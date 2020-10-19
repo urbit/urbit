@@ -20,6 +20,8 @@ import { getGroupFromWorkspace } from "~/logic/lib/workspace";
 import { SidebarAppConfigs } from './types';
 import { SidebarList } from "./SidebarList";
 import { SidebarInvite } from './SidebarInvite';
+import { roleForShip } from "~/logic/lib/group";
+
 
 interface SidebarProps {
   children: ReactNode;
@@ -89,6 +91,14 @@ export function Sidebar(props: SidebarProps) {
   );
   const sidebarInvites = (workspace?.type === 'home')
     ? inviteItems(invites, api) : null;
+
+  const role = props.groups?.[groupPath] ? roleForShip(props.groups[groupPath], window.ship) : undefined;
+  const isAdmin = (role === "admin") || (workspace?.type === 'home');
+
+  const newStyle = {
+    display: isAdmin ? "block" : "none"
+  };
+
   return (
     <Col
       display={display}
@@ -131,6 +141,7 @@ export function Sidebar(props: SidebarProps) {
         py="2"
       >
         <Link
+          style={newStyle}
           to={!!groupPath ? `/~landscape${groupPath}/new` : `/~landscape/home/new`}
         >
           <Box

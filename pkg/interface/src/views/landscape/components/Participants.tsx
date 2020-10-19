@@ -17,6 +17,7 @@ import {
   StatelessTextInput as Input,
 } from "@tlon/indigo-react";
 import _ from "lodash";
+import f from "lodash/fp";
 import VisibilitySensor from "react-visibility-sensor";
 
 import { Contact, Contacts } from "~/types/contact-update";
@@ -90,7 +91,7 @@ const Tab = ({ selected, id, label, setSelected }) => (
     borderBottom={selected === id ? 1 : 0}
     borderBottomColor="black"
     mr={2}
-    cursor='pointer'
+    cursor="pointer"
     onClick={() => setSelected(id)}
   >
     <Text color={selected === id ? "black" : "gray"}>{label}</Text>
@@ -141,11 +142,11 @@ export function Participants(props: {
 
   const filtered = useMemo(
     () =>
-      _.chain(participants)
-        .filter(tabFilters[filter])
-        .filter(searchParticipant(search))
-        .chunk(8)
-        .value(),
+      f.flow(
+        f.filter(tabFilters[filter]),
+        f.filter(searchParticipant(search)),
+        f.chunk(8)
+      )(participants),
     [search, filter, participants]
   );
 
@@ -288,22 +289,18 @@ function Participant(props: {
     });
   }, [api, association]);
 
-  const avatar = (
-    (contact?.avatar !== null) && !props.hideAvatars)
-    ? <img src={contact.avatar} height={32} width={32} className="dib" />
-    : <Sigil
-      ship={contact.patp}
-      size={32}
-      color={`#${color}`}
-    />;
+  const avatar =
+    contact?.avatar !== null && !props.hideAvatars ? (
+      <img src={contact.avatar} height={32} width={32} className="dib" />
+    ) : (
+      <Sigil ship={contact.patp} size={32} color={`#${color}`} />
+    );
 
   const hasNickname = contact.nickname && !props.hideNicknames;
 
   return (
     <>
-      <Box>
-        {avatar}
-      </Box>
+      <Box>{avatar}</Box>
       <Col justifyContent="center" gapY="1" height="100%">
         {hasNickname && (
           <TruncText title={contact.nickname} maxWidth="85%" color="black">
@@ -337,11 +334,6 @@ function Participant(props: {
               gapY={2}
               p={2}
             >
-              <Action bg="transparent">
-                <Link to={`/~chat/new/dm/${contact.patp}`}>
-                  <Text color="green">Send Message</Text>
-                </Link>
-              </Action>
               {props.role === "admin" && (
                 <>
                   {!isInvite && (

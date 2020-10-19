@@ -1,4 +1,4 @@
-import React, { useCallback, ReactNode } from "react";
+import React, { ReactNode } from "react";
 import { Row, Box, Col, Text } from "@tlon/indigo-react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
@@ -6,8 +6,9 @@ import { Link } from "react-router-dom";
 import { ChatResource } from "~/views/apps/chat/ChatResource";
 import { PublishResource } from "~/views/apps/publish/PublishResource";
 
+import RichText from '~/views/components/RichText';
+
 import { Association } from "~/types/metadata-update";
-import { StoreState } from "~/logic/store/type";
 import GlobalApi from "~/logic/api/global";
 import { RouteComponentProps, Route, Switch } from "react-router-dom";
 import { ChannelSettings } from "./ChannelSettings";
@@ -29,11 +30,17 @@ type ResourceSkeletonProps = {
 };
 
 export function ResourceSkeleton(props: ResourceSkeletonProps) {
-  const { association, api, children, atRoot } = props;
+  const { association, api, baseUrl, children, atRoot } = props;
   const app = association?.metadata?.module || association["app-name"];
   const appPath = association["app-path"];
-  const selectedGroup = association["group-path"];
+  const workspace = (baseUrl === '/~landscape/home') ? '/home' : association["group-path"];
   const title = props.title || association?.metadata?.title;
+  const disableRemoteContent = {
+    audioShown: false,
+    imageShown: false,
+    oembedShown: false,
+    videoShown: false
+  };
   return (
     <Col width="100%" height="100%" overflowY="hidden">
       <Box
@@ -53,7 +60,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps) {
             my="1"
             display={["block", "none"]}
           >
-            <Link to={`/~landscape${selectedGroup}`}> {"<- Back"}</Link>
+            <Link to={`/~landscape${workspace}`}> {"<- Back"}</Link>
           </Box>
         ) : (
           <Box
@@ -61,25 +68,28 @@ export function ResourceSkeleton(props: ResourceSkeletonProps) {
             pr={2}
             mr={2}
           >
-            <Link to={`/~landscape${selectedGroup}/resource/${app}${appPath}`}>
+            <Link to={`/~landscape${workspace}/resource/${app}${appPath}`}>
               <Text color="blue">Go back to channel</Text>
             </Link>
           </Box>
         )}
-        
+
         {atRoot && (
           <>
             <Box pr={1} mr={2}>
-              <Text>{title}</Text>
+              <Text display='inline-block' verticalAlign='middle'>{title}</Text>
             </Box>
             <TruncatedBox
               display={["none", "block"]}
               maxWidth="60%"
+              verticalAlign='middle'
               flexShrink={1}
               title={association?.metadata?.description}
               color="gray"
             >
+              <RichText color='gray' remoteContentPolicy={disableRemoteContent} mb='0' display='inline-block'>
               {association?.metadata?.description}
+              </RichText>
             </TruncatedBox>
             <Box flexGrow={1} />
             <ChannelMenu association={association} api={api} />

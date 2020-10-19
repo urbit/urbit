@@ -43,7 +43,6 @@ interface NewChannelProps {
   group?: string;
 }
 
-const EMPTY_INVITE_POLICY = { invite: { pending: [] } };
 
 export function NewChannel(props: NewChannelProps & RouteComponentProps) {
   const { history, api, group } = props;
@@ -64,7 +63,7 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
             description,
             appPath,
             groupPath,
-            EMPTY_INVITE_POLICY,
+            { invite: { pending: ships.map((s) => `~${s}`) } },
             ships.map((s) => `~${s}`),
             true,
             false
@@ -86,8 +85,8 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
               resId,
               name,
               description,
-              EMPTY_INVITE_POLICY,
-              module
+              { invite: { pending: ships.map((s) => `~${s}`) } },
+              module,
             );
           }
           break;

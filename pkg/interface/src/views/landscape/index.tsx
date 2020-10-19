@@ -88,13 +88,16 @@ export default class Landscape extends Component<LandscapeProps, {}> {
             );
           }}
         />
-        <Route path="/~landscape/join"
+        <Route path="/~landscape/join/:ship?/:name?"
           render={routeProps=> {
+            const { ship, name } = routeProps.match.params;
+            const autojoin = ship && name ? `${ship}/${name}` : null;
             return (
               <JoinGroup 
                 groups={props.groups}
                 contacts={props.contacts}
                 api={props.api} 
+                autojoin={autojoin}
                 {...routeProps}
               />
             );

@@ -223,7 +223,7 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
           api={api}
           className="fl pr3 v-top bg-white bg-gray0-d pt1"
         />
-        <div className="clamp-message" style={{ flexGrow: 1 }}>
+        <Box flexGrow='1' display='block' className="clamp-message">
           <Box
             className="hide-child"
             pt={1}
@@ -243,11 +243,11 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
               }}
               title={`~${msg.author}`}
             >{name}</Text>
-            <Text gray mono className="v-mid">{timestamp}</Text>
+            <Text flexShrink='0' gray mono className="v-mid">{timestamp}</Text>
             <Text gray mono ml={2} className="v-mid child dn-s">{datestamp}</Text>
           </Box>
-          <Box fontSize={0}><MessageContent content={msg.letter} remoteContentPolicy={remoteContentPolicy} measure={measure} /></Box>
-        </div>
+          <Box fontSize='14px'><MessageContent content={msg.letter} remoteContentPolicy={remoteContentPolicy} measure={measure} /></Box>
+        </Box>
       </>
     );
   }
@@ -256,7 +256,7 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
 export const MessageWithoutSigil = ({ timestamp, msg, remoteContentPolicy, measure }) => (
   <>
     <p className="child pr1 mono f9 gray2 dib">{timestamp}</p>
-    <Box fontSize={0} className="clamp-message" style={{ flexGrow: 1 }}>
+    <Box fontSize='14px' className="clamp-message" style={{ flexGrow: 1 }}>
       <MessageContent content={msg.letter} remoteContentPolicy={remoteContentPolicy} measure={measure}/>
     </Box>
   </>
@@ -267,7 +267,7 @@ export const MessageContent = ({ content, remoteContentPolicy, measure }) => {
     return <CodeContent content={content} />;
   } else if ('url' in content) {
     return (
-      <Text fontSize={0} lineHeight="tall" color='gray'>
+      <Text fontSize='14px' lineHeight="tall" color='black'>
         <RemoteContent
           url={content.url}
           remoteContentPolicy={remoteContentPolicy}
@@ -283,9 +283,9 @@ export const MessageContent = ({ content, remoteContentPolicy, measure }) => {
     );
   } else if ('me' in content) {
     return (
-      <p className='f9 i lh-copy v-top'>
+      <Text fontStyle='italic' fontSize='14px' lineHeight='tall' color='black'>
         {content.me}
-      </p>
+      </Text>
     );
   }
   else if ('text' in content) {

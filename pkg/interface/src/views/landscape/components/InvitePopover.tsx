@@ -71,7 +71,7 @@ export function InvitePopover(props: InvitePopoverProps) {
           display="flex"
           justifyContent="center"
           alignItems="center"
-          bg="gray"
+          bg="scales.black30"
           left="0px"
           top="0px"
           width="100vw"
@@ -106,13 +106,13 @@ export function InvitePopover(props: InvitePopoverProps) {
                     label=""
                   />
                   <FormError message="Failed to invite" />
-                  <ChipInput
+                  {/* <ChipInput
                     id="emails"
                     label="Invite via Email"
                     caption="Send an Urbit ID and invite them to this group"
                     placeholder="name@example.com"
                     breakOnSpace
-                  />
+                  /> */}
                 </Col>
                 <Row
                   borderTop={1}

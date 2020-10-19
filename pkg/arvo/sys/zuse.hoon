@@ -75,11 +75,7 @@
 ++  life  @ud                                           ::  ship key revision
 ++  rift  @ud                                           ::  ship continuity
 ++  mime  {p/mite q/octs}                               ::  mimetyped data
-::
-::
-::    TODO: Rename to +mime once the current +mime and +mite are gone. The
-::
-++  octs  {p/@ud q/@t}                                  ::  octet-stream
+++  octs  {p/@ud q/@}                                   ::  octet-stream
 ++  sock  {p/ship q/ship}                               ::  outgoing [our his]
 ::+|
 ::
@@ -904,18 +900,17 @@
         lab/(map @tas @ud)                              ::  labels
     ==                                                  ::
   ++  germ                                              ::  merge style
-    $?  $init                                           ::  new desk
-        $this                                           ::  ours with parents
-        $that                                           ::  hers with parents
-        $fine                                           ::  fast forward
-        $meet                                           ::  orthogonal files
-        $mate                                           ::  orthogonal changes
-        $meld                                           ::  force merge
-    ==                                                  ::
-  ++  khan                                              ::
-    $~  [~ ~]
-    $:  fil/(unit (unit cage))                          ::  see ++khan-to-soba
-        dir/(unit (map @ta (unit khan)))                ::
+    $?  %init                                           ::  new desk
+        %fine                                           ::  fast forward
+        %meet                                           ::  orthogonal files
+        %mate                                           ::  orthogonal changes
+        %meld                                           ::  force merge
+        %only-this                                      ::  ours with parents
+        %only-that                                      ::  hers with parents
+        %take-this                                      ::  ours unless absent
+        %take-that                                      ::  hers unless absent
+        %meet-this                                      ::  ours if conflict
+        %meet-that                                      ::  hers if conflict
     ==                                                  ::
   ++  lobe  @uvI                                        ::  blob ref
   ++  maki  {p/@ta q/@ta r/@ta s/path}                  ::
@@ -1111,7 +1106,9 @@
           {$init p/@p}                                  ::  set owner
           {$logo ~}                                     ::  logout
           [%lyra hoon=(unit @t) arvo=@t]                ::  upgrade kernel
+          {$meld ~}                                     ::  unify memory
           {$pack ~}                                     ::  compact memory
+          {$trim p/@ud}                                 ::  trim kernel state
           {$veer p/@ta q/path r/@t}                     ::  install vane
           {$verb ~}                                     ::  verbose mode
           [%whey ~]                                     ::  memory report
@@ -1121,6 +1118,7 @@
       $%  {$belt p/belt}                                ::  terminal input
           {$blew p/blew}                                ::  terminal config
           {$boot lit/? p/*}                             ::  weird %dill boot
+          {$crop p/@ud}                                 ::  trim kernel state
           $>(%crud vane-task)                           ::  error with trace
           {$flog p/flog}                                ::  wrapped error
           {$flow p/@tas q/(list gill:gall)}             ::  terminal config
@@ -1130,6 +1128,7 @@
           {$harm ~}                                     ::  all terms hung up
           $>(%init vane-task)                           ::  after gall ready
           [%lyra hoon=(unit @t) arvo=@t]                ::  upgrade kernel
+          {$meld ~}                                     ::  unify memory
           {$noop ~}                                     ::  no operation
           {$pack ~}                                     ::  compact memory
           {$talk p/tank}                                ::
@@ -1193,9 +1192,11 @@
         {$url p/@t}                                     ::  activate url
     ==                                                  ::
   ++  flog                                              ::  sent to %dill
-    $%  {$crud p/@tas q/(list tank)}                    ::
+    $%  {$crop p/@ud}                                   ::  trim kernel state
+        {$crud p/@tas q/(list tank)}                    ::
         {$heft ~}                                       ::
         [%lyra hoon=(unit @t) arvo=@t]                  ::  upgrade kernel
+        {$meld ~}                                       ::  unify memory
         {$pack ~}                                       ::  compact memory
         {$text p/tape}                                  ::
         {$veer p/@ta q/path r/@t}                       ::  install vane
@@ -1271,6 +1272,9 @@
           ::    the first place.
           ::
           [%disconnect =binding]
+          ::  notifies us that web login code changed
+          ::
+          [%code-changed ~]
           ::  start responding positively to cors requests from origin
           ::
           [%approve-origin =origin]
@@ -1551,9 +1555,7 @@
         $put                                            ::  PUT
         $trac                                           ::  TRACE
     ==                                                  ::
-  ++  mite  (list @ta)                                  ::  mime type
   ++  moth  {p/meth q/math r/(unit octs)}               ::  http operation
-  ++  octs  {p/@ud q/@t}                                ::  octet-stream
   ++  oryx  @t                                          ::  CSRF secret
   ++  pork  {p/(unit @ta) q/(list @t)}                  ::  fully parsed url
   :: +prox: proxy notification
@@ -1972,6 +1974,7 @@
           [%turf ~]                                     ::  view domains
           $>(%vega vane-task)                           ::  report upgrade
           $>(%plea vane-task)                           ::  ames request
+          [%step ~]                                     ::  reset web login code
       ==                                                ::
     ::
     +$  dawn-event
@@ -6026,6 +6029,7 @@
   ::::                    ++mimes:html                  ::  (2e1) MIME
     ::                                                  ::::
   ++  mimes  ^?
+    ~%  %mimes  ..is  ~
     |%
     ::                                                  ::  ++as-octs:mimes:html
     ++  as-octs                                         ::  atom to octstream
@@ -6043,6 +6047,28 @@
       ?~  myn  ~
       ?:  =(~ t.myn)  (trip i.myn)
       (weld (trip i.myn) `tape`['/' $(myn t.myn)])
+    ::
+    ::  |base16: en/decode arbitrary MSB-first hex strings
+    ::
+    ++  base16
+      ~%  %base16  +  ~
+      |%
+      ++  en
+        ~/  %en
+        |=  a=octs  ^-  cord
+        (crip ((x-co:co (mul p.a 2)) (end 3 p.a q.a)))
+      ::
+      ++  de
+        ~/  %de
+        |=  a=cord  ^-  (unit octs)
+        (rush a rule)
+      ::
+      ++  rule
+        %+  cook
+          |=  a=(list @)  ^-  octs
+          [(add (dvr (lent a) 2)) (repn 4 (flop a))]
+        (star hit)
+      --
     ::                                                  ::  ++en-base64:mimes:
     ++  en-base64                                       ::  encode base64
       |=  tig/@
@@ -6325,7 +6351,8 @@
     ++  apex                                            ::  top level
       =+  spa=;~(pose comt whit)
       %+  knee  *manx  |.  ~+
-      %+  ifix  [(star spa) (star spa)]
+      %+  ifix  
+        [;~(plug (punt decl) (star spa)) (star spa)]
       ;~  pose
         %+  sear  |=({a/marx b/marl c/mane} ?.(=(c n.a) ~ (some [a b])))
           ;~(plug head many tail)
@@ -6371,6 +6398,12 @@
         whit
         ;~(less (jest '-->') hep)
       ==
+    ::
+    ++  decl                                            ::  ++decl:de-xml:html
+      %+  ifix                                          ::  XML declaration
+        [(jest '<?xml') (jest '?>')]
+      %-  star
+      ;~(less (jest '?>') prn)
     ::                                                  ::  ++escp:de-xml:html
     ++  escp                                            ::
       ;~(pose ;~(less led ban pad prn) enty)

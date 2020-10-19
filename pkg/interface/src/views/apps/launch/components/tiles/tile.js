@@ -30,10 +30,11 @@ export default class Tile extends React.Component {
         borderRadius={2}
         overflow="hidden"
         bg={bg || "white"}
-        boxShadow={boxShadow || '0 0 0px 1px rgba(0, 0, 0, 0.1) inset'}
-        {...props}
+        color='washedGray'
+        boxShadow={boxShadow || '0 0 0px 1px inset'}
       >
         <Box
+          {...props}
           height="100%"
           width="100%"
         >

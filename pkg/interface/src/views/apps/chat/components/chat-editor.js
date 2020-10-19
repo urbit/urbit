@@ -3,6 +3,8 @@ import { UnControlled as CodeEditor } from 'react-codemirror2';
 import { MOBILE_BROWSER_REGEX } from "~/logic/lib/util";
 import CodeMirror from 'codemirror';
 
+import { Row } from '@tlon/indigo-react';
+
 import 'codemirror/mode/markdown/markdown';
 import 'codemirror/addon/display/placeholder';
 
@@ -131,12 +133,16 @@ export default class ChatEditor extends Component {
     };
 
     return (
-      <div
-        className={
-          'chat fr flex h-100 bg-gray0-d lh-copy w-100 items-center ' +
-          (inCodeMode ? ' code' : '')
-        }
-        style={{ flexGrow: 1, paddingTop: '3px', maxHeight: '224px', width: 'calc(100% - 88px)' }}>
+      <Row
+        backgroundColor='white'
+        alignItems='center'
+        flexGrow='1'
+        height='100%'
+        maxHeight='224px'
+        paddingTop='8px'
+        width='calc(100% - 88px)'
+        className={inCodeMode ? 'chat code' : 'chat'}
+      >
         <CodeEditor
           value={message}
           options={options}
@@ -149,7 +155,7 @@ export default class ChatEditor extends Component {
           }}
           {...props}
         />
-      </div>
+      </Row>
     );
   }
 }

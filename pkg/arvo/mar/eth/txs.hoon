@@ -16,7 +16,7 @@
 ++  grab
   |%
   ++  mime
-    |=  [p=mite:eyre q=octs:eyre]
+    |=  (pair mite octs)
     =/  wan=wain  (to-wain q.q)
     ?>  ?=(^ wan)
     %+  murn  t.wan
