@@ -1243,6 +1243,9 @@
           events
         =^  head  queue  ~(get to queue)
         =,  p.head
+        ::NOTE  these will only fail if the mark and/or json types changed,
+        ::      since conversion failure also gets caught during first receive.
+        ::      we can't do anything about this, so consider it unsupported.
         ?~  sign=(channel-event-to-sign channel-event)  $
         ?~  json=(sign-to-json request-id u.sign)       $
         $(events [(event-json-to-wall id u.json) events])
@@ -1497,63 +1500,77 @@
       ?~  channel
         :_  state  :_  ~
         [duct %pass /flog %d %flog %crud %eyre-no-channel >id=channel-id< ~]
+      ::  attempt to convert the sign to json.
+      ::  if conversion succeeds, we *can* send it. if the client is actually
+      ::  connected, we *will* send it immediately.
       ::
-      =/  event-id  next-id.u.channel
-      ::  store the event as unacked
+      =/  json=(unit json)
+        (sign-to-json request-id sign)
+      =*  sending  &(?=([%| *] state.u.channel) ?=(^ json))
       ::
-      =.  events.u.channel
+      =/  next-id  next-id.u.channel
+      ::  if we can send it, store the event as unacked
+      ::
+      =?  events.u.channel  ?=(^ json)
         %-  ~(put to events.u.channel)
-        [event-id request-id (sign-to-channel-event sign)]
-      ::  if a client is connected, send this event to them.
+        [next-id request-id (sign-to-channel-event sign)]
+      ::  if it makes sense to do so, send the event to the client
       ::
-      =?  moves  ?=([%| *] state.u.channel)
+      =?  moves  sending
         ^-  (list move)
-        ?~  json=(sign-to-json request-id sign)
-          moves
         :_  moves
+        ::NOTE  assertions in this block because =* is flimsy
+        ?>  ?=([%| *] state.u.channel)
         :+  p.state.u.channel  %give
         ^-  gift:able
         :*  %response  %continue
         ::
             ^=  data
             %-  wall-to-octs
-            (event-json-to-wall event-id u.json)
+            (event-json-to-wall next-id (need json))
         ::
             complete=%.n
         ==
+      =?  next-id  ?=(^ json)  +(next-id)
       ::  update channel's unacked counts, find out if clogged
       ::
       =^  clogged  unacked.u.channel
-        ::  poke-acks are one-offs, don't apply clog logic to them
+        ::  poke-acks are one-offs, don't apply clog logic to them.
+        ::  and of course don't count events we can't send as unacked.
         ::
-        ?:  ?=(%poke-ack -.sign)  [| unacked.u.channel]
+        ?:  ?|  ?=(%poke-ack -.sign)
+                ?=(~ json)
+            ==
+          [| unacked.u.channel]
         =/  num=@ud
           (~(gut by unacked.u.channel) request-id 0)
         :_  (~(put by unacked.u.channel) request-id +(num))
         ?&  (gte num clog-threshold)
             (lth (add last-ack.u.channel clog-timeout) now)
         ==
-      ::
       ~?  clogged  [%e %clogged channel-id request-id]
-      ::  if we're clogged, end this gall subscription
+      ::  if we're clogged, or we ran into an event we can't serialize,
+      ::  kill this gall subscription.
       ::
-      =?  moves      clogged
+      =*  kicking    |(clogged ?=(~ json))
+      =?  moves      kicking
         :_  moves
         =+  (~(got by subscriptions.u.channel) request-id)
         :^  duct  %pass
           (subscription-wire channel-id request-id ship app)
         [%g %deal [our ship] app %leave ~]
-      =?  event-id   clogged  +(event-id)
-      =?  u.channel  clogged
+      ::  update channel state to reflect the %kick
+      ::
+      =?  u.channel  kicking
         %_  u.channel
           subscriptions  (~(del by subscriptions.u.channel) request-id)
           unacked        (~(del by unacked.u.channel) request-id)
           events         %-  ~(put to events.u.channel)
-                         [event-id request-id (sign-to-channel-event %kick ~)]
+                         [next-id request-id (sign-to-channel-event %kick ~)]
         ==
       ::  if a client is connected, send the kick event to them
       ::
-      =?  moves  &(clogged ?=([%| *] state.u.channel))
+      =?  moves  &(kicking ?=([%| *] state.u.channel))
         :_  moves
         :+  p.state.u.channel  %give
         ^-  gift:able
@@ -1561,17 +1578,18 @@
         ::
             ^=  data
             %-  wall-to-octs
-            %+  event-json-to-wall  event-id
+            %+  event-json-to-wall  next-id
             (need (sign-to-json request-id %kick ~))
         ::
             complete=%.n
         ==
+      =?  next-id   kicking  +(next-id)
       ::
       :-  moves
       %_    state
           session.channel-state
         %+  ~(put by session.channel-state.state)  channel-id
-        u.channel(next-id +(event-id))
+        u.channel(next-id next-id)
       ==
     ::  +sign-to-channel-event: strip the vase from a sign:agent:gall
     ::
