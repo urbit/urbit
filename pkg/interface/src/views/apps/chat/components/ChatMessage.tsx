@@ -97,7 +97,7 @@ export default class ChatMessage extends Component<ChatMessageProps> {
 
     const containerClass = `${renderSigil
       ? `cf pt2 pl3 lh-copy`
-      : `items-center cf hide-child`} ${isPending ? 'o-40' : ''} ${className}`
+      : `items-top cf hide-child`} ${isPending ? 'o-40' : ''} ${className}`
 
     const timestamp = moment.unix(msg.when / 1000).format(renderSigil ? 'hh:mm a' : 'hh:mm');
 
@@ -255,7 +255,7 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
 
 export const MessageWithoutSigil = ({ timestamp, msg, remoteContentPolicy, measure }) => (
   <>
-    <p className="child pr1 mono f9 gray2 dib">{timestamp}</p>
+    <Text mono gray display='inline-block' pr='1' pt='2px' lineHeight='tall' className="child">{timestamp}</Text>
     <Box fontSize='14px' className="clamp-message" style={{ flexGrow: 1 }}>
       <MessageContent content={msg.letter} remoteContentPolicy={remoteContentPolicy} measure={measure}/>
     </Box>
