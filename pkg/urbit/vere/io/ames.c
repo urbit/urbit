@@ -1007,6 +1007,19 @@ _ames_hear(u3_ames* sam_u,
   u3_head hed_u;
   u3_body bod_u;
 
+  //  XX packet filtering needs to revised for two protocol-change scenarios
+  //
+  //    - packets using old protocol versions from our sponsees
+  //      these must be let through, and this is a transitive condition;
+  //      they must also be forwarded where appropriate
+  //      they can be validated, as we know their semantics
+  //
+  //    - packets using newer protocol versions
+  //      these should probably be let through, or at least
+  //      trigger printfs suggesting upgrade.
+  //      they cannot be filtered, as we do not know their semantics
+  //
+
   //  unpack header, ensuring buffer is large enough
   //
   if (  (4 > len_w)
@@ -1020,7 +1033,7 @@ _ames_hear(u3_ames* sam_u,
 
   //  ensure the protocol version matches ours
   //
-  //    XX rethink
+  //    XX rethink use of [fit_o] here and elsewhere
   //
   if (  (c3y == sam_u->fig_u.fit_o)
      && (sam_u->ver_y != hed_u.ver_y) )
@@ -1243,6 +1256,9 @@ _ames_prot_scry_cb(void* vod_p, u3_noun nun)
     sam_u->ver_y = ver;
   }
 
+  //  XX revise: filtering should probably be disabled if
+  //  we get a protocol version above the latest one we know
+  //
   sam_u->fig_u.fit_o = c3y;
   u3z(nun);
 }
