@@ -43,9 +43,17 @@
   ?>  ?|((team:title our.bowl src.bowl) (is-client:hc src.bowl))
   =^  cards  state
     ?+  mark  (on-poke:def mark vase)
+        %btc-provider-action
+      :: TODO:  check whether endpoint/credentials are set
+      (handle-action:hc !<(action vase))
+      ::
         %btc-provider-command
+      ?>  (team:title our.bowl src.bowl)
       (handle-command:hc !<(command vase))
+      ::
         %btc-provider-rpc-action
+      ?>  (team:title our.bowl src.bowl)
+      :: TODO:  check whether endpoint/credentials are set
       (handle-rpc-action !<(rpc-action vase))
     ==
   [cards this]
@@ -86,6 +94,10 @@
 --
 ::  helper core
 |_  =bowl:gall
+++  handle-action
+  |=  act=action
+  ~&  >  act
+  `state
 ++  handle-command
   |=  comm=command
   ^-  (quip card _state)
@@ -224,7 +236,7 @@
 ++  electrum-http-response
   |=  [status=@ud rpc-resp=response:rpc:jstd]
   ^-  (quip card _state)
-  ~&  >>  (parse-response:electrum-rpc:elib rpc-resp)
+  ~&  >>  (to-response (rpc-response [%erpc (parse-response:electrum-rpc:elib rpc-resp)]))
   `state
 ::
 --

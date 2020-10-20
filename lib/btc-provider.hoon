@@ -4,7 +4,8 @@
 =,  sur
 |%
 ++  to-response
-  |=  response:rpc
+  |=  rpc-response:sur
   ^-  response:sur
-  [%get-address-info *address-info]
+  *response:sur
+  ::[%get-address-info *address-info]
 --

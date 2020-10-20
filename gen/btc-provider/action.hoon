@@ -1,13 +1,13 @@
-::  Sends a raw RPC action to the BTC Bridge
+::  Sends a raw RPC action to the BTC Provider
 ::
 ::  Commands:
 ::
 ::
 ::
-/-  *btc-bridge
+/-  *btc-provider
 ::
 :-  %say
 |=  $:  [now=@da eny=@uvJ =beak]
         [[act=action ~] ~]
 ==
-[%btc-bridge-action act]
+[%btc-provider-action act]
