@@ -2736,10 +2736,19 @@
   --
 ::
 ++  ff                                                  ::  ieee 754 format fp
+  =<  =>  $
+      |%  :: become:
+      ++  rh  ~(. (..$ @rh:~) [w=5 p=10 b=--15] r)
+      ++  rs  ~(. (..$ @rs:~) [w=8 p=23 b=--127] r)
+      ++  rd  ~(. (..$ @rd:~) [w=11 p=52 b=--1.023] r)
+      ++  rq  ~(. (..$ @rq:~) [w=15 p=112 b=--16.383] r)
+      --
+  |*  rx/_@r:~
   |_  {{w/@u p/@u b/@s} r/$?($u $d $z $a $n)}
   ::  this core has no use outside of the functionality
   ::  provided to ++rd, ++rs, ++rq, and ++rh
   ::
+  ::  rx=type:         one of @rs, @rd, @rh, or @rq
   ::  w=width:         bits in exponent field
   ::  p=precision:     bits in fraction field
   ::  b=bias:          added to exponent when storing
@@ -2748,11 +2757,12 @@
   ++  sb  (bex (^add w p))                              ::  sign bit
   ++  me  (dif:si (dif:si --1 b) (sun:si p))            ::  minimum exponent
   ::
+  ::
   ++  pa
     %*(. fl p +(p), v me, w (^sub (bex w) 3), d %d, r r)
   ::
   ++  sea                                               ::  @r to fn
-    |=  {a/@r}  ^-  fn
+    |=  {a/rx}  ^-  fn
     =+  [f=(cut 0 [0 p] a) e=(cut 0 [p w] a)]
     =+  s=(sig a)
     ?:  =(e 0)
@@ -2766,83 +2776,83 @@
   ++  bit  |=  {a/fn}  (bif (rou:pa a))                 ::  fn to @r w+ rounding
   ::
   ++  bif                                               ::  fn to @r no rounding
-    |=  {a/fn}  ^-  @r
+    |=  {a/fn}  ^-  rx
     ?:  ?=({$i *} a)
       =+  q=(lsh 0 p (fil 0 w 1))
       ?:  s.a  q  (^add q sb)
     ?:  ?=({$n *} a)  (lsh 0 (dec p) (fil 0 +(w) 1))
-    ?~  a.a  ?:  s.a  `@r`0  sb
+    ?~  a.a  ?:(s.a `@r`0 sb)
     =+  ma=(met 0 a.a)
     ?.  =(ma +(p))
       ?>  =(e.a me)
       ?>  (^lth ma +(p))
-      ?:  s.a  `@r`a.a  (^add a.a sb)
+      ?:(s.a `@r`a.a (^add a.a sb))
     =+  q=(sum:si (dif:si e.a me) --1)
     =+  r=(^add (lsh 0 p (abs:si q)) (end 0 p a.a))
-    ?:  s.a  r  (^add r sb)
+    ?:(s.a r (^add r sb))
   ::
   ++  sig                                               ::  get sign
-    |=  {a/@r}  ^-  ?
+    |=  {a/rx}  ^-  ?
     =(0 (cut 0 [(^add p w) 1] a))
   ::
   ++  exp                                               ::  get exponent
-    |=  {a/@r}  ^-  @s
+    |=  {a/rx}  ^-  @s
     (dif:si (sun:si (cut 0 [p w] a)) b)
   ::
   ++  add                                               ::  add
-    |=  {a/@r b/@r}
+    |=  {a/rx b/rx}
     (bif (add:pa (sea a) (sea b)))
   ::
   ++  sub                                               ::  subtract
-    |=  {a/@r b/@r}
+    |=  {a/rx b/rx}
     (bif (sub:pa (sea a) (sea b)))
   ::
   ++  mul                                               ::  multiply
-    |=  {a/@r b/@r}
+    |=  {a/rx b/rx}
     (bif (mul:pa (sea a) (sea b)))
   ::
   ++  div                                               ::  divide
-    |=  {a/@r b/@r}
+    |=  {a/rx b/rx}
     (bif (div:pa (sea a) (sea b)))
   ::
   ++  fma                                               ::  fused multiply-add
-    |=  {a/@r b/@r c/@r}
+    |=  {a/rx b/rx c/rx}
     (bif (fma:pa (sea a) (sea b) (sea c)))
   ::
   ++  sqt                                               ::  square root
-    |=  {a/@r}
+    |=  {a/rx}
     (bif (sqt:pa (sea a)))
   ::
   ++  lth                                               ::  less-than
-    |=  {a/@r b/@r}  (fall (lth:pa (sea a) (sea b)) |)
+    |=  {a/rx b/rx}  (fall (lth:pa (sea a) (sea b)) |)
   ++  lte                                               ::  less-equals
-    |=  {a/@r b/@r}  (fall (lte:pa (sea a) (sea b)) |)
+    |=  {a/rx b/rx}  (fall (lte:pa (sea a) (sea b)) |)
   ++  equ                                               ::  equals
-    |=  {a/@r b/@r}  (fall (equ:pa (sea a) (sea b)) |)
+    |=  {a/rx b/rx}  (fall (equ:pa (sea a) (sea b)) |)
   ++  gte                                               ::  greater-equals
-    |=  {a/@r b/@r}  (fall (gte:pa (sea a) (sea b)) |)
+    |=  {a/rx b/rx}  (fall (gte:pa (sea a) (sea b)) |)
   ++  gth                                               ::  greater-than
-    |=  {a/@r b/@r}  (fall (gth:pa (sea a) (sea b)) |)
+    |=  {a/rx b/rx}  (fall (gth:pa (sea a) (sea b)) |)
   ++  sun                                               ::  uns integer to @r
     |=  {a/@u}  (bit [%f & --0 a])
   ++  san                                               ::  signed integer to @r
     |=  {a/@s}  (bit [%f (syn:si a) --0 (abs:si a)])
   ++  toi                                               ::  round to integer
-    |=  {a/@r}  (toi:pa (sea a))
+    |=  {a/rx}  (toi:pa (sea a))
   ++  drg                                               ::  @r to decimal float
-    |=  {a/@r}  (drg:pa (sea a))
+    |=  {a/rx}  (drg:pa (sea a))
   ++  grd                                               ::  decimal float to @r
     |=  {a/dn}  (bif (grd:pa a))
   --
 ::
-++  rlyd  |=  a/@rd  ^-  dn  (drg:rd a)                 ::  prep @rd for print
-++  rlys  |=  a/@rs  ^-  dn  (drg:rs a)                 ::  prep @rs for print
-++  rlyh  |=  a/@rh  ^-  dn  (drg:rh a)                 ::  prep @rh for print
-++  rlyq  |=  a/@rq  ^-  dn  (drg:rq a)                 ::  prep @rq for print
-++  ryld  |=  a/dn  ^-  @rd  (grd:rd a)                 ::  finish parsing @rd
-++  ryls  |=  a/dn  ^-  @rs  (grd:rs a)                 ::  finish parsing @rs
-++  rylh  |=  a/dn  ^-  @rh  (grd:rh a)                 ::  finish parsing @rh
-++  rylq  |=  a/dn  ^-  @rq  (grd:rq a)                 ::  finish parsing @rq
+++  rlyd  |=  a/@rd  ^-  dn  (drg:rd:ff a)              ::  prep @rd for print
+++  rlys  |=  a/@rs  ^-  dn  (drg:rs:ff a)              ::  prep @rs for print
+++  rlyh  |=  a/@rh  ^-  dn  (drg:rh:ff a)              ::  prep @rh for print
+++  rlyq  |=  a/@rq  ^-  dn  (drg:rq:ff a)              ::  prep @rq for print
+++  ryld  |=  a/dn  ^-  @rd  (grd:rd:ff a)              ::  finish parsing @rd
+++  ryls  |=  a/dn  ^-  @rs  (grd:rs:ff a)              ::  finish parsing @rs
+++  rylh  |=  a/dn  ^-  @rh  (grd:rh:ff a)              ::  finish parsing @rh
+++  rylq  |=  a/dn  ^-  @rq  (grd:rq:ff a)              ::  finish parsing @rq
 ::
 ++  rd                                                  ::  double precision fp
   ^|
@@ -2850,14 +2860,9 @@
   |_  r/$?($u $d $z $n)
   ::  round up, round down, round to zero, round to nearest
   ::
-  ++  ma
-    %*(. ff w 11, p 52, b --1.023, r r)
-  ::
-  ++  sea                                               ::  @rd to fn
-    |=  {a/@rd}  (sea:ma a)
-  ::
-  ++  bit                                               ::  fn to @rd
-    |=  {a/fn}  ^-  @rd  (bit:ma a)
+  ++  ma  rd:ff
+  ++  sea  |=(a=@rd (sea:ma a))                         ::  @rd to fn
+  ++  bit  |=(a=fn ^-(@rd (bit:ma a)))                  ::  fn to @rd
   ::
   ++  add  ~/  %add                                     ::  add
     |=  {a/@rd b/@rd}  ^-  @rd
@@ -2928,14 +2933,9 @@
   |_  r/$?($u $d $z $n)
   ::  round up, round down, round to zero, round to nearest
   ::
-  ++  ma
-    %*(. ff w 8, p 23, b --127, r r)
-  ::
-  ++  sea                                               ::  @rs to fn
-    |=  {a/@rs}  (sea:ma a)
-  ::
-  ++  bit                                               ::  fn to @rs
-    |=  {a/fn}  ^-  @rs  (bit:ma a)
+  ++  ma  rs:ff
+  ++  sea  |=(a=@rs (sea:ma a))                         ::  @rs to fn
+  ++  bit  |=(a=fn ^-(@rs (bit:ma a)))                  ::  fn to @rs
   ::
   ++  add  ~/  %add                                     ::  add
     |=  {a/@rs b/@rs}  ^-  @rs
@@ -3007,14 +3007,9 @@
   |_  r/$?($u $d $z $n)
   ::  round up, round down, round to zero, round to nearest
   ::
-  ++  ma
-    %*(. ff w 15, p 112, b --16.383, r r)
-  ::
-  ++  sea                                               ::  @rq to fn
-    |=  {a/@rq}  (sea:ma a)
-  ::
-  ++  bit                                               ::  fn to @rq
-    |=  {a/fn}  ^-  @rq  (bit:ma a)
+  ++  ma  rq:ff
+  ++  sea  |=(a=@rq (sea:ma a))                         ::  @rq to fn
+  ++  bit  |=(a=fn ^-(@rq (bit:ma a)))                  ::  fn to @rq
   ::
   ++  add  ~/  %add                                     ::  add
     |=  {a/@rq b/@rq}  ^-  @rq
@@ -3086,14 +3081,9 @@
   |_  r/$?($u $d $z $n)
   ::  round up, round down, round to zero, round to nearest
   ::
-  ++  ma
-    %*(. ff w 5, p 10, b --15, r r)
-  ::
-  ++  sea                                               ::  @rh to fn
-    |=  {a/@rh}  (sea:ma a)
-  ::
-  ++  bit                                               ::  fn to @rh
-    |=  {a/fn}  ^-  @rh  (bit:ma a)
+  ++  ma  rh:ff
+  ++  sea  |=(a=@rh (sea:ma a))                         ::  @rh to fn
+  ++  bit  |=(a=fn ^-(@rh (bit:ma a)))                  ::  fn to @rh
   ::
   ++  add  ~/  %add                                     ::  add
     |=  {a/@rh b/@rh}  ^-  @rh
