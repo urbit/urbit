@@ -1,6 +1,7 @@
 import React, { memo } from 'react';
-import { sigil, reactRenderer } from '@tlon/sigil-js';
-import { Box } from '@tlon/indigo-react';
+import { sigil as sigiljs, stringRenderer } from '@tlon/sigil-js';
+import { memoize } from 'lodash';
+import { Box, BaseImage } from '@tlon/indigo-react';
 
 export const foregroundFromBackground = (background) => {
   const rgb = {
@@ -14,41 +15,42 @@ export const foregroundFromBackground = (background) => {
   return ((whiteBrightness - brightness) < 50) ? 'black' : 'white';
 };
 
-export const Sigil = memo(({ classes = '', color, foreground = '', ship, size, svgClass = '', icon = false, padded = false }) => {
-  const padding = (icon && padded) ? '2px' : '0px';
-  const innerSize = (icon && padded) ? (Number(size) - 4) : size;
-  const foregroundColor = foreground ? foreground : foregroundFromBackground(color);
-  return ship.length > 14
-    ? (<Box
-        backgroundColor='black'
-        borderRadius={icon ? '1' : '0'}
-        display='inline-block'
-        height={size}
-        width={size}
-        className={classes}
-       />) : (
-       <Box
-        display='inline-block'
-        borderRadius={icon ? '1' : '0'}
-        flexBasis={size}
-        backgroundColor={color}
-        padding={padding}
-        className={classes}
-       >
-      {sigil({
-        patp: ship,
-        renderer: reactRenderer,
-        size: innerSize,
-        icon,
-        colors: [
-          color,
-          foregroundColor
-        ],
-        class: svgClass
-      })}
-    </Box>);
+export const SigilURL = memoize(({ patp, size, icon, color}) => {
+  const sigil = sigiljs({
+    patp,
+    renderer: stringRenderer,
+    size,
+    icon,
+    colors: [
+      color,
+      foregroundFromBackground(color)
+    ],
+  });
+  const blob = new Blob([sigil], { type: 'image/svg+xml'});
+  return URL.createObjectURL(blob);
 });
 
-Sigil.displayName = 'Sigil';
+export const Sigil = memo(({ classes = '', color, ship, size, svgClass = '', icon = false }) => {
+  return ship.length > 14
+    ? (<Box
+      display='inline-block'
+      bg='black'
+      className={classes}
+      width={size}
+      height={size}>
+    </Box>)
+    : (<Box
+      display='inline-block'
+      className={classes}
+      style={{ flexBasis: size }}
+    >
+      <BaseImage
+        width={size}
+        height={size}
+        className={svgClass}
+        src={SigilURL({ patp: ship, size, icon, color })}
+      />
+    </Box>)
+})
 
 export default Sigil;
