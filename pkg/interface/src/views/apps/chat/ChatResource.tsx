@@ -25,8 +25,8 @@ export function ChatResource(props: ChatResourceProps) {
     return null;
   }
 
-  const { envelopes, config } = props.inbox[station];
-  const { read, length } = config;
+  const { envelopes, config } = (props.inbox?.[station]) ? props.inbox[station] : {envelopes: [], config: {}};
+  const { read, length } = (config) ? config : undefined;
 
   const groupPath = props.association["group-path"];
   const group = props.groups[groupPath];
