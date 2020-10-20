@@ -27,8 +27,8 @@ data SlogAction
   = KeepAlive
   | Slog (Atom, Tank)
 
-conduit :: SlogAction -> ConduitT () (Flush Builder) IO ()
-conduit a = do
+streamSlog :: Monad m => SlogAction -> ConduitT () (Flush Builder) m ()
+streamSlog a = do
   case a of
     KeepAlive -> pure ()
     Slog (_, t) -> for_ (wash (WashCfg 0 80) (tankTree t)) $ \l -> do
@@ -42,30 +42,40 @@ kingSubsite :: HasLogFunc e
             => TVar ((Atom, Tank) -> IO ())
             -> RAcquire e KingSubsite
 kingSubsite func = do
-  slogQ :: TQueue (Atom, Tank) <- newTQueueIO
-  baton :: TMVar ()            <- newEmptyTMVarIO
-  atomically $ writeTVar func (\s -> atomically $ writeTQueue slogQ s)
+  clients <- newTVarIO (mempty :: Map Word (SlogAction -> IO ()))
+  nextId  <- newTVarIO (0 :: Word)
+  baton   <- newTMVarIO ()
+
+  atomically $ writeTVar func $ \s -> readTVarIO clients >>= traverse_ ($ Slog s)
+
   acquireWorker "Runtime subsite keep-alive" $ forever $ do
-    atomically $ putTMVar baton ()
     threadDelay 20_000_000
-
-  let action = (KeepAlive <$ takeTMVar baton)  -- every 20s
-           <|> (Slog <$> readTQueue slogQ)
-           --TODO  queue builds even without listeners connected.
-           --      and with listeners connected, only one pops from queue!
-           --      need queue per connection, not global?
-
-  let loop = yield Flush >> forever (atomically action >>= conduit)
+    io $ readTVarIO clients >>= traverse_ ($ KeepAlive)
 
   --TODO  scry to verify cookie authentication
-  pure $ KS $ \req respond -> respond $ case W.pathInfo req of
-    ("~_~":"slog":_) -> W.responseSource (H.mkStatus 200 "OK")        heads loop
-    _                -> W.responseLBS    (H.mkStatus 404 "Not Found") []    ""
-    where
-      heads = [ ("Content-Type" , "text/event-stream")
-              , ("Cache-Control", "no-cache")
-              , ("Connection"   , "keep-alive")
-              ]
+  pure $ KS $ \req respond -> case W.pathInfo req of
+    ("~_~":"slog":_) -> bracket
+      (do
+        id <- atomically $ do
+          id <- readTVar nextId
+          modifyTVar' nextId (+ 1)
+          pure id
+        slogQ <- newTQueueIO
+        atomically $
+          modifyTVar' clients (insertMap id (atomically . writeTQueue slogQ))
+        pure (id, slogQ))
+      (\(id, _) -> atomically $ modifyTVar' clients (deleteMap id))
+      (\(_, q) ->
+        let loop = yield Flush >> forever (atomically (readTQueue q) >>= streamSlog)
+        in  respond $ W.responseSource (H.mkStatus 200 "OK") heads loop)
+
+    _ -> respond $ W.responseLBS (H.mkStatus 404 "Not Found") [] ""
+
+  where
+    heads = [ ("Content-Type" , "text/event-stream")
+            , ("Cache-Control", "no-cache")
+            , ("Connection"   , "keep-alive")
+            ]
 
 fourOhFourSubsite :: Ship -> KingSubsite
 fourOhFourSubsite who = KS $ \req respond ->
