@@ -2265,12 +2265,12 @@
   ::
 ::
 ++  fl                                                  ::  arb. precision fp
-  =/  {{p/@u v/@s w/@u} r/$?($n $u $d $z $a) d/$?($d $f $i)}
+  =/  {{p/@u v/@s w/@u} r/$?($u $d $z $a $n) d/$?($d $f $i)}
     [[113 -16.494 32.765] %n %d]
   ::  p=precision:     number of bits in arithmetic form; must be at least 2
   ::  v=min exponent:  minimum value of e
   ::  w=width:         max - min value of e, 0 is fixed point
-  ::  r=rounding mode: nearest (ties to even), up, down, to zero, away from zero
+  ::  r=rounding mode: up, down, to zero, away from zero, nearest (ties to even)
   ::  d=behavior:      return denormals, flush denormals to zero,
   ::                   infinite exponent range
   =>
@@ -2736,7 +2736,7 @@
   --
 ::
 ++  ff                                                  ::  ieee 754 format fp
-  |_  {{w/@u p/@u b/@s} r/$?($n $u $d $z $a)}
+  |_  {{w/@u p/@u b/@s} r/$?($u $d $z $a $n)}
   ::  this core has no use outside of the functionality
   ::  provided to ++rd, ++rs, ++rq, and ++rh
   ::
@@ -2847,8 +2847,8 @@
 ++  rd                                                  ::  double precision fp
   ^|
   ~%  %rd  +>  ~
-  |_  r/$?($n $u $d $z)
-  ::  round to nearest, round up, round down, round to zero
+  |_  r/$?($u $d $z $n)
+  ::  round up, round down, round to zero, round to nearest
   ::
   ++  ma
     %*(. ff w 11, p 52, b --1.023, r r)
@@ -2925,8 +2925,8 @@
 ++  rs                                                  ::  single precision fp
   ~%  %rs  +>  ~
   ^|
-  |_  r/$?($n $u $d $z)
-  ::  round to nearest, round up, round down, round to zero
+  |_  r/$?($u $d $z $n)
+  ::  round up, round down, round to zero, round to nearest
   ::
   ++  ma
     %*(. ff w 8, p 23, b --127, r r)
@@ -3004,8 +3004,8 @@
 ++  rq                                                  ::  quad precision fp
   ~%  %rq  +>  ~
   ^|
-  |_  r/$?($n $u $d $z)
-  ::  round to nearest, round up, round down, round to zero
+  |_  r/$?($u $d $z $n)
+  ::  round up, round down, round to zero, round to nearest
   ::
   ++  ma
     %*(. ff w 15, p 112, b --16.383, r r)
@@ -3083,8 +3083,8 @@
 ++  rh                                                  ::  half precision fp
   ~%  %rh  +>  ~
   ^|
-  |_  r/$?($n $u $d $z)
-  ::  round to nearest, round up, round down, round to zero
+  |_  r/$?($u $d $z $n)
+  ::  round up, round down, round to zero, round to nearest
   ::
   ++  ma
     %*(. ff w 5, p 10, b --15, r r)
