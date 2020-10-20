@@ -5,12 +5,13 @@
 +$  credentials  [bc=btc-credentials ec=electrum-credentials]
 +$  status  [creds=credentials connected=? clients=(set ship)]
 +$  action
-  $%  [%get-balance addresses=(set address)]
-      [%get-transactions addresses=(set address)]
+  $%  [%get-address-info =address]
   ==
 +$  response
   $%  [%block-count count=@]
-      [%balance (set [=address balance=sats])]
+      [%get-address-info info=address-info]
+      [%get-balance (set [=address balance=sats])]
+      [%get-transactions ~]
   ==
 +$  update                              ::  sub updates from /clients path (connection etc.)
   $%  [%status connected=?]
@@ -30,6 +31,7 @@
     |%
     +$  request
       $%  [%get-address-balance =address]
+          [%get-address-utxos =address]
       ==
     --
   ++  bitcoin-core
