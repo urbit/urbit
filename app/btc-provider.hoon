@@ -1,8 +1,7 @@
-
-::  btc-provider.hoon 
+::  btc-provider.hoon
 ::  Proxy that serves a BTC full node and ElectRS address indexer
 ::
-/+  *btc-provider, dbug, default-agent, base64, blib=btc-node-json, elib=electrum-rpc
+/+  *btc-provider, dbug, default-agent
 |%
 +$  versioned-state
     $%  state-0
@@ -33,7 +32,7 @@
 ++  on-load
   |=  old-state=vase
   ^-  (quip card _this)
-  ~&  >  '%btc-provider recompiled successfully'
+  ~&  >  '%btc-provider recompiled successfully '
   `this(state !<(versioned-state old-state))
 ++  on-poke
   |=  [=mark =vase]
@@ -50,10 +49,6 @@
         %btc-provider-action
       ?>  connected.status
       (handle-action:hc !<(action vase))
-      ::
-        %btc-provider-rpc-action
-      ?>  connected.status
-      (handle-rpc-action !<(rpc-action vase))
     ==
   [cards this]
 ++  on-watch
@@ -72,20 +67,10 @@
 ++  on-arvo
   |=  [=wire =sign-arvo]
   ^-  (quip card _this)
-  =*  response  client-response.sign-arvo
   =^  cards  state
   ?+    +<.sign-arvo    (on-arvo:def wire sign-arvo)
       %http-response
-    ?.  ?=(%finished -.response)
-      `state
-    =/  [status=@ud rpc-resp=response:rpc:jstd]
-      [status-code.response-header.response (get-rpc-response:hc response)]
-    ?+    wire  (on-arvo:def wire sign-arvo)
-        [%erpc *]
-      (electrum-http-response:hc status rpc-resp)
-        [%brpc *]
-      (btc-http-response:hc status rpc-resp)
-    ==
+      (handle-response:hc wire client-response.sign-arvo)
   ==
   [cards this]
 ::
@@ -95,8 +80,15 @@
 |_  =bowl:gall
 ++  handle-action
   |=  act=action
-  ~&  >  act
-  `state
+  ^-  (quip card _state)
+  =/  out  *outbound-config:iris
+  =/  req=request:http
+    ?-  -.act
+        %get-address-info
+      (gen-request status [%erpc %get-address-utxos address.act])
+    ==
+  :_  state
+  ~[[%pass /[-.act]/[(scot %da now.bowl)] %arvo %i %request req out]]
 ++  handle-command
   |=  comm=command
   ^-  (quip card _state)
@@ -107,6 +99,19 @@
       %whitelist-clients
     `state(whitelist (~(uni in whitelist) clients.comm))
   ==
+++  handle-response
+  |=  [=wire response=client-response:iris]
+  ^-  (quip card _state)
+  ?.  ?=(%finished -.response)  `state
+  =*  status  status-code.response-header.response
+  =/  rpc-resp=response:rpc:jstd
+    (get-rpc-response response)
+  ?+  -.wire  `state
+      %get-address-info
+    ~&  >  "get-address-info response"
+    ~&  >  rpc-resp
+    `state
+  ==
 ++  is-whitelisted
   |=  user=ship  ^-  ?
   ?|  (~(has in whitelist) user)
@@ -115,59 +120,6 @@
 ++  is-client
   |=  user=ship  ^-  ?
   (~(has in clients.status) user)
-++  btc-rpc-auth-header
-  =*  user  rpc-user.bc.creds.status
-  =*  pass  rpc-password.bc.creds.status
-  :-  'Authorization'
-  ;:  (cury cat 3)
-  'Basic '
-  %-  ~(en base64 | &)
-  (as-octs:mimes:html :((cury cat 3) user ':' pass))
-  ==
-++  btc-gen-request
-  |=  req=request:bitcoin-core:rpc
-  ^-  request:http
-  =*  endpoint  rpc-url.bc.creds.status
-  =/  body=request:rpc:jstd
-    (request-to-rpc:btc-rpc:blib req)
-  =/  =header-list:http
-    :~  ['Content-Type' 'application/json']
-        btc-rpc-auth-header
-    ==
-  :*  %'POST'
-      endpoint
-      header-list
-      =,  html
-      %-  some
-      %-  as-octt:mimes
-      (en-json (request-to-json:rpc:jstd body))
-  ==
-::
-++  electrum-gen-request
-  |=  req=request:electrum:rpc
-  %+  request-to-http:electrum-rpc:elib
-  rpc-url.ec.creds.status  req
-::
-++  gen-request
-  |=  ract=rpc-action
-  ^-  request:http
-  ?-  -.ract
-      %erpc
-    (electrum-gen-request +.ract)
-      %brpc
-    (btc-gen-request +.ract)
-  ==
-::
-++  handle-rpc-action
-  |=  ract=rpc-action
-  ^-  (quip card _state)
-  =/  out-wire=path
-    /[-.ract]/[(scot %da now.bowl)]
-  =/  out  *outbound-config:iris
-  =/  req=request:http
-    (gen-request ract)
-  :_  state
-  [%pass out-wire %arvo %i %request req out]~
 ::
 ++  httr-to-rpc-response
   |=  hit=httr:eyre
@@ -223,19 +175,20 @@
           ['message' (uf '' so)]
   ==  ==
 ::
+:: TODO: BELOW are deprecated. Rip out their functionality
 ++  btc-http-response
   |=  [status=@ud rpc-resp=response:rpc:jstd]
   ^-  (quip card _state)
   ?.  ?=([%result *] rpc-resp)
     ~&  [%error +.rpc-resp]
     [~ state]
-  ~&  >  (parse-response:btc-rpc:blib rpc-resp)
+::  ~&  >  (parse-response:btc-rpc:blib rpc-resp)
   [~ state]
 ::
 ++  electrum-http-response
   |=  [status=@ud rpc-resp=response:rpc:jstd]
   ^-  (quip card _state)
-  ~&  >>  (to-response (rpc-response [%erpc (parse-response:electrum-rpc:elib rpc-resp)]))
+::  ~&  >>   (to-response (rpc-response [%erpc (parse-response:electrum-rpc:elib rpc-resp)]))
   `state
 ::
 --

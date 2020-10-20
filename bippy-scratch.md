@@ -6,8 +6,7 @@ The below requires norsyr's fix to `decompress-point` in order to work.
 =rpc-pass '302a586ef1d1d4d93f22b1c69cadfdfc8323b984c0f469356529b1a8fdd2558e'
 :btc-provider|command [%set-credentials [rpc-url='http://localhost:8332' rpc-user='__cookie__' rpc-pass] [rpc-url='http://localhost:50002']]
 
-:btc-provider|rpc-action [%brpc %get-block-count ~]
-:btc-provider|rpc-action [%erpc %get-address-utxos [%bech32 'bc1q59u5epktervh6fxqay2dlph0wxu9hjnx6v8n66']]
+:btc-provider|action [%get-address-info [%bech32 'bc1q59u5epktervh6fxqay2dlph0wxu9hjnx6v8n66'']]
 ```
 
 ## Transactions
