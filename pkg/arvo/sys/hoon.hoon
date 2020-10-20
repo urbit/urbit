@@ -11240,11 +11240,11 @@
   ::
   ++  rest
     ~/  %rest
-    |=  leg/{p/type q/hoon}
+    |=  leg=[p=type q=hoon]
     ^-  type
     ?:  (~(has in fan) leg)
       ~>(%mean.'rest-loop' !!)
-    =>  .(fan (~(put in fan) leg))
+    =.  fan  (~(put in fan) leg)
     (play(sut p.leg) q.leg)
   ::
   ++  take
