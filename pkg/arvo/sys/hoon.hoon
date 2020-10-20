@@ -259,6 +259,8 @@
 ++  head  |*(^ ,:+<-)                                   ::  get head
 ++  same  |*(* +<)                                      ::  identity
 ::
+++  succ  |=(@ +(+<))                                   ::  successor
+::
 ++  tail  |*(^ ,:+<+)                                   ::  get tail
 ++  test  |=(^ =(+<- +<+))                              ::  equality
 ::
