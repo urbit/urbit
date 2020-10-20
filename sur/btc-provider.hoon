@@ -13,7 +13,7 @@
       [%get-balance (set [=address balance=sats])]
       [%get-transactions ~]
   ==
-+$  update                              ::  sub updates from /clients path (connection etc.)
++$  update                              :: sub updates from /clients path (connection etc.)
   $%  [%status connected=?]
   ==
 ::
@@ -21,16 +21,16 @@
   $%  [%set-credentials creds=credentials]
       [%whitelist-clients clients=(set ship)]
   ==
-+$  rpc-action
-  $%  [%erpc request:electrum:rpc]
-      [%brpc request:bitcoin-core:rpc]
-  ==
-+$  rpc-response
-  $%  [%erpc response:electrum:rpc]
-      [%brpc response:bitcoin-core:rpc]
-  ==
 ++  rpc
   |%
+  +$  action
+    $%  [%erpc request:electrum]
+        [%brpc request:bitcoin-core]
+    ==
+  +$  response
+    $%  [%erpc response:electrum]
+        [%brpc response:bitcoin-core]
+    ==
   ++  electrum
     |%
     +$  request
