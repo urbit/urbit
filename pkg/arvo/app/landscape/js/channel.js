@@ -55,6 +55,9 @@ class Channel {
     //    disconnect function may be called exactly once.
     //
     this.outstandingSubscriptions = new Map();
+    
+    //  whether we've tried to re-establish our current eventSource
+    this.eventSourceRestart = 0;
   }
 
   setOnChannelError(onError = (err) => {}) {
@@ -189,6 +192,11 @@ class Channel {
 
     this.eventSource = new EventSource(this.channelURL(), {withCredentials:true});
     this.eventSource.onmessage = e => {
+      // we can't send Last-Event-ID in the header,
+      // so we just ignore events that we've already seen
+      if(this.lastEventId > e.lastEventId) {
+        return;
+      }
       this.lastEventId = e.lastEventId;
 
       let obj = JSON.parse(e.data);
@@ -233,9 +241,16 @@ class Channel {
     this.eventSource.onopen = this.onChannelOpen;
 
     this.eventSource.onerror = e => {
-      this.delete();
-      this.init();
-      this.onChannelError(e);
+      if(this.eventSourceRestart > 4) {
+        this.delete();
+        this.init();
+        this.onChannelError(e);
+      } else {
+        this.eventSourceRestart = true;
+        this.eventSource.close();
+        this.eventSource = null;
+        this.connectIfDisconnected();
+      }
     }
   }
 
