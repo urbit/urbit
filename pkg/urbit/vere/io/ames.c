@@ -14,12 +14,11 @@
 #include "vere/vere.h"
 #include "ur/serial.h"
 
-/* u3_pact: ames packet, coming or going.
+/* u3_pact: outbound ames packet.
 */
   typedef struct _u3_pact {
     uv_udp_send_t    snd_u;             //  udp send request
-    c3_w             pip_w;             //  target IPv4 address
-    c3_s             por_s;             //  target port
+    u3_lane          lan_u;             //  destination lane
     c3_w             len_w;             //  length in bytes
     c3_y*            hun_y;             //  packet buffer
     c3_y             imp_y;             //  galaxy number (optional)
@@ -341,8 +340,8 @@ _ames_send(u3_pact* pac_u)
 
     memset(&add_u, 0, sizeof(add_u));
     add_u.sin_family = AF_INET;
-    add_u.sin_addr.s_addr = htonl(pac_u->pip_w);
-    add_u.sin_port = htons(pac_u->por_s);
+    add_u.sin_addr.s_addr = htonl(pac_u->lan_u.pip_w);
+    add_u.sin_port = htons(pac_u->lan_u.por_s);
 
     {
       uv_buf_t buf_u = uv_buf_init((c3_c*)pac_u->hun_y, pac_u->len_w);
@@ -362,95 +361,6 @@ _ames_send(u3_pact* pac_u)
       }
     }
   }
-}
-
-/* _ames_czar_port(): udp port for galaxy.
-*/
-static c3_s
-_ames_czar_port(c3_y imp_y)
-{
-  if ( c3n == u3_Host.ops_u.net ) {
-    return 31337 + imp_y;
-  }
-  else {
-    return 13337 + imp_y;
-  }
-}
-
-/* _ames_czar_gone(): galaxy address resolution failed.
-*/
-static void
-_ames_czar_gone(u3_pact* pac_u, time_t now)
-{
-  u3_ames* sam_u = pac_u->sam_u;
-
-  if ( c3y == sam_u->imp_o[pac_u->imp_y] ) {
-    u3l_log("ames: czar at %s: not found (b)\n", pac_u->dns_c);
-    sam_u->imp_o[pac_u->imp_y] = c3n;
-  }
-
-  if ( (0 == sam_u->imp_w[pac_u->imp_y]) ||
-       (0xffffffff == sam_u->imp_w[pac_u->imp_y]) )
-  {
-    sam_u->imp_w[pac_u->imp_y] = 0xffffffff;
-  }
-
-  //  keep existing ip for 5 more minutes
-  //
-  sam_u->imp_t[pac_u->imp_y] = now;
-
-  _ames_pact_free(pac_u);
-}
-
-/* _ames_czar_cb(): galaxy address resolution callback.
-*/
-static void
-_ames_czar_cb(uv_getaddrinfo_t* adr_u,
-              c3_i              sas_i,
-              struct addrinfo*  aif_u)
-{
-  u3_pact* pac_u = (u3_pact*)adr_u->data;
-  u3_ames* sam_u = pac_u->sam_u;
-  time_t now     = time(0);
-
-  struct addrinfo* rai_u = aif_u;
-
-  while ( 1 ) {
-    if ( !rai_u ) {
-      _ames_czar_gone(pac_u, now);
-      break;
-    }
-
-    if ( (AF_INET == rai_u->ai_family) ) {
-      struct sockaddr_in* add_u = (struct sockaddr_in *)rai_u->ai_addr;
-      c3_w old_w = sam_u->imp_w[pac_u->imp_y];
-
-      sam_u->imp_w[pac_u->imp_y] = ntohl(add_u->sin_addr.s_addr);
-      sam_u->imp_t[pac_u->imp_y] = now;
-      sam_u->imp_o[pac_u->imp_y] = c3y;
-
-#if 1
-      if ( sam_u->imp_w[pac_u->imp_y] != old_w
-        && sam_u->imp_w[pac_u->imp_y] != 0xffffffff ) {
-        u3_noun wad = u3i_words(1, &sam_u->imp_w[pac_u->imp_y]);
-        u3_noun nam = u3dc("scot", c3__if, wad);
-        c3_c*   nam_c = u3r_string(nam);
-
-        u3l_log("ames: czar %s: ip %s\n", pac_u->dns_c, nam_c);
-
-        c3_free(nam_c); u3z(nam);
-      }
-#endif
-
-      _ames_send(pac_u);
-      break;
-    }
-
-    rai_u = rai_u->ai_next;
-  }
-
-  c3_free(adr_u);
-  uv_freeaddrinfo(aif_u);
 }
 
 /* u3_ames_decode_lane(): deserialize noun to lane
@@ -594,24 +504,120 @@ _ames_serialize_packet(u3_panc* pac_u, c3_o dop_o)
   }
 }
 
-/* _ames_czar(): galaxy address resolution.
+/* _ames_czar_port(): udp port for galaxy.
+*/
+static c3_s
+_ames_czar_port(c3_y imp_y)
+{
+  if ( c3n == u3_Host.ops_u.net ) {
+    return 31337 + imp_y;
+  }
+  else {
+    return 13337 + imp_y;
+  }
+}
+
+/* _ames_czar_gone(): galaxy address resolution failed.
 */
 static void
-_ames_czar(u3_pact* pac_u, c3_c* bos_c)
+_ames_czar_gone(u3_pact* pac_u, time_t now)
 {
   u3_ames* sam_u = pac_u->sam_u;
 
-  pac_u->por_s = _ames_czar_port(pac_u->imp_y);
+  if ( c3y == sam_u->imp_o[pac_u->imp_y] ) {
+    u3l_log("ames: czar at %s: not found (b)\n", pac_u->dns_c);
+    sam_u->imp_o[pac_u->imp_y] = c3n;
+  }
+
+  if ( (0 == sam_u->imp_w[pac_u->imp_y]) ||
+       (0xffffffff == sam_u->imp_w[pac_u->imp_y]) )
+  {
+    sam_u->imp_w[pac_u->imp_y] = 0xffffffff;
+  }
+
+  //  keep existing ip for 5 more minutes
+  //
+  sam_u->imp_t[pac_u->imp_y] = now;
+
+  _ames_pact_free(pac_u);
+}
+
+/* _ames_czar_here(): galaxy address resolution succeeded.
+*/
+static void
+_ames_czar_here(u3_pact* pac_u, time_t now, struct sockaddr_in* add_u)
+{
+  u3_ames* sam_u = pac_u->sam_u;
+  c3_w     old_w = sam_u->imp_w[pac_u->imp_y];
+  c3_w     pip_w = ntohl(add_u->sin_addr.s_addr);
+
+  if ( pip_w != old_w ) {
+    u3_noun nam = u3dc("scot", c3__if, u3i_word(pip_w));
+    c3_c* nam_c = u3r_string(nam);
+
+    u3l_log("ames: czar %s: ip %s\n", pac_u->dns_c, nam_c);
+
+    c3_free(nam_c);
+    u3z(nam);
+  }
+
+  sam_u->imp_w[pac_u->imp_y] = pip_w;
+  sam_u->imp_t[pac_u->imp_y] = now;
+  sam_u->imp_o[pac_u->imp_y] = c3y;
+
+  pac_u->lan_u.pip_w = pip_w;
+  _ames_send(pac_u);
+}
+
+/* _ames_czar_cb(): galaxy address resolution callback.
+*/
+static void
+_ames_czar_cb(uv_getaddrinfo_t* adr_u,
+              c3_i              sas_i,
+              struct addrinfo*  aif_u)
+{
+  {
+    u3_pact*         pac_u = (u3_pact*)adr_u->data;
+    struct addrinfo* rai_u = aif_u;
+    time_t             now = time(0);
+
+    while ( rai_u ) {
+      if ( (AF_INET == rai_u->ai_family) ) {
+        _ames_czar_here(pac_u, now, (struct sockaddr_in *)rai_u->ai_addr);
+        break;
+      }
+      else {
+        rai_u = rai_u->ai_next;
+      }
+    }
+
+    if ( !rai_u ) {
+      _ames_czar_gone(pac_u, now);
+    }
+  }
+
+  c3_free(adr_u);
+  uv_freeaddrinfo(aif_u);
+}
+
+/* _ames_czar(): galaxy address resolution.
+*/
+static void
+_ames_czar(u3_pact* pac_u)
+{
+  u3_ames* sam_u = pac_u->sam_u;
+
+  pac_u->lan_u.por_s = _ames_czar_port(pac_u->imp_y);
 
   if ( c3n == u3_Host.ops_u.net ) {
-    pac_u->pip_w = 0x7f000001;
+    pac_u->lan_u.pip_w = 0x7f000001;
     _ames_send(pac_u);
     return;
   }
 
   //  if we don't have a galaxy domain, no-op
   //
-  if ( 0 == bos_c ) {
+  if ( !sam_u->dns_c ) {
     u3_noun nam = u3dc("scot", 'p', pac_u->imp_y);
     c3_c*  nam_c = u3r_string(nam);
     u3l_log("ames: no galaxy domain for %s, no-op\r\n", nam_c);
@@ -621,47 +627,63 @@ _ames_czar(u3_pact* pac_u, c3_c* bos_c)
     return;
   }
 
-  time_t now = time(0);
+  {
+    c3_w pip_w = sam_u->imp_w[pac_u->imp_y];
+    time_t wen = sam_u->imp_t[pac_u->imp_y];
+    time_t now = time(0);
 
-  // backoff
-  if ( (0xffffffff == sam_u->imp_w[pac_u->imp_y]) &&
-       (now - sam_u->imp_t[pac_u->imp_y]) < 300 ) {
-    _ames_pact_free(pac_u);
-    return;
-  }
-
-  if ( (0 == sam_u->imp_w[pac_u->imp_y]) ||
-       (now - sam_u->imp_t[pac_u->imp_y]) > 300 ) { /* 5 minute TTL */
-    u3_noun  nam = u3dc("scot", 'p', pac_u->imp_y);
-    c3_c*  nam_c = u3r_string(nam);
-    // XX remove extra byte for '~'
-    pac_u->dns_c = c3_malloc(1 + strlen(bos_c) + 1 + strlen(nam_c));
-
-    snprintf(pac_u->dns_c, 256, "%s.%s", nam_c + 1, bos_c);
-    // u3l_log("czar %s, dns %s\n", nam_c, pac_u->dns_c);
-
-    c3_free(nam_c);
-    u3z(nam);
-
+    //  backoff for 5 minutes after failed lookup
+    //
+    if (  ( now < wen )               //  time shenanigans!
+       || (  (0xffffffff == pip_w)    //  sentinal ip address
+          && ((now - wen) < 300) ) )
     {
-      uv_getaddrinfo_t* adr_u = c3_malloc(sizeof(*adr_u));
-      adr_u->data = pac_u;
-
+      _ames_pact_free(pac_u);
+      return;
+    }
+    //  cached addresses have a 5 minute TTL
+    //
+    else if ( (0 != pip_w) && ((now - wen) < 300) ) {
+      pac_u->lan_u.pip_w = pip_w;
+      _ames_send(pac_u);
+      return;
+    }
+    else {
       c3_i sas_i;
 
-      if ( 0 != (sas_i = uv_getaddrinfo(u3L, adr_u,
-                                        _ames_czar_cb,
-                                        pac_u->dns_c, 0, 0)) ) {
-        u3l_log("ames: %s\n", uv_strerror(sas_i));
-        _ames_czar_gone(pac_u, now);
+      {
+        u3_noun nam = u3dc("scot", 'p', pac_u->imp_y);
+        c3_c* nam_c = u3r_string(nam);
+
+        //  NB: . separator not counted, as [nam_c] includes a ~ that we skip
+        //
+        pac_u->dns_c = c3_malloc(1 + strlen(nam_c) + strlen(sam_u->dns_c));
+        sas_i = snprintf(pac_u->dns_c, 255, "%s.%s", nam_c + 1, sam_u->dns_c);
+
+        c3_free(nam_c);
+        u3z(nam);
+      }
+
+      if ( 0 != sas_i ) {
+        u3l_log("ames: czar: galaxy domain %s truncated\n", sam_u->dns_c);
+        _ames_pact_free(pac_u);
         return;
       }
+
+      {
+        uv_getaddrinfo_t* adr_u = c3_malloc(sizeof(*adr_u));
+        adr_u->data = pac_u;
+
+        if ( 0 != (sas_i = uv_getaddrinfo(u3L, adr_u,
+                                          _ames_czar_cb,
+                                          pac_u->dns_c, 0, 0)) )
+        {
+          u3l_log("ames: %s\n", uv_strerror(sas_i));
+          _ames_czar_gone(pac_u, now);
+          return;
+        }
+      }
     }
-  }
-  else {
-    pac_u->pip_w = sam_u->imp_w[pac_u->imp_y];
-    _ames_send(pac_u);
-    return;
   }
 }
 
@@ -694,7 +716,7 @@ _ames_ef_send(u3_ames* sam_u, u3_noun lan, u3_noun pac)
     c3_assert( val < 256 );
 
     pac_u->imp_y = val;
-    _ames_czar(pac_u, sam_u->dns_c);
+    _ames_czar(pac_u);
   }
   //  non-galaxy lane
   //
@@ -711,9 +733,7 @@ _ames_ef_send(u3_ames* sam_u, u3_noun lan, u3_noun pac)
     //  otherwise, mutate destination and send packet
     //
     else {
-      pac_u->pip_w = lan_u.pip_w;
-      pac_u->por_s = lan_u.por_s;
-
+      pac_u->lan_u = lan_u;
       _ames_send(pac_u);
     }
   }
