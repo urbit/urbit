@@ -3,11 +3,12 @@
 ::  big endian sha256: input and output are both MSB first (big endian)
 ::
 ++  sha256
-  |=  =byts  ^-  hash
+  |=  =byts  ^-  hash256
   ::  if there are leading 0s, lshift by their amount after flip to little endian to preserve
   =/  pad=@  (sub wid.byts (met 3 dat.byts))
   =/  little-endian=@
     (lsh 3 pad (swp 3 dat.byts))
+  %-  hash256
   :-  32
   %+  swp  3
   (shay wid.byts little-endian)
@@ -17,8 +18,9 @@
   (sha256 (sha256 byts))
 ::
 ++  hash-160
-  |=  pubkey=@ux  ^-  hash
+  |=  pubkey=@ux  ^-  hash160
   =,  ripemd:crypto
+  %-  hash160
   :-  20
   %-  ripemd-160
   %-  sha256  [(met 3 pubkey) pubkey]
@@ -91,7 +93,7 @@
     (address-to-script-pubkey address.output)
   ::
   ++  sighash
-    |=  input-index=@  ^-  hash
+    |=  input-index=@  ^-  hash256
     ?:  (gte input-index (lent inputs.ut))
       ~|("Input index out of range" !!)
     =/  =input:tx  (snag input-index inputs.ut)
@@ -101,7 +103,7 @@
   ::
   ++  sighash-witness
     |=  =input:tx
-    |^  ^-  hash
+    |^  ^-  hash256
     =/  prevouts=byts
       %-  concat-as-byts  (turn inputs.ut prevouts-buffer)
     =/  sequences=byts
@@ -152,7 +154,7 @@
   ++  sighash-legacy
     ::  TODO: Not working--wrong sighash for multiple inputs (works for 1)
     |=  index-to-sign=@
-    |^  ^-  hash
+    |^  ^-  hash256
     =/  n-version=^buffer  (from-atom-le 4 version.ut)
     =/  num-inputs=^buffer  ~[(@ux (lent inputs.ut))]
     =/  prevouts=^buffer
@@ -360,9 +362,13 @@
     ?~  d  ~|("Invalid bech32 address" !!)
     =/  bs=(list @)
       (from-digits:bits 5 (slag 1 data.u.d))
+    =/  byt-len=@  (div (lent bs) 8)
     ?.  =(0 (mod (lent bs) 8))
       ~|("Invalid bech32 address: not 8bit" !!)
-    [(div (lent bs) 8) (to-atom:bits bs)]
+    ?.  ?|(?=(%20 byt-len) ?=(%32 byt-len))
+      ~|("Invalid bech32 address: must be 20 (P2WPKH) or 32 (P2WSH) bytes" !!)
+    %-  hash
+    [byt-len (to-atom:bits bs)]
   ::  pubkey is the 33 byte ECC compressed public key
   ::
   ++  encode-pubkey
