@@ -21,12 +21,14 @@ export const Sigil = memo(({ classes = '', color, foreground = '', ship, size, s
   return ship.length > 14
     ? (<Box
         backgroundColor='black'
+        borderRadius={icon ? '1' : '0'}
         display='inline-block'
         height={size}
         width={size}
        />) : (
        <Box
         display='inline-block'
+        borderRadius={icon ? '1' : '0'}
         flexBasis={size}
         backgroundColor={color}
         padding={padding}
