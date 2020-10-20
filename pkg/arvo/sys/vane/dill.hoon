@@ -211,7 +211,6 @@
               (bg ~)
               (fg ~)
           ==
-        ::
         ++  ef  |=(a/^deco (scap (deco a)))             ::  ANSI effect
         ::
         ++  fg  |=(a/^tint (scap (tint a)))             ::  ANSI foreground
@@ -219,13 +218,13 @@
         ++  bg                                          ::  ANSI background
           |=  a/^tint
           %-  scap
-          =>((tint a) [+(p) q])                         ::  (add 10 fg)
+          =>((tint a) [+(-) +])                         ::  (add 10 fg)
         ::
         ++  scap                                        ::  ANSI escape seq
-          |=  a/$@(@ (pair @ @))
+          |=  a/$@(@ (list @))
           %-  (list @c)
           :+  27  '['                                   ::  "\033[{a}m"
-          ?@(a :~(a 'm') :~(p.a q.a 'm'))
+          ?@(a :~(a 'm') (snoc a 'm'))
         ::
         ++  deco                                        ::  ANSI effects
           |=  a/^deco  ^-  @
@@ -238,19 +237,25 @@
         ::
         ++  tint                                        ::  ANSI colors (fg)
           |=  a/^tint
-          ^-  (pair @ @)
+          ^-  (list @)
           :-  '3'
-          ?-  a
-            $k  '0'
-            $r  '1'
-            $g  '2'
-            $y  '3'
-            $b  '4'
-            $m  '5'
-            $c  '6'
-            $w  '7'
-            ~  '9'
-           ==
+          ?@  a
+            :_  ~
+            ?-  a
+              $k  '0'
+              $r  '1'
+              $g  '2'
+              $y  '3'
+              $b  '4'
+              $m  '5'
+              $c  '6'
+              $w  '7'
+              ~  '9'
+             ==
+          =/  r  (~(sit fe 3) r.a)
+          =/  g  (~(sit fe 3) g.a)
+          =/  b  (~(sit fe 3) b.a)
+          "8;2;{<r>};{<g>};{<b>}"
         --
       ::  XX move
       ::

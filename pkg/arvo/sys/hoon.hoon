@@ -1972,7 +1972,9 @@
 +$  tile  ::  XX: ?@(knot (pair styl knot))
           ::
           cord
-+$  tint  ?($r $g $b $c $m $y $k $w $~)                 ::  text color
++$  tint
+  $@  ?($r $g $b $c $m $y $k $w $~)                     ::  text color
+  [r=@uxD g=@uxD b=@uxD]                                ::  24bit true color
 ::
 ::  A `plum` is the intermediate representation for the pretty-printer. It
 ::  encodes hoon-shaped data with the least amount of structured needed
