@@ -19,11 +19,16 @@
   ++  request-to-http
     |=  [endpoint=@t req=request:electrum:rpc]
     ^-  request:http
+    %-  http-request
     ?-  -.req
         %get-address-balance
-      %-  http-request
       %^  cat  3
         (cat 3 endpoint '/addresses/balance/')
+      (address-to-cord address.req)
+      ::
+        %get-address-utxos
+      %^  cat  3
+        (cat 3 endpoint '/addresses/listunspent/')
       (address-to-cord address.req)
     ==
   --
