@@ -45,8 +45,9 @@ const searchParticipant = (search: string) => (p: Participant) => {
   if (search.length == 0) {
     return true;
   }
-  const s = search.toLowerCase();
-  return p.patp.includes(s) || p.nickname.toLowerCase().includes(search);
+  let s = search.toLowerCase();
+  s = (s.startsWith('~')) ? s.substr(1) : s;
+  return p.patp.includes(s) || p.nickname.toLowerCase().includes(s);
 };
 
 function getParticipants(cs: Contacts, group: Group) {
@@ -289,6 +290,11 @@ function Participant(props: {
     });
   }, [api, association]);
 
+  const onKick = useCallback(async () => {
+    const resource = resourceFromPath(association["group-path"]);
+    await api.groups.remove(resource, [`~${contact.patp}`]);
+  }, [api, association]);
+
   const avatar =
     contact?.avatar !== null && !props.hideAvatars ? (
       <img src={contact.avatar} height={32} width={32} className="dib" />
@@ -337,9 +343,14 @@ function Participant(props: {
               {props.role === "admin" && (
                 <>
                   {!isInvite && (
+                    <>
                     <StatelessAsyncAction onClick={onBan} bg="transparent">
                       <Text color="red">Ban from {title}</Text>
                     </StatelessAsyncAction>
+                    <StatelessAsyncAction onClick={onKick} bg="transparent">
+                      <Text color="red">Kick from {title}</Text>
+                    </StatelessAsyncAction>
+                    </>
                   )}
                   {role === "admin" ? (
                     <StatelessAsyncAction onClick={onDemote} bg="transparent">

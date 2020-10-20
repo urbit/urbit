@@ -93,7 +93,7 @@ export default class WeatherTile extends React.Component {
     weatherStyle = { bg: 'white', text: 'black' }
     ) {
     return (
-      <Tile bg={weatherStyle.bg} color={weatherStyle.text}>
+      <Tile bg={weatherStyle.bg}>
         {child}
       </Tile>
     );

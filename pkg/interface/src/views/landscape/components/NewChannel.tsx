@@ -45,7 +45,7 @@ interface NewChannelProps {
 
 
 export function NewChannel(props: NewChannelProps & RouteComponentProps) {
-  const { history, api, group } = props;
+  const { history, api, group, workspace } = props;
 
   const waiter = useWaitForProps(props, 5000);
 
@@ -145,12 +145,13 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
               caption="What's your channel about?"
               placeholder="Channel description"
             />
+            {(workspace?.type === 'home') &&
             <ShipSearch
               groups={props.groups}
               contacts={props.contacts}
               id="ships"
               label="Invitees"
-            />
+            />}
             <Box justifySelf="start">
               <AsyncButton
                 primary
