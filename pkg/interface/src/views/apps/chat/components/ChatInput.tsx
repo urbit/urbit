@@ -186,6 +186,7 @@ export default class ChatInput extends Component<ChatInputProps, ChatInputState>
         color={`#${color}`}
         classes={sigilClass}
         icon
+        padded
         />;
 
     return (
