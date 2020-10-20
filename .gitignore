@@ -8,6 +8,7 @@ result-*
 /zod
 /bus
 /nec
+/sev
 /fakezod
 
 # package manager caches
