@@ -114,9 +114,10 @@
 ::  |parser-at: parsers for dojo expressions using :dir as working directory
 ::
 ++  parser-at
-  |=  [our=ship dir=beam]
+  |=  [our=ship dir=beam no-complex=?]
   |%
   ++  default-app         %hood
+  ++  vang                %*(. ^vang no-complex no-complex)
   ++  hoon-parser         (vang | (en-beam:format dir))
   ++  our                 p.dir
   ::
@@ -324,7 +325,9 @@
     dir(r [%da now.hid])
   ::
   ++  he-beak    `beak`[p q r]:he-beam
-  ++  he-parser  (parser-at our.hid he-beam)
+  ++  vang  %*(. ^vang no-complex !enable-complex-float)
+  ++  he-parser  (parser-at our.hid he-beam !enable-complex-float)
+  ++  enable-complex-float  (~(has by var) %enable-complex-float)
   ::
   ++  dy                                                ::  project work
     |_  dojo-project                                    ::

@@ -2839,10 +2839,15 @@
     |=  {a/@s}  (bit [%f (syn:si a) --0 (abs:si a)])
   ++  toi                                               ::  round to integer
     |=  {a/rx}  (toi:pa (sea a))
-  ++  drg                                               ::  @r to decimal float
+  ++  drg                                               ::  @rr to decimal real
     |=  {a/rx}  (drg:pa (sea a))
-  ++  grd                                               ::  decimal float to @r
+  ++  drg2                                              ::  @r to decimal float
+    |=  a=rx  ^-  [a=dn b=dn]
+    [(drg (end (xeb p) 1 a)) (drg (cut (xeb p) [1 1] a))]
+  ++  grd                                               ::  decimal real to @rr
     |=  {a/dn}  (bif (grd:pa a))
+  ++  grd2                                              ::  decimal float to @r
+    |=([a=dn b=dn] ^-(rx (rep (xeb p) ~[(grd a) (grd b)])))
   --
 ::
 ++  rlyd  |=  a/@rd  ^-  dn  (drg:rd:ff a)              ::  prep @rd for print
@@ -5972,10 +5977,10 @@
         ::
             $r
           ?+  hay  (z-co q.p.lot)
-            $d  ['.' '~' (r-co (rlyd q.p.lot))]
-            $h  ['.' '~' '~' (r-co (rlyh q.p.lot))]
-            $q  ['.' '~' '~' '~' (r-co (rlyq q.p.lot))]
-            $s  ['.' (r-co (rlys q.p.lot))]
+            $s  ['.' (r-co (drg2:rs:ff q.p.lot))]
+            $d  ['.' '~' (r-co (drg2:rd:ff q.p.lot))]
+            $h  ['.' '~' '~' (r-co (drg2:rh:ff q.p.lot))]
+            $q  ['.' '~' '~' '~' (r-co (drg2:rq:ff q.p.lot))]
           ==
         ::
             $u
@@ -6011,6 +6016,11 @@
       ++  c-co  (em-co [58 1] |=({? b/@ c/tape} [~(c ne b) c]))
       ++  d-co  |=(min/@ (em-co [10 min] |=({? b/@ c/tape} [~(d ne b) c])))
       ++  r-co
+        |=  {a/dn b/dn}
+        ?:  =(b [%d & --0 0])  (rr-co a)
+        (weld (rr-co a) ['j' (rr-co b)])
+      ::
+      ++  rr-co
         |=  a/dn
         ?:  ?=({$i *} a)  (weld ?:(s.a "inf" "-inf") rep)
         ?:  ?=({$n *} a)  (weld "nan" rep)
@@ -6096,8 +6106,8 @@
 ::::  4l: atom parsing
   ::
 ++  so
-  ~%  %so  +  ~
-  |%
+  ~%  %so  +>  ~
+  |_  no-complex=?
   ++  bisk
     ~+
     ;~  pose
@@ -6168,6 +6178,8 @@
       (stag %many (ifix [cab ;~(plug cab cab)] (more cab nusk)))
     ==
   ++  royl
+    ::TODO %rhr %rqr %rdr %rsr auras when real
+    ::
     ~+
     ;~  pose
       (stag %rh royl-rh)
@@ -6176,12 +6188,15 @@
       (stag %rs royl-rs)
     ==
   ::
-  ++  royl-rh  (cook rylh ;~(pfix ;~(plug sig sig) (cook royl-cell royl-rn)))
-  ++  royl-rq  (cook rylq ;~(pfix ;~(plug sig sig sig) (cook royl-cell royl-rn)))
-  ++  royl-rd  (cook ryld ;~(pfix sig (cook royl-cell royl-rn)))
-  ++  royl-rs  (cook ryls (cook royl-cell royl-rn))
+  ++  royl-rh  (cook grd2:rh:ff ;~(pfix sig sig (cook royl-comp royl-rn)))
+  ++  royl-rq  (cook grd2:rq:ff ;~(pfix sig sig sig (cook royl-comp royl-rn)))
+  ++  royl-rd  (cook grd2:rd:ff ;~(pfix sig (cook royl-comp royl-rn)))
+  ++  royl-rs  (cook grd2:rs:ff (cook royl-comp royl-rn))
   ::
-  ++  royl-rn
+  ++  royl-rn  ;~(plug royl-rr ;~(pose royl-rc (easy ~)))
+  ++  royl-rc  ?:(no-complex fail ;~(pfix (just %j) royl-rr))
+  ::
+  ++  royl-rr
     =/  moo
       |=  a=tape
       :-  (lent a)
@@ -6219,9 +6234,11 @@
       ==
     ==
   ::
+  ++  royl-comp  |=([a=rn b=?(~ rn)] ^-([dn dn] [(royl-cell a) (royl-cell b)]))
   ++  royl-cell
-    |=  rn
+    |=  ?(~ rn)
     ^-  dn
+    ?~  +<  [%d & --0 0]
     ?.  ?=({$d *} +<)  +<
     =+  ^=  h
       (dif:si (new:si f.b i.b) (sun:si d.b))
@@ -12157,12 +12174,14 @@
 ::::  5d: parser
   ::
 ++  vang                                                ::  set ++vast params
+  =/  no-complex  &                                     ::  complex float syntax
   |=  {bug/? wer/path}                                  ::  bug: debug mode
-  %*(. vast bug bug, wer wer)                           ::  wer: where we are
+  %*(. vast bug bug, wer wer, no-complex no-complex)    ::  wer: where we are
 ::
 ++  vast                                                ::  main parsing core
-  =+  [bug=`?`| wer=*path]
+  =+  [bug=`?`| wer=*path no-complex=`?`&]
   |%
+  ++  so  %*(. ^so no-complex no-complex)               ::TEMP feature flag
   ++  gash  %+  cook                                    ::  parse path
               |=  a/(list tyke)  ^-  tyke
               ?~(a ~ (weld i.a $(a t.a)))
