@@ -289,6 +289,11 @@ function Participant(props: {
     });
   }, [api, association]);
 
+  const onKick = useCallback(async () => {
+    const resource = resourceFromPath(association["group-path"]);
+    await api.groups.remove(resource, [`~${contact.patp}`]);
+  }, [api, association]);
+
   const avatar =
     contact?.avatar !== null && !props.hideAvatars ? (
       <img src={contact.avatar} height={32} width={32} className="dib" />
@@ -337,9 +342,14 @@ function Participant(props: {
               {props.role === "admin" && (
                 <>
                   {!isInvite && (
+                    <>
                     <StatelessAsyncAction onClick={onBan} bg="transparent">
                       <Text color="red">Ban from {title}</Text>
                     </StatelessAsyncAction>
+                    <StatelessAsyncAction onClick={onKick} bg="transparent">
+                      <Text color="red">Kick from {title}</Text>
+                    </StatelessAsyncAction>
+                    </>
                   )}
                   {role === "admin" ? (
                     <StatelessAsyncAction onClick={onDemote} bg="transparent">
