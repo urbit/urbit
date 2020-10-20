@@ -1358,6 +1358,14 @@
         ::
         =duct
     ==
+  ::  channel-event: unacknowledged channel event, vaseless sign
+  ::
+  +$  channel-event
+    $%  $>(%poke-ack sign:agent:gall)
+        $>(%watch-ack sign:agent:gall)
+        $>(%kick sign:agent:gall)
+        [%fact =mark =noun]
+    ==
   ::  channel: connection to the browser
   ::
   ::    Channels are the main method where a webpage communicates with Gall
@@ -1392,7 +1400,7 @@
         ::    channel, we send the event but we still add it to events because we
         ::    can't assume it got received until we get an acknowledgment.
         ::
-        events=(qeu [id=@ud lines=wall])
+        events=(qeu [id=@ud request-id=@ud =channel-event])
         ::  subscriptions: gall subscriptions
         ::
         ::    We maintain a list of subscriptions so if a channel times out, we

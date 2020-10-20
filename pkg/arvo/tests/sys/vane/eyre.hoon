@@ -1308,7 +1308,7 @@
           %+  expect-gall-deal
             :*  /channel/subscription/'0123456789abcdef'/'2'/~nul/two
                 [~nul ~nul]  %two
-                %watch-as  %json  /one/two/three
+                %watch  /one/two/three
             ==
             card.i.moves
         ::
@@ -1516,16 +1516,16 @@
   ==
 ::
 ++  test-prune-events
-  =/  q=(qeu [id=@ud lines=wall])  ~
-  =.  q  (~(put to q) [0 ~])
-  =.  q  (~(put to q) [1 ~])
-  =.  q  (~(put to q) [2 ~])
-  =.  q  (~(put to q) [3 ~])
-  =.  q  (~(put to q) [4 ~])
+  =/  q=(qeu [id=@ud @ud channel-event:eyre])  ~
+  =.  q  (~(put to q) [0 *@ud *channel-event:eyre])
+  =.  q  (~(put to q) [1 *@ud *channel-event:eyre])
+  =.  q  (~(put to q) [2 *@ud *channel-event:eyre])
+  =.  q  (~(put to q) [3 *@ud *channel-event:eyre])
+  =.  q  (~(put to q) [4 *@ud *channel-event:eyre])
   ::
   =.  q  (prune-events:eyre-gate q 3)
   ::
-  (expect-eq !>([~ [4 ~]]) !>(~(top to q)))
+  (expect-eq !>([~ [4 *@ud *channel-event:eyre]]) !>(~(top to q)))
 ::
 ++  test-channel-sends-unacknowledged-events-on-reconnection
   ::  common initialization
@@ -2027,7 +2027,7 @@
   ::
   ?:  ?=([%watch *] deal.expected)
     ?.  ?=([%watch *] r.note)
-      [%leaf "expected %watch-as, actual {<r.note>}"]~
+      [%leaf "expected %watch, actual {<r.note>}"]~
     ::  compare the path
     ::
     (expect-eq !>(path.deal.expected) !>(path.r.note))
@@ -2201,7 +2201,7 @@
           %+  expect-gall-deal
             :*  /channel/subscription/'0123456789abcdef'/'1'/~nul/two
                 [~nul ~nul]  %two
-                %watch-as  %json  /one/two/three
+                %watch  /one/two/three
             ==
             card.i.t.moves
         ::
@@ -2226,6 +2226,19 @@
   ?:  &(=(%ca term) =(/hoon/handler/gen s.beam))
     :+  ~  ~
     vase+!>(!>(|=(* |=(* [[%404 ~] ~]))))
+  ?:  &(=(%cb term) =(/json s.beam))
+    :^  ~  ~  %dais
+    !>  ^-  dais:clay
+    |_  sam=vase
+    ++  bunt  !!
+    ++  diff  !!
+    ++  form  !!
+    ++  join  !!
+    ++  mash  !!
+    ++  pact  !!
+    ++  vale  |=(=noun !>(;;(json noun)))
+    ++  volt  !!
+    --
   ::
   ?>  =(%j term)
   ?>  =(~nul p.beam)
