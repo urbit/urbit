@@ -69,7 +69,6 @@ export default class GlobalStore extends BaseStore<StoreState> {
         chat: {},
         contacts: {},
         graph: {},
-        publish: {}
       },
       groups: {},
       groupKeys: new Set(),
@@ -105,8 +104,6 @@ export default class GlobalStore extends BaseStore<StoreState> {
     this.contactReducer.reduce(data, this.state);
     this.s3Reducer.reduce(data, this.state);
     this.groupReducer.reduce(data, this.state);
-    this.publishUpdateReducer.reduce(data, this.state);
-    this.publishResponseReducer.reduce(data, this.state);
     this.launchReducer.reduce(data, this.state);
     this.connReducer.reduce(data, this.state);
     GraphReducer(data, this.state);
