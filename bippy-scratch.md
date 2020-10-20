@@ -27,7 +27,7 @@ abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon 
 ```
 
 ### Getting BIP84 Address from `xpub`
-```
+```g
 (~(address bip84:b %main xpub))
 ```
 
