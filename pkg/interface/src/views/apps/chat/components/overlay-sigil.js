@@ -64,6 +64,8 @@ export class OverlaySigil extends PureComponent {
         size={16}
         color={props.color}
         classes={props.sigilClass}
+        icon
+        padded
         />;
 
      return (

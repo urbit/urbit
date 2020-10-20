@@ -185,6 +185,7 @@ export default class ChatInput extends Component<ChatInputProps, ChatInputState>
         size={16}
         color={`#${color}`}
         classes={sigilClass}
+        icon
         />;
 
     return (
@@ -197,6 +198,7 @@ export default class ChatInput extends Component<ChatInputProps, ChatInputState>
         borderTopColor='washedGray'
         backgroundColor='white'
         className='cf'
+        zIndex='0'
       >
         <div className="pa2 flex items-center">
           {avatar}
