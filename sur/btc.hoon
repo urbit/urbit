@@ -8,8 +8,12 @@
 +$  hash160  [wid=%20 dat=@ux]
 +$  hash  ?(hash256 hash160)
 +$  buffer  (list @ux)
++$  utxo  [pos=@ tx-hash=hash256 block-height=@ value=sats]
 ++  address-info
   $:  =address
+      confirmed-value=sats
+      unconfirmed-value=sats
+      utxos=(set utxo)
   ==
 ++  tx
   |%
@@ -20,7 +24,7 @@
         outputs=(list output)
     ==
   +$  input
-    $:  tx-hash=byts
+    $:  tx-hash=hash256
         tx-index=@
         witness-ver=@
         sequence=byts
@@ -32,6 +36,7 @@
   +$  output
     $:  =address
         value=sats
+
     ==
   --
 ++  ops
