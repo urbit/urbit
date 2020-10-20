@@ -47,11 +47,9 @@ export default class LaunchApp extends React.Component {
             p={2}
           >
             <Tile
-              border={1}
               bg="#fff"
-              borderColor="green"
+              color="green"
               to="/~landscape/home"
-              boxShadow='none'
               p={0}
             >
               <Box p={2} height='100%' width='100%' bg='washedGreen'>
