@@ -45,8 +45,9 @@ const searchParticipant = (search: string) => (p: Participant) => {
   if (search.length == 0) {
     return true;
   }
-  const s = search.toLowerCase();
-  return p.patp.includes(s) || p.nickname.toLowerCase().includes(search);
+  let s = search.toLowerCase();
+  s = (s.startsWith('~')) ? s.substr(1) : s;
+  return p.patp.includes(s) || p.nickname.toLowerCase().includes(s);
 };
 
 function getParticipants(cs: Contacts, group: Group) {
