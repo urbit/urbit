@@ -25,6 +25,10 @@
   $%  [%erpc request:electrum:rpc]
       [%brpc request:bitcoin-core:rpc]
   ==
++$  rpc-response
+  $%  [%erpc response:electrum:rpc]
+      [%brpc response:bitcoin-core:rpc]
+  ==
 ++  rpc
   |%
   ++  electrum
@@ -33,10 +37,14 @@
       $%  [%get-address-balance =address]
           [%get-address-utxos =address]
       ==
+    +$  response
+      $%  [%get-address-utxos utxos=(set utxo)]
+      ==
     --
   ++  bitcoin-core
     |%
     +$  request  btc-node-hook-action:bnh
+    +$  response  btc-node-hook-response:bnh
     --
   --
 --
