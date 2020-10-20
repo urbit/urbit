@@ -110,9 +110,10 @@ export function SidebarItem(props: {
             flex='1'
             overflow='hidden'
             width='100%'
+            textOverflow='ellipsis'
+            whiteSpace='pre'
             fontWeight={hasUnread ? "bold" : "regular"}
             color={selected || isSynced ? "black" : "lightGray"}
-            style={{ textOverflow: 'ellipsis', whiteSpace: 'pre'}}
           >
             {title}
           </Text>

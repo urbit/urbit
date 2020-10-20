@@ -62,7 +62,7 @@ function RecentGroups(props: { recent: string[]; associations: Associations }) {
               flexShrink='0'
             />
             <Link style={{ minWidth: 0 }} to={`/~landscape${g}`}>
-              <Text verticalAlign='top' maxWidth='100%' overflow='hidden' display='inline-block' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}>{assoc?.metadata?.title}</Text>
+              <Text verticalAlign='top' maxWidth='100%' overflow='hidden' display='inline-block' textOverflow='ellipsis' whiteSpace='pre'>{assoc?.metadata?.title}</Text>
             </Link>
           </Row>
         );
@@ -156,7 +156,7 @@ export function GroupSwitcher(props: {
           >
             <Row p={2} alignItems="center">
               <Row alignItems="center" mr={1} flex='1'>
-                <Text overflow='hidden' display='inline-block' maxWidth='131px'  style={{ textOverflow: 'ellipsis', whiteSpace: 'pre'}}>{title}</Text>
+                <Text overflow='hidden' display='inline-block' maxWidth='131px' textOverflow='ellipsis' whiteSpace='pre'>{title}</Text>
               </Row>
               <Icon size='12px' ml='1' mt="0px" display="inline-block" icon="ChevronSouth" />
             </Row>

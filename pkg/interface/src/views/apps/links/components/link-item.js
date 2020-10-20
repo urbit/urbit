@@ -47,7 +47,7 @@ export const LinkItem = (props) => {
           width="100%"
           target="_blank"
           rel="noopener noreferrer">
-          <Text display='inline-block' overflow='hidden' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre'}}> {contents[0].text}</Text>
+          <Text display='inline-block' overflow='hidden' textOverflow='ellipsis' whiteSpace='pre'> {contents[0].text}</Text>
             <Text ml="2" color="gray" display='inline-block' flexShrink='0'>{hostname} ↗</Text>
         </Anchor>
         <Box width="100%">

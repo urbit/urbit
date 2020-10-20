@@ -57,7 +57,7 @@ export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
           fontSize='0'
         >
           <Text display='block' pb='2' gray>You have been invited to:</Text>
-          <Text display='inline-block' overflow='hidden' maxWidth='100%' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }} title={invite.path.slice(6)}>{invite.path.slice(6)}</Text>
+          <Text display='inline-block' overflow='hidden' maxWidth='100%' textOverflow='ellipsis' whiteSpace='pre' title={invite.path.slice(6)}>{invite.path.slice(6)}</Text>
           <Box pt='5'>
             <Text
               onClick={() => acceptInvite(invite)}
