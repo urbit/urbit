@@ -82,7 +82,7 @@ export function Notebook(props: NotebookProps & RouteComponentProps) {
         graph={graph}
         host={ship}
         book={book}
-        contacts={notebookContacts}
+        contacts={!!notebookContacts ? notebookContacts : {}}
         hideNicknames={hideNicknames}
         baseUrl={props.baseUrl}
       />

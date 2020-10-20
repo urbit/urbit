@@ -54,9 +54,15 @@ export function NotebookRoutes(
       <Route
         path={baseUrl}
         exact
-        render={(routeProps) => {
-          return <Notebook {...props} graph={graph} rootUrl={rootUrl} baseUrl={baseUrl}  />;
-        }}
+        render={(routeProps) => (
+          <Notebook
+            {...props}
+            graph={graph}
+            contacts={notebookContacts}
+            association={props.association}
+            rootUrl={rootUrl}
+            baseUrl={baseUrl} />
+        )}
       />
       <Route
         path={relativePath("/new")}
