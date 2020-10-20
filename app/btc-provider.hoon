@@ -1,9 +1,8 @@
 
-::  btc-provider.hoon
+::  btc-provider.hoon 
 ::  Proxy that serves a BTC full node and ElectRS address indexer
 ::
-/-  *btc-provider, bnh=btc-node-hook
-/+  dbug, default-agent, base64, blib=btc-node-json, elib=electrum-rpc-http
+/+  *btc-provider, dbug, default-agent, base64, blib=btc-node-json, elib=electrum-rpc
 |%
 +$  versioned-state
     $%  state-0
@@ -225,7 +224,7 @@
 ++  electrum-http-response
   |=  [status=@ud rpc-resp=response:rpc:jstd]
   ^-  (quip card _state)
-  ~&  >  rpc-resp
+  ~&  >>  (parse-response:electrum-rpc:elib rpc-resp)
   `state
 ::
 --

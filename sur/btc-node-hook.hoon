@@ -574,10 +574,7 @@
 +$  btc-node-hook-command   command:btc-rpc
 ::  Expand the response type to include connectivity
 ::
-+$  btc-node-hook-response
-  $%  [%status connected=? status-code=@ud]
-      response:btc-rpc
-  ==
++$  btc-node-hook-response  response:btc-rpc
 ::
 ++  btc-rpc
   |%
