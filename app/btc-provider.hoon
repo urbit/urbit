@@ -42,18 +42,17 @@
   ::
   ?>  ?|((team:title our.bowl src.bowl) (is-client:hc src.bowl))
   =^  cards  state
-    ?+  mark  (on-poke:def mark vase)
-        %btc-provider-action
-      :: TODO:  check whether endpoint/credentials are set
-      (handle-action:hc !<(action vase))
-      ::
-        %btc-provider-command
+    ?:  ?=(%btc-provider-command mark)
       ?>  (team:title our.bowl src.bowl)
       (handle-command:hc !<(command vase))
+    ~|  "Not connected to RPC endpoints"
+    ?+  mark  (on-poke:def mark vase)
+        %btc-provider-action
+      ?>  connected.status
+      (handle-action:hc !<(action vase))
       ::
         %btc-provider-rpc-action
-      ?>  (team:title our.bowl src.bowl)
-      :: TODO:  check whether endpoint/credentials are set
+      ?>  connected.status
       (handle-rpc-action !<(rpc-action vase))
     ==
   [cards this]
