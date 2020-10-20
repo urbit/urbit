@@ -1392,14 +1392,22 @@ static void
 _ames_io_info(u3_auto* car_u)
 {
   u3_ames* sam_u = (u3_ames*)car_u;
-  u3l_log("               dropped: %" PRIu64 "\n", sam_u->sat_u.dop_d);
-  u3l_log("      forwards dropped: %" PRIu64 "\n", sam_u->sat_u.fod_d);
-  u3l_log("      forwards pending: %" PRIu64 "\n", sam_u->sat_u.foq_d);
-  u3l_log("             forwarded: %" PRIu64 "\n", sam_u->sat_u.fow_d);
-  u3l_log("        filtered (ver): %" PRIu64 "\n", sam_u->sat_u.vet_d);
-  u3l_log("        filtered (mug): %" PRIu64 "\n", sam_u->sat_u.mut_d);
-  u3l_log("               crashed: %" PRIu64 "\n", sam_u->sat_u.fal_d);
-  u3l_log("          cached lanes: %u\n", u3h_wyt(sam_u->lax_p));
+
+# define FLAG(a) ( (c3y == a) ? "&" : "|" )
+
+  u3l_log("      config:\n");
+  u3l_log("        filtering: %s\n", FLAG(sam_u->fig_u.fit_o));
+  u3l_log("         can send: %s\n", FLAG(sam_u->fig_u.net_o));
+  u3l_log("         can scry: %s\n", FLAG(sam_u->fig_u.see_o));
+  u3l_log("      counters:\n");
+  u3l_log("                 dropped: %" PRIu64 "\n", sam_u->sat_u.dop_d);
+  u3l_log("        forwards dropped: %" PRIu64 "\n", sam_u->sat_u.fod_d);
+  u3l_log("        forwards pending: %" PRIu64 "\n", sam_u->sat_u.foq_d);
+  u3l_log("               forwarded: %" PRIu64 "\n", sam_u->sat_u.fow_d);
+  u3l_log("          filtered (ver): %" PRIu64 "\n", sam_u->sat_u.vet_d);
+  u3l_log("          filtered (mug): %" PRIu64 "\n", sam_u->sat_u.mut_d);
+  u3l_log("                 crashed: %" PRIu64 "\n", sam_u->sat_u.fal_d);
+  u3l_log("            cached lanes: %u\n", u3h_wyt(sam_u->lax_p));
 }
 
 /* u3_ames_io_init(): initialize ames I/O.
