@@ -152,7 +152,7 @@ Need to test with this because it shows need to input num bytes
 The below code also shows how to convert from bech32 back to a 20-byte hash. This is used for transaction building.
 ```
 =pubkey 0x2.79be.667e.f9dc.bbac.55a0.6295.ce87.0b07.029b.fcdb.2dce.28d9.59f2.815b.16f8.1798
-(encode-pubkey:bech32:btc %main pubkey)
+(encode-pubkey:bech32:btc %main pubkey)bbt
 ::  gives [~ %bech32 'bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4']
 
 `[@ @ux]`(hash-160:btc pubkey)
