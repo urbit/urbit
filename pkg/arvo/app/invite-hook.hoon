@@ -37,16 +37,16 @@
       %invite-action
     =/  act=invite-action  !<(invite-action vase)
     ?.  ?=(%invite -.act)  ~
-    ?:  (team:title our.bowl src.bowl)
+    ?:  (team:title [our src]:bowl)
       ::  outgoing. we must be inviting another ship. send them the invite.
       ::
       ?<  (team:title our.bowl recipient.invite.act)
       [(invite-hook-poke recipient.invite.act act)]~
     ::  else incoming. ensure invitatory exists and invite is not a duplicate.
     ::
-    ?>  ?=(^ (invitatory-scry path.act))
-    ?>  ?=(~ (invite-scry path.act uid.act))
-    [(invite-poke path.act act)]~
+    ?>  ?=(^ (invitatory-scry term.act))
+    ?>  ?=(~ (invite-scry term.act uid.act))
+    [(invite-poke term.act act)]~
   ==
   ::
   ++  invite-hook-poke
@@ -62,10 +62,10 @@
     ==
   ::
   ++  invite-poke
-    |=  [=path action=invite-action]
+    |=  [=term action=invite-action]
     ^-  card
     :*  %pass
-        path
+        /[term]
         %agent
         [our.bowl %invite-store]
         %poke
@@ -74,26 +74,22 @@
     ==
   ::
   ++  invitatory-scry
-    |=  pax=path
-    ^-  (unit invitatory)
-    =.  pax
-      ;:  weld
-        /(scot %p our.bowl)/invite-store/(scot %da now.bowl)/invitatory
-        pax
-        /noun
-      ==
-    .^((unit invitatory) %gx pax)
+    |=  =term
+    .^  (unit invitatory)
+        %gx
+        %+  weld
+          /(scot %p our.bowl)/invite-store/(scot %da now.bowl)/invitatory
+        /[term]/noun
+    ==
   ::
   ++  invite-scry
-    |=  [pax=path uid=serial]
-    ^-  (unit invite)
-    =.  pax
-      ;:  weld
-        /(scot %p our.bowl)/invite-store/(scot %da now.bowl)/invite
-        pax
-        /(scot %uv uid)/noun
-      ==
-    .^((unit invite) %gx pax)
+    |=  [=term uid=serial]
+    .^  (unit invite)
+        %gx
+        %+  weld
+          /(scot %p our.bowl)/invite-store/(scot %da now.bowl)/invite
+        /[term]/(scot %uv uid)/noun
+    ==
   --
 ::
 ++  on-peek   on-peek:def

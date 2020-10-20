@@ -410,10 +410,11 @@
     =/  =invite
       :*  our.bol
           ?:(managed %contact-hook %chat-hook)
-          ?:(managed group-path app-path)
+          (de-path:resource ?:(managed group-path app-path))
           ship  ''
       ==
-    =/  act=invite-action  [%invite ?:(managed /contacts /chat) (shaf %msg-uid eny.bol) invite]
+    =/  act=invite-action
+      [%invite ?:(managed %contacts %chat) (shaf %msg-uid eny.bol) invite]
     [%pass / %agent [our.bol %invite-hook] %poke %invite-action !>(act)]
   ::
   ++  chat-scry

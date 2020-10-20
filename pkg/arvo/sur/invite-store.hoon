@@ -14,27 +14,27 @@
 ::  contains a map of serial to invite. this allows it to only receive
 ::  invites that it is concerned with
 ::
-+$  invites  (map resource invitatory)   ::  main data structure
++$  invites     (map term invitatory)   ::  main data structure
 ::
 +$  invitatory  (map serial invite)  ::  containing or conveying an invitation
 ::
 +$  invite-base
-  $%  [%create =resource]                     ::  create a resource
-      [%delete =resource]                     ::  delete a resource
-      [%invite =resource uid=serial =invite]  ::  receive an invite at res/uid
-      [%decline =resource uid=serial]         ::  decline an invite at res/uid
+  $%  [%create =term]                     ::  create a resource
+      [%delete =term]                     ::  delete a resource
+      [%invite =term uid=serial =invite]  ::  receive an invite at term/uid
+      [%decline =term uid=serial]         ::  decline an invite at term/uid
   ==
 ::
 +$  invite-action
   $%  invite-base
-      [%accept =resource uid=serial]            ::  accept an invite at res/uid
+      [%accept =term uid=serial]            ::  accept an invite at term/uid
   ==
 ::
 +$  invite-update
   $%  invite-base
       [%initial =invites]
       [%invitatory =invitatory]                 ::  receive invitatory
-      [%accepted =resource uid=serial =invite]  ::  an invite has been accepted
+      [%accepted =term uid=serial =invite]  ::  an invite has been accepted
   ==
 --
 

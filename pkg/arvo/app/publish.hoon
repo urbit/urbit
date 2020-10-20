@@ -91,7 +91,7 @@
     :_  this
     :~  [%pass /view-bind %arvo %e %connect [~ /'publish-view'] %publish]
         [%pass /read/paths %arvo %c %warp our.bol q.byk.bol `rav]
-        (invite-poke:main [%create /publish])
+        (invite-poke:main [%create %publish])
         :*  %pass  /invites  %agent  [our.bol %invite-store]  %watch
             /invitatory/publish
         ==
@@ -122,7 +122,7 @@
             :*  %pass  /permissions  %agent  [our.bol %permission-store]  %watch
                 /updates
             ==
-            (invite-poke:main [%create /publish])
+            (invite-poke:main [%create %publish])
             :*  %pass  /invites  %agent  [our.bol %invite-store]  %watch
                 /invitatory/publish
             ==
@@ -313,10 +313,10 @@
       ^-  card
       =/  uid  (sham %publish who book eny.bol)
       =/  inv=invite
-        :*  our.bol  %publish  /notebook/[book]  who
+        :*  our.bol  %publish  [our.bol book]  who
             (crip "invite for notebook {<our.bol>}/{(trip book)}")
         ==
-      =/  act=invite-action  [%invite /publish uid inv]
+      =/  act=invite-action  [%invite %publish uid inv]
       [%pass /invite %agent [who %invite-hook] %poke %invite-action !>(act)]
     ::
     ++  move-files
@@ -1043,10 +1043,10 @@
     ~
   =/  uid  (sham %publish who u.book eny.bol)
   =/  inv=invite
-    :*  our.bol  %publish  /notebook/[u.book]  who
+    :*  our.bol  %publish  [our.bol u.book]  who
         (crip "invite for notebook {<our.bol>}/{(trip u.book)}")
     ==
-  =/  act=invite-action  [%invite /publish uid inv]
+  =/  act=invite-action  [%invite %publish uid inv]
   [%pass / %agent [our.bol %invite-hook] %poke %invite-action !>(act)]~
 ::
 ++  handle-invite-update
@@ -1065,16 +1065,13 @@
     [~ state]
   ::
       %accepted
-    ?>  ?=([@ @ *] path.invite.upd)
-    =/  book  i.t.path.invite.upd
+    =*  rid  resource.invite.upd
     =/  group
-      (group-from-book notebook+book^~)
+      (group-from-book notebook+name.rid^~)
     ?^  group
-      (subscribe-notebook ship.invite.upd book)
-    =/  rid=resource
-      (de-path:resource ship+path.invite.upd)
+      (subscribe-notebook ship.invite.upd name.rid)
     =/  join-wire=wire
-      /join-group/[(scot %p ship.invite.upd)]/[book]
+      /join-group/[(scot %p ship.invite.upd)]/[name.rid]
     =/  =cage
       :-  %group-update
       !>  ^-  action:group-store
@@ -1255,10 +1252,10 @@
   |=  who=ship
   =/  uid  (sham %publish who book eny.bol)
   =/  inv=invite
-    :*  our.bol  %publish  /(scot %p our.bol)/[book]  who
+    :*  our.bol  %publish  [our.bol book]  who
         (crip "invite for notebook {<our.bol>}/{(trip book)}")
     ==
-  =/  act=invite-action  [%invite /publish uid inv]
+  =/  act=invite-action  [%invite %publish uid inv]
   [%pass / %agent [our.bol %invite-hook] %poke %invite-action !>(act)]
 ::
 ++  make-groups
@@ -1944,10 +1941,11 @@
         =/  =invite
           :*  our.bol
               %contact-hook
-              group-path
+              rid
               ship  ''
           ==
-        =/  act=invite-action  [%invite /contacts (shaf %msg-uid eny.bol) invite]
+        =/  act=invite-action
+          [%invite %contacts (shaf %msg-uid eny.bol) invite]
         [%pass / %agent [our.bol %invite-hook] %poke %invite-action !>(act)]
     ==
   ==

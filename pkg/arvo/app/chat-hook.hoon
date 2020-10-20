@@ -77,7 +77,7 @@
   ++  on-init
     ^-  (quip card _this)
     :_  this(invite-created %.y)
-    :~  (invite-poke:cc [%create /chat])
+    :~  (invite-poke:cc [%create %chat])
         [%pass /invites %agent [our.bol %invite-store] %watch /invitatory/chat]
         watch-groups:cc
     ==
@@ -691,10 +691,13 @@
   :_  state
   ?+  -.fact  ~
       %accepted
-    =/  ask-history  ?~((chat-scry path.invite.fact) %.y %.n)
-    =*  shp       ship.invite.fact
-    =*  app-path  path.invite.fact
-    ~[(chat-view-poke [%join shp app-path ask-history])]
+    =*  resource  resource.invite.fact
+    =/  =path  [(scot %p entity.resource) name.resource ~]
+    :_  ~
+    %-  chat-view-poke
+    :^  %join  ship.invite.fact
+      path
+    ?=(~ (chat-scry path))
 ==
 ::
 ++  fact-group-update

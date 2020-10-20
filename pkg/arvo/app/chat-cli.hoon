@@ -724,10 +724,10 @@
         ::
           !>
           ^-  invite-action
-          :^  %invite  /chat
+          :^  %invite  %chat
             (shax (jam [our-self where] who))
           ^-  invite
-          [our-self %chat-hook where who '']
+          [our-self %chat-hook (de-path:resource where) who '']
       ==
     ::  +set-target: set audience, update prompt
     ::
@@ -1134,9 +1134,7 @@
   ++  show-invite
     |=  invite
     ^-  card
-    %-  note
-    %+  weld  "invited to: "
-    ~(phat tr (path-to-target path))
+    (note "invited to: {(scow %p entity.resource)} {(trip name.resource)}")
   --
 ::
 ::  +tr: render targets
