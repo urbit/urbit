@@ -53,6 +53,15 @@
       ==
   ==
 ::
++$  state-four
+  [state-three migrate=migration-state]  
+::
+::  $migration-state: resources that are unavailable because their host
+::  has not processed the ota, and number of times we've tried to reach
+::  the host
++$  migration-state
+  (map resource @ud)
+::
 +$  versioned-state
   $%  [%1 state-two]
       [%2 state-two]
@@ -60,7 +69,7 @@
       [%4 state-three]
       [%5 state-three]
       [%6 state-three]
-      [%7 state-three]
+      [%7 state-four]
   ==
 ::
 +$  metadata-delta
@@ -76,7 +85,7 @@
   ==
 --
 ::
-=|  [%7 state-three]
+=|  [%7 state-four]
 =*  state  -
 %-  agent:dbug
 %+  verb  |
@@ -228,35 +237,48 @@
       ==
     ::
         %6
-      %_  $
-        -.p.old-state  %7
+      =/  [ours=(set [rid=resource nb=notebook]) theirs=(set resource)]
+        %+  roll  ~(tap by books.p.old-state)
+        |=  [[[who=@p book=@tas] nb=notebook] [ours=(set [resource notebook]) theirs=(set resource)]]
+        ^-  [(set [resource notebook]) (set resource)]
+        =/  =resource
+          [who book]
+        ?.  =(who our.bol)
+          ours^(~(put in theirs) resource)
+        :_  theirs
+        (~(put in ours) [resource nb])
+      ::
+      %_    $
+          p.old-state  
+        :+  %7  +.p.old-state 
+        %-  ~(gas by *(map resource @ud))
+        (turn ~(tap in theirs) (late 0))
         ::
           cards
         ;:  weld
           cards
-        ::  move to graph-store
-          %+  roll  ~(tap by books.p.old-state)
-          |=  [[[who=@p book=@tas] nb=notebook] out=(list card)]
+        ::  move our books to graph-store
           ^-  (list card)
-          =/  =resource
-            [who book]
-          ?.  =(who our.bol)
-            :_  out
-            (poke-graph-pull %add who resource)
+          %-  zing
+          %+  turn  ~(tap in ours)
+          |=  [rid=resource nb=notebook]
+          ^-  (list card)
           =/  =graph:graph-store
             (notebook-to-graph nb)
-          %+  weld  out
-          ^-  (list card)
           :~ 
             %-  poke-graph-store
             :*  %0  date-created.nb  %add-graph
-                resource 
+                rid 
                 graph
                 `%graph-validator-publish
             ==
-            (poke-graph-push %add resource)
+            (poke-graph-push %add rid)
           ==
+        ::  for their books, subscribe to graph-pull-hook, to see if host has migrated
+          ^-  (list card)
+          (turn ~(tap in theirs) check-host-migrate:main)
         ::  leave all subscriptions
+          ^-  (list card)
           %+  turn  ~(tap in ~(key by wex.bol))
           |=  [=wire =ship app=term]
           ^-  card
@@ -484,8 +506,41 @@
   ++  on-watch  on-watch:def
   ++  on-leave  on-leave:def
   ++  on-peek  on-peek:def
-  ++  on-agent  on-agent:def
-  ++  on-arvo  on-arvo:def
+  ++  on-agent  
+    |=  [=wire =sign:agent:gall]
+    ^-  (quip card _this)
+    ?.  ?=([%graph-migrate *] wire)
+      (on-agent:def wire sign)
+    =/  rid=resource
+      (de-path:resource t.wire)
+    ?.  ?=(%watch-ack -.sign)
+      (on-agent:def wire sign)
+    ?~  p.sign
+      ::  if watch acked successfully, then host has completed OTA, and
+      ::  we are safe to add it to the pull-hook
+      :_  this(migrate (~(del by migrate) rid))
+      ~[(poke-graph-pull:main %add entity.rid rid)]
+    ::  if nacked, then set a exponential backoff and retry
+    =/  nack-count=@ud
+      +((~(gut by migrate) rid 0))
+    :_  this(migrate (~(put by migrate) rid nack-count))
+    ::  (bex 19) is roughly 6 days
+    =/  wakeup=@da
+      (add now.bol (bex (min 19 nack-count)))
+    [%pass wire %arvo %b %wait wakeup]~
+  ::   
+  ++  on-arvo
+    |=  [=wire =sign-arvo]
+    ^-  (quip card _this)
+    ?.  ?=([%graph-migrate *] wire)
+      (on-arvo:def wire sign-arvo)
+    =/  rid=resource
+      (de-path:resource t.wire)
+    ?>  ?=([%b %wake *] sign-arvo)
+    ~?  ?=(^ error.sign-arvo)
+      "behn errored in backoff timers, continuing anyway" 
+    :_  this
+    ~[(check-host-migrate:main rid)]
   ::
   ++  on-fail  on-fail:def
   --
@@ -600,4 +655,23 @@
   =/  act=contact-view-action:contact-view
     [%create name.rid policy title description]
   (contact-view-poke act)
+::
+++  check-host-migrate
+  |=  rid=resource
+  ^-  card
+  =/  res-path
+    (en-path:resource rid)
+  =-  [%pass graph-migrate+res-path %agent -]
+  [[entity.rid %graph-push-hook] %watch resource+res-path]
+::
+
+::
+++  poke-our
+  |=  [app=term =cage]
+  [%pass / %agent [our.bol app] %poke cage]
+::
+++  poke-graph-pull
+  |=  =action:pull-hook
+  (poke-our %graph-pull-hook pull-hook-action+!>(action))
+::
 --
