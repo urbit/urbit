@@ -6595,6 +6595,12 @@
               r/(pair seminoun (map term tome))         ::  chapters
           ==                                            ::
 +$  garb  (trel (unit term) poly vair)                  ::  core
++$  grub                                                ::  new compiler cache
+  $:  nes/(map (pair type type) type)                   ::  +nest
+      res/(map (pair type hoon) type)                   ::  +rest
+      pay/(map (pair type hoon) type)                   ::  +play
+      mit/(map (pair type hoon) (pair type nock))       ::  +mint
+  ==                                                    ::
 +$  poly  ?(%wet %dry)                                  ::  polarity
 +$  foot  $%  {$dry p/hoon}                             ::  dry arm, geometric
               {$wet p/hoon}                             ::  wet arm, generic
@@ -9086,6 +9092,7 @@
           rib=*(set {type type hoon})
           vet=`?`&
           fab=`?`&
+          grub=*grub
       ==
   =+  sut=`type`%noun
   |%
