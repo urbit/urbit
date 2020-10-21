@@ -450,6 +450,14 @@
   |^
   ?>  (team:title our.bowl src.bowl)
   ?+  path  (on-peek:def path)
+      [%x %graph-mark @ @ ~]
+    =/  =ship   (slav %p i.t.t.path)
+    =/  =term   i.t.t.t.path
+    =/  result=(unit marked-graph:store)
+      (~(get by graphs) [ship term])
+    ?~  result  [~ ~]
+    ``noun+!>(q.u.result)
+  ::
       [%x %keys ~]
     :-  ~  :-  ~  :-  %graph-update
     !>(`update:store`[%0 now.bowl [%keys ~(key by graphs)]])
