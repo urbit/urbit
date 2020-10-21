@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import _ from "lodash";
-import { Text } from "@tlon/indigo-react";
 
 import GlobalApi from "~/logic/api/global";
 import { Patp, Path } from "~/types/noun";

@@ -15,40 +15,76 @@ export const foregroundFromBackground = (background) => {
   return ((whiteBrightness - brightness) < 50) ? 'black' : 'white';
 };
 
-export const SigilURL = memoize(({ patp, size, icon, color}) => {
+const sigilBlobUrls = new Map();
+
+export const sigilBlobUrl = (vals) => {
+  const { patp, size, icon, color } = vals;
+  const key = `${patp}-${size}-${color}${icon ? `-icon` : ''}`;
+  if (sigilBlobUrls.has(key)) {
+    return sigilBlobUrls.get(key);
+  } else {
+    const url = SigilURL(vals);
+    sigilBlobUrls.set(key, url);
+    return url;
+  }
+};
+
+export const SigilURL = memoize(({ patp, size, icon, colors }) => {
   const sigil = sigiljs({
     patp,
     renderer: stringRenderer,
     size,
     icon,
-    colors: [
-      color,
-      foregroundFromBackground(color)
-    ],
+    colors,
   });
   const blob = new Blob([sigil], { type: 'image/svg+xml'});
   return URL.createObjectURL(blob);
 });
 
-export const Sigil = memo(({ classes = '', color, ship, size, svgClass = '', icon = false }) => {
+export const Sigil = memo(({
+  classes = '',
+  color,
+  foreground = '',
+  ship,
+  size,
+  svgClass = '',
+  icon = false,
+  padded = false
+}) => {
+  const padding = (icon && padded) ? '2px' : '0px';
+  const innerSize = (icon && padded) ? (Number(size) - 4) : size;
+  const foregroundColor = foreground ? foreground : foregroundFromBackground(color);
   return ship.length > 14
     ? (<Box
-      display='inline-block'
-      bg='black'
-      className={classes}
-      width={size}
-      height={size}>
-    </Box>)
-    : (<Box
-      display='inline-block'
-      className={classes}
-      style={{ flexBasis: size }}
-    >
+        backgroundColor='black'
+        borderRadius={icon ? '1' : '0'}
+        display='inline-block'
+        height={size}
+        width={size}
+        className={classes}
+       />) : (
+       <Box
+        display='flex'
+        borderRadius={icon ? '1' : '0'}
+        flexBasis={size}
+        backgroundColor={color}
+        padding={padding}
+        className={classes}
+        lineHeight={1}
+       >
       <BaseImage
         width={size}
         height={size}
         className={svgClass}
-        src={SigilURL({ patp: ship, size, icon, color })}
+        src={sigilBlobUrl({
+          patp: ship,
+          size: innerSize,
+          icon,
+          colors: [
+            color,
+            foregroundColor
+          ]
+        })}
       />
     </Box>)
 })
