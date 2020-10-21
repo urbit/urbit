@@ -9667,6 +9667,31 @@
                  $(sut repo, gil (~(put in gil) sut))
     ==
   ::
+  ++  caching-bran
+    ~+
+    =+  gil=*(set type)
+    |-  ~+  ^-  [seminoun:musk _grub]
+    ?-    sut
+      $noun      [[full/[~ ~ ~] ~] grub]
+      $void      [[full/[~ ~ ~] ~] grub]
+      {$atom *}  :_  grub
+                 ?~(q.sut [full/[~ ~ ~] ~] [full/~ u.q.sut])
+      {$cell *}  =^  lef  grub  $(sut p.sut)
+                 =^  rig  grub  $(sut q.sut)
+                 [(combine:musk lef rig) grub]
+      {$core *}  =^  val  grub  $(sut p.sut)
+                 :_  grub
+                 %+  combine:musk
+                   p.r.q.sut
+                 val
+      {$face *}  $(sut repo)
+      {$fork *}  [[full/[~ ~ ~] ~] grub]
+      {$hint *}  $(sut repo)
+      {$hold *}  ?:  (~(has in gil) sut)
+                   [[full/[~ ~ ~] ~] grub]
+                 $(sut repo, gil (~(put in gil) sut))
+    ==
+  ::
   ++  burp
     ::  expel undigested seminouns
     ::
