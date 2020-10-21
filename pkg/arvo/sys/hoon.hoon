@@ -9265,16 +9265,19 @@
       ::
           %base
         ?-    base.skin
-            %cell      $(skin [%cell [%base %noun] [%base %noun]])
+            %cell
+          $(skin [%cell [%base %noun] [%base %noun]])
         ::
             %flag
           =^  lef  grub  $(skin [%leaf %f &])
           =^  rig  grub  $(skin [%leaf %f |])
           [(fork lef rig ~) grub]
         ::
-            %null      $(skin [%leaf %n ~])
+            %null
+          $(skin [%leaf %n ~])
         ::
-            %void      [%void grub]
+            %void
+          [%void grub]
         ::
             %noun
           =^  nests  grub  (~(caching-nest ut %void) | ref)
@@ -9285,21 +9288,22 @@
           =|  gil=(set type)
           |-  ^-  [type _grub]
           ?-    ref
-              %void      [%void grub]
+              %void
+            [%void grub]
           ::
-              %noun      [[%atom p.base.skin ~] grub]
+              %noun
+            [[%atom p.base.skin ~] grub]
           ::
               [%atom *]
             ?.  (fitz p.base.skin p.ref)
               ~>(%mean.'atom-mismatch' !!)
-            :-  :+  %atom
-                  (max p.base.skin p.ref)
-                q.ref
-            grub
+            [[%atom (max p.base.skin p.ref) q.ref] grub]
           ::
-              [%cell *]  [%void grub]
+              [%cell *]
+            [%void grub]
           ::
-              [%core *]  [%void grub]
+              [%core *]
+            [%void grub]
           ::
               [%face *]
             =^  rig  grub  $(ref q.ref)
@@ -9308,7 +9312,7 @@
               [%fork *]
             =/  thread  ~(tap in p.ref)
             =^  uni  grub
-              (spin thread grub |=([ty=type cac=_grub] ^$(ref ty)))
+              (spin thread grub |=([=type =_grub] ^$(ref type)))
             [(fork uni) grub]
           ::
               [%hint *]
@@ -9318,33 +9322,56 @@
               [%hold *]
             ?:  (~(has in gil) ref)  [%void grub]
             =^  rig  grub  caching-repo(sut ref)
-            =^  val  grub  $(gil (~(put in gil) ref), ref rig)
-            [val grub]
+            $(gil (~(put in gil) ref), ref rig)
           ==
         ==
       ::
-          %cell  !!
-      ::  %cell
-      ::=|  gil=(set type)
-      ::|-  ^-  type
-      ::?-    ref
-      ::    %void      %void
-      ::    %noun      [%cell %noun %noun]
-      ::    [%atom *]  %void
-      ::    [%cell *]  =+  ^$(skin skin.skin, ref p.ref)
-      ::               ?:  =(%void -)  %void
-      ::               (cell - ^$(skin ^skin.skin, ref q.ref))
-      ::    [%core *]  =+  ^$(skin skin.skin, ref p.ref)
-      ::               ?:  =(%void -)  %void
-      ::               ?.  =(%noun ^skin.skin)
-      ::                 (cell - ^$(skin ^skin.skin, ref %noun))
-      ::               [%core - q.ref]
-      ::    [%face *]  (face p.ref $(ref q.ref))
-      ::    [%fork *]  (fork (turn ~(tap in p.ref) |=(=type ^$(ref type))))
-      ::    [%hint *]  (hint p.ref $(ref q.ref))
-      ::    [%hold *]  ?:  (~(has in gil) ref)  %void
-      ::               $(gil (~(put in gil) ref), ref repo(sut ref))
-      ::==
+          %cell
+        =|  gil=(set type)
+        |-  ^-  [type _grub]
+        ?-    ref
+            %void
+          [%void grub]
+        ::
+            %noun
+          [[%cell %noun %noun] grub]
+        ::
+            [%atom *]
+          [%void grub]
+        ::
+            [%cell *]
+          =^  won  grub  ^$(skin skin.skin, ref p.ref)
+          ?:  =(%void won)  [%void grub]
+          =^  tew  grub  ^$(skin skin.skin, ref q.ref)
+          [(cell won tew) grub]
+        ::
+            [%core *]
+          =^  won  grub  ^$(skin skin.skin, ref p.ref)
+          ?:  =(%void won)  [%void grub]
+          ?.  =(%noun ^skin.skin)
+            =^  tew  grub  ^$(skin ^skin.skin, ref %noun)
+            [(cell won tew) grub]
+          [[%core won q.ref] grub]
+        ::
+            [%face *]
+          =^  val  grub  $(ref q.ref)
+          [(face p.ref val) grub]
+        ::
+            [%fork *]
+          =/  thread  ~(tap in p.ref)
+          =^  uni  grub
+            (spin thread grub |=([=type =_grub] ^$(ref type)))
+          [(fork uni) grub]
+        ::
+            [%hint *]
+          =^  val  grub  $(ref q.ref)
+          [(hint p.ref val) grub]
+        ::
+            [%hold *]
+          ?:  (~(has in gil) ref)  [%void grub]
+          =^  rig  grub  caching-repo(sut ref)
+          $(gil (~(put in gil) ref), ref rig)
+        ==
       ::
           %leaf  !!
       ::  %leaf
