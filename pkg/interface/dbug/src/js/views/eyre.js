@@ -111,7 +111,7 @@ export class Eyre extends Component {
           </tr>
           <tr>
             <td class="inter">last-ack</td>
-            <td>{c['last-ack']}</td>
+            <td>{msToDa(c['last-ack'])}</td>
           </tr>
           <tr>
             <td class="inter">unacked</td>
