@@ -9727,6 +9727,73 @@
     ^-  type
     [%face [[[cog ~ gen] ~ ~] ~] sut]
   ::
+  ++  caching-crop
+    ~/  %crop
+    |=  ref/type
+    =+  bix=*(set {type type})
+    =<  dext
+    |%
+    ++  dext
+      ^-  [type _grub]
+      ~_  leaf+"crop"
+      ::  ~_  (dunk 'dext: sut')
+      ::  ~_  (dunk(sut ref) 'dext: ref')
+      ?:  |(=(sut ref) =(%noun ref))
+        [%void grub]
+      ?:  =(%void ref)
+        [sut grub]
+      ?-    sut
+          {$atom *}
+        ?+  ref      sint
+          {$atom *}  :_  grub
+                     ?^  q.sut
+                       ?^(q.ref ?:(=(q.ref q.sut) %void sut) %void)
+                     ?^(q.ref sut %void)
+          {$cell *}  [sut grub]
+        ==
+      ::
+          {$cell *}
+        ?+  ref      sint
+          {$atom *}  [sut grub]
+          {$cell *}  =^  nests  grub  (caching-nest(sut p.ref) | p.sut)
+                     ?.  nests  [sut grub]
+                     =^  rig  grub  dext(sut q.sut, ref q.ref)
+                     [(cell p.sut rig) grub]
+        ==
+      ::
+          {$core *}  ?:(?=(?({$atom *} {$cell *}) [ref grub]) [sut grub] sint)
+          {$face *}  =^  val  grub  dext(sut q.sut)
+                     [(face p.sut val) grub]
+          {$fork *}  =/  thread  ~(tap in p.sut)
+                     =^  uni  grub
+                       (spin thread grub |=([=type =_grub] dext(sut type)))
+                     [(fork uni) grub]
+          {$hint *}  =^  rig  grub  dext(sut q.sut)
+                     [(hint p.sut rig) grub]
+          {$hold *}  ?<  (~(has in bix) [sut ref])
+                     dext(sut repo, bix (~(put in bix) [sut ref]))
+          $noun      dext(sut repo)
+          $void      [%void grub]
+      ==
+    ::
+    ++  sint
+      ^-  [type _grub]
+      ?+    ref    !!
+        {$core *}  [sut grub]
+        {$face *}  =^  rig  grub  caching-repo(sut ref)
+                   dext(ref rig)
+        {$fork *}  =/  yed  ~(tap in p.ref)
+                   |-  ^-  [type _grub]
+                   ?~  yed  [sut grub]
+                   =^  rig  grub  dext(ref i.yed)
+                   $(yed t.yed, sut rig)
+        {$hint *}  =^  rig  grub  caching-repo(sut ref)
+                   dext(ref rig)
+        {$hold *}  =^  rig  grub  caching-repo(sut ref)
+                   dext(ref rig)
+      ==
+    --
+  ::
   ++  crop
     ~/  %crop
     |=  ref/type
