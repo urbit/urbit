@@ -46,7 +46,6 @@ interface ChatMessageProps {
   className?: string;
   isPending: boolean;
   style?: any;
-  allStations: any;
   scrollWindow: HTMLDivElement;
   isLastMessage?: boolean;
   unreadMarkerRef: React.RefObject<HTMLDivElement>;
@@ -87,7 +86,6 @@ export default class ChatMessage extends Component<ChatMessageProps> {
       scrollWindow,
       isLastMessage,
       unreadMarkerRef,
-      allStations,
       history,
       api
     } = this.props;
@@ -118,7 +116,6 @@ export default class ChatMessage extends Component<ChatMessageProps> {
       style,
       containerClass,
       isPending,
-      allStations,
       history,
       api,
       scrollWindow
@@ -165,7 +162,6 @@ interface MessageProps {
   containerClass: string;
   isPending: boolean;
   style: any;
-  allStations: any;
   measure(element): void;
   scrollWindow: HTMLDivElement;
 };
@@ -182,7 +178,6 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
       hideAvatars,
       remoteContentPolicy,
       measure,
-      allStations,
       history,
       api,
       scrollWindow
@@ -218,7 +213,6 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
           hideAvatars={hideAvatars}
           hideNicknames={hideNicknames}
           scrollWindow={scrollWindow}
-          allStations={allStations}
           history={history}
           api={api}
           className="fl pr3 v-top bg-white bg-gray0-d pt1"

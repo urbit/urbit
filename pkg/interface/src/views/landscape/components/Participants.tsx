@@ -3,8 +3,8 @@ import React, {
   useMemo,
   useCallback,
   SyntheticEvent,
-  ChangeEvent,
-} from "react";
+  ChangeEvent
+} from 'react';
 import {
   Col,
   Box,
@@ -14,23 +14,23 @@ import {
   Center,
   Button,
   Action,
-  StatelessTextInput as Input,
-} from "@tlon/indigo-react";
-import _ from "lodash";
-import f from "lodash/fp";
-import VisibilitySensor from "react-visibility-sensor";
+  StatelessTextInput as Input
+} from '@tlon/indigo-react';
+import _ from 'lodash';
+import f from 'lodash/fp';
+import VisibilitySensor from 'react-visibility-sensor';
 
-import { Contact, Contacts } from "~/types/contact-update";
-import { Sigil } from "~/logic/lib/sigil";
-import { cite, uxToHex } from "~/logic/lib/util";
-import { Group, RoleTags } from "~/types/group-update";
-import { roleForShip, resourceFromPath } from "~/logic/lib/group";
-import { Association } from "~/types/metadata-update";
-import { useHistory, Link } from "react-router-dom";
-import { Dropdown } from "~/views/components/Dropdown";
-import GlobalApi from "~/logic/api/global";
-import { StatelessAsyncAction } from "~/views/components/StatelessAsyncAction";
-import styled from "styled-components";
+import { Contact, Contacts } from '~/types/contact-update';
+import { Sigil } from '~/logic/lib/sigil';
+import { cite, uxToHex } from '~/logic/lib/util';
+import { Group, RoleTags } from '~/types/group-update';
+import { roleForShip, resourceFromPath } from '~/logic/lib/group';
+import { Association } from '~/types/metadata-update';
+import { useHistory, Link } from 'react-router-dom';
+import { Dropdown } from '~/views/components/Dropdown';
+import GlobalApi from '~/logic/api/global';
+import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
+import styled from 'styled-components';
 
 const TruncText = styled(Box)`
   white-space: nowrap;
@@ -39,7 +39,7 @@ const TruncText = styled(Box)`
 `;
 
 type Participant = Contact & { patp: string; pending: boolean };
-type ParticipantsTabId = "total" | "pending" | "admin";
+type ParticipantsTabId = 'total' | 'pending' | 'admin';
 
 const searchParticipant = (search: string) => (p: Participant) => {
   if (search.length == 0) {
@@ -54,36 +54,36 @@ function getParticipants(cs: Contacts, group: Group) {
   const contacts: Participant[] = _.map(cs, (c, patp) => ({
     ...c,
     patp,
-    pending: false,
+    pending: false
   }));
-  const members: Participant[] = _.map(Array.from(group.members), (m) =>
+  const members: Participant[] = _.map(Array.from(group.members), m =>
     emptyContact(m, false)
   );
-  const allMembers = _.unionBy(contacts, members, "patp");
+  const allMembers = _.unionBy(contacts, members, 'patp');
   const pending: Participant[] =
-    "invite" in group.policy
-      ? _.map(Array.from(group.policy.invite.pending), (m) =>
+    'invite' in group.policy
+      ? _.map(Array.from(group.policy.invite.pending), m =>
           emptyContact(m, true)
         )
       : [];
 
   return [
-    _.unionBy(allMembers, pending, "patp"),
+    _.unionBy(allMembers, pending, 'patp'),
     pending.length,
-    allMembers.length,
+    allMembers.length
   ] as const;
 }
 
 const emptyContact = (patp: string, pending: boolean): Participant => ({
-  nickname: "",
-  email: "",
-  phone: "",
-  color: "",
+  nickname: '',
+  email: '',
+  phone: '',
+  color: '',
   avatar: null,
-  notes: "",
-  website: "",
+  notes: '',
+  website: '',
   patp,
-  pending,
+  pending
 });
 
 const Tab = ({ selected, id, label, setSelected }) => (
@@ -95,7 +95,7 @@ const Tab = ({ selected, id, label, setSelected }) => (
     cursor="pointer"
     onClick={() => setSelected(id)}
   >
-    <Text color={selected === id ? "black" : "gray"}>{label}</Text>
+    <Text color={selected === id ? 'black' : 'gray'}>{label}</Text>
   </Box>
 );
 
@@ -113,18 +113,18 @@ export function Participants(props: {
     (p: Participant) => boolean
   > = useMemo(
     () => ({
-      total: (p) => !p.pending,
-      pending: (p) => p.pending,
-      admin: (p) => props.group.tags?.role?.admin?.has(p.patp),
+      total: p => !p.pending,
+      pending: p => p.pending,
+      admin: p => props.group.tags?.role?.admin?.has(p.patp)
     }),
     [props.group]
   );
 
   const ourRole = roleForShip(props.group, window.ship);
 
-  const [filter, setFilter] = useState<ParticipantsTabId>("total");
+  const [filter, setFilter] = useState<ParticipantsTabId>('total');
 
-  const [search, _setSearch] = useState("");
+  const [search, _setSearch] = useState('');
   const setSearch = useMemo(() => _.debounce(_setSearch, 200), [_setSearch]);
   const onSearchChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
@@ -134,7 +134,7 @@ export function Participants(props: {
   );
 
   const adminCount = props.group.tags?.role?.admin?.size || 0;
-  const isInvite = "invite" in props.group.policy;
+  const isInvite = 'invite' in props.group.policy;
 
   const [participants, pendingCount, memberCount] = getParticipants(
     props.contacts,
@@ -156,7 +156,7 @@ export function Participants(props: {
   // TODO: remove when resolved
   const isSafari = useMemo(() => {
     const ua = window.navigator.userAgent;
-    return ua.includes("Safari") && !ua.includes("Chrome");
+    return ua.includes('Safari') && !ua.includes('Chrome');
   }, []);
 
   return (
@@ -166,7 +166,7 @@ export function Participants(props: {
         border={1}
         borderColor="washedGray"
         borderRadius={1}
-        position={isSafari ? "static" : "sticky"}
+        position={isSafari ? 'static' : 'sticky'}
         top="0px"
         mb={2}
         px={2}
@@ -192,7 +192,7 @@ export function Participants(props: {
             selected={filter}
             setSelected={setFilter}
             id="admin"
-            label={`${adminCount} Admin${adminCount > 1 ? "s" : ""}`}
+            label={`${adminCount} Admin${adminCount > 1 ? 's' : ''}`}
           />
         </Row>
       </Row>
@@ -210,8 +210,8 @@ export function Participants(props: {
         </Row>
         <Box
           display="grid"
-          gridAutoRows={["48px 48px 1px", "48px 1px"]}
-          gridTemplateColumns={["48px 1fr", "48px 2fr 1fr", "48px 3fr 1fr"]}
+          gridAutoRows={['48px 48px 1px', '48px 1px']}
+          gridTemplateColumns={['48px 1fr', '48px 2fr 1fr', '48px 3fr 1fr']}
           gridRowGap={2}
           alignItems="center"
         >
@@ -224,7 +224,7 @@ export function Participants(props: {
             >
               {({ isVisible }) =>
                 isVisible ? (
-                  cs.map((c) => (
+                  cs.map(c => (
                     <Participant
                       api={api}
                       key={c.patp}
@@ -261,37 +261,37 @@ function Participant(props: {
   const { title } = association.metadata;
 
   const color = uxToHex(contact.color);
-  const isInvite = "invite" in group.policy;
+  const isInvite = 'invite' in group.policy;
 
   const role = useMemo(
     () =>
       contact.pending
-        ? "pending"
-        : roleForShip(group, contact.patp) || "member",
+        ? 'pending'
+        : roleForShip(group, contact.patp) || 'member',
     [contact, group]
   );
 
   const onPromote = useCallback(async () => {
-    const resource = resourceFromPath(association["group-path"]);
-    await api.groups.addTag(resource, { tag: "admin" }, [`~${contact.patp}`]);
+    const resource = resourceFromPath(association['group-path']);
+    await api.groups.addTag(resource, { tag: 'admin' }, [`~${contact.patp}`]);
   }, [api, association]);
 
   const onDemote = useCallback(async () => {
-    const resource = resourceFromPath(association["group-path"]);
-    await api.groups.removeTag(resource, { tag: "admin" }, [
-      `~${contact.patp}`,
+    const resource = resourceFromPath(association['group-path']);
+    await api.groups.removeTag(resource, { tag: 'admin' }, [
+      `~${contact.patp}`
     ]);
   }, [api, association]);
 
   const onBan = useCallback(async () => {
-    const resource = resourceFromPath(association["group-path"]);
+    const resource = resourceFromPath(association['group-path']);
     await api.groups.changePolicy(resource, {
-      open: { banShips: [`~${contact.patp}`] },
+      open: { banShips: [`~${contact.patp}`] }
     });
   }, [api, association]);
 
   const onKick = useCallback(async () => {
-    const resource = resourceFromPath(association["group-path"]);
+    const resource = resourceFromPath(association['group-path']);
     await api.groups.remove(resource, [`~${contact.patp}`]);
   }, [api, association]);
 
@@ -319,7 +319,7 @@ function Participant(props: {
       </Col>
       <Row
         justifyContent="space-between"
-        gridColumn={["1 / 3", "auto"]}
+        gridColumn={['1 / 3', 'auto']}
         alignItems="center"
       >
         <Col>
@@ -340,7 +340,12 @@ function Participant(props: {
               gapY={2}
               p={2}
             >
-              {props.role === "admin" && (
+              <Action bg="transparent">
+                <Link to={`/~landscape/dm/${contact.patp}`}>
+                  <Text color="green">Send Message</Text>
+                </Link>
+              </Action>
+              {props.role === 'admin' && (
                 <>
                   {!isInvite && (
                     <>
@@ -352,7 +357,7 @@ function Participant(props: {
                     </StatelessAsyncAction>
                     </>
                   )}
-                  {role === "admin" ? (
+                  {role === 'admin' ? (
                     <StatelessAsyncAction onClick={onDemote} bg="transparent">
                       Demote from Admin
                     </StatelessAsyncAction>
@@ -372,7 +377,7 @@ function Participant(props: {
       <Box
         borderBottom={1}
         borderBottomColor="washedGray"
-        gridColumn={["1 / 3", "1 / 4"]}
+        gridColumn={['1 / 3', '1 / 4']}
       />
     </>
   );
@@ -382,7 +387,7 @@ function BlankParticipant({ length }) {
   return (
     <Box
       gridRow={[`auto / span ${3 * length}`, `auto / span ${2 * length}`]}
-      gridColumn={["1 / 3", "1 / 4"]}
+      gridColumn={['1 / 3', '1 / 4']}
       height="100%"
     />
   );
