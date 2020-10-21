@@ -9419,7 +9419,8 @@
           $(gil (~(put in gil) ref), ref rig)
         ==
       ::
-          %dbug  $(skin skin.skin)
+          %dbug
+        $(skin skin.skin)
       ::
           %help
         =^  rig  grub  $(skin skin.skin)
@@ -9429,19 +9430,23 @@
         =^  rig  grub  $(skin skin.skin)
         [(face term.skin rig) grub]
       ::
-          %over  !!
-      ::  %over  $(skin skin.skin, sut (~(play ut sut) %wing wing.skin))
-          %spec  !!
-      ::  %spec  =/  yon  $(skin skin.skin)
-      ::         =/  hit  (~(play ut sut) ~(example ax fab spec.skin))
-      ::         ?>  (~(nest ut hit) & yon)
-      ::         hit
-          %wash  !!
-      ::  %wash  =-  $(ref (~(play ut ref) -))
-      ::         :-  %wing
-      ::         |-  ^-  wing
-      ::         ?:  =(0 depth.skin)  ~
-      ::         [[%| 0 ~] $(depth.skin (dec depth.skin))]
+          %over
+        =^  val  grub  (~(caching-play ut sut) %wing wing.skin)
+        $(skin skin.skin, sut val)
+      ::
+          %spec
+        =^  yon  grub  $(skin skin.skin)
+        =/  hit  (~(caching-play ut sut) ~(example ax fab spec.skin))
+        ?>  -:(~(caching-nest ut -:hit) & yon)
+        hit
+      ::
+          %wash
+        =-  =^  played  grub  (~(caching-play ut ref) -)
+            $(ref played)
+        :-  %wing
+        |-  ^-  wing
+        ?:  =(0 depth.skin)  ~
+        [[%| 0 ~] $(depth.skin (dec depth.skin))]
       ==
     ::
     ::  -lose: make a $type by restricting .ref to exclude .skin
@@ -11151,6 +11156,10 @@
       $rite  [?=($iron met) |]
     ==
   ::
+  ++  caching-play
+    |=  gen/hoon
+    ^-  [type _grub]
+    !!
   ++  play
     ~/  %play
     =>  .(vet |)
