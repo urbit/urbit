@@ -9373,28 +9373,51 @@
           $(gil (~(put in gil) ref), ref rig)
         ==
       ::
-          %leaf  !!
-      ::  %leaf
-      ::=|  gil=(set type)
-      ::|-  ^-  type
-      ::?-  ref
-      ::  %void      %void
-      ::  %noun      [%atom aura.skin `atom.skin]
-      ::  [%atom *]  ?:  &(?=(^ q.ref) !=(atom.skin u.q.ref))
-      ::               %void
-      ::             ?.  (fitz aura.skin p.ref)
-      ::                ~>(%mean.'atom-mismatch' !!)
-      ::             :+  %atom
-      ::               (max aura.skin p.ref)
-      ::             `atom.skin
-      ::  [%cell *]  %void
-      ::  [%core *]  %void
-      ::  [%face *]  (face p.ref $(ref q.ref))
-      ::  [%fork *]  (fork (turn ~(tap in p.ref) |=(=type ^$(ref type))))
-      ::  [%hint *]  (hint p.ref $(ref q.ref))
-      ::  [%hold *]  ?:  (~(has in gil) ref)  %void
-      ::             $(gil (~(put in gil) ref), ref repo(sut ref))
-      ::==
+          %leaf
+        =|  gil=(set type)
+        |-  ^-  [type _grub]
+        ?-  ref
+            %void
+          [%void grub]
+        ::
+            %noun
+          [[%atom aura.skin `atom.skin] grub]
+        ::
+            [%atom *]
+          ?:  &(?=(^ q.ref) !=(atom.skin u.q.ref))
+            [%void grub]
+          ?.  (fitz aura.skin p.ref)
+            ~>(%mean.'atom-mismatch' !!)
+          :-  :+  %atom
+              (max aura.skin p.ref)
+            `atom.skin
+          grub
+        ::
+            [%cell *]
+          [%void grub]
+        ::
+            [%core *]
+          [%void grub]
+        ::
+            [%face *]
+          =^  val  grub  $(ref q.ref)
+          [(face p.ref val) grub]
+        ::
+            [%fork *]
+          =/  thread  ~(tap in p.ref)
+          =^  uni  grub
+            (spin thread grub |=([=type =_grub] ^$(ref type)))
+          [(fork uni) grub]
+        ::
+            [%hint *]
+          =^  val  grub  $(ref q.ref)
+          [(hint p.ref val) grub]
+        ::
+            [%hold *]
+          ?:  (~(has in gil) ref)  [%void grub]
+          =^  rig  grub  caching-repo(sut ref)
+          $(gil (~(put in gil) ref), ref rig)
+        ==
       ::
           %dbug  $(skin skin.skin)
       ::
