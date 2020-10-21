@@ -9258,6 +9258,142 @@
                  [[%| 0 ~] $(depth.skin (dec depth.skin))]
       ==
     ::
+    ++  caching-gain
+      |-  ^-  [type _grub]
+      ?@  skin  [[%face skin ref] grub]
+      ?-    -.skin
+      ::
+          %base
+        ?-    base.skin
+            %cell      $(skin [%cell [%base %noun] [%base %noun]])
+        ::
+            %flag
+          =^  lef  grub  $(skin [%leaf %f &])
+          =^  rig  grub  $(skin [%leaf %f |])
+          [(fork lef rig ~) grub]
+        ::
+            %null      $(skin [%leaf %n ~])
+        ::
+            %void      [%void grub]
+        ::
+            %noun
+          =^  nests  grub  (~(caching-nest ut %void) | ref)
+          :-  ?:  nests  %void  ref
+          grub
+        ::
+            [%atom *]
+          =|  gil=(set type)
+          |-  ^-  [type _grub]
+          ?-    ref
+              %void      [%void grub]
+          ::
+              %noun      [[%atom p.base.skin ~] grub]
+          ::
+              [%atom *]
+            ?.  (fitz p.base.skin p.ref)
+              ~>(%mean.'atom-mismatch' !!)
+            :-  :+  %atom
+                  (max p.base.skin p.ref)
+                q.ref
+            grub
+          ::
+              [%cell *]  [%void grub]
+          ::
+              [%core *]  [%void grub]
+          ::
+              [%face *]
+            =^  rig  grub  $(ref q.ref)
+            [(face p.ref rig) grub]
+          ::
+              [%fork *]
+            =/  thread  ~(tap in p.ref)
+            =^  uni  grub
+              (spin thread grub |=([ty=type cac=_grub] ^$(ref ty)))
+            [(fork uni) grub]
+          ::
+              [%hint *]
+            =^  rig  grub  $(ref q.ref)
+            [(hint p.ref rig) grub]
+          ::
+              [%hold *]
+            ?:  (~(has in gil) ref)  [%void grub]
+            =^  rig  grub  caching-repo(sut ref)
+            =^  val  grub  $(gil (~(put in gil) ref), ref rig)
+            [val grub]
+          ==
+        ==
+      ::
+          %cell  !!
+      ::  %cell
+      ::=|  gil=(set type)
+      ::|-  ^-  type
+      ::?-    ref
+      ::    %void      %void
+      ::    %noun      [%cell %noun %noun]
+      ::    [%atom *]  %void
+      ::    [%cell *]  =+  ^$(skin skin.skin, ref p.ref)
+      ::               ?:  =(%void -)  %void
+      ::               (cell - ^$(skin ^skin.skin, ref q.ref))
+      ::    [%core *]  =+  ^$(skin skin.skin, ref p.ref)
+      ::               ?:  =(%void -)  %void
+      ::               ?.  =(%noun ^skin.skin)
+      ::                 (cell - ^$(skin ^skin.skin, ref %noun))
+      ::               [%core - q.ref]
+      ::    [%face *]  (face p.ref $(ref q.ref))
+      ::    [%fork *]  (fork (turn ~(tap in p.ref) |=(=type ^$(ref type))))
+      ::    [%hint *]  (hint p.ref $(ref q.ref))
+      ::    [%hold *]  ?:  (~(has in gil) ref)  %void
+      ::               $(gil (~(put in gil) ref), ref repo(sut ref))
+      ::==
+      ::
+          %leaf  !!
+      ::  %leaf
+      ::=|  gil=(set type)
+      ::|-  ^-  type
+      ::?-  ref
+      ::  %void      %void
+      ::  %noun      [%atom aura.skin `atom.skin]
+      ::  [%atom *]  ?:  &(?=(^ q.ref) !=(atom.skin u.q.ref))
+      ::               %void
+      ::             ?.  (fitz aura.skin p.ref)
+      ::                ~>(%mean.'atom-mismatch' !!)
+      ::             :+  %atom
+      ::               (max aura.skin p.ref)
+      ::             `atom.skin
+      ::  [%cell *]  %void
+      ::  [%core *]  %void
+      ::  [%face *]  (face p.ref $(ref q.ref))
+      ::  [%fork *]  (fork (turn ~(tap in p.ref) |=(=type ^$(ref type))))
+      ::  [%hint *]  (hint p.ref $(ref q.ref))
+      ::  [%hold *]  ?:  (~(has in gil) ref)  %void
+      ::             $(gil (~(put in gil) ref), ref repo(sut ref))
+      ::==
+      ::
+          %dbug  $(skin skin.skin)
+      ::
+          %help
+        =^  rig  grub  $(skin skin.skin)
+        [(hint [sut %help help.skin] rig) grub]
+      ::
+          %name
+        =^  rig  grub  $(skin skin.skin)
+        [(face term.skin rig) grub]
+      ::
+          %over  !!
+      ::  %over  $(skin skin.skin, sut (~(play ut sut) %wing wing.skin))
+          %spec  !!
+      ::  %spec  =/  yon  $(skin skin.skin)
+      ::         =/  hit  (~(play ut sut) ~(example ax fab spec.skin))
+      ::         ?>  (~(nest ut hit) & yon)
+      ::         hit
+          %wash  !!
+      ::  %wash  =-  $(ref (~(play ut ref) -))
+      ::         :-  %wing
+      ::         |-  ^-  wing
+      ::         ?:  =(0 depth.skin)  ~
+      ::         [[%| 0 ~] $(depth.skin (dec depth.skin))]
+      ==
+    ::
     ::  -lose: make a $type by restricting .ref to exclude .skin
     ::
     ++  lose
@@ -10789,6 +10925,12 @@
       ==           ==
     --
   ++  mite  |=(ref/type |((nest | ref) (nest(sut ref) & sut)))
+  :: XX implement
+  ::
+  ++  caching-nest
+    |=  {tel/? ref/type}
+    ^-  [? _grub]
+    !!
   ++  nest
     ~/  %nest
     |=  {tel/? ref/type}
