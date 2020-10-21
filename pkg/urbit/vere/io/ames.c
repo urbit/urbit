@@ -1282,6 +1282,10 @@ _ames_io_talk(u3_auto* car_u)
 
   //  scry the protocol version out of arvo
   //
+  //    XX this should be re-triggered periodically,
+  //    or, better yet, %ames should emit a %turf
+  //    (or some other reconfig) effect when it is reset.
+  //
   u3_pier_peek_last(car_u->pir_u, u3_nul, c3__ax, u3_nul,
                     u3nt(u3i_string("protocol"), u3i_string("version"), u3_nul),
                     sam_u, _ames_prot_scry_cb);
