@@ -11254,6 +11254,19 @@
     =.  fan  (~(put in fan) leg)
     (play(sut p.leg) q.leg)
   ::
+  ++  caching-rest
+    |=  leg=[p=type q=hoon]
+    ^-  [type _grub]
+    =/  cached  (~(get by res.grub) leg)
+    ?^  cached
+      [u.cached grub]
+    ?:  (~(has in fan) leg)
+      ~>(%mean.'rest-loop' !!)
+    =.  fan  (~(put in fan) leg)
+    =/  played
+      (play(sut p.leg) q.leg)
+    [played grub(res (~(put by res.grub) leg played))]
+  ::
   ++  take
     |=  {vit/vein duz/$-(type type)}
     ^-  (pair axis type)
