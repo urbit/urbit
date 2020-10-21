@@ -1,7 +1,7 @@
 import React, { Component, PureComponent } from "react";
 import moment from "moment";
 import _ from "lodash";
-import { Box, Row, Text } from "@tlon/indigo-react";
+import { Box, Row, Text, Rule } from "@tlon/indigo-react";
 
 import { OverlaySigil } from './overlay-sigil';
 import { uxToHex, cite, writeText } from '~/logic/lib/util';
@@ -14,15 +14,15 @@ import RemoteContent from '~/views/components/RemoteContent';
 export const DATESTAMP_FORMAT = '[~]YYYY.M.D';
 
 export const UnreadMarker = React.forwardRef(({ dayBreak, when }, ref) => (
-  <div ref={ref} style={{ color: "#219dff" }} className="flex items-center f9 absolute w-100 left-0 pv0">
-    <hr style={{ borderColor: "#219dff" }} className="dn-s ma0 w2 bt-0" />
-    <p className="mh4 z-2" style={{ whiteSpace: 'normal' }}>New messages below</p>
-    <hr style={{ borderColor: "#219dff" }} className="ma0 flex-grow-1 bt-0" />
+  <Row ref={ref} color='blue' alignItems='center' fontSize='0' position='absolute' width='100%' py='2'>
+    <Rule borderColor='blue' display={['none', 'block']} m='0' width='2rem' />
+    <Text flexShrink='0' display='block' zIndex='2' mx='4' color='blue'>New messages below</Text>
+    <Rule borderColor='blue' flexGrow='1' m='0'/>
     {dayBreak
-      ? <p className="gray2 mh4">{moment(when).calendar()}</p>
+      ? <Text display='block' gray mx='4'>{moment(when).calendar()}</Text>
       : null}
-    <hr style={{ width: "calc(50% - 48px)" }} style={{ borderColor: "#219dff" }} className="ma0 bt-0" />
-  </div>
+    <Rule style={{ width: "calc(50% - 48px)" }} borderColor='blue' m='0' />
+  </Row>
 ));
 
 export const DayBreak = ({ when }) => (
@@ -125,7 +125,7 @@ export default class ChatMessage extends Component<ChatMessageProps> {
     };
 
     const unreadContainerStyle = {
-      height: isLastRead ? '1.66em' : '0',
+      height: isLastRead ? '2rem' : '0',
     };
 
     return (

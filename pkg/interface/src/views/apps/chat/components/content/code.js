@@ -19,6 +19,7 @@ export default class CodeContent extends Component {
           overflow='auto'
           maxHeight='10em'
           maxWidth='100%'
+          style={{ whiteSpace: 'pre' }}
           backgroundColor='scales.black10'
         >
           {content.code.output[0].join('\n')}
@@ -36,6 +37,7 @@ export default class CodeContent extends Component {
           overflow='auto'
           maxHeight='10em'
           maxWidth='100%'
+          style={{ whiteSpace: 'pre' }}
         >
           {content.code.expression}
         </Text>
