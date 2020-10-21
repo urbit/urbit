@@ -3,6 +3,11 @@
 ++  grow
   |%
   ++  noun  i
+  ++  notification-kind
+    ?+  index.p.i  ~
+      [@ ~]    `%link
+      [@ @ ~]  `%comment
+    ==
   --
 ++  grab
   |%
