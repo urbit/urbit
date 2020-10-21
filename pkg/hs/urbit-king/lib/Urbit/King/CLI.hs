@@ -44,6 +44,7 @@ data Opts = Opts
     , oHttpPort     :: Maybe Word16
     , oHttpsPort    :: Maybe Word16
     , oLoopbackPort :: Maybe Word16
+    , oInjectEvents :: [Injection]
     }
   deriving (Show)
 
@@ -75,6 +76,11 @@ data Nat
   = NatAlways
   | NatWhenPrivateNetwork
   | NatNever
+  deriving (Show)
+
+data Injection
+  = InjectOneEvent   FilePath
+  | InjectManyEvents FilePath
   deriving (Show)
 
 data New = New
@@ -221,6 +227,17 @@ pillFromURL = PillSourceURL <$> strOption
 pierPath :: Parser FilePath
 pierPath = strArgument (metavar "PIER" <> help "Path to pier")
 
+injectEvents :: Parser [Injection]
+injectEvents = many (InjectOneEvent <$> strOption ( short 'I'
+                          <> long "inject-event"
+                          <> metavar "JAM"
+                          <> help "Path to a jammed event")  <|>
+                     InjectManyEvents <$> strOption (
+                        long "inject-event-list"
+                     <> metavar "JAM LIST"
+                     <> help "Path to a jammed list of events"
+                    ))
+
 serfExe :: Parser (Maybe Text)
 serfExe =  optional
     $  strOption
@@ -305,6 +322,8 @@ opts = do
       <> long "loopback-port"
       <> help "Localhost-only HTTP port"
       <> hidden
+
+    oInjectEvents <- injectEvents
 
     oHashless  <- switch $ short 'S'
                         <> long "hashless"
