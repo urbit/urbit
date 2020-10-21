@@ -410,7 +410,7 @@
     =/  =invite
       :*  our.bol
           ?:(managed %contact-hook %chat-hook)
-          (de-path:resource ?:(managed group-path app-path))
+          (de-path:resource ?:(managed group-path ship+app-path))
           ship  ''
       ==
     =/  act=invite-action

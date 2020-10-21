@@ -17,7 +17,7 @@ const sortGroupsAlph = (a: Association, b: Association) =>
 export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
   const { associations, invites, api, ...boxProps } = props;
 
-  const incomingGroups = Object.values(invites?.['/contacts'] || {});
+  const incomingGroups = Object.values(invites?.['contacts'] || {});
   const getKeyByValue = (object, value) => {
     return Object.keys(object).find(key => object[key] === value);
   }
@@ -26,10 +26,12 @@ export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
     .sort(sortGroupsAlph);
 
   const acceptInvite = (invite) => {
-    const [, , ship, name] = invite.path.split('/');
-    const resource = { ship, name };
+    const resource = {
+      ship: `~${invite.resource.ship}`,
+      name: invite.resource.name
+    };
     return api.contacts.join(resource).then(() => {
-      api.invite.accept('/contacts', getKeyByValue(invites['/contacts'], invite));
+      api.invite.accept('contacts', getKeyByValue(invites['contacts'], invite));
     });
   };
 
@@ -54,10 +56,16 @@ export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
           borderRadius='2'
           borderColor='lightGray'
           p='2'
-          fontSize='0'
-        >
+          fontSize='0'>
           <Text display='block' pb='2' gray>You have been invited to:</Text>
-          <Text display='inline-block' overflow='hidden' maxWidth='100%' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }} title={invite.path.slice(6)}>{invite.path.slice(6)}</Text>
+          <Text
+            display='inline-block'
+            overflow='hidden'
+            maxWidth='100%'
+            style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}
+            title={`~${invite.resource.ship}/${invite.resource.name}`}>
+              {`~${invite.resource.ship}/${invite.resource.name}`}
+          </Text>
           <Box pt='5'>
             <Text
               onClick={() => acceptInvite(invite)}
@@ -68,7 +76,12 @@ export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
             </Text>
             <Text
               color='red'
-              onClick={() => api.invite.decline('/contacts', getKeyByValue(invites['/contacts'], invite))}
+              onClick={() =>
+                api.invite.decline(
+                  'contacts',
+                  getKeyByValue(invites['contacts'], invite)
+                )
+              }
               cursor='pointer'>
                 Reject
               </Text>
