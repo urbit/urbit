@@ -11245,6 +11245,17 @@
       *           ~>(%mean.'repo-fltt' !!)
     ==
   ::
+  ++  caching-repo
+    ^-  [type _grub]
+    ?-  sut
+      [%core *]   [[%cell %noun p.sut] grub]
+      [%face *]   [q.sut grub]
+      [%hint *]   [q.sut grub]
+      [%hold *]   (caching-rest [p.sut q.sut])
+      %noun       [(fork [%atom %$ ~] [%cell %noun %noun] ~) grub]
+      *           ~>(%mean.'repo-fltt' !!)
+    ==
+  ::
   ++  rest
     ~/  %rest
     |=  leg=[p=type q=hoon]
