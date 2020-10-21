@@ -17,6 +17,13 @@
   ;<  ~  bind:m
     (poke-our %group-push-hook %push-hook-action !>([%add rid]))
   (pure:m rid)
+::
+++  get-mark
+  |=  module=@t
+  ^-  (unit mark)
+  ?+  module  ~
+    %link  `%graph-validator-link
+  ==
 --
 ::
 =,  strand=strand:spider
@@ -32,7 +39,7 @@
 ?.  =(our.bowl entity.rid.action)
   (strand-fail:strandio %bad-request ~)
 =/  =update:graph
-  [%0 now.bowl %add-graph rid.action *graph:graph mark.action]
+  [%0 now.bowl %add-graph rid.action *graph:graph (get-mark module.action)]
 ;<  ~  bind:m
   (poke-our %graph-store graph-update+!>(update))
 ;<  ~  bind:m
