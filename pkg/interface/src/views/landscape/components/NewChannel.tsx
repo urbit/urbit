@@ -12,20 +12,19 @@ import GlobalApi from "~/logic/api/global";
 import { AsyncButton } from "~/views/components/AsyncButton";
 import { FormError } from "~/views/components/FormError";
 import { RouteComponentProps } from "react-router-dom";
-import { stringToSymbol } from "~/logic/lib/util";
+import { stringToSymbol, parentPath } from "~/logic/lib/util";
 import GroupSearch from "~/views/components/GroupSearch";
 import { Associations } from "~/types/metadata-update";
 import { useWaitForProps } from "~/logic/lib/useWaitForProps";
-import { Notebooks } from "~/types/publish-update";
 import { Groups } from "~/types/group-update";
 import { ShipSearch } from "~/views/components/ShipSearch";
-import { Rolodex } from "~/types";
+import { Rolodex, Workspace } from "~/types";
 
 interface FormSchema {
   name: string;
   description: string;
   ships: string[];
-  type: "chat" | "publish" | "links";
+  type: "chat" | "publish" | "link";
 }
 
 const formSchema = Yup.object({
@@ -41,6 +40,7 @@ interface NewChannelProps {
   contacts: Rolodex;
   groups: Groups;
   group?: string;
+  workspace: Workspace;
 }
 
 
@@ -72,7 +72,7 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
         case "publish":
           await props.api.publish.newBook(resId, name, description, group);
           break;
-        case "links":
+        case "link":
           if (group) {
             await api.graph.createManagedGraph(
               resId,
@@ -100,6 +100,8 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
         await waiter((p) => !!p?.groups?.[`/ship/~${window.ship}/${resId}`]);
       }
       actions.setStatus({ success: null });
+      const resourceUrl = parentPath(location.pathname);
+      history.push(`${resourceUrl}/resource/${type}${type === 'link' ? '/ship' : ''}/~${window.ship}/${resId}`);
     } catch (e) {
       console.error(e);
       actions.setStatus({ error: "Channel creation failed" });
@@ -132,7 +134,7 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
               <Box color="black" mb={2}>Channel Type</Box>
               <Radio label="Chat" id="chat" name="type" />
               <Radio label="Notebook" id="publish" name="type" />
-              <Radio label="Collection" id="links" name="type" />
+              <Radio label="Collection" id="link" name="type" />
             </Col>
             <Input
               id="name"
