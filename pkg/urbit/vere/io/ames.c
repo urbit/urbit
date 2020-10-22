@@ -868,16 +868,46 @@ _ames_forward(u3_panc* pac_u, u3_noun las)
   }
 
   {
-    u3_noun los = las;
     u3_noun pac = _ames_serialize_packet(pac_u, c3y);
-    while ( u3_nul != las ) {
-      _ames_ef_send(sam_u, u3k(u3h(las)), u3k(pac));
-      las = u3t(las);
+    u3_noun tag, dat, lan, t = las;
+
+    while ( u3_nul != t ) {
+      u3x_cell(t, &lan, &t);
+
+      //  validate lane and skip self if galaxy
+      //
+      if ( c3n == u3r_cell(lan, &tag, &dat) ) {
+        u3l_log("ames: bogus lane\n");
+        u3m_p("lan", lan);
+      }
+      else {
+        c3_o sen_o = c3y;
+        c3_d who_d[2];
+
+        if ( c3y == tag ) {
+          u3r_chubs(0, 2, who_d, dat);
+
+          if (  (who_d[0] == sam_u->pir_u->who_d[0])
+             && (who_d[1] == sam_u->pir_u->who_d[1]) )
+          {
+            sen_o = c3n;
+            if ( u3C.wag_w & u3o_verbose ) {
+              u3l_log("ames: forward skipping self\n");
+            }
+          }
+        }
+
+        if ( c3y == sen_o ) {
+          _ames_ef_send(sam_u, u3k(lan), u3k(pac));
+        }
+      }
     }
-    u3z(los); u3z(pac);
+
+    u3z(pac);
   }
 
   _ames_panc_free(pac_u);
+  u3z(las);
 }
 
 /*  _ames_lane_scry_cb(): learn lane to forward packet on
