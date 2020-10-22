@@ -40,9 +40,8 @@
 ++  on-load
   |=  old=vase
   ^-  (quip card _this)
-  :_  this(state !<(state-0 old))
-  ~
-  ::
+  `this(state !<(state-0 old))
+::
 ++  on-watch  on-watch:def
 ::
 ++  on-poke
@@ -118,7 +117,7 @@
     =/  =index:store
       [%group resource.update -.update]
     :_  state
-    ~[(add-unread:ha index notification)]
+    ~[(add-unread index notification)]
   ::  +metadata-update is stubbed for now, for the following reasons
   ::    - There's no semantic difference in metadata-store between
   ::    adding and editing a channel
@@ -128,6 +127,12 @@
     |=  update=metadata-update:metadata-store
     ^-  (quip card _state)
     [~ state]
+  ::
+  ++  add-unread
+    |=  [=index:store =notification:store]
+    ^-  card 
+    =-  [%pass / %agent [our.bowl %hark-store] %poke -]
+    hark-action+!>([%add index notification])
   --
 ::
 ++  on-peek  on-peek:def
@@ -138,11 +143,6 @@
 --
 |_  =bowl:gall
 +*  met  ~(. metadata bowl)
-::
-++  add-unread
-  |=  [=index:store =notification:store]
-  ^-  card 
-  [%pass / %agent [our.bowl %hark-store] %poke %hark-action !>([%add index notification])]
 ::
 ++  watch-groups
   ^-  card
