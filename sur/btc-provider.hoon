@@ -3,7 +3,7 @@
 +$  btc-credentials  [rpc-url=@t rpc-user=@t rpc-password=@t]
 +$  electrum-credentials  [rpc-url=@t]
 +$  credentials  [bc=btc-credentials ec=electrum-credentials]
-+$  status  [creds=credentials connected=? clients=(set ship)]
++$  host-info  [creds=credentials connected=? clients=(set ship)]
 +$  action
   $%  [%get-address-info =address]
   ==
@@ -23,6 +23,7 @@
   ==
 ++  rpc
   |%
+  +$  type  $?(%erpc %brpc)
   +$  action
     $%  [%erpc request:electrum]
         [%brpc request:bitcoin-core]
@@ -47,5 +48,6 @@
     +$  response  btc-node-hook-response:bnh
     --
   --
+
 --
 
