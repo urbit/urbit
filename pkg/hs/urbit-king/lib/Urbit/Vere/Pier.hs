@@ -183,7 +183,7 @@ bootNewShip pill lite ship bootEv = do
   let logPath = (pierPath </> ".urb/log")
 
   rwith (Log.new logPath ident) $ \log -> do
-    logInfo "Event log initialized."
+    logInfo "Event log onitialized."
     jobs <- (\now -> bootSeqJobs now seq) <$> io Time.now
     writeJobs log (fromList jobs)
 
@@ -361,27 +361,26 @@ pier (serf, log) vSlog startedSig injected = do
   tExec <- acquireWorker "Effects" (router slog (readTQueue executeQ) drivz)
   tDisk <- acquireWorkerBound "Persist" (runPersist log persistQ execute)
 
-  -- Now that the Serf is configurated, the IO drivers are hooked up, their
+  -- Now that the Serf is configured, the IO drivers are hooked up, their
   -- starting events have been dispatched, and the terminal is live, we can now
   -- handle injecting events requested from the command line.
-  unless (null injected) $ rio $ do
-    for_ (zip [1..] injected) $ \(num, ev) -> do
-      logTrace $ display @Text ("Injecting event " ++ (tshow num) ++ " of " ++
-                                (tshow $ length injected) ++ "...")
-      okaySig :: MVar (Either [Goof] ()) <- newEmptyMVar
+  for_ (zip [1..] injected) $ \(num, ev) -> rio $ do
+    logTrace $ display @Text ("Injecting event " ++ (tshow num) ++ " of " ++
+                              (tshow $ length injected) ++ "...")
+    okaySig :: MVar (Either [Goof] ()) <- newEmptyMVar
 
-      let inject = atomically $ compute $ RRWork $ EvErr ev $ cb
-          cb :: WorkError -> IO ()
-          cb = \case
-            RunOkay _         -> putMVar okaySig (Right ())
-            RunSwap _ _ _ _ _ -> putMVar okaySig (Right ())
-            RunBail goofs     -> putMVar okaySig (Left goofs)
+    let inject = atomically $ compute $ RRWork $ EvErr ev $ cb
+        cb :: WorkError -> IO ()
+        cb = \case
+          RunOkay _         -> putMVar okaySig (Right ())
+          RunSwap _ _ _ _ _ -> putMVar okaySig (Right ())
+          RunBail goofs     -> putMVar okaySig (Left goofs)
 
-      io inject
+    io inject
 
-      takeMVar okaySig >>= \case
-        Left goof -> error ("Goof in injected event: " <> show goof)
-        Right ()  -> pure ()
+    takeMVar okaySig >>= \case
+      Left goof -> error ("Goof in injected event: " <> show goof)
+      Right ()  -> pure ()
 
 
   let snapshotEverySecs = 120
