@@ -1,4 +1,4 @@
-/-  *btc, bnh=btc-node-hook
+/-  *btc, brpc=btc-node-hook, erpc=electrum-rpc
 |%
 +$  btc-credentials  [rpc-url=@t rpc-user=@t rpc-password=@t]
 +$  electrum-credentials  [rpc-url=@t]
@@ -13,7 +13,7 @@
       [%get-balance (set [=address balance=sats])]
       [%get-transactions ~]
   ==
-+$  update                              :: sub updates from /clients path (connection etc.)
++$  update                              ::  sub updates from /clients path (connection etc.)
   $%  [%status connected=?]
   ==
 ::
@@ -23,7 +23,6 @@
   ==
 ++  rpc
   |%
-  +$  type  $?(%erpc %brpc)
   +$  action
     $%  [%erpc request:electrum]
         [%brpc request:bitcoin-core]
@@ -34,18 +33,13 @@
     ==
   ++  electrum
     |%
-    +$  request
-      $%  [%get-address-balance =address]
-          [%get-address-utxos =address]
-      ==
-    +$  response
-      $%  [%get-address-utxos utxos=(set utxo)]
-      ==
+    +$  request  request:erpc
+    +$  response  response:erpc
     --
   ++  bitcoin-core
     |%
-    +$  request  btc-node-hook-action:bnh
-    +$  response  btc-node-hook-response:bnh
+    +$  request  btc-node-hook-action:brpc
+    +$  response  btc-node-hook-response:brpc
     --
   --
 
