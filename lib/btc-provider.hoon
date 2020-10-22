@@ -5,9 +5,9 @@
 =,  sur
 |%
 ++  btc-rpc-auth-header
-  |=  =status
-  =*  user  rpc-user.bc.creds.status
-  =*  pass  rpc-password.bc.creds.status
+  |=  =host-info
+  =*  user  rpc-user.bc.creds.host-info
+  =*  pass  rpc-password.bc.creds.host-info
   :-  'Authorization'
   ;:  (cury cat 3)
       'Basic '
@@ -15,14 +15,14 @@
       (as-octs:mimes:html :((cury cat 3) user ':' pass))
   ==
 ++  btc-gen-request
-  |=  [=status req=request:bitcoin-core:rpc]
+  |=  [=host-info req=request:bitcoin-core:rpc]
   ^-  request:http
-  =*  endpoint  rpc-url.bc.creds.status
+  =*  endpoint  rpc-url.bc.creds.host-info
   =/  body=request:rpc:jstd
     (request-to-rpc:btc-rpc:blib req)
   =/  =header-list:http
     :~  ['Content-Type' 'application/json']
-        (btc-rpc-auth-header status)
+        (btc-rpc-auth-header host-info)
     ==
   :*  %'POST'
       endpoint
@@ -34,18 +34,18 @@
    ==
 ::
 ++  electrum-gen-request
-  |=  [=status req=request:electrum:rpc]
+  |=  [=host-info req=request:electrum:rpc]
   %+  request-to-http:electrum-rpc:elib
-  rpc-url.ec.creds.status  req
+  rpc-url.ec.creds.host-info  req
 ::
 ++  gen-request
-  |=  [=status ract=action:rpc]
+|=  [=host-info ract=action:rpc]
   ^-  request:http
   ?-  -.ract
       %erpc
-    (electrum-gen-request status +.ract)
+    (electrum-gen-request host-info +.ract)
       %brpc
-    (btc-gen-request status +.ract)
+    (btc-gen-request host-info +.ract)
   ==
 ::
 ++  to-response

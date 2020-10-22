@@ -7,7 +7,7 @@
     $%  state-0
     ==
 ::
-+$  state-0  [%0 =status whitelist=(set ship)]
++$  state-0  [%0 =host-info whitelist=(set ship)]
 ::
 +$  card  card:agent:gall
 ::
@@ -25,7 +25,7 @@
 ++  on-init
   ^-  (quip card _this)
   ~&  >  '%btc-provider initialized successfully'
-  `this(status [*credentials connected=%.n clients=*(set ship)], whitelist *(set ship))
+  `this(host-info [*credentials connected=%.n clients=*(set ship)], whitelist *(set ship))
 ++  on-save
   ^-  vase
   !>(state)
@@ -47,7 +47,7 @@
     ~|  "Not connected to RPC endpoints"
     ?+  mark  (on-poke:def mark vase)
         %btc-provider-action
-      ?>  connected.status
+      ?>  connected.host-info
       (handle-action:hc !<(action vase))
     ==
   [cards this]
@@ -58,8 +58,8 @@
   `this
 ::  ?>  (is-whitelisted:hc src.bowl)
 ::  ~&  >  "added client {<src.bowl>}"
-::  :_  this(clients.status (~(put in clients.status) src.bowl))
-::  ~[[%give %fact ~ [%btc-provider-update !>([%status connected.status])]]]
+::  :_  this(clients.host-info (~(put in clients.host-info) src.bowl))
+::  ~[[%give %fact ~ [%btc-provider-update !>([%status connected.host-info])]]]
 ::
 ++  on-leave  on-leave:def
 ++  on-peek   on-peek:def
@@ -80,21 +80,26 @@
 |_  =bowl:gall
 ++  handle-action
   |=  act=action
-  ^-  (quip card _state)
-  =/  out  *outbound-config:iris
-  =/  req=request:http
+  |^  ^-  (quip card _state)
+  =/  ract=action:rpc
     ?-  -.act
         %get-address-info
-      (gen-request status [%erpc %get-address-utxos address.act])
+      [%erpc %get-address-utxos address.act]
     ==
-  :_  state
-  ~[[%pass /[-.act]/[(scot %da now.bowl)] %arvo %i %request req out]]
+  [~[(req-card act ract)] state]
+  ++  req-card
+    |=  [act=action ract=action:rpc]
+    =|  out=outbound-config:iris
+    =/  req=request:http
+      (gen-request host-info ract)
+    [%pass /[-.act]/[-.ract]/[(scot %da now.bowl)] %arvo %i %request req out]
+  --
 ++  handle-command
   |=  comm=command
   ^-  (quip card _state)
   ?-  -.comm
       %set-credentials
-    `state(status [creds.comm connected=%.y clients=*(set ship)])
+    `state(host-info [creds.comm connected=%.y clients=*(set ship)])
     ::
       %whitelist-clients
     `state(whitelist (~(uni in whitelist) clients.comm))
@@ -106,9 +111,10 @@
   =*  status  status-code.response-header.response
   =/  rpc-resp=response:rpc:jstd
     (get-rpc-response response)
-  ?+  -.wire  `state
-      %get-address-info
-    ~&  >  "get-address-info response"
+  ::  TODO: error handling goes here
+  ?+  wire  `state
+      [%get-address-info *]
+    ~&  >>  +<.wire
     ~&  >  rpc-resp
     `state
   ==
@@ -119,7 +125,7 @@
   ==
 ++  is-client
   |=  user=ship  ^-  ?
-  (~(has in clients.status) user)
+  (~(has in clients.host-info) user)
 ::
 ++  httr-to-rpc-response
   |=  hit=httr:eyre
