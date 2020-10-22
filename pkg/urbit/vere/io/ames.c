@@ -851,6 +851,22 @@ _ames_forward(u3_panc* pac_u, u3_noun las)
     u3l_log("ames: forwarded %" PRIu64 " total\n", sam_u->sat_u.fow_d);
   }
 
+  if ( u3C.wag_w & u3o_verbose ) {
+    u3_noun sen = u3dc("scot", 'p', u3i_chubs(2, pac_u->bod_u.sen_d));
+    u3_noun rec = u3dc("scot", 'p', u3i_chubs(2, pac_u->bod_u.rec_d));
+    c3_c* sen_c = u3r_string(sen);
+    c3_c* rec_c = u3r_string(rec);
+    c3_y* pip_y = (c3_y*)&pac_u->ore_u.pip_w;
+
+    u3l_log("ames: forwarding for %s to %s from %d.%d.%d.%d:%d\n",
+            sen_c, rec_c,
+            pip_y[0], pip_y[1], pip_y[2], pip_y[3],
+            pac_u->ore_u.por_s);
+
+    c3_free(sen_c); c3_free(rec_c);
+    u3z(sen); u3z(rec);
+  }
+
   {
     u3_noun los = las;
     u3_noun pac = _ames_serialize_packet(pac_u, c3y);
