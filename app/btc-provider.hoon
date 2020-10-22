@@ -57,7 +57,7 @@
   ~&  >>  pax
   `this
 ::  ?>  (is-whitelisted:hc src.bowl)
-::  ~&  >  "added client {<src.bowl>}"
+::   ~&  >  "added client {<src.bowl>}"
 ::  :_  this(clients.host-info (~(put in clients.host-info) src.bowl))
 ::  ~[[%give %fact ~ [%btc-provider-update !>([%status connected.host-info])]]]
 ::
