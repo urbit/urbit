@@ -79,11 +79,10 @@
         ?~  existing-notif
           notification
         (merge-notification:ha u.existing-notif notification)
-      =.  timebox
+      =/  new-timebox=timebox:store
         (~(put by timebox) index new)
-      =.  notifications
-        (put:orm notifications last-seen timebox)
-      :_(state (give:ha [/updates]~ %add index notification))
+      :-  (give:ha [/updates]~ %add index notification)
+      state(notifications (put:orm notifications last-seen new-timebox))
     ::
     ++  do-archive
       |=  [time=@da =index:store]
@@ -92,19 +91,19 @@
         (gut-orm:ha notifications time)
       =/  =notification:store
         (~(got by timebox) index)
-      =.  timebox
+      =/  new-timebox=timebox:store
         (~(del by timebox) index)
       :-  (give:ha [/updates]~ %archive time index)
       %_  state
         ::
           notifications
-        (put:orm notifications time timebox)
+        (put:orm notifications time new-timebox)
         ::
           archive
         %^  jub-orm:ha  archive  time
-        |=  =timebox:store
+        |=  archive-box=timebox:store
         ^-  timebox:store
-        (~(put by timebox) index notification)
+        (~(put by archive-box) index notification)
       ==
     ::
     ++  read
@@ -169,13 +168,15 @@
   |=  =notification:store
   notification(read read)
 ::  +jub-orm: combo +jab/+gut for ordered maps
+::    TODO: move to zuse.hoon
 ++  jub-orm
   |=  [=notifications:store time=@da fun=$-(timebox:store timebox:store)]
   ^-  notifications:store
   =/  =timebox:store
     (fun (gut-orm notifications time))
   (put:orm notifications time timebox)
-::
+::  +gut-orm: +gut:by for ordered maps
+::    TODO: move to zuse.hoon
 ++  gut-orm
   |=  [=notifications:store time=@da]
   ^-  timebox:store
