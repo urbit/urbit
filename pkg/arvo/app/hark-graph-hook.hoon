@@ -101,6 +101,7 @@
   ++  graph-update
     |=  =update:graph-store
     ^-  (quip card _state)
+    |^
     ?.  ?=(%add-nodes -.q.update)
       [~ state]
     =/  group=resource
@@ -108,10 +109,10 @@
     =/  =metadata:metadata-store
       (need (peek-metadata:met %graph group resource.q.update))
     =*  rid  resource.q.update
-    =+  (scry:ha ,mark=(unit mark) /gx/graph-store/graph-mark/(scot %p entity.rid)/[name.rid]/noun)
+    =+  (scry ,mark=(unit mark) /gx/graph-store/graph-mark/(scot %p entity.rid)/[name.rid]/noun)
     ?~  mark
       [~ state]
-    =+  (scry:ha ,=tube:clay /cc/[q.byk.bowl]/[u.mark]/notification-kind)
+    =+  (scry ,=tube:clay /cc/[q.byk.bowl]/[u.mark]/notification-kind)
     :_  state
     ^-  (list card)
     %+  murn
@@ -123,7 +124,20 @@
       ~
     =/  =index:store
       [%graph group rid module.metadata u.notification-kind]
-    `(add-unread:ha index [time-sent.post.node %.n [%graph contents.post.node]]) 
+    `(add-unread index [time-sent.post.node %.n [%graph contents.post.node]]) 
+    ::
+    ++  add-unread
+      |=  [=index:store =notification:store]
+      ^-  card 
+      =-  [%pass / %agent [our.bowl %hark-store] %poke -]
+      hark-action+!>([%add index notification])
+    ::
+    ++  scry
+      |*  [=mold p=path]
+      ?>  ?=(^ p)
+      ?>  ?=(^ t.p)
+      .^(mold i.p (scot %p our.bowl) i.t.p (scot %da now.bowl) t.t.p)
+    --
   --
 ::
 ++  on-peek  on-peek:def
@@ -133,20 +147,8 @@
 ++  on-fail   on-fail:def
 --
 |_  =bowl:gall
-+*  met  ~(. metadata bowl)
-::
-++  add-unread
-  |=  [=index:store =notification:store]
-  ^-  card 
-  [%pass / %agent [our.bowl %hark-store] %poke %hark-action !>([%add index notification])]
 ::
 ++  watch-graph
   ^-  card
   [%pass /graph %agent [our.bowl %graph-store] %watch /updates]
-::
-++  scry
-  |*  [=mold p=path]
-  ?>  ?=(^ p)
-  ?>  ?=(^ t.p)
-  .^(mold i.p (scot %p our.bowl) i.t.p (scot %da now.bowl) t.t.p)
 --
