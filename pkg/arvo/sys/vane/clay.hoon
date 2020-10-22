@@ -611,6 +611,45 @@
         ^+  sam
         [p:bunt noun]
       --
+    ::  +get-says: get staticized mark definition
+    ::
+    ::  TODO: cache?
+    ::
+    ++  get-says
+      |=  mak=mark
+      ^-  [vase state]
+      =^  cor=vase  nub  (build-fit %mar mak)
+      =^  =dais  nub  (get-mark mak)
+      =/  sut  :(slop !>(day=dais) cor(p [%face %raw p.cor]) !>(..zuse))
+      =/  =hoon
+        :^  %tsnt  %typ  !,(*hoon noun:grab:raw)
+        :^  %tsnt  %dif  !,(*hoon dorm:grad:raw)
+        !,  *hoon
+        ^-  (says:clay typ dif)
+        |_  sam=typ
+        +*  d  ~(. day !>(sam))
+        ++  bunt  !<(typ bunt:d)
+        ++  diff  |=(typ !<(dif (diff:d !>(+<))))
+        ++  form  form:d
+        ++  join
+          |=  [a=dif b=dif]
+          ^-  (unit (unit dif))
+          =/  r  (join:d !>(a) !>(b))
+          ?~  r  ~
+          ?~  u.r  `~
+          ``!<(dif u.u.r)
+        ::
+        ++  mash
+          |=  [[=a=ship =a=desk a=dif] [=b=ship =b=desk b=dif]]
+          =/  r  (mash:d [a-ship a-desk !>(a)] [b-ship b-desk !>(b)])
+          ?~  r  ~
+          `!<(dif u.r)
+        ::
+        ++  pact  |=(dif !<(typ (pact:d !>(+<))))
+        ++  vale  |=(noun !<(typ (vale:d +<)))
+        ++  volt  |=(noun !<(typ (volt:d +<)))
+        --
+      [(slap sut hoon) nub]
     ::  +get-cast: produce a $tube mark conversion gate from .a to .b
     ::
     ++  get-cast
@@ -2738,6 +2777,7 @@
           $b  ~|  %i-guess-you-ought-to-build-your-own-marks  !!
           $c  ~|  %casts-should-be-compiled-on-your-own-ship  !!
           $d  ~|  %totally-temporary-error-please-replace-me  !!
+          $e  ~|  %even-static-dais-should-not-cross-network  !!
           $p  ~|  %requesting-foreign-permissions-is-invalid  !!
           $r  ~|  %no-cages-please-they-are-just-way-too-big  !!
           $s  ~|  %please-dont-get-your-takos-over-a-network  !!
@@ -3539,6 +3579,23 @@
         (get-cast:(ford:fusion static-ford-args) [i i.t]:path)
       :_(fod.dom [~ ~ %& %tube !>(tube)])
     ::
+    ++  read-e
+      !.
+      |=  [=aeon =path]
+      ^-  [(unit (unit (each cage lobe))) ford-cache]
+      ?.  =(aeon let.dom)
+        [~ fod.dom]
+      ?.  ?=([@ ~] path)
+        [[~ ~] fod.dom]
+      ::  TODO: cache?
+      ::  =/  cached=(unit [=tube *])  (~(get by casts.fod.dom) [i i.t]:path)
+      ::  ?^  cached
+      ::    :_(fod.dom [~ ~ %& %tube !>(tube.u.cached)])
+      =^  =vase  fod.dom
+        %-  wrap:fusion
+        (get-says:(ford:fusion static-ford-args) i.path)
+      :_(fod.dom [~ ~ %& %says vase])
+    ::
     ::  Gets the permissions that apply to a particular node.
     ::
     ::  If the node has no permissions of its own, we use its parent's.
@@ -3899,6 +3956,7 @@
         %a  (read-a yon path.mun)
         %b  (read-b yon path.mun)
         %c  (read-c yon path.mun)
+        %e  (read-e yon path.mun)
         %p  :_(fod (read-p path.mun))
         %r  :_(fod (bind (read-r yon path.mun) (lift |=(a=cage [%& a]))))
         %s  :_(fod (bind (read-s yon path.mun) (lift |=(a=cage [%& a]))))
