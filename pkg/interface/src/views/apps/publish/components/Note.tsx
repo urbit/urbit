@@ -46,7 +46,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
   if (window.ship === note?.post?.author) {
     adminLinks = (
       <Box display="inline-block" verticalAlign="middle">
-        <Link to={`${baseUrl}/note/${noteId}/edit`}>
+        <Link to={`${baseUrl}/edit`}>
         <Text
           color="green"
           ml={2}

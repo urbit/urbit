@@ -1,9 +1,10 @@
 import React from "react";
+import _ from 'lodash';
 import { PostFormSchema, PostForm } from "./NoteForm";
 import { FormikHelpers } from "formik";
 import GlobalApi from "~/logic/api/global";
-import { RouteComponentProps } from "react-router-dom";
-import { GraphNode, TextContent } from "~/types";
+import { RouteComponentProps, useLocation } from "react-router-dom";
+import { GraphNode, TextContent, Association } from "~/types";
 import { getLatestRevision, editPost } from "~/logic/lib/publish";
 import {useWaitForProps} from "~/logic/lib/useWaitForProps";
 interface EditPostProps {
@@ -17,6 +18,7 @@ interface EditPostProps {
 export function EditPost(props: EditPostProps & RouteComponentProps) {
   const { note, book, noteId, api, ship, history } = props;
   const [revNum, title, body] = getLatestRevision(note);
+  const location = useLocation();
 
   const waiter = useWaitForProps(props);
   const initial: PostFormSchema = {
@@ -37,7 +39,8 @@ export function EditPost(props: EditPostProps & RouteComponentProps) {
         const [rev] = getLatestRevision(p.note);
         return rev === newRev;
       });
-      history.push(`/~publish/notebook/ship/${ship}/${book}/note/${noteId}`);
+      const noteUrl = _.dropRight(location.pathname.split('/'), 1).join('/');
+      history.push(noteUrl);
     } catch (e) {
       console.error(e);
       actions.setStatus({ error: "Failed to edit notebook" });
