@@ -1,5 +1,4 @@
 import React  from 'react';
-import classnames from 'classnames';
 import { Text, Icon } from '@tlon/indigo-react';
 
 import Tile from './tile';
@@ -23,7 +22,7 @@ export default class BasicTile extends React.PureComponent {
               verticalAlign='top'
               pt='5px'
               pr='2px'
-            />
+              />
             : null
           }{props.title}
         </Text>
