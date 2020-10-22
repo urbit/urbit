@@ -190,7 +190,7 @@ _ames_etch_head(u3_head* hed_u, c3_y buf_y[4])
 }
 
 /* _ames_chub_bytes(): c3_y[8] to c3_d
-** XX move
+** XX factor out, deduplicate with other conversions
 */
 static inline c3_d
 _ames_chub_bytes(c3_y byt_y[8])
@@ -206,7 +206,6 @@ _ames_chub_bytes(c3_y byt_y[8])
 }
 
 /* _ames_ship_to_chubs(): pack [len_y] bytes into c3_d[2]
-** XX move
 */
 static inline void
 _ames_ship_to_chubs(c3_d sip_d[2], c3_y len_y, c3_y* buf_y)
@@ -219,7 +218,7 @@ _ames_ship_to_chubs(c3_d sip_d[2], c3_y len_y, c3_y* buf_y)
 }
 
 /* _ames_chub_bytes(): c3_d to c3_y[8]
-** XX move
+** XX factor out, deduplicate with other conversions
 */
 static inline void
 _ames_bytes_chub(c3_y byt_y[8], c3_d num_d)
@@ -235,7 +234,6 @@ _ames_bytes_chub(c3_y byt_y[8], c3_d num_d)
 }
 
 /* _ames_ship_of_chubs(): unpack c3_d[2] into [len_y] bytes.
-** XX move
 */
 static inline void
 _ames_ship_of_chubs(c3_d sip_d[2], c3_y len_y, c3_y* buf_y)
