@@ -703,7 +703,7 @@
       (handle-request:authentication secure address request)
     ::
         %logout
-      (handle-logout:authentication authenticated request)
+      (handle-logout:authentication secure authenticated request)
     ::
         %channel
       (handle-request:by-channel secure authenticated address request)
@@ -896,7 +896,9 @@
         (~(put by sessions.authentication-state.state) session [expires-at ~])
       ::
       =/  cookie-line=@t
-        (session-cookie-string session &)
+        =/  origin=(unit origin)
+          (get-header:http 'origin' header-list.request)
+        (session-cookie-string session secure ?=(^ origin) &)
       ::
       =;  out=[moves=(list move) server-state]
         ::  if we didn't have any cookies previously, start the expiry timer
@@ -930,7 +932,7 @@
     ::  +handle-logout: handles an http request for logging out
     ::
     ++  handle-logout
-      |=  [authenticated=? =request:http]
+      |=  [secure=? authenticated=? =request:http]
       ^-  [(list move) server-state]
       ::  whatever we end up doing, we always redirect to the login page
       ::
@@ -945,7 +947,10 @@
         (session-id-from-request request)
       =?  headers.response-header.response  ?=(^ session-id)
         :_  headers.response-header.response
-        ['set-cookie' (session-cookie-string u.session-id |)]
+        =/  origin=(unit origin)
+          (get-header:http 'origin' header-list.request)
+        :-  'set-cookie'
+        (session-cookie-string u.session-id secure ?=(^ origin) |)
       ?.  &(authenticated ?=(^ session-id))
         (handle-response response)
       ::  delete the requesting session, or all sessions if so specified
@@ -1031,14 +1036,21 @@
     ::  +session-cookie-string: compose session cookie
     ::
     ++  session-cookie-string
-      |=  [session=@uv extend=?]
+      |=  [session=@uv secure=? cross-origin=? extend=?]
       ^-  @t
       %-  crip
-      =;  max-age=tape
-        "urbauth-{<our>}={<session>}; Path=/; Max-Age={max-age}"
-      %-  format-ud-as-integer
-      ?.  extend  0
-      (div (msec:milly session-timeout) 1.000)
+      =/  max-age=tape
+        %-  format-ud-as-integer
+        ?.  extend  0
+        (div (msec:milly session-timeout) 1.000)
+      %+  weld
+        "urbauth-{<our>}={<session>}; Path=/; Max-Age={max-age}; "
+      %+  weld
+        ?.  secure  ""
+        " Secure;"
+      ?:  &(cross-origin secure)
+        "SameSite=None;"
+      "SameSite=Lax;"
     --
   ::  +channel: per-event handling of requests to the channel system
   ::
@@ -1802,6 +1814,12 @@
           ?^  response-header.u.connection-state
             ~&  [%http-multiple-start duct]
             error-connection
+          ::
+          =/  connection=outstanding-connection
+            (~(got by connections.state) duct)
+          =/  origin=(unit origin)
+            %+  get-header:http  'origin'
+            header-list.request.inbound-request.connection
           ::  if request was authenticated, extend the session & cookie's life
           ::
           =^  response-header  sessions.authentication-state.state
@@ -1827,17 +1845,12 @@
                 session(expiry-time (add now session-timeout))
             =-  response-header.http-event(headers -)
             %^  set-header:http  'set-cookie'
-              (session-cookie-string u.session-id &)
+              %+  session-cookie-string  u.session-id
+              [secure.inbound ?=(^ origin) &]
             headers.response-header.http-event
-          ::
-          =/  connection=outstanding-connection
-            (~(got by connections.state) duct)
           ::  if the request was a simple cors request from an approved origin
           ::  append the necessary cors headers to the response
           ::
-          =/  origin=(unit origin)
-            %+  get-header:http  'origin'
-            header-list.request.inbound-request.connection
           =?  headers.response-header
               ?&  ?=(^ origin)
                   (~(has in approved.cors-registry.state) u.origin)
