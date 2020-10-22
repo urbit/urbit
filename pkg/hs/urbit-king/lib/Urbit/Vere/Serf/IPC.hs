@@ -250,8 +250,8 @@ recvPeek :: Serf -> IO (Maybe (Term, Noun))
 recvPeek serf = do
   recvPleaHandlingSlog serf >>= \case
     PPeek (SDone peek) -> pure peek
-    -- XX produce error
-    PPeek (SBail dud)  -> throwIO (PeekBail dud)
+    -- XX surface error content
+    PPeek (SBail dud)  -> pure Nothing
     plea               -> throwIO (UnexpectedPlea (toNoun plea) "expecting %peek")
 
 
