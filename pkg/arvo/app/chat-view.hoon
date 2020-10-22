@@ -6,7 +6,7 @@
 /-  *permission-store,
     *permission-hook,
     *group,
-    *invite-store,
+    inv=invite-store,
     *metadata-store,
     group-hook,
     *permission-group-hook,
@@ -407,13 +407,13 @@
     ^-  card
     =/  managed=?
       !=(ship+app-path group-path)
-    =/  =invite
+    =/  =invite:inv
       :*  our.bol
           ?:(managed %contact-hook %chat-hook)
           (de-path:resource ?:(managed group-path ship+app-path))
           ship  ''
       ==
-    =/  act=invite-action
+    =/  act=action:inv
       [%invite ?:(managed %contacts %chat) (shaf %msg-uid eny.bol) invite]
     [%pass / %agent [our.bol %invite-hook] %poke %invite-action !>(act)]
   ::

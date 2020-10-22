@@ -40,7 +40,7 @@
   ==
 ::
 ++  update-to-json
-  |=  upd=invite-update
+  |=  upd=update
   =,  enjs:format
   ^-  json
   %+  frond  %invite-update
@@ -89,7 +89,7 @@
 ::
 ++  json-to-action
   |=  jon=json
-  ^-  invite-action
+  ^-  action
   =,  dejs:format
   =<  (parse-json jon)
   |%
@@ -131,4 +131,3 @@
     ==
   --
 --
-

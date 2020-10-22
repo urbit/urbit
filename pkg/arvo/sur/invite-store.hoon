@@ -10,6 +10,14 @@
       text=cord       ::  text to describe the invite
   ==
 ::
++$  multi-invite
+  $:  =ship                  ::  ship to subscribe to upon accepting invite
+      app=@tas               ::  app to subscribe to upon accepting invite
+      =resource              ::  path to subscribe to upon accepting invite
+      recipients=(set ship)  ::  recipient to receive invite
+      text=cord              ::  text to describe the invite
+  ==
+::
 ::  +invites: each application using invites creates its own resource that
 ::  contains a map of serial to invite. this allows it to only receive
 ::  invites that it is concerned with
@@ -25,12 +33,13 @@
       [%decline =term uid=serial]         ::  decline an invite at term/uid
   ==
 ::
-+$  invite-action
++$  action
   $%  invite-base
       [%accept =term uid=serial]            ::  accept an invite at term/uid
+      [%invites =term uid=serial invites=multi-invite]
   ==
 ::
-+$  invite-update
++$  update
   $%  invite-base
       [%initial =invites]
       [%invitatory =invitatory]                 ::  receive invitatory

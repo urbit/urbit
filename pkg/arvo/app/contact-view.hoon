@@ -5,7 +5,7 @@
 ::
 /-
     group-hook,
-    *invite-store,
+    inv=invite-store,
     *contact-hook,
     *metadata-store,
     *metadata-hook,
@@ -271,11 +271,11 @@
   [%pass / %agent [entity.rid app] %poke cage]
 ::
 ++  send-invite
-  |=  =invite
+  |=  =invite:inv
   ^-  card
   =/  =cage
     :-  %invite-action
-    !>  ^-  invite-action
+    !>  ^-  action:inv
     [%invite %contacts (shaf %invite-uid eny.bol) invite]
   [%pass / %agent [recipient.invite %invite-hook] %poke cage]
 ::

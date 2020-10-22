@@ -4,7 +4,7 @@
 /-  group-hook,
     *contact-hook,
     *contact-view,
-    *invite-store,
+    inv=invite-store,
     *metadata-hook,
     *metadata-store,
     *group
@@ -470,7 +470,7 @@
   --
 ::
 ++  invite-poke
-  |=  act=invite-action
+  |=  act=action:inv
   ^-  card
   [%pass / %agent [our.bol %invite-store] %poke %invite-action !>(act)]
 ::

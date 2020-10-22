@@ -35,22 +35,44 @@
   :_  this
   ?+  mark  (on-poke:def mark vase)
       %invite-action
-    =/  act=invite-action  !<(invite-action vase)
-    ?.  ?=(%invite -.act)  ~
-    ?:  (team:title [our src]:bowl)
-      ::  outgoing. we must be inviting another ship. send them the invite.
+    =/  act=action  !<(action vase)
+    ?+  -.act     ~
+        %invites
+      ?.  (team:title [our src]:bowl)  ~
+      ::  outgoing. we must be inviting other ships. send them each an invite
       ::
-      ?<  (team:title our.bowl recipient.invite.act)
-      [(invite-hook-poke recipient.invite.act act)]~
-    ::  else incoming. ensure invitatory exists and invite is not a duplicate.
+      %+  turn  ~(tap in recipients.invites.act)
+      |=  recipient=ship
+      ^-  card
+      ?<  (team:title our.bowl recipient)
+      %+  invite-hook-poke  recipient
+      :^  %invite 
+          term.act
+        uid.act
+      ^-  invite
+      :*  ship.invites.act
+          app.invites.act
+          resource.invites.act
+          recipient
+          text.invites.act
+      ==
     ::
-    ?>  ?=(^ (invitatory-scry term.act))
-    ?>  ?=(~ (invite-scry term.act uid.act))
-    [(invite-poke term.act act)]~
+        %invite
+      ?:  (team:title [our src]:bowl)
+        ::  outgoing. we must be inviting another ship. send them the invite.
+        ::
+        ?<  (team:title our.bowl recipient.invite.act)
+        [(invite-hook-poke recipient.invite.act act)]~
+      ::  else incoming. ensure invitatory exists and invite is not a duplicate.
+      ::
+      ?>  ?=(^ (invitatory-scry term.act))
+      ?>  ?=(~ (invite-scry term.act uid.act))
+      [(invite-poke term.act act)]~
+    ==
   ==
   ::
   ++  invite-hook-poke
-    |=  [=ship action=invite-action]
+    |=  [=ship =action]
     ^-  card
     :*  %pass
         /invite-hook
@@ -62,7 +84,7 @@
     ==
   ::
   ++  invite-poke
-    |=  [=term action=invite-action]
+    |=  [=term =action]
     ^-  card
     :*  %pass
         /[term]

@@ -2,7 +2,7 @@
 ::  mirror chat data from foreign to local based on read permissions
 ::  allow sending chat messages to foreign paths based on write perms
 ::
-/-  *permission-store, *invite-store, *metadata-store,
+/-  *permission-store, inv=invite-store, *metadata-store,
     *permission-hook, *group-store, *permission-group-hook,  ::TMP  for upgrade
     hook=chat-hook,
     view=chat-view,
@@ -52,7 +52,7 @@
 +$  poke
   $%  [%chat-action action:store]
       [%permission-action permission-action]
-      [%invite-action invite-action]
+      [%invite-action action:inv]
       [%chat-view-action action:view]
   ==
 ::
@@ -458,7 +458,7 @@
       ::
           %invite-update
         =^  cards  state
-          (fact-invite-update:cc wire !<(invite-update q.cage.sign))
+          (fact-invite-update:cc wire !<(update:inv q.cage.sign))
         [cards this]
       ::
           %group-update
@@ -686,7 +686,7 @@
   ==
 ::
 ++  fact-invite-update
-  |=  [wir=wire fact=invite-update]
+  |=  [wir=wire fact=update:inv]
   ^-  (quip card _state)
   :_  state
   ?+  -.fact  ~
@@ -889,9 +889,9 @@
   [%pass / %agent [our.bol %chat-view] %poke %chat-view-action !>(act)]
 ::
 ++  invite-poke
-  |=  act=invite-action
+  |=  =action:inv
   ^-  card
-  [%pass / %agent [our.bol %invite-store] %poke %invite-action !>(act)]
+  [%pass / %agent [our.bol %invite-store] %poke %invite-action !>(action)]
 ::
 ++  sec-to-perm
   |=  [pax=path =kind]
@@ -906,9 +906,9 @@
   [%mailbox pax]
 ::
 ++  invite-scry
-  |=  uid=serial
-  ^-  (unit invite)
-  %^  scry  (unit invite)
+  |=  uid=serial:inv
+  ^-  (unit invite:inv)
+  %^  scry  (unit invite:inv)
     %invite-store
   /invite/chat/(scot %uv uid)
 ::

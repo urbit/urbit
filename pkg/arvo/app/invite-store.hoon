@@ -1,5 +1,5 @@
 ::  invite-store [landscape]
-/-  *invite-store
+/-  store=invite-store
 /+  res=resource, default-agent, dbug
 |%
 +$  card  card:agent:gall
@@ -8,7 +8,7 @@
       state-1
   ==
 ::
-+$  invitatory-0  (map serial invite-0)
++$  invitatory-0  (map serial:store invite-0)
 +$  invite-0
   $:  =ship           ::  ship to subscribe to upon accepting invite
       app=@tas        ::  app to subscribe to upon accepting invite
@@ -18,7 +18,7 @@
   ==
 ::
 +$  state-0  [%0 invites=(map path invitatory-0)]
-+$  state-1  [%1 =invites]
++$  state-1  [%1 =invites:store]
 --
 ::
 =|  state-1
@@ -37,22 +37,25 @@
   =/  old  !<(versioned-state old-vase)
   ?:  ?=(%1 -.old)
    `this(state old)
-  :-  ~
+  :-  =-  [%pass / %agent [our.bowl %invite-store] %poke %invite-action !>(-)]~
+      !>  ^-  action:store
+      [%create %graph]
   %=  this
       state
     :-  %1
-    %-  ~(gas by *^invites)
+    %-  ~(gas by *invites:store)
     %+  murn  ~(tap by invites.old)
     |=  [=path =invitatory-0]
-    ^-  (unit [term invitatory])
+    ^-  (unit [term invitatory:store])
     ?.  ?=([@ ~] path)  ~
     :-  ~
     :-  i.path
-    %-  ~(gas by *invitatory)
+    %-  ~(gas by *invitatory:store)
     %+  turn  ~(tap by invitatory-0)
-    |=  [uid=serial =invite-0]
-    ^-  [serial invite]
-    :-  uid
+    |=  [=serial:store =invite-0]
+    ^-  [serial:store invite:store]
+    :-  serial
+    ^-  invite:store
     :*  ship.invite-0
         app.invite-0
         (de-path:res path.invite-0)
@@ -71,11 +74,11 @@
   ^-  (quip card _this)
   ?>  (team:title our.bowl src.bowl)
   =/  cards=(list card)
-    ?+    path  (on-watch:def path)
+    ?+  path  (on-watch:def path)
         [%all ~]      [%give %fact ~ %invite-update !>([%initial invites])]~
         [%updates ~]  ~
         [%invitatory @ ~]
-      =/  inv=invitatory  (~(got by invites) i.t.path)
+      =/  inv=invitatory:store  (~(got by invites) i.t.path)
       [%give %fact ~ %invite-update !>([%invitatory inv])]~
     ==
   [cards this]
@@ -87,12 +90,12 @@
   ?>  (team:title our.bowl src.bowl)
   =^  cards  state
     ?+  mark  (on-poke:def mark vase)
-      %invite-action  (poke-invite-action !<(invite-action vase))
+      %invite-action  (poke-invite-action !<(action:store vase))
     ==
   [cards this]
   ::
   ++  poke-invite-action
-    |=  action=invite-action
+    |=  =action:store
     ^-  (quip card _state)
     ?-  -.action
         %create   (handle-create +.action)
@@ -100,6 +103,7 @@
         %invite   (handle-invite +.action)
         %accept   (handle-accept +.action)
         %decline  (handle-decline +.action)
+        %invites  ~|('only send this to %invite-hook' !!)
     ==
   ::
   ++  handle-create
@@ -108,7 +112,7 @@
     ?:  (~(has by invites) term)
       [~ state]
     :-  (send-diff term [%create term])
-    state(invites (~(put by invites) term *invitatory))
+    state(invites (~(put by invites) term *invitatory:store))
   ::
   ++  handle-delete
     |=  =term
@@ -119,53 +123,53 @@
     state(invites (~(del by invites) term))
   ::
   ++  handle-invite
-    |=  [=term uid=serial =invite]
+    |=  [=term =serial:store =invite:store]
     ^-  (quip card _state)
     ?.  (~(has by invites) term)
       [~ state]
     =/  container  (~(got by invites) term)
-    =.  uid  (sham eny.bowl)
-    =.  container  (~(put by container) uid invite)
-    :-  (send-diff term [%invite term uid invite])
+    =.  serial  (sham eny.bowl)
+    =.  container  (~(put by container) serial invite)
+    :-  (send-diff term [%invite term serial invite])
     state(invites (~(put by invites) term container))
   ::
   ++  handle-accept
-    |=  [=term uid=serial]
+    |=  [=term =serial:store]
     ^-  (quip card _state)
     ?.  (~(has by invites) term)
       [~ state]
     =/  container  (~(got by invites) term)
-    =/  invite  (~(get by container) uid)
+    =/  invite  (~(get by container) serial)
     ?~  invite
       [~ state]
-    =.  container  (~(del by container) uid)
-    :-  (send-diff term [%accepted term uid u.invite])
+    =.  container  (~(del by container) serial)
+    :-  (send-diff term [%accepted term serial u.invite])
     state(invites (~(put by invites) term container))
   ::
   ++  handle-decline
-    |=  [=term uid=serial]
+    |=  [=term =serial:store]
     ^-  (quip card _state)
     ?.  (~(has by invites) term)
       [~ state]
     =/  container  (~(got by invites) term)
-    =/  invite  (~(get by container) uid)
+    =/  invite  (~(get by container) serial)
     ?~  invite
       [~ state]
-    =.  container  (~(del by container) uid)
-    :-  (send-diff term [%decline term uid])
+    =.  container  (~(del by container) serial)
+    :-  (send-diff term [%decline term serial])
     state(invites (~(put by invites) term container))
   ::
   ++  update-subscribers
-    |=  [=path upd=invite-update]
+    |=  [=path =update:store]
     ^-  card
-    [%give %fact ~[path] %invite-update !>(upd)]
+    [%give %fact ~[path] %invite-update !>(update)]
   ::
   ++  send-diff
-    |=  [=term upd=invite-update]
+    |=  [=term =update:store]
     ^-  (list card)
-    :~  (update-subscribers /all upd)
-        (update-subscribers /updates upd)
-        (update-subscribers /invitatory/[term] upd)
+    :~  (update-subscribers /all update)
+        (update-subscribers /updates update)
+        (update-subscribers /invitatory/[term] update)
     ==
   --
 ::
@@ -178,17 +182,17 @@
   ::
       [%x %invitatory @ ~]
     :^  ~  ~  %noun
-    !>  ^-  (unit invitatory)
+    !>  ^-  (unit invitatory:store)
     (~(get by invites) i.t.t.path)
   ::
       [%x %invite @ @ ~]
     =*  term  i.t.t.path
-    =/  uid=serial  (slav %uv i.t.t.t.path)
+    =/  =serial:store  (slav %uv i.t.t.t.path)
     ?.  (~(has by invites) term)
       ~
-    =/  =invitatory  (~(got by invites) term)
+    =/  =invitatory:store  (~(got by invites) term)
     :^  ~  ~  %noun
-    !>  ^-  (unit invite)
-    (~(get by invitatory) uid)
+    !>  ^-  (unit invite:store)
+    (~(get by invitatory) serial)
   ==
 --
