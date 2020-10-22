@@ -10620,7 +10620,7 @@
   ::
   ++  caching-fish
     |=  axe=axis
-    =/  vot  *(set type)
+    =|  vot=(set type)
     |-  ^-  [nock _grub]
     ?-  sut
         %void       [[%1 1] grub]
@@ -10705,6 +10705,74 @@
     ::
         $noun       ref
         $void       %void
+    ==
+  ::
+  ++  caching-fuse
+    |=  ref=type
+    =|  bix=(set [type type])
+    |-  ^-  [type _grub]
+    ?:  ?|(=(sut ref) =(%noun ref))
+      [sut grub]
+    ?-    sut
+        [%atom *]
+      ?-    ref
+          [%atom *]
+        :_  grub
+        =/  foc  ?:((fitz p.ref p.sut) p.sut p.ref)
+        ?^  q.sut
+          ?^  q.ref
+            ?:  =(q.sut q.ref)
+              [%atom foc q.sut]
+            %void
+          [%atom foc q.sut]
+        [%atom foc q.ref]
+      ::
+          [%cell *]
+        [%void grub]
+      ::
+          *
+        $(sut ref, ref sut)
+      ==
+    ::
+        [%cell *]
+      ?-    ref
+          [%cell *]
+        =^  lef  grub  $(sut p.sut, ref p.ref)
+        =^  rig  grub  $(sut q.sut, ref q.ref)
+        [(cell lef rig) grub]
+      ::
+          *
+        $(sut ref, ref sut)
+      ==
+    ::
+        [%core *]
+      $(sut repo)
+    ::
+        [%face *]
+      =^  rig  grub  $(sut q.sut)
+      [(face p.sut rig) grub]
+    ::
+        [%fork *]
+      =/  yed  ~(tap in p.sut)
+      =^  uni  grub
+        (spin yed grub |=([=type =_grub] ^$(sut type)))
+      [(fork uni) grub]
+    ::
+        [%hint *]
+      =^  rig  grub  $(sut q.sut)
+      [(hint p.sut rig) grub]
+    ::
+        [%hold *]
+      ?:  (~(has in bix) [sut ref])
+        ~>(%mean.'fuse-loop' !!)
+      =^  lef  grub  caching-repo
+      $(sut lef, bix (~(put in bix) [sut ref]))
+    ::
+        %noun
+      [ref grub]
+    ::
+        %void
+      [%void grub]
     ==
   ::
   ++  gain
