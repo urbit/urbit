@@ -267,6 +267,21 @@ ames env who isFake scry enqueueEv stderr = (initialEvents, runAmes)
 
       Right pkt -> logInfo $ displayShow ("ames: dropping ill-versed", pkt, ver)
 
+      -- XX better handle misversioned or illegible packets.
+      -- Remarks from 67f06ce5, pkg/urbit/vere/io/ames.c, L1010:
+      --
+      -- [There are] two protocol-change scenarios [which we must think about]:
+      --
+      --  - packets using old protocol versions from our sponsees
+      --    these must be let through, and this is a transitive condition;
+      --    they must also be forwarded where appropriate
+      --    they can be validated, as we know their semantics
+      --
+      --  - packets using newer protocol versions
+      --    these should probably be let through, or at least
+      --    trigger printfs suggesting upgrade.
+      --    they cannot be filtered, as we do not know their semantics
+      --
       Left e -> logInfo $ displayShow ("ames: dropping malformed", e)
 
     where
