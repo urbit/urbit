@@ -10618,6 +10618,55 @@
       $(sut repo)
     ==
   ::
+  ++  caching-fish
+    |=  axe=axis
+    =/  vot  *(set type)
+    |-  ^-  [nock _grub]
+    ?-  sut
+        %void       [[%1 1] grub]
+    ::
+        %noun       [[%1 0] grub]
+    ::
+        [%atom *]
+      :_  grub
+      ?~  q.sut
+        (flip [%3 %0 axe])
+      [%5 [%1 u.q.sut] [%0 axe]]
+    ::
+        [%cell *]
+      =^  lef  grub  $(sut p.sut, axe (peg axe 2))
+      =^  rig  grub  $(sut q.sut, axe (peg axe 3))
+      :_  grub
+      %+  flan
+        [%3 %0 axe]
+      (flan lef rig)
+    ::
+        [%core *]
+      ~>(%mean.'fish-core' !!)
+    ::
+        [%face *]
+      $(sut q.sut)
+    ::
+        [%fork *]
+      =/  yed  ~(tap in p.sut)
+      |-  ^-  [nock _grub]
+      ?~  yed
+        [[%1 1] grub]
+      =^  lef  grub  ^$(sut i.yed)
+      =^  rig  grub  $(yed t.yed)
+      :_  grub
+      (flor lef rig)
+    ::
+        [%hint *]
+      $(sut q.sut)
+    ::
+        [%hold *]
+      ?:  (~(has in vot) sut)
+        ~>(%mean.'fish-loop' !!)
+      =.  vot  (~(put in vot) sut)
+      $(sut repo)
+    ==
+  ::
   ++  fuse
     ~/  %fuse
     |=  ref/type
