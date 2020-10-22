@@ -183,7 +183,7 @@ bootNewShip pill lite ship bootEv = do
   let logPath = (pierPath </> ".urb/log")
 
   rwith (Log.new logPath ident) $ \log -> do
-    logInfo "Event log onitialized."
+    logInfo "Event log initialized."
     jobs <- (\now -> bootSeqJobs now seq) <$> io Time.now
     writeJobs log (fromList jobs)
 
