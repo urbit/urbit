@@ -168,7 +168,7 @@ export function GroupsPane(props: GroupsPaneProps) {
         render={(routeProps) => {
           const newUrl = `${baseUrl}/new`;
           return (
-            <Skeleton recentGroups={recentGroups} {...props} baseUrl={baseUrl}>
+            <Skeleton mobileHide recentGroups={recentGroups} {...props} baseUrl={baseUrl}>
               <NewChannel
                 {...routeProps}
                 api={api}
