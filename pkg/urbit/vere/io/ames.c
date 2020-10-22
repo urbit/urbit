@@ -53,8 +53,10 @@
       c3_d           dop_d;             //  drop count
       c3_d           fal_d;             //  crash count
       c3_d           saw_d;             //  successive scry failures
+      c3_d           hed_d;             //  failed to read header
       c3_d           vet_d;             //  version mismatches filtered
       c3_d           mut_d;             //  invalid mugs filtered
+      c3_d           bod_d;             //  failed to read body
       c3_d           foq_d;             //  forward queue size
       c3_d           fow_d;             //  forwarded count
       c3_d           fod_d;             //  forwards dropped count
@@ -1025,8 +1027,11 @@ _ames_hear(u3_ames* sam_u,
   if (  (4 > len_w)
      || (c3n == _ames_sift_head(&hed_u, hun_y)) )
   {
-    //  XX track stats
-    //
+    sam_u->sat_u.hed_d++;
+    if ( 0 == (sam_u->sat_u.hed_d % 100) ) {
+      u3l_log("ames: %" PRIu64 " dropped, failed to read header\n", sam_u->sat_u.hed_d);
+    }
+
     c3_free(hun_y);
     return;
   }
@@ -1068,8 +1073,11 @@ _ames_hear(u3_ames* sam_u,
     if (  (c3n == _ames_sift_body(&hed_u, &bod_u, bod_w, bod_y))
        || !ur_cue_test_with(sam_u->tes_u, bod_u.con_w, bod_u.con_y) )
     {
-      //  XX track stats
-      //
+      sam_u->sat_u.bod_d++;
+      if ( 0 == (sam_u->sat_u.bod_d % 100) ) {
+        u3l_log("ames: %" PRIu64 " dropped, failed to read body\n", sam_u->sat_u.bod_d);
+      }
+
       c3_free(hun_y);
       return;
     }
@@ -1424,8 +1432,10 @@ _ames_io_info(u3_auto* car_u)
   u3l_log("        forwards dropped: %" PRIu64 "\n", sam_u->sat_u.fod_d);
   u3l_log("        forwards pending: %" PRIu64 "\n", sam_u->sat_u.foq_d);
   u3l_log("               forwarded: %" PRIu64 "\n", sam_u->sat_u.fow_d);
+  u3l_log("          filtered (hed): %" PRIu64 "\n", sam_u->sat_u.hed_d);
   u3l_log("          filtered (ver): %" PRIu64 "\n", sam_u->sat_u.vet_d);
   u3l_log("          filtered (mug): %" PRIu64 "\n", sam_u->sat_u.mut_d);
+  u3l_log("          filtered (bod): %" PRIu64 "\n", sam_u->sat_u.bod_d);
   u3l_log("                 crashed: %" PRIu64 "\n", sam_u->sat_u.fal_d);
   u3l_log("            cached lanes: %u\n", u3h_wyt(sam_u->lax_p));
 }
