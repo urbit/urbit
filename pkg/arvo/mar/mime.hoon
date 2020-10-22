@@ -23,6 +23,10 @@
   |%
   ++  form  %mime
   ++  diff  |=(mime +<)
+  ++  mash
+    |=  [a=[=ship =desk diff=mime] b=[=ship =desk diff=mime]]
+    ^-  mime
+    diff.b
   ++  pact  |=(mime +<)
   ++  join  |=({mime mime} `(unit mime)`~)
   --
