@@ -883,7 +883,7 @@
     $:  face=(unit term)
         file-path=term
     ==
-  ++  care  ?($a $b $c $d $p $r $s $t $u $v $w $x $y $z)  ::  clay submode
+  ++  care  ?($a $b $c $d $e $p $r $s $t $u $v $w $x $y $z)  ::  clay submode
   ++  case                                              ::  ship desk case spur
     $%  {$da p/@da}                                     ::  date
         {$tas p/@tas}                                   ::  label
@@ -1046,6 +1046,23 @@
       |~  [a=[ship desk diff=vase] b=[ship desk diff=vase]]
       *(unit vase)
     ++  pact  |~(diff=vase sam)
+    ++  vale  |~(noun sam)
+    ++  volt  |~(noun sam)
+    --
+  ::  $says: static dais
+  ::
+  ++  says
+    |*  [typ=mold dif=mold]
+    $_  ^|
+    |_  sam=typ
+    ++  bunt  sam
+    ++  diff  |~(typ *dif)
+    ++  form  *mark
+    ++  join  |~([dif dif] *(unit (unit dif)))
+    ++  mash
+      |~  [a=[ship desk dif] b=[ship desk dif]]
+      *(unit dif)
+    ++  pact  |~(dif sam)
     ++  vale  |~(noun sam)
     ++  volt  |~(noun sam)
     --
