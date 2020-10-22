@@ -1,8 +1,24 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import styled from 'styled-components';
+
 import defaultApps from '~/logic/lib/default-apps';
 
-import { Box, DisclosureBox } from "@tlon/indigo-react";
+import { Box } from "@tlon/indigo-react";
+
+const SquareBox = styled(Box)`
+  &::before {
+    content: "";
+    display: inline-block;
+    width: 1px;
+    height: 0;
+    padding-bottom: 100%;
+  }
+  & > * {
+    position: absolute;
+    top: 0;
+  }
+`;
 const routeList = defaultApps.map(a => `/~${a}`);
 
 export default class Tile extends React.Component {
@@ -26,7 +42,7 @@ export default class Tile extends React.Component {
 
 
     return (
-      <Box
+      <SquareBox
         borderRadius={2}
         overflow="hidden"
         bg={bg || "white"}
@@ -40,7 +56,7 @@ export default class Tile extends React.Component {
         >
           {childElement}
         </Box>
-      </Box>
+      </SquareBox>
     );
   }
 }

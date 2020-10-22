@@ -37,8 +37,7 @@ export default class LaunchApp extends React.Component {
           <Box
             ml='2'
             display='grid'
-            gridAutoRows='124px'
-            gridTemplateColumns='repeat(auto-fit, 124px)'
+            gridTemplateColumns='repeat(auto-fill, minmax(128px, 1fr))'
             gridGap={3}
             p={2}
           >
@@ -75,12 +74,9 @@ export default class LaunchApp extends React.Component {
               location={props.userLocation}
               weather={props.weather}
             />
+            <Box display={["none", "block"]} width="100%" gridColumn="1 / -1"></Box>
+            <Groups groups={props.groups} associations={props.associations} invites={props.invites} api={props.api}/>
           </Box>
-          <Groups
-            associations={props.associations}
-            groups={props.groups}
-            invites={props.invites}
-            api={props.api} />
         </Box>
         <Box
           position="absolute"
