@@ -598,7 +598,7 @@ runShip (CLI.Run pierPath) opts daemon = do
 
     loadInjections :: [CLI.Injection] -> RIO PierEnv [Ev]
     loadInjections injections = do
-      perInjection :: [[Ev]] <- forM injections $ \case
+      perInjection :: [[Ev]] <- for injections $ \case
           CLI.InjectOneEvent filePath -> do
             logInfo $ display $ "boot: reading injected event from " ++
               (pack filePath :: Text)

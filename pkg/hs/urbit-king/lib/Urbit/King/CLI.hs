@@ -228,15 +228,17 @@ pierPath :: Parser FilePath
 pierPath = strArgument (metavar "PIER" <> help "Path to pier")
 
 injectEvents :: Parser [Injection]
-injectEvents = many (InjectOneEvent <$> strOption ( short 'I'
-                          <> long "inject-event"
-                          <> metavar "JAM"
-                          <> help "Path to a jammed event")  <|>
-                     InjectManyEvents <$> strOption (
-                        long "inject-event-list"
-                     <> metavar "JAM LIST"
-                     <> help "Path to a jammed list of events"
-                    ))
+injectEvents = many $ InjectOneEvent <$> strOption
+                        ( short 'I'
+                       <> long "inject-event"
+                       <> metavar "JAM"
+                       <> help "Path to a jammed event"
+                       <> hidden)
+                  <|> InjectManyEvents <$> strOption
+                        ( long "inject-event-list"
+                       <> metavar "JAM_LIST"
+                       <> help "Path to a jammed list of events"
+                       <> hidden)
 
 serfExe :: Parser (Maybe Text)
 serfExe =  optional
