@@ -523,6 +523,9 @@
     ::  if nacked, then set a exponential backoff and retry
     =/  nack-count=@ud
       +((~(gut by migrate) rid 0))
+    ?:  (gte 24 nack-count)
+      ~&  >>>  "failed to migrate notebook {<rid>} to graph-store"
+      [~ this]
     :_  this(migrate (~(put by migrate) rid nack-count))
     ::  (bex 19) is roughly 6 days
     =/  wakeup=@da
