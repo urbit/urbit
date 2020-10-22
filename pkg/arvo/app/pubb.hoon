@@ -23,7 +23,9 @@
 ++  on-poke
   |=  [=mark =vase]
   ?>  ?=(%noun mark)
-  =+  .^(=dais:clay %cb /(scot %p our.bowl)/home/(scot %da now.bowl)/todo)
+  =+  .^  =(says:clay form:todo diff:todo)
+          %ce  /(scot %p our.bowl)/home/(scot %da now.bowl)/todo
+      ==
   =|  cards=(list card:agent:gall)
   |^
   =+  ;;(=poke q.vase)
@@ -57,7 +59,7 @@
   ++  edit-todos
     |=  =diff:todo
     ^+  in-this
-    =:  todos  !<(form:todo (~(pact dais !>(todos)) !>(diff)))
+    =:  todos  (~(pact says todos) diff)
         cards  :_(cards [%give %fact ~[/todos] %todo-diff !>(diff)])
       ==
     in-this

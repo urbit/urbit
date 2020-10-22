@@ -7,6 +7,7 @@
 ++  grad
   |%
   ++  form  %todo-diff
+  ++  dorm  ^diff
   ++  diff  !!
   ++  join  !!
   ++  mash  !!
