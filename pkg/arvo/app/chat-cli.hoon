@@ -537,7 +537,7 @@
     ++  group  ;~((glue net) ship sym)
     ++  tag   |*(a=@tas (cold a (jest a)))  ::TODO  into stdlib
     ++  ship  ;~(pfix sig fed:ag)
-    ++  path  ;~(pfix net ;~(plug urs:ab (easy ~)))  ::NOTE  short only, tmp
+    ++  path  ;~(pfix fas ;~(plug urs:ab (easy ~)))  ::NOTE  short only, tmp
     ::  +mang: un/managed indicator prefix
     ::
     ::    deprecated, as sig prefix is no longer used
@@ -619,7 +619,7 @@
     ++  letter
       ;~  pose
         (stag %url turl)
-        (stag %me ;~(pfix vat text))
+        (stag %me ;~(pfix pat text))
         (stag %text ;~(less mic hax text))
       ==
     ::  +turl: url parser
