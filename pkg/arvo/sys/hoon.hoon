@@ -11453,6 +11453,45 @@
       [(nice p.pul) (cons q.pul q.dan)]
     --
   ::
+  ++  caching-moot
+    =+  gil=*(set type)
+    |-  ^-  [? _grub]
+    ?-    sut
+        [%atom *]
+      :_  grub  |
+    ::
+        [%cell *]
+      =^  lef  grub  $(sut p.sut)
+      =^  rig  grub  $(sut q.sut)
+      :_  grub  |(lef rig)
+    ::
+        [%core *]
+      $(sut p.sut)
+    ::
+        [%face *]
+      $(sut q.sut)
+    ::
+        [%fork *]
+      =/  yed  ~(tap in p.sut)
+      =^  val=(list ?)  grub
+        (spin yed grub |=([=type =_grub] ^$(sut type)))
+      :_  grub  (levy val same)
+    ::
+        [%hint *]
+      $(sut q.sut)
+    ::
+        [%hold *]
+      =^  val  grub  caching-repo
+      =^  rig  grub  $(gil (~(put in gil) sut), sut val)
+      :_  grub  |((~(has in gil) sut) rig)
+    ::
+        %noun
+      :_  grub  |
+    ::
+        %void
+      :_  grub  &
+    ==
+  ::
   ++  moot
     =+  gil=*(set type)
     |-  ^-  ?
