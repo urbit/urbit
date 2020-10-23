@@ -12122,9 +12122,72 @@
     --
   ::
   ++  caching-peek
-    |=  [way=?($read $rite $both $free) axe=axis]
+    |=  [way=?(%read %rite %both %free) axe=axis]
     ^-  [type _grub]
-    !!
+    ?:  =(1 axe)
+      :_  grub  sut
+    =/  now  (cap axe)
+    =/  lat  (mas axe)
+    =|  gil=(set type)
+    |-  ^-  [type _grub]
+    ?-    sut
+        [%atom *]
+      :_  grub  %void
+    ::
+        [%cell *]
+      =^  lef  grub  ^$(sut p.sut, axe lat)
+      =^  rig  grub  ^$(sut q.sut, axe lat)
+      :_  grub  ?:(=(2 now) lef rig)
+    ::
+        [%core *]
+      ?.  =(3 now)
+        :_  grub  %noun
+      =/  pec  (peel way r.p.q.sut)
+      =/  tow
+        ?:  =(1 lat)  1
+        (cap lat)
+      =^  nut  grub
+        ?:  ?|  =([& &] pec)
+                &(sam.pec =(tow 2))
+                &(con.pec =(tow 3))
+            ==
+          :_  grub  p.sut
+        ~_  leaf+"payload-block"
+        ?.  =(way %read)  !!
+        =^  lef  grub  ^$(sut p.sut, axe 2)
+        =^  rig  grub  ^$(sut p.sut, axe 3)
+        :_  grub
+        %+  cell
+          ?.(sam.pec %noun lef)
+        ?.(con.pec %noun rig)
+      %=  ^$
+        axe  lat
+        sut  nut
+      ==
+    ::
+        [%fork *]
+      =/  yed  ~(tap in p.sut)
+      =^  val  grub
+        (spin yed grub |=([=type =_grub] ^$(sut type)))
+      :_  grub
+      (fork val)
+    ::
+        [%hold *]
+      ?:  (~(has in gil) sut)
+        :_  grub  %void
+      =^  rig  grub  caching-repo
+      $(gil (~(put in gil) sut), sut rig)
+    ::
+        %void
+      :_  grub  %void
+    ::
+        %noun
+      :_  grub  %noun
+    ::
+        *
+      =^  val  grub  caching-repo
+      $(sut val)
+    ==
   ::
   ++  peek
     ~/  %peek
