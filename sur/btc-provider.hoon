@@ -7,14 +7,15 @@
 +$  action
   $%  [%get-address-info =address]
   ==
-+$  response
-  $%  [%block-count count=@]
-      [%get-address-info info=address-info]
-      [%get-balance (set [=address balance=sats])]
-      [%get-transactions ~]
++$  result
+  $%  [%get-address-info info=address-info]
+  ==
++$  error
+  $%  [%not-connected ~]
   ==
 +$  update                              ::  sub updates from /clients path (connection etc.)
-  $%  [%status connected=?]
+  $%  [%result =result]
+      [%error =error]
   ==
 ::
 +$  command

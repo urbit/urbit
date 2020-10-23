@@ -44,10 +44,10 @@
     ?:  ?=(%btc-provider-command mark)
       ?>  (team:title our.bowl src.bowl)
       (handle-command:hc !<(command vase))
-    ~|  "Not connected to RPC endpoints"
     ?+  mark  (on-poke:def mark vase)
         %btc-provider-action
-      ?>  connected.host-info
+      ?.  connected.host-info
+        ~|("Not connected to RPC endpoints" !!)
       (handle-action:hc !<(action vase))
     ==
   [cards this]
@@ -106,18 +106,32 @@
   ==
 ++  handle-response
   |=  [=wire response=client-response:iris]
+  :: IMPORTANT: whatever we make here gets sent out to subscribers at the end
   ^-  (quip card _state)
   ?.  ?=(%finished -.response)  `state
-  =*  status  status-code.response-header.response
+  =/  e=(unit error)  (check-connection status-code.response-header.response)
+  ?^  e
+    :_  state(connected.host-info %.n)
+    ~[(send-update [%error e])]
+  ~&  >>  response
   =/  rpc-resp=response:rpc:jstd
     (get-rpc-response response)
   ::  TODO: error handling goes here
-  ?+  wire  `state
-      [%get-address-info *]
+  ?+  wire  ~|("Unexpected HTTP response" !!)
+      [%get-address-info %erpc *]
     ~&  >>  +<.wire
     ~&  >  rpc-resp
     `state
   ==
+++  check-connection
+  |=  status=@ud
+  ^-  (unit error)
+  ?:  =(504 status)
+    `[%not-connected ~]
+  ~
+++  send-update
+  |=  =update  ^-  card
+  [%give %fact [/clients]~ %btc-provider-update !>(update)]
 ++  is-whitelisted
   |=  user=ship  ^-  ?
   ?|  (~(has in whitelist) user)

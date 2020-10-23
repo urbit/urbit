@@ -49,8 +49,8 @@
   ==
 ::
 ++  to-response
-  |=  response:rpc
-  ^-  response
-  *response
+  |=  result:rpc
+  ^-  result
+  *result
   ::[%get-address-info *address-info]
 --
