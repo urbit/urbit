@@ -1,28 +1,38 @@
 import React from 'react';
 import moment from 'moment';
 import SunCalc from 'suncalc';
-import styled from 'styled-components';
 
 import Tile from './tile';
 
-const VIEWBOX_SIZE = 100;
-const CX = VIEWBOX_SIZE / 2;
-const CY = VIEWBOX_SIZE / 2;
-const RADIUS = VIEWBOX_SIZE / 2;
-const CELESTIAL_BODY_SIZE = 16;
+const innerSize = 124; // clock size
 
-const ApplyClockBg = styled.div`
-  .background {
-    fill: ${p => p.theme.colors.white};
+// polar to cartesian
+// var ptc = function(r, theta) {
+//   return {
+//     x: r * Math.cos(theta),
+//     y: r * Math.sin(theta)
+//   }
+// }
+
+let timeTextColor = '#000000', dateTextColor = '#333333', background = '#ffffff';
+
+const dark = window.matchMedia('(prefers-color-scheme: dark)');
+
+if (dark.matches) {
+  timeTextColor = '#ffffff';
+  dateTextColor = '#7f7f7f';
+  background = '#333';
+}
+
+function darkColors(dark) {
+  if (dark.matches) {
+    timeTextColor = '#ffffff';
+    dateTextColor = '#7f7f7f';
+    background = '#ffffff';
   }
-  .time {
-    fill: ${p => p.theme.colors.black};
-    color: ${p => p.theme.colors.black};
-  }
-  .date {
-    fill: ${p => p.theme.colors.gray};
-  }
-`;
+ }
+
+dark.addListener(darkColors);
 
 const toRelativeTime = (date, referenceTime, unit) => moment(date)
   .diff(referenceTime, unit);
@@ -32,6 +42,10 @@ const minsToDegs = (mins) => {
   return (mins / 1440) * 360;
 };
 
+const splitArc = (start, end) => end + ((start - end) * 0.5);
+
+const isOdd = n => Math.abs(n % 2) == 1;
+
 const radToDeg = rad => rad * (180 / Math.PI);
 
 const degToRad = deg => deg * (Math.PI / 180);
@@ -40,137 +54,58 @@ const convert = (date, referenceTime) => {
   return minsToDegs(toRelativeTime(date, referenceTime, 'minutes'));
 };
 
-// https://github.com/tingletech/moon-phase
-export const dFromPhase = (moonPhase) => {
-  let mag, sweep, d = "m50,0";
-  if (moonPhase <= 0.25) {
-    sweep = [ 1, 0 ];
-    mag = 20 - 20 * moonPhase * 4;
-  } else if (moonPhase <= 0.50) {
-    sweep = [ 0, 0 ];
-    mag = 20 * (moonPhase - 0.25) * 4;
-  } else if (moonPhase <= 0.75) {
-    sweep = [ 1, 1 ];
-    mag = 20 - 20 * (moonPhase - 0.50) * 4;
-  } else if (moonPhase <= 1) {
-    sweep = [ 0, 1 ];
-    mag = 20 * (moonPhase - 0.75) * 4;
+const circle = (ctx, x, y, r, from, to, fill) => {
+  ctx.beginPath();
+  ctx.arc( x, y, r, from, to );
+  ctx.strokeStyle = 'rgba(0,0,0,0)';
+  ctx.fillStyle = fill || 'rgba(0,0,0,0)';
+  ctx.fill();
+};
+
+const circleClip = (ctx, x, y, r, from, to, fill) => {
+  ctx.globalCompositeOperation = 'xor';
+  circle(ctx, x, y, r, from, to, fill);
+  ctx.globalCompositeOperation = 'source-over';
+};
+
+const circleOutline = (ctx, x, y, r, from, to, stroke, lineWidth) => {
+  ctx.beginPath();
+  ctx.arc( x, y, r, from, to );
+  ctx.fillStyle = 'rgba(0,0,0,0)';
+  ctx.lineWidth = lineWidth;
+  ctx.strokeStyle = stroke || 'rgba(0,0,0,0)';
+  if (lineWidth) {
+    ctx.stroke();  
   }
+};
 
-  d = d + "a" + mag + ",20 0 1," + sweep[0] + " 0,100 ";
-  d = d + "a20,20 0 1," + sweep[1] + " 0,-100";
-  return d;
-}
+const arc = (ctx, x, y, r, from, to, fill) => {
+  ctx.beginPath();
+  ctx.arc( x, y, r, from, to );
+  ctx.fillStyle = 'rgba(0,0,0,0)';
+  ctx.lineWidth = r * 2;
+  ctx.strokeStyle = fill || 'rgba(0,0,0,0)';
+  ctx.stroke();
+};
 
-const Moon = ({ angle, ...props }) => {
-  const phase = SunCalc.getMoonIllumination(moment().toDate()).phase.toFixed(2);
-  const cx = CX + (RADIUS - 12) * Math.cos(degToRad(angle)) - (CELESTIAL_BODY_SIZE / 2);
-  const cy = CY + (RADIUS - 12) * Math.sin(degToRad(angle)) - (CELESTIAL_BODY_SIZE / 2);
-  return (
-    <g>
-      <mask id="umbra">
-        <rect x="-50" y="-50" height="200" width="200" fill="black" />
-        <path d={dFromPhase(phase)} fill="white"/>
-      </mask>
-      <use
-      width={CELESTIAL_BODY_SIZE}
-      height={CELESTIAL_BODY_SIZE}
-      xlinkHref="#Moon-symbol" 
-      x={cx}
-      y={cy}
-      transform={`rotate(${angle} ${cx + (CELESTIAL_BODY_SIZE / 2)} ${cy + (CELESTIAL_BODY_SIZE / 2)})`}
-      />
-    </g>
-  );
-}
+const degArc = (ctx, x, y, r, from, to, fill) => {
+  ctx.beginPath();
+  ctx.arc( x, y, r, degToRad(from), degToRad(to));
+  ctx.fillStyle = 'rgba(0,0,0,0)';
+  ctx.lineWidth = r * 2;
+  ctx.strokeStyle = fill || 'rgba(0,0,0,0)';
+  ctx.stroke();
+};
 
-const Sun = ({ angle, ...props}) => (
-  <circle
-    id="sun"
-    cx={CX + (RADIUS - 12) * Math.cos(degToRad(angle))}
-    cy={CY + (RADIUS - 12) * Math.sin(degToRad(angle))}
-    fill="#FCC440"
-    stroke="rgba(0,0,0,0.1)"
-    r={CELESTIAL_BODY_SIZE / 2}
-    {...props}
-  ></circle>
-);
-
-const SvgArc = ({ start, end, ...rest }) => {
-  const x1 = CX + RADIUS * Math.cos(degToRad(start));
-  const y1 = CY + RADIUS * Math.sin(degToRad(start));
-  const x2 = CX + RADIUS * Math.cos(degToRad(end));
-  const y2 = CY + RADIUS * Math.sin(degToRad(end));
-
-  const isLarge = Math.abs((start > 360 ? start - 360 : start) - end) > 180;
-
-  const d = [
-    'M', CX, CY,
-    'L', x1, y1,
-    'A', RADIUS, RADIUS, '0', (isLarge ? '1' : '0'), '1', x2, y2, 'z'
-  ].join(' ');
-
-  return <path d={d} {...rest} />;
-}
-
-class ClockText extends React.Component {
+class Clock extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      time: Date.now()
-    }
-  }
-  componentDidMount() {
-    this.interval = setInterval(() => this.setState({ time: Date.now() }), 1000);
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
-
-  render() {
-    const now = moment(this.state.time);
-    return (
-      <>
-        <use xlinkHref="#clock-center" className="background" />
-        <text
-          textAnchor="middle"
-          x={CX}
-          y={CY - 2}
-          fontSize="10"
-          fontFamily="Inter"
-          className="time"
-        >
-          <tspan>{now.format('h')}</tspan>
-          <tspan>:<animate attributeName="fill"
-            values="currentColor;transparent"
-            begin="0s"
-            dur="1s"
-            calcMode="discrete"
-            repeatCount="indefinite"/>
-          </tspan>
-          <tspan>{now.format('mm A')}</tspan>
-        </text>
-        <text
-          textAnchor="middle"
-          x={CX}
-          y={CY + 11}
-          fontSize="10"
-          fontFamily="Inter"
-          className="date"
-      >{now.format('MMM D')}<tspan style={{ fontFeatureSettings: "'sups' 1" }}>{now.format('Do').replace(now.format('D'), '')}</tspan></text>
-      </>
-    );
-  }
-}
-
-class Clock extends React.PureComponent {
-  constructor(props) {
-    super(props);
+    this.animate = this.animate.bind(this);
+    this.canvasRef = React.createRef();
+    this.canvas = null;
     this.angle = 0;
     this.referenceTime = moment().startOf('day').subtract(6, 'hours');
     this.state = {
-      time: Date.now(),
       lat: 0,
       lon: 0,
       geolocationSuccess: false,
@@ -229,84 +164,246 @@ class Clock extends React.PureComponent {
   }
 
   componentDidMount() {
+    this.canvas = initCanvas(
+      this.canvasRef,
+      { x: innerSize, y: innerSize },
+      4
+    );
+
     this.initGeolocation();
-    this.interval = setInterval(() => this.setState({ time: Date.now() }), 60000);
+    this.animate();
   }
 
   componentWillUnmount() {
-    clearInterval(this.interval);
+    if (this.animationTimer) {
+      window.clearTimeout(this.animationTimer);
+    }
+  }
+
+  animate() {
+    this.animationTimer = 
+      window.setTimeout(() => window.requestAnimationFrame(this.animate), 1000);
+
+    const { state } = this;
+    const time = new Date();
+    const ctx = this.canvas.getContext('2d');
+    ctx.clearRect(0, 0, ctx.width, ctx.height);
+    ctx.save();
+
+    const ctr = innerSize / 2;
+
+    // Sun+moon calculations
+    const cx = ctr;
+    const cy = ctr;
+    this.angle = degToRad(convert(time, this.referenceTime));
+    const newX = cx + (ctr - 15) * Math.cos(this.angle);
+    const newY = cy + (ctr - 15) * Math.sin(this.angle);
+
+    // Center white circle with time and date
+    circle(
+      ctx,
+      ctr,
+      ctr,
+      ctr,
+      -1,
+      2 * Math.PI,
+      background
+    );
+
+    // Day
+    degArc(
+      ctx,
+      ctr,
+      ctr,
+      ctr / 2,
+      state.sunriseEnd,
+      state.sunset,
+      'rgba(33, 157, 255, .2)'
+    );
+
+    // Sunrise
+    degArc(
+      ctx,
+      ctr,
+      ctr,
+      ctr / 2,
+      state.sunsetStart,
+      state.sunriseEnd,
+      '#FFC700'
+    );
+
+    // Sunset
+    degArc(
+      ctx,
+      ctr,
+      ctr,
+      ctr / 2,
+      state.dusk,
+      state.dawn,
+      'rgba(255, 65, 54, .8)'
+    );
+
+    // Night
+    degArc(
+      ctx,
+      ctr,
+      ctr,
+      ctr / 2,
+      state.night,
+      state.nightEnd,
+      'rgba(0, 0, 0, .8)'
+    );
+
+    if (
+      radToDeg(this.angle) > splitArc(state.sunriseEnd, state.nightEnd)
+      && radToDeg(this.angle) < splitArc(state.sunset, state.night)
+    ) {
+      // Sun circle
+      circle(
+        ctx,
+        newX-1/2,
+        newY-1/2,
+        8,
+        0,
+        2 * Math.PI,
+        '#FCC440'
+      );
+
+      // Sun circle border
+      circleOutline(
+        ctx,
+        newX-1/2,
+        newY-1/2,
+        8,
+        0,
+        2 * Math.PI,
+        'rgba(0,0,0,0.1)',
+        1
+      );
+    } else {
+      // Moon circle
+      circle(
+        ctx,
+        newX-1/2,
+        newY-1/2,
+        8,
+        0,
+        2 * Math.PI,
+        '#FFFFFF'
+      );
+      // Moon circle outline
+      circleOutline(
+        ctx,
+        newX-1/2,
+        newY-1/2,
+        8,
+        0,
+        2 * Math.PI,
+        '#000000',
+        1
+      );
+    }
+
+
+    // Outer borders
+    circleOutline(
+      ctx,
+      ctr,
+      ctr,
+      ctr-1,
+      -1,
+      2 * Math.PI,
+      'none',
+      0
+    );
+
+    // Center white circle border
+    circleOutline(
+      ctx,
+      ctr,
+      ctr,
+      ctr/1.85,
+      -1,
+      2 * Math.PI,
+      'none',
+      0
+    );
+
+    // Inner hole
+    circle(
+      ctx,
+      ctr,
+      ctr,
+      ctr/1.85,
+      -1,
+      2 * Math.PI,
+      background
+    );
+
+    // Text for time and date
+    const timeText = isOdd(time.getSeconds())
+      ? moment().format('h mm A')
+      : moment().format('h:mm A');
+    const dateText = moment().format('MMM Do');
+    ctx.textAlign = 'center';
+    ctx.fillStyle = timeTextColor;
+    ctx.font = '12px Inter';
+    ctx.fillText(timeText, ctr, ctr + 6 - 7);
+    ctx.fillStyle = dateTextColor;
+    ctx.font = '12px Inter';
+    ctx.fillText(dateText, ctr, ctr + 6 + 7);
+
+    ctx.restore();
   }
 
   render() {
-    const now = moment(this.state.time);
-    const angle = convert(now, this.referenceTime);
-
     return (
-      <ApplyClockBg>
-        <svg
-          style={{ height: '100%', width: '100%'}}
-          viewBox={`0 0 ${VIEWBOX_SIZE} ${VIEWBOX_SIZE}`}
-          xmlns="http://www.w3.org/2000/svg"
-          xmlnsXlink="http://www.w3.org/1999/xlink"
-        >
-          <defs>
-            <symbol id="clock-center">
-              <circle r={VIEWBOX_SIZE / 1.85 / 2} cx={CX} cy={CY} />
-            </symbol>
-            <mask id="center-mask">
-              <rect x="0" y="0" width={VIEWBOX_SIZE} height={VIEWBOX_SIZE} fill="white" />
-              <use xlinkHref="#clock-center" fill="black"/>
-            </mask>
-            <symbol id="Moon-symbol" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
-              <g>
-                <path mask="url(#umbra)" d="m50,0 a20,20 0 1,1 0,100 a20,20 0 1,1 0,-100" fill="#fff" stroke="#000"/>
-              </g>
-            </symbol>
-          </defs>
-          <g mask="url(#center-mask)">
-            <circle cx={CY} cy={CY} r={RADIUS} className="background" />
-            <SvgArc
-              id="day"
-              start={this.state.sunriseEnd}
-              end={this.state.sunset}
-              fill="rgba(33, 157, 255, .2)"
-            />
-            <SvgArc
-              id="sunrise"
-              start={this.state.sunsetStart}
-              end={this.state.sunriseEnd}
-              fill="#FFC700"
-            />
-            <SvgArc
-              id="sunset"
-              start={this.state.dusk}
-              end={this.state.dawn}
-              fill="rgba(255, 65, 54, .8)"
-            />
-            <SvgArc
-              id="night"
-              start={this.state.night}
-              end={this.state.nightEnd}
-              fill="rgba(0, 0, 0, .8)"
-            />
-            {angle > this.state.nightEnd && angle < this.state.sunset
-              ? <Sun angle={angle} />
-              : <Moon angle={angle} />
-            }
-          </g>
-          <ClockText />
-        </svg>
-      </ApplyClockBg>
+      <canvas
+        style={{ height: '100%', width: '100%'}}
+        ref={ canvasRef => this.canvasRef = canvasRef }
+        id="clock-canvas"
+      />
     );
   }
 }
 
+export default class ClockTile extends React.Component {
+  constructor(props) {
+    super(props);
+  }
 
+  renderWrapper(child) {
+    return (
+      <Tile p={0} border={0} bg='transparent' boxShadow='none'>
+        {child}
+      </Tile>
+    );
+  }
 
-const ClockTile = ({ location = {} }) => (
-  <Tile p={0} border={0} bg='transparent' boxShadow='none'>
-    <Clock data={location} />
-  </Tile>
-);
+  render() {
+    const data = this.props.location ? this.props.location : {};
+    return this.renderWrapper((
+      <Clock data={data} />
+    ));
+  }
+}
 
-export default ClockTile;
+const initCanvas = (canvas, size, ratio) => {
+  const { x, y } = size;
+  // let ratio = ctx.webkitBackingStorePixelRatio < 2
+  //   ? window.devicePixelRatio
+  //   : 1;
+
+  // default for high print resolution.
+  // ratio = ratio * resMult;
+
+  canvas.width = x * ratio;
+  canvas.height = y * ratio;
+  canvas.style.width = x + 'px';
+  canvas.style.height = y + 'px';
+
+  canvas.getContext('2d').scale(ratio, ratio);
+
+  return canvas;
+};
+
