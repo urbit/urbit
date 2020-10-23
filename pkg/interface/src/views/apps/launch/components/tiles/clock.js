@@ -250,11 +250,14 @@ class Clock extends React.PureComponent {
           xmlnsXlink="http://www.w3.org/1999/xlink"
         >
           <defs>
+            <symbol id="border">
+              <circle cx={CY} cy={CY} r={RADIUS} />
+            </symbol>
             <symbol id="clock-center">
               <circle r={VIEWBOX_SIZE / 1.85 / 2} cx={CX} cy={CY} />
             </symbol>
             <mask id="center-mask">
-              <rect x="0" y="0" width={VIEWBOX_SIZE} height={VIEWBOX_SIZE} fill="white" />
+              <use xlinkHref="#border" fill="white" />
               <use xlinkHref="#clock-center" fill="black"/>
             </mask>
             <symbol id="Moon-symbol" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
@@ -262,9 +265,10 @@ class Clock extends React.PureComponent {
                 <path mask="url(#umbra)" d="m50,0 a20,20 0 1,1 0,100 a20,20 0 1,1 0,-100" fill="#fff" stroke="#000"/>
               </g>
             </symbol>
+            
           </defs>
           <g mask="url(#center-mask)">
-            <circle cx={CY} cy={CY} r={RADIUS} className="background" />
+            <use xlinkHref="#border" className="background" />
             <SvgArc
               id="day"
               start={this.state.sunriseEnd}
