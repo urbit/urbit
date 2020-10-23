@@ -8,9 +8,10 @@
 --                                                      ::
 =>  |%                                                  ::  console protocol
 ++  axle                                                ::
-  $:  %4                                                ::
+  $:  %4  ::TODO  replace ducts with session ids        ::
       hey/(unit duct)                                   ::  default duct
       dug/(map duct axon)                               ::  conversations
+      eye=(jug duct duct)                               ::  outside listeners
       lit/?                                             ::  boot in lite mode
       $=  veb                                           ::  vane verbosities
       $~  (~(put by *(map @tas log-level)) %hole %soft) ::  quiet packet crashes
@@ -151,7 +152,11 @@
       ::
       ++  done                                          ::  return gift
         |=  git/gift:able
-        +>(moz :_(moz [hen %give git]))
+        =-  +>.$(moz (weld - moz))
+        %+  turn
+          :-  hen
+          ~(tap in (~(get ju eye.all) hen))
+        |=(=duct [duct %give git])
       ::
       ++  deal                                          ::  pass to %gall
         |=  [=wire =deal:gall]
@@ -161,7 +166,7 @@
         |=  [=wire =note]
         +>(moz :_(moz [hen %pass wire note]))
       ::
-      ++  from                                          ::  receive belt
+      ++  from                                          ::  receive blit
         |=  bit/dill-blit
         ^+  +>
         ?:  ?=($mor -.bit)
@@ -369,6 +374,20 @@
     =.  veb.all  (~(put by veb.all) tag.task level.task)
     [~ ..^$]
   ::
+  ?:  ?=(%view -.task)
+    ::  crash on viewing non-existent session
+    ::
+    ~|  [%no-session duct.task ~(key by dug.all)]
+    =/  =axon  (~(got by dug.all) duct.task)
+    ::  register the viewer and send them the prompt line
+    ::
+    :-  [hen %give %blit [see.axon]~]~
+    ..^$(eye.all (~(put ju eye.all) duct.task hen))
+  ::
+  ?:  ?=(%flee -.task)
+    :-  ~
+    ..^$(eye.all (~(del ju eye.all) duct.task hen))
+  ::
   =/  nus  (ax hen)
   ?~  nus
     ::  :hen is an unrecognized duct
@@ -404,6 +423,7 @@
             $~  (~(put by *(map @tas log-level)) %hole %soft)
             (map @tas log-level)
         ==
+      ::
       ++  axle-2
         $:  %2
             hey/(unit duct)
@@ -450,7 +470,7 @@
   ?-  -.old
     %1  $(old [%2 [hey dug lit dog=& hef veb]:old])
     %2  $(old [%3 [hey dug lit veb]:old])
-    %3  =-  $(old [%4 hey.old - lit.old veb.old])
+    %3  =-  $(old [%4 hey.old - ~ lit.old veb.old])
         (~(run by dug.old) |=(a=axon-3 a(see lin+see.a)))
     %4  ..^$(all old)
   ==
