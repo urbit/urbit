@@ -3061,14 +3061,20 @@
   (en:crub:crypto symmetric-key (jam plaintext))
 ::  +decrypt: decrypt packet content to a $shut-packet or die
 ::
+::    TODO: alter |acru interface
+::
 ++  decrypt
   |=  [=symmetric-key ciphertext=@]
   ^-  shut-packet
+  =+  ;;([iv=@ len=@ cyf=@] (cue ciphertext))
+  ::  assert cyphertext length <= claimed length <= max bytes
   ::
-  ;;  shut-packet
-  %-  cue
-  %-  need
-  (de:crub:crypto symmetric-key ciphertext)
+  ?.  (lte (met 3 cyf) len)
+    ~|(ames-len-small+len^(met 3 cyf) !!)
+  ?.  (lte len 1.024)
+    ~|(ames-len-large+len !!)
+  ;;  shut-packet  %-  cue  %-  need
+  (~(de sivc:aes:crypto (shaz symmetric-key) ~) iv len cyf)
 ::  +encode-packet: serialize a packet into a bytestream
 ::
 ++  encode-packet
