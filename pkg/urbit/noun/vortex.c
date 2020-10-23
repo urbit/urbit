@@ -165,8 +165,13 @@ u3v_time(u3_noun now)
   u3z(u3A->now);
   u3A->now = now;
 
+  //  XX unused, removed
+  //
+  //    u3z() temporarily preserved to avoid leaking
+  //    checkpointed values
+  //
   u3z(u3A->wen);
-  u3A->wen = _cv_scot(u3nc(c3__da, u3k(u3A->now)));
+  u3A->wen = 0;
 }
 
 /* u3v_numb(): set the instance number.
