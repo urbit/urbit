@@ -11717,6 +11717,78 @@
                        dext(sut q.sut, ref q.ref)
       ==           ==
     --
+  ::
+  ++  caching-miss                                      ::  nonintersection
+    |=  $:  ::  ref: symmetric type
+            ::
+            ref=type
+        ==
+    ::  intersection of sut and ref is empty
+    ::
+    ^-  [? _grub]
+    =|  gil=(set (set type))
+    =<  dext
+    |%
+    ++  dext
+      ^-  [? _grub]
+      ::
+      ?:  =(ref sut)
+        (caching-nest(sut %void) | sut)
+      ?-  sut
+          %void
+        :_  grub  &
+      ::
+          %noun
+        (caching-nest(sut %void) | ref)
+      ::
+          [%atom *]
+        sint
+      ::
+          [%cell *]
+        sint
+      ::
+          [%core *]
+        sint(sut [%cell %noun %noun])
+      ::
+          [%fork *]
+        =/  yed  ~(tap in p.sut)
+        =^  val=(list ?)  grub
+          (spin yed grub |=([=type =_grub] dext(sut type)))
+        :_  grub  (levy val same)
+      ::
+          [%face *]
+        dext(sut q.sut)
+      ::
+          [%hint *]
+        dext(sut q.sut)
+      ::
+          [%hold *]
+        =/  sums  (~(gas in *(set type)) `(list type)`[sut ref ~])
+        ?:  (~(has in gil) sums)
+           :_  grub  &
+        =^  val  grub  caching-repo
+        %=  dext
+          sut  val
+          gil  (~(put in gil) sums)
+        ==
+      ==
+    ++  sint
+      ?+    ref  dext(sut ref, ref sut)
+          [%atom *]
+        :_  grub
+        ?.  ?=([%atom *] sut)  &
+        ?&  ?=(^ q.ref)
+            ?=(^ q.sut)
+            !=(q.ref q.sut)
+        ==
+          [%cell *]
+        ?.  ?=([%cell *] sut)
+          :_  grub  &
+        =^  lef  grub  dext(sut p.sut, ref p.ref)
+        =^  rig  grub  dext(sut q.sut, ref q.ref)
+        :_  grub  |(lef rig)
+      ==
+    --
   ++  mite  |=(ref/type |((nest | ref) (nest(sut ref) & sut)))
   ::  XX implement
   ::
