@@ -39,6 +39,7 @@ const addGraph = (json, state) => {
     //  is empty
     if (!node.children) {
       node.children = new OrderedMap();
+      node.post.originalIndex = node.post.index;
       node.post.index = node.post.index.split('/').map(x => x.length === 0 ? '' : normalizeKey(parseInt(x, 10))).join('/');
       return node;
     }
@@ -52,13 +53,17 @@ const addGraph = (json, state) => {
       });
 
       if (index.length === 0) { break; }
+
+      const normalKey = normalizeKey(index[index.length - 1]);
+      item[1].post.originalKey = index[index.length - 1];
       
       converted.set(
-        normalizeKey(index[index.length - 1]),
+        normalKey,
         _processNode(item[1])
       );
     }
     node.children = converted;
+    node.post.originalIndex = node.post.index;
     node.post.index = node.post.index.split('/').map(x => x.length === 0 ? '' : normalizeKey(parseInt(x, 10))).join('/');
     return node;
   };
@@ -81,7 +86,10 @@ const addGraph = (json, state) => {
       if (index.length === 0) { break; }
       
       let node = _processNode(item[1]);
-      state.graphs[resource].set(normalizeKey(index[index.length - 1]), node);
+
+      const normalKey = normalizeKey(index[index.length - 1])
+      node.post.originalKey = index[index.length - 1];
+      state.graphs[resource].set(normalKey, node);
     }
     state.graphKeys.add(resource);
   }
@@ -111,13 +119,17 @@ const addNodes = (json, state) => {
   const _addNode = (graph, index, node) => {
     //  set child of graph
     if (index.length === 1) {
+      node.post.originalIndex = node.post.index;
       node.post.index = node.post.index.split('/').map(x => x.length === 0 ? '' : normalizeKey(parseInt(x, 10))).join('/');
-      graph.set(normalizeKey(index[0]), node);
+
+      const normalKey = normalizeKey(index[0])
+      node.post.originalKey = index[0];
+      graph.set(normalKey, node);
       return graph;
     }
 
     // set parent of graph
-    let parNode = graph.get(index[0]);
+    let parNode = graph.get(normalizeKey(index[0]));
     if (!parNode) {
       console.error('parent node does not exist, cannot add child');
       return;
@@ -162,7 +174,7 @@ const removeNodes = (json, state) => {
     if (index.length === 1) {
         graph.delete(index[0]);
       } else {
-        const child = graph.get(index[0]);
+        const child = graph.get(normalizeKey(index[0]));
         _remove(child.children, index.slice(1));
         graph.set(normalizeKey(index[0]), child);
       }
