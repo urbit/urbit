@@ -21,6 +21,7 @@ export function SidebarListHeader(props: {
   initialValues: SidebarListConfig;
   groups: Groups;
   contacts: Rolodex;
+  baseUrl: string;
   selected: string;
   workspace: Workspace;
   handleSubmit: (c: SidebarListConfig) => void;
@@ -35,14 +36,6 @@ export function SidebarListHeader(props: {
     [props.handleSubmit]
   );
 
-  const onDm = useCallback((values: { ships: string[]; }) => {
-    if(values.ships.length === 0) {
-      return;
-    }
-    const [ship] = values.ships;
-    history.push(`/~landscape/dm/${ship}`);
-  },[history]);
- 
   return (
     <Row
       flexShrink="0"
@@ -63,7 +56,7 @@ export function SidebarListHeader(props: {
         mr='2'
         display={(props.workspace?.type === 'home') ? 'inline-block' : 'none'}
       >
-       <Link to="/~landscape/home/invites">
+       <Link to={`${props.baseUrl}/invites`}>
           <Text
             display='inline-block'
             verticalAlign='middle'

@@ -123,6 +123,7 @@ export function Sidebar(props: SidebarProps) {
       />
       <SidebarListHeader
         contacts={props.contacts} 
+        baseUrl={props.baseUrl}
         groups={props.groups}
         initialValues={config}
         handleSubmit={setConfig}
