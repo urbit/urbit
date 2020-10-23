@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
 import { sigil, reactRenderer } from '@tlon/sigil-js';
+import { Box } from '@tlon/indigo-react';
 
 export const foregroundFromBackground = (background) => {
   const rgb = {
@@ -11,30 +12,42 @@ export const foregroundFromBackground = (background) => {
   const whiteBrightness = 255;
 
   return ((whiteBrightness - brightness) < 50) ? 'black' : 'white';
-}
+};
 
-export const Sigil = memo(({ classes = '', color, ship, size, svgClass = '', icon = false }) => {
+export const Sigil = memo(({ classes = '', color, foreground = '', ship, size, svgClass = '', icon = false, padded = false }) => {
+  const padding = (icon && padded) ? '2px' : '0px';
+  const innerSize = (icon && padded) ? (Number(size) - 4) : size;
+  const foregroundColor = foreground ? foreground : foregroundFromBackground(color);
   return ship.length > 14
-    ? (<div
-      className={'bg-black dib ' + classes}
-      style={{ width: size, height: size }}>
-    </div>)
-    : (<div
-      className={'dib ' + classes}
-      style={{ flexBasis: size, backgroundColor: color }}
-    >
+    ? (<Box
+        backgroundColor='black'
+        borderRadius={icon ? '1' : '0'}
+        display='inline-block'
+        height={size}
+        width={size}
+       />) : (
+       <Box
+        display='inline-block'
+        borderRadius={icon ? '1' : '0'}
+        flexBasis={size}
+        backgroundColor={color}
+        padding={padding}
+        className={classes}
+       >
       {sigil({
         patp: ship,
         renderer: reactRenderer,
-        size: size,
+        size: innerSize,
         icon,
         colors: [
           color,
-          foregroundFromBackground(color)
+          foregroundColor
         ],
         class: svgClass
       })}
-    </div>)
-})
+    </Box>);
+});
+
+Sigil.displayName = 'Sigil';
 
 export default Sigil;

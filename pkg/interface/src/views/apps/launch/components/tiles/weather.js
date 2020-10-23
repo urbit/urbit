@@ -1,6 +1,6 @@
 import React from 'react';
 import moment from 'moment';
-import { Box, Icon, Text } from '@tlon/indigo-react';
+import { Box, Icon, Text, BaseAnchor, BaseInput } from '@tlon/indigo-react';
 
 import Tile from './tile';
 
@@ -93,7 +93,7 @@ export default class WeatherTile extends React.Component {
     weatherStyle = { bg: 'white', text: 'black' }
     ) {
     return (
-      <Tile bg={weatherStyle.bg} color={weatherStyle.text}>
+      <Tile bg={weatherStyle.bg}>
         {child}
       </Tile>
     );
@@ -103,14 +103,15 @@ export default class WeatherTile extends React.Component {
     let secureCheck;
     let error;
     if (this.state.error === true) {
-      error = <p className="f9 red2 pt1">Please try again.</p>;
+      error = <Text display='block' color='red' pt='1'>Please try again.</Text>;
     }
     if (location.protocol === 'https:') {
       secureCheck = (
-        <a className="black white-d f9 pointer"
-           onClick={() => this.locationSubmit()}>
+        <Text color='black' cursor='pointer'
+           onClick={() => this.locationSubmit()}
+        >
           Detect ->
-        </a>
+        </Text>
       );
     }
     return this.renderWrapper(
@@ -120,32 +121,38 @@ export default class WeatherTile extends React.Component {
         justifyContent='space-between'
         height='100%'
       >
-        <a
-          className="f9 black white-d pointer"
+        <Text
+          color='black'
+          cursor='pointer'
           onClick={() =>
             this.setState({ manualEntry: !this.state.manualEntry })
           }
         >
           &lt;&#45;
-        </a>
+        </Text>
         {secureCheck}
         <Text pb={1} mb='auto'>
           Please enter your{' '}
-          <a
-            className="bb"
+          <BaseAnchor
+            borderBottom='1px solid'
+            color='black'
             href="https://latitudeandlongitude.org/"
             target="_blank"
           >
             latitude and longitude
-          </a>
+          </BaseAnchor>
           .
         </Text>
         {error}
-        <form mt='auto' className="flex" style={{ marginBlockEnd: 0}}>
-          <input
+        <Box mt='auto' display='flex' marginBlockEnd='0'>
+          <BaseInput
             id="gps"
             size="10"
-            className="w-100 black white-d bg-transparent bn f9"
+            width='100%'
+            color='black'
+            fontSize='0'
+            backgroundColor='transparent'
+            border='0'
             type="text"
             placeholder="29.55, -95.08"
             onKeyDown={(e) => {
@@ -153,15 +160,21 @@ export default class WeatherTile extends React.Component {
                 e.preventDefault();
                 this.manualLocationSubmit(e.target.value);
               }
-            }} />
-          <input
-            className={'bg-transparent black white-d bn pointer ' +
-            'f9 flex-shrink-0 pr1'}
+            }}
+          />
+          <BaseInput
+            backgroundColor='transparent'
+            color='black'
+            cursor='pointer'
+            flexShrink='0'
+            pl='1'
+            fontSize='0'
+            border='0'
             type="submit"
             onClick={() => this.manualLocationSubmit()}
             value="->"
           />
-        </form>
+        </Box>
       </Box>
     );
   }
@@ -216,17 +229,17 @@ export default class WeatherTile extends React.Component {
         alignItems='space-between'
       >
         <Text color={weatherStyle.text}>
-          <Icon icon='Weather' color={weatherStyle.text} display='inline' style={{ position: 'relative', top: '.3em'}} />
+          <Icon icon='Weather' color={weatherStyle.text} display='inline' style={{ position: 'relative', top: '.3em' }} />
           Weather
-          <a
-            style={{ color: weatherStyle.text }}
-            className='pointer'
-            onClick={() =>
-              this.setState({ manualEntry: !this.state.manualEntry })
-            }
-          >
-          ->
-        </a>
+            <Text
+              color={weatherStyle.text}
+              cursor='pointer'
+              onClick={() =>
+                this.setState({ manualEntry: !this.state.manualEntry })
+              }
+            >
+            ->
+          </Text>
         </Text>
 
         <Box
@@ -257,15 +270,19 @@ export default class WeatherTile extends React.Component {
 
     if (this.props.location) {
       return this.renderWrapper((
-        <div
-          className={'pa2 w-100 h-100 ' +
-          'bg-white bg-gray0-d black white-d'}>
+        <Box
+          p='2'
+          width='100%'
+          height='100%'
+          backgroundColor='white'
+          color='black'
+        >
             <Icon icon='Weather' color='black' display='inline' style={{ position: 'relative', top: '.3em' }} />
             <Text>Weather</Text>
-          <p className="w-100 flex-col f9">
+          <Text pt='2' width='100%' display='flex' flexDirection='column'>
           Loading, please check again later...
-          </p>
-        </div>
+          </Text>
+        </Box>
       ));
     }
     return this.renderNoData();

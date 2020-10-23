@@ -1,24 +1,21 @@
 import React from 'react';
 import Helmet from 'react-helmet';
-import { Link } from 'react-router-dom';
 
 import { Box, Row, Icon, Text, Center } from '@tlon/indigo-react';
-import { uxToHex, adjustHex } from "~/logic/lib/util";
+import { uxToHex, adjustHex } from '~/logic/lib/util';
 
 import './css/custom.css';
 
-import { Sigil } from "~/logic/lib/sigil";
+import { Sigil } from '~/logic/lib/sigil';
 import Tiles from './components/tiles';
 import Tile from './components/tiles/tile';
 import Welcome from './components/welcome';
 import Groups from './components/Groups';
 
 export default class LaunchApp extends React.Component {
-
   componentDidMount() {
     // preload spinner asset
     new Image().src = '/~landscape/img/Spinner.png';
-
   }
 
   render() {
@@ -27,16 +24,15 @@ export default class LaunchApp extends React.Component {
     const sigilColor = contact?.color
       ? `#${uxToHex(contact.color)}`
       : props.dark
-      ? "#FFFFFF"
-      : "#000000";
-
+      ? '#FFFFFF'
+      : '#000000';
 
     return (
       <>
         <Helmet>
           <title>OS1 - Home</title>
         </Helmet>
-        <div className="h-100 overflow-y-scroll">
+        <Box height='100%' overflowY='scroll'>
           <Welcome firstTime={props.launch.firstTime} api={props.api} />
           <Box
             ml='2'
@@ -47,11 +43,9 @@ export default class LaunchApp extends React.Component {
             p={2}
           >
             <Tile
-              border={1}
               bg="#fff"
-              borderColor="green"
+              color="green"
               to="/~landscape/home"
-              boxShadow='none'
               p={0}
             >
               <Box p={2} height='100%' width='100%' bg='washedGreen'>
@@ -82,22 +76,23 @@ export default class LaunchApp extends React.Component {
               weather={props.weather}
             />
           </Box>
-          <Groups associations={props.associations} invites={props.invites} api={props.api}/>
-          <Box
-            position="absolute"
-            fontFamily="mono"
-            left="0"
-            bottom="0"
-            color="gray"
-            bg="white"
-            ml={3}
-            mb={3}
-            borderRadius={2}
-            fontSize={0}
-            p={2}>
-            {props.baseHash}
-          </Box>
-        </div>
+          <Groups associations={props.associations} invites={props.invites} api={props.api} />
+        </Box>
+        <Box
+          position="absolute"
+          fontFamily="mono"
+          left="0"
+          bottom="0"
+          color="gray"
+          bg="white"
+          ml={3}
+          mb={3}
+          borderRadius={2}
+          fontSize={0}
+          p={2}
+        >
+          {props.baseHash}
+        </Box>
       </>
     );
   }

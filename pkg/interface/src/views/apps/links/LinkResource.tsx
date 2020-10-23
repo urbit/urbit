@@ -124,7 +124,7 @@ export function LinkResource(props: LinkResourceProps) {
                     name={name}
                     ship={ship}
                     api={api}
-                    parentIndex={node.post.index}
+                    parentIndex={node.post.originalIndex}
                   />
                 </Row>
                 <Comments

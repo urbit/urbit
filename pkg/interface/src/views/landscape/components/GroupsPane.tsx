@@ -62,9 +62,8 @@ export function GroupsPane(props: GroupsPaneProps) {
   }
 
   const popovers = (routeProps: RouteComponentProps, baseUrl: string) =>
-    (groupPath && (
-      <>
-        <PopoverRoutes
+     ( <>
+        {groupPath && ( <PopoverRoutes
           contacts={groupContacts || {}}
           association={groupAssociation!}
           group={group!}
@@ -74,17 +73,17 @@ export function GroupsPane(props: GroupsPaneProps) {
           hideNicknames={props.hideNicknames}
           {...routeProps}
           baseUrl={baseUrl}
-        />
+        />)}
         <InvitePopover
           api={api}
           association={groupAssociation!}
           baseUrl={baseUrl}
           groups={props.groups}
           contacts={props.contacts}
+          workspace={workspace}
         />
       </>
-    )) ||
-    null;
+    ) 
 
   return (
     <Switch>
@@ -168,7 +167,7 @@ export function GroupsPane(props: GroupsPaneProps) {
         render={(routeProps) => {
           const newUrl = `${baseUrl}/new`;
           return (
-            <Skeleton recentGroups={recentGroups} {...props} baseUrl={baseUrl}>
+            <Skeleton mobileHide recentGroups={recentGroups} {...props} baseUrl={baseUrl}>
               <NewChannel
                 {...routeProps}
                 api={api}
@@ -176,6 +175,7 @@ export function GroupsPane(props: GroupsPaneProps) {
                 groups={groups}
                 group={groupPath}
                 contacts={props.contacts}
+                workspace={workspace}
               />
               {popovers(routeProps, baseUrl)}
             </Skeleton>

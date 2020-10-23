@@ -1,6 +1,7 @@
 import React, { useRef, useCallback } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { Col } from "@tlon/indigo-react";
+import _ from 'lodash';
 
 import { Association } from "~/types/metadata-update";
 import { StoreState } from "~/logic/store/type";
@@ -24,8 +25,8 @@ export function ChatResource(props: ChatResourceProps) {
     return null;
   }
 
-  const { envelopes, config } = props.inbox[station];
-  const { read, length } = config;
+  const { envelopes, config } = (props.inbox?.[station]) ? props.inbox[station] : {envelopes: [], config: {}};
+  const { read, length } = (config) ? config : undefined;
 
   const groupPath = props.association["group-path"];
   const group = props.groups[groupPath];
@@ -113,7 +114,6 @@ export function ChatResource(props: ChatResourceProps) {
         group={group}
         ship={owner}
         station={station}
-        allStations={Object.keys(props.inbox)}
         api={props.api}
         hideNicknames={props.hideNicknames}
         hideAvatars={props.hideAvatars}

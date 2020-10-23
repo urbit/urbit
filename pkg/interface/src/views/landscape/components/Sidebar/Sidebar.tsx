@@ -13,6 +13,7 @@ import {
   Workspace,
   Groups,
   Invites,
+  Rolodex,
 } from "~/types";
 import { SidebarListHeader } from "./SidebarListHeader";
 import { useLocalStorageState } from "~/logic/lib/useLocalStorageState";
@@ -20,8 +21,11 @@ import { getGroupFromWorkspace } from "~/logic/lib/workspace";
 import { SidebarAppConfigs } from './types';
 import { SidebarList } from "./SidebarList";
 import { SidebarInvite } from './SidebarInvite';
+import { roleForShip } from "~/logic/lib/group";
+
 
 interface SidebarProps {
+  contacts: Rolodex;
   children: ReactNode;
   recentGroups: string[];
   invites: Invites ;
@@ -89,12 +93,21 @@ export function Sidebar(props: SidebarProps) {
   );
   const sidebarInvites = (workspace?.type === 'home')
     ? inviteItems(invites, api) : null;
+
+  const role = props.groups?.[groupPath] ? roleForShip(props.groups[groupPath], window.ship) : undefined;
+  const isAdmin = (role === "admin") || (workspace?.type === 'home');
+
+  const newStyle = {
+    display: isAdmin ? "block" : "none"
+  };
+
   return (
     <Col
       display={display}
       width="100%"
       gridRow="1/2"
       gridColumn="1/2"
+      borderTopLeftRadius='2'
       borderRight={1}
       borderRightColor="washedGray"
       overflowY="scroll"
@@ -108,7 +121,14 @@ export function Sidebar(props: SidebarProps) {
         baseUrl={props.baseUrl}
         workspace={props.workspace}
       />
-      <SidebarListHeader initialValues={config} handleSubmit={setConfig} />
+      <SidebarListHeader
+        contacts={props.contacts} 
+        baseUrl={props.baseUrl}
+        groups={props.groups}
+        initialValues={config}
+        handleSubmit={setConfig}
+        selected={selected || ""} 
+        workspace={workspace} />
       {sidebarInvites}
       <SidebarList
         config={config}
@@ -131,6 +151,7 @@ export function Sidebar(props: SidebarProps) {
         py="2"
       >
         <Link
+          style={newStyle}
           to={!!groupPath ? `/~landscape${groupPath}/new` : `/~landscape/home/new`}
         >
           <Box
