@@ -7,7 +7,7 @@ const normalizeKey = (key) => {
     // new links uses milliseconds since unix epoch
     // old (pre-graph-store) use @da
     // ported from +time:enjs:format in hoon.hoon
-    return (1000 * (9223372036854775 + (key - DA_UNIX_EPOCH))) / 18446744073709551616;
+    return Math.round((1000 * (9223372036854775 + (key - DA_UNIX_EPOCH))) / 18446744073709551616);
   }
   return key;
 }
@@ -39,6 +39,7 @@ const addGraph = (json, state) => {
     //  is empty
     if (!node.children) {
       node.children = new OrderedMap();
+      node.post.index = node.post.index.split('/').map(x => x.length === 0 ? '' : normalizeKey(parseInt(x, 10))).join('/');
       return node;
     }
 
@@ -58,6 +59,7 @@ const addGraph = (json, state) => {
       );
     }
     node.children = converted;
+    node.post.index = node.post.index.split('/').map(x => x.length === 0 ? '' : normalizeKey(parseInt(x, 10))).join('/');
     return node;
   };
 
@@ -109,6 +111,7 @@ const addNodes = (json, state) => {
   const _addNode = (graph, index, node) => {
     //  set child of graph
     if (index.length === 1) {
+      node.post.index = node.post.index.split('/').map(x => x.length === 0 ? '' : normalizeKey(parseInt(x, 10))).join('/');
       graph.set(normalizeKey(index[0]), node);
       return graph;
     }
