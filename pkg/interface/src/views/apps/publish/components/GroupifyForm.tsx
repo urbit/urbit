@@ -64,7 +64,9 @@ export function GroupifyForm(props: GroupifyFormProps) {
           id="group"
           label="Group"
           caption="What group should this notebook be added to? If blank, a new group will be made for the notebook"
+          groups={props.groups}
           associations={props.associations}
+          adminOnly
         />
         <AsyncButton loadingText="Groupifying..." border>
           Groupify
