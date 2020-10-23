@@ -162,7 +162,6 @@ export default class ChatEditor extends Component {
         flexGrow='1'
         height='100%'
         maxHeight='224px'
-        paddingTop='8px'
         width='calc(100% - 88px)'
         className={inCodeMode ? 'chat code' : 'chat'}
         color="black"
@@ -171,7 +170,7 @@ export default class ChatEditor extends Component {
           ? <BaseInput
             fontFamily={inCodeMode ? 'Source Code Pro' : 'Inter'}
             fontSize="14px"
-            style={{ width: '100%', marginTop: '-8px', background: 'transparent', color: 'currentColor' }}
+            style={{ width: '100%', background: 'transparent', color: 'currentColor' }}
             placeholder={inCodeMode ? "Code..." : "Message..."}
             onKeyUp={event => {
               if (event.key === 'Enter') {
@@ -197,7 +196,7 @@ export default class ChatEditor extends Component {
           {...props}
         />
         }
-        
+
       </Row>
     );
   }
