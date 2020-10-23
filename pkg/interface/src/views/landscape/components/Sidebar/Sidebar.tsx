@@ -13,6 +13,7 @@ import {
   Workspace,
   Groups,
   Invites,
+  Rolodex,
 } from "~/types";
 import { SidebarListHeader } from "./SidebarListHeader";
 import { useLocalStorageState } from "~/logic/lib/useLocalStorageState";
@@ -24,6 +25,7 @@ import { roleForShip } from "~/logic/lib/group";
 
 
 interface SidebarProps {
+  contacts: Rolodex;
   children: ReactNode;
   recentGroups: string[];
   invites: Invites ;
@@ -119,7 +121,14 @@ export function Sidebar(props: SidebarProps) {
         baseUrl={props.baseUrl}
         workspace={props.workspace}
       />
-      <SidebarListHeader initialValues={config} handleSubmit={setConfig} />
+      <SidebarListHeader
+        contacts={props.contacts} 
+        baseUrl={props.baseUrl}
+        groups={props.groups}
+        initialValues={config}
+        handleSubmit={setConfig}
+        selected={selected || ""} 
+        workspace={workspace} />
       {sidebarInvites}
       <SidebarList
         config={config}

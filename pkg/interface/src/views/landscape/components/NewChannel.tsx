@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback } from 'react';
 import {
   Box,
   ManagedTextInputField as Input,
@@ -28,10 +28,10 @@ interface FormSchema {
 }
 
 const formSchema = Yup.object({
-  name: Yup.string().required("Channel must have a name"),
+  name: Yup.string().required('Channel must have a name'),
   description: Yup.string(),
   ships: Yup.array(Yup.string()),
-  type: Yup.string().required("Must choose channel type"),
+  type: Yup.string().required('Must choose channel type')
 });
 
 interface NewChannelProps {
@@ -43,7 +43,6 @@ interface NewChannelProps {
   workspace: Workspace;
 }
 
-
 export function NewChannel(props: NewChannelProps & RouteComponentProps) {
   const { history, api, group, workspace } = props;
 
@@ -54,7 +53,7 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
     try {
       const { name, description, type, ships } = values;
       switch (type) {
-        case "chat":
+        case 'chat':
           const appPath = `/~${window.ship}/${resId}`;
           const groupPath = group || `/ship${appPath}`;
 
@@ -63,13 +62,13 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
             description,
             appPath,
             groupPath,
-            { invite: { pending: ships.map((s) => `~${s}`) } },
-            ships.map((s) => `~${s}`),
+            { invite: { pending: ships.map(s => `~${s}`) } },
+            ships.map(s => `~${s}`),
             true,
             false
           );
           break;
-        case "publish":
+        case 'publish':
           await props.api.publish.newBook(resId, name, description, group);
           break;
         case "link":
@@ -79,32 +78,32 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
               name,
               description,
               group,
-              "link"
+              'link'
             );
           } else {
             await api.graph.createUnmanagedGraph(
               resId,
               name,
               description,
-              { invite: { pending: ships.map((s) => `~${s}`) } },
-              "link"
+              { invite: { pending: ships.map(s => `~${s}`) } },
+              'link'
             );
           }
           break;
 
         default:
-          console.log("fallthrough");
+          console.log('fallthrough');
       }
 
       if (!group) {
-        await waiter((p) => !!p?.groups?.[`/ship/~${window.ship}/${resId}`]);
+        await waiter(p => Boolean(p?.groups?.[`/ship/~${window.ship}/${resId}`]));
       }
       actions.setStatus({ success: null });
       const resourceUrl = parentPath(location.pathname);
       history.push(`${resourceUrl}/resource/${type}${type === 'link' ? '/ship' : ''}/~${window.ship}/${resId}`);
     } catch (e) {
       console.error(e);
-      actions.setStatus({ error: "Channel creation failed" });
+      actions.setStatus({ error: 'Channel creation failed' });
     }
   };
   return (
@@ -115,11 +114,11 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
       <Formik
         validationSchema={formSchema}
         initialValues={{
-          type: "chat",
-          name: "",
-          description: "",
-          group: "",
-          ships: [],
+          type: 'chat',
+          name: '',
+          description: '',
+          group: '',
+          ships: []
         }}
         onSubmit={onSubmit}
       >

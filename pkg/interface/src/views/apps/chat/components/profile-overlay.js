@@ -12,7 +12,6 @@ export class ProfileOverlay extends PureComponent {
 
     this.popoverRef = React.createRef();
     this.onDocumentClick = this.onDocumentClick.bind(this);
-    this.createAndRedirectToDM = this.createAndRedirectToDM.bind(this);
   }
 
   componentDidMount() {
@@ -23,42 +22,6 @@ export class ProfileOverlay extends PureComponent {
   componentWillUnmount() {
     document.removeEventListener('mousedown', this.onDocumentClick);
     document.removeEventListener('touchstart', this.onDocumentClick);
-  }
-
-  createAndRedirectToDM() {
-    const { api, ship, history, allStations } = this.props;
-    const station = `/~${window.ship}/dm--${ship}`;
-    const theirStation = `/~${ship}/dm--${window.ship}`;
-
-    if (allStations.indexOf(station) !== -1) {
-      history.push(`/~landscape/home/resource/chat${station}`);
-      return;
-    }
-
-    if (allStations.indexOf(theirStation) !== -1) {
-      history.push(`/~landscape/home/resource/chat${theirStation}`);
-      return;
-    }
-
-    const groupPath = `/ship/~${window.ship}/dm--${ship}`;
-    const aud = ship !== window.ship ? [`~${ship}`] : [];
-    const title = `${cite(window.ship)} <-> ${cite(ship)}`;
-
-    api.chat.create(
-      title,
-      '',
-      station,
-      groupPath,
-      { invite: { pending: aud } },
-      aud,
-      true,
-      false
-    );
-
-    //  TODO: make a pretty loading state
-    setTimeout(() => {
-      history.push(`/~landscape/home/resource/chat${station}`);
-    }, 5000);
   }
 
   onDocumentClick(event) {
@@ -72,7 +35,7 @@ export class ProfileOverlay extends PureComponent {
   }
 
   render() {
-    const { contact, ship, color, topSpace, bottomSpace, group, association, hideNicknames, hideAvatars, history } = this.props;
+    const { contact, ship, color, topSpace, bottomSpace, group, hideNicknames, hideAvatars, history } = this.props;
 
     let top, bottom;
     if (topSpace < OVERLAY_HEIGHT / 2) {
@@ -132,7 +95,7 @@ export class ProfileOverlay extends PureComponent {
           )}
           <Text mono gray>{cite(`~${ship}`)}</Text>
           {!isOwn && (
-            <Button mt={2} width="100%" style={{ cursor: 'pointer' }} onClick={this.createAndRedirectToDM}>
+            <Button mt={2} width="100%" style={{ cursor: 'pointer' }} onClick={() => history.push(`/~landscape/dm/${ship}`)}>
               Send Message
             </Button>
           )}
