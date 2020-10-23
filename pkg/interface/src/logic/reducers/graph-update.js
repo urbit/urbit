@@ -6,6 +6,7 @@ const normalizeKey = (key) => {
   if(key > DA_UNIX_EPOCH) {
     // new links uses milliseconds since unix epoch
     // old (pre-graph-store) use @da
+    // ported from +time:enjs:format in hoon.hoon
     return (1000 * (9223372036854775 + (key - DA_UNIX_EPOCH))) / 18446744073709551616;
   }
   return key;
@@ -14,7 +15,6 @@ const normalizeKey = (key) => {
 export const GraphReducer = (json, state) => {
   const data = _.get(json, 'graph-update', false);
   if (data) {
-    console.log(data);
     keys(data, state);
     addGraph(data, state);
     removeGraph(data, state);
@@ -143,7 +143,6 @@ const addNodes = (json, state) => {
 
       item[1].children = mapifyChildren(item[1].children || []);
 
-      console.log(index);
 
       
       state.graphs[resource] = _addNode(
@@ -167,13 +166,11 @@ const removeNodes = (json, state) => {
   };
   const data = _.get(json, 'remove-nodes', false);
   if (data) {
-    console.log(data);
     const { ship, name } = data.resource;
     const res = `${ship}/${name}`;
     if (!(res in state.graphs)) { return; }
 
     data.indices.forEach((index) => {
-      console.log(index);
       if (index.split('/').length === 0) { return; }
       let indexArr = index.split('/').slice(1).map((ind) => {
         return parseInt(ind, 10);
