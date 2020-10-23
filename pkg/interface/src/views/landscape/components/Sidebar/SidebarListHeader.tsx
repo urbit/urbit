@@ -12,10 +12,13 @@ import {
 import { FormikOnBlur } from "~/views/components/FormikOnBlur";
 import { Dropdown } from "~/views/components/Dropdown";
 import { FormikHelpers } from "formik";
-import { SidebarListConfig } from "./types";
+import { SidebarListConfig, Workspace } from "./types";
+import { Link } from 'react-router-dom';
 
 export function SidebarListHeader(props: {
   initialValues: SidebarListConfig;
+  selected: string;
+  workspace: Workspace;
   handleSubmit: (c: SidebarListConfig) => void;
 }) {
   const onSubmit = useCallback(
@@ -35,12 +38,34 @@ export function SidebarListHeader(props: {
       pr={2}
       pl={3}
     >
-      <Box>
+      <Box flexShrink='0'>
         <Text>
           {props.initialValues.hideUnjoined ? "Joined Channels" : "All Channels"}
         </Text>
       </Box>
+      <Box
+        width='100%'
+        textAlign='right'
+        mr='2'
+        display={(props.workspace?.type === 'home') ? 'inline-block' : 'none'}
+      >
+        <Link
+          to={`/~landscape/home${props.selected}/dm`}
+        >
+          <Text
+            display='inline-block'
+            verticalAlign='middle'
+            py='1px'
+            px='3px'
+            backgroundColor='washedBlue'
+            color='blue'
+            borderRadius='1'>
+              + DM
+          </Text>
+        </Link>
+      </Box>
       <Dropdown
+        flexShrink='0'
         width="200px"
         alignY="top"
         alignX={["right", "left"]}

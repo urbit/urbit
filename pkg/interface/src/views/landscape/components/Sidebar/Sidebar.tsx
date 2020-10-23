@@ -119,7 +119,7 @@ export function Sidebar(props: SidebarProps) {
         baseUrl={props.baseUrl}
         workspace={props.workspace}
       />
-      <SidebarListHeader initialValues={config} handleSubmit={setConfig} />
+      <SidebarListHeader initialValues={config} handleSubmit={setConfig} selected={selected || ""} workspace={workspace} />
       {sidebarInvites}
       <SidebarList
         config={config}
