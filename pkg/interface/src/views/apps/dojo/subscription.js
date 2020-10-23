@@ -72,7 +72,7 @@ export default class Subscription {
   }
 
   firstRound() {
-    this.subscribe('/sole/' + this.api.dojoId, 'dojo');
+    this.subscribe('/herm', 'herm');
   }
 
   handleEvent(diff) {

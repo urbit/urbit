@@ -29,8 +29,8 @@ export default class Api {
       });
   }
 
-  soto(data) {
-    return this.action('dojo', 'sole-action', { id: this.dojoId, dat: data });
+  belt(belt) {
+    return this.action('herm', 'belt', belt);
   }
 
   action(appl, mark, data) {
