@@ -10,6 +10,7 @@ export class Input extends Component {
       type: 'Sending to Dojo'
     };
     this.keyPress = this.keyPress.bind(this);
+    this.click = this.click.bind(this);
     this.inputRef = React.createRef();
   }
 
@@ -24,64 +25,70 @@ export class Input extends Component {
   }
 
   keyPress(e) {
+    let key = e.key;
+    //  let paste event pass
     if ((e.getModifierState('Control') || event.getModifierState('Meta'))
-       && e.key === 'v') {
+        && e.key === 'v') {
       return;
     }
+
+    let belt = null;
+         if (key === 'ArrowLeft')  belt = {aro: 'l'};
+    else if (key === 'ArrowRight') belt = {aro: 'r'};
+    else if (key === 'ArrowUp')    belt = {aro: 'u'};
+    else if (key === 'ArrowDown')  belt = {aro: 'd'};
+    else if (key === 'Backspace')  belt = {bac: null};
+    else if (key === 'Delete')     belt = {del: null};
+    else if (key === 'Tab')        belt = {ctl: 'i'};
+    else if (key === 'Enter')      belt = {ret: null};
+    else if (key.length === 1)     belt = {txt: key};
+    else                           belt = null;
+
+    if (belt && e.getModifierState('Control')) {
+      if (belt.txt !== undefined) belt = {ctl: belt.txt};
+    } else
+    if (belt &&
+        (e.getModifierState('Meta') || e.getModifierState('Alt'))) {
+      if (belt.bac !== undefined) belt = {met: 'bac'};
+    }
+
+    if (belt !== null) {
+      this.props.api.belt(belt);
+    }
+
+    //TODO  handle paste
 
     e.preventDefault();
 
-    const allowedKeys = [
-      'Enter', 'Backspace', 'ArrowLeft', 'ArrowRight', 'Tab'
-    ];
+  }
 
-    if ((e.key.length > 1) && (!(allowedKeys.includes(e.key)))) {
-      return;
-    }
+  paste(e) {
+    const clipboardData = e.clipboardData || window.clipboardData;
+    this.props.api.belt({ txt: clipboardData.getData('Text') });
+    e.preventDefault();
+  }
 
-    // submit on enter
-    if (e.key === 'Enter') {
-      this.setState({ awaiting: true, type: 'Sending to Dojo' });
-      this.props.api.soto('ret').then(() => {
-        this.setState({ awaiting: false });
-      });
-    } else if ((e.key === 'Backspace') && (this.props.cursor > 0)) {
-      this.props.store.doEdit({ del: this.props.cursor - 1 });
-      return this.props.store.setState({ cursor: this.props.cursor - 1 });
-    } else if (e.key === 'Backspace') {
-      return;
-    } else if (e.key.startsWith('Arrow')) {
-      if (e.key === 'ArrowLeft') {
-        if (this.props.cursor > 0) {
-          this.props.store.setState({ cursor: this.props.cursor - 1 });
-        }
-      } else if (e.key === 'ArrowRight') {
-        if (this.props.cursor < this.props.input.length) {
-          this.props.store.setState({ cursor: this.props.cursor + 1 });
-        }
-      }
-    }
-
-    // tab completion
-    else if (e.key === 'Tab') {
-      this.setState({ awaiting: true, type: 'Getting suggestions' });
-      this.props.api.soto({ tab: this.props.cursor }).then(() => {
-        this.setState({ awaiting: false });
-      });
-    }
-
-    // capture and transmit most characters
-    else {
-      this.props.store.doEdit({ ins: { cha: e.key, at: this.props.cursor } });
-      this.props.store.setState({ cursor: this.props.cursor + 1 });
-    }
+  click(e) {
+    // prevent desynced cursor movement
+    e.preventDefault();
+    e.target.setSelectionRange(this.props.cursor, this.props.cursor);
   }
 
   render() {
+    const line = this.props.line;
+    let prompt = 'connecting...';
+    if (line) {
+      if (line.lin) {
+        prompt = line.lin;
+      }
+      //TODO  render prompt style
+      else if (line.klr) {
+        prompt = line.klr.reduce((l, p) => (l + p), '');
+      }
+    }
     return (
       <div className="flex flex-row flex-grow-1 relative">
-        <div className="flex-shrink-0"><span class="dn-s">{cite(this.props.ship)}:</span>dojo
-        </div>
+        <div className="flex-shrink-0"></div>
         <span id="prompt">
           {this.props.prompt}
         </span>
@@ -95,22 +102,13 @@ export class Input extends Component {
           className="mono ml1 flex-auto dib w-100"
           id="dojo"
           cursor={this.props.cursor}
-          onClick={e => this.props.store.setState({ cursor: e.target.selectionEnd })}
           onKeyDown={this.keyPress}
-          onPaste={(e) => {
-            const clipboardData = e.clipboardData || window.clipboardData;
-            const paste = Array.from(clipboardData.getData('Text'));
-            paste.reduce(async (previous, next) => {
-              await previous;
-              this.setState({ cursor: this.props.cursor + 1 });
-              return this.props.store.doEdit({ ins: { cha: next, at: this.props.cursor } });
-            }, Promise.resolve());
-            e.preventDefault();
-            }}
+          onClick={this.click}
+          onPaste={this.paste}
           ref={this.inputRef}
-          defaultValue={this.props.input}
+          defaultValue="connecting..."
+          value={prompt}
         />
-        <Spinner awaiting={this.state.awaiting} text={`${this.state.type}...`} classes="absolute right-0 bottom-0 inter pa ba pa2 b--gray1-d" />
       </div>
     );
   }

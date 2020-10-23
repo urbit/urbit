@@ -72,14 +72,13 @@ export default class DojoApp extends Component {
                       cursor: 'text'
                     }}
                   >
-                    <History commandLog={this.state.txt} />
+                    <History log={this.state.lines.slice(0, -1)} />
                     <Input
                       ship={this.props.ship}
                       cursor={this.state.cursor}
-                      prompt={this.state.prompt}
-                      input={this.state.input}
                       api={this.api}
                       store={this.store}
+                      line={this.state.lines.slice(-1)[0]}
                     />
                   </div>
                 </div>
