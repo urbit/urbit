@@ -10780,6 +10780,23 @@
     |=  gen/hoon  ^-  type
     (chip & gen)
   ::
+  ++  caching-hemp
+    ::  generate formula from foot
+    ::
+    |=  [hud/poly gol/type gen/hoon]
+    ^-  [nock _grub]
+    ~+
+    =+  %hemp-141
+    ?-  hud
+        %dry
+      =^  val  grub  (caching-mint gol gen)
+      [q:val grub]
+    ::
+        %wet
+      =^  val  grub  (caching-mint(vet |) gol gen)
+      [q:val grub]
+    ==
+  ::
   ++  hemp
     ::  generate formula from foot
     ::
@@ -10933,6 +10950,185 @@
     =+  hum=(core dox [nym hud %gold] dox (laze nym hud dom) dom)
     =+  (balk(sut yet) hum hud dom)
     [yet hum]
+  ::
+  ++  caching-mine
+    ::  mint all chapters and feet in a core
+    ::
+    |=  [gol=type mel=vair nym=(unit term) hud=poly dom=(map term tome)]
+    ^-  [(pair type nock) _grub]
+    |^
+    =^  checked  grub  (core-check gol)
+    =/  log  (chapters-check checked)
+    =/  dog  (get-tomes log)
+    =^  dez  grub
+      =.  sut  (core sut [nym hud %gold] sut (laze nym hud dom) dom)
+      |-  ^-  [?(~ ^) _grub]
+      ?:  ?=(~ dom)
+        [~ grub]
+      =^  dov=?(~ ^)  grub
+        =/  dab=(map term hoon)  q.q.n.dom
+        =/  dag  (arms-check dab (get-arms dog p.n.dom))
+        |-  ^-  [?(~ ^) _grub]
+        ?:  ?=(~ dab)
+          [~ grub]
+        =^  gog  grub  (get-arm-type log dag p.n.dab)
+        =^  vad  grub  (caching-hemp hud gog q.n.dab)
+        ?-    dab
+            [* ~ ~]
+          [vad grub]
+        ::
+            [* ~ *]
+          =^  val  grub  $(dab r.dab)
+          [[vad val] grub]
+        ::
+            [* * ~]
+          =^  val  grub  $(dab l.dab)
+          [[vad val] grub]
+        ::
+            [* * *]
+          =^  lef  grub  $(dab l.dab)
+          =^  rig  grub  $(dab r.dab)
+          [[vad lef rig] grub]
+        ==
+      ?-      dom
+          [* ~ ~]
+        [dov grub]
+      ::
+          [* ~ *]
+        =^  val  grub  $(dom r.dom)
+        [[dov val] grub]
+      ::
+          [* * ~]
+        =^  val  grub  $(dom l.dom)
+        [[dov val] grub]
+      ::
+          [* * *]
+        =^  lef  grub  $(dom l.dom)
+        =^  rig  grub  $(dom r.dom)
+        [[dov lef rig] grub]
+      ==
+    =/  cor  (core sut [nym hud mel] sut [[%full ~] dez] dom)
+    :_  grub
+    [cor [%1 dez]]
+    ::
+    ::  all the below arms are used for gol checking and should have no
+    ::  effect other than giving more specific errors
+    ::
+    ::  all the possible types we could be expecting.
+    ::
+    +$  gol-type
+      $~  %noun
+      $@  %noun
+      $%  [%cell p=type q=type]
+          [%core p=type q=coil]
+          [%fork p=(set gol-type)]
+      ==
+    ::  check that we're looking for a core
+    ::
+    ++  core-check
+      |=  log=type
+      |-  ^-  [gol-type _grub]
+      =^  val  grub  caching-repo(sut log)
+      =^  def  grub  $(log val)
+      ?+    log  [def grub]
+          %noun      :_  grub  (nice log &)
+          %void      :_  grub  (nice %noun |)
+          [%atom *]  :_  grub  (nice %noun |)
+          [%cell *]
+        =^  val  grub  (caching-nest(sut p.log) & %noun)
+        :_  grub  (nice log val)
+          [%core *]  :_  grub  (nice log(r.p.q %gold) &)
+          [%fork *]
+        =/  tys  ~(tap in p.log)
+        =^  val  grub
+          |-  ^-  [(set gol-type) _grub]
+          ?~  tys
+            [~ grub]
+          =^  a  grub  ^$(log i.tys)
+          =^  b  grub  $(tys t.tys)
+          [(~(put in b) a) grub]
+        :_  grub  [%fork val]
+      ==
+    ::  check we have the expected number of chapters
+    ::
+    ++  chapters-check
+      |=  log=gol-type
+      |-  ^-  gol-type
+      ?-    log
+          %noun      (nice log &)
+          [%cell *]  (nice log &)
+          [%core *]  ~_  leaf+"core-number-of-chapters"
+                     (nice log =(~(wyt by dom) ~(wyt by q.r.q.log)))
+          [%fork *]
+        =/  tys  ~(tap in p.log)
+        |-  ^-  gol-type
+        ?~  tys
+          log
+        =/  a  ^$(log i.tys)
+        =/  b  $(tys t.tys)
+        log
+      ==
+    ::  get map of tomes if exists
+    ::
+    ++  get-tomes
+      |=  log=gol-type
+      ^-  (unit (map term tome))
+      ?-    log
+          %noun      ~
+          [%cell *]  ~
+          [%fork *]  ~  ::  maybe could be more aggressive
+          [%core *]  `q.r.q.log
+      ==
+    ::  get arms in tome
+    ::
+    ++  get-arms
+      |=  [dog=(unit (map term tome)) nam=term]
+      ^-  (unit (map term hoon))
+      %+  bind  dog
+      |=  a=(map term tome)
+      ~_  leaf+"unexpcted-chapter.{(trip nam)}"
+      q:(~(got by a) nam)
+    ::  check we have the expected number of arms
+    ::
+    ++  arms-check
+      |=  [dab=(map term hoon) dag=(unit (map term hoon))]
+      ?~  dag
+        dag
+      =/  a
+        =/  exp  ~(wyt by u.dag)
+        =/  hav  ~(wyt by dab)
+        ~_  =/  expt  (scow %ud exp)
+            =/  havt  (scow %ud hav)
+            leaf+"core-number-of-arms.exp={expt}.hav={havt}"
+        ~_  =/  missing  ~(tap in (~(dif in ~(key by u.dag)) ~(key by dab)))
+            leaf+"missing.{<missing>}"
+        ~_  =/  extra  ~(tap in (~(dif in ~(key by dab)) ~(key by u.dag)))
+            leaf+"extra.{<extra>}"
+        ~_  =/  have  ~(tap in ~(key by dab))
+            leaf+"have.{<have>}"
+        (nice dag =(exp hav))
+      a
+    ::  get expected type of this arm
+    ::
+    ++  get-arm-type
+      |=  [log=gol-type dag=(unit (map term hoon)) nam=term]
+      ^-  [type _grub]
+      ?~  dag
+        [%noun grub]
+      %.  u.dag
+      |=  a=(map term hoon)
+      =/  gen=hoon
+        ~_  leaf+"unexpected-arm.{(trip nam)}"
+        (~(got by a) nam)
+      (caching-play(sut log) gen)
+    ::
+    ++  nice
+      |*  [typ=* gud=?]
+      ?:  gud
+        typ
+      ~_  leaf+"core-nice"
+      !!
+    --
   ::
   ++  mine
     ::  mint all chapters and feet in a core
