@@ -12644,6 +12644,44 @@
       {$hint *}  (hint p.sut $(sut q.sut))
       {$hold *}  $(sut repo)
     ==
+  ::
+  ++  caching-wrap
+    |=  yoz=?(%lead %iron %zinc)
+    ~_  leaf+"wrap"
+    ^-  [type _grub]
+    ?+    sut  [sut grub]
+        [%cell *]
+      =^  lef  grub  $(sut p.sut)
+      =^  rig  grub  $(sut q.sut)
+      :_  grub
+      (cell lef rig)
+    ::
+        [%core *]
+      ?>  |(=(%gold r.p.q.sut) =(%lead yoz))
+      :_  grub
+      sut(r.p.q yoz)
+    ::
+        [%face *]
+      =^  rig  grub  $(sut q.sut)
+      :_  grub
+      (face p.sut rig)
+    ::
+        [%fork *]
+      =/  yed  ~(tap in p.sut)
+      =^  val  grub
+        (spin yed grub |=([=type =_grub] ^$(sut type)))
+      :_  grub
+      (fork val)
+    ::
+        [%hint *]
+      =^  rig  grub  $(sut q.sut)
+      :_  grub
+      (hint p.sut rig)
+    ::
+        [%hold *]
+      =^  rig  grub  caching-repo
+      $(sut rig)
+    ==
   --
 ++  us                                                  ::  prettyprinter
   =>  |%
