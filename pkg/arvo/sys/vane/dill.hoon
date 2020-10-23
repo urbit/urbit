@@ -389,6 +389,9 @@
     ..^$(eye.all (~(del ju eye.all) duct.task hen))
   ::
   =/  nus  (ax hen)
+  =?  nus  &(?=(~ nus) ?=(^ hey.all))
+    ::TODO  allow specifying target session in task
+    (ax u.hey.all)
   ?~  nus
     ::  :hen is an unrecognized duct
     ::  could be before %boot (or %boot failed)
