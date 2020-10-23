@@ -19,6 +19,7 @@ interface InviteSearchProps {
   contacts: Rolodex;
   groups: Groups;
   hideSelection?: boolean;
+  maxLength?: number;
 }
 
 const ClickableText = styled(Text)`
@@ -111,6 +112,8 @@ export function ShipSearch(props: InviteSearchProps) {
     [nicknames]
   );
 
+  const maxLength = props.maxLength
+
   return (
     <Col>
       <DropdownSearch<string>
@@ -125,7 +128,7 @@ export function ShipSearch(props: InviteSearchProps) {
         caption={props.caption}
         candidates={peers}
         renderCandidate={renderCandidate}
-        disabled={false}
+        disabled={props.maxLength ? value.length >= props.maxLength : false}
         search={(s: string, t: string) =>
           t.toLowerCase().startsWith(s.toLowerCase())
         }
@@ -136,7 +139,6 @@ export function ShipSearch(props: InviteSearchProps) {
         value={undefined}
         error={error}
       />
-      {props.hideSelection && (
       <Row minHeight="34px" flexWrap="wrap">
         {value.map((s) => (
           <Box
@@ -156,7 +158,7 @@ export function ShipSearch(props: InviteSearchProps) {
             </ClickableText>
           </Box>
         ))}
-      </Row>)}
+      </Row>
     </Col>
   );
 }

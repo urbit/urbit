@@ -63,18 +63,7 @@ export function SidebarListHeader(props: {
         mr='2'
         display={(props.workspace?.type === 'home') ? 'inline-block' : 'none'}
       >
-      <Dropdown
-        flexShrink='0'
-        width="200px"
-        alignY="top"
-        alignX={["right", "left"]}
-        options={
-          <FormikOnBlur initialValues={{ ships: [] }} onSubmit={onDm}>
-              <ShipSearch hideSelection groups={props.groups} contacts={props.contacts} id="ships" label="" />
-          </FormikOnBlur>
-        }
-      >
-
+       <Link to="/~landscape/home/invites">
           <Text
             display='inline-block'
             verticalAlign='middle'
@@ -85,7 +74,7 @@ export function SidebarListHeader(props: {
             borderRadius='1'>
               + DM
             </Text>
-          </Dropdown>
+        </Link>
       </Box>
       <Dropdown
         flexShrink='0'
