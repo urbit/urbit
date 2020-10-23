@@ -1,10 +1,20 @@
 import _ from 'lodash';
 import { OrderedMap } from "~/logic/lib/OrderedMap";
 
+const DA_UNIX_EPOCH = 170141184475152167957503069145530368000;
+const normalizeKey = (key) => {
+  if(key > DA_UNIX_EPOCH) {
+    // new links uses milliseconds since unix epoch
+    // old (pre-graph-store) use @da
+    return (1000 * (9223372036854775 + (key - DA_UNIX_EPOCH))) / 18446744073709551616;
+  }
+  return key;
+}
 
 export const GraphReducer = (json, state) => {
   const data = _.get(json, 'graph-update', false);
   if (data) {
+    console.log(data);
     keys(data, state);
     addGraph(data, state);
     removeGraph(data, state);
@@ -43,7 +53,7 @@ const addGraph = (json, state) => {
       if (index.length === 0) { break; }
       
       converted.set(
-        index[index.length - 1],
+        normalizeKey(index[index.length - 1]),
         _processNode(item[1])
       );
     }
@@ -69,7 +79,7 @@ const addGraph = (json, state) => {
       if (index.length === 0) { break; }
       
       let node = _processNode(item[1]);
-      state.graphs[resource].set(index[index.length - 1], node);
+      state.graphs[resource].set(normalizeKey(index[index.length - 1]), node);
     }
     state.graphKeys.add(resource);
   }
@@ -91,7 +101,7 @@ const mapifyChildren = (children) => {
   return new OrderedMap(
     children.map(([idx, node]) => {
       const nd = {...node, children: mapifyChildren(node.children || []) }; 
-      return [parseInt(idx.slice(1), 10), nd];
+      return [normalizeKey(parseInt(idx.slice(1), 10)), nd];
     }));
 };
 
@@ -99,7 +109,7 @@ const addNodes = (json, state) => {
   const _addNode = (graph, index, node) => {
     //  set child of graph
     if (index.length === 1) {
-      graph.set(index[0], node);
+      graph.set(normalizeKey(index[0]), node);
       return graph;
     }
 
@@ -110,7 +120,7 @@ const addNodes = (json, state) => {
       return;
     }
     parNode.children = _addNode(parNode.children, index.slice(1), node);
-    graph.set(index[0], parNode);
+    graph.set(normalizeKey(index[0]), parNode);
     return graph;
   };
 
@@ -133,6 +143,8 @@ const addNodes = (json, state) => {
 
       item[1].children = mapifyChildren(item[1].children || []);
 
+      console.log(index);
+
       
       state.graphs[resource] = _addNode(
         state.graphs[resource],
@@ -150,7 +162,7 @@ const removeNodes = (json, state) => {
       } else {
         const child = graph.get(index[0]);
         _remove(child.children, index.slice(1));
-        graph.set(index[0], child);
+        graph.set(normalizeKey(index[0]), child);
       }
   };
   const data = _.get(json, 'remove-nodes', false);
