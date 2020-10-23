@@ -261,8 +261,13 @@ ames env who isFake scry enqueueEv stderr = (initialEvents, runAmes)
         if pktRcvr == who
           then serfsUp p a b
           else lan pktRcvr >>= \case
-            Just (dest:_) -> forward dest $ encode pkt
-              { pktOrigin = pktOrigin <|> Just (ipDest p a) }
+            Just ls
+              |  dest:_ <- filter notSelf ls
+              -> forward dest $ encode pkt
+                { pktOrigin = pktOrigin <|> Just (ipDest p a) }
+              where
+                notSelf (EachYes g) = who /= Ship (fromIntegral g)
+                notSelf (EachNo  _) = True
             _ -> logInfo $ displayShow ("ames: dropping unroutable", pkt)
 
       Right pkt -> logInfo $ displayShow ("ames: dropping ill-versed", pkt, ver)
