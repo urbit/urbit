@@ -11790,12 +11790,222 @@
       ==
     --
   ++  mite  |=(ref/type |((nest | ref) (nest(sut ref) & sut)))
-  ::  XX implement
   ::
   ++  caching-nest
-    |=  {tel/? ref/type}
-    ^-  [? _grub]
-    !!
+    |=  [tel=? ref=type]
+    =|  $:  seg=(set type)                              ::  degenerate sut
+            reg=(set type)                              ::  degenerate ref
+            gil=(set (pair type type))                  ::  assume nest
+        ==
+    =<  dext
+    |%
+    ++  deem
+      |=  [mel=vair ram=vair]
+      ^-  [? _grub]
+      ?.  |(=(mel ram) =(%lead mel) =(%gold ram))
+        :_  grub  |
+      ?-  mel
+          %lead
+        :_  grub  &
+      ::
+          %gold
+        meet
+      ::
+          %iron
+        =^  lef  grub  (caching-peek(sut ref) %rite 2)
+        =^  rig  grub  (caching-peek %rite 2)
+        dext(sut lef, ref rig)
+      ::
+          %zinc
+        =^  lef  grub  (caching-peek %read 2)
+        =^  rig  grub  (caching-peek(sut ref) %read 2)
+        dext(sut lef, ref rig)
+      ==
+    ::
+    ++  deep
+      |=  $:  dom=(map term tome)
+              vim=(map term tome)
+          ==
+      ^-  [? _grub]
+      ?:  ?=(~ dom)  :_  grub  =(vim ~)
+      ?:  ?=(~ vim)  :_  grub  |
+      ::
+      =/  case-zod  =(p.n.dom p.n.vim)
+      =^  case-nec  grub  $(dom l.dom, vim l.vim)
+      =^  case-bud  grub  $(dom r.dom, vim r.vim)
+      ::
+      =/  dab  [q.q.n.dom]
+      =/  hem  [q.q.n.vim]
+      ::
+      =^  case-wes  grub
+        |-  ^-  [? _grub]
+        ?:  ?=(~ dab)  :_  grub  =(hem ~)
+        ?:  ?=(~ hem)  :_  grub  |
+        =/  case-wes-zod  =(p.n.dab p.n.hem)
+        =^  case-wes-nec  grub  $(dab l.dab, hem l.hem)
+        =^  case-wes-bud  grub  $(dab r.dab, hem r.hem)
+        ::
+        =^  played-zod  grub  (caching-play q.n.dab)
+        =^  played-nec  grub  (caching-play(sut ref) q.n.hem)
+        ::
+        =^  case-wes-sev  grub  dext(sut played-zod, ref played-nec)
+        ::
+        :_  grub
+        ?&  case-wes-zod
+            case-wes-nec
+            case-wes-bud
+            case-wes-sev
+        ==
+      ::
+      :_  grub
+      ?&  case-zod
+          case-nec
+          case-bud
+          case-wes
+      ==
+    ::
+    ++  dext
+      =<  $
+      |.
+      ^-  [? _grub]
+      =^  checked  grub
+      ::
+      ?:  =(sut ref)  :_  grub  &
+      ?-    sut
+          %void
+        sint
+      ::
+          %noun
+        :_  grub  &
+      ::
+          [%atom *]
+        ?.  ?=([%atom *] ref)  sint
+        :_  grub
+        ?&  (fitz p.sut p.ref)
+            |(?=(~ q.sut) =(q.sut q.ref))
+        ==
+      ::
+          [%cell *]
+        ?.  ?=([%cell *] ref)  sint
+        =^  lef  grub  dext(sut p.sut, ref p.ref, seg ~, reg ~)
+        =^  rig  grub  dext(sut q.sut, ref q.ref, seg ~, reg ~)
+        :_  grub  &(lef rig)
+      ::
+          [%core *]
+        ?.  ?=([%core *] ref)  sint
+        ?:  =(q.sut q.ref)  dext(sut p.sut, ref p.ref)
+        ::
+        =/  case-zod  =(q.p.q.sut q.p.q.ref)  ::  same wet/dry
+        =^  case-nec  grub  meet(sut q.q.sut, ref p.sut)
+        =^  case-bud  grub  dext(sut q.q.ref, ref p.ref)
+        =^  case-sev  grub
+          (deem(sut q.q.sut, ref q.q.ref) r.p.q.sut r.p.q.ref)
+        =^  case-per  grub
+            ?:  =(%wet q.p.q.sut)
+              :_  grub  =(q.r.q.sut q.r.q.ref)
+            =/  case-per-zod  (~(has in gil) [sut ref])
+            =^  case-per-nec  grub
+              %.  [q.r.q.sut q.r.q.ref]
+              %=  deep
+                gil  (~(put in gil) [sut ref])
+                sut  sut(p q.q.sut, r.p.q %gold)
+                ref  ref(p q.q.ref, r.p.q %gold)
+              ==
+            :_  grub
+            |(case-per-zod case-per-nec)
+        ::
+        :_  grub
+        ?&  case-zod
+            case-nec
+            case-bud
+            case-sev
+            case-per
+        ==
+      ::
+          [%face *]
+        dext(sut q.sut)
+      ::
+          [%fork *]
+        ?.  ?=(?([%atom *] %noun [%cell *] [%core *]) ref)  sint
+        =/  yed  ~(tap in p.sut)
+        =^  val=(list ?)  grub
+          (spin yed grub |=([=type =_grub] dext(tel |, sut type)))
+        :_  grub
+        (lien val same)
+      ::
+          [%hint *]
+        dext(sut q.sut)
+      ::
+          [%hold *]
+        ?:  (~(has in seg) sut)
+          :_  grub  |
+        ?:  (~(has in gil) [sut ref])
+          :_  grub  &
+        =^  val  grub  caching-repo
+        %=  dext
+          sut  val
+          seg  (~(put in seg) sut)
+          gil  (~(put in gil) [sut ref])
+        ==
+      ==
+      ::
+      :_  grub
+      ?:  checked  &
+      ?.  tel  |
+      ~_  (dunk %need)
+      ~_  (dunk(sut ref) %have)
+      ~>  %mean.'nest-fail'
+      !!
+    ::
+    ++  meet
+      =^  lef  grub  dext
+      =^  rig  grub  dext(sut ref, ref sut)
+      :_  grub  &(lef rig)
+    ::
+    ++  sint
+      ^-  [? _grub]
+      ?-    ref
+          %noun
+        :_  grub  |
+      ::
+          %void
+        :_  grub  &
+      ::
+          [%atom *]
+        :_  grub  |
+      ::
+          [%cell *]
+        :_  grub  |
+      ::
+          [%core *]
+        =^  rig  grub  caching-repo(sut ref)
+        dext(ref rig)
+      ::
+          [%face *]
+        dext(ref q.ref)
+      ::
+          [%fork *]
+        =/  yed  ~(tap in p.ref)
+        =^  val=(list ?)  grub
+          (spin yed grub |=([=type =_grub] dext(ref type)))
+        :_  grub
+        (levy val same)
+      ::
+          [%hint *]
+        dext(ref q.ref)
+      ::
+          [%hold *]
+        ?:  (~(has in reg) ref)  :_  grub  &
+        ?:  (~(has in gil) [sut ref])  :_  grub  &
+        =^  val  grub  caching-repo(sut ref)
+        %=  dext
+          ref  val
+          reg  (~(put in reg) ref)
+          gil  (~(put in gil) [sut ref])
+        ==
+      ==
+    --
+  ::
   ++  nest
     ~/  %nest
     |=  {tel/? ref/type}
@@ -11910,6 +12120,11 @@
                       gil  (~(put in gil) [sut ref])
       ==            ==
     --
+  ::
+  ++  caching-peek
+    |=  [way=?($read $rite $both $free) axe=axis]
+    ^-  [type _grub]
+    !!
   ::
   ++  peek
     ~/  %peek
