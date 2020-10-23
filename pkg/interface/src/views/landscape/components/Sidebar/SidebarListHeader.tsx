@@ -13,14 +13,20 @@ import { FormikOnBlur } from "~/views/components/FormikOnBlur";
 import { Dropdown } from "~/views/components/Dropdown";
 import { FormikHelpers } from "formik";
 import { SidebarListConfig, Workspace } from "./types";
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
+import {ShipSearch} from "~/views/components/ShipSearch";
+import {Groups, Rolodex} from "~/types";
 
 export function SidebarListHeader(props: {
   initialValues: SidebarListConfig;
+  groups: Groups;
+  contacts: Rolodex;
   selected: string;
   workspace: Workspace;
   handleSubmit: (c: SidebarListConfig) => void;
 }) {
+
+  const history = useHistory();
   const onSubmit = useCallback(
     (values: SidebarListConfig, actions: FormikHelpers<SidebarListConfig>) => {
       props.handleSubmit(values);
@@ -29,6 +35,14 @@ export function SidebarListHeader(props: {
     [props.handleSubmit]
   );
 
+  const onDm = useCallback((values: { ships: string[]; }) => {
+    if(values.ships.length === 0) {
+      return;
+    }
+    const [ship] = values.ships;
+    history.push(`/~landscape/dm/${ship}`);
+  },[history]);
+ 
   return (
     <Row
       flexShrink="0"
@@ -49,9 +63,18 @@ export function SidebarListHeader(props: {
         mr='2'
         display={(props.workspace?.type === 'home') ? 'inline-block' : 'none'}
       >
-        <Link
-          to={`/~landscape/home${props.selected}/dm`}
-        >
+      <Dropdown
+        flexShrink='0'
+        width="200px"
+        alignY="top"
+        alignX={["right", "left"]}
+        options={
+          <FormikOnBlur initialValues={{ ships: [] }} onSubmit={onDm}>
+              <ShipSearch hideSelection groups={props.groups} contacts={props.contacts} id="ships" label="" />
+          </FormikOnBlur>
+        }
+      >
+
           <Text
             display='inline-block'
             verticalAlign='middle'
@@ -61,8 +84,8 @@ export function SidebarListHeader(props: {
             color='blue'
             borderRadius='1'>
               + DM
-          </Text>
-        </Link>
+            </Text>
+          </Dropdown>
       </Box>
       <Dropdown
         flexShrink='0'

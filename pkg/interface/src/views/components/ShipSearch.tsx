@@ -13,11 +13,12 @@ import { HoverBox } from "./HoverBox";
 
 interface InviteSearchProps {
   disabled?: boolean;
-  label: string;
+  label?: string;
   caption?: string;
   id: string;
   contacts: Rolodex;
   groups: Groups;
+  hideSelection?: boolean;
 }
 
 const ClickableText = styled(Text)`
@@ -45,10 +46,11 @@ const Candidate = ({ title, detail, selected, onClick }) => (
 );
 
 export function ShipSearch(props: InviteSearchProps) {
-  const [{ value }, { error }, { setValue }] = useField<string[]>(props.id);
+  const [{ value }, { error }, { setValue, setTouched }] = useField<string[]>(props.id);
 
   const onSelect = useCallback(
     (s: string) => {
+      setTouched(true);
       setValue([...value, s]);
     },
     [setValue, value]
@@ -134,6 +136,7 @@ export function ShipSearch(props: InviteSearchProps) {
         value={undefined}
         error={error}
       />
+      {props.hideSelection && (
       <Row minHeight="34px" flexWrap="wrap">
         {value.map((s) => (
           <Box
@@ -153,7 +156,7 @@ export function ShipSearch(props: InviteSearchProps) {
             </ClickableText>
           </Box>
         ))}
-      </Row>
+      </Row>)}
     </Col>
   );
 }

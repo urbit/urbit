@@ -22,7 +22,7 @@ interface RenderChoiceProps<C> {
 }
 
 interface DropdownSearchProps<C> {
-  label: string;
+  label?: string;
   id: string;
   // check if entry is exact match
   isExact: (s: string) => C | undefined;
@@ -118,7 +118,7 @@ export function DropdownSearch<C>(props: DropdownSearchProps<C>) {
 
   return (
     <Box position="relative" zIndex={9}>
-      <Label htmlFor={props.id}>{props.label}</Label>
+      {props.label && (<Label htmlFor={props.id}>{props.label}</Label>)}
       {caption ? <Label mt="2" gray>{caption}</Label> : null}
       {!props.disabled && (
         <Input
