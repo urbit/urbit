@@ -26,7 +26,7 @@ abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon 
 ```
 
 ### Getting BIP84 Address from `xpub`
-```g
+```
 (~(address bip84:b %main xpub))
 ```
 
@@ -37,6 +37,7 @@ abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon 
 
 =xpub "zpub6rFR7y4Q2AijBEqTUquhVz398htDFrtymD9xYYfG1m4wAcvPhXNfE3EfH1r1ADqtfSdVCToUG868RvUUkgDKf31mGDtKsAYz2oz2AGutZYs"
 `@ux`(compress-point:ecc pub:(derive-public:(derive-public:(from-extended:bip32 xpub) 0) 0))
+::  gives 0x3.30d5.4fd0.dd42.0a6e.5f8d.3624.f5f3.482c.ae35.0f79.d5f0.753b.f5be.ef9c.2d91.af3c
 ::  gets 0 index in non-change account
 ```
 
