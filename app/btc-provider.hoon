@@ -54,12 +54,9 @@
 ++  on-watch
   |=  pax=path
   ^-  (quip card _this)
-  ~&  >>  pax
-  `this
-::  ?>  (is-whitelisted:hc src.bowl)
-::   ~&  >  "added client {<src.bowl>}"
-::  :_  this(clients.host-info (~(put in clients.host-info) src.bowl))
-::  ~[[%give %fact ~ [%btc-provider-update !>([%status connected.host-info])]]]
+  ?>  (is-whitelisted:hc src.bowl)
+  ~&  >  "btc-provider: added client {<src.bowl>}"
+  `this(clients.host-info (~(put in clients.host-info) src.bowl))
 ::
 ++  on-leave  on-leave:def
 ++  on-peek   on-peek:def
@@ -106,14 +103,15 @@
   ==
 ++  handle-response
   |=  [=wire response=client-response:iris]
-  :: IMPORTANT: whatever we make here gets sent out to subscribers at the end
+  :: IMPORTANT:  whatever we make here gets sent out to subscribers at the end
   ^-  (quip card _state)
   ?.  ?=(%finished -.response)  `state
   =/  e=(unit error)  (check-connection status-code.response-header.response)
+  ~&  >  "before"
   ?^  e
     :_  state(connected.host-info %.n)
-    ~[(send-update [%error e])]
-  ~&  >>  response
+    ~[(send-update [%error u.e])]
+  ~&  >  "after"
   =/  rpc-resp=response:rpc:jstd
     (get-rpc-response response)
   ::  TODO: error handling goes here
