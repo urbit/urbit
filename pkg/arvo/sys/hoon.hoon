@@ -9271,7 +9271,8 @@
             %flag
           =^  lef  grub  $(skin [%leaf %f &])
           =^  rig  grub  $(skin [%leaf %f |])
-          [(fork lef rig ~) grub]
+          :_  grub
+          (fork lef rig ~)
         ::
             %null
           $(skin [%leaf %n ~])
@@ -9281,8 +9282,8 @@
         ::
             %noun
           =^  nests  grub  (~(caching-nest ut %void) | ref)
-          :-  ?:  nests  %void  ref
-          grub
+          :_  grub
+          ?:  nests  %void  ref
         ::
             [%atom *]
           =|  gil=(set type)
@@ -9292,12 +9293,14 @@
             [%void grub]
           ::
               %noun
-            [[%atom p.base.skin ~] grub]
+            :_  grub
+            [%atom p.base.skin ~]
           ::
               [%atom *]
             ?.  (fitz p.base.skin p.ref)
               ~>(%mean.'atom-mismatch' !!)
-            [[%atom (max p.base.skin p.ref) q.ref] grub]
+            :_  grub
+            [%atom (max p.base.skin p.ref) q.ref]
           ::
               [%cell *]
             [%void grub]
@@ -9307,17 +9310,20 @@
           ::
               [%face *]
             =^  rig  grub  $(ref q.ref)
-            [(face p.ref rig) grub]
+            :_  grub
+            (face p.ref rig)
           ::
               [%fork *]
             =/  thread  ~(tap in p.ref)
-            =^  uni  grub
+            =^  wiz  grub
               (spin thread grub |=([=type =_grub] ^$(ref type)))
-            [(fork uni) grub]
+            :_  grub
+            (fork wiz)
           ::
               [%hint *]
             =^  rig  grub  $(ref q.ref)
-            [(hint p.ref rig) grub]
+            :_  grub
+            (hint p.ref rig)
           ::
               [%hold *]
             ?:  (~(has in gil) ref)  [%void grub]
@@ -9334,7 +9340,8 @@
           [%void grub]
         ::
             %noun
-          [[%cell %noun %noun] grub]
+          :_  grub
+          [%cell %noun %noun]
         ::
             [%atom *]
           [%void grub]
@@ -9343,29 +9350,34 @@
           =^  won  grub  ^$(skin skin.skin, ref p.ref)
           ?:  =(%void won)  [%void grub]
           =^  tew  grub  ^$(skin skin.skin, ref q.ref)
-          [(cell won tew) grub]
+          :_  grub
+          (cell won tew)
         ::
             [%core *]
           =^  won  grub  ^$(skin skin.skin, ref p.ref)
           ?:  =(%void won)  [%void grub]
           ?.  =(%noun ^skin.skin)
             =^  tew  grub  ^$(skin ^skin.skin, ref %noun)
-            [(cell won tew) grub]
-          [[%core won q.ref] grub]
+            :_  grub  (cell won tew)
+          :_  grub
+          [%core won q.ref]
         ::
             [%face *]
           =^  val  grub  $(ref q.ref)
-          [(face p.ref val) grub]
+          :_  grub
+          (face p.ref val)
         ::
             [%fork *]
-          =/  thread  ~(tap in p.ref)
-          =^  uni  grub
-            (spin thread grub |=([=type =_grub] ^$(ref type)))
-          [(fork uni) grub]
+          =/  yed  ~(tap in p.ref)
+          =^  wiz  grub
+            (spin yed grub |=([=type =_grub] ^$(ref type)))
+          :_  grub
+          (fork wiz)
         ::
             [%hint *]
           =^  val  grub  $(ref q.ref)
-          [(hint p.ref val) grub]
+          :_  grub
+          (hint p.ref val)
         ::
             [%hold *]
           ?:  (~(has in gil) ref)  [%void grub]
@@ -9381,17 +9393,18 @@
           [%void grub]
         ::
             %noun
-          [[%atom aura.skin `atom.skin] grub]
+          :_  grub
+          [%atom aura.skin `atom.skin]
         ::
             [%atom *]
           ?:  &(?=(^ q.ref) !=(atom.skin u.q.ref))
             [%void grub]
           ?.  (fitz aura.skin p.ref)
             ~>(%mean.'atom-mismatch' !!)
-          :-  :+  %atom
-              (max aura.skin p.ref)
-            `atom.skin
-          grub
+          :_  grub
+          :+  %atom
+            (max aura.skin p.ref)
+          `atom.skin
         ::
             [%cell *]
           [%void grub]
@@ -9401,17 +9414,20 @@
         ::
             [%face *]
           =^  val  grub  $(ref q.ref)
-          [(face p.ref val) grub]
+          :_  grub
+          (face p.ref val)
         ::
             [%fork *]
-          =/  thread  ~(tap in p.ref)
-          =^  uni  grub
-            (spin thread grub |=([=type =_grub] ^$(ref type)))
-          [(fork uni) grub]
+          =/  yed  ~(tap in p.ref)
+          =^  wiz  grub
+            (spin yed grub |=([=type =_grub] ^$(ref type)))
+          :_  grub
+          (fork wiz)
         ::
             [%hint *]
           =^  val  grub  $(ref q.ref)
-          [(hint p.ref val) grub]
+          :_  grub
+          (hint p.ref val)
         ::
             [%hold *]
           ?:  (~(has in gil) ref)  [%void grub]
@@ -9424,21 +9440,25 @@
       ::
           %help
         =^  rig  grub  $(skin skin.skin)
-        [(hint [sut %help help.skin] rig) grub]
+        :_  grub
+        (hint [sut %help help.skin] rig)
       ::
           %name
         =^  rig  grub  $(skin skin.skin)
-        [(face term.skin rig) grub]
+        :_  grub
+        (face term.skin rig)
       ::
           %over
         =^  val  grub  (~(caching-play ut sut) %wing wing.skin)
         $(skin skin.skin, sut val)
       ::
           %spec
+        ::  XX grub not used well here
+        ::
         =^  yon  grub  $(skin skin.skin)
-        =/  hit  (~(caching-play ut sut) ~(example ax fab spec.skin))
-        ?>  -:(~(caching-nest ut -:hit) & yon)
-        hit
+        =^  hit  grub  (~(caching-play ut sut) ~(example ax fab spec.skin))
+        ?>  -:(~(caching-nest ut hit) & yon)
+        [hit grub]
       ::
           %wash
         =-  =^  played  grub  (~(caching-play ut ref) -)
@@ -9451,36 +9471,66 @@
     ::
     ++  caching-lose
       |-  ^-  [type _grub]
-      ?@  skin  [[%face skin ref] grub]
+      ?@  skin  :_  grub  [%face skin ref]
       ?-    -.skin
       ::
           %base
         ?-    base.skin
-            %cell      $(skin [%cell [%base %noun] [%base %noun]])
-            %flag      $(skin [%base %atom %f])
-            %null      $(skin [%leaf %n ~])
-            %void      [ref grub]
-            %noun      [%void grub]
+            %cell
+          $(skin [%cell [%base %noun] [%base %noun]])
+        ::
+            %flag
+          $(skin [%base %atom %f])
+        ::
+            %null
+          $(skin [%leaf %n ~])
+        ::
+            %void
+          [ref grub]
+        ::
+            %noun
+          [%void grub]
+        ::
             [%atom *]
           =|  gil=(set type)
           |-  ^-  [type _grub]
           ?-    ref
-            %void      [%void grub]
-            %noun      [[%cell %noun %noun] grub]
-            [%atom *]  [%void grub]
-            [%cell *]  [ref grub]
-            [%core *]  [ref grub]
-            [%face *]  =^  rig  grub  $(ref q.ref)
-                       [(face p.ref rig) grub]
-            [%fork *]  =/  thread  ~(tap in p.ref)
-                       =^  uni  grub
-                         (spin thread grub |=([=type =_grub] ^$(ref type)))
-                       [(fork uni) grub]
-            [%hint *]  =^  rig  grub  $(ref q.ref)
-                       [(hint p.ref rig) grub]
-            [%hold *]  ?:  (~(has in gil) ref)  [%void grub]
-                       =^  rig  grub  caching-repo(sut ref)
-                       $(gil (~(put in gil) ref), ref rig)
+              %void
+            [%void grub]
+          ::
+              %noun
+            :_  grub  [%cell %noun %noun]
+          ::
+              [%atom *]
+            [%void grub]
+          ::
+              [%cell *]
+            [ref grub]
+          ::
+              [%core *]
+            [ref grub]
+          ::
+              [%face *]
+            =^  rig  grub  $(ref q.ref)
+            :_  grub
+            (face p.ref rig)
+          ::
+              [%fork *]
+            =/  yed  ~(tap in p.ref)
+            =^  wiz  grub
+              (spin yed grub |=([=type =_grub] ^$(ref type)))
+            :_  grub
+            (fork wiz)
+          ::
+              [%hint *]
+            =^  rig  grub  $(ref q.ref)
+            :_  grub
+            (hint p.ref rig)
+          ::
+              [%hold *]
+            ?:  (~(has in gil) ref)  [%void grub]
+            =^  rig  grub  caching-repo(sut ref)
+            $(gil (~(put in gil) ref), ref rig)
           ==
         ==
       ::
@@ -9488,63 +9538,118 @@
         =|  gil=(set type)
         |-  ^-  [type _grub]
         ?-    ref
-            %void      [%void grub]
-            %noun      [[%atom %$ ~] grub]
-            [%atom *]  [ref grub]
-            [%cell *]  =^  lef  grub  ^$(skin skin.skin, ref p.ref)
-                       ?:  =(%void lef)  [%void grub]
-                       =^  rig  grub  ^$(skin ^skin.skin, ref q.ref)
-                       [(cell lef rig) grub]
-            [%core *]  =^  lef  grub  ^$(skin skin.skin, ref p.ref)
-                       ?:  =(%void lef)  [%void grub]
-                       ?.  =(%noun ^skin.skin)
-                         =^  rig  grub  ^$(skin ^skin.skin, ref %noun)
-                         [(cell lef rig) grub]
-                       [[%core - q.ref] grub]
-            [%face *]  =^  rig  grub  $(ref q.ref)
-                       [(face p.ref rig) grub]
-            [%fork *]  =/  thread  ~(tap in p.ref)
-                       =^  uni  grub
-                         (spin thread grub |=([=type =_grub] ^$(ref type)))
-                        [(fork uni) grub]
-            [%hint *]  =^  val  grub  $(ref q.ref)
-                       [(hint p.ref val) grub]
-            [%hold *]  ?:  (~(has in gil) ref)  [%void grub]
-                       =^  rig  grub  caching-repo(sut ref)
-                       $(gil (~(put in gil) ref), ref rig)
+            %void
+          [%void grub]
+        ::
+            %noun
+          :_  grub
+          [%atom %$ ~]
+        ::
+            [%atom *]
+          [ref grub]
+        ::
+            [%cell *]
+          =^  lef  grub  ^$(skin skin.skin, ref p.ref)
+          ?:  =(%void lef)  [%void grub]
+          =^  rig  grub  ^$(skin ^skin.skin, ref q.ref)
+          :_  grub
+          (cell lef rig)
+        ::
+            [%core *]
+          =^  lef  grub  ^$(skin skin.skin, ref p.ref)
+          ?:  =(%void lef)  [%void grub]
+          ?.  =(%noun ^skin.skin)
+            =^  rig  grub  ^$(skin ^skin.skin, ref %noun)
+            :_  grub
+            (cell lef rig)
+          :_  grub
+          [%core - q.ref]
+        ::
+            [%face *]
+          =^  rig  grub  $(ref q.ref)
+          :_  grub
+          (face p.ref rig)
+        ::
+            [%fork *]
+          =/  yed  ~(tap in p.ref)
+          =^  wiz  grub
+            (spin yed grub |=([=type =_grub] ^$(ref type)))
+          :_  grub
+          (fork wiz)
+        ::
+            [%hint *]
+          =^  val  grub  $(ref q.ref)
+          :_  grub
+          (hint p.ref val)
+        ::
+            [%hold *]
+          ?:  (~(has in gil) ref)  [%void grub]
+          =^  rig  grub  caching-repo(sut ref)
+          $(gil (~(put in gil) ref), ref rig)
         ==
       ::
           %leaf
         =|  gil=(set type)
         |-  ^-  [type _grub]
         ?-  ref
-          %void      [%void grub]
-          %noun      [%noun grub]
-          [%atom *]  :_  grub
-                     ?:  =(q.ref `atom.skin)
-                       %void
-                     ref
-          [%cell *]  [ref grub]
-          [%core *]  [ref grub]
-          [%face *]  =^  val  grub  $(ref q.ref)
-                     [(face p.ref val) grub]
-          [%fork *]  =/  thread  ~(tap in p.ref)
-                     =^  uni  grub
-                       (spin thread grub |=([=type =_grub] ^$(ref type)))
-                     [(fork uni) grub]
-          [%hint *]  =^  val  grub  $(ref q.ref)
-                     [(hint p.ref val) grub]
-          [%hold *]  ?:  (~(has in gil) ref)  [%void grub]
-                     =^  rig  grub  caching-repo(sut ref)
-                     $(gil (~(put in gil) ref), ref rig)
+            %void
+          [%void grub]
+        ::
+            %noun
+          [%noun grub]
+        ::
+            [%atom *]
+          :_  grub
+          ?:  =(q.ref `atom.skin)
+            %void
+          ref
+        ::
+            [%cell *]
+          [ref grub]
+        ::
+            [%core *]
+          [ref grub]
+        ::
+            [%face *]
+          =^  val  grub  $(ref q.ref)
+          :_  grub
+          (face p.ref val)
+        ::
+            [%fork *]
+          =/  yed  ~(tap in p.ref)
+          =^  wiz  grub
+            (spin yed grub |=([=type =_grub] ^$(ref type)))
+          :_  grub
+          (fork wiz)
+        ::
+            [%hint *]
+          =^  val  grub  $(ref q.ref)
+          :_  grub
+          (hint p.ref val)
+        ::
+            [%hold *]
+          ?:  (~(has in gil) ref)  [%void grub]
+          =^  rig  grub  caching-repo(sut ref)
+          $(gil (~(put in gil) ref), ref rig)
         ==
       ::
-          %dbug  $(skin skin.skin)
-          %help  $(skin skin.skin)
-          %name  $(skin skin.skin)
-          %over  $(skin skin.skin)
-          %spec  $(skin skin.skin)
-          %wash  [ref grub]
+          %dbug
+        $(skin skin.skin)
+      ::
+          %help
+        $(skin skin.skin)
+      ::
+          %name
+        $(skin skin.skin)
+      ::
+          %over
+        $(skin skin.skin)
+      ::
+          %spec
+        $(skin skin.skin)
+      ::
+          %wash
+        [ref grub]
       ==
     ::  -lose: make a $type by restricting .ref to exclude .skin
     ::
@@ -9672,24 +9777,46 @@
     =+  gil=*(set type)
     |-  ~+  ^-  [seminoun:musk _grub]
     ?-    sut
-      $noun      [[full/[~ ~ ~] ~] grub]
-      $void      [[full/[~ ~ ~] ~] grub]
-      {$atom *}  :_  grub
-                 ?~(q.sut [full/[~ ~ ~] ~] [full/~ u.q.sut])
-      {$cell *}  =^  lef  grub  $(sut p.sut)
-                 =^  rig  grub  $(sut q.sut)
-                 [(combine:musk lef rig) grub]
-      {$core *}  =^  val  grub  $(sut p.sut)
-                 :_  grub
-                 %+  combine:musk
-                   p.r.q.sut
-                 val
-      {$face *}  $(sut repo)
-      {$fork *}  [[full/[~ ~ ~] ~] grub]
-      {$hint *}  $(sut repo)
-      {$hold *}  ?:  (~(has in gil) sut)
-                   [[full/[~ ~ ~] ~] grub]
-                 $(sut repo, gil (~(put in gil) sut))
+        %noun
+      :_  grub
+      [full/[~ ~ ~] ~]
+    ::
+        %void
+      :_  grub
+      [full/[~ ~ ~] ~]
+    ::
+        [%atom *]
+      :_  grub
+      ?~(q.sut [full/[~ ~ ~] ~] [full/~ u.q.sut])
+    ::
+        [%cell *]
+      =^  lef  grub  $(sut p.sut)
+      =^  rig  grub  $(sut q.sut)
+      :_  grub
+      (combine:musk lef rig)
+    ::
+        [%core *]
+      =^  val  grub  $(sut p.sut)
+      :_  grub
+      %+  combine:musk
+        p.r.q.sut
+      val
+    ::
+        [%face *]
+      $(sut repo)
+    ::
+        [%fork *]
+      :_  grub
+      [full/[~ ~ ~] ~]
+    ::
+        [%hint *]
+      $(sut repo)
+    ::
+        [%hold *]
+      ?:  (~(has in gil) sut)
+        :_  grub
+        [full/[~ ~ ~] ~]
+      $(sut repo, gil (~(put in gil) sut))
     ==
   ::
   ++  burp
@@ -9729,68 +9856,97 @@
   ::
   ++  caching-crop
     ~/  %crop
-    |=  ref/type
-    =+  bix=*(set {type type})
+    |=  ref=type
+    =|  bix=(set [type type])
     =<  dext
     |%
     ++  dext
       ^-  [type _grub]
       ~_  leaf+"crop"
-      ::  ~_  (dunk 'dext: sut')
-      ::  ~_  (dunk(sut ref) 'dext: ref')
       ?:  |(=(sut ref) =(%noun ref))
         [%void grub]
       ?:  =(%void ref)
         [sut grub]
       ?-    sut
-          {$atom *}
+          [%atom *]
         ?+  ref      sint
-          {$atom *}  :_  grub
-                     ?^  q.sut
-                       ?^(q.ref ?:(=(q.ref q.sut) %void sut) %void)
-                     ?^(q.ref sut %void)
-          {$cell *}  [sut grub]
+            [%atom *]
+          :_  grub
+          ?^  q.sut
+            ?^(q.ref ?:(=(q.ref q.sut) %void sut) %void)
+          ?^(q.ref sut %void)
+        ::
+            [%cell *]
+          [sut grub]
         ==
       ::
-          {$cell *}
+          [%cell *]
         ?+  ref      sint
-          {$atom *}  [sut grub]
-          {$cell *}  =^  nests  grub  (caching-nest(sut p.ref) | p.sut)
-                     ?.  nests  [sut grub]
-                     =^  rig  grub  dext(sut q.sut, ref q.ref)
-                     [(cell p.sut rig) grub]
+            [%atom *]
+          [sut grub]
+        ::
+            [%cell *]
+          =^  nests  grub  (caching-nest(sut p.ref) | p.sut)
+          ?.  nests  [sut grub]
+          =^  rig  grub  dext(sut q.sut, ref q.ref)
+          :_  grub
+          (cell p.sut rig)
         ==
       ::
-          {$core *}  ?:(?=(?({$atom *} {$cell *}) [ref grub]) [sut grub] sint)
-          {$face *}  =^  val  grub  dext(sut q.sut)
-                     [(face p.sut val) grub]
-          {$fork *}  =/  thread  ~(tap in p.sut)
-                     =^  uni  grub
-                       (spin thread grub |=([=type =_grub] dext(sut type)))
-                     [(fork uni) grub]
-          {$hint *}  =^  rig  grub  dext(sut q.sut)
-                     [(hint p.sut rig) grub]
-          {$hold *}  ?<  (~(has in bix) [sut ref])
-                     dext(sut repo, bix (~(put in bix) [sut ref]))
-          $noun      dext(sut repo)
-          $void      [%void grub]
+          [%core *]
+        ?:(?=(?({$atom *} {$cell *}) [ref grub]) [sut grub] sint)
+      ::
+          [%face *]
+        =^  val  grub  dext(sut q.sut)
+        [(face p.sut val) grub]
+      ::
+          [%fork *]
+        =/  yed  ~(tap in p.sut)
+        =^  wiz  grub
+          (spin yed grub |=([=type =_grub] dext(sut type)))
+        :_  grub
+        (fork wiz)
+      ::
+          [%hint *]
+        =^  rig  grub  dext(sut q.sut)
+        :_  grub
+        (hint p.sut rig)
+      ::
+          [%hold *]
+        ?<  (~(has in bix) [sut ref])
+        dext(sut repo, bix (~(put in bix) [sut ref]))
+      ::
+          %noun
+        dext(sut repo)
+      ::
+          %void
+        [%void grub]
       ==
     ::
     ++  sint
       ^-  [type _grub]
       ?+    ref    !!
-        {$core *}  [sut grub]
-        {$face *}  =^  rig  grub  caching-repo(sut ref)
-                   dext(ref rig)
-        {$fork *}  =/  yed  ~(tap in p.ref)
-                   |-  ^-  [type _grub]
-                   ?~  yed  [sut grub]
-                   =^  rig  grub  dext(ref i.yed)
-                   $(yed t.yed, sut rig)
-        {$hint *}  =^  rig  grub  caching-repo(sut ref)
-                   dext(ref rig)
-        {$hold *}  =^  rig  grub  caching-repo(sut ref)
-                   dext(ref rig)
+          [%core *]
+        [sut grub]
+      ::
+          [%face *]
+        =^  rig  grub  caching-repo(sut ref)
+        dext(ref rig)
+      ::
+          [%fork *]
+        =/  yed  ~(tap in p.ref)
+        |-  ^-  [type _grub]
+        ?~  yed  [sut grub]
+        =^  rig  grub  dext(ref i.yed)
+        $(yed t.yed, sut rig)
+      ::
+          [%hint *]
+        =^  rig  grub  caching-repo(sut ref)
+        dext(ref rig)
+      ::
+          [%hold *]
+        =^  rig  grub  caching-repo(sut ref)
+        dext(ref rig)
       ==
     --
   ::
@@ -10201,7 +10357,8 @@
           %|
         =^  fex  grub
           (caching-mint(sut p.p.p.mor) %noun [%wing i.hyp ~])
-        [[%| %| p.fex (comb q.p.p.mor q.fex)] grub]
+        :_  grub
+        [%| %| p.fex (comb q.p.p.mor q.fex)]
       ==
     ::
         %&
@@ -10212,7 +10369,8 @@
               heg=?^(i.hyp i.hyp [%| p=0 q=(some i.hyp)])
           ==
       ?:  ?=(%& -.heg)
-        [[%& [`p.heg lon] %& (peek way p.heg)] grub]
+        :_  grub
+        [%& [`p.heg lon] %& (peek way p.heg)]
       =|  gil=(set type)
       =<  $
       |%
@@ -10255,11 +10413,14 @@
         ++  $
           ^-  [pony _grub]
           ?-    sut
-              %void       [~ grub]
+              %void
+            [~ grub]
           ::
-              %noun       [stop grub]
+              %noun
+            [stop grub]
           ::
-              [%atom *]   [stop grub]
+              [%atom *]
+            [stop grub]
           ::
               [%cell *]
             ?~  q.heg  [here grub]
@@ -10279,11 +10440,12 @@
               :_  grub
               :+  %&
                 [`axe lon]
-              =/  zut  ^-  foot
-                       ?-  q.p.q.sut
-                         %wet  [%wet q.u.zem]
-                         %dry  [%dry q.u.zem]
-                       ==
+              =/  zut
+                ^-  foot
+                ?-  q.p.q.sut
+                  %wet  [%wet q.u.zem]
+                  %dry  [%dry q.u.zem]
+                ==
               [%| (peg 2 p.u.zem) [[sut zut] ~ ~]]
             =/  pec  (peel way r.p.q.sut)
             ?.  sam.pec  [lose grub]
@@ -10338,16 +10500,16 @@
             --
             ::
               [%fork *]
-            =/  thread  ~(tap in p.sut)
+            =/  yed  ~(tap in p.sut)
             =^  wiz=(list pony)  grub
-              (spin thread grub |=([=type =_grub] ^$(sut type)))
+              (spin yed grub |=([=type =_grub] ^$(sut type)))
             :_  grub
             ?~  wiz  ~
             |-  ^-  pony
             ?~  t.wiz  i.wiz
             (twin i.wiz $(wiz t.wiz))
           ::
-              [$hold *]
+              [%hold *]
             ?:  (~(has in gil) sut)
               [~ grub]
             =^  rig  grub  caching-repo
@@ -10623,9 +10785,11 @@
     =|  vot=(set type)
     |-  ^-  [nock _grub]
     ?-  sut
-        %void       [[%1 1] grub]
+        %void
+      [[%1 1] grub]
     ::
-        %noun       [[%1 0] grub]
+        %noun
+      [[%1 0] grub]
     ::
         [%atom *]
       :_  grub
@@ -10651,7 +10815,8 @@
       =/  yed  ~(tap in p.sut)
       |-  ^-  [nock _grub]
       ?~  yed
-        [[%1 1] grub]
+        :_  grub
+        [%1 1]
       =^  lef  grub  ^$(sut i.yed)
       =^  rig  grub  $(yed t.yed)
       :_  grub
@@ -10739,7 +10904,8 @@
           [%cell *]
         =^  lef  grub  $(sut p.sut, ref p.ref)
         =^  rig  grub  $(sut q.sut, ref q.ref)
-        [(cell lef rig) grub]
+        :_  grub
+        (cell lef rig)
       ::
           *
         $(sut ref, ref sut)
@@ -10750,17 +10916,20 @@
     ::
         [%face *]
       =^  rig  grub  $(sut q.sut)
-      [(face p.sut rig) grub]
+      :_  grub
+      (face p.sut rig)
     ::
         [%fork *]
       =/  yed  ~(tap in p.sut)
-      =^  uni  grub
+      =^  wiz  grub
         (spin yed grub |=([=type =_grub] ^$(sut type)))
-      [(fork uni) grub]
+      :_  grub
+      (fork wiz)
     ::
         [%hint *]
       =^  rig  grub  $(sut q.sut)
-      [(hint p.sut rig) grub]
+      :_  grub
+      (hint p.sut rig)
     ::
         [%hold *]
       ?:  (~(has in bix) [sut ref])
@@ -11463,7 +11632,8 @@
         [%cell *]
       =^  lef  grub  $(sut p.sut)
       =^  rig  grub  $(sut q.sut)
-      :_  grub  |(lef rig)
+      :_  grub
+      |(lef rig)
     ::
         [%core *]
       $(sut p.sut)
@@ -11473,9 +11643,10 @@
     ::
         [%fork *]
       =/  yed  ~(tap in p.sut)
-      =^  val=(list ?)  grub
+      =^  wiz=(list ?)  grub
         (spin yed grub |=([=type =_grub] ^$(sut type)))
-      :_  grub  (levy val same)
+      :_  grub
+      (levy wiz same)
     ::
         [%hint *]
       $(sut q.sut)
@@ -11483,13 +11654,14 @@
         [%hold *]
       =^  val  grub  caching-repo
       =^  rig  grub  $(gil (~(put in gil) sut), sut val)
-      :_  grub  |((~(has in gil) sut) rig)
+      :_  grub
+      |((~(has in gil) sut) rig)
     ::
         %noun
-      :_  grub  |
+      [| grub]
     ::
         %void
-      :_  grub  &
+      [& grub]
     ==
   ::
   ++  moot
@@ -11736,7 +11908,7 @@
         (caching-nest(sut %void) | sut)
       ?-  sut
           %void
-        :_  grub  &
+        [& grub]
       ::
           %noun
         (caching-nest(sut %void) | ref)
@@ -11752,9 +11924,10 @@
       ::
           [%fork *]
         =/  yed  ~(tap in p.sut)
-        =^  val=(list ?)  grub
+        =^  wiz=(list ?)  grub
           (spin yed grub |=([=type =_grub] dext(sut type)))
-        :_  grub  (levy val same)
+        :_  grub
+        (levy wiz same)
       ::
           [%face *]
         dext(sut q.sut)
@@ -11765,16 +11938,18 @@
           [%hold *]
         =/  sums  (~(gas in *(set type)) `(list type)`[sut ref ~])
         ?:  (~(has in gil) sums)
-           :_  grub  &
+           [& grub]
         =^  val  grub  caching-repo
         %=  dext
-          sut  val
-          gil  (~(put in gil) sums)
+          sut   val
+          gil   (~(put in gil) sums)
+          grub  grub
         ==
       ==
     ++  sint
       ?+    ref  dext(sut ref, ref sut)
           [%atom *]
+      ::
         :_  grub
         ?.  ?=([%atom *] sut)  &
         ?&  ?=(^ q.ref)
@@ -11782,11 +11957,13 @@
             !=(q.ref q.sut)
         ==
           [%cell *]
+      ::
         ?.  ?=([%cell *] sut)
           :_  grub  &
         =^  lef  grub  dext(sut p.sut, ref p.ref)
         =^  rig  grub  dext(sut q.sut, ref q.ref)
-        :_  grub  |(lef rig)
+        :_  grub
+        |(lef rig)
       ==
     --
   ++  mite  |=(ref/type |((nest | ref) (nest(sut ref) & sut)))
@@ -11803,10 +11980,10 @@
       |=  [mel=vair ram=vair]
       ^-  [? _grub]
       ?.  |(=(mel ram) =(%lead mel) =(%gold ram))
-        :_  grub  |
+        [| grub]
       ?-  mel
           %lead
-        :_  grub  &
+        [& grub]
       ::
           %gold
         meet
@@ -11870,13 +12047,13 @@
       ^-  [? _grub]
       =^  checked  grub
       ::
-      ?:  =(sut ref)  :_  grub  &
+      ?:  =(sut ref)  [& grub]
       ?-    sut
           %void
         sint
       ::
           %noun
-        :_  grub  &
+        [& grub]
       ::
           [%atom *]
         ?.  ?=([%atom *] ref)  sint
@@ -11889,7 +12066,8 @@
         ?.  ?=([%cell *] ref)  sint
         =^  lef  grub  dext(sut p.sut, ref p.ref, seg ~, reg ~)
         =^  rig  grub  dext(sut q.sut, ref q.ref, seg ~, reg ~)
-        :_  grub  &(lef rig)
+        :_  grub
+        &(lef rig)
       ::
           [%core *]
         ?.  ?=([%core *] ref)  sint
@@ -11902,14 +12080,16 @@
           (deem(sut q.q.sut, ref q.q.ref) r.p.q.sut r.p.q.ref)
         =^  case-per  grub
             ?:  =(%wet q.p.q.sut)
-              :_  grub  =(q.r.q.sut q.r.q.ref)
+              :_  grub
+              =(q.r.q.sut q.r.q.ref)
             =/  case-per-zod  (~(has in gil) [sut ref])
             =^  case-per-nec  grub
               %.  [q.r.q.sut q.r.q.ref]
               %=  deep
-                gil  (~(put in gil) [sut ref])
-                sut  sut(p q.q.sut, r.p.q %gold)
-                ref  ref(p q.q.ref, r.p.q %gold)
+                gil   (~(put in gil) [sut ref])
+                sut   sut(p q.q.sut, r.p.q %gold)
+                ref   ref(p q.q.ref, r.p.q %gold)
+                grub  grub
               ==
             :_  grub
             |(case-per-zod case-per-nec)
@@ -11928,24 +12108,25 @@
           [%fork *]
         ?.  ?=(?([%atom *] %noun [%cell *] [%core *]) ref)  sint
         =/  yed  ~(tap in p.sut)
-        =^  val=(list ?)  grub
+        =^  wiz=(list ?)  grub
           (spin yed grub |=([=type =_grub] dext(tel |, sut type)))
         :_  grub
-        (lien val same)
+        (lien wiz same)
       ::
           [%hint *]
         dext(sut q.sut)
       ::
           [%hold *]
         ?:  (~(has in seg) sut)
-          :_  grub  |
+          [| grub]
         ?:  (~(has in gil) [sut ref])
-          :_  grub  &
+          [& grub]
         =^  val  grub  caching-repo
         %=  dext
-          sut  val
-          seg  (~(put in seg) sut)
-          gil  (~(put in gil) [sut ref])
+          sut   val
+          seg   (~(put in seg) sut)
+          gil   (~(put in gil) [sut ref])
+          grub  grub
         ==
       ==
       ::
@@ -11960,22 +12141,23 @@
     ++  meet
       =^  lef  grub  dext
       =^  rig  grub  dext(sut ref, ref sut)
-      :_  grub  &(lef rig)
+      :_  grub
+      &(lef rig)
     ::
     ++  sint
       ^-  [? _grub]
       ?-    ref
           %noun
-        :_  grub  |
+        [| grub]
       ::
           %void
-        :_  grub  &
+        [& grub]
       ::
           [%atom *]
-        :_  grub  |
+        [| grub]
       ::
           [%cell *]
-        :_  grub  |
+        [| grub]
       ::
           [%core *]
         =^  rig  grub  caching-repo(sut ref)
@@ -11986,22 +12168,23 @@
       ::
           [%fork *]
         =/  yed  ~(tap in p.ref)
-        =^  val=(list ?)  grub
+        =^  wiz=(list ?)  grub
           (spin yed grub |=([=type =_grub] dext(ref type)))
         :_  grub
-        (levy val same)
+        (levy wiz same)
       ::
           [%hint *]
         dext(ref q.ref)
       ::
           [%hold *]
-        ?:  (~(has in reg) ref)  :_  grub  &
-        ?:  (~(has in gil) [sut ref])  :_  grub  &
+        ?:  (~(has in reg) ref)  [& grub]
+        ?:  (~(has in gil) [sut ref])  [& grub]
         =^  val  grub  caching-repo(sut ref)
         %=  dext
-          ref  val
-          reg  (~(put in reg) ref)
-          gil  (~(put in gil) [sut ref])
+          ref   val
+          reg   (~(put in reg) ref)
+          gil   (~(put in gil) [sut ref])
+          grub  grub
         ==
       ==
     --
@@ -12132,16 +12315,18 @@
     |-  ^-  [type _grub]
     ?-    sut
         [%atom *]
-      :_  grub  %void
+      [%void grub]
     ::
         [%cell *]
       =^  lef  grub  ^$(sut p.sut, axe lat)
       =^  rig  grub  ^$(sut q.sut, axe lat)
-      :_  grub  ?:(=(2 now) lef rig)
+      :_  grub
+      ?:(=(2 now) lef rig)
     ::
         [%core *]
       ?.  =(3 now)
-        :_  grub  %noun
+    ::
+        [%noun grub]
       =/  pec  (peel way r.p.q.sut)
       =/  tow
         ?:  =(1 lat)  1
@@ -12151,7 +12336,7 @@
                 &(sam.pec =(tow 2))
                 &(con.pec =(tow 3))
             ==
-          :_  grub  p.sut
+          [p.sut grub]
         ~_  leaf+"payload-block"
         ?.  =(way %read)  !!
         =^  lef  grub  ^$(sut p.sut, axe 2)
@@ -12161,28 +12346,29 @@
           ?.(sam.pec %noun lef)
         ?.(con.pec %noun rig)
       %=  ^$
-        axe  lat
-        sut  nut
+        axe   lat
+        sut   nut
+        grub  grub
       ==
     ::
         [%fork *]
       =/  yed  ~(tap in p.sut)
-      =^  val  grub
+      =^  wiz  grub
         (spin yed grub |=([=type =_grub] ^$(sut type)))
       :_  grub
-      (fork val)
+      (fork wiz)
     ::
         [%hold *]
       ?:  (~(has in gil) sut)
-        :_  grub  %void
+        [%void grub]
       =^  rig  grub  caching-repo
       $(gil (~(put in gil) sut), sut rig)
     ::
         %void
-      :_  grub  %void
+      [%void grub]
     ::
         %noun
-      :_  grub  %noun
+      [%noun grub]
     ::
         *
       =^  val  grub  caching-repo
@@ -12249,6 +12435,7 @@
     |=  gen/hoon
     ^-  [type _grub]
     !!
+  ::
   ++  play
     ~/  %play
     =>  .(vet |)
@@ -12538,11 +12725,11 @@
   ++  caching-repo
     ^-  [type _grub]
     ?-  sut
-      [%core *]   [[%cell %noun p.sut] grub]
-      [%face *]   [q.sut grub]
-      [%hint *]   [q.sut grub]
+      [%core *]   :_  grub  [%cell %noun p.sut]
+      [%face *]   :_  grub  q.sut
+      [%hint *]   :_  grub  q.sut
       [%hold *]   (caching-rest [p.sut q.sut])
-      %noun       [(fork [%atom %$ ~] [%cell %noun %noun] ~) grub]
+      %noun       :_  grub  (fork [%atom %$ ~] [%cell %noun %noun] ~)
       *           ~>(%mean.'repo-fltt' !!)
     ==
   ::
@@ -12564,9 +12751,9 @@
     ?:  (~(has in fan) leg)
       ~>(%mean.'rest-loop' !!)
     =.  fan  (~(put in fan) leg)
-    =/  played
-      (play(sut p.leg) q.leg)
-    [played grub(res (~(put by res.grub) leg played))]
+    =^  played  grub  (caching-play(sut p.leg) q.leg)
+    :_  grub(res (~(put by res.grub) leg played))
+    played
   ::
   ++  take
     |=  {vit/vein duz/$-(type type)}
@@ -12668,10 +12855,10 @@
     ::
         [%fork *]
       =/  yed  ~(tap in p.sut)
-      =^  val  grub
+      =^  wiz  grub
         (spin yed grub |=([=type =_grub] ^$(sut type)))
       :_  grub
-      (fork val)
+      (fork wiz)
     ::
         [%hint *]
       =^  rig  grub  $(sut q.sut)
