@@ -140,7 +140,7 @@
   :~  boot-one
       boot-two
       'compiler-formula'
-      [(welp pad/(reap pad '-') '\  engaging-text-mode\  ' (reap pod '-')) system-source]
+      [(welp pad/(reap pad '-') '\0Aengaging-text-mode\0A' (reap pod '-')) system-source]
   ==
 =/  pad  (end 0 3 (met 0 (jam (padded [0 2] ''))))
 ::

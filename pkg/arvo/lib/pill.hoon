@@ -140,7 +140,7 @@
   ::~&  encode/a
   ?.  =([~ a] (rust (spud a) fel:stab))
     ~&(lost-path/(spat a) ~)
-  [(octo (crip "\  {(spud a)}{b}\  ")) (escape (octo c))]
+  [(octo (crip "\0a{(spud a)}{b}\0a")) (escape (octo c))]
 ::
 ++  fake-arvo
   =,  format
@@ -175,7 +175,7 @@
     |=  [pax=path ~ mite oct=octs]
     (encode pax ~ oct)
   ::
-    (encode /wip-padding ~ (octo (lsh 3 4.500.000 '\  ')))
+    (encode /wip-padding ~ (octo (lsh 3 4.500.000 '\0A')))
     (encode /'~' ~ '')  :: trailer, helps detect truncation, cap trailing zeroes
   ==
 --

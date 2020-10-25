@@ -9,7 +9,7 @@
   ++  get  |=([a=@u b=@t] (cut 3 [a 1] b))
   ++  get-line
     |=  [a=@u b=@t]  ^-  [cord @u]
-    ?.  =('\  ' (get a b))
+    ?.  =('\0A' (get a b))
       ~|(expected-line/[a `@t`(cut 3 [a 40] b)] !!)
     =;  c
       ::~&  [a c b]
@@ -18,7 +18,7 @@
     !.
     |-  ^+  a
     ?:  (gth a z)  ~|(%eof-expected-line !!)
-    ?.  =('\  ' (get +(a) b))
+    ?.  =('\0A' (get +(a) b))
       $(a +(a))
     +(a)
   ::
@@ -28,7 +28,7 @@
     !.
     |-  ^-  (unit @u)
     ?:  (gth a z)  ~
-    ?:  &(=('\  ' (get a b)) =('\  \0A/' (cut 3 [a 3] b)))
+    ?:  &(=('\0A' (get a b)) =('\0A\0A/' (cut 3 [a 3] b)))
       (some +(a))
     $(a +(a))
   ::
