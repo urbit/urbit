@@ -970,7 +970,7 @@
                     %pill
                   ^+  +>.$
                   ?>  ?=(@ q.q.ovo)
-                  +>.$(bod `q.q.ovo)
+                  +>.$(bod `q.q.ovo, who ~)  :: require %boot
                 ::  install %zuse or vane
                 ::
                     %veer
@@ -996,7 +996,17 @@
                     %whom
                   ^+  +>.$
                   ?>  ?=(@ q.q.ovo)
+                  ?:  ?=([~ @] bod)  +>.$  :: require %boot
                   +>.$(who `q.q.ovo)
+                ::  buffer boot into middle of pill
+                ::
+                    %boot
+                  ^+  +>.$
+                  ?>  &(?=(^ eny) ?=([~ @] bod))
+                  =*  boot  $%([%fake our=@] [%dawn [our=@ ^] ^])
+                  =>  .(q.ovo ;;([%boot ? p=boot] q.ovo))
+                  =/  our=@p  ?@(+.p.q.ovo our.p.q.ovo our.p.q.ovo)
+                  +>.$(who `our)
                 ==
               ::  upgrade once we have identity, entropy, and %zuse or a pill
               ::
@@ -1006,8 +1016,9 @@
                 (turn vanes.^poke |=([label=@tas =vane] [label vase.vane]))
               =^  nex=$-(* [(list ovum) *])  soul
                 ?^  u.bod  [|=(a=* [~ *]) soul]
+                ?>  ?=(%boot -.q.ovo)  ::XX brittle
                 :: install zuse from text pill
-                (pill u.who now u.eny *pram u.bod nyf)
+                (pill u.who now u.eny *pram u.bod nyf ovo)
               =/  zus  ?^(u.bod u.bod bud)
               =;  [ova=(list ovum) arv=*]
                 =^(ovo=(list ovum) arv (nex arv) [(weld ovo ova) arv])
@@ -1388,7 +1399,7 @@
 ::  +pill: system init deserialization
 ::
 ++  pill
-  |=  [who=ship now=@da yen=@ ram=pram pil=@t nyf=pane]
+  |=  [who=ship now=@da yen=@ ram=pram pil=@t nyf=pane bot=ovum]
   ::REVIEW kinda convoluted
   ^-  [nex=$-(* [(list ovum) *]) sol=_soul]
   !:
@@ -1398,11 +1409,14 @@
       :_  (veer-hard who now zus)
       |=  arv=*  ;;  [(list ovum) _arv]
       ::  spooky type erasure
-      .*  [[who now ver fyl] arv]
-      =>  [[who=who now=now ver=ver fyl=fyl] arvo]  !=
-      |-  ^-  [(list ovum) _..poke]
+      .*  :_(arv [who now ver fyl bot])
+      =>  :_(arvo [who=who now=now ver=ver fyl=fyl bot=bot])  !=
+      |-  ^-  [(list ovum) arv=*]
       ?^  ver  $(ver t.ver, soul (veer-hard who now i.ver))
-      (poke now /$/sync [%into %$ & fyl])
+      =+  [ove arv]=(poke:soul now bot)  ::  boot event
+      .*  .(+>.$ arv)  !=
+      =+  [ova arv]=(poke:soul now /$/sync [%into %$ & fyl])
+      [(weld ove ova) arv]
   ::
   +$  octs  (pair @u @t)
   +$  mime  (pair path octs)
