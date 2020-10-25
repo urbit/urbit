@@ -1,6 +1,5 @@
 ::  |pill: helper functions for making pills
 ::
-/+  *tide
 ^?
 |%
 ::
@@ -143,16 +142,8 @@
   [(octo (crip "\0a{(spud a)}{b}\0a")) (escape (octo c))]
 ::
 ++  fake-arvo
-  =,  format
-  |=  bek=path
-  =/  get  |=(a=path (to-wain .^(@t %cx :(weld bek a /hoon))))
-  %-  of-wain
-  ;:  welp
-    ~['!:  =~']
-    (get /lib/tide)
-    (slag 1 (get /gen/pillarvo))
-    ~['    ==' '']
-  ==
+  |=  bek=path  ^-  @t
+  .^(@t %cx (weld bek /gen/pillarvo/hoon))
 ::
 ++  coalesce
   |=  sys=path  ^-  @t

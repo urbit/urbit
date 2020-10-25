@@ -1,5 +1,3 @@
-/+  tide
-::
 =+  [our=~sampel now=~2000.1.1]
 =<  pillgen
 |%
