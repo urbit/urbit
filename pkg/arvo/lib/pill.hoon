@@ -173,7 +173,10 @@
     %-  zing
     %+  turn  (file-mimes (scag 3 sys) ~[/pill/sys/tests])
     |=  [pax=path ~ mite oct=octs]
-    (encode pax ~ oct)
+    =/  unfin
+      |(=('' q.oct) !=('\0A' (cut 3 [(dec p.oct) 1] q.oct)))
+    ?.  unfin  (encode pax ~ oct)
+    (welp (encode pax " ~" oct) [(octo '\0A')]~)
   ::
     (encode /wip-padding ~ (octo (lsh 3 4.500.000 '\0A')))
     (encode /'~' ~ '')  :: trailer, helps detect truncation, cap trailing zeroes
