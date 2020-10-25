@@ -14768,7 +14768,12 @@
     ::  generate last-generation spans for `!>`, etc.
     ::
     ~>  %slog.[0 leaf+"1-d"]
-    =.  compiler-gate  .*(0 +:compiler-tool)
+    .*  :*  compiler-tool=compiler-tool  arvo-source=arvo-source 
+            system-source=system-source  wir=wir
+        ==
+    =>  [compiler-tool=* arvo-source=@t system-source=@t wir=path]
+    !=
+    =/  compiler-gate  .*(0 +:compiler-tool)
     ::
     ::  get the span (type) of the kernel core, which is the context
     ::  of the compiler gate.  we just compiled the compiler,
@@ -14790,7 +14795,6 @@
     ::
     =/  arvo-kernel
       ~>  %slog.[0 leaf+"1-g"]
-      ~|  kernel-tool=kernel-tool
       .*(+>:compiler-gate +:kernel-tool)
     ::
     ::  pass it the packed source for its own initialization
