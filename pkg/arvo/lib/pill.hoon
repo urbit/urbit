@@ -159,6 +159,7 @@
     (encode pax " %{?~(van '$' van) ~}" src)
   ::
     =/  userspace  (skip default-directories |=(a=spur =(a /sys)))
+    ~&  userspace/`(list path)`userspace
     %-  zing
     %+  turn  (file-mimes (scag 3 sys) userspace)
     |=  [pax=path ~ mite oct=octs]

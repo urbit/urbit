@@ -44,7 +44,8 @@
 ::  the arvo core.  it becomes very hard to change this shape.
 ::  fortunately, it is not a very complex interface.
 ::
-:-  %noun
+:-  %pill
+^-  pill:pill
 ::
 ::  boot-one: lifecycle formula
 ::
@@ -122,27 +123,30 @@
 =+  compiler-source=.^(@t %cx (welp sys /hoon/hoon))
 ::
 ::  compiler-twig: compiler as hoon expression
- :: ::
- :: ~&  %glass-parsing
- :: =+  compiler-twig=(ream compiler-source)
- :: ~&  %glass-parsed
- :: ::
- :: ::  compiler-formula: compiler as nock formula
- :: ::
- :: ~&  %glass-compiling
- :: =+  compiler-formula=q:(~(mint ut %noun) %noun compiler-twig)
- :: ~&  %glass-compiled
- :: ::
+::
+~&  %glass-parsing
+=+  compiler-twig=(ream compiler-source)
+~&  %glass-parsed
+::
+::  compiler-formula: compiler as nock formula
+::
+~&  %glass-compiling
+=+  compiler-formula=q:(~(mint ut %noun) %noun compiler-twig)
+~&  %glass-compiled
+::
 ::  padded: pill byte alignment
 ::
 =/  padded
-  |=  [[pad=@u pod=@u] system-source=@t]  ^-  (list *)
+  |=  [[pad=@u pod=@u] system-source=@t]  ^-  pill:pill
+  ::  a pill is a 3-tuple of event-lists: [boot kernel userspace]
+  =<  [. ~ ~]
+  =/  txt-marker  '\0A\0Aengaging-text-mode\0A'
   :~  boot-one
       boot-two
-      'compiler-formula'
-      [(welp pad/(reap pad '-') '\0Aengaging-text-mode\0A' (reap pod '-')) system-source]
+      compiler-formula
+      [(welp pad/(reap pad '-') txt-marker (reap pod '-')) system-source]
   ==
-=/  pad  (end 0 3 (met 0 (jam (padded [0 2] ''))))
+=/  pad  (end 0 3 (met 0 (jam (padded [0 9] ''))))
 ::
 ::  system-source: textual encoding of all files in `sys/`
 ::
@@ -150,6 +154,6 @@
 =+  system-source=(coalesce:pill sys)
 ~&  %coalesced
 ::
-=/  sys-pad  (end 0 3 (dec (mul 2 (xeb (met 0 system-source)))))
+=/  sys-pad  (add 7 (end 0 3 (mul 2 (met 0 (met 0 system-source)))))
 (padded [pad sys-pad] system-source)
 
