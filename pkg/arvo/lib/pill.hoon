@@ -144,18 +144,13 @@
     ~&(lost-path/(spat a) ~)
   [(octo (crip "\0a{(spud a)}{b}\0a")) (escape (octo c))]
 ::
-++  fake-arvo
-  |=  bek=path  ^-  @t
-  .^(@t %cx (weld bek /gen/pillarvo/hoon))
-::
 ++  coalesce
   |=  sys=path  ^-  @t
   %+  can  3
   :: ;:  weld
   %-  zing  ^-  (list (list octs))  :~
     (encode /sys/hoon/hoon ~ .^(@t %cx (welp sys /hoon/hoon)))
-    ::(encode /sys/arvo/hoon ~ .^(@t %cx (welp sys /arvo/hoon)))
-    (encode /sys/arvo/hoon ~ (fake-arvo (scag 3 sys)))
+    (encode /sys/arvo/hoon ~ .^(@t %cx (welp sys /arvo/hoon)))
   ::
     ?:  &  ~
     %-  zing
