@@ -150,5 +150,6 @@
 =+  system-source=(coalesce:pill sys)
 ~&  %coalesced
 ::
-(padded [pad 3] system-source)
+=/  sys-pad  (end 0 3 (dec (mul 2 (xeb (met 0 system-source)))))
+(padded [pad sys-pad] system-source)
 

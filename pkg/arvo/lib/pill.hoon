@@ -124,6 +124,9 @@
 ::
 ++  escape
   |=  a=octs  ^-  (list octs)
+  ?:  =('\0A/' (cut 3 [0 2] q.a))
+    [(octo '\0A/\0A') $(a [(dec p.a) (rsh 3 1 q.a)])]
+  |-  ^-  (list octs)
   =/  sep  (next-sep:bootstrap.tide 0 q.a)
   ?~  sep  [a]~
   ::~&  [u.sep `@t`(cut 3 [(dec u.sep) 20] q.a) (end 3 40 q.a)]
@@ -169,7 +172,6 @@
     ?.  unfin  (encode pax ~ oct)
     (welp (encode pax " ~" oct) [(octo '\0A')]~)
   ::
-    (encode /wip-padding ~ (octo (lsh 3 4.500.000 '\0A')))
     (encode /'~' ~ '')  :: trailer, helps detect truncation, cap trailing zeroes
   ==
 --
