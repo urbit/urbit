@@ -1411,6 +1411,8 @@
   ++  vane  ;~(pose (cold %$ buc) low)
   ++  meta  ;~(pose ;~(pfix ace cen vane) (jest ' ~'))
   ++  parse
+    ~>  %slog.[0 leaf+"pill: parsing"]
+    =+  mib=1
     =|  [ver=(list [%veer lal=@tas pax=path txt=@t]) hav=(list [path ~ mime])]
     |=  [idx=@u txt=@t]  ^+  [ver hav]
     =^  hed  idx  (get-line:bootstrap.tide idx txt)
@@ -1424,6 +1426,8 @@
     ::
     =^  bod  idx  (get-body imp idx txt)
     =/  oct=octs  [(roll (turn bod head) add) (can 3 bod)]
+    =?  mib  (gth idx (mul mib (bex 20)))
+      ~&(parsed/["{<mib>}MB" hed] +(mib))
     %_  $
       ver  ?~(van ver :_(ver [%veer u.van (unhoon pax) q.oct]))
       hav  :_(hav [pax `[/text/plain oct]])

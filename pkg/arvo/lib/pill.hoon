@@ -152,15 +152,15 @@
     (encode /sys/hoon/hoon ~ .^(@t %cx (welp sys /hoon/hoon)))
     (encode /sys/arvo/hoon ~ .^(@t %cx (welp sys /arvo/hoon)))
   ::
-    ?:  &  ~
     %-  zing
     %+  turn  (module-ova sys)
     |=  [wire %veer van=@tasD pax=path src=@t]
     =.  pax  (weld (slag 3 pax) /hoon)
     (encode pax " %{?~(van '$' van) ~}" src)
   ::
+    =/  userspace  (skip default-directories |=(a=spur =(a /sys)))
     %-  zing
-    %+  turn  (file-mimes (scag 3 sys) ~[/pill/sys/tests])
+    %+  turn  (file-mimes (scag 3 sys) userspace)
     |=  [pax=path ~ mite oct=octs]
     =/  unfin
       |(=('' q.oct) !=('\0A' (cut 3 [(dec p.oct) 1] q.oct)))
