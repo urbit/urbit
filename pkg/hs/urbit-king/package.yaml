@@ -31,6 +31,7 @@ dependencies:
   - binary
   - bytestring
   - case-insensitive
+  - cereal
   - classy-prelude
   - conduit
   - containers
@@ -119,6 +120,7 @@ dependencies:
 default-extensions:
   - ApplicativeDo
   - BangPatterns
+  - BinaryLiterals
   - BlockArguments
   - ConstraintKinds
   - DataKinds
@@ -145,6 +147,7 @@ default-extensions:
   - OverloadedStrings
   - PackageImports
   - PartialTypeSignatures
+  - PatternGuards
   - PatternSynonyms
   - QuasiQuotes
   - Rank2Types
