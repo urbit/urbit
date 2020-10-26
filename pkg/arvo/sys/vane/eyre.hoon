@@ -1500,6 +1500,14 @@
       ?~  channel
         :_  state  :_  ~
         [duct %pass /flog %d %flog %crud %eyre-no-channel >id=channel-id< ~]
+      ::  it's possible that this is a fact emitted directly alongside a fact
+      ::  that triggered a clog & closed the subscription. in that case, just
+      ::  drop the fact.
+      ::
+      ?:  ?&  ?=(%fact -.sign)
+              !(~(has by subscriptions.u.channel) request-id)
+          ==
+        [~ state]
       ::  attempt to convert the sign to json.
       ::  if conversion succeeds, we *can* send it. if the client is actually
       ::  connected, we *will* send it immediately.

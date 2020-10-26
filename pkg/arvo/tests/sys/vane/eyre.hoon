@@ -1875,7 +1875,7 @@
     loop-fact(cur +(cur))
   ::  the next subscription result should trigger a clog
   ::
-  =^  results  eyre-gate
+  =^  results1  eyre-gate
     %:  eyre-take
       eyre-gate
       now
@@ -1922,7 +1922,25 @@
             ==
         ==
     ==
-  results
+  ::  subsequent subscription updates, which might have gotten sent out during
+  ::  the same event in which a clog triggered, should be silently ignored
+  ::
+  =^  results2  eyre-gate
+    %:  eyre-take
+      eyre-gate
+      now
+      scry=scry-provides-code
+      ^=  take-args
+        :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
+            duct=~[/http-put-request]
+            ^-  (hypo sign:eyre-gate)
+            :-  *type
+            [%g %unto %fact %json !>(`json`[%a [%n '1'] ~])]
+        ==
+      ^=  moves
+        ~
+    ==
+  (weld results1 results2)
 ::
 ++  test-born-sends-pending-cancels
   ::
