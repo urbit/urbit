@@ -8,7 +8,7 @@
 ::::
   !:
 :-  %say
-|=  {{now/@da * bec/beak} {~ ~}}
+|=  {{now/@da * bec/beak} {~ squeeze=_|}}
 ::  See also: ++bootstrap in hoon.hoon, ++pill in arvo.hoon
 ::
 ::  we're creating an event series E whose lifecycle can be computed
@@ -122,6 +122,15 @@
 ::
 =+  compiler-source=.^(@t %cx (welp sys /hoon/hoon))
 ::
+::  squeeze: disable !> support for bootstrap compiler. (500kb -> 300kb)
+::
+=?  compiler-source  squeeze
+  =,  format
+  =/  burpless  |=(a=@t ?:(=(a '  ++  burp') '  ++  burp  =<  %noun' a))
+  =/  new   (of-wain (turn (to-wain compiler-source) burpless))
+  ?<(=(new compiler-source) new)
+::
+::
 ::  compiler-twig: compiler as hoon expression
 ::
 ~&  %glass-parsing
@@ -150,9 +159,9 @@
 ::
 ::  system-source: textual encoding of all files in `sys/`
 ::
-~&  %coalescing
+~&  %glass-collecting-files
 =+  system-source=(coalesce:pill sys)
-~&  %coalesced
+~&  %glass-collected
 ::
 =/  sys-pad  (add 7 (end 0 3 (mul 2 (met 0 (met 0 system-source)))))
 (padded [pad sys-pad] system-source)

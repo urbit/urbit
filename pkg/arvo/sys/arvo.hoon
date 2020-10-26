@@ -1441,7 +1441,7 @@
     =^  bod  idx  (get-body imp idx txt)
     =/  oct=octs  [(roll (turn bod head) add) (can 3 bod)]
     =?  mib  (gth idx (mul mib (bex 20)))
-      ~&(parsed/["{<mib>}MB" hed] +(mib))
+      ~&(parsed/["{<mib>}MB" at=hed] +(mib))
     %_  $
       ver  ?~(van ver :_(ver [%veer u.van (unhoon pax) q.oct]))
       hav  :_(hav [pax `[/text/plain oct]])
