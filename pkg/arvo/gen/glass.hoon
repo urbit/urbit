@@ -134,7 +134,7 @@
     ::
     ?.  ?=([^ ^ fom=^ [[%pad ^] @] ~] boot-ova.reuse-pill.arg)
       ~|(%bad-glass-pill !!) 
-    =/  reuse-formula=^  fom.boot-ova.reuse-pill.arg
+    =/  reuse-formula  ~|(%bad-nock ;;(nock fom.boot-ova.reuse-pill.arg))
     ?.  check-reuse  ~&(%glass-reuse-trusting reuse-formula)
     ::
     ::  compiler-formula: self compiled with old pill
@@ -163,7 +163,7 @@
   ::
   :_  arg
   ::
-  ::  squeeze: disable !> support for bootstrap compiler. (500kb -> 300kb)
+  ::  squeeze: disable !> support for bootstrap compiler. (500kb -> 230kb)
   ::
   =?  compiler-source  squeeze
     =,  format
@@ -182,7 +182,16 @@
   ::
   ~&  %glass-compiling
   =-  ~&(%glass-compiled -)
-  compiler-formula=q:(~(mint ut %noun) %noun compiler-twig)
+  =/  compiler-formula=*  q:(~(mint ut %noun) %noun compiler-twig)
+  |-
+  ?.  squeeze  compiler-formula
+  ::
+  ~&  :-  %glass-squeeze-recompiling
+      [(met 3 (jam compiler-formula)) `@p`(mug compiler-formula)]
+  =/  recompiled-formula
+    +:.*(0 [%9 %2 %10 [6 %1 %noun compiler-source] compiler-formula])
+  ?:  =(compiler-formula recompiled-formula)  compiler-formula
+  $(compiler-formula recompiled-formula)
 ::
 ::
 ::  padded: pill byte alignment
