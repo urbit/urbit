@@ -107,7 +107,7 @@ int urcrypt_aes_sivb_en(uint8_t *message,
                         size_t message_length,
                         urcrypt_aes_siv_data *data,
                         size_t data_length,
-                        uint8_t key[32],
+                        uint8_t key[48],
                         uint8_t iv[16],
                         uint8_t *out);
 int urcrypt_aes_sivb_de(uint8_t *message,
