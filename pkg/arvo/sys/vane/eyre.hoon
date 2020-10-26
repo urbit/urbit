@@ -1585,7 +1585,7 @@
         ==
       =?  next-id   kicking  +(next-id)
       ::
-      :-  moves
+      :-  (flop moves)
       %_    state
           session.channel-state
         %+  ~(put by session.channel-state.state)  channel-id
