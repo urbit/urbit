@@ -668,7 +668,7 @@ _ames_czar(u3_pact* pac_u)
         u3z(nam);
       }
 
-      if ( 0 != sas_i ) {
+      if ( 255 <= sas_i ) {
         u3l_log("ames: czar: galaxy domain %s truncated\n", sam_u->dns_c);
         _ames_pact_free(pac_u);
         return;
