@@ -241,6 +241,16 @@
   ;<  our=@p  bind:m  get-our
   (watch wire [our term] path)
 ::
+++  scry
+  |*  [=mold =path]
+  =/  m  (strand ,mold)
+  ^-  form:m
+  ?>  ?=(^ path)
+  ?>  ?=(^ t.path)
+  ;<  =bowl:spider  bind:m  get-bowl
+  %-  pure:m
+  .^(mold i.path (scot %p our.bowl) i.t.path (scot %da now.bowl) t.t.path)
+::
 ++  leave
   |=  [=wire =dock]
   =/  m  (strand ,~)
@@ -284,6 +294,20 @@
   =/  =card:agent:gall
     [%pass /wait/(scot %da until) %arvo %b %wait until]
   (send-raw-card card)
+::
+++  map-err
+  |*  computation-result=mold
+  =/  m  (strand ,computation-result)
+  |=  [f=$-([term tang] [term tang]) computation=form:m]
+  ^-  form:m
+  |=  tin=strand-input:strand
+  =*  loop  $
+  =/  c-res  (computation tin)
+  ?:  ?=(%cont -.next.c-res)
+    c-res(self.next ..loop(computation self.next.c-res))
+  ?.  ?=(%fail -.next.c-res)
+    c-res
+  c-res(err.next (f err.next.c-res))
 ::
 ++  set-timeout
   |*  computation-result=mold
@@ -478,6 +502,17 @@
       `[%skip ~]
     `[%done +>.sign-arvo.u.in.tin]
   ==
+::  +check-online: require that peer respond before timeout
+::
+++  check-online
+  |=  [who=ship lag=@dr]
+  =/  m  (strand ,~)
+  ^-  form:m
+  %+  (map-err ,~)  |=(* [%offline *tang])
+  %+  (set-timeout ,~)  lag
+  ;<  ~  bind:m
+    (poke [who %hood] %helm-hi !>(~))
+  (pure:m ~)
 ::
 ::  Queue on skip, try next on fail %ignore
 ::

@@ -36,7 +36,6 @@ export default function Settings({
   return (
     <Box
       backgroundColor="white"
-      fontSize={2}
       display="grid"
       gridTemplateRows="auto"
       gridTemplateColumns="1fr"

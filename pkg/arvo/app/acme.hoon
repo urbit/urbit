@@ -1,4 +1,4 @@
-/-  asn1, hall
+/-  asn1
 /+  base64, der, primitive-rsa, *pkcs, *jose, default-agent, verb
 =,  eyre
 =*  rsa  primitive-rsa
@@ -1023,7 +1023,7 @@
     ::
     =>  .(liv (some fig), rod ~)
     ?>  ?=(^ liv)
-    ::  notify :hall
+    ::  notify %dill
     ::
     =>  =/  msg=cord
           %+  rap  3
@@ -1229,7 +1229,7 @@
   ::
   ?:  (bad-nonce rep)
     (nonce:effect [act spur])
-  ::  XX replace with :hall notification
+  ::  XX replace with %dill notification
   ::
   ~|  [%http-response-fail wire]
   %.  [spur rep]
@@ -1398,7 +1398,7 @@
     this
   =.  ..emit  (queue-next-order 1 | dom)
   =.  ..emit  cancel-current-order
-  ::  notify :hall
+  ::  notify %dill
   ::
   =.  ..emit
     =/  msg=cord

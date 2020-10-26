@@ -1,5 +1,6 @@
 import React from 'react';
 import moment from 'moment';
+import { Box, Icon, Text, BaseAnchor, BaseInput } from '@tlon/indigo-react';
 
 import Tile from './tile';
 
@@ -47,87 +48,53 @@ export default class WeatherTile extends React.Component {
   // set appearance based on weather
   setColors(data) {
     let weatherStyle = {
-      gradient1: '',
-      gradient2: '',
+      bg: '',
       text: ''
     };
 
-    switch (data.daily.icon) {
+    switch (data.currently.icon) {
       case 'clear-day':
-        weatherStyle = {
-          gradient1: '#A5CEF0', gradient2: '#FEF4E0', text: 'black'
-        };
+        weatherStyle = { bg: '#E9F5FF', text: '#333' };
         break;
       case 'clear-night':
-        weatherStyle = {
-          gradient1: '#56668e', gradient2: '#000080', text: 'white'
-        };
+        weatherStyle = { bg: '#14263C', text: '#fff' };
         break;
       case 'rain':
-        weatherStyle = {
-          gradient1: '#b1b2b3', gradient2: '#b0c7ff', text: 'black'
-        };
+        weatherStyle = { bg: '#2E1611', text: '#fff' };
         break;
       case 'snow':
-        weatherStyle = {
-          gradient1: '#eee', gradient2: '#f9f9f9', text: 'black'
-        };
+        weatherStyle = { bg: '#F9F9FB', text: '#333' };
         break;
       case 'sleet':
-        weatherStyle = {
-          gradient1: '#eee', gradient2: '#f9f9f9', text: 'black'
-        };
+        weatherStyle = { bg: '#EFF1F3', text: '#333' };
         break;
       case 'wind':
-        weatherStyle = {
-          gradient1: '#eee', gradient2: '#fff', text: 'black'
-        };
+        weatherStyle = { bg: '#F7FEF6', text: '#333' };
         break;
       case 'fog':
-        weatherStyle = {
-          gradient1: '#eee', gradient2: '#fff', text: 'black'
-        };
+        weatherStyle = { bg: '#504D44', text: '#fff' };
         break;
       case 'cloudy':
-        weatherStyle = {
-          gradient1: '#eee', gradient2: '#b1b2b3', text: 'black'
-        };
+        weatherStyle = { bg: '#EEF1F5', text: '#333' };
         break;
       case 'partly-cloudy-day':
-        weatherStyle = {
-          gradient1: '#fcc440', gradient2: '#b1b2b3', text: 'black'
-        };
+        weatherStyle = { bg: '#F3F6FA', text: '#333' };
         break;
       case 'partly-cloudy-night':
-        weatherStyle = {
-          gradient1: '#7f7f7f', gradient2: '#56668e', text: 'white'
-        };
+        weatherStyle = { bg: '#283442', text: '#fff' };
         break;
       default:
-        weatherStyle = {
-          gradient1: 'white', gradient2: 'white', text: 'black'
-        };
+        weatherStyle = { bg: 'white', text: 'black' };
     }
     return weatherStyle;
   }
   // all tile views
   renderWrapper(child,
-    weatherStyle = { gradient1: 'white', gradient2: 'white', text: 'black' }
+    weatherStyle = { bg: 'white', text: 'black' }
     ) {
     return (
-      <Tile>
-      <div
-        className={'relative ' + weatherStyle.text}
-        style={{
-          width: 126,
-          height: 126,
-          background: `linear-gradient(135deg, ${weatherStyle.gradient1} 0%,` +
-          `${weatherStyle.gradient2} 45%, ${weatherStyle.gradient2} 65%,` +
-          `${weatherStyle.gradient1} 100%)`
-        }}
-      >
+      <Tile bg={weatherStyle.bg}>
         {child}
-      </div>
       </Tile>
     );
   }
@@ -136,121 +103,156 @@ export default class WeatherTile extends React.Component {
     let secureCheck;
     let error;
     if (this.state.error === true) {
-      error = <p
-          className="f9 red2 pt1"
-              >Please try again.
-        </p>;
+      error = <Text display='block' color='red' pt='1'>Please try again.</Text>;
     }
     if (location.protocol === 'https:') {
       secureCheck = (
-        <a className="black white-d f9 absolute pointer"
-           style={{ right: 8, top: 8 }}
-           onClick={() => this.locationSubmit()}>
+        <Text color='black' cursor='pointer'
+           onClick={() => this.locationSubmit()}
+        >
           Detect ->
-        </a>
+        </Text>
       );
     }
     return this.renderWrapper(
-      <div className={'pa2 w-100 h-100 bg-white bg-gray0-d black white-d ' +
-      'b--black b--gray1-d ba'}
+      <Box
+        display='flex'
+        flexDirection='column'
+        justifyContent='space-between'
+        height='100%'
       >
-        <a
-          className="f9 black white-d pointer absolute"
-          style={{ top: 8 }}
+        <Text
+          color='black'
+          cursor='pointer'
           onClick={() =>
             this.setState({ manualEntry: !this.state.manualEntry })
           }
         >
           &lt;&#45;
-        </a>
+        </Text>
         {secureCheck}
-        <p className="f9 pt5">
+        <Text pb={1} mb='auto'>
           Please enter your{' '}
-          <a
-            className="black bb white-d"
+          <BaseAnchor
+            borderBottom='1px solid'
+            color='black'
             href="https://latitudeandlongitude.org/"
             target="_blank"
           >
             latitude and longitude
-          </a>
+          </BaseAnchor>
           .
-        </p>
+        </Text>
         {error}
-        <div className="absolute" style={{ left: 8, bottom: 8 }}>
-          <form className="flex" style={{ marginBlockEnd: 0 }}>
-            <input
-              id="gps"
-              className="w-100 black white-d bg-transparent bn f9"
-              type="text"
-              placeholder="29.558107, -95.089023"
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  e.preventDefault();
-                  this.manualLocationSubmit(e.target.value);
-                }
-              }} />
-            <input
-              className={'bg-transparent black white-d bn pointer ' +
-              'f9 flex-shrink-0 pr1'}
-              type="submit"
-              onClick={() => this.manualLocationSubmit()}
-              value="->"
-            />
-          </form>
-        </div>
-      </div>
+        <Box mt='auto' display='flex' marginBlockEnd='0'>
+          <BaseInput
+            id="gps"
+            size="10"
+            width='100%'
+            color='black'
+            fontSize='0'
+            backgroundColor='transparent'
+            border='0'
+            type="text"
+            placeholder="29.55, -95.08"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                this.manualLocationSubmit(e.target.value);
+              }
+            }}
+          />
+          <BaseInput
+            backgroundColor='transparent'
+            color='black'
+            cursor='pointer'
+            flexShrink='0'
+            pl='1'
+            fontSize='0'
+            border='0'
+            type="submit"
+            onClick={() => this.manualLocationSubmit()}
+            value="->"
+          />
+        </Box>
+      </Box>
     );
   }
 
   renderNoData() {
-    return this.renderWrapper((
-      <div
-        className={'pa2 w-100 h-100 b--black b--gray1-d ba ' +
-        'bg-white bg-gray0-d black white-d'}
-      onClick={() => this.setState({ manualEntry: !this.state.manualEntry })}
+    return this.renderWrapper(
+      <Box
+        bg='white'
+        display='flex'
+        flexDirection='column'
+        justifyContent='space-between'
+        height='100%'
+        onClick={() => this.setState({ manualEntry: !this.state.manualEntry })}
       >
-          <p className="f9 absolute"
-            style={{ left: 8, top: 8 }}
-          >
-            Weather
-          </p>
-        <p className="absolute w-100 flex-col f9"
-        style={{ bottom: 8, left: 8, cursor: 'pointer' }}
-        >
-        -> Set location
-        </p>
-      </div>
-    ));
+        <Box>
+          <Icon icon='Weather' display='inline-block' verticalAlign='top' pt='3px' pr='2px' />
+          <Text>Weather</Text>
+        </Box>
+        <Text style={{ cursor: 'pointer' }}>
+          -> Set location
+        </Text>
+      </Box>
+    );
   }
 
   renderWithData(data, weatherStyle) {
     const c = data.currently;
     const d = data.daily.data[0];
 
-    const da = moment.unix(d.sunsetTime).format('h:mm a') || '';
+    const sunset = moment.unix(d.sunsetTime);
+    const sunsetDiff = sunset.diff(moment(), 'hours');
+
+    const sunrise = moment.unix(d.sunriseTime);
+    let sunriseDiff = sunrise.diff(moment(), 'hours');
+
+    if (sunriseDiff > 24) {
+      sunriseDiff = sunriseDiff - 24;
+    } else if (sunriseDiff < 0) {
+      sunriseDiff = sunriseDiff + 24;
+    }
+
+    const nextSolarEvent = sunsetDiff > 0
+      ? `Sun sets in ${sunsetDiff}h`
+      : `Sun rises in ${sunriseDiff}h`;
 
     return this.renderWrapper(
-      <div className="w-100 h-100 b--black b--gray1-d ba"
-      style={{ backdropFilter: 'blur(80px)' }}
+      <Box
+        width='100%'
+        height='100%'
+        display='flex'
+        flexDirection='column'
+        alignItems='space-between'
       >
-        <p className="f9 absolute" style={{ left: 8, top: 8 }}>
+        <Text color={weatherStyle.text}>
+          <Icon icon='Weather' color={weatherStyle.text} display='inline' style={{ position: 'relative', top: '.3em' }} />
           Weather
-        </p>
-        <a
-          className="f9 absolute pointer"
-          style={{ right: 8, top: 8 }}
-          onClick={() =>
-            this.setState({ manualEntry: !this.state.manualEntry })
-          }
+            <Text
+              color={weatherStyle.text}
+              cursor='pointer'
+              onClick={() =>
+                this.setState({ manualEntry: !this.state.manualEntry })
+              }
+            >
+            ->
+          </Text>
+        </Text>
+
+        <Box
+          mt="auto"
+          width="100%"
+          display="flex"
+          flexDirection="column"
         >
-          ->
-        </a>
-        <div className="w-100 absolute" style={{ left: 8, bottom: 8 }}>
-          <p className="f9">{c.summary}</p>
-          <p className="f9 pt1">{Math.round(c.temperature)}°</p>
-          <p className="f9 pt1">Sunset at {da}</p>
-        </div>
-      </div>
+          <Text color={weatherStyle.text}>{c.summary}</Text>
+          <Text color={weatherStyle.text}>{Math.round(c.temperature)}°</Text>
+          <Text color={weatherStyle.text}>{nextSolarEvent}</Text>
+        </Box>
+      </Box>
     , weatherStyle);
   }
 
@@ -268,20 +270,19 @@ export default class WeatherTile extends React.Component {
 
     if (this.props.location) {
       return this.renderWrapper((
-        <div
-          className={'pa2 w-100 h-100 b--black b--gray1-d ba ' +
-          'bg-white bg-gray0-d black white-d'}>
-            <p className="f9 absolute"
-              style={{ left: 8, top: 8 }}
-            >
-              Weather
-            </p>
-          <p className="absolute w-100 flex-col f9"
-          style={{ bottom: 8, left: 8 }}
-          >
+        <Box
+          p='2'
+          width='100%'
+          height='100%'
+          backgroundColor='white'
+          color='black'
+        >
+            <Icon icon='Weather' color='black' display='inline' style={{ position: 'relative', top: '.3em' }} />
+            <Text>Weather</Text>
+          <Text pt='2' width='100%' display='flex' flexDirection='column'>
           Loading, please check again later...
-          </p>
-        </div>
+          </Text>
+        </Box>
       ));
     }
     return this.renderNoData();

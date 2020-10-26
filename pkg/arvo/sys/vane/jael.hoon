@@ -35,12 +35,19 @@
 ::  manage subscriptions efficiently.
 ::
 =>  |%
-+$  state                                               ::  all vane state
-  $:  ver=$0                                            ::  vane version
-      pki=state-pki                                     ::
++$  any-state  $%(state-0 state-1)
+::
++$  state-0
+  $:  %0
+      pki=state-pki-0                                   ::
       etn=state-eth-node                                ::  eth connection state
   ==                                                    ::
-+$  state-pki                                           ::  urbit metadata
++$  state-1
+  $:  %1
+      pki=state-pki-1                                   ::
+      etn=state-eth-node                                ::  eth connection state
+  ==                                                    ::
++$  state-pki-0                                         ::  urbit metadata
   $:  $=  own                                           ::  vault (vein)
         $:  yen=(set duct)                              ::  trackers
             sig=(unit oath)                             ::  for a moon
@@ -49,6 +56,26 @@
             nod=purl:eyre                               ::  eth gateway
             fak=_|                                      ::  fake keys
             lyf=life                                    ::  version
+            jaw=(map life ring)                         ::  private keys
+        ==                                              ::
+      $=  zim                                           ::  public
+        $:  yen=(jug duct ship)                         ::  trackers
+            ney=(jug ship duct)                         ::  reverse trackers
+            nel=(set duct)                              ::  trackers of all
+            dns=dnses                                   ::  on-chain dns state
+            pos=(map ship point)                        ::  on-chain ship state
+        ==                                              ::
+  ==                                                    ::
++$  state-pki-1                                         ::  urbit metadata
+  $:  $=  own                                           ::  vault (vein)
+        $:  yen=(set duct)                              ::  trackers
+            sig=(unit oath)                             ::  for a moon
+            tuf=(list turf)                             ::  domains
+            boq=@ud                                     ::  boot block
+            nod=purl:eyre                               ::  eth gateway
+            fak=_|                                      ::  fake keys
+            lyf=life                                    ::  version
+            step=@ud                                    ::  login code step
             jaw=(map life ring)                         ::  private keys
         ==                                              ::
       $=  zim                                           ::  public
@@ -79,6 +106,9 @@
       ==                                                ::
       $:  %b                                            ::    to %behn
           $>(%wait task:able:behn)                      ::  set timer
+      ==                                                ::
+      $:  %e                                            ::    to %eyre
+          [%code-changed ~]                             ::  notify code changed
       ==                                                ::
       $:  %g                                            ::    to %gall
           $>(%deal task:able:gall)                      ::  talk to app
@@ -179,7 +209,7 @@
           ==
           ::  all vane state
           ::
-          state
+          state-1
       ==
   ::  lex: all durable state
   ::  moz: pending actions
@@ -446,6 +476,14 @@
       %-  curd  =<  abet
       (~(new-event su hen our now pki etn) [ship udiff]:tac)
     ::
+    ::  rotate web login code
+    ::
+        %step
+      %=  +>.$
+        step.own.pki  +(step.own.pki)
+        moz           [[hen %pass / %e %code-changed ~] moz]
+      ==
+    ::
     ::  watch public keys
     ::    [%public-keys ships=(set ship)]
     ::
@@ -578,7 +616,7 @@
   ::                                                    ::  ++curd:of
   ++  curd                                              ::  relative moves
     |=  $:  moz/(list move)
-            pki/state-pki
+            pki/state-pki-1
             etn/state-eth-node
         ==
     +>(pki pki, etn etn, moz (weld (flop moz) ^moz))
@@ -599,7 +637,7 @@
   =|  $:  hen=duct
           our=ship
           now=@da
-          state-pki
+          state-pki-1
           state-eth-node
       ==
   ::  moz: moves in reverse order
@@ -955,7 +993,7 @@
 ::
 ::  lex: all durable %jael state
 ::
-=|  lex/state
+=|  lex/state-1
 |=  $:  ::
         ::  our: identity
         ::  now: current time
@@ -991,11 +1029,15 @@
   |=  $:  ::  old: previous state
           ::
           ::  old/*
-          old/state
+          old/any-state
       ==
   ^+  ..^$
-  ::  ..^$
-  ..^$(lex old)
+  =/  new=state-1
+    ?-  -.old
+      %0  old(- %1, |7.own.pki [step=0 |7.own.pki.old])
+      %1  old
+    ==
+  ..^$(lex new)
 ::                                                      ::  ++scry
 ++  scry                                                ::  inspect
   |=  $:  ::  fur: event security
@@ -1025,6 +1067,14 @@
     ``mass+!>(maz)
   ?+    syd
       ~
+  ::
+      %step
+    ?.  ?=([@ ~] tyl)  [~ ~]
+    ?.  =([%& our] why)
+      [~ ~]
+    =/  who  (slaw %p i.tyl)
+    ?~  who  [~ ~]
+    ``[%noun !>(step.own.pki.lex)]
   ::
       %code
     ?.  ?=([@ ~] tyl)  [~ ~]
