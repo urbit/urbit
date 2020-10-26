@@ -1507,7 +1507,6 @@
       ?:  ?&  ?=(%fact -.sign)
               !(~(has by subscriptions.u.channel) request-id)
           ==
-        ~&  [%e %fact-without-subscription channel-id request-id]
         [~ state]
       ::  attempt to convert the sign to json.
       ::  if conversion succeeds, we *can* send it. if the client is actually
