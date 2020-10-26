@@ -1,3 +1,4 @@
 bin/* filter=lfs diff=lfs merge=lfs -text
 bin/*/* filter=lfs diff=lfs merge=lfs -text
+bin/crystal.pill filter= diff= merge=
 pkg/arvo/**/*.css binary
