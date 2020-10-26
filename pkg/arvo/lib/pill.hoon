@@ -144,7 +144,7 @@
     ~&(lost-path/(spat a) ~)
   [(octo (crip "\0a{(spud a)}{b}\0a")) (escape (octo c))]
 ::
-++  coalesce
+++  collect-all
   |=  sys=path  ^-  @t
   %+  can  3
   :: ;:  weld

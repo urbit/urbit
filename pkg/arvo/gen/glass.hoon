@@ -6,9 +6,11 @@
 /+  pill
 ::
 ::::
-  !:
+  ::
+=/  args  =;(t $?(t [reuse-pill=pill:pill t]) $@(~ [custom-source=@t ~]))
+::
 :-  %say
-|=  {{now/@da * bec/beak} {~ squeeze=_|}}
+|=  {{now/@da * bec/beak} {arg=args squeeze=_| check-reuse=_&}}
 ::  See also: ++bootstrap in hoon.hoon, ++pill in arvo.hoon
 ::
 ::  we're creating an event series E whose lifecycle can be computed
@@ -122,26 +124,66 @@
 ::
 =+  compiler-source=.^(@t %cx (welp sys /hoon/hoon))
 ::
-::  squeeze: disable !> support for bootstrap compiler. (500kb -> 300kb)
+::  compiler-formula: check or construct boot formula
 ::
-=?  compiler-source  squeeze
-  =,  format
-  =/  burpless  |=(a=@t ?:(=(a '  ++  burp') '  ++  burp  =<  %noun' a))
-  =/  new   (of-wain (turn (to-wain compiler-source) burpless))
-  ?<(=(new compiler-source) new)
+=^  compiler-formula=*  arg
+  ?:  ?=([^ *] arg)
+    :_  +.arg
+    ::
+    ::  reuse-formula: grab existing pill's bootstrap formula
+    ::
+    ?.  ?=([^ ^ fom=^ [[%pad ^] @] ~] boot-ova.reuse-pill.arg)
+      ~|(%bad-glass-pill !!) 
+    =/  reuse-formula=^  fom.boot-ova.reuse-pill.arg
+    ?.  check-reuse  ~&(%glass-reuse-trusting reuse-formula)
+    ::
+    ::  compiler-formula: self compiled with old pill
+    ::
+    ~?  squeeze  %reuse-not-squeezing
+    ~&  %glass-reuse-compiling
+    =/  compiler-formula
+      +:.*(0 [%9 %2 %10 [6 %1 %noun compiler-source] reuse-formula])
+    ~&  %glass-reuse-checking^`@p`(mug compiler-formula)
+    |-
+    =/  recompiled-formula
+      +:.*(0 [%9 %2 %10 [6 %1 %noun compiler-source] compiler-formula])
+    ?.  =(compiler-formula recompiled-formula)
+      :: XX have to triple-compile, probably due to the !> in ++dole:ut
+      ~&  %glass-non-fixedpoint^`@p`(mug recompiled-formula)
+      $(compiler-formula recompiled-formula)
+    ::
+    ::  ensure double-compiled hoon round-tripped to current hoon
+    ::
+    =/  compiler-tool  .*(0 recompiled-formula)
+    ?.  =(tide compiler-tool)
+      ~|(bad-tide/[`@p`(mug tide) `@p`(mug compiler-tool)] !!)
+    compiler-formula=reuse-formula
+  ::
+  ::  normal pill
+  ::
+  :_  arg
+  ::
+  ::  squeeze: disable !> support for bootstrap compiler. (500kb -> 300kb)
+  ::
+  =?  compiler-source  squeeze
+    =,  format
+    =/  burpless  |=(a=@t ?:(=(a '  ++  burp') '  ++  burp  =<  %noun' a))
+    =/  new   (of-wain (turn (to-wain compiler-source) burpless))
+    ?<(=(new compiler-source) new)
+  ::
+  ::
+  ::  compiler-twig: compiler as hoon expression
+  ::
+  ~&  %glass-parsing
+  =+  compiler-twig=(ream compiler-source)
+  ~&  %glass-parsed
+  ::
+  ::  compiler-formula: compiler as nock formula
+  ::
+  ~&  %glass-compiling
+  =-  ~&(%glass-compiled -)
+  compiler-formula=q:(~(mint ut %noun) %noun compiler-twig)
 ::
-::
-::  compiler-twig: compiler as hoon expression
-::
-~&  %glass-parsing
-=+  compiler-twig=(ream compiler-source)
-~&  %glass-parsed
-::
-::  compiler-formula: compiler as nock formula
-::
-~&  %glass-compiling
-=+  compiler-formula=q:(~(mint ut %noun) %noun compiler-twig)
-~&  %glass-compiled
 ::
 ::  padded: pill byte alignment
 ::
@@ -159,9 +201,12 @@
 ::
 ::  system-source: textual encoding of all files in `sys/`
 ::
-~&  %glass-collecting-files
-=+  system-source=(coalesce:pill sys)
-~&  %glass-collected
+=/  system-source
+  ?:  ?=([@ ~] arg)
+    ~&([%glass-custom `@p`(mug custom-source.arg)] custom-source.arg)
+  ~&  %glass-collecting-files
+  =-  ~&(%glass-collected -)
+  (collect-all:pill sys)
 ::
 =/  sys-pad  (add 7 (end 0 3 (mul 2 (met 0 (met 0 system-source)))))
 (padded [pad sys-pad] system-source)
