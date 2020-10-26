@@ -59,6 +59,7 @@
     ::  the formal urbit state is always just a gate (function)
     ::  which, passed the next event, produces the next state.
     ::
+    !.
     =>  [boot-formula=* full-sequence=*]
     !=  ::
         ::  first we use the boot formula (event 1) to set up
@@ -98,6 +99,7 @@
             ::
             main-sequence=**
         ==
+    !.
     !=  :_  main-sequence
         ::
         ::  activate the bootstrap gate.  the product of this formula
@@ -142,10 +144,12 @@
     ~?  squeeze  %reuse-not-squeezing
     ~&  %glass-reuse-compiling
     =/  compiler-formula
+      %-  road  |.  :: avoid polluting caches
       +:.*(0 [%9 %2 %10 [6 %1 %noun compiler-source] reuse-formula])
     ~&  %glass-reuse-checking^`@p`(mug compiler-formula)
     |-
     =/  recompiled-formula
+      %-  road  |.  :: avoid polluting caches
       +:.*(0 [%9 %2 %10 [6 %1 %noun compiler-source] compiler-formula])
     ?.  =(compiler-formula recompiled-formula)
       :: XX have to triple-compile, probably due to the !> in ++dole:ut
@@ -182,13 +186,15 @@
   ::
   ~&  %glass-compiling
   =-  ~&(%glass-compiled -)
-  =/  compiler-formula=*  q:(~(mint ut %noun) %noun compiler-twig)
+  =/  compiler-formula=*
+    (road |.(q:(~(mint ut %noun) %noun compiler-twig)))
   |-
   ?.  squeeze  compiler-formula
   ::
   ~&  :-  %glass-squeeze-recompiling
       [(met 3 (jam compiler-formula)) `@p`(mug compiler-formula)]
   =/  recompiled-formula
+    %-  road  |.  :: avoid polluting caches
     +:.*(0 [%9 %2 %10 [6 %1 %noun compiler-source] compiler-formula])
   ?:  =(compiler-formula recompiled-formula)  compiler-formula
   $(compiler-formula recompiled-formula)
@@ -206,7 +212,7 @@
       compiler-formula
       [(welp pad/(reap pad '-') txt-marker (reap pod '-')) system-source]
   ==
-=/  pad  (end 0 3 (met 0 (jam (padded [0 9] ''))))
+=/  pad  (end 0 3 (met 0 (jam (padded [0 7] ''))))
 ::
 ::  system-source: textual encoding of all files in `sys/`
 ::
@@ -217,6 +223,6 @@
   =-  ~&(%glass-collected -)
   (collect-all:pill sys)
 ::
-=/  sys-pad  (add 7 (end 0 3 (mul 2 (met 0 (met 0 system-source)))))
+=/  sys-pad  (add 6 (end 0 3 (mul 2 (met 0 (met 0 system-source)))))
 (padded [pad sys-pad] system-source)
 
