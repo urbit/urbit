@@ -14753,7 +14753,8 @@
     ::  we use raw nock to erase the type, so we can later replace
     ::  the compiler gate with the input hoon
     ::
-    =/  compiler-gate=*  ride
+    =/  compiler-gate=*  tide
+    |-
     ::
     ::  compile the compiler source, producing (pair span nock).
     ::  the compiler ignores its input so we use a trivial span.
@@ -14768,12 +14769,20 @@
     ::  generate last-generation spans for `!>`, etc.
     ::
     ~>  %slog.[0 leaf+"1-d"]
-    .*  :*  compiler-tool=compiler-tool  arvo-source=arvo-source 
-            system-source=system-source  wir=wir
+    =^  old   compiler-gate  [compiler-gate .*(0 +:compiler-tool)]
+    ::
+    ::  if this had any effect, seek fixedpoint
+    ::
+    ?.  =(compiler-gate old)
+      ~>(%slog.[0 leaf+"1-d -> c (divergence detected)"] $)
+    ::
+    .*  :*  compiler-tool=compiler-tool  compiler-gate=compiler-gate
+            arvo-source=arvo-source  system-source=system-source  wir=wir
         ==
-    =>  [compiler-tool=* arvo-source=@t system-source=@t wir=path]
+    =>  :*  compiler-tool=*  compiler-gate=*
+            arvo-source=@t   system-source=@t  wir=path
+        ==
     !=
-    =/  compiler-gate  .*(0 +:compiler-tool)
     ::
     ::  get the span (type) of the kernel core, which is the context
     ::  of the compiler gate.  we just compiled the compiler,
