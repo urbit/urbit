@@ -2,8 +2,8 @@ import React from "react";
 
 import {
   Box,
-  InputLabel,
-  Checkbox,
+  Label,
+  ManagedCheckboxField as Checkbox,
   Button,
 } from "@tlon/indigo-react";
 import { Formik, Form } from "formik";
@@ -14,7 +14,7 @@ import GlobalApi from "../../../../api/global";
 import { LaunchState } from "../../../../types/launch-update";
 import { DropLaunchTiles } from "./DropLaunch";
 import { S3State, BackgroundConfig } from "../../../../types";
-import { BackgroundPicker, BgType } from './BackgroundPicker';
+import { BackgroundPicker, BgType } from "./BackgroundPicker";
 
 const formSchema = Yup.object().shape({
   tileOrdering: Yup.array().of(Yup.string()),
@@ -47,14 +47,7 @@ interface DisplayFormProps {
 }
 
 export default function DisplayForm(props: DisplayFormProps) {
-  const {
-    api,
-    launch,
-    background,
-    hideAvatars,
-    hideNicknames,
-    s3
-  } = props;
+  const { api, launch, background, hideAvatars, hideNicknames, s3 } = props;
 
   let bgColor, bgUrl;
   if (background?.type === "url") {
@@ -99,17 +92,17 @@ export default function DisplayForm(props: DisplayFormProps) {
         <Form>
           <Box
             display="grid"
-            gridTemplateColumns="1fr"
+            gridTemplateColumns="100%"
             gridTemplateRows="auto"
-            gridRowGap={3}
+            gridRowGap={5}
           >
             <Box color="black" fontSize={1} mb={3} fontWeight={900}>
               Display Preferences
             </Box>
             <Box mb={2}>
-              <InputLabel display="block" pb={2}>
+              <Label display="block" pb={2}>
                 Tile Order
-              </InputLabel>
+              </Label>
               <DropLaunchTiles
                 id="tileOrdering"
                 name="tileOrdering"
@@ -123,22 +116,20 @@ export default function DisplayForm(props: DisplayFormProps) {
               api={api}
               s3={s3}
             />
-            <Box>
-              <Checkbox
-                label="Disable avatars"
-                id="avatars"
-                caption="Do not show user-set avatars"
-              />
-              <Checkbox
-                label="Disable nicknames"
-                id="nicknames"
-                caption="Do not show user-set nicknames"
-              />
-            </Box>
+            <Checkbox
+              label="Disable avatars"
+              id="avatars"
+              caption="Do not show user-set avatars"
+            />
+            <Checkbox
+              label="Disable nicknames"
+              id="nicknames"
+              caption="Do not show user-set nicknames"
+            />
+            <Button border={1} style={{ cursor: 'pointer' }} borderColor="washedGray" type="submit">
+              Save
+            </Button>
           </Box>
-          <Button border={1} borderColor="washedGray" type="submit">
-            Save
-          </Button>
         </Form>
       )}
     </Formik>

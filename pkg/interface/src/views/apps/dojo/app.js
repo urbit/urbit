@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
-import { Route, Link } from 'react-router-dom';
-import classnames from 'classnames';
+import { Route } from 'react-router-dom';
 import Helmet from 'react-helmet';
 
-import { Popout } from './components/lib/icons/popout';
 import { History } from './components/history';
 import { Input } from './components/input';
 
@@ -54,16 +52,8 @@ export default class DojoApp extends Component {
         >
           <Route
             exact
-            path="/~dojo/:popout?"
+            path="/~dojo/"
             render={(props) => {
-              const popout = Boolean(props.match.params.popout);
-
-              const popoutClasses = classnames({
-                'mh4-m mh4-l mh4-xl': !popout,
-                'mb4-m mb4-l mb4-xl': !popout,
-                'ba-m ba-l ba-xl': !popout
-              });
-
               return (
                 <div className="w-100 h-100 flex-m flex-l flex-xl">
                   <div
@@ -75,14 +65,13 @@ export default class DojoApp extends Component {
                     className={
                       'pa3 bg-white bg-gray0-d black white-d mono w-100 f8 relative' +
                       ' h-100-m40-s b--gray2 br1 flex-auto flex flex-column ' +
-                      popoutClasses
+                      'mh4-m mh4-l mh4-xl mb4-m mb4-l mb4-xl ba-m ba-l ba-xl'
                     }
                     style={{
                       lineHeight: '1.4',
                       cursor: 'text'
                     }}
                   >
-                    <Popout popout={popout} />
                     <History commandLog={this.state.txt} />
                     <Input
                       ship={this.props.ship}

@@ -904,7 +904,7 @@
           [%leaf "wrong number of moves: {<(lent moves)>}"]~
         ::
         %+  expect-gall-deal
-          :*  /channel/subscription/'0123456789abcdef'/1
+          :*  /channel/subscription/'0123456789abcdef'/1/~nul/two
               [~nul ~nul]  %two  %leave  ~
           ==
           card.i.moves
@@ -942,7 +942,8 @@
       now=(add ~1111.1.2 ~m1)
       scry=scry-provides-code
       ^=  take-args
-        :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
+        :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
+            duct=~[/http-put-request]
             ^-  (hypo sign:eyre-gate)
             :-  *type
             [%g %unto %watch-ack ~]
@@ -957,7 +958,8 @@
       now=(add ~1111.1.2 ~m2)
       scry=scry-provides-code
       ^=  take-args
-        :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
+        :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
+            duct=~[/http-put-request]
             ^-  (hypo sign:eyre-gate)
             :-  *type
             [%g %unto %fact %json !>(`json`[%a [%n '1'] [%n '2'] ~])]
@@ -1108,7 +1110,7 @@
             card.i.moves
         ::
           %+  expect-eq
-            !>  put-200-response
+            !>  put-204-response
             !>  i.t.moves
         ::
           %+  expect-eq
@@ -1158,7 +1160,8 @@
       now=(add ~1111.1.2 ~m2)
       scry=scry-provides-code
       ^=  take-args
-        :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
+        :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
+            duct=~[/http-put-request]
             ^-  (hypo sign:eyre-gate)
             :-  *type
             [%g %unto %watch-ack ~]
@@ -1201,13 +1204,13 @@
           ::  we want to cancel the subscription id on which we originally subscribed
           ::
           %+  expect-gall-deal
-            :*  /channel/subscription/'0123456789abcdef'/'1'
+            :*  /channel/subscription/'0123456789abcdef'/'1'/~nul/two
                 [~nul ~nul]  %two  %leave  ~
             ==
             card.i.moves
         ::
           %+  expect-eq
-            !>  put-200-response
+            !>  put-204-response
             !>  i.t.moves
         ::
           %+  expect-eq
@@ -1259,7 +1262,8 @@
       now=(add ~1111.1.2 ~m2)
       scry=scry-provides-code
       ^=  take-args
-        :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
+        :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
+            duct=~[/http-put-request]
             ^-  (hypo sign:eyre-gate)
             :-  *type
             [%g %unto %watch-ack ~]
@@ -1302,14 +1306,14 @@
         ::
         ;:  weld
           %+  expect-gall-deal
-            :*  /channel/subscription/'0123456789abcdef'/'2'
+            :*  /channel/subscription/'0123456789abcdef'/'2'/~nul/two
                 [~nul ~nul]  %two
-                %watch-as  %json  /one/two/three
+                %watch  /one/two/three
             ==
             card.i.moves
         ::
           %+  expect-eq
-            !>  put-200-response
+            !>  put-204-response
             !>  i.t.moves
         ::
           %+  expect-eq
@@ -1334,7 +1338,8 @@
       now=(add ~1111.1.2 ~m2)
       scry=scry-provides-code
       ^=  take-args
-        :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
+        :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
+            duct=~[/http-put-request]
             ^-  (hypo sign:eyre-gate)
             :-  *type
             [%g %unto %fact %json !>(`json`[%a [%n '1'] [%n '2'] ~])]
@@ -1349,7 +1354,8 @@
       now=(add ~1111.1.2 ~m2)
       scry=scry-provides-code
       ^=  take-args
-        :*  wire=/channel/subscription/'0123456789abcdef'/'2'  duct=~[/http-put-request]
+        :*  wire=/channel/subscription/'0123456789abcdef'/'2'/~nul/two
+            duct=~[/http-put-request]
             ^-  (hypo sign:eyre-gate)
             :-  *type
             [%g %unto %fact %json !>(`json`[%a [%n '1'] [%n '2'] ~])]
@@ -1451,13 +1457,13 @@
         ::
         ;:  weld
           %+  expect-gall-deal
-            :*  /channel/subscription/'0123456789abcdef'/'1'
+            :*  /channel/subscription/'0123456789abcdef'/'1'/~nul/two
                 [~nul ~nul]  %two  %leave  ~
             ==
             card.i.moves
         ::
           %+  expect-eq
-            !>  put-200-response
+            !>  put-204-response
             !>  i.t.moves
     ==  ==
   ::  gall responds on the second subscription.
@@ -1471,7 +1477,8 @@
       now=(add ~1111.1.2 ~m2)
       scry=scry-provides-code
       ^=  take-args
-        :*  wire=/channel/subscription/'0123456789abcdef'/'2'  duct=~[/http-put-request]
+        :*  wire=/channel/subscription/'0123456789abcdef'/'2'/~nul/two
+            duct=~[/http-put-request]
             ^-  (hypo sign:eyre-gate)
             :-  *type
             [%g %unto %fact %json !>(`json`[%a [%n '1'] [%n '2'] ~])]
@@ -1509,16 +1516,27 @@
   ==
 ::
 ++  test-prune-events
-  =/  q=(qeu [id=@ud lines=wall])  ~
-  =.  q  (~(put to q) [0 ~])
-  =.  q  (~(put to q) [1 ~])
-  =.  q  (~(put to q) [2 ~])
-  =.  q  (~(put to q) [3 ~])
-  =.  q  (~(put to q) [4 ~])
+  =/  q=(qeu [id=@ud @ud channel-event:eyre])  ~
+  =.  q  (~(put to q) [0 0 *channel-event:eyre])
+  =.  q  (~(put to q) [1 0 *channel-event:eyre])
+  =.  q  (~(put to q) [2 0 *channel-event:eyre])
+  =.  q  (~(put to q) [3 1 *channel-event:eyre])
+  =.  q  (~(put to q) [4 1 *channel-event:eyre])
   ::
-  =.  q  (prune-events:eyre-gate q 3)
+  =^  a  q  (prune-events:eyre-gate q 3)
   ::
-  (expect-eq !>([~ [4 ~]]) !>(~(top to q)))
+  %+  expect-eq
+    !>
+    :-  (~(gas by *(map @ud @ud)) ~[0^3 1^1])
+    [~ [4 1 *channel-event:eyre]]
+  !>([a ~(top to q)])
+::
+++  test-subtract-acked-events
+  =/  a  (~(gas by *(map @ud @ud)) ~[0^3 1^1])
+  =/  u  (~(gas by *(map @ud @ud)) ~[0^4 2^1])
+  =/  e  (~(gas by *(map @ud @ud)) ~[0^1 2^1])
+  =/  r  (subtract-acked-events:eyre-gate a u)
+  (expect-eq !>(e) !>(r))
 ::
 ++  test-channel-sends-unacknowledged-events-on-reconnection
   ::  common initialization
@@ -1547,7 +1565,8 @@
       now=(add ~1111.1.2 ~m2)
       scry=scry-provides-code
       ^=  take-args
-        :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
+        :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
+            duct=~[/http-put-request]
             ^-  (hypo sign:eyre-gate)
             :-  *type
             [%g %unto %watch-ack ~]
@@ -1618,7 +1637,8 @@
       now=(add ~1111.1.2 ~m4)
       scry=scry-provides-code
       ^=  take-args
-        :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
+        :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
+            duct=~[/http-put-request]
             ^-  (hypo sign:eyre-gate)
             :-  *type
             [%g %unto %fact %json !>(`json`[%a [%n '1'] ~])]
@@ -1673,7 +1693,7 @@
           [%leaf "wrong number of moves: {<(lent moves)>}"]~
         ::
         %+  expect-eq
-          !>  put-200-response
+          !>  put-204-response
           !>  i.moves
     ==
   ::  the client connection is detected to be broken
@@ -1706,7 +1726,8 @@
       now=(add ~1111.1.2 ~m7)
       scry=scry-provides-code
       ^=  take-args
-        :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
+        :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
+            duct=~[/http-put-request]
             ^-  (hypo sign:eyre-gate)
             :-  *type
             [%g %unto %fact %json !>(`json`[%a [%n '2'] ~])]
@@ -1785,6 +1806,123 @@
     results8
     results9
   ==
+::
+++  test-channel-subscription-clogged
+  ::  common initialization
+  ::
+  =^  tested-elsewhere  eyre-gate
+    (perform-init-start-channel eyre-gate *sley)
+  ::
+  =/  now=@da  :(add ~1111.1.2 clog-timeout:eyre-gate ~s1)
+  ::  subscription gets a success message
+  ::
+  =^  tested-elsewhere  eyre-gate
+    %:  eyre-take
+      eyre-gate
+      now
+      scry=scry-provides-code
+      ^=  take-args
+        :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
+            duct=~[/http-put-request]
+            ^-  (hypo sign:eyre-gate)
+            :-  *type
+            [%g %unto %watch-ack ~]
+         ==
+      moves=~
+    ==
+  ::  opens the http channel
+  ::
+  =^  tested-elsewhere  eyre-gate
+    %:  eyre-call
+      eyre-gate
+      now
+      scry=scry-provides-code
+      ^=  call-args
+      ^-  [duct * (hobo task:able:eyre-gate)]
+        :*  duct=~[/http-get-open]  ~
+            %request
+            %.n
+            [%ipv4 .192.168.1.1]
+            %'GET'
+            '/~/channel/0123456789abcdef'
+            ['cookie' cookie-value]~
+            ~
+        ==
+      ^=  expected-moves
+      ~  ::NOTE  tested elsewher
+    ==
+  ::  user gets sent multiple subscription results
+  ::
+  =/  max=@ud  (dec clog-threshold:eyre-gate)
+  =/  cur=@ud  0
+  |-  =*  loop-fact  $
+  ?.  =(cur max)
+    =^  tested-elsewhere  eyre-gate
+      %:  eyre-take
+        eyre-gate
+        now
+        scry=scry-provides-code
+        ^=  take-args
+          :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
+              duct=~[/http-put-request]
+              ^-  (hypo sign:eyre-gate)
+              :-  *type
+              [%g %unto %fact %json !>(`json`[%a [%n '1'] ~])]
+          ==
+        ^=  moves
+        ~  ::NOTE  tested elsewhere
+      ==
+    loop-fact(cur +(cur))
+  ::  the next subscription result should trigger a clog
+  ::
+  =^  results  eyre-gate
+    %:  eyre-take
+      eyre-gate
+      now
+      scry=scry-provides-code
+      ^=  take-args
+        :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
+            duct=~[/http-put-request]
+            ^-  (hypo sign:eyre-gate)
+            :-  *type
+            [%g %unto %fact %json !>(`json`[%a [%n '1'] ~])]
+        ==
+      ^=  moves
+        :~  :*  duct=~[/http-get-open]
+                %give
+                %response
+                %continue
+                :-  ~
+                %-  as-octt:mimes:html
+                """
+                id: {((d-co:co 1) +(clog-threshold:eyre-gate))}
+                data: \{"id":1,"response":"quit"}
+
+
+                """
+                complete=%.n
+            ==
+            :*  duct=~[/http-put-request]  %pass
+              /channel/subscription/'0123456789abcdef'/'1'/~nul/two
+              %g  %deal  [~nul ~nul]  %two  %leave  ~
+            ==
+            :*  duct=~[/http-get-open]
+              %give
+              %response
+              %continue
+              :-  ~
+              %-  as-octt:mimes:html
+              """
+              id: {((d-co:co 1) clog-threshold:eyre-gate)}
+              data: \{"json":[1],"id":1,"response":"diff"}
+
+
+              """
+              complete=%.n
+            ==
+        ==
+    ==
+  results
 ::
 ++  test-born-sends-pending-cancels
   ::
@@ -2017,7 +2155,7 @@
   ::
   ?:  ?=([%watch *] deal.expected)
     ?.  ?=([%watch *] r.note)
-      [%leaf "expected %watch-as, actual {<r.note>}"]~
+      [%leaf "expected %watch, actual {<r.note>}"]~
     ::  compare the path
     ::
     (expect-eq !>(path.deal.expected) !>(path.r.note))
@@ -2189,14 +2327,14 @@
             card.i.moves
         ::
           %+  expect-gall-deal
-            :*  /channel/subscription/'0123456789abcdef'/'1'
+            :*  /channel/subscription/'0123456789abcdef'/'1'/~nul/two
                 [~nul ~nul]  %two
-                %watch-as  %json  /one/two/three
+                %watch  /one/two/three
             ==
             card.i.t.moves
         ::
           %+  expect-eq
-            !>  put-200-response
+            !>  put-204-response
             !>  i.t.t.moves
         ::
           %+  expect-eq
@@ -2216,6 +2354,19 @@
   ?:  &(=(%ca term) =(/hoon/handler/gen s.beam))
     :+  ~  ~
     vase+!>(!>(|=(* |=(* [[%404 ~] ~]))))
+  ?:  &(=(%cb term) =(/json s.beam))
+    :^  ~  ~  %dais
+    !>  ^-  dais:clay
+    |_  sam=vase
+    ++  bunt  !!
+    ++  diff  !!
+    ++  form  !!
+    ++  join  !!
+    ++  mash  !!
+    ++  pact  !!
+    ++  vale  |=(=noun !>(;;(json noun)))
+    ++  volt  !!
+    --
   ::
   ?>  =(%j term)
   ?>  =(~nul p.beam)
@@ -2233,14 +2384,14 @@
   ?~  data  headers
   %+  weld  headers
   ['content-length' (crip ((d-co:co 1) p.u.data))]~
-::  produce the 200 response to a put request
+::  produce the 204 response to a put request
 ::
-++  put-200-response
+++  put-204-response
   :*  ~[/http-put-request]
       %give
       %response
       %start
-      [200 ['set-cookie' cookie-string]~]
+      [204 ['set-cookie' cookie-string]~]
       ~
       %.y
   ==

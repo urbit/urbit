@@ -23,7 +23,7 @@
   :-  ?-  b
         ~  "/"  :: XX !! maybe?
         {$hood ^}  "|{(path-heps t.b)}"
-        ^          "+{(path-heps b)}"  :: XX deal with :hall|foo
+        ^          "+{(path-heps b)}"  :: XX deal with :graph-store|foo
       ==
   =/  c  (to-wain:format a)
   ?~  c  "~"

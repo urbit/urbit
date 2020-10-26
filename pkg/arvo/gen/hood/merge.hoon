@@ -3,6 +3,7 @@
 ::::  /hoon/merge/hood/gen
   ::
 /?    310
+/*  help-text  %txt  /gen/hood/merge/help/txt
 =,  clay
 ::
 |%
@@ -14,12 +15,13 @@
   ::
 :-  %say
 |=  $:  {now/@da eny/@uvJ bek/beak}
-        {arg/{?(sorc {syd/$@(desk beaky) sorc})} cas/case gem/?(germ $auto)}
+        {arg/{?(~ sorc {syd/$@(desk beaky) sorc})} cas/case gem/?(germ $auto)}
     ==
 =*  our  p.bek
 |^  :-  %kiln-merge
-    ^-  {syd/desk her/ship sud/desk cas/case gem/?(germ $auto)}
+    ^-  $@(~ {syd/desk her/ship sud/desk cas/case gem/?(germ $auto)})
     ?-  arg
+      ~  ((slog (turn help-text |=(=@t leaf+(trip t)))) ~)
       {@ @ ~}
         =+(arg [sud ?.(=(our her) her (sein:title p.bek now her)) sud (opt-case da+now) gem])
     ::
