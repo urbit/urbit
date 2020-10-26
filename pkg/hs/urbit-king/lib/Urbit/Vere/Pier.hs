@@ -379,7 +379,8 @@ pier (serf, log) vSlog startedSig injected = do
     io inject
 
     takeMVar okaySig >>= \case
-      Left goof -> error ("Goof in injected event: " <> show goof)
+      Left goof -> logError $ display @Text ("Goof in injected event: " <>
+                                             tshow goof)
       Right ()  -> pure ()
 
 
