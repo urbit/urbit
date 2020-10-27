@@ -211,6 +211,13 @@ ames env who isFake scry enqueueEv stderr = (initialEvents, runAmes)
     mode <- rio (netMode isFake)
     cachedScryLane <- cache scryLane
 
+    fwdCount <- newTVarIO 0
+
+    async $ forever do
+      threadDelay 30_000_000
+      fwd <- readTVarIO fwdCount
+      putStrLn ("ames: forwarded " <> tshow fwd <> " packets")
+
     aTurfs   <- newTVarIO Nothing
     aDropped <- newTVarIO 0
     aVersion <- newTVarIO Nothing
@@ -221,7 +228,9 @@ ames env who isFake scry enqueueEv stderr = (initialEvents, runAmes)
       aDropped
       aVersion
       cachedScryLane
-      (send aUdpServ aResolvr mode)
+      (\d b -> do
+        send aUdpServ aResolvr mode d b
+        atomically $ modifyTVar' fwdCount (+ 1))
       aUdpServ
 
     pure (AmesDrv { .. })
