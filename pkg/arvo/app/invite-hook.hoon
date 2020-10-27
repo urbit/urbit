@@ -46,9 +46,7 @@
       ^-  card
       ?<  (team:title our.bowl recipient)
       %+  invite-hook-poke  recipient
-      :^  %invite 
-          term.act
-        uid.act
+      :^  %invite  term.act  uid.act
       ^-  invite
       :*  ship.invites.act
           app.invites.act

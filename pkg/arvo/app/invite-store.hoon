@@ -82,7 +82,7 @@
   ^-  (quip card _this)
   ?>  (team:title our.bowl src.bowl)
   =/  cards=(list card)
-    ?+  path  (on-watch:def path)
+    ?+    path  (on-watch:def path)
         [%all ~]      [%give %fact ~ %invite-update !>([%initial invites])]~
         [%updates ~]  ~
         [%invitatory @ ~]
@@ -106,12 +106,12 @@
     |=  =action:store
     ^-  (quip card _state)
     ?-  -.action
-        %create   (handle-create +.action)
-        %delete   (handle-delete +.action)
-        %invite   (handle-invite +.action)
-        %accept   (handle-accept +.action)
-        %decline  (handle-decline +.action)
-        %invites  ~|('only send this to %invite-hook' !!)
+      %create   (handle-create +.action)
+      %delete   (handle-delete +.action)
+      %invite   (handle-invite +.action)
+      %accept   (handle-accept +.action)
+      %decline  (handle-decline +.action)
+      %invites  ~|('only send this to %invite-hook' !!)
     ==
   ::
   ++  handle-create

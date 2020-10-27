@@ -72,7 +72,7 @@
 ::
 ?:  ?=(%group -.associated)
   (pure:m !>(~))
-?-  -.policy.associated.action
+?-    -.policy.associated.action
     %group  (pure:m !>(~))
     %invite
   =/  inv-action=action:inv
