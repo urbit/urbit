@@ -12,7 +12,9 @@
 ::
 +$  state-0
   $:  %0
-      watching=(jug resource notifiable:hook)
+      watching=(set resource)
+      mentions=_&
+      watch-on-self=_&
   ==
 ::
 --
@@ -40,7 +42,26 @@
   ^-  (quip card _this)
   `this(state !<(state-0 old))
 ::
-++  on-watch  on-watch:def
+++  on-watch  
+  |=  =path
+  ^-  (quip card _this)
+  |^
+  =^  cards  state
+    ?+  path  (on-watch:def path)
+      [%updates ~]  updates
+    ==
+  [cards this]
+  ::
+  ++  updates
+    ^-  (quip card _state)
+    :_  state
+    %+  give:ha  ~
+    :*  %initial
+        watching
+        mentions
+        watch-on-self
+    ==
+  --
 ::
 ++  on-poke
   ~/  %hark-graph-hook-poke
@@ -62,19 +83,32 @@
     ?-  -.action
       %listen  (listen +.action)
       %ignore  (ignore +.action)
+      %set-mentions  (set-mentions +.action)
+      %set-watch-on-self  (set-watch-on-self +.action)
     ==
     ++  listen
-      |=  [=notifiable:hook graph=resource]
+      |=  graph=resource
       ^-  (quip card _state)
-      :-  ~
-      state(watching (~(put ju watching) graph notifiable))
+      :-  (give:ha ~[/updates] [%listen graph])
+      state(watching (~(put in watching) graph))
     ::
     ++  ignore
-      |=  [=notifiable:hook graph=resource]
+      |=  graph=resource
       ^-  (quip card _state)
-      :-  ~
-      state(watching (~(del ju watching) graph notifiable))
+      :-  (give:ha ~[/updates] [%ignore graph])
+      state(watching (~(del in watching) graph))
     ::
+    ++  set-mentions
+      |=  ment=?
+      ^-  (quip card _state)
+      :-  (give:ha ~[/updates] %set-mentions ment)
+      state(mentions ment)
+    ::
+    ++  set-watch-on-self
+      |=  self=?
+      ^-  (quip card _state)
+      :-  (give:ha ~[/updates] %set-watch-on-self self)
+      state(watch-on-self self)
     --
   --
 ::
@@ -113,18 +147,58 @@
     ?~  mark
       [~ state]
     =+  (scry ,=tube:clay /cc/[q.byk.bowl]/[u.mark]/notification-kind)
-    :_  state
-    ^-  (list card)
-    %+  murn
-      ~(val by nodes.q.update)
-    |=  =node:graph-store
-    ^-  (unit card)
+    ^-  (quip card _state)
+    =/  nodes=(list [p=index:graph-store q=node:graph-store])
+      ~(tap by nodes.q.update)
+    =|  cards=(list card)
+    |-
+    ?~  nodes 
+      [cards state]
+    =*  index  p.i.nodes
+    =*  node   q.i.nodes
+    ?:  =(our.bowl author.post.node)
+      =^  self-cards  state
+        (self-post rid node)
+      $(cards (weld cards self-cards), nodes t.nodes)
     =+  !<(notification-kind=(unit @t) (tube !>([0 post.node])))
     ?~  notification-kind
-      ~
-    =/  =index:store
-      [%graph group rid module.metadata u.notification-kind]
-    `(add-unread index [time-sent.post.node %.n [%graph contents.post.node]]) 
+      $(nodes t.nodes)
+    =/  desc=@t
+      ?:  (is-mention contents.post.node)
+        %mention 
+      u.notification-kind
+    ?.  ?|  =(desc %mention)
+            (~(has in watching) rid)
+        ==
+      $(nodes t.nodes)
+    =/  notif-index=index:store
+      [%graph group rid module.metadata desc]
+    =/  =contents:store
+      [%graph (limo post.node ~)]
+    %_    $
+        nodes  t.nodes
+        cards  
+      :_  cards
+      (add-unread notif-index [time-sent.post.node %.n contents]) 
+    ==
+    ::
+    ++  is-mention
+      |=  contents=(list content:post)
+      ^-  ?
+      ?.  mentions  %.n
+      ?~  contents  %.n
+      ?.  ?=(%text -.i.contents)
+        $(contents t.contents)
+      ?^  (find (trip text.i.contents) (scow %p our.bowl))
+        %.y
+      $(contents t.contents)
+    ::
+    ++  self-post
+      |=  [rid=resource =node:graph-store]
+      ^-  (quip card _state)
+      ?.  ?=(%.y watch-on-self)
+        [~ state]
+      `state(watching (~(put in watching) rid))
     ::
     ++  add-unread
       |=  [=index:store =notification:store]
@@ -147,6 +221,11 @@
 ++  on-fail   on-fail:def
 --
 |_  =bowl:gall
+::
+++  give
+  |=  [paths=(list path) =update:hook]
+  ^-  (list card)
+  [%give %fact paths hark-graph-hook-update+!>(update)]~
 ::
 ++  watch-graph
   ^-  card
