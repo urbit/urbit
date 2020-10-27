@@ -42,7 +42,16 @@
   ^-  (quip card _this)
   `this(state !<(state-0 old))
 ::
-++  on-watch  on-watch:def
+++  on-watch  
+  |=  =path
+  ?.  ?=([%updates ~] path)
+    (on-watch:def path)
+  :_  this
+  =;  =cage
+    [%give %fact ~[/updates] cage]~
+  :-  %hark-group-hook-update
+  !>  ^-  update:hook
+  [%initial watching]
 ::
 ++  on-poke
   ~/  %hark-group-hook-poke
@@ -68,12 +77,19 @@
     ++  listen
       |=  group=resource
       ^-  (quip card _state)
-      `state(watching (~(put in watching) group))
+      :-  (give %listen group)
+      state(watching (~(put in watching) group))
     ::
     ++  ignore
       |=  group=resource
       ^-  (quip card _state)
-      `state(watching (~(del in watching) group))
+      :-  (give %ignore group)
+      state(watching (~(del in watching) group))
+    ::
+    ++  give
+      |=  =update:hook
+      ^-  (list card)
+      [%give %fact ~[/updates] %hark-group-hook-update !>(update)]~
     --
   --
 ::
@@ -136,7 +152,6 @@
   --
 ::
 ++  on-peek  on-peek:def
-::
 ++  on-leave  on-leave:def
 ++  on-arvo  on-arvo:def
 ++  on-fail   on-fail:def
