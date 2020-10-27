@@ -1318,3 +1318,6 @@
 
         c3_w
         u3_readdir_r(DIR *dirp, struct dirent *entry, struct dirent **result);
+
+        void
+        u3_get_cmd_output(c3_c *cmd_c, c3_c *out_c, c3_w len_c);

@@ -99,6 +99,28 @@ u3_readdir_r(DIR *dirp, struct dirent *entry, struct dirent **result)
   return(0);
 }
 
+/* u3_get_cmd_output(): Run a shell command and capture a line of output.
+   Exits with an error if the command fails or produces no output.
+   The 'out_c' parameter should be an array of sufficient length to hold
+   the command's output, up to a max of len_c characters.
+*/
+void
+u3_get_cmd_output(c3_c *cmd_c, c3_c *out_c, c3_w len_c)
+{
+  FILE *fp = popen(cmd_c, "r");
+  if ( NULL == fp ) {
+    u3l_log("'%s' failed\n", cmd_c);
+    exit(1);
+  }
+
+  if ( NULL == fgets(out_c, len_c, fp) ) {
+    u3l_log("'%s' produced no output\n", cmd_c);
+    exit(1);
+  }
+
+  pclose(fp);
+}
+
 /* _unix_down(): descend path.
 */
 static c3_c*

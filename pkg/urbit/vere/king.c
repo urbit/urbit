@@ -289,28 +289,6 @@ _king_get_atom(c3_c* url_c)
   }
 }
 
-/* _get_cmd_output(): Run a shell command and capture its output.
-   Exits with an error if the command fails or produces no output.
-   The 'out_c' parameter should be an array of sufficient length to hold
-   the command's output, up to a max of len_c characters.
-*/
-static void
-_get_cmd_output(c3_c *cmd_c, c3_c *out_c, c3_w len_c)
-{
-  FILE *fp = popen(cmd_c, "r");
-  if ( NULL == fp ) {
-    u3l_log("'%s' failed\n", cmd_c);
-    exit(1);
-  }
-
-  if ( NULL == fgets(out_c, len_c, fp) ) {
-    u3l_log("'%s' produced no output\n", cmd_c);
-    exit(1);
-  }
-
-  pclose(fp);
-}
-
 /* _arvo_hash(): get a shortened hash of the last git commit
    that modified the sys/ directory in arvo.
    hax_c must be an array with length >= 11.
@@ -321,7 +299,7 @@ _arvo_hash(c3_c *out_c, c3_c *arv_c)
   c3_c cmd_c[2048];
 
   sprintf(cmd_c, "git -C %s log -1 HEAD --format=%%H -- sys/", arv_c);
-  _get_cmd_output(cmd_c, out_c, 11);
+  u3_get_cmd_output(cmd_c, out_c, 11);
 
   out_c[10] = 0;  //  end with null-byte
 }
