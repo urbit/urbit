@@ -3,6 +3,6 @@ let
   pkgs = import ../../default.nix { };
 
 in pkgs.shellFor {
-  name = "urbit";
-  packages = ps: [ ps.urbit ];
+  name = "herb";
+  packages = ps: [ ps.herb ];
 }
