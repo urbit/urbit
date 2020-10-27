@@ -5,15 +5,19 @@ import LocalReducer from '../reducers/local';
 import ChatReducer from '../reducers/chat-update';
 
 import { StoreState } from './type';
+import { Timebox } from '~/types';
 import { Cage } from '~/types/cage';
 import ContactReducer from '../reducers/contact-update';
 import S3Reducer from '../reducers/s3-update';
 import { GraphReducer } from '../reducers/graph-update';
+import { HarkReducer } from '../reducers/hark-update';
 import GroupReducer from '../reducers/group-update';
 import PublishUpdateReducer from '../reducers/publish-update';
 import PublishResponseReducer from '../reducers/publish-response';
 import LaunchReducer from '../reducers/launch-update';
 import ConnectionReducer from '../reducers/connection';
+import {OrderedMap} from '../lib/OrderedMap';
+import { BigIntOrderedMap } from '../lib/BigIntOrderedMap';
 
 export const homeAssociation = {
   "app-path": "/home",
@@ -98,6 +102,15 @@ export default class GlobalStore extends BaseStore<StoreState> {
       dark: false,
       inbox: {},
       chatSynced: null,
+      notifications: new BigIntOrderedMap<Timebox>(),
+      archivedNotifications: new BigIntOrderedMap<Timebox>(),
+      notificationsGraphConfig: {
+        watchOnSelf: false,
+        mentions: false,
+        watching: [],
+        watchingIndices: {}
+      },
+      notificationsCount: 0
     };
   }
 
@@ -114,5 +127,6 @@ export default class GlobalStore extends BaseStore<StoreState> {
     this.launchReducer.reduce(data, this.state);
     this.connReducer.reduce(data, this.state);
     GraphReducer(data, this.state);
+    HarkReducer(data, this.state);
   }
 }

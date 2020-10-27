@@ -6,6 +6,7 @@ export * from './contact-update';
 export * from './global';
 export * from './group-update';
 export * from './graph-update';
+export * from './hark-update';
 export * from './invite-update';
 export * from './launch-update';
 export * from './link-listen-update';

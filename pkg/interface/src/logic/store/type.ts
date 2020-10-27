@@ -11,6 +11,7 @@ import { LaunchState, WeatherState } from '~/types/launch-update';
 import { ConnectionStatus } from '~/types/connection';
 import { BackgroundConfig, LocalUpdateRemoteContentPolicy } from '~/types/local-update';
 import {Graphs} from '~/types/graph-update';
+import { Notifications, NotificationGraphConfig } from "~/types";
 
 export interface StoreState {
   // local state
@@ -53,4 +54,9 @@ export interface StoreState {
   chatSynced: ChatHookUpdate | null;
   inbox: Inbox;
   pendingMessages: Map<Path, Envelope[]>;
+
+  notifications: Notifications;
+  notificationsGraphConfig: NotificationGraphConfig;
+  notificationsCount: number,
+  doNotDisturb: boolean;
 }
