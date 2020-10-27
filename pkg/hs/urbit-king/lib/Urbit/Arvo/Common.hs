@@ -20,6 +20,8 @@ module Urbit.Arvo.Common
 
 import Urbit.Prelude hiding (Term)
 
+import Control.Monad.Fail (fail)
+
 import qualified Network.HTTP.Types.Method as H
 import qualified Urbit.Ob                  as Ob
 
