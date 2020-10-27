@@ -107,7 +107,7 @@ const SvgArc = ({ start, end, ...rest }) => {
   const d = [
     'M', CX, CY,
     'L', x1, y1,
-    'A', RADIUS, RADIUS, '0', (isLarge ? '1' : '0'), '1', x2, y2, 'z'
+    'A', RADIUS, RADIUS, '0', '1', '1', x2, y2, 'z'
   ].join(' ');
 
   return <path d={d} {...rest} />;
