@@ -3,14 +3,8 @@
 build:
 	nix-build -A urbit -A herb --no-out-link
 
-build-all:
-	nix-build --no-out-link
-
 install:
 	nix-env -f . -iA urbit -iA urbit-debug -iA herb
-
-cross:
-	sh/cross
 
 release:
 	sh/release
@@ -32,3 +26,6 @@ interface:
 clean:
 	rm -rf ./out ./work
 	rm -f result result-*
+
+fmt:
+	sh/fmt
