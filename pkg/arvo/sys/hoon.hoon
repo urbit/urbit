@@ -14739,6 +14739,7 @@
     =+  [arvo-hed arvo-a]=(get-line hoon-z system-source)
     ?.  =('/sys/arvo/hoon' arvo-hed)  ~|([%not-arvo-hoon arvo-hed] !!)
     =/  arvo-z  (need (next-sep arvo-a system-source))
+    ~>  %slog.[0 leaf+"textual: pill parsed"]
     ::
     ::  event 4: hoon compiler source, compiling to event 2
     ::
@@ -14754,7 +14755,6 @@
     ::  the compiler gate with the input hoon
     ::
     =/  compiler-gate=*  tide
-    |-
     ::
     ::  compile the compiler source, producing (pair span nock).
     ::  the compiler ignores its input so we use a trivial span.
@@ -14774,7 +14774,8 @@
     ::  if this had any effect, seek fixedpoint
     ::
     ?.  =(compiler-gate old)
-      ~>(%slog.[0 leaf+"1-d -> c (divergence detected)"] $)
+      ~>  %slog.[0 leaf+"1-d -> b (divergence detected)"]
+      .*(compiler-gate [%9 2 %10 [6 %1 [%pill system-source]] %0 1])
     ::
     .*  :*  compiler-tool=compiler-tool  compiler-gate=compiler-gate
             arvo-source=arvo-source  system-source=system-source  wir=wir
