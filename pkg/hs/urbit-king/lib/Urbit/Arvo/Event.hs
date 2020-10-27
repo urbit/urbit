@@ -1,12 +1,15 @@
 {-# LANGUAGE StrictData #-}
 
+-- This is required due to the use of 'Void' in a constructor slot in
+-- combination with 'deriveNoun' which generates an unreachable pattern.
+{-# OPTIONS_GHC -Wno-overlapping-patterns #-}
+
 {-|
     Event Types and Noun Conversion
 -}
 module Urbit.Arvo.Event where
 
-import Urbit.Noun.Tree (HoonMap, HoonSet)
-import Urbit.Prelude   hiding (Term)
+import Urbit.Prelude hiding (Term)
 
 import Urbit.Arvo.Common (KingId(..), ServId(..))
 import Urbit.Arvo.Common (Desk, Mime)

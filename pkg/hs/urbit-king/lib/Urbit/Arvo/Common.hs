@@ -1,5 +1,9 @@
 {-# LANGUAGE StrictData #-}
 
+-- This is required due to the use of 'Void' in a constructor slot in
+-- combination with 'deriveNoun' which generates an unreachable pattern.
+{-# OPTIONS_GHC -Wno-overlapping-patterns #-}
+
 {-|
     Types used in both Events and Effects.
 -}
