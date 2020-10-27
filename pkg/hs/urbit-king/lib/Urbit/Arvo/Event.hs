@@ -11,6 +11,7 @@ module Urbit.Arvo.Event where
 
 import Urbit.Prelude hiding (Term)
 
+import Control.Monad.Fail (fail)
 import Urbit.Arvo.Common (KingId(..), ServId(..))
 import Urbit.Arvo.Common (Desk, Mime)
 import Urbit.Arvo.Common (Header(..), HttpEvent)

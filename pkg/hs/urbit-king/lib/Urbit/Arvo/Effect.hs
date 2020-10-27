@@ -12,6 +12,7 @@ module Urbit.Arvo.Effect where
 import Urbit.Noun.Time
 import Urbit.Prelude
 
+import Control.Monad.Fail (fail)
 import Urbit.Arvo.Common (KingId(..), ServId(..))
 import Urbit.Arvo.Common (Header, HttpEvent, HttpServerConf, Method, Mime)
 import Urbit.Arvo.Common (AmesDest, Turf)
