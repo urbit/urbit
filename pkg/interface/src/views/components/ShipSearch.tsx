@@ -12,6 +12,7 @@ import { Rolodex, Groups } from "~/types";
 import { HoverBox } from "./HoverBox";
 
 interface InviteSearchProps {
+  autoFocus?: boolean;
   disabled?: boolean;
   label?: string;
   caption?: string;
@@ -138,6 +139,7 @@ export function ShipSearch(props: InviteSearchProps) {
         renderChoice={({ candidate, onRemove }) => null}
         value={undefined}
         error={error}
+        autoFocus={props.autoFocus}
       />
       <Row minHeight="34px" flexWrap="wrap">
         {value.map((s) => (
