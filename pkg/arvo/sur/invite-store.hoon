@@ -5,7 +5,7 @@
 +$  invite
   $:  =ship           ::  ship to subscribe to upon accepting invite
       app=@tas        ::  app to subscribe to upon accepting invite
-      =resource       ::  path to subscribe to upon accepting invite
+      =resource       ::  resource to subscribe to upon accepting invite
       recipient=ship  ::  recipient to receive invite
       text=cord       ::  text to describe the invite
   ==
@@ -13,7 +13,7 @@
 +$  multi-invite
   $:  =ship                  ::  ship to subscribe to upon accepting invite
       app=@tas               ::  app to subscribe to upon accepting invite
-      =resource              ::  path to subscribe to upon accepting invite
+      =resource              ::  resource to subscribe to upon accepting invite
       recipients=(set ship)  ::  recipient to receive invite
       text=cord              ::  text to describe the invite
   ==
@@ -43,7 +43,7 @@
   $%  invite-base
       [%initial =invites]
       [%invitatory =invitatory]                 ::  receive invitatory
-      [%accepted =term uid=serial =invite]  ::  an invite has been accepted
+      [%accepted =term uid=serial =invite]      ::  an invite has been accepted
   ==
 --
 
