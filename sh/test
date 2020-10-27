@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-set -e
+set -euo pipefail
 
-pkg=$(nix-build nix/ops -A test --no-out-link "$@")
+pkg="$(nix-build -A urbit-tests --no-out-link "$@")"
 
 hdr () {
   echo =====$(sed 's/./=/g' <<< "$1")=====
@@ -10,10 +10,10 @@ hdr () {
   echo =====$(sed 's/./=/g' <<< "$1")=====
 }
 
-for f in $(find $pkg/ -type f)
+for f in $(find "$pkg/" -type f)
 do
-  hdr $(basename $f)
-  cat $f
+  hdr "$(basename $f)"
+  cat "$f"
 done
 
 fail=0
