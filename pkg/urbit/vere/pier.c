@@ -1227,6 +1227,65 @@ u3_pier_stay(c3_w wag_w, u3_noun pax)
   return pir_u;
 }
 
+/* _pier_pill_glass_arvo(): construct sys/ glass-pill atom
+*/
+static u3_atom
+_pier_pill_glass_arvo(c3_c* arv_c){
+  c3_c pill_c[2*1024*1024] = {0}; // or thereabouts
+
+  setenv("URBIT_ARVO_PATH", arv_c, 0);
+  u3_get_cmd_output(
+      "(cd \"$URBIT_ARVO_PATH\";"
+        // for hoon and arvo, just replace . in path with /
+        "for i in sys/hoon.hoon sys/arvo.hoon; do \n"
+          "echo; echo \"/${i/./\\/}\"; cat \"$i\"; done;\n"
+	"echo; echo \"/sys/zuse/hoon %$\"; cat sys/zuse.hoon;\n"
+        // for vanes, also take the `f`ilename
+        "for i in sys/vane/*.hoon; do f=\"${i##*/}\";\n"
+          // and reduce it to its first character
+          "echo; echo \"/${i/./\\/} %${f%\"${f#?}\"}\"; cat \"$i\"; done;\n"
+        "echo; echo \"/~\""
+      // encode \n as \r to sneak it past fgets line-buffering
+      ") | tr '\n' '\r'"
+     , pill_c, sizeof(pill_c)
+  );
+  c3_assert(pill_c[sizeof(pill_c)-1] == '\0');
+  for(c3_c *i = pill_c; *i; i++){if(*i == '\r') *i = '\n';}
+
+
+  return u3i_string(pill_c);
+}
+
+static c3_t _starts_with(c3_y* a, c3_y* b){
+  return (0 == strncmp( a, b, strlen(a)-1));
+}
+
+/* _pier_pill_reglass(): set textual sys/ if on glass pill.
+   Returns 0 on nonglass boot formula, 1 if it has been changed.
+*/
+static c3_w
+_pier_pill_reglass(u3_noun* bot, c3_c* arv_c){
+  assert(NULL != arv_c);
+  // +61 is -.&4, out of a [boot1 boot2 hoon-hoon [/pad/... SRC] ~] noun
+  u3_noun src;
+  if ( u3_none == (src = u3r_at(61, *bot)) || c3n == u3a_is_atom(src)){
+    return 0;
+  }
+
+  c3_y lead_y[32] = {0};
+  u3r_bytes(0, 31, lead_y, src);
+
+  if (!_starts_with("\n/sys/hoon/hoon\n", lead_y)){
+    return 0;
+  }
+  if (!_starts_with("\n/sys/hoon/hoon\ncrystal=", lead_y)){
+    u3l_log("boot: glass: overriding arvo in non-crystal pill\n");
+  }
+
+  *bot = u3i_edit(*bot, 61, _pier_pill_glass_arvo(arv_c));
+  return 1;
+}
+
 /* _pier_pill_parse(): extract boot formulas and module/userspace ova from pill
 */
 static u3_boot
@@ -1259,7 +1318,8 @@ _pier_pill_parse(u3_noun pil)
   //
   if ( c3y == u3h(pil) ) {
     if ( u3_nul != pil_q ) {
-      c3_w len_w = 0;
+      c3_w intos_w = 0;
+      intos_w += _pier_pill_reglass(&bot_u.bot, u3_Host.ops_u.arv_c);
       u3_noun ova = bot_u.use;
       u3_noun new = u3_nul;
       u3_noun ovo;
@@ -1268,8 +1328,8 @@ _pier_pill_parse(u3_noun pil)
         ovo = u3h(ova);
 
         if ( c3__into == u3h(u3t(ovo)) ) {
-          c3_assert( 0 == len_w );
-          len_w++;
+          c3_assert( 0 == intos_w );
+          intos_w++;
           ovo = u3t(pil_q);
         }
 
@@ -1277,7 +1337,7 @@ _pier_pill_parse(u3_noun pil)
         ova = u3t(ova);
       }
 
-      c3_assert( 1 == len_w );
+      c3_assert( 1 == intos_w );
 
       u3z(bot_u.use);
       bot_u.use = u3kb_flop(new);
