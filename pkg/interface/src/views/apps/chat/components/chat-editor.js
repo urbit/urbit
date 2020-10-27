@@ -172,7 +172,7 @@ export default class ChatEditor extends Component {
             fontSize="14px"
             style={{ width: '100%', background: 'transparent', color: 'currentColor' }}
             placeholder={inCodeMode ? "Code..." : "Message..."}
-            autoComplete={new RegExp(/Chrome/).test(navigator.userAgent) ? 'disabled' : 'off'}
+            autoComplete={new RegExp(/CriOS/).test(navigator.userAgent) ? 'disabled' : 'off'}
             onKeyUp={event => {
               if (event.key === 'Enter') {
                 this.submit();
