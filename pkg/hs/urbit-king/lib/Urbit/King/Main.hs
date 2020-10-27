@@ -537,7 +537,7 @@ newShip CLI.New{..} opts = do
 
     bootFromSeed :: Pill -> Seed -> RIO HostEnv ()
     bootFromSeed pill seed = do
-      ethReturn <- dawnVent seed
+      ethReturn <- dawnVent nEthNode seed
 
       case ethReturn of
         Left x -> error $ unpack x
@@ -627,8 +627,8 @@ startBrowser pierPath = runRAcquire $ do
     log <- Log.existing (pierPath <> "/.urb/log")
     rio $ EventBrowser.run log
 
-checkDawn :: HasLogFunc e => FilePath -> RIO e ()
-checkDawn keyfilePath = do
+checkDawn :: HasLogFunc e => String -> FilePath -> RIO e ()
+checkDawn provider keyfilePath = do
   -- The keyfile is a jammed Seed then rendered in UW format
   text <- readFileUtf8 keyfilePath
   asAtom <- case cordToUW (Cord $ T.strip text) of
@@ -642,7 +642,7 @@ checkDawn keyfilePath = do
 
   print $ show seed
 
-  e <- dawnVent seed
+  e <- dawnVent provider seed
   print $ show e
 
 
@@ -673,7 +673,7 @@ main = do
     CLI.CmdBug (CLI.ValidateEvents pax f   l) -> checkEvs pax f l
     CLI.CmdBug (CLI.ValidateFX     pax f   l) -> checkFx pax f l
     CLI.CmdBug (CLI.ReplayEvents pax l      ) -> replayPartEvs pax l
-    CLI.CmdBug (CLI.CheckDawn pax           ) -> checkDawn pax
+    CLI.CmdBug (CLI.CheckDawn provider pax  ) -> checkDawn provider pax
     CLI.CmdBug CLI.CheckComet                 -> checkComet
     CLI.CmdCon pier                           -> connTerm pier
 

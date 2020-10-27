@@ -40,10 +40,6 @@ import qualified Urbit.Ob              as Ob
 import qualified Network.HTTP.Client.TLS as TLS
 import qualified Network.HTTP.Types      as HT
 
--- During boot, use the infura provider
-provider :: String
-provider = "http://eth-mainnet.urbit.org:8545"
-
 -- The address of the azimuth contract as a string.
 azimuthAddr :: Text
 azimuthAddr = "0x223c067f8cf28ae173ee5cafea60ca44c335fecb"
@@ -154,7 +150,7 @@ dawnPostRequests endpoint responseBuilder requests = do
 
   -- Send to the server
   responses <- dawnSendHTTP endpoint requestPayload >>= \case
-    Left err -> error $ "error fetching " <> provider <> ": HTTP " <> (show err)
+    Left err -> error $ "error fetching " <> endpoint <> ": HTTP " <> (show err)
     Right x -> pure x
 
   -- Get a list of the result texts in the order of the submitted requests
@@ -335,7 +331,7 @@ parseTurfResponse a raw = turf
 
 retrievePoint :: String -> TextBlockNum -> Ship -> RIO e EthPoint
 retrievePoint endpoint block ship =
-  dawnPostRequests provider parseEthPoint
+  dawnPostRequests endpoint parseEthPoint
     [PointRequest block (fromIntegral ship)] >>= \case
       [x] -> pure x
       _   -> error "JSON server returned multiple return values."
@@ -407,10 +403,11 @@ getSponsorshipChain endpoint block = loop
             pure $ chain <> [(ship, ethPoint)]
 
 -- Produces either an error or a validated boot event structure.
-dawnVent :: HasLogFunc e => Seed -> RIO e (Either Text Dawn)
-dawnVent dSeed@(Seed ship life ring oaf) =
+dawnVent :: HasLogFunc e => String -> Seed -> RIO e (Either Text Dawn)
+dawnVent provider dSeed@(Seed ship life ring oaf) =
   -- The type checker can't figure this out on its own.
   (onLeft tshow :: Either SomeException Dawn -> Either Text Dawn) <$> try do
+    putStrLn ("boot: requesting ethereum information from " <> pack provider)
     blockResponses
       <- dawnPostRequests provider parseBlockRequest [BlockRequest]
 
