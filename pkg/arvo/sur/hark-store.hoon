@@ -17,7 +17,7 @@
   [date=@da read=? =contents]
 ::
 +$  contents
-  $%  [%graph =(list content:post)]
+  $%  [%graph =(list post:post)]
       [%group =(list group-contents)]
   ==
 ::
@@ -25,17 +25,24 @@
   (map index notification)
 ::
 +$  notifications
-  ((mop atom timebox) lth)
+  ((mop @da timebox) lth)
 ::
 +$  action
   $%  [%add =index =notification]
       [%archive time=@da index]
       [%read time=@da index]
       [%unread time=@da index]
+      [%set-dnd dnd=?]
       [%seen ~]
   ==
+::
+++  indexed-notification
+  [index notification]
 ::  
 +$  update
   $%  action
+      [%more =(list update)]
+      [%timebox time=@da archived=? =(list [index notification])]
+      [%count count=@ud]
   ==
 --

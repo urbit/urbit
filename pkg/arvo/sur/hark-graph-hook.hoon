@@ -1,12 +1,22 @@
-/-  *resource
+/-  *resource, graph-store
 ^?
 |%
 ::
-+$  notifiable
-  ?(%mention %node)
-::
 +$  action
-  [?(%listen %ignore) =notifiable group=resource]
+  $%
+    [?(%listen %ignore) graph=resource]
+    [%set-mentions mentions=?]
+    [%set-watch-on-self watch-on-self=?]
+  ==
 ::
++$  update
+  $% 
+    action
+    $:  %initial
+      watching=(set resource)
+      mentions=_&
+      watch-on-self=_&
+    ==
+  ==
 --
 
