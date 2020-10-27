@@ -15,12 +15,24 @@
       =notifications:store
       archive=notifications:store
       last-seen=@da
+      dnd=?
   ==
++$  inflated-state
+  $:  state-0
+      cache
+  ==
+::  $cache: useful to have precalculated, but can be derived from state
+::  albeit expensively
++$  cache
+  $:  unread-count=@ud
+      ~
+  ==
+  
 ::
 ++  orm  ((ordered-map @da timebox:store) lth)
 --
 ::
-=|  state-0
+=|  inflated-state
 =*  state  -
 ::
 =<
@@ -37,14 +49,67 @@
   :_  this
   ~[autoseen-timer]
 ::
-++  on-save  !>(state)
+++  on-save  !>(-.state)
 ++  on-load
-  |=  old=vase
+  |=  =old=vase
   ^-  (quip card _this)
-  `this(state !<(state-0 old))
+  =/  old
+   !<(state-0 old-vase)
+  `this(-.state old, +.state (inflate-cache old))
 ::
-++  on-watch  on-watch:def
-++  on-peek   on-peek:def
+++  on-watch  
+  |=  =path
+  ^-  (quip card _this)
+  |^
+  ?+    path   (on-watch:def path)
+    ::
+      [%updates ~]
+    :_  this
+    [%give %fact ~ hark-update+!>(initial-updates)]~
+  ==
+  ++  initial-updates
+    ^-  update:store
+    :-  %more
+    ^-  (list update:store)
+    :+  [%set-dnd dnd]
+      [%count unread-count]
+    %+  weld
+      %+  turn
+        (tap-nonempty archive)
+      (timebox-update &)
+    %+  turn
+      (tap-nonempty notifications)
+    (timebox-update |)
+  ::
+  ++  timebox-update
+    |=  archived=?
+    |=  [time=@da =timebox:store]
+    ^-  update:store
+    [%timebox time archived ~(tap by timebox)]
+  ::
+  ++  tap-nonempty
+    |=  =notifications:store
+    ^-  (list [@da timebox:store])
+    %+  skip  (tap:orm notifications)
+    |=([@da =timebox:store] =(0 ~(wyt by timebox)))
+  --
+::
+++  on-peek   
+  |=  =path
+  ^-  (unit (unit cage))
+  ?+  path  (on-peek:def path)
+    ::
+      [%x %recent @ @ ~]
+    =/  offset=@ud
+      (slav %ud i.t.t.path)
+    =/  length=@ud
+      (slav %ud i.t.t.t.path)
+    :^  ~  ~  %noun
+    !>
+    %+  gas:orm  *_notifications
+    (scag length (slag offset (tap:orm notifications)))
+    ::
+  ==
 ++  on-poke
   ~/  %hark-store-poke
   |=  [=mark =vase]
@@ -67,6 +132,7 @@
       %seen     seen
       %read     (read +.action)
       %unread   (unread +.action)
+      %set-dnd  (set-dnd +.action)
     ==
     ++  add  
       |=  [=index:store =notification:store]
@@ -81,7 +147,7 @@
         (merge-notification:ha u.existing-notif notification)
       =/  new-timebox=timebox:store
         (~(put by timebox) index new)
-      :-  (give:ha [/updates]~ %add index notification)
+      :-  ~  ::  (give:ha [/updates]~ %add index notification)
       state(notifications (put:orm notifications last-seen new-timebox))
     ::
     ++  do-archive
@@ -103,7 +169,7 @@
         %^  jub-orm:ha  archive  time
         |=  archive-box=timebox:store
         ^-  timebox:store
-        (~(put by archive-box) index notification)
+        (~(put by archive-box) index notification(read %.y))
       ==
     ::
     ++  read
@@ -124,6 +190,12 @@
       :~  cancel-autoseen:ha
           autoseen-timer:ha
       ==
+    ::
+    ++  set-dnd
+      |=  d=?
+      ^-  (quip card _state)
+      :_  state(dnd d)
+      (give:ha [/updates]~ %set-dnd d)
     ::
     --
   --
@@ -161,12 +233,21 @@
 ::
 ++  change-read-status
   |=  [time=@da =index:store read=?]
+  ~&  `@ud`time
+  ~&  index
+  ~&  ;;((list @ud) (key-orm notifications))
   ^+  notifications
   %^  jub-orm  notifications  time
   |=  =timebox:store
   %+  ~(jab by timebox)  index
   |=  =notification:store
+  ?>  !=(read read.notification)
   notification(read read)
+::  +key-orm: +key:by for ordered maps
+++   key-orm
+  |=  =notifications:store
+  ^-  (list @da)
+  (turn (tap:orm notifications) |=([key=@da =timebox:store] key))
 ::  +jub-orm: combo +jab/+gut for ordered maps
 ::    TODO: move to zuse.hoon
 ++  jub-orm
@@ -194,5 +275,24 @@
 ++  give
   |=  [paths=(list path) update=update:store]
   ^-  (list card)
-  [%give %fact paths [%hark-update !>([%0 update])]]~
+  [%give %fact paths [%hark-update !>(update)]]~
+::
+++  inflate-cache
+  |=  state-0
+  ^-  cache
+  :_  ~
+  %+  roll
+    (tap:orm notifications)
+  |=  [[time=@da =timebox:store] out=@ud]
+  =/  unreads  ~(tap by timebox)
+  |-
+  ?~  unreads  out
+  =*  notification  q.i.unreads
+  ?:  read.notification
+    out
+  %_    $
+      unreads  t.unreads
+    ::
+      out  +(out)
+  ==
 --
