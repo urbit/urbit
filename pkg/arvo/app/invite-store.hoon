@@ -30,7 +30,15 @@
 +*  this  .
     def   ~(. (default-agent this %|) bowl)
 ::
-++  on-init   on-init:def
+++  on-init
+  ^-  (quip card _this)
+  :-  ~
+  %_  this
+      invites.state
+    %-  ~(gas by *invites:store)
+    [%graph *invitatory:store]~
+  ==
+::
 ++  on-save   !>(state)
 ++  on-load
   |=  old-vase=vase

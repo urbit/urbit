@@ -4,7 +4,7 @@
 ++  grad  %noun
 ++  grow
   |%
-  ++  noun  upd
+  ++  noun  update
   ++  json  (update-to-json update)
   --
 ::
