@@ -1048,7 +1048,7 @@
     ^+  event-core
     ::  assert the comet can't pretend to be a moon or other address
     ::
-    ?>  (lth 64 (met 0 sndr.packet))
+    ?>  ?=(%pawn (clan:title sndr.packet))
     ::  if we already know .sndr, ignore duplicate attestation
     ::
     =/  ship-state  (~(get by peers.ames-state) sndr.packet)

@@ -9176,7 +9176,7 @@
     =/  who=ship  `@`fig:ex:cub
     ::  disallow 64-bit or smaller addresses
     ::
-    ?:  (gte 64 (met 0 sndr.packet))
+    ?.  ?=(%pawn (clan:title who))
       $(eny +(eny))
     ?:  (~(has in stars) (^sein:title who))
       [who 1 sec:ex:cub ~]
