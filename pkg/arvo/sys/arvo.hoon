@@ -970,6 +970,8 @@
                     %pill
                   ^+  +>.$
                   ?>  ?=(@ q.q.ovo)
+                  ?:  (empty:pill q.q.ovo)  :: no zuse
+                    +>.$
                   +>.$(bod `q.q.ovo, who ~)  :: require %boot
                 ::  install %zuse or vane
                 ::
@@ -1018,7 +1020,7 @@
                 ?^  u.bod  [|=(a=* [~ *]) soul]
                 ?>  ?=(%boot -.q.ovo)  ::XX brittle
                 :: install zuse from text pill
-                (pill u.who now u.eny *pram u.bod nyf ovo)
+                (boot:pill u.who now u.eny *pram u.bod nyf ovo)
               =/  zus  ?^(u.bod u.bod bud)
               =;  [ova=(list ovum) arv=*]
                 =^(ovo=(list ovum) arv (nex arv) [(weld ovo ova) arv])
@@ -1399,27 +1401,39 @@
 ::  +pill: system init deserialization
 ::
 ++  pill
-  |=  [who=ship now=@da yen=@ ram=pram pil=@t nyf=pane bot=ovum]
-  ::REVIEW kinda convoluted
-  ^-  [nex=$-(* [(list ovum) *]) sol=_soul]
   !:
-  |^  =+  [ver fyl]=(parse 0 pil)
-      =^  zus  ver
-        ?>(?=([[%veer %$ ^] *] ver) ver)
-      :_  (veer-hard who now zus)
-      |=  arv=*  ;;  [(list ovum) _arv]
-      ::  spooky type erasure
-      .*  :_(arv [who now ver fyl bot])
-      =>  :_(arvo [who=who now=now ver=ver fyl=fyl bot=bot])  !=
-      |-  ^-  [(list ovum) arv=*]
-      ?^  ver  $(ver t.ver, soul (veer-hard who now i.ver))
-      =+  [ove arv]=(poke:soul now bot)  ::  boot event
-      .*  .(+>.$ arv)  !=
-      =+  [ova arv]=(poke:soul now /$/sync [%into %$ & fyl])
-      [(weld ove ova) arv]
+  |%
+  ++  boot
+    |=  [who=ship now=@da yen=@ ram=pram pil=@t nyf=pane bot=ovum]
+    ::REVIEW kinda convoluted
+    ^-  [nex=$-(* [(list ovum) *]) sol=_soul]
+    =+  [ver fyl]=(parse 0 pil)
+    =^  zus  ver
+      ?>(?=([[%veer %$ ^] *] ver) ver)
+    :_  (veer-hard who now zus)
+    |=  arv=*  ;;  [(list ovum) _arv]
+    ::  spooky type erasure
+    .*  :_(arv [who now ver fyl bot])
+    =>  :_(arvo [who=who now=now ver=ver fyl=fyl bot=bot])  !=
+    |-  ^-  [(list ovum) arv=*]
+    ?^  ver  $(ver t.ver, soul (veer-hard who now i.ver))
+    =+  [ove arv]=(poke:soul now bot)  ::  boot event
+    .*  .(+>.$ arv)  !=
+    =+  [ova arv]=(poke:soul now /$/sync [%into %$ & fyl])
+    [(weld ove ova) arv]
   ::
   +$  octs  (pair @u @t)
   +$  mime  (pair path octs)
+  ::
+  ++  empty                                             :: only hoon and arvo
+    |=  txt=@t  ^-  ?
+    =/  idx  0
+    =.  idx  +:(get-line:bootstrap.tide idx txt)
+    =.  idx  +:(get-body | idx txt)
+    =.  idx  +:(get-line:bootstrap.tide idx txt)
+    =.  idx  +:(get-body | idx txt)
+    =^  hed  idx  (get-line:bootstrap.tide idx txt)
+    &(=('' (rsh 3 +(idx) txt)) ?>(=(hed '/~') &))
   ::
   :: ' ~' = improperly terminated, last newline isn't part of file
   ++  vane  ;~(pose (cold %$ buc) low)
