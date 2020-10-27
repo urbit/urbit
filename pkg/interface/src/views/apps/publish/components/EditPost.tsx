@@ -14,7 +14,7 @@ interface EditPostProps {
 
 export function EditPost(props: EditPostProps & RouteComponentProps) {
   const { note, book, noteId, api, ship, history } = props;
-  const body = note.file.slice(note.file.indexOf(";>") + 2);
+  const body = note.file.slice(note.file.indexOf(";>") + 3);
   const initial: PostFormSchema = {
     title: note.title,
     body,
