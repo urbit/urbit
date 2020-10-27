@@ -79,8 +79,8 @@ export function JoinGroup(props: JoinGroupProps & RouteComponentProps) {
   );
 
   return (
-    <Body>
-      <Col maxWidth="300px" overflowY="auto" p="3">
+    <>
+      <Col overflowY="auto" p="3">
         <Box mb={3}>
           <Text fontWeight="bold">Join Group</Text>
         </Box>
@@ -103,6 +103,6 @@ export function JoinGroup(props: JoinGroupProps & RouteComponentProps) {
           </Form>
         </Formik>
       </Col>
-    </Body>
+    </>
   );
 }
