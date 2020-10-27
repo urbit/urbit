@@ -170,4 +170,47 @@
   ::
     (encode /'~' ~ '')  :: trailer, helps detect truncation, cap trailing zeroes
   ==
+::
+++  fake-boot
+  |=  [[our=ship now=time eny=@uv] txt=@t]  ^-  wain
+  (fake-boot-pill [our now eny] [[[%9 2 0 1] |.((tide %pill txt))] ~ ~])
+::
+++  fake-boot-pill
+  |=  [[our=ship now=time eny=@uv] pil=pill]  ^-  wain
+  |^  (pretty (eventful (boot pil)))
+  ++  boot  |=(pil=pill [.*(->.pil -<.pil) +.pil])
+  ++  eventful
+    |=  [arv=* mod=(list unix-event) usr=(list unix-event)]  ^-  (list ovum)
+    =/  ins=(list unix-event)
+      %+  welp
+        [[/ %whom our] [/ %wack eny] mod]
+      [[/$/term/1 [%boot & %fake our]] usr]
+    |-  ^-  (list ovum)
+    ?~  ins  ~  :: throw away arv
+    =^  out  +>.arv  (apply +>.arv now i.ins)
+    (weld out $(ins t.ins))
+  ::
+  ++  apply
+    |=  [arv=* ven=[@da unix-event]]
+    =|  pok=$-([@da ovum] ^)
+    =/  kop  .*(arv +47.arv)
+    ;;([(list ovum) *] .*(.(pok kop) !=((pok ven))))
+  ::
+  ++  pretty
+    =|  [out=wain cur=tape]
+    |=  a=(list ovum)  ^-  wain
+    ?~  a  (flop out)
+    ?+  p.q.i.a  $(a t.a, out :_(out (crip <p.q.i.a>)))
+      %blit
+        =>  .(q.i.a ;;($>(%blit gift:able:dill) q.i.a))
+        =/  bis=(list blit:dill)  p.q.i.a
+        |-
+        ?~  bis  ^$(a t.a)
+        ?+  -.i.bis  $(bis t.bis)
+          %lin  $(bis t.bis, cur (tufa p.i.bis))
+          %sag  $(bis t.bis, out :_(out (crip <%jam p.i.bis>)))
+          %mor  $(bis t.bis, out :_(out (crip cur)))
+        ==
+    ==
+  --
 --
