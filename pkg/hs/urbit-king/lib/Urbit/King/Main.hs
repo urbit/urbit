@@ -190,7 +190,7 @@ tryBootFromPill
 tryBootFromPill oExit pill lite ship boot = do
   mStart <- newEmptyMVar
   vSlog  <- logSlogs
-  runOrExitImmediately vSlog (bootedPier vSlog) oExit mStart
+  runOrExitImmediately vSlog (bootedPier vSlog) oExit mStart []
  where
   bootedPier vSlog = do
     view pierPathL >>= lockFile
@@ -204,8 +204,9 @@ runOrExitImmediately
   -> RAcquire PierEnv (Serf, Log.EventLog)
   -> Bool
   -> MVar ()
+  -> [Ev]
   -> RIO PierEnv ()
-runOrExitImmediately vSlog getPier oExit mStart = do
+runOrExitImmediately vSlog getPier oExit mStart injected = do
   rwith getPier (if oExit then shutdownImmediately else runPier)
  where
   shutdownImmediately :: (Serf, Log.EventLog) -> RIO PierEnv ()
@@ -216,18 +217,19 @@ runOrExitImmediately vSlog getPier oExit mStart = do
 
   runPier :: (Serf, Log.EventLog) -> RIO PierEnv ()
   runPier serfLog = do
-    runRAcquire (Pier.pier serfLog vSlog mStart)
+    runRAcquire (Pier.pier serfLog vSlog mStart injected)
 
 tryPlayShip
   :: Bool
   -> Bool
   -> Maybe Word64
   -> MVar ()
+  -> [Ev]
   -> RIO PierEnv ()
-tryPlayShip exitImmediately fullReplay playFrom mStart = do
+tryPlayShip exitImmediately fullReplay playFrom mStart injected = do
   when fullReplay wipeSnapshot
   vSlog <- logSlogs
-  runOrExitImmediately vSlog (resumeShip vSlog) exitImmediately mStart
+  runOrExitImmediately vSlog (resumeShip vSlog) exitImmediately mStart injected
  where
   wipeSnapshot = do
     shipPath <- view pierPathL
@@ -586,11 +588,28 @@ runShip (CLI.Run pierPath) opts daemon = do
   where
     runPier :: MVar () -> RIO PierEnv ()
     runPier mStart = do
+      injections <- loadInjections (CLI.oInjectEvents opts)
       tryPlayShip
         (CLI.oExit opts)
         (CLI.oFullReplay opts)
         (CLI.oDryFrom opts)
         mStart
+        injections
+
+    loadInjections :: [CLI.Injection] -> RIO PierEnv [Ev]
+    loadInjections injections = do
+      perInjection :: [[Ev]] <- for injections $ \case
+          CLI.InjectOneEvent filePath -> do
+            logInfo $ display $ "boot: reading injected event from " ++
+              (pack filePath :: Text)
+            io (loadFile filePath >>= either throwIO (pure . singleton))
+
+          CLI.InjectManyEvents filePath -> do
+            logInfo $ display $ "boot: reading injected event list from " ++
+              (pack filePath :: Text)
+            io (loadFile filePath >>= either throwIO pure)
+      pure $ concat perInjection
+
 
 
 buildPortHandler :: HasLogFunc e => CLI.Nat -> RIO e PortControlApi
