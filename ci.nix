@@ -103,7 +103,7 @@ in localLib.dimension "system" systems (systemName:
       # Push the tarball to the remote google storage bucket.
       release = let
         version = builtins.readFile ./pkg/urbit/version;
-        name = "urbit-v${version}-${system}";
+        name = "urbit-v${version}-${systemName}";
       in pushObject name "tar.gz" staticPackages.tarball;
 
       # Replace top-level pill attributes with push to google storage variants.
