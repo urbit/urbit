@@ -63,13 +63,14 @@ export function GroupSearch(props: InviteSearchProps) {
     [props.associations?.contacts]
   );
 
-  const [{ value }, { error }, { setValue }] = useField(props.id);
+  const [{ value }, { error }, { setValue, setTouched }] = useField(props.id);
 
   const group = props.associations?.contacts?.[value];
 
   const onSelect = useCallback(
     (a: Association) => {
       setValue(a["group-path"]);
+      setTouched(true);
     },
     [setValue]
   );
@@ -77,6 +78,7 @@ export function GroupSearch(props: InviteSearchProps) {
   const onRemove = useCallback(
     (a: Association) => {
       setValue("");
+      setTouched(true);
     },
     [setValue]
   );

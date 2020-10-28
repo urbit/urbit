@@ -10,6 +10,24 @@ import GlobalApi from "~/logic/api/global";
 import { Notification } from "./notification";
 import { Associations } from "~/types";
 
+type DatedTimebox = [BigInteger, Timebox];
+
+function filterNotification(groups: string[]) {
+  if (groups.length === 0) {
+    return () => true;
+  }
+  return (n: IndexedNotification) => {
+    if ("graph" in n.index) {
+      const { group } = n.index.graph;
+      return groups.findIndex((g) => group === g) !== -1;
+    } else if ("group" in n.index) {
+      const { group } = n.index.group;
+      return groups.findIndex((g) => group === g) !== -1;
+    }
+    return true;
+  };
+}
+
 export default function Inbox(props: {
   notifications: Notifications;
   archive: Notifications;
@@ -17,7 +35,7 @@ export default function Inbox(props: {
   api: GlobalApi;
   associations: Associations;
   contacts: Rolodex;
-  gr;
+  filter: string[];
 }) {
   const { api, associations } = props;
   useEffect(() => {
@@ -27,7 +45,7 @@ export default function Inbox(props: {
     }, 3000);
     return () => {
       if (seen) {
-        //api.hark.seen();
+        api.hark.seen();
       }
     };
   }, []);
@@ -35,16 +53,15 @@ export default function Inbox(props: {
   const [newNotifications, ...notifications] =
     Array.from(props.showArchive ? props.archive : props.notifications) || [];
 
-  const inspect = f.tap((x: any) => {
-    console.log(x);
-  });
-
   const notificationsByDay = f.flow(
-    f.groupBy<[BigInteger, Timebox]>(([date]) =>
+    f.map<DatedTimebox>(([date, nots]) => [
+      date,
+      nots.filter(filterNotification(props.filter)),
+    ]),
+    f.groupBy<DatedTimebox>(([date]) =>
       moment(daToUnix(date)).format("DDMMYYYY")
     ),
-    f.values,
-    inspect
+    f.values
   )(notifications);
 
   return (
@@ -81,8 +98,6 @@ export default function Inbox(props: {
     </Col>
   );
 }
-
-type DatedTimebox = [BigInteger, Timebox];
 
 function sortTimeboxes([a]: DatedTimebox, [b]: DatedTimebox) {
   return b.subtract(a);

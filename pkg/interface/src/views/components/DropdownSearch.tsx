@@ -122,6 +122,7 @@ export function DropdownSearch<C>(props: DropdownSearchProps<C>) {
       {caption ? <Label mt="2" gray>{caption}</Label> : null}
       {!props.disabled && (
         <Input
+          mt="2"
           ref={textarea}
           onChange={onChange}
           value={query}
