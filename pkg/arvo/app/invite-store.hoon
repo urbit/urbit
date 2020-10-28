@@ -45,7 +45,7 @@
   =/  old  !<(versioned-state old-vase)
   ?:  ?=(%1 -.old)
    `this(state old)
-  :-  =-  [%pass / %agent [our.bowl %invite-store] %poke %invite-action !>(-)]~
+  :-  =-  [%pass / %agent [our.bowl %invite-store] %poke %invite-action -]~
       !>  ^-  action:store
       [%create %graph]
   %=  this
