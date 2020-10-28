@@ -31,8 +31,7 @@
       ip
     ::  comment
         [@ %2 @ ~]
-      ?>  ?=([* ~] contents.p.ip)
-      ?>  ?=(%text -.i.contents.p.ip)
+      ?>  ?=(^ contents.p.ip)
       ip
     ::  top level post must have no content
         [@ ~]
