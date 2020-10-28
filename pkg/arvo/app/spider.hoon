@@ -309,7 +309,9 @@
 ++  on-watch-result
   |=  =tid
   ^-  (quip card ^state)
-  `state
+  ?:  (~(has by tid.state) tid)
+    `state
+  ~|('watching a thread that does not exist' !!)
 ::
 ++  handle-sign
   |=  [=tid =wire =sign-arvo]
