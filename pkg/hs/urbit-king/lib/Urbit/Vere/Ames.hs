@@ -9,6 +9,7 @@ import Urbit.Prelude
 import Network.Socket              hiding (recvFrom, sendTo)
 import Urbit.Arvo                  hiding (Fake)
 import Urbit.King.Config
+import Urbit.King.Scry
 import Urbit.Vere.Ames.LaneCache
 import Urbit.Vere.Ames.Packet
 import Urbit.Vere.Pier.Types
@@ -341,23 +342,13 @@ ames env who isFake scry enqueueEv stderr = (initialEvents, runAmes)
   scryLane :: HasLogFunc e
            => Ship
            -> RIO e (Maybe [AmesDest])
-  scryLane ship = scry' ["peers", MkKnot $ tshow ship, "forward-lane"]
+  scryLane ship = scry' ["peers", tshow ship, "forward-lane"]
 
   scry' :: forall e n
          . (HasLogFunc e, FromNoun n)
-        => [Knot]
+        => [Text]
         -> RIO e (Maybe n)
-  scry' p = do
-    env <- ask
-    wen <- io Time.now
-    let nkt = MkKnot $ tshow $ Time.MkDate wen
-    let pax = Path $ "ax" : MkKnot (tshow who) : "" : nkt : p
-    io (scry wen Nothing pax) >>= \case
-      Just (_, fromNoun @n -> Just v) -> pure $ Just v
-      Just (_, n) -> do
-        logError $ displayShow ("ames: uncanny scry result", pax, n)
-        pure Nothing
-      Nothing -> pure Nothing
+  scry' = scryNow scry "ax" who ""
 
   ipv4Addr (Jammed (AAVoid v  )) = absurd v
   ipv4Addr (Jammed (AAIpv4 a p)) = SockAddrInet (fromIntegral p) (unIpv4 a)

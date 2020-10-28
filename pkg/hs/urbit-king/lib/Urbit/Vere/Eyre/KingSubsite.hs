@@ -12,6 +12,7 @@ module Urbit.Vere.Eyre.KingSubsite
 import Urbit.Prelude hiding (Builder)
 
 import Data.ByteString.Builder
+import Urbit.King.Scry
 import Urbit.Vere.Serf.Types
 
 import Data.Conduit       (ConduitT, Flush(..), yield)
@@ -100,27 +101,7 @@ kingSubsite who scry func = do  --TODO  unify who into scry
               => Text
               -> RIO e (Maybe Bool)
     scryAuth cookie =
-      scry' $ fmap MkKnot ["authenticated", "cookie", textAsTa cookie]
-
-    --TODO  refactor into scry lib, as:
-    -- (forall n. FromNoun n => Text -> Text -> [Text] -> IO (Maybe n))
-    --                      vanecare -> desk -> restofpath
-    scry' :: forall e n
-           . (HasLogFunc e, FromNoun n)
-          => [Knot]
-          -> RIO e (Maybe n)
-    scry' p = do
-      env <- ask
-      wen <- io Time.now
-      let nkt = MkKnot $ tshow $ Time.MkDate wen
-      let pax = Path $ "ex" : MkKnot (tshow who) : "" : nkt : p
-      putStrLn (tshow pax)
-      io (scry wen Nothing pax) >>= \case
-        Just (_, fromNoun @n -> Just v) -> pure $ Just v
-        Just (_, n) -> do
-          logError $ displayShow ("eyre: uncanny scry result", pax, n)
-          pure Nothing
-        Nothing -> pure Nothing
+      scryNow scry "ex" who "" $ ["authenticated", "cookie", textAsTa cookie]
 
 fourOhFourSubsite :: Ship -> KingSubsite
 fourOhFourSubsite who = KS $ \req respond ->
