@@ -35,7 +35,7 @@ let
       inherit serviceAccountKey name contentMD5 contentType;
 
       bucket = "bootstrap.urbit.org";
-      object = "ci/${lib.removeSuffix extension name}.${sha256}.${extension}";
+      object = "ci/${lib.removeSuffix extension name}${sha256}.${extension}";
       file = drv.out;
     };
 
@@ -107,9 +107,9 @@ in localLib.dimension "system" systems (systemName:
       # Push the tarball to the remote google storage bucket.
       release = pushObject {
         name = tarball.name;
+        drv = tarball;
         extension = tarball.meta.extension;
         contentType = "application/x-gtar";
-        drv = tarball;
       };
 
       # Replace top-level pill attributes with push to google storage variants.
