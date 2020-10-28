@@ -76,7 +76,11 @@ export default class LaunchApp extends React.Component {
               weather={props.weather}
             />
           </Box>
-          <Groups associations={props.associations} invites={props.invites} api={props.api} />
+          <Groups
+            associations={props.associations}
+            groups={props.groups}
+            invites={props.invites}
+            api={props.api} />
         </Box>
         <Box
           position="absolute"
