@@ -5,7 +5,8 @@
 # upload. This is in additional to any sha256sum you might want to actually
 # name the object key under.
 
-{ bucket, object, name, file, md5, serviceAccountKey, preferLocalBuild ? true }:
+{ bucket, object, name, file, contentMD5, contentType, serviceAccountKey
+, preferLocalBuild ? true }:
 
 assert lib.asserts.assertMsg (builtins.isString serviceAccountKey)
   "`serviceAccountKey` must contain the JSON contents of a service-account key";
@@ -28,7 +29,7 @@ in stdenvNoCC.mkDerivation {
 
     gcloud auth activate-service-account --key-file=- <<< '${serviceAccountKey}'
 
-    local_md5=$(echo -n '${md5}' | xxd -r -p | base64)
+    local_md5=$(echo -n '${contentMD5}' | xxd -r -p | base64)
     remote_md5=
        
     stat_uri() {
@@ -43,7 +44,9 @@ in stdenvNoCC.mkDerivation {
     if ! stat_uri; then
        header "copying ${file} to ${uri}"
 
-       gsutil cp '${file}' '${uri}'
+       gsutil -h "Content-MD5:$local_md5" \
+              -h "Content-Type:${contentType}" \
+         cp '${file}' '${uri}'
 
        if ! stat_uri; then
          echo "failed calculating remote uri md5" >&2
@@ -52,13 +55,13 @@ in stdenvNoCC.mkDerivation {
     fi 
 
     # This is the same format as md5sum (double space separator) and
-    # is used as the outputHash to ensure a fixed output derivation.
+    # needs to match the .outputHash to ensure a fixed output derivation.
     echo -n "$remote_md5  ${uri}" > $out
   '';
 
   outputHashAlgo = "sha256";
   outputHashMode = "flat";
-  outputHash = builtins.hashString "sha256" "${md5}  ${uri}";
+  outputHash = builtins.hashString "sha256" "${contentMD5}  ${uri}";
 
   inherit preferLocalBuild;
 }
