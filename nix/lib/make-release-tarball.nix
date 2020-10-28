@@ -12,13 +12,14 @@ let
     (lib.mapAttrsToList (_target: source: "${source}") contents);
 
 in stdenvNoCC.mkDerivation {
-  name = "${name}.tar.gz";
+  inherit name;
+
   outputs = [ "out" "hash" ];
   nativeBuildInputs = [ coreutils ];
   phases = [ "buildPhase" "hashPhase" ];
 
   buildPhase = ''
-    tar vczf $out \
+    tar -vczf $out \
       --owner=0 --group=0 --mode=u+rw,uga+r \
       --absolute-names \
       --hard-dereference \

@@ -121,14 +121,17 @@ let
 
     # FIXME: tarball binaries need executable permissions set?
 
-    # Create a .tar.gz of the primary binaries.
-    tarball = localLib.makeReleaseTarball {
-      name = "urbit-tarball";
+    # Create a .tgz of the primary binaries.
+    tarball = let
+      name = "urbit-v${urbit.version}-${urbit.system}";
+      urbit-king = hs.urbit-king.components.exes.urbit-king;
+    in localLib.makeReleaseTarball {
+      inherit name;
+
       contents = {
-        "urbit" = "${urbit}/bin/urbit";
-        "urbit-worker" = "${urbit}/bin/urbit-worker";
-        "urbit-king" =
-          "${hs.urbit-king.components.exes.urbit-king}/bin/urbit-king";
+        "${name}/urbit" = "${urbit}/bin/urbit";
+        "${name}/urbit-worker" = "${urbit}/bin/urbit-worker";
+        "${name}/urbit-king" = "${urbit-king}/bin/urbit-king";
       };
     };
 
