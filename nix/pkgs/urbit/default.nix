@@ -8,13 +8,13 @@ let
 
   src = lib.cleanSource ../../../pkg/urbit;
 
+  version = builtins.readFile "${src}/version";
+
 in stdenv.mkDerivation {
-  inherit src;
+  inherit src version;
 
   pname = "urbit" + lib.optionalString enableDebug "-debug"
     + lib.optionalString enableStatic "-static";
-
-  version = builtins.readFile "${src}/version";
 
   nativeBuildInputs = [ pkgconfig ];
 
