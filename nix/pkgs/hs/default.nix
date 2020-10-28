@@ -1,4 +1,4 @@
-{ lib, stdenv, darwin, haskell-nix, gmp, zlib, libffi, checkMaterialization
+{ lib, stdenv, darwin, haskell-nix, gmp, zlib, libffi
 , enableStatic ? stdenv.hostPlatform.isStatic }:
 
 let
@@ -7,7 +7,7 @@ let
   index-state = "2020-09-24T00:00:00Z";
 
   project = haskell-nix.stackProject {
-    inherit compiler-nix-name index-state checkMaterialization;
+    inherit compiler-nix-name index-state;
 
     # This is incredibly difficult to get right, almost everything goes wrong.
     # See: https://github.com/input-output-hk/haskell.nix/issues/496

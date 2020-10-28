@@ -63,19 +63,16 @@ let
 in localLib.dimension "system" systems (systemName:
   { system, crossSystem }:
   let
-    # Check the pinned haskell.nix hashes for correctness.
-    checkMaterialization = true;
-
     # Shared libraries/executables for the build (current) system.
     localPackages = import ./default.nix {
-      inherit system checkMaterialization;
+      inherit system;
 
       enableStatic = false;
     };
 
     # Static libraries/executables for the host (cross) system.
     staticPackages = import ./default.nix {
-      inherit system crossSystem checkMaterialization;
+      inherit system crossSystem;
 
       enableStatic = true;
     };
