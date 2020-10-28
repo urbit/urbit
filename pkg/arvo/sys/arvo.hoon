@@ -1014,18 +1014,18 @@
               ::
               ?.  &(?=(^ who) ?=(^ eny) ?=(^ bod))
                 [~ +>.$]
-              =/  nyf
-                (turn vanes.^poke |=([label=@tas =vane] [label vase.vane]))
               =^  nex=$-(* [(list ovum) *])  soul
                 ?^  u.bod  [|=(a=* [~ *]) soul]
                 ?>  ?=(%boot -.q.ovo)  ::XX brittle
                 :: install zuse from text pill
-                (boot:pill u.who now u.eny *pram u.bod nyf ovo)
+                (boot:pill u.who now u.bod ovo)
               =/  zus  ?^(u.bod u.bod bud)
               =;  [ova=(list ovum) arv=*]
                 =^(ovo=(list ovum) arv (nex arv) [(weld ovo ova) arv])
               ~>  %slog.[0 leaf+"arvo: metamorphosis"]
               ~<  %slog.[0 leaf+"arvo: metamorphosed"]
+              =/  nyf
+                (turn vanes.^poke |=([label=@tas =vane] [label vase.vane]))
               (load u.who now u.eny *pram zus nyf)
     ::
     ++  wish  |=  txt=*                                 ::  22
@@ -1404,7 +1404,7 @@
   !:
   |%
   ++  boot
-    |=  [who=ship now=@da yen=@ ram=pram pil=@t nyf=pane bot=ovum]
+    |=  [who=ship now=@da pil=@t bot=ovum]
     ::REVIEW kinda convoluted
     ^-  [nex=$-(* [(list ovum) *]) sol=_soul]
     =+  [ver fyl]=(parse 0 pil)
