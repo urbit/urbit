@@ -39,7 +39,6 @@ type ChatWindowProps = RouteComponentProps<{
   group: Group;
   ship: Patp;
   station: any;
-  allStations: any;
   api: GlobalApi;
   hideNicknames: boolean;
   hideAvatars: boolean;
@@ -56,7 +55,7 @@ interface ChatWindowState {
 export default class ChatWindow extends Component<ChatWindowProps, ChatWindowState> {
   private virtualList: VirtualScroller | null;
   private unreadMarkerRef: React.RefObject<HTMLDivElement>;
-  
+
   INITIALIZATION_MAX_TIME = 1500;
 
   constructor(props) {
@@ -68,14 +67,14 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
       initialized: false,
       lastRead: props.unreadCount ? props.mailboxSize - props.unreadCount : Infinity,
     };
-    
+
     this.dismissUnread = this.dismissUnread.bind(this);
     this.scrollToUnread = this.scrollToUnread.bind(this);
     this.handleWindowBlur = this.handleWindowBlur.bind(this);
     this.handleWindowFocus = this.handleWindowFocus.bind(this);
     this.stayLockedIfActive = this.stayLockedIfActive.bind(this);
     this.dismissIfLineVisible = this.dismissIfLineVisible.bind(this);
-    
+
     this.virtualList = null;
     this.unreadMarkerRef = React.createRef();
   }
@@ -88,7 +87,7 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
       this.setState({ initialized: true });
     }, this.INITIALIZATION_MAX_TIME);
   }
-  
+
   componentWillUnmount() {
     window.removeEventListener('blur', this.handleWindowBlur);
     window.removeEventListener('focus', this.handleWindowFocus);
@@ -192,10 +191,10 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
     }
 
     this.setState({ fetchPending: true });
-    
+
     start = Math.min(mailboxSize - start, mailboxSize);
     end = Math.max(mailboxSize - end, 0, start - MAX_BACKLOG_SIZE);
-    
+
     return api.chat
       .fetchMessages(end, start, station)
       .finally(() => {
@@ -224,7 +223,7 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
       this.dismissUnread();
     }
   }
-  
+
   render() {
     const {
       envelopes,
@@ -243,7 +242,6 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
       hideAvatars,
       hideNicknames,
       remoteContentPolicy,
-      allStations,
       history
     } = this.props;
 
@@ -251,7 +249,7 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
 
     const messages = new Map();
     let lastMessage = 0;
-    
+
     [...envelopes]
       .sort((a, b) => a.number - b.number)
       .forEach(message => {
@@ -267,8 +265,8 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
         lastMessage = mailboxSize + index;
       });
 
-    const messageProps = { association, group, contacts, hideAvatars, hideNicknames, remoteContentPolicy, unreadMarkerRef, allStations, history, api };
-    
+    const messageProps = { association, group, contacts, hideAvatars, hideNicknames, remoteContentPolicy, unreadMarkerRef, history, api };
+
     return (
       <>
         <UnreadNotice

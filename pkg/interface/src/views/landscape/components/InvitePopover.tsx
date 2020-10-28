@@ -11,7 +11,7 @@ import { useOutsideClick } from "~/logic/lib/useOutsideClick";
 import { FormError } from "~/views/components/FormError";
 import { resourceFromPath } from "~/logic/lib/group";
 import GlobalApi from "~/logic/api/global";
-import { Groups, Rolodex } from "~/types";
+import { Groups, Rolodex, Workspace } from "~/types";
 import { ChipInput } from "~/views/components/ChipInput";
 
 interface InvitePopoverProps {
@@ -20,6 +20,7 @@ interface InvitePopoverProps {
   groups: Groups;
   contacts: Rolodex;
   api: GlobalApi;
+  workspace: Workspace;
 }
 
 interface FormSchema {
@@ -46,6 +47,10 @@ export function InvitePopover(props: InvitePopoverProps) {
   useOutsideClick(innerRef, onOutsideClick);
 
   const onSubmit = async ({ ships, emails }: { ships: string[] }, actions) => {
+    if(props.workspace.type === 'home') {
+      history.push(`/~landscape/dm/${ships[0]}`);
+      return;
+    }
     //  TODO: how to invite via email?
     try {
       const resource = resourceFromPath(association["group-path"]);
@@ -97,13 +102,15 @@ export function InvitePopover(props: InvitePopoverProps) {
                 <Col gapY="3" p={3}>
                   <Box>
                     <Text>Invite to </Text>
-                    <Text fontWeight="800">{title}</Text>
+                    <Text fontWeight="800">{title || "DM"}</Text>
                   </Box>
                   <ShipSearch
                     groups={props.groups}
                     contacts={props.contacts}
                     id="ships"
                     label=""
+                    maxLength={props.workspace.type === 'home' ? 1 : undefined}
+                    autoFocus
                   />
                   <FormError message="Failed to invite" />
                   {/* <ChipInput

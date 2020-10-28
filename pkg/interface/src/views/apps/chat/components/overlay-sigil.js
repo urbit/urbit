@@ -55,7 +55,7 @@ export class OverlaySigil extends PureComponent {
 
   render() {
     const { props, state } = this;
-    const { hideAvatars, allStations } = props;
+    const { hideAvatars } = props;
 
     const img = (props.contact && (props.contact.avatar !== null) && !hideAvatars)
       ? <img src={props.contact.avatar} height={16} width={16} className="dib" />
@@ -84,7 +84,6 @@ export class OverlaySigil extends PureComponent {
             association={props.association}
             group={props.group}
             onDismiss={this.profileHide}
-            allStations={allStations}
             hideAvatars={hideAvatars}
             hideNicknames={props.hideNicknames}
             history={props.history}

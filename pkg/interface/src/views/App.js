@@ -49,6 +49,7 @@ const Root = styled.div`
   /* Works on Chrome/Edge/Safari */
   *::-webkit-scrollbar {
     width: 6px;
+    height: 6px;
   }
   *::-webkit-scrollbar-track {
     background: transparent;
