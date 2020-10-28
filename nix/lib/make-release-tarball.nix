@@ -1,6 +1,6 @@
 { lib, stdenvNoCC, coreutils }:
 
-{ name, contents # { target = source, ... }
+{ name, extension ? "tgz", contents # { target = source, ... }
 }:
 
 let
@@ -12,7 +12,7 @@ let
     (lib.mapAttrsToList (_target: source: "${source}") contents);
 
 in stdenvNoCC.mkDerivation {
-  inherit name;
+  name = "${name}.${extension}";
 
   outputs = [ "out" "hash" ];
   nativeBuildInputs = [ coreutils ];
@@ -35,4 +35,6 @@ in stdenvNoCC.mkDerivation {
   '';
 
   preferLocalBuild = true;
+
+  meta = { inherit extension; };
 }

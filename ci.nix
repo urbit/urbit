@@ -24,24 +24,29 @@ let
   serviceAccountKey = builtins.readFile ("/var/run/keys/service-account.json");
 
   # Push a split output derivation containing "out" and "hash" outputs.
-  pushObject = name: extension: drv:
+  pushObject =
+    { name, extension, drv, contentType ? "application/octet-stream" }:
     let
-      # Use the sha256 for the object key suffix.
+      # Use the sha256 for the object key prefix.
       sha256 = builtins.readFile (drv.hash + "/sha256");
-      # Use md5 as an idempotency check for gsutil
-      md5 = builtins.readFile (drv.hash + "/md5");
+      # Use md5 as an idempotency check for gsutil.
+      contentMD5 = builtins.readFile (drv.hash + "/md5");
     in localLib.pushStorageObject {
-      inherit serviceAccountKey md5;
+      inherit serviceAccountKey name contentMD5 contentType;
 
       bucket = "bootstrap.urbit.org";
-      object = "ci/${name}-${sha256}.${extension}";
-      name = "${name}.${extension}";
+      object = "ci/${lib.removeSuffix extension name}.${sha256}.${extension}";
       file = drv.out;
     };
 
-  # Push a split output pill derivation containing "build" attribute with the
-  # with the ".pill" file extension.
-  pushPill = name: drv: pushObject name "pill" drv.build;
+  # Build and push a split output pill derivation with the ".pill" file extension.
+  pushPill = name: pill:
+    pushObject {
+      inherit name;
+
+      drv = pill.build;
+      extension = "pill";
+    };
 
   systems = lib.filterAttrs (_: v: builtins.elem v.system supportedSystems) {
     linux = {
@@ -100,7 +105,12 @@ in localLib.dimension "system" systems (systemName:
       hs = localLib.collectHaskellComponents haskellPackages;
 
       # Push the tarball to the remote google storage bucket.
-      release = pushObject tarball.name "tgz" tarball;
+      release = pushObject {
+        name = tarball.name;
+        extension = tarball.meta.extension;
+        contentType = "application/x-gtar";
+        drv = tarball;
+      };
 
       # Replace top-level pill attributes with push to google storage variants.
     } // lib.optionalAttrs (system == "x86_64-linux") {
