@@ -35,17 +35,7 @@ export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
   };
 
   return (
-    <Box
-      {...boxProps}
-      ml='2'
-      display="grid"
-      gridAutoRows="124px"
-      gridTemplateColumns="repeat(auto-fit, 124px)"
-      gridGap={3}
-      px={2}
-      pt={2}
-      pb="7"
-    >
+    <>
       {incomingGroups.map((invite) => (
         <Box
           height='100%'
@@ -92,6 +82,6 @@ export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
           <Text>{group.metadata.title}</Text>
         </Tile>
       ))}
-    </Box>
+    </>
   );
 }
