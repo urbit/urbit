@@ -43,10 +43,7 @@
 , crossOverlays ? [ ]
   # Whether to use pkgs.pkgsStatic.* to obtain statically linked package
   # dependencies - ie. when building fully-static libraries or executables. 
-, enableStatic ? crossSystem != null
-  # Whether to check that the pinned hashes for haskell.nix are correct.
-  # Set to false by default since it's a lot slower, but true for ci.
-, checkMaterialization ? false }:
+, enableStatic ? crossSystem != null }:
 
 let
 
@@ -100,7 +97,7 @@ let
 
     hs = callPackage ./nix/pkgs/hs {
       inherit (pkgs) haskell-nix;
-      inherit checkMaterialization enableStatic;
+      inherit enableStatic;
     };
   };
 
