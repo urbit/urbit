@@ -13,6 +13,10 @@ export const MOMENT_CALENDAR_DATE = {
   sameElse: "DD/MM/YYYY",
 };
 
+export function parentPath(path: string) {
+  return _.dropRight(path.split('/'), 1).join('/');
+}
+
 const DA_UNIX_EPOCH = bigInt("170141184475152167957503069145530368000"); // `@ud` ~1970.1.1
 const DA_SECOND = bigInt("18446744073709551616"); // `@ud` ~s1
 export function daToUnix(da: BigInteger) {

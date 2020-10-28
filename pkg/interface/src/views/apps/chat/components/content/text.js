@@ -24,10 +24,30 @@ const DISABLED_INLINE_TOKENS = [
   'reference'
 ];
 
+const renderers = {
+  inlineCode: ({language, value}) => {
+    return <Text mono fontSize='14px' backgroundColor='washedGray' style={{ whiteSpace: 'preWrap'}}>{value}</Text>
+  },
+  code: ({language, value}) => {
+    return <Text
+              py='1'
+              className='clamp-message'
+              fontSize='14px'
+              display='block'
+              mono
+              backgroundColor='washedGray'
+              overflowX='scroll'
+              style={{ whiteSpace: 'pre'}}>
+              {value}
+            </Text>
+  }
+};
+
 const MessageMarkdown = React.memo(props => (
   <ReactMarkdown
     {...props}
     unwrapDisallowed={true}
+    renderers={renderers}
     allowNode={(node, index, parent) => {
       if (
         node.type === 'blockquote'

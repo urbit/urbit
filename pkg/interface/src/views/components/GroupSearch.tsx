@@ -4,11 +4,16 @@ import _ from "lodash";
 import { useField } from "formik";
 import styled from "styled-components";
 
+import { roleForShip } from "~/logic/lib/group";
+
 import { DropdownSearch } from "./DropdownSearch";
+import { Groups } from "~/types";
 import { Associations, Association } from "~/types/metadata-update";
 
 interface InviteSearchProps {
   disabled?: boolean;
+  adminOnly: boolean;
+  groups: Groups;
   associations: Associations;
   label: string;
   caption?: string;
@@ -59,7 +64,18 @@ function renderCandidate(
 
 export function GroupSearch(props: InviteSearchProps) {
   const groups = useMemo(
-    () => Object.values(props.associations?.contacts || {}),
+    () => {
+      return props.adminOnly
+        ? Object.values(
+          Object.keys(props.associations?.contacts)
+          .filter(e => roleForShip(props.groups[e], window.ship) === 'admin')
+          .reduce((obj, key) => {
+            obj[key] = props.associations?.contacts[key]
+            return obj;
+          }, {}) || {}
+        )
+        : Object.values(props.associations?.contacts || {});
+    },
     [props.associations?.contacts]
   );
 
@@ -99,7 +115,7 @@ export function GroupSearch(props: InviteSearchProps) {
       onSelect={onSelect}
       onRemove={onRemove}
       renderChoice={({ candidate, onRemove }) => (
-        <Box px={2} py={1} border={1} borderColor="washedGrey" color="black" fontSize={0}>
+        <Box cursor='default' px={2} py={1} border={1} borderColor="washedGrey" color="black" fontSize={0}>
           {candidate.metadata.title}
           <ClickableText ml={2} onClick={onRemove} color="black">
             x
