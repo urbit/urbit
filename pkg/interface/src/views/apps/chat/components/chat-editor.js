@@ -3,7 +3,7 @@ import { UnControlled as CodeEditor } from 'react-codemirror2';
 import { MOBILE_BROWSER_REGEX } from "~/logic/lib/util";
 import CodeMirror from 'codemirror';
 
-import { Row } from '@tlon/indigo-react';
+import { Row, BaseInput } from '@tlon/indigo-react';
 
 import 'codemirror/mode/markdown/markdown';
 import 'codemirror/addon/display/placeholder';
@@ -35,6 +35,25 @@ const MARKDOWN_CONFIG = {
     linkHref: 'presentation'
   }
 };
+
+// Until CodeMirror supports options.inputStyle = 'textarea' on mobile,
+// we need to hack this into a regular input that has some funny behaviors
+const inputProxy = (input) => new Proxy(input, {
+  get(target, property) {
+    if (property in target) {
+      return target[property];
+    }
+    if (property === 'setOption') {
+      return () => {};
+    }
+    if (property === 'getValue') {
+      return () => target.value;
+    }
+    if (property === 'setValue') {
+      return (val) => target.value = val;
+    }
+  }
+});
 
 export default class ChatEditor extends Component {
   constructor(props) {
@@ -129,7 +148,11 @@ export default class ChatEditor extends Component {
         'Esc': () => {
           this.editor?.getInputField().blur();
         }
-      }
+      },
+      // The below will ony work once codemirror's bug is fixed
+      spellcheck: !!MOBILE_BROWSER_REGEX.test(navigator.userAgent),
+      autocorrect: !!MOBILE_BROWSER_REGEX.test(navigator.userAgent),
+      autocapitalize: !!MOBILE_BROWSER_REGEX.test(navigator.userAgent)
     };
 
     return (
@@ -139,22 +162,41 @@ export default class ChatEditor extends Component {
         flexGrow='1'
         height='100%'
         maxHeight='224px'
-        paddingTop='8px'
         width='calc(100% - 88px)'
         className={inCodeMode ? 'chat code' : 'chat'}
+        color="black"
       >
-        <CodeEditor
+        {MOBILE_BROWSER_REGEX.test(navigator.userAgent)
+          ? <BaseInput
+            fontFamily={inCodeMode ? 'Source Code Pro' : 'Inter'}
+            fontSize="14px"
+            style={{ width: '100%', background: 'transparent', color: 'currentColor' }}
+            placeholder={inCodeMode ? "Code..." : "Message..."}
+            onKeyUp={event => {
+              if (event.key === 'Enter') {
+                this.submit();
+              } else {
+                this.messageChange(null, null, event.target.value);
+              }
+            }}
+            ref={input => {
+              if (!input) return;
+              this.editor = inputProxy(input);
+            }}
+            {...props}
+          />
+          : <CodeEditor
           value={message}
           options={options}
           onChange={(e, d, v) => this.messageChange(e, d, v)}
           editorDidMount={(editor) => {
             this.editor = editor;
-            if (!MOBILE_BROWSER_REGEX.test(navigator.userAgent)) {
-              editor.focus();
-            }
+            editor.focus();
           }}
           {...props}
         />
+        }
+
       </Row>
     );
   }

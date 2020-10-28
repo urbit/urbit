@@ -12,12 +12,15 @@ import { Rolodex, Groups } from "~/types";
 import { HoverBox } from "./HoverBox";
 
 interface InviteSearchProps {
+  autoFocus?: boolean;
   disabled?: boolean;
-  label: string;
+  label?: string;
   caption?: string;
   id: string;
   contacts: Rolodex;
   groups: Groups;
+  hideSelection?: boolean;
+  maxLength?: number;
 }
 
 const ClickableText = styled(Text)`
@@ -45,10 +48,11 @@ const Candidate = ({ title, detail, selected, onClick }) => (
 );
 
 export function ShipSearch(props: InviteSearchProps) {
-  const [{ value }, { error }, { setValue }] = useField<string[]>(props.id);
+  const [{ value }, { error }, { setValue, setTouched }] = useField<string[]>(props.id);
 
   const onSelect = useCallback(
     (s: string) => {
+      setTouched(true);
       setValue([...value, s]);
     },
     [setValue, value]
@@ -109,6 +113,8 @@ export function ShipSearch(props: InviteSearchProps) {
     [nicknames]
   );
 
+  const maxLength = props.maxLength
+
   return (
     <Col>
       <DropdownSearch<string>
@@ -123,7 +129,7 @@ export function ShipSearch(props: InviteSearchProps) {
         caption={props.caption}
         candidates={peers}
         renderCandidate={renderCandidate}
-        disabled={false}
+        disabled={props.maxLength ? value.length >= props.maxLength : false}
         search={(s: string, t: string) =>
           t.toLowerCase().startsWith(s.toLowerCase())
         }
@@ -133,6 +139,7 @@ export function ShipSearch(props: InviteSearchProps) {
         renderChoice={({ candidate, onRemove }) => null}
         value={undefined}
         error={error}
+        autoFocus={props.autoFocus}
       />
       <Row minHeight="34px" flexWrap="wrap">
         {value.map((s) => (

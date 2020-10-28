@@ -1,7 +1,7 @@
 import React, { Component, PureComponent } from "react";
 import moment from "moment";
 import _ from "lodash";
-import { Box, Row, Text } from "@tlon/indigo-react";
+import { Box, Row, Text, Rule } from "@tlon/indigo-react";
 
 import { OverlaySigil } from './overlay-sigil';
 import { uxToHex, cite, writeText } from '~/logic/lib/util';
@@ -14,20 +14,20 @@ import RemoteContent from '~/views/components/RemoteContent';
 export const DATESTAMP_FORMAT = '[~]YYYY.M.D';
 
 export const UnreadMarker = React.forwardRef(({ dayBreak, when }, ref) => (
-  <div ref={ref} style={{ color: "#219dff" }} className="flex items-center f9 absolute w-100 left-0 pv0">
-    <hr style={{ borderColor: "#219dff" }} className="dn-s ma0 w2 bt-0" />
-    <p className="mh4 z-2" style={{ whiteSpace: 'normal' }}>New messages below</p>
-    <hr style={{ borderColor: "#219dff" }} className="ma0 flex-grow-1 bt-0" />
+  <Row ref={ref} color='blue' alignItems='center' fontSize='0' position='absolute' width='100%' py='2'>
+    <Rule borderColor='blue' display={['none', 'block']} m='0' width='2rem' />
+    <Text flexShrink='0' display='block' zIndex='2' mx='4' color='blue'>New messages below</Text>
+    <Rule borderColor='blue' flexGrow='1' m='0'/>
     {dayBreak
-      ? <p className="gray2 mh4">{moment(when).calendar()}</p>
+      ? <Text display='block' gray mx='4'>{moment(when).calendar(null, { sameElse: DATESTAMP_FORMAT })}</Text>
       : null}
-    <hr style={{ width: "calc(50% - 48px)" }} style={{ borderColor: "#219dff" }} className="ma0 bt-0" />
-  </div>
+    <Rule style={{ width: "calc(50% - 48px)" }} borderColor='blue' m='0' />
+  </Row>
 ));
 
 export const DayBreak = ({ when }) => (
   <div className="pv3 gray2 b--gray2 flex items-center justify-center f9 w-100">
-    <p>{moment(when).calendar()}</p>
+    <p>{moment(when).calendar(null, { sameElse: DATESTAMP_FORMAT })}</p>
   </div>
 );
 
@@ -46,7 +46,6 @@ interface ChatMessageProps {
   className?: string;
   isPending: boolean;
   style?: any;
-  allStations: any;
   scrollWindow: HTMLDivElement;
   isLastMessage?: boolean;
   unreadMarkerRef: React.RefObject<HTMLDivElement>;
@@ -87,7 +86,6 @@ export default class ChatMessage extends Component<ChatMessageProps> {
       scrollWindow,
       isLastMessage,
       unreadMarkerRef,
-      allStations,
       history,
       api
     } = this.props;
@@ -97,7 +95,7 @@ export default class ChatMessage extends Component<ChatMessageProps> {
 
     const containerClass = `${renderSigil
       ? `cf pt2 pl3 lh-copy`
-      : `items-center cf hide-child`} ${isPending ? 'o-40' : ''} ${className}`
+      : `items-top cf hide-child`} ${isPending ? 'o-40' : ''} ${className}`
 
     const timestamp = moment.unix(msg.when / 1000).format(renderSigil ? 'hh:mm a' : 'hh:mm');
 
@@ -118,14 +116,13 @@ export default class ChatMessage extends Component<ChatMessageProps> {
       style,
       containerClass,
       isPending,
-      allStations,
       history,
       api,
       scrollWindow
     };
 
     const unreadContainerStyle = {
-      height: isLastRead ? '1.66em' : '0',
+      height: isLastRead ? '2rem' : '0',
     };
 
     return (
@@ -165,7 +162,6 @@ interface MessageProps {
   containerClass: string;
   isPending: boolean;
   style: any;
-  allStations: any;
   measure(element): void;
   scrollWindow: HTMLDivElement;
 };
@@ -182,7 +178,6 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
       hideAvatars,
       remoteContentPolicy,
       measure,
-      allStations,
       history,
       api,
       scrollWindow
@@ -218,7 +213,6 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
           hideAvatars={hideAvatars}
           hideNicknames={hideNicknames}
           scrollWindow={scrollWindow}
-          allStations={allStations}
           history={history}
           api={api}
           className="fl pr3 v-top bg-white bg-gray0-d pt1"
@@ -255,7 +249,7 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
 
 export const MessageWithoutSigil = ({ timestamp, msg, remoteContentPolicy, measure }) => (
   <>
-    <p className="child pr1 mono f9 gray2 dib">{timestamp}</p>
+    <Text mono gray display='inline-block' pr='1' pt='2px' lineHeight='tall' className="child">{timestamp}</Text>
     <Box fontSize='14px' className="clamp-message" style={{ flexGrow: 1 }}>
       <MessageContent content={msg.letter} remoteContentPolicy={remoteContentPolicy} measure={measure}/>
     </Box>

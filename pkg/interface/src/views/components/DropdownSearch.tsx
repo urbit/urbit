@@ -22,7 +22,8 @@ interface RenderChoiceProps<C> {
 }
 
 interface DropdownSearchProps<C> {
-  label: string;
+  autoFocus?: boolean;
+  label?: string;
   id: string;
   // check if entry is exact match
   isExact: (s: string) => C | undefined;
@@ -51,7 +52,7 @@ interface DropdownSearchProps<C> {
 
 export function DropdownSearch<C>(props: DropdownSearchProps<C>) {
   const textarea = useRef<HTMLTextAreaElement>();
-  const { candidates, getKey, caption } = props;
+  const { candidates, getKey, caption, autoFocus } = props;
 
   const [query, setQuery] = useState("");
 
@@ -118,7 +119,7 @@ export function DropdownSearch<C>(props: DropdownSearchProps<C>) {
 
   return (
     <Box position="relative" zIndex={9}>
-      <Label htmlFor={props.id}>{props.label}</Label>
+      {props.label && (<Label htmlFor={props.id}>{props.label}</Label>)}
       {caption ? <Label mt="2" gray>{caption}</Label> : null}
       {!props.disabled && (
         <Input
@@ -127,6 +128,7 @@ export function DropdownSearch<C>(props: DropdownSearchProps<C>) {
           value={query}
           autocomplete="off"
           placeholder={props.placeholder || ""}
+          autoFocus={autoFocus}
         />
       )}
       {dropdown.length !== 0 && query.length !== 0 && (

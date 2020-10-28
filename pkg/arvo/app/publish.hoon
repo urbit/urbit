@@ -8,7 +8,7 @@
 /-  *permission-hook
 /-  *permission-group-hook
 /-  *permission-store
-/-  *invite-store
+/-  inv=invite-store
 /-  *metadata-store
 /-  *metadata-hook
 /-  contact-view
@@ -117,7 +117,7 @@
             :*  %pass  /permissions  %agent  [our.bol %permission-store]  %watch
                 /updates
             ==
-            (invite-poke:main [%create /publish])
+            (invite-poke:main [%create %publish])
             :*  %pass  /invites  %agent  [our.bol %invite-store]  %watch
                 /invitatory/publish
             ==
@@ -131,10 +131,10 @@
       =+  ^-  [kick-cards=(list card) old-subs=(jug @tas @p)]  kick-subs
       =/  inv-scry-pax
         /(scot %p our.bol)/invite-store/(scot %da now.bol)/invitatory/publish/noun
-      =/  inv=(unit invitatory)  .^((unit invitatory) %gx inv-scry-pax)
+      =/  invi=(unit invitatory:inv)  .^((unit invitatory:inv) %gx inv-scry-pax)
       =|  new-state=state-two
-      =?  tile-num.new-state  ?=(^ inv)
-        ~(wyt by u.inv)
+      =?  tile-num.new-state  ?=(^ invi)
+        ~(wyt by u.invi)
       %=  $
           old-state  [%& %2 new-state]
       ::
@@ -441,12 +441,12 @@
       |=  who=@p
       ^-  card
       =/  uid  (sham %publish who book eny.bol)
-      =/  inv=invite
-        :*  our.bol  %publish  /notebook/[book]  who
+      =/  =invite:inv
+        :*  our.bol  %publish  [our.bol book]  who
             (crip "invite for notebook {<our.bol>}/{(trip book)}")
         ==
-      =/  act=invite-action  [%invite /publish uid inv]
-      [%pass /invite %agent [who %invite-hook] %poke %invite-action !>(act)]
+      =/  =action:inv  [%invite %publish uid invite]
+      [%pass /invite %agent [who %invite-hook] %poke %invite-action !>(action)]
     ::
     ++  move-files
       |=  old-subs=(jug @tas @p)
@@ -566,7 +566,7 @@
   ==
 ::
 ++  invite-poke
-  |=  act=invite-action
+  |=  act=action:inv
   ^-  card
   [%pass / %agent [our.bol %invite-store] %poke %invite-action !>(act)]
 ::
@@ -588,11 +588,11 @@
   %+  turn  ~(tap in invitees)
   |=  who=ship
   =/  uid  (sham %publish who book eny.bol)
-  =/  inv=invite
-    :*  our.bol  %publish  /(scot %p our.bol)/[book]  who
+  =/  =invite:inv
+    :*  our.bol  %publish  [our.bol book]  who
         (crip "invite for notebook {<our.bol>}/{(trip book)}")
     ==
-  =/  act=invite-action  [%invite /publish uid inv]
+  =/  act=action:inv  [%invite %publish uid invite]
   [%pass / %agent [our.bol %invite-hook] %poke %invite-action !>(act)]
 ::
 ++  make-groups

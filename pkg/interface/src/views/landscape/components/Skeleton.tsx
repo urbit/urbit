@@ -12,11 +12,12 @@ import { Path, AppName } from "~/types/noun";
 import { LinkCollections } from "~/types/link-update";
 import styled from "styled-components";
 import GlobalSubscription from "~/logic/subscription/global";
-import { Workspace, Groups, Graphs, Invites } from "~/types";
+import { Workspace, Groups, Graphs, Invites, Rolodex } from "~/types";
 import { useChat, useGraphModule } from "./Sidebar/Apps";
 import { Body } from "~/views/components/Body";
 
 interface SkeletonProps {
+  contacts: Rolodex;
   children: ReactNode;
   recentGroups: string[];
   groups: Groups;
@@ -59,6 +60,7 @@ export function Skeleton(props: SkeletonProps) {
     >
       {!props.hideSidebar && (
         <Sidebar
+          contacts={props.contacts}
           api={props.api}
           recentGroups={props.recentGroups}
           selected={props.selected}
