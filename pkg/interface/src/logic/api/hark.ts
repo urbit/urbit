@@ -8,6 +8,14 @@ export class HarkApi extends BaseApi<StoreState> {
     return this.action("hark-store", "hark-action", action);
   }
 
+  private graphHookAction(action: any) {
+    return this.action("hark-graph-hook", "hark-graph-hook-action", action);
+  }
+
+  private groupHookAction(action: any) {
+    return this.action("hark-group-hook", "hark-group-hook-action", action);
+  }
+
   private actOnNotification(frond: string, intTime: BigInteger, index: NotifIndex) {
     const time = decToUd(intTime.toString());
     return this.harkAction({
@@ -54,6 +62,53 @@ export class HarkApi extends BaseApi<StoreState> {
 
   seen() {
     return this.harkAction({ seen: null });
+  }
+
+  mute(index: NotifIndex) {
+    if('graph' in index) {
+      const { graph } = index.graph;
+      return this.ignoreGraph(graph);
+    }
+    if('group' in index) {
+      const { group } = index.group;
+      return this.ignoreGroup(group);
+    }
+    return Promise.resolve();
+  }
+
+  unmute(index: NotifIndex) {
+    if('graph' in index) {
+      return this.listenGraph(index.graph.graph);
+    }
+    if('group' in index) {
+      return this.listenGroup(index.group.group);
+    }
+    return Promise.resolve();
+  }
+
+  ignoreGroup(group: string) {
+    return this.groupHookAction({
+      ignore: group
+    })
+  }
+
+  ignoreGraph(graph: string) {
+    return this.graphHookAction({
+      ignore: graph
+    })
+  }
+
+
+  listenGroup(group: string) {
+    return this.groupHookAction({
+      listen: group
+    })
+  }
+
+  listenGraph(graph: string) {
+    return this.graphHookAction({
+      listen: graph
+    })
   }
 
   async getTimeSubset(start?: Date, end?: Date) {

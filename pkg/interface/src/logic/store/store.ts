@@ -104,11 +104,11 @@ export default class GlobalStore extends BaseStore<StoreState> {
       chatSynced: null,
       notifications: new BigIntOrderedMap<Timebox>(),
       archivedNotifications: new BigIntOrderedMap<Timebox>(),
+      notificationsGroupConfig: [],
       notificationsGraphConfig: {
         watchOnSelf: false,
         mentions: false,
         watching: [],
-        watchingIndices: {}
       },
       notificationsCount: 0
     };

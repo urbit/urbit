@@ -11,7 +11,7 @@ import { LaunchState, WeatherState } from '~/types/launch-update';
 import { ConnectionStatus } from '~/types/connection';
 import { BackgroundConfig, LocalUpdateRemoteContentPolicy } from '~/types/local-update';
 import {Graphs} from '~/types/graph-update';
-import { Notifications, NotificationGraphConfig } from "~/types";
+import { Notifications, NotificationGraphConfig, GroupNotificationsConfig } from "~/types";
 
 export interface StoreState {
   // local state
@@ -57,6 +57,7 @@ export interface StoreState {
 
   notifications: Notifications;
   notificationsGraphConfig: NotificationGraphConfig;
+  notificationsGroupConfig: GroupNotificationsConfig;
   notificationsCount: number,
   doNotDisturb: boolean;
 }

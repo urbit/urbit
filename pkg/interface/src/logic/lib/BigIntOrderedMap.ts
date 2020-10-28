@@ -167,8 +167,8 @@ export class BigIntOrderedMap<V> implements Iterable<[BigInteger, V]> {
       if (!node) {
         return;
       }
-      result.push(node.n);
       inner(node.l);
+      result.push(node.n);
       inner(node.r);
     };
     inner(this.root);

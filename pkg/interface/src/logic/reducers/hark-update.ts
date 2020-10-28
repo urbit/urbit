@@ -1,4 +1,10 @@
-import { Notifications, Notification, NotifIndex, NotificationGraphConfig, GroupNotificationsConfig } from "~/types";
+import {
+  Notifications,
+  Notification,
+  NotifIndex,
+  NotificationGraphConfig,
+  GroupNotificationsConfig,
+} from "~/types";
 import { makePatDa } from "~/logic/lib/util";
 import _ from "lodash";
 
@@ -7,7 +13,7 @@ type HarkState = {
   archivedNotifications: Notifications;
   notificationsCount: number;
   notificationsGraphConfig: NotificationGraphConfig;
-  groupNotifications: GroupNotificationsConfig;
+  notificationsGroupConfig: GroupNotificationsConfig;
 };
 
 export const HarkReducer = (json: any, state: HarkState) => {
@@ -19,11 +25,13 @@ export const HarkReducer = (json: any, state: HarkState) => {
   if (graphHookData) {
     console.log(graphHookData);
     graphInitial(graphHookData, state);
+    graphIgnore(graphHookData, state);
+    graphListen(graphHookData, state);
     graphWatchSelf(graphHookData, state);
     graphMentions(graphHookData, state);
   }
   const groupHookData = _.get(json, "hark-group-hook-update", false);
-  if(groupHookData) {
+  if (groupHookData) {
     groupInitial(groupHookData, state);
     groupListen(groupHookData, state);
     groupIgnore(groupHookData, state);
@@ -31,9 +39,9 @@ export const HarkReducer = (json: any, state: HarkState) => {
 };
 
 function groupInitial(json: any, state: HarkState) {
-  const data = _.get(json, 'initial', false);
-  if(data) {
-    state.groupNotifications = data;
+  const data = _.get(json, "initial", false);
+  if (data) {
+    state.notificationsGroupConfig = data;
   }
 }
 
@@ -44,17 +52,38 @@ function graphInitial(json: any, state: HarkState) {
   }
 }
 
+function graphListen(json: any, state: HarkState) {
+  const data = _.get(json, "listen", false);
+  if (data) {
+    state.notificationsGraphConfig.watching = [
+      ...state.notificationsGraphConfig.watching,
+      data,
+    ];
+  }
+}
+
+function graphIgnore(json: any, state: HarkState) {
+  const data = _.get(json, "ignore", false);
+  if (data) {
+    state.notificationsGraphConfig.watching = state.notificationsGraphConfig.watching.filter(
+      (n) => n !== data
+    );
+  }
+}
+
 function groupListen(json: any, state: HarkState) {
   const data = _.get(json, "listen", false);
   if (data) {
-    state.groupNotifications = [...state.groupNotifications, data];
+    state.notificationsGroupConfig = [...state.notificationsGroupConfig, data];
   }
 }
 
 function groupIgnore(json: any, state: HarkState) {
   const data = _.get(json, "ignore", false);
   if (data) {
-    state.groupNotifications = state.groupNotifications.filter(n => n!== data);
+    state.notificationsGroupConfig = state.notificationsGroupConfig.filter(
+      (n) => n !== data
+    );
   }
 }
 
@@ -80,6 +109,26 @@ function reduce(data: any, state: HarkState) {
   more(data, state);
   dnd(data, state);
   count(data, state);
+  added(data, state);
+}
+
+function added(json: any, state: HarkState) {
+  const data = _.get(json, "added", false);
+  if (data) {
+    const { index, notification } = data;
+    const time = makePatDa(data.time);
+    const timebox = state.notifications.get(time) || [];
+    const arrIdx = timebox.findIndex((idxNotif) =>
+      notifIdxEqual(index, idxNotif.index)
+    );
+    if (arrIdx !== -1) {
+      timebox[arrIdx] = { index, notification };
+      state.notifications.set(time, timebox);
+    } else {
+      state.notifications.set(time, [...timebox, { index, notification }]);
+      state.notificationsCount++;
+    }
+  }
 }
 
 function count(json: any, state: HarkState) {

@@ -12,6 +12,7 @@
     "@tlon/indigo-react": "urbit/indigo-react#lf/1.2.9",
     "@tlon/sigil-js": "^1.4.2",
     "aws-sdk": "^2.726.0",
+    "big-integer": "^1.6.48",
     "classnames": "^2.2.6",
     "codemirror": "^5.55.0",
     "css-loader": "^3.5.3",
