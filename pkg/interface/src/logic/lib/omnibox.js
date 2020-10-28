@@ -55,6 +55,7 @@ const appIndex = function (apps) {
 const otherIndex = function() {
   const other = [];
   other.push(result('Home', '/~landscape/home', 'home', null));
+  other.push(result('Notifications', '/~notifications', 'inbox', null));
   other.push(result('Profile and Settings', '/~profile/identity', 'profile', null));
   other.push(result('Log Out', '/~/logout', 'logout', null));
 

@@ -39,6 +39,8 @@ export class OmniboxResult extends Component {
       graphic = <Sigil color={sigilFill} classes='dib v-mid mr2' ship={window.ship} size={16} icon padded />;
     } else if (icon === 'home') {
       graphic = <Icon display='inline-block' verticalAlign='middle' icon='Circle' mr='2' size='16px' color={iconFill} />;
+    } else if (icon === 'notifications') {
+      graphic = <Icon display='inline-block' verticalAlign='middle' icon='Inbox' mr='2' size='16px' color={iconFill} />;
     } else {
       graphic = <Icon icon='NullIcon' verticalAlign="middle" mr='2' size="16px" color={iconFill} />;
     }
