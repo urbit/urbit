@@ -60,6 +60,7 @@ export function MarkdownEditor(
       border={1}
       borderColor="lightGray"
       borderRadius={2}
+      height={['calc(100% - 22vh)', '100%']}
       {...boxProps}
     >
       <CodeEditor

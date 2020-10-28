@@ -36,7 +36,7 @@ export class OmniboxResult extends Component {
     } else if (icon === 'logout') {
       graphic = <Icon display="inline-block" verticalAlign="middle" icon='ArrowWest' mr='2' size='16px' color={iconFill} />;
     } else if (icon === 'profile') {
-      graphic = <Sigil color={sigilFill} classes='dib v-mid mr2' ship={window.ship} size={16} />;
+      graphic = <Sigil color={sigilFill} classes='dib v-mid mr2' ship={window.ship} size={16} icon padded />;
     } else if (icon === 'home') {
       graphic = <Icon display='inline-block' verticalAlign='middle' icon='Circle' mr='2' size='16px' color={iconFill} />;
     } else {

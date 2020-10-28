@@ -1358,6 +1358,14 @@
         ::
         =duct
     ==
+  ::  channel-event: unacknowledged channel event, vaseless sign
+  ::
+  +$  channel-event
+    $%  $>(%poke-ack sign:agent:gall)
+        $>(%watch-ack sign:agent:gall)
+        $>(%kick sign:agent:gall)
+        [%fact =mark =noun]
+    ==
   ::  channel: connection to the browser
   ::
   ::    Channels are the main method where a webpage communicates with Gall
@@ -1384,6 +1392,11 @@
         ::  next-id: next sequence number to use
         ::
         next-id=@ud
+        ::  last-ack: time of last client ack
+        ::
+        ::    used for clog calculations, in combination with :unacked
+        ::
+        last-ack=@da
         ::  events: unacknowledged events
         ::
         ::    We keep track of all events where we haven't received a
@@ -1392,13 +1405,18 @@
         ::    channel, we send the event but we still add it to events because we
         ::    can't assume it got received until we get an acknowledgment.
         ::
-        events=(qeu [id=@ud lines=wall])
-        ::  subscriptions: gall subscriptions
+        events=(qeu [id=@ud request-id=@ud =channel-event])
+        ::  unacked: unacknowledged event counts by request-id
+        ::
+        ::    used for clog calculations, in combination with :last-ack
+        ::
+        unacked=(map @ud @ud)
+        ::  subscriptions: gall subscriptions by request-id
         ::
         ::    We maintain a list of subscriptions so if a channel times out, we
         ::    can cancel all the subscriptions we've made.
         ::
-        subscriptions=(map wire [ship=@p app=term =path duc=duct])
+        subscriptions=(map @ud [ship=@p app=term =path duc=duct])
         ::  heartbeat: sse heartbeat timer
         ::
         heartbeat=(unit timer)

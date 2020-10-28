@@ -55,7 +55,7 @@ export class Omnibox extends Component {
   }
 
   getSearchedCategories() {
-    return ['commands', 'groups', 'subscriptions', 'apps', 'other'];
+    return ['other', 'commands', 'groups', 'subscriptions', 'apps'];
   }
 
   control(evt) {
@@ -154,7 +154,7 @@ export class Omnibox extends Component {
             result.title.toLowerCase().includes(query) ||
             result.link.toLowerCase().includes(query) ||
             result.app.toLowerCase().includes(query) ||
-            (result.host !== null ? result.host.includes(query) : false)
+            (result.host !== null ? result.host.toLowerCase().includes(query) : false)
           );
         })
       );

@@ -7,6 +7,10 @@ export function appIsGraph(app) {
   return app === 'link' || app === 'publish';
 }
 
+export function parentPath(path) {
+  return _.dropRight(path.split('/'), 1).join('/');
+}
+
 export function clamp(x,min,max) {
   return Math.max(min, Math.min(max, x));
 }

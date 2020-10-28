@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Spinner } from '~/views/components/Spinner';
 import { createPost } from '~/logic/api/graph';
+import { deSig } from "~/logic/lib/util";
 
 
 export class CommentSubmit extends Component {
@@ -22,7 +23,7 @@ export class CommentSubmit extends Component {
 
     this.setState({ disabled: true }, () => {
       this.props.api.graph.addPost(
-        `~${this.props.ship}`,
+        `~${deSig(this.props.ship)}`,
         this.props.name,
         post
       ).then((r) => {
