@@ -72,6 +72,8 @@ export function GroupsPane(props: GroupsPaneProps) {
           s3={props.s3}
           hideAvatars={props.hideAvatars}
           hideNicknames={props.hideNicknames}
+          notificationsGroupConfig={props.notificationsGroupConfig}
+
           {...routeProps}
           baseUrl={baseUrl}
         />

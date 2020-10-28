@@ -8,6 +8,7 @@ import DojoApp from '~/views/apps/dojo/app';
 import Landscape from '~/views/landscape/index';
 import Profile from '~/views/apps/profile/profile';
 import ErrorComponent from '~/views/components/Error';
+import Notifications from '~/views/apps/notifications/notifications';
 
 
 export const Container = styled(Box)`
@@ -59,6 +60,12 @@ export const Content = (props) => {
             <Profile
              {...props}
             />
+          )}
+        />
+        <Route
+          path="/~notifications"
+          render={ p => (
+            <Notifications {...props} />
           )}
         />
         <Route

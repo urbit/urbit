@@ -3,8 +3,9 @@ import { Link, useHistory } from "react-router-dom";
 
 import { Icon, Row, Col, Button, Text, Box, Action } from "@tlon/indigo-react";
 import { Dropdown } from "~/views/components/Dropdown";
-import { Association } from "~/types";
+import { Association, NotificationGraphConfig } from "~/types";
 import GlobalApi from "~/logic/api/global";
+import { StatelessAsyncAction } from "~/views/components/StatelessAsyncAction";
 
 const ChannelMenuItem = ({
   icon,
@@ -27,6 +28,7 @@ const ChannelMenuItem = ({
 interface ChannelMenuProps {
   association: Association;
   api: GlobalApi;
+  notificationConfig: NotificationGraphConfig;
 }
 
 export function ChannelMenu(props: ChannelMenuProps) {
@@ -34,8 +36,9 @@ export function ChannelMenu(props: ChannelMenuProps) {
   const history = useHistory();
   const { metadata } = association;
   const app = metadata.module || association["app-name"];
-  const workspace = history.location.pathname.startsWith('/~landscape/home')
-    ? '/home' : association?.['group-path'];
+  const workspace = history.location.pathname.startsWith("/~landscape/home")
+    ? "/home"
+    : association?.["group-path"];
   const baseUrl = `/~landscape${workspace}/resource/${app}${association["app-path"]}`;
   const appPath = association["app-path"];
 
@@ -44,6 +47,13 @@ export function ChannelMenu(props: ChannelMenuProps) {
     : appPath.split("/");
 
   const isOurs = ship.slice(1) === window.ship;
+
+  const isMuted =
+    props.notificationConfig.watching.findIndex((a) => a === appPath) === -1;
+  const onChangeMute = async () => {
+    const func = isMuted ? "listenGraph" : "ignoreGraph";
+    await api.hark[func](appPath);
+  };
   const onUnsubscribe = useCallback(async () => {
     const app = metadata.module || association["app-name"];
     switch (app) {
@@ -85,15 +95,37 @@ export function ChannelMenu(props: ChannelMenuProps) {
   return (
     <Dropdown
       options={
-        <Col backgroundColor="white" border={1} borderRadius={1} borderColor="lightGray">
+        <Col
+          backgroundColor="white"
+          border={1}
+          borderRadius={1}
+          borderColor="lightGray"
+        >
+          {metadata.module === "link" && (
+            <ChannelMenuItem color="blue" icon="Inbox">
+              <StatelessAsyncAction
+                m="2"
+                bg="white"
+                name="notif"
+                onClick={onChangeMute}
+              >
+                {isMuted ? "Unmute" : "Mute"} this channel
+              </StatelessAsyncAction>
+            </ChannelMenuItem>
+          )}
           {isOurs ? (
             <>
               <ChannelMenuItem color="red" icon="TrashCan">
-                <Action m="2" backgroundColor='white' destructive onClick={onDelete}>
+                <Action
+                  m="2"
+                  backgroundColor="white"
+                  destructive
+                  onClick={onDelete}
+                >
                   Delete Channel
                 </Action>
               </ChannelMenuItem>
-              <ChannelMenuItem bottom icon="Gear" color='black'>
+              <ChannelMenuItem bottom icon="Gear" color="black">
                 <Link to={`${baseUrl}/settings`}>
                   <Box fontSize={0} p="2">
                     Channel Settings

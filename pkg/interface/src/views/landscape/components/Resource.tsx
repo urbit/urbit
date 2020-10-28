@@ -52,7 +52,12 @@ export function Resource(props: ResourceProps) {
       <Route
         path={relativePath("")}
         render={(routeProps) => (
-          <ResourceSkeleton baseUrl={props.baseUrl} {...skelProps} atRoot>
+          <ResourceSkeleton
+            notificationsGraphConfig={props.notificationsGraphConfig}
+            baseUrl={props.baseUrl}
+            {...skelProps} 
+            atRoot
+          >
             {app === "chat" ? (
               <ChatResource {...props} />
             ) : app === "publish" ? (
