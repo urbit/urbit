@@ -68,6 +68,7 @@
     ^-  (quip card _state)
     |^
     ?>  ?=(%0 -.update)
+    =?  p.update  =(p.update *time)  now.bowl
     ?-  -.q.update
         %add-graph          (add-graph +.q.update)
         %remove-graph       (remove-graph +.q.update)
