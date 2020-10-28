@@ -25,6 +25,11 @@ const StatusBar = (props) => {
           <Icon icon='Home' color='black'/>
           </StatusBarItem>
         <StatusBarItem mr={2} onClick={() => props.api.local.setOmnibox()}>
+        { !props.doNotDisturb && props.notificationsCount > 0 && 
+          (<Box display="block" right="-8px" top="-8px" position="absolute" >
+            <Icon color="blue" icon="Bullet" />
+           </Box>
+        )}
         <Icon icon='LeapArrow'/>
           <Text ml={2} color='black'>
             Leap
