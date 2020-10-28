@@ -278,17 +278,6 @@ pier (serf, log) vSlog startedSig = do
       Term.addDemux ext demux
     logInfo "TERMSERV External terminal connected."
 
-  -- Set up the runtime subsite server and its capability to slog
-  siteSlog <- newTVarIO (const $ pure ())
-  runtimeSubsite <- Site.kingSubsite siteSlog
-
-  --  Slogs go to stderr, to the runtime subsite, and to the terminal.
-  env <- ask
-  atomically $ writeTVar vSlog $ \s@(_, tank) -> runRIO env $ do
-      atomically $ Term.slog muxed s
-      io $ readTVarIO siteSlog >>= ($ s)
-      logOther "serf" (display $ T.strip $ tankToText tank)
-
   scryQ <- newTQueueIO
   onKill  <- view onKillPierSigL
 
@@ -305,12 +294,23 @@ pier (serf, log) vSlog startedSig = do
         atomically $ writeTQueue scryQ (w, b, g, putMVar res)
         takeMVar res
 
+  -- Set up the runtime subsite server and its capability to slog
+  siteSlog <- newTVarIO (const $ pure ())
+  runtimeSubsite <- Site.kingSubsite ship scry siteSlog
+
+  --  Slogs go to stderr, to the runtime subsite, and to the terminal.
+  env <- ask
+  atomically $ writeTVar vSlog $ \s@(_, tank) -> runRIO env $ do
+      atomically $ Term.slog muxed s
+      io $ readTVarIO siteSlog >>= ($ s)
+      logOther "serf" (display $ T.strip $ tankToText tank)
+
   (bootEvents, startDrivers) <- do
     env <- ask
     let err = atomically . Term.trace muxed . (<> "\r\n")
     siz <- atomically $ Term.curDemuxSize demux
     let fak = isFake logId
-    drivers env ship fak compute scry (siz, muxed) err sigint
+    drivers env ship fak compute scry (siz, muxed) err sigint runtimeSubsite
 
   let computeConfig = ComputeConfig { ccOnWork      = takeTMVar computeQ
                                     , ccOnKill      = onKill
