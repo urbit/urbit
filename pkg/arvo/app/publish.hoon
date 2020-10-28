@@ -529,7 +529,7 @@
     :_  this(migrate (~(put by migrate) rid nack-count))
     ::  (bex 19) is roughly 6 days
     =/  wakeup=@da
-      (add now.bol (bex (min 19 nack-count)))
+      (add now.bol (mul ~s1 (bex (min 19 nack-count))))
     [%pass wire %arvo %b %wait wakeup]~
   ::   
   ++  on-arvo
