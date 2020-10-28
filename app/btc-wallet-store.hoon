@@ -1,6 +1,10 @@
 ::  btc-wallet-store.hoon
 ::  Manages wallet pubkeys
 ::
+::  Subscriptions: none
+::  To Subscribers:
+::    watched address updates
+::
 /+  dbug, default-agent
 |%
 +$  versioned-state

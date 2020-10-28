@@ -1,5 +1,11 @@
 ::  btc-wallet-hook.hoon
-:: 
+::
+::  Subscriptions:
+::    btc-provider:
+::      connection status
+::      RPC call results/errors
+::  To Subscribers:
+::    none
 ::
 /-  *btc-wallet-hook
 /+  shoe, dbug, default-agent
