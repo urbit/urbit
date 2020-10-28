@@ -23,8 +23,6 @@
     %-  of
     :~  listen+dejs-path:resource
         ignore+dejs-path:resource
-        listen-indices+graph-indices
-        ignore-indices+graph-indices
         set-mentions+bo
         set-watch-on-self+bo
     ==
@@ -48,7 +46,6 @@
       %set-watch-on-self  b+watch-on-self.act
       %set-mentions  b+mentions.act
       ?(%listen %ignore)   s+(enjs-path:resource graph.act)
-      ?(%listen-indices %ignore-indices)  (graph-indices +.act)
     ==
   ::
   ++  update
@@ -61,7 +58,6 @@
     :~  'watchOnSelf'^b+watch-on-self.upd
         'mentions'^b+mentions.upd
         watching+a+(turn ~(tap in watching.upd) |=(r=resource s+(enjs-path:resource r)))
-        'watchingIndices'^a+(turn ~(tap by watching-indices.upd) graph-indices)
     ==
   --
 --

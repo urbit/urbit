@@ -147,8 +147,11 @@
         (merge-notification:ha u.existing-notif notification)
       =/  new-timebox=timebox:store
         (~(put by timebox) index new)
-      :-  ~  ::  (give:ha [/updates]~ %add index notification)
-      state(notifications (put:orm notifications last-seen new-timebox))
+      :-  (give:ha [/updates]~ %added last-seen index new)
+      %_  state
+        notifications  (put:orm notifications last-seen new-timebox)
+        unread-count  +(unread-count)
+      ==
     ::
     ++  do-archive
       |=  [time=@da =index:store]
@@ -161,6 +164,7 @@
         (~(del by timebox) index)
       :-  (give:ha [/updates]~ %archive time index)
       %_  state
+        unread-count  (dec unread-count)
         ::
           notifications
         (put:orm notifications time new-timebox)
@@ -176,13 +180,19 @@
       |=  [time=@da =index:store]
       ^-  (quip card _state)
       :-  (give:ha [/updates]~ %read time index)
-      state(notifications (change-read-status:ha time index %.y))
+      %_  state
+        unread-count   (dec unread-count)
+        notifications  (change-read-status:ha time index %.y)
+      ==
     ::
     ++  unread
       |=  [time=@da =index:store]
       ^-  (quip card _state)
       :-  (give:ha [/updates]~ %unread time index)
-      state(notifications (change-read-status:ha time index %.n))
+      %_  state
+        unread-count   +(unread-count)
+        notifications  (change-read-status:ha time index %.n)
+      ==
     ::
     ++  seen
       ^-  (quip card _state)
@@ -233,9 +243,6 @@
 ::
 ++  change-read-status
   |=  [time=@da =index:store read=?]
-  ~&  `@ud`time
-  ~&  index
-  ~&  ;;((list @ud) (key-orm notifications))
   ^+  notifications
   %^  jub-orm  notifications  time
   |=  =timebox:store

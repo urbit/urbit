@@ -6,7 +6,7 @@
   ++  noun  upd
   ++  json  
     %+  frond:enjs:format
-      %hark-graph-hook-update
+      %hark-group-hook-update
     (update:enjs upd)
   --
 ++  grab

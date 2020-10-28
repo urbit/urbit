@@ -68,6 +68,7 @@
     |^
     %+  frond  -.upd
     ?+  -.upd  a+~
+        %added      (added +.upd)
         %timebox  (timebox +.upd)
         %set-dnd  b+dnd.upd
         %count    (numb count.upd)
@@ -75,6 +76,15 @@
           ?(%archive %read %unread)
         (notif-ref +.upd)
     ==
+    ::
+    ++  added
+      |=  [tim=@da idx=^index not=^notification]
+      ^-  json
+      %-  pairs
+      :~  time+s+(scot %ud tim)
+          index+(index idx)
+          notification+(notification not)
+      ==
     ::
     ++  notif-ref
       |=  [tim=@da idx=^index]

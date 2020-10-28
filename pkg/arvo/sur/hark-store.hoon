@@ -42,6 +42,7 @@
 +$  update
   $%  action
       [%more =(list update)]
+      [%added time=@da =index =notification]
       [%timebox time=@da archived=? =(list [index notification])]
       [%count count=@ud]
   ==

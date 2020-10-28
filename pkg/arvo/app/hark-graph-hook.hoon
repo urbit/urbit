@@ -144,9 +144,7 @@
       (need (peek-metadata:met %graph group resource.q.update))
     =*  rid  resource.q.update
     =+  (scry ,mark=(unit mark) /gx/graph-store/graph-mark/(scot %p entity.rid)/[name.rid]/noun)
-    ?~  mark
-      [~ state]
-    =+  (scry ,=tube:clay /cc/[q.byk.bowl]/[u.mark]/notification-kind)
+    =+  (scry ,=tube:clay /cc/[q.byk.bowl]/[(fall mark %graph-validator-link)]/notification-kind)
     ^-  (quip card _state)
     =/  nodes=(list [p=index:graph-store q=node:graph-store])
       ~(tap by nodes.q.update)
@@ -189,7 +187,9 @@
       ?~  contents  %.n
       ?.  ?=(%text -.i.contents)
         $(contents t.contents)
-      ?^  (find (trip text.i.contents) (scow %p our.bowl))
+      =/  res
+         (find (scow %p our.bowl) (trip text.i.contents))       
+      ?^  res
         %.y
       $(contents t.contents)
     ::
