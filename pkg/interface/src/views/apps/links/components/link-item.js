@@ -5,6 +5,8 @@ import { Sigil } from '~/logic/lib/sigil';
 import { Link } from 'react-router-dom';
 import { cite } from '~/logic/lib/util';
 
+import { roleForShip } from "~/logic/lib/group";
+
 export const LinkItem = (props) => {
   const {
     node,
@@ -14,7 +16,8 @@ export const LinkItem = (props) => {
     resource,
     hideAvatars,
     hideNicknames,
-    api
+    api,
+    group
   } = props;
 
   const URLparser = new RegExp(
@@ -36,6 +39,7 @@ export const LinkItem = (props) => {
 
   const baseUrl = props.baseUrl || `/~404/${resource}`;
 
+  const ourRole = group ? roleForShip(group, window.ship) : undefined;
   const [ship, name] = resource.split("/");
 
   return (
@@ -61,7 +65,7 @@ export const LinkItem = (props) => {
           <Link to={`${baseUrl}/${index}`}>
             <Text color="gray">{size} comments</Text>
           </Link>
-          {(author === window.ship) && <Text color='red' ml='2' cursor='pointer' onClick={() => api.graph.removeNodes(`~${ship}`, name, [node.post.index])}>Delete</Text>}
+          {(ourRole === "admin") && <Text color='red' ml='2' cursor='pointer' onClick={() => api.graph.removeNodes(`~${ship}`, name, [node.post.index])}>Delete</Text>}
         </Box>
       </Col>
     </Row>

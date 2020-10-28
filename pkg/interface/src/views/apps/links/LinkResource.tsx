@@ -48,6 +48,7 @@ export function LinkResource(props: LinkResourceProps) {
     ? associations.graph[appPath]
     : { metadata: {} };
   const contactDetails = contacts[resource["group-path"]] || {};
+  const group = groups[resource["group-path"]] || {};
   const graph = graphs[resourcePath] || null;
 
   useEffect(() => {
@@ -83,6 +84,7 @@ export function LinkResource(props: LinkResourceProps) {
                       hideNicknames={hideNicknames}
                       baseUrl={resourceUrl}
                       color={uxToHex(contact?.color || '0x0')}
+                      group={group}
                       api={api}
                     />
                   );
