@@ -19,7 +19,7 @@ export const UnreadMarker = React.forwardRef(({ dayBreak, when }, ref) => (
     <Text flexShrink='0' display='block' zIndex='2' mx='4' color='blue'>New messages below</Text>
     <Rule borderColor='blue' flexGrow='1' m='0'/>
     {dayBreak
-      ? <Text display='block' gray mx='4'>{moment(when).calendar()}</Text>
+      ? <Text display='block' gray mx='4'>{moment(when).calendar(null, { sameElse: DATESTAMP_FORMAT })}</Text>
       : null}
     <Rule style={{ width: "calc(50% - 48px)" }} borderColor='blue' m='0' />
   </Row>
@@ -27,7 +27,7 @@ export const UnreadMarker = React.forwardRef(({ dayBreak, when }, ref) => (
 
 export const DayBreak = ({ when }) => (
   <div className="pv3 gray2 b--gray2 flex items-center justify-center f9 w-100">
-    <p>{moment(when).calendar()}</p>
+    <p>{moment(when).calendar(null, { sameElse: DATESTAMP_FORMAT })}</p>
   </div>
 );
 
