@@ -3,7 +3,7 @@ import { UnControlled as CodeEditor } from 'react-codemirror2';
 import { MOBILE_BROWSER_REGEX } from "~/logic/lib/util";
 import CodeMirror from 'codemirror';
 
-import { Row, BaseInput } from '@tlon/indigo-react';
+import { Row, BaseInput, BaseTextArea } from '@tlon/indigo-react';
 
 import 'codemirror/mode/markdown/markdown';
 import 'codemirror/addon/display/placeholder';
@@ -35,6 +35,27 @@ const MARKDOWN_CONFIG = {
     linkHref: 'presentation'
   }
 };
+
+function iOSShift(e) {
+  // Since where on iOS, we at least don't have to care 
+  // about cross-browser stuff
+  var s = String.fromCharCode(e.which);
+  let isCaps, isUppercase = false;
+
+  // if the char doesn't match its lower case friend, and the shift key is 
+  // not pressed (which is always the case on iOS, but we leave it there 
+  // for readability), we have uppercase input
+  isUppercase = (s.toUpperCase() === s && s.toLowerCase() !== s && !e.shiftKey);
+
+  // if its the second uppercase input in a row, we may have caps lock input
+  isCaps = isCaps && isUppercase;
+
+  // set the warning
+  if (isUppercase && !isCaps) {
+      return true
+  }
+  return false;
+}
 
 // Until CodeMirror supports options.inputStyle = 'textarea' on mobile,
 // we need to hack this into a regular input that has some funny behaviors
@@ -167,14 +188,15 @@ export default class ChatEditor extends Component {
         color="black"
       >
         {MOBILE_BROWSER_REGEX.test(navigator.userAgent)
-          ? <BaseInput
+          ? <BaseTextArea
             fontFamily={inCodeMode ? 'Source Code Pro' : 'Inter'}
+            rows="1"
             fontSize="14px"
             style={{ width: '100%', background: 'transparent', color: 'currentColor' }}
             placeholder={inCodeMode ? "Code..." : "Message..."}
-            autoComplete={new RegExp(/CriOS/).test(navigator.userAgent) ? 'disabled' : 'off'}
             onKeyUp={event => {
-              if (event.key === 'Enter') {
+              console.log(event.shiftKey);
+              if (event.key === 'Enter' && !iOSShift(event)) {
                 this.submit();
               } else {
                 this.messageChange(null, null, event.target.value);
