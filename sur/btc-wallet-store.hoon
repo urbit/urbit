@@ -1,11 +1,22 @@
+::  wallets are compatible with BIPs 44, 49, and 84
+::  m / purpose' / coin_type' / account' / change / address_index
+::
 /-  *btc, bip32
 |%
-+$  wallet
-  $:  xpub=tape
-      root-path=tape
-      ::  indices-0 is main account, indices-1 is change account
+::  wilt: copulates with thousands of indices to form addresses
+::  walt: wallet metadata
+::
++$  wilt  _bip32
++$  walt
+  $:  ::  scanned: whether we've checked all addresses for prior activity
+      ::  ching: non-change addresses
+      ::  chang: change addresses
+      ::  watch: address -> [change address_index]
       ::
-      indices-0=((mop @ address-info) gth)
-      indices-1=((mop @ address-info) gth)
+      =wilt
+      scanned=?
+      ching=((mop @ address-info) gth)
+      chang=((mop @ address-info) gth)
+      watch=(map address [change=@ index=@])
   ==
 --
