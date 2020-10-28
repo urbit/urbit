@@ -22,9 +22,8 @@
     ::  revisions are numbered by the revision count
     ::  starting at one
         [@ %1 @ ~]
-      ?>  ?=([* * ~] contents.p.ip)
+      ?>  ?=([* * *] contents.p.ip)
       ?>  ?=(%text -.i.contents.p.ip)
-      ?>  ?=(%text -.i.t.contents.p.ip)
       ip
     ::  container for comments
         [@ %2 ~]
