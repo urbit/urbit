@@ -83,6 +83,7 @@ export function LinkResource(props: LinkResourceProps) {
                       hideNicknames={hideNicknames}
                       baseUrl={resourceUrl}
                       color={uxToHex(contact?.color || '0x0')}
+                      api={api}
                     />
                   );
                 })}
