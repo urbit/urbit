@@ -13,10 +13,7 @@
 +$  error
   $%  [%not-connected ~]
   ==
-+$  update                              ::  sub updates from /clients path (connection etc.)
-  $%  [%result =result]
-      [%error =error]
-  ==
++$  update  (each result error)               ::  sub updates from /clients path (connection etc.)
 ::
 +$  command
   $%  [%set-credentials creds=credentials]

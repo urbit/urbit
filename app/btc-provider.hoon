@@ -1,6 +1,11 @@
 ::  btc-provider.hoon
 ::  Proxy that serves a BTC full node and ElectRS address indexer
 ::
+::  Subscriptions: none
+::  To Subscribers:
+::    current connection state
+::    results/errors of RPC calls
+::
 /+  *btc-provider, dbug, default-agent
 |%
 +$  versioned-state
@@ -110,7 +115,7 @@
   ~&  >  "before"
   ?^  e
     :_  state(connected.host-info %.n)
-    ~[(send-update [%error u.e])]
+    ~[(send-update [%| u.e])]
   ~&  >  "after"
   =/  rpc-resp=response:rpc:jstd
     (get-rpc-response response)
