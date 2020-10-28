@@ -1,8 +1,6 @@
 import React from "react";
 import { Box, Text } from "@tlon/indigo-react";
-import { Link } from "react-router-dom";
 
-import { useLocalStorageState } from "~/logic/lib/useLocalStorageState";
 import { Associations, Association } from "~/types";
 import { alphabeticalOrder } from "~/logic/lib/util";
 import Tile from '../components/tiles/tile';
@@ -23,6 +21,7 @@ export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
   }
 
   const groups = Object.values(associations?.contacts || {})
+    .filter(e => e['group-path'] in props.groups)
     .sort(sortGroupsAlph);
 
   const acceptInvite = (invite) => {
