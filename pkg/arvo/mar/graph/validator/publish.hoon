@@ -24,7 +24,7 @@
         [@ %1 @ ~]
       ?>  ?=([* * ~] contents.p.ip)
       ?>  ?=(%text -.i.contents.p.ip)
-      ?>  ?=(%text -.t.i.contents.p.ip)
+      ?>  ?=(%text -.i.t.contents.p.ip)
       ip
     ::  container for comments
         [@ %2 ~]
