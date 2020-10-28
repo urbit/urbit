@@ -102,7 +102,8 @@ export function GroupSwitcher(props: {
                 width="100%"
                 alignItems="stretch"
               >
-                <GroupSwitcherItem to="">
+                {(props.baseUrl === '/~landscape/home') ?
+                  <GroupSwitcherItem to="">
                   <Icon
                     mr={2}
                     color="gray"
@@ -111,6 +112,16 @@ export function GroupSwitcher(props: {
                   />
                   <Text>All Groups</Text>
                 </GroupSwitcherItem>
+                :
+                <GroupSwitcherItem to="/~landscape/home">
+                  <Icon
+                    mr={2}
+                    color="gray"
+                    display="block"
+                    icon="Circle"
+                  />
+                  <Text>Home</Text>
+                </GroupSwitcherItem>}
                 <RecentGroups
                   recent={props.recentGroups}
                   associations={props.associations}
