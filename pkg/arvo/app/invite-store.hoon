@@ -59,14 +59,17 @@
     :-  ~
     :-  i.path
     %-  ~(gas by *invitatory:store)
-    %+  turn  ~(tap by invitatory-0)
+    %+  murn  ~(tap by invitatory-0)
     |=  [=serial:store =invite-0]
-    ^-  [serial:store invite:store]
+    ^-  (unit [serial:store invite:store])
+    =/  resource=(unit resource:res)  (de-path-soft:res path.invite-0)
+    ?~  resource  ~
+    :-  ~
     :-  serial
     ^-  invite:store
     :*  ship.invite-0
         app.invite-0
-        (de-path:res path.invite-0)
+        u.resource
         recipient.invite-0
         text.invite-0
     ==
