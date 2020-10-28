@@ -13,8 +13,7 @@
 
 let
 
-  inherit (import ./nix/default.nix { })
-    lib recurseIntoAttrs haskell-nix callPackage;
+  inherit (import ./nix/default.nix { }) lib haskell-nix callPackage;
 
   # Local library import from derivation functions such as fetchGitHubLFS, etc.
   # upon which local package defintions are dependent.
