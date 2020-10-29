@@ -50,7 +50,12 @@
   ==
   [cards this]
 ::
-++  on-watch  on-watch:def
+++  on-watch
+  |=  pax=path
+  ^-  (quip card _this)
+  ?>  (team:title our.bowl src.bowl)
+  ?>  ?=([%wallets *] pax)
+  `this
 ++  on-leave  on-leave:def
 ++  on-peek   on-peek:def
 ++  on-agent  on-agent:def
@@ -65,7 +70,40 @@
   ?-  -.act
       %add-wallet
     (add-wallet xpub.act)
+    ::
+      %update-address
+    (update-address +.act)
   ==
+++  update-address
+  |=  [a=address us=(set utxo)]
+  ^-  (quip card _state)
+  =/  xpubs=(list tape)
+    %~  tap  in
+    ~(key by wallets.state)
+  |-  ?~  xpubs  `state
+  =/  w=walt  (~(got by wallets.state) i.xpubs)
+  ?:  (~(has by wach.w) a)
+    %:  send-address-update
+        i.xpubs
+        (update-wallet w a us)
+        a
+        us
+    ==
+  $(xpubs t.xpubs)
+::
+++  update-wallet
+  |=  [w=walt a=address us=(set utxo)]
+  ^-  walt
+  =/  curr-addi=addi
+    (~(got by wach.w) a)
+  w(wach (~(put by wach.w) a curr-addi(used %.y, utxos us)))
+::
+++  send-address-update
+  |=  [xpub=tape =walt a=address us=(set utxo)]
+  ^-  (quip card _state)
+  :_  state(wallets (~(put by wallets.state) xpub walt))
+  ~[[%give %fact ~[/wallets] %btc-wallet-store-update !>([%address a us])]]
+::
 ++  add-wallet
   |=  xpub=tape
   ^-  (quip card _state)
@@ -75,8 +113,9 @@
   =/  wallet=walt
     :*  (from-extended:bip32 xpub)
         (xpub-type:btc xpub)
-        [%.n 0 *wach]
-        [%.n 0 *wach]
+        *wach
+        %.n
+        [0 0]
     ==
   `state(wallets (~(put by wallets.state) xpub wallet))
 --
