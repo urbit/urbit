@@ -12,6 +12,7 @@ import {
 } from "~/types";
 import { Center, LoadingSpinner } from "@tlon/indigo-react";
 import { Notebook as INotebook } from "~/types/publish-update";
+import bigInt, { BigInteger } from 'big-integer';
 
 import Notebook from "./Notebook";
 import NewPost from "./new-post";
@@ -82,7 +83,7 @@ export function NotebookRoutes(
         path={relativePath("/note/:noteId")}
         render={(routeProps) => {
           const { noteId } = routeProps.match.params;
-          const noteIdNum = parseInt(noteId, 10);
+          const noteIdNum = bigInt(noteId)
 
           if(!graph) {
             return <Center height="100%"><LoadingSpinner /></Center>;

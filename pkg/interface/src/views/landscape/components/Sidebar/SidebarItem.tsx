@@ -24,12 +24,12 @@ function SidebarItemIndicator(props: { status?: SidebarItemStatus }) {
   }
 }
 
-const getAppIcon = (app: string, module: string) => {
+const getAppIcon = (app: string, mod: string) => {
   if (app === "graph") {
-    if (module === "link") {
+    if (mod === "link") {
       return "Links";
     }
-    return _.capitalize(module);
+    return _.capitalize(mod);
   }
   return _.capitalize(app);
 };
@@ -58,7 +58,7 @@ export function SidebarItem(props: {
   const { association, path, selected, apps, groups } = props;
   const title = getItemTitle(association);
   const appName = association?.["app-name"];
-  const module = association?.metadata?.module || appName;
+  const mod = association?.metadata?.module || appName;
   const appPath = association?.["app-path"];
   const groupPath = association?.["group-path"];
   const app = apps[appName];
@@ -74,8 +74,8 @@ export function SidebarItem(props: {
   const baseUrl = isUnmanaged ? `/~landscape/home` : `/~landscape${groupPath}`;
 
   const to = isSynced
-    ? `${baseUrl}/resource/${module}${appPath}`
-    : `${baseUrl}/join/${module}${appPath}`;
+    ? `${baseUrl}/resource/${mod}${appPath}`
+    : `${baseUrl}/join/${mod}${appPath}`;
 
   const color = selected ? "black" : isSynced ? "gray" : "lightGray";
 
@@ -101,7 +101,7 @@ export function SidebarItem(props: {
         <Icon
           display="block"
           color={color}
-          icon={getAppIcon(appName, module) as any}
+          icon={getAppIcon(appName, mod) as any}
         />
         <Box width='100%' flexShrink={2} ml={2} display='flex' overflow='hidden'>
           <Text

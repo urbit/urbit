@@ -1,5 +1,7 @@
 import { Post, GraphNode, TextContent, Graph, NodeMap } from "~/types";
 import { buntPost } from '~/logic/lib/post';
+import {BigIntOrderedMap} from "./BigIntOrderedMap";
+import bigInt from 'big-integer';
 
 export function newPost(
   title: string,
@@ -73,7 +75,7 @@ export function editPost(rev: number, noteId: number, title: string, body: strin
 }
 
 export function getLatestRevision(node: GraphNode): [number, string, string, Post] {
-  const revs = node.children.get(1);
+  const revs = node.children.get(bigInt(1));
   const empty = [1, "", "", buntPost()] as [number, string, string, Post];
   if(!revs) {
     return empty;
@@ -87,9 +89,9 @@ export function getLatestRevision(node: GraphNode): [number, string, string, Pos
 }
 
 export function getComments(node: GraphNode): GraphNode {
-  const comments = node.children.get(2);
+  const comments = node.children.get(bigInt(2));
   if(!comments) {
-    return { post: buntPost(), children: new Map() } 
+    return { post: buntPost(), children: new BigIntOrderedMap() } 
   }
   return comments;
 }
