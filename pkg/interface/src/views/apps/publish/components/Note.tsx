@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Box, Text, Col } from "@tlon/indigo-react";
 import ReactMarkdown from "react-markdown";
+import bigInt from 'big-integer';
+
 import { Link, RouteComponentProps } from "react-router-dom";
 import { Spinner } from "~/views/components/Spinner";
 import { Comments } from "./Comments";
@@ -19,7 +21,6 @@ interface NoteProps {
   api: GlobalApi;
   hideAvatars: boolean;
   hideNicknames: boolean;
-  baseUrl?: string;
   remoteContentPolicy: LocalUpdateRemoteContentPolicy;
   rootUrl: string;
   baseUrl: string;
@@ -40,7 +41,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
   const comments = getComments(note);
   const [revNum, title, body, post] = getLatestRevision(note);
  
-  const noteId = parseInt(note.post.index.split('/')[1], 10);
+  const noteId = bigInt(note.post.index.split('/')[1]);
 
   let adminLinks: JSX.Element | null = null;
   if (window.ship === note?.post?.author) {

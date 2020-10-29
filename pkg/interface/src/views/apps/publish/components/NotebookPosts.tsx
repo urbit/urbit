@@ -19,7 +19,7 @@ export function NotebookPosts(props: NotebookPostsProps) {
         ([date, node]) =>
           node && (
             <NotePreview
-              key={date}
+              key={date.toString()}
               host={props.host}
               book={props.book}
               contact={props.contacts[node.post.author]}

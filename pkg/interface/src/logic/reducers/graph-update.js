@@ -1,16 +1,6 @@
 import _ from 'lodash';
-import { OrderedMap } from "~/logic/lib/OrderedMap";
-
-const DA_UNIX_EPOCH = 170141184475152167957503069145530368000;
-const normalizeKey = (key) => {
-  if(key > DA_UNIX_EPOCH) {
-    // new links uses milliseconds since unix epoch
-    // old (pre-graph-store) use @da
-    // ported from +time:enjs:format in hoon.hoon
-    return Math.round((1000 * (9223372036854775 + (key - DA_UNIX_EPOCH))) / 18446744073709551616);
-  }
-  return key;
-}
+import { BigIntOrderedMap } from "~/logic/lib/BigIntOrderedMap";
+import bigInt, { BigInteger } from "big-integer";
 
 export const GraphReducer = (json, state) => {
   const data = _.get(json, 'graph-update', false);
@@ -38,33 +28,26 @@ const addGraph = (json, state) => {
   const _processNode = (node) => {
     //  is empty
     if (!node.children) {
-      node.children = new OrderedMap();
-      node.post.originalIndex = node.post.index;
-      node.post.index = node.post.index.split('/').map(x => x.length === 0 ? '' : normalizeKey(parseInt(x, 10))).join('/');
+      node.children = new BigIntOrderedMap();
       return node;
     }
 
     //  is graph
-    let converted = new OrderedMap();
+    let converted = new BigIntOrderedMap();
     for (let i in node.children) {
       let item = node.children[i];
       let index = item[0].split('/').slice(1).map((ind) => {
-        return parseInt(ind, 10);
+        return bigInt(ind);
       });
 
       if (index.length === 0) { break; }
-
-      const normalKey = normalizeKey(index[index.length - 1]);
-      item[1].post.originalKey = index[index.length - 1];
       
       converted.set(
-        normalKey,
+        index[index.length - 1],
         _processNode(item[1])
       );
     }
     node.children = converted;
-    node.post.originalIndex = node.post.index;
-    node.post.index = node.post.index.split('/').map(x => x.length === 0 ? '' : normalizeKey(parseInt(x, 10))).join('/');
     return node;
   };
 
@@ -75,21 +58,22 @@ const addGraph = (json, state) => {
     }
 
     let resource = data.resource.ship + '/' + data.resource.name;
-    state.graphs[resource] = new OrderedMap();
+    state.graphs[resource] = new BigIntOrderedMap();
 
     for (let i in data.graph) {
       let item = data.graph[i];
       let index = item[0].split('/').slice(1).map((ind) => {
-        return parseInt(ind, 10);
+        return bigInt(ind);
       });
 
       if (index.length === 0) { break; }
       
       let node = _processNode(item[1]);
 
-      const normalKey = normalizeKey(index[index.length - 1])
-      node.post.originalKey = index[index.length - 1];
-      state.graphs[resource].set(normalKey, node);
+      state.graphs[resource].set(
+        index[index.length - 1],
+        node
+      );
     }
     state.graphKeys.add(resource);
   }
@@ -108,7 +92,7 @@ const removeGraph = (json, state) => {
 };
 
 const mapifyChildren = (children) => {
-  return new OrderedMap(
+  return new BigIntOrderedMap(
     children.map(([idx, node]) => {
       const nd = {...node, children: mapifyChildren(node.children || []) }; 
       return [normalizeKey(parseInt(idx.slice(1), 10)), nd];
@@ -119,23 +103,18 @@ const addNodes = (json, state) => {
   const _addNode = (graph, index, node) => {
     //  set child of graph
     if (index.length === 1) {
-      node.post.originalIndex = node.post.index;
-      node.post.index = node.post.index.split('/').map(x => x.length === 0 ? '' : normalizeKey(parseInt(x, 10))).join('/');
-
-      const normalKey = normalizeKey(index[0])
-      node.post.originalKey = index[0];
-      graph.set(normalKey, node);
+      graph.set(index[0], node);
       return graph;
     }
 
     // set parent of graph
-    let parNode = graph.get(normalizeKey(index[0]));
+    let parNode = graph.get(index[0]);
     if (!parNode) {
       console.error('parent node does not exist, cannot add child');
       return;
     }
     parNode.children = _addNode(parNode.children, index.slice(1), node);
-    graph.set(normalizeKey(index[0]), parNode);
+    graph.set(index[0], parNode);
     return graph;
   };
 
@@ -151,7 +130,7 @@ const addNodes = (json, state) => {
       if (item[0].split('/').length === 0) { return; }
 
       let index = item[0].split('/').slice(1).map((ind) => {
-        return parseInt(ind, 10);
+        return bigInt(ind);
       });
 
       if (index.length === 0) { return; }
@@ -174,9 +153,9 @@ const removeNodes = (json, state) => {
     if (index.length === 1) {
         graph.delete(index[0]);
       } else {
-        const child = graph.get(normalizeKey(index[0]));
+        const child = graph.get(index[0]);
         _remove(child.children, index.slice(1));
-        graph.set(normalizeKey(index[0]), child);
+        graph.set(index[0], child);
       }
   };
   const data = _.get(json, 'remove-nodes', false);
@@ -188,7 +167,7 @@ const removeNodes = (json, state) => {
     data.indices.forEach((index) => {
       if (index.split('/').length === 0) { return; }
       let indexArr = index.split('/').slice(1).map((ind) => {
-        return parseInt(ind, 10);
+        return bigInt(ind);
       });
       _remove(state.graphs[res], indexArr);
     });
