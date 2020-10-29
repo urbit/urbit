@@ -3,9 +3,19 @@
 +$  legacy-address  $%([%legacy @uc])
 +$  bech32-address  $%([%bech32 cord])
 +$  address  ?(legacy-address bech32-address)
-+$  sats  @ud
-+$  hash  [wid=@ dat=@ux]
++$  bipt  $?(%bip44 %bip49 %bip84)
++$  sats  @ud  ::
++$  hash256  [wid=%32 dat=@ux]
++$  hash160  [wid=%20 dat=@ux]
++$  hash  ?(hash256 hash160)
 +$  buffer  (list @ux)
++$  utxo  [pos=@ tx-hash=hash256 block-height=@ value=sats]
+++  address-info
+  $:  =address
+      confirmed-value=sats
+      unconfirmed-value=sats
+      utxos=(set utxo)
+  ==
 ++  tx
   |%
   +$  unsigned
@@ -15,7 +25,7 @@
         outputs=(list output)
     ==
   +$  input
-    $:  tx-hash=byts
+    $:  tx-hash=hash256
         tx-index=@
         witness-ver=@
         sequence=byts
@@ -27,6 +37,7 @@
   +$  output
     $:  =address
         value=sats
+
     ==
   --
 ++  ops

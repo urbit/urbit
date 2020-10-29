@@ -3,11 +3,10 @@ The below requires norsyr's fix to `decompress-point` in order to work.
 
 ## Set Credentials and Ping Servers
 ```
-=rpc-pass '57669fe0365412f8b2152cba2aa6fbada8a9483f9f01fee24b05ed407b1c1635'
+=rpc-pass '302a586ef1d1d4d93f22b1c69cadfdfc8323b984c0f469356529b1a8fdd2558e'
 :btc-provider|command [%set-credentials [rpc-url='http://localhost:8332' rpc-user='__cookie__' rpc-pass] [rpc-url='http://localhost:50002']]
 
-:btc-provider|rpc-action [%brpc %get-block-count ~]
-:btc-provider|rpc-action [%erpc %get-address-balance [%bech32 'bc1q59u5epktervh6fxqay2dlph0wxu9hjnx6v8n66']]
+:btc-provider|action [%get-address-info [%bech32 'bc1q59u5epktervh6fxqay2dlph0wxu9hjnx6v8n66'']]
 ```
 
 ## Transactions
@@ -38,6 +37,7 @@ abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon 
 
 =xpub "zpub6rFR7y4Q2AijBEqTUquhVz398htDFrtymD9xYYfG1m4wAcvPhXNfE3EfH1r1ADqtfSdVCToUG868RvUUkgDKf31mGDtKsAYz2oz2AGutZYs"
 `@ux`(compress-point:ecc pub:(derive-public:(derive-public:(from-extended:bip32 xpub) 0) 0))
+::  gives 0x3.30d5.4fd0.dd42.0a6e.5f8d.3624.f5f3.482c.ae35.0f79.d5f0.753b.f5be.ef9c.2d91.af3c
 ::  gets 0 index in non-change account
 ```
 
@@ -152,7 +152,7 @@ Need to test with this because it shows need to input num bytes
 The below code also shows how to convert from bech32 back to a 20-byte hash. This is used for transaction building.
 ```
 =pubkey 0x2.79be.667e.f9dc.bbac.55a0.6295.ce87.0b07.029b.fcdb.2dce.28d9.59f2.815b.16f8.1798
-(encode-pubkey:bech32:btc %main pubkey)
+(encode-pubkey:bech32:btc %main pubkey)bbt
 ::  gives [~ %bech32 'bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4']
 
 `[@ @ux]`(hash-160:btc pubkey)

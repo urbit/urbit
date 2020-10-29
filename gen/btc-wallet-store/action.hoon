@@ -1,13 +1,13 @@
-::  Sends a raw RPC action to the BTC Provider
+::  Sends an action to btc-wallet-store
 ::
 ::  Commands:
 ::
 ::
 ::
-/-  *btc-provider
+/-  *btc-wallet-store
 ::
 :-  %say
 |=  $:  [now=@da eny=@uvJ =beak]
         [[act=action ~] ~]
 ==
-[%btc-provider-action act]
+[%btc-wallet-store-action act]
