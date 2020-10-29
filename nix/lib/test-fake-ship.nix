@@ -9,8 +9,6 @@ stdenvNoCC.mkDerivation {
   phases = [ "buildPhase" "installPhase" "checkPhase" ];
 
   buildPhase = ''
-    set -xeuo pipefail
-
     if ! [ -f "$SSL_CERT_FILE" ]; then
       header "$SSL_CERT_FILE doesn't exist"
       exit 1
