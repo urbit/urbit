@@ -1,7 +1,25 @@
 import _ from 'lodash';
 import f from 'lodash/fp';
+import bigInt from 'big-integer';
 
 export const MOBILE_BROWSER_REGEX = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i;
+
+const DA_UNIX_EPOCH = bigInt("170141184475152167957503069145530368000"); // `@ud` ~1970.1.1
+const DA_SECOND = bigInt("18446744073709551616"); // `@ud` ~s1
+export function daToUnix(da) {
+  // ported from +time:enjs:format in hoon.hoon
+  const offset = DA_SECOND.divide(bigInt(2000));
+  const epochAdjusted = offset.add(da.subtract(DA_UNIX_EPOCH));
+
+  return Math.round(
+    epochAdjusted.multiply(bigInt(1000)).divide(DA_SECOND).toJSNumber()
+  );
+}
+
+export function unixToDa(unix) {
+  const timeSinceEpoch =  bigInt(unix).multiply(DA_SECOND).divide(bigInt(1000));
+  return DA_UNIX_EPOCH.add(timeSinceEpoch);
+}
 
 export function appIsGraph(app) {
   return app === 'link' || app === 'publish';
