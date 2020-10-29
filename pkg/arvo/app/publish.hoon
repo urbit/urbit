@@ -335,9 +335,16 @@
       ^-  graph:graph-store
       %^  put:orm:graph-store
         *graph:graph-store  %1
+      =/  body=@t
+        =/  idx
+          (find ";>" file.note)
+        ?~  idx
+          file.note
+        %-  crip
+        (slag (add 2 u.idx) (trip file.note))
       %*  .  (blank-note-node note)
         index.post   ~[date-created.note %1 %1]
-        contents.post  ~[text+title.note text+filename.note]
+        contents.post  ~[text+title.note text+body]
       ==
     ::
     ++  comments-to-internal-graph
