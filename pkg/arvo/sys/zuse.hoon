@@ -367,7 +367,7 @@
     ++  pairs
       %+  cook
         ~(gas by *(map @t @t))
-      %+  more  (ifix [. .]:(star ace) mic)
+      %+  most  (ifix [. .]:(star ace) mic)
       ;~(plug token ;~(pose ;~(pfix tis value) (easy '')))
     ::
     ++  value
