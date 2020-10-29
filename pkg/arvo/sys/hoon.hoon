@@ -11096,6 +11096,39 @@
     =+  neg=~(open ap gen)
     ?:(=(neg gen) sut $(gen neg))
   ::
+  ++  caching-bake
+    |=  [dox=type hud=poly dab=(map term hoon)]
+    ^-  [* _grub]
+    ?:  ?=(~ dab)
+      [~ grub]
+    =^  dov  grub
+      ::  this seems wrong but it's actually right
+      ::
+      ?-  hud
+        %dry  (caching-mull %noun dox q.n.dab)
+        %wet  [~ grub]
+      ==
+    ?-  dab
+        [* ~ ~]
+      [dov grub]
+    ::
+        [* ~ *]
+      =^  rig  grub  $(dab r.dab)
+      :_  grub
+      [dov rig]
+    ::
+        [* * ~]
+      =^  rig  grub  $(dab l.dab)
+      :_  grub
+      [dov rig]
+    ::
+        [* * *]
+      =^  lef  grub  $(dab l.dab)
+      =^  rig  grub  $(dab r.dab)
+      :_  grub
+      [dov lef rig]
+    ==
+  ::
   ++  bake
     |=  [dox/type hud/poly dab/(map term hoon)]
     ^-  *
@@ -11113,6 +11146,33 @@
       {* ~ *}  [dov $(dab r.dab)]
       {* * ~}  [dov $(dab l.dab)]
       {* * *}  [dov $(dab l.dab) $(dab r.dab)]
+    ==
+  ::
+  ++  caching-balk
+    |=  [dox=type hud=poly dom=(map term tome)]
+    ^-  [* _grub]
+    ?:  ?=(~ dom)
+      [~ grub]
+    =^  dov  grub  (caching-bake dox hud q.q.n.dom)
+    ?-    dom
+        [* ~ ~]
+      [dov grub]
+    ::
+        [* ~ *]
+      =^  rig  grub  $(dom r.dom)
+      :_  grub
+      [dov rig]
+    ::
+        [* * ~]
+      =^  rig  grub  $(dom l.dom)
+      :_  grub
+      [dov rig]
+    ::
+        [* * *]
+      =^  lef  grub  $(dom l.dom)
+      =^  rig  grub  $(dom r.dom)
+      :_  grub
+      [dov lef rig]
     ==
   ::
   ++  balk
@@ -11696,6 +11756,12 @@
       $noun      |
       $void      &
     ==
+  ::  XX implement
+  ::
+  ++  caching-mull
+    |=  [gol=type dox=type gen=hoon]
+    ^-  [[p=type q=type] _grub]
+    !!
   ::
   ++  mull
     ~/  %mull
@@ -11860,7 +11926,16 @@
       =+  yaz=(mile(sut p.dan) q.dan mel nym hud dom)
       [(nice p.yaz) q.yaz]
     --
+  ::
   ++  meet  |=(ref/type &((nest | ref) (nest(sut ref) | sut)))
+  ::
+  ++  caching-meet
+    |=  ref=type
+    ^-  [? _grub]
+    =^  lef  grub  (caching-nest | ref)
+    =^  rig  grub  (caching-nest(sut ref) | sut)
+    :_  grub
+    &(lef rig)
   ::                                                    ::
   ++  miss                                              ::  nonintersection
     |=  $:  ::  ref: symmetric type
