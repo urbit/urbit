@@ -12776,9 +12776,9 @@
   ++  caching-take
     |=  [vit=vein duz=$-(type type)]
     ^-  [(pair axis type) _grub]
-    =-  =/  [=type =_grub]  -
-        :_  grub
-        [(tend vit) type]
+    =;  [=type =_grub]
+      :_  grub
+      [(tend vit) type]
     =.  vit  (flop vit)
     |-  ^-  [type _grub]
     ?~  vit
