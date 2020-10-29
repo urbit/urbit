@@ -336,8 +336,10 @@
       %^  put:orm:graph-store
         *graph:graph-store  %1
       =/  body=@t
+        =/  file
+          (trip file.note)
         =/  idx
-          (find ";>" file.note)
+          (find ";>" file)
         ?~  idx
           file.note
         %-  crip

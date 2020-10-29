@@ -7,14 +7,17 @@
 +$  card  card:agent:gall
 +$  versioned-state
   $%  state-0
+      state-1
   ==
 ::
 +$  state-0  [%0 network:store]
++$  state-1  [%1 network:store]
+::
 ++  orm      orm:store
 ++  orm-log  orm-log:store
 --
 ::
-=|  state-0
+=|  state-1
 =*  state  -
 ::
 %-  agent:dbug
@@ -27,9 +30,27 @@
 ++  on-init  [~ this]
 ++  on-save  !>(state)
 ++  on-load
-  |=  old=vase
+  |=  =old=vase
   ^-  (quip card _this)
-  [~ this(state !<(state-0 old))]
+  =+  !<(old=versioned-state old-vase)
+  =|  cards=(list card)
+  |-
+  ?-    -.old
+      %0  
+    %_    $
+      -.old  %1
+    ::
+        graphs.old
+      %-  ~(run by graphs.old)
+      |=  [=graph:store q=(unit mark)]
+      ^-  [graph:store (unit mark)]
+      :-  graph
+      ?^  q  q
+      `%graph-validator-link
+    ==
+  ::
+    %1  [cards this(state old)]
+  ==
 ::
 ++  on-watch
   ~/  %graph-store-watch
