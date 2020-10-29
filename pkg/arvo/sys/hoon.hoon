@@ -9731,18 +9731,6 @@
       ==
     --
   ::
-  ++  bleu
-    |=  {gol/type gen/hoon}
-    ^-  {type nock}
-    =+  pro=(mint gol gen)
-    =+  jon=(apex:musk bran q.pro)
-    ?:  |(?=(~ jon) ?=($wait -.u.jon))
-      ?:  &(!fab vet)
-        ~&  %bleu-fail
-        !!
-      [p.pro q.pro]
-    [p.pro %1 p.u.jon]
-  ::
   ++  blow
     |=  {gol/type gen/hoon}
     ^-  {type nock}
