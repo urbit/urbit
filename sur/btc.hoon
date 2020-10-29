@@ -3,7 +3,8 @@
 +$  legacy-address  $%([%legacy @uc])
 +$  bech32-address  $%([%bech32 cord])
 +$  address  ?(legacy-address bech32-address)
-+$  sats  @ud
++$  bipt  $?(%bip44 %bip49 %bip84)
++$  sats  @ud  ::
 +$  hash256  [wid=%32 dat=@ux]
 +$  hash160  [wid=%20 dat=@ux]
 +$  hash  ?(hash256 hash160)
