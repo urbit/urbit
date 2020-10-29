@@ -15,7 +15,7 @@ fi
 #
 if [ "$(head -c 7 "$IVORY")" = "version" ]; then
   echo "$IVORY is an LFS pointer (it starts with 'version')"
-  echo "to fix, run: git lfs install"
+  echo "to fix, run: git lfs install && git lfs fetch"
   exit 1
 fi
 
