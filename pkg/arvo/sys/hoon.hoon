@@ -10011,6 +10011,12 @@
     :+  %palm
       [['.' ~] ['-' ~] ~ ~]
     [[%leaf (mesc (trip paz))] duck ~]
+  ::  XX implement
+  ::
+  ++  caching-elbo
+    |=  [lop=palo rig=(list (pair wing hoon))]
+    ^-  [type _grub]
+    !!
   ::
   ++  elbo
     |=  {lop/palo rig/(list (pair wing hoon))}
@@ -10036,6 +10042,12 @@
       rig  t.rig
       hag  q.dix
     ==
+  ::  XX implement
+  ::
+  ++  caching-ergo
+    |=  [lop=palo rig=(list (pair wing hoon))]
+    ^-  [(pair type nock) _grub]
+    !!
   ::
   ++  ergo
     |=  {lop/palo rig/(list (pair wing hoon))}
@@ -10066,6 +10078,12 @@
       hag  q.dix
       hej  [[p.dix q.zil] hej]
     ==
+  ::  XX implement
+  ::
+  ++  caching-endo
+    |=  [lop=(pair palo palo) dox=type rig=(list (pair wing hoon))]
+    ^-  [(pair type type) _grub]
+    !!
   ::
   ++  endo
     |=  {lop/(pair palo palo) dox/type rig/(list (pair wing hoon))}
@@ -10299,6 +10317,12 @@
           ?>  ?=([%core *] a)
           [%core q.q.a q.a]
     ==
+  ::  XX implement
+  ::
+  ++  caching-feel
+    |=  rot=(list wing)
+    ^-  [? _grub]
+    !!
   ::                                                    ::
   ++  feel                                              ::  detect existence
     |=  rot/(list wing)
@@ -10726,6 +10750,11 @@
             %&  [`type`p.q.p.tor %0 axe]
             %|  [(fire ~(tap in q.q.p.tor)) [%9 p.q.p.tor %0 axe]]
     ==    ==
+  ::  XX implement
+  ++  caching-fire
+    |=  hag=(list [p=type q=foot])
+    ^-  [type _grub]
+    !!
   ::
   ++  fire
     |=  hag/(list {p/type q/foot})
@@ -10950,6 +10979,11 @@
       [%void grub]
     ==
   ::
+  ++  caching-gain
+    |=  gen=hoon
+    ^-  [type _grub]
+    (caching-chip & gen)
+  ::
   ++  gain
     ~/  %gain
     |=  gen/hoon  ^-  type
@@ -11058,10 +11092,21 @@
       ==         ==     ==
     --
   ::
+  ++  caching-lose
+    |=  gen=hoon
+    ^-  [type _grub]
+    (caching-chip | gen)
+  ::
   ++  lose
     ~/  %lose
     |=  gen/hoon  ^-  type
     (chip | gen)
+  ::  XX implement
+  ::
+  ++  caching-chip
+    |=  [how=? gen=hoon]
+    ^-  [type _grub]
+    !!
   ::
   ++  chip
     ~/  %chip
@@ -11175,6 +11220,17 @@
       {* * ~}   [dov $(dom l.dom)]
       {* * *}   [dov $(dom l.dom) $(dom r.dom)]
     ==
+  ::
+  ++  caching-mile
+    ::  mull all chapters and feet in a core
+    ::
+    |=  [dox=type mel=vair nym=(unit term) hud=poly dom=(map term tome)]
+    ^-  [(pair type type) _grub]
+    =/  yet  (core sut [nym hud %gold] sut (laze nym hud dom) dom)
+    =/  hum  (core dox [nym hud %gold] dox (laze nym hud dom) dom)
+    =^  val  grub  (caching-balk(sut yet) hum hud dom)
+    :_  grub
+    [yet hum]
   ::
   ++  mile
     ::  mull all chapters and feet in a core
@@ -12047,7 +12103,15 @@
         |(lef rig)
       ==
     --
+  ::
   ++  mite  |=(ref/type |((nest | ref) (nest(sut ref) & sut)))
+  ::
+  ++  caching-mite
+    |=  ref=type
+    =^  lef  grub  (caching-nest | ref)
+    =^  rig  grub  (caching-nest(sut ref) & sut)
+    :_  grub
+    |(lef rig)
   ::
   ++  caching-nest
     |=  [tel=? ref=type]
@@ -12835,6 +12899,7 @@
     =^  played  grub  (caching-play(sut p.leg) q.leg)
     :_  grub(res (~(put by res.grub) leg played))
     played
+  ::  XX provided function should deal with cache
   ::
   ++  caching-take
     |=  [vit=vein duz=$-(type type)]
@@ -12979,6 +13044,12 @@
     |=  vit/vein
     ^-  axis
     ?~(vit 1 (peg $(vit t.vit) ?~(i.vit 1 u.i.vit)))
+  ::  XX implement
+  ::
+  ++  caching-toss
+    |=  [hyp=wing mur=type men=(list [p=type q=foot])]
+    ^-  [[p=axis q=(list [p=type q=foot])] _grub]
+    !!
   ::
   ++  toss
     ~/  %toss
