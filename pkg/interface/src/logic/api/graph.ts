@@ -4,18 +4,28 @@ import { Patp, Path, PatpNoSig } from '~/types/noun';
 import _ from 'lodash';
 import {makeResource, resourceFromPath} from '../lib/group';
 import {GroupPolicy, Enc, Post, NodeMap} from '~/types';
-import { numToUd } from '~/logic/lib/util';
+import { numToUd, unixToDa } from '~/logic/lib/util';
 
 export const createPost = (contents: Object[], parentIndex: string = '') => {
   return {
     author: `~${window.ship}`,
-    index: parentIndex + '/' + Date.now(),
+    index: parentIndex + '/' + unixToDa(Date.now()).toString(),
     'time-sent': Date.now(),
     contents,
     hash: null,
     signatures: []
   };
 };
+
+function moduleToMark(mod: string): string | undefined {
+  if(mod === 'link') {
+    return 'graph-validator-link';
+  }
+  if(mod === 'publish') {
+    return 'graph-validator-publish';
+  }
+  return undefined;
+}
 
 export default class GraphApi extends BaseApi<StoreState> {
 
@@ -47,7 +57,8 @@ export default class GraphApi extends BaseApi<StoreState> {
         title,
         description,
         associated,
-        "module": mod
+        "module": mod,
+        mark: moduleToMark(mod)
       }
     });
   }
@@ -67,7 +78,8 @@ export default class GraphApi extends BaseApi<StoreState> {
         title,
         description,
         associated: { policy },
-        "module": mod
+        "module": mod,
+        mark: moduleToMark(mod)
       }
     });
   }
