@@ -11,21 +11,26 @@
 ::  wilt: stores xpub; copulates with thousands of indices to form addresses
 ::  walt: wallet metadata
 ::
-+$  addi  [idx=@ used=? utxos=(set utxo)]
++$  chyg  $?(%0 %1)
++$  addi  [=chyg idx=@ used=? utxos=(set utxo)]
 +$  wach  (map address addi)
-+$  chyg  [scanned=? next=@ =wach]
 +$  wilt  _bip32
 +$  walt
   $:  ::  bipt: BIP44/49/84
-      ::  ching: non-change addresses
-      ::  chang: change addresses
+      ::  ching: next index in non-change addresses
+      ::  chang: next index in change addresses
       ::
       =wilt
       =bipt
-      ching=chyg
-      chang=chyg
-  ==
+      =wach
+      scanned=?
+      [ching=@ chang=@]
+    ==
 +$  action
   $%  [%add-wallet xpub=tape]
+      [%update-address =address utxos=(set utxo)]
+  ==
++$  update
+  $%  [%address =address utxos=(set utxo)]
   ==
 --
