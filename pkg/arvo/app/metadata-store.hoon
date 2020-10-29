@@ -57,6 +57,7 @@
 +$  state-3   [%3 base-state-1]
 +$  state-4   [%4 base-state-1]
 +$  state-5   [%5 base-state-1]
++$  state-6   [%6 base-state-1]
 +$  versioned-state
   $%  state-0
       state-1
@@ -64,10 +65,11 @@
       state-3
       state-4
       state-5
+      state-6
   ==
 --
 ::
-=|  state-5
+=|  state-6
 =*  state  -
 %+  verb  |
 %-  agent:dbug
@@ -86,13 +88,13 @@
     =/  old  !<(versioned-state vase)
     =|  cards=(list card)
     |^
-    ?:  ?=(%5 -.old)
+    ?:  ?=(%6 -.old)
       [cards this(state old)]
-    ?:  ?=(%4 -.old)
+    ?:  ?=(%5 -.old)
       =/  =^associations
         (migrate-app-to-graph-store %publish associations.old)
       %_    $
-        -.old  %5
+        -.old  %6
         associations.old  associations
       ::
           resource-indices.old
@@ -104,9 +106,10 @@
           group-indices.old
         (rebuild-group-indices associations)
       ==
-    ?:  ?=(%3 -.old)
+
+    ?:  ?=(%4 -.old)
       %_    $
-        -.old  %4
+        -.old  %5
         ::
           resource-indices.old
         (rebuild-resource-indices associations.old)
@@ -117,6 +120,8 @@
           group-indices.old
         (rebuild-group-indices associations.old)
       ==
+    ?:  ?=(%3 -.old)
+      $(old [%4 +.old])
     ?:  ?=(%2 -.old)
       =/  new-state=state-3
         %*  .  *state-3
@@ -178,11 +183,16 @@
       |=  [app=@tas =^associations]
       ^+  associations
       %-  malt
-      %+  murn  ~(tap by associations)
+      %+  turn  ~(tap by associations)
       |=  [[=group-path =md-resource] m=metadata]
-      ^-  (unit [[^group-path ^md-resource] metadata])
-      ?.  =(app-name.md-resource app)  ~
-      `[[group-path [%graph app-path.md-resource]] m]
+      ^-  [[^group-path ^md-resource] metadata]
+      ?.  =(app-name.md-resource app)  
+        [[group-path md-resource] m]
+      =/  new-app-path=path
+        ?.  ?=([@ @ ~] app-path.md-resource)
+          app-path.md-resource
+        ship+app-path.md-resource
+      [[group-path [%graph new-app-path]] m(module app)]
     ::
     ++  poke-md-hook
       |=  act=metadata-hook-action
