@@ -10674,6 +10674,24 @@
       --
     ==
   ::
+  ++  caching-find
+    |=  [way=vial hyp=wing]
+    ^-  [port _grub]
+    ~_  (show [%c %find] %l hyp)
+    =^  val  grub  (caching-fond way hyp)
+    :_  grub
+    ?@  val  !!
+    ?-    -.val
+        %&
+      [%& p.val]
+    ::
+        %|
+      ?-  -.p.val
+        %|  [%| p.p.val]
+        %&  !!
+      ==
+    ==
+  ::
   ++  find
     ~/  %find
     |=  {way/vial hyp/wing}
@@ -12879,6 +12897,13 @@
                    %void
                  $(sut repo, vil (~(put in vil) sut))
     ==
+  ::
+  ++  caching-tack
+    |=  [hyp=wing mur=type]
+    ~_  (show [%c %tack] %l hyp)
+    =^  fid  grub  (caching-find %rite hyp)
+    ?>  ?=(%& -.fid)
+    (caching-take p.p.fid |=(type mur))
   ::
   ++  tack
     |=  {hyp/wing mur/type}
