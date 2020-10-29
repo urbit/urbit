@@ -49,7 +49,7 @@ let
   # Encode `oid` and `size` into a download operation per:
   # https://github.com/git-lfs/git-lfs/blob/master/docs/api/batch.md
   #
-  # This is done using toJSON to avoid bash quotation issuthe configurationes.
+  # This is done using toJSON to avoid bash quotation issues.
   downloadPayload = builtins.toJSON {
     operation = "download";
     objects = [ pointer ];

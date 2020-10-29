@@ -10,7 +10,7 @@ release:
 	sh/release
 
 test:
-	sh/test
+	nix-build -A urbit-tests --no-out-link
 
 pills:
 	sh/update-solid-pill
