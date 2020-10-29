@@ -337,18 +337,12 @@ ames env who isFake scry enqueueEv stderr = (initialEvents, runAmes)
         EachNo  addr -> to (ipv4Addr addr)
 
   scryVersion :: HasLogFunc e => RIO e (Maybe Version)
-  scryVersion = scry' ["protocol", "version"]
+  scryVersion = scryNow scry "ax" who "" ["protocol", "version"]
 
   scryLane :: HasLogFunc e
            => Ship
            -> RIO e (Maybe [AmesDest])
-  scryLane ship = scry' ["peers", tshow ship, "forward-lane"]
-
-  scry' :: forall e n
-         . (HasLogFunc e, FromNoun n)
-        => [Text]
-        -> RIO e (Maybe n)
-  scry' = scryNow scry "ax" who ""
+  scryLane ship = scryNow scry "ax" who "" ["peers", tshow ship, "forward-lane"]
 
   ipv4Addr (Jammed (AAVoid v  )) = absurd v
   ipv4Addr (Jammed (AAIpv4 a p)) = SockAddrInet (fromIntegral p) (unIpv4 a)
