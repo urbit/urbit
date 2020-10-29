@@ -5,28 +5,27 @@
 ::  To Subscribers:
 ::    watched address updates
 ::
-/+  dbug, default-agent
+/-  *btc-wallet-store
+/+  dbug, default-agent, bip32, btc
 |%
 +$  versioned-state
     $%  state-0
     ==
 ::
-+$  state-0  [%0 connected=?]
++$  state-0  [%0 wallets=(map tape walt)]
 ::
 +$  card  card:agent:gall
-+$  command
-  $?  %add-wallet
-  ==
 ::
 --
 =|  state-0
 =*  state  -
 %-  agent:dbug
 ^-  agent:gall
+=<
 |_  =bowl:gall
 +*  this      .
-    des   ~(. (default:shoe this command) bowl)
     def   ~(. (default-agent this %|) bowl)
+    hc    ~(. +> bowl)
 ::
 ++  on-init
   ^-  (quip card _this)
@@ -43,7 +42,13 @@
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
-  `this
+  ?>  (team:title our.bowl src.bowl)
+  =^  cards  state
+  ?+  mark  (on-poke:def mark vase)
+      %btc-wallet-store-action
+    (handle-action:hc !<(action vase))
+  ==
+  [cards this]
 ::
 ++  on-watch  on-watch:def
 ++  on-leave  on-leave:def
@@ -51,4 +56,27 @@
 ++  on-agent  on-agent:def
 ++  on-arvo   on-arvo:def
 ++  on-fail   on-fail:def
+--
+::
+|_  =bowl:gall
+++  handle-action
+  |=  act=action
+  ^-  (quip card _state)
+  ?-  -.act
+      %add-wallet
+    (add-wallet xpub.act)
+  ==
+++  add-wallet
+  |=  xpub=tape
+  ^-  (quip card _state)
+  ?:  (~(has by wallets.state) xpub)
+    ~&  >>>  "xpub already imported"
+    `state
+  =/  wallet=walt
+    :*  (from-extended:bip32 xpub)
+        (xpub-type:btc xpub)
+        [%.n 0 *wach]
+        [%.n 0 *wach]
+    ==
+  `state(wallets (~(put by wallets.state) xpub wallet))
 --

@@ -47,7 +47,7 @@
   ?>  ?|((team:title our.bowl src.bowl) (is-client:hc src.bowl))
   =^  cards  state
     ?:  ?=(%btc-provider-command mark)
-      ?>  (team:title our.bowl src.bowl)
+    ?>  (team:title our.bowl src.bowl)
       (handle-command:hc !<(command vase))
     ?+  mark  (on-poke:def mark vase)
         %btc-provider-action

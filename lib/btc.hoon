@@ -1,5 +1,13 @@
 /-  *btc
 |%
+++  xpub-type
+  |=  xpub=tape
+  ^-  bipt
+  =/  prefix=tape  (scag 4 xpub)
+  ?:  =("xpub" prefix)  %bip44
+  ?:  =("ypub" prefix)  %bip49
+  ?:  =("zpub" prefix)  %bip84
+  ~|("invalid xpub: {<xpub>}" !!)
 ::  big endian sha256: input and output are both MSB first (big endian)
 ::
 ++  sha256
