@@ -12755,6 +12755,93 @@
     :_  grub(res (~(put by res.grub) leg played))
     played
   ::
+  ++  caching-take
+    |=  [vit=vein duz=$-(type type)]
+    ^-  [(pair axis type) _grub]
+    =-  =/  [=type =_grub]  -
+        :_  grub
+        [(tend vit) type]
+    =.  vit  (flop vit)
+    |-  ^-  [type _grub]
+    ?~  vit
+      :_  grub
+      (duz sut)
+    ?~  i.vit
+      |-  ^-  [type _grub]
+      ?+  sut      ^$(vit t.vit)
+          [%face *]
+        =^  rig  grub  ^$(vit t.vit, sut q.sut)
+        :_  grub
+        (face p.sut rig)
+      ::
+          [%hint *]
+        =^  rig  grub  ^$(sut q.sut)
+        :_  grub
+        (hint p.sut rig)
+      ::
+          [%fork *]
+        =/  yed  ~(tap in p.sut)
+        =^  wiz  grub  (spin yed grub |=([=type =_grub] ^$(sut type)))
+        :_  grub
+        (fork wiz)
+      ::
+          [%hold *]
+        =^  rig  grub  caching-repo
+        $(sut rig)
+      ==
+    =|  vil=(set type)
+    |-  ^-  [type _grub]
+    ?:  =(1 u.i.vit)
+      ^$(vit t.vit)
+    =+  [now lat]=(cap u.i.vit)^(mas u.i.vit)
+    ?-  sut
+        %noun
+      $(sut [%cell %noun %noun])
+    ::
+        %void
+      [%void grub]
+    ::
+        [%atom *]
+      [%void grub]
+    ::
+        [%cell *]
+      ?:  =(2 now)
+        =^  lef  grub  $(sut p.sut, u.i.vit lat)
+        :_  grub
+        (cell lef q.sut)
+      =^  rig  grub  $(sut q.sut, u.i.vit lat)
+      :_  grub
+      (cell p.sut rig)
+    ::
+        [%core *]
+      ?:  =(2 now)
+        $(sut repo)
+      =^  lef  grub  $(sut p.sut, u.i.vit lat)
+      :_  grub
+      (core lef q.sut)
+    ::
+        [%face *]
+      =^  rig  grub  $(sut q.sut)
+      :_  grub
+      (face p.sut rig)
+    ::
+        [%fork *]
+      =/  yed  ~(tap in p.sut)
+      =^  wiz  grub  (spin yed grub |=([=type =_grub] ^$(sut type)))
+      :_  grub
+      (fork wiz)
+    ::
+        [%hint *]
+      =^  rig  grub  $(sut q.sut)
+      :_  grub
+      (hint p.sut rig)
+    ::
+        [%hold *]
+      ?:  (~(has in vil) sut)
+        [%void grub]
+      $(sut repo, vil (~(put in vil) sut))
+    ==
+  ::
   ++  take
     |=  {vit/vein duz/$-(type type)}
     ^-  (pair axis type)
