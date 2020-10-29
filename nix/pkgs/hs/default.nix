@@ -1,4 +1,4 @@
-{ lib, stdenv, darwin, haskell-nix, gmp, zlib, libffi
+{ lib, stdenv, darwin, haskell-nix, gmp, zlib, libffi, brass
 , enableStatic ? stdenv.hostPlatform.isStatic }:
 
 let
@@ -63,11 +63,9 @@ let
       ];
 
       packages = {
-        # Disable the urbit-king test-suite for now - since it relies
-        # on relative paths to lfs pills.
-        urbit-king.doCheck = false;
         urbit-king.components.exes.urbit-king.enableStatic = enableStatic;
         urbit-king.components.exes.urbit-king.enableShared = !enableStatic;
+
         urbit-king.components.exes.urbit-king.configureFlags =
           lib.optionals enableStatic [
             "--ghc-option=-optl=-L${gmp}/lib"
@@ -75,6 +73,9 @@ let
             "--ghc-option=-optl=-L${zlib}/lib"
           ] ++ lib.optionals (enableStatic && stdenv.isDarwin)
           [ "--ghc-option=-optl=-L${darwin.libiconv}/lib" ];
+
+        urbit-king.components.tests.urbit-king-tests.testFlags =
+          [ "--brass-pill=${brass.lfs}" ];
       };
     }];
   };

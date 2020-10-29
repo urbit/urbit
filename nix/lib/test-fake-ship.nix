@@ -2,7 +2,8 @@
 
 { urbit, herb, arvo ? null, pill, ship ? "bus" }:
 
-stdenvNoCC.mkDerivation {name = "test-${ship}";
+stdenvNoCC.mkDerivation {
+  name = "test-${ship}";
   buildInputs = [ cacert urbit herb ];
 
   phases = [ "buildPhase" "installPhase" "checkPhase" ];
@@ -104,34 +105,32 @@ stdenvNoCC.mkDerivation {name = "test-${ship}";
       echo ==== $1 ====
       echo =====$(sed 's/./=/g' <<< "$1")=====
     }
-    
+
     for f in $(find "$out/" -type f); do
       hdr "$(basename $f)"
       cat "$f"
     done
-    
+
     fail=0
-    
+
     for f in $(find "$out/" -type f); do
       if egrep "((FAILED|CRASHED)|(ford|warn):) " $f >/dev/null; then
         if [[ $fail -eq 0 ]]; then
           hdr "Test Failures"
         fi
-    
+
         echo "ERROR Test failure in $(basename $f)"
 
         ((fail++))
       fi
     done
-    
+
     if [[ $fail -eq 0 ]]; then
       hdr "Success"
     fi
-    
+
     exit "$fail"
   '';
 
-  meta = {
-    platforms = [ "x86_64-linux" "x86_64-darwin" ];
-  };
+  meta = { platforms = [ "x86_64-linux" "x86_64-darwin" ]; };
 }

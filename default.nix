@@ -22,6 +22,10 @@
      $ nix-build -A brass.build
      $ nix-build -A solid.build
 
+   Run the king-haskell tests:
+
+     $ nix-build -A hs.urbit-king.checks.urbit-king-tests
+
    Build a specific Haskell package from ./pkg/hs:
 
      $ nix-build -A hs.urbit-noun.components.library
