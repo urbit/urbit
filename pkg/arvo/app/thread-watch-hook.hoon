@@ -6,7 +6,6 @@
 /+  default-agent, dbug
 ::
 |%
-
 +$  card  card:agent:gall
 +$  versioned-state
   $%  state-0
@@ -50,33 +49,34 @@
   ?.  ?=(%thread-watch-action mark)
     (on-poke:def mark vase)
   =/  =action  !<(action vase)
+  =*  observer  observer.action
   =/  vals  (silt ~(val by observers))
   ?-  -.action
       %watch
-    ?:  ?|(=(app.action %spider) =(app.action %thread-watch-hook)) 
+    ?:  ?|(=(app.observer %spider) =(app.observer %thread-watch-hook)) 
       ~|('we avoid infinite loops' !!)
-    ?:  (~(has in vals) observer.action)
+    ?:  (~(has in vals) observer)
       ~|('duplicate observer' !!)
-    :_  this(observers.state (~(put by observers) now.bowl observer.action))  
+    :_  this(observers (~(put by observers) now.bowl observer))  
     :_  ~
     :*  %pass
         /observer/(scot %da now.bowl)
         %agent
-        [our.bowl app.action]
+        [our.bowl app.observer]
         %watch
-        path.action
+        path.observer
     == 
   ::
       %ignore
-    ?.  (~(has in vals) observer.action)
+    ?.  (~(has in vals) observer)
       ~|('cannot remove nonexistent observer' !!)
-    =/  key  (got-by-val observers observer.action)
-    :_  this(observers.state (~(del by observers) key))
+    =/  key  (got-by-val observers observer)
+    :_  this(observers (~(del by observers) key))
     :_  ~
     :*  %pass
         /observer/(scot %da key)
         %agent
-        [our.bowl app.action]
+        [our.bowl app.observer]
         %leave
         ~
     == 
@@ -85,32 +85,94 @@
 ++  on-agent
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)
-  ?+    -.sign  (on-agent:def wire sign)
+  ?-    -.sign
       %kick
-    ::  TODO: handle this by resubscribing... unless it's a
-    ::  thread-result kick
-    [~ this]
+    ?+    wire  (on-agent:def wire sign)
+        [%thread-result @ ~]  [~ this]
+        [%observer @ ~]
+      =/  =time  (slav %da i.t.wire)
+      =/  =observer  (~(got by observers) time)
+      :_  this
+      :_  ~
+      :*  %pass
+          wire
+          %agent
+          [our.bowl app.observer]
+          %watch
+          path.observer
+      == 
+    ==
   ::
       %poke-ack
-    ::  if thread start fails, delete observer!
-    [~ this]
+    ?.  ?=([%thread-start @ @ ~] wire)
+      (on-agent:def wire sign)
+    ?~  p.sign  [~ this]
+    =/  =time  (slav %da i.t.wire)
+    =/  tid  (slav %uv i.t.t.wire)
+    =/  =observer  (~(got by observers) time)
+    :_  this(observers (~(del by observers) time))
+    :~  :*  %pass
+            [%observer i.t.wire ~]
+            %agent
+            [our.bowl app.observer]
+            %leave
+            ~
+        ==
+        :*  %pass
+            wire
+            %agent
+            [our.bowl app.observer]
+            %leave
+            ~
+        == 
+    ==
   ::
       %watch-ack
-    ::  TODO: handle nack by deleting observer
-    [~ this]
+    ?~  p.sign  [~ this]
+    ?+    wire  (on-agent:def wire sign)
+        [%thread-result @ ~]  [~ this]
+        [%observer @ ~]
+      =/  =time  (slav %da i.t.wire)
+      [~ this(observers (~(del by observers) time))]
+    ==
   ::
       %fact
-    ?+    wire  (on-agent wire sign)
+    ?+    wire  (on-agent:def wire sign)
         [%thread-result @ ~]
-      ::  TODO: process whether the thread succeeded or failed and
-      ::  respond  accordingly
-      ::  spider: if we get a %thread-fail on a %thread-result fact... delete the
-      ::  observer
-      [~ this]
+      ?.  =(p.cage.sign %thread-fail)
+        [~ this]
+      =/  =time  (slav %da i.t.wire)
+      =/  =observer  (~(got by observers) time)
+      :_  this(observers (~(del by observers) time))
+      :_  ~
+      :*  %pass
+          [%observer i.t.wire ~]
+          %agent
+          [our.bowl app.observer]
+          %leave
+          ~
+      == 
     ::
         [%observer @ ~]
-      ::  TODO: spin up a thread to process input
-      [~ this]
+      =/  =time  (slav %da i.t.wire)
+      =/  =observer  (~(got by observers) time)
+      =/  tid  (scot %uv (sham eny.bowl))
+      :_  this
+      :~  :*  %pass
+              [%thread-start i.t.wire tid ~]
+              %agent
+              [our.bowl %spider]
+              %poke
+              %spider-start
+              !>([~ `tid thread.observer q.cage.sign])
+          ==
+          :*  %pass
+              [%thread-result tid ~]
+              %agent
+              [our.bowl %spider]
+              %watch
+              [%thread-result tid ~]
+      ==  == 
     ==
   ==
 ::
