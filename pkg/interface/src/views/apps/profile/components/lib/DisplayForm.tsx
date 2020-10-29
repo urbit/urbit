@@ -9,6 +9,7 @@ import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 
 import GlobalApi from '~/logic/api/global';
+import { uxToHex } from '~/logic/lib/util';
 import { S3State, BackgroundConfig } from '~/types';
 import { BackgroundPicker, BgType } from './BackgroundPicker';
 
@@ -17,7 +18,7 @@ const formSchema = Yup.object().shape({
     .oneOf(['none', 'color', 'url'], 'invalid')
     .required('Required'),
   bgUrl: Yup.string().url(),
-  bgColor: Yup.string().matches(/#([A-F]|[a-f]|[0-9]){6}/, 'Invalid color'),
+  bgColor: Yup.string(),
   avatars: Yup.boolean(),
   nicknames: Yup.boolean()
 });
@@ -57,7 +58,7 @@ export default function DisplayForm(props: DisplayFormProps) {
       initialValues={
         {
           bgType,
-          bgColor,
+          bgColor: bgColor || '',
           bgUrl,
           avatars: hideAvatars,
           nicknames: hideNicknames
@@ -66,7 +67,7 @@ export default function DisplayForm(props: DisplayFormProps) {
       onSubmit={(values, actions) => {
         const bgConfig: BackgroundConfig =
           values.bgType === 'color'
-            ? { type: 'color', color: values.bgColor || '' }
+            ? { type: 'color', color: `#${uxToHex(values.bgColor || '0x0')}` }
             : values.bgType === 'url'
             ? { type: 'url', url: values.bgUrl || '' }
             : undefined;
