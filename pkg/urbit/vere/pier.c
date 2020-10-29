@@ -1256,7 +1256,7 @@ _pier_pill_glass_arvo(c3_c* arv_c){
   return u3i_string(pill_c);
 }
 
-static c3_t _starts_with(c3_y* a, c3_y* b){
+static c3_t _starts_with(c3_c* a, c3_c* b){
   return (0 == strncmp( a, b, strlen(a)-1));
 }
 
@@ -1272,8 +1272,8 @@ _pier_pill_reglass(u3_noun* bot, c3_c* arv_c){
     return 0;
   }
 
-  c3_y lead_y[32] = {0};
-  u3r_bytes(0, 31, lead_y, src);
+  c3_c lead_y[32] = {0};
+  u3r_bytes(0, 31, (c3_y *)lead_y, src);
 
   if (!_starts_with("\n/sys/hoon/hoon\n", lead_y)){
     return 0;
