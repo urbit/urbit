@@ -38,6 +38,17 @@ To resume a fake ship, just pass the name of the pier:
 $ urbit my-fake-zod
 ```
 
+Fake ships by default use the same pre-compiled kernelspace ('pills') as livenet
+ships do: boot pills, which are not always current with `master`. If you wish to
+develop using code off the master branch, run the following from the repo
+directory:
+
+```
+git lfs install
+git lfs pull
+urbit -F zod -B "bin/solid.pill" -A "pkg/arvo"
+```
+
 ## Git practice
 
 ### Contributing

@@ -24,15 +24,18 @@
     */
 #     define u3a_bytes  (c3_w)((1 << (2 + u3a_bits)))
 
-    /* u3a_minimum: minimum number of words in a box.
-    **
-    **  wiseof(u3a_cell) + wiseof(u3a_box) + 1 (trailing siz_w)
+    /* u3a_cells: number of representable cells.
     */
-#ifdef U3_MEMORY_DEBUG
-#     define u3a_minimum   8
-#else
-#     define u3a_minimum   6
-#endif
+#     define u3a_cells  (c3_w)(u3a_words / u3a_minimum)
+
+    /* u3a_maximum: maximum loom object size (largest possible atom).
+    */
+#     define u3a_maximum   \
+        (c3_w)(u3a_words - (c3_wiseof(u3a_box) + c3_wiseof(u3a_atom)))
+
+    /* u3a_minimum: minimum loom object size (actual size of a cell).
+    */
+#     define u3a_minimum   (c3_w)(1 + c3_wiseof(u3a_box) + c3_wiseof(u3a_cell))
 
     /* u3a_fbox_no: number of free lists per size.
     */
@@ -414,6 +417,11 @@
           void
           u3a_wfree(void* lag_v);
 
+        /* u3a_wtrim(): trim storage.
+        */
+          void
+          u3a_wtrim(void* tox_v, c3_w old_w, c3_w len_w);
+
         /* u3a_wealloc(): word realloc.
         */
           void*
@@ -642,33 +650,6 @@
         */
           void
           u3a_deadbeef(void);
-
-      /* Atoms from proto-atoms.
-      */
-        /* u3a_slab(): create a length-bounded proto-atom.
-        */
-          c3_w*
-          u3a_slab(c3_w len_w);
-
-        /* u3a_slaq(): u3a_slab() with a defined blocksize.
-        */
-          c3_w*
-          u3a_slaq(c3_g met_g, c3_w len_w);
-
-        /* u3a_malt(): measure and finish a proto-atom.
-        */
-          u3_noun
-          u3a_malt(c3_w* sal_w);
-
-        /* u3a_moot(): finish a pre-measured proto-atom; dangerous.
-        */
-          u3_noun
-          u3a_moot(c3_w* sal_w);
-
-        /* u3a_mint(): finish a measured proto-atom.
-        */
-          u3_noun
-          u3a_mint(c3_w* sal_w, c3_w len_w);
 
         /* u3a_walk_fore(): preorder traversal, visits ever limb of a noun.
         **

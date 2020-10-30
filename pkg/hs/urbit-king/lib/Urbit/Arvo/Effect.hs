@@ -1,3 +1,9 @@
+{-# LANGUAGE StrictData #-}
+
+-- This is required due to the use of 'Void' in a constructor slot in
+-- combination with 'deriveNoun' which generates an unreachable pattern.
+{-# OPTIONS_GHC -Wno-overlapping-patterns #-}
+
 {-|
     Effect Types and Their Noun Conversions
 -}
@@ -6,6 +12,7 @@ module Urbit.Arvo.Effect where
 import Urbit.Noun.Time
 import Urbit.Prelude
 
+import Control.Monad.Fail (fail)
 import Urbit.Arvo.Common (KingId(..), ServId(..))
 import Urbit.Arvo.Common (Header, HttpEvent, HttpServerConf, Method, Mime)
 import Urbit.Arvo.Common (AmesDest, Turf)

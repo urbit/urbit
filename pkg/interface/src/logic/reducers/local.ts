@@ -8,7 +8,7 @@ type LocalState = Pick<StoreState, 'sidebarShown' | 'omniboxShown' | 'baseHash' 
 export default class LocalReducer<S extends LocalState> {
     rehydrate(state: S) {
       try {
-        const json = JSON.parse(localStorage.getItem('localReducer') || '');
+        const json = JSON.parse(localStorage.getItem('localReducer') || '{}');
         _.forIn(json, (value, key) => {
           state[key] = value;
         });

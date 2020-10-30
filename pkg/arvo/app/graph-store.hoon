@@ -188,7 +188,7 @@
           =/  =hash:store  `@ux`(sham validated-portion)
           ?~  hash.p  node(signatures.post *signatures:store)
           ~|  "signatures do not match the calculated hash"
-          ?>  (are-signatures-valid:sigs signatures.p hash now.bowl)
+          ?>  (are-signatures-valid:sigs our.bowl signatures.p hash now.bowl)
           ~|  "hash of post does not match calculated hash"
           ?>  =(hash u.hash.p)
           node
@@ -296,7 +296,7 @@
           ~|  "cannot add signatures to a node missing a hash"
           ?>  ?=(^ hash.post.node)
           ~|  "signatures did not match public keys!"
-          ?>  (are-signatures-valid:sigs signatures u.hash.post.node now.bowl)
+          ?>  (are-signatures-valid:sigs our.bowl signatures u.hash.post.node now.bowl)
           node(signatures.post (~(uni in signatures) signatures.post.node))
         ~|  "child graph does not exist to add signatures to!"
         ?>  ?=(%graph -.children.node)
@@ -474,6 +474,22 @@
       now.bowl
     [%add-graph [ship term] `graph:store`p.u.result q.u.result]
   ::
+      ::  note: near-duplicate of /x/graph
+      ::
+      [%x %archive @ @ ~]
+    =/  =ship   (slav %p i.t.t.path)
+    =/  =term   i.t.t.t.path
+    =/  result=(unit marked-graph:store)
+      (~(get by archive) [ship term])
+    ?~  result
+      ~&  no-archived-graph+[ship term]
+      [~ ~]
+    :-  ~  :-  ~  :-  %graph-update
+    !>  ^-  update:store
+    :+  %0
+      now.bowl
+    [%add-graph [ship term] `graph:store`p.u.result q.u.result]
+  ::
       [%x %graph-subset @ @ @ @ ~]
     =/  =ship  (slav %p i.t.t.path)
     =/  =term  i.t.t.t.path
@@ -532,6 +548,15 @@
       ^-  [index:store node:store]
       [(snoc index atom) node]
     ==
+  ::
+      [%x %update-log-subset @ @ @ @ ~]
+    =/  =ship   (slav %p i.t.t.path)
+    =/  =term   i.t.t.t.path
+    =/  start=(unit time)  (slaw %da i.t.t.t.t.path)
+    =/  end=(unit time)    (slaw %da i.t.t.t.t.t.path)
+    =/  update-log=(unit update-log:store)  (~(get by update-logs) [ship term])
+    ?~  update-log  [~ ~]
+    ``noun+!>((subset:orm-log u.update-log start end))
   ::
       [%x %update-log @ @ ~]
     =/  =ship   (slav %p i.t.t.path)

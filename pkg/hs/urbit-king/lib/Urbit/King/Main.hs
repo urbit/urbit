@@ -90,11 +90,8 @@ import Urbit.King.App
 
 import Control.Concurrent     (myThreadId)
 import Control.Exception      (AsyncException(UserInterrupt))
-import Control.Lens           ((&))
 import System.Process         (system)
 import System.IO              (hPutStrLn)
-import Text.Show.Pretty       (pPrint)
-import Urbit.Noun.Conversions (cordToUW)
 import Urbit.Noun.Time        (Wen)
 import Urbit.Vere.LockFile    (lockFile)
 
@@ -141,12 +138,12 @@ toSerfFlags CLI.Opts{..} = catMaybes m
     setFrom True flag = Just flag
     setFrom False _   = Nothing
 
-toPierConfig :: FilePath -> CLI.Opts -> PierConfig
-toPierConfig pierPath o@(CLI.Opts{..}) = PierConfig { .. }
+toPierConfig :: FilePath -> Maybe Text -> CLI.Opts -> PierConfig
+toPierConfig pierPath serfExe o@(CLI.Opts{..}) = PierConfig { .. }
  where
   _pcPierPath  = pierPath
   _pcDryRun    = oDryRun || isJust oDryFrom
-  _pcSerfExe   = oSerfExe
+  _pcSerfExe   = serfExe
   _pcSerfFlags = toSerfFlags o
 
 toNetworkConfig :: CLI.Opts -> NetworkConfig
@@ -175,10 +172,10 @@ logStderr action = do
   logFunc <- view stderrLogFuncL
   runRIO logFunc action
 
-logSlogs :: HasStderrLogFunc e => RIO e (TVar (Text -> IO ()))
+logSlogs :: HasStderrLogFunc e => RIO e (TVar ((Atom, Tank) -> IO ()))
 logSlogs = logStderr $ do
   env <- ask
-  newTVarIO (runRIO env . logOther "serf" . display . T.strip)
+  newTVarIO (runRIO env . logOther "serf" . display . T.strip . tankToText . snd)
 
 tryBootFromPill
   :: Bool
@@ -190,7 +187,7 @@ tryBootFromPill
 tryBootFromPill oExit pill lite ship boot = do
   mStart <- newEmptyMVar
   vSlog  <- logSlogs
-  runOrExitImmediately vSlog (bootedPier vSlog) oExit mStart
+  runOrExitImmediately vSlog (bootedPier vSlog) oExit mStart []
  where
   bootedPier vSlog = do
     view pierPathL >>= lockFile
@@ -200,12 +197,13 @@ tryBootFromPill oExit pill lite ship boot = do
     pure sls
 
 runOrExitImmediately
-  :: TVar (Text -> IO ())
+  :: TVar ((Atom, Tank) -> IO ())
   -> RAcquire PierEnv (Serf, Log.EventLog)
   -> Bool
   -> MVar ()
+  -> [Ev]
   -> RIO PierEnv ()
-runOrExitImmediately vSlog getPier oExit mStart = do
+runOrExitImmediately vSlog getPier oExit mStart injected = do
   rwith getPier (if oExit then shutdownImmediately else runPier)
  where
   shutdownImmediately :: (Serf, Log.EventLog) -> RIO PierEnv ()
@@ -216,18 +214,19 @@ runOrExitImmediately vSlog getPier oExit mStart = do
 
   runPier :: (Serf, Log.EventLog) -> RIO PierEnv ()
   runPier serfLog = do
-    runRAcquire (Pier.pier serfLog vSlog mStart)
+    runRAcquire (Pier.pier serfLog vSlog mStart injected)
 
 tryPlayShip
   :: Bool
   -> Bool
   -> Maybe Word64
   -> MVar ()
+  -> [Ev]
   -> RIO PierEnv ()
-tryPlayShip exitImmediately fullReplay playFrom mStart = do
+tryPlayShip exitImmediately fullReplay playFrom mStart injected = do
   when fullReplay wipeSnapshot
   vSlog <- logSlogs
-  runOrExitImmediately vSlog (resumeShip vSlog) exitImmediately mStart
+  runOrExitImmediately vSlog (resumeShip vSlog) exitImmediately mStart injected
  where
   wipeSnapshot = do
     shipPath <- view pierPathL
@@ -240,7 +239,8 @@ tryPlayShip exitImmediately fullReplay playFrom mStart = do
   north shipPath = shipPath <> "/.urb/chk/north.bin"
   south shipPath = shipPath <> "/.urb/chk/south.bin"
 
-  resumeShip :: TVar (Text -> IO ()) -> RAcquire PierEnv (Serf, Log.EventLog)
+  resumeShip :: TVar ((Atom, Tank) -> IO ())
+             -> RAcquire PierEnv (Serf, Log.EventLog)
   resumeShip vSlog = do
     view pierPathL >>= lockFile
     rio $ logInfo "RESUMING SHIP"
@@ -490,6 +490,7 @@ newShip CLI.New{..} opts = do
       eny <- io $ Sys.randomIO
       let seed = mineComet (Set.fromList starList) eny
       putStrLn ("boot: found comet " ++ renderShip (sShip seed))
+      putStrLn ("code: " ++ (tshow $ deriveCode $ sRing seed))
       bootFromSeed pill seed
 
     CLI.BootFake name -> do
@@ -551,16 +552,17 @@ newShip CLI.New{..} opts = do
                        -> RIO HostEnv ()
     runTryBootFromPill pill name ship bootEvent = do
       vKill <- view (kingEnvL . kingEnvKillSignal)
-      let pierConfig = toPierConfig (pierPath name) opts
+      let pierConfig = toPierConfig (pierPath name) nSerfExe opts
       let networkConfig = toNetworkConfig opts
       runPierEnv pierConfig networkConfig vKill $
         tryBootFromPill True pill nLite ship bootEvent
 
-runShipEnv :: CLI.Run -> CLI.Opts -> TMVar () -> RIO PierEnv a -> RIO HostEnv a
-runShipEnv (CLI.Run pierPath) opts vKill act = do
+runShipEnv :: Maybe Text -> CLI.Run -> CLI.Opts -> TMVar () -> RIO PierEnv a
+           -> RIO HostEnv a
+runShipEnv serfExe (CLI.Run pierPath) opts vKill act = do
   runPierEnv pierConfig netConfig vKill act
  where
-  pierConfig = toPierConfig pierPath opts
+  pierConfig = toPierConfig pierPath serfExe opts
   netConfig = toNetworkConfig opts
 
 runShip
@@ -583,11 +585,28 @@ runShip (CLI.Run pierPath) opts daemon = do
   where
     runPier :: MVar () -> RIO PierEnv ()
     runPier mStart = do
+      injections <- loadInjections (CLI.oInjectEvents opts)
       tryPlayShip
         (CLI.oExit opts)
         (CLI.oFullReplay opts)
         (CLI.oDryFrom opts)
         mStart
+        injections
+
+    loadInjections :: [CLI.Injection] -> RIO PierEnv [Ev]
+    loadInjections injections = do
+      perInjection :: [[Ev]] <- for injections $ \case
+          CLI.InjectOneEvent filePath -> do
+            logInfo $ display $ "boot: reading injected event from " ++
+              (pack filePath :: Text)
+            io (loadFile filePath >>= either throwIO (pure . singleton))
+
+          CLI.InjectManyEvents filePath -> do
+            logInfo $ display $ "boot: reading injected event list from " ++
+              (pack filePath :: Text)
+            io (loadFile filePath >>= either throwIO pure)
+      pure $ concat perInjection
+
 
 
 buildPortHandler :: HasLogFunc e => CLI.Nat -> RIO e PortControlApi
@@ -700,19 +719,17 @@ main = do
 
   Once `waitForKillRequ` returns, the ship will be terminated and this
   routine will exit.
-
-  TODO Use logging system instead of printing.
 -}
 runShipRestarting
-  :: CLI.Run -> CLI.Opts -> RIO HostEnv ()
-runShipRestarting r o = do
+  :: Maybe Text -> CLI.Run -> CLI.Opts -> RIO HostEnv ()
+runShipRestarting serfExe r o = do
   let pier = pack (CLI.rPierPath r)
-      loop = runShipRestarting r o
+      loop = runShipRestarting serfExe r o
 
   onKill    <- view onKillKingSigL
   vKillPier <- newEmptyTMVarIO
 
-  tid <- asyncBound $ runShipEnv r o vKillPier $ runShip r o True
+  tid <- asyncBound $ runShipEnv serfExe r o vKillPier $ runShip r o True
 
   let onShipExit = Left <$> waitCatchSTM tid
       onKillRequ = Right <$> onKill
@@ -727,6 +744,7 @@ runShipRestarting r o = do
       loop
     Right () -> do
       logTrace $ display (pier <> " shutdown requested")
+      atomically $ putTMVar vKillPier ()
       race_ (wait tid) $ do
         threadDelay 5_000_000
         logInfo $ display (pier <> " not down after 5s, killing with fire.")
@@ -737,11 +755,11 @@ runShipRestarting r o = do
   TODO This is messy and shared a lot of logic with `runShipRestarting`.
 -}
 runShipNoRestart
-  :: CLI.Run -> CLI.Opts -> Bool -> RIO HostEnv ()
-runShipNoRestart r o d = do
+  :: Maybe Text -> CLI.Run -> CLI.Opts -> Bool -> RIO HostEnv ()
+runShipNoRestart serfExe r o d = do
   -- killing ship same as killing king
   vKill  <- view (kingEnvL . kingEnvKillSignal)
-  tid    <- asyncBound (runShipEnv r o vKill $ runShip r o d)
+  tid    <- asyncBound (runShipEnv serfExe r o vKill $ runShip r o d)
   onKill <- view onKillKingSigL
 
   let pier = pack (CLI.rPierPath r)
@@ -780,14 +798,14 @@ runShips CLI.Host {..} ships = do
   go :: [(CLI.Run, CLI.Opts, Bool)] ->  RIO HostEnv ()
   go = \case
     []    -> pure ()
-    [rod] -> runSingleShip rod
-    ships -> runMultipleShips (ships <&> \(r, o, _) -> (r, o))
+    [rod] -> runSingleShip hSerfExe rod
+    ships -> runMultipleShips hSerfExe (ships <&> \(r, o, _) -> (r, o))
 
 
 -- TODO Duplicated logic.
-runSingleShip :: (CLI.Run, CLI.Opts, Bool) -> RIO HostEnv ()
-runSingleShip (r, o, d) = do
-  shipThread <- async (runShipNoRestart r o d)
+runSingleShip :: Maybe Text -> (CLI.Run, CLI.Opts, Bool) -> RIO HostEnv ()
+runSingleShip serfExe (r, o, d) = do
+  shipThread <- async (runShipNoRestart serfExe r o d)
 
   {-
     Wait for the ship to go down.
@@ -807,10 +825,10 @@ runSingleShip (r, o, d) = do
     pure ()
 
 
-runMultipleShips :: [(CLI.Run, CLI.Opts)] -> RIO HostEnv ()
-runMultipleShips ships = do
+runMultipleShips :: Maybe Text -> [(CLI.Run, CLI.Opts)] -> RIO HostEnv ()
+runMultipleShips serfExe ships = do
   shipThreads <- for ships $ \(r, o) -> do
-    async (runShipRestarting r o)
+    async (runShipRestarting serfExe r o)
 
   {-
     Since `spin` never returns, this will run until the main

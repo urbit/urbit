@@ -10,6 +10,7 @@ module Urbit.Vere.Dawn ( dawnVent
                        , mix
                        , shas
                        , shaf
+                       , deriveCode
                        , cometFingerprintBS
                        , cometFingerprint
                        ) where
@@ -18,7 +19,6 @@ import Urbit.Arvo.Common
 import Urbit.Arvo.Event  hiding (Address)
 import Urbit.Prelude     hiding (Call, rights, to, (.=))
 
-import Data.Bifunctor                (bimap)
 import Data.Bits                     (xor)
 import Data.List                     (nub)
 import Data.Text                     (splitOn)
@@ -350,10 +350,10 @@ validateShipAndGetSponsor endpoint block (Seed ship life ring oaf) =
       -- A comet address is the fingerprint of the keypair
       let shipFromPass = cometFingerprint $ ringToPass ring
       when (ship /= shipFromPass) $
-        fail ("comet name doesn't match fingerprint " <> show ship <> " vs " <>
+        error ("comet name doesn't match fingerprint " <> show ship <> " vs " <>
               show shipFromPass)
       when (life /= 1) $
-        fail ("comet can never be re-keyed")
+        error ("comet can never be re-keyed")
       pure (shipSein ship)
 
     validateMoon = do
@@ -367,14 +367,14 @@ validateShipAndGetSponsor endpoint block (Seed ship life ring oaf) =
 
       whoP <- retrievePoint endpoint block ship
       case epNet whoP of
-        Nothing -> fail "ship not keyed"
+        Nothing -> error "ship not keyed"
         Just (netLife, pass, contNum, (hasSponsor, who), _) -> do
           when (netLife /= life) $
-              fail ("keyfile life mismatch; keyfile claims life " <>
+              error ("keyfile life mismatch; keyfile claims life " <>
                     show life <> ", but Azimuth claims life " <>
                     show netLife)
           when ((ringToPass ring) /= pass) $
-              fail "keyfile does not match blockchain"
+              error "keyfile does not match blockchain"
           -- TODO: The hoon code does a breach check, but the C code never
           -- supplies the data necessary for it to function.
           pure who
@@ -390,16 +390,16 @@ getSponsorshipChain endpoint block = loop
       ethPoint <- retrievePoint endpoint block ship
 
       case (clanFromShip ship, epNet ethPoint) of
-        (Ob.Comet, _) -> fail "Comets cannot be sponsors"
-        (Ob.Moon, _)  -> fail "Moons cannot be sponsors"
+        (Ob.Comet, _) -> error "Comets cannot be sponsors"
+        (Ob.Moon, _)  -> error "Moons cannot be sponsors"
 
         (_, Nothing) ->
-            fail $ unpack ("Ship " <> renderShip ship <> " not booted")
+            error $ unpack ("Ship " <> renderShip ship <> " not booted")
 
         (Ob.Galaxy, Just _) -> pure [(ship, ethPoint)]
 
         (_, Just (_, _, _, (False, _), _)) ->
-            fail $ unpack ("Ship " <> renderShip ship <> " has no sponsor")
+            error $ unpack ("Ship " <> renderShip ship <> " has no sponsor")
 
         (_, Just (_, _, _, (True, sponsor), _)) -> do
             chain <- loop sponsor
@@ -461,8 +461,11 @@ mix a b = BS.pack $ loop (BS.unpack a) (BS.unpack b)
     loop [] b          = b
     loop (x:xs) (y:ys) = (xor x y) : loop xs ys
 
+shax :: BS.ByteString -> BS.ByteString
+shax = SHA256.hash
+
 shas :: BS.ByteString -> BS.ByteString -> BS.ByteString
-shas salt = SHA256.hash . mix salt . SHA256.hash
+shas salt = shax . mix salt . shax
 
 shaf :: BS.ByteString -> BS.ByteString -> BS.ByteString
 shaf salt ruz = (mix a b)
@@ -470,6 +473,18 @@ shaf salt ruz = (mix a b)
     haz = shas salt ruz
     a = (take 16 haz)
     b = (drop 16 haz)
+
+-- Given a ring, derives the network login code.
+--
+-- Note that the network code is a patp, not a patq: the bytes have been
+-- scrambled.
+deriveCode :: Ring -> Ob.Patp
+deriveCode Ring {..} = Ob.patp $
+                       bytesAtom $
+                       take 8 $
+                       shaf (C.pack "pass") $
+                       shax $
+                       C.singleton 'B' <> ringSign <> ringCrypt
 
 cometFingerprintBS :: Pass -> ByteString
 cometFingerprintBS = (shaf $ C.pack "bfig") . passToBS

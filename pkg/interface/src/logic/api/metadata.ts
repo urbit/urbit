@@ -1,11 +1,12 @@
 
 import BaseApi from './base';
 import { StoreState } from '../store/type';
-import { Path, Patp } from '~/types/noun';
+import { Path, Patp, Association, Metadata } from '~/types';
 
 export default class MetadataApi extends BaseApi<StoreState> {
 
-  metadataAdd(appName: string, appPath: Path, groupPath: Path, title: string, description: string, dateCreated: string, color: string) {
+
+  metadataAdd(appName: string, appPath: Path, groupPath: Path, title: string, description: string, dateCreated: string, color: string, moduleName: string) {
     const creator = `~${this.ship}`;
     return this.metadataAction({
       add: {
@@ -19,8 +20,23 @@ export default class MetadataApi extends BaseApi<StoreState> {
           description,
           color,
           'date-created': dateCreated,
-          creator
+          creator,
+          'module': moduleName
         }
+      }
+    });
+  }
+
+  update(association: Association, newMetadata: Partial<Metadata>) {
+    const metadata = {...association.metadata, ...newMetadata };
+    return this.metadataAction({ 
+      add: {
+        'group-path': association['group-path'], 
+        resource: {
+          'app-path': association['app-path'],
+          'app-name': association['app-name'],
+        },
+        metadata
       }
     });
   }

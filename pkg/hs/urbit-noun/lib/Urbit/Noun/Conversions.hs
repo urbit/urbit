@@ -18,6 +18,7 @@ module Urbit.Noun.Conversions
 import ClassyPrelude hiding (hash)
 
 import Control.Lens         hiding (Each, Index, (<.>))
+import Control.Monad.Fail   (fail)
 import Data.Void
 import Data.Word
 import Text.Regex.TDFA
@@ -34,7 +35,7 @@ import GHC.Types        (Char(C#))
 import GHC.Word         (Word32(W32#))
 import Prelude          ((!!))
 import RIO.FilePath     (joinPath, splitDirectories, takeBaseName,
-                         takeDirectory, takeExtension, (<.>))
+                         takeDirectory, takeExtension)
 import Urbit.Noun.Cue   (cue)
 import Urbit.Noun.Jam   (jam)
 import Urbit.Ob         (patp)

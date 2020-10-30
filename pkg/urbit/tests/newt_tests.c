@@ -343,6 +343,10 @@ main(int argc, char* argv[])
   _test_newt_smol();
   _test_newt_vast();
 
+  //  GC
+  //
+  u3m_grab(u3_none);
+
   fprintf(stderr, "test_newt: ok\n");
 
   return 0;

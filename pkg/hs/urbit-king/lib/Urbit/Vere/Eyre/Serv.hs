@@ -16,8 +16,6 @@
   TODO How to detect socket closed during server run?
 -}
 
-{-# OPTIONS_GHC -Wno-deprecations #-}
-
 module Urbit.Vere.Eyre.Serv
   ( ServApi(..)
   , TlsConfig(..)
@@ -54,7 +52,7 @@ import qualified Urbit.Vere.Eyre.Wai         as E
 -- Internal Types --------------------------------------------------------------
 
 data ServApi = ServApi
-  { saKil :: STM ()
+  { saKil :: IO ()
   , saPor :: STM W.Port
   }
 
@@ -140,8 +138,12 @@ openFreePort hos = do
       Right ps -> pure (Right ps)
  where
   doBind sok = do
-    adr <- Net.inet_addr hos
-    Net.bind sok (Net.SockAddrInet Net.defaultPort adr)
+    adr <-
+      Net.getAddrInfo Nothing (Just hos) Nothing >>= \case
+        []     -> error ("unable to determine numeric hostname from " ++ hos)
+        ip : _ -> pure (Net.addrAddress ip)
+ 
+    Net.bind sok adr
     Net.listen sok 1
     port <- Net.socketPort sok
     pure (fromIntegral port, sok)
@@ -332,14 +334,12 @@ getFirstTlsConfig (MTC var) = do
 realServ :: HasLogFunc e => TVar E.LiveReqs -> ServConf -> RIO e ServApi
 realServ vLive conf@ServConf {..} = do
   logInfo (displayShow ("EYRE", "SERV", "Running Real Server"))
-  kil <- newEmptyTMVarIO
   por <- newEmptyTMVarIO
 
   tid <- async (runServ por)
-  _   <- async (atomically (takeTMVar kil) >> cancel tid)
 
   pure $ ServApi
-    { saKil = void (tryPutTMVar kil ())
+    { saKil = cancel tid
     , saPor = readTMVar por
     }
  where

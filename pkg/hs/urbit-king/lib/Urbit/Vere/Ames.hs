@@ -1,3 +1,7 @@
+-- This is required due to the use of 'Void' in a constructor slot in
+-- combination with 'deriveNoun' which generates an unreachable pattern.
+{-# OPTIONS_GHC -Wno-overlapping-patterns #-}
+
 {-|
   Ames IO Driver
 -}
@@ -66,6 +70,7 @@ localhost = tupleToHostAddress (127, 0, 0, 1)
 
 inaddrAny :: HostAddress
 inaddrAny = tupleToHostAddress (0, 0, 0, 0)
+ 
 
 modeAddress :: NetworkMode -> Maybe HostAddress
 modeAddress = \case
@@ -149,7 +154,7 @@ ames' who isFake scry stderr = do
       vail <- readTVar avail
       if vail > 0
         then do
-          modifyTVar avail (subtract 1)
+          modifyTVar' avail (subtract 1)
           writeTQueue ventQ p
           pure Intake
         else do

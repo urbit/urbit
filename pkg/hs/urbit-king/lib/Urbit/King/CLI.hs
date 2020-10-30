@@ -20,6 +20,7 @@ data Host = Host
   { hSharedHttpPort  :: Maybe Word16
   , hSharedHttpsPort :: Maybe Word16
   , hUseNatPmp       :: Nat
+  , hSerfExe         :: Maybe Text
   }
  deriving (Show)
 
@@ -43,7 +44,7 @@ data Opts = Opts
     , oHttpPort     :: Maybe Word16
     , oHttpsPort    :: Maybe Word16
     , oLoopbackPort :: Maybe Word16
-    , oSerfExe      :: Maybe Text
+    , oInjectEvents :: [Injection]
     }
   deriving (Show)
 
@@ -77,12 +78,18 @@ data Nat
   | NatNever
   deriving (Show)
 
+data Injection
+  = InjectOneEvent   FilePath
+  | InjectManyEvents FilePath
+  deriving (Show)
+
 data New = New
     { nPillSource :: PillSource
     , nPierPath   :: Maybe FilePath -- Derived from ship name if not specified.
     , nArvoDir    :: Maybe FilePath
     , nBootType   :: BootType
     , nLite       :: Bool
+    , nSerfExe    :: Maybe Text
     }
   deriving (Show)
 
@@ -220,6 +227,27 @@ pillFromURL = PillSourceURL <$> strOption
 pierPath :: Parser FilePath
 pierPath = strArgument (metavar "PIER" <> help "Path to pier")
 
+injectEvents :: Parser [Injection]
+injectEvents = many $ InjectOneEvent <$> strOption
+                        ( short 'I'
+                       <> long "inject-event"
+                       <> metavar "JAM"
+                       <> help "Path to a jammed event"
+                       <> hidden)
+                  <|> InjectManyEvents <$> strOption
+                        ( long "inject-event-list"
+                       <> metavar "JAM_LIST"
+                       <> help "Path to a jammed list of events"
+                       <> hidden)
+
+serfExe :: Parser (Maybe Text)
+serfExe =  optional
+    $  strOption
+    $  metavar "PATH"
+    <> long "serf"
+    <> help "Path to serf binary to run ships in"
+    <> hidden
+
 new :: Parser New
 new = do
     nPierPath <- optional pierPath
@@ -239,6 +267,8 @@ new = do
                    <> long "arvo"
                    <> value Nothing
                    <> help "Replace initial clay filesys with contents of PATH"
+
+    nSerfExe <- serfExe
 
     pure New{..}
 
@@ -295,13 +325,7 @@ opts = do
       <> help "Localhost-only HTTP port"
       <> hidden
 
-    oSerfExe <-
-      optional
-      $  strOption
-      $  metavar "PATH"
-      <> long "serf"
-      <> help "Path to Serf"
-      <> hidden
+    oInjectEvents <- injectEvents
 
     oHashless  <- switch $ short 'S'
                         <> long "hashless"
@@ -450,6 +474,8 @@ host = do
     <> hidden
      ) <|>
      (pure $ NatWhenPrivateNetwork)
+
+  hSerfExe <- serfExe
 
   pure (Host{..})
 

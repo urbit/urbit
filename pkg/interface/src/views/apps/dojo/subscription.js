@@ -14,6 +14,32 @@ export default class Subscription {
     } else {
       console.error('~~~ ERROR: Must set api.ship before operation ~~~');
     }
+    this.setupSlog();
+  }
+
+  setupSlog() {
+    let available = false;
+    const slog = new EventSource('/~_~/slog', { withCredentials: true });
+
+    slog.onopen = e => {
+      console.log('slog: opened stream');
+      available = true;
+    }
+
+    slog.onmessage = e => {
+      this.handleEvent({ txt: e.data });
+    }
+
+    slog.onerror = e => {
+      console.error('slog: eventsource error:', e);
+      if (available) {
+        window.setTimeout(() => {
+          if (slog.readyState !== EventSource.CLOSED) return;
+          console.log('slog: reconnecting...');
+          this.setupSlog();
+        }, 10000);
+      }
+    }
   }
 
   delete() {
