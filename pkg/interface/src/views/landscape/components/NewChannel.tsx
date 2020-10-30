@@ -108,6 +108,9 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
   };
   return (
     <Col overflowY="auto" p={3}>
+      <Box pb='3' display={['block', 'none']} onClick={() => history.push(props.baseUrl)}>
+        {'<- Back'}
+      </Box>
       <Box fontWeight="bold" mb={4} color="black">
         New Channel
       </Box>
