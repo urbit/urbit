@@ -87,7 +87,7 @@ export function Sidebar(props: SidebarProps) {
   const [config, setConfig] = useLocalStorageState<SidebarListConfig>(
     `group-config:${groupPath || "home"}`,
     {
-      sortBy: "asc",
+      sortBy: "lastUpdated",
       hideUnjoined: false,
     }
   );
