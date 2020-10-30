@@ -48,7 +48,7 @@ export function CommentItem(props: CommentItemProps) {
           showImage
           contacts={contacts}
           ship={commentData?.author}
-          date={commentData["date-created"]}
+          date={commentData?.["time-sent"]}
           hideAvatars={props.hideAvatars}
           hideNicknames={props.hideNicknames}
         >
