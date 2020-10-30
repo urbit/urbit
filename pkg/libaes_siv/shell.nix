@@ -1,6 +1,8 @@
-{ pkgs ? import <nixpkgs> {} }:
-with pkgs;
-stdenv.mkDerivation {
+let
+
+  pkgs = import ../../default.nix { };
+
+in pkgs.shellFor {
   name = "libaes_siv";
-  buildInputs = [ cmake openssl ];
+  packages = ps: [ ps.libaes_siv ];
 }
