@@ -1,3 +1,4 @@
+import React from 'react';
 import _ from 'lodash';
 import f from 'lodash/fp';
 import bigInt from 'big-integer';
@@ -324,4 +325,13 @@ export function numToUd(num) {
     f.map(s => s.join('')),
     f.join('.')
   )(num.toString())
+}
+
+export function usePreventWindowUnload(shouldPreventDefault) {
+  React.useEffect(() => {
+    if (!shouldPreventDefault) return;
+    const handleBeforeUnload = event => event.preventDefault();
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [shouldPreventDefault]);
 }
