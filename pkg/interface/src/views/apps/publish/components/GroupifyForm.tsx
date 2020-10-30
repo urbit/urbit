@@ -6,7 +6,7 @@ import { Notebook } from "~/types/publish-update";
 import { Contacts } from "~/types/contact-update";
 
 import { MetadataForm } from "./MetadataForm";
-import { Groups, Associations } from "~/types";
+import { Groups, Associations, Association } from "~/types";
 import { Formik, FormikHelpers, Form } from "formik";
 import GroupSearch from "~/views/components/GroupSearch";
 import { AsyncButton } from "~/views/components/AsyncButton";
@@ -22,10 +22,10 @@ interface FormSchema {
 interface GroupifyFormProps {
   host: string;
   book: string;
-  notebook: Notebook;
   groups: Groups;
   api: GlobalApi;
   associations: Associations;
+  association: Association;
 }
 
 export function GroupifyForm(props: GroupifyFormProps) {
@@ -34,14 +34,16 @@ export function GroupifyForm(props: GroupifyFormProps) {
     actions: FormikHelpers<FormSchema>
   ) => {
     try {
-      await props.api.publish.groupify(props.book, values.group);
+      await props.api.graph.groupifyGraph(
+        `~${window.ship}`, props.book, 'publish', values.group || undefined);
       actions.setStatus({ success: null });
     } catch (e) {
+      console.error(e);
       actions.setStatus({ error: e.message });
     }
   };
 
-  const groupPath = props.notebook?.["writers-group-path"];
+  const groupPath = props.association?.['group-path'];
 
   const isUnmanaged = props.groups?.[groupPath]?.hidden || false;
 
