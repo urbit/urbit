@@ -15,6 +15,7 @@ export default class CodeContent extends Component {
           mono
           p='1'
           my='0'
+          borderRadius='1'
           fontSize='14px'
           overflow='auto'
           maxHeight='10em'
@@ -33,6 +34,7 @@ export default class CodeContent extends Component {
           mono
           my='0'
           p='1'
+          borderRadius='1'
           fontSize='14px'
           overflow='auto'
           maxHeight='10em'
