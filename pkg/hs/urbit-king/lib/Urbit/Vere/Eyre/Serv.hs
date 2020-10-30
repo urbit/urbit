@@ -54,7 +54,7 @@ import qualified Urbit.Vere.Eyre.Wai         as E
 -- Internal Types --------------------------------------------------------------
 
 data ServApi = ServApi
-  { saKil :: STM ()
+  { saKil :: IO ()
   , saPor :: STM W.Port
   }
 
@@ -332,14 +332,12 @@ getFirstTlsConfig (MTC var) = do
 realServ :: HasLogFunc e => TVar E.LiveReqs -> ServConf -> RIO e ServApi
 realServ vLive conf@ServConf {..} = do
   logInfo (displayShow ("EYRE", "SERV", "Running Real Server"))
-  kil <- newEmptyTMVarIO
   por <- newEmptyTMVarIO
 
   tid <- async (runServ por)
-  _   <- async (atomically (takeTMVar kil) >> cancel tid)
 
   pure $ ServApi
-    { saKil = void (tryPutTMVar kil ())
+    { saKil = cancel tid
     , saPor = readTMVar por
     }
  where
