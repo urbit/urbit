@@ -58,7 +58,7 @@ const SidebarStickySpacer = styled(Box)`
 const inviteItems = (invites, api) => {
   const returned = [];
   Object.keys(invites).filter((e) => {
-    return e !== '/contacts';
+    return e !== 'contacts';
   }).map((appKey) => {
     const app = invites[appKey];
     Object.keys(app).map((uid) => {
@@ -122,12 +122,12 @@ export function Sidebar(props: SidebarProps) {
         workspace={props.workspace}
       />
       <SidebarListHeader
-        contacts={props.contacts} 
+        contacts={props.contacts}
         baseUrl={props.baseUrl}
         groups={props.groups}
         initialValues={config}
         handleSubmit={setConfig}
-        selected={selected || ""} 
+        selected={selected || ""}
         workspace={workspace} />
       {sidebarInvites}
       <SidebarList
