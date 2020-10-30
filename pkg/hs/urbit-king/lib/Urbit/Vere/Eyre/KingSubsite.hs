@@ -73,19 +73,22 @@ kingSubsite who scry func = do  --TODO  unify who into scry
       (\(id, _) -> atomically $ modifyTVar' clients (deleteMap id))
       (\(_, q) -> do
         authed <- authenticated env req
-        if not authed then
-          respond $ W.responseLBS (H.mkStatus 403 "Permission Denied") [] ""
-        else
-          let loop = yield Flush >> forever (atomically (readTQueue q) >>= streamSlog)
-          in  respond $ W.responseSource (H.mkStatus 200 "OK") heads loop)
+        if not authed
+          then respond $ emptyResponse 403 "Permission Denied"
+          else
+            let loop = yield Flush >>
+                       forever (atomically (readTQueue q) >>= streamSlog)
+            in  respond $ W.responseSource (H.mkStatus 200 "OK") heads loop)
 
-    _ -> respond $ W.responseLBS (H.mkStatus 404 "Not Found") [] ""
+    _ -> respond $ emptyResponse 404 "Not Found"
 
   where
     heads = [ ("Content-Type" , "text/event-stream")
             , ("Cache-Control", "no-cache")
             , ("Connection"   , "keep-alive")
             ]
+
+    emptyResponse cod mes = W.responseLBS (H.mkStatus cod mes) [] ""
 
     authenticated env req = runRIO env
                           $ (scryAuth $ getCookie req)
@@ -100,11 +103,11 @@ kingSubsite who scry func = do  --TODO  unify who into scry
               => Text
               -> RIO e (Maybe Bool)
     scryAuth cookie =
-      scryNow scry "ex" who "" $ ["authenticated", "cookie", textAsTa cookie]
+      scryNow scry "ex" who "" ["authenticated", "cookie", textAsTa cookie]
 
 fourOhFourSubsite :: Ship -> KingSubsite
 fourOhFourSubsite who = KS $ \req respond ->
   respond $ W.responseLBS (H.mkStatus 404 "Not Found") [] body
   where
     body = toLazyByteString $ foldMap charUtf8 $ msg
-    msg  = "Ship " <> (show who) <> " not docked."
+    msg  = "Ship " <> show who <> " not docked."
