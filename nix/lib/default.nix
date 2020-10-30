@@ -3,10 +3,10 @@
 let
 
   # Fetchers + Import from derivations (IFDs)
-  fetchers = {
+  fetchers = rec {
     bootFakeShip = callPackage ./boot-fake-ship.nix { };
 
-    testFakeShip = callPackage ./test-fake-ship.nix { };
+    testFakeShip = callPackage ./test-fake-ship.nix { inherit bootFakeShip; };
 
     fetchGitHubLFS = callPackage ./fetch-github-lfs.nix { };
 

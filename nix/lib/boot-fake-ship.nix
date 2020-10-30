@@ -10,8 +10,6 @@ stdenvNoCC.mkDerivation {
   phases = [ "buildPhase" "installPhase " ];
 
   buildPhase = ''
-    set -xeuo pipefail
-
     if ! [ -f "$SSL_CERT_FILE" ]; then
       header "$SSL_CERT_FILE doesn't exist"
       exit 1
@@ -20,6 +18,8 @@ stdenvNoCC.mkDerivation {
     ARVO=${if arvo == null then "" else arvo}
     PILL=${pill}
     SHIP=${ship}
+
+    set -xeuo pipefail
 
     if [ -z "$ARVO" ]; then
       urbit -d -F "$SHIP" -B "$PILL" ./pier

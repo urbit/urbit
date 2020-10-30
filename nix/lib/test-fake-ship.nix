@@ -1,38 +1,36 @@
-{ stdenvNoCC, cacert }:
+{ stdenvNoCC, cacert, python3, bootFakeShip }:
 
-{ urbit, herb, arvo ? null, pill, ship ? "bus" }:
+{ urbit, herb, arvo ? null, pill, ship ? "bus", doCheck ? true }:
 
 stdenvNoCC.mkDerivation {
-  name = "test-${ship}";
-  buildInputs = [ cacert urbit herb ];
+  inherit doCheck;
 
-  phases = [ "buildPhase" "installPhase" "checkPhase" ];
+  name = "test-${ship}";
+  src = bootFakeShip { inherit urbit herb arvo pill ship; };
+  phases = [ "unpackPhase" "buildPhase" "checkPhase" ];
+  buildInputs = [ cacert urbit herb python3 ];
+
+  unpackPhase = ''
+    cp -R $src ./pier
+    chmod -R u+rw ./pier
+  '';
 
   buildPhase = ''
-    if ! [ -f "$SSL_CERT_FILE" ]; then
-      header "$SSL_CERT_FILE doesn't exist"
-      exit 1
-    fi
+    set -x
 
-    ARVO=${if arvo == null then "" else arvo}
-    PILL=${pill}
-    SHIP=${ship}
+    urbit -d ./pier 2> urbit-output
 
-    if [ -z "$ARVO" ]; then
-      urbit -d -F $SHIP -B $PILL ./pier 2> urbit-output
-    else
-      urbit -d -F $SHIP -A $ARVO -B $PILL ./pier 2> urbit-output
-    fi
+    # Sledge Hammer!
+    # See: https://github.com/travis-ci/travis-ci/issues/4704#issuecomment-348435959
+    python3 -c $'import os\n[os.set_blocking(i, True) for i in range(3)]\n'
 
-    tail -f urbit-output >&2 &
+    tail -F urbit-output >&2 &
+
     tailproc=$!
 
     cleanup () {
-      if [ -e ./pier/.vere.lock ]; then
-        kill $(< ./pier/.vere.lock) || true
-      fi
-
-      kill "$tailproc" || true
+      kill $(cat ./pier/.vere.lock) || true
+      kill "$tailproc" 2>/dev/null || true
 
       set +x
     }
@@ -71,13 +69,13 @@ stdenvNoCC.mkDerivation {
     herb ./pier -p hood -d '+hood/mass'
     herb ./pier -p hood -d '+hood/exit'
 
+    cleanup
+
     # Collect output
     cp urbit-output test-output-unit
     cp urbit-output test-output-agents
     cp urbit-output test-output-generators
     cp urbit-output test-output-marks
-
-    rm urbit-output
 
     sed -i '0,/test-unit-start/d'        test-output-unit
     sed -i '/test-unit-end/,$d'          test-output-unit
@@ -90,11 +88,10 @@ stdenvNoCC.mkDerivation {
 
     sed -i '0,/test-marks-start/d'       test-output-marks
     sed -i '/test-marks-end/,$d'         test-output-marks
-  '';
 
-  installPhase = ''
-    mkdir $out
-    cp -r test-output-* $out/
+    mkdir -p $out
+
+    cp test-output-* $out/
   '';
 
   checkPhase = ''
