@@ -119,6 +119,7 @@ export function Sidebar(props: SidebarProps) {
         associations={associations}
         recentGroups={props.recentGroups}
         baseUrl={props.baseUrl}
+        isAdmin={isAdmin}
         workspace={props.workspace}
       />
       <SidebarListHeader
