@@ -16,7 +16,11 @@ export class BigIntOrderedMap<V> implements Iterable<[BigInteger, V]> {
   private root: MapNode<V> = null;
   size: number = 0;
 
-  constructor() {}
+  constructor(initial: [BigInteger, V][] = []) {
+    initial.forEach(([key, val]) => {
+      this.set(key, val);
+    });
+  }
 
   /**
    *  Retrieve an value for a key
