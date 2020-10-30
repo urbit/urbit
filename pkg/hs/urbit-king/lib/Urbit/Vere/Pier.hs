@@ -26,7 +26,7 @@ import Urbit.Vere.Pier.Types
 
 import Control.Monad.STM      (retry)
 import System.Environment     (getExecutablePath)
-import System.FilePath        (splitFileName, (</>))
+import System.FilePath        (splitFileName)
 import System.Posix.Files     (ownerModes, setFileMode)
 import Urbit.EventLog.LMDB    (EventLog)
 import Urbit.King.API         (TermConn)

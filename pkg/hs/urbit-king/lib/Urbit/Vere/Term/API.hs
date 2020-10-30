@@ -13,6 +13,7 @@ import Urbit.Prelude hiding (trace)
 
 import Urbit.Arvo (Belt, Blit)
 
+import Control.Monad.Fail (fail)
 import Urbit.TermSize
 
 -- External Types --------------------------------------------------------------
