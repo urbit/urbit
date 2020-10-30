@@ -1,7 +1,29 @@
 import _ from 'lodash';
 import f from 'lodash/fp';
+import bigInt from 'big-integer';
 
 export const MOBILE_BROWSER_REGEX = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i;
+
+const DA_UNIX_EPOCH = bigInt("170141184475152167957503069145530368000"); // `@ud` ~1970.1.1
+const DA_SECOND = bigInt("18446744073709551616"); // `@ud` ~s1
+export function daToUnix(da) {
+  // ported from +time:enjs:format in hoon.hoon
+  const offset = DA_SECOND.divide(bigInt(2000));
+  const epochAdjusted = offset.add(da.subtract(DA_UNIX_EPOCH));
+
+  return Math.round(
+    epochAdjusted.multiply(bigInt(1000)).divide(DA_SECOND).toJSNumber()
+  );
+}
+
+export function unixToDa(unix) {
+  const timeSinceEpoch =  bigInt(unix).multiply(DA_SECOND).divide(bigInt(1000));
+  return DA_UNIX_EPOCH.add(timeSinceEpoch);
+}
+
+export function appIsGraph(app) {
+  return app === 'link' || app === 'publish';
+}
 
 export function parentPath(path) {
   return _.dropRight(path.split('/'), 1).join('/');
@@ -256,3 +278,50 @@ export function stringToSymbol(str) {
   return result;
 }
 
+export function scrollIsAtTop(container) {
+  if (
+    (navigator.userAgent.includes("Safari") &&
+      navigator.userAgent.includes("Chrome")) ||
+    navigator.userAgent.includes("Firefox")
+  ) {
+    return container.scrollTop === 0;
+  } else if (navigator.userAgent.includes("Safari")) {
+    return (
+      container.scrollHeight + Math.round(container.scrollTop) <=
+      container.clientHeight + 10
+    );
+  } else {
+    return false;
+  }
+}
+
+export function scrollIsAtBottom(container) {
+  if (
+    (navigator.userAgent.includes("Safari") &&
+      navigator.userAgent.includes("Chrome")) ||
+    navigator.userAgent.includes("Firefox")
+  ) {
+    return (
+      container.scrollHeight - Math.round(container.scrollTop) <=
+      container.clientHeight + 10
+    );
+  } else if (navigator.userAgent.includes("Safari")) {
+    return container.scrollTop === 0;
+  } else {
+    return false;
+  }
+}
+
+/**
+ * Formats a numbers as a `@ud` inserting dot where needed
+ */
+export function numToUd(num) {
+  return f.flow(
+    f.split(''),
+    f.reverse,
+    f.chunk(3),
+    f.reverse,
+    f.map(s => s.join('')),
+    f.join('.')
+  )(num.toString())
+}

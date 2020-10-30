@@ -53,7 +53,7 @@ export function MarkdownEditor(
 
   return (
     <Box
-      flexGrow={1}
+      height="100%"
       position="static"
       className="publish"
       p={1}

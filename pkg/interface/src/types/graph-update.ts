@@ -1,4 +1,5 @@
-import {Patp} from "./noun";
+import { Patp } from "./noun";
+import { BigIntOrderedMap } from "~/logic/lib/BigIntOrderedMap";
 
 
 export interface TextContent { text: string; };
@@ -10,7 +11,7 @@ export type Content =  TextContent | UrlContent | CodeContent | ReferenceContent
 export interface Post {
   author: Patp;
   contents: Content[];
-  hash?: string;
+  hash: string | null;
   index: string;
   pending?: boolean;
   signatures: string[];
@@ -23,7 +24,7 @@ export interface GraphNode {
   post: Post;
 }
 
-export type Graph = Map<number, GraphNode>;
+export type Graph = BigIntOrderedMap<GraphNode>;
 
 export type Graphs = { [rid: string]: Graph };
 

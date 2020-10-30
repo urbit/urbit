@@ -7,13 +7,20 @@ import ReactMarkdown from "react-markdown";
 import moment from "moment";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import { GraphNode } from "~/types/graph-update";
+import {
+  getComments,
+  getLatestRevision,
+  getSnippet,
+} from "~/logic/lib/publish";
 
 interface NotePreviewProps {
   host: string;
   book: string;
-  note: Note;
+  node: GraphNode;
   contact?: Contact;
   hideNicknames?: boolean;
+  baseUrl: string;
 }
 
 const WrappedBox = styled(Box)`
@@ -21,46 +28,62 @@ const WrappedBox = styled(Box)`
 `;
 
 export function NotePreview(props: NotePreviewProps) {
-  const { note, contact } = props;
+  const { node, contact } = props;
+  const { post } = node;
+  if (!post) {
+    return null;
+  }
 
-  let name = note.author;
+  let name = post?.author;
   if (contact && !props.hideNicknames) {
-    name = contact.nickname.length > 0 ? contact.nickname : note.author;
+    name = contact.nickname.length > 0 ? contact.nickname : post?.author;
   }
-  if (name === note.author) {
-    name = cite(note.author);
+  if (name === post?.author) {
+    name = cite(post?.author);
   }
-  let comment = "No Comments";
-  if (note["num-comments"] == 1) {
-    comment = "1 Comment";
-  } else if (note["num-comments"] > 1) {
-    comment = `${note["num-comments"]} Comments`;
-  }
-  const date = moment(note["date-created"]).fromNow();
-  const url = `${props.book}/note/${note["note-id"]}`;
+
+  const numComments = getComments(node).children.size;
+  const commentDesc =
+    numComments === 0
+      ? "No Comments"
+      : numComments === 1
+      ? "1 Comment"
+      : `${numComments} Comments`;
+  const date = moment(post["time-sent"]).fromNow();
+  const url = `${props.baseUrl}/note/${post.index.split("/")[1]}`;
+
+  // stubbing pending notification-store
+  const isRead = true;
+
+  const [rev, title, body] = getLatestRevision(node);
+
+  const snippet = getSnippet(body);
 
   return (
     <Link to={url}>
       <Col mb={4}>
-        <WrappedBox mb={1}>{note.title}</WrappedBox>
+        <WrappedBox mb={1}>{title}</WrappedBox>
         <WrappedBox mb={1}>
           <ReactMarkdown
             unwrapDisallowed
             allowedTypes={["text", "root", "break", "paragraph"]}
-            source={note.snippet}
+            source={snippet}
           />
         </WrappedBox>
         <Box color="gray" display="flex">
           <Box
             mr={3}
-            fontFamily={contact?.nickname && !props.hideNicknames ? "sans" : "mono"}
+            fontFamily={
+              contact?.nickname && !props.hideNicknames ? "sans" : "mono"
+            }
           >
             {name}
           </Box>
-          <Box color={note.read ? "gray" : "green"} mr={3}>
+          <Box color={isRead ? "gray" : "green"} mr={3}>
             {date}
           </Box>
-          <Box>{comment}</Box>
+          <Box mr={3}>{commentDesc}</Box>
+          <Box>{rev === 1 ? `1 Revision` : `${rev} Revisions`}</Box>
         </Box>
       </Col>
     </Link>
