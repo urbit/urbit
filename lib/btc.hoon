@@ -1,4 +1,7 @@
-/-  *btc
+/-  sur=btc
+^?
+=<  [sur .]
+=,  sur
 |%
 ++  xpub-type
   |=  xpub=tape
@@ -264,6 +267,7 @@
     (my [[%main "bc"] [%testnet "tb"] ~])
   ++  charset  "qpzry9x8gf2tvdw0s3jn54khce6mua7l"
   +$  raw-decoded  [hrp=tape data=(list @) checksum=(list @)]
+  ::  below is a port of: https://github.com/bitcoinjs/bech32/blob/master/index.js
   ::
   ++  polymod
     |=  values=(list @)
