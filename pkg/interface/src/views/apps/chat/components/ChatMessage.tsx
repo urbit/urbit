@@ -229,6 +229,7 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
               fontSize={0}
               mr={3}
               mono={!showNickname}
+              fontWeight={(showNickname) ? '500' : '400'}
               className={`mw5 db truncate pointer`}
               ref={e => nameSpan = e}
               onClick={() => {
