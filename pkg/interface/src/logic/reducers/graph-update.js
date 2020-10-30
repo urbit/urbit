@@ -95,7 +95,7 @@ const mapifyChildren = (children) => {
   return new BigIntOrderedMap(
     children.map(([idx, node]) => {
       const nd = {...node, children: mapifyChildren(node.children || []) }; 
-      return [normalizeKey(parseInt(idx.slice(1), 10)), nd];
+      return [bigInt(idx.slice(1)), nd];
     }));
 };
 
