@@ -273,7 +273,6 @@ pier (serf, log) vSlog startedSig injected = do
   -- TODO Instead of using a TMVar, pull directly from the IO driver
   -- event sources.
   computeQ :: TMVar RunReq      <- newEmptyTMVarIO
-
   persistQ :: TQueue (Fact, FX) <- newTQueueIO
   executeQ :: TQueue FX         <- newTQueueIO
   saveSig :: TMVar ()           <- newEmptyTMVarIO
@@ -303,6 +302,9 @@ pier (serf, log) vSlog startedSig injected = do
       atomically $ Term.slog muxed s
       logOther "serf" (display $ T.strip $ tankToText tank)
 
+  scryQ <- newTQueueIO
+  onKill  <- view onKillPierSigL
+
   -- Our call above to set the logging function which echos errors from the
   -- Serf doesn't have the appended \r\n because those \r\n s are added in
   -- the c serf code. Logging output from our haskell process must manually
@@ -311,21 +313,22 @@ pier (serf, log) vSlog startedSig injected = do
   let execute = writeTQueue executeQ
   let persist = writeTQueue persistQ
   let sigint  = Serf.sendSIGINT serf
+  let scry    = \w b g -> do
+        res <- newEmptyMVar
+        atomically $ writeTQueue scryQ (w, b, g, putMVar res)
+        takeMVar res
 
   (bootEvents, startDrivers) <- do
     env <- ask
     let err = atomically . Term.trace muxed . (<> "\r\n")
     siz <- atomically $ Term.curDemuxSize demux
     let fak = isFake logId
-    drivers env ship fak compute (siz, muxed) err sigint
-
-  scrySig <- newEmptyTMVarIO
-  onKill  <- view onKillPierSigL
+    drivers env ship fak compute scry (siz, muxed) err sigint
 
   let computeConfig = ComputeConfig { ccOnWork      = takeTMVar computeQ
                                     , ccOnKill      = onKill
                                     , ccOnSave      = takeTMVar saveSig
-                                    , ccOnScry      = takeTMVar scrySig
+                                    , ccOnScry      = readTQueue scryQ
                                     , ccPutResult   = persist
                                     , ccShowSpinner = Term.spin muxed
                                     , ccHideSpinner = Term.stopSpin muxed
@@ -390,19 +393,6 @@ pier (serf, log) vSlog startedSig injected = do
     threadDelay (snapshotEverySecs * 1_000_000)
     void $ atomically $ tryPutTMVar saveSig ()
 
-  --  TODO bullshit scry tester
-  when False $ do
-    void $ acquireWorker "bullshit scry tester" $ do
-      env <- ask
-      forever $ do
-        threadDelay 15_000_000
-        wen <- io Time.now
-        let kal = \mTermNoun -> runRIO env $ do
-              logInfo $ displayShow ("scry result: ", mTermNoun)
-        let nkt = MkKnot $ tshow $ Time.MkDate wen
-        let pax = Path ["j", "~zod", "life", nkt, "~zod"]
-        atomically $ putTMVar scrySig (wen, Nothing, pax, kal)
-
   putMVar startedSig ()
 
   -- Wait for something to die.
@@ -444,17 +434,20 @@ drivers
   -> Ship
   -> Bool
   -> (RunReq -> STM ())
+  -> (Wen -> Gang -> Path -> IO (Maybe (Term, Noun)))
   -> (TermSize, Term.Client)
   -> (Text -> RIO e ())
   -> IO ()
   -> RAcquire e ([Ev], RAcquire e Drivers)
-drivers env who isFake plan termSys stderr serfSIGINT = do
+drivers env who isFake plan scry termSys stderr serfSIGINT = do
   (behnBorn, runBehn) <- rio Behn.behn'
   (termBorn, runTerm) <- rio (Term.term' termSys serfSIGINT)
-  (amesBorn, runAmes) <- rio (Ames.ames' who isFake stderr)
+  (amesBorn, runAmes) <- rio (Ames.ames' who isFake scry stderr)
   (httpBorn, runEyre) <- rio (Eyre.eyre' who isFake stderr)
   (clayBorn, runClay) <- rio Clay.clay'
   (irisBorn, runIris) <- rio Iris.client'
+
+  putStrLn ("ship is " <> tshow who)
 
   let initialEvents = mconcat [behnBorn,clayBorn,amesBorn,httpBorn,irisBorn,termBorn]
 

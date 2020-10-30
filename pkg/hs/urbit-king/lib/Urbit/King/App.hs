@@ -190,9 +190,9 @@ runHostEnv multi ports action = do
     king <- ask
 
     let hostEnv = HostEnv { _hostEnvKingEnv        = king
-                                , _hostEnvMultiEyreApi   = multi
-                                , _hostEnvPortControlApi = ports
-                                }
+                          , _hostEnvMultiEyreApi   = multi
+                          , _hostEnvPortControlApi = ports
+                          }
 
     io (runRIO hostEnv action)
 
