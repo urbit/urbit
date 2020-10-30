@@ -77,7 +77,7 @@ export function LinkResource(props: LinkResourceProps) {
                   const contact = contactDetails[node.post.author];
                   return (
                     <LinkItem
-                      key={date}
+                      key={date.toString()}
                       resource={resourcePath}
                       node={node}
                       nickname={contact?.nickname}

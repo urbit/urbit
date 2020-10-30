@@ -1,16 +1,18 @@
 import { Post, GraphNode, TextContent, Graph, NodeMap } from "~/types";
 import { buntPost } from '~/logic/lib/post';
+import { unixToDa } from "~/logic/lib/util";
 import {BigIntOrderedMap} from "./BigIntOrderedMap";
-import bigInt from 'big-integer';
+import bigInt, {BigInteger} from 'big-integer';
 
 export function newPost(
   title: string,
   body: string
-): [number, NodeMap] {
+): [BigInteger, NodeMap] {
   const now = Date.now();
+  const nowDa = unixToDa(now);
   const root: Post = {
     author: `~${window.ship}`,
-    index: "/" + now,
+    index: "/" + nowDa.toString(),
     "time-sent": now,
     contents: [],
     hash: null,
@@ -51,14 +53,14 @@ export function newPost(
     },
   };
 
-  return [now, nodes];
+  return [nowDa, nodes];
 }
 
-export function editPost(rev: number, noteId: number, title: string, body: string) {
+export function editPost(rev: number, noteId: BigInteger, title: string, body: string) {
   const now = Date.now();
   const newRev: Post = {
     author: `~${window.ship}`,
-    index: `/${noteId}/1/${rev}`,
+    index: `/${noteId.toString()}/1/${rev}`,
     "time-sent": now,
     contents: [{ text: title }, { text: body }],
     hash: null,
