@@ -348,23 +348,23 @@ function Participant(props: {
               {props.role === 'admin' && (
                 <>
                   {!isInvite && (
-                    <>
                     <StatelessAsyncAction onClick={onBan} bg="transparent">
                       <Text color="red">Ban from {title}</Text>
                     </StatelessAsyncAction>
-                    <StatelessAsyncAction onClick={onKick} bg="transparent">
-                      <Text color="red">Kick from {title}</Text>
-                    </StatelessAsyncAction>
-                    </>
                   )}
                   {role === 'admin' ? (
                     <StatelessAsyncAction onClick={onDemote} bg="transparent">
                       Demote from Admin
                     </StatelessAsyncAction>
                   ) : (
-                    <StatelessAsyncAction onClick={onPromote} bg="transparent">
-                      Promote to Admin
-                    </StatelessAsyncAction>
+                    <>
+                      <StatelessAsyncAction onClick={onKick} bg="transparent">
+                        <Text color="red">Kick from {title}</Text>
+                      </StatelessAsyncAction>
+                      <StatelessAsyncAction onClick={onPromote} bg="transparent">
+                        Promote to Admin
+                      </StatelessAsyncAction>
+                    </>
                   )}
                 </>
               )}

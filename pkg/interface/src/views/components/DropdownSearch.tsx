@@ -22,6 +22,7 @@ interface RenderChoiceProps<C> {
 }
 
 interface DropdownSearchProps<C> {
+  autoFocus?: boolean;
   label?: string;
   id: string;
   // check if entry is exact match
@@ -51,7 +52,7 @@ interface DropdownSearchProps<C> {
 
 export function DropdownSearch<C>(props: DropdownSearchProps<C>) {
   const textarea = useRef<HTMLTextAreaElement>();
-  const { candidates, getKey, caption } = props;
+  const { candidates, getKey, caption, autoFocus } = props;
 
   const [query, setQuery] = useState("");
 
@@ -127,6 +128,7 @@ export function DropdownSearch<C>(props: DropdownSearchProps<C>) {
           value={query}
           autocomplete="off"
           placeholder={props.placeholder || ""}
+          autoFocus={autoFocus}
         />
       )}
       {dropdown.length !== 0 && query.length !== 0 && (
