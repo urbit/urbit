@@ -42,19 +42,19 @@ export default class LaunchApp extends React.Component {
             p={2}
           >
             <Tile
-              bg="#fff"
+              bg="transparent"
               color="green"
               to="/~landscape/home"
               p={0}
             >
-              <Box p={2} height='100%' width='100%' bg='washedGreen'>
+              <Box p={2} height='100%' width='100%' bg='green'>
                 <Row alignItems='center'>
                   <Icon
-                    color="green"
-                    fill="rgba(0,0,0,0)"
-                    icon="Circle"
+                    color="white"
+                    // fill="rgba(0,0,0,0)"
+                    icon="Home"
                   />
-                  <Text ml="1" color="green">Home</Text>
+                  <Text ml="1" mt='1px' color="white">Home</Text>
                 </Row>
               </Box>
             </Tile>

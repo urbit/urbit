@@ -22,7 +22,7 @@ export function StatusBarItem({
       color="washedGray"
       bg="white"
       alignItems="center"
-      py={1}
+      height='32px'
       px={2}
       {...props}
     >
