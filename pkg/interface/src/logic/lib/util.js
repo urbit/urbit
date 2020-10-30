@@ -327,11 +327,18 @@ export function numToUd(num) {
   )(num.toString())
 }
 
-export function usePreventWindowUnload(shouldPreventDefault) {
+export function usePreventWindowUnload(shouldPreventDefault, message = "You have unsaved changes. Are you sure you want to exit?") {
   React.useEffect(() => {
     if (!shouldPreventDefault) return;
-    const handleBeforeUnload = event => event.preventDefault();
+    const handleBeforeUnload = event => {
+      event.preventDefault();
+      return message;
+    }
     window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+    window.onbeforeunload = handleBeforeUnload;
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.onbeforeunload = undefined;
+    }
   }, [shouldPreventDefault]);
 }
