@@ -94,7 +94,7 @@ export default class ChatMessage extends Component<ChatMessageProps> {
     const dayBreak = nextMsg && new Date(msg.when).getDate() !== new Date(nextMsg.when).getDate();
 
     const containerClass = `${renderSigil
-      ? `cf pt2 pl2 lh-copy`
+      ? `cf pl2 lh-copy`
       : `items-top cf hide-child`} ${isPending ? 'o-40' : ''} ${className}`
 
     const timestamp = moment.unix(msg.when / 1000).format(renderSigil ? 'hh:mm a' : 'hh:mm');
@@ -130,6 +130,7 @@ export default class ChatMessage extends Component<ChatMessageProps> {
         width='100%'
         display='flex'
         flexWrap='wrap'
+        pt={renderSigil ? 3 : 0}
         pr={3}
         pb={isLastMessage ? 3 : 0}
         ref={this.divRef}
