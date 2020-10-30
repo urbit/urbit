@@ -30,7 +30,7 @@ const PromptIfDirty = () => {
   return (
     <Prompt
       when={formik.dirty}
-      message="Are you sure you want to leave? You have with unsaved changes."
+      message="Are you sure you want to leave? You have unsaved changes."
     />
   );
 };
