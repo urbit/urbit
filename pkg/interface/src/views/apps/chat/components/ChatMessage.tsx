@@ -94,7 +94,7 @@ export default class ChatMessage extends Component<ChatMessageProps> {
     const dayBreak = nextMsg && new Date(msg.when).getDate() !== new Date(nextMsg.when).getDate();
 
     const containerClass = `${renderSigil
-      ? `cf pt2 pl3 lh-copy`
+      ? `cf pt2 pl2 lh-copy`
       : `items-top cf hide-child`} ${isPending ? 'o-40' : ''} ${className}`
 
     const timestamp = moment.unix(msg.when / 1000).format(renderSigil ? 'hh:mm a' : 'hh:mm');
@@ -249,7 +249,7 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
 
 export const MessageWithoutSigil = ({ timestamp, msg, remoteContentPolicy, measure }) => (
   <>
-    <Text mono gray display='inline-block' pr='1' pt='2px' lineHeight='tall' className="child">{timestamp}</Text>
+    <Text mono gray display='inline-block' pt='2px' lineHeight='tall' className="child">{timestamp}</Text>
     <Box fontSize='14px' className="clamp-message" style={{ flexGrow: 1 }}>
       <MessageContent content={msg.letter} remoteContentPolicy={remoteContentPolicy} measure={measure}/>
     </Box>
