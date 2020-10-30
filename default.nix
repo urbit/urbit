@@ -8,6 +8,11 @@
 
      $ nix-build -A urbit --arg enableSatic true
 
+   Note that on linux the previous command is equivalent to:
+
+     $ nix-build -A urbit --argstr crossSystem x86_64-unknown-linux-musl \
+                          --arg enableSatic true
+
    Static urbit-king binary:
 
      $ nix-build -A hs.urbit-king.components.exes.urbit-king --arg enableStatic true
@@ -47,12 +52,20 @@
 , crossOverlays ? [ ]
   # Whether to use pkgs.pkgsStatic.* to obtain statically linked package
   # dependencies - ie. when building fully-static libraries or executables. 
-, enableStatic ? crossSystem != null }:
+, enableStatic ? false }:
 
 let
 
   pkgs = import ./nix/default.nix {
-    inherit system crossSystem sources config overlays crossOverlays;
+    inherit system sources config overlays crossOverlays;
+
+    crossSystem =
+      # If we're running on linux and crossSystem is unspecified but static
+      # builds are requested - set the crossSystem to musl64.
+      if system == "x86_64-linux" && crossSystem == null && enableStatic then
+        "x86_64-unknown-linux-musl"
+      else
+        crossSystem;
   };
 
   # Local library import from derivation functions such as fetchGitHubLFS, etc.

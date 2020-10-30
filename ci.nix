@@ -48,31 +48,21 @@ let
       extension = "pill";
     };
 
-  systems = lib.filterAttrs (_: v: builtins.elem v.system supportedSystems) {
-    linux = {
-      system = "x86_64-linux";
-      crossSystem = lib.systems.examples.musl64;
-    };
-
-    darwin = {
-      system = "x86_64-darwin";
-      crossSystem = null;
-    };
+  systems = lib.filterAttrs (_: v: builtins.elem v supportedSystems) {
+    linux = "x86_64-linux";
+    darwin = "x86_64-darwin";
   };
 
-in localLib.dimension "system" systems (systemName:
-  { system, crossSystem }:
+in localLib.dimension "system" systems (systemName: system:
   let
-    # Shared libraries/executables for the build (current) system.
-    localPackages = import ./default.nix {
+    dynamicPackages = import ./default.nix {
       inherit system;
 
       enableStatic = false;
     };
 
-    # Static libraries/executables for the host (cross) system.
     staticPackages = import ./default.nix {
-      inherit system crossSystem;
+      inherit system;
 
       enableStatic = true;
     };
@@ -82,23 +72,23 @@ in localLib.dimension "system" systems (systemName:
       haskell-nix.haskellLib.selectProjectPackages staticPackages.hs;
 
     # The top-level set of attributes to build on ci.
-    finalPackages = localPackages // rec {
+    finalPackages = dynamicPackages // rec {
+      # Replace some top-level attributes with their static variant.
+      inherit (staticPackages) urbit tarball;
+
       # Expose the nix-shell derivation as a sanity check.
       shell = import ./shell.nix;
 
-      # Replace the top-level urbit attribute with the static variant.
-      urbit = staticPackages.urbit;
-
-      # Replace the top-level tarball attribute with the static variant.
-      tarball = staticPackages.tarball;
-
-      # Replace the localPackages.hs attribute with the individual components
+      # Replace the .hs attribute with the individual collections of components
       # displayed as top-level attributes:
       #
       # <system>.hs.library.[...]
+      # <system>.hs.checks.[...]
       # <system>.hs.tests.[...]
-      # <system>.hs.bencharmks.[...]
+      # <system>.hs.benchmarks.[...]
       # ...
+      #
+      # Note that .checks are the actual _execution_ of the tests.
       hs = localLib.collectHaskellComponents haskellPackages;
 
       # Push the tarball to the remote google storage bucket.
@@ -111,12 +101,12 @@ in localLib.dimension "system" systems (systemName:
 
       # Replace top-level pill attributes with push to google storage variants.
     } // lib.optionalAttrs (system == "x86_64-linux") {
-      ivory = pushPill "ivory" localPackages.ivory;
-      brass = pushPill "brass" localPackages.brass;
-      solid = pushPill "solid" localPackages.solid;
+      ivory = pushPill "ivory" dynamicPackages.ivory;
+      brass = pushPill "brass" dynamicPackages.brass;
+      solid = pushPill "solid" dynamicPackages.solid;
 
-      ivory-ropsten = pushPill "ivory-ropsten" localPackages.ivory-ropsten;
-      brass-ropsten = pushPill "brass-ropsten" localPackages.brass-ropsten;
+      ivory-ropsten = pushPill "ivory-ropsten" dynamicPackages.ivory-ropsten;
+      brass-ropsten = pushPill "brass-ropsten" dynamicPackages.brass-ropsten;
     };
 
     # Filter derivations that have meta.platform missing the current system,
