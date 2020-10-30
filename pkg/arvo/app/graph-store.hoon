@@ -711,7 +711,7 @@
       [%validator @ ~]
     :_  this
     =*  validator  i.t.wire
-    =/  =rave:clay  [%sing %b [%da now.bowl] /[validator]]
+    =/  =rave:clay  [%next %b [%da now.bowl] /[validator]]
     [%pass wire %arvo %c %warp our.bowl [%home `rave]]~
   ==
 ::
