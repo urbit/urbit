@@ -6,6 +6,7 @@ module Urbit.Vere.Ames.Packet where
 
 import Urbit.Prelude
 
+import Control.Monad.Fail
 import Data.Bits
 import Data.LargeWord
 import Data.Serialize
