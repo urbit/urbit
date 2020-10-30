@@ -156,7 +156,7 @@ export function GroupSwitcher(props: {
                       <Icon
                         mr={2}
                         color="blue"
-                        icon="CreateGroup"
+                        icon="Users"
                       />
                       <Text color="blue">Invite to group</Text>
                     </GroupSwitcherItem>
@@ -179,7 +179,7 @@ export function GroupSwitcher(props: {
                   <Icon
                     display="block"
                     color='blue'
-                    icon="CreateGroup"
+                    icon="Users"
                   />
                 </Link>
                 <Link to={navTo("/popover/settings")}>
