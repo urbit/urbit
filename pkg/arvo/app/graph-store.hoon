@@ -93,7 +93,7 @@
         ~(tap by nodes)
       |=  [=index:store =node:store]
       ^-  [index:store node:store]
-      :-  (turn index maybe-unix-to-da)
+      :-  (convert-unix-timestamped-index index)
       (convert-unix-timestamped-node node)
     ::
     ++  remove-nodes
@@ -103,7 +103,7 @@
       %-  ~(gas in *(set index:store))
       %+  turn
         ~(tap in indices)
-      |=(=index:store (turn index maybe-unix-to-da))
+      convert-unix-timestamped-index
     --
   ::  
   ++  maybe-unix-to-da
@@ -119,8 +119,13 @@
     ^-  node:store
     ?.  ?=(%graph -.children.node)
       node
-    :+  post.node  %graph
+    :+  post.node(index (convert-unix-timestamped-index index.post.node))   
+      %graph
     (convert-unix-timestamped-graph p.children.node)
+  ::
+  ++  convert-unix-timestamped-index
+    |=  =index:store
+    (turn index maybe-unix-to-da)
   ::
   ++  convert-unix-timestamped-graph
     |=  =graph:store
