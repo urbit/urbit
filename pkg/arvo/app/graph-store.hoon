@@ -117,9 +117,11 @@
   ++  convert-unix-timestamped-node
     |=  =node:store
     ^-  node:store
+    =.  index.post.node
+      (convert-unix-timestamped-index index.post.node)
     ?.  ?=(%graph -.children.node)
       node
-    :+  post.node(index (convert-unix-timestamped-index index.post.node))   
+    :+  post.node
       %graph
     (convert-unix-timestamped-graph p.children.node)
   ::
