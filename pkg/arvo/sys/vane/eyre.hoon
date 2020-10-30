@@ -590,8 +590,12 @@
     =*  headers  header-list.request
     ::  for requests from localhost, respect the "forwarded" header
     ::
-    =?  address  =([%ipv4 .127.0.0.1] address)
-      (fall (forwarded-for headers) address)
+    =/  [secure=? =^address]
+      =*  same  [secure address]
+      ?.  =([%ipv4 .127.0.0.1] address)        same
+      ?~  forwards=(forwarded-params headers)  same
+      :-  (fall (forwarded-secure u.forwards) secure)
+      (fall (forwarded-for u.forwards) address)
     ::
     =/  host  (get-header:http 'host' headers)
     =/  [=action suburl=@t]
@@ -2021,29 +2025,39 @@
     (cat 3 '.' u.ext.request-line)
   --
 ::
-++  forwarded-for
+++  forwarded-params
   |=  =header-list:http
-  ^-  (unit address)
-  =/  forwarded=(unit @t)
+  ^-  (unit (list (map @t @t)))
+  %+  biff
     (get-header:http 'forwarded' header-list)
-  ?~  forwarded  ~
-  |^  =/  forwards=(unit (list (map @t @t)))
-        (unpack-header:http u.forwarded)
-      ?.  ?=([~ ^] forwards)  ~
-      =*  forward  i.u.forwards
-      ?~  for=(~(get by forward) 'for')  ~
-      ::NOTE  per rfc7239, non-ip values are also valid. they're not useful
-      ::      for the general case, so we ignore them here. if needed,
-      ::      request handlers are free to inspect the headers themselves.
-      ::
-      (rush u.for ip-address)
+  unpack-header:http
+::
+++  forwarded-for
+  |=  forwards=(list (map @t @t))
+  ^-  (unit address)
+  ?.  ?=(^ forwards)  ~
+  =*  forward  i.forwards
+  ?~  for=(~(get by forward) 'for')  ~
+  ::NOTE  per rfc7239, non-ip values are also valid. they're not useful
+  ::      for the general case, so we ignore them here. if needed,
+  ::      request handlers are free to inspect the headers themselves.
   ::
-  ++  ip-address
-    ;~  sfix
-      ;~(pose (stag %ipv4 ip4) (stag %ipv6 (ifix [lac rac] ip6)))
-      ;~(pose ;~(pfix col dim:ag) (easy ~))
-    ==
-  --
+  %+  rush  u.for
+  ;~  sfix
+    ;~(pose (stag %ipv4 ip4) (stag %ipv6 (ifix [lac rac] ip6)))
+    ;~(pose ;~(pfix col dim:ag) (easy ~))
+  ==
+::
+++  forwarded-secure
+  |=  forwards=(list (map @t @t))
+  ^-  (unit ?)
+  ?.  ?=(^ forwards)  ~
+  =*  forward  i.forwards
+  ?~  proto=(~(get by forward) 'proto')  ~
+  ?+  u.proto  ~
+    %http   `|
+    %https  `&
+  ==
 ::
 ++  parse-request-line
   |=  url=@t
