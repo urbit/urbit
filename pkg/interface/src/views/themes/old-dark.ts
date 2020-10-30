@@ -91,6 +91,7 @@ const theme = {
     white: util.gray0,
     black: base.white,
 
+    darkGray: scales.white80,
     gray: scales.white60,
     lightGray: scales.white30,
     washedGray: scales.white05,
@@ -133,6 +134,7 @@ const theme = {
   fontWeights: {
     thin: 300,
     regular: 400,
+    semibold: 500,
     bold: 600,
   },
   // line-height

@@ -48,6 +48,13 @@
   ^-  ?
   =-  (~(has in -) ship)
   (members-from-path group-path)
+::
+++  is-admin
+  |=  [=ship =group-path]
+  ^-  ?
+  =/  tags  tags:(fall (scry-group-path group-path) *group)
+  =/  admins=(set ^ship)  (~(gut by tags) %admin ~)
+  (~(has in admins) ship)
 ::  +role-for-ship: get role for user
 ::
 ::    Returns ~ if no such group exists or user is not
@@ -77,6 +84,7 @@
   ?:  (~(has in members.group) ship)
     [~ ~]
   ~
+::
 ++  can-join-from-path
   |=  [=path =ship]
   %+  scry-for

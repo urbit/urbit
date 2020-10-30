@@ -92,7 +92,7 @@
   ::    1.923.673.882
   ::
   ::  and the ordering 1 < 2 < 3.
-  ::  1 should be in the left brach and 3 in the right one.
+  ::  1 should be in the left branch and 3 in the right one.
   ::
   =/  balanced-a=(set @)    [2 [1 ~ ~] [3 ~ ~]]
   ::  Doesn't follow vertical ordering

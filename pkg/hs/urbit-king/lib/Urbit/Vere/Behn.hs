@@ -1,3 +1,7 @@
+-- This is required due to the use of 'Void' in a constructor slot in
+-- combination with 'deriveNoun', which will generate an unreachable pattern.
+{-# OPTIONS_GHC -Wno-overlapping-patterns #-}
+
 {-|
     Behn: Timer Driver
 -}

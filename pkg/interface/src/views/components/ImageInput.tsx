@@ -1,7 +1,13 @@
 import React, { useRef, useCallback, useState } from "react";
 
-import { Box, Input, Img, Button } from "@tlon/indigo-react";
-import GlobalApi from "~/api/global";
+import {
+  Box,
+  StatelessTextInput as Input,
+  Row,
+  Button,
+  Label,
+  ErrorLabel,
+} from "@tlon/indigo-react";
 import { useField } from "formik";
 import { S3State } from "~/types/s3-update";
 import { useS3 } from "~/logic/lib/useS3";
@@ -10,16 +16,17 @@ type ImageInputProps = Parameters<typeof Box>[0] & {
   id: string;
   label: string;
   s3: S3State;
+  placeholder?: string;
 };
 
 export function ImageInput(props: ImageInputProps) {
-  const { id, label, s3, ...rest } = props;
+  const { id, label, s3, caption, placeholder, ...rest } = props;
 
   const { uploadDefault, canUpload } = useS3(s3);
 
   const [uploading, setUploading] = useState(false);
 
-  const [, , { setValue, setError }] = useField(id);
+  const [field, meta, { setValue, setError }] = useField(id);
 
   const ref = useRef<HTMLInputElement | null>(null);
 
@@ -44,29 +51,44 @@ export function ImageInput(props: ImageInputProps) {
   }, [ref]);
 
   return (
-    <Box {...rest} display="flex">
-      <Input disabled={uploading} type="text" label={label} id={id} />
-      {canUpload && (
-        <>
-          <Button
-            ml={1}
-            border={3}
-            borderColor="washedGray"
-            style={{ marginTop: "18px" }}
-            onClick={onClick}
-          >
-            {uploading ? "Uploading" : "Upload"}
-          </Button>
-          <input
-            style={{ display: "none" }}
-            type="file"
-            id="fileElement"
-            ref={ref}
-            accept="image/*"
-            onChange={onImageUpload}
-          />
-        </>
-      )}
+    <Box display="flex" flexDirection="column" {...props}>
+      <Label htmlFor={id}>{label}</Label>
+      {caption ? (
+        <Label mt="2" gray>
+          {caption}
+        </Label>
+      ) : null}
+      <Row mt="2" alignItems="flex-end">
+        <Input
+          type={"text"}
+          hasError={meta.touched && meta.error !== undefined}
+          placeholder={placeholder}
+          {...field}
+        />
+        {canUpload && (
+          <>
+            <Button
+              ml={1}
+              border={1}
+              borderColor="lightGray"
+              onClick={onClick}
+            >
+              {uploading ? "Uploading" : "Upload"}
+            </Button>
+            <input
+              style={{ display: "none" }}
+              type="file"
+              id="fileElement"
+              ref={ref}
+              accept="image/*"
+              onChange={onImageUpload}
+            />
+          </>
+        )}
+      </Row>
+      <ErrorLabel mt="2" hasError={!!(meta.touched && meta.error)}>
+        {meta.error}
+      </ErrorLabel>
     </Box>
   );
 }

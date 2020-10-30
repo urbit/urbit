@@ -26,7 +26,7 @@ import Urbit.Vere.Pier.Types
 
 import Control.Monad.STM      (retry)
 import System.Environment     (getExecutablePath)
-import System.FilePath        (splitFileName, (</>))
+import System.FilePath        (splitFileName)
 import System.Posix.Files     (ownerModes, setFileMode)
 import Urbit.EventLog.LMDB    (EventLog)
 import Urbit.King.API         (TermConn)
@@ -184,7 +184,7 @@ bootNewShip pill lite ship bootEv = do
   let logPath = (pierPath </> ".urb/log")
 
   rwith (Log.new logPath ident) $ \log -> do
-    logInfo "Event log onitialized."
+    logInfo "Event log initialized."
     jobs <- (\now -> bootSeqJobs now seq) <$> io Time.now
     writeJobs log (fromList jobs)
 
@@ -247,8 +247,9 @@ pier
   :: (Serf, EventLog)
   -> TVar ((Atom, Tank) -> IO ())
   -> MVar ()
+  -> [Ev]
   -> RAcquire PierEnv ()
-pier (serf, log) vSlog startedSig = do
+pier (serf, log) vSlog startedSig injected = do
   let logId = Log.identity log :: LogIdentity
   let ship  = who logId :: Ship
 
@@ -350,6 +351,29 @@ pier (serf, log) vSlog startedSig = do
   drivz <- startDrivers
   tExec <- acquireWorker "Effects" (router slog (readTQueue executeQ) drivz)
   tDisk <- acquireWorkerBound "Persist" (runPersist log persistQ execute)
+
+  -- Now that the Serf is configured, the IO drivers are hooked up, their
+  -- starting events have been dispatched, and the terminal is live, we can now
+  -- handle injecting events requested from the command line.
+  for_ (zip [1..] injected) $ \(num, ev) -> rio $ do
+    logTrace $ display @Text ("Injecting event " ++ (tshow num) ++ " of " ++
+                              (tshow $ length injected) ++ "...")
+    okaySig :: MVar (Either [Goof] ()) <- newEmptyMVar
+
+    let inject = atomically $ compute $ RRWork $ EvErr ev $ cb
+        cb :: WorkError -> IO ()
+        cb = \case
+          RunOkay _         -> putMVar okaySig (Right ())
+          RunSwap _ _ _ _ _ -> putMVar okaySig (Right ())
+          RunBail goofs     -> putMVar okaySig (Left goofs)
+
+    io inject
+
+    takeMVar okaySig >>= \case
+      Left goof -> logError $ display @Text ("Goof in injected event: " <>
+                                             tshow goof)
+      Right ()  -> pure ()
+
 
   let snapshotEverySecs = 120
 

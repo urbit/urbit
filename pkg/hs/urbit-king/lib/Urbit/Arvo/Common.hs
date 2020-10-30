@@ -1,5 +1,9 @@
 {-# LANGUAGE StrictData #-}
 
+-- This is required due to the use of 'Void' in a constructor slot in
+-- combination with 'deriveNoun' which generates an unreachable pattern.
+{-# OPTIONS_GHC -Wno-overlapping-patterns #-}
+
 {-|
     Types used in both Events and Effects.
 -}
@@ -15,6 +19,8 @@ module Urbit.Arvo.Common
   ) where
 
 import Urbit.Prelude hiding (Term)
+
+import Control.Monad.Fail (fail)
 
 import qualified Network.HTTP.Types.Method as H
 import qualified Urbit.Ob                  as Ob
