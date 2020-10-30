@@ -80,8 +80,8 @@
     |^  ^-  logged-update:store
     :+  %0  p.logged-update
     ?+  -.q.logged-update  q.logged-update
-      %add-nodes   (add-nodes +.q.logged-update)
-      %remove-nodes   (remove-nodes +.q.logged-update)
+      %add-nodes     (add-nodes +.q.logged-update)
+      %remove-nodes  (remove-nodes +.q.logged-update)
     ==
     ::
     ++  add-nodes
