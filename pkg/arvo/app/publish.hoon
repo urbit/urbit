@@ -523,6 +523,7 @@
     =/  rid=resource
       (de-path:resource t.wire)
     ?.  ?=(%watch-ack -.sign)
+      ~|  "Expected error, please ignore"
       (on-agent:def wire sign)
     ?~  p.sign
       ::  if watch acked successfully, then host has completed OTA, and
