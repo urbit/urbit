@@ -1,34 +1,29 @@
-import React from "react";
+import React from 'react';
 
 import {
   Box,
-  Label,
   ManagedCheckboxField as Checkbox,
-  Button,
-} from "@tlon/indigo-react";
-import { Formik, Form } from "formik";
-import * as Yup from "yup";
-import _ from "lodash";
+  Button
+} from '@tlon/indigo-react';
+import { Formik, Form } from 'formik';
+import * as Yup from 'yup';
 
-import GlobalApi from "../../../../api/global";
-import { LaunchState } from "../../../../types/launch-update";
-import { DropLaunchTiles } from "./DropLaunch";
-import { S3State, BackgroundConfig } from "../../../../types";
-import { BackgroundPicker, BgType } from "./BackgroundPicker";
+import GlobalApi from '~/logic/api/global';
+import { uxToHex } from '~/logic/lib/util';
+import { S3State, BackgroundConfig } from '~/types';
+import { BackgroundPicker, BgType } from './BackgroundPicker';
 
 const formSchema = Yup.object().shape({
-  tileOrdering: Yup.array().of(Yup.string()),
   bgType: Yup.string()
-    .oneOf(["none", "color", "url"], "invalid")
-    .required("Required"),
+    .oneOf(['none', 'color', 'url'], 'invalid')
+    .required('Required'),
   bgUrl: Yup.string().url(),
-  bgColor: Yup.string().matches(/#([A-F]|[a-f]|[0-9]){6}/, "Invalid color"),
+  bgColor: Yup.string(),
   avatars: Yup.boolean(),
-  nicknames: Yup.boolean(),
+  nicknames: Yup.boolean()
 });
 
 interface FormSchema {
-  tileOrdering: string[];
   bgType: BgType;
   bgColor: string | undefined;
   bgUrl: string | undefined;
@@ -38,7 +33,6 @@ interface FormSchema {
 
 interface DisplayFormProps {
   api: GlobalApi;
-  launch: LaunchState;
   dark: boolean;
   background: BackgroundConfig;
   hideAvatars: boolean;
@@ -47,16 +41,16 @@ interface DisplayFormProps {
 }
 
 export default function DisplayForm(props: DisplayFormProps) {
-  const { api, launch, background, hideAvatars, hideNicknames, s3 } = props;
+  const { api, background, hideAvatars, hideNicknames, s3 } = props;
 
   let bgColor, bgUrl;
-  if (background?.type === "url") {
+  if (background?.type === 'url') {
     bgUrl = background.url;
   }
-  if (background?.type === "color") {
+  if (background?.type === 'color') {
     bgColor = background.color;
   }
-  const bgType = background?.type || "none";
+  const bgType = background?.type || 'none';
 
   return (
     <Formik
@@ -64,21 +58,18 @@ export default function DisplayForm(props: DisplayFormProps) {
       initialValues={
         {
           bgType,
-          bgColor,
+          bgColor: bgColor || '',
           bgUrl,
           avatars: hideAvatars,
-          nicknames: hideNicknames,
-          tileOrdering: launch.tileOrdering,
+          nicknames: hideNicknames
         } as FormSchema
       }
       onSubmit={(values, actions) => {
-        api.launch.changeOrder(values.tileOrdering);
-
         const bgConfig: BackgroundConfig =
-          values.bgType === "color"
-            ? { type: "color", color: values.bgColor || "" }
-            : values.bgType === "url"
-            ? { type: "url", url: values.bgUrl || "" }
+          values.bgType === 'color'
+            ? { type: 'color', color: `#${uxToHex(values.bgColor || '0x0')}` }
+            : values.bgType === 'url'
+            ? { type: 'url', url: values.bgUrl || '' }
             : undefined;
 
         api.local.setBackground(bgConfig);
@@ -88,7 +79,7 @@ export default function DisplayForm(props: DisplayFormProps) {
         actions.setSubmitting(false);
       }}
     >
-      {(props) => (
+      {props => (
         <Form>
           <Box
             display="grid"
@@ -98,17 +89,6 @@ export default function DisplayForm(props: DisplayFormProps) {
           >
             <Box color="black" fontSize={1} mb={3} fontWeight={900}>
               Display Preferences
-            </Box>
-            <Box mb={2}>
-              <Label display="block" pb={2}>
-                Tile Order
-              </Label>
-              <DropLaunchTiles
-                id="tileOrdering"
-                name="tileOrdering"
-                tiles={launch.tiles}
-                order={launch.tileOrdering}
-              />
             </Box>
             <BackgroundPicker
               bgType={props.values.bgType}

@@ -1,25 +1,12 @@
 ::
 ::::  /hoon/info/publish/mar
+  ::  tombstoned, now unused
   ::
 /-  *publish
 !:
 |_  info=notebook-info
 ::
 ::
-++  grow
-  |%
-  ++  mime
-    :-  /text/x-publish-info
-    (as-octs:mimes:html (of-wain:format txt))
-  ++  txt
-    ^-  wain
-    :~  (cat 3 'title: ' title.info)
-        (cat 3 'description: ' description.info)
-        (cat 3 'comments: ' ?:(comments.info 'on' 'off'))
-        (cat 3 'writers: ' (spat writers.info))
-        (cat 3 'subscribers: ' (spat subscribers.info))
-    ==
-  --
 ++  grab
   |%
   ++  mime

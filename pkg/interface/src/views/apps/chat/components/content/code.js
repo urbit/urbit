@@ -20,7 +20,7 @@ export default class CodeContent extends Component {
           maxHeight='10em'
           maxWidth='100%'
           style={{ whiteSpace: 'pre' }}
-          backgroundColor='scales.black10'
+          backgroundColor='washedGray'
         >
           {content.code.output[0].join('\n')}
         </Text>
