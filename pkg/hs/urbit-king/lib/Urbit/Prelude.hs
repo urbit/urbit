@@ -21,10 +21,9 @@ module Urbit.Prelude
 import ClassyPrelude
 import Urbit.Noun
 
-import Control.Lens hiding (Each, Index, cons, index, snoc, uncons, unsnoc,
-                     (<.>), (<|))
-
 import Control.Arrow    ((<<<), (>>>))
+import Control.Lens hiding (Each, Index, cons, index, snoc, uncons, unsnoc,
+                            (<.>), (<|))
 import Data.Acquire     (Acquire, mkAcquire, with)
 import Data.RAcquire    (RAcquire, mkRAcquire, rwith)
 import Data.RAcquire    (MonadAcquire(..), MonadRIO(..))

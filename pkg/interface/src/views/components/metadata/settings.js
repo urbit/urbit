@@ -2,6 +2,7 @@ import React from 'react';
 
 import { MetadataColor } from './color';
 import { MetadataInput } from './input';
+import { Box } from '@tlon/indigo-react';
 import { uxToHex } from '~/logic/lib/util';
 
 
@@ -12,7 +13,8 @@ export const MetadataSettings = (props) => {
     changeLoading,
     api,
     resource,
-    app
+    app,
+    module
   } = props;
 
   const title =
@@ -26,7 +28,7 @@ export const MetadataSettings = (props) => {
     `#${uxToHex(props.association.metadata.color)}` : '';
 
   return (
-    <div className="cf mt6">
+    <Box mt='6'>
       <MetadataInput
         title='Rename'
         description={`Change the name of this ${resource}`}
@@ -41,7 +43,8 @@ export const MetadataSettings = (props) => {
               val,
               association.metadata.description,
               association.metadata['date-created'],
-              uxToHex(association.metadata.color)
+              uxToHex(association.metadata.color),
+              module
             ).then(() => {
               changeLoading(false, false, '', () => {});
             });
@@ -61,7 +64,8 @@ export const MetadataSettings = (props) => {
                 association.metadata.title,
                 val,
                 association.metadata['date-created'],
-                uxToHex(association.metadata.color)
+                uxToHex(association.metadata.color),
+                module
               ).then(() => {
                 changeLoading(false, false, '', () => {});
               });
@@ -80,13 +84,14 @@ export const MetadataSettings = (props) => {
               association.metadata.title,
               association.metadata.description,
               association.metadata['date-created'],
-              val
+              val,
+              module
             ).then(() => {
               changeLoading(false, false, '', () => {});
             });
           });
         }} />
-    </div>
+    </Box>
   );
 };
 

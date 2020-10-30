@@ -3,7 +3,6 @@ import { Box, Text } from "@tlon/indigo-react";
 
 const ReconnectBox = ({ color, children, onClick }) => (
   <Box
-    ml={2}
     px={2}
     py={1}
     display="flex"

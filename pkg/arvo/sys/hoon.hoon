@@ -262,6 +262,9 @@
 ++  tail  |*(^ ,:+<+)                                   ::  get tail
 ++  test  |=(^ =(+<- +<+))                              ::  equality
 ::
+++  lead  |*(* |*(* [+>+< +<]))                          ::  put head
+++  late  |*(* |*(* [+< +>+<]))                          ::  put tail
+::
 ::  #  %containers
 ::
 ::    the most basic of data types
@@ -622,12 +625,12 @@
 ++  murn                                                ::  maybe transform
   ~/  %murn
   |*  {a/(list) b/$-(* (unit))}
-  |-
+  =>  .(a (homo a))
+  |-  ^-  (list _?>(?=(^ a) (need (b i.a))))
   ?~  a  ~
-  =+  c=(b i.a)
-  ?~  c
-    $(a t.a)
-  [i=u.c t=$(a t.a)]
+  =/  c  (b i.a)
+  ?~  c  $(a t.a)
+  [+.c $(a t.a)]
 ::
 ++  oust                                                ::  remove
   ~/  %oust
@@ -778,6 +781,7 @@
   (weld (scag b a) [c (slag b a)])
 ::
 ++  welp                                                ::  faceless weld
+  ~/  %welp
   =|  {* *}
   |@
   ++  $
@@ -787,6 +791,7 @@
   --
 ::
 ++  zing                                                ::  promote
+  ~/  %zing
   =|  *
   |@
   ++  $
@@ -1196,8 +1201,10 @@
     ?|((b n.a) $(a l.a) $(a r.a))
   ::
   ++  apt                                               ::  check correctness
+    =<  $
+    ~/  %apt
     =|  {l/(unit) r/(unit)}
-    |-  ^-  ?
+    |.  ^-  ?
     ?~  a   &
     ?&  ?~(l & (gor n.a u.l))
         ?~(r & (gor u.r n.a))
@@ -1346,6 +1353,7 @@
     c(l a(r l.c))
   ::
   ++  rep                                               ::  reduce to product
+    ~/  %rep
     |*  b/_=>(~ |=({* *} +<+))
     |-
     ?~  a  +<+.b
@@ -1490,8 +1498,10 @@
     $(a r.a, c (peg c 7))
   ::
   ++  apt                                               ::  check correctness
+    =<  $
+    ~/  %apt
     =|  {l/(unit) r/(unit)}
-    |-  ^-  ?
+    |.  ^-  ?
     ?~  a   &
     ?&  ?~(l & &((gor p.n.a u.l) !=(p.n.a u.l)))
         ?~(r & &((gor u.r p.n.a) !=(u.r p.n.a)))
@@ -1603,6 +1613,7 @@
     d(l a(r l.d))
   ::
   ++  rep                                               ::  reduce to product
+    ~/  %rep
     |*  b/_=>(~ |=({* *} +<+))
     |-
     ?~  a  +<+.b
@@ -1619,6 +1630,7 @@
     [-.f a(l +.e, r +.f)]
   ::
   ++  run                                               ::  apply gate to values
+    ~/  %run
     |*  b/gate
     |-
     ?~  a  a
@@ -1685,18 +1697,23 @@
   ::
   ::
   ++  urn                                               ::  apply gate to nodes
+    ~/  %urn
     |*  b/$-({* *} *)
     |-
     ?~  a  ~
     a(n n.a(q (b p.n.a q.n.a)), l $(a l.a), r $(a r.a))
   ::
   ++  wyt                                               ::  depth of map
-    |-  ^-  @
+    =<  $
+    ~%  %wyt  +  ~
+    |.  ^-  @
     ?~(a 0 +((add $(a l.a) $(a r.a))))
   ::
   ++  key                                               ::  set of keys
+    =<  $
+    ~/  %key
     =+  b=`(set _?>(?=(^ a) p.n.a))`~
-    |-  ^+  b
+    |.  ^+  b
     ?~  a   b
     $(a r.a, b $(a l.a, b (~(put in b) p.n.a)))
   ::
@@ -5509,18 +5526,33 @@
 ::
 ++  stir
   ~/  %stir
-  |*  {rud/* raq/_=>(~ |*({a/* b/*} [a b])) fel/rule}
+  |*  [rud=* raq=_=>(~ |*([a=* b=*] [a b])) fel=rule]
   ~/  %fun
-  |=  tub/nail
+  |=  tub=nail
   ^-  (like _rud)
-  =+  vex=(fel tub)
-  ?~  q.vex
-    [p.vex [~ rud tub]]
-  =+  wag=$(tub q.u.q.vex)
-  ?>  ?=(^ q.wag)
-  [(last p.vex p.wag) [~ (raq p.u.q.vex p.u.q.wag) q.u.q.wag]]
+  ::
+  ::  lef: successful interim parse results (per .fel)
+  ::  wag: initial accumulator (.rud in .tub at farthest success)
+  ::
+  =+  ^=  [lef wag]
+    =|  lef=(list _(fel tub))
+    |-  ^-  [_lef (pair hair [~ u=(pair _rud nail)])]
+    =+  vex=(fel tub)
+    ?~  q.vex
+      :-  lef
+      [p.vex [~ rud tub]]
+    $(lef [vex lef], tub q.u.q.vex)
+  ::
+  ::  fold .lef into .wag, combining results with .raq
+  ::
+  %+  roll  lef
+  |=  _[vex=(fel tub) wag=wag]  :: q.vex is always (some)
+  ^+  wag
+  :-  (last p.vex p.wag)
+  [~ (raq p.u.+.q.vex p.u.q.wag) q.u.q.wag]
 ::
 ++  stun                                                ::  parse several times
+  ~/  %stun
   |*  {lig/{@ @} fel/rule}
   |=  tub/nail
   ^-  (like (list _(wonk (fel))))
@@ -6221,7 +6253,13 @@
   ++  twid
     ~+
     ;~  pose
-      (cook |=(a/@ [%blob (cue a)]) ;~(pfix (just '0') vum:ag))
+      %+  stag  %blob
+      %+  sear
+        ::  XX use +mole once available
+        ::
+        |=(a=@ `(unit)`=/(b (mule |.((cue a))) ?-(-.b %| ~, %& `p.b)))
+      ;~(pfix (just '0') vum:ag)
+    ::
       (stag %$ crub)
     ==
   ::
@@ -10793,8 +10831,8 @@
       ^-  ?
       =-  ?:  -  &
           ?.  tel  |
-          ::  ~_  (dunk %need)
-          ::  ~_  (dunk(sut ref) %have)
+          ~_  (dunk %need)
+          ~_  (dunk(sut ref) %have)
           ~>  %mean.'nest-fail'
           !!
       ?:  =(sut ref)  &
@@ -11364,7 +11402,7 @@
       ::
           {$face *}
         =^  cox  gid  $(q.ham q.q.ham)
-        :_(gid [%palm [['/' ~] ~ ~ ~] [%leaf (trip p.q.ham)] cox ~])
+        :_(gid [%palm [['=' ~] ~ ~ ~] [%leaf (trip p.q.ham)] cox ~])
       ::
           {$list *}
         =^  cox  gid  $(q.ham q.q.ham)
@@ -11376,10 +11414,10 @@
       ::
           {$plot *}
         =^  coz  gid  (many p.q.ham)
-        :_(gid [%rose [[' ' ~] ['{' ~] ['}' ~]] coz])
+        :_(gid [%rose [[' ' ~] ['[' ~] [']' ~]] coz])
       ::
           {$pear *}
-        :_(gid [%leaf '$' ~(rend co [%$ p.q.ham q.q.ham])])
+        :_(gid [%leaf '%' ~(rend co [%$ p.q.ham q.q.ham])])
       ::
           {$stop *}
         =+  num=~(rend co [%$ %ud p.q.ham])
@@ -12051,7 +12089,7 @@
   =/  res  (mule trap)
   ?-  -.res
     %&  p.res
-    %|  (mean leaf+"road: new" p.res)
+    %|  (mean p.res)
   ==
 ::
 ++  slew                                                ::  get axis in vase

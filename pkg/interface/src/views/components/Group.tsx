@@ -25,16 +25,16 @@ class GroupMember extends Component<{ ship: Patp; options: any[] }, {}> {
 
     return (
       <div className='flex justify-between f9 items-center'>
-        <div className='flex flex-column'>
+        <div className='flex flex-column flex-shrink-0'>
           <Text mono mr='2'>{`${cite(ship)}`}</Text>
           {children}
         </div>
         {options.length > 0 && (
           <Menu>
-            <MenuButton sm>Options</MenuButton>
+            <MenuButton width='min-content'>Options</MenuButton>
             <MenuList>
               {options.map(({ onSelect, text }) => (
-                <MenuItem onSelect={onSelect}>{text}</MenuItem>
+                <MenuItem onSelect={onSelect}><Text fontsize='0'>{text}</Text></MenuItem>
               ))}
             </MenuList>
           </Menu>

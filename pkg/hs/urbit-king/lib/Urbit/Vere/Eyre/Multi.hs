@@ -47,7 +47,7 @@ data MultiEyreApi = MultiEyreApi
   , meaCanc :: TVar (Map Ship OnMultiKil)
   , meaTlsC :: TVar (Map Ship (TlsConfig, Credential))
   , meaSite :: TVar (Map Ship KingSubsite)
-  , meaKill :: STM ()
+  , meaKill :: IO ()
   }
 
 

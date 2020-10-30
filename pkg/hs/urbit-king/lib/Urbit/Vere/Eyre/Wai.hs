@@ -25,7 +25,6 @@ module Urbit.Vere.Eyre.Wai
 where
 
 import Urbit.Prelude hiding (Builder)
-import Urbit.Prelude (RIO)
 
 import Data.Binary.Builder         (Builder, fromByteString)
 import Data.Bits                   (shiftL, (.|.))

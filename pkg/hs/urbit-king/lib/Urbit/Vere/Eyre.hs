@@ -348,9 +348,9 @@ eyre env who plan isFake stderr sub = (initialEvents, runHttpServer)
   kill :: HasLogFunc e => Serv -> RIO e ()
   kill Serv{..} = do
     atomically (leaveMultiEyre multi who)
-    atomically (saKil sLop)
-    atomically (saKil sIns)
-    for_ sSec (\sec -> atomically (saKil sec))
+    io (saKil sLop)
+    io (saKil sIns)
+    io $ for_ sSec (\sec -> (saKil sec))
     io (removePortsFile sPortsFile)
 
   restart :: Drv -> HttpServerConf -> RIO e Serv

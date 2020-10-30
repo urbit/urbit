@@ -17,7 +17,6 @@ import Urbit.Vere.Serf.Types
 
 import Data.Conduit       (ConduitT, Flush(..), yield)
 import Data.Text.Encoding (encodeUtf8Builder)
-import Urbit.Noun.Tank    (wash)
 
 import qualified Data.Text.Encoding  as E
 import qualified Network.HTTP.Types  as H

@@ -12,9 +12,8 @@ module Urbit.Noun.Convert
 
 import ClassyPrelude hiding (hash)
 
+import Control.Monad.Fail (MonadFail (fail))
 import Urbit.Noun.Core
-
-import qualified Control.Monad.Fail as Fail
 
 
 -- Types -----------------------------------------------------------------------
@@ -24,11 +23,11 @@ type ParseStack = [Text]
 
 -- "Parser" --------------------------------------------------------------------
 
-type Failure f r   = ParseStack -> String -> f r
-type Success a f r = a -> f r
+type Failure a   = ParseStack -> String -> a
+type Success a b = a -> b
 
 newtype Parser a = Parser {
-  runParser :: forall f r.  ParseStack -> Failure f r -> Success a f r -> f r
+  runParser :: forall r. ParseStack -> Failure r -> Success a r -> r
 }
 
 named :: Text -> Parser a -> Parser a
@@ -39,9 +38,8 @@ instance Monad Parser where
     m >>= g = Parser $ \path kf ks -> let ks' a = runParser (g a) path kf ks
                                        in runParser m path kf ks'
     return = pure
-    fail = Fail.fail
 
-instance Fail.MonadFail Parser where
+instance MonadFail Parser where
     fail msg = Parser $ \path kf _ks -> kf (reverse path) msg
 
 instance Functor Parser where
