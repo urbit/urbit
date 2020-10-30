@@ -6,7 +6,7 @@
 ::    watched address updates
 ::
 /-  *btc-wallet-store
-/+  dbug, default-agent, bip32, btc
+/+  dbug, default-agent, *btc-wallet-store, btc, bip32
 |%
 +$  versioned-state
     $%  state-0
@@ -73,55 +73,11 @@
   ^-  (quip card _state)
   ?-  -.act
       %add-wallet
-    (add-wallet +.act)
+    `state
+::    (add-wallet +.act)
     ::
       %update-address
-    (update-address +.act)
-  ==
-++  update-address
-  |=  [a=address us=(set utxo)]
-  ^-  (quip card _state)
-  =/  xpubs=(list tape)
-    %~  tap  in
-    ~(key by walts.state)
-  |-  ?~  xpubs  `state
-  =/  w=walt  (~(got by walts.state) i.xpubs)
-  ?:  (~(has by wach.w) a)
-    %:  send-address-update
-        i.xpubs
-        (update-wallet w a us)
-        a
-        us
-    ==
-  $(xpubs t.xpubs)
-::
-++  update-wallet
-  |=  [w=walt a=address us=(set utxo)]
-  ^-  walt
-  =/  curr-addi=addi
-    (~(got by wach.w) a)
-  w(wach (~(put by wach.w) a curr-addi(used %.y, utxos us)))
-::
-++  send-address-update
-  |=  [xpub=tape =walt a=address us=(set utxo)]
-  ^-  (quip card _state)
-  :_  state(walts (~(put by walts.state) xpub walt))
-  ~[[%give %fact ~[/wallets] %btc-wallet-store-update !>([%address a us])]]
-::
-++  add-wallet
-  |=  [xpub=tape scan-to=(unit scon) max-gap=(unit @)]
-  ^-  (quip card _state)
-  ?:  (~(has by walts.state) xpub)
-    ~&  >>>  "xpub already imported"
     `state
-  =/  wallet=walt
-    :*  (from-extended:bip32 xpub)
-        (xpub-type:btc xpub)
-        *wach
-        [0 0]
-        %.n
-        (fall scan-to *scon)
-        (fall max-gap max-gap.state)
-    ==
-  `state(walts (~(put by walts.state) xpub wallet))
+    ::  (update-address +.act)
+  ==
 --
