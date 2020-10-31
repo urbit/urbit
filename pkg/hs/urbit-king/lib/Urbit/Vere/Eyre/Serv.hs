@@ -33,11 +33,15 @@ where
 
 import Urbit.Prelude hiding (Builder)
 
-import Data.Default       (def)
-import Data.List.NonEmpty (NonEmpty((:|)))
-import Network.TLS        (Credential, Credentials(..), ServerHooks(..))
-import Network.TLS        (credentialLoadX509ChainFromMemory)
-import RIO.Prelude        (decodeUtf8Lenient)
+import Data.Default                (def)
+import Data.List.NonEmpty          (NonEmpty((:|)))
+import Network.TLS                 ( Credential
+                                   , Credentials(..)
+                                   , ServerHooks(..)
+                                   )
+import Network.TLS                 (credentialLoadX509ChainFromMemory)
+import RIO.Prelude                 (decodeUtf8Lenient)
+import Urbit.Vere.Eyre.KingSubsite (KingSubsite)
 
 import qualified Control.Monad.STM           as STM
 import qualified Data.Char                   as C
@@ -65,23 +69,23 @@ data TlsConfig = TlsConfig
 
 newtype MultiTlsConfig = MTC (TVar (Map Ship (TlsConfig, Credential)))
 
-instance Show MultiTlsConfig where
-  show = const "MultiTlsConfig"
-
 data ReqApi = ReqApi
   { rcReq :: Ship -> Word64 -> E.ReqInfo -> STM ()
   , rcKil :: Ship -> Word64 -> STM ()
   }
 
-instance Show ReqApi where
-  show = const "ReqApi"
-
 data ServType
-  = STHttp Ship ReqApi
-  | STHttps Ship TlsConfig ReqApi
-  | STMultiHttp ReqApi
-  | STMultiHttps MultiTlsConfig ReqApi
- deriving (Show)
+  = STHttp Ship KingSubsite ReqApi
+  | STHttps Ship TlsConfig KingSubsite ReqApi
+  | STMultiHttp (Ship -> STM KingSubsite) ReqApi
+  | STMultiHttps MultiTlsConfig (Ship -> STM KingSubsite) ReqApi
+
+instance Show ServType where
+  show = \case
+    STHttp  who _ _      -> "STHttp "  <> show who
+    STHttps who tls _ _  -> "STHttps " <> show who <> " " <> show tls
+    STMultiHttp _ _      -> "STMultiHttp"
+    STMultiHttps tls _ _ -> "STMultiHttps"
 
 data ServPort
   = SPAnyPort
@@ -264,26 +268,28 @@ startServer typ hos por sok red vLive = do
           & W.setPort (fromIntegral por)
           & W.setTimeout (5 * 60)
 
+  -- TODO build Eyre.Site.app in pier, thread through here
   let runAppl who = E.app envir who vLive
       reqShip = hostShip . W.requestHeaderHost
 
   case typ of
-    STHttp who api -> do
-      let app = runAppl who (rcReq api who) (rcKil api who)
+    STHttp who sub api -> do
+      let app = runAppl who (rcReq api who) (rcKil api who) sub
       io (W.runSettingsSocket opts sok app)
 
-    STHttps who TlsConfig {..} api -> do
+    STHttps who TlsConfig {..} sub api -> do
       let tls = W.tlsSettingsChainMemory tcCerti tcChain tcPrKey
-      let app = runAppl who (rcReq api who) (rcKil api who)
+      let app = runAppl who (rcReq api who) (rcKil api who) sub
       io (W.runTLSSocket tls opts sok app)
 
-    STMultiHttp api -> do
+    STMultiHttp fub api -> do
       let app req resp = do
             who <- reqShip req
-            runAppl who (rcReq api who) (rcKil api who) req resp
+            sub <- atomically $ fub who
+            runAppl who (rcReq api who) (rcKil api who) sub req resp
       io (W.runSettingsSocket opts sok app)
 
-    STMultiHttps mtls api -> do
+    STMultiHttps mtls fub api -> do
       TlsConfig {..} <- atomically (getFirstTlsConfig mtls)
 
       let sni = def { onServerNameIndication = onSniHdr envir mtls }
@@ -298,7 +304,8 @@ startServer typ hos por sok red vLive = do
           runRIO envir $ logDbg ctx "Got request"
           who <- reqShip req
           runRIO envir $ logDbg ctx ("Parsed HOST", who)
-          runAppl who (rcReq api who) (rcKil api who) req resp
+          sub <- atomically $ fub who
+          runAppl who (rcReq api who) (rcKil api who) sub req resp
 
       io (W.runTLSSocket tlsMany opts sok app)
 
