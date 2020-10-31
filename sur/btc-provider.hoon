@@ -8,7 +8,7 @@
   $%  [%get-address-info =address]
   ==
 +$  result
-  $%  [%get-address-info a=address us=(set utxo) used=?]
+  $%  [%get-address-info a=address utxos=(set utxo) used=?]
   ==
 +$  error
   $%  [%not-connected ~]
