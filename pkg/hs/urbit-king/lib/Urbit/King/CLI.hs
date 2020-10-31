@@ -143,10 +143,10 @@ data Bug
   deriving (Show)
 
 data Cmd
-    = CmdNew New  Opts
-    | CmdRun Host [(Run, Opts, Bool)]
-    | CmdImp Imp  Opts
-    | CmdExp Exp  Opts
+    = CmdNew New      Opts
+    | CmdRun Host     [(Run, Opts, Bool)]
+    | CmdImp FilePath Imp Opts
+    | CmdExp FilePath Exp Opts
     | CmdBug Bug
     | CmdCon FilePath
   deriving (Show)
@@ -507,13 +507,13 @@ runShip :: Parser (Cmd, Log)
 runShip = (,) <$> (CmdRun <$> host <*> some runOneShip) <*> log
 
 impShip :: Parser (Cmd, Log)
-impShip = (,) <$> (CmdImp <$> imp <*> opts) <*> log
+impShip = (,) <$> (CmdImp <$> pierPath <*> imp <*> opts) <*> log
 
 imp :: Parser Imp
 imp = Imp <$> strArgument (metavar "IMPFILE" <> help "Path to import file")
 
 expShip :: Parser (Cmd, Log)
-expShip = (,) <$> (CmdExp <$> exp <*> opts) <*> log
+expShip = (,) <$> (CmdExp <$> pierPath <*> exp <*> opts) <*> log
 
 exp :: Parser Exp
 exp = Exp <$> strArgument (metavar "EXPFILE" <> help "Path to export file")
