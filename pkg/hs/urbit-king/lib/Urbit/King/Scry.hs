@@ -12,10 +12,10 @@ import qualified Urbit.Noun.Time as Time
 scryNow :: forall e n
         . (HasLogFunc e, FromNoun n)
        => (Time.Wen -> Gang -> Path -> IO (Maybe (Term, Noun)))
-       -> Text
-       -> Ship
-       -> Text
-       -> [Text]
+       -> Text    -- ^ vane + care as two-letter string
+       -> Ship    -- ^ ship in scry path, usually the local ship
+       -> Text    -- ^ desk in scry path
+       -> [Text]  -- ^ resource path to scry for
        -> RIO e (Maybe n)
 scryNow scry vare ship desk path = do
   env <- ask
@@ -25,7 +25,7 @@ scryNow scry vare ship desk path = do
   io (scry wen Nothing pax) >>= \case
     Just (_, fromNoun @n -> Just v) -> pure $ Just v
     Just (_, n) -> do
-      logError $ displayShow (vare, "uncanny scry result", pax, n)
+      logError $ displayShow ("uncanny scry result", vare, pax, n)
       pure Nothing
     Nothing -> pure Nothing
 

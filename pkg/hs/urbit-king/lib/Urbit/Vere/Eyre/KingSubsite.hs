@@ -46,7 +46,7 @@ kingSubsite :: HasLogFunc e
             -> (Time.Wen -> Gang -> Path -> IO (Maybe (Term, Noun)))
             -> TVar ((Atom, Tank) -> IO ())
             -> RAcquire e KingSubsite
-kingSubsite who scry func = do  --TODO  unify who into scry
+kingSubsite who scry func = do
   clients <- newTVarIO (mempty :: Map Word (SlogAction -> IO ()))
   nextId  <- newTVarIO (0 :: Word)
   baton   <- newTMVarIO ()
@@ -58,9 +58,8 @@ kingSubsite who scry func = do  --TODO  unify who into scry
     threadDelay 20_000_000
     io $ readTVarIO clients >>= traverse_ ($ KeepAlive)
 
-  --TODO  scry to verify cookie authentication
   pure $ KS $ \req respond -> case W.pathInfo req of
-    ("~_~":"slog":_) -> bracket
+    ["~_~", "slog"] -> bracket
       (do
         id <- atomically $ do
           id <- readTVar nextId
@@ -76,8 +75,8 @@ kingSubsite who scry func = do  --TODO  unify who into scry
         if not authed
           then respond $ emptyResponse 403 "Permission Denied"
           else
-            let loop = yield Flush >>
-                       forever (atomically (readTQueue q) >>= streamSlog)
+            let loop = yield Flush
+                    >> forever (atomically (readTQueue q) >>= streamSlog)
             in  respond $ W.responseSource (H.mkStatus 200 "OK") heads loop)
 
     _ -> respond $ emptyResponse 404 "Not Found"
@@ -97,7 +96,7 @@ kingSubsite who scry func = do  --TODO  unify who into scry
     getCookie req = intercalate "; "
                   $ fmap (E.decodeUtf8 . snd)
                   $ filter ((== "cookie") . fst)
-                  (W.requestHeaders req)
+                  $ W.requestHeaders req
 
     scryAuth :: HasLogFunc e
               => Text
