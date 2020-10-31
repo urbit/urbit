@@ -31,6 +31,19 @@
         scan-to  (fall scan-to *scon)
         max-gap  (fall max-gap default-max-gap)
     ==
+  ::  generate an address; add it to wach (i.e. treat it as used and out in the wild)
+  ::
+  ++  gen-address
+    |=  =chyg
+    ^-  (pair address:btc _this)
+    =/  addr=address:btc
+      (mk-address chyg (get-nixt chyg))
+    :-  addr
+    %=  this
+        wach  (~(put by wach) addr [chyg (get-nixt chyg) *(set utxo:btc)])
+        nixt  (bump-nixt chyg)
+    ==
+  ::
   ++  mk-address
     |=  [=chyg =idx]
     ^-  address:btc
