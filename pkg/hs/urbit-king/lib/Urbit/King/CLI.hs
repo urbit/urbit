@@ -6,7 +6,7 @@
 -}
 module Urbit.King.CLI where
 
-import ClassyPrelude                   hiding (log)
+import ClassyPrelude                   hiding (exp, log)
 import Options.Applicative
 import Options.Applicative.Help.Pretty
 
@@ -99,6 +99,16 @@ data Run = Run
     }
   deriving (Show)
 
+data Imp = Imp
+    { iImportPath :: FilePath
+    }
+  deriving (Show)
+
+data Exp = Exp
+    { eExportPath :: FilePath
+    }
+  deriving (Show)
+
 data Bug
     = ValidatePill
         { bPillPath :: FilePath
@@ -135,6 +145,8 @@ data Bug
 data Cmd
     = CmdNew New  Opts
     | CmdRun Host [(Run, Opts, Bool)]
+    | CmdImp Imp  Opts
+    | CmdExp Exp  Opts
     | CmdBug Bug
     | CmdCon FilePath
   deriving (Show)
@@ -494,6 +506,18 @@ host = do
 runShip :: Parser (Cmd, Log)
 runShip = (,) <$> (CmdRun <$> host <*> some runOneShip) <*> log
 
+impShip :: Parser (Cmd, Log)
+impShip = (,) <$> (CmdImp <$> imp <*> opts) <*> log
+
+imp :: Parser Imp
+imp = Imp <$> strArgument (metavar "IMPFILE" <> help "Path to import file")
+
+expShip :: Parser (Cmd, Log)
+expShip = (,) <$> (CmdExp <$> exp <*> opts) <*> log
+
+exp :: Parser Exp
+exp = Exp <$> strArgument (metavar "EXPFILE" <> help "Path to export file")
+
 valPill :: Parser Bug
 valPill = do
     bPillPath <- strArgument (metavar "PILL" <> help "Path to pill")
@@ -587,6 +611,12 @@ cmd = subparser
                         )
        <> command "run" ( info (runShip <**> helper)
                         $ progDesc "Run an existing ship."
+                        )
+       <> command "imp" ( info (impShip <**> helper)
+                        $ progDesc "Import data into an existing ship."
+                        )
+       <> command "exp" ( info (expShip <**> helper)
+                        $ progDesc "Export data from an existing ship."
                         )
        <> command "bug" ( info (bugCmd <**> helper)
                         $ progDesc "Run a debugging sub-command."

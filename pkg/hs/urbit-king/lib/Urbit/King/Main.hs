@@ -557,6 +557,17 @@ newShip CLI.New{..} opts = do
       runPierEnv pierConfig networkConfig vKill $
         tryBootFromPill True pill nLite ship bootEvent
 
+impShip :: CLI.Imp -> CLI.Opts -> RIO KingEnv ()
+impShip CLI.Imp {..} opts = do
+  undefined
+  --let pierConfig = toPierConfig (pierPath name) nSerfExe opts
+  --let networkConfig = toNetworkConfig opts
+  --runPierEnv pierConfig networkConfig vKill $ undefined
+
+expShip :: CLI.Exp -> CLI.Opts -> RIO KingEnv ()
+expShip = undefined
+
+
 runShipEnv :: Maybe Text -> CLI.Run -> CLI.Opts -> TMVar () -> RIO PierEnv a
            -> RIO HostEnv a
 runShipEnv serfExe (CLI.Run pierPath) opts vKill act = do
@@ -664,6 +675,8 @@ main = do
   runKingEnv args log $ case args of
     CLI.CmdRun ko ships                       -> runShips ko ships
     CLI.CmdNew n  o                           -> newShip n o
+    CLI.CmdImp i  o                           -> impShip i o
+    CLI.CmdExp e  o                           -> expShip e o
     CLI.CmdBug (CLI.CollectAllFX pax        ) -> collectAllFx pax
     CLI.CmdBug (CLI.EventBrowser pax        ) -> startBrowser pax
     CLI.CmdBug (CLI.ValidatePill   pax pil s) -> testPill pax pil s
