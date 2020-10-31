@@ -25,17 +25,18 @@
 +$  wach  (map address addi)
 +$  scon  $~([max-index max-index] (pair idx idx))
 +$  wilt  _bip32
-::  scanning: maps xpub+chyg to set of indices.
-::            once it's full, we can check whether address in it were blank or not
-::  seen:     holds addresses whose scan results we've seen already
+::  todo: Set of indices; empty it out until none are left--means scanning of that batch is done
+::  has-used: whether current batch had any addresses with activity
+::  last:     index that wallet has been scanned to prior to this batch
 ::
-+$  scanning  (jug cord idx)
-+$  has-used  (map cord ?)
++$  waltscan  [todo=(set idx) has-used=? last=idx]
++$  scans     (map [xpub chyg] waltscan)
 ::
 +$  action
   $%  [%add-wallet =xpub scan-to=(unit scon) max-gap=(unit @)]
       [%update-address a=address utxos=(set utxo)]
   ==
+::
 +$  update
   $%  [%address a=address utxos=(set utxo)]
   ==

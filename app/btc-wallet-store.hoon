@@ -17,9 +17,8 @@
 ::
 +$  state-0
   $:  %0
-      walts=(map xpub:btc walt)
-      =scanning
-      =has-used
+      walts=(map xpub:btc _walt)
+      =scans
   ==
 ::
 +$  card  card:agent:gall
@@ -38,7 +37,7 @@
 ++  on-init
   ^-  (quip card _this)
   ~&  >  '%btc-wallet-store initialized'
-  `this(state [%0 *(map tape walt) max-gap=20])
+  `this(state [%0 *(map xpub:btc _walt) *^scans])
 ++  on-save
   ^-  vase
   !>(state)
