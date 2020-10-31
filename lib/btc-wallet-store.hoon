@@ -1,3 +1,5 @@
+::
+::
 /-  *btc-wallet-store
 /+  bip32, btc
 =,  secp:crypto
@@ -7,66 +9,73 @@
 ::  xpub
 ::  wilt
 ::  bipt: BIP44/49/84
-::  wach
 ::  next: next index to generate address for in non-change/change accounts respectively
 ::  scanned: whether the wallet's addresses have been checked for prior activity
 ::           if unscanned, 'next' values won't be valid
 ::  scan-to
 ::  max-gap
 ::
-++  is-next
-  |=  [adi=addi next=idxs]  ^-  ?
-  ?|  =(idx.addi p.next)
-      =(idx.addi q.next)
-  ==
-::
 ++  walt
-  |_  [=wilt =bipt =wach next=idxs scanned=? scan-to=scon max-gap=@u]
+  |_  [=wilt =bipt =wach =nixt scanned=? scan-to=scon max-gap=@]
   +*  this  .
   ::
   ++  from-xpub
-    |=  [=xpub:btc scan-to=(unit scon) max-gap=(unit @u)]
+    |=  [=xpub:btc scan-to=(unit scon) max-gap=(unit @)]
     ^-  _this
     %=  this
         wilt  (from-extended:bip32 (trip xpub))
         bipt  (xpub-type:btc xpub)
         wach  *^wach
-        next  [[%0 0] [%1 0]]
+        nixt  [0 0]
         scanned  %.n
         scan-to  (fall scan-to *scon)
         max-gap  (fall max-gap default-max-gap)
     ==
-  ++  get-address
-    |=  [=chyg idx=@]
+  ++  mk-address
+    |=  [=chyg =idx]
     ^-  address:btc
     =/  pubkey=@ux
       %-  compress-point:ecc
-      pub:(derive-public:(derive-public:wilt (@u chyg)) idx)
+      pub:(derive-public:(derive-public:wilt (@ chyg)) idx)
     ?:  ?=(%bip84 bipt)
       (need (encode-pubkey:bech32:btc %main pubkey))
     ~|("legacy addresses not supported yet" !!)
+  ::  insert a new address; update "nixt" free address if this one was it
   ::
-  :: should take index as a parameter so that we can write that to addi and update used
-  ++  insert-address  %dummy
+  ++  insert-address
+    |=  [a=address:btc =addi]
+    ^-  _this
+    =?  nixt  (is-nixt addi)
+      (bump-nixt chyg.addi)
+    this(wach (~(put by wach) a addi))
+  ::  update an address if it's in our wach (we're watching it already)
+  ::
   ++  update-address
-    |=  [a=address:btc used=? utxos=(set utxo:btc)]
+    |=  [a=address:btc utxos=(set utxo:btc)]
     ^-  _this
     =/  adi=(unit addi)
       (~(get by wach) a)
     ?~  adi  this
-    =.  wach
-      (~(put by wach) a u.adi(used used, utxos utxos))
-    ?.  ?&(used (is-next u.adi next))  this
-    ::  if used AND this is next index, we need to do update next
-    this
+    this(wach (~(put by wach) a u.adi(utxos utxos)))
   ::
-  ++  next-unused-idx
-    |=  c=chyg
-    ^-  idx
-    =/  indices=(list idx)
-      %+  turn  ~(val by wach)
-      |=(a=addi idx.a)
-    *idx
-    ::  check next for this one--problem is that we can't index in
+  ++  is-nixt
+  |=  =addi  ^-  ?
+  ?:  ?=(%0 chyg.addi)
+    =(idx.addi p.nixt)
+  =(idx.addi q.nixt)
+  ::  Returns the next unused index in the (non-)change account
+  ::
+  ++  bump-nixt
+    |=  =chyg  ^-  ^nixt
+    =/  new-idx=idx  (add 1 (get-nixt chyg))
+    |-  ?>  (lte new-idx max-index)
+    ?.  (~(has by wach) (mk-address chyg new-idx))
+        (set-nixt chyg new-idx)
+    $(new-idx +(new-idx))
+  ++  get-nixt
+    |=  =chyg  ?:(?=(%0 chyg) p.nixt q.nixt)
+  ++  set-nixt
+    |=  [=chyg idx=@]  ^-  ^nixt
+    ?:(?=(%0 chyg) [idx q.nixt] [p.nixt idx])
   --
 --

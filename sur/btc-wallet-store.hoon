@@ -8,25 +8,25 @@
 /+  bip32
 |%
 ++  max-index  (dec (pow 2 32))
-::  chyg: whether account is non-change/change
-::  idx:  path of [change address_index]
-::  idxs: pair of indices (non-change/change)
+::  chyg: whether account is (non-)change. 0 or 1
+::  nixt: next indices to generate addresses from (non-change/change)
 ::  addi: address with metadata inside a change path
-::  wach: map for watched addresses
-::  scon: indices to initially scan to in non-change/change accounts respectively
+::  wach: map for watched addresses.
+::        Membership implies the address is known by outside parties or had prior activity
+::  scon: indices to initially scan to in (non-)change accounts
 ::        defaults to 2^32-1 (i.e. all the addresses, ~4B)
 ::  wilt: stores xpub; copulates with thousands of indices to form addresses
 ::  walt: wallet metadata
 ::
 +$  chyg  $?(%0 %1)
-+$  idx   (pair chyg @u)
-+$  idxs  (pair idx idx)
-+$  addi  [=idx used=? utxos=(set utxo)]
++$  idx   @
++$  nixt  (pair idx idx)
++$  addi  [=chyg =idx utxos=(set utxo)]
 +$  wach  (map address addi)
-+$  scon  $~([[%0 max-index] [%1 max-index]] idxs)
++$  scon  $~([max-index max-index] (pair idx idx))
 +$  wilt  _bip32
 +$  action
-  $%  [%add-wallet =xpub scan-to=(unit scon) max-gap=(unit @u)]
+  $%  [%add-wallet =xpub scan-to=(unit scon) max-gap=(unit @)]
       [%update-address a=address utxos=(set utxo)]
   ==
 +$  update
