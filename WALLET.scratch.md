@@ -21,7 +21,17 @@
 ### update address data
 ```
 =walt1 (from-xpub:walt:bl xpub1 ~ ~)
-(get-address:walt1 %0 0)
+(mk-address:walt1 %0 0)
+::  gives bc1q0adfj7ur750hjwufzzlfj5ytqzsnd7fz9fjuzc
+=walt1 (insert-address:walt1 [%bech32 'bc1q0adfj7ur750hjwufzzlfj5ytqzsnd7fz9fjuzc'] [%0 0 ~])
+nixt:walt1
+::  gives [p=1 q=0] (nixt updated since it was 0)
+=walt1 (insert-address:walt1 [%bech32 'bc1qa5jcdww8u8493zttjjf6q5wu89e6knpvmsh7x4'] [%0 2 ~])
+nixt:walt1
+::  gives [p=1 q=0] (no update)
+=walt1 (insert-address:walt1 [%bech32 'bc1qvqrdh8suyv63ntaa0d7hmcamavv8283sngh6e5'] [%0 1 ~])
+nixt:walt1
+::  gives [p=3 q=0]  (skips index 2, since already a used address there)
 ```
 
 ## Algos
