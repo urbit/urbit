@@ -12,7 +12,6 @@ import Data.LargeWord
 import Data.Serialize
 
 import Urbit.Arvo (AmesDest)
-import Urbit.Noun.Tree (mug)
 
 data Packet = Packet
   { pktVersion    :: Word8
