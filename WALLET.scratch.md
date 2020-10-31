@@ -2,8 +2,8 @@
 
 ## xpub
 ```
-=xpub1 "zpub6r8dKyWJ31XF6n69KKeEwLjVC5ruqAbiJ4QCqLsrV36Mvx9WEjUaiPNPGFLHNCCqgCdy6iZC8ZgHsm6a1AUTVBMVbKGemNcWFcwBGSjJKbD"
-=xpub2 "xpub6D7yaZieZEeG617UcKXDhbsDeso6bmxSAiGWkvkASoiwcjaRtrH5HeNRnDT25s7zmxYzj6MtFe32dVqcf9YcBKKgn9THHjwn2uSjkvobK4e"
+=xpub1 'zpub6r8dKyWJ31XF6n69KKeEwLjVC5ruqAbiJ4QCqLsrV36Mvx9WEjUaiPNPGFLHNCCqgCdy6iZC8ZgHsm6a1AUTVBMVbKGemNcWFcwBGSjJKbD'
+=xpub2 'xpub6D7yaZieZEeG617UcKXDhbsDeso6bmxSAiGWkvkASoiwcjaRtrH5HeNRnDT25s7zmxYzj6MtFe32dVqcf9YcBKKgn9THHjwn2uSjkvobK4e'
 =bl -build-file %/lib/btc-wallet-store/hoon
 ```
 
@@ -15,14 +15,32 @@
 ### get address at indices
 ```
 =walt1 (from-xpub:walt:bl xpub1 ~ ~)
-=walt2 (from-xpub:walt:bl xpub2 ~ ~)
 (get-address:walt1 %0 0)
-(get-address:walt2 %0 0)
 ```
+
+### update address data
+```
+=walt1 (from-xpub:walt:bl xpub1 ~ ~)
+(get-address:walt1 %0 0)
+```
+
+## Algos
+Insert an address
+1. send wallet an address that we KNOW is in the wallet
+2. include the address's index 
+
+Scan addresses. (map xpub (pair list list))
+outgoing wire is /scan/xpub/change/index
+- keep list of  whether we've heard back on an address `(list (unit used))`
+- every time we get a response
+  - insert the address into the wallet if it's used
+  - check whether (lent (murn l)) == max-gap
+  - if it does, run lien--if any used, continue
+  - if none used, the wallet is scanned.
 
 
 ## scratch code, refactor
-++  update-address
+++  update-utxos
   |=  [a=address:btc us=(set utxo)]
   ^-  (quip card _state)
   =/  xpubs=(list tape)

@@ -8,12 +8,12 @@
   $%  [%get-address-info =address]
   ==
 +$  result
-  $%  [%get-address-info info=address-info]
+  $%  [%get-address-info a=address us=(set utxo) used=?]
   ==
 +$  error
   $%  [%not-connected ~]
   ==
-+$  update  (each result error)               ::  sub updates from /clients path (connection etc.)
++$  update  (each result error)             ::  sub updates to /clients path (connection etc.)
 ::
 +$  command
   $%  [%set-credentials creds=credentials]
