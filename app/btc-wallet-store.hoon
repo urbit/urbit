@@ -14,7 +14,7 @@
 ::
 +$  state-0
   $:  %0
-      walts=(map tape walt)
+      walts=(map xpub:btc walt)
       max-gap=@
   ==
 ::

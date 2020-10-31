@@ -4,9 +4,9 @@
 =,  sur
 |%
 ++  xpub-type
-  |=  xpub=tape
+  |=  =xpub
   ^-  bipt
-  =/  prefix=tape  (scag 4 xpub)
+  =/  prefix=tape  (scag 4 (trip xpub))
   ?:  =("xpub" prefix)  %bip44
   ?:  =("ypub" prefix)  %bip49
   ?:  =("zpub" prefix)  %bip84
