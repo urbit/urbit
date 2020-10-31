@@ -25,6 +25,13 @@
 +$  wach  (map address addi)
 +$  scon  $~([max-index max-index] (pair idx idx))
 +$  wilt  _bip32
+::  scanning: maps xpub+chyg to set of indices.
+::            once it's full, we can check whether address in it were blank or not
+::  seen:     holds addresses whose scan results we've seen already
+::
++$  scanning  (jug cord idx)
++$  has-used  (map cord ?)
+::
 +$  action
   $%  [%add-wallet =xpub scan-to=(unit scon) max-gap=(unit @)]
       [%update-address a=address utxos=(set utxo)]

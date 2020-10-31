@@ -35,18 +35,17 @@ nixt:walt1
 ```
 
 ## Algos
-Insert an address
-1. send wallet an address that we KNOW is in the wallet
-2. include the address's index 
 
 Scan addresses. (map xpub (pair list list))
-outgoing wire is /scan/xpub/change/index
-- keep list of  whether we've heard back on an address `(list (unit used))`
+outgoing wire is /scan/xpub/change/idx
+- keep (jug cord idx) of xpub+chyg -> idx
 - every time we get a response
-  - insert the address into the wallet if it's used
-  - check whether (lent (murn l)) == max-gap
-  - if it does, run lien--if any used, continue
-  - if none used, the wallet is scanned.
+  - check whether idx in `scanning`--ignore if not (old response)
+  - insert the address into the wallet **if it's used**
+  - if used, update `has-used` for this xpub to be true
+  - delete idx from `scanning` jug
+  - check whether `scanning` is now empty
+  
 
 
 ## scratch code, refactor
