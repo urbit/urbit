@@ -214,7 +214,7 @@ runOrExitImmediately vSlog getPier oExit mStart injected = do
 
   runPier :: (Serf, Log.EventLog) -> RIO PierEnv ()
   runPier serfLog = do
-    runRAcquire (Pier.pier serfLog vSlog mStart injected)
+    void $ runRAcquire (Pier.pier serfLog vSlog mStart injected)
 
 tryPlayShip
   :: Bool
@@ -557,15 +557,27 @@ newShip CLI.New{..} opts = do
       runPierEnv pierConfig networkConfig vKill $
         tryBootFromPill True pill nLite ship bootEvent
 
-impShip :: CLI.Imp -> CLI.Opts -> RIO KingEnv ()
-impShip CLI.Imp {..} opts = do
+impShip :: CLI.Arc -> CLI.Opts -> RIO KingEnv ()
+impShip arc@(CLI.Arc {..}) opts = runFake arc opts $ do
   undefined
-  --let pierConfig = toPierConfig (pierPath name) nSerfExe opts
-  --let networkConfig = toNetworkConfig opts
-  --runPierEnv pierConfig networkConfig vKill $ undefined
 
-expShip :: CLI.Exp -> CLI.Opts -> RIO KingEnv ()
-expShip = undefined
+expShip :: CLI.Arc -> CLI.Opts -> RIO KingEnv ()
+expShip arc@(CLI.Arc {..}) opts = runFake arc opts $ do
+  undefined
+
+-- really this should be unified with the new flow
+runFake :: CLI.Arc -> CLI.Opts -> (Pier -> RIO PierEnv e) -> RIO KingEnv e
+runFake CLI.Arc {..} opts act = do
+  -- XX again a hack
+  multi <- multiEyre (MultiEyreConf Nothing Nothing True)
+  let ports = buildInactivePorts
+  runHostEnv multi ports $ do
+    vKill <- view (kingEnvL . kingEnvKillSignal)
+    let pierConfig = toPierConfig aPierPath aSerfExe opts
+    let networkConfig = toNetworkConfig opts
+    runPierEnv pierConfig networkConfig vKill $
+      undefined -- rwith (Pier.pier serfLog vSlog mStart injected) $ act
+        
 
 
 runShipEnv :: Maybe Text -> CLI.Run -> CLI.Opts -> TMVar () -> RIO PierEnv a

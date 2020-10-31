@@ -265,7 +265,7 @@ pier
   -> TVar ((Atom, Tank) -> IO ())
   -> MVar ()
   -> [Ev]
-  -> RAcquire PierEnv ()
+  -> RAcquire PierEnv Pier
 pier (serf, log) vSlog startedSig injected = do
   let logId = Log.identity log :: LogIdentity
   let ship  = who logId :: Ship
@@ -313,7 +313,8 @@ pier (serf, log) vSlog startedSig injected = do
   let execute = writeTQueue executeQ
   let persist = writeTQueue persistQ
   let sigint  = Serf.sendSIGINT serf
-  let scry    = \w b g -> do
+
+  let pierScry = \w b g -> do
         res <- newEmptyMVar
         atomically $ writeTQueue scryQ (w, b, g, putMVar res)
         takeMVar res
@@ -323,7 +324,7 @@ pier (serf, log) vSlog startedSig injected = do
     let err = atomically . Term.trace muxed . (<> "\r\n")
     siz <- atomically $ Term.curDemuxSize demux
     let fak = isFake logId
-    drivers env ship fak compute scry (siz, muxed) err sigint
+    drivers env ship fak compute pierScry (siz, muxed) err sigint
 
   let computeConfig = ComputeConfig { ccOnWork      = takeTMVar computeQ
                                     , ccOnKill      = onKill
@@ -410,6 +411,8 @@ pier (serf, log) vSlog startedSig injected = do
 
   atomically $ (Term.spin muxed) (Just "shutdown")
 
+  pure Pier {..}
+
 death :: Text -> Async () -> STM (Either (Text, SomeException) Text)
 death tag tid = do
   waitCatchSTM tid <&> \case
@@ -434,7 +437,7 @@ drivers
   -> Ship
   -> Bool
   -> (RunReq -> STM ())
-  -> (Wen -> Gang -> Path -> IO (Maybe (Term, Noun)))
+  -> ScryFunc
   -> (TermSize, Term.Client)
   -> (Text -> RIO e ())
   -> IO ()

@@ -99,15 +99,10 @@ data Run = Run
     }
   deriving (Show)
 
-data Imp = Imp
-    { iPierPath   :: FilePath
-    , iImportPath :: FilePath
-    }
-  deriving (Show)
-
-data Exp = Exp
-    { ePierPath   :: FilePath
-    , eExportPath :: FilePath
+data Arc = Arc
+    { aPierPath :: FilePath
+    , aArcPath  :: FilePath
+    , aSerfExe  :: Maybe Text
     }
   deriving (Show)
 
@@ -147,8 +142,8 @@ data Bug
 data Cmd
     = CmdNew New      Opts
     | CmdRun Host     [(Run, Opts, Bool)]
-    | CmdImp Imp Opts
-    | CmdExp Exp Opts
+    | CmdImp Arc Opts
+    | CmdExp Arc Opts
     | CmdBug Bug
     | CmdCon FilePath
   deriving (Show)
@@ -509,18 +504,15 @@ runShip :: Parser (Cmd, Log)
 runShip = (,) <$> (CmdRun <$> host <*> some runOneShip) <*> log
 
 impShip :: Parser (Cmd, Log)
-impShip = (,) <$> (CmdImp <$> imp <*> opts) <*> log
-
-imp :: Parser Imp
-imp = Imp <$> pierPath
-          <*> strArgument (metavar "IMPFILE" <> help "Path to import file")
+impShip = (,) <$> (CmdImp <$> arc <*> opts) <*> log
 
 expShip :: Parser (Cmd, Log)
-expShip = (,) <$> (CmdExp <$> exp <*> opts) <*> log
+expShip = (,) <$> (CmdExp <$> arc <*> opts) <*> log
 
-exp :: Parser Exp
-exp = Exp <$> pierPath
-          <*> strArgument (metavar "EXPFILE" <> help "Path to export file")
+arc :: Parser Arc
+arc = Arc <$> pierPath
+          <*> strArgument (metavar "ARCFILE" <> help "Path to archive file")
+          <*> serfExe
 
 valPill :: Parser Bug
 valPill = do

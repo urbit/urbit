@@ -14,10 +14,12 @@ module Urbit.Vere.Pier.Types
   , jobId
   , jobMug
   , DriverApi(..)
+  , Pier(..)
+  , ScryFunc
   )
 where
 
-import Urbit.Prelude hiding (Term)
+import Urbit.Prelude
 
 import Urbit.Arvo
 import Urbit.Noun.Time
@@ -85,6 +87,15 @@ data DriverApi ef = DriverApi
   { diEventSource    :: STM (Maybe RunReq)
   , diOnEffect       :: ef -> IO ()
   }
+
+
+-- Capabilities of a Running Pier ----------------------------------------------
+
+data Pier = Pier
+  { pierScry :: ScryFunc
+  }
+
+type ScryFunc = Wen -> Gang -> Path -> IO (Maybe (Term, Noun))
 
 
 -- Instances -------------------------------------------------------------------
