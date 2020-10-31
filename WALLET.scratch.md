@@ -39,14 +39,13 @@ nixt:walt1
 Scan addresses. (map xpub (pair list list))
 outgoing wire is /scan/xpub/change/idx
 - keep (jug cord idx) of xpub+chyg -> idx
+- keep (map cord ?) of xpub+chyg-> has-used?
 - every time we get a response
   - check whether idx in `scanning`--ignore if not (old response)
   - insert the address into the wallet **if it's used**
   - if used, update `has-used` for this xpub to be true
   - delete idx from `scanning` jug
-  - check whether `scanning` is now empty
-  
-
+  - check whether scanning is now empty. If it is, check whether has-used is true
 
 ## scratch code, refactor
 ++  update-utxos
@@ -66,32 +65,9 @@ outgoing wire is /scan/xpub/change/idx
     ==
   $(xpubs t.xpubs)
 ::
-++  update-wallet
-  |=  [w=walt a=address:btc us=(set utxo)]
-  ^-  walt
-  =/  curr-addi=addi
-    (~(got by wach.w) a)
-  w(wach (~(put by wach.w) a curr-addi(used %.y, utxos us)))
-::
 ++  send-address-update
   |=  [xpub=tape =walt a=address:btc us=(set utxo)]
   ^-  (quip card _state)
   :_  state(walts (~(put by walts.state) xpub walt))
   ~[[%give %fact ~[/wallets] %btc-wallet-store-update !>([%address a us])]]
 ::
-++  add-wallet
-  |=  [xpub=tape scan-to=(unit scon) max-gap=(unit @)]
-  ^-  (quip card _state)
-  ?:  (~(has by walts.state) xpub)
-    ~&  >>>  "xpub already imported"
-    `state
-  =/  wallet=walt
-    :*  (from-extended:bip32 xpub)
-        (xpub-type:btc xpub)
-        *wach
-        [0 0]
-        %.n
-        (fall scan-to *scon)
-        (fall max-gap max-gap.state)
-    ==
-  `state(walts (~(put by walts.state) xpub wallet))

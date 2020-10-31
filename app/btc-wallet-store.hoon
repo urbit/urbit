@@ -11,11 +11,15 @@
 +$  versioned-state
     $%  state-0
     ==
+::  walts: all wallets, keyed by their xpubs
+::  scanning: sets of idxs currently being scanned, keyed by xpub+chyg
+::  has-used: whether xpub+chyg being scanned has previously used addresses, keyed by xpub+chyg
 ::
 +$  state-0
   $:  %0
       walts=(map xpub:btc walt)
-      max-gap=@
+      =scanning
+      =has-used
   ==
 ::
 +$  card  card:agent:gall
