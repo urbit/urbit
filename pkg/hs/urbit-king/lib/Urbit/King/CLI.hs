@@ -100,12 +100,14 @@ data Run = Run
   deriving (Show)
 
 data Imp = Imp
-    { iImportPath :: FilePath
+    { iPierPath   :: FilePath
+    , iImportPath :: FilePath
     }
   deriving (Show)
 
 data Exp = Exp
-    { eExportPath :: FilePath
+    { ePierPath   :: FilePath
+    , eExportPath :: FilePath
     }
   deriving (Show)
 
@@ -145,8 +147,8 @@ data Bug
 data Cmd
     = CmdNew New      Opts
     | CmdRun Host     [(Run, Opts, Bool)]
-    | CmdImp FilePath Imp Opts
-    | CmdExp FilePath Exp Opts
+    | CmdImp Imp Opts
+    | CmdExp Exp Opts
     | CmdBug Bug
     | CmdCon FilePath
   deriving (Show)
@@ -507,16 +509,18 @@ runShip :: Parser (Cmd, Log)
 runShip = (,) <$> (CmdRun <$> host <*> some runOneShip) <*> log
 
 impShip :: Parser (Cmd, Log)
-impShip = (,) <$> (CmdImp <$> pierPath <*> imp <*> opts) <*> log
+impShip = (,) <$> (CmdImp <$> imp <*> opts) <*> log
 
 imp :: Parser Imp
-imp = Imp <$> strArgument (metavar "IMPFILE" <> help "Path to import file")
+imp = Imp <$> pierPath
+          <*> strArgument (metavar "IMPFILE" <> help "Path to import file")
 
 expShip :: Parser (Cmd, Log)
-expShip = (,) <$> (CmdExp <$> pierPath <*> exp <*> opts) <*> log
+expShip = (,) <$> (CmdExp <$> exp <*> opts) <*> log
 
 exp :: Parser Exp
-exp = Exp <$> strArgument (metavar "EXPFILE" <> help "Path to export file")
+exp = Exp <$> pierPath
+          <*> strArgument (metavar "EXPFILE" <> help "Path to export file")
 
 valPill :: Parser Bug
 valPill = do

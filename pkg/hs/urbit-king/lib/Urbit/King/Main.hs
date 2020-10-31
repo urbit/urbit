@@ -675,8 +675,8 @@ main = do
   runKingEnv args log $ case args of
     CLI.CmdRun ko  ships                      -> runShips ko ships
     CLI.CmdNew n   o                          -> newShip n o
-    CLI.CmdImp p i o                          -> impShip i o
-    CLI.CmdExp p e o                          -> expShip e o
+    CLI.CmdImp i o                            -> impShip i o
+    CLI.CmdExp e o                            -> expShip e o
     CLI.CmdBug (CLI.CollectAllFX pax        ) -> collectAllFx pax
     CLI.CmdBug (CLI.EventBrowser pax        ) -> startBrowser pax
     CLI.CmdBug (CLI.ValidatePill   pax pil s) -> testPill pax pil s
