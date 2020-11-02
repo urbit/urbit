@@ -136,6 +136,8 @@ export function LinkResource(props: LinkResourceProps) {
                   editCommentId={editCommentId}
                   history={props.history}
                   baseUrl={`${resourceUrl}/${props.match.params.index}`}
+                  association={association}
+                  group={group}
                 />
               </Col>
             );

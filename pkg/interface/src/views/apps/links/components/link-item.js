@@ -64,7 +64,7 @@ export const LinkItem = (props) => {
             {showNickname ? nickname : cite(author) }
           </Text>
           <Link to={`${baseUrl}/${index}`}>
-            <Text color="gray">{size} comments</Text>
+            <Text color="gray">{size} comment{size > 1 ? 's' : null}</Text>
           </Link>
           {(ourRole === 'admin' || node.post.author === window.ship)
             && (<Text color='red' ml='2' cursor='pointer' onClick={() => api.graph.removeNodes(`~${ship}`, name, [node.post.index])}>Delete</Text>)}

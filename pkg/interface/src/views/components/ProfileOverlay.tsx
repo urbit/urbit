@@ -1,4 +1,6 @@
 import React, { PureComponent } from 'react';
+
+import { Contact, Association, Group } from '~/types';
 import { cite } from '~/logic/lib/util';
 import { Sigil } from '~/logic/lib/sigil';
 
@@ -6,9 +8,26 @@ import { Box, Col, Button, Text, BaseImage } from '@tlon/indigo-react';
 
 export const OVERLAY_HEIGHT = 250;
 
-export class ProfileOverlay extends PureComponent {
-  constructor() {
-    super();
+interface ProfileOverlayProps {
+  ship: string;
+  contact?: Contact;
+  color: string;
+  topSpace: number;
+  bottomSpace: number;
+  association: Association;
+  group: Group;
+  onDismiss(): void;
+  hideAvatars: boolean;
+  hideNicknames: boolean;
+  history: any;
+  api: any;
+}
+
+export class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
+  public popoverRef: React.Ref<typeof Col>;
+
+  constructor(props) {
+    super(props);
 
     this.popoverRef = React.createRef();
     this.onDocumentClick = this.onDocumentClick.bind(this);

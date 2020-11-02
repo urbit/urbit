@@ -1,17 +1,42 @@
 import React, { PureComponent } from 'react';
+
 import { Sigil } from '~/logic/lib/sigil';
+import { Contact, Association, Group } from '~/types';
+
 import {
   ProfileOverlay,
   OVERLAY_HEIGHT
-} from './profile-overlay';
+} from './ProfileOverlay';
 import { Box, BaseImage } from '@tlon/indigo-react';
 
-export class OverlaySigil extends PureComponent {
-  constructor() {
-    super();
+interface OverlaySigilProps {
+  ship: string;
+  contact?: Contact;
+  color: string;
+  sigilClass: string;
+  association: Association;
+  group: Group;
+  hideAvatars: boolean;
+  hideNicknames: boolean;
+  scrollWindow: HTMLElement;
+  history: any;
+  api: any;
+  className: string;
+}
+
+interface OverlaySigilState {
+  clicked: boolean;
+  topSpace: number;
+  bottomSpace: number;
+}
+
+export default class OverlaySigil extends PureComponent<OverlaySigilProps, OverlaySigilState> {
+  public containerRef: React.Ref<HTMLDivElement>;
+
+  constructor(props) {
+    super(props);
     this.state = {
       clicked: false,
-      captured: false,
       topSpace: 0,
       bottomSpace: 0
     };
@@ -21,17 +46,16 @@ export class OverlaySigil extends PureComponent {
     this.profileShow = this.profileShow.bind(this);
     this.profileHide = this.profileHide.bind(this);
     this.updateContainerOffset = this.updateContainerOffset.bind(this);
-    this.updateContainerInterval = null;
   }
 
   profileShow() {
     this.updateContainerOffset();
-    this.setState({ profileClicked: true });
+    this.setState({ clicked: true });
     this.props.scrollWindow.addEventListener('scroll', this.updateContainerOffset);
   }
 
   profileHide() {
-    this.setState({ profileClicked: false });
+    this.setState({ clicked: false });
     this.props.scrollWindow.removeEventListener('scroll', this.updateContainerOffset, true);
   }
 
@@ -77,7 +101,7 @@ export class OverlaySigil extends PureComponent {
         className={props.className}
         ref={this.containerRef}
       >
-        {state.profileClicked && (
+        {state.clicked && (
           <ProfileOverlay
             ship={props.ship}
             contact={props.contact}
