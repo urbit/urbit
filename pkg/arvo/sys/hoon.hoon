@@ -11237,12 +11237,39 @@
     ~/  %lose
     |=  gen/hoon  ^-  type
     (chip | gen)
-  ::  XX implement
   ::
   ++  caching-chip
     |=  [how=? gen=hoon]
     ^-  [type _grub]
-    !!
+    ?:  ?=([%wtts *] gen)
+      =^  worn  grub  (caching-play ~(example ax fab p.gen))
+      (caching-cool how q.gen worn)
+    ?:  ?=([%wthx *] gen)
+      =^  worn  grub  (caching-play %wing q.gen)
+      ~>  %slog.[0 [%leaf "chipping"]]
+      ?:  how
+        =;  [=type =_grub]
+            ~>  %slog.[0 (dunk(sut worn) 'chip: gain: ref')]
+            ~>  %slog.[0 (dunk(sut type) 'chip: gain: gain')]
+            [type grub]
+        ~(caching-gain ar worn p.gen)
+      ~(caching-lose ar worn p.gen)
+    ?:  ?&(how ?=([%wtpd *] gen))
+      |-  ^-  [type _grub]
+      ?~  p.gen
+        [sut grub]
+      =^  rig  grub  ^$(gen i.p.gen)
+      $(p.gen t.p.gen, sut rig)
+    ?:  ?&(!how ?=([%wtbr *] gen))
+      |-  ^-  [type _grub]
+      ?~  p.gen
+        [sut grub]
+      =^  rig  grub  ^$(gen i.p.gen)
+      $(p.gen t.p.gen, sut rig)
+    =/  neg  ~(open ap gen)
+    ?:  =(neg gen)
+      [sut grub]
+    $(gen neg)
   ::
   ++  chip
     ~/  %chip
