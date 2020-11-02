@@ -49,7 +49,8 @@ function RecentGroups(props: { recent: string[]; associations: Associations }) {
         const assoc = associations.contacts[g];
         const color = uxToHex(assoc?.metadata?.color || "0x0");
         return (
-          <Row key={g} px={1} pb={2} alignItems="center">
+          <Link key={g} style={{ minWidth: 0 }} to={`/~landscape${g}`}>
+          <Row px={1} pb={2} alignItems="center">
             <Box
               borderRadius={1}
               border={1}
@@ -61,10 +62,9 @@ function RecentGroups(props: { recent: string[]; associations: Associations }) {
               display="block"
               flexShrink='0'
             />
-            <Link style={{ minWidth: 0 }} to={`/~landscape${g}`}>
               <Text verticalAlign='top' maxWidth='100%' overflow='hidden' display='inline-block' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}>{assoc?.metadata?.title}</Text>
-            </Link>
-          </Row>
+            </Row>
+          </Link>
         );
       })}
     </Col>
