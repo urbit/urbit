@@ -165,24 +165,24 @@ export function GroupSwitcher(props: {
               </Col>
             }
           >
-            <Row p={2} alignItems="center">
-              <Row alignItems="center" mr={1} flex='1'>
-                <Text overflow='hidden' display='inline-block' maxWidth='131px'  style={{ textOverflow: 'ellipsis', whiteSpace: 'pre'}}>{title}</Text>
+            <Row p={2} alignItems="center" width='100%' minWidth='0'>
+              <Row alignItems="center" mr={1} flex='1' width='100%' minWidth='0'>
+                <Text overflow='hidden' display='inline-block' flexShrink='1' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre'}}>{title}</Text>
+                <Icon size='12px' ml='1' mt="0px" display="inline-block" icon="ChevronSouth" />
               </Row>
-              <Icon size='12px' ml='1' mt="0px" display="inline-block" icon="ChevronSouth" />
             </Row>
           </Dropdown>
-          <Row pr={1} justifyContent="flex-end" alignItems="center">
+          <Row pr={1} flexShrink='0' justifyContent="flex-end" alignItems="center">
             {workspace.type === "group" && (
               <>
-                <Link to={navTo("/invites")}>
+                <Link flexShrink='0' to={navTo("/invites")}>
                   <Icon
                     display="block"
                     color='blue'
                     icon="CreateGroup"
                   />
                 </Link>
-                <Link to={navTo("/popover/settings")}>
+                <Link flexShrink='0' to={navTo("/popover/settings")}>
                   <Icon color='gray' display="block" m={2} icon="Gear" />
                 </Link>
               </>
