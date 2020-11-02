@@ -1,3 +1,4 @@
+import React from 'react';
 import _ from 'lodash';
 import f from 'lodash/fp';
 import bigInt from 'big-integer';
@@ -324,4 +325,20 @@ export function numToUd(num) {
     f.map(s => s.join('')),
     f.join('.')
   )(num.toString())
+}
+
+export function usePreventWindowUnload(shouldPreventDefault, message = "You have unsaved changes. Are you sure you want to exit?") {
+  React.useEffect(() => {
+    if (!shouldPreventDefault) return;
+    const handleBeforeUnload = event => {
+      event.preventDefault();
+      return message;
+    }
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    window.onbeforeunload = handleBeforeUnload;
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.onbeforeunload = undefined;
+    }
+  }, [shouldPreventDefault]);
 }

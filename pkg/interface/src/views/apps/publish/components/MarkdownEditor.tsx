@@ -1,7 +1,9 @@
 import React, { useCallback } from "react";
-
 import { UnControlled as CodeEditor } from "react-codemirror2";
-import { MOBILE_BROWSER_REGEX } from "~/logic/lib/util";
+import { useFormikContext } from 'formik';
+import { Prompt } from 'react-router-dom';
+
+import { MOBILE_BROWSER_REGEX, usePreventWindowUnload } from "~/logic/lib/util";
 import { PropFunc } from "~/types/util";
 import CodeMirror from "codemirror";
 
@@ -21,6 +23,17 @@ interface MarkdownEditorProps {
   onChange: (s: string) => void;
   onBlur?: (e: any) => void;
 }
+
+const PromptIfDirty = () => {
+  const formik = useFormikContext();
+  usePreventWindowUnload(formik.dirty);
+  return (
+    <Prompt
+      when={formik.dirty}
+      message="Are you sure you want to leave? You have unsaved changes."
+    />
+  );
+};
 
 export function MarkdownEditor(
   props: MarkdownEditorProps & PropFunc<typeof Box>
@@ -63,6 +76,7 @@ export function MarkdownEditor(
       height={['calc(100% - 22vh)', '100%']}
       {...boxProps}
     >
+      <PromptIfDirty />
       <CodeEditor
         autoCursor={false}
         onBlur={onBlur}
