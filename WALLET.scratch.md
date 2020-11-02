@@ -51,14 +51,22 @@ nixt.st.q.res
 ## Algos
 
 ### Scan addresses
+#### in wallet-store
 * maps:
   - scans ([xpub chyg] -> waltscan)
   
 * start scan
+  - params: xpub
   - get `nixt` from wallet
-  - choose the next N indices
-  - store their indexes in scan
-  - send address+ idx [xpub chyg] to provider
+  - choose the next N indices WITHOUT generating
+  - store their indexes in batch
+  - new entry in scans for this xpub+both chyg
+  - send address+ idx [xpub chyg] to wallet-hook for processing
+  
+* on `:watch-address` action
+  - watch-address in the wallet IF used
+  - delete `idx` from todo.batch
+  - if the `todo`s in this xpub+chyg batch are empty, check whether wallet is scanned
 
 #### in wallet-hook
 * types
@@ -84,6 +92,12 @@ nixt.st.q.res
 ### Monitor addresses
 - nixt also stores next 50 addresses for each account.
 - every update-address call also checks those
+
+### make a payment
+* make payment
+  - get address
+  - on-agent gets return value, construct tx
+  - store tx (view or other command can get it)
 
 ::
 ++  send-address-update

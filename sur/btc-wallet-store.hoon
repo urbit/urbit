@@ -9,6 +9,7 @@
 |%
 ++  max-index  (dec (pow 2 32))
 ::  chyg: whether account is (non-)change. 0 or 1
+::  idx:  an address_index
 ::  nixt: next indices to generate addresses from (non-change/change)
 ::  addi: address with metadata inside a change path
 ::  wach: map for watched addresses.
@@ -26,14 +27,21 @@
 +$  scon  $~([max-index max-index] (pair idx idx))
 +$  wilt  _bip32
 ::  todo: Set of indices; empty it out until none are left--means scanning of that batch is done
-::  has-used: whether current batch had any addresses with activity
 ::  start:     index this batch started scanning from
 ::
-+$  batch  [todo=(set idx) has-used=? start=idx]
-+$  scans  (map [xpub chyg] batch)
++$  scan-batch  [todo=(set idx) start=idx]
++$  scans  (map [xpub chyg] scan-batch)
+::
+::  %add-wallet: add wallet to state and initiate a scan
+::  %scan: start a scan of the next address batch in a wallet
+::         if the scan is complete, update the wallet and remove from scans
+::  %watch-address: watch an address if used, remove from scans batch if not
+::  %update-address: update info of an address if we're watching it
 ::
 +$  action
   $%  [%add-wallet =xpub scan-to=(unit scon) max-gap=(unit @)]
+      [%scan =xpub]
+      [%watch-address =xpub =chyg =idx utxos=(set utxo) used=?]
       [%update-address a=address utxos=(set utxo)]
   ==
 ::
