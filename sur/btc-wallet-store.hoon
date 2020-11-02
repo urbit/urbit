@@ -30,7 +30,7 @@
 ::  start:     index this batch started scanning from
 ::
 +$  batch  [todo=(set idx) has-used=? start=idx]
-+$  scans     (map [xpub chyg] batch)
++$  scans  (map [xpub chyg] batch)
 ::
 +$  action
   $%  [%add-wallet =xpub scan-to=(unit scon) max-gap=(unit @)]

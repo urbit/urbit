@@ -32,20 +32,6 @@
         scan-to.st  (fall scan-to *scon)
         max-gap.st  (fall max-gap default-max-gap)
     ==
-  ::  generates the next available address
-  ::  adds it to wach (i.e. treat it as used and out in the wild)
-  ::
-  ++  gen-address
-    ^-  (pair address:btc _this)
-    =^  curr-idx  nixt.st
-      bump-nixt
-    =/  addr  (mk-address curr-idx)
-    :-  addr
-    %=  this
-        wach.st  %+  ~(put by wach.st)
-                      addr
-                    [chyg curr-idx *(set utxo:btc)]
-    ==
   ::
   ++  mk-address
     |=  =idx
@@ -55,10 +41,17 @@
       pub:(derive-public:(derive-public:wilt.st (@ chyg)) idx)
     ?:  ?=(%bip84 bipt.st)
       (need (encode-pubkey:bech32:btc %main pubkey))
-    ~|("legacy addresses not supported yet" !!)
+    ~|("legacy addresses not supported yet " !!)
+  ::  generates and watches the next available address
+  ::
+  ++  gen-address
+    ^-  (pair address:btc _this)
+    =/  addr  (mk-address nixt-idx)
+    :-  addr
+    (watch-address addr [chyg nixt-idx *(set utxo:btc)])
   ::  insert a new address; update "nixt" free address if this one was it
   ::
-  ++  insert-address
+  ++  watch-address
     |=  [a=address:btc =addi]
     ^-  _this
     ?>  =(chyg chyg.addi)
