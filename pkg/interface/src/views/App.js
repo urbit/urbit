@@ -43,7 +43,7 @@ const Root = styled.div`
 
   * {
     scrollbar-width: thin;
-    scrollbar-color: ${ p => p.theme.colors.gray } ${ p => p.theme.colors.white };
+    scrollbar-color: ${ p => p.theme.colors.gray } transparent;
   }
 
   /* Works on Chrome/Edge/Safari */
