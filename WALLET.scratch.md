@@ -50,34 +50,30 @@ nixt.st.q.res
 
 ## Algos
 
-Scan addresses. (map xpub (pair list list))
-outgoing wire is /scan/xpub/change/idx
-- keep (jug cord idx) of xpub+chyg -> idx
-- keep (map cord ?) of xpub+chyg-> has-used?
-- every time we get a response
+### Scan addresses
+* types
+  - req-id=@ux: hash160 of (cat xpub chyg)
+* maps:
+  - scans ([xpub chyg] -> waltscan)
+  - pend/fail: (req-id -> [=idx key=[xpub chyg]])
+  - timeouts: (req-id -> @da) -- store Behns for each req
+
+* send address-watch req
+  - send address to provider with req-id
+  - set a Behn for 30s, put in timeouts
+
+* on response from server
   - check whether idx in `scanning`--ignore if not (old response)
   - insert the address into the wallet **if it's used**
   - if used, update `has-used` for this xpub to be true
   - delete idx from `scanning` jug
   - check whether scanning is now empty. If it is, check whether has-used is true
+  
+* on error
 
-## scratch code, refactor
-++  update-utxos
-  |=  [a=address:btc us=(set utxo)]
-  ^-  (quip card _state)
-  =/  xpubs=(list tape)
-    %~  tap  in
-    ~(key by walts.state)
-  |-  ?~  xpubs  `state
-  =/  w=walt  (~(got by walts.state) i.xpubs)
-  ?:  (~(has by wach.w) a)
-    %:  send-address-update
-        i.xpubs
-        (update-wallet w a us)
-        a
-        us
-    ==
-  $(xpubs t.xpubs)
+* on timeout
+
+
 ::
 ++  send-address-update
   |=  [xpub=tape =walt a=address:btc us=(set utxo)]
