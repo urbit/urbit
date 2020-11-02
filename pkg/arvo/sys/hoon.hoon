@@ -10011,12 +10011,27 @@
     :+  %palm
       [['.' ~] ['-' ~] ~ ~]
     [[%leaf (mesc (trip paz))] duck ~]
-  ::  XX implement
   ::
   ++  caching-elbo
     |=  [lop=palo rig=(list (pair wing hoon))]
     ^-  [type _grub]
-    !!
+    ?:  ?=(%& -.q.lop)
+      |-  ^-  [type _grub]
+      ?~  rig
+        :_  grub
+        p.q.lop
+      =^  zil  grub  (caching-play q.i.rig)
+      =^  dar  grub  (caching-tack(sut p.q.lop) p.i.rig zil)
+      $(rig t.rig, p.q.lop q.dar)
+    =/  hag  ~(tap in q.q.lop)
+    =^  hog  grub
+      |-  ^+  [hag grub]
+      ?~  rig
+        [hag grub]
+      =^  zil  grub  (caching-play q.i.rig)
+      =^  dix  grub  (caching-toss p.i.rig zil hag)
+      $(rig t.rig, hag q.dix)
+    (caching-fire hog)
   ::
   ++  elbo
     |=  {lop/palo rig/(list (pair wing hoon))}
