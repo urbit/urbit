@@ -29,7 +29,7 @@
 ::  todo: Set of indices; empty it out until none are left--means scanning of that batch is done
 ::  start:     index this batch started scanning from
 ::
-+$  batch  [todo=(set idx) start=idx final=idx]
++$  batch  [todo=(set idx) endpoint=idx]
 +$  scans  (map [xpub chyg] batch)
 ::
 ::  %add-wallet: add wallet to state and initiate a scan
@@ -45,7 +45,7 @@
       [%update-address a=address utxos=(set utxo)]
   ==
 ::
-+$  update
-  $%  [%address a=address utxos=(set utxo)]
++$  request
+  $%  [%scan-address =xpub =chyg =idx]
   ==
 --

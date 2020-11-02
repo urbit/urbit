@@ -48,6 +48,17 @@ nixt.st.q.res
 ::  [p=1 q=0]
 ```
 
+## Scanning
+
+### manual scanning of empty wallet
+With max-gap=3
+```
+=scan-xpub 'zpub6rFR7y4Q2AijBEqTUquhVz398htDFrtymD9xYYfG1m4wAcvPhXNfE3EfH1r1ADqtfSdVCToUG868RvUUkgDKf31mGDtKsAYz2oz2AGutZYs'
+:btc-wallet-store|action [%add-wallet scan-xpub ~ [~ 3]]
+:btc-wallet-store +dbug
+:: shows scans with the xpub and {0 1 2} todos
+```
+
 ## Algos
 
 ### Scan addresses
@@ -79,11 +90,7 @@ nixt.st.q.res
   - set a Behn for 30s, put in timeouts
 
 * on response from server
-  - check whether idx in `scanning`--ignore if not (old response)
-  - insert the address into the wallet **if it's used**
-  - if used, update `has-used` for this xpub to be true
-  - delete idx from `scanning` jug
-  - check whether scanning is now empty. If it is, check whether has-used is true
+  - insert the address into the wallet
   
 * on error
 

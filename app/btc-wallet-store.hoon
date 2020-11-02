@@ -78,7 +78,7 @@
   ?-  -.act
       %add-wallet
     =/  w=_walt  (from-xpub:walt +.act)
-    :-  ~[(pass-scan xpub.act)]
+    :-  ~[(force-scan xpub.act)]
     state(walts (~(put by walts) xpub.act w))
     ::
       %run-scan
@@ -91,22 +91,61 @@
     `state
   ==
 ::
-++  pass-scan
+++  force-scan
   |=  =xpub  ^-  card
   :*  %pass   /[(scot %da now.bowl)]
       %agent  [our.bowl %btc-wallet-store]  %poke
       %btc-wallet-store-action  !>([%run-scan xpub])
   ==
-::  update scans to start a new wallet scan from 0 indices
 ::
-++  init-scan
-  |=  [=xpub max-gap=@]
+++  req-scan
+  |=  [b=batch =xpub =chyg]
+  ^-  (list card)
+  %+  turn  ~(tap in todo.b)
+  |=  =idx
+  :*  %give  %fact  ~[/requests]
+      %btc-wallet-store-request
+      !>([%scan-address xpub chyg idx])
+  ==
+::
+++  scan-status
+  |=  [=xpub =chyg]
+  ^-  [empty=? done=?]
+  =/  b=batch  (~(got by scans) [xpub chyg])
+  :-  =(0 ~(wyt in todo.b))
+  (~(scan-done (~(got by walts) xpub) chyg) endpoint.b)
+::
+++  insert-batches
+  |=  [=xpub b0=batch b1=batch]
   ^-  ^scans
-  =/  final=idx  (dec max-gap)
-  =/  b=batch  [(sy (gulf 0 final)) 0 final]
-  =.  scans
-    (~(put by scans) [xpub %0] b)
-  (~(put by scans) [xpub %1] b)
+  =.  scans  (~(put by scans) [xpub %0] b0)
+  (~(put by scans) [xpub %1] b1)
+::
+++  init-batches
+  |=  =xpub
+  ^-  (quip card _state)
+  =/  w=_walt  (~(got by walts) xpub)
+  =/  b=batch
+    [(sy (gulf 0 (dec max-gap.st.w))) (dec max-gap.st.w)]
+  :-  (weld (req-scan b xpub %0) (req-scan b xpub %1))
+  state(scans (insert-batches xpub b b))
+::  if the batch is done but the wallet isn't done scanning, returns new address requests and updated batch
+::
+++  bump-batch
+  |=  [=xpub =chyg]
+  ^-  (quip card batch)
+  =/  b=batch  (~(got by scans) xpub chyg)
+  =/  s  (scan-status xpub chyg)
+  ?.  ?&(empty.s ?!(done.s))
+    `b
+  =/  w=_walt  (~(got by walts) xpub)
+  =/  newb=batch
+    :*  (sy (gulf +(endpoint.b) (add endpoint.b max-gap.st.w)))
+        (add endpoint.b max-gap.st.w)
+    ==
+  :-  (req-scan newb xpub chyg)
+  newb
+::  delete the xpub from scans and set wallet to scanned
 ::
 ++  end-scan
   |=  [=xpub]
@@ -115,23 +154,24 @@
   =.  scans  (~(del by scans) [xpub %0])
   =.  scans  (~(del by scans) [xpub %1])
   state(walts (~(put by walts) xpub w(scanned.st %.y)))
+::  initiate a scan if one hasn't started
+::  check status of scan if one is running
 ::
 ++  run-scan
   |=  =xpub
   ^-  (quip card _state)
-  =/  w=_walt  (~(got by walts) xpub)
-  =?  scans  ?!((~(has by scans) [xpub %0]))
-    (init-scan xpub max-gap.st.w)
-  =/  ching=batch  (~(got by scans) [xpub %0])
-  =/  chang=batch  (~(got by scans) [xpub %1])
-  ?:  ?&  (empty todo.ching)
-          (empty todo.chang)
-          (~(scan-done w %0) final.ching)
-          (~(scan-done w %1) final.chang)
-      ==
+  ?.  (~(has by scans) [xpub %0])
+    (init-batches xpub)
+  =/  s0  (scan-status xpub %0)
+  =/  s1  (scan-status xpub %1)
+  ?:  ?&(empty.s0 done.s0 empty.s1 done.s1)
     `(end-scan xpub)
-  ::  TODO: otherwise,  make cards for the non-empty one, using idempotent "refill-batch"
-  `state
+  =/  [cards0=(list card) batch0=batch]
+    (bump-batch xpub %0)
+  =/  [cards1=(list card) batch1=batch]
+    (bump-batch xpub %1)
+  :-  (weld cards0 cards1)
+  state(scans (insert-batches xpub batch0 batch1))
 ::  watch the address passed, update wallet if it's used
 ::  if this idx was the last in todo.scans, check whether scan is done
 ::
@@ -145,14 +185,13 @@
     %+  ~(watch-address w chyg)
       (~(mk-address w chyg) idx)
     [chyg idx utxos]
-  ::  if todo is empty, check the scan status *after* this update
+  ::  if todo is empty, force checking of scan *after* this update
   ::
-  :-  ?:  (empty todo.b)  ~[(pass-scan xpub)]  ~
+  :-  ?:  empty:(scan-status xpub chyg)  ~[(force-scan xpub)]  ~
   %=  state
       walts  (~(put by walts) xpub w)
       scans  %+  ~(put by scans)
               [xpub chyg]
              b(todo (~(del in todo.b) idx))
   ==
-++  empty  |*(s=(set *) =(0 ~(wyt in s)))
 --
