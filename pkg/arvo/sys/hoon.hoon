@@ -10057,12 +10057,36 @@
       rig  t.rig
       hag  q.dix
     ==
-  ::  XX implement
   ::
   ++  caching-ergo
     |=  [lop=palo rig=(list (pair wing hoon))]
     ^-  [(pair type nock) _grub]
-    !!
+    =/  axe  (tend p.lop)
+    =|  hej=(list (pair axis nock))
+    ?:  ?=(%& -.q.lop)
+      =;  [lef=(pair type (list (pair axis nock))) =_grub]
+        :_  grub
+        [p.lef (hike axe q.lef)]
+      |-  ^-  [(pair type (list (pair axis nock))) _grub]
+      ?~  rig
+        :_  grub
+        [p.q.lop hej]
+      =^  zil  grub  (caching-mint %noun q.i.rig)
+      =^  dar  grub  (caching-tack(sut p.q.lop) p.i.rig p.zil)
+      $(rig t.rig, p.q.lop q.dar, hej [[p.dar q.zil] hej])
+    =/  hag  ~(tap in q.q.lop)
+    =;  [lef=(pair (list (pair type foot)) (list (pair axis nock))) =_grub]
+      =^  lit  grub  (caching-fire p.lef)
+      =/  rig  [%9 p.q.lop (hike axe q.lef)]
+      :_  grub
+      [lit rig]
+    |-  ^-  [(pair (list (pair type foot)) (list (pair axis nock))) _grub]
+    ?~  rig
+      :_  grub
+      [hag hej]
+    =^  zil  grub  (caching-mint %noun q.i.rig)
+    =^  dix  grub  (caching-toss p.i.rig p.zil hag)
+    $(rig t.rig, hag q.dix, hej [[p.dix q.zil] hej])
   ::
   ++  ergo
     |=  {lop/palo rig/(list (pair wing hoon))}
