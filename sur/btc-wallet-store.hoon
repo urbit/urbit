@@ -29,8 +29,8 @@
 ::  todo: Set of indices; empty it out until none are left--means scanning of that batch is done
 ::  start:     index this batch started scanning from
 ::
-+$  scan-batch  [todo=(set idx) start=idx]
-+$  scans  (map [xpub chyg] scan-batch)
++$  batch  [todo=(set idx) start=idx final=idx]
++$  scans  (map [xpub chyg] batch)
 ::
 ::  %add-wallet: add wallet to state and initiate a scan
 ::  %scan: start a scan of the next address batch in a wallet
@@ -40,7 +40,7 @@
 ::
 +$  action
   $%  [%add-wallet =xpub scan-to=(unit scon) max-gap=(unit @)]
-      [%scan =xpub]
+      [%run-scan =xpub]
       [%watch-address =xpub =chyg =idx utxos=(set utxo) used=?]
       [%update-address a=address utxos=(set utxo)]
   ==
