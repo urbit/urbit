@@ -83,7 +83,7 @@ export function NotePreview(props: NotePreviewProps) {
             {date}
           </Box>
           <Box mr={3}>{commentDesc}</Box>
-          <Box>{rev === 1 ? `1 Revision` : `${rev} Revisions`}</Box>
+          <Box>{rev.valueOf() === 1 ? `1 Revision` : `${rev} Revisions`}</Box>
         </Box>
       </Col>
     </Link>
