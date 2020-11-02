@@ -245,7 +245,8 @@ export default class VirtualScroller extends PureComponent<VirtualScrollerProps,
         event.preventDefault();
         const normalized = normalizeWheel(event);
         if (
-          (event.target.scrollHeight > event.target.clientHeight && event.target.clientHeight > 0) // If we're scrolling something with a scrollbar
+          !event.target.isSameNode(element)
+          && (event.target.scrollHeight > event.target.clientHeight && event.target.clientHeight > 0) // If we're scrolling something with a scrollbar
           && (
             (event.target.scrollTop > 0 && event.deltaY < 0) // Either we're not at the top and scrolling up
             || (event.target.scrollTop < event.target.scrollHeight - event.target.clientHeight && event.deltaY > 0) // Or we're not at the bottom and scrolling down
