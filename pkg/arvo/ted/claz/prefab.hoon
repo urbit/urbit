@@ -2,7 +2,7 @@
 ::
 ::    writes to .txt with line-format ~planet,~ticket,0xaddress,0xauth,0xcrypt
 ::
-::    eg: |claz-invites 'http://some-endpoint' ~marzod 10 %/prefab-invites/txt
+::    eg: -claz-prefab 'http://some-endpoint' ~marzod 10 %/prefab-invites/txt
 ::
 /+  keygen, azio, strandio
 =,  ethereum
