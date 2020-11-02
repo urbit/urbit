@@ -12,13 +12,14 @@
     $%  state-0
     ==
 ::  walts: all wallets, keyed by their xpubs
-::  scanning: sets of idxs currently being scanned, keyed by xpub+chyg
-::  has-used: whether xpub+chyg being scanned has previously used addresses, keyed by xpub+chyg
+::  scans: batch info for wallets being scanned
+::  batch-size: how many addresses to send out at once for checking
 ::
 +$  state-0
   $:  %0
       walts=(map xpub:btc _walt)
       =scans
+      =batch-size
   ==
 ::
 +$  card  card:agent:gall
