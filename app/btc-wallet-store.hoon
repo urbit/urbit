@@ -19,7 +19,7 @@
   $:  %0
       walts=(map xpub:btc _walt)
       =scans
-      =batch-size
+      batch-size=@
   ==
 ::
 +$  card  card:agent:gall
@@ -38,7 +38,7 @@
 ++  on-init
   ^-  (quip card _this)
   ~&  >  '%btc-wallet-store initialized'
-  `this(state [%0 *(map xpub:btc _walt) *^scans])
+  `this(state [%0 *(map xpub:btc _walt) *^scans default-max-gap])
 ++  on-save
   ^-  vase
   !>(state)
@@ -78,10 +78,47 @@
   ?-  -.act
       %add-wallet
     `state
-::    (add-wallet +.act)
+    ::
+      %scan
+    `state
+    ::
+      %watch-address
+      ::  [%watch-address =xpub =chyg =idx utxos=(set utxo) used=?]
+    (watch-address +.act)
     ::
       %update-address
     `state
-    ::  (update-address +.act)
+  ==
+::
+++  scan-action
+  |=  =xpub  ^-  card
+  :*  %pass   /[(scot %da now.bowl)]
+      %agent  [our.bowl %btc-wallet-store]  %poke
+      %btc-wallet-store-action  !>([%scan xpub])
+  ==
+::
+++  do-scan  2
+::  watch the address passed
+::  update wallet if it's used
+::  if this idx was the last in todo.scans, 
+::
+++  watch-address
+  |=  [=xpub:btc =chyg =idx utxos=(set utxo) used=?]
+  ^-  (quip card _state)
+  ?.  (~(has by scans) [xpub chyg])  `state
+  =/  w=_walt   (~(got by walts) xpub)
+  =/  s=scan-batch  (~(got by scans) [xpub chyg])
+  =?  w  used
+    %+  ~(watch-address w chyg)
+      (~(mk-address w chyg) idx)
+    [chyg idx utxos]
+  ::  if todo is empty, either scan a new batch or finish
+  ::
+  :-  ?:(=(0 ~(wyt in todo.s)) ~[(scan-action xpub)] ~)
+  %=  state
+      walts  (~(put by walts) xpub w)
+      scans  %+  ~(put by scans)
+              [xpub chyg]
+             s(todo (~(del in todo.s) idx))
   ==
 --
