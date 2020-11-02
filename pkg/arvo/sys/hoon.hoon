@@ -10854,11 +10854,43 @@
             %&  [`type`p.q.p.tor %0 axe]
             %|  [(fire ~(tap in q.q.p.tor)) [%9 p.q.p.tor %0 axe]]
     ==    ==
-  ::  XX implement
+  ::
   ++  caching-fire
     |=  hag=(list [p=type q=foot])
     ^-  [type _grub]
-    !!
+    ?:  ?=([[* [%wet ~ %1]] ~] hag)
+      :_  grub
+      p.i.hag
+    =^  wiz  grub
+      %^  spin  hag  grub
+      |=  [[p=type q=foot] =_grub]
+      ?.  ?=([%core *] p)
+        ~_  (dunk %fire-type)
+        ~_  leaf+"expected-fork-to-be-core"
+        ~_  (dunk(sut p) %fork-type)
+        ~>(%mean.'fire-core' !!)
+      =/  dox  [%core q.q.p q.p(r.p %gold)]
+      ?:  ?=(%dry -.q)
+        =^  nests  grub  (caching-nest(sut q.q.p) & p.p)
+        ?>  ?|(!vet nests)
+        :_  grub
+        [%hold [dox p.q]]
+      ?>  ?=(%wet -.q)
+      =^  done  grub  (caching-redo(sut p.p) q.q.p)
+      =.  p.p  done
+      =^  rumi  grub
+        %^    caching-mull(sut p, rib (~(put in rib) sut dox p.q))
+            %noun
+          dox
+        p.q
+      ?>  ?|  !vet
+              (~(has in rib) [sut dox p.q])
+              !=(** rumi)
+          ==
+      :_  grub
+      [%hold [p p.q]]
+    :_  grub
+    (fork wiz)
   ::
   ++  fire
     |=  hag/(list {p/type q/foot})
