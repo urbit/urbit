@@ -83,8 +83,11 @@ export function GroupSettings(props: GroupSettingsProps) {
   };
 
   const onDelete = async () => {
-    await props.api.contacts.delete(association["group-path"]);
-    history.push("/");
+    const name = association['group-path'].split('/').pop();
+    if (prompt(`To confirm deleting this group, type ${name}`) === name) {
+      await props.api.contacts.delete(association["group-path"]);
+      history.push("/");
+    }
   };
 
   const disabled =
