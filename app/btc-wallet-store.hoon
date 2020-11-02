@@ -124,13 +124,13 @@
     (init-scan xpub max-gap.st.w)
   =/  ching=batch  (~(got by scans) [xpub %0])
   =/  chang=batch  (~(got by scans) [xpub %1])
-  ?:  ?&  (empty ching)
-          (empty chang)
-          ~(scan-done w %0)
-          ~(scan-done w %1)
+  ?:  ?&  (empty todo.ching)
+          (empty todo.chang)
+          (~(scan-done w %0) final.ching)
+          (~(scan-done w %1) final.chang)
       ==
     `(end-scan xpub)
-  ::  TODO: otherwise, make cards for the non-empty one
+  ::  TODO: otherwise,  make cards for the non-empty one, using idempotent "refill-batch"
   `state
 ::  watch the address passed, update wallet if it's used
 ::  if this idx was the last in todo.scans, check whether scan is done
