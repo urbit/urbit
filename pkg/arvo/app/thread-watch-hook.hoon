@@ -3,6 +3,7 @@
 ::  watch an app at a particular path and forward all facts to a
 ::  particular thread
 ::
+/-  sur=thread-watch-hook
 /+  default-agent, dbug
 ::
 |%
@@ -10,19 +11,14 @@
 +$  versioned-state
   $%  state-0
   ==
-+$  observer  [app=term =path input=mark thread=term]
-+$  state-0   [%0 observers=(map time observer)]
-+$  action
-  $%  [%watch =observer]
-      [%ignore =observer]
-  ==
 ::
++$  state-0   [%0 observers=(map time observer:sur)]
 ++  got-by-val
-  |=  [a=(map time observer) b=observer]
+  |=  [a=(map time observer:sur) b=observer:sur]
   ^-  time
   %-  need
   %+  roll  ~(tap by a)
-  |=  [[key=time val=observer] output=(unit time)]
+  |=  [[key=time val=observer:sur] output=(unit time)]
   ?:(=(val b) `key output)
 --
 ::
@@ -48,7 +44,7 @@
   ?>  (team:title our.bowl src.bowl)
   ?.  ?=(%thread-watch-action mark)
     (on-poke:def mark vase)
-  =/  =action  !<(action vase)
+  =/  =action:sur  !<(action:sur vase)
   =*  observer  observer.action
   =/  vals  (silt ~(val by observers))
   ?-  -.action
@@ -91,7 +87,7 @@
         [%thread-result @ ~]  [~ this]
         [%observer @ ~]
       =/  =time  (slav %da i.t.wire)
-      =/  =observer  (~(got by observers) time)
+      =/  =observer:sur  (~(got by observers) time)
       :_  this
       :_  ~
       :*  %pass
@@ -109,7 +105,7 @@
     ?~  p.sign  [~ this]
     =/  =time  (slav %da i.t.wire)
     =/  tid  (slav %uv i.t.t.wire)
-    =/  =observer  (~(got by observers) time)
+    =/  =observer:sur  (~(got by observers) time)
     :_  this(observers (~(del by observers) time))
     :~  :*  %pass
             [%observer i.t.wire ~]
@@ -142,7 +138,7 @@
       ?.  =(p.cage.sign %thread-fail)
         [~ this]
       =/  =time  (slav %da i.t.wire)
-      =/  =observer  (~(got by observers) time)
+      =/  =observer:sur  (~(got by observers) time)
       :_  this(observers (~(del by observers) time))
       :_  ~
       :*  %pass
@@ -155,7 +151,7 @@
     ::
         [%observer @ ~]
       =/  =time  (slav %da i.t.wire)
-      =/  =observer  (~(got by observers) time)
+      =/  =observer:sur  (~(got by observers) time)
       =/  tid  (scot %uv (sham eny.bowl))
       :_  this
       :~  :*  %pass
@@ -164,7 +160,7 @@
               [our.bowl %spider]
               %poke
               %spider-start
-              !>([~ `tid thread.observer q.cage.sign])
+              !>([~ `tid thread.observer (slop !>(cage.sign) !>(~))])
           ==
           :*  %pass
               [%thread-result tid ~]
