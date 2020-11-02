@@ -561,7 +561,7 @@
         ++  vale
           |=  =noun
           ^+  sam
-          (slam (slap cor ^~((ream 'noun:grab'))) !>(noun))
+          (slam (slap cor !,(*hoon noun:grab)) !>(noun))
         ++  volt
           |=  =noun
           ^+  sam
@@ -577,22 +577,23 @@
         ^-  vase
         %+  slap
           (with-faces cor+cor sam+sam new+new ~)
-        ^~((ream '(diff:~(grad cor sam) new)'))
+        !,  *hoon
+        (diff:~(grad cor sam) new)
       ++  form  fom
       ++  join
         |=  [a=vase b=vase]
         ^-  (unit (unit vase))
         ?:  =(q.a q.b)
           ~
-        =;  res  `?~(q.res ~ `(slap res ^~((ream '?~(. !! u)'))))
-        (slam (slap cor ^~((ream 'join:grad'))) (slop a b))
+        =;  res  `?~(q.res ~ `(slap res !,(*hoon ?~(. !! u))))
+        (slam (slap cor !,(*hoon join:grad)) (slop a b))
       ++  mash
         |=  [a=[=ship =desk diff=vase] b=[=ship =desk diff=vase]]
         ^-  (unit vase)
         ?:  =(q.diff.a q.diff.b)
           ~
         :-  ~
-        %+  slam  (slap cor ^~((ream 'mash:grad')))
+        %+  slam  (slap cor !,(*hoon mash:grad))
         %+  slop
           :(slop !>(ship.a) !>(desk.a) diff.a)
         :(slop !>(ship.b) !>(desk.b) diff.b)
@@ -601,11 +602,12 @@
         ^+  sam
         %+  slap
           (with-faces cor+cor sam+sam diff+diff ~)
-        ^~((ream '(pact:~(grad cor sam) diff)'))
+        !,  *hoon
+        (pact:~(grad cor sam) diff)
       ++  vale
         |=  =noun
         ^+  sam
-        (slam (slap cor ^~((ream 'noun:grab'))) !>(noun))
+        (slam (slap cor !,(*hoon noun:grab)) !>(noun))
       ++  volt
         |=  =noun
         ^+  sam
@@ -637,7 +639,7 @@
       ::  try +grow; is there a +grow core with a .b arm?
       ::
       =^  old=vase  nub  (build-fit %mar a)
-      ?:  =/  ram  (mule |.((slap old ^~((ream 'grow')))))
+      ?:  =/  ram  (mule |.((slap old !,(*hoon grow))))
           ?:  ?=(%| -.ram)  %.n
           =/  lab  (mule |.((slob b p.p.ram)))
           ?:  ?=(%| -.lab)  %.n
@@ -650,22 +652,28 @@
         ^-  vase
         %+  slap
           (with-faces old+old sam+sam ~)
-        %-  ream
-        ;:  (cury cat 3)
-          '!:  '
-          '~!  old=old  '
-          '~!  sam=sam  '
-          b  ':~(grow old sam)'
-        ==
+        :+  %sgzp  !,(*hoon old=old)
+        :+  %sgzp  !,(*hoon sam=sam)
+        :+  %tsld  [%wing ~[b]]
+        !,  *hoon
+        ~(grow old sam)
       ::  try direct +grab
       ::
       =^  new=vase  nub  (build-fit %mar b)
-      =/  rab  (mule |.((slap new (ream (cat 3 a ':grab')))))
+      =/  rab
+        %-  mule  |.
+        %+  slap  new
+        :+  %tsld  [%wing ~[a]]
+        [%wing ~[%grab]]
       ?:  &(?=(%& -.rab) ?=(^ q.p.rab))
         :_(nub |=(sam=vase ~|([%grab a b] (slam p.rab sam))))
       ::  try +jump
       ::
-      =/  jum  (mule |.((slap old (ream (cat 3 b ':jump')))))
+      =/  jum
+        %-  mule  |.
+        %+  slap  old
+        :+  %tsld  [%wing ~[b]]
+        [%wing ~[%jump]]
       ?:  ?=(%& -.jum)
         (compose-casts a !<(mark p.jum) b)
       ::  try indirect +grab
@@ -1597,7 +1605,7 @@
           ~>  %mean.%arvo-parse-fail
           (path-to-hoon data /sys/arvo/hoon)
         ~>  %mean.%arvo-compile-fail
-        (slap (slap hoon gen) (ream '..is'))
+        (slap (slap hoon gen) !,(*^hoon ..is))
       ::
       ++  build-zuse
         |=  arvo=vase
@@ -4384,7 +4392,7 @@
           %+  rain  /sys/arvo/hoon
           (lobe-to-cord (~(got by data) /sys/arvo/hoon))
         ~>  %mean.%arvo-compile-fail
-        (slap (slap hoon gen) (ream '..is'))
+        (slap (slap hoon gen) !,(*^hoon ..is))
       ::
       ++  build-zuse
         |=  arvo=vase
