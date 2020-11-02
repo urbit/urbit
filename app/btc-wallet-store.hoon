@@ -77,48 +77,82 @@
   ^-  (quip card _state)
   ?-  -.act
       %add-wallet
-    `state
+    =/  w=_walt  (from-xpub:walt +.act)
+    :-  ~[(pass-scan xpub.act)]
+    state(walts (~(put by walts) xpub.act w))
     ::
-      %scan
-    `state
+      %run-scan
+    (run-scan +.act)
     ::
       %watch-address
-      ::  [%watch-address =xpub =chyg =idx utxos=(set utxo) used=?]
     (watch-address +.act)
     ::
       %update-address
     `state
   ==
 ::
-++  scan-action
+++  pass-scan
   |=  =xpub  ^-  card
   :*  %pass   /[(scot %da now.bowl)]
       %agent  [our.bowl %btc-wallet-store]  %poke
-      %btc-wallet-store-action  !>([%scan xpub])
+      %btc-wallet-store-action  !>([%run-scan xpub])
   ==
+::  update scans to start a new wallet scan from 0 indices
 ::
-++  do-scan  2
-::  watch the address passed
-::  update wallet if it's used
-::  if this idx was the last in todo.scans, 
+++  init-scan
+  |=  [=xpub max-gap=@]
+  ^-  ^scans
+  =/  final=idx  (dec max-gap)
+  =/  b=batch  [(sy (gulf 0 final)) 0 final]
+  =.  scans
+    (~(put by scans) [xpub %0] b)
+  (~(put by scans) [xpub %1] b)
+::
+++  end-scan
+  |=  [=xpub]
+  ^-  _state
+  =/  w=_walt  (~(got by walts) xpub)
+  =.  scans  (~(del by scans) [xpub %0])
+  =.  scans  (~(del by scans) [xpub %1])
+  state(walts (~(put by walts) xpub w(scanned.st %.y)))
+::
+++  run-scan
+  |=  =xpub
+  ^-  (quip card _state)
+  =/  w=_walt  (~(got by walts) xpub)
+  =?  scans  ?!((~(has by scans) [xpub %0]))
+    (init-scan xpub max-gap.st.w)
+  =/  ching=batch  (~(got by scans) [xpub %0])
+  =/  chang=batch  (~(got by scans) [xpub %1])
+  ?:  ?&  (empty ching)
+          (empty chang)
+          ~(scan-done w %0)
+          ~(scan-done w %1)
+      ==
+    `(end-scan xpub)
+  ::  TODO: otherwise, make cards for the non-empty one
+  `state
+::  watch the address passed, update wallet if it's used
+::  if this idx was the last in todo.scans, check whether scan is done
 ::
 ++  watch-address
   |=  [=xpub:btc =chyg =idx utxos=(set utxo) used=?]
   ^-  (quip card _state)
   ?.  (~(has by scans) [xpub chyg])  `state
   =/  w=_walt   (~(got by walts) xpub)
-  =/  s=scan-batch  (~(got by scans) [xpub chyg])
+  =/  b=batch  (~(got by scans) [xpub chyg])
   =?  w  used
     %+  ~(watch-address w chyg)
       (~(mk-address w chyg) idx)
     [chyg idx utxos]
-  ::  if todo is empty, either scan a new batch or finish
+  ::  if todo is empty, check the scan status *after* this update
   ::
-  :-  ?:(=(0 ~(wyt in todo.s)) ~[(scan-action xpub)] ~)
+  :-  ?:  (empty todo.b)  ~[(pass-scan xpub)]  ~
   %=  state
       walts  (~(put by walts) xpub w)
       scans  %+  ~(put by scans)
               [xpub chyg]
-             s(todo (~(del in todo.s) idx))
+             b(todo (~(del in todo.b) idx))
   ==
+++  empty  |*(s=(set *) =(0 ~(wyt in s)))
 --
