@@ -1,7 +1,7 @@
 ::  thread-watch-hook:
 ::
-::  watch an app at a particular path and forward all facts to a
-::  particular thread
+::  helper that observes an app at a particular path and forwards all facts 
+::  to a particular thread. kills the subscription if the thread crashes
 ::
 /-  sur=thread-watch-hook
 /+  default-agent, dbug
@@ -32,7 +32,7 @@
     def   ~(. (default-agent this %|) bowl)
 ::
 ++  on-init  on-init:def
-++  on-save   !>([%0 ~])
+++  on-save   !>(state)
 ++  on-load
   |=  old-vase=vase
   ^-  (quip card _this)
@@ -81,6 +81,7 @@
 ++  on-agent
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)
+  ~&  [wire sign]
   ?-    -.sign
       %kick
     ?+    wire  (on-agent:def wire sign)
@@ -102,6 +103,7 @@
       %poke-ack
     ?.  ?=([%thread-start @ @ ~] wire)
       (on-agent:def wire sign)
+    ~&  sign
     ?~  p.sign  [~ this]
     =/  =time  (slav %da i.t.wire)
     =/  tid  (slav %uv i.t.t.wire)

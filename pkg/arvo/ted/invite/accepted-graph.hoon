@@ -1,0 +1,30 @@
+/-  spider, inv=invite-store, graph-view
+/+  strandio
+::
+=*  strand        strand:spider
+=*  fail          strand-fail:strand
+=*  poke-our      poke-our:strandio
+=*  start-thread  start-thread:strandio
+::
+^-  thread:spider
+|=  arg=vase
+=/  m  (strand ,vase)
+^-  form:m
+=+  !<([=update:inv ~] arg)
+~&  update
+?.  ?=(%accepted -.update)
+  (pure:m !>(~))
+;<  =bowl:spider  bind:m  get-bowl:strandio
+=*  invite  invite.update
+?:  =(our.bowl entity.resource.invite)
+  ::  do not crash because that will kill the invitatory subscription
+  (pure:m !>(~))
+~&  'send graph-join'
+;<  ~  bind:m
+  %+  poke-our  %spider
+  =-  spider-start+!>([`tid.bowl ~ %graph-join -])
+  %+  slop
+    !>  ^-  action:graph-view
+    [%join resource.invite ship.invite]
+  !>(~)
+(pure:m !>(~))
