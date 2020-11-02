@@ -1,5 +1,6 @@
 import React from 'react';
 import Helmet from 'react-helmet';
+import styled from 'styled-components';
 
 import { Box, Row, Icon, Text, Center } from '@tlon/indigo-react';
 import { uxToHex, adjustHex } from '~/logic/lib/util';
@@ -11,6 +12,14 @@ import Tiles from './components/tiles';
 import Tile from './components/tiles/tile';
 import Welcome from './components/welcome';
 import Groups from './components/Groups';
+
+const ScrollbarLessBox = styled(Box)`
+  scrollbar-width: none !important;
+  
+  ::-webkit-scrollbar {
+    display: none;
+  }
+`;
 
 export default class LaunchApp extends React.Component {
   componentDidMount() {
@@ -32,7 +41,7 @@ export default class LaunchApp extends React.Component {
         <Helmet>
           <title>OS1 - Home</title>
         </Helmet>
-        <Box height='100%' overflowY='scroll'>
+        <ScrollbarLessBox height='100%' overflowY='scroll'>
           <Welcome firstTime={props.launch.firstTime} api={props.api} />
           <Box
             mx='2'
@@ -77,7 +86,7 @@ export default class LaunchApp extends React.Component {
             <Box display={["none", "block"]} width="100%" gridColumn="1 / -1"></Box>
             <Groups groups={props.groups} associations={props.associations} invites={props.invites} api={props.api}/>
           </Box>
-        </Box>
+        </ScrollbarLessBox>
         <Box
           position="absolute"
           fontFamily="mono"
