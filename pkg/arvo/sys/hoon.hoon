@@ -10821,11 +10821,27 @@
       [%| (mint %noun gen)]
     (find way u.hup)
   ::
-  ::  XX implement
   ++  caching-fine
     |=  tor=port
     ^-  [(pair type nock) _grub]
-    !!
+    ?-  -.tor
+        %|
+      [p.tor grub]
+    ::
+        %&
+      =/  axe  (tend p.p.tor)
+      ?-  -.q.p.tor
+          %&
+        :_  grub
+        [`type`p.q.p.tor %0 axe]
+      ::
+          %|
+        =^  lef  grub  (caching-fire ~(tap in q.q.p.tor))
+        =/  rig  [%9 p.q.p.tor %0 axe]
+        :_  grub
+        [lef rig]
+      ==
+    ==
   ::
   ++  fine
     ~/  %fine
