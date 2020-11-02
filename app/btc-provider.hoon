@@ -85,7 +85,7 @@
   |^  ^-  (quip card _state)
   =/  ract=action:rpc
     ?-  -.act
-        %get-address-info
+      %watch-address
       [%erpc %get-address-utxos address.act]
     ==
   [~[(req-card act ract)] state]
