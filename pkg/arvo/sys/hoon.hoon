@@ -10802,11 +10802,15 @@
         ==    ==
     (fond way hyp)
   ::
-  ::  XX implement
   ++  caching-fund
     |=  [way=vial gen=hoon]
     ^-  [port _grub]
-    !!
+    =/  hup  ~(reek ap gen)
+    ?~  hup
+      =^  rig  grub  (caching-mint %noun gen)
+      :_  grub
+      [%| rig]
+    (caching-find way u.hup)
   ::
   ++  fund
     ~/  %fund
