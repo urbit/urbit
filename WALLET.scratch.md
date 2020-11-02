@@ -57,7 +57,14 @@ nixt.st.q.res
   - scans ([xpub chyg] -> waltscan)
   - pend/fail: (req-id -> [=idx key=[xpub chyg]])
   - timeouts: (req-id -> @da) -- store Behns for each req
+  
+* start scan
+  - get `nixt` from wallet
+  - generate 
+  - store their indexes in scan
+  - send address+ idx [xpub chyg] to provider
 
+#### in wallet-hook
 * send address-watch req
   - send address to provider with req-id
   - set a Behn for 30s, put in timeouts
@@ -73,6 +80,9 @@ nixt.st.q.res
 
 * on timeout
 
+### Monitor addresses
+- nixt also stores next 50 addresses for each account.
+- every update-address call also checks those
 
 ::
 ++  send-address-update
