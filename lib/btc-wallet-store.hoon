@@ -75,28 +75,33 @@
       (~(get by wach.st) a)
     ?~  adi  this
     this(wach.st (~(put by wach.st) a u.adi(utxos utxos)))
+  ::  returns true if there are max-gap blank spots up to last-checked
   ::
+  ++  scan-done
+    |=  last-checked=idx
+    ^-  ?
+    (gth (add max-gap.st nixt-idx) last-checked)
   ++  is-nixt
     |=  =addi  ^-  ?
     ?:  ?=(%0 chyg.addi)
       =(idx.addi p.nixt.st)
     =(idx.addi q.nixt.st)
+  ++  nixt-idx
+    ?:(?=(%0 chyg) p.nixt.st q.nixt.st)
   ::  Returns: the prior idx in the account
   ::           nixt with account idx bumped
-  ::  To bump: increments idx until an unwatched address is found
+  ::  Increments idx until an unwatched address is found
   ::  Crashes if max-index is passed
   ::
   ++  bump-nixt
     |^  ^-  [old=idx new=nixt]
-    :-  get-nixt
-    =/  new-idx=idx  +(get-nixt)
+    :-  nixt-idx
+    =/  new-idx=idx  +(nixt-idx)
     |-  ?>  (lte new-idx max-index)
     ?.  (~(has by wach.st) (mk-address new-idx))
         (set-nixt new-idx)
     $(new-idx +(new-idx))
     ::
-    ++  get-nixt
-      ?:(?=(%0 chyg) p.nixt.st q.nixt.st)
     ++  set-nixt
       |=  idx=@  ^-  nixt
       ?:(?=(%0 chyg) [idx q.nixt.st] [p.nixt.st idx])
