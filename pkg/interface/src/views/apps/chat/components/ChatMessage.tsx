@@ -18,9 +18,6 @@ export const UnreadMarker = React.forwardRef(({ dayBreak, when }, ref) => (
     <Rule borderColor='blue' display={['none', 'block']} m='0' width='2rem' />
     <Text flexShrink='0' display='block' zIndex='2' mx='4' color='blue'>New messages below</Text>
     <Rule borderColor='blue' flexGrow='1' m='0'/>
-    {dayBreak
-      ? <Text display='block' gray mx='4'>{moment(when).calendar(null, { sameElse: DATESTAMP_FORMAT })}</Text>
-      : null}
     <Rule style={{ width: "calc(50% - 48px)" }} borderColor='blue' m='0' />
   </Row>
 ));
