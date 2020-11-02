@@ -10117,12 +10117,39 @@
       hag  q.dix
       hej  [[p.dix q.zil] hej]
     ==
-  ::  XX implement
   ::
   ++  caching-endo
     |=  [lop=(pair palo palo) dox=type rig=(list (pair wing hoon))]
     ^-  [(pair type type) _grub]
-    !!
+    ?:  ?=(%& -.q.p.lop)
+      ?>  ?=(%& -.q.q.lop)
+      |-  ^-  [(pair type type) _grub]
+      ?~  rig
+        :_  grub
+        [p.q.p.lop p.q.q.lop]
+      =^  zil  grub  (caching-mull %noun dox q.i.rig)
+      =^  pee  grub  (caching-tack(sut p.q.p.lop) p.i.rig p.zil)
+      =^  kew  grub  (caching-tack(sut p.q.q.lop) p.i.rig q.zil)
+      =/  dar  [p=pee q=kew]
+      ?>  =(p.p.dar p.q.dar)
+      $(rig t.rig, p.q.p.lop q.p.dar, p.q.q.lop q.q.dar)
+    ?>  ?=(%| -.q.q.lop)
+    ?>  =(p.q.p.lop p.q.q.lop)
+    =/  hag  [p=~(tap in q.q.p.lop) q=~(tap in q.q.q.lop)]
+    =;  [lef=(pair (list (pair type foot)) (list (pair type foot))) =_grub]
+      =^  lit  grub  (caching-fire p.lef)
+      =^  rit  grub  (caching-fire(vet |) q.lef)
+      :_  grub
+      [lit rit]
+    |-  ^-  [(pair (list (pair type foot)) (list (pair type foot))) _grub]
+    ?~  rig
+      [hag grub]
+    =^  zil  grub  (caching-mull %noun dox q.i.rig)
+    =^  pee  grub  (caching-toss p.i.rig p.zil p.hag)
+    =^  kew  grub  (caching-toss p.i.rig q.zil q.hag)
+    =/  dix  [p=pee q=kew]
+    ?>  =(p.p.dix p.q.dix)
+    $(rig t.rig, hag [q.p.dix q.q.dix])
   ::
   ++  endo
     |=  {lop/(pair palo palo) dox/type rig/(list (pair wing hoon))}
