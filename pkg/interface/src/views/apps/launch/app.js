@@ -35,7 +35,7 @@ export default class LaunchApp extends React.Component {
         <Box height='100%' overflowY='scroll'>
           <Welcome firstTime={props.launch.firstTime} api={props.api} />
           <Box
-            ml='2'
+            mx='2'
             display='grid'
             gridTemplateColumns='repeat(auto-fill, minmax(128px, 1fr))'
             gridGap={3}
