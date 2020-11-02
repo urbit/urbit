@@ -10383,12 +10383,30 @@
           ?>  ?=([%core *] a)
           [%core q.q.a q.a]
     ==
-  ::  XX implement
   ::
-  ++  caching-feel
+  ++  caching-feel                                      :: detect existence
     |=  rot=(list wing)
     ^-  [? _grub]
-    !!
+    =.  rot  (flop rot)
+    |-  ^-  [? _grub]
+    ?~  rot  [& grub]
+    =^  yep  grub  (caching-fond %free i.rot)
+    ?~  yep  [| grub]
+    ?-    -.yep
+        %&
+      =^  rig  grub  (caching-fine %& p.yep)
+      $(rot t.rot, sut p:rig)
+    ::
+        %|
+      ?-  -.p.yep
+          %&
+        [| grub]
+      ::
+          %|
+        =^  rig  grub  (caching-fine %| p.p.yep)
+        $(rot t.rot, sut p:rig)
+      ==
+    ==
   ::                                                    ::
   ++  feel                                              ::  detect existence
     |=  rot/(list wing)
