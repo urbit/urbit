@@ -13207,12 +13207,21 @@
     |=  vit/vein
     ^-  axis
     ?~(vit 1 (peg $(vit t.vit) ?~(i.vit 1 u.i.vit)))
-  ::  XX implement
   ::
   ++  caching-toss
     |=  [hyp=wing mur=type men=(list [p=type q=foot])]
     ^-  [[p=axis q=(list [p=type q=foot])] _grub]
-    !!
+    =;  wib=[p=[p=(unit axis) q=(list [p=type q=foot])] =_grub]
+      :_  grub.wib
+      [(need p.p.wib) q.p.wib]
+    |-  ^-  [[p=(unit axis) q=(list [p=type q=foot])] =_grub]
+    ?~  men
+      :_  grub
+      [*(unit axis) ~]
+    =^  geq  grub  (caching-tack(sut p.i.men) hyp mur)
+    =^  mox  grub  $(men t.men)
+    :_  grub
+    [(mate p.mox `_p.mox`[~ p.geq]) [[q.geq q.i.men] q.mox]]
   ::
   ++  toss
     ~/  %toss
