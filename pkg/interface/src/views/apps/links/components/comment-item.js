@@ -4,9 +4,10 @@ import { cite } from '~/logic/lib/util';
 import moment from 'moment';
 import { Box, Text, Row } from '@tlon/indigo-react';
 import RichText from '~/views/components/RichText';
+import { MentionText } from "~/views/components/MentionText";
 
 export const CommentItem = (props) => {
-  const content = props.post.contents[0].text;
+  const content = props.post.contents;
   const timeSent = 
     moment.unix(props.post['time-sent'] / 1000).format('hh:mm a');
 
@@ -33,10 +34,12 @@ export const CommentItem = (props) => {
         </Row>
       </Row>
       <Row>
-        <Text display="block" py={3} fontSize={1}>
-          <RichText remoteContentPolicy={props.remoteContentPolicy}>
-            {content}
-          </RichText>
+        <Text py={3} fontSize={1}>
+          <MentionText
+            remoteContentPolicy={props.remoteContentPolicy}
+            contacts={props.contacts}
+            content={content} 
+          />
         </Text>
       </Row>
     </Box>

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Spinner } from '~/views/components/Spinner';
 import { createPost } from '~/logic/api/graph';
 import { deSig } from "~/logic/lib/util";
+import { scanForMentions } from "~/logic/lib/graph";
 
 
 export class CommentSubmit extends Component {
@@ -17,9 +18,8 @@ export class CommentSubmit extends Component {
 
   onClickPost() {
     const parentIndex = this.props.parentIndex || '';
-    let post = createPost([
-      { text: this.state.comment },
-    ], parentIndex);
+    const content = scanForMentions(this.state.comment);
+    let post = createPost(content, parentIndex);
 
     this.setState({ disabled: true }, () => {
       this.props.api.graph.addPost(
