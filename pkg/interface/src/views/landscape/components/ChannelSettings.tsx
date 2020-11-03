@@ -13,7 +13,8 @@ import GlobalApi from "~/logic/api/global";
 import { uxToHex } from '~/logic/lib/util';
 import { FormError } from "~/views/components/FormError";
 import { ColorInput } from "~/views/components/ColorInput";
-import { Association } from "~/types";
+import { Association, Groups, Associations } from "~/types";
+import GroupifyForm from "./GroupifyForm";
 
 interface FormSchema {
   title: string;
@@ -23,6 +24,8 @@ interface FormSchema {
 
 interface ChannelSettingsProps {
   association: Association;
+  groups: Groups;
+  associations: Associations;
   api: GlobalApi;
 }
 
@@ -66,13 +69,9 @@ export function ChannelSettings(props: ChannelSettingsProps) {
     <Box overflowY="auto" p={4}>
       <Formik initialValues={initialValues} onSubmit={onSubmit}>
         <Form style={{ display: "contents" }}>
-          <Box
-            display="grid"
-            gridTemplateColumns="100%"
+          <Col
             maxWidth="512px"
-            gridAutoRows="auto"
-            width="100%"
-            gridRowGap={4}
+            gapY="4"
           >
             <Col mb={3}>
               <Text fontWeight="bold">Channel Settings</Text>
@@ -99,9 +98,10 @@ export function ChannelSettings(props: ChannelSettingsProps) {
               Save
             </AsyncButton>
             <FormError message="Failed to update settings" />
-          </Box>
+          </Col>
         </Form>
       </Formik>
+      <GroupifyForm {...props} />
     </Box>
   );
 }
