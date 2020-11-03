@@ -30,19 +30,20 @@ export class OmniboxResult extends Component {
     const sigilFill = (this.state.hovered || (selected === link)) ? '#3a8ff7' : '#ffffff';
 
     let graphic = <div />;
-    if (defaultApps.includes(icon.toLowerCase()) || icon.toLowerCase() === 'links') {
+    if (defaultApps.includes(icon.toLowerCase()) || icon.toLowerCase() === 'links' || icon === 'inbox') {
+      icon = (icon === 'inbox') ? 'Inbox' : icon;
       icon = (icon === 'Link') ? 'Links' : icon;
       graphic = <Icon display="inline-block" verticalAlign="middle" icon={icon} mr='2' size='16px' color={iconFill} />;
     } else if (icon === 'logout') {
       graphic = <Icon display="inline-block" verticalAlign="middle" icon='ArrowWest' mr='2' size='16px' color={iconFill} />;
     } else if (icon === 'profile') {
-      graphic = <Sigil color={sigilFill} classes='dib v-mid mr2' ship={window.ship} size={16} icon padded />;
+      graphic = <Sigil color={sigilFill} classes='dib flex-shrink-0 v-mid mr2' ship={window.ship} size={16} icon padded />;
     } else if (icon === 'home') {
       graphic = <Icon display='inline-block' verticalAlign='middle' icon='Circle' mr='2' size='16px' color={iconFill} />;
     } else if (icon === 'notifications') {
       graphic = <Icon display='inline-block' verticalAlign='middle' icon='Inbox' mr='2' size='16px' color={iconFill} />;
     } else {
-      graphic = <Icon icon='NullIcon' verticalAlign="middle" mr='2' size="16px" color={iconFill} />;
+      graphic = <Icon display='inline-block' icon='NullIcon' verticalAlign="middle" mr='2' size="16px" color={iconFill} />;
     }
 
     return graphic;
