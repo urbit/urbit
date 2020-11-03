@@ -9,7 +9,7 @@ ghc-options:
   - -Wno-type-defaults
   - -Wno-unused-matches
   - -Wno-name-shadowing
-  - -Wno-unused-do-bind
+  - -Wno-unbanged-strict-patterns
   - -O2
 
 library:

@@ -64,6 +64,7 @@ library:
     - -fwarn-incomplete-patterns
     - -fwarn-unused-binds
     - -fwarn-unused-imports
+    - -Wwarn
     - -O2
 
 executables:

@@ -4,6 +4,9 @@
 -- combination with 'deriveNoun' which generates an unreachable pattern.
 {-# OPTIONS_GHC -Wno-overlapping-patterns #-}
 
+-- Hack. See comment above instance ToNoun H.StdMethod
+{-# OPTIONS_GHC -Wno-orphans #-}
+
 {-|
     Types used in both Events and Effects.
 -}
