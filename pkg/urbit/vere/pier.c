@@ -725,6 +725,7 @@ _pier_play(u3_play* pay_u)
       u3_pier_cram(pir_u);
     }
     else if ( pay_u->eve_d == log_u->dun_d ) {
+      u3_lord_save(pir_u->god_u);
       _pier_work_init(pir_u);
     }
   }
