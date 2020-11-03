@@ -129,7 +129,7 @@ function DaySection({
 
   return (
     <>
-      <Box position="sticky" zIndex="2" top="0px" bg="white">
+      <Box position="sticky" zIndex="3" top="-1px" bg="white">
         <Box p="2" bg="scales.black05">
           {moment(daToUnix(timeboxes[0][0])).calendar(null, calendar)}
         </Box>

@@ -6,6 +6,7 @@ import { Dropdown } from "~/views/components/Dropdown";
 import { Association, NotificationGraphConfig } from "~/types";
 import GlobalApi from "~/logic/api/global";
 import { StatelessAsyncAction } from "~/views/components/StatelessAsyncAction";
+import {appIsGraph} from "~/logic/lib/util";
 
 const ChannelMenuItem = ({
   icon,
@@ -99,7 +100,7 @@ export function ChannelMenu(props: ChannelMenuProps) {
           borderRadius={1}
           borderColor="lightGray"
         >
-          {metadata.module === "link" && (
+          {appIsGraph(metadata.module) && (
             <ChannelMenuItem color="blue" icon="Inbox">
               <StatelessAsyncAction
                 m="2"

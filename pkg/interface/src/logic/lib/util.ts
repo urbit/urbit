@@ -354,3 +354,7 @@ export function usePreventWindowUnload(shouldPreventDefault: boolean, message = 
     }
   }, [shouldPreventDefault]);
 }
+
+export function pluralize(text: string, isPlural = false, vowel = false) {
+  return isPlural ? `${text}s`: `${vowel ? 'an' : 'a'} ${text}`;
+}
