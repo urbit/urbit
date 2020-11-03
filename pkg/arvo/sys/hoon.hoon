@@ -9773,7 +9773,7 @@
   ::
   ++  caching-bran
     ~+
-    =+  gil=*(set type)
+    =|  gil=(set type)
     |-  ~+  ^-  [seminoun:musk _grub]
     ?-    sut
         %noun
@@ -13073,7 +13073,6 @@
     =^  played  grub  (caching-play(sut p.leg) q.leg)
     :_  grub(res (~(put by res.grub) leg played))
     played
-  ::  XX provided function should deal with cache
   ::
   ++  caching-take
     |=  [vit=vein duz=$-(type type)]
