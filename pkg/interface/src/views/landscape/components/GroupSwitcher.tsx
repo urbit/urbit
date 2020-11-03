@@ -49,7 +49,8 @@ function RecentGroups(props: { recent: string[]; associations: Associations }) {
         const assoc = associations.contacts[g];
         const color = uxToHex(assoc?.metadata?.color || "0x0");
         return (
-          <Row key={g} px={1} pb={2} alignItems="center">
+          <Link key={g} style={{ minWidth: 0 }} to={`/~landscape${g}`}>
+          <Row px={1} pb={2} alignItems="center">
             <Box
               borderRadius={1}
               border={1}
@@ -61,10 +62,9 @@ function RecentGroups(props: { recent: string[]; associations: Associations }) {
               display="block"
               flexShrink='0'
             />
-            <Link style={{ minWidth: 0 }} to={`/~landscape${g}`}>
               <Text verticalAlign='top' maxWidth='100%' overflow='hidden' display='inline-block' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}>{assoc?.metadata?.title}</Text>
-            </Link>
-          </Row>
+            </Row>
+          </Link>
         );
       })}
     </Col>
@@ -165,11 +165,11 @@ export function GroupSwitcher(props: {
               </Col>
             }
           >
-            <Row p={2} alignItems="center">
-              <Row alignItems="center" mr={1} flex='1'>
-                <Text overflow='hidden' display='inline-block' maxWidth='131px'  style={{ textOverflow: 'ellipsis', whiteSpace: 'pre'}}>{title}</Text>
+            <Row p={2} alignItems="center" width='100%' minWidth='0'>
+              <Row alignItems="center" mr={1} flex='1' width='100%' minWidth='0'>
+                <Text overflow='hidden' display='inline-block' flexShrink='1' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre'}}>{title}</Text>
+                <Icon size='12px' ml='1' mt="0px" display="inline-block" icon="ChevronSouth" />
               </Row>
-              <Icon size='12px' ml='1' mt="0px" display="inline-block" icon="ChevronSouth" />
             </Row>
           </Dropdown>
           <Row pr={1} justifyContent="flex-end" alignItems="center">
