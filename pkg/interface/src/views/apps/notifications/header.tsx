@@ -1,6 +1,7 @@
 import React from "react";
 import { Text as NormalText, Row, Icon } from "@tlon/indigo-react";
 import f from "lodash/fp";
+import _ from "lodash";
 import moment from "moment";
 import { PropFunc } from "~/types/util";
 import { getContactDetails } from "~/logic/lib/util";
