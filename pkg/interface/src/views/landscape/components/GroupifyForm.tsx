@@ -20,8 +20,6 @@ interface FormSchema {
 }
 
 interface GroupifyFormProps {
-  host: string;
-  book: string;
   groups: Groups;
   api: GlobalApi;
   associations: Associations;
@@ -34,8 +32,12 @@ export function GroupifyForm(props: GroupifyFormProps) {
     actions: FormikHelpers<FormSchema>
   ) => {
     try {
+      const [, , ship, name] = props.association["app-path"].split("/");
       await props.api.graph.groupifyGraph(
-        `~${window.ship}`, props.book, 'publish', values.group || undefined);
+        ship,
+        name,
+        values.group || undefined
+      );
       actions.setStatus({ success: null });
     } catch (e) {
       console.error(e);
@@ -43,7 +45,7 @@ export function GroupifyForm(props: GroupifyFormProps) {
     }
   };
 
-  const groupPath = props.association?.['group-path'];
+  const groupPath = props.association?.["group-path"];
 
   const isUnmanaged = props.groups?.[groupPath]?.hidden || false;
 
@@ -52,7 +54,7 @@ export function GroupifyForm(props: GroupifyFormProps) {
   }
 
   const initialValues: FormSchema = {
-    group: null
+    group: null,
   };
 
   return (
@@ -62,17 +64,19 @@ export function GroupifyForm(props: GroupifyFormProps) {
       onSubmit={onGroupify}
     >
       <Form style={{ display: "contents" }}>
-        <GroupSearch
-          id="group"
-          label="Group"
-          caption="What group should this notebook be added to? If blank, a new group will be made for the notebook"
-          groups={props.groups}
-          associations={props.associations}
-          adminOnly
-        />
-        <AsyncButton loadingText="Groupifying..." border>
-          Groupify
-        </AsyncButton>
+        <Col mt="4" gapY="4" maxWidth="512px">
+          <GroupSearch
+            id="group"
+            label="Group"
+            caption="What group should this channel be added to? If blank, a new group will be made for the channel"
+            groups={props.groups}
+            associations={props.associations}
+            adminOnly
+          />
+          <AsyncButton loadingText="Groupifying..." border>
+            Groupify
+          </AsyncButton>
+        </Col>
       </Form>
     </Formik>
   );
