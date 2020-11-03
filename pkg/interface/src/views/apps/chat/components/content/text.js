@@ -30,10 +30,11 @@ const renderers = {
   },
   code: ({language, value}) => {
     return <Text
-              py='1'
+              p='1'
               className='clamp-message'
               fontSize='14px'
               display='block'
+              borderRadius='1'
               mono
               backgroundColor='washedGray'
               overflowX='scroll'

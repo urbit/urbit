@@ -77,7 +77,7 @@ export function GroupSwitcher(props: {
   baseUrl: string;
   recentGroups: string[];
 }) {
-  const { associations, workspace } = props;
+  const { associations, workspace, isAdmin } = props;
   const title = getTitleFromWorkspace(associations, workspace);
   const navTo = (to: string) => `${props.baseUrl}${to}`;
   return (
@@ -152,14 +152,14 @@ export function GroupSwitcher(props: {
                       />
                       <Text> Group Settings</Text>
                     </GroupSwitcherItem>
-                    <GroupSwitcherItem bottom to={navTo("/invites")}>
+                    {isAdmin && (<GroupSwitcherItem bottom to={navTo("/invites")}>
                       <Icon
                         mr={2}
                         color="blue"
-                        icon="CreateGroup"
+                        icon="Users"
                       />
                       <Text color="blue">Invite to group</Text>
-                    </GroupSwitcherItem>
+                    </GroupSwitcherItem>)}
                   </>
                 )}
               </Col>
@@ -172,17 +172,17 @@ export function GroupSwitcher(props: {
               </Row>
             </Row>
           </Dropdown>
-          <Row pr={1} flexShrink='0' justifyContent="flex-end" alignItems="center">
-            {workspace.type === "group" && (
+          <Row pr={1} justifyContent="flex-end" alignItems="center">
+            {(workspace.type === "group") && (
               <>
-                <Link flexShrink='0' to={navTo("/invites")}>
+                {isAdmin && (<Link to={navTo("/invites")}>
                   <Icon
                     display="block"
                     color='blue'
-                    icon="CreateGroup"
+                    icon="Users"
                   />
-                </Link>
-                <Link flexShrink='0' to={navTo("/popover/settings")}>
+                </Link>)}
+                <Link to={navTo("/popover/settings")}>
                   <Icon color='gray' display="block" m={2} icon="Gear" />
                 </Link>
               </>

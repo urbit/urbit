@@ -87,7 +87,6 @@ export function SidebarListHeader(props: {
                   <Text color="gray">Sort Order</Text>
                 </Box>
                 <Radio mb="1" label="A -> Z" id="asc" name="sortBy" />
-                <Radio mb="1" label="Z -> A" id="desc" name="sortBy" />
                 <Radio label="Last Updated" id="lastUpdated" name="sortBy" />
               </Col>
               <Col px={2}>
