@@ -15,7 +15,7 @@ import { uxToHex, hexToUx } from "~/logic/lib/util";
 type ColorInputProps = Parameters<typeof Col>[0] & {
   id: string;
   label: string;
-  disabled: boolean;
+  disabled?: boolean;
 };
 
 export function ColorInput(props: ColorInputProps) {
@@ -36,9 +36,10 @@ export function ColorInput(props: ColorInputProps) {
     const result = hexToUx(newValue);
     setValue(result);
   };
+  
 
   return (
-    <Box display="flex" flexDirection="column" {...props}>
+    <Box display="flex" flexDirection="column" {...rest}>
       <Label htmlFor={id}>{label}</Label>
       {caption ? (
         <Label mt="2" gray>

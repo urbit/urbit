@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { Box, Row, Col, Center, LoadingSpinner } from "@tlon/indigo-react";
 import { Switch, Route, Link } from "react-router-dom";
+import bigInt from 'big-integer';
 
 import GlobalApi from "~/logic/api/global";
 import { StoreState } from "~/logic/store/type";
@@ -48,6 +49,7 @@ export function LinkResource(props: LinkResourceProps) {
     ? associations.graph[appPath]
     : { metadata: {} };
   const contactDetails = contacts[resource["group-path"]] || {};
+  const group = groups[resource["group-path"]] || {};
   const graph = graphs[resourcePath] || null;
 
   useEffect(() => {
@@ -75,7 +77,7 @@ export function LinkResource(props: LinkResourceProps) {
                   const contact = contactDetails[node.post.author];
                   return (
                     <LinkItem
-                      key={date}
+                      key={date.toString()}
                       resource={resourcePath}
                       node={node}
                       nickname={contact?.nickname}
@@ -83,6 +85,8 @@ export function LinkResource(props: LinkResourceProps) {
                       hideNicknames={hideNicknames}
                       baseUrl={resourceUrl}
                       color={uxToHex(contact?.color || '0x0')}
+                      group={group}
+                      api={api}
                     />
                   );
                 })}
@@ -99,7 +103,7 @@ export function LinkResource(props: LinkResourceProps) {
               return <div>Malformed URL</div>;
             }
 
-            const index = parseInt(indexArr[1], 10);
+            const index = bigInt(indexArr[1]);
             const node = !!graph ? graph.get(index) : null;
 
             if (!node) {
@@ -124,7 +128,7 @@ export function LinkResource(props: LinkResourceProps) {
                     name={name}
                     ship={ship}
                     api={api}
-                    parentIndex={node.post.originalIndex}
+                    parentIndex={node.post.index}
                   />
                 </Row>
                 <Comments

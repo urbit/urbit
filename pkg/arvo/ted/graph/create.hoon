@@ -77,10 +77,10 @@
 ::
 ::  Send invites
 ::
-?:  ?=(%group -.associated)
+?:  ?=(%group -.associated.action)
   (pure:m !>(~))
 ?-    -.policy.associated.action
-    %group  (pure:m !>(~))
+    %open  (pure:m !>(~))
     %invite
   =/  inv-action=action:inv
     :^  %invites  %graph  (shaf %graph-uid eny.bowl)

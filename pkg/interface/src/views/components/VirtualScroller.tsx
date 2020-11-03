@@ -244,7 +244,18 @@ export default class VirtualScroller extends PureComponent<VirtualScrollerProps,
       element.addEventListener('wheel', (event) => {
         event.preventDefault();
         const normalized = normalizeWheel(event);
-        element.scrollBy(0, normalized.pixelY * -1);
+        if (
+          !event.target.isSameNode(element)
+          && (event.target.scrollHeight > event.target.clientHeight && event.target.clientHeight > 0) // If we're scrolling something with a scrollbar
+          && (
+            (event.target.scrollTop > 0 && event.deltaY < 0) // Either we're not at the top and scrolling up
+            || (event.target.scrollTop < event.target.scrollHeight - event.target.clientHeight && event.deltaY > 0) // Or we're not at the bottom and scrolling down
+          )
+        ) {
+          event.target.scrollBy(0, normalized.pixelY);
+        } else {
+          element.scrollBy(0, normalized.pixelY * -1);
+        }
         return false;
       }, { passive: false });
       window.addEventListener('keydown', this.invertedKeyHandler, { passive: false });

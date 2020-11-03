@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import _ from "lodash";
 import f from "lodash/fp";
 import bigInt, { BigInteger } from "big-integer";
@@ -13,6 +14,10 @@ export const MOMENT_CALENDAR_DATE = {
   sameElse: "DD/MM/YYYY",
 };
 
+export function appIsGraph(app: string) {
+  return app === 'publish' || app == 'link';
+}
+
 export function parentPath(path: string) {
   return _.dropRight(path.split('/'), 1).join('/');
 }
@@ -27,6 +32,11 @@ export function daToUnix(da: BigInteger) {
   return Math.round(
     epochAdjusted.multiply(bigInt(1000)).divide(DA_SECOND).toJSNumber()
   );
+}
+
+export function unixToDa(unix: number) {
+  const timeSinceEpoch =  bigInt(unix).multiply(DA_SECOND).divide(bigInt(1000));
+  return DA_UNIX_EPOCH.add(timeSinceEpoch);
 }
 
 export function makePatDa(patda: string) {
@@ -310,4 +320,37 @@ export function stringToSymbol(str: string) {
     return dateToDa(new Date());
   }
   return result;
+}
+
+
+
+/**
+ * Formats a numbers as a `@ud` inserting dot where needed
+ */
+export function numToUd(num: number) {
+  return f.flow(
+    f.split(''),
+    f.reverse,
+    f.chunk(3),
+    f.reverse,
+    f.map(s => s.join('')),
+    f.join('.')
+  )(num.toString())
+}
+
+export function usePreventWindowUnload(shouldPreventDefault: boolean, message = "You have unsaved changes. Are you sure you want to exit?") {
+  useEffect(() => {
+    if (!shouldPreventDefault) return;
+    const handleBeforeUnload = event => {
+      event.preventDefault();
+      return message;
+    }
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    window.onbeforeunload = handleBeforeUnload;
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      // @ts-ignore
+      window.onbeforeunload = undefined;
+    }
+  }, [shouldPreventDefault]);
 }
