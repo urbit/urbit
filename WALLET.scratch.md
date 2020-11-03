@@ -1,6 +1,11 @@
 # btc-wallet-* Scratch Code
 
 ## xpub
+Mnemonic
+```
+absurd sick rose mask magnet know slide spell rent casual someone grant giant inhale toward
+```
+
 ```
 =xpub1 'zpub6r8dKyWJ31XF6n69KKeEwLjVC5ruqAbiJ4QCqLsrV36Mvx9WEjUaiPNPGFLHNCCqgCdy6iZC8ZgHsm6a1AUTVBMVbKGemNcWFcwBGSjJKbD'
 =xpub2 'xpub6D7yaZieZEeG617UcKXDhbsDeso6bmxSAiGWkvkASoiwcjaRtrH5HeNRnDT25s7zmxYzj6MtFe32dVqcf9YcBKKgn9THHjwn2uSjkvobK4e'
@@ -49,14 +54,29 @@ nixt.st.q.res
 ```
 
 ## Scanning
+Mnemonic
+```
+abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about
+```
 
 ### manual scanning of empty wallet
 With max-gap=3
 ```
+=btc -build-file %/lib/btc/hoon
 =scan-xpub 'zpub6rFR7y4Q2AijBEqTUquhVz398htDFrtymD9xYYfG1m4wAcvPhXNfE3EfH1r1ADqtfSdVCToUG868RvUUkgDKf31mGDtKsAYz2oz2AGutZYs'
 :btc-wallet-store|action [%add-wallet scan-xpub ~ [~ 3]]
 :btc-wallet-store +dbug
 :: shows scans with the xpub and {0 1 2} todos
+
+::  %0 account has no used
+:btc-wallet-store|action [%watch-address scan-xpub %0 1 *(set utxo:btc) used=%.n]
+:btc-wallet-store|action [%watch-address scan-xpub %0 2 *(set utxo:btc) used=%.n]
+:btc-wallet-store|action [%watch-address scan-xpub %0 0 *(set utxo:btc) used=%.n]
+::  dbug should give empty for scans: [xpub %0]
+:btc-wallet-store|action [%watch-address scan-xpub %1 2 *(set utxo:btc) used=%.n]
+:btc-wallet-store|action [%watch-address scan-xpub %1 0 *(set utxo:btc) used=%.n]
+:btc-wallet-store|action [%watch-address scan-xpub %1 1 *(set utxo:btc) used=%.y]
+:: dbug should show re-filled scans: [xpub %1]
 ```
 
 ## Algos
