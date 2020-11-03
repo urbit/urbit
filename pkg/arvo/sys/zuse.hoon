@@ -75,11 +75,7 @@
 ++  life  @ud                                           ::  ship key revision
 ++  rift  @ud                                           ::  ship continuity
 ++  mime  {p/mite q/octs}                               ::  mimetyped data
-::
-::
-::    TODO: Rename to +mime once the current +mime and +mite are gone. The
-::
-++  octs  {p/@ud q/@t}                                  ::  octet-stream
+++  octs  {p/@ud q/@}                                   ::  octet-stream
 ++  sock  {p/ship q/ship}                               ::  outgoing [our his]
 ::+|
 ::
@@ -371,7 +367,7 @@
     ++  pairs
       %+  cook
         ~(gas by *(map @t @t))
-      %+  more  (ifix [. .]:(star ace) mic)
+      %+  most  (ifix [. .]:(star ace) mic)
       ;~(plug token ;~(pose ;~(pfix tis value) (easy '')))
     ::
     ++  value
@@ -904,18 +900,17 @@
         lab/(map @tas @ud)                              ::  labels
     ==                                                  ::
   ++  germ                                              ::  merge style
-    $?  $init                                           ::  new desk
-        $this                                           ::  ours with parents
-        $that                                           ::  hers with parents
-        $fine                                           ::  fast forward
-        $meet                                           ::  orthogonal files
-        $mate                                           ::  orthogonal changes
-        $meld                                           ::  force merge
-    ==                                                  ::
-  ++  khan                                              ::
-    $~  [~ ~]
-    $:  fil/(unit (unit cage))                          ::  see ++khan-to-soba
-        dir/(unit (map @ta (unit khan)))                ::
+    $?  %init                                           ::  new desk
+        %fine                                           ::  fast forward
+        %meet                                           ::  orthogonal files
+        %mate                                           ::  orthogonal changes
+        %meld                                           ::  force merge
+        %only-this                                      ::  ours with parents
+        %only-that                                      ::  hers with parents
+        %take-this                                      ::  ours unless absent
+        %take-that                                      ::  hers unless absent
+        %meet-this                                      ::  ours if conflict
+        %meet-that                                      ::  hers if conflict
     ==                                                  ::
   ++  lobe  @uvI                                        ::  blob ref
   ++  maki  {p/@ta q/@ta r/@ta s/path}                  ::
@@ -1111,7 +1106,9 @@
           {$init p/@p}                                  ::  set owner
           {$logo ~}                                     ::  logout
           [%lyra hoon=(unit @t) arvo=@t]                ::  upgrade kernel
+          {$meld ~}                                     ::  unify memory
           {$pack ~}                                     ::  compact memory
+          {$trim p/@ud}                                 ::  trim kernel state
           {$veer p/@ta q/path r/@t}                     ::  install vane
           {$verb ~}                                     ::  verbose mode
           [%whey ~]                                     ::  memory report
@@ -1121,6 +1118,7 @@
       $%  {$belt p/belt}                                ::  terminal input
           {$blew p/blew}                                ::  terminal config
           {$boot lit/? p/*}                             ::  weird %dill boot
+          {$crop p/@ud}                                 ::  trim kernel state
           $>(%crud vane-task)                           ::  error with trace
           {$flog p/flog}                                ::  wrapped error
           {$flow p/@tas q/(list gill:gall)}             ::  terminal config
@@ -1130,6 +1128,7 @@
           {$harm ~}                                     ::  all terms hung up
           $>(%init vane-task)                           ::  after gall ready
           [%lyra hoon=(unit @t) arvo=@t]                ::  upgrade kernel
+          {$meld ~}                                     ::  unify memory
           {$noop ~}                                     ::  no operation
           {$pack ~}                                     ::  compact memory
           {$talk p/tank}                                ::
@@ -1193,9 +1192,11 @@
         {$url p/@t}                                     ::  activate url
     ==                                                  ::
   ++  flog                                              ::  sent to %dill
-    $%  {$crud p/@tas q/(list tank)}                    ::
+    $%  {$crop p/@ud}                                   ::  trim kernel state
+        {$crud p/@tas q/(list tank)}                    ::
         {$heft ~}                                       ::
         [%lyra hoon=(unit @t) arvo=@t]                  ::  upgrade kernel
+        {$meld ~}                                       ::  unify memory
         {$pack ~}                                       ::  compact memory
         {$text p/tape}                                  ::
         {$veer p/@ta q/path r/@t}                       ::  install vane
@@ -1271,9 +1272,28 @@
           ::    the first place.
           ::
           [%disconnect =binding]
+          ::  notifies us that web login code changed
+          ::
+          [%code-changed ~]
+          ::  start responding positively to cors requests from origin
+          ::
+          [%approve-origin =origin]
+          ::  start responding negatively to cors requests from origin
+          ::
+          [%reject-origin =origin]
       ==
     ::
     --
+  ::  +origin: request origin as specified in an Origin header
+  ::
+  +$  origin  @torigin
+  ::  +cors-registry: origins categorized by approval status
+  ::
+  +$  cors-registry
+    $:  requests=(set origin)
+        approved=(set origin)
+        rejected=(set origin)
+    ==
   ::  +outstanding-connection: open http connections not fully complete:
   ::
   ::    This refers to outstanding connections where the connection to
@@ -1338,6 +1358,14 @@
         ::
         =duct
     ==
+  ::  channel-event: unacknowledged channel event, vaseless sign
+  ::
+  +$  channel-event
+    $%  $>(%poke-ack sign:agent:gall)
+        $>(%watch-ack sign:agent:gall)
+        $>(%kick sign:agent:gall)
+        [%fact =mark =noun]
+    ==
   ::  channel: connection to the browser
   ::
   ::    Channels are the main method where a webpage communicates with Gall
@@ -1364,6 +1392,11 @@
         ::  next-id: next sequence number to use
         ::
         next-id=@ud
+        ::  last-ack: time of last client ack
+        ::
+        ::    used for clog calculations, in combination with :unacked
+        ::
+        last-ack=@da
         ::  events: unacknowledged events
         ::
         ::    We keep track of all events where we haven't received a
@@ -1372,13 +1405,18 @@
         ::    channel, we send the event but we still add it to events because we
         ::    can't assume it got received until we get an acknowledgment.
         ::
-        events=(qeu [id=@ud lines=wall])
-        ::  subscriptions: gall subscriptions
+        events=(qeu [id=@ud request-id=@ud =channel-event])
+        ::  unacked: unacknowledged event counts by request-id
+        ::
+        ::    used for clog calculations, in combination with :last-ack
+        ::
+        unacked=(map @ud @ud)
+        ::  subscriptions: gall subscriptions by request-id
         ::
         ::    We maintain a list of subscriptions so if a channel times out, we
         ::    can cancel all the subscriptions we've made.
         ::
-        subscriptions=(map wire [ship=@p app=term =path duc=duct])
+        subscriptions=(map @ud [ship=@p app=term =path duc=duct])
         ::  heartbeat: sse heartbeat timer
         ::
         heartbeat=(unit timer)
@@ -1535,9 +1573,7 @@
         $put                                            ::  PUT
         $trac                                           ::  TRACE
     ==                                                  ::
-  ++  mite  (list @ta)                                  ::  mime type
   ++  moth  {p/meth q/math r/(unit octs)}               ::  http operation
-  ++  octs  {p/@ud q/@t}                                ::  octet-stream
   ++  oryx  @t                                          ::  CSRF secret
   ++  pork  {p/(unit @ta) q/(list @t)}                  ::  fully parsed url
   :: +prox: proxy notification
@@ -1956,6 +1992,7 @@
           [%turf ~]                                     ::  view domains
           $>(%vega vane-task)                           ::  report upgrade
           $>(%plea vane-task)                           ::  ames request
+          [%step ~]                                     ::  reset web login code
       ==                                                ::
     ::
     +$  dawn-event
@@ -5599,7 +5636,7 @@
       [(rash a fel) b]
     ::                                                  ::  ++pa:dejs:format
     ++  pa                                              ::  string as path
-      (su ;~(pfix net (more net urs:ab)))
+      (su ;~(pfix fas (more fas urs:ab)))
     ::                                                  ::  ++pe:dejs:format
     ++  pe                                              ::  prefix
       |*  {pre/* wit/fist}
@@ -6010,6 +6047,7 @@
   ::::                    ++mimes:html                  ::  (2e1) MIME
     ::                                                  ::::
   ++  mimes  ^?
+    ~%  %mimes  ..is  ~
     |%
     ::                                                  ::  ++as-octs:mimes:html
     ++  as-octs                                         ::  atom to octstream
@@ -6027,6 +6065,28 @@
       ?~  myn  ~
       ?:  =(~ t.myn)  (trip i.myn)
       (weld (trip i.myn) `tape`['/' $(myn t.myn)])
+    ::
+    ::  |base16: en/decode arbitrary MSB-first hex strings
+    ::
+    ++  base16
+      ~%  %base16  +  ~
+      |%
+      ++  en
+        ~/  %en
+        |=  a=octs  ^-  cord
+        (crip ((x-co:co (mul p.a 2)) (end 3 p.a q.a)))
+      ::
+      ++  de
+        ~/  %de
+        |=  a=cord  ^-  (unit octs)
+        (rush a rule)
+      ::
+      ++  rule
+        %+  cook
+          |=  a=(list @)  ^-  octs
+          [(add (dvr (lent a) 2)) (repn 4 (flop a))]
+        (star hit)
+      --
     ::                                                  ::  ++en-base64:mimes:
     ++  en-base64                                       ::  encode base64
       |=  tig/@
@@ -6138,7 +6198,7 @@
     ::                                                  ::  ++abox:de-json:html
     ++  abox                                            ::  array
       %+  stag  %a
-      (ifix [lac (wish rac)] (more (wish com) apex))
+      (ifix [sel (wish ser)] (more (wish com) apex))
     ::                                                  ::  ++apex:de-json:html
     ++  apex                                            ::  any value
       %+  knee  *json  |.  ~+
@@ -6170,7 +6230,7 @@
           =*  wow  `(map @t @)`(malt lip)
           (sear ~(get by wow) low)
         =*  tuf  ;~(pfix (just 'u') (cook tuft qix:ab))
-        ;~(pose yel net say bas loo tuf)
+        ;~(pose doq fas soq bas loo tuf)
       ==
     ::                                                  ::  ++expo:de-json:html
     ++  expo                                            ::  exponent
@@ -6184,7 +6244,7 @@
       ;~(plug dot digs)
     ::                                                  ::  ++jcha:de-json:html
     ++  jcha                                            ::  string character
-      ;~(pose ;~(less yel bas prn) esca)
+      ;~(pose ;~(less doq bas prn) esca)
     ::                                                  ::  ++mayb:de-json:html
     ++  mayb                                            ::  optional
       |*(bus/rule ;~(pose bus (easy ~)))
@@ -6201,7 +6261,7 @@
       ==
     ::                                                  ::  ++obje:de-json:html
     ++  obje                                            ::  object list
-      %+  ifix  [(wish leb) (wish reb)]
+      %+  ifix  [(wish kel) (wish ker)]
       (more (wish com) pear)
     ::                                                  ::  ++obox:de-json:html
     ++  obox                                            ::  object
@@ -6215,7 +6275,7 @@
       (cook |=(a/@ [a ~]) bus)
     ::                                                  ::  ++stri:de-json:html
     ++  stri                                            ::  string
-      (cook crip (ifix [yel yel] (star jcha)))
+      (cook crip (ifix [doq doq] (star jcha)))
     ::                                                  ::  ++tops:de-json:html
     ++  tops                                            ::  strict value
       ;~(pose abox obox)
@@ -6309,7 +6369,8 @@
     ++  apex                                            ::  top level
       =+  spa=;~(pose comt whit)
       %+  knee  *manx  |.  ~+
-      %+  ifix  [(star spa) (star spa)]
+      %+  ifix  
+        [;~(plug (punt decl) (star spa)) (star spa)]
       ;~  pose
         %+  sear  |=({a/marx b/marl c/mane} ?.(=(c n.a) ~ (some [a b])))
           ;~(plug head many tail)
@@ -6323,14 +6384,14 @@
         ;~(pfix (plus whit) name)
         ;~  pose
           %+  ifix
-            :_  yel
-            ;~(plug (ifix [. .]:(star whit) tis) yel)
-          (star ;~(less yel escp))
+            :_  doq
+            ;~(plug (ifix [. .]:(star whit) tis) doq)
+          (star ;~(less doq escp))
         ::
           %+  ifix
-            :_  say
-            ;~(plug (ifix [. .]:(star whit) tis) say)
-          (star ;~(less say escp))
+            :_  soq
+            ;~(plug (ifix [. .]:(star whit) tis) soq)
+          (star ;~(less soq escp))
         ::
           (easy ~)
         ==
@@ -6346,7 +6407,7 @@
     ::                                                  ::  ++chrd:de-xml:html
     ++  chrd                                            ::  character data
       %+  cook  |=(a/tape ^-(mars ;/(a)))
-      (plus ;~(less yel ;~(pose (just `@`10) escp)))
+      (plus ;~(less doq ;~(pose (just `@`10) escp)))
     ::                                                  ::  ++comt:de-xml:html
     ++  comt                                            ::  comments
       =-  (ifix [(jest '<!--') (jest '-->')] (star -))
@@ -6355,12 +6416,18 @@
         whit
         ;~(less (jest '-->') hep)
       ==
+    ::
+    ++  decl                                            ::  ++decl:de-xml:html
+      %+  ifix                                          ::  XML declaration
+        [(jest '<?xml') (jest '?>')]
+      %-  star
+      ;~(less (jest '?>') prn)
     ::                                                  ::  ++escp:de-xml:html
     ++  escp                                            ::
-      ;~(pose ;~(less led ban pad prn) enty)
+      ;~(pose ;~(less gal gar pam prn) enty)
     ::                                                  ::  ++enty:de-xml:html
     ++  enty                                            ::  entity
-      %+  ifix  pad^mic
+      %+  ifix  pam^mic
       ;~  pose
         =+  def=^+(ent (my:nl [%gt '>'] [%lt '<'] [%amp '&'] [%quot '"'] ~))
         %+  sear  ~(get by (~(uni by def) ent))
@@ -6376,7 +6443,7 @@
       ;~(plug ;~(plug name attr) (cold ~ (star whit)))
     ::                                                  ::  ++head:de-xml:html
     ++  head                                            ::  opening tag
-      (ifix [gal ban] ;~(plug name attr))
+      (ifix [gal gar] ;~(plug name attr))
     ::                                                  ::  ++many:de-xml:html
     ++  many                                            ::  contents
       ;~(pfix (star comt) (star ;~(sfix ;~(pose apex chrd cdat) (star comt))))
@@ -6391,7 +6458,7 @@
       ;~(pose ;~(plug ;~(sfix chx col) chx) chx)
     ::                                                  ::  ++tail:de-xml:html
     ++  tail                                            ::  closing tag
-      (ifix [(jest '</') ban] name)
+      (ifix [(jest '</') gar] name)
     ::                                                  ::  ++whit:de-xml:html
     ++  whit                                            ::  whitespace
       (mask ~[' ' `@`0x9 `@`0xa])
@@ -6496,8 +6563,13 @@
       ?^  t.rax
         [p.pok [ire q.pok]]:[pok=$(rax t.rax) ire=i.rax]
       =/  raf/(like term)
-          =>  |=(a/@ ((sand %tas) (crip (flop (trip a)))))
-          (;~(sfix (sear . sym) dot) [1^1 (flop (trip i.rax))])
+        %-  ;~  sfix
+              %+  sear
+                |=(a/@ ((sand %ta) (crip (flop (trip a)))))
+              (cook |=(a/tape (rap 3 ^-((list @) a))) (star aln))
+              dot
+            ==
+        [1^1 (flop (trip i.rax))]
       ?~  q.raf
         [~ [i.rax ~]]
       =+  `{ext/term {@ @} fyl/tape}`u.q.raf
@@ -6506,7 +6578,7 @@
     ::                                                  ::  ++apat:de-purl:html
     ++  apat                                            ::  2396 abs_path
       %+  cook  deft
-      ;~(pfix net (more net smeg))
+      ;~(pfix fas (more fas smeg))
     ::                                                  ::  ++aurf:de-purl:html
     ++  aurf                                            ::  2396 with fragment
       %+  cook  |~(a/purf a)
@@ -6527,13 +6599,13 @@
         [q.a [[p.a r.a] b]]
       ::
       ;~  plug
-        ;~(plug htts (punt ;~(sfix urt:ab vat)) thor)
+        ;~(plug htts (punt ;~(sfix urt:ab pat)) thor)
         ;~(plug ;~(pose apat (easy *pork)) yque)
       ==
     ::                                                  ::  ++htts:de-purl:html
     ++  htts                                            ::  scheme
       %+  sear  ~(get by (malt `(list (pair term ?))`[http+| https+& ~]))
-      ;~(sfix scem ;~(plug col net net))
+      ;~(sfix scem ;~(plug col fas fas))
     ::                                                  ::  ++cock:de-purl:html
     ++  cock                                            ::  cookie
       %+  most  ;~(plug mic ace)
@@ -6553,10 +6625,10 @@
       (cook crip (star pquo))
     ::                                                  ::  ++pcar:de-purl:html
     ++  pcar                                            ::  2396 path char
-      ;~(pose pure pesc psub col vat)
+      ;~(pose pure pesc psub col pat)
     ::                                                  ::  ++pcok:de-purl:html
     ++  pcok                                            ::  cookie char
-      ;~(less bas mic com yel prn)
+      ;~(less bas mic com doq prn)
     ::                                                  ::  ++pesc:de-purl:html
     ++  pesc                                            ::  2396 escaped
       ;~(pfix cen mes)
@@ -6565,24 +6637,24 @@
       (cold ' ' (just '+'))
     ::                                                  ::  ++pque:de-purl:html
     ++  pque                                            ::  3986 query char
-      ;~(pose pcar net wut)
+      ;~(pose pcar fas wut)
     ::                                                  ::  ++pquo:de-purl:html
     ++  pquo                                            ::  normal query char
-      ;~(pose pure pesc pold net wut col com)
+      ;~(pose pure pesc pold fas wut col com)
     ::                                                  ::  ++pure:de-purl:html
     ++  pure                                            ::  2396 unreserved
       ;~(pose aln hep cab dot zap sig tar say lit rit)
     ::                                                  ::  ++psub:de-purl:html
     ++  psub                                            ::  3986 sub-delims
       ;~  pose
-        zap  bus  pad  say  lit  rit
+        zap  buc  pam  soq  pal  par
         tar  lus  com  mic  tis
       ==
     ::                                                  ::  ++ptok:de-purl:html
     ++  ptok                                            ::  2616 token
       ;~  pose
-        aln  zap  hax  bus  cen  pad  say  tar  lus
-        hep  dot  ket  cab  tec  bar  sig
+        aln  zap  hax  buc  cen  pam  soq  tar  lus
+        hep  dot  ket  cab  tic  bar  sig
       ==
     ::                                                  ::  ++scem:de-purl:html
     ++  scem                                            ::  2396 scheme
@@ -6596,7 +6668,7 @@
       (cook crip (plus pcok))
     ::                                                  ::  ++tosk:de-purl:html
     ++  tosk                                            ::  6265 quoted value
-      ;~(pose tock (ifix [yel yel] tock))
+      ;~(pose tock (ifix [doq doq] tock))
     ::                                                  ::  ++toke:de-purl:html
     ++  toke                                            ::  2616 token
       (cook crip (plus ptok))
@@ -6638,7 +6710,7 @@
         ::  proper query
         ::
         %+  more
-          ;~(pose pad mic)
+          ;~(pose pam mic)
         ;~(plug fque ;~(pose ;~(pfix tis fquu) (easy '')))
         ::
         ::  funky query
@@ -8142,7 +8214,7 @@
     ::
     ++  function
       |*  [tag=@tas fun=@t rul=rule]
-      ;~(plug (cold tag (jest fun)) (ifix [lit rit] rul))
+      ;~(plug (cold tag (jest fun)) (ifix [pal par] rul))
     ::
     ++  shipname
       ;~(pfix sig fed:ag)

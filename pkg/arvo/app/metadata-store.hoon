@@ -55,24 +55,28 @@
 +$  state-1   [%1 base-state-0]
 +$  state-2   [%2 base-state-0]
 +$  state-3   [%3 base-state-1]
++$  state-4   [%4 base-state-1]
++$  state-5   [%5 base-state-1]
 +$  versioned-state
   $%  state-0
       state-1
       state-2
       state-3
+      state-4
+      state-5
   ==
 --
 ::
-=|  state-3
+=|  state-5
 =*  state  -
 %+  verb  |
 %-  agent:dbug
 ^-  agent:gall
 =<
   |_  =bowl:gall
-  +*  this           .
-      mc             ~(. +> bowl)
-      def            ~(. (default-agent this %|) bowl)
+  +*  this  .
+      mc    ~(. +> bowl)
+      def   ~(. (default-agent this %|) bowl)
   ::
   ++  on-init  on-init:def
   ++  on-save  !>(state)
@@ -82,8 +86,32 @@
     =/  old  !<(versioned-state vase)
     =|  cards=(list card)
     |^
-    ?:  ?=(%3 -.old)
+    ?:  ?=(%5 -.old)
       [cards this(state old)]
+    ?:  ?=(%4 -.old)
+      %_  $
+        -.old  %5
+      ::
+          group-indices.old
+        %-  ~(gas ju *(jug group-path md-resource))
+        ~(tap in ~(key by associations.old))
+      ::
+          app-indices.old
+        %-  ~(gas ju *(jug app-name [group-path app-path]))
+        %+  turn  ~(tap in ~(key by associations.old))
+        |=  [g=group-path r=md-resource]
+        ^-  [app-name [group-path app-path]]
+        [app-name.r [g app-path.r]]
+      ::
+          resource-indices.old
+        %-  ~(gas ju *(jug md-resource group-path))
+        %+  turn  ~(tap in ~(key by associations.old))
+        |=  [g=group-path r=md-resource]
+        ^-  [md-resource group-path]
+        [r g]
+      ==
+    ?:  ?=(%3 -.old)
+      $(old [%4 +.old])
     ?:  ?=(%2 -.old)
       =/  new-state=state-3
         %*  .  *state-3

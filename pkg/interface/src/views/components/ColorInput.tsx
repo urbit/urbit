@@ -15,17 +15,19 @@ import { uxToHex, hexToUx } from "~/logic/lib/util";
 type ColorInputProps = Parameters<typeof Col>[0] & {
   id: string;
   label: string;
+  disabled: boolean;
 };
 
 export function ColorInput(props: ColorInputProps) {
-  const { id, label, caption, ...rest } = props;
+  const { id, label, caption, disabled, ...rest } = props;
   const [{ value, onBlur }, meta, { setValue }] = useField(id);
 
-  const hex = value.substr(2).replace(".", "");
+  const hex = value.replace('#', '').substr(2).replace(".", "");
   const padded = hex.padStart(6, "0");
 
   const onChange = (e: any) => {
-    const { value: newValue } = e.target as HTMLInputElement;
+    let { value: newValue } = e.target as HTMLInputElement;
+    newValue = newValue.replace('#', '');
     const valid = newValue.match(/^(\d|[a-f]|[A-F]){0,6}$/);
 
     if (!valid) {
@@ -50,6 +52,8 @@ export function ColorInput(props: ColorInputProps) {
           onBlur={onBlur}
           onChange={onChange}
           value={hex}
+          disabled={disabled || false}
+          borderRight={0}
         />
         <Box
           borderBottomRightRadius={1}
@@ -60,7 +64,19 @@ export function ColorInput(props: ColorInputProps) {
           width="32px"
           alignSelf="stretch"
           bg={`#${padded}`}
-        />
+        >
+          <Input
+            width="100%"
+            height="100%"
+            alignSelf="stretch"
+            onInput={onChange}
+            value={`#${padded}`}
+            disabled={disabled || false}
+            type="color"
+            opacity={0}
+            overflow="hidden"
+          />
+        </Box>
       </Row>
       <ErrorLabel mt="2" hasError={!!(meta.touched && meta.error)}>
         {meta.error}

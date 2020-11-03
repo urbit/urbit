@@ -15,7 +15,7 @@ export class History extends Component {
           {this.props.commandLog.map((text, index) => {
             return (
               <p className="mono" key={index}
-              style={{ overflowWrap: 'break-word' }}
+              style={{ overflowWrap: 'break-word', whiteSpace: 'pre' }}
               >
                 {text}
               </p>

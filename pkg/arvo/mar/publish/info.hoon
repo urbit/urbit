@@ -23,7 +23,7 @@
 ++  grab
   |%
   ++  mime
-    |=  [mite:eyre p=octs:eyre]
+    |=  [mite p=octs]
     |^  (rash q.p both-parser)
     ++  key-val
       |*  [key=rule val=rule]
@@ -49,10 +49,10 @@
         (key-val (jest 'description: ') (cook crip (star prn)))
         %+  key-val  (jest 'comments: ')
           (cook |=(a=@ =(%on a)) ;~(pose (jest %on) (jest %off)))
-        (key-val (jest 'writers: ') ;~(pfix net (more net urs:ab)))
+        (key-val (jest 'writers: ') ;~(pfix fas (more fas urs:ab)))
         ;~  pose
-          (key-val (jest 'subscribers: ') ;~(pfix net (more net urs:ab)))
-          ;~(pfix (jest 'subscribers: ') ;~(pfix net (more net urs:ab)))
+          (key-val (jest 'subscribers: ') ;~(pfix fas (more fas urs:ab)))
+          ;~(pfix (jest 'subscribers: ') ;~(pfix fas (more fas urs:ab)))
         ==
       ==
     ++  both-parser

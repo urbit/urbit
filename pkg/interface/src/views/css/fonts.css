@@ -7,6 +7,20 @@
 
 @font-face {
   font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  src: url("https://media.urbit.org/fonts/Inter-Medium.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  src: url("https://media.urbit.org/fonts/Inter-SemiBold.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: 'Inter';
   font-style:  italic;
   font-weight: 400;
   src: url("https://media.urbit.org/fonts/Inter-Italic.woff2") format("woff2");

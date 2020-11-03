@@ -187,8 +187,18 @@ export default class PublishApi extends BaseApi {
     });
   }
 
+  readNote(who: PatpNoSig, book: string, note: string) {
+    return this.publishAction({
+      read: {
+        who,
+        book,
+        note
+      }
+    });
+  }
+
   updateComment(who: PatpNoSig, book: string, note: string, comment: Path, body: string) {
-    return this.publishAction({ 
+    return this.publishAction({
       'edit-comment': {
         who,
         book,

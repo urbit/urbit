@@ -1,6 +1,16 @@
 import _ from 'lodash';
 import { OrderedMap } from "~/logic/lib/OrderedMap";
 
+const DA_UNIX_EPOCH = 170141184475152167957503069145530368000;
+const normalizeKey = (key) => {
+  if(key > DA_UNIX_EPOCH) {
+    // new links uses milliseconds since unix epoch
+    // old (pre-graph-store) use @da
+    // ported from +time:enjs:format in hoon.hoon
+    return Math.round((1000 * (9223372036854775 + (key - DA_UNIX_EPOCH))) / 18446744073709551616);
+  }
+  return key;
+}
 
 export const GraphReducer = (json, state) => {
   const data = _.get(json, 'graph-update', false);
@@ -29,6 +39,8 @@ const addGraph = (json, state) => {
     //  is empty
     if (!node.children) {
       node.children = new OrderedMap();
+      node.post.originalIndex = node.post.index;
+      node.post.index = node.post.index.split('/').map(x => x.length === 0 ? '' : normalizeKey(parseInt(x, 10))).join('/');
       return node;
     }
 
@@ -41,13 +53,18 @@ const addGraph = (json, state) => {
       });
 
       if (index.length === 0) { break; }
+
+      const normalKey = normalizeKey(index[index.length - 1]);
+      item[1].post.originalKey = index[index.length - 1];
       
       converted.set(
-        index[index.length - 1],
+        normalKey,
         _processNode(item[1])
       );
     }
     node.children = converted;
+    node.post.originalIndex = node.post.index;
+    node.post.index = node.post.index.split('/').map(x => x.length === 0 ? '' : normalizeKey(parseInt(x, 10))).join('/');
     return node;
   };
 
@@ -69,7 +86,10 @@ const addGraph = (json, state) => {
       if (index.length === 0) { break; }
       
       let node = _processNode(item[1]);
-      state.graphs[resource].set(index[index.length - 1], node);
+
+      const normalKey = normalizeKey(index[index.length - 1])
+      node.post.originalKey = index[index.length - 1];
+      state.graphs[resource].set(normalKey, node);
     }
     state.graphKeys.add(resource);
   }
@@ -91,7 +111,7 @@ const mapifyChildren = (children) => {
   return new OrderedMap(
     children.map(([idx, node]) => {
       const nd = {...node, children: mapifyChildren(node.children || []) }; 
-      return [parseInt(idx.slice(1), 10), nd];
+      return [normalizeKey(parseInt(idx.slice(1), 10)), nd];
     }));
 };
 
@@ -99,18 +119,23 @@ const addNodes = (json, state) => {
   const _addNode = (graph, index, node) => {
     //  set child of graph
     if (index.length === 1) {
-      graph.set(index[0], node);
+      node.post.originalIndex = node.post.index;
+      node.post.index = node.post.index.split('/').map(x => x.length === 0 ? '' : normalizeKey(parseInt(x, 10))).join('/');
+
+      const normalKey = normalizeKey(index[0])
+      node.post.originalKey = index[0];
+      graph.set(normalKey, node);
       return graph;
     }
 
     // set parent of graph
-    let parNode = graph.get(index[0]);
+    let parNode = graph.get(normalizeKey(index[0]));
     if (!parNode) {
       console.error('parent node does not exist, cannot add child');
       return;
     }
     parNode.children = _addNode(parNode.children, index.slice(1), node);
-    graph.set(index[0], parNode);
+    graph.set(normalizeKey(index[0]), parNode);
     return graph;
   };
 
@@ -133,6 +158,7 @@ const addNodes = (json, state) => {
 
       item[1].children = mapifyChildren(item[1].children || []);
 
+
       
       state.graphs[resource] = _addNode(
         state.graphs[resource],
@@ -148,20 +174,18 @@ const removeNodes = (json, state) => {
     if (index.length === 1) {
         graph.delete(index[0]);
       } else {
-        const child = graph.get(index[0]);
+        const child = graph.get(normalizeKey(index[0]));
         _remove(child.children, index.slice(1));
-        graph.set(index[0], child);
+        graph.set(normalizeKey(index[0]), child);
       }
   };
   const data = _.get(json, 'remove-nodes', false);
   if (data) {
-    console.log(data);
     const { ship, name } = data.resource;
     const res = `${ship}/${name}`;
     if (!(res in state.graphs)) { return; }
 
     data.indices.forEach((index) => {
-      console.log(index);
       if (index.split('/').length === 0) { return; }
       let indexArr = index.split('/').slice(1).map((ind) => {
         return parseInt(ind, 10);

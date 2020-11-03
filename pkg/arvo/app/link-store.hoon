@@ -4,7 +4,9 @@
 /+  store=link-store, graph-store, default-agent, verb, dbug
 ::
 |%
++$  spore-any  $%(spore-1 state-0)
 +$  state-any  $%(state-1 state-0)
++$  spore-1  [%1 cards=*]
 +$  state-1  [%1 cards=(list card)]
 +$  state-0
   $:  %0
@@ -45,9 +47,9 @@
   |=  old=vase
   ^-  (quip card _this)
   ::
-  =/  s  !<(state-any old)
+  =/  s  !<(spore-any old)
   ?:  ?=(%1 -.s)
-    [~ this(state s)]
+    [~ this(state s(cards ~))]
   ::  defer card emission to later event
   ::
   =;  [cards=(list card) that=_this]

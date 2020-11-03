@@ -164,7 +164,7 @@
       ~(tap in ~(key by starting.any))
     |-  ^-  (quip card _this)
     ?~  yarns
-      `this
+      [~[bind-eyre:sc] this]
     =^  cards-1  state
       (handle-stop-thread:sc (yarn-to-tid i.yarns) |)
     =^  cards-2  this
@@ -290,7 +290,7 @@
   =/  body=json
     (need (de-json:html q.u.body.request.inbound-request))
   =/  input=vase
-    (tube !>(body))
+    (slop (tube !>(body)) !>(~))
   =/  =start-args
     [~ `tid thread input]
   =^  cards  state
