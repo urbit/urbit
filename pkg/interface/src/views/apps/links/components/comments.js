@@ -23,6 +23,7 @@ export const Comments = (props) => {
           return (
             <CommentItem
               key={comment.post.index}
+              contacts={contacts}
               post={comment.post}
               nickname={nickname}
               hasNickname={Boolean(nickname)}

@@ -211,11 +211,9 @@
       ^-  ?
       ?.  mentions  %.n
       ?~  contents  %.n
-      ?.  ?=(%text -.i.contents)
+      ?.  ?=(%mention -.i.contents)
         $(contents t.contents)
-      =/  res
-         (find (scow %p our.bowl) (trip text.i.contents))       
-      ?^  res
+      ?:  =(our.bowl ship.i.contents)
         %.y
       $(contents t.contents)
     ::

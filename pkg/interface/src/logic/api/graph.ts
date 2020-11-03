@@ -3,10 +3,10 @@ import { StoreState } from '../store/type';
 import { Patp, Path, PatpNoSig } from '~/types/noun';
 import _ from 'lodash';
 import {makeResource, resourceFromPath} from '../lib/group';
-import {GroupPolicy, Enc, Post, NodeMap} from '~/types';
+import {GroupPolicy, Enc, Post, NodeMap, Content} from '~/types';
 import { numToUd, unixToDa } from '~/logic/lib/util';
 
-export const createPost = (contents: Object[], parentIndex: string = '') => {
+export const createPost = (contents: Content[], parentIndex: string = '') => {
   return {
     author: `~${window.ship}`,
     index: parentIndex + '/' + unixToDa(Date.now()).toString(),

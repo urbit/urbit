@@ -6,14 +6,15 @@ import GlobalApi from "~/logic/api/global";
 import { Box, Row } from "@tlon/indigo-react";
 import styled from "styled-components";
 import { Author } from "./Author";
-import {GraphNode, TextContent} from "~/types/graph-update";
-import tokenizeMessage from '~/logic/lib/tokenizeMessage';
-import RichText from '~/views/components/RichText';
-import {LocalUpdateRemoteContentPolicy} from "~/types";
+import { GraphNode, TextContent } from "~/types/graph-update";
+import tokenizeMessage from "~/logic/lib/tokenizeMessage";
+import RichText from "~/views/components/RichText";
+import { LocalUpdateRemoteContentPolicy } from "~/types";
+import { MentionText } from "~/views/components/MentionText";
 
 const ClickBox = styled(Box)`
   cursor: pointer;
-  padding-left: ${p => p.theme.space[2]}px;
+  padding-left: ${(p) => p.theme.space[2]}px;
 `;
 
 interface CommentItemProps {
@@ -31,9 +32,7 @@ interface CommentItemProps {
 export function CommentItem(props: CommentItemProps) {
   const { ship, contacts, book, api, remoteContentPolicy } = props;
   const commentData = props.comment?.post;
-  const comment = commentData.contents[0] as TextContent;
-
-  const content = tokenizeMessage(comment.text).flat().join(' ');
+  const comment = commentData.contents;
 
   const disabled = props.pending || window.ship !== commentData.author;
 
@@ -62,7 +61,11 @@ export function CommentItem(props: CommentItemProps) {
         </Author>
       </Row>
       <Box mb={2}>
-        <RichText className="f9 white-d" remoteContentPolicy={remoteContentPolicy}>{content}</RichText>
+        <MentionText
+          contacts={contacts}
+          content={comment}
+          remoteContentPolicy={remoteContentPolicy}
+        />
       </Box>
     </Box>
   );
