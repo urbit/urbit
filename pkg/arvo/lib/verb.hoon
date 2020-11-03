@@ -89,13 +89,13 @@
 --
 ::
 ++  print
-  |=  [=bowl:gall tape=_^?(|.(*tape))]
+  |=  [=bowl:gall render=(trap tape)]
   ^+  same
   =?  .  bowl-print
     %-  (slog >bowl< ~)
     .
   ?.  loud  same
-  %-  (slog leaf+(tape) ~)
+  %-  (slog [%leaf $:render] ~)
   same
 ::
 ++  emit-event
