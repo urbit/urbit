@@ -9731,6 +9731,17 @@
       ==
     --
   ::
+  ++  caching-blow
+    |=  [gol=type gen=hoon]
+    ^-  [[type nock] _grub]
+    =^  pro  grub  (caching-mint gol gen)
+    =^  bra  grub  caching-bran
+    =/  jon  (apex:musk bra q.pro)
+    :_  grub
+    ?:  |(?=(~ jon) ?=(%wait -.u.jon))
+      [p.pro q.pro]
+    [p.pro %1 p.u.jon]
+  ::
   ++  blow
     |=  {gol/type gen/hoon}
     ^-  {type nock}
