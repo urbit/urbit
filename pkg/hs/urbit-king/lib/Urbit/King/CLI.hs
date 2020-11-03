@@ -89,6 +89,7 @@ data New = New
     , nArvoDir    :: Maybe FilePath
     , nBootType   :: BootType
     , nLite       :: Bool
+    , nEthNode    :: String
     , nSerfExe    :: Maybe Text
     }
   deriving (Show)
@@ -125,7 +126,8 @@ data Bug
         , bFinalEvt :: Word64
         }
     | CheckDawn
-        { bKeyfilePath :: FilePath
+        { bEthNode     :: String
+        , bKeyfilePath :: FilePath
         }
     | CheckComet
   deriving (Show)
@@ -248,6 +250,14 @@ serfExe =  optional
     <> help "Path to serf binary to run ships in"
     <> hidden
 
+ethNode :: Parser String
+ethNode = strOption
+     $ short 'e'
+    <> long "eth-node"
+    <> value "http://eth-mainnet.urbit.org:8545"
+    <> help "Ethereum gateway URL"
+    <> hidden
+
 new :: Parser New
 new = do
     nPierPath <- optional pierPath
@@ -267,6 +277,8 @@ new = do
                    <> long "arvo"
                    <> value Nothing
                    <> help "Replace initial clay filesys with contents of PATH"
+
+    nEthNode <- ethNode
 
     nSerfExe <- serfExe
 
@@ -522,7 +534,7 @@ browseEvs :: Parser Bug
 browseEvs = EventBrowser <$> pierPath
 
 checkDawn :: Parser Bug
-checkDawn = CheckDawn <$> keyfilePath
+checkDawn = CheckDawn <$> ethNode <*> keyfilePath
 
 bugCmd :: Parser (Cmd, Log)
 bugCmd = (flip (,) <$> log <*>) $ fmap CmdBug

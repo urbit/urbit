@@ -13,6 +13,7 @@ module Urbit.Noun.Conversions
   , Mug(..), Path(..), EvilPath(..), Ship(..)
   , Lenient(..), pathToFilePath, filePathToPath
   , showUD, tshowUD
+  , textAsTa
   ) where
 
 import ClassyPrelude hiding (hash)
@@ -41,7 +42,9 @@ import Urbit.Noun.Jam   (jam)
 import Urbit.Ob         (patp)
 
 import qualified Data.Char                as C
+import qualified Data.Text                as T
 import qualified Data.Text.Encoding       as T
+import qualified Numeric                  as N
 
 
 -- Noun ------------------------------------------------------------------------
@@ -552,6 +555,18 @@ instance FromNoun Knot where
       then pure (MkKnot txt)
       else fail ("Non-ASCII chars in knot: " <> unpack txt)
 
+-- equivalent of (cury scot %t)
+textAsTa :: Text -> Text
+textAsTa = ("~~" <>) . concatMap \case
+  ' ' -> "."
+  '.' -> "~."
+  '~' -> "~~"
+  c   ->
+    if C.isAlphaNum c || (c == '-') then
+      T.singleton c
+    else
+      if C.ord c < 0x10 then "~0" else "~"
+      <> (pack $ N.showHex (C.ord c) ".")
 
 -- Term ------------------------------------------------------------------------
 
