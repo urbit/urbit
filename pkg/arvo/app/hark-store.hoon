@@ -155,7 +155,7 @@
       :-  (give:ha [/updates]~ %added last-seen index new)
       %_  state
         notifications  (put:orm notifications last-seen new-timebox)
-        unread-count  +(unread-count)
+        unread-count  ?~(existing-notif +(unread-count) unread-count)
       ==
     ::
     ++  do-archive
@@ -169,7 +169,7 @@
         (~(del by timebox) index)
       :-  (give:ha [/updates]~ %archive time index)
       %_  state
-        unread-count  (dec unread-count)
+        unread-count  ?.(read.notification (dec unread-count) unread-count)
         ::
           notifications
         (put:orm notifications time new-timebox)
