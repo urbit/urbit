@@ -68,12 +68,7 @@
       (~(get by wach.st) a)
     ?~  adi  this
     this(wach.st (~(put by wach.st) a u.adi(utxos utxos)))
-  ::  returns true if there are max-gap blank spots up to last-checked
   ::
-  ++  scan-done
-    |=  last-checked=idx
-    ^-  ?
-    (gth (add max-gap.st nixt-idx) last-checked)
   ++  is-nixt
     |=  =addi  ^-  ?
     ?:  ?=(%0 chyg.addi)
