@@ -105,9 +105,14 @@
     =/  length=@ud
       (slav %ud i.t.t.t.path)
     :^  ~  ~  %noun
-    !>
-    %+  gas:orm  *_notifications
-    (scag length (slag offset (tap:orm notifications)))
+    !>  ^-  update:store
+    :-  %more
+    %+  turn
+      (scag length (slag offset (tap:orm notifications)))
+    |=  [time=@da =timebox:store]
+    ^-  update:store
+    :^  %timebox  time  %.n
+    ~(tap by timebox)
     ::
   ==
 ++  on-poke

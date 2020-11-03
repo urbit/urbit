@@ -45,23 +45,19 @@
 ++  on-watch  
   |=  =path
   ^-  (quip card _this)
-  |^
   =^  cards  state
-    ?+  path  (on-watch:def path)
-      [%updates ~]  updates
+    ?+    path  (on-watch:def path)
+      ::
+        [%updates ~]  
+      :_  state
+      %+  give:ha  ~
+      :*  %initial
+          watching
+          mentions
+          watch-on-self
+      ==
     ==
   [cards this]
-  ::
-  ++  updates
-    ^-  (quip card _state)
-    :_  state
-    %+  give:ha  ~
-    :*  %initial
-        watching
-        mentions
-        watch-on-self
-    ==
-  --
 ::
 ++  on-poke
   ~/  %hark-graph-hook-poke
@@ -143,9 +139,12 @@
     =/  =metadata:metadata-store
       (need (peek-metadata:met %graph group resource.q.update))
     =*  rid  resource.q.update
-    =+  (scry ,mark=(unit mark) /gx/graph-store/graph-mark/(scot %p entity.rid)/[name.rid]/noun)
-    =+  (scry ,=tube:clay /cc/[q.byk.bowl]/[(fall mark %graph-validator-link)]/notification-kind)
-    ^-  (quip card _state)
+    =+  %+  scry
+           ,mark=(unit mark) 
+        /gx/graph-store/graph-mark/(scot %p entity.rid)/[name.rid]/noun
+    =+  %+  scry
+          ,=tube:clay
+        /cc/[q.byk.bowl]/[(fall mark %graph-validator-link)]/notification-kind
     =/  nodes=(list [p=index:graph-store q=node:graph-store])
       ~(tap by nodes.q.update)
     =|  cards=(list card)
