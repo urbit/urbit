@@ -24,7 +24,7 @@
         ::  comment on link post; comment text
         ::
         [@ @ ~]
-      ?>  ?=([[%text @] ~] contents.p.ip)
+      ?>  ?=(^ contents.p.ip)
       ip
     ==
   --
