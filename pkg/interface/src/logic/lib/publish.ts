@@ -87,7 +87,7 @@ export function getLatestRevision(node: GraphNode): [number, string, string, Pos
     return empty
   }
   const [title, body] = rev.post.contents as TextContent[];
-  return [revNum, title.text, body.text, rev.post];
+  return [revNum.toJSNumber(), title.text, body.text, rev.post];
 }
 
 export function getComments(node: GraphNode): GraphNode {
