@@ -141,6 +141,7 @@
         [~ this]
       =/  =time  (slav %da i.t.wire)
       =/  =observer:sur  (~(got by observers) time)
+      ~&  [time observer]
       :_  this(observers (~(del by observers) time))
       :_  ~
       :*  %pass
@@ -155,6 +156,7 @@
       =/  =time  (slav %da i.t.wire)
       =/  =observer:sur  (~(got by observers) time)
       =/  tid  (scot %uv (sham eny.bowl))
+      ~&  [time observer tid]
       :_  this
       :~  :*  %pass
               [%thread-start i.t.wire tid ~]
@@ -162,7 +164,7 @@
               [our.bowl %spider]
               %poke
               %spider-start
-              !>([~ `tid thread.observer (slop !>(cage.sign) !>(~))])
+              !>([~ `tid thread.observer (slop q.cage.sign !>(~))])
           ==
           :*  %pass
               [%thread-result tid ~]
