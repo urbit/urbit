@@ -37,10 +37,16 @@ data Noun
     = NCell Int Word !Noun !Noun
     | NAtom Int !Atom
 
+pattern Cell :: Noun -> Noun -> Noun
+pattern Atom :: Atom -> Noun
+
 pattern Cell x y <- NCell _ _ x y where Cell = mkCell
 pattern Atom a   <- NAtom _ a     where Atom = mkAtom
 
 {-# COMPLETE Cell, Atom #-}
+
+pattern C :: Noun -> Noun -> Noun
+pattern A :: Atom -> Noun
 
 pattern C x y <- NCell _ _ x y where C = mkCell
 pattern A a   <- NAtom _ a     where A = mkAtom

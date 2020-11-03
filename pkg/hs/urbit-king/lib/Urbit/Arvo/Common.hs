@@ -15,7 +15,7 @@ module Urbit.Arvo.Common
   , HttpServerConf(..), PEM(..), Key, Cert
   , HttpEvent(..), Method, Header(..), ResponseHeader(..)
   , ReOrg(..), reorgThroughNoun
-  , AmesDest(..), Ipv4(..), Ipv6(..), Patp(..), Galaxy, AmesAddress(..)
+  , AmesDest, Ipv4(..), Ipv6(..), Patp(..), Galaxy, AmesAddress(..)
   ) where
 
 import Urbit.Prelude hiding (Term)
