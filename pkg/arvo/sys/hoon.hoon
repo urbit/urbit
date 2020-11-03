@@ -12253,12 +12253,267 @@
       $noun      |
       $void      &
     ==
-  ::  XX implement
   ::
   ++  caching-mull
     |=  [gol=type dox=type gen=hoon]
     ^-  [[p=type q=type] _grub]
-    !!
+    |^  ^-  [[p=type q=type] _grub]
+    ?:  =(%void sut)
+      ~>(%mean.'mull-none' !!)
+    ?-    gen
+    ::
+        [^ *]
+      =^  hed  grub  $(gen p.gen, gol %noun)
+      =^  tal  grub  $(gen q.gen, gol %noun)
+      =^  lef  grub  (caching-nice (cell p.hed p.tal))
+      :_  grub
+      [lef (cell q.hed q.tal)]
+    ::
+        [%ktcn *]
+      $(fab |, gen p.gen)
+    ::
+        [%brcn *]
+      (caching-grow %gold p.gen %dry [%$ 1] q.gen)
+    ::
+        [%brvt *]
+      (caching-grow %gold p.gen %wet [%$ 1] q.gen)
+    ::
+        [%cnts *]
+      :_  grub
+      (~(mull et p.gen q.gen) gol dox)
+    ::
+        [%dtkt *]
+      =^  lef  grub  $(gen q.gen, gol %noun) :: XX ignored?
+      $(gen [%kttr p.gen])
+    ::
+        [%dtls *]
+      =^  lef  grub  $(gen p.gen, gol [%atom %$ ~]) :: XX ignored?
+      (caching-beth [%atom %$ ~])
+    ::
+        [%sand *]
+      =^  rig  grub  (caching-play gen)
+      (caching-beth rig)
+    ::
+        [%rock *]
+      =^  rig  grub  (caching-play gen)
+      (caching-beth rig)
+    ::
+        [%dttr *]
+      =^  lef  grub  $(gen p.gen, gol %noun)  :: XX ignored?
+      =^  rig  grub  $(gen q.gen, gol %noun)  :: XX ignored?
+      (caching-beth %noun)
+    ::
+        [%dtts *]
+      =^  lef  grub  $(gen p.gen, gol %noun)  :: XX ignored?
+      =^  rig  grub  $(gen q.gen, gol %noun)  :: XX ignored?
+      (caching-beth bool)
+    ::
+        [%dtwt *]
+      =^  lef  grub  $(gen p.gen, gol %noun)  :: XX ignored?
+      (caching-beth bool) ::  XX  =|
+    ::
+        [%hand *]
+      :_  grub
+      [p.gen p.gen]
+    ::
+        [%ktbr *]
+      =^  vat  grub  $(gen p.gen)
+      =^  lef  grub  (caching-wrap(sut p.vat) %iron)
+      =^  rig  grub  (caching-wrap(sut q.vat) %iron)
+      :_  grub
+      [lef rig]
+    ::
+        [%ktls *]
+      =^  wor  grub  (caching-play p.gen)
+      =^  lef  grub  (caching-nice wor)
+      =^  rig  grub  (caching-play(sut dox) p.gen)
+      =/  hif  [p=lef q=rig]
+      =^  val  grub  $(gen q.gen, gol p.hif)  :: XX ignored?
+      [hif grub]
+    ::
+        [%ktpd *]
+      =^  vat  grub  $(gen p.gen)
+      =^  lef  grub  (caching-wrap(sut p.vat) %zinc)
+      =^  rig  grub  (caching-wrap(sut q.vat) %zinc)
+      :_  grub
+      [lef rig]
+    ::
+        [%tune *]
+      :_  grub
+      [(face p.gen sut) (face p.gen dox)]
+    ::
+        [%ktwt *]
+      =^  vat  grub  $(gen p.gen)
+      =^  lef  grub  (caching-wrap(sut p.vat) %lead)
+      =^  rig  grub  (caching-wrap(sut q.vat) %lead)
+      :_  grub
+      [lef rig]
+    ::
+        [%note *]
+      =^  vat  grub  $(gen q.gen)
+      :_  grub
+      [(hint [sut p.gen] p.vat) (hint [dox p.gen] q.vat)]
+    ::
+        [%ktsg *]
+      $(gen p.gen)
+    ::
+        [%sgzp *]
+      =^  wor  grub  (caching-play p.gen)
+      ~_  duck(sut wor)
+      $(gen q.gen)
+    ::
+        [%sgbn *]
+      $(gen q.gen)
+    ::
+        [%tsbn *]
+      =^  lem  grub  $(gen p.gen, gol %noun)
+      $(gen q.gen, sut p.lem, dox q.lem)
+    ::
+        [%tscm *]
+      =/  boc  (busk p.gen)
+      =/  nuf  (busk(sut dox) p.gen)
+      $(gen q.gen, sut boc, dox nuf)
+    ::
+        [%wtcl *]
+      =^  nor  grub  $(gen p.gen, gol bool)
+      =^  hiq  grub
+        ^-  [[p=type q=type] _grub]
+        =^  lef  grub  (caching-gain p.gen)
+        =^  rig  grub  (caching-gain(sut dox) p.gen)
+        =/  fex  [p=lef q=rig]
+        ?:  =(%void p.fex)
+          ?:  =(%void q.fex)
+            :_  grub
+            [%void %void]
+          =^  wor  grub  (caching-play(sut q.fex) q.gen)
+          ~>  %mean.'if-z'
+          :_  grub
+          [%void wor]
+        ?:  =(%void q.fex)
+          ~>(%mean.'mull-bonk-b' !!)
+        $(sut p.fex, dox q.fex, gen q.gen)
+      =^  ran  grub
+        ^-  [[p=type q=type] _grub]
+        =^  lef  grub  (caching-lose p.gen)
+        =^  rig  grub  (caching-lose(sut dox) p.gen)
+        =/  wux  [p=lef q=rig]
+        ?:  =(%void p.wux)
+          ?:  =(%void q.wux)
+            :_  grub
+            [%void %void]
+          =^  wor  grub  (caching-play(sut q.wux) r.gen)
+          ~>  %mean.'if-a'
+          :_  grub
+          [%void wor]
+        ?:  =(%void q.wux)
+          ~>(%mean.'mull-bonk-c' !!)
+        $(sut p.wux, dox q.wux, gen r.gen)
+      =^  lef  grub  (caching-nice (fork p.hiq p.ran ~))
+      :_  grub
+      [lef (fork q.hiq q.ran ~)]
+    ::
+        [%fits *]
+      =^  lef  grub  (caching-play p.gen)
+      =^  rig  grub  (caching-play(sut dox) p.gen)
+      =/  waz  [p=lef q=rig]
+      =^  mil  grub  (caching-mint %noun [%wing q.gen])
+      =^  mir  grub  (caching-mint(sut dox) %noun [%wing q.gen])
+      =/  syx  [p=(cove q.mil) q=(cove q.mir)]
+      =^  fil  grub  (caching-fish(sut p.waz) p.syx)
+      =^  fir  grub  (caching-fish(sut q.waz) q.syx)
+      =/  pov  [p=fil q=fir]
+      ?.  &(=(p.syx q.syx) =(p.pov q.pov))
+        ~>(%mean.'mull-bonk-a' !!)
+      (caching-beth bool)
+    ::
+        [%wthx *]
+      ~>  %mean.'mull-bonk-x'
+      =^  fil  grub  (caching-find %read [[%& 1] q.gen])
+      ?>  &(?=(%& -.fil) ?=(%& -.q.p.fil))
+      =^  fir  grub  (caching-find(sut dox) %read [%& 1] q.gen)
+      ?>  &(?=(%& -.fir) ?=(%& -.q.p.fir))
+      =/  new  [type=p.q.p.fil axis=(tend p.p.fil)]
+      =/  old  [type=p.q.p.fir axis=(tend p.p.fir)]
+      ?>  =(axis.old axis.new)
+      =^  nests  grub  (caching-nest(sut type.old) & type.new)
+      ?>  nests
+      (caching-beth bool)
+    ::
+        [%dbug *]
+      ~_  (show %o p.gen)
+      $(gen q.gen)
+    ::
+        [%zpcm *]
+      =^  wor  grub  (caching-play p.gen)
+      =^  lef  grub  (caching-nice wor)
+      =^  rig  grub  (caching-play(sut dox) p.gen)
+      :_  grub
+      [lef rig]
+    ::
+        [%lost *]
+      ?:  vet
+        ~>(%mean.'mull-skip' !!)
+      (caching-beth %void)
+    ::
+        [%zpts *]
+      (caching-beth %noun)
+    ::
+        [%zpmc *]
+      =^  vos  grub  $(gol %noun, gen q.gen)       ::  XX validate!
+      =^  pil  grub  (caching-play p.gen)
+      =^  pir  grub  (caching-play(sut dox) p.gen)
+      =^  lef  grub  (caching-nice (cell pil p.vos))
+      :_  grub
+      [lef (cell pir q.vos)]
+    ::
+        [%zpld *]
+      ::  XX is this right?
+      =^  wor  grub  (caching-play [%kttr p.gen])
+      (caching-beth wor)
+    ::
+        [%zpvt *]
+      =^  lef  grub  (caching-feel p.gen)
+      =^  rig  grub  (caching-feel(sut dox) p.gen)
+      ?.  =(lef rig)
+        ~>(%mean.'mull-bonk-f' !!)
+      ?:  lef
+        $(gen q.gen)
+      $(gen r.gen)
+    ::
+        [%zpzp *]
+      (caching-beth %void)
+    ::
+        *
+      =/  doz  ~(open ap gen)
+      ?:  =(doz gen)
+        ~_  (show [%c 'hoon'] [%q gen])
+        ~>(%mean.'mull-open' !!)
+      $(gen doz)
+    ==
+    ::
+    ++  caching-beth
+      |=  typ=type
+      =^  lef  grub  (caching-nice typ)
+      :_  grub
+      [lef typ]
+    ::
+    ++  caching-nice
+      |=  typ=type
+      ~_  leaf+"mull-nice"
+      =^  nests  grub  (caching-nest(sut gol) & typ)
+      ?>  ?|(!vet nests)
+      [typ grub]
+    ::
+    ++  caching-grow
+      |=  [mel=vair nym=(unit term) hud=poly ruf=hoon dom=(map term tome)]
+      ~_  leaf+"mull-grow"
+      ^-  [[p=type q=type] _grub]
+      =^  dan  grub  ^$(gen ruf, gol %noun)
+      =^  yaz  grub  (caching-mile(sut p.dan) q.dan mel nym hud dom)
+      =^  lef  grub  (caching-nice p.yaz)
+      :_  grub
+      [lef q.yaz]
+    --
   ::
   ++  mull
     ~/  %mull
