@@ -56,6 +56,23 @@
     inner-state=vase
   ==
 ::
+::  $state-1: state for the push hook
+::
+::    .sharing: resources that the push hook is proxying
+::    .federating: a jug of ships that are federating our resources
+::    .inner-state: state given to internal door
+::
++$  state-1
+  $:  %1
+    sharing=(set resource)
+    federating=(jug resource ship)
+    inner-state=vase
+  ==
++$  versioned-state
+  $%  state-0
+      state-1
+  ==
+::
 ++  push-hook
   |*  =config
   $_  ^|
@@ -144,7 +161,7 @@
 ++  agent
   |*  =config
   |=  =(push-hook config)
-  =|  state-0
+  =|  state-1
   =*  state  -
   ^-  agent:gall
   =<
@@ -163,7 +180,13 @@
     ++  on-load
       |=  =old=vase
       =/  old
-        !<(state-0 old-vase)
+        !<(versioned-state old-vase)
+      =?  old  ?=(%0 -.old)
+        %*  .  *state-1
+          sharing  sharing.old
+          inner-state  inner-state.old
+        ==
+      ?>  ?=(%1 -.old)
       =^  cards   push-hook
         (on-load:og inner-state.old)
       `this(state old)
@@ -176,6 +199,10 @@
     ++  on-poke
       |=  [=mark =vase]
       ^-  (quip card:agent:gall agent:gall)
+      ?:  =(mark %push-hook-federate-action)
+        =^  cards  state
+          (poke-federate-action:hc !<(federate-action vase))
+        [cards this]
       ?:  =(mark %push-hook-action)
         ?>  (team:title our.bowl src.bowl)
         =^  cards  state
@@ -204,6 +231,9 @@
       ?>  ?=([%ship @ @ *] t.path)
       =/  =resource
         (de-path:resource t.path)
+      ?:  (~(has by federating) resource)
+        :_  this
+        (offload:hc resource)
       =/  =vase
         (initial-watch:og t.t.t.t.path resource)
       :_  this
@@ -272,6 +302,7 @@
       %remove  (remove +.action)
       %revoke  (revoke +.action)
     ==
+    ::
     ++  add
       |=  rid=resource
       =.  sharing
@@ -304,6 +335,43 @@
         ~
       `[%give %kick ~[path] `her]
     --
+  ::
+  ++  poke-federate-action
+    |=  act=federate-action
+    ^-  (quip card:agent:gall _state)
+    |^
+    ?:  (team:title [our src]:bowl)
+      proxy
+    ?-  -.act
+      %federate    (federate +.act)
+      %unfederate  (unfederate +.act)
+    ==
+    ::
+    ++  federate
+      |=  rid=resource
+      :-  ~
+      %_  state
+        federating  (~(put ju federating) rid src.bowl)
+      ==
+    ::
+    ++  unfederate
+      |=  rid=resource
+      :-  ~
+      %_  state
+        federating  (~(del ju federating) rid src.bowl)
+      ==
+    ::
+    ++  proxy
+      ^-  (quip card:agent:gall _state)
+      =/  =wire
+        (make-wire fed-proxy+(en-path:resource resource.act))
+      :_  state
+      =;  =cage
+        [%pass wire %agent [entity.resource.act dap.bowl] %poke cage]~
+      push-hook-federate-action+!>(act)
+    ::
+    --
+  ::
   ++  incoming-subscriptions
     |=  prefix=path
     ^-  (list (pair ship path))
@@ -351,5 +419,18 @@
     =/  dap=term
       ?:(=(our.bowl entity.u.rid) store-name.config dap.bowl)
     [%pass wire %agent [entity.u.rid dap] %poke update-mark.config vase]~
+  ::
+  ++  offload
+    |=  rid=resource
+    ^-  (list card:agent:gall)
+    =/  ships=(list ship)
+      ~(tap in (~(got by federating) rid))
+    =/  idx=@
+      (~(rad ^og eny.bowl) (dec (lent ships)))
+    =/  target=ship
+      (snag idx ships)
+    :~  [%give %fact ~ %push-hook-update !>([%offload rid target])]
+        [%give %kick ~ `src.bowl]
+    ==
   --
 --

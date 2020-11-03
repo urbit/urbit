@@ -18,7 +18,7 @@
 ::
 ::   %pull-hook-action: Add/remove a resource from pulling.
 ::
-/-  *pull-hook
+/-  *pull-hook, push-hook
 /+  default-agent, resource
 ::
 ::
@@ -48,6 +48,26 @@
   $:  %0
     tracking=(map resource ship)
     inner-state=vase
+  ==
+::  
+::  $state-1: state for the pull hook
+::
+::    .tracking: a map of resources we are pulling, and the ships that
+::    we are pulling them from.
+::    .offloading: resources we are currently switching to a different
+::    host
+::    .inner-state: state given to internal door
+::
++$  state-1
+  $:  %1
+    tracking=(map resource ship)
+    inner-state=vase
+    offloading=(map resource ship)
+  ==
+::
++$  versioned-state
+  $%  state-0
+      state-1
   ==
 ::
 ++  default
@@ -133,7 +153,7 @@
 ++  agent
   |*  =config
   |=  =(pull-hook config)
-  =|  state-0
+  =|  state-1
   =*  state  -
   ^-  agent:gall
   =<
@@ -151,7 +171,7 @@
       |=  =old=vase
       ^-  [(list card:agent:gall) agent:gall]
       =/  old
-        !<(state-0 old-vase)
+        !<(state-1 old-vase)
       =^  cards   pull-hook
         (on-load:og inner-state.old)
       [cards this(state old)]
@@ -194,6 +214,10 @@
         (on-agent:def wire sign)
       =/  rid=resource
         (de-path:resource t.t.t.t.wire)
+      =/  offload
+        (~(get by offloading) rid)
+      ?:  &(?=(^ offload) =(src.bowl u.offload))
+        [~ this]
       ?+   -.sign  (on-agent:def wire sign)
           %kick
         =/  pax=(unit path)
@@ -217,6 +241,10 @@
         [give-update cards]
       ::
           %fact
+        ?:  ?=(%push-hook-update p.cage.sign)
+          =^  cards  state
+            (on-push-hook-update:hc !<(update:push-hook q.cage.sign))
+          [cards this]
         ?.  =(update-mark.config p.cage.sign)
           =^  cards  pull-hook
             (on-agent:og wire sign)
@@ -275,6 +303,18 @@
       :-  ~[(leave-resource resource)]
       state(tracking (~(del by tracking) resource))
     --
+  ::
+  ++  on-push-hook-update
+    |=  =update:push-hook
+    ^-  (quip card:agent:gall _state)
+    ?>  ?=(%offload -.update)
+    =/  old-host=ship
+      (~(got by tracking) resource.update)
+    =.  tracking
+      (~(del by tracking) resource.update)
+    =^  cards  state
+      (poke-hook-action %add [ship resource]:update)
+    [cards state(offloading (~(put by offloading) resource.update old-host))]
   ::
   ++  leave-resource
     |=  rid=resource
