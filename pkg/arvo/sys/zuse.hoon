@@ -6563,8 +6563,13 @@
       ?^  t.rax
         [p.pok [ire q.pok]]:[pok=$(rax t.rax) ire=i.rax]
       =/  raf/(like term)
-          =>  |=(a/@ ((sand %tas) (crip (flop (trip a)))))
-          (;~(sfix (sear . sym) dot) [1^1 (flop (trip i.rax))])
+        %-  ;~  sfix
+              %+  sear
+                |=(a/@ ((sand %ta) (crip (flop (trip a)))))
+              (cook |=(a/tape (rap 3 ^-((list @) a))) (star aln))
+              dot
+            ==
+        [1^1 (flop (trip i.rax))]
       ?~  q.raf
         [~ [i.rax ~]]
       =+  `{ext/term {@ @} fyl/tape}`u.q.raf
