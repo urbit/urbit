@@ -23,6 +23,14 @@ import { SidebarList } from "./SidebarList";
 import { SidebarInvite } from './SidebarInvite';
 import { roleForShip } from "~/logic/lib/group";
 
+const ScrollbarLessCol = styled(Col)`
+  scrollbar-width: none !important;
+  
+  ::-webkit-scrollbar {
+    display: none;
+  }
+`;
+
 
 interface SidebarProps {
   contacts: Rolodex;
@@ -102,7 +110,7 @@ export function Sidebar(props: SidebarProps) {
   };
 
   return (
-    <Col
+    <ScrollbarLessCol
       display={display}
       width="100%"
       gridRow="1/2"
@@ -165,6 +173,6 @@ export function Sidebar(props: SidebarProps) {
           </Box>
         </Link>
       </Box>
-    </Col>
+    </ScrollbarLessCol>
   );
 }
