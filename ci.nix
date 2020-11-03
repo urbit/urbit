@@ -21,7 +21,8 @@ let
 
   # The key with google storage bucket write permission,
   # deployed to ci via nixops `deployment.keys."service-account.json"`.
-  serviceAccountKey = builtins.readFile ("/var/run/keys/service-account.json");
+  serviceAccountKey =
+    builtins.readFile ("/var/lib/hercules-ci-agent/secrets/service-account.json");
 
   # Push a split output derivation containing "out" and "hash" outputs.
   pushObject =
