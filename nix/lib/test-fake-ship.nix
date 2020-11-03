@@ -37,14 +37,20 @@ stdenvNoCC.mkDerivation {
 
     trap cleanup EXIT
 
+    #  measure initial memory usage
+    #
+    herb ./pier -d '~&  ~  ~&  %init-mass-start  ~'
     herb ./pier -p hood -d '+hood/mass'
+    herb ./pier -d '~&  ~  ~&  %init-mass-end  ~'
 
-    # Run the unit tests and then print scrollback
+    #  run the unit tests
+    #
     herb ./pier -d '~&  ~  ~&  %test-unit-start  ~'
     herb ./pier -d '####-test %/tests'
     herb ./pier -d '~&  ~  ~&  %test-unit-end  ~'
 
-    # Start and run the test app
+    #  use the :test app to build all agents, generators, and marks
+    #
     herb ./pier -p hood -d '+hood/start %test'
 
     herb ./pier -d '~&  ~  ~&  %test-agents-start  ~'
@@ -59,14 +65,42 @@ stdenvNoCC.mkDerivation {
     herb ./pier -p test -d '%marks'
     herb ./pier -d '~&  ~  ~&  %test-marks-end  ~'
 
-    # Compact the loom, comparing memory use before and after
+    #  measure memory usage post tests
+    #
+    herb ./pier -d '~&  ~  ~&  %test-mass-start  ~'
     herb ./pier -p hood -d '+hood/mass'
+    herb ./pier -d '~&  ~  ~&  %test-mass-end  ~'
 
+    #  defragment the loom
+    #
     herb ./pier -d '~&  ~  ~&  %pack-start  ~'
     herb ./pier -p hood -d '+hood/pack'
     herb ./pier -d '~&  ~  ~&  %pack-end  ~'
 
+    #  reclaim space within arvo
+    #
+    herb ./pier -d '~&  ~  ~&  %trim-start  ~'
+    herb ./pier -p hood -d '+hood/trim'
+    herb ./pier -d '~&  ~  ~&  %trim-end  ~'
+
+    #  measure memory usage pre |meld
+    #
+    herb ./pier -d '~&  ~  ~&  %trim-mass-start  ~'
     herb ./pier -p hood -d '+hood/mass'
+    herb ./pier -d '~&  ~  ~&  %trim-mass-end  ~'
+
+    #  globally deduplicate
+    #
+    herb ./pier -d '~&  ~  ~&  %meld-start  ~'
+    herb ./pier -p hood -d '+hood/meld'
+    herb ./pier -d '~&  ~  ~&  %meld-end  ~'
+
+    #  measure memory usage post |meld
+    #
+    herb ./pier -d '~&  ~  ~&  %meld-mass-start  ~'
+    herb ./pier -p hood -d '+hood/mass'
+    herb ./pier -d '~&  ~  ~&  %meld-mass-end  ~'
+
     herb ./pier -p hood -d '+hood/exit'
 
     cleanup
