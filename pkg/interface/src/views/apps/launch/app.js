@@ -29,12 +29,6 @@ export default class LaunchApp extends React.Component {
 
   render() {
     const { props } = this;
-    const contact = props.contacts?.['/~/default']?.[window.ship];
-    const sigilColor = contact?.color
-      ? `#${uxToHex(contact.color)}`
-      : props.dark
-      ? '#FFFFFF'
-      : '#000000';
 
     return (
       <>
@@ -66,15 +60,6 @@ export default class LaunchApp extends React.Component {
                   <Text ml="1" mt='1px' color="white">Home</Text>
                 </Row>
               </Box>
-            </Tile>
-            <Tile
-              borderColor={adjustHex(sigilColor, -40)}
-              bg={sigilColor}
-              to="/~profile"
-            >
-              <Center height="100%">
-                <Sigil ship={`~${window.ship}`} size={80} color={sigilColor} />
-              </Center>
             </Tile>
             <Tiles
               tiles={props.launch.tiles}
