@@ -13282,12 +13282,176 @@
       $read  [?=($zinc met) |]
       $rite  [?=($iron met) |]
     ==
-  ::  XX implement
   ::
   ++  caching-play
-    |=  gen/hoon
+    =.  vet  |
+    |=  gen=hoon
     ^-  [type _grub]
-    !!
+    ?-    gen
+        [^ *]
+      =^  lef  grub  $(gen p.gen)
+      =^  rig  grub  $(gen q.gen)
+      :_  grub
+      (cell lef rig)
+    ::
+        [%ktcn *]
+      $(fab |, gen p.gen)
+    ::
+        [%brcn *]
+      :_  grub
+      (core sut [p.gen %dry %gold] sut *seminoun q.gen)
+    ::
+        [%brvt *]
+      :_  grub
+      (core sut [p.gen %wet %gold] sut *seminoun q.gen)
+    ::
+        [%cnts *]
+      :_  grub
+      ~(play et p.gen q.gen)
+    ::
+        [%dtkt *]
+      $(gen [%kttr p.gen])
+    ::
+        [%dtls *]
+      :_  grub
+      [%atom %$ ~]
+    ::
+        [%rock *]
+      |-  ^-  [type _grub]
+      ?@  q.gen
+        :_  grub  [%atom p.gen `q.gen]
+      =^  lef  grub  $(q.gen -.q.gen)
+      =^  rig  grub  $(q.gen +.q.gen)
+      :_  grub
+      [%cell lef rig]
+    ::
+        [%sand *]
+      ?@  q.gen
+        ?:  =(%n p.gen)
+          ?>  =(0 q.gen)
+          :_  grub
+          [%atom p.gen `q.gen]
+        ?:  =(%f p.gen)
+        ?>  (lte q.gen 1)
+          [bool grub]
+        :_  grub
+        [%atom p.gen ~]
+      $(-.gen %rock)
+    ::
+        [%tune *]
+      :_  grub
+      (face p.gen sut)
+    ::
+        [%dttr *]
+      [%noun grub]
+    ::
+        [%dtts *]
+      [bool grub]
+    ::
+        [%dtwt *]
+      [bool grub]
+    ::
+        [%hand *]
+      [p.gen grub]
+    ::
+        [%ktbr *]
+      =^  rig  grub  $(gen p.gen)
+      (caching-wrap(sut rig) %iron)
+    ::
+        [%ktls *]
+      $(gen p.gen)
+    ::
+        [%ktpd *]
+      =^  rig  grub  $(gen p.gen)
+      (caching-wrap(sut rig) %zinc)
+    ::
+        [%ktsg *]
+      $(gen p.gen)
+    ::
+        [%ktwt *]
+      =^  rig  grub  $(gen p.gen)
+      (caching-wrap(sut rig) %lead)
+    ::
+        [%note *]
+      =^  rig  grub  $(gen q.gen)
+      :_  grub
+      (hint [sut p.gen] rig)
+    ::
+        [%sgzp *]
+      =^  rig  grub  $(gen p.gen) :: XX change from ^$
+      ~_  duck(sut rig)
+      $(gen q.gen)
+    ::
+        [%sgbn *]
+      $(gen q.gen)
+    ::
+        [%tsbn *]
+      =^  rig  grub  $(gen p.gen)
+      $(gen q.gen, sut rig)
+    ::
+        [%tscm *]
+      $(gen q.gen, sut (busk p.gen))
+    ::
+        [%wtcl *]
+      =^  fex  grub  (caching-gain p.gen)
+      =^  wux  grub  (caching-lose p.gen)
+      =^  won  grub
+        ?:  =(%void fex)
+          [%void grub]
+        $(sut fex, gen q.gen)
+      =^  tew  grub
+        ?:  =(%void wux)
+          [%void grub]
+        $(sut wux, gen r.gen)
+      :_  grub
+      (fork ~[won tew])
+    ::
+        [%fits *]
+      [bool grub]
+    ::
+        [%wthx *]
+      [bool grub]
+    ::
+        [%dbug *]
+      =^  rig  grub  $(gen q.gen)
+      ~_  (show %o p.gen)
+      [rig grub]
+    ::
+        [%zpcm *]
+      $(gen p.gen)
+    ::
+        [%lost *]
+      [%void grub]
+    ::
+        [%zpmc *]
+      =^  lef  grub  $(gen p.gen)
+      =^  rig  grub  $(gen q.gen)
+      :_  grub
+      (cell lef rig)
+    ::
+        [%zpld *]
+      (caching-play [%kttr p.gen])
+    ::
+        [%zpts *]
+      [%noun grub]
+    ::
+        [%zpvt *]
+      =^  red  grub  (caching-feel p.gen)
+      ?:  red
+        $(gen q.gen)
+      $(gen r.gen)
+    ::
+        [%zpzp *]
+      [%void grub]
+    ::
+        *
+      =+  doz=~(open ap gen)
+      ?:  =(doz gen)
+        ~_  (show [%c 'hoon'] [%q gen])
+        ~>  %mean.'play-open'
+        !!
+      $(gen doz)
+    ==
   ::
   ++  play
     ~/  %play
