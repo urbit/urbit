@@ -74,6 +74,7 @@
     |=  c=^content
     ^-  json
     ?-  -.c
+        %mention    (frond %mention (ship ship.c))
         %text       (frond %text s+text.c)
         %url        (frond %url s+url.c)
         %reference  (frond %reference (uid uid.c))
@@ -324,7 +325,8 @@
     ::
     ++  content
       %-  of
-      :~  [%text so]
+      :~  [%mention (su ;~(pfix sig fed:ag))]
+          [%text so]
           [%url so]
           [%reference uid]
           [%code eval]
