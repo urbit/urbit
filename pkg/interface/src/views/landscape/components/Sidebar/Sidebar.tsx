@@ -97,10 +97,6 @@ export function Sidebar(props: SidebarProps) {
   const role = props.groups?.[groupPath] ? roleForShip(props.groups[groupPath], window.ship) : undefined;
   const isAdmin = (role === "admin") || (workspace?.type === 'home');
 
-  const newStyle = {
-    display: isAdmin ? "block" : "none"
-  };
-
   return (
     <Col
       display={display}
@@ -142,7 +138,7 @@ export function Sidebar(props: SidebarProps) {
       <SidebarStickySpacer flexShrink={0} />
       <Box
         flexShrink="0"
-        display="flex"
+        display={isAdmin ? "flex" : "none"}
         justifyContent="center"
         position="sticky"
         bottom={"8px"}
@@ -151,7 +147,6 @@ export function Sidebar(props: SidebarProps) {
         py="2"
       >
         <Link
-          style={newStyle}
           to={!!groupPath ? `/~landscape${groupPath}/new` : `/~landscape/home/new`}
         >
           <Box
