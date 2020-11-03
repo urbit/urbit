@@ -82,7 +82,7 @@ export function GroupsPane(props: GroupsPaneProps) {
           workspace={workspace}
         />
       </>
-    ) 
+    )
 
   return (
     <Switch>
@@ -170,6 +170,7 @@ export function GroupsPane(props: GroupsPaneProps) {
               <NewChannel
                 {...routeProps}
                 api={api}
+                baseUrl={baseUrl}
                 associations={associations}
                 groups={groups}
                 group={groupPath}
