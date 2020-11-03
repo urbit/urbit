@@ -27,9 +27,9 @@
 +$  scon  $~([max-index max-index] (pair idx idx))
 +$  wilt  _bip32
 ::  todo: Set of indices; empty it out until none are left--means scanning of that batch is done
-::  start:     index this batch started scanning from
+::  start:     index this batch started scanning from 
 ::
-+$  batch  [todo=(set idx) endpoint=idx]
++$  batch  [todo=(set idx) endpoint=idx has-used=?]
 +$  scans  (map [xpub chyg] batch)
 ::
 ::  %add-wallet: add wallet to state and initiate a scan
@@ -40,7 +40,6 @@
 ::
 +$  action
   $%  [%add-wallet =xpub scan-to=(unit scon) max-gap=(unit @)]
-      [%run-scan =xpub]
       [%watch-address =xpub =chyg =idx utxos=(set utxo) used=?]
       [%update-address a=address utxos=(set utxo)]
   ==
