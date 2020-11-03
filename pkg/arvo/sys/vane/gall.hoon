@@ -1535,6 +1535,9 @@
       |=  [=wire =dock]
       ^+  ap-core
       ::
+      =.   outbound.watches.current-agent 
+        %-  ~(del by outbound.watches.current-agent)
+        [wire dock]
       =.  ap-core
         (ap-pass wire %agent dock %leave ~)
       =/  way  [%out (scot %p p.dock) q.dock wire]
