@@ -31,8 +31,7 @@ function sidebarSort(
 
   return {
     asc: alphabetical,
-    desc: (a, b) => alphabetical(b, a),
-    lastUpdated,
+    lastUpdated
   };
 }
 

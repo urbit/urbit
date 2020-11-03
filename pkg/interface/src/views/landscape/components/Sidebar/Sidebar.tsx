@@ -87,7 +87,7 @@ export function Sidebar(props: SidebarProps) {
   const [config, setConfig] = useLocalStorageState<SidebarListConfig>(
     `group-config:${groupPath || "home"}`,
     {
-      sortBy: "asc",
+      sortBy: "lastUpdated",
       hideUnjoined: false,
     }
   );
@@ -115,6 +115,7 @@ export function Sidebar(props: SidebarProps) {
         associations={associations}
         recentGroups={props.recentGroups}
         baseUrl={props.baseUrl}
+        isAdmin={isAdmin}
         workspace={props.workspace}
       />
       <SidebarListHeader
