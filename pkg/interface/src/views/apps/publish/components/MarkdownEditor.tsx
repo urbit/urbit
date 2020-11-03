@@ -26,10 +26,10 @@ interface MarkdownEditorProps {
 
 const PromptIfDirty = () => {
   const formik = useFormikContext();
-  usePreventWindowUnload(formik.dirty);
+  usePreventWindowUnload(formik.dirty && !formik.isSubmitting);
   return (
     <Prompt
-      when={formik.dirty}
+      when={formik.dirty && !formik.isSubmitting}
       message="Are you sure you want to leave? You have unsaved changes."
     />
   );
