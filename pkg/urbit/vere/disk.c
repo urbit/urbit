@@ -633,6 +633,9 @@ u3_disk_exit(u3_disk* log_u)
 
   //  cancel write thread
   //
+  //    XX can deadlock when called from signal handler
+  //    XX revise SIGTSTP handling
+  //
   if ( c3y == log_u->ted_o ) {
     c3_i sas_i;
 
