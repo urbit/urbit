@@ -4,14 +4,15 @@
 =*  strand        strand:spider
 =*  fail          strand-fail:strand
 =*  poke-our      poke-our:strandio
-=*  start-thread  start-thread:strandio
+=*  flog-text     flog-text:strandio
 ::
 ^-  thread:spider
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m
 =+  !<([=update:inv ~] arg)
-~&  update
+;<  ~  bind:m
+  (flog-text "{<update>}")
 ?.  ?=(%accepted -.update)
   (pure:m !>(~))
 ;<  =bowl:spider  bind:m  get-bowl:strandio
