@@ -5,7 +5,7 @@ export type SidebarItemStatus =
   | "disconnected"
   | "loading";
 
-export type SidebarSort = "asc" | "desc" | "lastUpdated";
+export type SidebarSort = "asc" | "lastUpdated";
 
 export interface SidebarListConfig {
   sortBy: SidebarSort;

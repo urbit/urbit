@@ -87,7 +87,7 @@ export function Sidebar(props: SidebarProps) {
   const [config, setConfig] = useLocalStorageState<SidebarListConfig>(
     `group-config:${groupPath || "home"}`,
     {
-      sortBy: "asc",
+      sortBy: "lastUpdated",
       hideUnjoined: false,
     }
   );
@@ -96,10 +96,6 @@ export function Sidebar(props: SidebarProps) {
 
   const role = props.groups?.[groupPath] ? roleForShip(props.groups[groupPath], window.ship) : undefined;
   const isAdmin = (role === "admin") || (workspace?.type === 'home');
-
-  const newStyle = {
-    display: isAdmin ? "block" : "none"
-  };
 
   return (
     <Col
@@ -119,6 +115,7 @@ export function Sidebar(props: SidebarProps) {
         associations={associations}
         recentGroups={props.recentGroups}
         baseUrl={props.baseUrl}
+        isAdmin={isAdmin}
         workspace={props.workspace}
       />
       <SidebarListHeader
@@ -142,7 +139,7 @@ export function Sidebar(props: SidebarProps) {
       <SidebarStickySpacer flexShrink={0} />
       <Box
         flexShrink="0"
-        display="flex"
+        display={isAdmin ? "flex" : "none"}
         justifyContent="center"
         position="sticky"
         bottom={"8px"}
@@ -151,7 +148,6 @@ export function Sidebar(props: SidebarProps) {
         py="2"
       >
         <Link
-          style={newStyle}
           to={!!groupPath ? `/~landscape${groupPath}/new` : `/~landscape/home/new`}
         >
           <Box
