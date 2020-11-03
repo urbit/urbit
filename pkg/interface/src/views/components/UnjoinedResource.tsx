@@ -22,16 +22,13 @@ interface UnjoinedResourceProps {
 
 function isJoined(app: string, path: string) {
   return function (
-    props: Pick<UnjoinedResourceProps, "inbox" | "graphKeys" | "notebooks">
+    props: Pick<UnjoinedResourceProps, "inbox" | "graphKeys">
   ) {
-    let ship, name;
     const graphKey = path.substr(7);
     switch (app) {
       case "link":
-        return props.graphKeys.has(graphKey);
       case "publish":
-        [, ship, name] = path.split("/");
-        return !!props.notebooks[ship]?.[name];
+        return props.graphKeys.has(graphKey);
       case "chat":
         return !!props.inbox[path];
       default:
@@ -53,13 +50,10 @@ export function UnjoinedResource(props: UnjoinedResourceProps) {
   const onJoin = async () => {
     let ship, name;
     switch (app) {
+      case "publish":
       case "link":
         [, , ship, name] = appPath.split("/");
         await api.graph.joinGraph(ship, name);
-        break;
-      case "publish":
-        [, ship, name] = appPath.split("/");
-        await api.publish.subscribeNotebook(ship.slice(1), name);
         break;
       case "chat":
         [, ship, name] = appPath.split("/");
@@ -73,7 +67,7 @@ export function UnjoinedResource(props: UnjoinedResourceProps) {
   };
 
   useEffect(() => {
-    if (isJoined(app, appPath)({ inbox, graphKeys, notebooks })) {
+    if (isJoined(app, appPath)({ inbox, graphKeys })) {
       history.push(`${props.baseUrl}/resource/${app}${appPath}`);
     }
   }, [props.association, inbox, graphKeys, notebooks]);

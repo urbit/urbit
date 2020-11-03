@@ -61,9 +61,7 @@ export function ChannelMenu(props: ChannelMenuProps) {
         await api.chat.delete(appPath);
         break;
       case "publish":
-        await api.publish.unsubscribeNotebook(ship.slice(1), name);
-        await api.publish.fetchNotebooks();
-
+        await api.graph.leaveGraph(ship, name);
         break;
       case "link":
         await api.graph.leaveGraph(ship, name);
@@ -81,7 +79,7 @@ export function ChannelMenu(props: ChannelMenuProps) {
         await api.chat.delete(appPath);
         break;
       case "publish":
-        await api.publish.delBook(name);
+        await api.graph.deleteGraph(name);
         break;
       case "link":
         await api.graph.deleteGraph(name);

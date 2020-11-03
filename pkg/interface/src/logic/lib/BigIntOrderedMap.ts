@@ -14,8 +14,13 @@ type MapNode<V> = NonemptyNode<V> | null;
  */
 export class BigIntOrderedMap<V> implements Iterable<[BigInteger, V]> {
   private root: MapNode<V> = null;
+  size: number = 0;
 
-  constructor() {}
+  constructor(initial: [BigInteger, V][] = []) {
+    initial.forEach(([key, val]) => {
+      this.set(key, val);
+    });
+  }
 
   /**
    *  Retrieve an value for a key
@@ -54,6 +59,7 @@ export class BigIntOrderedMap<V> implements Iterable<[BigInteger, V]> {
       }
       const [k] = node.n;
       if (key.eq(k)) {
+        this.size--;
         return {
           ...node,
           n: [k, value],
@@ -76,6 +82,7 @@ export class BigIntOrderedMap<V> implements Iterable<[BigInteger, V]> {
 
       return { ...node, r };
     };
+    this.size++;
     this.root = inner(this.root);
   }
 
@@ -141,6 +148,9 @@ export class BigIntOrderedMap<V> implements Iterable<[BigInteger, V]> {
       ];
     };
     const [ret, newRoot] = inner(this.root);
+    if(ret) {
+      this.size--;
+    }
     this.root = newRoot;
     return ret;
   }

@@ -8,52 +8,36 @@ import { Contacts } from "~/types/contact-update";
 import _ from "lodash";
 import GlobalApi from "~/logic/api/global";
 import { FormikHelpers } from "formik";
+import {GraphNode, Graph} from "~/types/graph-update";
+import {createPost} from "~/logic/api/graph";
 import { LocalUpdateRemoteContentPolicy } from "~/types";
 
 interface CommentsProps {
-  comments: Comment[];
+  comments: GraphNode;
   book: string;
-  noteId: NoteId;
-  note: Note;
+  note: GraphNode;
   ship: string;
   contacts: Contacts;
   api: GlobalApi;
-  numComments: number;
-  enabled: boolean;
   hideAvatars: boolean;
   hideNicknames: boolean;
   remoteContentPolicy: LocalUpdateRemoteContentPolicy;
 }
 
 export function Comments(props: CommentsProps) {
-  const { comments, ship, book, note, api, noteId, numComments } = props;
-  const [pending, setPending] = useState<string[]>([]);
-
-  useEffect(() => {
-    _.forEach(comments, (comment: Comment) => {
-      const { content } = comment[Object.keys(comment)[0]];
-      setPending((p) => p.filter((p) => p !== content));
-    });
-  }, [numComments]);
+  const { comments, ship, book, note, api } = props;
 
   const onSubmit = async (
     { comment },
     actions: FormikHelpers<{ comment: string }>
   ) => {
-    setPending((p) => [...p, comment]);
-    const action = {
-      "new-comment": {
-        who: ship.slice(1),
-        book: book,
-        note: noteId,
-        body: comment,
-      },
-    };
     try {
-      await api.publish.publishAction(action);
+      const post = createPost([{ text: comment }], comments?.post?.index);
+      await api.graph.addPost(ship, book, post)
       actions.resetForm();
       actions.setStatus({ success: null });
     } catch (e) {
+      console.error(e);
       actions.setStatus({ error: e.message });
     }
   };
@@ -61,38 +45,14 @@ export function Comments(props: CommentsProps) {
   return (
     <Col>
       <CommentInput onSubmit={onSubmit} />
-      {Array.from(pending).map((com, i) => {
-        const da = dateToDa(new Date());
-        const ship = `~${window.ship}`;
-        const comment = {
-          [da]: {
-            author: ship,
-            content: com,
-            "date-created": Math.round(new Date().getTime()),
-          },
-        } as Comment;
-        return (
-          <CommentItem
-            comment={comment}
-            key={i}
-            contacts={props.contacts}
-            ship={ship}
-            pending={true}
-            hideNicknames={props.hideNicknames}
-            hideAvatars={props.hideAvatars}
-            remoteContentPolicy={props.remoteContentPolicy}
-          />
-        );
-      })}
-      {props.comments.map((com, i) => (
+      {Array.from(comments.children).reverse().map(([idx, comment]) => (
         <CommentItem
-          comment={com}
-          key={i}
+          comment={comment}
+          key={idx}
           contacts={props.contacts}
           api={api}
           book={book}
           ship={ship}
-          note={note["note-id"]}
           hideNicknames={props.hideNicknames}
           hideAvatars={props.hideAvatars}
           remoteContentPolicy={props.remoteContentPolicy}
