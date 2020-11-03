@@ -32,6 +32,22 @@
   ?|  (is-member:grp src.bowl i.group-paths)
       (is-admin:grp src.bowl i.group-paths)
   ==
+::
+++  is-allowed-remove
+  |=  [=resource:res indices=(set index:store) =bowl:gall]
+  ^-  ?
+  =/  gra   ~(. graph bowl)
+  ?.  (is-allowed resource bowl %.n)
+    %.n
+  %+  levy
+    ~(tap in indices)
+  |=  =index:store
+  ^-  ?
+  =/  =node:store
+    (get-node:gra resource index)
+  ?|  =(author.post.node src.bowl)
+      (is-allowed resource bowl %.y)
+  ==
 --
 ::
 %-  agent:dbug
@@ -63,7 +79,7 @@
       %add-graph          (is-allowed resource.q.update bowl %.y)
       %remove-graph       (is-allowed resource.q.update bowl %.y)
       %add-nodes          (is-allowed resource.q.update bowl %.n)
-      %remove-nodes       (is-allowed resource.q.update bowl %.y)
+      %remove-nodes       (is-allowed-remove resource.q.update indices.q.update bowl)
       %add-signatures     (is-allowed resource.uid.q.update bowl %.n)
       %remove-signatures  (is-allowed resource.uid.q.update bowl %.y)
       %archive-graph      (is-allowed resource.q.update bowl %.y)
