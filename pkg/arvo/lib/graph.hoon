@@ -17,7 +17,7 @@
   %+  scry-for  update:store
   /graph/(scot %p entity.res)/[name.res]
 ::
-++  get-node
+++  got-node
   |=  [res=resource =index:store]
   ^-  node:store
   =+  %+  scry-for  ,=update:store

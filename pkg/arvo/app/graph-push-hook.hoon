@@ -44,7 +44,7 @@
   |=  =index:store
   ^-  ?
   =/  =node:store
-    (get-node:gra resource index)
+    (got-node:gra resource index)
   ?|  =(author.post.node src.bowl)
       (is-allowed resource bowl %.y)
   ==
