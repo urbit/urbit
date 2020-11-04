@@ -109,9 +109,6 @@ in localLib.dimension "system" systems (systemName: system:
         ivory = pushPill "ivory" dynamicPackages.ivory;
         brass = pushPill "brass" dynamicPackages.brass;
         solid = pushPill "solid" dynamicPackages.solid;
-
-        ivory-ropsten = pushPill "ivory-ropsten" dynamicPackages.ivory-ropsten;
-        brass-ropsten = pushPill "brass-ropsten" dynamicPackages.brass-ropsten;
       };
     };
 
