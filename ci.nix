@@ -21,8 +21,8 @@ let
 
   # The key with google storage bucket write permission,
   # deployed to ci via nixops `deployment.keys."service-account.json"`.
-  serviceAccountKey =
-    builtins.readFile ("/var/lib/hercules-ci-agent/secrets/service-account.json");
+  serviceAccountKey = builtins.readFile
+    ("/var/lib/hercules-ci-agent/secrets/service-account.json");
 
   # Push a split output derivation containing "out" and "hash" outputs.
   pushObject =
@@ -73,11 +73,11 @@ in localLib.dimension "system" systems (systemName: system:
       haskell-nix.haskellLib.selectProjectPackages staticPackages.hs;
 
     # The top-level set of attributes to build on ci.
-    finalPackages = dynamicPackages // rec {
-      # Replace some top-level attributes with their static variant.
-      inherit (staticPackages) urbit tarball;
+    finalPackages = rec {
+      # Expose select packages to increase signal-to-noise of the ci dashboard.
+      inherit (staticPackages) urbit urbit-tests tarball;
 
-      # Expose the nix-shell derivation as a sanity check.
+      # Expose the nix-shell derivation as a sanity check + possible cache hit.
       shell = import ./shell.nix;
 
       # Replace the .hs attribute with the individual collections of components
@@ -92,7 +92,7 @@ in localLib.dimension "system" systems (systemName: system:
       # Note that .checks are the actual _execution_ of the tests.
       hs = localLib.collectHaskellComponents haskellPackages;
 
-      # Push the tarball to the remote google storage bucket.
+      # Push the tarball to the google storage bucket for the current platform.
       release = pushObject {
         name = tarball.name;
         drv = tarball;
@@ -100,7 +100,7 @@ in localLib.dimension "system" systems (systemName: system:
         contentType = "application/x-gtar";
       };
 
-      # Replace top-level pill attributes with push to google storage variants.
+      # Top-level pill attributes build and push-to-storage - only on linux.
     } // lib.optionalAttrs (system == "x86_64-linux") {
       ivory = pushPill "ivory" dynamicPackages.ivory;
       brass = pushPill "brass" dynamicPackages.brass;
