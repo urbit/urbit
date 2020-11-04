@@ -1,7 +1,41 @@
+::  lib/push-hook: helper for creating a push hook
+::  
+::   lib/push-hook is a helper for automatically pushing data from a
+::   local store to the corresponding pull-hook on remote ships. It also
+::   proxies remote pokes to the store.
+::
+::   ## Interfacing notes:
+::
+::   The inner door may interact with the library by producing cards. 
+::   Do not pass any cards on a wire beginning with /helper as these
+::   wires are reserved by this library. Any watches/pokes/peeks not
+::   listed below will be routed to the inner door.
+::
+::   ##  Subscription paths
+::
+::   /resource/[resource]: Receive initial state and updates to
+::   .resource. .resource should be encoded with en-path:resource from
+::   /lib/resource. Facts on this path will be of mark
+::   update-mark.config
+::
+::   ##  Pokes
+::
+::   %push-hook-action: Add/remove a resource from pushing.
+::   [update-mark.config]: A poke to proxy to the local store or a
+::   foreign push-hook
+::
 /-  *push-hook
-/+  default-agent, resource
+/+  default-agent, resource, verb
 |%
 +$  card  card:agent:gall
+::
+::  $config: configuration for the push hook
+::  
+::    .store-name: name of the store to proxy pokes and
+::    subscriptions to
+::    .store-path: subscription path to receive updates on
+::    .update-mark: mark that updates will be tagged with
+::    .pull-hook-name: name of the corresponding pull-hook
 ::
 +$  config
   $:  store-name=term
@@ -10,6 +44,12 @@
       update-mark=term
       pull-hook-name=term
   ==
+::
+::  $state-0: state for the push hook
+::
+::    .sharing: resources that the push hook is proxying
+::    .inner-state: state given to internal door
+::
 +$  state-0
   $:  %0
     sharing=(set resource)
@@ -20,6 +60,48 @@
   |*  =config
   $_  ^|
   |_  bowl:gall
+  ::
+  ::  +resource-for-update: get affected resource from an update
+  ::  
+  ::    Given a vase of the update, the mark of which is
+  ::    update-mark.config, produce the affected resource, if any.
+  ::
+  ++  resource-for-update
+    |~  vase
+    *(unit resource)
+  ::
+  ::  +take-update: handle update from store
+  ::
+  ::    Given an update from the store, do other things after proxying
+  ::    the update
+  ::
+  ++  take-update
+    |~  vase
+    *[(list card) _^|(..on-init)]
+  ::  +should-proxy-update: should forward update to store
+  ::
+  ::    If %.y is produced, then the update is forwarded to the local
+  ::    store. If %.n is produced then the update is not forwarded and
+  ::    the poke fails.
+  ::
+  ++  should-proxy-update
+    |~  vase
+    *?
+  ::  +initial-watch: produce initial state for a subscription
+  ::
+  ::    .resource is the resource being subscribed to.
+  ::    .path is any additional information in the subscription wire.
+  ::    This would typically be used to encode state that the subscriber
+  ::    already has. For example, a chat client might encode
+  ::    the number of messages that it already has, or the date it last
+  ::    received an update.
+  ::
+  ::    If +initial-watch crashes, the subscription fails.
+  ::
+  ++  initial-watch
+    |~  [path resource]
+    *vase
+  ::  from agent:gall
   ::
   ++  on-init
     *[(list card) _^|(..on-init)]
@@ -58,35 +140,6 @@
   ++  on-fail
     |~  [term tang]
     *[(list card) _^|(..on-init)]
-  ::  +resource-for-update: get affected resource from an update
-  ++  resource-for-update
-    |~  vase
-    *(unit resource)
-  ::
-  ::  +on-update: handle update from store
-  ::
-  ::    Do extra stuff on store update
-  ++  take-update
-    |~  vase
-    *[(list card) _^|(..on-init)]
-  ::  +should-proxy-update: should forward update to store
-  ::
-  ::    If %.y is produced, then the update is forwarded to the local
-  ::    store. If %.n is produced then the update is not forwarded and
-  ::    the poke fails.
-  ::
-  ++  should-proxy-update
-    |~  vase
-    *?
-  ::  +initial-watch: produce initial state for a subscription
-  ::
-  ::    .resource is the resource being subscribed to.
-  ::    .path is any additional information in the subscription wire
-  ::
-  ++  initial-watch
-    |~  [path resource]
-    *vase
-  ::
   --
 ++  agent
   |*  =config
@@ -130,6 +183,9 @@
         [cards this]
       ::
       ?:  =(mark update-mark.config)
+        ?:  (team:title [our src]:bowl)
+          :_  this
+          (forward-update:hc vase)
         =^  cards  state
           (poke-update:hc vase)
         [cards this]
@@ -149,7 +205,7 @@
       =/  =resource
         (de-path:resource t.path)
       =/  =vase
-        (initial-watch:og t.t.t.path resource)
+        (initial-watch:og t.t.t.t.path resource)
       :_  this
       [%give %fact ~ update-mark.config vase]~
     ::
@@ -281,5 +337,19 @@
     =/  =path
       resource+(en-path:resource u.rid)
     [%give %fact ~[path] update-mark.config vase]~
+  ::
+  ++  forward-update
+    |=  =vase
+    ^-  (list card:agent:gall)
+    =/  rid=(unit resource)
+      (resource-for-update:og vase)
+    ?~  rid  ~
+    =/  =path
+      resource+(en-path:resource u.rid)
+    =/  =wire
+      (make-wire resource+(en-path:resource u.rid))
+    =/  dap=term
+      ?:(=(our.bowl entity.u.rid) store-name.config dap.bowl)
+    [%pass wire %agent [entity.u.rid dap] %poke update-mark.config vase]~
   --
 --

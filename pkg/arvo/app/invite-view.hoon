@@ -1,3 +1,7 @@
+:: invite-view [landscape]:
+::
+::  deprecated
+::
 /+  default-agent
 ^-  agent:gall
 |_  =bowl:gall
