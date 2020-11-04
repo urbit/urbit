@@ -73,9 +73,9 @@ in localLib.dimension "system" systems (systemName: system:
       haskell-nix.haskellLib.selectProjectPackages staticPackages.hs;
 
     # The top-level set of attributes to build on ci.
-    finalPackages = rec {
+    finalPackages = {
       # Expose select packages to increase signal-to-noise of the ci dashboard.
-      inherit (staticPackages) urbit urbit-tests tarball;
+      inherit (staticPackages) urbit urbit-tests;
 
       # Expose the nix-shell derivation as a sanity check + possible cache hit.
       shell = import ./shell.nix;
@@ -93,7 +93,8 @@ in localLib.dimension "system" systems (systemName: system:
       hs = localLib.collectHaskellComponents haskellPackages;
 
       # Push the tarball to the google storage bucket for the current platform.
-      release = pushObject {
+      release = let inherit (staticPackages) tarball;
+      in pushObject {
         name = tarball.name;
         drv = tarball;
         extension = tarball.meta.extension;
