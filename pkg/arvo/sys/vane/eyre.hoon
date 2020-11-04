@@ -462,7 +462,7 @@
     ==
     ;body
       ;h1:"Internal Server Error"
-      ;p:"There was an error while handling the request for {<(trip url)>}."
+      ;p:"There was an error while handling the request for {(trip url)}."
       ;*  ?:  authorized
             ;=
               ;code:"*{(render-tang-to-marl 80 t)}"
@@ -478,7 +478,7 @@
   ::
   =/  code-as-tape=tape  (format-ud-as-integer code)
   =/  message=tape
-    ?+  code  "{<code>} Error"
+    ?+  code  "{(scow %ud code)} Error"
       %400  "Bad Request"
       %403  "Forbidden"
       %404  "Not Found"
@@ -495,7 +495,7 @@
     ==
     ;body
       ;h1:"{message}"
-      ;p:"There was an error while handling the request for {<(trip url)>}."
+      ;p:"There was an error while handling the request for {(trip url)}."
       ;*  ?:  authorized
             ;=
               ;code:"{t}"
@@ -999,7 +999,7 @@
         ~
       ::  is there an urbauth cookie?
       ::
-      ?~  urbauth=(get-header:http (crip "urbauth-{<our>}") u.cookies)
+      ?~  urbauth=(get-header:http (crip "urbauth-{(scow %p our)}") u.cookies)
         ~
       ::  if it's formatted like a valid session cookie, produce it
       ::
@@ -1039,7 +1039,7 @@
       ^-  @t
       %-  crip
       =;  max-age=tape
-        "urbauth-{<our>}={<session>}; Path=/; Max-Age={max-age}"
+        "urbauth-{(scow %p our)}={(scow %uv session)}; Path=/; Max-Age={max-age}"
       %-  format-ud-as-integer
       ?.  extend  0
       (div (msec:milly session-timeout) 1.000)
@@ -2400,7 +2400,7 @@
       =/  handle-gall-error
         handle-gall-error:(per-server-event event-args)
       =^  moves  server-state.ax
-        (handle-gall-error leaf+"eyre bad mark {<mark>}" ~)
+        (handle-gall-error leaf+"eyre bad mark {(trip mark)}" ~)
       [moves http-server-gate]
     ::
     =/  =http-event:http
