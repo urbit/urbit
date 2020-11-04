@@ -13,7 +13,8 @@
 
 let
 
-  inherit (import ./nix/default.nix { }) lib haskell-nix callPackage;
+  inherit (import ./nix/default.nix { })
+    lib haskell-nix recurseIntoAttrs callPackage;
 
   # Local library import from derivation functions such as fetchGitHubLFS, etc.
   # upon which local package defintions are dependent.
@@ -104,12 +105,14 @@ in localLib.dimension "system" systems (systemName: system:
 
       # Top-level pill attributes build and push-to-storage - only on linux.
     } // lib.optionalAttrs (system == "x86_64-linux") {
-      ivory = pushPill "ivory" dynamicPackages.ivory;
-      brass = pushPill "brass" dynamicPackages.brass;
-      solid = pushPill "solid" dynamicPackages.solid;
+      pill = recurseIntoAttrs {
+        ivory = pushPill "ivory" dynamicPackages.ivory;
+        brass = pushPill "brass" dynamicPackages.brass;
+        solid = pushPill "solid" dynamicPackages.solid;
 
-      ivory-ropsten = pushPill "ivory-ropsten" dynamicPackages.ivory-ropsten;
-      brass-ropsten = pushPill "brass-ropsten" dynamicPackages.brass-ropsten;
+        ivory-ropsten = pushPill "ivory-ropsten" dynamicPackages.ivory-ropsten;
+        brass-ropsten = pushPill "brass-ropsten" dynamicPackages.brass-ropsten;
+      };
     };
 
     # Filter derivations that have meta.platform missing the current system,
