@@ -20,7 +20,7 @@ const StatusBar = (props) => {
       gridTemplateColumns="3fr 1fr"
       py='3'
       px='3'
-      pb='2'
+      pb='3'
       >
       <Row collapse>
       <Button borderColor='washedGray' mr='2' px='2' onClick={() => props.history.push('/')} {...props}>

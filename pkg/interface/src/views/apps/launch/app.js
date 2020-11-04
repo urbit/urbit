@@ -43,6 +43,7 @@ export default class LaunchApp extends React.Component {
             gridTemplateColumns='repeat(auto-fill, minmax(128px, 1fr))'
             gridGap={3}
             p={2}
+            pt={0}
           >
             <Tile
               bg="transparent"
@@ -55,9 +56,9 @@ export default class LaunchApp extends React.Component {
                   <Icon
                     color="white"
                     // fill="rgba(0,0,0,0)"
-                    icon="Home"
+                    icon="Boot"
                   />
-                  <Text ml="1" mt='1px' color="white">Home</Text>
+                  <Text ml="1" mt='1px' color="white">DMs + Drafts</Text>
                 </Row>
               </Box>
             </Tile>
