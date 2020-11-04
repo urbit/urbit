@@ -13511,6 +13511,240 @@
                    !!
                  $(gen doz)
     ==
+  ::
+  ++  caching-redo                                      ::  refurbish faces
+    |=  $:  ::  ref: raw payload
+            ::
+            ref=type
+        ==
+    ::  :type: subject refurbished to reference namespace
+    ::  :grub: compiler cache
+    ::
+    ^-  [type _grub]
+    ::  hos: subject tool stack
+    ::  wec: reference tool stack set
+    ::  gil: repetition set
+    ::
+    =|  hos=(list tool)
+    =/  wec=(set (list tool))  [~ ~ ~]
+    =|  gil=(set (pair type type))
+    =<  ::  errors imply subject/reference mismatch
+        ::
+        ~|  %redo-match
+        ::  reduce by subject
+        ::
+        dext
+    |%
+    ::                                                  ::
+    ++  dear                                            ::  resolve tool stack
+      ::  :(unit (list tool)): unified tool stack
+      ::
+      ^-  (unit (list tool))
+      ::  empty implies void
+      ::
+      ?~  wec  `~
+      ::  any reference faces must be clear
+      ::
+      ?.  ?=([* ~ ~] wec)
+        ~&  [%dear-many wec]
+        ~
+      :-  ~
+      ::  har: single reference tool stack
+      ::
+      =/  har  n.wec
+      ::  len: lengths of [sut ref] face stacks
+      ::
+      =/  len  [p q]=[(lent hos) (lent har)]
+      ::  lip: length of sut-ref face stack overlap
+      ::
+      ::      AB
+      ::       BC
+      ::
+      ::    +lip is (lent B), where +hay is forward AB
+      ::    and +liv is forward BC (stack BA and CB).
+      ::
+      ::    overlap is a weird corner case.  +lip is
+      ::    almost always 0.  brute force is fine.
+      ::
+      =/  lip
+        =|  lup=(unit @ud)
+        =|  lip=@ud
+        |-  ^-  @ud
+        ?:  |((gth lip p.len) (gth lip q.len))
+          (fall lup 0)
+        ::  lep: overlap candidate: suffix of subject face stack
+        ::
+        =/  lep  (slag (sub p.len lip) hos)
+        ::  lap: overlap candidate: prefix of reference face stack
+        ::
+        =/  lap  (scag lip har)
+        ::  save any match and continue
+        ::
+        $(lip +(lip), lup ?.(=(lep lap) lup `lip))
+      ::  ~&  [har+har hos+hos len+len lip+lip]
+      ::  produce combined face stack (forward ABC, stack CBA)
+      ::
+      (weld hos (slag lip har))
+    ::                                                  ::
+    ++  dext                                            ::  subject traverse
+      ::  :type: refurbished subject
+      ::  :grub: compiler cache
+      ::
+      ^-  [type _grub]
+      ::  check for trivial cases
+      ::
+      ?:  ?|  =(sut ref)
+              ?=(?(%noun %void [?(%atom %core) *]) ref)
+          ==
+        [done grub]
+      ?-    sut
+          ?(%noun %void [?(%atom %core) *])
+        ::  reduce reference and reassemble leaf
+        ::
+        =^  cor  grub  (sint &)
+        [done:cor grub]
+      ::
+          [%cell *]
+        ::  reduce reference to match subject
+        ::
+        =^  cor  grub  (sint &)
+        =>  cor
+        ?>  ?=([%cell *] sut)
+        ::  leaf with possible recursive descent
+        ::
+        =:  hos  ~
+            wec  [~ ~ ~]
+        ==
+        =^  lef  grub  dext(sut p.sut, ref (peek(sut ref) %free 2))
+        =^  rig  grub  dext(sut p.sut, ref (peek(sut ref) %free 3))
+        :_  grub
+        done(sut [%cell lef rig])
+      ::
+          [%face *]
+        ::  push face on subject stack, and descend
+        ::
+        dext(hos [p.sut hos], sut q.sut)
+      ::
+          [%hint *]
+        ::  work through hint
+        ::
+        =^  rig  grub  dext(sut q.sut)
+        :_  grub
+        (hint p.sut rig)
+      ::
+          [%fork *]
+        ::  reconstruct each case in fork
+        ::
+        =/  yed  ~(tap in p.sut)
+        =^  wiz  grub
+          (spin yed grub |=([=type =_grub] dext(sut type)))
+        :_  grub
+        (fork wiz)
+      ::
+          [%hold *]
+        ::  reduce to hard
+        ::
+        =^  cor  grub  (sint |)
+        =>  cor
+        ?>  ?=([%hold *] sut)
+        ?:  (~(has in fan) [p.sut q.sut])
+          ::  repo loop; redo depends on its own product
+          ::
+          =^  cor  grub  (sint &)
+          :_  grub
+          done:cor
+        ?:  (~(has in gil) [sut ref])
+          ::  type recursion, stop renaming
+          ::
+          =^  cor  grub  (sint |)
+          :_  grub
+          done:cor
+        ::  restore unchanged holds
+        ::
+        =^  rig  grub  caching-repo
+        =^  val  grub  dext(sut rig, gil (~(put in gil) sut ref))
+        :_  grub
+        ?:  =(val -.rig)
+          sut
+        val
+        ::
+        :: =+  repo
+        :: =-  ?:(=(- +<) sut -)
+        :: dext(sut -, gil (~(put in gil) sut ref))
+        ::
+        :: =^  val  grub  dext(sut rig, gil (~(put in gil) sut ref))
+        :: ?:  =(
+        :: =-  ?:(=(- +<) sut -)
+      ==
+    ::                                                  ::
+    ++  done                                            ::  complete assembly
+      ^-  type
+      ::  :type: subject refurbished
+      ::
+      ::  lov: combined face stack
+      ::
+      =/  lov
+          =/  lov  dear
+          ?~  lov
+            ::  ~_  (dunk 'redo: dear: sut')
+            ::  ~_  (dunk(sut ref) 'redo: dear: ref')
+            ~&  [%wec wec]
+            !!
+          (need lov)
+      ::  recompose faces
+      ::
+      |-  ^-  type
+      ?~  lov  sut
+      $(lov t.lov, sut (face i.lov sut))
+    ::                                                  ::
+    ++  sint                                            ::  reduce by reference
+      |=  $:  ::  hod: expand holds
+              ::
+              hod=?
+          ==
+      ::  ::.: reference with face/fork/hold reduced
+      ::
+      ^+  [. grub]
+      ?+    ref  [. grub]
+          [%hint *]
+        $(ref q.ref)
+      ::
+          [%face *]
+        ::  extend all stacks in set
+        ::
+        %=  $
+          ref  q.ref
+          wec  (~(run in wec) |=((list tool) [p.ref +<]))
+        ==
+      ::
+          [%fork *]
+        ::  reconstruct all relevant cases
+        ::
+        =;  [val=(pair (set (list tool)) (list type)) =_grub]
+          :_  grub
+          +(wec p.val, ref (fork q.val))
+        =/  moy  ~(tap in p.ref)
+        |-  ^-  [(pair (set (list tool)) (list type)) _grub]
+        ?~  moy  [[~ ~] grub]
+        ::  head recurse
+        ::
+        =^  mor  grub  $(moy t.moy)
+        ::  prune reference cases outside subject
+        ::
+        ?:  (miss i.moy)  [mor grub]
+        ::  unify all cases
+        ::
+        =^  dis  grub  ^$(ref i.moy)
+        :_  grub
+        [(~(uni in p.mor) wec.dis) [ref.dis q.mor]]
+      ::
+          [%hold *]
+        ?.  hod
+          [. grub]
+        =^  rig  grub  caching-repo(sut ref)
+        $(ref rig)
+      ==
+    --
   ::                                                    ::
   ++  redo                                              ::  refurbish faces
     |=  $:  ::  ref: raw payload
