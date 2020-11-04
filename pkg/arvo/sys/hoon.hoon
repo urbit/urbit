@@ -11513,16 +11513,28 @@
     ++  core-check
       |=  log=type
       |-  ^-  [gol-type _grub]
-      =^  val  grub  caching-repo(sut log)
-      =^  def  grub  $(log val)
-      ?+    log  [def grub]
-          %noun      :_  grub  (nice log &)
-          %void      :_  grub  (nice %noun |)
-          [%atom *]  :_  grub  (nice %noun |)
+      ?-    log
+          %noun
+        :_  grub
+        (nice log &)
+      ::
+          %void
+        :_  grub
+        (nice %noun |)
+      ::
+          [%atom *]
+        :_  grub
+        (nice %noun |)
+      ::
           [%cell *]
         =^  val  grub  (caching-nest(sut p.log) & %noun)
-        :_  grub  (nice log val)
-          [%core *]  :_  grub  (nice log(r.p.q %gold) &)
+        :_  grub
+        (nice log val)
+      ::
+          [%core *]
+        :_  grub
+        (nice log(r.p.q %gold) &)
+      ::
           [%fork *]
         =/  tys  ~(tap in p.log)
         =^  val  grub
@@ -11533,6 +11545,10 @@
           =^  b  grub  $(tys t.tys)
           [(~(put in b) a) grub]
         :_  grub  [%fork val]
+      ::
+          *
+        =^  rig  grub  caching-repo(sut log)
+        $(log rig)
       ==
     ::  check we have the expected number of chapters
     ::
