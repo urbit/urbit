@@ -10004,6 +10004,24 @@
       ==
     --
   ::
+  ++  caching-cool
+    |=  [pol=? hyp=wing ref=type]
+    ^-  [type _grub]
+    =^  fid  grub  (caching-find %both hyp)
+    ?-  -.fid
+        %|
+      [sut grub]
+    ::
+        %&
+      =;  [val=(pair axis type) =_grub]
+        [q.val grub]
+      %+  caching-take  p.p.fid
+      |=  a=type
+      ?:  pol
+        (caching-fuse(sut a) ref)
+      (caching-crop(sut a) ref)
+    ==
+  ::
   ++  cool
     |=  {pol/? hyp/wing ref/type}
     ^-  type
@@ -14007,16 +14025,14 @@
     played
   ::
   ++  caching-take
-    |=  [vit=vein duz=$-(type type)]
+    |=  [vit=vein duz=$-(type [type _grub])]
     ^-  [(pair axis type) _grub]
     =;  [=type =_grub]
       :_  grub
       [(tend vit) type]
     =.  vit  (flop vit)
     |-  ^-  [type _grub]
-    ?~  vit
-      :_  grub
-      (duz sut)
+    ?~  vit  (duz sut)
     ?~  i.vit
       |-  ^-  [type _grub]
       ?+  sut      ^$(vit t.vit)
@@ -14136,7 +14152,7 @@
     ~_  (show [%c %tack] %l hyp)
     =^  fid  grub  (caching-find %rite hyp)
     ?>  ?=(%& -.fid)
-    (caching-take p.p.fid |=(type mur))
+    (caching-take p.p.fid |=(type [mur grub]))
   ::
   ++  tack
     |=  {hyp/wing mur/type}
