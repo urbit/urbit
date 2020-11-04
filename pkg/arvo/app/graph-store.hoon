@@ -558,7 +558,7 @@
   ++  poke-import
     |=  jammed=@
     ^-  (quip card _state)
-    =/  sty  ;;(state-0 (cue jammed))
+    =/  sty  ;;(state-1 (cue jammed))
     :_  sty
     %+  turn  ~(tap by graphs.sty)
     |=  [rid=resource:store =marked-graph:store]

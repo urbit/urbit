@@ -690,7 +690,7 @@
 ++  poke-import
   |=  jammed=@
   ^-  (quip card _state)
-  =/  sty=state-8  ;;(state-8 (cue jammed))
+  =/  sty=state-10  ;;(state-10 (cue jammed))
   :_  sty
   %+  turn  ~(tap by synced.sty)
   |=  [=path =ship]

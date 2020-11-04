@@ -379,7 +379,7 @@
 ++  poke-import
   |=  jammed=@
   ^-  (quip card _state)
-  =/  sty=state-4  ;;(state-4 (cue jammed))
+  =/  sty=state-6  ;;(state-6 (cue jammed))
   [~ sty]
 ::
 ++  handle-add
