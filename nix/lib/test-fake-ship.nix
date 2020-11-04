@@ -160,6 +160,4 @@ stdenvNoCC.mkDerivation {
 
     exit "$fail"
   '';
-
-  meta = { platforms = [ "x86_64-linux" "x86_64-darwin" ]; };
 }
