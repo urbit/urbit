@@ -3,8 +3,6 @@
 { urbit, herb, arvo ? null, pill, ship ? "bus", doCheck ? true }:
 
 stdenvNoCC.mkDerivation {
-  inherit doCheck;
-
   name = "test-${ship}";
   src = bootFakeShip { inherit urbit herb arvo pill ship; };
   phases = [ "unpackPhase" "buildPhase" "checkPhase" ];
@@ -161,7 +159,13 @@ stdenvNoCC.mkDerivation {
     exit "$fail"
   '';
 
+  inherit doCheck;
+
   # Fix 'bind: operation not permitted' when nix.useSandbox = true on darwin.
   # See https://github.com/NixOS/nix/blob/5f6840fbb49ae5b534423bd8a4360646ee93dbaf/src/libstore/build.cc#L2961
   __darwinAllowLocalNetworking = true;
+
+  meta = {
+    systems = [ "x86_64-linux" ];
+  };
 }
