@@ -186,6 +186,12 @@
           =.  see  [%lin p.bit]
           (done %blit [see [%hop pos] ~])
         ?:  ?=($pom -.bit)
+          ::NOTE  treat "styled prompt" without style as plain prompt,
+          ::      to allow rendering by older runtimes
+          ::TODO  remove me once v0.10.9+ has high/guaranteed adoption
+          ::
+          ?:  (levy p.bit (cork head |*(s=stye =(*stye s))))
+            $(bit [%pro (zing (turn p.bit tail))])
           =.  see  [%klr p.bit]
           (done %blit [see [%hop pos] ~])
         ?:  ?=($hop -.bit)
