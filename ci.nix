@@ -75,7 +75,8 @@ in localLib.dimension "system" systems (systemName: system:
     # The top-level set of attributes to build on ci.
     finalPackages = {
       # Expose select packages to increase signal-to-noise of the ci dashboard.
-      inherit (staticPackages) urbit urbit-tests;
+      inherit (staticPackages) urbit;
+      inherit (dynamicPackages) urbit-tests;
 
       # Expose the nix-shell derivation as a sanity check + possible cache hit.
       shell = import ./shell.nix;
