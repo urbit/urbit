@@ -4,8 +4,11 @@
 
 stdenvNoCC.mkDerivation {
   name = "test-${ship}";
+
   src = bootFakeShip { inherit urbit herb arvo pill ship; };
+
   phases = [ "unpackPhase" "buildPhase" "checkPhase" ];
+
   buildInputs = [ cacert urbit herb python3 ];
 
   unpackPhase = ''
@@ -166,6 +169,6 @@ stdenvNoCC.mkDerivation {
   __darwinAllowLocalNetworking = true;
 
   meta = {
-    systems = [ "x86_64-linux" ];
+    platforms = [ "x86_64-linux" ];
   };
 }
