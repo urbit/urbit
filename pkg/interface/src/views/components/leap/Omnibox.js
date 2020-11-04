@@ -267,7 +267,7 @@ export class Omnibox extends Component {
           display={props.show ? 'block' : 'none'}>
           <Row justifyContent='center'>
             <Box
-              mt='20vh'
+              mt={['10vh', '20vh']}
               width='max(50vw, 300px)'
               maxWidth='600px'
               borderRadius='2'

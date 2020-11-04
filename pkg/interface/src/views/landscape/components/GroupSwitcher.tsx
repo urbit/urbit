@@ -120,7 +120,7 @@ export function GroupSwitcher(props: {
                     display="block"
                     icon="Circle"
                   />
-                  <Text>Home</Text>
+                  <Text>DMs + Drafts</Text>
                 </GroupSwitcherItem>}
                 <RecentGroups
                   recent={props.recentGroups}
