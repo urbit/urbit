@@ -1,4 +1,4 @@
-{ stdenvNoCC, cacert }:
+{ lib, stdenvNoCC, cacert }:
 
 { urbit, herb, arvo ? null, pill, ship }:
 
@@ -22,9 +22,13 @@ stdenvNoCC.mkDerivation {
     set -xeuo pipefail
 
     if [ -z "$ARVO" ]; then
-      urbit -d -F "$SHIP" -B "$PILL" ./pier
+      urbit ${
+        lib.concatStringsSep " " urbit.meta.arguments
+      } -d -F "$SHIP" -B "$PILL" ./pier
     else
-      urbit -d -F "$SHIP" -A "$ARVO" -B "$PILL" ./pier
+      urbit ${
+        lib.concatStringsSep " " urbit.meta.arguments
+      } -d -F "$SHIP" -A "$ARVO" -B "$PILL" ./pier
     fi
 
     cleanup () {
