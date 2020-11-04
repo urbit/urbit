@@ -45,6 +45,6 @@
   ==
 ::
 +$  request
-  $%  [%scan-address =xpub =chyg =idx]
+  $%  [%scan-address a=address =xpub =chyg =idx]
   ==
 --
