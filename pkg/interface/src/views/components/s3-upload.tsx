@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Box, Text, Icon } from "@tlon/indigo-react";
+import { BaseInput, Box, Text, Icon } from "@tlon/indigo-react";
 
 import S3Client from '~/logic/lib/s3';
 import { Spinner } from './Spinner';
@@ -117,7 +117,6 @@ export class S3Upload extends Component<S3UploadProps, S3UploadState> {
           this.setState({ isUploading: false });
         });
     }, 200);
-
   }
 
   onClick() {
@@ -141,8 +140,8 @@ export class S3Upload extends Component<S3UploadProps, S3UploadState> {
     const display = children || <Icon icon='ArrowNorth' />;
     return (
       <>
-        <input
-          className="dn"
+        <BaseInput
+          display='none'
           type="file"
           id="fileElement"
           ref={this.inputRef}
@@ -150,7 +149,7 @@ export class S3Upload extends Component<S3UploadProps, S3UploadState> {
           onChange={this.onChange.bind(this)} />
         {this.state.isUploading
           ? <Spinner awaiting={true} classes={className} />
-          : <span className={`pointer ${className}`} onClick={this.onClick.bind(this)}>{display}</span>
+          : <Text cursor='pointer' className={className} onClick={this.onClick.bind(this)}>{display}</Text>
         }
       </>
     );
