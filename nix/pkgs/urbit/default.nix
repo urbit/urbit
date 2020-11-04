@@ -75,5 +75,8 @@ in stdenv.mkDerivation {
 
   inherit enableParallelBuilding doCheck dontStrip;
 
-  meta = { debug = enableDebug; };
+  meta = {
+    debug = enableDebug;
+    arguments = lib.optionals enableDebug [ "-g" ];
+  };
 }

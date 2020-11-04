@@ -1,4 +1,4 @@
-{ stdenvNoCC, cacert, python3, bootFakeShip }:
+{ lib, stdenvNoCC, cacert, python3, bootFakeShip }:
 
 { urbit, herb, arvo ? null, pill, ship ? "bus", doCheck ? true }:
 
@@ -19,7 +19,9 @@ stdenvNoCC.mkDerivation {
   buildPhase = ''
     set -x
 
-    urbit -d ./pier 2> urbit-output
+    urbit ${
+      lib.concatStringsSep " " urbit.meta.arguments
+    } -d ./pier 2> urbit-output
 
     # Sledge Hammer!
     # See: https://github.com/travis-ci/travis-ci/issues/4704#issuecomment-348435959
