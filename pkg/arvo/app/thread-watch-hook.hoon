@@ -31,7 +31,26 @@
 +*  this  .
     def   ~(. (default-agent this %|) bowl)
 ::
-++  on-init  on-init:def
+++  on-init
+  |^  ^-  (quip card _this)
+  :_  this
+  :~  (act /inv-acc-gra [%watch /invitatory/graph %invite-accepted-graph])
+  ==
+  ::
+  ++  act
+    |=  [=wire =action:sur]
+    ^-  card
+    :*  %pass
+        wire
+        %agent
+        [our.bowl %thread-watch-hook]
+        %poke
+        %thread-watch-action
+        !>  ^-  action:sur
+        action
+    ==
+  --
+::
 ++  on-save   !>(state)
 ++  on-load
   |=  old-vase=vase
@@ -81,7 +100,6 @@
 ++  on-agent
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)
-  ~&  [wire sign]
   ?-    -.sign
       %kick
     ?+    wire  (on-agent:def wire sign)
@@ -103,7 +121,6 @@
       %poke-ack
     ?.  ?=([%thread-start @ @ ~] wire)
       (on-agent:def wire sign)
-    ~&  sign
     ?~  p.sign  [~ this]
     =/  =time  (slav %da i.t.wire)
     =/  tid  (slav %uv i.t.t.wire)
@@ -141,7 +158,6 @@
         [~ this]
       =/  =time  (slav %da i.t.wire)
       =/  =observer:sur  (~(got by observers) time)
-      ~&  [time observer]
       :_  this(observers (~(del by observers) time))
       :_  ~
       :*  %pass
@@ -156,7 +172,6 @@
       =/  =time  (slav %da i.t.wire)
       =/  =observer:sur  (~(got by observers) time)
       =/  tid  (scot %uv (sham eny.bowl))
-      ~&  [time observer tid]
       :_  this
       :~  :*  %pass
               [%thread-start i.t.wire tid ~]
