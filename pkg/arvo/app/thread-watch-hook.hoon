@@ -34,8 +34,8 @@
 ++  on-init
   |^  ^-  (quip card _this)
   :_  this
-  :~  (act /inv-acc-gra [%watch /invitatory/graph %invite-accepted-graph])
-  ==
+  :_  ~
+  (act /inv-gra [%watch %invite-store /invitatory/graph %invite-accepted-graph])
   ::
   ++  act
     |=  [=wire =action:sur]
