@@ -6596,10 +6596,10 @@
           ==                                            ::
 +$  garb  (trel (unit term) poly vair)                  ::  core
 +$  grub                                                ::  new compiler cache
-  $:  nes/(map (pair type type) type)                   ::  +nest
-      res/(map (pair type hoon) type)                   ::  +rest
-      pay/(map (pair type hoon) type)                   ::  +play
-      mit/(map (pair type hoon) (pair type nock))       ::  +mint
+  $:  nes=(map (pair type type) ?)                      ::  +nest
+      res=(map (pair type hoon) type)                   ::  +rest
+      pay=(map (pair type hoon) type)                   ::  +play
+      mit=(map (pair type hoon) (pair type nock))       ::  +mint
   ==                                                    ::
 +$  poly  ?(%wet %dry)                                  ::  polarity
 +$  foot  $%  {$dry p/hoon}                             ::  dry arm, geometric
@@ -12864,6 +12864,9 @@
             reg=(set type)                              ::  degenerate ref
             gil=(set (pair type type))                  ::  assume nest
         ==
+    =/  cach  (~(get by nes.grub) [sut ref])
+    ?^  cach
+      [u.cach grub]
     =<  dext
     |%
     ++  deem
@@ -12932,6 +12935,9 @@
       ==
     ::
     ++  dext
+      =;  [nests=? =_grub]
+        :-  nests
+        grub(nes (~(put by nes.grub) [sut ref] nests))
       =<  $
       |.
       ^-  [? _grub]
