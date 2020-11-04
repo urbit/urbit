@@ -1,7 +1,7 @@
 ::
 ::::    /sys/hoon                                       ::
   ::                                                    ::
-=<  ride
+=<  caching-ride
 =>  %141  =>
 ::                                                      ::
 ::::    0: version stub                                 ::
@@ -9096,6 +9096,8 @@
       ==
   =+  sut=`type`%noun
   |%
+  ::  XX unused
+  ::
   ++  clip
     |=  ref/type
     ?>  ?|(!vet (nest(sut ref) & sut))
@@ -17326,6 +17328,16 @@
 ++  reck                                                ::  parse hoon file
   |=  bon/path
   (rain bon .^(@t %cx (weld bon `path`[%hoon ~])))
+::
+++  caching-ride                                        ::  end-to-end compiler
+  |=  {typ/type txt/@}
+  ^-  (pair type nock)
+  ~>  %slog.[0 leaf/"caching-ride: parsing"]
+  =/  gen  (ream txt)
+  ~>  %slog.[0 leaf/"caching-ride: compiling"]
+  ~<  %slog.[0 leaf/"caching-ride: compiled"]
+  =>  (~(caching-mint ut typ) %noun gen)
+  -
 ::
 ++  ride                                                ::  end-to-end compiler
   |=  {typ/type txt/@}
