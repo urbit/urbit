@@ -32,7 +32,7 @@ const StatusBar = (props) => {
           <Text ml={2} color='black'>
             Leap
           </Text>
-          <Text display={['none', 'inline']} ml={4} color='gray'>
+          <Text display={['none', 'inline']} ml={2} color='gray'>
             {metaKey}/
           </Text>
         </StatusBarItem>
