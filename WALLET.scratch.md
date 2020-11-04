@@ -62,6 +62,7 @@ abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon 
 ### manual scanning of empty wallet
 With max-gap=3
 ```
+:btc-wallet-hook|action [%set-provider ~dopzod]
 =btc -build-file %/lib/btc/hoon
 =scan-xpub 'zpub6rFR7y4Q2AijBEqTUquhVz398htDFrtymD9xYYfG1m4wAcvPhXNfE3EfH1r1ADqtfSdVCToUG868RvUUkgDKf31mGDtKsAYz2oz2AGutZYs'
 :btc-wallet-store|action [%add-wallet scan-xpub ~ [~ 3]]

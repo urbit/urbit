@@ -84,10 +84,10 @@
   ?-  -.act
       %add-wallet
     =/  w=_walt  (from-xpub:walt +.act)
+    =.  walts  (~(put by walts) xpub.act w)
     =^  cards  state
       (init-batches xpub.act (dec max-gap.st.w))
-    :-  cards
-    state(walts (~(put by walts) xpub.act w))
+    [cards state]
     ::
       %watch-address
     (watch-address +.act)
@@ -106,11 +106,12 @@
 ++  req-scan
   |=  [b=batch =xpub =chyg]
   ^-  (list card)
+  =/  w=_walt  (~(got by walts) xpub)
   %+  turn  ~(tap in todo.b)
   |=  =idx
   :*  %give  %fact  ~[/requests]
       %btc-wallet-store-request
-      !>([%scan-address xpub chyg idx])
+      !>([%scan-address (~(mk-address w chyg) idx) xpub chyg idx])
   ==
 ::
 ++  scan-status

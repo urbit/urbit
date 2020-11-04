@@ -115,22 +115,24 @@
   ^-  (quip card _state)
   ?-  -.act
       %set-provider
+    =*  sub-card
+      [%pass /set-prov %agent [provider.act %btc-provider] %watch /clients]
     :_  state
-::  TODO  %+  weld
-::      ?~(provider *(list card) ~[[%pass /leave-prov %agent [host.u.provider %btc-provider] %leave ~]])
-    ~[[%pass /set-prov %agent [provider.act %btc-provider] %watch /clients]]
+    ?~  provider  ~[sub-card]
+    :~  [%pass /leave-prov %agent [host.u.provider %btc-provider] %leave ~]
+        sub-card
+    ==
   ==
 ++  handle-request
   |=  req=request:bws
   ^-  (quip card _state)
   ?-  -.req
       %scan-address
-    ?~  provider  ~|("provider not set" !!)
-    =/  ri=req-id  (mk-req-id +.req)
-    =/  a=address  *address
-::   TODO   (~(mk-address (from-xpub:walt:lib-bws xpub.req) chyg.req) idx.req)
-    :-  ~[(get-address-info host.u.provider a)]
-    state(pend (~(put by pend) ri +.req))
+    ?~  provider
+      ~|("provider not set" !!)
+    =/  ri=req-id  (mk-req-id +>.req)
+    :-  ~[(get-address-info host.u.provider a.req)]
+    state(pend (~(put by pend) ri +>.req))
   ==
 ::
 ++  get-address-info
@@ -143,6 +145,7 @@
   |=  [=xpub =chyg:bws =idx:bws]  ^-  req-id
   =/  chygidx=@  (cat 3 ?:(=(%0 chyg) '0' '1') idx)
   =/  dat=@  (cat 3 xpub chygidx)
+
   %-  ripemd-160:ripemd:crypto
   [(met 3 dat) dat]
 --
