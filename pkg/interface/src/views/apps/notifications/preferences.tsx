@@ -70,7 +70,7 @@ export default function NotificationPreferences(
           <Checkbox
             label="Do not disturb"
             id="dnd"
-            caption="You won't seee the notification badge, but notifications will still appear in your inbox."
+            caption="You won't see the notification badge, but notifications will still appear in your inbox."
           />
 
           <Checkbox
