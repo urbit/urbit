@@ -11166,11 +11166,11 @@
     ?-  hud
         %dry
       =^  val  grub  (caching-mint gol gen)
-      [q:val grub]
+      [q.val grub]
     ::
         %wet
       =^  val  grub  (caching-mint(vet |) gol gen)
-      [q:val grub]
+      [q.val grub]
     ==
   ::
   ++  hemp
@@ -11544,7 +11544,8 @@
           =^  a  grub  ^$(log i.tys)
           =^  b  grub  $(tys t.tys)
           [(~(put in b) a) grub]
-        :_  grub  [%fork val]
+        :_  grub
+        [%fork val]
       ::
           *
         =^  rig  grub  caching-repo(sut log)
@@ -13481,7 +13482,7 @@
       [%void grub]
     ::
         *
-      =+  doz=~(open ap gen)
+      =/  doz  ~(open ap gen)
       ?:  =(doz gen)
         ~_  (show [%c 'hoon'] [%q gen])
         ~>  %mean.'play-open'
