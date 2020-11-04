@@ -22,7 +22,7 @@ let
     };
   };
 
-  finalOverlays = [
+  finalOverlays = haskellNix.overlays ++ [
     # Add top-level .sources attribute for other overlays to access niv sources.
     (_final: _prev: { sources = finalSources; })
 
@@ -31,7 +31,7 @@ let
 
     # Specific overrides guarded by the host platform.
     (import ./overlays/musl.nix)
-  ] ++ haskellNix.overlays ++ overlays;
+  ] ++ overlays;
 
   pkgs = import finalSources.nixpkgs {
     inherit system crossSystem crossOverlays;

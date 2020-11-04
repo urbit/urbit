@@ -11,6 +11,7 @@
 let
 
   pkgs = import ./nix/default.nix { };
+
   localPackages = import ./default.nix { };
 
   # The non-Haskell packages which build inputs (dependencies) will be
@@ -43,24 +44,19 @@ in localPackages.hs.shellFor {
       urbit-termsize
     ];
 
-  # Build tools to make available in the shell's PATH.
+  # Haskell tools to make available on the shell's PATH.
+  tools = {
+    shellcheck = "0.7.1";
+    ormolu = "0.1.3.0";
+  };
+
+  # Nixpkgs tools to make available on the shell's PATH.
   buildInputs = [
     pkgs.cacert
-    pkgs.stack
     pkgs.nixfmt
     pkgs.shfmt
-
+    pkgs.stack
     (import pkgs.sources.niv { }).niv
-
-    (localPackages.hs.hackageTool {
-      name = "ormolu";
-      version = "0.1.3.0";
-    })
-
-    (localPackages.hs.hackageTool {
-      name = "ShellCheck";
-      version = "0.7.1";
-    })
   ] ++ merge "buildInputs";
 
   nativeBuildInputs = merge "nativeBuildInputs";
