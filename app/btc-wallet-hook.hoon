@@ -1,20 +1,31 @@
 ::  btc-wallet-hook.hoon
 ::
-::  Subscriptions:
+::  Subscribes to:
 ::    btc-provider:
-::      connection status
-::      RPC call results/errors
-::  To Subscribers:
+::      - connection status
+::      - RPC call results/errors
+::
+::    btc-wallet-store
+::      - requests for address info
+::      - updates to existing address info
+::
+::  Sends updates to:
 ::    none
 ::
-/-  *btc-wallet-hook
-/+  shoe, dbug, default-agent
+/-  *btc, *btc-wallet-hook, bws=btc-wallet-store
+/+  shoe, dbug, default-agent, lib-bws=btc-wallet-store
 |%
 +$  versioned-state
     $%  state-0
     ==
+::  provdider: maybe ship if provider is set
 ::
-+$  state-0  [%0 provider=(unit ship)]
++$  state-0
+  $:  %0
+      provider=(unit [host=ship works=?])
+      pend=back
+      fail=back
+  ==
 ::
 +$  card  card:shoe
 +$  command
@@ -45,8 +56,10 @@
 ++  on-init
   ^-  (quip card _this)
   ~&  >  '%btc-wallet-hook initialized'
-  ::  sub to wallet-store
-  `this
+  :_  this
+  :~  [%pass /r/[(scot %da now.bowl)] %agent [our.bowl %btc-wallet-store] %watch /requests]
+      [%pass /u/[(scot %da now.bowl)] %agent [our.bowl %btc-wallet-store] %watch /updates]
+  ==
 ++  on-save
   ^-  vase
   !>(state)
@@ -74,8 +87,17 @@
   ?+  -.sign  (on-agent:def wire sign)
       %watch-ack
     ?:  ?=(%set-provider -.wire)
-      `this(provider.state `src.bowl)
+      `this(provider.state `[src.bowl %.y])
     `this
+      %fact
+    =^  cards  state
+      ?+  p.cage.sign  `state
+          %btc-provider-response
+        `state
+          %btc-wallet-store-request
+        (handle-request:hc !<(request:bws q.cage.sign))
+      ==
+    [cards this]
   ==
 ++  on-arvo   on-arvo:def
 ++  on-fail   on-fail:def
@@ -92,17 +114,35 @@
   |=  act=action
   ^-  (quip card _state)
   ?-  -.act
-      %get-balance
-    ~&  >  %get-balance
-    ~&  >  addresses.act
-    `state
-    ::
       %set-provider
     :_  state
-    [[%pass /set-provider %agent [provider.act %btc-provider] %watch /clients]]~
-    ::
-      %add-xpub
-    ~&  >  xpub.act
-    `state
+::  TODO  %+  weld
+::      ?~(provider *(list card) ~[[%pass /leave-prov %agent [host.u.provider %btc-provider] %leave ~]])
+    ~[[%pass /set-prov %agent [provider.act %btc-provider] %watch /clients]]
   ==
+++  handle-request
+  |=  req=request:bws
+  ^-  (quip card _state)
+  ?-  -.req
+      %scan-address
+    ?~  provider  ~|("provider not set" !!)
+    =/  ri=req-id  (mk-req-id +.req)
+    =/  a=address  *address
+::   TODO   (~(mk-address (from-xpub:walt:lib-bws xpub.req) chyg.req) idx.req)
+    :-  ~[(get-address-info host.u.provider a)]
+    state(pend (~(put by pend) ri +.req))
+  ==
+::
+++  get-address-info
+  |=  [host=ship a=address]  ^-  card
+  :*  %pass  /[(scot %da now.bowl)]  %agent  [host %btc-provider]
+      %poke  %btc-provider-action  !>([%get-address-info a])
+  ==
+::
+++  mk-req-id
+  |=  [=xpub =chyg:bws =idx:bws]  ^-  req-id
+  =/  chygidx=@  (cat 3 ?:(=(%0 chyg) '0' '1') idx)
+  =/  dat=@  (cat 3 xpub chygidx)
+  %-  ripemd-160:ripemd:crypto
+  [(met 3 dat) dat]
 --

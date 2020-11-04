@@ -1,9 +1,11 @@
 ::  btc-wallet-store.hoon
 ::  Manages wallet pubkeys
 ::
-::  Subscriptions: none
-::  To Subscribers:
-::    watched address updates
+::  Subscribes to: none
+::
+::  Sends updates on:
+::    - /requests: to request data about addresses
+::    - /updates: new data about one of our addresses
 ::
 /-  *btc-wallet-store
 /+  dbug, default-agent, *btc-wallet-store, btc, bip32
@@ -62,8 +64,12 @@
   |=  pax=path
   ^-  (quip card _this)
   ?>  (team:title our.bowl src.bowl)
-  ?>  ?=([%wallets *] pax)
-  `this
+  ?+  pax  (on-watch:def pax)
+      [%requests *]
+    `this
+      [%updates *]
+    `this
+  ==
 ++  on-leave  on-leave:def
 ++  on-peek   on-peek:def
 ++  on-agent  on-agent:def
@@ -89,6 +95,13 @@
       %update-address
     `state
   ==
+::  Wallet-scan algorithm:
+::  Initiate a batch for each chyg, with max-gap idxs in it
+::  Send that to /requests subscribers to call out to providers and get the info
+::  Whenever a %watch-address result comes back
+::    - remove that idx from todo.batch
+::    - do run-scan to check whether that chyg is done
+::    - if it isn't, refill it with idxs to scan
 ::
 ++  req-scan
   |=  [b=batch =xpub =chyg]
@@ -161,10 +174,7 @@
   ^-  (quip card _state)
   =/  s0  (scan-status xpub %0)
   =/  s1  (scan-status xpub %1)
-  ~&  >>  s0
-  ~&  >>  s1
   ?:  ?&(empty.s0 done.s0 empty.s1 done.s1)
-    ~&  >  "ending scan"
     `(end-scan xpub)
   =/  [cards0=(list card) batch0=batch]
     (bump-batch xpub %0)
