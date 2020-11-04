@@ -1,9 +1,13 @@
-/-  *btc
+/-  *btc, bws=btc-wallet-store
 |%
-+$  xpub  tape
+::  req-id: hash of [xpub chyg idx]
+::  addo: wallet index to send result of request to
+::  back: lookup table of req-id -> addo
+::
++$  req-id  @ux
++$  addo  [=xpub =chyg:bws =idx:bws]
++$  back  (map req-id addo)
 +$  action
-  $%  [%get-balance addresses=(set address)]
-      [%set-provider provider=ship]
-      [%add-xpub xpub=tape]
+  $%  [%set-provider provider=ship]
   ==
 --
