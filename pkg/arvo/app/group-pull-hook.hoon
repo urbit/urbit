@@ -1,5 +1,6 @@
-::  group-hook: allow syncing group data from foreign paths to local paths
+::  group-hook [landscape]:
 ::
+::  allow syncing group data from foreign paths to local paths
 ::
 /-  *group, hook=group-hook, *invite-store, *resource
 /+  default-agent, verb, dbug, store=group-store, grpl=group, pull-hook

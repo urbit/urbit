@@ -100,6 +100,10 @@
   |=  ~
   abet:(emit %pass way.mass-timer.sat %arvo %b %rest nex.mass-timer.sat)
 ::
+++  poke-meld
+  |=  ~  =<  abet
+  (emit %pass /pack %arvo %d %flog %meld ~)
+::
 ++  poke-pack
   |=  ~  =<  abet
   (emit %pass /pack %arvo %d %flog %pack ~)
@@ -187,6 +191,10 @@
     (module-ova:pill top)
   |=([=wire =flog:dill] [%pass wire %arvo %d %flog flog])
 ::
+++  poke-trim
+  |=  pri=@ud  =<  abet
+  (emit %pass /pack %arvo %d %flog %crop pri)
+::
 ++  poke-verb                                         ::  toggle verbose
   |=  ~  =<  abet
   (flog %verb ~)
@@ -211,6 +219,16 @@
   |=  [=binding:eyre =generator:eyre]  =<  abet
   (emit %pass /helm/serv %arvo %e %serve binding generator)
 ::
+++  poke-cors-approve
+  |=  =origin:eyre
+  =<  abet
+  (emit %pass /helm/cors/approve %arvo %e %approve-origin origin)
+::
+++  poke-cors-reject
+  |=  =origin:eyre
+  =<  abet
+  (emit %pass /helm/cors/reject %arvo %e %reject-origin origin)
+::
 ++  poke
   |=  [=mark =vase]
   ?+  mark  ~|([%poke-helm-bad-mark mark] !!)
@@ -221,9 +239,12 @@
     %helm-automass         =;(f (f !<(_+<.f vase)) poke-automass)
     %helm-cancel-automass  =;(f (f !<(_+<.f vase)) poke-cancel-automass)
     %helm-code             =;(f (f !<(_+<.f vase)) poke-code)
+    %helm-cors-approve     =;(f (f !<(_+<.f vase)) poke-cors-approve)
+    %helm-cors-reject      =;(f (f !<(_+<.f vase)) poke-cors-reject)
     %helm-hi               =;(f (f !<(_+<.f vase)) poke-hi)
     %helm-knob             =;(f (f !<(_+<.f vase)) poke-knob)
     %helm-mass             =;(f (f !<(_+<.f vase)) poke-mass)
+    %helm-meld             =;(f (f !<(_+<.f vase)) poke-meld)
     %helm-moon             =;(f (f !<(_+<.f vase)) poke-moon)
     %helm-pack             =;(f (f !<(_+<.f vase)) poke-pack)
     %helm-rekey            =;(f (f !<(_+<.f vase)) poke-rekey)
@@ -232,6 +253,7 @@
     %helm-reset            =;(f (f !<(_+<.f vase)) poke-reset)
     %helm-send-hi          =;(f (f !<(_+<.f vase)) poke-send-hi)
     %helm-serve            =;(f (f !<(_+<.f vase)) poke-serve)
+    %helm-trim             =;(f (f !<(_+<.f vase)) poke-trim)
     %helm-verb             =;(f (f !<(_+<.f vase)) poke-verb)
     %helm-write-sec-atom   =;(f (f !<(_+<.f vase)) poke-sec-atom)
   ==

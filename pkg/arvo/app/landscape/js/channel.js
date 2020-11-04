@@ -66,7 +66,7 @@ class Channel {
   }
 
   deleteOnUnload() {
-    window.addEventListener("unload", (event) => {
+    window.addEventListener("beforeunload", (event) => {
       this.delete();
     });
   }
@@ -103,14 +103,16 @@ class Channel {
       path,
       connectionErrFunc = () => {},
       eventFunc = () => {},
-      quitFunc = () => {}) {
+      quitFunc = () => {},
+      subAckFunc = () => {}) {
     let id = this.nextId();
     this.outstandingSubscriptions.set(
       id,
       {
         err: connectionErrFunc,
         event: eventFunc,
-        quit: quitFunc
+        quit: quitFunc,
+        subAck: subAckFunc
       }
     );
 
@@ -165,9 +167,11 @@ class Channel {
       //    The server side puts messages it sends us in a queue until we
       //    acknowledge that we received it.
       //
-      let x = JSON.stringify(
-        [{action: "ack", "event-id": parseInt(this.lastEventId)}, j]
-      );
+      let payload = [{action: "ack", "event-id": parseInt(this.lastEventId)}];
+      if(j) {
+        payload.push(j)
+      }
+      let x = JSON.stringify(payload);
       req.send(x);
 
       this.lastEventId = this.lastAcknowledgedEventId;
@@ -205,13 +209,16 @@ class Channel {
       } else if (obj.response == "subscribe" ||
                 (obj.response == "poke" && !!subFuncs)) {
         let funcs = subFuncs;
-        //  on a response to a subscribe, we only notify the caller on err
-        //
+
         if (obj.hasOwnProperty("err")) {
           funcs["err"](obj.err);
           this.outstandingSubscriptions.delete(obj.id);
+        } else if (obj.hasOwnProperty("ok")) {
+          funcs["subAck"](obj);
         }
       } else if (obj.response == "diff") {
+        // ack subscription
+        this.sendJSONToChannel();
         let funcs = subFuncs;
         funcs["event"](obj.json);
       } else if (obj.response == "quit") {

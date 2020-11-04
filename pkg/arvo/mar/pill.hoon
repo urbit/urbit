@@ -13,7 +13,7 @@
   |%
   ++  noun  pill
   ++  mime
-    |=  [p=mite:eyre q=octs:eyre]
+    |=  (pair mite octs)
     =+  o=(pair ,* ,*) :: ,*)
     =+  (,[boot-ova=* kernel-ova=(list o) userspace-ova=(list o)] (cue q.q))
     =/  convert

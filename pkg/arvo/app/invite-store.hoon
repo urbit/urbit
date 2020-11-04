@@ -1,3 +1,4 @@
+::  invite-store [landscape]
 /+  *invite-json, default-agent, dbug
 |%
 +$  card  card:agent:gall
