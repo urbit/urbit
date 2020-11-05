@@ -1226,6 +1226,7 @@
 #   define c3__weak   c3_s4('w','e','a','k')
 #   define c3__web    c3_s3('w','e','b')
 #   define c3__wet    c3_s3('w','e','t')
+#   define c3__wend   c3_s4('w','e','n','d')
 #   define c3__werp   c3_s4('w','e','r','p')
 #   define c3__west   c3_s4('w','e','s','t')
 #   define c3__what   c3_s4('w','h','a','t')

@@ -542,8 +542,9 @@
           u3_psat_init = 0,                   //  initialized
           u3_psat_boot = 1,                   //  bootstrap
           u3_psat_play = 2,                   //  replaying
-          u3_psat_work = 3,                   //  working
-          u3_psat_done = 4                    //  shutting down
+          u3_psat_wyrd = 3,                   //  versioning
+          u3_psat_work = 4,                   //  working
+          u3_psat_done = 5                    //  shutting down
         } u3_psat;
 
       /* u3_boot: bootstrap event sequence
