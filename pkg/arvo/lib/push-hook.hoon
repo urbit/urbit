@@ -334,9 +334,14 @@
     =/  rid=(unit resource)
       (resource-for-update:og vase)
     ?~  rid  ~
-    =/  =path
+    =/  prefix=path
       resource+(en-path:resource u.rid)
-    [%give %fact ~[path] update-mark.config vase]~
+    =/  paths=(list path)
+      %+  turn
+        (incoming-subscriptions prefix)
+      |=([ship pax=path] pax)
+    ?~  paths  ~
+    [%give %fact paths update-mark.config vase]~
   ::
   ++  forward-update
     |=  =vase
