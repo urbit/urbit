@@ -25,30 +25,24 @@ let
   serviceAccountKey = builtins.readFile
     ("/var/lib/hercules-ci-agent/secrets/service-account.json");
 
-  # Push a split output derivation containing "out" and "hash" outputs.
-  pushObject =
-    { name, extension, drv, contentType ? "application/octet-stream" }:
-    let
-      # Use the sha256 for the object key prefix.
-      sha256 = builtins.readFile (drv.hash + "/sha256");
-      # Use md5 as an idempotency check for gsutil.
-      contentMD5 = builtins.readFile (drv.hash + "/md5");
-    in localLib.pushStorageObject {
-      inherit serviceAccountKey name contentMD5 contentType;
+  # Push a derivation to a remote storage bucket as a post-build effect.
+  pushObject = { name, drv, contentType ? "application/octet-stream" }:
+    localLib.pushStorageObject {
+      inherit name contentType serviceAccountKey;
 
       bucket = "bootstrap.urbit.org";
-      object = "ci/${lib.removeSuffix extension name}${sha256}.${extension}";
+      object = "ci/${lib.removePrefix "/nix/store/" (toString drv)}";
       file = drv.out;
     };
 
-  # Build and push a split output pill derivation with the ".pill" file extension.
-  pushPill = name: pill:
-    pushObject {
-      inherit name;
+  # # Build and push a split output pill derivation with the ".pill" file extension.
+  # pushPill = name: pill:
+  #   pushObject {
+  #     inherit name;
 
-      drv = pill.build;
-      extension = "pill";
-    };
+  #     drv = pill.build;
+  #     extension = "pill";
+  #   };
 
   systems = lib.filterAttrs (_: v: builtins.elem v supportedSystems) {
     linux = "x86_64-linux";
@@ -99,11 +93,10 @@ in localLib.dimension "system" systems (systemName: system:
       in pushObject {
         name = tarball.name;
         drv = tarball;
-        extension = tarball.meta.extension;
         contentType = "application/x-gtar";
       };
     };
-      
+
     # Filter derivations that have meta.platform missing the current system,
     # such as testFakeShip on darwin.
     platformFilter = localLib.platformFilterGeneric system;
