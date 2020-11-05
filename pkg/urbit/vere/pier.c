@@ -557,7 +557,7 @@ _pier_work_init(u3_pier* pir_u)
 /* _pier_wyrd_good(): %wyrd version negotation succeeded.
 */
 static void
-_pier_wyrd_good(u3_pier* pir_u, u3_ovum* egg_u, u3_gift* gif_u)
+_pier_wyrd_good(u3_pier* pir_u, u3_ovum* egg_u)
 {
   //  restore event callbacks
   //
@@ -570,10 +570,6 @@ _pier_wyrd_good(u3_pier* pir_u, u3_ovum* egg_u, u3_gift* gif_u)
   //  initialize i/o drivers
   //
   _pier_work_init(pir_u);
-
-  //  plan %wyrd effects
-  //
-  _pier_gift_plan(pir_u->wok_u, gif_u);
 
   //  free %wyrd driver and ovum
   //
@@ -674,7 +670,7 @@ _pier_on_lord_wyrd_done(void*    ptr_v,
     u3_fact_free(tac_u);
     u3_gift_free(gif_u);
 
-    //  XX messageing
+    //  XX messaging, cli argument to bypass
     //
     u3l_log("pier: version negotiation failed; downgrade\n");
     _pier_wyrd_fail(pir_u, egg_u, u3_nul);
@@ -686,7 +682,11 @@ _pier_on_lord_wyrd_done(void*    ptr_v,
 
     //  finalize %wyrd success
     //
-    _pier_wyrd_good(pir_u, egg_u, gif_u);
+    _pier_wyrd_good(pir_u, egg_u);
+
+    //  plan %wyrd effects
+    //
+    _pier_gift_plan(pir_u->wok_u, gif_u);
   }
 }
 
@@ -699,11 +699,22 @@ _pier_on_lord_wyrd_bail(void* ptr_v, u3_ovum* egg_u, u3_noun lud)
 
   c3_assert( u3_psat_wyrd == pir_u->sat_e );
 
+  //  XX add cli argument to bypass negotiation failure
+  //
+#if 0
   //  print %wyrd failure and exit
   //
   //    XX check bail mote, retry on %intr, %meme, &c
   //
   _pier_wyrd_fail(pir_u, egg_u, lud);
+#else
+  //  XX temporary hack to fake %wyrd success
+  //
+  {
+    _pier_wyrd_good(pir_u, egg_u);
+    u3z(lud);
+  }
+#endif
 }
 
 /* _pier_wyrd_init(): send %wyrd.
