@@ -102,16 +102,8 @@ in localLib.dimension "system" systems (systemName: system:
         extension = tarball.meta.extension;
         contentType = "application/x-gtar";
       };
-
-      # Top-level pill attributes build and push-to-storage - only on linux.
-    } // lib.optionalAttrs (system == "x86_64-linux") {
-      pill = recurseIntoAttrs {
-        ivory = pushPill "ivory" dynamicPackages.ivory;
-        brass = pushPill "brass" dynamicPackages.brass;
-        solid = pushPill "solid" dynamicPackages.solid;
-      };
     };
-
+      
     # Filter derivations that have meta.platform missing the current system,
     # such as testFakeShip on darwin.
     platformFilter = localLib.platformFilterGeneric system;
