@@ -1,10 +1,11 @@
-/-  *resource, graph-store, post, group-store, metadata-store
+/-  *resource, graph-store, post, group-store, metadata-store, chat-store
 ^? 
 |%
 ::
 +$  index
   $%  [%graph group=resource graph=resource module=@t description=@t]
       [%group group=resource description=@t]
+      [%chat chat=path]
   ==
 ::
 +$  group-contents
@@ -19,6 +20,7 @@
 +$  contents
   $%  [%graph =(list post:post)]
       [%group =(list group-contents)]
+      [%chat =(list envelope:chat-store)]
   ==
 ::
 +$  timebox
