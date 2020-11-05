@@ -28,14 +28,16 @@ in makeEffect {
     }
 
     if ! stat_uri; then
-       header "copying $file to $uri"
+      header "copying $file to $uri"
 
-       gsutil -h "Content-Type:$contentType" cp $file $uri
+      gsutil -h "Content-Type:$contentType" cp $file $uri
 
-       if ! stat_uri; then
-         echo "failed pushing $file to $url" >&2
-         exit 1 
-       fi
+      if ! stat_uri; then
+        header "failed pushing $file to $url"
+        exit 1 
+      fi
+    else
+      header "$uri already exists, skipping"
     fi 
   '';
 }
