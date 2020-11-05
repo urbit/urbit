@@ -113,7 +113,34 @@
   ++  chat-update
     |=  =update:chat-store
     ^-  (quip card _state)
-    [~ state]
+    :_  state
+    ?+   -.update   ~
+      %message  (process-envelope path.update envelope.update)
+      ::
+        %messages  
+      %-  zing
+      (turn envelopes.update (cury process-envelope path.update))
+    ==
+  ::
+  ++  process-envelope
+    |=  [=path =envelope:chat-store]
+    ^-  (list card)
+    ?.  ?&  (~(has in watching) path)
+            !=(author.envelope our.bowl)
+        ==
+      ~
+    =/  =index:store
+      [%chat path]
+    =/  =contents:store
+      [%chat ~[envelope]]
+    ~[(poke-store %add index when.envelope %.n contents)]
+  ::
+  ++  poke-store
+    |=  =action:store
+    ^-  card
+    =/  =cage
+      hark-action+!>(action)
+    [%pass /store %agent [our.bowl %hark-store] %poke cage]
   --
 ::
 ++  on-peek  on-peek:def
@@ -123,6 +150,7 @@
 ++  on-fail   on-fail:def
 --
 |_  =bowl:gall
+::
 ::
 ++  give
   |=  [paths=(list path) =update:hook]
