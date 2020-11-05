@@ -13,7 +13,7 @@
 ::    none
 ::
 /-  *btc, *btc-wallet-hook, bws=btc-wallet-store
-/+  shoe, dbug, default-agent, lib-bws=btc-wallet-store
+/+  shoe, dbug, default-agent, bwsl=btc-wallet-store
 |%
 +$  versioned-state
     $%  state-0
@@ -130,7 +130,7 @@
       %scan-address
     ?~  provider
       ~|("provider not set" !!)
-    =/  ri=req-id  (mk-req-id +>.req)
+    =/  ri=req-id  (hash-xpub:bwsl +>.req)
     :-  ~[(get-address-info host.u.provider a.req)]
     state(pend (~(put by pend) ri +>.req))
   ==
@@ -140,12 +140,4 @@
   :*  %pass  /[(scot %da now.bowl)]  %agent  [host %btc-provider]
       %poke  %btc-provider-action  !>([%get-address-info a])
   ==
-::
-++  mk-req-id
-  |=  [=xpub =chyg:bws =idx:bws]  ^-  req-id
-  =/  chygidx=@  (cat 3 ?:(=(%0 chyg) '0' '1') idx)
-  =/  dat=@  (cat 3 xpub chygidx)
-
-  %-  ripemd-160:ripemd:crypto
-  [(met 3 dat) dat]
 --
