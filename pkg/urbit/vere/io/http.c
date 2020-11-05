@@ -1395,6 +1395,10 @@ _http_serv_init_h2o(SSL_CTX* tls_u, c3_o log, c3_o red)
   h2o_u->fig_u.server_name = h2o_iovec_init(
                                H2O_STRLIT("urbit/vere-" URBIT_VERSION));
 
+  //  set maximum request size to 512 MiB
+  //
+  h2o_u->fig_u.max_request_entity_size = 512 * 1024 * 1024;
+
   // XX default pending vhost/custom-domain design
   // XX revisit the effect of specifying the port
   h2o_u->hos_u = h2o_config_register_host(&h2o_u->fig_u,

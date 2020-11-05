@@ -578,7 +578,8 @@ runFake CLI.Arc {..} opts act = do
     runPierEnv pierConfig networkConfig vKill $
       undefined -- rwith (Pier.pier serfLog vSlog mStart injected) $ act
         
-
+acquirePier :: RAcquire PierEnv Pier
+acquirePier = undefined
 
 runShipEnv :: Maybe Text -> CLI.Run -> CLI.Opts -> TMVar () -> RIO PierEnv a
            -> RIO HostEnv a

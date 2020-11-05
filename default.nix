@@ -119,14 +119,15 @@ let
   };
 
   # Additional top-level packages and attributes exposed for convenience.
-  extraPackages = with localPackages; {
+  extraPackages = with localPackages; rec {
     # Expose packages we've local customisations for.
     inherit (hostPackages) libsigsegv;
 
     urbit-debug = urbit.override { enableDebug = true; };
     urbit-tests = localLib.testFakeShip {
-      inherit urbit herb;
+      inherit herb;
 
+      urbit = urbit-debug;
       pill = solid.lfs;
     };
 

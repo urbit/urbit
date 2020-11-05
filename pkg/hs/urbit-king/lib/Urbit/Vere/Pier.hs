@@ -34,20 +34,21 @@ import Urbit.Noun.Time        (Wen)
 import Urbit.TermSize         (TermSize(..), termSize)
 import Urbit.Vere.Serf        (Serf)
 
-import qualified Data.Text              as T
-import qualified System.Entropy         as Ent
-import qualified Urbit.EventLog.LMDB    as Log
-import qualified Urbit.King.API         as King
-import qualified Urbit.Noun.Time        as Time
-import qualified Urbit.Vere.Ames        as Ames
-import qualified Urbit.Vere.Behn        as Behn
-import qualified Urbit.Vere.Clay        as Clay
-import qualified Urbit.Vere.Eyre        as Eyre
-import qualified Urbit.Vere.Http.Client as Iris
-import qualified Urbit.Vere.Serf        as Serf
-import qualified Urbit.Vere.Term        as Term
-import qualified Urbit.Vere.Term.API    as Term
-import qualified Urbit.Vere.Term.Demux  as Term
+import qualified Data.Text                   as T
+import qualified System.Entropy              as Ent
+import qualified Urbit.EventLog.LMDB         as Log
+import qualified Urbit.King.API              as King
+import qualified Urbit.Noun.Time             as Time
+import qualified Urbit.Vere.Ames             as Ames
+import qualified Urbit.Vere.Behn             as Behn
+import qualified Urbit.Vere.Clay             as Clay
+import qualified Urbit.Vere.Eyre             as Eyre
+import qualified Urbit.Vere.Eyre.KingSubsite as Site
+import qualified Urbit.Vere.Http.Client      as Iris
+import qualified Urbit.Vere.Serf             as Serf
+import qualified Urbit.Vere.Term             as Term
+import qualified Urbit.Vere.Term.API         as Term
+import qualified Urbit.Vere.Term.Demux       as Term
 
 
 -- Initialize pier directory. --------------------------------------------------
@@ -240,24 +241,6 @@ getSnapshot top last = do
     pure $ sort (filter (<= fromIntegral last) snapshotNums)
 
 
--- Utils for Spawning Worker Threads -------------------------------------------
-
-acquireWorker :: HasLogFunc e => Text -> RIO e () -> RAcquire e (Async ())
-acquireWorker nam act = mkRAcquire (async act) kill
- where
-  kill tid = do
-    logInfo ("Killing worker thread: " <> display nam)
-    cancel tid
-
-acquireWorkerBound :: HasLogFunc e => Text -> RIO e () -> RAcquire e (Async ())
-acquireWorkerBound nam act = mkRAcquire (asyncBound act) kill
- where
-  kill tid = do
-    logInfo ("Killing worker thread: " <> display nam)
-    cancel tid
-
-
-
 -- Run Pier --------------------------------------------------------------------
 
 pier
@@ -296,12 +279,6 @@ pier (serf, log) vSlog startedSig injected = do
       Term.addDemux ext demux
     logInfo "TERMSERV External terminal connected."
 
-  --  Slogs go to both stderr and to the terminal.
-  env <- ask
-  atomically $ writeTVar vSlog $ \s@(_, tank) -> runRIO env $ do
-      atomically $ Term.slog muxed s
-      logOther "serf" (display $ T.strip $ tankToText tank)
-
   scryQ <- newTQueueIO
   onKill  <- view onKillPierSigL
 
@@ -319,12 +296,23 @@ pier (serf, log) vSlog startedSig injected = do
         atomically $ writeTQueue scryQ (w, b, g, putMVar res)
         takeMVar res
 
+  -- Set up the runtime subsite server and its capability to slog
+  siteSlog <- newTVarIO (const $ pure ())
+  runtimeSubsite <- Site.kingSubsite ship pierScry siteSlog
+
+  --  Slogs go to stderr, to the runtime subsite, and to the terminal.
+  env <- ask
+  atomically $ writeTVar vSlog $ \s@(_, tank) -> runRIO env $ do
+      atomically $ Term.slog muxed s
+      io $ readTVarIO siteSlog >>= ($ s)
+      logOther "serf" (display $ T.strip $ tankToText tank)
+
   (bootEvents, startDrivers) <- do
     env <- ask
     let err = atomically . Term.trace muxed . (<> "\r\n")
     siz <- atomically $ Term.curDemuxSize demux
     let fak = isFake logId
-    drivers env ship fak compute pierScry (siz, muxed) err sigint
+    drivers env ship fak compute pierScry (siz, muxed) err sigint runtimeSubsite
 
   let computeConfig = ComputeConfig { ccOnWork      = takeTMVar computeQ
                                     , ccOnKill      = onKill
@@ -441,12 +429,13 @@ drivers
   -> (TermSize, Term.Client)
   -> (Text -> RIO e ())
   -> IO ()
+  -> Site.KingSubsite
   -> RAcquire e ([Ev], RAcquire e Drivers)
-drivers env who isFake plan scry termSys stderr serfSIGINT = do
+drivers env who isFake plan scry termSys stderr serfSIGINT sub = do
   (behnBorn, runBehn) <- rio Behn.behn'
   (termBorn, runTerm) <- rio (Term.term' termSys serfSIGINT)
   (amesBorn, runAmes) <- rio (Ames.ames' who isFake scry stderr)
-  (httpBorn, runEyre) <- rio (Eyre.eyre' who isFake stderr)
+  (httpBorn, runEyre) <- rio (Eyre.eyre' who isFake stderr sub)
   (clayBorn, runClay) <- rio Clay.clay'
   (irisBorn, runIris) <- rio Iris.client'
 

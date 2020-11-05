@@ -5,6 +5,12 @@ let
   optionalList = xs: if xs == null then [ ] else xs;
 
 in {
+  haskell-nix = prev.haskell-nix // {
+    toolPackageName = prev.haskell-nix.toolPackageName // {
+      shellcheck = "ShellCheck";
+    };
+  };
+
   h2o = prev.h2o.overrideAttrs (_attrs: {
     version = final.sources.h2o.rev;
     src = final.sources.h2o;
