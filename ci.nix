@@ -21,40 +21,18 @@ let
   localLib = callPackage ./nix/lib { };
 
   # The key with google storage bucket write permission,
-  # deployed to ci via nixops `deployment.keys."service-account.json"`.
+  # deployed to ci via nixops deployment.keys."service-account.json".
   serviceAccountKey = builtins.readFile
     ("/var/lib/hercules-ci-agent/secrets/service-account.json");
 
-  # Push a split output derivation containing "out" and "hash" outputs.
-  pushObject =
-    { name, extension, drv, contentType ? "application/octet-stream" }:
-    let
-      # Use the sha256 for the object key prefix.
-      sha256 = builtins.readFile (drv.hash + "/sha256");
-      # Use md5 as an idempotency check for gsutil.
-      contentMD5 = builtins.readFile (drv.hash + "/md5");
-    in localLib.pushStorageObject {
-      inherit serviceAccountKey name contentMD5 contentType;
-
-      bucket = "bootstrap.urbit.org";
-      object = "ci/${lib.removeSuffix extension name}${sha256}.${extension}";
-      file = drv.out;
-    };
-
-  # Build and push a split output pill derivation with the ".pill" file extension.
-  pushPill = name: pill:
-    pushObject {
-      inherit name;
-
-      drv = pill.build;
-      extension = "pill";
-    };
-
+  # Filter out systems that this machine does not support.
   systems = lib.filterAttrs (_: v: builtins.elem v supportedSystems) {
     linux = "x86_64-linux";
     darwin = "x86_64-darwin";
   };
 
+  # Build the ci matrix for each of the supported systems, see finalPackages
+  # for the total set of attributes that will be evaluated per system.
 in localLib.dimension "system" systems (systemName: system:
   let
     dynamicPackages = import ./default.nix {
@@ -96,14 +74,17 @@ in localLib.dimension "system" systems (systemName: system:
 
       # Push the tarball to the google storage bucket for the current platform.
       release = let inherit (staticPackages) tarball;
-      in pushObject {
+      in localLib.pushStorageObject {
+        inherit serviceAccountKey;
+
+        bucket = "bootstrap.urbit.org";
+        object = "ci/${lib.removePrefix "/nix/store/" (toString tarball)}";
         name = tarball.name;
-        drv = tarball;
-        extension = tarball.meta.extension;
+        file = tarball.out;
         contentType = "application/x-gtar";
       };
     };
-      
+
     # Filter derivations that have meta.platform missing the current system,
     # such as testFakeShip on darwin.
     platformFilter = localLib.platformFilterGeneric system;
