@@ -481,15 +481,35 @@
 ++  scry
   |=  {fur/(unit (set monk)) ren/@tas why/shop syd/desk lot/coin tyl/path}
   ^-  (unit (unit cage))
-  ?.  ?=(%& -.why)  ~
-  =*  his  p.why
+  ::TODO  don't special-case whey scry
+  ::
   ?:  &(=(ren %$) =(tyl /whey))
     =/  maz=(list mass)
       :~  hey+&+hey.all
           dug+&+dug.all
       ==
     ``mass+!>(maz)
-  [~ ~]
+  ::  only respond for the local identity, %$ desk, current timestamp
+  ::
+  ?.  ?&  =(&+our why)
+          =([%$ %da now] lot)
+          =(%$ syd)
+      ==
+    ~
+  ::  /dx/sessions//line    blit    current line (prompt) of default session
+  ::  /dx/sessions//cursor  @ud     current cursor position of default session
+  ::TODO  support asking for specific sessions once session ids are real
+  ::
+  ?.  ?=(%x ren)  ~
+  ?+  tyl  ~
+      [%sessions %$ *]
+    ?~  hey.all                                [~ ~]
+    ?~  session=(~(get by dug.all) u.hey.all)  [~ ~]
+    ?+  t.t.tyl  ~
+      [%line ~]    ``blit+!>(`blit`see.u.session)
+      [%cursor ~]  ``atom+!>(pos.u.session)
+    ==
+  ==
 ::
 ++  stay  all
 ::
