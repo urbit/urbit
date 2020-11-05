@@ -2,6 +2,7 @@ import BaseApi from "./base";
 import { StoreState } from "../store/type";
 import { dateToDa, decToUd } from "../lib/util";
 import {NotifIndex} from "~/types";
+import { BigInteger } from 'big-integer';
 
 export class HarkApi extends BaseApi<StoreState> {
   private harkAction(action: any): Promise<any> {
@@ -15,6 +16,10 @@ export class HarkApi extends BaseApi<StoreState> {
   private groupHookAction(action: any) {
     return this.action("hark-group-hook", "hark-group-hook-action", action);
   }
+  
+  private chatHookAction(action: any) {
+    return this.action("hark-chat-hook", "hark-chat-hook-action", action);
+  }
 
   private actOnNotification(frond: string, intTime: BigInteger, index: NotifIndex) {
     const time = decToUd(intTime.toString());
@@ -24,10 +29,6 @@ export class HarkApi extends BaseApi<StoreState> {
         index
       }
     });
-  }
-
-  private graphHookAction(action: any) {
-    return this.action("hark-graph-hook", "hark-graph-hook-action", action);
   }
 
   setMentions(mentions: boolean) {
@@ -73,6 +74,9 @@ export class HarkApi extends BaseApi<StoreState> {
       const { group } = index.group;
       return this.ignoreGroup(group);
     }
+    if('chat' in index) {
+      return this.ignoreChat(index.chat);
+    }
     return Promise.resolve();
   }
 
@@ -82,6 +86,9 @@ export class HarkApi extends BaseApi<StoreState> {
     }
     if('group' in index) {
       return this.listenGroup(index.group.group);
+    }
+    if('chat' in index) {
+      return this.listenChat(index.chat);
     }
     return Promise.resolve();
   }
@@ -98,6 +105,12 @@ export class HarkApi extends BaseApi<StoreState> {
     })
   }
 
+  ignoreChat(chat: string) {
+    return this.chatHookAction({
+      ignore: chat
+    });
+  }
+
 
   listenGroup(group: string) {
     return this.groupHookAction({
@@ -109,6 +122,12 @@ export class HarkApi extends BaseApi<StoreState> {
     return this.graphHookAction({
       listen: graph
     })
+  }
+
+  listenChat(chat: string) {
+    return this.chatHookAction({
+      listen: chat
+    });
   }
 
   async getTimeSubset(start?: Date, end?: Date) {

@@ -62,6 +62,7 @@ export interface StoreState {
   notifications: Notifications;
   notificationsGraphConfig: NotificationGraphConfig;
   notificationsGroupConfig: GroupNotificationsConfig;
+  notificationsChatConfig: string[];
   notificationsCount: number,
   doNotDisturb: boolean;
 }
