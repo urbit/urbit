@@ -8,12 +8,14 @@ import {
   NotificationGraphConfig,
   GroupNotificationsConfig,
   NotifIndex,
-  Associations
+  Associations,
 } from "~/types";
 import GlobalApi from "~/logic/api/global";
 import { StatelessAsyncAction } from "~/views/components/StatelessAsyncAction";
 import { GroupNotification } from "./group";
 import { GraphNotification } from "./graph";
+import { ChatNotification } from "./chat";
+import { BigInteger } from "big-integer";
 
 interface NotificationProps {
   notification: IndexedNotification;
@@ -23,12 +25,14 @@ interface NotificationProps {
   archived: boolean;
   graphConfig: NotificationGraphConfig;
   groupConfig: GroupNotificationsConfig;
+  chatConfig: string[];
 }
 
 function getMuted(
   idx: NotifIndex,
   groups: GroupNotificationsConfig,
-  graphs: NotificationGraphConfig
+  graphs: NotificationGraphConfig,
+  chat: string[]
 ) {
   if ("graph" in idx) {
     const { graph } = idx.graph;
@@ -36,6 +40,9 @@ function getMuted(
   }
   if ("group" in idx) {
     return _.findIndex(groups || [], (g) => g === idx.group.group) === -1;
+  }
+  if ("chat" in idx) {
+    return _.findIndex(chat || [], (c) => c === idx.chat) === -1;
   }
   return false;
 }
@@ -48,6 +55,7 @@ function NotificationWrapper(props: {
   archived: boolean;
   graphConfig: NotificationGraphConfig;
   groupConfig: GroupNotificationsConfig;
+  chatConfig: string[];
 }) {
   const { api, time, notif, children } = props;
 
@@ -55,7 +63,12 @@ function NotificationWrapper(props: {
     return api.hark.archive(time, notif.index);
   }, [time, notif]);
 
-  const isMuted = getMuted(notif.index, props.groupConfig, props.graphConfig);
+  const isMuted = getMuted(
+    notif.index,
+    props.groupConfig,
+    props.graphConfig,
+    props.chatConfig
+  );
 
   const onChangeMute = useCallback(async () => {
     const func = isMuted ? "unmute" : "mute";
@@ -84,19 +97,26 @@ export function Notification(props: NotificationProps) {
   const { notification, associations, archived } = props;
   const { read, contents, time } = notification.notification;
 
+  const Wrapper = ({ children }) => (
+    <NotificationWrapper
+      archived={archived}
+      notif={notification}
+      time={props.time}
+      api={props.api}
+      graphConfig={props.graphConfig}
+      groupConfig={props.groupConfig}
+      chatConfig={props.chatConfig}
+    >
+      {children}
+    </NotificationWrapper>
+  );
+
   if ("graph" in notification.index) {
     const index = notification.index.graph;
     const c: GraphNotificationContents = (contents as any).graph;
 
     return (
-      <NotificationWrapper
-        archived={archived}
-        notif={notification}
-        time={props.time}
-        api={props.api}
-        graphConfig={props.graphConfig}
-        groupConfig={props.groupConfig}
-      >
+      <Wrapper>
         <GraphNotification
           api={props.api}
           index={index}
@@ -108,21 +128,14 @@ export function Notification(props: NotificationProps) {
           time={time}
           associations={associations}
         />
-      </NotificationWrapper>
+      </Wrapper>
     );
   }
   if ("group" in notification.index) {
     const index = notification.index.group;
     const c: GroupNotificationContents = (contents as any).group;
     return (
-      <NotificationWrapper
-        archived={archived}
-        notif={notification}
-        time={props.time}
-        api={props.api}
-        graphConfig={props.graphConfig}
-        groupConfig={props.groupConfig}
-      >
+      <Wrapper>
         <GroupNotification
           api={props.api}
           index={index}
@@ -134,7 +147,27 @@ export function Notification(props: NotificationProps) {
           time={time}
           associations={associations}
         />
-      </NotificationWrapper>
+      </Wrapper>
+    );
+  }
+  if ("chat" in notification.index) {
+    const index = notification.index.chat;
+    const c: ChatNotificationContents = (contents as any).chat;
+    return (
+      <Wrapper>
+        <ChatNotification
+          api={props.api}
+          index={index}
+          contents={c}
+          contacts={props.contacts}
+          read={read}
+          archived={archived}
+          groups={{}}
+          timebox={props.time}
+          time={time}
+          associations={associations}
+        />
+      </Wrapper>
     );
   }
 

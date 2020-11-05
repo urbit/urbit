@@ -54,6 +54,7 @@ export function Resource(props: ResourceProps) {
         render={(routeProps) => (
           <ResourceSkeleton
             notificationsGraphConfig={props.notificationsGraphConfig}
+            notificationsChatConfig={props.notificationsChatConfig}
             baseUrl={props.baseUrl}
             {...skelProps} 
             atRoot
