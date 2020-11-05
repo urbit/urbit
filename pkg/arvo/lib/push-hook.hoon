@@ -318,14 +318,15 @@
       |=  rid=resource
       =/  pax=path
         [%resource (en-path:resource rid)]
-      =/  paths=(list path)
+      =/  paths=(set path)
+        %-  sy
         %+  turn
           (incoming-subscriptions pax)
-        |=([ship pox=path] pax)
+        |=([ship pox=path] pox)
       =.  sharing
         (~(del in sharing) rid)
       :_  state
-      [%give %kick ~[pax] ~]~
+      [%give %kick ~(tap in paths) ~]~
     ::
     ++  revoke
       |=  [ships=(set ship) rid=resource]
