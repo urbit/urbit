@@ -15,6 +15,13 @@
 ::  max-gap
 ::
 ::
+++  hash-xpub
+  |=  [=xpub:btc =chyg =idx]
+  ^-  @ux
+  =/  chygidx=@  (cat 3 ?:(=(%0 chyg) '0' '1') idx)
+  =/  dat=@  (cat 3 xpub chygidx)
+  %-  ripemd-160:ripemd:crypto
+  [(met 3 dat) dat]
 ++  walt
   =|  st=[=wilt =bipt =wach =nixt scanned=? scan-to=scon max-gap=@]
   |_  =chyg
