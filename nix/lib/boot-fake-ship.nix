@@ -1,8 +1,13 @@
-{ stdenvNoCC, cacert }:
+{ lib, stdenvNoCC, cacert }:
 
-{ urbit, herb, arvo ? null, pill, ship }:
+{ urbit, herb, arvo ? null, pill, ship, arguments ? [ "-l" ] }:
 
-stdenvNoCC.mkDerivation {
+let
+
+  args = arguments ++ [ "-d" "-F" "${ship}" "-B" "${pill}" ]
+    ++ lib.optionals (arvo != null) [ "-A" "${arvo}" ];
+
+in stdenvNoCC.mkDerivation {
   name = "fake-${ship}";
 
   buildInputs = [ cacert urbit herb ];
@@ -15,17 +20,9 @@ stdenvNoCC.mkDerivation {
       exit 1
     fi
 
-    ARVO=${if arvo == null then "" else arvo}
-    PILL=${pill}
-    SHIP=${ship}
-
     set -xeuo pipefail
 
-    if [ -z "$ARVO" ]; then
-      urbit -d -F "$SHIP" -B "$PILL" ./pier
-    else
-      urbit -d -F "$SHIP" -A "$ARVO" -B "$PILL" ./pier
-    fi
+    urbit ${lib.concatStringsSep " " args} ./pier
 
     cleanup () {
       if [ -f ./pier/.vere.lock ]; then

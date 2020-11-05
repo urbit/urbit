@@ -2,7 +2,7 @@
 , ed25519, ent, ge-additions, gmp, h2o, herb, ivory, libaes_siv, libscrypt
 , libsigsegv, libuv, lmdb, murmur3, openssl, secp256k1, softfloat3, zlib
 , enableStatic ? stdenv.hostPlatform.isStatic, enableDebug ? false
-, doCheck ? true, enableParallelBuilding ? true }:
+, doCheck ? true, enableParallelBuilding ? true, dontStrip ? true }:
 
 let
 
@@ -73,7 +73,10 @@ in stdenv.mkDerivation {
   # See https://github.com/NixOS/nixpkgs/issues/18995
   hardeningDisable = lib.optionals enableDebug [ "all" ];
 
-  inherit enableParallelBuilding doCheck;
+  inherit enableParallelBuilding doCheck dontStrip;
 
-  meta = { debug = enableDebug; };
+  meta = {
+    debug = enableDebug;
+    arguments = lib.optionals enableDebug [ "-g" ];
+  };
 }
