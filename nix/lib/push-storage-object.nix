@@ -1,4 +1,4 @@
-{ lib, makeEffect, google-cloud-sdk }:
+{ lib, makeEffect, python3, google-cloud-sdk }:
 
 { bucket, object, name, file, contentType, serviceAccountKey }:
 
@@ -14,7 +14,7 @@ in makeEffect {
 
   name = "push-${name}";
 
-  inputs = [ google-cloud-sdk ];
+  inputs = [ (google-cloud-sdk.override { python = python3; }) ];
 
   dontUnpack = true;
 
