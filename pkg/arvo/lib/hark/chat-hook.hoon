@@ -24,7 +24,7 @@
     %+  frond  -.upd
     ?-  -.upd
       ?(%listen %ignore)  (path chat.upd)
-        %initial   a+(turn ~(tap in watching.upd) path)
+      %initial   a+(turn ~(tap in watching.upd) path)
     ==
   --
 --

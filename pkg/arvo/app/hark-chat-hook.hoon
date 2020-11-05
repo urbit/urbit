@@ -159,5 +159,5 @@
 ::
 ++  watch-chat
   ^-  card
-  [%pass /chat %agent [our.bowl %graph-store] %watch /updates]
+  [%pass /chat %agent [our.bowl %chat-store] %watch /updates]
 --

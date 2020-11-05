@@ -1,5 +1,5 @@
 /-  sur=hark-store, post
-/+  resource, graph-store, group-store
+/+  resource, graph-store, group-store, chat-store
 ^?
 =<  [. sur]
 =,  sur
@@ -11,6 +11,7 @@
     %-  of
     :~  graph+graph-index
         group+group-index
+        chat+pa
     ==
   ::
   ++  group-index
@@ -106,6 +107,7 @@
       ?-  -.index
         %graph  (graph-index +.index)
         %group  (group-index +.index)
+        %chat   (path chat.index)
       ==
       :: 
       ++  graph-index
@@ -144,7 +146,14 @@
       ?-  -.contents
         %graph  (graph-contents +.contents)
         %group  (group-contents +.contents)
+        %chat   (chat-contents +.contents)
       ==
+      ::
+      ++  chat-contents
+        |=  =(list envelope:chat-store)
+        ^-  json
+        :-  %a
+        (turn list envelope:enjs:chat-store)
       ::
       ++  graph-contents
         |=  =(list post:post)
