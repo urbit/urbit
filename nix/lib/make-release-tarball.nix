@@ -13,10 +13,9 @@ let
 
 in stdenvNoCC.mkDerivation {
   name = "${name}.${extension}";
+  phases = [ "buildPhase" ];
 
-  outputs = [ "out" "hash" ];
   nativeBuildInputs = [ coreutils ];
-  phases = [ "buildPhase" "hashPhase" ];
 
   buildPhase = ''
     tar -vczf $out \
@@ -27,14 +26,5 @@ in stdenvNoCC.mkDerivation {
       ${sources}
   '';
 
-  hashPhase = ''
-    mkdir $hash
-
-    md5sum $out | awk '{printf $1}' > $hash/md5
-    sha256sum $out | awk '{printf $1}' > $hash/sha256
-  '';
-
   preferLocalBuild = true;
-
-  meta = { inherit extension; };
 }
