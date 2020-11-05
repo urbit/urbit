@@ -1,11 +1,8 @@
 import React, { useEffect } from "react";
-import { Box, Col, Button, InputLabel, InputCaption } from "@tlon/indigo-react";
+import { Box, Col, Text } from "@tlon/indigo-react";
 import * as Yup from "yup";
 import GlobalApi from "~/logic/api/global";
-import { Notebook } from "~/types/publish-update";
-import { Contacts } from "~/types/contact-update";
 
-import { MetadataForm } from "./MetadataForm";
 import { Groups, Associations, Association } from "~/types";
 import { Formik, FormikHelpers, Form } from "formik";
 import GroupSearch from "~/views/components/GroupSearch";
@@ -63,8 +60,11 @@ export function GroupifyForm(props: GroupifyFormProps) {
       initialValues={initialValues}
       onSubmit={onGroupify}
     >
-      <Form style={{ display: "contents" }}>
-        <Col mt="4" gapY="4" maxWidth="512px">
+      <Form>
+        <Col gapY="4" maxWidth="512px">
+          <Box>
+            <Text fontWeight="500">Groupify this chanel</Text>
+          </Box>
           <GroupSearch
             id="group"
             label="Group"
@@ -73,7 +73,7 @@ export function GroupifyForm(props: GroupifyFormProps) {
             associations={props.associations}
             adminOnly
           />
-          <AsyncButton loadingText="Groupifying..." border>
+          <AsyncButton primary loadingText="Groupifying..." border>
             Groupify
           </AsyncButton>
         </Col>

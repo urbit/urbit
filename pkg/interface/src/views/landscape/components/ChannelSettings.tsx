@@ -10,7 +10,7 @@ import {
 } from "@tlon/indigo-react";
 import { Formik, Form, useFormikContext, FormikHelpers } from "formik";
 import GlobalApi from "~/logic/api/global";
-import { uxToHex } from '~/logic/lib/util';
+import { uxToHex } from "~/logic/lib/util";
 import { FormError } from "~/views/components/FormError";
 import { ColorInput } from "~/views/components/ColorInput";
 import { Association, Groups, Associations } from "~/types";
@@ -66,16 +66,13 @@ export function ChannelSettings(props: ChannelSettingsProps) {
   };
 
   return (
-    <Box overflowY="auto" p={4}>
+    <Col gapY="6" overflowY="auto" p={4}>
       <Formik initialValues={initialValues} onSubmit={onSubmit}>
         <Form style={{ display: "contents" }}>
-          <Col
-            maxWidth="512px"
-            gapY="4"
-          >
+          <Col maxWidth="512px" gapY="4">
             <Col mb={3}>
               <Text fontWeight="bold">Channel Settings</Text>
-              <Label gray mt='2'>
+              <Label gray mt="2">
                 Set the title, description and colour of the channel
               </Label>
             </Col>
@@ -101,7 +98,8 @@ export function ChannelSettings(props: ChannelSettingsProps) {
           </Col>
         </Form>
       </Formik>
+      <Box borderBottom="1" borderBottomColor="lightGray" width="100%" maxWidth="512px" />
       <GroupifyForm {...props} />
-    </Box>
+    </Col>
   );
 }
