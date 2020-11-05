@@ -7,6 +7,7 @@ import { Groups, Associations, Association } from "~/types";
 import { Formik, FormikHelpers, Form } from "formik";
 import GroupSearch from "~/views/components/GroupSearch";
 import { AsyncButton } from "~/views/components/AsyncButton";
+import {useHistory} from "react-router-dom";
 
 const formSchema = Yup.object({
   group: Yup.string().nullable(),
@@ -24,17 +25,29 @@ interface GroupifyFormProps {
 }
 
 export function GroupifyForm(props: GroupifyFormProps) {
+  const history = useHistory();
+  const { association } = props;
   const onGroupify = async (
     values: FormSchema,
     actions: FormikHelpers<FormSchema>
   ) => {
     try {
-      const [, , ship, name] = props.association["app-path"].split("/");
-      await props.api.graph.groupifyGraph(
-        ship,
-        name,
-        values.group || undefined
-      );
+      if (association["app-name"] === "chat") {
+        await props.api.chat.groupify(
+          association["app-path"],
+          values.group,
+          true
+        );
+      } else {
+        const [, , ship, name] = association["app-path"].split("/");
+        await props.api.graph.groupifyGraph(
+          ship,
+          name,
+          values.group || undefined
+        );
+      }
+      const mod = association.metadata.module || association['app-name'];
+      history.push(`/~landscape${values.group}/resource/${mod}${association['app-path']}`);
       actions.setStatus({ success: null });
     } catch (e) {
       console.error(e);
@@ -68,7 +81,7 @@ export function GroupifyForm(props: GroupifyFormProps) {
           <GroupSearch
             id="group"
             label="Group"
-            caption="What group should this channel be added to? If blank, a new group will be made for the channel"
+            caption="What group should this channel be added to? If blank, a new group will be made for the channel. Note that you must be an admin to add channels to a group"
             groups={props.groups}
             associations={props.associations}
             adminOnly
