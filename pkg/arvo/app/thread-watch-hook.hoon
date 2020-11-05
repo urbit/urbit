@@ -123,8 +123,8 @@
       (on-agent:def wire sign)
     ?~  p.sign  [~ this]
     =/  =time  (slav %da i.t.wire)
-    =/  tid  (slav %uv i.t.t.wire)
     =/  =observer:sur  (~(got by observers) time)
+    ~&  added-invalid-observer+observer
     :_  this(observers (~(del by observers) time))
     :~  :*  %pass
             [%observer i.t.wire ~]
@@ -148,6 +148,7 @@
         [%thread-result @ ~]  [~ this]
         [%observer @ ~]
       =/  =time  (slav %da i.t.wire)
+      ~&  watch-ack-deleting-observer+(~(got by observers) time)
       [~ this(observers (~(del by observers) time))]
     ==
   ::
@@ -155,18 +156,34 @@
     ?+    wire  (on-agent:def wire sign)
         [%thread-result @ ~]
       ?.  =(p.cage.sign %thread-fail)
-        [~ this]
+        :_  this
+        :_  ~
+        :*  %pass
+            wire
+            %agent
+            [our.bowl %spider]
+            %leave
+            ~
+        == 
       =/  =time  (slav %da i.t.wire)
       =/  =observer:sur  (~(got by observers) time)
+      ~&  observer-failed+observer
       :_  this(observers (~(del by observers) time))
-      :_  ~
-      :*  %pass
-          [%observer i.t.wire ~]
-          %agent
-          [our.bowl app.observer]
-          %leave
-          ~
-      == 
+      :~  :*  %pass
+              [%observer i.t.wire ~]
+              %agent
+              [our.bowl app.observer]
+              %leave
+              ~
+          ==
+          :*  %pass
+              wire
+              %agent
+              [our.bowl %spider]
+              %leave
+              ~
+          == 
+      ==
     ::
         [%observer @ ~]
       =/  =time  (slav %da i.t.wire)
@@ -174,20 +191,20 @@
       =/  tid  (scot %uv (sham eny.bowl))
       :_  this
       :~  :*  %pass
+              [%thread-result i.t.wire ~]
+              %agent
+              [our.bowl %spider]
+              %watch
+              [%thread-result tid ~]
+          ==  
+          :*  %pass
               [%thread-start i.t.wire tid ~]
               %agent
               [our.bowl %spider]
               %poke
               %spider-start
               !>([~ `tid thread.observer (slop q.cage.sign !>(~))])
-          ==
-          :*  %pass
-              [%thread-result tid ~]
-              %agent
-              [our.bowl %spider]
-              %watch
-              [%thread-result tid ~]
-      ==  == 
+      ==  ==
     ==
   ==
 ::

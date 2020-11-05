@@ -11,8 +11,6 @@
 =/  m  (strand ,vase)
 ^-  form:m
 =+  !<([=update:inv ~] arg)
-;<  ~  bind:m
-  (flog-text "{<update>}")
 ?.  ?=(%accepted -.update)
   (pure:m !>(~))
 ;<  =bowl:spider  bind:m  get-bowl:strandio
@@ -20,7 +18,6 @@
 ?:  =(our.bowl entity.resource.invite)
   ::  do not crash because that will kill the invitatory subscription
   (pure:m !>(~))
-~&  'send graph-join'
 ;<  ~  bind:m
   %+  poke-our  %spider
   =-  spider-start+!>([`tid.bowl ~ %graph-join -])
