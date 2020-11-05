@@ -20,6 +20,7 @@
 +*  this  .
     def   ~(. (default-agent this %|) bowl)
     dep   ~(. (default:pull-hook this config) bowl)
+    gra   ~(. graph bowl)
 ::
 ++  on-init       on-init:def
 ++  on-save       !>(~)
@@ -42,7 +43,7 @@
 ++  on-pull-kick
   |=  =resource
   ^-  (unit path)
-  =/  maybe-time  (peek-update-log:graph resource)
+  =/  maybe-time  (peek-update-log:gra resource)
   ?~  maybe-time  `/
   `/(scot %da u.maybe-time)
 --
