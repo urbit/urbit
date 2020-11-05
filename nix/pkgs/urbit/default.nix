@@ -54,6 +54,12 @@ in stdenv.mkDerivation {
     mkdir -p $out/bin
     cp ./build/urbit $out/bin/urbit
     cp ./build/urbit-worker $out/bin/urbit-worker
+  '' + lib.optionalString (stdenv.isDarwin && enableStatic) ''
+    # Hack stolen from //nixpkgs/pkgs/stdenv/darwin/portable-libsystem.sh
+    find "$out/bin" -exec \
+      install_name_tool -change \
+        ${stdenv.cc.libc}/lib/libSystem.B.dylib \
+        /usr/lib/libSystem.B.dylib {} \;
   '';
 
   CFLAGS = [ (if enableDebug then "-O0" else "-O3") "-g" ]
