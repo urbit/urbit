@@ -67,5 +67,5 @@
   %+  poke-our  %metadata-store
   metadata-action+!>([%remove app-path graph+app-path])
 ;<  ~  bind:m
-  (poke-our %group-store %group-update !>([%remove-group rid.action]))
+  (poke-our %group-store %group-update !>([%remove-group rid.action ~]))
 (pure:m !>(~))
