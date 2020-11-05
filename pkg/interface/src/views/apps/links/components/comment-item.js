@@ -21,6 +21,13 @@ export const CommentItem = (props) => {
         classes={(!!props.member ? 'mix-blend-diff' : '')}
       />;
 
+  const disabled = props.pending || props.post.author !== window.ship;
+
+  const onDelete = async () => {
+    const [ship,name] = props.resource.split('/');
+    await props.api.graph.removeNodes(`~${ship}`, name, [props.post.index]);
+  };
+
   return (
     <Box width="100%" py={3} opacity={props.pending ? '0.6' : '1'}>
       <Row backgroundColor='white'>
@@ -30,6 +37,14 @@ export const CommentItem = (props) => {
             {showNickname ? props.nickname : cite(props.post.author)}
           </Text>
           <Text gray ml={2}>{timeSent}</Text>
+          {!disabled && (
+            <>
+              <Box cursor="pointer" pl="2" color="red" onClick={onDelete}>
+                Delete
+              </Box>
+            </>
+          )}
+
         </Row>
       </Row>
       <Row>

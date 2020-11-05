@@ -133,7 +133,7 @@ export function LinkResource(props: LinkResourceProps) {
                 </Row>
                 <Comments
                   comments={node.children}
-                  resourcePath={resourcePath}
+                  resource={resourcePath}
                   contacts={contactDetails}
                   api={api}
                   hideAvatars={hideAvatars}
