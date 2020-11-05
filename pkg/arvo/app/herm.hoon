@@ -30,7 +30,14 @@
   |=  =path
   ^-  (quip card:agent:gall _this)
   ?.  ?=([%herm ~] path)  !!
-  [~ this]
+  :_  this
+  ::  scry prompt and cursor position out of dill for initial response
+  ::
+  =/  base=^path
+    /dx/(scot %p our.bowl)//(scot %da now.bowl)/sessions
+  :~  [%give %fact ~ %blit !>(.^(blit:dill (weld base //line)))]
+      [%give %fact ~ %blit !>(`blit:dill`hop+.^(@ud (weld base //cursor)))]
+  ==
 ::
 ++  on-arvo
   |=  [=wire =sign-arvo]
