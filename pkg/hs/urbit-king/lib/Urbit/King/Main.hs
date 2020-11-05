@@ -105,6 +105,7 @@ import qualified Urbit.EventLog.LMDB     as Log
 import qualified Urbit.King.CLI          as CLI
 import qualified Urbit.King.EventBrowser as EventBrowser
 import qualified Urbit.Ob                as Ob
+import qualified Urbit.Vere.Archive      as Arc
 import qualified Urbit.Vere.Pier         as Pier
 import qualified Urbit.Vere.Serf         as Serf
 import qualified Urbit.Vere.Term         as Term
@@ -559,14 +560,16 @@ newShip CLI.New{..} opts = do
 
 impShip :: CLI.Arc -> CLI.Opts -> RIO KingEnv ()
 impShip arc@(CLI.Arc {..}) opts = runFake arc opts $ do
-  undefined
+  evs <- Arc.inport aArcPath
+  var <- newEmptyMVar
+  tryPlayShip True False Nothing var evs
 
 expShip :: CLI.Arc -> CLI.Opts -> RIO KingEnv ()
 expShip arc@(CLI.Arc {..}) opts = runFake arc opts $ do
   undefined
 
 -- really this should be unified with the new flow
-runFake :: CLI.Arc -> CLI.Opts -> (Pier -> RIO PierEnv e) -> RIO KingEnv e
+runFake :: CLI.Arc -> CLI.Opts -> RIO PierEnv e -> RIO KingEnv e
 runFake CLI.Arc {..} opts act = do
   -- XX again a hack
   multi <- multiEyre (MultiEyreConf Nothing Nothing True)
@@ -575,8 +578,7 @@ runFake CLI.Arc {..} opts act = do
     vKill <- view (kingEnvL . kingEnvKillSignal)
     let pierConfig = toPierConfig aPierPath aSerfExe opts
     let networkConfig = toNetworkConfig opts
-    runPierEnv pierConfig networkConfig vKill $
-      undefined -- rwith (Pier.pier serfLog vSlog mStart injected) $ act
+    runPierEnv pierConfig networkConfig vKill act
         
 acquirePier :: RAcquire PierEnv Pier
 acquirePier = undefined
