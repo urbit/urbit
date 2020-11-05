@@ -6,7 +6,7 @@
 ++  grab
   |%
   ++  mime  |=({p/mite q/octs} q.q)
-  ++  noun  @t
+  ++  noun  @
   --
 ++  grad  %mime
 --
