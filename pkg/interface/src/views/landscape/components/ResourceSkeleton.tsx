@@ -99,7 +99,8 @@ export function ResourceSkeleton(props: ResourceSkeletonProps) {
             </TruncatedBox>
             <Box flexGrow={1} />
             <ChannelMenu
-              notificationConfig={props.notificationsGraphConfig}
+              graphNotificationConfig={props.notificationsGraphConfig}
+              chatNotificationConfig={props.notificationsChatConfig}
               association={association}
               api={api}
             />
