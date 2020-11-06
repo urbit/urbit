@@ -1,4 +1,4 @@
-/-  sur=thread-watch-hook
+/-  sur=observe-hook
 |_  =action:sur
 ++  grad  %noun
 ++  grow

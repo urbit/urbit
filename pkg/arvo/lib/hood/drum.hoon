@@ -107,7 +107,7 @@
       %graph-store
       %graph-pull-hook
       %graph-push-hook
-      %thread-watch-hook
+      %observe-hook
   ==
 ::
 ++  deft-fish                                           ::  default connects
@@ -243,7 +243,7 @@
     =>  (se-born | %home %graph-push-hook)
     (se-born | %home %graph-pull-hook)
   =?  ..on-load  (lte hood-version %11)
-   (se-born | %home %thread-watch-hook)
+   (se-born | %home %observe-hook)
   ..on-load
 ::
 ++  reap-phat                                         ::  ack connect

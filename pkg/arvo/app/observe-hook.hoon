@@ -1,9 +1,9 @@
-::  thread-watch-hook:
+::  observe-hook:
 ::
 ::  helper that observes an app at a particular path and forwards all facts 
 ::  to a particular thread. kills the subscription if the thread crashes
 ::
-/-  sur=thread-watch-hook
+/-  sur=observe-hook
 /+  default-agent, dbug
 ::
 |%
@@ -43,9 +43,9 @@
     :*  %pass
         wire
         %agent
-        [our.bowl %thread-watch-hook]
+        [our.bowl %observe-hook]
         %poke
-        %thread-watch-action
+        %observe-action
         !>  ^-  action:sur
         action
     ==
@@ -61,14 +61,14 @@
   |=  [=mark =vase]
   ^-  (quip card _this)
   ?>  (team:title our.bowl src.bowl)
-  ?.  ?=(%thread-watch-action mark)
+  ?.  ?=(%observe-action mark)
     (on-poke:def mark vase)
   =/  =action:sur  !<(action:sur vase)
   =*  observer  observer.action
   =/  vals  (silt ~(val by observers))
   ?-  -.action
       %watch
-    ?:  ?|(=(app.observer %spider) =(app.observer %thread-watch-hook)) 
+    ?:  ?|(=(app.observer %spider) =(app.observer %observe-hook)) 
       ~|('we avoid infinite loops' !!)
     ?:  (~(has in vals) observer)
       ~|('duplicate observer' !!)
