@@ -76,12 +76,12 @@ export function GroupifyForm(props: GroupifyFormProps) {
       <Form>
         <Col gapY="4" maxWidth="512px">
           <Box>
-            <Text fontWeight="500">Groupify this chanel</Text>
+            <Text fontWeight="500">Groupify this channel</Text>
           </Box>
           <GroupSearch
             id="group"
             label="Group"
-            caption="What group should this channel be added to? If blank, a new group will be made for the channel. Note that you must be an admin to add channels to a group"
+            caption="Optionally, if you have admin privileges, you can add this channel to a group, or leave this blank to place the channel in its own group"
             groups={props.groups}
             associations={props.associations}
             adminOnly
