@@ -600,8 +600,6 @@ u3m_dump(void)
 }
 #endif
 
-c3_w Exit;
-
 /* u3m_bail(): bail out.  Does not return.
 **
 **  Bail motes:
@@ -612,7 +610,6 @@ c3_w Exit;
 **    %intr               ::  interrupt
 **    %fail               ::  computability failure
 **    %over               ::  stack overflow (a kind of %fail)
-**    %need               ::  namespace block
 **    %meme               ::  out of memory
 **
 **  These are equivalents of the full exception noun, the error ball:
@@ -651,30 +648,15 @@ u3m_bail(u3_noun how)
     }
   }
 
+  //  intercept fatal errors
+  //
   switch ( how ) {
-    case c3__fail: {
-      break;
-    }
-
-    case c3__meme: {
+    case c3__foul:
+    case c3__meme:
+    case c3__oops: {
       fprintf(stderr, "bailing out\r\n");
       abort();
     }
-    case c3__exit: {
-
-      static c3_w xuc_w = 0;
-
-      {
-        // u3l_log("exit %d\r\n", xuc_w);
-        // if ( 49 == xuc_w ) { abort(); }
-        xuc_w++;
-        break;
-      }
-    }
-    case c3__foul:
-    case c3__oops:
-      fprintf(stderr, "bailing out\r\n");
-      assert(0);
   }
 
   if ( &(u3H->rod_u) == u3R ) {
@@ -688,21 +670,15 @@ u3m_bail(u3_noun how)
 
   /* Reconstruct a correct error ball.
   */
-  {
-    if ( _(u3ud(how)) ) {
-      switch ( how ) {
-        case c3__exit: {
-          how = u3nc(2, u3R->bug.tax);
-          break;
-        }
-        case c3__need: {
-          c3_assert(0);
-        }
-        default: {
-          how = u3nt(3, how, u3R->bug.tax);
-          break;
-        }
-      }
+  if ( _(u3ud(how)) ) {
+    switch ( how ) {
+      case c3__exit: {
+        how = u3nc(2, u3R->bug.tax);
+      } break;
+
+      default: {
+        how = u3nt(3, how, u3R->bug.tax);
+      } break;
     }
   }
 
