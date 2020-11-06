@@ -42,6 +42,7 @@ export function Header(props: {
   time: number;
   read: boolean;
   associations: Associations;
+  chat?: boolean;
 }) {
   const { description, channel, group, moduleIcon, read } = props;
   const contacts = props.contacts[group] || {};
@@ -70,8 +71,9 @@ export function Header(props: {
   const groupTitle =
     props.associations.contacts?.[props.group]?.metadata?.title || props.group;
 
+  const app = props.chat ? 'chat' : 'graph';
   const channelTitle =
-    (channel && props.associations.graph?.[channel]?.metadata?.title) ||
+    (channel && props.associations?.[app]?.[channel]?.metadata?.title) ||
     channel;
 
   return (
