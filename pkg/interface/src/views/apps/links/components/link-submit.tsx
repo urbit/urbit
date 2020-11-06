@@ -3,12 +3,11 @@ import { hasProvider } from 'oembed-parser';
 
 import { S3Upload, SubmitDragger } from '~/views/components/s3-upload';
 import { Spinner } from '~/views/components/Spinner';
-import { Icon } from "@tlon/indigo-react";
+import { Box, Text, BaseInput, Button } from "@tlon/indigo-react";
 import GlobalApi from '~/logic/api/global';
 import { S3State } from '~/types';
 
 import { createPost } from '~/logic/api/graph';
-
 
 interface LinkSubmitProps {
   api: GlobalApi;
@@ -176,13 +175,6 @@ export class LinkSubmit extends Component<LinkSubmitProps, LinkSubmitState> {
   }
 
   render() {
-    const activeClasses = (this.state.linkValid && !this.state.disabled)
-      ? 'green2 pointer' : 'gray2';
-
-    const focus = (this.state.submitFocus)
-      ? 'b--black b--white-d'
-      : 'b--gray4 b--gray2-d';
-
     const isS3Ready =
       ( this.props.s3.credentials.secretAccessKey &&
         this.props.s3.credentials.endpoint &&
@@ -190,8 +182,14 @@ export class LinkSubmit extends Component<LinkSubmitProps, LinkSubmitState> {
       );
 
     return (
-      <div
-        className={`flex-shrink-0 relative ba br1 w-100 mb6 ${focus}`}
+      <>
+      <Box
+        flexShrink='0'
+        position='relative'
+        border='1px solid'
+        borderColor={this.state.submitFocus ? 'black' : 'washedGray'}
+        width='100%'
+        borderRadius='2'
         onDragEnter={this.onDragEnter.bind(this)}
         onDragOver={e => {
           e.preventDefault();
@@ -203,31 +201,31 @@ export class LinkSubmit extends Component<LinkSubmitProps, LinkSubmitState> {
         onDrop={this.onDrop}
       >
         {this.state.dragover ? <SubmitDragger /> : null}
-        <div className="relative">
+        <Box position='relative'>
           {
             ( this.state.linkValue ||
               this.state.urlFocus ||
               this.state.disabled
             ) ? null : (
               isS3Ready ? (
-                <span className="gray2 absolute pl2 pt3 pb2 f8"
+                <Text gray position='absolute' pl='2' pt='2' pb='2' fontSize='0'
                       style={{pointerEvents: 'none'}}>
                   Drop or
-                  <span className="pointer green2"
+                  <Text cursor='pointer' color='blue'
                         style={{pointerEvents: 'all'}}
                         onClick={(event) => {
                           if (!this.readyToUpload()) {
                             return;
                           }
                            this.s3Uploader.current.inputRef.current.click();
-                        }}> upload </span>
+                        }}> upload </Text>
                   a file, or paste a link here
-                </span>
+                </Text>
               ) : (
-                <span className="gray2 absolute pl2 pt3 pb2 f8"
+                <Text gray position='absolute' pl='2' pt='2' pb='2' fontSize='0'
                       style={{pointerEvents: 'none'}}>
                   Paste a link here
-                </span>
+                </Text>
               )
             )
           }
@@ -239,9 +237,15 @@ export class LinkSubmit extends Component<LinkSubmitProps, LinkSubmitState> {
             uploadError={this.uploadError.bind(this)}
             className="dn absolute pt3 pb2 pl2 w-100"
           ></S3Upload> : null}
-          <input
+          <BaseInput
             type="url"
-            className="pl2 w-100 f8 pt3 pb2 white-d bg-transparent"
+            pl='2'
+            width='100%'
+            fontSize='0'
+            pt='2'
+            pb='2'
+            color='black'
+            backgroundColor='transparent'
             onChange={this.setLinkValue}
             onBlur={() => this.setState({ submitFocus: false, urlFocus: false })}
             onFocus={() => this.setState({ submitFocus: true, urlFocus: true })}
@@ -255,10 +259,15 @@ export class LinkSubmit extends Component<LinkSubmitProps, LinkSubmitState> {
             }}
             value={this.state.linkValue}
           />
-        </div>
-          <input
+        </Box>
+          <BaseInput
+            pl='2'
+            backgroundColor='transparent'
+            width='100%'
+            fontSize='0'
+            color='black'
             type="text"
-            className="pl2 bg-transparent w-100 f8 white-d linkTitle"
+            className="linkTitle"
             style={{
               resize: 'none',
               height: 40
@@ -276,23 +285,18 @@ export class LinkSubmit extends Component<LinkSubmitProps, LinkSubmitState> {
             }}
             value={this.state.linkTitle}
           />
-          {!this.state.disabled ? <button
-            className={
-              'bg-transparent f8 flex-shrink-0 pr2 pl2 pt2 pb3 ' + activeClasses
-            }
-            disabled={!this.state.linkValid || this.state.disabled}
-            onClick={this.onClickPost.bind(this)}
-            style={{
-              bottom: 12,
-              right: 8
-            }}
+      </Box>
+      <Box mt='2' mb='4'>
+        <Button
+          flexShrink='0'
+          primary
+          disabled={!this.state.linkValid || this.state.disabled}
+          onClick={this.onClickPost.bind(this)}
           >
             Post link
-          </button> : null}
-          <Spinner awaiting={this.state.disabled} classes="nowrap flex items-center pr2 pl2 pt2 pb4" style={{flex: '1 1 14rem'}} text="Posting to collection..." />
-
-
-      </div>
+          </Button>
+      </Box>
+      </>
     ) ;
   }
 }
