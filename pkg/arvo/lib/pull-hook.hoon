@@ -38,16 +38,25 @@
       push-hook-name=term
   ==
 ::  
-::  $state-0: state for the pull hook
+::  $base-state-0: state for the pull hook
 ::
 ::    .tracking: a map of resources we are pulling, and the ships that
 ::    we are pulling them from.
 ::    .inner-state: state given to internal door
 ::
-+$  state-0
++$  base-state-0
   $:  %0
     tracking=(map resource ship)
     inner-state=vase
+  ==
+::
++$  state-0  [%0 base-state-0]
+::
++$  state-1  [%1 base-state-0]
+::
++$  versioned-state 
+  $%  state-0
+      state-1
   ==
 ::
 ++  default
@@ -133,7 +142,7 @@
 ++  agent
   |*  =config
   |=  =(pull-hook config)
-  =|  state-0
+  =|  state-1
   =*  state  -
   ^-  agent:gall
   =<
@@ -149,12 +158,40 @@
       [cards this]
     ++  on-load
       |=  =old=vase
-      ^-  [(list card:agent:gall) agent:gall]
       =/  old
-        !<(state-0 old-vase)
-      =^  cards   pull-hook
-        (on-load:og inner-state.old)
-      [cards this(state old)]
+        !<(versioned-state old-vase)
+      =|  cards=(list card:agent:gall)
+      |^ 
+      ?-  -.old
+          %1  
+        =^  og-cards   pull-hook
+          (on-load:og inner-state.old)
+        [(weld cards og-cards) this(state old)]
+        ::
+          %0
+        %_    $
+            -.old  %1
+          ::
+            cards
+          (weld cards (missing-subscriptions tracking.old))
+        ==
+      ==
+      ++  missing-subscriptions
+        |=  tracking=(map resource ship)
+        ^-  (list card:agent:gall)
+        %+  murn
+          ~(tap by tracking)
+        |=  [rid=resource =ship]
+        ^-  (unit card:agent:gall)
+        =/  =path
+          (en-path:resource rid)
+        =/  =wire
+          (weld /pull/resource path)
+        ?:  (~(has by wex.bowl) [wire ship push-hook-name.config])
+          ~
+        `[%pass wire %agent [ship push-hook-name.config] %watch path]
+      --
+    ::
     ++  on-save
       ^-  vase
       =.  inner-state
