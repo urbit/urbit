@@ -1,16 +1,13 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { Col } from "@tlon/indigo-react";
-import { CommentItem } from "./CommentItem";
-import CommentInput from "./CommentInput";
-import { dateToDa } from "~/logic/lib/util";
-import { Comment, Note, NoteId } from "~/types/publish-update";
-import { Contacts } from "~/types/contact-update";
-import _ from "lodash";
-import GlobalApi from "~/logic/api/global";
-import { FormikHelpers } from "formik";
-import {GraphNode, Graph} from "~/types/graph-update";
-import {createPost} from "~/logic/api/graph";
-import { LocalUpdateRemoteContentPolicy } from "~/types";
+import React from 'react';
+import { Col } from '@tlon/indigo-react';
+import { CommentItem } from '~/views/components/CommentItem';
+import CommentInput from './CommentInput';
+import { Contacts } from '~/types/contact-update';
+import GlobalApi from '~/logic/api/global';
+import { FormikHelpers } from 'formik';
+import { GraphNode } from '~/types/graph-update';
+import { createPost } from '~/logic/api/graph';
+import { LocalUpdateRemoteContentPolicy } from '~/types';
 
 interface CommentsProps {
   comments: GraphNode;
@@ -25,7 +22,7 @@ interface CommentsProps {
 }
 
 export function Comments(props: CommentsProps) {
-  const { comments, ship, book, note, api } = props;
+  const { comments, ship, book, api } = props;
 
   const onSubmit = async (
     { comment },
@@ -33,7 +30,7 @@ export function Comments(props: CommentsProps) {
   ) => {
     try {
       const post = createPost([{ text: comment }], comments?.post?.index);
-      await api.graph.addPost(ship, book, post)
+      await api.graph.addPost(ship, book, post);
       actions.resetForm();
       actions.setStatus({ success: null });
     } catch (e) {
@@ -51,7 +48,7 @@ export function Comments(props: CommentsProps) {
           key={idx}
           contacts={props.contacts}
           api={api}
-          book={book}
+          name={book}
           ship={ship}
           hideNicknames={props.hideNicknames}
           hideAvatars={props.hideAvatars}

@@ -1,36 +1,30 @@
 import React from 'react';
-import { CommentItem } from './comment-item';
-import { getContactDetails } from '~/logic/lib/util';
+import { CommentItem } from '~/views/components/CommentItem';
 
 
 export const Comments = (props) => {
   const {
     hideNicknames,
     hideAvatars,
-    remoteContentPolicy
+    remoteContentPolicy,
+    ship,
+    name
   } = props;
 
   const contacts = props.contacts ? props.contacts : {};
 
   return (
     <div>
-      { Array.from(props.comments).map(([date, comment]) => {
-          const { nickname, color, member, avatar } =
-            getContactDetails(contacts[comment.post.author]);
-
-          const nameClass = nickname && !hideNicknames ? 'inter' : 'mono';
-
+      { Array.from(props.comments).reverse().map(([idx, comment]) => {
           return (
             <CommentItem
+              comment={comment}
+              key={idx}
+              contacts={contacts}
               api={props.api}
-              resource={props.resource}
-              key={comment.post.index}
               post={comment.post}
-              nickname={nickname}
-              hasNickname={Boolean(nickname)}
-              color={color}
-              avatar={avatar}
-              member={member}
+              ship={ship}
+              name={name}
               hideNicknames={hideNicknames}
               hideAvatars={hideAvatars}
               remoteContentPolicy={remoteContentPolicy}

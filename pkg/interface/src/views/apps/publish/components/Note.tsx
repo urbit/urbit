@@ -34,13 +34,13 @@ export function Note(props: NoteProps & RouteComponentProps) {
   const deletePost = async () => {
     setDeleting(true);
     const indices = [note.post.index]
-    await api.graph.removeNodes(ship, book, indices); 
+    await api.graph.removeNodes(ship, book, indices);
     props.history.push(rootUrl);
   };
 
   const comments = getComments(note);
   const [revNum, title, body, post] = getLatestRevision(note);
- 
+
   const noteId = bigInt(note.post.index.split('/')[1]);
 
   let adminLinks: JSX.Element | null = null;
