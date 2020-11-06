@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import _ from 'lodash';
+import _ from "lodash";
 import { Link } from "react-router-dom";
 import GlobalApi from "~/logic/api/global";
 import {
@@ -15,8 +15,12 @@ import { Header } from "./header";
 import { pluralize } from "~/logic/lib/util";
 import ChatMessage from "../chat/components/ChatMessage";
 
-function describeNotification(lent: number) {
-  return `sent ${pluralize("message", lent !== 1)} in`;
+function describeNotification(mention: boolean, lent: number) {
+  const msg = pluralize("message", lent !== 1);
+  if (mention) {
+    return `mentioned you in ${msg} in`;
+  }
+  return `sent ${msg} in`;
 }
 
 export function ChatNotification(props: {
@@ -34,13 +38,14 @@ export function ChatNotification(props: {
   const { index, contents, read, time, api, timebox } = props;
   const authors = _.map(contents, "author");
 
-  const association = props.associations.chat[index];
+  const { chat, mention } = index;
+  const association = props.associations.chat[chat];
   const groupPath = association["group-path"];
   const appPath = association["app-path"];
 
   const group = props.groups[groupPath];
 
-  const desc = describeNotification(contents.length);
+  const desc = describeNotification(mention, contents.length);
   const groupContacts = props.contacts[groupPath];
 
   const onClick = useCallback(() => {
@@ -62,7 +67,7 @@ export function ChatNotification(props: {
         time={time}
         authors={authors}
         moduleIcon="Chat"
-        channel={index}
+        channel={chat}
         contacts={props.contacts}
         group={groupPath}
         description={desc}

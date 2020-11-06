@@ -209,7 +209,8 @@ function notifIdxEqual(a: NotifIndex, b: NotifIndex) {
       a.group.description === b.group.description
     );
   } else if ("chat" in a && "chat" in b) {
-    return a.chat === b.chat;
+    return a.chat.chat === b.chat.chat &&
+      a.chat.mention === b.chat.mention;
   }
   return false;
 }
