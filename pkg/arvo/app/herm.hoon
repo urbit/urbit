@@ -11,6 +11,19 @@
 %+  verb  |
 %-  agent:dbug
 ^-  agent:gall
+=>  |%
+    ++  request-tube
+      |=  [bowl:gall from=mark to=mark next=?]
+      ^-  card:agent:gall
+      :*  %pass  /tube/[from]/[to]
+          %arvo  %c     %warp
+          our    q.byk  ~
+        ::
+          ?:  next
+            [%next %c da+now /[from]/[to]]
+          [%sing %c da+now /[from]/[to]]
+      ==
+    --
 |_  =bowl:gall
 +*  this  .
     def   ~(. (default-agent this %|) bowl)
@@ -18,7 +31,13 @@
 ++  on-init
   ^-  (quip card:agent:gall _this)
   :_  this
-  [%pass /herm/1 %arvo %d %view [//term/1]~]~
+  ::  set up dill session subscription,
+  ::  and ensure the tubes we use are in cache
+  ::
+  :~  [%pass /herm/1 %arvo %d %view [//term/1]~]
+      (request-tube bowl %blit %json |)
+      (request-tube bowl %json %belt |)
+  ==
 ::
 ++  on-save   !>([%0 ~])
 ++  on-load
@@ -42,15 +61,29 @@
 ++  on-arvo
   |=  [=wire =sign-arvo]
   ^-  (quip card:agent:gall _this)
-  ?.  =(/herm/1 wire)  !!
-  ?.  ?=([%d %blit *] sign-arvo)
-    ~|  [%unexpected-sign [- +<]:sign-arvo]
-    !!
-  :: ~&  [dap.bowl %blit (turn p.sign-arvo head)]
-  :_  this
-  %+  turn  p.sign-arvo
-  |=  =blit:dill
-  [%give %fact [/herm]~ %blit !>(blit)]
+  ?+  wire  !!
+    ::  pass on dill blits for the session
+    ::
+      [%herm %~.1 ~]
+    ?.  ?=([%d %blit *] sign-arvo)
+      ~|  [%unexpected-sign [- +<]:sign-arvo]
+      !!
+    :_  this
+    %+  turn  p.sign-arvo
+    |=  =blit:dill
+    [%give %fact [/herm]~ %blit !>(blit)]
+  ::
+    ::  ensure the tubes we need remain in cache
+    ::
+      [%tube @ @ ~]
+    =*  from  i.t.wire
+    =*  to  i.t.t.wire
+    ?.  ?=([%c %writ *] sign-arvo)
+      ~|  [%unexpected-sign [- +<]:sign-arvo]
+      !!
+    :_  this
+    [(request-tube bowl from to &)]~
+  ==
 ::
 ++  on-poke
   |=  [=mark =vase]
