@@ -183,9 +183,9 @@
         |=  [rid=resource =ship]
         ^-  (unit card:agent:gall)
         =/  =path
-          (en-path:resource rid)
+          resource+(en-path:resource rid)
         =/  =wire
-          (weld /pull/resource path)
+          pull+path
         ?:  (~(has by wex.bowl) [wire ship push-hook-name.config])
           ~
         `[%pass wire %agent [ship push-hook-name.config] %watch path]
