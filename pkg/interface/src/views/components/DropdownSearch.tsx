@@ -12,21 +12,14 @@ import {
   Box,
   Label,
   ErrorLabel,
-  StatelessTextInput as Input
+  StatelessTextInput as Input,
 } from "@tlon/indigo-react";
 import { useDropdown } from "~/logic/lib/useDropdown";
+import { PropFunc } from "~/types/util";
 
-interface RenderChoiceProps<C> {
-  candidate: C;
-  onRemove: () => void;
-}
-
-interface DropdownSearchProps<C> {
-  autoFocus?: boolean;
-  label?: string;
-  id: string;
+interface DropdownSearchExtraProps<C> {
   // check if entry is exact match
-  isExact: (s: string) => C | undefined;
+  isExact?: (s: string) => C | undefined;
   // Options for dropdown
   candidates: C[];
   // Present options in dropdown
@@ -39,43 +32,57 @@ interface DropdownSearchProps<C> {
   getKey: (c: C) => string;
   // search predicate
   search: (s: string, c: C) => boolean;
-  // render selected candidate
-  renderChoice: (props: RenderChoiceProps<C>) => React.ReactNode;
   onSelect: (c: C) => void;
-  onRemove: (c: C) => void;
-  value: C | undefined;
-  caption?: string;
   disabled?: boolean;
-  error?: string;
   placeholder?: string;
 }
 
+type DropdownSearchProps<C> = PropFunc<typeof Box> &
+  DropdownSearchExtraProps<C>;
+
 export function DropdownSearch<C>(props: DropdownSearchProps<C>) {
   const textarea = useRef<HTMLTextAreaElement>();
-  const { candidates, getKey, caption, autoFocus } = props;
+  const {
+    candidates,
+    getKey,
+    search: searchPred,
+    onSelect,
+    isExact,
+    renderCandidate,
+    disabled,
+    placeholder,
+    ...rest
+  } = props;
 
   const [query, setQuery] = useState("");
+  const exact = useCallback(
+    (s: string) => {
+      return isExact ? isExact(s) : undefined;
+    },
+    [isExact]
+  );
 
   const { next, back, search, selected, options } = useDropdown(
     candidates,
     getKey,
-    props.search
+    searchPred,
+    exact
   );
 
-  const onSelect = useCallback(
+  const handleSelect = useCallback(
     (c: C) => {
       setQuery("");
-      props.onSelect(c);
+      onSelect(c);
     },
-    [setQuery, props.onSelect]
+    [setQuery, onSelect]
   );
 
   const onEnter = useCallback(() => {
     if (selected) {
-      onSelect(selected);
+      handleSelect(selected);
     }
     return false;
-  }, [onSelect, selected]);
+  }, [handleSelect, selected]);
 
   useEffect(() => {
     if (!textarea.current) {
@@ -103,7 +110,7 @@ export function DropdownSearch<C>(props: DropdownSearchProps<C>) {
   );
 
   const dropdown = useMemo(() => {
-    const first = props.isExact(query);
+    const first = props.isExact?.(query);
     let opts = options;
     if (first) {
       opts = options.includes(first) ? opts : [first, ...options];
@@ -112,30 +119,26 @@ export function DropdownSearch<C>(props: DropdownSearchProps<C>) {
       props.renderCandidate(
         o,
         !_.isUndefined(selected) && props.getKey(o) === props.getKey(selected),
-        onSelect
+        handleSelect
       )
     );
   }, [options, props.getKey, props.renderCandidate, selected]);
 
   return (
-    <Box position="relative" zIndex={9}>
-      {props.label && (<Label htmlFor={props.id}>{props.label}</Label>)}
-      {caption ? <Label mt="2" gray>{caption}</Label> : null}
-      {!props.disabled && (
-        <Input
-          mt="2"
-          ref={textarea}
-          onChange={onChange}
-          value={query}
-          autocomplete="off"
-          placeholder={props.placeholder || ""}
-          autoFocus={autoFocus}
-        />
-      )}
+    <Box {...rest} position="relative" zIndex={9}>
+      <Input
+        ref={textarea}
+        onChange={onChange}
+        value={query}
+        autocomplete="off"
+        disabled={disabled}
+        placeholder={placeholder}
+      />
       {dropdown.length !== 0 && query.length !== 0 && (
         <Box
-          mt={1}
-          border={1}
+          mt="1"
+          border="1"
+          borderRadius="1"
           borderColor="washedGray"
           bg="white"
           width="100%"
@@ -144,15 +147,6 @@ export function DropdownSearch<C>(props: DropdownSearchProps<C>) {
           {dropdown}
         </Box>
       )}
-      {props.value && (
-        <Box mt={2} display="flex">
-          {props.renderChoice({
-            candidate: props.value,
-            onRemove: () => props.onRemove(props.value as C),
-          })}
-        </Box>
-      )}
-      <ErrorLabel>{props.error}</ErrorLabel>
     </Box>
   );
 }

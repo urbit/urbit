@@ -23,7 +23,7 @@ export const homeAssociation = {
   "group-path": "/home",
   metadata: {
     color: "0x0",
-    title: "Home",
+    title: "DMs + Drafts",
     description: "",
     "date-created": "",
     module: "",

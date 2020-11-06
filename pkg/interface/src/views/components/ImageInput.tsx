@@ -7,6 +7,7 @@ import {
   Button,
   Label,
   ErrorLabel,
+  BaseInput
 } from "@tlon/indigo-react";
 import { useField } from "formik";
 import { S3State } from "~/types/s3-update";
@@ -75,7 +76,7 @@ export function ImageInput(props: ImageInputProps) {
             >
               {uploading ? "Uploading" : "Upload"}
             </Button>
-            <input
+            <BaseInput
               style={{ display: "none" }}
               type="file"
               id="fileElement"

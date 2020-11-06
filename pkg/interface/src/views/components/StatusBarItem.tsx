@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { Row as _Row, Icon } from "@tlon/indigo-react";
+import { Row as _Row, Icon, Button } from "@tlon/indigo-react";
 import styled from "styled-components";
 
 const Row = styled(_Row)`
@@ -14,15 +14,11 @@ export function StatusBarItem({
   ...props
 }: StatusBarItemProps) {
   return (
-    <Row
+    <Button
       position="relative"
-      collapse
       border={1}
-      borderRadius={2}
       color="washedGray"
       bg="white"
-      alignItems="center"
-      height='32px'
       px={2}
       {...props}
     >
@@ -35,6 +31,6 @@ export function StatusBarItem({
           style={{ position: 'absolute', top: '-10', right: '-11' }}
         />
       )}
-    </Row>
+    </Button>
   );
 }
