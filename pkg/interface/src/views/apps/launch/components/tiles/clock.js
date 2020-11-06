@@ -72,10 +72,19 @@ const Moon = ({ angle, ...props }) => {
         <rect x="-50" y="-50" height="200" width="200" fill="black" />
         <path d={dFromPhase(phase)} fill="white"/>
       </mask>
+      <circle
+        id="moonbg"
+        cx={CX + (RADIUS - 12) * Math.cos(degToRad(angle))}
+        cy={CY + (RADIUS - 12) * Math.sin(degToRad(angle))}
+        fill="rgba(255,255,255,0.6)"
+        r={CELESTIAL_BODY_SIZE / 2}
+        {...props}
+      ></circle>
       <use
       width={CELESTIAL_BODY_SIZE}
       height={CELESTIAL_BODY_SIZE}
       xlinkHref="#Moon-symbol" 
+      id="moon"
       x={cx}
       y={cy}
       transform={`rotate(${angle} ${cx + (CELESTIAL_BODY_SIZE / 2)} ${cy + (CELESTIAL_BODY_SIZE / 2)})`}
