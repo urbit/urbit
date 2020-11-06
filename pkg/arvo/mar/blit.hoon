@@ -1,6 +1,7 @@
 ::  blit: runtime blit structure
 ::
-~%  %mar-blit  ..is  ~
+/+  base64
+::
 |_  =blit:dill
 ++  grad  %noun
 ::  +grab: convert from
@@ -12,7 +13,6 @@
 ::  +grow: convert to
 ::
 ++  grow
-  ~%  %blit-grow  ..grow  ~
   |%
   ++  noun  blit
   ++  json
@@ -25,9 +25,19 @@
       %hop  (numb p.blit)
       %lin  s+(crip (tufa p.blit))
       %mor  b+&
-      %sag  (pairs 'path'^(path p.blit) 'file'^s+(jam q.blit) ~)
-      %sav  (pairs 'path'^(path p.blit) 'file'^s+q.blit ~)
       %url  s+p.blit
+    ::
+        %sag
+      %-  pairs
+      :~  'path'^(path p.blit)
+          'file'^s+(en:base64 (as-octs:mimes:html (jam q.blit)))
+      ==
+    ::
+        %sav
+      %-  pairs
+      :~  'path'^(path p.blit)
+          'file'^s+(en:base64 (as-octs:mimes:html q.blit))
+      ==
     ::
         %klr
       :-  %a
