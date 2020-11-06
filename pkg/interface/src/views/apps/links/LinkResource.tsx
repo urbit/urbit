@@ -136,6 +136,8 @@ export function LinkResource(props: LinkResourceProps) {
                   resource={resourcePath}
                   contacts={contactDetails}
                   api={api}
+                  ship={ship}
+                  name={name}
                   hideAvatars={hideAvatars}
                   hideNicknames={hideNicknames}
                   remoteContentPolicy={remoteContentPolicy}
