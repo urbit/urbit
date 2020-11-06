@@ -31,8 +31,11 @@ export class HarkApi extends BaseApi<StoreState> {
     });
   }
 
-  setMentions(mentions: boolean) {
-    return this.graphHookAction({
+  async setMentions(mentions: boolean) {
+    await this.graphHookAction({
+      'set-mentions': mentions
+    });
+    return this.chatHookAction({
       'set-mentions': mentions
     });
   }

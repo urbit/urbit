@@ -18,7 +18,10 @@ export interface GroupNotifIndex {
   description: string;
 }
 
-export type ChatNotifIndex = string;
+export interface ChatNotifIndex {
+  chat: string;
+  mention: boolean;
+}
 
 export type NotifIndex =
   | { graph: GraphNotifIndex }
