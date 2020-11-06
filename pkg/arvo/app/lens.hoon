@@ -88,7 +88,6 @@
             %invite-store
             %chat-store
             %chat-hook
-            %publish
             %graph-store
         ==
       |=  app=@tas
