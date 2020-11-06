@@ -600,8 +600,6 @@ u3m_dump(void)
 }
 #endif
 
-c3_w Exit;
-
 /* u3m_bail(): bail out.  Does not return.
 **
 **  Bail motes:
