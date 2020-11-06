@@ -47,7 +47,8 @@ export function GroupifyForm(props: GroupifyFormProps) {
         );
       }
       const mod = association.metadata.module || association['app-name'];
-      history.push(`/~landscape${values.group}/resource/${mod}${association['app-path']}`);
+      const newGroup = values.group || association['group-path'];
+      history.push(`/~landscape${newGroup}/resource/${mod}${association['app-path']}`);
       actions.setStatus({ success: null });
     } catch (e) {
       console.error(e);
