@@ -12,13 +12,14 @@
   $%  state-0
   ==
 ::
-+$  state-0   [%0 observers=(map time observer:sur)]
++$  serial   @uv
++$  state-0  [%0 observers=(map serial observer:sur)]
 ++  got-by-val
-  |=  [a=(map time observer:sur) b=observer:sur]
-  ^-  time
+  |=  [a=(map serial observer:sur) b=observer:sur]
+  ^-  serial
   %-  need
   %+  roll  ~(tap by a)
-  |=  [[key=time val=observer:sur] output=(unit time)]
+  |=  [[key=serial val=observer:sur] output=(unit serial)]
   ?:(=(val b) `key output)
 --
 ::
@@ -72,10 +73,10 @@
       ~|('we avoid infinite loops' !!)
     ?:  (~(has in vals) observer)
       ~|('duplicate observer' !!)
-    :_  this(observers (~(put by observers) now.bowl observer))  
+    :_  this(observers (~(put by observers) (sham eny.bowl) observer))  
     :_  ~
     :*  %pass
-        /observer/(scot %da now.bowl)
+        /observer/(scot %uv (sham eny.bowl))
         %agent
         [our.bowl app.observer]
         %watch
@@ -89,7 +90,7 @@
     :_  this(observers (~(del by observers) key))
     :_  ~
     :*  %pass
-        /observer/(scot %da key)
+        /observer/(scot %uv key)
         %agent
         [our.bowl app.observer]
         %leave
@@ -100,13 +101,25 @@
 ++  on-agent
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)
-  ?-    -.sign
-      %kick
-    ?+    wire  (on-agent:def wire sign)
-        [%thread-result @ ~]  [~ this]
-        [%observer @ ~]
-      =/  =time  (slav %da i.t.wire)
-      =/  =observer:sur  (~(got by observers) time)
+  |^
+  ?+  wire  (on-agent:def wire sign)
+    [%observer @ ~]        on-observer
+    [%thread-result @ ~]   on-thread-result
+    [%thread-start @ @ ~]  on-thread-start
+  ==
+  ::
+  ++  on-observer
+    ?>  ?=([%observer @ ~] wire)
+    ?+    -.sign  (on-agent:def wire sign)
+        %watch-ack
+      ?~  p.sign  [~ this]
+      =/  =serial  (slav %uv i.t.wire)
+      ~&  watch-ack-deleting-observer+(~(got by observers) serial)
+      [~ this(observers (~(del by observers) serial))]
+    ::
+        %kick
+      =/  =serial  (slav %uv i.t.wire)
+      =/  =observer:sur  (~(got by observers) serial)
       :_  this
       :_  ~
       :*  %pass
@@ -116,78 +129,10 @@
           %watch
           path.observer
       == 
-    ==
-  ::
-      %poke-ack
-    ?.  ?=([%thread-start @ @ ~] wire)
-      (on-agent:def wire sign)
-    ?~  p.sign  [~ this]
-    =/  =time  (slav %da i.t.wire)
-    =/  =observer:sur  (~(got by observers) time)
-    ~&  added-invalid-observer+observer
-    :_  this(observers (~(del by observers) time))
-    :~  :*  %pass
-            [%observer i.t.wire ~]
-            %agent
-            [our.bowl app.observer]
-            %leave
-            ~
-        ==
-        :*  %pass
-            wire
-            %agent
-            [our.bowl app.observer]
-            %leave
-            ~
-        == 
-    ==
-  ::
-      %watch-ack
-    ?~  p.sign  [~ this]
-    ?+    wire  (on-agent:def wire sign)
-        [%thread-result @ ~]  [~ this]
-        [%observer @ ~]
-      =/  =time  (slav %da i.t.wire)
-      ~&  watch-ack-deleting-observer+(~(got by observers) time)
-      [~ this(observers (~(del by observers) time))]
-    ==
-  ::
-      %fact
-    ?+    wire  (on-agent:def wire sign)
-        [%thread-result @ ~]
-      ?.  =(p.cage.sign %thread-fail)
-        :_  this
-        :_  ~
-        :*  %pass
-            wire
-            %agent
-            [our.bowl %spider]
-            %leave
-            ~
-        == 
-      =/  =time  (slav %da i.t.wire)
-      =/  =observer:sur  (~(got by observers) time)
-      ~&  observer-failed+observer
-      :_  this(observers (~(del by observers) time))
-      :~  :*  %pass
-              [%observer i.t.wire ~]
-              %agent
-              [our.bowl app.observer]
-              %leave
-              ~
-          ==
-          :*  %pass
-              wire
-              %agent
-              [our.bowl %spider]
-              %leave
-              ~
-          == 
-      ==
     ::
-        [%observer @ ~]
-      =/  =time  (slav %da i.t.wire)
-      =/  =observer:sur  (~(got by observers) time)
+        %fact
+      =/  =serial  (slav %uv i.t.wire)
+      =/  =observer:sur  (~(got by observers) serial)
       =/  tid  (scot %uv (sham eny.bowl))
       :_  this
       :~  :*  %pass
@@ -206,7 +151,68 @@
               !>([~ `tid thread.observer (slop q.cage.sign !>(~))])
       ==  ==
     ==
-  ==
+  ::
+  ++  on-thread-result
+    ?>  ?=([%thread-result @ ~] wire)
+    ?+    -.sign  (on-agent:def wire sign)
+      %kick       [~ this]
+      %watch-ack  [~ this]
+    ::
+        %fact
+      ?.  =(p.cage.sign %thread-fail)
+        :_  this
+        :_  ~
+        :*  %pass
+            wire
+            %agent
+            [our.bowl %spider]
+            %leave
+            ~
+        == 
+      =/  =serial  (slav %uv i.t.wire)
+      =/  =observer:sur  (~(got by observers) serial)
+      ~&  observer-failed+observer
+      :_  this(observers (~(del by observers) serial))
+      :~  :*  %pass
+              [%observer i.t.wire ~]
+              %agent
+              [our.bowl app.observer]
+              %leave
+              ~
+          ==
+          :*  %pass
+              wire
+              %agent
+              [our.bowl %spider]
+              %leave
+              ~
+          == 
+      ==
+    ==
+  ::
+  ++  on-thread-start
+    ?>  ?=([%thread-start @ @ ~] wire)
+    ?.  ?=(%poke-ack -.sign)  (on-agent:def wire sign)
+    ?~  p.sign  [~ this]
+    =/  =serial  (slav %uv i.t.wire)
+    =/  =observer:sur  (~(got by observers) serial)
+    ~&  added-invalid-observer+observer
+    :_  this(observers (~(del by observers) serial))
+    :~  :*  %pass
+            [%observer i.t.wire ~]
+            %agent
+            [our.bowl app.observer]
+            %leave
+            ~
+        ==
+        :*  %pass
+            wire
+            %agent
+            [our.bowl app.observer]
+            %leave
+            ~
+    ==  == 
+  --
 ::
 ++  on-watch  on-watch:def
 ++  on-leave  on-leave:def
