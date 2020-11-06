@@ -23,7 +23,7 @@ export const homeAssociation = {
   "group-path": "/home",
   metadata: {
     color: "0x0",
-    title: "Home",
+    title: "DMs + Drafts",
     description: "",
     "date-created": "",
     module: "",
@@ -100,6 +100,7 @@ export default class GlobalStore extends BaseStore<StoreState> {
       notifications: new BigIntOrderedMap<Timebox>(),
       archivedNotifications: new BigIntOrderedMap<Timebox>(),
       notificationsGroupConfig: [],
+      notificationsChatConfig: [],
       notificationsGraphConfig: {
         watchOnSelf: false,
         mentions: false,

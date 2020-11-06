@@ -20,7 +20,7 @@ const StatusBar = (props) => {
       gridTemplateColumns="3fr 1fr"
       py='3'
       px='3'
-      pb='2'
+      pb='3'
       >
       <Row collapse>
       <Button borderColor='washedGray' mr='2' px='2' onClick={() => props.history.push('/')} {...props}>
@@ -37,7 +37,7 @@ const StatusBar = (props) => {
           <Text ml={2} color='black'>
             Leap
           </Text>
-          <Text display={['none', 'inline']} ml={4} color='gray'>
+          <Text display={['none', 'inline']} ml={2} color='gray'>
             {metaKey}/
           </Text>
         </StatusBarItem>

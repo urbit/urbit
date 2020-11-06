@@ -186,6 +186,7 @@ export default class ChatEditor extends Component {
             {...props}
           />
           : <CodeEditor
+          className="lh-copy"
           value={message}
           options={options}
           onChange={(e, d, v) => this.messageChange(e, d, v)}

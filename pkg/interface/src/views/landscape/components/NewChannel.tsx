@@ -126,11 +126,9 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
         onSubmit={onSubmit}
       >
         <Form>
-          <Box
-            display="grid"
-            gridTemplateRows="auto"
-            gridRowGap={4}
-            gridTemplateColumns="300px"
+          <Col 
+            maxWidth="348px" 
+            gapY="4"
           >
             <Col gapY="2">
               <Box color="black" mb={2}>Channel Type</Box>
@@ -168,7 +166,7 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
               </AsyncButton>
             </Box>
             <FormError message="Channel creation failed" />
-          </Box>
+          </Col>
         </Form>
       </Formik>
     </Col>

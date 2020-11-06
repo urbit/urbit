@@ -22,6 +22,8 @@ export const Comments = (props) => {
 
           return (
             <CommentItem
+              api={props.api}
+              resource={props.resource}
               key={comment.post.index}
               contacts={contacts}
               post={comment.post}

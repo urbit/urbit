@@ -12,7 +12,7 @@ import { Associations } from "~/types";
 
 type DatedTimebox = [BigInteger, Timebox];
 
-function filterNotification(groups: string[]) {
+function filterNotification(associations: Associations, groups: string[]) {
   if (groups.length === 0) {
     return () => true;
   }
@@ -22,6 +22,9 @@ function filterNotification(groups: string[]) {
       return groups.findIndex((g) => group === g) !== -1;
     } else if ("group" in n.index) {
       const { group } = n.index.group;
+      return groups.findIndex((g) => group === g) !== -1;
+    } else if ("chat" in n.index) {
+      const group = associations.chat[n.index.chat]?.["group-path"];
       return groups.findIndex((g) => group === g) !== -1;
     }
     return true;
@@ -56,7 +59,7 @@ export default function Inbox(props: {
   const notificationsByDay = f.flow(
     f.map<DatedTimebox>(([date, nots]) => [
       date,
-      nots.filter(filterNotification(props.filter)),
+      nots.filter(filterNotification(associations, props.filter)),
     ]),
     f.groupBy<DatedTimebox>(([date]) =>
       moment(daToUnix(date)).format("DDMMYYYY")
@@ -75,6 +78,7 @@ export default function Inbox(props: {
           associations={props.associations}
           graphConfig={props.notificationsGraphConfig}
           groupConfig={props.notificationsGroupConfig}
+          chatConfig={props.notificationsChatConfig}
           api={api}
         />
       )}
@@ -92,6 +96,7 @@ export default function Inbox(props: {
               api={api}
               graphConfig={props.notificationsGraphConfig}
               groupConfig={props.notificationsGroupConfig}
+              chatConfig={props.notificationsChatConfig}
             />
           )
       )}
@@ -119,6 +124,7 @@ function DaySection({
   api,
   groupConfig,
   graphConfig,
+  chatConfig,
 }) {
   const calendar = latest
     ? MOMENT_CALENDAR_DATE
@@ -143,6 +149,7 @@ function DaySection({
             <Notification
               graphConfig={graphConfig}
               groupConfig={groupConfig}
+              chatConfig={chatConfig}
               api={api}
               associations={associations}
               notification={not}

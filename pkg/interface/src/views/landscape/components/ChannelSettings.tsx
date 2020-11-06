@@ -10,10 +10,11 @@ import {
 } from "@tlon/indigo-react";
 import { Formik, Form, useFormikContext, FormikHelpers } from "formik";
 import GlobalApi from "~/logic/api/global";
-import { uxToHex } from '~/logic/lib/util';
+import { uxToHex } from "~/logic/lib/util";
 import { FormError } from "~/views/components/FormError";
 import { ColorInput } from "~/views/components/ColorInput";
-import { Association } from "~/types";
+import { Association, Groups, Associations } from "~/types";
+import GroupifyForm from "./GroupifyForm";
 
 interface FormSchema {
   title: string;
@@ -23,6 +24,8 @@ interface FormSchema {
 
 interface ChannelSettingsProps {
   association: Association;
+  groups: Groups;
+  associations: Associations;
   api: GlobalApi;
 }
 
@@ -63,20 +66,13 @@ export function ChannelSettings(props: ChannelSettingsProps) {
   };
 
   return (
-    <Box overflowY="auto" p={4}>
+    <Col gapY="6" overflowY="auto" p={4}>
       <Formik initialValues={initialValues} onSubmit={onSubmit}>
         <Form style={{ display: "contents" }}>
-          <Box
-            display="grid"
-            gridTemplateColumns="100%"
-            maxWidth="512px"
-            gridAutoRows="auto"
-            width="100%"
-            gridRowGap={4}
-          >
+          <Col flexShrink="0" maxWidth="512px" gapY="4">
             <Col mb={3}>
               <Text fontWeight="bold">Channel Settings</Text>
-              <Label gray mt='2'>
+              <Label gray mt="2">
                 Set the title, description and colour of the channel
               </Label>
             </Col>
@@ -99,9 +95,11 @@ export function ChannelSettings(props: ChannelSettingsProps) {
               Save
             </AsyncButton>
             <FormError message="Failed to update settings" />
-          </Box>
+          </Col>
         </Form>
       </Formik>
-    </Box>
+      <Box borderBottom="1" borderBottomColor="lightGray" width="100%" maxWidth="512px" />
+      <GroupifyForm {...props} />
+    </Col>
   );
 }
