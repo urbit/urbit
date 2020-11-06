@@ -45,4 +45,12 @@
   ^-  update-log:store
   %+  scry-for  update-log:store
   /update-log-subset/(scot %p entity.res)/[name.res]/(scot %da start)/'~'
+::
+++  get-keys
+  ^-  resources
+  =+  %+  scry-for  ,=update:store
+      /keys
+  ?>  ?=(%0 -.update)
+  ?>  ?=(%keys -.q.update)
+  resources.q.update
 --

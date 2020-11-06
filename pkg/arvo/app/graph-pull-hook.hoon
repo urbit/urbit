@@ -36,6 +36,7 @@
   |=  [=resource =tang]
   ^-  (quip card _this)
   :_  this
+  ?.  (~(has in get-keys:gra) resource)  ~
   =-  [%pass /pull-nack %agent [our.bowl %graph-store] %poke %graph-update -]~
   !>  ^-  update:store
   [%0 now.bowl [%archive-graph resource]]
