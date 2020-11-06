@@ -45,9 +45,8 @@
 ::    .inner-state: state given to internal door
 ::
 +$  base-state-0
-  $:  %0
-    tracking=(map resource ship)
-    inner-state=vase
+  $:  tracking=(map resource ship)
+      inner-state=vase
   ==
 ::
 +$  state-0  [%0 base-state-0]
