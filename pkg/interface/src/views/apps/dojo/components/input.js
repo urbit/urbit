@@ -10,6 +10,7 @@ export class Input extends Component {
       type: 'Sending to Dojo'
     };
     this.keyPress = this.keyPress.bind(this);
+    this.paste = this.paste.bind(this);
     this.click = this.click.bind(this);
     this.inputRef = React.createRef();
   }
@@ -26,9 +27,9 @@ export class Input extends Component {
 
   keyPress(e) {
     let key = e.key;
-    //  let paste event pass
+    //  let paste and leap events pass
     if ((e.getModifierState('Control') || event.getModifierState('Meta'))
-        && e.key === 'v') {
+        && (e.key === 'v' || e.key === '/')) {
       return;
     }
 
@@ -56,10 +57,7 @@ export class Input extends Component {
       this.props.api.belt(belt);
     }
 
-    //TODO  handle paste
-
     e.preventDefault();
-
   }
 
   paste(e) {

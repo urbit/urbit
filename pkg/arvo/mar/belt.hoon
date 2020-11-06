@@ -1,16 +1,13 @@
 ::  belt: runtime belt structure
 ::
-~%  %mar-belt  ..is  ~
 |_  =belt:dill
 ++  grad  %noun
 ::  +grab: convert from
 ::
 ++  grab
-  ~%  %belt-grab  ..grab  ~
   |%
   ++  noun  belt:dill
   ++  json
-    ~/  %mar-belt-json
     ^-  $-(^json belt:dill)
     =,  dejs:format
     %-  of
