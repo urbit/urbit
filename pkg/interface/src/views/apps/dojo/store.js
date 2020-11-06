@@ -24,7 +24,8 @@ export default class Store {
         beep.play();
         break;
       case 'clr':
-        this.setState({ lines: [''] });
+        this.state.lines = this.state.lines.slice(-1);
+        this.setState({ lines: this.state.lines });
         break;
       case 'hop':
         this.setState({ cursor: blit.hop });
