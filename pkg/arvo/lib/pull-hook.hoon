@@ -185,7 +185,7 @@
         =/  =path
           resource+(en-path:resource rid)
         =/  =wire
-          pull+path
+          (make-wire pull+path)
         ?:  (~(has by wex.bowl) [wire ship push-hook-name.config])
           ~
         `[%pass wire %agent [ship push-hook-name.config] %watch path]
