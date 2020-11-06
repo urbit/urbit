@@ -6,7 +6,7 @@ export function getTitleFromWorkspace(
 ) {
   switch (workspace.type) {
     case "home":
-      return "Home";
+      return "DMs + Drafts";
     case "group":
       const association = associations.contacts[workspace.group];
       return association?.metadata?.title || "";
