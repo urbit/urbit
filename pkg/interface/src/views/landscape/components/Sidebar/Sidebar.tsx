@@ -116,7 +116,6 @@ export function Sidebar(props: SidebarProps) {
       borderRightColor="washedGray"
       overflowY="scroll"
       fontSize={0}
-      bg="white"
       position="relative"
     >
       <GroupSwitcher
