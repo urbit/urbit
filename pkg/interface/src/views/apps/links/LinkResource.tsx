@@ -12,8 +12,7 @@ import { RouteComponentProps } from "react-router-dom";
 import { LinkItem } from "./components/link-item";
 import { LinkSubmit } from "./components/link-submit";
 import { LinkPreview } from "./components/link-preview";
-import { CommentSubmit } from "./components/comment-submit";
-import { Comments } from "./components/comments";
+import { Comments } from "~/views/components/comments";
 
 import "./css/custom.css";
 
@@ -123,21 +122,13 @@ export function LinkResource(props: LinkResourceProps) {
                   commentNumber={node.children.size}
                   remoteContentPolicy={remoteContentPolicy}
                 />
-                <Row flexShrink='0'>
-                  <CommentSubmit
-                    name={name}
-                    ship={ship}
-                    api={api}
-                    parentIndex={node.post.index}
-                  />
-                </Row>
                 <Comments
-                  comments={node.children}
+                  ship={ship}
+                  name={name}
+                  comments={node}
                   resource={resourcePath}
                   contacts={contactDetails}
                   api={api}
-                  ship={ship}
-                  name={name}
                   hideAvatars={hideAvatars}
                   hideNicknames={hideNicknames}
                   remoteContentPolicy={remoteContentPolicy}
