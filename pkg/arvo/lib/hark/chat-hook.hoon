@@ -12,6 +12,7 @@
     %-  of
     :~  listen+pa
         ignore+pa
+        set-mentions+bo
     ==
   --
 ::
@@ -24,6 +25,7 @@
     %+  frond  -.upd
     ?-  -.upd
       ?(%listen %ignore)  (path chat.upd)
+      %set-mentions  b+mentions.upd
       %initial   a+(turn ~(tap in watching.upd) path)
     ==
   --

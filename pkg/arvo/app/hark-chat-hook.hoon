@@ -13,6 +13,7 @@
 +$  state-0
   $:  %0
       watching=(set path)
+      mentions=_&
   ==
 ::
 --
@@ -75,6 +76,7 @@
     ?-  -.action
       %listen  (listen +.action)
       %ignore  (ignore +.action)
+      %set-mentions  (set-mentions +.action)
     ==
     ++  listen
       |=  chat=path
@@ -87,6 +89,12 @@
       ^-  (quip card _state)
       :-  (give:ha ~[/updates] [%ignore chat])
       state(watching (~(del in watching) chat))
+    ::
+    ++  set-mentions
+      |=  ment=?
+      ^-  (quip card _state)
+      :-  (give:ha ~[/updates] [%set-mentions ment])
+      state(mentions ment)
     --
   --
 ::
@@ -121,16 +129,29 @@
       %-  zing
       (turn envelopes.update (cury process-envelope path.update))
     ==
+  ++  is-mention
+    |=  [=path =envelope:chat-store]
+    ?.  ?=(%text -.letter.envelope)  %.n
+    ?&  mentions
+        ?=  ^ 
+        (find (scow %p our.bowl) (trip text.letter.envelope))
+    ==
+  ::
+  ++  is-notification
+    |=  [=path =envelope:chat-store]
+    ?&  (~(has in watching) path)
+        !=(author.envelope our.bowl)
+    ==  
   ::
   ++  process-envelope
     |=  [=path =envelope:chat-store]
     ^-  (list card)
-    ?.  ?&  (~(has in watching) path)
-            !=(author.envelope our.bowl)
-        ==
+    =/  mention=?
+      (is-mention path envelope)
+    ?.  ?|(mention (is-notification path envelope))
       ~
     =/  =index:store
-      [%chat path]
+      [%chat path mention]
     =/  =contents:store
       [%chat ~[envelope]]
     ~[(poke-store %add index when.envelope %.n contents)]

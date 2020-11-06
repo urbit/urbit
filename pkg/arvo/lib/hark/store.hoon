@@ -11,7 +11,13 @@
     %-  of
     :~  graph+graph-index
         group+group-index
-        chat+pa
+        chat+chat-index
+    ==
+  ::
+  ++  chat-index
+    %-  ot
+    :~  chat+pa
+        mention+bo
     ==
   ::
   ++  group-index
@@ -107,8 +113,16 @@
       ?-  -.index
         %graph  (graph-index +.index)
         %group  (group-index +.index)
-        %chat   (path chat.index)
+        %chat   (chat-index +.index)
       ==
+      ::
+      ++  chat-index
+        |=  [chat=^path mention=?]
+        ^-  json
+        %-  pairs
+        :~  chat+(path chat)
+            mention+b+mention
+        ==
       :: 
       ++  graph-index
         |=  [group=resource graph=resource module=@t description=@t]

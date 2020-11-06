@@ -5,7 +5,7 @@
 +$  index
   $%  [%graph group=resource graph=resource module=@t description=@t]
       [%group group=resource description=@t]
-      [%chat chat=path]
+      [%chat chat=path mention=?]
   ==
 ::
 +$  group-contents
