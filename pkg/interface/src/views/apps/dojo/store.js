@@ -1,4 +1,5 @@
-import Share from './components/lib/sole';
+import { saveAs } from 'file-saver';
+
 export default class Store {
   constructor() {
     this.state = this.initialState();
@@ -42,7 +43,14 @@ export default class Store {
         this.state.lines.push('');
         this.setState({ lines: this.state.lines });
         break;
-      //TODO  file downloads for %sag and %sav
+      case 'sag':
+        blit.sav = blit.sag;
+      case 'sav':
+        let name = blit.sav.path.split('/').slice(-2).join('.');
+        let buff = new Buffer(blit.sav.file, 'base64');
+        let blob = new Blob([buff], {type: 'application/octet-stream'});
+        saveAs(blob, name);
+        break;
       case 'url':
         //TODO  too invasive? just print as <a>?
         window.open(blit.url);
