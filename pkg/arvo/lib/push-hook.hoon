@@ -45,17 +45,24 @@
       pull-hook-name=term
   ==
 ::
-::  $state-0: state for the push hook
+::  $base-state-0: state for the push hook
 ::
 ::    .sharing: resources that the push hook is proxying
 ::    .inner-state: state given to internal door
 ::
-+$  state-0
-  $:  %0
-    sharing=(set resource)
-    inner-state=vase
++$  base-state-0
+  $:  sharing=(set resource)
+      inner-state=vase
   ==
 ::
++$  state-0  [%0 base-state-0]
+::
++$  state-1  [%1 base-state-0]
+::
++$  versioned-state
+  $%  state-0
+      state-1
+  ==
 ++  push-hook
   |*  =config
   $_  ^|
@@ -144,7 +151,7 @@
 ++  agent
   |*  =config
   |=  =(push-hook config)
-  =|  state-0
+  =|  state-1
   =*  state  -
   ^-  agent:gall
   =<
@@ -163,10 +170,39 @@
     ++  on-load
       |=  =old=vase
       =/  old
-        !<(state-0 old-vase)
-      =^  cards   push-hook
-        (on-load:og inner-state.old)
-      `this(state old)
+        !<(versioned-state old-vase)
+      =|  cards=(list card:agent:gall)
+      |^ 
+      ?-  -.old
+          %1  
+        =^  og-cards   push-hook
+          (on-load:og inner-state.old)
+        [(weld cards og-cards) this(state old)]
+        ::
+          %0
+        %_    $
+            -.old  %1
+          ::
+            cards
+          =/  paths=(list path)
+            kicked-watches
+          ?~  paths  cards
+          :_   cards
+          [%give %kick paths ~]
+        ==
+      ==
+      ::
+      ++  kicked-watches
+        ^-  (list path)
+        %~  tap  in
+        %+  roll
+          ~(val by sup.bowl)
+        |=  [[=ship =path] out=(set path)]
+        ?~  path   out
+        ?.  (lth 4 (lent path))
+          out
+        (~(put in out) path)
+      --
     ::
     ++  on-save
       =.  inner-state
@@ -282,14 +318,15 @@
       |=  rid=resource
       =/  pax=path
         [%resource (en-path:resource rid)]
-      =/  paths=(list path)
+      =/  paths=(set path)
+        %-  sy
         %+  turn
           (incoming-subscriptions pax)
-        |=([ship pox=path] pax)
+        |=([ship pox=path] pox)
       =.  sharing
         (~(del in sharing) rid)
       :_  state
-      [%give %kick ~[pax] ~]~
+      [%give %kick ~(tap in paths) ~]~
     ::
     ++  revoke
       |=  [ships=(set ship) rid=resource]
@@ -334,9 +371,14 @@
     =/  rid=(unit resource)
       (resource-for-update:og vase)
     ?~  rid  ~
-    =/  =path
+    =/  prefix=path
       resource+(en-path:resource u.rid)
-    [%give %fact ~[path] update-mark.config vase]~
+    =/  paths=(list path)
+      %+  turn
+        (incoming-subscriptions prefix)
+      |=([ship pax=path] pax)
+    ?~  paths  ~
+    [%give %fact paths update-mark.config vase]~
   ::
   ++  forward-update
     |=  =vase
