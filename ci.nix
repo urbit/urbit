@@ -18,7 +18,7 @@ let
 
   # Local library import from derivation functions such as fetchGitHubLFS, etc.
   # upon which local package defintions are dependent.
-  localLib = callPackage ./nix/lib { };
+  libLocal = callPackage ./nix/lib { };
 
   # The key with google storage bucket write permission,
   # deployed to ci via nixops deployment.keys."service-account.json".
@@ -31,31 +31,30 @@ let
     darwin = "x86_64-darwin";
   };
 
-  # Build the ci matrix for each of the supported systems, see finalPackages
+  # Build the ci matrix for each of the supported systems, see pkgsFinal
   # for the total set of attributes that will be evaluated per system.
-in localLib.dimension "system" systems (systemName: system:
+in libLocal.dimension "system" systems (systemName: system:
   let
-    dynamicPackages = import ./default.nix {
+    pkgsShared = import ./default.nix {
       inherit system;
 
       enableStatic = false;
     };
 
-    staticPackages = import ./default.nix {
+    pkgsStatic = import ./default.nix {
       inherit system;
 
       enableStatic = true;
     };
 
     # Filter the stack project to only our locally declared packages.
-    haskellPackages =
-      haskell-nix.haskellLib.selectProjectPackages staticPackages.hs;
+    pkgsHaskell = haskell-nix.haskellLib.selectProjectPackages pkgsStatic.hs;
 
     # The top-level set of attributes to build on ci.
-    finalPackages = {
+    pkgsFinal = {
       # Expose select packages to increase signal-to-noise of the ci dashboard.
-      inherit (staticPackages) urbit;
-      inherit (dynamicPackages) urbit-tests;
+      inherit (pkgsStatic) urbit;
+      inherit (pkgsShared) urbit-tests;
 
       # Expose the nix-shell derivation as a sanity check + possible cache hit.
       shell = import ./shell.nix;
@@ -70,11 +69,11 @@ in localLib.dimension "system" systems (systemName: system:
       # ...
       #
       # Note that .checks are the actual _execution_ of the tests.
-      hs = localLib.collectHaskellComponents haskellPackages;
+      hs = libLocal.collectHaskellComponents pkgsHaskell;
 
       # Push the tarball to the google storage bucket for the current platform.
-      release = let inherit (staticPackages) tarball;
-      in localLib.pushStorageObject {
+      release = let inherit (pkgsStatic) tarball;
+      in libLocal.pushStorageObject {
         inherit serviceAccountKey;
 
         bucket = "bootstrap.urbit.org";
@@ -87,6 +86,6 @@ in localLib.dimension "system" systems (systemName: system:
 
     # Filter derivations that have meta.platform missing the current system,
     # such as testFakeShip on darwin.
-    platformFilter = localLib.platformFilterGeneric system;
+    platformFilter = libLocal.platformFilterGeneric system;
 
-  in localLib.filterAttrsOnlyRecursive (_: v: platformFilter v) finalPackages)
+  in libLocal.filterAttrsOnlyRecursive (_: v: platformFilter v) pkgsFinal)

@@ -1,3 +1,5 @@
+# Functions that are expected run on the native (non-cross) system.
+
 { lib, recurseIntoAttrs, haskell-nix, callPackage }:
 
 let

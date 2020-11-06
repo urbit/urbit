@@ -13,18 +13,29 @@
 
 let
 
-  finalSources = import ./sources.nix { inherit pkgs; } // sources;
+  sourcesFinal = import ./sources.nix { inherit pkgs; } // sources;
 
-  haskellNix = import finalSources."haskell.nix" {
+  haskellNix = import sourcesFinal."haskell.nix" {
     sourcesOverride = {
-      hackage = finalSources."hackage.nix";
-      stackage = finalSources."stackage.nix";
+      hackage = sourcesFinal."hackage.nix";
+      stackage = sourcesFinal."stackage.nix";
     };
   };
 
-  finalOverlays = haskellNix.overlays ++ [
-    # Add top-level .sources attribute for other overlays to access niv sources.
-    (_final: _prev: { sources = finalSources; })
+  configFinal = haskellNix.config // config;
+
+  overlaysFinal = haskellNix.overlays ++ [
+    (_final: prev: {
+      # Add top-level .sources attribute for other overlays to access sources.
+      sources = sourcesFinal;
+
+      # Additional non-convential package/exe mappings for shellFor.tools.
+      haskell-nix = prev.haskell-nix // {
+        toolPackageName = prev.haskell-nix.toolPackageName // {
+          shellcheck = "ShellCheck";
+        };
+      };
+    })
 
     # General unguarded (native) overrides for nixpkgs.
     (import ./overlays/native.nix)
@@ -33,11 +44,11 @@ let
     (import ./overlays/musl.nix)
   ] ++ overlays;
 
-  pkgs = import finalSources.nixpkgs {
+  pkgs = import sourcesFinal.nixpkgs {
     inherit system crossSystem crossOverlays;
 
-    config = haskellNix.config // config;
-    overlays = finalOverlays;
+    config = configFinal;
+    overlays = overlaysFinal;
   };
 
 in pkgs // {
