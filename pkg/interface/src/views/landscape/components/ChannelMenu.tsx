@@ -6,7 +6,7 @@ import { Dropdown } from "~/views/components/Dropdown";
 import { Association, NotificationGraphConfig } from "~/types";
 import GlobalApi from "~/logic/api/global";
 import { StatelessAsyncAction } from "~/views/components/StatelessAsyncAction";
-import {appIsGraph} from "~/logic/lib/util";
+import { appIsGraph } from "~/logic/lib/util";
 
 const ChannelMenuItem = ({
   icon,
@@ -29,7 +29,8 @@ const ChannelMenuItem = ({
 interface ChannelMenuProps {
   association: Association;
   api: GlobalApi;
-  notificationConfig: NotificationGraphConfig;
+  graphNotificationConfig: NotificationGraphConfig;
+  chatNotificationConfig: string[];
 }
 
 export function ChannelMenu(props: ChannelMenuProps) {
@@ -49,10 +50,19 @@ export function ChannelMenu(props: ChannelMenuProps) {
 
   const isOurs = ship.slice(1) === window.ship;
 
-  const isMuted =
-    props.notificationConfig.watching.findIndex((a) => a === appPath) === -1;
+  const isMuted = appIsGraph(app)
+    ? props.graphNotificationConfig.watching.findIndex((a) => a === appPath) ===
+      -1
+    : props.chatNotificationConfig.findIndex((a) => a === appPath) === -1;
   const onChangeMute = async () => {
-    const func = isMuted ? "listenGraph" : "ignoreGraph";
+    const func =
+      association["app-name"] === "chat"
+        ? isMuted
+          ? "listenChat"
+          : "ignoreChat"
+        : isMuted
+        ? "listenGraph"
+        : "ignoreGraph";
     await api.hark[func](appPath);
   };
   const onUnsubscribe = useCallback(async () => {
@@ -100,18 +110,16 @@ export function ChannelMenu(props: ChannelMenuProps) {
           borderRadius={1}
           borderColor="lightGray"
         >
-          {appIsGraph(metadata.module) && (
-            <ChannelMenuItem color="blue" icon="Inbox">
-              <StatelessAsyncAction
-                m="2"
-                bg="white"
-                name="notif"
-                onClick={onChangeMute}
-              >
-                {isMuted ? "Unmute" : "Mute"} this channel
-              </StatelessAsyncAction>
-            </ChannelMenuItem>
-          )}
+          <ChannelMenuItem color="blue" icon="Inbox">
+            <StatelessAsyncAction
+              m="2"
+              bg="white"
+              name="notif"
+              onClick={onChangeMute}
+            >
+              {isMuted ? "Unmute" : "Mute"} this channel
+            </StatelessAsyncAction>
+          </ChannelMenuItem>
           {isOurs ? (
             <>
               <ChannelMenuItem color="red" icon="TrashCan">

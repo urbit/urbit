@@ -1,6 +1,5 @@
 import {
   Notifications,
-  Notification,
   NotifIndex,
   NotificationGraphConfig,
   GroupNotificationsConfig,
@@ -14,6 +13,7 @@ type HarkState = {
   notificationsCount: number;
   notificationsGraphConfig: NotificationGraphConfig;
   notificationsGroupConfig: GroupNotificationsConfig;
+  notificationsChatConfig: string[];
 };
 
 export const HarkReducer = (json: any, state: HarkState) => {
@@ -36,7 +36,38 @@ export const HarkReducer = (json: any, state: HarkState) => {
     groupListen(groupHookData, state);
     groupIgnore(groupHookData, state);
   }
+
+  const chatHookData = _.get(json, "hark-chat-hook-update", false);
+  if(chatHookData) {
+
+    chatInitial(chatHookData, state);
+    chatListen(chatHookData, state);
+    chatIgnore(chatHookData, state);
+
+  }
 };
+
+function chatInitial(json: any, state: HarkState) {
+  const data = _.get(json, "initial", false);
+  if (data) {
+    state.notificationsChatConfig = data;
+  }
+}
+
+
+function chatListen(json: any, state: HarkState) {
+  const data = _.get(json, "listen", false);
+  if (data) {
+    state.notificationsChatConfig = [...state.notificationsChatConfig, data];
+  }
+}
+
+function chatIgnore(json: any, state: HarkState) {
+  const data = _.get(json, "ignore", false);
+  if (data) {
+    state.notificationsChatConfig = state.notificationsChatConfig.filter(x => x !== data);
+  }
+}
 
 function groupInitial(json: any, state: HarkState) {
   const data = _.get(json, "initial", false);
@@ -177,6 +208,9 @@ function notifIdxEqual(a: NotifIndex, b: NotifIndex) {
       a.group.group === b.group.group &&
       a.group.description === b.group.description
     );
+  } else if ("chat" in a && "chat" in b) {
+    return a.chat.chat === b.chat.chat &&
+      a.chat.mention === b.chat.mention;
   }
   return false;
 }

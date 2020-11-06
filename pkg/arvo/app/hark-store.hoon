@@ -237,6 +237,10 @@
   ^-  notification:store
   ?-    -.contents.existing
     ::
+      %chat
+    ?>  ?=(%chat -.contents.new)
+    existing(list.contents (weld list.contents.existing list.contents.new))
+    ::
       %graph
     ?>  ?=(%graph -.contents.new)
     existing(list.contents (weld list.contents.existing list.contents.new))

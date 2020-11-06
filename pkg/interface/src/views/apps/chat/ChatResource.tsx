@@ -1,4 +1,4 @@
-import React, { useRef, useCallback } from "react";
+import React, { useRef, useCallback, useEffect } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { Col } from "@tlon/indigo-react";
 import _ from 'lodash';
@@ -94,6 +94,15 @@ export function ChatResource(props: ChatResourceProps) {
     station,
   ]);
 
+  const scrollTo = new URLSearchParams(location.search).get('msg');
+  useEffect(() => {
+    const clear =  () => {
+      props.history.replace(location.pathname);
+    }
+    setTimeout(clear, 10000);
+    return clear;
+  }, [station]);
+
   return (
     <Col {...bind} height="100%" overflow="hidden" position="relative">
       {dragging && <SubmitDragger />}
@@ -118,6 +127,7 @@ export function ChatResource(props: ChatResourceProps) {
         hideNicknames={props.hideNicknames}
         hideAvatars={props.hideAvatars}
         location={props.location}
+        scrollTo={scrollTo ? parseInt(scrollTo, 10) : undefined}
       />
       <ChatInput
         ref={chatInput}
