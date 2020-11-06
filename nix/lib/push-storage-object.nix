@@ -21,7 +21,9 @@ in makeEffect {
   effectScript = ''
     export HOME="."
 
-    gcloud auth activate-service-account --key-file=- <<< $serviceAccountKey
+    gcloud auth activate-service-account \
+      --verbosity=none --quiet --no-user-output-enabled \
+      --key-file=- <<< $serviceAccountKey
 
     stat_uri() {
       gsutil stat $uri
