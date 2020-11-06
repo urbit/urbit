@@ -6,7 +6,7 @@
 
    Static urbit and urbit-worker binaries:
 
-     $ nix-build -A urbit --arg enableSatic true
+     $ nix-build -A urbit --arg enableStatic true
 
    Note that on linux the previous command is equivalent to:
 
@@ -56,32 +56,35 @@
 
 let
 
-  pkgs = import ./nix/default.nix {
+  pkgsNative = import ./nix/default.nix { inherit system; };
+
+  pkgsCross = import ./nix/default.nix {
     inherit system sources config overlays crossOverlays;
 
+    # If we're running on linux and crossSystem is unspecified but
+    # enableStatic = true - set the crossSystem to musl64.
     crossSystem =
-      # If we're running on linux and crossSystem is unspecified but static
-      # builds are requested - set the crossSystem to musl64.
       if system == "x86_64-linux" && crossSystem == null && enableStatic then
         "x86_64-unknown-linux-musl"
       else
         crossSystem;
   };
 
-  # Local library import from derivation functions such as fetchGitHubLFS, etc.
-  # upon which local package defintions are dependent.
-  localLib = pkgs.callPackage ./nix/lib { };
-
-  # Utilise nixpkgs's top-level/static.nix overlay if required.
-  hostPackages = if enableStatic then pkgs.pkgsStatic else pkgs;
+  # Use nixpkgs' top-level/static overlay if enableStatic = true.
+  pkgsStatic = if enableStatic then pkgsCross.pkgsStatic else pkgsCross;
 
   # Enrich the global package set with our local functions and packages.
+  # Cross vs static build dependencies can be selectively overridden for
+  # inputs like python and haskell-nix
   callPackage =
-    pkgs.lib.callPackageWith (hostPackages // localLib // localPackages);
+    pkgsNative.lib.callPackageWith (pkgsStatic // libLocal // pkgsLocal);
+
+  # Local library import-from-derivation functions such as fetchGitHubLFS, etc.
+  libLocal = pkgsNative.callPackage ./nix/lib { };
 
   # Local vendored packages defined in ./pkg.
   # For non-vendored nixpkgs specific package overrides, see ./nix/overlays.
-  localPackages = {
+  pkgsLocal = {
     argon2u = callPackage ./nix/pkgs/argon2u { };
 
     ca-bundle = callPackage ./nix/pkgs/ca-bundle { };
@@ -100,7 +103,7 @@ let
 
     softfloat3 = callPackage ./nix/pkgs/softfloat3 { };
 
-    herb = callPackage ./nix/pkgs/herb { inherit (pkgs) python; };
+    herb = callPackage ./nix/pkgs/herb { inherit (pkgsCross) python; };
 
     arvo = callPackage ./nix/pkgs/arvo { };
 
@@ -113,18 +116,18 @@ let
     urbit = callPackage ./nix/pkgs/urbit { inherit enableStatic; };
 
     hs = callPackage ./nix/pkgs/hs {
-      inherit (pkgs) haskell-nix;
       inherit enableStatic;
+      inherit (pkgsCross) haskell-nix;
     };
   };
 
   # Additional top-level packages and attributes exposed for convenience.
-  extraPackages = with localPackages; rec {
-    # Expose packages we've local customisations for.
-    inherit (hostPackages) libsigsegv;
+  pkgsExtra = with pkgsLocal; rec {
+    # Expose packages we've local customisations (like patches) for easy access.
+    inherit (pkgsCross) libsigsegv;
 
     urbit-debug = urbit.override { enableDebug = true; };
-    urbit-tests = localLib.testFakeShip {
+    urbit-tests = libLocal.testFakeShip {
       inherit herb;
 
       urbit = urbit-debug;
@@ -140,7 +143,7 @@ let
     tarball = let
       name = "urbit-v${urbit.version}-${urbit.system}";
       urbit-king = hs.urbit-king.components.exes.urbit-king;
-    in localLib.makeReleaseTarball {
+    in libLocal.makeReleaseTarball {
       inherit name;
 
       contents = {
@@ -167,16 +170,16 @@ let
     #
     shellFor = { name, packages, ... }@attrs:
       pkgs.mkShell ({
-        inputsFrom = packages localPackages;
+        inputsFrom = packages pkgsLocal;
       } // builtins.removeAttrs attrs [ "packages" ]);
   };
 
   # Ensure that in the case of cross-compilation we're not statically linking
   # against glibc. This is typically a sign that crossSystem is misconfigured.
   checkPlatform =
-    if enableStatic && hostPackages.stdenv.hostPlatform.libc == "glibc" then
+    if enableStatic && pkgsCross.stdenv.hostPlatform.libc == "glibc" then
       builtins.trace "warning: statically linking against glibc."
     else
-      pkgs.lib.id;
+      pkgsNative.lib.id;
 
-in checkPlatform (localPackages // extraPackages)
+in checkPlatform (pkgsLocal // pkgsExtra)
