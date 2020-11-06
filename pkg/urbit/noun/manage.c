@@ -612,7 +612,6 @@ c3_w Exit;
 **    %intr               ::  interrupt
 **    %fail               ::  computability failure
 **    %over               ::  stack overflow (a kind of %fail)
-**    %need               ::  namespace block
 **    %meme               ::  out of memory
 **
 **  These are equivalents of the full exception noun, the error ball:
@@ -673,21 +672,15 @@ u3m_bail(u3_noun how)
 
   /* Reconstruct a correct error ball.
   */
-  {
-    if ( _(u3ud(how)) ) {
-      switch ( how ) {
-        case c3__exit: {
-          how = u3nc(2, u3R->bug.tax);
-          break;
-        }
-        case c3__need: {
-          c3_assert(0);
-        }
-        default: {
-          how = u3nt(3, how, u3R->bug.tax);
-          break;
-        }
-      }
+  if ( _(u3ud(how)) ) {
+    switch ( how ) {
+      case c3__exit: {
+        how = u3nc(2, u3R->bug.tax);
+      } break;
+
+      default: {
+        how = u3nt(3, how, u3R->bug.tax);
+      } break;
     }
   }
 
