@@ -3,6 +3,7 @@
 ::
 +$  action
   $%  [?(%listen %ignore) chat=path]
+      [%set-mentions mentions=?]
   ==
 ::
 +$  update
