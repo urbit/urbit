@@ -58,17 +58,26 @@ haskell-nix.stackProject {
       "xhtml"
     ];
 
+    # Override various project-local flags and build configuration.
     packages = {
-      urbit-king.components.exes.urbit-king.enableStatic = enableStatic;
-      urbit-king.components.exes.urbit-king.enableShared = !enableStatic;
+      urbit-king.components.exes.urbit-king = {
+        enableStatic = enableStatic;
+        enableShared = !enableStatic;
 
-      urbit-king.components.exes.urbit-king.configureFlags =
-        lib.optionals enableStatic [
+        configureFlags = lib.optionals enableStatic [
           "--ghc-option=-optl=-L${gmp}/lib"
           "--ghc-option=-optl=-L${libffi}/lib"
           "--ghc-option=-optl=-L${zlib}/lib"
         ] ++ lib.optionals (enableStatic && stdenv.isDarwin)
-        [ "--ghc-option=-optl=-L${darwin.libiconv}/lib" ];
+          [ "--ghc-option=-optl=-L${darwin.libiconv}/lib" ];
+
+        postInstall = lib.optionalString (enableStatic && stdenv.isDarwin) ''
+          find "$out/bin" -type f -exec \
+            install_name_tool -change \
+              ${stdenv.cc.libc}/lib/libSystem.B.dylib \
+              /usr/lib/libSystem.B.dylib {} \;
+        '';
+      };
 
       urbit-king.components.tests.urbit-king-tests.testFlags =
         [ "--brass-pill=${brass.lfs}" ];
