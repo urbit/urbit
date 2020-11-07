@@ -5,13 +5,16 @@
 +$  credentials  [bc=btc-credentials ec=electrum-credentials]
 +$  host-info  [creds=credentials connected=? clients=(set ship)]
 +$  action
-  $%  [%get-address-info =address]
+  $%  [%watch-address =address]
   ==
 +$  result
   $%  [%watch-address a=address utxos=(set utxo) used=?]
   ==
 +$  error
-  $%  [%not-connected ~]
+  $%  [%not-connected status=@ud]
+      [%bad-request status=@ud]
+      [%http-error status=@ud]
+      [%rpc-error ~]
   ==
 +$  update  (each result error)             ::  sub updates to /clients path (connection etc.)
 ::

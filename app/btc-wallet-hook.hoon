@@ -83,11 +83,11 @@
 ++  on-peek   on-peek:def
 ++  on-agent
   |=  [=wire =sign:agent:gall]
-  ^-  (quip card _this)
+  |^  ^-  (quip card _this)
   ?+  -.sign  (on-agent:def wire sign)
       %watch-ack
     ?:  ?=(%set-provider -.wire)
-      `this(provider.state `[src.bowl %.y])
+      handle-provider-ack
     `this
       %fact
     =^  cards  state
@@ -99,6 +99,11 @@
       ==
     [cards this]
   ==
+  ++  handlle-provider-ack
+    ?^  p.sign
+      `this(provider ~)
+      ::    - positive ack: check whether it's our current provider, then set connected to true. Retry items in pend/fail
+  --
 ++  on-arvo   on-arvo:def
 ++  on-fail   on-fail:def
 --
@@ -108,8 +113,10 @@
   ^-  (quip card _state)
   ~&  >  comm
   `state
+::  set-provider algo:
+::    - add provider, connected false
+::    - on negative ack: delete the provider
 ::
-::  ==
 ++  handle-action
   |=  act=action
   ^-  (quip card _state)
