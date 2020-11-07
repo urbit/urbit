@@ -121,6 +121,13 @@ With max-gap=3
 - nixt also stores next 50 addresses for each account.
 - every update-address call also checks those
 
+### subscribe to provider
+* btc: FIX and think out hook->provider data/sub flow
+  - on sub: add provider, connected is false
+  - negative ack: delete provider
+  - positive ack: check whether it's our current provider, then set connected to true. Retry items in pend/fail
+* btc: if no provider set, keep items in pend/fail
+
 ### make a payment
 * make payment
   - get address
