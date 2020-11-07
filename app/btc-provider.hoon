@@ -30,7 +30,10 @@
 ++  on-init
   ^-  (quip card _this)
   ~&  >  '%btc-provider initialized successfully'
-  `this(host-info [*credentials connected=%.n clients=*(set ship)], whitelist *(set ship))
+  ::  ping every 30s to see whether connected to RPC
+  ::
+  :-  ~[(start-ping-timer:hc ~s30)]
+  this(host-info [*credentials connected=%.n clients=*(set ship)], whitelist *(set ship))
 ++  on-save
   ^-  vase
   !>(state)
@@ -46,13 +49,11 @@
   ::
   ?>  ?|((team:title our.bowl src.bowl) (is-client:hc src.bowl))
   =^  cards  state
-    ?:  ?=(%btc-provider-command mark)
-    ?>  (team:title our.bowl src.bowl)
-      (handle-command:hc !<(command vase))
     ?+  mark  (on-poke:def mark vase)
+        %btc-provider-command
+      ?>  (team:title our.bowl src.bowl)
+      (handle-command:hc !<(command vase))
         %btc-provider-action
-      ?.  connected.host-info
-        ~|("Not connected to RPC endpoints" !!)
       (handle-action:hc !<(action vase))
     ==
   [cards this]
@@ -69,6 +70,15 @@
 ++  on-arvo
   |=  [=wire =sign-arvo]
   ^-  (quip card _this)
+  ::  check for connectivity every 30 seconds
+  ?:  ?=([%ping-timer *] wire)
+    :_  this
+    :~  :*  %pass  /ping/[(scot %da now.bowl)]  %agent
+            [our.bowl %btc-provider]  %poke
+            %btc-provider-action  !>([%ping ~])
+        ==
+        (start-ping-timer:hc ~s30)
+    ==
   =^  cards  state
   ?+    +<.sign-arvo    (on-arvo:def wire sign-arvo)
       %http-response
@@ -80,9 +90,18 @@
 --
 ::  helper core
 |_  =bowl:gall
+++  start-ping-timer
+  |=  interval=@dr  ^-  card
+  [%pass /ping-timer %arvo %b %wait (add now.bowl interval)]
 ++  handle-action
   |=  act=action
   |^  ^-  (quip card _state)
+  ?:  ?=(%ping -.act)
+    ~&  >>  "ping action"
+    `state
+  ?.  connected.host-info
+    ~&  >>>  "Not connected to RPC"
+    [~[(send-update [%| [%not-connected 500]])] state]
   =/  ract=action:rpc
     ?-  -.act
         %watch-address
