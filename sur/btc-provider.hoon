@@ -6,6 +6,7 @@
 +$  host-info  [creds=credentials connected=? clients=(set ship)]
 +$  action
   $%  [%watch-address =address]
+      [%ping ~]
   ==
 +$  result
   $%  [%watch-address a=address utxos=(set utxo) used=?]
