@@ -85,12 +85,12 @@
   |^  ^-  (quip card _state)
   =/  ract=action:rpc
     ?-  -.act
-      %get-address-info
+        %watch-address
       [%erpc %get-address-utxos address.act]
     ==
-  [~[(req-card act ract)] state]
+  [~[(req-card ract)] state]
   ++  req-card
-    |=  [act=action ract=action:rpc]
+    |=  ract=action:rpc
     =|  out=outbound-config:iris
     =/  req=request:http
       (gen-request host-info ract)
@@ -108,33 +108,49 @@
   ==
 ++  handle-response
   |=  [=wire response=client-response:iris]
-  :: IMPORTANT:  whatever we make here gets sent out to subscribers at the end
   ^-  (quip card _state)
   ?.  ?=(%finished -.response)  `state
-  =/  e=(unit error)  (check-connection status-code.response-header.response)
-  ~&  >  "before"
-  ?^  e
-    :_  state(connected.host-info %.n)
-    ~[(send-update [%| u.e])]
-  ~&  >  "after"
+  =*  status  status-code.response-header.response
+  ::  handle error types, in order:
+  ::    - connection errors
+  ::    - RPC errors
+  ::
+  =^  conn-err  state
+    (connection-error status)
+  ?^  conn-err
+    ~&  >>>  conn-err
+    [~[(send-update [%| u.conn-err])] state]
   =/  rpc-resp=response:rpc:jstd
     (get-rpc-response response)
-  ::  TODO: error handling goes here
+  ?.  ?=([%result *] rpc-resp)
+    [~[(send-update [%| [%rpc-error ~]])] state]
+  ::  no error, so handle returned RPC data 
+  ::
   ?+  wire  ~|("Unexpected HTTP response" !!)
-      [%get-address-info %erpc *]
-    ~&  >>  +<.wire
+      [%watch-address %erpc *]
+    ~&  >>  +<.wire   ::  %brpc/%erpc 
     ~&  >  rpc-resp
     `state
   ==
-++  check-connection
+::
+++  connection-error
   |=  status=@ud
-  ^-  (unit error)
-  ?:  =(504 status)
-    `[%not-connected ~]
-  ~
+  ^-  [(unit error) _state]
+  ?+  status  [`[%http-error status] state]
+      %200
+    [~ state]
+      %400
+    [`[%bad-request status] state]
+      %502
+    [`[%not-connected status] state(connected.host-info %.y)]
+      %504
+    [`[%not-connected status] state(connected.host-info %.n)]
+  ==
+::
 ++  send-update
   |=  =update  ^-  card
   [%give %fact [/clients]~ %btc-provider-update !>(update)]
+::
 ++  is-whitelisted
   |=  user=ship  ^-  ?
   ?|  (~(has in whitelist) user)
@@ -150,7 +166,7 @@
   ~|  hit
   =/  jon=json  (need (de-json:html q:(need r.hit)))
   ?.  =(%2 (div p.hit 100))
-    (parse-error jon)
+    (parse-rpc-error jon)
   =,  dejs-soft:format
   ^-  response:rpc:jstd
   =;  dere
@@ -170,7 +186,7 @@
   ?:  ?=([^ * ~] res)
     `[%result [u.id.res ?~(res.res ~ u.res.res)]]
   ~|  jon
-  `(parse-error jon)
+  `(parse-rpc-error jon)
 ::
 ++  get-rpc-response
   |=  response=client-response:iris
@@ -181,7 +197,7 @@
       response-header.response
     full-file.response
 ::
-++  parse-error
+++  parse-rpc-error
   |=  =json
   ^-  response:rpc:jstd
   :-  %error
