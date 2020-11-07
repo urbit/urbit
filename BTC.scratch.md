@@ -5,6 +5,7 @@ The below requires norsyr's fix to `decompress-point` in order to work.
 (don't need password if all run on localhost)
 ```
 =rpc-pass '57a6662a8ddb792a557e9fe6d1a731f954db6c35e75a91e823ab20ea7a33585b'
+:btc-provider|command [%set-credentials [rpc-url='http://localhost:8332' rpc-user='__cookie__' rpc-pass] [rpc-url='http://localhost:50002']]=rpc-pass '57a6662a8ddb792a557e9fe6d1a731f954db6c35e75a91e823ab20ea7a33585b'
 :btc-provider|command [%set-credentials [rpc-url='http://localhost:8332' rpc-user='__cookie__' rpc-pass] [rpc-url='http://localhost:50002']]
 
 :btc-provider|action [%watch-address [%bech32 'bc1q59u5epktervh6fxqay2dlph0wxu9hjnx6v8n66'']]
