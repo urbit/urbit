@@ -174,9 +174,9 @@
       %400
     [`[%bad-request status] state]
       %401
-    [`[%no-auth status] state]
+    [`[%no-auth status] state(connected.host-info %.n)]
       %502
-    [`[%not-connected status] state(connected.host-info %.y)]
+    [`[%not-connected status] state(connected.host-info %.n)]
       %504
     [`[%not-connected status] state(connected.host-info %.n)]
   ==
