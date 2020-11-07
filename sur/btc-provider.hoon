@@ -14,6 +14,7 @@
 +$  error
   $%  [%not-connected status=@ud]
       [%bad-request status=@ud]
+      [%no-auth status=@ud]
       [%http-error status=@ud]
       [%rpc-error ~]
   ==

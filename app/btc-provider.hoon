@@ -2,7 +2,7 @@
 ::  Proxy that serves a BTC full node and ElectRS address indexer
 ::
 ::  Subscriptions: none
-::  To Subscribers:
+::  To Subscribers: /clients
 ::    current connection state
 ::    results/errors of RPC calls
 ::
@@ -32,8 +32,7 @@
   ~&  >  '%btc-provider initialized successfully'
   ::  ping every 30s to see whether connected to RPC
   ::
-  :-  ~[(start-ping-timer:hc ~s30)]
-  this(host-info [*credentials connected=%.n clients=*(set ship)], whitelist *(set ship))
+  `this(host-info [*credentials connected=%.n clients=*(set ship)], whitelist *(set ship))
 ++  on-save
   ^-  vase
   !>(state)
@@ -60,6 +59,7 @@
 ++  on-watch
   |=  pax=path
   ^-  (quip card _this)
+  ?>  ?=([%clients *] pax)
   ?>  (is-whitelisted:hc src.bowl)
   ~&  >  "btc-provider: added client {<src.bowl>}"
   `this(clients.host-info (~(put in clients.host-info) src.bowl))
@@ -70,7 +70,8 @@
 ++  on-arvo
   |=  [=wire =sign-arvo]
   ^-  (quip card _this)
-  ::  check for connectivity every 30 seconds
+  ::  check for connectivity every 30 seconds with %ping
+  ::
   ?:  ?=([%ping-timer *] wire)
     :_  this
     :~  :*  %pass  /ping/[(scot %da now.bowl)]  %agent
@@ -82,7 +83,7 @@
   =^  cards  state
   ?+    +<.sign-arvo    (on-arvo:def wire sign-arvo)
       %http-response
-      (handle-response:hc wire client-response.sign-arvo)
+      (handle-rpc-response:hc wire client-response.sign-arvo)
   ==
   [cards this]
 ::
@@ -90,22 +91,35 @@
 --
 ::  helper core
 |_  =bowl:gall
+++  handle-command
+  |=  comm=command
+  ^-  (quip card _state)
+  ?-  -.comm
+      %set-credentials
+    :-  ~[(start-ping-timer ~s30)]
+    state(host-info [creds.comm connected=%.y clients=*(set ship)])
+    ::
+      %whitelist-clients
+    `state(whitelist (~(uni in whitelist) clients.comm))
+==
 ++  start-ping-timer
   |=  interval=@dr  ^-  card
   [%pass /ping-timer %arvo %b %wait (add now.bowl interval)]
+::  only %ping works if we're not connected
+::
 ++  handle-action
   |=  act=action
   |^  ^-  (quip card _state)
-  ?:  ?=(%ping -.act)
-    ~&  >>  "ping action"
-    `state
-  ?.  connected.host-info
+  ?:  ?&(?!(connected.host-info) ?!(=(-.act %ping)))
     ~&  >>>  "Not connected to RPC"
     [~[(send-update [%| [%not-connected 500]])] state]
   =/  ract=action:rpc
     ?-  -.act
         %watch-address
       [%erpc %get-address-utxos address.act]
+      ::
+        %ping
+      [%brpc %get-block-count ~]
     ==
   [~[(req-card ract)] state]
   ++  req-card
@@ -115,17 +129,13 @@
       (gen-request host-info ract)
     [%pass /[-.act]/[-.ract]/[(scot %da now.bowl)] %arvo %i %request req out]
   --
-++  handle-command
-  |=  comm=command
-  ^-  (quip card _state)
-  ?-  -.comm
-      %set-credentials
-    `state(host-info [creds.comm connected=%.y clients=*(set ship)])
-    ::
-      %whitelist-clients
-    `state(whitelist (~(uni in whitelist) clients.comm))
-  ==
-++  handle-response
+::  wire structure
+::  /action-tas/rpc-action-tas/timestamp
+::
+::  TODO use the 2 below to handle responses
+::  ~&  >  (parse-response:btc-rpc:blib rpc-resp)
+::  ~&  >>   (to-response (rpc-response [%erpc (parse-response:electrum-rpc:elib rpc-resp)]))
+++  handle-rpc-response
   |=  [=wire response=client-response:iris]
   ^-  (quip card _state)
   ?.  ?=(%finished -.response)  `state
@@ -143,13 +153,16 @@
     (get-rpc-response response)
   ?.  ?=([%result *] rpc-resp)
     [~[(send-update [%| [%rpc-error ~]])] state]
-  ::  no error, so handle returned RPC data 
+  ::  no error, so handle returned RPC data
   ::
   ?+  wire  ~|("Unexpected HTTP response" !!)
       [%watch-address %erpc *]
+    ::  use the %erpc parser here
     ~&  >>  +<.wire   ::  %brpc/%erpc 
     ~&  >  rpc-resp
     `state
+      [%ping %brpc *]
+    `state(connected.host-info %.y)
   ==
 ::
 ++  connection-error
@@ -160,6 +173,8 @@
     [~ state]
       %400
     [`[%bad-request status] state]
+      %401
+    [`[%no-auth status] state]
       %502
     [`[%not-connected status] state(connected.host-info %.y)]
       %504
@@ -232,21 +247,4 @@
       :~  ['code' (uf '' no)]
           ['message' (uf '' so)]
   ==  ==
-::
-:: TODO: BELOW are deprecated. Rip out their functionality
-++  btc-http-response
-  |=  [status=@ud rpc-resp=response:rpc:jstd]
-  ^-  (quip card _state)
-  ?.  ?=([%result *] rpc-resp)
-    ~&  [%error +.rpc-resp]
-    [~ state]
-::  ~&  >  (parse-response:btc-rpc:blib rpc-resp)
-  [~ state]
-::
-++  electrum-http-response
-  |=  [status=@ud rpc-resp=response:rpc:jstd]
-  ^-  (quip card _state)
-::  ~&  >>   (to-response (rpc-response [%erpc (parse-response:electrum-rpc:elib rpc-resp)]))
-  `state
-::
 --
