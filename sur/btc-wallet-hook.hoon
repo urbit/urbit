@@ -6,5 +6,6 @@
 +$  back  (map req-id:bp request:bws)
 +$  action
   $%  [%set-provider provider=ship]
+      [%force-retry ~]
   ==
 --

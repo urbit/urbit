@@ -101,10 +101,8 @@
     =^  cards  state
       ?+  p.cage.sign  `state
           %btc-provider-update
-        ~&  >>  !<(update:bp q.cage.sign)
         `state
           %btc-wallet-store-request
-        ~&  >>  !<(request:bws q.cage.sign)
         (handle-request:hc !<(request:bws q.cage.sign))
       ==
     [cards this]
@@ -120,7 +118,7 @@
   `state
 ::  set-provider algo: 
 ::    - add provider, connected false
-::    - on negative ack: delete the provider
+::    - on negative ack: delete the provider 
 ::
 ++  handle-action
   |=  act=action
@@ -129,21 +127,27 @@
       %set-provider
     =*  sub-card
       [%pass /set-prov %agent [provider.act %btc-provider] %watch /clients]
-    :_  state
+    :_  state(provider [~ provider.act %.n])
     ?~  provider  ~[sub-card]
     :~  [%pass /leave-prov %agent [host.u.provider %btc-provider] %leave ~]
         sub-card
     ==
+    ::
+      %force-retry
+    :_  state
+    %+  weld  (retry pend)  (retry fail)
   ==
 ++  handle-request
   |=  req=request:bws
   ^-  (quip card _state)
   ?-  -.req
       %scan-address
-    ?~  provider  ~|("provider not set" !!)
     =/  ri=req-id:bp  (mk-req-id (hash-xpub:bwsl +>.req))
-    :-  ~[(get-address-info ri host.u.provider a.req)]
-    state(pend (~(put by pend) ri req))
+    :_  state(pend (~(put by pend) ri req))
+    ?~  provider
+      ~&  >  "provider not set"
+      ~
+    ~[(get-address-info ri host.u.provider a.req)]
   ==
 ::
 ++  retry
@@ -157,7 +161,7 @@
 ++  get-address-info
   |=  [ri=req-id:bp host=ship a=address]  ^-  card
   :*  %pass  /[(scot %da now.bowl)]  %agent  [host %btc-provider]
-      %poke  %btc-provider-action  !>([ri %get-address-info a])
+      %poke  %btc-provider-action  !>([ri %address-info a])
   ==
 ++  mk-req-id
   |=  hash=@ux  ^-  req-id:bp
