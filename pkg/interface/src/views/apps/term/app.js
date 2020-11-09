@@ -11,7 +11,7 @@ import Subscription from './subscription';
 
 import './css/custom.css';
 
-export default class DojoApp extends Component {
+export default class TermApp extends Component {
   constructor(props) {
     super(props);
     this.store = new Store();
