@@ -147,6 +147,12 @@ u3_term_log_init(void)
     {
       uty_u->fid_i = 0;                       //  stdin, yes we write to it...
 
+      if ( !isatty(uty_u->fid_i) ) {
+        fprintf(stderr, "vere: unable to initialize terminal (not a tty)\r\n"
+                        "      use -t to disable interactivity\r\n");
+        u3_king_bail();
+      }
+
       uv_pipe_init(u3L, &(uty_u->pop_u), 0);
       uv_pipe_open(&(uty_u->pop_u), uty_u->fid_i);
     }
