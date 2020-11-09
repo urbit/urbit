@@ -44,7 +44,7 @@
       [%update-address a=address utxos=(set utxo)]
   ==
 ::
-+$  request
-  $%  [%scan-address a=address =xpub =chyg =idx]
-  ==
++$  req-method
+  $?(%scan-address)
++$  request  [method=req-method a=address =xpub =chyg =idx]
 --

@@ -1,11 +1,9 @@
 /-  *btc, bws=btc-wallet-store, bp=btc-provider
 |%
 ::  req-id: hash of [xpub chyg idx]
-::  addo: wallet index to send result of request to
-::  back: lookup table of req-id -> addo
+::  back: lookup table of req-id -> requests from wallet-store
 ::
-+$  addo  [=xpub =chyg:bws =idx:bws]
-+$  back  (map req-id:bp addo)
++$  back  (map req-id:bp request:bws)
 +$  action
   $%  [%set-provider provider=ship]
   ==
