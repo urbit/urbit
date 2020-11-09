@@ -73,20 +73,20 @@ function DragTileBasic(props: {
   style: any;
 }) {
   const { basic: tile } = props.tile;
-  const isDojo = useMemo(() => tile.title === "Dojo", [tile.title]);
+  const isTerm = useMemo(() => tile.title === "Terminal", [tile.title]);
   return (
     <DragTileBox
       tile={{ type: props.tile }}
       index={props.index}
       bg={
-        "white" // isDojo ? "black" : "white"
+        "white" // isTerm ? "black" : "white"
       }
       style={props.style}
     >
-      <Image width="48px" height="48px" src={tile.iconUrl} invert={isDojo} />
+      <Image width="48px" height="48px" src={tile.iconUrl} invert={isTerm} />
       <Text
         color={
-          "black" // isDojo ? "white" : "black"
+          "black" // isTerm ? "white" : "black"
         }
       >
         {tile.title}

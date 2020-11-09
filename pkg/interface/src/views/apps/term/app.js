@@ -45,14 +45,14 @@ export default class DojoApp extends Component {
     return (
       <>
         <Helmet>
-          <title>OS1 - Dojo</title>
+          <title>OS1 - Terminal</title>
         </Helmet>
         <div
           style={{ height: '100%' }}
         >
           <Route
             exact
-            path="/~dojo/"
+            path="/~term/"
             render={(props) => {
               return (
                 <div className="w-100 h-100 flex-m flex-l flex-xl">

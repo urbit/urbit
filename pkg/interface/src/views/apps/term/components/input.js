@@ -5,10 +5,7 @@ import { Spinner } from '~/views/components/Spinner';
 export class Input extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      awaiting: false,
-      type: 'Sending to Dojo'
-    };
+    this.state = {};
     this.keyPress = this.keyPress.bind(this);
     this.paste = this.paste.bind(this);
     this.click = this.click.bind(this);
@@ -98,7 +95,7 @@ export class Input extends Component {
           tabindex="0"
           wrap="off"
           className="mono ml1 flex-auto dib w-100"
-          id="dojo"
+          id="term"
           cursor={this.props.cursor}
           onKeyDown={this.keyPress}
           onClick={this.click}
