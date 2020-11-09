@@ -22,7 +22,7 @@
 ::
 +$  state-0
   $:  %0
-      provider=(unit [host=ship works=?])
+      provider=(unit [host=ship connected=?])
       pend=back
       fail=back
   ==
@@ -81,23 +81,30 @@
 ++  on-watch  on-watch:def
 ++  on-leave  on-leave:def
 ++  on-peek   on-peek:def
+::  TODO: write up how we can get on-agent %fact (success) or on-arvo Behn timeout
+::
 ++  on-agent
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)
   ?+  -.sign  (on-agent:def wire sign)
       %watch-ack
-    ?:  ?=(%set-provider -.wire)
-      ?^  p.sign
-        `this(provider ~)
-        :: TODO: if positive ack: check whether it's our current provider, then set connected to true. Retry items in pend/fail. Replace '`this'
-      `this
-    `this
+    ?+  -.wire  `this
+        %set-provider
+      ?~  provider  `this
+      ?^  p.sign  `this(provider ~)
+      ?.  =(src.bowl host.u.provider)  `this
+      :_  this(provider `[host.u.provider %.y])
+      %+  weld  (retry:hc pend)  (retry:hc fail)
+    ==
+      ::
       %fact
     =^  cards  state
       ?+  p.cage.sign  `state
-          %btc-provider-response
+          %btc-provider-update
+        ~&  >>  !<(update:bp q.cage.sign)
         `state
           %btc-wallet-store-request
+        ~&  >>  !<(request:bws q.cage.sign)
         (handle-request:hc !<(request:bws q.cage.sign))
       ==
     [cards this]
@@ -133,12 +140,19 @@
   ^-  (quip card _state)
   ?-  -.req
       %scan-address
-    ?~  provider
-      ~|("provider not set" !!)
+    ?~  provider  ~|("provider not set" !!)
     =/  ri=req-id:bp  (mk-req-id (hash-xpub:bwsl +>.req))
     :-  ~[(get-address-info ri host.u.provider a.req)]
-    state(pend (~(put by pend) ri +>.req))
+    state(pend (~(put by pend) ri req))
   ==
+::
+++  retry
+  |=  =back
+  ^-  (list card)
+  ?~  provider  ~|("provider not set" !!)
+  %+  turn  ~(tap by back)
+  |=  [ri=req-id:bp req=request:bws]
+  (get-address-info ri host.u.provider a.req)
 ::
 ++  get-address-info
   |=  [ri=req-id:bp host=ship a=address]  ^-  card
