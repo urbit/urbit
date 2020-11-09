@@ -34,7 +34,7 @@ export const Content = (props) => {
           )}
         />
         <Route
-          path='/~dojo'
+          path='/~term'
           render={p => (
             <DojoApp
               history={p.history}
