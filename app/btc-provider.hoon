@@ -73,7 +73,7 @@
     :_  this
     :~  :*  %pass  /ping/[(scot %da now.bowl)]  %agent
             [our.bowl %btc-provider]  %poke
-            %btc-provider-action  !>([%ping ~])
+            %btc-provider-action  !>([%blank-id %ping ~])
         ==
         (start-ping-timer:hc ~s30)
     ==
@@ -107,13 +107,13 @@
 ++  handle-action
   |=  act=action
   ^-  (quip card _state)
-  ?.  ?|(connected.host-info =(-.act %ping))
+  ?.  ?|(connected.host-info =(-.body.act %ping))
     ~&  >>>  "Not connected to RPC"
-    [~[(send-update [%| [%not-connected 500]])] state]
+    [~[(send-update [%| %not-connected 500])] state]
   =/  ract=action:rpc
-    ?-  -.act
+    ?-  -.body.act
         %address-info
-      [%erpc %get-address-utxos address.act]
+      [%erpc %get-address-utxos address.body.act]
       ::
         %ping
       [%brpc %get-block-count ~]
@@ -125,16 +125,21 @@
   =/  req=request:http
     (gen-request host-info ract)
   [%pass (mk-wire act ract) %arvo %i %request req out]
-::  wire structure: /action-tas/rpc-action-tas/(address, if rpc-action %erpc)/now
+::  wire structure: /action-tas/rpc-action-tas/req-id/(address, if rpc-action %erpc)/now
 ::
 ++  mk-wire
   |=  [act=action ract=action:rpc]
   ^-  wire
   =/  addr=path
     ?:(?=(%erpc -.ract) /(address-to-cord:elib address.ract) /)
-  %-  zing  ~[/[-.act]/[-.ract] addr /[(scot %da now.bowl)]]
-::  TODO: write up how some responses can trigger a req-card to get more info (i.e. used
-::        that happens when multiple RPC calls have to be collated into one response
+  %-  zing
+  :~  /[-.body.act]/[-.ract]/[req-id.act]
+      addr
+      /[(scot %da now.bowl)]
+  ==
+::  Handles HTTP responses from RPC servers. Parses for errors, then handles response.
+::  For actions that require collating multiple RPC calls, uses req-card to call out
+::    to RPC again if more information is required.
 ::
 ++  handle-rpc-response
   |=  [=wire response=client-response:iris]
@@ -155,27 +160,31 @@
   ::  no error, switch on wire to handle RPC data
   ::
   ?+  wire  ~|("Unexpected HTTP response" !!)
-      [%address-info %erpc @ *]
-    =/  addr=address:btc  (address-from-cord:elib +>-.wire)
-    =/  eresp  (parse-response:electrum-rpc:elib rpc-resp)
-    :_  state
-    ^-  (list card)
-    :~  ?-  -.eresp
-            %get-address-utxos
-          ?:  =(0 ~(wyt in utxos.eresp))
-            (req-card [%address-info addr] [%erpc %get-address-history addr])
-          (send-update [%& %address-info addr utxos.eresp %.y])
-          ::
-            %get-address-history
-          %-  send-update
-          :*  %&  %address-info  addr  *(set utxo:btc)
-              ?:(=(0 ~(wyt in txs.eresp)) %.n %.y)
-          ==
-        ==
-     ==
+      [%address-info %erpc @ @ *]
+    [(handle-address-info wire rpc-resp) state]
      ::
       [%ping %brpc *]
     `state(connected.host-info %.y)
+  ==
+::
+++  handle-address-info
+  |=  [=wire rpc-resp=response:rpc:jstd]
+  ^-  (list card)
+  =/  req-id=@t  +>-.wire
+  =/  addr=address:btc  (address-from-cord:elib +>+<.wire)
+  =/  eresp  (parse-response:electrum-rpc:elib rpc-resp)
+  :~  ?-  -.eresp
+          %get-address-utxos
+        ?:  =(0 ~(wyt in utxos.eresp))
+          (req-card [req-id %address-info addr] [%erpc %get-address-history addr])
+        (send-update [%& req-id %address-info addr utxos.eresp %.y])
+        ::
+          %get-address-history
+        %-  send-update
+        :*  %&  req-id  %address-info  addr  *(set utxo:btc)
+            ?:(=(0 ~(wyt in txs.eresp)) %.n %.y)
+        ==
+      ==
   ==
 ::
 ++  connection-error
@@ -195,7 +204,8 @@
   ==
 ::
 ++  send-update
-  |=  =update  ^-  card
+  |=  =update
+  ^-  card
   ~&  >>  "send-update: {<update>}"
   [%give %fact [/clients]~ %btc-provider-update !>(update)]
 ::

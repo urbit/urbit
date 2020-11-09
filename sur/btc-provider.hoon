@@ -4,11 +4,13 @@
 +$  electrum-credentials  [rpc-url=@t]
 +$  credentials  [bc=btc-credentials ec=electrum-credentials]
 +$  host-info  [creds=credentials connected=? clients=(set ship)]
-+$  action
++$  action  [req-id=@t body=action-body]
++$  action-body
   $%  [%address-info =address]
       [%ping ~]
   ==
-+$  result
++$  result  [req-id=@t body=result-body]
++$  result-body
   $%  [%address-info a=address utxos=(set utxo) used=?]
   ==
 +$  error
@@ -18,7 +20,7 @@
       [%http-error status=@ud]
       [%rpc-error ~]
   ==
-+$  update  (each result error)             ::  sub updates to /clients path (connection etc.)
++$  update  (each result error)
 ::
 +$  command
   $%  [%set-credentials creds=credentials]
