@@ -15,7 +15,7 @@ export class History extends Component {
       >
         <div style={{ marginTop: 'auto' }}>
           {this.props.log.map((line, i) => {
-            return <Line key={i} index={i} line={line} />;
+            return <Line key={i} line={line} />;
           })}
         </div>
       </div>
