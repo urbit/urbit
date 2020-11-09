@@ -4,11 +4,15 @@ The below requires norsyr's fix to `decompress-point` in order to work.
 ## Set Credentials and Ping Servers
 (don't need password if all run on localhost)
 ```
-=rpc-pass '57a6662a8ddb792a557e9fe6d1a731f954db6c35e75a91e823ab20ea7a33585b'
-:btc-provider|command [%set-credentials [rpc-url='http://localhost:8332' rpc-user='__cookie__' rpc-pass] [rpc-url='http://localhost:50002']]=rpc-pass '57a6662a8ddb792a557e9fe6d1a731f954db6c35e75a91e823ab20ea7a33585b'
+=rpc-pass 'c7dc0698a2e3a5d66096152b34c273b8fbcc821e9d49f2ac706e38307d3441c5'
 :btc-provider|command [%set-credentials [rpc-url='http://localhost:8332' rpc-user='__cookie__' rpc-pass] [rpc-url='http://localhost:50002']]
 
-:btc-provider|action [%watch-address [%bech32 'bc1q59u5epktervh6fxqay2dlph0wxu9hjnx6v8n66'']]
+:btc-provider|action [%address-info [%bech32 'bc1q59u5epktervh6fxqay2dlph0wxu9hjnx6v8n66']]
+:btc-provider|action [%address-info [%bech32 'bc1qlwd7mw33uea5m8r2lsnsrkc7gp2qynrxsfxpfm']]
+:btc-provider|action [%address-info [%bech32 'bc1qglkc9zfcn04vcc88nn0ljtxcpu5uxfznc3829k']]
+::  first is an address w balance
+::  second has no balance but is used
+::  third is unused
 ```
 
 ## Transactions
