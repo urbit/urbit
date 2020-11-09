@@ -31,8 +31,6 @@
 ++  on-init
   ^-  (quip card _this)
   ~&  >  '%btc-provider initialized successfully'
-  ::  ping every 30s to see whether connected to RPC
-  ::
   `this(host-info [*credentials connected=%.n clients=*(set ship)], whitelist *(set ship))
 ++  on-save
   ^-  vase
@@ -45,9 +43,7 @@
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
-  ::  Only allow clients/authorized to poke
-  ::
-  ?>  ?|((team:title our.bowl src.bowl) (is-client:hc src.bowl))
+ ?>  ?|((team:title our.bowl src.bowl) (is-client:hc src.bowl))
   =^  cards  state
     ?+  mark  (on-poke:def mark vase)
         %btc-provider-command
@@ -71,7 +67,7 @@
 ++  on-arvo
   |=  [=wire =sign-arvo]
   ^-  (quip card _this)
-  ::  check for connectivity every 30 seconds with %ping
+  ::  check for connectivity every 30 seconds
   ::
   ?:  ?=([%ping-timer *] wire)
     :_  this
@@ -106,7 +102,7 @@
 ++  start-ping-timer
   |=  interval=@dr  ^-  card
   [%pass /ping-timer %arvo %b %wait (add now.bowl interval)]
-::  if not connected, only %ping action works
+::  if not connected, only %ping action is allowed
 ::
 ++  handle-action
   |=  act=action
@@ -129,7 +125,7 @@
   =/  req=request:http
     (gen-request host-info ract)
   [%pass (mk-wire act ract) %arvo %i %request req out]
-::  Wire structure: /action-tas/rpc-action-tas/(address, if %erpc action)/now
+::  wire structure: /action-tas/rpc-action-tas/(address, if rpc-action %erpc)/now
 ::
 ++  mk-wire
   |=  [act=action ract=action:rpc]
@@ -137,6 +133,8 @@
   =/  addr=path
     ?:(?=(%erpc -.ract) /(address-to-cord:elib address.ract) /)
   %-  zing  ~[/[-.act]/[-.ract] addr /[(scot %da now.bowl)]]
+::  TODO: write up how some responses can trigger a req-card to get more info (i.e. used
+::        that happens when multiple RPC calls have to be collated into one response
 ::
 ++  handle-rpc-response
   |=  [=wire response=client-response:iris]
@@ -209,6 +207,8 @@
 ++  is-client
   |=  user=ship  ^-  ?
   (~(has in clients.host-info) user)
+::  RPC JSON helper gates
+::  TODO: move these to /lib
 ::
 ++  httr-to-rpc-response
   |=  hit=httr:eyre
