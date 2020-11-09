@@ -12,7 +12,7 @@
 ::  Sends updates to:
 ::    none
 ::
-/-  *btc, *btc-wallet-hook, bws=btc-wallet-store
+/-  *btc, *btc-wallet-hook, bws=btc-wallet-store, bp=btc-provider
 /+  shoe, dbug, default-agent, bwsl=btc-wallet-store
 |%
 +$  versioned-state
@@ -147,4 +147,7 @@
   :*  %pass  /[(scot %da now.bowl)]  %agent  [host %btc-provider]
       %poke  %btc-provider-action  !>([%get-address-info a])
   ==
+++  mk-req-id
+  |=  hash=@ux  ^-  req-id:bp
+  (scot %ux hash)
 --
