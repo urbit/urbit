@@ -83,11 +83,14 @@
 ++  on-peek   on-peek:def
 ++  on-agent
   |=  [=wire =sign:agent:gall]
-  |^  ^-  (quip card _this)
+  ^-  (quip card _this)
   ?+  -.sign  (on-agent:def wire sign)
       %watch-ack
     ?:  ?=(%set-provider -.wire)
-      handle-provider-ack
+      ?^  p.sign
+        `this(provider ~)
+        :: TODO: if positive ack: check whether it's our current provider, then set connected to true. Retry items in pend/fail. Replace '`this'
+      `this
     `this
       %fact
     =^  cards  state
@@ -99,11 +102,6 @@
       ==
     [cards this]
   ==
-  ++  handlle-provider-ack
-    ?^  p.sign
-      `this(provider ~)
-      ::    - positive ack: check whether it's our current provider, then set connected to true. Retry items in pend/fail
-  --
 ++  on-arvo   on-arvo:def
 ++  on-fail   on-fail:def
 --
@@ -113,7 +111,7 @@
   ^-  (quip card _state)
   ~&  >  comm
   `state
-::  set-provider algo:
+::  set-provider algo: 
 ::    - add provider, connected false
 ::    - on negative ack: delete the provider
 ::
@@ -137,15 +135,15 @@
       %scan-address
     ?~  provider
       ~|("provider not set" !!)
-    =/  ri=req-id  (hash-xpub:bwsl +>.req)
-    :-  ~[(get-address-info host.u.provider a.req)]
+    =/  ri=req-id:bp  (mk-req-id (hash-xpub:bwsl +>.req))
+    :-  ~[(get-address-info ri host.u.provider a.req)]
     state(pend (~(put by pend) ri +>.req))
   ==
 ::
 ++  get-address-info
-  |=  [host=ship a=address]  ^-  card
+  |=  [ri=req-id:bp host=ship a=address]  ^-  card
   :*  %pass  /[(scot %da now.bowl)]  %agent  [host %btc-provider]
-      %poke  %btc-provider-action  !>([%get-address-info a])
+      %poke  %btc-provider-action  !>([ri %get-address-info a])
   ==
 ++  mk-req-id
   |=  hash=@ux  ^-  req-id:bp
