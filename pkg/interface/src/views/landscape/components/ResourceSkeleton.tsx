@@ -42,7 +42,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps) {
     videoShown: false
   };
   return (
-    <Col width="100%" height="100%" overflowY="hidden">
+    <Col overflowY="hidden">
       <Box
         flexShrink="0"
         py="2"

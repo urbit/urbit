@@ -193,7 +193,6 @@ export default class ChatInput extends Component<ChatInputProps, ChatInputState>
       <Row
         alignItems='center'
         position='relative'
-        flexGrow='1'
         flexShrink='0'
         borderTop='1'
         borderTopColor='washedGray'

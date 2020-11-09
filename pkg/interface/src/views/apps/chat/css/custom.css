@@ -208,6 +208,10 @@ blockquote {
 }
 .chat .react-codemirror2 {
   width: 100%;
+  height: 100%;
+  max-height: 224px;
+  overflow-y: hidden;
+
 }
 
 .chat .CodeMirror {
@@ -215,6 +219,8 @@ blockquote {
   width: 100% !important;
   cursor: text;
   background: transparent;
+  overflow-y: hidden;
+  max-height: 224px;
 }
 
 .chat .CodeMirror * {

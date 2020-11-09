@@ -159,12 +159,12 @@ export default class ChatEditor extends Component {
       <Row
         backgroundColor='white'
         alignItems='center'
-        flexGrow='1'
         height='100%'
         maxHeight='224px'
         width='calc(100% - 88px)'
         className={inCodeMode ? 'chat code' : 'chat'}
         color="black"
+        overflow="hidden"
       >
         {MOBILE_BROWSER_REGEX.test(navigator.userAgent)
           ? <BaseInput
