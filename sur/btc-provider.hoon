@@ -5,11 +5,11 @@
 +$  credentials  [bc=btc-credentials ec=electrum-credentials]
 +$  host-info  [creds=credentials connected=? clients=(set ship)]
 +$  action
-  $%  [%watch-address =address]
+  $%  [%address-info =address]
       [%ping ~]
   ==
 +$  result
-  $%  [%watch-address a=address utxos=(set utxo) used=?]
+  $%  [%address-info a=address utxos=(set utxo) used=?]
   ==
 +$  error
   $%  [%not-connected status=@ud]
@@ -45,5 +45,4 @@
     +$  response  btc-node-hook-response:brpc
     --
   --
-
 --

@@ -5,6 +5,14 @@
   ?:  ?=([%legacy *] address)
     (scot %uc +.address)
   +.address
+::
+++  address-from-cord
+  |=  addrc=@t  ^-  address
+  ?.  ?|  =("bc1" (scag 3 (trip addrc)))
+          =("tb1" (scag 3 (trip addrc)))
+      ==
+    ~|("legacy addresses not yet supported" !!)
+  [%bech32 addrc]
 ++  to-hex
   |=  h=@t
   ^-  @ux
@@ -39,6 +47,9 @@
     ?+  id.res  ~|([%unsupported-response id.res] !!)
         %get-address-utxos
       [id.res ((as:dejs:format utxo) res.res)]
+      ::
+        %get-address-history
+      [id.res ((as:dejs:format history) res.res)]
     ==
     ++  utxo
       %-  ot:dejs:format
@@ -47,22 +58,29 @@
           [%height ni:dejs:format]
           [%value ni:dejs:format]
       ==
+    ++  history
+      %-  ot:dejs:format
+      :~  ['tx_hash' (cu:dejs:format to-hash256 so:dejs:format)]
+          [%height ni:dejs:format]
+      ==
     --
   ::
   ++  request-to-http
     |=  [endpoint=@t req=request:electrum:rpc]
-    ^-  request:http
+    |^  ^-  request:http
     %-  http-request
-    ?-  -.req
-        %get-address-balance
-      %^  cat  3
-        (cat 3 endpoint '/addresses/balance/')
-      (address-to-cord address.req)
-      ::
+    ?-  method.req
         %get-address-utxos
-      %^  cat  3
-        (cat 3 endpoint '/addresses/utxos/')
-      (address-to-cord address.req)
+      (mk-url '/addresses/utxos/' address.req)
+      ::
+        %get-address-history
+      (mk-url '/addresses/history/' address.req)
     ==
+    ++  mk-url
+      |=  [base=@t addr=address]
+      %^  cat  3
+        (cat 3 endpoint base)
+      (address-to-cord addr)
+    --
   --
 --
