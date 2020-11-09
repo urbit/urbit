@@ -10,7 +10,7 @@
 +$  hash160  [wid=%20 dat=@ux]
 +$  hash  ?(hash256 hash160)
 +$  buffer  (list @ux)
-+$  utxo  [pos=@ tx-hash=hash256 block-height=@ value=sats]
++$  utxo  [pos=@ tx-hash=hash256 height=@ value=sats]
 ++  address-info
   $:  =address
       confirmed-value=sats

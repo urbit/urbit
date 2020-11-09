@@ -6,7 +6,8 @@
 ::    current connection state
 ::    results/errors of RPC calls
 ::
-/+  *btc-provider, dbug, default-agent
+/-  btc
+/+  *btc-provider, dbug, default-agent, elib=electrum-rpc
 |%
 +$  versioned-state
     $%  state-0
@@ -105,44 +106,44 @@
 ++  start-ping-timer
   |=  interval=@dr  ^-  card
   [%pass /ping-timer %arvo %b %wait (add now.bowl interval)]
-::  only %ping works if we're not connected
+::  if not connected, only %ping action works
 ::
 ++  handle-action
   |=  act=action
-  |^  ^-  (quip card _state)
-  ?:  ?&(?!(connected.host-info) ?!(=(-.act %ping)))
+  ^-  (quip card _state)
+  ?.  ?|(connected.host-info =(-.act %ping))
     ~&  >>>  "Not connected to RPC"
     [~[(send-update [%| [%not-connected 500]])] state]
   =/  ract=action:rpc
     ?-  -.act
-        %watch-address
+        %address-info
       [%erpc %get-address-utxos address.act]
       ::
         %ping
       [%brpc %get-block-count ~]
     ==
-  [~[(req-card ract)] state]
-  ++  req-card
-    |=  ract=action:rpc
-    =|  out=outbound-config:iris
-    =/  req=request:http
-      (gen-request host-info ract)
-    [%pass /[-.act]/[-.ract]/[(scot %da now.bowl)] %arvo %i %request req out]
-  --
-::  wire structure
-::  /action-tas/rpc-action-tas/timestamp
+  [~[(req-card act ract)] state]
+++  req-card
+  |=  [act=action ract=action:rpc]
+  =|  out=outbound-config:iris
+  =/  req=request:http
+    (gen-request host-info ract)
+  [%pass (mk-wire act ract) %arvo %i %request req out]
+::  Wire structure: /action-tas/rpc-action-tas/(address, if %erpc action)/now
 ::
-::  TODO use the 2 below to handle responses
-::  ~&  >  (parse-response:btc-rpc:blib rpc-resp)
-::  ~&  >>   (to-response (rpc-response [%erpc (parse-response:electrum-rpc:elib rpc-resp)]))
+++  mk-wire
+  |=  [act=action ract=action:rpc]
+  ^-  wire
+  =/  addr=path
+    ?:(?=(%erpc -.ract) /(address-to-cord:elib address.ract) /)
+  %-  zing  ~[/[-.act]/[-.ract] addr /[(scot %da now.bowl)]]
+::
 ++  handle-rpc-response
   |=  [=wire response=client-response:iris]
   ^-  (quip card _state)
   ?.  ?=(%finished -.response)  `state
   =*  status  status-code.response-header.response
-  ::  handle error types, in order:
-  ::    - connection errors
-  ::    - RPC errors
+  ::  handle error types: connection errors, RPC errors (in order)
   ::
   =^  conn-err  state
     (connection-error status)
@@ -153,14 +154,28 @@
     (get-rpc-response response)
   ?.  ?=([%result *] rpc-resp)
     [~[(send-update [%| [%rpc-error ~]])] state]
-  ::  no error, so handle returned RPC data
+  ::  no error, switch on wire to handle RPC data
   ::
   ?+  wire  ~|("Unexpected HTTP response" !!)
-      [%watch-address %erpc *]
-    ::  use the %erpc parser here
-    ~&  >>  +<.wire   ::  %brpc/%erpc 
-    ~&  >  rpc-resp
-    `state
+      [%address-info %erpc @ *]
+    =/  addr=address:btc  (address-from-cord:elib +>-.wire)
+    =/  eresp  (parse-response:electrum-rpc:elib rpc-resp)
+    :_  state
+    ^-  (list card)
+    :~  ?-  -.eresp
+            %get-address-utxos
+          ?:  =(0 ~(wyt in utxos.eresp))
+            (req-card [%address-info addr] [%erpc %get-address-history addr])
+          (send-update [%& %address-info addr utxos.eresp %.y])
+          ::
+            %get-address-history
+          %-  send-update
+          :*  %&  %address-info  addr  *(set utxo:btc)
+              ?:(=(0 ~(wyt in txs.eresp)) %.n %.y)
+          ==
+        ==
+     ==
+     ::
       [%ping %brpc *]
     `state(connected.host-info %.y)
   ==
@@ -183,6 +198,7 @@
 ::
 ++  send-update
   |=  =update  ^-  card
+  ~&  >>  "send-update: {<update>}"
   [%give %fact [/clients]~ %btc-provider-update !>(update)]
 ::
 ++  is-whitelisted
