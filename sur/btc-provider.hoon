@@ -4,12 +4,13 @@
 +$  electrum-credentials  [rpc-url=@t]
 +$  credentials  [bc=btc-credentials ec=electrum-credentials]
 +$  host-info  [creds=credentials connected=? clients=(set ship)]
-+$  action  [req-id=@t body=action-body]
++$  req-id  @t
++$  action  [=req-id body=action-body]
 +$  action-body
   $%  [%address-info =address]
       [%ping ~]
   ==
-+$  result  [req-id=@t body=result-body]
++$  result  [=req-id body=result-body]
 +$  result-body
   $%  [%address-info a=address utxos=(set utxo) used=?]
   ==
