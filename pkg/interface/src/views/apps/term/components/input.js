@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Row, Box, BaseInput } from '@tlon/indigo-react';
 import { cite } from '~/logic/lib/util';
 import { Spinner } from '~/views/components/Spinner';
 
@@ -82,29 +83,27 @@ export class Input extends Component {
       }
     }
     return (
-      <div className="flex flex-row flex-grow-1 relative">
-        <div className="flex-shrink-0"></div>
-        <span id="prompt">
-          {this.props.prompt}
-        </span>
-        <input
-          autoFocus
-          autocorrect="off"
-          autocapitalize="off"
-          spellcheck="false"
-          tabindex="0"
-          wrap="off"
-          className="mono ml1 flex-auto dib w-100"
-          id="term"
-          cursor={this.props.cursor}
-          onKeyDown={this.keyPress}
-          onClick={this.click}
-          onPaste={this.paste}
-          ref={this.inputRef}
-          defaultValue="connecting..."
-          value={prompt}
-        />
-      </div>
+      <Row flexGrow='1' position='relative'>
+        <Box flexShrink='0'>
+          <BaseInput
+            autoFocus
+            autoCorrect="off"
+            autoCapitalize="off"
+            spellCheck="false"
+            tabindex="0"
+            wrap="off"
+            className="mono ml1 flex-auto dib w-100"
+            id="term"
+            cursor={this.props.cursor}
+            onKeyDown={this.keyPress}
+            onClick={this.click}
+            onPaste={this.paste}
+            ref={this.inputRef}
+            defaultValue="connecting..."
+            value={prompt}
+          />
+        </Box>
+      </Row>
     );
   }
 }
