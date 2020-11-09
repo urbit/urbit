@@ -102,7 +102,7 @@ With max-gap=3
 
 #### in wallet-hook
 * types
-  - req-id=@ux: hash160 of (cat xpub chyg)
+  - req-id=@t: hash160 of (cat xpub chyg)
   - pend/fail: (req-id -> [=idx key=[xpub chyg]])
   - timeouts: (req-id -> @da) -- store Behns for each req
 
@@ -120,13 +120,6 @@ With max-gap=3
 ### Monitor addresses
 - nixt also stores next 50 addresses for each account.
 - every update-address call also checks those
-
-### subscribe to provider
-* btc: FIX and think out hook->provider data/sub flow
-  - on sub: add provider, connected is false
-  - negative ack: delete provider
-  - positive ack: check whether it's our current provider, then set connected to true. Retry items in pend/fail
-* btc: if no provider set, keep items in pend/fail
 
 ### make a payment
 * make payment
