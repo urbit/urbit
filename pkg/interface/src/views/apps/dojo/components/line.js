@@ -55,7 +55,7 @@ export default function Line({index, line}) {
     //
     return (
       <Text mono display='block' fontSize='14px'
-      style={{ overflowWrap: 'break-word', whiteSpace: 'pre' }}
+      style={{ overflowWrap: 'break-word', whiteSpace: 'pre-wrap' }}
       >
         {text}
       </Text>
