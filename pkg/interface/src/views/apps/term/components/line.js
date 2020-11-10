@@ -15,8 +15,8 @@ export default React.memo(({line}) => {
         switch (deco) {
           case null: return prop;
           case 'br': return {bold: true, ...prop};
-          case 'bl': return {blink: true, ...prop};  //TODO
-          case 'un': return {textDecoration: 'underline', ...prop};  //TODO  fixme
+          case 'bl': return {className: 'blink', ...prop};
+          case 'un': return {style: {textDecoration: 'underline'}, ...prop};
           default: console.log('weird deco', deco); return prop;
         }
       }, {});
