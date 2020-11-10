@@ -1723,6 +1723,7 @@
           [$deal p=sock q=term r=deal]                  ::  full transmission
           [%goad force=? agent=(unit dude)]             ::  rebuild agent(s)
           [%sear =ship]                                 ::  clear pending queues
+          [%fade dap=term style=?(%rest %doze %gone)]   ::  put app to sleep
           $>(%init vane-task)                           ::  set owner
           $>(%trim vane-task)                           ::  trim state
           $>(%vega vane-task)                           ::  report upgrade

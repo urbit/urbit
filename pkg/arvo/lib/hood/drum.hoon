@@ -177,6 +177,11 @@
   =<  se-abet  =<  se-view
   (se-born & wel)
 ::
+++  poke-fade                                         ::  fade app
+  |=  wel/well:gall
+  =<  se-abet  =<  se-view
+  (se-fade wel)
+::
 ++  poke-link                                         ::  connect app
   |=  gyl/gill:gall
   =<  se-abet  =<  se-view
@@ -205,6 +210,7 @@
     %drum-put            =;(f (f !<(_+<.f vase)) poke-put)
     %drum-set-boot-apps  =;(f (f !<(_+<.f vase)) poke-set-boot-apps)
     %drum-start          =;(f (f !<(_+<.f vase)) poke-start)
+    %drum-fade           =;(f (f !<(_+<.f vase)) poke-fade)
     %drum-unlink         =;(f (f !<(_+<.f vase)) poke-unlink)
   ==
 ::
@@ -309,7 +315,7 @@
   ::                                                  ::  ::
 ++  se-abet                                           ::  resolve
   ^-  (quip card:agent:gall state)
-  =.  .  se-subze:se-adze:se-adit
+  =.  .  se-subze:se-adze:se-subit:se-adit
   :_  sat(bin (~(put by bin) ost dev))
   ^-  (list card:agent:gall)
   ?~  biz  (flop moz)
@@ -373,6 +379,17 @@
       %.n
     $(priorities t.priorities)
   --
+::
+++  se-subit                                          ::  downdate servers
+  =/  ruf=(list term)  ~(tap in ~(key by fur))
+  |-  ^+  this
+  ?~  ruf
+    this
+  ?:  (~(has in ray) [%home i.ruf])
+    $(ruf t.ruf)
+  =/  wire  [%drum %fade i.ruf ~]
+  =.  this  (se-emit %pass wire %arvo %g %fade i.ruf %gone)
+  $(ruf t.ruf, fur (~(del by fur) i.ruf))
 ::
 ++  se-adze                                           ::  update connections
   ^+  .
@@ -467,6 +484,15 @@
   %=  +>
     ray  (~(put in ray) wel)
     eel  (~(put in eel) [our.hid q.wel])
+  ==
+::
+++  se-fade                                           ::  delete server
+  |=  wel=well:gall
+  ^+  +>
+  ?.  (~(has in ray) wel)
+    (se-text "[fade not running {<p.wel>}/{<q.wel>}]")
+  %=  +>
+    ray  (~(del in ray) wel)
   ==
 ::
 ++  se-drop                                           ::  disconnect

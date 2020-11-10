@@ -851,6 +851,19 @@
     =?  new-blocked  !=(ship attributing.routes.mov)
       (~(put to new-blocked) mov)
     $
+  ::  +mo-fade: put app to sleep
+  ::
+  ++  mo-fade
+    |=  [dap=term style=?(%rest %doze %gone)]
+    ^+  mo-core
+    =/  =routes  [disclosing=~ attributing=our]
+    =/  app  (ap-abed:ap dap routes)
+    =.  mo-core  ap-abet:(ap-fade:app style)
+    ?-  style
+      %gone  mo-core(yokes.state (~(del by yokes.state) dap))
+      %rest  !!
+      %doze  !!
+    ==
   ::  +mo-beak: assemble a beak for the specified agent.
   ::
   ++  mo-beak
@@ -1071,6 +1084,31 @@
         yokes.state  running
         moves        moves
       ==
+    ::  +ap-fade:  put affairs in order.
+    ::
+    ::    For %gone, remove all incoming and outgoing subscriptions.
+    ::
+    ++  ap-fade
+      |=  style=?(%rest %doze %gone)
+      ^+  ap-core
+      ?>  ?=(%gone style)
+      =/  out=(list [[=wire =ship =term] ? =path])
+        ~(tap by outbound.watches.current-agent)
+      =/  inbound-paths=(set path)
+        %-  silt
+        %+  turn  ~(tap by inbound.watches.current-agent)
+        |=  [=duct =ship =path]
+        path
+      =/  will=(list card:agent:gall)
+        %+  welp
+          ?:  =(~ inbound-paths)
+            ~
+          [%give %kick ~(tap in inbound-paths) ~]~
+        %+  turn  ~(tap by outbound.watches.current-agent)
+        |=  [[=wire =ship =term] ? =path]
+        [%pass wire %agent [ship term] %leave ~]
+      =^  maybe-tang  ap-core  (ap-ingest ~ |.([will agent.current-agent]))
+      ap-core
     ::  +ap-from-internal: internal move to move.
     ::
     ::    We convert from cards to duct-indexed moves when resolving
@@ -1707,6 +1745,7 @@
     mo-abet
   ::
       %sear  mo-abet:(mo-filter-queue:mo-core ship.task)
+      %fade  mo-abet:(mo-fade:mo-core dap.task style.task)
       %trim  [~ gall-payload]
       %vega  [~ gall-payload]
   ==

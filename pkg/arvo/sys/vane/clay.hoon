@@ -165,7 +165,6 @@
       hez=(unit duct)                                   ::  sync duct
       cez=(map @ta crew)                                ::  permission groups
       pud=(unit [=desk =yoki])                          ::  pending update
-      pun=(list move)                                   ::  upgrade moves
   ==                                                    ::
 ::
 ::  Object store.
@@ -3949,7 +3948,7 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =|                                                    ::  instrument state
-    $:  ver=%5                                        ::  vane version
+    $:  ver=%6                                        ::  vane version
         ruf=raft                                      ::  revision tree
     ==                                                ::
 |=  [our=ship now=@da eny=@uvJ ski=sley]              ::  current invocation
@@ -4151,7 +4150,7 @@
       =^  moves-1  ..^^$  $(desks t.desks)
       =^  moves-2  ruf  abet:wake:((de our now ski hen ruf) [ship desk]:i.desks)
       [(weld moves-1 moves-2) ..^^$]
-    [(welp wake-moves pun.ruf) ..^$(pun.ruf ~)]
+    [wake-moves ..^$]
   ::
       ?(%warp %werp)
     ::  capture whether this read is on behalf of another ship
@@ -4209,8 +4208,14 @@
   =?  old  ?=(%2 -.old)  (load-2-to-3 old)
   =?  old  ?=(%3 -.old)  (load-3-to-4 old)
   =?  old  ?=(%4 -.old)  (load-4-to-5 old)
-  ?>  ?=(%5 -.old)
+  =?  old  ?=(%5 -.old)  (load-5-to-6 old)
+  ?>  ?=(%6 -.old)
   ..^^$(ruf +.old)
+  ::
+  ++  load-5-to-6
+    |=  =state-5
+    ^-  state-6
+    state-5(- %6, |7 pud.state-5)
   ::
   ++  load-4-to-5
     |=  =state-4
@@ -4424,8 +4429,19 @@
       --
     --
   ::
-  +$  any-state  $%(state-5 state-4 state-3 state-2)
-  +$  state-5  [%5 raft]
+  +$  any-state  $%(state-6 state-5 state-4 state-3 state-2)
+  +$  state-6  [%6 raft]
+  ++  state-5
+    $:  %5
+        rom=room
+        hoy=(map ship rung)
+        ran=rang
+        mon=(map term beam)
+        hez=(unit duct)
+        cez=(map @ta crew)
+        pud=(unit [=desk =yoki])
+        pun=(list *)
+    ==                                                    ::
   +$  state-4
     $:  %4
         rom=room
