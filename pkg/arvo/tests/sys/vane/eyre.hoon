@@ -1853,7 +1853,7 @@
     ==
   ::  user gets sent multiple subscription results
   ::
-  =/  max=@ud  (dec clog-threshold:eyre-gate)
+  =/  max=@ud  clog-threshold:eyre-gate
   =/  cur=@ud  0
   |-  =*  loop-fact  $
   ?.  =(cur max)
@@ -1889,13 +1889,31 @@
         ==
       ^=  moves
         :~  :*  duct=~[/http-get-open]
+              %give
+              %response
+              %continue
+              :-  ~
+              %-  as-octt:mimes:html
+              """
+              id: {((d-co:co 1) +(clog-threshold:eyre-gate))}
+              data: \{"json":[1],"id":1,"response":"diff"}
+
+
+              """
+              complete=%.n
+            ==
+            :*  duct=~[/http-put-request]  %pass
+              /channel/subscription/'0123456789abcdef'/'1'/~nul/two
+              %g  %deal  [~nul ~nul]  %two  %leave  ~
+            ==
+            :*  duct=~[/http-get-open]
                 %give
                 %response
                 %continue
                 :-  ~
                 %-  as-octt:mimes:html
                 """
-                id: {((d-co:co 1) +(clog-threshold:eyre-gate))}
+                id: {((d-co:co 1) (add 2 clog-threshold:eyre-gate))}
                 data: \{"id":1,"response":"quit"}
 
 
