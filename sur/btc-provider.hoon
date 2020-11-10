@@ -22,6 +22,7 @@
       [%rpc-error ~]
   ==
 +$  update  (each result error)
++$  status  ?(%connected %disconnected)
 ::
 +$  command
   $%  [%set-credentials creds=credentials]
@@ -49,3 +50,4 @@
     --
   --
 --
+::

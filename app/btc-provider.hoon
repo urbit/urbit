@@ -43,7 +43,7 @@
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
- ?>  ?|((team:title our.bowl src.bowl) (is-client:hc src.bowl))
+  ?>  ?|((team:title our.bowl src.bowl) (is-client:hc src.bowl))
   =^  cards  state
     ?+  mark  (on-poke:def mark vase)
         %btc-provider-command
@@ -57,9 +57,12 @@
   |=  pax=path
   ^-  (quip card _this)
   ?>  ?=([%clients *] pax)
-  ?>  (is-whitelisted:hc src.bowl)
+  ?.  (is-whitelisted:hc src.bowl)
+    ~&  >>>  "btc-provider: blocked client {<src.bowl>}"
+    [~[[%give %kick ~ ~]] this]
   ~&  >  "btc-provider: added client {<src.bowl>}"
-  `this(clients.host-info (~(put in clients.host-info) src.bowl))
+  :-  ~[[%give %fact ~ %btc-provider-status !>(?:(connected.host-info %connected %disconnected))]]
+  this(clients.host-info (~(put in clients.host-info) src.bowl))
 ::
 ++  on-leave  on-leave:def
 ++  on-peek   on-peek:def
