@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import { hasProvider } from 'oembed-parser';
 
 import { S3Upload, SubmitDragger } from '~/views/components/s3-upload';
-import { Spinner } from '~/views/components/Spinner';
-import { Box, Text, BaseInput, Button } from "@tlon/indigo-react";
+import { Box, Text, BaseInput, Button } from '@tlon/indigo-react';
 import GlobalApi from '~/logic/api/global';
 import { S3State } from '~/types';
 
@@ -57,7 +56,7 @@ export class LinkSubmit extends Component<LinkSubmitProps, LinkSubmitState> {
     this.setState({ disabled: true });
 
     const parentIndex = this.props.parentIndex || '';
-    let post = createPost([
+    const post = createPost([
       { text: title },
       { url: link }
     ], parentIndex);
@@ -79,7 +78,7 @@ export class LinkSubmit extends Component<LinkSubmitProps, LinkSubmitState> {
   setLinkValid(linkValue) {
     const URLparser = new RegExp(
       /((?:([\w\d\.-]+)\:\/\/?){1}(?:(www)\.?){0,1}(((?:[\w\d-]+\.)*)([\w\d-]+\.[\w\d]+))){1}(?:\:(\d+)){0,1}((\/(?:(?:[^\/\s\?]+\/)*))(?:([^\?\/\s#]+?(?:.[^\?\s]+){0,1}){0,1}(?:\?([^\s#]+)){0,1})){0,1}(?:#([^#\s]+)){0,1}/
-    );;
+    );
 
     let linkValid = URLparser.test(linkValue);
 
@@ -100,7 +99,7 @@ export class LinkSubmit extends Component<LinkSubmitProps, LinkSubmitState> {
           if (result.title && !this.state.linkTitle) {
             this.setState({ linkTitle: result.title });
           }
-        }).catch((error) => {/*noop*/});
+        }).catch((error) => { /* noop*/ });
       } else if (!this.state.linkTitle) {
         this.setState({
           linkTitle: decodeURIComponent(linkValue
@@ -112,7 +111,7 @@ export class LinkSubmit extends Component<LinkSubmitProps, LinkSubmitState> {
             .replace('_', ' ')
             .replace(/\d{4}\.\d{1,2}\.\d{2}\.\.\d{2}\.\d{2}\.\d{2}-/, '')
             )
-        })
+        });
       }
     }
   }
@@ -169,8 +168,8 @@ export class LinkSubmit extends Component<LinkSubmitProps, LinkSubmitState> {
       return;
     }
     this.s3Uploader.current.inputRef.current.files = files;
-    const fire = document.createEvent("HTMLEvents");
-    fire.initEvent("change", true, true);
+    const fire = document.createEvent('HTMLEvents');
+    fire.initEvent('change', true, true);
     this.s3Uploader.current?.inputRef.current?.dispatchEvent(fire);
   }
 
@@ -191,10 +190,10 @@ export class LinkSubmit extends Component<LinkSubmitProps, LinkSubmitState> {
         width='100%'
         borderRadius='2'
         onDragEnter={this.onDragEnter.bind(this)}
-        onDragOver={e => {
+        onDragOver={(e) => {
           e.preventDefault();
           if (isS3Ready) {
-            this.setState({ dragover: true})
+            this.setState({ dragover: true });
           }
         }}
         onDragLeave={() => this.setState({ dragover: false })}
@@ -208,22 +207,29 @@ export class LinkSubmit extends Component<LinkSubmitProps, LinkSubmitState> {
               this.state.disabled
             ) ? null : (
               isS3Ready ? (
-                <Text gray position='absolute' pl='2' pt='2' pb='2' fontSize='0'
-                      style={{pointerEvents: 'none'}}>
+                <Text gray position='absolute'
+                  pl='2' pt='2'
+                  pb='2' fontSize='0'
+                      style={{ pointerEvents: 'none' }}
+                >
                   Drop or
                   <Text cursor='pointer' color='blue'
-                        style={{pointerEvents: 'all'}}
+                        style={{ pointerEvents: 'all' }}
                         onClick={(event) => {
                           if (!this.readyToUpload()) {
                             return;
                           }
                            this.s3Uploader.current.inputRef.current.click();
-                        }}> upload </Text>
+                        }}
+                  > upload </Text>
                   a file, or paste a link here
                 </Text>
               ) : (
-                <Text gray position='absolute' pl='2' pt='2' pb='2' fontSize='0'
-                      style={{pointerEvents: 'none'}}>
+                <Text gray position='absolute'
+                  pl='2' pt='2'
+                  pb='2' fontSize='0'
+                      style={{ pointerEvents: 'none' }}
+                >
                   Paste a link here
                 </Text>
               )
@@ -236,7 +242,7 @@ export class LinkSubmit extends Component<LinkSubmitProps, LinkSubmitState> {
             uploadSuccess={this.uploadSuccess.bind(this)}
             uploadError={this.uploadError.bind(this)}
             className="dn absolute pt3 pb2 pl2 w-100"
-          ></S3Upload> : null}
+            ></S3Upload> : null}
           <BaseInput
             type="url"
             pl='2'
@@ -292,7 +298,7 @@ export class LinkSubmit extends Component<LinkSubmitProps, LinkSubmitState> {
           primary
           disabled={!this.state.linkValid || this.state.disabled}
           onClick={this.onClickPost.bind(this)}
-          >
+        >
             Post link
           </Button>
       </Box>
