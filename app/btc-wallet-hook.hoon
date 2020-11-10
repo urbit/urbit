@@ -154,10 +154,11 @@
       %scan-address
     =/  ri=req-id:bp  (mk-req-id (hash-xpub:bwsl +>.req))
     :_  state(pend (~(put by pend) ri req))
-    ?~  provider
-      ~&  >  "provider not set"
-      ~
-    ~[(get-address-info ri host.u.provider a.req)]
+    ?~  provider  ~
+    ?:  provider-connected
+      ~[(get-address-info ri host.u.provider a.req)]
+    ~&  >  "provider not set"
+    ~
   ==
 ::
 ++  retry
@@ -176,4 +177,8 @@
 ++  mk-req-id
   |=  hash=@ux  ^-  req-id:bp
   (scot %ux hash)
+++  provider-connected
+  ^-  ?
+  ?~  provider  %.n
+  connected.u.provider
 --
