@@ -221,7 +221,6 @@
         name.u.notif-kind
       =/  parent=index:post
         (scag parent-lent.u.notif-kind index.post.node)
-      ~&  parent
       ?.  ?|  =(desc %mention)
               (~(has in watching) [rid parent])
           ==
