@@ -32,11 +32,13 @@ export function Author(props: AuthorProps) {
       {showImage && (
         <Box>
           {showAvatar ? (
-            <img src={contact?.avatar} height={24} width={24} className="dib" />
+            <img src={contact?.avatar} height={16} width={16} className="dib" />
           ) : (
             <Sigil
               ship={ship}
-              size={24}
+              size={16}
+              icon
+              padded
               color={color}
               classes={contact?.color ? '' : "mix-blend-diff"}
             />
@@ -45,8 +47,10 @@ export function Author(props: AuthorProps) {
       )}
       <Box
         ml={showImage ? 2 : 0}
-        color="gray"
+        color="black"
+        lineHeight='tall'
         fontFamily={showNickname ? "sans" : "mono"}
+        fontWeight={showNickname ? '500' : '400'}
       >
         {name}
       </Box>

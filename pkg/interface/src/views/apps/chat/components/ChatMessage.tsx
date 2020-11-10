@@ -295,27 +295,89 @@ export const MessageContent = ({ content, remoteContentPolicy, measure }) => {
 };
 
 export const MessagePlaceholder = ({ height, index, className = '', style = {}, ...props }) => (
-  <div className={`w-100 f7 pl3 pt4 pr3 cf flex lh-copy ${className}`} style={{ height, ...style }} {...props}>
-      <div className="fl pr3 v-top bg-white bg-gray0-d">
-        <span
-          className="db bg-gray2 bg-white-d"
+  <Box
+    width='100%'
+    fontSize='2'
+    pl='3' pt='4'
+    pr='3'
+    display='flex'
+    lineHeight='tall'
+    className={className}
+    style={{ height, ...style }}
+    {...props}
+  >
+      <Box pr='3' verticalAlign='top' backgroundColor='white' style={{ float: 'left' }}>
+        <Text
+          display='block'
+          background='gray'
+          width='24px'
+          height='24px'
+          borderRadius='50%'
           style={{
-            width: "24px",
-            height: "24px",
-            borderRadius: "50%",
             visibility: (index % 5 == 0) ? "initial" : "hidden",
           }}
-        ></span>
-      </div>
-      <div className="fr clamp-message white-d" style={{ flexGrow: 1, marginTop: -8 }}>
-        <div className="hide-child" style={{paddingTop: "6px", visibility: (index % 5 == 0) ? "initial" : "hidden" }}>
-          <p className={`v-mid f9 gray2 dib mr3 c-default`}>
-            <span className="mw5 db"><span className="bg-gray5 bg-gray1-d db w-100 h-100"></span></span>
-          </p>
-          <p className="v-mid mono f9 gray2 dib"><span className="bg-gray5 bg-gray1-d db w-100 h-100" style={{height: "1em", width: `${(index % 3 + 1) * 3}em`}}></span></p>
-          <p className="v-mid mono f9 ml2 gray2 dib child dn-s"><span className="bg-gray5 bg-gray1-d db w-100 h-100"></span></p>
-        </div>
-        <span className="bg-gray5 bg-gray1-d db w-100 h-100 db" style={{height: `1em`, width: `${(index % 5) * 20}%`}}></span>
-      </div>
-    </div>
+        ></Text>
+      </Box>
+      <Box
+        style={{ float: 'right', flexGrow: 1 }}
+        color='black'
+        className="clamp-message"
+      >
+        <Box
+          className="hide-child"
+          paddingTop='4'
+          style={{visibility: (index % 5 == 0) ? "initial" : "hidden" }}
+        >
+          <Text
+            display='inline-block'
+            verticalAlign='middle'
+            fontSize='0'
+            gray
+            cursor='default'
+          >
+            <Text maxWidth='32rem' display='block'>
+              <Text
+                backgroundColor='gray'
+                display='block'
+                width='100%'
+                height='100%'></Text>
+              </Text>
+          </Text>
+          <Text
+            display='inline-block'
+            mono
+            verticalAlign='middle'
+            fontSize='0'
+            gray
+          >
+            <Text
+              background='gray'
+              display='block'
+              height='1em'
+              style={{ width: `${(index % 3 + 1) * 3}em` }}
+            ></Text>
+            </Text>
+          <Text
+            mono
+            verticalAlign='middle'
+            fontSize='0'
+            ml='2'
+            gray
+            display={['none', 'inline-block']}
+            className="child">
+            <Text
+              backgroundColor='gray'
+              display='block'
+              width='100%'
+              height='100%'
+              ></Text>
+            </Text>
+        </Box>
+        <Text
+          display='block'
+          backgroundColor='gray'
+          height='1em'
+          style={{ width: `${(index % 5) * 20}%` }}></Text>
+      </Box>
+    </Box>
 );

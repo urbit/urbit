@@ -111,6 +111,7 @@
       %hark-graph-hook
       %hark-group-hook
       %hark-chat-hook
+      %observe-hook
   ==
 ::
 ++  deft-fish                                           ::  default connects
@@ -250,6 +251,7 @@
     =>  (se-born | %home %hark-group-hook)
     =>  (se-born | %home %hark-chat-hook)
     (se-born | %home %hark-store)
+   (se-born | %home %observe-hook)
   ..on-load
 ::
 ++  reap-phat                                         ::  ack connect
