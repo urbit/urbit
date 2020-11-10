@@ -3,6 +3,14 @@
 ++  grow
   |%
   ++  noun  i
+  ::  +notification-kind
+  ::    Ignore all containers, only notify on content
+  ::
+  ++  notification-kind
+    ?+  index.p.i   ~
+      [@ %1 @ ~]  `%note
+      [@ %2 @ ~]  `%comment
+    ==
   --
 ++  grab
   |%

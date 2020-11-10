@@ -7,10 +7,10 @@ import { Contacts } from "~/types/contact-update";
 import { Group } from "~/types/group-update";
 import { Association } from "~/types/metadata-update";
 import GlobalApi from "~/logic/api/global";
-import {S3State} from "~/types";
+import {GroupNotificationsConfig, S3State} from "~/types";
 
 import { ContactCard } from "./ContactCard";
-import { GroupSettings } from "./GroupSettings";
+import { GroupSettings } from "./GroupSettings/GroupSettings";
 import { Participants } from "./Participants";
 
 
@@ -41,6 +41,7 @@ export function PopoverRoutes(
     api: GlobalApi;
     hideAvatars: boolean;
     hideNicknames: boolean;
+    notificationsGroupConfig: GroupNotificationsConfig;
   } & RouteComponentProps
 ) {
   const relativeUrl = (url: string) => `${props.baseUrl}/popover${url}`;
@@ -125,6 +126,7 @@ export function PopoverRoutes(
                         group={props.group}
                         association={props.association}
                         api={props.api}
+                        notificationsGroupConfig={props.notificationsGroupConfig}
                       />
                     )}
                     {view === "participants" && (

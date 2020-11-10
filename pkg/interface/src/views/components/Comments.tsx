@@ -1,13 +1,14 @@
 import React from 'react';
 import { Col } from '@tlon/indigo-react';
-import { CommentItem } from '~/views/components/CommentItem';
-import CommentInput from '~/views/components/CommentInput';
+import { CommentItem } from './CommentItem';
+import CommentInput from './CommentInput';
 import { Contacts } from '~/types/contact-update';
 import GlobalApi from '~/logic/api/global';
 import { FormikHelpers } from 'formik';
 import { GraphNode } from '~/types/graph-update';
 import { createPost } from '~/logic/api/graph';
 import { LocalUpdateRemoteContentPolicy } from '~/types';
+import { scanForMentions } from '~/logic/lib/graph';
 
 interface CommentsProps {
   comments: GraphNode;
@@ -28,7 +29,8 @@ export function Comments(props: CommentsProps) {
     actions: FormikHelpers<{ comment: string }>
   ) => {
     try {
-      const post = createPost([{ text: comment }], comments?.post?.index);
+      const content = scanForMentions(comment);
+      const post = createPost(content, comments?.post?.index);
       await api.graph.addPost(ship, name, post);
       actions.resetForm();
       actions.setStatus({ success: null });
@@ -44,7 +46,7 @@ export function Comments(props: CommentsProps) {
       {Array.from(comments.children).reverse().map(([idx, comment]) => (
         <CommentItem
           comment={comment}
-          key={idx}
+          key={idx.toString()}
           contacts={props.contacts}
           api={api}
           name={name}
