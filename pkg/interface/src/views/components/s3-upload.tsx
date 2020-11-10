@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
-import { BaseInput, Box, Text, Icon } from "@tlon/indigo-react";
+import { BaseInput, Box, Text, Icon, LoadingSpinner } from "@tlon/indigo-react";
 
 import S3Client from '~/logic/lib/s3';
-import { Spinner } from './Spinner';
 import { S3Credentials, S3Configuration } from '~/types';
 import { dateToDa, deSig } from '~/logic/lib/util';
 
@@ -148,7 +147,7 @@ export class S3Upload extends Component<S3UploadProps, S3UploadState> {
           accept={accept}
           onChange={this.onChange.bind(this)} />
         {this.state.isUploading
-          ? <Spinner awaiting={true} classes={className} />
+          ? <LoadingSpinner background="gray" foreground="black" />
           : <Text cursor='pointer' className={className} onClick={this.onClick.bind(this)}>{display}</Text>
         }
       </>
