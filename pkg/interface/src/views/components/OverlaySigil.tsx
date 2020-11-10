@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 
 import { Sigil } from '~/logic/lib/sigil';
-import { Contact, Association, Group } from '~/types';
+import { Contact, Group } from '~/types';
 
 import {
   ProfileOverlay,
@@ -14,7 +14,6 @@ interface OverlaySigilProps {
   contact?: Contact;
   color: string;
   sigilClass: string;
-  association: Association;
   group: Group;
   hideAvatars: boolean;
   hideNicknames: boolean;
@@ -108,7 +107,6 @@ export default class OverlaySigil extends PureComponent<OverlaySigilProps, Overl
             color={props.color}
             topSpace={state.topSpace}
             bottomSpace={state.bottomSpace}
-            association={props.association}
             group={props.group}
             onDismiss={this.profileHide}
             hideAvatars={hideAvatars}

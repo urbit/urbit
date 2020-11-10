@@ -41,7 +41,6 @@ export const CommentItem = (props) => {
           contact={contact}
           color={color}
           sigilClass={sigilClass}
-          association={association}
           group={group}
           hideAvatars={hideAvatars}
           hideNicknames={hideNicknames}

@@ -6,10 +6,9 @@ import bigInt from 'big-integer';
 import GlobalApi from "~/logic/api/global";
 import { StoreState } from "~/logic/store/type";
 import { uxToHex } from '~/logic/lib/util';
-import { Association, GraphNode } from "~/types";
 import { RouteComponentProps } from "react-router-dom";
 
-import { LinkItem } from "./components/link-item";
+import { LinkItem } from "./components/LinkItem";
 import { LinkSubmit } from "./components/link-submit";
 import { LinkPreview } from "./components/link-preview";
 import { Comments } from "~/views/components/comments";
@@ -77,14 +76,14 @@ export function LinkResource(props: LinkResourceProps) {
                   const contact = contactDetails[node.post.author];
                   return (
                     <LinkItem
+                      contacts={contacts}
                       key={date.toString()}
                       resource={resourcePath}
                       node={node}
-                      nickname={contact?.nickname}
                       hideAvatars={hideAvatars}
                       hideNicknames={hideNicknames}
+                      remoteContentPolicy={remoteContentPolicy}
                       baseUrl={resourceUrl}
-                      color={uxToHex(contact?.color || '0x0')}
                       group={group}
                       api={api}
                     />
@@ -115,13 +114,18 @@ export function LinkResource(props: LinkResourceProps) {
             return (
               <Col width="100%" p={3} maxWidth="640px">
                 <Link to={resourceUrl}>{"<- Back"}</Link>
-                <LinkPreview
-                  resourcePath={resourcePath}
-                  post={node.post}
-                  nickname={contact?.nickname}
+                <LinkItem
+                  contacts={contacts}
+                  key={node.post.index}
+                  resource={resourcePath}
+                  node={node}
+                  hideAvatars={hideAvatars}
                   hideNicknames={hideNicknames}
-                  commentNumber={node.children.size}
                   remoteContentPolicy={remoteContentPolicy}
+                  baseUrl={resourceUrl}
+                  group={group}
+                  api={api}
+                  mt={2}
                 />
                 <Comments
                   ship={ship}

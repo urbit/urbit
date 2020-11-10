@@ -215,7 +215,6 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
           contact={contact}
           color={color}
           sigilClass={sigilClass}
-          association={association}
           group={group}
           hideAvatars={hideAvatars}
           hideNicknames={hideNicknames}

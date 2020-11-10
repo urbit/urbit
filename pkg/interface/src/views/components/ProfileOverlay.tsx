@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 
-import { Contact, Association, Group } from '~/types';
+import { Contact, Group } from '~/types';
 import { cite } from '~/logic/lib/util';
 import { Sigil } from '~/logic/lib/sigil';
 
@@ -14,7 +14,6 @@ interface ProfileOverlayProps {
   color: string;
   topSpace: number;
   bottomSpace: number;
-  association: Association;
   group: Group;
   onDismiss(): void;
   hideAvatars: boolean;
