@@ -13,11 +13,11 @@
     %-  of
     :~  aro+(su (perk %d %l %r %u ~))
         bac+ul
-        ctl+`$-(json @c)`so
+        ctl+(cu taft so)
         del+ul
-        met+`$-(json @c)`so
+        met+(cu taft so)
         ret+ul
-        txt+`$-(json (list @c))`sa
+        txt+(cu tuba sa)
     ==
   --
 ::  +grow: convert to
