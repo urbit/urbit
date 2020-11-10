@@ -40,11 +40,11 @@ export class Input extends Component {
     else if (key === 'Delete')     belt = {del: null};
     else if (key === 'Tab')        belt = {ctl: 'i'};
     else if (key === 'Enter')      belt = {ret: null};
-    else if (key.length === 1)     belt = {txt: key};
+    else if (key.length === 1)     belt = {txt: [key]};
     else                           belt = null;
 
     if (belt && e.getModifierState('Control')) {
-      if (belt.txt !== undefined) belt = {ctl: belt.txt};
+      if (belt.txt !== undefined) belt = {ctl: belt.txt[0]};
     } else
     if (belt &&
         (e.getModifierState('Meta') || e.getModifierState('Alt'))) {
@@ -60,7 +60,8 @@ export class Input extends Component {
 
   paste(e) {
     const clipboardData = e.clipboardData || window.clipboardData;
-    this.props.api.belt({ txt: clipboardData.getData('Text') });
+    const clipboardText = clipboardData.getData('Text');
+    this.props.api.belt({ txt: [...clipboardText] });
     e.preventDefault();
   }
 
@@ -75,11 +76,11 @@ export class Input extends Component {
     let prompt = 'connecting...';
     if (line) {
       if (line.lin) {
-        prompt = line.lin;
+        prompt = line.lin.join('');
       }
       //TODO  render prompt style
       else if (line.klr) {
-        prompt = line.klr.reduce((l, p) => (l + p), '');
+        prompt = line.klr.reduce((l, p) => (l + p.text.join('')), '');
       }
     }
     return (

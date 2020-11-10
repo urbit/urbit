@@ -28,7 +28,21 @@ export default class Store {
         this.setState({ lines: this.state.lines });
         break;
       case 'hop':
-        this.setState({ cursor: blit.hop });
+        //  since lines are lists of characters that might span multiple
+        //  codepoints, we need to calculate the byte-wise cursor position
+        //  to avoid incorrect cursor rendering.
+        let line = this.state.lines[this.state.lines.length - 1];
+        let hops;
+        if (line.lin) {
+          hops = line.lin.slice(0, blit.hop);
+        }
+        else if (line.klr) {
+          hops = line.klr.reduce((h, p) => {
+            if (h.length >= blit.hop) return h;
+            return [...h, ...p.text.slice(0, blit.hop - h.length)]
+          }, []);
+        }
+        this.setState({ cursor: hops.join('').length });
         break;
       case 'lin':
         this.state.lines[this.state.lines.length - 1] = blit;

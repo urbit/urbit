@@ -4,10 +4,11 @@ import { Box, Text } from '@tlon/indigo-react';
 export default React.memo(({line}) => {
 
   //  line body to jsx
+  //NOTE  lines are lists of characters that might span multiple codepoints
   //
   let text = '';
   if (line.lin) {
-    text = line.lin;
+    text = line.lin.join('');
   }
   else if (line.klr) {
     text = line.klr.map((part, i) => {
@@ -48,7 +49,9 @@ export default React.memo(({line}) => {
       {
         return part.text;
       } else {
-        return (<Text mono fontSize='inherit' key={i} {...prop}>{part.text}</Text>);
+        return (<Text mono fontSize='inherit' key={i} {...prop}>
+          {part.text.join('')}
+        </Text>);
       }
     });
   }

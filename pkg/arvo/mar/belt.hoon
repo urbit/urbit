@@ -17,7 +17,7 @@
         del+ul
         met+(cu taft so)
         ret+ul
-        txt+(cu tuba sa)
+        txt+(ar (cu taft so))
     ==
   --
 ::  +grow: convert to
