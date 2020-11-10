@@ -21,8 +21,26 @@ Intentionally very limited in function. It is a primitive for tracking wallet st
 
 It can take address inputs from any local source. This allows the possibility of creating import programs for pre-existing wallet data, or large amounts of wallet data.
 
+Outgoing data:
+
+Incoming data:
+
 ## btc-wallet-hook
 I don't like the name "hook" here, but can't think of anything better atm. It's closer to a data source/manager on top of the wallet, potentially just one of many.
+
+Outgoing data:
+
+Incoming data:
+
+Error conditions:
+
+## btc-provider
+
+Outgoing data:
+
+Incoming data:
+
+Error conditions:
 
 
 ## Needed Extensions

@@ -99,7 +99,7 @@
         (handle-provider-status:hc !<(status:bp q.cage.sign))
         ::
           %btc-provider-update
-        `state
+        (handle-provider-update:hc !<(update:bp q.cage.sign))
         ::
           %btc-wallet-store-request
         (handle-request:hc !<(request:bws q.cage.sign))
@@ -110,21 +110,6 @@
 ++  on-fail   on-fail:def
 --
 |_  =bowl:gall
-::  if status is %connected, retry all pending address lookups
-::
-++  handle-provider-status
-  |=  s=status:bp
-  ^-  (quip card _state)
-  ?~  provider  `state
-  ?.  =(host.u.provider src.bowl)  `state
-  ?-  s
-      %connected
-    :-  (retry pend)
-    state(provider `[host.u.provider %.y])
-      %disconnected
-    `state(provider `[host.u.provider %.n])
-  ==
-::
 ++  handle-command
   |=  comm=command
   ^-  (quip card _state)
@@ -147,6 +132,45 @@
       %force-retry
     [(retry pend) state]
   ==
+::  if status is %connected, retry all pending address lookups
+::
+++  handle-provider-status
+  |=  s=status:bp
+  ^-  (quip card _state)
+  ?~  provider  `state
+  ?.  =(host.u.provider src.bowl)  `state
+  ?-  s
+      %connected
+    ::  only retry if previously disconnected
+    :-  ?:(connected.u.provider ~ (retry pend))
+    state(provider `[host.u.provider %.y])
+      %disconnected
+    `state(provider `[host.u.provider %.n])
+  ==
+::
+++  handle-provider-update
+  |=  =update:bp
+  |^  ^-  (quip card _state)
+  ?.  ?=(%& -.update)  `state
+  ?-  -.body.p.update
+      %address-info
+    =/  ureq  (~(get by pend) req-id.p.update)
+    ?~  ureq  `state
+    :_  state(pend (~(del by pend) req-id.p.update))
+    :~  %-  poke-store
+        :*  %watch-address  xpub.u.ureq  chyg.u.ureq  idx.u.ureq
+            utxos.body.p.update  used.body.p.update
+        ==
+    ==
+  ==
+  ++  poke-store
+    |=  act=action:bws  ^-  card
+    :*  %pass  /[(scot %da now.bowl)]  %agent
+        [our.bowl %btc-wallet-store]  %poke
+        %btc-wallet-store-action  !>(act)
+    ==
+  --
+::
 ++  handle-request
   |=  req=request:bws
   ^-  (quip card _state)
@@ -157,7 +181,7 @@
     ?~  provider  ~
     ?:  provider-connected
       ~[(get-address-info ri host.u.provider a.req)]
-    ~&  >  "provider not set"
+    ~&  >  "provider not connected"
     ~
   ==
 ::
