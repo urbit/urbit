@@ -21,7 +21,18 @@
 =|  state-0
 =*  state  -
 ::
-=<
+=>
+  |_  =bowl:gall
+  ::
+  ++  give
+    |=  [paths=(list path) =update:hook]
+    ^-  (list card)
+    [%give %fact paths hark-chat-hook-update+!>(update)]~
+  ::
+  ++  watch-chat
+    ^-  card
+    [%pass /chat %agent [our.bowl %chat-store] %watch /updates]
+  --
 %-  agent:dbug
 ^-  agent:gall
 ~%  %hark-chat-hook-agent  ..card  ~
@@ -73,6 +84,7 @@
     |=  =action:hook
     ^-  (quip card _state)
     |^
+    :-  (give:ha ~[/updates] action)
     ?-  -.action
       %listen  (listen +.action)
       %ignore  (ignore +.action)
@@ -80,20 +92,17 @@
     ==
     ++  listen
       |=  chat=path
-      ^-  (quip card _state)
-      :-  (give:ha ~[/updates] [%listen chat])
+      ^+  state
       state(watching (~(put in watching) chat))
     ::
     ++  ignore
       |=  chat=path
-      ^-  (quip card _state)
-      :-  (give:ha ~[/updates] [%ignore chat])
+      ^+  state
       state(watching (~(del in watching) chat))
     ::
     ++  set-mentions
       |=  ment=?
-      ^-  (quip card _state)
-      :-  (give:ha ~[/updates] [%set-mentions ment])
+      ^+  state
       state(mentions ment)
     --
   --
@@ -130,7 +139,7 @@
       (turn envelopes.update (cury process-envelope path.update))
     ==
   ++  is-mention
-    |=  [=path =envelope:chat-store]
+    |=  =envelope:chat-store
     ?.  ?=(%text -.letter.envelope)  %.n
     ?&  mentions
         ?=  ^ 
@@ -147,7 +156,7 @@
     |=  [=path =envelope:chat-store]
     ^-  (list card)
     =/  mention=?
-      (is-mention path envelope)
+      (is-mention envelope)
     ?.  ?|(mention (is-notification path envelope))
       ~
     =/  =index:store
@@ -159,9 +168,8 @@
   ++  poke-store
     |=  =action:store
     ^-  card
-    =/  =cage
-      hark-action+!>(action)
-    [%pass /store %agent [our.bowl %hark-store] %poke cage]
+    =-  [%pass /store %agent [our.bowl %hark-store] %poke -]
+    hark-action+!>(action)
   --
 ::
 ++  on-peek  on-peek:def
@@ -169,16 +177,4 @@
 ++  on-leave  on-leave:def
 ++  on-arvo  on-arvo:def
 ++  on-fail   on-fail:def
---
-|_  =bowl:gall
-::
-::
-++  give
-  |=  [paths=(list path) =update:hook]
-  ^-  (list card)
-  [%give %fact paths hark-chat-hook-update+!>(update)]~
-::
-++  watch-chat
-  ^-  card
-  [%pass /chat %agent [our.bowl %chat-store] %watch /updates]
 --
