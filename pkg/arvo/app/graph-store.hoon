@@ -505,26 +505,23 @@
       ^-  (quip card _state)
       ?<  (~(has by archive) resource)
       ?>  (~(has by graphs) resource)
-      :_  state
-      %+  turn  (tap:orm-log update-log)
-      |=  [=time update=logged-update:store]
-      ^-  card
-      ?>  ?=(%0 -.update)
-      :*  %pass
-          /run-updates/(scot %da time)
-          %agent
-          [our.bowl %graph-store]
-          %poke
-          :-  %graph-update
-          !>
-          ^-  update:store
-          ?-  -.q.update
-              %add-nodes          update(resource.q resource)
-              %remove-nodes       update(resource.q resource)
-              %add-signatures     update(resource.uid.q resource)
-              %remove-signatures  update(resource.uid.q resource)
-          ==
-      ==
+      =/  updates=(list [=time upd=logged-update:store])
+        (tap:orm-log update-log)
+      =|  cards=(list card)
+      |-  ^-  (quip card _state)
+      ?~  updates
+        [cards state]
+      =*  update  upd.i.updates
+      =^  crds  state
+        %-  graph-update 
+        ^-  update:store
+        ?-  -.q.update
+            %add-nodes          update(resource.q resource)
+            %remove-nodes       update(resource.q resource)
+            %add-signatures     update(resource.uid.q resource)
+            %remove-signatures  update(resource.uid.q resource)
+        ==
+      $(cards (weld cards crds), updates t.updates)
     ::
     ++  validate-graph
       |=  [=graph:store mark=(unit mark:store)]
