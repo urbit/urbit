@@ -206,9 +206,6 @@ md img {
 }
 
 @media all and (prefers-color-scheme: dark) {
-  body {
-    background-color: #333;
-  }
   .bg-black-d {
     background-color: black;
   }

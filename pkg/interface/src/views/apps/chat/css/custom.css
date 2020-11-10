@@ -273,9 +273,6 @@ pre.CodeMirror-placeholder.CodeMirror-line-like { color: var(--gray); }
 /* dark */
 
 @media (prefers-color-scheme: dark) {
-  body {
-    background-color: #333;
-  }
   .bg-black-d {
     background-color: black;
   }

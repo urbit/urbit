@@ -213,7 +213,7 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
           scrollWindow={scrollWindow}
           history={history}
           api={api}
-          className="fl pr3 v-top bg-white bg-gray0-d pt1"
+          className="fl"
         />
         <Box flexGrow='1' display='block' className="clamp-message">
           <Box

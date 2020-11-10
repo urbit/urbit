@@ -73,6 +73,10 @@ export class OverlaySigil extends PureComponent {
       <Box
         cursor='pointer'
         position='relative'
+        backgroundColor='white'
+        pt='1'
+        pr='3'
+        verticalAlign='top'
         onClick={this.profileShow}
         className={props.className}
         ref={this.containerRef}
