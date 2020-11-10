@@ -15,18 +15,13 @@ import Groups from './components/Groups';
 
 const ScrollbarLessBox = styled(Box)`
   scrollbar-width: none !important;
-  
+
   ::-webkit-scrollbar {
     display: none;
   }
 `;
 
 export default class LaunchApp extends React.Component {
-  componentDidMount() {
-    // preload spinner asset
-    new Image().src = '/~landscape/img/Spinner.png';
-  }
-
   render() {
     const { props } = this;
 
