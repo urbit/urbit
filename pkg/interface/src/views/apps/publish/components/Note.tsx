@@ -5,7 +5,7 @@ import bigInt from 'big-integer';
 
 import { Link, RouteComponentProps } from "react-router-dom";
 import { Spinner } from "~/views/components/Spinner";
-import { Comments } from "./Comments";
+import { Comments } from "~/views/components/Comments";
 import { NoteNavigation } from "./NoteNavigation";
 import GlobalApi from "~/logic/api/global";
 import { getLatestRevision, getComments } from '~/logic/lib/publish';
@@ -34,13 +34,13 @@ export function Note(props: NoteProps & RouteComponentProps) {
   const deletePost = async () => {
     setDeleting(true);
     const indices = [note.post.index]
-    await api.graph.removeNodes(ship, book, indices); 
+    await api.graph.removeNodes(ship, book, indices);
     props.history.push(rootUrl);
   };
 
   const comments = getComments(note);
   const [revNum, title, body, post] = getLatestRevision(note);
- 
+
   const noteId = bigInt(note.post.index.split('/')[1]);
 
   let adminLinks: JSX.Element | null = null;
@@ -106,8 +106,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
       />
       <Comments
         ship={ship}
-        book={props.book}
-        note={props.note}
+        name={props.book}
         comments={comments}
         contacts={props.contacts}
         api={props.api}
