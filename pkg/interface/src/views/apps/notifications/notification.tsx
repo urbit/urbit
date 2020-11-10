@@ -11,6 +11,7 @@ import {
   Associations,
 } from "~/types";
 import GlobalApi from "~/logic/api/global";
+import { getParentIndex } from "~/logic/lib/notification";
 import { StatelessAsyncAction } from "~/views/components/StatelessAsyncAction";
 import { GroupNotification } from "./group";
 import { GraphNotification } from "./graph";
@@ -29,20 +30,29 @@ interface NotificationProps {
 }
 
 function getMuted(
-  idx: NotifIndex,
+  idxNotif: IndexedNotification,
   groups: GroupNotificationsConfig,
   graphs: NotificationGraphConfig,
   chat: string[]
 ) {
-  if ("graph" in idx) {
-    const { graph } = idx.graph;
-    return _.findIndex(graphs?.watching || [], (g) => g === graph) === -1;
+  const { index, notification } = idxNotif;
+  if ("graph" in idxNotif.index) {
+    const { graph } = idxNotif.index.graph;
+    if(!('graph' in notification.contents)) {
+      throw new Error();
+    }
+    const parent = getParentIndex(index.graph, notification.contents.graph);
+
+    return _.findIndex(
+      graphs?.watching || [], 
+      (g) => g.graph === graph && g.index === parent
+    ) === -1;
   }
-  if ("group" in idx) {
-    return _.findIndex(groups || [], (g) => g === idx.group.group) === -1;
+  if ("group" in index) {
+    return _.findIndex(groups || [], (g) => g === index.group.group) === -1;
   }
-  if ("chat" in idx) {
-    return _.findIndex(chat || [], (c) => c === idx.chat) === -1;
+  if ("chat" in index) {
+    return _.findIndex(chat || [], (c) => c === index.chat.chat) === -1;
   }
   return false;
 }
@@ -64,7 +74,7 @@ function NotificationWrapper(props: {
   }, [time, notif]);
 
   const isMuted = getMuted(
-    notif.index,
+    notif,
     props.groupConfig,
     props.graphConfig,
     props.chatConfig
@@ -72,7 +82,7 @@ function NotificationWrapper(props: {
 
   const onChangeMute = useCallback(async () => {
     const func = isMuted ? "unmute" : "mute";
-    return api.hark[func](notif.index);
+    return api.hark[func](notif);
   }, [notif, api, isMuted]);
 
   const changeMuteDesc = isMuted ? "Unmute" : "Mute";
