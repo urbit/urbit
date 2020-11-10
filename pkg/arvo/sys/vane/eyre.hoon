@@ -1504,11 +1504,13 @@
       ?~  channel
         :_  state  :_  ~
         [duct %pass /flog %d %flog %crud %eyre-no-channel >id=channel-id< ~]
-      ::  it's possible that this is a fact emitted directly alongside a fact
+      ::  it's possible that this is a sign emitted directly alongside a fact
       ::  that triggered a clog & closed the subscription. in that case, just
-      ::  drop the fact.
+      ::  drop the sign.
+      ::  poke-acks are not paired with subscriptions, so we can process them
+      ::  regardless.
       ::
-      ?:  ?&  ?=(%fact -.sign)
+      ?:  ?&  !?=(%poke-ack -.sign)
               !(~(has by subscriptions.u.channel) request-id)
           ==
         [~ state]
@@ -1547,10 +1549,10 @@
       ::  update channel's unacked counts, find out if clogged
       ::
       =^  clogged  unacked.u.channel
-        ::  poke-acks are one-offs, don't apply clog logic to them.
+        ::  only apply clog logic to facts.
         ::  and of course don't count events we can't send as unacked.
         ::
-        ?:  ?|  ?=(%poke-ack -.sign)
+        ?:  ?|  !?=(%fact -.sign)
                 ?=(~ json)
             ==
           [| unacked.u.channel]
@@ -1567,6 +1569,10 @@
       =*  kicking    |(clogged ?=(~ json))
       =?  moves      kicking
         :_  moves
+        ::NOTE  this shouldn't crash because we
+        ::      - never fail to serialize subscriptionless signs (%poke-ack),
+        ::      - only clog on %facts, which have a subscription associated,
+        ::      - and already checked whether we still have that subscription.
         =+  (~(got by subscriptions.u.channel) request-id)
         :^  duct  %pass
           (subscription-wire channel-id request-id ship app)
