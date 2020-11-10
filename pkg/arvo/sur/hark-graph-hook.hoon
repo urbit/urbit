@@ -1,7 +1,6 @@
 /-  *resource, graph-store
 ^?
 |%
-::
 +$  action
   $%
     [?(%listen %ignore) graph=resource]
@@ -19,4 +18,3 @@
     ==
   ==
 --
-

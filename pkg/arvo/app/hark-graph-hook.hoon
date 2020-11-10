@@ -22,7 +22,24 @@
 =|  state-0
 =*  state  -
 ::
-=<
+=>
+  |_  =bowl:gall
+  ::
+  ++  scry
+    |*  [=mold p=path]
+    ?>  ?=(^ p)
+    ?>  ?=(^ t.p)
+    .^(mold i.p (scot %p our.bowl) i.t.p (scot %da now.bowl) t.t.p)
+  ::
+  ++  give
+    |=  [paths=(list path) =update:hook]
+    ^-  (list card)
+    [%give %fact paths hark-graph-hook-update+!>(update)]~
+  ::
+  ++  watch-graph
+    ^-  card
+    [%pass /graph %agent [our.bowl %graph-store] %watch /updates]
+  --
 %-  agent:dbug
 ^-  agent:gall
 ~%  %hark-graph-hook-agent  ..card  ~
@@ -76,6 +93,7 @@
     |=  =action:hook
     ^-  (quip card _state)
     |^
+    :-  (give:ha ~[/updates] action)
     ?-  -.action
       %listen  (listen +.action)
       %ignore  (ignore +.action)
@@ -84,26 +102,22 @@
     ==
     ++  listen
       |=  graph=resource
-      ^-  (quip card _state)
-      :-  (give:ha ~[/updates] [%listen graph])
+      ^+  state
       state(watching (~(put in watching) graph))
     ::
     ++  ignore
       |=  graph=resource
-      ^-  (quip card _state)
-      :-  (give:ha ~[/updates] [%ignore graph])
+      ^+  state
       state(watching (~(del in watching) graph))
     ::
     ++  set-mentions
       |=  ment=?
-      ^-  (quip card _state)
-      :-  (give:ha ~[/updates] %set-mentions ment)
+      ^+  state
       state(mentions ment)
     ::
     ++  set-watch-on-self
       |=  self=?
-      ^-  (quip card _state)
-      :-  (give:ha ~[/updates] %set-watch-on-self self)
+      ^+  state
       state(watch-on-self self)
     --
   --
@@ -239,20 +253,4 @@
 ++  on-arvo  on-arvo:def
 ++  on-fail   on-fail:def
 --
-|_  =bowl:gall
-::
-++  scry
-  |*  [=mold p=path]
-  ?>  ?=(^ p)
-  ?>  ?=(^ t.p)
-  .^(mold i.p (scot %p our.bowl) i.t.p (scot %da now.bowl) t.t.p)
-::
-++  give
-  |=  [paths=(list path) =update:hook]
-  ^-  (list card)
-  [%give %fact paths hark-graph-hook-update+!>(update)]~
-::
-++  watch-graph
-  ^-  card
-  [%pass /graph %agent [our.bowl %graph-store] %watch /updates]
---
+

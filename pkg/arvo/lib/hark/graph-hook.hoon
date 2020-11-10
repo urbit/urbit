@@ -4,11 +4,9 @@
 =<  [. sur]
 =,  sur
 |%
-::
 ++  dejs
   =,  dejs:format
   |%
-  ::
   ++  graph-indices
     %-  ot
     :~  graph+dejs-path:resource
@@ -27,10 +25,10 @@
         set-watch-on-self+bo
     ==
   --
+::
 ++  enjs
   =,  enjs:format
   |%
-  ::
   ++  graph-indices
     |=  [graph=resource indices=(set index:graph-store)]
     %-  pairs

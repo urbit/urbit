@@ -22,7 +22,6 @@
   ;<  ~  bind:m
     (poke-our %group-push-hook %push-hook-action !>([%add rid]))
   (pure:m rid)
-::
 --
 ::
 =,  strand=strand:spider

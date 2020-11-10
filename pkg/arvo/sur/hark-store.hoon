@@ -1,7 +1,6 @@
 /-  *resource, graph-store, post, group-store, metadata-store, chat-store
 ^? 
 |%
-::
 +$  index
   $%  [%graph group=resource graph=resource module=@t description=@t]
       [%group group=resource description=@t]
