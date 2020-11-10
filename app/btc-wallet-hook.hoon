@@ -24,7 +24,6 @@
   $:  %0
       provider=(unit [host=ship connected=?])
       pend=back
-      fail=back
   ==
 ::
 +$  card  card:shoe
@@ -81,27 +80,27 @@
 ++  on-watch  on-watch:def
 ++  on-leave  on-leave:def
 ++  on-peek   on-peek:def
-::  TODO: write up how we can get on-agent %fact (success) or on-arvo Behn timeout
-::
 ++  on-agent
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)
   ?+  -.sign  (on-agent:def wire sign)
-      %watch-ack
-    ?+  -.wire  `this
-        %set-provider
-      ?~  provider  `this
-      ?^  p.sign  `this(provider ~)
-      ?.  =(src.bowl host.u.provider)  `this
-      :_  this(provider `[host.u.provider %.y])
-      %+  weld  (retry:hc pend)  (retry:hc fail)
-    ==
-      ::
+      %kick
+    ?~  provider  `this
+    ?:  ?&  ?=(%set-provider -.wire)
+            =(host.u.provider src.bowl)
+        ==
+      `this(provider ~)
+    `this
+    ::
       %fact
     =^  cards  state
       ?+  p.cage.sign  `state
+          %btc-provider-status
+        (handle-provider-status:hc !<(status:bp q.cage.sign))
+        ::
           %btc-provider-update
         `state
+        ::
           %btc-wallet-store-request
         (handle-request:hc !<(request:bws q.cage.sign))
       ==
@@ -111,14 +110,26 @@
 ++  on-fail   on-fail:def
 --
 |_  =bowl:gall
+::  if status is %connected, retry all pending address lookups
+::
+++  handle-provider-status
+  |=  s=status:bp
+  ^-  (quip card _state)
+  ?~  provider  `state
+  ?.  =(host.u.provider src.bowl)  `state
+  ?-  s
+      %connected
+    :-  (retry pend)
+    state(provider `[host.u.provider %.y])
+      %disconnected
+    `state(provider `[host.u.provider %.n])
+  ==
+::
 ++  handle-command
   |=  comm=command
   ^-  (quip card _state)
   ~&  >  comm
   `state
-::  set-provider algo: 
-::    - add provider, connected false
-::    - on negative ack: delete the provider 
 ::
 ++  handle-action
   |=  act=action
@@ -126,16 +137,15 @@
   ?-  -.act
       %set-provider
     =*  sub-card
-      [%pass /set-prov %agent [provider.act %btc-provider] %watch /clients]
+      [%pass /set-provider %agent [provider.act %btc-provider] %watch /clients]
     :_  state(provider [~ provider.act %.n])
     ?~  provider  ~[sub-card]
-    :~  [%pass /leave-prov %agent [host.u.provider %btc-provider] %leave ~]
+    :~  [%pass /set-provider %agent [host.u.provider %btc-provider] %leave ~]
         sub-card
     ==
     ::
       %force-retry
-    :_  state
-    %+  weld  (retry pend)  (retry fail)
+    [(retry pend) state]
   ==
 ++  handle-request
   |=  req=request:bws
