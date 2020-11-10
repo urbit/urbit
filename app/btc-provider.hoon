@@ -73,13 +73,7 @@
   ::  check for connectivity every 30 seconds
   ::
   ?:  ?=([%ping-timer *] wire)
-    :_  this
-    :~  :*  %pass  /ping/[(scot %da now.bowl)]  %agent
-            [our.bowl %btc-provider]  %poke
-            %btc-provider-action  !>([%blank-id %ping ~])
-        ==
-        (start-ping-timer:hc ~s30)
-    ==
+    [do-ping:hc this]
   =^  cards  state
   ?+    +<.sign-arvo    (on-arvo:def wire sign-arvo)
       %http-response
@@ -96,15 +90,12 @@
   ^-  (quip card _state)
   ?-  -.comm
       %set-credentials
-    :-  ~[(send-status %connected) (start-ping-timer ~s30)]
-    state(host-info [creds.comm connected=%.y clients=*(set ship)])
+    :-  do-ping
+    state(host-info [creds.comm connected=%.n clients=*(set ship)])
     ::
       %whitelist-clients
     `state(whitelist (~(uni in whitelist) clients.comm))
 ==
-++  start-ping-timer
-  |=  interval=@dr  ^-  card
-  [%pass /ping-timer %arvo %b %wait (add now.bowl interval)]
 ::  if not connected, only %ping action is allowed
 ::
 ++  handle-action
@@ -210,21 +201,35 @@
 ::
 ++  send-status
   |=  =status  ^-  card
-  [%give %fact ~ %btc-provider-status !>(status)]
+  [%give %fact ~[/clients] %btc-provider-status !>(status)]
 ++  send-update
   |=  =update
   ^-  card
   ~&  >>  "send-update: {<update>}"
-  [%give %fact [/clients]~ %btc-provider-update !>(update)]
+  [%give %fact ~[/clients] %btc-provider-update !>(update)]
 ::
 ++  is-whitelisted
   |=  user=ship  ^-  ?
   ?|  (~(has in whitelist) user)
       =(our.bowl user)
   ==
+::
 ++  is-client
   |=  user=ship  ^-  ?
   (~(has in clients.host-info) user)
+::
+++  start-ping-timer
+  |=  interval=@dr  ^-  card
+  [%pass /ping-timer %arvo %b %wait (add now.bowl interval)]
+::
+++  do-ping
+  ^-  (list card)
+  :~  :*  %pass  /ping/[(scot %da now.bowl)]  %agent
+          [our.bowl %btc-provider]  %poke
+          %btc-provider-action  !>([%blank-id %ping ~])
+      ==
+      (start-ping-timer ~s30)
+  ==
 ::  RPC JSON helper gates
 ::  TODO: move these to /lib
 ::
