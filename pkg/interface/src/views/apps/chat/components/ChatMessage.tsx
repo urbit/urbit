@@ -31,8 +31,8 @@ export const DayBreak = ({ when }) => (
 interface ChatMessageProps {
   measure(element): void;
   msg: Envelope | IMessage;
-  previousMsg: Envelope | IMessage | undefined;
-  nextMsg: Envelope | IMessage | undefined;
+  previousMsg?: Envelope | IMessage;
+  nextMsg?: Envelope | IMessage;
   isLastRead: boolean;
   group: Group;
   association: Association;
@@ -48,6 +48,7 @@ interface ChatMessageProps {
   unreadMarkerRef: React.RefObject<HTMLDivElement>;
   history: any;
   api: any;
+  highlighted?: boolean;
 }
 
 export default class ChatMessage extends Component<ChatMessageProps> {
@@ -84,7 +85,8 @@ export default class ChatMessage extends Component<ChatMessageProps> {
       isLastMessage,
       unreadMarkerRef,
       history,
-      api
+      api,
+      highlighted
     } = this.props;
 
     const renderSigil = Boolean((nextMsg && msg.author !== nextMsg.author) || !nextMsg || msg.number === 1);
@@ -115,7 +117,8 @@ export default class ChatMessage extends Component<ChatMessageProps> {
       isPending,
       history,
       api,
-      scrollWindow
+      scrollWindow,
+      highlighted
     };
 
     const unreadContainerStyle = {
@@ -124,6 +127,7 @@ export default class ChatMessage extends Component<ChatMessageProps> {
 
     return (
       <Box
+        bg={highlighted ? 'washedBlue' : 'white'}
         width='100%'
         display='flex'
         flexWrap='wrap'
@@ -165,6 +169,8 @@ interface MessageProps {
 };
 
 export class MessageWithSigil extends PureComponent<MessageProps> {
+  isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  
   render() {
     const {
       msg,
@@ -176,8 +182,8 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
       hideAvatars,
       remoteContentPolicy,
       measure,
-      history,
       api,
+      history,
       scrollWindow
     } = this.props;
 
@@ -185,8 +191,8 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
     const contact = msg.author in contacts ? contacts[msg.author] : false;
     const showNickname = !hideNicknames && contact && contact.nickname;
     const name = showNickname ? contact.nickname : cite(msg.author);
-    const color = contact ? `#${uxToHex(contact.color)}` : '#000000';
-    const sigilClass = contact ? '' : 'mix-blend-diff';
+    const color = contact ? `#${uxToHex(contact.color)}` : this.isDark ?  '#000000' :'#FFFFFF'  
+    const sigilClass = contact ? '' : this.isDark ? 'mix-blend-diff' : 'mix-blend-darken';
 
     let nameSpan = null;
 
@@ -213,7 +219,7 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
           scrollWindow={scrollWindow}
           history={history}
           api={api}
-          className="fl pr3 v-top bg-white bg-gray0-d pt1"
+          className="fl pr3 v-top pt1"
         />
         <Box flexGrow='1' display='block' className="clamp-message">
           <Box
@@ -239,7 +245,7 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
             <Text flexShrink='0' gray mono className="v-mid">{timestamp}</Text>
             <Text gray mono ml={2} className="v-mid child dn-s">{datestamp}</Text>
           </Box>
-          <Box fontSize='14px'><MessageContent content={msg.letter} remoteContentPolicy={remoteContentPolicy} measure={measure} /></Box>
+          <Box  fontSize='14px'><MessageContent content={msg.letter} remoteContentPolicy={remoteContentPolicy} measure={measure} /></Box>
         </Box>
       </>
     );

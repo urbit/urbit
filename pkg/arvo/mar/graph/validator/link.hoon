@@ -3,6 +3,11 @@
 ++  grow
   |%
   ++  noun  i
+  ++  notification-kind
+    ?+  index.p.i  ~
+      [@ ~]    `%link
+      [@ @ ~]  `%comment
+    ==
   --
 ++  grab
   |%
@@ -19,7 +24,7 @@
         ::  comment on link post; comment text
         ::
         [@ @ ~]
-      ?>  ?=([[%text @] ~] contents.p.ip)
+      ?>  ?=(^ contents.p.ip)
       ip
     ==
   --

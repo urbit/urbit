@@ -125,6 +125,9 @@ class App extends React.Component {
     const theme = state.dark ? dark : light;
     const { background } = state;
 
+    const notificationsCount = state.notificationsCount || 0;
+    const doNotDisturb = state.doNotDisturb || false;
+
     return (
       <ThemeProvider theme={theme}>
         <Helmet>
@@ -143,6 +146,8 @@ class App extends React.Component {
                 connection={this.state.connection}
                 subscription={this.subscription}
                 ship={this.ship}
+                doNotDisturb={doNotDisturb}
+                notificationsCount={notificationsCount}
               />
             </ErrorBoundary>
             <ErrorBoundary>

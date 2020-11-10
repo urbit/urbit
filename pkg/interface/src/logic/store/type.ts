@@ -9,7 +9,13 @@ import { S3State } from '~/types/s3-update';
 import { LaunchState, WeatherState } from '~/types/launch-update';
 import { ConnectionStatus } from '~/types/connection';
 import {Graphs} from '~/types/graph-update';
-import { BackgroundConfig, LocalUpdateRemoteContentPolicy } from '~/types/local-update';
+import {
+  Notifications,
+  NotificationGraphConfig, 
+  GroupNotificationsConfig,
+  LocalUpdateRemoteContentPolicy,
+  BackgroundConfig
+} from "~/types";
 
 export interface StoreState {
   // local state
@@ -45,11 +51,18 @@ export interface StoreState {
   userLocation: string | null;
 
   // publish state
-  notebooks: Notebooks;
+  notebooks: any;
 
   // Chat state
   chatInitialized: boolean;
   chatSynced: ChatHookUpdate | null;
   inbox: Inbox;
   pendingMessages: Map<Path, Envelope[]>;
+
+  notifications: Notifications;
+  notificationsGraphConfig: NotificationGraphConfig;
+  notificationsGroupConfig: GroupNotificationsConfig;
+  notificationsChatConfig: string[];
+  notificationsCount: number,
+  doNotDisturb: boolean;
 }
