@@ -61,7 +61,7 @@
     ~&  >>>  "btc-provider: blocked client {<src.bowl>}"
     [~[[%give %kick ~ ~]] this]
   ~&  >  "btc-provider: added client {<src.bowl>}"
-  :-  ~[[%give %fact ~ %btc-provider-status !>(?:(connected.host-info %connected %disconnected))]]
+  :-  ~[(send-status ?:(connected.host-info %connected %disconnected))]
   this(clients.host-info (~(put in clients.host-info) src.bowl))
 ::
 ++  on-leave  on-leave:def
@@ -96,7 +96,7 @@
   ^-  (quip card _state)
   ?-  -.comm
       %set-credentials
-    :-  ~[(start-ping-timer ~s30)]
+    :-  ~[(send-status %connected) (start-ping-timer ~s30)]
     state(host-info [creds.comm connected=%.y clients=*(set ship)])
     ::
       %whitelist-clients
@@ -155,7 +155,8 @@
     (connection-error status)
   ?^  conn-err
     ~&  >>>  conn-err
-    [~[(send-update [%| u.conn-err])] state]
+    :_  state(connected.host-info %.n)
+    ~[(send-status %disconnected) (send-update [%| u.conn-err])]
   =/  rpc-resp=response:rpc:jstd
     (get-rpc-response response)
   ?.  ?=([%result *] rpc-resp)
@@ -167,7 +168,8 @@
     [(handle-address-info wire rpc-resp) state]
      ::
       [%ping %brpc *]
-    `state(connected.host-info %.y)
+    :-  ~[(send-status %connected)]
+    state(connected.host-info %.y)
   ==
 ::
 ++  handle-address-info
@@ -206,6 +208,9 @@
     [`[%not-connected status] state(connected.host-info %.n)]
   ==
 ::
+++  send-status
+  |=  =status  ^-  card
+  [%give %fact ~ %btc-provider-status !>(status)]
 ++  send-update
   |=  =update
   ^-  card
