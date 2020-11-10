@@ -1,7 +1,6 @@
 /-  *resource, graph-store, post
 ^?
 |%
-::
 +$  action
   $%
     [?(%listen %ignore) graph=resource =index:post]
@@ -19,4 +18,3 @@
     ==
   ==
 --
-

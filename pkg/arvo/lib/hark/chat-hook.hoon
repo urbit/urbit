@@ -3,11 +3,9 @@
 =<  [. sur]
 =,  sur
 |%
-::
 ++  dejs
   =,  dejs:format
   |%
-  ::
   ++  action
     %-  of
     :~  listen+pa
@@ -19,7 +17,6 @@
 ++  enjs
   =,  enjs:format
   |%
-  ::
   ++  update
     |=  upd=^update
     %+  frond  -.upd

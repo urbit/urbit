@@ -1,7 +1,6 @@
 /-  *resource
 ^?
 |%
-::
 +$  action
   [?(%listen %ignore) group=resource]
 ::
@@ -9,6 +8,4 @@
   $%  action
       [%initial watching=(set resource)]
   ==
-::
 --
-
