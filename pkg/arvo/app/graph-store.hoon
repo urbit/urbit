@@ -8,16 +8,18 @@
 +$  versioned-state
   $%  state-0
       state-1
+      state-2
   ==
 ::
 +$  state-0  [%0 network:store]
 +$  state-1  [%1 network:store]
++$  state-2  [%2 network:store]
 ::
 ++  orm      orm:store
 ++  orm-log  orm-log:store
 --
 ::
-=|  state-1
+=|  state-2
 =*  state  -
 ::
 %-  agent:dbug
@@ -66,8 +68,90 @@
       convert-unix-timestamped-log
     ==
   ::
-    %1  [cards this(state old)]
+      %1
+    %_  $
+      -.old            %2
+      graphs.old       (~(run by graphs.old) change-revision-graph)
+    ::
+        update-logs.old
+      %-  ~(run by update-logs.old)
+      |=  =update-log:store
+      *update-log:store
+    ==
+  ::
+    %2  [cards this(state old)]
   ==
+  ::
+  ++  change-revision-graph
+    |=  [=graph:store q=(unit mark)]
+    ^-  [graph:store (unit mark)]
+    |^
+    :_  q
+    ?+    q  graph
+      [~ %graph-validator-link]     convert-links
+      [~ %graph-validator-publish]  convert-publish
+    ==
+    ::
+    ++  convert-links
+      %+  gas:orm  *graph:store
+      %+  turn  (tap:orm graph)
+      |=  [=atom =node:store]
+      ^-  [^atom node:store]
+      ::  top-level
+      ::
+      :+  atom  post.node
+      ?:  ?=(%empty -.children.node)
+        [%empty ~]
+      :-  %graph
+      %+  gas:orm  *graph:store
+      %+  turn  (tap:orm p.children.node)
+      |=  [=^atom =node:store]
+      ^-  [^^atom node:store]
+      ::  existing comments get turned into containers for revisions
+      ::
+      :^    atom
+          post.node(contents ~, hash ~)
+        %graph
+      %+  gas:orm  *graph:store
+      :_  ~  :-  atom
+      :_  [%empty ~]
+      post.node(index (snoc index.post.node atom), hash ~)
+    ::
+    ++  convert-publish
+      %+  gas:orm  *graph:store
+      %+  turn  (tap:orm graph)
+      |=  [=atom =node:store]
+      ^-  [^atom node:store]
+      ::  top-level
+      ::
+      :+  atom  post.node
+      ?:  ?=(%empty -.children.node)
+        [%empty ~]
+      :-  %graph
+      %+  gas:orm  *graph:store
+      %+  turn  (tap:orm p.children.node)
+      |=  [=^atom =node:store]
+      ^-  [^^atom node:store]
+      ::  existing container for publish note revisions
+      ::
+      ?>  ?=(%graph -.children.node)
+      ?+    atom  !!
+          %1  [atom node]
+          %2
+        :+  atom  post.node
+        :-  %graph
+        %+  gas:orm  *graph:store
+        %+  turn  (tap:orm p.children.node)
+        |=  [=^^atom =node:store]
+        ^-  [^^^atom node:store]
+        :+  atom  post.node(contents ~, hash ~)
+        :-  %graph
+        %+  gas:orm  *graph:store
+        :_  ~  :-  atom
+        :_  [%empty ~]
+        post.node(index (snoc index.post.node atom), hash ~)
+      ==
+    --
   ::
   ++  convert-unix-timestamped-log
     |=  =update-log:store

@@ -20,6 +20,10 @@
     |=  p=*
     =/  ip  ;;(indexed-post p)
     ?+    index.p.ip  !!
+    ::  top level post must have no content
+        [@ ~]
+      ?>  ?=(~ contents.p.ip)
+      ip
     ::  container for revisions
     ::
         [@ %1 ~]  
@@ -34,16 +38,19 @@
       ?>  ?=(%text -.i.contents.p.ip)
       ip
     ::  container for comments
+    ::
         [@ %2 ~]
       ?>  ?=(~ contents.p.ip)
       ip
-    ::  comment
+    ::  container for comment revisions
+    ::
         [@ %2 @ ~]
-      ?>  ?=(^ contents.p.ip)
-      ip
-    ::  top level post must have no content
-        [@ ~]
       ?>  ?=(~ contents.p.ip)
+      ip
+    ::  specific comment revision
+    ::
+        [@ %2 @ @ ~]
+      ?>  ?=(^ contents.p.ip)
       ip
     ==
   --
