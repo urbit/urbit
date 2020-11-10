@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Box, Text, Button } from '@tlon/indigo-react';
 
 export class ResubscribeElement extends Component {
   onClickResubscribe() {
@@ -9,21 +10,23 @@ export class ResubscribeElement extends Component {
   }
 
   render() {
-    const { props } = this; 
+    const { props } = this;
     if (props.isChatUnsynced) {
       return (
-        <div className="db pa3 ma3 ba b--yellow2 bg-yellow0">
-          <p className="lh-copy db">
+        <Box p='3' m='3' border='1px solid' borderColor='yellow' backgroundColor='lightYellow'>
+          <Text lineHeight='tall' display='block'>
             Your ship has been disconnected from the chat's host.
             This may be due to a bad connection, going offline, lack of permission,
             or an over-the-air update.
-          </p>
-          <a onClick={this.onClickResubscribe.bind(this)}
-             className="db underline black pointer mt3"
+          </Text>
+          <Button
+            primary
+            mt='3'
+            onClick={this.onClickResubscribe.bind(this)}
           >
             Reconnect to this chat
-          </a>
-        </div>
+          </Button>
+        </Box>
       );
     } else {
       return null;
