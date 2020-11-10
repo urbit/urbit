@@ -377,16 +377,21 @@
   ?:  ?=(%view -.task)
     ::  crash on viewing non-existent session
     ::
-    ~|  [%no-session duct.task ~(key by dug.all)]
-    =/  =axon  (~(got by dug.all) duct.task)
+    ~|  [%no-session session.task]
+    ?>  =(~ session.task)
+    =/  session  (need hey.all)
+    =/  =axon    (~(got by dug.all) session)
     ::  register the viewer and send them the prompt line
     ::
     :-  [hen %give %blit [see.axon]~]~
-    ..^$(eye.all (~(put ju eye.all) duct.task hen))
+    ..^$(eye.all (~(put ju eye.all) session hen))
   ::
   ?:  ?=(%flee -.task)
     :-  ~
-    ..^$(eye.all (~(del ju eye.all) duct.task hen))
+    ~|  [%no-session session.task]
+    ?>  =(~ session.task)
+    =/  session  (need hey.all)
+    ..^$(eye.all (~(del ju eye.all) session hen))
   ::
   =/  nus  (ax hen)
   =?  nus  &(?=(~ nus) ?=(^ hey.all))
