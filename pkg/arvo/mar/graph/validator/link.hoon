@@ -21,10 +21,16 @@
       ?>  ?=([[%text @] [%url @] ~] contents.p.ip)
       ip
     ::
-        ::  comment on link post; comment text
+        ::  comment on link post; container structure
         ::
         [@ @ ~]
       ?>  ?=(^ contents.p.ip)
+      ip
+    ::
+        ::  comment on link post; comment text
+        ::
+        [@ @ @ ~]
+      ?>  ?=(~ contents.p.ip)
       ip
     ==
   --
