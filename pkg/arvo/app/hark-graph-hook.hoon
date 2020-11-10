@@ -12,7 +12,7 @@
 ::
 +$  state-0
   $:  %0
-      watching=(set resource)
+      watching=(set [resource index:post])
       mentions=_&
       watch-on-self=_&
   ==
@@ -83,16 +83,16 @@
       %set-watch-on-self  (set-watch-on-self +.action)
     ==
     ++  listen
-      |=  graph=resource
+      |=  [graph=resource =index:post]
       ^-  (quip card _state)
-      :-  (give:ha ~[/updates] [%listen graph])
-      state(watching (~(put in watching) graph))
+      :-  (give:ha ~[/updates] [%listen graph index])
+      state(watching (~(put in watching) [graph index]))
     ::
     ++  ignore
-      |=  graph=resource
+      |=  [graph=resource =index:post]
       ^-  (quip card _state)
-      :-  (give:ha ~[/updates] [%ignore graph])
-      state(watching (~(del in watching) graph))
+      :-  (give:ha ~[/updates] [%ignore graph index])
+      state(watching (~(del in watching) [graph index]))
     ::
     ++  set-mentions
       |=  ment=?
@@ -127,10 +127,18 @@
       (graph-update !<(update:graph-store q.cage.sign))
     [cards this]
   ==
+  ++  add-graph
+    |=  rid=resource
+    ^-  (quip card _state)
+    ?.  &(watch-on-self =(our.bowl entity.rid))
+      [~ state]
+    `state(watching (~(put in watching) [rid ~]))
   ::
   ++  graph-update
     |=  =update:graph-store
     ^-  (quip card _state)
+    ?:  ?=(%add-graph -.q.update)
+      (add-graph resource.q.update)
     ?.  ?=(%add-nodes -.q.update)
       [~ state]
     =/  group=resource
@@ -187,15 +195,19 @@
           (self-post node)
         :_  state
         (weld child-cards self-cards)
-      =+  !<(notif-kind=(unit @t) (tube !>([0 post.node])))
+      =+  !<  notif-kind=(unit [name=@t parent-lent=@ud])
+          (tube !>([0 post.node]))
       ?~  notif-kind
         [child-cards state]
       =/  desc=@t
         ?:  (is-mention contents.post.node)
           %mention 
-        u.notif-kind
+        name.u.notif-kind
+      =/  parent=index:post
+        (scag parent-lent.u.notif-kind index.post.node)
+      ~&  parent
       ?.  ?|  =(desc %mention)
-              (~(has in watching) rid)
+              (~(has in watching) [rid parent])
           ==
         [child-cards state]
       =/  notif-index=index:store
@@ -222,7 +234,7 @@
       ^-  (quip card _state)
       ?.  ?=(%.y watch-on-self)
         [~ state]
-      `state(watching (~(put in watching) rid))
+      `state(watching (~(put in watching) [rid index.post.node]))
     ::
     ++  add-unread
       |=  [=index:store =notification:store]
