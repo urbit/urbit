@@ -3,10 +3,15 @@ The below requires norsyr's fix to `decompress-point` in order to work.
 
 ## Set Credentials and Ping Servers
 ```
-=rpc-pass '302a586ef1d1d4d93f22b1c69cadfdfc8323b984c0f469356529b1a8fdd2558e'
+=rpc-pass '9cd2f14f9855ea5eec587935887e83c39494a35f036a9ef30abcb12df6ccf0fe'
 :btc-provider|command [%set-credentials [rpc-url='http://localhost:8332' rpc-user='__cookie__' rpc-pass] [rpc-url='http://localhost:50002']]
 
-:btc-provider|action [%get-address-info [%bech32 'bc1q59u5epktervh6fxqay2dlph0wxu9hjnx6v8n66'']]
+:btc-provider|action ['addr0' %address-info [%bech32 'bc1q59u5epktervh6fxqay2dlph0wxu9hjnx6v8n66']]
+:btc-provider|action ['addr1' %address-info [%bech32 'bc1qlwd7mw33uea5m8r2lsnsrkc7gp2qynrxsfxpfm']]
+:btc-provider|action ['addr2' %address-info [%bech32 'bc1qglkc9zfcn04vcc88nn0ljtxcpu5uxfznc3829k']]
+::  first is an address w balance
+::  second has no balance but is used
+::  third is unused
 ```
 
 ## Transactions
@@ -23,10 +28,6 @@ abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon 
 ```
 =b -build-file %/lib/btc-scratch/hoon
 =xpub "zpub6rFR7y4Q2AijBEqTUquhVz398htDFrtymD9xYYfG1m4wAcvPhXNfE3EfH1r1ADqtfSdVCToUG868RvUUkgDKf31mGDtKsAYz2oz2AGutZYs"
-```
-
-### Getting BIP84 Address from `xpub`
-```
 (~(address bip84:b %main xpub))
 ```
 
@@ -188,13 +189,12 @@ Using [BIP 143](https://github.com/bitcoin/bips/blob/master/bip-0143.mediawiki#P
 Native P2WPKH
 ```
 =btc -build-file %/lib/btc/hoon
-=btcs -build-file %/sur/btc/hoon
-=input0 (input:tx:btcs [[32 0xfff7.f788.1a80.99af.a694.0d42.d1e7.f636.2bec.3817.1ea3.edf4.3354.1db4.e4ad.969f] 0 0 [4 0xeeff.ffff] [35 0x21.03c9.f483.6b9a.4f77.fc0d.81f7.bcb0.1b7f.1b35.9168.64b9.476c.241c.e9fc.198b.d254.32ac] ~ ~ 625.000.000])
-=input1 (input:tx:btcs [[32 0xef51.e1b8.04cc.89d1.82d2.7965.5c3a.a89e.815b.1b30.9fe2.87d9.b2b5.5d57.b90e.c68a] 0 1 [4 0xffff.ffff] [22 0x14.1d0f.172a.0ecb.48ae.e1be.1f26.87d2.963a.e33f.71a1] ~ `[33 0x2.5476.c2e8.3188.368d.a1ff.3e29.2e7a.cafc.db35.66bb.0ad2.53f6.2fc7.0f07.aeee.6357] 600.000.000])
+=input0 (input:tx:btc [[32 0xfff7.f788.1a80.99af.a694.0d42.d1e7.f636.2bec.3817.1ea3.edf4.3354.1db4.e4ad.969f] 0 0 [4 0xeeff.ffff] [35 0x21.03c9.f483.6b9a.4f77.fc0d.81f7.bcb0.1b7f.1b35.9168.64b9.476c.241c.e9fc.198b.d254.32ac] ~ ~ 625.000.000])
+=input1 (input:tx:btc[[32 0xef51.e1b8.04cc.89d1.82d2.7965.5c3a.a89e.815b.1b30.9fe2.87d9.b2b5.5d57.b90e.c68a] 0 1 [4 0xffff.ffff] [22 0x14.1d0f.172a.0ecb.48ae.e1be.1f26.87d2.963a.e33f.71a1] ~ `[33 0x2.5476.c2e8.3188.368d.a1ff.3e29.2e7a.cafc.db35.66bb.0ad2.53f6.2fc7.0f07.aeee.6357] 600.000.000])
 
-=output0 (output:tx:btcs [[%bech32 'bc1qs2qtxl0n0rdenan0shy457p6w6k85m2e36f7ze'] 112.340.000])
-=output1 (output:tx:btcs [[%bech32 'bc1q800y9klw0exmu63pkt2sechszel64q2enddkt4'] 223.450.000])
-=utx (unsigned:tx:btcs [1 0x11 ~[input0 input1] ~[output0 output1]])
+=output0 (output:tx:btc [[%bech32 'bc1qs2qtxl0n0rdenan0shy457p6w6k85m2e36f7ze'] 112.340.000])
+=output1 (output:tx:btc [[%bech32 'bc1q800y9klw0exmu63pkt2sechszel64q2enddkt4'] 223.450.000])
+=utx (unsigned:tx:btc [1 0x11 ~[input0 input1] ~[output0 output1]])
 
 (~(sighash unsigned-tx:btc utx) 1)
 :: gives [wid=32 dat=0xc37a.f311.16d1.b27c.af68.aae9.e3ac.82f1.4779.2901.4d5b.9176.57d0.eb49.478c.b670]
@@ -230,9 +230,9 @@ Signing input index 0 (non-witness)
 
 ### A sample legacy address-only transaction
 ```
-=linput0 (input:tx:btcs [[32 0xeccf.7e30.3418.9b85.1985.d871.f913.84b8.ee35.7cd4.7c30.2473.6e56.76eb.2deb.b3f2] 1 0 [4 0xffff.ffff] [25 0x76.a914.0109.6677.6006.953d.5567.439e.5e39.f86a.0d27.3bee.88ac] ~ ~ 100.000.000])
-=loutput0 (output:tx:btcs [[%legacy 0c1runeksijzfVxyrpiyCY2LCBvYsSiFsCm] 99.900.000])
-=lutx (unsigned:tx:btcs [1 0x0 ~[linput0] ~[loutput0]])
+=linput0 (input:tx:btc [[32 0xeccf.7e30.3418.9b85.1985.d871.f913.84b8.ee35.7cd4.7c30.2473.6e56.76eb.2deb.b3f2] 1 0 [4 0xffff.ffff] [25 0x76.a914.0109.6677.6006.953d.5567.439e.5e39.f86a.0d27.3bee.88ac] ~ ~ 100.000.000])
+=loutput0 (output:tx:btc [[%legacy 0c1runeksijzfVxyrpiyCY2LCBvYsSiFsCm] 99.900.000])
+=lutx (unsigned:tx:btc [1 0x0 ~[linput0] ~[loutput0]])
 
 =lh dat:(~(sighash unsigned-tx:btc lutx) 0)
 =lprivkey 0x18e1.4a7b.6a30.7f42.6a94.f811.4701.e7c8.e774.e7f9.a47e.2c20.35db.29a2.0632.1725

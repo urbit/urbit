@@ -5,10 +5,21 @@ Uses the fork [btc-urbit](https://github.com/timlucmiptev/btc-urbit), with custo
   * new `decompress-key` from [https://github.com/yosoyubik/urbit/blob/decompress-point/pkg/arvo/sys/zuse.hoon]
 - `lib/bip32.hoon` from [https://github.com/urbit/urbit/blob/c473a4a35f2fdfde7b31f8b0ba5cbd7f54b0f223/pkg/arvo/lib/bip32.hoon]
 
-## `btc-node` Patch
-Includes a custom version of `btc-node` that supports access control and returning responses to a local subscriber.
+## IMPORTANT
+always check whether ecc has the decompress-point correct
 
-### Changes
+## Starting Up
+The `rpc-pass` portion is to give the provider credentials to the RPC daemons.
+```
+|commit %home
+|start %btc-wallet-store
+|start %btc-wallet-hook
+|start %btc-provider
+:btc-wallet-hook|action [%set-provider <PROVIDER_SHIP>]
+
+=rpc-pass BTC_RPC_PASSWORD
+:btc-provider|command [%set-credentials [rpc-url='http://localhost:8332' rpc-user='__cookie__' rpc-pass] [rpc-url='http://localhost:50002']]
+```
 
 
 ### New Commands

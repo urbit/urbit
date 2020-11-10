@@ -4,16 +4,25 @@
 +$  electrum-credentials  [rpc-url=@t]
 +$  credentials  [bc=btc-credentials ec=electrum-credentials]
 +$  host-info  [creds=credentials connected=? clients=(set ship)]
-+$  action
-  $%  [%get-address-info =address]
++$  req-id  @t
++$  action  [=req-id body=action-body]
++$  action-body
+  $%  [%address-info =address]
+      [%ping ~]
   ==
-+$  result
-  $%  [%get-address-info info=address-info]
++$  result  [=req-id body=result-body]
++$  result-body
+  $%  [%address-info a=address utxos=(set utxo) used=?]
   ==
 +$  error
-  $%  [%not-connected ~]
+  $%  [%not-connected status=@ud]
+      [%bad-request status=@ud]
+      [%no-auth status=@ud]
+      [%http-error status=@ud]
+      [%rpc-error ~]
   ==
-+$  update  (each result error)               ::  sub updates from /clients path (connection etc.)
++$  update  (each result error)
++$  status  ?(%connected %disconnected)
 ::
 +$  command
   $%  [%set-credentials creds=credentials]
@@ -40,6 +49,5 @@
     +$  response  btc-node-hook-response:brpc
     --
   --
-
 --
-
+::

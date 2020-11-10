@@ -1,9 +1,12 @@
-/-  *btc
+/-  sur=btc
+^?
+=<  [sur .]
+=,  sur
 |%
 ++  xpub-type
-  |=  xpub=tape
+  |=  =xpub
   ^-  bipt
-  =/  prefix=tape  (scag 4 xpub)
+  =/  prefix=tape  (scag 4 (trip xpub))
   ?:  =("xpub" prefix)  %bip44
   ?:  =("ypub" prefix)  %bip49
   ?:  =("zpub" prefix)  %bip84
@@ -264,6 +267,7 @@
     (my [[%main "bc"] [%testnet "tb"] ~])
   ++  charset  "qpzry9x8gf2tvdw0s3jn54khce6mua7l"
   +$  raw-decoded  [hrp=tape data=(list @) checksum=(list @)]
+  ::  below is a port of: https://github.com/bitcoinjs/bech32/blob/master/index.js
   ::
   ++  polymod
     |=  values=(list @)

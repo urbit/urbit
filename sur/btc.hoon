@@ -1,15 +1,16 @@
 |%
 +$  network  ?(%main %testnet)
++$  xpub  cord
 +$  legacy-address  $%([%legacy @uc])
 +$  bech32-address  $%([%bech32 cord])
 +$  address  ?(legacy-address bech32-address)
 +$  bipt  $?(%bip44 %bip49 %bip84)
-+$  sats  @ud  ::
++$  sats  @ud
 +$  hash256  [wid=%32 dat=@ux]
 +$  hash160  [wid=%20 dat=@ux]
 +$  hash  ?(hash256 hash160)
 +$  buffer  (list @ux)
-+$  utxo  [pos=@ tx-hash=hash256 block-height=@ value=sats]
++$  utxo  [pos=@ tx-hash=hash256 height=@ value=sats]
 ++  address-info
   $:  =address
       confirmed-value=sats

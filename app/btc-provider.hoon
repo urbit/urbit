@@ -2,11 +2,12 @@
 ::  Proxy that serves a BTC full node and ElectRS address indexer
 ::
 ::  Subscriptions: none
-::  To Subscribers:
+::  To Subscribers: /clients
 ::    current connection state
 ::    results/errors of RPC calls
 ::
-/+  *btc-provider, dbug, default-agent
+/-  btc
+/+  *btc-provider, dbug, default-agent, elib=electrum-rpc
 |%
 +$  versioned-state
     $%  state-0
@@ -42,26 +43,26 @@
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
-  ::  Only allow clients/authorized to poke
-  ::
   ?>  ?|((team:title our.bowl src.bowl) (is-client:hc src.bowl))
   =^  cards  state
-    ?:  ?=(%btc-provider-command mark)
-    ?>  (team:title our.bowl src.bowl)
-      (handle-command:hc !<(command vase))
     ?+  mark  (on-poke:def mark vase)
+        %btc-provider-command
+      ?>  (team:title our.bowl src.bowl)
+      (handle-command:hc !<(command vase))
         %btc-provider-action
-      ?.  connected.host-info
-        ~|("Not connected to RPC endpoints" !!)
       (handle-action:hc !<(action vase))
     ==
   [cards this]
 ++  on-watch
   |=  pax=path
   ^-  (quip card _this)
-  ?>  (is-whitelisted:hc src.bowl)
+  ?>  ?=([%clients *] pax)
+  ?.  (is-whitelisted:hc src.bowl)
+    ~&  >>>  "btc-provider: blocked client {<src.bowl>}"
+    [~[[%give %kick ~ ~]] this]
   ~&  >  "btc-provider: added client {<src.bowl>}"
-  `this(clients.host-info (~(put in clients.host-info) src.bowl))
+  :-  ~[(send-status ?:(connected.host-info %connected %disconnected))]
+  this(clients.host-info (~(put in clients.host-info) src.bowl))
 ::
 ++  on-leave  on-leave:def
 ++  on-peek   on-peek:def
@@ -69,10 +70,14 @@
 ++  on-arvo
   |=  [=wire =sign-arvo]
   ^-  (quip card _this)
+  ::  check for connectivity every 30 seconds
+  ::
+  ?:  ?=([%ping-timer *] wire)
+    [do-ping:hc this]
   =^  cards  state
   ?+    +<.sign-arvo    (on-arvo:def wire sign-arvo)
       %http-response
-      (handle-response:hc wire client-response.sign-arvo)
+      (handle-rpc-response:hc wire client-response.sign-arvo)
   ==
   [cards this]
 ::
@@ -80,69 +85,153 @@
 --
 ::  helper core
 |_  =bowl:gall
-++  handle-action
-  |=  act=action
-  |^  ^-  (quip card _state)
-  =/  ract=action:rpc
-    ?-  -.act
-        %get-address-info
-      [%erpc %get-address-utxos address.act]
-    ==
-  [~[(req-card act ract)] state]
-  ++  req-card
-    |=  [act=action ract=action:rpc]
-    =|  out=outbound-config:iris
-    =/  req=request:http
-      (gen-request host-info ract)
-    [%pass /[-.act]/[-.ract]/[(scot %da now.bowl)] %arvo %i %request req out]
-  --
 ++  handle-command
   |=  comm=command
   ^-  (quip card _state)
   ?-  -.comm
       %set-credentials
-    `state(host-info [creds.comm connected=%.y clients=*(set ship)])
+    :-  do-ping
+    state(host-info [creds.comm connected=%.n clients=*(set ship)])
     ::
       %whitelist-clients
     `state(whitelist (~(uni in whitelist) clients.comm))
+==
+::  if not connected, only %ping action is allowed
+::
+++  handle-action
+  |=  act=action
+  ^-  (quip card _state)
+  ?.  ?|(connected.host-info =(-.body.act %ping))
+    ~&  >>>  "Not connected to RPC"
+    [~[(send-update [%| %not-connected 500])] state]
+  =/  ract=action:rpc
+    ?-  -.body.act
+        %address-info
+      [%erpc %get-address-utxos address.body.act]
+      ::
+        %ping
+      [%brpc %get-block-count ~]
+    ==
+  [~[(req-card act ract)] state]
+++  req-card
+  |=  [act=action ract=action:rpc]
+  =|  out=outbound-config:iris
+  =/  req=request:http
+    (gen-request host-info ract)
+  [%pass (mk-wire act ract) %arvo %i %request req out]
+::  wire structure: /action-tas/rpc-action-tas/req-id/(address, if rpc-action %erpc)/now
+::
+++  mk-wire
+  |=  [act=action ract=action:rpc]
+  ^-  wire
+  =/  addr=path
+    ?:(?=(%erpc -.ract) /(address-to-cord:elib address.ract) /)
+  %-  zing
+  :~  /[-.body.act]/[-.ract]/[req-id.act]
+      addr
+      /[(scot %da now.bowl)]
   ==
-++  handle-response
+::  Handles HTTP responses from RPC servers. Parses for errors, then handles response.
+::  For actions that require collating multiple RPC calls, uses req-card to call out
+::    to RPC again if more information is required.
+::
+++  handle-rpc-response
   |=  [=wire response=client-response:iris]
-  :: IMPORTANT:  whatever we make here gets sent out to subscribers at the end
   ^-  (quip card _state)
   ?.  ?=(%finished -.response)  `state
-  =/  e=(unit error)  (check-connection status-code.response-header.response)
-  ~&  >  "before"
-  ?^  e
+  =*  status  status-code.response-header.response
+  ::  handle error types: connection errors, RPC errors (in order)
+  ::
+  =^  conn-err  state
+    (connection-error status)
+  ?^  conn-err
+    ~&  >>>  conn-err
     :_  state(connected.host-info %.n)
-    ~[(send-update [%| u.e])]
-  ~&  >  "after"
+    ~[(send-status %disconnected) (send-update [%| u.conn-err])]
   =/  rpc-resp=response:rpc:jstd
     (get-rpc-response response)
-  ::  TODO: error handling goes here
+  ?.  ?=([%result *] rpc-resp)
+    [~[(send-update [%| [%rpc-error ~]])] state]
+  ::  no error, switch on wire to handle RPC data
+  ::
   ?+  wire  ~|("Unexpected HTTP response" !!)
-      [%get-address-info %erpc *]
-    ~&  >>  +<.wire
-    ~&  >  rpc-resp
-    `state
+      [%address-info %erpc @ @ *]
+    [(handle-address-info wire rpc-resp) state]
+     ::
+      [%ping %brpc *]
+    :-  ~[(send-status %connected)]
+    state(connected.host-info %.y)
   ==
-++  check-connection
+::
+++  handle-address-info
+  |=  [=wire rpc-resp=response:rpc:jstd]
+  ^-  (list card)
+  =/  req-id=@t  +>-.wire
+  =/  addr=address:btc  (address-from-cord:elib +>+<.wire)
+  =/  eresp  (parse-response:electrum-rpc:elib rpc-resp)
+  :~  ?-  -.eresp
+          %get-address-utxos
+        ?:  =(0 ~(wyt in utxos.eresp))
+          (req-card [req-id %address-info addr] [%erpc %get-address-history addr])
+        (send-update [%& req-id %address-info addr utxos.eresp %.y])
+        ::
+          %get-address-history
+        %-  send-update
+        :*  %&  req-id  %address-info  addr  *(set utxo:btc)
+            ?:(=(0 ~(wyt in txs.eresp)) %.n %.y)
+        ==
+      ==
+  ==
+::
+++  connection-error
   |=  status=@ud
-  ^-  (unit error)
-  ?:  =(504 status)
-    `[%not-connected ~]
-  ~
+  ^-  [(unit error) _state]
+  ?+  status  [`[%http-error status] state]
+      %200
+    [~ state]
+      %400
+    [`[%bad-request status] state]
+      %401
+    [`[%no-auth status] state(connected.host-info %.n)]
+      %502
+    [`[%not-connected status] state(connected.host-info %.n)]
+      %504
+    [`[%not-connected status] state(connected.host-info %.n)]
+  ==
+::
+++  send-status
+  |=  =status  ^-  card
+  [%give %fact ~[/clients] %btc-provider-status !>(status)]
 ++  send-update
-  |=  =update  ^-  card
-  [%give %fact [/clients]~ %btc-provider-update !>(update)]
+  |=  =update
+  ^-  card
+  ~&  >>  "send-update: {<update>}"
+  [%give %fact ~[/clients] %btc-provider-update !>(update)]
+::
 ++  is-whitelisted
   |=  user=ship  ^-  ?
   ?|  (~(has in whitelist) user)
       =(our.bowl user)
   ==
+::
 ++  is-client
   |=  user=ship  ^-  ?
   (~(has in clients.host-info) user)
+::
+++  start-ping-timer
+  |=  interval=@dr  ^-  card
+  [%pass /ping-timer %arvo %b %wait (add now.bowl interval)]
+::
+++  do-ping
+  ^-  (list card)
+  :~  :*  %pass  /ping/[(scot %da now.bowl)]  %agent
+          [our.bowl %btc-provider]  %poke
+          %btc-provider-action  !>([%blank-id %ping ~])
+      ==
+      (start-ping-timer ~s30)
+  ==
+::  RPC JSON helper gates
+::  TODO: move these to /lib
 ::
 ++  httr-to-rpc-response
   |=  hit=httr:eyre
@@ -150,7 +239,7 @@
   ~|  hit
   =/  jon=json  (need (de-json:html q:(need r.hit)))
   ?.  =(%2 (div p.hit 100))
-    (parse-error jon)
+    (parse-rpc-error jon)
   =,  dejs-soft:format
   ^-  response:rpc:jstd
   =;  dere
@@ -170,7 +259,7 @@
   ?:  ?=([^ * ~] res)
     `[%result [u.id.res ?~(res.res ~ u.res.res)]]
   ~|  jon
-  `(parse-error jon)
+  `(parse-rpc-error jon)
 ::
 ++  get-rpc-response
   |=  response=client-response:iris
@@ -181,7 +270,7 @@
       response-header.response
     full-file.response
 ::
-++  parse-error
+++  parse-rpc-error
   |=  =json
   ^-  response:rpc:jstd
   :-  %error
@@ -197,21 +286,4 @@
       :~  ['code' (uf '' no)]
           ['message' (uf '' so)]
   ==  ==
-::
-:: TODO: BELOW are deprecated. Rip out their functionality
-++  btc-http-response
-  |=  [status=@ud rpc-resp=response:rpc:jstd]
-  ^-  (quip card _state)
-  ?.  ?=([%result *] rpc-resp)
-    ~&  [%error +.rpc-resp]
-    [~ state]
-::  ~&  >  (parse-response:btc-rpc:blib rpc-resp)
-  [~ state]
-::
-++  electrum-http-response
-  |=  [status=@ud rpc-resp=response:rpc:jstd]
-  ^-  (quip card _state)
-::  ~&  >>   (to-response (rpc-response [%erpc (parse-response:electrum-rpc:elib rpc-resp)]))
-  `state
-::
 --
