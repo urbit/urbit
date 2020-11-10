@@ -72,7 +72,7 @@ export default class Subscription {
   }
 
   firstRound() {
-    this.subscribe('/herm', 'herm');
+    this.subscribe('/session/', 'herm');
   }
 
   handleEvent(diff) {

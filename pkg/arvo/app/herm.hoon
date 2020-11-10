@@ -34,7 +34,7 @@
   ::  set up dill session subscription,
   ::  and ensure the tubes we use are in cache
   ::
-  :~  [%pass /herm/1 %arvo %d %view [//term/1]~]
+  :~  [%pass [%view %$ ~] %arvo %d %view ~]
       (request-tube bowl %blit %json |)
       (request-tube bowl %json %belt |)
   ==
@@ -48,7 +48,7 @@
 ++  on-watch
   |=  =path
   ^-  (quip card:agent:gall _this)
-  ?.  ?=([%herm ~] path)  !!
+  ?>  ?=([%session @ ~] path)
   :_  this
   ::  scry prompt and cursor position out of dill for initial response
   ::
@@ -64,14 +64,14 @@
   ?+  wire  !!
     ::  pass on dill blits for the session
     ::
-      [%herm %~.1 ~]
+      [%view %$ ~]
     ?.  ?=([%d %blit *] sign-arvo)
       ~|  [%unexpected-sign [- +<]:sign-arvo]
       !!
     :_  this
     %+  turn  p.sign-arvo
     |=  =blit:dill
-    [%give %fact [/herm]~ %blit !>(blit)]
+    [%give %fact [%session %$ ~]~ %blit !>(blit)]
   ::
     ::  ensure the tubes we need remain in cache
     ::
@@ -92,7 +92,7 @@
     ~|  [%unexpected-mark mark]
     !!
   :_  this
-  [%pass /herm/1 %arvo %d %belt !<(belt:dill vase)]~
+  [%pass [%belt %$ ~] %arvo %d %belt !<(belt:dill vase)]~
 ::
 ++  on-leave  on-leave:def
 ++  on-peek   on-peek:def
