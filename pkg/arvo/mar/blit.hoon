@@ -23,7 +23,7 @@
       %bel  b+&
       %clr  b+&
       %hop  (numb p.blit)
-      %lin  s+(crip (tufa p.blit))
+      %lin  a+(turn p.blit |=(c=@c s+(tuft c)))
       %mor  b+&
       %url  s+p.blit
     ::
@@ -44,7 +44,7 @@
       %+  turn  p.blit
       |=  [=stye text=(list @c)]
       %-  pairs
-      :~  'text'^s+(crip (tufa text))
+      :~  'text'^a+(turn text |=(c=@c s+(tuft c)))
         ::
           :-  'stye'
           %-  pairs
