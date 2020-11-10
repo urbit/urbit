@@ -22,7 +22,24 @@
 =|  state-0
 =*  state  -
 ::
-=<
+=>
+  |_  =bowl:gall
+  ::
+  ++  scry
+    |*  [=mold p=path]
+    ?>  ?=(^ p)
+    ?>  ?=(^ t.p)
+    .^(mold i.p (scot %p our.bowl) i.t.p (scot %da now.bowl) t.t.p)
+  ::
+  ++  give
+    |=  [paths=(list path) =update:hook]
+    ^-  (list card)
+    [%give %fact paths hark-graph-hook-update+!>(update)]~
+  ::
+  ++  watch-graph
+    ^-  card
+    [%pass /graph %agent [our.bowl %graph-store] %watch /updates]
+  --
 %-  agent:dbug
 ^-  agent:gall
 ~%  %hark-graph-hook-agent  ..card  ~
@@ -42,13 +59,13 @@
   ^-  (quip card _this)
   `this(state !<(state-0 old))
 ::
-++  on-watch  
+++  on-watch
   |=  =path
   ^-  (quip card _this)
   =^  cards  state
     ?+    path  (on-watch:def path)
       ::
-        [%updates ~]  
+        [%updates ~]
       :_  state
       %+  give:ha  ~
       :*  %initial
@@ -76,6 +93,7 @@
     |=  =action:hook
     ^-  (quip card _state)
     |^
+    :-  (give:ha ~[/updates] action)
     ?-  -.action
       %listen  (listen +.action)
       %ignore  (ignore +.action)
@@ -96,14 +114,12 @@
     ::
     ++  set-mentions
       |=  ment=?
-      ^-  (quip card _state)
-      :-  (give:ha ~[/updates] %set-mentions ment)
+      ^+  state
       state(mentions ment)
     ::
     ++  set-watch-on-self
       |=  self=?
-      ^-  (quip card _state)
-      :-  (give:ha ~[/updates] %set-watch-on-self self)
+      ^+  state
       state(watch-on-self self)
     --
   --
@@ -147,7 +163,7 @@
       (need (peek-metadata:met %graph group resource.q.update))
     =*  rid  resource.q.update
     =+  %+  scry:ha
-           ,mark=(unit mark) 
+           ,mark=(unit mark)
         /gx/graph-store/graph-mark/(scot %p entity.rid)/[name.rid]/noun
     =+  %+  scry:ha
           ,=tube:clay
@@ -156,7 +172,7 @@
       ~(tap by nodes.q.update)
     =|  cards=(list card)
     |^
-    ?~  nodes 
+    ?~  nodes
       [cards state]
     =*  index  p.i.nodes
     =*  node   q.i.nodes
@@ -181,7 +197,7 @@
       =^  new-cards  state
         (check-node node.i.children tube)
       %_    $
-        cards  (weld cards new-cards) 
+        cards  (weld cards new-cards)
         children  t.children
       ==
     ::
@@ -201,7 +217,7 @@
         [child-cards state]
       =/  desc=@t
         ?:  (is-mention contents.post.node)
-          %mention 
+          %mention
         name.u.notif-kind
       =/  parent=index:post
         (scag parent-lent.u.notif-kind index.post.node)
@@ -238,7 +254,7 @@
     ::
     ++  add-unread
       |=  [=index:store =notification:store]
-      ^-  card 
+      ^-  card
       =-  [%pass / %agent [our.bowl %hark-store] %poke -]
       hark-action+!>([%add index notification])
     ::
@@ -251,20 +267,4 @@
 ++  on-arvo  on-arvo:def
 ++  on-fail   on-fail:def
 --
-|_  =bowl:gall
-::
-++  scry
-  |*  [=mold p=path]
-  ?>  ?=(^ p)
-  ?>  ?=(^ t.p)
-  .^(mold i.p (scot %p our.bowl) i.t.p (scot %da now.bowl) t.t.p)
-::
-++  give
-  |=  [paths=(list path) =update:hook]
-  ^-  (list card)
-  [%give %fact paths hark-graph-hook-update+!>(update)]~
-::
-++  watch-graph
-  ^-  card
-  [%pass /graph %agent [our.bowl %graph-store] %watch /updates]
---
+

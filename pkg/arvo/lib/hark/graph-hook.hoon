@@ -4,7 +4,6 @@
 =<  [. sur]
 =,  sur
 |%
-::
 ++  dejs
   =,  dejs:format
   |%
@@ -27,6 +26,7 @@
         set-watch-on-self+bo
     ==
   --
+::
 ++  enjs
   =,  enjs:format
   |%
@@ -42,7 +42,7 @@
     |=  act=^action
     ^-  json
     %+  frond  -.act
-    ?-  -.act  
+    ?-  -.act
       %set-watch-on-self  b+watch-on-self.act
       %set-mentions  b+mentions.act
       ?(%listen %ignore)   (graph-index graph.act index.act)

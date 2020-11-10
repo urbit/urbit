@@ -68,7 +68,6 @@
 ++  enjs
   =,  enjs:format
   |%
-  ::
   ++  update
     |=  upd=^update
     ^-  json
@@ -80,6 +79,7 @@
         %set-dnd  b+dnd.upd
         %count    (numb count.upd)
         %more     (more +.upd)
+        ::
           ?(%archive %read %unread)
         (notif-ref +.upd)
     ==
@@ -210,11 +210,3 @@
     --
   --
 --
-          
-          
-
-
-
-
-
-

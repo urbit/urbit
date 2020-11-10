@@ -27,7 +27,6 @@
   $:  unread-count=@ud
       ~
   ==
-  
 ::
 ++  orm  ((ordered-map @da timebox:store) lth)
 --
@@ -67,6 +66,7 @@
     :_  this
     [%give %fact ~ hark-update+!>(initial-updates)]~
   ==
+  ::
   ++  initial-updates
     ^-  update:store
     :-  %more
@@ -113,8 +113,8 @@
     ^-  update:store
     :^  %timebox  time  %.n
     ~(tap by timebox)
-    ::
   ==
+::
 ++  on-poke
   ~/  %hark-store-poke
   |=  [=mark =vase]
@@ -211,7 +211,6 @@
       ^-  (quip card _state)
       :_  state(dnd d)
       (give:ha [/updates]~ %set-dnd d)
-    ::
     --
   --
 ::
