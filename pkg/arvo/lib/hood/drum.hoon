@@ -250,8 +250,8 @@
     =>  (se-born | %home %hark-graph-hook)
     =>  (se-born | %home %hark-group-hook)
     =>  (se-born | %home %hark-chat-hook)
-    (se-born | %home %hark-store)
-   (se-born | %home %observe-hook)
+    =>  (se-born | %home %hark-store)
+    (se-born | %home %observe-hook)
   ..on-load
 ::
 ++  reap-phat                                         ::  ack connect
