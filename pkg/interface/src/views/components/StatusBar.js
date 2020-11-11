@@ -6,8 +6,6 @@ import ReconnectButton from './ReconnectButton';
 import { StatusBarItem } from './StatusBarItem';
 import { Sigil } from '~/logic/lib/sigil';
 
-
-
 const StatusBar = (props) => {
 
   const metaKey = (window.navigator.platform.includes('Mac')) ? '⌘' : 'Ctrl+';
@@ -29,7 +27,7 @@ const StatusBar = (props) => {
 
         <StatusBarItem mr={2} onClick={() => props.api.local.setOmnibox()}>
         { !props.doNotDisturb && props.notificationsCount > 0 &&
-          (<Box display="block" right="-8px" top="-8px" position="absolute" >
+          (<Box display="block" right="-5px" top="-5px" position="absolute" >
             <Icon color="blue" icon="Bullet" />
            </Box>
         )}
