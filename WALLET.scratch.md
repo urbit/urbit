@@ -41,10 +41,10 @@ nixt.walt1
 
 ### generate new address (for receiving payment)
 ```
-=walt1 (from-xpub:walt:bl xpub1 ~ ~)
-=res ~(gen-address walt1 %0)
+=walt1 (from-xpub:bl xpub1 ~ ~)
+=res ~(gen-address wad:bl walt1 %0)
 p.res
-nixt.st.q.res
+nixt.q.res
 ::  gives 
 ::  [%bech32 'bc1q0adfj7ur750hjwufzzlfj5ytqzsnd7fz9fjuzc']
 ::  [p=1 q=0]
@@ -57,7 +57,7 @@ abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon 
 ```
 
 ### manual scanning of empty wallet
-With max-gap=3
+Uses `btc-wallet-hook`, with max-gap=3
 ```
 :btc-wallet-hook|action [%set-provider ~dopzod]
 =scan-xpub 'zpub6rFR7y4Q2AijBEqTUquhVz398htDFrtymD9xYYfG1m4wAcvPhXNfE3EfH1r1ADqtfSdVCToUG868RvUUkgDKf31mGDtKsAYz2oz2AGutZYs'
