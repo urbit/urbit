@@ -241,7 +241,9 @@ export class Omnibox extends Component {
                 link={result.link}
                 navigate={() => this.navigate(result.app, result.link)}
                 selected={selected}
-                dark={props.dark} />
+                invites={props.invites}
+                notifications={props.notifications}
+              />
             ))}
           </Box>
         );

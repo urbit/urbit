@@ -2,12 +2,10 @@ import React from 'react';
 import Helmet from 'react-helmet';
 import styled from 'styled-components';
 
-import { Box, Row, Icon, Text, Center } from '@tlon/indigo-react';
-import { uxToHex, adjustHex } from '~/logic/lib/util';
+import { Box, Row, Icon, Text } from '@tlon/indigo-react';
 
 import './css/custom.css';
 
-import { Sigil } from '~/logic/lib/sigil';
 import Tiles from './components/tiles';
 import Tile from './components/tiles/tile';
 import Welcome from './components/welcome';
@@ -65,7 +63,7 @@ export default class LaunchApp extends React.Component {
               weather={props.weather}
             />
             <Box display={["none", "block"]} width="100%" gridColumn="1 / -1"></Box>
-            <Groups groups={props.groups} associations={props.associations} invites={props.invites} api={props.api}/>
+            <Groups groups={props.groups} associations={props.associations} />
           </Box>
         </ScrollbarLessBox>
         <Box
