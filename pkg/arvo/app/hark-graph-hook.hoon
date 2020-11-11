@@ -102,14 +102,12 @@
     ==
     ++  listen
       |=  [graph=resource =index:post]
-      ^-  (quip card _state)
-      :-  (give:ha ~[/updates] [%listen graph index])
+      ^+  state
       state(watching (~(put in watching) [graph index]))
     ::
     ++  ignore
       |=  [graph=resource =index:post]
-      ^-  (quip card _state)
-      :-  (give:ha ~[/updates] [%ignore graph index])
+      ^+  state
       state(watching (~(del in watching) [graph index]))
     ::
     ++  set-mentions
