@@ -12,34 +12,31 @@ absurd sick rose mask magnet know slide spell rent casual someone grant giant in
 =bl -build-file %/lib/btc-wallet-store/hoon
 ```
 
-### add
-```
-:btc-wallet-store|action [%add-wallet xpub ~ ~]
-```
-
 ### get address at indices
 ```
-=walt1 (from-xpub:walt:bl xpub1 ~ ~)
-(get-address:walt1 %0 0)
+=walt1 (from-xpub:bl xpub1 ~ ~)
+(~(mk-address wad:bl walt1 %0) 0)
+::  gives [%bech32 'bc1q0adfj7ur750hjwufzzlfj5ytqzsnd7fz9fjuzc']
 ```
 
 ### update address data
 ```
-=walt1 (from-xpub:walt:bl xpub1 ~ ~)
-(~(mk-address walt1 %0) 0)
+=walt1 (from-xpub:bl xpub1 ~ ~)
+(~(mk-address wad:bl walt1 %0) 0)
 ::  gives bc1q0adfj7ur750hjwufzzlfj5ytqzsnd7fz9fjuzc
-=walt1 (~(insert-address walt1 %0) [%bech32 'bc1q0adfj7ur750hjwufzzlfj5ytqzsnd7fz9fjuzc'] [%0 0 ~])
-nixt.st.walt1
+=walt1 (~(watch-address wad:bl walt1 %0) [%bech32 'bc1q0adfj7ur750hjwufzzlfj5ytqzsnd7fz9fjuzc'] [%0 0 ~])
+nixt.walt1
 ::  gives [p=1 q=0] (nixt updated since it was 0)
-=walt1 (~(insert-address walt1 %0) [%bech32 'bc1qa5jcdww8u8493zttjjf6q5wu89e6knpvmsh7x4'] [%0 2 ~])
-nixt.st.walt1
+=walt1 (~(watch-address wad:bl walt1 %0) [%bech32 'bc1qa5jcdww8u8493zttjjf6q5wu89e6knpvmsh7x4'] [%0 2 ~])
+nixt.walt1=walt1 (~(watch-address wad:bl walt1 %0) [%bech32 'bc1qa5jcdww8u8493zttjjf6q5wu89e6knpvmsh7x4'] [%0 2 ~])
+nixt.walt1
 ::  gives [p=1 q=0] (no update)
-=walt1 (~(insert-address walt1 %0) [%bech32 'bc1qvqrdh8suyv63ntaa0d7hmcamavv8283sngh6e5'] [%0 1 ~])
-nixt.st.walt1
+=walt1 (~(watch-address wad:bl walt1 %0) [%bech32 'bc1qvqrdh8suyv63ntaa0d7hmcamavv8283sngh6e5'] [%0 1 ~])
+nixt.walt1
 ::  gives [p=3 q=0]  (skips index 2, since already a used address there)
 
-=walt1 (insert-address:walt1 [%bech32 'bc1qvqrdh8suyv63ntaa0d7hmcamavv8283sngh6e5'] [%0 4 ~])
-::  gives error, because address is inserted at the wrong index
+=walt1 (~(watch-address wad:bl walt1 %0) [%bech32 'bc1qvqrdh8suyv63ntaa0d7hmcamavv8283sngh6e5'] [%0 4 ~])
+::  gives error, because address is inserted at index that doesn't match it
 ```
 
 ### generate new address (for receiving payment)

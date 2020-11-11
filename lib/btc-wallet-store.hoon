@@ -6,14 +6,6 @@
 =+  ecc=secp256k1
 |%
 ++  default-max-gap  20
-::  walt: door parameterized on chyg (the change account to use for current operation)
-::        to access state, use VARNAME.st.WALTNAME, e.g. nixt.st.walt1
-::
-::  wach: map of watched addresses
-::  scanned: whether the wallet's addresses have been checked for prior activity
-::  scan-to
-::  max-gap
-::
 ::
 ++  hash-xpub
   |=  [=xpub:btc =chyg =idx]
@@ -22,37 +14,36 @@
   =/  dat=@  (cat 3 xpub chygidx)
   %-  ripemd-160:ripemd:crypto
   [(met 3 dat) dat]
-++  walt
-  =|  st=[=wilt =bipt =wach =nixt scanned=? scan-to=scon max-gap=@]
-  |_  =chyg
-  +*  this  .
-  ::
-  ++  from-xpub
-    |=  [=xpub:btc scan-to=(unit scon) max-gap=(unit @)]
-    ^-  _this
-    %=  this
-        wilt.st  (from-extended:bip32 (trip xpub))
-        bipt.st  (xpub-type:btc xpub)
-        wach.st  *wach
-        nixt.st  [0 0]
-        scanned.st  %.n
-        scan-to.st  (fall scan-to *scon)
-        max-gap.st  (fall max-gap default-max-gap)
-    ==
-  ::
+::
+++  from-xpub
+  |=  [=xpub:btc scan-to=(unit scon) max-gap=(unit @)]
+  ^-  walt
+  :*  (from-extended:bip32 (trip xpub))
+      (xpub-type:btc xpub)
+      *wach
+      [0 0]
+      %.n
+      (fall scan-to *scon)
+      (fall max-gap default-max-gap)
+  ==
+::  wad: door for processing walts (wallets)
+::        parameterized on a walt and it's chyg account
+::
+++  wad
+  |_  [w=walt =chyg]
   ++  mk-address
     |=  =idx
     ^-  address:btc
     =/  pubkey=@ux
       %-  compress-point:ecc
-      pub:(derive-public:(derive-public:wilt.st (@ chyg)) idx)
-    ?:  ?=(%bip84 bipt.st)
+      pub:(derive-public:(derive-public:wilt.w (@ chyg)) idx)
+    ?:  ?=(%bip84 bipt.w)
       (need (encode-pubkey:bech32:btc %main pubkey))
     ~|("legacy addresses not supported yet " !!)
   ::  generates and watches the next available address
   ::
   ++  gen-address
-    ^-  (pair address:btc _this)
+    ^-  (pair address:btc walt)
     =/  addr  (mk-address nixt-idx)
     :-  addr
     (watch-address addr [chyg nixt-idx *(set utxo:btc)])
@@ -60,29 +51,29 @@
   ::
   ++  watch-address
     |=  [a=address:btc =addi]
-    ^-  _this
+    ^-  walt
     ?>  =(chyg chyg.addi)
     ?>  =(a (mk-address idx.addi))
-    =?  nixt.st  (is-nixt addi)
+    =?  nixt.w  (is-nixt addi)
       new:bump-nixt
-    this(wach.st (~(put by wach.st) a addi))
-  ::  update an address if it's in our wach map
+    w(wach (~(put by wach.w) a addi))
+  ::  update an address if it's in wach map
   ::
   ++  update-address
     |=  [a=address:btc utxos=(set utxo:btc)]
-    ^-  _this
+    ^-  walt
     =/  adi=(unit addi)
-      (~(get by wach.st) a)
-    ?~  adi  this
-    this(wach.st (~(put by wach.st) a u.adi(utxos utxos)))
+      (~(get by wach.w) a)
+    ?~  adi  w
+    w(wach (~(put by wach.w) a u.adi(utxos utxos)))
   ::
   ++  is-nixt
     |=  =addi  ^-  ?
     ?:  ?=(%0 chyg.addi)
-      =(idx.addi p.nixt.st)
-    =(idx.addi q.nixt.st)
+      =(idx.addi p.nixt.w)
+    =(idx.addi q.nixt.w)
   ++  nixt-idx
-    ?:(?=(%0 chyg) p.nixt.st q.nixt.st)
+    ?:(?=(%0 chyg) p.nixt.w q.nixt.w)
   ::  Returns: the prior idx in the account
   ::           nixt with account idx bumped
   ::  Increments idx until an unwatched address is found
@@ -93,13 +84,13 @@
     :-  nixt-idx
     =/  new-idx=idx  +(nixt-idx)
     |-  ?>  (lte new-idx max-index)
-    ?.  (~(has by wach.st) (mk-address new-idx))
+    ?.  (~(has by wach.w) (mk-address new-idx))
         (set-nixt new-idx)
     $(new-idx +(new-idx))
     ::
     ++  set-nixt
       |=  idx=@  ^-  nixt
-      ?:(?=(%0 chyg) [idx q.nixt.st] [p.nixt.st idx])
+      ?:(?=(%0 chyg) [idx q.nixt.w] [p.nixt.w idx])
     --
   --
 --
