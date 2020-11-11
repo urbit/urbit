@@ -51,19 +51,18 @@ export function ChannelMenu(props: ChannelMenuProps) {
   const isOurs = ship.slice(1) === window.ship;
 
   const isMuted = appIsGraph(app)
-    ? props.graphNotificationConfig.watching.findIndex((a) => a === appPath) ===
-      -1
+    ? props.graphNotificationConfig.watching.findIndex(
+        (a) => a.graph === appPath && a.index === "/"
+      ) === -1
     : props.chatNotificationConfig.findIndex((a) => a === appPath) === -1;
+
   const onChangeMute = async () => {
-    const func =
-      association["app-name"] === "chat"
-        ? isMuted
-          ? "listenChat"
-          : "ignoreChat"
-        : isMuted
-        ? "listenGraph"
-        : "ignoreGraph";
-    await api.hark[func](appPath);
+    if (association["app-name"] === "chat") {
+      const func = isMuted ? "listenChat" : "ignoreChat";
+      return api.hark[func](appPath);
+    }
+    const func = isMuted ? "listenGraph" : "ignoreGraph";
+    await api.hark[func](appPath, "/");
   };
   const onUnsubscribe = useCallback(async () => {
     const app = metadata.module || association["app-name"];

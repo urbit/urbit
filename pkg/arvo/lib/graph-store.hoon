@@ -52,6 +52,7 @@
   ++  index
     |=  i=^index
     ^-  json
+    ?:  =(~ i)  s+'/'
     =/  j=^tape  ""
     |-
     ?~  i  [%s (crip j)]
