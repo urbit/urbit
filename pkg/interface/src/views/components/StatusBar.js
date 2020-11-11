@@ -1,13 +1,12 @@
 import React from 'react';
 
-import { useLocation } from 'react-router-dom';
 import { Row, Box, Text, Icon, Button } from '@tlon/indigo-react';
 import ReconnectButton from './ReconnectButton';
 import { StatusBarItem } from './StatusBarItem';
 import { Sigil } from '~/logic/lib/sigil';
 
 const StatusBar = (props) => {
-
+  const invites = Object.keys(props.invites?.['contacts'] || {});
   const metaKey = (window.navigator.platform.includes('Mac')) ? '⌘' : 'Ctrl+';
 
   return (
@@ -26,7 +25,7 @@ const StatusBar = (props) => {
       </Button>
 
         <StatusBarItem mr={2} onClick={() => props.api.local.setOmnibox()}>
-        { !props.doNotDisturb && props.notificationsCount > 0 &&
+        { !props.doNotDisturb && (props.notificationsCount > 0 || invites.length > 0) &&
           (<Box display="block" right="-5px" top="-5px" position="absolute" >
             <Icon color="blue" icon="Bullet" />
            </Box>
