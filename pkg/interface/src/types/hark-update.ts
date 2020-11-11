@@ -4,7 +4,7 @@ import { GroupUpdate } from "./group-update";
 import { BigIntOrderedMap } from "~/logic/lib/BigIntOrderedMap";
 import { Envelope } from './chat-update';
 
-type GraphNotifDescription = "link" | "comment";
+type GraphNotifDescription = "link" | "comment" | "note" | "mention";
 
 export interface GraphNotifIndex {
   graph: string;
@@ -39,7 +39,7 @@ export type NotificationContents =
   | { group: GroupNotificationContents }
   | { chat: ChatNotificationContents };
 
-interface Notification {
+export interface Notification {
   read: boolean;
   time: number;
   contents: NotificationContents;
@@ -57,7 +57,12 @@ export type Notifications = BigIntOrderedMap<Timebox>;
 export interface NotificationGraphConfig {
   watchOnSelf: boolean;
   mentions: boolean;
-  watching: string[];
+  watching: WatchedIndex[]
 }
 
+
+interface WatchedIndex {
+  graph: string;
+  index: string;
+}
 export type GroupNotificationsConfig = string[];

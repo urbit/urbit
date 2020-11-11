@@ -97,7 +97,7 @@ function graphIgnore(json: any, state: HarkState) {
   const data = _.get(json, "ignore", false);
   if (data) {
     state.notificationsGraphConfig.watching = state.notificationsGraphConfig.watching.filter(
-      (n) => n !== data
+      ({ graph, index }) => !(graph === data.graph && index === data.index)
     );
   }
 }

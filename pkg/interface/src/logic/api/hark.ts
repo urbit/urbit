@@ -1,8 +1,9 @@
 import BaseApi from "./base";
 import { StoreState } from "../store/type";
 import { dateToDa, decToUd } from "../lib/util";
-import {NotifIndex} from "~/types";
+import {NotifIndex, IndexedNotification} from "~/types";
 import { BigInteger } from 'big-integer';
+import {getParentIndex} from "../lib/notification";
 
 export class HarkApi extends BaseApi<StoreState> {
   private harkAction(action: any): Promise<any> {
@@ -68,30 +69,39 @@ export class HarkApi extends BaseApi<StoreState> {
     return this.harkAction({ seen: null });
   }
 
-  mute(index: NotifIndex) {
-    if('graph' in index) {
-      const { graph } = index.graph;
-      return this.ignoreGraph(graph);
+  mute(notif: IndexedNotification) {
+    if('graph' in notif.index && 'graph' in notif.notification.contents) {
+      const { index } = notif;
+      const parentIndex = getParentIndex(index.graph, notif.notification.contents.graph)
+      if(!parentIndex) {
+        return Promise.resolve();
+      }
+      return this.ignoreGraph(index.graph.graph, parentIndex);
     }
-    if('group' in index) {
-      const { group } = index.group;
+    if('group' in notif.index) {
+      const { group } = notif.index.group;
       return this.ignoreGroup(group);
     }
-    if('chat' in index) {
-      return this.ignoreChat(index.chat);
+    if('chat' in notif.index) {
+      return this.ignoreChat(notif.index.chat.chat);
     }
     return Promise.resolve();
   }
 
-  unmute(index: NotifIndex) {
-    if('graph' in index) {
-      return this.listenGraph(index.graph.graph);
+  unmute(notif: IndexedNotification) {
+    if('graph' in notif.index && 'graph' in notif.notification.contents) {
+      const { index } = notif;
+      const parentIndex = getParentIndex(index.graph, notif.notification.contents.graph)
+      if(!parentIndex) {
+        return Promise.resolve();
+      }
+      return this.listenGraph(index.graph.graph, parentIndex);
     }
-    if('group' in index) {
-      return this.listenGroup(index.group.group);
+    if('group' in notif.index) {
+      return this.listenGroup(notif.index.group.group);
     }
-    if('chat' in index) {
-      return this.listenChat(index.chat);
+    if('chat' in notif.index) {
+      return this.listenChat(notif.index.chat.chat);
     }
     return Promise.resolve();
   }
@@ -102,9 +112,12 @@ export class HarkApi extends BaseApi<StoreState> {
     })
   }
 
-  ignoreGraph(graph: string) {
+  ignoreGraph(graph: string, index: string) {
     return this.graphHookAction({
-      ignore: graph
+      ignore: {
+        graph,
+        index
+      }
     })
   }
 
@@ -121,9 +134,12 @@ export class HarkApi extends BaseApi<StoreState> {
     })
   }
 
-  listenGraph(graph: string) {
+  listenGraph(graph: string, index: string) {
     return this.graphHookAction({
-      listen: graph
+      listen: {
+        graph,
+        index
+      }
     })
   }
 

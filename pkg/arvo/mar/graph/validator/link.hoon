@@ -5,8 +5,8 @@
   ++  noun  i
   ++  notification-kind
     ?+  index.p.i  ~
-      [@ ~]    `%link
-      [@ @ ~]  `%comment
+      [@ ~]    `[%link 0]
+      [@ @ ~]  `[%comment 1]
     ==
   --
 ++  grab

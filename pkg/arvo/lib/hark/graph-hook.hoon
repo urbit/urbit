@@ -1,4 +1,4 @@
-/-  sur=hark-graph-hook
+/-  sur=hark-graph-hook, post
 /+  graph-store, resource
 ^?
 =<  [. sur]
@@ -7,20 +7,21 @@
 ++  dejs
   =,  dejs:format
   |%
-  ++  graph-indices
-    %-  ot
-    :~  graph+dejs-path:resource
-        indices+(as graph-index)
-    ==
   ::
-  ++  graph-index
+  ++  index
     ^-  $-(json index:graph-store)
     (su ;~(pfix net (more net dem)))
   ::
+  ++  graph-index
+    %-  ot
+    :~  graph+dejs-path:resource
+        index+index
+    ==
+  ::
   ++  action
     %-  of
-    :~  listen+dejs-path:resource
-        ignore+dejs-path:resource
+    :~  listen+graph-index
+        ignore+graph-index
         set-mentions+bo
         set-watch-on-self+bo
     ==
@@ -29,22 +30,25 @@
 ++  enjs
   =,  enjs:format
   |%
-  ++  graph-indices
-    |=  [graph=resource indices=(set index:graph-store)]
+  ::
+  ++  graph-index
+    |=  [graph=resource =index:post]
     %-  pairs
     :~  graph+s+(enjs-path:resource graph)
-        indices+a+(turn ~(tap in indices) index:enjs:graph-store)
+        index+(index:enjs:graph-store index)
     ==
   ::
   ++  action
     |=  act=^action
     ^-  json
     %+  frond  -.act
-    ?-  -.act  
+    ?-  -.act
       %set-watch-on-self  b+watch-on-self.act
       %set-mentions  b+mentions.act
-      ?(%listen %ignore)   s+(enjs-path:resource graph.act)
+      ?(%listen %ignore)   (graph-index graph.act index.act)
     ==
+  ::
+  ::
   ::
   ++  update
     |=  upd=^update
@@ -55,7 +59,8 @@
     %-  pairs
     :~  'watchOnSelf'^b+watch-on-self.upd
         'mentions'^b+mentions.upd
-        watching+a+(turn ~(tap in watching.upd) |=(r=resource s+(enjs-path:resource r)))
+        :+  %watching  %a
+        (turn ~(tap in watching.upd) graph-index)
     ==
   --
 --
