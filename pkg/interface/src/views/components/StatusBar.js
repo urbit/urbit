@@ -47,15 +47,6 @@ const StatusBar = (props) => {
         />
       </Row>
       <Row justifyContent="flex-end" collapse>
-      {!props.doNotDisturb && (<StatusBarItem color="blue" px='12px' mr='2' onClick={() => props.history.push('/~notifications')}>
-        <Text
-        fontWeight={props.notificationsCount > 0 ? "500" : "400"}
-        fontSize='0'
-        color="blue"
-        >
-          {(props.notificationsCount > 99) ? "99+" : props.notificationsCount}
-        </Text>
-      </StatusBarItem>)}
         <StatusBarItem px={'2'} flexShrink='0' onClick={() => props.history.push('/~profile')}>
           <Sigil ship={props.ship} size={16} color='black' classes='mix-blend-diff' icon />
           <Text ml={2} display={["none", "inline"]} fontFamily="mono">~{props.ship}</Text>
