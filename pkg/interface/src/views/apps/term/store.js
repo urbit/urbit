@@ -18,6 +18,16 @@ export default class Store {
   }
 
   handleEvent(data) {
+    //  process slogs
+    //
+    if (data.slog) {
+      this.state.lines.splice(this.state.lines.length-1, 0, {lin: [data.slog]});
+      this.setState({ lines: this.state.lines });
+      return;
+    }
+
+    //  process blits
+    //
     const blit = data.data;
     switch (Object.keys(blit)[0]) {
       case 'bel':
@@ -31,6 +41,7 @@ export default class Store {
         //  since lines are lists of characters that might span multiple
         //  codepoints, we need to calculate the byte-wise cursor position
         //  to avoid incorrect cursor rendering.
+        //
         let line = this.state.lines[this.state.lines.length - 1];
         let hops;
         if (line.lin) {
