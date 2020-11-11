@@ -118,7 +118,7 @@ export function GroupSwitcher(props: {
                     mr={2}
                     color="gray"
                     display="block"
-                    icon="Circle"
+                    icon="Boot"
                   />
                   <Text>DMs + Drafts</Text>
                 </GroupSwitcherItem>}
