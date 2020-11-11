@@ -119,7 +119,7 @@
   =/  req=request:http
     (gen-request host-info ract)
   [%pass (mk-wire act ract) %arvo %i %request req out]
-::  wire structure: /action-tas/rpc-action-tas/req-id/(address, if rpc-action %erpc)/now
+::  wire structure: /action-tas/rpc-action-tas/req-id/(address, if rpc-action %erpc)/now 
 ::
 ++  mk-wire
   |=  [act=action ract=action:rpc]
@@ -145,7 +145,6 @@
   =^  conn-err  state
     (connection-error status)
   ?^  conn-err
-    ~&  >>>  conn-err
     :_  state(connected.host-info %.n)
     ~[(send-status %disconnected) (send-update [%| u.conn-err])]
   =/  rpc-resp=response:rpc:jstd

@@ -3,7 +3,7 @@ The below requires norsyr's fix to `decompress-point` in order to work.
 
 ## Set Credentials and Ping Servers
 ```
-=rpc-pass '9cd2f14f9855ea5eec587935887e83c39494a35f036a9ef30abcb12df6ccf0fe'
+=rpc-pass 'e09acb2144ec8a5d32fe6b3c098590c10935be19395e6a997ae5eaca89ea0133'
 :btc-provider|command [%set-credentials [rpc-url='http://localhost:8332' rpc-user='__cookie__' rpc-pass] [rpc-url='http://localhost:50002']]
 
 :btc-provider|action ['addr0' %address-info [%bech32 'bc1q59u5epktervh6fxqay2dlph0wxu9hjnx6v8n66']]

@@ -63,13 +63,13 @@ abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon 
 With max-gap=3
 ```
 :btc-wallet-hook|action [%set-provider ~dopzod]
-=btc -build-file %/lib/btc/hoon
 =scan-xpub 'zpub6rFR7y4Q2AijBEqTUquhVz398htDFrtymD9xYYfG1m4wAcvPhXNfE3EfH1r1ADqtfSdVCToUG868RvUUkgDKf31mGDtKsAYz2oz2AGutZYs'
 :btc-wallet-store|action [%add-wallet scan-xpub ~ [~ 3]]
 :btc-wallet-store +dbug
 :: shows scans with the xpub and {0 1 2} todos
 
 ::  %0 account has no used
+=btc -build-file %/lib/btc/hoon
 :btc-wallet-store|action [%watch-address scan-xpub %0 1 *(set utxo:btc) used=%.n]
 :btc-wallet-store|action [%watch-address scan-xpub %0 2 *(set utxo:btc) used=%.n]
 :btc-wallet-store|action [%watch-address scan-xpub %0 0 *(set utxo:btc) used=%.n]
@@ -80,42 +80,12 @@ With max-gap=3
 :: dbug should show re-filled scans: [xpub %1]
 ```
 
+## scrys
+```
+.^((list @t) %gx /=btc-wallet-store=/scanned/noun)
+```
+
 ## Algos
-
-### Scan addresses
-#### in wallet-store
-* maps:
-  - scans ([xpub chyg] -> waltscan)
-  
-* start scan
-  - params: xpub
-  - get `nixt` from wallet
-  - choose the next N indices WITHOUT generating
-  - store their indexes in batch
-  - new entry in scans for this xpub+both chyg
-  - send address+ idx [xpub chyg] to wallet-hook for processing
-  
-* on `:watch-address` action
-  - watch-address in the wallet IF used
-  - delete `idx` from todo.batch
-  - if the `todo`s in this xpub+chyg batch are empty, check whether wallet is scanned
-
-#### in wallet-hook
-* types
-  - req-id=@t: hash160 of (cat xpub chyg)
-  - pend/fail: (req-id -> [=idx key=[xpub chyg]])
-  - timeouts: (req-id -> @da) -- store Behns for each req
-
-* send address-watch req
-  - send address to provider with req-id
-  - set a Behn for 30s, put in timeouts
-
-* on response from server
-  - insert the address into the wallet
-  
-* on error
-
-* on timeout
 
 ### Monitor addresses
 - nixt also stores next 50 addresses for each account.
