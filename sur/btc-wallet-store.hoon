@@ -17,7 +17,6 @@
 ::  scon: indices to initially scan to in (non-)change accounts
 ::        defaults to 2^32-1 (i.e. all the addresses, ~4B)
 ::  wilt: stores xpub; copulates with thousands of indices to form addresses
-::  walt: wallet metadata
 ::
 +$  chyg  $?(%0 %1)
 +$  idx   @
@@ -26,8 +25,22 @@
 +$  wach  (map address addi)
 +$  scon  $~([max-index max-index] (pair idx idx))
 +$  wilt  _bip32
+::  walt: wallet datastructure
+::  scanned: whether the wallet's addresses have been checked for prior activity
+::  scan-to
+::  max-gap
+::
++$  walt
+  $:  =wilt
+      =bipt
+      =wach
+      =nixt
+      scanned=?
+      scan-to=scon
+      max-gap=@
+  ==
 ::  todo: Set of indices; empty it out until none are left--means scanning of that batch is done
-::  start:     index this batch started scanning from 
+::  start:     index this batch started scanning from
 ::
 +$  batch  [todo=(set idx) endpoint=idx has-used=?]
 +$  scans  (map [xpub chyg] batch)
