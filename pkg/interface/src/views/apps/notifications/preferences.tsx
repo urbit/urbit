@@ -72,7 +72,6 @@ export default function NotificationPreferences(
             id="dnd"
             caption="You won't see the notification badge, but notifications will still appear in your inbox."
           />
-
           <Checkbox
             label="Watch for replies"
             id="watchOnSelf"

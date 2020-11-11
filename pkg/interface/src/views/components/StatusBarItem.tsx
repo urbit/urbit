@@ -15,7 +15,7 @@ export function StatusBarItem({
 }: StatusBarItemProps) {
   return (
     <Button
-      position="relative"
+      style={{ position: 'relative' }}
       border={1}
       color="washedGray"
       bg="white"

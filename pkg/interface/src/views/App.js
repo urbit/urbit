@@ -155,7 +155,8 @@ class App extends React.Component {
                 associations={state.associations}
                 apps={state.launch}
                 api={this.api}
-                dark={state.dark}
+                notifications={state.notificationsCount}
+                invites={state.invites}
                 groups={state.groups}
                 show={state.omniboxShown}
               />

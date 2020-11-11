@@ -63,7 +63,7 @@ export default function NotificationsScreen(props: any) {
                   borderBottom="1"
                   borderBottomColor="washedGray"
                 >
-                  <Box>Updates </Box>
+                  <Text>Updates</Text>
                   <Row>
                     <Box>
                       <HeaderLink current={view} view="">
@@ -111,7 +111,7 @@ export default function NotificationsScreen(props: any) {
                       <Text mr="1" gray>
                         Filter:
                       </Text>
-                      {groupFilterDesc}
+                      <Text>{groupFilterDesc}</Text>
                     </Box>
                   </Dropdown>
                 </Row>
