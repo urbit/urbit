@@ -41,7 +41,7 @@ Incoming data:
 - responses from `btc-provider`
 - connectivity status from `btc-provider`
 - address lookup requests from `btc-wallet-store`
-- newlyy generated/watched addresses from `btc-wallet-store`
+- newly generated/watched addresses from `btc-wallet-store`
 
 Outgoing data:
 - pokes `btc-wallet-store` with address updates
