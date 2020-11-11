@@ -19,7 +19,7 @@
 ::
 +$  state-0
   $:  %0
-      walts=(map xpub:btc _walt)
+      walts=(map xpub:btc walt)
       =scans
       batch-size=@
   ==
@@ -40,7 +40,7 @@
 ++  on-init
   ^-  (quip card _this)
   ~&  >  '%btc-wallet-store initialized'
-  `this(state [%0 *(map xpub:btc _walt) *^scans default-max-gap])
+  `this(state [%0 *(map xpub:btc walt) *^scans default-max-gap])
 ++  on-save
   ^-  vase
   !>(state)
@@ -97,9 +97,9 @@
   ^-  (quip card _state)
   ?-  -.act
       %add-wallet
-    =/  w=_walt  (from-xpub:walt +.act)
+    =/  w=walt  (from-xpub +.act)
     =.  walts  (~(put by walts) xpub.act w)
-    (init-batches xpub.act (dec max-gap.st.w))
+    (init-batches xpub.act (dec max-gap.w))
     ::
       %watch-address
     (watch-address +.act)
@@ -108,11 +108,11 @@
     `state
     ::
       %generate-address
-    =/  uw=(unit _walt)  (~(get by walts) xpub.act)
+    =/  uw=(unit walt)  (~(get by walts) xpub.act)
     ?~  uw
       ~|("btc-wallet-store, %generate-address: non-existent wallet" !!)
-    =/  [a=address:btc w=_walt]
-      ~(gen-address u.uw chyg.act)
+    =/  [a=address:btc w=walt]
+      ~(gen-address wad u.uw chyg.act)
     :_  state(walts (~(put by walts) xpub.act w))
     ~[[%give %fact ~[/updates] %btc-wallet-store-update !>([%generate-address a])]]
   ==
@@ -127,12 +127,12 @@
 ++  req-scan
   |=  [pax=(list path) b=batch =xpub =chyg]
   ^-  (list card)
-  =/  w=_walt  (~(got by walts) xpub)
+  =/  w=walt  (~(got by walts) xpub)
   %+  turn  ~(tap in todo.b)
   |=  =idx
   :*  %give  %fact  pax
       %btc-wallet-store-request
-      !>([%scan-address (~(mk-address w chyg) idx) xpub chyg idx])
+      !>([%scan-address (~(mk-address wad w chyg) idx) xpub chyg idx])
   ==
 ::
 ++  scan-status
@@ -165,10 +165,10 @@
   =/  s  (scan-status xpub chyg)
   ?.  ?&(empty.s ?!(done.s))
     `b
-  =/  w=_walt  (~(got by walts) xpub)
+  =/  w=walt  (~(got by walts) xpub)
   =/  newb=batch
-    :*  (sy (gulf +(endpoint.b) (add endpoint.b max-gap.st.w)))
-        (add endpoint.b max-gap.st.w)
+    :*  (sy (gulf +(endpoint.b) (add endpoint.b max-gap.w)))
+        (add endpoint.b max-gap.w)
         %.n
     ==
   :-  (req-scan ~[/requests] newb xpub chyg)
@@ -184,10 +184,10 @@
 ++  end-scan
   |=  [=xpub]
   ^-  _state
-  =/  w=_walt  (~(got by walts) xpub)
+  =/  w=walt  (~(got by walts) xpub)
   =.  scans  (~(del by scans) [xpub %0])
   =.  scans  (~(del by scans) [xpub %1])
-  state(walts (~(put by walts) xpub w(scanned.st %.y)))
+  state(walts (~(put by walts) xpub w(scanned %.y)))
 ::  initiate a scan if one hasn't started
 ::  check status of scan if one is running
 ::
@@ -211,13 +211,13 @@
   |=  [=xpub:btc =chyg =idx utxos=(set utxo) used=?]
   ^-  (quip card _state)
   ?.  (~(has by scans) [xpub chyg])  `state
-  =/  w=_walt   (~(got by walts) xpub)
+  =/  w=walt   (~(got by walts) xpub)
   =/  b=batch  (~(got by scans) [xpub chyg])
   =?  walts  used
     %+  ~(put by walts)
       xpub
-    %+  ~(watch-address w chyg)
-      (~(mk-address w chyg) idx)
+    %+  ~(watch-address wad w chyg)
+      (~(mk-address wad w chyg) idx)
     [chyg idx utxos]
   =.  scans
     (iter-scan b(has-used ?|(used has-used.b)) xpub chyg idx)
@@ -228,7 +228,7 @@
 ++  scanned-wallets
   ^-  (list xpub)
   %+  murn  ~(tap by walts)
-  |=  [=xpub:btc w=_walt]
+  |=  [=xpub:btc w=walt]
   ^-  (unit xpub:btc)
-  ?:  scanned.st.w  `xpub  ~
+  ?:  scanned.w  `xpub  ~
 --
