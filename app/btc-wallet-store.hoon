@@ -85,17 +85,24 @@
       %add-wallet
     =/  w=_walt  (from-xpub:walt +.act)
     =.  walts  (~(put by walts) xpub.act w)
-    =^  cards  state
-      (init-batches xpub.act (dec max-gap.st.w))
-    [cards state]
+    (init-batches xpub.act (dec max-gap.st.w))
     ::
       %watch-address
     (watch-address +.act)
     ::
       %update-address
     `state
+    ::
+      %generate-address
+    =/  uw=(unit _walt)  (~(get by walts) xpub.act)
+    ?~  uw
+      ~|("btc-wallet-store, %generate-address: non-existent wallet" !!)
+    =/  [a=address:btc w=_walt]
+      ~(gen-address u.uw chyg.act)
+    :_  state(walts (~(put by walts) xpub.act w))
+    ~[[%give %fact ~[/updates] %btc-wallet-store-update !>([%generate-address a])]]
   ==
-::  Wallet-scan algorithm:
+::  wallet scan algorithm:
 ::  Initiate a batch for each chyg, with max-gap idxs in it
 ::  Send that to /requests subscribers to call out to providers and get the info
 ::  Whenever a %watch-address result comes back
