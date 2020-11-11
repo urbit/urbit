@@ -1,5 +1,9 @@
 # btc-agents - Bitcoin on Urbit
 
+## Architecture
+[Written up here](ARCH.md)
+
+## Notes
 Uses the fork [btc-urbit](https://github.com/timlucmiptev/btc-urbit), with custom:
 - `sys/zuse.hoon`
   * new `decompress-key` from [https://github.com/yosoyubik/urbit/blob/decompress-point/pkg/arvo/sys/zuse.hoon]

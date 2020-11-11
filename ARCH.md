@@ -31,17 +31,22 @@ Incoming data:
 - requests to generate and watch new addresses
 
 Outgoing data:
-- requests for address info
+- requests for address info on unscanned address batches (sends to each new subscriber on /requests)
 - newly generated/watched addresses
 
 ## btc-wallet-hook
 I don't like the name "hook" here, but can't think of anything better atm. It's closer to a non-wallet-state manager on top of the wallet-store; potentially just one of many.
 
-It interfaces with hte 
+Incoming data:
+- responses from `btc-provider`
+- connectivity status from `btc-provider`
+- address lookup requests from `btc-wallet-store`
+- newlyy generated/watched addresses from `btc-wallet-store`
 
 Outgoing data:
-
-Incoming data:
+- pokes `btc-wallet-store` with address updates
+- pokes `btc-wallet-store` with address generation requests
+- pokes `btc-provider` with address lookup requests
 
 Error conditions:
 Disconnected provider: when it receives a message that this is the case, it stops sending outgoing address info requests until the provider says it's back up. Once we receive a connected message, all pending requests are retried.
@@ -71,7 +76,7 @@ Error conditions:
 - `btc-wallet-store` should watch the next ~20 addresses in each wallet account, so that it can detect BTC sent to the wallet if the wallet is also managed/generates addresses in an outside-Urbit program.
 
 ## Possible Improvements/Changes
-- Do away with `btc-wallet-hook` altogether in its current form, and instead make `btc-provider` both a server (as it is now) and also a client. Pros: conceptually clean; less between-agent data. Cons: complicates the otherwise simple provider codebase.
+- Do away with `btc-wallet-hook` altogether in its current form, and instead make `btc-provider` both a server (as it is now) and also a client. Pros: less between-agent data. Cons: complicates the otherwise simple provider module. PrA better solution might be to split just the connectivity parts of `btc-wallet-hook` into a local provider
 - Multiple Providers
 - Gossip network for both pulling and pushing address updates to lower network usage on the providers.
 

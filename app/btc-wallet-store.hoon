@@ -66,12 +66,26 @@
   ?>  (team:title our.bowl src.bowl)
   ?+  pax  (on-watch:def pax)
       [%requests *]
-    `this
+      ::  TODO: run req-scan on all scans
+    :_  this
+    %-  zing
+    %~  val  by
+    %-  ~(urn by scans)
+      |*  [k=[=xpub:btc =chyg] b=batch]
+      ^-  (list card)
+      (req-scan ~ b xpub.k chyg.k)
+    ::
       [%updates *]
     `this
   ==
+++  on-peek
+  |=  pax=path
+  ^-  (unit (unit cage))
+  ?+  pax  (on-peek:def pax)
+      [%x %scanned ~]
+    ``noun+!>(scanned-wallets)
+  ==
 ++  on-leave  on-leave:def
-++  on-peek   on-peek:def
 ++  on-agent  on-agent:def
 ++  on-arvo   on-arvo:def
 ++  on-fail   on-fail:def
@@ -111,12 +125,12 @@
 ::    - if it isn't, refill it with idxs to scan
 ::
 ++  req-scan
-  |=  [b=batch =xpub =chyg]
+  |=  [pax=(list path) b=batch =xpub =chyg]
   ^-  (list card)
   =/  w=_walt  (~(got by walts) xpub)
   %+  turn  ~(tap in todo.b)
   |=  =idx
-  :*  %give  %fact  ~[/requests]
+  :*  %give  %fact  pax
       %btc-wallet-store-request
       !>([%scan-address (~(mk-address w chyg) idx) xpub chyg idx])
   ==
@@ -140,7 +154,7 @@
   ^-  (quip card _state)
   =/  b=batch
     [(sy (gulf 0 endpoint)) endpoint %.n]
-  :-  (weld (req-scan b xpub %0) (req-scan b xpub %1))
+  :-  (weld (req-scan ~[/requests] b xpub %0) (req-scan ~[/requests] b xpub %1))
   state(scans (insert-batches xpub b b))
 ::  if the batch is done but the wallet isn't done scanning, returns new address requests and updated batch
 ::
@@ -157,7 +171,7 @@
         (add endpoint.b max-gap.st.w)
         %.n
     ==
-  :-  (req-scan newb xpub chyg)
+  :-  (req-scan ~[/requests] newb xpub chyg)
   newb
 ::
 ++  iter-scan
@@ -210,4 +224,11 @@
   ?:  empty:(scan-status xpub chyg)
     (run-scan xpub)
   `state
+::
+++  scanned-wallets
+  ^-  (list xpub)
+  %+  murn  ~(tap by walts)
+  |=  [=xpub:btc w=_walt]
+  ^-  (unit xpub:btc)
+  ?:  scanned.st.w  `xpub  ~
 --
