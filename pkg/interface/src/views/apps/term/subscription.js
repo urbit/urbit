@@ -27,7 +27,7 @@ export default class Subscription {
     }
 
     slog.onmessage = e => {
-      this.handleEvent({ txt: e.data });
+      this.handleEvent({ slog: e.data });
     }
 
     slog.onerror = e => {
