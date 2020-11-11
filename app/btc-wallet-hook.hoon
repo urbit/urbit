@@ -13,7 +13,7 @@
 ::    none
 ::
 /-  *btc, *btc-wallet-hook, bws=btc-wallet-store, bp=btc-provider
-/+  shoe, dbug, default-agent, bwsl=btc-wallet-store
+/+  dbug, default-agent, bwsl=btc-wallet-store
 |%
 +$  versioned-state
     $%  state-0
@@ -26,31 +26,17 @@
       pend=back
   ==
 ::
-+$  card  card:shoe
-+$  command
-  $?  %add-xpub
-  ==
-::
++$  card  card:agent:gall
 --
 =|  state-0
 =*  state  -
 %-  agent:dbug
 ^-  agent:gall
-%-  (agent:shoe command)
-^-  (shoe:shoe command)
 =<
 |_  =bowl:gall
 +*  this      .
-    des   ~(. (default:shoe this command) bowl)
     def   ~(. (default-agent this %|) bowl)
     hc    ~(. +> bowl)
-::
-++  command-parser  command-parser:des
-++  tab-list  tab-list:des
-++  can-connect  can-connect:des
-++  on-command  on-command:des
-++  on-connect  on-connect:des
-++  on-disconnect  on-disconnect:des
 ::
 ++  on-init
   ^-  (quip card _this)
@@ -110,12 +96,6 @@
 ++  on-fail   on-fail:def
 --
 |_  =bowl:gall
-++  handle-command
-  |=  comm=command
-  ^-  (quip card _state)
-  ~&  >  comm
-  `state
-::
 ++  handle-action
   |=  act=action
   ^-  (quip card _state)
