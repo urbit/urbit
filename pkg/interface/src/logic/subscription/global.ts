@@ -61,7 +61,7 @@ export default class GlobalSubscription extends BaseSubscription<StoreState> {
       this.subscribe('/updates', 'hark-chat-hook', true);
       this.dequeue();
 
-    }, 1500)
+    }, 200)
     
 
   }
