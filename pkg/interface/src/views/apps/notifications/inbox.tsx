@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import f from "lodash/fp";
 import _ from "lodash";
 import { Icon, Col, Row, Box, Text, Anchor } from "@tlon/indigo-react";
@@ -67,8 +67,15 @@ export default function Inbox(props: {
     f.values
   )(notifications);
 
+  const onScroll = useCallback((e) => {
+    let container = e.target;
+    if(container.scrollHeight - container.scrollTop === container.clientHeight) {
+      api.hark.getMore();
+    }
+  }, [api]);
+
   return (
-    <Col overflowY="auto" flexGrow="1">
+    <Col onScroll={onScroll} overflowY="auto" flexGrow="1">
       {newNotifications && (
         <DaySection
           latest
