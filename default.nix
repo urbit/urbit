@@ -169,7 +169,7 @@ let
     #  }
     #
     shellFor = { name, packages, ... }@attrs:
-      pkgs.mkShell ({
+      pkgsNative.mkShell ({
         inputsFrom = packages pkgsLocal;
       } // builtins.removeAttrs attrs [ "packages" ]);
   };
