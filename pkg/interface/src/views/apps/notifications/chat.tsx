@@ -46,7 +46,7 @@ export function ChatNotification(props: {
   const group = props.groups[groupPath];
 
   const desc = describeNotification(mention, contents.length);
-  const groupContacts = props.contacts[groupPath];
+  const groupContacts = props.contacts[groupPath] || {};
 
   const onClick = useCallback(() => {
     if (props.archived) {
