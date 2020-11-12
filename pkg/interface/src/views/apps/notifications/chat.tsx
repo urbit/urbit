@@ -74,7 +74,8 @@ export function ChatNotification(props: {
       />
       <Col pb="3" pl="5">
         {_.map(_.take(contents, 5), (content, idx) => {
-          const to = `/~landscape${groupPath}/resource/chat${appPath}?msg=${content.number}`;
+          const workspace = group?.hidden ? '/home' : groupPath;
+          const to = `/~landscape${workspace}/resource/chat${appPath}?msg=${content.number}`;
           return (
             <Link key={idx} to={to}>
               <ChatMessage
