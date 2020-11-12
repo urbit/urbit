@@ -9,7 +9,7 @@
     "@reach/menu-button": "^0.10.5",
     "@reach/tabs": "^0.10.5",
     "@tlon/indigo-light": "^1.0.3",
-    "@tlon/indigo-react": "1.2.13",
+    "@tlon/indigo-react": "1.2.14",
     "@tlon/sigil-js": "^1.4.2",
     "aws-sdk": "^2.726.0",
     "big-integer": "^1.6.48",

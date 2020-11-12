@@ -72,11 +72,11 @@ export function Header(props: {
 
   return (
     <Row p="2" flexWrap="wrap" gapX="1" alignItems="center">
-      {!props.archived && (
+      {(!props.archived && !read) && (
         <Icon
           display="block"
           mr="1"
-          icon={read ? "Circle" : "Bullet"}
+          icon="LargeBullet"
           color="blue"
         />
       )}
