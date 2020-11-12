@@ -86,11 +86,9 @@ const acceptInvite = (invite) => {
   };
 
   return (
-    <Col overflowY="auto" flexGrow="1">
+    <Col flexGrow='1' minHeight='0'>
       {incomingGroups.map((invite) => (
         <Box
-          height='100%'
-          width='100%'
           bg='white'
           p='3'
           fontSize='0'>
