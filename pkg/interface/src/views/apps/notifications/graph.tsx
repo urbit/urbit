@@ -140,7 +140,7 @@ const GraphNode = ({
 
   return (
     <Link to={nodeUrl}>
-      <Row gapX="2" py="2">
+      <Row gapX="2" pt="2">
         <Col>{img}</Col>
         <Col alignItems="flex-start">
           <Row
