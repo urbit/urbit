@@ -1,7 +1,7 @@
 ::  hark-chat-hook: notifications for chat-store [landscape]
 ::
 /-  store=hark-store, post, group-store, metadata-store, hook=hark-chat-hook
-/+  resource, metadata, default-agent, dbug, chat-store
+/+  resource, metadata, default-agent, dbug, chat-store, grpl=group
 ::
 ~%  %hark-chat-hook-top  ..is  ~
 |%
@@ -31,7 +31,7 @@
   ::
   ++  watch-chat
     ^-  card
-    [%pass /chat %agent [our.bowl %chat-store] %watch /updates]
+    [%pass /chat %agent [our.bowl %chat-store] %watch /all]
   --
 %-  agent:dbug
 ^-  agent:gall
@@ -41,6 +41,7 @@
     ha    ~(. +> bowl)
     def   ~(. (default-agent this %|) bowl)
     met   ~(. metadata bowl)
+    grp   ~(. grpl bowl)
 ::
 ++  on-init
   :_  this
@@ -130,14 +131,44 @@
   ++  chat-update
     |=  =update:chat-store
     ^-  (quip card _state)
-    :_  state
-    ?+   -.update   ~
-      %message  (process-envelope path.update envelope.update)
+    ?+   -.update   `state
+      %initial  (process-initial +.update)
+      %create   (process-new +.update)
+      ::
+        %message
+      :_  state
+      (process-envelope path.update envelope.update)
       ::
         %messages  
+      :_  state
       %-  zing
       (turn envelopes.update (cury process-envelope path.update))
     ==
+  ++  process-initial
+    |=  =inbox:chat-store
+    ^-  (quip card _state)
+    =/  keys=(list path)
+      ~(tap in ~(key by inbox))
+    =|  cards=(list card)
+    |-  
+    ?~  keys
+      [cards state]
+    =*  path  i.keys
+    =^  cs  state
+      (process-new path)
+    $(cards (weld cards cs), keys t.keys)
+  ::
+  ++  process-new
+    |=  chat=path
+    ^-  (quip card _state)
+    =/  groups=(list path)
+      (groups-from-resource:met %chat chat)
+    ?~  groups
+      `state
+    ?:  (is-managed-path:grp i.groups)
+      `state
+    `state(watching (~(put in watching) chat))
+  :: 
   ++  is-mention
     |=  =envelope:chat-store
     ?.  ?=(%text -.letter.envelope)  %.n
