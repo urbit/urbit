@@ -4,44 +4,44 @@
 [Written up here](ARCH.md)
 
 ## Notes
-Uses the fork [btc-urbit](https://github.com/timlucmiptev/btc-urbit), with custom:
+Tested to work with `urbit/urbit` commit `d527b420580fb019db8aab397431180e6e6428eb`
+Uses custom:
 - `sys/zuse.hoon`
   * new `decompress-key` from [https://github.com/yosoyubik/urbit/blob/decompress-point/pkg/arvo/sys/zuse.hoon]
 - `lib/bip32.hoon` from [https://github.com/urbit/urbit/blob/c473a4a35f2fdfde7b31f8b0ba5cbd7f54b0f223/pkg/arvo/lib/bip32.hoon]
 
-## IMPORTANT
-always check whether ecc has the decompress-point correct
+## BTC and ElectRS requirements
+- BTC fully sync'd node
+- ElectRS with built index
+- Node proxy server to translate HTTP to ElectRS
 
 ## Starting Up
-The `rpc-pass` portion is to give the provider credentials to the RPC daemons.
+First, install new zuse and bip32:
 ```
+|mount %
 |commit %home
+::  should see gall molt with the new zuse
+```
+
+### Verify system works
+Verify `ecc` has the correct decompress-point gate. The below should yield: `0x3.30d5.4fd0.dd42.0a6e.5f8d.3624.f5f3.482c.ae35.0f79.d5f0.753b.f5be.ef9c.2d91.af3c`
+```
+=bip32 -build-file %/lib/bip32/hoon
+=ecc secp256k1:secp:crypto
+=xpub "zpub6rFR7y4Q2AijBEqTUquhVz398htDFrtymD9xYYfG1m4wAcvPhXNfE3EfH1r1ADqtfSdVCToUG868RvUUkgDKf31mGDtKsAYz2oz2AGutZYs"
+`@ux`(compress-point:ecc pub:(derive-public:(derive-public:(from-extended:bip32 xpub) 0) 0))
+
+```
+
+Set credentials and start agents
+```
+=rpc-pass BTC_RPC_PASSWORD
+=provider PROVIDER_@p
 |start %btc-wallet-store
 |start %btc-wallet-hook
 |start %btc-provider
-:btc-wallet-hook|action [%set-provider <PROVIDER_SHIP>]
+:btc-wallet-hook|action [%set-provider provider]
 
-=rpc-pass BTC_RPC_PASSWORD
 :btc-provider|command [%set-credentials [rpc-url='http://localhost:8332' rpc-user='__cookie__' rpc-pass] [rpc-url='http://localhost:50002']]
-```
-
-
-### New Commands
-```
-::  send results of this RPC call to subscribers, if watched
-:btc-node-hook|command [%watch %get-block-count]
-:btc-node-hook|command [%unwatch %get-block-count]
-
-::  send a message to subscribers as to whether the external node is live
-:btc-node-hook|command [%ping ~]
-```
-
-## Bech32 Support
-Commit the files, and then run:
-```
-=btc -build-file %/lib/btc/hoon
-=pubkey 0x2.79be.667e.f9dc.bbac.55a0.6295.ce87.0b07.029b.fcdb.2dce.28d9.59f2.815b.16f8.1798
-(hash-160:btc pubkey)
-=result (encode-pubkey:bech32:btc %main pubkey)
 ```
 
