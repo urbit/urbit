@@ -20,6 +20,7 @@ export function StatusBarItem({
       color="washedGray"
       bg="white"
       px={2}
+      overflow='visible'
       {...props}
     >
       {children}

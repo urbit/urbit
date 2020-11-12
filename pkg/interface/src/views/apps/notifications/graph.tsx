@@ -51,8 +51,8 @@ function describeNotification(description: string, plural: boolean) {
 }
 
 const GraphUrl = ({ url, title }) => (
-  <Box borderRadius="1" p="2" bg="washedGray">
-    <Anchor target="_blank" color="gray" href={url}>
+  <Box borderRadius="2" p="2" bg="scales.black05">
+    <Anchor underline={false} target="_blank" color="black" href={url}>
       <Icon verticalAlign="bottom" mr="2" icon="ArrowExternal" />
       {title}
     </Anchor>
@@ -140,7 +140,7 @@ const GraphNode = ({
 
   return (
     <Link to={nodeUrl}>
-      <Row gapX="2" py="2">
+      <Row gapX="2" pt="2">
         <Col>{img}</Col>
         <Col alignItems="flex-start">
           <Row

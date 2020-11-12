@@ -53,7 +53,7 @@ export default function NotificationsScreen(props: any) {
           const { view } = routeProps.match.params;
           return (
             <Body>
-              <Col height="100%">
+              <Col height="100%" minHeight='0' overflowY='scroll'>
                 <Row
                   p="3"
                   alignItems="center"

@@ -149,10 +149,21 @@ export class HarkApi extends BaseApi<StoreState> {
     });
   }
 
+  getMore() {
+    const offset = this.store.state.notifications.size;
+    const count = 10;
+    return this.getSubset(offset,count);
+  }
+
+  async getSubset(offset:number, count:number) {
+    const data = await this.scry("hark-store", `/recent/${offset}/${count}`);
+    this.store.handleEvent({ data });
+  }
+
   async getTimeSubset(start?: Date, end?: Date) {
     const s = start ? dateToDa(start) : "-";
     const e = end ? dateToDa(end) : "-";
-    const result = await this.scry("hark-hook", `/time-subset/${s}/${e}`);
+    const result = await this.scry("hark-hook", `/recent/${s}/${e}`);
     this.store.handleEvent({
       data: result,
     });
