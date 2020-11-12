@@ -8,7 +8,9 @@ import {
   NotificationGraphConfig,
   GroupNotificationsConfig,
   NotifIndex,
+  Groups,
   Associations,
+  Contacts,
 } from "~/types";
 import GlobalApi from "~/logic/api/global";
 import { getParentIndex } from "~/logic/lib/notification";
@@ -24,6 +26,8 @@ interface NotificationProps {
   associations: Associations;
   api: GlobalApi;
   archived: boolean;
+  groups: Groups;
+  contacts: Contacts;
   graphConfig: NotificationGraphConfig;
   groupConfig: GroupNotificationsConfig;
   chatConfig: string[];
@@ -172,7 +176,7 @@ export function Notification(props: NotificationProps) {
           contacts={props.contacts}
           read={read}
           archived={archived}
-          groups={{}}
+          groups={props.groups}
           timebox={props.time}
           time={time}
           associations={associations}
