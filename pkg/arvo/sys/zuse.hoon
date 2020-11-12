@@ -1120,6 +1120,7 @@
           {$boot lit/? p/*}                             ::  weird %dill boot
           {$crop p/@ud}                                 ::  trim kernel state
           $>(%crud vane-task)                           ::  error with trace
+          [%flee session=~]                             ::  unwatch session
           {$flog p/flog}                                ::  wrapped error
           {$flow p/@tas q/(list gill:gall)}             ::  terminal config
           {$hail ~}                                     ::  terminal refresh
@@ -1134,6 +1135,7 @@
           {$talk p/tank}                                ::
           {$text p/tape}                                ::
           {$veer p/@ta q/path r/@t}                     ::  install vane
+          [%view session=~]                             ::  watch session blits
           $>(%trim vane-task)                           ::  trim state
           $>(%vega vane-task)                           ::  report upgrade
           {$verb ~}                                     ::  verbose mode

@@ -91,7 +91,7 @@
       %chat-hook
       %chat-view
       %chat-cli
-      %soto
+      %herm
       %contact-store
       %contact-hook
       %contact-view
@@ -237,10 +237,11 @@
     =>  (se-born | %home %group-push-hook)
     (se-born | %home %group-pull-hook)
   =?  ..on-load  (lte hood-version %9)
-   (se-born | %home %graph-store)
+    (se-born | %home %graph-store)
   =?  ..on-load  (lte hood-version %10)
     =>  (se-born | %home %graph-push-hook)
-    (se-born | %home %graph-pull-hook)
+    =>  (se-born | %home %graph-pull-hook)
+    (se-born | %home %herm)
   ..on-load
 ::
 ++  reap-phat                                         ::  ack connect
