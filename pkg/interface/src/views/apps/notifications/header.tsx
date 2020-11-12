@@ -87,9 +87,9 @@ export function Header(props: {
       {!!moduleIcon && <Icon icon={moduleIcon as any} />}
       {!!channel && <Text fontWeight="500">{channelTitle}</Text>}
       <Rule vertical height="12px" />
-      {groupTitle && 
+      {groupTitle &&
          <>
-          <Text fontWeight="500">{groupTitle}</Text>}
+          <Text fontWeight="500">{groupTitle}</Text>
           <Rule vertical height="12px"/>
         </>
       }
