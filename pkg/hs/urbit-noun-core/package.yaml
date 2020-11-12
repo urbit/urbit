@@ -24,6 +24,7 @@ dependencies:
   - vector
   - integer-gmp
   - template-haskell
+  - murmur3
 
 default-extensions:
   - ApplicativeDo
