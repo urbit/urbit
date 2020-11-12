@@ -12,15 +12,10 @@ module Urbit.Noun.Tree
 import ClassyPrelude
 import Control.Lens  hiding (non)
 
-import Urbit.Atom
 import Urbit.Noun.Conversions ()
 import Urbit.Noun.Convert
 import Urbit.Noun.Core
 import Urbit.Noun.TH
-
-import Data.Bits        (shiftR, xor)
-import Data.Hash.Murmur (murmur3)
-import GHC.Natural      (Natural)
 
 
 -- Types -----------------------------------------------------------------------
