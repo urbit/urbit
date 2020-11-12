@@ -75,10 +75,12 @@
       [%count unread-count]
     %+  weld
       %+  turn
-        (tap-nonempty archive)
+         %+  scag  5
+        (tap-nonempty:ha archive)
       (timebox-update &)
     %+  turn
-      (tap-nonempty notifications)
+      %+  scag  5
+      (tap-nonempty:ha notifications)
     (timebox-update |)
   ::
   ++  timebox-update
@@ -86,12 +88,6 @@
     |=  [time=@da =timebox:store]
     ^-  update:store
     [%timebox time archived ~(tap by timebox)]
-  ::
-  ++  tap-nonempty
-    |=  =notifications:store
-    ^-  (list [@da timebox:store])
-    %+  skip  (tap:orm notifications)
-    |=([@da =timebox:store] =(0 ~(wyt by timebox)))
   --
 ::
 ++  on-peek   
@@ -104,11 +100,13 @@
       (slav %ud i.t.t.path)
     =/  length=@ud
       (slav %ud i.t.t.t.path)
-    :^  ~  ~  %noun
+    :^  ~  ~  %hark-update
     !>  ^-  update:store
     :-  %more
     %+  turn
-      (scag length (slag offset (tap:orm notifications)))
+      %+  scag  length
+      %+  slag  offset
+      (tap-nonempty:ha notifications)
     |=  [time=@da =timebox:store]
     ^-  update:store
     :^  %timebox  time  %.n
@@ -230,6 +228,12 @@
 --
 |_  =bowl:gall
 +*  met  ~(. metadata bowl)
+::
+++  tap-nonempty
+  |=  =notifications:store
+  ^-  (list [@da timebox:store])
+  %+  skip  (tap:orm notifications)
+  |=([@da =timebox:store] =(0 ~(wyt by timebox)))
 ::
 ++  merge-notification
   |=  [existing=notification:store new=notification:store]
