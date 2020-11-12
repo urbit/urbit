@@ -93,11 +93,9 @@ export default function Inbox(props: {
   };
 
   return (
-    <Col onScroll={onScroll} overflowY="auto" flexGrow="1">
+    <Col onScroll={onScroll} overflowY="auto" flexGrow="1" minHeight='0'>
       {incomingGroups.map((invite) => (
         <Box
-          height='100%'
-          width='100%'
           bg='white'
           p='3'
           fontSize='0'>
