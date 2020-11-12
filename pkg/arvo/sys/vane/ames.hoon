@@ -756,6 +756,8 @@
           =([%$ %da now] lot)
           =(%$ syd)
       ==
+    ?.  for.veb.bug.ames-state  ~
+    ~>  %slog.0^leaf/"ames: scry-fail {<[why=why lot=lot now=now syd=syd]>}"
     ~
   ::  /ax/protocol/version           @
   ::  /ax/peers                      (map ship ?(%alien %known))
@@ -1121,17 +1123,32 @@
     ?>  =(rcvr-life.shut-packet our-life.channel)
     ::  non-galaxy: update route with heard lane or forwarded lane
     ::
-    =?    route.peer-state
-        ?:  =(%czar (clan:title her.channel))
-          %.n
-        =/  is-old-direct=?  ?=([~ %& *] route.peer-state)
-        =/  is-new-direct=?  ?=(~ origin.packet)
-        ::  old direct takes precedence over new indirect
-        ::
-        |(is-new-direct !is-old-direct)
+    =?    route.peer-state  !=(%czar (clan:title her.channel))
+      ::  if new packet is direct, use that.  otherwise, if the new new
+      ::  and old lanes are indirect, use the new one.  if the new lane
+      ::  is indirect but the old lane is direct, then if the lanes are
+      ::  identical, don't mark it indirect; if they're not identical,
+      ::  use the new lane and mark it indirect.
       ::
-      ?~  origin.packet
+      ::  if you mark lane as indirect because you got an indirect
+      ::  packet even though you already had a direct identical lane,
+      ::  then delayed forwarded packets will come later and reset to
+      ::  indirect, so you're unlikely to get a stable direct route
+      ::  (unless the forwarder goes offline for a while).
+      ::
+      ::  conversely, if you don't accept indirect routes with different
+      ::  lanes, then if your lane is stale and they're trying to talk
+      ::  to you, your acks will go to the stale lane, and you'll never
+      ::  time it out unless you reach out to them.  this manifests as
+      ::  needing to |hi or dotpost to get a response when the other
+      ::  ship has changed lanes.
+      ::
+      ?:  ?=(~ origin.packet)
         `[direct=%.y lane]
+      ?:  ?=([~ %& *] route.peer-state)
+        ?:  =(lane.u.route.peer-state u.origin.packet)
+          route.peer-state
+        `[direct=%.n u.origin.packet]
       `[direct=%.n u.origin.packet]
     ::  perform peer-specific handling of packet
     ::

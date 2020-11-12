@@ -3,45 +3,46 @@
 */
 #include "all.h"
 
+STATIC_ASSERT( (UINT32_MAX > u3a_cells),
+               "list index precision" );
 
-/* functions
-*/
 u3_noun
 u3qb_find(u3_noun nedl, u3_noun hstk)
 {
-  u3_atom i = 0;
+  if ( u3_nul != nedl ) {
+    c3_w  i_w = 0;
 
-  while ( 1 ) {
-    if ( u3_nul == nedl) {
-      return u3_nul;
-    } else if ( u3_nul == hstk ) {
-      return u3_nul;
-    }
+    while ( u3_nul != hstk ) {
+      u3_noun i_h, t_h = hstk;
+      u3_noun i_n, t_n = nedl;
+      u3x_cell(t_h, &i_h, &t_h);
+      u3x_cell(t_n, &i_n, &t_n);
 
-    u3_noun n = nedl;
-    u3_noun h = hstk;
-    while (c3y == u3r_sing(u3h(n), u3h(h))) {
-      if ( u3_nul == u3t(n) ) {
-        return u3nc(0, i);
+      while ( c3y == u3r_sing(i_n, i_h) ) {
+        if ( u3_nul == t_n ) {
+          return u3nc(u3_nul, u3i_word(i_w));
+        }
+        else if ( u3_nul == t_h ) {
+          break;
+        }
+        else {
+          u3x_cell(t_h, &i_h, &t_h);
+          u3x_cell(t_n, &i_n, &t_n);
+        }
       }
 
-      n = u3t(n);
-      h = u3t(h);
+      hstk = u3t(hstk);
+      i_w++;
     }
-
-    i = u3i_vint(i);
-    hstk = u3t(hstk);
   }
+
+  return u3_nul;
 }
 
 u3_noun
 u3wb_find(u3_noun cor)
 {
   u3_noun a, b;
-
-  if ( c3n == u3r_mean(cor, u3x_sam_2, &a, u3x_sam_3, &b, 0) ) {
-    return u3m_bail(c3__exit);
-  } else {
-    return u3qb_find(a, b);
-  }
+  u3x_mean(cor, u3x_sam_2, &a, u3x_sam_3, &b, 0);
+  return u3qb_find(a, b);
 }

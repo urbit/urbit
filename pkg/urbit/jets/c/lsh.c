@@ -29,15 +29,12 @@
         return u3m_bail(c3__exit);
       }
       else {
-        c3_w* sal_w = u3a_slaq(a_g, (b_w + len_w));
+        u3i_slab sab_u;
+        u3i_slab_init(&sab_u, a_g, (b_w + len_w));
 
-        if ( 0 == sal_w ) {
-          return u3m_bail(c3__fail);
-        }
-        u3r_chop(a_g, 0, len_w, b_w, sal_w, c);
+        u3r_chop(a_g, 0, len_w, b_w, sab_u.buf_w, c);
 
-        // return u3a_moot(sal_w);
-        return u3a_malt(sal_w);
+        return u3i_slab_mint(&sab_u);
       }
     }
   }

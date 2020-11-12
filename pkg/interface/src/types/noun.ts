@@ -18,7 +18,7 @@ export type Serial = string;
 export type Jug<K,V> = Map<K,Set<V>>;
 
 // name of app
-export type AppName = 'chat' | 'link' | 'contacts' | 'publish';
+export type AppName = 'chat' | 'link' | 'contacts' | 'publish' | 'graph';
 
 export function getTagFromFrond<O>(frond: O): keyof O {
   const tags = Object.keys(frond) as Array<keyof O>;

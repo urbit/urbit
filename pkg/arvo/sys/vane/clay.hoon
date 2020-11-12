@@ -109,6 +109,10 @@
       mut/(list (trel path lobe cage))                  ::  mutations
   ==                                                    ::
 ::
+::  Over-the-wire backfill request
+::
++$  fill  [=desk =lobe]
+::
 ::  Ford cache
 ::
 +$  ford-cache
@@ -214,18 +218,29 @@
 ::  requests, and a possible nako if we've received data from the other ship and
 ::  are in the process of validating it.
 ::
-++  rind                                                ::  request manager
-          $:  nix/@ud                                   ::  request index
-              bom/(map @ud {p/duct q/rave})             ::  outstanding
-              fod/(map duct @ud)                        ::  current requests
-              haw/(map mood (unit cage))                ::  simple cache
-          ==                                            ::
++$  rind                                                ::  request manager
+  $:  nix=@ud                                           ::  request index
+      bom=(map @ud update-state)                        ::  outstanding
+      fod=(map duct @ud)                                ::  current requests
+      haw=(map mood (unit cage))                        ::  simple cache
+  ==                                                    ::
+::
+::  Active downloads
+::
++$  update-state
+  $:  =duct
+      =rave
+      have=(map lobe blob)
+      need=(list lobe)
+      nako=(qeu (unit nako))
+      busy=_|
+  ==
 ::
 ::  Result of a subscription
 ::
 ++  sub-result
   $%  [%blab =mood data=(each cage lobe)]
-      [%bleb ins=@ud range=(unit (pair aeon aeon))]
+      [%bleb ver=@ud ins=@ud range=(unit (pair aeon aeon))]
       [%balk cage=(unit (each cage lobe)) =mood]
       [%blas moods=(set mood)]
       [%blub ~]
@@ -246,7 +261,7 @@
 ::  Generally used when we store a request in our state somewhere.
 ::
 ++  cach  (unit (unit (each cage lobe)))                ::  cached result
-+$  wove  [for=(unit ship) =rove]                       ::  stored source + req
++$  wove  [for=(unit [=ship ver=@ud]) =rove]            ::  stored source + req
 ++  rove                                                ::  stored request
           $%  [%sing =mood]                             ::  single request
               [%next =mood aeon=(unit aeon) =cach]      ::  next version of one
@@ -1134,13 +1149,13 @@
   ::  Give next step in a subscription.
   ::
   ++  bleb
-    |=  {hen/duct ins/@ud hip/(unit (pair aeon aeon))}
+    |=  [hen=duct ver=@ud ins=@ud hip=(unit (pair aeon aeon))]
     ^+  +>
     %^  blab  hen  [%w [%ud ins] ~]
     :-  %&
     ?~  hip
       [%null [%atom %n ~] ~]
-    [%nako !>((make-nako:ze u.hip))]
+    [%nako !>((make-nako:ze ver u.hip))]
   ::
   ::  Tell subscriber that subscription is done.
   ::
@@ -1183,7 +1198,7 @@
     =/  =desk  p.riff
     =/  =wire  /warp-index/(scot %p ship)/(scot %tas desk)/(scot %ud index)
     =/  =path  [%question desk (scot %ud index) ~]
-    (emit duct %pass wire %a %plea ship %c path riff)
+    (emit duct %pass wire %a %plea ship %c path [[%1 ~] riff])
   ::
   ::  Create a request that cannot be filled immediately.
   ::
@@ -1210,7 +1225,7 @@
       (send-over-ames hen her inx syd `rave)
     %=  +>+.$
       nix.u.ref  +(nix.u.ref)
-      bom.u.ref  (~(put by bom.u.ref) inx [hen rave])
+      bom.u.ref  (~(put by bom.u.ref) inx [hen rave ~ ~ ~ |])
       fod.u.ref  (~(put by fod.u.ref) hen inx)
     ==
   ::
@@ -1358,12 +1373,12 @@
         %&  q.p.yoki
         %|  (~(run by q.p.yoki) |=(=lobe |+lobe))
       ==
-    =/  old-lobes=(map path lobe)
+    =/  old-yaki
       ?:  =(0 let.dom)
-        ~
-      q:(aeon-to-yaki:ze let.dom)
+        *yaki
+      (aeon-to-yaki:ze let.dom)
     =/  [deletes=(set path) changes=(map path (each page lobe))]
-      (get-changes old-lobes new-data)
+      (get-changes q.old-yaki new-data)
     ~|  [from=let.dom deletes=deletes changes=~(key by changes)]
     ::
     ::  promote ford cache
@@ -1376,13 +1391,6 @@
             |(!=(~ sys-changes) !=(~ (need-vane-update changes)))
         ==
       (sys-update yoki new-data changes)
-    =.  ..park
-      %-  emil
-      =/  changed=(set path)  ~(key by changes)
-      =/  existed=(set path)  ~(key by old-lobes)
-      %^  print  deletes
-        (~(int in changed) existed)
-      (~(dif in changed) existed)
     ::  clear caches if zuse reloaded
     ::
     =/  is-zuse-new=?  !=(~ sys-changes)
@@ -1393,7 +1401,7 @@
     =.  fer.dom  `(build-reef fer.dom ~(key by changes) new-data)
     =?  ank.dom  is-zuse-new  *ankh
     =?  changes  is-zuse-new
-      (changes-for-upgrade old-lobes deletes changes)
+      (changes-for-upgrade q.old-yaki deletes changes)
     ::
     =/  =args:ford:fusion
       [zuse:(need fer.dom) ank.dom deletes changes lat.ran fod.dom]
@@ -1413,6 +1421,12 @@
         %|  p.value
         %&  lobe:(~(got by change-cages) path)
       ==
+    ::  if we didn't change the data and it's not a merge commit, abort
+    ::
+    ::  very important to keep all permanent changes below this point
+    ::
+    ?:  &(=([r.old-yaki ~] p.p.yoki) =(data q.old-yaki))
+      ..park
     =/  =yaki
       ?-  -.yoki
         %&  (make-yaki p.p.yoki data now)
@@ -1435,6 +1449,7 @@
       (checkout-mime args deletes ~(key by changes))
     =.  mim.dom  (apply-changes-to-mim mim.dom mim)
     =.  fod.dom  ford-cache.args
+    =.  ..park  (emil (print q.old-yaki data))
     ::
     wake:(ergo mim)
     ::
@@ -1724,8 +1739,14 @@
     ::  Print notification to console
     ::
     ++  print
-      |=  [deletes=(set path) changes=(set path) additions=(set path)]
+      |=  [old=(map path lobe) new=(map path lobe)]
       ^-  (list move)
+      =/  [deletes=(set path) upserts=(map path (each page lobe))]
+        (get-changes old (~(run by new) |=(=lobe |+lobe)))
+      =/  upsert-set  ~(key by upserts)
+      =/  old-set     ~(key by old)
+      =/  changes=(set path)    (~(int in upsert-set) old-set)
+      =/  additions=(set path)  (~(dif in upsert-set) old-set)
       ?~  hun
         ~
       ?:  =(0 let.dom)
@@ -2003,6 +2024,7 @@
       ::  bob's.
       ::
       ?:  ?=(%init germ)
+        ?>  ?=(~ bob-yaki)
         &+`[conflicts=~ new=|+ali-yaki lat=~]
       ::
       =/  bob-yaki  (need bob-yaki)
@@ -2010,13 +2032,13 @@
       ^-  (each (unit merge-result) [term tang])
       ?-    germ
       ::
-      ::  If this is a %this merge, we check to see if ali's and bob's
+      ::  If this is a %only-this merge, we check to see if ali's and bob's
       ::  commits are the same, in which case we're done.  Otherwise, we
       ::  check to see if ali's commit is in the ancestry of bob's, in
       ::  which case we're done.  Otherwise, we create a new commit with
       ::  bob's data plus ali and bob as parents.
       ::
-          %this
+          %only-this
         ?:  =(r.ali-yaki r.bob-yaki)
           &+~
         ?:  (~(has in (reachable-takos:ze r.bob-yaki)) r.ali-yaki)
@@ -2027,17 +2049,47 @@
             lat=~
         ==
       ::
-      ::  If this is a %that merge, we check to see if ali's and bob's
+      ::  If this is a %only-that merge, we check to see if ali's and bob's
       ::  commits are the same, in which case we're done.  Otherwise, we
       ::  create a new commit with ali's data plus ali and bob as
       ::  parents.
       ::
-          %that
+          %only-that
         ?:  =(r.ali-yaki r.bob-yaki)
           &+~
         :*  %&  ~
             conflicts=~
             new=&+[[r.bob-yaki r.ali-yaki ~] (to-yuki q.ali-yaki)]
+            lat=~
+        ==
+      ::
+      ::  Create a merge commit with exactly the contents of the
+      ::  destination desk except take any files from the source commit
+      ::  which are not in the destination desk.
+      ::
+          %take-this
+        ?:  =(r.ali-yaki r.bob-yaki)
+          &+~
+        ?:  (~(has in (reachable-takos:ze r.bob-yaki)) r.ali-yaki)
+          &+~
+        =/  new-data  (~(uni by q.ali-yaki) q.bob-yaki)
+        :*  %&  ~
+            conflicts=~
+            new=&+[[r.bob-yaki r.ali-yaki ~] (to-yuki new-data)]
+            lat=~
+        ==
+      ::
+      ::  Create a merge commit with exactly the contents of the source
+      ::  commit except preserve any files from the destination desk
+      ::  which are not in the source commit.
+      ::
+          %take-that
+        ?:  =(r.ali-yaki r.bob-yaki)
+          &+~
+        =/  new-data  (~(uni by q.bob-yaki) q.ali-yaki)
+        :*  %&  ~
+            conflicts=~
+            new=&+[[r.bob-yaki r.ali-yaki ~] (to-yuki new-data)]
             lat=~
         ==
       ::
@@ -2060,20 +2112,20 @@
           ==
         &+`[conflicts=~ new=|+ali-yaki lat=~]
       ::
-          ?(%meet %mate %meld)
+          ?(%meet %mate %meld %meet-this %meet-that)
         ?:  =(r.ali-yaki r.bob-yaki)
           &+~
         ?:  (~(has in (reachable-takos:ze r.bob-yaki)) r.ali-yaki)
           &+~
         ?:  (~(has in (reachable-takos:ze r.ali-yaki)) r.bob-yaki)
           $(germ %fine)
-        =/  merge-points  find-merge-points
+        =/  merge-points  (find-merge-points ali-yaki bob-yaki)
         ?~  merge-points
           :~  %|  %merge-no-merge-base
               leaf+"consider a %this or %that merge to get a mergebase"
           ==
         =/  merge-point=yaki  n.merge-points
-        ?.  ?=(%meet germ)
+        ?:  ?=(?(%mate %meld) germ)
           =/  ali-diffs=cane  (diff-base ali-yaki bob-yaki merge-point)
           =/  bob-diffs=cane  (diff-base bob-yaki ali-yaki merge-point)
           =/  bof=(map path (unit cage))
@@ -2091,13 +2143,35 @@
           %-  ~(uni by `(map path *)`cal.bob-diffs)
           %-  ~(uni by `(map path *)`can.bob-diffs)
           `(map path *)`old.bob-diffs
-        ?.  =(~ both-diffs)
+        ?:  &(?=(%meet germ) !=(~ both-diffs))
           :~  %|  %meet-conflict
             >~(key by both-diffs)<
             leaf+"consider a %mate merge"
           ==
+        =/  both-done=(map path lobe)
+          |^
+          ?-  germ
+            %meet       ~
+            %meet-this  (resolve (~(uni by new.bob-diffs) cal.bob-diffs))
+            %meet-that  (resolve (~(uni by new.ali-diffs) cal.ali-diffs))
+          ==
+          ++  resolve
+            |=  news=(map path lobe)
+            %-  malt  ^-  (list [path lobe])
+            %+  murn  ~(tap by both-diffs)
+            |=  [=path *]
+            ^-  (unit [^path lobe])
+            =/  new  (~(get by news) path)
+            ?~  new
+              ~
+            `[path u.new]
+          --
+        ::
+        =/  deleted
+          %-  ~(dif by (~(uni by old.ali-diffs) old.bob-diffs))
+          (~(run by both-done) |=(* ~))
         =/  not-deleted=(map path lobe)
-          %+  roll  ~(tap by (~(uni by old.ali-diffs) old.bob-diffs))
+          %+  roll  ~(tap by deleted)
           =<  .(not-deleted q.merge-point)
           |=  [[pax=path ~] not-deleted=(map path lobe)]
           (~(del by not-deleted) pax)
@@ -2118,42 +2192,6 @@
         |=  m=(map path lobe)
         ^-  (map path (each page lobe))
         (~(run by m) |=(=lobe |+lobe))
-      ::
-      ::  Find the most recent common ancestor(s).
-      ::
-      ::    Pretty sure this could be a lot more efficient.
-      ::
-      ++  find-merge-points
-        ^-  (set yaki)
-        %-  reduce-merge-points
-        =+  r=(reachable-takos:ze r.ali-yaki)
-        |-  ^-  (set yaki)
-        ~!  bob-yaki
-        ?:  (~(has in r) r.bob-yaki)  (~(put in *(set yaki)) bob-yaki)
-        %+  roll  p.bob-yaki
-        |=  [t=tako s=(set yaki)]
-        ?:  (~(has in r) t)
-          (~(put in s) (~(got by hut.ran) t))
-        (~(uni in s) ^$(bob-yaki (~(got by hut.ran) t)))
-      ::
-      ::  Eliminate redundant merge-point candidates
-      ::
-      ++  reduce-merge-points
-        |=  unk=(set yaki)
-        =|  gud=(set yaki)
-        =/  zar=(map tako (set tako))
-          %+  roll  ~(tap in unk)
-          |=  [yak=yaki qar=(map tako (set tako))]
-          (~(put by qar) r.yak (reachable-takos:ze r.yak))
-        |-
-        ^-  (set yaki)
-        ?~  unk  gud
-        =+  bun=(~(del in `(set yaki)`unk) n.unk)
-        ?:  %+  levy  ~(tap by (~(uni in gud) bun))
-            |=  yak=yaki
-            !(~(has in (~(got by zar) r.yak)) r.n.unk)
-          $(gud (~(put in gud) n.unk), unk bun)
-        $(unk bun)
       ::
       ::  The set of changes between the mergebase and one of the desks
       ::  being merged
@@ -2379,7 +2417,7 @@
           [%| %mate-conflict -]
         =/  old=(map path lobe)                         ::  oldies but goodies
           %+  roll  ~(tap by (~(uni by old.dal) old.dob))
-          =<  .(old q.bas)
+          =<  .(old q.bob)
           |=  [[pax=path ~] old=(map path lobe)]
           (~(del by old) pax)
         =/  [hot=(map path lobe) lat=(map lobe blob)]   ::  new content
@@ -2408,6 +2446,67 @@
         ==
       --
     --
+  ::
+  ::  Find the most recent common ancestor(s).
+  ::
+  ::    For performance, this depends on +reachable-takos being
+  ::    memoized.
+  ::
+  ++  find-merge-points
+    |=  [=ali=yaki =bob=yaki]
+    ^-  (set yaki)
+    ::  Loop through ancestors breadth-first, lazily generating ancestry
+    ::
+    =/  ali-takos  (reachable-takos:ze r.ali-yaki)
+    ::  Tako worklist
+    ::
+    =/  takos=(qeu tako)  [r.bob-yaki ~ ~]
+    ::  Mergebase candidates.  Have proven they're common ancestors, but
+    ::  not that they're a most recent
+    ::
+    =|  bases=(set tako)
+    ::  Takos we've already checked or are in our worklist
+    ::
+    =|  done=(set tako)
+    |-  ^-  (set yaki)
+    =*  outer-loop  $
+    ::  If we've finished our worklist, convert to yakis and return
+    ::
+    ?:  =(~ takos)
+      (silt (turn ~(tap in bases) ~(got by hut.ran)))
+    =^  =tako  takos  ~(get to takos)
+    =.  done  (~(put in done) tako)
+    ::  If this is a common ancestor, stop recursing through our
+    ::  parentage.  Check if it's comparable to any existing candidate.
+    ::
+    ?:  (~(has in ali-takos) tako)
+      =/  base-list  ~(tap in bases)
+      |-  ^-  (set yaki)
+      =*  bases-loop  $
+      ?~  base-list
+        ::  Proven it's not an ancestor of any previous candidate.
+        ::  Remove all ancestors of new candidate and add it to the
+        ::  candidate list.
+        ::
+        =.  bases
+          =/  new-reachable  (reachable-takos:ze tako)
+          (~(put in (~(dif in bases) new-reachable)) tako)
+        outer-loop
+      ::  If it's an ancestor of another candidate, this is not most
+      ::  recent, so skip and try next in worklist.
+      ::
+      =/  base-reachable  (reachable-takos:ze i.base-list)
+      ?:  (~(has in base-reachable) tako)
+        outer-loop
+      bases-loop(base-list t.base-list)
+    ::  Append parents to list and recurse
+    ::
+    =/  bob-yaki  (~(got by hut.ran) tako)
+    =/  new-candidates  (skip p.bob-yaki ~(has in done))
+    %_  outer-loop
+      done   (~(gas in done) new-candidates)
+      takos  (~(gas to takos) new-candidates)
+    ==
   ::
   ::  Update mime cache
   ::
@@ -2560,25 +2659,28 @@
   ::  we remove it from `ref` and tell the foreign ship to cancel as well.
   ::
   ++  cancel-request                                    ::  release request
-    ^+  .
+    ^+  ..cancel-request
     =^  wos/(list wove)  qyx
       :_  (~(run by qyx) |=(a/(set duct) (~(del in a) hen)))
       %-  ~(rep by qyx)
       |=  {{a/wove b/(set duct)} c/(list wove)}
       ?.((~(has in b) hen) c [a c])
+    ::
     ?~  ref
-      =>  .(ref `(unit rind)`ref)     ::  XX TMI
-      ?:  =(~ wos)  +                                   ::  XX handle?
-      |-  ^+  +>
-      ?~  wos  +>
-      $(wos t.wos, +> (run-if-future rove.i.wos |=(@da (best hen +<))))
-    ^+  ..cancel-request
-    =+  nux=(~(get by fod.u.ref) hen)
-    ?~  nux  ..cancel-request
+      =>  .(ref `(unit rind)`ref)             ::  XX TMI
+      ?:  =(~ wos)  ..cancel-request                    ::  XX handle?
+      |-  ^+  ..cancel-request
+      ?~  wos  ..cancel-request
+      =.  ..cancel-request  (run-if-future rove.i.wos |=(@da (best hen +<)))
+      $(wos t.wos)
+    ::
+    ?~  nux=(~(get by fod.u.ref) hen)
+      ..cancel-request(ref `(unit rind)`ref)  ::  XX TMI
     =:  fod.u.ref  (~(del by fod.u.ref) hen)
         bom.u.ref  (~(del by bom.u.ref) u.nux)
       ==
-    (send-over-ames hen her u.nux syd ~)
+    %.  [hen her u.nux [syd ~]]
+    send-over-ames(ref `(unit rind)`ref)      ::  XX TMI
   ::
   ::  Handles a request.
   ::
@@ -2589,7 +2691,7 @@
   ::  and then waiting if the subscription range extends into the future.
   ::
   ++  start-request
-    |=  [for=(unit ship) rav=rave]
+    |=  [for=(unit [ship @ud]) rav=rave]
     ^+  ..start-request
     =^  [new-sub=(unit rove) sub-results=(list sub-result)]  fod.dom
       (try-fill-sub for (rave-to-rove rav))
@@ -2612,9 +2714,9 @@
     ?>  ?=(^ ref)
     =+  ruv=(~(get by bom.u.ref) inx)
     ?~  ruv  +>.$
-    =/  rav=rave  q.u.ruv
+    =/  rav=rave  rave.u.ruv
     ?:  ?=(%many -.rav)
-      (take-foreign-update inx rut)
+      abet:(apex:(foreign-update inx) rut)
     ?~  rut
       ::  nothing here, so cache that
       ::
@@ -2689,36 +2791,138 @@
       !>(;;(@uvI q.page))
     --
   ::
-  ::  A full foreign update.  Validate and apply to our local cache of
-  ::  their state.
+  ::  Respond to backfill request
   ::
-  ++  take-foreign-update
-    |=  [inx=@ud rut=(unit rand)]
-    ^+  ..take-foreign-update
+  ::  Maybe should verify the requester is allowed to access this blob?
+  ::
+  ++  give-backfill
+    |=  =lobe
+    ^+  ..give-backfill
+    (emit hen %give %boon (~(got by lat.ran) lobe))
+  ::
+  ::  Ingest foreign update, requesting missing blobs if necessary
+  ::
+  ++  foreign-update
+    |=  inx=@ud
     ?>  ?=(^ ref)
-    =/  ruv  (~(get by bom.u.ref) inx)
-    ?~  ruv
-      ~&  [%clay-foreign-update-lost her syd inx]
-      ..take-foreign-update
-    =.  hen  p.u.ruv
-    =/  =rave  q.u.ruv
-    ?>  ?=(%many -.rave)
-    |^
-    ?~  rut
-      done
-    =.  lim  ?.(?=(%da -.to.moat.rave) lim p.to.moat.rave)
-    ?>  ?=(%nako p.r.u.rut)
-    =/  nako  ;;(nako q.r.u.rut)
-    =.  ..take-foreign-update
-      =<  ?>(?=(^ ref) .)
-      (apply-foreign-update nako)
-    done
+    =/  [sat=update-state lost=?]
+      =/  ruv  (~(get by bom.u.ref) inx)
+      ?~  ruv
+        ~&  [%clay-foreign-update-lost her syd inx]
+        [*update-state &]
+      [u.ruv |]
+    =/  done=?  |
+    =.  hen  duct.sat
+    |%
+    ++  abet
+      ^+  ..foreign-update
+      ?:  lost
+        ..foreign-update
+      ?:  done
+        =:  bom.u.ref  (~(del by bom.u.ref) inx)
+            fod.u.ref  (~(del by fod.u.ref) hen)
+          ==
+        =<(?>(?=(^ ref) .) wake)
+      =.  bom.u.ref  (~(put by bom.u.ref) inx sat)
+      ..foreign-update
     ::
-    ++  done
-      =:  bom.u.ref  (~(del by bom.u.ref) inx)
-          bom.u.ref  (~(del by bom.u.ref) hen)
-        ==
-      =<(?>(?=(^ ref) .) wake)
+    ++  apex
+      |=  rut=(unit rand)
+      ^+  ..abet
+      ?:  lost  ..abet
+      ?~  rut
+        =.  nako.sat  (~(put to nako.sat) ~)
+        work
+      ?>  ?=(%nako p.r.u.rut)
+      =/  nako  ;;(nako q.r.u.rut)
+      =/  missing  (missing-blobs nako)
+      =.  need.sat  `(list lobe)`(welp need.sat ~(tap in missing))
+      =.  nako.sat  (~(put to nako.sat) ~ nako)
+      work
+    ::
+    ++  missing-blobs
+      |=  =nako
+      ^-  (set lobe)
+      =/  yakis  ~(tap in lar.nako)
+      |-  ^-  (set lobe)
+      =*  yaki-loop  $
+      ?~  yakis
+        ~
+      =/  lobes=(list [=path =lobe])  ~(tap by q.i.yakis)
+      |-  ^-  (set lobe)
+      =*  blob-loop  $
+      ?~  lobes
+        yaki-loop(yakis t.yakis)
+      ?:  (~(has by lat.ran) lobe.i.lobes)
+        blob-loop(lobes t.lobes)
+      (~(put in blob-loop(lobes t.lobes)) lobe.i.lobes)
+    ::
+    ::  Receive backfill response
+    ::
+    ++  take-backfill
+      |=  =blob
+      ^+  ..abet
+      ?:  lost  ..abet
+      =?    need.sat
+          ?&  ?=(%delta -.blob)
+              !(~(has by lat.ran) q.q.blob)
+              !(~(has by have.sat) q.q.blob)
+          ==
+        [q.q.blob need.sat]
+      ::  We can't put a blob in lat.ran if its parent isn't already
+      ::  there.  Unions are in reverse order so we don't overwrite
+      ::  existing blobs.
+      ::
+      =.  ..abet
+        ?:  &(?=(%delta -.blob) !(~(has by lat.ran) q.q.blob))
+          ..abet(have.sat (~(uni by (malt [p.blob `^blob`blob] ~)) have.sat))
+        ..abet(lat.ran (~(uni by (malt [p.blob blob] ~)) lat.ran))
+      work(busy.sat |)
+    ::
+    ::  Fetch next blob
+    ::
+    ++  work
+      ^+  ..abet
+      ?:  busy.sat
+        ..abet
+      |-  ^+  ..abet
+      ?:  =(~ need.sat)
+        ::  NB: if you change to release nakos as we get enough blobs
+        ::  for them instead of all at the end, you *must* store the
+        ::  `lim` that should be applied after the nako is complete and
+        ::  not use the one in the rave, since that will apply to the
+        ::  end of subscription.
+        ::
+        =.  lat.ran  (~(uni by have.sat) lat.ran)
+        |-  ^+  ..abet
+        ?:  =(~ nako.sat)
+          ..abet
+        =^  next=(unit nako)  nako.sat  ~(get to nako.sat)
+        ?~  next
+          ..abet(done &)
+        =.  ..abet  (apply-foreign-update u.next)
+        =.  ..foreign-update  =<(?>(?=(^ ref) .) wake)
+        $
+      ?>  ?=(^ need.sat)
+      ::  This is what removes an item from `need`.  This happens every
+      ::  time we take a backfill response, but it could happen more than
+      ::  once if we somehow got this data in the meantime (maybe from
+      ::  another desk updating concurrently, or a previous update on this
+      ::  same desk).
+      ::
+      ?:  ?|  (~(has by lat.ran) i.need.sat)
+              (~(has by have.sat) i.need.sat)
+          ==
+        $(need.sat t.need.sat)
+      ::  Otherwise, fetch the next blob
+      ::
+      =/  =fill  [syd i.need.sat]
+      =/  =wire  /back-index/(scot %p her)/[syd]/(scot %ud inx)
+      =/  =path  [%backfill syd (scot %ud inx) ~]
+      =.  ..foreign-update
+        =<  ?>(?=(^ ref) .)
+        (emit hen %pass wire %a %plea her %c path fill)
+      ..abet(busy.sat &)
     ::
     ::  When we get a %w foreign update, store this in our state.
     ::
@@ -2728,7 +2932,7 @@
     ::
     ++  apply-foreign-update
       |=  =nako
-      ^+  ..take-foreign-update
+      ^+  ..abet
       ::  hit: updated commit-hashes by @ud case
       ::  nut: new commit-hash/commit pairs
       ::  hut: updated commits by hash
@@ -2765,12 +2969,19 @@
         $(aeon +(aeon))
       ::  produce updated state
       ::
+      =/  =rave  rave:(~(got by bom.u.ref) inx)
+      ?>  ?=(%many -.rave)
       =:  let.dom   (max let.nako let.dom)
           hit.dom   hit
           hut.ran   hut
           lat.ran   lat
+          ::  Is this correct?  Seeems like it should only go to `to` if
+          ::  we've gotten all the way to the end.  Leaving this
+          ::  behavior unchanged for now, but I believe it's wrong.
+          ::
+          lim       ?.(?=(%da -.to.moat.rave) lim p.to.moat.rave)
         ==
-      ..take-foreign-update
+      ..abet
     --
   ::
   ::  fire function if request is in future
@@ -2862,8 +3073,9 @@
   ::  Try to fill a subscription
   ::
   ++  try-fill-sub
-    |=  [for=(unit ship) rov=rove]
+    |=  [far=(unit [=ship ver=@ud]) rov=rove]
     ^-  [[new-sub=(unit rove) (list sub-result)] ford-cache]
+    =/  for=(unit ship)  ?~(far ~ `ship.u.far)
     ?-    -.rov
         %sing
       =/  cache-value=(unit (unit cage))
@@ -3075,6 +3287,7 @@
         ::
         [`rov ~]
       =/  to-aeon  (case-to-aeon to.moat.rov)
+      =/  ver  ?~(far %1 ver.u.far)
       ?~  to-aeon
         ::  we're in the middle of the range, so produce what we can,
         ::  but don't end the subscription
@@ -3092,7 +3305,7 @@
           ~
         ::  else changes, so produce them
         ::
-        [%bleb let.dom ?:(track.rov ~ `[u.from-aeon let.dom])]~
+        [%bleb ver let.dom ?:(track.rov ~ `[u.from-aeon let.dom])]~
       ::  we're past the end of the range, so end subscription
       ::
       :-  ~
@@ -3103,24 +3316,13 @@
       =/  bleb=(list sub-result)
         ?:  =(lobes.rov new-lobes)
           ~
-        [%bleb +(u.from-aeon) ?:(track.rov ~ `[u.from-aeon u.to-aeon])]~
+        [%bleb ver +(u.from-aeon) ?:(track.rov ~ `[u.from-aeon u.to-aeon])]~
       ::  end subscription
       ::
       =/  blub=(list sub-result)
         [%blub ~]~
       (weld bleb blub)
     ==
-  ::
-  ++  drop-me
-    ^+  .
-    ~|  %clay-drop-me-not-implemented
-    !!
-    ::  ?~  mer
-    ::    .
-    ::  %-  emit(mer ~)  ^-  move  :*
-    ::    hen.u.mer  %give  %mere  %|  %user-interrupt
-    ::    >sor.u.mer<  >our<  >cas.u.mer<  >gem.u.mer<  ~
-    ::  ==
   ::
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   ::
@@ -3209,7 +3411,7 @@
     ::  Creates a nako of all the changes between a and b.
     ::
     ++  make-nako
-      |=  {a/aeon b/aeon}
+      |=  [ver=@ud a=aeon b=aeon]
       ^-  nako
       :+  ?>  (lte b let.dom)
           |-
@@ -3219,13 +3421,14 @@
         b
       ?:  =(0 b)
         [~ ~]
-      (data-twixt-takos (~(get by hit.dom) a) (aeon-to-tako b))
+      (data-twixt-takos =(0 ver) (~(get by hit.dom) a) (aeon-to-tako b))
     ::
     ::  Traverse parentage and find all ancestor hashes
     ::
     ++  reachable-takos                                 ::  reachable
       |=  p/tako
       ^-  (set tako)
+      ~+
       =|  s=(set tako)
       |-  ^-  (set tako)
       =.  s  (~(put in s) p)
@@ -3245,16 +3448,21 @@
     ::  ones we found before `a`.  Then convert the takos to yakis and also get
     ::  all the data in all the yakis.
     ::
+    ::  What happens if you run an %init merge on a desk that already
+    ::  had a commit?
+    ::
     ++  data-twixt-takos
-      |=  {a/(unit tako) b/tako}
-      ^-  {(set yaki) (set plop)}
+      |=  [plops=? a=(unit tako) b=tako]
+      ^-  [(set yaki) (set plop)]
       =+  old=?~(a ~ (reachable-takos u.a))
-      =/  yal/(set tako)
+      =/  yal=(set tako)
           %-  silt
           %+  skip
             ~(tap in (reachable-takos b))
-          |=(tak/tako (~(has in old) tak))
+          |=(tak=tako (~(has in old) tak))
       :-  (silt (turn ~(tap in yal) tako-to-yaki))
+      ?.  plops
+        ~
       (silt (turn ~(tap in (new-lobes (new-lobes ~ old) yal)) lobe-to-blob))
     ::
     ::  Get all the lobes that are referenced in `a` except those that are
@@ -3442,7 +3650,7 @@
     ++  read-s
       |=  [yon=aeon pax=path]
       ^-  (unit (unit cage))
-      ?.  ?=([?(%yaki %blob %hash %cage %open %late) * ~] pax)
+      ?.  ?=([?(%yaki %blob %hash %cage %open %late %base) * *] pax)
         `~
       ?-    i.pax
           %yaki
@@ -3479,6 +3687,19 @@
         ``open+!>(prelude:(ford:fusion static-ford-args))
       ::
           %late  !!  :: handled in +aver
+          %base
+        ?>  ?=(^ t.t.pax)
+        :^  ~  ~  %uvs  !>
+        ^-  (list @uv)
+        =/  him  (slav %p i.t.pax)
+        =/  other  dom:((de our now ski hen ruf) him i.t.t.pax)
+        ?:  =(0 let.other)
+          ~
+        =/  our-yaki  (~(got by hut.ran) (~(got by hit.dom) yon))
+        =/  other-yaki  (~(got by hut.ran) (~(got by hit.other) let.other))
+        %+  turn  ~(tap in (find-merge-points other-yaki our-yaki))
+        |=  =yaki
+        r.yaki
       ==
     ::  +read-t: produce the list of paths within a yaki with :pax as prefix
     ::
@@ -3728,7 +3949,7 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =|                                                    ::  instrument state
-    $:  ver=%3                                        ::  vane version
+    $:  ver=%5                                        ::  vane version
         ruf=raft                                      ::  revision tree
     ==                                                ::
 |=  [our=ship now=@da eny=@uvJ ski=sley]              ::  current invocation
@@ -3939,7 +4160,14 @@
     =^  for  req
       ?:  ?=(%warp -.req)
         [~ req]
-      :-  ?:(=(our who.req) ~ `who.req)
+      ::  ?:  =(our who.req)
+      ::    [~ [%warp wer.req rif.req]]
+      =^  ver  rif.req
+        ?@  -.rif.req
+          [%0 rif.req]
+        [-<.rif.req +.rif.req]
+      ?>  ?=(@ -.rif.req)
+      :-  ?:(=(our who.req) ~ `[who.req ver])
       [%warp wer.req rif.req]
     ::
     ?>  ?=(%warp -.req)
@@ -3957,8 +4185,14 @@
     =*  pax  path.plea.req
     =*  res  payload.plea.req
     ::
-    ?>  ?=({%question *} pax)
-    =+  ryf=;;(riff res)
+    ?:  ?=([%backfill *] pax)
+      =+  ;;(=fill res)
+      =^  mos  ruf
+        =/  den  ((de our now ski hen ruf) our desk.fill)
+        abet:(give-backfill:den +.fill)
+      [[[hen %give %done ~] mos] ..^$]
+    ?>  ?=([%question *] pax)
+    =+  ryf=;;(riff-any res)
     :_  ..^$
     :~  [hen %give %done ~]
         =/  =wire
@@ -3971,10 +4205,63 @@
   !:
   |^
   |=  old=any-state
-  ~!  [old=old new=*state-3]
+  ~!  [old=old new=*state-4]
   =?  old  ?=(%2 -.old)  (load-2-to-3 old)
-  ?>  ?=(%3 -.old)
+  =?  old  ?=(%3 -.old)  (load-3-to-4 old)
+  =?  old  ?=(%4 -.old)  (load-4-to-5 old)
+  ?>  ?=(%5 -.old)
   ..^^$(ruf +.old)
+  ::
+  ++  load-4-to-5
+    |=  =state-4
+    ^-  state-5
+    state-4(- %5, pun ~)
+  ::
+  ++  load-3-to-4
+    |=  =state-3
+    ^-  state-4
+    |^
+    =-  state-3(- %4, hoy hoy.-, rom (room-3-to-4 rom.state-3))
+    ^-  hoy=(map ship rung)
+    %-  ~(run by hoy.state-3)
+    |=  =rung-3
+    ^-  rung
+    %-  ~(run by rus.rung-3)
+    |=  =rede-3
+    ^-  rede
+    =-  rede-3(ref ref.-, qyx (cult-3-to-4 qyx.rede-3))
+    ^-  ref=(unit rind)
+    ?~  ref.rede-3
+      ~
+    =-  `u.ref.rede-3(bom bom.-)
+    ^-  bom=(map @ud update-state)
+    %-  ~(run by bom.u.ref.rede-3)
+    |=  [=duct =rave]
+    ^-  update-state
+    [duct rave ~ ~ ~ |]
+    ::
+    ++  room-3-to-4
+      |=  =room-3
+      ^-  room
+      =-  room-3(dos dos.-)
+      ^-  dos=(map desk dojo)
+      %-  ~(run by dos.room-3)
+      |=  =dojo-3
+      ^-  dojo
+      dojo-3(qyx (cult-3-to-4 qyx.dojo-3))
+    ::
+    ++  cult-3-to-4
+      |=  =cult-3
+      ^-  cult
+      %-  malt
+      %+  turn  ~(tap by cult-3)
+      |=  [=wove-3 ducts=(set duct)]
+      ^-  [wove (set duct)]
+      :_  ducts  :_  rove.wove-3
+      ?~  for.wove-3
+        ~
+      `[u.for.wove-3 %0]
+    --
   ::
   ++  load-2-to-3
     |=  =state-2
@@ -4005,11 +4292,11 @@
           :-  %ford-fusion
           [leaf+"queued merge canceled due to upgrade to ford fusion" ~]
         `[duct %slip %b %drip !>([%mere %| err])]
-      ^-  rom=room
+      ^-  rom=room-3
       :-  hun.rom.state-2
       %-  ~(urn by dos.rom.state-2)
       |=  [=desk =dojo-2]
-      ^-  dojo
+      ^-  dojo-3
       =-  dojo-2(dom -)
       ^-  dome
       =/  fer=(unit reef-cache)
@@ -4019,23 +4306,22 @@
           (~(got by hut.ran.state-2) (~(got by hit.dom.dojo-2) let.dom.dojo-2))
         `(build-reef desk q.yaki)
       [ank let hit lab mim fod=*ford-cache fer=fer]:[dom.dojo-2 .]
-    ^-  hoy=(map ship rung)
+    ^-  hoy=(map ship rung-3)
     %-  ~(run by hoy.state-2)
     |=  =rung-2
-    ^-  rung
+    ^-  rung-3
     %-  ~(run by rus.rung-2)
     |=  =rede-2
-    ^-  rede
+    ^-  rede-3
     =-  rede-2(ref ref.-, dom dom.-)
     :-  ^-  dom=dome
         [ank let hit lab mim fod=*ford-cache fer=~]:[dom.rede-2 .]
-    ^-  ref=(unit rind)
+    ^-  ref=(unit rind-3)
     ?~  ref.rede-2
       ~
-    ::  TODO: somehow call +wake later to notify subscribers
     :-  ~
-    ^-  rind
-    =/  rin=rind  [nix bom fod haw]:u.ref.rede-2
+    ^-  rind-3
+    =/  rin=rind-3  [nix bom fod haw]:u.ref.rede-2
     =.  rin
       =/  pur=(list [inx=@ud =rand *])  ~(tap by pur.u.ref.rede-2)
       |-  ^+  rin
@@ -4138,8 +4424,57 @@
       --
     --
   ::
-  +$  any-state  $%(state-3 state-2)
-  +$  state-3  [%3 raft]
+  +$  any-state  $%(state-5 state-4 state-3 state-2)
+  +$  state-5  [%5 raft]
+  +$  state-4
+    $:  %4
+        rom=room
+        hoy=(map ship rung)
+        ran=rang
+        mon=(map term beam)
+        hez=(unit duct)
+        cez=(map @ta crew)
+        pud=(unit [=desk =yoki])
+        pun=(list *)
+    ==
+  +$  state-3
+    $:  %3
+        rom=room-3
+        hoy=(map ship rung-3)
+        ran=rang
+        mon=(map term beam)
+        hez=(unit duct)
+        cez=(map @ta crew)
+        pud=(unit [=desk =yoki])
+        pun=(list *)
+    ==
+  +$  rung-3  rus=(map desk rede-3)
+  +$  rede-3
+    $:  lim/@da
+        ref/(unit rind-3)
+        qyx/cult-3
+        dom/dome
+        per/regs
+        pew/regs
+    ==
+  +$  rind-3
+    $:  nix/@ud
+        bom/(map @ud {p/duct q/rave})
+        fod/(map duct @ud)
+        haw/(map mood (unit cage))
+    ==
+  +$  room-3
+    $:  hun/duct
+        dos/(map desk dojo-3)
+    ==
+  ++  dojo-3
+    $:  qyx/cult-3
+        dom/dome
+        per/regs
+        pew/regs
+    ==
+  +$  cult-3  (jug wove-3 duct)
+  +$  wove-3  [for=(unit ship) =rove]
   +$  state-2
     $:  %2
         rom=room-2                                      ::  domestic
@@ -4156,7 +4491,7 @@
         dos/(map desk dojo-2)                           ::  native desk
     ==                                                  ::
   +$  dojo-2
-    $:  qyx/cult                                        ::  subscribers
+    $:  qyx/cult-3                                      ::  subscribers
         dom/dome-2                                      ::  desk state
         per/regs                                        ::  read perms per path
         pew/regs                                        ::  write perms per path
@@ -4172,7 +4507,7 @@
   +$  rede-2
     $:  lim/@da                                         ::  complete to
         ref/(unit rind-2)                               ::  outgoing requests
-        qyx/cult                                        ::  subscribers
+        qyx/cult-3                                      ::  subscribers
         dom/dome-2                                      ::  revision state
         per/regs                                        ::  read perms per path
         pew/regs                                        ::  write perms per path
@@ -4303,6 +4638,35 @@
       [mos ..^$]
     ==
   ::
+  ?:  ?=([%back-index @ @ @ ~] tea)
+    ?+    +<.q.hin  ~|  %clay-backfill-index-strange  !!
+        %done
+      ?~  error.q.hin
+        [~ ..^$]
+      ::  TODO better error handling
+      ::
+      ~&  %clay-take-backfill-index-error^our^tea^tag.u.error.q.hin
+      %-  (slog tang.u.error.q.hin)
+      [~ ..^$]
+    ::
+        %lost
+      ~|  %clay-take-backfill-lost^our
+      ::  TODO better error handling
+      !!
+    ::
+        %boon
+      =+  ;;  =blob  payload.q.hin
+      ::
+      =/  her=ship   (slav %p i.t.tea)
+      =/  =desk      (slav %tas i.t.t.tea)
+      =/  index=@ud  (slav %ud i.t.t.t.tea)
+      ::
+      =^  mos  ruf
+        =/  den  ((de our now ski hen ruf) her desk)
+        abet:abet:(take-backfill:(foreign-update:den index) blob)
+      [mos ..^$]
+    ==
+  ::
   ?:  ?=([%sinks ~] tea)
     ?>  ?=(%public-keys +<.q.hin)
     ?.  ?=(%breach -.public-keys-result.q.hin)
@@ -4396,7 +4760,9 @@
     :+  desk  %|
     :~  ankh+&+ank.dom.dojo
         mime+&+mim.dom.dojo
-        ford+&+fod.dom.dojo
+        ford-vases+&+vases.fod.dom.dojo
+        ford-marks+&+marks.fod.dom.dojo
+        ford-casts+&+casts.fod.dom.dojo
     ==
   :~  domestic+|+domestic
       foreign+&+hoy.ruf

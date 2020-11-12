@@ -23,7 +23,7 @@
   --
 ++  grab
   |%
-  ++  mime  |=({p/mite:eyre q/octs:eyre} q.q)
+  ++  mime  |=((pair mite octs) q.q)
   ++  noun  @t
   ++  txt   of-wain:format
   --

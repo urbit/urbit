@@ -28,19 +28,8 @@ u3qc_repn(u3_atom bits, u3_noun blox)
   c3_w num_blox_w = u3qb_lent(blox);
   c3_w bit_widt_w = num_blox_w * bits;
   c3_w wor_widt_w = DIVCEIL(bit_widt_w, 32);
-
-  //
-  //  Allocate a proto-atom. This is u3a_slab without initialization.
-  //
-  c3_w* buf_w;
-  {
-    c3_w*     nov_w = u3a_walloc(wor_widt_w + c3_wiseof(u3a_atom));
-    u3a_atom* pug_u = (void *)nov_w;
-
-    pug_u->mug_w = 0;
-    pug_u->len_w = wor_widt_w;
-    buf_w        = pug_u->buf_w;
-  }
+  u3i_slab  sab_u;
+  u3i_slab_bare(&sab_u, 5, wor_widt_w);
 
   //
   //  Fill the atom buffer with bits from each block.
@@ -53,7 +42,7 @@ u3qc_repn(u3_atom bits, u3_noun blox)
   //  cur_w  next buffer word to flush into.
   //
   {
-    c3_w acc_w=0, use_w=0, *cur_w=buf_w;
+    c3_w acc_w=0, use_w=0, *cur_w=sab_u.buf_w;
 
 #   define FLUSH() *cur_w++=acc_w; acc_w=use_w=0
 #   define SLICE(sz,off,val) TAKEBITS(sz, val) << off
@@ -98,7 +87,7 @@ u3qc_repn(u3_atom bits, u3_noun blox)
     }
   }
 
-  return u3a_malt(buf_w);
+  return u3i_slab_mint(&sab_u);
 }
 
 u3_noun

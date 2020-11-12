@@ -1,5 +1,6 @@
 ::
-::  Soto: A Dojo relay for Urbit's Landscape interface
+::  soto [landscape]: A Dojo relay for Urbit's Landscape interface
+::
 ::  Relays sole-effects to subscribers and forwards sole-action pokes
 ::
 /-  sole
@@ -29,7 +30,7 @@
   :_  ~
   :*  %pass  /srv  %agent  [our.bol %file-server]
       %poke  %file-server-action
-      !>([%serve-dir /'~dojo' /app/landscape %.n])
+      !>([%serve-dir /'~dojo' /app/landscape %.n %.y])
   ==
 ++  on-save  !>(state)
 ::
@@ -43,7 +44,7 @@
   :~  [%pass /bind/soto %arvo %e %disconnect [~ /'~dojo']]
       :*  %pass  /srv  %agent  [our.bol %file-server]
           %poke  %file-server-action
-          !>([%serve-dir /'~dojo' /app/landscape %.n])
+          !>([%serve-dir /'~dojo' /app/landscape %.n %.y])
       ==
   ==
 ::

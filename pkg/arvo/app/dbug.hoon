@@ -148,9 +148,7 @@
   ::
   =;  json=(unit json)
     ?~  json  not-found:gen
-    %-  json-response:gen
-    =,  html
-    (as-octt:mimes (en-json u.json))
+    (json-response:gen u.json)
   =,  enjs:format
   ?+  site  ~
     ::  /apps.json: {appname: running?}
@@ -382,17 +380,19 @@
         'connected'^b+!-.state
         'expiry'^?-(-.state %& (time date.p.state), %| ~)
         'next-id'^(numb next-id)
+        'last-ack'^(time last-ack)
         'unacked'^a+(turn (sort (turn ~(tap in events) head) dor) numb)
       ::
         :-  'subscriptions'
         :-  %a
         %+  turn  ~(tap by subscriptions)
-        |=  [=wire [=^ship app=term =^path *]]
+        |=  [id=@ud [=^ship app=term =^path *]]
         %-  pairs
-        :~  'wire'^(^path wire)
+        :~  'id'^(numb id)
             'ship'^(^ship ship)
             'app'^s+app
             'path'^(^path path)
+            'unacked'^(numb (~(gut by unacked) id 0))
         ==
     ==
   ==

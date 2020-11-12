@@ -8,5 +8,4 @@
 +$  update
   $%  [%tracking tracking=(map resource ship)]
   ==
-::
 --

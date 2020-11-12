@@ -33,6 +33,7 @@ module Urbit.Vere.Ames.UDP
 where
 
 import Urbit.Prelude
+import Urbit.Vere.Ports
 
 import Network.Socket hiding (recvFrom, sendTo)
 
@@ -79,14 +80,14 @@ forceBind :: HasLogFunc e => PortNumber -> HostAddress -> RIO e Socket
 forceBind por hos = go
  where
   go = do
-    logDebug (display ("AMES: UDP: Opening socket on port " <> tshow por))
+    logInfo (display ("AMES: UDP: Opening socket on port " <> tshow por))
     io (doBind por hos) >>= \case
       Right sk -> do
-        logDebug (display ("AMES: UDP: Opened socket on port " <> tshow por))
+        logInfo (display ("AMES: UDP: Opened socket on port " <> tshow por))
         pure sk
       Left err -> do
-        logDebug (display ("AMES: UDP: " <> tshow err))
-        logDebug ("AMES: UDP: Failed to open UDP socket. Waiting")
+        logInfo (display ("AMES: UDP: " <> tshow err))
+        logInfo ("AMES: UDP: Failed to open UDP socket. Waiting")
         threadDelay 250_000
         go
 
@@ -137,7 +138,7 @@ recvPacket sok = do
 -}
 fakeUdpServ :: HasLogFunc e => RIO e UdpServ
 fakeUdpServ = do
-  logDebug $ displayShow ("AMES", "UDP", "\"Starting\" fake UDP server.")
+  logInfo $ displayShow ("AMES", "UDP", "\"Starting\" fake UDP server.")
   pure UdpServ { .. }
  where
   usSend = \_ _ -> pure ()
@@ -151,9 +152,13 @@ fakeUdpServ = do
   Real UDP server.  See module-level docs.
 -}
 realUdpServ
-  :: forall e . HasLogFunc e => PortNumber -> HostAddress -> RIO e UdpServ
+  :: forall e
+   . (HasLogFunc e, HasPortControlApi e)
+  => PortNumber
+  -> HostAddress
+  -> RIO e UdpServ
 realUdpServ por hos = do
-  logDebug $ displayShow ("AMES", "UDP", "Starting real UDP server.")
+  logInfo $ displayShow ("AMES", "UDP", "Starting real UDP server.")
 
   env <- ask
 
@@ -173,7 +178,7 @@ realUdpServ por hos = do
   -}
   let signalBrokenSocket :: Socket -> RIO e ()
       signalBrokenSocket sock = do
-        logDebug $ displayShow ("AMES", "UDP"
+        logInfo $ displayShow ("AMES", "UDP"
                                , "Socket broken. Requesting new socket"
                                )
         atomically $ do
@@ -197,11 +202,21 @@ realUdpServ por hos = do
           logWarn "AMES: UDP: Dropping outbound packet because queue is full."
 
   tOpen <- async $ forever $ do
-    sk <- forceBind por hos
-    atomically (writeTVar vSock (Just sk))
-    broken <- atomically (takeTMVar vFail)
-    logWarn "AMES: UDP: Closing broken socket."
-    io (close broken)
+     sk <- forceBind por hos
+     sn <- io $ getSocketName sk
+
+     let waitForRelease = do
+           atomically (writeTVar vSock (Just sk))
+           broken <- atomically (takeTMVar vFail)
+           logWarn "AMES: UDP: Closing broken socket."
+           io (close broken)
+
+     case sn of
+       (SockAddrInet boundPort _) ->
+         -- When we're on IPv4, maybe port forward at the NAT.
+         rwith (requestPortAccess $ fromIntegral boundPort) $
+             \() -> waitForRelease
+       _ -> waitForRelease
 
   tSend <- async $ forever $ join $ atomically $ do
     (adr, byt) <- readTBQueue qSend
@@ -227,11 +242,11 @@ realUdpServ por hos = do
             enqueueRecvPacket p a b
 
   let shutdown = do
-        logDebug "AMES: UDP: Shutting down. (killing threads)"
+        logInfo "AMES: UDP: Shutting down. (killing threads)"
         cancel tOpen
         cancel tSend
         cancel tRecv
-        logDebug "AMES: UDP: Shutting down. (closing socket)"
+        logInfo "AMES: UDP: Shutting down. (closing socket)"
         io $ join $ atomically $ do
           res <- readTVar vSock <&> maybe (pure ()) close
           writeTVar vSock Nothing

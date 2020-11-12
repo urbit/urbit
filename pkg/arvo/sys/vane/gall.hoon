@@ -11,9 +11,9 @@
 ::  $move: Arvo-level move
 ::
 +$  move  [=duct move=(wind note-arvo gift-arvo)]
-::  $state-6: overall gall state, versioned
+::  $state-7: overall gall state, versioned
 ::
-+$  state-6  [%6 state]
++$  state-7  [%7 state]
 ::  $state: overall gall state
 ::
 ::    system-duct: TODO document
@@ -111,7 +111,8 @@
 ::  $spore: structures for update, produced by +stay
 ::
 +$  spore
-  $:  %6
+  $:  %7
+      wipe-eyre-subs=_|  ::NOTE  band-aid for #3196, remove on next upgrade
       system-duct=duct
       outstanding=(map [wire duct] (qeu remote-request))
       contacts=(set ship)
@@ -155,10 +156,12 @@
       =-  [(skip -< |=(move ?=([* %give %onto *] +<))) ->]
       =/  adult  adult-core
       =.  state.adult
-        [%6 system-duct outstanding contacts yokes=~ blocked]:spore
+        [%7 system-duct outstanding contacts yokes=~ blocked]:spore
       =/  mo-core  (mo-abed:mo:adult duct)
       =.  mo-core
         =/  apps=(list [dap=term =egg])  ~(tap by eggs.spore)
+        ~?  wipe-eyre-subs.spore
+          [%g %wiping-eyre-subs]
         |-  ^+  mo-core
         ?~  apps  mo-core
         ~>  %slog.[0 leaf+"gall: upgrading {<dap.i.apps>}"]
@@ -166,6 +169,18 @@
         =^  tan  ap-core  (ap-install:ap-core `old-state.egg.i.apps)
         ?^  tan
           (mean u.tan)
+        =?  ap-core  wipe-eyre-subs.spore
+          =/  ducts=(list ^duct)
+            %+  skim  ~(tap in ~(key by inbound.watches.egg.i.apps))
+            |=  =^duct
+            %+  lien  duct
+            |=  =path
+            ?=(^ (find /e/channel/subscription path))
+          |-
+          ?~  ducts  ap-core
+          =.  ap-core
+            ap-load-delete:ap-core(agent-duct i.ducts)
+          $(ducts t.ducts)
         $(apps t.apps, mo-core ap-abet:ap-core)
       =.  mo-core  (mo-subscribe-to-agent-builds:mo-core now)
       =^  moves  adult-gate  mo-abet:mo-core
@@ -177,7 +192,7 @@
       =*  call-args  +<
       ?:  =(~ eggs.spore)
         ~>  %slog.[0 leaf+"gall: direct morphogenesis"]
-        =.  state.adult-gate  spore(eggs *(map term yoke))
+        =.  state.adult-gate  [- +>]:spore(eggs *(map term yoke))
         (call:adult-core call-args)
       ?^  dud
         ~>  %slog.[0 leaf+"gall: pupa call dud"]
@@ -192,7 +207,7 @@
       =*  take-args  +<
       ?:  =(~ eggs.spore)
         ~>  %slog.[0 leaf+"gall: direct morphogenesis"]
-        =.  state.adult-gate  spore(eggs *(map term yoke))
+        =.  state.adult-gate  [- +>]:spore(eggs *(map term yoke))
         (take:adult-core take-args)
       ?^  dud
         ~>  %slog.[0 leaf+"gall: pupa take dud"]
@@ -208,11 +223,13 @@
       ?.  =(~ eggs.spore)
         pupal-gate
       ~>  %slog.[0 leaf+"gall: direct morphogenesis"]
-      adult-gate(state spore(eggs *(map term yoke)))
+      %_  adult-gate
+        state  [- +>]:spore(eggs *(map term yoke))
+      ==
       ::
       ++  upgrade
         |=  =all-state
-        ^-  ^spore
+        ^-  spore-7
         ::
         =?  all-state  ?=(%0 -.all-state)
           (state-0-to-1 all-state)
@@ -232,15 +249,23 @@
         =?  all-state  ?=(%5 -.all-state)
           (state-5-to-spore-6 all-state)
         ::
-        ?>  ?=(%6 -.all-state)
+        =?  all-state  ?=(%6 -.all-state)
+          (spore-6-to-7 all-state)
+        ::
+        ?>  ?=(%7 -.all-state)
         all-state
       ::  +all-state: upgrade path
       ::
-      +$  all-state  $%(state-0 state-1 state-2 state-3 state-4 state-5 ^spore)
+      +$  all-state
+        $%  state-0  state-1  state-2  state-3  state-4  state-5
+            spore-6  spore-7
+        ==
+      ::
+      ++  spore-6-to-7  |=(s=spore-6 `spore-7`[%7 & +.s])
       ::
       ++  state-5-to-spore-6
         |=  s=state-5
-        ^-  ^spore
+        ^-  spore-6
         %=    s
             -  %6
             outstanding  ~  ::  TODO: do we need to process these somehow?
@@ -254,6 +279,8 @@
       ++  state-1-to-2  |=(s=state-1 `state-2`s(- %2, +< +<.s, +> `+>.s))
       ++  state-0-to-1  |=(s=state-0 `state-1`s(- %1))
       ::
+      +$  spore-7  ^spore
+      +$  spore-6  [%6 _+>:*spore-7]
       +$  state-5  [%5 agents-2]
       +$  state-4  [%4 agents-2]
       +$  state-3  [%3 agents-2]
@@ -306,7 +333,7 @@
     --
 ::  adult gall vane interface, for type compatibility with pupa
 ::
-=|  state=state-6
+=|  state=state-7
 |=  [our=ship now=@da eny=@uvJ ski=sley]
 =*  gall-payload  .
 =<  ~%  %gall-wrap  ..mo  ~
@@ -1732,7 +1759,7 @@
 ::
 ++  stay
   ^-  spore
-  =;  eggs=(map term egg)  state(yokes eggs)
+  =;  eggs=(map term egg)  [- | +]:state(yokes eggs)
   %-  ~(run by yokes.state)
   |=(=yoke `egg`yoke(agent on-save:agent.yoke))
 ::  +take: response

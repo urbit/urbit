@@ -25,7 +25,7 @@
   ==
 +$  per-desk                                            ::  per-desk state
   $:  auto=?                                            ::  escalate on failure
-      gem=germ                                          ::  strategy
+      gem=?(%this %that germ)                           ::  strategy
       her=@p                                            ::  from ship
       sud=@tas                                          ::  from desk
       cas=case                                          ::  at case
@@ -47,11 +47,12 @@
       sud=desk                                          ::
   ==
 +$  kiln-merge                                          ::
+  $@  ~
   $:  syd=desk                                          ::
       ali=ship                                          ::
       sud=desk                                          ::
       cas=case                                          ::
-      gim=?($auto germ)                                 ::
+      gim=?(%auto germ)                                 ::
   ==
 --
 |=  [bowl:gall state]
@@ -204,14 +205,14 @@
   ::
   ::  If destination desk doesn't exist, need a %init merge.  If this is
   ::  its first revision, it probably doesn't have a mergebase yet, so
-  ::  use %that.
+  ::  use %take-that.
   ::
   ++  get-germ
     |=  =desk
-    =+  .^(=cass:clay %cw /(scot %p our)/home/(scot %da now))
+    =+  .^(=cass:clay %cw /(scot %p our)/[desk]/(scot %da now))
     ?-  ud.cass
       %0  %init
-      %1  %that
+      %1  %take-that
       *   %mate
     ==
   ::
@@ -341,13 +342,22 @@
     abet:(spam (render "already syncing" [sud her syd]:hos) ~)
   abet:abet:start-sync:(auto hos)
 ::
+++  ota-info
+  ?~  ota
+    "OTAs disabled"
+  "OTAs enabled from {<desk.u.ota>} on {<ship.u.ota>}"
+::
+++  poke-ota-info
+  |=  *
+  =<  abet  %-  spam
+  :~  [%leaf ota-info]
+      [%leaf "use |ota %disable or |ota ~sponsor %kids to reset it"]
+  ==
+::
 ++  poke-syncs                                        ::  print sync config
   |=  ~
   =<  abet  %-  spam
-  :-  :-  %leaf
-      ?~  ota
-        "OTAs disabled"
-      "OTAs from {<desk.u.ota>} on {<ship.u.ota>}"
+  :-  [%leaf ota-info]
   ?:  =(0 ~(wyt by syn))
     [%leaf "no other syncs configured"]~
   %+  turn  ~(tap in ~(key by syn))
@@ -363,6 +373,7 @@
 ::
 ++  poke-merge                                        ::
   |=  kiln-merge
+  ?~  +<  abet
   abet:abet:(merge:(work syd) ali sud cas gim)
 ::
 ++  poke-cancel
@@ -416,6 +427,7 @@
     %kiln-merge              =;(f (f !<(_+<.f vase)) poke-merge)
     %kiln-mount              =;(f (f !<(_+<.f vase)) poke-mount)
     %kiln-ota                =;(f (f !<(_+<.f vase)) poke:update)
+    %kiln-ota-info           =;(f (f !<(_+<.f vase)) poke-ota-info)
     %kiln-permission         =;(f (f !<(_+<.f vase)) poke-permission)
     %kiln-rm                 =;(f (f !<(_+<.f vase)) poke-rm)
     %kiln-schedule           =;(f (f !<(_+<.f vase)) poke-schedule)
@@ -593,20 +605,21 @@
     ::    Initial merges from any source must use the %init germ.
     ::    Subsequent merges may use any germ, but if the source is
     ::    a remote ship with which we have not yet merged, we won't
-    ::    share a merge-base commit and all germs but %that will fail.
+    ::    share a merge-base commit and all germs but %only-that will
+    ::    fail.
     ::
-    ::    We want to always use %that for the first remote merge.
-    ::    But we also want local syncs (%base to %home or %kids)
-    ::    to succeed after that first remote sync. To accomplish both
-    ::    we simply use %that for the first three sync merges.
-    ::    (The first two are from the pill.)
+    ::    We want to always use %only-that for the first remote merge.
+    ::    But we also want local syncs (%base to %home or %kids) to
+    ::    succeed after that first remote sync. To accomplish both we
+    ::    simply use %only-that for the first three sync merges.  (The
+    ::    first two are from the pill.)
     ::
     =/  =germ
       =/  =cass
         .^(cass:clay %cw /(scot %p our)/[syd]/(scot %da now))
       ?:  =(0 ud.cass)
         %init
-      ?:((gth 2 ud.cass) %that %mate)
+      ?:((gth 2 ud.cass) %only-that %mate)
     =<  %-  spam
         ?:  =(our her)  ~
         [(render "beginning sync" sud her syd) ~]
@@ -667,6 +680,8 @@
   ::
   ++  perform                                         ::
     ^+  .
+    ?<  ?=(%this gem)
+    ?<  ?=(%that gem)
     (blab [%pass /kiln/[syd] %arvo %c [%merg syd her sud cas gem]] ~)
   ::
   ++  fancy-merge                                     ::  send to self
@@ -802,6 +817,8 @@
       =.  ..mere  (fancy-merge tic our syd %init)
       =>  (spam leaf+"%melding %{(trip sud)} into scratch space" ~)
       %-  blab  :_  ~
+      ?<  ?=(%this gem)
+      ?<  ?=(%that gem)
       =/  note  [%merg (cat 3 syd '-scratch') her sud cas gem]
       [%pass /kiln/[syd] %arvo %c note]
     ==

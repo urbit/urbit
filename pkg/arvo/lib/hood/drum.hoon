@@ -69,11 +69,11 @@
         %azimuth-tracker
         %ping
         %goad
+        %lens
     ==
   ?:  lit
     ~
   :~  %acme
-      %lens
       %clock
       %dojo
       %launch
@@ -104,6 +104,9 @@
       %s3-store
       %file-server
       %glob
+      %graph-store
+      %graph-pull-hook
+      %graph-push-hook
   ==
 ::
 ++  deft-fish                                           ::  default connects
@@ -206,7 +209,7 @@
   ==
 ::
 ++  on-load
-  |=  [hood-version=?(%1 %2 %3 %4 %5 %6 %7 %8) old=any-state]
+  |=  [hood-version=?(%1 %2 %3 %4 %5 %6 %7 %8 %9 %10) old=any-state]
   =<  se-abet  =<  se-view
   =.  sat  old
   =.  dev  (~(gut by bin) ost *source)
@@ -233,6 +236,11 @@
   =?  ..on-load  (lte hood-version %8)
     =>  (se-born | %home %group-push-hook)
     (se-born | %home %group-pull-hook)
+  =?  ..on-load  (lte hood-version %9)
+   (se-born | %home %graph-store)
+  =?  ..on-load  (lte hood-version %10)
+    =>  (se-born | %home %graph-push-hook)
+    (se-born | %home %graph-pull-hook)
   ..on-load
 ::
 ++  reap-phat                                         ::  ack connect

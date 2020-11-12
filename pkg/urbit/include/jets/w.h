@@ -122,6 +122,7 @@
     u3_noun u3we_jam(u3_noun);
     u3_noun u3we_mat(u3_noun);
     u3_noun u3we_rub(u3_noun);
+    u3_noun u3we_leer(u3_noun);
     u3_noun u3we_lore(u3_noun);
     u3_noun u3we_loss(u3_noun);
     u3_noun u3we_lune(u3_noun);
@@ -200,6 +201,9 @@
     u3_noun u3we_make(u3_noun);
     u3_noun u3we_sign(u3_noun);
     u3_noun u3we_reco(u3_noun);
+
+    u3_noun u3we_en_base16(u3_noun);
+    u3_noun u3we_de_base16(u3_noun);
 
     u3_noun u3we_bend_fun(u3_noun);
     u3_noun u3we_cold_fun(u3_noun);

@@ -5,6 +5,7 @@
   /** Tier 1.
   **/
     u3_noun u3ka_add(u3_noun a, u3_noun b);
+    u3_noun u3ka_dec(u3_atom a);
     u3_noun u3ka_div(u3_noun a, u3_noun b);
     u3_noun u3ka_sub(u3_noun a, u3_noun b);
     u3_noun u3ka_mod(u3_noun a, u3_noun b);
@@ -85,6 +86,11 @@
   */
     u3_noun
     u3kdb_gas(u3_noun a, u3_noun b);
+
+  /* u3kdb_uni(): map union.
+  */
+    u3_noun
+    u3kdb_uni(u3_noun a, u3_noun b);
 
   /* u3kdi_gas(): list to map.
   */

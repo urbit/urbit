@@ -15,6 +15,33 @@
 
 #include "all.h"
 
+static u3j_harm _141_hex_mimes_base16_en_a[] = {{".2", u3we_en_base16}, {}};
+static c3_c* _141_hex_mimes_base16_en_ha[] = {
+  0
+};
+
+static u3j_harm _141_hex_mimes_base16_de_a[] = {{".2", u3we_de_base16}, {}};
+static c3_c* _141_hex_mimes_base16_de_ha[] = {
+  0
+};
+
+static u3j_core _141_hex_mimes_base16_d[] =
+  { { "en", 7, _141_hex_mimes_base16_en_a, 0, _141_hex_mimes_base16_en_ha },
+    { "de", 7, _141_hex_mimes_base16_de_a, 0, _141_hex_mimes_base16_de_ha },
+    {}
+  };
+static c3_c* _141_hex_mimes_base16_ha[] = {
+  0
+};
+
+static u3j_core _141_hex_mimes_d[] =
+  { { "base16", 3, 0, _141_hex_mimes_base16_d, _141_hex_mimes_base16_ha },
+    {}
+  };
+static c3_c* _141_hex_mimes_ha[] = {
+  0
+};
+
 static u3j_harm _141_hex_aes_ecba_en_a[] = {{".2", u3wea_ecba_en}, {}};
 static c3_c* _141_hex_aes_ecba_en_ha[] = {
   "a4eaaead7ffeb213cf8d611f20d7be4786b34f31a27f41c77538125992107c2d",
@@ -203,6 +230,10 @@ static c3_c* _141_hex_aes_ha[] = {
   0
 };
 
+static u3j_harm _141_hex_leer_a[] = {{".2", u3we_leer}, {}};
+static c3_c* _141_hex_leer_ha[] = {
+  0
+};
 static u3j_harm _141_hex_lore_a[] = {{".2", u3we_lore}, {}};
 static c3_c* _141_hex_lore_ha[] = {
   "19b13cfea49fd14aafbb20b8b888ba454f809c3f50a7cfeebd43f87336fe052d",
@@ -386,6 +417,7 @@ static c3_c* _141_hex_ripe_ha[] = {
 
 static u3j_core _141_hex_d[] =
 { { "lore",   63, _141_hex_lore_a, 0, _141_hex_lore_ha },
+  { "leer",   63, _141_hex_leer_a, 0, _141_hex_leer_ha },
   { "loss",   63, _141_hex_loss_a, 0, _141_hex_loss_ha },
   { "lune",  127, _141_hex_lune_a, 0, _141_hex_lune_ha },
 
@@ -397,6 +429,7 @@ static u3j_core _141_hex_d[] =
   { "blake",  31, 0, _141_hex_blake_d, _141_hex_blake_ha },
   { "ripemd", 31, 0, _141_hex_ripe_d,  _141_hex_ripe_ha  },
   { "secp",   31, 0, _141_hex_secp_d,  _141_hex_secp_ha  },
+  { "mimes",  31, 0, _141_hex_mimes_d, _141_hex_mimes_ha  },
   {}
 };
 static c3_c* _141_hex_ha[] = {
@@ -1623,9 +1656,8 @@ static c3_c* _141_two_xeb_ha[] = {
     0
   };
 
-  // https://github.com/urbit/urbit/issues/328
-  // static u3j_harm _141_two__in_int_a[] = {{".2", u3wdi_int}, {}};
-  // static c3_c* _141_two__in_int_ha[] = {0};
+  static u3j_harm _141_two__in_int_a[] = {{".2", u3wdi_int}, {}};
+  static c3_c* _141_two__in_int_ha[] = {0};
 
   static u3j_harm _141_two__in_put_a[] = {{".2", u3wdi_put}, {}};
   static c3_c* _141_two__in_put_ha[] = {
@@ -1663,7 +1695,7 @@ static u3j_core _141_two__in_d[] =
     { "dif", 7, _141_two__in_dif_a, 0, _141_two__in_dif_ha },
     { "gas", 7, _141_two__in_gas_a, 0, _141_two__in_gas_ha },
     { "has", 7, _141_two__in_has_a, 0, _141_two__in_has_ha },
-    // { "int", 7, _141_two__in_int_a, 0, _141_two__in_int_ha },
+    { "int", 7, _141_two__in_int_a, 0, _141_two__in_int_ha },
     { "put", 7, _141_two__in_put_a, 0, _141_two__in_put_ha },
     { "rep", 7, _141_two__in_rep_a, 0, _141_two__in_rep_ha },
     { "run", 7, _141_two__in_run_a, 0, _141_two__in_run_ha },
@@ -1719,9 +1751,8 @@ static c3_c* _141_two__in_ha[] = {
     0
   };
 
-  // https://github.com/urbit/urbit/issues/328
-  // static u3j_harm _141_two__by_int_a[] = {{".2", u3wdb_int, c3y}, {}};
-  // static c3_c* _141_two__by_int_ha[] = {0};
+  static u3j_harm _141_two__by_int_a[] = {{".2", u3wdb_int, c3y}, {}};
+  static c3_c* _141_two__by_int_ha[] = {0};
 
   static u3j_harm _141_two__by_jab_a[] = {{".2", u3wdb_jab, c3y}, {}};
   static c3_c* _141_two__by_jab_ha[] = {
@@ -1773,7 +1804,7 @@ static u3j_core _141_two__by_d[] =
     { "gas", 7, _141_two__by_gas_a, 0, _141_two__by_gas_ha },
     { "get", 7, _141_two__by_get_a, 0, _141_two__by_get_ha },
     { "has", 7, _141_two__by_has_a, 0, _141_two__by_has_ha },
-    // { "int", 7, _141_two__by_int_a, 0, _141_two__by_int_ha },
+    { "int", 7, _141_two__by_int_a, 0, _141_two__by_int_ha },
     { "jab", 7, _141_two__by_jab_a, 0, _141_two__by_jab_ha },
     { "key", 7, _141_two__by_key_a, 0, _141_two__by_key_ha },
     { "put", 7, _141_two__by_put_a, 0, _141_two__by_put_ha },

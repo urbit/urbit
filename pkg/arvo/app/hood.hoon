@@ -2,22 +2,17 @@
 /+  drum=hood-drum, helm=hood-helm, kiln=hood-kiln
 |%
 +$  state
-  $:  %8
-      drum=state:drum
-      helm=state:helm
-      kiln=state:kiln
-  ==
-+$  state-7
-  $:  %7
+  $:  %10
       drum=state:drum
       helm=state:helm
       kiln=state:kiln
   ==
 +$  any-state
   $%  state
-      state-7
       [ver=?(%1 %2 %3 %4 %5 %6) lac=(map @tas fin-any-state)]
       [%7 drum=state:drum helm=state:helm kiln=state:kiln]
+      [%8 drum=state:drum helm=state:helm kiln=state:kiln]
+      [%9 drum=state:drum helm=state:helm kiln=state:kiln]
   ==
 +$  any-state-tuple
   $:  drum=any-state:drum
@@ -70,7 +65,7 @@
   =^  d  drum.state  (on-load:drum-core -.old drum.tup)
   =^  h  helm.state  (on-load:helm-core -.old helm.tup)
   =^  k  kiln.state  (on-load:kiln-core -.old kiln.tup)
-  [:(weld d h k) this]
+  [:(welp d h k) this]
 ::
 ++  on-poke
   |=  [=mark =vase]
