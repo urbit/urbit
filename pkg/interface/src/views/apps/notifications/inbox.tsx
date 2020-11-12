@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import f from "lodash/fp";
 import _ from "lodash";
 import { Icon, Col, Row, Box, Text, Anchor } from "@tlon/indigo-react";
@@ -69,13 +69,20 @@ export default function Inbox(props: {
     f.values
   )(notifications);
 
+  const onScroll = useCallback((e) => {
+    let container = e.target;
+    if(!props.showArchive && (container.scrollHeight - container.scrollTop === container.clientHeight)) {
+      api.hark.getMore();
+    }
+  }, [api]);
+
   const incomingGroups = Object.values(invites?.['contacts'] || {});
 
-    const getKeyByValue = (object, value) => {
+  const getKeyByValue = (object, value) => {
     return Object.keys(object).find(key => object[key] === value);
   };
 
-const acceptInvite = (invite) => {
+  const acceptInvite = (invite) => {
     const resource = {
       ship: `~${invite.resource.ship}`,
       name: invite.resource.name
@@ -86,11 +93,9 @@ const acceptInvite = (invite) => {
   };
 
   return (
-    <Col overflowY="auto" flexGrow="1">
+    <Col onScroll={onScroll} overflowY="auto" flexGrow="1" minHeight='0' flexShrink='0'>
       {incomingGroups.map((invite) => (
         <Box
-          height='100%'
-          width='100%'
           bg='white'
           p='3'
           fontSize='0'>

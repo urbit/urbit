@@ -65,4 +65,5 @@ export interface StoreState {
   notificationsChatConfig: string[];
   notificationsCount: number,
   doNotDisturb: boolean;
+  graphUnreads: Record<string, number>;
 }

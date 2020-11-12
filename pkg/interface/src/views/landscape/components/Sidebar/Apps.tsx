@@ -42,9 +42,13 @@ export function useChat(
 export function useGraphModule(
   graphKeys: Set<string>,
   graphs: Graphs,
+  graphUnreads: Record<string, number>
 ): SidebarAppConfig {
   const getStatus = useCallback(
     (s: string) => {
+      if((graphUnreads[s] || 0) > 0) {
+        return 'unread';
+      }
       const [, , host, name] = s.split("/");
       const graphKey = `${host.slice(1)}/${name}`;
 

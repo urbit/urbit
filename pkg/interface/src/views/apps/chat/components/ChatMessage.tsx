@@ -86,7 +86,8 @@ export default class ChatMessage extends Component<ChatMessageProps> {
       unreadMarkerRef,
       history,
       api,
-      highlighted
+      highlighted,
+      fontSize
     } = this.props;
 
     const renderSigil = Boolean((nextMsg && msg.author !== nextMsg.author) || !nextMsg || msg.number === 1);
@@ -118,7 +119,8 @@ export default class ChatMessage extends Component<ChatMessageProps> {
       history,
       api,
       scrollWindow,
-      highlighted
+      highlighted,
+      fontSize
     };
 
     const unreadContainerStyle = {
@@ -131,7 +133,7 @@ export default class ChatMessage extends Component<ChatMessageProps> {
         width='100%'
         display='flex'
         flexWrap='wrap'
-        pt={renderSigil ? 3 : 0}
+        pt={this.props.pt ? this.props.pt : renderSigil ? 3 : 0}
         pr={3}
         pb={isLastMessage ? 3 : 0}
         ref={this.divRef}
@@ -170,7 +172,7 @@ interface MessageProps {
 
 export class MessageWithSigil extends PureComponent<MessageProps> {
   isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  
+
   render() {
     const {
       msg,
@@ -184,14 +186,15 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
       measure,
       api,
       history,
-      scrollWindow
+      scrollWindow,
+      fontSize
     } = this.props;
 
     const datestamp = moment.unix(msg.when / 1000).format(DATESTAMP_FORMAT);
     const contact = msg.author in contacts ? contacts[msg.author] : false;
     const showNickname = !hideNicknames && contact && contact.nickname;
     const name = showNickname ? contact.nickname : cite(msg.author);
-    const color = contact ? `#${uxToHex(contact.color)}` : this.isDark ?  '#000000' :'#FFFFFF'  
+    const color = contact ? `#${uxToHex(contact.color)}` : this.isDark ?  '#000000' :'#FFFFFF'
     const sigilClass = contact ? '' : this.isDark ? 'mix-blend-diff' : 'mix-blend-darken';
 
     let nameSpan = null;
@@ -245,7 +248,7 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
             <Text flexShrink='0' gray mono className="v-mid">{timestamp}</Text>
             <Text gray mono ml={2} className="v-mid child dn-s">{datestamp}</Text>
           </Box>
-          <Box  fontSize='14px'><MessageContent content={msg.letter} remoteContentPolicy={remoteContentPolicy} measure={measure} /></Box>
+          <Box fontSize={fontSize ? fontSize : '14px'}><MessageContent content={msg.letter} remoteContentPolicy={remoteContentPolicy} measure={measure} fontSize={fontSize} /></Box>
         </Box>
       </>
     );
@@ -261,12 +264,12 @@ export const MessageWithoutSigil = ({ timestamp, msg, remoteContentPolicy, measu
   </>
 );
 
-export const MessageContent = ({ content, remoteContentPolicy, measure }) => {
+export const MessageContent = ({ content, remoteContentPolicy, measure, fontSize }) => {
   if ('code' in content) {
     return <CodeContent content={content} />;
   } else if ('url' in content) {
     return (
-      <Text fontSize='14px' lineHeight="tall" color='black'>
+      <Text fontSize={fontSize ? fontSize : '14px'} lineHeight="tall" color='black'>
         <RemoteContent
           url={content.url}
           remoteContentPolicy={remoteContentPolicy}
@@ -282,13 +285,13 @@ export const MessageContent = ({ content, remoteContentPolicy, measure }) => {
     );
   } else if ('me' in content) {
     return (
-      <Text fontStyle='italic' fontSize='14px' lineHeight='tall' color='black'>
+      <Text fontStyle='italic' fontSize={fontSize ? fontSize : '14px'} lineHeight='tall' color='black'>
         {content.me}
       </Text>
     );
   }
   else if ('text' in content) {
-    return <TextContent content={content} />;
+    return <TextContent fontSize={fontSize} content={content} />;
   } else {
     return null;
   }
