@@ -48,7 +48,7 @@
     (on-watch:def path)
   :_  this
   =;  =cage
-    [%give %fact ~[/updates] cage]~
+    [%give %fact ~ cage]~
   :-  %hark-group-hook-update
   !>  ^-  update:hook
   [%initial watching]
