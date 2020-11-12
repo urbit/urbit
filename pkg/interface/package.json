@@ -15,6 +15,7 @@
     "classnames": "^2.2.6",
     "codemirror": "^5.55.0",
     "css-loader": "^3.5.3",
+    "file-saver": "^2.0.2",
     "formik": "^2.1.4",
     "lodash": "^4.17.15",
     "markdown-to-jsx": "^6.11.4",

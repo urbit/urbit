@@ -8,9 +8,10 @@
 --                                                      ::
 =>  |%                                                  ::  console protocol
 ++  axle                                                ::
-  $:  %4                                                ::
+  $:  %4  ::TODO  replace ducts with session ids        ::
       hey/(unit duct)                                   ::  default duct
       dug/(map duct axon)                               ::  conversations
+      eye=(jug duct duct)                               ::  outside listeners
       lit/?                                             ::  boot in lite mode
       $=  veb                                           ::  vane verbosities
       $~  (~(put by *(map @tas log-level)) %hole %soft) ::  quiet packet crashes
@@ -151,7 +152,11 @@
       ::
       ++  done                                          ::  return gift
         |=  git/gift:able
-        +>(moz :_(moz [hen %give git]))
+        =-  +>.$(moz (weld - moz))
+        %+  turn
+          :-  hen
+          ~(tap in (~(get ju eye.all) hen))
+        |=(=duct [duct %give git])
       ::
       ++  deal                                          ::  pass to %gall
         |=  [=wire =deal:gall]
@@ -161,7 +166,7 @@
         |=  [=wire =note]
         +>(moz :_(moz [hen %pass wire note]))
       ::
-      ++  from                                          ::  receive belt
+      ++  from                                          ::  receive blit
         |=  bit/dill-blit
         ^+  +>
         ?:  ?=($mor -.bit)
@@ -369,7 +374,29 @@
     =.  veb.all  (~(put by veb.all) tag.task level.task)
     [~ ..^$]
   ::
+  ?:  ?=(%view -.task)
+    ::  crash on viewing non-existent session
+    ::
+    ~|  [%no-session session.task]
+    ?>  =(~ session.task)
+    =/  session  (need hey.all)
+    =/  =axon    (~(got by dug.all) session)
+    ::  register the viewer and send them the prompt line
+    ::
+    :-  [hen %give %blit [see.axon]~]~
+    ..^$(eye.all (~(put ju eye.all) session hen))
+  ::
+  ?:  ?=(%flee -.task)
+    :-  ~
+    ~|  [%no-session session.task]
+    ?>  =(~ session.task)
+    =/  session  (need hey.all)
+    ..^$(eye.all (~(del ju eye.all) session hen))
+  ::
   =/  nus  (ax hen)
+  =?  nus  &(?=(~ nus) ?=(^ hey.all))
+    ::TODO  allow specifying target session in task
+    (ax u.hey.all)
   ?~  nus
     ::  :hen is an unrecognized duct
     ::  could be before %boot (or %boot failed)
@@ -404,6 +431,7 @@
             $~  (~(put by *(map @tas log-level)) %hole %soft)
             (map @tas log-level)
         ==
+      ::
       ++  axle-2
         $:  %2
             hey/(unit duct)
@@ -450,7 +478,7 @@
   ?-  -.old
     %1  $(old [%2 [hey dug lit dog=& hef veb]:old])
     %2  $(old [%3 [hey dug lit veb]:old])
-    %3  =-  $(old [%4 hey.old - lit.old veb.old])
+    %3  =-  $(old [%4 hey.old - ~ lit.old veb.old])
         (~(run by dug.old) |=(a=axon-3 a(see lin+see.a)))
     %4  ..^$(all old)
   ==
@@ -458,15 +486,35 @@
 ++  scry
   |=  {fur/(unit (set monk)) ren/@tas why/shop syd/desk lot/coin tyl/path}
   ^-  (unit (unit cage))
-  ?.  ?=(%& -.why)  ~
-  =*  his  p.why
+  ::TODO  don't special-case whey scry
+  ::
   ?:  &(=(ren %$) =(tyl /whey))
     =/  maz=(list mass)
       :~  hey+&+hey.all
           dug+&+dug.all
       ==
     ``mass+!>(maz)
-  [~ ~]
+  ::  only respond for the local identity, %$ desk, current timestamp
+  ::
+  ?.  ?&  =(&+our why)
+          =([%$ %da now] lot)
+          =(%$ syd)
+      ==
+    ~
+  ::  /dx/sessions//line    blit    current line (prompt) of default session
+  ::  /dx/sessions//cursor  @ud     current cursor position of default session
+  ::TODO  support asking for specific sessions once session ids are real
+  ::
+  ?.  ?=(%x ren)  ~
+  ?+  tyl  ~
+      [%sessions %$ *]
+    ?~  hey.all                                [~ ~]
+    ?~  session=(~(get by dug.all) u.hey.all)  [~ ~]
+    ?+  t.t.tyl  ~
+      [%line ~]    ``blit+!>(`blit`see.u.session)
+      [%cursor ~]  ``atom+!>(pos.u.session)
+    ==
+  ==
 ::
 ++  stay  all
 ::
