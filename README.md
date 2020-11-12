@@ -30,7 +30,6 @@ Verify `ecc` has the correct decompress-point gate. The below should yield: `0x3
 =ecc secp256k1:secp:crypto
 =xpub "zpub6rFR7y4Q2AijBEqTUquhVz398htDFrtymD9xYYfG1m4wAcvPhXNfE3EfH1r1ADqtfSdVCToUG868RvUUkgDKf31mGDtKsAYz2oz2AGutZYs"
 `@ux`(compress-point:ecc pub:(derive-public:(derive-public:(from-extended:bip32 xpub) 0) 0))
-
 ```
 
 Set credentials and start agents

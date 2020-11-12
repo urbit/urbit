@@ -1,56 +1,112 @@
 /-  sur=btc-provider, *btc
-/+  blib=btc-node-json, elib=electrum-rpc, base64
+/+  base64
 ^?
 =<  [sur .]
 =,  sur
 |%
-++  btc-rpc-auth-header
-  |=  =host-info
-  =*  user  rpc-user.bc.creds.host-info
-  =*  pass  rpc-password.bc.creds.host-info
-  :-  'Authorization'
-  ;:  (cury cat 3)
-      'Basic '
-      %-  ~(en base64 | &)
-      (as-octs:mimes:html :((cury cat 3) user ':' pass))
-  ==
-++  btc-gen-request
-  |=  [=host-info req=request:bitcoin-core:rpc]
-  ^-  request:http
-  =*  endpoint  rpc-url.bc.creds.host-info
-  =/  body=request:rpc:jstd
-    (request-to-rpc:btc-rpc:blib req)
-  =/  =header-list:http
-    :~  ['Content-Type' 'application/json']
-        (btc-rpc-auth-header host-info)
-    ==
-  :*  %'POST'
-      endpoint
-      header-list
-      =,  html
-      %-  some
-      %-  as-octt:mimes
-      (en-json (request-to-json:rpc:jstd body))
-   ==
+++  address-to-cord
+  |=  =address  ^-  cord
+  ?:  ?=([%legacy *] address)
+    (scot %uc +.address)
+  +.address
 ::
-++  electrum-gen-request
-  |=  [=host-info req=request:electrum:rpc]
-  %+  request-to-http:electrum-rpc:elib
-  rpc-url.ec.creds.host-info  req
+++  address-from-cord
+  |=  addrc=@t  ^-  address
+  ?.  ?|  =("bc1" (scag 3 (trip addrc)))
+          =("tb1" (scag 3 (trip addrc)))
+      ==
+    ~|("legacy addresses not yet supported" !!)
+  [%bech32 addrc]
+::
+++  to-hex
+  |=  h=@t
+  ^-  @ux
+  ?:  =('' h)  0x0
+  ::  Add leading 00
+  ::
+  =+  (lsh 3 2 h)
+  ::  Group by 4-size block
+  ::
+  =+  (rsh 3 2 -)
+  ::  Parse hex to atom
+  ::
+  `@ux`(rash - hex)
+::
+++  to-hash256
+  |=  h=@t
+  (hash256 [32 (to-hex h)])
+::
+++  http-request
+  |=  url=@t
+  ^-  request:http
+  [%'GET' url ~ ~]
 ::
 ++  gen-request
-|=  [=host-info ract=action:rpc]
+ |=  [=host-info ract=action:rpc]
   ^-  request:http
-  ?-  -.ract
-      %erpc
-    (electrum-gen-request host-info +.ract)
-      %brpc
-    (btc-gen-request host-info +.ract)
-  ==
+  %+  action-to-http:rpc
+  api-url.creds.host-info
 ::
 ++  to-response
   |=  result:rpc
   ^-  result
   *result
-  ::[%get-address-info *address-info]
+++  rpc
+  |%
+  ++  parse-response
+    |=  res=response:rpc:jstd
+    |^  ^-  response:rpc
+    ~|  -.res
+    ::  only deals with successful requests
+    ::  ignores (%error, %fails and %batch)
+    ::
+    ?>  ?=(%result -.res)
+    ?+  id.res  ~|([%unsupported-response id.res] !!)
+        %get-address-info
+      [id.res (address-info res.res)]
+      ::
+        %get-block-count
+      [id.res (ni:dejs:format res.res)]
+    ==
+    ++  address-info
+    :: TODO: top element is blockcount+utxos
+    ::  use: (as:dejs:format utxo)
+    ++  utxo
+      %-  ot:dejs:format
+      :~  ['tx_pos' ni:dejs:format]
+          ['tx_hash' (cu:dejs:format to-hash256 so:dejs:format)]
+          [%height ni:dejs:format]
+          [%value ni:dejs:format]
+          [%blockcount ni:dejs:format]
+      ==
+    ++  history
+      %-  ot:dejs:format
+      :~  ['tx_hash' (cu:dejs:format to-hash256 so:dejs:format)]
+          [%height ni:dejs:format]
+          [%blockcount ni:dejs:format]
+      ==
+    --
+  ::
+  ++  action-to-http
+    |=  [endpoint=@t ract=action:rpc]
+    |^  ^-  request:http
+    %-  http-request
+    ?-  -.ract
+        %get-address-utxos
+      (mk-url '/addresses/utxos/' `address.ract)
+      ::
+        %get-address-history
+      (mk-url '/addresses/history/' `address.ract)
+        %get-block-count
+      (mk-url '/blockcount' ~)
+    ==
+    ++  mk-url
+      |=  [base=@t uaddr=(unit address)]
+      =/  addr=@t
+        ?~  uaddr  ''  (address-to-cord u.uaddr)
+      %^  cat  3
+        (cat 3 endpoint base)
+      (address-to-cord addr)
+    --
+  --
 --
