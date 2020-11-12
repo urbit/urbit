@@ -123,6 +123,7 @@
         :~  [%resource (enjs:res resource.upd)]
             [%graph (graph graph.upd)]
             [%mark ?~(mark.upd ~ s+u.mark.upd)]
+            [%overwrite b+overwrite.upd]
         ==
       ::
           %remove-graph
@@ -276,6 +277,7 @@
       :~  [%resource dejs:res]
           [%graph graph]
           [%mark (mu so)]
+          [%overwrite bo]
       ==
     ::
     ++  graph

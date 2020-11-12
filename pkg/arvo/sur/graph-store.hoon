@@ -42,7 +42,7 @@
 ::
 +$  update-0
   $%  logged-update-0
-      [%add-graph =resource =graph mark=(unit mark)]
+      [%add-graph =resource =graph mark=(unit mark) overwrite=?]
       [%remove-graph =resource]
     ::
       [%add-tag =term =resource]
