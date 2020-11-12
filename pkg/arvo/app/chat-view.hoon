@@ -220,8 +220,7 @@
       ~&  %chat-already-exists
       ~
     %-  zing
-    :~  (create-chat app-path.act allow-history.act)
-        %-  create-group
+    :~  %-  create-group
         :*  group-path.act
             app-path.act
             policy.act
@@ -231,6 +230,7 @@
             managed.act
         ==
         (create-metadata title.act description.act group-path.act app-path.act)
+        (create-chat app-path.act allow-history.act)
     ==
   ::
       %delete
