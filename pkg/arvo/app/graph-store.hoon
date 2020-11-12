@@ -66,8 +66,7 @@
     ::
         update-logs.old
       %-  ~(run by update-logs.old)
-      |=  =update-log:store
-      *update-log:store
+      |=(a=* *update-log:store)
     ==
   ::
       %1
@@ -77,8 +76,7 @@
     ::
         update-logs.old
       %-  ~(run by update-logs.old)
-      |=  =update-log:store
-      *update-log:store
+      |=(a=* *update-log:store)
     ==
   ::
     %2  [cards this(state old)]
@@ -247,20 +245,27 @@
     ==
     ::
     ++  add-graph
-      |=  [=resource:store =graph:store mark=(unit mark:store)]
+      |=  $:  =resource:store
+              =graph:store
+              mark=(unit mark:store)
+              overwrite=?
+          ==
       ^-  (quip card _state)
-      ?<  (~(has by archive) resource)
-      ?<  (~(has by graphs) resource)
+      ?>  ?|  overwrite
+              ?&  !(~(has by archive) resource)
+                  !(~(has by graphs) resource)
+          ==  ==
       ?>  (validate-graph graph mark)
       :_  %_  state
               graphs       (~(put by graphs) resource [graph mark])
               update-logs  (~(put by update-logs) resource (gas:orm-log ~ ~))
+              archive      (~(del by archive) resource)
               validators
             ?~  mark  validators
             (~(put in validators) u.mark)
           ==
       %-  zing
-      :~  (give [/updates /keys ~] [%add-graph resource graph mark])
+      :~  (give [/updates /keys ~] [%add-graph resource graph mark overwrite])
           ?~  mark  ~
           ?:  (~(has in validators) u.mark)  ~
           =/  wire  /validator/[u.mark]
@@ -646,7 +651,7 @@
     !>  ^-  update:store
     :+  %0
       now.bowl
-    [%add-graph [ship term] `graph:store`p.u.result q.u.result]
+    [%add-graph [ship term] `graph:store`p.u.result q.u.result %.y]
   ::
       ::  note: near-duplicate of /x/graph
       ::
@@ -662,7 +667,7 @@
     !>  ^-  update:store
     :+  %0
       now.bowl
-    [%add-graph [ship term] `graph:store`p.u.result q.u.result]
+    [%add-graph [ship term] `graph:store`p.u.result q.u.result %.y]
   ::
       [%x %graph-subset @ @ @ @ ~]
     =/  =ship  (slav %p i.t.t.path)
