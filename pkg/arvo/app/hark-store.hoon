@@ -25,6 +25,7 @@
 ::  albeit expensively
 +$  cache
   $:  unread-count=@ud
+      graph-unreads=(map resource @ud)
       ~
   ==
 ::
@@ -71,6 +72,7 @@
     ^-  update:store
     :-  %more
     ^-  (list update:store)
+    :-  [%graph-unreads graph-unreads]
     :+  [%set-dnd dnd]
       [%count unread-count]
     %+  weld
@@ -152,6 +154,7 @@
         (~(put by timebox) index new)
       :-  (give:ha [/updates]~ %added last-seen index new)
       %_  state
+        +  ?~(existing-notif (upd-unreads:ha index %.n) +.state)
         notifications  (put:orm notifications last-seen new-timebox)
         unread-count  ?~(existing-notif +(unread-count) unread-count)
       ==
@@ -167,7 +170,7 @@
         (~(del by timebox) index)
       :-  (give:ha [/updates]~ %archive time index)
       %_  state
-        unread-count  ?.(read.notification (dec unread-count) unread-count)
+        +  ?.(read.notification (upd-unreads:ha index %.y) +.state)
         ::
           notifications
         (put:orm notifications time new-timebox)
@@ -184,6 +187,7 @@
       ^-  (quip card _state)
       :-  (give:ha [/updates]~ %read time index)
       %_  state
+        +  (upd-unreads:ha index %.y)
         unread-count   (dec unread-count)
         notifications  (change-read-status:ha time index %.y)
       ==
@@ -193,6 +197,7 @@
       ^-  (quip card _state)
       :-  (give:ha [/updates]~ %unread time index)
       %_  state
+        +  (upd-unreads:ha index %.n)
         unread-count   +(unread-count)
         notifications  (change-read-status:ha time index %.n)
       ==
@@ -296,22 +301,37 @@
   ^-  (list card)
   [%give %fact paths [%hark-update !>(update)]]~
 ::
+++  upd-unreads
+  |=  [=index:store read=?]
+  ^+  +.state
+  =/  f=$-(@ @)
+    ?:  read
+      dec
+    |=(a=@ +(a))
+  =.  unread-count  (f unread-count)
+  ?.  ?=(%graph -.index)
+    +.state
+  =/  curr-unread=@ud
+    (~(gut by graph-unreads) graph.index 0)
+  +.state(graph-unreads (~(put by graph-unreads) graph.index (f curr-unread)))
+::
 ++  inflate-cache
   |=  state-0
-  ^-  cache
-  :_  ~
-  %+  roll
+  ^+  +.state
+  =/  nots=(list [p=@da =timebox:store])
     (tap:orm notifications)
-  |=  [[time=@da =timebox:store] out=@ud]
-  =/  unreads  ~(tap by timebox)
-  |-
-  ?~  unreads  out
+  |-  =*  outer  $
+  ?~  nots
+    +.state
+  =/  unreads  ~(tap by timebox.i.nots)
+  |-  =*  inner  $
+  ?~  unreads  
+    outer(nots t.nots)
   =*  notification  q.i.unreads
+  =*  index         p.i.unreads
   ?:  read.notification
-    out
-  %_    $
-      unreads  t.unreads
-    ::
-      out  +(out)
-  ==
+    inner(unreads t.unreads)
+  =.  +.state
+    (upd-unreads index read.notification)
+  inner(unreads t.unreads)
 --

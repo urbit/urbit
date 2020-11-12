@@ -78,11 +78,21 @@
         %timebox  (timebox +.upd)
         %set-dnd  b+dnd.upd
         %count    (numb count.upd)
+        %graph-unreads  (graph-unreads map.upd)
         %more     (more +.upd)
         ::
           ?(%archive %read %unread)
         (notif-ref +.upd)
     ==
+    ::
+    ++  graph-unreads
+      |=  =(map resource @ud)
+      ^-  json 
+      %-  pairs
+      %+  turn
+        ~(tap by map)
+      |=  [rid=resource unread=@ud]
+      (enjs-path:resource rid)^(numb unread)
     ::
     ++  added
       |=  [tim=@da idx=^index not=^notification]

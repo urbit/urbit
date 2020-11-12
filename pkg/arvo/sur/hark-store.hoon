@@ -46,5 +46,6 @@
       [%added time=@da =index =notification]
       [%timebox time=@da archived=? =(list [index notification])]
       [%count count=@ud]
+      [%graph-unreads =(map resource @ud)]
   ==
 --
