@@ -1,9 +1,6 @@
-/-  *btc, brpc=btc-node-hook, erpc=electrum-rpc
+/-  *btc
 |%
-+$  btc-credentials  [rpc-url=@t rpc-user=@t rpc-password=@t]
-+$  electrum-credentials  [rpc-url=@t]
-+$  credentials  [bc=btc-credentials ec=electrum-credentials]
-+$  host-info  [creds=credentials connected=? clients=(set ship)]
++$  host-info  [api-url=@t connected=? clients=(set ship)]
 +$  req-id  @t
 +$  action  [=req-id body=action-body]
 +$  action-body
@@ -12,7 +9,7 @@
   ==
 +$  result  [=req-id body=result-body]
 +$  result-body
-  $%  [%address-info a=address utxos=(set utxo) used=?]
+  $%  [%address-info utxos=(set utxo) used=?]
   ==
 +$  error
   $%  [%not-connected status=@ud]
@@ -25,29 +22,20 @@
 +$  status  ?(%connected %disconnected)
 ::
 +$  command
-  $%  [%set-credentials creds=credentials]
+  $%  [%set-credentials api-url=@t]
       [%whitelist-clients clients=(set ship)]
   ==
 ++  rpc
   |%
   +$  action
-    $%  [%erpc request:electrum]
-        [%brpc request:bitcoin-core]
+    $:  [%get-address-info =address]
+        [%get-block-count ~]
     ==
+  ::
   +$  response
-    $%  [%erpc response:electrum]
-        [%brpc response:bitcoin-core]
+    $:  [%get-address-info utxos=(set utxo) used=? blockcount=@ud]
+        [%get-block-count blockcount=@ud]
     ==
-  ++  electrum
-    |%
-    +$  request  request:erpc
-    +$  response  response:erpc
-    --
-  ++  bitcoin-core
-    |%
-    +$  request  btc-node-hook-action:brpc
-    +$  response  btc-node-hook-response:brpc
-    --
   --
 --
 ::
