@@ -23,7 +23,6 @@ export const HarkReducer = (json: any, state: HarkState) => {
   }
   const graphHookData = _.get(json, "hark-graph-hook-update", false);
   if (graphHookData) {
-    console.log(graphHookData);
     graphInitial(graphHookData, state);
     graphIgnore(graphHookData, state);
     graphListen(graphHookData, state);
@@ -133,6 +132,7 @@ function graphWatchSelf(json: any, state: HarkState) {
 }
 
 function reduce(data: any, state: HarkState) {
+  console.log(data);
   unread(data, state);
   read(data, state);
   archive(data, state);
@@ -141,6 +141,14 @@ function reduce(data: any, state: HarkState) {
   dnd(data, state);
   count(data, state);
   added(data, state);
+  graphUnreads(data, state);
+}
+
+function graphUnreads(json: any, state: HarkState) {
+  const data = _.get(json, 'graph-unreads');
+  if(data) {
+    state.graphUnreads =  data;
+  }
 }
 
 function added(json: any, state: HarkState) {
@@ -158,6 +166,10 @@ function added(json: any, state: HarkState) {
     } else {
       state.notifications.set(time, [...timebox, { index, notification }]);
       state.notificationsCount++;
+      if('graph' in index) {
+        const curr = state.graphUnreads[index.graph.graph] || 0;
+        state.graphUnreads[index.graph.graph] = curr+1;
+      }
     }
   }
 }
@@ -243,6 +255,11 @@ function read(json: any, state: HarkState) {
   if (data) {
     const { time, index } = data;
     state.notificationsCount--;
+    if('graph' in index) {
+      const curr = state.graphUnreads[index.graph.graph] || 0;
+      state.graphUnreads[index.graph.graph] = curr-1;
+    }
+
     setRead(time, index, true, state);
   }
 }
@@ -252,6 +269,10 @@ function unread(json: any, state: HarkState) {
   if (data) {
     const { time, index } = data;
     state.notificationsCount++;
+    if('graph' in index) {
+      const curr = state.graphUnreads[index.graph.graph] || 0;
+      state.graphUnreads[index.graph.graph] = curr+1;
+    }
     setRead(time, index, false, state);
   }
 }
