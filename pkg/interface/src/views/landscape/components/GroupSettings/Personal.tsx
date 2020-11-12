@@ -42,7 +42,7 @@ function DeleteGroup(props: {
   const action = props.owner ? "Delete" : "Leave";
   const description = props.owner
     ? "Permanently delete this group. (All current members will no longer see this group.)"
-    : "Leave this group. You can rejoin if it is an open group, or if you are reinvited";
+    : "You can rejoin if it is an open group, or if you are reinvited";
 
   return (
     <Col>
@@ -50,7 +50,7 @@ function DeleteGroup(props: {
       <Label gray mt="2">
         {description}
       </Label>
-      <StatelessAsyncButton onClick={onDelete} mt={2} destructive>
+      <StatelessAsyncButton onClick={onDelete} mt={2} destructive={props.owner}>
         {action} this group
       </StatelessAsyncButton>
     </Col>
@@ -82,6 +82,8 @@ export function GroupPersonalSettings(props: {
     await props.api.hark[func](groupPath);
   };
 
+  const owner = (window.ship in props.group?.tags?.role?.admin)
+
   return (
     <Col gapY="4">
       <FormikOnBlur initialValues={initialValues} onSubmit={onSubmit}>
@@ -91,7 +93,7 @@ export function GroupPersonalSettings(props: {
           caption="Send me notifications when this group changes"
         />
       </FormikOnBlur>
-      <DeleteGroup association={props.association} owner api={props.api} />
+      <DeleteGroup association={props.association} owner={owner} api={props.api} />
     </Col>
   );
 }
