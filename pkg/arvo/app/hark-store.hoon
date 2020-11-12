@@ -15,7 +15,7 @@
       =notifications:store
       archive=notifications:store
       last-seen=@da
-      dnd=?
+      dnd=_|
   ==
 +$  inflated-state
   $:  state-0
