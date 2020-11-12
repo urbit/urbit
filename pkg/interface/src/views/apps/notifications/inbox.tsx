@@ -71,7 +71,7 @@ export default function Inbox(props: {
 
   const onScroll = useCallback((e) => {
     let container = e.target;
-    if(container.scrollHeight - container.scrollTop === container.clientHeight) {
+    if(!props.showArchive && (container.scrollHeight - container.scrollTop === container.clientHeight)) {
       api.hark.getMore();
     }
   }, [api]);

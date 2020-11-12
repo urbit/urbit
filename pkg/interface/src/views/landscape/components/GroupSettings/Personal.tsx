@@ -9,9 +9,9 @@ import {
   Col,
   Label,
   Button,
+  LoadingSpinner,
+  BaseLabel
 } from "@tlon/indigo-react";
-import { Formik, Form, useFormikContext, FormikHelpers } from "formik";
-import { FormError } from "~/views/components/FormError";
 import { Group, GroupPolicy } from "~/types/group-update";
 import { Enc } from "~/types/noun";
 import { Association } from "~/types/metadata-update";
@@ -24,6 +24,7 @@ import { useHistory } from "react-router-dom";
 import { uxToHex } from "~/logic/lib/util";
 import { FormikOnBlur } from "~/views/components/FormikOnBlur";
 import {GroupNotificationsConfig} from "~/types";
+import {StatelessAsyncToggle} from "~/views/components/StatelessAsyncToggle";
 
 function DeleteGroup(props: {
   owner: boolean;
@@ -71,14 +72,8 @@ export function GroupPersonalSettings(props: {
 
   const watching = props.notificationsGroupConfig.findIndex(g => g === groupPath) !== -1;
 
-  const initialValues: FormSchema = {
-    watching
-  };
-  const onSubmit = async (values: FormSchema) => {
-    if(values.watching === watching) {
-      return;
-    }
-    const func = values.watching ? 'listenGroup' : 'ignoreGroup';
+  const onClick = async () => {
+    const func = !watching ? 'listenGroup' : 'ignoreGroup';
     await props.api.hark[func](groupPath);
   };
 
@@ -86,13 +81,17 @@ export function GroupPersonalSettings(props: {
 
   return (
     <Col gapY="4">
-      <FormikOnBlur initialValues={initialValues} onSubmit={onSubmit}>
-        <Toggle
-          id="watching"
-          label="Notify me on group activity"
-          caption="Send me notifications when this group changes"
-        />
-      </FormikOnBlur>
+      <BaseLabel 
+        htmlFor="asyncToggle"
+        display="flex"
+        cursor="pointer"
+      >
+        <StatelessAsyncToggle selected={watching} onClick={onClick} />
+        <Col>
+          <Label>Notify me on group activity</Label>
+          <Label mt="2" gray>Send me notifications when this group changes</Label>
+        </Col>
+      </BaseLabel>
       <DeleteGroup association={props.association} owner={owner} api={props.api} />
     </Col>
   );
