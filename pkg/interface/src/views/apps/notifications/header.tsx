@@ -1,5 +1,5 @@
 import React from "react";
-import { Text as NormalText, Row, Icon } from "@tlon/indigo-react";
+import { Text as NormalText, Row, Icon, Rule } from "@tlon/indigo-react";
 import f from "lodash/fp";
 import _ from "lodash";
 import moment from "moment";
@@ -9,12 +9,6 @@ import { Associations, Contact, Contacts, Rolodex } from "~/types";
 
 const Text = (props: PropFunc<typeof Text>) => (
   <NormalText fontWeight="500" {...props} />
-);
-
-const Divider = (props: PropFunc<typeof Text>) => (
-  <Text lineHeight="tall" mx="1" fontWeight="bold" color="lightGray">
-    |
-  </Text>
 );
 
 function Author(props: { patp: string; contacts: Contacts; last?: boolean }) {
@@ -92,13 +86,9 @@ export function Header(props: {
       <Text mr="1">{description}</Text>
       {!!moduleIcon && <Icon icon={moduleIcon as any} />}
       {!!channel && <Text fontWeight="500">{channelTitle}</Text>}
-      <Text mx="1" fontWeight="bold" color="lightGray">
-        |
-      </Text>
+      <Rule vertical height="12px" />
       <Text fontWeight="500">{groupTitle}</Text>
-      <Text lineHeight="tall" mx="1" fontWeight="bold" color="lightGray">
-        |
-      </Text>
+      <Rule vertical height="12px"/>
       <Text fontWeight="regular" color="lightGray">
         {time}
       </Text>

@@ -1,15 +1,12 @@
 import React from 'react';
 
-import { useLocation } from 'react-router-dom';
 import { Row, Box, Text, Icon, Button } from '@tlon/indigo-react';
 import ReconnectButton from './ReconnectButton';
 import { StatusBarItem } from './StatusBarItem';
 import { Sigil } from '~/logic/lib/sigil';
 
-
-
 const StatusBar = (props) => {
-
+  const invites = Object.keys(props.invites?.['contacts'] || {});
   const metaKey = (window.navigator.platform.includes('Mac')) ? '⌘' : 'Ctrl+';
 
   return (
@@ -28,8 +25,8 @@ const StatusBar = (props) => {
       </Button>
 
         <StatusBarItem mr={2} onClick={() => props.api.local.setOmnibox()}>
-        { !props.doNotDisturb && props.notificationsCount > 0 &&
-          (<Box display="block" right="-8px" top="-8px" position="absolute" >
+        { !props.doNotDisturb && (props.notificationsCount > 0 || invites.length > 0) &&
+          (<Box display="block" right="-5px" top="-5px" position="absolute" >
             <Icon color="blue" icon="Bullet" />
            </Box>
         )}
@@ -47,15 +44,6 @@ const StatusBar = (props) => {
         />
       </Row>
       <Row justifyContent="flex-end" collapse>
-      {!props.doNotDisturb && (<StatusBarItem color="blue" px='12px' mr='2' onClick={() => props.history.push('/~notifications')}>
-        <Text
-        fontWeight={props.notificationsCount > 0 ? "500" : "400"}
-        fontSize='0'
-        color="blue"
-        >
-          {(props.notificationsCount > 99) ? "99+" : props.notificationsCount}
-        </Text>
-      </StatusBarItem>)}
         <StatusBarItem px={'2'} flexShrink='0' onClick={() => props.history.push('/~profile')}>
           <Sigil ship={props.ship} size={16} color='black' classes='mix-blend-diff' icon />
           <Text ml={2} display={["none", "inline"]} fontFamily="mono">~{props.ship}</Text>

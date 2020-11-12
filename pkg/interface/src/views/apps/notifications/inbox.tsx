@@ -9,6 +9,7 @@ import { BigInteger } from "big-integer";
 import GlobalApi from "~/logic/api/global";
 import { Notification } from "./notification";
 import { Associations } from "~/types";
+import { cite } from '~/logic/lib/util';
 
 type DatedTimebox = [BigInteger, Timebox];
 
@@ -39,8 +40,9 @@ export default function Inbox(props: {
   associations: Associations;
   contacts: Rolodex;
   filter: string[];
+  invites: any;
 }) {
-  const { api, associations } = props;
+  const { api, associations, invites } = props;
   useEffect(() => {
     let seen = false;
     setTimeout(() => {
@@ -74,8 +76,54 @@ export default function Inbox(props: {
     }
   }, [api]);
 
+  const incomingGroups = Object.values(invites?.['contacts'] || {});
+
+  const getKeyByValue = (object, value) => {
+    return Object.keys(object).find(key => object[key] === value);
+  };
+
+  const acceptInvite = (invite) => {
+    const resource = {
+      ship: `~${invite.resource.ship}`,
+      name: invite.resource.name
+    };
+    return api.contacts.join(resource).then(() => {
+      api.invite.accept('contacts', getKeyByValue(invites['contacts'], invite));
+    });
+  };
+
   return (
     <Col onScroll={onScroll} overflowY="auto" flexGrow="1">
+      {incomingGroups.map((invite) => (
+        <Box
+          height='100%'
+          width='100%'
+          bg='white'
+          p='3'
+          fontSize='0'>
+          <Text display='block' pb='2' gray>{cite(invite.resource.ship)} invited you to <Text fontWeight='500'>{invite.resource.name}</Text></Text>
+          <Box pt='3'>
+            <Text
+              onClick={() => acceptInvite(invite)}
+            color='blue'
+            mr='2'
+            cursor='pointer'>
+              Accept
+            </Text>
+            <Text
+              color='red'
+              onClick={() =>
+                api.invite.decline(
+                  'contacts',
+                  getKeyByValue(invites['contacts'], invite)
+                )
+              }
+              cursor='pointer'>
+                Reject
+              </Text>
+          </Box>
+        </Box>
+      ))}
       {newNotifications && (
         <DaySection
           latest
@@ -144,7 +192,9 @@ function DaySection({
     <>
       <Box position="sticky" zIndex="3" top="-1px" bg="white">
         <Box p="2" bg="scales.black05">
-          {moment(daToUnix(timeboxes[0][0])).calendar(null, calendar)}
+          <Text>
+            {moment(daToUnix(timeboxes[0][0])).calendar(null, calendar)}
+          </Text>
         </Box>
       </Box>
       {_.map(timeboxes.sort(sortTimeboxes), ([date, nots], i) =>
