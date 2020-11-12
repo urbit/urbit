@@ -1889,24 +1889,6 @@
         ==
       ^=  moves
         :~  :*  duct=~[/http-get-open]
-              %give
-              %response
-              %continue
-              :-  ~
-              %-  as-octt:mimes:html
-              """
-              id: {((d-co:co 1) +(clog-threshold:eyre-gate))}
-              data: \{"json":[1],"id":1,"response":"diff"}
-
-
-              """
-              complete=%.n
-            ==
-            :*  duct=~[/http-put-request]  %pass
-              /channel/subscription/'0123456789abcdef'/'1'/~nul/two
-              %g  %deal  [~nul ~nul]  %two  %leave  ~
-            ==
-            :*  duct=~[/http-get-open]
                 %give
                 %response
                 %continue
@@ -1921,22 +1903,22 @@
                 complete=%.n
             ==
             :*  duct=~[/http-put-request]  %pass
-              /channel/subscription/'0123456789abcdef'/'1'/~nul/two
-              %g  %deal  [~nul ~nul]  %two  %leave  ~
+                /channel/subscription/'0123456789abcdef'/'1'/~nul/two
+                %g  %deal  [~nul ~nul]  %two  %leave  ~
             ==
             :*  duct=~[/http-get-open]
-              %give
-              %response
-              %continue
-              :-  ~
-              %-  as-octt:mimes:html
-              """
-              id: {((d-co:co 1) clog-threshold:eyre-gate)}
-              data: \{"json":[1],"id":1,"response":"diff"}
+                %give
+                %response
+                %continue
+                :-  ~
+                %-  as-octt:mimes:html
+                """
+                id: {((d-co:co 1) +(clog-threshold:eyre-gate))}
+                data: \{"json":[1],"id":1,"response":"diff"}
 
 
-              """
-              complete=%.n
+                """
+                complete=%.n
             ==
         ==
     ==
