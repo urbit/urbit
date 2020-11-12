@@ -82,7 +82,7 @@ export function GroupPersonalSettings(props: {
     await props.api.hark[func](groupPath);
   };
 
-  const owner = (window.ship in props.group?.tags?.role?.admin)
+  const owner = (props.group?.tags?.role?.admin.has(window.ship) || false);
 
   return (
     <Col gapY="4">
