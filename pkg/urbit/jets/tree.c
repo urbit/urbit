@@ -1689,7 +1689,7 @@ static c3_c* _141_two_xeb_ha[] = {
   };
 
 static u3j_core _141_two__in_d[] =
-  { // { "apt", 7, _141_two__in_apt_a, 0, _141_two__in_apt_ha },
+  { { "apt", 7, _141_two__in_apt_a, 0, _141_two__in_apt_ha },
     { "bif", 7, _141_two__in_bif_a, 0, _141_two__in_bif_ha },
     { "del", 7, _141_two__in_del_a, 0, _141_two__in_del_ha },
     { "dif", 7, _141_two__in_dif_a, 0, _141_two__in_dif_ha },
@@ -1797,7 +1797,7 @@ static c3_c* _141_two__in_ha[] = {
 static u3j_core _141_two__by_d[] =
   { { "all", 7, _141_two__by_all_a, 0, _141_two__by_all_ha },
     { "any", 7, _141_two__by_any_a, 0, _141_two__by_any_ha },
-    // { "apt", 7, _141_two__by_apt_a, 0, _141_two__by_apt_ha },
+    { "apt", 7, _141_two__by_apt_a, 0, _141_two__by_apt_ha },
     { "bif", 7, _141_two__by_bif_a, 0, _141_two__by_bif_ha },
     { "del", 7, _141_two__by_del_a, 0, _141_two__by_del_ha },
     { "dif", 7, _141_two__by_dif_a, 0, _141_two__by_dif_ha },
