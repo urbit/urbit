@@ -44,7 +44,7 @@ function getMuted(
     const parent = getParentIndex(index.graph, notification.contents.graph);
 
     return _.findIndex(
-      graphs?.watching || [], 
+      graphs?.watching || [],
       (g) => g.graph === graph && g.index === parent
     ) === -1;
   }
@@ -90,11 +90,11 @@ function NotificationWrapper(props: {
     <Row alignItems="center" justifyContent="space-between">
       {children}
       <Row gapX="2" p="2" alignItems="center">
-        <StatelessAsyncAction name={changeMuteDesc} onClick={onChangeMute}>
+        <StatelessAsyncAction name={changeMuteDesc} onClick={onChangeMute} backgroundColor="transparent">
           {changeMuteDesc}
         </StatelessAsyncAction>
         {!props.archived && (
-          <StatelessAsyncAction name={time.toString()} onClick={onArchive}>
+          <StatelessAsyncAction name={time.toString()} onClick={onArchive} backgroundColor="transparent">
             Archive
           </StatelessAsyncAction>
         )}
