@@ -83,6 +83,8 @@ export function ChatNotification(props: {
                 isLastRead={false}
                 group={group}
                 contacts={groupContacts}
+                fontSize='0'
+                pt='2'
               />
             </Link>
           );

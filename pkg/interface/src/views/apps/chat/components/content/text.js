@@ -26,13 +26,12 @@ const DISABLED_INLINE_TOKENS = [
 
 const renderers = {
   inlineCode: ({language, value}) => {
-    return <Text mono fontSize='14px' backgroundColor='washedGray' style={{ whiteSpace: 'preWrap'}}>{value}</Text>
+    return <Text mono backgroundColor='washedGray' style={{ whiteSpace: 'preWrap'}}>{value}</Text>
   },
   code: ({language, value}) => {
     return <Text
               p='1'
               className='clamp-message'
-              fontSize='14px'
               display='block'
               borderRadius='1'
               mono
@@ -84,7 +83,7 @@ export default class TextContent extends Component {
       && (urbitOb.isValidPatp(group[2]) // valid patp?
       && (group[0] === content.text))) { // entire message is room name?
       return (
-        <Text fontSize='14px' color='black' lineHeight="tall">
+        <Text fontSize={props.fontSize ? props.fontSize : '14px'} color='black' lineHeight="tall">
           <Link
             className="bb b--black b--white-d mono"
             to={'/~landscape/join/' + group.input}>
@@ -94,7 +93,7 @@ export default class TextContent extends Component {
       );
     } else {
       return (
-        <Text color='black' fontSize='14px' lineHeight="tall" style={{ overflowWrap: 'break-word' }}>
+        <Text color='black' fontSize={props.fontSize ? props.fontSize : '14px'} lineHeight="tall" style={{ overflowWrap: 'break-word' }}>
           <MessageMarkdown source={content.text} />
         </Text>
       );
