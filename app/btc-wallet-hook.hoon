@@ -138,8 +138,8 @@
     ?~  ureq  `state
     :_  state(pend (~(del by pend) req-id.p.update))
     :~  %-  poke-store
-        :*  %watch-address  xpub.u.ureq  chyg.u.ureq  idx.u.ureq
-            utxos.body.p.update  used.body.p.update
+        :*  %address-info  xpub.u.ureq  chyg.u.ureq  idx.u.ureq
+            utxos.body.p.update  used.body.p.update  blockcount.body.p.update
         ==
     ==
   ==

@@ -55,8 +55,7 @@
 ::
 +$  action
   $%  [%add-wallet =xpub scan-to=(unit scon) max-gap=(unit @ud) confs=(unit @ud)]
-      [%watch-address =xpub =chyg =idx utxos=(set utxo) used=?]
-      [%update-address a=address utxos=(set utxo)]
+      [%address-info =xpub =chyg =idx utxos=(set utxo) used=? blockcount=@ud]
       [%generate-address =xpub =chyg]
   ==
 ::
