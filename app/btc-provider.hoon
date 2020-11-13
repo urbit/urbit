@@ -7,7 +7,7 @@
 ::    results/errors of RPC calls
 ::
 /-  btc
-/+  *btc-provider, dbug, default-agent, elib=electrum-rpc
+/+  *btc-provider, dbug, default-agent
 |%
 +$  versioned-state
     $%  state-0
@@ -31,7 +31,7 @@
 ++  on-init
   ^-  (quip card _this)
   ~&  >  '%btc-provider initialized successfully'
-  `this(host-info [*credentials connected=%.n clients=*(set ship)], whitelist *(set ship))
+  `this(host-info ['' connected=%.n clients=*(set ship)], whitelist *(set ship))
 ++  on-save
   ^-  vase
   !>(state)
@@ -107,10 +107,10 @@
   =/  ract=action:rpc
     ?-  -.body.act
         %address-info
-      [%get-address-utxos address.body.act]
+      [%get-address-info address.body.act]
       ::
         %ping
-      [%brpc %get-block-count ~]
+      [%get-block-count ~]
     ==
   [~[(req-card act ract)] state]
 ++  req-card
@@ -124,7 +124,7 @@
 ++  mk-wire
   |=  act=action  ^-  wire
   /[-.body.act]/[req-id.act]/[(scot %da now.bowl)]
-::  Handles HTTP responses from RPC servers. Parses for errors, then handles response.
+::  Handles HTTP responses from RPC servers. Parses for errors, then handles response. 
 ::  For actions that require collating multiple RPC calls, uses req-card to call out
 ::    to RPC again if more information is required.
 ::
@@ -149,12 +149,12 @@
   ?+  wire  ~|("Unexpected HTTP response" !!)
       [%address-info @ *]
     =/  req-id=@t  +>-.wire
-    =/  resp=response:rpc  (parse-response:rpc rpc-resp)
+    =/  resp=response:rpc  (parse-response rpc-resp)
     ?>  ?=([%get-address-info *] resp)
     :_  state
-    ~[(send-update [%& req-id %address-info utxos.resp %.y])]
+    ~[(send-update [%& req-id %address-info +.resp])]
      ::
-      [%ping %brpc *]
+      [%ping @ *]
     :-  ~[(send-status %connected)]
     state(connected.host-info %.y)
   ==
