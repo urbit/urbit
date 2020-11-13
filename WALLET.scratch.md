@@ -59,9 +59,10 @@ abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon 
 ### manual scanning of empty wallet
 Uses `btc-wallet-hook`, with max-gap=3
 ```
+:btc-provider|command [%set-credentials api-url='http://localhost:50002']
 :btc-wallet-hook|action [%set-provider ~dopzod]
 =scan-xpub 'zpub6rFR7y4Q2AijBEqTUquhVz398htDFrtymD9xYYfG1m4wAcvPhXNfE3EfH1r1ADqtfSdVCToUG868RvUUkgDKf31mGDtKsAYz2oz2AGutZYs'
-:btc-wallet-store|action [%add-wallet scan-xpub ~ [~ 3]]
+:btc-wallet-store|action [%add-wallet scan-xpub ~ [~ 3] [~ 6]]
 :btc-wallet-store +dbug
 :: shows scans with the xpub and {0 1 2} todos
 

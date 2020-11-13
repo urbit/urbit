@@ -16,12 +16,14 @@
 ::  walts: all wallets, keyed by their xpubs
 ::  scans: batch info for wallets being scanned
 ::  batch-size: how many addresses to send out at once for checking
+::  last-block: most recent block seen by the store
 ::
 +$  state-0
   $:  %0
       walts=(map xpub:btc walt)
       =scans
-      batch-size=@
+      batch-size=@ud
+      last-block=@ud
   ==
 ::
 +$  card  card:agent:gall
@@ -40,7 +42,7 @@
 ++  on-init
   ^-  (quip card _this)
   ~&  >  '%btc-wallet-store initialized'
-  `this(state [%0 *(map xpub:btc walt) *^scans default-max-gap])
+  `this(state [%0 *(map xpub:btc walt) *^scans max-gap:defaults 0])
 ++  on-save
   ^-  vase
   !>(state)
@@ -66,7 +68,6 @@
   ?>  (team:title our.bowl src.bowl)
   ?+  pax  (on-watch:def pax)
       [%requests *]
-      ::  TODO: run req-scan on all scans
     :_  this
     %-  zing
     %~  val  by
@@ -101,11 +102,8 @@
     =.  walts  (~(put by walts) xpub.act w)
     (init-batches xpub.act (dec max-gap.w))
     ::
-      %watch-address
-    (watch-address +.act)
-    ::
-      %update-address
-    `state
+      %address-info 
+    (update-address +.act)
     ::
       %generate-address
     =/  uw=(unit walt)  (~(get by walts) xpub.act)
@@ -183,10 +181,11 @@
 ::
 ++  end-scan
   |=  [=xpub]
-  ^-  _state
+  ^-  (quip card _state)
   =/  w=walt  (~(got by walts) xpub)
   =.  scans  (~(del by scans) [xpub %0])
   =.  scans  (~(del by scans) [xpub %1])
+  :-  ~[[%give %fact ~[/updates] %btc-wallet-store-update !>([%scan-done xpub])]]
   state(walts (~(put by walts) xpub w(scanned %.y)))
 ::  initiate a scan if one hasn't started
 ::  check status of scan if one is running
@@ -197,7 +196,7 @@
   =/  s0  (scan-status xpub %0)
   =/  s1  (scan-status xpub %1)
   ?:  ?&(empty.s0 done.s0 empty.s1 done.s1)
-    `(end-scan xpub)
+    (end-scan xpub)
   =/  [cards0=(list card) batch0=batch]
     (bump-batch xpub %0)
   =/  [cards1=(list card) batch1=batch]
@@ -206,21 +205,27 @@
   state(scans (insert-batches xpub batch0 batch1))
 ::  watch the address passed, update wallet if it's used
 ::  if this idx was the last in todo.scans, do run-scan to see whether scan is done
+::  updates wallet-store state to have last-block
 ::
-++  watch-address
-  |=  [=xpub:btc =chyg =idx utxos=(set utxo) used=?]
+++  update-address
+  |=  [=xpub:btc =chyg =idx utxos=(set utxo) used=? last-block=@ud]
   ^-  (quip card _state)
-  ?.  (~(has by scans) [xpub chyg])  `state
-  =/  w=walt   (~(got by walts) xpub)
-  =/  b=batch  (~(got by scans) [xpub chyg])
+  =?  state  (gth last-block last-block.state)
+    state(last-block last-block)
+  =/  w=(unit walt)  (~(get by walts) xpub)
+  ?~  w  `state
   =?  walts  used
-    %+  ~(put by walts)
-      xpub
-    %+  ~(watch-address wad w chyg)
-      (~(mk-address wad w chyg) idx)
+    %+  ~(put by walts)  xpub
+    %+  ~(update-address wad u.w chyg)
+      (~(mk-address wad u.w chyg) idx)
     [chyg idx utxos]
+  ::  if the wallet is being scanned, update the scan batch
+  ::
+  ?.  (~(has by scans) [xpub chyg])  `state
+  =/  b=(unit batch)  (~(get by scans) [xpub chyg])
+  ?~  b  `state
   =.  scans
-    (iter-scan b(has-used ?|(used has-used.b)) xpub chyg idx)
+    (iter-scan u.b(has-used ?|(used has-used.u.b)) xpub chyg idx)
   ?:  empty:(scan-status xpub chyg)
     (run-scan xpub)
   `state
