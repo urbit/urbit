@@ -124,6 +124,10 @@
 ++  mk-wire
   |=  act=action  ^-  wire
   /[-.body.act]/[req-id.act]/[(scot %da now.bowl)]
+::
+++  get-req-id
+  |=  =wire  ^-  req-id
+  +<.wire
 ::  Handles HTTP responses from RPC servers. Parses for errors, then handles response. 
 ::  For actions that require collating multiple RPC calls, uses req-card to call out
 ::    to RPC again if more information is required.
@@ -148,11 +152,10 @@
   ::
   ?+  wire  ~|("Unexpected HTTP response" !!)
       [%address-info @ *]
-    =/  req-id=@t  +>-.wire
     =/  resp=response:rpc  (parse-response rpc-resp)
     ?>  ?=([%get-address-info *] resp)
     :_  state
-    ~[(send-update [%& req-id %address-info +.resp])]
+    ~[(send-update [%& (get-req-id wire) %address-info +.resp])]
      ::
       [%ping @ *]
     :-  ~[(send-status %connected)]
