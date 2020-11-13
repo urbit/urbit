@@ -118,10 +118,10 @@
   =|  out=outbound-config:iris
   =/  req=request:http
     (gen-request host-info ract)
-  [%pass (mk-wire act) %arvo %i %request req out]
+  [%pass (rpc-wire act) %arvo %i %request req out]
 ::  wire structure: /action-tas/req-id/now
 ::
-++  mk-wire
+++  rpc-wire
   |=  act=action  ^-  wire
   /[-.body.act]/[req-id.act]/[(scot %da now.bowl)]
 ::
