@@ -28,7 +28,8 @@
 ::  walt: wallet datastructure
 ::  scanned: whether the wallet's addresses have been checked for prior activity
 ::  scan-to
-::  max-gap
+::  max-gap: maximum number of consec blank addresses before wallet stops scanning
+::  confs:   confirmations required (after this is hit for an address, wallet stops refreshing it)
 ::
 +$  walt
   $:  =wilt
@@ -37,7 +38,8 @@
       =nixt
       scanned=?
       scan-to=scon
-      max-gap=@
+      max-gap=@ud
+      confs=@ud
   ==
 ::  todo: Set of indices; empty it out until none are left--means scanning of that batch is done
 ::  start:     index this batch started scanning from
@@ -52,7 +54,7 @@
 ::  %update-address: update info of an address if we're watching it
 ::
 +$  action
-  $%  [%add-wallet =xpub scan-to=(unit scon) max-gap=(unit @)]
+  $%  [%add-wallet =xpub scan-to=(unit scon) max-gap=(unit @ud) confs=(unit @ud)]
       [%watch-address =xpub =chyg =idx utxos=(set utxo) used=?]
       [%update-address a=address utxos=(set utxo)]
       [%generate-address =xpub =chyg]
@@ -60,9 +62,10 @@
 ::
 +$  update
   $%  [%generate-address =address]
+      [%scan-done =xpub]
   ==
 ::
-+$  req-method
-  $?(%scan-address)
-+$  request  [method=req-method a=address =xpub =chyg =idx]
++$  request
+  $%  [%scan-address a=address =xpub =chyg =idx]
+  ==
 --

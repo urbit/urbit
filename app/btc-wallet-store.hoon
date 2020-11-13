@@ -16,12 +16,14 @@
 ::  walts: all wallets, keyed by their xpubs
 ::  scans: batch info for wallets being scanned
 ::  batch-size: how many addresses to send out at once for checking
+::  last-block: most recent block seen by the store
 ::
 +$  state-0
   $:  %0
       walts=(map xpub:btc walt)
       =scans
-      batch-size=@
+      batch-size=@ud
+      last-block=@ud
   ==
 ::
 +$  card  card:agent:gall
@@ -40,7 +42,7 @@
 ++  on-init
   ^-  (quip card _this)
   ~&  >  '%btc-wallet-store initialized'
-  `this(state [%0 *(map xpub:btc walt) *^scans default-max-gap])
+  `this(state [%0 *(map xpub:btc walt) *^scans max-gap:defaults 0])
 ++  on-save
   ^-  vase
   !>(state)
@@ -66,7 +68,6 @@
   ?>  (team:title our.bowl src.bowl)
   ?+  pax  (on-watch:def pax)
       [%requests *]
-      ::  TODO: run req-scan on all scans
     :_  this
     %-  zing
     %~  val  by
@@ -183,10 +184,11 @@
 ::
 ++  end-scan
   |=  [=xpub]
-  ^-  _state
+  ^-  (quip card _state)
   =/  w=walt  (~(got by walts) xpub)
   =.  scans  (~(del by scans) [xpub %0])
   =.  scans  (~(del by scans) [xpub %1])
+  :-  ~[[%give %fact ~[/updates] %btc-wallet-store-update !>([%scan-done xpub])]]
   state(walts (~(put by walts) xpub w(scanned %.y)))
 ::  initiate a scan if one hasn't started
 ::  check status of scan if one is running
@@ -197,7 +199,7 @@
   =/  s0  (scan-status xpub %0)
   =/  s1  (scan-status xpub %1)
   ?:  ?&(empty.s0 done.s0 empty.s1 done.s1)
-    `(end-scan xpub)
+    (end-scan xpub)
   =/  [cards0=(list card) batch0=batch]
     (bump-batch xpub %0)
   =/  [cards1=(list card) batch1=batch]
