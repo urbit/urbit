@@ -7,7 +7,7 @@
 ::    results/errors of RPC calls
 ::
 /-  btc
-/+  *btc-provider, dbug, default-agent, elib=electrum-rpc
+/+  *btc-provider, dbug, default-agent
 |%
 +$  versioned-state
     $%  state-0
@@ -31,7 +31,7 @@
 ++  on-init
   ^-  (quip card _this)
   ~&  >  '%btc-provider initialized successfully'
-  `this(host-info [*credentials connected=%.n clients=*(set ship)], whitelist *(set ship))
+  `this(host-info ['' connected=%.n clients=*(set ship)], whitelist *(set ship))
 ++  on-save
   ^-  vase
   !>(state)
@@ -91,7 +91,7 @@
   ?-  -.comm
       %set-credentials
     :-  do-ping
-    state(host-info [creds.comm connected=%.n clients=*(set ship)])
+    state(host-info [api-url.comm connected=%.n clients=*(set ship)])
     ::
       %whitelist-clients
     `state(whitelist (~(uni in whitelist) clients.comm))
@@ -107,10 +107,10 @@
   =/  ract=action:rpc
     ?-  -.body.act
         %address-info
-      [%erpc %get-address-utxos address.body.act]
+      [%get-address-info address.body.act]
       ::
         %ping
-      [%brpc %get-block-count ~]
+      [%get-block-count ~]
     ==
   [~[(req-card act ract)] state]
 ++  req-card
@@ -118,20 +118,13 @@
   =|  out=outbound-config:iris
   =/  req=request:http
     (gen-request host-info ract)
-  [%pass (mk-wire act ract) %arvo %i %request req out]
-::  wire structure: /action-tas/rpc-action-tas/req-id/(address, if rpc-action %erpc)/now 
+  [%pass (mk-wire act) %arvo %i %request req out]
+::  wire structure: /action-tas/req-id/now
 ::
 ++  mk-wire
-  |=  [act=action ract=action:rpc]
-  ^-  wire
-  =/  addr=path
-    ?:(?=(%erpc -.ract) /(address-to-cord:elib address.ract) /)
-  %-  zing
-  :~  /[-.body.act]/[-.ract]/[req-id.act]
-      addr
-      /[(scot %da now.bowl)]
-  ==
-::  Handles HTTP responses from RPC servers. Parses for errors, then handles response.
+  |=  act=action  ^-  wire
+  /[-.body.act]/[req-id.act]/[(scot %da now.bowl)]
+::  Handles HTTP responses from RPC servers. Parses for errors, then handles response. 
 ::  For actions that require collating multiple RPC calls, uses req-card to call out
 ::    to RPC again if more information is required.
 ::
@@ -154,32 +147,16 @@
   ::  no error, switch on wire to handle RPC data
   ::
   ?+  wire  ~|("Unexpected HTTP response" !!)
-      [%address-info %erpc @ @ *]
-    [(handle-address-info wire rpc-resp) state]
+      [%address-info @ *]
+    =/  req-id=@t  +>-.wire
+    =/  resp=response:rpc  (parse-response rpc-resp)
+    ?>  ?=([%get-address-info *] resp)
+    :_  state
+    ~[(send-update [%& req-id %address-info +.resp])]
      ::
-      [%ping %brpc *]
+      [%ping @ *]
     :-  ~[(send-status %connected)]
     state(connected.host-info %.y)
-  ==
-::
-++  handle-address-info
-  |=  [=wire rpc-resp=response:rpc:jstd]
-  ^-  (list card)
-  =/  req-id=@t  +>-.wire
-  =/  addr=address:btc  (address-from-cord:elib +>+<.wire)
-  =/  eresp  (parse-response:electrum-rpc:elib rpc-resp)
-  :~  ?-  -.eresp
-          %get-address-utxos
-        ?:  =(0 ~(wyt in utxos.eresp))
-          (req-card [req-id %address-info addr] [%erpc %get-address-history addr])
-        (send-update [%& req-id %address-info addr utxos.eresp %.y])
-        ::
-          %get-address-history
-        %-  send-update
-        :*  %&  req-id  %address-info  addr  *(set utxo:btc)
-            ?:(=(0 ~(wyt in txs.eresp)) %.n %.y)
-        ==
-      ==
   ==
 ::
 ++  connection-error
@@ -229,60 +206,4 @@
       ==
       (start-ping-timer ~s30)
   ==
-::  RPC JSON helper gates
-::  TODO: move these to /lib
-::
-++  httr-to-rpc-response
-  |=  hit=httr:eyre
-  ^-  response:rpc:jstd
-  ~|  hit
-  =/  jon=json  (need (de-json:html q:(need r.hit)))
-  ?.  =(%2 (div p.hit 100))
-    (parse-rpc-error jon)
-  =,  dejs-soft:format
-  ^-  response:rpc:jstd
-  =;  dere
-    =+  res=((ar dere) jon)
-    ?~  res  (need (dere jon))
-    [%batch u.res]
-  |=  jon=json
-  ^-  (unit response:rpc:jstd)
-  =/  res=[id=(unit @t) res=(unit json) err=(unit json)]
-    %.  jon
-    =,  dejs:format
-    =-  (ou -)
-    :~  ['id' (uf ~ (mu so))]
-        ['result' (uf ~ (mu same))]
-        ['error' (uf ~ (mu same))]
-    ==
-  ?:  ?=([^ * ~] res)
-    `[%result [u.id.res ?~(res.res ~ u.res.res)]]
-  ~|  jon
-  `(parse-rpc-error jon)
-::
-++  get-rpc-response
-  |=  response=client-response:iris
-  ^-  response:rpc:jstd
-  ?>  ?=(%finished -.response)
-  %-  httr-to-rpc-response
-    %+  to-httr:iris
-      response-header.response
-    full-file.response
-::
-++  parse-rpc-error
-  |=  =json
-  ^-  response:rpc:jstd
-  :-  %error
-  ?~  json  ['' '' '']
-  %.  json
-  =,  dejs:format
-  =-  (ou -)
-  :~  =-  ['id' (uf '' (cu - (mu so)))]
-      |*(a=(unit) ?~(a '' u.a))
-      :-  'error'
-      =-  (uf ['' ''] -)
-      =-  (cu |*(a=(unit) ?~(a ['' ''] u.a)) (mu (ou -)))
-      :~  ['code' (uf '' no)]
-          ['message' (uf '' so)]
-  ==  ==
 --

@@ -5,7 +5,19 @@ This architecture is, by Urbit standards, awkward. The awkwardness arises mainly
 
 My goal in designing this was to isolate the architecture's awkwardness as much as possible to specific chokepoints, and to keep the non-provider portions as clean state machine primitives.
 
-System parts:
+## System Components
+### Outside Dependencies (for `btc-provider`)
+These dependencies only apply to a provider running a full node with the `btc-provider` agent.
+- Fully sync'd Bitcoin full node with running RPC. Be sure to have settings:
+```
+server=1
+rpcallowip=127.0.0.1
+rpcport=8332
+```
+- Fully sync'd ElectRS
+- Custom HTTP API proxy. This is what `btc-provider` calls. It is necessary because ElectRS does not accept HTTP calls, and its API endpoints chain several RPC calls into one for convenience. It also abstracts out the multiple Bitcoin/ElectRS RPCs.
+
+### Gall Agents
 - `btc-wallet-store`: holds wallets and watches their addresses
   * tracks whether a wallet has been scanned
   * generates receiving addresses and change addresses
