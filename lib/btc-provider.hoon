@@ -98,5 +98,59 @@
     %^  cat  3
     (cat 3 endpoint base)  addr
   --
+::  RPC/HTTP Utilities
+::
+++  httr-to-rpc-response
+  |=  hit=httr:eyre
+  ^-  response:rpc:jstd
+  ~|  hit
+  =/  jon=json  (need (de-json:html q:(need r.hit)))
+  ?.  =(%2 (div p.hit 100))
+    (parse-rpc-error jon)
+  =,  dejs-soft:format
+  ^-  response:rpc:jstd
+  =;  dere
+    =+  res=((ar dere) jon)
+    ?~  res  (need (dere jon))
+    [%batch u.res]
+  |=  jon=json
+  ^-  (unit response:rpc:jstd)
+  =/  res=[id=(unit @t) res=(unit json) err=(unit json)]
+    %.  jon
+    =,  dejs:format
+    =-  (ou -)
+    :~  ['id' (uf ~ (mu so))]
+        ['result' (uf ~ (mu same))]
+        ['error' (uf ~ (mu same))]
+    ==
+  ?:  ?=([^ * ~] res)
+    `[%result [u.id.res ?~(res.res ~ u.res.res)]]
+  ~|  jon
+  `(parse-rpc-error jon)
+::
+++  get-rpc-response
+  |=  response=client-response:iris
+  ^-  response:rpc:jstd
+  ?>  ?=(%finished -.response)
+  %-  httr-to-rpc-response
+    %+  to-httr:iris
+      response-header.response
+    full-file.response
+::
+++  parse-rpc-error
+  |=  =json
+  ^-  response:rpc:jstd
+  :-  %error
+  ?~  json  ['' '' '']
+  %.  json
+  =,  dejs:format
+  =-  (ou -)
+  :~  =-  ['id' (uf '' (cu - (mu so)))]
+      |*(a=(unit) ?~(a '' u.a))
+      :-  'error'
+      =-  (uf ['' ''] -)
+      =-  (cu |*(a=(unit) ?~(a ['' ''] u.a)) (mu (ou -)))
+      :~  ['code' (uf '' no)]
+          ['message' (uf '' so)]
+  ==  ==
 --
-
