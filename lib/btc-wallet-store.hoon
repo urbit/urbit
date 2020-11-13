@@ -5,7 +5,11 @@
 =,  secp:crypto
 =+  ecc=secp256k1
 |%
-++  default-max-gap  20
+++  defaults
+  |%
+  ++  max-gap  20
+  ++  confs    6
+  --
 ::
 ++  hash-xpub
   |=  [=xpub:btc =chyg =idx]
@@ -16,7 +20,7 @@
   [(met 3 dat) dat]
 ::
 ++  from-xpub
-  |=  [=xpub:btc scan-to=(unit scon) max-gap=(unit @)]
+  |=  [=xpub:btc scan-to=(unit scon) max-gap=(unit @ud) confs=(unit @ud)]
   ^-  walt
   :*  (from-extended:bip32 (trip xpub))
       (xpub-type:btc xpub)
@@ -24,7 +28,8 @@
       [0 0]
       %.n
       (fall scan-to *scon)
-      (fall max-gap default-max-gap)
+      (fall max-gap max-gap:defaults)
+      (fall confs confs:defaults)
   ==
 ::  wad: door for processing walts (wallets)
 ::        parameterized on a walt and it's chyg account
