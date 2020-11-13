@@ -43,6 +43,7 @@ abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon 
 
 ## Legacy BTC Address Parsing
 ```
+
 ::  yields the initial addresss
 `@uc`(scan "17xg1BZLn63zCxdTxbsFLoWpQeSnD7zSHW" fim:ag)
 
@@ -244,3 +245,22 @@ https://github.com/bitcoin/bips/blob/master/bip-0143.mediawiki#P2SHP2WPKH
 
 ## more scratch
 
+## Sponsorship for Stars/Planets
+```
+> (clan:title our)
+%king
+> (clan:title ~timluc)
+%king
+> (clan:title ~timluc-miptev)
+%duke
+> (clan:title ~zod)
+%czar
+> (clan:title ~fipdul-podfer-bacdul-timzod)
+%earl
+
+::  sponsorship
+> (sein:title our now ~timluc-miptev)
+~panten
+> (saxo:title our now ~timluc-miptev)
+~[~timluc-miptev ~panten ~ten]
+```
