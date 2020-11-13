@@ -36,7 +36,7 @@
   |=  h=@t
   (hash256 [32 (to-hex h)])
 ::
-++  http-request
+++  get-request
   |=  url=@t
   ^-  request:http
   [%'GET' url ~ ~]
@@ -44,69 +44,59 @@
 ++  gen-request
  |=  [=host-info ract=action:rpc]
   ^-  request:http
-  %+  action-to-http:rpc
-  api-url.creds.host-info
+  %+  rpc-action-to-http
+  api-url.host-info  ract
 ::
 ++  to-response
   |=  result:rpc
   ^-  result
   *result
-++  rpc
-  |%
-  ++  parse-response
-    |=  res=response:rpc:jstd
-    |^  ^-  response:rpc
-    ~|  -.res
-    ::  only deals with successful requests
-    ::  ignores (%error, %fails and %batch)
-    ::
-    ?>  ?=(%result -.res)
-    ?+  id.res  ~|([%unsupported-response id.res] !!)
-        %get-address-info
-      [id.res (address-info res.res)]
-      ::
-        %get-block-count
-      [id.res (ni:dejs:format res.res)]
-    ==
-    ++  address-info
-    :: TODO: top element is blockcount+utxos
-    ::  use: (as:dejs:format utxo)
-    ++  utxo
-      %-  ot:dejs:format
-      :~  ['tx_pos' ni:dejs:format]
-          ['tx_hash' (cu:dejs:format to-hash256 so:dejs:format)]
-          [%height ni:dejs:format]
-          [%value ni:dejs:format]
-          [%blockcount ni:dejs:format]
-      ==
-    ++  history
-      %-  ot:dejs:format
-      :~  ['tx_hash' (cu:dejs:format to-hash256 so:dejs:format)]
-          [%height ni:dejs:format]
-          [%blockcount ni:dejs:format]
-      ==
-    --
+++  parse-response
+  |=  res=response:rpc:jstd
+  |^  ^-  response:rpc
+  ~|  -.res
+  ::  ignores RPC responses of %error, %fails and %batch
   ::
-  ++  action-to-http
-    |=  [endpoint=@t ract=action:rpc]
-    |^  ^-  request:http
-    %-  http-request
-    ?-  -.ract
-        %get-address-utxos
-      (mk-url '/addresses/utxos/' `address.ract)
-      ::
-        %get-address-history
-      (mk-url '/addresses/history/' `address.ract)
-        %get-block-count
-      (mk-url '/blockcount' ~)
+  ?>  ?=(%result -.res)
+  ?+  id.res  ~|([%unsupported-response id.res] !!)
+      %get-address-info
+    [id.res (address-info res.res)]
+    ::
+      %get-block-count
+    [id.res (ni:dejs:format res.res)]
+  ==
+  ++  address-info
+    %-  ot:dejs:format
+    :~  [%utxos (as:dejs:format utxo)]
+        [%used bo:dejs:format]
+        [%blockcount ni:dejs:format]
     ==
-    ++  mk-url
-      |=  [base=@t uaddr=(unit address)]
-      =/  addr=@t
-        ?~  uaddr  ''  (address-to-cord u.uaddr)
-      %^  cat  3
-        (cat 3 endpoint base)
-      (address-to-cord addr)
-    --
+  ++  utxo
+    %-  ot:dejs:format
+    :~  ['tx_pos' ni:dejs:format]
+        ['tx_hash' (cu:dejs:format to-hash256 so:dejs:format)]
+        [%height ni:dejs:format]
+        [%value ni:dejs:format]
+    ==
+  --
+::
+++  rpc-action-to-http
+  |=  [endpoint=@t ract=action:rpc]
+  |^  ^-  request:http
+  %-  get-request
+  ?-  -.ract
+      %get-address-info
+    (mk-url '/addresses/info/' `address.ract)
+    ::
+      %get-block-count
+    (mk-url '/getblockcount' ~)
+  ==
+  ++  mk-url
+    |=  [base=@t uaddr=(unit address)]
+    =/  addr=@t
+      ?~  uaddr  ''  (address-to-cord u.uaddr)
+    %^  cat  3
+    (cat 3 endpoint base)  addr
   --
 --
+
