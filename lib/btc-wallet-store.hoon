@@ -51,10 +51,10 @@
     ^-  (pair address:btc walt)
     =/  addr  (mk-address nixt-idx)
     :-  addr
-    (watch-address addr [chyg nixt-idx *(set utxo:btc)])
+    (update-address addr [chyg nixt-idx *(set utxo:btc)])
   ::  insert a new address; update "nixt" free address if this one was it
   ::
-  ++  watch-address
+  ++  update-address
     |=  [a=address:btc =addi]
     ^-  walt
     ?>  =(chyg chyg.addi)
@@ -62,15 +62,6 @@
     =?  nixt.w  (is-nixt addi)
       new:bump-nixt
     w(wach (~(put by wach.w) a addi))
-  ::  update an address if it's in wach map
-  ::
-  ++  update-address
-    |=  [a=address:btc utxos=(set utxo:btc)]
-    ^-  walt
-    =/  adi=(unit addi)
-      (~(get by wach.w) a)
-    ?~  adi  w
-    w(wach (~(put by wach.w) a u.adi(utxos utxos)))
   ::
   ++  is-nixt
     |=  =addi  ^-  ?
