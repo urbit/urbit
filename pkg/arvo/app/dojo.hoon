@@ -218,7 +218,7 @@
         ;~(plug (cold %ur lus) parse-url)
         ;~(plug (cold %ge lus) parse-model)
         ;~(plug (cold %te hep) sym (star ;~(pfix ace parse-source)))
-        ;~(plug (cold %as pad) sym ;~(pfix ace parse-source))
+        ;~(plug (cold %as pam) sym ;~(pfix ace parse-source))
         ;~(plug (cold %do cab) parse-hoon ;~(pfix ace parse-source))
         parse-value
       ==
