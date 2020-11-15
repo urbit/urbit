@@ -7180,13 +7180,16 @@
 ::  unequal under noun equality but equal via the compare gate
 ::
 ++  ordered-map
+  ~/  %ordered-map
   |*  [key=mold val=mold]
   =>  |%
       +$  item  (mk-item key val)
       --
   ::  +compare: item comparator for horizontal order
   ::
+  ~/  %compare
   |=  compare=$-([key key] ?)
+  ~/  %core
   |%
   ::  +check-balance: verify horizontal and vertical orderings
   ::
@@ -7219,6 +7222,7 @@
   ::  +put: ordered item insert
   ::
   ++  put
+    ~/  %put
     |=  [a=(tree item) =key =val]
     ^-  (tree item)
     ::  base case: replace null with single-item tree
@@ -7422,6 +7426,7 @@
   ::  +get: get val at key or return ~
   ::
   ++  get
+    ~/  %get
     |=  [a=(tree item) b=key]
     ^-  (unit val)
     ?~  a  ~
