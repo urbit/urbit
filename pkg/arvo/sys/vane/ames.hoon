@@ -637,6 +637,7 @@
     =<  abet
     ?-  -.task
       %born  on-born:event-core
+      %chop  (on-chop:event-core ship.task)
       %crud  (on-crud:event-core [p q]:task)
       %hear  (on-hear:event-core [lane blob]:task)
       %heed  (on-heed:event-core ship.task)
@@ -962,6 +963,18 @@
     =/  =wire  (make-pump-timer-wire [ship bone]:i.to-stir)
     =.  event-core  (emit duct %pass wire %b %wait da.i.to-stir)
     $(to-stir t.to-stir)
+  ::
+  ::
+  ++  on-chop
+    |=  =ship
+    ^+  event-core
+    =/  ship-state  (~(get by peers.ames-state) ship)
+    ?.  ?=([~ %known *] ship-state)
+      event-core
+    ::
+    =/  =peer-state  +.u.ship-state
+    =/  =channel     [[our ship] now channel-state -.peer-state]
+    abet:on-chop:(make-peer-core peer-state channel)
   ::  +on-crud: handle event failure; print to dill
   ::
   ++  on-crud
@@ -1665,6 +1678,20 @@
       |=  [verb=? print=(trap tape)]
       ^+  same
       (^trace verb her.channel print)
+    ::  +on-chop: clear and nack all partially received messages
+    ::
+    ++  on-chop
+      ^+  peer-core
+      =-  peer-core(rcv.peer-state -)
+      %-  ~(run by rcv.peer-state)
+      |=  =message-sink-state
+      %_    message-sink-state
+          live-messages  ~
+          nax
+        %-  ~(uni in nax.message-sink-state)
+        ~(key by live-messages.message-sink-state)
+      ==
+    ::
     ++  on-heed  peer-core(heeds.peer-state (~(put in heeds.peer-state) duct))
     ++  on-jilt  peer-core(heeds.peer-state (~(del in heeds.peer-state) duct))
     ::  +update-qos: update and maybe print connection status

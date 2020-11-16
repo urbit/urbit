@@ -421,6 +421,7 @@
     ::    %heed: track peer's responsiveness; gives %clog if slow
     ::    %jilt: stop tracking peer's responsiveness
     ::    %plea: request to send message
+    ::    %chop: nack all partially received messages from peer
     ::
     ::    System and Lifecycle Tasks
     ::
@@ -438,6 +439,7 @@
           [%heed =ship]
           [%jilt =ship]
           $>(%plea vane-task)
+          [%chop =ship]
       ::
           $>(%born vane-task)
           $>(%crud vane-task)
