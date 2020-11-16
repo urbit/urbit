@@ -378,16 +378,16 @@
       ::NOTE  this is ptok:de-purl:html, but can't access that here
       %-  plus
       ;~  pose
-        aln  zap  hax  bus  cen  pad  say  tar  lus
-        hep  dot  ket  cab  tec  bar  sig
+        aln  zap  hax  buc  cen  pam  soq  tar  lus
+        hep  dot  ket  cab  tic  bar  sig
       ==
     ::
     ++  quoted-string                                 ::  7230 quoted string
       %+  cook  crip
-      %+  ifix  [. .]:;~(less (jest '\\"') yel)
+      %+  ifix  [. .]:;~(less (jest '\\"') doq)
       %-  star
       ;~  pose
-        ;~(pfix bat ;~(pose (just '\09') ace prn))
+        ;~(pfix bas ;~(pose (just '\09') ace prn))
         ;~(pose (just '\09') ;~(less (mask "\22\5c\7f") (shim 0x20 0xff)))
       ==
     --
@@ -6643,7 +6643,7 @@
       ;~(pose pure pesc pold fas wut col com)
     ::                                                  ::  ++pure:de-purl:html
     ++  pure                                            ::  2396 unreserved
-      ;~(pose aln hep cab dot zap sig tar say lit rit)
+      ;~(pose aln hep cab dot zap sig tar soq pal par)
     ::                                                  ::  ++psub:de-purl:html
     ++  psub                                            ::  3986 sub-delims
       ;~  pose
