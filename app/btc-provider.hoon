@@ -61,7 +61,7 @@
     ~&  >>>  "btc-provider: blocked client {<src.bowl>}"
     [~[[%give %kick ~ ~]] this]
   ~&  >  "btc-provider: added client {<src.bowl>}"
-  :-  ~[(send-status ?:(connected.host-info %connected %disconnected))]
+  :-  do-ping:hc
   this(clients.host-info (~(put in clients.host-info) src.bowl))
 ::
 ++  on-leave  on-leave:def
@@ -143,22 +143,23 @@
     (connection-error status)
   ?^  conn-err
     :_  state(connected.host-info %.n)
-    ~[(send-status %disconnected) (send-update [%| u.conn-err])]
+    ~[(send-status [%disconnected ~]) (send-update [%| u.conn-err])]
   =/  rpc-resp=response:rpc:jstd
     (get-rpc-response response)
   ?.  ?=([%result *] rpc-resp)
     [~[(send-update [%| [%rpc-error ~]])] state]
   ::  no error, switch on wire to handle RPC data
   ::
+  =/  resp=response:rpc  (parse-response rpc-resp)
   ?+  wire  ~|("Unexpected HTTP response" !!)
       [%address-info @ *]
-    =/  resp=response:rpc  (parse-response rpc-resp)
     ?>  ?=([%get-address-info *] resp)
     :_  state
     ~[(send-update [%& (get-req-id wire) %address-info +.resp])]
      ::
       [%ping @ *]
-    :-  ~[(send-status %connected)]
+    ?>  ?=([%get-block-and-fee *] resp)
+    :-  ~[(send-status [%connected blockcount.resp fee.resp])]
     state(connected.host-info %.y)
   ==
 ::

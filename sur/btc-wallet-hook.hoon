@@ -4,6 +4,7 @@
 ::  back: lookup table of req-id -> requests from wallet-store
 ::
 +$  back  (map req-id:bp request:bws)
++$  btc-state  [blockcount=@ud fee=sats t=@da]
 +$  action
   $%  [%set-provider provider=ship]
       [%force-retry ~]
