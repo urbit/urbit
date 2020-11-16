@@ -2,8 +2,6 @@
 ::  m / purpose' / coin_type' / account' / change / address_index
 ::  change can be 0 or 1
 ::
-::  TODO: explain state tracking (used maps, next unused idx)
-::
 /-  *btc
 /+  bip32
 |%
