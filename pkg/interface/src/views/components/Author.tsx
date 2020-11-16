@@ -7,6 +7,7 @@ import { uxToHex, cite } from "~/logic/lib/util";
 import { Contacts, Rolodex } from "~/types/contact-update";
 import OverlaySigil from "./OverlaySigil";
 import { Group, Association, LocalUpdateRemoteContentPolicy } from "~/types";
+import GlobalApi from "~/logic/api/global";
 
 interface AuthorProps {
   contacts: Rolodex;
@@ -18,11 +19,12 @@ interface AuthorProps {
   children?: ReactNode;
   remoteContentPolicy: LocalUpdateRemoteContentPolicy;
   group: Group;
+  api: GlobalApi;
 }
 
 export default function Author(props: AuthorProps) {
   const { contacts, ship = '', date, showImage, hideAvatars, hideNicknames, remoteContentPolicy, group, api } = props;
-  let contact = null;
+  let contact;
   if (contacts) {
     contact = ship in contacts ? contacts[ship] : null;
   }
@@ -43,9 +45,9 @@ export default function Author(props: AuthorProps) {
           group={group}
           hideAvatars={hideAvatars}
           hideNicknames={hideNicknames}
-          scrollWindow={document.createElement('div')}
           history={history}
           api={api}
+          bg="white"
           className="fl v-top pt1"
         />
         </Box>

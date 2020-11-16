@@ -4,17 +4,17 @@ import { Contact, Group } from '~/types';
 import { cite } from '~/logic/lib/util';
 import { Sigil } from '~/logic/lib/sigil';
 
-import { Box, Col, Button, Text, BaseImage } from '@tlon/indigo-react';
+import { Box, Col, Button, Text, BaseImage, ColProps } from '@tlon/indigo-react';
 
 export const OVERLAY_HEIGHT = 250;
 
-interface ProfileOverlayProps {
+type ProfileOverlayProps = ColProps & {
   ship: string;
   contact?: Contact;
   color: string;
-  topSpace: number;
-  bottomSpace: number;
-  group: Group;
+  topSpace: number | 'auto'; 
+  bottomSpace: number | 'auto';
+  group?: Group;
   onDismiss(): void;
   hideAvatars: boolean;
   hideNicknames: boolean;
@@ -53,7 +53,19 @@ export class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
   }
 
   render() {
-    const { contact, ship, color, topSpace, bottomSpace, group, hideNicknames, hideAvatars, history } = this.props;
+    const {
+      contact,
+      ship,
+      color,
+      topSpace,
+      bottomSpace,
+      group = false,
+      hideNicknames,
+      hideAvatars,
+      history,
+      onDismiss,
+      ...rest
+    } = this.props;
 
     let top, bottom;
     if (topSpace < OVERLAY_HEIGHT / 2) {
@@ -84,7 +96,7 @@ export class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
     /* if (!group.hidden) {
     }*/
 
-    const isHidden = group.hidden;
+    const isHidden = group ? group.hidden : false;
 
     return (
       <Col
@@ -95,6 +107,7 @@ export class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
         zIndex='3'
         fontSize='0'
         style={containerStyle}
+        {...rest}
       >
         <Box height='160px' width='160px'>
           {img}

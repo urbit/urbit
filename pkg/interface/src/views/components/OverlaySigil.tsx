@@ -7,17 +7,18 @@ import {
   ProfileOverlay,
   OVERLAY_HEIGHT
 } from './ProfileOverlay';
-import { Box, BaseImage } from '@tlon/indigo-react';
 
-interface OverlaySigilProps {
+import { Box, BaseImage, ColProps } from '@tlon/indigo-react';
+
+type OverlaySigilProps = ColProps & {
   ship: string;
   contact?: Contact;
   color: string;
   sigilClass: string;
-  group: Group;
+  group?: Group;
   hideAvatars: boolean;
   hideNicknames: boolean;
-  scrollWindow: HTMLElement;
+  scrollWindow?: HTMLElement;
   history: any;
   api: any;
   className: string;
@@ -25,8 +26,8 @@ interface OverlaySigilProps {
 
 interface OverlaySigilState {
   clicked: boolean;
-  topSpace: number;
-  bottomSpace: number;
+  topSpace: number | 'auto';
+  bottomSpace: number | 'auto';
 }
 
 export default class OverlaySigil extends PureComponent<OverlaySigilProps, OverlaySigilState> {
@@ -50,12 +51,12 @@ export default class OverlaySigil extends PureComponent<OverlaySigilProps, Overl
   profileShow() {
     this.updateContainerOffset();
     this.setState({ clicked: true });
-    this.props.scrollWindow.addEventListener('scroll', this.updateContainerOffset);
+    this.props.scrollWindow?.addEventListener('scroll', this.updateContainerOffset);
   }
 
   profileHide() {
     this.setState({ clicked: false });
-    this.props.scrollWindow.removeEventListener('scroll', this.updateContainerOffset, true);
+    this.props.scrollWindow?.removeEventListener('scroll', this.updateContainerOffset, true);
   }
 
   updateContainerOffset() {
@@ -63,8 +64,12 @@ export default class OverlaySigil extends PureComponent<OverlaySigilProps, Overl
       const container = this.containerRef.current;
       const scrollWindow = this.props.scrollWindow;
 
-      const bottomSpace = scrollWindow.scrollHeight - container.offsetTop - scrollWindow.scrollTop;
-      const topSpace = scrollWindow.offsetHeight - bottomSpace - OVERLAY_HEIGHT;
+      const bottomSpace = scrollWindow
+        ? scrollWindow.scrollHeight - container.offsetTop - scrollWindow.scrollTop
+        : 'auto';
+      const topSpace = scrollWindow
+        ? scrollWindow.offsetHeight - bottomSpace - OVERLAY_HEIGHT
+        : 0;
 
       this.setState({
         topSpace,
@@ -78,16 +83,29 @@ export default class OverlaySigil extends PureComponent<OverlaySigilProps, Overl
   }
 
   render() {
-    const { props, state } = this;
-    const { hideAvatars } = props;
+    const {
+      className,
+      ship,
+      contact,
+      color,
+      group,
+      hideAvatars,
+      hideNicknames,
+      history,
+      api,
+      sigilClass,
+      ...rest
+    } = this.props;
 
-    const img = (props.contact && (props.contact.avatar !== null) && !hideAvatars)
-      ? <BaseImage display='inline-block' src={props.contact.avatar} height={16} width={16} />
+    const { state } = this;
+
+    const img = (contact && (contact.avatar !== null) && !hideAvatars)
+      ? <BaseImage display='inline-block' src={contact.avatar} height={16} width={16} />
       : <Sigil
-        ship={props.ship}
+        ship={ship}
         size={16}
-        color={props.color}
-        classes={props.sigilClass}
+        color={color}
+        classes={sigilClass}
         icon
         padded
         />;
@@ -97,22 +115,23 @@ export default class OverlaySigil extends PureComponent<OverlaySigilProps, Overl
         cursor='pointer'
         position='relative'
         onClick={this.profileShow}
-        className={props.className}
-        ref={this.containerRef}
+         ref={this.containerRef}
+         className={className}
       >
         {state.clicked && (
           <ProfileOverlay
-            ship={props.ship}
-            contact={props.contact}
-            color={props.color}
+            ship={ship}
+            contact={contact}
+            color={color}
             topSpace={state.topSpace}
             bottomSpace={state.bottomSpace}
-            group={props.group}
+            group={group}
             onDismiss={this.profileHide}
             hideAvatars={hideAvatars}
-            hideNicknames={props.hideNicknames}
-            history={props.history}
-            api={props.api}
+            hideNicknames={hideNicknames}
+            history={history}
+             api={api}
+             {...rest}
           />
         )}
         {img}
