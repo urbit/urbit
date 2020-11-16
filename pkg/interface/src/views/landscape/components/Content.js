@@ -16,6 +16,7 @@ export const Container = styled(Box)`
    overflow: hidden;
    width: 100%;
    height: calc(100% - 62px);
+   z-index: 0;
 `;
 
 

@@ -64,31 +64,31 @@ export default function LaunchApp(props) {
           />
           <Box display={["none", "block"]} width="100%" gridColumn="1 / -1"></Box>
           <Groups groups={props.groups} associations={props.associations} />
+          <Box width="100%" gridColumn="1 / -1"></Box>
+          <Box 
+            justifySelf="start"
+            fontFamily="mono"
+            left="0"
+            bottom="0"
+            color="gray"
+            bg="white"
+            borderRadius={2}
+            fontSize={0}
+            p={2}
+            cursor="pointer"
+            onClick={() => {
+              writeText(props.baseHash);
+              setHashText('copied');
+              setTimeout(() => {
+                setHashText(props.baseHash);
+              }, 2000);
+            }}
+          >
+            {hashText || props.baseHash}
+          </Box>
         </Box>
       </ScrollbarLessBox>
-      <Box
-        position="absolute"
-        fontFamily="mono"
-        left="0"
-        bottom="0"
-        color="gray"
-        bg="white"
-        ml={3}
-        mb={3}
-        borderRadius={2}
-        fontSize={0}
-        p={2}
-        cursor="pointer"
-        onClick={() => {
-          writeText(props.baseHash);
-          setHashText('copied');
-          setTimeout(() => {
-            setHashText(props.baseHash);
-          }, 2000);
-        }}
-      >
-        {hashText || props.baseHash}
-      </Box>
+      
     </>
   );
 }
