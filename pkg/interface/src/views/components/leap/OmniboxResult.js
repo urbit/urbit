@@ -30,7 +30,7 @@ export class OmniboxResult extends Component {
     const sigilFill = (this.state.hovered || (selected === link)) ? '#3a8ff7' : '#ffffff';
     const bulletFill = (this.state.hovered || (selected === link)) ? 'white' : 'blue';
 
-    const inviteCount = Object.keys(invites?.['contacts'] || {});
+    const inviteCount = [].concat(...Object.values(invites).map(obj => Object.values(obj)));
 
     let graphic = <div />;
     if (defaultApps.includes(icon.toLowerCase()) || icon.toLowerCase() === 'links') {

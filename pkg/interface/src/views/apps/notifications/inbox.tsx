@@ -10,6 +10,7 @@ import GlobalApi from "~/logic/api/global";
 import { Notification } from "./notification";
 import { Associations } from "~/types";
 import { cite } from '~/logic/lib/util';
+import { InviteItem } from '~/views/components/Invite';
 
 type DatedTimebox = [BigInteger, Timebox];
 
@@ -77,52 +78,28 @@ export default function Inbox(props: {
     }
   }, [api]);
 
-  const incomingGroups = Object.values(invites?.['contacts'] || {});
-
-  const getKeyByValue = (object, value) => {
-    return Object.keys(object).find(key => object[key] === value);
-  };
-
-  const acceptInvite = (invite) => {
-    const resource = {
-      ship: `~${invite.resource.ship}`,
-      name: invite.resource.name
-    };
-    return api.contacts.join(resource).then(() => {
-      api.invite.accept('contacts', getKeyByValue(invites['contacts'], invite));
+  const inviteItems = (invites, api) => {
+    const returned = [];
+    Object.keys(invites).map((appKey) => {
+      const app = invites[appKey];
+      Object.keys(app).map((uid) => {
+        const invite = app[uid];
+        const inviteItem =
+          <InviteItem
+            key={uid}
+            invite={invite}
+            onAccept={() => api.invite.accept(appKey, uid)}
+            onDecline={() => api.invite.decline(appKey, uid)}
+          />;
+        returned.push(inviteItem);
+      });
     });
+    return returned;
   };
 
   return (
     <Col onScroll={onScroll} overflowY="auto" flexGrow="1" minHeight='0' flexShrink='0'>
-      {incomingGroups.map((invite) => (
-        <Box
-          bg='white'
-          p='3'
-          fontSize='0'>
-          <Text display='block' pb='2' gray>{cite(invite.resource.ship)} invited you to <Text fontWeight='500'>{invite.resource.name}</Text></Text>
-          <Box pt='3'>
-            <Text
-              onClick={() => acceptInvite(invite)}
-            color='blue'
-            mr='2'
-            cursor='pointer'>
-              Accept
-            </Text>
-            <Text
-              color='red'
-              onClick={() =>
-                api.invite.decline(
-                  'contacts',
-                  getKeyByValue(invites['contacts'], invite)
-                )
-              }
-              cursor='pointer'>
-                Reject
-              </Text>
-          </Box>
-        </Box>
-      ))}
+      {inviteItems(invites, api)}
       {newNotifications && (
         <DaySection
           latest
