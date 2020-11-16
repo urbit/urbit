@@ -700,21 +700,11 @@
         =/  duct  t.duct.move
         =*  gift  gift.ball.move
         ::
-        ?~  duct
-          ::
-          ::  the caller was Outside
-          ::
-          ~|  [%xeno wire (symp -.q.p.gift)]
-          ?>  ?=([%$ *] wire)
-          (xeno wire gift)
-        ::
-        ::  the caller was a vane
-        ::
-        =^  vane=term  wire
+        =^  way=term  wire
           ~|  [%give duct.move (symp -.q.p.gift)]
           ?>(?=(^ wire) wire)
         ::
-        ~?  &(!lac |(!=(%blit +>-.gift) !=(%d vane.gem)))
+        ~?  &(!lac !=(%$ way) |(!=(%blit +>-.gift) !=(%d vane.gem)))
           :-  (runt [(lent bars.gem) '|'] "")
           :^  %give  vane.gem
             ?:  ?=(%unto +>-.gift)
@@ -722,7 +712,7 @@
             (symp +>-.gift)
           duct.move
         ::
-        (take duct wire vane gift)
+        (take duct wire way gift)
       ::
       ::  %hurl: action with error
       ::
@@ -780,20 +770,6 @@
       ?.  (~(has by van) lal)
         ~
       (peek:(plow lal) fur ren bed)
-    ::  +xeno: stash pending output
-    ::
-    ++  xeno
-      |=  [=wire gift=maze]
-      ^+  this
-      =/  ovo=ovum  [wire ;;(card q.p.gift)]
-      ::
-      ::  XX update clients to %pass to arvo, remove
-      ::
-      ?:  ?=(?(%lyra %veer %verb %wack %whey) -.card.ovo)
-        ~>  %mean.'xeno: bad waif'
-        (call:pith ;;(waif:pith card.ovo))
-      ::
-      this(out [ovo out])
     ::  +call: advance to target
     ::
     ++  call
@@ -812,6 +788,15 @@
     ++  take
       |=  [=duct =wire way=term gift=maze]
       ^+  this
+      ?:  ?=(%$ way)
+        ::
+        ::  the caller was Outside
+        ::
+        ?>  ?=(~ duct)
+        (xeno:pith wire ;;(card q.p.gift))
+      ::
+      ::  the caller was a vane
+      ::
       %+  push  [way duct bars.gem]
       ::
       ::  cons source onto .gift to make a $sign
@@ -878,12 +863,10 @@
         |=  =ovum
         ^-  $>(%pass ball)
         =^  way=term  wire.ovum  wire.ovum
-        =?  way  ?=(%$ way)
-          ::  patch up wire for backward-compatible routing
-          ::
-          ::    XX update clients and remove
-          ::
-          (dint wire.ovum)
+        ::
+        ::  XX uncomment to restore previous routing
+        ::
+        :: =?  way  ?=(%$ way)  (dint wire.ovum)
         ::
         ::  %$: default, routed to arvo-proper as trivial vase
         ::  @:  route to vane XX remove %soft, clam via %zuse
@@ -952,6 +935,20 @@
           %+  sort  ~(tap by van)
           |=([[a=@tas *] [b=@tas *]] (aor a b))
         |=([way=term *] `move`[*duct %pass wire way `maze`&/vase])
+      ::
+      ++  xeno
+        |=  =ovum
+        ^+  this
+        ::  XX update clients to %pass to arvo, remove
+        ::
+        ?:  ?=(?(%lyra %veer %verb %wack %whey) -.card.ovum)
+          ~>  %mean.'xeno: bad waif'
+          (call ;;(waif:pith card.ovum))
+        ::
+        ::  XX uncomment to restore previous routing
+        ::
+        :: =.  wire.ovum  $/wire.ovum
+        this(out [ovum out])
       --
     --
   --

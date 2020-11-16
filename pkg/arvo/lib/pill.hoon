@@ -66,7 +66,7 @@
   ::  hav: all user files
   ::
   =;  hav  ~&  user-files+(lent hav)
-           [[%$ %sync ~] [%into %$ & hav]]
+           [/c/sync [%into %$ & hav]]
   =|  hav/mode:clay
   |-  ^+  hav
   ?~  sal  ~
