@@ -29,9 +29,9 @@ function getGraphModuleIcon(module: string) {
 
 const FilterBox = styled(Box)`
   background: linear-gradient(
-    ${(p) => p.theme.colors.scales.white10} 0%,
-    ${(p) => p.theme.colors.scales.white60} 40%,
-    ${(p) => p.theme.colors.scales.white100} 100%
+    to bottom,
+    transparent,
+    ${(p) => p.theme.colors.white}
   );
 `;
 
@@ -91,7 +91,7 @@ const GraphNodeContent = ({ contents, mod, description, index }) => {
               width="100%"
               zIndex="1"
               height="calc(100% - 2em)"
-              bottom="0px"
+              bottom="-4px"
               position="absolute"
             />
           </Box>

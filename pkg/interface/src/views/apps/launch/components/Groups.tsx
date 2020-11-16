@@ -63,7 +63,9 @@ function Group(props: GroupProps) {
     <Tile to={`/~landscape${path}`}>
       <Col height="100%" justifyContent="space-between">
         <Text>{title}</Text>
-        {unreads > 0 && <Text gray>{unreads} unread </Text>}
+        {unreads > 0 && 
+          (<Text gray>{unreads} unread{unreads !== 1 && 's'} </Text>)
+        }
       </Col>
     </Tile>
   );
