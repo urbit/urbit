@@ -59,7 +59,7 @@ const GraphUrl = ({ url, title }) => (
   </Box>
 );
 
-const GraphNodeContent = ({ contents, mod, description, index }) => {
+const GraphNodeContent = ({ contents, mod, description, index, remoteContentPolicy }) => {
   const idx = index.slice(1).split("/");
   if (mod === "link") {
     if (idx.length === 1) {
@@ -67,7 +67,7 @@ const GraphNodeContent = ({ contents, mod, description, index }) => {
       return <GraphUrl title={text} url={url} />;
     } else if (idx.length === 2) {
       const [{ text }] = contents;
-      return <RichText>{text}</RichText>;
+      return <RichText remoteContentPolicy={remoteContentPolicy}>{text}</RichText>;
     }
     return null;
   }
@@ -76,7 +76,7 @@ const GraphNodeContent = ({ contents, mod, description, index }) => {
       return null;
     } else if (idx[1] === "2") {
       const [{ text }] = contents;
-      return <RichText>{text}</RichText>;
+      return <RichText remoteContentPolicy={remoteContentPolicy}>{text}</RichText>;
     } else if (idx[1] === "1") {
       const [{ text: header }, { text: body }] = contents;
       const snippet = getSnippet(body);
@@ -123,6 +123,7 @@ const GraphNode = ({
   index,
   graph,
   group,
+  remoteContentPolicy
 }) => {
   author = deSig(author);
 
@@ -163,6 +164,7 @@ const GraphNode = ({
               mod={mod}
               description={description}
               index={index}
+              remoteContentPolicy={remoteContentPolicy}
             />
           </Row>
         </Col>
@@ -181,8 +183,9 @@ export function GraphNotification(props: {
   associations: Associations;
   contacts: Rolodex;
   api: GlobalApi;
+  remoteContentPolicy: any;
 }) {
-  const { contents, index, read, time, api, timebox } = props;
+  const { contents, index, read, time, api, timebox, remoteContentPolicy } = props;
 
   const authors = _.map(contents, "author");
   const { graph, group } = index;
@@ -223,6 +226,7 @@ export function GraphNotification(props: {
             index={content.index}
             graph={graph}
             group={group}
+            remoteContentPolicy={remoteContentPolicy}
           />
         ))}
       </Col>
