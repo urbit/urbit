@@ -23,6 +23,7 @@
 +$  state-0
   $:  %0
       provider=(unit [host=ship connected=?])
+      =btc-state
       pend=back
   ==
 ::
@@ -119,11 +120,14 @@
   ^-  (quip card _state)
   ?~  provider  `state
   ?.  =(host.u.provider src.bowl)  `state
-  ?-  s
+  ?-  -.s
       %connected
     ::  only retry if previously disconnected
     :-  ?:(connected.u.provider ~ (retry pend))
-    state(provider `[host.u.provider %.y])
+    %=  state
+        provider  `[host.u.provider %.y]
+        btc-state  [blockcount.s fee.s now.bowl]
+    ==
       %disconnected
     `state(provider `[host.u.provider %.n])
   ==

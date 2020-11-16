@@ -23,7 +23,10 @@
       [%rpc-error ~]
   ==
 +$  update  (each result error)
-+$  status  ?(%connected %disconnected)
++$  status
+  $%  [%connected blockcount=@ud fee=@ud]
+      [%disconnected ~]
+  ==
 ::
 ++  rpc
   |%
