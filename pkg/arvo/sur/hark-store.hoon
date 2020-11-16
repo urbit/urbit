@@ -26,7 +26,7 @@
   (map index notification)
 ::
 +$  notifications
-  ((mop @da timebox) lth)
+  ((mop @da timebox) gth)
 ::
 +$  action
   $%  [%add =index =notification]

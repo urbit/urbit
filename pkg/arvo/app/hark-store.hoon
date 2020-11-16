@@ -29,7 +29,7 @@
       ~
   ==
 ::
-++  orm  ((ordered-map @da timebox:store) lth)
+++  orm  ((ordered-map @da timebox:store) gth)
 --
 ::
 =|  inflated-state
@@ -55,6 +55,10 @@
   ^-  (quip card _this)
   =/  old
    !<(state-0 old-vase)
+  =.  notifications.old
+    (gas:orm *notifications:store (tap:orm notifications.old))
+  =.  archive.old
+    (gas:orm *notifications:store (tap:orm archive.old))
   `this(-.state old, +.state (inflate-cache old))
 ::
 ++  on-watch  
@@ -77,11 +81,11 @@
       [%count unread-count]
     %+  weld
       %+  turn
-         %+  scag  5
+         %+  scag  3
         (tap-nonempty:ha archive)
       (timebox-update &)
     %+  turn
-      %+  scag  5
+      %+  scag  3
       (tap-nonempty:ha notifications)
     (timebox-update |)
   ::
