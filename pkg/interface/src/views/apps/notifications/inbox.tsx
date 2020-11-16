@@ -69,12 +69,17 @@ export default function Inbox(props: {
     f.values
   )(notifications);
 
+  useEffect(() => {
+    api.hark.getMore(props.showArchive);
+  }, [props.showArchive]);
+
   const onScroll = useCallback((e) => {
     let container = e.target;
-    if(!props.showArchive && (container.scrollHeight - container.scrollTop === container.clientHeight)) {
-      api.hark.getMore();
+    const { scrollHeight, scrollTop, clientHeight } = container;
+    if((scrollHeight - scrollTop - clientHeight) < 20) {
+      api.hark.getMore(props.showArchive);
     }
-  }, [api]);
+  }, [props.showArchive]);
 
   const incomingGroups = Object.values(invites?.['contacts'] || {});
 
@@ -93,7 +98,7 @@ export default function Inbox(props: {
   };
 
   return (
-    <Col onScroll={onScroll} overflowY="auto" flexGrow="1" minHeight='0' flexShrink='0'>
+    <Col onScroll={onScroll} overflowY="auto" height="100%" minHeight='0'>
       {incomingGroups.map((invite) => (
         <Box
           bg='white'
