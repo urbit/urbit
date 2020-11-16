@@ -14,7 +14,8 @@ import {
   NotificationGraphConfig, 
   GroupNotificationsConfig,
   LocalUpdateRemoteContentPolicy,
-  BackgroundConfig
+  BackgroundConfig,
+  Unreads
 } from "~/types";
 
 export interface StoreState {
@@ -59,11 +60,12 @@ export interface StoreState {
   inbox: Inbox;
   pendingMessages: Map<Path, Envelope[]>;
 
+  archivedNotifications: Notifications;
   notifications: Notifications;
   notificationsGraphConfig: NotificationGraphConfig;
   notificationsGroupConfig: GroupNotificationsConfig;
   notificationsChatConfig: string[];
   notificationsCount: number,
   doNotDisturb: boolean;
-  graphUnreads: Record<string, number>;
+  unreads: Unreads;
 }
