@@ -42,6 +42,8 @@
         listen-api+(su ;~(plug sym ;~(pfix col sym)))
         export+so
         import+(ot app+so base64-jam+so ~)
+        export-all+none
+        import-all+(ot base64-jam+so ~)
         as+(ot mark+(su sym) next+source ~)
         hoon+(ot code+so next+source ~)
       ==
