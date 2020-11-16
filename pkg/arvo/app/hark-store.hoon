@@ -25,7 +25,7 @@
 ::  albeit expensively
 +$  cache
   $:  unread-count=@ud
-      graph-unreads=(map resource @ud)
+      by-index=(jug index:store @da)
       ~
   ==
 ::
@@ -72,7 +72,7 @@
     ^-  update:store
     :-  %more
     ^-  (list update:store)
-    :-  [%graph-unreads graph-unreads]
+    :-  unreads
     :+  [%set-dnd dnd]
       [%count unread-count]
     %+  weld
@@ -84,6 +84,14 @@
       %+  scag  5
       (tap-nonempty:ha notifications)
     (timebox-update |)
+  ::
+  ++  unreads
+    ^-  update:store
+    :-  %unreads
+    ^-  (list [index:store @ud])
+    %+  turn
+      ~(tap by by-index)
+    |=([=index:store =(set @da)] [index ~(wyt in set)])
   ::
   ++  timebox-update
     |=  archived=?
@@ -136,6 +144,7 @@
       %archive  (do-archive +.action)
       %seen     seen
       %read     (read +.action)
+      %read-index  (read-index +.action)
       %unread   (unread +.action)
       %set-dnd  (set-dnd +.action)
     ==
@@ -154,10 +163,22 @@
         (~(put by timebox) index new)
       :-  (give:ha [/updates]~ %added last-seen index new)
       %_  state
-        +  ?~(existing-notif (upd-unreads:ha index %.n) +.state)
+        +  ?~(existing-notif (upd-unreads:ha index last-seen %.n) +.state)
         notifications  (put:orm notifications last-seen new-timebox)
-        unread-count  ?~(existing-notif +(unread-count) unread-count)
       ==
+    ++  read-index
+      |=  =index:store
+      ^-  (quip card _state)
+      =/  times=(list @da)
+        ~(tap in (~(gut by by-index) index ~))
+      =|  cards=(list card)
+      |- 
+      ?~  times
+        [cards state]
+      =*  time  i.times
+      =^  crds  state
+        (read time index)
+      $(cards (weld cards crds), times t.times)
     ::
     ++  do-archive
       |=  [time=@da =index:store]
@@ -170,7 +191,7 @@
         (~(del by timebox) index)
       :-  (give:ha [/updates]~ %archive time index)
       %_  state
-        +  ?.(read.notification (upd-unreads:ha index %.y) +.state)
+        +  ?.(read.notification (upd-unreads:ha index time %.y) +.state)
         ::
           notifications
         (put:orm notifications time new-timebox)
@@ -187,7 +208,7 @@
       ^-  (quip card _state)
       :-  (give:ha [/updates]~ %read time index)
       %_  state
-        +  (upd-unreads:ha index %.y)
+        +  (upd-unreads:ha index time %.y)
         unread-count   (dec unread-count)
         notifications  (change-read-status:ha time index %.y)
       ==
@@ -197,7 +218,7 @@
       ^-  (quip card _state)
       :-  (give:ha [/updates]~ %unread time index)
       %_  state
-        +  (upd-unreads:ha index %.n)
+        +  (upd-unreads:ha index time %.n)
         unread-count   +(unread-count)
         notifications  (change-read-status:ha time index %.n)
       ==
@@ -302,18 +323,16 @@
   [%give %fact paths [%hark-update !>(update)]]~
 ::
 ++  upd-unreads
-  |=  [=index:store read=?]
+  |=  [=index:store time=@da read=?]
   ^+  +.state
-  =/  f=$-(@ @)
+  %_    +.state
+    ::
+      by-index 
+    %.  [index time]
     ?:  read
-      dec
-    |=(a=@ +(a))
-  =.  unread-count  (f unread-count)
-  ?.  ?=(%graph -.index)
-    +.state
-  =/  curr-unread=@ud
-    (~(gut by graph-unreads) graph.index 0)
-  +.state(graph-unreads (~(put by graph-unreads) graph.index (f curr-unread)))
+      ~(del ju by-index)
+    ~(put ju by-index)
+  ==
 ::
 ++  inflate-cache
   |=  state-0
@@ -332,6 +351,6 @@
   ?:  read.notification
     inner(unreads t.unreads)
   =.  +.state
-    (upd-unreads index read.notification)
+    (upd-unreads index p.i.nots %.n)
   inner(unreads t.unreads)
 --

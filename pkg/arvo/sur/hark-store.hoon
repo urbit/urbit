@@ -32,6 +32,7 @@
   $%  [%add =index =notification]
       [%archive time=@da index]
       [%read time=@da index]
+      [%read-index index]
       [%unread time=@da index]
       [%set-dnd dnd=?]
       [%seen ~]
@@ -42,10 +43,10 @@
 ::  
 +$  update
   $%  action
-      [%more =(list update)]
+      [%more more=(list update)]
       [%added time=@da =index =notification]
       [%timebox time=@da archived=? =(list [index notification])]
       [%count count=@ud]
-      [%graph-unreads =(map resource @ud)]
+      [%unreads unreads=(list [index @ud])]
   ==
 --
