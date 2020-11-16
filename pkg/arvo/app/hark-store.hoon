@@ -109,21 +109,24 @@
   ^-  (unit (unit cage))
   ?+  path  (on-peek:def path)
     ::
-      [%x %recent @ @ ~]
+      [%x %recent ?(%archive %inbox) @ @ ~]
+    =/  is-archive
+      =(%archive i.t.t.path)
     =/  offset=@ud
-      (slav %ud i.t.t.path)
-    =/  length=@ud
       (slav %ud i.t.t.t.path)
+    =/  length=@ud
+      (slav %ud i.t.t.t.t.path)
     :^  ~  ~  %hark-update
     !>  ^-  update:store
     :-  %more
     %+  turn
       %+  scag  length
       %+  slag  offset
-      (tap-nonempty:ha notifications)
+      %-  tap-nonempty:ha 
+      ?:(is-archive archive notifications)
     |=  [time=@da =timebox:store]
     ^-  update:store
-    :^  %timebox  time  %.n
+    :^  %timebox  time  is-archive
     ~(tap by timebox)
   ==
 ::
