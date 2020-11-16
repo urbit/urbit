@@ -61,6 +61,12 @@ export class HarkApi extends BaseApi<StoreState> {
     return this.actOnNotification('read', time, index);
   }
 
+  readIndex(index: NotifIndex) {
+    return this.harkAction({
+      'read-index': index
+    });
+  }
+
   unread(time: BigInteger, index: NotifIndex) {
     return this.actOnNotification('unread', time, index);
   }

@@ -181,6 +181,7 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
     if (this.state.fetchPending) return;
     if (this.props.unreadCount === 0) return;
     this.props.api.chat.read(this.props.station);
+    this.props.api.hark.readIndex({ chat: { chat: this.props.station, mention: false }});
   }
 
   fetchMessages(start, end, force = false): Promise<void> {
