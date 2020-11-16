@@ -60,7 +60,6 @@ function RecentGroups(props: { recent: string[]; associations: Associations }) {
               bg={`#${color}`}
               mr={2}
               display="block"
-              flexShrink='0'
             />
               <Text verticalAlign='top' maxWidth='100%' overflow='hidden' display='inline-block' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}>{assoc?.metadata?.title}</Text>
             </Row>
@@ -93,6 +92,7 @@ export function GroupSwitcher(props: {
           <Dropdown
             width="231px"
             alignY="top"
+            alignX="left"
             options={
               <Col
                 borderRadius={1}
@@ -165,12 +165,10 @@ export function GroupSwitcher(props: {
               </Col>
             }
           >
-            <Row p={2} alignItems="center" width='100%' minWidth='0'>
-              <Row alignItems="center" mr={1} flex='1' width='100%' minWidth='0'>
-                <Text overflow='hidden' display='inline-block' flexShrink='1' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre'}}>{title}</Text>
+              <Row p="2" alignItems="center" mr={1} flex='1' flexGrow={1}>
+                <Text overflow='hidden' display='inline-block' style={{ flexShrink: "1", textOverflow: 'ellipsis', whiteSpace: 'pre'}}>{title}</Text>
                 <Icon size='12px' ml='1' mt="0px" display="inline-block" icon="ChevronSouth" />
               </Row>
-            </Row>
           </Dropdown>
           <Row pr={1} justifyContent="flex-end" alignItems="center">
             {(workspace.type === "group") && (

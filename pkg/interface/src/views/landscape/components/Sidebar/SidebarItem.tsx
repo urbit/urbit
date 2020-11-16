@@ -103,7 +103,7 @@ export function SidebarItem(props: {
           color={color}
           icon={getAppIcon(appName, mod) as any}
         />
-        <Box width='100%' flexShrink={2} ml={2} display='flex' overflow='hidden'>
+        <Box width='100%' style={{ flexShrink: 2}} ml={2} display='flex' overflow='hidden'>
           <Text
             lineHeight="short"
             display='inline-block'

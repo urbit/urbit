@@ -103,7 +103,7 @@ export function ChatResource(props: ChatResourceProps) {
   }, [station]);
 
   return (
-    <Col {...bind} height="100%" overflow="hidden" position="relative">
+    <Col {...bind} height="calc(100% - 33px)" overflow="hidden" position="relative">
       {dragging && <SubmitDragger />}
       <ChatWindow
         remoteContentPolicy={props.remoteContentPolicy}

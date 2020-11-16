@@ -42,12 +42,11 @@ export function PostForm(props: PostFormProps) {
         validateOnBlur
       >
         <Form style={{ display: "contents"}}>
-          <Row flexShrink='0' flexDirection={["column-reverse", "row"]} mb={4} gapX={4} justifyContent='space-between'>
+          <Row flexDirection={["column-reverse", "row"]} mb={4} gapX={4} justifyContent='space-between'>
             <Input maxWidth='40rem' width='100%' flexShrink={[0, 1]} placeholder="Post Title" id="title" />
             <AsyncButton
               ml={[0,2]}
               mb={[4,0]}
-              flexShrink={0}
               primary
               loadingText={loadingText}
             >

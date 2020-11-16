@@ -286,7 +286,7 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
         <VirtualScroller
           ref={list => {this.virtualList = list}}
           origin="bottom"
-          style={{ height: '100%' }}
+          style={{ height: 'calc(100% - 32px)' }}
           onStartReached={() => {
             this.setState({ idle: false });
             this.dismissUnread();

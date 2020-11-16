@@ -11,6 +11,7 @@ import { Box, Col } from "@tlon/indigo-react";
 import { useOutsideClick } from "~/logic/lib/useOutsideClick";
 import { useLocation } from "react-router-dom";
 import { Portal } from "./Portal";
+import {PropFunc} from "~/types/util";
 
 type AlignY = "top" | "bottom";
 type AlignX = "left" | "right";
@@ -34,8 +35,8 @@ const DropdownOptions = styled(Box)`
   transition-timing-function: ease;
 `;
 
-export function Dropdown(props: DropdownProps) {
-  const { children, options } = props;
+export function Dropdown(props: DropdownProps & PropFunc<typeof Box>) {
+  const { children, options, alignX, alignY, width, ...rest } = props;
   const dropdownRef = useRef<HTMLElement>(null);
   const anchorRef = useRef<HTMLElement>(null);
   const { pathname } = useLocation();
@@ -51,12 +52,12 @@ export function Dropdown(props: DropdownProps) {
         bottom: document.documentElement.clientHeight - rect.bottom,
         right: document.documentElement.clientWidth - rect.right,
       };
-      const alignX = _.isArray(props.alignX) ? props.alignX : [props.alignX];
-      const alignY = _.isArray(props.alignY) ? props.alignY : [props.alignY];
+      const newAlignX = _.isArray(alignX) ? alignX : [alignX];
+      const newAlignY = _.isArray(alignY) ? alignY : [alignY];
 
       let newCoords = {
         ..._.reduce(
-          alignX,
+          newAlignY,
           (acc, a, idx) => ({
             ...acc,
             [a]: _.zipWith(
@@ -68,7 +69,7 @@ export function Dropdown(props: DropdownProps) {
           {}
         ),
         ..._.reduce(
-          alignY,
+          newAlignX,
           (acc, a, idx) => ({
             ...acc,
             [a]: _.zipWith(
@@ -111,14 +112,14 @@ export function Dropdown(props: DropdownProps) {
   });
 
   return (
-    <Box flexShrink={1} position={open ? "relative" : "static"} minWidth='0'>
+    <Box style={{ flexShrink:"1" }} position={open ? "relative" : "static"} minWidth='0'>
       <ClickBox width='100%' ref={anchorRef} onClick={onOpen}>
         {children}
       </ClickBox>
       {open && (
         <Portal>
           <DropdownOptions
-            width={props.width || "max-content"}
+            width={width || "max-content"}
             {...coords}
             ref={dropdownRef}
           >

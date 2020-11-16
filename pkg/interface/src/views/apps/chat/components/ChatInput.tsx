@@ -188,9 +188,7 @@ return;
     return (
       <Row
         alignItems='center'
-        position='relative'
-        flexGrow='1'
-        flexShrink='0'
+        flexGrow={1}
         borderTop='1'
         borderTopColor='washedGray'
         backgroundColor='white'
@@ -211,7 +209,6 @@ return;
         />
         <Box
           mx='2'
-          flexShrink='0'
           height='16px'
           width='16px'
           flexBasis='16px'
@@ -232,7 +229,6 @@ return;
         </Box>
         <Box
           mr='2'
-          flexShrink='0'
           height='16px'
           width='16px'
           flexBasis='16px'

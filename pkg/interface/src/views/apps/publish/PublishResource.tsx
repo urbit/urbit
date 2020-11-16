@@ -20,7 +20,7 @@ export function PublishResource(props: PublishResourceProps) {
   const notebookContacts = props.contacts[association["group-path"]];
 
   return (
-    <Box height="100%" width="100%" overflowY="auto">
+    <Box height="calc(100% - 32px)" width="100%" overflowY="auto">
       <NotebookRoutes
         api={api}
         ship={ship}

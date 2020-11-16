@@ -183,7 +183,6 @@ export class LinkSubmit extends Component<LinkSubmitProps, LinkSubmitState> {
     return (
       <>
       <Box
-        flexShrink='0'
         position='relative'
         border='1px solid'
         borderColor={this.state.submitFocus ? 'black' : 'washedGray'}
@@ -294,7 +293,6 @@ export class LinkSubmit extends Component<LinkSubmitProps, LinkSubmitState> {
       </Box>
       <Box mt='2' mb='4'>
         <Button
-          flexShrink='0'
           primary
           disabled={!this.state.linkValid || this.state.disabled}
           onClick={this.onClickPost.bind(this)}

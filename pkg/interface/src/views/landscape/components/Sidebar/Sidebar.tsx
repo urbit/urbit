@@ -143,9 +143,8 @@ export function Sidebar(props: SidebarProps) {
         apps={props.apps}
         baseUrl={props.baseUrl}
       />
-      <SidebarStickySpacer flexShrink={0} />
+      <SidebarStickySpacer />
       <Box
-        flexShrink="0"
         display={isAdmin ? "flex" : "none"}
         justifyContent="center"
         position="sticky"

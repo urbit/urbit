@@ -94,7 +94,7 @@ export default function Inbox(props: {
   };
 
   return (
-    <Col onScroll={onScroll} overflowY="auto" flexGrow="1" minHeight='0' flexShrink='0'>
+    <Col onScroll={onScroll} overflowY="auto" flexGrow="1" minHeight='0'>
       {incomingGroups.map((invite) => (
         <Box
           bg='white'
@@ -206,7 +206,7 @@ function DaySection({
         _.map(nots.sort(sortIndexedNotification), (not, j: number) => (
           <React.Fragment key={j}>
             {(i !== 0 || j !== 0) && (
-              <Box flexShrink="0" height="4px" bg="scales.black05" />
+              <Box height="4px" bg="scales.black05" />
             )}
             <Notification
               graphConfig={graphConfig}

@@ -42,7 +42,7 @@ export const LinkItem = (props) => {
   const [ship, name] = resource.split('/');
 
   return (
-    <Row minWidth='0' flexShrink='0' width="100%" alignItems="center" py={3} bg="white">
+    <Row minWidth='0' width="100%" alignItems="center" py={3} bg="white">
       {img}
       <Col minWidth='0' height="100%" width='100%' justifyContent="space-between" ml={2}>
         <Anchor

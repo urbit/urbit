@@ -87,7 +87,6 @@ export class OmniboxResult extends Component {
         verticalAlign="middle"
         color={this.state.hovered || selected === link ? 'white' : 'black'}
         maxWidth="60%"
-        style={{ flexShrink: 0 }}
         mr='1'
         >
           {text}
@@ -96,7 +95,7 @@ export class OmniboxResult extends Component {
         display="inline-block"
         verticalAlign="middle"
         color={this.state.hovered || selected === link ? 'white' : 'black'}
-        width='100%'
+        flexGrow={1}
         textAlign='right'
         >
           {subtext}

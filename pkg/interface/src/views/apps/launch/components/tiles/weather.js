@@ -166,7 +166,6 @@ export default class WeatherTile extends React.Component {
             backgroundColor='transparent'
             color='black'
             cursor='pointer'
-            flexShrink='0'
             pl='1'
             fontSize='0'
             border='0'

@@ -115,7 +115,6 @@ export function ChipInput(props: ChipInputProps) {
         <Input
           width="auto"
           height="24px"
-          flexShrink="1"
           flexGrow="1"
           pl="0"
           ref={inputRef}

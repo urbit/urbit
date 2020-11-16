@@ -69,7 +69,7 @@ export function LinkResource(props: LinkResourceProps) {
           render={(props) => {
             return (
               <Col width="100%" p={4} alignItems="center" maxWidth="768px">
-                <Col width="100%" flexShrink='0'>
+                <Col width="100%">
                   <LinkSubmit s3={s3} name={name} ship={ship.slice(1)} api={api} />
                 </Col>
                 {Array.from(graph).map(([date, node]) => {

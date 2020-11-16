@@ -69,7 +69,7 @@ export function ChannelSettings(props: ChannelSettingsProps) {
     <Col gapY="6" overflowY="auto" p={4}>
       <Formik initialValues={initialValues} onSubmit={onSubmit}>
         <Form style={{ display: "contents" }}>
-          <Col flexShrink="0" maxWidth="512px" gapY="4">
+          <Col maxWidth="512px" gapY="4">
             <Col mb={3}>
               <Text fontWeight="bold">Channel Settings</Text>
               <Label gray mt="2">
