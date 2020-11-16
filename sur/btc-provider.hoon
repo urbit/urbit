@@ -30,11 +30,13 @@
   +$  action
     $%  [%get-address-info =address]
         [%get-block-count ~]
+        [%get-block-and-fee ~]
     ==
   ::
   +$  response
     $%  [%get-address-info utxos=(set utxo) used=? blockcount=@ud]
         [%get-block-count blockcount=@ud]
+        [%get-block-and-fee blockcount=@ud fee=sats]
     ==
   --
 --
