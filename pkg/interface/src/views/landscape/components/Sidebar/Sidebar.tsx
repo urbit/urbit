@@ -20,12 +20,11 @@ import { useLocalStorageState } from "~/logic/lib/useLocalStorageState";
 import { getGroupFromWorkspace } from "~/logic/lib/workspace";
 import { SidebarAppConfigs } from './types';
 import { SidebarList } from "./SidebarList";
-import { SidebarInvite } from './SidebarInvite';
 import { roleForShip } from "~/logic/lib/group";
 
 const ScrollbarLessCol = styled(Col)`
   scrollbar-width: none !important;
-  
+
   ::-webkit-scrollbar {
     display: none;
   }
@@ -63,27 +62,6 @@ const SidebarStickySpacer = styled(Box)`
   }
 `;
 
-const inviteItems = (invites, api) => {
-  const returned = [];
-  Object.keys(invites).filter((e) => {
-    return e !== 'contacts';
-  }).map((appKey) => {
-    const app = invites[appKey];
-    Object.keys(app).map((uid) => {
-      const invite = app[uid];
-      const inviteItem =
-        <SidebarInvite
-          key={uid}
-          invite={invite}
-          onAccept={() => api.invite.accept(appKey, uid)}
-          onDecline={() => api.invite.decline(appKey, uid)}
-        />;
-        returned.push(inviteItem);
-    });
-  });
-  return returned;
-};
-
 export function Sidebar(props: SidebarProps) {
   const { invites, api, associations, selected, apps, workspace } = props;
   const groupPath = getGroupFromWorkspace(workspace);
@@ -99,8 +77,6 @@ export function Sidebar(props: SidebarProps) {
       hideUnjoined: false,
     }
   );
-  const sidebarInvites = (workspace?.type === 'home')
-    ? inviteItems(invites, api) : null;
 
   const role = props.groups?.[groupPath] ? roleForShip(props.groups[groupPath], window.ship) : undefined;
   const isAdmin = (role === "admin") || (workspace?.type === 'home');
@@ -133,7 +109,6 @@ export function Sidebar(props: SidebarProps) {
         handleSubmit={setConfig}
         selected={selected || ""}
         workspace={workspace} />
-      {sidebarInvites}
       <SidebarList
         config={config}
         associations={associations}

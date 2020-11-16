@@ -6,7 +6,7 @@ import { StatusBarItem } from './StatusBarItem';
 import { Sigil } from '~/logic/lib/sigil';
 
 const StatusBar = (props) => {
-  const invites = Object.keys(props.invites?.['contacts'] || {});
+  const invites = [].concat(...Object.values(props.invites).map(obj => Object.values(obj)));
   const metaKey = (window.navigator.platform.includes('Mac')) ? '⌘' : 'Ctrl+';
 
   return (

@@ -1,18 +1,16 @@
 import React, { Component } from 'react';
 import { Invite } from '~/types/invite-update';
 import { Text, Box, Button, Row } from '@tlon/indigo-react';
+import { cite } from '~/logic/lib/util';
 
-export class SidebarInvite extends Component<{invite: Invite, onAccept: Function, onDecline: Function}, {}> {
+export class InviteItem extends Component<{invite: Invite, onAccept: Function, onDecline: Function}, {}> {
   render() {
     const { props } = this;
 
     return (
       <Box width='100%' p='4' mb='4' borderBottom='1px solid lightGray' position='sticky' style={{ top: 0 }}>
         <Box width='100%' verticalAlign='middle'>
-          <Text display='block' pb='2' gray>You have been invited to:</Text>
-          <Text display='inline-block'>
-            {`~${props.invite.resource.ship}/${props.invite.resource.name}`}
-          </Text>
+          <Text display='block' pb='2' gray><Text mono>{cite(props.invite.resource.ship)}</Text> invited you to <Text fontWeight='500'>{props.invite.resource.name}</Text></Text>
         </Box>
         <Row>
         <Button
@@ -39,4 +37,4 @@ export class SidebarInvite extends Component<{invite: Invite, onAccept: Function
   }
 }
 
-export default SidebarInvite;
+export default InviteItem;
