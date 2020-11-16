@@ -64,7 +64,7 @@ function Group(props: GroupProps) {
       <Col height="100%" justifyContent="space-between">
         <Text>{title}</Text>
         {unreads > 0 && 
-          (<Text gray>{unreads} unread{unreads !== 1 && 's'} </Text>)
+          (<Text color="blue" gray>{unreads} update{unreads !== 1 && 's'} </Text>)
         }
       </Col>
     </Tile>
