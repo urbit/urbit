@@ -110,6 +110,9 @@
         sub-card
     ==
     ::
+      %pay
+    `state
+    ::
       %force-retry
     [(retry pend) state]
   ==
