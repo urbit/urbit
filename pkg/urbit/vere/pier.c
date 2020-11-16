@@ -1465,7 +1465,7 @@ _pier_boot_make(u3_noun who, u3_noun ven, u3_noun pil)
     //
     c3_assert( c3y == u3a_is_cell(ven) );
 
-    u3_noun wir = u3nq(u3_blip, c3__term, '1', u3_nul);
+    u3_noun wir = u3nq(c3__d, c3__term, '1', u3_nul);
     u3_noun cad = u3nt(c3__boot, u3_Host.ops_u.lit, ven); // transfer
 
     bot_u.use = u3nc(u3nc(wir, cad), bot_u.use);
