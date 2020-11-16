@@ -534,7 +534,7 @@
     ::     ;~(pfix ace ;~(plug i.opt $(opt t.opt)))
     ::   --
     ::
-    ++  group  ;~((glue net) ship sym)
+    ++  group  ;~((glue fas) ship sym)
     ++  tag   |*(a=@tas (cold a (jest a)))  ::TODO  into stdlib
     ++  ship  ;~(pfix sig fed:ag)
     ++  path  ;~(pfix fas ;~(plug urs:ab (easy ~)))  ::NOTE  short only, tmp
