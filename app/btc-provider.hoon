@@ -110,7 +110,7 @@
       [%get-address-info address.body.act]
       ::
         %ping
-      [%get-block-count ~]
+      [%get-block-and-fee ~]
     ==
   [~[(req-card act ract)] state]
 ++  req-card

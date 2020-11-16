@@ -64,6 +64,9 @@
     ::
       %get-block-count
     [id.res (ni:dejs:format res.res)]
+    ::
+      %get-block-and-fee
+    [id.res (block-and-fee res.res)]
   ==
   ++  address-info
     %-  ot:dejs:format
@@ -78,6 +81,11 @@
         [%height ni:dejs:format]
         [%value ni:dejs:format]
     ==
+  ++  block-and-fee
+    %-  ot:dejs:format
+    :~  [%blockcount ni:dejs:format]
+        [%fee ni:dejs:format]
+    ==
   --
 ::
 ++  rpc-action-to-http
@@ -90,6 +98,9 @@
     ::
       %get-block-count
     (mk-url '/getblockcount' ~)
+    ::
+      %get-block-and-fee
+    (mk-url '/getblockandfee' ~)
   ==
   ++  mk-url
     |=  [base=@t uaddr=(unit address)]
