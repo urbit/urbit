@@ -24,7 +24,9 @@
   $:  %0
       provider=(unit [host=ship connected=?])
       =btc-state
-      pend=back
+      def-wallet=(unit xpub)
+      padr=pend-addr
+      ptxb=pend-txbu
   ==
 ::
 +$  card  card:agent:gall
@@ -110,11 +112,24 @@
         sub-card
     ==
     ::
-      %pay
+      %set-default-wallet
+    =/  xs=(list xpub)  scry-scanned
+    ?.  (gth (lent xs) 0)  `state
+    `state(def-wallet `(snag 0 xs))
+    ::
+      %req-pay-address
+    ::  TODO: gen-address in wallet-store
+    ::  handle response in on-agent-> wallet-store update
+    :: TODO: check whether default-wallet has a value
+    ?~  def-wallet  ~&  >>>  "no default wallet"  `state
+    :-  ~[(poke-wallet-store [%generate-address u.def-wallet %0])]
+    state
+    ::
+      %pay-address
     `state
     ::
       %force-retry
-    [(retry pend) state]
+    [(retry padr) state]
   ==
 ::  if status is %connected, retry all pending address lookups
 ::
@@ -126,7 +141,7 @@
   ?-  -.s
       %connected
     ::  only retry if previously disconnected
-    :-  ?:(connected.u.provider ~ (retry pend))
+    :-  ?:(connected.u.provider ~ (retry padr))
     %=  state
         provider  `[host.u.provider %.y]
         btc-state  [blockcount.s fee.s now.bowl]
@@ -137,26 +152,19 @@
 ::
 ++  handle-provider-update
   |=  =update:bp
-  |^  ^-  (quip card _state)
+  ^-  (quip card _state)
   ?.  ?=(%& -.update)  `state
   ?-  -.body.p.update
       %address-info
-    =/  ureq  (~(get by pend) req-id.p.update)
+    =/  ureq  (~(get by padr) req-id.p.update)
     ?~  ureq  `state
-    :_  state(pend (~(del by pend) req-id.p.update))
-    :~  %-  poke-store
+    :_  state(padr (~(del by padr) req-id.p.update))
+    :~  %-  poke-wallet-store
         :*  %address-info  xpub.u.ureq  chyg.u.ureq  idx.u.ureq
             utxos.body.p.update  used.body.p.update  blockcount.body.p.update
         ==
     ==
   ==
-  ++  poke-store
-    |=  act=action:bws  ^-  card
-    :*  %pass  /[(scot %da now.bowl)]  %agent
-        [our.bowl %btc-wallet-store]  %poke
-        %btc-wallet-store-action  !>(act)
-    ==
-  --
 ::
 ++  handle-request
   |=  req=request:bws
@@ -164,7 +172,7 @@
   ?-  -.req
       %scan-address
     =/  ri=req-id:bp  (mk-req-id (hash-xpub:bwsl +>.req))
-    :_  state(pend (~(put by pend) ri req))
+    :_  state(padr (~(put by padr) ri req))
     ?~  provider  ~
     ?:  provider-connected
       ~[(get-address-info ri host.u.provider a.req)]
@@ -173,10 +181,10 @@
   ==
 ::
 ++  retry
-  |=  =back
+  |=  p=pend-addr
   ^-  (list card)
   ?~  provider  ~|("provider not set" !!)
-  %+  turn  ~(tap by back)
+  %+  turn  ~(tap by p)
   |=  [ri=req-id:bp req=request:bws]
   (get-address-info ri host.u.provider a.req)
 ::
@@ -192,4 +200,21 @@
   ^-  ?
   ?~  provider  %.n
   connected.u.provider
+::
+++  poke-wallet-store
+  |=  act=action:bws  ^-  card
+  :*  %pass  /[(scot %da now.bowl)]  %agent
+      [our.bowl %btc-wallet-store]  %poke
+      %btc-wallet-store-action  !>(act)
+  ==
+::
+++  scry-scanned
+  .^  (list xpub)
+    %gx
+    (scot %p our.bowl)
+    %btc-wallet-store
+    (scot %da now.bowl)
+    %scanned
+    %noun
+  ==
 --
