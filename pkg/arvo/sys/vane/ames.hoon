@@ -3118,6 +3118,50 @@
   ::  result is <<header body>>
   ::
   (mix header (lsh 5 1 body))
+::
+::
+++  decode-packet
+  |=  =blob
+  ^-  packet
+  ::  first 32 (2^5) bits are header; the rest is body
+  ::
+  =/  header  (end 5 1 blob)
+  =/  body    (rsh 5 1 blob)
+  ::  read header; first two bits are reserved
+  ::
+  =/  is-ames  (cut 0 [2 1] header)
+  ?.  =(& is-ames)
+    ~|  %ames-not-ames  !!
+  ::
+  =/  version  (cut 0 [3 3] header)
+  ?.  =(protocol-version version)
+    ~|  ames-protocol-version+version  !!
+  ::
+  =/  sndr-size  (decode-ship-size (cut 0 [6 2] header))
+  =/  rcvr-size  (decode-ship-size (cut 0 [8 2] header))
+  =/  checksum   (cut 0 [11 20] header)
+  =/  relayed    (cut 0 [31 1] header)
+  =^  origin=(unit @)  body
+    ?:  =(| relayed)
+      [~ body]
+    [`(rsh 3 6 body) (end 3 6 body)]
+  ?.  =(checksum (end 0 20 (mug body)))
+    ~|  %ames-checksum  !!
+  ::  read fixed-length sndr and rcvr life from body
+  ::
+  =/  sndr-life  (cut 0 [0 4] body)
+  =/  rcvr-life  (cut 0 [4 4] body)
+  ::  read variable-length .sndr and .rcvr addresses
+  ::
+  =/  off   1
+  =^  sndr  off  [(cut 3 [off sndr-size] body) (add off sndr-size)]
+  =^  rcvr  off  [(cut 3 [off rcvr-size] body) (add off rcvr-size)]
+  =^  siv   off  [(cut 3 [off 64] body) (add off 64)]
+  ::  read variable-length ciphertext
+  ::
+  =/  cyf-size  :(sub (met 3 body) 1 off)
+  =/  cyf  (cut 3 [off cyf-size] body)
+  [[sndr rcvr] origin siv syf]
 ::  +decode-packet: deserialize packet from bytestream or crash
 ::
 ++  decode-packet
@@ -3150,6 +3194,19 @@
       (rsh 3 (add rcvr-size sndr-size) body)
   ::
   [dyad encrypted origin content]
+::  +decode-origin-size: decode a 2-bit origin size into a byte width
+::
+::    Rationale:
+::    %0: no origin
+::    %1: 4-byte address, 2-byte port
+::
+++  decode-origin-size
+  |=  size=@
+  ^-  @
+  ?+  size  !!
+    %0  0
+    %1  6
+  ==
 ::  +decode-ship-size: decode a 2-bit ship type specifier into a byte width
 ::
 ::    Type 0: galaxy or star -- 2 bytes
