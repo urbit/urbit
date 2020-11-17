@@ -91,7 +91,10 @@
         (handle-provider-update:hc !<(update:bp q.cage.sign))
         ::
           %btc-wallet-store-request
-        (handle-request:hc !<(request:bws q.cage.sign))
+        (handle-wallet-store-request:hc !<(request:bws q.cage.sign))
+        ::
+          %btc-wallet-store-update
+        (handle-wallet-store-update:hc !<(update:bws q.cage.sign))
       ==
     [cards this]
   ==
@@ -118,12 +121,14 @@
     `state(def-wallet `(snag 0 xs))
     ::
       %req-pay-address
-    ::  TODO: gen-address in wallet-store
-    ::  handle response in on-agent-> wallet-store update
-    :: TODO: check whether default-wallet has a value
-    ?~  def-wallet  ~&  >>>  "no default wallet"  `state
-    :-  ~[(poke-wallet-store [%generate-address u.def-wallet %0])]
-    state
+    ?<  =(src.bowl payee.act)        ::  can't pay yourself
+    :_  state
+    ?.  =(payee.act our.bowl)       ::  forward poke to payee
+      ~[(poke-wallet-hook payee.act act)]
+    ?~  def-wallet  ~|("btc-wallet-hook: no def-wallet set" !!)
+    :~  %+  poke-wallet-store  /[(scot %p src.bowl)]
+           [%generate-address u.def-wallet %0]
+    ==
     ::
       %pay-address
     `state
@@ -159,14 +164,14 @@
     =/  ureq  (~(get by padr) req-id.p.update)
     ?~  ureq  `state
     :_  state(padr (~(del by padr) req-id.p.update))
-    :~  %-  poke-wallet-store
+    :~  %+  poke-wallet-store  /
         :*  %address-info  xpub.u.ureq  chyg.u.ureq  idx.u.ureq
             utxos.body.p.update  used.body.p.update  blockcount.body.p.update
         ==
     ==
   ==
 ::
-++  handle-request
+++  handle-wallet-store-request
   |=  req=request:bws
   ^-  (quip card _state)
   ?-  -.req
@@ -178,6 +183,19 @@
       ~[(get-address-info ri host.u.provider a.req)]
     ~&  >  "provider not connected"
     ~
+  ==
+::
+++  handle-wallet-store-update
+  |=  upd=update:bws
+  ^-  (quip card _state)
+  ?-  -.upd
+      %generate-address
+    :: TODO: add to piym
+    :: TODO: send to requesting wallet-hook
+    `state
+    ::
+      %scan-done
+    `state
   ==
 ::
 ++  retry
@@ -201,10 +219,19 @@
   ?~  provider  %.n
   connected.u.provider
 ::
-++  poke-wallet-store
-  |=  act=action:bws  ^-  card
+++  poke-wallet-hook
+  |=  [target=ship act=action]
+  ^-  card
   :*  %pass  /[(scot %da now.bowl)]  %agent
-      [our.bowl %btc-wallet-store]  %poke
+      [target %btc-wallet-hook]  %poke
+      %btc-wallet-hook-action  !>(act)
+  ==
+::
+++  poke-wallet-store
+  |=  [prefix=wire act=action:bws]
+  ^-  card
+  :*  %pass  (weld prefix /[(scot %da now.bowl)])
+      %agent  [our.bowl %btc-wallet-store]  %poke
       %btc-wallet-store-action  !>(act)
   ==
 ::
