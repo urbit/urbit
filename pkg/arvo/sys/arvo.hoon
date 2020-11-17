@@ -159,8 +159,9 @@
 ::  $plan: worklist
 ::  $soul: persistent state
 ::  $vane: kernel module
+::  $vere: runtime version
 ::  $vile: reflexive constants
-::
+::  $wynn: kelvin stack
 ::
 +$  debt
   $:  ::  run: list of worklists
@@ -178,16 +179,24 @@
   $:  our=ship                                        ::  identity
       eny=@uvJ                                        ::  entropy
       lac=?                                           ::  laconic bit
+      ver=vere                                        ::  runtime
       zus=vase                                        ::  %zuse
       van=(map term vane)                             ::  modules
   ==
 +$  vane  [=vase =worm]
++$  vere
+  $:  $:  non=@ta
+          rev=(pair term (trel @ud @ud @ud)) :: XX path?
+      ==
+      kel=wynn
+  ==
 +$  vile
   $:  typ=type    ::  -:!>(*type)
       duc=type    ::  -:!>(*duct)
       wir=type    ::  -:!>(*wire)
       dud=type    ::  -:!>(*(unit goof))
   ==
++$  wynn  (list (pair term @ud))
 --
 =>
 ~%  %hex  ..ut  ~
@@ -264,6 +273,44 @@
       ==
     ~>(%slog.[0 leaf+"arvo: scry-dark"] ~)
   [~ ~ +.q.u.u.bop]
+::  +wyrd: kelvin negotiation
+::
+::    specified but unimplemented:
+::    arvo should produce a [wend/wynn] effect
+::    to signal downgrade
+::
+++  wyrd
+  |=  [run=wynn hav=wynn]
+  ::  wyr: ~: runtime supports all required kelvins
+  ::       ^: runtime support is missing or lagging
+  ::
+  =;  wyr
+    ~&  wyrd=wyr
+    ::  XX revise hint, crash
+    ::
+    :: ?^  wyr
+    ::   ~>  %wyrd.[p.u.wyr]
+    ::   ~_  ?~  q.u.wyr
+    ::         leaf/"missing"
+    ::       leaf/"wyrd: %({(trip p.p.u.wyr)} {(scow %ud q.p.u.wyr)} {(scow %ud q.u.wyr)}"
+    ::   !!
+    ::
+    same
+  |-  ^-  (unit (pair (pair term @ud) (unit @ud)))
+  ?~  hav  ~
+  ::
+  ::  fel: %&: runtime kelvin for [i.hav]
+  ::       %|: no specified runtime support
+  ::
+  =/  fel
+    |-  ^-  (each @ud (pair term @ud))
+    ?~  run  |/i.hav
+    ?:(=(p.i.hav p.i.run) &/q.i.run $(run t.run))
+  ::
+  ?-  -.fel
+    %|  `[p.fel ~]
+    %&  ?.((lte q.i.hav p.fel) `[i.hav `p.fel] $(hav t.hav))
+  ==
 ::  |part: arvo structures and engines
 ::
 ++  part
@@ -851,9 +898,11 @@
           +$  wasp
             ::  %crud: reroute $ovum with $goof         ::  NB: different
             ::  %wack: iterate entropy
+            ::  %wyrd: check/record runtime kelvin stack
             ::
             $%  [%crud =goof =ovum]
                 [%wack p=@uvJ]
+                [%wyrd p=vere]
             ==
           --
       ::
@@ -885,7 +934,7 @@
         ?-  -.waif
           %lyra  =/  pos=plan  [$/~ [*duct (gest [//arvo vega/~])] ~]
                  %_  ..pith
-                   but  `(boot [hun van]:waif)
+                   but  `(boot kel.ver [hun van]:waif)
                    run  (weld run [pos ~])
                  ==
         ::
@@ -902,7 +951,10 @@
           %verb  ..pith(lac ?~(p.waif !lac u.p.waif))
         ::
           %veer  ?:  ?=(%$ lal.waif)
-                   ..pith(zus $:(smit:va "zuse" pit [pax txt]:waif))
+                   =.  zus  $:(smit:va "zuse" pit [pax txt]:waif)
+                   %-  (wyrd kel.ver [zuse/;;(@ud q:(slap zus limb/%zuse)) ~])
+                   ..pith
+                ::
                  ::
                  =/  nex  (create:va zus [lal pax txt]:waif)
                  =/  nav  (~(get by van) lal.waif)
@@ -918,7 +970,7 @@
         ?~  wire.ovum
           ~>(%mean.'pith: bad wire' !!)
         ::
-        ?.  ?=(?(%crud %wack) -.card.ovum)
+        ?.  ?=(?(%crud %wack %wyrd) -.card.ovum)
           (emit $/~ [*duct (gest ovum)] ~)
         ::
         =/  buz  ;;(wasp card.ovum)
@@ -931,6 +983,17 @@
         ::  XX review
         ::
           %wack  ..pith(eny (shaz (cat 3 eny p.buz)))
+        ::
+        ::  %wyrd: check for runtime kelvin compatibility
+        ::
+          %wyrd  =.  ver  p.buz
+                  %-  %+  wyrd  kel.ver
+                      ^-  (list (pair term @))
+                      :~  hoon/hoon-version
+                          arvo/%arvo-kelvin
+                          zuse/;;(@ q:(slap zus limb/%zuse))
+                      ==
+                  ..pith
         ==
       ::
       ++  spam
@@ -963,7 +1026,7 @@
   ?.(&(?=(@ a) ((sane %tas) a)) %$ a)
 ::
 ++  boot
-  |=  [hun=(unit @t) van=@t]
+  |=  [kel=wynn hun=(unit @t) van=@t]
   ^-  $-(heir (trap ^))
   ~>  %mean.'vega: ruin'
   ?~  hun
@@ -996,9 +1059,12 @@
     ::  require single-step upgrade
     ::
     ?.  |(=(nex hoon-version) =(+(nex) hoon-version))
-      ::  XX  %wyrd hint
+      ::  XX revise hint
       ::
       ~>(%mean.'wyrd: vega:' !!)
+    ::  require runtime compatibility
+    ::
+    %-  (wyrd kel [hoon/nex ~])
     ::
     ::  if we're upgrading language versions, recompile the compiler
     ::
@@ -1101,6 +1167,13 @@
   ::  clear compiler caches
   ::
   =.  van  (~(run by van) |=(=vane vane(worm *worm)))
+  ::
+  %-  %+  wyrd  kel.ver
+      ^-  (list (pair term @))
+      :~  hoon/hoon-version
+          arvo/%arvo-kelvin
+          zuse/;;(@ q:(slap zus limb/%zuse))
+      ==
   ::  restore working state and resume
   ::
   =/  zef=(each (pair (list ovum) soul) (trap ^))
@@ -1161,24 +1234,29 @@
 ::    For convenience, this larval stage also supports hoon compilation
 ::    with +wish and vane installation with the %veer event.
 ::
-=|  $:  ::  who: identity once we know it
-        ::  eny: entropy once we learn it
-        ::  bod: %zuse once we receive it
-        ::
-        who=(unit ship)
-        eny=(unit @)
-        lac=?
-        bod=(unit (trap vase))
-        van=(map term (trap vase))
-    ==
 =>  |%
+    ::  $foal: larval state
     ::  $grub: larval events
     ::
+    +$  foal
+      $:  ::  who: identity once we know it
+          ::  eny: entropy once we learn it
+          ::  bod: %zuse once we receive it
+          ::
+          who=(unit ship)
+          eny=(unit @)
+          lac=?
+          ver=vere  :: XX unit
+          bod=(unit (trap vase))
+          van=(map term (trap vase))
+      ==
     +$  grub
+      $~  verb/~
       $%  $>(%verb waif:pith:le:part)
           $>(%veer waif:pith:le:part)
           $>(%wack wasp:pith:le:part)
           [%whom p=ship]
+          $>(%wyrd wasp:pith:le:part)
       ==
     ::
     ++  mint
@@ -1188,18 +1266,24 @@
       (smit:va:part cap vax pax txt)
     ::
     ++  molt
-      |=  $:  [our=ship now=@da eny=@uvJ]
-              lac=?
-              bod=(trap vase)
-              van=(map term (trap vase))
+      |=  [now=@da foal]
+      ^-  (unit heir)
+      ?.  &(?=(^ who) ?=(^ eny) ?=(^ bod))
+        ~
+      =/  zus  $:u.bod
+      %-  %+  wyrd  kel.ver
+          ^-  (list (pair term @))
+          :~  hoon/hoon-version
+              arvo/%arvo-kelvin
+              zuse/;;(@ud q:(slap zus limb/%zuse))
           ==
-      ^-  heir
-      =/  zus  $:bod
       =/  nav  %-  ~(run by van)
                |=(a=(trap vase) (settle:va:part (slym $:a zus)))
-      [%arvo-kelvin now *debt [our eny lac zus nav]]
+      `[%arvo-kelvin now *debt [u.who u.eny lac ver zus nav]]
     --
 ::
+=|  foal
+=*  fol  -
 |%
 ++  come  ^come                                         ::   +4
 ++  load  ^load                                         ::  +10
@@ -1222,15 +1306,24 @@
     ::
         %wack  ..poke(eny `p.gub)
         %whom  ..poke(who `p.gub)
+        %wyrd  =.  ver  p.gub
+                %-  %+  wyrd  kel.ver
+                    ^-  (list (pair term @))
+                    :*  hoon/hoon-version
+                        arvo/%arvo-kelvin
+                        ?~  bod  ~
+                        [zuse/;;(@ud q:(slap $:u.bod limb/%zuse)) ~]
+                    ==
+                ..poke
     ==
   ::
-  ::  upgrade once we've accumulated identity, entropy, and %zuse
-  ::
-  ?.  &(?=(^ who) ?=(^ eny) ?=(^ bod))
+  ?~  hir=(molt now fol)
     [~ ..poke]
   ::
+  ::  upgrade once we've accumulated necessary state
+  ::
   ~>  %slog.[0 leaf+"arvo: metamorphosis"]
-  (load (molt [u.who now u.eny] lac u.bod van))
+  (load u.hir)
 ::
 ++  wish                                                ::  +22
   |=  txt=*
