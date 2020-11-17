@@ -165,7 +165,13 @@
 ::    address.  Routes are opaque to Arvo and only have meaning in the
 ::    interpreter. This enforces that Ames is transport-agnostic.
 ::
-+$  packet  [dyad encrypted=? origin=(unit lane) content=*]
++$  packet
+  $:  =dyad
+      sndr-tick=@ubB
+      rcvr-tick=@ubB
+      origin=(unit @uxorigin)
+      content=@uxcontent
+  ==
 ::  $open-packet: unencrypted packet payload, for comet self-attestation
 ::
 ::    This data structure gets signed and jammed to form the .contents
@@ -3118,7 +3124,7 @@
   ::  result is <<header body>>
   ::
   (mix header (lsh 5 1 body))
-::
+::  +decode-packet: deserialize packet from bytestream or crash
 ::
 ++  decode-packet
   |=  =blob
@@ -3151,51 +3157,53 @@
     ~|  %ames-checksum  !!
   ::  read fixed-length sndr and rcvr life from body
   ::
-  =/  sndr-life  (cut 0 [0 4] body)
-  =/  rcvr-life  (cut 0 [4 4] body)
+  =/  sndr-tick  (cut 0 [0 4] body)
+  =/  rcvr-tick  (cut 0 [4 4] body)
   ::  read variable-length .sndr and .rcvr addresses
   ::
   =/  off   1
   =^  sndr  off  [(cut 3 [off sndr-size] body) (add off sndr-size)]
   =^  rcvr  off  [(cut 3 [off rcvr-size] body) (add off rcvr-size)]
-  ::  read initialization vector .siv and variable-length ciphertext .cyf
-  ::
-  =^  siv  off  [(cut 3 [off 64] body) (add off 64)]
-  =/  cyf-size  :(sub (met 3 body) 1 off)
-  =/  cyf  (cut 3 [off cyf-size] body)
-  [[sndr rcvr] origin siv syf]
-::  +decode-packet: deserialize packet from bytestream or crash
+  =/  meat  (cut 3 [off (sub (met 3 body) off)])
+  [[[sndr rcvr] sndr-tick rcvr-tick origin meat]
 ::
-++  decode-packet
-  |=  =blob
-  ^-  packet
-  ::  first 32 (2^5) bits are header; the rest is body
+++  decode-open-packet
+  |=  [=packet our-life=@]
+  ^-  open-packet
+  =+  ;;  [signature=@ signed=@]  (cue content.packet)
+  =+  ;;  =open-packet            (cue signed)
+  ::  assert .our and .her and lives match
   ::
-  =/  header  (end 5 1 blob)
-  =/  body    (rsh 5 1 blob)
+  ?>  .=       sndr.open-packet  sndr.packet
+  ?>  .=       rcvr.open-packet  our
+  ?>  .=  sndr-life.open-packet  1
+  ?>  .=  rcvr-life.open-packet  life.ames-state
+  ::  only a star can sponsor a comet
   ::
-  =/  version    (end 0 3 header)
-  =/  checksum   (cut 0 [3 20] header)
-  =/  sndr-size  (decode-ship-size (cut 0 [23 2] header))
-  =/  rcvr-size  (decode-ship-size (cut 0 [25 2] header))
-  =/  encrypted  ?+((cut 0 [27 5] header) !! %0 %.y, %1 %.n)
+  ?>  =(%king (clan:title (^sein:title sndr.packet)))
+  ::  comet public-key must hash to its @p address
   ::
-  =/  =dyad
-    :-  sndr=(end 3 sndr-size body)
-    rcvr=(cut 3 [sndr-size rcvr-size] body)
+  ?>  =(sndr.packet fig:ex:(com:nu:crub:crypto public-key.open-packet))
+  ::  verify signature
   ::
-  ?.  =(protocol-version version)
-    ~|  %ames-protocol^version^dyad  !!
-  ?.  =(checksum (end 0 20 (mug body)))
-    ~|  %ames-checksum^dyad  !!
+  ::    Logic duplicates +com:nu:crub:crypto and +sure:as:crub:crypto.
   ::
-  =+  ~|  %ames-invalid-packet
-      ;;  [origin=(unit lane) content=*]
-      ~|  %ames-invalid-noun
-      %-  cue
-      (rsh 3 (add rcvr-size sndr-size) body)
-  ::
-  [dyad encrypted origin content]
+  =/  key  (end 8 1 (rsh 3 1 public-key.open-packet))
+  ?>  (veri:ed:crypto signature signed key)
+  open-packet
+::
+++  decode-shut-packet
+  |=  [=packet =symmetric-key our-life=@ her-life=@]
+  ^-  shut-packet
+  ?.  =(sndr-tick.packet (mod her-life 16))
+    ~|  ames-sndr-tick+sndr-tick.packet  !!
+  ?.  =(rcvr-tick.packet (mod our-life 16))
+    ~|  ames-rcvr-tick+rcvr-tick.packet  !!
+  =/  siv  (end 9 1 content.packet)
+  =/  cyf  (rsh 9 1 content.packet)
+  =/  len  (met 3 cyf)
+  =/  vec  [sndr.dyad.packet rcvr.dyad.packet her-life our-life]~
+  (need (~(de sivc:aes (shaz symmetric-key) vec) siv len cyf))
 ::  +decode-ship-size: decode a 2-bit ship type specifier into a byte width
 ::
 ::    Type 0: galaxy or star -- 2 bytes
