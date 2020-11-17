@@ -1,11 +1,7 @@
 # btc-wallet-* Scratch Code
 
 ## xpub
-Mnemonic
-```
-absurd sick rose mask magnet know slide spell rent casual someone grant giant inhale toward
-```
-
+xpub1 is from mnemonic from PRIVATE.scratch
 ```
 =xpub1 'zpub6r8dKyWJ31XF6n69KKeEwLjVC5ruqAbiJ4QCqLsrV36Mvx9WEjUaiPNPGFLHNCCqgCdy6iZC8ZgHsm6a1AUTVBMVbKGemNcWFcwBGSjJKbD'
 =xpub2 'xpub6D7yaZieZEeG617UcKXDhbsDeso6bmxSAiGWkvkASoiwcjaRtrH5HeNRnDT25s7zmxYzj6MtFe32dVqcf9YcBKKgn9THHjwn2uSjkvobK4e'
@@ -81,6 +77,8 @@ Uses `btc-wallet-hook`, with max-gap=3
 ## scrys
 ```
 .^((list @t) %gx /=btc-wallet-store=/scanned/noun)
+
+.^(@ud %gx /=btc-wallet-store=/balance/[xpub]/noun)
 ```
 
 ## Algos
