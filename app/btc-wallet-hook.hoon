@@ -27,6 +27,10 @@
       def-wallet=(unit xpub)
       padr=pend-addr
       ptxb=pend-txbu
+      =piym
+      =poym
+      =piym-watch
+      =poym-watch
   ==
 ::
 +$  card  card:agent:gall
@@ -94,7 +98,7 @@
         (handle-wallet-store-request:hc !<(request:bws q.cage.sign))
         ::
           %btc-wallet-store-update
-        (handle-wallet-store-update:hc !<(update:bws q.cage.sign))
+        (handle-wallet-store-update:hc wire !<(update:bws q.cage.sign))
       ==
     [cards this]
   ==
@@ -121,12 +125,18 @@
     `state(def-wallet `(snag 0 xs))
     ::
       %req-pay-address
-    ?<  =(src.bowl payee.act)        ::  can't pay yourself
+    :: TODO: add whitelisting here instead of comet block
+    ::  can't pay yourself; comets can't pay (could spam requests)
+    ::  forwards poke to payee if payee isn't us
+    ::  wire is /payer/value/timestamp
+    ::
+    ?<  =(src.bowl payee.act)
+    ?<  ?=(%pawn (clan:title src.bowl))
     :_  state
-    ?.  =(payee.act our.bowl)       ::  forward poke to payee
+    ?.  =(payee.act our.bowl)
       ~[(poke-wallet-hook payee.act act)]
     ?~  def-wallet  ~|("btc-wallet-hook: no def-wallet set" !!)
-    :~  %+  poke-wallet-store  /[(scot %p src.bowl)]
+    :~  %+  poke-wallet-store  /[(scot %p src.bowl)]/[(scot %ud value.act)]
            [%generate-address u.def-wallet %0]
     ==
     ::
@@ -186,15 +196,25 @@
   ==
 ::
 ++  handle-wallet-store-update
-  |=  upd=update:bws
+  |=  [=wire upd=update:bws]
   ^-  (quip card _state)
   ?-  -.upd
       %generate-address
-    :: TODO: add to piym
-    :: TODO: send to requesting wallet-hook
-    `state
+    ?>  ?=([@ @ @ *] wire)
+    =/  value=sats  (slav %ud +<.wire)
+    =/  payer=ship  (slav %p -.wire)
+    ::  moons go in a jar with parent as the key
+    ::  this will let me implement moon rate-limiting
+    ::
+    =/  fam=ship
+      ?:  =(%earl (clan:title payer))
+        (sein:title our.bowl now.bowl payer)
+      payer
+    :-  ~[(poke-wallet-hook payer [%pay-address address.upd payer value])]
+    state(piym (~(add ja piym) fam [address.upd payer value]))
     ::
       %scan-done
+    :: TODO: update def-wallet if none set
     `state
   ==
 ::
