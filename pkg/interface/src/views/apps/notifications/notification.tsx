@@ -142,6 +142,7 @@ export function Notification(props: NotificationProps) {
           timebox={props.time}
           time={time}
           associations={associations}
+          remoteContentPolicy={props.remoteContentPolicy}
         />
       </Wrapper>
     );
