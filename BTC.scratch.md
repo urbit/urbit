@@ -258,6 +258,8 @@ https://github.com/bitcoin/bips/blob/master/bip-0143.mediawiki#P2SHP2WPKH
 %czar
 > (clan:title ~fipdul-podfer-bacdul-timzod)
 %earl
+(clan:title ~lapfep-tipdys-difsum-natmug--novpub-matwes-sicrel-marzod)
+%pawn
 
 ::  sponsorship
 > (sein:title our now ~timluc-miptev)
