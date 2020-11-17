@@ -444,11 +444,13 @@ _serf_sure(u3_serf* sef_u, c3_w pre_w, u3_noun par)
 static u3_noun
 _serf_make_crud(u3_noun job, u3_noun dud)
 {
-  u3_noun now, ovo, wir, cad, new;
+  u3_noun now, ovo, new;
   u3x_cell(job, &now, &ovo);
-  u3x_cell(ovo, &wir, &cad);
 
-  new = u3nt(u3i_vint(u3k(now)), u3k(wir), u3nt(c3__crud, dud, u3k(cad)));
+  new = u3nt(u3i_vint(u3k(now)),
+             u3nt(u3_blip, c3__arvo, u3_nul),
+             u3nt(c3__crud, dud, u3k(ovo)));
+
   u3z(job);
   return new;
 }
