@@ -347,7 +347,11 @@ _pier_on_lord_work_bail(void* ptr_v, u3_ovum* egg_u, u3_noun lud)
 
   u3_auto_bail(egg_u, lud);
 
-  _pier_work(pir_u->wok_u);
+  //  XX groace
+  //
+  if ( pir_u->wok_u ) {
+    _pier_work(pir_u->wok_u);
+  }
 }
 
 /* _pier_work_time(): set time.
