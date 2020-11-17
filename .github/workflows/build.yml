@@ -100,7 +100,7 @@ jobs:
           name: mars
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@0.1.2
+      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@0.2.0
         with:
           version: '290.0.1'
           service_account_key: ${{ secrets.GCS_SERVICE_ACCOUNT_KEY }}
