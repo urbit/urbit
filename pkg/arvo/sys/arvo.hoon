@@ -833,27 +833,27 @@
           ::
           +$  waif
             ::  %lyra: upgrade kernel
+            ::  %trim: trim state, spam to all
             ::  %vega: notify vanes post upgrade
             ::  %whey: produce $mass                    :: XX remove, scry
             ::  %verb: toggle laconicity
             ::  %veer: upgrade module
-            ::  %wack: iterate entropy                  :: XX move to $wasp
             ::  NB: %warn removed
             ::
             $%  [%lyra hun=(unit @t) van=@t]
+                [%trim p=@ud]
                 [%vega ~]
                 [%whey ~]
-                [%verb ~]
+                [%verb p=(unit ?)]
                 [%veer lal=@tas pax=path txt=@t]
-                [%wack p=@uvJ]
             ==
           ::
           +$  wasp
             ::  %crud: reroute $ovum with $goof         ::  NB: different
-            ::  %trim: trim state, spam to all          ::  XX move to $waif
+            ::  %wack: iterate entropy
             ::
-            $%  [%trim p=@ud]
-                [%crud =goof =ovum]
+            $%  [%crud =goof =ovum]
+                [%wack p=@uvJ]
             ==
           --
       ::
@@ -889,8 +889,17 @@
                    run  (weld run [pos ~])
                  ==
         ::
+        ::  %trim: clear state
+        ::
+        ::    clears compiler caches if high-priority
+        ::    XX add separate $wasp if this should happen last
+        ::
+          %trim  =?  van  =(0 p.waif)
+                   (~(run by van) |=(=vane vane(worm *worm)))
+                 (emit $/~ (spam /arvo !>(waif)))
+        ::
           %vega  (emit $/~ (spam /arvo !>(waif)))
-          %verb  ..pith(lac !lac)
+          %verb  ..pith(lac ?~(p.waif !lac u.p.waif))
         ::
           %veer  ?:  ?=(%$ lal.waif)
                    ..pith(zus $:(smit:va "zuse" pit [pax txt]:waif))
@@ -900,7 +909,6 @@
                  =?  nex  ?=(^ nav)  (update:va vase.u.nav nex)
                  ..pith(van (~(put by van) lal.waif (settle:va nex)))
         ::
-          %wack  ..pith(eny (shaz (cat 3 eny p.waif))) :: XX review
           %whey  ..pith(out [[//arvo mass/whey] out])
         ==
       ::
@@ -909,23 +917,20 @@
         ^+  ..pith
         ?~  wire.ovum
           ~>(%mean.'pith: bad wire' !!)
-        ?~  buz=((soft wasp) card.ovum)
+        ::
+        ?.  ?=(?(%crud %wack) -.card.ovum)
           (emit $/~ [*duct (gest ovum)] ~)
         ::
-        ?-  -.u.buz
-        ::
-        ::  %trim: clear state
-        ::
-        ::    clears compiler caches if high-priority
-        ::    XX add separate $wasp if this should happen last
-        ::
-          %trim  =?  van  =(0 p.u.buz)
-                   (~(run by van) |=(=vane vane(worm *worm)))
-                 (emit $/~ (spam t.wire.ovum !>(u.buz)))
+        =/  buz  ;;(wasp card.ovum)
+        ?-  -.buz
         ::
         ::  %crud: forward error notification
         ::
-          %crud  (emit $/~ [*duct hurl/[goof.u.buz (gest ovum.u.buz)]] ~)
+          %crud  (emit $/~ [*duct hurl/[goof.buz (gest ovum.buz)]] ~)
+        ::
+        ::  XX review
+        ::
+          %wack  ..pith(eny (shaz (cat 3 eny p.buz)))
         ==
       ::
       ++  spam
@@ -941,7 +946,7 @@
         ^+  this
         ::  XX update clients to %pass to arvo, remove
         ::
-        ?:  ?=(?(%lyra %veer %verb %wack %whey) -.card.ovum)
+        ?:  ?=(?(%lyra %veer %verb %whey) -.card.ovum)
           ~>  %mean.'xeno: bad waif'
           (call ;;(waif:pith card.ovum))
         ::
@@ -1162,6 +1167,7 @@
         ::
         who=(unit ship)
         eny=(unit @)
+        lac=?
         bod=(unit (trap vase))
         van=(map term (trap vase))
     ==
@@ -1169,8 +1175,9 @@
     ::  $grub: larval events
     ::
     +$  grub
-      $%  $>(%veer waif:pith:le:part)
-          $>(%wack waif:pith:le:part)   :: XX $wasp
+      $%  $>(%verb waif:pith:le:part)
+          $>(%veer waif:pith:le:part)
+          $>(%wack wasp:pith:le:part)
           [%whom p=ship]
       ==
     ::
@@ -1182,13 +1189,15 @@
     ::
     ++  molt
       |=  $:  [our=ship now=@da eny=@uvJ]
-              zus=vase
+              lac=?
+              bod=(trap vase)
               van=(map term (trap vase))
           ==
       ^-  heir
+      =/  zus  $:bod
       =/  nav  %-  ~(run by van)
                |=(a=(trap vase) (settle:va:part (slym $:a zus)))
-      [%arvo-kelvin now *debt [our eny & zus nav]]
+      [%arvo-kelvin now *debt [our eny lac zus nav]]
     --
 ::
 |%
@@ -1204,6 +1213,8 @@
   ::
   =.  ..poke
     ?-    -.gub
+        %verb  ..poke(lac ?~(p.gub !lac u.p.gub))
+    ::
         %veer  ?:  ?=(%$ lal.gub)
                  ..poke(bod `(mint pit [lal pax txt]:gub))
                =/  zus  =<($ (need bod))  ::  XX misparse
@@ -1219,7 +1230,7 @@
     [~ ..poke]
   ::
   ~>  %slog.[0 leaf+"arvo: metamorphosis"]
-  (load (molt [u.who now u.eny] $:u.bod van))
+  (load (molt [u.who now u.eny] lac u.bod van))
 ::
 ++  wish                                                ::  +22
   |=  txt=*
