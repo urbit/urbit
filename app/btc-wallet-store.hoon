@@ -102,7 +102,7 @@
     =.  walts  (~(put by walts) xpub.act w)
     (init-batches xpub.act (dec max-gap.w))
     ::
-      %address-info 
+      %address-info
     (update-address +.act)
     ::
       %generate-address
