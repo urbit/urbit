@@ -25,8 +25,8 @@
       provider=(unit [host=ship connected=?])
       =btc-state
       def-wallet=(unit xpub)
-      padr=pend-addr
-      ptxb=pend-txbu
+      =pend-addr
+      =pend-txbu
       =piym
       =poym
       =piym-watch
@@ -141,10 +141,13 @@
     ==
     ::
       %pay-address
+    :: TODO: update poym
+    :: send tx request out for poym
+    ::  TODO: ask wallet to generate tbxu for poym
     `state
     ::
       %force-retry
-    [(retry padr) state]
+    [(retry pend-addr) state]
   ==
 ::  if status is %connected, retry all pending address lookups
 ::
@@ -156,7 +159,7 @@
   ?-  -.s
       %connected
     ::  only retry if previously disconnected
-    :-  ?:(connected.u.provider ~ (retry padr))
+    :-  ?:(connected.u.provider ~ (retry pend-addr))
     %=  state
         provider  `[host.u.provider %.y]
         btc-state  [blockcount.s fee.s now.bowl]
@@ -171,9 +174,9 @@
   ?.  ?=(%& -.update)  `state
   ?-  -.body.p.update
       %address-info
-    =/  ureq  (~(get by padr) req-id.p.update)
+    =/  ureq  (~(get by pend-addr) req-id.p.update)
     ?~  ureq  `state
-    :_  state(padr (~(del by padr) req-id.p.update))
+    :_  state(pend-addr (~(del by pend-addr) req-id.p.update))
     :~  %+  poke-wallet-store  /
         :*  %address-info  xpub.u.ureq  chyg.u.ureq  idx.u.ureq
             utxos.body.p.update  used.body.p.update  blockcount.body.p.update
@@ -187,7 +190,7 @@
   ?-  -.req
       %scan-address
     =/  ri=req-id:bp  (mk-req-id (hash-xpub:bwsl +>.req))
-    :_  state(padr (~(put by padr) ri req))
+    :_  state(pend-addr (~(put by pend-addr) ri req))
     ?~  provider  ~
     ?:  provider-connected
       ~[(get-address-info ri host.u.provider a.req)]
@@ -214,12 +217,13 @@
     state(piym (~(add ja piym) fam [address.upd payer value]))
     ::
       %scan-done
-    :: TODO: update def-wallet if none set
+    ?~  def-wallet
+      `state(def-wallet `xpub.upd)
     `state
   ==
 ::
 ++  retry
-  |=  p=pend-addr
+  |=  p=^pend-addr
   ^-  (list card)
   ?~  provider  ~|("provider not set" !!)
   %+  turn  ~(tap by p)

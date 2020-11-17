@@ -39,6 +39,9 @@
       max-gap=@ud
       confs=@ud
   ==
+::  input: utxo for a transaction
+::
++$  input  [=utxo =chyg =idx]
 ::  todo: Set of indices; empty it out until none are left--means scanning of that batch is done
 ::  start:     index this batch started scanning from
 ::
