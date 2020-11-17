@@ -7,6 +7,10 @@
 ::    - /requests: to request data about addresses
 ::    - /updates: new data about one of our addresses
 ::
+::  Scrys
+::  x/scanned: (list xpub) of all scanned wallets
+::  x/balance/xpub: balance (in sats) of wallet
+::
 /-  *btc-wallet-store
 /+  dbug, default-agent, *btc-wallet-store, btc, bip32
 |%
@@ -85,6 +89,9 @@
   ?+  pax  (on-peek:def pax)
       [%x %scanned ~]
     ``noun+!>(scanned-wallets)
+    ::
+      [%x %balance @ ~]
+    ``noun+!>((balance:hc (xpub:btc +>-.pax)))
   ==
 ++  on-leave  on-leave:def
 ++  on-agent  on-agent:def
@@ -154,7 +161,8 @@
     [(sy (gulf 0 endpoint)) endpoint %.n]
   :-  (weld (req-scan ~[/requests] b xpub %0) (req-scan ~[/requests] b xpub %1))
   state(scans (insert-batches xpub b b))
-::  if the batch is done but the wallet isn't done scanning, returns new address requests and updated batch
+::  if the batch is done but the wallet isn't done scanning,
+::  returns new address requests and updated batch
 ::
 ++  bump-batch
   |=  [=xpub =chyg]
@@ -236,4 +244,43 @@
   |=  [=xpub:btc w=walt]
   ^-  (unit xpub:btc)
   ?:  scanned.w  `xpub  ~
+::
+++  balance
+  |=  =xpub:btc
+  ^-  sats:btc
+  =/  w  (~(get by walts) xpub)
+  ?~  w  ~|("btc-wallet-store: non-existent xpub" !!)
+  =/  values=(list sats:btc)
+    %+  turn  ~(val by wach.u.w)
+    |=  =addi  ^-  sats:btc
+    %+  roll
+      %+  turn  ~(tap by utxos.addi)
+      |=(=utxo:btc value.utxo)
+    add
+  (roll values add)
+::  Uses naive random selection. Should switch to branch-and-bound later
+::
+++  select-utxos
+  |=  [target=sats w=walt]
+  ^-  (unit (list input))
+  =/  is=(list input)
+    %-  zing
+    %+  turn  ~(val by wach.w)
+    |=  =addi
+    %+  turn  ~(tap in utxos.addi)
+      |=(=utxo:btc [utxo chyg.addi idx.addi])
+  (single-random-draw target is)
+::
+++  single-random-draw
+  |=  [target=sats is=(list input)]
+  ^-  (unit (list input))
+  =|  [selected=(list input) total=sats:btc]
+  =/  rng  ~(. og eny.bowl)
+  |-  ?~  is  ~
+  =^  n  rng  (rads:rng (lent is))
+  =/  i  (snag n ((list input) is))
+  =/  new-total  (add total value.utxo.i)
+  ?:  (gth new-total target)
+    `[i selected]
+  $(is t.is, total new-total, selected [i selected])
 --
