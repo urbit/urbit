@@ -110,7 +110,7 @@
 ::
 ++  poke-pass
   |=  =note-arvo  =<  abet
-  (emit %pass /pass %arvo note-arvo)
+  (emit %pass /helm/pass %arvo note-arvo)
 ::
 ++  take-wake-automass
   |=  [way=wire error=(unit tang)]
@@ -281,5 +281,7 @@
                    ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
     [%serv *]      %+  take-bound  t.wire
                    ?>(?=(%bound +<.sign-arvo) +>.sign-arvo)
+    [%pass *]      ~&  [%pass-response [- +<]:sign-arvo]
+                   abet
   ==
 --

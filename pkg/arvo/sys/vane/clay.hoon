@@ -1748,7 +1748,7 @@
       =/  additions=(set path)  (~(dif in upsert-set) old-set)
       ?~  hun
         ~
-      ?:  =(0 let.dom)
+      ?:  (lte let.dom 1)
         ~
       |^
       ;:  weld
@@ -1765,7 +1765,7 @@
       ::
       ++  path-to-tank
         |=  =path
-        =/  pre=^path  ~[(scot %p our) syd (scot %ud +(let.dom))]
+        =/  pre=^path  ~[(scot %p our) syd (scot %ud let.dom)]
         :+  %rose  ["/" "/" ~]
         %+  turn  (weld pre path)
         |=  a=cord
