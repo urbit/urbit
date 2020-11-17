@@ -17,7 +17,7 @@
           {$face p/term q/wine}
           {$list p/term q/wine}
           {$pear p/term q/@}
-          {$bswt p/(list wine)}
+          {$bcwt p/(list wine)}
           {$plot p/(list wine)}
           {$stop p/@ud}
           {$tree p/term q/wine}
@@ -122,7 +122,7 @@
       =^  cox  gid  $(q.ham q.q.ham)
       :_(gid [%rose [" " (weld (trip p.q.ham) "(") ")"] cox ~])
     ::
-        {$bswt *}
+        {$bcwt *}
       =^  coz  gid  (many p.q.ham)
       :_(gid [%rose [[' ' ~] ['?' '(' ~] [')' ~]] coz])
     ::
@@ -265,7 +265,7 @@
       ~
     [~ u.for u.aft]
   ::
-      {$bswt *}
+      {$bcwt *}
     |-  ^-  (unit tank)
     ?~  p.q.ham
       ~
@@ -354,7 +354,7 @@
   ^=  woz
   ^-  wine
   ?.  ?=({$stop *} q.ham)
-    ?:  ?&  ?=  {$bswt {$pear $n $0} {$plot {$pear $n $0} {$face *} ~} ~}
+    ?:  ?&  ?=  {$bcwt {$pear $n $0} {$plot {$pear $n $0} {$face *} ~} ~}
               q.ham
             =(1 (met 3 p.i.t.p.i.t.p.q.ham))
         ==
@@ -364,7 +364,7 @@
   ?~  may
     q.ham
   =+  nul=[%pear %n 0]
-  ?.  ?&  ?=({$bswt *} u.may)
+  ?.  ?&  ?=({$bcwt *} u.may)
           ?=({* * ~} p.u.may)
           |(=(nul i.p.u.may) =(nul i.t.p.u.may))
       ==
@@ -458,7 +458,7 @@
   ::
       {$fork *}
     =+  yed=(sort ~(tap in p.sut) aor)
-    =-  [p [%bswt q]]
+    =-  [p [%bcwt q]]
     |-  ^-  {p/{p/(map type @) q/(map @ wine)} q/(list wine)}
     ?~  yed
       [dex ~]

@@ -35,7 +35,7 @@
     ::  compile arvo against hoon, with our current compiler
     ::
     =/  whole-hoon=hoon
-      [%tsbn compiler-hoon [%tsbn [%$ 7] (rain arvo-path arvo-src)]]
+      [%tsgr compiler-hoon [%tsgr [%$ 7] (rain arvo-path arvo-src)]]
     ~&  %solid-parsed
     =/  whole-formula  q:(~(mint ut %noun) %noun whole-hoon)
     ~&  %solid-arvo
