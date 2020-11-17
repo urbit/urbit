@@ -31,7 +31,7 @@
   $%  [%set-provider provider=ship]
       [%set-default-wallet ~]
       [%req-pay-address payee=ship value=sats]
-      [%pay-address payer=ship value=sats =address]
+      [%pay-address =address payer=ship value=sats]
       [%force-retry ~]
   ==
 --
