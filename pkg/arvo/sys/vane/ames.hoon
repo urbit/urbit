@@ -3141,6 +3141,8 @@
   =/  rcvr-size  (decode-ship-size (cut 0 [8 2] header))
   =/  checksum   (cut 0 [11 20] header)
   =/  relayed    (cut 0 [31 1] header)
+  ::  origin, if present, is 6 octets long, at the end of the body
+  ::
   =^  origin=(unit @)  body
     ?:  =(| relayed)
       [~ body]
@@ -3156,9 +3158,9 @@
   =/  off   1
   =^  sndr  off  [(cut 3 [off sndr-size] body) (add off sndr-size)]
   =^  rcvr  off  [(cut 3 [off rcvr-size] body) (add off rcvr-size)]
-  =^  siv   off  [(cut 3 [off 64] body) (add off 64)]
-  ::  read variable-length ciphertext
+  ::  read initialization vector .siv and variable-length ciphertext .cyf
   ::
+  =^  siv  off  [(cut 3 [off 64] body) (add off 64)]
   =/  cyf-size  :(sub (met 3 body) 1 off)
   =/  cyf  (cut 3 [off cyf-size] body)
   [[sndr rcvr] origin siv syf]
@@ -3194,19 +3196,6 @@
       (rsh 3 (add rcvr-size sndr-size) body)
   ::
   [dyad encrypted origin content]
-::  +decode-origin-size: decode a 2-bit origin size into a byte width
-::
-::    Rationale:
-::    %0: no origin
-::    %1: 4-byte address, 2-byte port
-::
-++  decode-origin-size
-  |=  size=@
-  ^-  @
-  ?+  size  !!
-    %0  0
-    %1  6
-  ==
 ::  +decode-ship-size: decode a 2-bit ship type specifier into a byte width
 ::
 ::    Type 0: galaxy or star -- 2 bytes
