@@ -354,7 +354,7 @@
     ==
   ::
   ++  create-group
-    |=  [=path app-path=path =policy ships=(set ship) title=@t desc=@t managed=?]
+    |=  [=path app-path=path policy=create:policy ships=(set ship) title=@t desc=@t managed=?]
     ^-  (list card)
     ?^  (scry-group-path:grp path)  ~
     =/  rid=resource
@@ -504,9 +504,9 @@
   [%pass / %agent [our.bol %chat-store] %poke %chat-action !>(act)]
 ::
 ++  group-poke
-  |=  upd=update:group-store
+  |=  act=action:group-store
   ^-  card
-  [%pass / %agent [our.bol %group-store] %poke %group-update !>(upd)]
+  [%pass / %agent [our.bol %group-store] %poke %group-action !>(act)]
 ++  group-pull-hook-poke
   |=  act=action:pull-hook
   ^-  card

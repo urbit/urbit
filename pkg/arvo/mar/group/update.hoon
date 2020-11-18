@@ -8,9 +8,4 @@
   %+  frond:enjs:format  'groupUpdate'
   (update:enjs upd)
   --
-++  grab
-  |%
-  ++  noun  update
-  ++  json  update:dejs
-  --
 --

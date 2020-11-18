@@ -1212,7 +1212,7 @@
   [%pass / %agent [our.bol %contact-view] %poke %contact-view-action !>(act)]
 ::
 ++  contact-view-create
-  |=  [=path ships=(set ship) =policy title=@t description=@t]
+  |=  [=path ships=(set ship) policy=create:policy title=@t description=@t]
   =/  rid=resource
     (de-path:resource path)
   =/  act=contact-view-action:contact-view
@@ -1280,7 +1280,7 @@
     :_  [group-path.group group-path.group]
     [(group-proxy-poke entity.rid %add-tag rid tag members.u.grp)]~
   ::
-  =/  =policy
+  =/  policy=create:policy
     *open:policy
   ?:  make-managed.group
     ?^  grp  [~ group-path.group group-path.group]

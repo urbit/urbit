@@ -51,6 +51,17 @@
   +$  policy
     $%  invite
         open
+        custom
+    ==
+  +$  create
+    $%  invite
+        open
+        action:custom
+    ==
+  +$  action
+    $%  [%invite diff:invite]
+        [%open diff:open]
+        [%replace =create]
     ==
   ::  $diff: change group policy
   +$  diff
@@ -58,6 +69,7 @@
         [%open diff:open]
         [%replace =policy]
     ==
+
   ::  $invite: allow only invited ships
   ++  invite
     =<  invite-policy
@@ -88,6 +100,12 @@
           [%ban-ships ships=(set ship)]
           [%allow-ships ships=(set ship)]
       ==
+    --
+  ++  custom
+    =<  custom-policy
+    |%
+      +$  custom-policy  [%custom agent=term join-path=path name=@t description=@t]
+      +$  action  [%custom agent=term join-path=path]
     --
   --
 --

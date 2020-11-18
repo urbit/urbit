@@ -178,7 +178,7 @@
     ==
   ::
   ++  policy
-    |=  =^policy
+    |=  policy=^policy
     %+  frond  -.policy
     %-  pairs
     ?-  -.policy
@@ -188,6 +188,13 @@
          %open
       :~  banned+(set ship banned.policy)
           ban-ranks+(set rank ban-ranks.policy)
+      ==
+        %custom
+      :~
+        agent+s+agent.policy
+        join-path+(path join-path.policy)
+        name+s+name.policy
+        description+s+description.policy
       ==
     ==
   ++  policy-diff
@@ -230,13 +237,13 @@
     (frond %resource (enjs:resource resource.update))
   ::
   ++  add-group
-    |=  =action
+    |=  =diff
     ^-  json
-    ?>  ?=(%add-group -.action)
+    ?>  ?=(%add-group -.diff)
     %-  pairs
-    :~  resource+(enjs:resource resource.action)
-        policy+(policy policy.action)
-        hidden+b+hidden.action
+    :~  resource+(enjs:resource resource.diff)
+        policy+(policy policy.diff)
+        hidden+b+hidden.diff
     ==
   ::
   ++  add-members
@@ -278,13 +285,21 @@
         ships+(set ship ships.action)
     ==
   ::
-  ++  change-policy
-    |=  =action
+  ++  change-policy-diff
+    |=  =diff
     ^-  json
-    ?>  ?=(%change-policy -.action)
+    ?>  ?=(%change-policy -.diff)
     %-  pairs
-    :~  resource+(enjs:resource resource.action)
-        diff+(policy-diff diff.action)
+    :~  resource+(enjs:resource resource.diff)
+        diff+(policy-diff diff.diff)
+    ==
+  ++  change-policy
+    |=  =diff
+    ^-  json
+    ?>  ?=(%change-policy -.diff)
+    %-  pairs
+    :~  resource+(enjs:resource resource.diff)
+        diff+(policy-diff diff.diff)
     ==
   --
 ++  dejs
@@ -295,7 +310,7 @@
     |=  [a=(map @t json) b=$-(@t @t)]
     ^+  a
     =-  (malt -)
-    |- 
+    |-
     ^-  (list [@t json])
     ?~  a  ~
     :-  [(b p.n.a) q.n.a]
@@ -308,7 +323,7 @@
       |=  jon/json
       ?>  ?=({$o {@ *} $~ $~} jon)
       |-
-      ?-    wer                                         
+      ?-    wer
           :: {{key/@t wit/*} t/*}
           {{key/@t *} t/*}
         =>  .(wer [[* wit] *]=wer)
@@ -325,10 +340,10 @@
     ?>  ?=(%o -.jon)
     (ruk-jon p.jon enkebab)
   ::
-  ++  update
-    ^-  $-(json ^update)
+  ++  action
+    ^-  $-(json ^action)
     |=  jon=json
-    ^-  ^update
+    ^-  ^action
     %.  jon
     %-  of
     :~
@@ -381,37 +396,43 @@
   ++  ship
     (su ;~(pfix sig fed:ag))
   ++  policy
-    ^-  $-(json ^policy)
+    ^-  $-(json create:^policy)
     %-  of
     :~  invite+invite-policy
         open+open-policy
+        custom+custom-policy
     ==
   ++  invite-policy
     %-  ot
     :~  pending+(as ship)
+    ==
+  ++  custom-policy
+    %-  ot
+    :~  agent+so
+        join-path+pa
     ==
   ++  open-policy
     %-  ot
     :~  ban-ranks+(as rank)
         banned+(as ship)
     ==
-  ++  open-policy-diff
+  ++  open-policy-action
     %-  of
     :~  allow-ranks+(as rank)
         allow-ships+(as ship)
         ban-ranks+(as rank)
         ban-ships+(as ship)
     ==
-  ++  invite-policy-diff
+  ++  invite-policy-action
     %-  of
     :~  add-invites+(as ship)
         remove-invites+(as ship)
     ==
-  ++  policy-diff
-    ^-  $-(json diff:^policy)
+  ++  policy-action
+    ^-  $-(json action:^policy)
     %-  of
-    :~  invite+invite-policy-diff
-        open+open-policy-diff
+    :~  invite+invite-policy-action
+        open+open-policy-action
         replace+policy
     ==
   ::
@@ -462,7 +483,8 @@
   ++  change-policy
     %-  ot
     :~  resource+dejs:resource
-        diff+policy-diff
+        :: TODO: change diff to action?
+        diff+policy-action
     ==
   --
 --

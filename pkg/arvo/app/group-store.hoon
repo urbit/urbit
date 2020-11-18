@@ -245,6 +245,8 @@
       (~(has in banned.policy) ship)
       (~(has in ban-ranks.policy) (clan:title ship))
     ==
+      %custom
+    (scry-custom-policy ship agent.policy join-path.policy)
   ==
 ++  poke-noun
   |=  =vase
@@ -331,7 +333,21 @@
         /noun
       ==
     ==
+  ::
   --
+++  scry-custom-policy
+  |=  [=ship agent=term pax=path]
+  .^  ?
+    %gx
+    (scot %p our.bol)
+    agent
+    (scot %da now.bol)
+    ;:  weld
+      pax
+      /[(scot %p ship)]
+      /atom
+    ==
+  ==
 ::
 ++  poke-group-update
   |=  =update:store

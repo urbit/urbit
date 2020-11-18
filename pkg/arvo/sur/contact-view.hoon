@@ -4,7 +4,7 @@
 +$  contact-view-action
   $%  ::  %create: create in both groups and contacts
       ::
-      [%create name=term =policy title=@t description=@t]
+      [%create name=term policy=create:policy title=@t description=@t]
       ::  %join: join open group in both groups and contacts
       ::
       [%join =resource]

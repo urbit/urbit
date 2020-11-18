@@ -32,13 +32,18 @@
 ::    %remove-group: remove a group from the store
 ::    %expose: unset .hidden flag
 ::
-+$  action
-  $%  [%add-group =resource =policy hidden=?]
++$  action  (build-group-diff create:policy action:policy)
+
++$  diff  (build-group-diff policy diff:policy)
+
+++  build-group-diff
+  |$  [create diff]
+  $%  [%add-group =resource policy=create hidden=?]
       [%add-members =resource ships=(set ship)]
       [%remove-members =resource ships=(set ship)]
       [%add-tag =resource =tag ships=(set ship)]
       [%remove-tag =resource =tag ships=(set ship)]
-      [%change-policy =resource =diff:policy]
+      [%change-policy =resource =diff]
       [%remove-group =resource ~]
       [%expose =resource ~]
   ==
@@ -48,11 +53,10 @@
 ::
 +$  update
   $%  initial
-      action
+      diff
   ==
 +$  initial
   $%  [%initial-group =resource =group]
       [%initial =groups]
   ==
 --
-

@@ -9,7 +9,7 @@
           description=@t
           app-path=path
           group-path=path
-          =policy
+          policy=create:policy
           members=(set ship)
           allow-history=?
           managed=?

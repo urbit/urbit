@@ -750,7 +750,7 @@
       =/  =target          [with-group our-self path]
       =/  real-path=^path  (target-to-path target)
       =/  group-path=^path  ?~(ugroup ship+real-path (en-path:resource u.ugroup))
-      =/  =policy
+      =/  policy=create:policy
         ?-  security
           %channel  *open:policy
           %village  *invite:policy
