@@ -1,5 +1,5 @@
 import React, { useMemo, useCallback } from "react";
-import { Box, Text, Row, Col } from "@tlon/indigo-react";
+import { Box, Label, Icon, Text, Row, Col } from "@tlon/indigo-react";
 import _ from "lodash";
 import ob from "urbit-ob";
 import { useField } from "formik";
@@ -12,17 +12,16 @@ import { Rolodex, Groups } from "~/types";
 import { HoverBox } from "./HoverBox";
 
 interface InviteSearchProps {
+  autoFocus?: boolean;
   disabled?: boolean;
-  label: string;
+  label?: string;
   caption?: string;
   id: string;
   contacts: Rolodex;
   groups: Groups;
+  hideSelection?: boolean;
+  maxLength?: number;
 }
-
-const ClickableText = styled(Text)`
-  cursor: pointer;
-`;
 
 const Candidate = ({ title, detail, selected, onClick }) => (
   <HoverBox
@@ -45,10 +44,14 @@ const Candidate = ({ title, detail, selected, onClick }) => (
 );
 
 export function ShipSearch(props: InviteSearchProps) {
-  const [{ value }, { error }, { setValue }] = useField<string[]>(props.id);
+  const { id, label, caption } = props;
+  const [{ value }, { error }, { setValue, setTouched }] = useField<string[]>(
+    props.id
+  );
 
   const onSelect = useCallback(
     (s: string) => {
+      setTouched(true);
       setValue([...value, s]);
     },
     [setValue, value]
@@ -111,35 +114,36 @@ export function ShipSearch(props: InviteSearchProps) {
 
   return (
     <Col>
+      <Label htmlFor={id}>{label}</Label>
+      {caption && (
+        <Label gray mt="2">
+          {caption}
+        </Label>
+      )}
       <DropdownSearch<string>
-        label={props.label}
-        id={props.id}
+        mt="2"
         isExact={(s) => {
           const ship = `~${deSig(s)}`;
           const result = ob.isValidPatp(ship);
           return result ? deSig(s) : undefined;
         }}
         placeholder="Search for ships"
-        caption={props.caption}
         candidates={peers}
         renderCandidate={renderCandidate}
-        disabled={false}
+        disabled={props.maxLength ? value.length >= props.maxLength : false}
         search={(s: string, t: string) =>
           t.toLowerCase().startsWith(s.toLowerCase())
         }
         getKey={(s: string) => s}
         onSelect={onSelect}
-        onRemove={onRemove}
-        renderChoice={({ candidate, onRemove }) => null}
-        value={undefined}
-        error={error}
       />
       <Row minHeight="34px" flexWrap="wrap">
         {value.map((s) => (
-          <Box
+          <Row
             fontFamily="mono"
-            px={2}
+            alignItems="center"
             py={1}
+            px={2}
             border={1}
             borderColor="washedGrey"
             color="black"
@@ -148,10 +152,13 @@ export function ShipSearch(props: InviteSearchProps) {
             mr={2}
           >
             <Text fontFamily="mono">{cite(s)}</Text>
-            <ClickableText ml={2} onClick={() => onRemove(s)} color="black">
-              x
-            </ClickableText>
-          </Box>
+            <Icon
+              icon="X"
+              ml={2}
+              onClick={() => onRemove(s)}
+              cursor="pointer"
+            />
+          </Row>
         ))}
       </Row>
     </Col>

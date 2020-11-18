@@ -12,11 +12,12 @@ import { Path, AppName } from "~/types/noun";
 import { LinkCollections } from "~/types/link-update";
 import styled from "styled-components";
 import GlobalSubscription from "~/logic/subscription/global";
-import { Workspace, Groups, Graphs, Invites } from "~/types";
-import { useChat, usePublish, useLinks } from "./Sidebar/Apps";
+import { Workspace, Groups, Graphs, Invites, Rolodex } from "~/types";
+import { useChat, useGraphModule } from "./Sidebar/Apps";
 import { Body } from "~/views/components/Body";
 
 interface SkeletonProps {
+  contacts: Rolodex;
   children: ReactNode;
   recentGroups: string[];
   groups: Groups;
@@ -42,15 +43,13 @@ interface SkeletonProps {
 
 export function Skeleton(props: SkeletonProps) {
   const chatConfig = useChat(props.inbox, props.chatSynced);
-  const publishConfig = usePublish(props.notebooks);
-  const linkConfig = useLinks(props.graphKeys, props.graphs);
+  const graphConfig = useGraphModule(props.graphKeys, props.graphs, props.graphUnreads);
   const config = useMemo(
     () => ({
-      publish: publishConfig,
-      link: linkConfig,
+      graph: graphConfig,
       chat: chatConfig,
     }),
-    [publishConfig, linkConfig, chatConfig]
+    [graphConfig, chatConfig]
   );
 
   return (
@@ -61,6 +60,7 @@ export function Skeleton(props: SkeletonProps) {
     >
       {!props.hideSidebar && (
         <Sidebar
+          contacts={props.contacts}
           api={props.api}
           recentGroups={props.recentGroups}
           selected={props.selected}

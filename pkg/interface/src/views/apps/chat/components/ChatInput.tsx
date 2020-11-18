@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import ChatEditor from './chat-editor';
-import { S3Upload, SubmitDragger } from '~/views/components/s3-upload' ;
+import { S3Upload } from '~/views/components/s3-upload' ;
 import { uxToHex } from '~/logic/lib/util';
 import { Sigil } from '~/logic/lib/sigil';
 import tokenizeMessage, { isUrl } from '~/logic/lib/tokenizeMessage';
 import GlobalApi from '~/logic/api/global';
 import { Envelope } from '~/types/chat-update';
-import { Contacts, S3Configuration } from '~/types';
-import { Row } from '@tlon/indigo-react';
+import { Contacts } from '~/types';
+import { Row, BaseImage, Box, Icon } from '@tlon/indigo-react';
 
 interface ChatInputProps {
   api: GlobalApi;
@@ -31,7 +31,6 @@ interface ChatInputState {
   uploadingPaste: boolean;
 }
 
-
 export default class ChatInput extends Component<ChatInputProps, ChatInputState> {
   public s3Uploader: React.RefObject<S3Upload>;
   private chatEditor: React.RefObject<ChatEditor>;
@@ -42,7 +41,7 @@ export default class ChatInput extends Component<ChatInputProps, ChatInputState>
     this.state = {
       inCodeMode: false,
       submitFocus: false,
-      uploadingPaste: false,
+      uploadingPaste: false
     };
 
     this.s3Uploader = React.createRef();
@@ -50,7 +49,6 @@ export default class ChatInput extends Component<ChatInputProps, ChatInputState>
 
     this.submit = this.submit.bind(this);
     this.toggleCode = this.toggleCode.bind(this);
-
   }
 
   toggleCode() {
@@ -81,8 +79,6 @@ export default class ChatInput extends Component<ChatInputProps, ChatInputState>
       };
     }
   }
-
-
 
   submit(text) {
     const { props, state } = this;
@@ -134,7 +130,6 @@ export default class ChatInput extends Component<ChatInputProps, ChatInputState>
         { url }
       );
     }
-
   }
 
   uploadError(error) {
@@ -159,10 +154,11 @@ export default class ChatInput extends Component<ChatInputProps, ChatInputState>
     if (!this.readyToUpload()) {
       return;
     }
-    if (!this.s3Uploader.current || !this.s3Uploader.current.inputRef.current) return;
+    if (!this.s3Uploader.current || !this.s3Uploader.current.inputRef.current)
+return;
     this.s3Uploader.current.inputRef.current.files = files;
-    const fire = document.createEvent("HTMLEvents");
-    fire.initEvent("change", true, true);
+    const fire = document.createEvent('HTMLEvents');
+    fire.initEvent('change', true, true);
     this.s3Uploader.current?.inputRef.current?.dispatchEvent(fire);
   }
 
@@ -179,12 +175,14 @@ export default class ChatInput extends Component<ChatInputProps, ChatInputState>
         props.ourContact &&
         ((props.ourContact.avatar !== null) && !props.hideAvatars)
       )
-      ? <img src={props.ourContact.avatar} height={16} width={16} className="dib" />
+      ? <BaseImage src={props.ourContact.avatar} height={16} width={16} className="dib" />
       : <Sigil
         ship={window.ship}
         size={16}
         color={`#${color}`}
         classes={sigilClass}
+        icon
+        padded
         />;
 
     return (
@@ -197,10 +195,11 @@ export default class ChatInput extends Component<ChatInputProps, ChatInputState>
         borderTopColor='washedGray'
         backgroundColor='white'
         className='cf'
+        zIndex='0'
       >
-        <div className="pa2 flex items-center">
+        <Row p='2' alignItems='center'>
           {avatar}
-        </div>
+        </Row>
         <ChatEditor
           ref={this.chatEditor}
           inCodeMode={state.inCodeMode}
@@ -210,12 +209,13 @@ export default class ChatInput extends Component<ChatInputProps, ChatInputState>
           onPaste={this.onPaste.bind(this)}
           placeholder='Message...'
         />
-        <div className="ml2 mr2 flex-shrink-0"
-             style={{
-                height: '16px',
-                width: '16px',
-                flexBasis: 16,
-              }}>
+        <Box
+          mx='2'
+          flexShrink='0'
+          height='16px'
+          width='16px'
+          flexBasis='16px'
+        >
           <S3Upload
             ref={this.s3Uploader}
             configuration={props.s3.configuration}
@@ -224,28 +224,25 @@ export default class ChatInput extends Component<ChatInputProps, ChatInputState>
             uploadError={this.uploadError.bind(this)}
             accept="*"
           >
-            <img
-              className="invert-d"
-              src="/~landscape/img/ImageUpload.png"
+            <Icon icon='Links'
               width="16"
               height="16"
             />
           </S3Upload>
-        </div>
-        <div className="mr2 flex-shrink-0" style={{
-            height: '16px',
-            width: '16px',
-            flexBasis: 16,
-          }}>
-          <img style={{
-              filter: state.inCodeMode ? 'invert(100%)' : '',
-              height: '14px',
-              width: '14px',
-            }}
+        </Box>
+        <Box
+          mr='2'
+          flexShrink='0'
+          height='16px'
+          width='16px'
+          flexBasis='16px'
+        >
+          <Icon
+            icon='Dojo'
             onClick={this.toggleCode}
-            src="/~landscape/img/CodeEval.png"
-            className="contrast-10-d bg-white bg-none-d ba b--gray1-d br1" />
-        </div>
+            color={state.inCodeMode ? 'blue' : 'black'}
+          />
+        </Box>
       </Row>
     );
   }

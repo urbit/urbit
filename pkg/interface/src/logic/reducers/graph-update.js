@@ -1,6 +1,6 @@
 import _ from 'lodash';
-import { OrderedMap } from "~/logic/lib/OrderedMap";
-
+import { BigIntOrderedMap } from "~/logic/lib/BigIntOrderedMap";
+import bigInt, { BigInteger } from "big-integer";
 
 export const GraphReducer = (json, state) => {
   const data = _.get(json, 'graph-update', false);
@@ -28,16 +28,16 @@ const addGraph = (json, state) => {
   const _processNode = (node) => {
     //  is empty
     if (!node.children) {
-      node.children = new OrderedMap();
+      node.children = new BigIntOrderedMap();
       return node;
     }
 
     //  is graph
-    let converted = new OrderedMap();
+    let converted = new BigIntOrderedMap();
     for (let i in node.children) {
       let item = node.children[i];
       let index = item[0].split('/').slice(1).map((ind) => {
-        return parseInt(ind, 10);
+        return bigInt(ind);
       });
 
       if (index.length === 0) { break; }
@@ -58,18 +58,22 @@ const addGraph = (json, state) => {
     }
 
     let resource = data.resource.ship + '/' + data.resource.name;
-    state.graphs[resource] = new OrderedMap();
+    state.graphs[resource] = new BigIntOrderedMap();
 
     for (let i in data.graph) {
       let item = data.graph[i];
       let index = item[0].split('/').slice(1).map((ind) => {
-        return parseInt(ind, 10);
+        return bigInt(ind);
       });
 
       if (index.length === 0) { break; }
       
       let node = _processNode(item[1]);
-      state.graphs[resource].set(index[index.length - 1], node);
+
+      state.graphs[resource].set(
+        index[index.length - 1],
+        node
+      );
     }
     state.graphKeys.add(resource);
   }
@@ -82,16 +86,16 @@ const removeGraph = (json, state) => {
     if (!('graphs' in state)) {
       state.graphs = {};
     }
-    let resource = data.resource.ship + '/' + data.resource.name;
+    let resource = data.ship + '/' + data.name;
     delete state.graphs[resource];
   }
 };
 
 const mapifyChildren = (children) => {
-  return new OrderedMap(
+  return new BigIntOrderedMap(
     children.map(([idx, node]) => {
       const nd = {...node, children: mapifyChildren(node.children || []) }; 
-      return [parseInt(idx.slice(1), 10), nd];
+      return [bigInt(idx.slice(1)), nd];
     }));
 };
 
@@ -126,12 +130,13 @@ const addNodes = (json, state) => {
       if (item[0].split('/').length === 0) { return; }
 
       let index = item[0].split('/').slice(1).map((ind) => {
-        return parseInt(ind, 10);
+        return bigInt(ind);
       });
 
       if (index.length === 0) { return; }
 
       item[1].children = mapifyChildren(item[1].children || []);
+
 
       
       state.graphs[resource] = _addNode(
@@ -155,16 +160,14 @@ const removeNodes = (json, state) => {
   };
   const data = _.get(json, 'remove-nodes', false);
   if (data) {
-    console.log(data);
     const { ship, name } = data.resource;
     const res = `${ship}/${name}`;
     if (!(res in state.graphs)) { return; }
 
     data.indices.forEach((index) => {
-      console.log(index);
       if (index.split('/').length === 0) { return; }
       let indexArr = index.split('/').slice(1).map((ind) => {
-        return parseInt(ind, 10);
+        return bigInt(ind);
       });
       _remove(state.graphs[res], indexArr);
     });

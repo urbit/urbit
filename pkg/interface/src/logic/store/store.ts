@@ -5,15 +5,17 @@ import LocalReducer from '../reducers/local';
 import ChatReducer from '../reducers/chat-update';
 
 import { StoreState } from './type';
+import { Timebox } from '~/types';
 import { Cage } from '~/types/cage';
 import ContactReducer from '../reducers/contact-update';
 import S3Reducer from '../reducers/s3-update';
 import { GraphReducer } from '../reducers/graph-update';
+import { HarkReducer } from '../reducers/hark-update';
 import GroupReducer from '../reducers/group-update';
-import PublishUpdateReducer from '../reducers/publish-update';
-import PublishResponseReducer from '../reducers/publish-response';
 import LaunchReducer from '../reducers/launch-update';
 import ConnectionReducer from '../reducers/connection';
+import {OrderedMap} from '../lib/OrderedMap';
+import { BigIntOrderedMap } from '../lib/BigIntOrderedMap';
 
 export const homeAssociation = {
   "app-path": "/home",
@@ -21,7 +23,7 @@ export const homeAssociation = {
   "group-path": "/home",
   metadata: {
     color: "0x0",
-    title: "Home",
+    title: "DMs + Drafts",
     description: "",
     "date-created": "",
     module: "",
@@ -37,8 +39,6 @@ export default class GlobalStore extends BaseStore<StoreState> {
   contactReducer = new ContactReducer();
   s3Reducer = new S3Reducer();
   groupReducer = new GroupReducer();
-  publishUpdateReducer = new PublishUpdateReducer();
-  publishResponseReducer = new PublishResponseReducer();
   launchReducer = new LaunchReducer();
   connReducer = new ConnectionReducer();
 
@@ -73,7 +73,6 @@ export default class GlobalStore extends BaseStore<StoreState> {
         chat: {},
         contacts: {},
         graph: {},
-        publish: {}
       },
       groups: {},
       groupKeys: new Set(),
@@ -98,6 +97,17 @@ export default class GlobalStore extends BaseStore<StoreState> {
       dark: false,
       inbox: {},
       chatSynced: null,
+      notifications: new BigIntOrderedMap<Timebox>(),
+      archivedNotifications: new BigIntOrderedMap<Timebox>(),
+      notificationsGroupConfig: [],
+      notificationsChatConfig: [],
+      notificationsGraphConfig: {
+        watchOnSelf: false,
+        mentions: false,
+        watching: [],
+      },
+      notificationsCount: 0,
+      graphUnreads: {}
     };
   }
 
@@ -109,10 +119,9 @@ export default class GlobalStore extends BaseStore<StoreState> {
     this.contactReducer.reduce(data, this.state);
     this.s3Reducer.reduce(data, this.state);
     this.groupReducer.reduce(data, this.state);
-    this.publishUpdateReducer.reduce(data, this.state);
-    this.publishResponseReducer.reduce(data, this.state);
     this.launchReducer.reduce(data, this.state);
     this.connReducer.reduce(data, this.state);
     GraphReducer(data, this.state);
+    HarkReducer(data, this.state);
   }
 }

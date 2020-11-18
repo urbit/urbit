@@ -37,6 +37,13 @@
   %-  spat
   (en-path resource)
 ::
+++  dejs-path
+  %-  su:dejs:format
+  ;~  pfix
+    (jest '/ship/')
+    ;~((glue fas) ;~(pfix sig fed:ag) urs:ab)
+  ==
+::
 ++  dejs
   =,  dejs:format
   ^-  $-(json resource)

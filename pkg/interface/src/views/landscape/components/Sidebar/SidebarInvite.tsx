@@ -11,7 +11,7 @@ export class SidebarInvite extends Component<{invite: Invite, onAccept: Function
         <Box width='100%' verticalAlign='middle'>
           <Text display='block' pb='2' gray>You have been invited to:</Text>
           <Text display='inline-block'>
-            {props.invite.path.substr(1)}
+            {`~${props.invite.resource.ship}/${props.invite.resource.name}`}
           </Text>
         </Box>
         <Row>

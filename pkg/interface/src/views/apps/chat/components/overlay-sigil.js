@@ -4,6 +4,7 @@ import {
   ProfileOverlay,
   OVERLAY_HEIGHT
 } from './profile-overlay';
+import { Box, BaseImage } from '@tlon/indigo-react';
 
 export class OverlaySigil extends PureComponent {
   constructor() {
@@ -55,21 +56,25 @@ export class OverlaySigil extends PureComponent {
 
   render() {
     const { props, state } = this;
-    const { hideAvatars, allStations } = props;
+    const { hideAvatars } = props;
 
     const img = (props.contact && (props.contact.avatar !== null) && !hideAvatars)
-      ? <img src={props.contact.avatar} height={16} width={16} className="dib" />
+      ? <BaseImage display='inline-block' src={props.contact.avatar} height={16} width={16} />
       : <Sigil
         ship={props.ship}
         size={16}
         color={props.color}
         classes={props.sigilClass}
+        icon
+        padded
         />;
 
      return (
-      <div
+      <Box
+        cursor='pointer'
+        position='relative'
         onClick={this.profileShow}
-        className={props.className + ' pointer relative'}
+        className={props.className}
         ref={this.containerRef}
       >
         {state.profileClicked && (
@@ -82,7 +87,6 @@ export class OverlaySigil extends PureComponent {
             association={props.association}
             group={props.group}
             onDismiss={this.profileHide}
-            allStations={allStations}
             hideAvatars={hideAvatars}
             hideNicknames={props.hideNicknames}
             history={props.history}
@@ -90,7 +94,7 @@ export class OverlaySigil extends PureComponent {
           />
         )}
         {img}
-      </div>
+      </Box>
     );
   }
 }

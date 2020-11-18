@@ -111,8 +111,8 @@ export function Dropdown(props: DropdownProps) {
   });
 
   return (
-    <Box flexShrink={0} position={open ? "relative" : "static"}>
-      <ClickBox ref={anchorRef} onClick={onOpen}>
+    <Box flexShrink={1} position={open ? "relative" : "static"} minWidth='0'>
+      <ClickBox width='100%' ref={anchorRef} onClick={onOpen}>
         {children}
       </ClickBox>
       {open && (

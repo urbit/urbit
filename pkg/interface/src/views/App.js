@@ -43,12 +43,13 @@ const Root = styled.div`
 
   * {
     scrollbar-width: thin;
-    scrollbar-color: ${ p => p.theme.colors.gray } ${ p => p.theme.colors.white };
+    scrollbar-color: ${ p => p.theme.colors.gray } transparent;
   }
 
   /* Works on Chrome/Edge/Safari */
   *::-webkit-scrollbar {
     width: 6px;
+    height: 6px;
   }
   *::-webkit-scrollbar-track {
     background: transparent;
@@ -124,6 +125,9 @@ class App extends React.Component {
     const theme = state.dark ? dark : light;
     const { background } = state;
 
+    const notificationsCount = state.notificationsCount || 0;
+    const doNotDisturb = state.doNotDisturb || false;
+
     return (
       <ThemeProvider theme={theme}>
         <Helmet>
@@ -142,6 +146,8 @@ class App extends React.Component {
                 connection={this.state.connection}
                 subscription={this.subscription}
                 ship={this.ship}
+                doNotDisturb={doNotDisturb}
+                notificationsCount={notificationsCount}
               />
             </ErrorBoundary>
             <ErrorBoundary>
@@ -149,7 +155,8 @@ class App extends React.Component {
                 associations={state.associations}
                 apps={state.launch}
                 api={this.api}
-                dark={state.dark}
+                notifications={state.notificationsCount}
+                invites={state.invites}
                 groups={state.groups}
                 show={state.omniboxShown}
               />

@@ -1,5 +1,4 @@
 import React  from 'react';
-import classnames from 'classnames';
 import { Text, Icon } from '@tlon/indigo-react';
 
 import Tile from './tile';
@@ -10,11 +9,11 @@ export default class BasicTile extends React.PureComponent {
 
     return (
       <Tile
-        bg={props.title === 'Dojo' ? '#000000' : 'white'}
+        bg={props.title === 'Terminal' ? '#000000' : 'white'}
         to={props.linkedUrl}
       >
-        <Text color={props.title === 'Dojo' ? '#ffffff' : 'black'}>
-          {props.title === 'Dojo'
+        <Text color={props.title === 'Terminal' ? '#ffffff' : 'black'}>
+          {props.title === 'Terminal'
             ? <Icon
               icon='ChevronEast'
               color='#fff'
@@ -23,7 +22,7 @@ export default class BasicTile extends React.PureComponent {
               verticalAlign='top'
               pt='5px'
               pr='2px'
-            />
+              />
             : null
           }{props.title}
         </Text>

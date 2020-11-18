@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import _ from 'lodash';
 import normalizeWheel from 'normalize-wheel';
+import { Box } from '@tlon/indigo-react';
 
 interface VirtualScrollerProps {
   origin: 'top' | 'bottom';
@@ -216,7 +217,7 @@ export default class VirtualScroller extends PureComponent<VirtualScrollerProps,
     if (map.has(event.code) && document.body.isSameNode(document.activeElement)) {
       event.preventDefault();
       event.stopImmediatePropagation();
-      let distance = map.get(event.code); 
+      let distance = map.get(event.code);
       if (event.code === 'Space' && event.shiftKey) {
         distance = distance * -1;
       }
@@ -244,7 +245,18 @@ export default class VirtualScroller extends PureComponent<VirtualScrollerProps,
       element.addEventListener('wheel', (event) => {
         event.preventDefault();
         const normalized = normalizeWheel(event);
-        element.scrollBy(0, normalized.pixelY * -1);
+        if (
+          !event.target.isSameNode(element)
+          && (event.target.scrollHeight > event.target.clientHeight && event.target.clientHeight > 0) // If we're scrolling something with a scrollbar
+          && (
+            (event.target.scrollTop > 0 && event.deltaY < 0) // Either we're not at the top and scrolling up
+            || (event.target.scrollTop < event.target.scrollHeight - event.target.clientHeight && event.deltaY > 0) // Or we're not at the bottom and scrolling down
+          )
+        ) {
+          event.target.scrollBy(0, normalized.pixelY);
+        } else {
+          element.scrollBy(0, normalized.pixelY * -1);
+        }
         return false;
       }, { passive: false });
       window.addEventListener('keydown', this.invertedKeyHandler, { passive: false });
@@ -321,13 +333,13 @@ export default class VirtualScroller extends PureComponent<VirtualScrollerProps,
     };
 
     return (
-      <div ref={this.setWindow.bind(this)} onScroll={this.onScroll.bind(this)} style={{...style, ...{overflowY: 'scroll', transform }}}>
-        <div ref={this.scrollContainer} style={{ transform }}>
-          <div style={{ height: `${origin === 'top' ? startgap : endgap}px` }}></div>
+      <Box overflowY='scroll' ref={this.setWindow.bind(this)} onScroll={this.onScroll.bind(this)} style={{ ...style, ...{ transform } }}>
+        <Box ref={this.scrollContainer} style={{ transform }}>
+          <Box style={{ height: `${origin === 'top' ? startgap : endgap}px` }}></Box>
           {indexesToRender.map(render)}
-          <div style={{ height: `${origin === 'top' ? endgap : startgap}px` }}></div>
-        </div>
-      </div>
+          <Box style={{ height: `${origin === 'top' ? endgap : startgap}px` }}></Box>
+        </Box>
+      </Box>
     );
   }
 }

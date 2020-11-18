@@ -1,14 +1,27 @@
 import React, { useMemo, useCallback } from "react";
-import { Box, Text } from "@tlon/indigo-react";
+import {
+  Box,
+  Text,
+  Label,
+  Row,
+  Col,
+  Icon,
+  ErrorLabel,
+} from "@tlon/indigo-react";
 import _ from "lodash";
 import { useField } from "formik";
 import styled from "styled-components";
 
+import { roleForShip } from "~/logic/lib/group";
+
 import { DropdownSearch } from "./DropdownSearch";
+import { Groups } from "~/types";
 import { Associations, Association } from "~/types/metadata-update";
 
 interface InviteSearchProps {
   disabled?: boolean;
+  adminOnly: boolean;
+  groups: Groups;
   associations: Associations;
   label: string;
   caption?: string;
@@ -16,17 +29,9 @@ interface InviteSearchProps {
 }
 
 const CandidateBox = styled(Box)<{ selected: boolean }>`
-  background-color: ${(p) =>
-    p.selected ? p.theme.colors.washedGray : p.theme.colors.white};
-  pointer: cursor;
   &:hover {
     background-color: ${(p) => p.theme.colors.washedGray};
   }
-`;
-
-const ClickableText = styled(Text)`
-  cursor: pointer;
-
 `;
 
 const Candidate = ({ title, selected, onClick }) => (
@@ -36,7 +41,7 @@ const Candidate = ({ title, selected, onClick }) => (
     borderColor="washedGray"
     color="black"
     fontSize={0}
-    p={1}
+    p={2}
     width="100%"
   >
     {title}
@@ -58,55 +63,79 @@ function renderCandidate(
 }
 
 export function GroupSearch(props: InviteSearchProps) {
-  const groups = useMemo(
-    () => Object.values(props.associations?.contacts || {}),
-    [props.associations?.contacts]
-  );
+  const { id, caption, label } = props;
+  const groups: Association[] = useMemo(() => {
+    return props.adminOnly
+      ? Object.values(
+          Object.keys(props.associations?.contacts)
+            .filter(
+              (e) => roleForShip(props.groups[e], window.ship) === "admin"
+            )
+            .reduce((obj, key) => {
+              obj[key] = props.associations?.contacts[key];
+              return obj;
+            }, {}) || {}
+        )
+      : Object.values(props.associations?.contacts || {});
+  }, [props.associations?.contacts]);
 
-  const [{ value }, { error }, { setValue }] = useField(props.id);
+  const [{ value }, meta, { setValue, setTouched }] = useField(props.id);
 
-  const group = props.associations?.contacts?.[value];
+  const { title: groupTitle } =
+    props.associations.contacts?.[value]?.metadata || {};
 
   const onSelect = useCallback(
     (a: Association) => {
       setValue(a["group-path"]);
+      setTouched(true);
     },
     [setValue]
   );
 
-  const onRemove = useCallback(
-    (a: Association) => {
-      setValue("");
-    },
-    [setValue]
-  );
+  const onUnselect = useCallback(() => {
+    setValue(undefined);
+    setTouched(true);
+  }, [setValue]);
 
   return (
-    <DropdownSearch<Association>
-      label={props.label}
-      id={props.id}
-      caption={props.caption}
-      candidates={groups}
-      isExact={() => undefined}
-      renderCandidate={renderCandidate}
-      disabled={value && value.length !== 0}
-      search={(s: string, a: Association) =>
-        a.metadata.title.toLowerCase().startsWith(s.toLowerCase())
-      }
-      getKey={(a: Association) => a["group-path"]}
-      onSelect={onSelect}
-      onRemove={onRemove}
-      renderChoice={({ candidate, onRemove }) => (
-        <Box px={2} py={1} border={1} borderColor="washedGrey" color="black" fontSize={0}>
-          {candidate.metadata.title}
-          <ClickableText ml={2} onClick={onRemove} color="black">
-            x
-          </ClickableText>
-        </Box>
+    <Col>
+      <Label htmlFor={id}>{label}</Label>
+      {caption && (
+        <Label gray mt="2">
+          {caption}
+        </Label>
       )}
-      value={group}
-      error={error}
-    />
+      {value && (
+        <Row
+          borderRadius="1"
+          mt="2"
+          width="fit-content"
+          border="1"
+          borderColor="gray"
+          height="32px"
+          px="2"
+          alignItems="center"
+        >
+          <Text mr="2">{groupTitle || value}</Text>
+          <Icon onClick={onUnselect} icon="X" />
+        </Row>
+      )}
+      {!value && (
+        <DropdownSearch<Association>
+          mt="2"
+          candidates={groups}
+          renderCandidate={renderCandidate}
+          search={(s: string, a: Association) =>
+            a.metadata.title.toLowerCase().startsWith(s.toLowerCase())
+          }
+          getKey={(a: Association) => a["group-path"]}
+          onSelect={onSelect}
+        />
+      )}
+      <ErrorLabel hasError={!!(meta.touched && meta.error)}>
+        {meta.error}
+      </ErrorLabel>
+    </Col>
   );
 }
 

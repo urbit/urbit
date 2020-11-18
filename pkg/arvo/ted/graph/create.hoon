@@ -1,4 +1,9 @@
-/-  spider, graph=graph-store, *metadata-store, *group, group-store
+/-  spider,
+    graph=graph-store,
+    *metadata-store,
+    *group,
+    group-store,
+    inv=invite-store
 /+  strandio, resource, graph-view
 =>
 |% 
@@ -24,9 +29,10 @@
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m
-=+  !<(=action:graph-view arg)
+=+  !<([=action:graph-view ~] arg)
 ?>  ?=(%create -.action)
 ;<  =bowl:spider  bind:m  get-bowl:strandio
+::
 ::  Add graph to graph-store
 ::
 ?.  =(our.bowl entity.rid.action)
@@ -37,12 +43,14 @@
   (poke-our %graph-store graph-update+!>(update))
 ;<  ~  bind:m
   (poke-our %graph-push-hook %push-hook-action !>([%add rid.action]))
+::
 ::  Add group, if graph is unmanaged
 ::
 ;<  group=resource  bind:m
   (handle-group rid.action associated.action)
 =/  group-path=path
   (en-path:resource group)
+::
 ::  Setup metadata
 ::
 =/  =metadata
@@ -53,9 +61,30 @@
     creator       our.bowl
     module        module.action
   ==
-=/  act=metadata-action
+=/  =metadata-action
   [%add group-path graph+(en-path:resource rid.action) metadata]
-;<  ~  bind:m  (poke-our %metadata-hook %metadata-action !>(act))
+;<  ~  bind:m
+  (poke-our %metadata-hook %metadata-action !>(metadata-action))
 ;<  ~  bind:m
   (poke-our %metadata-hook %metadata-hook-action !>([%add-owned group-path]))
-(pure:m !>(~))
+::
+::  Send invites
+::
+?:  ?=(%group -.associated.action)
+  (pure:m !>(~))
+?-    -.policy.associated.action
+    %open  (pure:m !>(~))
+    %invite
+  =/  inv-action=action:inv
+    :^  %invites  %graph  (shaf %graph-uid eny.bowl)
+    ^-  multi-invite:inv
+    :*  our.bowl
+        %graph-push-hook
+        rid.action
+        pending.policy.associated.action
+        description.action
+    ==
+  ;<  ~  bind:m
+    (poke-our %invite-hook %invite-action !>(inv-action))
+  (pure:m !>(~))
+==

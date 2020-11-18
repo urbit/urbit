@@ -1,20 +1,17 @@
 import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
-import { Box, Center } from '@tlon/indigo-react';
 
 import './css/custom.css';
 
-import { PatpNoSig, AppName } from '~/types/noun';
+import { PatpNoSig } from '~/types/noun';
 import GlobalApi from '~/logic/api/global';
 import { StoreState } from '~/logic/store/type';
-import GlobalSubscription from '~/logic/subscription/global';
-import { Resource } from '~/views/components/Resource';
-import { PopoverRoutes } from './components/PopoverRoutes';
-import { UnjoinedResource } from '~/views/components/UnjoinedResource';
 import { GroupsPane } from './components/GroupsPane';
 import { Workspace } from '~/types';
-import {NewGroup} from './components/NewGroup';
-import {JoinGroup} from './components/JoinGroup';
+import { NewGroup } from './components/NewGroup';
+import { JoinGroup } from './components/JoinGroup';
+
+import { cite } from '~/logic/lib/util';
 
 
 type LandscapeProps = StoreState & {
@@ -26,33 +23,50 @@ type LandscapeProps = StoreState & {
 export default class Landscape extends Component<LandscapeProps, {}> {
   componentDidMount() {
     document.title = 'OS1 - Landscape';
-    // preload spinner asset
-    new Image().src = '/~landscape/img/Spinner.png';
 
-    this.props.subscription.startApp('groups')
-    this.props.subscription.startApp('chat')
-    this.props.subscription.startApp('publish');
+    this.props.subscription.startApp('groups');
+    this.props.subscription.startApp('chat');
     this.props.subscription.startApp('graph');
-    this.props.api.publish.fetchNotebooks();
-    
+  }
+
+  createandRedirectToDM(api, ship, history, allStations) {
+    const station = `/~${window.ship}/dm--${ship}`;
+    const theirStation = `/~${ship}/dm--${window.ship}`;
+
+    if (allStations.indexOf(station) !== -1) {
+      history.push(`/~landscape/home/resource/chat${station}`);
+      return;
+    }
+
+    if (allStations.indexOf(theirStation) !== -1) {
+      history.push(`/~landscape/home/resource/chat${theirStation}`);
+      return;
+    }
+
+    const groupPath = `/ship/~${window.ship}/dm--${ship}`;
+    const aud = ship !== window.ship ? [`~${ship}`] : [];
+    const title = `${cite(window.ship)} <-> ${cite(ship)}`;
+
+    api.chat.create(
+      title,
+      '',
+      station,
+      groupPath,
+      { invite: { pending: aud } },
+      aud,
+      true,
+      false
+    );
+
+    //  TODO: make a pretty loading state
+    setTimeout(() => {
+      history.push(`/~landscape/home/resource/chat${station}`);
+    }, 5000);
   }
 
   render() {
     const { props } = this;
-
-    const contacts = props.contacts || {};
-    const defaultContacts =
-      (Boolean(props.contacts) && '/~/default' in props.contacts) ?
-        props.contacts['/~/default'] : {};
-
-    const invites =
-      (Boolean(props.invites) && '/contacts' in props.invites) ?
-        props.invites['/contacts'] : {};
-    const s3 = props.s3 ? props.s3 : {};
-    const groups = props.groups || {};
-    const associations = props.associations || {};
-    const { api } = props;
-
+    const { api, inbox } = props;
 
     return (
       <Switch>
@@ -73,7 +87,6 @@ export default class Landscape extends Component<LandscapeProps, {}> {
         <Route path="/~landscape/home"
           render={routeProps => {
             const ws: Workspace = { type: 'home' };
-
             return (
               <GroupsPane workspace={ws} baseUrl="/~landscape/home" {...props} />
             );
@@ -85,21 +98,27 @@ export default class Landscape extends Component<LandscapeProps, {}> {
               <NewGroup
                 groups={props.groups}
                 contacts={props.contacts}
-                api={props.api} 
+                api={props.api}
                 {...routeProps}
               />
             );
           }}
+        />
+        <Route path='/~landscape/dm/:ship?'
+        render={routeProps => {
+          const { ship } = routeProps.match.params;
+          return this.createandRedirectToDM(api, ship, routeProps.history, Object.keys(inbox));
+        }}
         />
         <Route path="/~landscape/join/:ship?/:name?"
           render={routeProps=> {
             const { ship, name } = routeProps.match.params;
             const autojoin = ship && name ? `${ship}/${name}` : null;
             return (
-              <JoinGroup 
+              <JoinGroup
                 groups={props.groups}
                 contacts={props.contacts}
-                api={props.api} 
+                api={props.api}
                 autojoin={autojoin}
                 {...routeProps}
               />

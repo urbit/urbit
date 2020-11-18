@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row, Icon, Text } from '@tlon/indigo-react';
+import { Box, Row, Icon, Text } from '@tlon/indigo-react';
 import defaultApps from '~/logic/lib/default-apps';
 import Sigil from '~/logic/lib/sigil';
 
@@ -25,22 +25,38 @@ export class OmniboxResult extends Component {
       }
   }
 
-  getIcon(icon, dark, selected, link) {
+  getIcon(icon, selected, link, invites, notifications) {
     const iconFill = (this.state.hovered || (selected === link)) ? 'white' : 'black';
     const sigilFill = (this.state.hovered || (selected === link)) ? '#3a8ff7' : '#ffffff';
+    const bulletFill = (this.state.hovered || (selected === link)) ? 'white' : 'blue';
+
+    const inviteCount = Object.keys(invites?.['contacts'] || {});
 
     let graphic = <div />;
-    if (defaultApps.includes(icon.toLowerCase()) || icon.toLowerCase() === 'links') {
-      icon = (icon === 'Link') ? 'Links' : icon;
+    if (defaultApps.includes(icon.toLowerCase())
+        || icon.toLowerCase() === 'links'
+        || icon.toLowerCase() === 'terminal')
+    {
+      icon = (icon === 'Link')     ? 'Links' :
+             (icon === 'Terminal') ? 'Dojo'  : icon;
       graphic = <Icon display="inline-block" verticalAlign="middle" icon={icon} mr='2' size='16px' color={iconFill} />;
+    } else if (icon === 'inbox') {
+      graphic = <Box display='flex' verticalAlign='middle'>
+        <Icon display='inline-block' verticalAlign='middle' icon='Inbox' mr='2' size='16px' color={iconFill} />
+        {(notifications > 0 || inviteCount.length > 0) && (
+          <Icon display='inline-block' icon='Bullet' style={{ position: 'absolute', top: -5, left: 5 }} color={bulletFill} />
+        )}
+      </Box>;
     } else if (icon === 'logout') {
-      graphic = <Icon display="inline-block" verticalAlign="middle" icon='ArrowWest' mr='2' size='16px' color={iconFill} />;
+      graphic = <Icon display="inline-block" verticalAlign="middle" icon='SignOut' mr='2' size='16px' color={iconFill} />;
     } else if (icon === 'profile') {
-      graphic = <Sigil color={sigilFill} classes='dib v-mid mr2' ship={window.ship} size={16} />;
+      graphic = <Sigil color={sigilFill} classes='dib flex-shrink-0 v-mid mr2' ship={window.ship} size={16} icon padded />;
     } else if (icon === 'home') {
-      graphic = <Icon display='inline-block' verticalAlign='middle' icon='Circle' mr='2' size='16px' color={iconFill} />;
+      graphic = <Icon display='inline-block' verticalAlign='middle' icon='Boot' mr='2' size='16px' color={iconFill} />;
+    } else if (icon === 'notifications') {
+      graphic = <Icon display='inline-block' verticalAlign='middle' icon='Inbox' mr='2' size='16px' color={iconFill} />;
     } else {
-      graphic = <Icon icon='NullIcon' verticalAlign="middle" mr='2' size="16px" color={iconFill} />;
+      graphic = <Icon display='inline-block' icon='NullIcon' verticalAlign="middle" mr='2' size="16px" color={iconFill} />;
     }
 
     return graphic;
@@ -51,9 +67,9 @@ export class OmniboxResult extends Component {
   }
 
   render() {
-    const { icon, text, subtext, link, navigate, selected, dark } = this.props;
+    const { icon, text, subtext, link, navigate, selected, invites, notifications } = this.props;
 
-    const graphic = this.getIcon(icon, dark, selected, link);
+    const graphic = this.getIcon(icon, selected, link, invites, notifications);
 
     return (
       <Row

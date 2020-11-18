@@ -1,5 +1,5 @@
 /-  spider
-/+  libstrand=strand, default-agent, verb, server 
+/+  libstrand=strand, default-agent, verb, server
 =,  strand=strand:libstrand
 |%
 +$  card         card:agent:gall
@@ -290,7 +290,7 @@
   =/  body=json
     (need (de-json:html q.u.body.request.inbound-request))
   =/  input=vase
-    (tube !>(body))
+    (slop (tube !>(body)) !>(~))
   =/  =start-args
     [~ `tid thread input]
   =^  cards  state

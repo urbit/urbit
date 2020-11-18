@@ -28,6 +28,7 @@
 ::
 +$  content
   $%  [%text text=cord]
+      [%mention =ship]
       [%url url=cord]
       [%code expression=cord output=(list tank)]
       [%reference =uid]

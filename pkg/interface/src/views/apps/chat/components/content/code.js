@@ -15,11 +15,12 @@ export default class CodeContent extends Component {
           mono
           p='1'
           my='0'
-          fontSize='14px'
+          borderRadius='1'
           overflow='auto'
           maxHeight='10em'
           maxWidth='100%'
-          backgroundColor='scales.black10'
+          style={{ whiteSpace: 'pre' }}
+          backgroundColor='washedGray'
         >
           {content.code.output[0].join('\n')}
         </Text>
@@ -32,10 +33,11 @@ export default class CodeContent extends Component {
           mono
           my='0'
           p='1'
-          fontSize='14px'
+          borderRadius='1'
           overflow='auto'
           maxHeight='10em'
           maxWidth='100%'
+          style={{ whiteSpace: 'pre' }}
         >
           {content.code.expression}
         </Text>

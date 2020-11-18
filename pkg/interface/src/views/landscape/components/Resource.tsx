@@ -44,7 +44,12 @@ export function Resource(props: ResourceProps) {
               baseUrl={props.baseUrl}
               {...skelProps}
             >
-              <ChannelSettings api={api} association={association} />
+              <ChannelSettings 
+                groups={props.groups}
+                associations={props.associations}
+                api={api}
+                association={association} 
+              />
             </ResourceSkeleton>
           );
         }}
@@ -52,7 +57,13 @@ export function Resource(props: ResourceProps) {
       <Route
         path={relativePath("")}
         render={(routeProps) => (
-          <ResourceSkeleton baseUrl={props.baseUrl} {...skelProps} atRoot>
+          <ResourceSkeleton
+            notificationsGraphConfig={props.notificationsGraphConfig}
+            notificationsChatConfig={props.notificationsChatConfig}
+            baseUrl={props.baseUrl}
+            {...skelProps} 
+            atRoot
+          >
             {app === "chat" ? (
               <ChatResource {...props} />
             ) : app === "publish" ? (
