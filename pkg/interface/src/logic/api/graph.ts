@@ -74,7 +74,6 @@ export default class GraphApi extends BaseApi<StoreState> {
   }
 
   private hookAction(ship: Patp, action: any): Promise<any> {
-    console.log(action);
     return this.action('graph-push-hook', 'graph-update', action);
   }
 

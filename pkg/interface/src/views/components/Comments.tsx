@@ -26,7 +26,7 @@ interface CommentsProps {
 }
 
 export function Comments(props: CommentsProps) {
-  const { comments, ship, name, api } = props;
+  const { comments, ship, name, api, baseUrl, history} = props;
 
   const onSubmit = async (
     { comment },
@@ -52,7 +52,6 @@ export function Comments(props: CommentsProps) {
     { comment },
     actions: FormikHelpers<{ comment: string }>
   ) => {
-    //  TODO: finish up
     try {
       const commentNode = comments.children.get(bigInt(props.editCommentId));
       const [idx, _] = getLatestCommentRevision(commentNode);
@@ -62,9 +61,10 @@ export function Comments(props: CommentsProps) {
         content,
         `${commentNode.post.index}/${parseInt(idx + 1, 10)}`
       );
+      post.index = post.index.split('/');
+      post.index = post.index.slice(0,5).join('/');
       await api.graph.addPost(ship, name, post);
-      actions.resetForm();
-      actions.setStatus({ success: null });
+      history.push(baseUrl);
     } catch (e) {
       console.error(e);
       actions.setStatus({ error: e.message });
