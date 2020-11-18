@@ -24,6 +24,7 @@ interface ContactCardProps {
   path: string;
   api: GlobalApi;
   s3: S3State;
+  rootIdentity: Contact;
 }
 
 const formSchema = Yup.object({
@@ -63,13 +64,13 @@ const emptyContact = {
   nickname: '',
   email: '',
   phone: '',
-  website: '', 
+  website: '',
   notes: ''
 };
 
 export function ContactCard(props: ContactCardProps) {
   const us = `~${window.ship}`;
-  const { contact } = props;
+  const { contact, rootIdentity } = props;
   const onSubmit = async (values: Contact, actions: FormikHelpers<Contact>) => {
     try {
       if(!contact) {
@@ -112,7 +113,7 @@ export function ContactCard(props: ContactCardProps) {
     <Box p={4} height="100%" overflowY="auto">
       <Formik
         validationSchema={formSchema}
-        initialValues={contact || emptyContact}
+        initialValues={contact || rootIdentity || emptyContact}
         onSubmit={onSubmit}
       >
         <Form
@@ -141,7 +142,7 @@ export function ContactCard(props: ContactCardProps) {
           <Input id="website" label="Website" />
           <Input id="notes" label="Notes" />
           <AsyncButton primary loadingText="Updating..." border>
-            Save
+            {(contact) ? "Save" : "Share Contact"}
           </AsyncButton>
         </Form>
       </Formik>
