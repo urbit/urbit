@@ -9179,6 +9179,10 @@
     |-  ^-  seed:able:jael
     =/  cub=acru:ames  (pit:nu:crub:crypto 512 eny)
     =/  who=ship  `@`fig:ex:cub
+    ::  disallow 64-bit or smaller addresses
+    ::
+    ?.  ?=(%pawn (clan:title who))
+      $(eny +(eny))
     ?:  (~(has in stars) (^sein:title who))
       [who 1 sec:ex:cub ~]
     $(eny +(eny))
