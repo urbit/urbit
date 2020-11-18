@@ -121,17 +121,18 @@
     =/  cost  (mul input-weight feyb)
     ?:  (lte val cost)  0
     (sub val cost)
- ::  Uses naive random selection. Should switch to branch-and-bound later
+  ::  Uses naive random selection. Should switch to branch-and-bound later
   ::
   ++  select-utxos
-    ^-  (unit (list input))
-    =/  is=(list input)
-      %-  zing
-      %+  turn  ~(val by wach.w)
-      |=  =addi
+    |^  ^-  (unit (list input))
+    %-  single-random-draw
+    %-  zing
+    (turn ~(val by wach.w) to-inputs)
+    ++  to-inputs
+      |=  =addi  ^-  (list input)
       %+  turn  ~(tap in utxos.addi)
-        |=(=utxo:btc [utxo chyg.addi idx.addi])
-    (single-random-draw is)
+      |=(=utxo:btc [utxo chyg.addi idx.addi])
+    --
   ::  single-random-draw
   ::    randomly choose utxos until target is hit
   ::    only use an input if its net-value > 0
