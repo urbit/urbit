@@ -14,11 +14,8 @@ import { Skeleton } from "./Skeleton";
 import { InvitePopover } from "./InvitePopover";
 import { NewChannel } from "./NewChannel";
 
-import { Resource as IResource, Groups } from "~/types/group-update";
-import { Associations } from "~/types/metadata-update";
-import { resourceAsPath } from "~/logic/lib/util";
+import { appIsGraph } from "~/logic/lib/util";
 import { AppName } from "~/types/noun";
-import { Contacts, Rolodex } from "~/types/contact-update";
 import GlobalApi from "~/logic/api/global";
 import { StoreState } from "~/logic/store/type";
 import { UnjoinedResource } from "~/views/components/UnjoinedResource";
@@ -71,6 +68,8 @@ export function GroupsPane(props: GroupsPaneProps) {
           s3={props.s3}
           hideAvatars={props.hideAvatars}
           hideNicknames={props.hideNicknames}
+          notificationsGroupConfig={props.notificationsGroupConfig}
+
           {...routeProps}
           baseUrl={baseUrl}
         />)}
@@ -83,7 +82,7 @@ export function GroupsPane(props: GroupsPaneProps) {
           workspace={workspace}
         />
       </>
-    ) 
+    )
 
   return (
     <Switch>
@@ -95,11 +94,11 @@ export function GroupsPane(props: GroupsPaneProps) {
             string
           >;
           const appName = app as AppName;
-          const isShip = app === "link";
+          const isGraph = appIsGraph(app);
 
-          const resource = `${isShip ? "/ship" : ""}/${host}/${name}`;
+          const resource = `${isGraph ? "/ship" : ""}/${host}/${name}`;
           const association =
-            appName === "link"
+            isGraph
               ? associations.graph[resource]
               : associations[appName][resource];
           const resourceUrl = `${baseUrl}/resource/${app}${resource}`;
@@ -133,9 +132,9 @@ export function GroupsPane(props: GroupsPaneProps) {
         render={(routeProps) => {
           const { app, host, name } = routeProps.match.params;
           const appName = app as AppName;
-          const isShip = app === "link";
-          const appPath = `${isShip ? '/ship/' : '/'}${host}/${name}`;
-          const association = isShip ? associations.graph[appPath] : associations[appName][appPath];
+          const isGraph = appIsGraph(app);
+          const appPath = `${isGraph ? '/ship/' : '/'}${host}/${name}`;
+          const association = isGraph ? associations.graph[appPath] : associations[appName][appPath];
           const resourceUrl = `${baseUrl}/join/${app}${appPath}`;
 
           if (!association) {
@@ -171,6 +170,7 @@ export function GroupsPane(props: GroupsPaneProps) {
               <NewChannel
                 {...routeProps}
                 api={api}
+                baseUrl={baseUrl}
                 associations={associations}
                 groups={groups}
                 group={groupPath}
@@ -196,7 +196,7 @@ export function GroupsPane(props: GroupsPaneProps) {
                 display={["none", "flex"]}
                 p='4'
               >
-                <Box><Text fontSize="0" color='gray'>
+                <Box p="4"><Text fontSize="0" color='gray'>
                   {description}
                 </Text></Box>
               </Col>

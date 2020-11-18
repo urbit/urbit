@@ -23,14 +23,10 @@ type LandscapeProps = StoreState & {
 export default class Landscape extends Component<LandscapeProps, {}> {
   componentDidMount() {
     document.title = 'OS1 - Landscape';
-    // preload spinner asset
-    new Image().src = '/~landscape/img/Spinner.png';
 
-    this.props.subscription.startApp('groups')
-    this.props.subscription.startApp('chat')
-    this.props.subscription.startApp('publish');
+    this.props.subscription.startApp('groups');
+    this.props.subscription.startApp('chat');
     this.props.subscription.startApp('graph');
-    this.props.api.publish.fetchNotebooks();
   }
 
   createandRedirectToDM(api, ship, history, allStations) {

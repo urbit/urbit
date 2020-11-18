@@ -3,19 +3,29 @@ import { StoreState } from '../store/type';
 import { Patp, Path, PatpNoSig } from '~/types/noun';
 import _ from 'lodash';
 import {makeResource, resourceFromPath} from '../lib/group';
-import {GroupPolicy, Enc, Post} from '~/types';
-import { deSig } from '~/logic/lib/util';
+import {GroupPolicy, Enc, Post, NodeMap, Content} from '~/types';
+import { numToUd, unixToDa } from '~/logic/lib/util';
 
-export const createPost = (contents: Object[], parentIndex: string = '') => {
+export const createPost = (contents: Content[], parentIndex: string = '') => {
   return {
     author: `~${window.ship}`,
-    index: parentIndex + '/' + Date.now(),
+    index: parentIndex + '/' + unixToDa(Date.now()).toString(),
     'time-sent': Date.now(),
     contents,
     hash: null,
     signatures: []
   };
 };
+
+function moduleToMark(mod: string): string | undefined {
+  if(mod === 'link') {
+    return 'graph-validator-link';
+  }
+  if(mod === 'publish') {
+    return 'graph-validator-publish';
+  }
+  return undefined;
+}
 
 export default class GraphApi extends BaseApi<StoreState> {
 
@@ -47,7 +57,8 @@ export default class GraphApi extends BaseApi<StoreState> {
         title,
         description,
         associated,
-        "module": mod
+        "module": mod,
+        mark: moduleToMark(mod)
       }
     });
   }
@@ -67,7 +78,8 @@ export default class GraphApi extends BaseApi<StoreState> {
         title,
         description,
         associated: { policy },
-        "module": mod
+        "module": mod,
+        mark: moduleToMark(mod)
       }
     });
   }
@@ -139,7 +151,7 @@ export default class GraphApi extends BaseApi<StoreState> {
   }
 
   addNodes(ship: Patp, name: string, nodes: Object) {
-    this.hookAction(ship, {
+    return this.hookAction(ship, {
       'add-nodes': {
         resource: { ship, name },
         nodes
@@ -204,9 +216,10 @@ export default class GraphApi extends BaseApi<StoreState> {
   }
 
   getNode(ship: string, resource: string, index: string) {
+    const idx = index.split('/').map(numToUd).join('/');
     return this.scry<any>(
       'graph-store',
-      `/node/${ship}/${resource}/${index}`
+      `/node/${ship}/${resource}${idx}`
     ).then((node) => {
       this.store.handleEvent({
         data: node

@@ -1,72 +1,59 @@
 import React from 'react';
 import Helmet from 'react-helmet';
+import styled from 'styled-components';
 
-import { Box, Row, Icon, Text, Center } from '@tlon/indigo-react';
-import { uxToHex, adjustHex } from '~/logic/lib/util';
+import { Box, Row, Icon, Text } from '@tlon/indigo-react';
 
 import './css/custom.css';
 
-import { Sigil } from '~/logic/lib/sigil';
 import Tiles from './components/tiles';
 import Tile from './components/tiles/tile';
 import Welcome from './components/welcome';
 import Groups from './components/Groups';
 
-export default class LaunchApp extends React.Component {
-  componentDidMount() {
-    // preload spinner asset
-    new Image().src = '/~landscape/img/Spinner.png';
-  }
+const ScrollbarLessBox = styled(Box)`
+  scrollbar-width: none !important;
 
+  ::-webkit-scrollbar {
+    display: none;
+  }
+`;
+
+export default class LaunchApp extends React.Component {
   render() {
     const { props } = this;
-    const contact = props.contacts?.['/~/default']?.[window.ship];
-    const sigilColor = contact?.color
-      ? `#${uxToHex(contact.color)}`
-      : props.dark
-      ? '#FFFFFF'
-      : '#000000';
 
     return (
       <>
         <Helmet>
           <title>OS1 - Home</title>
         </Helmet>
-        <Box height='100%' overflowY='scroll'>
+        <ScrollbarLessBox height='100%' overflowY='scroll'>
           <Welcome firstTime={props.launch.firstTime} api={props.api} />
           <Box
-            ml='2'
+            mx='2'
             display='grid'
-            gridAutoRows='124px'
-            gridTemplateColumns='repeat(auto-fit, 124px)'
+            gridTemplateColumns='repeat(auto-fill, minmax(128px, 1fr))'
             gridGap={3}
             p={2}
+            pt={0}
           >
             <Tile
-              bg="#fff"
+              bg="transparent"
               color="green"
               to="/~landscape/home"
               p={0}
             >
-              <Box p={2} height='100%' width='100%' bg='washedGreen'>
+              <Box p={2} height='100%' width='100%' bg='green'>
                 <Row alignItems='center'>
                   <Icon
-                    color="green"
-                    fill="rgba(0,0,0,0)"
-                    icon="Circle"
+                    color="white"
+                    // fill="rgba(0,0,0,0)"
+                    icon="Boot"
                   />
-                  <Text ml="1" color="green">Home</Text>
+                  <Text ml="1" mt='1px' color="white">DMs + Drafts</Text>
                 </Row>
               </Box>
-            </Tile>
-            <Tile
-              borderColor={adjustHex(sigilColor, -40)}
-              bg={sigilColor}
-              to="/~profile"
-            >
-              <Center height="100%">
-                <Sigil ship={`~${window.ship}`} size={80} color={sigilColor} />
-              </Center>
             </Tile>
             <Tiles
               tiles={props.launch.tiles}
@@ -75,9 +62,10 @@ export default class LaunchApp extends React.Component {
               location={props.userLocation}
               weather={props.weather}
             />
+            <Box display={["none", "block"]} width="100%" gridColumn="1 / -1"></Box>
+            <Groups groups={props.groups} associations={props.associations} />
           </Box>
-          <Groups associations={props.associations} invites={props.invites} api={props.api} />
-        </Box>
+        </ScrollbarLessBox>
         <Box
           position="absolute"
           fontFamily="mono"

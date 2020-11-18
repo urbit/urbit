@@ -110,6 +110,7 @@ export function InvitePopover(props: InvitePopoverProps) {
                     id="ships"
                     label=""
                     maxLength={props.workspace.type === 'home' ? 1 : undefined}
+                    autoFocus
                   />
                   <FormError message="Failed to invite" />
                   {/* <ChipInput

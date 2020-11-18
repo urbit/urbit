@@ -17,6 +17,18 @@
   %+  scry-for  update:store
   /graph/(scot %p entity.res)/[name.res]
 ::
+++  got-node
+  |=  [res=resource =index:store]
+  ^-  node:store
+  =+  %+  scry-for  ,=update:store
+      %+  weld
+        /node/(scot %p entity.res)/[name.res]
+      (turn index (cury scot %ud))
+  ?>  ?=(%0 -.update)
+  ?>  ?=(%add-nodes -.q.update)
+  ?>  ?=(^ nodes.q.update)
+  q.n.nodes.q.update
+::
 ++  get-update-log
   |=  rid=resource 
   ^-  update-log:store
@@ -33,4 +45,12 @@
   ^-  update-log:store
   %+  scry-for  update-log:store
   /update-log-subset/(scot %p entity.res)/[name.res]/(scot %da start)/'~'
+::
+++  get-keys
+  ^-  resources
+  =+  %+  scry-for  ,=update:store
+      /keys
+  ?>  ?=(%0 -.update)
+  ?>  ?=(%keys -.q.update)
+  resources.q.update
 --
