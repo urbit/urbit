@@ -43,7 +43,7 @@ interface SkeletonProps {
 
 export function Skeleton(props: SkeletonProps) {
   const chatConfig = useChat(props.inbox, props.chatSynced);
-  const graphConfig = useGraphModule(props.graphKeys, props.graphs, props.graphUnreads);
+  const graphConfig = useGraphModule(props.graphKeys, props.graphs, props.unreads.graph);
   const config = useMemo(
     () => ({
       graph: graphConfig,

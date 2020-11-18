@@ -1,7 +1,7 @@
 import React, { ReactNode, useCallback } from "react";
 import moment from "moment";
 import { Row, Box, Col, Text, Anchor, Icon, Action } from "@tlon/indigo-react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import _ from "lodash";
 import {
   Post,
@@ -29,9 +29,9 @@ function getGraphModuleIcon(module: string) {
 
 const FilterBox = styled(Box)`
   background: linear-gradient(
-    ${(p) => p.theme.colors.scales.white10} 0%,
-    ${(p) => p.theme.colors.scales.white60} 40%,
-    ${(p) => p.theme.colors.scales.white100} 100%
+    to bottom,
+    transparent,
+    ${(p) => p.theme.colors.white}
   );
 `;
 
@@ -83,15 +83,15 @@ const GraphNodeContent = ({ contents, mod, description, index, remoteContentPoli
       return (
         <Col>
           <Box mb="2" fontWeight="500">
-            {header}
+            <Text>{header}</Text>
           </Box>
           <Box overflow="hidden" maxHeight="400px">
-            {snippet}
+            <Text lineHeight="tall">{snippet}</Text>
             <FilterBox
               width="100%"
               zIndex="1"
               height="calc(100% - 2em)"
-              bottom="0px"
+              bottom="-4px"
               position="absolute"
             />
           </Box>
@@ -123,9 +123,12 @@ const GraphNode = ({
   index,
   graph,
   group,
+  read,
+  onRead,
   remoteContentPolicy
 }) => {
   author = deSig(author);
+  const history = useHistory();
 
   const img = (
     <Sigil
@@ -139,37 +142,42 @@ const GraphNode = ({
 
   const nodeUrl = getNodeUrl(mod, group, graph, index);
 
+  const onClick = useCallback(() => {
+    if(!read) {
+      onRead();
+    }
+    history.push(nodeUrl);
+  }, [read, onRead]);
+
   return (
-    <Link to={nodeUrl}>
-      <Row gapX="2" pt="2">
-        <Col>{img}</Col>
-        <Col alignItems="flex-start">
-          <Row
-            mb="2"
-            height="16px"
-            alignItems="center"
-            p="1"
-            backgroundColor="white"
-          >
-            <Text mono title={author}>
-              {cite(author)}
-            </Text>
-            <Text ml="2" gray>
-              {moment(time).format("HH:mm")}
-            </Text>
-          </Row>
-          <Row p="1">
-            <GraphNodeContent
-              contents={contents}
-              mod={mod}
-              description={description}
-              index={index}
-              remoteContentPolicy={remoteContentPolicy}
-            />
-          </Row>
-        </Col>
-      </Row>
-    </Link>
+    <Row onClick={onClick} gapX="2" pt="2">
+      <Col>{img}</Col>
+      <Col alignItems="flex-start">
+        <Row
+          mb="2"
+          height="16px"
+          alignItems="center"
+          p="1"
+          backgroundColor="white"
+        >
+          <Text mono title={author}>
+            {cite(author)}
+          </Text>
+          <Text ml="2" gray>
+            {moment(time).format("HH:mm")}
+          </Text>
+        </Row>
+        <Row p="1">
+          <GraphNodeContent
+            contents={contents}
+            mod={mod}
+            description={description}
+            index={index}
+            remoteContentPolicy={remoteContentPolicy}
+          />
+        </Row>
+      </Col>
+    </Row>
   );
 };
 
@@ -202,8 +210,9 @@ export function GraphNotification(props: {
   }, [api, timebox, index, read]);
 
   return (
-    <Col onClick={onClick} p="2">
+    <Col p="2">
       <Header
+        onClick={onClick}
         archived={props.archived}
         time={time}
         read={read}
@@ -226,6 +235,8 @@ export function GraphNotification(props: {
             index={content.index}
             graph={graph}
             group={group}
+            read={read}
+            onRead={onClick}
             remoteContentPolicy={remoteContentPolicy}
           />
         ))}
