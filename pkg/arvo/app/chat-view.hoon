@@ -488,8 +488,8 @@
     (en-path:resource rid)
   ?>  ?=(^ path)
   :~  (group-pull-hook-poke %add ship rid)
-      (chat-hook-poke %add-synced ship t.path ask-history)
       (metadata-hook-poke %add-synced ship path)
+      (chat-hook-poke %add-synced ship t.path ask-history)
   ==
 ::
 ++  diff-chat-update
