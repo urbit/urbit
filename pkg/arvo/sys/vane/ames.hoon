@@ -187,9 +187,7 @@
 ::  $shut-packet: encrypted packet payload
 ::
 +$  shut-packet
-  $:  =sndr=life
-      =rcvr=life
-      =bone
+  $:  =bone
       =message-num
       meat=(each fragment-meat ack-meat)
   ==
@@ -3076,6 +3074,7 @@
         fragment.p
       (cut 13 [[fragment-num 1] fragment]:p.meat.plaintext)
     ==
+=
   (en:crub:crypto symmetric-key (jam plaintext))
 ::  +decrypt: decrypt packet content to a $shut-packet or die
 ::
@@ -3120,6 +3119,7 @@
 ::  +decode-packet: deserialize packet from bytestream or crash
 ::
 ++  decode-packet
+  ~/  %decode-packet
   |=  =blob
   ^-  packet
   ::  first 32 (2^5) bits are header; the rest is body
@@ -3146,9 +3146,15 @@
     ?:  =(| relayed)
       [~ body]
     [`(rsh 3 6 body) (end 3 6 body)]
+  ::  .checksum does not apply to the origin
+  ::
   ?.  =(checksum (end 0 20 (mug body)))
     ~|  %ames-checksum  !!
-  ::  read fixed-length sndr and rcvr life from body
+  ::  read fixed-length sndr and rcvr life data from body
+  ::
+  ::    These represent the last four bits of the sender and receiver
+  ::    life fields, to be used for quick dropping of honest packets to
+  ::    or from the wrong life.
   ::
   =/  sndr-tick  (cut 0 [0 4] body)
   =/  rcvr-tick  (cut 0 [4 4] body)
@@ -3156,9 +3162,29 @@
   ::
   =/  off   1
   =^  sndr  off  [(cut 3 [off sndr-size] body) (add off sndr-size)]
+  ?.  (is-valid-rank sndr sndr-size)
+    ~|  ames-sender-impostor+[sndr sndr-size]  !!
+  ::
   =^  rcvr  off  [(cut 3 [off rcvr-size] body) (add off rcvr-size)]
-  =/  meat  (cut 3 [off (sub (met 3 body) off)])
-  [[[sndr rcvr] sndr-tick rcvr-tick origin meat]
+  ?.  (is-valid-rank rcvr rcvr-size)
+    ~|  ames-receiver-impostor+[rcvr rcvr-size]  !!
+  ::  read variable-length .content from the rest of .body
+  ::
+  =/  content  (cut 3 [off (sub (met 3 body) off)])
+  [[[sndr rcvr] sndr-tick rcvr-tick origin content]
+::  +is-valid-rank: does .ship match its stated .size?
+::
+++  is-valid-rank
+  |=  [=ship size=@ubB]
+  ^-  ?
+  .=  size
+  ?+  (clan:title ship)
+    %czar  0b0
+    %king  0b0
+    %duke  0b1
+    %earl  0b10
+    %pawn  0b11
+  ==
 ::
 ++  decode-open-packet
   |=  [=packet our-life=@]
@@ -3184,6 +3210,16 @@
   =/  key  (end 8 1 (rsh 3 1 public-key.open-packet))
   ?>  (veri:ed:crypto signature signed key)
   open-packet
+::  +encode-shut-packet: encrypt and packetize a $shut-packet
+::
+++  encode-shut-packet
+  |=  [=shut-packet =symmetric-key our=ship her=ship our-life=@ her-life=@]
+  ^-  packet
+  =/  vec  [our her her-life our-life]~
+  =/  [siv=@uxH len=@ cyf=@ux]
+    (~(en sivc:aes (shaz symmetric-key) vec) (jam shut-packet))
+  =/  content  (mix (lsh 3 len siv) cyf)
+  [[our her] (mod our-life 16) (mod her-life 16) origin=~ content]
 ::
 ++  decode-shut-packet
   |=  [=packet =symmetric-key our-life=@ her-life=@]
