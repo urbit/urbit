@@ -34,8 +34,9 @@ export function ChatNotification(props: {
   contacts: Rolodex;
   groups: Groups;
   api: GlobalApi;
+  remoteContentPolicy: any;
 }) {
-  const { index, contents, read, time, api, timebox } = props;
+  const { index, contents, read, time, api, timebox, remoteContentPolicy } = props;
   const authors = _.map(contents, "author");
 
   const { chat, mention } = index;
@@ -46,7 +47,7 @@ export function ChatNotification(props: {
   const group = props.groups[groupPath];
 
   const desc = describeNotification(mention, contents.length);
-  const groupContacts = props.contacts[groupPath];
+  const groupContacts = props.contacts[groupPath] || {};
 
   const onClick = useCallback(() => {
     if (props.archived) {
@@ -74,7 +75,8 @@ export function ChatNotification(props: {
       />
       <Col pb="3" pl="5">
         {_.map(_.take(contents, 5), (content, idx) => {
-          const to = `/~landscape${groupPath}/resource/chat${appPath}?msg=${content.number}`;
+          const workspace = group?.hidden ? '/home' : groupPath;
+          const to = `/~landscape${workspace}/resource/chat${appPath}?msg=${content.number}`;
           return (
             <Link key={idx} to={to}>
               <ChatMessage
@@ -85,6 +87,7 @@ export function ChatNotification(props: {
                 contacts={groupContacts}
                 fontSize='0'
                 pt='2'
+                remoteContentPolicy={remoteContentPolicy}
               />
             </Link>
           );

@@ -63,7 +63,7 @@ export function Header(props: {
 
   const time = moment(props.time).format("HH:mm");
   const groupTitle =
-    props.associations.contacts?.[props.group]?.metadata?.title || props.group;
+    props.associations.contacts?.[props.group]?.metadata?.title;
 
   const app = props.chat ? 'chat' : 'graph';
   const channelTitle =
@@ -87,8 +87,12 @@ export function Header(props: {
       {!!moduleIcon && <Icon icon={moduleIcon as any} />}
       {!!channel && <Text fontWeight="500">{channelTitle}</Text>}
       <Rule vertical height="12px" />
-      <Text fontWeight="500">{groupTitle}</Text>
-      <Rule vertical height="12px"/>
+      {groupTitle &&
+         <>
+          <Text fontWeight="500">{groupTitle}</Text>
+          <Rule vertical height="12px"/>
+        </>
+      }
       <Text fontWeight="regular" color="lightGray">
         {time}
       </Text>
