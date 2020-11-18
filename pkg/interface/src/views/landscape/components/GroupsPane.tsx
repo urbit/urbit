@@ -39,6 +39,7 @@ export function GroupsPane(props: GroupsPaneProps) {
   const groupPath = getGroupFromWorkspace(workspace);
 
   const groupContacts = (groupPath && contacts[groupPath]) || undefined;
+  const rootIdentity = contacts?.["/~/default"]?.[window.ship];
   const groupAssociation =
     (groupPath && associations.contacts[groupPath]) || undefined;
   const group = (groupPath && groups[groupPath]) || undefined;
@@ -62,6 +63,7 @@ export function GroupsPane(props: GroupsPaneProps) {
      ( <>
         {groupPath && ( <PopoverRoutes
           contacts={groupContacts || {}}
+          rootIdentity={rootIdentity}
           association={groupAssociation!}
           group={group!}
           api={api}
