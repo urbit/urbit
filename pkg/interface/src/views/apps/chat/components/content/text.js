@@ -36,7 +36,7 @@ const renderers = {
               borderRadius='1'
               mono
               backgroundColor='washedGray'
-              overflowX='scroll'
+              overflowX='auto'
               style={{ whiteSpace: 'pre'}}>
               {value}
             </Text>
