@@ -127,12 +127,12 @@
 +$  signature      @uwsignature
 ::  $rank: which kind of ship address, by length
 ::
-::    0: galaxy or star -- 2  bytes
-::    1: planet         -- 4  bytes
-::    2: moon           -- 8  bytes
-::    3: comet          -- 16 bytes
+::    0b0: galaxy or star -- 2  bytes
+::    0b1: planet         -- 4  bytes
+::    0b10: moon           -- 8  bytes
+::    0b11: comet          -- 16 bytes
 ::
-+$  rank  ?(%0 %1 %2 %3)
++$  rank  ?(%0b0 %0b1 %0b10 %0b11)
 ::
 +|  %kinetics
 ::  $channel: combined sender and receiver identifying data
@@ -3095,34 +3095,27 @@
   ::
   =/  sndr-meta  (encode-ship-metadata sndr)
   =/  rcvr-meta  (encode-ship-metadata rcvr)
-  ::  body: <<sndr rcvr (jam [origin content])>>
-  ::
-  ::    The .sndr and .rcvr ship addresses are encoded with fixed
-  ::    lengths specified by the packet header. They live outside
-  ::    the jammed-data section to simplify packet filtering in the
-  ::    interpreter.
   ::
   =/  body=@
     ;:  mix
-      sndr
-      (lsh 3 size.sndr-meta rcvr)
-      (lsh 3 (add size.sndr-meta size.rcvr-meta) (jam [origin content]))
+      sndr-tick
+      (lsh 2 1 rcvr-tick)
+      (lsh 3 1 sndr)
+      (lsh 3 +(size.sndr-meta) rcvr)
+      (lsh 3 +((add size.sndr-meta size.rcvr-meta)) content)
     ==
-  ::  header: 32-bit header assembled from bitstreams of fields
-  ::
-  ::    <<version checksum sndr-rank rcvr-rank encryption-type unused>>
-  ::    4 bits at the end of the header are unused.
+  =?  body  ?=(^ origin)  (mix (lsh 3 6 body) u.origin)
   ::
   =/  header=@
     %+  can  0
-    :~  [3 protocol-version]
-        [20 (mug body)]
+    :~  [3 reserved=0]
+        [1 is-ames=&]
+        [3 protocol-version]
         [2 rank.sndr-meta]
         [2 rank.rcvr-meta]
-        [5 ?:(encrypted %0 %1)]
+        [20 checksum]
+        [1 relayed=.?(origin)]
     ==
-  ::  result is <<header body>>
-  ::
   (mix header (lsh 5 1 body))
 ::  +decode-packet: deserialize packet from bytestream or crash
 ::
@@ -3133,18 +3126,18 @@
   ::
   =/  header  (end 5 1 blob)
   =/  body    (rsh 5 1 blob)
-  ::  read header; first two bits are reserved
+  ::  read header; first three bits are reserved
   ::
-  =/  is-ames  (cut 0 [2 1] header)
+  =/  is-ames  (cut 0 [3 1] header)
   ?.  =(& is-ames)
     ~|  %ames-not-ames  !!
   ::
-  =/  version  (cut 0 [3 3] header)
+  =/  version  (cut 0 [4 3] header)
   ?.  =(protocol-version version)
     ~|  ames-protocol-version+version  !!
   ::
-  =/  sndr-size  (decode-ship-size (cut 0 [6 2] header))
-  =/  rcvr-size  (decode-ship-size (cut 0 [8 2] header))
+  =/  sndr-size  (decode-ship-size (cut 0 [7 2] header))
+  =/  rcvr-size  (decode-ship-size (cut 0 [9 2] header))
   =/  checksum   (cut 0 [11 20] header)
   =/  relayed    (cut 0 [31 1] header)
   ::  origin, if present, is 6 octets long, at the end of the body
@@ -3212,14 +3205,14 @@
 ::    Type 3: comet          -- 16 bytes
 ::
 ++  decode-ship-size
-  |=  rank=@
+  |=  rank=@ubB
   ^-  @
   ::
   ?+  rank  !!
-    %0  2
-    %1  4
-    %2  8
-    %3  16
+    %0b0   2
+    %0b1   4
+    %0b10  8
+    %0b11  16
   ==
 ::  +encode-ship-metadata: produce size (in bytes) and address rank for .ship
 ::
@@ -3234,8 +3227,8 @@
   ::
   =/  size=@  (met 3 ship)
   ::
-  ?:  (lte size 2)  [2 %0]
-  ?:  (lte size 4)  [4 %1]
-  ?:  (lte size 8)  [8 %2]
-  [16 %3]
+  ?:  (lte size 2)  [2 %0b0]
+  ?:  (lte size 4)  [4 %0b1]
+  ?:  (lte size 8)  [8 %0b10]
+  [16 %0b11]
 --
