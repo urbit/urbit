@@ -9766,18 +9766,7 @@
     ^-  (pair type type)
     (~(mull et hyp rig) gol dox)
   ::
-  ++  felt
-    ~/  %felt
-    |=  lap/opal
-    ^-  type
-    ?-  -.lap
-      %&  p.lap
-      %|  %-  fork
-          %+  turn  ~(tap in q.lap)
-          |=  [a=type *]
-          ?>  ?=([%core *] a)
-          [%core q.q.a q.a]
-    ==
+  ++  felt  !!
   ::                                                    ::
   ++  feel                                              ::  detect existence
     |=  rot/(list wing)
@@ -9826,7 +9815,12 @@
       ==
     ::
         %&
-      =.  sut  (felt q.p.mor)
+      =.  sut
+        =*  lap  q.p.mor
+        ?-  -.lap
+          %&  p.lap
+          %|  (fork (turn ~(tap in q.lap) head))
+        ==
       =>  :_  +
           :*  axe=`axis`1
               lon=p.p.mor
