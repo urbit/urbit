@@ -36,6 +36,7 @@ export function LinkResource(props: LinkResourceProps) {
     hideAvatars,
     hideNicknames,
     remoteContentPolicy,
+    history
   } = props;
 
   const appPath = association["app-path"];
@@ -94,15 +95,15 @@ export function LinkResource(props: LinkResourceProps) {
           }}
         />
         <Route
-          path={relativePath("/:index")}
+          path={relativePath("/:index/:commentId?")}
           render={(props) => {
-            const indexArr = props.match.params.index.split("-");
+            const index = bigInt(props.match.params.index);
+            const editCommentId = props.match.params.commentId || null;
 
-            if (indexArr.length <= 1) {
+            if (!index) {
               return <div>Malformed URL</div>;
             }
 
-            const index = bigInt(indexArr[1]);
             const node = !!graph ? graph.get(index) : null;
 
             if (!node) {
@@ -132,6 +133,9 @@ export function LinkResource(props: LinkResourceProps) {
                   hideAvatars={hideAvatars}
                   hideNicknames={hideNicknames}
                   remoteContentPolicy={remoteContentPolicy}
+                  editCommentId={editCommentId}
+                  history={props.history}
+                  baseUrl={`${resourceUrl}/${props.match.params.index}`}
                 />
               </Col>
             );

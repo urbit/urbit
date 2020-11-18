@@ -59,10 +59,9 @@ export function Comments(props: CommentsProps) {
       const content = scanForMentions(comment);
       const post = createPost(
         content,
-        `${commentNode.post.index}/${parseInt(idx + 1, 10)}`
+        commentNode.post.index,
+        parseInt(idx + 1, 10)
       );
-      post.index = post.index.split('/');
-      post.index = post.index.slice(0,5).join('/');
       await api.graph.addPost(ship, name, post);
       history.push(baseUrl);
     } catch (e) {

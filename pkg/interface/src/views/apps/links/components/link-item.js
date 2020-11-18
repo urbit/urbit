@@ -24,7 +24,7 @@ export const LinkItem = (props) => {
   );
 
   const author = node.post.author;
-  const index = node.post.index.split('/').join('-');
+  const index = node.post.index.split('/')[1];
   const size = node.children ? node.children.size : 0;
   const contents = node.post.contents;
   const hostname = URLparser.exec(contents[1].url) ? URLparser.exec(contents[1].url)[4] : null;
