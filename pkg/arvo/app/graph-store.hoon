@@ -658,7 +658,7 @@
       :+  %add-nodes
         [ship term]
       %-  ~(gas by *(map index:store node:store))
-      %+  turn  (tap:orm `graph:store`(subset:orm p.children.u.node start end))
+      %+  turn  (tap:orm `graph:store`(subset:orm p.children.u.node end start))
       |=  [=atom =node:store]
       ^-  [index:store node:store]
       [(snoc index atom) node]
@@ -671,7 +671,8 @@
     =/  end=(unit time)    (slaw %da i.t.t.t.t.t.path)
     =/  update-log=(unit update-log:store)  (~(get by update-logs) [ship term])
     ?~  update-log  [~ ~]
-    ``noun+!>((subset:orm-log u.update-log start end))
+    ::  orm-log is ordered backwards, so swap start and end
+    ``noun+!>((subset:orm-log u.update-log end start))
   ::
       [%x %update-log @ @ ~]
     =/  =ship   (slav %p i.t.t.path)

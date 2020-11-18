@@ -3,7 +3,7 @@ import f from "lodash/fp";
 import _ from "lodash";
 import { Icon, Col, Row, Box, Text, Anchor } from "@tlon/indigo-react";
 import moment from "moment";
-import { Notifications, Rolodex, Timebox, IndexedNotification } from "~/types";
+import { Notifications, Rolodex, Timebox, IndexedNotification, Groups } from "~/types";
 import { MOMENT_CALENDAR_DATE, daToUnix, resourceAsPath } from "~/logic/lib/util";
 import { BigInteger } from "big-integer";
 import GlobalApi from "~/logic/api/global";
@@ -38,6 +38,7 @@ function filterNotification(associations: Associations, groups: string[]) {
 export default function Inbox(props: {
   notifications: Notifications;
   archive: Notifications;
+  groups: Groups;
   showArchive?: boolean;
   api: GlobalApi;
   associations: Associations;
@@ -145,9 +146,11 @@ export default function Inbox(props: {
           contacts={props.contacts}
           archive={!!props.showArchive}
           associations={props.associations}
+          groups={props.groups}
           graphConfig={props.notificationsGraphConfig}
           groupConfig={props.notificationsGroupConfig}
           chatConfig={props.notificationsChatConfig}
+          remoteContentPolicy={props.remoteContentPolicy}
           api={api}
         />
       )}
@@ -163,9 +166,11 @@ export default function Inbox(props: {
               archive={!!props.showArchive}
               associations={props.associations}
               api={api}
+              groups={props.groups}
               graphConfig={props.notificationsGraphConfig}
               groupConfig={props.notificationsGroupConfig}
               chatConfig={props.notificationsChatConfig}
+              remoteContentPolicy={props.remoteContentPolicy}
             />
           )
       )}
@@ -186,6 +191,7 @@ function sortIndexedNotification(
 
 function DaySection({
   contacts,
+  groups,
   archive,
   timeboxes,
   latest = false,
@@ -194,6 +200,7 @@ function DaySection({
   groupConfig,
   graphConfig,
   chatConfig,
+  remoteContentPolicy
 }) {
   const calendar = latest
     ? MOMENT_CALENDAR_DATE
@@ -226,7 +233,9 @@ function DaySection({
               notification={not}
               archived={archive}
               contacts={contacts}
+              groups={groups}
               time={date}
+              remoteContentPolicy={remoteContentPolicy}
             />
           </React.Fragment>
         ))
