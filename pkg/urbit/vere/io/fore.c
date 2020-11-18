@@ -22,6 +22,17 @@ _fore_inject_bail(u3_ovum* egg_u, u3_noun lud)
   u3_ovum_free(egg_u);
 }
 
+/* _fore_import_bail(): handle failure on arbitrary injection.
+*/
+static void
+_fore_import_bail(u3_ovum* egg_u, u3_noun lud)
+{
+  u3_auto_bail_slog(egg_u, lud);
+  u3l_log("pier: import failed\n");
+
+  u3_ovum_free(egg_u);
+}
+
 /* _fore_inject(): inject an arbitrary ovum from a jammed file at [pax_c].
 */
 static void
@@ -75,16 +86,17 @@ static void
 _fore_import(u3_auto* car_u, c3_c* pax_c)
 {
   // With apologies
-  u3_noun arc = u3ke_cue(u3m_file(pax_c));
-  c3_c * b64_c = u3r_string(u3do("crip", u3do("en-base64:mimes:html", arc)));
-  c3_w siz = strlen(b64_c) + 120;
+  u3_noun arc  = u3ke_cue(u3m_file(pax_c));
+  u3_noun b64  = u3do("crip", u3do("en-base64:mimes:html", arc));
+  c3_c * b64_c = u3r_string(b64);
 
-  c3_c bod_c[siz];
-  snprintf(bod_c, siz,
+  c3_w siz_w   = strlen(b64_c) + 120;
+  c3_c * bod_c = (c3_c *) c3_malloc(siz_w);
+  snprintf(bod_c, siz_w,
     "{\"source\": {\"import-all\": {\"base64-jam\": \"%s\"}}, \
     \"sink\": {\"stdout\": null}}", b64_c);
-  u3_noun dat = u3nt(u3_nul, u3i_word(strlen(bod_c)), u3i_string(bod_c));
 
+  u3_noun dat = u3nt(u3_nul, u3i_word(strlen(bod_c)), u3i_string(bod_c));
   u3_noun req = u3nt(c3n,
     u3nc(u3i_string("ipv4"), u3i_word(0x7f000001)),
     u3nq(u3i_string("POST"), u3i_string("/"), u3_nul, dat));
@@ -92,7 +104,11 @@ _fore_import(u3_auto* car_u, c3_c* pax_c)
   u3_noun cad = u3nc(u3i_string("request-local"), req);
   u3_auto_peer(
     u3_auto_plan(car_u, u3_ovum_init(0, c3__e, wir, cad)),
-    0, 0, _fore_inject_bail);
+    0, 0, _fore_import_bail);
+
+  u3z(b64);
+  c3_free(b64_c);
+  c3_free(bod_c);
 }
 
 /* _fore_io_talk():
