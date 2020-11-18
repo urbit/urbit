@@ -6,7 +6,7 @@ import { Contacts } from '~/types/contact-update';
 import GlobalApi from '~/logic/api/global';
 import { FormikHelpers } from 'formik';
 import { GraphNode } from '~/types/graph-update';
-import { createPost } from '~/logic/api/graph';
+import { createPost, createBlankNodeWithChildPost } from '~/logic/api/graph';
 import { LocalUpdateRemoteContentPolicy } from '~/types';
 import { scanForMentions } from '~/logic/lib/graph';
 
@@ -30,8 +30,12 @@ export function Comments(props: CommentsProps) {
   ) => {
     try {
       const content = scanForMentions(comment);
-      const post = createPost(content, comments?.post?.index);
-      await api.graph.addPost(ship, name, post);
+      const node = createBlankNodeWithChildPost(
+        comments?.post?.index,
+        '1',
+        content
+      );
+      await api.graph.addNode(ship, name, node);
       actions.resetForm();
       actions.setStatus({ success: null });
     } catch (e) {

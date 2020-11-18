@@ -84,11 +84,24 @@ export function getLatestRevision(node: GraphNode): [number, string, string, Pos
   }
   const [revNum, rev] = [...revs.children][0];
   if(!rev) {
-    return empty
+    return empty;
   }
   const [title, body] = rev.post.contents as TextContent[];
   return [revNum.toJSNumber(), title.text, body.text, rev.post];
 }
+
+export function getLatestCommentRevision(node: GraphNode): [number, Post] {
+  const empty = [1, buntPost()] as [number, Post];
+  if (node.children.size <= 0) {
+    return empty;
+  }
+  const [revNum, rev] = [...node.children][0];
+  if(!rev) {
+    return empty;
+  }
+  return [revNum.toJSNumber(), rev.post];
+}
+
 
 export function getComments(node: GraphNode): GraphNode {
   const comments = node.children.get(bigInt(2));
