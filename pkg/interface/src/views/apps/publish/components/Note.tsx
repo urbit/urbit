@@ -30,6 +30,8 @@ export function Note(props: NoteProps & RouteComponentProps) {
   const [deleting, setDeleting] = useState(false);
 
   const { notebook, note, contacts, ship, book, api, rootUrl, baseUrl } = props;
+  const editCommentId = props.match.params.commentId;
+  console.log(props.match);
 
   const deletePost = async () => {
     setDeleting(true);
@@ -113,6 +115,8 @@ export function Note(props: NoteProps & RouteComponentProps) {
         hideNicknames={props.hideNicknames}
         hideAvatars={props.hideAvatars}
         remoteContentPolicy={props.remoteContentPolicy}
+        baseUrl={baseUrl}
+        editCommentId={editCommentId}
       />
       <Spinner
         text="Deleting post..."
