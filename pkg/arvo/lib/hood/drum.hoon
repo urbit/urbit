@@ -69,11 +69,11 @@
         %azimuth-tracker
         %ping
         %goad
+        %lens
     ==
   ?:  lit
     ~
   :~  %acme
-      %lens
       %clock
       %dojo
       %launch
