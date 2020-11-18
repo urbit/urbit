@@ -3,7 +3,7 @@ import { Route, Switch, RouteComponentProps, Link } from "react-router-dom";
 import { Box, Row, Col, Icon, Text } from "@tlon/indigo-react";
 import { useOutsideClick } from "~/logic/lib/useOutsideClick";
 import { HoverBoxLink } from "~/views/components/HoverBox";
-import { Contacts } from "~/types/contact-update";
+import { Contacts, Contact } from "~/types/contact-update";
 import { Group } from "~/types/group-update";
 import { Association } from "~/types/metadata-update";
 import GlobalApi from "~/logic/api/global";
@@ -12,7 +12,6 @@ import {GroupNotificationsConfig, S3State} from "~/types";
 import { ContactCard } from "./ContactCard";
 import { GroupSettings } from "./GroupSettings/GroupSettings";
 import { Participants } from "./Participants";
-
 
 const SidebarItem = ({ selected, icon, text, to }) => {
   return (
@@ -42,6 +41,7 @@ export function PopoverRoutes(
     hideAvatars: boolean;
     hideNicknames: boolean;
     notificationsGroupConfig: GroupNotificationsConfig;
+    rootIdentity: Contact;
   } & RouteComponentProps
 ) {
   const relativeUrl = (url: string) => `${props.baseUrl}/popover${url}`;
@@ -142,6 +142,7 @@ export function PopoverRoutes(
                     {view === "profile" && (
                       <ContactCard
                         contact={props.contacts[window.ship]}
+                        rootIdentity={props.rootIdentity}
                         api={props.api}
                         path={props.association["group-path"]}
                         s3={props.s3}
