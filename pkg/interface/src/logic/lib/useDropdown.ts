@@ -12,7 +12,7 @@ export function useDropdown<C>(
     (s: string) => {
       const exactMatch = isExact(s);
       const exact = exactMatch ? [exactMatch] : [];
-      const opts = [...exact,...candidates.filter((c) => searchPred(s, c))]
+      const opts = [...new Set([...exact, ...candidates.filter((c) => searchPred(s, c))])];
       setOptions(opts);
       if (selected) {
         const idx = opts.findIndex((c) => key(c) === key(selected));
