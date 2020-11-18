@@ -24,10 +24,30 @@ const DISABLED_INLINE_TOKENS = [
   'reference'
 ];
 
+const renderers = {
+  inlineCode: ({language, value}) => {
+    return <Text mono backgroundColor='washedGray' style={{ whiteSpace: 'preWrap'}}>{value}</Text>
+  },
+  code: ({language, value}) => {
+    return <Text
+              p='1'
+              className='clamp-message'
+              display='block'
+              borderRadius='1'
+              mono
+              backgroundColor='washedGray'
+              overflowX='scroll'
+              style={{ whiteSpace: 'pre'}}>
+              {value}
+            </Text>
+  }
+};
+
 const MessageMarkdown = React.memo(props => (
   <ReactMarkdown
     {...props}
     unwrapDisallowed={true}
+    renderers={renderers}
     allowNode={(node, index, parent) => {
       if (
         node.type === 'blockquote'
@@ -63,7 +83,7 @@ export default class TextContent extends Component {
       && (urbitOb.isValidPatp(group[2]) // valid patp?
       && (group[0] === content.text))) { // entire message is room name?
       return (
-        <Text fontSize='14px' color='black' lineHeight="tall">
+        <Text fontSize={props.fontSize ? props.fontSize : '14px'} color='black' lineHeight="tall">
           <Link
             className="bb b--black b--white-d mono"
             to={'/~landscape/join/' + group.input}>
@@ -73,7 +93,7 @@ export default class TextContent extends Component {
       );
     } else {
       return (
-        <Text color='black' fontSize='14px' lineHeight="tall" style={{ overflowWrap: 'break-word' }}>
+        <Text color='black' fontSize={props.fontSize ? props.fontSize : '14px'} lineHeight="tall" style={{ overflowWrap: 'break-word' }}>
           <MessageMarkdown source={content.text} />
         </Text>
       );

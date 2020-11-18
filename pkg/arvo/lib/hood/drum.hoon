@@ -107,6 +107,11 @@
       %graph-store
       %graph-pull-hook
       %graph-push-hook
+      %hark-store
+      %hark-graph-hook
+      %hark-group-hook
+      %hark-chat-hook
+      %observe-hook
   ==
 ::
 ++  deft-fish                                           ::  default connects
@@ -209,7 +214,7 @@
   ==
 ::
 ++  on-load
-  |=  [hood-version=?(%1 %2 %3 %4 %5 %6 %7 %8 %9 %10) old=any-state]
+  |=  [hood-version=@ud old=any-state]
   =<  se-abet  =<  se-view
   =.  sat  old
   =.  dev  (~(gut by bin) ost *source)
@@ -241,6 +246,12 @@
   =?  ..on-load  (lte hood-version %10)
     =>  (se-born | %home %graph-push-hook)
     (se-born | %home %graph-pull-hook)
+  =?  ..on-load  (lte hood-version %11)
+    =>  (se-born | %home %hark-graph-hook)
+    =>  (se-born | %home %hark-group-hook)
+    =>  (se-born | %home %hark-chat-hook)
+    =>  (se-born | %home %hark-store)
+    (se-born | %home %observe-hook)
   ..on-load
 ::
 ++  reap-phat                                         ::  ack connect

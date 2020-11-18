@@ -5,7 +5,7 @@
 /-  glob
 /+  default-agent, verb, dbug
 |%
-++  hash  0v2.1vtfh.0l23v.30s7f.n57l9.dpjvi
+++  hash  0ve8ukb.s45qi.3h6k8.hmh4p.h6p9m
 +$  state-0  [%0 hash=@uv glob=(unit (each glob:glob tid=@ta))]
 +$  all-states
   $%  state-0
@@ -89,7 +89,7 @@
     =+  .^(=map=tube:clay %cc (weld home /map/mime))
     =+  .^(arch %cy (weld home /app/landscape/js/bundle))
     =/  bundle-hash=@t
-      %-  need 
+      %-  need
       ^-  (unit @t)
       %-  ~(rep by dir)
       |=  [[file=@t ~] out=(unit @t)]

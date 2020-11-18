@@ -11,6 +11,7 @@ import {
 import GlobalApi from "~/logic/api/global";
 import { S3State } from "~/types";
 import { ImageInput } from "~/views/components/ImageInput";
+import {ColorInput} from "~/views/components/ColorInput";
 
 export type BgType = "none" | "url" | "color";
 
@@ -48,7 +49,7 @@ export function BackgroundPicker({
       <Row {...rowSpace}>
         <Radio label="Color" id="color" {...radioProps} />
         {bgType === "color" && (
-          <Input ml={4} type="text" label="Color" id="bgColor" />
+          <ColorInput id="bgColor" label="Color" /> 
         )}
       </Row>
       <Radio label="None" id="none" {...radioProps} />
