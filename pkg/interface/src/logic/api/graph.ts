@@ -42,10 +42,17 @@ export const createBlankNodeWithChildPost = (
   };  
 };
 
-export const createPost = (contents: Content[], parentIndex: string = '') => {
+export const createPost = (
+  contents: Content[],
+  parentIndex: string = '',
+  childIndex:string = 'DATE_PLACEHOLDER'
+) => {
+  if (childIndex === 'DATE_PLACEHOLDER') {
+    childIndex = unixToDa(Date.now()).toString();
+  }
   return {
     author: `~${window.ship}`,
-    index: parentIndex + '/' + unixToDa(Date.now()).toString(),
+    index: parentIndex + '/' + childIndex,
     'time-sent': Date.now(),
     contents,
     hash: null,
