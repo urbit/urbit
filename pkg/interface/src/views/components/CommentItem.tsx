@@ -8,6 +8,7 @@ import { GraphNode, TextContent } from '~/types/graph-update';
 import tokenizeMessage from '~/logic/lib/tokenizeMessage';
 import { LocalUpdateRemoteContentPolicy } from '~/types';
 import { MentionText } from '~/views/components/MentionText';
+import { getLatestCommentRevision } from '~/logic/lib/publish';
 
 const ClickBox = styled(Box)`
   cursor: pointer;
@@ -27,24 +28,22 @@ interface CommentItemProps {
 }
 
 export function CommentItem(props: CommentItemProps) {
-  const { ship, contacts, name, api, remoteContentPolicy } = props;
-  const commentData = props.comment?.post;
-  const comment = commentData.contents;
-
-  const disabled = props.pending || window.ship !== commentData.author;
+  const { ship, contacts, name, api, remoteContentPolicy, comment } = props;
+  const [revNum, post] = getLatestCommentRevision(comment);
+  const disabled = props.pending || window.ship !== post?.author;
 
   const onDelete = async () => {
-    await api.graph.removeNodes(ship, name, [commentData?.index]);
+    await api.graph.removeNodes(ship, name, [comment.post?.index]);
   };
 
   return (
-    <Box mb={4} opacity={commentData?.pending ? '60%' : '100%'}>
+    <Box mb={4} opacity={post?.pending ? '60%' : '100%'}>
       <Row bg="white" my={3}>
         <Author
           showImage
           contacts={contacts}
-          ship={commentData?.author}
-          date={commentData?.['time-sent']}
+          ship={post?.author}
+          date={post?.['time-sent']}
           hideAvatars={props.hideAvatars}
           hideNicknames={props.hideNicknames}
         >
@@ -60,7 +59,7 @@ export function CommentItem(props: CommentItemProps) {
       <Box mb={2}>
         <MentionText
           contacts={contacts}
-          content={comment}
+          content={post?.contents}
           remoteContentPolicy={remoteContentPolicy}
         />
       </Box>
