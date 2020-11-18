@@ -3050,6 +3050,7 @@
 ::    Assumes keys have a tag on them like the result of the |ex:crub core.
 ::
 ++  derive-symmetric-key
+  ~/  %derive-symmetric-key
   |=  [=public-key =private-key]
   ^-  symmetric-key
   ::
@@ -3060,35 +3061,10 @@
   =.  private-key  (rsh 8 1 (rsh 3 1 private-key))
   ::
   `@`(shar:ed:crypto public-key private-key)
-::  +encrypt: encrypt $shut-packet into atomic packet content
-::
-++  encrypt
-  |=  [=symmetric-key plaintext=shut-packet]
-  ^-  @
-  ::
-  =?    meat.plaintext
-      ?&  ?=(%& -.meat.plaintext)
-          (gth (met 13 fragment.p.meat.plaintext) 1)
-      ==
-    %_    meat.plaintext
-        fragment.p
-      (cut 13 [[fragment-num 1] fragment]:p.meat.plaintext)
-    ==
-=
-  (en:crub:crypto symmetric-key (jam plaintext))
-::  +decrypt: decrypt packet content to a $shut-packet or die
-::
-++  decrypt
-  |=  [=symmetric-key ciphertext=@]
-  ^-  shut-packet
-  ::
-  ;;  shut-packet
-  %-  cue
-  %-  need
-  (de:crub:crypto symmetric-key ciphertext)
 ::  +encode-packet: serialize a packet into a bytestream
 ::
 ++  encode-packet
+  ~/  %encode-packet
   |=  packet
   ^-  blob
   ::
@@ -3175,6 +3151,7 @@
 ::  +is-valid-rank: does .ship match its stated .size?
 ::
 ++  is-valid-rank
+  ~/  %is-valid-rank
   |=  [=ship size=@ubB]
   ^-  ?
   .=  size
@@ -3185,8 +3162,10 @@
     %earl  0b10
     %pawn  0b11
   ==
+::  +decode-open-packet: decode comet attestation into an $open-packet
 ::
 ++  decode-open-packet
+  ~/  %decode-open-packet
   |=  [=packet our-life=@]
   ^-  open-packet
   =+  ;;  [signature=@ signed=@]  (cue content.packet)
@@ -3213,15 +3192,28 @@
 ::  +encode-shut-packet: encrypt and packetize a $shut-packet
 ::
 ++  encode-shut-packet
+  ~/  %encode-shut-packet
   |=  [=shut-packet =symmetric-key our=ship her=ship our-life=@ her-life=@]
   ^-  packet
+  ::
+  =?    meat.shut-packet
+      ?&  ?=(%& -.meat.shut-packet)
+          (gth (met 13 fragment.p.meat.shut-packet) 1)
+      ==
+    %_    meat.shut-packet
+        fragment.p
+      (cut 13 [[fragment-num 1] fragment]:p.meat.shut-packet)
+    ==
+  ::
   =/  vec  [our her her-life our-life]~
   =/  [siv=@uxH len=@ cyf=@ux]
     (~(en sivc:aes (shaz symmetric-key) vec) (jam shut-packet))
   =/  content  (mix (lsh 3 len siv) cyf)
   [[our her] (mod our-life 16) (mod her-life 16) origin=~ content]
+::  +decode-shut-packet: decrypt a $shut-packet from a $packet
 ::
 ++  decode-shut-packet
+  ~/  %decode-shut-packet
   |=  [=packet =symmetric-key our-life=@ her-life=@]
   ^-  shut-packet
   ?.  =(sndr-tick.packet (mod her-life 16))
@@ -3241,6 +3233,7 @@
 ::    Type 3: comet          -- 16 bytes
 ::
 ++  decode-ship-size
+  ~/  %decode-ship-size
   |=  rank=@ubB
   ^-  @
   ::
@@ -3258,6 +3251,7 @@
 ::    3: comet
 ::
 ++  encode-ship-metadata
+  ~/  %encode-ship-metadata
   |=  =ship
   ^-  [size=@ =rank]
   ::
