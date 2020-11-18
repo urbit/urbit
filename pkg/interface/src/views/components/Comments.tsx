@@ -1,4 +1,5 @@
 import React from 'react';
+import bigInt from 'big-integer';
 import { Col } from '@tlon/indigo-react';
 import { CommentItem } from './CommentItem';
 import CommentInput from './CommentInput';
@@ -7,6 +8,7 @@ import GlobalApi from '~/logic/api/global';
 import { FormikHelpers } from 'formik';
 import { GraphNode } from '~/types/graph-update';
 import { createPost, createBlankNodeWithChildPost } from '~/logic/api/graph';
+import { getLatestCommentRevision } from '~/logic/lib/publish';
 import { LocalUpdateRemoteContentPolicy } from '~/types';
 import { scanForMentions } from '~/logic/lib/graph';
 
@@ -14,6 +16,8 @@ interface CommentsProps {
   comments: GraphNode;
   name: string;
   ship: string;
+  editCommentId: string;
+  baseUrl: string;
   contacts: Contacts;
   api: GlobalApi;
   hideAvatars: boolean;
@@ -44,22 +48,76 @@ export function Comments(props: CommentsProps) {
     }
   };
 
+  const onEdit = async (
+    { comment },
+    actions: FormikHelpers<{ comment: string }>
+  ) => {
+    //  TODO: finish up
+    try {
+      const commentNode = comments.children.get(bigInt(props.editCommentId));
+      const [idx, _] = getLatestCommentRevision(commentNode);
+
+      const content = scanForMentions(comment);
+      const post = createPost(
+        content,
+        `${commentNode.post.index}/${parseInt(idx + 1, 10)}`
+      );
+      await api.graph.addPost(ship, name, post);
+      actions.resetForm();
+      actions.setStatus({ success: null });
+    } catch (e) {
+      console.error(e);
+      actions.setStatus({ error: e.message });
+    }
+  };
+
+  let commentContent = null;
+  if (props.editCommentId) {
+    const commentNode = comments.children.get(bigInt(props.editCommentId));
+    const [_, post] = getLatestCommentRevision(commentNode);
+    commentContent = post.contents.reduce((val, curr) => {
+      if ('text' in curr) {
+        val = val + curr.text;
+      } else if ('mention' in curr) {
+        val = val + curr.mention;
+      } else if ('url' in curr) {
+        val = val + curr.url;
+      } else if ('code' in curr) {
+        val = val + curr.code.expression;
+      }
+      return val;
+    }, '');
+  }
+
   return (
     <Col>
-      <CommentInput onSubmit={onSubmit} />
-      {Array.from(comments.children).reverse().map(([idx, comment]) => (
-        <CommentItem
-          comment={comment}
-          key={idx.toString()}
-          contacts={props.contacts}
-          api={api}
-          name={name}
-          ship={ship}
-          hideNicknames={props.hideNicknames}
-          hideAvatars={props.hideAvatars}
-          remoteContentPolicy={props.remoteContentPolicy}
+      {( !props.editCommentId ? <CommentInput onSubmit={onSubmit} /> : null )}
+      {( !!props.editCommentId ? (
+        <CommentInput
+          onSubmit={onEdit}
+          label='Edit Comment'
+          loadingText='Editing...'
+          initial={commentContent}
         />
-      ))}
+      ) : null )}
+      {Array.from(comments.children).reverse()
+        .filter(([idx, _]) => idx.toString() !== props.editCommentId)
+        .map(([idx, comment]) => {
+          return (
+            <CommentItem
+              comment={comment}
+              key={idx.toString()}
+              contacts={props.contacts}
+              api={api}
+              name={name}
+              ship={ship}
+              hideNicknames={props.hideNicknames}
+              hideAvatars={props.hideAvatars}
+              remoteContentPolicy={props.remoteContentPolicy}
+              baseUrl={props.baseUrl}
+            />
+          );
+      })}
     </Col>
   );
 }

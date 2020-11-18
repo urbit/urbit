@@ -1,7 +1,8 @@
 import React from 'react';
+import { Link } from "react-router-dom";
 import { Contacts } from '~/types/contact-update';
 import GlobalApi from '~/logic/api/global';
-import { Box, Row } from '@tlon/indigo-react';
+import { Box, Row, Text } from '@tlon/indigo-react';
 import styled from 'styled-components';
 import { Author } from '~/views/apps/publish/components/Author';
 import { GraphNode, TextContent } from '~/types/graph-update';
@@ -18,6 +19,7 @@ const ClickBox = styled(Box)`
 interface CommentItemProps {
   pending?: boolean;
   comment: GraphNode;
+  baseUrl: string;
   contacts: Contacts;
   name: string;
   ship: string;
@@ -36,6 +38,10 @@ export function CommentItem(props: CommentItemProps) {
     await api.graph.removeNodes(ship, name, [comment.post?.index]);
   };
 
+  const commentIndexArray = (comment.post?.index || '/').split('/');
+  const commentIndex = commentIndexArray[commentIndexArray.length - 1];
+  const updateUrl = `${props.baseUrl}/${commentIndex}`
+
   return (
     <Box mb={4} opacity={post?.pending ? '60%' : '100%'}>
       <Row bg="white" my={3}>
@@ -48,11 +54,19 @@ export function CommentItem(props: CommentItemProps) {
           hideNicknames={props.hideNicknames}
         >
           {!disabled && (
-            <>
-              <ClickBox color="red" onClick={onDelete}>
+            <Box display="inline-block" verticalAlign="middle">
+              <Link to={updateUrl}>
+                <Text
+                  color="green"
+                  ml={2}
+                >
+                  Update
+                </Text>
+              </Link>
+              <ClickBox display="inline-block" color="red" onClick={onDelete}>
                 Delete
               </ClickBox>
-            </>
+            </Box>
           )}
         </Author>
       </Row>
