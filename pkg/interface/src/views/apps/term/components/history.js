@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import Line from './line';
+
 export class History extends Component {
   constructor(props) {
     super(props);
@@ -12,14 +14,8 @@ export class History extends Component {
         style={{ resize: 'none' }}
       >
         <div style={{ marginTop: 'auto' }}>
-          {this.props.commandLog.map((text, index) => {
-            return (
-              <p className="mono" key={index}
-              style={{ overflowWrap: 'break-word', whiteSpace: 'pre' }}
-              >
-                {text}
-              </p>
-            );
+          {this.props.log.map((line, i) => {
+            return <Line key={i} line={line} />;
           })}
         </div>
       </div>

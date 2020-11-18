@@ -91,7 +91,7 @@
       %chat-hook
       %chat-view
       %chat-cli
-      %soto
+      %herm
       %contact-store
       %contact-hook
       %contact-view
@@ -242,7 +242,7 @@
     =>  (se-born | %home %group-push-hook)
     (se-born | %home %group-pull-hook)
   =?  ..on-load  (lte hood-version %9)
-   (se-born | %home %graph-store)
+    (se-born | %home %graph-store)
   =?  ..on-load  (lte hood-version %10)
     =>  (se-born | %home %graph-push-hook)
     (se-born | %home %graph-pull-hook)
@@ -251,7 +251,8 @@
     =>  (se-born | %home %hark-group-hook)
     =>  (se-born | %home %hark-chat-hook)
     =>  (se-born | %home %hark-store)
-    (se-born | %home %observe-hook)
+    =>  (se-born | %home %observe-hook)
+    (se-born | %home %herm)
   ..on-load
 ::
 ++  reap-phat                                         ::  ack connect
@@ -567,7 +568,6 @@
 ++  se-show                                           ::  show buffer, raw
   |=  lin/(pair @ud stub)
   ^+  +>
-  =.  p.lin  (add p.lin (lent-stye:klr q.lin))
   ?:  =(mir lin)  +>
   =.  +>  ?:(=(p.mir p.lin) +> (se-blit %hop p.lin))
   =.  +>  ?:(=(q.mir q.lin) +> (se-blit %pom q.lin))
@@ -1131,24 +1131,9 @@
      (fall p.q.a p.q.b)
      (fall q.q.a q.q.b)
   ::
-  ++  lent-stye
-    |=  a/stub  ^-  @
-    (roll (lnts-stye a) add)
-  ::
   ++  lent-char
     |=  a/stub  ^-  @
     (roll (lnts-char a) add)
-  ::
-  ++  lnts-stye                                       ::  stub pair head lengths
-    |=  a/stub  ^-  (list @)
-    %+  turn  a
-    |=  a/(pair stye (list @c))
-    ;:  add                        ::  presumes impl of cvrt:ansi in %dill
-        (mul 5 2)                  ::  bg
-        (mul 5 2)                  ::  fg
-        =+  b=~(wyt in p.p.a)      ::  effect
-        ?:(=(0 b) 0 (mul 4 +(b)))
-    ==
   ::
   ++  lnts-char                                       ::  stub pair tail lengths
     |=  a/stub  ^-  (list @)

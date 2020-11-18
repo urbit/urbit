@@ -33,8 +33,12 @@ export class OmniboxResult extends Component {
     const inviteCount = Object.keys(invites?.['contacts'] || {});
 
     let graphic = <div />;
-    if (defaultApps.includes(icon.toLowerCase()) || icon.toLowerCase() === 'links') {
-      icon = (icon === 'Link') ? 'Links' : icon;
+    if (defaultApps.includes(icon.toLowerCase())
+        || icon.toLowerCase() === 'links'
+        || icon.toLowerCase() === 'terminal')
+    {
+      icon = (icon === 'Link')     ? 'Links' :
+             (icon === 'Terminal') ? 'Dojo'  : icon;
       graphic = <Icon display="inline-block" verticalAlign="middle" icon={icon} mr='2' size='16px' color={iconFill} />;
     } else if (icon === 'inbox') {
       graphic = <Box display='flex' verticalAlign='middle'>
