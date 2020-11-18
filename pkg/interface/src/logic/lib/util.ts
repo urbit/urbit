@@ -155,18 +155,14 @@ export function uxToHex(ux: string) {
   return value;
 }
 
-export const hexToUx: (hex: string) => string = f.flow(
-  f.split(""),
-  f.chunk(4),
-  f.map(
-    f.flow(
-      f.dropWhile((y) => y === 0),
-      f.join
-    )
-  ),
-  f.join("."),
-  (x) => `0x${x}`
-);
+export const hexToUx = (hex) => {
+  const ux = f.flow(
+    f.chunk(4),
+    f.map(x => _.dropWhile(x, y => y === 0).join('')),
+    f.join('.')
+  )(hex.split(''));
+  return `0x${ux}`;
+};
 
 export function writeText(str: string) {
   return new Promise<void>((resolve, reject) => {
