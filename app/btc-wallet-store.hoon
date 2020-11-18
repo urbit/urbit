@@ -258,29 +258,4 @@
       |=(=utxo:btc value.utxo)
     add
   (roll values add)
-::  Uses naive random selection. Should switch to branch-and-bound later
-::
-++  select-utxos
-  |=  [target=sats w=walt]
-  ^-  (unit (list input))
-  =/  is=(list input)
-    %-  zing
-    %+  turn  ~(val by wach.w)
-    |=  =addi
-    %+  turn  ~(tap in utxos.addi)
-      |=(=utxo:btc [utxo chyg.addi idx.addi])
-  (single-random-draw target is)
-::
-++  single-random-draw
-  |=  [target=sats is=(list input)]
-  ^-  (unit (list input))
-  =|  [selected=(list input) total=sats:btc]
-  =/  rng  ~(. og eny.bowl)
-  |-  ?~  is  ~
-  =^  n  rng  (rads:rng (lent is))
-  =/  i  (snag n ((list input) is))
-  =/  new-total  (add total value.utxo.i)
-  ?:  (gth new-total target)
-    `[i selected]
-  $(is t.is, total new-total, selected [i selected])
 --
