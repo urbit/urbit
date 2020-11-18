@@ -145,13 +145,13 @@
     =|  [select=(list input) total=sats:btc]
     |-  ?~  is  ~
     =^  n  rng  (rads:rng (lent is))
-    =/  i=input  (snag n ((list input) is))
+    =/  i=input  (snag n `(list input)`is)
     =/  net-val  (net-value value.utxo.i)
     =?  select  (gth net-val 0)  [i select]           ::  select if net-value > 0
     =/  new-total  (add total net-val)
     ?:  (gte new-total target)  `select
     %=  $
-        is  (oust [n 1] ((list input) is))
+        is  (oust [n 1] `(list input)`is)
         total  new-total
     ==
   ::

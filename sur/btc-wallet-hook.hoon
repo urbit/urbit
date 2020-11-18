@@ -18,7 +18,7 @@
 ::
 +$  payment  [=address payer=ship value=sats]
 +$  key  [=bipt =chyg:bws =idx:bws]
-+$  txin  [=utxo raw-tx=byts =key]
++$  txin  [=utxo raw-tx=(unit byts) =key]
 +$  txout  [=address value=sats]
 +$  txbu  [txins=(list txin) txouts=(list txout)]
 ::
