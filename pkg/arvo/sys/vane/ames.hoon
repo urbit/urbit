@@ -1001,17 +1001,10 @@
     =/  =channel     [[our ship] now channel-state -.peer-state]
     abet:on-jilt:(make-peer-core peer-state channel)
   ::  +on-hear: handle raw packet receipt
-  ::
-  ++  on-hear
-    |=  [=lane =blob]
-    ^+  event-core
-    (on-hear-packet lane (decode-packet blob) ok=%.y)
   ::  +on-hole: handle packet crash notification
   ::
-  ++  on-hole
-    |=  [=lane =blob]
-    ^+  event-core
-    (on-hear-packet lane (decode-packet blob) ok=%.n)
+  ++  on-hear  |=([l=lane b=blob] (on-hear-packet l (decode-packet b) ok=&))
+  ++  on-hear  |=([l=lane b=blob] (on-hear-packet l (decode-packet b) ok=|))
   ::  +on-hear-packet: handle mildly processed packet receipt
   ::
   ++  on-hear-packet
@@ -1026,14 +1019,17 @@
     ?.  =(our rcvr.packet)
       on-hear-forward
     ::
-    ?:  encrypted.packet
-      on-hear-shut
-    on-hear-open
+    ?:  ?&  ?=(%pawn (clan:title sndr.packet))
+            !(~(has by peers.ames-state) sndr.packet)
+        ==
+      on-hear-open
+    on-hear-shut
   ::  +on-hear-forward: maybe forward a packet to someone else
   ::
   ::    Note that this performs all forwarding requests without
   ::    filtering.  Any protection against DDoS amplification will be
   ::    provided by Vere.
+  ::    TODO: flat
   ::
   ++  on-hear-forward
     |=  [=lane =packet ok=?]
@@ -1100,6 +1096,7 @@
     ::
     event-core
   ::  +on-hear-shut: handle receipt of encrypted packet
+  ::  TODO: flat
   ::
   ++  on-hear-shut
     |=  [=lane =packet ok=?]
@@ -1607,6 +1604,7 @@
   ::  +attestation-packet: generate signed self-attestation for .her
   ::
   ::    Sent by a comet on first contact with a peer.  Not acked.
+  ::  TODO: flat
   ::
   ++  attestation-packet
     |=  [her=ship =her=life]
@@ -1882,13 +1880,15 @@
       ::    kind of flow this is (forward/backward), so flip the bit
       ::    here.
       ::
-      =.  bone.shut-packet  (mix 1 bone.shut-packet)
-      ::
-      =/  content  (encrypt symmetric-key.channel shut-packet)
-      =/  =packet  [[our her.channel] encrypted=%.y origin=~ content]
-      =/  =blob    (encode-packet packet)
-      ::
-      =.  event-core  (send-blob | her.channel blob)
+      =.  event-core
+        %^  send-blob  |  her.channel
+        %-  encode-packet
+        %:  encode-shut-packet
+          shut-packet(bone (mix 1 bone.shut-packet))
+          symmetric-key.channel
+          our               her.channel
+          our-life.channel  her-life.channel
+        ==
       peer-core
     ::  +got-duct: look up $duct by .bone, asserting already bound
     ::
