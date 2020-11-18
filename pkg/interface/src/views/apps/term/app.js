@@ -11,7 +11,7 @@ import Subscription from './subscription';
 
 import './css/custom.css';
 
-export default class DojoApp extends Component {
+export default class TermApp extends Component {
   constructor(props) {
     super(props);
     this.store = new Store();
@@ -45,14 +45,14 @@ export default class DojoApp extends Component {
     return (
       <>
         <Helmet>
-          <title>OS1 - Dojo</title>
+          <title>OS1 - Terminal</title>
         </Helmet>
         <div
           style={{ height: '100%' }}
         >
           <Route
             exact
-            path="/~dojo/"
+            path="/~term/"
             render={(props) => {
               return (
                 <div className="w-100 h-100 flex-m flex-l flex-xl">
@@ -72,14 +72,13 @@ export default class DojoApp extends Component {
                       cursor: 'text'
                     }}
                   >
-                    <History commandLog={this.state.txt} />
+                    <History log={this.state.lines.slice(0, -1)} />
                     <Input
                       ship={this.props.ship}
                       cursor={this.state.cursor}
-                      prompt={this.state.prompt}
-                      input={this.state.input}
                       api={this.api}
                       store={this.store}
+                      line={this.state.lines.slice(-1)[0]}
                     />
                   </div>
                 </div>

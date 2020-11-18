@@ -27,7 +27,7 @@ export default class Subscription {
     }
 
     slog.onmessage = e => {
-      this.handleEvent({ txt: e.data });
+      this.handleEvent({ slog: e.data });
     }
 
     slog.onerror = e => {
@@ -72,7 +72,7 @@ export default class Subscription {
   }
 
   firstRound() {
-    this.subscribe('/sole/' + this.api.dojoId, 'dojo');
+    this.subscribe('/session/', 'herm');
   }
 
   handleEvent(diff) {
