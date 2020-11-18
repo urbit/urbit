@@ -6,7 +6,7 @@ import {
 } from "~/types";
 import { makePatDa } from "~/logic/lib/util";
 import _ from "lodash";
-import {StoreState} from "../store/type";
+import { StoreState } from "../store/type";
 
 type HarkState = Pick<StoreState,
   "notificationsChatConfig"
@@ -20,7 +20,6 @@ type HarkState = Pick<StoreState,
 export const HarkReducer = (json: any, state: HarkState) => {
   const data = _.get(json, "harkUpdate", false);
   if (data) {
-    console.log(data);
     reduce(data, state);
   }
   const graphHookData = _.get(json, "hark-graph-hook-update", false);
@@ -134,7 +133,6 @@ function graphWatchSelf(json: any, state: HarkState) {
 }
 
 function reduce(data: any, state: HarkState) {
-  console.log(data);
   unread(data, state);
   read(data, state);
   archive(data, state);
