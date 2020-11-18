@@ -5362,28 +5362,30 @@
   ::                                                    ::::
 ++  format  ^?
   |%
-  ::                                                    ::  ++to-wain:format
-  ++  to-wain                                           ::  atom to line list
-    ~%  %lore  ..is  ~
-    |=  lub/@
-    =|  tez/(list @t)
-    |-  ^+  tez
-    =+  ^=  wor
-      =+  [meg=0 i=0]
-      |-  ^-  {meg/@ i/@ end/@f}
-      =+  gam=(cut 3 [i 1] lub)
-      ?:  =(0 gam)
-        [meg i %.y]
-      ?:  =(10 gam)
-        [meg i %.n]
-      $(meg (cat 3 meg gam), i +(i))
-    ?:  end.wor
-      (flop ^+(tez [meg.wor tez]))
-    ?:  =(0 lub)  (flop tez)
-    $(lub (rsh 3 +(i.wor) lub), tez [meg.wor tez])
+  ::  0 ending a line (invalid @t) is not preserved     ::  ++to-wain:format
+  ++  to-wain                                           ::  cord to line list
+    ~%  %leer  ..is  ~
+    |=  txt=cord
+    ^-  wain
+    =/  len=@  (met 3 txt)
+    =/  cut  =+(cut -(a 3, c 1, d txt))
+    =/  sub  sub
+    =|  [i=@ out=wain]
+    |-  ^+  out
+    =+  |-  ^-  j=@
+        ?:  ?|  =(i len)
+                =(10 (cut(b i)))
+            ==
+          i
+        $(i +(i))
+    =.  out  :_  out
+      (cut(b i, c (sub j i)))
+    ?:  =(j len)
+      (flop out)
+    $(i +(j))
   ::                                                    ::  ++of-wain:format
-  ++  of-wain                                           ::  line list to atom
-    |=  tez/(list @t)
+  ++  of-wain                                           ::  line list to cord
+    |=  tez=wain  ^-  cord
     (rap 3 (join '\0a' tez))
   ::                                                    ::  ++of-wall:format
   ++  of-wall                                           ::  line list to tape
