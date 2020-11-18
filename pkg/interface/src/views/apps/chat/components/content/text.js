@@ -26,7 +26,7 @@ const DISABLED_INLINE_TOKENS = [
 
 const renderers = {
   inlineCode: ({language, value}) => {
-    return <Text mono backgroundColor='washedGray' style={{ whiteSpace: 'preWrap'}}>{value}</Text>
+    return <Text mono p='1' backgroundColor='washedGray' style={{ whiteSpace: 'preWrap'}}>{value}</Text>
   },
   code: ({language, value}) => {
     return <Text
@@ -36,7 +36,7 @@ const renderers = {
               borderRadius='1'
               mono
               backgroundColor='washedGray'
-              overflowX='scroll'
+              overflowX='auto'
               style={{ whiteSpace: 'pre'}}>
               {value}
             </Text>
