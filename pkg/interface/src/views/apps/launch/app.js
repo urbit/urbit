@@ -63,7 +63,7 @@ export default function LaunchApp(props) {
             weather={props.weather}
           />
           <Box display={["none", "block"]} width="100%" gridColumn="1 / -1"></Box>
-          <Groups groups={props.groups} associations={props.associations} />
+          <Groups unreads={props.unreads} groups={props.groups} associations={props.associations} />
         </Box>
       </ScrollbarLessBox>
       <Box
