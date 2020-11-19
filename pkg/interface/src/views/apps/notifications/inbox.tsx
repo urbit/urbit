@@ -10,9 +10,9 @@ import GlobalApi from "~/logic/api/global";
 import { Notification } from "./notification";
 import { Associations } from "~/types";
 import { cite } from '~/logic/lib/util';
-import {useWaitForProps} from "~/logic/lib/useWaitForProps";
-import {useHistory} from "react-router-dom";
-import {StatelessAsyncAction} from "~/views/components/StatelessAsyncAction";
+import { InviteItem } from '~/views/components/Invite';
+import { useWaitForProps } from "~/logic/lib/useWaitForProps";
+import { useHistory } from "react-router-dom";
 
 type DatedTimebox = [BigInteger, Timebox];
 
@@ -28,7 +28,7 @@ function filterNotification(associations: Associations, groups: string[]) {
       const { group } = n.index.group;
       return groups.findIndex((g) => group === g) !== -1;
     } else if ("chat" in n.index) {
-      const group = associations.chat[n.index.chat]?.["group-path"];
+      const group = associations.chat[n.index.chat.chat]?.["group-path"];
       return groups.findIndex((g) => group === g) !== -1;
     }
     return true;
@@ -87,58 +87,50 @@ export default function Inbox(props: {
     }
   }, [props.showArchive]);
 
-  const incomingGroups = Object.values(invites?.['contacts'] || {});
-
-  const getKeyByValue = (object, value) => {
-    return Object.keys(object).find(key => object[key] === value);
-  };
-
-  const acceptInvite = async (invite) => {
+  const acceptInvite = (app: string, uid: string) => async (invite) => {
     const resource = {
       ship: `~${invite.resource.ship}`,
       name: invite.resource.name
     };
-    await api.contacts.join(resource);
-    await api.invite.accept('contacts', getKeyByValue(invites['contacts'], invite));
-    const path = resourceAsPath(invite.resource)
-    await waiter(p => path in p.associations?.contacts);
+
+    let resourcePath = resourceAsPath(invite.resource);
+    if(app === 'chat') {
+      resourcePath = resourcePath.slice(5);
+    }
+
+    let path = `/home/resource/${app}${resourcePath}`;
+    if(app === 'contacts') {
+      await api.contacts.join(resource);
+      path = resourceAsPath(invite.resource);
+      await waiter(p => path in p.associations?.contacts);
+    }
+    await api.invite.accept(app, uid);
 
     history.push(`/~landscape${path}`);
   };
 
+  const inviteItems = (invites, api) => {
+    const returned = [];
+    Object.keys(invites).map((appKey) => {
+      const app = invites[appKey];
+      Object.keys(app).map((uid) => {
+        const invite = app[uid];
+        const inviteItem =
+          <InviteItem
+            key={uid}
+            invite={invite}
+            onAccept={acceptInvite(appKey, uid)}
+            onDecline={() => api.invite.decline(appKey, uid)}
+          />;
+        returned.push(inviteItem);
+      });
+    });
+    return returned;
+  };
+
   return (
-    <Col onScroll={onScroll} overflowY="auto" height="100%" minHeight='0'>
-      {incomingGroups.map((invite) => (
-        <Box
-          bg='white'
-          p='3'
-          fontSize='0'>
-          <Text display='block' pb='2' gray><Text mono>{cite(invite.resource.ship)}</Text> invited you to <Text fontWeight='500'>{invite.resource.name}</Text></Text>
-          <Box pt='3'>
-            <StatelessAsyncAction 
-              name="accept"
-              bg="transparent"
-              onClick={() => acceptInvite(invite)}
-              color='blue'
-              mr='2'
-            >
-              Accept
-            </StatelessAsyncAction>
-            <StatelessAsyncAction
-              name="decline"
-              bg="transparent"
-              color='red'
-              onClick={() =>
-                api.invite.decline(
-                  'contacts',
-                  getKeyByValue(invites['contacts'], invite)
-                )
-              }>
-                Reject
-              </StatelessAsyncAction>
-          </Box>
-        </Box>
-      ))}
+    <Col onScroll={onScroll} overflowY="auto" flexGrow={1} minHeight='0' flexShrink={0}>
+      {inviteItems(invites, api)}
       {newNotifications && (
         <DaySection
           latest
