@@ -51,7 +51,10 @@
 ++  on-load
   |=  old=vase
   ^-  (quip card _this)
-  `this(state !<(state-0 old))
+  :_  this(state !<(state-0 old))
+  ?:  (~(has by wex.bowl) [/chat our.bowl %chat-store])
+    ~
+  ~[watch-chat:ha]
 ::
 ++  on-watch  
   |=  =path

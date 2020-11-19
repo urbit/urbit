@@ -271,6 +271,7 @@
                 rid 
                 graph
                 `%graph-validator-publish
+                %.y
             ==
             (poke-graph-push %add rid)
           ==

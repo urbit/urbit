@@ -1,6 +1,5 @@
 import React from "react";
 import { useField } from "formik";
-import styled from "styled-components";
 import {
   Col,
   Label,
@@ -22,7 +21,7 @@ export function ColorInput(props: ColorInputProps) {
   const { id, label, caption, disabled, ...rest } = props;
   const [{ value, onBlur }, meta, { setValue }] = useField(id);
 
-  const hex = value.replace('#', '').substr(2).replace(".", "");
+  const hex = value.replace('#', '').replace("0x","").replace(".", "");
   const padded = hex.padStart(6, "0");
 
   const onChange = (e: any) => {
@@ -36,7 +35,7 @@ export function ColorInput(props: ColorInputProps) {
     const result = hexToUx(newValue);
     setValue(result);
   };
-  
+
 
   return (
     <Box display="flex" flexDirection="column" {...rest}>

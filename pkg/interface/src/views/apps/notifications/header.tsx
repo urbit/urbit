@@ -37,7 +37,7 @@ export function Header(props: {
   read: boolean;
   associations: Associations;
   chat?: boolean;
-}) {
+} & PropFunc<typeof Row> ) {
   const { description, channel, group, moduleIcon, read } = props;
   const contacts = props.contacts[group] || {};
 
@@ -71,7 +71,7 @@ export function Header(props: {
     channel;
 
   return (
-    <Row p="2" flexWrap="wrap" gapX="1" alignItems="center">
+    <Row onClick={props.onClick} p="2" flexWrap="wrap" gapX="1" alignItems="center">
       {!props.archived && (
         <Icon
           display="block"

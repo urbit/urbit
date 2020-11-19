@@ -60,6 +60,11 @@ export interface NotificationGraphConfig {
   watching: WatchedIndex[]
 }
 
+export interface Unreads {
+  chat: Record<string, number>;
+  group: Record<string, number>;
+  graph: Record<string, number>;
+}
 
 interface WatchedIndex {
   graph: string;
