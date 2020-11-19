@@ -19,7 +19,7 @@ const getKindUnreads = (associations: Associations) => (path: string) => (
 ): ((unreads: Unreads) => number) =>
   f.flow(
     (x) => x[kind],
-    f.pickBy((_v, key) => associations[kind]?.[key]["group-path"] === path),
+    f.pickBy((_v, key) => associations[kind]?.[key]?.["group-path"] === path),
     f.values,
     f.reduce(f.add, 0)
   );
@@ -28,14 +28,14 @@ export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
   const { associations, unreads, ...boxProps } = props;
 
   const groups = Object.values(associations?.contacts || {})
-    .filter((e) => e["group-path"] in props.groups)
+    .filter((e) => e?.["group-path"] in props.groups)
     .sort(sortGroupsAlph);
   const getUnreads = getKindUnreads(associations || {});
 
   return (
     <>
       {groups.map((group) => {
-        const path = group["group-path"];
+        const path = group?.["group-path"];
         const unreadCount = (["chat", "graph"] as const)
           .map(getUnreads(path))
           .map((f) => f(unreads))
@@ -43,7 +43,7 @@ export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
         return (
           <Group
             unreads={unreadCount}
-            path={group["group-path"]}
+            path={group?.["group-path"]}
             title={group.metadata.title}
           />
         );
