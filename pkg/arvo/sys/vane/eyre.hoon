@@ -462,7 +462,7 @@
     ==
     ;body
       ;h1:"Internal Server Error"
-      ;p:"There was an error while handling the request for {<(trip url)>}."
+      ;p:"There was an error while handling the request for {(trip url)}."
       ;*  ?:  authorized
             ;=
               ;code:"*{(render-tang-to-marl 80 t)}"
@@ -478,7 +478,7 @@
   ::
   =/  code-as-tape=tape  (format-ud-as-integer code)
   =/  message=tape
-    ?+  code  "{<code>} Error"
+    ?+  code  "{(scow %ud code)} Error"
       %400  "Bad Request"
       %403  "Forbidden"
       %404  "Not Found"
@@ -495,7 +495,7 @@
     ==
     ;body
       ;h1:"{message}"
-      ;p:"There was an error while handling the request for {<(trip url)>}."
+      ;p:"There was an error while handling the request for {(trip url)}."
       ;*  ?:  authorized
             ;=
               ;code:"{t}"
@@ -590,8 +590,12 @@
     =*  headers  header-list.request
     ::  for requests from localhost, respect the "forwarded" header
     ::
-    =?  address  =([%ipv4 .127.0.0.1] address)
-      (fall (forwarded-for headers) address)
+    =/  [secure=? =^address]
+      =*  same  [secure address]
+      ?.  =([%ipv4 .127.0.0.1] address)        same
+      ?~  forwards=(forwarded-params headers)  same
+      :-  (fall (forwarded-secure u.forwards) secure)
+      (fall (forwarded-for u.forwards) address)
     ::
     =/  host  (get-header:http 'host' headers)
     =/  [=action suburl=@t]
@@ -995,7 +999,7 @@
         ~
       ::  is there an urbauth cookie?
       ::
-      ?~  urbauth=(get-header:http (crip "urbauth-{<our>}") u.cookies)
+      ?~  urbauth=(get-header:http (crip "urbauth-{(scow %p our)}") u.cookies)
         ~
       ::  if it's formatted like a valid session cookie, produce it
       ::
@@ -1035,7 +1039,7 @@
       ^-  @t
       %-  crip
       =;  max-age=tape
-        "urbauth-{<our>}={<session>}; Path=/; Max-Age={max-age}"
+        "urbauth-{(scow %p our)}={(scow %uv session)}; Path=/; Max-Age={max-age}"
       %-  format-ud-as-integer
       ?.  extend  0
       (div (msec:milly session-timeout) 1.000)
@@ -1599,7 +1603,7 @@
         ==
       =?  next-id   kicking  +(next-id)
       ::
-      :-  moves
+      :-  (flop moves)
       %_    state
           session.channel-state
         %+  ~(put by session.channel-state.state)  channel-id
@@ -2027,29 +2031,39 @@
     (cat 3 '.' u.ext.request-line)
   --
 ::
-++  forwarded-for
+++  forwarded-params
   |=  =header-list:http
-  ^-  (unit address)
-  =/  forwarded=(unit @t)
+  ^-  (unit (list (map @t @t)))
+  %+  biff
     (get-header:http 'forwarded' header-list)
-  ?~  forwarded  ~
-  |^  =/  forwards=(unit (list (map @t @t)))
-        (unpack-header:http u.forwarded)
-      ?.  ?=([~ ^] forwards)  ~
-      =*  forward  i.u.forwards
-      ?~  for=(~(get by forward) 'for')  ~
-      ::NOTE  per rfc7239, non-ip values are also valid. they're not useful
-      ::      for the general case, so we ignore them here. if needed,
-      ::      request handlers are free to inspect the headers themselves.
-      ::
-      (rush u.for ip-address)
+  unpack-header:http
+::
+++  forwarded-for
+  |=  forwards=(list (map @t @t))
+  ^-  (unit address)
+  ?.  ?=(^ forwards)  ~
+  =*  forward  i.forwards
+  ?~  for=(~(get by forward) 'for')  ~
+  ::NOTE  per rfc7239, non-ip values are also valid. they're not useful
+  ::      for the general case, so we ignore them here. if needed,
+  ::      request handlers are free to inspect the headers themselves.
   ::
-  ++  ip-address
-    ;~  sfix
-      ;~(pose (stag %ipv4 ip4) (stag %ipv6 (ifix [lac rac] ip6)))
-      ;~(pose ;~(pfix col dim:ag) (easy ~))
-    ==
-  --
+  %+  rush  u.for
+  ;~  sfix
+    ;~(pose (stag %ipv4 ip4) (stag %ipv6 (ifix [sel ser] ip6)))
+    ;~(pose ;~(pfix col dim:ag) (easy ~))
+  ==
+::
+++  forwarded-secure
+  |=  forwards=(list (map @t @t))
+  ^-  (unit ?)
+  ?.  ?=(^ forwards)  ~
+  =*  forward  i.forwards
+  ?~  proto=(~(get by forward) 'proto')  ~
+  ?+  u.proto  ~
+    %http   `|
+    %https  `&
+  ==
 ::
 ++  parse-request-line
   |=  url=@t
@@ -2392,7 +2406,7 @@
       =/  handle-gall-error
         handle-gall-error:(per-server-event event-args)
       =^  moves  server-state.ax
-        (handle-gall-error leaf+"eyre bad mark {<mark>}" ~)
+        (handle-gall-error leaf+"eyre bad mark {(trip mark)}" ~)
       [moves http-server-gate]
     ::
     =/  =http-event:http
