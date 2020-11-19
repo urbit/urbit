@@ -33,8 +33,8 @@
 ::    Parsed with a static path for reproducibility.
 ::
 =/  whole-hoon=hoon
-  :+  %tsbn  compiler-hoon
-  :+  %tsld  (rain /sys/arvo/hoon arvo-source)
+  :+  %tsgr  compiler-hoon
+  :+  %tsgl  (rain /sys/arvo/hoon arvo-source)
   [%$ 7]
 ::  compile the whole schmeer
 ::

@@ -144,7 +144,7 @@
       [^ *]      (both p.gen q.gen)
       [%ktcn *]  loop(gen p.gen)
       [%brcn *]  (grow q.gen)
-      [%brvt *]  (grow q.gen)
+      [%brpt *]  (grow q.gen)
       [%cnts *]
     |-  ^-  (unit [term type])
     =*  inner-loop  $
@@ -165,13 +165,13 @@
       [%hand *]  ~
       [%ktbr *]  loop(gen p.gen)
       [%ktls *]  (both p.gen q.gen)
-      [%ktpd *]  loop(gen p.gen)
+      [%ktpm *]  loop(gen p.gen)
       [%ktsg *]  loop(gen p.gen)
       [%ktwt *]  loop(gen p.gen)
       [%note *]  loop(gen q.gen)
       [%sgzp *]  (both p.gen q.gen)
-      [%sgbn *]  loop(gen q.gen)  ::  should check for hoon in p.gen
-      [%tsbn *]  (change p.gen q.gen)
+      [%sggr *]  loop(gen q.gen)  ::  should check for hoon in p.gen
+      [%tsgr *]  (change p.gen q.gen)
       [%tscm *]
     %+  replace
       loop(gen p.gen)
@@ -185,7 +185,7 @@
       [%lost *]  loop(gen p.gen)
       [%zpmc *]  (both p.gen q.gen)
       [%zpts *]  loop(gen p.gen)
-      [%zpvt *]  (both q.gen r.gen)
+      [%zppt *]  (both q.gen r.gen)
       [%zpzp *]  ~
       *
     =+  doz=~(open ap gen)

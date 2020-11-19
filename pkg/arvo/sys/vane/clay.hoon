@@ -654,7 +654,7 @@
           (with-faces old+old sam+sam ~)
         :+  %sgzp  !,(*hoon old=old)
         :+  %sgzp  !,(*hoon sam=sam)
-        :+  %tsld  [%limb b]
+        :+  %tsgl  [%limb b]
         !,  *hoon
         ~(grow old sam)
       ::  try direct +grab
@@ -663,7 +663,7 @@
       =/  rab
         %-  mule  |.
         %+  slap  new
-        :+  %tsld  [%limb a]
+        :+  %tsgl  [%limb a]
         [%limb %grab]
       ?:  &(?=(%& -.rab) ?=(^ q.p.rab))
         :_(nub |=(sam=vase ~|([%grab a b] (slam p.rab sam))))
@@ -672,7 +672,7 @@
       =/  jum
         %-  mule  |.
         %+  slap  old
-        :+  %tsld  [%limb b]
+        :+  %tsgl  [%limb b]
         [%limb %jump]
       ?:  ?=(%& -.jum)
         (compose-casts a !<(mark p.jum) b)
