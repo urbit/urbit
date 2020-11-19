@@ -6,7 +6,7 @@
   ++  notification-kind
     ?+  index.p.i  ~
       [@ ~]    `[%link 0]
-      [@ @ ~]  `[%comment 1]
+      [@ @ @ ~]  `[%comment 1]
     ==
   --
 ++  grab
