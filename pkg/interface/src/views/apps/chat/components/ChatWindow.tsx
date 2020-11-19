@@ -43,6 +43,7 @@ type ChatWindowProps = RouteComponentProps<{
   hideNicknames: boolean;
   hideAvatars: boolean;
   remoteContentPolicy: LocalUpdateRemoteContentPolicy;
+  scrollTo?: number;
 }
 
 interface ChatWindowState {
@@ -84,6 +85,10 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
     window.addEventListener('focus', this.handleWindowFocus);
     this.initialFetch();
     setTimeout(() => {
+      if(this.props.scrollTo) {
+        this.scrollToUnread();
+      }
+
       this.setState({ initialized: true });
     }, this.INITIALIZATION_MAX_TIME);
   }
@@ -167,14 +172,16 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
   }
 
   scrollToUnread() {
-    const { mailboxSize, unreadCount } = this.props;
-    this.virtualList?.scrollToData(mailboxSize - unreadCount);
+    const { mailboxSize, unreadCount, scrollTo } = this.props;
+    const target = scrollTo || (mailboxSize - unreadCount);
+    this.virtualList?.scrollToData(target);
   }
 
   dismissUnread() {
     if (this.state.fetchPending) return;
     if (this.props.unreadCount === 0) return;
     this.props.api.chat.read(this.props.station);
+    this.props.api.hark.readIndex({ chat: { chat: this.props.station, mention: false }});
   }
 
   fetchMessages(start, end, force = false): Promise<void> {
@@ -297,7 +304,8 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
             const isPending: boolean = 'pending' in msg && Boolean(msg.pending);
             const isLastMessage: boolean = Boolean(index === lastMessage)
             const isLastRead: boolean = Boolean(!isLastMessage && index === this.state.lastRead);
-            const props = { measure, scrollWindow, isPending, isLastRead, isLastMessage, msg, ...messageProps };
+            const highlighted = index === this.props.scrollTo;
+            const props = { measure, highlighted, scrollWindow, isPending, isLastRead, isLastMessage, msg, ...messageProps };
             return (
               <ChatMessage
                 key={index}

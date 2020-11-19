@@ -6,7 +6,6 @@ export class OrderedMap<V> extends Map<number, V>
     const sorted = Array.from(super[Symbol.iterator]()).sort(
       ([a], [b]) => b - a
     );
-
     let index = 0;
     return {
       [Symbol.iterator]: this[Symbol.iterator],

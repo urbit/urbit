@@ -4,10 +4,12 @@ import { Route, Switch } from 'react-router-dom';
 import styled from 'styled-components';
 
 import LaunchApp from '~/views/apps/launch/app';
-import DojoApp from '~/views/apps/dojo/app';
+import TermApp from '~/views/apps/term/app';
 import Landscape from '~/views/landscape/index';
 import Profile from '~/views/apps/profile/profile';
 import ErrorComponent from '~/views/components/Error';
+import Notifications from '~/views/apps/notifications/notifications';
+import GraphApp from '../../apps/graph/app';
 
 
 export const Container = styled(Box)`
@@ -34,9 +36,9 @@ export const Content = (props) => {
           )}
         />
         <Route
-          path='/~dojo'
+          path='/~term'
           render={p => (
-            <DojoApp
+            <TermApp
               history={p.history}
               location={p.location}
               match={p.match}
@@ -61,6 +63,13 @@ export const Content = (props) => {
             />
           )}
         />
+        <Route
+          path="/~notifications"
+          render={ p => (
+            <Notifications {...props} />
+          )}
+        />
+        <GraphApp {...props} />
         <Route
           render={p => (
             <ErrorComponent
