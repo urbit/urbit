@@ -18,13 +18,16 @@
 +$  versioned-state
     $%  state-0
     ==
-::  provdider: maybe ship if provider is set
+++  def-moon-limit  10
+::  provider: maybe ship if provider is set
+::  moon-limit: how many addresses a ship and its moons can request in piym
 ::
 +$  state-0
   $:  %0
       provider=(unit [host=ship connected=?])
       =btc-state
       def-wallet=(unit xpub)
+      moon-limit=@ud
       =pend-addr
       =pend-txbu
       =piym
@@ -48,7 +51,7 @@
 ++  on-init
   ^-  (quip card _this)
   ~&  >  '%btc-wallet-hook initialized'
-  :_  this
+  :_  this(moon-limit.state def-moon-limit)
   :~  [%pass /r/[(scot %da now.bowl)] %agent [our.bowl %btc-wallet-store] %watch /requests]
       [%pass /u/[(scot %da now.bowl)] %agent [our.bowl %btc-wallet-store] %watch /updates]
   ==
@@ -203,25 +206,45 @@
   ?-  -.upd
       %generate-address
     ::  if no meta (payer/value), just prints address
-    ::  moons go in a jar with parent as the key
-    ::  this will let me implement moon rate-limiting
     ::
-    ?~  meta.upd
-      ~&  >  address.upd
-      `state
+    ?~  meta.upd  ~&(> address.upd `state)
     =/  [payer=ship value=sats]  u.meta.upd
-    =/  fam=ship
-      ?:  =(%earl (clan:title payer))
-        (sein:title our.bowl now.bowl payer)
-      payer
     :-  ~[(poke-wallet-hook payer [%pay-address address.upd payer value])]
-    state(piym (~(add ja piym) fam [address.upd payer value]))
+    (update-piym address.upd u.meta.upd)
+    ::
+      %generate-txbu
+      :: TODO: finish
+    `state
     ::
       %scan-done
     ?~  def-wallet
       `state(def-wallet `xpub.upd)
     `state
   ==
+::  update piym with a payment
+::  moons are stored with their sponsor
+::  if ship already has a payment for the payer ship, replace
+::
+++  update-piym
+  |=  p=payment
+  |^  ^-  _state
+  =/  fam=ship
+    ?:  =(%earl (clan:title payer.p))
+      (sein:title our.bowl now.bowl payer.p)
+    payer.p
+  =/  ups=(unit (list payment))
+    (~(get by piym) fam)
+  ?~  ups  (insert fam ~[p])
+  ~|  "btc-wallet-hook: too many address requests from moons"
+  ?>  (lte (lent u.ups) moon-limit.state)
+  =/  i=(unit @)
+    (find ~[payer.p] (turn u.ups |=([* py=ship *] py)))
+  ?~  i  (insert fam [p u.ups])
+  (insert fam (snap u.ups u.i p))
+  ++  insert
+    |=  [fam=ship ps=(list payment)]
+    state(piym (~(put by piym) fam ps))
+  --
 ::
 ++  retry
   |=  p=^pend-addr
