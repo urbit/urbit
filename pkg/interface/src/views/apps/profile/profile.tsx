@@ -112,12 +112,15 @@ export default function ProfileScreen(props: any) {
                 {view === "settings" && <Settings {...props} />}
 
                 {view === "identity" && (
+                  <>
+                  <Text display='block' gray px='3' pt='3'>Your identity provides the default information you can optionally share with groups in the group settings panel.</Text>
                   <ContactCard
                     contact={contact}
                     path="/~/default"
                     api={props.api}
                     s3={props.s3}
                   />
+                  </>
                 )}
               </Box>
             </Box>

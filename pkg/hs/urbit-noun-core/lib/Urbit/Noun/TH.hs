@@ -4,6 +4,7 @@
 module Urbit.Noun.TH (deriveNoun, deriveToNoun, deriveFromNoun) where
 
 import ClassyPrelude              hiding (fromList)
+import Control.Monad.Fail         (fail)
 import Language.Haskell.TH
 import Language.Haskell.TH.Syntax
 import Urbit.Noun.Convert

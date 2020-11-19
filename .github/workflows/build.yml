@@ -1,0 +1,120 @@
+# Notes:
+#
+#   jobs.<job_id>
+#
+#     A seperate job id results in a lot of duplication of nix/cachix work.
+#     The build will have to download any substituted derivations from cachix
+#     for the steps with each distinct job id and upload built derivations to
+#     cachix after each job has completed, either succesfully or on failure.
+#
+#   jobs.<job_id>.steps.run
+#
+#     build + test are distinct as each step entry results in a collapsable title
+#     within the log output, which makes it easier to view failing builds or
+#     tests independently.
+#
+#   jobs.<job_id>.strategy.fail-fast
+#
+#     Set to false so developers working on vere or king-haskell can have their
+#     respective builds proceed without the other causing failure.
+#
+#   shell.nix
+#
+#     mkShell doesn't allow you to build it - so instantiate all the subshells
+#     defined for the individual pkg/*/shell.nix as a sanity check and to create
+#     some artefacts suitable for developers to pull from cachix. The top-level
+#     shell.nix build time is dominated by Haskell dependencies so it's built as
+#     part of the haskell build steps.
+#
+# Syntax:
+#
+#   https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions
+
+name: Build, test, and upload urbit release tarball
+
+on:
+  push: null
+  pull_request: null
+
+jobs:
+  urbit:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: ubuntu-latest }
+          - { os: macos-latest }
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: cachix/install-nix-action@v12
+      - uses: cachix/cachix-action@v8
+        with:
+          name: mars
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - run: nix-build -A urbit --arg enableStatic true
+
+      - if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: nix-build -A urbit-tests
+
+  haskell:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: ubuntu-latest }
+          - { os: macos-latest }
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: cachix/install-nix-action@v12
+      - uses: cachix/cachix-action@v8
+        with:
+          name: mars
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - run: nix-build -A hs.urbit-king.components.exes.urbit-king --arg enableStatic true
+      - run: nix-build -A hs-checks
+      - run: nix-build shell.nix
+
+  upload:
+    needs: [urbit, haskell]
+    strategy:
+      matrix:
+        include:
+          - { os: ubuntu-latest, system: x86_64-linux }
+          - { os: macos-latest, system: x86_64-darwin }
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: cachix/install-nix-action@v12
+      - uses: cachix/cachix-action@v8
+        with:
+          name: mars
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@0.1.2
+        with:
+          version: '290.0.1'
+          service_account_key: ${{ secrets.GCS_SERVICE_ACCOUNT_KEY }}
+          project_id: ${{ secrets.GCS_PROJECT }}
+          export_default_credentials: true
+
+      - run: nix-build -A tarball
+
+      - name: Run upload to bootstrap.urbit.org
+        run: |
+          version="$(cat ./pkg/urbit/version)"
+          system="$(nix eval --raw '(builtins.currentSystem)')"
+          target="gs://bootstrap.urbit.org/ci/urbit-v${version}-${system}-${GITHUB_SHA:0:9}.tgz"
+
+          gsutil cp -n ./result "$target"
+
+          echo "upload to $target complete."

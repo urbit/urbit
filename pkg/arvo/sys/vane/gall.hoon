@@ -1553,7 +1553,7 @@
       =/  res  (mock [run %9 2 %0 1] (sloy ski))
       ?-  -.res
         %0  [%& !<(step:agent [-:!>(*step:agent) p.res])]
-        %1  [%| (turn p.res |=(a=* (smyt (path a))))]
+        %1  [%| (smyt ;;(path p.res)) ~]
         %2  [%| p.res]
       ==
     ::  +ap-mule-peek: same as +ap-mule but for (unit (unit cage))
@@ -1564,7 +1564,7 @@
       =/  res  (mock [run %9 2 %0 1] (sloy ski))
       ?-  -.res
         %0  [%& !<((unit (unit cage)) [-:!>(*(unit (unit cage))) p.res])]
-        %1  [%| (turn p.res |=(a=* (smyt (path a))))]
+        %1  [%| (smyt ;;(path p.res)) ~]
         %2  [%| p.res]
       ==
     ::  +ap-ingest: call agent arm

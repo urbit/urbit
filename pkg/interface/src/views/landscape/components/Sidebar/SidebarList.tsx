@@ -20,19 +20,18 @@ function sidebarSort(
   const lastUpdated = (a: string, b: string) => {
     const aAssoc = associations[a];
     const bAssoc = associations[b];
-    const aModule = aAssoc?.metadata?.module || aAssoc?.["app-name"];
-    const bModule = bAssoc?.metadata?.module || bAssoc?.["app-name"];
+    const aAppName = aAssoc?.["app-name"];
+    const bAppName = bAssoc?.["app-name"];
 
-    const aUpdated = apps[aModule].lastUpdated(a);
-    const bUpdated = apps[bModule].lastUpdated(b);
+    const aUpdated = apps[aAppName]?.lastUpdated(a) || 0;
+    const bUpdated = apps[bAppName]?.lastUpdated(b) || 0;
 
     return bUpdated - aUpdated || alphabetical(a, b);
   };
 
   return {
     asc: alphabetical,
-    desc: (a, b) => alphabetical(b, a),
-    lastUpdated,
+    lastUpdated
   };
 }
 

@@ -116,7 +116,7 @@
     |=  [=resource =graph:gra]
     ^-  card
     %-  poke-graph-store
-    [%0 now.bowl %add-graph resource graph `%graph-validator-link]
+    [%0 now.bowl %add-graph resource graph `%graph-validator-link %.y]
   ::
   ++  archive-graph
     |=  =resource

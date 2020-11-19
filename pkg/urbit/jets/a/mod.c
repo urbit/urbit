@@ -10,15 +10,10 @@
   u3qa_mod(u3_atom a,
            u3_atom b)
   {
-#if 0
-    if ( b == 3 && a == 2684227708 ) {
-      printf("dword at 0x27ff84ff8 is %" PRIu64 "\r\n", *(c3_d *)0x27ff84ff8);
-      *(c3_d *)0x27ff84ff8 = 25;
-      printf("see, we modified it\r\n");
-    }
-#endif
     if ( 0 == b ) {
       return u3m_bail(c3__exit);
+    } else if ( _(u3a_is_cat(a)) && _(u3a_is_cat(b)) ) {
+      return a % b;
     } else {
       mpz_t a_mp, b_mp;
 
@@ -46,3 +41,12 @@
       return u3qa_mod(a, b);
     }
   }
+
+u3_noun
+u3ka_mod(u3_noun a,
+         u3_noun b)
+{
+  u3_noun c = u3qa_mod(a, b);
+  u3z(a); u3z(b);
+  return c;
+}

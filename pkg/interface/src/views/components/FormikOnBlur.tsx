@@ -15,7 +15,7 @@ export function FormikOnBlur<
     ) {
       const { values } = formikBag;
       formikBag.submitForm().then(() => {
-        formikBag.resetForm({ values });
+        formikBag.resetForm({ values, touched: {} });
       });
     }
   }, [

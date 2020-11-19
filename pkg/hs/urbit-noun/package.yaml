@@ -20,11 +20,11 @@ dependencies:
   - lens
   - murmur3
   - regex-tdfa
-  - regex-tdfa-text
   - rio
   - text
   - time
   - urbit-atom
+  - urbit-hob
   - urbit-noun-core
 
 default-extensions:

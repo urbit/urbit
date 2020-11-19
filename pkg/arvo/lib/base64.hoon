@@ -3,6 +3,7 @@
 ::  pad: include padding when encoding, require when decoding
 ::  url: use url-safe characters '-' for '+' and '_' for '/'
 ::
+::
 =+  [pad=& url=|]
 |%
 ::

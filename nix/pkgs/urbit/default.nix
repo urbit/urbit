@@ -1,61 +1,76 @@
-{
-  pkgs,
-  debug,
-  argon2, ed25519, ent, ge-additions, libaes_siv, h2o, murmur3, scrypt, secp256k1, softfloat3, uv, ivory-header, ca-header
-}:
+{ lib, stdenv, coreutils, pkgconfig, argon2u, cacert, ca-bundle, curlMinimal
+, ed25519, ent, ge-additions, gmp, h2o, herb, ivory, libaes_siv, libscrypt
+, libsigsegv, libuv, lmdb, murmur3, openssl, secp256k1, softfloat3, zlib
+, enableStatic ? stdenv.hostPlatform.isStatic, enableDebug ? false
+, doCheck ? true, enableParallelBuilding ? true, dontStrip ? true }:
 
 let
 
-  name =
-    if debug then "urbit-debug" else "urbit";
+  src = lib.cleanSource ../../../pkg/urbit;
 
-  meta = rec {
-    inherit debug;
-    bin   = "${urbit}/bin/${name}";
-    flags = if debug then [ "-g" ] else [];
-    exe   = ''${meta.bin} ${pkgs.lib.strings.concatStringsSep " " meta.flags}'';
+  version = builtins.readFile "${src}/version";
+
+in stdenv.mkDerivation {
+  inherit src version;
+
+  pname = "urbit" + lib.optionalString enableDebug "-debug"
+    + lib.optionalString enableStatic "-static";
+
+  nativeBuildInputs = [ pkgconfig ];
+
+  buildInputs = [
+    argon2u
+    cacert
+    ca-bundle
+    curlMinimal
+    ed25519
+    ent
+    ge-additions
+    gmp
+    h2o
+    ivory.header
+    libaes_siv
+    libscrypt
+    libsigsegv
+    libuv
+    lmdb
+    murmur3
+    openssl
+    secp256k1
+    softfloat3
+    zlib
+  ];
+
+  checkInputs = [ herb ];
+
+  # Ensure any `/usr/bin/env bash` shebang is patched.
+  postPatch = ''
+    patchShebangs ./configure
+  '';
+
+  checkTarget = "test";
+
+  installPhase = ''
+    mkdir -p $out/bin
+    cp ./build/urbit $out/bin/urbit
+    cp ./build/urbit-worker $out/bin/urbit-worker
+  '';
+
+  CFLAGS = [ (if enableDebug then "-O0" else "-O3") "-g" ]
+    ++ lib.optionals (!enableDebug) [ "-Werror" ]
+    ++ lib.optionals enableStatic [ "-static" ];
+
+  MEMORY_DEBUG = enableDebug;
+  CPU_DEBUG = enableDebug;
+  EVENT_TIME_DEBUG = false;
+
+  # See https://github.com/NixOS/nixpkgs/issues/18995
+  hardeningDisable = lib.optionals enableDebug [ "all" ];
+
+  inherit enableParallelBuilding doCheck dontStrip;
+
+  meta = {
+    debug = enableDebug;
+    arguments = lib.optionals enableDebug [ "-g" ];
   };
-
-  sigseg =
-    pkgs.libsigsegv.overrideAttrs (oldAttrs: rec {
-      patches = [ ./libsigsegv_fix.patch ];
-    });
-
-  deps =
-    with pkgs;
-    [ curl gmp sigseg openssl zlib lmdb ];
-
-  vendor =
-    [ argon2 softfloat3 ed25519 ent ge-additions libaes_siv h2o scrypt uv murmur3 secp256k1 ivory-header ca-header ];
-
-  urbit = pkgs.stdenv.mkDerivation {
-    inherit name meta;
-    exename = name;
-    src     = ../../../pkg/urbit;
-    nativeBuildInputs = deps ++ vendor;
-
-    configurePhase = ''
-      bash ./configure
-    '';
-
-    installPhase = ''
-      make all -j8
-      make test
-
-      mkdir -p $out/bin
-      cp ./build/urbit $out/bin/$exename
-      cp ./build/urbit-worker $out/bin/$exename-worker
-    '';
-
-    # See https://github.com/NixOS/nixpkgs/issues/18995
-    hardeningDisable = if debug then [ "all" ] else [];
-
-    CFLAGS           = "-O3 -g -Werror";
-    MEMORY_DEBUG     = debug;
-    CPU_DEBUG        = debug;
-    EVENT_TIME_DEBUG = false;
-  };
-
-in
-
-urbit
+}
