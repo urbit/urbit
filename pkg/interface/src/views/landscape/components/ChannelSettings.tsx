@@ -14,6 +14,7 @@ import { uxToHex } from "~/logic/lib/util";
 import { FormError } from "~/views/components/FormError";
 import { ColorInput } from "~/views/components/ColorInput";
 import { Association, Groups, Associations } from "~/types";
+import Writers from '~/views/apps/publish/components/Writers';
 import GroupifyForm from "./GroupifyForm";
 
 interface FormSchema {
@@ -99,6 +100,10 @@ export function ChannelSettings(props: ChannelSettingsProps) {
         </Form>
       </Formik>
       <Box borderBottom="1" borderBottomColor="lightGray" width="100%" maxWidth="512px" />
+      {(metadata?.module === 'publish') && (<>
+        <Writers {...props} />
+        <Box borderBottom="1" borderBottomColor="lightGray" width="100%" maxWidth="512px" />
+      </>)}
       <GroupifyForm {...props} />
     </Col>
   );
