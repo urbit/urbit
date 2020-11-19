@@ -100,7 +100,6 @@ export function Comments(props: CommentsProps) {
         />
       ) : null )}
       {Array.from(comments.children).reverse()
-        .filter(([idx, _]) => idx.toString() !== props.editCommentId)
         .map(([idx, comment]) => {
           return (
             <CommentItem
@@ -114,6 +113,7 @@ export function Comments(props: CommentsProps) {
               hideAvatars={props.hideAvatars}
               remoteContentPolicy={props.remoteContentPolicy}
               baseUrl={props.baseUrl}
+              pending={idx.toString() === props.editCommentId}
             />
           );
       })}
