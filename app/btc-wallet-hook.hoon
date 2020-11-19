@@ -139,14 +139,15 @@
     ?.  =(payee.act our.bowl)
       ~[(poke-wallet-hook payee.act act)]
     ?~  def-wallet  ~|("btc-wallet-hook: no def-wallet set" !!)
-    ~[(poke-wallet-store / [%generate-address u.def-wallet %0 `[src.bowl value.act]])]
+    ~[(poke-wallet-store [%generate-address u.def-wallet %0 `[src.bowl value.act]])]
     ::
-      %pay-address
-    :: we get passed address/payer/value
-    ::  TODO: ask wallet to generate txbu for poym
-    :: TODO: update poym
-    :: send tx request out for poym
-    `state
+      %ret-pay-address
+    ?~  def-wallet  ~|("btc-wallet-hook: no def-wallet set" !!)
+    ?>  =(payer.act our.bowl)
+    :_  state
+    :~  %-  poke-wallet-store
+        [%generate-txbu u.def-wallet fee.btc-state ~[[address.act value.act]]]
+    ==
     ::
       %force-retry
     [(retry pend-addr) state]
@@ -179,7 +180,7 @@
     =/  ureq  (~(get by pend-addr) req-id.p.update)
     ?~  ureq  `state
     :_  state(pend-addr (~(del by pend-addr) req-id.p.update))
-    :~  %+  poke-wallet-store  /
+    :~  %-  poke-wallet-store
         :*  %address-info  xpub.u.ureq  chyg.u.ureq  idx.u.ureq
             utxos.body.p.update  used.body.p.update  blockcount.body.p.update
         ==
@@ -205,15 +206,16 @@
   ^-  (quip card _state)
   ?-  -.upd
       %generate-address
-    ::  if no meta (payer/value), just prints address
+    ::  if no meta (payer/value), just prints address 
     ::
     ?~  meta.upd  ~&(> address.upd `state)
     =/  [payer=ship value=sats]  u.meta.upd
-    :-  ~[(poke-wallet-hook payer [%pay-address address.upd payer value])]
+    :-  ~[(poke-wallet-hook payer [%ret-pay-address address.upd payer value])]
     (update-piym address.upd u.meta.upd)
     ::
       %generate-txbu
-      :: TODO: finish
+      :: TODO: add the txbu to poym
+      :: send all its input tx-ids out for feedback
     `state
     ::
       %scan-done
@@ -276,9 +278,9 @@
   ==
 ::
 ++  poke-wallet-store
-  |=  [prefix=wire act=action:bws]
+  |=  act=action:bws
   ^-  card
-  :*  %pass  (weld prefix /[(scot %da now.bowl)])
+  :*  %pass  /[(scot %da now.bowl)]
       %agent  [our.bowl %btc-wallet-store]  %poke
       %btc-wallet-store-action  !>(act)
   ==
