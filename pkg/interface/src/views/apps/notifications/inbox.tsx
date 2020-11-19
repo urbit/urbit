@@ -87,15 +87,24 @@ export default function Inbox(props: {
     }
   }, [props.showArchive]);
 
-  const acceptInvite = async (invite) => {
+  const acceptInvite = (app: string, uid: string) => async (invite) => {
     const resource = {
       ship: `~${invite.resource.ship}`,
       name: invite.resource.name
     };
-    await api.contacts.join(resource);
-    await api.invite.accept('contacts', getKeyByValue(invites['contacts'], invite));
-    const path = resourceAsPath(invite.resource)
-    await waiter(p => path in p.associations?.contacts);
+
+    let resourcePath = resourceAsPath(invite.resource);
+    if(app === 'chat') {
+      resourcePath = resourcePath.slice(5);
+    }
+
+    let path = `/home/resource/${app}${resourcePath}`;
+    if(app === 'contacts') {
+      await api.contacts.join(resource);
+      path = resourceAsPath(invite.resource);
+      await waiter(p => path in p.associations?.contacts);
+    }
+    await api.invite.accept(app, uid);
 
     history.push(`/~landscape${path}`);
   };
@@ -110,7 +119,7 @@ export default function Inbox(props: {
           <InviteItem
             key={uid}
             invite={invite}
-            onAccept={acceptInvite}
+            onAccept={acceptInvite(appKey, uid)}
             onDecline={() => api.invite.decline(appKey, uid)}
           />;
         returned.push(inviteItem);
