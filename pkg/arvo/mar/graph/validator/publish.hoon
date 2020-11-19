@@ -9,7 +9,7 @@
   ++  notification-kind
     ?+  index.p.i   ~
       [@ %1 @ ~]  `[%note 0]
-      [@ %2 @ ~]  `[%comment 1]
+      [@ %2 @ @ ~]  `[%comment 1]
     ==
   --
 ++  grab
