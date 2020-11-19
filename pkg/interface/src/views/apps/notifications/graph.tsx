@@ -19,6 +19,7 @@ import GlobalApi from "~/logic/api/global";
 import ReactMarkdown from "react-markdown";
 import { getSnippet } from "~/logic/lib/publish";
 import styled from "styled-components";
+import {MentionText} from "~/views/components/MentionText";
 
 function getGraphModuleIcon(module: string) {
   if (module === "link") {
@@ -59,24 +60,28 @@ const GraphUrl = ({ url, title }) => (
   </Box>
 );
 
-const GraphNodeContent = ({ contents, mod, description, index, remoteContentPolicy }) => {
+const GraphNodeContent = ({ contents, contacts, mod, description, index, remoteContentPolicy }) => {
   const idx = index.slice(1).split("/");
   if (mod === "link") {
     if (idx.length === 1) {
       const [{ text }, { url }] = contents;
       return <GraphUrl title={text} url={url} />;
     } else if (idx.length === 2) {
-      const [{ text }] = contents;
-      return <RichText remoteContentPolicy={remoteContentPolicy}>{text}</RichText>;
+      return <MentionText
+        content={contents}
+        contacts={contacts}
+        remoteContentPolicy={remoteContentPolicy}
+      />
     }
     return null;
   }
   if (mod === "publish") {
-    if (idx.length !== 3) {
-      return null;
-    } else if (idx[1] === "2") {
-      const [{ text }] = contents;
-      return <RichText remoteContentPolicy={remoteContentPolicy}>{text}</RichText>;
+    if (idx[1] === "2") {
+      return <MentionText
+        content={contents}
+        contacts={contacts}
+        remoteContentPolicy={remoteContentPolicy}
+      />
     } else if (idx[1] === "1") {
       const [{ text: header }, { text: body }] = contents;
       const snippet = getSnippet(body);
@@ -116,6 +121,7 @@ function getNodeUrl(mod: string, group: string, graph: string, index: string) {
 }
 const GraphNode = ({
   contents,
+  contacts,
   author,
   mod,
   description,
@@ -138,7 +144,9 @@ const GraphNode = ({
       color={`#000000`}
       classes="mix-blend-diff"
     />
-  );
+    );
+
+  const groupContacts = contacts[group];
 
   const nodeUrl = getNodeUrl(mod, group, graph, index);
 
@@ -169,6 +177,7 @@ const GraphNode = ({
         </Row>
         <Row p="1">
           <GraphNodeContent
+            contacts={groupContacts}
             contents={contents}
             mod={mod}
             description={description}
@@ -229,6 +238,7 @@ export function GraphNotification(props: {
           <GraphNode
             author={content.author}
             contents={content.contents}
+            contacts={props.contacts}
             mod={index.module}
             time={content["time-sent"]}
             description={index.description}
