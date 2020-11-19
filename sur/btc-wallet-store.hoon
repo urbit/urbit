@@ -57,11 +57,11 @@
 +$  action
   $%  [%add-wallet =xpub scan-to=(unit scon) max-gap=(unit @ud) confs=(unit @ud)]
       [%address-info =xpub =chyg =idx utxos=(set utxo) used=? blockcount=@ud]
-      [%generate-address =xpub =chyg]
+      [%generate-address =xpub =chyg meta=(unit [payer=ship value=sats])]
   ==
 ::
 +$  update
-  $%  [%generate-address =address]
+  $%  [%generate-address =address meta=(unit [payer=ship value=sats])]
       [%scan-done =xpub]
   ==
 ::
