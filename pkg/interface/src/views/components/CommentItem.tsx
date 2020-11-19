@@ -43,7 +43,7 @@ export function CommentItem(props: CommentItemProps) {
   const updateUrl = `${props.baseUrl}/${commentIndex}`
 
   return (
-    <Box mb={4} opacity={post?.pending ? '60%' : '100%'}>
+    <Box mb={4} opacity={props.pending ? '60%' : '100%'}>
       <Row bg="white" my={3}>
         <Author
           showImage
