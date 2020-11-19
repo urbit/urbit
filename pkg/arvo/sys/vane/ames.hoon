@@ -105,7 +105,9 @@
       rot=`?`%.n  ::  routing attempts
   ==
 =>
+~%  %ames  ..is  ~
 |%
++|  %helpers
 ::  +trace: print if .verb is set and we're tracking .ship
 ::
 ++  trace
@@ -117,10 +119,340 @@
       ~+  |(=(~ ships) (~(has in ships) ship))
     same
   (slog leaf/"ames: {(scow %p ship)}: {(print)}" ~)
---
-=>
-~%  %ames-generics  ..is  ~
-|%
+::  +qos-update-text: notice text for if connection state changes
+::
+++  qos-update-text
+  |=  [=ship old=qos new=qos]
+  ^-  (unit tape)
+  ::
+  ?+  [-.old -.new]  ~
+    [%unborn %live]  `"; {(scow %p ship)} is your neighbor"
+    [%dead %live]    `"; {(scow %p ship)} is ok"
+    [%live %dead]    `"; {(scow %p ship)} not responding still trying"
+    [%unborn %dead]  `"; {(scow %p ship)} not responding still trying"
+    [%live %unborn]  `"; {(scow %p ship)} has sunk"
+    [%dead %unborn]  `"; {(scow %p ship)} has sunk"
+  ==
+::  +lte-packets: yes if a is before b
+::
+++  lte-packets
+  |=  [a=live-packet-key b=live-packet-key]
+  ^-  ?
+  ::
+  ?:  (lth message-num.a message-num.b)
+    %.y
+  ?:  (gth message-num.a message-num.b)
+    %.n
+  (lte fragment-num.a fragment-num.b)
+::  +split-message: split message into kilobyte-sized fragments
+::
+::    We don't literally split it here since that would allocate many
+::    large atoms with no structural sharing.  Instead, each
+::    static-fragment has the entire message and a counter.  In
+::    +encrypt, we interpret this to get the actual fragment.
+::
+++  split-message
+  ~/  %split-message
+  |=  [=message-num =message-blob]
+  ^-  (list static-fragment)
+  ::
+  =/  num-fragments=fragment-num  (met 13 message-blob)
+  =|  counter=@
+  ::
+  |-  ^-  (list static-fragment)
+  ?:  (gte counter num-fragments)
+    ~
+  ::
+  :-  [message-num num-fragments counter `@`message-blob]
+  $(counter +(counter))
+::  +assemble-fragments: concatenate fragments into a $message
+::
+++  assemble-fragments
+  ~/  %assemble-fragments
+  |=  [num-fragments=fragment-num fragments=(map fragment-num fragment)]
+  ^-  *
+  ::
+  =|  sorted=(list fragment)
+  =.  sorted
+    =/  index=fragment-num  0
+    |-  ^+  sorted
+    ?:  =(index num-fragments)
+      sorted
+    $(index +(index), sorted [(~(got by fragments) index) sorted])
+  ::
+  %-  cue
+  %+  can   13
+  %+  turn  (flop sorted)
+  |=(a=@ [1 a])
+::  +bind-duct: find or make new $bone for .duct in .ossuary
+::
+++  bind-duct
+  |=  [=ossuary =duct]
+  ^+  [next-bone.ossuary ossuary]
+  ::
+  ?^  existing=(~(get by by-duct.ossuary) duct)
+    [u.existing ossuary]
+  ::
+  :-  next-bone.ossuary
+  :+  (add 4 next-bone.ossuary)
+    (~(put by by-duct.ossuary) duct next-bone.ossuary)
+  (~(put by by-bone.ossuary) next-bone.ossuary duct)
+::  +make-bone-wire: encode ship and bone in wire for sending to vane
+::
+++  make-bone-wire
+  |=  [her=ship =bone]
+  ^-  wire
+  ::
+  /bone/(scot %p her)/(scot %ud bone)
+::  +parse-bone-wire: decode ship and bone from wire from local vane
+::
+++  parse-bone-wire
+  |=  =wire
+  ^-  [her=ship =bone]
+  ::
+  ~|  %ames-wire-bone^wire
+  ?>  ?=([%bone @ @ ~] wire)
+  [`@p`(slav %p i.t.wire) `@ud`(slav %ud i.t.t.wire)]
+::  +make-pump-timer-wire: construct wire for |packet-pump timer
+::
+++  make-pump-timer-wire
+  |=  [her=ship =bone]
+  ^-  wire
+  /pump/(scot %p her)/(scot %ud bone)
+::  +parse-pump-timer-wire: parse .her and .bone from |packet-pump wire
+::
+++  parse-pump-timer-wire
+  |=  =wire
+  ^-  (unit [her=ship =bone])
+  ::
+  ~|  %ames-wire-timer^wire
+  ?.  ?=([%pump @ @ ~] wire)
+    ~
+  ?~  ship=`(unit @p)`(slaw %p i.t.wire)
+    ~
+  ?~  bone=`(unit @ud)`(slaw %ud i.t.t.wire)
+    ~
+  `[u.ship u.bone]
+::  +derive-symmetric-key: $symmetric-key from $private-key and $public-key
+::
+::    Assumes keys have a tag on them like the result of the |ex:crub core.
+::
+++  derive-symmetric-key
+  ~/  %derive-symmetric-key
+  |=  [=public-key =private-key]
+  ^-  symmetric-key
+  ::
+  ?>  =('b' (end 3 1 public-key))
+  =.  public-key  (rsh 8 1 (rsh 3 1 public-key))
+  ::
+  ?>  =('B' (end 3 1 private-key))
+  =.  private-key  (rsh 8 1 (rsh 3 1 private-key))
+  ::
+  `@`(shar:ed:crypto public-key private-key)
+::  +encode-packet: serialize a packet into a bytestream
+::
+++  encode-packet
+  ~/  %encode-packet
+  |=  packet
+  ^-  blob
+  ::
+  =/  sndr-meta  (encode-ship-metadata sndr)
+  =/  rcvr-meta  (encode-ship-metadata rcvr)
+  ::
+  =/  body=@
+    ;:  mix
+      sndr-tick
+      (lsh 2 1 rcvr-tick)
+      (lsh 3 1 sndr)
+      (lsh 3 +(size.sndr-meta) rcvr)
+      (lsh 3 +((add size.sndr-meta size.rcvr-meta)) content)
+    ==
+  =/  checksum  (end 0 20 (mug body))
+  =?  body  ?=(^ origin)  (mix (lsh 3 6 body) u.origin)
+  ::
+  =/  header=@
+    %+  can  0
+    :~  [3 reserved=0]
+        [1 is-ames=&]
+        [3 protocol-version]
+        [2 rank.sndr-meta]
+        [2 rank.rcvr-meta]
+        [20 checksum]
+        [1 relayed=.?(origin)]
+    ==
+  (mix header (lsh 5 1 body))
+::  +decode-packet: deserialize packet from bytestream or crash
+::
+++  decode-packet
+  ~/  %decode-packet
+  |=  =blob
+  ^-  packet
+  ::  first 32 (2^5) bits are header; the rest is body
+  ::
+  =/  header  (end 5 1 blob)
+  =/  body    (rsh 5 1 blob)
+  ::  read header; first three bits are reserved
+  ::
+  =/  is-ames  (cut 0 [3 1] header)
+  ?.  =(& is-ames)
+    ~|  %ames-not-ames  !!
+  ::
+  =/  version  (cut 0 [4 3] header)
+  ?.  =(protocol-version version)
+    ~|  ames-protocol-version+version  !!
+  ::
+  =/  sndr-size  (decode-ship-size (cut 0 [7 2] header))
+  =/  rcvr-size  (decode-ship-size (cut 0 [9 2] header))
+  =/  checksum   (cut 0 [11 20] header)
+  =/  relayed    (cut 0 [31 1] header)
+  ::  origin, if present, is 6 octets long, at the end of the body
+  ::
+  =^  origin=(unit @)  body
+    ?:  =(| relayed)
+      [~ body]
+    [`(rsh 3 6 body) (end 3 6 body)]
+  ::  .checksum does not apply to the origin
+  ::
+  ?.  =(checksum (end 0 20 (mug body)))
+    ~|  %ames-checksum  !!
+  ::  read fixed-length sndr and rcvr life data from body
+  ::
+  ::    These represent the last four bits of the sender and receiver
+  ::    life fields, to be used for quick dropping of honest packets to
+  ::    or from the wrong life.
+  ::
+  =/  sndr-tick  (cut 0 [0 4] body)
+  =/  rcvr-tick  (cut 0 [4 4] body)
+  ::  read variable-length .sndr and .rcvr addresses
+  ::
+  =/  off   1
+  =^  sndr  off  [(cut 3 [off sndr-size] body) (add off sndr-size)]
+  ?.  (is-valid-rank sndr sndr-size)
+    ~|  ames-sender-impostor+[sndr sndr-size]  !!
+  ::
+  =^  rcvr  off  [(cut 3 [off rcvr-size] body) (add off rcvr-size)]
+  ?.  (is-valid-rank rcvr rcvr-size)
+    ~|  ames-receiver-impostor+[rcvr rcvr-size]  !!
+  ::  read variable-length .content from the rest of .body
+  ::
+  =/  content  (cut 3 [off (sub (met 3 body) off)] body)
+  [[sndr rcvr] sndr-tick rcvr-tick origin content]
+::  +is-valid-rank: does .ship match its stated .size?
+::
+++  is-valid-rank
+  ~/  %is-valid-rank
+  |=  [=ship size=@ubB]
+  ^-  ?
+  .=  size
+  ?-  (clan:title ship)
+    %czar  0b0
+    %king  0b0
+    %duke  0b1
+    %earl  0b10
+    %pawn  0b11
+  ==
+::  +decode-open-packet: decode comet attestation into an $open-packet
+::
+++  decode-open-packet
+  ~/  %decode-open-packet
+  |=  [=packet our=ship our-life=@]
+  ^-  open-packet
+  ::  deserialize and type-check packet contents
+  ::
+  =+  ;;  [signature=@ signed=@]  (cue content.packet)
+  =+  ;;  =open-packet            (cue signed)
+  ::  assert .our and .her and lives match
+  ::
+  ?>  .=       sndr.open-packet  sndr.packet
+  ?>  .=       rcvr.open-packet  our
+  ?>  .=  sndr-life.open-packet  1
+  ?>  .=  rcvr-life.open-packet  life.ames-state
+  ::  only a star can sponsor a comet
+  ::
+  ?>  =(%king (clan:title (^sein:title sndr.packet)))
+  ::  comet public-key must hash to its @p address
+  ::
+  ?>  =(sndr.packet fig:ex:(com:nu:crub:crypto public-key.open-packet))
+  ::  verify signature
+  ::
+  ::    Logic duplicates +com:nu:crub:crypto and +sure:as:crub:crypto.
+  ::
+  =/  key  (end 8 1 (rsh 3 1 public-key.open-packet))
+  ?>  (veri:ed:crypto signature signed key)
+  open-packet
+::  +encode-shut-packet: encrypt and packetize a $shut-packet
+::
+++  encode-shut-packet
+  ~/  %encode-shut-packet
+  |=  [=shut-packet =symmetric-key our=ship her=ship our-life=@ her-life=@]
+  ^-  packet
+  ::
+  =?    meat.shut-packet
+      ?&  ?=(%& -.meat.shut-packet)
+          (gth (met 13 fragment.p.meat.shut-packet) 1)
+      ==
+    %_    meat.shut-packet
+        fragment.p
+      (cut 13 [[fragment-num 1] fragment]:p.meat.shut-packet)
+    ==
+  ::
+  =/  vec  ~[our her her-life our-life]
+  =/  [siv=@uxH len=@ cyf=@ux]
+    (~(en sivc:aes:crypto (shaz symmetric-key) vec) (jam shut-packet))
+  =/  content  (mix (lsh 3 len siv) cyf)
+  [[our her] (mod our-life 16) (mod her-life 16) origin=~ content]
+::  +decode-shut-packet: decrypt a $shut-packet from a $packet
+::
+++  decode-shut-packet
+  ~/  %decode-shut-packet
+  |=  [=packet =symmetric-key our-life=@ her-life=@]
+  ^-  shut-packet
+  ?.  =(sndr-tick.packet (mod her-life 16))
+    ~|  ames-sndr-tick+sndr-tick.packet  !!
+  ?.  =(rcvr-tick.packet (mod our-life 16))
+    ~|  ames-rcvr-tick+rcvr-tick.packet  !!
+  =/  siv  (end 9 1 content.packet)
+  =/  cyf  (rsh 9 1 content.packet)
+  =/  len  (met 3 cyf)
+  =/  vec  ~[sndr.packet rcvr.packet her-life our-life]
+  ;;  shut-packet  %-  need
+  (~(de sivc:aes:crypto (shaz symmetric-key) vec) siv len cyf)
+::  +decode-ship-size: decode a 2-bit ship type specifier into a byte width
+::
+::    Type 0: galaxy or star -- 2 bytes
+::    Type 1: planet         -- 4 bytes
+::    Type 2: moon           -- 8 bytes
+::    Type 3: comet          -- 16 bytes
+::
+++  decode-ship-size
+  ~/  %decode-ship-size
+  |=  rank=@ubB
+  ^-  @
+  ::
+  ?+  rank  !!
+    %0b0   2
+    %0b1   4
+    %0b10  8
+    %0b11  16
+  ==
+::  +encode-ship-metadata: produce size (in bytes) and address rank for .ship
+::
+::    0: galaxy or star
+::    1: planet
+::    2: moon
+::    3: comet
+::
+++  encode-ship-metadata
+  ~/  %encode-ship-metadata
+  |=  =ship
+  ^-  [size=@ =rank]
+  ::
+  =/  size=@  (met 3 ship)
+  ::
+  ?:  (lte size 2)  [2 %0b0]
+  ?:  (lte size 4)  [4 %0b1]
+  ?:  (lte size 8)  [8 %0b10]
+  [16 %0b11]
 +|  %atomics
 ::
 +$  private-key    @uwprivatekey
@@ -844,9 +1176,9 @@
     ``noun+!>(!>(res))
   ==
 --
-::  helpers
+::  |per-event: inner event-handling core
 ::
-~%  %ames-helpers  +>+  ~
+~%  %per-event  ..trace  ~
 |%
 ++  per-event
   =|  moves=(list move)
@@ -2889,336 +3221,4 @@
     ::
     message-sink
   --
-::  +qos-update-text: notice text for if connection state changes
-::
-++  qos-update-text
-  |=  [=ship old=qos new=qos]
-  ^-  (unit tape)
-  ::
-  ?+  [-.old -.new]  ~
-    [%unborn %live]  `"; {(scow %p ship)} is your neighbor"
-    [%dead %live]    `"; {(scow %p ship)} is ok"
-    [%live %dead]    `"; {(scow %p ship)} not responding still trying"
-    [%unborn %dead]  `"; {(scow %p ship)} not responding still trying"
-    [%live %unborn]  `"; {(scow %p ship)} has sunk"
-    [%dead %unborn]  `"; {(scow %p ship)} has sunk"
-  ==
-::  +lte-packets: yes if a is before b
-::
-++  lte-packets
-  |=  [a=live-packet-key b=live-packet-key]
-  ^-  ?
-  ::
-  ?:  (lth message-num.a message-num.b)
-    %.y
-  ?:  (gth message-num.a message-num.b)
-    %.n
-  (lte fragment-num.a fragment-num.b)
-::  +split-message: split message into kilobyte-sized fragments
-::
-::    We don't literally split it here since that would allocate many
-::    large atoms with no structural sharing.  Instead, each
-::    static-fragment has the entire message and a counter.  In
-::    +encrypt, we interpret this to get the actual fragment.
-::
-++  split-message
-  |=  [=message-num =message-blob]
-  ^-  (list static-fragment)
-  ::
-  =/  num-fragments=fragment-num  (met 13 message-blob)
-  =|  counter=@
-  ::
-  |-  ^-  (list static-fragment)
-  ?:  (gte counter num-fragments)
-    ~
-  ::
-  :-  [message-num num-fragments counter `@`message-blob]
-  $(counter +(counter))
-::  +assemble-fragments: concatenate fragments into a $message
-::
-++  assemble-fragments
-  |=  [num-fragments=fragment-num fragments=(map fragment-num fragment)]
-  ^-  *
-  ::
-  =|  sorted=(list fragment)
-  =.  sorted
-    =/  index=fragment-num  0
-    |-  ^+  sorted
-    ?:  =(index num-fragments)
-      sorted
-    $(index +(index), sorted [(~(got by fragments) index) sorted])
-  ::
-  %-  cue
-  %+  can   13
-  %+  turn  (flop sorted)
-  |=(a=@ [1 a])
-::  +bind-duct: find or make new $bone for .duct in .ossuary
-::
-++  bind-duct
-  |=  [=ossuary =duct]
-  ^+  [next-bone.ossuary ossuary]
-  ::
-  ?^  existing=(~(get by by-duct.ossuary) duct)
-    [u.existing ossuary]
-  ::
-  :-  next-bone.ossuary
-  :+  (add 4 next-bone.ossuary)
-    (~(put by by-duct.ossuary) duct next-bone.ossuary)
-  (~(put by by-bone.ossuary) next-bone.ossuary duct)
-::  +make-bone-wire: encode ship and bone in wire for sending to vane
-::
-++  make-bone-wire
-  |=  [her=ship =bone]
-  ^-  wire
-  ::
-  /bone/(scot %p her)/(scot %ud bone)
-::  +parse-bone-wire: decode ship and bone from wire from local vane
-::
-++  parse-bone-wire
-  |=  =wire
-  ^-  [her=ship =bone]
-  ::
-  ~|  %ames-wire-bone^wire
-  ?>  ?=([%bone @ @ ~] wire)
-  [`@p`(slav %p i.t.wire) `@ud`(slav %ud i.t.t.wire)]
-::  +make-pump-timer-wire: construct wire for |packet-pump timer
-::
-++  make-pump-timer-wire
-  |=  [her=ship =bone]
-  ^-  wire
-  /pump/(scot %p her)/(scot %ud bone)
-::  +parse-pump-timer-wire: parse .her and .bone from |packet-pump wire
-::
-++  parse-pump-timer-wire
-  |=  =wire
-  ^-  (unit [her=ship =bone])
-  ::
-  ~|  %ames-wire-timer^wire
-  ?.  ?=([%pump @ @ ~] wire)
-    ~
-  ?~  ship=`(unit @p)`(slaw %p i.t.wire)
-    ~
-  ?~  bone=`(unit @ud)`(slaw %ud i.t.t.wire)
-    ~
-  `[u.ship u.bone]
-::  +derive-symmetric-key: $symmetric-key from $private-key and $public-key
-::
-::    Assumes keys have a tag on them like the result of the |ex:crub core.
-::
-++  derive-symmetric-key
-  ~/  %derive-symmetric-key
-  |=  [=public-key =private-key]
-  ^-  symmetric-key
-  ::
-  ?>  =('b' (end 3 1 public-key))
-  =.  public-key  (rsh 8 1 (rsh 3 1 public-key))
-  ::
-  ?>  =('B' (end 3 1 private-key))
-  =.  private-key  (rsh 8 1 (rsh 3 1 private-key))
-  ::
-  `@`(shar:ed:crypto public-key private-key)
-::  +encode-packet: serialize a packet into a bytestream
-::
-++  encode-packet
-  ~/  %encode-packet
-  |=  packet
-  ^-  blob
-  ::
-  =/  sndr-meta  (encode-ship-metadata sndr)
-  =/  rcvr-meta  (encode-ship-metadata rcvr)
-  ::
-  =/  body=@
-    ;:  mix
-      sndr-tick
-      (lsh 2 1 rcvr-tick)
-      (lsh 3 1 sndr)
-      (lsh 3 +(size.sndr-meta) rcvr)
-      (lsh 3 +((add size.sndr-meta size.rcvr-meta)) content)
-    ==
-  =/  checksum  (end 0 20 (mug body))
-  =?  body  ?=(^ origin)  (mix (lsh 3 6 body) u.origin)
-  ::
-  =/  header=@
-    %+  can  0
-    :~  [3 reserved=0]
-        [1 is-ames=&]
-        [3 protocol-version]
-        [2 rank.sndr-meta]
-        [2 rank.rcvr-meta]
-        [20 checksum]
-        [1 relayed=.?(origin)]
-    ==
-  (mix header (lsh 5 1 body))
-::  +decode-packet: deserialize packet from bytestream or crash
-::
-++  decode-packet
-  ~/  %decode-packet
-  |=  =blob
-  ^-  packet
-  ::  first 32 (2^5) bits are header; the rest is body
-  ::
-  =/  header  (end 5 1 blob)
-  =/  body    (rsh 5 1 blob)
-  ::  read header; first three bits are reserved
-  ::
-  =/  is-ames  (cut 0 [3 1] header)
-  ?.  =(& is-ames)
-    ~|  %ames-not-ames  !!
-  ::
-  =/  version  (cut 0 [4 3] header)
-  ?.  =(protocol-version version)
-    ~|  ames-protocol-version+version  !!
-  ::
-  =/  sndr-size  (decode-ship-size (cut 0 [7 2] header))
-  =/  rcvr-size  (decode-ship-size (cut 0 [9 2] header))
-  =/  checksum   (cut 0 [11 20] header)
-  =/  relayed    (cut 0 [31 1] header)
-  ::  origin, if present, is 6 octets long, at the end of the body
-  ::
-  =^  origin=(unit @)  body
-    ?:  =(| relayed)
-      [~ body]
-    [`(rsh 3 6 body) (end 3 6 body)]
-  ::  .checksum does not apply to the origin
-  ::
-  ?.  =(checksum (end 0 20 (mug body)))
-    ~|  %ames-checksum  !!
-  ::  read fixed-length sndr and rcvr life data from body
-  ::
-  ::    These represent the last four bits of the sender and receiver
-  ::    life fields, to be used for quick dropping of honest packets to
-  ::    or from the wrong life.
-  ::
-  =/  sndr-tick  (cut 0 [0 4] body)
-  =/  rcvr-tick  (cut 0 [4 4] body)
-  ::  read variable-length .sndr and .rcvr addresses
-  ::
-  =/  off   1
-  =^  sndr  off  [(cut 3 [off sndr-size] body) (add off sndr-size)]
-  ?.  (is-valid-rank sndr sndr-size)
-    ~|  ames-sender-impostor+[sndr sndr-size]  !!
-  ::
-  =^  rcvr  off  [(cut 3 [off rcvr-size] body) (add off rcvr-size)]
-  ?.  (is-valid-rank rcvr rcvr-size)
-    ~|  ames-receiver-impostor+[rcvr rcvr-size]  !!
-  ::  read variable-length .content from the rest of .body
-  ::
-  =/  content  (cut 3 [off (sub (met 3 body) off)] body)
-  [[sndr rcvr] sndr-tick rcvr-tick origin content]
-::  +is-valid-rank: does .ship match its stated .size?
-::
-++  is-valid-rank
-  ~/  %is-valid-rank
-  |=  [=ship size=@ubB]
-  ^-  ?
-  .=  size
-  ?-  (clan:title ship)
-    %czar  0b0
-    %king  0b0
-    %duke  0b1
-    %earl  0b10
-    %pawn  0b11
-  ==
-::  +decode-open-packet: decode comet attestation into an $open-packet
-::
-++  decode-open-packet
-  ~/  %decode-open-packet
-  |=  [=packet our=ship our-life=@]
-  ^-  open-packet
-  ::  deserialize and type-check packet contents
-  ::
-  =+  ;;  [signature=@ signed=@]  (cue content.packet)
-  =+  ;;  =open-packet            (cue signed)
-  ::  assert .our and .her and lives match
-  ::
-  ?>  .=       sndr.open-packet  sndr.packet
-  ?>  .=       rcvr.open-packet  our
-  ?>  .=  sndr-life.open-packet  1
-  ?>  .=  rcvr-life.open-packet  life.ames-state
-  ::  only a star can sponsor a comet
-  ::
-  ?>  =(%king (clan:title (^sein:title sndr.packet)))
-  ::  comet public-key must hash to its @p address
-  ::
-  ?>  =(sndr.packet fig:ex:(com:nu:crub:crypto public-key.open-packet))
-  ::  verify signature
-  ::
-  ::    Logic duplicates +com:nu:crub:crypto and +sure:as:crub:crypto.
-  ::
-  =/  key  (end 8 1 (rsh 3 1 public-key.open-packet))
-  ?>  (veri:ed:crypto signature signed key)
-  open-packet
-::  +encode-shut-packet: encrypt and packetize a $shut-packet
-::
-++  encode-shut-packet
-  ~/  %encode-shut-packet
-  |=  [=shut-packet =symmetric-key our=ship her=ship our-life=@ her-life=@]
-  ^-  packet
-  ::
-  =?    meat.shut-packet
-      ?&  ?=(%& -.meat.shut-packet)
-          (gth (met 13 fragment.p.meat.shut-packet) 1)
-      ==
-    %_    meat.shut-packet
-        fragment.p
-      (cut 13 [[fragment-num 1] fragment]:p.meat.shut-packet)
-    ==
-  ::
-  =/  vec  ~[our her her-life our-life]
-  =/  [siv=@uxH len=@ cyf=@ux]
-    (~(en sivc:aes:crypto (shaz symmetric-key) vec) (jam shut-packet))
-  =/  content  (mix (lsh 3 len siv) cyf)
-  [[our her] (mod our-life 16) (mod her-life 16) origin=~ content]
-::  +decode-shut-packet: decrypt a $shut-packet from a $packet
-::
-++  decode-shut-packet
-  ~/  %decode-shut-packet
-  |=  [=packet =symmetric-key our-life=@ her-life=@]
-  ^-  shut-packet
-  ?.  =(sndr-tick.packet (mod her-life 16))
-    ~|  ames-sndr-tick+sndr-tick.packet  !!
-  ?.  =(rcvr-tick.packet (mod our-life 16))
-    ~|  ames-rcvr-tick+rcvr-tick.packet  !!
-  =/  siv  (end 9 1 content.packet)
-  =/  cyf  (rsh 9 1 content.packet)
-  =/  len  (met 3 cyf)
-  =/  vec  ~[sndr.packet rcvr.packet her-life our-life]
-  ;;  shut-packet  %-  need
-  (~(de sivc:aes:crypto (shaz symmetric-key) vec) siv len cyf)
-::  +decode-ship-size: decode a 2-bit ship type specifier into a byte width
-::
-::    Type 0: galaxy or star -- 2 bytes
-::    Type 1: planet         -- 4 bytes
-::    Type 2: moon           -- 8 bytes
-::    Type 3: comet          -- 16 bytes
-::
-++  decode-ship-size
-  ~/  %decode-ship-size
-  |=  rank=@ubB
-  ^-  @
-  ::
-  ?+  rank  !!
-    %0b0   2
-    %0b1   4
-    %0b10  8
-    %0b11  16
-  ==
-::  +encode-ship-metadata: produce size (in bytes) and address rank for .ship
-::
-::    0: galaxy or star
-::    1: planet
-::    2: moon
-::    3: comet
-::
-++  encode-ship-metadata
-  ~/  %encode-ship-metadata
-  |=  =ship
-  ^-  [size=@ =rank]
-  ::
-  =/  size=@  (met 3 ship)
-  ::
-  ?:  (lte size 2)  [2 %0b0]
-  ?:  (lte size 4)  [4 %0b1]
-  ?:  (lte size 8)  [8 %0b10]
-  [16 %0b11]
 --
