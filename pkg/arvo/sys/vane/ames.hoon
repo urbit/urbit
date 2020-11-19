@@ -1605,7 +1605,6 @@
   ::  +attestation-packet: generate signed self-attestation for .her
   ::
   ::    Sent by a comet on first contact with a peer.  Not acked.
-  ::  TODO: flat
   ::
   ++  attestation-packet
     |=  [her=ship =her=life]
@@ -1620,7 +1619,8 @@
       ==
     ::
     =/  signed=@  (sign:as:crypto-core.ames-state (jam open-packet))
-    =/  =packet   [[our her] encrypted=%.n origin=~ signed]
+    =/  =packet
+      [[our her] (mod life.ames-state 16) (mod her-life 16) origin=~ signed]
     ::
     (encode-packet packet)
   ::  +get-peer-state: lookup .her state or ~
