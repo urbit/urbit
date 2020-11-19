@@ -9,6 +9,7 @@ import Landscape from '~/views/landscape/index';
 import Profile from '~/views/apps/profile/profile';
 import ErrorComponent from '~/views/components/Error';
 import Notifications from '~/views/apps/notifications/notifications';
+import GraphApp from '../../apps/graph/app';
 
 
 export const Container = styled(Box)`
@@ -68,6 +69,7 @@ export const Content = (props) => {
             <Notifications {...props} />
           )}
         />
+        <GraphApp {...props} />
         <Route
           render={p => (
             <ErrorComponent

@@ -94,20 +94,19 @@ export default function Inbox(props: {
       name: invite.resource.name
     };
 
-    let resourcePath = resourceAsPath(invite.resource);
-    if(app === 'chat') {
-      resourcePath = resourcePath.slice(5);
-    }
-
-    let path = `/home/resource/${app}${resourcePath}`;
+    const resourcePath = resourceAsPath(invite.resource);
     if(app === 'contacts') {
       await api.contacts.join(resource);
-      path = resourceAsPath(invite.resource);
-      await waiter(p => path in p.associations?.contacts);
+      await waiter(p => resourcePath in p.associations?.contacts);
+      await api.invite.accept(app, uid);
+      history.push(`/~landscape${resourcePath}`);
+    } else if ( app === 'chat') {
+      await api.invite.accept(app, uid);
+      history.push(`/~landscape/home/resource/chat${resourcePath.slice(5)}`);
+    } else if ( app === 'graph') {
+      await api.invite.accept(app, uid);
+      history.push(`/~graph/join${resourcePath}`);
     }
-    await api.invite.accept(app, uid);
-
-    history.push(`/~landscape${path}`);
   };
 
   const inviteItems = (invites, api) => {
