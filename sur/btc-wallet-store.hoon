@@ -39,11 +39,19 @@
       max-gap=@ud
       confs=@ud
   ==
-::  input: utxo for a transaction
+::  input: utxo for a transaction::
+::  feyb: fee per byte in sats
+::  key:  HD wallet path
+::  txi/txo:  input/output for a transaction being built
+::  txbu: tx builder -- all information needed to make a transaction for signing
 ::
 +$  input  [=utxo =chyg =idx]
-::  todo: Set of indices; empty it out until none are left--means scanning of that batch is done
-::  start:     index this batch started scanning from
++$  feyb  sats
++$  key  [=bipt =chyg =idx]
++$  txi  [=utxo raw-tx=(unit buffer) =key]
++$  txo  [=address value=sats]
++$  txbu  [txis=(list txi) txos=(list txo)]
+::  TODO: document
 ::
 +$  batch  [todo=(set idx) endpoint=idx has-used=?]
 +$  scans  (map [xpub chyg] batch)
@@ -58,10 +66,12 @@
   $%  [%add-wallet =xpub scan-to=(unit scon) max-gap=(unit @ud) confs=(unit @ud)]
       [%address-info =xpub =chyg =idx utxos=(set utxo) used=? blockcount=@ud]
       [%generate-address =xpub =chyg meta=(unit [payer=ship value=sats])]
+      [%generate-txbu =xpub txos=(list txo) feyb=sats]
   ==
 ::
 +$  update
   $%  [%generate-address =address meta=(unit [payer=ship value=sats])]
+      [%generate-txbu =xpub =vbytes =txbu]
       [%scan-done =xpub]
   ==
 ::

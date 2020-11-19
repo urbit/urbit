@@ -75,6 +75,7 @@ Uses `btc-wallet-hook`, with max-gap=3
 ```
 
 ### utxo selection
+Creates dummy inputs and outputs. Builds a TX with them.
 ```
 =btc -build-file %/lib/btc/hoon
 =bwsl -build-file %/lib/btc-wallet-store/hoon
@@ -87,9 +88,12 @@ Uses `btc-wallet-hook`, with max-gap=3
 =eny1 0v3uc.iuebi.5qilc.l8d87.c1k6n.7iksq.nkobs.8s5he.raq40.9ff0b.5tj3u.kjtg7.aq59e.hatv7.oioam.mlsr4.pqqcd.cnbjn.pnpi2.1m5rt.k4scg
 =eny2 0v1gt.mc4ca.lfs0m.q1dal.lqobu.mmlbd.2umnp.lj9dr.4pf4s.pvclr.dps96.4a6i8.rt6n9.krp0r.11kqu.ckqe4.1tmat.gr754.463aj.a4b41.jj7qg
 =inputs ~[[u(value val0) %0 0] [u(value val1) %0 2] [u(value val2) %0 1] [u(value val3) %1 2]]
+=outputs ~[[[%bech32 'bc1q59u5epktervh6fxqay2dlph0wxu9hjnx6v8n66'] value=200.100] [[%bech32 'bc1qlwd7mw33uea5m8r2lsnsrkc7gp2qynrxsfxpfm'] value=200.000]]
+=w *walt:bwsl
+=w w(bipt %bip84)
 
-(~(single-random-draw sut:bwsl [*walt:bwsl eny1 400.100 100 2]) inputs)
-(~(single-random-draw sut:bwsl [*walt:bwsl eny2 400.100 100 2]) inputs)
+(~(single-random-draw sut:bwsl [w eny1 100 outputs]) inputs)
+(~(single-random-draw sut:bwsl [w eny2 100 outputs]) inputs)
 
 ```
 Above tests w 2 outputs, total fees with 2 inputs of 27.500. Gives:
