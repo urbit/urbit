@@ -66,7 +66,7 @@ const GraphNodeContent = ({ contents, contacts, mod, description, index, remoteC
     if (idx.length === 1) {
       const [{ text }, { url }] = contents;
       return <GraphUrl title={text} url={url} />;
-    } else if (idx.length === 2) {
+    } else if (idx.length === 3) {
       return <MentionText
         content={contents}
         contacts={contacts}
@@ -115,7 +115,7 @@ function getNodeUrl(mod: string, group: string, graph: string, index: string) {
     return `${graphUrl}/note/${noteId}`;
   } else if (mod === "link") {
     const [linkId] = idx;
-    return `${graphUrl}/-${linkId}`;
+    return `${graphUrl}/${linkId}`;
   }
   return "";
 }
