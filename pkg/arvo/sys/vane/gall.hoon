@@ -53,6 +53,7 @@
 ::
 +$  yoke
   $:  control-duct=duct
+      nonce=@t
       live=?
       =stats
       =watches
@@ -123,6 +124,7 @@
 ::
 +$  egg
   $:  control-duct=duct
+      nonce=@t
       live=?
       =stats
       =watches
@@ -273,7 +275,9 @@
             outstanding  ~  ::  TODO: do we need to process these somehow?
             running
           ::  XXX &+ should be in next state adapter
-          (~(run by running.s) |=(y=yoke-0 +:y(agent &+on-save:agent.y)))
+          %-  ~(run by running.s)
+          |=  y=yoke-0
+          [+< %nonce +>]:y(agent &+on-save:agent.y)
         ==
       ::
       ++  state-4-to-5  |=(s=state-4 `state-5`s(- %5, outstanding ~))
@@ -427,8 +431,12 @@
     ::
     =.  yokes.state
       %+  ~(put by yokes.state)  dap
-      =/  default-yoke  *yoke
-      default-yoke(control-duct hen, beak bek, agent &+agent)
+      %*  .  *yoke
+        control-duct  hen
+        beak          bek
+        agent         &+agent
+        nonce         (scot %uw (end 5 1 (shas %yoke-nonce eny)))
+      ==
     ::
     =/  old  mo-core
     =/  wag
@@ -791,7 +799,7 @@
     |=  [=path =sign-arvo]
     ^+  mo-core
     ::
-    ?.  ?=([@ @ *] path)
+    ?.  ?=([@ @ @ *] path)
       ~&  [%mo-handle-use-bad-path path]
       !!
     ::
@@ -800,16 +808,19 @@
     ?~  yoke
       %-  (slog leaf+"gall: {<dap>} dead, got {<+<.sign-arvo>}" ~)
       mo-core
+    ?.  =(nonce.u.yoke i.t.path)
+      %-  (slog leaf+"gall: got old {<+<.sign-arvo>} for {<dap>}" ~)
+      mo-core
     ?.  ?=([?(%g %b) %unto *] sign-arvo)
       ?:  ?=(%| -.agent.u.yoke)
         %-  (slog leaf+"gall: {<dap>} dozing, dropping {<+<.sign-arvo>}" ~)
         mo-core
       =/  app
-        =/  =ship  (slav %p i.t.path)
+        =/  =ship  (slav %p i.t.t.path)
         =/  =routes  [disclosing=~ attributing=ship]
         (ap-abed:ap dap routes)
       ::
-      =.  app  (ap-generic-take:app t.t.path sign-arvo)
+      =.  app  (ap-generic-take:app t.t.t.path sign-arvo)
       ap-abet:app
     ?>  ?=([%out @ @ *] t.t.path)
     =/  =ship  (slav %p i.t.t.t.path)
@@ -1212,13 +1223,9 @@
         =/  =neat  q.card
         =.  wire
           ?:  ?=(%agent -.neat)
-            ::  remove `our` in next breach after 2019/12 and reflect in
-            ::  +mo-handle-use (non-unto case)
-            ::
-            :-  (scot %p our)
             [%out (scot %p ship.neat) name.neat wire]
           [(scot %p attributing.agent-routes) wire]
-        =.  wire  [%use agent-name wire]
+        =.  wire  [%use agent-name nonce.current-agent wire]
         =/  =note-arvo
           ?-  -.neat
             %arvo   note-arvo.neat
@@ -1841,7 +1848,7 @@
   ^-  spore
   =;  eggs=(map term egg)  [- | +]:state(yokes eggs)
   %-  ~(run by yokes.state)
-  |=  =yoke 
+  |=  =yoke
   ^-  egg
   %=    yoke
       agent

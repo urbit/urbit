@@ -1,6 +1,6 @@
 ::  Drum: destroy app
 ::
-::::  /hoon/start/hood/gen
+::::  /hoon/fade/hood/gen
   ::
 /?    310
 ::
