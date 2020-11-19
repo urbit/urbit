@@ -896,11 +896,14 @@
     =/  =routes  [disclosing=~ attributing=our]
     =/  app  (ap-abed:ap dap routes)
     =.  mo-core  ap-abet:(ap-fade:app style)
-    ?-  style
-      %gone  mo-core(yokes.state (~(del by yokes.state) dap))
-      %doze  mo-core
-      %wake  (mo-boot dap our %home)
-    ==
+    =.  mo-core
+      ?-  style
+        %gone  mo-core(yokes.state (~(del by yokes.state) dap))
+        %doze  mo-core
+        %wake  (mo-boot dap our %home)
+      ==
+    =?  mo-core  !?=(%wake style)  (mo-subscribe-to-agent-builds now)
+    mo-core
   ::  +mo-beak: assemble a beak for the specified agent.
   ::
   ++  mo-beak

@@ -281,7 +281,6 @@
                    ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
     [%serv *]      %+  take-bound  t.wire
                    ?>(?=(%bound +<.sign-arvo) +>.sign-arvo)
-    [%pass *]      ~&  [%pass-response [- +<]:sign-arvo]
-                   abet
+    [%pass *]      abet
   ==
 --
