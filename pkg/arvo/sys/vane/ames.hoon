@@ -166,7 +166,7 @@
 ::    interpreter. This enforces that Ames is transport-agnostic.
 ::
 +$  packet
-  $:  =dyad
+  $:  dyad
       sndr-tick=@ubB
       rcvr-tick=@ubB
       origin=(unit @uxaddress)
@@ -1004,7 +1004,7 @@
   ::  +on-hole: handle packet crash notification
   ::
   ++  on-hear  |=([l=lane b=blob] (on-hear-packet l (decode-packet b) ok=&))
-  ++  on-hear  |=([l=lane b=blob] (on-hear-packet l (decode-packet b) ok=|))
+  ++  on-hole  |=([l=lane b=blob] (on-hear-packet l (decode-packet b) ok=|))
   ::  +on-hear-packet: handle mildly processed packet receipt
   ::
   ++  on-hear-packet
@@ -1056,29 +1056,8 @@
     =/  ship-state  (~(get by peers.ames-state) sndr.packet)
     ?:  ?=([~ %known *] ship-state)
       event-core
-    ::  deserialize and type-check packet contents
     ::
-    ?>  ?=(@ content.packet)
-    =+  ;;  [signature=@ signed=@]  (cue content.packet)
-    =+  ;;  =open-packet            (cue signed)
-    ::  assert .our and .her and lives match
-    ::
-    ?>  .=       sndr.open-packet  sndr.packet
-    ?>  .=       rcvr.open-packet  our
-    ?>  .=  sndr-life.open-packet  1
-    ?>  .=  rcvr-life.open-packet  life.ames-state
-    ::  only a star can sponsor a comet
-    ::
-    ?>  =(%king (clan:title (^sein:title sndr.packet)))
-    ::  comet public-key must hash to its @p address
-    ::
-    ?>  =(sndr.packet fig:ex:(com:nu:crub:crypto public-key.open-packet))
-    ::  verify signature
-    ::
-    ::    Logic duplicates +com:nu:crub:crypto and +sure:as:crub:crypto.
-    ::
-    =/  key  (end 8 1 (rsh 3 1 public-key.open-packet))
-    ?>  (veri:ed:crypto signature signed key)
+    =/  =open-packet  (decode-open-packet packet our life.ames-state)
     ::  store comet as peer in our state
     ::
     =.  peers.ames-state
@@ -1129,12 +1108,7 @@
     =/  =channel      [[our sndr.packet] now channel-state -.peer-state]
     ~|  %ames-crash-on-packet-from^her.channel
     =/  =shut-packet
-      %:  decode-shut-packet
-        packet
-        symmetric-key.channel
-        our-life.channel
-        her-life.chanel
-      ==
+      (decode-shut-packet packet [symmetric-key our-life her-life]:channel)
     ::  non-galaxy: update route with heard lane or forwarded lane
     ::
     =?  route.peer-state  !=(%czar (clan:title her.channel))
@@ -1947,17 +1921,7 @@
       ::  +on-pump-send: emit message fragment requested by |message-pump
       ::
       ++  on-pump-send
-        |=  =static-fragment
-        ^+  peer-core
-        ::  encrypt and encode .static-fragment to .blob bitstream
-        ::
-        %-  send-shut-packet  :*
-          our-life.channel
-          her-life.channel
-          bone
-          message-num.static-fragment
-          %&  +.static-fragment
-        ==
+        |=(f=static-fragment (send-shut-packet bone [message-num %& +]:f))
       ::  +on-pump-wait: relay |message-pump's set-timer request
       ::
       ++  on-pump-wait
@@ -2004,16 +1968,7 @@
       ::  +on-sink-send: emit ack packet as requested by |message-sink
       ::
       ++  on-sink-send
-        |=  [=message-num =ack-meat]
-        ^+  peer-core
-        ::
-        %-  send-shut-packet  :*
-          our-life.channel
-          her-life.channel
-          bone
-          message-num
-          %|  ack-meat
-        ==
+        |=([num=message-num ack=ack-meat] (send-shut-packet bone num %| ack))
       ::  +on-sink-memo: dispatch message received by |message-sink
       ::
       ::    odd bone:                %plea request message
@@ -3080,6 +3035,7 @@
       (lsh 3 +(size.sndr-meta) rcvr)
       (lsh 3 +((add size.sndr-meta size.rcvr-meta)) content)
     ==
+  =/  checksum  (end 0 20 (mug body))
   =?  body  ?=(^ origin)  (mix (lsh 3 6 body) u.origin)
   ::
   =/  header=@
@@ -3147,8 +3103,8 @@
     ~|  ames-receiver-impostor+[rcvr rcvr-size]  !!
   ::  read variable-length .content from the rest of .body
   ::
-  =/  content  (cut 3 [off (sub (met 3 body) off)])
-  [[[sndr rcvr] sndr-tick rcvr-tick origin content]
+  =/  content  (cut 3 [off (sub (met 3 body) off)] body)
+  [[sndr rcvr] sndr-tick rcvr-tick origin content]
 ::  +is-valid-rank: does .ship match its stated .size?
 ::
 ++  is-valid-rank
@@ -3156,7 +3112,7 @@
   |=  [=ship size=@ubB]
   ^-  ?
   .=  size
-  ?+  (clan:title ship)
+  ?-  (clan:title ship)
     %czar  0b0
     %king  0b0
     %duke  0b1
@@ -3167,8 +3123,10 @@
 ::
 ++  decode-open-packet
   ~/  %decode-open-packet
-  |=  [=packet our-life=@]
+  |=  [=packet our=ship our-life=@]
   ^-  open-packet
+  ::  deserialize and type-check packet contents
+  ::
   =+  ;;  [signature=@ signed=@]  (cue content.packet)
   =+  ;;  =open-packet            (cue signed)
   ::  assert .our and .her and lives match
@@ -3206,9 +3164,9 @@
       (cut 13 [[fragment-num 1] fragment]:p.meat.shut-packet)
     ==
   ::
-  =/  vec  [our her her-life our-life]~
+  =/  vec  ~[our her her-life our-life]
   =/  [siv=@uxH len=@ cyf=@ux]
-    (~(en sivc:aes (shaz symmetric-key) vec) (jam shut-packet))
+    (~(en sivc:aes:crypto (shaz symmetric-key) vec) (jam shut-packet))
   =/  content  (mix (lsh 3 len siv) cyf)
   [[our her] (mod our-life 16) (mod her-life 16) origin=~ content]
 ::  +decode-shut-packet: decrypt a $shut-packet from a $packet
@@ -3224,8 +3182,9 @@
   =/  siv  (end 9 1 content.packet)
   =/  cyf  (rsh 9 1 content.packet)
   =/  len  (met 3 cyf)
-  =/  vec  [sndr.dyad.packet rcvr.dyad.packet her-life our-life]~
-  (need (~(de sivc:aes (shaz symmetric-key) vec) siv len cyf))
+  =/  vec  ~[sndr.packet rcvr.packet her-life our-life]
+  ;;  shut-packet  %-  need
+  (~(de sivc:aes:crypto (shaz symmetric-key) vec) siv len cyf)
 ::  +decode-ship-size: decode a 2-bit ship type specifier into a byte width
 ::
 ::    Type 0: galaxy or star -- 2 bytes
