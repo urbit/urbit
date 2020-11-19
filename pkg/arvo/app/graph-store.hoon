@@ -71,8 +71,8 @@
   ::
       %1
     %_  $
-      -.old            %2
-      graphs.old       (~(run by graphs.old) change-revision-graph)
+      -.old       %2
+      graphs.old  (~(run by graphs.old) change-revision-graph)
     ::
         update-logs.old
       %-  ~(run by update-logs.old)
@@ -113,7 +113,7 @@
           post.node(contents ~, hash ~)
         %graph
       %+  gas:orm  *graph:store
-      :_  ~  :-  atom
+      :_  ~  :-  %1
       :_  [%empty ~]
       post.node(index (snoc index.post.node atom), hash ~)
     ::
@@ -148,7 +148,7 @@
         :+  atom  post.node(contents ~, hash ~)
         :-  %graph
         %+  gas:orm  *graph:store
-        :_  ~  :-  atom
+        :_  ~  :-  %1
         :_  [%empty ~]
         post.node(index (snoc index.post.node atom), hash ~)
       ==
