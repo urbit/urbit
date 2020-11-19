@@ -1101,7 +1101,6 @@
     ::
     event-core
   ::  +on-hear-shut: handle receipt of encrypted packet
-  ::  TODO: flat
   ::
   ++  on-hear-shut
     |=  [=lane =packet ok=?]
@@ -1129,19 +1128,16 @@
     =/  =peer-state   +.u.sndr-state
     =/  =channel      [[our sndr.packet] now channel-state -.peer-state]
     ~|  %ames-crash-on-packet-from^her.channel
-    =/  =shut-packet  (decrypt symmetric-key.channel content.packet)
-    ::  ward against replay attacks
-    ::
-    ::    We only accept packets from a ship at their known life, and to
-    ::    us at our current life.
-    ::
-    ~|  our-life=[expected=our-life.channel got=rcvr-life.shut-packet]
-    ~|  her-life=[expected=her-life.channel got=sndr-life.shut-packet]
-    ?>  =(sndr-life.shut-packet her-life.channel)
-    ?>  =(rcvr-life.shut-packet our-life.channel)
+    =/  =shut-packet
+      %:  decode-shut-packet
+        packet
+        symmetric-key.channel
+        our-life.channel
+        her-life.chanel
+      ==
     ::  non-galaxy: update route with heard lane or forwarded lane
     ::
-    =?    route.peer-state  !=(%czar (clan:title her.channel))
+    =?  route.peer-state  !=(%czar (clan:title her.channel))
       ::  if new packet is direct, use that.  otherwise, if the new new
       ::  and old lanes are indirect, use the new one.  if the new lane
       ::  is indirect but the old lane is direct, then if the lanes are
@@ -1164,10 +1160,10 @@
       ?:  ?=(~ origin.packet)
         `[direct=%.y lane]
       ?:  ?=([~ %& *] route.peer-state)
-        ?:  =(lane.u.route.peer-state u.origin.packet)
+        ?:  =(lane.u.route.peer-state |+u.origin.packet)
           route.peer-state
-        `[direct=%.n u.origin.packet]
-      `[direct=%.n u.origin.packet]
+        `[direct=%.n |+u.origin.packet]
+      `[direct=%.n |+u.origin.packet]
     ::  perform peer-specific handling of packet
     ::
     =/  peer-core  (make-peer-core peer-state channel)
