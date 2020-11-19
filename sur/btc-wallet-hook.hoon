@@ -9,7 +9,7 @@
 ::  piym: incoming payments. Stores all ship moons inside
 ::  poym: outgoing payments
 ::  piym-watch/poym-watch:
-::   let us link an address back to its incoming/outgoing payment 
+::   let us link an address back to its incoming/outgoing payment
 ::
 +$  btc-state  [blockcount=@ud fee=sats t=@da]
 +$  pend-addr  (map req-id:bp request:bws) 

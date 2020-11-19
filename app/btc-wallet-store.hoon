@@ -124,12 +124,12 @@
       %generate-txbu
     =/  uw=(unit walt)  (~(get by walts) xpub.act)
     ?~  uw  ~&(>>> "btc-wallet-store: non-existent xpub" `state)
-    =/  r=(unit [=vbytes:btc =txbu])
+    =/  r=(unit txbu)
       %~  select-utxos  sut
-      [u.uw eny.bowl +>.act]
+      [u.uw eny.bowl feyb.act txos.act]
     ?~  r  ~&(>>> "btc-wallet-store: insufficient balance" `state)
     :_  state
-    ~[(send-update [%generate-txbu xpub.act u.r])]
+    ~[(send-update [%generate-txbu xpub.act payee.act u.r])]
   ==
 ::  wallet scan algorithm:
 ::  Initiate a batch for each chyg, with max-gap idxs in it

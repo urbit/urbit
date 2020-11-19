@@ -127,24 +127,25 @@
     (sub val cost)
   ::  Uses naive random selection. Should switch to branch-and-bound later. 
   ::
-  ++  inputs-to-txbu
-    |=  is=(list input)  ^-  txbu
-    :_  txos
-    %+  turn  is
-    |=(i=input [utxo.i ~ [bipt.w chyg.i idx.i]])
-  ::
   ++  select-utxos
-    |^  ^-  (unit [=vbytes =txbu])
+    |^  ^-  (unit =txbu)
     =/  uis=(unit (list input))
       %-  single-random-draw
       %-  zing
       (turn ~(val by wach.w) to-inputs)
-    ?~  uis  ~
-    `[(total-vbytes u.uis) (inputs-to-txbu u.uis)]
+    ?~(uis ~ `(inputs-to-txbu u.uis))
+    ::
     ++  to-inputs
       |=  =addi  ^-  (list input)
       %+  turn  ~(tap in utxos.addi)
       |=(=utxo:btc [utxo chyg.addi idx.addi])
+    ++  inputs-to-txbu
+      |=  is=(list input)  ^-  txbu
+      :*  (total-vbytes is)
+          %+  turn  is
+          |=(i=input [utxo.i ~ [bipt.w chyg.i idx.i]])
+          txos
+      ==
     --
   ::  single-random-draw
   ::    randomly choose utxos until target is hit
