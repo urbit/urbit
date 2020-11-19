@@ -119,7 +119,7 @@
     =/  [a=address:btc w=walt]
       ~(gen-address wad u.uw chyg.act)
     :_  state(walts (~(put by walts) xpub.act w))
-    ~[[%give %fact ~[/updates] %btc-wallet-store-update !>([%generate-address a])]]
+    ~[(send-update [%generate-address a meta.act])]
   ==
 ::  wallet scan algorithm:
 ::  Initiate a batch for each chyg, with max-gap idxs in it
@@ -258,4 +258,8 @@
       |=(=utxo:btc value.utxo)
     add
   (roll values add)
+::
+++  send-update
+  |=  upd=update  ^-  card
+  [%give %fact ~[/updates] %btc-wallet-store-update !>(upd)]
 --

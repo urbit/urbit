@@ -136,14 +136,12 @@
     ?.  =(payee.act our.bowl)
       ~[(poke-wallet-hook payee.act act)]
     ?~  def-wallet  ~|("btc-wallet-hook: no def-wallet set" !!)
-    :~  %+  poke-wallet-store  /[(scot %p src.bowl)]/[(scot %ud value.act)]
-           [%generate-address u.def-wallet %0]
-    ==
+    ~[(poke-wallet-store / [%generate-address u.def-wallet %0 `[src.bowl value.act]])]
     ::
       %pay-address
     :: TODO: update poym
     :: send tx request out for poym
-    ::  TODO: ask wallet to generate tbxu for poym
+    ::  TODO: ask wallet to generate txbu for poym
     `state
     ::
       %force-retry
@@ -203,12 +201,14 @@
   ^-  (quip card _state)
   ?-  -.upd
       %generate-address
-    ?>  ?=([@ @ @ *] wire)
-    =/  value=sats  (slav %ud +<.wire)
-    =/  payer=ship  (slav %p -.wire)
+    :: TODO if there's meta, add to piym
     ::  moons go in a jar with parent as the key
     ::  this will let me implement moon rate-limiting
     ::
+    ?~  meta.upd
+      ~&  >  address.upd
+      `state
+    =/  [payer=ship value=sats]  u.meta.upd
     =/  fam=ship
       ?:  =(%earl (clan:title payer))
         (sein:title our.bowl now.bowl payer)
