@@ -64,7 +64,14 @@
 =/  installed
   =<  q
   %^    spin
-      (module-ova:pill sys)
+      ^-  (list ovum)
+      :~  :~  //arvo
+              %what
+              [/sys/hoon hoon/compiler-src]
+              [/sys/arvo hoon/arvo-src]
+          ==
+          (file-ovum2:pill (flop (tail (flop sys))))
+      ==
     .*(0 arvo-formula)
   |=  [ovo=ovum ken=*]
   [~ (slum ken [now ovo])]

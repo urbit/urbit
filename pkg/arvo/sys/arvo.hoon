@@ -102,6 +102,59 @@
           (pair cord (each * (list mass)))
 +$  monk  (each ship (pair @tas @ta))
 +$  move  [=duct =ball]
+::  $node: fundamental hierarchical node
+::
+::    XX s/b +arch
+::
+++  node
+  =<  |$  [item]
+      [fil=(unit item) dir=(map @ta $)]
+  ::
+  ::  |de: node engine
+  ::
+  |%
+  ++  de
+    =|  fat=(node)
+    |@
+    ::
+    ++  get
+      |=  pax=path
+      ^+  fat
+      ?~  pax  fat
+      =/  kid  (~(get by dir.fat) i.pax)
+      ?~  kid  [~ ~]
+      $(fat u.kid, pax t.pax)
+    ::
+    ++  put
+      |*  [pax=path dat=*]
+      =>  .(dat `_?>(?=(^ fil.fat) u.fil.fat)`dat)
+      ^+  fat
+      ?~  pax  fat(fil `dat)
+      =/  kid  (~(get by dir.fat) i.pax)
+      =/  new  (fall kid fat(fil ~, dir ~))
+      fat(dir (~(put by dir.fat) i.pax $(fat new, pax t.pax)))
+    ::
+    ++  gas
+      |=  lit=(list (pair path _?>(?=(^ fil.fat) u.fil.fat)))
+      ^+  fat
+      ?~  lit  fat
+      $(fat (put p.i.lit q.i.lit), lit t.lit)
+    ::
+    ++  tap
+      =|  pax=path
+      =|  out=(list (pair path _?>(?=(^ fil.fat) u.fil.fat)))
+      |-  ^+   out
+      =?  out  ?=(^ fil.fat)  :_(out [pax u.fil.fat])
+      =/  dir  ~(tap by dir.fat)
+      |-  ^+   out
+      ?~  dir  out
+      %=  $
+        dir  t.dir
+        out  ^$(pax (weld pax /[p.i.dir]), fat q.i.dir)
+      ==
+    -- :: de
+  -- :: node
+::
 +$  ovum  (pair wire curd)
 ::
 +$  scry-sample
@@ -166,9 +219,13 @@
 +$  debt
   $:  ::  run: list of worklists
       ::  out: pending output
+      ::  kel: kernel files
+      ::  fil: pending files
       ::
       run=(list plan)
       out=(list ovum)
+      kel=(list (pair path (cask)))
+      fil=(list (pair path (cask)))
   ==
 +$  germ  [vane=term bars=(list duct)]
 +$  heir
@@ -180,6 +237,7 @@
       eny=@uvJ                                        ::  entropy
       lac=?                                           ::  laconic bit
       ver=vere                                        ::  runtime
+      fat=(node (cask))                               ::
       zus=vase                                        ::  %zuse
       van=(map term vane)                             ::  modules
   ==
@@ -317,11 +375,26 @@
   =>  |%
       ::  $card: tagged, untyped event
       ::  $ovum: card with cause
+      ::  $hoof: hoon source
+      ::  $news: collated updates
       ::
       ::    XX replace top-level structures
       ::
       +$  card  (cask)
       +$  ovum  [=wire =card]
+      +$  hoof  @t
+      +$  news
+          $:  ::  sys: installs + replacements
+              ::  use: non-system files
+              ::
+              sys=(map path (cask))
+              use=(map path (cask))
+          ==
+      +$  seed  [hun=(unit hoof) arv=hoof]
+      +$  sprig
+        $:  zus=(unit hoof)
+            van=(list (cask hoof))
+        ==
       --
   ::
   ~%  %part  ..part  ~
@@ -355,6 +428,95 @@
     ==
   ::
   +|  %engines
+  ::
+  ::  |adapt
+  ::
+  ++  adapt
+    =>  |%
+        ::  deep file as source
+        ::
+        ++  sole  |=(a=(cask) `hoof`?>(?=([%hoon @t] a) q.a))
+        --
+    =*  de  de:node
+    |_  fat=(node (cask))
+    ::
+    ::  +group: collate changes
+    ::
+    ++  group
+      |=  fal=(list (pair path (cask)))
+      =|  del=news
+      |-  ^+   del
+      ?~  fal  del
+      ::  classify files, ignoring unchanged
+      ::
+      =*  pax  p.i.fal
+      =*  dat  q.i.fal
+      =/  hav  (~(get de fat) pax)
+      =?  del  |(?=(~ fil.hav) !=(u.fil.hav dat))
+         ?:  ?=([%sys *] pax)
+           del(sys (~(put by sys.del) pax dat))
+         del(use (~(put by use.del) pax dat))
+      $(fal t.fal)
+    ::  +usurp: consider self-replacement
+    ::
+    ++  usurp
+      |=  del=news
+      ^-  (unit (pair seed (list (pair path (cask)))))
+      ~&  usurp/(turn ~(tap by sys.del) head)
+      =/  hun  (~(get by sys.del) /sys/hoon)
+      =/  arv  (~(get by sys.del) /sys/arvo)
+      ?~  hun
+        ?~  arv  ~
+        `[`(sole u.arv) [/sys/arvo u.arv] ~]
+      =/  rav
+        ~|  %usurp-hoon-no-arvo
+        ((bond |.((need fil:(~(get de fat) /sys/arvo)))) arv)
+      ~!  rav
+      :+  ~
+        [`(sole u.hun) (sole rav)]
+      [[/sys/arvo rav] [/sys/hoon u.hun] ~]
+    ::  +adorn: augment capabilities
+    ::
+    ++  adorn
+      |=  [del=news all=?]
+      ^-  (pair sprig _fat)
+      ::  zuse: shared library
+      ::
+      =^  zus  fat
+        ?^  hav=(~(get by sys.del) /sys/zuse)
+          :-  `(sole u.hav)
+          (~(put de fat) /sys/zuse u.hav)
+        :_  fat
+        ~|  %adorn-no-zuse
+        ?.(all ~ `(sole (need fil:(~(get de fat) /sys/zuse))))
+      ::  kernel modules
+      ::
+      ::    %zuse is the subject of the vanes; force all if we have a new %zuse
+      ::
+      =|  nav=(map term hoof)
+      =?  nav  |(all ?=(^ zus))
+        %-  ~(gas by nav)
+        %+  turn
+          ~(tap by dir:(~(get de fat) /sys/vane))
+        |=([name=@ta _fat] [`@tas`name (sole (need fil))])
+      ::
+      =^  new  fat
+        %^    spin
+            %+  skim  ~(tap by sys.del)
+            |=([p=path *] ?=([%sys %vane @tas ~] p))
+          fat
+        |=  [[p=path q=(cask)] taf=_fat]
+        ^-  (pair (cask hoof) _fat)
+        ?>  ?=([%sys %vane @tas ~] p)
+        =*  nam  i.t.t.p
+        ?>  ((sane %tas) nam)
+        [[`@tas`nam (sole q)] (~(put de taf) p q)]
+      ::
+      =;  van
+        [[zus van] fat]
+      %+  sort  ~(tap by (~(gas by nav) new))
+      |=([[a=@tas *] [b=@tas *]] (aor a b))
+    -- :: adapt
   ::
   ::  |me: dynamic analysis
   ::
@@ -635,15 +797,22 @@
   ::
   ++  le
     ~%  %le  ..le  ~
-    =|  debt
-    =*  nub  -
-    =|  $:  ::  gem: worklist metadata
+    =|  $:  ::  run: list of worklists
+            ::  out: pending output
+            ::  gem: worklist metadata
             ::  dud: propagate error
-            ::  but: reboot gate
+            ::  but: reboot signal
             ::
+            ::
+            run=(list plan)
+            out=(list ovum)
             gem=germ
             dud=(unit goof)
-            but=(unit $-(heir (trap ^)))
+            $=  but  %-  unit
+                     $:  gat=$-(heir (trap ^))
+                         kel=(list (pair path (cask)))
+                         fil=(list (pair path (cask)))
+                     ==
         ==
     ::
     |_  [[pit=vase vil=vile] now=@da soul]
@@ -656,7 +825,7 @@
       ^-  (each (pair (list ovum) soul) (trap ^))
       ?~  but
         &/[(flop out) sol]
-      |/(u.but [%arvo-kelvin now [run out] sol])
+      |/(gat.u.but [%arvo-kelvin now [run out [kel fil]:u.but] sol])
     ::  +poke: prepare a worklist-of-one from outside
     ::
     ++  poke
@@ -672,7 +841,9 @@
       =:  run  run.debt
           out  out.debt
         ==
-      this
+      ::  apply remaining update
+      ::
+      (~(lod what:pith fil.debt) kel.debt)
     ::  +emit: enqueue a worklist with source
     ::
     ++  emit
@@ -882,6 +1053,7 @@
             ::  %lyra: upgrade kernel
             ::  %trim: trim state, spam to all
             ::  %vega: notify vanes post upgrade
+            ::  %what: update from files
             ::  %whey: produce $mass                    :: XX remove, scry
             ::  %verb: toggle laconicity
             ::  %veer: upgrade module
@@ -890,6 +1062,7 @@
             $%  [%lyra hun=(unit @t) van=@t]
                 [%trim p=@ud]
                 [%vega ~]
+                [%what p=(list (pair path (cask)))]
                 [%whey ~]
                 [%verb p=(unit ?)]
                 [%veer lal=@tas pax=path txt=@t]
@@ -927,16 +1100,68 @@
           ==
         [%pass wire.ovum way &/vase]
       ::
+      ::  |what: update engine
+      ::
+      ::    +kel: (maybe) initiate a kernel update
+      ::    +lod: continue with update after kernel +load
+      ::    +mod: update the modules of the kernel
+      ::
+      ++  what
+        |_  fil=(list (pair path (cask)))
+        ::
+        ++  kel
+          ^+  ..pith
+          =/  del  (~(group adapt fat) fil)
+          =/  tub  (~(usurp adapt fat) del)
+          ?~  tub
+            (mod del |)
+          =/  pos=plan
+            [$/~ [*duct (gest [//arvo vega/~])] ~]
+          =/  gat  (boot kel.ver [hun arv]:p.u.tub)
+          %_  ..pith
+            but  `[gat q.u.tub fil]
+            run  (weld run [pos ~])
+          ==
+        ::
+        ++  lod
+          |=  kel=(list (pair path (cask)))
+          ^+  ..pith
+          =/  fat  (~(gas de:node fat) kel)
+          %+  mod
+            (~(group adapt fat) fil)
+          %+  lien  kel
+          |=  [p=path *]
+          ?=([%sys ?(%arvo %hoon) *] p)
+        ::
+        ++  mod
+          |=  [del=news all=?]
+          ^+  ..pith
+          =^  job=sprig  fat  (~(adorn adapt fat) del all)
+          =?  zus  ?=(^ zus.job)
+            $:(smit:va "zuse" pit /sys/zuse/hoon u.zus.job)
+          %-  (wyrd kel.ver [zuse/;;(@ud q:(slap zus limb/%zuse)) ~])
+          %=    ..pith
+              van
+            %+  roll  van.job
+            |=  [[(cask hoof)] =_van]
+            ^+  van
+            =/  way  (wilt p)
+            =/  nex  (create:va zus way /sys/vane/[p]/hoon q)
+            =/  nav  (~(get by van) way)
+            =?  nex  ?=(^ nav)  (update:va vase.u.nav nex)
+            (~(put by van) way (settle:va nex))
+          ==
+        --
+      ::
       ++  call
         |=  =waif
         ^+  ..pith
         ?^  dud  ~>(%mean.'pith: goof' !!)
         ?-  -.waif
-          %lyra  =/  pos=plan  [$/~ [*duct (gest [//arvo vega/~])] ~]
-                 %_  ..pith
-                   but  `(boot kel.ver [hun van]:waif)
-                   run  (weld run [pos ~])
-                 ==
+          %lyra  =;  wat  $(waif wat)
+                 :+  %what  [/sys/arvo hoon/van.waif]
+                 ?~  hun.waif  ~
+                 [[/sys/hoon hoon/u.hun.waif] ~]
         ::
         ::  %trim: clear state
         ::
@@ -947,20 +1172,14 @@
                    (~(run by van) |=(=vane vane(worm *worm)))
                  (emit $/~ (spam /arvo !>(waif)))
         ::
-          %vega  (emit $/~ (spam /arvo !>(waif)))
+          %vega  (emit $/~ (spam /arvo !>(waif)))  :: XX also out
           %verb  ..pith(lac ?~(p.waif !lac u.p.waif))
         ::
-          %veer  ?:  ?=(%$ lal.waif)
-                   =.  zus  $:(smit:va "zuse" pit [pax txt]:waif)
-                   %-  (wyrd kel.ver [zuse/;;(@ud q:(slap zus limb/%zuse)) ~])
-                   ..pith
-                ::
-                 ::
-                 =/  nex  (create:va zus [lal pax txt]:waif)
-                 =/  nav  (~(get by van) lal.waif)
-                 =?  nex  ?=(^ nav)  (update:va vase.u.nav nex)
-                 ..pith(van (~(put by van) lal.waif (settle:va nex)))
+          %veer  =/  pax
+                   sys/?:(?=(%$ lal.waif) /zuse /vane/[(grow lal.waif)])
+                 $(waif what/[[pax hoon/txt.waif] ~])
         ::
+          %what  ~(kel what p.waif)
           %whey  ..pith(out [[//arvo mass/whey] out])
         ==
       ::
@@ -1134,6 +1353,34 @@
     [%behn *]  %b
   ==
 ::
+++  grow
+  |=  way=term
+  ?+  way  way
+    %a  %ames
+    %b  %behn
+    %c  %clay
+    %d  %dill
+    %e  %eyre
+    %f  %ford
+    %g  %gall
+    %i  %iris
+    %j  %jael
+  ==
+::
+++  wilt
+  |=  van=term
+  ?+  van  van
+    %ames  %a
+    %behn  %b
+    %clay  %c
+    %dill  %d
+    %eyre  %e
+    %ford  %f
+    %gall  %g
+    %iris  %i
+    %jael  %j
+  ==
+::
 ++  is  &
 --
 =>
@@ -1247,6 +1494,7 @@
           eny=(unit @)
           lac=?
           ver=vere  :: XX unit
+          fat=(unit (node (cask)))
           bod=(unit (trap vase))
           van=(map term (trap vase))
       ==
@@ -1255,6 +1503,7 @@
       $%  $>(%verb waif:pith:le:part)
           $>(%veer waif:pith:le:part)
           $>(%wack wasp:pith:le:part)
+          $>(%what waif:pith:le:part)
           [%whom p=ship]
           $>(%wyrd wasp:pith:le:part)
       ==
@@ -1268,7 +1517,7 @@
     ++  molt
       |=  [now=@da foal]
       ^-  (unit heir)
-      ?.  &(?=(^ who) ?=(^ eny) ?=(^ bod))
+      ?.  &(?=(^ who) ?=(^ eny) ?=(^ fat) ?=(^ bod))
         ~
       =/  zus  $:u.bod
       %-  %+  wyrd  kel.ver
@@ -1279,7 +1528,8 @@
           ==
       =/  nav  %-  ~(run by van)
                |=(a=(trap vase) (settle:va:part (slym $:a zus)))
-      `[%arvo-kelvin now *debt [u.who u.eny lac ver zus nav]]
+      =/  sol  [u.who u.eny lac ver u.fat zus nav]
+      `[%arvo-kelvin now *debt sol]
     --
 ::
 =|  foal
@@ -1292,19 +1542,48 @@
   |=  [now=@da ovo=ovum]
   ^-  ^
   =/  gub
+    ~|  [p.ovo p.q.ovo]
     ~>  %mean.'arvo: bad grub'
     ;;(grub q.ovo)
   ::
   =.  ..poke
+    |-  ^+  ..poke
     ?-    -.gub
         %verb  ..poke(lac ?~(p.gub !lac u.p.gub))
     ::
-        %veer  ?:  ?=(%$ lal.gub)
-                 ..poke(bod `(mint pit [lal pax txt]:gub))
-               =/  zus  =<($ (need bod))  ::  XX misparse
-               ..poke(van (~(put by van) lal.gub (mint zus [lal pax txt]:gub)))
+        %veer  =/  pax
+                 sys/?:(?=(%$ lal.gub) /zuse /vane/[(grow lal.gub)])
+               $(q.ovo what/[[pax hoon/txt.gub] ~])
     ::
         %wack  ..poke(eny `p.gub)
+    ::
+        %what  =/  taf  (fall fat *(node (cask)))
+               =/  del  (~(group adapt:part taf) p.gub)
+               =/  tub  (~(usurp adapt:part taf) del)
+               ?:  &(?=(^ dir.taf) ?=(^ tub))
+                 ~|(%larval-reboot !!)   :: XX support
+               ::
+               ::  require, and unconditionally adopt, initial kernel source
+               ::
+               =?  taf  =(~ dir.taf)     ::  XX TMI
+                 ~|  %larval-need-kernel
+                 ?>  ?=(^ tub)
+                 (~(gas de:node taf) q.u.tub)
+               ::
+               =^  job  taf  [p q]:(~(adorn adapt:part taf) del |)
+               =?  bod  ?=(^ zus.job)
+                 `(mint pit %$ /sys/zuse/hoon u.zus.job)
+               %=    ..poke
+                   fat  `taf
+                   van
+                 %+  roll  van.job
+                 |=  [[(cask hoof:part)] =_van]
+                 ^+  van
+                 ?>  ?=(^ bod)
+                 =/  way  (wilt p)
+                 (~(put by van) way (mint $:u.bod way /sys/vane/[p]/hoon q))
+               ==
+    ::
         %whom  ..poke(who `p.gub)
         %wyrd  =.  ver  p.gub
                 %-  %+  wyrd  kel.ver
