@@ -5,10 +5,9 @@ export default class Api {
     this.ship = ship;
     this.channel = channel;
     this.bindPaths = [];
-    this.dojoId = 'soto-' + Math.random().toString(36).substring(2);
   }
 
-  bind(path, method, ship = this.ship, appl = 'dojo', success, fail) {
+  bind(path, method, ship = this.ship, appl = 'herm', success, fail) {
     this.bindPaths = _.uniq([...this.bindPaths, path]);
 
     window.subscriptionId = this.channel.subscribe(ship, appl, path,
@@ -29,8 +28,8 @@ export default class Api {
       });
   }
 
-  soto(data) {
-    return this.action('dojo', 'sole-action', { id: this.dojoId, dat: data });
+  belt(belt) {
+    return this.action('herm', 'belt', belt);
   }
 
   action(appl, mark, data) {

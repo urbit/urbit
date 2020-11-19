@@ -301,7 +301,7 @@
           [%nodes nodes]
       ==
     ::
-    ++  nodes  (op ;~(pfix net (more net dem)) node)
+    ++  nodes  (op ;~(pfix fas (more fas dem)) node)
     ::
     ++  node
       %-  ot
@@ -378,7 +378,7 @@
           [%index index]          
       ==
     ::
-    ++  index  (su ;~(pfix net (more net dem)))
+    ++  index  (su ;~(pfix fas (more fas dem)))
     ::
     ++  add-tag
       %-  ot
