@@ -182,6 +182,7 @@
 ++  send-status
   |=  =status  ^-  card
   [%give %fact ~[/clients] %btc-provider-status !>(status)]
+::
 ++  send-update
   |=  =update
   ^-  card
