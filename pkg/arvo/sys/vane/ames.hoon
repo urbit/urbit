@@ -169,7 +169,7 @@
   $:  =dyad
       sndr-tick=@ubB
       rcvr-tick=@ubB
-      origin=(unit @uxorigin)
+      origin=(unit @uxaddress)
       content=@uxcontent
   ==
 ::  $open-packet: unencrypted packet payload, for comet self-attestation
@@ -1029,16 +1029,21 @@
   ::    Note that this performs all forwarding requests without
   ::    filtering.  Any protection against DDoS amplification will be
   ::    provided by Vere.
-  ::    TODO: flat
   ::
   ++  on-hear-forward
+    ~/  %on-hear-forward
     |=  [=lane =packet ok=?]
     ^+  event-core
     %-  %^  trace  for.veb  sndr.packet
         |.("forward: {<sndr.packet>} -> {<rcvr.packet>}")
     ::  set .origin.packet if it doesn't already have one, re-encode, and send
     ::
-    =?  origin.packet  ?=(~ origin.packet)  `lane
+    =?    origin.packet
+        &(?=(~ origin.packet) !=(%czar (clan:title sndr.packet)))
+      ?>  ?=(%| -.lane)
+      ?>  (lte (met 3 p.lane) 6)
+      `p.lane
+    ::
     =/  =blob  (encode-packet packet)
     (send-blob & rcvr.packet blob)
   ::  +on-hear-open: handle receipt of plaintext comet self-attestation
