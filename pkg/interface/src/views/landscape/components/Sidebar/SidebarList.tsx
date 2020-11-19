@@ -23,8 +23,8 @@ function sidebarSort(
     const aAppName = aAssoc?.["app-name"];
     const bAppName = bAssoc?.["app-name"];
 
-    const aUpdated = apps[aAppName].lastUpdated(a);
-    const bUpdated = apps[bAppName].lastUpdated(b);
+    const aUpdated = apps[aAppName]?.lastUpdated(a) || 0;
+    const bUpdated = apps[bAppName]?.lastUpdated(b) || 0;
 
     return bUpdated - aUpdated || alphabetical(a, b);
   };
