@@ -475,22 +475,32 @@ _n_nock_on(u3_noun bus, u3_noun fol)
 #define SLIB 70
 #define SLIS 71
 #define SAVE 72
+// dynamic
+#define HILT_FORE_BYTE  73
+#define HILT_FORE_SHORT 74
+#define HINT_FORE_BYTE  75
+#define HINT_FORE_SHORT 76
+
+#define HILT_HIND_KEEP 77
+#define HILT_HIND_LOSE 78
+#define HINT_HIND_KEEP 79
+#define HINT_HIND_LOSE 80
 // nock 10
-#define MUTH 73
-#define KUTH 74
-#define MUTT 75
-#define KUTT 76
-#define MUSM 77
-#define KUSM 78
-#define MUTB 79
-#define MUTS 80
-#define MITB 81
-#define MITS 82
-#define KUTB 83
-#define KUTS 84
-#define KITB 85
-#define KITS 86
-#define LAST 87
+#define MUTH 81
+#define KUTH 82
+#define MUTT 83
+#define KUTT 84
+#define MUSM 85
+#define KUSM 86
+#define MUTB 87
+#define MUTS 88
+#define MITB 89
+#define MITS 90
+#define KUTB 91
+#define KUTS 92
+#define KITB 93
+#define KITS 94
+#define LAST 95
 
 /* _n_arg(): return the size (in bytes) of an opcode's argument
  */
@@ -605,6 +615,7 @@ _n_melt(u3_noun ops, c3_w* byc_w, c3_w* cal_w,
         case SAST: case SALT: case KICS: case TICS:
         case FISK: case FISL: case SUSH: case SANS:
         case LISL: case LISK: case SKIS: case SLIS:
+        case HILT_FORE_SHORT: case HINT_FORE_SHORT:
           c3_assert(0); //overflows
           break;
 
@@ -625,6 +636,7 @@ _n_melt(u3_noun ops, c3_w* byc_w, c3_w* cal_w,
         case BUSH: case FIBK: case FIBL:
         case SANB: case LIBL: case LIBK:
         case KITB: case MITB:
+        case HILT_FORE_BYTE: case HINT_FORE_BYTE:
           a_w = (*lit_w)++;
           if ( a_w <= 0xFF ) {
             siz_y[i_w] = 2;
@@ -856,6 +868,7 @@ _n_prog_asm(u3_noun ops, u3n_prog* pog_u, u3_noun sip)
         case LIBK: case LIBL:
         case BUSH: case SANB:
         case KITB: case MITB:
+        case HILT_FORE_BYTE: case HINT_FORE_BYTE:
           _n_prog_asm_inx(buf_y, &i_w, lit_s, cod);
           pog_u->lit_u.non[lit_s++] = u3k(u3t(op));
           break;
@@ -963,6 +976,7 @@ static char* opcode_names[] = {
   "balt", "salt",
   "skib", "skis", "slib", "slis",
   "save",
+  "hilt_fore", "hilt_hind", "hint_fore", "hint_hind",
   "muth", "kuth", "mutt", "kutt",
   "musm", "kusm",
   "mutb", "muts", "mitb", "mits",
@@ -995,21 +1009,32 @@ static c3_w _n_comp(u3_noun*, u3_noun, c3_o, c3_o);
 static c3_w
 _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
 {
+  c3_w tot_w = 0;
+
   if ( c3n == u3du(hif) ) {
-    // no currently recognized static hints
-    return _n_comp(ops, nef, los_o, tel_o);
+    u3_noun fen = u3_nul;
+    c3_w  nef_w = _n_comp(&fen, nef, los_o, tel_o);
+
+    ++tot_w; _n_emit(ops, u3nc(HILT_FORE_BYTE, u3nc(u3k(hif), u3k(nef))));  // overflows
+    ++tot_w; _n_emit(ops, u3nc(SBIN, nef_w + 1));
+    tot_w += nef_w; _n_apen(ops, fen);
+    ++tot_w; _n_emit(ops, ( c3y == los_o ) ? HILT_HIND_LOSE : HILT_HIND_KEEP);  // overflows
   }
   else {
-    c3_w tot_w = 0;
     u3_noun zep, hod;
     u3x_cell(hif, &zep, &hod);
 
     switch ( zep ) {
-      default:
+      default: {
+        u3_noun fen = u3_nul;
+        c3_w  nef_w = _n_comp(&fen, nef, los_o, tel_o);
+
         tot_w += _n_comp(ops, hod, c3n, c3n);
-        ++tot_w; _n_emit(ops, TOSS);
-        tot_w += _n_comp(ops, nef, los_o, tel_o);
-        break;
+        ++tot_w; _n_emit(ops, u3nc(HINT_FORE_BYTE, u3nc(u3k(zep), u3k(nef))));  // overflows
+        ++tot_w; _n_emit(ops, u3nc(SBIN, nef_w + 1));
+        tot_w += nef_w; _n_apen(ops, fen);
+        ++tot_w; _n_emit(ops, ( c3y == los_o ) ? HINT_HIND_LOSE : HINT_HIND_KEEP);  // overflows
+      } break;
 
       case c3__hunk:
       case c3__lose:
@@ -1062,8 +1087,9 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
         break;
       }
     }
-    return tot_w;
   }
+
+  return tot_w;
 }
 
 static c3_t
@@ -1617,6 +1643,40 @@ u3n_find(u3_noun key, u3_noun fol)
   return pog_p;
 }
 
+static c3_o
+_n_hilt_fore(u3_noun lit, u3_noun bus, u3_noun* out) // transfer, retain, n/a
+{
+  fprintf(stderr, "hilt_fore\r\n");
+  u3z(lit);
+  *out = u3_nul;
+  return c3y;
+}
+
+static void
+_n_hilt_hind(u3_noun tok, u3_noun pro)  // transfer, retain
+{
+  fprintf(stderr, "hilt_hind\r\n");
+  c3_assert( u3_nul == tok );
+  u3z(tok);
+}
+
+static c3_o
+_n_hint_fore(u3_noun lit, u3_noun bus, u3_noun* clu) // transfer, retain, transfer
+{
+  fprintf(stderr, "hint_fore\r\n");
+  u3z(lit); u3z(*clu);
+  *clu = u3_nul;
+  return c3y;
+}
+
+static void
+_n_hint_hind(u3_noun tok, u3_noun pro)  // transfer, retain
+{
+  fprintf(stderr, "hint_hind\r\n");
+  c3_assert( u3_nul == tok );
+  u3z(tok);
+}
+
 /* _n_kick(): stop tracing noc and kick a u3j_site.
  */
 static u3_weak
@@ -1680,6 +1740,10 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
     &&do_balt, &&do_salt,
     &&do_skib, &&do_skis, &&do_slib, &&do_slis,
     &&do_save,
+    &&do_hilt_fore_byte, &&do_hilt_fore_short,
+    &&do_hint_fore_byte, &&do_hint_fore_short,
+    &&do_hilt_hind_keep, &&do_hilt_hind_lose,
+    &&do_hint_hind_keep, &&do_hint_hind_lose,
     &&do_muth, &&do_kuth, &&do_mutt, &&do_kutt,
     &&do_musm, &&do_kusm,
     &&do_mutb, &&do_muts, &&do_mitb, &&do_mits,
@@ -2268,6 +2332,67 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
       }
       *top = x;
       u3z(o);
+      BURN();
+
+    do_hilt_fore_byte:
+      x = pog[ip_w++];
+      goto hilt_fore_in;
+
+    do_hilt_fore_short:
+      x = _n_resh(pog, &ip_w);
+    hilt_fore_in:
+      x   = u3k(pog_u->lit_u.non[x]);
+      top = _n_peek(off);   // bus
+      x   = _n_hilt_fore(x, *top, &o);
+      _n_push(mov, off, o);
+      _n_swap(mov, off);    // bus
+      _n_push(mov, off, x); // shortcircuit if c3n
+      BURN();
+
+    do_hint_fore_byte:
+      x = pog[ip_w++];
+      goto hint_fore_in;
+
+    do_hint_fore_short:
+      x = _n_resh(pog, &ip_w);
+    hint_fore_in:
+      x   = u3k(pog_u->lit_u.non[x]);
+      o   = _n_pep(mov, off); // clu
+      top = _n_peek(off);     // bus
+      x   = _n_hint_fore(x, *top, &o);
+      _n_push(mov, off, o);
+      _n_swap(mov, off);      // bus
+      _n_push(mov, off, x);
+      BURN();
+
+    do_hilt_hind_keep:          //  [pro bus tok]
+      x   = _n_pep(mov, off);   //  [bus tok]
+      _n_swap(mov, off);        //  [tok bus]
+      o   = _n_pep(mov, off);   //  [bus]
+      _n_push(mov, off, x);     //  [pro bus]
+      _n_hilt_hind(o, x);
+      BURN();
+
+    do_hilt_hind_lose:          //  [pro tok]
+      top = _n_swap(mov, off);  //  [tok pro]
+      o   = _n_pep(mov, off);   //  [pro]
+      top = _n_peek(off);
+      _n_hilt_hind(o, *top);
+      BURN();
+
+    do_hint_hind_keep:          //  [pro bus tok]
+      x   = _n_pep(mov, off);   //  [bus tok]
+      _n_swap(mov, off);        //  [tok bus]
+      o   = _n_pep(mov, off);   //  [bus]
+      _n_push(mov, off, x);     //  [pro bus]
+      _n_hint_hind(o, x);
+      BURN();
+
+    do_hint_hind_lose:          //  [pro tok]
+      top = _n_swap(mov, off);  //  [tok pro]
+      o   = _n_pep(mov, off);   //  [pro]
+      top = _n_peek(off);
+      _n_hint_hind(o, *top);
       BURN();
 
     do_kuth:
