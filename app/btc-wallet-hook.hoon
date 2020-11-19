@@ -139,9 +139,10 @@
     ~[(poke-wallet-store / [%generate-address u.def-wallet %0 `[src.bowl value.act]])]
     ::
       %pay-address
+    :: we get passed address/payer/value
+    ::  TODO: ask wallet to generate txbu for poym
     :: TODO: update poym
     :: send tx request out for poym
-    ::  TODO: ask wallet to generate txbu for poym
     `state
     ::
       %force-retry
@@ -201,7 +202,7 @@
   ^-  (quip card _state)
   ?-  -.upd
       %generate-address
-    :: TODO if there's meta, add to piym
+    ::  if no meta (payer/value), just prints address
     ::  moons go in a jar with parent as the key
     ::  this will let me implement moon rate-limiting
     ::

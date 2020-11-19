@@ -90,18 +90,22 @@
     --
   --
 ::  sut: door to select utxos
-::    targ: target output amount, not including fees
-::    feyb: fee in sats per byte
-::    outs: number of outputs
 ::
 ++  sut
-|_  [w=walt eny=@uvJ targ=sats feyb=sats outs=@]
+|_  [w=walt eny=@uvJ =feyb txos=(list txo)]
   ++  meta-weight  10
   ++  output-weight  31
+  ::
+  ++  target-value
+    ^-  sats
+    %+  roll  (turn txos |=(=txo value.txo))
+    |=([a=sats b=sats] (add a b))
+  ::
   ++  base-weight
     ^-  vbytes
     %+  add  meta-weight
-    (mul outs output-weight)
+    (mul (lent txos) output-weight)
+  ::
   ++  input-weight
     ^-  vbytes
     ?.  ?=(%bip84 bipt.w)
@@ -121,13 +125,22 @@
     =/  cost  (mul input-weight feyb)
     ?:  (lte val cost)  0
     (sub val cost)
-  ::  Uses naive random selection. Should switch to branch-and-bound later.
+  ::  Uses naive random selection. Should switch to branch-and-bound later. 
+  ::
+  ++  inputs-to-txbu
+    |=  is=(list input)  ^-  txbu
+    :_  txos
+    %+  turn  is
+    |=(i=input [utxo.i ~ [bipt.w chyg.i idx.i]])
   ::
   ++  select-utxos
-    |^  ^-  (unit [=vbytes (list input)])
-    %-  single-random-draw
-    %-  zing
-    (turn ~(val by wach.w) to-inputs)
+    |^  ^-  (unit [=vbytes =txbu])
+    =/  uis=(unit (list input))
+      %-  single-random-draw
+      %-  zing
+      (turn ~(val by wach.w) to-inputs)
+    ?~  uis  ~
+    `[(total-vbytes u.uis) (inputs-to-txbu u.uis)]
     ++  to-inputs
       |=  =addi  ^-  (list input)
       %+  turn  ~(tap in utxos.addi)
@@ -139,18 +152,17 @@
   ::
   ++  single-random-draw
     |=  is=(list input)
-    ^-  (unit [=vbytes (list input)])
+    ^-  (unit (list input))
     =/  rng  ~(. og eny)
-    =/  target  (add targ (mul feyb base-weight))     ::  add base fees to target
+    =/  target  (add target-value (mul feyb base-weight))   ::  add base fees to target
     =|  [select=(list input) total=sats:btc]
     |-  ?:  =(~ is)  ~
     =^  n  rng  (rads:rng (lent is))
     =/  i=input  (snag n is)
     =/  net-val  (net-value value.utxo.i)
-    =?  select  (gth net-val 0)  [i select]           ::  select if net-value > 0
+    =?  select  (gth net-val 0)  [i select]                 ::  select if net-value > 0
     =/  new-total  (add total net-val)
-    ?:  (gte new-total target)
-      `[(total-vbytes select) select]
+    ?:  (gte new-total target)  `select
     %=  $
         is  (oust [n 1] is)
         total  new-total

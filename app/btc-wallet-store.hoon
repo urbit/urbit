@@ -115,11 +115,21 @@
       %generate-address
     =/  uw=(unit walt)  (~(get by walts) xpub.act)
     ?~  uw
-      ~|("btc-wallet-store, %generate-address: non-existent wallet" !!)
+      ~|("btc-wallet-store: non-existent xpub" !!)
     =/  [a=address:btc w=walt]
       ~(gen-address wad u.uw chyg.act)
     :_  state(walts (~(put by walts) xpub.act w))
     ~[(send-update [%generate-address a meta.act])]
+    ::
+      %generate-txbu
+    =/  uw=(unit walt)  (~(get by walts) xpub.act)
+    ?~  uw  ~&(>>> "btc-wallet-store: non-existent xpub" `state)
+    =/  r=(unit [=vbytes:btc =txbu])
+      %~  select-utxos  sut
+      [u.uw +>.act]
+    ?~  r  ~&(>>> "btc-wallet-store: insufficient balance" `state)
+    :_  state
+    ~[(send-update [%generate-txbu xpub.act u.r])]
   ==
 ::  wallet scan algorithm:
 ::  Initiate a batch for each chyg, with max-gap idxs in it
