@@ -72,7 +72,8 @@ export default function Inbox(props: {
     f.groupBy<DatedTimebox>(([date]) =>
       moment(daToUnix(date)).format("DDMMYYYY")
     ),
-    f.values
+    f.values,
+    f.reverse
   )(notifications);
 
   useEffect(() => {
