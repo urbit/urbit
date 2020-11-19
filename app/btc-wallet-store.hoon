@@ -126,7 +126,7 @@
     ?~  uw  ~&(>>> "btc-wallet-store: non-existent xpub" `state)
     =/  r=(unit [=vbytes:btc =txbu])
       %~  select-utxos  sut
-      [u.uw +>.act]
+      [u.uw eny.bowl +>.act]
     ?~  r  ~&(>>> "btc-wallet-store: insufficient balance" `state)
     :_  state
     ~[(send-update [%generate-txbu xpub.act u.r])]
