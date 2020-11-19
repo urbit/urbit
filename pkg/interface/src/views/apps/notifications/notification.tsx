@@ -92,7 +92,7 @@ function NotificationWrapper(props: {
 
   const changeMuteDesc = isMuted ? "Unmute" : "Mute";
   return (
-    <Row alignItems="top" justifyContent="space-between">
+    <Row flexShrink={0} alignItems="top" justifyContent="space-between">
       {children}
       <Row gapX="2" p="2" pt='3' alignItems="top">
         <StatelessAsyncAction name={changeMuteDesc} onClick={onChangeMute} backgroundColor="transparent">
