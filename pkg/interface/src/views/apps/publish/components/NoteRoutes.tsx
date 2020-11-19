@@ -33,17 +33,20 @@ export function NoteRoutes(props: NoteRoutesProps & RouteComponentProps) {
   return (
     <Switch>
       <Route
+        exact
         path={relativePath("/edit")}
         render={(routeProps) => <EditPost {...routeProps} {...props} />}
       />
       <Route
-        path={baseUrl}
-        exact
-        render={(routeProps) => {
-          return <Note baseUrl={baseUrl} {...routeProps} {...props} rootUrl={rootUrl} />;
-        }}
+        path={relativePath("/:commentId?")}
+        render={(routeProps) => 
+          <Note
+            baseUrl={baseUrl}
+            {...props}
+            {...routeProps}
+            rootUrl={rootUrl} />
+        }
       />
-
     </Switch>
   );
 }
