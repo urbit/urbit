@@ -6,10 +6,53 @@ import {makeResource, resourceFromPath} from '../lib/group';
 import {GroupPolicy, Enc, Post, NodeMap, Content} from '~/types';
 import { numToUd, unixToDa } from '~/logic/lib/util';
 
-export const createPost = (contents: Content[], parentIndex: string = '') => {
+export const createBlankNodeWithChildPost = (
+  parentIndex: string = '',
+  childIndex: string = '',
+  contents: Content[]
+) => {
+  const date = unixToDa(Date.now()).toString();
+  const nodeIndex = parentIndex + '/' + date;
+
+  const childGraph = {};
+  childGraph[childIndex] = {
+    post: {
+      author: `~${window.ship}`,
+      index: nodeIndex + '/' + childIndex,
+      'time-sent': Date.now(),
+      contents,
+      hash: null,
+      signatures: []
+    },
+    children: { empty: null }
+  };
+
+  return {
+    post: {
+      author: `~${window.ship}`,
+      index: nodeIndex,
+      'time-sent': Date.now(),
+      contents: [],
+      hash: null,
+      signatures: []
+    },
+    children: {
+      graph: childGraph
+    }
+  };  
+};
+
+export const createPost = (
+  contents: Content[],
+  parentIndex: string = '',
+  childIndex:string = 'DATE_PLACEHOLDER'
+) => {
+  if (childIndex === 'DATE_PLACEHOLDER') {
+    childIndex = unixToDa(Date.now()).toString();
+  }
   return {
     author: `~${window.ship}`,
-    index: parentIndex + '/' + unixToDa(Date.now()).toString(),
+    index: parentIndex + '/' + childIndex,
     'time-sent': Date.now(),
     contents,
     hash: null,
@@ -141,6 +184,19 @@ export default class GraphApi extends BaseApi<StoreState> {
       post,
       children: { empty: null }
     };
+
+    return this.hookAction(ship, {
+      'add-nodes': {
+        resource,
+        nodes
+      }
+    });
+  }
+
+  addNode(ship: Patp, name: string, node: Object) {
+    let nodes = {};
+    const resource = { ship, name };
+    nodes[node.post.index] = node;
 
     return this.hookAction(ship, {
       'add-nodes': {
