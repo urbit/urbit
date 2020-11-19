@@ -475,16 +475,16 @@ _n_nock_on(u3_noun bus, u3_noun fol)
 #define SLIB 70
 #define SLIS 71
 #define SAVE 72
-// dynamic
-#define HILT_FORE_BYTE  73
-#define HILT_FORE_SHORT 74
-#define HINT_FORE_BYTE  75
-#define HINT_FORE_SHORT 76
-
-#define HILT_HIND_KEEP 77
-#define HILT_HIND_LOSE 78
-#define HINT_HIND_KEEP 79
-#define HINT_HIND_LOSE 80
+// before formula
+#define HILB 73  //  atomic,    byte
+#define HILS 74  //  atomic,    short
+#define HINB 75  //  arbitrary, byte
+#define HINS 76  //  arbitrary, short
+// after formula
+#define HILK 77  //  atomic,    keep
+#define HILL 78  //  atomic,    lose
+#define HINK 79  //  arbitrary, keep
+#define HINL 80  //  arbitrary, lose
 // nock 10
 #define MUTH 81
 #define KUTH 82
@@ -615,7 +615,7 @@ _n_melt(u3_noun ops, c3_w* byc_w, c3_w* cal_w,
         case SAST: case SALT: case KICS: case TICS:
         case FISK: case FISL: case SUSH: case SANS:
         case LISL: case LISK: case SKIS: case SLIS:
-        case HILT_FORE_SHORT: case HINT_FORE_SHORT:
+        case HILS: case HINS:
           c3_assert(0); //overflows
           break;
 
@@ -636,7 +636,7 @@ _n_melt(u3_noun ops, c3_w* byc_w, c3_w* cal_w,
         case BUSH: case FIBK: case FIBL:
         case SANB: case LIBL: case LIBK:
         case KITB: case MITB:
-        case HILT_FORE_BYTE: case HINT_FORE_BYTE:
+        case HILB: case HINB:
           a_w = (*lit_w)++;
           if ( a_w <= 0xFF ) {
             siz_y[i_w] = 2;
@@ -868,7 +868,7 @@ _n_prog_asm(u3_noun ops, u3n_prog* pog_u, u3_noun sip)
         case LIBK: case LIBL:
         case BUSH: case SANB:
         case KITB: case MITB:
-        case HILT_FORE_BYTE: case HINT_FORE_BYTE:
+        case HILB: case HINB:
           _n_prog_asm_inx(buf_y, &i_w, lit_s, cod);
           pog_u->lit_u.non[lit_s++] = u3k(u3t(op));
           break;
@@ -976,7 +976,8 @@ static char* opcode_names[] = {
   "balt", "salt",
   "skib", "skis", "slib", "slis",
   "save",
-  "hilt_fore", "hilt_hind", "hint_fore", "hint_hind",
+  "hilb", "hils", "hinb", "hins"
+  "hilk", "hill", "hink", "hinl"
   "muth", "kuth", "mutt", "kutt",
   "musm", "kusm",
   "mutb", "muts", "mitb", "mits",
@@ -1012,13 +1013,28 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
   c3_w tot_w = 0;
 
   if ( c3n == u3du(hif) ) {
-    u3_noun fen = u3_nul;
-    c3_w  nef_w = _n_comp(&fen, nef, los_o, tel_o);
+    //  compile whitelisted atomic hints to dispatch protocol;
+    //  compute and drop all others;
+    //
+    switch ( hif ) {
+      default: {
+        return _n_comp(ops, nef, los_o, tel_o);
+      }
 
-    ++tot_w; _n_emit(ops, u3nc(HILT_FORE_BYTE, u3nc(u3k(hif), u3k(nef))));  // overflows
-    ++tot_w; _n_emit(ops, u3nc(SBIN, nef_w + 1));
-    tot_w += nef_w; _n_apen(ops, fen);
-    ++tot_w; _n_emit(ops, ( c3y == los_o ) ? HILT_HIND_LOSE : HILT_HIND_KEEP);  // overflows
+      //  no currently recognized static hints
+      //
+      case u3_none: {
+        u3_noun fen = u3_nul;
+        c3_w  nef_w = _n_comp(&fen, nef, los_o, tel_o);
+
+        //  HILB overflows to HILS
+        //
+        ++tot_w; _n_emit(ops, u3nc(HILB, u3nc(u3k(hif), u3k(nef))));
+        ++tot_w; _n_emit(ops, u3nc(SBIN, nef_w + 1));
+        tot_w += nef_w; _n_apen(ops, fen);
+        ++tot_w; _n_emit(ops, ( c3y == los_o ) ? HILL : HILK);
+      } break;
+    }
   }
   else {
     u3_noun zep, hod;
@@ -1026,14 +1042,31 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
 
     switch ( zep ) {
       default: {
-        u3_noun fen = u3_nul;
-        c3_w  nef_w = _n_comp(&fen, nef, los_o, tel_o);
+        //  compile whitelisted dynamic hints to dispatch protocol;
+        //  compute and drop all others;
+        //
+        switch ( zep ) {
+          default: {
+            tot_w += _n_comp(ops, hod, c3n, c3n);
+            ++tot_w; _n_emit(ops, TOSS);
+            tot_w += _n_comp(ops, nef, los_o, tel_o);
+          } break;
 
-        tot_w += _n_comp(ops, hod, c3n, c3n);
-        ++tot_w; _n_emit(ops, u3nc(HINT_FORE_BYTE, u3nc(u3k(zep), u3k(nef))));  // overflows
-        ++tot_w; _n_emit(ops, u3nc(SBIN, nef_w + 1));
-        tot_w += nef_w; _n_apen(ops, fen);
-        ++tot_w; _n_emit(ops, ( c3y == los_o ) ? HINT_HIND_LOSE : HINT_HIND_KEEP);  // overflows
+          //  no currently recognized dynamic hints
+          //
+          case u3_none: {
+            u3_noun fen = u3_nul;
+            c3_w  nef_w = _n_comp(&fen, nef, los_o, tel_o);
+
+            tot_w += _n_comp(ops, hod, c3n, c3n);
+            //  HINB overflows to HINS
+            //
+            ++tot_w; _n_emit(ops, u3nc(HINB, u3nc(u3k(zep), u3k(nef))));
+            ++tot_w; _n_emit(ops, u3nc(SBIN, nef_w + 1));
+            tot_w += nef_w; _n_apen(ops, fen);
+            ++tot_w; _n_emit(ops, ( c3y == los_o ) ? HINL : HINK);
+          } break;
+        }
       } break;
 
       case c3__hunk:
@@ -1643,36 +1676,57 @@ u3n_find(u3_noun key, u3_noun fol)
   return pog_p;
 }
 
+/* _n_hilt_fore(): literal (atomic) dynamic hint, before formula evaluation.
+**            lit: hint atom. TRANSFER
+**            bus: subject. RETAIN
+**            out: token for _n_hilt_hind();
+**                 conventually, [lit] or [lit data]. ~ if unused.
+**
+**                 any hints herein must be whitelisted in _n_burn().
+*/
 static c3_o
-_n_hilt_fore(u3_noun lit, u3_noun bus, u3_noun* out) // transfer, retain, n/a
+_n_hilt_fore(u3_atom lit, u3_noun bus, u3_noun* out) // transfer, retain, n/a
 {
-  fprintf(stderr, "hilt_fore\r\n");
   u3z(lit);
   *out = u3_nul;
   return c3y;
 }
 
+/* _n_hilt_hind(): literal (atomic) dynamic hint, after formula evaluation.
+**            tok: token from _n_hilt_fore(). TRANSFER
+**            pro: product of formula evaluation. RETAIN
+*/
 static void
 _n_hilt_hind(u3_noun tok, u3_noun pro)  // transfer, retain
 {
-  fprintf(stderr, "hilt_hind\r\n");
   c3_assert( u3_nul == tok );
   u3z(tok);
 }
 
+/* _n_hint_fore(): arbitrary dynamic hint, before formula evaluation
+**            hin: [hint-atom, formula]. TRANSFER
+**            bus: subject. RETAIN
+**            clu: product of the hint-formula. TRANSFER
+**                 also, token for _n_hint_hind();
+**                 conventually, [hint-atom] or [hint-atom data]. ~ if unused.
+**
+**                 any hints herein must be whitelisted in _n_burn().
+*/
 static c3_o
-_n_hint_fore(u3_noun lit, u3_noun bus, u3_noun* clu) // transfer, retain, transfer
+_n_hint_fore(u3_cell hin, u3_noun bus, u3_noun* clu)
 {
-  fprintf(stderr, "hint_fore\r\n");
-  u3z(lit); u3z(*clu);
+  u3z(hin); u3z(*clu);
   *clu = u3_nul;
   return c3y;
 }
 
+/* _n_hint_hind(): arbitrary dynamic hint, after formula evaluation.
+**            tok: token from _n_hint_fore(). TRANSFER
+**            pro: product of formula evaluation. RETAIN
+*/
 static void
-_n_hint_hind(u3_noun tok, u3_noun pro)  // transfer, retain
+_n_hint_hind(u3_noun tok, u3_noun pro)
 {
-  fprintf(stderr, "hint_hind\r\n");
   c3_assert( u3_nul == tok );
   u3z(tok);
 }
@@ -1740,10 +1794,8 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
     &&do_balt, &&do_salt,
     &&do_skib, &&do_skis, &&do_slib, &&do_slis,
     &&do_save,
-    &&do_hilt_fore_byte, &&do_hilt_fore_short,
-    &&do_hint_fore_byte, &&do_hint_fore_short,
-    &&do_hilt_hind_keep, &&do_hilt_hind_lose,
-    &&do_hint_hind_keep, &&do_hint_hind_lose,
+    &&do_hilb, &&do_hils, &&do_hinb, &&do_hins,
+    &&do_hilk, &&do_hill, &&do_hink, &&do_hinl,
     &&do_muth, &&do_kuth, &&do_mutt, &&do_kutt,
     &&do_musm, &&do_kusm,
     &&do_mutb, &&do_muts, &&do_mitb, &&do_mits,
@@ -2334,11 +2386,11 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
       u3z(o);
       BURN();
 
-    do_hilt_fore_byte:
+    do_hilb:
       x = pog[ip_w++];
       goto hilt_fore_in;
 
-    do_hilt_fore_short:
+    do_hils:
       x = _n_resh(pog, &ip_w);
     hilt_fore_in:
       x   = u3k(pog_u->lit_u.non[x]);
@@ -2349,23 +2401,23 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
       _n_push(mov, off, x); // shortcircuit if c3n
       BURN();
 
-    do_hint_fore_byte:
+    do_hinb:
       x = pog[ip_w++];
       goto hint_fore_in;
 
-    do_hint_fore_short:
+    do_hins:
       x = _n_resh(pog, &ip_w);
-    hint_fore_in:
+    hint_fore_in:               //  [clu bus]
       x   = u3k(pog_u->lit_u.non[x]);
-      o   = _n_pep(mov, off); // clu
-      top = _n_peek(off);     // bus
+      o   = _n_pep(mov, off);   //  [bus]
+      top = _n_peek(off);
       x   = _n_hint_fore(x, *top, &o);
-      _n_push(mov, off, o);
-      _n_swap(mov, off);      // bus
-      _n_push(mov, off, x);
+      _n_push(mov, off, o);     //  [tok bus]
+      _n_swap(mov, off);        //  [bus tok]
+      _n_push(mov, off, x);     //  [kip bus tok]
       BURN();
 
-    do_hilt_hind_keep:          //  [pro bus tok]
+    do_hilk:                    //  [pro bus tok]
       x   = _n_pep(mov, off);   //  [bus tok]
       _n_swap(mov, off);        //  [tok bus]
       o   = _n_pep(mov, off);   //  [bus]
@@ -2373,14 +2425,14 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
       _n_hilt_hind(o, x);
       BURN();
 
-    do_hilt_hind_lose:          //  [pro tok]
+    do_hill:                    //  [pro tok]
       top = _n_swap(mov, off);  //  [tok pro]
       o   = _n_pep(mov, off);   //  [pro]
       top = _n_peek(off);
       _n_hilt_hind(o, *top);
       BURN();
 
-    do_hint_hind_keep:          //  [pro bus tok]
+    do_hink:                    //  [pro bus tok]
       x   = _n_pep(mov, off);   //  [bus tok]
       _n_swap(mov, off);        //  [tok bus]
       o   = _n_pep(mov, off);   //  [bus]
@@ -2388,7 +2440,7 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
       _n_hint_hind(o, x);
       BURN();
 
-    do_hint_hind_lose:          //  [pro tok]
+    do_hinl:                    //  [pro tok]
       top = _n_swap(mov, off);  //  [tok pro]
       o   = _n_pep(mov, off);   //  [pro]
       top = _n_peek(off);
