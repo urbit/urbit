@@ -1485,6 +1485,19 @@ _n_rewo(c3_y* buf, c3_w* ip_w)
   return one | (two << 8) | (tre << 16) | (qua << 24);
 }
 
+/* _n_swap(): swap two items on the top of the stack, return pointer to top
+ */
+static inline u3_noun*
+_n_swap(c3_ys mov, c3_ys off)
+{
+  u3_noun* top = _n_peek(off);
+  u3_noun*  up = _n_peet(mov, off);
+  u3_noun  tmp = *up;
+  *up  = *top;
+  *top = tmp;
+  return top;
+}
+
 #ifdef VERBOSE_BYTECODE
 /* _n_print_byc(): print bytecode. used for debugging.
  */
@@ -1602,19 +1615,6 @@ u3n_find(u3_noun key, u3_noun fol)
   pog_p = u3of(u3n_prog, _n_find(key, fol));
   u3t_off(noc_o);
   return pog_p;
-}
-
-/* _n_swap(): swap two items on the top of the stack, return pointer to top
- */
-static inline u3_noun*
-_n_swap(c3_ys mov, c3_ys off)
-{
-  u3_noun* top = _n_peek(off);
-  u3_noun* up   = _n_peet(mov, off);
-  u3_noun  tmp  = *up;
-  *up  = *top;
-  *top = tmp;
-  return top;
 }
 
 /* _n_kick(): stop tracing noc and kick a u3j_site.
