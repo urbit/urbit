@@ -4,12 +4,15 @@ import _ from "lodash";
 import { Icon, Col, Row, Box, Text, Anchor } from "@tlon/indigo-react";
 import moment from "moment";
 import { Notifications, Rolodex, Timebox, IndexedNotification, Groups } from "~/types";
-import { MOMENT_CALENDAR_DATE, daToUnix } from "~/logic/lib/util";
+import { MOMENT_CALENDAR_DATE, daToUnix, resourceAsPath } from "~/logic/lib/util";
 import { BigInteger } from "big-integer";
 import GlobalApi from "~/logic/api/global";
 import { Notification } from "./notification";
 import { Associations } from "~/types";
 import { cite } from '~/logic/lib/util';
+import {useWaitForProps} from "~/logic/lib/useWaitForProps";
+import {useHistory} from "react-router-dom";
+import {StatelessAsyncAction} from "~/views/components/StatelessAsyncAction";
 
 type DatedTimebox = [BigInteger, Timebox];
 
@@ -44,6 +47,8 @@ export default function Inbox(props: {
   invites: any;
 }) {
   const { api, associations, invites } = props;
+  const waiter = useWaitForProps(props)
+  const history = useHistory();
   useEffect(() => {
     let seen = false;
     setTimeout(() => {
@@ -70,12 +75,17 @@ export default function Inbox(props: {
     f.values
   )(notifications);
 
+  useEffect(() => {
+    api.hark.getMore(props.showArchive);
+  }, [props.showArchive]);
+
   const onScroll = useCallback((e) => {
     let container = e.target;
-    if(!props.showArchive && (container.scrollHeight - container.scrollTop === container.clientHeight)) {
-      api.hark.getMore();
+    const { scrollHeight, scrollTop, clientHeight } = container;
+    if((scrollHeight - scrollTop - clientHeight) < 20) {
+      api.hark.getMore(props.showArchive);
     }
-  }, [api]);
+  }, [props.showArchive]);
 
   const incomingGroups = Object.values(invites?.['contacts'] || {});
 
@@ -83,43 +93,49 @@ export default function Inbox(props: {
     return Object.keys(object).find(key => object[key] === value);
   };
 
-  const acceptInvite = (invite) => {
+  const acceptInvite = async (invite) => {
     const resource = {
       ship: `~${invite.resource.ship}`,
       name: invite.resource.name
     };
-    return api.contacts.join(resource).then(() => {
-      api.invite.accept('contacts', getKeyByValue(invites['contacts'], invite));
-    });
+    await api.contacts.join(resource);
+    await api.invite.accept('contacts', getKeyByValue(invites['contacts'], invite));
+    const path = resourceAsPath(invite.resource)
+    await waiter(p => path in p.associations?.contacts);
+
+    history.push(`/~landscape${path}`);
   };
 
   return (
-    <Col onScroll={onScroll} overflowY="auto" flexGrow="1" minHeight='0'>
+    <Col onScroll={onScroll} overflowY="auto" height="100%" minHeight='0'>
       {incomingGroups.map((invite) => (
         <Box
           bg='white'
           p='3'
           fontSize='0'>
-          <Text display='block' pb='2' gray>{cite(invite.resource.ship)} invited you to <Text fontWeight='500'>{invite.resource.name}</Text></Text>
+          <Text display='block' pb='2' gray><Text mono>{cite(invite.resource.ship)}</Text> invited you to <Text fontWeight='500'>{invite.resource.name}</Text></Text>
           <Box pt='3'>
-            <Text
+            <StatelessAsyncAction 
+              name="accept"
+              bg="transparent"
               onClick={() => acceptInvite(invite)}
-            color='blue'
-            mr='2'
-            cursor='pointer'>
+              color='blue'
+              mr='2'
+            >
               Accept
-            </Text>
-            <Text
+            </StatelessAsyncAction>
+            <StatelessAsyncAction
+              name="decline"
+              bg="transparent"
               color='red'
               onClick={() =>
                 api.invite.decline(
                   'contacts',
                   getKeyByValue(invites['contacts'], invite)
                 )
-              }
-              cursor='pointer'>
+              }>
                 Reject
-              </Text>
+              </StatelessAsyncAction>
           </Box>
         </Box>
       ))}

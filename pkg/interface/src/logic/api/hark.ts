@@ -61,6 +61,12 @@ export class HarkApi extends BaseApi<StoreState> {
     return this.actOnNotification('read', time, index);
   }
 
+  readIndex(index: NotifIndex) {
+    return this.harkAction({
+      'read-index': index
+    });
+  }
+
   unread(time: BigInteger, index: NotifIndex) {
     return this.actOnNotification('unread', time, index);
   }
@@ -149,14 +155,17 @@ export class HarkApi extends BaseApi<StoreState> {
     });
   }
 
-  getMore() {
-    const offset = this.store.state.notifications.size;
-    const count = 10;
-    return this.getSubset(offset,count);
+  getMore(archive = false) {
+    const offset = this.store.state[
+      archive ? 'archivedNotifications' : 'notifications'
+    ].size;
+    const count = 3;
+    return this.getSubset(offset,count, archive);
   }
 
-  async getSubset(offset:number, count:number) {
-    const data = await this.scry("hark-store", `/recent/${offset}/${count}`);
+  async getSubset(offset:number, count:number, isArchive: boolean) {
+    const where = isArchive ? 'archive' : 'inbox';
+    const data = await this.scry("hark-store", `/recent/${where}/${offset}/${count}`);
     this.store.handleEvent({ data });
   }
 

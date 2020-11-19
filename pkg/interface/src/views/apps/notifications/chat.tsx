@@ -40,11 +40,11 @@ export function ChatNotification(props: {
   const authors = _.map(contents, "author");
 
   const { chat, mention } = index;
-  const association = props.associations.chat[chat];
-  const groupPath = association["group-path"];
-  const appPath = association["app-path"];
+  const association = props?.associations?.chat?.[chat];
+  const groupPath = association?.["group-path"];
+  const appPath = index?.chat;
 
-  const group = props.groups[groupPath];
+  const group = props?.groups?.[groupPath];
 
   const desc = describeNotification(mention, contents.length);
   const groupContacts = props.contacts[groupPath] || {};
@@ -75,7 +75,10 @@ export function ChatNotification(props: {
       />
       <Col pb="3" pl="5">
         {_.map(_.take(contents, 5), (content, idx) => {
-          const workspace = group?.hidden ? '/home' : groupPath;
+          let workspace = groupPath;
+          if (workspace === undefined || group?.hidden) {
+            workspace = '/home';
+          }
           const to = `/~landscape${workspace}/resource/chat${appPath}?msg=${content.number}`;
           return (
             <Link key={idx} to={to}>
