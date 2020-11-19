@@ -1,10 +1,12 @@
-::  chat-view: sets up chat JS client, paginates data, and combines commands
+::  chat-view [landscape]:
+::
+::  sets up chat JS client, paginates data, and combines commands
 ::  into semantic actions for the UI
 ::
 /-  *permission-store,
     *permission-hook,
     *group,
-    *invite-store,
+    inv=invite-store,
     *metadata-store,
     group-hook,
     *permission-group-hook,
@@ -157,7 +159,7 @@
     (on-arvo:def wire sign-arvo)
   ::
   ++  on-save  !>(state)
-  ++  on-load  
+  ++  on-load
     |=  old-vase=vase
     ^-  (quip card _this)
     =/  old  ((soft state-0) q.old-vase)
@@ -211,15 +213,14 @@
   ?-  -.act
       %create
     ?>  ?=(^ app-path.act)
-    ?>  ?|  =(+:group-path.act app-path.act) 
-            =(~(tap in members.act) ~) 
+    ?>  ?|  =(+:group-path.act app-path.act)
+            =(~(tap in members.act) ~)
         ==
     ?^  (chat-scry app-path.act)
       ~&  %chat-already-exists
       ~
     %-  zing
-    :~  (create-chat app-path.act allow-history.act)
-        %-  create-group
+    :~  %-  create-group
         :*  group-path.act
             app-path.act
             policy.act
@@ -229,6 +230,7 @@
             managed.act
         ==
         (create-metadata title.act description.act group-path.act app-path.act)
+        (create-chat app-path.act allow-history.act)
     ==
   ::
       %delete
@@ -295,6 +297,7 @@
       ~[(chat-hook-poke %add-synced ship.act app-path.act ask-history.act)]
     =/  rid=resource
       (de-path:resource ship+app-path.act)
+    ?:  =(our.bol entity.rid)  ~
     =/  =cage
       :-  %group-update
       !>  ^-  action:group-store
@@ -404,13 +407,14 @@
     ^-  card
     =/  managed=?
       !=(ship+app-path group-path)
-    =/  =invite
+    =/  =invite:inv
       :*  our.bol
           ?:(managed %contact-hook %chat-hook)
-          ?:(managed group-path app-path)
+          (de-path:resource ?:(managed group-path ship+app-path))
           ship  ''
       ==
-    =/  act=invite-action  [%invite ?:(managed /contacts /chat) (shaf %msg-uid eny.bol) invite]
+    =/  act=action:inv
+      [%invite ?:(managed %contacts %chat) (shaf %msg-uid eny.bol) invite]
     [%pass / %agent [our.bol %invite-hook] %poke %invite-action !>(act)]
   ::
   ++  chat-scry
@@ -484,8 +488,8 @@
     (en-path:resource rid)
   ?>  ?=(^ path)
   :~  (group-pull-hook-poke %add ship rid)
-      (chat-hook-poke %add-synced ship t.path ask-history)
       (metadata-hook-poke %add-synced ship path)
+      (chat-hook-poke %add-synced ship t.path ask-history)
   ==
 ::
 ++  diff-chat-update

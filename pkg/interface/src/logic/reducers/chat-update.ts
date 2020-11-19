@@ -1,8 +1,9 @@
 import _ from 'lodash';
-import { StoreState } from '../../../store/type';
+import { StoreState } from '~/logic/store/type';
 import { Cage } from '~/types/cage';
 import { ChatUpdate } from '~/types/chat-update';
 import { ChatHookUpdate } from '~/types/chat-hook-update';
+import { Envelope } from "~/types/chat-update";
 
 type ChatState = Pick<StoreState, 'chatInitialized' | 'chatSynced' | 'inbox' | 'pendingMessages'>;
 
@@ -49,8 +50,11 @@ export default class ChatReducer<S extends ChatState> {
   messages(json: ChatUpdate, state: S) {
     const data = _.get(json, 'messages', false);
     if (data) {
-      state.inbox[data.path].envelopes =
-        state.inbox[data.path].envelopes.concat(data.envelopes);
+      state.inbox[data.path].envelopes = _.unionBy(
+        state.inbox[data.path].envelopes,
+        data.envelopes,
+        (envelope: Envelope) => envelope.uid
+      );
     }
   }
 
@@ -96,5 +100,6 @@ export default class ChatReducer<S extends ChatState> {
         mailbox.splice(index, 1);
       }
     }
+    state.pendingMessages.set(msg.path, mailbox);
   }
 }

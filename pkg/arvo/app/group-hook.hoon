@@ -1,4 +1,6 @@
-::  group-hook: allow syncing group data from foreign paths to local paths
+::  group-hook [landscape]:
+::
+::  allow syncing group data from foreign paths to local paths
 ::
 /-  *group, hook=group-hook, *invite-store
 /+  default-agent, verb, dbug, store=group-store, grpl=group, pull-hook, push-hook, resource
@@ -58,7 +60,7 @@
     :: ignore duplicate publish groups
     ?:  =(4 (lent path))
       ~&  "ignoring: {<path>}"
-      ~ 
+      ~
     =/  pax=^path
       ?:  =('~' i.path)
         t.path

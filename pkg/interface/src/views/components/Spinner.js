@@ -1,24 +1,19 @@
-import React, { Component } from 'react';
+import React from 'react';
+import { LoadingSpinner, Text } from '@tlon/indigo-react';
 
-export class Spinner extends Component {
-  render() {
-    const classes = this.props.classes ? this.props.classes : '';
-    const text = this.props.text ? this.props.text : '';
-    const awaiting = this.props.awaiting ? this.props.awaiting : false;
+const Spinner = ({
+  classes = '',
+  text = '',
+  awaiting = false
+}) => awaiting ? (
+  <Text zIndex='2' display='flex' className={classes}>
+    <LoadingSpinner
+      foreground='black'
+      background='gray'
+      style={{ flexShrink: 0 }}
+    />
+    <Text display='inline-block' ml='2' verticalAlign='middle' flexShrink='0'>{text}</Text>
+  </Text>
+) : null;
 
-    if (awaiting) {
-      return (
-        <div className={classes + ' z-2 bg-white bg-gray0-d white-d'}>
-          <img className="invert-d spin-active v-mid"
-            src="/~landscape/img/Spinner.png"
-            width={16}
-            height={16}
-          />
-          <p className="dib f9 ml2 v-mid inter">{text}</p>
-        </div>
-      );
-    } else {
-      return null;
-    }
-  }
-}
+export { Spinner as default, Spinner };

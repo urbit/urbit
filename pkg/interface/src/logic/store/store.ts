@@ -5,17 +5,30 @@ import LocalReducer from '../reducers/local';
 import ChatReducer from '../reducers/chat-update';
 
 import { StoreState } from './type';
+import { Timebox } from '~/types';
 import { Cage } from '~/types/cage';
 import ContactReducer from '../reducers/contact-update';
-import LinkUpdateReducer from '../reducers/link-update';
 import S3Reducer from '../reducers/s3-update';
+import { GraphReducer } from '../reducers/graph-update';
+import { HarkReducer } from '../reducers/hark-update';
 import GroupReducer from '../reducers/group-update';
-import PermissionReducer from '../reducers/permission-update';
-import PublishUpdateReducer from '../reducers/publish-update';
-import PublishResponseReducer from '../reducers/publish-response';
 import LaunchReducer from '../reducers/launch-update';
-import LinkListenReducer from '../reducers/listen-update';
 import ConnectionReducer from '../reducers/connection';
+import {OrderedMap} from '../lib/OrderedMap';
+import { BigIntOrderedMap } from '../lib/BigIntOrderedMap';
+
+export const homeAssociation = {
+  "app-path": "/home",
+  "app-name": "contact",
+  "group-path": "/home",
+  metadata: {
+    color: "0x0",
+    title: "DMs + Drafts",
+    description: "",
+    "date-created": "",
+    module: "",
+  },
+};
 
 
 export default class GlobalStore extends BaseStore<StoreState> {
@@ -24,13 +37,8 @@ export default class GlobalStore extends BaseStore<StoreState> {
   localReducer = new LocalReducer();
   chatReducer = new ChatReducer();
   contactReducer = new ContactReducer();
-  linkReducer = new LinkUpdateReducer();
-  linkListenReducer = new LinkListenReducer();
   s3Reducer = new S3Reducer();
   groupReducer = new GroupReducer();
-  permissionReducer = new PermissionReducer();
-  publishUpdateReducer = new PublishUpdateReducer();
-  publishResponseReducer = new PublishResponseReducer();
   launchReducer = new LaunchReducer();
   connReducer = new ConnectionReducer();
 
@@ -42,7 +50,6 @@ export default class GlobalStore extends BaseStore<StoreState> {
     this.localReducer.dehydrate(this.state);
   }
 
-
   initialState(): StoreState {
     return {
       pendingMessages: new Map(),
@@ -53,17 +60,24 @@ export default class GlobalStore extends BaseStore<StoreState> {
       suspendedFocus: null,
       baseHash: null,
       background: undefined,
+      remoteContentPolicy: {
+        imageShown: true,
+        audioShown: true,
+        videoShown: true,
+        oembedShown: true,
+      },
       hideAvatars: false,
       hideNicknames: false,
       invites: {},
       associations: {
         chat: {},
         contacts: {},
-        link: {},
-        publish: {}
+        graph: {},
       },
       groups: {},
       groupKeys: new Set(),
+      graphs: {},
+      graphKeys: new Set(),
       launch: {
         firstTime: false,
         tileOrdering: [],
@@ -71,7 +85,6 @@ export default class GlobalStore extends BaseStore<StoreState> {
       },
       weather: {},
       userLocation: null,
-      permissions: {},
       s3: {
         configuration: {
           buckets: new Set(),
@@ -79,15 +92,26 @@ export default class GlobalStore extends BaseStore<StoreState> {
         },
         credentials: null
       },
-      links: {},
-      linksSeen: {},
-      linkListening: new Set(),
-      linkComments: {},
       notebooks: {},
       contacts: {},
       dark: false,
       inbox: {},
       chatSynced: null,
+      notifications: new BigIntOrderedMap<Timebox>(),
+      archivedNotifications: new BigIntOrderedMap<Timebox>(),
+      notificationsGroupConfig: [],
+      notificationsChatConfig: [],
+      notificationsGraphConfig: {
+        watchOnSelf: false,
+        mentions: false,
+        watching: [],
+      },
+      notificationsCount: 0,
+      unreads: {
+        graph: {},
+        group: {},
+        chat: {},
+      }
     };
   }
 
@@ -97,14 +121,11 @@ export default class GlobalStore extends BaseStore<StoreState> {
     this.localReducer.reduce(data, this.state);
     this.chatReducer.reduce(data, this.state);
     this.contactReducer.reduce(data, this.state);
-    this.linkReducer.reduce(data, this.state);
     this.s3Reducer.reduce(data, this.state);
     this.groupReducer.reduce(data, this.state);
-    this.permissionReducer.reduce(data, this.state);
-    this.publishUpdateReducer.reduce(data, this.state);
-    this.publishResponseReducer.reduce(data, this.state);
     this.launchReducer.reduce(data, this.state);
-    this.linkListenReducer.reduce(data, this.state);
     this.connReducer.reduce(data, this.state);
+    GraphReducer(data, this.state);
+    HarkReducer(data, this.state);
   }
 }

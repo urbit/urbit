@@ -27,6 +27,30 @@ textarea, select, input, button { outline: none; }
   mix-blend-mode: difference;
 }
 
+
+button {
+  background-color: transparent;
+  cursor: pointer;
+}
+
+* {
+  -webkit-user-drag: none;
+}
+
+/*  stolen from  indigo-react reset.css
+ *  TODO: remove and add reset.css properly
+ */
+  
+@keyframes loadingSpinnerRotation {
+    from {
+        transform: rotate(0deg);
+      }
+    
+      to {
+        transform: rotate(360deg);
+      }
+}
+
 /* dark */
 @media all and (prefers-color-scheme: dark) {
   body {

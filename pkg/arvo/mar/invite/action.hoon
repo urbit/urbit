@@ -1,6 +1,6 @@
 /+  *invite-json
 =,  dejs:format
-|_  act=invite-action
+|_  act=action
 ++  grad  %noun
 ++  grow
   |%
@@ -8,7 +8,7 @@
   --
 ++  grab
   |%
-  ++  noun  invite-action
+  ++  noun  action
   ++  json
     |=  jon=^json
     (json-to-action jon)

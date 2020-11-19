@@ -1,3 +1,7 @@
+::  s3-store [landscape]:
+::
+::  stores s3 keys for uploading and sharing images and objects
+::
 /-  *s3
 /+  s3-json, default-agent, verb, dbug
 ~%  %s3-top  ..is  ~

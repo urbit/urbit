@@ -19,23 +19,23 @@ export default function SecuritySettings({ api }: SecuritySettingsProps) {
       <Box fontSize={0} mt={2} color="gray">
         You will be logged out of your Urbit on this browser.
         <form method="post" action="/~/logout">
-          <Button narrow mt='4' border={1}>
+          <Button mt='4' border={1} style={{ cursor: 'pointer' }}>
             Logout
           </Button>
         </form>
       </Box>
-      {/* <Box color="black" fontSize={0} mt={4} fontWeight={700}>
+      <Box color="black" fontSize={0} mt={4} fontWeight={700}>
         Log out of all sessions
-      </Box> */}
-      {/* Restore after testing sending 'all' in POST body
+      </Box>
       <Box fontSize={0} mt={2} color="gray">
         You will be logged out of all browsers that have currently logged into your Urbit.
         <form method="post" action="/~/logout">
-          <Button error narrow mt={4} border={1}>
+          <input type="hidden" name="all" />
+          <Button destructive mt={4} border={1} style={{ cursor: 'pointer' }}>
             Logout
           </Button>
         </form>
-      </Box> */}
+      </Box>
     </Box>
   );
 }

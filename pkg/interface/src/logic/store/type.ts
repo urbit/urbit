@@ -4,14 +4,19 @@ import { Path } from '~/types/noun';
 import { Invites } from '~/types/invite-update';
 import { Associations } from '~/types/metadata-update';
 import { Rolodex } from '~/types/contact-update';
-import { Notebooks } from '~/types/publish-update';
 import { Groups } from '~/types/group-update';
 import { S3State } from '~/types/s3-update';
-import { Permissions } from '~/types/permission-update';
 import { LaunchState, WeatherState } from '~/types/launch-update';
-import { LinkComments, LinkCollections, LinkSeen } from '~/types/link-update';
 import { ConnectionStatus } from '~/types/connection';
-import { BackgroundConfig } from '~/types/local-update';
+import {Graphs} from '~/types/graph-update';
+import {
+  Notifications,
+  NotificationGraphConfig, 
+  GroupNotificationsConfig,
+  LocalUpdateRemoteContentPolicy,
+  BackgroundConfig,
+  Unreads
+} from "~/types";
 
 export interface StoreState {
   // local state
@@ -22,8 +27,10 @@ export interface StoreState {
   connection: ConnectionStatus;
   baseHash: string | null;
   background: BackgroundConfig;
+  remoteContentPolicy: LocalUpdateRemoteContentPolicy;
   hideAvatars: boolean;
   hideNicknames: boolean;
+
   // invite state
   invites: Invites;
   // metadata state
@@ -33,8 +40,9 @@ export interface StoreState {
   // groups state
   groups: Groups;
   groupKeys: Set<Path>;
-  permissions: Permissions;
   s3: S3State;
+  graphs: Graphs;
+  graphKeys: Set<string>;
 
 
   // App specific states
@@ -43,18 +51,21 @@ export interface StoreState {
   weather: WeatherState | {} | null;
   userLocation: string | null;
 
-  //  links state
-  linksSeen: LinkSeen;
-  linkListening: Set<Path>;
-  links: LinkCollections;
-  linkComments: LinkComments;
-
   // publish state
-  notebooks: Notebooks;
+  notebooks: any;
 
   // Chat state
   chatInitialized: boolean;
   chatSynced: ChatHookUpdate | null;
   inbox: Inbox;
   pendingMessages: Map<Path, Envelope[]>;
+
+  archivedNotifications: Notifications;
+  notifications: Notifications;
+  notificationsGraphConfig: NotificationGraphConfig;
+  notificationsGroupConfig: GroupNotificationsConfig;
+  notificationsChatConfig: string[];
+  notificationsCount: number,
+  doNotDisturb: boolean;
+  unreads: Unreads;
 }

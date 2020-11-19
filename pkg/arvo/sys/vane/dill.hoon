@@ -8,9 +8,10 @@
 --                                                      ::
 =>  |%                                                  ::  console protocol
 ++  axle                                                ::
-  $:  %3                                                ::
+  $:  %4  ::TODO  replace ducts with session ids        ::
       hey/(unit duct)                                   ::  default duct
       dug/(map duct axon)                               ::  conversations
+      eye=(jug duct duct)                               ::  outside listeners
       lit/?                                             ::  boot in lite mode
       $=  veb                                           ::  vane verbosities
       $~  (~(put by *(map @tas log-level)) %hole %soft) ::  quiet packet crashes
@@ -21,7 +22,7 @@
       tem/(unit (list dill-belt))                       ::  pending, reverse
       wid/_80                                           ::  terminal width
       pos/@ud                                           ::  cursor position
-      see/(list @c)                                     ::  current line
+      see=$%([%lin (list @c)] [%klr stub])              ::  current line
   ==                                                    ::
 +$  log-level  ?(%hush %soft %loud)                     ::  none, line, full
 --  =>                                                  ::
@@ -117,7 +118,9 @@
           $blew  (send %rez p.p.kyz q.p.kyz)
           $heft  (dump %whey ~)
           $lyra  (dump kyz)
+          $meld  (dump kyz)
           $pack  (dump kyz)
+          $crop  (dump trim+p.kyz)
           $veer  (dump kyz)
           $verb  (dump kyz)
         ==
@@ -149,7 +152,11 @@
       ::
       ++  done                                          ::  return gift
         |=  git/gift:able
-        +>(moz :_(moz [hen %give git]))
+        =-  +>.$(moz (weld - moz))
+        %+  turn
+          :-  hen
+          ~(tap in (~(get ju eye.all) hen))
+        |=(=duct [duct %give git])
       ::
       ++  deal                                          ::  pass to %gall
         |=  [=wire =deal:gall]
@@ -159,7 +166,7 @@
         |=  [=wire =note]
         +>(moz :_(moz [hen %pass wire note]))
       ::
-      ++  from                                          ::  receive belt
+      ++  from                                          ::  receive blit
         |=  bit/dill-blit
         ^+  +>
         ?:  ?=($mor -.bit)
@@ -170,86 +177,33 @@
           %+  done  %blit
           :~  [%lin p.bit]
               [%mor ~]
-              [%lin see]
+              see
               [%hop pos]
           ==
         ?:  ?=($klr -.bit)
           %+  done  %blit
-          :~  [%lin (cvrt:ansi p.bit)]
+          :~  [%klr p.bit]
               [%mor ~]
-              [%lin see]
+              see
               [%hop pos]
           ==
         ?:  ?=($pro -.bit)
-          (done(see p.bit) %blit [[%lin p.bit] [%hop pos] ~])
+          =.  see  [%lin p.bit]
+          (done %blit [see [%hop pos] ~])
         ?:  ?=($pom -.bit)
-          =.  see  (cvrt:ansi p.bit)
-          (done %blit [[%lin see] [%hop pos] ~])
+          ::NOTE  treat "styled prompt" without style as plain prompt,
+          ::      to allow rendering by older runtimes
+          ::TODO  remove me once v0.10.9+ has high/guaranteed adoption
+          ::
+          ?:  (levy p.bit (cork head |*(s=stye =(*stye s))))
+            $(bit [%pro (zing (turn p.bit tail))])
+          =.  see  [%klr p.bit]
+          (done %blit [see [%hop pos] ~])
         ?:  ?=($hop -.bit)
           (done(pos p.bit) %blit [bit ~])
         ?:  ?=($qit -.bit)
           (dump %logo ~)
         (done %blit [bit ~])
-      ::
-      ++  ansi
-        |%
-        ++  cvrt                                        ::  stub to (list @c)
-          |=  a/stub                                    ::  with ANSI codes
-          ^-  (list @c)
-          %-  zing  %+  turn  a
-          |=  a/(pair stye (list @c))
-          ^-  (list @c)
-          ;:  weld
-              ?:  =(0 ~(wyt in p.p.a))  ~
-              `(list @c)`(zing (turn ~(tap in p.p.a) ef))
-              (bg p.q.p.a)
-              (fg q.q.p.a)
-              q.a
-              ?~(p.p.a ~ (ef ~))
-              (bg ~)
-              (fg ~)
-          ==
-        ::
-        ++  ef  |=(a/^deco (scap (deco a)))             ::  ANSI effect
-        ::
-        ++  fg  |=(a/^tint (scap (tint a)))             ::  ANSI foreground
-        ::
-        ++  bg                                          ::  ANSI background
-          |=  a/^tint
-          %-  scap
-          =>((tint a) [+(p) q])                         ::  (add 10 fg)
-        ::
-        ++  scap                                        ::  ANSI escape seq
-          |=  a/$@(@ (pair @ @))
-          %-  (list @c)
-          :+  27  '['                                   ::  "\033[{a}m"
-          ?@(a :~(a 'm') :~(p.a q.a 'm'))
-        ::
-        ++  deco                                        ::  ANSI effects
-          |=  a/^deco  ^-  @
-          ?-  a
-            ~   '0'
-            $br  '1'
-            $un  '4'
-            $bl  '5'
-          ==
-        ::
-        ++  tint                                        ::  ANSI colors (fg)
-          |=  a/^tint
-          ^-  (pair @ @)
-          :-  '3'
-          ?-  a
-            $k  '0'
-            $r  '1'
-            $g  '2'
-            $y  '3'
-            $b  '4'
-            $m  '5'
-            $c  '6'
-            $w  '7'
-            ~  '9'
-           ==
-        --
       ::  XX move
       ::
       ++  sein
@@ -396,7 +350,7 @@
     =*  duc  (need hey.all)
     =/  app  %hood
     =/  see  (tuba "<awaiting {(trip app)}, this may take a minute>")
-    =/  zon=axon  [app input=[~ ~] width=80 cursor=(lent see) see]
+    =/  zon=axon  [app input=[~ ~] width=80 cursor=(lent see) lin+see]
     ::
     =^  moz  all  abet:(~(into as duc zon) ~)
     [moz ..^$]
@@ -420,7 +374,29 @@
     =.  veb.all  (~(put by veb.all) tag.task level.task)
     [~ ..^$]
   ::
+  ?:  ?=(%view -.task)
+    ::  crash on viewing non-existent session
+    ::
+    ~|  [%no-session session.task]
+    ?>  =(~ session.task)
+    =/  session  (need hey.all)
+    =/  =axon    (~(got by dug.all) session)
+    ::  register the viewer and send them the prompt line
+    ::
+    :-  [hen %give %blit [see.axon]~]~
+    ..^$(eye.all (~(put ju eye.all) session hen))
+  ::
+  ?:  ?=(%flee -.task)
+    :-  ~
+    ~|  [%no-session session.task]
+    ?>  =(~ session.task)
+    =/  session  (need hey.all)
+    ..^$(eye.all (~(del ju eye.all) session hen))
+  ::
   =/  nus  (ax hen)
+  =?  nus  &(?=(~ nus) ?=(^ hey.all))
+    ::TODO  allow specifying target session in task
+    (ax u.hey.all)
   ?~  nus
     ::  :hen is an unrecognized duct
     ::  could be before %boot (or %boot failed)
@@ -439,7 +415,7 @@
       ++  axle-1
         $:  $1
             hey/(unit duct)
-            dug/(map duct axon)
+            dug/(map duct axon-3)
             lit/?
             $=  hef
             $:  a/(unit mass)
@@ -455,10 +431,11 @@
             $~  (~(put by *(map @tas log-level)) %hole %soft)
             (map @tas log-level)
         ==
+      ::
       ++  axle-2
         $:  %2
             hey/(unit duct)
-            dug/(map duct axon)
+            dug/(map duct axon-3)
             lit/?
             dog/_|
             $=  hef
@@ -476,29 +453,68 @@
             (map @tas log-level)
         ==
       ::
-      ++  axle-any
-        $%(axle-1 axle-2 axle)
+      +$  axle-3
+        $:  %3
+            hey=(unit duct)
+            dug=(map duct axon-3)
+            lit=?
+            $=  veb
+            $~  (~(put by *(map @tas log-level)) %hole %soft)
+            (map @tas log-level)
+        ==
+      +$  axon-3
+        $:  ram=term
+            tem=(unit (list dill-belt))
+            wid=_80
+            pos=@ud
+            see=(list @c)
+        ==
+      ::
+      +$  axle-any
+        $%(axle-1 axle-2 axle-3 axle)
       --
   ::
   |=  old=axle-any
   ?-  -.old
     %1  $(old [%2 [hey dug lit dog=& hef veb]:old])
     %2  $(old [%3 [hey dug lit veb]:old])
-    %3  ..^$(all old)
+    %3  =-  $(old [%4 hey.old - ~ lit.old veb.old])
+        (~(run by dug.old) |=(a=axon-3 a(see lin+see.a)))
+    %4  ..^$(all old)
   ==
 ::
 ++  scry
   |=  {fur/(unit (set monk)) ren/@tas why/shop syd/desk lot/coin tyl/path}
   ^-  (unit (unit cage))
-  ?.  ?=(%& -.why)  ~
-  =*  his  p.why
+  ::TODO  don't special-case whey scry
+  ::
   ?:  &(=(ren %$) =(tyl /whey))
     =/  maz=(list mass)
       :~  hey+&+hey.all
           dug+&+dug.all
       ==
     ``mass+!>(maz)
-  [~ ~]
+  ::  only respond for the local identity, %$ desk, current timestamp
+  ::
+  ?.  ?&  =(&+our why)
+          =([%$ %da now] lot)
+          =(%$ syd)
+      ==
+    ~
+  ::  /dx/sessions//line    blit    current line (prompt) of default session
+  ::  /dx/sessions//cursor  @ud     current cursor position of default session
+  ::TODO  support asking for specific sessions once session ids are real
+  ::
+  ?.  ?=(%x ren)  ~
+  ?+  tyl  ~
+      [%sessions %$ *]
+    ?~  hey.all                                [~ ~]
+    ?~  session=(~(get by dug.all) u.hey.all)  [~ ~]
+    ?+  t.t.tyl  ~
+      [%line ~]    ``blit+!>(`blit`see.u.session)
+      [%cursor ~]  ``atom+!>(pos.u.session)
+    ==
+  ==
 ::
 ++  stay  all
 ::

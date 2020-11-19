@@ -1,29 +1,16 @@
 ::
 ::::  /hoon/info/publish/mar
+  ::  tombstoned, now unused
   ::
 /-  *publish
 !:
 |_  info=notebook-info
 ::
 ::
-++  grow
-  |%
-  ++  mime
-    :-  /text/x-publish-info
-    (as-octs:mimes:html (of-wain:format txt))
-  ++  txt
-    ^-  wain
-    :~  (cat 3 'title: ' title.info)
-        (cat 3 'description: ' description.info)
-        (cat 3 'comments: ' ?:(comments.info 'on' 'off'))
-        (cat 3 'writers: ' (spat writers.info))
-        (cat 3 'subscribers: ' (spat subscribers.info))
-    ==
-  --
 ++  grab
   |%
   ++  mime
-    |=  [mite:eyre p=octs:eyre]
+    |=  [mite p=octs]
     |^  (rash q.p both-parser)
     ++  key-val
       |*  [key=rule val=rule]
@@ -49,10 +36,10 @@
         (key-val (jest 'description: ') (cook crip (star prn)))
         %+  key-val  (jest 'comments: ')
           (cook |=(a=@ =(%on a)) ;~(pose (jest %on) (jest %off)))
-        (key-val (jest 'writers: ') ;~(pfix net (more net urs:ab)))
+        (key-val (jest 'writers: ') ;~(pfix fas (more fas urs:ab)))
         ;~  pose
-          (key-val (jest 'subscribers: ') ;~(pfix net (more net urs:ab)))
-          ;~(pfix (jest 'subscribers: ') ;~(pfix net (more net urs:ab)))
+          (key-val (jest 'subscribers: ') ;~(pfix fas (more fas urs:ab)))
+          ;~(pfix (jest 'subscribers: ') ;~(pfix fas (more fas urs:ab)))
         ==
       ==
     ++  both-parser

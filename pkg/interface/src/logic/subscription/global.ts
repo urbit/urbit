@@ -18,30 +18,30 @@ const publishSubscriptions: AppSubscription[] = [
   ['/primary', 'publish'],
 ];
 
-const linkSubscriptions: AppSubscription[] = [
-  ['/json/seen', 'link-view'],
-  ['/listening', 'link-listen-hook']
-]
-
 const groupSubscriptions: AppSubscription[] = [
   ['/synced', 'contact-hook']
 ];
 
-type AppName = 'publish' | 'chat' | 'link' | 'groups';
+const graphSubscriptions: AppSubscription[] = [
+  ['/updates', 'graph-store']
+];
+
+type AppName = 'publish' | 'chat' | 'groups' | 'graph';
 const appSubscriptions: Record<AppName, AppSubscription[]> = {
   chat: chatSubscriptions,
   publish: publishSubscriptions,
-  link: linkSubscriptions,
-  groups: groupSubscriptions
+  groups: groupSubscriptions,
+  graph: graphSubscriptions
 };
 
 export default class GlobalSubscription extends BaseSubscription<StoreState> {
   openSubscriptions: Record<AppName, number[]> = {
     chat: [],
     publish: [],
-    link: [],
-    groups: []
+    groups: [],
+    graph: []
   };
+
   start() {
     this.subscribe('/all', 'invite-store');
     this.subscribe('/groups', 'group-store');
@@ -50,6 +50,11 @@ export default class GlobalSubscription extends BaseSubscription<StoreState> {
     this.subscribe('/all', 's3-store');
     this.subscribe('/all', 'launch');
     this.subscribe('/all', 'weather');
+    this.subscribe('/keys', 'graph-store');
+    this.subscribe('/updates', 'hark-store');
+    this.subscribe('/updates', 'hark-graph-hook');
+    this.subscribe('/updates', 'hark-group-hook');
+    this.subscribe('/updates', 'hark-chat-hook');
   }
 
   restart() {
@@ -67,7 +72,8 @@ export default class GlobalSubscription extends BaseSubscription<StoreState> {
       console.log(`${app} already started`);
       return;
     }
-    this.openSubscriptions[app] = appSubscriptions[app].map(([path, agent]) => this.subscribe(path, agent));
+    this.openSubscriptions[app] =
+      appSubscriptions[app].map(([path, agent]) => this.subscribe(path, agent));
   }
 
   stopApp(app: AppName) {

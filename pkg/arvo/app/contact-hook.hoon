@@ -1,9 +1,10 @@
-::  contact-hook:
+::  contact-hook [landscape]
+::
 ::
 /-  group-hook,
     *contact-hook,
     *contact-view,
-    *invite-store,
+    inv=invite-store,
     *metadata-hook,
     *metadata-store,
     *group
@@ -43,7 +44,7 @@
   ++  on-init
     ^-  (quip card _this)
     :_  this(invite-created %.y)
-    :~  (invite-poke:cc [%create /contacts])
+    :~  (invite-poke:cc [%create %contacts])
         [%pass /inv %agent [our.bol %invite-store] %watch /invitatory/contacts]
         [%pass /group %agent [our.bol %group-store] %watch /groups]
     ==
@@ -54,7 +55,7 @@
     =/  old  !<(versioned-state old-vase)
     =|  cards=(list card)
     |^
-    |-  ^-  (quip card _this) 
+    |-  ^-  (quip card _this)
     ?:  ?=(%3 -.old)
       [cards this(state old)]
     ?:  ?=(%2 -.old)
@@ -80,7 +81,7 @@
       %_    $
         -.old  %2
         ::
-          synced.old  
+          synced.old
         %-  malt
         %+  turn
           ~(tap by synced.old)
@@ -126,7 +127,7 @@
           %json
         (poke-json:cc !<(json vase))
       ::
-          %contact-action  
+          %contact-action
         (poke-contact-action:cc !<(contact-action vase))
       ::
           %contact-hook-action
@@ -149,7 +150,7 @@
         %kick       [(kick:cc wire) this]
         %watch-ack
       =^  cards  state
-        (watch-ack:cc wire p.sign) 
+        (watch-ack:cc wire p.sign)
       [cards this]
     ::
         %fact
@@ -307,8 +308,8 @@
     [%pass /group %agent [our.bol %group-store] %watch /groups]~
   ::
       [%contacts @ *]
-    =/  wir  
-      ?:  =(%ship i.t.wir) 
+    =/  wir
+      ?:  =(%ship i.t.wir)
         wir
       (migrate wir)
     ?>  ?=([%contacts @ @ *] wir)
@@ -472,25 +473,10 @@
           (contact-poke [%delete path])
         (contact-poke [%remove path ship])
     ==
-  ::
-  ++  send-invite-poke
-    |=  [=path =ship]
-    ^-  card
-    =/  =invite
-      :*  our.bol  %contact-hook
-          path  ship  ''
-      ==
-    =/  act=invite-action  [%invite /contacts (shaf %msg-uid eny.bol) invite]
-    [%pass / %agent [our.bol %invite-hook] %poke %invite-action !>(act)]
   --
 ::
-++  group-hook-poke
-  |=  =action:group-hook
-  ^-  card
-  [%pass / %agent [our.bol %group-hook] %poke %group-hook-action !>(action)]
-::
 ++  invite-poke
-  |=  act=invite-action
+  |=  act=action:inv
   ^-  card
   [%pass / %agent [our.bol %invite-store] %poke %invite-action !>(act)]
 ::
@@ -498,26 +484,6 @@
   |=  act=contact-action
   ^-  card
   [%pass / %agent [our.bol %contact-store] %poke %contact-action !>(act)]
-::
-++  contact-view-poke
-  |=  act=contact-view-action
-  ^-  card
-  [%pass / %agent [our.bol %contact-view] %poke %contact-view-action !>(act)]
-::
-++  group-poke
-  |=  act=action:group-store
-  ^-  card
-  [%pass / %agent [our.bol %group-store] %poke %group-action !>(act)]
-::
-++  metadata-poke
-  |=  act=metadata-action
-  ^-  card
-  [%pass / %agent [our.bol %metadata-store] %poke %metadata-action !>(act)]
-::
-++  metadata-hook-poke
-  |=  act=metadata-hook-action
-  ^-  card
-  [%pass / %agent [our.bol %metadata-hook] %poke %metadata-hook-action !>(act)]
 ::
 ++  contacts-scry
   |=  pax=path
@@ -529,16 +495,6 @@
       /noun
     ==
   .^((unit contacts) %gx pax)
-::
-++  invite-scry
-  |=  uid=serial
-  ^-  (unit invite)
-  =/  pax
-    ;:  weld
-      /(scot %p our.bol)/invite-store/(scot %da now.bol)
-      /invite/contacts/(scot %uv uid)/noun
-    ==
-  .^((unit invite) %gx pax)
 ::
 ++  group-scry
   |=  pax=path

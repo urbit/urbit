@@ -12,7 +12,7 @@ export default class ChatApi extends BaseApi<StoreState> {
    * Fetch backlog
    */
   fetchMessages(start: number, end: number, path: Path) {
-    fetch(`/chat-view/paginate/${start}/${end}${path}`)
+    return fetch(`/chat-view/paginate/${start}/${end}${path}`)
       .then(response => response.json())
       .then((json) => {
         this.store.handleEvent({
@@ -81,7 +81,7 @@ export default class ChatApi extends BaseApi<StoreState> {
    * If we don't host the chat, then it just leaves
    */
   delete(path: Path) {
-    this.viewAction({ delete: { 'app-path': path } });
+    return this.viewAction({ delete: { 'app-path': path } });
   }
 
   /**
@@ -157,7 +157,7 @@ export default class ChatApi extends BaseApi<StoreState> {
       this.store.state.pendingMessages.set(path, [envelope]);
     }
 
-    this.store.setState({
+    return this.store.setState({
       pendingMessages: this.store.state.pendingMessages
     });
   }
