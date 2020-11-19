@@ -50,7 +50,7 @@
 +$  key  [=bipt =chyg =idx]
 +$  txi  [=utxo raw-tx=(unit buffer) =key]
 +$  txo  [=address value=sats]
-+$  txbu  [txis=(list txi) txos=(list txo)]
++$  txbu  [=vbytes txis=(list txi) txos=(list txo)]
 ::  TODO: document
 ::
 +$  batch  [todo=(set idx) endpoint=idx has-used=?]
@@ -66,12 +66,12 @@
   $%  [%add-wallet =xpub scan-to=(unit scon) max-gap=(unit @ud) confs=(unit @ud)]
       [%address-info =xpub =chyg =idx utxos=(set utxo) used=? blockcount=@ud]
       [%generate-address =xpub =chyg meta=(unit [payer=ship value=sats])]
-      [%generate-txbu =xpub feyb=sats txos=(list txo)]
+      [%generate-txbu =xpub payee=(unit ship) feyb=sats txos=(list txo)]
   ==
 ::
 +$  update
   $%  [%generate-address =address meta=(unit [payer=ship value=sats])]
-      [%generate-txbu =xpub =vbytes =txbu]
+      [%generate-txbu =xpub payee=(unit ship) =txbu]
       [%scan-done =xpub]
   ==
 ::

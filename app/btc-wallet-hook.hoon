@@ -21,6 +21,7 @@
 ++  def-moon-limit  10
 ::  provider: maybe ship if provider is set
 ::  moon-limit: how many addresses a ship and its moons can request in piym
+::  piym/poym-watch: listen to btc-wallet-store for address updates; update payment info
 ::
 +$  state-0
   $:  %0
@@ -146,7 +147,7 @@
     ?>  =(payer.act our.bowl)
     :_  state
     :~  %-  poke-wallet-store
-        [%generate-txbu u.def-wallet fee.btc-state ~[[address.act value.act]]]
+        [%generate-txbu u.def-wallet `src.bowl fee.btc-state ~[[address.act value.act]]]
     ==
     ::
       %force-retry
@@ -206,7 +207,7 @@
   ^-  (quip card _state)
   ?-  -.upd
       %generate-address
-    ::  if no meta (payer/value), just prints address 
+    ::  if no meta (payer/value), just prints address
     ::
     ?~  meta.upd  ~&(> address.upd `state)
     =/  [payer=ship value=sats]  u.meta.upd
@@ -216,7 +217,9 @@
       %generate-txbu
       :: TODO: add the txbu to poym
       :: send all its input tx-ids out for feedback
-    `state
+    :_  ?~  payee.upd  state
+        state(poym (~(put by poym) u.payee.upd txbu.upd))
+    ~
     ::
       %scan-done
     ?~  def-wallet
