@@ -6,7 +6,6 @@
 ::
 ::  payment: a payment expected from another ship
 ::    - address: address generated for this payment
-::  txbu: tx builder -- all information needed to make a transaction for signing
 ::  piym: incoming payments. Stores all ship moons inside
 ::  poym: outgoing payments
 ::  piym-watch/poym-watch:
@@ -17,13 +16,9 @@
 +$  pend-txbu  (map req-id:bp ship)
 ::
 +$  payment  [=address payer=ship value=sats]
-+$  key  [=bipt =chyg:bws =idx:bws]
-+$  txin  [=utxo raw-tx=(unit byts) =key]
-+$  txout  [=address value=sats]
-+$  txbu  [txins=(list txin) txouts=(list txout)]
 ::
 +$  piym  (jar ship payment)
-+$  poym  (map ship txbu)
++$  poym  (map ship txbu:bws)
 +$  piym-watch  (map address ship)
 +$  poym-watch  (map address ship)
 ::
