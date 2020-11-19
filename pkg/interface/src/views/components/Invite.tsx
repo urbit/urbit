@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { Invite } from '~/types/invite-update';
 import { Text, Box, Button, Row } from '@tlon/indigo-react';
+import { StatelessAsyncAction } from "~/views/components/StatelessAsyncAction";
 import { cite } from '~/logic/lib/util';
 
-export class InviteItem extends Component<{invite: Invite, onAccept: Function, onDecline: Function}, {}> {
+export class InviteItem extends Component<{invite: Invite, onAccept: (i: any) => Promise<any>, onDecline: (i: any) => Promise<any>}, {}> {
   render() {
     const { props } = this;
 
@@ -13,24 +14,24 @@ export class InviteItem extends Component<{invite: Invite, onAccept: Function, o
           <Text display='block' pb='2' gray><Text mono>{cite(props.invite.resource.ship)}</Text> invited you to <Text fontWeight='500'>{props.invite.resource.name}</Text></Text>
         </Box>
         <Row>
-        <Button
-          cursor='pointer'
-          primary
-          mt='4'
-          display='inline-block'
-          onClick={this.props.onAccept.bind(this)}
-        >
-          Accept
-        </Button>
-        <Button
-          display='inline-block'
-          cursor='pointer'
-          ml='4'
-          mt='4'
-          onClick={this.props.onDecline.bind(this)}
-        >
-          Decline
-        </Button>
+          <StatelessAsyncAction 
+            name="accept"
+            bg="transparent"
+            onClick={() => props.onAccept(props.invite)}
+            color='blue'
+            mr='2'
+          >
+            Accept
+          </StatelessAsyncAction>
+          <StatelessAsyncAction
+            name="decline"
+            bg="transparent"
+            color='red'
+            onClick={() => props.onDecline(props.invite)}
+          >
+              Reject
+            </StatelessAsyncAction>
+
         </Row>
       </Box>
     );

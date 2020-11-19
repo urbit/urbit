@@ -4,13 +4,15 @@ import _ from "lodash";
 import { Icon, Col, Row, Box, Text, Anchor } from "@tlon/indigo-react";
 import moment from "moment";
 import { Notifications, Rolodex, Timebox, IndexedNotification, Groups } from "~/types";
-import { MOMENT_CALENDAR_DATE, daToUnix } from "~/logic/lib/util";
+import { MOMENT_CALENDAR_DATE, daToUnix, resourceAsPath } from "~/logic/lib/util";
 import { BigInteger } from "big-integer";
 import GlobalApi from "~/logic/api/global";
 import { Notification } from "./notification";
 import { Associations } from "~/types";
 import { cite } from '~/logic/lib/util';
 import { InviteItem } from '~/views/components/Invite';
+import { useWaitForProps } from "~/logic/lib/useWaitForProps";
+import { useHistory } from "react-router-dom";
 
 type DatedTimebox = [BigInteger, Timebox];
 
@@ -26,7 +28,7 @@ function filterNotification(associations: Associations, groups: string[]) {
       const { group } = n.index.group;
       return groups.findIndex((g) => group === g) !== -1;
     } else if ("chat" in n.index) {
-      const group = associations.chat[n.index.chat]?.["group-path"];
+      const group = associations.chat[n.index.chat.chat]?.["group-path"];
       return groups.findIndex((g) => group === g) !== -1;
     }
     return true;
@@ -45,6 +47,8 @@ export default function Inbox(props: {
   invites: any;
 }) {
   const { api, associations, invites } = props;
+  const waiter = useWaitForProps(props)
+  const history = useHistory();
   useEffect(() => {
     let seen = false;
     setTimeout(() => {
@@ -71,12 +75,30 @@ export default function Inbox(props: {
     f.values
   )(notifications);
 
+  useEffect(() => {
+    api.hark.getMore(props.showArchive);
+  }, [props.showArchive]);
+
   const onScroll = useCallback((e) => {
     let container = e.target;
-    if(!props.showArchive && (container.scrollHeight - container.scrollTop === container.clientHeight)) {
-      api.hark.getMore();
+    const { scrollHeight, scrollTop, clientHeight } = container;
+    if((scrollHeight - scrollTop - clientHeight) < 20) {
+      api.hark.getMore(props.showArchive);
     }
-  }, [api]);
+  }, [props.showArchive]);
+
+  const acceptInvite = async (invite) => {
+    const resource = {
+      ship: `~${invite.resource.ship}`,
+      name: invite.resource.name
+    };
+    await api.contacts.join(resource);
+    await api.invite.accept('contacts', getKeyByValue(invites['contacts'], invite));
+    const path = resourceAsPath(invite.resource)
+    await waiter(p => path in p.associations?.contacts);
+
+    history.push(`/~landscape${path}`);
+  };
 
   const inviteItems = (invites, api) => {
     const returned = [];
@@ -88,7 +110,7 @@ export default function Inbox(props: {
           <InviteItem
             key={uid}
             invite={invite}
-            onAccept={() => api.invite.accept(appKey, uid)}
+            onAccept={acceptInvite}
             onDecline={() => api.invite.decline(appKey, uid)}
           />;
         returned.push(inviteItem);
@@ -98,7 +120,7 @@ export default function Inbox(props: {
   };
 
   return (
-    <Col onScroll={onScroll} overflowY="auto" flexGrow="1" minHeight='0' flexShrink='0'>
+    <Col onScroll={onScroll} overflowY="auto" flexGrow={1} minHeight='0' flexShrink={0}>
       {inviteItems(invites, api)}
       {newNotifications && (
         <DaySection
