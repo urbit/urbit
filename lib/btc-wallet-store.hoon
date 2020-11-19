@@ -114,17 +114,17 @@
     %+  add  base-weight
     (mul input-weight (lent selected))
   ::  value of an input after fee
-  ::    0 if net is <= 0
+  ::  0 if net is <= 0
   ::
   ++  net-value
     |=  val=sats  ^-  sats
     =/  cost  (mul input-weight feyb)
     ?:  (lte val cost)  0
     (sub val cost)
-  ::  Uses naive random selection. Should switch to branch-and-bound later
+  ::  Uses naive random selection. Should switch to branch-and-bound later.
   ::
   ++  select-utxos
-    |^  ^-  (unit (list input))
+    |^  ^-  (unit [=vbytes (list input)])
     %-  single-random-draw
     %-  zing
     (turn ~(val by wach.w) to-inputs)
@@ -139,19 +139,20 @@
   ::
   ++  single-random-draw
     |=  is=(list input)
-    ^-  (unit (list input))
+    ^-  (unit [=vbytes (list input)])
     =/  rng  ~(. og eny)
     =/  target  (add targ (mul feyb base-weight))     ::  add base fees to target
     =|  [select=(list input) total=sats:btc]
-    |-  ?~  is  ~
+    |-  ?:  =(~ is)  ~
     =^  n  rng  (rads:rng (lent is))
-    =/  i=input  (snag n `(list input)`is)
+    =/  i=input  (snag n is)
     =/  net-val  (net-value value.utxo.i)
     =?  select  (gth net-val 0)  [i select]           ::  select if net-value > 0
     =/  new-total  (add total net-val)
-    ?:  (gte new-total target)  `select
+    ?:  (gte new-total target)
+      `[(total-vbytes select) select]
     %=  $
-        is  (oust [n 1] `(list input)`is)
+        is  (oust [n 1] is)
         total  new-total
     ==
   ::
