@@ -1,6 +1,5 @@
 import React from "react";
 import { useField } from "formik";
-import styled from "styled-components";
 import {
   Col,
   Label,
@@ -15,14 +14,14 @@ import { uxToHex, hexToUx } from "~/logic/lib/util";
 type ColorInputProps = Parameters<typeof Col>[0] & {
   id: string;
   label: string;
-  disabled: boolean;
+  disabled?: boolean;
 };
 
 export function ColorInput(props: ColorInputProps) {
   const { id, label, caption, disabled, ...rest } = props;
   const [{ value, onBlur }, meta, { setValue }] = useField(id);
 
-  const hex = value.replace('#', '').substr(2).replace(".", "");
+  const hex = value.replace('#', '').replace("0x","").replace(".", "");
   const padded = hex.padStart(6, "0");
 
   const onChange = (e: any) => {
@@ -37,8 +36,9 @@ export function ColorInput(props: ColorInputProps) {
     setValue(result);
   };
 
+
   return (
-    <Box display="flex" flexDirection="column" {...props}>
+    <Box display="flex" flexDirection="column" {...rest}>
       <Label htmlFor={id}>{label}</Label>
       {caption ? (
         <Label mt="2" gray>

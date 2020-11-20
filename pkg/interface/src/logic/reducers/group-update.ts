@@ -103,7 +103,7 @@ export default class GroupReducer<S extends GroupState> {
       const resourcePath = resourceAsPath(resource);
       state.groups[resourcePath] = {
         members: new Set(),
-        tags: { role: {} },
+        tags: { role: { admin: new Set([window.ship]) } },
         policy: decodePolicy(policy),
         hidden,
       };

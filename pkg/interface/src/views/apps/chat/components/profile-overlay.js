@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { cite } from '~/logic/lib/util';
 import { Sigil } from '~/logic/lib/sigil';
 
-import { Box, Col, Button, Text } from "@tlon/indigo-react";
+import { Box, Col, Button, Text, BaseImage } from '@tlon/indigo-react';
 
 export const OVERLAY_HEIGHT = 250;
 
@@ -51,8 +51,8 @@ export class ProfileOverlay extends PureComponent {
 
     const isOwn = window.ship === ship;
 
-    let img = contact?.avatar && !hideAvatars
-      ? <img src={contact.avatar} height={160} width={160} className="brt2 dib" />
+    const img = contact?.avatar && !hideAvatars
+      ? <BaseImage display='inline-block' src={contact.avatar} height={160} width={160} className="brt2" />
       : <Sigil
         ship={ship}
         size={160}
@@ -63,7 +63,7 @@ export class ProfileOverlay extends PureComponent {
     const showNickname = contact?.nickname && !hideNicknames;
 
     //  TODO: we need to rethink this "top-level profile view" of other ships
-    /*if (!group.hidden) {
+    /* if (!group.hidden) {
     }*/
 
     const isHidden = group.hidden;
@@ -103,7 +103,7 @@ export class ProfileOverlay extends PureComponent {
             <Button
               mt='2'
               width='100%'
-              style={{ cursor: 'pointer '}}
+              style={{ cursor: 'pointer ' }}
               onClick={() => (isHidden) ? history.push('/~profile/identity') : history.push(`${history.location.pathname}/popover/profile`)}
             >
               Edit Identity

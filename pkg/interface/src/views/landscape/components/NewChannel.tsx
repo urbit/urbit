@@ -24,14 +24,14 @@ interface FormSchema {
   name: string;
   description: string;
   ships: string[];
-  type: "chat" | "publish" | "link";
+  moduleType: "chat" | "publish" | "link";
 }
 
 const formSchema = Yup.object({
   name: Yup.string().required('Channel must have a name'),
   description: Yup.string(),
   ships: Yup.array(Yup.string()),
-  type: Yup.string().required('Must choose channel type')
+  moduleType: Yup.string().required('Must choose channel type')
 });
 
 interface NewChannelProps {
@@ -51,8 +51,8 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
   const onSubmit = async (values: FormSchema, actions) => {
     const resId: string = stringToSymbol(values.name);
     try {
-      const { name, description, type, ships } = values;
-      switch (type) {
+      const { name, description, moduleType, ships } = values;
+      switch (moduleType) {
         case 'chat':
           const appPath = `/~${window.ship}/${resId}`;
           const groupPath = group || `/ship${appPath}`;
@@ -68,9 +68,7 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
             false
           );
           break;
-        case 'publish':
-          await props.api.publish.newBook(resId, name, description, group);
-          break;
+        case "publish":
         case "link":
           if (group) {
             await api.graph.createManagedGraph(
@@ -78,19 +76,18 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
               name,
               description,
               group,
-              'link'
+              moduleType
             );
           } else {
             await api.graph.createUnmanagedGraph(
               resId,
               name,
               description,
-              { invite: { pending: ships.map(s => `~${s}`) } },
-              'link'
+              { invite: { pending: ships.map((s) => `~${s}`) } },
+              moduleType
             );
           }
           break;
-
         default:
           console.log('fallthrough');
       }
@@ -100,7 +97,10 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
       }
       actions.setStatus({ success: null });
       const resourceUrl = parentPath(location.pathname);
-      history.push(`${resourceUrl}/resource/${type}${type === 'link' ? '/ship' : ''}/~${window.ship}/${resId}`);
+      history.push(
+        `${resourceUrl}/resource/${moduleType}` +
+        `${moduleType !== 'chat' ? '/ship' : ''}/~${window.ship}/${resId}`
+      );
     } catch (e) {
       console.error(e);
       actions.setStatus({ error: 'Channel creation failed' });
@@ -108,13 +108,16 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
   };
   return (
     <Col overflowY="auto" p={3}>
+      <Box pb='3' display={['block', 'none']} onClick={() => history.push(props.baseUrl)}>
+        {'<- Back'}
+      </Box>
       <Box fontWeight="bold" mb={4} color="black">
         New Channel
       </Box>
       <Formik
         validationSchema={formSchema}
         initialValues={{
-          type: 'chat',
+          moduleType: 'chat',
           name: '',
           description: '',
           group: '',
@@ -123,17 +126,15 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
         onSubmit={onSubmit}
       >
         <Form>
-          <Box
-            display="grid"
-            gridTemplateRows="auto"
-            gridRowGap={4}
-            gridTemplateColumns="300px"
+          <Col 
+            maxWidth="348px" 
+            gapY="4"
           >
             <Col gapY="2">
               <Box color="black" mb={2}>Channel Type</Box>
-              <Radio label="Chat" id="chat" name="type" />
-              <Radio label="Notebook" id="publish" name="type" />
-              <Radio label="Collection" id="link" name="type" />
+              <Radio label="Chat" id="chat" name="moduleType" />
+              <Radio label="Notebook" id="publish" name="moduleType" />
+              <Radio label="Collection" id="link" name="moduleType" />
             </Col>
             <Input
               id="name"
@@ -165,7 +166,7 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
               </AsyncButton>
             </Box>
             <FormError message="Channel creation failed" />
-          </Box>
+          </Col>
         </Form>
       </Formik>
     </Col>

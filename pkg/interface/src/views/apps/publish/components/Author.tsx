@@ -17,10 +17,9 @@ interface AuthorProps {
 
 export function Author(props: AuthorProps) {
   const { contacts, ship = '', date, showImage } = props;
-  const noSig = ship.slice(1);
   let contact = null;
   if (contacts) {
-    contact = noSig in contacts ? contacts[noSig] : null;
+    contact = ship in contacts ? contacts[ship] : null;
   }
   const color = contact?.color ? `#${uxToHex(contact?.color)}` : "#000000";
   const showAvatar = !props.hideAvatars && contact?.avatar;
@@ -33,11 +32,13 @@ export function Author(props: AuthorProps) {
       {showImage && (
         <Box>
           {showAvatar ? (
-            <img src={contact?.avatar} height={24} width={24} className="dib" />
+            <img src={contact?.avatar} height={16} width={16} className="dib" />
           ) : (
             <Sigil
               ship={ship}
-              size={24}
+              size={16}
+              icon
+              padded
               color={color}
               classes={contact?.color ? '' : "mix-blend-diff"}
             />
@@ -46,8 +47,10 @@ export function Author(props: AuthorProps) {
       )}
       <Box
         ml={showImage ? 2 : 0}
-        color="gray"
+        color="black"
+        lineHeight='tall'
         fontFamily={showNickname ? "sans" : "mono"}
+        fontWeight={showNickname ? '500' : '400'}
       >
         {name}
       </Box>
