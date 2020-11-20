@@ -42,7 +42,7 @@
 ::  +capped-queue: a +qeu with a maximum number of entries
 ::
 ++  capped-queue
-  |*  item-type=mold
+  |$  [item-type]
   $:  queue=(qeu item-type)
       size=@ud
       max-size=_64
@@ -53,19 +53,16 @@
 ::     :key-type to :val-type. Detailed docs for this type can be found there.
 ::
 ++  clock
-  |*  $:  ::  key-type: mold of keys
-          ::
-          key-type=mold
-          ::  val-type: mold of values
-          ::
-          val-type=mold
-      ==
-    $:  lookup=(map key-type [val=val-type fresh=@ud])
-        queue=(qeu key-type)
-        size=@ud
-        max-size=_2.048
-        depth=_1
-    ==
+  |$  ::  key-type: mold of keys
+      ::  val-type: mold of values
+      ::
+      [key-type val-type]
+  $:  lookup=(map key-type [val=val-type fresh=@ud])
+      queue=(qeu key-type)
+      size=@ud
+      max-size=_2.048
+      depth=_1
+  ==
 ::
 +$  deco  ?(~ $bl $br $un)                              ::  text decoration
 +$  json                                                ::  normal json value
@@ -76,20 +73,20 @@
       [%n p=@ta]                                        ::  number
       [%s p=@t]                                         ::  string
   ==                                                    ::
-++  life  @ud                                           ::  ship key revision
-++  rift  @ud                                           ::  ship continuity
-++  mime  {p/mite q/octs}                               ::  mimetyped data
-++  octs  {p/@ud q/@}                                   ::  octet-stream
-++  sock  {p/ship q/ship}                               ::  outgoing [our his]
++$  life  @ud                                           ::  ship key revision
++$  rift  @ud                                           ::  ship continuity
++$  mime  (pair mite octs)                              ::  mimetyped data
++$  octs  (pair @ud cord)                               ::  octet-stream
++$  sock  (pair ship ship)                              ::  outgoing [our his]
 ::+|
 ::
-++  roof  (room vase)                                   ::  namespace
++$  roof  (room vase)                                   ::  namespace
 ++  room                                                ::  either namespace
-  |*  vase/mold                                         ::  vase or maze
-  $-  $:  ref/*                                         ::  reference type
-          lyc/(unit (set ship))                         ::  leakset
-          car/term                                      ::  perspective
-          bem/beam                                      ::  path
+  |$  [vase]                                            ::  vase or maze
+  $-  $:  ref=*                                         ::  reference type
+          lyc=(unit (set ship))                         ::  leakset
+          car=term                                      ::  perspective
+          bem=beam                                      ::  path
       ==                                                ::
   %-  unit                                              ::  ~: unknown
   %-  unit                                              ::  ~ ~: invalid
