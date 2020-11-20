@@ -33,7 +33,6 @@
       def-wallet=(unit xpub)
       moon-limit=@ud
       =pend-addr
-      =pend-txbu
       =piym
       =poym
       =piym-watch
@@ -191,6 +190,7 @@
     ==
     ::
       %raw-tx
+    ::  TODO: check whether in poym
     ~&  >>  rawtx.body.p.upd
     `state
   ==
@@ -225,10 +225,11 @@
     ::  txbus can potentially use the same UTXO inputs, so if another payment
     ::   was in process of fetching raw-txs for a txbu, replace it
     ::
-    =/  ri=req-id:bp  (gen-req-id:bp eny.bowl)
-    :_  state(poym [ri payee.upd txbu.upd])
+    =/  txids=(list txid)
+      %+  turn  txis.txbu.upd
+      |=  =txi:bws  txid.utxo.txi
+    :_  state(poym [payee.upd txbu.upd])
     :: TODO: send all its input tx-ids out for feedback
-    ~
     ::
       %scan-done
     ?~  def-wallet
@@ -269,9 +270,18 @@
   (get-address-info ri host.u.provider a.req)
 ::
 ++  get-address-info
-  |=  [ri=req-id:bp host=ship a=address]  ^-  card
+  |=  [ri=req-id:bp host=ship a=address]
+  ^-  card
   :*  %pass  /[(scot %da now.bowl)]  %agent  [host %btc-provider]
       %poke  %btc-provider-action  !>([ri %address-info a])
+  ==
+::
+++  get-raw-tx
+  |=  [host=ship =txid]
+  ^-  card
+  =/  ri=req-id:bp  (gen-req-id:bp eny.bowl)
+  :*  %pass  /[(scot %da now.bowl)]  %agent  [host %btc-provider]
+      %poke  %btc-provider-action !>(ri %raw-tx txid)
   ==
 ::
 ++  provider-connected

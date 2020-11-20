@@ -15,7 +15,7 @@
 +$  result  [=req-id body=result-body]
 +$  result-body
   $%  [%address-info utxos=(set utxo) used=? blockcount=@ud]
-      [%raw-tx =rawtx]
+      [%raw-tx =txid =rawtx]
   ==
 +$  error
   $%  [%not-connected status=@ud]
@@ -41,7 +41,7 @@
   ::
   +$  response
     $%  [%get-address-info utxos=(set utxo) used=? blockcount=@ud]
-        [%get-raw-tx =rawtx]
+        [%get-raw-tx =txid =rawtx]
         [%get-block-count blockcount=@ud]
         [%get-block-and-fee blockcount=@ud fee=sats]
     ==
