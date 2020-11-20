@@ -561,7 +561,7 @@
         ++  vale
           |=  =noun
           ^+  sam
-          (slam (slap cor ^~((ream 'noun:grab'))) !>(noun))
+          (slam (slap cor !,(*hoon noun:grab)) !>(noun))
         ++  volt
           |=  =noun
           ^+  sam
@@ -577,22 +577,23 @@
         ^-  vase
         %+  slap
           (with-faces cor+cor sam+sam new+new ~)
-        ^~((ream '(diff:~(grad cor sam) new)'))
+        !,  *hoon
+        (diff:~(grad cor sam) new)
       ++  form  fom
       ++  join
         |=  [a=vase b=vase]
         ^-  (unit (unit vase))
         ?:  =(q.a q.b)
           ~
-        =;  res  `?~(q.res ~ `(slap res ^~((ream '?~(. !! u)'))))
-        (slam (slap cor ^~((ream 'join:grad'))) (slop a b))
+        =;  res  `?~(q.res ~ `(slap res !,(*hoon ?~(. !! u))))
+        (slam (slap cor !,(*hoon join:grad)) (slop a b))
       ++  mash
         |=  [a=[=ship =desk diff=vase] b=[=ship =desk diff=vase]]
         ^-  (unit vase)
         ?:  =(q.diff.a q.diff.b)
           ~
         :-  ~
-        %+  slam  (slap cor ^~((ream 'mash:grad')))
+        %+  slam  (slap cor !,(*hoon mash:grad))
         %+  slop
           :(slop !>(ship.a) !>(desk.a) diff.a)
         :(slop !>(ship.b) !>(desk.b) diff.b)
@@ -601,11 +602,12 @@
         ^+  sam
         %+  slap
           (with-faces cor+cor sam+sam diff+diff ~)
-        ^~((ream '(pact:~(grad cor sam) diff)'))
+        !,  *hoon
+        (pact:~(grad cor sam) diff)
       ++  vale
         |=  =noun
         ^+  sam
-        (slam (slap cor ^~((ream 'noun:grab'))) !>(noun))
+        (slam (slap cor !,(*hoon noun:grab)) !>(noun))
       ++  volt
         |=  =noun
         ^+  sam
@@ -637,7 +639,7 @@
       ::  try +grow; is there a +grow core with a .b arm?
       ::
       =^  old=vase  nub  (build-fit %mar a)
-      ?:  =/  ram  (mule |.((slap old ^~((ream 'grow')))))
+      ?:  =/  ram  (mule |.((slap old !,(*hoon grow))))
           ?:  ?=(%| -.ram)  %.n
           =/  lab  (mule |.((slob b p.p.ram)))
           ?:  ?=(%| -.lab)  %.n
@@ -650,22 +652,28 @@
         ^-  vase
         %+  slap
           (with-faces old+old sam+sam ~)
-        %-  ream
-        ;:  (cury cat 3)
-          '!:  '
-          '~!  old=old  '
-          '~!  sam=sam  '
-          b  ':~(grow old sam)'
-        ==
+        :+  %sgzp  !,(*hoon old=old)
+        :+  %sgzp  !,(*hoon sam=sam)
+        :+  %tsld  [%limb b]
+        !,  *hoon
+        ~(grow old sam)
       ::  try direct +grab
       ::
       =^  new=vase  nub  (build-fit %mar b)
-      =/  rab  (mule |.((slap new (ream (cat 3 a ':grab')))))
+      =/  rab
+        %-  mule  |.
+        %+  slap  new
+        :+  %tsld  [%limb a]
+        [%limb %grab]
       ?:  &(?=(%& -.rab) ?=(^ q.p.rab))
         :_(nub |=(sam=vase ~|([%grab a b] (slam p.rab sam))))
       ::  try +jump
       ::
-      =/  jum  (mule |.((slap old (ream (cat 3 b ':jump')))))
+      =/  jum
+        %-  mule  |.
+        %+  slap  old
+        :+  %tsld  [%limb b]
+        [%limb %jump]
       ?:  ?=(%& -.jum)
         (compose-casts a !<(mark p.jum) b)
       ::  try indirect +grab
@@ -803,7 +811,7 @@
         ::  parse optional /? and ignore
         ::
         ;~  pose
-          (cold ~ ;~(plug net wut gap dem gap))
+          (cold ~ ;~(plug fas wut gap dem gap))
           (easy ~)
         ==
       ::
@@ -812,7 +820,7 @@
             ;~  sfix
               %+  cook  |=((list (list taut)) (zing +<))
               %+  more  gap
-              ;~  pfix  ;~(plug net hep gap)
+              ;~  pfix  ;~(plug fas hep gap)
                 (most ;~(plug com gaw) taut-rule)
               ==
               gap
@@ -824,7 +832,7 @@
             ;~  sfix
               %+  cook  |=((list (list taut)) (zing +<))
               %+  more  gap
-              ;~  pfix  ;~(plug net lus gap)
+              ;~  pfix  ;~(plug fas lus gap)
                 (most ;~(plug com gaw) taut-rule)
               ==
               gap
@@ -836,9 +844,9 @@
             ;~  sfix
               %+  cook  |=((list [face=term =path]) +<)
               %+  more  gap
-              ;~  pfix  ;~(plug net tis gap)
+              ;~  pfix  ;~(plug fas tis gap)
                 %+  cook  |=([term path] +<)
-                ;~(plug sym ;~(pfix ;~(plug gap net) (more net urs:ab)))
+                ;~(plug sym ;~(pfix ;~(plug gap fas) (more fas urs:ab)))
               ==
               gap
             ==
@@ -849,12 +857,12 @@
             ;~  sfix
               %+  cook  |=((list [face=term =mark =path]) +<)
               %+  more  gap
-              ;~  pfix  ;~(plug net tar gap)
+              ;~  pfix  ;~(plug fas tar gap)
                 %+  cook  |=([term mark path] +<)
                 ;~  plug
                   sym
                   ;~(pfix ;~(plug gap cen) sym)
-                  ;~(pfix ;~(plug gap net) (more net urs:ab))
+                  ;~(pfix ;~(plug gap fas) (more fas urs:ab))
                 ==
               ==
               gap
@@ -1597,7 +1605,7 @@
           ~>  %mean.%arvo-parse-fail
           (path-to-hoon data /sys/arvo/hoon)
         ~>  %mean.%arvo-compile-fail
-        (slap (slap hoon gen) (ream '..is'))
+        (slap (slap hoon gen) !,(*^hoon ..is))
       ::
       ++  build-zuse
         |=  arvo=vase
@@ -2460,7 +2468,7 @@
     =/  ali-takos  (reachable-takos:ze r.ali-yaki)
     ::  Tako worklist
     ::
-    =/  takos=(list tako)  ~[r.bob-yaki]
+    =/  takos=(qeu tako)  [r.bob-yaki ~ ~]
     ::  Mergebase candidates.  Have proven they're common ancestors, but
     ::  not that they're a most recent
     ::
@@ -2472,13 +2480,14 @@
     =*  outer-loop  $
     ::  If we've finished our worklist, convert to yakis and return
     ::
-    ?~  takos
+    ?:  =(~ takos)
       (silt (turn ~(tap in bases) ~(got by hut.ran)))
-    =.  done  (~(put in done) i.takos)
+    =^  =tako  takos  ~(get to takos)
+    =.  done  (~(put in done) tako)
     ::  If this is a common ancestor, stop recursing through our
     ::  parentage.  Check if it's comparable to any existing candidate.
     ::
-    ?:  (~(has in ali-takos) i.takos)
+    ?:  (~(has in ali-takos) tako)
       =/  base-list  ~(tap in bases)
       |-  ^-  (set yaki)
       =*  bases-loop  $
@@ -2488,20 +2497,24 @@
         ::  candidate list.
         ::
         =.  bases
-          =/  new-reachable  (reachable-takos:ze i.takos)
-          (~(put in (~(dif in bases) new-reachable)) i.takos)
-        outer-loop(takos t.takos)
+          =/  new-reachable  (reachable-takos:ze tako)
+          (~(put in (~(dif in bases) new-reachable)) tako)
+        outer-loop
       ::  If it's an ancestor of another candidate, this is not most
       ::  recent, so skip and try next in worklist.
       ::
       =/  base-reachable  (reachable-takos:ze i.base-list)
-      ?:  (~(has in base-reachable) i.takos)
-        outer-loop(takos t.takos)
+      ?:  (~(has in base-reachable) tako)
+        outer-loop
       bases-loop(base-list t.base-list)
     ::  Append parents to list and recurse
     ::
-    =/  bob-yaki  (~(got by hut.ran) i.takos)
-    outer-loop(takos (weld t.takos (skip p.bob-yaki ~(has in done))))
+    =/  bob-yaki  (~(got by hut.ran) tako)
+    =/  new-candidates  (skip p.bob-yaki ~(has in done))
+    %_  outer-loop
+      done   (~(gas in done) new-candidates)
+      takos  (~(gas to takos) new-candidates)
+    ==
   ::
   ::  Update mime cache
   ::
@@ -2654,25 +2667,28 @@
   ::  we remove it from `ref` and tell the foreign ship to cancel as well.
   ::
   ++  cancel-request                                    ::  release request
-    ^+  .
+    ^+  ..cancel-request
     =^  wos/(list wove)  qyx
       :_  (~(run by qyx) |=(a/(set duct) (~(del in a) hen)))
       %-  ~(rep by qyx)
       |=  {{a/wove b/(set duct)} c/(list wove)}
       ?.((~(has in b) hen) c [a c])
+    ::
     ?~  ref
-      =>  .(ref `(unit rind)`ref)     ::  XX TMI
-      ?:  =(~ wos)  +                                   ::  XX handle?
-      |-  ^+  +>
-      ?~  wos  +>
-      $(wos t.wos, +> (run-if-future rove.i.wos |=(@da (best hen +<))))
-    ^+  ..cancel-request
-    =+  nux=(~(get by fod.u.ref) hen)
-    ?~  nux  ..cancel-request
+      =>  .(ref `(unit rind)`ref)             ::  XX TMI
+      ?:  =(~ wos)  ..cancel-request                    ::  XX handle?
+      |-  ^+  ..cancel-request
+      ?~  wos  ..cancel-request
+      =.  ..cancel-request  (run-if-future rove.i.wos |=(@da (best hen +<)))
+      $(wos t.wos)
+    ::
+    ?~  nux=(~(get by fod.u.ref) hen)
+      ..cancel-request(ref `(unit rind)`ref)  ::  XX TMI
     =:  fod.u.ref  (~(del by fod.u.ref) hen)
         bom.u.ref  (~(del by bom.u.ref) u.nux)
       ==
-    (send-over-ames hen her u.nux syd ~)
+    %.  [hen her u.nux [syd ~]]
+    send-over-ames(ref `(unit rind)`ref)      ::  XX TMI
   ::
   ::  Handles a request.
   ::
@@ -4376,7 +4392,7 @@
           %+  rain  /sys/arvo/hoon
           (lobe-to-cord (~(got by data) /sys/arvo/hoon))
         ~>  %mean.%arvo-compile-fail
-        (slap (slap hoon gen) (ream '..is'))
+        (slap (slap hoon gen) !,(*^hoon ..is))
       ::
       ++  build-zuse
         |=  arvo=vase

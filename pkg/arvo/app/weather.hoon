@@ -1,3 +1,7 @@
+::  weather [landscape]:
+::
+::  holds latlong, gets weather data from API, passes it on to subscribers
+::
 /+  *server, default-agent, verb, dbug
 =,  format
 ::

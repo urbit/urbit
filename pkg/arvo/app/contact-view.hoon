@@ -1,9 +1,11 @@
-::  contact-view: sets up contact JS client and combines commands
+::  contact-view [landscape]:
+::
+::  sets up contact JS client and combines commands
 ::  into semantic actions for the UI
 ::
 /-
     group-hook,
-    *invite-store,
+    inv=invite-store,
     *contact-hook,
     *metadata-store,
     *metadata-hook,
@@ -48,7 +50,7 @@
         (contact-poke:cc [%add /~/default our.bowl *contact])
         :*  %pass  /srv  %agent  [our.bol %file-server]
             %poke  %file-server-action
-            !>([%serve-dir /'~groups' /app/landscape %.n])
+            !>([%serve-dir /'~groups' /app/landscape %.n %.y])
         ==
     ==
   ::
@@ -63,7 +65,7 @@
         [%pass / %arvo %e %connect [~ /'contact-view'] %contact-view]
         :*  %pass  /srv  %agent  [our.bol %file-server]
             %poke  %file-server-action
-            !>([%serve-dir /'~groups' /app/landscape %.n])
+            !>([%serve-dir /'~groups' /app/landscape %.n %.y])
         ==
     ==
   ::
@@ -159,27 +161,22 @@
       %+  turn
         ~(tap in pending.policy.act)
       |=  =ship
-      (send-invite our.bol %contacts path ship '')
+      (send-invite our.bol %contacts rid ship '')
     ==
   ::
       %join
-    =/  =path
-      (en-path:resource resource.act)
     =/  =cage
       :-  %group-update
       !>  ^-  update:group-store
       [%add-members resource.act (sy our.bol ~)]
     =/  =wire
-      [%join-group path]
+      [%join-group (en-path:resource resource.act)]
     [%pass wire %agent [entity.resource.act %group-push-hook] %poke cage]~
   ::
       %invite
     =*  rid  resource.act
-    =/  =path
-      (en-path:resource rid)
-    =/  =group
-      (need (scry-group:grp rid))
-    :-  (send-invite entity.rid %contacts path ship.act text.act)
+    =/  =group  (need (scry-group:grp rid))
+    :-  (send-invite entity.rid %contacts rid ship.act text.act)
     ?.  ?=(%invite -.policy.group)  ~
     ~[(add-pending rid ship.act)]
   ::
@@ -274,12 +271,12 @@
   [%pass / %agent [entity.rid app] %poke cage]
 ::
 ++  send-invite
-  |=  =invite
+  |=  =invite:inv
   ^-  card
   =/  =cage
     :-  %invite-action
-    !>  ^-  invite-action
-    [%invite /contacts (shaf %invite-uid eny.bol) invite]
+    !>  ^-  action:inv
+    [%invite %contacts (shaf %invite-uid eny.bol) invite]
   [%pass / %agent [recipient.invite %invite-hook] %poke cage]
 ::
 ++  contact-poke

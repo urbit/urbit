@@ -34,6 +34,79 @@
 ++  enjs
   =,  enjs:format
   |%
+  ::
+  ++  signatures
+    |=  s=^signatures
+    ^-  json
+    [%a (turn ~(tap in s) signature)]
+  ::
+  ++  signature
+    |=  s=^signature
+    ^-  json
+    %-  pairs
+    :~  [%signature s+(scot %ux p.s)]
+        [%ship (ship q.s)]
+        [%life (numb r.s)]
+    ==
+  ::
+  ++  index
+    |=  i=^index
+    ^-  json
+    ?:  =(~ i)  s+'/'
+    =/  j=^tape  ""
+    |-
+    ?~  i  [%s (crip j)]
+    =/  k=json  (numb i.i)
+    ?>  ?=(%n -.k)
+    %_  $
+        i  t.i
+        j  (weld j (weld "/" (trip +.k)))
+    ==
+  ::
+  ++  uid
+    |=  u=^uid
+    ^-  json
+    %-  pairs
+    :~  [%resource (enjs:res resource.u)]
+        [%index (index index.u)]
+    ==
+  ::
+  ++  content
+    |=  c=^content
+    ^-  json
+    ?-  -.c
+        %mention    (frond %mention (ship ship.c))
+        %text       (frond %text s+text.c)
+        %url        (frond %url s+url.c)
+        %reference  (frond %reference (uid uid.c))
+        %code
+      %+  frond  %code
+      %-  pairs
+      :-  [%expression s+expression.c]
+      :_  ~
+      :-  %output
+      ::  virtualize output rendering, +tank:enjs:format might crash
+      ::
+      =/  result=(each (list json) tang)
+        (mule |.((turn output.c tank)))
+      ?-  -.result
+        %&  a+p.result
+        %|  a+[a+[%s '[[output rendering error]]']~]~
+      ==
+    ==
+  ::
+  ++  post
+    |=  p=^post
+    ^-  json
+    %-  pairs
+    :~  [%author (ship author.p)]
+        [%index (index index.p)]
+        [%time-sent (time time-sent.p)]
+        [%contents [%a (turn contents.p content)]]
+        [%hash ?~(hash.p ~ s+(scot %ux u.hash.p))]
+        [%signatures (signatures signatures.p)]
+    ==
+  ::
   ++  update
     |=  upd=^update
     ^-  json
@@ -50,6 +123,7 @@
         :~  [%resource (enjs:res resource.upd)]
             [%graph (graph graph.upd)]
             [%mark ?~(mark.upd ~ s+u.mark.upd)]
+            [%overwrite b+overwrite.upd]
         ==
       ::
           %remove-graph
@@ -132,20 +206,6 @@
       :~  (index [a]~)
           (node n)
       ==
-    ::
-    ++  index
-      |=  i=^index
-      ^-  json
-      =/  j=^tape  ""
-      |-
-      ?~  i  [%s (crip j)]
-      =/  k=json  (numb i.i)
-      ?>  ?=(%n -.k)
-      %_  $
-          i  t.i
-          j  (weld j (weld "/" (trip +.k)))
-      ==
-    ::
     ++  node
       |=  n=^node
       ^-  json
@@ -158,41 +218,7 @@
           ==
       ==
     ::
-    ++  post
-      |=  p=^post
-      ^-  json
-      %-  pairs
-      :~  [%author (ship author.p)]
-          [%index (index index.p)]
-          [%time-sent (time time-sent.p)]
-          [%contents [%a (turn contents.p content)]]
-          [%hash ?~(hash.p ~ s+(scot %ux u.hash.p))]
-          [%signatures (signatures signatures.p)]
-      ==
-    ::
-    ++  content
-      |=  c=^content
-      ^-  json
-      ?-  -.c
-          %text       (frond %text s+text.c)
-          %url        (frond %url s+url.c)
-          %reference  (frond %reference (uid uid.c))
-          %code
-        %+  frond  %code
-        %-  pairs
-        :-  [%expression s+expression.c]
-        :_  ~
-        :-  %output
-        ::  virtualize output rendering, +tank:enjs:format might crash
-        ::
-        =/  result=(each (list json) tang)
-          (mule |.((turn output.c tank)))
-        ?-  -.result
-          %&  a+p.result
-          %|  a+[a+[%s '[[output rendering error]]']~]~
-        ==
-      ==
-    ::
+            ::
     ++  nodes
       |=  m=(map ^index ^node)
       ^-  json
@@ -210,27 +236,6 @@
       ^-  json
       [%a (turn ~(tap in i) index)]
     ::
-    ++  uid
-      |=  u=^uid
-      ^-  json
-      %-  pairs
-      :~  [%resource (enjs:res resource.u)]
-          [%index (index index.u)]
-      ==
-    ::
-    ++  signatures
-      |=  s=^signatures
-      ^-  json
-      [%a (turn ~(tap in s) signature)]
-    ::
-    ++  signature
-      |=  s=^signature
-      ^-  json
-      %-  pairs
-      :~  [%signature s+(scot %ux p.s)]
-          [%ship (ship q.s)]
-          [%life (numb r.s)]
-      ==
     --
   --
 ::
@@ -247,20 +252,24 @@
     |%
     ++  decode
       %-  of
-      :~  [%add-graph add-graph]
-          [%remove-graph remove-graph]
-          [%add-nodes add-nodes]
+      :~  [%add-nodes add-nodes]
           [%remove-nodes remove-nodes]
           [%add-signatures add-signatures]
           [%remove-signatures remove-signatures]
+        ::
+          [%add-graph add-graph]
+          [%remove-graph remove-graph]
+        ::
           [%add-tag add-tag]
           [%remove-tag remove-tag]
+        ::
           [%archive-graph archive-graph]
           [%unarchive-graph unarchive-graph]
+          [%run-updates run-updates]
+        ::
           [%keys keys]
           [%tags tags]
           [%tag-queries tag-queries]
-          [%run-updates run-updates]
       ==
     ::
     ++  add-graph
@@ -268,6 +277,7 @@
       :~  [%resource dejs:res]
           [%graph graph]
           [%mark (mu so)]
+          [%overwrite bo]
       ==
     ::
     ++  graph
@@ -291,14 +301,19 @@
           [%nodes nodes]
       ==
     ::
-    ++  nodes  (op ;~(pfix net (more net dem)) node)
+    ++  nodes  (op ;~(pfix fas (more fas dem)) node)
     ::
     ++  node
       %-  ot
       :~  [%post post]
-          ::  TODO: support adding nodes with children by supporting the
-          ::  graph key
-          [%children (of [%empty ul]~)]
+          [%children internal-graph]
+      ==
+    ::
+    ++  internal-graph
+      ^-  $-(json ^internal-graph)
+      %-  of
+      :~  [%empty ul]
+          [%graph graph]
       ==
     ::
     ++  post
@@ -313,7 +328,8 @@
     ::
     ++  content
       %-  of
-      :~  [%text so]
+      :~  [%mention (su ;~(pfix sig fed:ag))]
+          [%text so]
           [%url so]
           [%reference uid]
           [%code eval]
@@ -362,7 +378,7 @@
           [%index index]          
       ==
     ::
-    ++  index  (su ;~(pfix net (more net dem)))
+    ++  index  (su ;~(pfix fas (more fas dem)))
     ::
     ++  add-tag
       %-  ot

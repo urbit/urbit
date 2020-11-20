@@ -18,12 +18,12 @@
     ::  empty string works fine
     ::
     %+  expect-eq
-      !>  ~['']
+      !>  ~
       !>  (to-wain '')
     ::  leading/trailing/consecutive newlines all work fine
     ::
     %+  expect-eq
-      !>  ~['' 'hi' '' '' 'there' '']
+      !>  ~['' 'hi' '' '' 'there']
       !>  (to-wain '\0ahi\0a\0a\0athere\0a')
   ==
 ::  join a list of lines (cords) into a single cord

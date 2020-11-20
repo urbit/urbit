@@ -1308,7 +1308,7 @@
           %+  expect-gall-deal
             :*  /channel/subscription/'0123456789abcdef'/'2'/~nul/two
                 [~nul ~nul]  %two
-                %watch-as  %json  /one/two/three
+                %watch  /one/two/three
             ==
             card.i.moves
         ::
@@ -1516,16 +1516,27 @@
   ==
 ::
 ++  test-prune-events
-  =/  q=(qeu [id=@ud lines=wall])  ~
-  =.  q  (~(put to q) [0 ~])
-  =.  q  (~(put to q) [1 ~])
-  =.  q  (~(put to q) [2 ~])
-  =.  q  (~(put to q) [3 ~])
-  =.  q  (~(put to q) [4 ~])
+  =/  q=(qeu [id=@ud @ud channel-event:eyre])  ~
+  =.  q  (~(put to q) [0 0 *channel-event:eyre])
+  =.  q  (~(put to q) [1 0 *channel-event:eyre])
+  =.  q  (~(put to q) [2 0 *channel-event:eyre])
+  =.  q  (~(put to q) [3 1 *channel-event:eyre])
+  =.  q  (~(put to q) [4 1 *channel-event:eyre])
   ::
-  =.  q  (prune-events:eyre-gate q 3)
+  =^  a  q  (prune-events:eyre-gate q 3)
   ::
-  (expect-eq !>([~ [4 ~]]) !>(~(top to q)))
+  %+  expect-eq
+    !>
+    :-  (~(gas by *(map @ud @ud)) ~[0^3 1^1])
+    [~ [4 1 *channel-event:eyre]]
+  !>([a ~(top to q)])
+::
+++  test-subtract-acked-events
+  =/  a  (~(gas by *(map @ud @ud)) ~[0^3 1^1])
+  =/  u  (~(gas by *(map @ud @ud)) ~[0^4 2^1])
+  =/  e  (~(gas by *(map @ud @ud)) ~[0^1 2^1])
+  =/  r  (subtract-acked-events:eyre-gate a u)
+  (expect-eq !>(e) !>(r))
 ::
 ++  test-channel-sends-unacknowledged-events-on-reconnection
   ::  common initialization
@@ -1796,6 +1807,141 @@
     results9
   ==
 ::
+++  test-channel-subscription-clogged
+  ::  common initialization
+  ::
+  =^  tested-elsewhere  eyre-gate
+    (perform-init-start-channel eyre-gate *sley)
+  ::
+  =/  now=@da  :(add ~1111.1.2 clog-timeout:eyre-gate ~s1)
+  ::  subscription gets a success message
+  ::
+  =^  tested-elsewhere  eyre-gate
+    %:  eyre-take
+      eyre-gate
+      now
+      scry=scry-provides-code
+      ^=  take-args
+        :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
+            duct=~[/http-put-request]
+            ^-  (hypo sign:eyre-gate)
+            :-  *type
+            [%g %unto %watch-ack ~]
+         ==
+      moves=~
+    ==
+  ::  opens the http channel
+  ::
+  =^  tested-elsewhere  eyre-gate
+    %:  eyre-call
+      eyre-gate
+      now
+      scry=scry-provides-code
+      ^=  call-args
+      ^-  [duct * (hobo task:able:eyre-gate)]
+        :*  duct=~[/http-get-open]  ~
+            %request
+            %.n
+            [%ipv4 .192.168.1.1]
+            %'GET'
+            '/~/channel/0123456789abcdef'
+            ['cookie' cookie-value]~
+            ~
+        ==
+      ^=  expected-moves
+      ~  ::NOTE  tested elsewhere
+    ==
+  ::  user gets sent multiple subscription results
+  ::
+  =/  max=@ud  clog-threshold:eyre-gate
+  =/  cur=@ud  0
+  |-  =*  loop-fact  $
+  ?.  =(cur max)
+    =^  tested-elsewhere  eyre-gate
+      %:  eyre-take
+        eyre-gate
+        now
+        scry=scry-provides-code
+        ^=  take-args
+          :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
+              duct=~[/http-put-request]
+              ^-  (hypo sign:eyre-gate)
+              :-  *type
+              [%g %unto %fact %json !>(`json`[%a [%n '1'] ~])]
+          ==
+        ^=  moves
+        ~  ::NOTE  tested elsewhere
+      ==
+    loop-fact(cur +(cur))
+  ::  the next subscription result should trigger a clog
+  ::
+  =^  results1  eyre-gate
+    %:  eyre-take
+      eyre-gate
+      now
+      scry=scry-provides-code
+      ^=  take-args
+        :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
+            duct=~[/http-put-request]
+            ^-  (hypo sign:eyre-gate)
+            :-  *type
+            [%g %unto %fact %json !>(`json`[%a [%n '1'] ~])]
+        ==
+      ^=  moves
+        :~  :*  duct=~[/http-get-open]
+              %give
+              %response
+              %continue
+              :-  ~
+              %-  as-octt:mimes:html
+              """
+              id: {((d-co:co 1) +(clog-threshold:eyre-gate))}
+              data: \{"json":[1],"id":1,"response":"diff"}
+
+
+              """
+              complete=%.n
+            ==
+            :*  duct=~[/http-put-request]  %pass
+              /channel/subscription/'0123456789abcdef'/'1'/~nul/two
+              %g  %deal  [~nul ~nul]  %two  %leave  ~
+            ==
+            :*  duct=~[/http-get-open]
+                %give
+                %response
+                %continue
+                :-  ~
+                %-  as-octt:mimes:html
+                """
+                id: {((d-co:co 1) (add 2 clog-threshold:eyre-gate))}
+                data: \{"id":1,"response":"quit"}
+
+
+                """
+                complete=%.n
+            ==
+        ==
+    ==
+  ::  subsequent subscription updates, which might have gotten sent out during
+  ::  the same event in which a clog triggered, should be silently ignored
+  ::
+  =^  results2  eyre-gate
+    %:  eyre-take
+      eyre-gate
+      now
+      scry=scry-provides-code
+      ^=  take-args
+        :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
+            duct=~[/http-put-request]
+            ^-  (hypo sign:eyre-gate)
+            :-  *type
+            [%g %unto %fact %json !>(`json`[%a [%n '1'] ~])]
+        ==
+      ^=  moves
+        ~
+    ==
+  (weld results1 results2)
+::
 ++  test-born-sends-pending-cancels
   ::
   =^  results1  eyre-gate
@@ -2027,7 +2173,7 @@
   ::
   ?:  ?=([%watch *] deal.expected)
     ?.  ?=([%watch *] r.note)
-      [%leaf "expected %watch-as, actual {<r.note>}"]~
+      [%leaf "expected %watch, actual {<r.note>}"]~
     ::  compare the path
     ::
     (expect-eq !>(path.deal.expected) !>(path.r.note))
@@ -2201,7 +2347,7 @@
           %+  expect-gall-deal
             :*  /channel/subscription/'0123456789abcdef'/'1'/~nul/two
                 [~nul ~nul]  %two
-                %watch-as  %json  /one/two/three
+                %watch  /one/two/three
             ==
             card.i.t.moves
         ::
@@ -2226,6 +2372,19 @@
   ?:  &(=(%ca term) =(/hoon/handler/gen s.beam))
     :+  ~  ~
     vase+!>(!>(|=(* |=(* [[%404 ~] ~]))))
+  ?:  &(=(%cb term) =(/json s.beam))
+    :^  ~  ~  %dais
+    !>  ^-  dais:clay
+    |_  sam=vase
+    ++  bunt  !!
+    ++  diff  !!
+    ++  form  !!
+    ++  join  !!
+    ++  mash  !!
+    ++  pact  !!
+    ++  vale  |=(=noun !>(;;(json noun)))
+    ++  volt  !!
+    --
   ::
   ?>  =(%j term)
   ?>  =(~nul p.beam)

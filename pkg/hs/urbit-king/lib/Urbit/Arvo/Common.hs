@@ -1,3 +1,12 @@
+{-# LANGUAGE StrictData #-}
+
+-- This is required due to the use of 'Void' in a constructor slot in
+-- combination with 'deriveNoun' which generates an unreachable pattern.
+{-# OPTIONS_GHC -Wno-overlapping-patterns #-}
+
+-- Hack. See comment above instance ToNoun H.StdMethod
+{-# OPTIONS_GHC -Wno-orphans #-}
+
 {-|
     Types used in both Events and Effects.
 -}
@@ -9,10 +18,12 @@ module Urbit.Arvo.Common
   , HttpServerConf(..), PEM(..), Key, Cert
   , HttpEvent(..), Method, Header(..), ResponseHeader(..)
   , ReOrg(..), reorgThroughNoun
-  , AmesDest(..), Ipv4(..), Ipv6(..), Patp(..), Galaxy, AmesAddress(..)
+  , AmesDest, Ipv4(..), Ipv6(..), Patp(..), Galaxy, AmesAddress(..)
   ) where
 
 import Urbit.Prelude hiding (Term)
+
+import Control.Monad.Fail (fail)
 
 import qualified Network.HTTP.Types.Method as H
 import qualified Urbit.Ob                  as Ob

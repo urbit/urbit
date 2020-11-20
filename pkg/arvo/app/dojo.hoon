@@ -165,7 +165,7 @@
         ==
       ==
     ::
-      ;~  pfix  net
+      ;~  pfix  fas
         ;~  pose
           (parse-variable (cold %sur hep) ;~(pfix gap parse-cables))
           (parse-variable (cold %lib lus) ;~(pfix gap parse-cables))
@@ -179,8 +179,8 @@
   ++  parse-sink
     ;~  pose
       ;~(plug (cold %file tar) parse-beam)
-      ;~(plug (cold %flat vat) (most net sym))
-      ;~(plug (cold %pill dot) (most net sym))
+      ;~(plug (cold %flat pat) (most fas sym))
+      ;~(plug (cold %pill dot) (most fas sym))
       ;~(plug (cold %http lus) (stag %post parse-url))
       ;~(plug (cold %http hep) (stag %put parse-url))
       (stag %show (cook $?($1 $2 $3 $4 $5) (cook lent (stun [1 5] wut))))
@@ -218,7 +218,7 @@
         ;~(plug (cold %ur lus) parse-url)
         ;~(plug (cold %ge lus) parse-model)
         ;~(plug (cold %te hep) sym (star ;~(pfix ace parse-source)))
-        ;~(plug (cold %as pad) sym ;~(pfix ace parse-source))
+        ;~(plug (cold %as pam) sym ;~(pfix ace parse-source))
         ;~(plug (cold %do cab) parse-hoon ;~(pfix ace parse-source))
         parse-value
       ==
@@ -228,7 +228,7 @@
     ;~  pose
       ;~  plug
         ;~(pfix sig fed:ag)
-        ;~(pose ;~(pfix net sym) (easy default-app))
+        ;~(pose ;~(pfix fas sym) (easy default-app))
       ==
       %+  stag  our
       ;~(pose sym (easy default-app))
@@ -263,7 +263,7 @@
     auri:de-purl:html
   ::
   ++  parse-model   ;~(plug parse-server parse-config)
-  ++  parse-server  (stag 0 (most net sym))
+  ++  parse-server  (stag 0 (most fas sym))
   ++  parse-hoon    tall:hoon-parser
   ::
   ++  parse-rood
@@ -284,9 +284,10 @@
     ==
   ++  parse-value
     ;~  pose
-      (stag %sa ;~(pfix tar pad sym))
+      ;~(plug (cold %as pam) sym ;~(pfix ace parse-source))
+      (stag %sa ;~(pfix tar pam sym))
       (stag %ex parse-hoon)
-      (stag %tu (ifix [lac rac] (most ace parse-source)))
+      (stag %tu (ifix [sel ser] (most ace parse-source)))
     ==
   ::
   ++  parse-config
@@ -502,8 +503,8 @@
       ^+  +>
       ::  XX needs filter
       ::
-      :: ?:  ?=({$show $3} -.mad)
-      ::  (dy-rash %tan (dy-show-source q.mad) ~)       ::  XX separate command
+      ?:  ?=({$show $3} -.mad)
+        (dy-rash %tan (dy-show-source q.mad) ~)
       ?:  ?=($brev -.mad)
         =.  var  (~(del by var) p.mad)
         =<  dy-amok
@@ -589,10 +590,8 @@
                   ?-  p.p.mad
                     %0  ~
                     %1  [[%rose [~ "  " ~] (skol p.q.cay) ~] maar]
-                    ::  XX  actually print something meaningful here
-                    ::
-                    %2  [[%rose [~ "  " ~] *tank ~] maar]
-                    %3  ~
+                    %2  [[%rose [~ "  " ~] (dy-show-type-noun p.q.cay) ~] maar]
+                    ::%3  handled above 
                     %4  ~
                     %5  [[%rose [~ "  " ~] (xskol p.q.cay) ~] maar]
                   ==
@@ -638,6 +637,70 @@
           :-  i=""
           t=(turn `wain`?~(r.hit ~ (to-wain:format q.u.r.hit)) trip)
       ==
+  ++  dy-show-type-noun
+    |=  a/type  ^-  tank
+    =-  >[-]<
+    |-  ^-  $?  $%  {$atom @tas (unit @)}
+                    {$cell _$ _$}
+                    {$face $@(term tune) _$}
+                    {$fork (set _$)}
+                    {$hold _$ hoon}
+                ==
+                wain                :: "<|core|>"
+                $?($noun $void)
+            ==
+    ?+  a  a
+      {$face ^}  a(q $(a q.a))
+      {$cell ^}  a(p $(a p.a), q $(a q.a))
+      {$fork *}  a(p (silt (turn ~(tap in p.a) |=(b/type ^$(a b)))))
+      {$hint *}  !!
+      {$core ^}  `wain`/core
+      {$hold *}  a(p $(a p.a))
+    ==
+  ::
+  ::  XX needs filter
+  ::
+  ++  dy-shown
+    =/  jank-bucwut  :: FIXME just $? fishes when defined for some reason
+      |*  [a=mold b=mold]
+      |=(c=_`*`*a ?:(& (a c) (b c)))
+    ::
+    ::$?  hoon
+    ;:    jank-bucwut
+        hoon
+        $^  {dy-shown dy-shown}
+        $%  {$ur cord}
+            {$sa mark}
+            {$as mark dy-shown}
+            {$do hoon dy-shown}
+            {$te term (list dy-shown)}
+            {$ge path (list dy-shown) (map term (unit dy-shown))}
+            {$dv path}
+        ==
+    ==
+  ::
+  ++  dy-show-source
+    |=  a/dojo-source  ^-  tank
+    =-  >[-]<
+    =+  `{@ bil/dojo-build}`a
+    |-  ^-  dy-shown
+    ?-  -.bil
+      $?($ur $dv $sa)  bil
+      $ex  ?.  ?=({$cltr *} p.bil)  p.bil
+               |-  ^-  hoon
+               ?~  p.p.bil  !!
+               ?~  t.p.p.bil  i.p.p.bil
+               [i.p.p.bil $(p.p.bil t.p.p.bil)]
+      $tu  ?~  p.bil  !!
+           |-
+           ?~  t.p.bil  ^$(bil q.i.p.bil)
+           [^$(bil q.i.p.bil) $(p.bil t.p.bil)]
+      $as  bil(q $(bil q.q.bil))
+      $do  bil(q $(bil q.q.bil))
+      $te  bil(q (turn q.bil ..$))
+      $ge  :+  %ge  q.p.p.bil
+           [(turn p.q.p.bil ..$) (~(run by q.q.p.bil) (lift ..$))]
+    ==
     ::
     ++  dy-edit                                         ::  handle edit
       |=  cal/sole-change
@@ -875,6 +938,8 @@
       ?>  ?=(~ cud)
       ?:  =(nex num)
         dy-over
+      ?:  =([%show %3] -.mad)                           :: just show source
+        dy-over
       dy-make(cud `[nex (~(got by job) nex)])
     --
   ::
@@ -1080,6 +1145,8 @@
             $listen-api  !!
             $export      !!
             $import      !!
+            $export-all  !!
+            $import-all  !!
             $as
           :*  %as  mar.source.com
               $(num +(num), source.com next.source.com)

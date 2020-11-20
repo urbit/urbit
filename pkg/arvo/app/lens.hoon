@@ -14,6 +14,28 @@
           job=(unit [eyre-id=@ta com=command:lens])
       ==
   ==
+::
+++  export-app
+  |=  [app=@tas our=@p now=@da]
+  .^(@ %gx /(scot %p our)/[app]/(scot %da now)/export/noun)
+++  export-all
+  |=  [our=@p now=@da]
+  ^-  (list [@tas @])
+  %+  turn
+    ^-  (list @tas)
+    :~  %group-store
+        %metadata-store
+        %metadata-hook
+        %contact-store
+        %contact-hook
+        %invite-store
+        %chat-store
+        %chat-hook
+        %publish
+        %graph-store
+    ==
+  |=  app=@tas
+  [app (export-app app our now)]
 --
 ::
 =|  =state
@@ -43,12 +65,15 @@
   =/  com=command:lens
     (json:grab:lens-mark jon)
   ::
-  ?:  ?=(%export -.source.com)
-    ~&  [%export app.source.com]
+  ?+  -.source.com
+    :_  this(job.state (some [eyre-id com]))
+    [%pass /sole %agent [our.bowl %dojo] %watch /sole/[eyre-id]]~
+  ::
+      %export
     :_  this(job.state (some [eyre-id com]))
     [%pass /export %agent [our.bowl app.source.com] %watch /export]~
   ::
-  ?:  ?=(%import -.source.com)
+      %import
     ?~  enc=(de:base64 base64-jam.source.com)
       !!
     ::
@@ -57,8 +82,28 @@
     :_  this(job.state (some [eyre-id com]))
     [%pass /import %agent [our.bowl app.source.com] %poke %import !>(c)]~
   ::
-  :_  this(job.state (some [eyre-id com]))
-  [%pass /sole %agent [our.bowl %dojo] %watch /sole/[eyre-id]]~
+      %export-all
+    =/  output  (crip "{<our.bowl>}-export/atom")
+    =/  jon
+      =/  =atom  (jam (export-all our.bowl now.bowl))
+      =/  =octs  [(met 3 atom) atom]
+      =/  enc    (en:base64 octs)
+      (pairs:enjs:format file+s+output data+s+enc ~)
+    :_  this
+    %+  give-simple-payload:app  eyre-id
+    (json-response:gen jon)
+  ::
+      %import-all
+    =/  enc  (de:base64 base64-jam.source.com)
+    ?~  enc  !!
+    =/  by-app  ;;((list [@tas @]) (cue q.u.enc))
+    :_  this
+    %+  weld  (give-simple-payload:app eyre-id not-found:gen)
+    %+  turn  by-app
+    |=  [app=@tas data=@]
+    ^-  card:agent:gall
+    [%pass /import-all %agent [our.bowl app] %poke %import !>(data)]
+  ==
 ::
 ++  on-watch
   |=  =path
@@ -68,7 +113,13 @@
   (on-watch:def path)
 ::
 ++  on-leave  on-leave:def
-++  on-peek   on-peek:def
+++  on-peek
+  |=  =path
+  ^-  (unit (unit cage))
+  ?+  path  (on-peek:def path)
+    [%x %export-all ~]
+    ``noun+!>((jam (export-all our.bowl now.bowl)))
+  ==
 ++  on-agent
   |=  [=wire =sign:agent:gall]
   ^-  (quip card:agent:gall _this)
@@ -136,7 +187,7 @@
     ::
     :_  this
     %+  give-simple-payload:app  eyre-id.u.job.state
-    (json-response:gen (json-to-octs jon))
+    (json-response:gen jon)
   ::
   ++  take-sole-effect
     |=  fec=sole-effect
@@ -186,7 +237,7 @@
     %+  give-simple-payload:app  eyre-id.u.job.state
     ?-  -.u.out
         %json
-      (json-response:gen (json-to-octs json.u.out))
+      (json-response:gen json.u.out)
     ::
         %mime
       =/  headers
