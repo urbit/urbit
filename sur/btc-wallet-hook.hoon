@@ -17,7 +17,7 @@
 +$  payment  [=address payer=ship value=sats]
 ::
 +$  piym  (jar ship payment)
-+$  poym  [payee=(unit ship) =txbu]
++$  poym  [payee=(unit ship) =txbu:bws]
 +$  piym-watch  (map address ship)
 +$  poym-watch  (map address ship)
 ::

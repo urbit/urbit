@@ -190,7 +190,7 @@
     ==
     ::
       %raw-tx
-    ::  TODO: check whether in poym
+    ::  TODO: check whether in poym. We have txid in the update
     ~&  >>  rawtx.body.p.upd
     `state
   ==
@@ -225,10 +225,11 @@
     ::  txbus can potentially use the same UTXO inputs, so if another payment
     ::   was in process of fetching raw-txs for a txbu, replace it
     ::
-    =/  txids=(list txid)
-      %+  turn  txis.txbu.upd
-      |=  =txi:bws  txid.utxo.txi
     :_  state(poym [payee.upd txbu.upd])
+    ?~  provider  ~&(>>> "provider not set" ~)
+    %+  turn  txis.txbu.upd
+    |=(=txi:bws (get-raw-tx host.u.provider txid.utxo.txi))
+
     :: TODO: send all its input tx-ids out for feedback
     ::
       %scan-done
@@ -281,7 +282,7 @@
   ^-  card
   =/  ri=req-id:bp  (gen-req-id:bp eny.bowl)
   :*  %pass  /[(scot %da now.bowl)]  %agent  [host %btc-provider]
-      %poke  %btc-provider-action !>(ri %raw-tx txid)
+      %poke  %btc-provider-action  !>([ri %raw-tx txid])
   ==
 ::
 ++  provider-connected
