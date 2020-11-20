@@ -165,31 +165,34 @@ _disk_commit_start(struct _cd_save* req_u)
                                     _disk_commit_after_cb);
 }
 
-/* _disk_serialize_v0(): serialize events in format v0.
+/* _disk_serialize_v1(): serialize events in format v1.
 */
 static c3_w
-_disk_serialize_v0(u3_fact* tac_u, c3_y** dat_y)
+_disk_serialize_v1(u3_fact* tac_u, c3_y** out_y)
 {
-  u3_noun val = u3nc(tac_u->bug_l, u3k(tac_u->job));
-  u3_atom mat;
-  c3_w  len_w;
-
 #ifdef DISK_TRACE_JAM
   u3t_event_trace("king disk jam", 'B');
 #endif
 
-  mat    = u3ke_jam(val);
-  len_w  = u3r_met(3, mat);
-  *dat_y = c3_malloc(len_w);
-  u3r_bytes(0, len_w, *dat_y, mat);
+  {
+    u3_atom mat = u3qe_jam(tac_u->job);
+    c3_w  len_w = u3r_met(3, mat);
+    c3_y* dat_y = c3_malloc(4 + len_w);
+    dat_y[0] = tac_u->mug_l & 0xff;
+    dat_y[1] = (tac_u->mug_l >> 8) & 0xff;
+    dat_y[2] = (tac_u->mug_l >> 16) & 0xff;
+    dat_y[3] = (tac_u->mug_l >> 24) & 0xff;
+    u3r_bytes(0, len_w, dat_y + 4, mat);
 
 #ifdef DISK_TRACE_JAM
-  u3t_event_trace("king disk jam", 'E');
+    u3t_event_trace("king disk jam", 'E');
 #endif
 
-  u3z(mat);
+    u3z(mat);
 
-  return len_w;
+    *out_y = dat_y;
+    return len_w + 4;
+  }
 }
 
 /* _disk_batch(): create a write batch
@@ -213,7 +216,7 @@ _disk_batch(u3_disk* log_u, c3_d len_d)
   for ( c3_d i_d = 0ULL; i_d < len_d; ++i_d) {
     c3_assert( (req_u->eve_d + i_d) == tac_u->eve_d );
 
-    req_u->siz_i[i_d] = _disk_serialize_v0(tac_u, &req_u->byt_y[i_d]);
+    req_u->siz_i[i_d] = _disk_serialize_v1(tac_u, &req_u->byt_y[i_d]);
 
     tac_u = tac_u->nex_u;
   }
@@ -276,7 +279,6 @@ u3_disk_boot_plan(u3_disk* log_u, u3_noun job)
   //  NB, boot mugs are 0
   //
   u3_fact* tac_u = u3_fact_init(++log_u->sen_d, 0, job);
-  tac_u->bug_l   = 0;  // XX
 
   if ( !log_u->put_u.ent_u ) {
     c3_assert( !log_u->put_u.ext_u );
@@ -381,9 +383,17 @@ _disk_read_one_cb(void* ptr_v, c3_d eve_d, size_t val_i, void* val_p)
   u3_disk* log_u = red_u->log_u;
   u3_fact* tac_u;
 
+  if ( 4 >= val_i ) {
+    return c3n;
+  }
+
   {
-    u3_noun val, mug, job;
-    c3_l  bug_l;
+    u3_noun job;
+    c3_y* dat_y = val_p;
+    c3_l  mug_l = dat_y[0]
+                ^ (dat_y[1] <<  8)
+                ^ (dat_y[2] << 16)
+                ^ (dat_y[3] << 24);
 
 #ifdef DISK_TRACE_CUE
     u3t_event_trace("king disk cue", 'B');
@@ -391,39 +401,23 @@ _disk_read_one_cb(void* ptr_v, c3_d eve_d, size_t val_i, void* val_p)
 
     //  XX u3m_soft?
     //
-    val = u3ke_cue(u3i_bytes(val_i, val_p));
+    job = u3ke_cue(u3i_bytes(val_i - 4, dat_y + 4));
 
 #ifdef DISK_TRACE_CUE
     u3t_event_trace("king disk cue", 'E');
 #endif
 
-    if (  (c3n == u3r_cell(val, &mug, &job))
-       || (c3n == u3r_safe_word(mug, &bug_l)) ) // XX
-    {
-      //  failure here triggers cleanup in _disk_read_start_cb()
-      //
-      u3z(val);
-      return c3n;
-    }
-
-    //  NB: mug is unknown due to log format
-    //
-    tac_u = u3_fact_init(eve_d, 0, u3k(job));
-    tac_u->bug_l = bug_l;
-
-    u3z(val);
+    tac_u = u3_fact_init(eve_d, mug_l, job);
   }
 
   if ( !red_u->ent_u ) {
     c3_assert( !red_u->ext_u );
 
     c3_assert( red_u->eve_d == eve_d );
-    // tac_u->mug_l = 0;  // XX
     red_u->ent_u = red_u->ext_u = tac_u;
   }
   else {
     c3_assert( (1ULL + red_u->ent_u->eve_d) == eve_d );
-    // log_u->get_u.ent_u->mug_l = tac_u->bug_l; // XX
     red_u->ent_u->nex_u = tac_u;
     red_u->ent_u = tac_u;
   }
