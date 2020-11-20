@@ -28,4 +28,7 @@
       [%ret-pay-address =address payer=ship value=sats]
       [%force-retry ~]
   ==
++$  request
+  $%  [%sign-tx payee=(unit ship) =txbu:bws]
+  ==
 --
