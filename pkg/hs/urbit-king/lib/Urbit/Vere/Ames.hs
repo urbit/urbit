@@ -10,7 +10,7 @@ module Urbit.Vere.Ames (ames, ames', PacketOutcome(..)) where
 
 import Urbit.Prelude
 
-import Network.Socket              hiding (recvFrom, sendTo)
+import Network.Socket
 import Urbit.Arvo                  hiding (Fake)
 import Urbit.King.Config
 import Urbit.King.Scry

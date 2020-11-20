@@ -35,6 +35,7 @@ data HoonTreeNode a = NTN
 data HoonTree a = E | Node (HoonTreeNode a)
   deriving (Eq, Ord, Show)
 
+pattern N :: NounVal a -> HoonTree a -> HoonTree a -> HoonTree a
 pattern N n l r = Node (NTN n l r)
 
 newtype HoonSet a = HoonSet { unHoonSet :: HoonTree a }
