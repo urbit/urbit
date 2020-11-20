@@ -7,21 +7,15 @@
 module Urbit.Noun.Tree
     ( HoonSet, setToHoonSet, setFromHoonSet
     , HoonMap, mapToHoonMap, mapFromHoonMap
-    , mug
     ) where
 
 import ClassyPrelude
 import Control.Lens  hiding (non)
 
-import Urbit.Atom
 import Urbit.Noun.Conversions ()
 import Urbit.Noun.Convert
 import Urbit.Noun.Core
 import Urbit.Noun.TH
-
-import Data.Bits        (shiftR, xor)
-import Data.Hash.Murmur (murmur3)
-import GHC.Natural      (Natural)
 
 
 -- Types -----------------------------------------------------------------------
@@ -79,67 +73,6 @@ instance FromNoun a => FromNoun (HoonTree a) where
 deriveNoun ''HoonTreeNode
 
 
--- Mug -------------------------------------------------------------------------
-
-type Nat = Natural
-
-slowMug :: Noun -> Nat
-slowMug = trim 0xcafe_babe . \case
-    A a   -> a
-    C h t -> mix (slowMug h) $ mix 0x7fff_ffff (slowMug t)
-  where
-    trim :: Nat -> Nat -> Nat
-    trim syd key =
-        if 0/=ham then ham else trim (succ syd) key
-      where
-        haz = muk syd (met 3 key) key
-        ham = mix (rsh 0 31 haz) (end 0 31 haz)
-
-mix :: Nat -> Nat -> Nat
-mix = xor
-
--- Murmur3
-muk :: Nat -> Nat -> Nat -> Nat
-muk seed len =
-    fromIntegral . murmur3 (word32 seed) . resize . atomBytes
-  where
-    resize :: ByteString -> ByteString
-    resize buf =
-      case compare (length buf) (int len) of
-          EQ -> buf
-          LT -> error "bad-muk"
-          GT -> error "bad-muk"
---        LT -> buf <> replicate (len - length buf) 0
---        GT -> take len buf
-
-int :: Integral i => i -> Int
-int = fromIntegral
-
-word32 :: Integral i => i -> Word32
-word32 = fromIntegral
-
-bex :: Nat -> Nat
-bex = (2^)
-
-end :: Nat -> Nat -> Nat -> Nat
-end blockSize blocks n =
-  n `mod` (bex (bex blockSize * blocks))
-
-rsh :: Nat -> Nat -> Nat -> Nat
-rsh blockSize blocks n =
-    shiftR n $ fromIntegral $ (bex blockSize * blocks)
-
-met :: Nat -> Nat -> Nat
-met bloq = go 0
-  where
-    go c 0 = c
-    go c n = go (succ c) (rsh bloq 1 n)
-
--- XX TODO
-mug :: Noun -> Nat
-mug = slowMug
-
-
 -- Order -----------------------------------------------------------------------
 
 {-
@@ -148,8 +81,8 @@ mug = slowMug
 mor :: Noun -> Noun -> Bool
 mor a b = if c == d then dor a b else c < d
   where
-    c = mug $ A $ mug a
-    d = mug $ A $ mug b
+    c = mug $ A $ fromIntegral $ mug a
+    d = mug $ A $ fromIntegral $ mug b
 
 {-
     Orders in ascending tree depth.

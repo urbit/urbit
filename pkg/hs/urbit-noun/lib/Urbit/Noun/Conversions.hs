@@ -10,7 +10,7 @@ module Urbit.Noun.Conversions
   , BigTape(..), BigCord(..)
   , Wain(..), Wall, Each(..)
   , UD(..), UV(..), UW(..), cordToUW
-  , Mug(..), Path(..), EvilPath(..), Ship(..)
+  , Path(..), EvilPath(..), Ship(..)
   , Lenient(..), pathToFilePath, filePathToPath
   , showUD, tshowUD
   , textAsTa
@@ -638,11 +638,6 @@ filePathToPath fp = Path path
     ext = case takeExtension fp of
       ('.':xs) -> xs
       x        -> x
-
--- Mug -------------------------------------------------------------------------
-
-newtype Mug = Mug Word32
-  deriving newtype (Eq, Ord, Show, Num, ToNoun, FromNoun)
 
 
 -- Bool ------------------------------------------------------------------------
