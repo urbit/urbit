@@ -10,7 +10,7 @@
 ::      - updates to existing address info
 ::
 ::  Sends updates to:
-::    none
+::    /sign-me
 ::
 /-  *btc, *btc-wallet-hook, bws=btc-wallet-store
 /+  dbug, default-agent, bwsl=btc-wallet-store, bp=btc-provider
@@ -76,6 +76,7 @@
   ==
   [cards this]
 ::
+::  TODO: handle /sign-me path
 ++  on-watch  on-watch:def
 ++  on-leave  on-leave:def
 ++  on-peek   on-peek:def
@@ -190,9 +191,10 @@
     ==
     ::
       %raw-tx
-    ::  TODO: check whether in poym. We have txid in the update
-    ~&  >>  rawtx.body.p.upd
-    `state
+    =.  state  (update-poym +.body.p.upd)
+    :_  state
+    ?.  poym-ready  ~
+    ~[(send-tx poym)]
   ==
 ::
 ++  handle-wallet-store-request
@@ -229,8 +231,6 @@
     ?~  provider  ~&(>>> "provider not set" ~)
     %+  turn  txis.txbu.upd
     |=(=txi:bws (get-raw-tx host.u.provider txid.utxo.txi))
-
-    :: TODO: send all its input tx-ids out for feedback
     ::
       %scan-done
     ?~  def-wallet
@@ -261,6 +261,24 @@
     |=  [fam=ship ps=(list payment)]
     state(piym (~(put by piym) fam ps))
   --
+::
+++  update-poym
+  |=  [=txid rt=rawtx]
+  ^-  _state
+  =*  txis  txis.txbu.poym
+  =|  i=@
+  |-
+  ?:  (gte i (lent txis))  state
+  =/  ith=txi:bws  (snag i txis)
+  =?  txis  =(txid txid.utxo.ith)
+   (snap txis i `txi:bws`ith(ur `rt))
+  $(i +(i))
+::  poym-ready: do we have all rawtx for inputs?
+::
+++  poym-ready
+  ^-  ?
+  %+  levy  txis.txbu.poym
+  |=(t=txi:bws ?=(^ ur.t))
 ::
 ++  retry
   |=  p=^pend-addr
@@ -297,6 +315,11 @@
       [target %btc-wallet-hook]  %poke
       %btc-wallet-hook-action  !>(act)
   ==
+::
+++  send-tx
+  |=  p=^poym
+  ^-  card
+  [%give %fact ~[/sign-me] %btc-wallet-hook-request !>([%sign-tx p])]
 ::
 ++  poke-wallet-store
   |=  act=action:bws
