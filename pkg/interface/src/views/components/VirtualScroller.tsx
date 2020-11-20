@@ -306,7 +306,7 @@ export default class VirtualScroller extends PureComponent<VirtualScrollerProps,
 
     const indexesToRender = Array.from(visibleItems.keys());
 
-    const transform = origin === 'top' ? 'scale3d(1, 1, 1)' : 'scale3d(1, -1, 1)';
+    const transform = origin === 'top' ? 'scale3d(1, 1, 1)' : 'scale3d(1, -1, 1) perspective(1px)';
 
     const render = (index) => {
       const measure = (element) => {
