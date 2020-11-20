@@ -2,23 +2,24 @@
 |%
 ::  req-id: hash of [xpub chyg idx]
 ::  pend: lookup of req-id -> requests from wallet-store
-::  pend-txbu: lookup req-id -> txbu (to fetch and assoc raw-tx info with txid)
+::  pend-txbu: lookup req-id -> txbu (to fetch and assoc rawtx info with txid)
 ::
 ::  payment: a payment expected from another ship
 ::    - address: address generated for this payment
-::  piym: incoming payments. Stores all ship moons inside
-::  poym: outgoing payments
+::  piym: incoming payments. Stores all ship moons under their planet.
+::  poym: the current outgoing payment (one at a time only)
 ::  piym-watch/poym-watch:
 ::   let us link an address back to its incoming/outgoing payment
+::   checked when address updates come from btc-wallet-store
 ::
 +$  btc-state  [blockcount=@ud fee=sats t=@da]
-+$  pend-addr  (map req-id:bp request:bws) 
++$  pend-addr  (map req-id:bp request:bws)
 +$  pend-txbu  (map req-id:bp ship)
 ::
 +$  payment  [=address payer=ship value=sats]
 ::
 +$  piym  (jar ship payment)
-+$  poym  (map ship txbu:bws)
++$  poym  [=req-id:bp payee=(unit ship) =txbu:bws]
 +$  piym-watch  (map address ship)
 +$  poym-watch  (map address ship)
 ::

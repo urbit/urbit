@@ -1,9 +1,14 @@
-/-  sur=btc-provider, *btc
-/+  base64
+/-  sur=btc-provider
+/+  base64, *btc
 ^?
 =<  [sur .]
 =,  sur
 |%
+++  gen-req-id
+  |=  eny=@uvJ  ^-  req-id
+  %+  scot  %ux
+  (ripemd-160:ripemd:crypto [(met 3 eny) eny])
+::
 ++  address-to-cord
   |=  =address  ^-  cord
   ?:  ?=([%legacy *] address)
@@ -36,6 +41,11 @@
   |=  h=@t
   (hash256 [32 (to-hex h)])
 ::
+++  to-btc-byts
+  |=  h=@t
+  ^-  btc-byts
+  [(lent (trip h)) (to-hex h)]
+::
 ++  get-request
   |=  url=@t
   ^-  request:http
@@ -62,6 +72,9 @@
       %get-address-info
     [id.res (address-info res.res)]
     ::
+      %get-raw-tx
+    [id.res (raw-tx res.res)]
+    ::
       %get-block-count
     [id.res (ni:dejs:format res.res)]
     ::
@@ -81,6 +94,8 @@
         [%height ni:dejs:format]
         [%value ni:dejs:format]
     ==
+  ++  raw-tx
+    (cu:dejs:format to-btc-byts so:dejs:format)
   ++  block-and-fee
     %-  ot:dejs:format
     :~  [%blockcount ni:dejs:format]
@@ -94,20 +109,23 @@
   %-  get-request
   ?-  -.ract
       %get-address-info
-    (mk-url '/addresses/info/' `address.ract)
+    %+  mk-url  '/addresses/info/'
+    (address-to-cord address.ract)
+    ::
+      %get-raw-tx
+    %+  mk-url  '/getrawtx/'
+    (en:base16:mimes:html txid.ract)
     ::
       %get-block-count
-    (mk-url '/getblockcount' ~)
+    (mk-url '/getblockcount' '')
     ::
       %get-block-and-fee
-    (mk-url '/getblockandfee' ~)
+    (mk-url '/getblockandfee' '')
   ==
   ++  mk-url
-    |=  [base=@t uaddr=(unit address)]
-    =/  addr=@t
-      ?~  uaddr  ''  (address-to-cord u.uaddr)
+    |=  [base=@t params=@t]
     %^  cat  3
-    (cat 3 endpoint base)  addr
+    (cat 3 endpoint base)  params
   --
 ::  RPC/HTTP Utilities
 ::

@@ -109,10 +109,14 @@
         %address-info
       [%get-address-info address.body.act]
       ::
+        %raw-tx
+      [%get-raw-tx txid.body.act]
+      ::
         %ping
       [%get-block-and-fee ~]
     ==
   [~[(req-card act ract)] state]
+::
 ++  req-card
   |=  [act=action ract=action:rpc]
   =|  out=outbound-config:iris
@@ -155,8 +159,13 @@
       [%address-info @ *]
     ?>  ?=([%get-address-info *] resp)
     :_  state
-    ~[(send-update [%& (get-req-id wire) %address-info +.resp])]
-     ::
+    ~[(send-update [%.y (get-req-id wire) %address-info +.resp])]
+    ::
+      [%raw-tx @ *]
+    ?>  ?=([%get-raw-tx *] resp)
+    :_  state
+    ~[(send-update [%.y (get-req-id wire) %raw-tx rawtx.resp])]
+    ::
       [%ping @ *]
     ?>  ?=([%get-block-and-fee *] resp)
     :-  ~[(send-status [%connected blockcount.resp fee.resp])]

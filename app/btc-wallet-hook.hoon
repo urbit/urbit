@@ -12,13 +12,16 @@
 ::  Sends updates to:
 ::    none
 ::
-/-  *btc, *btc-wallet-hook, bws=btc-wallet-store, bp=btc-provider
-/+  dbug, default-agent, bwsl=btc-wallet-store
+/-  *btc, *btc-wallet-hook, bws=btc-wallet-store
+/+  dbug, default-agent, bwsl=btc-wallet-store, bp=btc-provider
 |%
+++  defaults
+  |%
+  ++  moon-limit  10
+  --
 +$  versioned-state
     $%  state-0
     ==
-++  def-moon-limit  10
 ::  provider: maybe ship if provider is set
 ::  moon-limit: how many addresses a ship and its moons can request in piym
 ::  piym/poym-watch: listen to btc-wallet-store for address updates; update payment info
@@ -52,7 +55,7 @@
 ++  on-init
   ^-  (quip card _this)
   ~&  >  '%btc-wallet-hook initialized'
-  :_  this(moon-limit.state def-moon-limit)
+  :_  this(moon-limit.state moon-limit:defaults)
   :~  [%pass /r/[(scot %da now.bowl)] %agent [our.bowl %btc-wallet-store] %watch /requests]
       [%pass /u/[(scot %da now.bowl)] %agent [our.bowl %btc-wallet-store] %watch /updates]
   ==
@@ -154,6 +157,7 @@
     [(retry pend-addr) state]
   ==
 ::  if status is %connected, retry all pending address lookups
+::  only retry if previously disconnected
 ::
 ++  handle-provider-status
   |=  s=status:bp
@@ -162,7 +166,6 @@
   ?.  =(host.u.provider src.bowl)  `state
   ?-  -.s
       %connected
-    ::  only retry if previously disconnected
     :-  ?:(connected.u.provider ~ (retry pend-addr))
     %=  state
         provider  `[host.u.provider %.y]
@@ -173,19 +176,23 @@
   ==
 ::
 ++  handle-provider-update
-  |=  =update:bp
+  |=  upd=update:bp
   ^-  (quip card _state)
-  ?.  ?=(%& -.update)  `state
-  ?-  -.body.p.update
+  ?.  ?=(%.y -.upd)  `state
+  ?-  -.body.p.upd
       %address-info
-    =/  ureq  (~(get by pend-addr) req-id.p.update)
+    =/  ureq  (~(get by pend-addr) req-id.p.upd)
     ?~  ureq  `state
-    :_  state(pend-addr (~(del by pend-addr) req-id.p.update))
+    :_  state(pend-addr (~(del by pend-addr) req-id.p.upd))
     :~  %-  poke-wallet-store
         :*  %address-info  xpub.u.ureq  chyg.u.ureq  idx.u.ureq
-            utxos.body.p.update  used.body.p.update  blockcount.body.p.update
+            utxos.body.p.upd  used.body.p.upd  blockcount.body.p.upd
         ==
     ==
+    ::
+      %raw-tx
+    ~&  >>  rawtx.body.p.upd
+    `state
   ==
 ::
 ++  handle-wallet-store-request
@@ -193,7 +200,7 @@
   ^-  (quip card _state)
   ?-  -.req
       %scan-address
-    =/  ri=req-id:bp  (mk-req-id (hash-xpub:bwsl +>.req))
+    =/  ri=req-id:bp  (gen-req-id:bp eny.bowl)
     :_  state(pend-addr (~(put by pend-addr) ri req))
     ?~  provider  ~
     ?:  provider-connected
@@ -215,10 +222,12 @@
     (update-piym address.upd u.meta.upd)
     ::
       %generate-txbu
-      :: TODO: add the txbu to poym
-      :: send all its input tx-ids out for feedback
-    :_  ?~  payee.upd  state
-        state(poym (~(put by poym) u.payee.upd txbu.upd))
+    ::  txbus can potentially use the same UTXO inputs, so if another payment
+    ::   was in process of fetching raw-txs for a txbu, replace it
+    ::
+    =/  ri=req-id:bp  (gen-req-id:bp eny.bowl)
+    :_  state(poym [ri payee.upd txbu.upd])
+    :: TODO: send all its input tx-ids out for feedback
     ~
     ::
       %scan-done
@@ -264,9 +273,7 @@
   :*  %pass  /[(scot %da now.bowl)]  %agent  [host %btc-provider]
       %poke  %btc-provider-action  !>([ri %address-info a])
   ==
-++  mk-req-id
-  |=  hash=@ux  ^-  req-id:bp
-  (scot %ux hash)
+::
 ++  provider-connected
   ^-  ?
   ?~  provider  %.n
