@@ -49,7 +49,8 @@ function RecentGroups(props: { recent: string[]; associations: Associations }) {
         const assoc = associations.contacts[g];
         const color = uxToHex(assoc?.metadata?.color || "0x0");
         return (
-          <Row key={g} px={1} pb={2} alignItems="center">
+          <Link key={g} style={{ minWidth: 0 }} to={`/~landscape${g}`}>
+          <Row px={1} pb={2} alignItems="center">
             <Box
               borderRadius={1}
               border={1}
@@ -61,10 +62,9 @@ function RecentGroups(props: { recent: string[]; associations: Associations }) {
               display="block"
               flexShrink='0'
             />
-            <Link style={{ minWidth: 0 }} to={`/~landscape${g}`}>
               <Text verticalAlign='top' maxWidth='100%' overflow='hidden' display='inline-block' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}>{assoc?.metadata?.title}</Text>
-            </Link>
-          </Row>
+            </Row>
+          </Link>
         );
       })}
     </Col>
@@ -77,7 +77,7 @@ export function GroupSwitcher(props: {
   baseUrl: string;
   recentGroups: string[];
 }) {
-  const { associations, workspace } = props;
+  const { associations, workspace, isAdmin } = props;
   const title = getTitleFromWorkspace(associations, workspace);
   const navTo = (to: string) => `${props.baseUrl}${to}`;
   return (
@@ -102,7 +102,8 @@ export function GroupSwitcher(props: {
                 width="100%"
                 alignItems="stretch"
               >
-                <GroupSwitcherItem to="">
+                {(props.baseUrl === '/~landscape/home') ?
+                  <GroupSwitcherItem to="">
                   <Icon
                     mr={2}
                     color="gray"
@@ -111,6 +112,16 @@ export function GroupSwitcher(props: {
                   />
                   <Text>All Groups</Text>
                 </GroupSwitcherItem>
+                :
+                <GroupSwitcherItem to="/~landscape/home">
+                  <Icon
+                    mr={2}
+                    color="gray"
+                    display="block"
+                    icon="Boot"
+                  />
+                  <Text>DMs + Drafts</Text>
+                </GroupSwitcherItem>}
                 <RecentGroups
                   recent={props.recentGroups}
                   associations={props.associations}
@@ -141,36 +152,36 @@ export function GroupSwitcher(props: {
                       />
                       <Text> Group Settings</Text>
                     </GroupSwitcherItem>
-                    <GroupSwitcherItem bottom to={navTo("/invites")}>
+                    {isAdmin && (<GroupSwitcherItem bottom to={navTo("/invites")}>
                       <Icon
                         mr={2}
                         color="blue"
-                        icon="CreateGroup"
+                        icon="Users"
                       />
                       <Text color="blue">Invite to group</Text>
-                    </GroupSwitcherItem>
+                    </GroupSwitcherItem>)}
                   </>
                 )}
               </Col>
             }
           >
-            <Row p={2} alignItems="center">
-              <Row alignItems="center" mr={1} flex='1'>
-                <Text overflow='hidden' display='inline-block' maxWidth='131px'  style={{ textOverflow: 'ellipsis', whiteSpace: 'pre'}}>{title}</Text>
+            <Row p={2} alignItems="center" width='100%' minWidth='0'>
+              <Row alignItems="center" mr={1} flex='1' width='100%' minWidth='0'>
+                <Text overflow='hidden' display='inline-block' flexShrink='1' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre'}}>{title}</Text>
+                <Icon size='12px' ml='1' mt="0px" display="inline-block" icon="ChevronSouth" />
               </Row>
-              <Icon size='12px' ml='1' mt="0px" display="inline-block" icon="ChevronSouth" />
             </Row>
           </Dropdown>
           <Row pr={1} justifyContent="flex-end" alignItems="center">
-            {workspace.type === "group" && (
+            {(workspace.type === "group") && (
               <>
-                <Link to={navTo("/invites")}>
+                {isAdmin && (<Link to={navTo("/invites")}>
                   <Icon
                     display="block"
                     color='blue'
-                    icon="CreateGroup"
+                    icon="Users"
                   />
-                </Link>
+                </Link>)}
                 <Link to={navTo("/popover/settings")}>
                   <Icon color='gray' display="block" m={2} icon="Gear" />
                 </Link>

@@ -37,7 +37,7 @@
         %-  su
         ;~  plug
             sym
-            ;~(pfix col (more net (cook crip (star ;~(less net prn)))))
+            ;~(pfix col (more fas (cook crip (star ;~(less fas prn)))))
         ==
         listen-api+(su ;~(plug sym ;~(pfix col sym)))
         export+so
@@ -61,7 +61,7 @@
         %-  su
         ;~  plug
             sym
-            ;~(pfix col (more net (cook crip (star ;~(less net prn)))))
+            ;~(pfix col (more fas (cook crip (star ;~(less fas prn)))))
         ==
         command+so
         app+(su sym)

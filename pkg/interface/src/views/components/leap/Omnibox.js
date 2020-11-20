@@ -55,7 +55,7 @@ export class Omnibox extends Component {
   }
 
   getSearchedCategories() {
-    return ['commands', 'groups', 'subscriptions', 'apps', 'other'];
+    return ['other', 'commands', 'groups', 'subscriptions', 'apps'];
   }
 
   control(evt) {
@@ -117,7 +117,13 @@ export class Omnibox extends Component {
     const { props } = this;
     this.setState({ results: this.initialResults(), query: '' }, () => {
       props.api.local.setOmnibox();
-      if (defaultApps.includes(app.toLowerCase()) || app === 'profile' || app === 'Links' || app === 'home') {
+      if (defaultApps.includes(app.toLowerCase())
+          || app === 'profile'
+          || app === 'Links'
+          || app === 'Terminal'
+          || app === 'home'
+          || app === 'inbox')
+      {
         props.history.push(link);
       } else {
         window.location.href = link;
@@ -154,7 +160,7 @@ export class Omnibox extends Component {
             result.title.toLowerCase().includes(query) ||
             result.link.toLowerCase().includes(query) ||
             result.app.toLowerCase().includes(query) ||
-            (result.host !== null ? result.host.includes(query) : false)
+            (result.host !== null ? result.host.toLowerCase().includes(query) : false)
           );
         })
       );
@@ -216,7 +222,7 @@ export class Omnibox extends Component {
   renderResults() {
     const { props, state } = this;
     return <Box
-            maxHeight="400px"
+            maxHeight={['200px', "400px"]}
             overflowY="auto"
             overflowX="hidden"
             borderBottomLeftRadius='2'
@@ -241,7 +247,9 @@ export class Omnibox extends Component {
                 link={result.link}
                 navigate={() => this.navigate(result.app, result.link)}
                 selected={selected}
-                dark={props.dark} />
+                invites={props.invites}
+                notifications={props.notifications}
+              />
             ))}
           </Box>
         );
@@ -267,7 +275,7 @@ export class Omnibox extends Component {
           display={props.show ? 'block' : 'none'}>
           <Row justifyContent='center'>
             <Box
-              mt='20vh'
+              mt={['10vh', '20vh']}
               width='max(50vw, 300px)'
               maxWidth='600px'
               borderRadius='2'

@@ -6,7 +6,7 @@
 /-  *permission-store,
     *permission-hook,
     *group,
-    *invite-store,
+    inv=invite-store,
     *metadata-store,
     group-hook,
     *permission-group-hook,
@@ -220,8 +220,7 @@
       ~&  %chat-already-exists
       ~
     %-  zing
-    :~  (create-chat app-path.act allow-history.act)
-        %-  create-group
+    :~  %-  create-group
         :*  group-path.act
             app-path.act
             policy.act
@@ -231,6 +230,7 @@
             managed.act
         ==
         (create-metadata title.act description.act group-path.act app-path.act)
+        (create-chat app-path.act allow-history.act)
     ==
   ::
       %delete
@@ -407,13 +407,14 @@
     ^-  card
     =/  managed=?
       !=(ship+app-path group-path)
-    =/  =invite
+    =/  =invite:inv
       :*  our.bol
           ?:(managed %contact-hook %chat-hook)
-          ?:(managed group-path app-path)
+          (de-path:resource ?:(managed group-path ship+app-path))
           ship  ''
       ==
-    =/  act=invite-action  [%invite ?:(managed /contacts /chat) (shaf %msg-uid eny.bol) invite]
+    =/  act=action:inv
+      [%invite ?:(managed %contacts %chat) (shaf %msg-uid eny.bol) invite]
     [%pass / %agent [our.bol %invite-hook] %poke %invite-action !>(act)]
   ::
   ++  chat-scry
@@ -487,8 +488,8 @@
     (en-path:resource rid)
   ?>  ?=(^ path)
   :~  (group-pull-hook-poke %add ship rid)
-      (chat-hook-poke %add-synced ship t.path ask-history)
       (metadata-hook-poke %add-synced ship path)
+      (chat-hook-poke %add-synced ship t.path ask-history)
   ==
 ::
 ++  diff-chat-update

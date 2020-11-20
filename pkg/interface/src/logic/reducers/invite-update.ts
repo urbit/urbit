@@ -29,35 +29,35 @@ export default class InviteReducer<S extends InviteState> {
   create(json: InviteUpdate, state: S) {
     const data = _.get(json, 'create', false);
     if (data) {
-      state.invites[data.path] = {};
+      state.invites[data] = {};
     }
   }
 
   delete(json: InviteUpdate, state: S) {
     const data = _.get(json, 'delete', false);
     if (data) {
-      delete state.invites[data.path];
+      delete state.invites[data];
     }
   }
 
   invite(json: InviteUpdate, state: S) {
     const data = _.get(json, 'invite', false);
     if (data) {
-      state.invites[data.path][data.uid] = data.invite;
+      state.invites[data.term][data.uid] = data.invite;
     }
   }
 
   accepted(json: InviteUpdate, state: S) {
     const data = _.get(json, 'accepted', false);
     if (data) {
-      delete state.invites[data.path][data.uid];
+      delete state.invites[data.term][data.uid];
     }
   }
 
   decline(json: InviteUpdate, state: S) {
     const data = _.get(json, 'decline', false);
     if (data) {
-      delete state.invites[data.path][data.uid];
+      delete state.invites[data.term][data.uid];
     }
   }
 }

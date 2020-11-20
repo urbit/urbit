@@ -2,7 +2,9 @@ import React, { Component } from "react";
 import moment from "moment";
 import { Box } from "@tlon/indigo-react";
 import { Link } from "react-router-dom";
-import { Notebook } from "../../../../types/publish-update";
+import { Graph, GraphNode } from "~/types";
+import { getLatestRevision } from "~/logic/lib/publish";
+import { BigInteger } from "big-integer";
 
 function NavigationItem(props: {
   url: string;
@@ -30,48 +32,55 @@ function NavigationItem(props: {
   );
 }
 
+function getAdjacentId(
+  graph: Graph,
+  child: BigInteger,
+  backwards = false
+): BigInteger | null {
+  const children = Array.from(graph);
+  const i = children.findIndex(([index]) => index.eq(child));
+  const target = children[backwards ? i + 1 : i - 1];
+  return target?.[0] || null;
+}
+
+function makeNoteUrl(noteId: number) {
+  return noteId.toString();
+}
+
 interface NoteNavigationProps {
-  book: string;
-  nextId?: string;
-  prevId?: string;
-  ship: string;
-  notebook: Notebook;
+  noteId: number;
+  notebook: Graph;
+  baseUrl: string;
 }
 
 export function NoteNavigation(props: NoteNavigationProps) {
   let nextComponent = <Box />;
   let prevComponent = <Box />;
-  let nextUrl = "";
-  let prevUrl = "";
-  const { nextId, prevId, notebook } = props;
-  const next =
-    nextId && nextId in notebook?.notes ? notebook?.notes[nextId] : null;
+  const { noteId, notebook } = props;
+  if (!notebook) {
+    return null;
+  }
+  const nextId = getAdjacentId(notebook, noteId);
+  const prevId = getAdjacentId(notebook, noteId, true);
+  const next = nextId && notebook.get(nextId);
+  const prev = prevId && notebook.get(prevId);
 
-  const prev =
-    prevId && prevId in notebook?.notes ? notebook?.notes[prevId] : null;
   if (!next && !prev) {
     return null;
   }
 
-  if (next) {
-    nextUrl = `${props.nextId}`;
-    nextComponent = (
-      <NavigationItem
-        title={next.title}
-        date={next["date-created"]}
-        url={nextUrl}
-      />
-    );
+  if (next && nextId) {
+    const nextUrl = makeNoteUrl(nextId);
+    const [, title, , post] = getLatestRevision(next);
+    const date = post["time-sent"];
+    nextComponent = <NavigationItem title={title} date={date} url={nextUrl} />;
   }
-  if (prev) {
-    prevUrl = `${props.prevId}`;
+  if (prev && prevId) {
+    const prevUrl = makeNoteUrl(prevId);
+    const [, title, , post] = getLatestRevision(prev);
+    const date = post["time-sent"];
     prevComponent = (
-      <NavigationItem
-        title={prev.title}
-        date={prev["date-created"]}
-        url={prevUrl}
-        prev
-      />
+      <NavigationItem title={title} date={date} url={prevUrl} prev />
     );
   }
 
