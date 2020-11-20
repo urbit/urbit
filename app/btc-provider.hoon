@@ -164,7 +164,7 @@
       [%raw-tx @ *]
     ?>  ?=([%get-raw-tx *] resp)
     :_  state
-    ~[(send-update [%.y (get-req-id wire) %raw-tx rawtx.resp])]
+    ~[(send-update [%.y (get-req-id wire) %raw-tx +.resp])]
     ::
       [%ping @ *]
     ?>  ?=([%get-block-and-fee *] resp)

@@ -2,7 +2,6 @@
 |%
 ::  req-id: hash of [xpub chyg idx]
 ::  pend: lookup of req-id -> requests from wallet-store
-::  pend-txbu: lookup req-id -> txbu (to fetch and assoc rawtx info with txid)
 ::
 ::  payment: a payment expected from another ship
 ::    - address: address generated for this payment
@@ -14,12 +13,11 @@
 ::
 +$  btc-state  [blockcount=@ud fee=sats t=@da]
 +$  pend-addr  (map req-id:bp request:bws)
-+$  pend-txbu  (map req-id:bp ship)
 ::
 +$  payment  [=address payer=ship value=sats]
 ::
 +$  piym  (jar ship payment)
-+$  poym  [=req-id:bp payee=(unit ship) =txbu:bws]
++$  poym  [payee=(unit ship) =txbu]
 +$  piym-watch  (map address ship)
 +$  poym-watch  (map address ship)
 ::

@@ -95,7 +95,10 @@
         [%value ni:dejs:format]
     ==
   ++  raw-tx
-    (cu:dejs:format to-btc-byts so:dejs:format)
+    %-  ot:dejs:format
+    :~  [%txid (cu:dejs:format to-hash256 so:dejs:format)]
+        [%rawtx (cu:dejs:format to-btc-byts so:dejs:format)]
+    ==
   ++  block-and-fee
     %-  ot:dejs:format
     :~  [%blockcount ni:dejs:format]
