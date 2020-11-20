@@ -17,6 +17,7 @@
     u3_auto    car_u;                   //  driver
     uv_timer_t tim_u;                   //  behn timer
     c3_o       alm_o;                   //  alarm
+    c3_l       sev_l;                   //  instance numbers
   } u3_behn;
 
 //  XX review, move
@@ -167,9 +168,13 @@ _behn_born_bail(u3_ovum* egg_u, u3_noun lud)
 static void
 _behn_io_talk(u3_auto* car_u)
 {
-  //  XX remove u3A->sen
+  u3_behn* teh_u = (u3_behn*)car_u;
+
+  //  XX remove [sev_l]
   //
-  u3_noun wir = u3nt(c3__behn, u3k(u3A->sen), u3_nul);
+  u3_noun wir = u3nt(c3__behn,
+                     u3dc("scot", c3__uv, teh_u->sev_l),
+                     u3_nul);
   u3_noun cad = u3nc(c3__born, u3_nul);
 
   u3_auto_peer(
@@ -240,6 +245,16 @@ u3_behn_io_init(u3_pier* pir_u)
   car_u->io.talk_f = _behn_io_talk;
   car_u->io.kick_f = _behn_io_kick;
   car_u->io.exit_f = _behn_io_exit;
+
+  {
+    u3_noun now;
+    struct timeval tim_u;
+    gettimeofday(&tim_u, 0);
+
+    now = u3_time_in_tv(&tim_u);
+    teh_u->sev_l = u3r_mug(now);
+    u3z(now);
+  }
 
   return car_u;
 }
