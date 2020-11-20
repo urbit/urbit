@@ -287,6 +287,7 @@
   ~/  %decode-packet
   |=  =blob
   ^-  packet
+  ~|  %decode-packet-fail
   ::  first 32 (2^5) bits are header; the rest is body
   ::
   =/  header  (end 5 1 blob)
@@ -345,11 +346,11 @@
   ^-  ?
   .=  size
   ?-  (clan:title ship)
-    %czar  0b0
-    %king  0b0
-    %duke  0b1
-    %earl  0b10
-    %pawn  0b11
+    %czar  2
+    %king  2
+    %duke  4
+    %earl  8
+    %pawn  16
   ==
 ::  +decode-open-packet: decode comet attestation into an $open-packet
 ::
@@ -396,7 +397,7 @@
       (cut 13 [[fragment-num 1] fragment]:p.meat.shut-packet)
     ==
   ::
-  =/  vec  ~[our her her-life our-life]
+  =/  vec  ~[our her our-life her-life]
   =/  [siv=@uxH len=@ cyf=@ux]
     (~(en sivc:aes:crypto (shaz symmetric-key) vec) (jam shut-packet))
   =/  content  (mix (lsh 3 len siv) cyf)
@@ -411,11 +412,11 @@
     ~|  ames-sndr-tick+sndr-tick.packet  !!
   ?.  =(rcvr-tick.packet (mod our-life 16))
     ~|  ames-rcvr-tick+rcvr-tick.packet  !!
-  =/  siv  (end 9 1 content.packet)
-  =/  cyf  (rsh 9 1 content.packet)
-  =/  len  (met 3 cyf)
+  =/  len  (sub (met 3 content.packet) 16)
+  =/  cyf  (end 3 len content.packet)
+  =/  siv  (rsh 3 len content.packet)
   =/  vec  ~[sndr.packet rcvr.packet her-life our-life]
-  ;;  shut-packet  %-  need
+  ;;  shut-packet  %-  cue  %-  need
   (~(de sivc:aes:crypto (shaz symmetric-key) vec) siv len cyf)
 ::  +decode-ship-size: decode a 2-bit ship type specifier into a byte width
 ::
@@ -976,7 +977,9 @@
       %crud  (on-crud:event-core [p q]:task)
       %hear  (on-hear:event-core [lane blob]:task)
       %heed  (on-heed:event-core ship.task)
-      %hole  (on-hole:event-core [lane blob]:task)
+      %hole  ~&  %on-hole
+             %-  (slog +:(need dud))
+             (on-hole:event-core [lane blob]:task)
       %init  (on-init:event-core ship=p.task)
       %jilt  (on-jilt:event-core ship.task)
       %sift  (on-sift:event-core ships.task)
@@ -1354,6 +1357,7 @@
     ?:  ?&  ?=(%pawn (clan:title sndr.packet))
             !(~(has by peers.ames-state) sndr.packet)
         ==
+      ~&  %on-hear-open
       on-hear-open
     on-hear-shut
   ::  +on-hear-forward: maybe forward a packet to someone else
@@ -1416,10 +1420,6 @@
   ++  on-hear-shut
     |=  [=lane =packet ok=?]
     ^+  event-core
-    ::  encrypted packet content must be an encrypted atom
-    ::
-    ?>  ?=(@ content.packet)
-    ::
     =/  sndr-state  (~(get by peers.ames-state) sndr.packet)
     ::  if we don't know them, maybe enqueue a jael %public-keys request
     ::
