@@ -39,7 +39,6 @@
 ::
 ::  miscellaneous systems types
 ::+|
-++  ares  (unit {p/term q/(list tank)})                 ::  possible error
 ::  +capped-queue: a +qeu with a maximum number of entries
 ::
 ++  capped-queue
@@ -68,10 +67,6 @@
         depth=_1
     ==
 ::
-++  coop  (unit ares)                                   ::  possible error
-::  +disc: a desk on a ship; can be used as a beak that varies with time
-::
-+$  disc  [=ship =desk]
 +$  deco  ?(~ $bl $br $un)                              ::  text decoration
 +$  json                                                ::  normal json value
   $@  ~                                                 ::  null
@@ -906,7 +901,6 @@
         {$ud p/@ud}                                     ::  number
     ==                                                  ::
   ++  cass  {ud/@ud da/@da}                             ::  cases for revision
-  ++  coop  (unit ares)                                 ::  e2e ack
   ++  crew  (set ship)                                  ::  permissions group
   ++  dict  {src/path rul/real}                         ::  effective permission
   ++  dome                                              ::  project state
