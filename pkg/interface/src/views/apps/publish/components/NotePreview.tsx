@@ -82,7 +82,7 @@ export function NotePreview(props: NotePreviewProps) {
           <Box color={isRead ? "gray" : "green"} mr={3}>
             {date}
           </Box>
-          <Box mr={3}><Text>{commentDesc}</Text></Box>
+          <Box mr={3}>{commentDesc}</Box>
           <Box>{rev.valueOf() === 1 ? `1 Revision` : `${rev} Revisions`}</Box>
         </Box>
       </Col>
