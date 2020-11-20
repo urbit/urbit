@@ -1965,6 +1965,7 @@
 ::
 ::  $tank: formatted print tree
 ::
+::    just a cord, or
 ::    %leaf: just a tape
 ::    %palm: backstep list
 ::           flat-mid, open, flat-open, flat-close
@@ -1973,6 +1974,7 @@
 ::
 +$  tank
   $~  leaf/~
+  $@  cord
   $%  [%leaf p=tape]
       [%palm p=(qual tape tape tape tape) q=(list tank)]
       [%rose p=(trel tape tape tape) q=(list tank)]
@@ -4463,6 +4465,8 @@
   ::
   ++  ram
     ^-  tape
+    ?@  tac
+      (trip tac)
     ?-    -.tac
         %leaf  p.tac
     ::
@@ -4501,6 +4505,8 @@
     ::
     =|  lug=wall
     |^  ^-  wall
+        ?@  tac
+          (rig (trip tac))
         ?-    -.tac
             %leaf  (rig p.tac)
         ::
