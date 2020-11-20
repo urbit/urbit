@@ -376,7 +376,7 @@ _cu_realloc(FILE* fil_u, ur_root_t** tor_u, ur_nvec_t* doc_u)
 
   //  stash event number
   //
-  c3_d eve_d = u3A->ent_d;
+  c3_d eve_d = u3A->eve_d;
 
   //  reallocate kernel and cold jet state
   //
@@ -412,7 +412,7 @@ _cu_realloc(FILE* fil_u, ur_root_t** tor_u, ur_nvec_t* doc_u)
 
   //  restore event number
   //
-  u3A->ent_d = eve_d;
+  u3A->eve_d = eve_d;
 
   //  mark all pages dirty
   //
@@ -875,7 +875,7 @@ u3u_uncram(c3_c* dir_c, c3_d eve_d)
 
   //  restore event number
   //
-  u3A->ent_d = eve_d;
+  u3A->eve_d = eve_d;
 
   //  mark all pages dirty
   //

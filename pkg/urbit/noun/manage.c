@@ -1691,15 +1691,7 @@ u3m_boot(c3_c* dir_c)
     u3j_ream();
     u3n_ream();
 
-    //  XX unused, removed
-    //
-    //    u3z() temporarily preserved to avoid leaking
-    //    checkpointed values
-    //
-    u3z(u3A->wen);
-    u3A->wen = 0;
-
-    return u3A->ent_d;
+    return u3A->eve_d;
   }
   else {
   /* Basic initialization.

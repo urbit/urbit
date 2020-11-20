@@ -7,12 +7,9 @@
     /* u3v_arvo: modern arvo structure.
     */
       typedef struct _u3v_arvo {
-        c3_d    ent_d;                    //  event number
+        c3_d  eve_d;                      //  event number
         u3_noun yot;                      //  cached gates
-        u3_noun now;                      //  current time, as noun
-        u3_noun wen;                      //  current time, as text, XX remove
-        u3_noun sev_l;                    //  instance number
-        u3_noun sen;                      //  instance string
+        u3_noun now;                      //  current time
         u3_noun roc;                      //  kernel core
       } u3v_arvo;
 
@@ -58,11 +55,6 @@
     */
       u3_noun
       u3v_wish(const c3_c* str_c);
-
-    /* u3v_numb(): set the instance number.
-    */
-      void
-      u3v_numb(void);
 
     /* u3v_time(): set the reck time.
     */
