@@ -448,10 +448,11 @@ _ames_recv_cb(uv_udp_t*        wax_u,
 
   //  data present, and protocol version in header matches 0
   //
+  //    The first three bits in the header are reserved.
   //    XX inflexible, scry version out of ames
   //
   if (  (0 < nrd_i)
-     && (0 == (0x7 & *((c3_w*)buf_u->base))) )
+     && (0 == (0x7 & (*((c3_w*)buf_u->base)) >> 3)) )
   {
     u3_noun wir = u3nc(c3__ames, u3_nul);
     u3_noun cad;
