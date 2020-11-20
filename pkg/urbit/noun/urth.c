@@ -649,7 +649,14 @@ u3u_cram(c3_c* dir_c, c3_d eve_d)
         roc = ur_cons(rot_u, cod_u.refs[i_d], roc);
       }
 
-      roc = ur_cons(rot_u, ur_coin64(rot_u, c3__fast), ur_cons(rot_u, ken, roc));
+      {
+        c3_c* has_c = "hashboard";
+        ur_nref has = ur_coin_bytes(rot_u, strlen(has_c), (c3_y*)has_c);
+        roc = ur_cons(rot_u, has, roc);
+      }
+
+      roc = ur_cons(rot_u, ur_coin64(rot_u, c3__arvo),
+                           ur_cons(rot_u, ken, roc));
 
       ur_jam(rot_u, roc, &len_d, &byt_y);
     }
@@ -844,7 +851,7 @@ u3u_uncram(c3_c* dir_c, c3_d eve_d)
     //
     u3_cue_xeno* sil_u = u3s_cue_xeno_init_with(ur_fib33, ur_fib34);
     u3_weak        ref = u3s_cue_xeno_with(sil_u, len_d, byt_y);
-    u3_noun   roc, cod;
+    u3_noun   roc, doc, tag, cod;
 
     u3s_cue_xeno_done(sil_u);
 
@@ -853,7 +860,10 @@ u3u_uncram(c3_c* dir_c, c3_d eve_d)
       c3_free(nam_c);
       return c3n;
     }
-    else if ( c3n == u3r_pq(ref, c3__fast, &roc, &cod) ) {
+    else if (  c3n == u3r_pq(ref, c3__arvo, &roc, &doc)
+            || (c3n == u3r_cell(doc, &tag, &cod))
+            || (c3n == u3r_sing_c("hashboard", tag)) )
+   {
       fprintf(stderr, "uncram: failed: invalid rock format\r\n");
       u3z(ref);
       c3_free(nam_c);
