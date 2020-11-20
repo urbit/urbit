@@ -488,19 +488,15 @@ u3_disk_read(u3_disk* log_u, c3_d eve_d, c3_d len_d)
 static c3_o
 _disk_save_meta(u3_disk* log_u, const c3_c* key_c, u3_atom dat)
 {
-  u3_atom mat = u3ke_jam(dat);
-  c3_w  len_w = u3r_met(3, mat);
+  c3_w  len_w = u3r_met(3, dat);
   c3_y* byt_y = c3_malloc(len_w);
-  c3_o  ret_o;
+  u3r_bytes(0, len_w, byt_y, dat);
 
-  u3r_bytes(0, len_w, byt_y, mat);
-
-  ret_o = u3_lmdb_save_meta(log_u->mdb_u, key_c, len_w, byt_y);
-
-  u3z(mat);
-  c3_free(byt_y);
-
-  return ret_o;
+  {
+    c3_o ret_o = u3_lmdb_save_meta(log_u->mdb_u, key_c, len_w, byt_y);
+    c3_free(byt_y);
+    return ret_o;
+  }
 }
 
 /* u3_disk_save_meta(): save metadata.
@@ -513,8 +509,9 @@ u3_disk_save_meta(u3_disk* log_u,
 {
   c3_assert( c3y == u3a_is_cat(lif_w) );
 
-  if (  (c3n == _disk_save_meta(log_u, "who", u3i_chubs(2, who_d)))
-     || (c3n == _disk_save_meta(log_u, "is-fake", fak_o))
+  if (  (c3n == _disk_save_meta(log_u, "version", 1))
+     || (c3n == _disk_save_meta(log_u, "who", u3i_chubs(2, who_d)))
+     || (c3n == _disk_save_meta(log_u, "fake", fak_o))
      || (c3n == _disk_save_meta(log_u, "life", lif_w)) )
   {
     return c3n;
@@ -540,24 +537,8 @@ _disk_meta_read_cb(void* ptr_v, size_t val_i, void* val_p)
 static u3_weak
 _disk_read_meta(u3_disk* log_u, const c3_c* key_c)
 {
-  u3_weak mat = u3_none;
   u3_weak dat = u3_none;
-  u3_noun pro;
-
-  u3_lmdb_read_meta(log_u->mdb_u, &mat, key_c, _disk_meta_read_cb);
-
-  if ( u3_none != mat ) {
-    pro = u3m_soft(0, u3ke_cue, mat);
-
-    if ( u3_blip != u3h(pro) ) {
-      fprintf(stderr, "disk: meta cue failed\r\n");
-    }
-    else {
-      dat = u3k(u3t(pro));
-    }
-  }
-
-  u3z(pro);
+  u3_lmdb_read_meta(log_u->mdb_u, &dat, key_c, _disk_meta_read_cb);
   return dat;
 }
 
@@ -569,34 +550,45 @@ u3_disk_read_meta(u3_disk* log_u,
                   c3_o*    fak_o,
                   c3_w*    lif_w)
 {
-  u3_weak who = _disk_read_meta(log_u, "who");
-  u3_weak fak = _disk_read_meta(log_u, "is-fake");
-  u3_weak lif = _disk_read_meta(log_u, "life");
+  u3_weak ver, who, fak, lif;
 
-  if ( u3_none == who ) {
+  if ( u3_none == (ver = _disk_read_meta(log_u, "version")) ) {
+    fprintf(stderr, "disk: read meta: no version\r\n");
+    return c3n;
+  }
+  if ( u3_none == (who = _disk_read_meta(log_u, "who")) ) {
     fprintf(stderr, "disk: read meta: no indentity\r\n");
     return c3n;
   }
-  else if ( u3_none == fak ) {
+  if ( u3_none == (fak = _disk_read_meta(log_u, "fake")) ) {
     fprintf(stderr, "disk: read meta: no fake bit\r\n");
-    u3z(who);
     return c3n;
   }
-  else if ( u3_none == lif ) {
+  if ( u3_none == (lif = _disk_read_meta(log_u, "life")) ) {
     fprintf(stderr, "disk: read meta: no lifecycle length\r\n");
-    u3z(who);
     return c3n;
   }
 
-  if ( !((c3y == fak ) || (c3n == fak )) ) {
-    fprintf(stderr, "disk: read meta: invalid fake bit\r\n");
-    u3z(who); u3z(fak); u3z(lif);
-    return c3n;
-  }
-  else if ( c3n == u3a_is_cat(lif) ) {
-    fprintf(stderr, "disk: read meta: invalid lifecycle length\r\n");
-    u3z(who); u3z(fak); u3z(lif);
-    return c3n;
+  {
+    c3_o val_o = c3y;
+
+    if ( 1 != ver ) {
+      fprintf(stderr, "disk: read meta: unknown version %u\r\n", ver);
+      val_o = c3n;
+    }
+    else if ( !((c3y == fak ) || (c3n == fak )) ) {
+      fprintf(stderr, "disk: read meta: invalid fake bit\r\n");
+      val_o = c3n;
+    }
+    else if ( c3n == u3a_is_cat(lif) ) {
+      fprintf(stderr, "disk: read meta: invalid lifecycle length\r\n");
+      val_o = c3n;
+    }
+
+    if ( c3n == val_o ) {
+      u3z(ver); u3z(who); u3z(fak); u3z(lif);
+      return c3n;
+    }
   }
 
   if ( who_d ) {
