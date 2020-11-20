@@ -18,7 +18,7 @@ import Foreign.Storable
 import RIO.FilePath
 import System.Posix.IO
 import System.Posix.Terminal
-import Urbit.Arvo            hiding (Term)
+import Urbit.Arvo
 import Urbit.King.App
 import Urbit.Noun.Time
 import Urbit.Prelude         hiding (getCurrentTime)
@@ -71,8 +71,10 @@ data Private = Private
 
 -- Utils -----------------------------------------------------------------------
 
+blewEvent :: Word -> Word -> Ev
 blewEvent w h = EvBlip $ BlipEvTerm $ TermEvBlew (UD 1, ()) w h
 
+initialHail :: Ev
 initialHail = EvBlip $ BlipEvTerm $ TermEvHail (UD 1, ()) ()
 
 -- Version one of this is punting on the ops_u.dem flag: whether we're running
@@ -162,6 +164,7 @@ leftBracket, rightBracket :: Text
 leftBracket = "«"
 rightBracket = "»"
 
+_spin_cool_us, _spin_warm_us, _spin_rate_us, _spin_idle_us :: Integral i => i
 _spin_cool_us = 500000
 _spin_warm_us = 50000
 _spin_rate_us = 250000

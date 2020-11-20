@@ -17,7 +17,7 @@ module Urbit.Vere.Dawn ( dawnVent
 
 import Urbit.Arvo.Common
 import Urbit.Arvo.Event  hiding (Address)
-import Urbit.Prelude     hiding (Call, rights, to, (.=))
+import Urbit.Prelude     hiding (rights, to, (.=))
 
 import Data.Bits                     (xor)
 import Data.List                     (nub)
