@@ -9,11 +9,13 @@
 +$  action  [=req-id body=action-body]
 +$  action-body
   $%  [%address-info =address]
+      [%raw-tx =txid]
       [%ping ~]
   ==
 +$  result  [=req-id body=result-body]
 +$  result-body
   $%  [%address-info utxos=(set utxo) used=? blockcount=@ud]
+      [%raw-tx =rawtx]
   ==
 +$  error
   $%  [%not-connected status=@ud]
@@ -32,12 +34,14 @@
   |%
   +$  action
     $%  [%get-address-info =address]
+        [%get-raw-tx =txid]
         [%get-block-count ~]
         [%get-block-and-fee ~]
     ==
   ::
   +$  response
     $%  [%get-address-info utxos=(set utxo) used=? blockcount=@ud]
+        [%get-raw-tx =rawtx]
         [%get-block-count blockcount=@ud]
         [%get-block-and-fee blockcount=@ud fee=sats]
     ==

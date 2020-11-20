@@ -11,14 +11,6 @@
   ++  confs    6
   --
 ::
-++  hash-xpub
-  |=  [=xpub:btc =chyg =idx]
-  ^-  @ux
-  =/  chygidx=@  (cat 3 ?:(=(%0 chyg) '0' '1') idx)
-  =/  dat=@  (cat 3 xpub chygidx)
-  %-  ripemd-160:ripemd:crypto
-  [(met 3 dat) dat]
-::
 ++  from-xpub
   |=  [=xpub:btc scan-to=(unit scon) max-gap=(unit @ud) confs=(unit @ud)]
   ^-  walt

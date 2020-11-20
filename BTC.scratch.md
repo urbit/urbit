@@ -12,6 +12,11 @@ The below requires norsyr's fix to `decompress-point` in order to work.
 ::  first is an address w balance
 ::  second has no balance but is used
 ::  third is unused
+
+:btc-provider|action ['reqid' %raw-tx [%32 0x33f.693f.df99.5a5e.a7fe.5c95.1ab6.858c.7e6a.5fff.c585.7992.2cd4.fc31.9c61.4c5b]]
+:btc-provider|action ['reqid' %raw-tx [%32 0x2131.b660.7f25.0d31.d8da.9818.d2d9.2560.c7d6.7fe7.8ca4.0d02.6408.c090.6868.71e6]]
+::  first is a 382 byte tx
+::  second is a 27.660 byte tx
 ```
 
 ## Transactions
