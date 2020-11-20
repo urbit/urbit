@@ -477,6 +477,51 @@ u3_pier_peek_last(u3_pier*   pir_u,
   _pier_peek_plan(pir_u, pic_u);
 }
 
+/* _pier_on_scry_done(): scry callback.
+*/
+static void
+_pier_on_scry_done(void* ptr_v, u3_noun nun)
+{
+  u3_pier* pir_u = ptr_v;
+  u3_weak res = u3r_at(7, nun);
+
+  if (u3_none == res) {
+    u3l_log("pier: scry failed\n");
+  }
+  else {
+    u3l_log("pier: scry succeeded\n");
+
+    c3_c* pac_c = u3_Host.ops_u.puk_c;
+    if (!pac_c) {
+      pac_c = u3_Host.ops_u.pek_c;
+    }
+
+    u3_noun pad;
+    {
+      //  XX crashes if [pac_c] is not a valid path
+      //  XX virtualize or fix
+      //
+      u3_noun pax = u3do("stab", u3i_string(pac_c));
+      c3_w len_w = u3kb_lent(u3k(pax));
+      pad = u3nt(c3_s4('.','u','r','b'),
+                 c3_s3('p','u','t'),
+                 u3qb_scag(len_w - 1, pax));
+      u3z(pax);
+    }
+
+    c3_c fil_c[2048];
+    snprintf(fil_c, 2048, "%s/.urb/put/%s.jam", pir_u->pax_c, pac_c+1);
+
+    u3_walk_save(fil_c, 0, u3qe_jam(res), pir_u->pax_c, pad);
+    u3l_log("pier: scry in %s\n", fil_c);
+  }
+
+  u3l_log("pier: exit\n");
+  u3_pier_exit(pir_u);
+
+  u3z(nun);
+}
+
 /* _pier_work_init(): begin processing new events
 */
 static void
@@ -529,11 +574,6 @@ _pier_work_init(u3_pier* pir_u)
   uv_idle_init(u3L, &wok_u->idl_u);
   wok_u->idl_u.data = wok_u;
 
-  //  initialize i/o drivers
-  //
-  wok_u->car_u = u3_auto_init(pir_u);
-  u3_auto_talk(wok_u->car_u);
-
   // //  setup u3_lord work callbacks
   // //
   // u3_lord_work_cb cb_u = {
@@ -544,6 +584,51 @@ _pier_work_init(u3_pier* pir_u)
   //   .bail_f = _pier_on_lord_work_bail
   // };
   // u3_lord_work_init(pir_u->god_u, cb_u);
+
+  //  XX this is messy, revise
+  //
+  if ( u3_Host.ops_u.pek_c ) {
+    u3_noun pex = u3do("stab", u3i_string(u3_Host.ops_u.pek_c));
+    u3_noun car;
+    u3_noun dek;
+    u3_noun pax;
+    if ( c3n == u3r_trel(pex, &car, &dek, &pax)
+      || c3n == u3a_is_cat(car) )
+    {
+      u3m_p("pier: invalid scry", pex);
+      _pier_on_scry_done(pir_u, u3_nul);
+    } else {
+      //  run the requested scry, jam to disk, then exit
+      //
+      u3l_log("pier: scry\n");
+      u3_pier_peek_last(pir_u, u3_nul, u3k(car), u3k(dek), u3k(pax),
+                        pir_u, _pier_on_scry_done);
+    }
+    u3z(pex);
+  }
+  else if ( _(u3_Host.ops_u.exp) ) {
+    u3_noun pex = u3do("stab", u3i_string("/gx/lens/export-all/noun"));
+    u3_noun car;
+    u3_noun dek;
+    u3_noun pax;
+    u3r_trel(pex, &car, &dek, &pax);
+    if (!u3_Host.ops_u.puk_c) {
+      u3_Host.ops_u.puk_c = strdup("/archive");
+    }
+    //  run the requested scry, jam to disk, then exit
+    //
+    u3l_log("pier: scry\n");
+    u3_pier_peek_last(pir_u, u3_nul, u3k(car), u3k(dek), u3k(pax),
+                      pir_u, _pier_on_scry_done);
+    u3z(pex);
+
+  }
+  else {
+    //  initialize i/o drivers
+    //
+    wok_u->car_u = u3_auto_init(pir_u);
+    u3_auto_talk(wok_u->car_u);
+  }
 
   _pier_work(wok_u);
 }
@@ -1068,51 +1153,6 @@ _pier_on_lord_bail(void* ptr_v)
   u3_pier_bail(pir_u);
 }
 
-/* _pier_on_scry_done(): scry callback.
-*/
-static void
-_pier_on_scry_done(void* ptr_v, u3_noun nun)
-{
-  u3_pier* pir_u = ptr_v;
-  u3_weak res = u3r_at(7, nun);
-
-  if (u3_none == res) {
-    u3l_log("pier: scry failed\n");
-  }
-  else {
-    u3l_log("pier: scry succeeded\n");
-
-    c3_c* pac_c = u3_Host.ops_u.puk_c;
-    if (!pac_c) {
-      pac_c = u3_Host.ops_u.pek_c;
-    }
-
-    u3_noun pad;
-    {
-      //  XX crashes if [pac_c] is not a valid path
-      //  XX virtualize or fix
-      //
-      u3_noun pax = u3do("stab", u3i_string(pac_c));
-      c3_w len_w = u3kb_lent(u3k(pax));
-      pad = u3nt(c3_s4('.','u','r','b'),
-                 c3_s3('p','u','t'),
-                 u3qb_scag(len_w - 1, pax));
-      u3z(pax);
-    }
-
-    c3_c fil_c[2048];
-    snprintf(fil_c, 2048, "%s/.urb/put/%s.jam", pir_u->pax_c, pac_c+1);
-
-    u3_walk_save(fil_c, 0, u3qe_jam(res), pir_u->pax_c, pad);
-    u3l_log("pier: scry in %s\n", fil_c);
-  }
-
-  u3l_log("pier: exit");
-  u3_pier_exit(pir_u);
-
-  u3z(nun);
-}
-
 /* _pier_on_lord_live(): worker is ready.
 */
 static void
@@ -1143,26 +1183,7 @@ _pier_on_lord_live(void* ptr_v)
     c3_assert( u3_psat_init == pir_u->sat_e );
     c3_assert( log_u->sen_d == log_u->dun_d );
 
-    if (u3_Host.ops_u.pek_c) {
-      u3_noun pex = u3do("stab", u3i_string(u3_Host.ops_u.pek_c));
-      u3_noun car;
-      u3_noun dek;
-      u3_noun pax;
-      if ( c3n == u3r_trel(pex, &car, &dek, &pax)
-        || c3n == u3a_is_cat(car) )
-      {
-        u3m_p("pier: invalid scry", pex);
-        _pier_on_scry_done(pir_u, u3_nul);
-      } else {
-        //  run the requested scry, jam to disk, then exit
-        //
-        u3l_log("pier: scry\n");
-        u3_pier_peek_last(pir_u, u3_nul, u3k(car), u3k(dek), u3k(pax),
-                          pir_u, _pier_on_scry_done);
-      }
-      u3z(pex);
-    }
-    else if ( god_u->eve_d < log_u->dun_d ) {
+    if ( god_u->eve_d < log_u->dun_d ) {
       c3_d eve_d;
 
       //  XX revisit

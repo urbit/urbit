@@ -16,7 +16,7 @@ where
 
 import Urbit.Prelude hiding (Builder)
 
-import Urbit.Arvo           hiding (ServerId, reqUrl, secure)
+import Urbit.Arvo           hiding (ServerId, reqUrl)
 import Urbit.Vere.Eyre.Serv
 import Urbit.Vere.Eyre.Wai
 

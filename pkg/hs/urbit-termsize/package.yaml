@@ -9,9 +9,12 @@ dependencies:
   - unix
 
 ghc-options:
-  - -fwarn-incomplete-patterns
-  - -fwarn-unused-binds
-  - -fwarn-unused-imports
+  - -Wall
+  - -Werror
+  - -Wno-type-defaults
+  - -Wno-unused-matches
+  - -Wno-name-shadowing
+  - -Wno-unused-do-bind
   - -O2
 
 library:
