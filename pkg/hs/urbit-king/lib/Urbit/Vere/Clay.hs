@@ -8,7 +8,7 @@ module Urbit.Vere.Clay
   )
 where
 
-import Urbit.Arvo            hiding (Term)
+import Urbit.Arvo
 import Urbit.King.App
 import Urbit.Prelude
 import Urbit.Vere.Pier.Types
@@ -32,6 +32,7 @@ deskToPath :: Desk -> FilePath
 deskToPath (Desk (Cord t)) = unpack t
 
 -- | The hard coded mime type of every file.
+textPlain :: Path
 textPlain = Path [(MkKnot "text"), (MkKnot "plain")]
 
 -- | Filter for dotfiles, tempfiles and backup files.

@@ -10,7 +10,7 @@ where
 
 import Urbit.Prelude hiding (Builder)
 
-import Urbit.Arvo                hiding (ServerId, reqUrl, secure)
+import Urbit.Arvo                hiding (ServerId, reqUrl)
 import Urbit.King.App            (HasKingId(..), HasMultiEyreApi(..), HasPierEnv(..))
 import Urbit.King.Config
 import Urbit.Vere.Eyre.Multi
