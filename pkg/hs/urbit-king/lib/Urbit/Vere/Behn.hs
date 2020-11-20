@@ -8,6 +8,8 @@
 
 module Urbit.Vere.Behn (behn, DriverApi(..), behn') where
 
+import Data.Time.Clock.System (SystemTime)
+
 import Urbit.Arvo            hiding (Behn)
 import Urbit.Prelude
 import Urbit.Vere.Pier.Types
@@ -39,6 +41,7 @@ bornEv king = EvBlip $ BlipEvBehn $ BehnEvBorn (king, ()) ()
 wakeEv :: Ev
 wakeEv = EvBlip $ BlipEvBehn $ BehnEvWake () ()
 
+sysTime :: Wen -> SystemTime
 sysTime = view Time.systemTime
 
 wakeErr :: WorkError -> IO ()
