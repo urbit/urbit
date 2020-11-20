@@ -2,8 +2,6 @@
 ::  m / purpose' / coin_type' / account' / change / address_index
 ::  change can be 0 or 1
 ::
-::  TODO: explain state tracking (used maps, next unused idx)
-::
 /-  *btc
 /+  bip32
 |%
@@ -41,8 +39,19 @@
       max-gap=@ud
       confs=@ud
   ==
-::  todo: Set of indices; empty it out until none are left--means scanning of that batch is done
-::  start:     index this batch started scanning from
+::  input: utxo for a transaction::
+::  feyb: fee per byte in sats
+::  key:  HD wallet path
+::  txi/txo:  input/output for a transaction being built
+::  txbu: tx builder -- all information needed to make a transaction for signing
+::
++$  input  [=utxo =chyg =idx]
++$  feyb  sats
++$  key  [=bipt =chyg =idx]
++$  txi  [=utxo ur=(unit rawtx) =key]
++$  txo  [=address value=sats]
++$  txbu  [=vbytes txis=(list txi) txos=(list txo)]
+::  TODO: document
 ::
 +$  batch  [todo=(set idx) endpoint=idx has-used=?]
 +$  scans  (map [xpub chyg] batch)
@@ -51,16 +60,18 @@
 ::  %scan: start a scan of the next address batch in a wallet
 ::         if the scan is complete, update the wallet and remove from scans
 ::  %watch-address: watch an address if used, remove from scans batch if not
-::  %update-address: update info of an address if we're watching it
+::  %update-address: update info of an address if we're watching it 
 ::
 +$  action
   $%  [%add-wallet =xpub scan-to=(unit scon) max-gap=(unit @ud) confs=(unit @ud)]
       [%address-info =xpub =chyg =idx utxos=(set utxo) used=? blockcount=@ud]
-      [%generate-address =xpub =chyg]
+      [%generate-address =xpub =chyg meta=(unit [payer=ship value=sats])]
+      [%generate-txbu =xpub payee=(unit ship) feyb=sats txos=(list txo)]
   ==
 ::
 +$  update
-  $%  [%generate-address =address]
+  $%  [%generate-address =address meta=(unit [payer=ship value=sats])]
+      [%generate-txbu =xpub payee=(unit ship) =txbu]
       [%scan-done =xpub]
   ==
 ::

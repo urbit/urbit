@@ -61,7 +61,7 @@
     ~&  >>>  "btc-provider: blocked client {<src.bowl>}"
     [~[[%give %kick ~ ~]] this]
   ~&  >  "btc-provider: added client {<src.bowl>}"
-  :-  ~[(send-status ?:(connected.host-info %connected %disconnected))]
+  :-  do-ping:hc
   this(clients.host-info (~(put in clients.host-info) src.bowl))
 ::
 ++  on-leave  on-leave:def
@@ -109,10 +109,14 @@
         %address-info
       [%get-address-info address.body.act]
       ::
+        %raw-tx
+      [%get-raw-tx txid.body.act]
+      ::
         %ping
-      [%get-block-count ~]
+      [%get-block-and-fee ~]
     ==
   [~[(req-card act ract)] state]
+::
 ++  req-card
   |=  [act=action ract=action:rpc]
   =|  out=outbound-config:iris
@@ -143,22 +147,28 @@
     (connection-error status)
   ?^  conn-err
     :_  state(connected.host-info %.n)
-    ~[(send-status %disconnected) (send-update [%| u.conn-err])]
+    ~[(send-status [%disconnected ~]) (send-update [%| u.conn-err])]
   =/  rpc-resp=response:rpc:jstd
     (get-rpc-response response)
   ?.  ?=([%result *] rpc-resp)
     [~[(send-update [%| [%rpc-error ~]])] state]
   ::  no error, switch on wire to handle RPC data
   ::
+  =/  resp=response:rpc  (parse-response rpc-resp)
   ?+  wire  ~|("Unexpected HTTP response" !!)
       [%address-info @ *]
-    =/  resp=response:rpc  (parse-response rpc-resp)
     ?>  ?=([%get-address-info *] resp)
     :_  state
-    ~[(send-update [%& (get-req-id wire) %address-info +.resp])]
-     ::
+    ~[(send-update [%.y (get-req-id wire) %address-info +.resp])]
+    ::
+      [%raw-tx @ *]
+    ?>  ?=([%get-raw-tx *] resp)
+    :_  state
+    ~[(send-update [%.y (get-req-id wire) %raw-tx +.resp])]
+    ::
       [%ping @ *]
-    :-  ~[(send-status %connected)]
+    ?>  ?=([%get-block-and-fee *] resp)
+    :-  ~[(send-status [%connected blockcount.resp fee.resp])]
     state(connected.host-info %.y)
   ==
 ::
@@ -181,6 +191,7 @@
 ++  send-status
   |=  =status  ^-  card
   [%give %fact ~[/clients] %btc-provider-status !>(status)]
+::
 ++  send-update
   |=  =update
   ^-  card

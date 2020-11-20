@@ -6,11 +6,15 @@
 +$  address  ?(legacy-address bech32-address)
 +$  bipt  $?(%bip44 %bip49 %bip84)
 +$  sats  @ud
++$  vbytes  @ud
++$  btc-byts  [wid=@ dat=@ux]
 +$  hash256  [wid=%32 dat=@ux]
 +$  hash160  [wid=%20 dat=@ux]
 +$  hash  ?(hash256 hash160)
++$  txid  hash256
++$  rawtx  btc-byts
 +$  buffer  (list @ux)
-+$  utxo  [pos=@ tx-hash=hash256 height=@ value=sats]
++$  utxo  [pos=@ =txid height=@ value=sats]
 ++  address-info
   $:  =address
       confirmed-value=sats
@@ -26,7 +30,7 @@
         outputs=(list output)
     ==
   +$  input
-    $:  tx-hash=hash256
+    $:  =txid
         tx-index=@
         witness-ver=@
         sequence=byts

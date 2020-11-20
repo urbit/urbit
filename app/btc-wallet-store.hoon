@@ -7,6 +7,10 @@
 ::    - /requests: to request data about addresses
 ::    - /updates: new data about one of our addresses
 ::
+::  Scrys
+::  x/scanned: (list xpub) of all scanned wallets
+::  x/balance/xpub: balance (in sats) of wallet
+::
 /-  *btc-wallet-store
 /+  dbug, default-agent, *btc-wallet-store, btc, bip32
 |%
@@ -85,6 +89,9 @@
   ?+  pax  (on-peek:def pax)
       [%x %scanned ~]
     ``noun+!>(scanned-wallets)
+    ::
+      [%x %balance @ ~]
+    ``noun+!>((balance:hc (xpub:btc +>-.pax)))
   ==
 ++  on-leave  on-leave:def
 ++  on-agent  on-agent:def
@@ -102,17 +109,27 @@
     =.  walts  (~(put by walts) xpub.act w)
     (init-batches xpub.act (dec max-gap.w))
     ::
-      %address-info 
+      %address-info
     (update-address +.act)
     ::
       %generate-address
     =/  uw=(unit walt)  (~(get by walts) xpub.act)
     ?~  uw
-      ~|("btc-wallet-store, %generate-address: non-existent wallet" !!)
+      ~|("btc-wallet-store: non-existent xpub" !!)
     =/  [a=address:btc w=walt]
       ~(gen-address wad u.uw chyg.act)
     :_  state(walts (~(put by walts) xpub.act w))
-    ~[[%give %fact ~[/updates] %btc-wallet-store-update !>([%generate-address a])]]
+    ~[(send-update [%generate-address a meta.act])]
+    ::
+      %generate-txbu
+    =/  uw=(unit walt)  (~(get by walts) xpub.act)
+    ?~  uw  ~&(>>> "btc-wallet-store: non-existent xpub" `state)
+    =/  r=(unit txbu)
+      %~  select-utxos  sut
+      [u.uw eny.bowl feyb.act txos.act]
+    ?~  r  ~&(>>> "btc-wallet-store: insufficient balance" `state)
+    :_  state
+    ~[(send-update [%generate-txbu xpub.act payee.act u.r])]
   ==
 ::  wallet scan algorithm:
 ::  Initiate a batch for each chyg, with max-gap idxs in it
@@ -154,7 +171,8 @@
     [(sy (gulf 0 endpoint)) endpoint %.n]
   :-  (weld (req-scan ~[/requests] b xpub %0) (req-scan ~[/requests] b xpub %1))
   state(scans (insert-batches xpub b b))
-::  if the batch is done but the wallet isn't done scanning, returns new address requests and updated batch
+::  if the batch is done but the wallet isn't done scanning,
+::  returns new address requests and updated batch
 ::
 ++  bump-batch
   |=  [=xpub =chyg]
@@ -236,4 +254,22 @@
   |=  [=xpub:btc w=walt]
   ^-  (unit xpub:btc)
   ?:  scanned.w  `xpub  ~
+::
+++  balance
+  |=  =xpub:btc
+  ^-  sats:btc
+  =/  w  (~(get by walts) xpub)
+  ?~  w  ~|("btc-wallet-store: non-existent xpub" !!)
+  =/  values=(list sats:btc)
+    %+  turn  ~(val by wach.u.w)
+    |=  =addi  ^-  sats:btc
+    %+  roll
+      %+  turn  ~(tap by utxos.addi)
+      |=(=utxo:btc value.utxo)
+    add
+  (roll values add)
+::
+++  send-update
+  |=  upd=update  ^-  card
+  [%give %fact ~[/updates] %btc-wallet-store-update !>(upd)]
 --

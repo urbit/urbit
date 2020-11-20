@@ -85,7 +85,8 @@ Error conditions:
 ## Needed Extensions
 - Invoice generator that asks for addresses on behalf of ships and tracks whether they've made payments. `wallet-hook` could probably be renamed to `wallet-manager` and extended for this purpose.
 - `btc-provider` should push out address state in each block
-- `btc-wallet-store` should watch the next ~20 addresses in each wallet account, so that it can detect BTC sent to the wallet if the wallet is also managed/generates addresses in an outside-Urbit program.
+- `btc-wallet-store` should watch the next ~20 addresses in each wallet account, so that it can detect BTC sent to the wallet if the wallet is also manageed/generates addresses in an outside-Urbit program.
+- use Branch-and-Bound UTXO selection algo
 
 ## Possible Improvements/Changes
 - Do away with `btc-wallet-hook` altogether in its current form, and instead make `btc-provider` both a server (as it is now) and also a client. Pros: less between-agent data. Cons: complicates the otherwise simple provider module. PrA better solution might be to split just the connectivity parts of `btc-wallet-hook` into a local provider
