@@ -48,7 +48,7 @@
 +$  input  [=utxo =chyg =idx]
 +$  feyb  sats
 +$  key  [=bipt =chyg =idx]
-+$  txi  [=utxo raw-tx=(unit buffer) =key]
++$  txi  [=utxo ur=(unit rawtx) =key]
 +$  txo  [=address value=sats]
 +$  txbu  [=vbytes txis=(list txi) txos=(list txo)]
 ::  TODO: document

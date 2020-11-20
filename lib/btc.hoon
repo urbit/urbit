@@ -80,6 +80,7 @@
   ++  to-byts
     |=  b=^buffer  ^-  byts
     [(lent b) (rep 3 (flop b))]
+  ::
   ++  concat-as-byts
     |=  bs=(list ^buffer)  ^-  byts
     %-  to-byts  (zing bs)
@@ -129,7 +130,7 @@
     =/  hash-sequence=^buffer
       %-  from-byts  (dsha256 sequences)
     =/  outpoint=^buffer
-      %+  weld  (from-byts tx-hash.input)
+      %+  weld  (from-byts txid.input)
       (from-atom-le 4 witness-ver.input)
     =/  script-code=^buffer
       %-  to-script-pubkey
@@ -158,7 +159,7 @@
     ++  prevouts-buffer
       |=  =input:tx  ^-  ^buffer
       %+  weld
-      (from-byts tx-hash.input)
+      (from-byts txid.input)
       (from-atom-le 4 witness-ver.input)
     --
   ::
@@ -196,7 +197,7 @@
       |=  [index-to-sign=@ index=@ =input:tx]
       ^-  ^buffer
       %-  zing
-      :~  (from-byts tx-hash.input)
+      :~  (from-byts txid.input)
           (from-atom-le 4 tx-index.input)
           ::  only insert script-pubkey if we're on the input index being signed
           ?:  =(index-to-sign index)
