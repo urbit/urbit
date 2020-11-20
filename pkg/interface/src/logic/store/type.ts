@@ -11,7 +11,7 @@ import { ConnectionStatus } from '~/types/connection';
 import {Graphs} from '~/types/graph-update';
 import {
   Notifications,
-  NotificationGraphConfig, 
+  NotificationGraphConfig,
   GroupNotificationsConfig,
   LocalUpdateRemoteContentPolicy,
   BackgroundConfig,
@@ -60,7 +60,6 @@ export interface StoreState {
   inbox: Inbox;
   pendingMessages: Map<Path, Envelope[]>;
 
-  archivedNotifications: Notifications;
   notifications: Notifications;
   notificationsGraphConfig: NotificationGraphConfig;
   notificationsGroupConfig: GroupNotificationsConfig;

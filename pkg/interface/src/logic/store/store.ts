@@ -98,7 +98,6 @@ export default class GlobalStore extends BaseStore<StoreState> {
       inbox: {},
       chatSynced: null,
       notifications: new BigIntOrderedMap<Timebox>(),
-      archivedNotifications: new BigIntOrderedMap<Timebox>(),
       notificationsGroupConfig: [],
       notificationsChatConfig: [],
       notificationsGraphConfig: {

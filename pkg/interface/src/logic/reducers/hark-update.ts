@@ -10,11 +10,10 @@ import { StoreState } from "../store/type";
 
 type HarkState = Pick<StoreState,
   "notificationsChatConfig"
-  | "notificationsGroupConfig" 
-  | "notificationsGraphConfig" 
+  | "notificationsGroupConfig"
+  | "notificationsGraphConfig"
   | "notifications"
   | "notificationsCount"
-  | "archivedNotifications"
   | "unreads">;
 
 export const HarkReducer = (json: any, state: HarkState) => {
@@ -163,7 +162,7 @@ function updateUnreads(state: HarkState, index: NotifIndex, f: (u: number) => nu
       } else if('chat' in index) {
         const curr = state.unreads.chat[index.chat.chat] || 0
         state.unreads.chat[index.chat.chat] = f(curr);
-      } 
+      }
 }
 
 function added(json: any, state: HarkState) {
@@ -200,11 +199,7 @@ const timebox = (json: any, state: HarkState) => {
   const data = _.get(json, "timebox", false);
   if (data) {
     const time = makePatDa(data.time);
-    if (data.archive) {
-      state.archivedNotifications.set(time, data.notifications);
-    } else {
       state.notifications.set(time, data.notifications);
-    }
   }
 };
 
@@ -290,17 +285,9 @@ function archive(json: any, state: HarkState) {
       notifIdxEqual(index, idxNotif.index)
     );
     state.notifications.set(time, unarchived);
-    const archiveBox = state.archivedNotifications.get(time) || [];
     const readCount = archived.filter(
       ({ notification }) => !notification.read
     ).length;
     updateUnreads(state, index, x => x - readCount);
-    state.archivedNotifications.set(time, [
-      ...archiveBox,
-      ...archived.map(({ notification, index }) => ({
-        notification: { ...notification, read: true },
-        index,
-      })),
-    ]);
   }
 }

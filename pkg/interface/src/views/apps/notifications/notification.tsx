@@ -100,7 +100,7 @@ function NotificationWrapper(props: {
         </StatelessAsyncAction>
         {!props.archived && (
           <StatelessAsyncAction name={time.toString()} onClick={onArchive} backgroundColor="transparent">
-            Archive
+            Dismiss
           </StatelessAsyncAction>
         )}
       </Row>
