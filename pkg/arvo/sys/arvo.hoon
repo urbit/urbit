@@ -942,11 +942,11 @@
     =/  pit=vase  !>(..is)
     =|  $:  ::  who: our identity once we know it
             ::  eny: entropy once we learn it
-            ::  bod: %zuse once we receive it
+            ::  bod: %zuse or pill once we receive it
             ::
             who=(unit ship)
             eny=(unit @)
-            bod=(unit vase)
+            bod=(unit $@(cord vase))
         ==
     ::  larval Arvo structural interface
     ::
@@ -965,6 +965,14 @@
                   ::
                   ~&  [%larval-ignore p.ovo -.q.ovo]
                   +>.$
+                ::  hold onto textual init
+                ::
+                    %pill
+                  ^+  +>.$
+                  ?>  ?=(@ q.q.ovo)
+                  ?:  (empty:pill q.q.ovo)  :: no zuse
+                    +>.$
+                  +>.$(bod `q.q.ovo, who ~)  :: require %boot
                 ::  install %zuse or vane
                 ::
                     %veer
@@ -990,21 +998,39 @@
                     %whom
                   ^+  +>.$
                   ?>  ?=(@ q.q.ovo)
+                  ?:  ?=([~ @] bod)  +>.$  :: require %boot
                   +>.$(who `q.q.ovo)
+                ::  buffer boot into middle of pill
+                ::
+                    %boot
+                  ^+  +>.$
+                  ?>  &(?=(^ eny) ?=([~ @] bod))
+                  =*  boot  $%([%fake our=@] [%dawn [our=@ ^] ^])
+                  =>  .(q.ovo ;;([%boot ? p=boot] q.ovo))
+                  =/  our=@p  ?@(+.p.q.ovo our.p.q.ovo our.p.q.ovo)
+                  +>.$(who `our)
                 ==
-              ::  upgrade once we've accumulated identity, entropy, and %zuse
+              ::  upgrade once we have identity, entropy, and %zuse or a pill
               ::
               ?.  &(?=(^ who) ?=(^ eny) ?=(^ bod))
                 [~ +>.$]
+              =^  nex=$-(* [(list ovum) *])  soul
+                ?^  u.bod  [|=(a=* [~ *]) soul]
+                ?>  ?=(%boot -.q.ovo)  ::XX brittle
+                :: install zuse from text pill
+                (boot:pill u.who now u.bod ovo)
+              =/  zus  ?^(u.bod u.bod bud)
+              =;  [ova=(list ovum) arv=*]
+                =^(ovo=(list ovum) arv (nex arv) [(weld ovo ova) arv])
               ~>  %slog.[0 leaf+"arvo: metamorphosis"]
               ~<  %slog.[0 leaf+"arvo: metamorphosed"]
               =/  nyf
                 (turn vanes.^poke |=([label=@tas =vane] [label vase.vane]))
-              (load u.who now u.eny *pram u.bod nyf)
+              (load u.who now u.eny *pram zus nyf)
     ::
     ++  wish  |=  txt=*                                 ::  22
               ?>  ?=(@ txt)
-              q:(slap ?~(bod pit u.bod) (ream txt))
+              q:(slap ?~(bod pit ?@(u.bod pit u.bod)) (ream txt))
     --
 ::
 ::  persistent arvo state
@@ -1344,8 +1370,12 @@
   |=  [who=ship now=@da fav=curd]
   ^+  soul
   =>  .(fav ;;([%veer lal=@tas pax=path txt=@t] fav))
-  =;  res  ?-(-.res %& p.res, %| (mean leaf+"veer: {<lal.fav>}" p.res))
-  %-  mule  |.
+  =/  res  (mule |.((veer-hard who now fav)))
+  ?-(-.res %& p.res, %| (mean leaf+"veer: {<lal.fav>}" p.res))
+::
+++  veer-hard
+  |=  [who=ship now=@da fav=[%veer lal=@tas pax=path txt=@t]]
+  ^+  soul
   ?:  =(%$ lal.fav)
     ~>  %slog.[0 leaf+"zuse: {(scow p+(mug txt.fav))}"]
     =+  gen=(rain pax.fav txt.fav)
@@ -1368,6 +1398,84 @@
     %.  [pax txt]:fav
     ruck:(vent who lal.fav vil bud [vase.vane.i.vanes *worm])
   ==
+::  +pill: system init deserialization
+::
+++  pill
+  !:
+  |%
+  ++  boot
+    |=  [who=ship now=@da pil=@t bot=ovum]
+    ::REVIEW kinda convoluted
+    ^-  [nex=$-(* [(list ovum) *]) sol=_soul]
+    =+  [ver fyl]=(parse 0 pil)
+    =^  zus  ver
+      ?>(?=([[%veer %$ ^] *] ver) ver)
+    :_  (veer-hard who now zus)
+    |=  arv=*  ;;  [(list ovum) _arv]
+    ::  spooky type erasure
+    .*  :_(arv [who now ver fyl bot])
+    =>  :_(arvo [who=who now=now ver=ver fyl=fyl bot=bot])  !=
+    |-  ^-  [(list ovum) arv=*]
+    ?^  ver  $(ver t.ver, soul (veer-hard who now i.ver))
+    =+  [ove arv]=(poke:soul now bot)  ::  boot event
+    .*  .(+>.$ arv)  !=
+    =+  [ova arv]=(poke:soul now /$/sync [%into %$ & fyl])
+    [(weld ove ova) arv]
+  ::
+  +$  octs  (pair @u @t)
+  +$  mime  (pair path octs)
+  ::
+  ++  empty                                             :: only hoon and arvo
+    |=  txt=@t  ^-  ?
+    =/  idx  0
+    =.  idx  +:(get-line:bootstrap.tide idx txt)
+    =.  idx  +:(get-body | idx txt)
+    =.  idx  +:(get-line:bootstrap.tide idx txt)
+    =.  idx  +:(get-body | idx txt)
+    =^  hed  idx  (get-line:bootstrap.tide idx txt)
+    &(=('' (rsh 3 +(idx) txt)) ?>(=(hed '/~') &))
+  ::
+  :: ' ~' = improperly terminated, last newline isn't part of file
+  ++  vane  ;~(pose (cold %$ buc) low)
+  ++  meta  ;~(pose ;~(pfix ace cen vane) (jest ' ~'))
+  ++  parse
+    ~>  %slog.[0 leaf+"pill: parsing"]
+    =+  mib=1
+    =|  [ver=(list [%veer lal=@tas pax=path txt=@t]) hav=(list [path ~ mime])]
+    |=  [idx=@u txt=@t]  ^+  [ver hav]
+    =^  hed  idx  (get-line:bootstrap.tide idx txt)
+    =/  [pax=path tam=(unit cord)]
+      ~|(hed (rash hed ;~(plug fel:stab (punt meta))))
+    =/  [imp=? van=(unit term)]  ?:(=([~ ' ~'] tam) [& ~] [| tam])
+    ?:  =(/~ pax)
+      ~|  [%post-terminator `@t`(cut 3 [+(idx) 100] txt)]
+      ?>  =(+(idx) (met 3 txt))  :: no bytes after terminator line
+      [(flop ver) hav]
+    ::
+    =^  bod  idx  (get-body imp idx txt)
+    =/  oct=octs  [(roll (turn bod head) add) (can 3 bod)]
+    =?  mib  (gth idx (mul mib (bex 20)))
+      ~&(parsed/["{<mib>}MB" at=hed] +(mib))
+    %_  $
+      ver  ?~(van ver :_(ver [%veer u.van (unhoon pax) q.oct]))
+      hav  :_(hav [pax `[/text/plain oct]])
+    ==
+  ::
+  ++  unhoon                                           :: strip trailng /hoon
+    |=(a=path ^+(a =.(a (flop a) ?+(a !! [%hoon *] (flop t.+.a)))))
+  ::
+  ++  get-body
+    |=  [imp=? idx=@u txt=@t]  ^-  [(list octs) @u]
+    =/  sep
+      %.  (next-sep:bootstrap.tide idx txt)
+      (bond |.(~|([%unclosed-file at=idx `@t`(cut 3 [+(idx) 100] txt)] !!)))
+    =/  len  (sub sep +(idx))
+    ?:  =('\0A/\0A' (cut 3 [sep 3] txt))
+      =+  [ocs fin]=$(idx (add sep 2))
+      [[[len (cut 3 [+(idx) len] txt)] ocs] fin]
+    =?  len  imp  (dec len)
+    [[len (cut 3 [+(idx) len] txt)]~ sep]
+  --
 ::  +wish: external compute
 ::
 ++  wish
