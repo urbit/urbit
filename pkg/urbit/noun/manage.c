@@ -535,6 +535,7 @@ u3m_pave(c3_o nuu_o, c3_o bug_o)
     u3H = (void *)_pave_north(u3_Loom + 1,
                               c3_wiseof(u3v_home),
                               u3a_words - 1);
+    u3H->ver_w = u3v_version;
     u3R = &u3H->rod_u;
 
     _pave_parts();
@@ -543,6 +544,7 @@ u3m_pave(c3_o nuu_o, c3_o bug_o)
     u3H = (void *)_find_north(u3_Loom + 1,
                               c3_wiseof(u3v_home),
                               u3a_words - 1);
+    c3_assert( u3v_version == u3H->ver_w );
     u3R = &u3H->rod_u;
   }
 }
@@ -1687,7 +1689,7 @@ u3m_boot(c3_c* dir_c)
 
   /* Reactivate jets on old kernel.
   */
-  if ( !_(nuu_o) ) {
+  if ( c3n == nuu_o ) {
     u3j_ream();
     u3n_ream();
 

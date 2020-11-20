@@ -18,6 +18,7 @@
       typedef struct _u3v_home {
         u3a_road rod_u;                   //  storage state
         u3v_arvo arv_u;                   //  arvo state
+        c3_w     ver_w;                   //  version number XX s/b first
       } u3v_home;
 
 
@@ -28,6 +29,10 @@
       c3_global u3v_home* u3v_Home;
 #       define u3H  u3v_Home
 #       define u3A  (&(u3v_Home->arv_u))
+
+  /** Constants.
+  **/
+#     define u3v_version 1
 
   /**  Functions.
   **/
