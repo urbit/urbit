@@ -1680,7 +1680,7 @@ u3n_find(u3_noun key, u3_noun fol)
 **            lit: hint atom. TRANSFER
 **            bus: subject. RETAIN
 **            out: token for _n_hilt_hind();
-**                 conventually, [lit] or [lit data]. ~ if unused.
+**                 conventionally, [lit] or [lit data]. ~ if unused.
 **
 **                 any hints herein must be whitelisted in _n_burn().
 */
@@ -1708,7 +1708,7 @@ _n_hilt_hind(u3_noun tok, u3_noun pro)  // transfer, retain
 **            bus: subject. RETAIN
 **            clu: product of the hint-formula. TRANSFER
 **                 also, token for _n_hint_hind();
-**                 conventually, [hint-atom] or [hint-atom data]. ~ if unused.
+**                 conventionally, [hint-atom] or [hint-atom data]. ~ if unused.
 **
 **                 any hints herein must be whitelisted in _n_burn().
 */
