@@ -24,7 +24,9 @@
 ::
 ++  arvo  %arvo-kelvin
 ::
-::  $arch: fundamental node
+::  $arch: node identity
+::  $axal: fundamental node, recursive
+::  $axil: fundamental node
 ::  $beak: global context
 ::  $beam: global name
 ::  $bone: opaque duct handle
@@ -37,7 +39,14 @@
 ::  $ship: network identity
 ::  $sink: subscription
 ::
-+$  arch  [fil=(unit @uvI) dir=(map @ta ~)]
++$  arch  (axil @uvI)
+++  axal
+  |$  [item]
+  [fil=(unit item) dir=(map @ta $)] ::
+++  axil
+  |$  [item]
+  [fil=(unit item) dir=(map @ta ~)]
+::
 +$  beam  [beak s=path]
 +$  beak  (trel ship desk case)
 +$  bone  @ud
@@ -104,59 +113,6 @@
           (pair cord (each * (list mass)))
 +$  monk  (each ship (pair @tas @ta))
 +$  move  [=duct =ball]
-::  $node: fundamental hierarchical node
-::
-::    XX s/b +arch
-::
-++  node
-  =<  |$  [item]
-      [fil=(unit item) dir=(map @ta $)]
-  ::
-  ::  |de: node engine
-  ::
-  |%
-  ++  de
-    =|  fat=(node)
-    |@
-    ::
-    ++  get
-      |=  pax=path
-      ^+  fat
-      ?~  pax  fat
-      =/  kid  (~(get by dir.fat) i.pax)
-      ?~  kid  [~ ~]
-      $(fat u.kid, pax t.pax)
-    ::
-    ++  put
-      |*  [pax=path dat=*]
-      =>  .(dat `_?>(?=(^ fil.fat) u.fil.fat)`dat)
-      ^+  fat
-      ?~  pax  fat(fil `dat)
-      =/  kid  (~(get by dir.fat) i.pax)
-      =/  new  (fall kid fat(fil ~, dir ~))
-      fat(dir (~(put by dir.fat) i.pax $(fat new, pax t.pax)))
-    ::
-    ++  gas
-      |=  lit=(list (pair path _?>(?=(^ fil.fat) u.fil.fat)))
-      ^+  fat
-      ?~  lit  fat
-      $(fat (put p.i.lit q.i.lit), lit t.lit)
-    ::
-    ++  tap
-      =|  pax=path
-      =|  out=(list (pair path _?>(?=(^ fil.fat) u.fil.fat)))
-      |-  ^+   out
-      =?  out  ?=(^ fil.fat)  :_(out [pax u.fil.fat])
-      =/  dir  ~(tap by dir.fat)
-      |-  ^+   out
-      ?~  dir  out
-      %=  $
-        dir  t.dir
-        out  ^$(pax (weld pax /[p.i.dir]), fat q.i.dir)
-      ==
-    -- :: de
-  -- :: node
-::
 +$  ovum  (pair wire curd)
 ::
 +$  scry-sample
@@ -240,7 +196,7 @@
       lac=?                                           ::  laconic bit
       ver=vere                                        ::  runtime
       lag=_|                                          ::  upgrade blocked
-      fat=(node (cask))                               ::  filesystem
+      fat=(axal (cask))                               ::  filesystem
       zus=vase                                        ::  %zuse
       van=(map term vane)                             ::  modules
   ==
@@ -376,6 +332,50 @@
     %|  `[p.fel ~]
     %&  ?.((lte p.fel q.i.hav) `[i.hav `p.fel] $(hav t.hav))
   ==
+::
+::  |de: axal engine
+::
+++  de
+  =|  fat=(axal)
+  |@
+  ::
+  ++  get
+    |=  pax=path
+    ^+  fat
+    ?~  pax  fat
+    =/  kid  (~(get by dir.fat) i.pax)
+    ?~  kid  [~ ~]
+    $(fat u.kid, pax t.pax)
+  ::
+  ++  put
+    |*  [pax=path dat=*]
+    =>  .(dat `_?>(?=(^ fil.fat) u.fil.fat)`dat)
+    ^+  fat
+    ?~  pax  fat(fil `dat)
+    =/  kid  (~(get by dir.fat) i.pax)
+    =/  new  (fall kid fat(fil ~, dir ~))
+    fat(dir (~(put by dir.fat) i.pax $(fat new, pax t.pax)))
+  ::
+  ++  gas
+    |=  lit=(list (pair path _?>(?=(^ fil.fat) u.fil.fat)))
+    ^+  fat
+    ?~  lit  fat
+    $(fat (put p.i.lit q.i.lit), lit t.lit)
+  ::
+  ++  tap
+    =|  pax=path
+    =|  out=(list (pair path _?>(?=(^ fil.fat) u.fil.fat)))
+    |-  ^+   out
+    =?  out  ?=(^ fil.fat)  :_(out [pax u.fil.fat])
+    =/  dir  ~(tap by dir.fat)
+    |-  ^+   out
+    ?~  dir  out
+    %=  $
+      dir  t.dir
+      out  ^$(pax (weld pax /[p.i.dir]), fat q.i.dir)
+    ==
+  --
+::
 ::  |part: arvo structures and engines
 ::
 ++  part
@@ -444,8 +444,7 @@
         ::
         ++  sole  |=(a=(cask) `hoof`?>(?=([%hoon @t] a) q.a))
         --
-    =*  de  de:node
-    |_  fat=(node (cask))
+    |_  fat=(axal (cask))
     ::
     ::  +group: collate changes
     ::
@@ -1132,7 +1131,7 @@
         ++  lod
           |=  kel=(list (pair path (cask)))
           ^+  ..pith
-          =/  fat  (~(gas de:node fat) kel)
+          =/  fat  (~(gas de fat) kel)
           %+  mod
             (~(group adapt fat) fil)
           %+  lien  kel
@@ -1506,7 +1505,7 @@
           eny=(unit @)
           lac=?
           ver=(unit vere)
-          fat=(unit (node (cask)))
+          fat=(unit (axal (cask)))
           bod=(unit (trap vase))
           van=(map term (trap vase))
       ==
@@ -1569,7 +1568,7 @@
     ::
         %wack  ..poke(eny `p.gub)
     ::
-        %what  =/  taf  (fall fat *(node (cask)))
+        %what  =/  taf  (fall fat *(axal (cask)))
                =/  del  (~(group adapt:part taf) p.gub)
                =/  tub  (~(usurp adapt:part taf) del)
                ?:  &(?=(^ dir.taf) ?=(^ tub))
@@ -1580,7 +1579,7 @@
                =?  taf  =(~ dir.taf)     ::  XX TMI
                  ~|  %larval-need-kernel
                  ?>  ?=(^ tub)
-                 (~(gas de:node taf) q.u.tub)
+                 (~(gas de taf) q.u.tub)
                ::
                =^  job  taf  [p q]:(~(adorn adapt:part taf) del |)
                =?  bod  ?=(^ zus.job)
