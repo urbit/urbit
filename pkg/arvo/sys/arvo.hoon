@@ -289,7 +289,7 @@
   ?.  ?=(^ ved)  ~
   =/  ron=@tas  u.hyr
   =/  bed=beam
-    [[u.fal u.dyc (case p.u.ved)] (flop tyl)]
+    [[u.fal u.dyc (case p.u.ved)] tyl]
   =/  bop=(unit (unit (cask meta)))
     (sod ref ~ ron bed)
   ?~  bop  ~
