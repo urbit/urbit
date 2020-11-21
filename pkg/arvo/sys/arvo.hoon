@@ -239,7 +239,8 @@
       eny=@uvJ                                        ::  entropy
       lac=?                                           ::  laconic bit
       ver=vere                                        ::  runtime
-      fat=(node (cask))                               ::
+      lag=_|                                          ::  upgrade blocked
+      fat=(node (cask))                               ::  filesystem
       zus=vase                                        ::  %zuse
       van=(map term vane)                             ::  modules
   ==
@@ -344,18 +345,22 @@
   ::  wyr: ~: runtime supports all required kelvins
   ::       ^: runtime support is missing or lagging
   ::
-  =;  wyr
+  =;  wyr  !.
+    ?~  wyr
+      same
     ~&  wyrd=wyr
-    ::  XX revise hint, crash
-    ::
-    :: ?^  wyr
-    ::   ~>  %wyrd.[p.u.wyr]
-    ::   ~_  ?~  q.u.wyr
-    ::         leaf/"missing"
-    ::       leaf/"wyrd: %({(trip p.p.u.wyr)} {(scow %ud q.p.u.wyr)} {(scow %ud q.u.wyr)}"
-    ::   !!
-    ::
-    same
+    ~_  :+  %rose
+          [" " ~ ~]
+        :~  =+  p.u.wyr
+            leaf/"%{(trip p)} %{(scow %ud q)} required;"
+            ?~  q.u.wyr
+              leaf/"runtime missing support"
+            leaf/"runtime only supports %{(scow %ud u.q.u.wyr)}"
+        ==
+    ~>  %mean.'arvo: upgrade blocked'
+    ~>  %mean.'wyrd'
+    !!
+  ::
   |-  ^-  (unit (pair (pair term @ud) (unit @ud)))
   ?~  hav  ~
   ::
@@ -369,7 +374,7 @@
   ::
   ?-  -.fel
     %|  `[p.fel ~]
-    %&  ?.((lte q.i.hav p.fel) `[i.hav `p.fel] $(hav t.hav))
+    %&  ?.((lte p.fel q.i.hav) `[i.hav `p.fel] $(hav t.hav))
   ==
 ::  |part: arvo structures and engines
 ::
@@ -464,7 +469,6 @@
     ++  usurp
       |=  del=news
       ^-  (unit (pair seed (list (pair path (cask)))))
-      ~&  usurp/(turn ~(tap by sys.del) head)
       =/  hun  (~(get by sys.del) /sys/hoon)
       =/  arv  (~(get by sys.del) /sys/arvo)
       ?~  hun
@@ -1199,7 +1203,13 @@
         ::
         ::  %crud: forward error notification
         ::
-          %crud  (emit $/~ [*duct hurl/[goof.buz (gest ovum.buz)]] ~)
+          %crud  =?  lag  ?&  ?=(%exit mote.goof.buz)
+                              ?=(^ tang.goof.buz)
+                              ?=(%leaf -.i.tang.goof.buz)  :: XX ?@
+                              ?=(%wyrd (crip p.i.tang.goof.buz))
+                          ==
+                   ~&(%lagging &)
+                 (emit $/~ [*duct hurl/[goof.buz (gest ovum.buz)]] ~)
         ::
         ::  XX review
         ::
@@ -1207,14 +1217,14 @@
         ::
         ::  %wyrd: check for runtime kelvin compatibility
         ::
-          %wyrd  =.  ver  p.buz
-                  %-  %+  wyrd  kel.ver
-                      ^-  (list (pair term @))
-                      :~  hoon/hoon-version
-                          arvo/arvo
-                          zuse/;;(@ q:(slap zus limb/%zuse))
-                      ==
-                  ..pith
+          %wyrd  %-  %+  wyrd  kel.p.buz
+                     ^-  (list (pair term @))
+                     :~  hoon/hoon-version
+                         arvo/arvo
+                         zuse/;;(@ q:(slap zus limb/%zuse))
+                     ==
+                 =?  lag  !=(rev.ver rev.p.buz)  ~&(%unlagging |)
+                 ..pith(ver p.buz)
         ==
       ::
       ++  spam
@@ -1495,7 +1505,7 @@
           who=(unit ship)
           eny=(unit @)
           lac=?
-          ver=vere  :: XX unit
+          ver=(unit vere)
           fat=(unit (node (cask)))
           bod=(unit (trap vase))
           van=(map term (trap vase))
@@ -1519,10 +1529,10 @@
     ++  molt
       |=  [now=@da foal]
       ^-  (unit heir)
-      ?.  &(?=(^ who) ?=(^ eny) ?=(^ fat) ?=(^ bod))
+      ?.  &(?=(^ who) ?=(^ eny) ?=(^ ver) ?=(^ fat) ?=(^ bod))
         ~
       =/  zus  $:u.bod
-      %-  %+  wyrd  kel.ver
+      %-  %+  wyrd  kel.u.ver
           ^-  (list (pair term @))
           :~  hoon/hoon-version
               arvo/arvo
@@ -1530,7 +1540,7 @@
           ==
       =/  nav  %-  ~(run by van)
                |=(a=(trap vase) (settle:va:part (slym $:a zus)))
-      =/  sol  [u.who u.eny lac ver u.fat zus nav]
+      =/  sol  [u.who u.eny lac u.ver | u.fat zus nav]
       `[arvo now *debt sol]
     --
 ::
@@ -1587,15 +1597,14 @@
                ==
     ::
         %whom  ..poke(who `p.gub)
-        %wyrd  =.  ver  p.gub
-                %-  %+  wyrd  kel.ver
-                    ^-  (list (pair term @))
-                    :*  hoon/hoon-version
-                        arvo/arvo
-                        ?~  bod  ~
-                        [zuse/;;(@ud q:(slap $:u.bod limb/%zuse)) ~]
-                    ==
-                ..poke
+        %wyrd  %-  %+  wyrd  kel.p.gub
+                   ^-  (list (pair term @))
+                   :*  hoon/hoon-version
+                       arvo/arvo
+                       ?~  bod  ~
+                       [zuse/;;(@ud q:(slap $:u.bod limb/%zuse)) ~]
+                   ==
+               ..poke(ver `p.gub)
     ==
   ::
   ?~  hir=(molt now fol)
