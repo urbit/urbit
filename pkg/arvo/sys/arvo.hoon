@@ -22,6 +22,8 @@
 |%
 +|  %global
 ::
+++  arvo  %arvo-kelvin
+::
 ::  $arch: fundamental node
 ::  $beak: global context
 ::  $beam: global name
@@ -229,7 +231,7 @@
   ==
 +$  germ  [vane=term bars=(list duct)]
 +$  heir
-  $%  [%arvo-kelvin now=@da =debt =soul]
+  $%  [_arvo now=@da =debt =soul]
   ==
 +$  plan  (pair germ (list move))
 +$  soul
@@ -825,7 +827,7 @@
       ^-  (each (pair (list ovum) soul) (trap ^))
       ?~  but
         &/[(flop out) sol]
-      |/(gat.u.but [%arvo-kelvin now [run out [kel fil]:u.but] sol])
+      |/(gat.u.but [arvo now [run out [kel fil]:u.but] sol])
     ::  +poke: prepare a worklist-of-one from outside
     ::
     ++  poke
@@ -1209,7 +1211,7 @@
                   %-  %+  wyrd  kel.ver
                       ^-  (list (pair term @))
                       :~  hoon/hoon-version
-                          arvo/%arvo-kelvin
+                          arvo/arvo
                           zuse/;;(@ q:(slap zus limb/%zuse))
                       ==
                   ..pith
@@ -1409,7 +1411,7 @@
   ::
   =.  sol
     ?-  -.hir
-      %arvo-kelvin  soul.hir
+      _arvo  soul.hir
     ==
   ::  clear compiler caches
   ::
@@ -1418,7 +1420,7 @@
   %-  %+  wyrd  kel.ver
       ^-  (list (pair term @))
       :~  hoon/hoon-version
-          arvo/%arvo-kelvin
+          arvo/arvo
           zuse/;;(@ q:(slap zus limb/%zuse))
       ==
   ::  restore working state and resume
@@ -1523,13 +1525,13 @@
       %-  %+  wyrd  kel.ver
           ^-  (list (pair term @))
           :~  hoon/hoon-version
-              arvo/%arvo-kelvin
+              arvo/arvo
               zuse/;;(@ud q:(slap zus limb/%zuse))
           ==
       =/  nav  %-  ~(run by van)
                |=(a=(trap vase) (settle:va:part (slym $:a zus)))
       =/  sol  [u.who u.eny lac ver u.fat zus nav]
-      `[%arvo-kelvin now *debt sol]
+      `[arvo now *debt sol]
     --
 ::
 =|  foal
@@ -1589,7 +1591,7 @@
                 %-  %+  wyrd  kel.ver
                     ^-  (list (pair term @))
                     :*  hoon/hoon-version
-                        arvo/%arvo-kelvin
+                        arvo/arvo
                         ?~  bod  ~
                         [zuse/;;(@ud q:(slap $:u.bod limb/%zuse)) ~]
                     ==
