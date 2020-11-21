@@ -473,7 +473,7 @@
     |=  [dap=term =case:clay]
     ^-  (each agent tang)
     =/  bek=beak  [our %home case]
-    =/  sky  (ski [%141 %noun] ~ %ca bek /hoon/[dap]/app)
+    =/  sky  (ski [%141 %noun] ~ %ca bek /app/[dap]/hoon)
     ?~  sky  |+[leaf+"gall: {<dap>} scry blocked"]~
     ?~  u.sky  |+[leaf+"gall: {<dap>} scry failed"]~
     =/  =cage  u.u.sky
@@ -903,7 +903,7 @@
       =/  =case:clay  da+now
       =/  =mars:clay  [p.cage mark]:deal
       =/  mars-path   /[a.mars]/[b.mars]
-      =/  sky  (ski [%141 %noun] ~ %cc [our %home case] (flop mars-path))
+      =/  sky  (ski [%141 %noun] ~ %cc [our %home case] mars-path)
       ?-    sky
           ?(~ [~ ~])
         =/  ror  "gall: poke cast fail :{(trip dap)} {<mars>}"
@@ -1114,7 +1114,7 @@
         =/  =case:clay  da+now
         =/  bek=beak    [our %home case]
         =/  mars-path  /[a.mars]/[b.mars]
-        =/  sky  (ski [%141 %noun] ~ %cc bek (flop mars-path))
+        =/  sky  (ski [%141 %noun] ~ %cc bek mars-path)
         ?-    sky
             ?(~ [~ ~])
           %-  (slog leaf+"watch-as fact conversion find-fail" >sky< ~)
@@ -1278,7 +1278,7 @@
       =/  tub=(unit tube:clay)
         ?:  =(have want)  `(bake same ^vase)
         =/  tuc=(unit (unit cage))
-          (ski [%141 %noun] ~ %cc [our %home da+now] (flop /[have]/[want]))
+          (ski [%141 %noun] ~ %cc [our %home da+now] /[have]/[want])
         ?.  ?=([~ ~ *] tuc)  ~
         `!<(tube:clay q.u.u.tuc)
       ?~  tub
