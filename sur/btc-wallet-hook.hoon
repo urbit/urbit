@@ -6,7 +6,6 @@
 ::  payment: a payment expected from another ship
 ::    - address: address generated for this payment
 ::  piym: incoming payments. Stores all ship moons under their planet.
-::  poym: the current outgoing payment (one at a time only)
 ::  piym-watch/poym-watch:
 ::   let us link an address back to its incoming/outgoing payment
 ::   checked when address updates come from btc-wallet-store
@@ -17,7 +16,6 @@
 +$  payment  [=address payer=ship value=sats]
 ::
 +$  piym  (jar ship payment)
-+$  poym  [payee=(unit ship) =txbu:bws]
 +$  piym-watch  (map address ship)
 +$  poym-watch  (map address ship)
 ::
@@ -29,6 +27,6 @@
       [%force-retry ~]
   ==
 +$  request
-  $%  [%sign-tx payee=(unit ship) =txbu:bws]
+  $%  [%sign-tx txbu:bws]
   ==
 --

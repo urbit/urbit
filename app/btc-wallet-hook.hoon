@@ -34,7 +34,7 @@
       moon-limit=@ud
       =pend-addr
       =piym
-      =poym
+      poym=(unit txbu:bws)
       =piym-watch
       =poym-watch
   ==
@@ -133,11 +133,14 @@
     ::
       %req-pay-address
     :: TODO: add whitelisting here instead of comet block
+    ::  can't request payment address if poym already building a tx
     ::  can't pay yourself; comets can't pay (could spam requests)
     ::  forwards poke to payee if payee isn't us
     ::  wire is /payer/value/timestamp
     ::
+    ~|  "Can't pay ourselves; can't pay if poym full; no comets"
     ?<  =(src.bowl payee.act)
+    ?<  ?&(=(src.bowl our.bowl) ?=(^ poym))
     ?<  ?=(%pawn (clan:title src.bowl))
     :_  state
     ?.  =(payee.act our.bowl)
@@ -154,7 +157,7 @@
     ==
     ::
       %force-retry
-    [(retry pend-addr) state]
+    [retry-pend-addr state]
   ==
 ::  if status is %connected, retry all pending address lookups
 ::  only retry if previously disconnected
@@ -166,7 +169,8 @@
   ?.  =(host.u.provider src.bowl)  `state
   ?-  -.s
       %connected
-    :-  ?:(connected.u.provider ~ (retry pend-addr))
+    :-  ?:  connected.u.provider  ~
+        (weld retry-pend-addr retry-txbu)
     %=  state
         provider  `[host.u.provider %.y]
         btc-state  [blockcount.s fee.s now.bowl]
@@ -191,10 +195,10 @@
     ==
     ::
       %raw-tx
-    =.  state  (update-poym +.body.p.upd)
+    ?~  poym  ~&(>> "btc-wallet-hook: %raw-tx: poym is empty" `state)
+    =.  txis.u.poym  (update-poym-txis txis.u.poym +.body.p.upd)
     :_  state
-    ?.  poym-ready  ~
-    ~[(send-tx poym)]
+    ?:(poym-ready ~[(send-sign-tx u.poym)] ~)
   ==
 ::
 ++  handle-wallet-store-request
@@ -227,7 +231,7 @@
     ::  txbus can potentially use the same UTXO inputs, so if another payment
     ::   was in process of fetching raw-txs for a txbu, replace it
     ::
-    :_  state(poym [payee.upd txbu.upd])
+    :_  state(poym `txbu.upd)
     ?~  provider  ~&(>>> "provider not set" ~)
     %+  turn  txis.txbu.upd
     |=(=txi:bws (get-raw-tx host.u.provider txid.utxo.txi))
@@ -261,14 +265,13 @@
     |=  [fam=ship ps=(list payment)]
     state(piym (~(put by piym) fam ps))
   --
+::  insert rawtx into our poym txbu, if it exists
 ::
-++  update-poym
-  |=  [=txid rt=rawtx]
-  ^-  _state
-  =*  txis  txis.txbu.poym
+++  update-poym-txis
+  |=  [txis=(list txi:bws) =txid rt=rawtx]
+  ^-  (list txi:bws)
   =|  i=@
-  |-
-  ?:  (gte i (lent txis))  state
+  |-  ?:  (gte i (lent txis))  txis
   =/  ith=txi:bws  (snag i txis)
   =?  txis  =(txid txid.utxo.ith)
    (snap txis i `txi:bws`ith(ur `rt))
@@ -277,16 +280,24 @@
 ::
 ++  poym-ready
   ^-  ?
-  %+  levy  txis.txbu.poym
+  ?~  poym  %.n
+  %+  levy  txis.u.poym
   |=(t=txi:bws ?=(^ ur.t))
 ::
-++  retry
-  |=  p=^pend-addr
+++  retry-pend-addr
   ^-  (list card)
   ?~  provider  ~|("provider not set" !!)
-  %+  turn  ~(tap by p)
+  %+  turn  ~(tap by pend-addr)
   |=  [ri=req-id:bp req=request:bws]
   (get-address-info ri host.u.provider a.req)
+::
+++  retry-txbu
+  ^-  (list card)
+  ?~  poym  ~
+  ?~  provider  ~|("provider not set" !!)
+  %+  turn  txis.u.poym
+  |=  =txi:bws
+  (get-raw-tx host.u.provider txid.utxo.txi)
 ::
 ++  get-address-info
   |=  [ri=req-id:bp host=ship a=address]
@@ -316,10 +327,10 @@
       %btc-wallet-hook-action  !>(act)
   ==
 ::
-++  send-tx
-  |=  p=^poym
+++  send-sign-tx
+  |=  =txbu:bws
   ^-  card
-  [%give %fact ~[/sign-me] %btc-wallet-hook-request !>([%sign-tx p])]
+  [%give %fact ~[/sign-me] %btc-wallet-hook-request !>([%sign-tx txbu])]
 ::
 ++  poke-wallet-store
   |=  act=action:bws
