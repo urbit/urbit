@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from "react";
+import React, { useMemo, useCallback, ChangeEvent, useState } from "react";
 import { Box, Label, Icon, Text, Row, Col } from "@tlon/indigo-react";
 import _ from "lodash";
 import ob from "urbit-ob";
@@ -45,23 +45,40 @@ const Candidate = ({ title, detail, selected, onClick }) => (
 
 export function ShipSearch(props: InviteSearchProps) {
   const { id, label, caption } = props;
-  const [{ value }, { error }, { setValue, setTouched }] = useField<string[]>(
-    props.id
+  const [{ }, { error, value }, { setValue, setTouched }] = useField<string[]>({
+    name: id,
+    multiple: true
+  });
+
+  const [currentEntry, setCurrentEntry] = useState('');
+
+  const onChange = useCallback(
+    (s: string) => {
+      setValue([...value, s].filter(v => v !== currentEntry));
+      setCurrentEntry(s);
+    },
+    [setValue, value, setCurrentEntry, currentEntry]
   );
 
   const onSelect = useCallback(
     (s: string) => {
       setTouched(true);
-      setValue([...value, s]);
+      setValue([...value, s]
+        .map(v => `~${deSig(v)}`)
+        .filter((v, i, a) => a.indexOf(v) === i)
+        .filter(v => ob.isValidPatp(v))
+      );
+      setCurrentEntry('');
     },
-    [setValue, value]
+    [setValue, value, setCurrentEntry, currentEntry]
   );
 
   const onRemove = useCallback(
     (s: string) => {
       setValue(value.filter((v) => v !== s));
+      setCurrentEntry('');
     },
-    [setValue, value]
+    [setValue, value, setCurrentEntry, currentEntry]
   );
 
   const [peers, nicknames] = useMemo(() => {
@@ -130,15 +147,16 @@ export function ShipSearch(props: InviteSearchProps) {
         placeholder="Search for ships"
         candidates={peers}
         renderCandidate={renderCandidate}
-        disabled={props.maxLength ? value.length >= props.maxLength : false}
+        disabled={props.maxLength ? value.length >= props.maxLength && !currentEntry : false}
         search={(s: string, t: string) =>
           t.toLowerCase().startsWith(s.toLowerCase())
         }
         getKey={(s: string) => s}
         onSelect={onSelect}
+        onChange={event => onChange(event.target.value)}
       />
       <Row minHeight="34px" flexWrap="wrap">
-        {value.map((s) => (
+        {value.filter(v => v !== currentEntry).map((s) => (
           <Row
             fontFamily="mono"
             alignItems="center"

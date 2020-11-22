@@ -1,18 +1,18 @@
 import React, { useCallback, useRef, useMemo } from "react";
-import { Box, Text, Col, Button, Row } from "@tlon/indigo-react";
+import { Switch, Route, useHistory } from "react-router-dom";
+import { Formik, Form } from "formik";
 import * as Yup from 'yup';
+import { Box, Text, Col, Button, Row } from "@tlon/indigo-react";
 
 import { ShipSearch } from "~/views/components/ShipSearch";
 import { Association } from "~/types/metadata-update";
-import { Switch, Route, useHistory } from "react-router-dom";
-import { Formik, Form } from "formik";
 import { AsyncButton } from "~/views/components/AsyncButton";
 import { useOutsideClick } from "~/logic/lib/useOutsideClick";
 import { FormError } from "~/views/components/FormError";
 import { resourceFromPath } from "~/logic/lib/group";
 import GlobalApi from "~/logic/api/global";
 import { Groups, Rolodex, Workspace } from "~/types";
-import { ChipInput } from "~/views/components/ChipInput";
+import { deSig } from "~/logic/lib/util";
 
 interface InvitePopoverProps {
   baseUrl: string;
@@ -30,7 +30,7 @@ interface FormSchema {
 
 const formSchema = Yup.object({
   emails: Yup.array(Yup.string().email("Invalid email")),
-  ships: Yup.array(Yup.string())
+  ships: Yup.array(Yup.string()).min(1)
 });
 
 export function InvitePopover(props: InvitePopoverProps) {
@@ -48,14 +48,14 @@ export function InvitePopover(props: InvitePopoverProps) {
 
   const onSubmit = async ({ ships, emails }: { ships: string[] }, actions) => {
     if(props.workspace.type === 'home') {
-      history.push(`/~landscape/dm/${ships[0]}`);
+      history.push(`/~landscape/dm/${deSig(ships[0])}`);
       return;
     }
     //  TODO: how to invite via email?
     try {
       const resource = resourceFromPath(association["group-path"]);
       await ships.reduce(
-        (acc, s) => acc.then(() => api.contacts.invite(resource, `~${s}`)),
+        (acc, s) => acc.then(() => api.contacts.invite(resource, `~${deSig(s)}`)),
         Promise.resolve()
       );
       actions.setStatus({ success: null });

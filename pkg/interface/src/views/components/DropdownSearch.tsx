@@ -35,6 +35,7 @@ interface DropdownSearchExtraProps<C> {
   onSelect: (c: C) => void;
   disabled?: boolean;
   placeholder?: string;
+  onChange?: (e: ChangeEvent<HTMLTextAreaElement>) => void;
 }
 
 type DropdownSearchProps<C> = PropFunc<typeof Box> &
@@ -51,6 +52,7 @@ export function DropdownSearch<C>(props: DropdownSearchProps<C>) {
     renderCandidate,
     disabled,
     placeholder,
+    onChange = () => {},
     ...rest
   } = props;
 
@@ -101,8 +103,9 @@ export function DropdownSearch<C>(props: DropdownSearchProps<C>) {
     };
   }, [textarea.current, next, back, onEnter]);
 
-  const onChange = useCallback(
+  const changeCallback = useCallback(
     (e: ChangeEvent<HTMLTextAreaElement>) => {
+      onChange(e);
       search(e.target.value);
       setQuery(e.target.value);
     },
@@ -128,7 +131,7 @@ export function DropdownSearch<C>(props: DropdownSearchProps<C>) {
     <Box {...rest} position="relative" zIndex={9}>
       <Input
         ref={textarea}
-        onChange={onChange}
+        onChange={changeCallback}
         value={query}
         autocomplete="off"
         disabled={disabled}
