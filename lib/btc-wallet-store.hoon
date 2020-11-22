@@ -5,6 +5,16 @@
 =,  secp:crypto
 =+  ecc=secp256k1
 |%
+++  enjs
+  =,  enjs:format
+  |%
+  ::
+  ++  txbu
+    |=  =^txbu
+    ^-  json
+    [%s 'txbu placeholder']
+  --
+::
 ++  defaults
   |%
   ++  max-gap  20

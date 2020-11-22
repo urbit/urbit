@@ -76,8 +76,13 @@
   ==
   [cards this]
 ::
-::  TODO: handle /sign-me path
-++  on-watch  on-watch:def
+++  on-watch
+  |=  pax=path
+  ^-  (quip card _this)
+  ?+  pax  (on-watch:def pax)
+      [%sign-me ~]
+      `this
+  ==
 ++  on-leave  on-leave:def
 ++  on-peek   on-peek:def
 ++  on-agent
