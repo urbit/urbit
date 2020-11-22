@@ -43,14 +43,14 @@
 ::  feyb: fee per byte in sats
 ::  key:  HD wallet path
 ::  txi/txo:  input/output for a transaction being built
-::  txbu: tx builder -- all information needed to make a transaction for signing
+::  txbu: tx builder -- all information needed to make a transaction for signing 
 ::
 +$  input  [=utxo =chyg =idx]
 +$  feyb  sats
 +$  key  [=bipt =chyg =idx]
 +$  txi  [=utxo ur=(unit rawtx) =key]
 +$  txo  [=address value=sats]
-+$  txbu  [=vbytes txis=(list txi) txos=(list txo)]
++$  txbu  [payee=(unit ship) =vbytes txis=(list txi) txos=(list txo)]
 ::  TODO: document
 ::
 +$  batch  [todo=(set idx) endpoint=idx has-used=?]
@@ -71,7 +71,7 @@
 ::
 +$  update
   $%  [%generate-address =address meta=(unit [payer=ship value=sats])]
-      [%generate-txbu =xpub payee=(unit ship) =txbu]
+      [%generate-txbu =xpub =txbu]
       [%scan-done =xpub]
   ==
 ::

@@ -92,9 +92,8 @@ Creates dummy inputs and outputs. Builds a TX with them.
 =w *walt:bwsl
 =w w(bipt %bip84)
 
-(~(single-random-draw sut:bwsl [w eny1 100 outputs]) inputs)
-(~(single-random-draw sut:bwsl [w eny2 100 outputs]) inputs)
-
+(~(single-random-draw sut:bwsl [w eny1 ~ 100 outputs]) inputs)
+(~(single-random-draw sut:bwsl [w eny2 ~ 100 outputs]) inputs)
 ```
 Above tests w 2 outputs, total fees with 2 inputs of 27.500. Gives:
 1. 500.000 input

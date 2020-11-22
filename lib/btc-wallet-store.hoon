@@ -84,7 +84,7 @@
 ::  sut: door to select utxos
 ::
 ++  sut
-|_  [w=walt eny=@uvJ =feyb txos=(list txo)]
+|_  [w=walt eny=@uvJ payee=(unit ship) =feyb txos=(list txo)]
   ++  meta-weight  10
   ++  output-weight  31
   ::
@@ -117,7 +117,7 @@
     =/  cost  (mul input-weight feyb)
     ?:  (lte val cost)  0
     (sub val cost)
-  ::  Uses naive random selection. Should switch to branch-and-bound later. 
+  ::  Uses naive random selection. Should switch to branch-and-bound later.
   ::
   ++  select-utxos
     |^  ^-  (unit =txbu)
@@ -133,7 +133,8 @@
       |=(=utxo:btc [utxo chyg.addi idx.addi])
     ++  inputs-to-txbu
       |=  is=(list input)  ^-  txbu
-      :*  (total-vbytes is)
+      :*  payee
+          (total-vbytes is)
           %+  turn  is
           |=(i=input [utxo.i ~ [bipt.w chyg.i idx.i]])
           txos
