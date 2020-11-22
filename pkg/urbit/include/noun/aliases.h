@@ -61,11 +61,11 @@
 
   /**  Macros.
   **/
-    /* u3_assure(): loobean assert, bailing with %fail.
+    /* u3_assure(): boolean assert, bailing with %fail.
     */
 #     define u3_assure(x)  if ( !_(x) ) { u3m_bail(c3__fail); }
 
-    /* u3_assert(): loobean assert, bailing with %exit.
+    /* u3_assert(): boolean assert, bailing with %exit.
     */
 #     define u3_assent(x)  if ( !_(x) ) { u3m_bail(c3__exit); }
 
