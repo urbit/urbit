@@ -106,7 +106,7 @@
   ::
   =/  =packet:ames
     :*  [sndr=~nec rcvr=~bud]
-        sndr-tick=0b100
+        sndr-tick=0b10
         rcvr-tick=0b11
         origin=~
         content=0xdead.beef
@@ -123,7 +123,7 @@
   ::
   =/  =packet:ames
     :*  [sndr=~nec rcvr=~bud]
-        sndr-tick=0b100
+        sndr-tick=0b10
         rcvr-tick=0b11
         origin=`0xbeef.cafe.beef
         content=0xdead.beef
@@ -152,10 +152,10 @@
     %:  encode-shut-packet:vane
       shut-packet
       nec-sym
-      ~nec
+      ~bus
       ~bud
-      nec-life=4
-      bud-life=3
+      sndr-life=4
+      rcvr-life=3
     ==
   ::
   =/  =blob:ames   (encode-packet:vane packet)
