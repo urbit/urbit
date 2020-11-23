@@ -14,7 +14,7 @@ interface RendererProps {
 
 interface VirtualScrollerProps {
   origin: 'top' | 'bottom';
-  loadRows(start: BigInteger, end: BigInteger): void;
+  loadRows(newer: boolean): void;
   data: BigIntOrderedMap<BigInteger, any>;
   renderer: (props: RendererProps) => JSX.Element | null;
   onStartReached?(): void;
@@ -69,7 +69,7 @@ export default class VirtualScroller extends Component<VirtualScrollerProps, Vir
     this.setScrollTop = this.setScrollTop.bind(this);
     this.scrollToData = this.scrollToData.bind(this);
     this.scrollKeyMap = this.scrollKeyMap.bind(this);
-    this.loadRows = _.memoize(this.loadRows).bind(this);
+    this.loadRows = _.debounce(this.loadRows, 300, { leading: true }).bind(this);
   }
 
   componentDidMount() {
@@ -143,14 +143,9 @@ export default class VirtualScroller extends Component<VirtualScrollerProps, Vir
     const { data, size: totalSize, onCalculateVisibleItems } = this.props;
 
 
-    //console.log([...items].map(([index]) => this.heightOf(index)));
-    //const list = [...data];
-    //console.log(list[0][0].toString());
-    // console.log(list[list.length - 1][0].toString());
     [...data].forEach(([index, datum]) => {
       const height = this.heightOf(index);
       if (startgap < scrollTop && !startGapFilled) {
-        console.log(index.toString());
         startBuffer.set(index, datum);
         startgap += height;
       } else if (heightShown < windowHeight) {
@@ -164,31 +159,26 @@ export default class VirtualScroller extends Component<VirtualScrollerProps, Vir
       }
     });
 
-    console.log(startgap);
-
-
-    startBuffer = new BigIntOrderedMap([...startBuffer].reverse().slice(0, (visibleItems.size - visibleItems.size % 5)));
+    startBuffer = new BigIntOrderedMap(
+      [...startBuffer].reverse().slice(0, (visibleItems.size - visibleItems.size % 5))
+    );
 
     
     startBuffer.forEach((_datum, index) => {
       startgap -= this.heightOf(index);
     });
 
-    console.log(startBuffer.size);
-    console.log(startgap);
 
-    const firstVisibleKey = visibleItems.peekLargest()?.[0] ?? this.estimateIndexFromScrollTop(scrollTop)!;
-    const firstNeededKey = bigIntUtils.max(firstVisibleKey.subtract(bigInt(this.OVERSCAN_SIZE)), bigInt.zero)
-    if (!data.has(firstNeededKey.add(bigInt.one))) {
-      this.loadRows(firstNeededKey, firstVisibleKey.subtract(bigInt.one));
+    const firstVisibleKey = visibleItems.peekSmallest()?.[0] ?? this.estimateIndexFromScrollTop(scrollTop)!;
+    if (data.peekSmallest()![0].eq(firstVisibleKey)) {
+      this.loadRows(false);
     }
     const lastVisibleKey = 
-      visibleItems.peekSmallest()?.[0]
+      visibleItems.peekLargest()?.[0]
       ?? bigInt(this.estimateIndexFromScrollTop(scrollTop + windowHeight)!);
-    const lastNeededKey = bigIntUtils.min(lastVisibleKey.add(bigInt(this.OVERSCAN_SIZE)), bigInt(totalSize));
 
-    if (!data.has(lastNeededKey.subtract(bigInt.one))) {
-      this.loadRows(lastVisibleKey.add(bigInt.one), lastNeededKey);
+    if (data.peekLargest()![0].eq(lastVisibleKey)) {
+      this.loadRows(true);
     }
     onCalculateVisibleItems ? onCalculateVisibleItems(visibleItems) : null;
     this.setState({
@@ -198,25 +188,8 @@ export default class VirtualScroller extends Component<VirtualScrollerProps, Vir
     });
   }
 
-  loadRows(start: BigInteger, end: BigInteger) {
-    if (this.pendingLoad?.timeout) {
-      clearTimeout(this.pendingLoad.timeout);
-      start = bigIntUtils.min(start, this.pendingLoad.start);
-      end = bigIntUtils.max(end, this.pendingLoad.end);
-    }
-    this.pendingLoad = {
-      timeout: setTimeout(() => {
-        if (!this.pendingLoad) return;
-        start = bigIntUtils.max(this.pendingLoad.start, bigInt.zero);
-        end = bigIntUtils.min(bigIntUtils.max(this.pendingLoad.end, bigInt.zero), bigInt(this.props.size));
-        if (start < end) {
-          this.props.loadRows(start, end);
-        }
-        clearTimeout(this.pendingLoad.timeout);
-        this.pendingLoad = undefined;
-      }, 500),
-      start, end
-    };
+  loadRows(newer: boolean) {
+    this.props.loadRows(newer);
   }
 
   scrollKeyMap(): Map<string, number> {

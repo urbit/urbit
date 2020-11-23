@@ -58,29 +58,6 @@ export default class ChatInput extends Component<ChatInputProps, ChatInputState>
     });
   }
 
-  getLetterType(letter) {
-    if (letter.startsWith('/me ')) {
-      letter = letter.slice(4);
-      // remove insignificant leading whitespace.
-      // aces might be relevant to style.
-      while (letter[0] === '\n') {
-        letter = letter.slice(1);
-      }
-
-      return {
-        me: letter
-      };
-    } else if (isUrl(letter)) {
-      return {
-        url: letter
-      };
-    } else {
-      return {
-        text: letter
-      };
-    }
-  }
-
   submit(text) {
     const { props, state } = this;
     const [,,ship,name] = props.station.split('/');

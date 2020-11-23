@@ -4,7 +4,7 @@ import { Patp, Path, PatpNoSig } from '~/types/noun';
 import _ from 'lodash';
 import {makeResource, resourceFromPath} from '../lib/group';
 import {GroupPolicy, Enc, Post, NodeMap, Content} from '~/types';
-import { numToUd, unixToDa } from '~/logic/lib/util';
+import { numToUd, unixToDa, decToUd } from '~/logic/lib/util';
 
 export const createBlankNodeWithChildPost = (
   parentIndex: string = '',
@@ -262,6 +262,28 @@ export default class GraphApi extends BaseApi<StoreState> {
         });
       });
   }
+
+  async getNewest(ship: string, resource: string, count: number, index = '') {
+    const data = await this.scry<any>('graph-store', `/newest/${ship}/${resource}/${count}${index}`);
+    this.store.handleEvent({ data });
+  }
+
+  async getOlderSiblings(ship: string, resource: string, count: number, index = '') {
+    const idx = index.split('/').map(decToUd).join('/');
+    const data = await this.scry<any>('graph-store',
+       `/node-siblings/older/${ship}/${resource}/${count}${idx}`
+     );
+    this.store.handleEvent({ data });
+  }
+
+  async getYoungerSiblings(ship: string, resource: string, count: number, index = '') {
+    const idx = index.split('/').map(decToUd).join('/');
+    const data = await this.scry<any>('graph-store',
+       `/node-siblings/younger/${ship}/${resource}/${count}${idx}`
+     );
+    this.store.handleEvent({ data });
+  }
+
 
   getGraphSubset(ship: string, resource: string, start: string, end: string) {
     return this.scry<any>(

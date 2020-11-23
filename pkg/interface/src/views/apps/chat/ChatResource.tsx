@@ -66,7 +66,7 @@ export function ChatResource(props: ChatResourceProps) {
   const chatInput = useRef<ChatInput>();
 
   useEffect(() => {
-    props.api.graph.getGraph(owner,name);
+    props.api.graph.getNewest(owner, name, 10);
   }, [station]);
 
   const onFileDrag = useCallback(
