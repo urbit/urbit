@@ -39,6 +39,10 @@ main(int argc, char* argv[])
 
   _test_ames();
 
+  //  GC
+  //
+  u3m_grab(u3_none);
+
   fprintf(stderr, "ames okeedokee\n");
   return 0;
 }

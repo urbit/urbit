@@ -25,7 +25,7 @@
 ++  grab
   |%
   ++  mime
-    |=  [mite:eyre p=octs:eyre]
+    |=  [mite p=octs]
     |^  (rash q.p both-parser)
     ++  key-val
       |*  [key=rule val=rule]

@@ -3,7 +3,7 @@
 ::  mounts HTTP endpoints for Landscape (and third-party) user applications
 ::
 /-  srv=file-server, glob
-/+  *server, default-agent, verb, dbug
+/+  *server, default-agent, verb, dbug, version
 |%
 +$  card  card:agent:gall
 +$  serving    (map url-base=path [=content public=? single-page=?])
@@ -320,24 +320,11 @@
 ++  on-peek
   |=  =path
   ^-  (unit (unit cage))
-  |^
   ?+  path  (on-peek:def path)
-    [%x %clay %base %hash ~]  ``hash+!>(base-hash)
+      [%x %clay %base %hash ~]
+    =/  versions  (base-hash:version [our now]:bowl)
+    ``hash+!>(?~(versions 0v0 (end 0 25 i.versions)))
   ==
-  ::  stolen from +trouble
-  ::  TODO: move to a lib?
-  ++  base-hash
-    ^-  @uv
-    =+  .^  ota=(unit [=ship =desk =aeon:clay])
-            %gx  /(scot %p our.bowl)/hood/(scot %da now.bowl)/kiln/ota/noun
-        ==
-    ?~  ota
-      *@uv
-    =/  parent  (scot %p ship.u.ota)
-    =+  .^(=cass:clay %cs /[parent]/[desk.u.ota]/1/late/foo)
-    %^  end  0  25
-    .^(@uv %cz /[parent]/[desk.u.ota]/(scot %ud ud.cass))
-  --
 ++  on-agent  on-agent:def
 ++  on-fail   on-fail:def
 --

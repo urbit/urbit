@@ -756,6 +756,8 @@
           =([%$ %da now] lot)
           =(%$ syd)
       ==
+    ?.  for.veb.bug.ames-state  ~
+    ~>  %slog.0^leaf/"ames: scry-fail {<[why=why lot=lot now=now syd=syd]>}"
     ~
   ::  /ax/protocol/version           @
   ::  /ax/peers                      (map ship ?(%alien %known))
@@ -783,23 +785,35 @@
       ~  ``noun+!>(u.peer)
     ::
         [%forward-lane ~]
-      ::  find lane for u.who, or their galaxy
+      ::
+      ::  this duplicates the routing hack from +send-blob:event-core
+      ::  so long as neither the peer nor the peer's sponsoring galaxy is us:
+      ::
+      ::    - no route to the peer: send to the peer's sponsoring galaxy
+      ::    - direct route to the peer: use that
+      ::    - indirect route to the peer: send to both that route and the
+      ::      the peer's sponsoring galaxy
       ::
       :^  ~  ~  %noun
       !>  ^-  (list lane)
-      =/  ship-state  (~(get by peers.ames-state) u.who)
-      ?.  ?=([~ %known *] ship-state)
+      ?.  ?&  ?=([~ %known *] peer)
+              !=(our u.who)
+          ==
         ~
-      =/  peer-state  +.u.ship-state
-      ?.  =(~ route.peer-state)  ::NOTE  avoid tmi
-        [lane:(need route.peer-state)]~
-      |-  ^-  (list lane)
-      ?:  ?=(%czar (clan:title sponsor.peer-state))
-        [%& sponsor.peer-state]~
-      =/  next  (~(get by peers.ames-state) sponsor.peer-state)
+      =;  zar=(trap (list lane))
+        ?~  route.u.peer  $:zar
+        =*  rot  u.route.u.peer
+        ?:(direct.rot [lane.rot ~] [lane.rot $:zar])
+      ::
+      |.  ^-  (list lane)
+      ?:  ?=(%czar (clan:title sponsor.u.peer))
+        ?:  =(our sponsor.u.peer)
+          ~
+        [%& sponsor.u.peer]~
+      =/  next  (~(get by peers.ames-state) sponsor.u.peer)
       ?.  ?=([~ %known *] next)
         ~
-      $(peer-state +.u.next)
+      $(peer next)
     ==
   ::
       [%bones @ ~]
@@ -1032,6 +1046,9 @@
   ++  on-hear-open
     |=  [=lane =packet ok=?]
     ^+  event-core
+    ::  assert the comet can't pretend to be a moon or other address
+    ::
+    ?>  ?=(%pawn (clan:title sndr.packet))
     ::  if we already know .sndr, ignore duplicate attestation
     ::
     =/  ship-state  (~(get by peers.ames-state) sndr.packet)

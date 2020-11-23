@@ -1,3 +1,7 @@
+-- This is required due to the use of 'Void' in a constructor slot in
+-- combination with 'deriveNoun' which generates an unreachable pattern.
+{-# OPTIONS_GHC -Wno-overlapping-patterns #-}
+
 {-|
   Ames IO Driver
 -}
@@ -6,15 +10,22 @@ module Urbit.Vere.Ames (ames, ames', PacketOutcome(..)) where
 
 import Urbit.Prelude
 
-import Network.Socket              hiding (recvFrom, sendTo)
+import Network.Socket
 import Urbit.Arvo                  hiding (Fake)
 import Urbit.King.Config
+import Urbit.King.Scry
+import Urbit.Vere.Ames.LaneCache
+import Urbit.Vere.Ames.Packet
 import Urbit.Vere.Pier.Types
+import Urbit.Vere.Ports
 
+import Data.Serialize      (decode, encode)
 import Urbit.King.App      (HasKingId(..), HasPierEnv(..))
 import Urbit.Vere.Ames.DNS (NetworkMode(..), ResolvServ(..))
 import Urbit.Vere.Ames.DNS (galaxyPort, resolvServ)
 import Urbit.Vere.Ames.UDP (UdpServ(..), fakeUdpServ, realUdpServ)
+
+import qualified Urbit.Noun.Time as Time
 
 
 -- Constants -------------------------------------------------------------------
@@ -32,11 +43,15 @@ packetsDroppedPerComplaint = 1000
 
 -- Types -----------------------------------------------------------------------
 
+type Version = Word8
+
 data AmesDrv = AmesDrv
   { aTurfs    :: TVar (Maybe [Turf])
   , aDropped  :: TVar Word
+  , aVersion  :: TVar (Maybe Version)
   , aUdpServ  :: UdpServ
   , aResolvr  :: ResolvServ
+  , aVersTid  :: Async ()
   , aRecvTid  :: Async ()
   }
 
@@ -56,6 +71,7 @@ localhost = tupleToHostAddress (127, 0, 0, 1)
 
 inaddrAny :: HostAddress
 inaddrAny = tupleToHostAddress (0, 0, 0, 0)
+ 
 
 modeAddress :: NetworkMode -> Maybe HostAddress
 modeAddress = \case
@@ -81,9 +97,10 @@ bornEv inst = EvBlip $ BlipEvNewt $ NewtEvBorn (fromIntegral inst, ()) ()
 
 hearEv :: PortNumber -> HostAddress -> ByteString -> Ev
 hearEv p a bs =
-  EvBlip $ BlipEvAmes $ AmesEvHear () dest (MkBytes bs)
- where
-  dest = EachNo $ Jammed $ AAIpv4 (Ipv4 a) (fromIntegral p)
+  EvBlip $ BlipEvAmes $ AmesEvHear () (ipDest p a) (MkBytes bs)
+
+ipDest :: PortNumber -> HostAddress -> AmesDest
+ipDest p a = EachNo $ Jammed $ AAIpv4 (Ipv4 a) (fromIntegral p)
 
 
 --------------------------------------------------------------------------------
@@ -105,7 +122,10 @@ udpPort isFake who = do
   mPort <- view (networkConfigL . ncAmesPort)
   pure $ maybe (listenPort mode who) fromIntegral mPort
 
-udpServ :: (HasLogFunc e, HasNetworkConfig e) => Bool -> Ship -> RIO e UdpServ
+udpServ :: (HasLogFunc e, HasNetworkConfig e, HasPortControlApi e)
+        => Bool
+        -> Ship
+        -> RIO e UdpServ
 udpServ isFake who = do
   mode <- netMode isFake
   port <- udpPort isFake who
@@ -121,9 +141,10 @@ ames'
   :: HasPierEnv e
   => Ship
   -> Bool
+  -> (Time.Wen -> Gang -> Path -> IO (Maybe (Term, Noun)))
   -> (Text -> RIO e ())
   -> RIO e ([Ev], RAcquire e (DriverApi NewtEf))
-ames' who isFake stderr = do
+ames' who isFake scry stderr = do
   -- Unfortunately, we cannot use TBQueue because the only behavior
   -- provided for when full is to block the writer. The implementation
   -- below uses materially the same data structures as TBQueue, however.
@@ -134,7 +155,7 @@ ames' who isFake stderr = do
       vail <- readTVar avail
       if vail > 0
         then do
-          modifyTVar avail (subtract 1)
+          modifyTVar' avail (subtract 1)
           writeTQueue ventQ p
           pure Intake
         else do
@@ -147,7 +168,7 @@ ames' who isFake stderr = do
       pure pM
 
   env <- ask
-  let (bornEvs, startDriver) = ames env who isFake enqueuePacket stderr
+  let (bornEvs, startDriver) = ames env who isFake scry enqueuePacket stderr
 
   let runDriver = do
         diOnEffect <- startDriver
@@ -170,14 +191,15 @@ ames' who isFake stderr = do
 -}
 ames
   :: forall e
-   . (HasLogFunc e, HasNetworkConfig e, HasKingId e)
+   . (HasLogFunc e, HasNetworkConfig e, HasPortControlApi e, HasKingId e)
   => e
   -> Ship
   -> Bool
+  -> (Time.Wen -> Gang -> Path -> IO (Maybe (Term, Noun)))
   -> (EvErr -> STM PacketOutcome)
   -> (Text -> RIO e ())
   -> ([Ev], RAcquire e (NewtEf -> IO ()))
-ames env who isFake enqueueEv stderr = (initialEvents, runAmes)
+ames env who isFake scry enqueueEv stderr = (initialEvents, runAmes)
  where
   king = fromIntegral (env ^. kingIdL)
 
@@ -190,36 +212,106 @@ ames env who isFake enqueueEv stderr = (initialEvents, runAmes)
     drv  <- mkRAcquire start stop
     pure (handleEffect drv mode)
 
-  start :: HasLogFunc e => RIO e AmesDrv
+  start :: RIO e AmesDrv
   start = do
+    mode <- rio (netMode isFake)
+    cachedScryLane <- cache scryLane
+
     aTurfs   <- newTVarIO Nothing
     aDropped <- newTVarIO 0
+    aVersion <- newTVarIO Nothing
+    aVersTid <- trackVersionThread aVersion
     aUdpServ <- udpServ isFake who
-    aRecvTid <- queuePacketsThread aDropped aUdpServ
     aResolvr <- resolvServ aTurfs (usSend aUdpServ) stderr
+    aRecvTid <- queuePacketsThread
+      aDropped
+      aVersion
+      cachedScryLane
+      (send aUdpServ aResolvr mode)
+      aUdpServ
+
     pure (AmesDrv { .. })
 
   hearFailed _ = pure ()
 
-  queuePacketsThread :: HasLogFunc e => TVar Word -> UdpServ -> RIO e (Async ())
-  queuePacketsThread dropCtr UdpServ {..} = async $ forever $ do
-    outcome <- atomically $ do
-      (p, a, b) <- usRecv
-      enqueueEv (EvErr (hearEv p a b) hearFailed)
-    case outcome of
-      Intake -> pure ()
-      Ouster -> do
-        d <- atomically $ do
-          d <- readTVar dropCtr
-          writeTVar dropCtr (d + 1)
-          pure d
-        when (d `rem` packetsDroppedPerComplaint == 0) $
-          logWarn "ames: queue full; dropping inbound packets"
+  trackVersionThread :: HasLogFunc e => TVar (Maybe Version) -> RIO e (Async ())
+  trackVersionThread versSlot = async $ forever do
+    scryVersion >>= \case
+      Just v -> do
+        v0 <- readTVarIO versSlot
+        atomically $ writeTVar versSlot (Just v)
+        if (v0 == Just v)
+          then logInfo $ displayShow ("ames: proto version unchanged at", v)
+          else stderr ("ames: protocol version now " <> tshow v)
 
-  stop :: AmesDrv -> RIO e ()
+      Nothing -> logError "ames: could not scry for version"
+
+    threadDelay (10 * 60 * 1_000_000)  -- 10m
+
+  queuePacketsThread :: HasLogFunc e
+                     => TVar Word
+                     -> TVar (Maybe Version)
+                     -> (Ship -> RIO e (Maybe [AmesDest]))
+                     -> (AmesDest -> ByteString -> RIO e ())
+                     -> UdpServ
+                     -> RIO e (Async ())
+  queuePacketsThread dropCtr vers lan forward UdpServ{..} = async $ forever $ do
+      -- port number, host address, bytestring
+    (p, a, b) <- atomically usRecv
+    ver <- readTVarIO vers
+
+    case decode b of
+      Right (pkt@Packet {..}) | ver == Nothing || ver == Just pktVersion -> do
+        logDebug $ displayShow ("ames: bon packet", pkt, showUD $ bytesAtom b)
+
+        if pktRcvr == who
+          then serfsUp p a b
+          else lan pktRcvr >>= \case
+            Just ls
+              |  dest:_ <- filter notSelf ls
+              -> forward dest $ encode pkt
+                { pktOrigin = pktOrigin <|> Just (ipDest p a) }
+              where
+                notSelf (EachYes g) = who /= Ship (fromIntegral g)
+                notSelf (EachNo  _) = True
+            _ -> logInfo $ displayShow ("ames: dropping unroutable", pkt)
+
+      Right pkt -> logInfo $ displayShow ("ames: dropping ill-versed", pkt, ver)
+
+      -- XX better handle misversioned or illegible packets.
+      -- Remarks from 67f06ce5, pkg/urbit/vere/io/ames.c, L1010:
+      --
+      -- [There are] two protocol-change scenarios [which we must think about]:
+      --
+      --  - packets using old protocol versions from our sponsees
+      --    these must be let through, and this is a transitive condition;
+      --    they must also be forwarded where appropriate
+      --    they can be validated, as we know their semantics
+      --
+      --  - packets using newer protocol versions
+      --    these should probably be let through, or at least
+      --    trigger printfs suggesting upgrade.
+      --    they cannot be filtered, as we do not know their semantics
+      --
+      Left e -> logInfo $ displayShow ("ames: dropping malformed", e)
+
+    where
+      serfsUp p a b =
+        atomically (enqueueEv (EvErr (hearEv p a b) hearFailed)) >>= \case
+          Intake -> pure ()
+          Ouster -> do
+            d <- atomically $ do
+              d <- readTVar dropCtr
+              writeTVar dropCtr (d + 1)
+              pure d
+            when (d `rem` packetsDroppedPerComplaint == 0) $
+              logWarn "ames: queue full; dropping inbound packets"
+
+  stop :: forall e. AmesDrv -> RIO e ()
   stop AmesDrv {..} = io $ do
     usKill aUdpServ
     rsKill aResolvr
+    cancel aVersTid
     cancel aRecvTid
 
   handleEffect :: AmesDrv -> NetworkMode -> NewtEf -> IO ()
@@ -229,20 +321,33 @@ ames env who isFake enqueueEv stderr = (initialEvents, runAmes)
 
     NewtEfSend (_id, ()) dest (MkBytes bs) -> do
       atomically (readTVar aTurfs) >>= \case
-        Nothing    -> pure ()
-        Just turfs -> sendPacket drv mode dest bs
+        Nothing    -> stderr "ames: send before turfs" >> pure ()
+        Just turfs -> send aUdpServ aResolvr mode dest bs
 
-  sendPacket :: AmesDrv -> NetworkMode -> AmesDest -> ByteString -> RIO e ()
-  sendPacket AmesDrv {..} mode dest byt = do
-    let to adr = io (usSend aUdpServ adr byt)
+  send :: UdpServ
+       -> ResolvServ
+       -> NetworkMode
+       -> AmesDest
+       -> ByteString
+       -> RIO e ()
+  send udpServ resolvr mode dest byt = do
+    let to adr = io (usSend udpServ adr byt)
 
     case (mode, dest) of
       (NoNetwork, _ ) -> pure ()
       (Fake     , _ ) -> when (okFakeAddr dest) $ to (localAddr Fake dest)
       (Localhost, _ ) -> to (localAddr Localhost dest)
       (Real     , ra) -> ra & \case
-        EachYes gala -> io (rsSend aResolvr gala byt)
+        EachYes gala -> io (rsSend resolvr gala byt)
         EachNo  addr -> to (ipv4Addr addr)
+
+  scryVersion :: HasLogFunc e => RIO e (Maybe Version)
+  scryVersion = scryNow scry "ax" who "" ["protocol", "version"]
+
+  scryLane :: HasLogFunc e
+           => Ship
+           -> RIO e (Maybe [AmesDest])
+  scryLane ship = scryNow scry "ax" who "" ["peers", tshow ship, "forward-lane"]
 
   ipv4Addr (Jammed (AAVoid v  )) = absurd v
   ipv4Addr (Jammed (AAIpv4 a p)) = SockAddrInet (fromIntegral p) (unIpv4 a)

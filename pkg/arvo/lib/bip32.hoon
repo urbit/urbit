@@ -81,11 +81,11 @@
 ++  derivation-path
   ;~  pfix
     ;~(pose (jest 'm/') (easy ~))
-  %+  most  net
+  %+  most  fas
   ;~  pose
     %+  cook
       |=(i=@ (add i (bex 31)))
-    ;~(sfix dem say)
+    ;~(sfix dem soq)
   ::
     dem
   ==  ==

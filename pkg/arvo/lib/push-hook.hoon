@@ -21,10 +21,11 @@
 ::   ##  Pokes
 ::
 ::   %push-hook-action: Add/remove a resource from pushing.
-::   [update-mark.config]: A poke to proxy to the local store
+::   [update-mark.config]: A poke to proxy to the local store or a
+::   foreign push-hook
 ::
 /-  *push-hook
-/+  default-agent, resource
+/+  default-agent, resource, verb
 |%
 +$  card  card:agent:gall
 ::
@@ -44,17 +45,24 @@
       pull-hook-name=term
   ==
 ::
-::  $state-0: state for the push hook
+::  $base-state-0: state for the push hook
 ::
 ::    .sharing: resources that the push hook is proxying
 ::    .inner-state: state given to internal door
 ::
-+$  state-0
-  $:  %0
-    sharing=(set resource)
-    inner-state=vase
++$  base-state-0
+  $:  sharing=(set resource)
+      inner-state=vase
   ==
 ::
++$  state-0  [%0 base-state-0]
+::
++$  state-1  [%1 base-state-0]
+::
++$  versioned-state
+  $%  state-0
+      state-1
+  ==
 ++  push-hook
   |*  =config
   $_  ^|
@@ -143,7 +151,7 @@
 ++  agent
   |*  =config
   |=  =(push-hook config)
-  =|  state-0
+  =|  state-1
   =*  state  -
   ^-  agent:gall
   =<
@@ -162,10 +170,39 @@
     ++  on-load
       |=  =old=vase
       =/  old
-        !<(state-0 old-vase)
-      =^  cards   push-hook
-        (on-load:og inner-state.old)
-      `this(state old)
+        !<(versioned-state old-vase)
+      =|  cards=(list card:agent:gall)
+      |^ 
+      ?-  -.old
+          %1  
+        =^  og-cards   push-hook
+          (on-load:og inner-state.old)
+        [(weld cards og-cards) this(state old)]
+        ::
+          %0
+        %_    $
+            -.old  %1
+          ::
+            cards
+          =/  paths=(list path)
+            kicked-watches
+          ?~  paths  cards
+          :_   cards
+          [%give %kick paths ~]
+        ==
+      ==
+      ::
+      ++  kicked-watches
+        ^-  (list path)
+        %~  tap  in
+        %+  roll
+          ~(val by sup.bowl)
+        |=  [[=ship =path] out=(set path)]
+        ?~  path   out
+        ?.  (lth 4 (lent path))
+          out
+        (~(put in out) path)
+      --
     ::
     ++  on-save
       =.  inner-state
@@ -182,6 +219,9 @@
         [cards this]
       ::
       ?:  =(mark update-mark.config)
+        ?:  (team:title [our src]:bowl)
+          :_  this
+          (forward-update:hc vase)
         =^  cards  state
           (poke-update:hc vase)
         [cards this]
@@ -201,7 +241,7 @@
       =/  =resource
         (de-path:resource t.path)
       =/  =vase
-        (initial-watch:og t.t.t.path resource)
+        (initial-watch:og t.t.t.t.path resource)
       :_  this
       [%give %fact ~ update-mark.config vase]~
     ::
@@ -278,14 +318,15 @@
       |=  rid=resource
       =/  pax=path
         [%resource (en-path:resource rid)]
-      =/  paths=(list path)
+      =/  paths=(set path)
+        %-  sy
         %+  turn
           (incoming-subscriptions pax)
-        |=([ship pox=path] pax)
+        |=([ship pox=path] pox)
       =.  sharing
         (~(del in sharing) rid)
       :_  state
-      [%give %kick ~[pax] ~]~
+      [%give %kick ~(tap in paths) ~]~
     ::
     ++  revoke
       |=  [ships=(set ship) rid=resource]
@@ -330,8 +371,27 @@
     =/  rid=(unit resource)
       (resource-for-update:og vase)
     ?~  rid  ~
+    =/  prefix=path
+      resource+(en-path:resource u.rid)
+    =/  paths=(list path)
+      %+  turn
+        (incoming-subscriptions prefix)
+      |=([ship pax=path] pax)
+    ?~  paths  ~
+    [%give %fact paths update-mark.config vase]~
+  ::
+  ++  forward-update
+    |=  =vase
+    ^-  (list card:agent:gall)
+    =/  rid=(unit resource)
+      (resource-for-update:og vase)
+    ?~  rid  ~
     =/  =path
       resource+(en-path:resource u.rid)
-    [%give %fact ~[path] update-mark.config vase]~
+    =/  =wire
+      (make-wire resource+(en-path:resource u.rid))
+    =/  dap=term
+      ?:(=(our.bowl entity.u.rid) store-name.config dap.bowl)
+    [%pass wire %agent [entity.u.rid dap] %poke update-mark.config vase]~
   --
 --

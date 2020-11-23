@@ -25,6 +25,11 @@ u3z_key_4(c3_m fun, u3_noun one, u3_noun two, u3_noun tri, u3_noun qua)
 {
   return u3nc(fun, u3nq(u3k(one), u3k(two), u3k(tri), u3k(qua)));
 }
+u3_noun
+u3z_key_5(c3_m fun, u3_noun one, u3_noun two, u3_noun tri, u3_noun qua, u3_noun qin)
+{
+  return u3nc(fun, u3nq(u3k(one), u3k(two), u3k(tri), u3nc(u3k(qua), u3k(qin))));
+}
 
 /* u3z_find(): find in memo cache.  Arguments retained.
 */

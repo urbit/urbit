@@ -4,7 +4,7 @@
 /-  group-hook,
     *contact-hook,
     *contact-view,
-    *invite-store,
+    inv=invite-store,
     *metadata-hook,
     *metadata-store,
     *group
@@ -44,7 +44,7 @@
   ++  on-init
     ^-  (quip card _this)
     :_  this(invite-created %.y)
-    :~  (invite-poke:cc [%create /contacts])
+    :~  (invite-poke:cc [%create %contacts])
         [%pass /inv %agent [our.bol %invite-store] %watch /invitatory/contacts]
         [%pass /group %agent [our.bol %group-store] %watch /groups]
     ==
@@ -467,25 +467,10 @@
           (contact-poke [%delete path])
         (contact-poke [%remove path ship])
     ==
-  ::
-  ++  send-invite-poke
-    |=  [=path =ship]
-    ^-  card
-    =/  =invite
-      :*  our.bol  %contact-hook
-          path  ship  ''
-      ==
-    =/  act=invite-action  [%invite /contacts (shaf %msg-uid eny.bol) invite]
-    [%pass / %agent [our.bol %invite-hook] %poke %invite-action !>(act)]
   --
 ::
-++  group-hook-poke
-  |=  =action:group-hook
-  ^-  card
-  [%pass / %agent [our.bol %group-hook] %poke %group-hook-action !>(action)]
-::
 ++  invite-poke
-  |=  act=invite-action
+  |=  act=action:inv
   ^-  card
   [%pass / %agent [our.bol %invite-store] %poke %invite-action !>(act)]
 ::
@@ -493,26 +478,6 @@
   |=  act=contact-action
   ^-  card
   [%pass / %agent [our.bol %contact-store] %poke %contact-action !>(act)]
-::
-++  contact-view-poke
-  |=  act=contact-view-action
-  ^-  card
-  [%pass / %agent [our.bol %contact-view] %poke %contact-view-action !>(act)]
-::
-++  group-poke
-  |=  act=action:group-store
-  ^-  card
-  [%pass / %agent [our.bol %group-store] %poke %group-action !>(act)]
-::
-++  metadata-poke
-  |=  act=metadata-action
-  ^-  card
-  [%pass / %agent [our.bol %metadata-store] %poke %metadata-action !>(act)]
-::
-++  metadata-hook-poke
-  |=  act=metadata-hook-action
-  ^-  card
-  [%pass / %agent [our.bol %metadata-hook] %poke %metadata-hook-action !>(act)]
 ::
 ++  contacts-scry
   |=  pax=path
@@ -524,16 +489,6 @@
       /noun
     ==
   .^((unit contacts) %gx pax)
-::
-++  invite-scry
-  |=  uid=serial
-  ^-  (unit invite)
-  =/  pax
-    ;:  weld
-      /(scot %p our.bol)/invite-store/(scot %da now.bol)
-      /invite/contacts/(scot %uv uid)/noun
-    ==
-  .^((unit invite) %gx pax)
 ::
 ++  group-scry
   |=  pax=path

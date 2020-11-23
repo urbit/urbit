@@ -7,14 +7,20 @@
 +$  card  card:agent:gall
 +$  versioned-state
   $%  state-0
+      state-1
+      state-2
   ==
 ::
 +$  state-0  [%0 network:store]
++$  state-1  [%1 network:store]
++$  state-2  [%2 network:store]
+::
 ++  orm      orm:store
 ++  orm-log  orm-log:store
++$  debug-input  [%validate-graph =resource:store]
 --
 ::
-=|  state-0
+=|  state-2
 =*  state  -
 ::
 %-  agent:dbug
@@ -27,9 +33,160 @@
 ++  on-init  [~ this]
 ++  on-save  !>(state)
 ++  on-load
-  |=  old=vase
+  |=  =old=vase
   ^-  (quip card _this)
-  [~ this(state !<(state-0 old))]
+  =+  !<(old=versioned-state old-vase)
+  =|  cards=(list card)
+  |^
+  ?-    -.old
+      %0  
+    %_    $
+      -.old  %1
+    ::
+        validators.old
+      (~(put in validators.old) %graph-validator-link)
+    ::
+        cards
+      %+  weld  cards
+      %+  turn
+        ~(tap in (~(put in validators.old) %graph-validator-link))
+      |=  validator=@t
+      ^-  card
+      =/  =wire  /validator/[validator]
+      =/  =rave:clay  [%sing %b [%da now.bowl] /[validator]]
+      [%pass wire %arvo %c %warp our.bowl [%home `rave]]
+    ::
+        graphs.old
+      %-  ~(run by graphs.old)
+      |=  [=graph:store q=(unit mark)]
+      ^-  [graph:store (unit mark)]
+      :-  (convert-unix-timestamped-graph graph)
+      ?^  q  q
+      `%graph-validator-link
+    ::
+        update-logs.old
+      %-  ~(run by update-logs.old)
+      |=(a=* *update-log:store)
+    ==
+  ::
+      %1
+    %_  $
+      -.old       %2
+      graphs.old  (~(run by graphs.old) change-revision-graph)
+    ::
+        update-logs.old
+      %-  ~(run by update-logs.old)
+      |=(a=* *update-log:store)
+    ==
+  ::
+    %2  [cards this(state old)]
+  ==
+  ::
+  ++  change-revision-graph
+    |=  [=graph:store q=(unit mark)]
+    ^-  [graph:store (unit mark)]
+    |^
+    :_  q
+    ?+    q  graph
+      [~ %graph-validator-link]     convert-links
+      [~ %graph-validator-publish]  convert-publish
+    ==
+    ::
+    ++  convert-links
+      %+  gas:orm  *graph:store
+      %+  turn  (tap:orm graph)
+      |=  [=atom =node:store]
+      ^-  [^atom node:store]
+      ::  top-level
+      ::
+      :+  atom  post.node
+      ?:  ?=(%empty -.children.node)
+        [%empty ~]
+      :-  %graph
+      %+  gas:orm  *graph:store
+      %+  turn  (tap:orm p.children.node)
+      |=  [=^atom =node:store]
+      ^-  [^^atom node:store]
+      ::  existing comments get turned into containers for revisions
+      ::
+      :^    atom
+          post.node(contents ~, hash ~)
+        %graph
+      %+  gas:orm  *graph:store
+      :_  ~  :-  %1
+      :_  [%empty ~]
+      post.node(index (snoc index.post.node atom), hash ~)
+    ::
+    ++  convert-publish
+      %+  gas:orm  *graph:store
+      %+  turn  (tap:orm graph)
+      |=  [=atom =node:store]
+      ^-  [^atom node:store]
+      ::  top-level
+      ::
+      :+  atom  post.node
+      ?:  ?=(%empty -.children.node)
+        [%empty ~]
+      :-  %graph
+      %+  gas:orm  *graph:store
+      %+  turn  (tap:orm p.children.node)
+      |=  [=^atom =node:store]
+      ^-  [^^atom node:store]
+      ::  existing container for publish note revisions
+      ::
+      ?+    atom  !!
+          %1  [atom node]
+          %2
+        :+  atom  post.node
+        ?:  ?=(%empty -.children.node)
+          [%empty ~]
+        :-  %graph
+        %+  gas:orm  *graph:store
+        %+  turn  (tap:orm p.children.node)
+        |=  [=^^atom =node:store]
+        ^-  [^^^atom node:store]
+        :+  atom  post.node(contents ~, hash ~)
+        :-  %graph
+        %+  gas:orm  *graph:store
+        :_  ~  :-  %1
+        :_  [%empty ~]
+        post.node(index (snoc index.post.node atom), hash ~)
+      ==
+    --
+  ::  
+  ++  maybe-unix-to-da
+    |=  =atom
+    ^-  @
+    ::  (bex 127) is roughly 226AD
+    ?.  (lte atom (bex 127))
+      atom
+    (add ~1970.1.1 (div (mul ~s1 atom) 1.000))
+  ::
+  ++  convert-unix-timestamped-node
+    |=  =node:store
+    ^-  node:store
+    =.  index.post.node
+      (convert-unix-timestamped-index index.post.node)
+    ?.  ?=(%graph -.children.node)
+      node
+    :+  post.node
+      %graph
+    (convert-unix-timestamped-graph p.children.node)
+  ::
+  ++  convert-unix-timestamped-index
+    |=  =index:store
+    (turn index maybe-unix-to-da)
+  ::
+  ++  convert-unix-timestamped-graph
+    |=  =graph:store
+    %+  gas:orm  *graph:store
+    %+  turn
+      (tap:orm graph)
+    |=  [=atom =node:store]
+    ^-  [^atom node:store]
+    :-  (maybe-unix-to-da atom)
+    (convert-unix-timestamped-node node)
+  --
 ::
 ++  on-watch
   ~/  %graph-store-watch
@@ -60,6 +217,7 @@
   =^  cards  state
     ?+  mark           (on-poke:def mark vase)
         %graph-update  (graph-update !<(update:store vase))
+        %noun          (debug !<(debug-input vase))
     ==
   [cards this]
   ::
@@ -68,6 +226,7 @@
     ^-  (quip card _state)
     |^
     ?>  ?=(%0 -.update)
+    =?  p.update  =(p.update *time)  now.bowl
     ?-  -.q.update
         %add-graph          (add-graph +.q.update)
         %remove-graph       (remove-graph +.q.update)
@@ -86,23 +245,30 @@
     ==
     ::
     ++  add-graph
-      |=  [=resource:store =graph:store mark=(unit mark:store)]
+      |=  $:  =resource:store
+              =graph:store
+              mark=(unit mark:store)
+              overwrite=?
+          ==
       ^-  (quip card _state)
-      ?<  (~(has by archive) resource)
-      ?<  (~(has by graphs) resource)
+      ?>  ?|  overwrite
+              ?&  !(~(has by archive) resource)
+                  !(~(has by graphs) resource)
+          ==  ==
       ?>  (validate-graph graph mark)
       :_  %_  state
               graphs       (~(put by graphs) resource [graph mark])
               update-logs  (~(put by update-logs) resource (gas:orm-log ~ ~))
+              archive      (~(del by archive) resource)
               validators
             ?~  mark  validators
             (~(put in validators) u.mark)
           ==
       %-  zing
-      :~  (give [/updates /keys ~] [%add-graph resource graph mark])
+      :~  (give [/updates /keys ~] [%add-graph resource graph mark overwrite])
           ?~  mark  ~
           ?:  (~(has in validators) u.mark)  ~
-          =/  wire  (weld /graph (en-path:res resource))
+          =/  wire  /validator/[u.mark]
           =/  =rave:clay  [%sing %b [%da now.bowl] /[u.mark]]
           [%pass wire %arvo %c %warp our.bowl [%home `rave]]~
       ==
@@ -188,7 +354,7 @@
           =/  =hash:store  `@ux`(sham validated-portion)
           ?~  hash.p  node(signatures.post *signatures:store)
           ~|  "signatures do not match the calculated hash"
-          ?>  (are-signatures-valid:sigs signatures.p hash now.bowl)
+          ?>  (are-signatures-valid:sigs our.bowl signatures.p hash now.bowl)
           ~|  "hash of post does not match calculated hash"
           ?>  =(hash u.hash.p)
           node
@@ -296,7 +462,7 @@
           ~|  "cannot add signatures to a node missing a hash"
           ?>  ?=(^ hash.post.node)
           ~|  "signatures did not match public keys!"
-          ?>  (are-signatures-valid:sigs signatures u.hash.post.node now.bowl)
+          ?>  (are-signatures-valid:sigs our.bowl signatures u.hash.post.node now.bowl)
           node(signatures.post (~(uni in signatures) signatures.post.node))
         ~|  "child graph does not exist to add signatures to!"
         ?>  ?=(%graph -.children.node)
@@ -395,52 +561,57 @@
       ^-  (quip card _state)
       ?<  (~(has by archive) resource)
       ?>  (~(has by graphs) resource)
-      :_  state
-      %+  turn  (tap:orm-log update-log)
-      |=  [=time update=logged-update:store]
-      ^-  card
-      ?>  ?=(%0 -.update)
-      :*  %pass
-          /run-updates/(scot %da time)
-          %agent
-          [our.bowl %graph-store]
-          %poke
-          :-  %graph-update
-          !>
-          ^-  update:store
-          ?-  -.q.update
-              %add-nodes          update(resource.q resource)
-              %remove-nodes       update(resource.q resource)
-              %add-signatures     update(resource.uid.q resource)
-              %remove-signatures  update(resource.uid.q resource)
-          ==
-      ==
-    ::
-    ++  validate-graph
-      |=  [=graph:store mark=(unit mark:store)]
-      ^-  ?
-      ?~  mark   %.y
-      ?~  graph  %.y
-      =/  =dais:clay
-        .^  =dais:clay
-            %cb
-            /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/[u.mark]
+      =/  updates=(list [=time upd=logged-update:store])
+        (tap:orm-log update-log)
+      =|  cards=(list card)
+      |-  ^-  (quip card _state)
+      ?~  updates
+        [cards state]
+      =*  update  upd.i.updates
+      =^  crds  state
+        %-  graph-update 
+        ^-  update:store
+        ?-  -.q.update
+            %add-nodes          update(resource.q resource)
+            %remove-nodes       update(resource.q resource)
+            %add-signatures     update(resource.uid.q resource)
+            %remove-signatures  update(resource.uid.q resource)
         ==
-      %+  roll  (tap:orm graph)
-      |=  [[=atom =node:store] out=?]
-      ?&  out
-          =(%& -:(mule |.((vale:dais [atom post.node]))))
-          ?-  -.children.node
-              %empty  %.y
-              %graph  ^$(graph p.children.node)
-          ==
-      ==
+      $(cards (weld cards crds), updates t.updates)
     ::
     ++  give
       |=  [paths=(list path) update=update-0:store]
       ^-  (list card)
       [%give %fact paths [%graph-update !>([%0 now.bowl update])]]~
     --
+  ::
+  ++  debug
+    |=  =debug-input
+    ^-  (quip card _state)
+    =/  [=graph:store mark=(unit mark:store)]
+      (~(got by graphs) resource.debug-input)
+    ?>  (validate-graph graph mark)
+    [~ state]
+  ::
+  ++  validate-graph
+    |=  [=graph:store mark=(unit mark:store)]
+    ^-  ?
+    ?~  mark   %.y
+    ?~  graph  %.y
+    =/  =dais:clay
+      .^  =dais:clay
+          %cb
+          /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/[u.mark]
+      ==
+    %+  roll  (tap:orm graph)
+    |=  [[=atom =node:store] out=?]
+    ?&  out
+        =(%& -:(mule |.((vale:dais [atom post.node]))))
+        ?-  -.children.node
+            %empty  %.y
+            %graph  ^$(graph p.children.node)
+        ==
+    ==
   --
 ::
 ++  on-peek
@@ -450,6 +621,14 @@
   |^
   ?>  (team:title our.bowl src.bowl)
   ?+  path  (on-peek:def path)
+      [%x %graph-mark @ @ ~]
+    =/  =ship   (slav %p i.t.t.path)
+    =/  =term   i.t.t.t.path
+    =/  result=(unit marked-graph:store)
+      (~(get by graphs) [ship term])
+    ?~  result  [~ ~]
+    ``noun+!>(q.u.result)
+  ::
       [%x %keys ~]
     :-  ~  :-  ~  :-  %graph-update
     !>(`update:store`[%0 now.bowl [%keys ~(key by graphs)]])
@@ -472,7 +651,23 @@
     !>  ^-  update:store
     :+  %0
       now.bowl
-    [%add-graph [ship term] `graph:store`p.u.result q.u.result]
+    [%add-graph [ship term] `graph:store`p.u.result q.u.result %.y]
+  ::
+      ::  note: near-duplicate of /x/graph
+      ::
+      [%x %archive @ @ ~]
+    =/  =ship   (slav %p i.t.t.path)
+    =/  =term   i.t.t.t.path
+    =/  result=(unit marked-graph:store)
+      (~(get by archive) [ship term])
+    ?~  result
+      ~&  no-archived-graph+[ship term]
+      [~ ~]
+    :-  ~  :-  ~  :-  %graph-update
+    !>  ^-  update:store
+    :+  %0
+      now.bowl
+    [%add-graph [ship term] `graph:store`p.u.result q.u.result %.y]
   ::
       [%x %graph-subset @ @ @ @ ~]
     =/  =ship  (slav %p i.t.t.path)
@@ -497,7 +692,7 @@
     =/  =ship  (slav %p i.t.t.path)
     =/  =term  i.t.t.t.path
     =/  =index:store
-      (turn t.t.t.t.path |=(=cord (slav %ud cord)))
+      (turn t.t.t.t.path (cury slav %ud))
     =/  node=(unit node:store)  (get-node ship term index)
     ?~  node  [~ ~]
     :-  ~  :-  ~  :-  %graph-update
@@ -527,11 +722,21 @@
       :+  %add-nodes
         [ship term]
       %-  ~(gas by *(map index:store node:store))
-      %+  turn  (tap:orm `graph:store`(subset:orm p.children.u.node start end))
+      %+  turn  (tap:orm `graph:store`(subset:orm p.children.u.node end start))
       |=  [=atom =node:store]
       ^-  [index:store node:store]
       [(snoc index atom) node]
     ==
+  ::
+      [%x %update-log-subset @ @ @ @ ~]
+    =/  =ship   (slav %p i.t.t.path)
+    =/  =term   i.t.t.t.path
+    =/  start=(unit time)  (slaw %da i.t.t.t.t.path)
+    =/  end=(unit time)    (slaw %da i.t.t.t.t.t.path)
+    =/  update-log=(unit update-log:store)  (~(get by update-logs) [ship term])
+    ?~  update-log  [~ ~]
+    ::  orm-log is ordered backwards, so swap start and end
+    ``noun+!>((subset:orm-log u.update-log end start))
   ::
       [%x %update-log @ @ ~]
     =/  =ship   (slav %p i.t.t.path)
@@ -575,15 +780,15 @@
 ++  on-arvo
   |=  [=wire =sign-arvo]
   ^-  (quip card _this)
-  ?+  -.sign-arvo  (on-arvo:def wire sign-arvo)
-      %c
+  ?+  wire  (on-arvo:def wire sign-arvo)
+  ::
+  ::  old wire, do nothing 
+      [%graph *]  [~ this]
+  ::
+      [%validator @ ~]
     :_  this
-    ?>  ?=([%graph @ *] wire)
-    =/  =resource:store  (de-path:res t.wire)
-    =/  gra=(unit marked-graph:store)  (~(get by graphs) resource)
-    ?~  gra  ~
-    ?~  q.u.gra  ~
-    =/  =rave:clay  [%next %b [%da now.bowl] /[u.q.u.gra]]
+    =*  validator  i.t.wire
+    =/  =rave:clay  [%next %b [%da now.bowl] /[validator]]
     [%pass wire %arvo %c %warp our.bowl [%home `rave]]~
   ==
 ::

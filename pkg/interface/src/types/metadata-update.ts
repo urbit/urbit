@@ -31,7 +31,7 @@ type MetadataUpdateRemove = {
 
 export type Associations = Record<AppName, AppAssociations>;
 
-type AppAssociations = {
+export type AppAssociations = {
   [p in Path]: Association;
 }
 
@@ -45,10 +45,11 @@ export type Association = Resource & {
   metadata: Metadata;
 };
 
-interface Metadata {
+export interface Metadata {
   color: string;
   creator: Patp;
   'date-created': string;
   description: string;
   title: string;
+  module: string;
 }

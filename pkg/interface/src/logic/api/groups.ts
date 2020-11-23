@@ -26,7 +26,7 @@ export default class GroupsApi extends BaseApi<StoreState> {
     return this.proxyAction({ addMembers: { resource, ships } });
   }
 
-  changePolicy(resource: Resource, diff: GroupPolicyDiff) {
+  changePolicy(resource: Resource, diff: Enc<GroupPolicyDiff>) {
     return this.proxyAction({ changePolicy: { resource, diff } });
   }
 

@@ -8,7 +8,7 @@ import { Sigil } from "~/logic/lib/sigil";
 import { uxToHex, MOBILE_BROWSER_REGEX } from "~/logic/lib/util";
 
 import Settings from "./components/settings";
-import { ContactCard } from "../groups/components/lib/ContactCard";
+import { ContactCard } from "~/views/landscape/components/ContactCard";
 
 const SidebarItem = ({ children, view, current }) => {
   const selected = current === view;
@@ -22,7 +22,7 @@ const SidebarItem = ({ children, view, current }) => {
         px={3}
         backgroundColor={selected ? "washedBlue" : "white"}
       >
-        <Icon mr={2} display="inline-block" icon="Circle" fill={color} />
+        <Icon mr={2} display="inline-block" icon="Circle" color={color} />
         <Text color={color} fontSize={0}>
           {children}
         </Text>
@@ -53,7 +53,7 @@ export default function ProfileScreen(props: any) {
           return null;
         }
         if (!view && !MOBILE_BROWSER_REGEX.test(window.navigator.userAgent)) {
-          history.replace("/~profile/settings");
+          history.replace("/~profile/identity");
         }
 
         return (
@@ -112,12 +112,15 @@ export default function ProfileScreen(props: any) {
                 {view === "settings" && <Settings {...props} />}
 
                 {view === "identity" && (
+                  <>
+                  <Text display='block' gray px='3' pt='3'>Your identity provides the default information you can optionally share with groups in the group settings panel.</Text>
                   <ContactCard
                     contact={contact}
                     path="/~/default"
                     api={props.api}
                     s3={props.s3}
                   />
+                  </>
                 )}
               </Box>
             </Box>

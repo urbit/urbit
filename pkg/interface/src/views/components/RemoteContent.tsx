@@ -1,6 +1,6 @@
 import React, { PureComponent, Fragment } from 'react';
 import { LocalUpdateRemoteContentPolicy } from "~/types/local-update";
-import { Button } from '@tlon/indigo-react';
+import { BaseAnchor, BaseImage, Box, Button } from '@tlon/indigo-react';
 import { hasProvider } from 'oembed-parser';
 import EmbedContainer from 'react-oembed-container';
 import { memoize } from 'lodash';
@@ -64,19 +64,21 @@ export default class RemoteContent extends PureComponent<RemoteContentProps, Rem
     .then((result) => {
       this.setState({ embed: result });
     }).catch((error) => {
+      if (error.name === 'AbortError') return;
       this.setState({ embed: 'error' });
     });
   }
 
   wrapInLink(contents) {
-    return (<a
+    return (<BaseAnchor
       href={this.props.url}
-      className={`word-break-all ${(typeof contents === 'string') ? 'bb b--white-d b--black' : ''}`}
+      style={{ color: 'inherit', textDecoration: 'none' }}
+      className={`word-break-all ${(typeof contents === 'string') ? 'bb' : ''}`}
       target="_blank"
       rel="noopener noreferrer"
     >
       {contents}
-    </a>);
+    </BaseAnchor>);
   }
 
   render() {
@@ -100,7 +102,7 @@ export default class RemoteContent extends PureComponent<RemoteContentProps, Rem
 
     if (isImage && remoteContentPolicy.imageShown) {
       return this.wrapInLink(
-        <img
+        <BaseImage
           src={url}
           style={style}
           onLoad={onLoad}
@@ -138,23 +140,28 @@ export default class RemoteContent extends PureComponent<RemoteContentProps, Rem
         </>
       );
     } else if (isOembed && remoteContentPolicy.oembedShown) {
-      if (!this.state.embed) {
+      if (!this.state.embed || this.state.embed?.html === '') {
         this.loadOembed();
       }
 
       return (
         <Fragment>
           {renderUrl ? this.wrapInLink(this.state.embed && this.state.embed.title ? this.state.embed.title : url) : null}
-          {this.state.embed !== 'error' && !unfold ? <Button
+          {this.state.embed !== 'error' && this.state.embed?.html && !unfold ? <Button
+            display='inline-flex'
             border={1}
-            style={{ display: 'inline-flex', height: '1.66em' }} // Height is hacked to line-height until Button supports proper size
+            height={3}
             ml={1}
             onClick={this.unfoldEmbed}
+            style={{ cursor: 'pointer' }}
           >
             {this.state.unfold ? 'collapse' : 'expand'}
           </Button> : null}
-          <div
-            className={'embed-container mb2 w-100 w-75-l w-50-xl ' + (this.state.unfold ? 'db' : 'dn')}
+          <Box
+            mb='2'
+            width='100%'
+            display={this.state.unfold ? 'block' : 'none'}
+            className='embed-container'
             style={style}
             onLoad={onLoad}
             {...oembedProps}
@@ -165,7 +172,7 @@ export default class RemoteContent extends PureComponent<RemoteContentProps, Rem
               <div dangerouslySetInnerHTML={{__html: this.state.embed.html}}></div>
             </EmbedContainer>
             : null}
-          </div>
+          </Box>
         </Fragment>
       );
     } else {

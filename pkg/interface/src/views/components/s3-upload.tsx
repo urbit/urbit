@@ -1,16 +1,29 @@
 import React, { Component } from 'react'
-import { Icon } from "@tlon/indigo-react";
+import { BaseInput, Box, Text, Icon, LoadingSpinner } from "@tlon/indigo-react";
 
 import S3Client from '~/logic/lib/s3';
-import { Spinner } from './Spinner';
 import { S3Credentials, S3Configuration } from '~/types';
 import { dateToDa, deSig } from '~/logic/lib/util';
 
 export const SubmitDragger = () => (
-  <div
-    className="top-0 bottom-0 left-0 right-0 absolute bg-gray5 h-100 w-100 flex items-center justify-center z-999"
-    style={{pointerEvents: 'none'}}
-  >Drop a file to upload</div>
+  <Box
+    top='0'
+    bottom='0'
+    left='0'
+    right='0'
+    position='absolute'
+    backgroundColor='white'
+    height='100%'
+    width='100%'
+    display='flex'
+    alignItems='center'
+    justifyContent='center'
+    style={{ pointerEvents: 'none', zIndex: 999 }}
+  >
+      <Text fontSize='1' color='black'>
+        Drop a file to upload
+      </Text>
+    </Box>
 );
 
 interface S3UploadProps {
@@ -85,22 +98,24 @@ export class S3Upload extends Component<S3UploadProps, S3UploadState> {
     const timestamp = deSig(dateToDa(new Date()));
     let bucket = props.configuration.currentBucket;
 
-    this.setState({ isUploading: true });
-
-    this.s3.upload(bucket, `${window.ship}/${timestamp}-${fileName}.${fileExtension}`, file)
-      .then((data) => {
-        if (!data || !('Location' in data)) {
-          return;
-        }
-        this.props.uploadSuccess(data.Location);
-      })
-      .catch((err) => {
-        console.error(err);
-        this.props.uploadError(err);
-      })
-      .finally(() => {
-        this.setState({ isUploading: false });
-      });
+    setTimeout(() => {
+      if (this.state.isUploading) return;
+      this.setState({ isUploading: true });
+      this.s3.upload(bucket, `${window.ship}/${timestamp}-${fileName}.${fileExtension}`, file)
+        .then((data) => {
+          if (!data || !('Location' in data)) {
+            return;
+          }
+          this.props.uploadSuccess(data.Location);
+        })
+        .catch((err) => {
+          console.error(err);
+          this.props.uploadError(err);
+        })
+        .finally(() => {
+          this.setState({ isUploading: false });
+        });
+    }, 200);
   }
 
   onClick() {
@@ -116,7 +131,7 @@ export class S3Upload extends Component<S3UploadProps, S3UploadState> {
       accept = '*',
       children = false
     } = this.props;
-    
+
     if (!this.isReady(credentials, configuration)) {
       return null;
     }
@@ -124,16 +139,16 @@ export class S3Upload extends Component<S3UploadProps, S3UploadState> {
     const display = children || <Icon icon='ArrowNorth' />;
     return (
       <>
-        <input
-          className="dn"
+        <BaseInput
+          display='none'
           type="file"
           id="fileElement"
           ref={this.inputRef}
           accept={accept}
           onChange={this.onChange.bind(this)} />
         {this.state.isUploading
-          ? <Spinner awaiting={true} classes={className} />
-          : <span className={`pointer ${className}`} onClick={this.onClick.bind(this)}>{display}</span>
+          ? <LoadingSpinner background="gray" foreground="black" />
+          : <Text cursor='pointer' className={className} onClick={this.onClick.bind(this)}>{display}</Text>
         }
       </>
     );

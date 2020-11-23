@@ -100,5 +100,6 @@ export default class ChatReducer<S extends ChatState> {
         mailbox.splice(index, 1);
       }
     }
+    state.pendingMessages.set(msg.path, mailbox);
   }
 }

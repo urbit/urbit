@@ -57,6 +57,11 @@
 #       define u3x_peg(a_w, b_w) \
           ( (a_w << u3x_dep(b_w)) | (b_w &~ (1 << u3x_dep(b_w))) )
 
+      /* u3x_atom(): atom or exit.
+      */
+#       define u3x_atom(a)                            \
+          ( (c3y == u3a_is_cell(a)) ? u3m_bail(c3__exit) : a )
+
   /**  Functions.
   **/
     /** u3x_*: read, but bail with c3__exit on a crash.
