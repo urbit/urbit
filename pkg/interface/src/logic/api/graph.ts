@@ -67,6 +67,9 @@ function moduleToMark(mod: string): string | undefined {
   if(mod === 'publish') {
     return 'graph-validator-publish';
   }
+  if(mod === 'chat') {
+    return 'graph-validator-chat';
+  }
   return undefined;
 }
 

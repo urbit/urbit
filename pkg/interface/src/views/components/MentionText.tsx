@@ -37,7 +37,7 @@ export function MentionText(props: MentionTextProps) {
   );
 }
 
-function Mention(props: { ship: string; contacts: Contacts }) {
+export function Mention(props: { ship: string; contacts: Contacts }) {
   const { contacts, ship } = props;
   const contact = contacts[ship];
   const showNickname = !!contact?.nickname;

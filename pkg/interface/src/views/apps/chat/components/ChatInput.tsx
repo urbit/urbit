@@ -3,10 +3,11 @@ import ChatEditor from './chat-editor';
 import { S3Upload } from '~/views/components/s3-upload' ;
 import { uxToHex } from '~/logic/lib/util';
 import { Sigil } from '~/logic/lib/sigil';
+import { createPost } from '~/logic/api/graph';
 import tokenizeMessage, { isUrl } from '~/logic/lib/tokenizeMessage';
 import GlobalApi from '~/logic/api/global';
 import { Envelope } from '~/types/chat-update';
-import { Contacts } from '~/types';
+import { Contacts, Content } from '~/types';
 import { Row, BaseImage, Box, Icon } from '@tlon/indigo-react';
 
 interface ChatInputProps {
@@ -82,39 +83,23 @@ export default class ChatInput extends Component<ChatInputProps, ChatInputState>
 
   submit(text) {
     const { props, state } = this;
+    const [,,ship,name] = props.station.split('/');
     if (state.inCodeMode) {
       this.setState({
         inCodeMode: false
       }, () => {
-        props.api.chat.message(
-          props.station,
-          `~${window.ship}`,
-          Date.now(), {
-            code: {
-              expression: text,
-              output: undefined
-            }
-          }
-        );
+        const contents: Content[] = [{ code: {  expression: text, output: undefined }}];
+        const post = createPost(contents);
+        props.api.graph.addPost(ship, name, post);
       });
       return;
     }
 
-    const messages = tokenizeMessage(text);
+    const post = createPost(tokenizeMessage((text)))
 
     props.deleteMessage();
 
-    messages.forEach((message) => {
-      if (message.length > 0) {
-        message = this.getLetterType(message.join(' '));
-        props.api.chat.message(
-          props.station,
-          `~${window.ship}`,
-          Date.now(),
-          message
-        );
-      }
-    });
+    props.api.graph.addPost(ship,name, post);
   }
 
   uploadSuccess(url) {
@@ -123,12 +108,8 @@ export default class ChatInput extends Component<ChatInputProps, ChatInputState>
       this.chatEditor.current.editor.setValue(url);
       this.setState({ uploadingPaste: false });
     } else {
-      props.api.chat.message(
-        props.station,
-        `~${window.ship}`,
-        Date.now(),
-        { url }
-      );
+      const [,,ship,name] = props.station.split('/');
+      props.api.graph.addPost(ship,name, createPost([{ url }]));
     }
   }
 

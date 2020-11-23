@@ -9,7 +9,7 @@ import { Contacts } from "~/types/contact-update";
 import { Association } from "~/types/metadata-update";
 import { Group } from "~/types/group-update";
 import { Envelope, IMessage } from "~/types/chat-update";
-import { LocalUpdateRemoteContentPolicy } from "~/types";
+import { LocalUpdateRemoteContentPolicy, Graph } from "~/types";
 import { BigIntOrderedMap } from "~/logic/lib/BigIntOrderedMap";
 
 import VirtualScroller from "~/views/components/VirtualScroller";
@@ -29,13 +29,12 @@ type ChatWindowProps = RouteComponentProps<{
   station: string;
 }> & {
   unreadCount: number;
-  envelopes: Envelope[];
   isChatMissing: boolean;
   isChatLoading: boolean;
   isChatUnsynced: boolean;
   unreadMsg: Envelope | false;
   stationPendingMessages: IMessage[];
-  mailboxSize: number;
+  graph: Graph;
   contacts: Contacts;
   association: Association;
   group: Group;
@@ -58,6 +57,7 @@ interface ChatWindowState {
 export default class ChatWindow extends Component<ChatWindowProps, ChatWindowState> {
   private virtualList: VirtualScroller | null;
   private unreadMarkerRef: React.RefObject<HTMLDivElement>;
+  private prevSize = 0;
 
   INITIALIZATION_MAX_TIME = 1500;
 
@@ -112,6 +112,7 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
   }
 
   initialFetch() {
+    /*
     const { envelopes, mailboxSize, unreadCount } = this.props;
     if (envelopes.length > 0) {
       const start = Math.min(mailboxSize - unreadCount, mailboxSize - DEFAULT_BACKLOG_SIZE);
@@ -127,28 +128,37 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
         this.initialFetch();
       }, 2000);
     }
+     */
   }
 
   componentDidUpdate(prevProps: ChatWindowProps, prevState) {
-    const { isChatMissing, history, envelopes, mailboxSize, stationPendingMessages, unreadCount, station } = this.props;
+    const { isChatMissing, history, graph, unreadCount, station } = this.props;
 
     if (isChatMissing) {
       history.push("/~404");
-    } else if (envelopes.length !== prevProps.envelopes.length && this.state.fetchPending) {
+    } else if (graph.size !== prevProps.graph.size && this.state.fetchPending) {
       this.setState({ fetchPending: false });
     }
 
-    if ((mailboxSize !== prevProps.mailboxSize) || (envelopes.length !== prevProps.envelopes.length)) {
+      /*if ((mailboxSize !== prevProps.mailboxSize) || (envelopes.length !== prevProps.envelopes.length)) {
       this.virtualList?.calculateVisibleItems();
       this.stayLockedIfActive();
-    }
+    }*/
 
-    if (unreadCount > prevProps.unreadCount && this.state.idle) {
+      /*if (unreadCount > prevProps.unreadCount && this.state.idle) {
       this.setState({
         lastRead: unreadCount ? mailboxSize - unreadCount : -1,
       });
-    }
+    }*/
 
+    console.log(graph.size);
+    console.log(prevProps.graph.size);
+
+    if(this.prevSize !== graph.size) {
+      this.prevSize = graph.size;
+      this.virtualList?.calculateVisibleItems();
+    }
+      /*
     if (stationPendingMessages.length !== prevProps.stationPendingMessages.length) {
       this.virtualList?.calculateVisibleItems();
     }
@@ -164,6 +174,7 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
         lastRead: unreadCount ? mailboxSize - unreadCount : -1,
       });
     }
+     */
   }
 
   stayLockedIfActive() {
@@ -174,16 +185,18 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
   }
 
   scrollToUnread() {
+    /*
     const { mailboxSize, unreadCount, scrollTo } = this.props;
     const target = scrollTo || (mailboxSize - unreadCount);
     this.virtualList?.scrollToData(target);
+     */
   }
 
   dismissUnread() {
     if (this.state.fetchPending) return;
     if (this.props.unreadCount === 0) return;
-    this.props.api.chat.read(this.props.station);
-    this.props.api.hark.readIndex({ chat: { chat: this.props.station, mention: false }});
+    //this.props.api.chat.read(this.props.station);
+    //this.props.api.hark.readIndex({ chat: { chat: this.props.station, mention: false }});
   }
 
   fetchMessages(start, end, force = false): Promise<void> {
@@ -235,7 +248,6 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
 
   render() {
     const {
-      envelopes,
       stationPendingMessages,
       unreadCount,
       unreadMsg,
@@ -248,6 +260,7 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
       group,
       contacts,
       mailboxSize,
+      graph,
       hideAvatars,
       hideNicknames,
       remoteContentPolicy,
@@ -256,26 +269,11 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
 
     const unreadMarkerRef = this.unreadMarkerRef;
 
-    const messages = new BigIntOrderedMap();
     let lastMessage = 0;
 
-    [...envelopes]
-      .sort((a, b) => a.number - b.number)
-      .forEach(message => {
-        const num = bigInt(message.number);
-        messages.set(num, message);
-        lastMessage = message.number;
-      });
-
-    stationPendingMessages
-      .sort((a, b) => a.when - b.when)
-      .forEach((message, index) => {
-        const idx = bigInt(index + 1); // To 1-index it
-        messages.set(bigInt(mailboxSize).add(idx), message);
-        lastMessage = mailboxSize + index;
-      });
-
     const messageProps = { association, group, contacts, hideAvatars, hideNicknames, remoteContentPolicy, unreadMarkerRef, history, api };
+
+    const keys = graph.keys().reverse();
 
     return (
       <>
@@ -296,10 +294,10 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
             this.dismissUnread();
           }}
           onScroll={this.onScroll.bind(this)}
-          data={messages}
-          size={mailboxSize + stationPendingMessages.length}
+          data={graph}
+          size={graph.size}
           renderer={({ index, measure, scrollWindow }) => {
-            const msg: Envelope | IMessage = messages.get(index);
+            const msg = graph.get(index)!.post;
             if (!msg) return null;
             if (!this.state.initialized) {
               return <MessagePlaceholder key={index.toString()} height="64px" index={index} />;
@@ -309,11 +307,14 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
             const isLastRead: boolean = Boolean(!isLastMessage && index.eq(bigInt(this.state.lastRead)));
             const highlighted = bigInt(this.props.scrollTo || -1).eq(index);
             const props = { measure, highlighted, scrollWindow, isPending, isLastRead, isLastMessage, msg, ...messageProps };
+            const graphIdx = keys.findIndex(idx => idx.eq(index));
+            const prevIdx = keys[graphIdx+1];
+            const nextIdx = keys[graphIdx-1];
             return (
               <ChatMessage
                 key={index.toString()}
-                previousMsg={messages.get(index.add(bigInt.one))}
-                nextMsg={messages.get(index.subtract(bigInt.one))}
+                previousMsg={prevIdx && graph.get(prevIdx)?.post}
+                nextMsg={nextIdx && graph.get(nextIdx)?.post}
                 {...props}
               />
             );

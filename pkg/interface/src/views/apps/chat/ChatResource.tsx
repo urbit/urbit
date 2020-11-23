@@ -11,6 +11,7 @@ import ChatInput from './components/ChatInput';
 import GlobalApi from '~/logic/api/global';
 import { SubmitDragger } from '~/views/components/s3-upload';
 import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
+import {Loading} from '~/views/components/Loading';
 
 type ChatResourceProps = StoreState & {
   association: Association;
@@ -31,6 +32,8 @@ export function ChatResource(props: ChatResourceProps) {
   const group = props.groups[groupPath];
   const contacts = props.contacts[groupPath] || {};
 
+  const graph = props.graphs[station.slice(7)];
+
   const pendingMessages = (props.pendingMessages.get(station) || []).map(
     value => ({
       ...value,
@@ -38,12 +41,7 @@ export function ChatResource(props: ChatResourceProps) {
     })
   );
 
-  const isChatMissing =
-    (props.chatInitialized &&
-      !(station in props.inbox) &&
-      props.chatSynced &&
-      !(station in props.chatSynced)) ||
-    false;
+  const isChatMissing = !props.graphKeys.has(station.slice(7));
 
   const isChatLoading =
     (props.chatInitialized &&
@@ -61,11 +59,15 @@ export function ChatResource(props: ChatResourceProps) {
   const unreadCount = length - read;
   const unreadMsg = unreadCount > 0 && envelopes[unreadCount - 1];
 
-  const [, owner, name] = station.split('/');
+  const [,, owner, name] = station.split('/');
   const ourContact = contacts?.[window.ship];
   const lastMsgNum = envelopes.length || 0;
 
   const chatInput = useRef<ChatInput>();
+
+  useEffect(() => {
+    props.api.graph.getGraph(owner,name);
+  }, [station]);
 
   const onFileDrag = useCallback(
     (files: FileList) => {
@@ -102,21 +104,26 @@ export function ChatResource(props: ChatResourceProps) {
     return clear;
   }, [station]);
 
+  if(!graph) {
+    return <Loading />;
+  }
+
   return (
     <Col {...bind} height="100%" overflow="hidden" position="relative">
       {dragging && <SubmitDragger />}
       <ChatWindow
         remoteContentPolicy={props.remoteContentPolicy}
-        mailboxSize={length}
+        mailboxSize={5}
         match={props.match as any}
-        stationPendingMessages={pendingMessages}
+        stationPendingMessages={[]}
         history={props.history}
         isChatMissing={isChatMissing}
         isChatLoading={isChatLoading}
         isChatUnsynced={isChatUnsynced}
-        unreadCount={unreadCount}
-        unreadMsg={unreadMsg}
-        envelopes={envelopes || []}
+        graph={graph}
+        unreadCount={0}
+        unreadMsg={false}
+        envelopes={[]}
         contacts={contacts}
         association={props.association}
         group={group}

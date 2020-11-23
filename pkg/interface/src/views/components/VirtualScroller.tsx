@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { PureComponent, Component } from 'react';
 import _ from 'lodash';
 import { BigIntOrderedMap } from "~/logic/lib/BigIntOrderedMap";
 import normalizeWheel from 'normalize-wheel';
@@ -34,10 +34,10 @@ interface VirtualScrollerState {
   scrollTop: number;
 }
 
-export default class VirtualScroller extends PureComponent<VirtualScrollerProps, VirtualScrollerState> {
+export default class VirtualScroller extends Component<VirtualScrollerProps, VirtualScrollerState> {
   private scrollContainer: React.RefObject<HTMLDivElement>;
   public window: HTMLDivElement | null;
-  private cache: BigIntOrderedMap<BigInteger, any>;
+  private cache: BigIntOrderedMap<any>;
   private pendingLoad: {
     start: BigInteger;
     end: BigInteger
@@ -144,8 +144,8 @@ export default class VirtualScroller extends PureComponent<VirtualScrollerProps,
 
 
     //console.log([...items].map(([index]) => this.heightOf(index)));
-    const list = [...data];
-    console.log(list[0][0].toString());
+    //const list = [...data];
+    //console.log(list[0][0].toString());
     // console.log(list[list.length - 1][0].toString());
     [...data].forEach(([index, datum]) => {
       const height = this.heightOf(index);

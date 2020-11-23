@@ -8,9 +8,12 @@ export interface UrlContent {
   url: string;
 }
 export interface CodeContent {
-  expresssion: string;
-  output: string;
+  code: {
+    expresssion: string;
+    output: string | undefined;
+  }
 }
+
 export interface ReferenceContent {
   uid: string;
 }

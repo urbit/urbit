@@ -52,44 +52,22 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
     const resId: string = stringToSymbol(values.name);
     try {
       const { name, description, moduleType, ships } = values;
-      switch (moduleType) {
-        case 'chat':
-          const appPath = `/~${window.ship}/${resId}`;
-          const groupPath = group || `/ship${appPath}`;
-
-          await api.chat.create(
-            name,
-            description,
-            appPath,
-            groupPath,
-            { invite: { pending: ships.map(s => `~${s}`) } },
-            ships.map(s => `~${s}`),
-            true,
-            false
-          );
-          break;
-        case "publish":
-        case "link":
-          if (group) {
-            await api.graph.createManagedGraph(
-              resId,
-              name,
-              description,
-              group,
-              moduleType
-            );
-          } else {
-            await api.graph.createUnmanagedGraph(
-              resId,
-              name,
-              description,
-              { invite: { pending: ships.map((s) => `~${s}`) } },
-              moduleType
-            );
-          }
-          break;
-        default:
-          console.log('fallthrough');
+      if (group) {
+        await api.graph.createManagedGraph(
+          resId,
+          name,
+          description,
+          group,
+          moduleType
+        );
+      } else {
+        await api.graph.createUnmanagedGraph(
+          resId,
+          name,
+          description,
+          { invite: { pending: ships.map((s) => `~${s}`) } },
+          moduleType
+        );
       }
 
       if (!group) {
@@ -98,8 +76,7 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
       actions.setStatus({ success: null });
       const resourceUrl = parentPath(location.pathname);
       history.push(
-        `${resourceUrl}/resource/${moduleType}` +
-        `${moduleType !== 'chat' ? '/ship' : ''}/~${window.ship}/${resId}`
+        `${resourceUrl}/resource/${moduleType}/ship/~${window.ship}/${resId}`
       );
     } catch (e) {
       console.error(e);
