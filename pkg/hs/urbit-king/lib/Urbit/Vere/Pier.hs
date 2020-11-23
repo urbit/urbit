@@ -29,6 +29,7 @@ import System.Environment     (getExecutablePath)
 import System.FilePath        (splitFileName)
 import System.Posix.Files     (ownerModes, setFileMode)
 import Urbit.EventLog.LMDB    (EventLog)
+import Urbit.EventLog.Event   (buildLogEvent)
 import Urbit.King.API         (TermConn)
 import Urbit.Noun.Time        (Wen)
 import Urbit.TermSize         (TermSize(..), termSize)
@@ -103,11 +104,15 @@ writeJobs log !jobs = do
   fromJob (expectedId, job) = do
     unless (expectedId == jobId job) $ error $ show
       ("bad job id!", expectedId, jobId job)
-    pure $ jamBS $ jobPayload job
+    pure $ buildLogEvent (jobMug job) (jobPayload job)
+
+  jobMug :: Job -> Mug
+  jobMug (RunNok (LifeCyc _ m _)) = m
+  jobMug (DoWork (Work _ m _ _)) = m
 
   jobPayload :: Job -> Noun
-  jobPayload (RunNok (LifeCyc _ m n)) = toNoun (m, n)
-  jobPayload (DoWork (Work _ m d o )) = toNoun (m, d, o)
+  jobPayload (RunNok (LifeCyc _ _ n)) = toNoun n
+  jobPayload (DoWork (Work _ _ d o))  = toNoun (d, o)
 
 
 -- Acquire a running serf. -----------------------------------------------------
@@ -592,7 +597,7 @@ runPersist log inpQ out = do
       do
         unless (expectedId == eve) $ do
           throwIO (BadEventId expectedId eve)
-        pure $ jamBS $ toNoun (mug, wen, non)
+        pure $ buildLogEvent mug $ toNoun (wen, non)
     pure (fromList lis)
 
   getBatchFromQueue :: STM (NonNull [(Fact, FX)])
