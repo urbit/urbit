@@ -94,7 +94,8 @@
 ::::::::                                                ::  dill tiles
 --
 =|  all/axle
-|=  [our=ship now=@da eny=@uvJ ski=sley]                ::  current invocation
+|=  [our=ship now=@da eny=@uvJ rof=roof]                ::  current invocation
+=*  ski  (en-sley rof)
 =>  ~%  %dill  ..is  ~
     |%
     ++  as                                              ::  per cause
@@ -484,8 +485,16 @@
   ==
 ::
 ++  scry
-  |=  {fur/(unit (set monk)) ren/@tas why/shop syd/desk lot/coin tyl/path}
+  |=  [lyc=gang cyr=term bem=beam]
   ^-  (unit (unit cage))
+  =*  ren  cyr
+  =*  why=shop  &/p.bem
+  =*  syd  q.bem
+  =*  lot=coin  $/r.bem
+  =*  tyl  s.bem
+  ::
+  ?.  ?=(%& -.why)  ~
+  =*  his  p.why
   ::TODO  don't special-case whey scry
   ::
   ?:  &(=(ren %$) =(tyl /whey))

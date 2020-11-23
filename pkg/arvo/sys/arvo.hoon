@@ -35,7 +35,9 @@
 ::  +cask: marked data builder
 ::  $desk: local workspace
 ::  $dock: message target
+::  $gang: infinite set of peers
 ::  $mark: symbolic content type
+::  +omen: namespace path and data
 ::  $ship: network identity
 ::  $sink: subscription
 ::
@@ -47,8 +49,8 @@
   |$  [item]
   [fil=(unit item) dir=(map @ta ~)]
 ::
-+$  beam  [beak s=path]
 +$  beak  (trel ship desk case)
++$  beam  [beak s=path]
 +$  bone  @ud
 +$  case
   $%  ::  %da:  date
@@ -63,7 +65,9 @@
 ++  cask  |$  [a]  (pair mark a)
 +$  desk  @tas
 +$  dock  (pair @p term)
++$  gang  (unit (set ship))
 +$  mark  @tas
+++  omen  |$  [a]  (pair path (cask a))
 +$  ship  @p
 +$  sink  (trel bone ship path)
 ::
@@ -90,7 +94,9 @@
 ::  $monk: general identity
 ::  $move: cause and action
 ::  $ovum: card with cause
-::  $scry-sample: vane +scry argument
+::  $roof: namespace
+::  $rook: meta-namespace
+::  +room: generic namespace
 ::  $vane-sample: vane wrapper-gate aargument
 ::  $sley: namespace function
 ::  $slyd: super advanced
@@ -115,10 +121,21 @@
 +$  move  [=duct =ball]
 +$  ovum  (pair wire curd)
 ::
-+$  scry-sample
-  [fur=(unit (set monk)) ren=@tas why=shop syd=desk lot=coin tyl=path]
++$  roof  (room vase)                                   ::  namespace
++$  rook  (room meta)                                   ::  meta-namespace
+++  room                                                ::  either namespace
+  |$  [a]
+  $~  =>(~ |~(* ~))
+  $-  $:  lyc=gang                                      ::  leakset
+          cyr=term                                      ::  perspective
+          bem=beam                                      ::  path
+      ==                                                ::
+  %-  unit                                              ::  ~: unknown
+  %-  unit                                              ::  ~ ~: invalid
+  (cask a)
+::
 +$  vane-sample
-  [our=ship now=@da eny=@uvJ ski=slyd]
+  [our=ship now=@da eny=@uvJ rof=rook]
 ::
 +$  sley
   $-  [* (unit (set monk)) term beam]
@@ -187,12 +204,13 @@
   ==
 +$  germ  [vane=term bars=(list duct)]
 +$  heir
-  $%  [_arvo now=@da =debt =soul]
+  $%  [_arvo =debt =soul]
   ==
 +$  plan  (pair germ (list move))
 +$  soul
   $:  our=ship                                        ::  identity
       eny=@uvJ                                        ::  entropy
+      now=@da                                         ::  time
       lac=?                                           ::  laconic bit
       ver=vere                                        ::  runtime
       lag=_|                                          ::  upgrade blocked
@@ -220,6 +238,30 @@
 |%
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bE, Arvo core                ::
+::
+++  en-beam
+  |=(b=beam =*(s scot `path`[(s %p p.b) q.b (s r.b) s.b]))
+::
+++  de-beam
+  |=  p=path
+  ^-  (unit beam)
+  ?.  ?=([@ @ @ *] p)  ~
+  ?~  who=(slaw %p i.p)  ~
+  ?~  des=?~(i.t.p (some %$) (slaw %tas i.t.p))  ~  :: XX +sym ;~(pose low (easy %$))
+  ?~  ved=(slay i.t.t.p)  ~
+  ?.  ?=([%$ case] u.ved)  ~
+  `(unit beam)`[~ [`ship`u.who `desk`u.des `case`p.u.ved] t.t.t.p]
+::
+++  en-sley
+  |=  =roof
+  ^-  sley
+  |=  [typ=* fur=(unit (set monk)) ron=term bed=beam]
+  =/  lyc=gang
+    ?~  fur  ~
+    :-  ~
+    %-  ~(gas in *(set ship))
+    (murn ~(tap in u.fur) |=(m=monk ?-(-.m %| ~, %& `p.m)))
+  (roof lyc ron bed)
 ::
 ++  sloy
   ::  +sloy: adapter from old style scrys to new style scrys
@@ -275,10 +317,7 @@
   ~/  %sloy-light
   |=  sod/slyd
   |=  [ref=* ron=@tas fal=@p dyc=@tas ved=case tyl=path]
-  ::  we do not flop tyl because tyl wouldn't have been flopped by +en-beam
-  ::
-  =/  bed=beam
-    [[fal dyc ved] tyl]
+  =/  bed=beam  [[fal dyc ved] tyl]
   =/  bop=(unit (unit (cask meta)))
     (sod ref ~ ron bed)
   ?~  bop  ~
@@ -701,16 +740,17 @@
     ::  |plow:va: operate in time and space
     ::
     ++  plow
-      |=  [now=@da sky=slyd]
+      |=  [now=@da rok=rook]
       |%
       ::  +peek:plow:va: read from a local namespace
       ::
       ++  peek
-        |=  [fur=(unit (set monk)) ren=@t bed=beam]
+        ^-  rook
+        |=  [lyc=gang cyr=term bem=beam]
         ^-  (unit (unit (cask meta)))
         ::  namespace reads receive no entropy
         ::
-        =/  sam=vane-sample  [our now *@uvJ sky]
+        =/  sam=vane-sample  [our now *@uvJ rok]
         =^  rig  sac
           ~>  %mean.'peek: activation failed'
           (~(slym wa sac) vax sam)
@@ -718,16 +758,13 @@
           ~>  %mean.'peek: call failed'
           (~(slap wa sac) rig [%limb %scry])
         ::
-        ;;  (unit (unit (cask meta)))
-        %+  slum  q.gat
-        ^-  scry-sample
-        :*  fur
-            ren
-            [%& p.bed]
-            q.bed
-            `coin`[%$ r.bed]
-            s.bed
-        ==
+        =/  mas=[gang term beam]  [lyc cyr bem]
+        ::
+        =^  pro  sac  (~(slym wa sac) gat mas)
+        ?~  q.pro  ~
+        ?~  +.q.pro  [~ ~]
+        =^  dat  sac  (~(slot wa sac) 7 pro)
+        ``[(,mark -.q.dat) (,^ +.q.dat)]
       ::
       ::  |spin:plow:va: move statefully
       ::
@@ -735,7 +772,7 @@
         |=  [hen=duct eny=@uvJ dud=(unit goof)]
         =*  duc  [duc.vil hen]
         =*  err  [dud.vil dud]
-        =/  sam=vane-sample  [our now eny sky]
+        =/  sam=vane-sample  [our now eny rok]
         =^  rig  sac
           ~>  %mean.'spin: activation failed'
           (~(slym wa sac) vax sam)
@@ -820,17 +857,18 @@
                      ==
         ==
     ::
-    |_  [[pit=vase vil=vile] now=@da soul]
+    |_  [[pit=vase vil=vile] soul]
     +*  this  .
-        sol   +<+>
+        sol   +<+
     ::
     ::  +abet: finalize loop
     ::
     ++  abet
       ^-  (each (pair (list ovum) soul) (trap ^))
       ?~  but
+        ^-   [%& (pair (list ovum) soul)]
         &/[(flop out) sol]
-      |/(gat.u.but [arvo now [run out [kel fil]:u.but] sol])
+      |/(gat.u.but [arvo [run out [kel fil]:u.but] sol])
     ::  +poke: prepare a worklist-of-one from outside
     ::
     ++  poke
@@ -965,8 +1003,9 @@
           %+  turn  von
           =/  bem=beam  [[our %home da+now] /whey]
           |=  [lal=@tas =vane]
-          =/  met  (need (need (peek ** ~ (rsh 3 5 lal) bem)))
-          lal^|+;;((list mass) q.q.met)
+          =/  met  (peek ~ (rsh 3 5 lal) bem)
+          ?>  &(?=(^ met) ?=(^ u.met))  :: XX make optional
+          lal^|+;;((list mass) q.q.u.u.met)
       ::
           :+  %caches  %|
           %+  turn  von
@@ -979,20 +1018,20 @@
     ::  +peek: read from the entire namespace
     ::
     ++  peek
-      ^-  slyd
-      |=  [typ=* fur=(unit (set monk)) ron=term bed=beam]
+      ^-  rook
+      |=  [lyc=gang cyr=term bem=beam]
       ^-  (unit (unit (cask meta)))
       ::
-      ::  XX identity is defaulted to ship from beam
+      ?:  ?=(%$ cyr)
+        (peek:pith lyc %$ bem)
       ::
-      =>  .(fur ?^(fur fur `[[%& p.bed] ~ ~]))
       ::  XX vane and care are concatenated
       ::
-      =/  lal  (end 3 1 ron)
-      =/  ren  ;;(@t (rsh 3 1 ron))
+      =/  lal  (end 3 1 cyr)
+      =/  ren  ;;(@t (rsh 3 1 cyr))
       ?.  (~(has by van) lal)
         ~
-      (peek:(plow lal) fur ren bed)
+      (peek:(plow lal) lyc ren bem)
     ::  +call: advance to target
     ::
     ++  call
@@ -1186,6 +1225,20 @@
         ::
           %what  ~(kel what p.waif)
           %whey  ..pith(out [[//arvo mass/whey] out])
+        ==
+      ::
+      ++  peek
+        ^-  roof
+        |=  [lyc=gang car=term bem=beam]
+        ^-  (unit (unit cage))
+        ?.  ?|  =(our p.bem)
+                ?=(%$ q.bem)
+                =([%da now] p.r.bem)
+            ==
+          ~
+        ?+  s.bem  ~
+          [%whey ~]  ``mass/!>(whey)
+          [%lag ~]   ``noun/!>(lag)
         ==
       ::
       ++  poke
@@ -1435,7 +1488,7 @@
   ::  restore working state and resume
   ::
   =/  zef=(each (pair (list ovum) soul) (trap ^))
-    loop:(~(jump le:part [pit vil] now.hir sol) debt.hir)
+    loop:(~(jump le:part [pit vil] sol) debt.hir)
   ?-  -.zef
     %&  [p.p.zef ..load(sol q.p.zef)]
     %|  $:p.zef
@@ -1444,30 +1497,44 @@
 ::  +peek: external inspect
 ::
 ++  peek                                                ::  +46
-  |=  {now/@da hap/path}
-  ^-  (unit)
-  ?~  hap
-    [~ ~ hoon-version]
+  |=  $:  lyc=gang
+          $=  nom
+          %+  each  path
+          $%  [%once cyr=term syd=desk tyl=spur]
+              [%beam cyr=term bem=beam]
+          ==
+      ==
+  ^-  (unit (cask))
+  =/  hap=(unit [pat=? cyr=term bem=beam])
+    ?-  nom
+      [%& *]        ?~  p.nom  ~
+                    ?~  bem=(de-beam t.p.nom)  ~
+                    `[| i.p.nom u.bem]
+    ::
+      [%| %beam *]  `[| cyr bem]:p.nom
+    ::
+      [%| %once *]  `[& cyr.p.nom [our syd.p.nom da/now] tyl.p.nom]
+    ==
   ::
-  =/  el  ~(. le:part [pit vil] now sol)
-  ?:  =(hap /whey)
-    ``whey:el
-  =/  rob
-    ((sloy peek:el) [[151 %noun] hap])
-  ?~  rob  ~
-  ?~  u.rob  ~
-  [~ u.u.rob]
+  ?~  hap  ~
+  =/  pro  (~(peek le:part [pit vil] sol) lyc [cyr bem]:u.hap)
+  ?:  |(?=(~ pro) ?=(~ u.pro))  ~
+  =/  dat=(cask)  [p q.q]:u.u.pro
+  ?.  pat.u.hap  `dat
+  `[%omen [cyr.u.hap (en-beam bem.u.hap)] dat]
 ::
 ::  +poke: external apply
 ::
 ++  poke                                                ::  +47
   |=  [now=@da ovo=ovum]
   ^-  ^
-  =.  eny  (shaz (cat 3 eny now))  ::  XX review
+  =:  eny.sol  (shaz (cat 3 eny now))  ::  XX review
+      now.sol  now
+    ==
   ::
   ~|  poke+-.q.ovo
   =/  zef=(each (pair (list ovum) soul) (trap ^))
-    loop:(~(poke le:part [pit vil] now sol) ovo)
+    loop:(~(poke le:part [pit vil] sol) ovo)
   ?-  -.zef
     %&  [p.p.zef ..poke(sol q.p.zef)]
     %|  $:p.zef
@@ -1539,8 +1606,8 @@
           ==
       =/  nav  %-  ~(run by van)
                |=(a=(trap vase) (settle:va:part (slym $:a zus)))
-      =/  sol  [u.who u.eny lac u.ver | u.fat zus nav]
-      `[arvo now *debt sol]
+      :^  ~  arvo  *debt
+      [u.who u.eny now lac u.ver | u.fat zus nav]
     --
 ::
 =|  foal

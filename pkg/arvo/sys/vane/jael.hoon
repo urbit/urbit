@@ -1003,7 +1003,7 @@
         our=ship
         now=@da
         eny=@uvJ
-        ski=sley
+        rof=roof
     ==
 ^?
 |%
@@ -1040,21 +1040,14 @@
   ..^$(lex new)
 ::                                                      ::  ++scry
 ++  scry                                                ::  inspect
-  |=  $:  ::  fur: event security
-          ::  ren: access mode
-          ::  why: owner
-          ::  syd: desk (branch)
-          ::  lot: case (version)
-          ::  tyl: rest of path
-          ::
-          fur/(unit (set monk))
-          ren/@tas
-          why/shop
-          syd/desk
-          lot/coin
-          tyl/spur
-      ==
+  |=  [lyc=gang cyr=term bem=beam]
   ^-  (unit (unit cage))
+  =*  ren  cyr
+  =*  why=shop  &/p.bem
+  =*  syd  q.bem
+  =*  lot=coin  $/r.bem
+  =*  tyl  s.bem
+  ::
   ::  XX review for security, stability, cases other than now
   ::
   ?.  =(lot [%$ %da now])  ~

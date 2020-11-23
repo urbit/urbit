@@ -254,7 +254,7 @@
 ::
 =|  behn-state
 =*  state  -
-|=  [our=ship now=@da eny=@uvJ ski=sley]
+|=  [our=ship now=@da eny=@uvJ rof=roof]
 =*  behn-gate  .
 ^?
 |%
@@ -376,8 +376,14 @@
 ::    which might or might not show up in the product
 ::
 ++  scry
-  |=  [fur=(unit (set monk)) ren=@tas why=shop syd=desk lot=coin tyl=path]
+  |=  [lyc=gang cyr=term bem=beam]
   ^-  (unit (unit cage))
+  =*  ren  cyr
+  =*  why=shop  &/p.bem
+  =*  syd  q.bem
+  =*  lot=coin  $/r.bem
+  =*  tyl  s.bem
+  ::
   ::TODO  don't special-case whey scry
   ::
   ?:  &(=(ren %$) =(tyl /whey))
