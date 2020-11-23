@@ -27,17 +27,20 @@
 +$  state-3
   $:  %3
       ::TODO  support multiple sessions
-      :: sessions=(map sole-id session)                ::  sole sessions
-      $:  viewing=(set resource)                    ::  connected graphs
-          history=(list uid:post)                   ::  scrollback pointers
-          count=@ud                                 ::  (lent history)
-          audience=target                           ::  active target
-      ==
+      sessions=(map sole-id session)                ::  sole sessions
       bound=(map resource glyph)                    ::  bound resource glyphs
       binds=(jug glyph resource)                    ::  resource glyph lookup
       settings=(set term)                           ::  frontend flags
       width=@ud                                     ::  display width
       timez=(pair ? @ud)                            ::  timezone adjustment
+  ==
+::
++$  sole-id  @ta
++$  session
+  $:  viewing=(set resource)                        ::  connected graphs
+      history=(list uid:post)                       ::  scrollback pointers
+      count=@ud                                     ::  (lent history)
+      audience=target                               ::  active target
   ==
 ::
 ::TODO  remove for breach
@@ -182,23 +185,23 @@
   ++  on-fail   on-fail:def
   ::
   ++  command-parser
-    |=  sole-id=@ta
-    parser:sh:tc
+    |=  =sole-id
+    parser:(make:sh:tc sole-id)
   ::
   ++  tab-list
-    |=  sole-id=@ta
+    |=  =sole-id
     tab-list:sh:tc
   ::
   ++  on-command
-    |=  [sole-id=@ta =command]
+    |=  [=sole-id =command]
     =^  cards  state
-      (work:sh:tc command)
+      (work:(make:sh:tc sole-id) command)
     [cards this]
   ::
   ++  on-connect
-    |=  sole-id=@ta
+    |=  =sole-id
     ^-  (quip card _this)
-    [[prompt:sh-out:tc ~] this]
+    [[prompt:(make:sh-out:tc sole-id)]~ this]
   ::
   ++  can-connect     can-connect:des
   ++  on-disconnect   on-disconnect:des
@@ -264,7 +267,9 @@
         ==
     ^-  state-3
     :-  %3
-    :*  :*  viewing  ~  0
+    :*  %+  ~(put in *(map sole-id session))
+          (cat 3 'drum_' (scot %p our.bowl))
+        :*  ~  ~  0
           ::
             ?~  audience.u.old  *target
             [ship ?~(path %$ i.path)]:n.audience.u.old
@@ -301,6 +306,11 @@
 ::
 ::TODO  better moon support. (name:title our.bowl)
 ++  our-self  our.bowl
+::
+++  get-session
+  |=  =sole-id
+  ^-  session
+  (~(gut by sessions) sole-id %*(. *session audience [our-self %$]))
 ::  +tor: term ordering for targets
 ::
 ++  tor
@@ -347,46 +357,64 @@
 ++  on-graph-update
   |=  upd=update:graph
   ^-  (quip card _state)
-  ?+  -.q.upd  [~ state]
-    %remove-graph  (notice-remove +.q.upd)
-  ::
-      %add-nodes
-    ?.  (~(has in viewing) resource.q.upd)
-      [~ state]
-    %+  read-posts  resource.q.upd
-    (sort ~(tap by nodes.q.upd) ior)
-  ==
-::
-++  read-posts
-  |=  [=target nodes=(list [=index:post =node:graph])]
-  ^-  (quip card _state)
-  =^  cards  nodes
-    ^-  (quip card _nodes)
-    =+  count=(lent nodes)
-    ?.  (gth count 10)  [~ nodes]
-    :_  (swag [(sub count 10) 10] nodes)
-    [(print:sh-out "skipping {(scow %ud (sub count 10))} messages...")]~
+  ?.  ?=(?(%remove-graph %add-nodes) -.q.upd)
+    [~ state]
+  =/  sez=(list [=sole-id =session])
+    ~(tap by sessions)
+  =|  cards=(list card)
   |-
-  ?~  nodes  [cards state]
-  =^  caz  state  (read-post target [index post.node]:i.nodes)
-  $(cards (weld cards caz), nodes t.nodes)
+  ?~  sez  [cards state]
+  =^  caz  session.i.sez
+    ?-  -.q.upd
+      %remove-graph  (~(notice-remove se i.sez) +.q.upd)
+    ::
+        %add-nodes
+      %+  ~(read-posts se i.sez)
+        resource.q.upd
+      (sort ~(tap by nodes.q.upd) ior)
+    ==
+  =.  sessions  (~(put by sessions) i.sez)
+  $(sez t.sez, cards (weld cards caz))
+::  +se: session event handling
 ::
-::  +read-post: add envelope to state and show it to user
-::
-++  read-post
-  |=  [=target =index:post =post:post]
-  ^-  (quip card _state)
-  :-  (show-post:sh-out target post)
-  %_  state
-    history  [[target index] history]
-    count    +(count)
-  ==
-::
-++  notice-remove
-  |=  =target
-  ^-  (quip card _state)
-  :-  [(show-delete:sh-out target) ~]
-  state(viewing (~(del in viewing) target))
+++  se
+  |_  [=sole-id =session]
+  +*  sh-out  ~(. ^sh-out sole-id session)
+  ::
+  ++  read-posts
+    |=  [=target nodes=(list [=index:post =node:graph])]
+    ^-  (quip card _session)
+    =^  cards  nodes
+      ^-  (quip card _nodes)
+      =+  count=(lent nodes)
+      ?.  (gth count 10)  [~ nodes]
+      :_  (swag [(sub count 10) 10] nodes)
+      [(print:sh-out "skipping {(scow %ud (sub count 10))} messages...")]~
+    |-
+    ?~  nodes  [cards session]
+    =^  caz  session
+      (read-post target [index post.node]:i.nodes)
+    $(cards (weld cards caz), nodes t.nodes)
+  ::
+  ::  +read-post: add envelope to state and show it to user
+  ::
+  ++  read-post
+    |=  [=target =index:post =post:post]
+    ^-  (quip card _session)
+    :-  (show-post:sh-out target post)
+    %_  session
+      history  [[target index] history.session]
+      count    +(count.session)
+    ==
+  ::
+  ++  notice-remove
+    |=  =target
+    ^-  (quip card _session)
+    ?.  (~(has in viewing.session) target)
+      [~ session]
+    :-  [(show-delete:sh-out target) ~]
+    session(viewing (~(del in viewing.session) target))
+  --
 ::
 ::  +bind-default-glyph: bind to default, or random available
 ::
@@ -441,7 +469,7 @@
 ::  +decode-glyph: find the target that matches a glyph, if any
 ::
 ++  decode-glyph
-  |=  =glyph
+  |=  [=session =glyph]
   ^-  (unit target)
   =+  lax=(~(get ju binds) glyph)
   ::  no target
@@ -450,20 +478,30 @@
   ::  single target
   ?:  ?=([* ~ ~] lax)  n.lax
   ::  in case of multiple matches, pick one we're viewing
-  =.  lax  (~(uni in lax) viewing)
+  =.  lax  (~(uni in lax) viewing.session)
   ?:  ?=([* ~ ~] lax)  n.lax
   ::  in case of multiple audiences, pick the most recently active one
   |-  ^-  target
-  ?~  history  -:~(tap in lax)
-  =*  resource  resource.i.history
+  ?~  history.session  -:~(tap in lax)
+  =*  resource  resource.i.history.session
   ?:  (~(has in lax) resource)
     resource
-  $(history t.history)
+  $(history.session t.history.session)
 ::
 ::  +sh: shoe handling
 ::
 ++  sh
-  |%
+  |_  [=sole-id session]
+  +*  session  +<+
+      sh-out   ~(. ^sh-out sole-id session)
+      put-ses  state(sessions (~(put by sessions) sole-id session))
+  ::
+  ++  make
+    |=  =^sole-id
+    %_  ..make
+      sole-id  sole-id
+      +<+      (get-session sole-id)
+    ==
   ::  +read: command parser
   ::
   ::    parses the command line buffer.
@@ -547,7 +585,7 @@
       ;~  pose
         tarl
         ;~(plug ship name)
-        (sear decode-glyph glyph)
+        (sear (cury decode-glyph session) glyph)
       ==
     ::  +tars: set of comma-separated targs
     ::
@@ -680,7 +718,7 @@
       |=  =target
       ^-  (quip card _state)
       =.  audience  target
-      [[prompt:sh-out ~] state]
+      [[prompt:sh-out ~] put-ses]
     ::  +view: start printing messages from a resource
     ::
     ++  view
@@ -693,19 +731,20 @@
       ::  only view existing chat-type graphs
       ::
       ?.  (is-chat-graph target)
-        [[(note:sh-out "no such chat")]~ state]
+        [[(note:sh-out "no such chat")]~ put-ses]
+      =.  viewing  (~(put in viewing) target)
       =^  cards  state
         ?:  (~(has by bound) target)
           [~ state]
         (bind-default-glyph target)
-      :-  cards
-      state(viewing (~(put in viewing) target))
+      [[prompt:sh-out cards] put-ses]
     ::  +flee: stop printing messages from a resource
     ::
     ++  flee
       |=  =target
       ^-  (quip card _state)
-      [~ state(viewing (~(del in viewing) target))]
+      =.  viewing  (~(del in viewing) target)
+      [~ put-ses]
     ::  +say: send messages
     ::
     ++  say
@@ -848,7 +887,8 @@
         ::NOTE  graph store allows node deletion, so can this crash?
         =/  =uid:post    (snag index history)
         =/  =node:graph  (got-node:libgraph uid)
-        :_  state(audience resource.uid)
+        =.  audience     resource.uid
+        :_  put-ses
         ^-  (list card)
         :~  (print:sh-out ['?' ' ' number])
             (effect:sh-out ~(render-activate mr resource.uid post.node))
@@ -880,13 +920,19 @@
 ::  +sh-out: ouput to session
 ::
 ++  sh-out
-  |%
+  |_  [=sole-id session]
+  ++  make
+    |=  =^sole-id
+    %_  ..make
+      sole-id  sole-id
+      +<+      (get-session sole-id)
+    ==
   ::  +effex: emit shoe effect card
   ::
   ++  effex
     |=  effect=shoe-effect:shoe
     ^-  card
-    [%shoe ~ effect]
+    [%shoe ~[sole-id] effect]
   ::  +effect: emit console effect card
   ::
   ++  effect
@@ -975,7 +1021,7 @@
   ++  show-chats
     |=  chats=(list target)
     ^-  card
-    %-  print-more:sh-out
+    %-  print-more
     %+  turn  (sort chats tor)
     |=  resource
     "{(nome:mr entity)}/{(trip name)}"
