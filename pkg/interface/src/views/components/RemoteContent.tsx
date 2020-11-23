@@ -72,6 +72,7 @@ export default class RemoteContent extends PureComponent<RemoteContentProps, Rem
   wrapInLink(contents) {
     return (<BaseAnchor
       href={this.props.url}
+      flexShrink={0}
       style={{ color: 'inherit', textDecoration: 'none' }}
       className={`word-break-all ${(typeof contents === 'string') ? 'bb' : ''}`}
       target="_blank"
@@ -103,6 +104,7 @@ export default class RemoteContent extends PureComponent<RemoteContentProps, Rem
     if (isImage && remoteContentPolicy.imageShown) {
       return this.wrapInLink(
         <BaseImage
+          flexShrink={0}
           src={url}
           style={style}
           onLoad={onLoad}
@@ -153,6 +155,7 @@ export default class RemoteContent extends PureComponent<RemoteContentProps, Rem
             height={3}
             ml={1}
             onClick={this.unfoldEmbed}
+            flexShrink={0}
             style={{ cursor: 'pointer' }}
           >
             {this.state.unfold ? 'collapse' : 'expand'}
@@ -160,9 +163,11 @@ export default class RemoteContent extends PureComponent<RemoteContentProps, Rem
           <Box
             mb='2'
             width='100%'
+            flexShrink={0}
             display={this.state.unfold ? 'block' : 'none'}
             className='embed-container'
             style={style}
+            flexShrink={0}
             onLoad={onLoad}
             {...oembedProps}
             {...props}

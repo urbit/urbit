@@ -1,24 +1,33 @@
 import React, { PureComponent } from 'react';
 import _ from 'lodash';
+import { BigIntOrderedMap } from "~/logic/lib/BigIntOrderedMap";
 import normalizeWheel from 'normalize-wheel';
 import { Box } from '@tlon/indigo-react';
+import bigInt, { BigInteger } from 'big-integer';
+import * as bigIntUtils from '~/logic/lib/bigInt';
+
+interface RendererProps {
+  index: BigInteger;
+  measure: (el: any) => void;
+  scrollWindow: any
+}
 
 interface VirtualScrollerProps {
   origin: 'top' | 'bottom';
-  loadRows(start: number, end: number): void;
-  data: Map<number, any>;
-  renderer(index): JSX.Element | null;
+  loadRows(start: BigInteger, end: BigInteger): void;
+  data: BigIntOrderedMap<BigInteger, any>;
+  renderer: (props: RendererProps) => JSX.Element | null;
   onStartReached?(): void;
   onEndReached?(): void;
   size: number;
-  onCalculateVisibleItems?(visibleItems: Map<number, JSX.Element>): void;
+  onCalculateVisibleItems?(visibleItems: BigIntOrderedMap<BigInteger, JSX.Element>): void;
   onScroll?({ scrollTop, scrollHeight, windowHeight }): void;
   style?: any;
 }
 
 interface VirtualScrollerState {
   startgap: number | undefined;
-  visibleItems: Map<number, Element>;
+  visibleItems: BigIntOrderedMap<BigInteger, Element>;
   endgap: number | undefined;
   totalHeight: number;
   averageHeight: number;
@@ -28,29 +37,29 @@ interface VirtualScrollerState {
 export default class VirtualScroller extends PureComponent<VirtualScrollerProps, VirtualScrollerState> {
   private scrollContainer: React.RefObject<HTMLDivElement>;
   public window: HTMLDivElement | null;
-  private cache: Map<number, any>;
+  private cache: BigIntOrderedMap<BigInteger, any>;
   private pendingLoad: {
-    start: number;
-    end: number
+    start: BigInteger;
+    end: BigInteger
     timeout: ReturnType<typeof setTimeout>;
   } | undefined;
 
   OVERSCAN_SIZE = 100; // Minimum number of messages on either side before loadRows is called
 
-  constructor(props) {
+  constructor(props: VirtualScrollerProps) {
     super(props);
     this.state = {
       startgap: props.origin === 'top' ? 0 : undefined,
-      visibleItems: new Map(),
+      visibleItems: new BigIntOrderedMap(),
       endgap: props.origin === 'bottom' ? 0 : undefined,
       totalHeight: 0,
       averageHeight: 64,
-      scrollTop: props.origin === 'top' ? 0 : Infinity
+      scrollTop: props.origin === 'top' ? 0 : undefined
     };
 
     this.scrollContainer = React.createRef();
     this.window = null;
-    this.cache = new Map();
+    this.cache = new BigIntOrderedMap();
 
     this.recalculateTotalHeight = this.recalculateTotalHeight.bind(this);
     this.calculateVisibleItems = this.calculateVisibleItems.bind(this);
@@ -75,18 +84,18 @@ export default class VirtualScroller extends PureComponent<VirtualScrollerProps,
     } = this;
   }
 
-  scrollToData(targetIndex: number): Promise<void> {
+  scrollToData(targetIndex: BigInteger): Promise<void> {
     if (!this.window) {
       return new Promise((resolve, reject) => {reject()});
     }
     const { offsetHeight } = this.window;
     let scrollTop = 0;
     let itemHeight = 0;
-    new Map([...this.props.data].reverse()).forEach((datum, index) => {
+    new BigIntOrderedMap([...this.props.data].reverse()).forEach((datum, index) => {
       const height = this.heightOf(index);
-      if (index >= targetIndex) {
+      if (index.geq(targetIndex)) {
         scrollTop += height;
-        if (index === targetIndex) {
+        if (index.eq(targetIndex)) {
           itemHeight = height;
         }
       }
@@ -105,20 +114,20 @@ export default class VirtualScroller extends PureComponent<VirtualScrollerProps,
     this.setState({ totalHeight, averageHeight });
   }
 
-  estimateIndexFromScrollTop(targetScrollTop: number): number | void {
-    if (!this.window) return;
-    let index = this.props.size;
+  estimateIndexFromScrollTop(targetScrollTop: number): BigInteger | undefined {
+    if (!this.window) return undefined;
+    let index = bigInt(this.props.size);
     const { averageHeight } = this.state;
     let height = 0;
     while (height < targetScrollTop) {
       const itemHeight = this.cache.has(index) ? this.cache.get(index).height : averageHeight;
       height += itemHeight;
-      index--;
+      index.subtract(bigInt.one);
     }
     return index;
   }
 
-  heightOf(index: number): number {
+  heightOf(index: BigInteger): number {
     return this.cache.has(index) ? this.cache.get(index).height : this.state.averageHeight;
   }
 
@@ -126,70 +135,80 @@ export default class VirtualScroller extends PureComponent<VirtualScrollerProps,
     if (!this.window) return;
     let startgap = 0, heightShown = 0, endgap = 0;
     let startGapFilled = false;
-    let visibleItems = new Map();
-    let startBuffer = new Map();
-    let endBuffer = new Map();
+    let visibleItems = new BigIntOrderedMap<any>();
+    let startBuffer = new BigIntOrderedMap<any>();
+    let endBuffer = new BigIntOrderedMap<any>();
     const { scrollTop, offsetHeight: windowHeight } = this.window;
     const { averageHeight } = this.state;
     const { data, size: totalSize, onCalculateVisibleItems } = this.props;
 
-    const items = new Map([...data].reverse());
 
-    items.forEach((datum, index) => {
+    //console.log([...items].map(([index]) => this.heightOf(index)));
+    const list = [...data];
+    console.log(list[0][0].toString());
+    // console.log(list[list.length - 1][0].toString());
+    [...data].forEach(([index, datum]) => {
       const height = this.heightOf(index);
       if (startgap < scrollTop && !startGapFilled) {
+        console.log(index.toString());
         startBuffer.set(index, datum);
         startgap += height;
       } else if (heightShown < windowHeight) {
         startGapFilled = true;
         visibleItems.set(index, datum);
         heightShown += height;
-      } else if (endBuffer.size < visibleItems.size) {
+      } else if (endBuffer.size < (visibleItems.size - visibleItems.size % 5)) {
         endBuffer.set(index, data.get(index));
       } else {
         endgap += height;
       }
     });
 
-    // endgap += Math.abs(totalSize - data.size) * averageHeight; // Uncomment to make full height of backlog
-    startBuffer = new Map([...startBuffer].reverse().slice(0, visibleItems.size));
+    console.log(startgap);
 
-    startBuffer.forEach((datum, index) => {
+
+    startBuffer = new BigIntOrderedMap([...startBuffer].reverse().slice(0, (visibleItems.size - visibleItems.size % 5)));
+
+    
+    startBuffer.forEach((_datum, index) => {
       startgap -= this.heightOf(index);
     });
 
-    visibleItems = new Map([...visibleItems].reverse());
-    endBuffer = new Map([...endBuffer].reverse());
-    const firstVisibleKey = Array.from(visibleItems.keys())[0] ?? this.estimateIndexFromScrollTop(scrollTop);
-    const firstNeededKey = Math.max(firstVisibleKey - this.OVERSCAN_SIZE, 0);
-    if (!data.has(firstNeededKey + 1)) {
-      this.loadRows(firstNeededKey, firstVisibleKey - 1);
+    console.log(startBuffer.size);
+    console.log(startgap);
+
+    const firstVisibleKey = visibleItems.peekLargest()?.[0] ?? this.estimateIndexFromScrollTop(scrollTop)!;
+    const firstNeededKey = bigIntUtils.max(firstVisibleKey.subtract(bigInt(this.OVERSCAN_SIZE)), bigInt.zero)
+    if (!data.has(firstNeededKey.add(bigInt.one))) {
+      this.loadRows(firstNeededKey, firstVisibleKey.subtract(bigInt.one));
     }
-    const lastVisibleKey = Array.from(visibleItems.keys())[visibleItems.size - 1] ?? this.estimateIndexFromScrollTop(scrollTop + windowHeight);
-    const lastNeededKey = Math.min(lastVisibleKey + this.OVERSCAN_SIZE, totalSize);
-    if (!data.has(lastNeededKey - 1)) {
-      this.loadRows(lastVisibleKey + 1, lastNeededKey);
+    const lastVisibleKey = 
+      visibleItems.peekSmallest()?.[0]
+      ?? bigInt(this.estimateIndexFromScrollTop(scrollTop + windowHeight)!);
+    const lastNeededKey = bigIntUtils.min(lastVisibleKey.add(bigInt(this.OVERSCAN_SIZE)), bigInt(totalSize));
+
+    if (!data.has(lastNeededKey.subtract(bigInt.one))) {
+      this.loadRows(lastVisibleKey.add(bigInt.one), lastNeededKey);
     }
     onCalculateVisibleItems ? onCalculateVisibleItems(visibleItems) : null;
     this.setState({
       startgap: Number(startgap.toFixed()),
-      visibleItems: new Map([...endBuffer, ...visibleItems, ...startBuffer]),
+      visibleItems: new BigIntOrderedMap([...startBuffer, ...visibleItems, ...endBuffer]),
       endgap: Number(endgap.toFixed()),
     });
   }
 
-  loadRows(start, end) {
-    if (isNaN(start) || isNaN(end)) return;
+  loadRows(start: BigInteger, end: BigInteger) {
     if (this.pendingLoad?.timeout) {
       clearTimeout(this.pendingLoad.timeout);
-      start = Math.min(start, this.pendingLoad.start);
-      end = Math.max(end, this.pendingLoad.end);
+      start = bigIntUtils.min(start, this.pendingLoad.start);
+      end = bigIntUtils.max(end, this.pendingLoad.end);
     }
     this.pendingLoad = {
       timeout: setTimeout(() => {
         if (!this.pendingLoad) return;
-        start = Math.max(this.pendingLoad.start, 0);
-        end = Math.min(Math.max(this.pendingLoad.end, 0), this.props.size);
+        start = bigIntUtils.max(this.pendingLoad.start, bigInt.zero);
+        end = bigIntUtils.min(bigIntUtils.max(this.pendingLoad.end, bigInt.zero), bigInt(this.props.size));
         if (start < end) {
           this.props.loadRows(start, end);
         }
@@ -204,11 +223,11 @@ export default class VirtualScroller extends PureComponent<VirtualScrollerProps,
     return new Map([
       ['ArrowUp', this.state.averageHeight],
       ['ArrowDown', this.state.averageHeight * -1],
-      ['PageUp', this.window.offsetHeight],
-      ['PageDown', this.window.offsetHeight * -1],
-      ['Home', this.window.scrollHeight],
-      ['End', this.window.scrollHeight * -1],
-      ['Space', this.window.offsetHeight * -1]
+      ['PageUp', this.window!.offsetHeight],
+      ['PageDown', this.window!.offsetHeight * -1],
+      ['Home', this.window!.scrollHeight],
+      ['End', this.window!.scrollHeight * -1],
+      ['Space', this.window!.offsetHeight * -1]
     ]);
   }
 
@@ -217,11 +236,11 @@ export default class VirtualScroller extends PureComponent<VirtualScrollerProps,
     if (map.has(event.code) && document.body.isSameNode(document.activeElement)) {
       event.preventDefault();
       event.stopImmediatePropagation();
-      let distance = map.get(event.code);
+      let distance = map.get(event.code)!;
       if (event.code === 'Space' && event.shiftKey) {
         distance = distance * -1;
       }
-      this.window.scrollBy(0, distance);
+      this.window!.scrollBy(0, distance);
       return false;
     }
   }
@@ -242,12 +261,13 @@ export default class VirtualScroller extends PureComponent<VirtualScrollerProps,
 
     this.window = element;
     if (this.props.origin === 'bottom') {
-      element.addEventListener('wheel', (event) => {
+      /*      element.addEventListener('wheel', (event) => {
         event.preventDefault();
         const normalized = normalizeWheel(event);
         element.scrollBy(0, normalized.pixelY * -1);
         return false;
       }, { passive: false });
+       */
       window.addEventListener('keydown', this.invertedKeyHandler, { passive: false });
     }
     this.resetScroll();
@@ -304,12 +324,12 @@ export default class VirtualScroller extends PureComponent<VirtualScrollerProps,
       data
     } = this.props;
 
-    const indexesToRender = Array.from(visibleItems.keys());
+    const indexesToRender = visibleItems.keys().reverse();
 
     const transform = origin === 'top' ? 'scale3d(1, 1, 1)' : 'scale3d(1, -1, 1)';
 
-    const render = (index) => {
-      const measure = (element) => {
+    const render = (index: BigInteger) => {
+      const measure = (element: any) => {
         if (element) {
           this.cache.set(index, {
             height: element.offsetHeight,

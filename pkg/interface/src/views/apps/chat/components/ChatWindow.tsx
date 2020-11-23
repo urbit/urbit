@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import _ from "lodash";
+import bigInt, { BigInteger } from 'big-integer';
 
 import GlobalApi from "~/logic/api/global";
 import { Patp, Path } from "~/types/noun";
@@ -9,6 +10,7 @@ import { Association } from "~/types/metadata-update";
 import { Group } from "~/types/group-update";
 import { Envelope, IMessage } from "~/types/chat-update";
 import { LocalUpdateRemoteContentPolicy } from "~/types";
+import { BigIntOrderedMap } from "~/logic/lib/BigIntOrderedMap";
 
 import VirtualScroller from "~/views/components/VirtualScroller";
 
@@ -66,7 +68,7 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
       fetchPending: false,
       idle: true,
       initialized: false,
-      lastRead: props.unreadCount ? props.mailboxSize - props.unreadCount : Infinity,
+      lastRead: props.unreadCount ? props.mailboxSize - props.unreadCount : -1,
     };
 
     this.dismissUnread = this.dismissUnread.bind(this);
@@ -143,7 +145,7 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
 
     if (unreadCount > prevProps.unreadCount && this.state.idle) {
       this.setState({
-        lastRead: unreadCount ? mailboxSize - unreadCount : Infinity,
+        lastRead: unreadCount ? mailboxSize - unreadCount : -1,
       });
     }
 
@@ -159,7 +161,7 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
       this.virtualList?.resetScroll();
       this.scrollToUnread();
       this.setState({
-        lastRead: unreadCount ? mailboxSize - unreadCount : Infinity,
+        lastRead: unreadCount ? mailboxSize - unreadCount : -1,
       });
     }
   }
@@ -254,21 +256,22 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
 
     const unreadMarkerRef = this.unreadMarkerRef;
 
-    const messages = new Map();
+    const messages = new BigIntOrderedMap();
     let lastMessage = 0;
 
     [...envelopes]
       .sort((a, b) => a.number - b.number)
       .forEach(message => {
-        messages.set(message.number, message);
+        const num = bigInt(message.number);
+        messages.set(num, message);
         lastMessage = message.number;
       });
 
     stationPendingMessages
       .sort((a, b) => a.when - b.when)
       .forEach((message, index) => {
-        index = index + 1; // To 1-index it
-        messages.set(mailboxSize + index, message);
+        const idx = bigInt(index + 1); // To 1-index it
+        messages.set(bigInt(mailboxSize).add(idx), message);
         lastMessage = mailboxSize + index;
       });
 
@@ -299,24 +302,24 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
             const msg: Envelope | IMessage = messages.get(index);
             if (!msg) return null;
             if (!this.state.initialized) {
-              return <MessagePlaceholder key={index} height="64px" index={index} />;
+              return <MessagePlaceholder key={index.toString()} height="64px" index={index} />;
             }
             const isPending: boolean = 'pending' in msg && Boolean(msg.pending);
-            const isLastMessage: boolean = Boolean(index === lastMessage)
-            const isLastRead: boolean = Boolean(!isLastMessage && index === this.state.lastRead);
-            const highlighted = index === this.props.scrollTo;
+            const isLastMessage: boolean = Boolean(index.eq(bigInt(lastMessage)));
+            const isLastRead: boolean = Boolean(!isLastMessage && index.eq(bigInt(this.state.lastRead)));
+            const highlighted = bigInt(this.props.scrollTo || -1).eq(index);
             const props = { measure, highlighted, scrollWindow, isPending, isLastRead, isLastMessage, msg, ...messageProps };
             return (
               <ChatMessage
-                key={index}
-                previousMsg={messages.get(index + 1)}
-                nextMsg={messages.get(index - 1)}
+                key={index.toString()}
+                previousMsg={messages.get(index.add(bigInt.one))}
+                nextMsg={messages.get(index.subtract(bigInt.one))}
                 {...props}
               />
             );
           }}
           loadRows={(start, end) => {
-            this.fetchMessages(start, end);
+            this.fetchMessages(start.toJSNumber(), end.toJSNumber());
           }}
         />
       </>

@@ -14,7 +14,7 @@ import RemoteContent from '~/views/components/RemoteContent';
 export const DATESTAMP_FORMAT = '[~]YYYY.M.D';
 
 export const UnreadMarker = React.forwardRef(({ dayBreak, when }, ref) => (
-  <Row ref={ref} color='blue' alignItems='center' fontSize='0' position='absolute' width='100%' py='2'>
+  <Row flexShrink={0} ref={ref} color='blue' alignItems='center' fontSize='0' position='absolute' width='100%' py='2'>
     <Rule borderColor='blue' display={['none', 'block']} m='0' width='2rem' />
     <Text flexShrink='0' display='block' zIndex='2' mx='4' color='blue'>New messages below</Text>
     <Rule borderColor='blue' flexGrow='1' m='0'/>
@@ -130,6 +130,7 @@ export default class ChatMessage extends Component<ChatMessageProps> {
     return (
       <Box
         bg={highlighted ? 'washedBlue' : 'white'}
+        flexShrink={0}
         width='100%'
         display='flex'
         flexWrap='wrap'
@@ -146,7 +147,7 @@ export default class ChatMessage extends Component<ChatMessageProps> {
         {renderSigil
           ? <MessageWithSigil {...messageProps} />
           : <MessageWithoutSigil {...messageProps} />}
-        <Box fontSize={0} position='relative' width='100%' overflow='visible' style={unreadContainerStyle}>{isLastRead
+        <Box flexShrink={0} fontSize={0} position='relative' width='100%' overflow='visible' style={unreadContainerStyle}>{isLastRead
           ? <UnreadMarker dayBreak={dayBreak} when={msg.when} ref={unreadMarkerRef} />
           : null}</Box>
       </Box>
@@ -222,10 +223,11 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
           scrollWindow={scrollWindow}
           history={history}
           api={api}
-          className="fl pr3 v-top pt1"
+          className="fl pr3 v-top pt1 flex-shrink-0"
         />
-        <Box flexGrow='1' display='block' className="clamp-message">
+        <Box flexShrink={0} flexGrow='1' display='block' className="clamp-message">
           <Box
+            flexShrink={0}
             className="hide-child"
             pt={1}
             pb={1}
@@ -235,6 +237,7 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
             <Text
               fontSize={0}
               mr={3}
+              flexShrink={0}
               mono={!showNickname}
               fontWeight={(showNickname) ? '500' : '400'}
               className={`mw5 db truncate pointer`}
@@ -246,9 +249,9 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
               title={`~${msg.author}`}
             >{name}</Text>
             <Text flexShrink='0' gray mono className="v-mid">{timestamp}</Text>
-            <Text gray mono ml={2} className="v-mid child dn-s">{datestamp}</Text>
+            <Text flexShrink={0}  gray mono ml={2} className="v-mid child dn-s">{datestamp}</Text>
           </Box>
-          <Box fontSize={fontSize ? fontSize : '14px'}><MessageContent content={msg.letter} remoteContentPolicy={remoteContentPolicy} measure={measure} fontSize={fontSize} /></Box>
+          <Box flexShrink={0} fontSize={fontSize ? fontSize : '14px'}><MessageContent content={msg.letter} remoteContentPolicy={remoteContentPolicy} measure={measure} fontSize={fontSize} /></Box>
         </Box>
       </>
     );
@@ -257,8 +260,8 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
 
 export const MessageWithoutSigil = ({ timestamp, msg, remoteContentPolicy, measure }) => (
   <>
-    <Text mono gray display='inline-block' pt='2px' lineHeight='tall' className="child">{timestamp}</Text>
-    <Box fontSize='14px' className="clamp-message" style={{ flexGrow: 1 }}>
+    <Text flexShrink={0} mono gray display='inline-block' pt='2px' lineHeight='tall' className="child">{timestamp}</Text>
+    <Box flexShrink={0} fontSize='14px' className="clamp-message" style={{ flexGrow: 1 }}>
       <MessageContent content={msg.letter} remoteContentPolicy={remoteContentPolicy} measure={measure}/>
     </Box>
   </>
@@ -269,7 +272,7 @@ export const MessageContent = ({ content, remoteContentPolicy, measure, fontSize
     return <CodeContent content={content} />;
   } else if ('url' in content) {
     return (
-      <Text fontSize={fontSize ? fontSize : '14px'} lineHeight="tall" color='black'>
+      <Text flexShrink={0} fontSize={fontSize ? fontSize : '14px'} lineHeight="tall" color='black'>
         <RemoteContent
           url={content.url}
           remoteContentPolicy={remoteContentPolicy}
@@ -285,7 +288,7 @@ export const MessageContent = ({ content, remoteContentPolicy, measure, fontSize
     );
   } else if ('me' in content) {
     return (
-      <Text fontStyle='italic' fontSize={fontSize ? fontSize : '14px'} lineHeight='tall' color='black'>
+      <Text flexShrink={0} fontStyle='italic' fontSize={fontSize ? fontSize : '14px'} lineHeight='tall' color='black'>
         {content.me}
       </Text>
     );
