@@ -425,9 +425,10 @@
 =<  =*  adult-gate  .
     =|  queued-events=(qeu queued-event)
     ::
-    |=  [our=ship now=@da eny=@ scry-gate=sley]
+    |=  [our=ship now=@da eny=@ rof=roof]
     =*  larval-gate  .
     =*  adult-core   (adult-gate +<)
+    =*  scry-gate    (en-sley rof)
     |%
     ::  +call: handle request $task
     ::
@@ -610,9 +611,10 @@
 ::
 =<
 =|  =ames-state
-|=  [our=ship now=@da eny=@ scry-gate=sley]
+|=  [our=ship now=@da eny=@ rof=roof]
 =*  ames-gate  .
 =*  veb  veb.bug.ames-state
+=*  scry-gate  (en-sley rof)
 |%
 ::  +call: handle request $task
 ::
@@ -739,8 +741,14 @@
 ::  +scry: dereference namespace
 ::
 ++  scry
-  |=  [fur=(unit (set monk)) ren=@tas why=shop syd=desk lot=coin tyl=path]
+  |=  [lyc=gang cyr=term bem=beam]
   ^-  (unit (unit cage))
+  =*  ren  cyr
+  =*  why=shop  &/p.bem
+  =*  syd  q.bem
+  =*  lot=coin  $/r.bem
+  =*  tyl  s.bem
+  ::
   ::TODO  don't special-case whey scry
   ::
   ?:  &(=(%$ ren) =(tyl /whey))

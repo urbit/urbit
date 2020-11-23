@@ -3952,7 +3952,8 @@
     $:  ver=%5                                        ::  vane version
         ruf=raft                                      ::  revision tree
     ==                                                ::
-|=  [our=ship now=@da eny=@uvJ ski=sley]              ::  current invocation
+|=  [our=ship now=@da eny=@uvJ rof=roof]              ::  current invocation
+=*  ski  (en-sley rof)
 |%                                                    ::
 ++  call                                              ::  handle request
   |=  $:  hen=duct
@@ -4529,8 +4530,14 @@
   --
 ::
 ++  scry                                              ::  inspect
-  |=  {fur/(unit (set monk)) ren/@tas why/shop syd/desk lot/coin tyl/path}
+  |=  [lyc=gang cyr=term bem=beam]
   ^-  (unit (unit cage))
+  =*  ren  cyr
+  =/  why=shop  &/p.bem
+  =*  syd  q.bem
+  =/  lot=coin  $/r.bem
+  =*  tyl  s.bem
+  ::
   ?.  ?=(%& -.why)  ~
   =*  his  p.why
   ?:  &(=(ren %$) =(tyl /whey))
@@ -4544,13 +4551,8 @@
   =+  run=((soft care) ren)
   ?~  run  [~ ~]
   ::TODO  if it ever gets filled properly, pass in the full fur.
-  =/  for/(unit ship)
-    %-  ~(rep in (fall fur ~))
-    |=  {m/monk s/(unit ship)}
-    ?^  s  s
-    ?:  ?=(%| -.m)  ~
-    ?:  =(p.m his)  ~
-    `p.m
+  ::
+  =/  for/(unit ship)  ?~(lyc ~ ?~(u.lyc ~ `n.u.lyc))
   =/  den  ((de our now ski [/scryduct ~] ruf) his syd)
   =/  result  (mule |.(-:(aver:den for u.run u.luk tyl)))
   ?:  ?=(%| -.result)

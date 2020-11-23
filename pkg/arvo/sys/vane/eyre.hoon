@@ -2082,7 +2082,8 @@
 =|  ax=axle
 ::  a vane is activated with current date, entropy, and a namespace function
 ::
-|=  [our=ship now=@da eny=@uvJ scry-gate=sley]
+|=  [our=ship now=@da eny=@uvJ rof=roof]
+=*  scry-gate  (en-sley rof)
 ::  allow jets to be registered within this core
 ::
 ~%  %http-server  ..is  ~
@@ -2591,8 +2592,14 @@
 ::  +scry: request a path in the urbit namespace
 ::
 ++  scry
-  |=  [fur=(unit (set monk)) ren=@tas why=shop syd=desk lot=coin tyl=path]
+  |=  [lyc=gang cyr=term bem=beam]
   ^-  (unit (unit cage))
+  =*  ren  cyr
+  =*  why=shop  &/p.bem
+  =*  syd  q.bem
+  =/  lot=coin  $/r.bem
+  =*  tyl  s.bem
+  ::
   ?.  ?=(%& -.why)
     ~
   =*  who  p.why

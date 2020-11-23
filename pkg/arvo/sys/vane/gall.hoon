@@ -135,9 +135,10 @@
 ::
 =<  =*  adult-gate  .
     =|  =spore
-    |=  [our=ship now=@da eny=@uvJ ski=sley]
+    |=  [our=ship now=@da eny=@uvJ rof=roof]
     =*  pupal-gate  .
     =*  adult-core  (adult-gate +<)
+    =*  ski  (en-sley rof)
     =<  |%
         ++  call  ^call
         ++  load  ^load
@@ -334,8 +335,9 @@
 ::  adult gall vane interface, for type compatibility with pupa
 ::
 =|  state=state-7
-|=  [our=ship now=@da eny=@uvJ ski=sley]
+|=  [our=ship now=@da eny=@uvJ rof=roof]
 =*  gall-payload  .
+=*  ski  (en-sley rof)
 =<  ~%  %gall-wrap  ..mo  ~
     |%
     ++  call  ^call
@@ -1717,8 +1719,14 @@
 ::
 ++  scry
   ~/  %gall-scry
-  |=  [fur=(unit (set monk)) care=term =shop dap=desk =coin =path]
+  |=  [lyc=gang cyr=term bem=beam]
   ^-  (unit (unit cage))
+  =*  care  cyr
+  =/  =shop  &/p.bem
+  =*  dap  q.bem
+  =/  =coin  $/r.bem
+  =*  path  s.bem
+  ::
   ?.  ?=(%.y -.shop)
     ~
   =/  =ship  p.shop
