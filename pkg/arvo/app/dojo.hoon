@@ -897,7 +897,7 @@
     ++  dy-hoon-var
       =+  ^=  ope
           |=  gen/hoon  ^-  hoon
-          ?:  ?=(?($sgld $sgbn) -.gen)
+          ?:  ?=(?($sggl $sggr) -.gen)
             $(gen q.gen)
           =+  ~(open ap gen)
           ?.(=(gen -) $(gen -) gen)
