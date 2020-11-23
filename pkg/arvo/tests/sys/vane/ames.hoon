@@ -106,9 +106,27 @@
   ::
   =/  =packet:ames
     :*  [sndr=~nec rcvr=~bud]
-        encrypted=%.n
+        sndr-tick=0b100
+        rcvr-tick=0b11
         origin=~
-        content=[12 13]
+        content=0xdead.beef
+    ==
+  ::
+  =/  encoded  (encode-packet:vane packet)
+  =/  decoded  (decode-packet:vane encoded)
+  ::
+  %+  expect-eq
+    !>  packet
+    !>  decoded
+::
+++  test-origin-encoding  ^-  tang
+  ::
+  =/  =packet:ames
+    :*  [sndr=~nec rcvr=~bud]
+        sndr-tick=0b100
+        rcvr-tick=0b11
+        origin=`0xbeef.cafe.beef
+        content=0xdead.beef
     ==
   ::
   =/  encoded  (encode-packet:vane packet)
@@ -125,18 +143,19 @@
   =/  =plea:ames  [%g /talk [%first %post]]
   ::
   =/  =shut-packet:ames
-    :*  sndr-life=4
-        rcvr-life=3
-        bone=1
+    :*  bone=1
         message-num=1
         [%& num-fragments=1 fragment-num=0 (jam plea)]
     ==
   ::
   =/  =packet:ames
-    :*  [sndr=~bus rcvr=~bud]
-        encrypted=%.y
-        origin=~
-        content=(encrypt:vane nec-sym shut-packet)
+    %:  encode-shut-packet:vane
+      shut-packet
+      nec-sym
+      ~nec
+      ~bud
+      nec-life=4
+      bud-life=3
     ==
   ::
   =/  =blob:ames   (encode-packet:vane packet)

@@ -311,7 +311,7 @@
   =^  origin=(unit @)  body
     ?:  =(| relayed)
       [~ body]
-    [`(rsh 3 6 body) (end 3 6 body)]
+    [`(end 3 6 body) (rsh 3 6 body)]
   ::  .checksum does not apply to the origin
   ::
   ?.  =(checksum (end 0 20 (mug body)))
