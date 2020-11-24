@@ -367,7 +367,7 @@
   ?>  .=       sndr.open-packet  sndr.packet
   ?>  .=       rcvr.open-packet  our
   ?>  .=  sndr-life.open-packet  1
-  ?>  .=  rcvr-life.open-packet  life.ames-state
+  ?>  .=  rcvr-life.open-packet  our-life
   ::  only a star can sponsor a comet
   ::
   ?>  =(%king (clan:title (^sein:title sndr.packet)))
@@ -413,6 +413,14 @@
   ?.  =(rcvr-tick.packet (mod our-life 16))
     ~|  ames-rcvr-tick+rcvr-tick.packet  !!
   =/  len  (sub (met 3 content.packet) 16)
+  ::  2^13 bits of fragment, plus jammed bone and sequence numbers
+  ::
+  ::    Sanity check -- theoretically, this puts a limit on the number
+  ::    of flows and messages that can be sent, but 32 bytes for those
+  ::    numbers should be enough to last a cosmologicaly long time.
+  ::
+  ?.  (lte len ^~((add 1.024 32)))
+    ~|  ames-cyf-len+len  !!
   =/  cyf  (end 3 len content.packet)
   =/  siv  (rsh 3 len content.packet)
   =/  vec  ~[sndr.packet rcvr.packet her-life our-life]
@@ -1185,8 +1193,10 @@
 |%
 ++  per-event
   =|  moves=(list move)
+  ~/  %event-gate
   |=  [[our=ship now=@da eny=@ scry-gate=sley] =duct =ames-state]
   =*  veb  veb.bug.ames-state
+  ~%  %event-core  ..$  ~
   |%
   ++  event-core  .
   ++  abet  [(flop moves) ames-state]
@@ -1343,6 +1353,7 @@
   ::  +on-hear-packet: handle mildly processed packet receipt
   ::
   ++  on-hear-packet
+    ~/  %on-hear-packet
     |=  [=lane =packet ok=?]
     ^+  event-core
     ::
@@ -1357,7 +1368,6 @@
     ?:  ?&  ?=(%pawn (clan:title sndr.packet))
             !(~(has by peers.ames-state) sndr.packet)
         ==
-      ~&  %on-hear-open
       on-hear-open
     on-hear-shut
   ::  +on-hear-forward: maybe forward a packet to someone else
@@ -1376,8 +1386,10 @@
     ::
     =?    origin.packet
         &(?=(~ origin.packet) !=(%czar (clan:title sndr.packet)))
-      ?>  ?=(%| -.lane)
-      ?>  (lte (met 3 p.lane) 6)
+      ?:  ?=(%& -.lane)
+        ~
+      ?.  (lte (met 3 p.lane) 6)
+        ~|  ames-lane-size+p.lane  !!
       `p.lane
     ::
     =/  =blob  (encode-packet packet)
@@ -1385,6 +1397,7 @@
   ::  +on-hear-open: handle receipt of plaintext comet self-attestation
   ::
   ++  on-hear-open
+    ~/  %on-hear-open
     |=  [=lane =packet ok=?]
     ^+  event-core
     ::  if we already know .sndr, ignore duplicate attestation
@@ -1418,6 +1431,7 @@
   ::  +on-hear-shut: handle receipt of encrypted packet
   ::
   ++  on-hear-shut
+    ~/  %on-hear-shut
     |=  [=lane =packet ok=?]
     ^+  event-core
     =/  sndr-state  (~(get by peers.ames-state) sndr.packet)
@@ -1851,6 +1865,7 @@
   ::    request the information from Jael if we haven't already.
   ::
   ++  send-blob
+    ~/  %send-blob
     |=  [for=? =ship =blob]
     ::
     =/  final-ship  ship
@@ -1913,6 +1928,7 @@
   ::    Sent by a comet on first contact with a peer.  Not acked.
   ::
   ++  attestation-packet
+    ~/  %attestation-packet
     |=  [her=ship =her=life]
     ^-  blob
     ::
