@@ -262,8 +262,6 @@
 
 #   define u3qfu_van_fan  28
 #   define u3qfu_van_rib  58
-#   define u3qfu_van_vrf  59
-#   define u3qfu_van_vet  118
-#   define u3qfu_van_fab  119
+#   define u3qfu_van_vet  59
 
     void u3qf_test(const c3_c*, u3_noun);
