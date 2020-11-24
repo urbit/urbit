@@ -23,7 +23,7 @@
   ^-  form:m
   =/  beam  (need (de-beam:format path))
   ;<  =riot:clay  bind:m
-    (warp:strandio p.beam q.beam ~ %sing %x r.beam (flop s.beam))
+    (warp:strandio p.beam q.beam ~ %sing %x r.beam s.beam)
   ?~  riot
     (strand-fail:strandio %file-not-found >path< ~)
   (pure:m r.u.riot)

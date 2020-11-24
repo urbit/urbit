@@ -248,7 +248,7 @@
       ::
       =?  a  &(?=(^ a) =('' i.a))
         t.a
-      (fall (de-beam:format a) [`beak`[p q r]:dir (flop a)])
+      (fall (de-beam:format a) [`beak`[p q r]:dir a])
     =+  vez=hoon-parser
     (sear plex:vez (stag %clsg poor:vez))
   ::
@@ -591,7 +591,7 @@
                     %0  ~
                     %1  [[%rose [~ "  " ~] (skol p.q.cay) ~] maar]
                     %2  [[%rose [~ "  " ~] (dy-show-type-noun p.q.cay) ~] maar]
-                    ::%3  handled above 
+                    ::%3  handled above
                     %4  ~
                     %5  [[%rose [~ "  " ~] (xskol p.q.cay) ~] maar]
                   ==
@@ -1014,7 +1014,7 @@
         "/"  ?:(=(%home q.dir) "=" (trip q.dir))
         "/"  ?:(=([%ud 0] r.dir) "=" (scow r.dir))
       ==
-    ?:(=(~ s.dir) "" (spud (flop s.dir)))
+    ?:(=(~ s.dir) "" (spud s.dir))
   ::
   ++  he-prom                                           ::  send prompt
     %-  he-diff

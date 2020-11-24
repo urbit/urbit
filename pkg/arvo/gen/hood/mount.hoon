@@ -12,6 +12,6 @@
     ==
 ?~  pot
   =+  bem=(need (de-beam:format pax))
-  $(pot ~[?^(s.bem i.s.bem q.bem)])
+  $(pot ~[?^(s.bem (rear s.bem) q.bem)])
 :-  %kiln-mount
 [pax v.pot]

@@ -256,7 +256,7 @@
       ::  pax: full path at `tyl`
       ::  lon: directory at `tyl`
       ::
-      =/  pax  (en-beam:format bec tyl)
+      =/  pax  (en-beam:format bec (flop tyl))
       =/  lon  .^(arch %cy pax)
       =?  hav  ?=(^ fil.lon)
           ?.  ?=({$hoon *} tyl)

@@ -5515,7 +5515,7 @@
   ++  en-beam                                           ::  beam to path
     |=  bem/beam
     ^-  path
-    [(scot %p p.bem) q.bem (scot r.bem) (flop s.bem)]
+    [(scot %p p.bem) q.bem (scot r.bem) s.bem]
   ::                                                    ::  ++de-beam:format
   ++  de-beam                                           ::  parse path to beam
     |=  pax/path
@@ -5528,7 +5528,7 @@
     %+  biff  (slay i.t.t.pax)
     |=  cis/coin
     ?.  ?=({$$ case} cis)  ~
-    `(unit beam)`[~ [who dex `case`p.cis] (flop t.t.t.pax)]
+    `(unit beam)`[~ [who dex `case`p.cis] t.t.t.pax]
   ::
   ++  json-rn                                           ::  json to rn parser
     %+  knee  *rn  |.
