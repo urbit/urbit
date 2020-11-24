@@ -50,7 +50,9 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
   const waiter = useWaitForProps(props, 5000);
 
   const onSubmit = async (values: FormSchema, actions) => {
-    const resId: string = stringToSymbol(values.name);
+    const resId: string = stringToSymbol(values.name)
+      + ((workspace?.type !== 'home') ? `-${Math.floor(Math.random() * 10000)}`
+      : '');
     try {
       const { name, description, moduleType, ships } = values;
       switch (moduleType) {
@@ -130,8 +132,8 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
         onSubmit={onSubmit}
       >
         <Form>
-          <Col 
-            maxWidth="348px" 
+          <Col
+            maxWidth="348px"
             gapY="4"
           >
             <Col gapY="2">
