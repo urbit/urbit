@@ -76,7 +76,7 @@
 +$  life  @ud                                           ::  ship key revision
 +$  rift  @ud                                           ::  ship continuity
 +$  mime  (pair mite octs)                              ::  mimetyped data
-+$  octs  (pair @ud cord)                               ::  octet-stream
++$  octs  (pair @ud @)                                  ::  octet-stream
 +$  sock  (pair ship ship)                              ::  outgoing [our his]
 ::+|
 ::
@@ -6491,7 +6491,7 @@
     ++  apex                                            ::  top level
       =+  spa=;~(pose comt whit)
       %+  knee  *manx  |.  ~+
-      %+  ifix  
+      %+  ifix
         [;~(plug (punt decl) (star spa)) (star spa)]
       ;~  pose
         %+  sear  |=({a/marx b/marl c/mane} ?.(=(c n.a) ~ (some [a b])))
