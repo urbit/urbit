@@ -356,8 +356,8 @@
                =^  params=(list xkey)  st
                  |-  ^-  [(list xkey) xtable]
                  ?~  u.q.note  [~ st]
-                 =/  tsld  [%tsld [%limb %$] [%wing i.u.q.note]]
-                 =/  part  (~(play ut subject-of-note) tsld)
+                 =/  tsgl  [%tsgl [%limb %$] [%wing i.u.q.note]]
+                 =/  part  (~(play ut subject-of-note) tsgl)
                  =^  this  st  (main st part)
                  =^  more  st  $(u.q.note t.u.q.note)
                  [[this more] st]
@@ -1775,34 +1775,34 @@
              =/  tl  `spec`$(i tail.d)
              =/  both-basic  &(=([%base %noun] hd) =([%base %noun] tl))
              ?:  both-basic      [%base %cell]
-             ?:  ?=(%bscl -.tl)  [%bscl hd +.tl]
-             [%bscl hd tl ~]
+             ?:  ?=(%bccl -.tl)  [%bccl hd +.tl]
+             [%bccl hd tl ~]
       %core  =/  payld  $(i xray.d)
              =/  batt   ^-  (map term spec)
                         %-  ~(run by (flatten-battery batt.d))
                         |=  =xkey  ^$(i xkey)
              ?-  r.garb.d
-               %lead  [%bszp payld batt]
-               %gold  [%bsdt payld batt]
-               %zinc  [%bstc payld batt]
-               %iron  [%bsnt payld batt]
+               %lead  [%bczp payld batt]
+               %gold  [%bcdt payld batt]
+               %zinc  [%bctc payld batt]
+               %iron  [%bcfs payld batt]
              ==
       %pntr  !!
       %face  =/  =spec  $(i xray.d)
-             ?^(face.d spec [%bsts face.d spec])
+             ?^(face.d spec [%bcts face.d spec])
       %fork  =/  =xrole  (need xrole.x)
              |^  ?+  xrole
                      ~&  [%unexpected-fork-xrole xkey.x d xrole choices]
-                     [%bswt choices]
+                     [%bcwt choices]
                    %noun             [%base %noun]
                    %void             [%base %void]
-                   [%option *]       [%bswt choices]
-                   [%union *]        [%bscn choices]
-                   [%misjunction *]  [%bswt choices]
-                   [%junction *]     :+  %bsvt
+                   [%option *]       [%bcwt choices]
+                   [%union *]        [%bccn choices]
+                   [%misjunction *]  [%bcwt choices]
+                   [%junction *]     :+  %bcpt
                                        ^$(i flat.xrole)
                                      ^$(i deep.xrole)
-                   [%conjunction *]  :+  %bskt
+                   [%conjunction *]  :+  %bckt
                                        ^$(i wide.xrole)
                                      ^$(i tall.xrole)
                  ==
@@ -1822,7 +1822,7 @@
     ^-  spec
     ?.  (need loop.xr)  sp
     =/  nm  (synthetic xkey.xr)
-    [%bsbs [%loop nm] [[nm sp] ~ ~]]
+    [%bcbc [%loop nm] [[nm sp] ~ ~]]
   ::
   ::  If we have a `recipe`, we can generate much nicer output.
   ::

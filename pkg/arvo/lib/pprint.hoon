@@ -346,7 +346,7 @@
       [%brsg *]  (rune '|~' ~ ~ (spec p.x) (hn q.x) ~)
       [%brtr *]  (rune '|*' ~ ~ (spec p.x) (hn q.x) ~)
       [%brts *]  (rune '|=' ~ ~ (spec p.x) (hn q.x) ~)
-      [%brvt *]  (chapter '|@' ~ q.x)                 ::  Ignoring p.x
+      [%brpt *]  (chapter '|@' ~ q.x)                 ::  Ignoring p.x
       [%brwt *]  (rune '|?' ~ ~ (hn p.x) ~)
       [%clcb *]  (rune ':_' ~ ~ (hoons ~[p q]:x))
       [%clkt *]  (rune ':^' ~ ~ (hoons ~[p q r s]:x))
@@ -376,7 +376,7 @@
       [%ktdt *]  (rune '^.' ~ ~ (hoons ~[p q]:x))
       [%ktls *]  (rune '^+' ~ ~ (hoons ~[p q]:x))
       [%kthp *]  (rune '^-' ~ ~ ~[(spec p.x) (hn q.x)])
-      [%ktpd *]  (rune '^&' ~ ~ (hoons ~[p]:x))
+      [%ktpm *]  (rune '^&' ~ ~ (hoons ~[p]:x))
       [%ktsg *]  (rune '^~' ~ ~ (hoons ~[p]:x))
       [%ktts *]  (rune '^=' ~ `['' '=' ''] ~[(skin p.x) (hn q.x)])
       [%ktwt *]  (rune '^?' ~ ~ (hoons ~[p]:x))
@@ -385,56 +385,58 @@
       [%sgbr *]  (rune '~|' ~ ~ (hoons ~[p q]:x))
       [%sgcb *]  (rune '~_' ~ ~ (hoons ~[p q]:x))
       [%sgcn *]  (rune '~%' ~ ~ (chum p.x) (hn q.x) (tyre r.x) (hn s.x) ~)
-      [%sgnt *]  (rune '~/' ~ ~ (chum p.x) (hn q.x) ~)
-      [%sgld *]  (rune '~<' ~ ~ (hint p.x) (hn q.x) ~)
-      [%sgbn *]  (rune '~>' ~ ~ (hint p.x) (hn q.x) ~)
-      [%sgbs *]  (rune '~$' ~ ~ p.x (hn q.x) ~)
+      [%sgfs *]  (rune '~/' ~ ~ (chum p.x) (hn q.x) ~)
+      [%sggl *]  (rune '~<' ~ ~ (hint p.x) (hn q.x) ~)
+      [%sggr *]  (rune '~>' ~ ~ (hint p.x) (hn q.x) ~)
+      [%sgbc *]  (rune '~$' ~ ~ p.x (hn q.x) ~)
       [%sgls *]  (rune '~+' ~ ~ (hn q.x) ~)           ::  Ignoring p.x
-      [%sgpd *]  (rune '~&' ~ ~ (hoons ~[q r]:x))     ::  Ignoring p.x
+      [%sgpm *]  (rune '~&' ~ ~ (hoons ~[q r]:x))     ::  Ignoring p.x
       [%sgts *]  (rune '~=' ~ ~ (hoons ~[p q]:x))
       [%sgwt *]  (rune '~?' ~ ~ (hoons ~[q r s]:x))   ::  Ignoring p.x
       [%sgzp *]  (rune '~!' ~ ~ (hoons ~[p q]:x))
       [%mcts *]  %ast-node-mcts
       [%mccl *]  (rune ';:' `'==' `[':(' spc ')'] (hoons [p q]:x))
-      [%mcnt *]  (rune ';/' ~ ~ (hoons ~[p]:x))
+      [%mcfs *]  (rune ';/' ~ ~ (hoons ~[p]:x))
       [%mcgl *]  (rune ';<' ~ ~ (spec p.x) (hoons ~[q r s]:x))
       [%mcsg *]  (rune ';~' `'==' ~ (hoons [p q]:x))
       [%mcmc *]  (rune ';;' ~ ~ ~[(spec p.x) (hn q.x)])
       [%tsbr *]  (rune '=|' ~ ~ ~[(spec p.x) (hn q.x)])
       [%tscl *]  (tiscol-to-plum p.x q.x)
-      [%tsnt *]  (rune '=/' ~ ~ (skin p.x) (hn q.x) (hn r.x) ~)
+      [%tsfs *]  (rune '=/' ~ ~ (skin p.x) (hn q.x) (hn r.x) ~)
       [%tsmc *]  (rune '=;' ~ ~ [(skin p.x) (hoons ~[q r]:x)])
       [%tsdt *]  (rune '=.' ~ ~ [(wing p.x) (hoons ~[q r]:x)])
       [%tswt *]  (rune '=?' ~ ~ [(wing p.x) (hoons ~[q r s]:x)])
-      [%tsld *]  (rune '=>' ~ `['' ':' ''] (hoons ~[p q]:x))
+::  XX %tsld to %tsgl, but should be %tsgr? (to match =>)
+      [%tsgl *]  (rune '=>' ~ `['' ':' ''] (hoons ~[p q]:x))
       [%tshp *]  (rune '=-' ~ ~ (hoons ~[p q]:x))
-      [%tsbn *]  (rune '=<' ~ ~ (hoons ~[p q]:x))
+::  XX %tsbn to %tsgr, but should be %tsgl? (to match =<)
+      [%tsgr *]  (rune '=<' ~ ~ (hoons ~[p q]:x))
       [%tskt *]  (rune '=^' ~ ~ [(skin p.x) (wing q.x) (hoons ~[r s]:x)])
       [%tsls *]  (rune '=+' ~ ~ (hoons ~[p q]:x))
       [%tssg *]  (rune '=~' `'==' ~ (hoons p:x))
       [%tstr *]  ?~  q.p.x
                    (rune '=*' ~ ~ p.p.x (hoons ~[q r]:x))
-                 (rune '=*' ~ ~ (spec [%bsts p.p.x u.q.p.x]) (hoons ~[q r]:x))
+                 (rune '=*' ~ ~ (spec [%bcts p.p.x u.q.p.x]) (hoons ~[q r]:x))
       [%tscm *]  (rune '=,' ~ ~ (hoons ~[p q]:x))
       [%wtbr *]  (rune '?|' `'--' `['|(' ' ' ')'] (hoons p:x))
       [%wthp *]  (rune '?-' `'==' ~ (wing p.x) (matches q.x))
       [%wtcl *]  (rune '?:' ~ ~ (hoons ~[p q r]:x))
       [%wtdt *]  (rune '?.' ~ ~ (hoons ~[p q r]:x))
       [%wtkt *]  (rune '?^' ~ ~ [(wing p.x) (hoons ~[q r]:x)])
-      [%wtld *]  (rune '?<' ~ ~ (hoons ~[p q]:x))
-      [%wtbn *]  (rune '?>' ~ ~ (hoons ~[p q]:x))
+      [%wtgl *]  (rune '?<' ~ ~ (hoons ~[p q]:x))
+      [%wtgr *]  (rune '?>' ~ ~ (hoons ~[p q]:x))
       [%wtls *]  (rune '?+' `'==' ~ (wing p.x) (hn q.x) (matches r.x))
-      [%wtpd *]  (rune '?&' `'==' `['&(' ' ' ')'] (hoons p:x))
-      [%wtvt *]  (rune '?@' ~ ~ (wing p.x) (hoons ~[q r]:x))
+      [%wtpm *]  (rune '?&' `'==' `['&(' ' ' ')'] (hoons p:x))
+      [%wtpt *]  (rune '?@' ~ ~ (wing p.x) (hoons ~[q r]:x))
       [%wtsg *]  (rune '?~' ~ ~ (wing p.x) (hoons ~[q r]:x))
       [%wthx *]  (rune '?#' ~ ~ (skin p.x) (wing q.x) ~)
       [%wtts *]  (rune '?=' ~ ~ (spec p.x) (wing q.x) ~)
       [%wtzp *]  (rune '?!' ~ `['!' '' ''] (hoons ~[p]:x))
       [%zpcm *]  (rune '!,' ~ ~ (hoons ~[p q]:x))
-      [%zpbn *]  (rune '!>' ~ ~ (hoons ~[p]:x))
+      [%zpgr *]  (rune '!>' ~ ~ (hoons ~[p]:x))
       [%zpmc *]  (rune '!;' ~ ~ (hoons ~[p q]:x))
       [%zpts *]  (rune '!=' ~ ~ (hoons ~[p]:x))
-      [%zpvt *]  (rune '!@' ~ ~ (wingseq p.x) (hoons ~[q r]:x))
+      [%zppt *]  (rune '!@' ~ ~ (wingseq p.x) (hoons ~[q r]:x))
       [%zpwt *]  (hn q.x)                             ::  Ignore p.x
       [%zpzp ~]  '!!'
     ==
@@ -648,37 +650,37 @@
                  ?:  =(- 3)  '%^'
                  ?:  =(- 2)  '%+'  '%-'
                [(dohoon p.spec) (turn q.spec ..$)]
-        %bsbs  (core-spec-to-plum '$$' p.spec q.spec)
-        %bsbr  (subtree (fixed '$|') $(spec p.spec) (dohoon q.spec) ~)
-        %bscb  (dohoon p.spec)
-        %bscl  :-  %sbrk
+        %bcbc  (core-spec-to-plum '$$' p.spec q.spec)
+        %bcbr  (subtree (fixed '$|') $(spec p.spec) (dohoon q.spec) ~)
+        %bccb  (dohoon p.spec)
+        %bccl  :-  %sbrk
                :+  %tree
                  [`[' ' `['[' ']']] `['$:' `['' '==']]]
                (turn `(list ^spec)`+.spec ..$)
-        %bscn  (subtree (varying '$%' '==') (turn `(list ^spec)`+.spec ..$))
-        %bsdt  (core-spec-to-plum '$.' p.spec q.spec)
-        %bsld  (subtree (fixed '$<') $(spec p.spec) $(spec q.spec) ~)
-        %bsbn  (subtree (fixed '$>') $(spec p.spec) $(spec q.spec) ~)
-        %bshp  (subtree (fixed '$-') $(spec p.spec) $(spec q.spec) ~)
-        %bskt  (subtree (fixed '$^') $(spec p.spec) $(spec q.spec) ~)
-        %bsls  (subtree (fixed '$+') (stud-to-plum p.spec) $(spec q.spec) ~)
-        %bsnt  (core-spec-to-plum '$/' p.spec q.spec)
-        %bsmc  (subtree (fixed '$;') (dohoon p.spec) ~)
-        %bspd  (subtree (fixed '$&') $(spec p.spec) (dohoon q.spec) ~)
-        %bssg  (subtree (fixed '$~') (dohoon p.spec) $(spec q.spec) ~)
-        %bstc  (core-spec-to-plum '$`' p.spec q.spec)
-        %bsts  :-  %sbrk
+        %bccn  (subtree (varying '$%' '==') (turn `(list ^spec)`+.spec ..$))
+        %bcdt  (core-spec-to-plum '$.' p.spec q.spec)
+        %bcgl  (subtree (fixed '$<') $(spec p.spec) $(spec q.spec) ~)
+        %bcgr  (subtree (fixed '$>') $(spec p.spec) $(spec q.spec) ~)
+        %bchp  (subtree (fixed '$-') $(spec p.spec) $(spec q.spec) ~)
+        %bckt  (subtree (fixed '$^') $(spec p.spec) $(spec q.spec) ~)
+        %bcls  (subtree (fixed '$+') (stud-to-plum p.spec) $(spec q.spec) ~)
+        %bcfs  (core-spec-to-plum '$/' p.spec q.spec)
+        %bcmc  (subtree (fixed '$;') (dohoon p.spec) ~)
+        %bcpm  (subtree (fixed '$&') $(spec p.spec) (dohoon q.spec) ~)
+        %bcsg  (subtree (fixed '$~') (dohoon p.spec) $(spec q.spec) ~)
+        %bctc  (core-spec-to-plum '$`' p.spec q.spec)
+        %bcts  :-  %sbrk
                :+  %tree
                  [`['=' ~] `['$=' ~]]
                :~  (skin-to-plum p.spec)
                    $(spec q.spec)
                ==
-        %bsvt  (subtree (fixed '$@') $(spec p.spec) $(spec q.spec) ~)
-        %bswt  :-  %sbrk
+        %bcpt  (subtree (fixed '$@') $(spec p.spec) $(spec q.spec) ~)
+        %bcwt  :-  %sbrk
                :+  %tree
                   [`[' ' `['?(' ')']] `['$?' `['' '==']]]
                (turn `(list ^spec)`+.spec ..$)
-        %bszp  (core-spec-to-plum '$.' p.spec q.spec)
+        %bczp  (core-spec-to-plum '$.' p.spec q.spec)
       ==
   ::
   ++  varying
@@ -856,7 +858,7 @@
     |=  [=sample=xkey =product=xkey]
     ^-  plum
     %-  spec-to-plum  :*
-      %bshp
+      %bchp
       (ximage-to-spec:libxray sample-xkey img)
       (ximage-to-spec:libxray product-xkey img)
     ==

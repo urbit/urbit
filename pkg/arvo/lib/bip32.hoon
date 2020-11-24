@@ -16,7 +16,7 @@
 ::  dep:  depth in chain
 ::  ind:  index at depth
 ::  pif:  parent fingerprint (4 bytes)
-|_  [prv=@ pub=pont cad=@ dep=@ud ind=@ud pif=@]
+|_  [prv=@ pub=point.ecc cad=@ dep=@ud ind=@ud pif=@]
 ::
 +=  keyc  [key=@ cai=@]  ::  prv/pub key + chain code
 ::
@@ -26,7 +26,7 @@
 ::
 ++  ser-p  compress-point.ecc
 ::
-++  n      ^n:ecc
+++  n      n:t.ecc
 ::
 ::  core initialization
 ::
@@ -46,7 +46,7 @@
   +>(pub (decompress-point.ecc key), cad cai)
 ::
 ++  from-public-point
-  |=  [pon=pont cai=@]
+  |=  [pon=point.ecc cai=@]
   +>(pub pon, cad cai)
 ::
 ++  from-extended
@@ -150,7 +150,7 @@
   ::  rare exception, invalid key, go to the next one
   ?:  (gte left n)  $(i +(i))  ::TODO  or child key is "point at infinity"
   %_  +>.$
-    pub   (jc-add.ecc (point left) pub)
+    pub   (add-points.ecc (point left) pub)
     cad   right
     dep   +(dep)
     ind   i

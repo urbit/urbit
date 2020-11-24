@@ -34,7 +34,7 @@
 ::  A `wide` is a description of how to render a plum in a single
 ::  line. The nested (`kids`) sub-plums will be interleaved with `delimit`
 ::  strings, and, if `enclose` is set, then the output will be enclosed
-::  with `p.u.enclose` abnd `q.u.enclose`.
+::  with `p.u.enclose` and `q.u.enclose`.
 ::
 ::  For example, to build a plumfmt for string literals, we could write:
 ::

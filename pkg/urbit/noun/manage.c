@@ -1215,6 +1215,32 @@ u3m_soft(c3_w    mil_w,
     //    XX produce specific error motes instead of %2?
     //
     if ( 0 == u3A->roc ) {
+
+      {
+        u3_noun tax = u3t(u3t(why));
+
+        u3m_p("mote", u3h(u3t(why)));
+
+        while ( u3_nul != tax ) {
+          u3_noun dat, mot, val;
+          u3x_cell(tax, &dat, &tax);
+
+          if ( c3y == u3r_cell(dat, &mot, &val) ) {
+            if ( c3__spot == mot ) {
+              u3m_p("tax", val);
+            }
+            else if (  (c3__mean == mot)
+                    && (c3y == u3a_is_atom(val)) )
+            {
+              u3m_p("men", val);
+            }
+            else {
+              u3m_p("mot", mot);
+            }
+          }
+        }
+      }
+
       u3z(why);
       return u3nc(c3__fail, u3_nul);
     }
