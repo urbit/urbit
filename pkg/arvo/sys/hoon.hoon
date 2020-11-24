@@ -7540,7 +7540,7 @@
           nut=*(unit note)
           def=*(unit hoon)
       ==
-  |_  {fab/? mod/spec}
+  |_  mod=spec
   ::
   ++  autoname
     ::  derive name from spec
@@ -8195,7 +8195,6 @@
       %open  open
       %rake  rake
     ==
-  =+  fab=`?`&
   |_  gen/hoon
   ::
   ++  grip
@@ -8352,9 +8351,9 @@
     ?-    gen
         {~ *}     [%cnts [[%& p.gen] ~] ~]
     ::
-        {$base *}  ~(factory ax fab `spec`gen)
-        {$bust *}  ~(example ax fab %base p.gen)
-        {$ktcl *}  ~(factory ax fab p.gen)
+        {$base *}  ~(factory ax `spec`gen)
+        {$bust *}  ~(example ax %base p.gen)
+        {$ktcl *}  ~(factory ax p.gen)
         {$dbug *}   q.gen
         {$eror *}  ~>(%slog.[0 leaf/p.gen] !!)
     ::
@@ -8392,7 +8391,7 @@
         [%$ ~]                                          ::  $
       [[[%a ~] [%tsgl [%$ 3] [%limb %a]]] ~]            ::  a  +.a
     ::
-        {$leaf *}  ~(factory ax fab `spec`gen)
+        {$leaf *}  ~(factory ax `spec`gen)
         {$limb *}  [%cnts [p.gen ~] ~]
         {$tell *}  [%cncl [%limb %noah] [%zpgr [%cltr p.gen]] ~]
         {$wing *}  [%cnts p.gen ~]
@@ -8456,7 +8455,7 @@
         i.p.gen
       [i.p.gen $(p.gen t.p.gen)]
     ::
-        {$kttr *}  [%ktsg ~(example ax fab p.gen)]
+        {$kttr *}  [%ktsg ~(example ax p.gen)]
         {$cncb *}  [%ktls [%wing p.gen] %cnts p.gen q.gen]
         {$cndt *}  [%cncl q.gen [p.gen ~]]
         {$cnkt *}  [%cncl p.gen q.gen r.gen s.gen ~]
@@ -8489,7 +8488,7 @@
       (turn r.gen |=({p/wing q/hoon} [p [%tsgr [%$ 3] q]]))
     ::
         {$ktdt *}  [%ktls [%cncl p.gen q.gen ~] q.gen]
-        {$kthp *}  [%ktls ~(example ax fab p.gen) q.gen]
+        {$kthp *}  [%ktls ~(example ax p.gen) q.gen]
         {$ktts *}  (grip(gen q.gen) p.gen)
     ::
         {$sgbr *}
@@ -8607,10 +8606,10 @@
       ==                                                ::
     ::
         {$mcmc *}                                       ::                  ;;
-      [%cnhp ~(factory ax fab p.gen) q.gen]
+      [%cnhp ~(factory ax p.gen) q.gen]
     ::
         {$tsbr *}
-      [%tsls ~(example ax fab p.gen) q.gen]
+      [%tsls ~(example ax p.gen) q.gen]
     ::
         {$tstr *}
       :+  %tsgl
@@ -8688,7 +8687,7 @@
     ::
         {$wtpt *}   [%wtcl [%wtts [%base %atom %$] p.gen] q.gen r.gen]
         {$wtsg *}   [%wtcl [%wtts [%base %null] p.gen] q.gen r.gen]
-        {$wtts *}   [%fits ~(example ax fab p.gen) q.gen]
+        {$wtts *}   [%fits ~(example ax p.gen) q.gen]
         {$wtzp *}   [%wtcl p.gen [%rock %f 1] [%rock %f 0]]
         {$zpgr *}
       [%cncl [%limb %onan] [%zpmc [%kttr [%bcmc %limb %abel]] p.gen] ~]
@@ -8731,7 +8730,6 @@
       %fan    fan
       %rib    rib
       %vet    vet
-      %fab    fab
       %blow   blow
       %burp   burp
       %busk   busk
@@ -8772,7 +8770,6 @@
   =+  :*  fan=*(set {type hoon})
           rib=*(set {type type hoon})
           vet=`?`&
-          fab=`?`&
       ==
   =+  sut=`type`%noun
   |%
@@ -8928,7 +8925,7 @@
           %name  (face term.skin $(skin skin.skin))
           %over  $(skin skin.skin, sut (~(play ut sut) %wing wing.skin))
           %spec  =/  yon  $(skin skin.skin)
-                 =/  hit  (~(play ut sut) ~(example ax fab spec.skin))
+                 =/  hit  (~(play ut sut) ~(example ax spec.skin))
                  ?>  (~(nest ut hit) & yon)
                  hit
           %wash  =-  $(ref (~(play ut ref) -))
@@ -9017,18 +9014,6 @@
           %wash  ref
       ==
     --
-  ::
-  ++  bleu
-    |=  {gol/type gen/hoon}
-    ^-  {type nock}
-    =+  pro=(mint gol gen)
-    =+  jon=(apex:musk bran q.pro)
-    ?:  |(?=(~ jon) ?=($wait -.u.jon))
-      ?:  &(!fab vet)
-        ~&  %bleu-fail
-        !!
-      [p.pro q.pro]
-    [p.pro %1 p.u.jon]
   ::
   ++  blow
     |=  {gol/type gen/hoon}
@@ -9684,7 +9669,6 @@
       [dox p.q]
     ?>  ?=($wet -.q)
     ::  ~_  (dunk(sut [%cell q.q.p p.p]) %fire-wet)
-    ::  =.  p.p  ?:(fab p.p (redo(sut p.p) q.q.p))
     =.  p.p  (redo(sut p.p) q.q.p)
     ?>  ?|  !vet
             (~(has in rib) [sut dox p.q])
@@ -9782,9 +9766,6 @@
     ::  produce lazy core generator for static execution
     ::
     |=  [nym=(unit term) hud=poly dom=(map term tome)]
-    ::  only one layer of fabrication analysis
-    ::
-    =.  fab  &
     ~+
     ^-  seminoun
     =+  %hemp-141
@@ -9861,7 +9842,7 @@
     ~/  %chip
     |=  {how/? gen/hoon}  ^-  type
     ?:  ?=({$wtts *} gen)
-      (cool how q.gen (play ~(example ax fab p.gen)))
+      (cool how q.gen (play ~(example ax p.gen)))
     ?:  ?=({$wthx *} gen)
       =+  (play %wing q.gen)
       ~>  %slog.[0 [%leaf "chipping"]]
