@@ -114,7 +114,7 @@
       ==
     [cards this]
   ==
-++  on-arvo   on-arvo:def
+++  on-arvo  on-arvo:def
 ++  on-fail   on-fail:def
 --
 |_  =bowl:gall

@@ -12,7 +12,19 @@
   ++  txbu
     |=  =^txbu
     ^-  json
-    [%s 'txbu placeholder']
+    %-  pairs
+    :~  [%inputs ~]
+        ['associatedKeysets' s+'hi']
+        ['changePath' s+'hi']
+        ['outputScriptHex' s+'hi']
+        ['lockTime' s+'hi']
+        ['sigHashType' s+'hi']
+        [%segwit s+'hi']
+        ['initialTimestamp' s+'hi']
+    ==
+    :: TODO inputs, keysets, changeppath, outputscripthex, locktime, sigHashType, segwit, initialTimestamp
+    ::  , additionals ("bech32")
+    :: TODO: use 'pairs' at the top level
   --
 ::
 ++  defaults
