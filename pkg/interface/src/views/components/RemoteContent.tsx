@@ -1,12 +1,13 @@
 import React, { PureComponent, Fragment } from 'react';
 import { LocalUpdateRemoteContentPolicy } from "~/types/local-update";
-import { BaseAnchor, BaseImage, Box, Button } from '@tlon/indigo-react';
+import { BaseAnchor, BaseImage, Box, Button, Text } from '@tlon/indigo-react';
 import { hasProvider } from 'oembed-parser';
 import EmbedContainer from 'react-oembed-container';
 import { memoize } from 'lodash';
 
 interface RemoteContentProps {
   url: string;
+  text?: string;
   remoteContentPolicy: LocalUpdateRemoteContentPolicy;
   unfold?: boolean;
   renderUrl?: boolean;
@@ -14,6 +15,7 @@ interface RemoteContentProps {
   audioProps?: any;
   videoProps?: any;
   oembedProps?: any;
+  textProps?: any;
   style?: any;
   onLoad?(): void;
 }
@@ -48,7 +50,8 @@ export default class RemoteContent extends PureComponent<RemoteContentProps, Rem
     }
   }
 
-  unfoldEmbed() {
+  unfoldEmbed(event: Event) {
+    event.stopPropagation();
     let unfoldState = this.state.unfold;
     unfoldState = !unfoldState;
     this.setState({ unfold: unfoldState });
@@ -70,9 +73,10 @@ export default class RemoteContent extends PureComponent<RemoteContentProps, Rem
   }
 
   wrapInLink(contents) {
+    const { style } = this.props;
     return (<BaseAnchor
       href={this.props.url}
-      style={{ color: 'inherit', textDecoration: 'none' }}
+      style={{ color: 'inherit', textDecoration: 'none', ...style }}
       className={`word-break-all ${(typeof contents === 'string') ? 'bb' : ''}`}
       target="_blank"
       rel="noopener noreferrer"
@@ -85,12 +89,14 @@ export default class RemoteContent extends PureComponent<RemoteContentProps, Rem
     const {
       remoteContentPolicy,
       url,
+      text,
       unfold = false,
       renderUrl = true,
       imageProps = {},
       audioProps = {},
       videoProps = {},
       oembedProps = {},
+      textProps = {},
       style = {},
       onLoad = () => {},
       ...props
@@ -113,7 +119,9 @@ export default class RemoteContent extends PureComponent<RemoteContentProps, Rem
     } else if (isAudio && remoteContentPolicy.audioShown) {
       return (
         <>
-          {renderUrl ? this.wrapInLink(url) : null}
+          {renderUrl
+            ? this.wrapInLink(<Text {...textProps}>{text || url}</Text>)
+            : null}
           <audio
             controls
             className="db"
@@ -127,7 +135,9 @@ export default class RemoteContent extends PureComponent<RemoteContentProps, Rem
     } else if (isVideo && remoteContentPolicy.videoShown) {
       return (
         <>
-          {renderUrl ? this.wrapInLink(url) : null}
+          {renderUrl
+            ? this.wrapInLink(<Text {...textProps}>{text || url}</Text>)
+            : null}
           <video
             controls
             className="db"
@@ -146,7 +156,11 @@ export default class RemoteContent extends PureComponent<RemoteContentProps, Rem
 
       return (
         <Fragment>
-          {renderUrl ? this.wrapInLink(this.state.embed && this.state.embed.title ? this.state.embed.title : url) : null}
+          {renderUrl
+            ? this.wrapInLink(<Text {...textProps}>{(this.state.embed && this.state.embed.title)
+              ? this.state.embed.title
+              : (text || url)}</Text>)
+            : null}
           {this.state.embed !== 'error' && this.state.embed?.html && !unfold ? <Button
             display='inline-flex'
             border={1}
@@ -176,7 +190,9 @@ export default class RemoteContent extends PureComponent<RemoteContentProps, Rem
         </Fragment>
       );
     } else {
-      return renderUrl ? this.wrapInLink(url) : null;
+      return renderUrl
+        ? this.wrapInLink(<Text {...textProps}>{text || url}</Text>) 
+        : null;
     }
   }
 }

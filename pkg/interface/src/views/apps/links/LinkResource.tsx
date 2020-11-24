@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Box, Row, Col, Center, LoadingSpinner } from "@tlon/indigo-react";
+import { Box, Row, Col, Center, LoadingSpinner, Text } from "@tlon/indigo-react";
 import { Switch, Route, Link } from "react-router-dom";
 import bigInt from 'big-integer';
 
@@ -86,6 +86,7 @@ export function LinkResource(props: LinkResourceProps) {
                       baseUrl={resourceUrl}
                       group={group}
                       api={api}
+                      mb={3}
                     />
                   );
                 })}
@@ -112,8 +113,8 @@ export function LinkResource(props: LinkResourceProps) {
             const contact = contactDetails[node.post.author];
 
             return (
-              <Col width="100%" p={3} maxWidth="640px">
-                <Link to={resourceUrl}>{"<- Back"}</Link>
+              <Col width="100%" p={3} maxWidth="768px">
+                <Link to={resourceUrl}><Text bold>{"<- Back"}</Text></Link>
                 <LinkItem
                   contacts={contacts}
                   key={node.post.index}
@@ -125,7 +126,7 @@ export function LinkResource(props: LinkResourceProps) {
                   baseUrl={resourceUrl}
                   group={group}
                   api={api}
-                  mt={2}
+                  mt={3}
                 />
                 <Comments
                   ship={ship}

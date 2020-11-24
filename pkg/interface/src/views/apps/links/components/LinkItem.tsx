@@ -10,6 +10,7 @@ import { roleForShip } from '~/logic/lib/group';
 import { Contacts, GraphNode, Group, LocalUpdateRemoteContentPolicy, Rolodex } from '~/types';
 import GlobalApi from '~/logic/api/global';
 import { Dropdown } from '~/views/components/Dropdown';
+import RemoteContent from '~/views/components/RemoteContent';
 
 interface LinkItemProps {
   node: GraphNode;
@@ -69,23 +70,40 @@ export const LinkItem = (props: LinkItemProps) => {
   return (
     <Box width="100%" {...rest}>
     
-      <Anchor
+      <Box
         lineHeight="tall"
         display='flex'
         flexDirection='column'
-        style={{ textDecoration: 'none' }}
-        href={contents[1].url}
         width="100%"
-        target="_blank"
-        rel="noopener noreferrer"
-        p={2}
         color='washedGray'
         border={1}
         borderRadius={2}
+        alignItems="flex-start"
+        overflow="hidden"
       >
-        <Text overflow='hidden' color="black" style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }} mb={2}>{contents[0].text}</Text>
-        <Text color="gray" flexShrink={0}><Box display='flex'><Icon icon='ArrowExternal' mr={1}/>{hostname}</Box></Text>
-      </Anchor>
+        <RemoteContent
+          url={contents[1].url}
+          text={contents[0].text}
+          remoteContentPolicy={remoteContentPolicy}
+          style={{ marginTop: '-1px' }}
+          oembedProps={{
+            p: 2
+          }}
+          textProps={{
+            overflow: 'hidden',
+            color: 'black',
+            display: 'block',
+            style: { textOverflow: 'ellipsis', whiteSpace: 'pre' },
+            p: 2
+          }} />
+        <Text color="gray" p={2} flexShrink={0}>
+          <Anchor target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }} href={contents[1].url}>
+            <Box display='flex'>
+              <Icon icon='ArrowExternal' mr={1} />{hostname}
+            </Box>
+          </Anchor>
+        </Text>
+      </Box>
       
       <Row minWidth='0' flexShrink={0} width="100%" justifyContent="space-between" py={3} bg="white">
       

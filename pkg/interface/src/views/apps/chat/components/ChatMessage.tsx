@@ -279,6 +279,11 @@ export const MessageContent = ({ content, remoteContentPolicy, measure, fontSize
           }}}
           videoProps={{style: {
             maxWidth: '18rem'
+          }
+          }}
+          textProps={{style: {
+            fontSize: 'inherit',
+            textDecoration: 'underline'
           }}}
         />
       </Text>
