@@ -18,8 +18,8 @@ export default class LaunchApi extends BaseApi<StoreState> {
     return this.launchAction({ 'change-is-shown': { name, isShown }});
   }
 
-  weather(latlng: any) {
-    return this.action('weather', 'json', latlng);
+  weather(location: string) {
+    return this.action('weather', 'json', location);
   }
 
   private launchAction(data) {
