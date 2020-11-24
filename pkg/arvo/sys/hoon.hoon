@@ -12865,7 +12865,7 @@
           %+  sear
             |=  [=(unit term) =spec]
             %+  bind
-              ~(autoname ax & spec)
+              ~(autoname ax spec)
             |=  =term
             =*  name  ?~(unit term (cat 3 u.unit (cat 3 '-' term)))
             [%bcts name spec]
@@ -12993,7 +12993,7 @@
               ::
               |=  =spec
               ^-  (unit hoon)
-              %+  bind  ~(autoname ax & spec)
+              %+  bind  ~(autoname ax spec)
               |=(=term `hoon`[%ktts term %kttr spec])
             wyde
           ==
@@ -13723,7 +13723,7 @@
         %+  sear
           |=  =spec
           ^-  (unit skin)
-          %+  bind  ~(autoname ax & spec)
+          %+  bind  ~(autoname ax spec)
           |=  =term
           [%name term %spec spec %base %noun]
         wyde
