@@ -19,7 +19,7 @@ while getopts "w" opt; do
 done
 
 if [ -z "$WATCH_MODE" ]; then
-    echo "Installed %bippy"
+    echo "Installed btc-agents"
     rsync -r --exclude-from=$EXCLUDE_FILE * $PIER/
 else
    echo "Watching for changes to copy to ${PIER}..."

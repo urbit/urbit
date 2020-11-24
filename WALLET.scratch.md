@@ -99,6 +99,18 @@ Above tests w 2 outputs, total fees with 2 inputs of 27.500. Gives:
 1. 500.000 input
 2. Inputs 0 and 3
 
+## Make a full TXBU
+Provider is `~zod`, `~dopzod` is a client.
+On `~zod`:
+```
+:btc-provider|command [%set-credentials api-url='http://localhost:50002']
+:btc-provider|command [%whitelist-clients `(set ship)`(sy ~[~dopzod])]
+```
+
+on `~dopzod`:
+```
+:btc-wallet-hook|action [%set-provider ~zod]
+```
 
 ## scrys
 ```
@@ -107,22 +119,3 @@ Above tests w 2 outputs, total fees with 2 inputs of 27.500. Gives:
 .^(@ud %gx /=btc-wallet-store=/balance/[xpub]/noun)
 ```
 
-## Algos
-
-### Monitor addresses
-- nixt also stores next 50 addresses for each account.
-- every update-address call also checks those
-
-### make a payment
-* make payment
-  - get address
-  - on-agent gets return value, construct tx
-  - store tx (view or other command can get it)
-
-::
-++  send-address-update
-  |=  [xpub=tape =walt a=address:btc us=(set utxo)]
-  ^-  (quip card _state)
-  :_  state(walts (~(put by walts.state) xpub walt))
-  ~[[%give %fact ~[/wallets] %btc-wallet-store-update !>([%address a us])]]
-::
