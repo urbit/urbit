@@ -191,11 +191,7 @@ u3_pico_free(u3_pico* pic_u)
       u3z(pic_u->ful);
     } break;
 
-    case u3_pico_mine: {
-      u3z(pic_u->min_u.pax);
-    } break;
-
-    case u3_pico_last: {
+    case u3_pico_once: {
       u3z(pic_u->las_u.des);
       u3z(pic_u->las_u.pax);
     } break;

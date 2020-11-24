@@ -37,7 +37,7 @@
               [%meld ~]
               [%pack ~]
       ==  ==
-      [%peek mil=@ now=@da lyc=gang pat=path]
+      [%peek mil=@ sam=*]  :: gang (each path $%([%once @tas @tas path] [beam @tas beam]))
       [%play eve=@ lit=(list ?((pair @da ovum) *))]
       [%work mil=@ job=(pair @da ovum)]
   ==
@@ -776,43 +776,17 @@ u3_serf_play(u3_serf* sef_u, c3_d eve_d, u3_noun lit)
 u3_noun
 u3_serf_peek(u3_serf* sef_u, c3_w mil_w, u3_noun sam)
 {
-  u3_noun wen, pat, pro;
-
-  //  stash the previous date and set current
-  //
-  //    XX incomplete interface, arvo should track the date
-  //
-  wen = u3A->now;
-
-  {
-    u3_noun now, lyc;
-    u3x_trel(sam, &now, &lyc, &pat);
-    u3A->now = u3k(now);
-  }
-
+  u3_noun gon = u3m_soft(mil_w, u3v_peek, sam);
+  u3_noun pro;
 
   {
     u3_noun tag, dat;
-
-    //  XX incomplete interface, should pass [lyc] as well
-    //
-    u3_noun gon = u3m_soft(mil_w, u3v_peek, u3k(pat));
     u3x_cell(gon, &tag, &dat);
 
     //  read succeeded, produce result
     //
     if ( u3_blip == tag ) {
-      if ( u3_nul == dat ) {
-        pro = u3nc(c3__done, u3_nul);
-      }
-      else {
-        //  prepend the %noun mark
-        //
-        //    XX incomplete interface, should recv mark from arvo
-        //
-        pro = u3nq(c3__done, u3_nul, c3__noun, u3k(u3t(dat)));
-      }
-
+      pro = u3nc(c3__done, u3k(dat));
       u3z(gon);
     }
     //  read failed, produce trace
@@ -824,14 +798,6 @@ u3_serf_peek(u3_serf* sef_u, c3_w mil_w, u3_noun sam)
     }
   }
 
-  //  restore the previous date
-  //
-  //    XX incomplete interface, arvo should track the date
-  //
-  u3z(u3A->now);
-  u3A->now = wen;
-
-  u3z(sam);
   return u3nc(c3__peek, pro);
 }
 

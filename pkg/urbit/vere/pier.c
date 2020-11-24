@@ -436,29 +436,6 @@ u3_pier_peek(u3_pier*   pir_u,
   _pier_peek_plan(pir_u, pic_u);
 }
 
-/* u3_pier_peek_mine(): read namespace, injecting ship.
-*/
-void
-u3_pier_peek_mine(u3_pier*   pir_u,
-                  u3_noun      gan,
-                  c3_m       car_m,
-                  u3_noun      pax,
-                  void*      ptr_v,
-                  u3_peek_cb fun_f)
-{
-  u3_pico* pic_u = u3_pico_init();
-
-  pic_u->ptr_v = ptr_v;
-  pic_u->fun_f = fun_f;
-  pic_u->gan   = gan;
-  //
-  pic_u->typ_e       = u3_pico_mine;
-  pic_u->min_u.car_m = car_m;
-  pic_u->min_u.pax   = pax;
-
-  _pier_peek_plan(pir_u, pic_u);
-}
-
 /* u3_pier_peek_last(): read namespace, injecting ship and case.
 */
 void
@@ -476,7 +453,7 @@ u3_pier_peek_last(u3_pier*   pir_u,
   pic_u->fun_f = fun_f;
   pic_u->gan   = gan;
   //
-  pic_u->typ_e       = u3_pico_last;
+  pic_u->typ_e       = u3_pico_once;
   pic_u->las_u.car_m = car_m;
   pic_u->las_u.des   = des;
   pic_u->las_u.pax   = pax;
