@@ -826,12 +826,14 @@
           ~>  %mean.'peek: activation failed'
           (~(slym wa sac) vax sam)
         =^  gat  sac
-          ~>  %mean.'peek: call failed'
+          ~>  %mean.'peek: pull failed'
           (~(slap wa sac) rig [%limb %scry])
         ::
         =/  mas=[gang term beam]  [lyc cyr bem]
         ::
-        =^  pro  sac  (~(slym wa sac) gat mas)
+        =^  pro  sac
+          ~>  %mean.'peek: call failed'
+          (~(slym wa sac) gat mas)
         ?~  q.pro  ~
         ?~  +.q.pro  [~ ~]
         =^  dat  sac  (~(slot wa sac) 7 pro)
@@ -1286,7 +1288,8 @@
         ?.  ?=(?(%crud %wack %wyrd) -.card.ovum)
           (emit $/~ [*duct (gest ovum)] ~)
         ::
-        =/  buz  ;;(wasp card.ovum)
+        =/  buz  ~>  %mean.'pith: bad wasp'
+                 ;;(wasp card.ovum)
         ?-  -.buz
         ::
         ::  %crud: forward error notification
@@ -1329,8 +1332,9 @@
         ::  XX update clients to %pass to arvo, remove
         ::
         ?:  ?=(?(%lyra %veer %verb %whey) -.card.ovum)
+          %-  call
           ~>  %mean.'xeno: bad waif'
-          (call ;;(waif:pith card.ovum))
+          ;;(waif:pith card.ovum)
         ::
         ::  XX uncomment to restore previous routing
         ::
@@ -1618,7 +1622,7 @@
 ++  load                                                ::  +10
   |=  hir=heir
   ?:  ?=(%grub -.hir)
-    ~|(%larval-reboot !!)   :: XX support
+    ~>(%mean.'arvo: larval reboot' !!)    :: XX support
   (^load hir)
 ::
 ++  peek  _~                                            ::  +46
@@ -1646,7 +1650,7 @@
              =/  del  (~(group adapt:part taf) p.wip)
              =/  tub  (~(usurp adapt:part taf) del)
              ?:  &(?=(^ dir.taf) ?=(^ tub))
-               ~|(%larval-reboot !!)   :: XX support
+               ~>(%mean.'arvo: larval reboot' !!)    :: XX support
              ::
              ::  require, and unconditionally adopt, initial kernel source
              ::
