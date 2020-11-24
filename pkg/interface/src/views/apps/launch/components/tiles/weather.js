@@ -248,26 +248,42 @@ export default class WeatherTile extends React.Component {
       return this.renderManualEntry(data);
     }
 
+    if ('currently' in data) { // Old weather source
+      this.props.api.launch.weather(this.props.location);
+    }
+
     if ('current-condition' in data && 'weather' in data) {
       return this.renderWithData(data);
     }
 
     if (this.props.location) {
-      return this.renderWrapper((
+      return this.renderWrapper(
         <Box
-          p='2'
           width='100%'
           height='100%'
           backgroundColor='white'
           color='black'
+          display="flex"
+          flexDirection="column"
+          justifyContent="flex-start"
         >
-            <Icon icon='Weather' color='black' display='inline' style={{ position: 'relative', top: '.3em' }} />
-            <Text>Weather</Text>
-          <Text pt='2' width='100%' display='flex' flexDirection='column'>
-          Loading, please check again later...
+          <Text><Icon icon='Weather' color='black' display='inline' style={{ position: 'relative', top: '.3em' }} /> Weather</Text>
+          <Text width='100%' display='flex' flexDirection='column' mt={1}>
+            Loading, please check again later...
+          </Text>
+          <Text mt="auto">
+            Set new location{' '}
+            <Text
+                cursor='pointer'
+                onClick={() =>
+                  this.setState({ manualEntry: !this.state.manualEntry })
+                }
+              >
+              ->
+            </Text>
           </Text>
         </Box>
-      ));
+      );
     }
     return this.renderNoData();
   }
