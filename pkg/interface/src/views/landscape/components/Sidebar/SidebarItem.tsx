@@ -10,18 +10,12 @@ import { HoverBoxLink } from "~/views/components/HoverBox";
 import { Groups } from "~/types";
 
 function SidebarItemIndicator(props: { status?: SidebarItemStatus }) {
-  switch (props.status) {
-    case "disconnected":
-      return <Icon ml={2} fill="red" icon="X" />;
-    case "unsubscribed":
-      return <Icon ml={2} icon="Circle" fill="gray" />;
-    case "mention":
-      return <Icon ml={2} icon="Circle" />;
-    case "loading":
-      return <Icon ml={2} icon="Bullet" />;
-    default:
-      return null;
-  }
+  return {
+    disconnected: <Icon ml={2} fill="red" icon="X" />,
+    unsubscribed: null,
+    mention: <Icon icon="Bullet" style={{position: 'absolute', top: '-2px', left: '-2px'}} m={0} size={2} />,
+    loading: <Icon ml={2} icon="Bullet" />
+  }[props.status] || null;
 }
 
 const getAppIcon = (app: string, mod: string) => {
@@ -97,7 +91,8 @@ export function SidebarItem(props: {
       pr={2}
       selected={selected}
     >
-      <Row width='100%' alignItems="center" flex='1 auto' minWidth='0'>
+      <Row width='100%' alignItems="center" flex='1 auto' minWidth='0' position="relative">
+        <SidebarItemIndicator status={itemStatus} />
         <Icon
           display="block"
           color={color}

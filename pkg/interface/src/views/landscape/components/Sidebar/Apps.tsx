@@ -15,10 +15,25 @@ export function useChat(
       if (!mailbox) {
         return undefined;
       }
-      const { config } = mailbox;
+      const { config, envelopes } = mailbox;
+      const hasUnreadMention = envelopes.reduce((accum, envelope, index) => {
+        if (
+          'text' in envelope.letter
+          && envelope.letter.text.includes(window.ship)
+          && (envelopes.length - index) >= envelopes.length - (config.length - config.read)
+        ) {
+          return true;
+        }
+        return accum;
+      }, false);
+      if (hasUnreadMention) {
+        return "mention";
+      }
+
       if (config?.read !== config?.length) {
         return "unread";
       }
+      
       return undefined;
     },
     [inbox, chatSynced]
