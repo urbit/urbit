@@ -33,9 +33,9 @@ Verify `ecc` has the correct decompress-point gate. The below should yield: `0x3
 ```
 
 ### Startup'
-Set credentials and start agents
+Set credentials and start agents. Use `~dopzod` and `~zod`
 ```
-=provider $PROVIDER_@p
+=provider ~zod
 |start %btc-wallet-store
 |start %btc-wallet-hook
 |start %btc-provider
