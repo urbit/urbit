@@ -29,23 +29,32 @@
   [%event rcvr //newt/0v1n.2m9vh %hear hear-lane pac]~
 ::  +lane-to-ship: decode a ship from an aqua lane
 ::
+::    Special-case one comet, since its address doesn't fit into a lane.
+::
 ++  lane-to-ship
   |=  =lane:ames
   ^-  ship
   ::
   ?-  -.lane
     %&  p.lane
-    %|  `ship``@`p.lane
+    %|  =/  s  `ship``@`p.lane
+        ?.  =(s 0xdead.beef.cafe)
+          s
+        ~bosrym-podwyl-magnes-dacrys--pander-hablep-masrym-marbud
   ==
 ::  +ship-to-lane: encode a lane to look like it came from .ship
 ::
 ::    Never shows up as a galaxy, because Vere wouldn't know that either.
+::    Special-case one comet, since its address doesn't fit into a lane.
 ::
 ++  ship-to-lane
   |=  =ship
   ^-  lane:ames
-  ::
-  [%| `address:ames``@`ship]
+  :-  %|
+  ^-  address:ames  ^-  @
+  ?.  =(ship ~bosrym-podwyl-magnes-dacrys--pander-hablep-masrym-marbud)
+    ship
+  0xdead.beef.cafe
 --
 ::
 %+  aqua-vane-thread  ~[%restore %send]
