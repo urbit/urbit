@@ -6,29 +6,40 @@
 ::
 =/  nec  vane
 =/  bud  vane
+=/  comet  vane
 ::
 =.  our.nec        ~nec
 =.  now.nec        ~1111.1.1
 =.  eny.nec        0xdead.beef
 =.  scry-gate.nec  |=(* ``[%noun !>(*(list turf))])
-::
-=.  our.bud          ~bud
-=.  now.bud          ~1111.1.1
-=.  eny.bud          0xbeef.dead
-=.  scry-gate.bud    |=(* ``[%noun !>(*(list turf))])
-::
 =.  crypto-core.ames-state.nec  (pit:nu:crub:crypto 512 (shaz 'nec'))
-=.  crypto-core.ames-state.bud  (pit:nu:crub:crypto 512 (shaz 'bud'))
-::
 =/  nec-pub  pub:ex:crypto-core.ames-state.nec
 =/  nec-sec  sec:ex:crypto-core.ames-state.nec
+::
+=.  our.bud        ~bud
+=.  now.bud        ~1111.1.1
+=.  eny.bud        0xbeef.dead
+=.  scry-gate.bud  |=(* ``[%noun !>(*(list turf))])
+=.  crypto-core.ames-state.bud  (pit:nu:crub:crypto 512 (shaz 'bud'))
 =/  bud-pub  pub:ex:crypto-core.ames-state.bud
 =/  bud-sec  sec:ex:crypto-core.ames-state.bud
 ::
+=.  our.comet  ~bosrym-podwyl-magnes-dacrys--pander-hablep-masrym-marbud
+=.  now.comet        ~1111.1.1
+=.  eny.comet        0xbeef.cafe
+=.  scry-gate.comet  |=(* ``[%noun !>(*(list turf))])
+=.  crypto-core.ames-state.comet
+  %-  nol:nu:crub:crypto
+  0w9N.5uIvA.Jg0cx.NCD2R.o~MtZ.uEQOB.9uTbp.6LHvg.0yYTP.
+  3q3td.T4UF0.d5sDL.JGpZq.S3A92.QUuWg.IHdw7.izyny.j9W92
+=/  comet-pub  pub:ex:crypto-core.ames-state.comet
+=/  comet-sec  sec:ex:crypto-core.ames-state.comet
+::
 =/  nec-sym  (derive-symmetric-key:vane bud-pub nec-sec)
 =/  bud-sym  (derive-symmetric-key:vane nec-pub bud-sec)
-::
 ?>  =(nec-sym bud-sym)
+::
+=/  comet-sym  (derive-symmetric-key:vane bud-pub comet-sec)
 ::
 =.  life.ames-state.nec  2
 =.  peers.ames-state.nec
@@ -187,6 +198,56 @@
               [%d %flog %text "; ~bus is your neighbor"]
           ==
       !>  (sy ,.moves3)
+  ==
+::
+++  test-comet-encounter  ^-  tang
+  ::
+  =/  lane-foo=lane:ames  [%| `@ux``@`%lane-foo]
+  ::
+  =/  =open-packet:ames
+    :*  public-key=`@`comet-pub
+        sndr=our.comet
+        sndr-life=1
+        rcvr=~bud
+        rcvr-life=3
+    ==
+  =/  packet
+    (encode-open-packet:vane open-packet crypto-core.ames-state.comet)
+  =/  blob  (encode-packet:vane packet)
+  ::
+  =^  moves0  bud  (call bud ~[//unix] %hear lane-foo blob)
+  ::
+  =/  =plea:ames  [%g /talk [%first %post]]
+  =/  =shut-packet:ames
+    :*  bone=1
+        message-num=1
+        [%& num-fragments=1 fragment-num=0 (jam plea)]
+    ==
+  =/  =packet:ames
+    %:  encode-shut-packet:vane
+      shut-packet
+      comet-sym
+      our.comet
+      ~bud
+      sndr-life=1
+      rcvr-life=3
+    ==
+  =/  blob  (encode-packet:vane packet)
+  =^  moves1  bud  (call bud ~[//unix] %hear lane-foo blob)
+  ::
+  ;:  weld
+    %+  expect-eq
+      !>  ~
+      !>  moves0
+  ::
+    %+  expect-eq
+      !>  :~  :*  ~[//unix]  %pass  /qos  %d  %flog  %text
+                  "; {<our.comet>} is your neighbor"
+              ==
+              :*  ~[//unix]  %pass  /bone/(scot %p our.comet)/1
+                  %g  %plea  our.comet  plea
+          ==  ==
+      !>  moves1
   ==
 ::
 ++  test-message-flow  ^-  tang

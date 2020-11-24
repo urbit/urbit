@@ -352,6 +352,18 @@
     %earl  8
     %pawn  16
   ==
+::  +encode-open-packet: convert $open-packet attestation to $packet
+::
+++  encode-open-packet
+  ~/  %encode-open-packet
+  |=  [pac=open-packet =acru:ames]
+  ^-  packet
+  :*  [sndr rcvr]:pac
+      (mod sndr-life.pac 16)
+      (mod rcvr-life.pac 16)
+      origin=~
+      content=`@`(sign:as:acru (jam pac))
+  ==
 ::  +decode-open-packet: decode comet attestation into an $open-packet
 ::
 ++  decode-open-packet
@@ -1193,7 +1205,7 @@
 |%
 ++  per-event
   =|  moves=(list move)
-  ~/  %event-gate
+  ~%  %event-gate  ..per-event  ~
   |=  [[our=ship now=@da eny=@ scry-gate=sley] =duct =ames-state]
   =*  veb  veb.bug.ames-state
   ~%  %event-core  ..$  ~
@@ -1928,23 +1940,17 @@
   ::    Sent by a comet on first contact with a peer.  Not acked.
   ::
   ++  attestation-packet
-    ~/  %attestation-packet
     |=  [her=ship =her=life]
     ^-  blob
-    ::
-    =/  =open-packet
-      :*  ^=  public-key  pub:ex:crypto-core.ames-state
-          ^=        sndr  our
-          ^=   sndr-life  life.ames-state
-          ^=        rcvr  her
-          ^=   rcvr-life  her-life
-      ==
-    ::
-    =/  signed=@  (sign:as:crypto-core.ames-state (jam open-packet))
-    =/  =packet
-      [[our her] (mod life.ames-state 16) (mod her-life 16) origin=~ signed]
-    ::
-    (encode-packet packet)
+    %-  encode-packet
+    %-  encode-open-packet
+    :_  crypto-core.ames-state
+    :*  ^=  public-key  pub:ex:crypto-core.ames-state
+        ^=        sndr  our
+        ^=   sndr-life  life.ames-state
+        ^=        rcvr  her
+        ^=   rcvr-life  her-life
+    ==
   ::  +get-peer-state: lookup .her state or ~
   ::
   ++  get-peer-state
