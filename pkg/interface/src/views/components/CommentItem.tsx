@@ -21,6 +21,7 @@ interface CommentItemProps {
   comment: GraphNode;
   baseUrl: string;
   contacts: Contacts;
+  unread: boolean;
   name: string;
   ship: string;
   api: GlobalApi;
@@ -50,6 +51,7 @@ export function CommentItem(props: CommentItemProps) {
           contacts={contacts}
           ship={post?.author}
           date={post?.['time-sent']}
+          unread={props.unread}
           hideAvatars={props.hideAvatars}
           hideNicknames={props.hideNicknames}
         >

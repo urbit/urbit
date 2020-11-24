@@ -1,7 +1,7 @@
 import BaseApi from "./base";
 import { StoreState } from "../store/type";
 import { dateToDa, decToUd } from "../lib/util";
-import {NotifIndex, IndexedNotification} from "~/types";
+import {NotifIndex, IndexedNotification, Association, GraphNotifDescription} from "~/types";
 import { BigInteger } from 'big-integer';
 import {getParentIndex} from "../lib/notification";
 
@@ -69,6 +69,48 @@ export class HarkApi extends BaseApi<StoreState> {
 
   unread(time: BigInteger, index: NotifIndex) {
     return this.actOnNotification('unread', time, index);
+  }
+
+  markSinceAsRead(association: Association, parent: string, description: GraphNotifDescription, since: string) {
+    return this.harkAction(
+      {  'read-since': {
+        index:  { graph: {
+        graph: association['app-path'],
+        group: association['group-path'],
+        module: association.metadata.module,
+        description,
+        index: parent
+      } },
+        target: since
+    }});
+  }
+
+
+
+  markEachAsRead(association: Association, parent: string, child: string, description: GraphNotifDescription, mod: string) {
+    return this.harkAction({
+      'read-each': {
+        index: 
+          { graph:
+            { graph: association['app-path'], 
+              group: association['group-path'],
+              description, 
+              module: mod,
+              index: parent 
+            }
+          }, 
+        target: child
+      }
+    });
+  }
+
+  dec(index: NotifIndex, ref: string) {
+    return this.harkAction({
+      dec: {
+        index,
+        ref
+      }
+    });
   }
 
   seen() {

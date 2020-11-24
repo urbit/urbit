@@ -32,6 +32,7 @@ export function LinkResource(props: LinkResourceProps) {
     groups,
     associations,
     graphKeys,
+    unreads,
     s3,
     hideAvatars,
     hideNicknames,
@@ -68,6 +69,7 @@ export function LinkResource(props: LinkResourceProps) {
           exact
           path={relativePath("")}
           render={(props) => {
+            const graphUnreads = unreads.graph?.[appPath]?.['/']?.unreads || new Set();
             return (
               <Col width="100%" p={4} alignItems="center" maxWidth="768px">
                 <Col width="100%" flexShrink='0'>
@@ -80,6 +82,8 @@ export function LinkResource(props: LinkResourceProps) {
                       key={date.toString()}
                       resource={resourcePath}
                       node={node}
+                      contacts={contactDetails}
+                      unread={graphUnreads.has(node.post.index)}
                       nickname={contact?.nickname}
                       hideAvatars={hideAvatars}
                       hideNicknames={hideNicknames}
@@ -118,6 +122,8 @@ export function LinkResource(props: LinkResourceProps) {
                 <LinkPreview
                   resourcePath={resourcePath}
                   post={node.post}
+                  association={association}
+                  api={api}
                   nickname={contact?.nickname}
                   hideNicknames={hideNicknames}
                   commentNumber={node.children.size}
@@ -128,6 +134,8 @@ export function LinkResource(props: LinkResourceProps) {
                   name={name}
                   comments={node}
                   resource={resourcePath}
+                  association={association}
+                  unreads={unreads}
                   contacts={contactDetails}
                   api={api}
                   hideAvatars={hideAvatars}

@@ -7,7 +7,7 @@ import { Groups } from "~/types/group-update";
 import { Contacts, Rolodex } from "~/types/contact-update";
 import GlobalApi from "~/logic/api/global";
 import styled from "styled-components";
-import { Associations, Graph, Association } from "~/types";
+import { Associations, Graph, Association, Unreads } from "~/types";
 import { deSig } from "~/logic/lib/util";
 import { StatelessAsyncButton } from "~/views/components/StatelessAsyncButton";
 
@@ -24,7 +24,7 @@ interface NotebookProps {
   hideNicknames: boolean;
   baseUrl: string;
   rootUrl: string;
-  associations: Associations;
+  unreads: Unreads;
 }
 
 interface NotebookState {
@@ -84,6 +84,7 @@ export function Notebook(props: NotebookProps & RouteComponentProps) {
         book={book}
         contacts={!!notebookContacts ? notebookContacts : {}}
         hideNicknames={hideNicknames}
+        unreads={props.unreads}
         baseUrl={props.baseUrl}
       />
     </Col>

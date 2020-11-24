@@ -13,6 +13,7 @@ interface AuthorProps {
   hideAvatars: boolean;
   hideNicknames: boolean;
   children?: ReactNode;
+  unread?: boolean;
 }
 
 export function Author(props: AuthorProps) {
@@ -54,7 +55,7 @@ export function Author(props: AuthorProps) {
       >
         {name}
       </Box>
-      <Box ml={2} color="gray">
+      <Box ml={2} color={props.unread ? "blue" : "gray"}>
         {dateFmt}
       </Box>
       {props.children}

@@ -32,6 +32,7 @@
         graph+dejs-path:resource
         module+so
         description+so
+        index+(su ;~(pfix net (more net dem)))
     ==
   ::  parse date as @ud
   ::    TODO: move to zuse
@@ -53,16 +54,23 @@
     |=  jon=json
     [*^index *notification]
   ::
+  ++  read-graph-index
+    %-  ot
+    :~  index+index
+        target+(su ;~(pfix net (more net dem)))
+    ==
+  ::
   ++  action
     ^-  $-(json ^action)
     %-  of
     :~  seen+ul
         archive+notif-ref
-        unread+notif-ref
-        read+notif-ref
-        add+add
+        unread-note+notif-ref
+        read-note+notif-ref
+        add-note+add
         set-dnd+bo
-        read-index+index
+        read-since+read-graph-index
+        read-each+read-graph-index
     ==
   --
 ::
@@ -79,25 +87,46 @@
         %timebox  (timebox +.upd)
         %set-dnd  b+dnd.upd
         %count    (numb count.upd)
-        %unreads  (unreads unreads.upd)
         %more     (more +.upd)
+        %read-each  (read-graph +.upd)
+        %read-since  (read-graph +.upd)
+        %unread-each  (unread-each +.upd)
+        %unread-since  (unread-since +.upd)
+        %unreads   (unreads +.upd)
         ::
-          ?(%archive %read %unread)
+          ?(%archive %read-note %unread-note)
         (notif-ref +.upd)
     ==
     ::
     ++  unreads
-      |=  l=(list [^index @ud]) 
+      |=  l=(list [^index ^index-stats]) 
       ^-  json 
       :-  %a
       ^-  (list json)
       %+  turn  l
-      |=  [idx=^index unread=@ud]
+      |=  [idx=^index stats=^index-stats]
       %-  pairs
       :~  unread+(numb unread)
           index+(index idx)
       ==
     ::
+    ++  unread
+      |=  =^unreads
+      %+  frond
+        -.unreads
+      ?-  -.unreads
+        %since  (index:enjs:graph-store index.unreads)
+        %each   a+(turn ~(tap by indices.unreads) index:enjs:graph-store)
+      ==
+    ::
+    ++  index-stats
+      |=  stats=^index-stats
+      ^-  json
+      %-  pairs
+      :~  unreads+(unread unreads.stats)
+          notifications+(numb notifications.stats)
+          last+(time last-seen.stats)
+      ==
     ++  added
       |=  [tim=@da idx=^index not=^notification]
       ^-  json
@@ -139,13 +168,19 @@
         ==
       :: 
       ++  graph-index
-        |=  [group=resource graph=resource module=@t description=@t]
+        |=  $:  group=resource
+                graph=resource
+                module=@t
+                description=@t
+                idx=index:graph-store
+            ==
         ^-  json
         %-  pairs
         :~  group+s+(enjs-path:resource group)
             graph+s+(enjs-path:resource graph)
             module+s+module
             description+s+description
+            index+(index:enjs:graph-store idx)
         ==
       ::
       ++  group-index
@@ -220,6 +255,28 @@
           |=  [=^index =^notification]
           ^-  json
           (indexed-notification index notification)
+      ==
+    ::
+    ++  read-graph
+      |=  [=^index target=index:graph-store]
+      %-  pairs
+      :~  index+(^index index)
+          target+(index:enjs:graph-store target)
+      ==
+    ::
+    ++  unread-each
+      |=  [=^index target=index:graph-store tim=@da]
+      %-  pairs
+      :~  index+(^index index)
+          target+(index:enjs:graph-store target)
+          last+(time tim)
+      ==
+    ::
+    ++  unread-since
+      |=  [=^index tim=@da]
+      %-  pairs
+      :~  index+(^index index)
+          last+(time tim)
       ==
     --
   --

@@ -1,9 +1,10 @@
-import React  from 'react';
+import React from 'react';
 import { Row, Col, Anchor, Box, Text, BaseImage } from '@tlon/indigo-react';
 
 import { Sigil } from '~/logic/lib/sigil';
 import { Link } from 'react-router-dom';
 import { cite } from '~/logic/lib/util';
+import { Author } from "~/views/apps/publish/components/Author";
 
 import { roleForShip } from '~/logic/lib/group';
 
@@ -12,6 +13,8 @@ export const LinkItem = (props) => {
     node,
     nickname,
     avatar,
+    contacts,
+    unread,
     resource,
     hideAvatars,
     hideNicknames,
@@ -26,6 +29,7 @@ export const LinkItem = (props) => {
   const author = node.post.author;
   const index = node.post.index.split('/')[1];
   const size = node.children ? node.children.size : 0;
+  const date = node.post['time-sent'];
   const contents = node.post.contents;
   const hostname = URLparser.exec(contents[1].url) ? URLparser.exec(contents[1].url)[4] : null;
 
@@ -57,18 +61,22 @@ export const LinkItem = (props) => {
           <Text display='inline-block' overflow='hidden' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}>{contents[0].text}</Text>
             <Text ml="2" color="gray" display='inline-block' flexShrink='0'>{hostname} ↗</Text>
         </Anchor>
-        <Box width="100%">
-          <Text
-            fontFamily={showNickname ? 'sans' : 'mono'} pr={2}
+        <Row alignItems="center" width="100%">
+          <Author
+            contacts={contacts}
+            ship={author}
+            hideAvatars={hideAvatars}
+            hideNicknames={hideNicknames}
+            unread={unread}
+            date={date}
           >
-            {showNickname ? nickname : cite(author) }
-          </Text>
           <Link to={`${baseUrl}/${index}`}>
-            <Text color="gray">{size} comments</Text>
+            <Text ml="2" color="gray">{size} comments</Text>
           </Link>
           {(ourRole === 'admin' || node.post.author === window.ship)
             && (<Text color='red' ml='2' cursor='pointer' onClick={() => api.graph.removeNodes(`~${ship}`, name, [node.post.index])}>Delete</Text>)}
-        </Box>
+          </Author>
+        </Row>
       </Col>
     </Row>
   );

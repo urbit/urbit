@@ -3,6 +3,7 @@
 /-  store=hark-store, post, group-store, metadata-store, hook=hark-graph-hook
 /+  resource, metadata, default-agent, dbug, graph-store
 ::
+::
 ~%  %hark-graph-hook-top  ..is  ~
 |%
 +$  card  card:agent:gall
@@ -57,7 +58,10 @@
 ++  on-load
   |=  old=vase
   ^-  (quip card _this)
-  `this(state !<(state-0 old))
+  :_  this(state !<(state-0 old))
+  ?:  (~(has by wex.bowl) [/graph our.bowl %graph-store])
+    ~
+  ~[watch-graph:ha]
 ::
 ++  on-watch
   |=  =path
@@ -204,12 +208,7 @@
       ^-  (quip card _state)
       =^  child-cards  state
         (check-node-children node tube)
-      ?:  =(our.bowl author.post.node)
-        =^  self-cards  state
-          (self-post node)
-        :_  state
-        (weld child-cards self-cards)
-      =+  !<  notif-kind=(unit [name=@t parent-lent=@ud])
+      =+  !<  notif-kind=(unit [name=@t parent-lent=@ud mode=?(%each %since)])
           (tube !>([0 post.node]))
       ?~  notif-kind
         [child-cards state]
@@ -219,17 +218,25 @@
         name.u.notif-kind
       =/  parent=index:post
         (scag parent-lent.u.notif-kind index.post.node)
+      =/  notif-index=index:store
+        [%graph group rid module.metadata desc parent]
+      ?:  =(our.bowl author.post.node)
+        =^  self-cards  state
+          (self-post node notif-index mode.u.notif-kind)
+        :_  state
+        (weld child-cards self-cards)
+      :_  state
+      %+  weld  child-cards
+      :-  %^     update-unread-count
+            mode.u.notif-kind  notif-index 
+          [time-sent index]:post.node
       ?.  ?|  =(desc %mention)
               (~(has in watching) [rid parent])
           ==
-        [child-cards state]
-      =/  notif-index=index:store
-        [%graph group rid module.metadata desc]
+        ~
       =/  =contents:store
         [%graph (limo post.node ~)]
-      :_  state
-      %+  snoc  child-cards
-      (add-unread notif-index [time-sent.post.node %.n contents])
+      ~[(add-unread notif-index [time-sent.post.node %.n contents])]
     ::
     ++  is-mention
       |=  contents=(list content:post)
@@ -243,17 +250,35 @@
       $(contents t.contents)
     ::
     ++  self-post
-      |=  =node:graph-store
+      |=  $:  =node:graph-store
+              =index:store
+              mode=?(%since %each)
+          ==
       ^-  (quip card _state)
+      =|  cards=(list card)
+      =?  cards  ?=(%since mode)
+        :_  cards
+        (poke-hark %read-since index index.post.node)
       ?.  ?=(%.y watch-on-self)
-        [~ state]
-      `state(watching (~(put in watching) [rid index.post.node]))
+        [cards state]
+      :-  cards
+      state(watching (~(put in watching) [rid index.post.node]))
+    ::
+    ++  poke-hark
+      |=  =action:store
+      ^-  card
+      =-  [%pass / %agent [our.bowl %hark-store] %poke -]
+      hark-action+!>(action)
+    ::
+    ++  update-unread-count
+      |=  [mode=?(%since %each) =index:store time=@da ref=index:graph-store]
+      ?:  ?=(%since mode)
+        (poke-hark %unread-since index time)
+      (poke-hark %unread-each index ref time)
     ::
     ++  add-unread
       |=  [=index:store =notification:store]
-      ^-  card
-      =-  [%pass / %agent [our.bowl %hark-store] %poke -]
-      hark-action+!>([%add index notification])
+      (poke-hark %add-note index notification)
     ::
     --
   --

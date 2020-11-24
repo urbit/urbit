@@ -3,7 +3,7 @@ import { Box, Text, Col } from "@tlon/indigo-react";
 import f from "lodash/fp";
 import _ from "lodash";
 
-import { Associations, Association, Unreads } from "~/types";
+import { Associations, Association, Unreads, UnreadStats } from "~/types";
 import { alphabeticalOrder } from "~/logic/lib/util";
 import Tile from "../components/tiles/tile";
 
@@ -14,32 +14,29 @@ interface GroupsProps {
 const sortGroupsAlph = (a: Association, b: Association) =>
   alphabeticalOrder(a.metadata.title, b.metadata.title);
 
-const getKindUnreads = (associations: Associations) => (path: string) => (
-  kind: "chat" | "graph"
-): ((unreads: Unreads) => number) =>
+
+const getGraphUnreads = (associations: Associations, unreads: Unreads) => (path: string): number => 
   f.flow(
-    (x) => x[kind],
-    f.pickBy((_v, key) => associations[kind]?.[key]?.["group-path"] === path),
-    f.values,
+    (x) => x['graph'],
+    f.pickBy((_v, key) => associations.graph?.[key]["group-path"] === path),
+    f.map((x: Record<string, UnreadStats>) => 0), // x?.['/']?.unreads?.size),
     f.reduce(f.add, 0)
-  );
+  )(unreads);
 
 export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
-  const { associations, unreads, ...boxProps } = props;
+  const { associations, unreads, inbox, ...boxProps } = props;
 
   const groups = Object.values(associations?.contacts || {})
     .filter((e) => e?.["group-path"] in props.groups)
     .sort(sortGroupsAlph);
-  const getUnreads = getKindUnreads(associations || {});
+  const graphUnreads = getGraphUnreads(associations || {}, unreads);
 
   return (
     <>
       {groups.map((group) => {
         const path = group?.["group-path"];
-        const unreadCount = (["chat", "graph"] as const)
-          .map(getUnreads(path))
-          .map((f) => f(unreads))
-          .reduce(f.add, 0);
+        const unreadCount = graphUnreads(path)
+
         return (
           <Group
             unreads={unreadCount}
@@ -55,6 +52,7 @@ export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
 interface GroupProps {
   path: string;
   title: string;
+  updates?: number;
   unreads: number;
 }
 function Group(props: GroupProps) {

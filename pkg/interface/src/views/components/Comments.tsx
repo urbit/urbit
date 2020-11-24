@@ -6,14 +6,15 @@ import CommentInput from './CommentInput';
 import { Contacts } from '~/types/contact-update';
 import GlobalApi from '~/logic/api/global';
 import { FormikHelpers } from 'formik';
-import { GraphNode } from '~/types/graph-update';
+import { GraphNode, LocalUpdateRemoteContentPolicy, Unreads, Association } from '~/types';
 import { createPost, createBlankNodeWithChildPost } from '~/logic/api/graph';
 import { getLatestCommentRevision } from '~/logic/lib/publish';
-import { LocalUpdateRemoteContentPolicy } from '~/types';
 import { scanForMentions } from '~/logic/lib/graph';
+import { getLastSeen } from '~/logic/lib/hark';
 
 interface CommentsProps {
   comments: GraphNode;
+  association: Association;
   name: string;
   ship: string;
   editCommentId: string;
@@ -26,7 +27,7 @@ interface CommentsProps {
 }
 
 export function Comments(props: CommentsProps) {
-  const { comments, ship, name, api, baseUrl, history} = props;
+const { association, comments, ship, name, api, history } = props;
 
   const onSubmit = async (
     { comment },
@@ -87,6 +88,20 @@ export function Comments(props: CommentsProps) {
       return val;
     }, '');
   }
+  const parentIndex = `/${comments?.post.index.slice(1).split('/')[0]}`;
+
+  const children = Array.from(comments.children);
+
+
+  const [latestIdx, latest] = children?.[0] || [];
+  useEffect(() => {
+    return latest 
+      ? () => api.hark.markSinceAsRead(association, parentIndex, 'comment', latest.post.index) 
+      : () => {};
+  }, [association])
+
+
+  const lastSeen = getLastSeen(props.unreads, association['app-path'], parentIndex) || latestIdx || bigInt.zero;
 
   return (
     <Col>
@@ -99,7 +114,7 @@ export function Comments(props: CommentsProps) {
           initial={commentContent}
         />
       ) : null )}
-      {Array.from(comments.children).reverse()
+      {children.reverse()
         .map(([idx, comment]) => {
           return (
             <CommentItem
@@ -109,6 +124,7 @@ export function Comments(props: CommentsProps) {
               api={api}
               name={name}
               ship={ship}
+              unread={lastSeen.lt(idx)}
               hideNicknames={props.hideNicknames}
               hideAvatars={props.hideAvatars}
               remoteContentPolicy={props.remoteContentPolicy}

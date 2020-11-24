@@ -25,7 +25,6 @@ export default class Landscape extends Component<LandscapeProps, {}> {
     document.title = 'OS1 - Landscape';
 
     this.props.subscription.startApp('groups');
-    this.props.subscription.startApp('chat');
     this.props.subscription.startApp('graph');
   }
 

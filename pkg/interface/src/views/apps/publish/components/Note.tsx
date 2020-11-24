@@ -10,12 +10,14 @@ import { NoteNavigation } from "./NoteNavigation";
 import GlobalApi from "~/logic/api/global";
 import { getLatestRevision, getComments } from '~/logic/lib/publish';
 import { Author } from "./Author";
-import { Contacts, GraphNode, Graph, LocalUpdateRemoteContentPolicy } from "~/types";
+import { Contacts, GraphNode, Graph, LocalUpdateRemoteContentPolicy, Association, Unreads } from "~/types";
 
 interface NoteProps {
   ship: string;
   book: string;
   note: GraphNode;
+  unreads: Unreads;
+  association: Association;
   notebook: Graph;
   contacts: Contacts;
   api: GlobalApi;
@@ -39,8 +41,13 @@ export function Note(props: NoteProps & RouteComponentProps) {
     props.history.push(rootUrl);
   };
 
+
   const comments = getComments(note);
   const [revNum, title, body, post] = getLatestRevision(note);
+  useEffect(() => {
+    api.hark.markEachAsRead(props.association, '/', post.index, 'note', 'publish');
+  }, [props.association]);
+
 
   const noteId = bigInt(note.post.index.split('/')[1]);
 
@@ -108,8 +115,10 @@ export function Note(props: NoteProps & RouteComponentProps) {
       <Comments
         ship={ship}
         name={props.book}
+        unreads={props.unreads}
         comments={comments}
         contacts={props.contacts}
+        association={props.association}
         api={props.api}
         hideNicknames={props.hideNicknames}
         hideAvatars={props.hideAvatars}

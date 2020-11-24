@@ -106,12 +106,12 @@ export default class GlobalStore extends BaseStore<StoreState> {
         mentions: false,
         watching: [],
       },
-      notificationsCount: 0,
       unreads: {
-        graph: {},
-        group: {},
         chat: {},
-      }
+        graph: {},
+        group: {}
+      },
+      notificationsCount: 0
     };
   }
 

@@ -13,6 +13,7 @@ import {
   getLatestRevision,
   getSnippet,
 } from "~/logic/lib/publish";
+import {Unreads} from "~/types";
 
 interface NotePreviewProps {
   host: string;
@@ -21,6 +22,7 @@ interface NotePreviewProps {
   contact?: Contact;
   hideNicknames?: boolean;
   baseUrl: string;
+  unreads: Unreads;
 }
 
 const WrappedBox = styled(Box)`
@@ -52,10 +54,8 @@ export function NotePreview(props: NotePreviewProps) {
   const date = moment(post["time-sent"]).fromNow();
   const url = `${props.baseUrl}/note/${post.index.split("/")[1]}`;
 
-  // stubbing pending notification-store
-  const isRead = true;
-
-  const [rev, title, body] = getLatestRevision(node);
+  const [rev, title, body, content] = getLatestRevision(node);
+  const isUnread = props.unreads.graph?.[`/ship/${props.host}/${props.book}`]?.['/']?.unreads?.has(content.index);
 
   const snippet = getSnippet(body);
 
@@ -79,7 +79,7 @@ export function NotePreview(props: NotePreviewProps) {
           >
             {name}
           </Box>
-          <Box color={isRead ? "gray" : "green"} mr={3}>
+          <Box color={isUnread ? "blue" : "gray"} mr={3}>
             {date}
           </Box>
           <Box mr={3}>{commentDesc}</Box>
