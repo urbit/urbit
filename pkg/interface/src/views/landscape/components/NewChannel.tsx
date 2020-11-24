@@ -38,6 +38,7 @@ interface NewChannelProps {
   api: GlobalApi;
   associations: Associations;
   contacts: Rolodex;
+  chatSynced: any;
   groups: Groups;
   group?: string;
   workspace: Workspace;
@@ -94,6 +95,9 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
 
       if (!group) {
         await waiter(p => Boolean(p?.groups?.[`/ship/~${window.ship}/${resId}`]));
+      }
+      if (moduleType === 'chat') {
+        await waiter(p => Boolean(p?.chatSynced?.[`/~${window.ship}/${resId}`]));
       }
       actions.setStatus({ success: null });
       const resourceUrl = parentPath(location.pathname);
