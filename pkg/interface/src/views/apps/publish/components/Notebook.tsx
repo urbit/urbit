@@ -5,7 +5,7 @@ import { Box, Button, Text, Row, Col } from '@tlon/indigo-react';
 import { Groups } from '~/types/group-update';
 import { Contacts, Rolodex } from '~/types/contact-update';
 import GlobalApi from '~/logic/api/global';
-import { Associations, Graph, Association, LocalUpdateRemoteContentPolicy } from '~/types';
+import { Associations, Graph, Association } from '~/types';
 
 interface NotebookProps {
   api: GlobalApi;
@@ -50,9 +50,11 @@ export function Notebook(props: NotebookProps & RouteComponentProps) {
 
   const contact = notebookContacts?.[ship];
   const isOwn = `~${window.ship}` === ship;
+  let isWriter = true;
 
-  const isWriter =
-    isOwn || group.tags?.publish?.[`writers-${book}`]?.has(window.ship);
+  if (group.tags?.publish?.[`writers-${book}`]) {
+    isWriter = isOwn || group.tags?.publish?.[`writers-${book}`]?.has(window.ship);
+  }
 
   const showNickname = contact?.nickname && !hideNicknames;
 
@@ -60,8 +62,7 @@ export function Notebook(props: NotebookProps & RouteComponentProps) {
     <Col gapY="4" pt={4} mx="auto" px={3} maxWidth="768px">
       <Row justifyContent="space-between">
         <Box>
-          <Text> {metadata?.title}</Text>
-          <br />
+          <Text display='block'>{metadata?.title}</Text>
           <Text color="lightGray">by </Text>
           <Text fontFamily={showNickname ? 'sans' : 'mono'}>
             {showNickname ? contact?.nickname : ship}
