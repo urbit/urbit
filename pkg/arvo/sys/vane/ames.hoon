@@ -342,7 +342,7 @@
 ::
 ++  is-valid-rank
   ~/  %is-valid-rank
-  |=  [=ship size=@ubB]
+  |=  [=ship size=@ubC]
   ^-  ?
   .=  size
   ?-  (clan:title ship)
@@ -447,7 +447,7 @@
 ::
 ++  decode-ship-size
   ~/  %decode-ship-size
-  |=  rank=@ubB
+  |=  rank=@ubC
   ^-  @
   ::
   ?+  rank  !!
@@ -520,8 +520,8 @@
 ::
 +$  packet
   $:  dyad
-      sndr-tick=@ubB
-      rcvr-tick=@ubB
+      sndr-tick=@ubC
+      rcvr-tick=@ubC
       origin=(unit @uxaddress)
       content=@uxcontent
   ==
