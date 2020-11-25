@@ -162,33 +162,44 @@
       =|  cards=(list card:agent:gall)
       |^ 
       ?-  -.old
+          %0  $(-.old %1)
+        ::
           %1  
         =^  og-cards   pull-hook
           (on-load:og inner-state.old)
-        [(weld cards og-cards) this(state old)]
-        ::
-          %0
-        %_    $
-            -.old  %1
-          ::
-            cards
-          (weld cards (missing-subscriptions tracking.old))
-        ==
+        =.  state  old
+        =/  restart-cards
+          (restart-subscriptions tracking.old)
+        :_  this
+        :(weld restart-cards cards og-cards)
       ==
-      ++  missing-subscriptions
-        |=  tracking=(map resource ship)
+      ::
+      ++  check-subscription
+        |=  [rid=resource =ship]
+        ^-  ?
+        %+  lien
+          ~(tap in ~(key by wex.bowl))
+        |=  [=wire her=^ship app=term]
+        ^-  ?
+        ?&  =(app push-hook-name.config)
+            =(ship her)
+            =((scag 4 wire) /helper/pull-hook/pull/resource)
+            =(`rid (de-path-soft:resource (slag 4 wire)))
+        ==
+      ::
+      ++  restart-subscriptions
+        |=  pulling=(map resource ship)
         ^-  (list card:agent:gall)
         %+  murn
-          ~(tap by tracking)
-        |=  [rid=resource =ship]
+          ~(tap by pulling)
+        |=  [rid=resource =ship] 
         ^-  (unit card:agent:gall)
-        =/  =path
-          resource+(en-path:resource rid)
-        =/  =wire
-          (make-wire pull+path)
-        ?:  (~(has by wex.bowl) [wire ship push-hook-name.config])
-          ~
-        `[%pass wire %agent [ship push-hook-name.config] %watch path]
+        ?:  (check-subscription rid ship)  ~
+        ~&  >>  "restarting: {<rid>}"
+        =/  pax=(unit path)
+          (on-pull-kick:og rid)
+        ?~  pax  ~
+        `(watch-resource:hc rid u.pax)
       --
     ::
     ++  on-save
@@ -196,6 +207,7 @@
       =.  inner-state
         on-save:og
       !>(state)
+    ::
     ++  on-poke
       |=  [=mark =vase]
       ^-  [(list card:agent:gall) agent:gall]
@@ -308,18 +320,23 @@
     ::
     ++  remove
       |=  =resource
-      :-  ~[(leave-resource resource)]
+      :-  (leave-resource resource)
       state(tracking (~(del by tracking) resource))
     --
   ::
   ++  leave-resource
     |=  rid=resource
-    ^-  card
-    =/  =ship
-      (~(got by tracking) rid)
-    =/  =wire
-      (make-wire pull+resource+(en-path:resource rid))
-    [%pass wire %agent [ship push-hook-name.config] %leave ~]
+    ^-  (list card)
+    %+  roll
+      ~(tap in ~(key by wex.bowl))
+    |=  [[=wire her=ship app=term] out=(list card)] 
+    ?.  =(`rid (de-path-soft:resource (slag 4 wire)))
+      out
+    =/  him=(unit ship)
+      (~(get by tracking) rid)
+    ?.  =(`her him)  out
+    :_  out
+    [%pass wire %agent [her push-hook-name.config] %leave ~]
 
   ++  watch-resource
     |=  [rid=resource pax=path]
