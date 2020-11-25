@@ -1071,18 +1071,6 @@
 ::
 ++  mug                                                 ::  mug with murmur3
   ~/  %mug
-  |=  a/*
-  |^  (trim ?@(a a (mix $(a -.a) (mix 0x7fff.ffff $(a +.a)))))
-  ++  trim                                              ::  31-bit nonzero
-    |=  key/@
-    =+  syd=0xcafe.babe
-    |-  ^-  @
-    =+  haz=(muk syd (met 3 key) key)
-    =+  ham=(mix (rsh 0 31 haz) (end 0 31 haz))
-    ?.(=(0 ham) ham $(syd +(syd)))
-  --
-++  gum
-  ~/  %gum
   |=  a=*
   |^  ?@  a  (mum 0xcafe.babe 0x7fff a)
       =/  b  (cat 5 $(a -.a) $(a +.a))
