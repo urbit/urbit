@@ -164,8 +164,9 @@
       %force-retry
     [retry-pend-addr state]
   ==
-::  if status is %connected, retry all pending address lookups
-::  only retry if previously disconnected
+::  +handle-provider-status: handle connectivity updates from provider
+::    if status is %connected, retry all pending address lookups
+::    only retry if previously disconnected
 ::
 ++  handle-provider-status
   |=  s=status:bp
@@ -190,11 +191,11 @@
   ?.  ?=(%.y -.upd)  `state
   ?-  -.body.p.upd
       %address-info
-    =/  ureq  (~(get by pend-addr) req-id.p.upd)
-    ?~  ureq  `state
+    =+  req=(~(get by pend-addr) req-id.p.upd)
+    ?~  req  `state
     :_  state(pend-addr (~(del by pend-addr) req-id.p.upd))
     :~  %-  poke-wallet-store
-        :*  %address-info  xpub.u.ureq  chyg.u.ureq  idx.u.ureq
+        :*  %address-info  xpub.u.req  chyg.u.req  idx.u.req
             utxos.body.p.upd  used.body.p.upd  blockcount.body.p.upd
         ==
     ==
@@ -211,7 +212,7 @@
   ^-  (quip card _state)
   ?-  -.req
       %scan-address
-    =/  ri=req-id:bp  (gen-req-id:bp eny.bowl)
+    =+  ri=(gen-req-id:bp eny.bowl)
     :_  state(pend-addr (~(put by pend-addr) ri req))
     ?~  provider  ~
     ?:  provider-connected
@@ -246,9 +247,9 @@
       `state(def-wallet `xpub.upd)
     `state
   ==
-::  update piym with a payment
-::  moons are stored with their sponsor
-::  if ship already has a payment for the payer ship, replace
+::  +update-piym: store an expected incoming payment by ship
+::    moons are stored with their sponsor
+::    if ship already has a payment for the payer ship, replace
 ::
 ++  update-piym
   |=  p=payment
@@ -257,20 +258,20 @@
     ?:  =(%earl (clan:title payer.p))
       (sein:title our.bowl now.bowl payer.p)
     payer.p
-  =/  ups=(unit (list payment))
-    (~(get by piym) fam)
-  ?~  ups  (insert fam ~[p])
+  =+  ps=(~(get by piym) fam)
+  ?~  ps  (insert fam ~[p])
   ~|  "btc-wallet-hook: too many address requests from moons"
-  ?>  (lte (lent u.ups) moon-limit.state)
+  ?>  (lte (lent u.ps) moon-limit.state)
   =/  i=(unit @)
-    (find ~[payer.p] (turn u.ups |=([* py=ship *] py)))
-  ?~  i  (insert fam [p u.ups])
-  (insert fam (snap u.ups u.i p))
+    (find ~[payer.p] (turn u.ps |=([* py=ship *] py)))
+  ?~  i  (insert fam [p u.ps])
+  (insert fam (snap u.ps u.i p))
   ++  insert
     |=  [fam=ship ps=(list payment)]
     state(piym (~(put by piym) fam ps))
   --
-::  insert rawtx into our poym txbu, if it exists
+::  +update-poym-txis:
+::    update outgoing payment with a rawtx, if the txid is in poym's txis
 ::
 ++  update-poym-txis
   |=  [txis=(list txi:bws) =txid rt=rawtx]
@@ -281,7 +282,7 @@
   =?  txis  =(txid txid.utxo.ith)
    (snap txis i `txi:bws`ith(ur `rt))
   $(i +(i))
-::  poym-ready: do we have all rawtx for inputs?
+::  +poym-ready: whether all txis in poym have rawtxs
 ::
 ++  poym-ready
   ^-  ?
