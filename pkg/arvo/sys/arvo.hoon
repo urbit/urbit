@@ -1645,7 +1645,7 @@
                ::
                =?  taf  =(~ dir.taf)     ::  XX TMI
                  ~|  %larval-need-kernel
-                 ?>  ?=(^ tub)
+                 ?>  &(?=(^ tub) ?=(^ hun.p.u.tub))
                  (~(gas de taf) q.u.tub)
                ::
                =^  job  taf  [p q]:(~(adorn adapt:part taf) del |)
