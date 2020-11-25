@@ -113,6 +113,6 @@ export function getComments(node: GraphNode): GraphNode {
 
 export function getSnippet(body: string) {
   const start = body.slice(0, body.indexOf('\n', 2));
-  return start === body ? start : `${start}...`;
+  return (start === body || start.startsWith("![")) ? start : `${start}...`;
 }
 

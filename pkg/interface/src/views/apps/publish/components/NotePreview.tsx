@@ -3,7 +3,7 @@ import moment from "moment";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import ReactMarkdown from "react-markdown";
-import { Col, Box, Text } from "@tlon/indigo-react";
+import { Col, Box, Text, Image } from "@tlon/indigo-react";
 
 import { cite } from "~/logic/lib/util";
 import { Contact } from "~/types/contact-update";
@@ -67,7 +67,10 @@ export function NotePreview(props: NotePreviewProps) {
           <Text fontSize='14px'>
           <ReactMarkdown
             unwrapDisallowed
-            allowedTypes={["text", "root", "break", "paragraph"]}
+            allowedTypes={["text", "root", "break", "paragraph", "image"]}
+            renderers={{
+              image: (props) => <Image src={props.src} maxHeight='300px' style={{ objectFit: 'cover' }}/>
+            }}
             source={snippet}
           />
           </Text>
