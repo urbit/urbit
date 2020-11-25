@@ -4,7 +4,7 @@
 /-  group-hook,
     *contact-hook,
     *contact-view,
-    *invite-store,
+    inv=invite-store,
     *metadata-hook,
     *metadata-store,
     *group
@@ -44,7 +44,7 @@
   ++  on-init
     ^-  (quip card _this)
     :_  this(invite-created %.y)
-    :~  (invite-poke:cc [%create /contacts])
+    :~  (invite-poke:cc [%create %contacts])
         [%pass /inv %agent [our.bol %invite-store] %watch /invitatory/contacts]
         [%pass /group %agent [our.bol %group-store] %watch /groups]
     ==
@@ -467,20 +467,10 @@
           (contact-poke [%delete path])
         (contact-poke [%remove path ship])
     ==
-  ::
-  ++  send-invite-poke
-    |=  [=path =ship]
-    ^-  card
-    =/  =invite
-      :*  our.bol  %contact-hook
-          path  ship  ''
-      ==
-    =/  act=invite-action  [%invite /contacts (shaf %msg-uid eny.bol) invite]
-    [%pass / %agent [our.bol %invite-hook] %poke %invite-action !>(act)]
   --
 ::
 ++  invite-poke
-  |=  act=invite-action
+  |=  act=action:inv
   ^-  card
   [%pass / %agent [our.bol %invite-store] %poke %invite-action !>(act)]
 ::

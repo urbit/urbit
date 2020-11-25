@@ -61,7 +61,7 @@ where
 
 import Urbit.Prelude
 
-import Network.Socket        hiding (recvFrom, sendTo)
+import Network.Socket
 import Urbit.Arvo            hiding (Fake)
 
 import qualified Data.Map.Strict as M

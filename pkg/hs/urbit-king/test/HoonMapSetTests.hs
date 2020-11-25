@@ -70,7 +70,7 @@ treeRTMug inp = do
     non <- cueBSExn byt
     tee <- fromNounExn non
     mug <- evaluate $ mug $ toNoun $ treeTestsIdentity tee
-    pure $ Text.Lazy.Encoding.encodeUtf8 $ tlshow (mug :: Natural)
+    pure $ Text.Lazy.Encoding.encodeUtf8 $ tlshow mug
 
 goldenPill
     :: TestName

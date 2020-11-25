@@ -20,8 +20,15 @@ import { useLocalStorageState } from "~/logic/lib/useLocalStorageState";
 import { getGroupFromWorkspace } from "~/logic/lib/workspace";
 import { SidebarAppConfigs } from './types';
 import { SidebarList } from "./SidebarList";
-import { SidebarInvite } from './SidebarInvite';
 import { roleForShip } from "~/logic/lib/group";
+
+const ScrollbarLessCol = styled(Col)`
+  scrollbar-width: none !important;
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
+`;
 
 
 interface SidebarProps {
@@ -55,27 +62,6 @@ const SidebarStickySpacer = styled(Box)`
   }
 `;
 
-const inviteItems = (invites, api) => {
-  const returned = [];
-  Object.keys(invites).filter((e) => {
-    return e !== '/contacts';
-  }).map((appKey) => {
-    const app = invites[appKey];
-    Object.keys(app).map((uid) => {
-      const invite = app[uid];
-      const inviteItem =
-        <SidebarInvite
-          key={uid}
-          invite={invite}
-          onAccept={() => api.invite.accept(appKey, uid)}
-          onDecline={() => api.invite.decline(appKey, uid)}
-        />;
-        returned.push(inviteItem);
-    });
-  });
-  return returned;
-};
-
 export function Sidebar(props: SidebarProps) {
   const { invites, api, associations, selected, apps, workspace } = props;
   const groupPath = getGroupFromWorkspace(workspace);
@@ -87,22 +73,16 @@ export function Sidebar(props: SidebarProps) {
   const [config, setConfig] = useLocalStorageState<SidebarListConfig>(
     `group-config:${groupPath || "home"}`,
     {
-      sortBy: "asc",
+      sortBy: "lastUpdated",
       hideUnjoined: false,
     }
   );
-  const sidebarInvites = (workspace?.type === 'home')
-    ? inviteItems(invites, api) : null;
 
   const role = props.groups?.[groupPath] ? roleForShip(props.groups[groupPath], window.ship) : undefined;
   const isAdmin = (role === "admin") || (workspace?.type === 'home');
 
-  const newStyle = {
-    display: isAdmin ? "block" : "none"
-  };
-
   return (
-    <Col
+    <ScrollbarLessCol
       display={display}
       width="100%"
       gridRow="1/2"
@@ -112,24 +92,23 @@ export function Sidebar(props: SidebarProps) {
       borderRightColor="washedGray"
       overflowY="scroll"
       fontSize={0}
-      bg="white"
       position="relative"
     >
       <GroupSwitcher
         associations={associations}
         recentGroups={props.recentGroups}
         baseUrl={props.baseUrl}
+        isAdmin={isAdmin}
         workspace={props.workspace}
       />
       <SidebarListHeader
-        contacts={props.contacts} 
+        contacts={props.contacts}
         baseUrl={props.baseUrl}
         groups={props.groups}
         initialValues={config}
         handleSubmit={setConfig}
-        selected={selected || ""} 
+        selected={selected || ""}
         workspace={workspace} />
-      {sidebarInvites}
       <SidebarList
         config={config}
         associations={associations}
@@ -142,7 +121,7 @@ export function Sidebar(props: SidebarProps) {
       <SidebarStickySpacer flexShrink={0} />
       <Box
         flexShrink="0"
-        display="flex"
+        display={isAdmin ? "flex" : "none"}
         justifyContent="center"
         position="sticky"
         bottom={"8px"}
@@ -151,7 +130,6 @@ export function Sidebar(props: SidebarProps) {
         py="2"
       >
         <Link
-          style={newStyle}
           to={!!groupPath ? `/~landscape${groupPath}/new` : `/~landscape/home/new`}
         >
           <Box
@@ -165,6 +143,6 @@ export function Sidebar(props: SidebarProps) {
           </Box>
         </Link>
       </Box>
-    </Col>
+    </ScrollbarLessCol>
   );
 }

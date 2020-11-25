@@ -17,6 +17,8 @@
       {$listen-api api/term event/term}
       {$export app/@t}
       {$import app/@t base64-jam/@t}
+      {$export-all ~}
+      {$import-all base64-jam/@t}
   ==
 ++  sink
   $%  {$stdout ~}

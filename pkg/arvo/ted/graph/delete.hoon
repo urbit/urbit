@@ -41,6 +41,15 @@
     (poke-our %graph-store %graph-update !>([%0 now.bowl %remove-graph rid]))
   ;<  ~  bind:m
     (poke-our %graph-push-hook %push-hook-action !>([%remove rid]))
+  ;<  ~  bind:m
+    %+  poke-our  %metadata-hook
+    metadata-hook-action+!>([%remove (en-path:resource rid)])
+  ;<  ~  bind:m
+    %+  poke-our  %metadata-store
+    :-  %metadata-action
+    !>  :+  %remove 
+      (en-path:resource rid)
+    [%graph (en-path:resource rid)]
   (pure:m ~)
 --
 ::

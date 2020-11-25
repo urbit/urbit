@@ -2050,7 +2050,7 @@
   ::
   %+  rush  u.for
   ;~  sfix
-    ;~(pose (stag %ipv4 ip4) (stag %ipv6 (ifix [lac rac] ip6)))
+    ;~(pose (stag %ipv4 ip4) (stag %ipv6 (ifix [sel ser] ip6)))
     ;~(pose ;~(pfix col dim:ag) (easy ~))
   ==
 ::

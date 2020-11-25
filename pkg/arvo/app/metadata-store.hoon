@@ -10,7 +10,7 @@
 ::  encode group-path and app-path using (scot %t (spat group-path))
 ::
 ::  +watch paths:
-::  /all                                  assocations + updates
+::  /all                                  associations + updates
 ::  /updates                              just updates
 ::  /app-name/%app-name                   specific app's associations + updates
 ::
@@ -57,6 +57,7 @@
 +$  state-3   [%3 base-state-1]
 +$  state-4   [%4 base-state-1]
 +$  state-5   [%5 base-state-1]
++$  state-6   [%6 base-state-1]
 +$  versioned-state
   $%  state-0
       state-1
@@ -64,10 +65,11 @@
       state-3
       state-4
       state-5
+      state-6
   ==
 --
 ::
-=|  state-5
+=|  state-6
 =*  state  -
 %+  verb  |
 %-  agent:dbug
@@ -86,29 +88,37 @@
     =/  old  !<(versioned-state vase)
     =|  cards=(list card)
     |^
-    ?:  ?=(%5 -.old)
+    ?:  ?=(%6 -.old)
       [cards this(state old)]
-    ?:  ?=(%4 -.old)
-      %_  $
-        -.old  %5
-      ::
-          group-indices.old
-        %-  ~(gas ju *(jug group-path md-resource))
-        ~(tap in ~(key by associations.old))
-      ::
-          app-indices.old
-        %-  ~(gas ju *(jug app-name [group-path app-path]))
-        %+  turn  ~(tap in ~(key by associations.old))
-        |=  [g=group-path r=md-resource]
-        ^-  [app-name [group-path app-path]]
-        [app-name.r [g app-path.r]]
+    ?:  ?=(%5 -.old)
+      =/  =^associations
+        (migrate-app-to-graph-store %publish associations.old)
+      %_    $
+        -.old  %6
+        associations.old  associations
       ::
           resource-indices.old
-        %-  ~(gas ju *(jug md-resource group-path))
-        %+  turn  ~(tap in ~(key by associations.old))
-        |=  [g=group-path r=md-resource]
-        ^-  [md-resource group-path]
-        [r g]
+        (rebuild-resource-indices associations)
+        ::
+          app-indices.old
+        (rebuild-app-indices associations)
+        ::
+          group-indices.old
+        (rebuild-group-indices associations)
+      ==
+
+    ?:  ?=(%4 -.old)
+      %_    $
+        -.old  %5
+        ::
+          resource-indices.old
+        (rebuild-resource-indices associations.old)
+        ::
+          app-indices.old
+        (rebuild-app-indices associations.old)
+        ::
+          group-indices.old
+        (rebuild-group-indices associations.old)
       ==
     ?:  ?=(%3 -.old)
       $(old [%4 +.old])
@@ -146,6 +156,43 @@
         resource-indices  (migrate-resource-indices resource-indices.old)
       ==
     $(old new-state-1)
+    ::
+    ++  rebuild-resource-indices
+      |=  =^associations
+      %-  ~(gas ju *(jug md-resource group-path))
+      %+  turn  ~(tap in ~(key by associations))
+      |=  [g=group-path r=md-resource]
+      ^-  [md-resource group-path]
+      [r g] 
+    ::
+    ++  rebuild-group-indices
+      |=  =^associations 
+      %-  ~(gas ju *(jug group-path md-resource))
+      ~(tap in ~(key by associations))
+    ::
+    ++  rebuild-app-indices
+      |=  =^associations
+      %-  ~(gas ju *(jug app-name [group-path app-path]))
+      %+  turn  ~(tap in ~(key by associations))
+      |=  [g=group-path r=md-resource]
+      ^-  [app-name [group-path app-path]]
+      [app-name.r [g app-path.r]]
+
+    ::
+    ++  migrate-app-to-graph-store
+      |=  [app=@tas =^associations]
+      ^+  associations
+      %-  malt
+      %+  turn  ~(tap by associations)
+      |=  [[=group-path =md-resource] m=metadata]
+      ^-  [[^group-path ^md-resource] metadata]
+      ?.  =(app-name.md-resource app)  
+        [[group-path md-resource] m]
+      =/  new-app-path=path
+        ?.  ?=([@ @ ~] app-path.md-resource)
+          app-path.md-resource
+        ship+app-path.md-resource
+      [[group-path [%graph new-app-path]] m(module app)]
     ::
     ++  poke-md-hook
       |=  act=metadata-hook-action
