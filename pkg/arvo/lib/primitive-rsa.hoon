@@ -5,7 +5,7 @@
 |%
 ::  +key:rsa: rsa public or private key
 ::
-+=  key
++$  key
   $:  ::  pub:  public parameters (n=modulus, e=pub-exponent)
       ::
       pub=[n=@ux e=@ux]

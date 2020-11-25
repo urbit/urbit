@@ -121,7 +121,7 @@
   ++  address  @ux
   ::  event location
   ::
-  +=  event-id  [block=@ud log=@ud]
+  +$  event-id  [block=@ud log=@ud]
   ::
   ++  events  (set event-id)
   --
@@ -161,7 +161,7 @@
         ==
     ==
   ::
-  +=  dnses  [pri=@t sec=@t ter=@t]
+  +$  dnses  [pri=@t sec=@t ter=@t]
   ::
   ++  diff-azimuth
     $%  [%point who=@p dif=diff-point]
@@ -1575,7 +1575,7 @@
   ::   Used on both the proxy (ward) and upstream sides for
   ::   sending/receiving proxied-request notifications.
   ::
-  +=  prox
+  +$  prox
     $:  :: por: tcp port
         ::
         por=@ud
@@ -1970,7 +1970,7 @@
     ::
     +$  seed  [who=ship lyf=life key=ring sig=(unit oath:pki)]
     ::
-    +=  task                                            ::  in request ->$
+    +$  task                                            ::  in request ->$
       $~  [%vega ~]                                     ::
       $%  [%dawn dawn-event]                            ::  boot from keys
           [%fake =ship]                                 ::  fake boot
@@ -4218,9 +4218,9 @@
         as-octs=as-octs:mimes:html
     ~%  %secp  +<  ~
     |%
-    +=  jacobian   [x=@ y=@ z=@]                    ::  jacobian point
-    +=  point      [x=@ y=@]                        ::  curve point
-    +=  domain
+    +$  jacobian   [x=@ y=@ z=@]                    ::  jacobian point
+    +$  point      [x=@ y=@]                        ::  curve point
+    +$  domain
       $:  p=@                                       ::  prime modulo
           a=@                                       ::  y^2=x^3+ax+b
           b=@                                       ::
@@ -4695,7 +4695,7 @@
     ::
     ::  structures
     ::
-    +=  argon-type  ?(%d %i %id %u)
+    +$  argon-type  ?(%d %i %id %u)
     ::
     ::  shorthands
     ::

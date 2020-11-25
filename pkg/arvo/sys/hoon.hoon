@@ -12642,11 +12642,11 @@
         ::
           (stag %code (ifix [tic tic] (calf tic)))
         ::
-        ::  ++arm, +-arm, +$arm, +*arm, ++arm:core, ...
+        ::  ++arm, +$arm, +*arm, ++arm:core, ...
         ::
           %+  stag  %code
           ;~  plug
-            lus  ;~(pose lus hep buc tar)
+            lus  ;~(pose lus buc tar)
             low  (star ;~(pose nud low hep col))
           ==
         ::
@@ -13375,10 +13375,7 @@
     ++  boog  !:                                        ::  core arms
       %+  knee  [p=*term q=*hoon]  |.  ~+
       ;~  pose
-        ;~  pfix  ;~  pose
-                    (jest '++')
-                    (jest '+-')   ::  XX deprecated
-                  ==
+        ;~  pfix  (jest '++')
           ;~  plug
             ;~(pfix gap ;~(pose (cold %$ buc) sym))
             ;~(pfix gap loaf)
@@ -13388,7 +13385,7 @@
         %+  cook
           |=  {b/term d/spec}
           [b [%ktcl [%name b d]]]
-        ;~  pfix  ;~(pose (jest '+=') (jest '+$'))
+        ;~  pfix  (jest '+$')
           ;~  plug
             ;~(pfix gap sym)
             ;~(pfix gap loan)

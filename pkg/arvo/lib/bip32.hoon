@@ -18,7 +18,7 @@
 ::  pif:  parent fingerprint (4 bytes)
 |_  [prv=@ pub=point.ecc cad=@ dep=@ud ind=@ud pif=@]
 ::
-+=  keyc  [key=@ cai=@]  ::  prv/pub key + chain code
++$  keyc  [key=@ cai=@]  ::  prv/pub key + chain code
 ::
 ::  elliptic curve operations and values
 ::
