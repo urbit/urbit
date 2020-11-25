@@ -1,12 +1,12 @@
 import React from "react";
-import { Col, Box } from "@tlon/indigo-react";
-import { cite } from "~/logic/lib/util";
-import { Note } from "~/types/publish-update";
-import { Contact } from "~/types/contact-update";
-import ReactMarkdown from "react-markdown";
 import moment from "moment";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import ReactMarkdown from "react-markdown";
+import { Col, Box, Text } from "@tlon/indigo-react";
+
+import { cite } from "~/logic/lib/util";
+import { Contact } from "~/types/contact-update";
 import { GraphNode } from "~/types/graph-update";
 import {
   getComments,
@@ -62,8 +62,8 @@ export function NotePreview(props: NotePreviewProps) {
   return (
     <Link to={url}>
       <Col mb={4}>
-        <WrappedBox mb={1}>{title}</WrappedBox>
-        <WrappedBox mb={1}>
+        <WrappedBox mb={1}><Text bold>{title}</Text></WrappedBox>
+        <WrappedBox mb={1} className="md">
           <ReactMarkdown
             unwrapDisallowed
             allowedTypes={["text", "root", "break", "paragraph"]}
