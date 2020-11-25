@@ -6,25 +6,24 @@ import { Sigil } from "~/logic/lib/sigil"
 import { uxToHex, cite } from "~/logic/lib/util";
 import { Contacts, Rolodex } from "~/types/contact-update";
 import OverlaySigil from "./OverlaySigil";
-import { Group, Association, LocalUpdateRemoteContentPolicy } from "~/types";
+import { Group, Association } from "~/types";
 import GlobalApi from "~/logic/api/global";
 import { useHistory } from "react-router-dom";
 
 interface AuthorProps {
-  contacts: Rolodex;
+  contacts: Contacts;
   ship: string;
   date: number;
   showImage?: boolean;
   hideAvatars: boolean;
   hideNicknames: boolean;
   children?: ReactNode;
-  remoteContentPolicy: LocalUpdateRemoteContentPolicy;
   group: Group;
   api: GlobalApi;
 }
 
 export default function Author(props: AuthorProps) {
-  const { contacts, ship = '', date, showImage, hideAvatars, hideNicknames, remoteContentPolicy, group, api } = props;
+  const { contacts, ship = '', date, showImage, hideAvatars, hideNicknames, group, api } = props;
   const history = useHistory();
   let contact;
   if (contacts) {
