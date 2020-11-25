@@ -1662,7 +1662,7 @@
                  (~(put by van) way (mint $:u.bod way /sys/vane/[p]/hoon q))
                ==
     ::
-        %whom  ..poke(who `p.gub)
+        %whom  ..poke(who ~|(%whom-once ?>(?=(~ who) `p.gub)))
         %wyrd  %-  %+  wyrd  kel.p.gub
                    ^-  (list (pair term @))
                    :*  hoon/hoon-version
