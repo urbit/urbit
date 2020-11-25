@@ -217,119 +217,14 @@
       (molt duct `[duct %pass wire %b %huck sign])
     ::
     ++  load
-      |^
-      |=  old=all-state
-      =.  spore  (upgrade old)
+      |=  old=^spore
+      =.  spore  old
       ?.  =(~ eggs.spore)
         pupal-gate
       ~>  %slog.[0 leaf+"gall: direct morphogenesis"]
       %_  adult-gate
         state  [- +>]:spore(eggs *(map term yoke))
       ==
-      ::
-      ++  upgrade
-        |=  =all-state
-        ^-  spore-7
-        ::
-        =?  all-state  ?=(%0 -.all-state)
-          (state-0-to-1 all-state)
-        ::
-        =?  all-state  ?=(%1 -.all-state)
-          (state-1-to-2 all-state)
-        ::
-        =?  all-state  ?=(%2 -.all-state)
-          (state-2-to-3 all-state)
-        ::
-        =?  all-state  ?=(%3 -.all-state)
-          (state-3-to-4 all-state)
-        ::
-        =?  all-state  ?=(%4 -.all-state)
-          (state-4-to-5 all-state)
-        ::
-        =?  all-state  ?=(%5 -.all-state)
-          (state-5-to-spore-6 all-state)
-        ::
-        =?  all-state  ?=(%6 -.all-state)
-          (spore-6-to-7 all-state)
-        ::
-        ?>  ?=(%7 -.all-state)
-        all-state
-      ::  +all-state: upgrade path
-      ::
-      +$  all-state
-        $%  state-0  state-1  state-2  state-3  state-4  state-5
-            spore-6  spore-7
-        ==
-      ::
-      ++  spore-6-to-7  |=(s=spore-6 `spore-7`[%7 & +.s])
-      ::
-      ++  state-5-to-spore-6
-        |=  s=state-5
-        ^-  spore-6
-        %=    s
-            -  %6
-            outstanding  ~  ::  TODO: do we need to process these somehow?
-            running
-          (~(run by running.s) |=(y=yoke-0 +:y(agent on-save:agent.y)))
-        ==
-      ::
-      ++  state-4-to-5  |=(s=state-4 `state-5`s(- %5, outstanding ~))
-      ++  state-3-to-4  |=(s=state-3 `state-4`s(- %4, outstanding ~))
-      ++  state-2-to-3  |=(s=state-2 `state-3`s(- %3))
-      ++  state-1-to-2  |=(s=state-1 `state-2`s(- %2, +< +<.s, +> `+>.s))
-      ++  state-0-to-1  |=(s=state-0 `state-1`s(- %1))
-      ::
-      +$  spore-7  ^spore
-      +$  spore-6  [%6 _+>:*spore-7]
-      +$  state-5  [%5 agents-2]
-      +$  state-4  [%4 agents-2]
-      +$  state-3  [%3 agents-2]
-      +$  state-2  [%2 agents-2]
-      +$  state-1  [%1 agents-0]
-      +$  state-0  [%0 agents-0]
-      ::
-      +$  agents-2
-        $:  system-duct=duct
-            outstanding=(map [wire duct] (qeu remote-request))
-            contacts=(set ship)
-            running=(map term yoke-0)
-            blocked=(map term (qeu blocked-move))
-        ==
-      ::
-      +$  agents-0
-        $:  system-duct=duct
-            contacts=(set ship)
-            running=(map term yoke-0)
-            blocked=(map term (qeu blocked-move))
-        ==
-      ::
-      +$  yoke-0
-        $:  cache=worm
-            control-duct=duct
-            live=?
-            =stats
-            =watches
-            agent=any-agent
-            =beak
-            marks=(map duct mark)
-        ==
-      ::
-      ++  any-agent
-        $_
-        ^|
-        |_  bowl
-        ++  on-init   **
-        ++  on-save   *vase
-        ++  on-load   **
-        ++  on-poke   **
-        ++  on-watch  **
-        ++  on-leave  **
-        ++  on-peek   **
-        ++  on-agent  **
-        ++  on-arvo   **
-        ++  on-fail   **
-        --
-      --
     --
 ::  adult gall vane interface, for type compatibility with pupa
 ::

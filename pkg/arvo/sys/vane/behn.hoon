@@ -296,80 +296,9 @@
 ::  +load: migrate an old state to a new behn version
 ::
 ++  load
-  |^
-  |=  old=state
+  |=  old=behn-state
   ^+  behn-gate
-  =?  old  ?=(^ -.old)
-    (ket-to-1 old)
-  =?  old  ?=(~ -.old)
-    (load-0-to-1 old)
-  =?  old  ?=(%1 -.old)
-    (load-1-to-2 old)
-  ?>  ?=(%2 -.old)
   behn-gate(state old)
-  ::
-  ++  state
-    $^  behn-state-ket
-    $%  behn-state-0
-        behn-state-1
-        behn-state
-    ==
-  ::
-  ++  load-1-to-2
-    |=  old=behn-state-1
-    ^-  behn-state
-    =;  new-timers  old(- %2, timers new-timers)
-    =/  timers=(list timer)  ~(tap in ~(key by timers.old))
-    %+  roll  timers
-    |=  [t=timer acc=(tree [@da (qeu duct)])]
-    ^+  acc
-    =|  mock=behn-state
-    =.  timers.mock  acc
-    =/  event-core  (per-event *[@p @da duct] mock)
-    (set-timer:event-core t)
-  ::
-  ++  timer-map-1
-    %-  (ordered-map ,timer ,~)
-    |=  [a=timer b=timer]
-    (lth date.a date.b)
-  ::
-  +$  behn-state-1
-    $:  %1
-        timers=(tree [timer ~])
-        unix-duct=duct
-        next-wake=(unit @da)
-        drips=drip-manager
-    ==
-  ::
-  +$  behn-state-0
-    $:  ~
-        unix-duct=duct
-        next-wake=(unit @da)
-        drips=drip-manager
-    ==
-  ::
-  +$  behn-state-ket
-    $:  timers=(list timer)
-        unix-duct=duct
-        next-wake=(unit @da)
-        drips=drip-manager
-    ==
-  ::
-  ++  ket-to-1
-    |=  old=behn-state-ket
-    ^-  behn-state-1
-    :-  %1
-    %=    old
-        timers
-      %+  gas:timer-map-1  *(tree [timer ~])
-      (turn timers.old |=(=timer [timer ~]))
-    ==
-  ::
-  ++  load-0-to-1
-    |=  old=behn-state-0
-    ^-  behn-state-1
-    [%1 old]
-  --
 ::  +scry: view timer state
 ::
 ::    TODO: not referentially transparent w.r.t. elapsed timers,

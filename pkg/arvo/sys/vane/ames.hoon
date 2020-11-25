@@ -532,7 +532,6 @@
     ++  scry  scry:adult-core
     ++  stay  [%4 %larva queued-events ames-state.adult-gate]
     ++  load
-      |^
       |=  $=  old
           $%  $:  %4
               $%  $:  %larva
@@ -541,70 +540,16 @@
                   ==
                   [%adult state=_ames-state.adult-gate]
               ==  ==
-          ::
-              $:  %3
-              $%  $:  %larva
-                      events=(qeu queued-event-1)
-                      state=_ames-state.adult-gate
-                  ==
-                  [%adult state=_ames-state.adult-gate]
-              ==  ==
-          ::
-              $:  %2
-              $%  [%larva events=(qeu queued-event-1) state=ames-state-2]
-                  [%adult state=ames-state-2]
-              ==  ==
-          ::
-              $%  [%larva events=(qeu queued-event-1) state=ames-state-1]
-                  [%adult state=ames-state-1]
-          ==  ==
+          ==
       ?-    old
           [%4 %adult *]  (load:adult-core %4 state.old)
-          [%3 %adult *]  (load:adult-core %3 state.old)
-          [%2 %adult *]  (load:adult-core %2 state.old)
-          [%adult *]     (load:adult-core %1 state.old)
       ::
           [%4 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  queued-events  events.old
         =.  adult-gate     (load:adult-core %4 state.old)
         larval-gate
-      ::
-          [%3 %larva *]
-        ~>  %slog.1^leaf/"ames: larva: load"
-        =.  queued-events  (queued-events-1-to-4 events.old)
-        =.  adult-gate     (load:adult-core %3 state.old)
-        larval-gate
-      ::
-          [%2 %larva *]
-        ~>  %slog.1^leaf/"ames: larva: load"
-        =.  queued-events  (queued-events-1-to-4 events.old)
-        =.  adult-gate     (load:adult-core %2 state.old)
-        larval-gate
-      ::
-          [%larva *]
-        ~>  %slog.0^leaf/"ames: larva: load"
-        =.  queued-events  (queued-events-1-to-4 events.old)
-        =.  adult-gate     (load:adult-core %1 state.old)
-        larval-gate
       ==
-      ::
-      ++  queued-events-1-to-4
-        |=  events=(qeu queued-event-1)
-        ^-  (qeu queued-event)
-        %-  ~(gas to *(qeu queued-event))
-        ^-  (list queued-event)
-        %+  murn  ~(tap to events)
-        |=  e=queued-event-1
-        ^-  (unit queued-event)
-        ?.  ?=(%call -.e)
-          `e
-        ?:  ?=([%wegh ~] wrapped-task.e)
-          ~
-        ?:  ?=([%soft %wegh ~] wrapped-task.e)
-          ~
-        `e
-      --
     --
 ::  adult ames, after metamorphosis from larva
 ::
@@ -684,17 +629,9 @@
 ::
 ++  load
   |=  $=  old-state
-      $%  [%1 ames-state-1]
-          [%2 ames-state-2]
-          [%3 ^ames-state]
-          [%4 ^ames-state]
+      $%  [%4 ^ames-state]
       ==
   |^  ^+  ames-gate
-      ::
-      =?  old-state  ?=(%1 -.old-state)  %2^(state-1-to-2 +.old-state)
-      =?  old-state  ?=(%2 -.old-state)  %3^(state-2-to-3 +.old-state)
-      =?  old-state  ?=(%3 -.old-state)  %4^+.old-state
-      ::
       ?>  ?=(%4 -.old-state)
       ames-gate(ames-state +.old-state)
   ::
