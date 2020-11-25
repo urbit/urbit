@@ -1081,6 +1081,23 @@
     =+  ham=(mix (rsh 0 31 haz) (end 0 31 haz))
     ?.(=(0 ham) ham $(syd +(syd)))
   --
+++  gum
+  ~/  %gum
+  |=  a=*
+  |^  ?@  a  (mum 0xcafe.babe 0x7fff a)
+      =/  b  (cat 5 $(a -.a) $(a +.a))
+      (mum 0xdead.beef 0xfffe b)
+  ::
+  ++  mum
+    |=  [syd=@uxF fal=@F key=@]
+    =/  wyd  (met 3 key)
+    =|  i=@ud
+    |-  ^-  @F
+    ?:  =(8 i)  fal
+    =/  haz=@F  (muk syd wyd key)
+    =/  ham=@F  (mix (rsh 0 31 haz) (end 0 31 haz))
+    ?.(=(0 ham) ham $(i +(i), syd +(syd)))
+  --
 ::                                                      ::
 ::::  2f: noun ordering                                 ::
   ::                                                    ::

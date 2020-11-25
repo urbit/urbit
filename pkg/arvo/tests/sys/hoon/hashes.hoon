@@ -53,6 +53,50 @@
       !>  0x2ad3.9968
       !>  (mug [(dec (bex 128)) 1])
   ==
+::
+++  test-gum
+  ;:  weld
+    %+  expect-eq
+      !>  0x4d44.1035
+      !>  (gum 'Hello, world!')
+    ::
+    %+  expect-eq
+      !>  0x79ff.04e8
+      !>  (gum 0)
+    ::
+    %+  expect-eq
+      !>  0x715c.2a60
+      !>  (gum 1)
+    ::
+    %+  expect-eq
+      !>  0x64df.da5c
+      !>  (gum (crip (reap 28 'x')))
+    ::
+    %+  expect-eq
+      !>  0x192f.5588
+      !>  (gum [0 0])
+    ::
+    %+  expect-eq
+      !>  0x6b32.ec46
+      !>  (gum [1 1])
+    ::
+    %+  expect-eq
+      !>  0x2ef.fe10
+      !>  (gum [2 2])
+    ::
+    %+  expect-eq
+      !>  0x3a81.1aec
+      !>  (gum [1 2 3])
+    ::
+    %+  expect-eq
+      !>  0x7ce.fb7f
+      !>  (gum [0 (bex 32)])
+    ::
+    %+  expect-eq
+      !>  0x2aa0.6bfc
+      !>  (gum [(dec (bex 128)) 1])
+  ==
+::
 ::  SHA tests
 ::  For references see FIPS180-4 and related test vectors
 ::  https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf
