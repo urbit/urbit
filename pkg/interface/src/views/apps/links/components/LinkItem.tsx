@@ -20,7 +20,8 @@ interface LinkItemProps {
   remoteContentPolicy: LocalUpdateRemoteContentPolicy;
   api: GlobalApi;
   group: Group;
-  contacts: Rolodex;
+  path: string;
+  contacts: Rolodex[];
 }
 
 export const LinkItem = (props: LinkItemProps) => {
@@ -32,6 +33,7 @@ export const LinkItem = (props: LinkItemProps) => {
     remoteContentPolicy,
     api,
     group,
+    path,
     contacts,
     ...rest
   } = props;
@@ -86,10 +88,15 @@ export const LinkItem = (props: LinkItemProps) => {
           text={contents[0].text}
           remoteContentPolicy={remoteContentPolicy}
           unfold={true}
-          style={{ marginTop: '-1px', alignSelf: 'center' }}
+          style={{ alignSelf: 'center' }}
           oembedProps={{
             p: 2,
             className: 'links embed-container',
+          }}
+          imageProps={{
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            display: 'block'
           }}
           textProps={{
             overflow: 'hidden',
@@ -112,7 +119,7 @@ export const LinkItem = (props: LinkItemProps) => {
       
       <Author
         showImage
-        contacts={contacts}
+        contacts={contacts[path]}
         ship={author}
         date={node.post['time-sent']}
         hideAvatars={hideAvatars}

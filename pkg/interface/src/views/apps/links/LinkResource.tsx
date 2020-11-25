@@ -85,6 +85,7 @@ export function LinkResource(props: LinkResourceProps) {
                       remoteContentPolicy={remoteContentPolicy}
                       baseUrl={resourceUrl}
                       group={group}
+                      path={resource["group-path"]}
                       api={api}
                       mb={3}
                     />
@@ -125,6 +126,7 @@ export function LinkResource(props: LinkResourceProps) {
                   remoteContentPolicy={remoteContentPolicy}
                   baseUrl={resourceUrl}
                   group={group}
+                  path={resource["group-path"]}
                   api={api}
                   mt={3}
                 />
