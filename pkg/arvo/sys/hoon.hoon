@@ -1014,8 +1014,8 @@
 ++  muk                                                 ::  standard murmur3
   ~%  %muk  ..muk  ~
   =+  ~(. fe 5)
-  |=  {syd/@ len/@ key/@}
-  ?>  &((lte (met 5 syd) 1) (lte (met 0 len) 31))
+  |=  [syd=@ len=@ key=@]
+  =.  syd      (end 5 1 syd)
   =/  pad      (sub len (met 3 key))
   =/  data     (weld (rip 3 key) (reap pad 0))
   =/  nblocks  (div len 4)  ::  intentionally off-by-one
