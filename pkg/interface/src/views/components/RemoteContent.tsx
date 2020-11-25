@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { PureComponent, Fragment } from 'react';
 import { LocalUpdateRemoteContentPolicy } from "~/types/local-update";
 import { BaseAnchor, BaseImage, Box, Button, Text } from '@tlon/indigo-react';
 import { hasProvider } from 'oembed-parser';
@@ -29,9 +29,7 @@ const IMAGE_REGEX = new RegExp(/(jpg|img|png|gif|tiff|jpeg|webp|webm|svg)$/i);
 const AUDIO_REGEX = new RegExp(/(mp3|wav|ogg)$/i);
 const VIDEO_REGEX = new RegExp(/(mov|mp4|ogv)$/i);
 
-const memoizedFetch = memoize(fetch);
-
-export default class RemoteContent extends Component<RemoteContentProps, RemoteContentState> {
+export default class RemoteContent extends PureComponent<RemoteContentProps, RemoteContentState> {
   private fetchController: AbortController | undefined;
   constructor(props) {
     super(props);
@@ -60,7 +58,7 @@ export default class RemoteContent extends Component<RemoteContentProps, RemoteC
 
   loadOembed() {
     this.fetchController = new AbortController();
-    memoizedFetch(`https://noembed.com/embed?url=${this.props.url}`, {
+    fetch(`https://noembed.com/embed?url=${this.props.url}`, {
       signal: this.fetchController.signal
     })
     .then(response => response.clone().json())
