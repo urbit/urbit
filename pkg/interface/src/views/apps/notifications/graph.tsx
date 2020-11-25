@@ -42,8 +42,12 @@ function describeNotification(description: string, plural: boolean) {
       return `added ${pluralize("new link", plural)} to`;
     case "comment":
       return `left ${pluralize("comment", plural)} on`;
-    case "note":
+    case "edit-comment":
+      return `updated ${pluralize("comment", plural)} on`;
+    case "new-note":
       return `posted ${pluralize("note", plural)} to`;
+    case "edit-note":
+      return `updated ${pluralize("note", plural)} in`;
     case "mention":
       return "mentioned you on";
     default:
