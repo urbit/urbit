@@ -30,7 +30,7 @@ interface FormSchema {
 
 const formSchema = Yup.object({
   emails: Yup.array(Yup.string().email("Invalid email")),
-  ships: Yup.array(Yup.string()).min(1)
+  ships: Yup.array(Yup.string()).min(1, "Must invite at least one ship")
 });
 
 export function InvitePopover(props: InvitePopoverProps) {
@@ -97,6 +97,7 @@ export function InvitePopover(props: InvitePopoverProps) {
               initialValues={initialValues}
               onSubmit={onSubmit}
               validationSchema={formSchema}
+              validateOnBlur
             >
               <Form>
                 <Col gapY="3" p={3}>

@@ -36,6 +36,7 @@ interface DropdownSearchExtraProps<C> {
   disabled?: boolean;
   placeholder?: string;
   onChange?: (e: ChangeEvent<HTMLTextAreaElement>) => void;
+  onBlur?: (e: any) => void;
 }
 
 type DropdownSearchProps<C> = PropFunc<typeof Box> &
@@ -53,6 +54,7 @@ export function DropdownSearch<C>(props: DropdownSearchProps<C>) {
     disabled,
     placeholder,
     onChange = () => {},
+    onBlur = () => {},
     ...rest
   } = props;
 
@@ -136,6 +138,7 @@ export function DropdownSearch<C>(props: DropdownSearchProps<C>) {
         autocomplete="off"
         disabled={disabled}
         placeholder={placeholder}
+        onBlur={onBlur}
       />
       {dropdown.length !== 0 && query.length !== 0 && (
         <Box
