@@ -1,7 +1,7 @@
 ::  Fast type printing that's easy on the eyes or your money back
 ::
 =>  |%
-    ++  cape  {p/(map @ud wine) q/wine}
+    ++  cape  {p=(map @ud wine) q=wine}
     ++  wine
       $@  $?  %noun
               %path
@@ -11,22 +11,22 @@
               %wool
               %yarn
           ==
-      $%  {%mato p/term}
-          {%gate p/hoon q/type r/wine}
-          {%core p/(list @ta) q/wine}
-          {%face p/term q/wine}
-          {%list p/term q/wine}
-          {%pear p/term q/@}
-          {%bcwt p/(list wine)}
-          {%plot p/(list wine)}
-          {%stop p/@ud}
-          {%tree p/term q/wine}
-          {%unit p/term q/wine}
+      $%  {%mato p=term}
+          {%gate p=hoon q=type r=wine}
+          {%core p=(list @ta) q=wine}
+          {%face p=term q=wine}
+          {%list p=term q=wine}
+          {%pear p=term q=@}
+          {%bcwt p=(list wine)}
+          {%plot p=(list wine)}
+          {%stop p=@ud}
+          {%tree p=term q=wine}
+          {%unit p=term q=wine}
       ==
     --
-|_  sut/type
+|_  sut=type
 ++  dash
-  |=  {mil/tape lim/char lam/tape}
+  |=  {mil=tape lim=char lam=tape}
   ^-  tape
   =/  esc  (~(gas in *(set @tD)) lam)
   :-  lim
@@ -41,15 +41,15 @@
     [i.mil $(mil t.mil)]
   ['\\' ~(x ne (rsh 2 1 i.mil)) ~(x ne (end 2 1 i.mil)) $(mil t.mil)]
 ::
-++  deal  |=(lum/* (dish dole lum))
+++  deal  |=(lum=* (dish dole lum))
 ++  dial
-  |=  ham/cape
+  |=  ham=cape
   =+  gid=*(set @ud)
   =|  top-level=?  ::  don't need circumfix punctuation
   =<  `tank`-:$
   |%
   ++  many
-    |=  haz/(list wine)
+    |=  haz=(list wine)
     ^-  {(list tank) (set @ud)}
     ?~  haz  [~ gid]
     =^  mor  gid  $(haz t.haz)
@@ -155,12 +155,12 @@
   --
 ::
 ++  dish  !:
-  |=  {ham/cape lum/*}  ^-  tank
+  |=  {ham=cape lum=*}  ^-  tank
   ~|  [%dish-h ?@(q.ham q.ham -.q.ham)]
   ~|  [%lump lum]
   ~|  [%ham ham]
   %-  need
-  =|  gil/(set {@ud *})
+  =|  gil=(set {@ud *})
   |-  ^-  (unit tank)
   ?-    q.ham
       %noun
@@ -322,7 +322,7 @@
     |-  ^-  (unit (list tank))
     ?:  =(~ lum)
       [~ tuk]
-    ?.  ?=({n/* l/* r/*} lum)
+    ?.  ?=({n=* l=* r=*} lum)
       ~
     =+  rol=$(lum r.lum)
     ?~  rol
@@ -344,7 +344,7 @@
   ==
 ::
 ++  doge
-  |=  ham/cape
+  |=  ham=cape
   =-  ?+  woz  woz
         {%list * {%mato %'ta'}}  %path
         {%list * {%mato %'t'}}   %wall
@@ -403,10 +403,10 @@
   =+  gil=*(set type)
   =+  dex=[p=*(map type @) q=*(map @ wine)]
   =<  [q.p q]
-  |-  ^-  {p/{p/(map type @) q/(map @ wine)} q/wine}
+  |-  ^-  {p={p=(map type @) q=(map @ wine)} q=wine}
   =-  [p.tez (doge q.p.tez q.tez)]
   ^=  tez
-  ^-  {p/{p/(map type @) q/(map @ wine)} q/wine}
+  ^-  {p={p=(map type @) q=(map @ wine)} q=wine}
   ?:  (~(meet ut sut) -:!>(*type))
     [dex %type]
   ?-    sut
@@ -428,7 +428,7 @@
       [%gate q.n.q.q.n.q.r.q.sut sut(r.p.q %gold) q.dad]
     =+  yad=$(sut p.sut)
     :-  p.yad
-    =+  ^=  doy  ^-  {p/(list @ta) q/wine}
+    =+  ^=  doy  ^-  {p=(list @ta) q=wine}
         ?:  ?=({%core *} q.yad)
           [p.q.yad q.q.yad]
         [~ q.yad]
@@ -459,7 +459,7 @@
       {%fork *}
     =+  yed=(sort ~(tap in p.sut) aor)
     =-  [p [%bcwt q]]
-    |-  ^-  {p/{p/(map type @) q/(map @ wine)} q/(list wine)}
+    |-  ^-  {p={p=(map type @) q=(map @ wine)} q=(list wine)}
     ?~  yed
       [dex ~]
     =+  mor=$(yed t.yed)

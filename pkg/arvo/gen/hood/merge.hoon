@@ -8,18 +8,18 @@
 ::
 |%
 ++  beaky  {knot knot knot ~}
-++  sorc  ?({bek/beaky ~} {her/@p sud/@tas ~})
+++  sorc  ?({bek=beaky ~} {her=@p sud=@tas ~})
 --
 ::
 ::::
   ::
 :-  %say
-|=  $:  {now/@da eny/@uvJ bek/beak}
-        {arg/{?(~ sorc {syd/$@(desk beaky) sorc})} cas/case gem/?(germ %auto)}
+|=  $:  {now=@da eny=@uvJ bek=beak}
+        {arg={?(~ sorc {syd=$@(desk beaky) sorc})} cas=case gem=?(germ %auto)}
     ==
 =*  our  p.bek
 |^  :-  %kiln-merge
-    ^-  $@(~ {syd/desk her/ship sud/desk cas/case gem/?(germ %auto)})
+    ^-  $@(~ {syd=desk her=ship sud=desk cas=case gem=?(germ %auto)})
     ?-  arg
       ~  ((slog (turn help-text |=(=@t leaf+(trip t)))) ~)
       {@ @ ~}
@@ -37,10 +37,10 @@
         :-  (pars-src syd.arg)
         =+((pars bek.arg) [who dez (opt-case caz) gem])
     ==
-++  opt-case  |=(a/case ?:(=(*case cas) a cas))  :: override
-++  pars  |=(a/beaky `{{who/ship dez/desk caz/case} *}`(need (de-beam:format a)))
+++  opt-case  |=(a=case ?:(=(*case cas) a cas))  :: override
+++  pars  |=(a=beaky `{{who=ship dez=desk caz=case} *}`(need (de-beam:format a)))
 ++  pars-src
-  |=  syd/$@(desk beaky)
+  |=  syd=$@(desk beaky)
   ?@  syd  syd
   =+  (pars syd)
   ~|  [%into-foreign who `path`syd]

@@ -4,7 +4,7 @@
 /?    310
 !:
 ::::  A minimal noun mark
-|_  non/*
+|_  non=*
 ++  grab  |%
           ++  noun  *
           --

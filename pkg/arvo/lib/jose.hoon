@@ -34,7 +34,7 @@
   ::                                                  ::  ++apex:en-json:html
   ++  apex
     =,  en-json:html
-    |=  {val/json sor/$-(^ ?) rez/tape}
+    |=  {val=json sor=$-(^ ?) rez=tape}
     ^-  tape
     ?~  val  (weld "null" rez)
     ?-    -.val

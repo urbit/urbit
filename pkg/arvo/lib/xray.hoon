@@ -1844,7 +1844,7 @@
   ++  synthetic
     |=  number=@ud
     ^-  @tas
-    =/  alf/(list term)
+    =/  alf=(list term)
         ^~  :~  %alf  %bet  %gim  %dal  %hej  %vav  %zay  %het
                 %tet  %yod  %kaf  %lam  %mem  %nun  %sam  %ayn
                 %pej  %sad  %qof  %res  %sin  %tav

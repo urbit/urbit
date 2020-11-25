@@ -61,14 +61,14 @@
   %.  directories
   |=  ::  sal: all spurs to load from
       ::
-      sal/(list spur)
+      sal=(list spur)
   ^-  unix-event
   ::
   ::  hav: all user files
   ::
   =;  hav  ~&  user-files+(lent hav)
            [/c/sync [%into %$ & hav]]
-  =|  hav/mode:clay
+  =|  hav=mode:clay
   |-  ^+  hav
   ?~  sal  ~
   =.  hav  $(sal t.sal)

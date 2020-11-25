@@ -15,7 +15,7 @@
 ::      - scry namespace
 ::      - task for converting invites to tickets
 ::
-|=  pit/vase
+|=  pit=vase
 =,  pki:jael
 =,  able:jael
 =,  crypto
@@ -198,7 +198,7 @@
   ::  arvo issues: should be merged with the top-level
   ::  vane interface when that gets cleaned up a bit.
   ::
-  =|  moz/(list move)
+  =|  moz=(list move)
   =|  $:  $:  ::  our: identity
               ::  now: current time
               ::  eny: unique entropy
@@ -252,7 +252,7 @@
     (^sein:title who)
   ::                                                    ::  ++saxo:of
   ++  saxo                                              ::  sponsorship chain
-    |=  who/ship
+    |=  who=ship
     ^-  (list ship)
     =/  dad  (sein who)
     [who ?:(=(who dad) ~ $(who dad))]
@@ -261,8 +261,8 @@
     |=  $:  ::  hen: event cause
             ::  tac: event data
             ::
-            hen/duct
-            tac/task
+            hen=duct
+            tac=task
         ==
     ^+  +>
     ?-    -.tac
@@ -528,7 +528,7 @@
       (curd abet:~(private-keys ~(feed su hen our now pki etn) hen))
     ::
     ::  authenticated remote request
-    ::    {%west p/ship q/path r/*}
+    ::    {%west p=ship q=path r=*}
     ::
         %plea
       =*  her  ship.tac
@@ -615,9 +615,9 @@
     ==
   ::                                                    ::  ++curd:of
   ++  curd                                              ::  relative moves
-    |=  $:  moz/(list move)
-            pki/state-pki-1
-            etn/state-eth-node
+    |=  $:  moz=(list move)
+            pki=state-pki-1
+            etn=state-eth-node
         ==
     +>(pki pki, etn etn, moz (weld (flop moz) ^moz))
   --
@@ -656,7 +656,7 @@
     +>.$(moz [move moz])
   ::
   ++  exec                                              ::  mass gift
-    |=  {yen/(set duct) cad/card}
+    |=  {yen=(set duct) cad=card}
     =/  noy  ~(tap in yen)
     |-  ^+  this-su
     ?~  noy  this-su
@@ -758,7 +758,7 @@
   ++  feed
     |_  ::  hen: subscription source
         ::
-        hen/duct
+        hen=duct
     ::
     ::  Handle subscription to public-keys
     ::
@@ -993,7 +993,7 @@
 ::
 ::  lex: all durable %jael state
 ::
-=|  lex/state-1
+=|  lex=state-1
 |=  $:  ::
         ::  our: identity
         ::  now: current time
@@ -1012,9 +1012,9 @@
   |=  $:  ::  hen: cause of this event
           ::  hic: event data
           ::
-          hen/duct
+          hen=duct
           dud=(unit goof)
-          hic/(hypo (hobo task:able))
+          hic=(hypo (hobo task:able))
       ==
   ^-  [(list move) _..^$]
   ?^  dud
@@ -1029,7 +1029,7 @@
   |=  $:  ::  old: previous state
           ::
           ::  old/*
-          old/any-state
+          old=any-state
       ==
   ^+  ..^$
   =/  new=state-1
@@ -1252,10 +1252,10 @@
           ::  hen: cause
           ::  hin: result
           ::
-          tea/wire
-          hen/duct
+          tea=wire
+          hen=duct
           dud=(unit goof)
-          hin/(hypo sign)
+          hin=(hypo sign)
       ==
   ^-  [(list move) _..^$]
   ?^  dud

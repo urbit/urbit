@@ -157,7 +157,7 @@
       limb
   ?-  -.limb
     %&  (axis-to-cord p.limb)
-    ::  {%| p/@ud q/(unit term) ]
+    ::  {%| p=@ud q=(unit term) ]
     %|  (crip (runt [0 p.limb] ?~(q.limb "," (trip u.q.limb))))
   ==
 ::

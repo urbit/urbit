@@ -7,8 +7,8 @@
 ::::
   ::
 :-  %say
-|=  $:  {now/@da eny/@uvJ bec/beak}
-        {{pax/path pot/$@(~ {v/@tas ~})} ~}
+|=  $:  {now=@da eny=@uvJ bec=beak}
+        {{pax=path pot=$@(~ {v=@tas ~})} ~}
     ==
 ?~  pot
   =+  bem=(need (de-beam:format pax))

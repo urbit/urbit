@@ -12,14 +12,14 @@
 =,  format
 |%
 ++  mar-sole-change                       ::  XX  dependency
-  |_  cha/sole-change
+  |_  cha=sole-change
   ++  grow
     |%  ++  json
       ^-  ^json
       =,  enjs
       =;  edi
         =,(cha (pairs ted+(edi ted) ler+a+~[(numb own.ler) (numb his.ler)] ~))
-      |=  det/sole-edit
+      |=  det=sole-edit
       ?-  -.det
         %nop  [%s 'nop']
         %mor  [%a (turn p.det ..$)]
@@ -30,18 +30,18 @@
     --
   --
 ++  wush
-  |=  {wid/@u tan/tang}
+  |=  {wid=@u tan=tang}
   ^-  tape
-  (of-wall (turn (flop tan) |=(a/tank (of-wall (wash 0^wid a)))))
+  (of-wall (turn (flop tan) |=(a=tank (of-wall (wash 0^wid a)))))
 ::
 ++  purge                                               ::  discard ++styx style
-  |=  a/styx  ^-  tape
+  |=  a=styx  ^-  tape
   %-  zing  %+  turn  a
-  |=  a/_?>(?=(^ a) i.a)
+  |=  a=_?>(?=(^ a) i.a)
   ?@(a (trip a) ^$(a q.a))
 --
 ::
-|_  sef/sole-effect
+|_  sef=sole-effect
 ::
 ++  grad  %noun
 ++  grab                                                ::  convert from
@@ -56,7 +56,7 @@
     ^-  ^json
     ?+    -.sef
               ~|(unsupported-effect+-.sef !!)
-        %mor  [%a (turn p.sef |=(a/sole-effect json(sef a)))]
+        %mor  [%a (turn p.sef |=(a=sole-effect json(sef a)))]
         %err  (frond %hop (numb p.sef))
         %txt  (frond %txt (tape p.sef))
         %tan  (frond %tan (tape (wush 160 p.sef)))

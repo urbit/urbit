@@ -2,7 +2,7 @@
 /+  base64, group-store, resource
 |%
 ++  nu                                              ::  parse number as hex
-  |=  jon/json
+  |=  jon=json
   ?>  ?=({%s *} jon)
   (rash p.jon hex)
 ::

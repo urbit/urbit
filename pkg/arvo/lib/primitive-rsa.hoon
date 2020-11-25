@@ -39,7 +39,7 @@
   =/  e  :(con 1 (lsh 0 (dec a) 1) (~(raw og c) a))
   :: XX what algorithm is this modular remainder check?
   ::
-  ?:  ?&  (levy b |=(f/@ !=(1 (mod e f))))
+  ?:  ?&  (levy b |=(f=@ !=(1 (mod e f))))
           (pram:number e)
       ==
     e

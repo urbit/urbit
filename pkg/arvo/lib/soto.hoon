@@ -39,7 +39,7 @@
       =,  enjs:format
       ?+    -.sef
               ~|(unsupported-effect+-.sef !!)
-          %mor  [%a (turn p.sef |=(a/sole-effect ^$(sef a)))]
+          %mor  [%a (turn p.sef |=(a=sole-effect ^$(sef a)))]
           %err  (frond %hop (numb p.sef))
           %txt  (frond %txt (tape p.sef))
           %tan  (frond %tan (tape (wush 160 p.sef)))

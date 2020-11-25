@@ -341,9 +341,9 @@
   ::
   !:
   ~/  %sloy
-  |=  sod/slyd
+  |=  sod=slyd
   ^-  slyt
-  |=  {ref/* raw/*}
+  |=  {ref=* raw=*}
   =+  pux=((soft path) raw)
   ?~  pux  ~
   ?.  ?=({@ @ @ @ *} u.pux)  ~
@@ -385,7 +385,7 @@
 ::
 ++  sloy-light
   ~/  %sloy-light
-  |=  sod/slyd
+  |=  sod=slyd
   |=  [ref=* ron=@tas fal=@p dyc=@tas ved=case tyl=path]
   =/  bed=beam  [[fal dyc ved] tyl]
   =/  bop=(unit (unit (cask meta)))
@@ -1435,9 +1435,9 @@
   |.  ;;(^ (slum lod heir))
 ::
 ++  viol                                                ::  vane tools
-  |=  but/type
+  |=  but=type
   ^-  vile
-  =+  pal=|=(a/@t ^-(type (~(play ut but) (vice a))))
+  =+  pal=|=(a=@t ^-(type (~(play ut but) (vice a))))
   :*  typ=(pal '$:type')
       duc=(pal '$:duct')
       wir=(pal '$:wire')
