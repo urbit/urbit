@@ -388,7 +388,7 @@
   ?:  (~(has in ray) [%home i.ruf])
     $(ruf t.ruf)
   =/  wire  [%drum %fade i.ruf ~]
-  =.  this  (se-emit %pass wire %arvo %g %fade i.ruf %gone)
+  =.  this  (se-emit %pass wire %arvo %g %fade i.ruf %slay)
   $(ruf t.ruf, fur (~(del by fur) i.ruf))
 ::
 ++  se-adze                                           ::  update connections

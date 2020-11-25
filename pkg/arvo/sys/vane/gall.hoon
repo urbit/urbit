@@ -1,4 +1,4 @@
-::  ::  %gall, agent execution
+!:  ::  %gall, agent execution
 !?  163
 ::
 ::::
@@ -891,18 +891,18 @@
   ::  +mo-fade: put app to sleep
   ::
   ++  mo-fade
-    |=  [dap=term style=?(%gone %doze %wake)]
+    |=  [dap=term style=?(%slay %idle %jolt)]
     ^+  mo-core
     =/  =routes  [disclosing=~ attributing=our]
     =/  app  (ap-abed:ap dap routes)
     =.  mo-core  ap-abet:(ap-fade:app style)
     =.  mo-core
       ?-  style
-        %gone  mo-core(yokes.state (~(del by yokes.state) dap))
-        %doze  mo-core
-        %wake  (mo-boot dap our %home)
+        %slay  mo-core(yokes.state (~(del by yokes.state) dap))
+        %idle  mo-core
+        %jolt  (mo-boot dap our %home)
       ==
-    =?  mo-core  !?=(%wake style)  (mo-subscribe-to-agent-builds now)
+    =?  mo-core  !?=(%jolt style)  (mo-subscribe-to-agent-builds now)
     mo-core
   ::  +mo-beak: assemble a beak for the specified agent.
   ::
@@ -1133,15 +1133,15 @@
     ::    For %gone, remove all incoming and outgoing subscriptions.
     ::
     ++  ap-fade
-      |=  style=?(%gone %doze %wake)
+      |=  style=?(%slay %idle %jolt)
       ^+  ap-core
       ?-    style
-          %doze
+          %jolt  ap-core
+          %idle
         =.  agent.current-agent  |+on-save:ap-agent-core
         ap-core
       ::
-          %wake  ap-core
-          %gone
+          %slay
         =/  out=(list [[=wire =ship =term] ? =path])
           ~(tap by outbound.watches.current-agent)
         =/  inbound-paths=(set path)
