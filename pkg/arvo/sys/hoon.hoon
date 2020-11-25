@@ -12844,18 +12844,7 @@
       :-  ','
         ;~(pfix com (stag %bcmc wide))
       :-  '$'
-        ;~  pose
-          ;~  pfix  buc
-            ;~  pose
-            ::  XX all three deprecated
-            ::
-              (stag %leaf (stag %tas (cold %$ buc)))
-              (stag %leaf (stag %t qut))
-              (stag %leaf (sear |=(a/coin ?:(?=($$ -.a) (some +.a) ~)) nuck:so))
-            ==
-          ==
-          (stag %like (most col rope))
-        ==
+        (stag %like (most col rope))
       :-  '%'
         ;~  pose
           ;~  pfix  cen
