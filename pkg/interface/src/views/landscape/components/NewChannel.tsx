@@ -38,6 +38,7 @@ interface NewChannelProps {
   api: GlobalApi;
   associations: Associations;
   contacts: Rolodex;
+  chatSynced: any;
   groups: Groups;
   group?: string;
   workspace: Workspace;
@@ -49,7 +50,9 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
   const waiter = useWaitForProps(props, 5000);
 
   const onSubmit = async (values: FormSchema, actions) => {
-    const resId: string = stringToSymbol(values.name);
+    const resId: string = stringToSymbol(values.name)
+      + ((workspace?.type !== 'home') ? `-${Math.floor(Math.random() * 10000)}`
+      : '');
     try {
       const { name, description, moduleType, ships } = values;
       switch (moduleType) {
@@ -95,6 +98,9 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
       if (!group) {
         await waiter(p => Boolean(p?.groups?.[`/ship/~${window.ship}/${resId}`]));
       }
+      if (moduleType === 'chat') {
+        await waiter(p => Boolean(p?.chatSynced?.[`/~${window.ship}/${resId}`]));
+      }
       actions.setStatus({ success: null });
       const resourceUrl = parentPath(location.pathname);
       history.push(
@@ -126,8 +132,8 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
         onSubmit={onSubmit}
       >
         <Form>
-          <Col 
-            maxWidth="348px" 
+          <Col
+            maxWidth="348px"
             gapY="4"
           >
             <Col gapY="2">
