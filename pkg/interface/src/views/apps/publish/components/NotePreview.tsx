@@ -62,13 +62,15 @@ export function NotePreview(props: NotePreviewProps) {
   return (
     <Link to={url}>
       <Col mb={4}>
-        <WrappedBox mb={1}><Text bold>{title}</Text></WrappedBox>
-        <WrappedBox mb={1} className="md">
+        <WrappedBox mb={1}><Text bold fontSize='0'>{title}</Text></WrappedBox>
+        <WrappedBox mb={1}>
+          <Text fontSize='14px'>
           <ReactMarkdown
             unwrapDisallowed
             allowedTypes={["text", "root", "break", "paragraph"]}
             source={snippet}
           />
+          </Text>
         </WrappedBox>
         <Box color="gray" display="flex">
           <Box
