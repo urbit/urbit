@@ -386,10 +386,11 @@ _ames_send(u3_pact* pac_u)
 u3_lane
 u3_ames_decode_lane(u3_atom lan) {
   u3_lane lan_u;
+  c3_d lan_d;
 
-  c3_assert( u3r_met(3, lan) <= 6 );
-  u3r_bytes(0, 4, (c3_y*)&lan_u.pip_w, lan);  //  XX little-endian
-  u3r_bytes(4, 6, (c3_y*)&lan_u.por_s, lan);
+  c3_assert( c3y == u3r_safe_chub(lan, &lan_d) );
+  lan_u.pip_w = (c3_w)lan_d;
+  lan_u.por_s = (c3_s)(lan_d >> 32);
   return lan_u;
 }
 
