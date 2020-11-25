@@ -20,6 +20,7 @@ const scales = {
   white80: "rgba(255,255,255,0.8)",
   white90: "rgba(255,255,255,0.9)",
   white100: "rgba(255,255,255,1)",
+  black05: "rgba(0,0,0,0.05)",
   black10: "rgba(0,0,0,0.1)",
   black20: "rgba(0,0,0,0.2)",
   black30: "rgba(0,0,0,0.3)",

@@ -118,7 +118,7 @@
     u3_atom b = _mp_to_satom(a->e);
     u3_atom c = u3i_mp(a->a);
 
-    return u3i_cell(u3k(b), u3k(c));
+    return u3nc(b, c);
   }
 
   static void
@@ -317,7 +317,7 @@
         mpz_set_ui(c.e, 0);
       }
     }
-    u3_noun ret = u3nq(c3__f, c3y, u3k(_mp_to_satom(c.e)), u3k(u3i_mp(c.a)));
+    u3_noun ret = u3nq(c3__f, c3y, _mp_to_satom(c.e), u3i_mp(c.a));
     mpz_clear(d.minExp); mpz_clear(d.expWidth);
     return ret;
   }

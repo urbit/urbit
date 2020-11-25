@@ -12,7 +12,7 @@ let
 
   pkgs = import ./nix/default.nix { };
 
-  localPackages = import ./default.nix { };
+  pkgsLocal = import ./default.nix { };
 
   # The non-Haskell packages which build inputs (dependencies) will be
   # propagated into the shell. This combines nixpkgs' mkShell behaviour
@@ -23,11 +23,12 @@ let
   # 
   # Typically the inputs listed here also have a shell.nix in their respective
   # source directory you can use, to avoid the Haskell/GHC dependencies.
-  inputsFrom = with localPackages; [ ent ge-additions herb libaes_siv urbit ];
+  inputsFrom = with pkgsLocal; [ ent ge-additions herb libaes_siv urbit ];
 
-  merge = name: pkgs.lib.concatLists (pkgs.lib.catAttrs name inputsFrom);
+  # Collect the named attribute from all dependencies listed in inputsFrom.
+  mergeFrom = name: pkgs.lib.concatLists (pkgs.lib.catAttrs name inputsFrom);
 
-in localPackages.hs.shellFor {
+in pkgsLocal.hs.shellFor {
   # Haskell packages from the stackProject which will have their
   # dependencies available in the shell.
   packages = ps:
@@ -57,11 +58,11 @@ in localPackages.hs.shellFor {
     pkgs.shfmt
     pkgs.stack
     (import pkgs.sources.niv { }).niv
-  ] ++ merge "buildInputs";
+  ] ++ mergeFrom "buildInputs";
 
-  nativeBuildInputs = merge "nativeBuildInputs";
-  propagatedBuildInputs = merge "propagatedBuildInputs";
-  propagatedNativeBuildInputs = merge "propagatedNativeBuildInputs";
+  nativeBuildInputs = mergeFrom "nativeBuildInputs";
+  propagatedBuildInputs = mergeFrom "propagatedBuildInputs";
+  propagatedNativeBuildInputs = mergeFrom "propagatedNativeBuildInputs";
 
   shellHook = pkgs.lib.concatStringsSep "\n"
     (pkgs.lib.catAttrs "shellHook" (pkgs.lib.reverseList inputsFrom));

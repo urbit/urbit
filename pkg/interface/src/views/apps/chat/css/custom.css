@@ -87,22 +87,12 @@ h2 {
   mix-blend-mode: difference;
 }
 
+.mix-blend-darken {
+  mix-blend-mode: darken;
+}
+
 .placeholder-inter::placeholder {
   font-family: "Inter", sans-serif;
-}
-
-/* spinner */
-
-.spin-active {
-  animation: spin 2s infinite;
-}
-
-@keyframes spin {
-  0% {transform: rotate(0deg);}
-  25% {transform: rotate(90deg);}
-  50% {transform: rotate(180deg);}
-  75% {transform: rotate(270deg);}
-  100% {transform: rotate(360deg);}
 }
 
 .embed-container iframe {
@@ -225,16 +215,7 @@ blockquote {
   font-size: 14px;
 }
 
-pre, code {
-  background-color: var(--light-gray);
-}
-
-pre code {
-  background-color: transparent;
-  white-space: pre-wrap;
-}
-
-code, .code, .chat.code .react-codemirror2 .CodeMirror * {
+.chat.code .react-codemirror2 .CodeMirror * {
   font-family: 'Source Code Pro';
 }
 

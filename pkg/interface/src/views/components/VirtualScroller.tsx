@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import _ from 'lodash';
 import normalizeWheel from 'normalize-wheel';
+import { Box } from '@tlon/indigo-react';
 
 interface VirtualScrollerProps {
   origin: 'top' | 'bottom';
@@ -216,7 +217,7 @@ export default class VirtualScroller extends PureComponent<VirtualScrollerProps,
     if (map.has(event.code) && document.body.isSameNode(document.activeElement)) {
       event.preventDefault();
       event.stopImmediatePropagation();
-      let distance = map.get(event.code); 
+      let distance = map.get(event.code);
       if (event.code === 'Space' && event.shiftKey) {
         distance = distance * -1;
       }
@@ -321,13 +322,13 @@ export default class VirtualScroller extends PureComponent<VirtualScrollerProps,
     };
 
     return (
-      <div ref={this.setWindow.bind(this)} onScroll={this.onScroll.bind(this)} style={{...style, ...{overflowY: 'scroll', transform }}}>
-        <div ref={this.scrollContainer} style={{ transform }}>
-          <div style={{ height: `${origin === 'top' ? startgap : endgap}px` }}></div>
+      <Box overflowY='scroll' ref={this.setWindow.bind(this)} onScroll={this.onScroll.bind(this)} style={{ ...style, ...{ transform } }}>
+        <Box ref={this.scrollContainer} style={{ transform }}>
+          <Box style={{ height: `${origin === 'top' ? startgap : endgap}px` }}></Box>
           {indexesToRender.map(render)}
-          <div style={{ height: `${origin === 'top' ? endgap : startgap}px` }}></div>
-        </div>
-      </div>
+          <Box style={{ height: `${origin === 'top' ? endgap : startgap}px` }}></Box>
+        </Box>
+      </Box>
     );
   }
 }

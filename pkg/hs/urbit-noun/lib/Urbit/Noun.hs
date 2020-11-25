@@ -11,6 +11,7 @@ module Urbit.Noun
     , module Urbit.Noun.Core
     , module Urbit.Noun.Cue
     , module Urbit.Noun.Jam
+    , module Urbit.Noun.Mug
     , module Urbit.Noun.Tank
     , module Urbit.Noun.TH
     , module Urbit.Noun.Tree
@@ -29,6 +30,7 @@ import Urbit.Noun.Convert
 import Urbit.Noun.Core
 import Urbit.Noun.Cue
 import Urbit.Noun.Jam
+import Urbit.Noun.Mug
 import Urbit.Noun.Tank
 import Urbit.Noun.TH
 import Urbit.Noun.Tree
