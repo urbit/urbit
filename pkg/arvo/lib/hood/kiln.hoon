@@ -271,7 +271,7 @@
       =.  ..abet  (render-ket "OTA cancelled (1), retrying" ~)
       (poke-internal `[ship desk]:u.ota)
     =.  ..abet  (render-ket "downloading OTA update" ~)
-    =?  aeon.u.ota  ?=($w p.p.u.p.sign-arvo)
+    =?  aeon.u.ota  ?=(%w p.p.u.p.sign-arvo)
       ud:;;(cass:clay q.q.r.u.p.sign-arvo)
     %:  emit
       %pass  (make-wire /download)  %arvo  %c
@@ -598,7 +598,7 @@
           (render "on sync" sud her syd)
         ~
       start-sync
-    =.  let  ?.  ?=($w p.p.u.rot)  let  ud:;;(cass:clay q.q.r.u.rot)
+    =.  let  ?.  ?=(%w p.p.u.rot)  let  ud:;;(cass:clay q.q.r.u.rot)
     =/  =wire  /kiln/sync/merg/[syd]/(scot %p her)/[sud]
     ::  germ: merge mode for sync merges
     ::
@@ -648,7 +648,7 @@
             q.p.mes
         ==
       ::
-          $no-ali-disc
+          %no-ali-disc
         :~  (render "sync activated" sud her syd)
             leaf+"note: blank desk {<sud>} on {<her>}"
         ==
@@ -685,7 +685,7 @@
     (blab [%pass /kiln/[syd] %arvo %c [%merg syd her sud cas gem]] ~)
   ::
   ++  fancy-merge                                     ::  send to self
-    |=  {syd/desk her/@p sud/desk gem/?($auto germ)}
+    |=  {syd/desk her/@p sud/desk gem/?(%auto germ)}
     ^+  +>
     =/  =cage  [%kiln-merge !>([syd her sud cas gem])]
     %-  blab  :_  ~
@@ -694,9 +694,9 @@
   ++  spam  ::|=(tang ((slog +<) ..spam))
             |*(* +>(..work (^spam +<)))
   ++  merge
-    |=  {her/@p sud/@tas cas/case gim/?($auto germ)}
+    |=  {her/@p sud/@tas cas/case gim/?(%auto germ)}
     ^+  +>
-    ?.  ?=($auto gim)
+    ?.  ?=(%auto gim)
       perform(auto |, gem gim, her her, cas cas, sud sud)
     ?:  =(0 ud:.^(cass:clay %cw /(scot %p our)/[syd]/(scot %da now)))
       =>  $(gim %init)
@@ -786,27 +786,27 @@
     ?+    gem
       (spam leaf+"strange auto" >gem< ~)
     ::
-        $init
+        %init
       =+  :-  "auto merge failed on strategy %init"
           "I'm out of ideas"
       lose:(spam leaf+-< leaf+-> [>p.p.are< q.p.are])
     ::
-        $fine
-      ?.  ?=($bad-fine-merge p.p.are)
+        %fine
+      ?.  ?=(%bad-fine-merge p.p.are)
         =+  "auto merge failed on strategy %fine"
         lose:(spam leaf+- >p.p.are< q.p.are)
       =>  (spam leaf+"%fine merge failed, trying %meet" ~)
       perform(gem %meet)
     ::
-        $meet
-      ?.  ?=($meet-conflict p.p.are)
+        %meet
+      ?.  ?=(%meet-conflict p.p.are)
         =+  "auto merge failed on strategy %meet"
         lose:(spam leaf+- >p.p.are< q.p.are)
       =>  (spam leaf+"%meet merge failed, trying %mate" ~)
       perform(gem %mate)
     ::
-        $mate
-      ?.  ?=($mate-conflict p.p.are)
+        %mate
+      ?.  ?=(%mate-conflict p.p.are)
         =+  "auto merge failed on strategy %mate"
         lose:(spam leaf+- >p.p.are< q.p.are)
       =>  .(gem %meld)

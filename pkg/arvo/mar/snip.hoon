@@ -9,8 +9,8 @@
     =|  met/marl
     |=  a/marl  ^-  {hed/marl tal/marl}
     ?~  a  [~ ~]
-    ?.  ?=($h1 n.g.i.a)
-      ?:  ?=($meta n.g.i.a)
+    ?.  ?=(%h1 n.g.i.a)
+      ?:  ?=(%meta n.g.i.a)
         $(a t.a, met [i.a met])
       =+  had=$(a c.i.a)
       ?^  -.had  had
@@ -57,6 +57,6 @@
     --
   --
 ++  grab  |%                                            ::  convert from
-          ++  noun  {marl marl}                         ::  clam from $noun
+          ++  noun  {marl marl}                         ::  clam from %noun
           ++  elem  |=(a/manx (hedtal +.a))
 --        --

@@ -64,7 +64,7 @@
       depth=_1
   ==
 ::
-+$  deco  ?(~ $bl $br $un)                              ::  text decoration
++$  deco  ?(~ %bl %br %un)                              ::  text decoration
 +$  json                                                ::  normal json value
   $@  ~                                                 ::  null
   $%  [%a p=(list json)]                                ::  array
@@ -83,7 +83,7 @@
 +$  styl  %+  pair  (unit deco)                         ::  cascading style
           (pair (unit tint) (unit tint))                ::
 +$  styx  (list $@(@t (pair styl styx)))                ::  styled text
-+$  tint  ?($r $g $b $c $m $y $k $w $~)                 ::  text color
++$  tint  ?(%r %g %b %c %m %y %k %w %~)                 ::  text color
 +$  turf  (list @t)                                     ::  domain, tld first
 ::                                                      ::
 ::::                      ++jstd                        ::  json standards structures
@@ -812,45 +812,45 @@
     |%
     ++  gift                                            ::  out result <-$
       $%  [%boon payload=*]                             ::  ames response
-          {$croz rus/(map desk {r/regs w/regs})}        ::  rules for group
-          {$cruz cez/(map @ta crew)}                    ::  permission groups
-          {$dirk p/@tas}                                ::  mark mount dirty
-          {$ergo p/@tas q/mode}                         ::  version update
-          {$hill p/(list @tas)}                         ::  mount points
+          {%croz rus/(map desk {r/regs w/regs})}        ::  rules for group
+          {%cruz cez/(map @ta crew)}                    ::  permission groups
+          {%dirk p/@tas}                                ::  mark mount dirty
+          {%ergo p/@tas q/mode}                         ::  version update
+          {%hill p/(list @tas)}                         ::  mount points
           [%done error=(unit error:ames)]               ::  ames message (n)ack
-          {$mere p/(each (set path) (pair term tang))}  ::  merge result
-          {$note p/@tD q/tank}                          ::  debug message
-          {$ogre p/@tas}                                ::  delete mount point
-          {$rule red/dict wit/dict}                     ::  node r+w permissions
-          {$writ p/riot}                                ::  response
-          {$wris p/{$da p/@da} q/(set (pair care path))}  ::  many changes
+          {%mere p/(each (set path) (pair term tang))}  ::  merge result
+          {%note p/@tD q/tank}                          ::  debug message
+          {%ogre p/@tas}                                ::  delete mount point
+          {%rule red/dict wit/dict}                     ::  node r+w permissions
+          {%writ p/riot}                                ::  response
+          {%wris p/{%da p/@da} q/(set (pair care path))}  ::  many changes
       ==                                                ::
     ++  task                                            ::  in request ->$
       $~  [%vega ~]                                     ::
-      $%  {$boat ~}                                     ::  pier rebooted
-          {$cred nom/@ta cew/crew}                      ::  set permission group
-          {$crew ~}                                     ::  permission groups
-          {$crow nom/@ta}                               ::  group usage
+      $%  {%boat ~}                                     ::  pier rebooted
+          {%cred nom/@ta cew/crew}                      ::  set permission group
+          {%crew ~}                                     ::  permission groups
+          {%crow nom/@ta}                               ::  group usage
           $>(%crud vane-task)                           ::  error with trace
-          {$drop des/desk}                              ::  cancel pending merge
-          {$info des/desk dit/nori}                     ::  internal edit
+          {%drop des/desk}                              ::  cancel pending merge
+          {%info des/desk dit/nori}                     ::  internal edit
           $>(%init vane-task)                           ::  report install
-          {$into des/desk all/? fis/mode}               ::  external edit
-          $:  $merg                                     ::  merge desks
+          {%into des/desk all/? fis/mode}               ::  external edit
+          $:  %merg                                     ::  merge desks
               des/desk                                  ::  target
               her/@p  dem/desk  cas/case                ::  source
               how/germ                                  ::  method
           ==                                            ::
-          {$mont pot/term bem/beam}                     ::  mount to unix
-          {$dirk des/desk}                              ::  mark mount dirty
-          {$ogre pot/$@(desk beam)}                     ::  delete mount point
-          {$park des/desk yok/yoki ran/rang}            ::  synchronous commit
-          {$perm des/desk pax/path rit/rite}            ::  change permissions
-          {$pork ~}                                     ::  resume commit
+          {%mont pot/term bem/beam}                     ::  mount to unix
+          {%dirk des/desk}                              ::  mark mount dirty
+          {%ogre pot/$@(desk beam)}                     ::  delete mount point
+          {%park des/desk yok/yoki ran/rang}            ::  synchronous commit
+          {%perm des/desk pax/path rit/rite}            ::  change permissions
+          {%pork ~}                                     ::  resume commit
           $>(%trim vane-task)                           ::  trim state
           $>(%vega vane-task)                           ::  report upgrade
-          {$warp wer/ship rif/riff}                     ::  internal file req
-          {$werp who/ship wer/ship rif/riff-any}        ::  external file req
+          {%warp wer/ship rif/riff}                     ::  internal file req
+          {%werp who/ship wer/ship rif/riff-any}        ::  external file req
           $>(%plea vane-task)                           ::  ames request
       ==                                                ::
     --  ::able
@@ -866,8 +866,8 @@
   ++  beam  {{p/ship q/desk r/case} s/path}             ::  global name
   ++  beak  {p/ship q/desk r/case}                      ::  path prefix
   ++  blob                                              ::  fs blob
-    $%  {$delta p/lobe q/{p/mark q/lobe} r/page}        ::  delta on q
-        {$direct p/lobe q/page}                         ::  immediate
+    $%  {%delta p/lobe q/{p/mark q/lobe} r/page}        ::  delta on q
+        {%direct p/lobe q/page}                         ::  immediate
     ==                                                  ::
   ::  +cable: a reference to something on the filesystem
   ::    face: the face to wrap around the imported file
@@ -876,11 +876,11 @@
     $:  face=(unit term)
         file-path=term
     ==
-  ++  care  ?($a $b $c $d $p $r $s $t $u $v $w $x $y $z)  ::  clay submode
+  ++  care  ?(%a %b %c %d %p %r %s %t %u %v %w %x %y %z)  ::  clay submode
   ++  case                                              ::  ship desk case spur
-    $%  {$da p/@da}                                     ::  date
-        {$tas p/@tas}                                   ::  label
-        {$ud p/@ud}                                     ::  number
+    $%  {%da p/@da}                                     ::  date
+        {%tas p/@tas}                                   ::  label
+        {%ud p/@ud}                                     ::  number
     ==                                                  ::
   ++  cass  {ud/@ud da/@da}                             ::  cases for revision
   ++  crew  (set ship)                                  ::  permissions group
@@ -907,15 +907,15 @@
   ++  lobe  @uvI                                        ::  blob ref
   ++  maki  {p/@ta q/@ta r/@ta s/path}                  ::
   ++  miso                                              ::  ankh delta
-    $%  {$del ~}                                        ::  delete
-        {$ins p/cage}                                   ::  insert
-        {$dif p/cage}                                   ::  mutate from diff
-        {$mut p/cage}                                   ::  mutate from raw
+    $%  {%del ~}                                        ::  delete
+        {%ins p/cage}                                   ::  insert
+        {%dif p/cage}                                   ::  mutate from diff
+        {%mut p/cage}                                   ::  mutate from raw
     ==                                                  ::
   ++  misu                                              ::  computed delta
-    $%  {$del ~}                                        ::  delete
-        {$ins p/cage}                                   ::  insert
-        {$dif p/lobe q/cage}                            ::  mutate from diff
+    $%  {%del ~}                                        ::  delete
+        {%ins p/cage}                                   ::  insert
+        {%dif p/lobe q/cage}                            ::  mutate from diff
     ==                                                  ::
   ++  mizu  {p/@u q/(map @ud tako) r/rang}              ::  new state
   ++  moar  {p/@ud q/@ud}                               ::  normal change range
@@ -950,7 +950,7 @@
         [%many track=? =moat]                           ::  track range
     ==                                                  ::
   ++  real                                              ::  resolved permissions
-    $:  mod/?($black $white)                            ::
+    $:  mod/?(%black %white)                            ::
         who/(pair (set ship) (map @ta crew))            ::
     ==                                                  ::
   ++  regs  (map path rule)                             ::  rules for paths
@@ -959,12 +959,12 @@
     $^  [[%1 ~] riff]
     riff
   ++  rite                                              ::  new permissions
-    $%  {$r red/(unit rule)}                            ::  for read
-        {$w wit/(unit rule)}                            ::  for write
-        {$rw red/(unit rule) wit/(unit rule)}           ::  for read and write
+    $%  {%r red/(unit rule)}                            ::  for read
+        {%w wit/(unit rule)}                            ::  for write
+        {%rw red/(unit rule) wit/(unit rule)}           ::  for read and write
     ==                                                  ::
   ++  riot  (unit rant)                                 ::  response+complete
-  ++  rule  {mod/?($black $white) who/(set whom)}       ::  node permission
+  ++  rule  {mod/?(%black %white) who/(set whom)}       ::  node permission
   ++  rump  {p/care q/case r/@tas s/path}               ::  relative path
   ++  saba  {p/ship q/@tas r/moar s/dome}               ::  patch+merge
   ++  soba  (list {p/path q/miso})                      ::  delta
@@ -1092,45 +1092,45 @@
   ++  able  ^?
     |%
     ++  gift                                            ::  out result <-$
-      $%  {$bbye ~}                                     ::  reset prompt
-          {$blit p/(list blit)}                         ::  terminal output
-          {$burl p/@t}                                  ::  activate url
-          {$init p/@p}                                  ::  set owner
-          {$logo ~}                                     ::  logout
+      $%  {%bbye ~}                                     ::  reset prompt
+          {%blit p/(list blit)}                         ::  terminal output
+          {%burl p/@t}                                  ::  activate url
+          {%init p/@p}                                  ::  set owner
+          {%logo ~}                                     ::  logout
           [%lyra hoon=(unit @t) arvo=@t]                ::  upgrade kernel
-          {$meld ~}                                     ::  unify memory
-          {$pack ~}                                     ::  compact memory
-          {$trim p/@ud}                                 ::  trim kernel state
-          {$veer p/@ta q/path r/@t}                     ::  install vane
-          {$verb ~}                                     ::  verbose mode
+          {%meld ~}                                     ::  unify memory
+          {%pack ~}                                     ::  compact memory
+          {%trim p/@ud}                                 ::  trim kernel state
+          {%veer p/@ta q/path r/@t}                     ::  install vane
+          {%verb ~}                                     ::  verbose mode
           [%whey ~]                                     ::  memory report
       ==                                                ::
     ++  task                                            ::  in request ->$
       $~  [%vega ~]                                     ::
-      $%  {$belt p/belt}                                ::  terminal input
-          {$blew p/blew}                                ::  terminal config
-          {$boot lit/? p/*}                             ::  weird %dill boot
-          {$crop p/@ud}                                 ::  trim kernel state
+      $%  {%belt p/belt}                                ::  terminal input
+          {%blew p/blew}                                ::  terminal config
+          {%boot lit/? p/*}                             ::  weird %dill boot
+          {%crop p/@ud}                                 ::  trim kernel state
           $>(%crud vane-task)                           ::  error with trace
           [%flee session=~]                             ::  unwatch session
-          {$flog p/flog}                                ::  wrapped error
-          {$flow p/@tas q/(list gill:gall)}             ::  terminal config
-          {$hail ~}                                     ::  terminal refresh
-          {$heft ~}                                     ::  memory report
-          {$hook ~}                                     ::  this term hung up
-          {$harm ~}                                     ::  all terms hung up
+          {%flog p/flog}                                ::  wrapped error
+          {%flow p/@tas q/(list gill:gall)}             ::  terminal config
+          {%hail ~}                                     ::  terminal refresh
+          {%heft ~}                                     ::  memory report
+          {%hook ~}                                     ::  this term hung up
+          {%harm ~}                                     ::  all terms hung up
           $>(%init vane-task)                           ::  after gall ready
           [%lyra hoon=(unit @t) arvo=@t]                ::  upgrade kernel
-          {$meld ~}                                     ::  unify memory
-          {$noop ~}                                     ::  no operation
-          {$pack ~}                                     ::  compact memory
-          {$talk p/tank}                                ::
-          {$text p/tape}                                ::
-          {$veer p/@ta q/path r/@t}                     ::  install vane
+          {%meld ~}                                     ::  unify memory
+          {%noop ~}                                     ::  no operation
+          {%pack ~}                                     ::  compact memory
+          {%talk p/tank}                                ::
+          {%text p/tape}                                ::
+          {%veer p/@ta q/path r/@t}                     ::  install vane
           [%view session=~]                             ::  watch session blits
           $>(%trim vane-task)                           ::  trim state
           $>(%vega vane-task)                           ::  report upgrade
-          {$verb ~}                                     ::  verbose mode
+          {%verb ~}                                     ::  verbose mode
           [%knob tag=term level=?(%hush %soft %loud)]   ::  error verbosity
       ==                                                ::
     --  ::able
@@ -1139,62 +1139,62 @@
     ::
   ++  blew  {p/@ud q/@ud}                               ::  columns rows
   ++  belt                                              ::  old belt
-    $%  {$aro p/?($d $l $r $u)}                         ::  arrow key
-        {$bac ~}                                        ::  true backspace
-        {$ctl p/@c}                                     ::  control-key
-        {$del ~}                                        ::  true delete
-        {$met p/@c}                                     ::  meta-key
-        {$ret ~}                                        ::  return
-        {$txt p/(list @c)}                              ::  utf32 text
+    $%  {%aro p/?(%d %l %r %u)}                         ::  arrow key
+        {%bac ~}                                        ::  true backspace
+        {%ctl p/@c}                                     ::  control-key
+        {%del ~}                                        ::  true delete
+        {%met p/@c}                                     ::  meta-key
+        {%ret ~}                                        ::  return
+        {%txt p/(list @c)}                              ::  utf32 text
     ==                                                  ::
   ++  blit                                              ::  old blit
-    $%  {$bel ~}                                        ::  make a noise
-        {$clr ~}                                        ::  clear the screen
-        {$hop p/@ud}                                    ::  set cursor position
+    $%  {%bel ~}                                        ::  make a noise
+        {%clr ~}                                        ::  clear the screen
+        {%hop p/@ud}                                    ::  set cursor position
         [%klr p=stub]                                   ::  set styled line
-        {$lin p/(list @c)}                              ::  set current line
-        {$mor ~}                                        ::  newline
-        {$sag p/path q/*}                               ::  save to jamfile
-        {$sav p/path q/@}                               ::  save to file
-        {$url p/@t}                                     ::  activate url
+        {%lin p/(list @c)}                              ::  set current line
+        {%mor ~}                                        ::  newline
+        {%sag p/path q/*}                               ::  save to jamfile
+        {%sav p/path q/@}                               ::  save to file
+        {%url p/@t}                                     ::  activate url
     ==                                                  ::
   ++  dill-belt                                         ::  new belt
-    $%  {$aro p/?($d $l $r $u)}                         ::  arrow key
-        {$bac ~}                                        ::  true backspace
-        {$cru p/@tas q/(list tank)}                     ::  echo error
-        {$ctl p/@}                                      ::  control-key
-        {$del ~}                                        ::  true delete
-        {$hey ~}                                        ::  refresh
-        {$met p/@}                                      ::  meta-key
-        {$ret ~}                                        ::  return
-        {$rez p/@ud q/@ud}                              ::  resize, cols, rows
-        {$txt p/(list @c)}                              ::  utf32 text
-        {$yow p/gill:gall}                              ::  connect to app
+    $%  {%aro p/?(%d %l %r %u)}                         ::  arrow key
+        {%bac ~}                                        ::  true backspace
+        {%cru p/@tas q/(list tank)}                     ::  echo error
+        {%ctl p/@}                                      ::  control-key
+        {%del ~}                                        ::  true delete
+        {%hey ~}                                        ::  refresh
+        {%met p/@}                                      ::  meta-key
+        {%ret ~}                                        ::  return
+        {%rez p/@ud q/@ud}                              ::  resize, cols, rows
+        {%txt p/(list @c)}                              ::  utf32 text
+        {%yow p/gill:gall}                              ::  connect to app
     ==                                                  ::
   ++  dill-blit                                         ::  new blit
-    $%  {$bel ~}                                        ::  make a noise
-        {$clr ~}                                        ::  clear the screen
-        {$hop p/@ud}                                    ::  set cursor position
-        {$klr p/stub}                                   ::  styled text
-        {$mor p/(list dill-blit)}                       ::  multiple blits
-        {$pom p/stub}                                   ::  styled prompt
-        {$pro p/(list @c)}                              ::  show as cursor+line
-        {$qit ~}                                        ::  close console
-        {$out p/(list @c)}                              ::  send output line
-        {$sag p/path q/*}                               ::  save to jamfile
-        {$sav p/path q/@}                               ::  save to file
-        {$url p/@t}                                     ::  activate url
+    $%  {%bel ~}                                        ::  make a noise
+        {%clr ~}                                        ::  clear the screen
+        {%hop p/@ud}                                    ::  set cursor position
+        {%klr p/stub}                                   ::  styled text
+        {%mor p/(list dill-blit)}                       ::  multiple blits
+        {%pom p/stub}                                   ::  styled prompt
+        {%pro p/(list @c)}                              ::  show as cursor+line
+        {%qit ~}                                        ::  close console
+        {%out p/(list @c)}                              ::  send output line
+        {%sag p/path q/*}                               ::  save to jamfile
+        {%sav p/path q/@}                               ::  save to file
+        {%url p/@t}                                     ::  activate url
     ==                                                  ::
   ++  flog                                              ::  sent to %dill
-    $%  {$crop p/@ud}                                   ::  trim kernel state
-        {$crud p/@tas q/(list tank)}                    ::
-        {$heft ~}                                       ::
+    $%  {%crop p/@ud}                                   ::  trim kernel state
+        {%crud p/@tas q/(list tank)}                    ::
+        {%heft ~}                                       ::
         [%lyra hoon=(unit @t) arvo=@t]                  ::  upgrade kernel
-        {$meld ~}                                       ::  unify memory
-        {$pack ~}                                       ::  compact memory
-        {$text p/tape}                                  ::
-        {$veer p/@ta q/path r/@t}                       ::  install vane
-        {$verb ~}                                       ::  verbose mode
+        {%meld ~}                                       ::  unify memory
+        {%pack ~}                                       ::  compact memory
+        {%text p/tape}                                  ::
+        {%veer p/@ta q/path r/@t}                       ::  install vane
+        {%verb ~}                                       ::  verbose mode
     ==                                                  ::
   --  ::dill
 ::                                                      ::::
@@ -1546,8 +1546,8 @@
   ++  hate  {p/purl q/@p r/moth}                        ::  semi-cooked request
   ++  hiss  {p/purl q/moth}                             ::  outbound request
   ++  host  (each turf @if)                             ::  http host
-  ++  hoke  %+  each   {$localhost ~}                  ::  local host
-            ?($.0.0.0.0 $.127.0.0.1)                    ::
+  ++  hoke  %+  each   {%localhost ~}                  ::  local host
+            ?(%.0.0.0.0 %.127.0.0.1)                    ::
   ++  httq                                              ::  raw http request
     $:  p/meth                                          ::  method
         q/@t                                            ::  unparsed url
@@ -1558,14 +1558,14 @@
   ++  math  (map @t (list @t))                          ::  semiparsed headers
   ++  mess  (list {p/@t q/@t})                          ::  raw http headers
   ++  meth                                              ::  http methods
-    $?  $conn                                           ::  CONNECT
-        $delt                                           ::  DELETE
-        $get                                            ::  GET
-        $head                                           ::  HEAD
-        $opts                                           ::  OPTIONS
-        $post                                           ::  POST
-        $put                                            ::  PUT
-        $trac                                           ::  TRACE
+    $?  %conn                                           ::  CONNECT
+        %delt                                           ::  DELETE
+        %get                                            ::  GET
+        %head                                           ::  HEAD
+        %opts                                           ::  OPTIONS
+        %post                                           ::  POST
+        %put                                            ::  PUT
+        %trac                                           ::  TRACE
     ==                                                  ::
   ++  moth  {p/meth q/math r/(unit octs)}               ::  http operation
   ++  oryx  @t                                          ::  CSRF secret
@@ -1714,7 +1714,7 @@
     ++  task                                            ::  incoming request
       $~  [%vega ~]                                     ::
       $%  [%conf dap=term]                              ::  start agent
-          [$deal p=sock q=term r=deal]                  ::  full transmission
+          [%deal p=sock q=term r=deal]                  ::  full transmission
           [%goad force=? agent=(unit dude)]             ::  rebuild agent(s)
           [%sear =ship]                                 ::  clear pending queues
           $>(%init vane-task)                           ::  set owner
@@ -2191,19 +2191,19 @@
   ==
 ++  note-arvo                                           ::  out request $->
   $~  [%b %wake ~]
-  $%  {$a task:able:ames}
-      {$b task:able:behn}
-      {$c task:able:clay}
-      {$d task:able:dill}
+  $%  {%a task:able:ames}
+      {%b task:able:behn}
+      {%c task:able:clay}
+      {%d task:able:dill}
       [%e task:able:eyre]
-      {$g task:able:gall}
+      {%g task:able:gall}
       [%i task:able:iris]
-      {$j task:able:jael}
-      {@tas $meta vase}
+      {%j task:able:jael}
+      {@tas %meta vase}
   ==
 ++  sign-arvo                                           ::  in result $<-
-  $%  {$a gift:able:ames}
-      $:  $b
+  $%  {%a gift:able:ames}
+      $:  %b
           $%  gift:able:behn
               $>(%wris gift:able:clay)
               $>(%writ gift:able:clay)
@@ -2211,12 +2211,12 @@
               $>(%unto gift:able:gall)
           ==
       ==
-      {$c gift:able:clay}
-      {$d gift:able:dill}
+      {%c gift:able:clay}
+      {%d gift:able:dill}
       [%e gift:able:eyre]
-      {$g gift:able:gall}
+      {%g gift:able:gall}
       [%i gift:able:iris]
-      {$j gift:able:jael}
+      {%j gift:able:jael}
   ==
 ::  $unix-task: input from unix
 ::
@@ -5512,7 +5512,7 @@
     |=  dex/desk
     %+  biff  (slay i.t.t.pax)
     |=  cis/coin
-    ?.  ?=({$$ case} cis)  ~
+    ?.  ?=({%$ case} cis)  ~
     `(unit beam)`[~ [who dex `case`p.cis] t.t.t.pax]
   ::
   ++  json-rn                                           ::  json to rn parser
@@ -5611,7 +5611,7 @@
     ++  ar                                              ::  array as list
       |*  wit/fist
       |=  jon/json  ^-  (list _(wit *json))
-      ?>  ?=({$a *} jon)
+      ?>  ?=({%a *} jon)
       (turn p.jon wit)
     ::                                                  ::  ++as:dejs:format
     ++  as                                              ::  array as set
@@ -5621,7 +5621,7 @@
     ++  at                                              ::  array as tuple
       |*  wil/(pole fist)
       |=  jon/json
-      ?>  ?=({$a *} jon)
+      ?>  ?=({%a *} jon)
       ((at-raw wil) p.jon)
     ::                                                  ::  ++at-raw:dejs:format
     ++  at-raw                                          ::  array as tuple
@@ -5637,10 +5637,10 @@
       ==
     ::                                                  ::  ++bo:dejs:format
     ++  bo                                              ::  boolean
-      |=(jon/json ?>(?=({$b *} jon) p.jon))
+      |=(jon/json ?>(?=({%b *} jon) p.jon))
     ::                                                  ::  ++bu:dejs:format
     ++  bu                                              ::  boolean not
-      |=(jon/json ?>(?=({$b *} jon) !p.jon))
+      |=(jon/json ?>(?=({%b *} jon) !p.jon))
     ::                                                  ::  ++ci:dejs:format
     ++  ci                                              ::  maybe transform
       |*  {poq/gate wit/fist}
@@ -5671,16 +5671,16 @@
     ::                                                  ::  ++ni:dejs:format
     ++  ni                                              ::  number as integer
       |=  jon/json
-      ?>  ?=({$n *} jon)
+      ?>  ?=({%n *} jon)
       (rash p.jon dem)
     ::                                                  ::  ++no:dejs:format
     ++  no                                              ::  number as cord
-      |=(jon/json ?>(?=({$n *} jon) p.jon))
+      |=(jon/json ?>(?=({%n *} jon) p.jon))
     ::                                                  ::  ++of:dejs:format
     ++  of                                              ::  object as frond
       |*  wer/(pole {cord fist})
       |=  jon/json
-      ?>  ?=({$o {@ *} $~ $~} jon)
+      ?>  ?=({%o {@ *} ~ ~} jon)
       |-
       ?-    wer                                         :: mint-vain on empty
           :: {{key/@t wit/*} t/*}
@@ -5695,7 +5695,7 @@
     ++  ot                                              ::  object as tuple
       |*  wer/(pole {cord fist})
       |=  jon/json
-      ?>  ?=({$o *} jon)
+      ?>  ?=({%o *} jon)
       ((ot-raw wer) p.jon)
     ::                                                  ::  ++ot-raw:dejs:format
     ++  ot-raw                                          ::  object as tuple
@@ -5712,7 +5712,7 @@
     ++  ou                                              ::  object of units
       |*  wer/(pole {cord fist})
       |=  jon/json
-      ?>  ?=({$o *} jon)
+      ?>  ?=({%o *} jon)
       ((ou-raw wer) p.jon)
     ::                                                  ::  ++ou-raw:dejs:format
     ++  ou-raw                                          ::  object of units
@@ -5729,7 +5729,7 @@
     ++  om                                              ::  object as map
       |*  wit/fist
       |=  jon/json
-      ?>  ?=({$o *} jon)
+      ?>  ?=({%o *} jon)
       (~(run by p.jon) wit)
     ::                                                  ::  ++op:dejs:format
     ++  op                                              ::  parse keys of map
@@ -5750,7 +5750,7 @@
       (cu |*(* [pre +<]) wit)
     ::                                                  ::  ++sa:dejs:format
     ++  sa                                              ::  string as tape
-      |=(jon/json ?>(?=({$s *} jon) (trip p.jon)))
+      |=(jon/json ?>(?=({%s *} jon) (trip p.jon)))
     ::                                                  ::  ++se:dejs:format
     ++  se                                              ::  string as aura
       |=  aur=@tas
@@ -5758,12 +5758,12 @@
       ?>(?=([%s *] jon) (slav aur p.jon))
     ::                                                  ::  ++so:dejs:format
     ++  so                                              ::  string as cord
-      |=(jon/json ?>(?=({$s *} jon) p.jon))
+      |=(jon/json ?>(?=({%s *} jon) p.jon))
     ::                                                  ::  ++su:dejs:format
     ++  su                                              ::  parse string
       |*  sab/rule
       |=  jon/json  ^+  (wonk *sab)
-      ?>  ?=({$s *} jon)
+      ?>  ?=({%s *} jon)
       (rash p.jon sab)
     ::                                                  ::  ++uf:dejs:format
     ++  uf                                              ::  unit fall
@@ -5823,7 +5823,7 @@
     ++  ar                                              ::  array as list
       |*  wit/fist
       |=  jon/json
-      ?.  ?=({$a *} jon)  ~
+      ?.  ?=({%a *} jon)  ~
       %-  zl
       |-
       ?~  p.jon  ~
@@ -5832,7 +5832,7 @@
     ++  at                                              ::  array as tuple
       |*  wil/(pole fist)
       |=  jon/json
-      ?.  ?=({$a *} jon)  ~
+      ?.  ?=({%a *} jon)  ~
       ?.  =((lent wil) (lent p.jon))  ~
       =+  raw=((at-raw wil) p.jon)
       ?.((za raw) ~ (some (zp raw)))
@@ -5845,10 +5845,10 @@
       ((at-raw +.wil) ?~(jol ~ t.jol))
     ::
     ++  bo                                              ::  boolean
-      |=(jon/json ?.(?=({$b *} jon) ~ [~ u=p.jon]))
+      |=(jon/json ?.(?=({%b *} jon) ~ [~ u=p.jon]))
     ::
     ++  bu                                              ::  boolean not
-      |=(jon/json ?.(?=({$b *} jon) ~ [~ u=!p.jon]))
+      |=(jon/json ?.(?=({%b *} jon) ~ [~ u=!p.jon]))
     ::
     ++  ci                                              ::  maybe transform
       |*  {poq/gate wit/fist}
@@ -5862,7 +5862,7 @@
     ::
     ++  da                                              ::  UTC date
       |=  jon/json
-      ?.  ?=({$s *} jon)  ~
+      ?.  ?=({%s *} jon)  ~
       (bind (stud:chrono:userlib p.jon) |=(a/date (year a)))
     ::
     ++  di                                              ::  millisecond date
@@ -5884,18 +5884,18 @@
     ::
     ++  ni                                              ::  number as integer
       |=  jon/json
-      ?.  ?=({$n *} jon)  ~
+      ?.  ?=({%n *} jon)  ~
       (rush p.jon dem)
     ::
     ++  no                                              ::  number as cord
       |=  jon/json
-      ?.  ?=({$n *} jon)  ~
+      ?.  ?=({%n *} jon)  ~
       (some p.jon)
     ::
     ++  of                                              ::  object as frond
       |*  wer/(pole {cord fist})
       |=  jon/json
-      ?.  ?=({$o {@ *} ~ ~} jon)  ~
+      ?.  ?=({%o {@ *} ~ ~} jon)  ~
       |-
       ?~  wer  ~
       ?:  =(-.-.wer p.n.p.jon)
@@ -5905,7 +5905,7 @@
     ++  ot                                              ::  object as tuple
       |*  wer/(pole {cord fist})
       |=  jon/json
-      ?.  ?=({$o *} jon)  ~
+      ?.  ?=({%o *} jon)  ~
       =+  raw=((ot-raw wer) p.jon)
       ?.((za raw) ~ (some (zp raw)))
     ::
@@ -5919,7 +5919,7 @@
     ++  om                                              ::  object as map
       |*  wit/fist
       |=  jon/json
-      ?.  ?=({$o *} jon)  ~
+      ?.  ?=({%o *} jon)  ~
       (zm (~(run by p.jon) wit))
     ::
     ++  op                                              ::  parse keys of map
@@ -5943,16 +5943,16 @@
     ::
     ++  sa                                              ::  string as tape
       |=  jon/json
-      ?.(?=({$s *} jon) ~ (some (trip p.jon)))
+      ?.(?=({%s *} jon) ~ (some (trip p.jon)))
     ::
     ++  so                                              ::  string as cord
       |=  jon/json
-      ?.(?=({$s *} jon) ~ (some p.jon))
+      ?.(?=({%s *} jon) ~ (some p.jon))
     ::
     ++  su                                              ::  parse string
       |*  sab/rule
       |=  jon/json
-      ?.  ?=({$s *} jon)  ~
+      ?.  ?=({%s *} jon)  ~
       (rush p.jon sab)
     ::
     ++  ul  |=(jon/json ?~(jon (some ~) ~))             ::  null
@@ -6254,7 +6254,7 @@
       ^-  tape
       ?~  val  (weld "null" rez)
       ?-    -.val
-          $a
+          %a
         :-  '['
         =.  rez  [']' rez]
         !.
@@ -6263,9 +6263,9 @@
         ?~  t.p.val  ^$(val i.p.val)
         ^$(val i.p.val, rez [',' $(p.val t.p.val)])
      ::
-          $b  (weld ?:(p.val "true" "false") rez)
-          $n  (weld (trip p.val) rez)
-          $s
+          %b  (weld ?:(p.val "true" "false") rez)
+          %n  (weld (trip p.val) rez)
+          %s
         :-  '"'
         =.  rez  ['"' rez]
         =+  viz=(trip p.val)
@@ -6277,7 +6277,7 @@
           [i.hed $(viz t.viz)]
         (weld hed $(viz t.viz))
      ::
-          $o
+          %o
         :-  '{'
         =.  rez  ['}' rez]
         =+  viz=~(tap by p.val)
@@ -6293,9 +6293,9 @@
       =+  utf=|=(a/@ ['\\' 'u' ((x-co 4):co a)])
       |=  a/@  ^-  tape
       ?+  a  ?:((gth a 0x1f) [a ~] (utf a))
-        $10  "\\n"
-        $34  "\\\""
-        $92  "\\\\"
+        %10  "\\n"
+        %34  "\\\""
+        %92  "\\\\"
       ==
     --  ::en-json
   ::                                                    ::  ++de-json:html
@@ -6404,7 +6404,7 @@
     ++  apex                                            ::  top level
       |=  {mex/manx rez/tape}
       ^-  tape
-      ?:  ?=({$$ {{$$ *} ~}} g.mex)
+      ?:  ?=({%$ {{%$ *} ~}} g.mex)
         (escp v.i.a.g.mex rez)
       =+  man=`mane`n.g.mex
       =.  unq  |(unq =(%script man) =(%style man))
@@ -6441,11 +6441,11 @@
       %=    $
         xet  t.xet
         rez  ?-  i.xet
-               $34  ['&' 'q' 'u' 'o' 't' ';' rez]
-               $38  ['&' 'a' 'm' 'p' ';' rez]
-               $39  ['&' '#' '3' '9' ';' rez]
-               $60  ['&' 'l' 't' ';' rez]
-               $62  ['&' 'g' 't' ';' rez]
+               %34  ['&' 'q' 'u' 'o' 't' ';' rez]
+               %38  ['&' 'a' 'm' 'p' ';' rez]
+               %39  ['&' '#' '3' '9' ';' rez]
+               %60  ['&' 'l' 't' ';' rez]
+               %62  ['&' 'g' 't' ';' rez]
                *    [i.xet rez]
              ==
       ==
@@ -6901,7 +6901,7 @@
         =>  .(b `,(tup -.a +.a)`b)
         ?~  +.a  [(scot -.a b) ~]
         [(scot -.a -.b) `,(paf +.a)`(..$ +.a +.b)]
-    :-  paf=|*(a/(pole) ?~(a $~ {(odo:raid ,-.a(. %ta)) ,(..$ +.a)}))
+    :-  paf=|*(a/(pole) ?~(a ,~ {(odo:raid ,-.a(. %ta)) ,(..$ +.a)}))
     ^=  tup
     |*  {a/@tas b/(pole @tas)}
     =+  c=(odo:raid a)
@@ -6921,9 +6921,9 @@
     |=  b/*
     =-  a(, (- b))                  ::  preserve face
     ?+  a   @
-      $c  @c  $da  @da  $dr  @dr  $f   @f   $if  @if  $is  @is  $p   @p
-      $u  @u  $uc  @uc  $ub  @ub  $ui  @ui  $ux  @ux  $uv  @uv  $uw  @uw
-      $s  @s  $t   @t   $ta  @ta  $tas  @tas
+      %c  @c  %da  @da  %dr  @dr  %f   @f   %if  @if  %is  @is  %p   @p
+      %u  @u  %uc  @uc  %ub  @ub  %ui  @ui  %ux  @ux  %uv  @uv  %uw  @uw
+      %s  @s  %t   @t   %ta  @ta  %tas  @tas
     ==
 ::  ::                                                    ::  ++read:wired
 ::  ++  read                                              ::  parse odored path
@@ -6974,11 +6974,11 @@
         ^-  ship
         =/  mir  (clan who)
         ?-  mir
-          $czar  who
-          $king  (end 3 1 who)
-          $duke  (end 4 1 who)
-          $earl  (end 5 1 who)
-          $pawn  (end 4 1 who)
+          %czar  who
+          %king  (end 3 1 who)
+          %duke  (end 4 1 who)
+          %earl  (end 5 1 who)
+          %pawn  (end 4 1 who)
         ==
       --
   |%
@@ -7012,7 +7012,7 @@
     |=  [our=ship who=ship]
     ^-  ?
     ?|  =(our who)
-        &(?=($earl (clan who)) =(our (^sein who)))
+        &(?=(%earl (clan who)) =(our (^sein who)))
     ==
   --  ::title
 ::                                                      ::
@@ -7653,10 +7653,10 @@
           ^+  =+  [*date u=unit]
               *{(u _[a y]) (u _m) (u _d.t) (u _+.t) ~}
           :~
-              |-(?~(b ~ ?.(?=($y -.i.b) $(b t.b) `+.i.b)))
-              |-(?~(b ~ ?.(?=($m -.i.b) $(b t.b) `+.i.b)))
-              |-(?~(b ~ ?.(?=($d -.i.b) $(b t.b) `+.i.b)))
-              |-(?~(b ~ ?.(?=($t -.i.b) $(b t.b) `+.i.b)))
+              |-(?~(b ~ ?.(?=(%y -.i.b) $(b t.b) `+.i.b)))
+              |-(?~(b ~ ?.(?=(%m -.i.b) $(b t.b) `+.i.b)))
+              |-(?~(b ~ ?.(?=(%d -.i.b) $(b t.b) `+.i.b)))
+              |-(?~(b ~ ?.(?=(%t -.i.b) $(b t.b) `+.i.b)))
           ==
       |%
       ::                                                ::  ++snug:stud:chrono:

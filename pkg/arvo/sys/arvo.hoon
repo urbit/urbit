@@ -1068,7 +1068,7 @@
         ==
       ::
       =/  von
-        %+  turn  
+        %+  turn
           (sort ~(tap by van.mod) |=([[a=@tas *] [b=@tas *]] (aor a b)))
         |=([lal=@tas =vane] (cat 3 %vane- lal)^vane)
       ::

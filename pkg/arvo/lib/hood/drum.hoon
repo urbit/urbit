@@ -458,12 +458,12 @@
 ++  se-belt                                           ::  handle input
   |=  bet/dill-belt:dill
   ^+  +>
-  ?:  ?=({?($cru $hey $rez $yow) *} bet)              ::  target-agnostic
+  ?:  ?=({?(%cru %hey %rez %yow) *} bet)              ::  target-agnostic
     ?-  bet
-      {$cru *}  (se-dump:(se-text (trip p.bet)) q.bet)
-      {$hey *}  +>(mir [0 ~])                         ::  refresh
-      {$rez *}  +>(edg (dec p.bet))                   ::  resize window
-      {$yow *}  ~&([%no-yow -.bet] +>)
+      {%cru *}  (se-dump:(se-text (trip p.bet)) q.bet)
+      {%hey *}  +>(mir [0 ~])                         ::  refresh
+      {%rez *}  +>(edg (dec p.bet))                   ::  resize window
+      {%yow *}  ~&([%no-yow -.bet] +>)
     ==
   =+  gul=se-agon
   ?:  |(?=(~ gul) (se-aint u.gul))
@@ -651,21 +651,21 @@
   ++  ta-id  (cat 3 'drum_' (scot %p our.hid))        ::  per-ship duct id
   ::
   ++  ta-aro                                          ::  hear arrow
-    |=  key/?($d $l $r $u)
+    |=  key/?(%d %l %r %u)
     ^+  +>
     =.  ris  ~
     ?-  key
-      $d  ?.  =(num.hit pos.hit)
+      %d  ?.  =(num.hit pos.hit)
             (ta-mov +(pos.hit))
           ?:  =(0 (lent buf.say.inp))
             ta-bel
           (ta-hom:ta-nex %set ~)
-      $l  ?:  =(0 pos.inp)  ta-bel
+      %l  ?:  =(0 pos.inp)  ta-bel
           +>(pos.inp (dec pos.inp))
-      $r  ?:  =((lent buf.say.inp) pos.inp)
+      %r  ?:  =((lent buf.say.inp) pos.inp)
             ta-bel
           +>(pos.inp +(pos.inp))
-      $u  ?:(=(0 pos.hit) ta-bel (ta-mov (dec pos.hit)))
+      %u  ?:(=(0 pos.hit) ta-bel (ta-mov (dec pos.hit)))
     ==
   ::
   ++  ta-bel                                          ::  beep
@@ -674,16 +674,16 @@
   ++  ta-belt                                         ::  handle input
     |=  bet/dill-belt:dill
     ^+  +>
-    ?<  ?=({?($cru $hey $rez $yow) *} bet)            ::  target-specific
+    ?<  ?=({?(%cru %hey %rez %yow) *} bet)            ::  target-specific
     =.  blt  [q.blt `bet]                             ::  remember belt
     ?-  bet
-      {$aro *}  (ta-aro p.bet)
-      {$bac *}  ta-bac
-      {$ctl *}  (ta-ctl p.bet)
-      {$del *}  ta-del
-      {$met *}  (ta-met p.bet)
-      {$ret *}  ta-ret
-      {$txt *}  (ta-txt p.bet)
+      {%aro *}  (ta-aro p.bet)
+      {%bac *}  ta-bac
+      {%ctl *}  (ta-ctl p.bet)
+      {%del *}  ta-del
+      {%met *}  (ta-met p.bet)
+      {%ret *}  ta-ret
+      {%txt *}  (ta-txt p.bet)
     ==
   ::
   ++  ta-det                                          ::  send edit
@@ -709,48 +709,48 @@
   ++  ta-ctl                                          ::  hear control
     |=  key/@ud
     ^+  +>
-    =.  ris  ?.(?=(?($g $r) key) ~ ris)
+    =.  ris  ?.(?=(?(%g %r) key) ~ ris)
     ?+    key    ta-bel
-        $a  +>(pos.inp 0)
-        $b  (ta-aro %l)
-        $c  ta-bel
-        $d  ?^  buf.say.inp
+        %a  +>(pos.inp 0)
+        %b  (ta-aro %l)
+        %c  ta-bel
+        %d  ?^  buf.say.inp
               ta-del
             ?:  (~(has in (deft-fish our.hid)) gyl)
               +>(..ta (se-blit qit+~))                ::  quit pier
             +>(..ta (se-klin gyl))                    ::  unlink app
-        $e  +>(pos.inp (lent buf.say.inp))
-        $f  (ta-aro %r)
-        $g  ?~  ris  ta-bel
+        %e  +>(pos.inp (lent buf.say.inp))
+        %f  (ta-aro %r)
+        %g  ?~  ris  ta-bel
             (ta-hom(pos.hit num.hit, ris ~) [%set ~])
-        $i  ta-tab
-        $k  =+  len=(lent buf.say.inp)
+        %i  ta-tab
+        %k  =+  len=(lent buf.say.inp)
             ?:  =(pos.inp len)
               ta-bel
             (ta-kil %r [pos.inp (sub len pos.inp)])
-        $l  +>(..ta (se-blit %clr ~))
-        $n  (ta-aro %d)
-        $p  (ta-aro %u)
-        $r  ?~  ris
+        %l  +>(..ta (se-blit %clr ~))
+        %n  (ta-aro %d)
+        %p  (ta-aro %u)
+        %r  ?~  ris
               +>(ris `[pos.hit ~])
             ?:  =(0 pos.u.ris)
               ta-bel
             (ta-ser ~)
-        $t  =+  len=(lent buf.say.inp)
+        %t  =+  len=(lent buf.say.inp)
             ?:  |(=(0 pos.inp) (lth len 2))
               ta-bel
             =+  sop=(sub pos.inp ?:(=(len pos.inp) 2 1))
             (ta-hom (rep:edit [sop 2] (flop (swag [sop 2] buf.say.inp))))
-        $u  ?:  =(0 pos.inp)
+        %u  ?:  =(0 pos.inp)
               ta-bel
             (ta-kil %l [0 pos.inp])
-        $v  ta-bel
-        $w  ?:  =(0 pos.inp)
+        %v  ta-bel
+        %w  ?:  =(0 pos.inp)
               ta-bel
             =+  sop=(ta-pos %l %ace pos.inp)
             (ta-kil %l [(sub pos.inp sop) sop])
-        $x  +>(..ta se-anon)
-        $y  ?:  =(0 num.kil)
+        %x  +>(..ta se-anon)
+        %y  ?:  =(0 num.kil)
               ta-bel
             (ta-hom (cat:edit pos.inp ta-yan))
     ==
@@ -773,23 +773,23 @@
     |=  fec/sole-effect
     ^+  +>
     ?-  fec
-      {$bel *}  ta-bel
-      {$blk *}  +>
-      {$clr *}  +>(..ta (se-blit fec))
-      {$det *}  (ta-got +.fec)
-      {$err *}  (ta-err p.fec)
-      {$klr *}  +>(..ta (se-blit %klr (make:klr p.fec)))
-      {$mor *}  |-  ^+  +>.^$
+      {%bel *}  ta-bel
+      {%blk *}  +>
+      {%clr *}  +>(..ta (se-blit fec))
+      {%det *}  (ta-got +.fec)
+      {%err *}  (ta-err p.fec)
+      {%klr *}  +>(..ta (se-blit %klr (make:klr p.fec)))
+      {%mor *}  |-  ^+  +>.^$
                 ?~  p.fec  +>.^$
                 $(p.fec t.p.fec, +>.^$ ^$(fec i.p.fec))
-      {$nex *}  ta-nex
-      {$pro *}  (ta-pro +.fec)
-      {$tab *}  +>(..ta (se-tab p.fec))
-      {$tan *}  +>(..ta (se-dump p.fec))
-      {$sag *}  +>(..ta (se-blit fec))
-      {$sav *}  +>(..ta (se-blit fec))
-      {$txt *}  +>(..ta (se-text p.fec))
-      {$url *}  +>(..ta (se-blit fec))
+      {%nex *}  ta-nex
+      {%pro *}  (ta-pro +.fec)
+      {%tab *}  +>(..ta (se-tab p.fec))
+      {%tan *}  +>(..ta (se-dump p.fec))
+      {%sag *}  +>(..ta (se-blit fec))
+      {%sav *}  +>(..ta (se-blit fec))
+      {%txt *}  +>(..ta (se-text p.fec))
+      {%url *}  +>(..ta (se-blit fec))
     ==
   ::
   ++  ta-dog                                          ::  change cursor
@@ -800,19 +800,19 @@
       %+  min  len
       |-  ^-  @ud
       ?-  ted
-        {$del *}  ?:((gth pos.inp p.ted) (dec pos.inp) pos.inp)
-        {$ins *}  ?:((gte pos.inp p.ted) +(pos.inp) pos.inp)
-        {$mor *}  |-  ^-  @ud
+        {%del *}  ?:((gth pos.inp p.ted) (dec pos.inp) pos.inp)
+        {%ins *}  ?:((gte pos.inp p.ted) +(pos.inp) pos.inp)
+        {%mor *}  |-  ^-  @ud
                   ?~  p.ted  pos.inp
                   $(p.ted t.p.ted, pos.inp ^$(ted i.p.ted))
-        {$nop *}  pos.inp
-        {$set *}  len
+        {%nop *}  pos.inp
+        {%set *}  len
       ==
     ==
   ::
   ++  ta-off                                          ::  reset buffer offset
     |=  ted/sole-edit
-    =?  off  (any:edit ted |=(a/sole-edit ?=($set -.a)))  0
+    =?  off  (any:edit ted |=(a/sole-edit ?=(%set -.a)))  0
     +>
   ::
   ++  ta-got                                          ::  apply change
@@ -827,13 +827,13 @@
     (ta-dog(say.inp (~(commit sole say.inp) ted)) ted)
   ::
   ++  ta-jump                                         ::  buffer pos
-    |=  {dir/?($l $r) til/?($ace $edg $wrd) pos/@ud}
+    |=  {dir/?(%l %r) til/?(%ace %edg %wrd) pos/@ud}
     ^-  @ud
-    %-  ?:(?=($l dir) sub add)
+    %-  ?:(?=(%l dir) sub add)
     [pos (ta-pos dir til pos)]
   ::
   ++  ta-kil                                          ::  kill selection
-    |=  {dir/?($l $r) sel/{@ @}}
+    |=  {dir/?(%l %r) sel/{@ @}}
     ^+  +>
     =+  buf=(swag sel buf.say.inp)
     %.  (cut:edit sel)
@@ -841,8 +841,8 @@
         kil
       ?.  ?&  ?=(^ old.kil)
               ?=(^ p.blt)
-              ?|  ?=({$ctl ?($k $u $w)} u.p.blt)
-                  ?=({$met ?($d $bac)} u.p.blt)
+              ?|  ?=({%ctl ?(%k %u %w)} u.p.blt)
+                  ?=({%met ?(%d %bac)} u.p.blt)
           ==  ==
         %=  kil                                       ::  prepend
           num  +(num.kil)
@@ -853,8 +853,8 @@
         pos  num.kil
         old  :_  t.old.kil
              ?-  dir
-               $l  (welp buf i.old.kil)
-               $r  (welp i.old.kil buf)
+               %l  (welp buf i.old.kil)
+               %r  (welp i.old.kil buf)
       ==     ==
     ==
   ::
@@ -863,22 +863,22 @@
     ^+  +>
     =.  ris  ~
     ?+    key    ta-bel
-      $dot  ?.  &(?=(^ old.hit) ?=(^ i.old.hit))      ::  last "arg" from hist
+      %dot  ?.  &(?=(^ old.hit) ?=(^ i.old.hit))      ::  last "arg" from hist
               ta-bel
             =+  old=`(list @c)`i.old.hit
             =+  sop=(ta-jump(buf.say.inp old) %l %ace (lent old))
             (ta-hom (cat:edit pos.inp (slag sop old)))
             ::
-      $bac  ?:  =(0 pos.inp)                          ::  kill left-word
+      %bac  ?:  =(0 pos.inp)                          ::  kill left-word
               ta-bel
             =+  sop=(ta-pos %l %edg pos.inp)
             (ta-kil %l [(sub pos.inp sop) sop])
             ::
-      $b    ?:  =(0 pos.inp)                          ::  jump left-word
+      %b    ?:  =(0 pos.inp)                          ::  jump left-word
               ta-bel
             +>(pos.inp (ta-jump %l %edg pos.inp))
             ::
-      $c    ?:  =(pos.inp (lent buf.say.inp))         ::  capitalize
+      %c    ?:  =(pos.inp (lent buf.say.inp))         ::  capitalize
               ta-bel
             =+  sop=(ta-jump %r %wrd pos.inp)
             %-  ta-hom(pos.inp (ta-jump %r %edg sop))
@@ -886,20 +886,20 @@
             ^-  (list @c)  ^-  (list @)               :: XX unicode
             (cuss `tape``(list @)`(swag [sop 1] buf.say.inp))
             ::
-      $d    ?:  =(pos.inp (lent buf.say.inp))         ::  kill right-word
+      %d    ?:  =(pos.inp (lent buf.say.inp))         ::  kill right-word
               ta-bel
             (ta-kil %r [pos.inp (ta-pos %r %edg pos.inp)])
             ::
-      $f    ?:  =(pos.inp (lent buf.say.inp))         ::  jump right-word
+      %f    ?:  =(pos.inp (lent buf.say.inp))         ::  jump right-word
               ta-bel
             +>(pos.inp (ta-jump %r %edg pos.inp))
             ::
-      $r    %-  ta-hom(lay.hit (~(put by lay.hit) pos.hit ~))
+      %r    %-  ta-hom(lay.hit (~(put by lay.hit) pos.hit ~))
             :-  %set                                  ::  revert hist edit
             ?:  =(pos.hit num.hit)  ~
             (snag (sub num.hit +(pos.hit)) old.hit)
             ::
-      $t    =+  a=(ta-jump %r %edg pos.inp)           ::  transpose words
+      %t    =+  a=(ta-jump %r %edg pos.inp)           ::  transpose words
             =+  b=(ta-jump %l %edg a)
             =+  c=(ta-jump %l %edg b)
             ?:  =(b c)
@@ -912,10 +912,10 @@
                 (rep:edit prev (swag next buf.say.inp))
             ==
             ::
-      ?($u $l)                                        ::  upper/lower case
+      ?(%u %l)                                        ::  upper/lower case
             ?:  =(pos.inp (lent buf.say.inp))
               ta-bel
-            =+  case=?:(?=($u key) cuss cass)
+            =+  case=?:(?=(%u key) cuss cass)
             =+  sop=(ta-jump %r %wrd pos.inp)
             =+  sel=[sop (ta-pos %r %edg sop)]
             %-  ta-hom
@@ -923,10 +923,10 @@
             ^-  (list @c)  ^-  (list @)               :: XX unicode
             (case `tape``(list @)`(swag sel buf.say.inp))
             ::
-      $y    ?.  ?&  ?=(^ old.kil)                     ::  rotate & yank
+      %y    ?.  ?&  ?=(^ old.kil)                     ::  rotate & yank
                     ?=(^ p.blt)
-                    ?|  ?=({$ctl $y} u.p.blt)
-                        ?=({$met $y} u.p.blt)
+                    ?|  ?=({%ctl %y} u.p.blt)
+                        ?=({%met %y} u.p.blt)
                 ==  ==
               ta-bel
             =+  las=(lent ta-yan)
@@ -961,14 +961,14 @@
     ==
   ::
   ++  ta-pos                                          ::  buffer pos offset
-    |=  {dir/?($l $r) til/?($ace $edg $wrd) pos/@ud}
+    |=  {dir/?(%l %r) til/?(%ace %edg %wrd) pos/@ud}
     ^-  @ud
-    %-  ?-  til  $ace  ace:offset
-                 $edg  edg:offset
-                 $wrd  wrd:offset
+    %-  ?-  til  %ace  ace:offset
+                 %edg  edg:offset
+                 %wrd  wrd:offset
         ==
-    ?-  dir  $l  (flop (scag pos buf.say.inp))
-             $r  (slag pos buf.say.inp)
+    ?-  dir  %l  (flop (scag pos buf.say.inp))
+             %r  (slag pos buf.say.inp)
     ==
   ::
   ++  ta-pro                                          ::  set prompt
@@ -978,7 +978,7 @@
       %_    pom
           cad
         ;:  welp
-          ?.  ?=($earl (clan:title p.gyl))
+          ?.  ?=(%earl (clan:title p.gyl))
             (cite:title p.gyl)
           (scow %p p.gyl)
         ::
@@ -1065,7 +1065,7 @@
   ++  any                                             ::  matches?
     |=  {a/sole-edit b/$-(sole-edit ?)}
     ^-  ?
-    ?.  ?=($mor -.a)  (b a)
+    ?.  ?=(%mor -.a)  (b a)
     (lien p.a |=(c/sole-edit ^$(a c)))
   --
 ++  offset                                            ::  calculate offsets

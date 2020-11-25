@@ -14,7 +14,7 @@
         {arg/$@(~ {dom/path ~})}
         ~
     ==
-^-  (sole-result:sole {$write-sec-atom p/host:eyre q/@})
+^-  (sole-result:sole {%write-sec-atom p/host:eyre q/@})
 =-  ?~  arg  -
     (fun.q.q [%& dom.arg])
 %+  prompt

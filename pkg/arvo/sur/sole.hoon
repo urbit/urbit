@@ -6,11 +6,11 @@
 ++  sole-action                                         ::  sole to app
   $:  id=@ta                                            ::  duct id
     $=  dat
-    $%  ::  {$abo ~}                                    ::  reset interaction
-        {$det sole-change}                              ::  command line edit
-        {$ret ~}                                        ::  submit and clear
-        {$clr ~}                                        ::  exit context
-        {$tab pos/@ud}                                  ::  tab complete
+    $%  ::  {%abo ~}                                    ::  reset interaction
+        {%det sole-change}                              ::  command line edit
+        {%ret ~}                                        ::  submit and clear
+        {%clr ~}                                        ::  exit context
+        {%tab pos/@ud}                                  ::  tab complete
     ==                                                  ::
   ==
 ++  sole-buffer  (list @c)                              ::  command state
@@ -21,29 +21,29 @@
   ==                                                    ::
 ++  sole-clock  {own/@ud his/@ud}                       ::  vector clock
 ++  sole-edit                                           ::  shared state change
-  $%  {$del p/@ud}                                      ::  delete one at
-      {$ins p/@ud q/@c}                                 ::  insert at
-      {$mor p/(list sole-edit)}                         ::  combination
-      {$nop ~}                                          ::  no-op
-      {$set p/sole-buffer}                              ::  discontinuity
+  $%  {%del p/@ud}                                      ::  delete one at
+      {%ins p/@ud q/@c}                                 ::  insert at
+      {%mor p/(list sole-edit)}                         ::  combination
+      {%nop ~}                                          ::  no-op
+      {%set p/sole-buffer}                              ::  discontinuity
   ==                                                    ::
 ++  sole-effect                                         ::  app to sole
-  $%  {$bel ~}                                          ::  beep
-      {$blk p/@ud q/@c}                                 ::  blink+match char at
-      {$clr ~}                                          ::  clear screen
-      {$det sole-change}                                ::  edit command
-      {$err p/@ud}                                      ::  error point
-      {$klr p/styx}                                     ::  styled text line
-      {$mor p/(list sole-effect)}                       ::  multiple effects
-      {$nex ~}                                          ::  save clear command
-      {$pro sole-prompt}                                ::  set prompt
-      {$sag p/path q/*}                                 ::  save to jamfile
-      {$sav p/path q/@}                                 ::  save to file
-      {$tab p/(list {=cord =tank})}                     ::  tab-complete list
-      {$tan p/(list tank)}                              ::  classic tank
-  ::  {$taq p/tanq}                                     ::  modern tank
-      {$txt p/tape}                                     ::  text line
-      {$url p/@t}                                       ::  activate url
+  $%  {%bel ~}                                          ::  beep
+      {%blk p/@ud q/@c}                                 ::  blink+match char at
+      {%clr ~}                                          ::  clear screen
+      {%det sole-change}                                ::  edit command
+      {%err p/@ud}                                      ::  error point
+      {%klr p/styx}                                     ::  styled text line
+      {%mor p/(list sole-effect)}                       ::  multiple effects
+      {%nex ~}                                          ::  save clear command
+      {%pro sole-prompt}                                ::  set prompt
+      {%sag p/path q/*}                                 ::  save to jamfile
+      {%sav p/path q/@}                                 ::  save to file
+      {%tab p/(list {=cord =tank})}                     ::  tab-complete list
+      {%tan p/(list tank)}                              ::  classic tank
+  ::  {%taq p/tanq}                                     ::  modern tank
+      {%txt p/tape}                                     ::  text line
+      {%url p/@t}                                       ::  activate url
   ==                                                    ::
 ++  sole-command                                        ::  command state
   $:  pos/@ud                                           ::  cursor position
@@ -77,8 +77,8 @@
   (pair sole-prompt (sole-dialog out))                  ::  ask and continue
 ::                                                      ::
 ++  sole-gen                                            ::  XX virtual type
-  $%  {$say $-((sole-args) (cask))}                     ::  direct noun
-      {$ask $-((sole-args) (sole-product (cask)))}      ::  dialog
+  $%  {%say $-((sole-args) (cask))}                     ::  direct noun
+      {%ask $-((sole-args) (sole-product (cask)))}      ::  dialog
   ==                                                    ::
 ++  sole-args                                           ::  generator arguments
   |*  _[* *]                                            ::

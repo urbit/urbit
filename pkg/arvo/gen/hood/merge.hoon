@@ -15,11 +15,11 @@
   ::
 :-  %say
 |=  $:  {now/@da eny/@uvJ bek/beak}
-        {arg/{?(~ sorc {syd/$@(desk beaky) sorc})} cas/case gem/?(germ $auto)}
+        {arg/{?(~ sorc {syd/$@(desk beaky) sorc})} cas/case gem/?(germ %auto)}
     ==
 =*  our  p.bek
 |^  :-  %kiln-merge
-    ^-  $@(~ {syd/desk her/ship sud/desk cas/case gem/?(germ $auto)})
+    ^-  $@(~ {syd/desk her/ship sud/desk cas/case gem/?(germ %auto)})
     ?-  arg
       ~  ((slog (turn help-text |=(=@t leaf+(trip t)))) ~)
       {@ @ ~}

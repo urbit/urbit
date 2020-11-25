@@ -268,7 +268,7 @@
     ?-    -.tac
     ::
     ::  boot from keys
-    ::    $:  $dawn
+    ::    $:  %dawn
     ::        =seed
     ::        spon=ship
     ::        czar=(map ship [=rift =life =pass])
@@ -433,9 +433,9 @@
       (sources:~(feel su hen our now pki etn) [whos source]:tac)
     ::
     ::  cancel all trackers from duct
-    ::    {$nuke whos=(set ship)}
+    ::    {%nuke whos=(set ship)}
     ::
-        $nuke
+        %nuke
       =/  ships=(list ship)
         %~  tap  in
         %-  ~(int in whos.tac)
@@ -522,13 +522,13 @@
       +>.$
     ::
     ::  watch private keys
-    ::    {$private-keys $~}
+    ::    {%private-keys ~}
     ::
         %private-keys
       (curd abet:~(private-keys ~(feed su hen our now pki etn) hen))
     ::
     ::  authenticated remote request
-    ::    {$west p/ship q/path r/*}
+    ::    {%west p/ship q/path r/*}
     ::
         %plea
       =*  her  ship.tac
@@ -592,20 +592,20 @@
     ::
         [%g %unto *]
       ?-  +>-.hin
-          $kick      ~|([%jael-unexpected-quit tea hin] !!)
-          $poke-ack
+          %kick      ~|([%jael-unexpected-quit tea hin] !!)
+          %poke-ack
         ?~  p.p.+>.hin
           +>.$
         %-  (slog leaf+"jael-bad-coup" u.p.p.+>.hin)
         +>.$
       ::
-          $watch-ack
+          %watch-ack
         ?~  p.p.+>.hin
           +>.$
         %-  (slog u.p.p.+>.hin)
         ~|([%jael-unexpected-reap tea hin] +>.$)
       ::
-          $fact
+          %fact
         ?>  ?=([@ *] tea)
         =*  app  i.tea
         =/  =peer-sign  ;;(peer-sign q.q.cage.p.+>.hin)

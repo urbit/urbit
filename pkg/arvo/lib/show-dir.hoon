@@ -3,7 +3,7 @@
 ::::  /hoon/show-dir/lib
   ::
 /?    310
-|=  {vane/?($g $c) pax/path des/(map @t ~)}
+|=  {vane/?(%g %c) pax/path des/(map @t ~)}
 ^-  tank
 :+  %rose  [" " `~]
 %+  turn  (sort ~(tap by des) aor)

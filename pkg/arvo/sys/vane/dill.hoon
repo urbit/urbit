@@ -28,7 +28,7 @@
 --  =>                                                  ::
 |%                                                      ::  protocol outward
 ++  mess                                                ::
-  $%  {$dill-belt p/(hypo dill-belt)}                   ::
+  $%  {%dill-belt p/(hypo dill-belt)}                   ::
   ==                                                    ::
 ++  move  {p/duct q/(wind note gift:able)}              ::  local move
 ++  note                                                ::  out request $->
@@ -109,21 +109,21 @@
         |=  kyz/task:able
         ^+  +>
         ?+    -.kyz  ~&  [%strange-kiss -.kyz]  +>
-          $flow  +>
-          $harm  +>
-          $hail  (send %hey ~)
-          $belt  (send `dill-belt`p.kyz)
-          $text  (from %out (tuba p.kyz))
-          $crud  ::  (send `dill-belt`[%cru p.kyz q.kyz])
+          %flow  +>
+          %harm  +>
+          %hail  (send %hey ~)
+          %belt  (send `dill-belt`p.kyz)
+          %text  (from %out (tuba p.kyz))
+          %crud  ::  (send `dill-belt`[%cru p.kyz q.kyz])
                  (crud p.kyz q.kyz)
-          $blew  (send %rez p.p.kyz q.p.kyz)
-          $heft  (dump %whey ~)
-          $lyra  (dump kyz)
-          $meld  (dump kyz)
-          $pack  (dump kyz)
-          $crop  (dump trim+p.kyz)
-          $veer  (dump kyz)
-          $verb  (dump kyz)
+          %blew  (send %rez p.p.kyz q.p.kyz)
+          %heft  (dump %whey ~)
+          %lyra  (dump kyz)
+          %meld  (dump kyz)
+          %pack  (dump kyz)
+          %crop  (dump trim+p.kyz)
+          %veer  (dump kyz)
+          %verb  (dump kyz)
         ==
       ::
       ++  crud
@@ -170,28 +170,28 @@
       ++  from                                          ::  receive blit
         |=  bit/dill-blit
         ^+  +>
-        ?:  ?=($mor -.bit)
+        ?:  ?=(%mor -.bit)
           |-  ^+  +>.^$
           ?~  p.bit  +>.^$
           $(p.bit t.p.bit, +>.^$ ^$(bit i.p.bit))
-        ?:  ?=($out -.bit)
+        ?:  ?=(%out -.bit)
           %+  done  %blit
           :~  [%lin p.bit]
               [%mor ~]
               see
               [%hop pos]
           ==
-        ?:  ?=($klr -.bit)
+        ?:  ?=(%klr -.bit)
           %+  done  %blit
           :~  [%klr p.bit]
               [%mor ~]
               see
               [%hop pos]
           ==
-        ?:  ?=($pro -.bit)
+        ?:  ?=(%pro -.bit)
           =.  see  [%lin p.bit]
           (done %blit [see [%hop pos] ~])
-        ?:  ?=($pom -.bit)
+        ?:  ?=(%pom -.bit)
           ::NOTE  treat "styled prompt" without style as plain prompt,
           ::      to allow rendering by older runtimes
           ::TODO  remove me once v0.10.9+ has high/guaranteed adoption
@@ -200,9 +200,9 @@
             $(bit [%pro (zing (turn p.bit tail))])
           =.  see  [%klr p.bit]
           (done %blit [see [%hop pos] ~])
-        ?:  ?=($hop -.bit)
+        ?:  ?=(%hop -.bit)
           (done(pos p.bit) %blit [bit ~])
-        ?:  ?=($qit -.bit)
+        ?:  ?=(%qit -.bit)
           (dump %logo ~)
         (done %blit [bit ~])
       ::  XX move
@@ -223,7 +223,7 @@
         =/  can  (clan:title our)
         =.  tem  ~
         =.  +>  (pass / %g %conf ram)
-        =?  +>  ?=(?($earl $duke $king) can)
+        =?  +>  ?=(?(%earl %duke %king) can)
           (ota (sein our) %kids)
         ::  make kids desk publicly readable, so syncs work.
         ::
@@ -269,36 +269,36 @@
           ::
           +>(moz :_(moz [hen %give +.sih]))
         ::
-            {$g $onto *}
+            {%g %onto *}
           ::  ~&  [%take-gall-onto +>.sih]
           ?-  -.+>.sih
             %|  (crud %onto p.p.+>.sih)
             %&  (done %blit [%lin (tuba "{<p.p.sih>}")]~)
           ==
         ::
-            {$g $unto *}
+            {%g %unto *}
           ::  ~&  [%take-gall-unto +>.sih]
           ?-  -.+>.sih
-            $poke-ack   ?~(p.p.+>.sih +>.$ (crud %coup u.p.p.+>.sih))
-            $kick       peer
-            $watch-ack  ?~  p.p.+>.sih
+            %poke-ack   ?~(p.p.+>.sih +>.$ (crud %coup u.p.p.+>.sih))
+            %kick       peer
+            %watch-ack  ?~  p.p.+>.sih
                           +>.$
                         (dump:(crud %reap u.p.p.+>.sih) %logo ~)
-            $fact       (from ;;(dill-blit q:`vase`+>+>.sih))
+            %fact       (from ;;(dill-blit q:`vase`+>+>.sih))
           ==
         ::
-            {$c $note *}
+            {%c %note *}
           (from %out (tuba p.sih ' ' ~(ram re q.sih)))
         ::
-            {?($b $c) $writ *}
+            {?(%b %c) %writ *}
           init
         ::
-            {?($b %c) $mere *}
+            {?(%b %c) %mere *}
           ?:  ?=(%& -.p.sih)
             mere
           (mean >%dill-mere-fail< >p.p.p.sih< q.p.p.sih)
         ::
-            {$d $blit *}
+            {%d %blit *}
           (done +.sih)
         ==
       --
@@ -414,7 +414,7 @@
       ::  without .dog
       ::
       ++  axle-1
-        $:  $1
+        $:  %1
             hey/(unit duct)
             dug/(map duct axon-3)
             lit/?

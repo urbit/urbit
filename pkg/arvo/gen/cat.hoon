@@ -8,7 +8,7 @@
 ::::
   ::
 :-  %say
-|=  {^ {arg/(list path)} vane/?($g $c)}
+|=  {^ {arg/(list path)} vane/?(%g %c)}
 =-  tang+(flop `tang`(zing -))
 %+  turn  arg
 |=  pax/path

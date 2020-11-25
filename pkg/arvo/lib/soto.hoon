@@ -39,17 +39,17 @@
       =,  enjs:format
       ?+    -.sef
               ~|(unsupported-effect+-.sef !!)
-          $mor  [%a (turn p.sef |=(a/sole-effect ^$(sef a)))]
-          $err  (frond %hop (numb p.sef))
-          $txt  (frond %txt (tape p.sef))
-          $tan  (frond %tan (tape (wush 160 p.sef)))
-          $det  (frond %det json:~(grow mar-sole-change +.sef))
+          %mor  [%a (turn p.sef |=(a/sole-effect ^$(sef a)))]
+          %err  (frond %hop (numb p.sef))
+          %txt  (frond %txt (tape p.sef))
+          %tan  (frond %tan (tape (wush 160 p.sef)))
+          %det  (frond %det json:~(grow mar-sole-change +.sef))
       ::
-          $pro
+          %pro
         %+  frond  %pro
         (pairs vis+b+vis.sef tag+s+tag.sef cad+(tape (purge cad.sef)) ~)
       ::
-          $tab
+          %tab
         :-  %a
         %+  turn  p.sef
         |=  [=cord =^tank]
@@ -59,7 +59,7 @@
             info+(tape ~(ram re tank))
         ==
       ::
-          ?($bel $clr $nex)
+          ?(%bel %clr %nex)
         (frond %act %s -.sef)
       ==
   ++  mar-sole-change
@@ -72,11 +72,11 @@
           =,(cha (pairs ted+(edi ted) ler+a+~[(numb own.ler) (numb his.ler)] ~))
         |=  det=sole-edit
         ?-  -.det
-          $nop  [%s 'nop']
-          $mor  [%a (turn p.det ..$)]
-          $del  (frond %del (numb p.det))
-          $set  (frond %set (tape (tufa p.det)))
-          $ins  (frond %ins (pairs at+(numb p.det) cha+s+(tuft q.det) ~))
+          %nop  [%s 'nop']
+          %mor  [%a (turn p.det ..$)]
+          %del  (frond %del (numb p.det))
+          %set  (frond %set (tape (tufa p.det)))
+          %ins  (frond %ins (pairs at+(numb p.det) cha+s+(tuft q.det) ~))
         ==
       --
     --

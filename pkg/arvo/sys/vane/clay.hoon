@@ -50,7 +50,7 @@
 ::  gets file contents, %y gets a directory listing, and %z gets a recursive
 ::  hash of the file contents and children.
 ::
-:: ++  care  ?($d $p $t $u $v $w $x $y $z)
+:: ++  care  ?(%d %p %t %u %v %w %x %y %z)
 ::
 ::  Keeps track of subscribers.
 ::
@@ -1123,7 +1123,7 @@
     |=  [lim=@da lok=case]
     ^-  (unit aeon)
     ?-    -.lok
-        $da
+        %da
       ?:  (gth p.lok lim)  ~
       |-  ^-  (unit aeon)
       ?:  =(0 let.dom)  [~ 0]                         ::  avoid underflow
@@ -1136,8 +1136,8 @@
         [~ let.dom]
       $(let.dom (dec let.dom))
     ::
-        $tas  (~(get by lab.dom) p.lok)
-        $ud   ?:((gth p.lok let.dom) ~ [~ p.lok])
+        %tas  (~(get by lab.dom) p.lok)
+        %ud   ?:((gth p.lok let.dom) ~ [~ p.lok])
     ==
   ::
   ++  blas
@@ -1250,8 +1250,8 @@
     =;  won/(unit wove)  (fall won wov)
     =*  rov  rove.wov
     ?-    -.rov
-        $sing  ~
-        $next
+        %sing  ~
+        %next
       =+  aey=(case-to-aeon case.mood.rov)
       ?~  aey  ~
       %-  ~(rep in ~(key by qyx))
@@ -1260,7 +1260,7 @@
       ?.  =(for.wov for.haw)  ~
       =*  hav  rove.haw
       =-  ?:(- `haw ~)
-      ?&  ?=($next -.hav)
+      ?&  ?=(%next -.hav)
           =(mood.hav mood.rov(case case.mood.hav))
         ::
           ::  only a match if this request is before
@@ -1269,7 +1269,7 @@
           ?~(hay | (lte u.hay u.aey))
       ==
     ::
-        $mult
+        %mult
       =+  aey=(case-to-aeon case.mool.rov)
       ?~  aey  ~
       %-  ~(rep in ~(key by qyx))
@@ -1278,7 +1278,7 @@
       ?.  =(for.wov for.haw)  ~
       =*  hav  rove.haw
       =-  ?:(- `haw ~)
-      ?&  ?=($mult -.hav)
+      ?&  ?=(%mult -.hav)
           =(mool.hav mool.rov(case case.mool.hav))
         ::
           ::  only a match if this request is before
@@ -1292,7 +1292,7 @@
           ==
       ==
     ::
-        $many
+        %many
       =+  aey=(case-to-aeon from.moat.rov)
       ?~  aey  ~
       %-  ~(rep in ~(key by qyx))
@@ -1301,7 +1301,7 @@
       ?.  =(for.wov for.haw)  ~
       =*  hav  rove.haw
       =-  ?:(- `haw ~)
-      ?&  ?=($many -.hav)
+      ?&  ?=(%many -.hav)
           =(hav rov(from.moat from.moat.hav))
         ::
           ::  only a match if this request is before
@@ -2612,9 +2612,9 @@
       %+  roll
         =-  ~(tap in -)
         ?-  -.rit
-          $r    who:(fall red.rit *rule)
-          $w    who:(fall wit.rit *rule)
-          $rw   (~(uni in who:(fall red.rit *rule)) who:(fall wit.rit *rule))
+          %r    who:(fall red.rit *rule)
+          %w    who:(fall wit.rit *rule)
+          %rw   (~(uni in who:(fall red.rit *rule)) who:(fall wit.rit *rule))
         ==
       |=  {w/whom s/(set @ta)}
       ?:  |(?=(%& -.w) (~(has by cez) p.w))  s
@@ -2636,9 +2636,9 @@
         (emit hen %give %done ~)
     ::
     ?-  -.rit
-      $r    wake(per (put-perm per pax red.rit))
-      $w    wake(pew (put-perm pew pax wit.rit))
-      $rw   wake(per (put-perm per pax red.rit), pew (put-perm pew pax wit.rit))
+      %r    wake(per (put-perm per pax red.rit))
+      %w    wake(pew (put-perm pew pax wit.rit))
+      %rw   wake(per (put-perm per pax red.rit), pew (put-perm pew pax wit.rit))
     ==
   ::
   ++  put-perm
@@ -2730,7 +2730,7 @@
       ::
       %_    wake
           haw.u.ref
-        ?.  ?=($sing -.rav)  haw.u.ref
+        ?.  ?=(%sing -.rav)  haw.u.ref
         (~(put by haw.u.ref) mood.rav ~)
       ==
     |^
@@ -2747,20 +2747,20 @@
       |=  =rand
       ^-  (unit cage)
       ?-    p.p.rand
-          $a  ~|  %no-big-ford-builds-across-network-for-now  !!
-          $b  ~|  %i-guess-you-ought-to-build-your-own-marks  !!
-          $c  ~|  %casts-should-be-compiled-on-your-own-ship  !!
-          $d  ~|  %totally-temporary-error-please-replace-me  !!
-          $p  ~|  %requesting-foreign-permissions-is-invalid  !!
-          $r  ~|  %no-cages-please-they-are-just-way-too-big  !!
-          $s  ~|  %please-dont-get-your-takos-over-a-network  !!
-          $t  ~|  %requesting-foreign-directory-is-vaporware  !!
-          $u  ~|  %prolly-poor-idea-to-get-rang-over-network  !!
-          $v  ~|  %weird-shouldnt-get-v-request-from-network  !!
-          $z  `(validate-z r.rand)
-          $w  `(validate-w r.rand)
-          $x  (validate-x [p.p q.p q r]:rand)
-          $y  `[p.r.rand !>(;;(arch q.r.rand))]
+          %a  ~|  %no-big-ford-builds-across-network-for-now  !!
+          %b  ~|  %i-guess-you-ought-to-build-your-own-marks  !!
+          %c  ~|  %casts-should-be-compiled-on-your-own-ship  !!
+          %d  ~|  %totally-temporary-error-please-replace-me  !!
+          %p  ~|  %requesting-foreign-permissions-is-invalid  !!
+          %r  ~|  %no-cages-please-they-are-just-way-too-big  !!
+          %s  ~|  %please-dont-get-your-takos-over-a-network  !!
+          %t  ~|  %requesting-foreign-directory-is-vaporware  !!
+          %u  ~|  %prolly-poor-idea-to-get-rang-over-network  !!
+          %v  ~|  %weird-shouldnt-get-v-request-from-network  !!
+          %z  `(validate-z r.rand)
+          %w  `(validate-w r.rand)
+          %x  (validate-x [p.p q.p q r]:rand)
+          %y  `[p.r.rand !>(;;(arch q.r.rand))]
       ==
     ::
     ::  Make sure the incoming data is a %w response
@@ -2770,9 +2770,9 @@
       ^-  cage
       :-  p.page
       ?+  p.page  ~|  %strange-w-over-nextwork  !!
-        $cass  !>(;;(cass q.page))
-        $null  [[%atom %n ~] ~]
-        $nako  !>(~|([%molding [&1 &2 &3]:q.page] ;;(nako q.page)))
+        %cass  !>(;;(cass q.page))
+        %null  [[%atom %n ~] ~]
+        %nako  !>(~|([%molding [&1 &2 &3]:q.page] ;;(nako q.page)))
       ==
     ::
     ::  Make sure that incoming data is of the mark it claims to be.
@@ -3378,8 +3378,8 @@
       |=  a/lobe
       =>  (lobe-to-blob a)
       ?-  -
-        $delta      p.q
-        $direct     p.q
+        %delta      p.q
+        %direct     p.q
       ==
     ::
     ::  Checks whether two pieces of data (either cages or lobes) are the same.
@@ -3491,8 +3491,8 @@
         far
       =+  gar=(lobe-to-blob lob)
       ?-  -.gar
-        $direct    (~(put in far) lob)
-        $delta     (~(put in $(lob q.q.gar)) lob)
+        %direct    (~(put in far) lob)
+        %delta     (~(put in $(lob q.q.gar)) lob)
       ==
     ::
     ::  Probably can get rid of the cache checks because they happen in
@@ -3587,10 +3587,10 @@
       ?+  car
         (allowed-by who pax per.red)
       ::
-          $p
+          %p
         =(who our)
       ::
-          ?($y $z)
+          ?(%y %z)
         =+  tak=(~(get by hit.dom) yon)
         ?~  tak  |
         =+  yak=(tako-to-yaki u.tak)
@@ -3600,7 +3600,7 @@
         |=  {p/path s/(set path)}
         ?.  =(pax (scag len p))  s
         %-  ~(put in s)
-        ?:  ?=($z car)  p
+        ?:  ?=(%z car)  p
         (scag +(len) p)
       ==
     ::
@@ -3766,7 +3766,7 @@
     ::
     ++  read-v
       |=  {yon/aeon pax/path}
-      ^-  (unit (unit {$dome (hypo dome:clay)}))
+      ^-  (unit (unit {%dome (hypo dome:clay)}))
       ?:  (lth yon let.dom)
         :*  ~  ~  %dome  -:!>(*dome:clay)
             ^-  dome:clay
@@ -3822,17 +3822,17 @@
       =+  mar=(lobe-to-mark u.lob)
       ::  should convert any lobe to cage
       ::
-      ?.  ?=($hoon mar)
+      ?.  ?=(%hoon mar)
         [~ ~ %| u.lob]
       :^  ~  ~  %&
       :+  mar  [%atom %t ~]
       |-  ^-  @t                      ::  (urge cord) would be faster
       =+  bol=(lobe-to-blob u.lob)
-      ?:  ?=($direct -.bol)
+      ?:  ?=(%direct -.bol)
         ;;(@t q.q.bol)
-      ?>  ?=($delta -.bol)
+      ?>  ?=(%delta -.bol)
       =+  txt=$(u.lob q.q.bol)
-      ?>  ?=($txt-diff p.r.bol)
+      ?>  ?=(%txt-diff p.r.bol)
       =+  dif=;;((urge cord) q.r.bol)
       =,  format
       =+  pac=(of-wain (lurk:differ (to-wain (cat 3 txt '\0a')) dif))
@@ -3844,7 +3844,7 @@
     ::
     ++  read-y
       |=  {yon/aeon pax/path}
-      ^-  (unit (unit {$arch (hypo arch)}))
+      ^-  (unit (unit {%arch (hypo arch)}))
       ?:  =(0 yon)
         ``[%arch -:!>(*arch) *arch]
       =+  tak=(~(get by hit.dom) yon)
@@ -3872,7 +3872,7 @@
     ::
     ++  read-z
       |=  {yon/aeon pax/path}
-      ^-  (unit (unit {$uvi (hypo @uvI)}))
+      ^-  (unit (unit {%uvi (hypo @uvI)}))
       ?:  =(0 yon)
         ``uvi+[-:!>(*@uvI) *@uvI]
       =+  tak=(~(get by hit.dom) yon)

@@ -11,14 +11,14 @@
   |=  ted/sole-edit
   ^+  +>
   ?-    -.ted
-    $del  +>.$(buf (weld (scag p.ted buf) (slag +(p.ted) buf)))
-    $ins  +>.$(buf (weld (scag p.ted buf) `_buf`[q.ted (slag p.ted buf)]))
-    $mor  |-  ^+  +>.^$
+    %del  +>.$(buf (weld (scag p.ted buf) (slag +(p.ted) buf)))
+    %ins  +>.$(buf (weld (scag p.ted buf) `_buf`[q.ted (slag p.ted buf)]))
+    %mor  |-  ^+  +>.^$
           ?~  p.ted
             +>.^$
           $(p.ted t.p.ted, +>.^$ ^$(ted i.p.ted))
-    $nop  +>.$
-    $set  +>.$(buf p.ted)
+    %nop  +>.$
+    %set  +>.$(buf p.ted)
   ==
 ::
 ::::
@@ -34,33 +34,33 @@
   |=  {sin/sole-edit dex/sole-edit}
   ~|  [%transmute sin dex]
   ^-  sole-edit
-  ?:  ?=($mor -.sin)
+  ?:  ?=(%mor -.sin)
     |-  ^-  sole-edit
     ?~  p.sin  dex
     $(p.sin t.p.sin, dex ^$(sin i.p.sin))
   ::
-  ?:  ?=($mor -.dex)
+  ?:  ?=(%mor -.dex)
     :-  %mor
     |-  ^-  (list sole-edit)
     ?~  p.dex  ~
     [^$(dex i.p.dex) $(p.dex t.p.dex)]
   ::
-  ?:  |(?=($nop -.sin) ?=($nop -.dex))  dex
-  ?:  ?=($set -.sin)                    [%nop ~]
-  ?:  ?=($set -.dex)                    dex
+  ?:  |(?=(%nop -.sin) ?=(%nop -.dex))  dex
+  ?:  ?=(%set -.sin)                    [%nop ~]
+  ?:  ?=(%set -.dex)                    dex
   ::
   ?-    -.sin
-      $del
+      %del
     ?-  -.dex
-      $del  ?:  =(p.sin p.dex)  [%nop ~]
+      %del  ?:  =(p.sin p.dex)  [%nop ~]
             ?:((lth p.sin p.dex) dex(p (dec p.dex)) dex)
-      $ins  ?:((lth p.sin p.dex) dex(p (dec p.dex)) dex)
+      %ins  ?:((lth p.sin p.dex) dex(p (dec p.dex)) dex)
     ==
   ::
-      $ins
+      %ins
     ?-  -.dex
-      $del  ?:((lte p.sin p.dex) dex(p +(p.dex)) dex)
-      $ins  ?:  =(p.sin p.dex)
+      %del  ?:((lte p.sin p.dex) dex(p +(p.dex)) dex)
+      %ins  ?:  =(p.sin p.dex)
               ?:((lth q.sin q.dex) dex dex(p +(p.dex)))
             ?:((lte p.sin p.dex) dex(p +(p.dex)) dex)
     ==
@@ -81,18 +81,18 @@
 ++  inverse                                           ::  relative inverse
   |=  ted/sole-edit
   ^-  sole-edit
-  =.  ted  ?.(?=({$mor * ~} ted) ted i.p.ted)
+  =.  ted  ?.(?=({%mor * ~} ted) ted i.p.ted)
   ?-  -.ted
-    $del  [%ins p.ted (snag p.ted buf)]
-    $ins  [%del p.ted]
-    $mor  :-  %mor
+    %del  [%ins p.ted (snag p.ted buf)]
+    %ins  [%del p.ted]
+    %mor  :-  %mor
           %-  flop
           |-  ^-  (list sole-edit)
           ?~  p.ted  ~
           :-  ^$(ted i.p.ted)
           $(p.ted t.p.ted, +>.^$ (apply i.p.ted))
-    $nop  [%nop ~]
-    $set  [%set buf]
+    %nop  [%nop ~]
+    %set  [%set buf]
   ==
 ::
 ++  receive                                           ::  naturalize event
@@ -134,6 +134,6 @@
 ++  transpose                                         ::  adjust position
   |=  pos/@ud
   =+  dat=(transmute [%mor leg] [%ins pos `@c`0])
-  ?>  ?=($ins -.dat)
+  ?>  ?=(%ins -.dat)
   p.dat
 --
