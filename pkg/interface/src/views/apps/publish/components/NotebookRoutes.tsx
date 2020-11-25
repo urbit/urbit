@@ -86,7 +86,7 @@ export function NotebookRoutes(
         path={relativePath("/note/:noteId")}
         render={(routeProps) => {
           const { noteId } = routeProps.match.params;
-          const noteIdNum = bigInt(noteId)
+          const noteIdNum = bigInt(noteId);
 
           if(!graph) {
             return <Center height="100%"><LoadingSpinner /></Center>;
