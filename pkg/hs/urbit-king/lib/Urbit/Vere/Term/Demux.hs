@@ -4,12 +4,15 @@
     given full event history since the creation of the demuxer.
 -}
 
-module Urbit.Vere.Term.Demux (Demux, mkDemux, addDemux, useDemux) where
+module Urbit.Vere.Term.Demux (Demux,
+                              mkDemux,
+                              addDemux,
+                              useDemux,
+                              curDemuxSize) where
 
 import Urbit.Prelude
-
-import Urbit.Arvo          (Belt)
-import Urbit.Vere.Term.API (Client(Client))
+import Urbit.TermSize
+import Urbit.Vere.Term.API (Client(Client), ClientTake(..))
 
 import qualified Urbit.Vere.Term.API   as Term
 import qualified Urbit.Vere.Term.Logic as Logic
@@ -42,11 +45,17 @@ ksDelete k (KeyedSet t n) = KeyedSet (deleteMap k t) n
 
 data Demux = Demux
     { dConns :: TVar (KeyedSet Client)
+    , dSizes :: TVar (IntMap TermSize)
     , dStash :: TVar Logic.St
+    , dMinSize :: TVar TermSize
     }
 
-mkDemux :: STM Demux
-mkDemux = Demux <$> newTVar mempty <*> newTVar Logic.init
+mkDemux :: TermSize -> STM Demux
+mkDemux ts = Demux <$>
+  newTVar mempty <*>
+  newTVar mempty <*>
+  newTVar Logic.init <*>
+  newTVar ts
 
 addDemux :: Client -> Demux -> STM ()
 addDemux conn Demux{..} = do
@@ -57,6 +66,8 @@ addDemux conn Demux{..} = do
 useDemux :: Demux -> Client
 useDemux d = Client { give = dGive d, take = dTake d }
 
+curDemuxSize :: Demux -> STM TermSize
+curDemuxSize Demux{..} = readTVar dMinSize
 
 -- Internal --------------------------------------------------------------------
 
@@ -77,16 +88,45 @@ dGive Demux{..} evs = do
     If there are no attached clients, this will not return until one
     is attached.
 -}
-dTake :: Demux -> STM (Maybe Belt)
+dTake :: Demux -> STM (Maybe ClientTake)
 dTake Demux{..} = do
     conns <- readTVar dConns
-    waitForBelt conns >>= \case
-        (_, Just b ) -> pure (Just b)
-        (k, Nothing) -> do writeTVar dConns (ksDelete k conns)
-                           pure Nothing
+    waitForTake conns >>= \case
+        (_, Just (ClientTakeBelt b)) -> pure (Just (ClientTakeBelt b))
+
+        (k, Just (ClientTakeSize s)) -> do
+          newSizeTree <- modifyAndReadTVar' dSizes (insertMap k s)
+          maybeUpdateTerminalSize newSizeTree
+
+        (k, Nothing) -> do
+          writeTVar dConns (ksDelete k conns)
+          newSizeTree <- modifyAndReadTVar' dSizes (deleteMap k)
+          maybeUpdateTerminalSize newSizeTree
+
   where
-    waitForBelt :: KeyedSet Client -> STM (Int, Maybe Belt)
-    waitForBelt ks = asum
+    waitForTake :: KeyedSet Client -> STM (Int, Maybe ClientTake)
+    waitForTake ks = asum
                    $ fmap (\(k,c) -> (k,) <$> Term.take c)
                    $ mapToList
                    $ _ksTable ks
+
+    maybeUpdateTerminalSize :: IntMap TermSize -> STM (Maybe ClientTake)
+    maybeUpdateTerminalSize newSizeTree = do
+      let termSize = foldr minTermSize (TermSize 1024 1024) newSizeTree
+      curSize <- readTVar dMinSize
+      if curSize == termSize
+        then pure Nothing
+        else do
+          writeTVar dMinSize termSize
+          pure $ Just (ClientTakeSize termSize)
+
+    modifyAndReadTVar' :: TVar a -> (a -> a) -> STM a
+    modifyAndReadTVar' var fun = do
+      pre <- readTVar var
+      let !post = fun pre
+      writeTVar var post
+      pure post
+
+    minTermSize :: TermSize -> TermSize -> TermSize
+    minTermSize (TermSize wa ha) (TermSize wb hb) =
+      TermSize (min wa wb) (min ha hb)

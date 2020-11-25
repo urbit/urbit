@@ -70,8 +70,7 @@ _newt_meat_plan(u3_moat* mot_u, u3_meat* met_u)
 static void
 _newt_meat_poke(u3_moat* mot_u, u3_meat* met_u)
 {
-  u3_noun mat = u3i_bytes((c3_w)met_u->len_d, met_u->hun_y);
-  mot_u->pok_f(mot_u->ptr_v, mat);
+  mot_u->pok_f(mot_u->ptr_v, met_u->len_d, met_u->hun_y);
   c3_free(met_u);
 }
 
@@ -217,7 +216,7 @@ _newt_read(u3_moat*        mot_u,
       fprintf(stderr, "newt: read failed %s\r\n", uv_strerror(len_i));
     }
 
-    mot_u->bal_f(mot_u->ptr_v, uv_strerror(len_i));
+    mot_u->bal_f(mot_u->ptr_v, len_i, uv_strerror(len_i));
     return c3n;
   }
   //  EAGAIN/EWOULDBLOCK
@@ -299,7 +298,7 @@ _newt_read_init(u3_moat* mot_u, uv_read_cb read_cb_f)
                                      read_cb_f)) )
     {
       fprintf(stderr, "newt: read failed %s\r\n", uv_strerror(sas_i));
-      mot_u->bal_f(mot_u->ptr_v, uv_strerror(sas_i));
+      mot_u->bal_f(mot_u->ptr_v, sas_i, uv_strerror(sas_i));
     }
   }
 }
@@ -310,7 +309,7 @@ static void
 _moat_stop_cb(uv_handle_t* han_u)
 {
   u3_moat* mot_u = han_u->data;
-  mot_u->bal_f(mot_u->ptr_v, "");
+  mot_u->bal_f(mot_u->ptr_v, -1, "");
 }
 
 /* u3_newt_moat_stop(); newt stop/close input stream.
@@ -388,7 +387,8 @@ u3_newt_moat_info(u3_moat* mot_u)
 typedef struct _n_req {
   uv_write_t wri_u;
   u3_mojo*   moj_u;
-  c3_y       buf_y[0];
+  c3_y*      buf_y;
+  c3_y       len_y[8];
 } n_req;
 
 /* _newt_write_cb(): generic write callback.
@@ -399,6 +399,7 @@ _newt_write_cb(uv_write_t* wri_u, c3_i sas_i)
   n_req*   req_u = (n_req*)wri_u;
   u3_mojo* moj_u = req_u->moj_u;
 
+  c3_free(req_u->buf_y);
   c3_free(req_u);
 
   if ( 0 != sas_i ) {
@@ -407,7 +408,7 @@ _newt_write_cb(uv_write_t* wri_u, c3_i sas_i)
     }
     else {
       fprintf(stderr, "newt: write failed %s\r\n", uv_strerror(sas_i));
-      moj_u->bal_f(moj_u->ptr_v, uv_strerror(sas_i));
+      moj_u->bal_f(moj_u->ptr_v, sas_i, uv_strerror(sas_i));
     }
   }
 }
@@ -418,7 +419,7 @@ static void
 _mojo_stop_cb(uv_handle_t* han_u)
 {
   u3_mojo* moj_u = han_u->data;
-  moj_u->bal_f(moj_u->ptr_v, "");
+  moj_u->bal_f(moj_u->ptr_v, -1, "");
 }
 
 /* u3_newt_mojo_stop(); newt stop/close output stream.
@@ -435,40 +436,42 @@ u3_newt_mojo_stop(u3_mojo* moj_u, u3_moor_bail bal_f)
   uv_close((uv_handle_t*)&moj_u->pyp_u, _mojo_stop_cb);
 }
 
-/* u3_newt_write(): write atom to stream; free atom.
+/* u3_newt_send(): write buffer to stream.
 */
 void
-u3_newt_write(u3_mojo* moj_u, u3_atom mat)
+u3_newt_send(u3_mojo* moj_u, c3_d len_d, c3_y* byt_y)
 {
-  c3_w   len_w = u3r_met(3, mat);
-  n_req* req_u = c3_malloc(8 + len_w + sizeof(*req_u));
+  n_req* req_u = c3_malloc(sizeof(*req_u));
   req_u->moj_u = moj_u;
+  req_u->buf_y = byt_y;
 
-  //  write header; c3_d is futureproofing
+  //  write header
   //
-  req_u->buf_y[0] = ((len_w >>  0) & 0xff);
-  req_u->buf_y[1] = ((len_w >>  8) & 0xff);
-  req_u->buf_y[2] = ((len_w >> 16) & 0xff);
-  req_u->buf_y[3] = ((len_w >> 24) & 0xff);
-  req_u->buf_y[4] = req_u->buf_y[5] = req_u->buf_y[6] = req_u->buf_y[7] = 0;
-
-  //  write payload
-  //
-  u3r_bytes(0, len_w, req_u->buf_y + 8, mat);
-  u3z(mat);
+  req_u->len_y[0] = ( len_d        & 0xff);
+  req_u->len_y[1] = ((len_d >>  8) & 0xff);
+  req_u->len_y[2] = ((len_d >> 16) & 0xff);
+  req_u->len_y[3] = ((len_d >> 24) & 0xff);
+  req_u->len_y[4] = ((len_d >> 32) & 0xff);
+  req_u->len_y[5] = ((len_d >> 40) & 0xff);
+  req_u->len_y[6] = ((len_d >> 48) & 0xff);
+  req_u->len_y[7] = ((len_d >> 56) & 0xff);
 
   {
-    uv_buf_t buf_u = uv_buf_init((c3_c*)req_u->buf_y, 8 + len_w);
+    uv_buf_t buf_u[2] = {
+      uv_buf_init((c3_c*)req_u->len_y, 8),
+      uv_buf_init((c3_c*)req_u->buf_y, len_d)
+    };
+
     c3_i     sas_i;
 
     if ( 0 != (sas_i = uv_write(&req_u->wri_u,
                                 (uv_stream_t*)&moj_u->pyp_u,
-                                &buf_u, 1,
+                                buf_u, 2,
                                 _newt_write_cb)) )
     {
       c3_free(req_u);
       fprintf(stderr, "newt: write failed %s\r\n", uv_strerror(sas_i));
-      moj_u->bal_f(moj_u->ptr_v, uv_strerror(sas_i));
+      moj_u->bal_f(moj_u->ptr_v, sas_i, uv_strerror(sas_i));
     }
   }
 }

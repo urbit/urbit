@@ -398,7 +398,7 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "-e url        Ethereum gateway\n",
     "-F ship       Fake keys; also disables networking\n",
     "-g            Set GC flag\n",
-    "-j file       Create json trace file\n",
+    "-j            Create json trace file in .urb/put/trace\n",
     "-K stage      Start at Hoon kernel version stage\n",
     "-k keys       Private key file\n",
     "-L            local networking only\n",

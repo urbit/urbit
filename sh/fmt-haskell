@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+# Usage: fmt-haskell
+
+set -euo pipefail
+
+cd "${0%/*}/.."
+
+echo "Formatting Haskell"
+
+# FIXME: Avoid inplace (-i) modifications for now.
+find pkg/hs -type f -name '*.hs' \
+    -exec ormolu --mode check \
+    -o '-XBangPatterns' \
+    -o '-XMagicHash' \
+    -o '-XTypeApplications' \
+    -o '-XPatternSynonyms' \
+    {} \+

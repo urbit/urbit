@@ -45,3 +45,11 @@
       return u3qa_dec(a);
     }
   }
+
+  u3_noun
+  u3ka_dec(u3_atom a)
+  {
+    u3_noun b = u3qa_dec(a);
+    u3z(a);
+    return b;
+  }
