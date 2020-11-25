@@ -268,7 +268,7 @@
       (lsh 3 +((add size.sndr-meta size.rcvr-meta)) content)
     ==
   =/  checksum  (end 0 20 (mug body))
-  =?  body  ?=(^ origin)  (mix (lsh 3 6 body) u.origin)
+  =?  body  ?=(^ origin)  (cat 3 body u.origin)
   ::
   =/  header=@
     %+  can  0
@@ -311,7 +311,8 @@
   =^  origin=(unit @)  body
     ?:  =(| relayed)
       [~ body]
-    [`(end 3 6 body) (rsh 3 6 body)]
+    =/  len  (sub (met 3 body) 6)
+    [`(cut 3 [len 6] body) (end 3 len body)]
   ::  .checksum does not apply to the origin
   ::
   ?.  =(checksum (end 0 20 (mug body)))
