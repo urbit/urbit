@@ -1,4 +1,4 @@
-import React, { PureComponent, Fragment } from 'react';
+import React, { Component, Fragment } from 'react';
 import { LocalUpdateRemoteContentPolicy } from "~/types/local-update";
 import { BaseAnchor, BaseImage, Box, Button, Text } from '@tlon/indigo-react';
 import { hasProvider } from 'oembed-parser';
@@ -31,7 +31,7 @@ const VIDEO_REGEX = new RegExp(/(mov|mp4|ogv)$/i);
 
 const memoizedFetch = memoize(fetch);
 
-export default class RemoteContent extends PureComponent<RemoteContentProps, RemoteContentState> {
+export default class RemoteContent extends Component<RemoteContentProps, RemoteContentState> {
   private fetchController: AbortController | undefined;
   constructor(props) {
     super(props);
