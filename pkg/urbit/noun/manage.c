@@ -600,8 +600,6 @@ u3m_dump(void)
 }
 #endif
 
-c3_w Exit;
-
 /* u3m_bail(): bail out.  Does not return.
 **
 **  Bail motes:
@@ -612,7 +610,6 @@ c3_w Exit;
 **    %intr               ::  interrupt
 **    %fail               ::  computability failure
 **    %over               ::  stack overflow (a kind of %fail)
-**    %need               ::  namespace block
 **    %meme               ::  out of memory
 **
 **  These are equivalents of the full exception noun, the error ball:
@@ -651,30 +648,15 @@ u3m_bail(u3_noun how)
     }
   }
 
+  //  intercept fatal errors
+  //
   switch ( how ) {
-    case c3__fail: {
-      break;
-    }
-
-    case c3__meme: {
+    case c3__foul:
+    case c3__meme:
+    case c3__oops: {
       fprintf(stderr, "bailing out\r\n");
       abort();
     }
-    case c3__exit: {
-
-      static c3_w xuc_w = 0;
-
-      {
-        // u3l_log("exit %d\r\n", xuc_w);
-        // if ( 49 == xuc_w ) { abort(); }
-        xuc_w++;
-        break;
-      }
-    }
-    case c3__foul:
-    case c3__oops:
-      fprintf(stderr, "bailing out\r\n");
-      assert(0);
   }
 
   if ( &(u3H->rod_u) == u3R ) {
@@ -688,21 +670,15 @@ u3m_bail(u3_noun how)
 
   /* Reconstruct a correct error ball.
   */
-  {
-    if ( _(u3ud(how)) ) {
-      switch ( how ) {
-        case c3__exit: {
-          how = u3nc(2, u3R->bug.tax);
-          break;
-        }
-        case c3__need: {
-          c3_assert(0);
-        }
-        default: {
-          how = u3nt(3, how, u3R->bug.tax);
-          break;
-        }
-      }
+  if ( _(u3ud(how)) ) {
+    switch ( how ) {
+      case c3__exit: {
+        how = u3nc(2, u3R->bug.tax);
+      } break;
+
+      default: {
+        how = u3nt(3, how, u3R->bug.tax);
+      } break;
     }
   }
 
@@ -1689,6 +1665,14 @@ u3m_boot(c3_c* dir_c)
     u3j_ream();
     u3n_ream();
 
+    //  XX unused, removed
+    //
+    //    u3z() temporarily preserved to avoid leaking
+    //    checkpointed values
+    //
+    u3z(u3A->wen);
+    u3A->wen = 0;
+
     return u3A->ent_d;
   }
   else {
@@ -1727,121 +1711,6 @@ u3m_boot_lite(void)
   */
   memset(u3A, 0, sizeof(*u3A));
   return 0;
-}
-
-/* u3m_rock_stay(): jam state into [dir_c] at [evt_d]
-*/
-c3_o
-u3m_rock_stay(c3_c* dir_c, c3_d evt_d)
-{
-  c3_c nam_c[8193];
-
-  snprintf(nam_c, 8192, "%s", dir_c);
-  mkdir(nam_c, 0700);
-
-  snprintf(nam_c, 8192, "%s/.urb", dir_c);
-  mkdir(nam_c, 0700);
-
-  snprintf(nam_c, 8192, "%s/.urb/roc", dir_c);
-  mkdir(nam_c, 0700);
-
-  snprintf(nam_c, 8192, "%s/.urb/roc/%" PRIu64 ".jam", dir_c, evt_d);
-
-  {
-    u3_noun dat = u3nt(c3__fast, u3k(u3A->roc), u3j_stay());
-    c3_o  ret_o = u3s_jam_file(dat, nam_c);
-    u3z(dat);
-    return ret_o;
-  }
-}
-
-/* u3m_rock_load(): load state from [dir_c] at [evt_d]
-*/
-c3_o
-u3m_rock_load(c3_c* dir_c, c3_d evt_d)
-{
-  c3_c nam_c[8193];
-  snprintf(nam_c, 8192, "%s/.urb/roc/%" PRIu64 ".jam", dir_c, evt_d);
-
-  {
-    u3_noun dat;
-
-    {
-      //  XX u3m_file bails, but we'd prefer to return errors
-      //
-      u3_noun fil = u3m_file(nam_c);
-      u3a_print_memory(stderr, "rock: load", u3r_met(5, fil));
-
-      u3_noun pro = u3m_soft(0, u3ke_cue, fil);
-
-      if ( u3_blip != u3h(pro) ) {
-        fprintf(stderr, "rock: unable to cue %s\r\n", nam_c);
-        u3z(pro);
-        return c3n;
-      }
-      else {
-        dat = u3k(u3t(pro));
-        u3z(pro);
-      }
-    }
-
-    {
-      u3_noun roc, rel;
-
-      if ( u3r_pq(dat, c3__fast, &roc, &rel) ) {
-        u3z(dat);
-        return c3n;
-      }
-
-      u3A->roc = u3k(roc);
-      u3j_load(u3k(rel));
-    }
-
-    u3z(dat);
-  }
-
-  u3A->ent_d = evt_d;
-  u3j_ream();
-  u3n_ream();
-
-  return c3y;
-}
-
-/* u3m_rock_drop(): delete saved state from [dir_c] at [evt_d]
-*/
-c3_o
-u3m_rock_drop(c3_c* dir_c, c3_d evt_d)
-{
-  c3_c nam_c[8193];
-  snprintf(nam_c, 8192, "%s/.urb/roc/%" PRIu64 ".jam", dir_c, evt_d);
-
-  if ( 0 != unlink(nam_c) ) {
-    u3l_log("rock: drop %s failed: %s\r\n", nam_c, strerror(errno));
-    return c3n;
-  }
-
-  return c3y;
-}
-
-/* u3m_wipe(): purge and reinitialize loom, with checkpointing
-*/
-void
-u3m_wipe(void)
-{
-  //  clear page flags
-  //
-  memset((void*)u3P.dit_w, 0, u3a_pages >> 3);
-  //  reinitialize checkpoint system
-  //
-  //    NB: callers must first u3e_hold() or u3e_wipe()
-  //
-  u3e_live(c3n, u3P.dir_c);
-  //  reinitialize loom
-  //
-  u3m_pave(c3y, c3n);
-  //  reinitialize jets
-  //
-  u3j_boot(c3y);
 }
 
 /* u3m_reclaim: clear persistent caches to reclaim memory

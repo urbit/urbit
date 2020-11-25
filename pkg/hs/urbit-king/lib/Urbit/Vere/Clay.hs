@@ -163,7 +163,7 @@ clay env plan =
     handleEffect :: ClayDrv -> SyncEf -> IO ()
     handleEffect cd = runRIO env . \case
       SyncEfHill _ mountPoints -> do
-        logDebug $ displayShow ("(clay) known mount points:", mountPoints)
+        logInfo $ displayShow ("(clay) known mount points:", mountPoints)
         pierPath <- view pierPathL
         mountPairs <- flip mapM mountPoints $ \desk -> do
           ss <- takeFilesystemSnapshot (pierPath </> (deskToPath desk))
@@ -171,14 +171,14 @@ clay env plan =
         atomically $ writeTVar (cdMountPoints cd) (M.fromList mountPairs)
 
       SyncEfDirk p desk -> do
-        logDebug $ displayShow ("(clay) dirk:", p, desk)
+        logInfo $ displayShow ("(clay) dirk:", p, desk)
         m <- atomically $ readTVar (cdMountPoints cd)
         let snapshot = M.findWithDefault M.empty desk m
         pierPath <- view pierPathL
         let dir = pierPath </> deskToPath desk
         actions <- buildActionListFromDifferences dir snapshot
 
-        logDebug $ displayShow ("(clay) dirk actions: ", actions)
+        logInfo $ displayShow ("(clay) dirk actions: ", actions)
 
         let !intoList = map (actionsToInto dir) actions
 
@@ -191,12 +191,12 @@ clay env plan =
         atomically $ plan (EvErr syncEv syncFailed)
 
 
-        atomically $ modifyTVar
+        atomically $ modifyTVar'
             (cdMountPoints cd)
             (applyActionsToMountPoints desk actions)
 
       SyncEfErgo p desk actions -> do
-        logDebug $ displayShow ("(clay) ergo:", p, desk, actions)
+        logInfo $ displayShow ("(clay) ergo:", p, desk, actions)
 
         m <- atomically $ readTVar (cdMountPoints cd)
         let mountPoint = M.findWithDefault M.empty desk m
@@ -206,15 +206,15 @@ clay env plan =
         let hashedActions = map (calculateActionHash dir) actions
         for_ hashedActions (performAction mountPoint)
 
-        atomically $ modifyTVar
+        atomically $ modifyTVar'
             (cdMountPoints cd)
             (applyActionsToMountPoints desk hashedActions)
 
       SyncEfOgre p desk -> do
-        logDebug $ displayShow ("(clay) ogre:", p, desk)
+        logInfo $ displayShow ("(clay) ogre:", p, desk)
         pierPath <- view pierPathL
         removeDirectoryRecursive $ pierPath </> deskToPath desk
-        atomically $ modifyTVar (cdMountPoints cd) (M.delete desk)
+        atomically $ modifyTVar' (cdMountPoints cd) (M.delete desk)
 
 
     -- Change the structures off of the event into something we can work with
@@ -229,13 +229,13 @@ clay env plan =
     performAction :: (Map FilePath Int) -> (FilePath, Maybe (Mime, Int))
                   -> RIO e ()
     performAction m (fp, Nothing) = do
-      logDebug $ displayShow ("(clay) deleting file ", fp)
+      logInfo $ displayShow ("(clay) deleting file ", fp)
       removeFile fp
     performAction m (fp, Just ((Mime _ (File (Octs bs)), hash)))
-        | skip = logDebug $
+        | skip = logInfo $
                  displayShow ("(clay) skipping unchanged file update " , fp)
         | otherwise = do
-            logDebug $ displayShow ("(clay) updating file " , fp)
+            logInfo $ displayShow ("(clay) updating file " , fp)
             createDirectoryIfMissing True $ takeDirectory fp
             writeFile fp bs
       where
