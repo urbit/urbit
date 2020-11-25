@@ -277,7 +277,7 @@
   =+  pux=((soft path) raw)
   ?~  pux  ~
   ?.  ?=({@ @ @ @ *} u.pux)  ~
-  =+  :*  hyr=(slaw %tas i.u.pux)
+  =+  :*  hyr=?~(i.u.pux (some %$) (slaw %tas i.u.pux))
           fal=(slaw %p i.t.u.pux)
           dyc=?~(i.t.t.u.pux (some %$) (slaw %tas i.t.t.u.pux))
           ved=(slay i.t.t.t.u.pux)
