@@ -8,6 +8,6 @@
 =+  !<([pax=path ~] arg)
 ?~  bem=(de-beam:format pax)
   (strand-fail:strand %path-not-beam >pax< ~)
-=/  =mark  (head s.u.bem)
+=/  =mark  (rear s.u.bem)
 ;<  =dais:clay  bind:m  (build-mark:strandio -.u.bem mark)
 (pure:m !>(dais))

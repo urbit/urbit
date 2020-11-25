@@ -644,6 +644,14 @@
   ?~  a  ~
   [b $(a (dec a))]
 ::
+++  rear                                                ::  last item of list
+  ~/  %rear
+  |*  a=(list)
+  ^-  _?>(?=(^ a) i.a)
+  ?>  ?=(^ a)
+  ?:  =(~ t.a)  i.a  ::NOTE  avoiding tmi
+  $(a t.a)
+::
 ++  reel                                                ::  right fold
   ~/  %reel
   |*  {a/(list) b/_=>(~ |=({* *} +<+))}
@@ -708,6 +716,14 @@
     !!
   ?:  =(0 a)  i.b
   $(b t.b, a (dec a))
+::
+++  snip                                                ::  drop tail off list
+  ~/  %snip
+  |*  a=(list)
+  ^+  a
+  ?~  a  ~
+  ?:  =(~ t.a)  ~
+  [i.a $(a t.a)]
 ::
 ++  sort  !.                                            ::  quicksort
   ~/  %sort

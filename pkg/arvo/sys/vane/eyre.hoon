@@ -644,7 +644,7 @@
     ?-    -.action
         %gen
       =/  bek=beak  [our desk.generator.action da+now]
-      =/  sup=spur  (flop path.generator.action)
+      =/  sup=spur  path.generator.action
       =/  ski       (scry [%141 %noun] ~ %ca bek sup)
       =/  cag=cage  (need (need ski))
       ?>  =(%vase p.cag)
@@ -768,7 +768,7 @@
     ++  do-scry
       |=  [care=term =desk =path]
       ^-  (unit (unit cage))
-      (scry [%141 %noun] ~ care [our desk da+now] (flop path))
+      (scry [%141 %noun] ~ care [our desk da+now] path)
     ::
     ++  error-response
       |=  [status=@ud =tape]
@@ -1650,7 +1650,7 @@
         =*  desc=tape  "from {(trip have)} to json"
         =/  tube=(unit tube:clay)
           =/  tuc=(unit (unit cage))
-            (scry [%141 %noun] ~ %cc [our %home da+now] (flop /[have]/json))
+            (scry [%141 %noun] ~ %cc [our %home da+now] /[have]/json)
           ?.  ?=([~ ~ *] tuc)  ~
           `!<(tube:clay q.u.u.tuc)
         ?~  tube

@@ -2581,7 +2581,7 @@
     =-  ?~(- ~ `[nam (lent s.bem) (silt `(list path)`-)])
     %+  skim  can
     |=  pax/path
-    &(=(p.bem our) =(q.bem syd) =((flop s.bem) (scag (lent s.bem) pax)))
+    &(=(p.bem our) =(q.bem syd) =(s.bem (scag (lent s.bem) pax)))
   ::
   ::  Mount a beam to unix
   ::
@@ -4069,7 +4069,7 @@
       !!  ::  fire next in queue
     =^  mos  ruf
       =/  den  ((de our now ski hen ruf) our q.bem)
-      abet:(into:den (flop s.bem) all.req fis.req)
+      abet:(into:den s.bem all.req fis.req)
     [mos ..^$]
   ::
       %merg                                               ::  direct state up

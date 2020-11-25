@@ -2369,7 +2369,7 @@
 ++  scry-provides-code  ^-  sley
   |=  [* (unit (set monk)) =term =beam]
   ^-  (unit (unit cage))
-  ?:  &(=(%ca term) =(/hoon/handler/gen s.beam))
+  ?:  &(=(%ca term) =(/gen/handler/hoon s.beam))
     :+  ~  ~
     vase+!>(!>(|=(* |=(* [[%404 ~] ~]))))
   ?:  &(=(%cb term) =(/json s.beam))

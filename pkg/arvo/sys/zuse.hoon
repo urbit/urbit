@@ -76,7 +76,7 @@
 +$  life  @ud                                           ::  ship key revision
 +$  rift  @ud                                           ::  ship continuity
 +$  mime  (pair mite octs)                              ::  mimetyped data
-+$  octs  (pair @ud cord)                               ::  octet-stream
++$  octs  (pair @ud @)                                  ::  octet-stream
 +$  sock  (pair ship ship)                              ::  outgoing [our his]
 ::+|
 ::
@@ -5515,7 +5515,7 @@
   ++  en-beam                                           ::  beam to path
     |=  bem/beam
     ^-  path
-    [(scot %p p.bem) q.bem (scot r.bem) (flop s.bem)]
+    [(scot %p p.bem) q.bem (scot r.bem) s.bem]
   ::                                                    ::  ++de-beam:format
   ++  de-beam                                           ::  parse path to beam
     |=  pax/path
@@ -5528,7 +5528,7 @@
     %+  biff  (slay i.t.t.pax)
     |=  cis/coin
     ?.  ?=({$$ case} cis)  ~
-    `(unit beam)`[~ [who dex `case`p.cis] (flop t.t.t.pax)]
+    `(unit beam)`[~ [who dex `case`p.cis] t.t.t.pax]
   ::
   ++  json-rn                                           ::  json to rn parser
     %+  knee  *rn  |.
@@ -6491,7 +6491,7 @@
     ++  apex                                            ::  top level
       =+  spa=;~(pose comt whit)
       %+  knee  *manx  |.  ~+
-      %+  ifix  
+      %+  ifix
         [;~(plug (punt decl) (star spa)) (star spa)]
       ;~  pose
         %+  sear  |=({a/marx b/marl c/mane} ?.(=(c n.a) ~ (some [a b])))
