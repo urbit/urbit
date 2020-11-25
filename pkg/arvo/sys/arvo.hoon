@@ -247,7 +247,7 @@
   ?.  ?=(^ ved)  ~
   =/  ron=@tas  u.hyr
   =/  bed=beam
-    [[u.fal u.dyc (case p.u.ved)] (flop tyl)]
+    [[u.fal u.dyc (case p.u.ved)] tyl]
   =/  bop=(unit (unit (cask meta)))
     (sod ref ~ ron bed)
   ?~  bop  ~
@@ -726,7 +726,7 @@
             [%& p.bed]
             q.bed
             `coin`[%$ r.bed]
-            (flop s.bed)
+            s.bed
         ==
       ::
       ::  |spin:plow:va: move statefully

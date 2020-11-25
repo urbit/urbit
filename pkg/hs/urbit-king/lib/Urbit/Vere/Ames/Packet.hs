@@ -53,9 +53,7 @@ instance Serialize Packet where
     lookAhead $ do
       len  <- remaining
       body <- getBytes len
-      -- XX mug (marked "TODO") is implemented as "slowMug" in U.N.Tree. Ominous
-      -- Also, toNoun will copy the bytes into an atom. We probably want a mugBS
-      let chk = fromIntegral (mug $ toNoun $ MkBytes body) .&. (2 ^ 20 - 1)
+      let chk = fromIntegral (mugBS body) .&. (2 ^ 20 - 1)
       when (checksum /= chk) $
         fail ("checksum mismatch: expected " <> show checksum
            <> "; got " <> show chk)
@@ -84,8 +82,7 @@ instance Serialize Packet where
     let (sndR, putSndr) = putShipGetRank pktSndr
     let (rcvR, putRcvr) = putShipGetRank pktRcvr
     let body = runPut (putSndr <> putRcvr <> putByteString load)
-    -- XX again maybe mug can be made better here
-    let chek = fromIntegral (mug $ toNoun $ MkBytes body) .&. (2 ^ 20 - 1)
+    let chek = fromIntegral (mugBS body) .&. (2 ^ 20 - 1)
     let encr = pktEncrypted
     let vers = fromIntegral pktVersion .&. 0b111
     let head =        vers

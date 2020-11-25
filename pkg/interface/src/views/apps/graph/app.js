@@ -25,6 +25,10 @@ export default class GraphApp extends PureComponent {
           render={ (props) => {
             const resource =
               `${deSig(props.match.params.ship)}/${props.match.params.name}`;
+            const { ship, name } = props.match.params;
+            const path = `/ship/~${deSig(ship)}/${name}`;
+            const association = associations.graph[path];
+
 
             const autoJoin = () => {
               try {
@@ -33,13 +37,7 @@ export default class GraphApp extends PureComponent {
                   props.match.params.name
                 );
                 
-                if (props.match.params.module) {
-                  props.history.push(
-                    `/~${props.match.params.module}/${resource}`
-                  );
-                } else {
-                  props.history.push('/');
-                }
+                
               } catch(err) {
                 setTimeout(autoJoin, 2000);
               }
@@ -47,8 +45,8 @@ export default class GraphApp extends PureComponent {
 
             if(!graphKeys.has(resource)) {
               autoJoin();
-            } else if(props.match.params.module) {
-              props.history.push(`/~${props.match.params.module}/${resource}`);
+            } else if(!!association) {
+              props.history.push(`/~landscape/home/resource/${association.metadata.module}${path}`);
             }
             return (
               <Center width="100%" height="100%">

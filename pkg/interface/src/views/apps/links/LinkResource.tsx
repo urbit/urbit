@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { Box, Row, Col, Center, LoadingSpinner } from "@tlon/indigo-react";
 import { Switch, Route, Link } from "react-router-dom";
+import bigInt from 'big-integer';
 
 import GlobalApi from "~/logic/api/global";
 import { StoreState } from "~/logic/store/type";
@@ -11,8 +12,7 @@ import { RouteComponentProps } from "react-router-dom";
 import { LinkItem } from "./components/link-item";
 import { LinkSubmit } from "./components/link-submit";
 import { LinkPreview } from "./components/link-preview";
-import { CommentSubmit } from "./components/comment-submit";
-import { Comments } from "./components/comments";
+import { Comments } from "~/views/components/comments";
 
 import "./css/custom.css";
 
@@ -36,6 +36,7 @@ export function LinkResource(props: LinkResourceProps) {
     hideAvatars,
     hideNicknames,
     remoteContentPolicy,
+    history
   } = props;
 
   const appPath = association["app-path"];
@@ -48,6 +49,7 @@ export function LinkResource(props: LinkResourceProps) {
     ? associations.graph[appPath]
     : { metadata: {} };
   const contactDetails = contacts[resource["group-path"]] || {};
+  const group = groups[resource["group-path"]] || {};
   const graph = graphs[resourcePath] || null;
 
   useEffect(() => {
@@ -68,14 +70,14 @@ export function LinkResource(props: LinkResourceProps) {
           render={(props) => {
             return (
               <Col width="100%" p={4} alignItems="center" maxWidth="768px">
-                <Row width="100%" flexShrink='0'>
+                <Col width="100%" flexShrink='0'>
                   <LinkSubmit s3={s3} name={name} ship={ship.slice(1)} api={api} />
-                </Row>
+                </Col>
                 {Array.from(graph).map(([date, node]) => {
                   const contact = contactDetails[node.post.author];
                   return (
                     <LinkItem
-                      key={date}
+                      key={date.toString()}
                       resource={resourcePath}
                       node={node}
                       nickname={contact?.nickname}
@@ -83,6 +85,8 @@ export function LinkResource(props: LinkResourceProps) {
                       hideNicknames={hideNicknames}
                       baseUrl={resourceUrl}
                       color={uxToHex(contact?.color || '0x0')}
+                      group={group}
+                      api={api}
                     />
                   );
                 })}
@@ -91,15 +95,15 @@ export function LinkResource(props: LinkResourceProps) {
           }}
         />
         <Route
-          path={relativePath("/:index")}
+          path={relativePath("/:index/:commentId?")}
           render={(props) => {
-            const indexArr = props.match.params.index.split("-");
+            const index = bigInt(props.match.params.index);
+            const editCommentId = props.match.params.commentId || null;
 
-            if (indexArr.length <= 1) {
+            if (!index) {
               return <div>Malformed URL</div>;
             }
 
-            const index = parseInt(indexArr[1], 10);
             const node = !!graph ? graph.get(index) : null;
 
             if (!node) {
@@ -119,22 +123,19 @@ export function LinkResource(props: LinkResourceProps) {
                   commentNumber={node.children.size}
                   remoteContentPolicy={remoteContentPolicy}
                 />
-                <Row flexShrink='0'>
-                  <CommentSubmit
-                    name={name}
-                    ship={ship}
-                    api={api}
-                    parentIndex={node.post.originalIndex}
-                  />
-                </Row>
                 <Comments
-                  comments={node.children}
-                  resourcePath={resourcePath}
+                  ship={ship}
+                  name={name}
+                  comments={node}
+                  resource={resourcePath}
                   contacts={contactDetails}
                   api={api}
                   hideAvatars={hideAvatars}
                   hideNicknames={hideNicknames}
                   remoteContentPolicy={remoteContentPolicy}
+                  editCommentId={editCommentId}
+                  history={props.history}
+                  baseUrl={`${resourceUrl}/${props.match.params.index}`}
                 />
               </Col>
             );

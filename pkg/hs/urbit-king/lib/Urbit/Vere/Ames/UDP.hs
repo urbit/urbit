@@ -35,7 +35,7 @@ where
 import Urbit.Prelude
 import Urbit.Vere.Ports
 
-import Network.Socket hiding (recvFrom, sendTo)
+import Network.Socket
 
 import Control.Monad.STM         (retry)
 import Network.Socket.ByteString (recvFrom, sendTo)

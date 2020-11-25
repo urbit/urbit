@@ -561,7 +561,7 @@
         ++  vale
           |=  =noun
           ^+  sam
-          (slam (slap cor ^~((ream 'noun:grab'))) !>(noun))
+          (slam (slap cor !,(*hoon noun:grab)) !>(noun))
         ++  volt
           |=  =noun
           ^+  sam
@@ -577,22 +577,23 @@
         ^-  vase
         %+  slap
           (with-faces cor+cor sam+sam new+new ~)
-        ^~((ream '(diff:~(grad cor sam) new)'))
+        !,  *hoon
+        (diff:~(grad cor sam) new)
       ++  form  fom
       ++  join
         |=  [a=vase b=vase]
         ^-  (unit (unit vase))
         ?:  =(q.a q.b)
           ~
-        =;  res  `?~(q.res ~ `(slap res ^~((ream '?~(. !! u)'))))
-        (slam (slap cor ^~((ream 'join:grad'))) (slop a b))
+        =;  res  `?~(q.res ~ `(slap res !,(*hoon ?~(. !! u))))
+        (slam (slap cor !,(*hoon join:grad)) (slop a b))
       ++  mash
         |=  [a=[=ship =desk diff=vase] b=[=ship =desk diff=vase]]
         ^-  (unit vase)
         ?:  =(q.diff.a q.diff.b)
           ~
         :-  ~
-        %+  slam  (slap cor ^~((ream 'mash:grad')))
+        %+  slam  (slap cor !,(*hoon mash:grad))
         %+  slop
           :(slop !>(ship.a) !>(desk.a) diff.a)
         :(slop !>(ship.b) !>(desk.b) diff.b)
@@ -601,11 +602,12 @@
         ^+  sam
         %+  slap
           (with-faces cor+cor sam+sam diff+diff ~)
-        ^~((ream '(pact:~(grad cor sam) diff)'))
+        !,  *hoon
+        (pact:~(grad cor sam) diff)
       ++  vale
         |=  =noun
         ^+  sam
-        (slam (slap cor ^~((ream 'noun:grab'))) !>(noun))
+        (slam (slap cor !,(*hoon noun:grab)) !>(noun))
       ++  volt
         |=  =noun
         ^+  sam
@@ -637,7 +639,7 @@
       ::  try +grow; is there a +grow core with a .b arm?
       ::
       =^  old=vase  nub  (build-fit %mar a)
-      ?:  =/  ram  (mule |.((slap old ^~((ream 'grow')))))
+      ?:  =/  ram  (mule |.((slap old !,(*hoon grow))))
           ?:  ?=(%| -.ram)  %.n
           =/  lab  (mule |.((slob b p.p.ram)))
           ?:  ?=(%| -.lab)  %.n
@@ -650,22 +652,28 @@
         ^-  vase
         %+  slap
           (with-faces old+old sam+sam ~)
-        %-  ream
-        ;:  (cury cat 3)
-          '!:  '
-          '~!  old=old  '
-          '~!  sam=sam  '
-          b  ':~(grow old sam)'
-        ==
+        :+  %sgzp  !,(*hoon old=old)
+        :+  %sgzp  !,(*hoon sam=sam)
+        :+  %tsgl  [%limb b]
+        !,  *hoon
+        ~(grow old sam)
       ::  try direct +grab
       ::
       =^  new=vase  nub  (build-fit %mar b)
-      =/  rab  (mule |.((slap new (ream (cat 3 a ':grab')))))
+      =/  rab
+        %-  mule  |.
+        %+  slap  new
+        :+  %tsgl  [%limb a]
+        [%limb %grab]
       ?:  &(?=(%& -.rab) ?=(^ q.p.rab))
         :_(nub |=(sam=vase ~|([%grab a b] (slam p.rab sam))))
       ::  try +jump
       ::
-      =/  jum  (mule |.((slap old (ream (cat 3 b ':jump')))))
+      =/  jum
+        %-  mule  |.
+        %+  slap  old
+        :+  %tsgl  [%limb b]
+        [%limb %jump]
       ?:  ?=(%& -.jum)
         (compose-casts a !<(mark p.jum) b)
       ::  try indirect +grab
@@ -803,7 +811,7 @@
         ::  parse optional /? and ignore
         ::
         ;~  pose
-          (cold ~ ;~(plug net wut gap dem gap))
+          (cold ~ ;~(plug fas wut gap dem gap))
           (easy ~)
         ==
       ::
@@ -812,7 +820,7 @@
             ;~  sfix
               %+  cook  |=((list (list taut)) (zing +<))
               %+  more  gap
-              ;~  pfix  ;~(plug net hep gap)
+              ;~  pfix  ;~(plug fas hep gap)
                 (most ;~(plug com gaw) taut-rule)
               ==
               gap
@@ -824,7 +832,7 @@
             ;~  sfix
               %+  cook  |=((list (list taut)) (zing +<))
               %+  more  gap
-              ;~  pfix  ;~(plug net lus gap)
+              ;~  pfix  ;~(plug fas lus gap)
                 (most ;~(plug com gaw) taut-rule)
               ==
               gap
@@ -836,9 +844,9 @@
             ;~  sfix
               %+  cook  |=((list [face=term =path]) +<)
               %+  more  gap
-              ;~  pfix  ;~(plug net tis gap)
+              ;~  pfix  ;~(plug fas tis gap)
                 %+  cook  |=([term path] +<)
-                ;~(plug sym ;~(pfix ;~(plug gap net) (more net urs:ab)))
+                ;~(plug sym ;~(pfix ;~(plug gap fas) (more fas urs:ab)))
               ==
               gap
             ==
@@ -849,12 +857,12 @@
             ;~  sfix
               %+  cook  |=((list [face=term =mark =path]) +<)
               %+  more  gap
-              ;~  pfix  ;~(plug net tar gap)
+              ;~  pfix  ;~(plug fas tar gap)
                 %+  cook  |=([term mark path] +<)
                 ;~  plug
                   sym
                   ;~(pfix ;~(plug gap cen) sym)
-                  ;~(pfix ;~(plug gap net) (more net urs:ab))
+                  ;~(pfix ;~(plug gap fas) (more fas urs:ab))
                 ==
               ==
               gap
@@ -1597,7 +1605,7 @@
           ~>  %mean.%arvo-parse-fail
           (path-to-hoon data /sys/arvo/hoon)
         ~>  %mean.%arvo-compile-fail
-        (slap (slap hoon gen) (ream '..is'))
+        (slap (slap hoon gen) !,(*^hoon ..is))
       ::
       ++  build-zuse
         |=  arvo=vase
@@ -2573,7 +2581,7 @@
     =-  ?~(- ~ `[nam (lent s.bem) (silt `(list path)`-)])
     %+  skim  can
     |=  pax/path
-    &(=(p.bem our) =(q.bem syd) =((flop s.bem) (scag (lent s.bem) pax)))
+    &(=(p.bem our) =(q.bem syd) =(s.bem (scag (lent s.bem) pax)))
   ::
   ::  Mount a beam to unix
   ::
@@ -4061,7 +4069,7 @@
       !!  ::  fire next in queue
     =^  mos  ruf
       =/  den  ((de our now ski hen ruf) our q.bem)
-      abet:(into:den (flop s.bem) all.req fis.req)
+      abet:(into:den s.bem all.req fis.req)
     [mos ..^$]
   ::
       %merg                                               ::  direct state up
@@ -4384,7 +4392,7 @@
           %+  rain  /sys/arvo/hoon
           (lobe-to-cord (~(got by data) /sys/arvo/hoon))
         ~>  %mean.%arvo-compile-fail
-        (slap (slap hoon gen) (ream '..is'))
+        (slap (slap hoon gen) !,(*^hoon ..is))
       ::
       ++  build-zuse
         |=  arvo=vase

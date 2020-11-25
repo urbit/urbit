@@ -1,5 +1,5 @@
 /-  spider
-/+  libstrand=strand, default-agent, verb, server 
+/+  libstrand=strand, default-agent, verb, server
 =,  strand=strand:libstrand
 |%
 +$  card         card:agent:gall

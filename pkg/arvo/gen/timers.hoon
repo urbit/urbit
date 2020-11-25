@@ -5,5 +5,5 @@
   [%tang >timers< ~]
 .^  (list [date=@da =duct])
   %bx
-  (en-beam:format [p.bec %$ r.bec] /timers/debug)
+  (en-beam:format [p.bec %$ r.bec] /debug/timers)
 ==

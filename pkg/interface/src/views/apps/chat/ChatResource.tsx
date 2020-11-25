@@ -1,17 +1,16 @@
-import React, { useRef, useCallback } from "react";
-import { RouteComponentProps } from "react-router-dom";
-import { Col } from "@tlon/indigo-react";
+import React, { useRef, useCallback, useEffect } from 'react';
+import { RouteComponentProps } from 'react-router-dom';
+import { Col } from '@tlon/indigo-react';
 import _ from 'lodash';
 
-import { Association } from "~/types/metadata-update";
-import { StoreState } from "~/logic/store/type";
-import { useFileDrag } from "~/logic/lib/useDrag";
-import ChatWindow from "./components/ChatWindow";
-import ChatInput from "./components/ChatInput";
-import GlobalApi from "~/logic/api/global";
-import { deSig } from "~/logic/lib/util";
-import { SubmitDragger } from "~/views/components/s3-upload";
-import { useLocalStorageState } from "~/logic/lib/useLocalStorageState";
+import { Association } from '~/types/metadata-update';
+import { StoreState } from '~/logic/store/type';
+import { useFileDrag } from '~/logic/lib/useDrag';
+import ChatWindow from './components/ChatWindow';
+import ChatInput from './components/ChatInput';
+import GlobalApi from '~/logic/api/global';
+import { SubmitDragger } from '~/views/components/s3-upload';
+import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
 
 type ChatResourceProps = StoreState & {
   association: Association;
@@ -20,22 +19,22 @@ type ChatResourceProps = StoreState & {
 } & RouteComponentProps;
 
 export function ChatResource(props: ChatResourceProps) {
-  const station = props.association["app-path"];
+  const station = props.association['app-path'];
   if (!props.chatInitialized) {
     return null;
   }
 
-  const { envelopes, config } = (props.inbox?.[station]) ? props.inbox[station] : {envelopes: [], config: {}};
+  const { envelopes, config } = (props.inbox?.[station]) ? props.inbox[station] : { envelopes: [], config: {} };
   const { read, length } = (config) ? config : undefined;
 
-  const groupPath = props.association["group-path"];
+  const groupPath = props.association['group-path'];
   const group = props.groups[groupPath];
   const contacts = props.contacts[groupPath] || {};
 
   const pendingMessages = (props.pendingMessages.get(station) || []).map(
-    (value) => ({
+    value => ({
       ...value,
-      pending: true,
+      pending: true
     })
   );
 
@@ -62,7 +61,7 @@ export function ChatResource(props: ChatResourceProps) {
   const unreadCount = length - read;
   const unreadMsg = unreadCount > 0 && envelopes[unreadCount - 1];
 
-  const [, owner, name] = station.split("/");
+  const [, owner, name] = station.split('/');
   const ourContact = contacts?.[window.ship];
   const lastMsgNum = envelopes.length || 0;
 
@@ -81,18 +80,27 @@ export function ChatResource(props: ChatResourceProps) {
   const { bind, dragging } = useFileDrag(onFileDrag);
 
   const [unsent, setUnsent] = useLocalStorageState<Record<string, string>>(
-    "chat-unsent",
+    'chat-unsent',
     {}
   );
 
   const appendUnsent = useCallback(
-    (u: string) => setUnsent((s) => ({ ...s, [station]: u })),
+    (u: string) => setUnsent(s => ({ ...s, [station]: u })),
     [station]
   );
 
-  const clearUnsent = useCallback(() => setUnsent((s) => _.omit(s, station)), [
-    station,
+  const clearUnsent = useCallback(() => setUnsent(s => _.omit(s, station)), [
+    station
   ]);
+
+  const scrollTo = new URLSearchParams(location.search).get('msg');
+  useEffect(() => {
+    const clear =  () => {
+      props.history.replace(location.pathname);
+    };
+    setTimeout(clear, 10000);
+    return clear;
+  }, [station]);
 
   return (
     <Col {...bind} height="100%" overflow="hidden" position="relative">
@@ -118,6 +126,7 @@ export function ChatResource(props: ChatResourceProps) {
         hideNicknames={props.hideNicknames}
         hideAvatars={props.hideAvatars}
         location={props.location}
+        scrollTo={scrollTo ? parseInt(scrollTo, 10) : undefined}
       />
       <ChatInput
         ref={chatInput}
@@ -131,7 +140,7 @@ export function ChatResource(props: ChatResourceProps) {
         s3={props.s3}
         hideAvatars={props.hideAvatars}
         placeholder="Message..."
-        message={unsent[station] || ""}
+        message={unsent[station] || ''}
         deleteMessage={clearUnsent}
       />
     </Col>

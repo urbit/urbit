@@ -462,7 +462,7 @@
     ==
     ;body
       ;h1:"Internal Server Error"
-      ;p:"There was an error while handling the request for {<(trip url)>}."
+      ;p:"There was an error while handling the request for {(trip url)}."
       ;*  ?:  authorized
             ;=
               ;code:"*{(render-tang-to-marl 80 t)}"
@@ -478,7 +478,7 @@
   ::
   =/  code-as-tape=tape  (format-ud-as-integer code)
   =/  message=tape
-    ?+  code  "{<code>} Error"
+    ?+  code  "{(scow %ud code)} Error"
       %400  "Bad Request"
       %403  "Forbidden"
       %404  "Not Found"
@@ -495,7 +495,7 @@
     ==
     ;body
       ;h1:"{message}"
-      ;p:"There was an error while handling the request for {<(trip url)>}."
+      ;p:"There was an error while handling the request for {(trip url)}."
       ;*  ?:  authorized
             ;=
               ;code:"{t}"
@@ -590,8 +590,12 @@
     =*  headers  header-list.request
     ::  for requests from localhost, respect the "forwarded" header
     ::
-    =?  address  =([%ipv4 .127.0.0.1] address)
-      (fall (forwarded-for headers) address)
+    =/  [secure=? =^address]
+      =*  same  [secure address]
+      ?.  =([%ipv4 .127.0.0.1] address)        same
+      ?~  forwards=(forwarded-params headers)  same
+      :-  (fall (forwarded-secure u.forwards) secure)
+      (fall (forwarded-for u.forwards) address)
     ::
     =/  host  (get-header:http 'host' headers)
     =/  [=action suburl=@t]
@@ -640,7 +644,7 @@
     ?-    -.action
         %gen
       =/  bek=beak  [our desk.generator.action da+now]
-      =/  sup=spur  (flop path.generator.action)
+      =/  sup=spur  path.generator.action
       =/  ski       (scry [%141 %noun] ~ %ca bek sup)
       =/  cag=cage  (need (need ski))
       ?>  =(%vase p.cag)
@@ -764,7 +768,7 @@
     ++  do-scry
       |=  [care=term =desk =path]
       ^-  (unit (unit cage))
-      (scry [%141 %noun] ~ care [our desk da+now] (flop path))
+      (scry [%141 %noun] ~ care [our desk da+now] path)
     ::
     ++  error-response
       |=  [status=@ud =tape]
@@ -995,7 +999,7 @@
         ~
       ::  is there an urbauth cookie?
       ::
-      ?~  urbauth=(get-header:http (crip "urbauth-{<our>}") u.cookies)
+      ?~  urbauth=(get-header:http (crip "urbauth-{(scow %p our)}") u.cookies)
         ~
       ::  if it's formatted like a valid session cookie, produce it
       ::
@@ -1035,7 +1039,7 @@
       ^-  @t
       %-  crip
       =;  max-age=tape
-        "urbauth-{<our>}={<session>}; Path=/; Max-Age={max-age}"
+        "urbauth-{(scow %p our)}={(scow %uv session)}; Path=/; Max-Age={max-age}"
       %-  format-ud-as-integer
       ?.  extend  0
       (div (msec:milly session-timeout) 1.000)
@@ -1500,6 +1504,16 @@
       ?~  channel
         :_  state  :_  ~
         [duct %pass /flog %d %flog %crud %eyre-no-channel >id=channel-id< ~]
+      ::  it's possible that this is a sign emitted directly alongside a fact
+      ::  that triggered a clog & closed the subscription. in that case, just
+      ::  drop the sign.
+      ::  poke-acks are not paired with subscriptions, so we can process them
+      ::  regardless.
+      ::
+      ?:  ?&  !?=(%poke-ack -.sign)
+              !(~(has by subscriptions.u.channel) request-id)
+          ==
+        [~ state]
       ::  attempt to convert the sign to json.
       ::  if conversion succeeds, we *can* send it. if the client is actually
       ::  connected, we *will* send it immediately.
@@ -1535,10 +1549,10 @@
       ::  update channel's unacked counts, find out if clogged
       ::
       =^  clogged  unacked.u.channel
-        ::  poke-acks are one-offs, don't apply clog logic to them.
+        ::  only apply clog logic to facts.
         ::  and of course don't count events we can't send as unacked.
         ::
-        ?:  ?|  ?=(%poke-ack -.sign)
+        ?:  ?|  !?=(%fact -.sign)
                 ?=(~ json)
             ==
           [| unacked.u.channel]
@@ -1555,6 +1569,10 @@
       =*  kicking    |(clogged ?=(~ json))
       =?  moves      kicking
         :_  moves
+        ::NOTE  this shouldn't crash because we
+        ::      - never fail to serialize subscriptionless signs (%poke-ack),
+        ::      - only clog on %facts, which have a subscription associated,
+        ::      - and already checked whether we still have that subscription.
         =+  (~(got by subscriptions.u.channel) request-id)
         :^  duct  %pass
           (subscription-wire channel-id request-id ship app)
@@ -1585,7 +1603,7 @@
         ==
       =?  next-id   kicking  +(next-id)
       ::
-      :-  moves
+      :-  (flop moves)
       %_    state
           session.channel-state
         %+  ~(put by session.channel-state.state)  channel-id
@@ -1632,7 +1650,7 @@
         =*  desc=tape  "from {(trip have)} to json"
         =/  tube=(unit tube:clay)
           =/  tuc=(unit (unit cage))
-            (scry [%141 %noun] ~ %cc [our %home da+now] (flop /[have]/json))
+            (scry [%141 %noun] ~ %cc [our %home da+now] /[have]/json)
           ?.  ?=([~ ~ *] tuc)  ~
           `!<(tube:clay q.u.u.tuc)
         ?~  tube
@@ -2013,29 +2031,39 @@
     (cat 3 '.' u.ext.request-line)
   --
 ::
-++  forwarded-for
+++  forwarded-params
   |=  =header-list:http
-  ^-  (unit address)
-  =/  forwarded=(unit @t)
+  ^-  (unit (list (map @t @t)))
+  %+  biff
     (get-header:http 'forwarded' header-list)
-  ?~  forwarded  ~
-  |^  =/  forwards=(unit (list (map @t @t)))
-        (unpack-header:http u.forwarded)
-      ?.  ?=([~ ^] forwards)  ~
-      =*  forward  i.u.forwards
-      ?~  for=(~(get by forward) 'for')  ~
-      ::NOTE  per rfc7239, non-ip values are also valid. they're not useful
-      ::      for the general case, so we ignore them here. if needed,
-      ::      request handlers are free to inspect the headers themselves.
-      ::
-      (rush u.for ip-address)
+  unpack-header:http
+::
+++  forwarded-for
+  |=  forwards=(list (map @t @t))
+  ^-  (unit address)
+  ?.  ?=(^ forwards)  ~
+  =*  forward  i.forwards
+  ?~  for=(~(get by forward) 'for')  ~
+  ::NOTE  per rfc7239, non-ip values are also valid. they're not useful
+  ::      for the general case, so we ignore them here. if needed,
+  ::      request handlers are free to inspect the headers themselves.
   ::
-  ++  ip-address
-    ;~  sfix
-      ;~(pose (stag %ipv4 ip4) (stag %ipv6 (ifix [lac rac] ip6)))
-      ;~(pose ;~(pfix col dim:ag) (easy ~))
-    ==
-  --
+  %+  rush  u.for
+  ;~  sfix
+    ;~(pose (stag %ipv4 ip4) (stag %ipv6 (ifix [sel ser] ip6)))
+    ;~(pose ;~(pfix col dim:ag) (easy ~))
+  ==
+::
+++  forwarded-secure
+  |=  forwards=(list (map @t @t))
+  ^-  (unit ?)
+  ?.  ?=(^ forwards)  ~
+  =*  forward  i.forwards
+  ?~  proto=(~(get by forward) 'proto')  ~
+  ?+  u.proto  ~
+    %http   `|
+    %https  `&
+  ==
 ::
 ++  parse-request-line
   |=  url=@t
@@ -2378,7 +2406,7 @@
       =/  handle-gall-error
         handle-gall-error:(per-server-event event-args)
       =^  moves  server-state.ax
-        (handle-gall-error leaf+"eyre bad mark {<mark>}" ~)
+        (handle-gall-error leaf+"eyre bad mark {(trip mark)}" ~)
       [moves http-server-gate]
     ::
     =/  =http-event:http

@@ -1849,11 +1849,11 @@
             ~
         ==
       ^=  expected-moves
-      ~  ::NOTE  tested elsewher
+      ~  ::NOTE  tested elsewhere
     ==
   ::  user gets sent multiple subscription results
   ::
-  =/  max=@ud  (dec clog-threshold:eyre-gate)
+  =/  max=@ud  clog-threshold:eyre-gate
   =/  cur=@ud  0
   |-  =*  loop-fact  $
   ?.  =(cur max)
@@ -1875,7 +1875,7 @@
     loop-fact(cur +(cur))
   ::  the next subscription result should trigger a clog
   ::
-  =^  results  eyre-gate
+  =^  results1  eyre-gate
     %:  eyre-take
       eyre-gate
       now
@@ -1889,40 +1889,58 @@
         ==
       ^=  moves
         :~  :*  duct=~[/http-get-open]
-                %give
-                %response
-                %continue
-                :-  ~
-                %-  as-octt:mimes:html
-                """
-                id: {((d-co:co 1) +(clog-threshold:eyre-gate))}
-                data: \{"id":1,"response":"quit"}
-
-
-                """
-                complete=%.n
-            ==
-            :*  duct=~[/http-put-request]  %pass
-              /channel/subscription/'0123456789abcdef'/'1'/~nul/two
-              %g  %deal  [~nul ~nul]  %two  %leave  ~
-            ==
-            :*  duct=~[/http-get-open]
               %give
               %response
               %continue
               :-  ~
               %-  as-octt:mimes:html
               """
-              id: {((d-co:co 1) clog-threshold:eyre-gate)}
+              id: {((d-co:co 1) +(clog-threshold:eyre-gate))}
               data: \{"json":[1],"id":1,"response":"diff"}
 
 
               """
               complete=%.n
             ==
+            :*  duct=~[/http-put-request]  %pass
+              /channel/subscription/'0123456789abcdef'/'1'/~nul/two
+              %g  %deal  [~nul ~nul]  %two  %leave  ~
+            ==
+            :*  duct=~[/http-get-open]
+                %give
+                %response
+                %continue
+                :-  ~
+                %-  as-octt:mimes:html
+                """
+                id: {((d-co:co 1) (add 2 clog-threshold:eyre-gate))}
+                data: \{"id":1,"response":"quit"}
+
+
+                """
+                complete=%.n
+            ==
         ==
     ==
-  results
+  ::  subsequent subscription updates, which might have gotten sent out during
+  ::  the same event in which a clog triggered, should be silently ignored
+  ::
+  =^  results2  eyre-gate
+    %:  eyre-take
+      eyre-gate
+      now
+      scry=scry-provides-code
+      ^=  take-args
+        :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
+            duct=~[/http-put-request]
+            ^-  (hypo sign:eyre-gate)
+            :-  *type
+            [%g %unto %fact %json !>(`json`[%a [%n '1'] ~])]
+        ==
+      ^=  moves
+        ~
+    ==
+  (weld results1 results2)
 ::
 ++  test-born-sends-pending-cancels
   ::
@@ -2351,7 +2369,7 @@
 ++  scry-provides-code  ^-  sley
   |=  [* (unit (set monk)) =term =beam]
   ^-  (unit (unit cage))
-  ?:  &(=(%ca term) =(/hoon/handler/gen s.beam))
+  ?:  &(=(%ca term) =(/gen/handler/hoon s.beam))
     :+  ~  ~
     vase+!>(!>(|=(* |=(* [[%404 ~] ~]))))
   ?:  &(=(%cb term) =(/json s.beam))

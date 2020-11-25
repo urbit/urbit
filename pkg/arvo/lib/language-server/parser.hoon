@@ -11,7 +11,7 @@
     ::  parse optional /? and ignore
     ::
     ;~  pose
-      (cold ~ ;~(plug net wut gap dem gap))
+      (cold ~ ;~(plug fas wut gap dem gap))
       (easy ~)
     ==
   ::
@@ -20,7 +20,7 @@
         ;~  sfix
           %+  cook  |=((list (list taut)) (zing +<))
           %+  more  gap
-          ;~  pfix  ;~(plug net hep gap)
+          ;~  pfix  ;~(plug fas hep gap)
             (most ;~(plug com gaw) taut-rule)
           ==
           gap
@@ -32,7 +32,7 @@
         ;~  sfix
           %+  cook  |=((list (list taut)) (zing +<))
           %+  more  gap
-          ;~  pfix  ;~(plug net lus gap)
+          ;~  pfix  ;~(plug fas lus gap)
             (most ;~(plug com gaw) taut-rule)
           ==
           gap
@@ -44,9 +44,9 @@
         ;~  sfix
           %+  cook  |=((list [face=term =path]) +<)
           %+  more  gap
-          ;~  pfix  ;~(plug net tis gap)
+          ;~  pfix  ;~(plug fas tis gap)
             %+  cook  |=([term path] +<)
-            ;~(plug sym ;~(pfix ;~(plug gap net) (more net urs:ab)))
+            ;~(plug sym ;~(pfix ;~(plug gap fas) (more fas urs:ab)))
           ==
           gap
         ==
@@ -57,12 +57,12 @@
         ;~  sfix
           %+  cook  |=((list [face=term =mark =path]) +<)
           %+  more  gap
-          ;~  pfix  ;~(plug net tar gap)
+          ;~  pfix  ;~(plug fas tar gap)
             %+  cook  |=([term mark path] +<)
             ;~  plug
               sym
               ;~(pfix ;~(plug gap cen) sym)
-              ;~(pfix ;~(plug gap net) (more net urs:ab))
+              ;~(pfix ;~(plug gap fas) (more fas urs:ab))
             ==
           ==
           gap

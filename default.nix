@@ -27,7 +27,7 @@
      $ nix-build -A brass.build
      $ nix-build -A solid.build
 
-   Run the king-haskell tests:
+   Run the king-haskell checks (.tests are _build_ the test code, .checks _runs_):
 
      $ nix-build -A hs.urbit-king.checks.urbit-king-tests
 
@@ -123,12 +123,18 @@ let
 
   # Additional top-level packages and attributes exposed for convenience.
   pkgsExtra = with pkgsLocal; rec {
-    # Expose packages we've local customisations (like patches) for easy access.
+    # Expose packages with local customisations (like patches) for dev access.
     inherit (pkgsCross) libsigsegv;
+
+    # Collect haskell check (aka "run the tests") attributes so we can run every
+    # test for our local haskell packages, similar to the urbit-tests attribute.
+    hs-checks = (pkgsNative.recurseIntoAttrs
+      (libLocal.collectHaskellComponents pkgsLocal.hs)).checks;
 
     urbit-debug = urbit.override { enableDebug = true; };
     urbit-tests = libLocal.testFakeShip {
       inherit herb;
+      inherit arvo;
 
       urbit = urbit-debug;
       pill = solid.lfs;
@@ -136,8 +142,6 @@ let
 
     ivory-ropsten = ivory.override { arvo = arvo.ropsten; };
     brass-ropsten = brass.override { arvo = arvo.ropsten; };
-
-    # FIXME: tarball binaries need executable permissions set?
 
     # Create a .tgz of the primary binaries.
     tarball = let
@@ -154,8 +158,8 @@ let
     };
 
     # A convenience function for constructing a shell.nix for any of the
-    # localPackage derivations by automatically propagating any dependencies such
-    # as buildInputs to the nix-shell.
+    # pkgsLocal derivations by automatically propagating any dependencies 
+    # to the nix-shell.
     #
     # Example:
     #

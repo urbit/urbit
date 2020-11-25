@@ -165,7 +165,7 @@
         ==
       ==
     ::
-      ;~  pfix  net
+      ;~  pfix  fas
         ;~  pose
           (parse-variable (cold %sur hep) ;~(pfix gap parse-cables))
           (parse-variable (cold %lib lus) ;~(pfix gap parse-cables))
@@ -179,8 +179,8 @@
   ++  parse-sink
     ;~  pose
       ;~(plug (cold %file tar) parse-beam)
-      ;~(plug (cold %flat vat) (most net sym))
-      ;~(plug (cold %pill dot) (most net sym))
+      ;~(plug (cold %flat pat) (most fas sym))
+      ;~(plug (cold %pill dot) (most fas sym))
       ;~(plug (cold %http lus) (stag %post parse-url))
       ;~(plug (cold %http hep) (stag %put parse-url))
       (stag %show (cook $?($1 $2 $3 $4 $5) (cook lent (stun [1 5] wut))))
@@ -218,6 +218,7 @@
         ;~(plug (cold %ur lus) parse-url)
         ;~(plug (cold %ge lus) parse-model)
         ;~(plug (cold %te hep) sym (star ;~(pfix ace parse-source)))
+        ;~(plug (cold %as pam) sym ;~(pfix ace parse-source))
         ;~(plug (cold %do cab) parse-hoon ;~(pfix ace parse-source))
         parse-value
       ==
@@ -227,7 +228,7 @@
     ;~  pose
       ;~  plug
         ;~(pfix sig fed:ag)
-        ;~(pose ;~(pfix net sym) (easy default-app))
+        ;~(pose ;~(pfix fas sym) (easy default-app))
       ==
       %+  stag  our
       ;~(pose sym (easy default-app))
@@ -247,7 +248,7 @@
       ::
       =?  a  &(?=(^ a) =('' i.a))
         t.a
-      (fall (de-beam:format a) [`beak`[p q r]:dir (flop a)])
+      (fall (de-beam:format a) [`beak`[p q r]:dir a])
     =+  vez=hoon-parser
     (sear plex:vez (stag %clsg poor:vez))
   ::
@@ -262,7 +263,7 @@
     auri:de-purl:html
   ::
   ++  parse-model   ;~(plug parse-server parse-config)
-  ++  parse-server  (stag 0 (most net sym))
+  ++  parse-server  (stag 0 (most fas sym))
   ++  parse-hoon    tall:hoon-parser
   ::
   ++  parse-rood
@@ -283,10 +284,10 @@
     ==
   ++  parse-value
     ;~  pose
-      ;~(plug (cold %as pad) sym ;~(pfix ace parse-source))
-      (stag %sa ;~(pfix tar pad sym))
+      ;~(plug (cold %as pam) sym ;~(pfix ace parse-source))
+      (stag %sa ;~(pfix tar pam sym))
       (stag %ex parse-hoon)
-      (stag %tu (ifix [lac rac] (most ace parse-source)))
+      (stag %tu (ifix [sel ser] (most ace parse-source)))
     ==
   ::
   ++  parse-config
@@ -590,7 +591,7 @@
                     %0  ~
                     %1  [[%rose [~ "  " ~] (skol p.q.cay) ~] maar]
                     %2  [[%rose [~ "  " ~] (dy-show-type-noun p.q.cay) ~] maar]
-                    ::%3  handled above 
+                    ::%3  handled above
                     %4  ~
                     %5  [[%rose [~ "  " ~] (xskol p.q.cay) ~] maar]
                   ==
@@ -896,7 +897,7 @@
     ++  dy-hoon-var
       =+  ^=  ope
           |=  gen/hoon  ^-  hoon
-          ?:  ?=(?($sgld $sgbn) -.gen)
+          ?:  ?=(?($sggl $sggr) -.gen)
             $(gen q.gen)
           =+  ~(open ap gen)
           ?.(=(gen -) $(gen -) gen)
@@ -1013,7 +1014,7 @@
         "/"  ?:(=(%home q.dir) "=" (trip q.dir))
         "/"  ?:(=([%ud 0] r.dir) "=" (scow r.dir))
       ==
-    ?:(=(~ s.dir) "" (spud (flop s.dir)))
+    ?:(=(~ s.dir) "" (spud s.dir))
   ::
   ++  he-prom                                           ::  send prompt
     %-  he-diff
@@ -1144,6 +1145,8 @@
             $listen-api  !!
             $export      !!
             $import      !!
+            $export-all  !!
+            $import-all  !!
             $as
           :*  %as  mar.source.com
               $(num +(num), source.com next.source.com)

@@ -25,6 +25,7 @@ export const Sigil = memo(({ classes = '', color, foreground = '', ship, size, s
         display='inline-block'
         height={size}
         width={size}
+        className={classes}
        />) : (
        <Box
         display='inline-block'

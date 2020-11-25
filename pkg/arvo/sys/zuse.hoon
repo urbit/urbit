@@ -39,11 +39,10 @@
 ::
 ::  miscellaneous systems types
 ::+|
-++  ares  (unit {p/term q/(list tank)})                 ::  possible error
 ::  +capped-queue: a +qeu with a maximum number of entries
 ::
 ++  capped-queue
-  |*  item-type=mold
+  |$  [item-type]
   $:  queue=(qeu item-type)
       size=@ud
       max-size=_64
@@ -54,44 +53,53 @@
 ::     :key-type to :val-type. Detailed docs for this type can be found there.
 ::
 ++  clock
-  |*  $:  ::  key-type: mold of keys
-          ::
-          key-type=mold
-          ::  val-type: mold of values
-          ::
-          val-type=mold
-      ==
-    $:  lookup=(map key-type [val=val-type fresh=@ud])
-        queue=(qeu key-type)
-        size=@ud
-        max-size=_2.048
-        depth=_1
-    ==
+  |$  ::  key-type: mold of keys
+      ::  val-type: mold of values
+      ::
+      [key-type val-type]
+  $:  lookup=(map key-type [val=val-type fresh=@ud])
+      queue=(qeu key-type)
+      size=@ud
+      max-size=_2.048
+      depth=_1
+  ==
 ::
-++  coop  (unit ares)                                   ::  possible error
-::  +disc: a desk on a ship; can be used as a beak that varies with time
-::
-+$  disc  [=ship =desk]
-++  life  @ud                                           ::  ship key revision
-++  rift  @ud                                           ::  ship continuity
-++  mime  {p/mite q/octs}                               ::  mimetyped data
-++  octs  {p/@ud q/@}                                   ::  octet-stream
-++  sock  {p/ship q/ship}                               ::  outgoing [our his]
++$  deco  ?(~ $bl $br $un)                              ::  text decoration
++$  json                                                ::  normal json value
+  $@  ~                                                 ::  null
+  $%  [%a p=(list json)]                                ::  array
+      [%b p=?]                                          ::  boolean
+      [%o p=(map @t json)]                              ::  object
+      [%n p=@ta]                                        ::  number
+      [%s p=@t]                                         ::  string
+  ==                                                    ::
++$  life  @ud                                           ::  ship key revision
++$  rift  @ud                                           ::  ship continuity
++$  mime  (pair mite octs)                              ::  mimetyped data
++$  octs  (pair @ud @)                                  ::  octet-stream
++$  sock  (pair ship ship)                              ::  outgoing [our his]
 ::+|
 ::
-++  roof  (room vase)                                   ::  namespace
++$  roof  (room vase)                                   ::  namespace
 ++  room                                                ::  either namespace
-  |*  vase/mold                                         ::  vase or maze
-  $-  $:  ref/*                                         ::  reference type
-          lyc/(unit (set ship))                         ::  leakset
-          car/term                                      ::  perspective
-          bem/beam                                      ::  path
+  |$  [vase]                                            ::  vase or maze
+  $-  $:  ref=*                                         ::  reference type
+          lyc=(unit (set ship))                         ::  leakset
+          car=term                                      ::  perspective
+          bem=beam                                      ::  path
       ==                                                ::
   %-  unit                                              ::  ~: unknown
   %-  unit                                              ::  ~ ~: invalid
   (cask vase)                                           ::  marked cargo
 ::
-++  turf  (list @t)                                     ::  domain, tld first
++$  stub  (list (pair stye (list @c)))                  ::  styled unicode
++$  stye  (pair (set deco) (pair tint tint))            ::  decos/bg/fg
++$  styl  %+  pair  (unit deco)                         ::  cascading style
+          (pair (unit tint) (unit tint))                ::
++$  styx  (list $@(@t (pair styl styx)))                ::  styled text
++$  tint  ?($r $g $b $c $m $y $k $w $~)                 ::  text color
+::
++$  turf  (list @t)                                     ::  domain, tld first
 ::                                                      ::
 ::::                      ++jstd                        ::  json standards structures
   ::                                                    ::::
@@ -367,7 +375,7 @@
     ++  pairs
       %+  cook
         ~(gas by *(map @t @t))
-      %+  more  (ifix [. .]:(star ace) mic)
+      %+  most  (ifix [. .]:(star ace) mic)
       ;~(plug token ;~(pose ;~(pfix tis value) (easy '')))
     ::
     ++  value
@@ -378,16 +386,16 @@
       ::NOTE  this is ptok:de-purl:html, but can't access that here
       %-  plus
       ;~  pose
-        aln  zap  hax  bus  cen  pad  say  tar  lus
-        hep  dot  ket  cab  tec  bar  sig
+        aln  zap  hax  buc  cen  pam  soq  tar  lus
+        hep  dot  ket  cab  tic  bar  sig
       ==
     ::
     ++  quoted-string                                 ::  7230 quoted string
       %+  cook  crip
-      %+  ifix  [. .]:;~(less (jest '\\"') yel)
+      %+  ifix  [. .]:;~(less (jest '\\"') doq)
       %-  star
       ;~  pose
-        ;~(pfix bat ;~(pose (just '\09') ace prn))
+        ;~(pfix bas ;~(pose (just '\09') ace prn))
         ;~(pose (just '\09') ;~(less (mask "\22\5c\7f") (shim 0x20 0xff)))
       ==
     --
@@ -890,7 +898,6 @@
         {$ud p/@ud}                                     ::  number
     ==                                                  ::
   ++  cass  {ud/@ud da/@da}                             ::  cases for revision
-  ++  coop  (unit ares)                                 ::  e2e ack
   ++  crew  (set ship)                                  ::  permissions group
   ++  dict  {src/path rul/real}                         ::  effective permission
   ++  dome                                              ::  project state
@@ -1120,6 +1127,7 @@
           {$boot lit/? p/*}                             ::  weird %dill boot
           {$crop p/@ud}                                 ::  trim kernel state
           $>(%crud vane-task)                           ::  error with trace
+          [%flee session=~]                             ::  unwatch session
           {$flog p/flog}                                ::  wrapped error
           {$flow p/@tas q/(list gill:gall)}             ::  terminal config
           {$hail ~}                                     ::  terminal refresh
@@ -1134,6 +1142,7 @@
           {$talk p/tank}                                ::
           {$text p/tape}                                ::
           {$veer p/@ta q/path r/@t}                     ::  install vane
+          [%view session=~]                             ::  watch session blits
           $>(%trim vane-task)                           ::  trim state
           $>(%vega vane-task)                           ::  report upgrade
           {$verb ~}                                     ::  verbose mode
@@ -1157,13 +1166,13 @@
     $%  {$bel ~}                                        ::  make a noise
         {$clr ~}                                        ::  clear the screen
         {$hop p/@ud}                                    ::  set cursor position
+        [%klr p=stub]                                   ::  set styled line
         {$lin p/(list @c)}                              ::  set current line
         {$mor ~}                                        ::  newline
         {$sag p/path q/*}                               ::  save to jamfile
         {$sav p/path q/@}                               ::  save to file
         {$url p/@t}                                     ::  activate url
     ==                                                  ::
-  ++  deco  ?(~ $bl $br $un)                            ::  text decoration
   ++  dill-belt                                         ::  new belt
     $%  {$aro p/?($d $l $r $u)}                         ::  arrow key
         {$bac ~}                                        ::  true backspace
@@ -4217,185 +4226,296 @@
   ::                                                    ::
   ::::                    ++secp:crypto                 ::  (2b9) secp family
     ::                                                  ::::
-  ++  secp
-    ~%  %secp  ..is  ~
+  ++  secp  !.
+    ::  TODO: as-octs and hmc are outside of jet parent
+    =>  :+  ..is
+          hmc=hmac-sha256l:hmac:crypto
+        as-octs=as-octs:mimes:html
+    ~%  %secp  +<  ~
     |%
-    +=  jaco  [x=@ y=@ z=@]                             ::  jacobian point
-    +=  pont  [x=@ y=@]                                 ::  curve point
-    ::
-    ++  secp256k1
-      %+  secp  32
-      :*  p=0xffff.ffff.ffff.ffff.ffff.ffff.ffff.ffff.  ::  modulo
-              ffff.ffff.ffff.ffff.ffff.fffe.ffff.fc2f
-          a=0                                           ::  y^2=x^3+ax+b
-          b=7
-          ^=  g                                         ::  "prime" point
-          :*  x=0x79be.667e.f9dc.bbac.55a0.6295.ce87.0b07.
-                  029b.fcdb.2dce.28d9.59f2.815b.16f8.1798
-              y=0x483a.da77.26a3.c465.5da4.fbfc.0e11.08a8.
-                  fd17.b448.a685.5419.9c47.d08f.fb10.d4b8
-          ==
-          n=0xffff.ffff.ffff.ffff.ffff.ffff.ffff.fffe.  ::  prime order of g
-              baae.dce6.af48.a03b.bfd2.5e8c.d036.4141
+    +=  jacobian   [x=@ y=@ z=@]                    ::  jacobian point
+    +=  point      [x=@ y=@]                        ::  curve point
+    +=  domain
+      $:  p=@                                       ::  prime modulo
+          a=@                                       ::  y^2=x^3+ax+b
+          b=@                                       ::
+          g=point                                   ::  base point
+          n=@                                       ::  prime order of g
       ==
-    ::
     ++  secp
-      ~/  %secp
-      |=  [w=@ p=@ a=@ b=@ g=pont n=@]  :: being passed in from above
-      =/  p  ~(. fo p)
-      =/  n  ~(. fo n)
-      ~%  %helper  ..$  ~
-      |%
+      |_  [bytes=@ =domain]
+      ++  field-p  ~(. fo p.domain)
+      ++  field-n  ~(. fo n.domain)
       ++  compress-point
-        ~/  %compress-point
-        |=  pont
+        |=  =point
         ^-  @
-        (can 3 ~[w^x 1^(add 0x2 (cut 0 [0 1] y))])
-      ::
-      ++  serialize-point
-        ~/  %serialize-point
-        |=  pont
-        ^-  @
-        (can 3 ~[w^y w^x 1^0x4])
-      ::
-      ++  decompress-point
-        ~/  %decompress-point
-        |=  dat=@
-        ^-  pont
-        =+  x=(end 3 w a)
-        =+  y=:(add (pow x 3) (mul a x) b)
-        =+  s=(rsh 3 32 dat)
-        :-  x
-        ?:  =(0x2 s)  y
-        ?:  =(0x3 s)  y
-        ~|  [`@ux`s `@ux`dat]
-        !!
-      ::
-      ++  priv-to-pub                                   ::  get pub from priv
-        ~/  %priv-to-pub
-        |=  prv=@
-        ^-  pont
-        (jc-mul g prv)
-      ::
-      ++  make-k                                        ::  deterministic nonce
-        ~/  %make-k
-        =,  mimes:html
-        |=  [has=@uvI prv=@]
-        ^-  @
-        =*  hmc  hmac-sha256l:hmac
-        =/  v  (fil 3 w 1)
-        =/  k  0
-        =.  k  (hmc w^k (as-octs (can 3 [w has] [w prv] [1 0x0] [w v] ~)))
-        =.  v  (hmc w^k w^v)
-        =.  k  (hmc w^k (as-octs (can 3 [w has] [w prv] [1 0x1] [w v] ~)))
-        =.  v  (hmc w^k w^v)
-        (hmc w^k w^v)
-      ::
-      ++  ecdsa-raw-sign                                ::  generate signature
-        ~/  %ecdsa-raw-sign
-        |=  [has=@uvI prv=@]
-        ^-  [v=@ r=@ s=@]
-        =/  z  has
-        =/  k  (make-k has prv)
-        =+  [r y]=(jc-mul g k)
-        =/  s  (pro.n `@`(inv.n k) `@`(sum.n z (mul r prv)))
-        =/  big-s  (gte (mul 2 s) ^n)
-        :*  v=(mix (end 0 1 y) ?:(big-s 1 0))
-            r=r
-            s=?.(big-s s (sub ^n s))
+        %+  can  3
+        :~  [bytes x.point]
+            [1 (add 2 (cut 0 [0 1] y.point))]
         ==
       ::
-      ++  ecdsa-raw-recover                             ::  get pubkey from sig
-        ~/  %ecdsa-raw-recover
-        |=  [has=@uvI sig=[v=@ r=@ s=@]]
-        ^-  pont
-        ?>  (lte v.sig 7)
-        =/  x  r.sig
-        =/  ysq  (sum.p b (exp.p 3 x))               ::  omits A=0
-        =/  bet  (exp.p (div +(^p) 4) ysq)
-        =/  y  ?:(=(1 (end 0 1 (mix v.sig bet))) bet (dif.p 0 bet))
-        ?>  =(0 (dif.p ysq (pro.p y y)))
-        ?<  =(0 (sit.n r.sig))
-        ?<  =(0 (sit.n s.sig))
-        =/  gz  (mul:jc [x y 1]:g (dif.n 0 has))
-        =/  xy  (mul:jc [x y 1] s.sig)
-        =/  qr  (add:jc gz xy)
-        (from:jc (mul:jc qr (inv.n r.sig)))
+      ++  serialize-point
+        |=  =point
+        ^-  @
+        %+  can  3
+        :~  [bytes y.point]
+            [bytes x.point]
+            [1 4]
+        ==
       ::
-      ++  jc-mul                                        ::  point x scalar
-        |=  [a=pont n=@]
-        ^-  pont
-        (from:jc (mul:jc (into:jc a) n))
+      ++  decompress-point
+        |=  compressed=@
+        ^-  point
+        =/  x=@  (end 3 bytes compressed)
+        ?>  =(3 (mod p.domain 4))
+        =/  fop  field-p
+        =+  [fadd fmul fpow]=[sum.fop pro.fop exp.fop]
+        =/  y=@  %+  fpow  (rsh 0 2 +(p.domain))
+                 %+  fadd  b.domain
+                 %+  fadd  (fpow 3 x)
+                (fmul a.domain x)
+        =/  s=@  (rsh 3 bytes compressed)
+        ~|  [`@ux`s `@ux`compressed]
+        ?>  |(=(2 s) =(3 s))
+        ::  check parity
+        ::
+        =?  y  !=((sub s 2) (mod y 2))
+          (sub p.domain y)
+        [x y]
       ::
-      ++  jc-add                                        ::  add points
-        |=  [a=pont b=pont]
-        ^-  pont
-        (from:jc (add:jc (into:jc a) (into:jc b)))
-      ::
-      ++  jc                                            ::  jacobian core
+      ++  jc                                        ::  jacobian math
         |%
-        ++  add                                         ::  addition
-          |=  [a=jaco b=jaco]
-          ^-  jaco
+        ++  from
+          |=  a=jacobian
+          ^-  point
+          =/  fop   field-p
+          =+  [fmul fpow finv]=[pro.fop exp.fop inv.fop]
+          =/  z  (finv z.a)
+          :-  (fmul x.a (fpow 2 z))
+          (fmul y.a (fpow 3 z))
+        ::
+        ++  into
+          |=  point
+          ^-  jacobian
+          [x y 1]
+        ::
+        ++  double
+          |=  jacobian
+          ^-  jacobian
+          ?:  =(0 y)  [0 0 0]
+          =/  fop  field-p
+          =+  [fadd fsub fmul fpow]=[sum.fop dif.fop pro.fop exp.fop]
+          =/  s    :(fmul 4 x (fpow 2 y))
+          =/  m    %+  fadd
+                     (fmul 3 (fpow 2 x))
+                   (fmul a.domain (fpow 4 z))
+          =/  nx   %+  fsub
+                     (fpow 2 m)
+                   (fmul 2 s)
+          =/  ny  %+  fsub
+                    (fmul m (fsub s nx))
+                  (fmul 8 (fpow 4 y))
+          =/  nz  :(fmul 2 y z)
+          [nx ny nz]
+        ::
+        ++  add
+          |=  [a=jacobian b=jacobian]
+          ^-  jacobian
           ?:  =(0 y.a)  b
           ?:  =(0 y.b)  a
-          =/  u1  :(pro.p x.a z.b z.b)
-          =/  u2  :(pro.p x.b z.a z.a)
-          =/  s1  :(pro.p y.a z.b z.b z.b)
-          =/  s2  :(pro.p y.b z.a z.a z.a)
+          =/  fop  field-p
+          =+  [fadd fsub fmul fpow]=[sum.fop dif.fop pro.fop exp.fop]
+          =/  u1  :(fmul x.a z.b z.b)
+          =/  u2  :(fmul x.b z.a z.a)
+          =/  s1  :(fmul y.a z.b z.b z.b)
+          =/  s2  :(fmul y.b z.a z.a z.a)
           ?:  =(u1 u2)
             ?.  =(s1 s2)
               [0 0 1]
-            (dub a)
-          =/  h  (dif.p u2 u1)
-          =/  r  (dif.p s2 s1)
-          =/  h2  (pro.p h h)
-          =/  h3  (pro.p h2 h)
-          =/  u1h2  (pro.p u1 h2)
-          =/  nx  (dif.p (pro.p r r) :(sum.p h3 u1h2 u1h2))
-          =/  ny  (dif.p (pro.p r (dif.p u1h2 nx)) (pro.p s1 h3))
-          =/  nz  :(pro.p h z.a z.b)
+            (double a)
+          =/  h     (fsub u2 u1)
+          =/  r     (fsub s2 s1)
+          =/  h2    (fmul h h)
+          =/  h3    (fmul h2 h)
+          =/  u1h2  (fmul u1 h2)
+          =/  nx    %+  fsub
+                      (fmul r r)
+                    :(fadd h3 u1h2 u1h2)
+          =/  ny    %+  fsub
+                      (fmul r (fsub u1h2 nx))
+                    (fmul s1 h3)
+          =/  nz    :(fmul h z.a z.b)
           [nx ny nz]
         ::
-        ++  dub                                         ::  double
-          |=  a=jaco
-          ^-  jaco
-          ?:  =(0 y.a)
-            [0 0 0]
-          =/  ysq  (pro.p y.a y.a)
-          =/  s  :(pro.p 4 x.a ysq)
-          =/  m  :(pro.p 3 x.a x.a)                     ::  omits A=0
-          =/  nx  (dif.p (pro.p m m) (sum.p s s))
-          =/  ny  (dif.p (pro.p m (dif.p s nx)) :(pro.p 8 ysq ysq))
-          =/  nz  :(pro.p 2 y.a z.a)
-          [nx ny nz]
-        ::
-        ++  mul                                         :: jaco x scalar
-          |=  [a=jaco n=@]
-          ^-  jaco
+        ++  mul
+          |=  [a=jacobian scalar=@]
+          ^-  jacobian
           ?:  =(0 y.a)
             [0 0 1]
-          ?:  =(0 n)
+          ?:  =(0 scalar)
             [0 0 1]
-          ?:  =(1 n)
+          ?:  =(1 scalar)
             a
-          ?:  (gte n ^^n)
-            $(n (mod n ^^n))
-          ?:  =(0 (mod n 2))
-            (dub $(n (div n 2)))
-          (add a (dub $(n (div n 2))))
-        ::
-        ++  from                                        :: jaco -> point
-          |=  a=jaco
-          ^-  pont
-          =/  z  (inv.p z.a)
-          [:(pro.p x.a z z) :(pro.p y.a z z z)]
-        ::
-        ++  into                                        :: point -> jaco
-          |=  pont
-          ^-  jaco
-          [x y z=1]
+          ?:  (gte scalar n.domain)
+            $(scalar (mod scalar n.domain))
+          ?:  =(0 (mod scalar 2))
+            (double $(scalar (rsh 0 1 scalar)))
+          (add a (double $(scalar (rsh 0 1 scalar))))
         --
+      ++  add-points
+        |=  [a=point b=point]
+        ^-  point
+        =/  j  jc
+        (from.j (add.j (into.j a) (into.j b)))
+      ++  mul-point-scalar
+        |=  [p=point scalar=@]
+        ^-  point
+        =/  j  jc
+        %-  from.j
+        %+  mul.j
+          (into.j p)
+        scalar
+      ::
+      ++  valid-hash
+        |=  has=@
+        (lte (met 3 has) bytes)
+      ::
+      ++  in-order
+        |=  i=@
+        ?&  (gth i 0)
+            (lth i n.domain)
+        ==
+      ++  priv-to-pub
+        |=  private-key=@
+        ^-  point
+        ?>  (in-order private-key)
+        (mul-point-scalar g.domain private-key)
+      ::
+      ++  make-k
+        |=  [hash=@ private-key=@]
+        ^-  @
+        ?>  (in-order private-key)
+        ?>  (valid-hash hash)
+        =/  v  (fil 3 bytes 1)
+        =/  k  0
+        =.  k  %+  hmc  [bytes k]
+               %-  as-octs
+               %+  can  3
+               :~  [bytes hash]
+                   [bytes private-key]
+                   [1 0]
+                   [bytes v]
+               ==
+        =.  v  (hmc bytes^k bytes^v)
+        =.  k  %+  hmc  [bytes k]
+               %-  as-octs
+               %+  can  3
+               :~  [bytes hash]
+                   [bytes private-key]
+                   [1 1]
+                   [bytes v]
+               ==
+        =.  v  (hmc bytes^k bytes^v)
+        (hmc bytes^k bytes^v)
+      ::
+      ++  ecdsa-raw-sign
+        |=  [hash=@ private-key=@]
+        ^-  [r=@ s=@ y=@]
+        ::  make-k and priv-to pub will validate inputs
+        =/  k   (make-k hash private-key)
+        =/  rp  (priv-to-pub k)
+        =*  r   x.rp
+        ?<  =(0 r)
+        =/  fon  field-n
+        =+  [fadd fmul finv]=[sum.fon pro.fon inv.fon]
+        =/  s  %+  fmul  (finv k)
+               %+  fadd  hash
+               %+  fmul  r
+               private-key
+        ?<  =(0 s)
+        [r s y.rp]
+      ::  general recovery omitted, but possible
+      --
+    ++  secp256k1
+      ~%  %secp256k1  +  ~
+      |%
+      ++  t  :: in the battery for jet matching
+        ^-  domain
+        :*  0xffff.ffff.ffff.ffff.ffff.ffff.ffff.ffff.
+            ffff.ffff.ffff.ffff.ffff.fffe.ffff.fc2f
+            0
+            7
+            :-  0x79be.667e.f9dc.bbac.55a0.6295.ce87.0b07.
+                  029b.fcdb.2dce.28d9.59f2.815b.16f8.1798
+                0x483a.da77.26a3.c465.5da4.fbfc.0e11.08a8.
+                  fd17.b448.a685.5419.9c47.d08f.fb10.d4b8
+            0xffff.ffff.ffff.ffff.ffff.ffff.ffff.fffe.
+              baae.dce6.af48.a03b.bfd2.5e8c.d036.4141
+        ==
+      ::
+      ++  curve             ~(. secp 32 t)
+      ++  serialize-point   serialize-point:curve
+      ++  compress-point    compress-point:curve
+      ++  decompress-point  decompress-point:curve
+      ++  add-points        add-points:curve
+      ++  mul-point-scalar  mul-point-scalar:curve
+      ++  make-k
+        ~/  %make
+        |=  [hash=@uvI private-key=@]
+        ::  checks sizes
+        (make-k:curve hash private-key)
+      ++  priv-to-pub
+        |=  private-key=@
+        ::  checks sizes
+        (priv-to-pub:curve private-key)
+      ::
+      ++  ecdsa-raw-sign
+        ~/  %sign
+        |=  [hash=@uvI private-key=@]
+        ^-  [v=@ r=@ s=@]
+        =/  c  curve
+        ::  raw-sign checks sizes
+        =+  (ecdsa-raw-sign.c hash private-key)
+        =/  rp=point  [r y]
+        =/  s-high  (gte (mul 2 s) n.domain.c)
+        =?  s   s-high
+          (sub n.domain.c s)
+        =?  rp  s-high
+          [x.rp (sub p.domain.c y.rp)]
+        =/  v   (end 0 1 y.rp)
+        =?  v   (gte x.rp n.domain.c)
+          (add v 2)
+        [v x.rp s]
+      ::
+      ++  ecdsa-raw-recover
+        ~/  %reco
+        |=  [hash=@ sig=[v=@ r=@ s=@]]
+        ^-  point
+        ?>  (lte v.sig 3)
+        =/  c   curve
+        ?>  (valid-hash.c hash)
+        ?>  (in-order.c r.sig)
+        ?>  (in-order.c s.sig)
+        =/  x  ?:  (gte v.sig 2)
+                 (add r.sig n.domain.c)
+               r.sig
+        =/  fop  field-p.c
+        =+  [fadd fmul fpow]=[sum.fop pro.fop exp.fop]
+        =/  ysq   (fadd (fpow 3 x) b.domain.c)
+        =/  beta  (fpow (rsh 0 2 +(p.domain.c)) ysq)
+        =/  y  ?:  =((end 0 1 v.sig) (end 0 1 beta))
+                 beta
+               (sub p.domain.c beta)
+        ?>  =(0 (dif.fop ysq (fmul y y)))
+        =/  nz   (sub n.domain.c hash)
+        =/  j    jc.c
+        =/  gz   (mul.j (into.j g.domain.c) nz)
+        =/  xy   (mul.j (into.j x y) s.sig)
+        =/  qr   (add.j gz xy)
+        =/  qj   (mul.j qr (inv:field-n.c x))
+        =/  pub  (from.j qj)
+        ?<  =([0 0] pub)
+        pub
       --
     --
   ::
@@ -5362,28 +5482,30 @@
   ::                                                    ::::
 ++  format  ^?
   |%
-  ::                                                    ::  ++to-wain:format
-  ++  to-wain                                           ::  atom to line list
-    ~%  %lore  ..is  ~
-    |=  lub/@
-    =|  tez/(list @t)
-    |-  ^+  tez
-    =+  ^=  wor
-      =+  [meg=0 i=0]
-      |-  ^-  {meg/@ i/@ end/@f}
-      =+  gam=(cut 3 [i 1] lub)
-      ?:  =(0 gam)
-        [meg i %.y]
-      ?:  =(10 gam)
-        [meg i %.n]
-      $(meg (cat 3 meg gam), i +(i))
-    ?:  end.wor
-      (flop ^+(tez [meg.wor tez]))
-    ?:  =(0 lub)  (flop tez)
-    $(lub (rsh 3 +(i.wor) lub), tez [meg.wor tez])
+  ::  0 ending a line (invalid @t) is not preserved     ::  ++to-wain:format
+  ++  to-wain                                           ::  cord to line list
+    ~%  %leer  ..is  ~
+    |=  txt=cord
+    ^-  wain
+    =/  len=@  (met 3 txt)
+    =/  cut  =+(cut -(a 3, c 1, d txt))
+    =/  sub  sub
+    =|  [i=@ out=wain]
+    |-  ^+  out
+    =+  |-  ^-  j=@
+        ?:  ?|  =(i len)
+                =(10 (cut(b i)))
+            ==
+          i
+        $(i +(i))
+    =.  out  :_  out
+      (cut(b i, c (sub j i)))
+    ?:  =(j len)
+      (flop out)
+    $(i +(j))
   ::                                                    ::  ++of-wain:format
-  ++  of-wain                                           ::  line list to atom
-    |=  tez/(list @t)
+  ++  of-wain                                           ::  line list to cord
+    |=  tez=wain  ^-  cord
     (rap 3 (join '\0a' tez))
   ::                                                    ::  ++of-wall:format
   ++  of-wall                                           ::  line list to tape
@@ -5393,7 +5515,7 @@
   ++  en-beam                                           ::  beam to path
     |=  bem/beam
     ^-  path
-    [(scot %p p.bem) q.bem (scot r.bem) (flop s.bem)]
+    [(scot %p p.bem) q.bem (scot r.bem) s.bem]
   ::                                                    ::  ++de-beam:format
   ++  de-beam                                           ::  parse path to beam
     |=  pax/path
@@ -5406,7 +5528,7 @@
     %+  biff  (slay i.t.t.pax)
     |=  cis/coin
     ?.  ?=({$$ case} cis)  ~
-    `(unit beam)`[~ [who dex `case`p.cis] (flop t.t.t.pax)]
+    `(unit beam)`[~ [who dex `case`p.cis] t.t.t.pax]
   ::
   ++  json-rn                                           ::  json to rn parser
     %+  knee  *rn  |.
@@ -5636,7 +5758,7 @@
       [(rash a fel) b]
     ::                                                  ::  ++pa:dejs:format
     ++  pa                                              ::  string as path
-      (su ;~(pfix net (more net urs:ab)))
+      (su ;~(pfix fas (more fas urs:ab)))
     ::                                                  ::  ++pe:dejs:format
     ++  pe                                              ::  prefix
       |*  {pre/* wit/fist}
@@ -6198,7 +6320,7 @@
     ::                                                  ::  ++abox:de-json:html
     ++  abox                                            ::  array
       %+  stag  %a
-      (ifix [lac (wish rac)] (more (wish com) apex))
+      (ifix [sel (wish ser)] (more (wish com) apex))
     ::                                                  ::  ++apex:de-json:html
     ++  apex                                            ::  any value
       %+  knee  *json  |.  ~+
@@ -6230,7 +6352,7 @@
           =*  wow  `(map @t @)`(malt lip)
           (sear ~(get by wow) low)
         =*  tuf  ;~(pfix (just 'u') (cook tuft qix:ab))
-        ;~(pose yel net say bas loo tuf)
+        ;~(pose doq fas soq bas loo tuf)
       ==
     ::                                                  ::  ++expo:de-json:html
     ++  expo                                            ::  exponent
@@ -6244,7 +6366,7 @@
       ;~(plug dot digs)
     ::                                                  ::  ++jcha:de-json:html
     ++  jcha                                            ::  string character
-      ;~(pose ;~(less yel bas prn) esca)
+      ;~(pose ;~(less doq bas prn) esca)
     ::                                                  ::  ++mayb:de-json:html
     ++  mayb                                            ::  optional
       |*(bus/rule ;~(pose bus (easy ~)))
@@ -6261,7 +6383,7 @@
       ==
     ::                                                  ::  ++obje:de-json:html
     ++  obje                                            ::  object list
-      %+  ifix  [(wish leb) (wish reb)]
+      %+  ifix  [(wish kel) (wish ker)]
       (more (wish com) pear)
     ::                                                  ::  ++obox:de-json:html
     ++  obox                                            ::  object
@@ -6275,7 +6397,7 @@
       (cook |=(a/@ [a ~]) bus)
     ::                                                  ::  ++stri:de-json:html
     ++  stri                                            ::  string
-      (cook crip (ifix [yel yel] (star jcha)))
+      (cook crip (ifix [doq doq] (star jcha)))
     ::                                                  ::  ++tops:de-json:html
     ++  tops                                            ::  strict value
       ;~(pose abox obox)
@@ -6369,7 +6491,7 @@
     ++  apex                                            ::  top level
       =+  spa=;~(pose comt whit)
       %+  knee  *manx  |.  ~+
-      %+  ifix  
+      %+  ifix
         [;~(plug (punt decl) (star spa)) (star spa)]
       ;~  pose
         %+  sear  |=({a/marx b/marl c/mane} ?.(=(c n.a) ~ (some [a b])))
@@ -6384,14 +6506,14 @@
         ;~(pfix (plus whit) name)
         ;~  pose
           %+  ifix
-            :_  yel
-            ;~(plug (ifix [. .]:(star whit) tis) yel)
-          (star ;~(less yel escp))
+            :_  doq
+            ;~(plug (ifix [. .]:(star whit) tis) doq)
+          (star ;~(less doq escp))
         ::
           %+  ifix
-            :_  say
-            ;~(plug (ifix [. .]:(star whit) tis) say)
-          (star ;~(less say escp))
+            :_  soq
+            ;~(plug (ifix [. .]:(star whit) tis) soq)
+          (star ;~(less soq escp))
         ::
           (easy ~)
         ==
@@ -6407,7 +6529,7 @@
     ::                                                  ::  ++chrd:de-xml:html
     ++  chrd                                            ::  character data
       %+  cook  |=(a/tape ^-(mars ;/(a)))
-      (plus ;~(less yel ;~(pose (just `@`10) escp)))
+      (plus ;~(less doq ;~(pose (just `@`10) escp)))
     ::                                                  ::  ++comt:de-xml:html
     ++  comt                                            ::  comments
       =-  (ifix [(jest '<!--') (jest '-->')] (star -))
@@ -6424,10 +6546,10 @@
       ;~(less (jest '?>') prn)
     ::                                                  ::  ++escp:de-xml:html
     ++  escp                                            ::
-      ;~(pose ;~(less led ban pad prn) enty)
+      ;~(pose ;~(less gal gar pam prn) enty)
     ::                                                  ::  ++enty:de-xml:html
     ++  enty                                            ::  entity
-      %+  ifix  pad^mic
+      %+  ifix  pam^mic
       ;~  pose
         =+  def=^+(ent (my:nl [%gt '>'] [%lt '<'] [%amp '&'] [%quot '"'] ~))
         %+  sear  ~(get by (~(uni by def) ent))
@@ -6443,7 +6565,7 @@
       ;~(plug ;~(plug name attr) (cold ~ (star whit)))
     ::                                                  ::  ++head:de-xml:html
     ++  head                                            ::  opening tag
-      (ifix [gal ban] ;~(plug name attr))
+      (ifix [gal gar] ;~(plug name attr))
     ::                                                  ::  ++many:de-xml:html
     ++  many                                            ::  contents
       ;~(pfix (star comt) (star ;~(sfix ;~(pose apex chrd cdat) (star comt))))
@@ -6458,7 +6580,7 @@
       ;~(pose ;~(plug ;~(sfix chx col) chx) chx)
     ::                                                  ::  ++tail:de-xml:html
     ++  tail                                            ::  closing tag
-      (ifix [(jest '</') ban] name)
+      (ifix [(jest '</') gar] name)
     ::                                                  ::  ++whit:de-xml:html
     ++  whit                                            ::  whitespace
       (mask ~[' ' `@`0x9 `@`0xa])
@@ -6563,8 +6685,13 @@
       ?^  t.rax
         [p.pok [ire q.pok]]:[pok=$(rax t.rax) ire=i.rax]
       =/  raf/(like term)
-          =>  |=(a/@ ((sand %tas) (crip (flop (trip a)))))
-          (;~(sfix (sear . sym) dot) [1^1 (flop (trip i.rax))])
+        %-  ;~  sfix
+              %+  sear
+                |=(a/@ ((sand %ta) (crip (flop (trip a)))))
+              (cook |=(a/tape (rap 3 ^-((list @) a))) (star aln))
+              dot
+            ==
+        [1^1 (flop (trip i.rax))]
       ?~  q.raf
         [~ [i.rax ~]]
       =+  `{ext/term {@ @} fyl/tape}`u.q.raf
@@ -6573,7 +6700,7 @@
     ::                                                  ::  ++apat:de-purl:html
     ++  apat                                            ::  2396 abs_path
       %+  cook  deft
-      ;~(pfix net (more net smeg))
+      ;~(pfix fas (more fas smeg))
     ::                                                  ::  ++aurf:de-purl:html
     ++  aurf                                            ::  2396 with fragment
       %+  cook  |~(a/purf a)
@@ -6594,13 +6721,13 @@
         [q.a [[p.a r.a] b]]
       ::
       ;~  plug
-        ;~(plug htts (punt ;~(sfix urt:ab vat)) thor)
+        ;~(plug htts (punt ;~(sfix urt:ab pat)) thor)
         ;~(plug ;~(pose apat (easy *pork)) yque)
       ==
     ::                                                  ::  ++htts:de-purl:html
     ++  htts                                            ::  scheme
       %+  sear  ~(get by (malt `(list (pair term ?))`[http+| https+& ~]))
-      ;~(sfix scem ;~(plug col net net))
+      ;~(sfix scem ;~(plug col fas fas))
     ::                                                  ::  ++cock:de-purl:html
     ++  cock                                            ::  cookie
       %+  most  ;~(plug mic ace)
@@ -6620,10 +6747,10 @@
       (cook crip (star pquo))
     ::                                                  ::  ++pcar:de-purl:html
     ++  pcar                                            ::  2396 path char
-      ;~(pose pure pesc psub col vat)
+      ;~(pose pure pesc psub col pat)
     ::                                                  ::  ++pcok:de-purl:html
     ++  pcok                                            ::  cookie char
-      ;~(less bas mic com yel prn)
+      ;~(less bas mic com doq prn)
     ::                                                  ::  ++pesc:de-purl:html
     ++  pesc                                            ::  2396 escaped
       ;~(pfix cen mes)
@@ -6632,24 +6759,24 @@
       (cold ' ' (just '+'))
     ::                                                  ::  ++pque:de-purl:html
     ++  pque                                            ::  3986 query char
-      ;~(pose pcar net wut)
+      ;~(pose pcar fas wut)
     ::                                                  ::  ++pquo:de-purl:html
     ++  pquo                                            ::  normal query char
-      ;~(pose pure pesc pold net wut col com)
+      ;~(pose pure pesc pold fas wut col com)
     ::                                                  ::  ++pure:de-purl:html
     ++  pure                                            ::  2396 unreserved
-      ;~(pose aln hep cab dot zap sig tar say lit rit)
+      ;~(pose aln hep cab dot zap sig tar soq pal par)
     ::                                                  ::  ++psub:de-purl:html
     ++  psub                                            ::  3986 sub-delims
       ;~  pose
-        zap  bus  pad  say  lit  rit
+        zap  buc  pam  soq  pal  par
         tar  lus  com  mic  tis
       ==
     ::                                                  ::  ++ptok:de-purl:html
     ++  ptok                                            ::  2616 token
       ;~  pose
-        aln  zap  hax  bus  cen  pad  say  tar  lus
-        hep  dot  ket  cab  tec  bar  sig
+        aln  zap  hax  buc  cen  pam  soq  tar  lus
+        hep  dot  ket  cab  tic  bar  sig
       ==
     ::                                                  ::  ++scem:de-purl:html
     ++  scem                                            ::  2396 scheme
@@ -6663,7 +6790,7 @@
       (cook crip (plus pcok))
     ::                                                  ::  ++tosk:de-purl:html
     ++  tosk                                            ::  6265 quoted value
-      ;~(pose tock (ifix [yel yel] tock))
+      ;~(pose tock (ifix [doq doq] tock))
     ::                                                  ::  ++toke:de-purl:html
     ++  toke                                            ::  2616 token
       (cook crip (plus ptok))
@@ -6705,7 +6832,7 @@
         ::  proper query
         ::
         %+  more
-          ;~(pose pad mic)
+          ;~(pose pam mic)
         ;~(plug fque ;~(pose ;~(pfix tis fquu) (easy '')))
         ::
         ::  funky query
@@ -7886,7 +8013,7 @@
       ::  #  constants
       ::
       ::  contract addresses
-      ++  contracts  mainnet-contracts
+      ++  contracts  ropsten-contracts
       ++  mainnet-contracts
         |%
         ::  azimuth: data contract
@@ -8209,7 +8336,7 @@
     ::
     ++  function
       |*  [tag=@tas fun=@t rul=rule]
-      ;~(plug (cold tag (jest fun)) (ifix [lit rit] rul))
+      ;~(plug (cold tag (jest fun)) (ifix [pal par] rul))
     ::
     ++  shipname
       ;~(pfix sig fed:ag)
@@ -9174,6 +9301,10 @@
     |-  ^-  seed:able:jael
     =/  cub=acru:ames  (pit:nu:crub:crypto 512 eny)
     =/  who=ship  `@`fig:ex:cub
+    ::  disallow 64-bit or smaller addresses
+    ::
+    ?.  ?=(%pawn (clan:title who))
+      $(eny +(eny))
     ?:  (~(has in stars) (^sein:title who))
       [who 1 sec:ex:cub ~]
     $(eny +(eny))
