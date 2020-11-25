@@ -8,6 +8,7 @@ import { Contacts, Rolodex } from "~/types/contact-update";
 import OverlaySigil from "./OverlaySigil";
 import { Group, Association, LocalUpdateRemoteContentPolicy } from "~/types";
 import GlobalApi from "~/logic/api/global";
+import { useHistory } from "react-router-dom";
 
 interface AuthorProps {
   contacts: Rolodex;
@@ -24,6 +25,7 @@ interface AuthorProps {
 
 export default function Author(props: AuthorProps) {
   const { contacts, ship = '', date, showImage, hideAvatars, hideNicknames, remoteContentPolicy, group, api } = props;
+  const history = useHistory();
   let contact;
   if (contacts) {
     contact = ship in contacts ? contacts[ship] : null;

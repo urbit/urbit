@@ -79,6 +79,7 @@ export default class RemoteContent extends PureComponent<RemoteContentProps, Rem
       style={{ color: 'inherit', textDecoration: 'none', ...style }}
       className={`word-break-all ${(typeof contents === 'string') ? 'bb' : ''}`}
       target="_blank"
+      width="100%"
       rel="noopener noreferrer"
     >
       {contents}

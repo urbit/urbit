@@ -85,15 +85,18 @@ export const LinkItem = (props: LinkItemProps) => {
           url={contents[1].url}
           text={contents[0].text}
           remoteContentPolicy={remoteContentPolicy}
-          style={{ marginTop: '-1px' }}
+          unfold={true}
+          style={{ marginTop: '-1px', alignSelf: 'center' }}
           oembedProps={{
-            p: 2
+            p: 2,
+            className: 'links embed-container',
           }}
           textProps={{
             overflow: 'hidden',
             color: 'black',
             display: 'block',
-            style: { textOverflow: 'ellipsis', whiteSpace: 'pre' },
+            alignSelf: 'center',
+            style: { textOverflow: 'ellipsis', whiteSpace: 'pre', width: '100%' },
             p: 2
           }} />
         <Text color="gray" p={2} flexShrink={0}>
