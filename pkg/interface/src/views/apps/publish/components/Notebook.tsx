@@ -18,6 +18,7 @@ interface NotebookProps {
   contacts: Rolodex;
   groups: Groups;
   hideNicknames: boolean;
+  hideAvatars: boolean;
   baseUrl: string;
   rootUrl: string;
 }
@@ -34,14 +35,16 @@ export function Notebook(props: NotebookProps & RouteComponentProps) {
     notebookContacts,
     groups,
     hideNicknames,
+    hideAvatars,
     association,
     graph
   } = props;
   const { metadata } = association;
+
   const group = groups[association?.['group-path']];
   if (!group) {
-    return null; // Waiting on groups to populate
-  };
+    return null; // Waitin on groups to populate
+  }
 
   const relativePath = (p: string) => props.baseUrl + p;
 
@@ -80,7 +83,10 @@ export function Notebook(props: NotebookProps & RouteComponentProps) {
         book={book}
         contacts={notebookContacts ? notebookContacts : {}}
         hideNicknames={hideNicknames}
+        hideAvatars={hideAvatars}
         baseUrl={props.baseUrl}
+        api={props.api}
+        group={group}
       />
     </Col>
   );
