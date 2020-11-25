@@ -9,8 +9,8 @@ export default class BaseSubscription<S extends object> {
     this.channel.setOnChannelOpen(this.onChannelOpen.bind(this));
   }
 
-  dequeue() {
-    this.channel.sendJSONToChannel();
+  clearQueue() {
+    this.channel.clearQueue();
   }
 
   delete() {
@@ -42,7 +42,7 @@ export default class BaseSubscription<S extends object> {
     }, Math.pow(2,this.errorCount - 1) * 750);
   }
 
-  subscribe(path: Path, app: string, queue = false) {
+  subscribe(path: Path, app: string) {
     return this.api.subscribe(path, 'PUT', this.api.ship, app,
       this.handleEvent.bind(this),
       (err) => {
@@ -51,7 +51,7 @@ export default class BaseSubscription<S extends object> {
       },
       () => {
         this.subscribe(path, app);
-      }, queue);
+      });
   }
 
   unsubscribe(id: number) {

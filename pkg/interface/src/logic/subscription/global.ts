@@ -44,26 +44,20 @@ export default class GlobalSubscription extends BaseSubscription<StoreState> {
 
   start() {
     this.subscribe('/all', 'metadata-store');
-    this.subscribe('/all', 'invite-store', true);
-    this.subscribe('/all', 'launch', true);
-    this.subscribe('/all', 'weather', true);
-    this.dequeue();
+    this.subscribe('/all', 'invite-store');
+    this.subscribe('/all', 'launch');
+    this.subscribe('/all', 'weather');
+    this.subscribe('/groups', 'group-store');
+    this.clearQueue();
 
 
-    setTimeout(() => {
-      this.subscribe('/groups', 'group-store', true);
-      this.subscribe('/primary', 'contact-view', true);
-      this.subscribe('/all', 's3-store', true);
-      this.subscribe('/keys', 'graph-store', true);
-      this.subscribe('/updates', 'hark-store', true);
-      this.subscribe('/updates', 'hark-graph-hook', true);
-      this.subscribe('/updates', 'hark-group-hook', true);
-      this.subscribe('/updates', 'hark-chat-hook', true);
-      this.dequeue();
-
-    }, 200)
-    
-
+    this.subscribe('/primary', 'contact-view');
+    this.subscribe('/all', 's3-store');
+    this.subscribe('/keys', 'graph-store');
+    this.subscribe('/updates', 'hark-store');
+    this.subscribe('/updates', 'hark-graph-hook');
+    this.subscribe('/updates', 'hark-group-hook');
+    this.subscribe('/updates', 'hark-chat-hook');
   }
 
   restart() {
