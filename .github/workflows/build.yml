@@ -30,11 +30,9 @@
 #
 #   https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions
 
-name: Build, test, and upload urbit release tarball
+name: Build and test urbit binaries
 
-on:
-  push: null
-  pull_request: null
+on: [push, pull_request]
 
 jobs:
   urbit:
@@ -57,7 +55,7 @@ jobs:
 
       - run: nix-build -A urbit --arg enableStatic true
 
-      - if: ${{ matrix.os == 'ubuntu-latest' }}
+      - if: ${{ matrix.os == 'ubuntu-latest' && github.event_name == 'pull_request' }}
         run: nix-build -A urbit-tests
 
   haskell:
@@ -81,40 +79,3 @@ jobs:
       - run: nix-build -A hs.urbit-king.components.exes.urbit-king --arg enableStatic true
       - run: nix-build -A hs-checks
       - run: nix-build shell.nix
-
-  upload:
-    needs: [urbit, haskell]
-    strategy:
-      matrix:
-        include:
-          - { os: ubuntu-latest, system: x86_64-linux }
-          - { os: macos-latest, system: x86_64-darwin }
-
-    runs-on: ${{ matrix.os }}
-
-    steps:
-      - uses: actions/checkout@v2
-      - uses: cachix/install-nix-action@v12
-      - uses: cachix/cachix-action@v8
-        with:
-          name: mars
-          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
-
-      - uses: google-github-actions/setup-gcloud@v0.2.0
-        with:
-          version: '290.0.1'
-          service_account_key: ${{ secrets.GCS_SERVICE_ACCOUNT_KEY }}
-          project_id: ${{ secrets.GCS_PROJECT }}
-          export_default_credentials: true
-
-      - run: nix-build -A tarball
-
-      - name: Run upload to bootstrap.urbit.org
-        run: |
-          version="$(cat ./pkg/urbit/version)"
-          system="$(nix eval --raw '(builtins.currentSystem)')"
-          target="gs://bootstrap.urbit.org/ci/urbit-v${version}-${system}-${GITHUB_SHA:0:9}.tgz"
-
-          gsutil cp -n ./result "$target"
-
-          echo "upload to $target complete."
