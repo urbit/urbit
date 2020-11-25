@@ -246,8 +246,6 @@ _ames_sift_body(u3_head* hed_u,
     return c3n;
   }
   else {
-    c3_y rag_y[8] = {0};
-
     bod_u->sic_y = bod_y[0]        & 0xf;
     bod_u->ric_y = (bod_y[0] << 4) & 0xf;
 
@@ -257,8 +255,14 @@ _ames_sift_body(u3_head* hed_u,
     bod_u->con_s = len_w - 1 - sen_y - rec_y - rog_y;
     bod_u->con_y = bod_y + 1 + sen_y + rec_y;
 
-    memcpy(rag_y, bod_u->con_y + bod_u->con_s, rog_y);
-    bod_u->rog_d = _ames_chub_bytes(rag_y);
+    if ( rog_y ) {
+      c3_y rag_y[8] = {0};
+      memcpy(rag_y, bod_u->con_y + bod_u->con_s, rog_y);
+      bod_u->rog_d = _ames_chub_bytes(rag_y);
+    }
+    else {
+      bod_u->rog_d = 0;
+    }
 
     bod_u->mug_l = u3r_mug_bytes(bod_y, len_w - rog_y) & 0xfffff;
 
@@ -317,6 +321,12 @@ _ames_etch_pack(u3_head* hed_u,
   {
     c3_y* con_y = bod_y + 1 + sen_y + rec_y;
     memcpy(con_y, bod_u->con_y, bod_u->con_s);
+
+    if ( rog_y ) {
+      c3_y rag_y[8] = {0};
+      _ames_bytes_chub(rag_y, bod_u->rog_d);
+      memcpy(con_y + bod_u->con_s, rag_y, rog_y);
+    }
   }
 
   *out_y = pac_y;
