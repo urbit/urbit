@@ -17,7 +17,10 @@
 ::
 ++  orm      orm:store
 ++  orm-log  orm-log:store
-+$  debug-input  [%validate-graph =resource:store]
++$  debug-input  
+  $%  [%validate-graph =resource:store]
+      [%check-hooks ~]
+  ==
 --
 ::
 =|  state-2
@@ -79,7 +82,12 @@
       |=(a=* *update-log:store)
     ==
   ::
-    %2  [cards this(state old)]
+      %2  
+    =.  cards
+      :_  cards
+      =-  [%pass / %agent [our.bowl %graph-store] %poke -]
+      noun+!>([%check-hooks ~])
+    [cards this(state old)]
   ==
   ::
   ++  change-revision-graph
@@ -588,10 +596,57 @@
   ++  debug
     |=  =debug-input
     ^-  (quip card _state)
-    =/  [=graph:store mark=(unit mark:store)]
-      (~(got by graphs) resource.debug-input)
-    ?>  (validate-graph graph mark)
-    [~ state]
+    ?-  -.debug-input
+        %validate-graph
+      =/  [=graph:store mark=(unit mark:store)]
+        (~(got by graphs) resource.debug-input)
+      ?>  (validate-graph graph mark)
+      [~ state]
+      ::
+        %check-hooks
+      :_  state
+      %+  roll
+        ~(tap in ~(key by graphs))
+      |=  [=res out=(list card)]
+      %+  weld  out
+      ?:  =(our.bowl entity.res)
+        (check-push res)
+      (check-pull res)
+    ==
+  ::
+  ++  scry-pull-hook
+    .^  (set res)
+        %gx
+        (scot %p our.bowl)
+        %graph-pull-hook
+        (scot %da now.bowl)
+        /tracking/noun
+    ==
+  ::
+  ++  scry-push-hook
+    .^  (set res)
+        %gx
+        (scot %p our.bowl)
+        %graph-pull-hook
+        (scot %da now.bowl)
+        /tracking/noun
+    ==
+  ::
+  ++  check-pull
+    |=  =res
+    ^-  (list card)
+    ?:  (~(has in scry-pull-hook) res)
+      ~
+    =-  [%pass /hooks %agent [our.bowl %graph-pull-hook] %poke -]~
+    pull-hook-action+!>([%add entity.res res])
+  ::
+  ++  check-push
+    |=  =res
+    ^-  (list card)
+    ?:  (~(has in scry-push-hook) res)
+      ~
+    =-  [%pass /hooks %agent [our.bowl %graph-push-hook] %poke -]~
+    push-hook-action+!>([%add res])
   ::
   ++  validate-graph
     |=  [=graph:store mark=(unit mark:store)]

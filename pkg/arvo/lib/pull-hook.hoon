@@ -282,7 +282,9 @@
       ++  on-peek   
         |=  =path
         ^-  (unit (unit cage))
-        (on-peek:og path)
+        ?.  ?=([%x %tracking ~] path)
+          (on-peek:og path)
+        ``noun+!>(~(key by tracking))
     --
   |_  =bowl:gall
   +*  og   ~(. pull-hook bowl)
