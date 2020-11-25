@@ -398,7 +398,7 @@ u3_ames_decode_lane(u3_atom lan) {
 */
 c3_d
 u3_ames_lane_to_chub(u3_lane lan) {
-  return (c3_d)lan.pip_w<<16 ^ (c3_d)lan.por_s;
+  return ((c3_d)lan.por_s << 32) ^ (c3_d)lan.pip_w;
 }
 
 /* u3_ames_encode_lane(): serialize lane to noun
