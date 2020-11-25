@@ -166,11 +166,16 @@
         ?~  existing-notif
           notification
         (merge-notification:ha u.existing-notif notification)
+      =/  new-read=?
+        ?~  existing-notif
+          %.y
+        read.u.existing-notif
+      =.  read.new  %.n
       =/  new-timebox=timebox:store
         (~(put by timebox) index new)
       :-  (give:ha [/updates]~ %added last-seen index new)
       %_  state
-        +  ?~(existing-notif (upd-unreads:ha index last-seen %.n) +.state)
+        +  ?.(new-read +.state (upd-unreads:ha index last-seen %.n))
         notifications  (put:orm notifications last-seen new-timebox)
       ==
     ++  read-index
