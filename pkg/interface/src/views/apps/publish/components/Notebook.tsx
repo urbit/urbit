@@ -59,7 +59,7 @@ export function Notebook(props: NotebookProps & RouteComponentProps) {
   const showNickname = contact?.nickname && !hideNicknames;
 
   return (
-    <Col gapY="4" pt={4} mx="auto" px={3} maxWidth="500px">
+    <Col gapY="4" pt={4} mx="auto" px={3} maxWidth="768px">
       <Row justifyContent="space-between">
         <Box>
           <Text> {metadata?.title}</Text>
