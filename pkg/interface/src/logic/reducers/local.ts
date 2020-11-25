@@ -3,7 +3,7 @@ import { StoreState } from '~/store/type';
 import { Cage } from '~/types/cage';
 import { LocalUpdate, BackgroundConfig } from '~/types/local-update';
 
-type LocalState = Pick<StoreState, 'sidebarShown' | 'omniboxShown' | 'baseHash' | 'hideAvatars' | 'hideNicknames' | 'background' | 'dark' | 'suspendedFocus' | 'remoteContentPolicy'>;
+type LocalState = Pick<StoreState, 'sidebarShown' | 'omniboxShown' | 'baseHash' | 'runtimeLag' | 'hideAvatars' | 'hideNicknames' | 'background' | 'dark' | 'suspendedFocus' | 'remoteContentPolicy'>;
 
 export default class LocalReducer<S extends LocalState> {
     rehydrate(state: S) {
@@ -27,6 +27,7 @@ export default class LocalReducer<S extends LocalState> {
             this.sidebarToggle(data, state);
             this.setDark(data, state);
             this.baseHash(data, state);
+            this.runtimeLag(data, state);
             this.backgroundConfig(data, state)
             this.hideAvatars(data, state)
             this.hideNicknames(data, state)
@@ -37,6 +38,11 @@ export default class LocalReducer<S extends LocalState> {
     baseHash(obj: LocalUpdate, state: S) {
       if ('baseHash' in obj) {
         state.baseHash = obj.baseHash;
+      }
+    }
+    runtimeLag(obj: LocalUpdate, state: S) {
+      if ('runtimeLag' in obj) {
+        state.runtimeLag = obj.runtimeLag;
       }
     }
 

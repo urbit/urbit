@@ -10,6 +10,10 @@ interface LocalUpdateBaseHash {
   baseHash: string;
 }
 
+interface LocalUpdateRuntimeLag {
+  runtimeLag: boolean;
+}
+
 interface LocalUpdateBackgroundConfig {
   backgroundConfig: BackgroundConfig;
 }
@@ -49,6 +53,7 @@ export type LocalUpdate =
   LocalUpdateSidebarToggle
 | LocalUpdateSetDark
 | LocalUpdateBaseHash
+| LocalUpdateRuntimeLag
 | LocalUpdateBackgroundConfig
 | LocalUpdateHideAvatars
 | LocalUpdateHideNicknames

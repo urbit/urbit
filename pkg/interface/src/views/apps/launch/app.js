@@ -9,6 +9,7 @@ import './css/custom.css';
 import { Sigil } from '~/logic/lib/sigil';
 import Tiles from './components/tiles';
 import Tile from './components/tiles/tile';
+import VersionInfo from './components/VersionInfo';
 import Welcome from './components/welcome';
 import Groups from './components/Groups';
 
@@ -78,21 +79,11 @@ export default class LaunchApp extends React.Component {
           </Box>
           <Groups associations={props.associations} invites={props.invites} api={props.api} />
         </Box>
-        <Box
-          position="absolute"
-          fontFamily="mono"
-          left="0"
-          bottom="0"
-          color="gray"
-          bg="white"
-          ml={3}
-          mb={3}
-          borderRadius={2}
-          fontSize={0}
-          p={2}
-        >
-          {props.baseHash}
-        </Box>
+        <VersionInfo
+          api={props.api}
+          baseHash={props.baseHash}
+          runtimeLag={props.runtimeLag}
+        />
       </>
     );
   }

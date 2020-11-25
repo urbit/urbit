@@ -59,6 +59,7 @@ export default class GlobalStore extends BaseStore<StoreState> {
       omniboxShown: false,
       suspendedFocus: null,
       baseHash: null,
+      runtimeLag: false,
       background: undefined,
       remoteContentPolicy: {
         imageShown: true,

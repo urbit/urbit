@@ -20,6 +20,7 @@ export interface StoreState {
   dark: boolean;
   connection: ConnectionStatus;
   baseHash: string | null;
+  runtimeLag: boolean;
   background: BackgroundConfig;
   remoteContentPolicy: LocalUpdateRemoteContentPolicy;
   hideAvatars: boolean;
