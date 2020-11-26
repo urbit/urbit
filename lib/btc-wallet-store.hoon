@@ -13,8 +13,8 @@
     |=  =^txbu
     ^-  json
     %-  pairs
-    :~  [%inputs ~]
-        ['associatedKeysets' s+'hi']
+    :~  ::  [%inputs [%a (turn txis.txbu txi)]]
+        ['associatedKeysets' [%a (turn txis.txbu |=(=txi (key key.txi)))]]
         ['changePath' s+'hi']
         ['outputScriptHex' s+'hi']
         ['lockTime' s+'hi']
@@ -24,7 +24,26 @@
     ==
     :: TODO inputs, keysets, changeppath, outputscripthex, locktime, sigHashType, segwit, initialTimestamp
     ::  , additionals ("bech32")
-    :: TODO: use 'pairs' at the top level
+  ++  txi
+    |=  =^txi  ^-  json
+    ?>  ?=(^ ur.txi)
+    :-  %a
+    :~  s+(en:base16:mimes:html u.ur.txi)
+        n+pos.utxo.txi
+    ==
+  ++  key
+    |=  =^key  ^-  json
+    :-  %s
+    %^  cat  3  'm/'
+    %^  cat  3
+      ?-  bipt.key
+          %bip44  '44'
+          %bip49  '49'
+          %bip84  '84'
+      ==
+    %^  cat  3  '/0\'/0\'/'
+    %^  cat  3  ?:(=(%0 chyg.key) '0/' '1/')
+    (crip ((d-co:co 0) idx.key))
   --
 ::
 ++  defaults
@@ -143,11 +162,11 @@
   ::
   ++  select-utxos
     |^  ^-  (unit =txbu)
-    =/  uis=(unit (list input))
+    =/  is=(unit (list input))
       %-  single-random-draw
       %-  zing
       (turn ~(val by wach.w) to-inputs)
-    ?~(uis ~ `(inputs-to-txbu u.uis))
+    ?~(is ~ `(inputs-to-txbu u.is))
     ::
     ++  to-inputs
       |=  =addi  ^-  (list input)
