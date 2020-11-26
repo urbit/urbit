@@ -1128,11 +1128,10 @@
       ++  gest
         |=  =ovum
         ^-  $>(%pass ball)
-        =^  way=term  wire.ovum  wire.ovum
-        ::
-        ::  XX uncomment to restore previous routing
-        ::
-        :: =?  way  ?=(%$ way)  (dint wire.ovum)
+        =^  way=term  wire.ovum
+          ~|  %gest-wire
+          ?>  ?=(^ wire.ovum)
+          [(wilt i.wire.ovum) t.wire.ovum]
         ::
         ::  %$: default, routed to arvo-proper as trivial vase
         ::  @:  route to vane XX remove %soft, clam via %zuse
@@ -1402,19 +1401,6 @@
       duc=(pal '$:duct')
       wir=(pal '$:wire')
       dud=(pal '=<($ (unit goof))')  ::  XX misparse
-  ==
-::
-++  dint                                              ::  input routing
-  |=  hap=path  ^-  @tas
-  ?+  hap  %$
-    [%ames *]  %a
-    [%boat *]  %c
-    [%newt *]  %a
-    [%sync *]  %c
-    [%term *]  %d
-    [%http-client *]  %i
-    [%http-server *]  %e
-    [%behn *]  %b
   ==
 ::
 ++  grow
