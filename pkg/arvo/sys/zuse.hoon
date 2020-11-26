@@ -6374,7 +6374,7 @@
     ++  apex                                            ::  top level
       =+  spa=;~(pose comt whit)
       %+  knee  *manx  |.  ~+
-      %+  ifix  
+      %+  ifix
         [;~(plug (punt decl) (star spa)) (star spa)]
       ;~  pose
         %+  sear  |=({a/marx b/marl c/mane} ?.(=(c n.a) ~ (some [a b])))
@@ -8449,6 +8449,7 @@
               ::  dynamic
               [%array-n t=etyp n=@ud]
               [%array t=etyp]
+              [%tuple t=(list etyp)]
           ==
         ::
         ::  solidity-style typed data. integer bitsizes ignored
@@ -8462,9 +8463,9 @@
               [%ureal p=@urs]
               [%array-n p=(list data)]
               [%array p=(list data)]
+              [%tuple p=(list data)]
               [%bytes-n p=octs]  ::TODO  just @, because context knows length?
-              [%bytes p=octs]
-          ==
+              [%bytes p=octs]          ==
         --
     =,  mimes:html
     |%
@@ -8529,6 +8530,9 @@
         ~|  [%weird-ref-lent (lent ref)]
         ?>  =((lent ref) (lent hol))
         (weld nes ref)
+      ::
+          %tuple
+        $(dat [%array-n p.dat])
       ::
           %array  ::  where X has k elements (k is assumed to be of type uint256):
         ::  enc(X) = enc(k) enc([X[1], ..., X[k]])
@@ -8652,6 +8656,8 @@
         ::
             [%array-n *]
           (decode-array-n ~[t.typ] win n.typ)
+            [%tuple *]
+          (decode-tuple t.typ win)
         ==
       ::
       ++  decode-bytes-n
@@ -8678,6 +8684,16 @@
         ?:  =(len 0)  [fro (flop `(list)`res)]
         =+  (decode-one fro ~[i.tys])  ::  [nin=@ud dat=*]
         $(res ^+(res [dat res]), fro nin, len (dec len))
+      ++  decode-tuple
+        :: ::NOTE  we take (list etyp) even though we only operate on
+        :: ::      a single etyp as a workaround for urbit/arvo#673
+        :: ::NOTE  careful! produces lists without type info
+        =|  res=(list)
+        |*  [tys=(list etyp) fro=@ud]
+        ^-  [@ud (list)]
+        ?~  tys  [fro (flop `(list)`res)]
+        =+  (decode-one fro ~[i.tys])  ::  [nin=@ud dat=*]
+        $(res ^+(res [dat res]), fro nin, tys t.tys)
       --
     --
   ::
