@@ -1186,10 +1186,10 @@
           %=    ..pith
               van
             %+  roll  van.job
-            |=  [[(cask hoof)] =_van]
+            |=  [[nam=term txt=hoof] =_van]
             ^+  van
-            =/  way  (wilt p)
-            =/  nex  (create:va zus way /sys/vane/[p]/hoon q)
+            =/  way  (wilt nam)
+            =/  nex  (create:va zus way /sys/vane/[nam]/hoon txt)
             =/  nav  (~(get by van) way)
             =?  nex  ?=(^ nav)  (update:va vase.u.nav nex)
             (~(put by van) way (settle:va nex))
