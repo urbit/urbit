@@ -68,7 +68,7 @@ export function ChatResource(props: ChatResourceProps) {
   const chatInput = useRef<ChatInput>();
 
   const onFileDrag = useCallback(
-    (files: FileList) => {
+    (files: FileList | File[]) => {
       if (!chatInput.current) {
         return;
       }

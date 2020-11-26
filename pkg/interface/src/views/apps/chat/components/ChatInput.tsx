@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ChatEditor from './chat-editor';
 import { S3Upload } from '~/views/components/s3-upload' ;
-import { uxToHex } from '~/logic/lib/util';
+import { fileListFromFileArray, uxToHex } from '~/logic/lib/util';
 import { Sigil } from '~/logic/lib/sigil';
 import tokenizeMessage, { isUrl } from '~/logic/lib/tokenizeMessage';
 import GlobalApi from '~/logic/api/global';
@@ -150,16 +150,14 @@ export default class ChatInput extends Component<ChatInputProps, ChatInputState>
     this.uploadFiles(event.clipboardData.files);
   }
 
-  uploadFiles(files: FileList) {
+  uploadFiles(files: FileList | File[]) {
     if (!this.readyToUpload()) {
       return;
     }
-    if (!this.s3Uploader.current || !this.s3Uploader.current.inputRef.current)
-return;
-    this.s3Uploader.current.inputRef.current.files = files;
-    const fire = document.createEvent('HTMLEvents');
-    fire.initEvent('change', true, true);
-    this.s3Uploader.current?.inputRef.current?.dispatchEvent(fire);
+    if (!this.s3Uploader.current) {
+      return;
+    }
+    this.s3Uploader.current.uploadFiles(files);
   }
 
   render() {

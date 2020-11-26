@@ -51,6 +51,7 @@ export class S3Upload extends Component<S3UploadProps, S3UploadState> {
     this.s3 = new S3Client();
     this.setCredentials(props.credentials, props.configuration);
     this.inputRef = React.createRef();
+    this.uploadFiles = this.uploadFiles.bind(this);
   }
 
   isReady(creds, config): boolean {
@@ -84,13 +85,9 @@ export class S3Upload extends Component<S3UploadProps, S3UploadState> {
     );
   }
 
-  onChange(): void {
+  uploadFiles(files: FileList | File[]) {
     const { props } = this;
-    if (!this.inputRef.current) { return; }
-    let files = this.inputRef.current.files;
-    if (!files || files.length <= 0) { return; }
-
-    let file = files.item(0);
+    let file = ('item' in files) ? files.item(0) : files[0];
     if (!file) { return; }
     const fileParts = file.name.split('.');
     const fileName = fileParts.slice(0, -1);
@@ -116,6 +113,13 @@ export class S3Upload extends Component<S3UploadProps, S3UploadState> {
           this.setState({ isUploading: false });
         });
     }, 200);
+  }
+
+  onChange(): void {
+    if (!this.inputRef.current) { return; }
+    let files = this.inputRef.current.files;
+    if (!files || files.length <= 0) { return; }
+    this.uploadFiles(files);
   }
 
   onClick() {
