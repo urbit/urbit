@@ -1355,7 +1355,7 @@
         [raw cop]
       =/  hot
         ~>  %slog.[0 leaf+"vega: recompiling hoon %{<`@`nex>}"]
-        (road |.((slum cop [%noun hun])))
+        (road |.((slum cop [%noun u.hun])))
       [hot .*(0 +.hot)]
     ::  extract the hoon core from the outer gate (+ride)
     ::
