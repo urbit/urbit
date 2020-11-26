@@ -22,16 +22,16 @@
     =>  [dejs-soft:format ..sole-action]
     |^  (ot id+so dat+(fo %ret (of det+change tab+ni ~)) ~)
     ++  fo
-      |*  {a=term b=fist}
+      |*  [a=term b=fist]
       |=(c=json ?.(=([%s a] c) (b c) (some [a ~])))
     ::
     ++  ra
-      |*  {a={term fist} b=fist}
+      |*  [a=[term fist] b=fist]
       |=  c=json  %.  c
       ?.(=(%a -.c) b (pe -.a (ar +.a)))
     ::
     ++  ke                                              ::  callbacks
-      |*  {gar=* sef=(trap fist)}
+      |*  [gar=* sef=(trap fist)]
       |=  jon=json  ^-  (unit _gar)
       =-  ~!  gar  ~!  (need -)  -
       ((sef) jon)

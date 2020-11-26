@@ -168,7 +168,7 @@
       (cu (cury slav %uv) so)
     ::
     ++  re                                                ::  recursive reparsers
-      |*  {gar=* sef=_|.(fist:dejs-soft:format)}
+      |*  [gar=* sef=_|.(fist:dejs-soft:format)]
       |=  jon=json
       ^-  (unit _gar)
       =-  ~!  gar  ~!  (need -)  -

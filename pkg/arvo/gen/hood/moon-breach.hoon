@@ -16,7 +16,7 @@
 ^-  (unit [=ship =udiff:point:able:jael])
 =*  our  p.bec
 =/  ran  (clan:title our)
-?:  ?=({?(%earl %pawn)} ran)
+?:  ?=([?(%earl %pawn)] ran)
   %-  %-  slog  :_  ~
       leaf+"can't manage a moon from a {?:(?=(%earl ran) "moon" "comet")}"
   ~

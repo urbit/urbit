@@ -73,7 +73,7 @@
   ?~(+< +> $(+< t.+<, +> (emit i.+<)))
 ::
 ++  render
-  |=  {mez=tape sud=desk who=ship syd=desk}
+  |=  [mez=tape sud=desk who=ship syd=desk]
   :^  %palm  [" " ~ ~ ~]  leaf+(weld "kiln: " mez)
   ~[leaf+"from {<sud>}" leaf+"on {<who>}" leaf+"to {<syd>}"]
 ::
@@ -381,7 +381,7 @@
   abet:(emit %pass /cancel %arvo %c [%drop a])
 ::
 ++  poke-info
-  |=  {mez=tape tor=(unit toro)}
+  |=  [mez=tape tor=(unit toro)]
   ?~  tor
     abet:(spam leaf+mez ~)
   abet:(emit:(spam leaf+mez ~) %pass /kiln %arvo %c [%info u.tor])
@@ -395,19 +395,19 @@
   (poke-info "removed" `(fray a))
 ::
 ++  poke-label
-  |=  {syd=desk lab=@tas}
+  |=  [syd=desk lab=@tas]
   =+  pax=/(scot %p our)/[syd]/[lab]
   (poke-info "labeled {(spud pax)}" `[syd %| lab])
 ::
 ++  poke-schedule
-  |=  {where=path tym=@da eve=@t}
+  |=  [where=path tym=@da eve=@t]
   =.  where  (welp where /sched)
   %+  poke-info  "scheduled"
   =+  old=;;((map @da cord) (fall (file where) ~))
   `(foal where %sched !>((~(put by old) tym eve)))
 ::
 ++  poke-permission
-  |=  {syd=desk pax=path pub=?}
+  |=  [syd=desk pax=path pub=?]
   =<  abet
   %-  emit
   =/  =rite  [%r ~ ?:(pub %black %white) ~]
@@ -447,7 +447,7 @@
   abet:(emit %pass /kiln %arvo %g %sear ship)
 ::
 ++  done
-  |=  {way=wire saw=(unit error:ames)}
+  |=  [way=wire saw=(unit error:ames)]
   ~?  ?=(^ saw)  [%kiln-nack u.saw]
   abet
 ::
@@ -481,23 +481,23 @@
              ?>(?=(%mere +<.sign-arvo) +>.sign-arvo)
     ==
   ==
-++  take  |=(way=wire ?>(?=({@ ~} way) (work i.way))) ::  general handler
+++  take  |=(way=wire ?>(?=([@ ~] way) (work i.way))) ::  general handler
 ++  take-mere                                         ::
-  |=  {way=wire are=(each (set path) (pair term tang))}
+  |=  [way=wire are=(each (set path) (pair term tang))]
   abet:abet:(mere:(take way) are)
 ::
 ++  take-coup-fancy                                   ::
-  |=  {way=wire saw=(unit tang)}
+  |=  [way=wire saw=(unit tang)]
   abet:abet:(coup-fancy:(take way) saw)
 ::
 ++  take-coup-spam                                    ::
-  |=  {way=wire saw=(unit tang)}
+  |=  [way=wire saw=(unit tang)]
   ~?  ?=(^ saw)  [%kiln-spam-lame u.saw]
   abet
 ::
 ++  take-mere-sync                                    ::
-  |=  {way=wire mes=(each (set path) (pair term tang))}
-  ?>  ?=({@ @ @ *} way)
+  |=  [way=wire mes=(each (set path) (pair term tang))]
+  ?>  ?=([@ @ @ *] way)
   =/  hos=kiln-sync
       :*  syd=(slav %tas i.way)
           her=(slav %p i.t.way)
@@ -508,8 +508,8 @@
   abet:abet:(mere:(auto hos) mes)
 ::
 ++  take-writ-find-ship                               ::
-  |=  {way=wire rot=riot}
-  ?>  ?=({@ @ @ *} way)
+  |=  [way=wire rot=riot]
+  ?>  ?=([@ @ @ *] way)
   =/  hos=kiln-sync
       :*  syd=(slav %tas i.way)
           her=(slav %p i.t.way)
@@ -520,8 +520,8 @@
   abet:abet:(take-find-ship:(auto hos) rot)
 ::
 ++  take-writ-sync                                    ::
-  |=  {way=wire rot=riot}
-  ?>  ?=({@ @ @ *} way)
+  |=  [way=wire rot=riot]
+  ?>  ?=([@ @ @ *] way)
   =/  hos=kiln-sync
       :*  syd=(slav %tas i.way)
           her=(slav %p i.t.way)
@@ -685,7 +685,7 @@
     (blab [%pass /kiln/[syd] %arvo %c [%merg syd her sud cas gem]] ~)
   ::
   ++  fancy-merge                                     ::  send to self
-    |=  {syd=desk her=@p sud=desk gem=?(%auto germ)}
+    |=  [syd=desk her=@p sud=desk gem=?(%auto germ)]
     ^+  +>
     =/  =cage  [%kiln-merge !>([syd her sud cas gem])]
     %-  blab  :_  ~
@@ -694,7 +694,7 @@
   ++  spam  ::|=(tang ((slog +<) ..spam))
             |*(* +>(..work (^spam +<)))
   ++  merge
-    |=  {her=@p sud=@tas cas=case gim=?(%auto germ)}
+    |=  [her=@p sud=@tas cas=case gim=?(%auto germ)]
     ^+  +>
     ?.  ?=(%auto gim)
       perform(auto |, gem gim, her her, cas cas, sud sud)
@@ -828,7 +828,7 @@
     (scan a (more (just '\0a') (cook |=(a=tape leaf+a) (star prn))))
   ::
   ++  tanks-if-any
-    |=  {a=tape b=(list path) c=tape}  ^-  (list tank)
+    |=  [a=tape b=(list path) c=tape]  ^-  (list tank)
     ?:  =(~ b)  ~
     (welp (tape-to-tanks "\0a{c}{a}") >b< ~)
   --

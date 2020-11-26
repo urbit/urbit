@@ -30,7 +30,7 @@
     --
   --
 ++  wush
-  |=  {wid=@u tan=tang}
+  |=  [wid=@u tan=tang]
   ^-  tape
   (of-wall (turn (flop tan) |=(a=tank (of-wall (wash 0^wid a)))))
 ::

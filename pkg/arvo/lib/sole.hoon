@@ -31,7 +31,7 @@
 ::          (apply:(apply b) y)
 ::
 ++  transmute                                         ::  dex as after sin
-  |=  {sin=sole-edit dex=sole-edit}
+  |=  [sin=sole-edit dex=sole-edit]
   ~|  [%transmute sin dex]
   ^-  sole-edit
   ?:  ?=(%mor -.sin)
@@ -81,7 +81,7 @@
 ++  inverse                                           ::  relative inverse
   |=  ted=sole-edit
   ^-  sole-edit
-  =.  ted  ?.(?=({%mor * ~} ted) ted i.p.ted)
+  =.  ted  ?.(?=([%mor * ~] ted) ted i.p.ted)
   ?-  -.ted
     %del  [%ins p.ted (snag p.ted buf)]
     %ins  [%del p.ted]
@@ -97,7 +97,7 @@
 ::
 ++  receive                                           ::  naturalize event
   |=  sole-change
-  ^-  {sole-edit sole-share}
+  ^-  [sole-edit sole-share]
   ?.  &(=(his.ler his.ven) (lte own.ler own.ven))
     ~|  [%receive-sync his+[his.ler his.ven] own+[own.ler own.ven]]
     !!
@@ -110,8 +110,8 @@
   [dat abet:(apply(his.ven +(his.ven)) dat)]
 ::
 ++  remit                                             ::  conditional accept
-  |=  {cal=sole-change ask=$-((list @c) ?)}
-  ^-  {(unit sole-change) sole-share}
+  |=  [cal=sole-change ask=$-((list @c) ?)]
+  ^-  [(unit sole-change) sole-share]
   =+  old=buf
   =^  dat  +>+<.$  (receive cal)
   ?:  (ask buf)
@@ -121,12 +121,12 @@
 ::
 ++  transmit                                          ::  outgoing change
   |=  ted=sole-edit
-  ^-  {sole-change sole-share}
+  ^-  [sole-change sole-share]
   [[[his.ven own.ven] (sham buf) ted] (commit ted)]
 ::
 ++  transceive                                        ::  receive and invert
   |=  sole-change
-  ^-  {sole-edit sole-share}
+  ^-  [sole-edit sole-share]
   =+  old=buf
   =^  dat  +>+<.$  (receive +<.$)
   [(inverse(buf old) dat) +>+<.$]

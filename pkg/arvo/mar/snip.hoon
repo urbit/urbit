@@ -7,7 +7,7 @@
   ++  words  1
   ++  hedtal
     =|  met=marl
-    |=  a=marl  ^-  {hed=marl tal=marl}
+    |=  a=marl  ^-  [hed=marl tal=marl]
     ?~  a  [~ ~]
     ?.  ?=(%h1 n.g.i.a)
       ?:  ?=(%meta n.g.i.a)
@@ -18,19 +18,19 @@
     [c.i.a (weld (flop met) (limit words t.a))]
   ::
   ++  limit
-    |=  {lim=@u mal=marl}
+    |=  [lim=@u mal=marl]
     =<  res
-    |-  ^-  {rem=@u res=marl}
+    |-  ^-  [rem=@u res=marl]
     ?~  mal  [lim ~]
     ?~  lim  [0 ~]
-    =/  {lam=@u hed=manx}
+    =/  [lam=@u hed=manx]
       ?:  ?=(_;/(**) i.mal)
         [lim ;/(tay)]:(deword lim v.i.a.g.i.mal)
       [rem ele(c res)]:[ele=i.mal $(mal c.i.mal)]
     [rem - res]:[hed $(lim lam, mal t.mal)]
   ::
   ++  deword
-    |=  {lim=@u tay=tape}  ^-  {lim=@u tay=tape}
+    |=  [lim=@u tay=tape]  ^-  [lim=@u tay=tape]
     ?~  tay  [lim tay]
     ?~  lim  [0 ~]
     =+  wer=(dot 1^1 tay)
@@ -42,7 +42,7 @@
 ::
 ::
 =,  mimes:html
-|_  {hed=marl tal=marl}
+|_  [hed=marl tal=marl]
 ++  grad  %mime
 ::
 ++  grow                                                ::  convert to
@@ -57,6 +57,6 @@
     --
   --
 ++  grab  |%                                            ::  convert from
-          ++  noun  {marl marl}                         ::  clam from %noun
+          ++  noun  [marl marl]                         ::  clam from %noun
           ++  elem  |=(a=manx (hedtal +.a))
 --        --

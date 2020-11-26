@@ -9,7 +9,7 @@
 ::  Like +rose except also produces line number
 ::
 ++  lily
-  |*  {los=tape sab=rule}
+  |*  [los=tape sab=rule]
   =+  vex=(sab [[1 1] los])
   ?~  q.vex
     [%| p=p.vex(q (dec q.p.vex))]

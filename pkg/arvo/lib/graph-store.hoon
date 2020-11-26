@@ -8,11 +8,11 @@
 ::  NOTE: move these functions to zuse
 ++  nu                                              ::  parse number as hex
   |=  jon=json
-  ?>  ?=({%s *} jon)
+  ?>  ?=([%s *] jon)
   (rash p.jon hex)
 ::
 ++  re                                                ::  recursive reparsers
-  |*  {gar=* sef=_|.(fist:dejs-soft:format)}
+  |*  [gar=* sef=_|.(fist:dejs-soft:format)]
   |=  jon=json
   ^-  (unit _gar)
   =-  ~!  gar  ~!  (need -)  -

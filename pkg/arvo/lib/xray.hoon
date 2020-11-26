@@ -1319,7 +1319,7 @@
     ::
     =^  i=xkey  st
       ^-  [xkey xtable]
-      %+  (fold {xkey xtable} xkey)
+      %+  (fold ,[xkey xtable] xkey)
         [[void st] ~(tap in fork)]
       |=  [[k=xkey tbl=xtable] branch=xkey]
       ^-  [xkey xtable]
@@ -1417,8 +1417,8 @@
   ::  coherent `xrole` (where possible, otherwise a %misjunction).
   ::
   ::  This often needs to restructure things. For example, if we are
-  ::  combining `{{~ ~} {%a ~}}` and `{{~ ~} {%b ~}}`, we should produce
-  ::  `{{~ ~} ?%({%a ~} {%b ~})}`.
+  ::  combining `[[~ ~] [%a ~]]` and `[[~ ~] [%b ~]]`, we should produce
+  ::  `[[~ ~] ?%([%a ~] [%b ~])]`.
   ::
   ::  This is a massive switch on the xroles of the two arguments. This
   ::  is *very* easy to get wrong, so I structured things this in a

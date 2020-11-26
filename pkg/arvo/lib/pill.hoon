@@ -101,11 +101,11 @@
       =;  cot  [[(flop `path`tyl) `[/text/plain cot]] hav]
       ^-  octs
       ?-    tyl
-          {%json *}
+          [%json *]
         =/  dat  .^(json %cx pax)
         (as-octt:mimes:html (en-json:html dat))
       ::
-          {%txt *}
+          [%txt *]
         =/  dat  .^(wain %cx pax)
         (as-octs:mimes:html (of-wain:format dat))
       ::

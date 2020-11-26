@@ -419,7 +419,7 @@
 ::  +render-tang-to-marl: renders a tang and adds <br/> tags between each line
 ::
 ++  render-tang-to-marl
-  |=  {wid=@u tan=tang}
+  |=  [wid=@u tan=tang]
   ^-  marl
   =/  raw=(list tape)  (zing (turn tan |=(a=tank (wash 0^wid a))))
   ::
@@ -429,7 +429,7 @@
 ::  +render-tang-to-wall: renders tang as text lines
 ::
 ++  render-tang-to-wall
-  |=  {wid=@u tan=tang}
+  |=  [wid=@u tan=tang]
   ^-  wall
   (zing (turn tan |=(a=tank (wash 0^wid a))))
 ::  +wall-to-octs: text to binary output

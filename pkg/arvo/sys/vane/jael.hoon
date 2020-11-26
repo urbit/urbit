@@ -272,7 +272,7 @@
     ::        =seed
     ::        spon=ship
     ::        czar=(map ship [=rift =life =pass])
-    ::        turf=(list turf)}
+    ::        turf=(list turf)
     ::        bloq=@ud
     ::        node=purl
     ::    ==
@@ -433,7 +433,7 @@
       (sources:~(feel su hen our now pki etn) [whos source]:tac)
     ::
     ::  cancel all trackers from duct
-    ::    {%nuke whos=(set ship)}
+    ::    [%nuke whos=(set ship)]
     ::
         %nuke
       =/  ships=(list ship)
@@ -522,13 +522,13 @@
       +>.$
     ::
     ::  watch private keys
-    ::    {%private-keys ~}
+    ::    [%private-keys ~]
     ::
         %private-keys
       (curd abet:~(private-keys ~(feed su hen our now pki etn) hen))
     ::
     ::  authenticated remote request
-    ::    {%west p=ship q=path r=*}
+    ::    [%west p=ship q=path r=*]
     ::
         %plea
       =*  her  ship.tac
@@ -656,7 +656,7 @@
     +>.$(moz [move moz])
   ::
   ++  exec                                              ::  mass gift
-    |=  {yen=(set duct) cad=card}
+    |=  [yen=(set duct) cad=card]
     =/  noy  ~(tap in yen)
     |-  ^+  this-su
     ?~  noy  this-su

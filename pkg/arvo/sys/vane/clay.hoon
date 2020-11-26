@@ -21,7 +21,7 @@
 ::
 +$  ankh                                                ::  expanded node
   $~  [~ ~]
-  $:  fil=(unit {p=lobe q=cage})                        ::  file
+  $:  fil=(unit [p=lobe q=cage])                        ::  file
       dir=(map @ta ankh)                                ::  folders
   ==                                                    ::
 ::
@@ -64,7 +64,7 @@
 ::  Includes subscriber list, dome (desk content), possible commit state (for
 ::  local changes), possible merge state (for incoming merges), and permissions.
 ::
-++  dojo
++$  dojo
   $:  qyx=cult                                          ::  subscribers
       dom=dome                                          ::  desk state
       per=regs                                          ::  read perms per path
@@ -82,7 +82,7 @@
 ::  having changed; this lets us short-circuit that in some cases.
 ::  Whenever you give an `%ergo`, you must update this.
 ::
-++  dome
++$  dome
   $:  ank=ankh                                          ::  state
       let=aeon                                          ::  top id
       hit=(map aeon tako)                               ::  versions by id
@@ -101,7 +101,7 @@
 ::  --  `dif` is the diffs in `dig` applied to their files.
 ::  --  `mut` is the diffs between `muc` and the original files.
 ::
-++  dork                                                ::  diff work
++$  dork                                                ::  diff work
   $:  del=(list path)                                   ::  deletes
       ink=(list (pair path cage))                       ::  hoon inserts
       ins=(list (pair path cage))                       ::  inserts
@@ -130,7 +130,7 @@
 ::
 ::  Hash of a blob, for lookup in the object store (lat.ran)
 ::
-++  lobe  @uvI                                          ::  blob ref
++$  lobe  @uvI                                          ::  blob ref
 ::
 ::  New desk data.
 ::
@@ -138,7 +138,7 @@
 ::  of all new aeons to hashes of their commits, the most recent aeon, and sets
 ::  of all new commits and data.
 ::
-++  nako                                                ::  subscription state
++$  nako                                                ::  subscription state
   $:  gar=(map aeon tako)                               ::  new ids
       let=aeon                                          ::  next id
       lar=(set yaki)                                    ::  new commits
@@ -157,7 +157,7 @@
 ::  --  `cez` is a collection of named permission groups.
 ::  --  `pud` is an update that's waiting on a kernel upgrade
 ::
-++  raft                                                ::  filesystem
++$  raft                                                ::  filesystem
   $:  rom=room                                          ::  domestic
       hoy=(map ship rung)                               ::  foreign
       ran=rang                                          ::  hashes
@@ -172,17 +172,17 @@
 ::
 ::  Maps of commit hashes to commits and content hashes to content.
 ::
-++  rang                                                ::
++$  rang                                                ::
   $:  hut=(map tako yaki)                               ::
       lat=(map lobe blob)                               ::
   ==                                                    ::
 ::
 ::  Unvalidated response to a request.
 ::
-::  Like a ++rant, but with a page of data rather than a cage of it.
+::  Like a +$rant, but with a page of data rather than a cage of it.
 ::
-++  rand                                                ::  unvalidated rant
-          $:  p={p=care q=case r=@tas}                  ::  clade release book
++$  rand                                                ::  unvalidated rant
+          $:  p=[p=care q=case r=@tas]                  ::  clade release book
               q=path                                    ::  spur
               r=page                                    ::  data
           ==                                            ::
@@ -201,7 +201,7 @@
 ::  --  `dom` is the actual state of the filetree.  Since this is used almost
 ::      exclusively in `++ze`, we describe it there.
 ::
-++  rede                                                ::  universal project
++$  rede                                                ::  universal project
           $:  lim=@da                                   ::  complete to
               ref=(unit rind)                           ::  outgoing requests
               qyx=cult                                  ::  subscribers
@@ -238,7 +238,7 @@
 ::
 ::  Result of a subscription
 ::
-++  sub-result
++$  sub-result
   $%  [%blab =mood data=(each cage lobe)]
       [%bleb ver=@ud ins=@ud range=(unit (pair aeon aeon))]
       [%balk cage=(unit (each cage lobe)) =mood]
@@ -250,19 +250,19 @@
 ::
 ::  `hun` is the duct to dill, and `dos` is a collection of our desks.
 ::
-++  room                                                ::  fs per ship
++$  room                                                ::  fs per ship
           $:  hun=duct                                  ::  terminal duct
               dos=(map desk dojo)                       ::  native desk
           ==                                            ::
 ::
 ::  Stored request.
 ::
-::  Like a ++rave but with caches of current versions for %next and %many.
+::  Like a +$rave but with caches of current versions for %next and %many.
 ::  Generally used when we store a request in our state somewhere.
 ::
-++  cach  (unit (unit (each cage lobe)))                ::  cached result
++$  cach  (unit (unit (each cage lobe)))                ::  cached result
 +$  wove  [for=(unit [=ship ver=@ud]) =rove]            ::  stored source + req
-++  rove                                                ::  stored request
++$  rove                                                ::  stored request
           $%  [%sing =mood]                             ::  single request
               [%next =mood aeon=(unit aeon) =cach]      ::  next version of one
               $:  %mult                                 ::  next version of any
@@ -276,12 +276,12 @@
 ::
 ::  Foreign desk data.
 ::
-++  rung
++$  rung
           $:  rus=(map desk rede)                       ::  neighbor desks
           ==
 ::
-++  move  {p=duct q=(wind note gift:able)}              ::  local move
-++  note                                                ::  out request $->
++$  move  [p=duct q=(wind note gift:able)]              ::  local move
++$  note                                                ::  out request $->
   $~  [%b %wait *@da]                                   ::
   $%  $:  %a                                            ::  to %ames
           $>(%plea task:able:ames)                      ::
@@ -311,8 +311,8 @@
       $:  %j                                            ::  by %jael
           $>(%public-keys task:able:jael)               ::
   ==  ==                                                ::
-++  riot  (unit rant)                                   ::  response+complete
-++  sign                                                ::  in result $<-
++$  riot  (unit rant)                                   ::  response+complete
++$  sign                                                ::  in result $<-
   $~  [%b %wake ~]                                      ::
   $%  $:  %a                                            ::  by %ames
           $>  $?  %boon                                 ::  response
@@ -1023,7 +1023,7 @@
   ::  Handle `%sing` requests
   ::
   ++  aver
-    |=  {for=(unit ship) mun=mood}
+    |=  [for=(unit ship) mun=mood]
     ^-  [(unit (unit (each cage lobe))) ford-cache]
     =+  ezy=?~(ref ~ (~(get by haw.u.ref) mun))
     ?^  ezy
@@ -1057,7 +1057,7 @@
   ::  Producing null means subscription has been completed or cancelled.
   ::
   ++  balk
-    |=  {hen=duct cay=(unit (each cage lobe)) mun=mood}
+    |=  [hen=duct cay=(unit (each cage lobe)) mun=mood]
     ^+  +>
     ?~  cay  (blub hen)
     (blab hen mun u.cay)
@@ -1065,13 +1065,13 @@
   ::  Set timer.
   ::
   ++  bait
-    |=  {hen=duct tym=@da}
+    |=  [hen=duct tym=@da]
     (emit hen %pass /tyme/(scot %p her)/[syd] %b %wait tym)
   ::
   ::  Cancel timer.
   ::
   ++  best
-    |=  {hen=duct tym=@da}
+    |=  [hen=duct tym=@da]
     (emit hen %pass /tyme/(scot %p her)/[syd] %b %rest tym)
   ::
   ::  Give subscription result.
@@ -1141,7 +1141,7 @@
     ==
   ::
   ++  blas
-    |=  {hen=duct das=(set mood)}
+    |=  [hen=duct das=(set mood)]
     ^+  +>
     ?>  ?=(^ das)
     ::  translate the case to a date
@@ -1180,8 +1180,8 @@
   ::  in `subs`.
   ::
   ++  duct-lift
-    |*  send=_|=({duct *} ..duct-lift)
-    |=  {a=(set duct) arg=_+<+.send}  ^+  ..duct-lift
+    |*  send=_|=([duct *] ..duct-lift)
+    |=  [a=(set duct) arg=_+<+.send]  ^+  ..duct-lift
     =+  all=~(tap by a)
     |-  ^+  ..duct-lift
     ?~  all  ..duct-lift
@@ -1255,7 +1255,7 @@
       =+  aey=(case-to-aeon case.mood.rov)
       ?~  aey  ~
       %-  ~(rep in ~(key by qyx))
-      |=  {haw=wove res=(unit wove)}
+      |=  [haw=wove res=(unit wove)]
       ?^  res  res
       ?.  =(for.wov for.haw)  ~
       =*  hav  rove.haw
@@ -1273,7 +1273,7 @@
       =+  aey=(case-to-aeon case.mool.rov)
       ?~  aey  ~
       %-  ~(rep in ~(key by qyx))
-      |=  {haw=wove res=(unit wove)}
+      |=  [haw=wove res=(unit wove)]
       ?^  res  res
       ?.  =(for.wov for.haw)  ~
       =*  hav  rove.haw
@@ -1296,7 +1296,7 @@
       =+  aey=(case-to-aeon from.moat.rov)
       ?~  aey  ~
       %-  ~(rep in ~(key by qyx))
-      |=  {haw=wove res=(unit wove)}
+      |=  [haw=wove res=(unit wove)]
       ?^  res  res
       ?.  =(for.wov for.haw)  ~
       =*  hav  rove.haw
@@ -2576,7 +2576,7 @@
     ^-  (map term (pair @ud (set path)))
     %-  malt  ^-  (list (trel term @ud (set path)))
     %+  murn  ~(tap by mon)
-    |=  {nam=term bem=beam}
+    |=  [nam=term bem=beam]
     ^-  (unit (trel term @ud (set path)))
     =-  ?~(- ~ `[nam (lent s.bem) (silt `(list path)`-)])
     %+  skim  can
@@ -2606,7 +2606,7 @@
   ::  Set permissions for a node.
   ::
   ++  perm
-    |=  {pax=path rit=rite}
+    |=  [pax=path rit=rite]
     ^+  +>
     =/  mis=(set @ta)
       %+  roll
@@ -2616,7 +2616,7 @@
           %w    who:(fall wit.rit *rule)
           %rw   (~(uni in who:(fall red.rit *rule)) who:(fall wit.rit *rule))
         ==
-      |=  {w=whom s=(set @ta)}
+      |=  [w=whom s=(set @ta)]
       ?:  |(?=(%& -.w) (~(has by cez) p.w))  s
       (~(put in s) p.w)
     ?^  mis
@@ -2626,7 +2626,7 @@
         +>.$
       =-  (emit hen %give %done `[%perm-fail [%leaf "No such group(s): {-}"]~])
       %+  roll  ~(tap in `(set @ta)`mis)
-      |=  {g=@ta t=tape}
+      |=  [g=@ta t=tape]
       ?~  t  (trip g)
       :(weld t ", " (trip g))
     ::  TODO remove this nasty hack
@@ -2642,7 +2642,7 @@
     ==
   ::
   ++  put-perm
-    |=  {pes=regs pax=path new=(unit rule)}
+    |=  [pes=regs pax=path new=(unit rule)]
     ?~  new  (~(del by pes) pax)
     (~(put by pes) pax u.new)
   ::
@@ -2656,7 +2656,7 @@
     ==
   ::
   ++  forget-crew-in
-    |=  {nom=@ta pes=regs}
+    |=  [nom=@ta pes=regs]
     %-  ~(run by pes)
     |=  r=rule
     r(who (~(del in who.r) |+nom))
@@ -2671,7 +2671,7 @@
     =^  wos=(list wove)  qyx
       :_  (~(run by qyx) |=(a=(set duct) (~(del in a) hen)))
       %-  ~(rep by qyx)
-      |=  {{a=wove b=(set duct)} c=(list wove)}
+      |=  [[a=wove b=(set duct)] c=(list wove)]
       ?.((~(has in b) hen) c [a c])
     ::
     ?~  ref
@@ -3259,7 +3259,7 @@
       ::
       ::  know about file in cach
       ::
-      ++  know  |=({(pair care path) c=cach} ?=(^ c))
+      ++  know  |=([(pair care path) c=cach] ?=(^ c))
       ::
       ::  fill in the blanks
       ::
@@ -3385,7 +3385,7 @@
     ::  Checks whether two pieces of data (either cages or lobes) are the same.
     ::
     ++  equivalent-data
-      |=  {one=(each cage lobe) two=(each cage lobe)}
+      |=  [one=(each cage lobe) two=(each cage lobe)]
       ^-  ?
       ?:  ?=(%& -.one)
         ?:  ?=(%& -.two)
@@ -3398,7 +3398,7 @@
     ::  Gets a map of the data at the given path and all children of it.
     ::
     ++  lobes-at-path
-      |=  {for=(unit ship) yon=aeon pax=path}
+      |=  [for=(unit ship) yon=aeon pax=path]
       ^-  (map path lobe)
       ?:  =(0 yon)  ~
       ::  we use %z for the check because it looks at all child paths.
@@ -3409,7 +3409,7 @@
         =<  q
         %-  aeon-to-yaki
         yon
-      |=  {p=path q=lobe}
+      |=  [p=path q=lobe]
       ?|  ?=(~ pax)
           ?&  !?=(~ p)
               =(-.pax -.p)
@@ -3477,15 +3477,15 @@
     ::  already in `b`.
     ::
     ++  new-lobes                                       ::  object hash set
-      |=  {b=(set lobe) a=(set tako)}                   ::  that aren't in b
+      |=  [b=(set lobe) a=(set tako)]                   ::  that aren't in b
       ^-  (set lobe)
       %+  roll  ~(tap in a)
-      |=  {tak=tako bar=(set lobe)}
+      |=  [tak=tako bar=(set lobe)]
       ^-  (set lobe)
       =+  yak=(tako-to-yaki tak)
       %+  roll  ~(tap by q.yak)
       =<  .(far bar)
-      |=  {{path lob=lobe} far=(set lobe)}
+      |=  [[path lob=lobe] far=(set lobe)]
       ^-  (set lobe)
       ?~  (~(has in b) lob)                             ::  don't need
         far
@@ -3566,14 +3566,14 @@
       (read-p-in pax pew.red)
     ::
     ++  read-p-in
-      |=  {pax=path pes=regs}
+      |=  [pax=path pes=regs]
       ^-  dict
       =/  rul=(unit rule)  (~(get by pes) pax)
       ?^  rul
         :+  pax  mod.u.rul
         %-  ~(rep in who.u.rul)
-        |=  {w=whom out=(pair (set ship) (map @ta crew))}
-        ?:  ?=({%& @p} w)
+        |=  [w=whom out=(pair (set ship) (map @ta crew))]
+        ?:  ?=([%& @p] w)
           [(~(put in p.out) +.w) q.out]
         =/  cru=(unit crew)  (~(get by cez.ruf) +.w)
         ?~  cru  out
@@ -3582,7 +3582,7 @@
       $(pax (scag (dec (lent pax)) `path`pax))
     ::
     ++  may-read
-      |=  {who=ship car=care yon=aeon pax=path}
+      |=  [who=ship car=care yon=aeon pax=path]
       ^-  ?
       ?+  car
         (allowed-by who pax per.red)
@@ -3597,7 +3597,7 @@
         =+  len=(lent pax)
         =-  (levy ~(tap in -) |=(p=path (allowed-by who p per.red)))
         %+  roll  ~(tap in (~(del in ~(key by q.yak)) pax))
-        |=  {p=path s=(set path)}
+        |=  [p=path s=(set path)]
         ?.  =(pax (scag len p))  s
         %-  ~(put in s)
         ?:  ?=(%z car)  p
@@ -3605,18 +3605,18 @@
       ==
     ::
     ++  may-write
-      |=  {w=ship p=path}
+      |=  [w=ship p=path]
       (allowed-by w p pew.red)
     ::
     ++  allowed-by
-      |=  {who=ship pax=path pes=regs}
+      |=  [who=ship pax=path pes=regs]
       ^-  ?
       =/  rul=real  rul:(read-p-in pax pes)
       =/  in-list/?
         ?|  (~(has in p.who.rul) who)
           ::
             %-  ~(rep by q.who.rul)
-            |=  {{@ta cru=crew} out=_|}
+            |=  [[@ta cru=crew] out=_|]
             ?:  out  &
             (~(has in cru) who)
         ==
@@ -3632,9 +3632,9 @@
       =/  descendants=(list (pair path lobe))
           %+  turn
             %+  skim  ~(tap by (~(del by q.yaki) pax))
-            |=  {paf=path lob=lobe}
+            |=  [paf=path lob=lobe]
             =(pax (scag len paf))
-          |=  {paf=path lob=lobe}
+          |=  [paf=path lob=lobe]
           [(slag len paf) lob]
       =+  us=(~(get by q.yaki) pax)
       ?:  &(?=(~ descendants) ?=(~ us))
@@ -3642,7 +3642,7 @@
       %+  roll
         ^-  (list (pair path lobe))
         [[~ ?~(us *lobe u.us)] descendants]
-      |=({{path lobe} @uvI} (shax (jam +<)))
+      |=([[path lobe] @uvI] (shax (jam +<)))
     ::  +read-r: %x wrapped in a vase
     ::
     ++  read-r
@@ -3765,15 +3765,15 @@
     ::  of the data is legit. We also never send the mime cache over the wire.
     ::
     ++  read-v
-      |=  {yon=aeon pax=path}
-      ^-  (unit (unit {%dome (hypo dome:clay)}))
+      |=  [yon=aeon pax=path]
+      ^-  (unit (unit [%dome (hypo dome:clay)]))
       ?:  (lth yon let.dom)
         :*  ~  ~  %dome  -:!>(*dome:clay)
             ^-  dome:clay
             :*  ank=`[[%ank-in-old-v-not-implemented *ankh] ~ ~]
                 let=yon
-                hit=(molt (skim ~(tap by hit.dom) |=({p=@ud *} (lte p yon))))
-                lab=(molt (skim ~(tap by lab.dom) |=({* p=@ud} (lte p yon))))
+                hit=(molt (skim ~(tap by hit.dom) |=([p=@ud *] (lte p yon))))
+                lab=(molt (skim ~(tap by lab.dom) |=([* p=@ud] (lte p yon))))
         ==  ==
       ?:  (gth yon let.dom)
         ~
@@ -3814,7 +3814,7 @@
         :-  ~
         %+  bind
           fil.ank:(descend-path:(zu ank.dom) pax)
-        |=(a={p=lobe q=cage} [%& q.a])
+        |=(a=[p=lobe q=cage] [%& q.a])
       =+  yak=(tako-to-yaki u.tak)
       =+  lob=(~(get by q.yak) pax)
       ?~  lob
@@ -3843,8 +3843,8 @@
     ::  Gets an arch (directory listing) at a node.
     ::
     ++  read-y
-      |=  {yon=aeon pax=path}
-      ^-  (unit (unit {%arch (hypo arch)}))
+      |=  [yon=aeon pax=path]
+      ^-  (unit (unit [%arch (hypo arch)]))
       ?:  =(0 yon)
         ``[%arch -:!>(*arch) *arch]
       =+  tak=(~(get by hit.dom) yon)
@@ -3862,17 +3862,17 @@
       %+  turn
         ^-  (list (pair path lobe))
         %+  skim  ~(tap by (~(del by q.yak) pax))
-        |=  {paf=path lob=lobe}
+        |=  [paf=path lob=lobe]
         =(pax (scag len paf))
-      |=  {paf=path lob=lobe}
+      |=  [paf=path lob=lobe]
       =+  pat=(slag len paf)
       [?>(?=(^ pat) i.pat) ~]
     ::
     ::  Gets a recursive hash of a node and all its children.
     ::
     ++  read-z
-      |=  {yon=aeon pax=path}
-      ^-  (unit (unit {%uvi (hypo @uvI)}))
+      |=  [yon=aeon pax=path]
+      ^-  (unit (unit [%uvi (hypo @uvI)]))
       ?:  =(0 yon)
         ``uvi+[-:!>(*@uvI) *@uvI]
       =+  tak=(~(get by hit.dom) yon)
@@ -4006,7 +4006,7 @@
   ::
       %crow
     =/  des  ~(tap by dos.rom.ruf)
-    =|  rus=(map desk {r=regs w=regs})
+    =|  rus=(map desk [r=regs w=regs])
     |^
       ?~  des  [[hen %give %croz rus]~ ..^^$]
       =+  per=(filter-rules per.q.i.des)
@@ -4020,7 +4020,7 @@
       ^+  pes
       =-  (~(gas in *regs) -)
       %+  skim  ~(tap by pes)
-      |=  {p=path r=rule}
+      |=  [p=path r=rule]
       (~(has in who.r) |+nom.req)
     --
   ::
@@ -4116,7 +4116,7 @@
         ==
     %+  turn
       (skim ~(tap by mon.ruf) (corl (cury test pot) tail))
-    |=  {pon=term bem=beam}
+    |=  [pon=term bem=beam]
     [u.hez.ruf %give %ogre pon]
   ::
       %park
@@ -4468,7 +4468,7 @@
     ==
   +$  rind-3
     $:  nix=@ud
-        bom=(map @ud {p=duct q=rave})
+        bom=(map @ud [p=duct q=rave])
         fod=(map duct @ud)
         haw=(map mood (unit cage))
     ==
@@ -4523,7 +4523,7 @@
     ==                                                  ::
   +$  rind-2
     $:  nix=@ud                                         ::  request index
-        bom=(map @ud {p=duct q=rave})                   ::  outstanding
+        bom=(map @ud [p=duct q=rave])                   ::  outstanding
         fod=(map duct @ud)                              ::  current requests
         haw=(map mood (unit cage))                      ::  simple cache
         pud=update-qeu-2                                ::  active updates

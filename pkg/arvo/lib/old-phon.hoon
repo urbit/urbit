@@ -66,7 +66,7 @@
   |%
   ++  hif  (boss 256 ;~(plug tip tiq (easy ~)))
   ++  huf  %+  cook
-             |=({a=@ b=@} (wred:un ~(zug mu ~(zag mu [a b]))))
+             |=([a=@ b=@] (wred:un ~(zug mu ~(zag mu [a b]))))
            ;~(plug hif ;~(pfix hep hif))
   ++  hyf  (bass 0x1.0000.0000 ;~(plug huf ;~(pfix hep huf) (easy ~)))
   ++  tip  (sear |=(a=@ (ins:po a)) til)
@@ -87,7 +87,7 @@
   --
 ::
 ++  mu
-  |_  {top=@ bot=@}
+  |_  [top=@ bot=@]
   ++  zag  [p=(end 4 1 (add top bot)) q=bot]
   ++  zig  [p=(end 4 1 (add top (sub 0x1.0000 bot))) q=bot]
   ++  zug  (mix (lsh 4 1 top) bot)
@@ -105,9 +105,9 @@
     =>  .(len (dec len))
     =+  mig=(zaft (xafo len (cut 3 [len 1] pyn)))
     %+  can  3
-    %-  flop  ^-  (list {@ @})
+    %-  flop  ^-  (list [@ @])
     :-  [1 mig]
-    |-  ^-  (list {@ @})
+    |-  ^-  (list [@ @])
     ?:  =(0 len)
       ~
     =>  .(len (dec len))
@@ -122,17 +122,17 @@
     =>  .(len (dec len))
     =+  mig=(cut 3 [len 1] cry)
     %+  can  3
-    %-  flop  ^-  (list {@ @})
+    %-  flop  ^-  (list [@ @])
     :-  [1 (xaro len (zart mig))]
-    |-  ^-  (list {@ @})
+    |-  ^-  (list [@ @])
     ?:  =(0 len)
       ~
     =>  .(len (dec len))
     =+  mog=(cut 3 [len 1] cry)
     [[1 :(mix mig (end 3 1 len) (zyrt mog))] $(mig mog)]
   ::
-  ++  xafo  |=({a=@ b=@} +((mod (add (dec b) a) 255)))
-  ++  xaro  |=({a=@ b=@} +((mod (add (dec b) (sub 255 (mod a 255))) 255)))
+  ++  xafo  |=([a=@ b=@] +((mod (add (dec b) a) 255)))
+  ++  xaro  |=([a=@ b=@] +((mod (add (dec b) (sub 255 (mod a 255))) 255)))
   ::
   ++  zaft                                              ::  forward 255-sbox
     |=  a=@D

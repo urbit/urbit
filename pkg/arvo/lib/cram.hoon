@@ -1,6 +1,6 @@
 |%
 ++  static                                              :: freeze .mdh hoon subset
-  |=  gen=hoon  ^-  {inf=(map term dime) elm=manx}
+  |=  gen=hoon  ^-  [inf=(map term dime) elm=manx]
   ?+    -.gen
       =/  gen  ~(open ap gen)
       ?:  =(gen ^gen)  ~|([%cram-dynamic -.gen] !!)
@@ -12,11 +12,11 @@
 ::
 ++  single                                              :: unwrap one-elem marl
   |=  xml=marl  ^-  manx
-  ?:  ?=({* ~} xml)  i.xml
+  ?:  ?=([* ~] xml)  i.xml
   ~|(%many-elems !!)
 ::
 ++  shut-mart                                           :: xml attrs
-  |=({n=mane v=(list beer:hoot)} [n (turn v |=(a=beer:hoot ?^(a !! a)))])
+  |=([n=mane v=(list beer:hoot)] [n (turn v |=(a=beer:hoot ?^(a !! a)))])
 ::
 ++  shut                                                :: as xml constant
   |=  gen=hoon  ^-  marl
@@ -39,8 +39,8 @@
 ::
 ::
 ++  frontmatter                                         :: parse ~[[%foo 1] [%bar ~s2]]
-  |=  gen=hoon  ^-  (list {term dime})
-  ?:  ?=({%bust %null} gen)  ~
+  |=  gen=hoon  ^-  (list [term dime])
+  ?:  ?=([%bust %null] gen)  ~
   ?:  ?=(%dbug -.gen)  $(gen q.gen)
   ?.  ?=(%clsg -.gen)  ~|([%bad-frontmatter -.gen] !!)
   %+  turn  p.gen
@@ -56,6 +56,6 @@
 ++  as-dime                                            :: %foo ~.foo 0vbar etc
   |=  gen=hoon  ^-  dime
   ?:  ?=(%dbug -.gen)  $(gen q.gen)
-  ?.  ?=({?(%rock %sand) @ @} gen)  ~|([%bad-literal gen] !!)
+  ?.  ?=([?(%rock %sand) @ @] gen)  ~|([%bad-literal gen] !!)
   +.gen
 --

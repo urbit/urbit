@@ -12,7 +12,7 @@
   (set-to-array group ship:enjs:format)
 ::
 ++  set-to-array
-  |*  {a=(set) b=$-(* json)}
+  |*  [a=(set) b=$-(* json)]
   ^-  json
   [%a (turn ~(tap in a) b)]
 --

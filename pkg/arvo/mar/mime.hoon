@@ -24,6 +24,6 @@
   ++  form  %mime
   ++  diff  |=(mime +<)
   ++  pact  |=(mime +<)
-  ++  join  |=({mime mime} `(unit mime)`~)
+  ++  join  |=([mime mime] `(unit mime)`~)
   --
 --

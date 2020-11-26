@@ -28,7 +28,7 @@
 ::  special handling for <pre urb:codemirror>foo</pre>
 ++  urb-codemirror                                      ::  render code blocks
   |=  src=manx  ^-  manx
-  ?>  ?=({{%pre *} _;/(**) ~} src)
+  ?>  ?=([[%pre *] _;/(**) ~] src)
   ;codemirror(value "{v.i.a.g.i.c.src}");
 ::
 ++  elem-to-react-json                                  ::  serialize DOM as json
@@ -42,7 +42,7 @@
     c+a+(turn c.src ..$)
     gn+s+(mane-to-cord n.g.src)
     =<  ga+(pairs:enjs (turn a.g.src .))
-    |=  {a=mane b=tape}  ^-  {cord json}
+    |=  [a=mane b=tape]  ^-  [cord json]
     :_  (tape:enjs b)
     ?^  a  (mane-to-cord a)
     (~(gut by react-attrs) a a)

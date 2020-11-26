@@ -13,7 +13,7 @@
   ?@  pri
     leaf+?:(((sane %tas) pri) <`@tas`pri> <pri>)
   =<  rose+[" " ?:(- "~[" "[") "]"]^+
-  |-  ^-  {? (list tank)}
+  |-  ^-  [? (list tank)]
   ?~  +.pri
     [& ^$(pri -.pri) ~]
   ?@  +.pri

@@ -122,7 +122,7 @@
   ==
 ::
 ++  poke-send-hi
-  |=  {her=ship mes=(unit tape)}  =<  abet
+  |=  [her=ship mes=(unit tape)]  =<  abet
   %-  emit
   :*  %pass  /helm/hi/(scot %p her)
       %agent  [her %hood]  %poke
@@ -146,26 +146,26 @@
   (flog %text "< {<src.bowl>}: atom: {len} bytes, mug {gum}")
 ::
 ++  coup-hi
-  |=  {pax=path cop=(unit tang)}  =<  abet
-  ?>  ?=({@t ~} pax)
+  |=  [pax=path cop=(unit tang)]  =<  abet
+  ?>  ?=([@t ~] pax)
   (flog %text "hi {(trip i.pax)} {?~(cop "" "un")}successful")
 ::
 ++  poke-reload  |=(all=(list term) (poke-reload-desk %home all))
 ++  poke-reload-desk                                 ::  reload vanes
-  |:  $:{syd=desk all=(list term)}  =<  abet
+  |:  $:,[syd=desk all=(list term)]  =<  abet
   %-  emil
   %+  turn  all
   =+  top=`path`/(scot %p our.bowl)/[syd]/(scot %da now.bowl)
-  =/  van=(list {term ~})
+  =/  van=(list [term ~])
     :-  zus=[%zuse ~]
     ~(tap by dir:.^(arch %cy (welp top /sys/vane)))
   |=  nam=@tas
     =.  nam
     ?.  =(1 (met 3 nam))
       nam
-    =/  zaz=(list {p=knot ~})
-        (skim van |=({a=term ~} =(nam (end 3 1 a))))
-    ?>  ?=({{@ ~} ~} zaz)
+    =/  zaz=(list [p=knot ~])
+        (skim van |=([a=term ~] =(nam (end 3 1 a))))
+    ?>  ?=([[@ ~] ~] zaz)
     `term`p.i.zaz
   =+  tip=(end 3 1 nam)
   =+  zus==('z' tip)

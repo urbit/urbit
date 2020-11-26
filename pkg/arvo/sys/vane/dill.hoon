@@ -4,10 +4,10 @@
 |=  pit=vase
 =,  dill
 =>  |%                                                  ::  interface tiles
-++  gill  (pair ship term)                              ::  general contact
++$  gill  (pair ship term)                              ::  general contact
 --                                                      ::
 =>  |%                                                  ::  console protocol
-++  axle                                                ::
++$  axle                                                ::
   $:  %4  ::TODO  replace ducts with session ids        ::
       hey=(unit duct)                                   ::  default duct
       dug=(map duct axon)                               ::  conversations
@@ -17,7 +17,7 @@
       $~  (~(put by *(map @tas log-level)) %hole %soft) ::  quiet packet crashes
       (map @tas log-level)                              ::
   ==                                                    ::
-++  axon                                                ::  dill per duct
++$  axon                                                ::  dill per duct
   $:  ram=term                                          ::  console program
       tem=(unit (list dill-belt))                       ::  pending, reverse
       wid=_80                                           ::  terminal width
@@ -27,11 +27,11 @@
 +$  log-level  ?(%hush %soft %loud)                     ::  none, line, full
 --  =>                                                  ::
 |%                                                      ::  protocol outward
-++  mess                                                ::
-  $%  {%dill-belt p=(hypo dill-belt)}                   ::
++$  mess                                                ::
+  $%  [%dill-belt p=(hypo dill-belt)]                   ::
   ==                                                    ::
-++  move  {p=duct q=(wind note gift:able)}              ::  local move
-++  note                                                ::  out request $->
++$  move  [p=duct q=(wind note gift:able)]              ::  local move
++$  note                                                ::  out request $->
   $~  [%d %verb ~]                                      ::
   $%  $:  %c                                            ::
           $>  $?  %merg                                 ::  merge desks
@@ -64,7 +64,7 @@
               ==                                        ::
           task:able:jael                                ::
   ==  ==                                                ::
-++  sign                                                ::  in result $<-
++$  sign                                                ::  in result $<-
   $~  [%j %init *@p]                                    ::
   $%  $:  %b                                            ::
           $%  $>(%writ gift:able:clay)                  ::  XX %slip
@@ -102,7 +102,7 @@
       =|  moz=(list move)
       |_  [hen=duct axon]
       ++  abet                                          ::  resolve
-        ^-  {(list move) axle}
+        ^-  [(list move) axle]
         [(flop moz) all(dug (~(put by dug.all) hen +<+))]
       ::
       ++  call                                          ::  receive input
@@ -127,7 +127,7 @@
         ==
       ::
       ++  crud
-        |=  {err=@tas tac=(list tank)}
+        |=  [err=@tas tac=(list tank)]
         ::  unknown errors default to %loud
         ::
         =/  lev=log-level  (~(gut by veb.all) err %loud)
@@ -261,7 +261,7 @@
         (deal /sync %poke %kiln-ota !>(`syn))
       ::
       ++  take                                          ::  receive
-        |=  {tea=wire sih=sign}
+        |=  [tea=wire sih=sign]
         ^+  +>
         ?-    sih
             [%j %init *]
@@ -269,14 +269,14 @@
           ::
           +>(moz :_(moz [hen %give +.sih]))
         ::
-            {%g %onto *}
+            [%g %onto *]
           ::  ~&  [%take-gall-onto +>.sih]
           ?-  -.+>.sih
             %|  (crud %onto p.p.+>.sih)
             %&  (done %blit [%lin (tuba "{<p.p.sih>}")]~)
           ==
         ::
-            {%g %unto *}
+            [%g %unto *]
           ::  ~&  [%take-gall-unto +>.sih]
           ?-  -.+>.sih
             %poke-ack   ?~(p.p.+>.sih +>.$ (crud %coup u.p.p.+>.sih))
@@ -287,18 +287,18 @@
             %fact       (from ;;(dill-blit q:`vase`+>+>.sih))
           ==
         ::
-            {%c %note *}
+            [%c %note *]
           (from %out (tuba p.sih ' ' ~(ram re q.sih)))
         ::
-            {?(%b %c) %writ *}
+            [?(%b %c) %writ *]
           init
         ::
-            {?(%b %c) %mere *}
+            [?(%b %c) %mere *]
           ?:  ?=(%& -.p.sih)
             mere
           (mean >%dill-mere-fail< >p.p.p.sih< q.p.p.sih)
         ::
-            {%d %blit *}
+            [%d %blit *]
           (done +.sih)
         ==
       --
@@ -528,7 +528,7 @@
 ++  stay  all
 ::
 ++  take                                                ::  process move
-  |=  {tea=wire hen=duct dud=(unit goof) hin=(hypo sign)}
+  |=  [tea=wire hen=duct dud=(unit goof) hin=(hypo sign)]
   ^+  [*(list move) ..^$]
   ?^  dud
     ~|(%dill-take-dud (mean tang.u.dud))

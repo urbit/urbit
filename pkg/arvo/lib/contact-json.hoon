@@ -3,7 +3,7 @@
 |%
 ++  nu                                              ::  parse number as hex
   |=  jon=json
-  ?>  ?=({%s *} jon)
+  ?>  ?=([%s *] jon)
   (rash p.jon hex)
 ::
 ++  hook-update-to-json

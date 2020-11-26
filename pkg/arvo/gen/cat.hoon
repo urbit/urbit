@@ -8,7 +8,7 @@
 ::::
   ::
 :-  %say
-|=  {^ {arg=(list path)} vane=?(%g %c)}
+|=  [^ [arg=(list path)] vane=?(%g %c)]
 =-  tang+(flop `tang`(zing -))
 %+  turn  arg
 |=  pax=path
@@ -22,7 +22,7 @@
     ~
   [rose+[" " `~]^~[leaf+"~" (smyt pax)]]~
 ::
-    {{@t ~} ~ ~}
+    [[@t ~] ~ ~]
   $(pax (welp pax /[p.n.dir.ark]))
 ::
     *
