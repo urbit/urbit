@@ -46,7 +46,8 @@
   ^-  (list test)
   ::  strip off leading 'tests' from :path
   ::
-  =.  path  ?>(?=([%tests *] path) t.path)
+  ?.  ?=([%tests *] path)  ~
+  =/  path  t.path  ::NOTE  TMI
   ::  for each test, add the test's name to :path
   ::
   %+  turn  test-arms
