@@ -5,6 +5,7 @@
 
 ## Notes
 Tested to work with `urbit/urbit` commit `d527b420580fb019db8aab397431180e6e6428eb`
+TODO: 959b585b384f66e54421f70f95d6d152077907bb
 Uses custom:
 - `sys/zuse.hoon`
   * new `decompress-key` from [https://github.com/yosoyubik/urbit/blob/decompress-point/pkg/arvo/sys/zuse.hoon]
@@ -24,7 +25,8 @@ First, install new zuse and bip32:
 ```
 
 ### Verify ECC and BIP32 Libs
-Verify `ecc` has the correct decompress-point gate. The below should yield: `0x3.30d5.4fd0.dd42.0a6e.5f8d.3624.f5f3.482c.ae35.0f79.d5f0.753b.f5be.ef9c.2d91.af3c`
+Verify `ecc` has the correct decompress-point gate. 
+The below should yield: `0x3.30d5.4fd0.dd42.0a6e.5f8d.3624.f5f3.482c.ae35.0f79.d5f0.753b.f5be.ef9c.2d91.af3c`
 ```
 =bip32 -build-file %/lib/bip32/hoon
 =ecc secp256k1:secp:crypto
@@ -53,3 +55,10 @@ The below calls will print RPC results.
 ::  second has no balance but is used
 ::  third is unused
 ```
+
+
+## INSTALL NOTES
+1. `mount %`
+2. `./install-zuse.sh $PIER`
+3. `|commit %home`, rebuilds kernel
+4. copy others
