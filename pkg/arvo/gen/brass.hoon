@@ -160,7 +160,7 @@
 ::
 ::  compiler-source: hoon source file producing compiler, `sys/hoon`
 ::
-=+  compiler-source=.^(@t %cx /(scot %p p.bec)/[q.bec]/(scot %da now)/not-sys/hoon/hoon)
+=+  compiler-source=.^(@t %cx (welp sys /hoon/hoon))
 ::
 ::  compiler-twig: compiler as hoon expression
 ::
