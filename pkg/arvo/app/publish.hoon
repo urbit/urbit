@@ -54,7 +54,7 @@
   ==
 ::
 +$  state-four
-  [state-three migrate=migration-state]  
+  [state-three migrate=migration-state]
 ::
 ::  $migration-state: resources that are unavailable because their host
 ::  has not processed the ota, and number of times we've tried to reach
@@ -249,8 +249,8 @@
         (~(put in ours) [resource nb])
       ::
       %_    $
-          p.old-state  
-        :+  %7  +.p.old-state 
+          p.old-state
+        :+  %7  +.p.old-state
         %-  ~(gas by *(map resource @ud))
         (turn ~(tap in theirs) (late 0))
         ::
@@ -265,10 +265,10 @@
           ^-  (list card)
           =/  =graph:graph-store
             (notebook-to-graph nb)
-          :~ 
+          :~
             %-  poke-graph-store
             :*  %0  date-created.nb  %add-graph
-                rid 
+                rid
                 graph
                 `%graph-validator-publish
                 %.y
@@ -363,7 +363,7 @@
       :-  when
       %*  .  *node:graph-store
         author.post  author.comment
-        index.post  ~[date-created.note %2 when] 
+        index.post  ~[date-created.note %2 when]
         time-sent.post  when
         contents.post  [%text content.comment]~
       ==
@@ -516,7 +516,7 @@
   ++  on-watch  on-watch:def
   ++  on-leave  on-leave:def
   ++  on-peek  on-peek:def
-  ++  on-agent  
+  ++  on-agent
     |=  [=wire =sign:agent:gall]
     ^-  (quip card _this)
     ?.  ?=([%graph-migrate *] wire)
@@ -542,7 +542,7 @@
     =/  wakeup=@da
       (add now.bol (mul ~s1 (bex (min 19 nack-count))))
     [%pass wire %arvo %b %wait wakeup]~
-  ::   
+  ::
   ++  on-arvo
     |=  [=wire =sign-arvo]
     ^-  (quip card _this)
@@ -552,7 +552,7 @@
       (de-path:resource t.wire)
     ?>  ?=([%b %wake *] sign-arvo)
     ~?  ?=(^ error.sign-arvo)
-      "behn errored in backoff timers, continuing anyway" 
+      "behn errored in backoff timers, continuing anyway"
     :_  this
     ~[(check-host-migrate:main rid)]
   ::
@@ -625,7 +625,7 @@
     :_  [group-path.group group-path.group]
     [(group-proxy-poke entity.rid %add-tag rid tag members.u.grp)]~
   ::
-  =/  =policy
+  =/  policy=create:policy
     *open:policy
   ?:  make-managed.group
     ?^  grp  [~ group-path.group group-path.group]
