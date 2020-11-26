@@ -1479,6 +1479,78 @@ u3r_tape(u3_noun a)
   return a_y;
 }
 
+/* u3r_gum_both(): Join two mugs.
+*/
+c3_l
+u3r_gum_both(c3_l lef_l, c3_l rit_l)
+{
+  c3_y len_y = 4 + ((c3_bits_word(rit_l) + 0x7) >> 3);
+  c3_w syd_w = 0xdeadbeef;
+  c3_w   i_w = 0;
+  c3_y buf_y[8];
+
+  buf_y[0] = lef_l         & 0xff;
+  buf_y[1] = (lef_l >>  8) & 0xff;
+  buf_y[2] = (lef_l >> 16) & 0xff;
+  buf_y[3] = (lef_l >> 24) & 0xff;
+  buf_y[4] = rit_l         & 0xff;
+  buf_y[5] = (rit_l >>  8) & 0xff;
+  buf_y[6] = (rit_l >> 16) & 0xff;
+  buf_y[7] = (rit_l >> 24) & 0xff;
+
+  while ( i_w < 8 ) {
+    c3_w haz_w;
+    c3_l ham_l;
+
+    MurmurHash3_x86_32(buf_y, len_y, syd_w, &haz_w);
+    ham_l = (haz_w >> 31) ^ (haz_w & 0x7fffffff);
+
+    if ( 0 == ham_l ) {
+      syd_w++; i_w++;
+    }
+    else {
+      return ham_l;
+    }
+  }
+
+  return 0xfffe;
+}
+
+/* u3r_gum_bytes(): Compute the mug of `buf`, `len`, LSW first.
+*/
+c3_l
+u3r_gum_bytes(const c3_y *buf_y,
+              c3_w        len_w)
+{
+  c3_w syd_w = 0xcafebabe;
+  c3_w   i_w = 0;
+
+  while ( i_w < 8 ) {
+    c3_w haz_w;
+    c3_l ham_l;
+
+    MurmurHash3_x86_32(buf_y, len_w, syd_w, &haz_w);
+    ham_l = (haz_w >> 31) ^ (haz_w & 0x7fffffff);
+
+    if ( 0 == ham_l ) {
+      syd_w++; i_w++;
+    }
+    else {
+      return ham_l;
+    }
+  }
+
+  return 0x7fff;
+}
+
+/* u3r_gum_c(): Compute the mug of `a`, LSB first.
+*/
+c3_l
+u3r_gum_c(const c3_c* a_c)
+{
+  return u3r_gum_bytes((c3_y*)a_c, strlen(a_c));
+}
+
 /* u3r_mug_bytes(): Compute the mug of `buf`, `len`, LSW first.
 */
 c3_w

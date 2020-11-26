@@ -192,6 +192,71 @@ _test_mug(void)
   return ret_i;
 }
 
+/* _test_mug(): spot check u3r_mug hashes.
+*/
+static c3_i
+_test_gum(void)
+{
+  c3_i ret_i = 1;
+
+  if ( 0x4d441035 != u3r_gum_c("Hello, world!") ) {
+    fprintf(stderr, "fail (a)\r\n");
+    ret_i = 0;
+  }
+
+  if ( 0x79ff04e8 != u3r_mug_bytes(0, 0) ) {
+    fprintf(stderr, "fail (c)\r\n");
+    ret_i = 0;
+  }
+
+  {
+    c3_y byt_y[1] = {1};
+
+    if ( 0x715c2a60 != u3r_mug_bytes(byt_y, 1) ) {
+      fprintf(stderr, "fail (c)\r\n");
+      ret_i = 0;
+    }
+
+    byt_y[0] = 2;
+
+    if ( 0x718b9468 != u3r_mug_bytes(byt_y, 1) ) {
+      fprintf(stderr, "fail (c)\r\n");
+      ret_i = 0;
+    }
+  }
+
+  {
+    if ( 0x64dfda5c != u3r_gum_c("xxxxxxxxxxxxxxxxxxxxxxxxxxxx") ) {
+      fprintf(stderr, "fail (d)\r\n");
+      ret_i = 0;
+    }
+  }
+
+  //  [0 0]
+  //
+  if ( 0x192f5588 != u3r_gum_both(0x79ff04e8, 0x79ff04e8) ) {
+    fprintf(stderr, "fail (e)\r\n");
+    ret_i = 0;
+  }
+
+  //  [1 1]
+  //
+  if ( 0x6b32ec46 != u3r_gum_both(0x715c2a60, 0x715c2a60) ) {
+    fprintf(stderr, "fail (f)\r\n");
+    ret_i = 0;
+  }
+
+  //  [2 2]
+  //
+  if ( 0x2effe10 != u3r_gum_both(0x718b9468, 0x718b9468) ) {
+    fprintf(stderr, "fail (f)\r\n");
+    ret_i = 0;
+  }
+
+  return ret_i;
+}
+
+
 /* main(): run all test cases.
 */
 int
@@ -200,6 +265,11 @@ main(int argc, char* argv[])
   _setup();
 
   if ( !_test_mug() ) {
+    fprintf(stderr, "test_mug: failed\r\n");
+    exit(1);
+  }
+
+  if ( !_test_gum() ) {
     fprintf(stderr, "test_mug: failed\r\n");
     exit(1);
   }

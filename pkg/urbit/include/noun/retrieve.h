@@ -34,6 +34,22 @@
         c3_o
         u3r_mean(u3_noun a, ...);
 
+      /* u3r_gum_both(): Join two mugs.
+      */
+        c3_l
+        u3r_gum_both(c3_l lef_l, c3_l rit_l);
+
+      /* u3r_gum_bytes(): Compute the mug of `buf`, `len`, LSW first.
+      */
+        c3_l
+        u3r_gum_bytes(const c3_y *buf_y,
+                      c3_w        len_w);
+
+      /* u3r_gum_c(): Compute the mug of `a`, LSB first.
+      */
+        c3_l
+        u3r_gum_c(const c3_c* a_c);
+
       /* u3r_mug_bytes(): Compute the mug of `buf`, `len`, LSW first.
       */
         c3_w
