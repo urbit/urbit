@@ -12865,10 +12865,6 @@
           wide
           ;~(pose ;~(pfix ace (most ace wyde)) (easy ~))
         ==
-      :-  '{'
-        ::  XX deprecated
-        ::
-        (stag %bccl (ifix [kel ker] (most ace wyde)))
       :-  '['
         (stag %bccl (ifix [sel ser] (most ace wyde)))
       :-  '*'
@@ -12967,8 +12963,6 @@
         (stag %sand (stag %t qut))
       :-  '('
         (stag %cncl (ifix [pal par] (most ace wide)))
-      :-  '{'
-        (stag %ktcl (stag %bccl (ifix [kel ker] (most ace wyde))))
       :-  '*'
         ;~  pose
           (stag %kttr ;~(pfix tar wyde))

@@ -6279,7 +6279,7 @@
      ::
           %o
         :-  '{'
-        =.  rez  [']' rez]
+        =.  rez  ['}' rez]
         =+  viz=~(tap by p.val)
         ?~  viz  rez
         !.
