@@ -86,7 +86,11 @@
     loop(bez t.bez, fiz (~(put in fiz) [i.bez(s (snoc s.i.bez %hoon)) ~]))
   ;<  fez=(list path)  bind:m  (list-tree:strandio i.bez)
   ?.  =(~ fez)
-    =/  foz  (turn fez |=(path [[-.i.bez +<] ~]))
+    =/  foz
+      %+  murn  fez
+      |=  p=path
+      ?.  =(%hoon (rear p))  ~
+      (some [[-.i.bez p] ~])
     loop(bez t.bez, fiz (~(gas in fiz) foz))
   ~|  bad-test-beam+i.bez
   =/  tex=term  =-(?>(((sane %tas) -) -) (rear s.i.bez))
