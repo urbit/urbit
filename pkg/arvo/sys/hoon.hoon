@@ -12909,7 +12909,7 @@
         ==
       :-  ['a' 'z']
         ;~  pose
-          (stag %bcts ;~(plug sym ;~(pfix ;~(pose fas tis) wyde)))
+          (stag %bcts ;~(plug sym ;~(pfix tis wyde)))
           (stag %like (most col rope))
         ==
     ==
