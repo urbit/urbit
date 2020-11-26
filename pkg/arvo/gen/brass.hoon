@@ -191,11 +191,6 @@
 ::
 =/  bas=path  (flop (tail (flop sys)))
 :+  boot-ova
-  :~  :~  //arvo
-          %what
-          [/sys/hoon hoon/compiler-source]
-          [/sys/arvo hoon/arvo-source]
-      ==
-      (file-ovum2:pill bas)
+  :~  (file-ovum2:pill bas)
   ==
 [(file-ovum:pill bas) ~]
