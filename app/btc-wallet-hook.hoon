@@ -24,6 +24,7 @@
     ==
 ::  provider: maybe ship if provider is set
 ::  moon-limit: how many addresses a ship and its moons can request in piym
+::  feybs: fee/byte in sats for a given ship payee
 ::  piym/poym-watch: listen to btc-wallet-store for address updates; update payment info
 ::
 +$  state-0
@@ -32,6 +33,7 @@
       =btc-state
       def-wallet=(unit xpub)
       moon-limit=@ud
+      feybs=(map ship sats)
       =pend-addr
       =piym
       poym=(unit txbu:bws)
@@ -90,6 +92,7 @@
   ^-  (quip card _this)
   ?+  -.sign  (on-agent:def wire sign)
       %kick
+    ~&  >>>  "kicked from provider {<src.bowl>}"
     ?~  provider  `this
     ?:  ?&  ?=(%set-provider -.wire)
             =(host.u.provider src.bowl)
@@ -138,28 +141,41 @@
     ::
       %req-pay-address
     :: TODO: add whitelisting here instead of comet block
-    ::  can't request payment address if poym already building a tx
+    ::  overwrites any payment being built currently
     ::  can't pay yourself; comets can't pay (could spam requests)
     ::  forwards poke to payee if payee isn't us
-    ::  wire is /payer/value/timestamp
+    ::  wire is /payer/value/timestamp 
     ::
-    ~|  "Can't pay ourselves; can't pay if poym full; no comets"
+    ~|  "Can't pay ourselves; no comets"
     ?<  =(src.bowl payee.act)
-    ?<  ?&(=(src.bowl our.bowl) ?=(^ poym))
-    ?<  ?=(%pawn (clan:title src.bowl))
+    ?<  ?=(%pawn (clan:title payee.act))
+    =+  feyb=?~(feyb.act fee.btc-state u.feyb.act)
+    =>  .(poym ~, feybs (~(put by feybs) payee.act feyb))
     :_  state
-    ?.  =(payee.act our.bowl)
-      ~[(poke-wallet-hook payee.act act)]
+    ~[(poke-wallet-hook payee.act [%gen-pay-address value.act])]
+    ::
+      %gen-pay-address
+    ~|  "Can't pay ourselves; no comets"
+    ?<  =(src.bowl our.bowl)
+    ?<  ?=(%pawn (clan:title src.bowl))
     ?~  def-wallet  ~|("btc-wallet-hook: no def-wallet set" !!)
-    ~[(poke-wallet-store [%generate-address u.def-wallet %0 `[src.bowl value.act]])]
+    :_  state
+    :~  %-  poke-wallet-store
+        [%generate-address u.def-wallet %0 `[src.bowl value.act]]
+    ==
     ::
       %ret-pay-address
+    ?:  =(src.bowl our.bowl)  ~|("Can't pay ourselves" !!)
     ?~  def-wallet  ~|("btc-wallet-hook: no def-wallet set" !!)
+    =+  feyb=(~(gut by feybs) src.bowl fee.btc-state)
     ?>  =(payer.act our.bowl)
     :_  state
     :~  %-  poke-wallet-store
-        [%generate-txbu u.def-wallet `src.bowl fee.btc-state ~[[address.act value.act]]]
+        [%generate-txbu u.def-wallet `src.bowl feyb ~[[address.act value.act]]]
     ==
+    ::
+      %clear-poym
+    `state(poym ~)
     ::
       %force-retry
     [retry-pend-addr state]
@@ -201,7 +217,7 @@
     ==
     ::
       %raw-tx
-    ?~  poym  ~&(>> "btc-wallet-hook: %raw-tx: poym is empty" `state)
+    ?~  poym  `state
     =.  txis.u.poym  (update-poym-txis txis.u.poym +.body.p.upd)
     :_  state
     ?:(poym-ready ~[(send-sign-tx u.poym)] ~)
@@ -217,7 +233,6 @@
     ?~  provider  ~
     ?:  provider-connected
       ~[(get-address-info ri host.u.provider a.req)]
-    ~&  >  "provider not connected"
     ~
   ==
 ::
@@ -230,8 +245,8 @@
     ::
     ?~  meta.upd  ~&(> address.upd `state)
     =/  [payer=ship value=sats]  u.meta.upd
-    :-  ~[(poke-wallet-hook payer [%ret-pay-address address.upd payer value])]
-    (update-piym address.upd u.meta.upd)
+    :_  (update-piym address.upd u.meta.upd)
+    ~[(poke-wallet-hook payer [%ret-pay-address address.upd payer value])]
     ::
       %generate-txbu
     ::  txbus can potentially use the same UTXO inputs, so if another payment

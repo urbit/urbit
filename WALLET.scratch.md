@@ -100,17 +100,37 @@ Above tests w 2 outputs, total fees with 2 inputs of 27.500. Gives:
 2. Inputs 0 and 3
 
 ## Make a full TXBU
-Provider is `~zod`, `~dopzod` is a client.
+Provider is `~zod`, `~dopzod` is a client.  Use the xpub from PRIVATE.md to have a balance
+
+### setup
 On `~zod`:
 ```
+|start %btc-provider
+|start %btc-wallet-store
+|start %btc-wallet-hook
 :btc-provider|command [%set-credentials api-url='http://localhost:50002']
 :btc-provider|command [%whitelist-clients `(set ship)`(sy ~[~dopzod])]
+=xpubzod 'zpub6rFR7y4Q2AijBEqTUquhVz398htDFrtymD9xYYfG1m4wAcvPhXNfE3EfH1r1ADqtfSdVCToUG868RvUUkgDKf31mGDtKsAYz2oz2AGutZYs'
+:btc-wallet-hook|action [%set-provider ~zod]
+:btc-wallet-store|action [%add-wallet xpubzod ~ [~ 20] [~ 6]]
 ```
 
 on `~dopzod`:
 ```
+=xpubp PRIVATE.md
+
+|start %btc-wallet-store
+|start %btc-wallet-hook
 :btc-wallet-hook|action [%set-provider ~zod]
+:btc-wallet-store|action [%add-wallet xpubp ~ [~ 20] [~ 6]]
 ```
+
+### request address
+on `~dopzod`:
+```
+:btc-wallet-hook|action [%req-pay-address payee=~zod value=2.000 [~ 10]]
+```
+
 
 ## scrys
 ```
