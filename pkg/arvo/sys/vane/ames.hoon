@@ -1202,7 +1202,7 @@
 --
 ::  |per-event: inner event-handling core
 ::
-~%  %per-event  ..trace  ~
+~%  %per-event  ..decode-packet  ~
 |%
 ++  per-event
   =|  moves=(list move)
