@@ -304,33 +304,35 @@
       =.  tracking
         (~(put by tracking) resource ship)
       :_  state
-      ~[(watch-resource resource /)]
+      (watch-resource resource /)
     ::
     ++  remove
       |=  =resource
-      :-  ~[(leave-resource resource)]
+      :-  (leave-resource resource)
       state(tracking (~(del by tracking) resource))
     --
   ::
   ++  leave-resource
     |=  rid=resource
-    ^-  card
-    =/  =ship
-      (~(got by tracking) rid)
+    ^-  (list card)
+    =/  ship=(unit ship)
+      (~(get by tracking) rid)
+    ?~  ship  ~
     =/  =wire
       (make-wire pull+resource+(en-path:resource rid))
-    [%pass wire %agent [ship push-hook-name.config] %leave ~]
+    [%pass wire %agent [u.ship push-hook-name.config] %leave ~]~
 
   ++  watch-resource
     |=  [rid=resource pax=path]
-    ^-  card
-    =/  =ship
-      (~(got by tracking) rid)
+    ^-  (list card)
+    =/  ship=(unit ship)
+      (~(get by tracking) rid)
+    ?~  ship  ~
     =/  =path
       (welp resource+(en-path:resource rid) pax)
     =/  =wire
       (make-wire pull+path)
-    [%pass wire %agent [ship push-hook-name.config] %watch path]
+    [%pass wire %agent [u.ship push-hook-name.config] %watch path]~
   ::
   ++  make-wire
     |=  =wire
