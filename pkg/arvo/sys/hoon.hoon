@@ -5191,26 +5191,6 @@
 ++  wut  (just '?')                                     ::  wut, what?
 ++  zap  (just '!')                                     ::  zap! bang! crash!!
 ::
-++  ban  (just '>')   ::  XX deprecated, use gar
-++  bat  (just '\\')  ::  XX deprecated, use bas
-++  bus  (just '$')   ::  XX deprecated, use buc
-++  lac  (just '[')   ::  XX deprecated, use sel
-++  leb  (just '{')   ::  XX deprecated, use kel
-++  led  (just '<')   ::  XX deprecated, use gal
-++  lit  (just '(')   ::  XX deprecated, use pal
-++  lob  (just '{')   ::  XX deprecated, use kel
-++  net  (just '/')   ::  XX deprecated, use fas
-++  pad  (just '&')   ::  XX deprecated, use pam
-++  rac  (just ']')   ::  XX deprecated, use ser
-++  reb  (just '}')   ::  XX deprecated, use ker
-++  rit  (just ')')   ::  XX deprecated, use par
-++  rob  (just '}')   ::  XX deprecated, use ker
-++  say  (just '\'')  ::  XX deprecated, use soq
-++  tec  (just '`')   ::  XX deprecated, use tic
-++  toc  (just '"')   ::  XX deprecated, use doq
-++  vat  (just '@')   ::  XX deprecated, use pat
-++  yel  (just '"')   ::  XX deprecated, use doq
-::
 ::::  4i: parsing (useful idioms)
   ::
 ++  alf  ;~(pose low hig)                               ::  alphabetic

@@ -10,7 +10,7 @@
   ::
   ++  index
     ^-  $-(json index:graph-store)
-    (su ;~(pfix net (more net dem)))
+    (su ;~(pfix fas (more fas dem)))
   ::
   ++  graph-index
     %-  ot
