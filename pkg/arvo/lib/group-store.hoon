@@ -309,7 +309,7 @@
       ?>  ?=([%o [@ *] ~ ~] jon)
       |-
       ?-    wer
-          :: {{key=@t wit=*} t=*]
+          :: [[key=@t wit=*] t=*]
           [[key=@t *] t=*]
         =>  .(wer [[* wit] *]=wer)
         ?:  =(key.wer (enkebab p.n.p.jon))

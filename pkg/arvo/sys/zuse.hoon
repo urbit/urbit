@@ -175,8 +175,8 @@
         [%spawned who=@p]                           ::  Spawned
         [%keys =life =pass]                         ::  ChangedKeys
         [%continuity new=@ud]                       ::  BrokeContinuity
-        [%sponsor new=[has=? who=@p]]               ::  EscapeAcc=LostSpons
-        [%escape new=(unit @p)]                     ::  EscapeReq=Can
+        [%sponsor new=[has=? who=@p]]               ::  EscapeAcc/LostSpons
+        [%escape new=(unit @p)]                     ::  EscapeReq/Can
         [%management-proxy new=address]             ::  ChangedManagementPro
         [%voting-proxy new=address]                 ::  ChangedVotingProxy
         [%spawn-proxy new=address]                  ::  ChangedSpawnProxy
@@ -5629,7 +5629,7 @@
       |=  jol=(list json)
       ?~  jol  !!
       ?-    wil                                         :: mint-vain on empty
-          :: {wit=* t=*]
+          :: [wit=* t=*]
           [* t=*]
         =>  .(wil [wit *]=wil)
         ?~  t.wil  ?^(t.jol !! (wit.wil i.jol))
@@ -5683,7 +5683,7 @@
       ?>  ?=([%o [@ *] ~ ~] jon)
       |-
       ?-    wer                                         :: mint-vain on empty
-          :: {{key=@t wit=*} t=*]
+          :: [[key=@t wit=*] t=*]
           [[key=@t *] t=*]
         =>  .(wer [[* wit] *]=wer)
         ?:  =(key.wer p.n.p.jon)
@@ -5702,7 +5702,7 @@
       |*  wer=(pole [cord fist])
       |=  jom=(map @t json)
       ?-    wer                                         :: mint-vain on empty
-          :: {{key=@t wit=*} t=*]
+          :: [[key=@t wit=*] t=*]
           [[key=@t *] t=*]
         =>  .(wer [[* wit] *]=wer)
         =/  ten  ~|(key+key.wer (wit.wer (~(got by jom) key.wer)))
@@ -5719,7 +5719,7 @@
       |*  wer=(pole [cord fist])
       |=  jom=(map @t json)
       ?-    wer                                         :: mint-vain on empty
-          :: {{key=@t wit=*} t=*]
+          :: [[key=@t wit=*] t=*]
           [[key=@t *] t=*]
         =>  .(wer [[* wit] *]=wer)
         =/  ten  ~|(key+key.wer (wit.wer (~(get by jom) key.wer)))
@@ -6927,8 +6927,8 @@
     ==
 ::  ::                                                    ::  ++read:wired
 ::  ++  read                                              ::  parse odored path
-::    =<  |*({a=path b={@tas (pole @tas)}} ((+> b) a))
-::    |*  b={@tas (pole @tas)}
+::    =<  |*([a=path b=[@tas (pole @tas)]] ((+> b) a))
+::    |*  b=[@tas (pole @tas)]
 ::    |=  a=path
 ::    ?~  a  ~
 ::    =+  hed=(slaw -.b i.a)
@@ -6936,7 +6936,7 @@
 ::    ?~  +.b
 ::      ^-  (unit fog)
 ::      ?^(+.a ~ hed)
-::    ^-  (unit {fog _(need *(..^$ +.b))})
+::    ^-  (unit [fog _(need *(..^$ +.b))])
 ::    (both hed ((..^$ +.b) +.a))
   --  ::wired
 ::                                                      ::

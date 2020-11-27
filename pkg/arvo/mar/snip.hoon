@@ -57,6 +57,6 @@
     --
   --
 ++  grab  |%                                            ::  convert from
-          ++  noun  [marl marl]                         ::  clam from %noun
+          ++  noun  ,[marl marl]                        ::  clam from %noun
           ++  elem  |=(a=manx (hedtal +.a))
 --        --

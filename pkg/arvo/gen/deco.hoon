@@ -37,8 +37,8 @@
 ::  with {a}.  use this convention only for one-liners, etc.
 ::
 ::  the file below is a medium-sized generator, built around
-::  a typical two-core structure.  the cores are labeled [%arch}
-::  (structures) and [%work} (productions).  this is canonical.
+::  a typical two-core structure.  the cores are labeled {%arch}
+::  (structures) and {%work} (productions).  this is canonical.
 ::
 ::  this code is written to display the variety of formatting
 ::  options the parser allows.  a specific convention should pick

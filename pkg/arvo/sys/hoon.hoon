@@ -8466,7 +8466,7 @@
         [%cnhp *]  [%cncl p.gen q.gen ~]
         ::  this probably should work, but doesn't
         ::
-        ::  [%cncl *}  [%cntr [%$ ~] p.gen [[[[%& 6] ~] [%cltr q.gen]] ~]]
+        ::  [%cncl *]  [%cntr [%$ ~] p.gen [[[[%& 6] ~] [%cltr q.gen]] ~]]
         [%cncl *]  [%cnsg [%$ ~] p.gen q.gen]
         [%cnsg *]
       ::  this complex matching system is a leftover from the old
@@ -9474,7 +9474,7 @@
     =>  |%
         ++  pony                                        ::  raw match
                   $@  ~                                 ::  void
-                  %+  each                              ::  natural=abnormal
+                  %+  each                              ::  natural/abnormal
                     palo                                ::  arm or leg
                   %+  each                              ::  abnormal
                     @ud                                 ::  unmatched

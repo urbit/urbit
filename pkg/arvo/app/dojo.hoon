@@ -54,7 +54,7 @@
               r=@t
           ==
           [%poke p=goal]                                ::  poke app
-          [%show p=?(%0 %1 %2 %3 %4 %5)]                ::  val=type=hoon=xray
+          [%show p=?(%0 %1 %2 %3 %4 %5)]                ::  val/type/hoon/xray
           [%verb p=term]                                ::  store variable
       ==                                                ::
     +$  dojo-source                                     ::  construction node

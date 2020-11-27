@@ -1722,7 +1722,7 @@
             ==
           ==
         outer-loop(dels t.dels)
-      ::  Add=change
+      ::  Add/change
       ::
       =/  cans=(list [=path =lobe =cage])  ~(tap by changes)
       |-  ^+  [ankh ford-cache.ford-args]

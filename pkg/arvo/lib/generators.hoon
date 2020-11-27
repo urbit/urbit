@@ -27,7 +27,7 @@
   |*  [sef=rule fun=$-(* *)]                            ::
   |=  txt=sole-input                                    ::
   =+  vex=(sef [0 0] txt)                               ::
-  ?:  |(!=((lent txt) q.p.vex) ?=(~ q.vex))            ::
+  ?:  |(!=((lent txt) q.p.vex) ?=(~ q.vex))             ::
     q.p.vex                                             ::
   (fun p.u.q.vex)                                       ::
 --
