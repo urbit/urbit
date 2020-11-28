@@ -19,6 +19,7 @@
     ==
 ::  walts: all wallets, keyed by their xpubs
 ::  scans: batch info for wallets being scanned
+::  gena:  generated addresses that haven't had activity yet
 ::  batch-size: how many addresses to send out at once for checking
 ::  last-block: most recent block seen by the store
 ::
@@ -26,6 +27,7 @@
   $:  %0
       walts=(map xpub:btc walt)
       =scans
+      =gena
       batch-size=@ud
       last-block=@ud
   ==

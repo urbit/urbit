@@ -24,7 +24,7 @@
     ==
 ::  provider: maybe ship if provider is set
 ::  moon-limit: how many addresses a ship and its moons can request in piym
-::  feybs: fee/byte in sats for a given ship payee
+::  feybs: fee/byte in sats used for a given ship payee
 ::  piym/poym-watch: listen to btc-wallet-store for address updates; update payment info
 ::
 +$  state-0
@@ -34,13 +34,12 @@
       def-wallet=(unit xpub)
       moon-limit=@ud
       feybs=(map ship sats)
-      =pend-addr
+      =reqs
       =piym
       poym=(unit txbu:bws)
-      =piym-watch
-      =poym-watch
   ==
 ::
+::  TODO: find all instances of scan-addr -- make them typed correctly
 +$  card  card:agent:gall
 --
 =|  state-0
@@ -178,7 +177,7 @@
     `state(poym ~)
     ::
       %force-retry
-    [retry-pend-addr state]
+    [retry-scan-addr state]
   ==
 ::  +handle-provider-status: handle connectivity updates from provider
 ::    if status is %connected, retry all pending address lookups
@@ -192,7 +191,7 @@
   ?-  -.s
       %connected
     :-  ?:  connected.u.provider  ~
-        (weld retry-pend-addr retry-txbu)
+        (weld retry-scan-addr retry-txbu)
     %=  state
         provider  `[host.u.provider %.y]
         btc-state  [blockcount.s fee.s now.bowl]
@@ -207,9 +206,9 @@
   ?.  ?=(%.y -.upd)  `state
   ?-  -.body.p.upd
       %address-info
-    =+  req=(~(get by pend-addr) req-id.p.upd)
+    =+  req=(~(get by scan-addr) req-id.p.upd)
     ?~  req  `state
-    :_  state(pend-addr (~(del by pend-addr) req-id.p.upd))
+    :_  state(scan-addr (~(del by scan-addr) req-id.p.upd))
     :~  %-  poke-wallet-store
         :*  %address-info  xpub.u.req  chyg.u.req  idx.u.req
             utxos.body.p.upd  used.body.p.upd  blockcount.body.p.upd
@@ -229,7 +228,7 @@
   ?-  -.req
       %scan-address
     =+  ri=(gen-req-id:bp eny.bowl)
-    :_  state(pend-addr (~(put by pend-addr) ri req))
+    :_  state(scan-addr (~(put by scan-addr) ri req))
     ?~  provider  ~
     ?:  provider-connected
       ~[(get-address-info ri host.u.provider a.req)]
@@ -305,10 +304,10 @@
   %+  levy  txis.u.poym
   |=(t=txi:bws ?=(^ ur.t))
 ::
-++  retry-pend-addr
+++  retry-scan-addr
   ^-  (list card)
   ?~  provider  ~|("provider not set" !!)
-  %+  turn  ~(tap by pend-addr)
+  %+  turn  ~(tap by scan-addr)
   |=  [ri=req-id:bp req=request:bws]
   (get-address-info ri host.u.provider a.req)
 ::
