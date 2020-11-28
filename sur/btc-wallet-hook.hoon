@@ -1,17 +1,20 @@
 /-  *btc, bws=btc-wallet-store, bp=btc-provider
 |%
+::  btc-state: state from the provider; t is last update time
 ::  req-id: hash of [xpub chyg idx]
-::  pend: lookup of req-id -> requests from wallet-store
+::  reqs: lookup of req-id -> requests from wallet-store+blockcount
+::    blockcount included so that we only request address info when
+::    there's a newer block, in the case of addresses we are cooking
 ::
 ::  payment: a payment expected from another ship
 ::    - address: address generated for this payment
 ::  piym: incoming payments. Stores all ship moons under their planet.
 ::  piym-watch/poym-watch:
 ::   let us link an address back to its incoming/outgoing payment
-::   checked when address updates come from btc-wallet-store 
+::   checked when address updates come from btc-wallet-store
 ::
 +$  btc-state  [blockcount=@ud fee=sats t=@da]
-+$  pend-addr  (map req-id:bp request:bws)
++$  reqs (map req-id:bp [blockcount=@ud req=request:bws])
 ::
 +$  payment  [=address payer=ship value=sats]
 ::
