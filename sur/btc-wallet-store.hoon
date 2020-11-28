@@ -51,10 +51,14 @@
 +$  txi  [=utxo ur=(unit rawtx) =key]
 +$  txo  [=address value=sats]
 +$  txbu  [payee=(unit ship) =vbytes txis=(list txi) txos=(list txo)]
-::  TODO: document
+::  scanning addresses and monitoring generated addresses
+::  batch: indexes to scan for a given chyg
+::  scans: all scans underway (batches)
+::  gena:  any generated address that hasn't had activity yet
 ::
 +$  batch  [todo=(set idx) endpoint=idx has-used=?]
 +$  scans  (map [xpub chyg] batch)
++$  gena  (set address)
 ::
 ::  %add-wallet: add wallet to state and initiate a scan
 ::  %scan: start a scan of the next address batch in a wallet
@@ -74,8 +78,10 @@
       [%generate-txbu =xpub =txbu]
       [%scan-done =xpub]
   ==
+::  %scan-address: address we want [used? balance] for
+::  %cook-address: monitor address until it gets N confs
 ::
 +$  request
-  $%  [%scan-address a=address =xpub =chyg =idx]
+  $%  [%address-info blockcount=@ud a=address =xpub =chyg =idx]
   ==
 --
