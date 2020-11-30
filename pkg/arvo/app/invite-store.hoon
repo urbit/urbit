@@ -102,8 +102,15 @@
   =^  cards  state
     ?+  mark  (on-poke:def mark vase)
       %invite-action  (poke-invite-action !<(action:store vase))
+      %import         (poke-import q.vase)
     ==
   [cards this]
+  ::
+  ++  poke-import
+    |=  arc=*
+    ^-  (quip card _state)
+    =/  sty=state-1  ;;(state-1 arc)
+    [~ sty]
   ::
   ++  poke-invite-action
     |=  =action:store
@@ -205,5 +212,7 @@
     :^  ~  ~  %noun
     !>  ^-  (unit invite:store)
     (~(get by invitatory) serial)
+  ::
+      [%x %export ~]      ``noun+!>(state)
   ==
 --
