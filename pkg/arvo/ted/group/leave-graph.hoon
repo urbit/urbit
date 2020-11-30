@@ -2,7 +2,7 @@
 /+  strandio, res=resource
 ::
 =*  strand    strand:spider
-=*  poke-our  poke-our:strandio
+=*  raw-poke  raw-poke:strandio
 =*  scry      scry:strandio
 ::
 ^-  thread:spider
@@ -17,7 +17,7 @@
 ;<  =associations:met  bind:m
   %+  scry  associations:met
   ;:  weld
-    /gx/metadata-store/resource/group
+    /gx/metadata-store/group
     (en-path:res resource.update)
     /noun
   ==
@@ -32,9 +32,9 @@
 ?~  graphs
   (pure:m !>(~))
 ;<  ~  bind:m
-  %^    poke-our
-      %graph-store
-    %graph-update
+  %+  raw-poke
+    [our.bowl %graph-store]
+  :-  %graph-update
   !>  ^-  update:gra
   [%0 now.bowl [%archive-graph (de-path:res i.graphs)]]
 loop(graphs t.graphs)
