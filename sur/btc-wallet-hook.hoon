@@ -6,7 +6,7 @@
 ::    blockcount included so that we only request address info when
 ::    there's a newer block, in the case of addresses we are cooking
 ::
-::  payment: a payment expected from another ship
+::  payment: a payment expected from another ship 
 ::    - address: address generated for this payment
 ::  piym: incoming payments. Stores all ship moons under their planet.
 ::  piym-watch/poym-watch:
