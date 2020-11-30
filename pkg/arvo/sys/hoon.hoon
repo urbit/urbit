@@ -886,11 +886,10 @@
   ?:  =(0 b)  c
   $(b (rsh a b), c +(c))
 ::
-++  rap                                                 ::  assemble nonzero
+++  rap                                                 ::  assemble variable
   ~/  %rap
   |=  [a=bloq b=(list @)]
   ^-  @
-  =+  ~  ::REMOVEME jet dashboard bump
   ?~  b  0
   (cat a i.b $(b t.b))
 ::
