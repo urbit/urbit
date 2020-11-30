@@ -6,7 +6,7 @@ import { RouteComponentProps } from "react-router-dom";
 import Note from "./Note";
 import { EditPost } from "./EditPost";
 
-import { GraphNode, Graph, Contacts, LocalUpdateRemoteContentPolicy, Group } from "~/types";
+import { GraphNode, Graph, Contacts, LocalUpdateRemoteContentPolicy, Group, S3State } from "~/types";
 
 interface NoteRoutesProps {
   ship: string;
@@ -21,6 +21,7 @@ interface NoteRoutesProps {
   hideAvatars: boolean;
   baseUrl?: string;
   rootUrl?: string;
+  s3: S3State;
 }
 
 export function NoteRoutes(props: NoteRoutesProps & RouteComponentProps) {

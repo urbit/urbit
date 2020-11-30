@@ -33,7 +33,7 @@ function validateDragEvent(e: DragEvent): FileList | File[] | true | null {
   return null;
 }
 
-export function useFileDrag(dragged: (f: FileList | File[]) => void) {
+export function useFileDrag(dragged: (f: FileList | File[], e: DragEvent) => void) {
   const [dragging, setDragging] = useState(false);
 
   const onDragEnter = useCallback(
@@ -54,7 +54,7 @@ export function useFileDrag(dragged: (f: FileList | File[]) => void) {
         return;
       }
       e.preventDefault();
-      dragged(files);
+      dragged(files, e);
     },
     [setDragging, dragged]
   );

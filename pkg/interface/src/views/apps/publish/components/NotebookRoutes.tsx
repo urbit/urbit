@@ -8,7 +8,8 @@ import {
   Groups,
   Contacts,
   Rolodex,
-  LocalUpdateRemoteContentPolicy
+  LocalUpdateRemoteContentPolicy,
+  S3State
 } from "~/types";
 import { Center, LoadingSpinner } from "@tlon/indigo-react";
 import { Notebook as INotebook } from "~/types/publish-update";
@@ -35,6 +36,7 @@ interface NotebookRoutesProps {
   association: Association;
   remoteContentPolicy: LocalUpdateRemoteContentPolicy;
   associations: Associations;
+  s3: S3State;
 }
 
 export function NotebookRoutes(
@@ -79,6 +81,7 @@ export function NotebookRoutes(
             association={props.association}
             graph={graph}
             baseUrl={baseUrl}
+            s3={props.s3}
           />
         )}
       />
@@ -110,6 +113,7 @@ export function NotebookRoutes(
               hideAvatars={props.hideAvatars}
               hideNicknames={props.hideNicknames}
               remoteContentPolicy={props.remoteContentPolicy}
+              s3={props.s3}
               {...routeProps}
             />
           );
