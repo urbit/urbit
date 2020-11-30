@@ -11,13 +11,11 @@
 +$  versioned-state
   $%  state-0
       state-1
-      state-2
   ==
 ::
 +$  serial   @uv
 +$  state-0  [%0 observers=(map serial observer:sur)]
 +$  state-1  [%1 observers=(map serial observer:sur)]
-+$  state-1  [%2 observers=(map serial observer:sur)]
 ::
 ++  got-by-val
   |=  [a=(map serial observer:sur) b=observer:sur]
@@ -46,7 +44,7 @@
     ::
       %+  act
         /grp-gra
-      [%watch %group-store /groups %group-leave-graph]
+      [%watch %group-store /groups %group-on-leave]
   ==
   ::
   ++  act
@@ -69,21 +67,14 @@
   ^-  (quip card _this)
   =/  old-state  !<(versioned-state old-vase)
   ?-  -.old-state
-    %2  `this(state old-state)
-  ::
-      %1
-    =.  state  [%2 observers.old-state]
-    %+  on-poke
-      %observe-action
-    !>  ^-  action:sur
-    [%watch %group-store /groups %group-leave-metadata]
+    %1  `this(state old-state)
   ::
       %0
     =.  state  [%1 observers.old-state]
     %+  on-poke
       %observe-action
     !>  ^-  action:sur
-    [%watch %group-store /groups %group-leave-graph]
+    [%watch %group-store /groups %group-on-leave]
   ==
 ::
 ++  on-poke

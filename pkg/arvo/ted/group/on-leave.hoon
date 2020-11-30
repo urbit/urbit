@@ -1,4 +1,4 @@
-/-  spider, grp=group-store, met=metadata-store, hook=metadata-hook
+/-  spider, grp=group-store, gra=graph-store, met=metadata-store, hook=metadata-hook
 /+  strandio, res=resource
 ::
 =*  strand    strand:spider
