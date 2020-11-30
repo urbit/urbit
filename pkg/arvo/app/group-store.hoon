@@ -29,7 +29,7 @@
 ::      Modify the group. Further documented in /sur/group-store.hoon
 ::
 ::
-/-  *group, permission-store
+/-  *group, permission-store, *contact-view
 /+  store=group-store, default-agent, verb, dbug, resource
 |%
 +$  card  card:agent:gall
@@ -165,12 +165,15 @@
     ^-  (quip card _this)
     ?>  (team:title our.bowl src.bowl)
     =^  cards  state
-      ?+    mark  (on-poke:def mark vase)
-        %noun  (poke-noun:gc vase)
-        ::
+      ?+  mark  (on-poke:def mark vase)
+          %noun
+        (poke-noun:gc vase)
+      ::
           ?(%group-update %group-action)
         (poke-group-update:gc !<(update:store vase))
-        ::
+      ::
+          %import
+        (poke-import:gc q.vase)
       ==
     [cards this]
   ::
@@ -214,10 +217,42 @@
         (slav %p i.t.t.t.t.t.t.path)
       ?~  rid  ~
       ``noun+!>((peek-group-join u.rid ship))
+    ::
+        [%x %export ~]
+      ``noun+!>(state)
     ==
   ::
-  ++  on-agent  on-agent:def
-  ++  on-arvo   on-arvo:def
+  ++  on-agent
+    |=  [=wire =sign:agent:gall]
+    ^-  (quip card _this)
+    ?.  ?=([%try-rejoin @ *] wire)
+      (on-agent:def wire sign)
+    ?>  ?=(%poke-ack -.sign)
+    =/  rid=resource  (de-path:resource t.t.wire)
+    ?~  p.sign
+      =/  =cage
+        [%pull-hook-action !>([%add entity.rid rid])]
+      :_  this
+      [%pass / %agent [our.bowl %group-pull-hook] %poke cage]~
+    =/  nack-count=@ud  (slav %ud i.t.wire)
+    =/  wakeup=@da
+      (add now.bowl (mul ~s1 (bex (min 19 nack-count))))
+    :_  this
+    [%pass wire %arvo %b %wait wakeup]~
+  ::
+  ++  on-arvo
+    |=  [=wire =sign-arvo]
+    ^-  (quip card _this)
+    ?.  ?=([%try-rejoin @ *] wire)
+      (on-arvo:def wire sign-arvo)
+    =/  =resource       (de-path:resource t.t.wire)
+    =/  nack-count=@ud  (slav %ud i.t.wire)
+    ?>  ?=([%b %wake *] sign-arvo)
+    ~?  ?=(^ error.sign-arvo)
+      "behn errored in backoff timers, continuing anyway"
+    :_  this
+    [(try-rejoin:gc resource +(nack-count))]~
+  ::
   ++  on-fail   on-fail:def
   --
 ::
@@ -226,7 +261,7 @@
   |=  rid=resource
   ^-  (unit group)
   (~(get by groups) rid)
-
+::
 ++  peek-group-join
   |=  [rid=resource =ship]
   =/  ugroup
@@ -246,6 +281,39 @@
       (~(has in ban-ranks.policy) (clan:title ship))
     ==
   ==
+::
+++  poke-import
+  |=  arc=*
+  ^-  (quip card _state)
+  =/  sty=state-one  ;;(state-one arc)
+  :_  sty
+  %+  roll  ~(tap by groups.sty)
+  |=  [[=resource =group] out=(list card)]
+  ?:  =(entity.resource our.bol)
+    %+  weld  out
+    %+  roll  ~(tap in members.group)
+    |=  [recipient=@p out=(list card)]
+    ?:  =(recipient our.bol)
+      out
+    :_  out
+    %-  poke-contact
+    :*  %invite  resource  recipient
+        (crip "Rejoin disconnected group {<entity.resource>}/{<name.resource>}")
+    ==
+  :_  out
+  (try-rejoin resource 0)
+::
+++  try-rejoin
+  |=  [rid=resource nack-count=@ud]
+  ^-  card
+  =/  =cage
+    :-  %group-update
+    !>  ^-  update:store
+    [%add-members rid (sy our.bol ~)]
+  =/  =wire
+    [%try-rejoin (scot %ud nack-count) (en-path:resource rid)]
+  [%pass wire %agent [entity.rid %group-push-hook] %poke cage]
+::
 ++  poke-noun
   |=  =vase
   ^-  (quip card _state)
@@ -604,6 +672,11 @@
   |=  =action:store
   ^-  card
   [%pass / %agent [our.bol %group-store] %poke %group-action !>(action)]
+::
+++  poke-contact
+  |=  act=contact-view-action
+  ^-  card
+  [%pass / %agent [our.bol %contact-view] %poke %contact-view-action !>(act)]
 ::  +send-diff: update subscribers of new state
 ::
 ::    We only allow subscriptions on /groups
