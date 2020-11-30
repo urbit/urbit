@@ -153,7 +153,7 @@ class App extends React.Component {
             A network-wide breach is scheduled for early December 2020. Please visit <Anchor target="_blank" href="https://urbit.org/breach" color='inherit'>urbit.org/breach</Anchor> for more information.
               </Text>
             <Text cursor='pointer' fontWeight='500' onClick={() => {
-              banner.style.displaydisplay = "none";
+              banner.style.display = "none";
               localStorage.setItem("2020BreachBanner", "none");
             }}>Dismiss</Text>
           </Row>
