@@ -75,6 +75,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.dem = c3n;
   u3_Host.ops_u.dry = c3n;
   u3_Host.ops_u.exp = c3n;
+  u3_Host.ops_u.kex = c3n;
   u3_Host.ops_u.gab = c3n;
   u3_Host.ops_u.git = c3n;
 
@@ -97,7 +98,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.kno_w = DefaultKernel;
 
   while ( -1 != (ch_i=getopt(argc, argv,
-                 "X:Y:G:J:B:K:A:H:I:C:w:u:e:F:k:n:p:r:i:LljacdgoqstvxPDRS")) )
+                 "X:Y:G:J:B:K:A:H:I:C:w:u:e:F:k:n:p:r:i:LljacdgoqstvxOPDRS")) )
   {
     switch ( ch_i ) {
       case 'X': {
@@ -200,6 +201,7 @@ _main_getopt(c3_i argc, c3_c** argv)
       case 'd': { u3_Host.ops_u.dem = c3y; break; }
       case 'g': { u3_Host.ops_u.gab = c3y; break; }
       case 'o': { u3_Host.ops_u.exp = c3y; break; }
+      case 'O': { u3_Host.ops_u.kex = c3y; break; }
       case 'P': { u3_Host.ops_u.pro = c3y; break; }
       case 'D': { u3_Host.ops_u.dry = c3y; break; }
       case 'q': { u3_Host.ops_u.qui = c3y; break; }
