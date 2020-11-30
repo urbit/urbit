@@ -5,7 +5,7 @@
 
 ## Notes
 Tested to work with `urbit/urbit` commit `d527b420580fb019db8aab397431180e6e6428eb`
-TODO: 959b585b384f66e54421f70f95d6d152077907bb
+TODO: update to next
 Uses custom:
 - `sys/zuse.hoon`
   * new `decompress-key` from [https://github.com/yosoyubik/urbit/blob/decompress-point/pkg/arvo/sys/zuse.hoon]
@@ -20,7 +20,15 @@ Uses custom:
 First, install new zuse and bip32:
 ```
 |mount %
+```
+
+```
+./install.sh -w PIER_DIR
+```
+
+```
 |commit %home
+
 ::  should see gall molt with the new zuse
 ```
 

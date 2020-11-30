@@ -9,3 +9,6 @@ PIER=$1
 
 cp sys/zuse.hoon $PIER/
 echo "zuse copied"
+
+cp lib/bip32.hoon $PIER/
+echo "lib/bip32/hoon copied"
