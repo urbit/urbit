@@ -218,6 +218,7 @@
     ?+  mark           (on-poke:def mark vase)
         %graph-update  (graph-update !<(update:store vase))
         %noun          (debug !<(debug-input vase))
+        %import        (poke-import q.vase)
     ==
   [cards this]
   ::
@@ -612,6 +613,26 @@
             %graph  ^$(graph p.children.node)
         ==
     ==
+  ::
+  ++  poke-import
+    |=  arc=*
+    ^-  (quip card _state)
+    =/  sty  ;;(state-2 arc)
+    :_  sty
+    %+  turn  ~(tap by graphs.sty)
+    |=  [rid=resource:store =marked-graph:store]
+    ^-  card
+    ?:  =(our.bowl entity.rid)
+      =/  =cage  [%push-hook-action !>([%add rid])]
+      [%pass / %agent [our.bowl %graph-push-hook] %poke cage]
+    (try-rejoin rid 0)
+  ::
+  ++  try-rejoin
+    |=  [rid=resource:store nack-count=@]
+    ^-  card
+    =/  res-path  (en-path:res rid)
+    =/  wire  [%try-rejoin (scot %ud nack-count) res-path]
+    [%pass wire %agent [entity.rid %graph-push-hook] %watch resource+res-path]
   --
 ::
 ++  on-peek
@@ -668,6 +689,9 @@
     :+  %0
       now.bowl
     [%add-graph [ship term] `graph:store`p.u.result q.u.result %.y]
+  ::
+      [%x %export ~]
+    ``noun+!>(state)
   ::
       [%x %graph-subset @ @ @ @ ~]
     =/  =ship  (slav %p i.t.t.path)
@@ -792,9 +816,37 @@
     =*  validator  i.t.wire
     =/  =rave:clay  [%next %b [%da now.bowl] /[validator]]
     [%pass wire %arvo %c %warp our.bowl [%home `rave]]~
+  ::
+      [%try-rejoin @ *]
+    =/  rid=resource:store  (de-path:res t.t.wire)
+    =/  nack-count    (slav %ud i.t.wire)
+    ?>  ?=([%b %wake *] sign-arvo)
+    ~?  ?=(^ error.sign-arvo)
+      "behn errored in backoff timers, continuing anyway"
+    =/  new=^wire  [%try-rejoin (scot %ud +(nack-count)) t.t.wire]
+    :_  this
+    [%pass new %agent [entity.rid %graph-push-hook] %watch resource+t.t.wire]~
   ==
 ::
-++  on-agent  on-agent:def
+++  on-agent
+  |=  [=wire =sign:agent:gall]
+  ^-  (quip card _this)
+  ?.  ?=([%try-rejoin @ *] wire)
+    (on-agent:def wire sign)
+  ?.  ?=(%watch-ack -.sign)
+    [~ this]
+  =/  rid=resource:store  (de-path:res t.t.wire)
+  ?~  p.sign
+    ::  leave and poke our graph-pull-hook
+    =/  =cage  [%pull-hook-action !>([%add entity.rid rid])]
+    :_  this
+    [%pass / %agent [our.bowl %graph-pull-hook] %poke cage]~
+  =/  nack-count=@ud  (slav %ud i.t.wire)
+  =/  wakeup=@da
+    (add now.bowl (mul ~s1 (bex (min 19 nack-count))))
+  :_  this
+  [%pass wire %arvo %b %wait wakeup]~
+::
 ++  on-leave  on-leave:def
 ++  on-fail   on-fail:def
 --
