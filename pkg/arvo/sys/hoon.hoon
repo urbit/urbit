@@ -928,6 +928,16 @@
   |=  [a=bloq b=step c=@]
   (div c (bex (mul (bex a) b)))
 ::
+++  run                                                 ::  +turn into atom
+  ~/  %run
+  |=  [a=bite b=@ c=$-(@ @)]
+  (rep a (turn (rip a b) c))
+::
+++  rut                                                 ::  +turn into list
+  ~/  %rut
+  |*  [a=bite b=@ c=$-(@ *)]
+  (turn (rip a b) c)
+::
 ++  sew                                                 ::  stitch into
   ~/  %sew
   |=  [a=bloq [b=step c=step d=@] e=@]
