@@ -651,12 +651,16 @@
 ::
 ++  start-thread
   |=  file=term
+  (start-thread-with-args file *vase)
+::
+++  start-thread-with-args
+  |=  [file=term args=vase]
   =/  m  (strand ,tid:spider)
   ^-  form:m
   ;<  =bowl:spider  bind:m  get-bowl
   =/  tid
     (scot %ta (cat 3 (cat 3 'strand_' file) (scot %uv (sham file eny.bowl))))
-  =/  poke-vase  !>([`tid.bowl `tid file *vase])
+  =/  poke-vase  !>([`tid.bowl `tid file args])
   ;<  ~  bind:m  (poke-our %spider %spider-start poke-vase)
   ;<  ~  bind:m  (sleep ~s0)  ::  wait for thread to start
   (pure:m tid)
