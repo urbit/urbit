@@ -367,7 +367,7 @@
     ++  pairs
       %+  cook
         ~(gas by *(map @t @t))
-      %+  most  (ifix [. .]:(star ace) mic)
+      %+  more  (ifix [. .]:(star ace) mic)
       ;~(plug token ;~(pose ;~(pfix tis value) (easy '')))
     ::
     ++  value
@@ -378,16 +378,16 @@
       ::NOTE  this is ptok:de-purl:html, but can't access that here
       %-  plus
       ;~  pose
-        aln  zap  hax  buc  cen  pam  soq  tar  lus
-        hep  dot  ket  cab  tic  bar  sig
+        aln  zap  hax  bus  cen  pad  say  tar  lus
+        hep  dot  ket  cab  tec  bar  sig
       ==
     ::
     ++  quoted-string                                 ::  7230 quoted string
       %+  cook  crip
-      %+  ifix  [. .]:;~(less (jest '\\"') doq)
+      %+  ifix  [. .]:;~(less (jest '\\"') yel)
       %-  star
       ;~  pose
-        ;~(pfix bas ;~(pose (just '\09') ace prn))
+        ;~(pfix bat ;~(pose (just '\09') ace prn))
         ;~(pose (just '\09') ;~(less (mask "\22\5c\7f") (shim 0x20 0xff)))
       ==
     --
@@ -1120,7 +1120,6 @@
           {$boot lit/? p/*}                             ::  weird %dill boot
           {$crop p/@ud}                                 ::  trim kernel state
           $>(%crud vane-task)                           ::  error with trace
-          [%flee session=~]                             ::  unwatch session
           {$flog p/flog}                                ::  wrapped error
           {$flow p/@tas q/(list gill:gall)}             ::  terminal config
           {$hail ~}                                     ::  terminal refresh
@@ -1135,7 +1134,6 @@
           {$talk p/tank}                                ::
           {$text p/tape}                                ::
           {$veer p/@ta q/path r/@t}                     ::  install vane
-          [%view session=~]                             ::  watch session blits
           $>(%trim vane-task)                           ::  trim state
           $>(%vega vane-task)                           ::  report upgrade
           {$verb ~}                                     ::  verbose mode
@@ -1159,7 +1157,6 @@
     $%  {$bel ~}                                        ::  make a noise
         {$clr ~}                                        ::  clear the screen
         {$hop p/@ud}                                    ::  set cursor position
-        [%klr p=stub]                                   ::  set styled line
         {$lin p/(list @c)}                              ::  set current line
         {$mor ~}                                        ::  newline
         {$sag p/path q/*}                               ::  save to jamfile
@@ -4264,7 +4261,7 @@
       ++  decompress-point
         |=  dat=@
         ^-  pont
-        ::  ~&  "custom decompress point"
+::        ~&  "custom decompress point"
         =+  x=(end 3 w dat)
         ?>  =(3 (mod ^p 4))
         =+  y=(exp.p (div +(^p) 4) :(sum.p (exp.p 3 x) (pro.p a x) b))
@@ -5368,30 +5365,28 @@
   ::                                                    ::::
 ++  format  ^?
   |%
-  ::  0 ending a line (invalid @t) is not preserved     ::  ++to-wain:format
-  ++  to-wain                                           ::  cord to line list
-    ~%  %leer  ..is  ~
-    |=  txt=cord
-    ^-  wain
-    =/  len=@  (met 3 txt)
-    =/  cut  =+(cut -(a 3, c 1, d txt))
-    =/  sub  sub
-    =|  [i=@ out=wain]
-    |-  ^+  out
-    =+  |-  ^-  j=@
-        ?:  ?|  =(i len)
-                =(10 (cut(b i)))
-            ==
-          i
-        $(i +(i))
-    =.  out  :_  out
-      (cut(b i, c (sub j i)))
-    ?:  =(j len)
-      (flop out)
-    $(i +(j))
+  ::                                                    ::  ++to-wain:format
+  ++  to-wain                                           ::  atom to line list
+    ~%  %lore  ..is  ~
+    |=  lub/@
+    =|  tez/(list @t)
+    |-  ^+  tez
+    =+  ^=  wor
+      =+  [meg=0 i=0]
+      |-  ^-  {meg/@ i/@ end/@f}
+      =+  gam=(cut 3 [i 1] lub)
+      ?:  =(0 gam)
+        [meg i %.y]
+      ?:  =(10 gam)
+        [meg i %.n]
+      $(meg (cat 3 meg gam), i +(i))
+    ?:  end.wor
+      (flop ^+(tez [meg.wor tez]))
+    ?:  =(0 lub)  (flop tez)
+    $(lub (rsh 3 +(i.wor) lub), tez [meg.wor tez])
   ::                                                    ::  ++of-wain:format
-  ++  of-wain                                           ::  line list to cord
-    |=  tez=wain  ^-  cord
+  ++  of-wain                                           ::  line list to atom
+    |=  tez/(list @t)
     (rap 3 (join '\0a' tez))
   ::                                                    ::  ++of-wall:format
   ++  of-wall                                           ::  line list to tape
@@ -5644,7 +5639,7 @@
       [(rash a fel) b]
     ::                                                  ::  ++pa:dejs:format
     ++  pa                                              ::  string as path
-      (su ;~(pfix fas (more fas urs:ab)))
+      (su ;~(pfix net (more net urs:ab)))
     ::                                                  ::  ++pe:dejs:format
     ++  pe                                              ::  prefix
       |*  {pre/* wit/fist}
@@ -6206,7 +6201,7 @@
     ::                                                  ::  ++abox:de-json:html
     ++  abox                                            ::  array
       %+  stag  %a
-      (ifix [sel (wish ser)] (more (wish com) apex))
+      (ifix [lac (wish rac)] (more (wish com) apex))
     ::                                                  ::  ++apex:de-json:html
     ++  apex                                            ::  any value
       %+  knee  *json  |.  ~+
@@ -6238,7 +6233,7 @@
           =*  wow  `(map @t @)`(malt lip)
           (sear ~(get by wow) low)
         =*  tuf  ;~(pfix (just 'u') (cook tuft qix:ab))
-        ;~(pose doq fas soq bas loo tuf)
+        ;~(pose yel net say bas loo tuf)
       ==
     ::                                                  ::  ++expo:de-json:html
     ++  expo                                            ::  exponent
@@ -6252,7 +6247,7 @@
       ;~(plug dot digs)
     ::                                                  ::  ++jcha:de-json:html
     ++  jcha                                            ::  string character
-      ;~(pose ;~(less doq bas prn) esca)
+      ;~(pose ;~(less yel bas prn) esca)
     ::                                                  ::  ++mayb:de-json:html
     ++  mayb                                            ::  optional
       |*(bus/rule ;~(pose bus (easy ~)))
@@ -6269,7 +6264,7 @@
       ==
     ::                                                  ::  ++obje:de-json:html
     ++  obje                                            ::  object list
-      %+  ifix  [(wish kel) (wish ker)]
+      %+  ifix  [(wish leb) (wish reb)]
       (more (wish com) pear)
     ::                                                  ::  ++obox:de-json:html
     ++  obox                                            ::  object
@@ -6283,7 +6278,7 @@
       (cook |=(a/@ [a ~]) bus)
     ::                                                  ::  ++stri:de-json:html
     ++  stri                                            ::  string
-      (cook crip (ifix [doq doq] (star jcha)))
+      (cook crip (ifix [yel yel] (star jcha)))
     ::                                                  ::  ++tops:de-json:html
     ++  tops                                            ::  strict value
       ;~(pose abox obox)
@@ -6392,14 +6387,14 @@
         ;~(pfix (plus whit) name)
         ;~  pose
           %+  ifix
-            :_  doq
-            ;~(plug (ifix [. .]:(star whit) tis) doq)
-          (star ;~(less doq escp))
+            :_  yel
+            ;~(plug (ifix [. .]:(star whit) tis) yel)
+          (star ;~(less yel escp))
         ::
           %+  ifix
-            :_  soq
-            ;~(plug (ifix [. .]:(star whit) tis) soq)
-          (star ;~(less soq escp))
+            :_  say
+            ;~(plug (ifix [. .]:(star whit) tis) say)
+          (star ;~(less say escp))
         ::
           (easy ~)
         ==
@@ -6415,7 +6410,7 @@
     ::                                                  ::  ++chrd:de-xml:html
     ++  chrd                                            ::  character data
       %+  cook  |=(a/tape ^-(mars ;/(a)))
-      (plus ;~(less doq ;~(pose (just `@`10) escp)))
+      (plus ;~(less yel ;~(pose (just `@`10) escp)))
     ::                                                  ::  ++comt:de-xml:html
     ++  comt                                            ::  comments
       =-  (ifix [(jest '<!--') (jest '-->')] (star -))
@@ -6432,10 +6427,10 @@
       ;~(less (jest '?>') prn)
     ::                                                  ::  ++escp:de-xml:html
     ++  escp                                            ::
-      ;~(pose ;~(less gal gar pam prn) enty)
+      ;~(pose ;~(less led ban pad prn) enty)
     ::                                                  ::  ++enty:de-xml:html
     ++  enty                                            ::  entity
-      %+  ifix  pam^mic
+      %+  ifix  pad^mic
       ;~  pose
         =+  def=^+(ent (my:nl [%gt '>'] [%lt '<'] [%amp '&'] [%quot '"'] ~))
         %+  sear  ~(get by (~(uni by def) ent))
@@ -6451,7 +6446,7 @@
       ;~(plug ;~(plug name attr) (cold ~ (star whit)))
     ::                                                  ::  ++head:de-xml:html
     ++  head                                            ::  opening tag
-      (ifix [gal gar] ;~(plug name attr))
+      (ifix [gal ban] ;~(plug name attr))
     ::                                                  ::  ++many:de-xml:html
     ++  many                                            ::  contents
       ;~(pfix (star comt) (star ;~(sfix ;~(pose apex chrd cdat) (star comt))))
@@ -6466,7 +6461,7 @@
       ;~(pose ;~(plug ;~(sfix chx col) chx) chx)
     ::                                                  ::  ++tail:de-xml:html
     ++  tail                                            ::  closing tag
-      (ifix [(jest '</') gar] name)
+      (ifix [(jest '</') ban] name)
     ::                                                  ::  ++whit:de-xml:html
     ++  whit                                            ::  whitespace
       (mask ~[' ' `@`0x9 `@`0xa])
@@ -6571,13 +6566,8 @@
       ?^  t.rax
         [p.pok [ire q.pok]]:[pok=$(rax t.rax) ire=i.rax]
       =/  raf/(like term)
-        %-  ;~  sfix
-              %+  sear
-                |=(a/@ ((sand %ta) (crip (flop (trip a)))))
-              (cook |=(a/tape (rap 3 ^-((list @) a))) (star aln))
-              dot
-            ==
-        [1^1 (flop (trip i.rax))]
+          =>  |=(a/@ ((sand %tas) (crip (flop (trip a)))))
+          (;~(sfix (sear . sym) dot) [1^1 (flop (trip i.rax))])
       ?~  q.raf
         [~ [i.rax ~]]
       =+  `{ext/term {@ @} fyl/tape}`u.q.raf
@@ -6586,7 +6576,7 @@
     ::                                                  ::  ++apat:de-purl:html
     ++  apat                                            ::  2396 abs_path
       %+  cook  deft
-      ;~(pfix fas (more fas smeg))
+      ;~(pfix net (more net smeg))
     ::                                                  ::  ++aurf:de-purl:html
     ++  aurf                                            ::  2396 with fragment
       %+  cook  |~(a/purf a)
@@ -6607,13 +6597,13 @@
         [q.a [[p.a r.a] b]]
       ::
       ;~  plug
-        ;~(plug htts (punt ;~(sfix urt:ab pat)) thor)
+        ;~(plug htts (punt ;~(sfix urt:ab vat)) thor)
         ;~(plug ;~(pose apat (easy *pork)) yque)
       ==
     ::                                                  ::  ++htts:de-purl:html
     ++  htts                                            ::  scheme
       %+  sear  ~(get by (malt `(list (pair term ?))`[http+| https+& ~]))
-      ;~(sfix scem ;~(plug col fas fas))
+      ;~(sfix scem ;~(plug col net net))
     ::                                                  ::  ++cock:de-purl:html
     ++  cock                                            ::  cookie
       %+  most  ;~(plug mic ace)
@@ -6633,10 +6623,10 @@
       (cook crip (star pquo))
     ::                                                  ::  ++pcar:de-purl:html
     ++  pcar                                            ::  2396 path char
-      ;~(pose pure pesc psub col pat)
+      ;~(pose pure pesc psub col vat)
     ::                                                  ::  ++pcok:de-purl:html
     ++  pcok                                            ::  cookie char
-      ;~(less bas mic com doq prn)
+      ;~(less bas mic com yel prn)
     ::                                                  ::  ++pesc:de-purl:html
     ++  pesc                                            ::  2396 escaped
       ;~(pfix cen mes)
@@ -6645,24 +6635,24 @@
       (cold ' ' (just '+'))
     ::                                                  ::  ++pque:de-purl:html
     ++  pque                                            ::  3986 query char
-      ;~(pose pcar fas wut)
+      ;~(pose pcar net wut)
     ::                                                  ::  ++pquo:de-purl:html
     ++  pquo                                            ::  normal query char
-      ;~(pose pure pesc pold fas wut col com)
+      ;~(pose pure pesc pold net wut col com)
     ::                                                  ::  ++pure:de-purl:html
     ++  pure                                            ::  2396 unreserved
-      ;~(pose aln hep cab dot zap sig tar soq pal par)
+      ;~(pose aln hep cab dot zap sig tar say lit rit)
     ::                                                  ::  ++psub:de-purl:html
     ++  psub                                            ::  3986 sub-delims
       ;~  pose
-        zap  buc  pam  soq  pal  par
+        zap  bus  pad  say  lit  rit
         tar  lus  com  mic  tis
       ==
     ::                                                  ::  ++ptok:de-purl:html
     ++  ptok                                            ::  2616 token
       ;~  pose
-        aln  zap  hax  buc  cen  pam  soq  tar  lus
-        hep  dot  ket  cab  tic  bar  sig
+        aln  zap  hax  bus  cen  pad  say  tar  lus
+        hep  dot  ket  cab  tec  bar  sig
       ==
     ::                                                  ::  ++scem:de-purl:html
     ++  scem                                            ::  2396 scheme
@@ -6676,7 +6666,7 @@
       (cook crip (plus pcok))
     ::                                                  ::  ++tosk:de-purl:html
     ++  tosk                                            ::  6265 quoted value
-      ;~(pose tock (ifix [doq doq] tock))
+      ;~(pose tock (ifix [yel yel] tock))
     ::                                                  ::  ++toke:de-purl:html
     ++  toke                                            ::  2616 token
       (cook crip (plus ptok))
@@ -6718,7 +6708,7 @@
         ::  proper query
         ::
         %+  more
-          ;~(pose pam mic)
+          ;~(pose pad mic)
         ;~(plug fque ;~(pose ;~(pfix tis fquu) (easy '')))
         ::
         ::  funky query
@@ -8222,7 +8212,7 @@
     ::
     ++  function
       |*  [tag=@tas fun=@t rul=rule]
-      ;~(plug (cold tag (jest fun)) (ifix [pal par] rul))
+      ;~(plug (cold tag (jest fun)) (ifix [lit rit] rul))
     ::
     ++  shipname
       ;~(pfix sig fed:ag)
@@ -9187,10 +9177,6 @@
     |-  ^-  seed:able:jael
     =/  cub=acru:ames  (pit:nu:crub:crypto 512 eny)
     =/  who=ship  `@`fig:ex:cub
-    ::  disallow 64-bit or smaller addresses
-    ::
-    ?.  ?=(%pawn (clan:title who))
-      $(eny +(eny))
     ?:  (~(has in stars) (^sein:title who))
       [who 1 sec:ex:cub ~]
     $(eny +(eny))
