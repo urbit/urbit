@@ -6,43 +6,42 @@
 ::    These foreign key relationships are prone to breaking during OTAs 
 ::    and there are enough of them that they rarely get tested for 
 ::    manually. %sane is a gall app that will check the validity of
-::    these relationships. The MVP will just print the errors as it 
-::    finds them.
+::    these relationships, and fix them if asked.
+::
+::    Sane has a companion thread, -sane, which should be run instead
+::    of attempting :sane %fix directly from the dojo.
 ::
 ::    Pokes:
-::      %off - turn off checking on a reload
-::      %lax - check on reload, printing errors
-::      %strict - check on reload, aborting commit if invalid
-::      %check-print  - run a check now, printing errors
-::      %check-crash - run a check now, crashing nondeterministically
-::        if invalid 
-::    
+::      %fix - Find issues and fix them
+::      %check - Find issues and print them
+::
 ::    Currently validates:
 ::      - Entries in {contact,metadata,group} stores are in sync with 
 ::         their hooks
 ::      - Each group has its associated metadata and contacts
-::
-::    Future validation: 
-::      - Subscriptions are correctly setup for hooks
-::      - Graph store integration
-::    
+::      - Each graph is being synced
+::      - Each chat is being synced
 ::
 /-  *metadata-store, contacts=contact-store, *group
-/+  default-agent, verb, dbug, resource
+/+  default-agent, verb, dbug, resource, graph, mdl=metadata, group
 ~%  %sane-app  ..is  ~
 |%
 +$  card  card:agent:gall
 ::
-+$  state-zero  [%0 =mode]
++$  state-zero  [%0 ~]
 ::
-+$  issues  (list tank)
++$  issue  
+  $%  [%lib-pull-hook-desync app=term =resource]
+      [%lib-push-hook-desync app=term =resource]
+      [%md-hook-desync =path]
+      [%contact-hook-desync =path]
+      [%chat-desync =path]
+  ==
 ::
-+$  mode    ?(%strict %lax %off)
++$  issues
+  (list issue)
 ::
-+$  action  ?(mode check)
-::
-+$  check   ?(%check-print %check-crash)
-::
++$  action  ?(%check %fix)
 --
 ::
 =|  state-zero
@@ -60,14 +59,12 @@
 ::
 ++  on-init  
   ^-  (quip card _this)
-  :_  this
-  ~[subscribe-to-agent-builds]
+  `this
 ++  on-save  !>(state)
 ::
 ++  on-load
   |=  =vase
-  =/  old  !<(state-zero vase)
-  `this(mode mode.old)
+  `this
 ::
 ++  on-poke  
   |=  [=mark =vase]
@@ -75,10 +72,12 @@
   ?.  =(%noun mark)
     (on-poke:def mark vase)
   =/  act=action  !<(action vase)
-  ?:  ?=(^mode act)
-    `this(mode act)
-  %-  (check-sane:sc act)
-  `this
+  =^  cards  state
+    ?-  act  
+      %fix  fix-sane:sc
+      %check  print-sane:sc
+    ==
+  [cards this]
 ::
 ++  on-agent  on-agent:def
 ++  on-watch  on-watch:def
@@ -91,172 +90,201 @@
     (on-peek:def path)
   ~
 ::
-++  on-arvo   
-  |=  [=wire =sign-arvo]
-  ?>  ?=([%rebuilds ~] wire)
-  ?>  ?=([%c %wris *] sign-arvo)
-  =/  ucheck  check-type:sc 
-  :_  this
-  %.  ~[subscribe-to-agent-builds]
-  ?~  ucheck  same
-  (check-sane:sc u.ucheck)
-::
+++  on-arvo  on-arvo:def
 ++  on-fail   on-fail:def
 --
 ::
 |_  =bowl:gall
 ::
-++  subscribe-to-agent-builds
-  ^-  card
-  ~&  >>  "Subscribing..."
-  =/  =mool:clay
-    :-  da+now.bowl
-    %-  ~(gas in *(set [care:clay path]))
-    :~  [%a /app/metadata-hook/hoon]
-        [%a /app/metadata-store/hoon]
-        [%a /app/group-store/hoon]
-        [%a /app/group-pull-hook/hoon]
-        [%a /app/group-push-hook/hoon]
-        [%a /app/contact-store/hoon]
-        [%a /app/contact-hook/hoon]
-    ==
-  [%pass /rebuilds %arvo %c %warp our.bowl %home ~ %mult mool]
+++  gra  ~(. graph bowl)
 ::
-++  check-type
-  ^-  (unit check)
-  ?+  mode  ~
-    %strict  `%check-crash
-    %lax     `%check-print
-  ==
+++  md   ~(. mdl bowl)
 ::
-++  print
-  |=  [pri=@ud =issues]
-  ^+  same
-  %.  same
-  %-  %*(. slog pri pri)
-  issues
+++  grp  ~(. group bowl)
 ::
-++  xor
-  |*  [a=(set) b=(set)]
-  (~(uni in (~(dif in a) b)) (~(dif in b) a))
-::
-++  check-sane
-  |=  =check
-  ^+  same
-  =/  =issues
-    ;:  weld
-      store-hook-desync
-      metadata-group-desync
-      contact-group-desync
-    ==
-  ?~  issues
-    ((print 1 ~[leaf+"Sane!"]) same)
-  %-  (print 3 issues)
-  ?:  =(%check-print check)
-    same
-  =/  failure
-    ~|  %crashing-to-abort-merge
-    (bex (bex 256))
-  same
-::  +store-hook-desync: check desync between store and hook
-::
-::    check desync between store and hook for contacts,
-::    metadata, group and graph
-++  store-hook-desync
-  ^-  issues
-  =|  =issues
-  |^
-  =.  issues
-    metadata-desync
-  =.  issues
-    contact-desync
-  issues
+++  foreign-keys
+  |_  =issues
+  ++  fk-core  .
   ::
-  ++  report-desync
-    |=  [app=term =(set path)]
+  ++  abet
     ^+  issues
-    %+  weld
-      issues
+    issues
+  ::
+  ++  abet-fix
+    ^-  (list card)
+    (turn issues fix-issue)
+  ::
+  ++  report
+    |=  =issue
+    fk-core(issues (snoc issues issue))
+  ::
+  ++  report-many
+    |=  many=^issues
+    fk-core(issues (weld issues many))
+  ::
+  ++  check-all
+    =>  (lib-hooks-desync %group scry-groups)
+    =>  (lib-hooks-desync %graph get-keys:gra)
+    groups
+  ::
+  ++  chat
+    ^+  fk-core
+    =/  missing=(set path)
+      (~(dif in scry-chats) scry-chat-syncs)
+    %-  report-many
     %+  turn
-      ~(tap in set)
+      ~(tap in missing)
     |=  =path
-    `tank`leaf+"store-hook desync: {<app>}: {<path>}"
+    ^-  issue
+    [%chat-desync path]
   ::
-  ++  metadata-desync
-    ^+  issues
-    =/  groups=(set path)
-      =-  ~(key by -)
-      (scry (jug path md-resource) /y/metadata-store/group-indices)
-    =/  group-syncs
-      (scry (set path) /x/metadata-hook/synced/noun)
-    =/  desyncs=(set path)
-      (xor groups group-syncs)
-    (report-desync %metadata-store desyncs)
+  ++  groups
+    ^+  fk-core
+    =/  groups=(list resource)
+       ~(tap in scry-groups)
+    |-
+    ?~  groups
+      fk-core
+    =*  group  i.groups
+    =?  fk-core  !(~(has in scry-md-syncs) group)
+      (report %md-hook-desync (en-path:resource group))
+    =?  fk-core  &((is-managed:grp group) !(~(has in scry-contact-syncs) group))
+      (report %contact-hook-desync (en-path:resource group))
+    $(groups t.groups)
   ::
-  ++  contact-desync
-    ^+  issues
-    =/  contacts
-      contact-store-paths
-    =/  contact-syncs
-      (scry (set path) /x/contact-hook/synced/noun)
-    =/  desyncs
-      (xor contact-syncs contacts)
-    (report-desync %contact-store desyncs)
-  ::
+  ++  lib-hooks-desync
+    |=  [app=term storing=(set resource)]
+    ^+  fk-core
+    =/  tracking
+      (tracking-pull-hook (pull-hook-name app))
+    =/  sharing
+      (sharing-push-hook (push-hook-name app))
+    =/  resources
+      ~(tap in storing)
+    |- 
+    ?~  resources
+      fk-core
+    =*  rid  i.resources
+    =?  fk-core  &(=(our.bowl entity.rid) !(~(has in sharing) rid))
+      (report %lib-push-hook-desync (push-hook-name app) rid)
+    =?  fk-core  &(!=(our.bowl entity.rid) !(~(has in tracking) rid))
+      (report %lib-pull-hook-desync (pull-hook-name app) rid)
+    $(resources t.resources)
   --
-::  +metadata-group-desync: check desync between metadata and groups
 ::
-++  metadata-group-desync
-  ^-  issues
-  =/  groups=(set path)  group-store-paths
-  =/  metadata           metadata-store-paths
-  =/  desyncs            (xor groups metadata)
-  %+  turn
-    ~(tap in desyncs)
-  |=  =path
-  leaf+"metadata-group-desync: {<path>}"
-::  +contact-group-desync: check desync between contacts and groups
+++  pull-hook-name
+  |=  app=term
+  :(join-cord app '-' %pull-hook)
 ::
-++  contact-group-desync
-  ^-  issues
-  =/  groups=(set path)    managed-group-store-paths
-  =/  contacts             contact-store-paths
-  =/  desyncs              (xor contacts groups)
-  %+  turn
-    ~(tap in desyncs)
-  |=  =path
-  leaf+"contact-group-desync: {<path>}"
+++  push-hook-name
+  |=  app=term
+  :(join-cord app '-' %push-hook)
 ::
-++  contact-store-paths
+++  fix-sane
+  ^-  (quip card _state)
+  =/  cards=(list card)
+    =>  foreign-keys
+    =>  check-all
+    abet-fix
+  [cards state]
+::
+++  print-sane
+  ^-  (quip card _state)
+  =/  =issues
+    =>  foreign-keys
+    =>  check-all
+    abet
+  `state
+::
+++  fix-issue
+  |=  =issue
+  ^-  card
+  |^
+  ?-   -.issue 
+    ::
+      %lib-pull-hook-desync
+    =*  rid  resource.issue
+    (poke-our app.issue pull-hook-action+!>([%add entity.rid rid]))
+    ::
+      %lib-push-hook-desync
+    (poke-our app.issue push-hook-action+!>([%add resource.issue]))
+    ::
+      %md-hook-desync
+    =/  rid=resource
+      (de-path:resource path.issue)
+    =/  act
+      ?:  =(entity.rid our.bowl)
+        [%add-owned path.issue]
+      [%add-synced entity.rid path.issue]
+    (poke-our %metadata-hook metadata-hook-action+!>(act))
+    ::
+      %contact-hook-desync
+    =/  rid=resource
+      (de-path:resource path.issue)
+    =/  act
+      ?:  =(entity.rid our.bowl)
+        [%add-owned path.issue]
+      [%add-synced entity.rid path.issue]
+    (poke-our %contact-hook contact-hook-action+!>(act))
+      %chat-desync
+    =/  =ship
+      (slav %p (snag 0 path.issue))
+    =/  act
+      ?:  =(ship our.bowl)
+        [%add-owned path.issue %.n]
+      [%add-synced ship path.issue %.n]
+    (poke-our %chat-hook chat-hook-action+!>(act))
+  ==
+  ::
+  ++  poke-our
+    |=  [app=term =cage]
+    ^-  card
+    [%pass /fix %agent [our.bowl app] %poke cage]
+  --
+::
+++  join-cord
+  (cury cat 3)
+::
+++  scry-groups
+  (scry ,(set resource) /y/group-store/groups)
+::
+++  tracking-pull-hook
+  |=  hook=term
+  %+  scry
+    ,(set resource)
+  /x/[hook]/tracking/noun
+::
+++  sharing-push-hook
+  |=  hook=term
+  %+  scry
+    ,(set resource)
+  /x/[hook]/sharing/noun
+::
+++  scry-md-syncs
+  ^-  (set resource)
+  =-  (~(run in -) de-path:resource)
+  %+  scry
+    ,(set path)
+  /x/metadata-hook/synced/noun
+::
+++  scry-contact-syncs
+  ^-  (set resource)
+  =-  (~(run in -) de-path:resource)
+  %+  scry
+    ,(set path)
+  /x/contact-hook/synced/noun
+::
+++  scry-chat-syncs
   ^-  (set path)
-  %-  %~  del  in
-    ~(key by (scry rolodex:contacts /x/contact-store/all/noun))
-  /~/default
+  %+  scry
+    ,(set path)
+  /x/chat-hook/synced/noun
 ::
-++  metadata-store-paths
+++  scry-chats
   ^-  (set path)
-  ~(key by (scry (jug path md-resource) /y/metadata-store/group-indices))
-::
-++  group-store-paths
-  ^-  (set path)
-  %-  sy
-  %+  turn
-    ^-  (list resource)
-    ~(tap in (scry (set resource) /y/group-store/groups))
-  en-path:resource
-::
-++  managed-group-store-paths
-  %-  sy
-  ^-  (list path)
-  %+  murn
-     ~(tap in group-store-paths) 
-  |=  =path
-  ^-  (unit ^path)
-  =/  scry-pax=^path
-    :(weld /x/group-store/groups path /noun)
-  ?:  hidden:(need (scry (unit group) scry-pax))
-    ~
-  `path
+  %+  scry
+    ,(set path)
+  /x/chat-store/keys/noun
 ::
 ++  scry
   |*  [=mold =path]
