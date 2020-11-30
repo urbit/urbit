@@ -195,7 +195,6 @@
           (group-poke [%remove-group rid ~])
           (contact-poke [%delete path.act])
       ==
-      (delete-metadata path.act)
     ==
   ::
       %remove
@@ -355,13 +354,6 @@
     ==
   :~  (metadata-poke [%add path [%contacts path] metadata])
       (metadata-hook-poke [%add-owned path])
-  ==
-::
-++  delete-metadata
-  |=  =path
-  ^-  (list card)
-  :~  (metadata-poke [%remove path [%contacts path]])
-      (metadata-hook-poke [%remove path])
   ==
 ::
 ++  all-scry

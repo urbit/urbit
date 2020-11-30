@@ -27,7 +27,7 @@
 --
 ::
 %-  agent:dbug
-=|  state-1
+=|  state-2
 =*  state  -
 ::
 ^-  agent:gall
@@ -44,7 +44,7 @@
     ::
       %+  act
         /grp-gra
-      [%watch %group-store /groups %group-leave-graph]
+      [%watch %group-store /groups %group-on-leave]
   ==
   ::
   ++  act
@@ -74,7 +74,7 @@
     %+  on-poke
       %observe-action
     !>  ^-  action:sur
-    [%watch %group-store /groups %group-leave-graph]
+    [%watch %group-store /groups %group-on-leave]
   ==
 ::
 ++  on-poke
