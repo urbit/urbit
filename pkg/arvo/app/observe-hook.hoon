@@ -10,7 +10,7 @@
 +$  card  card:agent:gall
 +$  versioned-state
   $%  state-0
-      state-0
+      state-1
   ==
 ::
 +$  serial   @uv
@@ -70,7 +70,7 @@
     %1  `this(state old-state)
   ::
       %0
-    =.  this(state [%1 observers.old-state])
+    =.  state  [%1 observers.old-state]
     %+  on-poke
       %observe-action
     !>  ^-  action:sur
