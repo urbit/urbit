@@ -491,6 +491,23 @@ _pier_on_scry_done(void* ptr_v, u3_noun nun)
   else {
     u3l_log("pier: scry succeeded\n");
 
+    //  serialize as desired
+    //
+    u3_atom out;
+    c3_c*   ext_c;
+    {
+      u3l_log("xxx\n");
+      u3_atom puf = u3i_string(u3_Host.ops_u.puf_c);
+      if ( c3y == u3r_sing(c3__jam, puf) ) {
+        out   = u3qe_jam(res);
+        ext_c = "jam";
+      }
+      else {
+        out   = u3dc("scot", puf, u3k(res));
+        ext_c = "txt";
+      }
+    }
+
     c3_c* pac_c = u3_Host.ops_u.puk_c;
     if (!pac_c) {
       pac_c = u3_Host.ops_u.pek_c;
@@ -510,20 +527,9 @@ _pier_on_scry_done(void* ptr_v, u3_noun nun)
     }
 
     c3_c fil_c[2048];
-    snprintf(fil_c, 2048, "%s/.urb/put/%s.%s", pir_u->pax_c, pac_c+1,
-             (c3y == u3_Host.ops_u.kex) ? "key" : "jam");
+    snprintf(fil_c, 2048, "%s/.urb/put/%s.%s", pir_u->pax_c, pac_c+1, ext_c);
 
-    //  if this was a keyfile scry, serialize it as @uw,
-    //  otherwise, write it to a jamfile
-    //
-    //TODO  support broader control over output format
-    //
-    if ( c3y == u3_Host.ops_u.kex ) {
-      u3_atom out = u3dc("scot", c3__uw, u3k(res));
-      u3_walk_save(fil_c, 0, out, pir_u->pax_c, pad);
-    } else {
-      u3_walk_save(fil_c, 0, u3qe_jam(res), pir_u->pax_c, pad);
-    }
+    u3_walk_save(fil_c, 0, out, pir_u->pax_c, pad);
     u3l_log("pier: scry in %s\n", fil_c);
   }
 
@@ -633,13 +639,6 @@ _pier_work_init(u3_pier* pir_u)
                       pir_u, _pier_on_scry_done);
     u3z(pex);
 
-  }
-  else if ( _(u3_Host.ops_u.kex) ) {
-    if (!u3_Host.ops_u.puk_c) {
-      u3_Host.ops_u.puk_c = strdup("/archive/keyfile");
-    }
-    u3_pier_peek_last(pir_u, u3_nul, c3__j, c3__vile, u3_nul,
-                      pir_u, _pier_on_scry_done);
   }
   else {
     //  initialize i/o drivers

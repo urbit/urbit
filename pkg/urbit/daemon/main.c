@@ -75,7 +75,6 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.dem = c3n;
   u3_Host.ops_u.dry = c3n;
   u3_Host.ops_u.exp = c3n;
-  u3_Host.ops_u.kex = c3n;
   u3_Host.ops_u.gab = c3n;
   u3_Host.ops_u.git = c3n;
 
@@ -94,11 +93,12 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.tex = c3n;
   u3_Host.ops_u.tra = c3n;
   u3_Host.ops_u.veb = c3n;
+  u3_Host.ops_u.puf_c = "jam";
   u3_Host.ops_u.hap_w = 50000;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
   while ( -1 != (ch_i=getopt(argc, argv,
-                 "X:Y:G:J:B:K:A:H:I:C:w:u:e:F:k:n:p:r:i:LljacdgoqstvxOPDRS")) )
+                 "X:Y:G:J:B:K:A:H:I:C:w:u:e:F:k:n:p:r:i:Z:LljacdgoqstvxPDRS")) )
   {
     switch ( ch_i ) {
       case 'X': {
@@ -107,6 +107,10 @@ _main_getopt(c3_i argc, c3_c** argv)
       }
       case 'Y': {
         u3_Host.ops_u.puk_c = strdup(optarg);
+        break;
+      }
+      case 'Z': {
+        u3_Host.ops_u.puf_c = strdup(optarg);
         break;
       }
       case 'J': {
@@ -201,7 +205,6 @@ _main_getopt(c3_i argc, c3_c** argv)
       case 'd': { u3_Host.ops_u.dem = c3y; break; }
       case 'g': { u3_Host.ops_u.gab = c3y; break; }
       case 'o': { u3_Host.ops_u.exp = c3y; break; }
-      case 'O': { u3_Host.ops_u.kex = c3y; break; }
       case 'P': { u3_Host.ops_u.pro = c3y; break; }
       case 'D': { u3_Host.ops_u.dry = c3y; break; }
       case 'q': { u3_Host.ops_u.qui = c3y; break; }
@@ -423,9 +426,10 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "-u url        URL from which to download pill\n",
     "-v            Verbose\n",
     "-w name       Boot as ~name\n",
-    "-X path       Scry, jam to file, then exit\n"
+    "-X path       Scry, write to file, then exit\n"
     "-x            Exit immediately\n",
-    "-Y file       Optional name of jamfile (for -X and -o)\n"
+    "-Y file       Optional name of file (for -X and -o)\n"
+    "-Z format     Optional file format ('jam', or aura, for -X)\n"
     "\n",
     "Development Usage:\n",
     "   To create a development ship, use a fakezod:\n",
