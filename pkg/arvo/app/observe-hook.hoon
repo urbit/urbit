@@ -27,7 +27,7 @@
 --
 ::
 %-  agent:dbug
-=|  state-2
+=|  state-1
 =*  state  -
 ::
 ^-  agent:gall
