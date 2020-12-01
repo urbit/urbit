@@ -86,6 +86,9 @@
 ::    %s: watch
 ::    %u: leave
 ::
++$  ames-request-all
+  $%  [%0 ames-request]
+  ==
 +$  ames-request
   $%  [%m =mark noun=*]
       [%l =mark =path]
@@ -492,7 +495,8 @@
     ::
     =.  mo-core  (mo-track-ship ship)
     ?<  ?=(?(%raw-poke %poke-as) -.deal)
-    =/  =ames-request
+    =/  =ames-request-all
+      :-  %0
       ?-  -.deal
         %poke      [%m p.cage.deal q.q.cage.deal]
         %leave     [%u ~]
@@ -505,7 +509,7 @@
     ::
     =/  =note-arvo
       =/  =path  /ge/[foreign-agent]
-      [%a %plea ship %g path ames-request]
+      [%a %plea ship %g path ames-request-all]
     ::
     =.  outstanding.state
       =/  stand
@@ -769,7 +773,9 @@
       =/  sys-wire  [%sys wire]
       ::  TODO: %drip %kick so app crash can't kill the remote %pull
       ::
-      =.  mo-core  (mo-pass sys-wire %a %plea ship %g /ge/[foreign-agent] %u ~)
+      =/  =ames-request-all  [%0 %u ~]
+      =.  mo-core
+        (mo-pass sys-wire %a %plea ship %g /ge/[foreign-agent] ames-request-all)
       =.  mo-core  (mo-give %unto %kick ~)
       mo-core
     ==
@@ -1702,8 +1708,9 @@
     ?>  ?=([%ge @ ~] path)
     =/  agent-name  i.t.path
     ::
-    =/  =ames-request  ;;(ames-request noun)
-    =>  (mo-handle-ames-request:mo-core ship agent-name ames-request)
+    =+  ;;(=ames-request-all noun)
+    ?>  ?=(%0 -.ames-request-all)
+    =>  (mo-handle-ames-request:mo-core ship agent-name +.ames-request-all)
     mo-abet
   ::
       %sear  mo-abet:(mo-filter-queue:mo-core ship.task)
