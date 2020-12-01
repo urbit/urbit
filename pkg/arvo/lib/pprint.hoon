@@ -372,7 +372,6 @@
       [%dtts *]  (rune '.=' ~ `['=(' spc ')'] (hoons ~[p q]:x))
       [%dtwt *]  (rune '.?' ~ ~ (hoons ~[p.x]))
       [%ktbr *]  (rune '^|' ~ ~ (hoons ~[p.x]))
-      [%ktcn *]  (rune '^%' ~ ~ (hoons ~[p]:x))
       [%ktdt *]  (rune '^.' ~ ~ (hoons ~[p q]:x))
       [%ktls *]  (rune '^+' ~ ~ (hoons ~[p q]:x))
       [%kthp *]  (rune '^-' ~ ~ ~[(spec p.x) (hn q.x)])
