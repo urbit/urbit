@@ -707,7 +707,7 @@
     =/  older  ?=(%older i.t.t.path)
     =/  =ship  (slav %p i.t.t.t.path)
     =/  =term  i.t.t.t.t.path
-    =/  count=@ud  (slav %ud i.t.t.t.t.t.path)
+    =/  count=(unit @ud)  (slaw %ud i.t.t.t.t.t.path)
     =/  =index:store
       (turn t.t.t.t.t.t.path (cury slav %ud))
     =/  parent=index:store
@@ -723,7 +723,9 @@
       [ship term]
     %-  ~(gas by *(map index:store node:store))
     %+  turn
-      %+  scag  count
+      %-  ?~  count   same
+          |=   =(list [atom node:store])
+          (slag u.count list)
       %-  ?:(older same flop)
       %-  tap:orm
       %+  subset:orm  u.graph
@@ -745,7 +747,6 @@
     =/  children
       (get-node-children ship term index)
     ?~  children  [~ ~]
-    ~&  count
     :-  ~  :-  ~  :-  %graph-update
     !>  ^-  update:store
     :+  %0

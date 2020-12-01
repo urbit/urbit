@@ -5,7 +5,7 @@
   ++  noun  i
   ++  notification-kind
     ?+  index.p.i  ~
-      [@ ~]  `[%message 0]
+      [@ ~]  `[%message 0 %count]
     ==
   --
 ++  grab

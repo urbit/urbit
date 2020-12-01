@@ -150,16 +150,18 @@ function readEach(json: any, state: HarkState) {
 }
 
 function readSince(json: any, state: HarkState) {
-  const data = _.get(json, 'read-since');
+  const data = _.get(json, 'read-count');
   if(data) {
-    updateUnreadSince(state, data.index, data.target)
+    updateUnreadCount(state, data, () => 0)
   }
 }
 
 function unreadSince(json: any, state: HarkState) {
-  const data = _.get(json, 'unread-since');
+  const data = _.get(json, 'unread-count');
+  console.log(data);
   if(data) {
     updateNotificationStats(state, data.index, 'last', () => data.last)
+    updateUnreadCount(state, data.index, u => u + 1);
   }
 }
 
@@ -174,12 +176,13 @@ function unreadEach(json: any, state: HarkState) {
 function unreads(json: any, state: HarkState) {
   const data = _.get(json, 'unreads');
   if(data) {
+    console.log(data);
     data.forEach(({ index, stats }) => {
       const { unreads, notifications, last } = stats;
       updateNotificationStats(state, index, 'notifications', x => x + notifications);
       updateNotificationStats(state, index, 'last', () => last);
-      if('since' in unreads) {
-        updateUnreadSince(state, index, unreads.since);
+      if('count' in unreads) {
+        updateUnreadCount(state, index, () => unreads.count);
       } else {
         unreads.each.forEach((u: string) => {
           updateUnreads(state, index, s => s.add(u));
@@ -189,11 +192,13 @@ function unreads(json: any, state: HarkState) {
   }
 }
 
-function updateUnreadSince(state: HarkState, index: NotifIndex, since: string) {
+function updateUnreadCount(state: HarkState, index: NotifIndex, count: (c: number) => number) {
   if(!('graph' in index)) {
     return; 
   }
-  _.set(state.unreads.graph, [index.graph.graph, index.graph.index, 'unreads'], since);
+  const property = [index.graph.graph, index.graph.index, 'unreads'];
+  const curr = _.get(state.unreads.graph, property, 0);
+  _.set(state.unreads.graph, property, count(curr));
 }
 
 function updateUnreads(state: HarkState, index: NotifIndex, f: (us: Set<string>) => void) {

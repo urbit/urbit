@@ -69,7 +69,7 @@
         read-note+notif-ref
         add-note+add
         set-dnd+bo
-        read-since+read-graph-index
+        read-count+index
         read-each+read-graph-index
     ==
   --
@@ -88,10 +88,10 @@
         %set-dnd  b+dnd.upd
         %count    (numb count.upd)
         %more     (more +.upd)
-        %read-each  (read-graph +.upd)
-        %read-since  (read-graph +.upd)
+        %read-each  (read-each +.upd)
+        %read-count  (index +.upd)
         %unread-each  (unread-each +.upd)
-        %unread-since  (unread-since +.upd)
+        %unread-count  (unread-count +.upd)
         %unreads   (unreads +.upd)
         ::
           ?(%archive %read-note %unread-note)
@@ -106,7 +106,7 @@
       %+  turn  l
       |=  [idx=^index stats=^index-stats]
       %-  pairs
-      :~  unread+(numb unread)
+      :~  stats+(index-stats stats)
           index+(index idx)
       ==
     ::
@@ -115,8 +115,10 @@
       %+  frond
         -.unreads
       ?-  -.unreads
-        %since  (index:enjs:graph-store index.unreads)
         %each   a+(turn ~(tap by indices.unreads) index:enjs:graph-store)
+        ::
+          %count
+        (numb num.unreads)
       ==
     ::
     ++  index-stats
@@ -257,7 +259,7 @@
           (indexed-notification index notification)
       ==
     ::
-    ++  read-graph
+    ++  read-each
       |=  [=^index target=index:graph-store]
       %-  pairs
       :~  index+(^index index)
@@ -272,7 +274,7 @@
           last+(time tim)
       ==
     ::
-    ++  unread-since
+    ++  unread-count
       |=  [=^index tim=@da]
       %-  pairs
       :~  index+(^index index)

@@ -58,7 +58,7 @@ export class HarkApi extends BaseApi<StoreState> {
   }
 
   read(time: BigInteger, index: NotifIndex) {
-    return this.actOnNotification('read', time, index);
+    return this.actOnNotification('read-note', time, index);
   }
 
   readIndex(index: NotifIndex) {
@@ -68,21 +68,20 @@ export class HarkApi extends BaseApi<StoreState> {
   }
 
   unread(time: BigInteger, index: NotifIndex) {
-    return this.actOnNotification('unread', time, index);
+    return this.actOnNotification('unread-note', time, index);
   }
 
-  markSinceAsRead(association: Association, parent: string, description: GraphNotifDescription, since: string) {
+  markCountAsRead(association: Association, parent: string, description: GraphNotifDescription) {
     return this.harkAction(
-      {  'read-since': {
-        index:  { graph: {
+      {  'read-count': {
+         graph: {
         graph: association['app-path'],
         group: association['group-path'],
         module: association.metadata.module,
         description,
         index: parent
       } },
-        target: since
-    }});
+    });
   }
 
 

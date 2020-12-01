@@ -51,7 +51,7 @@ interface ChatWindowState {
   fetchPending: boolean;
   idle: boolean;
   initialized: boolean;
-  lastRead: number;
+  unreadIndex: BigInteger;
 }
 
 export default class ChatWindow extends Component<ChatWindowProps, ChatWindowState> {
@@ -60,18 +60,22 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
   private prevSize = 0;
   private loadedNewest = false;
   private loadedOldest = false;
+  private unreadIndex: BigInteger | null = null;
 
   INITIALIZATION_MAX_TIME = 1500;
 
-  constructor(props) {
+  constructor(props: ChatWindowProps) {
     super(props);
 
     this.state = {
       fetchPending: false,
       idle: true,
       initialized: false,
-      lastRead: props.unreadCount ? props.mailboxSize - props.unreadCount : -1,
+      unreadIndex: bigInt.zero
     };
+
+    this.calculateUnreadIndex();
+
 
     this.dismissUnread = this.dismissUnread.bind(this);
     this.scrollToUnread = this.scrollToUnread.bind(this);
@@ -102,6 +106,17 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
     window.removeEventListener('focus', this.handleWindowFocus);
   }
 
+  calculateUnreadIndex() {
+    const { graph, unreadCount } = this.props;
+    const unreadIndex = graph.keys()[unreadCount];
+    if(!unreadIndex) {
+      return;
+    }
+    this.setState({
+      unreadIndex
+    })
+  }
+
   handleWindowBlur() {
     this.setState({ idle: true });
   }
@@ -127,13 +142,16 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
       this.stayLockedIfActive();
     }*/
 
-      /*if (unreadCount > prevProps.unreadCount && this.state.idle) {
-      this.setState({
-        lastRead: unreadCount ? mailboxSize - unreadCount : -1,
-      });
-    }*/
+    if (unreadCount > prevProps.unreadCount && this.state.idle) {
+      this.calculateUnreadIndex();
+    }
+
 
     if(this.prevSize !== graph.size) {
+      if(this.state.unreadIndex.eq(bigInt.zero)) {
+        this.calculateUnreadIndex();
+        this.scrollToUnread();
+      }
       this.prevSize = graph.size;
       this.virtualList?.calculateVisibleItems();
     }
@@ -145,15 +163,12 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
     if (!this.state.fetchPending && prevState.fetchPending) {
       this.virtualList?.calculateVisibleItems();
     }
+       */
 
     if (station !== prevProps.station) {
       this.virtualList?.resetScroll();
-      this.scrollToUnread();
-      this.setState({
-        lastRead: unreadCount ? mailboxSize - unreadCount : -1,
-      });
+      this.calculateUnreadIndex();
     }
-     */
   }
 
   stayLockedIfActive() {
@@ -164,16 +179,19 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
   }
 
   scrollToUnread() {
-    /*
-    const { mailboxSize, unreadCount, scrollTo } = this.props;
-    const target = scrollTo || (mailboxSize - unreadCount);
-    this.virtualList?.scrollToData(target);
-     */
+    const { unreadIndex } = this.state;
+    if(unreadIndex.eq(bigInt.zero)) {
+      return;
+    }
+
+    this.virtualList?.scrollToData(unreadIndex);
   }
 
   dismissUnread() {
+    const { association } = this.props;
     if (this.state.fetchPending) return;
     if (this.props.unreadCount === 0) return;
+    //this.props.api.hark.markCountAsRead(association, '/', 'message');
     //this.props.api.chat.read(this.props.station);
     //this.props.api.hark.readIndex({ chat: { chat: this.props.station, mention: false }});
   }
@@ -234,7 +252,6 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
     const {
       stationPendingMessages,
       unreadCount,
-      unreadMsg,
       isChatLoading,
       isChatUnsynced,
       api,
@@ -258,12 +275,14 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
     const messageProps = { association, group, contacts, hideAvatars, hideNicknames, remoteContentPolicy, unreadMarkerRef, history, api };
 
     const keys = graph.keys().reverse();
+    const unreadIndex = keys[this.props.unreadCount];
+    const unreadMsg = unreadIndex && graph.get(unreadIndex);
 
     return (
       <>
         <UnreadNotice
           unreadCount={unreadCount}
-          unreadMsg={unreadCount === 1 && unreadMsg && unreadMsg.author === window.ship ? false : unreadMsg}
+          unreadMsg={unreadCount === 1 && unreadMsg && unreadMsg?.post.author === window.ship ? false : unreadMsg}
           dismissUnread={this.dismissUnread}
           onClick={this.scrollToUnread}
         />
@@ -281,19 +300,21 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
           data={graph}
           size={graph.size}
           renderer={({ index, measure, scrollWindow }) => {
-            const msg = graph.get(index)!.post;
+            const msg = graph.get(index)?.post;
             if (!msg) return null;
             if (!this.state.initialized) {
               return <MessagePlaceholder key={index.toString()} height="64px" index={index} />;
             }
             const isPending: boolean = 'pending' in msg && Boolean(msg.pending);
             const isLastMessage: boolean = Boolean(index.eq(bigInt(lastMessage)));
-            const isLastRead: boolean = Boolean(!isLastMessage && index.eq(bigInt(this.state.lastRead)));
             const highlighted = bigInt(this.props.scrollTo || -1).eq(index);
-            const props = { measure, highlighted, scrollWindow, isPending, isLastRead, isLastMessage, msg, ...messageProps };
             const graphIdx = keys.findIndex(idx => idx.eq(index));
             const prevIdx = keys[graphIdx+1];
             const nextIdx = keys[graphIdx-1];
+
+
+            const isLastRead: boolean = this.state.unreadIndex.eq(index);
+            const props = { measure, highlighted, scrollWindow, isPending, isLastRead, isLastMessage, msg, ...messageProps };
             return (
               <ChatMessage
                 key={index.toString()}

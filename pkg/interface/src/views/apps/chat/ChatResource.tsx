@@ -56,7 +56,7 @@ export function ChatResource(props: ChatResourceProps) {
       envelopes.length > 0) ||
     false;
 
-  const unreadCount = length - read;
+  const unreadCount = props.unreads.graph?.[station]?.['/']?.unreads || 0;
   const unreadMsg = unreadCount > 0 && envelopes[unreadCount - 1];
 
   const [,, owner, name] = station.split('/');
@@ -66,7 +66,7 @@ export function ChatResource(props: ChatResourceProps) {
   const chatInput = useRef<ChatInput>();
 
   useEffect(() => {
-    props.api.graph.getNewest(owner, name, 10);
+    props.api.graph.getNewest(owner, name, 20);
   }, [station]);
 
   const onFileDrag = useCallback(
@@ -121,7 +121,7 @@ export function ChatResource(props: ChatResourceProps) {
         isChatLoading={isChatLoading}
         isChatUnsynced={isChatUnsynced}
         graph={graph}
-        unreadCount={0}
+        unreadCount={unreadCount}
         unreadMsg={false}
         envelopes={[]}
         contacts={contacts}

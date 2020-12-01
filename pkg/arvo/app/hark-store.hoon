@@ -10,8 +10,8 @@
 ::  Usefull for non-linear, low-volume applications, i.e. blogs,
 ::  collections
 ::  
-/-  store=hark-store, post, group-store, metadata-store
-/+  resource, metadata, default-agent, dbug, graph-store
+/-  post, group-store, metadata-store
+/+  resource, metadata, default-agent, dbug, graph-store, graphl=graph, verb, store=hark-store
 ::
 ::
 ~%  %hark-store-top  ..is  ~
@@ -27,7 +27,7 @@
 +$  state-1
   $:  %1
       unreads-each=(jug index:store index:graph-store)
-      unreads-since=(map index:store index:graph-store)
+      unreads-count=(map index:store @ud)
       last-seen=(map index:store @da)
       =notifications:store
       archive=notifications:store
@@ -52,6 +52,7 @@
 =*  state  -
 ::
 =<
+%+  verb  |
 %-  agent:dbug
 ^-  agent:gall
 ~%  %hark-store-agent  ..card  ~
@@ -60,6 +61,7 @@
     ha    ~(. +> bowl)
     def   ~(. (default-agent this %|) bowl)
     met   ~(. metadata bowl)
+    gra   ~(. graphl bowl)
 ::
 ++  on-init
   :_  this
@@ -101,6 +103,7 @@
   ++  initial-updates
     ^-  update:store
     :-  %more
+    =-  ~&(- -)
     ^-  (list update:store)
     :+  give-unreads
       [%set-dnd dnd]
@@ -115,11 +118,12 @@
   ++  give-since-unreads
     ^-  (list [index:store index-stats:store])
     %+  turn
-      ~(tap by unreads-since)
-    |=  [=index:store since=index:graph-store]
+      ~(tap by unreads-count)
+    |=  [=index:store count=@ud]
+    ?>  ?=(%graph -.index)
     :*  index
         ~(wyt in (~(gut by by-index) index ~))
-        [%since since]
+        [%count count]
         (~(gut by last-seen) index *time)
     ==
   ++  give-each-unreads
@@ -186,6 +190,7 @@
   ::
   ++  hark-action
     |=  =action:store
+    ~&  -.action
     ^-  (quip card _state)
     |^
     ?-  -.action  
@@ -195,8 +200,8 @@
       %read-each     (read-each +.action)
       %unread-each   (unread-each +.action)
     ::
-      %read-since    (read-since +.action)
-      %unread-since  (unread-since +.action)
+      %read-count    (read-count +.action)
+      %unread-count  (unread-count +.action)
     ::
       %read-note     (read-note +.action)
       %unread-note   (unread-note +.action)
@@ -218,7 +223,7 @@
         ?~  existing-notif
           notification
         (merge-notification:ha u.existing-notif notification)
-      =.  read.new  %.y
+      =.  read.new  %.n
       =/  new-timebox=timebox:store
         (~(put by timebox) index new)
       :-  (give:ha [/updates]~ %added current-timebox index new)
@@ -316,15 +321,15 @@
         notifications  (change-read-status:ha time index %.n)
       ==
     ::
-    ++  read-since
-      |=  [=index:store since=index:graph-store]
+    ++  read-count
+      |=  =index:store
       ^-  (quip card _state)
       =^  cards  state
         (read-index index)
       :-  %+  weld  cards
-          (give:ha [/updates]~ %read-since index since)
+          (give:ha [/updates]~ %read-count index)
       %_  state
-        unreads-since  (~(put by unreads-since) index since)
+        unreads-count  (~(put by unreads-count) index 0)
       ==
     ::
     ++  read-boxes
@@ -351,12 +356,15 @@
       ^-  (quip card _state)
       `state
     ::
-    ++  unread-since
+    ++  unread-count
       |=  [=index:store time=@da]
       ^-  (quip card _state)
-      :-  (give:ha [/updates]~ %unread-since index time)
+      :-  (give:ha [/updates]~ %unread-count index time)
+      =/  curr=@ud
+        (~(gut by unreads-count) index 0)
       %_  state
         last-seen      (~(put by last-seen) index time)
+        unreads-count  (~(put by unreads-count) index +(curr))
       ==
     ::
     ++  seen

@@ -170,14 +170,17 @@ export default class VirtualScroller extends Component<VirtualScrollerProps, Vir
 
 
     const firstVisibleKey = visibleItems.peekSmallest()?.[0] ?? this.estimateIndexFromScrollTop(scrollTop)!;
-    if (data.peekSmallest()![0].eq(firstVisibleKey)) {
+    const smallest = data.peekSmallest();
+    if (smallest && smallest[0].eq(firstVisibleKey)) {
       this.loadRows(false);
     }
     const lastVisibleKey = 
       visibleItems.peekLargest()?.[0]
       ?? bigInt(this.estimateIndexFromScrollTop(scrollTop + windowHeight)!);
 
-    if (data.peekLargest()![0].eq(lastVisibleKey)) {
+    const largest = data.peekLargest();
+
+    if (largest && largest[0].eq(lastVisibleKey)) {
       this.loadRows(true);
     }
     onCalculateVisibleItems ? onCalculateVisibleItems(visibleItems) : null;

@@ -61,8 +61,8 @@
   $%  [%add-note =index =notification]
       [%archive time=@da index]
     ::
-      [%unread-since =index time=@da]
-      [%read-since =index =index:graph-store]
+      [%unread-count =index =time]
+      [%read-count =index]
     ::
       [%unread-each =index ref=index:graph-store time=@da]
       [%read-each index ref=index:graph-store]
@@ -82,7 +82,7 @@
   [notifications=@ud =unreads last-seen=@da]
 ::
 +$  unreads
-  $%  [%since =index:graph-store]
+  $%  [%count num=@ud]
       [%each indices=(set index:graph-store)]
   ==
 ::  
