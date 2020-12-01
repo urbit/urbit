@@ -728,6 +728,16 @@
     ::
     ++  dy-cage       |=(num=@ud (~(got by rez) num))   ::  known cage
     ++  dy-vase       |=(num=@ud q:(dy-cage num))       ::  known vase
+    ::
+    ++  dy-some
+      |=  src=(list dojo-source)
+      ^-  vase
+      ?~  src   !>(~)
+      %+  slop  !>(~)
+      |-
+      ?~  t.src  (dy-vase p.i.src)
+      (slop (dy-vase p.i.src) $(src t.src))
+    ::
     ++  dy-sore
       |=  src=(list dojo-source)
       ^-  vase
@@ -850,7 +860,7 @@
         [%pass /wool %agent [our.hid %spider] %watch /thread-result/[tid]]
       %-  he-card
       =/  =cage  ::  also sub
-        [%spider-start !>([~ `tid fil (dy-sore src)])]
+        [%spider-start !>([~ `tid fil (dy-some src)])]
       [%pass /wool %agent [our.hid %spider] %poke cage]
     ::
     ++  dy-make                                         ::  build step
