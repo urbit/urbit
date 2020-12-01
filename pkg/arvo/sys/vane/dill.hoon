@@ -410,79 +410,8 @@
   [moz ..^$]
 ::
 ++  load                                                ::  import old state
-  =>  |%
-      ::  without .dog
-      ::
-      ++  axle-1
-        $:  %1
-            hey=(unit duct)
-            dug=(map duct axon-3)
-            lit=?
-            $=  hef
-            $:  a=(unit mass)
-                b=(unit mass)
-                c=(unit mass)
-                e=(unit mass)
-                f=(unit mass)
-                g=(unit mass)
-                i=(unit mass)
-                j=(unit mass)
-            ==
-            $=  veb
-            $~  (~(put by *(map @tas log-level)) %hole %soft)
-            (map @tas log-level)
-        ==
-      ::
-      ++  axle-2
-        $:  %2
-            hey=(unit duct)
-            dug=(map duct axon-3)
-            lit=?
-            dog=_|
-            $=  hef
-            $:  a=(unit mass)
-                b=(unit mass)
-                c=(unit mass)
-                e=(unit mass)
-                f=(unit mass)
-                g=(unit mass)
-                i=(unit mass)
-                j=(unit mass)
-            ==
-            $=  veb
-            $~  (~(put by *(map @tas log-level)) %hole %soft)
-            (map @tas log-level)
-        ==
-      ::
-      +$  axle-3
-        $:  %3
-            hey=(unit duct)
-            dug=(map duct axon-3)
-            lit=?
-            $=  veb
-            $~  (~(put by *(map @tas log-level)) %hole %soft)
-            (map @tas log-level)
-        ==
-      +$  axon-3
-        $:  ram=term
-            tem=(unit (list dill-belt))
-            wid=_80
-            pos=@ud
-            see=(list @c)
-        ==
-      ::
-      +$  axle-any
-        $%(axle-1 axle-2 axle-3 axle)
-      --
-  ::
-  |=  old=axle-any
-  ?-  -.old
-    %1  $(old [%2 [hey dug lit dog=& hef veb]:old])
-    %2  $(old [%3 [hey dug lit veb]:old])
-    %3  =-  $(old [%4 hey.old - ~ lit.old veb.old])
-        (~(run by dug.old) |=(a=axon-3 a(see lin+see.a)))
-    %4  ..^$(all old)
-  ==
+  |=  old=axle
+  ..^$(all old)
 ::
 ++  scry
   |=  [lyc=gang cyr=term bem=beam]
