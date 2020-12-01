@@ -997,9 +997,7 @@
       %crud  (on-crud:event-core [p q]:task)
       %hear  (on-hear:event-core [lane blob]:task)
       %heed  (on-heed:event-core ship.task)
-      %hole  ~&  %on-hole
-             %-  (slog +:(need dud))
-             (on-hole:event-core [lane blob]:task)
+      %hole  (on-hole:event-core [lane blob]:task)
       %init  (on-init:event-core ship=p.task)
       %jilt  (on-jilt:event-core ship.task)
       %sift  (on-sift:event-core ships.task)
