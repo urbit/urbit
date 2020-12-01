@@ -496,7 +496,6 @@ _pier_on_scry_done(void* ptr_v, u3_noun nun)
     u3_atom out;
     c3_c*   ext_c;
     {
-      u3l_log("xxx\n");
       u3_atom puf = u3i_string(u3_Host.ops_u.puf_c);
       if ( c3y == u3r_sing(c3__jam, puf) ) {
         out   = u3qe_jam(res);
@@ -506,6 +505,7 @@ _pier_on_scry_done(void* ptr_v, u3_noun nun)
         out   = u3dc("scot", puf, u3k(res));
         ext_c = "txt";
       }
+      u3z(puf);
     }
 
     c3_c* pac_c = u3_Host.ops_u.puk_c;
