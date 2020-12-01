@@ -5070,11 +5070,11 @@
         (turn yol |=(a/@ta [%leaf (trip a)]))
       ::
           {s/$l c/*}        (shol c.vem)
-          {s/$o c/*}
+          {s/$o t/* c/*}
         %=    $
             vem
-          :-  [%m '%h::[%d %d].[%d %d]>']
-          [-.c.vem +<-.c.vem +<+.c.vem +>-.c.vem +>+.c.vem ~]
+          :-  [%m '%a:%h::[%d %d].[%d %d]>']
+          [t.vem -.c.vem +<-.c.vem +<+.c.vem +>-.c.vem +>+.c.vem ~]
         ==
       ::
           {s/$p c/*}        (shop c.vem |=(a/@ ~(rup at a)))
@@ -7272,7 +7272,7 @@
       ?:  &(?=($spot b.fol) ?=([[%full ~] *] noy))
         ::  compute within trace
         ::
-        ~_((show %o +.noy) $(fol d.fol))
+        ~_((show %o %live +.noy) $(fol d.fol))
       ::  else ignore hint
       ::
       $(fol d.fol)
@@ -9046,7 +9046,7 @@
 ::
 ::::  5c: compiler backend and prettyprinter
   ::
-++  ut
+++  ut  !:
   ~%    %ut
       +>+
     ==
@@ -10501,7 +10501,7 @@
       ==
     ::
         {$dbug *}
-      ~_  (show %o p.gen)
+      ~_  (show %o %mint p.gen)
       =+  hum=$(gen q.gen)
       [p.hum [%11 [%spot %1 p.gen] q.hum]]
     ::
@@ -10682,7 +10682,7 @@
       ?>  (nest(sut type.old) & type.new)
       (beth bool)
     ::
-        {$dbug *}  ~_((show %o p.gen) $(gen q.gen))
+        {$dbug *}  ~_((show %o %mull p.gen) $(gen q.gen))
         {$zpcm *}  [(nice (play p.gen)) (play(sut dox) p.gen)]
         {$lost *}
       ?:  vet
@@ -10999,7 +10999,7 @@
                  ==
       {$fits *}  bool
       {$wthx *}  bool
-      {$dbug *}  ~_((show %o p.gen) $(gen q.gen))
+      {$dbug *}  ~_((show %o %play p.gen) $(gen q.gen))
       {$zpcm *}  $(gen p.gen)
       {$lost *}  %void
       {$zpmc *}  (cell $(gen p.gen) $(gen q.gen))
