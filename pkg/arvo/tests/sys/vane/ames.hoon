@@ -6,31 +6,43 @@
 ::
 =/  nec  vane
 =/  bud  vane
+=/  comet  vane
 ::
-=.  our.nec  ~nec
-=.  now.nec  ~1111.1.1
-=.  eny.nec  0xdead.beef
-=.  rof.nec  |=(* ``[%noun !>(*(list turf))])
-::
-=.  our.bud  ~bud
-=.  now.bud  ~1111.1.1
-=.  eny.bud  0xbeef.dead
-=.  rof.bud  |=(* ``[%noun !>(*(list turf))])
-::
+=.  our.nec        ~nec
+=.  now.nec        ~1111.1.1
+=.  eny.nec        0xdead.beef
+=.  life.ames-state.nec  2
+=.  scry-gate.nec  |=(* ``[%noun !>(*(list turf))])
 =.  crypto-core.ames-state.nec  (pit:nu:crub:crypto 512 (shaz 'nec'))
-=.  crypto-core.ames-state.bud  (pit:nu:crub:crypto 512 (shaz 'bud'))
-::
 =/  nec-pub  pub:ex:crypto-core.ames-state.nec
 =/  nec-sec  sec:ex:crypto-core.ames-state.nec
+::
+=.  our.bud        ~bud
+=.  now.bud        ~1111.1.1
+=.  eny.bud        0xbeef.dead
+=.  life.ames-state.bud  3
+=.  scry-gate.bud  |=(* ``[%noun !>(*(list turf))])
+=.  crypto-core.ames-state.bud  (pit:nu:crub:crypto 512 (shaz 'bud'))
 =/  bud-pub  pub:ex:crypto-core.ames-state.bud
 =/  bud-sec  sec:ex:crypto-core.ames-state.bud
 ::
+=.  our.comet  ~bosrym-podwyl-magnes-dacrys--pander-hablep-masrym-marbud
+=.  now.comet        ~1111.1.1
+=.  eny.comet        0xbeef.cafe
+=.  scry-gate.comet  |=(* ``[%noun !>(*(list turf))])
+=.  crypto-core.ames-state.comet
+  %-  nol:nu:crub:crypto
+  0w9N.5uIvA.Jg0cx.NCD2R.o~MtZ.uEQOB.9uTbp.6LHvg.0yYTP.
+  3q3td.T4UF0.d5sDL.JGpZq.S3A92.QUuWg.IHdw7.izyny.j9W92
+=/  comet-pub  pub:ex:crypto-core.ames-state.comet
+=/  comet-sec  sec:ex:crypto-core.ames-state.comet
+::
 =/  nec-sym  (derive-symmetric-key:vane bud-pub nec-sec)
 =/  bud-sym  (derive-symmetric-key:vane nec-pub bud-sec)
-::
 ?>  =(nec-sym bud-sym)
 ::
-=.  life.ames-state.nec  2
+=/  comet-sym  (derive-symmetric-key:vane bud-pub comet-sec)
+::
 =.  peers.ames-state.nec
   %+  ~(put by peers.ames-state.nec)  ~bud
   =|  =peer-state:ames
@@ -43,7 +55,6 @@
   =.  route.peer-state  `[direct=%.y `lane:ames`[%& ~nec]]
   [%known peer-state]
 ::
-=.  life.ames-state.bud  3
 =.  peers.ames-state.bud
   %+  ~(put by peers.ames-state.bud)  ~nec
   =|  =peer-state:ames
@@ -106,9 +117,10 @@
   ::
   =/  =packet:ames
     :*  [sndr=~nec rcvr=~bud]
-        encrypted=%.n
+        sndr-tick=0b10
+        rcvr-tick=0b11
         origin=~
-        content=[12 13]
+        content=0xdead.beef
     ==
   ::
   =/  encoded  (encode-packet:vane packet)
@@ -118,6 +130,50 @@
     !>  packet
     !>  decoded
 ::
+++  test-origin-encoding  ^-  tang
+  ::
+  =/  =packet:ames
+    :*  [sndr=~nec rcvr=~bud]
+        sndr-tick=0b10
+        rcvr-tick=0b11
+        origin=`0xbeef.cafe.beef
+        content=0xdead.beef
+    ==
+  ::
+  =/  encoded  (encode-packet:vane packet)
+  =/  decoded  (decode-packet:vane encoded)
+  ::
+  %+  expect-eq
+    !>  packet
+    !>  decoded
+::
+++  test-shut-packet-encoding  ^-  tang
+  ::
+  =/  =shut-packet:ames
+    :+  bone=17  message-num=18
+    [%& num-fragments=1 fragment-num=1 fragment=`@`0xdead.beef]
+  ::
+  =/  =packet:ames
+    (encode-shut-packet:ames shut-packet nec-sym ~marnec ~marbud-marbud 3 17)
+  ::
+  =/  decoded  (decode-shut-packet:ames packet nec-sym 3 17)
+  ::
+  %+  expect-eq
+    !>  shut-packet
+    !>  decoded
+::
+++  test-shut-packet-associated-data  ^-  tang
+  ::
+  =/  =shut-packet:ames
+    :+  bone=17  message-num=18
+    [%& num-fragments=1 fragment-num=1 fragment=`@`0xdead.beef]
+  ::
+  =/  =packet:ames
+    (encode-shut-packet:ames shut-packet nec-sym ~marnec ~marbud-marbud 3 1)
+  ::
+  %-  expect-fail
+  |.((decode-shut-packet:ames packet nec-sym 3 17))
+::
 ++  test-alien-encounter  ^-  tang
   ::
   =/  lane-foo=lane:ames  [%| `@ux``@`%lane-foo]
@@ -125,18 +181,19 @@
   =/  =plea:ames  [%g /talk [%first %post]]
   ::
   =/  =shut-packet:ames
-    :*  sndr-life=4
-        rcvr-life=3
-        bone=1
+    :*  bone=1
         message-num=1
         [%& num-fragments=1 fragment-num=0 (jam plea)]
     ==
   ::
   =/  =packet:ames
-    :*  [sndr=~bus rcvr=~bud]
-        encrypted=%.y
-        origin=~
-        content=(encrypt:vane nec-sym shut-packet)
+    %:  encode-shut-packet:vane
+      shut-packet
+      nec-sym
+      ~bus
+      ~bud
+      sndr-life=4
+      rcvr-life=3
     ==
   ::
   =/  =blob:ames   (encode-packet:vane packet)
@@ -168,6 +225,56 @@
               [%d %flog %text "; ~bus is your neighbor"]
           ==
       !>  (sy ,.moves3)
+  ==
+::
+++  test-comet-encounter  ^-  tang
+  ::
+  =/  lane-foo=lane:ames  [%| `@ux``@`%lane-foo]
+  ::
+  =/  =open-packet:ames
+    :*  public-key=`@`comet-pub
+        sndr=our.comet
+        sndr-life=1
+        rcvr=~bud
+        rcvr-life=3
+    ==
+  =/  packet
+    (encode-open-packet:vane open-packet crypto-core.ames-state.comet)
+  =/  blob  (encode-packet:vane packet)
+  ::
+  =^  moves0  bud  (call bud ~[//unix] %hear lane-foo blob)
+  ::
+  =/  =plea:ames  [%g /talk [%first %post]]
+  =/  =shut-packet:ames
+    :*  bone=1
+        message-num=1
+        [%& num-fragments=1 fragment-num=0 (jam plea)]
+    ==
+  =/  =packet:ames
+    %:  encode-shut-packet:vane
+      shut-packet
+      comet-sym
+      our.comet
+      ~bud
+      sndr-life=1
+      rcvr-life=3
+    ==
+  =/  blob  (encode-packet:vane packet)
+  =^  moves1  bud  (call bud ~[//unix] %hear lane-foo blob)
+  ::
+  ;:  weld
+    %+  expect-eq
+      !>  ~
+      !>  moves0
+  ::
+    %+  expect-eq
+      !>  :~  :*  ~[//unix]  %pass  /qos  %d  %flog  %text
+                  "; {<our.comet>} is your neighbor"
+              ==
+              :*  ~[//unix]  %pass  /bone/(scot %p our.comet)/1
+                  %g  %plea  our.comet  plea
+          ==  ==
+      !>  moves1
   ==
 ::
 ++  test-message-flow  ^-  tang
