@@ -247,7 +247,7 @@ _ames_sift_body(u3_head* hed_u,
   }
   else {
     bod_u->sic_y = bod_y[0]        & 0xf;
-    bod_u->ric_y = (bod_y[0] << 4) & 0xf;
+    bod_u->ric_y = (bod_y[0] >> 4) & 0xf;
 
     _ames_ship_to_chubs(bod_u->sen_d, sen_y, bod_y + 1);
     _ames_ship_to_chubs(bod_u->rec_d, rec_y, bod_y + 1 + sen_y);
