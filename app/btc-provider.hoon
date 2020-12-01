@@ -168,7 +168,7 @@
     ::
       [%ping @ *]
     ?>  ?=([%get-block-and-fee *] resp)
-    :-  ~[(send-status [%connected blockcount.resp fee.resp])]
+    :-  ~[(send-status [%connected block.resp fee.resp])]
     state(connected.host-info %.y)
   ==
 ::
