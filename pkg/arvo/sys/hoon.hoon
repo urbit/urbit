@@ -928,6 +928,15 @@
   |=  [a=bloq b=step c=@]
   (div c (bex (mul (bex a) b)))
 ::
+++  sew                                                 ::  stitch into
+  ~/  %sew
+  |=  [a=bloq [b=step c=step d=@] e=@]
+  ^-  @
+  %+  add
+    (can a b^e c^d ~)
+  =/  f  (add b c)
+  (lsh a f (rsh a f e))
+::
 ++  swp                                                 ::  naive rev bloq order
   ~/  %swp
   |=  [a=bloq b=@]
