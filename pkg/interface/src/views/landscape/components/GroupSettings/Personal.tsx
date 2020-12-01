@@ -35,7 +35,8 @@ function DeleteGroup(props: {
   const onDelete = async () => {
     const name = props.association['group-path'].split('/').pop();
     if (prompt(`To confirm deleting this group, type ${name}`) === name) {
-      await props.api.contacts.delete(props.association["group-path"]);
+      const resource = resourceFromPath(props.association["group-path"])
+      await props.api.groups.removeGroup(resource);
       history.push("/");
     }
   };

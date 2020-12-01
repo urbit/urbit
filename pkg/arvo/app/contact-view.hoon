@@ -181,21 +181,7 @@
     ~[(add-pending rid ship.act)]
   ::
       %delete
-    =/  rid=resource
-      (de-path:resource path.act)
-    =/  group-pokes=(list card)
-      ?:  =(our.bol entity.rid)
-        ~[(group-push-poke %remove rid)]
-      :~  (group-proxy-poke %remove-members rid (sy our.bol ~))
-          (group-pull-poke %remove rid)
-      ==
-    ;:  weld
-      group-pokes
-      :~  (contact-hook-poke [%remove path.act])
-          (group-poke [%remove-group rid ~])
-          (contact-poke [%delete path.act])
-      ==
-    ==
+    ~
   ::
       %remove
     =/  rid=resource
