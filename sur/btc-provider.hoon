@@ -14,7 +14,7 @@
   ==
 +$  result  [=req-id body=result-body]
 +$  result-body
-  $%  [%address-info utxos=(set utxo) used=? blockcount=@ud]
+  $%  [%address-info utxos=(set utxo) used=? block=@ud time=(unit @da)]
       [%raw-tx =txid =rawtx]
   ==
 +$  error
@@ -26,13 +26,14 @@
   ==
 +$  update  (each result error)
 +$  status
-  $%  [%connected blockcount=@ud fee=@ud]
+  $%  [%connected block=@ud fee=@ud]
       [%disconnected ~]
   ==
 ::
 ++  rpc
   |%
   +$  action
+
     $%  [%get-address-info =address]
         [%get-raw-tx =txid]
         [%get-block-count ~]
@@ -40,10 +41,10 @@
     ==
   :: 
   +$  response
-    $%  [%get-address-info utxos=(set utxo) used=? blockcount=@ud]
+    $%  [%get-address-info utxos=(set utxo) used=? block=@ud time=(unit @da)]
         [%get-raw-tx =txid =rawtx]
-        [%get-block-count blockcount=@ud]
-        [%get-block-and-fee blockcount=@ud fee=sats]
+        [%get-block-count block=@ud]
+        [%get-block-and-fee block=@ud fee=sats]
 
     ==
   --
