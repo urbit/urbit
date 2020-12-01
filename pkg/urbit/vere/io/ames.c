@@ -246,25 +246,31 @@ _ames_sift_body(u3_head* hed_u,
     return c3n;
   }
   else {
-    bod_u->sic_y = bod_y[0]        & 0xf;
-    bod_u->ric_y = (bod_y[0] >> 4) & 0xf;
+    c3_y* gob_y;
+    c3_s  gob_s;
 
-    _ames_ship_to_chubs(bod_u->sen_d, sen_y, bod_y + 1);
-    _ames_ship_to_chubs(bod_u->rec_d, rec_y, bod_y + 1 + sen_y);
-
-    bod_u->con_s = len_w - 1 - sen_y - rec_y - rog_y;
-    bod_u->con_y = bod_y + 1 + sen_y + rec_y;
-
-    if ( rog_y ) {
+    if ( rog_y) {
       c3_y rag_y[8] = {0};
-      memcpy(rag_y, bod_u->con_y + bod_u->con_s, rog_y);
+      memcpy(rag_y, bod_y, rog_y);
       bod_u->rog_d = _ames_chub_bytes(rag_y);
     }
     else {
       bod_u->rog_d = 0;
     }
 
-    bod_u->mug_l = u3r_mug_bytes(bod_y, len_w - rog_y) & 0xfffff;
+    gob_y = bod_y + rog_y;
+    gob_s = len_w - rog_y;
+
+    bod_u->mug_l = u3r_mug_bytes(gob_y, gob_s) & 0xfffff;
+
+    bod_u->sic_y = gob_y[0]        & 0xf;
+    bod_u->ric_y = (gob_y[0] >> 4) & 0xf;
+
+    _ames_ship_to_chubs(bod_u->sen_d, sen_y, gob_y + 1);
+    _ames_ship_to_chubs(bod_u->rec_d, rec_y, gob_y + 1 + sen_y);
+
+    bod_u->con_s = gob_s - 1 - sen_y - rec_y;
+    bod_u->con_y = gob_y + 1 + sen_y + rec_y;
 
     return c3y;
   }
@@ -302,32 +308,32 @@ _ames_etch_pack(u3_head* hed_u,
   c3_y  sen_y = 2 << hed_u->sac_y;                         //  sender len
   c3_y  rec_y = 2 << hed_u->rac_y;                         //  receiver len
   c3_y  rog_y = ( c3y == hed_u->rel_o )? 6 : 0;            //  origin len
-  c3_w  bod_w = 1 + sen_y + rec_y + bod_u->con_s + rog_y;  //  body len
+  c3_w  bod_w = rog_y + 1 + sen_y + rec_y + bod_u->con_s;  //  body len
   c3_w  len_w = 4 + bod_w;                                 //  packet len
-  c3_y* pac_y = c3_malloc(len_w);
-  c3_y* bod_y = pac_y + 4;
+  c3_y* pac_y = c3_malloc(len_w);                          //  output buf
+  c3_y* bod_y = pac_y + 4;                                 //  body cursor
+  c3_y* gob_y = bod_y + rog_y;                             //  after origin
 
   //  serialize the head
   //
   _ames_etch_head(hed_u, pac_y);
 
+  //  serialize the origin, if present
+  //
+  if ( rog_y ) {
+    c3_y rag_y[8] = {0};
+    _ames_bytes_chub(rag_y, bod_u->rog_d);
+    memcpy(bod_y, rag_y, rog_y);
+  }
+
   //  serialize the body
   //
-  bod_y[0] = (bod_u->sic_y & 0xf) ^ ((bod_u->ric_y & 0xf) << 4);
+  gob_y[0] = (bod_u->sic_y & 0xf) ^ ((bod_u->ric_y & 0xf) << 4);
 
-  _ames_ship_of_chubs(bod_u->sen_d, sen_y, bod_y + 1);
-  _ames_ship_of_chubs(bod_u->rec_d, rec_y, bod_y + 1 + sen_y);
+  _ames_ship_of_chubs(bod_u->sen_d, sen_y, gob_y + 1);
+  _ames_ship_of_chubs(bod_u->rec_d, rec_y, gob_y + 1 + sen_y);
 
-  {
-    c3_y* con_y = bod_y + 1 + sen_y + rec_y;
-    memcpy(con_y, bod_u->con_y, bod_u->con_s);
-
-    if ( rog_y ) {
-      c3_y rag_y[8] = {0};
-      _ames_bytes_chub(rag_y, bod_u->rog_d);
-      memcpy(con_y + bod_u->con_s, rag_y, rog_y);
-    }
-  }
+  memcpy(gob_y + 1 + sen_y + rec_y, bod_u->con_y, bod_u->con_s);
 
   *out_y = pac_y;
   return len_w;
@@ -399,6 +405,8 @@ u3_ames_decode_lane(u3_atom lan) {
   c3_d lan_d;
 
   c3_assert( c3y == u3r_safe_chub(lan, &lan_d) );
+  u3z(lan);
+
   lan_u.pip_w = (c3_w)lan_d;
   lan_u.por_s = (c3_s)(lan_d >> 32);
   return lan_u;

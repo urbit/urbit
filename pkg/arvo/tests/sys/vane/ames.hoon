@@ -11,6 +11,7 @@
 =.  our.nec        ~nec
 =.  now.nec        ~1111.1.1
 =.  eny.nec        0xdead.beef
+=.  life.ames-state.nec  2
 =.  scry-gate.nec  |=(* ``[%noun !>(*(list turf))])
 =.  crypto-core.ames-state.nec  (pit:nu:crub:crypto 512 (shaz 'nec'))
 =/  nec-pub  pub:ex:crypto-core.ames-state.nec
@@ -19,6 +20,7 @@
 =.  our.bud        ~bud
 =.  now.bud        ~1111.1.1
 =.  eny.bud        0xbeef.dead
+=.  life.ames-state.bud  3
 =.  scry-gate.bud  |=(* ``[%noun !>(*(list turf))])
 =.  crypto-core.ames-state.bud  (pit:nu:crub:crypto 512 (shaz 'bud'))
 =/  bud-pub  pub:ex:crypto-core.ames-state.bud
@@ -41,7 +43,6 @@
 ::
 =/  comet-sym  (derive-symmetric-key:vane bud-pub comet-sec)
 ::
-=.  life.ames-state.nec  2
 =.  peers.ames-state.nec
   %+  ~(put by peers.ames-state.nec)  ~bud
   =|  =peer-state:ames
@@ -54,7 +55,6 @@
   =.  route.peer-state  `[direct=%.y `lane:ames`[%& ~nec]]
   [%known peer-state]
 ::
-=.  life.ames-state.bud  3
 =.  peers.ames-state.bud
   %+  ~(put by peers.ames-state.bud)  ~nec
   =|  =peer-state:ames
@@ -145,6 +145,21 @@
   ::
   %+  expect-eq
     !>  packet
+    !>  decoded
+::
+++  test-shut-packet-encoding  ^-  tang
+  ::
+  =/  =shut-packet:ames
+    :+  bone=17  message-num=18
+    [%& num-fragments=1 fragment-num=1 fragment=`@`0xdead.beef]
+  ::
+  =/  =packet:ames
+    (encode-shut-packet:ames shut-packet nec-sym ~marnec ~marbud-marbud 3 17)
+  ::
+  =/  decoded  (decode-shut-packet:ames packet nec-sym 3 17)
+  ::
+  %+  expect-eq
+    !>  shut-packet
     !>  decoded
 ::
 ++  test-alien-encounter  ^-  tang
