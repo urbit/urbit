@@ -52,4 +52,9 @@
   :-  %graph-update
   !>  ^-  update:gra
   [%0 now.bowl [%archive-graph (de-path:res app-path.m.i.entries)]]
+;<  ~  bind:m
+  %+  raw-poke
+    [our.bowl %graph-pull-hook]
+  :-  %pull-hook-action
+  !>([%remove (de-path:res app-path.m.i.entries)])
 loop(entries t.entries)
