@@ -548,8 +548,7 @@ static u3j_hood _141_pen__ut_ho[] = {
   { "ar",     12282 },
   { "fan",  28, c3n },
   { "rib",  58, c3n },
-  { "vet", 118, c3n },
-  { "fab", 119, c3n },
+  { "vet",  59, c3n },
 
   { "blow",    6015 },
   { "burp",     342 },
