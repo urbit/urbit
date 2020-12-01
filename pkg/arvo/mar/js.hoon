@@ -15,7 +15,7 @@
   --
 ++  grab
   |%                                                    ::  convert from
-  ++  mime  |=({p/mite q/octs} (@t q.q))
+  ++  mime  |=([p=mite q=octs] (@t q.q))
   ++  noun  cord                                        ::  clam from %noun
   --
 ++  grad  %mime

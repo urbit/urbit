@@ -78,8 +78,8 @@ export function NewGroup(props: NewGroupProps & RouteComponentProps) {
   );
 
   return (
-    <Body>
-      <Col maxWidth="300px" overflowY="auto" p="3">
+    <>
+      <Col overflowY="auto" p="3">
         <Box mb={3}>
           <Text fontWeight="bold">New Group</Text>
         </Box>
@@ -112,6 +112,6 @@ export function NewGroup(props: NewGroupProps & RouteComponentProps) {
           </Form>
         </Formik>
       </Col>
-    </Body>
+    </>
   );
 }
