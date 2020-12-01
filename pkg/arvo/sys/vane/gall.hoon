@@ -1,4 +1,4 @@
-::  ::  %gall, agent execution
+!:  ::  %gall, agent execution
 !?  163
 ::
 ::::
@@ -53,16 +53,17 @@
 ::
 +$  yoke
   $:  control-duct=duct
+      nonce=@t
       live=?
       =stats
       =watches
-      =agent
+      agent=(each agent vase)
       =beak
       marks=(map duct mark)
   ==
 ::  $blocked-move: enqueued move to an agent
 ::
-+$  blocked-move  [=duct =routes =deal]
++$  blocked-move  [=duct =routes move=(each deal sign:agent)]
 ::  $stats: statistics
 ::
 ::    change: how many moves this agent has processed
@@ -123,10 +124,11 @@
 ::
 +$  egg
   $:  control-duct=duct
+      nonce=@t
       live=?
       =stats
       =watches
-      old-state=vase
+      old-state=(each vase vase)
       =beak
       marks=(map duct mark)
   ==
@@ -166,9 +168,11 @@
         ?~  apps  mo-core
         ~>  %slog.[0 leaf+"gall: upgrading {<dap.i.apps>}"]
         =/  ap-core  (ap-abut:ap:mo-core i.apps)
-        =^  tan  ap-core  (ap-install:ap-core `old-state.egg.i.apps)
-        ?^  tan
-          (mean u.tan)
+        =?  ap-core  ?=(%& -.old-state.egg.i.apps)
+          =^  tan  ap-core  (ap-install:ap-core `p.old-state.egg.i.apps)
+          ?^  tan
+            (mean u.tan)
+          ap-core
         =?  ap-core  wipe-eyre-subs.spore
           =/  ducts=(list ^duct)
             %+  skim  ~(tap in ~(key by inbound.watches.egg.i.apps))
@@ -314,12 +318,17 @@
       =/  =routes  [disclosing=~ attributing=our]
       =/  ap-core  (ap-abed:ap dap routes)
       =.  ap-core  (ap-reinstall:ap-core agent)
-      ap-abet:ap-core
+      =.  mo-core  ap-abet:ap-core
+      (mo-clear-queue dap)
     ::
     =.  yokes.state
       %+  ~(put by yokes.state)  dap
-      =/  default-yoke  *yoke
-      default-yoke(control-duct hen, beak bek, agent agent)
+      %*  .  *yoke
+        control-duct  hen
+        beak          bek
+        agent         &+agent
+        nonce         (scot %uw (end 5 1 (shas %yoke-nonce eny)))
+      ==
     ::
     =/  old  mo-core
     =/  wag
@@ -356,10 +365,12 @@
           [%z /sys/arvo/hoon]
           [%z /sys/zuse/hoon]
           [%z /sys/vane/gall/hoon]
-          %+  turn  ~(tap in ~(key by yokes.state))
-          |=  dap=term
-          ^-  [care:clay path]
-          [%a /app/[dap]/hoon]
+          %+  murn  ~(tap by yokes.state)
+          |=  [dap=term =yoke]
+          ^-  (unit [care:clay path])
+          ?:  ?=(%| -.agent.yoke)
+            ~
+          `[%a /app/[dap]/hoon]
       ==
     (mo-pass wire %c %warp our %home ~ %mult mool)
   ::  +mo-scry-agent-cage: read $agent core from clay
@@ -680,26 +691,45 @@
     |=  [=path =sign-arvo]
     ^+  mo-core
     ::
-    ?.  ?=([@ @ *] path)
+    ?.  ?=([@ @ @ *] path)
       ~&  [%mo-handle-use-bad-path path]
       !!
     ::
+    =/  dap=term  i.path
+    =/  yoke  (~(get by yokes.state) dap)
+    ?~  yoke
+      %-  (slog leaf+"gall: {<dap>} dead, got {<+<.sign-arvo>}" ~)
+      mo-core
+    ?.  =(nonce.u.yoke i.t.path)
+      %-  (slog leaf+"gall: got old {<+<.sign-arvo>} for {<dap>}" ~)
+      mo-core
     ?.  ?=([?(%g %b) %unto *] sign-arvo)
+      ?:  ?=(%| -.agent.u.yoke)
+        %-  (slog leaf+"gall: {<dap>} dozing, dropping {<+<.sign-arvo>}" ~)
+        mo-core
       =/  app
-        =/  =term  i.path
-        =/  =ship  (slav %p i.t.path)
+        =/  =ship  (slav %p i.t.t.path)
         =/  =routes  [disclosing=~ attributing=ship]
-        (ap-abed:ap term routes)
+        (ap-abed:ap dap routes)
       ::
-      =.  app  (ap-generic-take:app t.t.path sign-arvo)
+      =.  app  (ap-generic-take:app t.t.t.path sign-arvo)
       ap-abet:app
+    ?>  ?=([%out @ @ *] t.t.path)
+    =/  =ship  (slav %p i.t.t.t.path)
+    =/  =routes  [disclosing=~ attributing=ship]
     =/  =sign:agent  +>.sign-arvo
-    =/  app
-      ?>  ?=([%out @ @ *] t.t.path)
-      =/  =term  i.path
-      =/  =ship  (slav %p i.t.t.t.path)
-      =/  =routes  [disclosing=~ attributing=ship]
-      (ap-abed:ap term routes)
+    ?:  ?=(%| -.agent.u.yoke)
+      =/  blocked=(qeu blocked-move)
+        =/  waiting  (~(get by blocked.state) dap)
+        =/  deals  (fall waiting *(qeu blocked-move))
+        =/  deal  [hen routes |+sign]
+        (~(put to deals) deal)
+      ::
+      %-  (slog leaf+"gall: {<dap>} dozing, got {<-.sign>}" ~)
+      %_  mo-core
+        blocked.state  (~(put by blocked.state) dap blocked)
+      ==
+    =/  app  (ap-abed:ap dap routes)
     =.  app
       (ap-specific-take:app t.t.path sign)
     ap-abet:app
@@ -717,10 +747,14 @@
     ?:  =(~ blocked)
       =.  blocked.state  (~(del by blocked.state) dap)
       mo-core
-    =^  [=duct =routes =deal]  blocked  ~(get to blocked)
-    =/  move
+    =^  [=duct =routes blocker=(each deal sign:agent)]  blocked
+      ~(get to blocked)
+    =/  =move
       =/  =sock  [attributing.routes our]
-      =/  card  [%slip %g %deal sock dap deal]
+      =/  card
+        ?:  ?=(%& -.blocker)
+          [%slip %g %deal sock dap p.blocker]
+        [%pass /clear-huck %b %huck %g %unto p.blocker]
       [duct card]
     $(moves [move moves])
   ::  +mo-filter-queue: remove all blocked tasks from ship.
@@ -746,6 +780,22 @@
     =?  new-blocked  !=(ship attributing.routes.mov)
       (~(put to new-blocked) mov)
     $
+  ::  +mo-fade: put app to sleep
+  ::
+  ++  mo-fade
+    |=  [dap=term style=?(%slay %idle %jolt)]
+    ^+  mo-core
+    =/  =routes  [disclosing=~ attributing=our]
+    =/  app  (ap-abed:ap dap routes)
+    =.  mo-core  ap-abet:(ap-fade:app style)
+    =.  mo-core
+      ?-  style
+        %slay  mo-core(yokes.state (~(del by yokes.state) dap))
+        %idle  mo-core
+        %jolt  (mo-boot dap our %home)
+      ==
+    =?  mo-core  !?=(%jolt style)  (mo-subscribe-to-agent-builds now)
+    mo-core
   ::  +mo-beak: assemble a beak for the specified agent.
   ::
   ++  mo-beak
@@ -825,22 +875,23 @@
     ap-abet:app
   ::  +mo-handle-local: handle locally.
   ::
-  ::    If the agent is running or blocked, assign it the supplied +deal.
-  ::    Otherwise simply apply the action to the agent.
+  ::    If the agent is not running or blocked, assign it the supplied
+  ::    +deal.  Otherwise simply apply the action to the agent.
   ::
   ++  mo-handle-local
     |=  [=ship agent=term =deal]
     ^+  mo-core
     ::
     =/  =routes  [disclosing=~ attributing=ship]
-    =/  is-running  (~(has by yokes.state) agent)
+    =/  running  (~(get by yokes.state) agent)
+    =/  is-running  ?~(running %| ?=(%& -.agent.u.running))
     =/  is-blocked  (~(has by blocked.state) agent)
     ::
     ?:  |(!is-running is-blocked)
       =/  blocked=(qeu blocked-move)
         =/  waiting  (~(get by blocked.state) agent)
         =/  deals  (fall waiting *(qeu blocked-move))
-        =/  deal  [hen routes deal]
+        =/  deal  [hen routes &+deal]
         (~(put to deals) deal)
       ::
       %-  (slog leaf+"gall: not running {<agent>} yet, got {<-.deal>}" ~)
@@ -931,10 +982,13 @@
     ++  ap-abut
       |=  [dap=term =egg]
       ^+  ap-core
-      =/  res  (mo-scry-agent-cage dap da+now)
-      ?:  ?=(%| -.res)
-        (mean p.res)
-      =/  =yoke  egg(old-state `agent`p.res)
+      =/  =yoke
+        ?:  ?=(%| -.old-state.egg)
+          egg
+        =/  res  (mo-scry-agent-cage dap da+now)
+        ?:  ?=(%| -.res)
+          (mean p.res)
+        egg(p.old-state `agent`p.res)
       =/  =routes  [disclosing=~ attributing=our]
       (ap-yoke dap routes yoke)
     ::  +ap-yoke: initialize agent state, starting from a $yoke
@@ -965,6 +1019,38 @@
       %_  mo-core
         yokes.state  running
         moves        moves
+      ==
+    ::  +ap-fade:  put affairs in order.
+    ::
+    ::    For %gone, remove all incoming and outgoing subscriptions.
+    ::
+    ++  ap-fade
+      |=  style=?(%slay %idle %jolt)
+      ^+  ap-core
+      ?-    style
+          %jolt  ap-core
+          %idle
+        =.  agent.current-agent  |+on-save:ap-agent-core
+        ap-core
+      ::
+          %slay
+        =/  out=(list [[=wire =ship =term] ? =path])
+          ~(tap by outbound.watches.current-agent)
+        =/  inbound-paths=(set path)
+          %-  silt
+          %+  turn  ~(tap by inbound.watches.current-agent)
+          |=  [=duct =ship =path]
+          path
+        =/  will=(list card:agent:gall)
+          %+  welp
+            ?:  =(~ inbound-paths)
+              ~
+            [%give %kick ~(tap in inbound-paths) ~]~
+          %+  turn  ~(tap by outbound.watches.current-agent)
+          |=  [[=wire =ship =term] ? =path]
+          [%pass wire %agent [ship term] %leave ~]
+        =^  maybe-tang  ap-core  (ap-ingest ~ |.([will *agent]))
+        ap-core
       ==
     ::  +ap-from-internal: internal move to move.
     ::
@@ -1032,13 +1118,9 @@
         =/  =neat  q.card
         =.  wire
           ?:  ?=(%agent -.neat)
-            ::  remove `our` in next breach after 2019/12 and reflect in
-            ::  +mo-handle-use (non-unto case)
-            ::
-            :-  (scot %p our)
             [%out (scot %p ship.neat) name.neat wire]
           [(scot %p attributing.agent-routes) wire]
-        =.  wire  [%use agent-name wire]
+        =.  wire  [%use agent-name nonce.current-agent wire]
         =/  =note-arvo
           ?-  -.neat
             %arvo   note-arvo.neat
@@ -1095,7 +1177,8 @@
     ::  +ap-agent-core: agent core with current bowl and state
     ::
     ++  ap-agent-core
-      ~(. agent.current-agent ap-construct-bowl)
+      ?>  ?=(%& -.agent.current-agent)
+      ~(. p.agent.current-agent ap-construct-bowl)
     ::  +ap-ducts-from-paths: get ducts subscribed to paths
     ::
     ++  ap-ducts-from-paths
@@ -1229,9 +1312,12 @@
       ~/  %ap-reinstall
       |=  =agent
       ^+  ap-core
-      =/  old-state=vase  ~(on-save agent.current-agent ap-construct-bowl)
+      =/  old-state=vase
+        ?:  ?=(%& -.agent.current-agent)
+          on-save:ap-agent-core
+        p.agent.current-agent
       =^  error  ap-core
-        (ap-install(agent.current-agent agent) `old-state)
+        (ap-install(agent.current-agent &+agent) `old-state)
       ?~  error
         ap-core
       (mean >%load-failed< u.error)
@@ -1498,7 +1584,7 @@
       ?:  ?=(%| -.result)
         `ap-core
       ::
-      =.  agent.current-agent  +.p.result
+      =.  agent.current-agent  &++.p.result
       =/  moves  (zing (turn -.p.result ap-from-internal))
       =.  inbound.watches.current-agent
         (ap-handle-kicks moves)
@@ -1602,6 +1688,7 @@
     mo-abet
   ::
       %sear  mo-abet:(mo-filter-queue:mo-core ship.task)
+      %fade  mo-abet:(mo-fade:mo-core dap.task style.task)
       %trim  [~ gall-payload]
       %vega  [~ gall-payload]
   ==
@@ -1656,7 +1743,14 @@
   ^-  spore
   =;  eggs=(map term egg)  [- | +]:state(yokes eggs)
   %-  ~(run by yokes.state)
-  |=(=yoke `egg`yoke(agent on-save:agent.yoke))
+  |=  =yoke
+  ^-  egg
+  %=    yoke
+      agent
+    ?:  ?=(%& -.agent.yoke)
+      [%& on-save:p.agent.yoke]
+    [%| p.agent.yoke]
+  ==
 ::  +take: response
 ::
 ++  take

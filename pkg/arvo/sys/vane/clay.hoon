@@ -165,7 +165,6 @@
       hez=(unit duct)                                   ::  sync duct
       cez=(map @ta crew)                                ::  permission groups
       pud=(unit [=desk =yoki])                          ::  pending update
-      pun=(list move)                                   ::  upgrade moves
   ==                                                    ::
 ::
 ::  Object store.
@@ -1757,7 +1756,7 @@
       =/  additions=(set path)  (~(dif in upsert-set) old-set)
       ?~  hun
         ~
-      ?:  =(0 let.dom)
+      ?:  (lte let.dom 1)
         ~
       |^
       ;:  weld
@@ -1774,7 +1773,7 @@
       ::
       ++  path-to-tank
         |=  =path
-        =/  pre=^path  ~[(scot %p our) syd (scot %ud +(let.dom))]
+        =/  pre=^path  ~[(scot %p our) syd (scot %ud let.dom)]
         :+  %rose  ["/" "/" ~]
         %+  turn  (weld pre path)
         |=  a=cord
@@ -3957,7 +3956,7 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =|                                                    ::  instrument state
-    $:  ver=%5                                        ::  vane version
+    $:  ver=%6                                        ::  vane version
         ruf=raft                                      ::  revision tree
     ==                                                ::
 |=  [our=ship now=@da eny=@uvJ ski=sley]              ::  current invocation
@@ -4159,7 +4158,7 @@
       =^  moves-1  ..^^$  $(desks t.desks)
       =^  moves-2  ruf  abet:wake:((de our now ski hen ruf) [ship desk]:i.desks)
       [(weld moves-1 moves-2) ..^^$]
-    [(welp wake-moves pun.ruf) ..^$(pun.ruf ~)]
+    [wake-moves ..^$]
   ::
       ?(%warp %werp)
     ::  capture whether this read is on behalf of another ship
@@ -4210,7 +4209,7 @@
   ==
 ::
 ++  load
-  |=  old=[%5 raft]
+  |=  old=[%6 raft]
   ..^$(ruf +.old)
 ::
 ++  scry                                              ::  inspect

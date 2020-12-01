@@ -108,6 +108,10 @@
   |=  ~  =<  abet
   (emit %pass /pack %arvo %d %flog %pack ~)
 ::
+++  poke-pass
+  |=  =note-arvo  =<  abet
+  (emit %pass /helm/pass %arvo note-arvo)
+::
 ++  take-wake-automass
   |=  [way=wire error=(unit tang)]
   ?^  error
@@ -247,6 +251,7 @@
     %helm-meld             =;(f (f !<(_+<.f vase)) poke-meld)
     %helm-moon             =;(f (f !<(_+<.f vase)) poke-moon)
     %helm-pack             =;(f (f !<(_+<.f vase)) poke-pack)
+    %helm-pass             =;(f (f !<(_+<.f vase)) poke-pass)
     %helm-rekey            =;(f (f !<(_+<.f vase)) poke-rekey)
     %helm-reload           =;(f (f !<(_+<.f vase)) poke-reload)
     %helm-reload-desk      =;(f (f !<(_+<.f vase)) poke-reload-desk)
@@ -276,5 +281,6 @@
                    ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
     [%serv *]      %+  take-bound  t.wire
                    ?>(?=(%bound +<.sign-arvo) +>.sign-arvo)
+    [%pass *]      abet
   ==
 --
