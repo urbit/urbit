@@ -268,7 +268,7 @@
       (lsh 3 +((add size.sndr-meta size.rcvr-meta)) content)
     ==
   =/  checksum  (end 0 20 (mug body))
-  =?  body  ?=(^ origin)  (cat 3 body u.origin)
+  =?  body  ?=(^ origin)  (mix u.origin (lsh 3 6 body))
   ::
   =/  header=@
     %+  can  0
@@ -312,7 +312,7 @@
     ?:  =(| relayed)
       [~ body]
     =/  len  (sub (met 3 body) 6)
-    [`(cut 3 [len 6] body) (end 3 len body)]
+    [`(end 3 6 body) (rsh 3 6 body)]
   ::  .checksum does not apply to the origin
   ::
   ?.  =(checksum (end 0 20 (mug body)))
@@ -413,7 +413,7 @@
   =/  vec  ~[our her our-life her-life]
   =/  [siv=@uxH len=@ cyf=@ux]
     (~(en sivc:aes:crypto (shaz symmetric-key) vec) (jam shut-packet))
-  =/  content  (mix (lsh 3 len siv) cyf)
+  =/  content  :(mix siv (lsh 7 1 len) (lsh 3 18 cyf))
   [[our her] (mod our-life 16) (mod her-life 16) origin=~ content]
 ::  +decode-shut-packet: decrypt a $shut-packet from a $packet
 ::
@@ -425,17 +425,10 @@
     ~|  ames-sndr-tick+sndr-tick.packet  !!
   ?.  =(rcvr-tick.packet (mod our-life 16))
     ~|  ames-rcvr-tick+rcvr-tick.packet  !!
-  =/  len  (sub (met 3 content.packet) 16)
-  ::  2^13 bits of fragment, plus jammed bone and sequence numbers
-  ::
-  ::    Sanity check -- theoretically, this puts a limit on the number
-  ::    of flows and messages that can be sent, but 32 bytes for those
-  ::    numbers should be enough to last a cosmologicaly long time.
-  ::
-  ?.  (lte len ^~((add 1.024 32)))
-    ~|  ames-cyf-len+len  !!
-  =/  cyf  (end 3 len content.packet)
-  =/  siv  (rsh 3 len content.packet)
+  =/  siv  (end 7 1 content.packet)
+  =/  len  (end 4 1 (rsh 7 1 content.packet))
+  =/  cyf  (rsh 3 (add len 18) content.packet)
+  ~|  ames-decrypt+[[sndr rcvr origin]:packet len siv]
   =/  vec  ~[sndr.packet rcvr.packet her-life our-life]
   ;;  shut-packet  %-  cue  %-  need
   (~(de sivc:aes:crypto (shaz symmetric-key) vec) siv len cyf)
