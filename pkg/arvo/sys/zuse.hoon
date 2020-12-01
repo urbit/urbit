@@ -3999,11 +3999,8 @@
       ++  bytes-to-lanes
         ::  flip byte order in blocks of 8 bytes.
         |=  a=@
-        %+  can  6
-        %+  turn  (rip 6 a)
-        |=  b=@
-        :-  1
-        (lsh 3 (sub 8 (met 3 b)) (swp 3 b))
+        %^  run  6  a
+        |=(b=@ (lsh 3 (sub 8 (met 3 b)) (swp 3 b)))
       ::
       ++  lanes-to-bytes
         ::  unflip byte order in blocks of 8 bytes.
@@ -5199,10 +5196,7 @@
       ::  add padding
       =+  (md5-pad wid dat)
       ::  endianness
-      =.  dat
-        %+  rep  5
-        %+  turn  (rip 5 dat)
-        |=(a=@ (rev 3 4 a))
+      =.  dat  (run 5 dat |=(a=@ (rev 3 4 a)))
       =*  x  dat
       =+  blocks=(div wid 512)
       =+  fev=~(. fe 5)
@@ -8668,7 +8662,8 @@
       ::  rex:  string of hex bytes with leading 0x.
       |*  [rex=@t tys=(list etyp)]
       =-  (decode-arguments - tys)
-      %+  turn  (rip 9 (rsh 3 2 rex))
+      %^  rut  9
+        (rsh 3 2 rex)
       (curr rash hex)
     ::
     ++  decode-arguments

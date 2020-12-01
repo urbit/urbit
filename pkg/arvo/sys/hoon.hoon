@@ -3337,10 +3337,10 @@
   =+  i=0
   |-  ^-  @
   ?:  =(i lex)
-    (rep 5 (turn (rip 5 hax) net))
+    (run 5 hax net)
   =+  ^=  wox
       =+  dux=(cut 9 [i 1] ful)
-      =+  wox=(rep 5 (turn (rip 5 dux) net))
+      =+  wox=(run 5 dux net)
       =+  j=16
       |-  ^-  @
       ?:  =(64 j)
@@ -3457,10 +3457,10 @@
   =+  i=0
   |-  ^-  @
   ?:  =(i lex)
-    (rep 6 (turn (rip 6 hax) net))
+    (run 6 hax net)
   =+  ^=  wox
       =+  dux=(cut 10 [i 1] ful)
-      =+  wox=(rep 6 (turn (rip 6 dux) net))
+      =+  wox=(run 6 dux net)
       =+  j=16
       |-  ^-  @
       ?:  =(80 j)
