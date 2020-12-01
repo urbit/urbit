@@ -144,6 +144,7 @@ data Tint
     | TintK
     | TintW
     | TintNull
+    | TintTrue Atom Atom Atom
   deriving (Eq, Ord, Show)
 
 data Stye = Stye
@@ -174,19 +175,22 @@ instance FromNoun Deco where
 
 instance ToNoun Tint where
   toNoun = \case
-    TintR    -> toNoun $ Cord "r"
-    TintG    -> toNoun $ Cord "g"
-    TintB    -> toNoun $ Cord "b"
-    TintC    -> toNoun $ Cord "c"
-    TintM    -> toNoun $ Cord "m"
-    TintY    -> toNoun $ Cord "y"
-    TintK    -> toNoun $ Cord "k"
-    TintW    -> toNoun $ Cord "w"
-    TintNull -> Atom 0
+    TintR          -> toNoun $ Cord "r"
+    TintG          -> toNoun $ Cord "g"
+    TintB          -> toNoun $ Cord "b"
+    TintC          -> toNoun $ Cord "c"
+    TintM          -> toNoun $ Cord "m"
+    TintY          -> toNoun $ Cord "y"
+    TintK          -> toNoun $ Cord "k"
+    TintW          -> toNoun $ Cord "w"
+    TintNull       -> Atom 0
+    TintTrue r g b -> Cell (Atom r) $ Cell (Atom g) (Atom b)
 
 instance FromNoun Tint where
   parseNoun = named "Tint" . \case
     Atom 0 -> pure TintNull
+    Cell (Atom r) (Cell (Atom g) (Atom b))
+           -> pure (TintTrue r g b)
     n      -> parseNoun @Cord n <&> unCord >>= \case
                 "r" -> pure TintR
                 "g" -> pure TintG
