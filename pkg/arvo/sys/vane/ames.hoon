@@ -398,7 +398,13 @@
 ::
 ++  encode-shut-packet
   ~/  %encode-shut-packet
-  |=  [=shut-packet =symmetric-key our=ship her=ship our-life=@ her-life=@]
+  |=  $:  =shut-packet
+          =symmetric-key
+          sndr=ship
+          rcvr=ship
+          sndr-life=@
+          rcvr-life=@
+      ==
   ^-  packet
   ::
   =?    meat.shut-packet
@@ -410,26 +416,26 @@
       (cut 13 [[fragment-num 1] fragment]:p.meat.shut-packet)
     ==
   ::
-  =/  vec  ~[our her our-life her-life]
+  =/  vec  ~[sndr rcvr sndr-life rcvr-life]
   =/  [siv=@uxH len=@ cyf=@ux]
     (~(en sivc:aes:crypto (shaz symmetric-key) vec) (jam shut-packet))
   =/  content  :(mix siv (lsh 7 1 len) (lsh 3 18 cyf))
-  [[our her] (mod our-life 16) (mod her-life 16) origin=~ content]
+  [[sndr rcvr] (mod sndr-life 16) (mod rcvr-life 16) origin=~ content]
 ::  +decode-shut-packet: decrypt a $shut-packet from a $packet
 ::
 ++  decode-shut-packet
   ~/  %decode-shut-packet
-  |=  [=packet =symmetric-key our-life=@ her-life=@]
+  |=  [=packet =symmetric-key sndr-life=@ rcvr-life=@]
   ^-  shut-packet
-  ?.  =(sndr-tick.packet (mod her-life 16))
+  ?.  =(sndr-tick.packet (mod sndr-life 16))
     ~|  ames-sndr-tick+sndr-tick.packet  !!
-  ?.  =(rcvr-tick.packet (mod our-life 16))
+  ?.  =(rcvr-tick.packet (mod rcvr-life 16))
     ~|  ames-rcvr-tick+rcvr-tick.packet  !!
   =/  siv  (end 7 1 content.packet)
   =/  len  (end 4 1 (rsh 7 1 content.packet))
-  =/  cyf  (rsh 3 (add len 18) content.packet)
+  =/  cyf  (rsh 3 18 content.packet)
   ~|  ames-decrypt+[[sndr rcvr origin]:packet len siv]
-  =/  vec  ~[sndr.packet rcvr.packet her-life our-life]
+  =/  vec  ~[sndr.packet rcvr.packet sndr-life rcvr-life]
   ;;  shut-packet  %-  cue  %-  need
   (~(de sivc:aes:crypto (shaz symmetric-key) vec) siv len cyf)
 ::  +decode-ship-size: decode a 2-bit ship type specifier into a byte width
@@ -1463,7 +1469,7 @@
     =/  =channel      [[our sndr.packet] now channel-state -.peer-state]
     ~|  %ames-crash-on-packet-from^her.channel
     =/  =shut-packet
-      (decode-shut-packet packet [symmetric-key our-life her-life]:channel)
+      (decode-shut-packet packet [symmetric-key her-life our-life]:channel)
     ::  non-galaxy: update route with heard lane or forwarded lane
     ::
     =?  route.peer-state  !=(%czar (clan:title her.channel))
