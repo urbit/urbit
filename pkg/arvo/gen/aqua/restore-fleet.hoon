@@ -1,6 +1,6 @@
 /-  aquarium
 =,  aquarium
 :-  %say
-|=  [* [label=@ta] ~]
+|=  [* [label=@ta ~] ~]
 :-  %aqua-events
-[%snap-ships label]~
+[%restore-snap label]~

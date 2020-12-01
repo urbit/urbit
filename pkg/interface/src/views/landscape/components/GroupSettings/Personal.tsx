@@ -34,10 +34,12 @@ function DeleteGroup(props: {
   const history = useHistory();
   const onDelete = async () => {
     const name = props.association['group-path'].split('/').pop();
-    if (prompt(`To confirm deleting this group, type ${name}`) === name) {
-      await props.api.contacts.delete(props.association["group-path"]);
-      history.push("/");
+    if (props.owner) {
+      const shouldDelete = (prompt(`To confirm deleting this group, type ${name}`) === name);
+      if (!shouldDelete) return;
     }
+    await props.api.contacts.delete(props.association["group-path"]);
+    history.push("/");
   };
 
   const action = props.owner ? "Delete" : "Leave";

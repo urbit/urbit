@@ -17,10 +17,10 @@
 ::
 ++  export-app
   |=  [app=@tas our=@p now=@da]
-  .^(@ %gx /(scot %p our)/[app]/(scot %da now)/export/noun)
+  .^(* %gx /(scot %p our)/[app]/(scot %da now)/export/noun)
 ++  export-all
   |=  [our=@p now=@da]
-  ^-  (list [@tas @])
+  ^-  (list [@tas *])
   %+  turn
     ^-  (list @tas)
     :~  %group-store
@@ -31,7 +31,6 @@
         %invite-store
         %chat-store
         %chat-hook
-        %publish
         %graph-store
     ==
   |=  app=@tas

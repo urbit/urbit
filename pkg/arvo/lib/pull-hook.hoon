@@ -196,6 +196,7 @@
       =.  inner-state
         on-save:og
       !>(state)
+    ::
     ++  on-poke
       |=  [=mark =vase]
       ^-  [(list card:agent:gall) agent:gall]
