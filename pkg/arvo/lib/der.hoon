@@ -175,7 +175,7 @@
   ::  advance until
   ::
   ++  till
-    |=  tub/nail
+    |=  tub=nail
     ^-  (like (list @D))
     ?~  q.tub
       (fail tub)

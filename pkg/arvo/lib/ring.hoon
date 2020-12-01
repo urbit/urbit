@@ -319,7 +319,7 @@
   ::  +seed-to-private-key-scalar: keyfile form to scalar we can multiply with
   ::
   ++  seed-to-private-key-scalar
-    |=  sk/@I  ^-  @udscalar
+    |=  sk=@I  ^-  @udscalar
     ?:  (gth (met 3 sk) 32)  !!
     =+  h=(shal (rsh 0 3 b:ed:crypto) sk)
     %+  add

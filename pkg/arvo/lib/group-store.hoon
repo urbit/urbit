@@ -295,7 +295,7 @@
     |=  [a=(map @t json) b=$-(@t @t)]
     ^+  a
     =-  (malt -)
-    |- 
+    |-
     ^-  (list [@t json])
     ?~  a  ~
     :-  [(b p.n.a) q.n.a]
@@ -304,13 +304,13 @@
     $(a r.a)
   ::
   ++  of
-      |*  wer/(pole {cord fist})
-      |=  jon/json
-      ?>  ?=({$o {@ *} $~ $~} jon)
+      |*  wer=(pole [cord fist])
+      |=  jon=json
+      ?>  ?=([%o [@ *] ~ ~] jon)
       |-
-      ?-    wer                                         
-          :: {{key/@t wit/*} t/*}
-          {{key/@t *} t/*}
+      ?-    wer
+          :: [[key=@t wit=*] t=*]
+          [[key=@t *] t=*]
         =>  .(wer [[* wit] *]=wer)
         ?:  =(key.wer (enkebab p.n.p.jon))
           [key.wer ~|(val+q.n.p.jon (wit.wer q.n.p.jon))]

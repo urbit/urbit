@@ -3,7 +3,7 @@
   ::
 /+    cram
 ::
-|_  mud/@t
+|_  mud=@t
 ++  grow
   |%
   ++  mime  [/text/x-unmark (as-octs:mimes:html mud)]

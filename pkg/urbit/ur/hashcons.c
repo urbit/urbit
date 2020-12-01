@@ -338,20 +338,23 @@ ur_mug
 ur_mug_bytes(const uint8_t *byt, uint64_t len)
 {
   uint32_t seed = 0xcafebabe;
-  ur_mug    mug;
+  uint8_t     i = 0;
 
-  while ( 1 ) {
+  while ( i < 8 ) {
+    ur_mug   mug;
     uint32_t raw;
     MurmurHash3_x86_32(byt, len, seed, &raw);
     mug = (raw >> 31) ^ ( ur_mask_31(raw) );
 
     if ( 0 == mug ) {
-      seed++;
+      seed++; i++;
     }
     else {
       return mug;
     }
   }
+
+  return (ur_mug)0x7fff;
 }
 
 ur_mug
@@ -387,9 +390,35 @@ ur_mug64(uint64_t x)
 ur_mug
 ur_mug_both(ur_mug hed, ur_mug tal)
 {
-  //  XX not correct per u3r_mug, but necessary to avoid collisions
-  //
-  return ur_mug32(hed ^ (0x7fffffff ^ ur_mug32(tal)));
+  uint32_t  seed = 0xdeadbeef;
+  uint8_t    len = 4 + ur_bloq_up3(ur_met0_32(tal));
+  uint8_t      i = 0;
+  uint8_t byt[8] = {
+    ur_mask_8(hed >>  0),
+    ur_mask_8(hed >>  8),
+    ur_mask_8(hed >> 16),
+    ur_mask_8(hed >> 24),
+    ur_mask_8(tal >>  0),
+    ur_mask_8(tal >>  8),
+    ur_mask_8(tal >> 16),
+    ur_mask_8(tal >> 24)
+  };
+
+  while ( i < 8 ) {
+    ur_mug   mug;
+    uint32_t raw;
+    MurmurHash3_x86_32(byt, len, seed, &raw);
+    mug = (raw >> 31) ^ ( ur_mask_31(raw) );
+
+    if ( 0 == mug ) {
+      seed++; i++;
+    }
+    else {
+      return mug;
+    }
+  }
+
+  return (ur_mug)0xfffe;
 }
 
 ur_mug

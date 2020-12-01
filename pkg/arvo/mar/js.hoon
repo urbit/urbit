@@ -4,7 +4,7 @@
 /?    310
 ::
 =,  eyre
-|_  mud/@
+|_  mud=@
 ++  grow
   |%
   ++  mime  [/application/javascript (as-octs:mimes:html (@t mud))]

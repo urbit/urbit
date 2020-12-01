@@ -7,8 +7,8 @@
 ::::
   ::
 :-  %say
-|=  $:  {now/@da eny/@uvJ bec/beak}
-        {{mon/$@(term {knot path}) ~} ~}
+|=  $:  [now=@da eny=@uvJ bec=beak]
+        [[mon=$@(term [knot path]) ~] ~]
     ==
 :-  %kiln-unmount
 mon

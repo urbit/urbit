@@ -1479,32 +1479,93 @@ u3r_tape(u3_noun a)
   return a_y;
 }
 
+/* u3r_mug_both(): Join two mugs.
+*/
+c3_l
+u3r_mug_both(c3_l lef_l, c3_l rit_l)
+{
+  c3_y len_y = 4 + ((c3_bits_word(rit_l) + 0x7) >> 3);
+  c3_w syd_w = 0xdeadbeef;
+  c3_w   i_w = 0;
+  c3_y buf_y[8];
+
+  buf_y[0] = lef_l         & 0xff;
+  buf_y[1] = (lef_l >>  8) & 0xff;
+  buf_y[2] = (lef_l >> 16) & 0xff;
+  buf_y[3] = (lef_l >> 24) & 0xff;
+  buf_y[4] = rit_l         & 0xff;
+  buf_y[5] = (rit_l >>  8) & 0xff;
+  buf_y[6] = (rit_l >> 16) & 0xff;
+  buf_y[7] = (rit_l >> 24) & 0xff;
+
+  while ( i_w < 8 ) {
+    c3_w haz_w;
+    c3_l ham_l;
+
+    MurmurHash3_x86_32(buf_y, len_y, syd_w, &haz_w);
+    ham_l = (haz_w >> 31) ^ (haz_w & 0x7fffffff);
+
+    if ( 0 == ham_l ) {
+      syd_w++; i_w++;
+    }
+    else {
+      return ham_l;
+    }
+  }
+
+  return 0xfffe;
+}
+
 /* u3r_mug_bytes(): Compute the mug of `buf`, `len`, LSW first.
 */
-c3_w
+c3_l
 u3r_mug_bytes(const c3_y *buf_y,
               c3_w        len_w)
 {
   c3_w syd_w = 0xcafebabe;
-  c3_w ham_w = 0;
+  c3_w   i_w = 0;
 
-  while ( 1 ) {
+  while ( i_w < 8 ) {
     c3_w haz_w;
-    MurmurHash3_x86_32(buf_y, len_w, syd_w, &haz_w);
-    ham_w = (haz_w >> 31) ^ (haz_w & 0x7fffffff);
+    c3_l ham_l;
 
-    if ( 0 == ham_w ) {
-      syd_w++;
+    MurmurHash3_x86_32(buf_y, len_w, syd_w, &haz_w);
+    ham_l = (haz_w >> 31) ^ (haz_w & 0x7fffffff);
+
+    if ( 0 == ham_l ) {
+      syd_w++; i_w++;
     }
     else {
-      return ham_w;
+      return ham_l;
     }
   }
+
+  return 0x7fff;
+}
+
+/* u3r_mug_c(): Compute the mug of `a`, LSB first.
+*/
+c3_l
+u3r_mug_c(const c3_c* a_c)
+{
+  return u3r_mug_bytes((c3_y*)a_c, strlen(a_c));
+}
+
+/* u3r_mug_cell(): Compute the mug of the cell `[hed tel]`.
+*/
+c3_l
+u3r_mug_cell(u3_noun hed,
+             u3_noun tel)
+{
+  c3_w lus_w = u3r_mug(hed);
+  c3_w biq_w = u3r_mug(tel);
+
+  return u3r_mug_both(lus_w, biq_w);
 }
 
 /* u3r_mug_chub(): Compute the mug of `num`, LSW first.
 */
-c3_w
+c3_l
 u3r_mug_chub(c3_d num_d)
 {
   c3_w buf_w[2];
@@ -1515,17 +1576,9 @@ u3r_mug_chub(c3_d num_d)
   return u3r_mug_words(buf_w, 2);
 }
 
-/* u3r_mug_string(): Compute the mug of `a`, LSB first.
-*/
-c3_w
-u3r_mug_string(const c3_c *a_c)
-{
-  return u3r_mug_bytes((c3_y*)a_c, strlen(a_c));
-}
-
 /* u3r_mug_words(): 31-bit nonzero MurmurHash3 on raw words.
 */
-c3_w
+c3_l
 u3r_mug_words(const c3_w* key_w, c3_w len_w)
 {
   c3_w byt_w;
@@ -1553,27 +1606,6 @@ u3r_mug_words(const c3_w* key_w, c3_w len_w)
   //  XX: assumes little-endian
   //
   return u3r_mug_bytes((c3_y*)key_w, byt_w);
-}
-
-/* u3r_mug_both(): Join two mugs.
-*/
-c3_w
-u3r_mug_both(c3_w lef_w, c3_w rit_w)
-{
-  c3_w ham_w = lef_w ^ (0x7fffffff ^ rit_w);
-  return u3r_mug_words(&ham_w, 1);
-}
-
-/* u3r_mug_cell(): Compute the mug of the cell `[hed tel]`.
-*/
-c3_w
-u3r_mug_cell(u3_noun hed,
-             u3_noun tel)
-{
-  c3_w lus_w = u3r_mug(hed);
-  c3_w biq_w = u3r_mug(tel);
-
-  return u3r_mug_both(lus_w, biq_w);
 }
 
 /* _cr_mug: stack frame for recording cell traversal

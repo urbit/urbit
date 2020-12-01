@@ -191,11 +191,9 @@ _cv_time_bump(u3_reck* rec_u)
 /* u3v_peek(): query the reck namespace (protected).
 */
 u3_noun
-u3v_peek(u3_noun hap)
+u3v_peek(u3_noun sam)
 {
   u3_noun fun = u3n_nock_on(u3k(u3A->roc), u3k(u3x_at(_CVX_PEEK, u3A->roc)));
-  u3_noun sam = u3nc(u3k(u3A->now), hap);
-
   return u3n_slam_on(fun, sam);
 }
 

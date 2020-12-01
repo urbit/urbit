@@ -43,3 +43,12 @@
       return u3qc_con(a, b);
     }
   }
+
+u3_noun
+u3kc_con(u3_noun a,
+         u3_noun b)
+{
+  u3_noun c = u3qc_con(a, b);
+  u3z(a); u3z(b);
+  return c;
+}

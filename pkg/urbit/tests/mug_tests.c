@@ -16,7 +16,7 @@ _test_mug(void)
 {
   c3_i ret_i = 1;
 
-  if ( 0x4d441035 != u3r_mug_string("Hello, world!") ) {
+  if ( 0x4d441035 != u3r_mug_c("Hello, world!") ) {
     fprintf(stderr, "fail (a)\r\n");
     ret_i = 0;
   }
@@ -32,36 +32,67 @@ _test_mug(void)
     u3z(a);
   }
 
-  if ( 0x79ff04e8 != u3r_mug_bytes(0, 0) ) {
-    fprintf(stderr, "fail (c)\r\n");
+  {
+    c3_y byt_y[1];
+
+    if ( 0x79ff04e8 != u3r_mug_bytes(0, 0) ) {
+      fprintf(stderr, "fail (c) (0)\r\n");
+      ret_i = 0;
+    }
+
+    byt_y[0] = 1;
+
+    if ( 0x715c2a60 != u3r_mug_bytes(byt_y, 1) ) {
+      fprintf(stderr, "fail (c) (1)\r\n");
+      ret_i = 0;
+    }
+
+    byt_y[0] = 2;
+
+    if ( 0x718b9468 != u3r_mug_bytes(byt_y, 1) ) {
+      fprintf(stderr, "fail (c) (2)\r\n");
+      ret_i = 0;
+    }
+  }
+
+  if ( 0x3a811aec != u3r_mug_both(0x715c2a60, u3r_mug_cell(2, 3)) ) {
+    fprintf(stderr, "fail (d)\r\n");
     ret_i = 0;
+  }
+
+
+  {
+    if ( 0x192f5588 != u3r_mug_cell(0, 0) ) {
+      fprintf(stderr, "fail (e) (1)\r\n");
+      ret_i = 0;
+    }
+
+    if ( 0x6b32ec46 != u3r_mug_cell(1, 1) ) {
+      fprintf(stderr, "fail (e) (2)\r\n");
+      ret_i = 0;
+    }
+
+    if ( 0x2effe10 != u3r_mug_cell(2, 2) ) {
+      fprintf(stderr, "fail (e) (3)\r\n");
+      ret_i = 0;
+    }
   }
 
   {
     u3_noun a = u3i_string("xxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 
     if ( 0x64dfda5c != u3r_mug(a) ) {
-      fprintf(stderr, "fail (d)\r\n");
+      fprintf(stderr, "fail (f)\r\n");
       ret_i = 0;
     }
 
     u3z(a);
   }
 
-  if ( 0x389ca03a != u3r_mug_cell(0, 0) ) {
-    fprintf(stderr, "fail (e)\r\n");
-    ret_i = 0;
-  }
-
-  if ( 0x389ca03a != u3r_mug_cell(1, 1) ) {
-    fprintf(stderr, "fail (f)\r\n");
-    ret_i = 0;
-  }
-
   {
     u3_noun a = u3qc_bex(32);
 
-    if ( 0x5258a6c0 != u3r_mug_cell(0, a) ) {
+    if ( 0x7cefb7f != u3r_mug_cell(0, a) ) {
       fprintf(stderr, "fail (g)\r\n");
       ret_i = 0;
     }
@@ -72,7 +103,7 @@ _test_mug(void)
   {
     u3_noun a = u3ka_dec(u3qc_bex(128));
 
-    if ( 0x2ad39968 != u3r_mug_cell(a, 1) ) {
+    if ( 0x2aa06bfc != u3r_mug_cell(a, 1) ) {
       fprintf(stderr, "fail (h)\r\n");
       ret_i = 0;
     }

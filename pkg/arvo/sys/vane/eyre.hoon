@@ -419,9 +419,9 @@
 ::  +render-tang-to-marl: renders a tang and adds <br/> tags between each line
 ::
 ++  render-tang-to-marl
-  |=  {wid/@u tan/tang}
+  |=  [wid=@u tan=tang]
   ^-  marl
-  =/  raw=(list tape)  (zing (turn tan |=(a/tank (wash 0^wid a))))
+  =/  raw=(list tape)  (zing (turn tan |=(a=tank (wash 0^wid a))))
   ::
   |-  ^-  marl
   ?~  raw  ~
@@ -429,7 +429,7 @@
 ::  +render-tang-to-wall: renders tang as text lines
 ::
 ++  render-tang-to-wall
-  |=  {wid/@u tan/tang}
+  |=  [wid=@u tan=tang]
   ^-  wall
   (zing (turn tan |=(a=tank (wash 0^wid a))))
 ::  +wall-to-octs: text to binary output
@@ -644,7 +644,7 @@
     ?-    -.action
         %gen
       =/  bek=beak  [our desk.generator.action da+now]
-      =/  sup=spur  (flop path.generator.action)
+      =/  sup=spur  path.generator.action
       =/  ski       (scry [%141 %noun] ~ %ca bek sup)
       =/  cag=cage  (need (need ski))
       ?>  =(%vase p.cag)
@@ -768,7 +768,7 @@
     ++  do-scry
       |=  [care=term =desk =path]
       ^-  (unit (unit cage))
-      (scry [%141 %noun] ~ care [our desk da+now] (flop path))
+      (scry [%141 %noun] ~ care [our desk da+now] path)
     ::
     ++  error-response
       |=  [status=@ud =tape]
@@ -1650,7 +1650,7 @@
         =*  desc=tape  "from {(trip have)} to json"
         =/  tube=(unit tube:clay)
           =/  tuc=(unit (unit cage))
-            (scry [%141 %noun] ~ %cc [our %home da+now] (flop /[have]/json))
+            (scry [%141 %noun] ~ %cc [our %home da+now] /[have]/json)
           ?.  ?=([~ ~ *] tuc)  ~
           `!<(tube:clay q.u.u.tuc)
         ?~  tube
@@ -2110,7 +2110,8 @@
 =|  ax=axle
 ::  a vane is activated with current date, entropy, and a namespace function
 ::
-|=  [our=ship now=@da eny=@uvJ scry-gate=sley]
+|=  [our=ship now=@da eny=@uvJ rof=roof]
+=*  scry-gate  (en-sley rof)
 ::  allow jets to be registered within this core
 ::
 ~%  %http-server  ..is  ~
@@ -2266,7 +2267,7 @@
         ::
         %turf
       =*  domains  domains.server-state.ax
-      =/  mod/(set turf)
+      =/  mod=(set turf)
         ?:  ?=(%put action.http-rule.task)
           (~(put in domains) turf.http-rule.task)
         (~(del in domains) turf.http-rule.task)
@@ -2506,121 +2507,23 @@
 ::  +load: migrate old state to new state (called on vane reload)
 ::
 ++  load
-  =>  |%
-      +$  axle-2020-9-30
-        [date=%~2020.9.30 server-state=server-state-2020-9-30]
-      ::
-      +$  server-state-2020-9-30
-        $:  bindings=(list [=binding =duct =action])
-            =cors-registry
-            connections=(map duct outstanding-connection)
-            =authentication-state
-            channel-state=channel-state-2020-9-30
-            domains=(set turf)
-            =http-config
-            ports=[insecure=@ud secure=(unit @ud)]
-            outgoing-duct=duct
-        ==
-      ::
-      +$  channel-state-2020-9-30
-        $:  session=(map @t channel-2020-9-30)
-            duct-to-key=(map duct @t)
-        ==
-      ::
-      +$  channel-2020-9-30
-        $:  state=(each timer duct)
-            next-id=@ud
-            events=(qeu [id=@ud lines=wall])
-            subscriptions=(map wire [ship=@p app=term =path duc=duct])
-            heartbeat=(unit timer)
-        ==
-      ::
-      +$  axle-2020-5-29
-        [date=%~2020.5.29 server-state=server-state-2020-5-29]
-      ::
-      +$  server-state-2020-5-29
-        $:  bindings=(list [=binding =duct =action])
-            connections=(map duct outstanding-connection)
-            =authentication-state
-            channel-state=channel-state-2020-9-30
-            domains=(set turf)
-            =http-config
-            ports=[insecure=@ud secure=(unit @ud)]
-            outgoing-duct=duct
-        ==
-      +$  axle-2019-10-6
-        [date=%~2019.10.6 server-state=server-state-2019-10-6]
-      ::
-      +$  server-state-2019-10-6
-        $:  bindings=(list [=binding =duct =action])
-            connections=(map duct outstanding-connection)
-            authentication-state=sessions=(map @uv @da)
-            channel-state=channel-state-2020-9-30
-            domains=(set turf)
-            =http-config
-            ports=[insecure=@ud secure=(unit @ud)]
-            outgoing-duct=duct
-        ==
-      --
-  |=  old=$%(axle axle-2019-10-6 axle-2020-5-29 axle-2020-9-30)
+  |=  old=axle
   ^+  ..^$
-  ::
-  ~!  %loading
-  ?-  -.old
-    %~2020.10.18  ..^$(ax old)
-  ::
-      %~2020.9.30
-    %_  $
-      date.old  %~2020.10.18
-    ::
-      ::NOTE  soft-breaks the reconnect case, but is generally less disruptive
-      ::      than wiping channels entirely.
-        session.channel-state.server-state.old
-      %-  ~(run by session.channel-state.server-state.old)
-      |=  channel-2020-9-30
-      ^-  channel
-      =/  subscriptions
-        %-  ~(gas by *(map @ud [@p term path duct]))
-        %+  turn  ~(tap by subscriptions)
-        |=  [=wire rest=[@p term path duct]]
-        [(slav %ud (snag 3 wire)) rest]
-      :*  state  next-id  now
-          *(qeu [@ud @ud channel-event])
-          *(map @ud @ud)
-          subscriptions  heartbeat
-      ==
-    ==
-  ::
-      %~2020.5.29
-    %_  $
-      date.old          %~2020.9.30
-      server-state.old  [-.server-state.old *cors-registry +.server-state.old]
-    ==
-  ::
-      %~2019.10.6
-    =^  success  bindings.server-state.old
-      %+  insert-binding
-        [[~ /~/logout] [/e/load/logout]~ [%logout ~]]
-      bindings.server-state.old
-    ~?  !success  [%e %failed-to-setup-logout-endpoint]
-    =^  success  bindings.server-state.old
-      %+  insert-binding
-        [[~ /~/scry] [/e/load/scry]~ [%scry ~]]
-      bindings.server-state.old
-    ~?  !success  [%e %failed-to-setup-scry-endpoint]
-    %_  $
-      date.old  %~2020.5.29
-      sessions.authentication-state.server-state.old  ~
-    ==
-  ==
+  ..^$(ax old)
 ::  +stay: produce current state
 ::
 ++  stay  `axle`ax
 ::  +scry: request a path in the urbit namespace
 ::
 ++  scry
-  |=  [fur=(unit (set monk)) ren=@tas why=shop syd=desk lot=coin tyl=path]
+  |=  [lyc=gang cyr=term bem=beam]
   ^-  (unit (unit cage))
+  =*  ren  cyr
+  =*  why=shop  &/p.bem
+  =*  syd  q.bem
+  =/  lot=coin  $/r.bem
+  =*  tyl  s.bem
+  ::
   ?.  ?=(%& -.why)
     ~
   =*  who  p.why

@@ -7,8 +7,8 @@
 ::::
   ::
 :-  %say
-|=  $:  {now/@da eny/@uvJ bec/beak}
-        {arg/{syd/desk lab/@tas ~} ~}
+|=  $:  [now=@da eny=@uvJ bec=beak]
+        [arg=[syd=desk lab=@tas ~] ~]
     ==
 :-  %kiln-label
 [syd lab]:arg

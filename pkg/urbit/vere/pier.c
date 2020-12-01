@@ -285,7 +285,8 @@ _pier_on_lord_work_spin(void* ptr_v, u3_atom pin, c3_o del_o)
 {
   u3_pier* pir_u = ptr_v;
 
-  c3_assert(  (u3_psat_work == pir_u->sat_e)
+  c3_assert(  (u3_psat_wyrd == pir_u->sat_e)
+           || (u3_psat_work == pir_u->sat_e)
            || (u3_psat_done == pir_u->sat_e) );
 
   u3_term_start_spinner(pin, del_o);
@@ -298,7 +299,8 @@ _pier_on_lord_work_spun(void* ptr_v)
 {
   u3_pier* pir_u = ptr_v;
 
-  c3_assert(  (u3_psat_work == pir_u->sat_e)
+  c3_assert(  (u3_psat_wyrd == pir_u->sat_e)
+           || (u3_psat_work == pir_u->sat_e)
            || (u3_psat_done == pir_u->sat_e) );
 
   u3_term_stop_spinner();
@@ -347,7 +349,11 @@ _pier_on_lord_work_bail(void* ptr_v, u3_ovum* egg_u, u3_noun lud)
 
   u3_auto_bail(egg_u, lud);
 
-  _pier_work(pir_u->wok_u);
+  //  XX groace
+  //
+  if ( pir_u->wok_u ) {
+    _pier_work(pir_u->wok_u);
+  }
 }
 
 /* _pier_work_time(): set time.
@@ -398,13 +404,14 @@ u3_pier_spin(u3_pier* pir_u)
 {
   //  XX return c3n instead?
   //
-  c3_assert(  (u3_psat_work == pir_u->sat_e)
-           || (u3_psat_done == pir_u->sat_e) );
+  if (  u3_psat_work == pir_u->sat_e
+     || u3_psat_done == pir_u->sat_e )
+  {
+    u3_work* wok_u = pir_u->wok_u;
 
-  u3_work* wok_u = pir_u->wok_u;
-
-  if ( !uv_is_active((uv_handle_t*)&wok_u->idl_u) ) {
-    uv_idle_start(&wok_u->idl_u, _pier_work_idle_cb);
+    if ( !uv_is_active((uv_handle_t*)&wok_u->idl_u) ) {
+      uv_idle_start(&wok_u->idl_u, _pier_work_idle_cb);
+    }
   }
 }
 
@@ -429,29 +436,6 @@ u3_pier_peek(u3_pier*   pir_u,
   _pier_peek_plan(pir_u, pic_u);
 }
 
-/* u3_pier_peek_mine(): read namespace, injecting ship.
-*/
-void
-u3_pier_peek_mine(u3_pier*   pir_u,
-                  u3_noun      gan,
-                  c3_m       car_m,
-                  u3_noun      pax,
-                  void*      ptr_v,
-                  u3_peek_cb fun_f)
-{
-  u3_pico* pic_u = u3_pico_init();
-
-  pic_u->ptr_v = ptr_v;
-  pic_u->fun_f = fun_f;
-  pic_u->gan   = gan;
-  //
-  pic_u->typ_e       = u3_pico_mine;
-  pic_u->min_u.car_m = car_m;
-  pic_u->min_u.pax   = pax;
-
-  _pier_peek_plan(pir_u, pic_u);
-}
-
 /* u3_pier_peek_last(): read namespace, injecting ship and case.
 */
 void
@@ -469,7 +453,7 @@ u3_pier_peek_last(u3_pier*   pir_u,
   pic_u->fun_f = fun_f;
   pic_u->gan   = gan;
   //
-  pic_u->typ_e       = u3_pico_last;
+  pic_u->typ_e       = u3_pico_once;
   pic_u->las_u.car_m = car_m;
   pic_u->las_u.des   = des;
   pic_u->las_u.pax   = pax;
@@ -546,8 +530,7 @@ _pier_work_init(u3_pier* pir_u)
 {
   u3_work* wok_u;
 
-  c3_assert(  (u3_psat_init == pir_u->sat_e)
-           || (u3_psat_play == pir_u->sat_e) );
+  c3_assert( u3_psat_wyrd == pir_u->sat_e );
 
   pir_u->sat_e = u3_psat_work;
   pir_u->wok_u = wok_u = c3_calloc(sizeof(*wok_u));
@@ -631,6 +614,227 @@ _pier_work_init(u3_pier* pir_u)
   }
 
   _pier_work(wok_u);
+}
+
+/* _pier_wyrd_good(): %wyrd version negotation succeeded.
+*/
+static void
+_pier_wyrd_good(u3_pier* pir_u, u3_ovum* egg_u)
+{
+  //  restore event callbacks
+  //
+  {
+    u3_lord* god_u = pir_u->god_u;
+    god_u->cb_u.work_done_f = _pier_on_lord_work_done;
+    god_u->cb_u.work_bail_f = _pier_on_lord_work_bail;
+  }
+
+  //  initialize i/o drivers
+  //
+  _pier_work_init(pir_u);
+
+  //  free %wyrd driver and ovum
+  //
+  {
+    u3_auto* car_u = egg_u->car_u;
+    u3_auto_done(egg_u);
+    c3_free(car_u);
+  }
+}
+
+/* _pier_wyrd_fail(): %wyrd version negotation failed.
+*/
+static void
+_pier_wyrd_fail(u3_pier* pir_u, u3_ovum* egg_u, u3_noun lud)
+{
+  //  XX version negotiation failed, print upgrade message
+  //
+  u3l_log("pier: version negotation failed\n\n");
+
+  //  XX only print trace with -v ?
+  //
+  u3_auto_bail_slog(egg_u, lud);
+
+  //  free %wyrd driver and ovum
+  //
+  {
+    u3_auto* car_u = egg_u->car_u;
+    u3_auto_done(egg_u);
+    c3_free(car_u);
+  }
+
+  u3_pier_bail(pir_u);
+}
+
+//  XX organizing version constants
+//
+#define VERE_NAME   "vere"
+#define VERE_MAJOR  0
+#define VERE_MINOR  10
+#define VERE_PATCH  9
+#define VERE_ZUSE   309
+
+/* _pier_wyrd_aver(): check for %wend effect and version downgrade. RETAIN
+*/
+static c3_o
+_pier_wyrd_aver(u3_noun act)
+{
+  u3_noun fec, kel, ver;
+
+  //    XX review, %wend re: %wyrd optional?
+  //
+  while ( u3_nul != act ) {
+    u3x_cell(act, &fec, &act);
+
+    if ( c3__wend == u3h(fec) ) {
+      kel = u3t(fec);
+
+      //  traverse $wynn, check for downgrades
+      //
+      while ( u3_nul != kel ) {
+        u3x_cell(kel, &ver, &kel);
+
+        //  check for %zuse downgrade
+        //
+        if (  (c3__zuse == u3h(ver))
+           && (VERE_ZUSE != u3t(ver)) )
+        {
+          return c3n;
+        }
+
+        //  XX in the future, send %wend to serf
+        //  to also negotiate downgrade of nock/hoon/&c?
+        //  (we don't want to have to filter effects)
+        //
+      }
+    }
+  }
+
+  return c3y;
+}
+
+/* _pier_on_lord_wyrd_done(): callback for successful %wyrd event.
+*/
+static void
+_pier_on_lord_wyrd_done(void*    ptr_v,
+                        u3_ovum* egg_u,
+                        u3_fact* tac_u,
+                        u3_gift* gif_u)
+{
+  u3_pier* pir_u = ptr_v;
+
+  c3_assert( u3_psat_wyrd == pir_u->sat_e );
+
+  //  arvo's side of version negotiation succeeded
+  //  traverse [gif_y] and validate
+  //
+  if ( c3n == _pier_wyrd_aver(gif_u->act) ) {
+    u3_fact_free(tac_u);
+    u3_gift_free(gif_u);
+
+    //  XX messaging, cli argument to bypass
+    //
+    u3l_log("pier: version negotiation failed; downgrade\n");
+    _pier_wyrd_fail(pir_u, egg_u, u3_nul);
+  }
+  else {
+    //  enqueue %wyrd event-log commit
+    //
+    u3_disk_plan(pir_u->log_u, tac_u);
+
+    //  finalize %wyrd success
+    //
+    _pier_wyrd_good(pir_u, egg_u);
+
+    //  plan %wyrd effects
+    //
+    _pier_gift_plan(pir_u->wok_u, gif_u);
+  }
+}
+
+/* _pier_on_lord_wyrd_bail(): callback for failed %wyrd event.
+*/
+static void
+_pier_on_lord_wyrd_bail(void* ptr_v, u3_ovum* egg_u, u3_noun lud)
+{
+  u3_pier* pir_u = ptr_v;
+
+  c3_assert( u3_psat_wyrd == pir_u->sat_e );
+
+  //  XX add cli argument to bypass negotiation failure
+  //
+#if 1
+  //  print %wyrd failure and exit
+  //
+  //    XX check bail mote, retry on %intr, %meme, &c
+  //
+  _pier_wyrd_fail(pir_u, egg_u, lud);
+#else
+  //  XX temporary hack to fake %wyrd success
+  //
+  {
+    _pier_wyrd_good(pir_u, egg_u);
+    u3z(lud);
+  }
+#endif
+}
+
+/* _pier_wyrd_init(): construct %wyrd.
+*/
+static u3_noun
+_pier_wyrd_card(u3_pier* pir_u)
+{
+  u3_lord* god_u = pir_u->god_u;
+
+  _pier_work_time(pir_u);
+  u3v_numb();
+
+  //  XX god_u not necessarily available yet, refactor call sites
+  //
+  u3_noun ver = u3nq(u3i_string(VERE_NAME), VERE_MAJOR, VERE_MINOR, VERE_PATCH);
+  u3_noun kel = u3nl(u3nc(c3__zuse, VERE_ZUSE),       //  XX god_u->zus_w
+                     // u3nc(c3__lull, PIER_LULL),    //  XX define
+                     u3nc(c3__arvo, u3i_string("arvo-kelvin")), //  XX from both king and serf?
+                     u3nc(c3__hoon, 141),  //  god_u->hon_y
+                     u3nc(c3__nock, 4),    //  god_u->noc_y
+                     u3_none);
+  u3_noun wir = u3nc(c3__arvo, u3_nul);
+  return u3nt(c3__wyrd, u3nc(u3k(u3A->sen), ver), kel);
+}
+
+/* _pier_wyrd_init(): send %wyrd.
+*/
+static void
+_pier_wyrd_init(u3_pier* pir_u)
+{
+  u3_noun cad = _pier_wyrd_card(pir_u);
+  u3_noun wir = u3nc(c3__arvo, u3_nul);
+
+  pir_u->sat_e = u3_psat_wyrd;
+
+  u3l_log("vere: checking version compatiblity\n");
+
+  {
+    u3_lord* god_u = pir_u->god_u;
+    u3_auto* car_u = c3_calloc(sizeof(*car_u));
+    u3_ovum* egg_u = u3_ovum_init(0, u3_blip, wir, cad);
+    u3_noun    ovo;
+
+    car_u->pir_u = pir_u;
+    car_u->nam_m = c3__wyrd;
+
+    u3_auto_plan(car_u, egg_u);
+
+    //  instead of subscribing with u3_auto_peer(),
+    //  we swizzle the [god_u] callbacks for full control
+    //
+    god_u->cb_u.work_done_f = _pier_on_lord_wyrd_done;
+    god_u->cb_u.work_bail_f = _pier_on_lord_wyrd_bail;
+
+    c3_assert( u3_auto_next(car_u, &ovo) == egg_u );
+
+    u3_lord_work(god_u, egg_u, ovo);
+  }
 }
 
 /* _pier_play_plan(): enqueue events for replay.
@@ -811,7 +1015,7 @@ _pier_play(u3_play* pay_u)
     }
     else if ( pay_u->eve_d == log_u->dun_d ) {
       u3_lord_save(pir_u->god_u);
-      _pier_work_init(pir_u);
+      _pier_wyrd_init(pir_u);
     }
   }
   else {
@@ -1205,7 +1409,7 @@ _pier_on_lord_live(void* ptr_v)
       _pier_play_init(pir_u, eve_d);
     }
     else {
-      _pier_work_init(pir_u);
+      _pier_wyrd_init(pir_u);
     }
   }
 }
@@ -1458,7 +1662,7 @@ _pier_pill_parse(u3_noun pil)
 /* _pier_boot_make(): construct boot sequence
 */
 static u3_boot
-_pier_boot_make(u3_noun who, u3_noun ven, u3_noun pil)
+_pier_boot_make(u3_noun who, u3_noun wyr, u3_noun ven, u3_noun pil)
 {
   u3_boot bot_u = _pier_pill_parse(pil); // transfer
 
@@ -1476,6 +1680,9 @@ _pier_boot_make(u3_noun who, u3_noun ven, u3_noun pil)
     wir = u3nt(u3_blip, c3__arvo, u3_nul);
     cad = u3nc(c3__whom, who);  // transfer
     bot_u.mod = u3nc(u3nc(wir, cad), bot_u.mod);
+
+    wir = u3nt(u3_blip, c3__arvo, u3_nul);
+    bot_u.mod = u3nc(u3nc(wir, wyr), bot_u.mod);
   }
 
   //  prepend legacy boot event to the userspace sequence
@@ -1486,7 +1693,7 @@ _pier_boot_make(u3_noun who, u3_noun ven, u3_noun pil)
     //
     c3_assert( c3y == u3a_is_cell(ven) );
 
-    u3_noun wir = u3nq(u3_blip, c3__term, '1', u3_nul);
+    u3_noun wir = u3nq(c3__d, c3__term, '1', u3_nul);
     u3_noun cad = u3nt(c3__boot, u3_Host.ops_u.lit, ven); // transfer
 
     bot_u.use = u3nc(u3nc(wir, cad), bot_u.use);
@@ -1506,7 +1713,7 @@ _pier_boot_plan(u3_pier* pir_u, u3_noun who, u3_noun ven, u3_noun pil)
     pir_u->fak_o = ( c3__fake == u3h(ven) ) ? c3y : c3n;
     u3r_chubs(0, 2, pir_u->who_d, who);
 
-    bot_u = _pier_boot_make(who, ven, pil);
+    bot_u = _pier_boot_make(who, _pier_wyrd_card(pir_u), ven, pil);
     pir_u->lif_w = u3qb_lent(bot_u.bot);
   }
 
@@ -1588,6 +1795,8 @@ u3_pier_boot(c3_w  wag_w,                   //  config flags
     return 0;
   }
 
+  //  XX must be called from on_lord_live
+  //
   if ( c3n == _pier_boot_plan(pir_u, who, ven, pil) ) {
     fprintf(stderr, "pier: boot plan fail\r\n");
     //  XX dispose

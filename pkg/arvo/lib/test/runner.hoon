@@ -31,7 +31,7 @@
           `tang`[[%leaf (weld "FAILED  " name)] ~]
           ::TODO indent
           :: %+  turn  p:run
-          ::   |=  {i/tape}
+          ::   |=  [i=tape]
           ::   ^-  tank
           ::   [%leaf (weld "  " i)]
           p.run
