@@ -1134,10 +1134,10 @@ static c3_w
 _term_it_put_value(c3_w*   lin_w,
                    u3_atom val)
 {
-  u3_atom ren = u3dc("scot", c3__ud, (val % 256));
-  c3_w    len = u3r_met(3, ren);
+  c3_c str_c[4];
+  c3_w len = snprintf(str_c, 4, "%d", val % 256);
   for ( c3_w i_w = 0; i_w < len; i_w++ ) {
-    lin_w[i_w] = u3r_byte(i_w, ren);
+    lin_w[i_w] = str_c[i_w];
   }
   u3z(val);
   return len;
