@@ -183,7 +183,7 @@
   (se-born & wel)
 ::
 ++  poke-fade                                         ::  fade app
-  |=  wel/well:gall
+  |=  wel=well:gall
   =<  se-abet  =<  se-view
   (se-fade wel)
 ::
