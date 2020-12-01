@@ -12,7 +12,7 @@
 =.  now.nec        ~1111.1.1
 =.  eny.nec        0xdead.beef
 =.  life.ames-state.nec  2
-=.  scry-gate.nec  |=(* ``[%noun !>(*(list turf))])
+=.  rof.nec  |=(* ``[%noun !>(*(list turf))])
 =.  crypto-core.ames-state.nec  (pit:nu:crub:crypto 512 (shaz 'nec'))
 =/  nec-pub  pub:ex:crypto-core.ames-state.nec
 =/  nec-sec  sec:ex:crypto-core.ames-state.nec
@@ -21,7 +21,7 @@
 =.  now.bud        ~1111.1.1
 =.  eny.bud        0xbeef.dead
 =.  life.ames-state.bud  3
-=.  scry-gate.bud  |=(* ``[%noun !>(*(list turf))])
+=.  rof.bud  |=(* ``[%noun !>(*(list turf))])
 =.  crypto-core.ames-state.bud  (pit:nu:crub:crypto 512 (shaz 'bud'))
 =/  bud-pub  pub:ex:crypto-core.ames-state.bud
 =/  bud-sec  sec:ex:crypto-core.ames-state.bud
@@ -29,7 +29,7 @@
 =.  our.comet  ~bosrym-podwyl-magnes-dacrys--pander-hablep-masrym-marbud
 =.  now.comet        ~1111.1.1
 =.  eny.comet        0xbeef.cafe
-=.  scry-gate.comet  |=(* ``[%noun !>(*(list turf))])
+=.  rof.comet  |=(* ``[%noun !>(*(list turf))])
 =.  crypto-core.ames-state.comet
   %-  nol:nu:crub:crypto
   0w9N.5uIvA.Jg0cx.NCD2R.o~MtZ.uEQOB.9uTbp.6LHvg.0yYTP.
