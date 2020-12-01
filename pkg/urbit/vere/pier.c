@@ -502,7 +502,7 @@ _pier_on_scry_done(void* ptr_v, u3_noun nun)
         ext_c = "jam";
       }
       else {
-        out   = u3dc("scot", puf, u3k(res));
+        out   = u3dc("scot", u3k(puf), u3k(res));
         ext_c = "txt";
       }
       u3z(puf);
