@@ -971,8 +971,8 @@
   ++  regs  (map path rule)                             ::  rules for paths
   +$  riff  [p=desk q=(unit rave)]                      ::  request+desist
   +$  riff-any
-    $^  [[%1 ~] riff]
-    riff
+    $%  [%1 =riff]
+    ==
   ++  rite                                              ::  new permissions
     $%  {$r red/(unit rule)}                            ::  for read
         {$w wit/(unit rule)}                            ::  for write
