@@ -86,6 +86,9 @@
             pos=(map ship point)                        ::  on-chain ship state
         ==                                              ::
   ==                                                    ::
++$  message-all
+  $%  [%0 message]
+  ==
 +$  message                                             ::  message to her jael
   $%  [%nuke whos=(set ship)]                           ::  cancel trackers
       [%public-keys whos=(set ship)]                    ::  view ethereum events
@@ -532,22 +535,24 @@
     ::
         %plea
       =*  her  ship.tac
-      =/  mes  ;;(message payload.plea.tac)
-      ?-    -.mes
+      =+  ;;(=message-all payload.plea.tac)
+      ?>  ?=(%0 -.message-all)
+      =/  =message  +.message-all
+      ?-    -.message
       ::
       ::  cancel trackers
       ::    [%nuke whos=(set ship)]
       ::
           %nuke
         =.  moz  [[hen %give %done ~] moz]
-        $(tac mes)
+        $(tac message)
       ::
       ::  view ethereum events
       ::    [%public-keys whos=(set ship)]
       ::
           %public-keys
         =.  moz  [[hen %give %done ~] moz]
-        $(tac mes)
+        $(tac message)
       ==
     ==
   ::
@@ -972,10 +977,9 @@
         ..feed
       ::
       ?:  ?=(%& -.source)
-        =/  send-message
-          |=  =message
-          [hen %pass /public-keys %a %plea p.source %j /public-keys message]
-        (emit (send-message %public-keys whos))
+        %-  emit
+        =/  =message-all  [%0 %public-keys whos]
+        [hen %pass /public-keys %a %plea p.source %j /public-keys message-all]
       (peer p.source whos)
     --
   ::

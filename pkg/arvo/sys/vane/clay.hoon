@@ -111,7 +111,9 @@
 ::
 ::  Over-the-wire backfill request
 ::
-+$  fill  [=desk =lobe]
++$  fill
+  $%  [%0 =desk =lobe]
+  ==
 ::
 ::  Ford cache
 ::
@@ -1206,7 +1208,7 @@
     =/  =desk  p.riff
     =/  =wire  /warp-index/(scot %p ship)/(scot %tas desk)/(scot %ud index)
     =/  =path  [%question desk (scot %ud index) ~]
-    (emit duct %pass wire %a %plea ship %c path [[%1 ~] riff])
+    (emit duct %pass wire %a %plea ship %c path `riff-any`[%1 riff])
   ::
   ::  Create a request that cannot be filled immediately.
   ::
@@ -2924,7 +2926,7 @@
         $(need.sat t.need.sat)
       ::  Otherwise, fetch the next blob
       ::
-      =/  =fill  [syd i.need.sat]
+      =/  =fill  [%0 syd i.need.sat]
       =/  =wire  /back-index/(scot %p her)/[syd]/(scot %ud inx)
       =/  =path  [%backfill syd (scot %ud inx) ~]
       =.  ..foreign-update
@@ -4171,13 +4173,8 @@
         [~ req]
       ::  ?:  =(our who.req)
       ::    [~ [%warp wer.req rif.req]]
-      =^  ver  rif.req
-        ?@  -.rif.req
-          [%0 rif.req]
-        [-<.rif.req +.rif.req]
-      ?>  ?=(@ -.rif.req)
-      :-  ?:(=(our who.req) ~ `[who.req ver])
-      [%warp wer.req rif.req]
+      :-  ?:(=(our who.req) ~ `[who.req -.rif.req])
+      [%warp wer.req riff.rif.req]
     ::
     ?>  ?=(%warp -.req)
     =*  rif  rif.req
@@ -4198,7 +4195,7 @@
       =+  ;;(=fill res)
       =^  mos  ruf
         =/  den  ((de our now ski hen ruf) our desk.fill)
-        abet:(give-backfill:den +.fill)
+        abet:(give-backfill:den lobe.fill)
       [[[hen %give %done ~] mos] ..^$]
     ?>  ?=([%question *] pax)
     =+  ryf=;;(riff-any res)
