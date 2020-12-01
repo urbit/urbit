@@ -956,8 +956,8 @@
   +$  regs  (map path rule)                             ::  rules for paths
   +$  riff  [p=desk q=(unit rave)]                      ::  request+desist
   +$  riff-any
-    $^  [[%1 ~] riff]
-    riff
+    $%  [%1 =riff]
+    ==
   +$  rite                                              ::  new permissions
     $%  [%r red=(unit rule)]                            ::  for read
         [%w wit=(unit rule)]                            ::  for write
@@ -1717,6 +1717,7 @@
           [%deal p=sock q=term r=deal]                  ::  full transmission
           [%goad force=? agent=(unit dude)]             ::  rebuild agent(s)
           [%sear =ship]                                 ::  clear pending queues
+          [%fade dap=term style=?(%slay %idle %jolt)]   ::  put app to sleep
           $>(%init vane-task)                           ::  set owner
           $>(%trim vane-task)                           ::  trim state
           $>(%vega vane-task)                           ::  report upgrade

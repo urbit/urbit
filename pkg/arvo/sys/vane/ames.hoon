@@ -364,58 +364,6 @@
   $%  [%memo =message-num message=*]
       [%send =message-num =ack-meat]
   ==
-::  previous state versions, for +stay/+load migrations
-::
-+|  %plasmonics
-::
-+$  ames-state-2
-  $:  peers=(map ship ship-state)
-      =unix=duct
-      =life
-      crypto-core=acru:ames
-      veb=_veb-all-off
-  ==
-::
-+$  queued-event-1
-  $%  [%call =duct type=* wrapped-task=(hobo task-1)]
-      [%take =wire =duct type=* =sign]
-  ==
-::
-+$  task-1
-  $%  [%wegh ~]
-      task
-  ==
-::
-+$  ames-state-1
-  $:  peers=(map ship ship-state-1)
-      =unix=duct
-      =life
-      crypto-core=acru:ames
-  ==
-+$  ship-state-1
-  $%  [%alien alien-agenda]
-      [%known peer-state-1]
-  ==
-+$  peer-state-1
-  $:  $:  =symmetric-key
-          =life
-          =public-key
-          sponsor=ship
-      ==
-      route=(unit [direct=? =lane])
-      qos=qos-1
-      =ossuary
-      snd=(map bone message-pump-state)
-      rcv=(map bone message-sink-state)
-      nax=(set [=bone =message-num])
-      heeds=(set duct)
-  ==
-+$  qos-1
-  $~  [%unborn ~]
-  $%  [%live last-contact=@da]
-      [%dead last-contact=@da]
-      [%unborn ~]
-  ==
 --
 ::  external vane interface
 ::
@@ -533,7 +481,6 @@
     ++  scry  scry:adult-core
     ++  stay  [%4 %larva queued-events ames-state.adult-gate]
     ++  load
-      |^
       |=  $=  old
           $%  $:  %4
               $%  $:  %larva
@@ -542,70 +489,16 @@
                   ==
                   [%adult state=_ames-state.adult-gate]
               ==  ==
-          ::
-              $:  %3
-              $%  $:  %larva
-                      events=(qeu queued-event-1)
-                      state=_ames-state.adult-gate
-                  ==
-                  [%adult state=_ames-state.adult-gate]
-              ==  ==
-          ::
-              $:  %2
-              $%  [%larva events=(qeu queued-event-1) state=ames-state-2]
-                  [%adult state=ames-state-2]
-              ==  ==
-          ::
-              $%  [%larva events=(qeu queued-event-1) state=ames-state-1]
-                  [%adult state=ames-state-1]
-          ==  ==
+          ==
       ?-    old
           [%4 %adult *]  (load:adult-core %4 state.old)
-          [%3 %adult *]  (load:adult-core %3 state.old)
-          [%2 %adult *]  (load:adult-core %2 state.old)
-          [%adult *]     (load:adult-core %1 state.old)
       ::
           [%4 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  queued-events  events.old
         =.  adult-gate     (load:adult-core %4 state.old)
         larval-gate
-      ::
-          [%3 %larva *]
-        ~>  %slog.1^leaf/"ames: larva: load"
-        =.  queued-events  (queued-events-1-to-4 events.old)
-        =.  adult-gate     (load:adult-core %3 state.old)
-        larval-gate
-      ::
-          [%2 %larva *]
-        ~>  %slog.1^leaf/"ames: larva: load"
-        =.  queued-events  (queued-events-1-to-4 events.old)
-        =.  adult-gate     (load:adult-core %2 state.old)
-        larval-gate
-      ::
-          [%larva *]
-        ~>  %slog.0^leaf/"ames: larva: load"
-        =.  queued-events  (queued-events-1-to-4 events.old)
-        =.  adult-gate     (load:adult-core %1 state.old)
-        larval-gate
       ==
-      ::
-      ++  queued-events-1-to-4
-        |=  events=(qeu queued-event-1)
-        ^-  (qeu queued-event)
-        %-  ~(gas to *(qeu queued-event))
-        ^-  (list queued-event)
-        %+  murn  ~(tap to events)
-        |=  e=queued-event-1
-        ^-  (unit queued-event)
-        ?.  ?=(%call -.e)
-          `e
-        ?:  ?=([%wegh ~] wrapped-task.e)
-          ~
-        ?:  ?=([%soft %wegh ~] wrapped-task.e)
-          ~
-        `e
-      --
     --
 ::  adult ames, after metamorphosis from larva
 ::
@@ -685,59 +578,9 @@
 ::  +load: load in old state after reload
 ::
 ++  load
-  |=  $=  old-state
-      $%  [%1 ames-state-1]
-          [%2 ames-state-2]
-          [%3 ^ames-state]
-          [%4 ^ames-state]
-      ==
-  |^  ^+  ames-gate
-      ::
-      =?  old-state  ?=(%1 -.old-state)  %2^(state-1-to-2 +.old-state)
-      =?  old-state  ?=(%2 -.old-state)  %3^(state-2-to-3 +.old-state)
-      =?  old-state  ?=(%3 -.old-state)  %4^+.old-state
-      ::
-      ?>  ?=(%4 -.old-state)
-      ames-gate(ames-state +.old-state)
-  ::
-  ++  state-1-to-2
-    |=  =ames-state-1
-    ^-  ames-state-2
-    ::
-    =|  =ames-state-2
-    =.  +.ames-state-2
-      :*  unix-duct.ames-state-1
-          life.ames-state-1
-          crypto-core.ames-state-1
-          veb=veb-all-off
-      ==
-    =.  peers.ames-state-2
-      %-  ~(gas by *(map ship ship-state))
-      %+  turn  ~(tap by peers.ames-state-1)
-      |=  [peer=ship =ship-state-1]
-      ^-  [ship ship-state]
-      ?:  ?=(%alien -.ship-state-1)
-        [peer ship-state-1]
-      :+  peer  %known
-      %=    +.ship-state-1
-          qos
-        ?+  -.qos.ship-state-1  qos.ship-state-1
-          %unborn  [%unborn now]
-        ==
-      ==
-    ames-state-2
-  ::
-  ++  state-2-to-3
-    |=  =ames-state-2
-    ^-  ^ames-state
-    ::
-    :*  peers.ames-state-2
-        unix-duct.ames-state-2
-        life.ames-state-2
-        crypto-core.ames-state-2
-        bug=[veb=veb.ames-state-2 ships=~]
-    ==
-  --
+  |=  old-state=[%4 ^ames-state]
+  ^+  ames-gate
+  ames-gate(ames-state +.old-state)
 ::  +scry: dereference namespace
 ::
 ++  scry

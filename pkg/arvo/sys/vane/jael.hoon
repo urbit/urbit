@@ -35,36 +35,10 @@
 ::  manage subscriptions efficiently.
 ::
 =>  |%
-+$  any-state  $%(state-0 state-1)
-::
-+$  state-0
-  $:  %0
-      pki=state-pki-0                                   ::
-      etn=state-eth-node                                ::  eth connection state
-  ==                                                    ::
 +$  state-1
   $:  %1
       pki=state-pki-1                                   ::
       etn=state-eth-node                                ::  eth connection state
-  ==                                                    ::
-+$  state-pki-0                                         ::  urbit metadata
-  $:  $=  own                                           ::  vault (vein)
-        $:  yen=(set duct)                              ::  trackers
-            sig=(unit oath)                             ::  for a moon
-            tuf=(list turf)                             ::  domains
-            boq=@ud                                     ::  boot block
-            nod=purl:eyre                               ::  eth gateway
-            fak=_|                                      ::  fake keys
-            lyf=life                                    ::  version
-            jaw=(map life ring)                         ::  private keys
-        ==                                              ::
-      $=  zim                                           ::  public
-        $:  yen=(jug duct ship)                         ::  trackers
-            ney=(jug ship duct)                         ::  reverse trackers
-            nel=(set duct)                              ::  trackers of all
-            dns=dnses                                   ::  on-chain dns state
-            pos=(map ship point)                        ::  on-chain ship state
-        ==                                              ::
   ==                                                    ::
 +$  state-pki-1                                         ::  urbit metadata
   $:  $=  own                                           ::  vault (vein)
@@ -86,6 +60,9 @@
             pos=(map ship point)                        ::  on-chain ship state
         ==                                              ::
   ==                                                    ::
++$  message-all
+  $%  [%0 message]
+  ==
 +$  message                                             ::  message to her jael
   $%  [%nuke whos=(set ship)]                           ::  cancel trackers
       [%public-keys whos=(set ship)]                    ::  view ethereum events
@@ -532,22 +509,24 @@
     ::
         %plea
       =*  her  ship.tac
-      =/  mes  ;;(message payload.plea.tac)
-      ?-    -.mes
+      =+  ;;(=message-all payload.plea.tac)
+      ?>  ?=(%0 -.message-all)
+      =/  =message  +.message-all
+      ?-    -.message
       ::
       ::  cancel trackers
       ::    [%nuke whos=(set ship)]
       ::
           %nuke
         =.  moz  [[hen %give %done ~] moz]
-        $(tac mes)
+        $(tac message)
       ::
       ::  view ethereum events
       ::    [%public-keys whos=(set ship)]
       ::
           %public-keys
         =.  moz  [[hen %give %done ~] moz]
-        $(tac mes)
+        $(tac message)
       ==
     ==
   ::
@@ -972,10 +951,9 @@
         ..feed
       ::
       ?:  ?=(%& -.source)
-        =/  send-message
-          |=  =message
-          [hen %pass /public-keys %a %plea p.source %j /public-keys message]
-        (emit (send-message %public-keys whos))
+        %-  emit
+        =/  =message-all  [%0 %public-keys whos]
+        [hen %pass /public-keys %a %plea p.source %j /public-keys message-all]
       (peer p.source whos)
     --
   ::
@@ -1026,18 +1004,9 @@
   [did ..^$]
 ::                                                      ::  ++load
 ++  load                                                ::  upgrade
-  |=  $:  ::  old: previous state
-          ::
-          ::  old/*
-          old=any-state
-      ==
+  |=  old=state-1
   ^+  ..^$
-  =/  new=state-1
-    ?-  -.old
-      %0  old(- %1, |7.own.pki [step=0 |7.own.pki.old])
-      %1  old
-    ==
-  ..^$(lex new)
+  ..^$(lex old)
 ::                                                      ::  ++scry
 ++  scry                                                ::  inspect
   |=  [lyc=gang cyr=term bem=beam]
