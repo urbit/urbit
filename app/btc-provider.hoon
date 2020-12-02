@@ -163,12 +163,13 @@
     ::
       [%raw-tx @ *]
     ?>  ?=([%get-raw-tx *] resp)
+
     :_  state
     ~[(send-update [%.y (get-req-id wire) %raw-tx +.resp])]
     ::
       [%ping @ *]
     ?>  ?=([%get-block-and-fee *] resp)
-    :-  ~[(send-status [%connected blockcount.resp fee.resp])]
+    :-  ~[(send-status [%connected block.resp fee.resp])]
     state(connected.host-info %.y)
   ==
 ::

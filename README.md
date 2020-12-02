@@ -5,6 +5,7 @@
 
 ## Notes
 Tested to work with `urbit/urbit` commit `d527b420580fb019db8aab397431180e6e6428eb`
+TODO: update to next
 Uses custom:
 - `sys/zuse.hoon`
   * new `decompress-key` from [https://github.com/yosoyubik/urbit/blob/decompress-point/pkg/arvo/sys/zuse.hoon]
@@ -19,23 +20,35 @@ Uses custom:
 First, install new zuse and bip32:
 ```
 |mount %
+```
+
+```
+./install.sh -w PIER_DIR
+```
+
+```
 |commit %home
+
 ::  should see gall molt with the new zuse
 ```
 
 ### Verify ECC and BIP32 Libs
-Verify `ecc` has the correct decompress-point gate. The below should yield: `0x3.30d5.4fd0.dd42.0a6e.5f8d.3624.f5f3.482c.ae35.0f79.d5f0.753b.f5be.ef9c.2d91.af3c`
+Verify `ecc` has the correct decompress-point gate. 
+The below should yield: `0x3.30d5.4fd0.dd42.0a6e.5f8d.3624.f5f3.482c.ae35.0f79.d5f0.753b.f5be.ef9c.2d91.af3c`
 ```
 =bip32 -build-file %/lib/bip32/hoon
 =ecc secp256k1:secp:crypto
 =xpub "zpub6rFR7y4Q2AijBEqTUquhVz398htDFrtymD9xYYfG1m4wAcvPhXNfE3EfH1r1ADqtfSdVCToUG868RvUUkgDKf31mGDtKsAYz2oz2AGutZYs"
-`@ux`(compress-point:ecc pub:(derive-public:(derive-public:(from-extended:bip32 xpub) 0) 0))
+`@ux`(comp
+ress-point:ecc pub:(derive-public:(derive-public:(from-extended:bip32 xpub) 0) 0))
 ```
 
+Now do `./install.sh -w PIER_DIR` for dev.
+
 ### Startup'
-Set credentials and start agents
+Set credentials and start agents. Use `~dopzod` and `~zod`
 ```
-=provider $PROVIDER_@p
+=provider ~zod
 |start %btc-wallet-store
 |start %btc-wallet-hook
 |start %btc-provider
@@ -53,3 +66,10 @@ The below calls will print RPC results.
 ::  second has no balance but is used
 ::  third is unused
 ```
+
+
+## INSTALL NOTES
+1. `mount %`
+2. `./install-zuse.sh $PIER`
+3. `|commit %home`, rebuilds kernel
+4. copy others

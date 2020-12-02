@@ -92,13 +92,44 @@ Creates dummy inputs and outputs. Builds a TX with them.
 =w *walt:bwsl
 =w w(bipt %bip84)
 
-(~(single-random-draw sut:bwsl [w eny1 100 outputs]) inputs)
-(~(single-random-draw sut:bwsl [w eny2 100 outputs]) inputs)
-
+(~(single-random-draw sut:bwsl [w eny1 ~ 100 outputs]) inputs)
+(~(single-random-draw sut:bwsl [w eny2 ~ 100 outputs]) inputs)
 ```
 Above tests w 2 outputs, total fees with 2 inputs of 27.500. Gives:
 1. 500.000 input
 2. Inputs 0 and 3
+
+## Make a full TXBU
+Provider is `~zod`, `~dopzod` is a client.  Use the xpub from PRIVATE.md to have a balance
+
+### setup
+On `~zod`:
+```
+|start %btc-provider
+|start %btc-wallet-store
+|start %btc-wallet-hook
+:btc-provider|command [%set-credentials api-url='http://localhost:50002']
+:btc-provider|command [%whitelist-clients `(set ship)`(sy ~[~dopzod])]
+=xpubzod 'zpub6rFR7y4Q2AijBEqTUquhVz398htDFrtymD9xYYfG1m4wAcvPhXNfE3EfH1r1ADqtfSdVCToUG868RvUUkgDKf31mGDtKsAYz2oz2AGutZYs'
+:btc-wallet-hook|action [%set-provider ~zod]
+:btc-wallet-store|action [%add-wallet xpubzod ~ [~ 20] [~ 6]]
+```
+
+on `~dopzod`:
+```
+=xpubp PRIVATE.md
+
+|start %btc-wallet-store
+|start %btc-wallet-hook
+:btc-wallet-hook|action [%set-provider ~zod]
+:btc-wallet-store|action [%add-wallet xpubp ~ [~ 20] [~ 6]]
+```
+
+### request address
+on `~dopzod`:
+```
+:btc-wallet-hook|action [%req-pay-address payee=~zod value=2.000 [~ 10]]
+```
 
 
 ## scrys
@@ -108,22 +139,3 @@ Above tests w 2 outputs, total fees with 2 inputs of 27.500. Gives:
 .^(@ud %gx /=btc-wallet-store=/balance/[xpub]/noun)
 ```
 
-## Algos
-
-### Monitor addresses
-- nixt also stores next 50 addresses for each account.
-- every update-address call also checks those
-
-### make a payment
-* make payment
-  - get address
-  - on-agent gets return value, construct tx
-  - store tx (view or other command can get it)
-
-::
-++  send-address-update
-  |=  [xpub=tape =walt a=address:btc us=(set utxo)]
-  ^-  (quip card _state)
-  :_  state(walts (~(put by walts.state) xpub walt))
-  ~[[%give %fact ~[/wallets] %btc-wallet-store-update !>([%address a us])]]
-::

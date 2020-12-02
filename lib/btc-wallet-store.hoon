@@ -5,6 +5,47 @@
 =,  secp:crypto
 =+  ecc=secp256k1
 |%
+++  enjs
+  =,  enjs:format
+  |%
+  ::
+  ++  txbu
+    |=  =^txbu
+    ^-  json
+    %-  pairs
+    :~  ::  [%inputs [%a (turn txis.txbu txi)]]
+        ['associatedKeysets' [%a (turn txis.txbu |=(=txi (key key.txi)))]]
+        ['changePath' s+'hi']
+        ['outputScriptHex' s+'hi']
+        ['lockTime' s+'hi']
+        ['sigHashType' s+'hi']
+        [%segwit s+'hi']
+        ['initialTimestamp' s+'hi']
+    ==
+    :: TODO inputs, keysets, changeppath, outputscripthex, locktime, sigHashType, segwit, initialTimestamp
+    ::  , additionals ("bech32")
+  ++  txi
+    |=  =^txi  ^-  json
+    ?>  ?=(^ ur.txi)
+    :-  %a
+    :~  s+(en:base16:mimes:html u.ur.txi)
+        n+pos.utxo.txi
+    ==
+  ++  key
+    |=  =^key  ^-  json
+    :-  %s
+    %^  cat  3  'm/'
+    %^  cat  3
+      ?-  bipt.key
+          %bip44  '44'
+          %bip49  '49'
+          %bip84  '84'
+      ==
+    %^  cat  3  '/0\'/0\'/'
+    %^  cat  3  ?:(=(%0 chyg.key) '0/' '1/')
+    (crip ((d-co:co 0) idx.key))
+  --
+::
 ++  defaults
   |%
   ++  max-gap  20
@@ -84,7 +125,7 @@
 ::  sut: door to select utxos
 ::
 ++  sut
-|_  [w=walt eny=@uvJ =feyb txos=(list txo)]
+|_  [w=walt eny=@uvJ payee=(unit ship) =feyb txos=(list txo)]
   ++  meta-weight  10
   ++  output-weight  31
   ::
@@ -117,15 +158,15 @@
     =/  cost  (mul input-weight feyb)
     ?:  (lte val cost)  0
     (sub val cost)
-  ::  Uses naive random selection. Should switch to branch-and-bound later. 
+  ::  Uses naive random selection. Should switch to branch-and-bound later.
   ::
   ++  select-utxos
     |^  ^-  (unit =txbu)
-    =/  uis=(unit (list input))
+    =/  is=(unit (list input))
       %-  single-random-draw
       %-  zing
       (turn ~(val by wach.w) to-inputs)
-    ?~(uis ~ `(inputs-to-txbu u.uis))
+    ?~(is ~ `(inputs-to-txbu u.is))
     ::
     ++  to-inputs
       |=  =addi  ^-  (list input)
@@ -133,7 +174,8 @@
       |=(=utxo:btc [utxo chyg.addi idx.addi])
     ++  inputs-to-txbu
       |=  is=(list input)  ^-  txbu
-      :*  (total-vbytes is)
+      :*  payee
+          (total-vbytes is)
           %+  turn  is
           |=(i=input [utxo.i ~ [bipt.w chyg.i idx.i]])
           txos

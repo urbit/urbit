@@ -22,6 +22,14 @@
       ==
     ~|("legacy addresses not yet supported" !!)
   [%bech32 addrc]
+::  +from-epoch: time since Jan 1, 1970 in seconds.
+::
+++  from-epoch
+  |=  secs=@ud
+  ^-  (unit @da)
+  ?:  =(0 secs)  ~
+  [~ (add ~1970.1.1 `@dr`(mul secs ~s1))]
+
 ::
 ++  to-hex
   |=  h=@t
@@ -85,7 +93,7 @@
     %-  ot:dejs:format
     :~  [%utxos (as:dejs:format utxo)]
         [%used bo:dejs:format]
-        [%blockcount ni:dejs:format]
+        [%block ni:dejs:format]
     ==
   ++  utxo
     %-  ot:dejs:format
@@ -93,6 +101,7 @@
         ['tx_hash' (cu:dejs:format to-hash256 so:dejs:format)]
         [%height ni:dejs:format]
         [%value ni:dejs:format]
+        [%recvd (cu:dejs:format from-epoch ni:dejs:format)]
     ==
   ++  raw-tx
     %-  ot:dejs:format
@@ -101,7 +110,7 @@
     ==
   ++  block-and-fee
     %-  ot:dejs:format
-    :~  [%blockcount ni:dejs:format]
+    :~  [%block ni:dejs:format]
         [%fee ni:dejs:format]
     ==
   --

@@ -19,6 +19,7 @@
     ==
 ::  walts: all wallets, keyed by their xpubs
 ::  scans: batch info for wallets being scanned
+::  gena:  generated addresses that haven't had activity yet
 ::  batch-size: how many addresses to send out at once for checking
 ::  last-block: most recent block seen by the store
 ::
@@ -26,6 +27,7 @@
   $:  %0
       walts=(map xpub:btc walt)
       =scans
+      =gena
       batch-size=@ud
       last-block=@ud
   ==
@@ -113,7 +115,7 @@
     (update-address +.act)
     ::
       %generate-address
-    =/  uw=(unit walt)  (~(get by walts) xpub.act)
+    =+  uw=(~(get by walts) xpub.act)
     ?~  uw
       ~|("btc-wallet-store: non-existent xpub" !!)
     =/  [a=address:btc w=walt]
@@ -122,14 +124,14 @@
     ~[(send-update [%generate-address a meta.act])]
     ::
       %generate-txbu
-    =/  uw=(unit walt)  (~(get by walts) xpub.act)
-    ?~  uw  ~&(>>> "btc-wallet-store: non-existent xpub" `state)
-    =/  r=(unit txbu)
+    =+  w=(~(get by walts) xpub.act)
+    ?~  w  ~&(>>> "btc-wallet-store: non-existent xpub" `state)
+    =/  t=(unit txbu)
       %~  select-utxos  sut
-      [u.uw eny.bowl feyb.act txos.act]
-    ?~  r  ~&(>>> "btc-wallet-store: insufficient balance" `state)
+      [u.w eny.bowl payee.act feyb.act txos.act]
+    ?~  t  ~&(>>> "btc-wallet-store: insufficient balance" `state)
     :_  state
-    ~[(send-update [%generate-txbu xpub.act payee.act u.r])]
+    ~[(send-update [%generate-txbu xpub.act u.t])]
   ==
 ::  wallet scan algorithm:
 ::  Initiate a batch for each chyg, with max-gap idxs in it
