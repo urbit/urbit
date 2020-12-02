@@ -837,10 +837,11 @@
     [~ this]
   =/  rid=resource:store  (de-path:res t.t.wire)
   ?~  p.sign
-    ::  leave and poke our graph-pull-hook
     =/  =cage  [%pull-hook-action !>([%add entity.rid rid])]
     :_  this
-    [%pass / %agent [our.bowl %graph-pull-hook] %poke cage]~
+    :~  [%pass / %agent [our.bowl %graph-pull-hook] %poke cage]
+        [%pass wire %agent [entity.rid %graph-push-hook] %leave ~]
+    ==
   =/  nack-count=@ud  (slav %ud i.t.wire)
   =/  wakeup=@da
     (add now.bowl (mul ~s1 (bex (min 19 nack-count))))
