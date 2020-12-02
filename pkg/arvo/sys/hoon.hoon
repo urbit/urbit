@@ -891,14 +891,15 @@
   ?~  b  0
   (cat a i.b $(b t.b))
 ::
-++  rep                                                 ::  assemble single
+++  rep                                                 ::  assemble fixed
   ~/  %rep
-  |=  [a=bloq b=(list @)]
-  ^-  @
-  =+  c=0
-  |-
-  ?~  b  0
-  (add (lsh a c (end a 1 i.b)) $(c +(c), b t.b))
+  |=  [a=bite b=(list @)]
+  =/  [=bloq =step]  ?^(a a [a *step])
+  =|  i=@ud
+  |-  ^-  @
+  ?~  b   0
+  %+  add  $(i +(i), b t.b)
+  (lsh bloq (mul step i) (end bloq step i.b))
 ::
 ++  repn
   ~/  %repn
@@ -933,10 +934,11 @@
 ::
 ++  rip                                                 ::  disassemble
   ~/  %rip
-  |=  [=bloq x=@]
+  |=  [a=bite b=@]
+  =/  [=bloq =step]  ?^(a a [a *step])
   ^-  (list @)
-  ?:  =(0 x)  ~
-  [(end bloq 1 x) $(x (rsh bloq 1 x))]
+  ?:  =(0 b)  ~
+  [(end bloq step b) $(b (rsh bloq step b))]
 ::
 ++  rsh                                                 ::  right-shift
   ~/  %rsh
