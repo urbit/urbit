@@ -4,6 +4,7 @@ import { ShipSearch } from '~/views/components/ShipSearch';
 import { Formik, Form, FormikHelpers } from 'formik';
 import { resourceFromPath } from '~/logic/lib/group';
 import { AsyncButton } from '~/views/components/AsyncButton';
+import { cite } from '~/logic/lib/util';
 
 export class Writers extends Component {
   render() {
@@ -27,6 +28,7 @@ export class Writers extends Component {
         actions.setStatus({ error: e.message });
       }
     };
+    const writers = Array.from(groups?.[association?.['group-path']]?.tags.publish?.[`writers-${name}`] || new Set()).map(e => cite(`~${e}`)).join(', ');
 
     return (
       <Box maxWidth='512px'>
@@ -49,6 +51,10 @@ export class Writers extends Component {
             </AsyncButton>
           </Form>
         </Formik>
+        {writers.length > 0 && <>
+        <Text display='block' mt='2'>Current writers:</Text>
+        <Text mt='2' display='block' mono>{writers}</Text>
+        </>}
       </Box>
     );
   }

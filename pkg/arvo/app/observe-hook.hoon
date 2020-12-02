@@ -10,10 +10,13 @@
 +$  card  card:agent:gall
 +$  versioned-state
   $%  state-0
+      state-1
   ==
 ::
 +$  serial   @uv
 +$  state-0  [%0 observers=(map serial observer:sur)]
++$  state-1  [%1 observers=(map serial observer:sur)]
+::
 ++  got-by-val
   |=  [a=(map serial observer:sur) b=observer:sur]
   ^-  serial
@@ -24,7 +27,7 @@
 --
 ::
 %-  agent:dbug
-=|  state-0
+=|  state-1
 =*  state  -
 ::
 ^-  agent:gall
@@ -35,8 +38,14 @@
 ++  on-init
   |^  ^-  (quip card _this)
   :_  this
-  :_  ~
-  (act /inv-gra [%watch %invite-store /invitatory/graph %invite-accepted-graph])
+  :~  %+  act
+        /inv-gra
+      [%watch %invite-store /invitatory/graph %invite-accepted-graph]
+    ::
+      %+  act
+        /grp-gra
+      [%watch %group-store /groups %group-on-leave]
+  ==
   ::
   ++  act
     |=  [=wire =action:sur]
@@ -56,7 +65,17 @@
 ++  on-load
   |=  old-vase=vase
   ^-  (quip card _this)
-  `this(state !<(state-0 old-vase))
+  =/  old-state  !<(versioned-state old-vase)
+  ?-  -.old-state
+    %1  `this(state old-state)
+  ::
+      %0
+    =.  state  [%1 observers.old-state]
+    %+  on-poke
+      %observe-action
+    !>  ^-  action:sur
+    [%watch %group-store /groups %group-on-leave]
+  ==
 ::
 ++  on-poke
   |=  [=mark =vase]

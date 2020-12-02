@@ -7,7 +7,7 @@
   ++  words  1
   ++  hedtal
     =|  met/marl
-    |=  a/marl  ^-  {hed/marl tal/marl}
+    |=  a=marl  ^-  {hed/marl tal/marl}
     ?~  a  [~ ~]
     ?.  ?=($h1 n.g.i.a)
       ?:  ?=($meta n.g.i.a)
@@ -18,7 +18,7 @@
     [c.i.a (weld (flop met) (limit words t.a))]
   ::
   ++  limit
-    |=  {lim/@u mal/marl}
+    |=  [lim=@u mal=marl]
     =<  res
     |-  ^-  {rem/@u res/marl}
     ?~  mal  [lim ~]
@@ -30,7 +30,7 @@
     [rem - res]:[hed $(lim lam, mal t.mal)]
   ::
   ++  deword
-    |=  {lim/@u tay/tape}  ^-  {lim/@u tay/tape}
+    |=  [lim=@u tay=tape]  ^-  {lim/@u tay/tape}
     ?~  tay  [lim tay]
     ?~  lim  [0 ~]
     =+  wer=(dot 1^1 tay)
@@ -58,5 +58,5 @@
   --
 ++  grab  |%                                            ::  convert from
           ++  noun  {marl marl}                         ::  clam from $noun
-          ++  elem  |=(a/manx (hedtal +.a))
+          ++  elem  |=(a=manx (hedtal +.a))
 --        --

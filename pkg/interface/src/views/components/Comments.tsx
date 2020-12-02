@@ -9,7 +9,7 @@ import { FormikHelpers } from 'formik';
 import { GraphNode } from '~/types/graph-update';
 import { createPost, createBlankNodeWithChildPost } from '~/logic/api/graph';
 import { getLatestCommentRevision } from '~/logic/lib/publish';
-import { LocalUpdateRemoteContentPolicy } from '~/types';
+import { LocalUpdateRemoteContentPolicy, Group } from '~/types';
 import { scanForMentions } from '~/logic/lib/graph';
 
 interface CommentsProps {
@@ -23,10 +23,11 @@ interface CommentsProps {
   hideAvatars: boolean;
   hideNicknames: boolean;
   remoteContentPolicy: LocalUpdateRemoteContentPolicy;
+  group: Group;
 }
 
 export function Comments(props: CommentsProps) {
-  const { comments, ship, name, api, baseUrl, history} = props;
+  const { comments, ship, name, api, baseUrl, history, group } = props;
 
   const onSubmit = async (
     { comment },
