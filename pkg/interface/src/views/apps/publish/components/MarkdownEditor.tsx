@@ -14,8 +14,8 @@ import "codemirror/addon/display/placeholder";
 import "codemirror/lib/codemirror.css";
 import { Box } from "@tlon/indigo-react";
 import { useFileDrag } from "~/logic/lib/useDrag";
-import { S3Upload, SubmitDragger } from "~/views/components/s3-upload";
-import { useS3 } from "~/logic/lib/useS3";
+import SubmitDragger from "~/views/components/SubmitDragger";
+import useS3 from "~/logic/lib/useS3";
 import { S3State } from "~/types";
 
 const MARKDOWN_CONFIG = {
