@@ -240,7 +240,7 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
               className={`mw5 db truncate pointer`}
               ref={e => nameSpan = e}
               onClick={() => {
-                writeText(msg.author);
+                writeText(`~${msg.author}`);
                 copyNotice(name);
               }}
               title={`~${msg.author}`}
