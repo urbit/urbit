@@ -71,12 +71,15 @@ const emptyContact = {
 export function ContactCard(props: ContactCardProps) {
   const us = `~${window.ship}`;
   const { contact, rootIdentity } = props;
-  const onSubmit = async (values: Contact, actions: FormikHelpers<Contact>) => {
+  const onSubmit = async (values: any, actions: FormikHelpers<Contact>) => {
     try {
       if(!contact) {
         const [,,ship] = props.path.split('/');
         values.color = uxToHex(values.color);
-        await props.api.contacts.share(ship, props.path, us, values)
+        const sharedValues = Object.assign({}, values);
+        sharedValues.avatar = (values.avatar === "") ? null : { url: values.avatar };
+        console.log(values);
+        await props.api.contacts.share(ship, props.path, us, sharedValues);
         actions.setStatus({ success: null });
         return;
       }
