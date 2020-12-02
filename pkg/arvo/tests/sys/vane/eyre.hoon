@@ -2229,7 +2229,7 @@
                 %+  complete-http-start-event
                   :-  200
                   ['content-type' 'text/html']~
-                [~ (login-page:eyre-gate `'/~landscape/inner-path' ~nul)]
+                [~ (login-page:eyre-gate `'/~landscape/inner-path' ~nul %.n)]
         ==  ==
     ==
   ::  a response post redirects back to the application, setting cookie
