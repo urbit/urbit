@@ -269,6 +269,12 @@
 ::
 ::    the most basic of data types
 +|  %containers
+::
++$  bite
+  ::    atom slice specifier
+  ::
+  $@(bloq [=bloq =step])
+::
 +$  bloq
   ::    blocksize
   ::
