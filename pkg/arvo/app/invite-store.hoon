@@ -1,6 +1,6 @@
 ::  invite-store [landscape]
 /-  store=invite-store
-/+  res=resource, default-agent, dbug
+/+  res=resource, default-agent, dbug, *migrate
 |%
 +$  card  card:agent:gall
 +$  versioned-state
@@ -109,7 +109,10 @@
   ++  poke-import
     |=  arc=*
     ^-  (quip card _state)
-    =/  sty=state-1  ;;(state-1 arc)
+    =/  sty=state-1
+      :-  %1
+      %-  remake-map-of-map
+      ;;((tree [term (tree [serial:store invite:store])]) +.arc)
     [~ sty]
   ::
   ++  poke-invite-action

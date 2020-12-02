@@ -30,7 +30,7 @@
 ::
 ::
 /-  *group, permission-store, *contact-view
-/+  store=group-store, default-agent, verb, dbug, resource
+/+  store=group-store, default-agent, verb, dbug, resource, *migrate
 |%
 +$  card  card:agent:gall
 ::
@@ -285,23 +285,61 @@
 ++  poke-import
   |=  arc=*
   ^-  (quip card _state)
-  =/  sty=state-one  ;;(state-one arc)
+  |^
+  =/  sty=state-one
+    [%1 (remake-groups ;;((tree [resource tree-group]) +.arc))]
   :_  sty
   %+  roll  ~(tap by groups.sty)
-  |=  [[=resource =group] out=(list card)]
-  ?:  =(entity.resource our.bol)
+  |=  [[rid=resource grp=group] out=(list card)]
+  ?:  =(entity.rid our.bol)
     %+  weld  out
-    %+  roll  ~(tap in members.group)
+    %+  roll  ~(tap in members.grp)
     |=  [recipient=@p out=(list card)]
     ?:  =(recipient our.bol)
       out
     :_  out
     %-  poke-contact
-    :*  %invite  resource  recipient
-        (crip "Rejoin disconnected group {<entity.resource>}/{<name.resource>}")
+    :*  %invite  rid  recipient
+        (crip "Rejoin disconnected group {<entity.rid>}/{<name.rid>}")
     ==
   :_  out
-  (try-rejoin resource 0)
+  (try-rejoin rid 0)
+  ::
+  ++  remake-groups
+    |=  grps=(tree [resource tree-group])
+    ^-  ^groups
+    %-  remake-map
+    (~(run by grps) remake-group)
+  ::
+  ++  remake-group
+    |=  grp=tree-group
+    ^-  group
+    %=  grp
+      members  (remake-set members.grp)
+      tags     (remake-jug tags.grp)
+      policy   (remake-policy policy.grp)
+    ==
+  ::
+  +$  tree-group
+    $:  members=(tree ship)
+        tags=(tree [tag (tree ship)])
+        policy=tree-policy
+        hidden=?
+    ==
+  ::
+  +$  tree-policy
+    $%  [%invite pending=(tree ship)]
+        [%open ban-ranks=(tree rank:title) banned=(tree ship)]
+    ==
+  ::
+  ++  remake-policy
+    |=  pl=tree-policy
+    ^-  policy
+    ?-  -.pl
+      %invite  [%invite (remake-set pending.pl)]
+      %open    [%open (remake-set ban-ranks.pl) (remake-set banned.pl)]
+    ==
+  --
 ::
 ++  try-rejoin
   |=  [rid=resource nack-count=@ud]

@@ -2,7 +2,7 @@
 ::
 :: data store that holds linear sequences of chat messages
 ::
-/+  store=chat-store, default-agent, verb, dbug, group-store
+/+  store=chat-store, default-agent, verb, dbug, group-store, *migrate
 ~%  %chat-store-top  ..is  ~
 |%
 +$  card  card:agent:gall
@@ -242,7 +242,7 @@
 ++  poke-import
   |=  arc=*
   ^-  (quip card _state)
-  =/  sty=state-3  ;;(state-3 arc)
+  =/  sty=state-3  [%3 (remake-map ;;((tree [path mailbox:store]) +.arc))]
   [~ sty]
 ::
 ++  handle-create
