@@ -104,6 +104,7 @@ export default function ProfileScreen(props: any) {
                 alignItems="center"
                 px={3}
                 borderBottom={1}
+                fontSize='0'
                 borderBottomColor="washedGray"
               >
                 <Link to="/~profile">{"<- Back"}</Link>
