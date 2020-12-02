@@ -324,7 +324,7 @@
     =+  h=(shal (rsh 0 3 b:ed:crypto) sk)
     %+  add
       (bex (sub b:ed:crypto 2))
-    (lsh 0 3 (cut 0 [3 (sub b:ed:crypto 5)] h))
+    (new-lsh [0 3] (cut 0 [3 (sub b:ed:crypto 5)] h))
   ::  +get-public-key-from-pass: decode the raw @ public key structure
   ::
   ++  get-public-key-from-pass

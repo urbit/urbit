@@ -2953,8 +2953,8 @@
   =/  body=@
     ;:  mix
       sndr
-      (lsh 3 size.sndr-meta rcvr)
-      (lsh 3 (add size.sndr-meta size.rcvr-meta) (jam [origin content]))
+      (new-lsh [3 size.sndr-meta] rcvr)
+      (new-lsh [3 (add size.sndr-meta size.rcvr-meta)] (jam [origin content]))
     ==
   ::  header: 32-bit header assembled from bitstreams of fields
   ::
@@ -2971,7 +2971,7 @@
     ==
   ::  result is <<header body>>
   ::
-  (mix header (lsh 5 1 body))
+  (mix header (new-lsh 5 body))
 ::  +decode-packet: deserialize packet from bytestream or crash
 ::
 ++  decode-packet

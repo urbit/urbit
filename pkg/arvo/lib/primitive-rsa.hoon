@@ -36,7 +36,7 @@
   ::   Sets low bit, as prime must be odd.
   ::   Sets high bit, as +raw:og only gives up to :a bits.
   ::
-  =/  e  :(con 1 (lsh 0 (dec a) 1) (~(raw og c) a))
+  =/  e  :(con 1 (new-lsh [0 (dec a)] 1) (~(raw og c) a))
   :: XX what algorithm is this modular remainder check?
   ::
   ?:  ?&  (levy b |=(f=@ !=(1 (mod e f))))

@@ -2447,8 +2447,8 @@
           ~|  [%dub-ga a]
           ?>  (lth b si)
           ?:  =(1 (cut 0 [(dec p.a) 1] b))
-            (dif (sit q.a) (sit (lsh 0 1 b)))
-          (lsh 0 1 b)
+            (dif (sit q.a) (sit (new-lsh 0 b)))
+          (new-lsh 0 b)
         ::                                              ::  ++pro:ga:number
         ++  pro                                         ::  slow multiply
           |=  [b=@ c=@]
@@ -3040,8 +3040,8 @@
       ^-  @uxH
       %-  ~(sit fe 7)
       ?.  =((xeb str) 128)
-        (lsh 0 1 str)
-      (mix 0x87 (lsh 0 1 str))
+        (new-lsh 0 str)
+      (mix 0x87 (new-lsh 0 str))
     ::                                                  ::  ++mpad:aes:crypto
     ++  mpad                                            ::
       |=  [oct=@ txt=@]
@@ -3054,7 +3054,7 @@
       ^-  @ux
       =+  pad=(mod oct 16)
       ?:  =(pad 0)  0x8000.0000.0000.0000.0000.0000.0000.0000
-      (lsh 3 (sub 15 pad) (mix 0x80 (lsh 3 1 txt)))
+      (new-lsh [3 (sub 15 pad)] (mix 0x80 (new-lsh 3 txt)))
     ::                                                  ::  ++suba:aes:crypto
     ++  suba                                            ::  AES-128 subkeys
       |=  key=@H
@@ -3429,7 +3429,7 @@
       =+  ^=  a
           %+  add
             (bex (sub b 2))
-          (lsh 0 3 (cut 0 [3 (sub b 5)] h))
+          (new-lsh [0 3] (cut 0 [3 (sub b 5)] h))
       =+  aa=(scam bb a)
       (etch aa)
     ::                                                  ::  ++suck:ed:crypto
@@ -3444,7 +3444,7 @@
       ^-  @ux
       =+  exp=(shal (rsh 0 3 b) (suck sek))
       =.  exp  (dis exp (can 0 ~[[3 0] [251 (fil 0 251 1)]]))
-      =.  exp  (con exp (lsh 3 31 0b100.0000))
+      =.  exp  (con exp (new-lsh [3 31] 0b100.0000))
       =+  prv=(new-end 8 exp)
       =+  crv=(fra.fq (sum.fq 1 pub) (dif.fq 1 pub))
       (curt prv crv)
@@ -3458,7 +3458,7 @@
       =+  ^=  a
           %+  add
             (bex (sub b 2))
-          (lsh 0 3 (cut 0 [3 (sub b 5)] h))
+          (new-lsh [0 3] (cut 0 [3 (sub b 5)] h))
       =+  ^=  r
           =+  hm=(cut 0 [b b] h)
           =+  ^=  i
@@ -3507,7 +3507,7 @@
       =+  few==>(fe .(a 5))
       =+  ^=  rot
         |=  [a=@ b=@]
-        (mix (new-end 5 (lsh 0 a b)) (rsh 0 (sub 32 a) b))
+        (mix (new-end 5 (new-lsh [0 a] b)) (rsh 0 (sub 32 a) b))
       =+  ^=  lea
         |=  [a=@ b=@]
         (net:few (sum:few (net:few a) (net:few b)))
@@ -3627,9 +3627,9 @@
       =+  b=64
       =?  k  (gth kl b)  (shay kl k)
       =+  ^=  q  %+  shay  (add b tl)
-       (add (lsh 3 b t) (mix k (fil 3 b 0x36)))
+       (add (new-lsh [3 b] t) (mix k (fil 3 b 0x36)))
       %+  shay  (add b 32)
-      (add (lsh 3 b q) (mix k (fil 3 b 0x5c)))
+      (add (new-lsh [3 b] q) (mix k (fil 3 b 0x5c)))
     ::                                                  ::  ++pbk:scr:crypto
     ++  pbk                                             :: PBKDF2-HMAC-SHA256
       ~/  %pbk
@@ -3656,12 +3656,12 @@
       =+  [t=0 j=1 k=1]
       =.  t  |-  ^-  @
         ?:  (gth j l)  t
-        =+  u=(add s (lsh 3 sl (rep 3 (flop (rpp 3 4 j)))))
+        =+  u=(add s (new-lsh [3 sl] (rep 3 (flop (rpp 3 4 j)))))
         =+  f=0  =.  f  |-  ^-  @
           ?:  (gth k c)  f
           =+  q=(hml p pl u ?:(=(k 1) (add sl 4) h))
           $(u q, f (mix f q), k +(k))
-        $(t (add t (lsh 3 (mul (dec j) h) f)), j +(j))
+        $(t (add t (new-lsh [3 (mul (dec j) h)] f)), j +(j))
       (new-end [3 d] t)
     ::                                                  ::  ++hsh:scr:crypto
     ++  hsh                                             ::  scrypt
@@ -3934,7 +3934,7 @@
       :-  (add p.inp +(pal))
       ::  padding is provided in lane bit ordering,
       ::  ie, LSB = left.
-      (cat 3 (con (lsh 3 pal dsb) 0x80) q.inp)
+      (cat 3 (con (new-lsh [3 pal] dsb) 0x80) q.inp)
     ::
     ++  sponge
       ::  sponge construction
@@ -3977,7 +3977,7 @@
           %+  roll  pieces
           |=  [p=@ s=@]
           ::  pad with capacity,
-          =.  p  (lsh 0 capacity p)
+          =.  p  (new-lsh [0 capacity] p)
           ::  xor it into the state and permute it.
           (permute (mix s (bytes-to-lanes p)))
         ::
@@ -3988,7 +3988,7 @@
         ::  append a bitrate-sized head of state to the
         ::  result.
         =.  res
-          %+  con  (lsh 0 bitrate res)
+          %+  con  (new-lsh [0 bitrate] res)
           (rsh 0 capacity (lanes-to-bytes state))
         =.  len  (add len bitrate)
         ?:  (gte len output)
@@ -4000,7 +4000,7 @@
         ::  flip byte order in blocks of 8 bytes.
         |=  a=@
         %^  run  6  a
-        |=(b=@ (lsh 3 (sub 8 (met 3 b)) (swp 3 b)))
+        |=(b=@ (new-lsh [3 (sub 8 (met 3 b))] (swp 3 b)))
       ::
       ++  lanes-to-bytes
         ::  unflip byte order in blocks of 8 bytes.
@@ -4041,14 +4041,14 @@
         =/  c=@
           %+  roll  (gulf 0 (dec size))
           |=  [x=@ud c=@]
-          %+  con  (lsh lane-bloq 1 c)
+          %+  con  (new-lsh [lane-bloq 1] c)
           %+  roll  (gulf 0 (dec size))
           |=  [y=@ud c=@]
           (mix c (get-lane x y a))
         =/  d=@
           %+  roll  (gulf 0 (dec size))
           |=  [x=@ud d=@]
-          %+  con  (lsh lane-bloq 1 d)
+          %+  con  (new-lsh [lane-bloq 1] d)
           %+  mix
             =-  (get-word - size c)
             ?:(=(x 0) (dec size) (dec x))
@@ -4058,8 +4058,8 @@
           %+  roll  (gulf 0 (dec lanes))
           |=  [i=@ud a=_a]
           %+  mix  a
-          %^  lsh  lane-bloq
-            (sub lanes +(i))
+          %+  new-lsh
+            [lane-bloq (sub lanes +(i))]
           (get-word i size d)
         ::
         ::  rho and pi
@@ -4069,7 +4069,8 @@
           =+  x=(mod i 5)
           =+  y=(div i 5)
           %+  con  b
-          %^  lsh  lane-bloq
+          %+  new-lsh
+            :-  lane-bloq
             %+  sub  lanes
             %+  add  +(y)
             %+  mul  size
@@ -4082,7 +4083,7 @@
         =.  a
           %+  roll  (gulf 0 (dec lanes))
           |=  [i=@ud a=@]
-          %+  con  (lsh lane-bloq 1 a)
+          %+  con  (new-lsh lane-bloq a)
           =+  x=(mod i 5)
           =+  y=(div i 5)
           %+  mix  (get-lane x y b)
@@ -4095,7 +4096,7 @@
         ::  iota
         =.  a
           =+  (round-constant round)
-          (mix a (lsh lane-bloq (dec lanes) -))
+          (mix a (new-lsh [lane-bloq (dec lanes)] -))
         ::
         ::  next round
         $(round +(round))
@@ -4197,14 +4198,14 @@
       =?  dat.key  (gth wid.key boq)  (haj wid.key dat.key)
       =?  wid.key  (gth wid.key boq)  out
       ::  keys shorter than block size are right-padded
-      =?  dat.key  (lth wid.key boq)  (lsh 3 (sub boq wid.key) dat.key)
+      =?  dat.key  (lth wid.key boq)  (new-lsh [3 (sub boq wid.key)] dat.key)
       ::  pad key, inner and outer
       =+  kip=(mix dat.key (fil 3 boq 0x36))
       =+  kop=(mix dat.key (fil 3 boq 0x5c))
       ::  append inner padding to message, then hash
-      =+  (haj (add wid.msg boq) (add (lsh 3 wid.msg kip) dat.msg))
+      =+  (haj (add wid.msg boq) (add (new-lsh [3 wid.msg] kip) dat.msg))
       ::  prepend outer padding to result, hash again
-      (haj (add out boq) (add (lsh 3 out kop) -))
+      (haj (add out boq) (add (new-lsh [3 out] kop) -))
     --  ::  hmac
   ::                                                    ::
   ::::                    ++secp:crypto                 ::  (2b9) secp family
@@ -4566,13 +4567,13 @@
           ::
           ++  pad
             |=  [byts len=@ud]
-            (lsh 3 (sub len wid) dat)
+            (new-lsh [3 (sub len wid)] dat)
           ::
           ++  compress
             |=  [h=@ c=@ t=@ud l=?]
             ^-  @
             ::  set up local work vector
-            =+  v=(add (lsh 6 8 h) iv)
+            =+  v=(add (new-lsh [6 8] h) iv)
             ::  xor the counter t into v
             =.  v
               %-  mod-word
@@ -4654,7 +4655,7 @@
         :^  h  0  8
         %+  cury  mix
         %+  add  0x101.0000
-        (add (lsh 3 1 wid.key) out)
+        (add (new-lsh 3 wid.key) out)
       ::  keep track of how much we've compressed
       =*  mes  dat.msg
       =+  com=0
@@ -4882,7 +4883,7 @@
         =/  random-block=@
           %+  compress  0
           %+  compress  0
-          %^  lsh  3  968
+          %+  new-lsh  [3 968]
           %+  rep  6
           =+  (cury (cury rev 3) 8)
           :~  (- counter)
@@ -5149,9 +5150,9 @@
       |-
       ?:  (gth out 64)
         =.  tmp  (blake2b 64^tmp 0^0 64)
-        =.  res  (add (lsh 3 32 res) (rsh 3 32 tmp))
+        =.  res  (add (new-lsh [3 32] res) (rsh 3 32 tmp))
         $(out (sub out 32))
-      %+  add  (lsh 3 out res)
+      %+  add  (new-lsh [3 out] res)
       (blake2b 64^tmp 0^0 out)
     ::
     ::  utilities
@@ -5339,7 +5340,7 @@
       =+  (sub 511 (mod (add wid 64) 512))
       :-  :(add 64 +(-) wid)
       %+  can  0
-      ~[64^(rev 3 8 wid) +(-)^(lsh 0 - 1) wid^dat]
+      ~[64^(rev 3 8 wid) +(-)^(new-lsh [0 -] 1) wid^dat]
     --
   ::
   ++  pbkdf
@@ -5398,7 +5399,7 @@
         ?:  (gth j l)  t
         =/  u
           %+  add  dat.s
-          %^  lsh  3  wid.s
+          %+  new-lsh  [3 wid.s]
           %+  rep  3
           (flop (rpp:scr 3 4 j))
         =+  f=0
@@ -5410,7 +5411,7 @@
             =+  ?:(=(k 1) (add wid.s 4) out)
             (prf [wid.p (rev 3 p)] [- (rev 3 - u)])
           $(u q, f (mix f q), k +(k))
-        $(t (add t (lsh 3 (mul (dec j) out) f)), j +(j))
+        $(t (add t (new-lsh [3 (mul (dec j) out)] f)), j +(j))
       (rev 3 d (new-end [3 d] t))
     --
   --  ::crypto
@@ -6194,7 +6195,7 @@
       |=  tig=@
       ^-  tape
       =+  poc=(~(dif fo 3) 0 (met 3 tig))
-      =+  pad=(lsh 3 poc (swp 3 tig))
+      =+  pad=(new-lsh [3 poc] (swp 3 tig))
       =+  ^=  cha
       'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
       =+  ^=  sif
@@ -6590,7 +6591,7 @@
     ?~  tep  [~ ~]
     ?:  =('%' i.tep)
       ?.  ?=([@ @ *] t.tep)  ~
-      =+  nag=(mix i.t.tep (lsh 3 1 i.t.t.tep))
+      =+  nag=(mix i.t.tep (new-lsh 3 i.t.t.tep))
       =+  val=(rush nag hex:ag)
       ?~  val  ~
       =+  nex=$(tep t.t.t.tep)

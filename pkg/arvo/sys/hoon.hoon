@@ -842,12 +842,12 @@
   |=  [a=bloq b=(list [p=step q=@])]
   ^-  @
   ?~  b  0
-  (add (new-end [a p.i.b] q.i.b) (lsh a p.i.b $(b t.b)))
+  (add (new-end [a p.i.b] q.i.b) (new-lsh [a p.i.b] $(b t.b)))
 ::
 ++  cat                                                 ::  concatenate
   ~/  %cat
   |=  [a=bloq b=@ c=@]
-  (add (lsh a (met a b) c) b)
+  (add (new-lsh [a (met a b)] c) b)
 ::
 ++  cut                                                 ::  slice
   ~/  %cut
@@ -873,12 +873,18 @@
   |-  ^-  @
   ?:  =(n b)
     (rsh a 1 d)
-  $(d (add c (lsh a 1 d)), n +(n))
+  $(d (add c (new-lsh a d)), n +(n))
 ::
 ++  lsh                                                 ::  left-shift
   ~/  %lsh
   |=  [a=bloq b=step c=@]
   (mul (bex (mul (bex a) b)) c)
+::
+++  new-lsh                                             ::  left-shift
+  ~/  %new-lsh
+  |=  [a=bite b=@]
+  =/  [=bloq =step]  ?^(a a [a *step])
+  (mul b (bex (mul (bex bloq) step)))
 ::
 ++  met                                                 ::  measure
   ~/  %met
@@ -905,7 +911,7 @@
   |-  ^-  @
   ?~  b   0
   %+  add  $(i +(i), b t.b)
-  (lsh bloq (mul step i) (new-end [bloq step] i.b))
+  (new-lsh [bloq (mul step i)] (new-end [bloq step] i.b))
 ::
 ++  rev
   ::  reverses block order, accounting for leading zeroes
@@ -917,8 +923,8 @@
   |=  [boz=bloq len=@ud dat=@]
   ^-  @
   =.  dat  (new-end [boz len] dat)
-  %^  lsh  boz
-    (sub len (met boz dat))
+  %+  new-lsh
+    [boz (sub len (met boz dat))]
   (swp boz dat)
 ::
 ++  rip                                                 ::  disassemble
@@ -951,7 +957,7 @@
   %+  add
     (can a b^e c^d ~)
   =/  f  (add b c)
-  (lsh a f (rsh a f e))
+  (new-lsh [a f] (rsh a f e))
 ::
 ++  swp                                                 ::  naive rev bloq order
   ~/  %swp
@@ -975,19 +981,19 @@
              b
            =+  c=(dec a)
            %+  con
-             (lsh c 1 $(a c, b (cut c [0 1] b)))
+             (new-lsh c $(a c, b (cut c [0 1] b)))
            $(a c, b (cut c [1 1] b))
   ++  out  (bex (bex a))                                ::  mod value
   ++  rol  |=  [b=bloq c=@ d=@]  ^-  @                  ::  roll left
            =+  e=(sit d)
            =+  f=(bex (sub a b))
            =+  g=(mod c f)
-           (sit (con (lsh b g e) (rsh b (sub f g) e)))
+           (sit (con (new-lsh [b g] e) (rsh b (sub f g) e)))
   ++  ror  |=  [b=bloq c=@ d=@]  ^-  @                  ::  roll right
            =+  e=(sit d)
            =+  f=(bex (sub a b))
            =+  g=(mod c f)
-           (sit (con (rsh b g e) (lsh b (sub f g) e)))
+           (sit (con (rsh b g e) (new-lsh [b (sub f g)] e)))
   ++  sum  |=([b=@ c=@] (sit (add b c)))                ::  wrapping add
   ++  sit  |=(b=@ (new-end a b))                            ::  enforce modulo
   --
@@ -1006,7 +1012,7 @@
     b   (rsh 0 1 b)
     c   +(c)
     d   %+  add  d
-          %^  lsh  0  c
+          %+  new-lsh  [0 c]
           ?&  =(0 (new-end 0 a))
               =(0 (new-end 0 b))
           ==
@@ -1023,7 +1029,7 @@
     b   (rsh 0 1 b)
     c   +(c)
     d   %+  add  d
-          %^  lsh  0  c
+          %+  new-lsh  [0 c]
           ?|  =(0 (new-end 0 a))
               =(0 (new-end 0 b))
           ==
@@ -1040,7 +1046,7 @@
     a   (rsh 0 1 a)
     b   (rsh 0 1 b)
     c   +(c)
-    d   (add d (lsh 0 c =((new-end 0 a) (new-end 0 b))))
+    d   (add d (new-lsh [0 c] =((new-end 0 a) (new-end 0 b))))
   ==
 ::
 ++  not  |=  [a=bloq b=@ c=@]                           ::  binary not (sized)
@@ -1076,14 +1082,14 @@
   =/  tlen  (dis len 3)
   =.  h1
     ?+  tlen  h1  ::  fallthrough switch
-      %3  =.  k1  (mix k1 (lsh 0 16 (snag 2 tail)))
-          =.  k1  (mix k1 (lsh 0 8 (snag 1 tail)))
+      %3  =.  k1  (mix k1 (new-lsh [0 16] (snag 2 tail)))
+          =.  k1  (mix k1 (new-lsh [0 8] (snag 1 tail)))
           =.  k1  (mix k1 (snag 0 tail))
           =.  k1  (sit (mul k1 c1))
           =.  k1  (rol 0 15 k1)
           =.  k1  (sit (mul k1 c2))
           (mix h1 k1)
-      %2  =.  k1  (mix k1 (lsh 0 8 (snag 1 tail)))
+      %2  =.  k1  (mix k1 (new-lsh [0 8] (snag 1 tail)))
           =.  k1  (mix k1 (snag 0 tail))
           =.  k1  (sit (mul k1 c1))
           =.  k1  (rol 0 15 k1)
@@ -2066,16 +2072,16 @@
     =>  .(m (~(put by m) a b))
     ?:  ?=(@ a)
       =+  d=(mat a)
-      [(add 1 p.d) (lsh 0 1 q.d) m]
+      [(add 1 p.d) (new-lsh 0 q.d) m]
     =>  .(b (add 2 b))
     =+  d=$(a -.a)
     =+  e=$(a +.a, b (add b p.d), m r.d)
-    [(add 2 (add p.d p.e)) (mix 1 (lsh 0 2 (cat 0 q.d q.e))) r.e]
+    [(add 2 (add p.d p.e)) (mix 1 (new-lsh [0 2] (cat 0 q.d q.e))) r.e]
   ?:  ?&(?=(@ a) (lte (met 0 a) (met 0 u.c)))
     =+  d=(mat a)
-    [(add 1 p.d) (lsh 0 1 q.d) m]
+    [(add 1 p.d) (new-lsh 0 q.d) m]
   =+  d=(mat u.c)
-  [(add 2 p.d) (mix 3 (lsh 0 2 q.d)) m]
+  [(add 2 p.d) (mix 3 (new-lsh [0 2] q.d)) m]
 ::
 ++  mat                                                 ::  length-encode
   ~/  %mat
@@ -2086,7 +2092,7 @@
   =+  b=(met 0 a)
   =+  c=(met 0 b)
   :-  (add (add c c) b)
-  (cat 0 (bex c) (mix (new-end [0 (dec c)] b) (lsh 0 (dec c) a)))
+  (cat 0 (bex c) (mix (new-end [0 (dec c)] b) (new-lsh [0 (dec c)] a)))
 ::
 ++  rub                                                 ::  length-decode
   ~/  %rub
@@ -2286,7 +2292,7 @@
       =+  q=(dif:si e.a e.b)
       |-  ?.  (syn:si q)  $(b a, a b, q +(q))           ::  a has larger exp
       ?:  e
-        [%f & e.b (^add (lsh 0 (abs:si q) a.a) a.b)]
+        [%f & e.b (^add (new-lsh [0 (abs:si q)] a.a) a.b)]
       =+  [ma=(met 0 a.a) mb=(met 0 a.b)]
       =+  ^=  w  %+  dif:si  e.a  %-  sun:si            ::  expanded exp of a
         ?:  (gth prc ma)  (^sub prc ma)  0
@@ -2297,7 +2303,7 @@
           %a  (lug %lg a &)  %u  (lug %lg a &)
           %n  (lug %na a &)
         ==
-      (rou [e.b (^add (lsh 0 (abs:si q) a.a) a.b)])
+      (rou [e.b (^add (new-lsh [0 (abs:si q)] a.a) a.b)])
     ::
     ++  sub                                             ::  subtract; exact if e
       |=  [a=[e=@s a=@u] b=[e=@s a=@u] e=?]  ^-  fn
@@ -2314,7 +2320,7 @@
           %a  (lug %ce a &)  %u  (lug %ce a &)
           %n  (lug %nt a &)
         ==
-      =+  j=(lsh 0 (abs:si q) a.a)
+      =+  j=(new-lsh [0 (abs:si q)] a.a)
       |-  ?.  (gte j a.b)
         (fli $(a.b j, j a.b, r swr))
       =+  i=(^sub j a.b)
@@ -2330,7 +2336,7 @@
       =+  [ma=(met 0 a.a) mb=(met 0 a.b)]
       =+  v=(dif:si (sun:si ma) (sun:si +((^add mb prc))))
       =.  a  ?:  (syn:si v)  a
-      a(e (sum:si v e.a), a (lsh 0 (abs:si v) a.a))
+      a(e (sum:si v e.a), a (new-lsh [0 (abs:si v)] a.a))
       =+  [j=(dif:si e.a e.b) q=(dvr a.a a.b)]
       (rau [j p.q] =(q.q 0))
     ::
@@ -2341,7 +2347,7 @@
         =+  ?:((^lth w x) (^sub x w) 0)
         =+  ?:  =((dis - 1) (dis (abs:si e.a) 1))  -
           (^add - 1)
-        a(e (dif:si e.a (sun:si -)), a (lsh 0 - a.a))
+        a(e (dif:si e.a (sun:si -)), a (new-lsh [0 -] a.a))
       =+  [y=(^sqt a.a) z=(fra:si e.a --2)]
       (rau [z p.y] =(q.y 0))
     ::
@@ -2352,14 +2358,14 @@
       ?:  =(c -1)  &  ?:  =(c --1)  |
       ?:  =((cmp:si e.a e.b) -1)
         (^lth (rsh 0 (abs:si (dif:si e.a e.b)) a.a) a.b)
-      (^lth (lsh 0 (abs:si (dif:si e.a e.b)) a.a) a.b)
+      (^lth (new-lsh [0 (abs:si (dif:si e.a e.b))] a.a) a.b)
     ::
     ++  equ                                             ::  equals
       |=  [a=[e=@s a=@u] b=[e=@s a=@u]]  ^-  ?
       ?.  =((ibl a) (ibl b))  |
       ?:  =((cmp:si e.a e.b) -1)
-        =((lsh 0 (abs:si (dif:si e.a e.b)) a.b) a.a)
-      =((lsh 0 (abs:si (dif:si e.a e.b)) a.a) a.b)
+        =((new-lsh [0 (abs:si (dif:si e.a e.b))] a.b) a.a)
+      =((new-lsh [0 (abs:si (dif:si e.a e.b))] a.a) a.b)
     ::
     ::  integer binary logarithm: 2^ibl(a) <= |a| < 2^(ibl(a)+1)
     ++  ibl
@@ -2383,7 +2389,7 @@
             =+  w=(dif:si e.a emn)
             ?:  (syn:si w)  (abs:si w)  0
           (min q (^sub prc ma))
-      a(e (dif:si e.a (sun:si -)), a (lsh 0 - a.a))
+      a(e (dif:si e.a (sun:si -)), a (new-lsh [0 -] a.a))
     ::
     ::  central rounding mechanism
     ::  can perform: floor, ceiling, smaller, larger,
@@ -2460,9 +2466,9 @@
       |=  [a=[e=@s a=@u]]  ^-  [@s @u]                  ::  guaranteed accurate
       ?<  =(a.a 0)                                      ::  for rounded floats
       =.  a  (xpd a)
-      =+  r=(lsh 0 ?:((syn:si e.a) (abs:si e.a) 0) a.a)
-      =+  s=(lsh 0 ?.((syn:si e.a) (abs:si e.a) 0) 1)
-      =+  mn=(lsh 0 ?:((syn:si e.a) (abs:si e.a) 0) 1)
+      =+  r=(new-lsh [0 ?:((syn:si e.a) (abs:si e.a) 0)] a.a)
+      =+  s=(new-lsh [0 ?.((syn:si e.a) (abs:si e.a) 0)] 1)
+      =+  mn=(new-lsh [0 ?:((syn:si e.a) (abs:si e.a) 0)] 1)
       =+  mp=mn
       =>  ?.
             ?&  =(a.a (bex (dec prc)))                  ::  if next smallest
@@ -2470,9 +2476,9 @@
             ==                                          ::  tighten lower bound
           .
         %=  .
-          mp  (lsh 0 1 mp)
-          r  (lsh 0 1 r)
-          s  (lsh 0 1 s)
+          mp  (new-lsh 0 mp)
+          r  (new-lsh 0 r)
+          s  (new-lsh 0 s)
         ==
       =+  [k=--0 q=(^div (^add s 9) 10)]
       |-  ?:  (^lth r q)
@@ -2760,9 +2766,9 @@
   ++  bif                                               ::  fn to @r no rounding
     |=  [a=fn]  ^-  @r
     ?:  ?=([%i *] a)
-      =+  q=(lsh 0 p (fil 0 w 1))
+      =+  q=(new-lsh [0 p] (fil 0 w 1))
       ?:  s.a  q  (^add q sb)
-    ?:  ?=([%n *] a)  (lsh 0 (dec p) (fil 0 +(w) 1))
+    ?:  ?=([%n *] a)  (new-lsh [0 (dec p)] (fil 0 +(w) 1))
     ?~  a.a  ?:  s.a  `@r`0  sb
     =+  ma=(met 0 a.a)
     ?.  =(ma +(p))
@@ -2770,7 +2776,7 @@
       ?>  (^lth ma +(p))
       ?:  s.a  `@r`a.a  (^add a.a sb)
     =+  q=(sum:si (dif:si e.a me) --1)
-    =+  r=(^add (lsh 0 p (abs:si q)) (new-end [0 p] a.a))
+    =+  r=(^add (new-lsh [0 p] (abs:si q)) (new-end [0 p] a.a))
     ?:  s.a  r  (^add r sb)
   ::
   ++  sig                                               ::  get sign
@@ -3213,8 +3219,8 @@
                ?~  f.rip
                  0
                =>  .(muc (dec muc))
-               (add (lsh 4 muc i.f.rip) $(f.rip t.f.rip))
-  (con (lsh 6 1 sec) fac)
+               (add (new-lsh [4 muc] i.f.rip) $(f.rip t.f.rip))
+  (con (new-lsh 6 sec) fac)
 ::
 ++  yall                                                ::  day / to day of year
   |=  day=@ud
@@ -3313,7 +3319,7 @@
   =>  .(ruz (cut 3 [0 len] ruz))
   =+  [few==>(fe .(a 5)) wac=|=([a=@ b=@] (cut 5 [a 1] b))]
   =+  [sum=sum.few ror=ror.few net=net.few inv=inv.few]
-  =+  ral=(lsh 0 3 len)
+  =+  ral=(new-lsh [0 3] len)
   =+  ^=  ful
       %+  can  0
       :~  [ral ruz]
@@ -3359,7 +3365,7 @@
       =+  x=:(mix (ror 0 7 l) (ror 0 18 l) (rsh 0 3 l))
       =+  y=:(mix (ror 0 17 m) (ror 0 19 m) (rsh 0 10 m))
       =+  z=:(sum n x o y)
-      $(wox (con (lsh 5 j z) wox), j +(j))
+      $(wox (con (new-lsh [5 j] z) wox), j +(j))
   =+  j=0
   =+  :*  a=(wac 0 hax)
           b=(wac 1 hax)
@@ -3407,7 +3413,7 @@
   =>  .(ruz (cut 3 [0 len] ruz))
   =+  [few==>(fe .(a 6)) wac=|=([a=@ b=@] (cut 6 [a 1] b))]
   =+  [sum=sum.few ror=ror.few net=net.few inv=inv.few]
-  =+  ral=(lsh 0 3 len)
+  =+  ral=(new-lsh [0 3] len)
   =+  ^=  ful
       %+  can  0
       :~  [ral ruz]
@@ -3479,7 +3485,7 @@
       =+  x=:(mix (ror 0 1 l) (ror 0 8 l) (rsh 0 7 l))
       =+  y=:(mix (ror 0 19 m) (ror 0 61 m) (rsh 0 6 m))
       =+  z=:(sum n x o y)
-      $(wox (con (lsh 6 j z) wox), j +(j))
+      $(wox (con (new-lsh [6 j] z) wox), j +(j))
   =+  j=0
   =+  :*  a=(wac 0 hax)
           b=(wac 1 hax)
@@ -3517,7 +3523,7 @@
   |=  ruz=@
   =+  [few==>(fe .(a 5)) wac=|=([a=@ b=@] (cut 5 [a 1] b))]
   =+  [sum=sum.few ror=ror.few rol=rol.few net=net.few inv=inv.few]
-  =+  ral=(lsh 0 3 (met 3 ruz))
+  =+  ral=(new-lsh [0 3] (met 3 ruz))
   =+  ^=  ful
       %+  can  0
       :~  [ral ruz]
@@ -3545,7 +3551,7 @@
               o=(wac (sub j 16) wox)
           ==
       =+  z=(rol 0 1 :(mix l m n o))
-      $(wox (con (lsh 5 j z) wox), j +(j))
+      $(wox (con (new-lsh [5 j] z) wox), j +(j))
   =+  j=0
   =+  :*  a=(wac 0 hax)
           b=(wac 1 hax)
@@ -3641,7 +3647,7 @@
     ^-  @
     =+  [few==>(fe .(a 5)) wac=|=([a=@ b=@] (cut 5 [a 1] b))]
     =+  [sum=sum.few ror=ror.few rol=rol.few net=net.few inv=inv.few]
-    =+  ral=(lsh 0 3 wid)
+    =+  ral=(new-lsh [0 3] wid)
     =+  ^=  ful
         %+  can  0
         :~  [ral (rev 3 wid dat)]
@@ -3669,7 +3675,7 @@
                 o=(wac (sub j 16) wox)
             ==
         =+  z=(rol 0 1 :(mix l m n o))
-        $(wox (con (lsh 5 j z) wox), j +(j))
+        $(wox (con (new-lsh [5 j] z) wox), j +(j))
     =+  j=0
     =+  :*  a=(wac 0 hax)
             b=(wac 1 hax)
@@ -4139,17 +4145,17 @@
       =-  yek:(roll (rip 3 key) -)
       =+  [a=*char b=*@ yek=`@ux`(fil 3 256 0xff)]
       |.
-      [+(b) (mix yek (lsh 3 `@u`a (~(inv fe 3) b)))]
+      [+(b) (mix yek (new-lsh [3 `@u`a] (~(inv fe 3) b)))]
   |%
   ++  cha  |=(a=char `(unit @uF)`=+(b=(cut 3 [`@`a 1] yek) ?:(=(b 0xff) ~ `b)))
   ++  tok
     |=  a=@ux  ^-  @ux
     =+  b=(pad a)
     =-  (~(net fe 5) (new-end [3 4] (shay 32 -)))
-    (shay (add b (met 3 a)) (lsh 3 b (swp 3 a)))
+    (shay (add b (met 3 a)) (new-lsh [3 b] (swp 3 a)))
   ::
   ++  pad  |=(a=@ =+(b=(met 3 a) ?:((gte b 21) 0 (sub 21 b))))
-  ++  enc  |=(a=@ux `@ux`(mix (lsh 3 4 a) (tok a)))
+  ++  enc  |=(a=@ux `@ux`(mix (new-lsh [3 4] a) (tok a)))
   ++  den
     |=  a=@ux  ^-  (unit @ux)
     =+  b=(rsh 3 4 a)
@@ -5442,7 +5448,7 @@
   |_  [top=@ bot=@]
   ++  zag  [p=(new-end 4 (add top bot)) q=bot]
   ++  zig  [p=(new-end 4 (add top (sub 0x1.0000 bot))) q=bot]
-  ++  zug  (mix (lsh 4 1 top) bot)
+  ++  zug  (mix (new-lsh 4 top) bot)
   --
 ++  ne
   |_  tig=@

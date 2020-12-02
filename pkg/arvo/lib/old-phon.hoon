@@ -90,7 +90,7 @@
   |_  [top=@ bot=@]
   ++  zag  [p=(new-end 4 (add top bot)) q=bot]
   ++  zig  [p=(new-end 4 (add top (sub 0x1.0000 bot))) q=bot]
-  ++  zug  (mix (lsh 4 1 top) bot)
+  ++  zug  (mix (new-lsh 4 top) bot)
   --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2eN, pseudo-cryptography      ::
