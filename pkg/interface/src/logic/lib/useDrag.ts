@@ -90,7 +90,7 @@ export function useFileDrag(dragged: (f: FileList | File[], e: DragEvent) => voi
     return () => {
       document.body.removeEventListener('mouseout', mouseleave);
     }
-  }, [setDragging]);
+  }, []);
 
   const bind = {
     onDragLeave,

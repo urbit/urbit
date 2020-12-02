@@ -87,7 +87,7 @@ const LinkSubmit = (props: LinkSubmitProps) => {
   };
 
   const onFileDrag = useCallback(
-    async (files: FileList | File[], e: DragEvent) => {
+    (files: FileList | File[], e: DragEvent): void => {
       if (!canUpload) {
         return;
       }
@@ -117,17 +117,15 @@ const LinkSubmit = (props: LinkSubmitProps) => {
       event.preventDefault();
       event.stopPropagation();
       uploadDefault(event.clipboardData.files[0]).then(setLinkValue);
-    }, [setLinkValue]
+    }, [setLinkValue, uploadDefault]
   );
 
-  const onKeyPress = useCallback(
-    (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        doPost();
-      }
-    }, []
-  );
+  const onKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      doPost();
+    }
+  };
 
   const placeholder = <Text
     gray

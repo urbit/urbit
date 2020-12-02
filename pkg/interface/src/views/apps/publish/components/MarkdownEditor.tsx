@@ -98,7 +98,7 @@ export function MarkdownEditor(
   return (
     <Box
       height="100%"
-      position="static"
+      position="relative"
       className="publish"
       p={1}
       border={1}

@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useEffect, useRef, useState } from "react";
 import { S3State } from "../../types/s3-update";
 import S3 from "aws-sdk/clients/s3";
+import { dateToDa, deSig } from "./util";
 
 export interface IuseS3 {
   canUpload: boolean;
@@ -37,9 +38,14 @@ const useS3 = (s3: S3State, { accept = '*' } = { accept: '*' }): IuseS3 => {
         throw new Error("S3 not ready");
       }
 
+      const fileParts = file.name.split('.');
+      const fileName = fileParts.slice(0, -1);
+      const fileExtension = fileParts.pop();
+      const timestamp = deSig(dateToDa(new Date()));
+
       const params = {
         Bucket: bucket,
-        Key: file.name,
+        Key: `${window.ship}/${timestamp}-${fileName}.${fileExtension}`,
         Body: file,
         ACL: "public-read",
         ContentType: file.type,
@@ -61,7 +67,7 @@ const useS3 = (s3: S3State, { accept = '*' } = { accept: '*' }): IuseS3 => {
       throw new Error("current bucket not set");
     }
     return upload(file, s3.configuration.currentBucket);
-  }, []);
+  }, [s3]);
 
   const promptUpload = useCallback(
     () => {
