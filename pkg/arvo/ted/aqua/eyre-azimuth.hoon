@@ -426,8 +426,8 @@
 ::
 ++  get-public
   |=  [who=@p lyfe=life typ=?(%auth %crypt)]
-  =/  bod  (rsh 3 1 pub:ex:(get-keys who lyfe))
-  =+  [enc=(rsh 8 1 bod) aut=(new-end 8 bod)]
+  =/  bod  (new-rsh 3 pub:ex:(get-keys who lyfe))
+  =+  [enc=(new-rsh 8 bod) aut=(new-end 8 bod)]
   ?:  =(%auth typ)
     aut
   enc

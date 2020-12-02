@@ -96,11 +96,11 @@
     =+  =<  [pub=pub:ex sec=sec:ex]
         (pit:nu:crub:crypto 256 seed)
     :-  ^=  auth
-        :-  (rsh 3 1 (new-end [3 33] pub))
-            (rsh 3 1 (new-end [3 33] sec))
+        :-  (new-rsh 3 (new-end [3 33] pub))
+            (new-rsh 3 (new-end [3 33] sec))
     ^=  crypt
-    :-  (rsh 3 33 pub)
-        (rsh 3 33 sec)
+    :-  (new-rsh [3 33] pub)
+        (new-rsh [3 33] sec)
   ::
   ++  seed
     |=  [seed=byts salt=tape]

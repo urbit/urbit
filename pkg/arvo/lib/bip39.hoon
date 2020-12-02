@@ -12,7 +12,7 @@
   ::
   =+  cs=(div wid 32)
   =/  check=@
-    %^  rsh  0  (sub 256 cs)
+    %+  new-rsh  [0 (sub 256 cs)]
     (sha-256l:sha (div wid 8) dat)
   =/  bits=byts
     :-  (add wid cs)
@@ -25,7 +25,7 @@
     |-  ^-  (list @)
     :-  (new-end [0 11] dat.bits)
     ?:  (lte wid.bits 11)  ~
-    $(bits [(sub wid.bits 11) (rsh 0 11 dat.bits)])
+    $(bits [(sub wid.bits 11) (new-rsh [0 11] dat.bits)])
   ::
   =/  words=(list tape)
     %+  turn  pieces

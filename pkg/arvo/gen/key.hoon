@@ -19,8 +19,8 @@
 =/  pub=pass  pub:ex:cub
 =/  mag=cord  (new-end 3 pub)
 ?>  =('b' mag)
-=/  bod=@  (rsh 3 1 pub)
-=/  cry=@  (rsh 8 1 bod)
+=/  bod=@  (new-rsh 3 pub)
+=/  cry=@  (new-rsh 8 bod)
 =/  sgn=@  (new-end 8 bod)
 %+  print  leaf+"  authentication: 0x{(render-hex-bytes:ethereum 32 sgn)}"
 %+  print  leaf+"  networking:     0x{(render-hex-bytes:ethereum 32 cry)}"

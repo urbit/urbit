@@ -55,7 +55,7 @@
   =/  e  `@ux`65.537
   |=  [wid=@ eny=@]
   ^-  key
-  =/  diw  (rsh 0 1 wid)
+  =/  diw  (new-rsh 0 wid)
   =/  p=@ux  (ramp diw [3 5 ~] eny)
   =/  q=@ux  (ramp diw [3 5 ~] +(eny))
   =/  n=@ux  (mul p q)

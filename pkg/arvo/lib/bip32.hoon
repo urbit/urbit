@@ -57,7 +57,7 @@
         |=  b=@ud
         ^-  [v=@ x=@]
         :-  (new-end [3 b] x)
-        (rsh 3 b x)
+        (new-rsh [3 b] x)
       --
   =^  k  x  (take 33)
   =^  c  x  (take 32)
@@ -173,7 +173,7 @@
   ^-  @uc
   ::  removes checksum
   ::
-  %^  rsh  3  4
+  %+  new-rsh  [3 4]
   %+  en-base58check
     [4 (version-bytes network %pub %.n)]
   [20 identity]
@@ -211,15 +211,15 @@
   |=  [v=byts d=byts]
   =+  p=[(add wid.v wid.d) (can 3 ~[d v])]
   =-  (can 3 ~[4^- p])
-  %^  rsh  3  28
+  %+  new-rsh  [3 28]
   (sha-256l:sha 32 (sha-256l:sha p))
 ::
 ++  de-base58check
   ::  vw: amount of version bytes
   |=  [vw=@u t=tape]
   =+  x=(de-base58:mimes:html t)
-  =+  hash=(sha-256l:sha 32 (sha-256:sha (rsh 3 4 x)))
-  ?>  =((new-end [3 4] x) (rsh 3 28 hash))
+  =+  hash=(sha-256l:sha 32 (sha-256:sha (new-rsh [3 4] x)))
+  ?>  =((new-end [3 4] x) (new-rsh [3 28] hash))
   (cut 3 [vw (sub (met 3 x) (add 4 vw))] x)
 ::
 ++  hash160

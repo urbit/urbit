@@ -852,7 +852,7 @@
 ++  cut                                                 ::  slice
   ~/  %cut
   |=  [a=bloq [b=step c=step] d=@]
-  (new-end [a c] (rsh a b d))
+  (new-end [a c] (new-rsh [a b] d))
 ::
 ++  end                                                 ::  tail
   ~/  %end
@@ -872,7 +872,7 @@
   =+  d=c
   |-  ^-  @
   ?:  =(n b)
-    (rsh a 1 d)
+    (new-rsh a d)
   $(d (add c (new-lsh a d)), n +(n))
 ::
 ++  lsh                                                 ::  left-shift
@@ -893,7 +893,7 @@
   =+  c=0
   |-
   ?:  =(0 b)  c
-  $(b (rsh a 1 b), c +(c))
+  $(b (new-rsh a b), c +(c))
 ::
 ++  rap                                                 ::  assemble nonzero
   ~/  %rap
@@ -930,15 +930,20 @@
 ++  rip                                                 ::  disassemble
   ~/  %rip
   |=  [a=bite b=@]
-  =/  [=bloq =step]  ?^(a a [a *step])
   ^-  (list @)
   ?:  =(0 b)  ~
-  [(new-end [bloq step] b) $(b (rsh bloq step b))]
+  [(new-end a b) $(b (new-rsh a b))]
 ::
 ++  rsh                                                 ::  right-shift
   ~/  %rsh
   |=  [a=bloq b=step c=@]
   (div c (bex (mul (bex a) b)))
+::
+++  new-rsh                                             ::  right-shift
+  ~/  %new-rsh
+  |=  [a=bite b=@]
+  =/  [=bloq =step]  ?^(a a [a *step])
+  (div b (bex (mul (bex bloq) step)))
 ::
 ++  run                                                 ::  +turn into atom
   ~/  %run
@@ -956,8 +961,8 @@
   ^-  @
   %+  add
     (can a b^e c^d ~)
-  =/  f  (add b c)
-  (new-lsh [a f] (rsh a f e))
+  =/  f  [a (add b c)]
+  (new-lsh f (new-rsh f e))
 ::
 ++  swp                                                 ::  naive rev bloq order
   ~/  %swp
@@ -988,12 +993,12 @@
            =+  e=(sit d)
            =+  f=(bex (sub a b))
            =+  g=(mod c f)
-           (sit (con (new-lsh [b g] e) (rsh b (sub f g) e)))
+           (sit (con (new-lsh [b g] e) (new-rsh [b (sub f g)] e)))
   ++  ror  |=  [b=bloq c=@ d=@]  ^-  @                  ::  roll right
            =+  e=(sit d)
            =+  f=(bex (sub a b))
            =+  g=(mod c f)
-           (sit (con (rsh b g e) (new-lsh [b (sub f g)] e)))
+           (sit (con (new-rsh [b g] e) (new-lsh [b (sub f g)] e)))
   ++  sum  |=([b=@ c=@] (sit (add b c)))                ::  wrapping add
   ++  sit  |=(b=@ (new-end a b))                            ::  enforce modulo
   --
@@ -1008,8 +1013,8 @@
   |-  ^-  @
   ?:  ?&(=(0 a) =(0 b))  d
   %=  $
-    a   (rsh 0 1 a)
-    b   (rsh 0 1 b)
+    a   (new-rsh 0 a)
+    b   (new-rsh 0 b)
     c   +(c)
     d   %+  add  d
           %+  new-lsh  [0 c]
@@ -1025,8 +1030,8 @@
   |-  ^-  @
   ?:  ?|(=(0 a) =(0 b))  d
   %=  $
-    a   (rsh 0 1 a)
-    b   (rsh 0 1 b)
+    a   (new-rsh 0 a)
+    b   (new-rsh 0 b)
     c   +(c)
     d   %+  add  d
           %+  new-lsh  [0 c]
@@ -1043,8 +1048,8 @@
   |-
   ?:  ?&(=(0 a) =(0 b))  d
   %=  $
-    a   (rsh 0 1 a)
-    b   (rsh 0 1 b)
+    a   (new-rsh 0 a)
+    b   (new-rsh 0 b)
     c   +(c)
     d   (add d (new-lsh [0 c] =((new-end 0 a) (new-end 0 b))))
   ==
@@ -1105,11 +1110,11 @@
   |^  (fmix32 h1)
   ++  fmix32
     |=  h=@
-    =.  h  (mix h (rsh 0 16 h))
+    =.  h  (mix h (new-rsh [0 16] h))
     =.  h  (sit (mul h 0x85eb.ca6b))
-    =.  h  (mix h (rsh 0 13 h))
+    =.  h  (mix h (new-rsh [0 13] h))
     =.  h  (sit (mul h 0xc2b2.ae35))
-    =.  h  (mix h (rsh 0 16 h))
+    =.  h  (mix h (new-rsh [0 16] h))
     h
   --
 ::
@@ -1127,7 +1132,7 @@
     |-  ^-  @F
     ?:  =(8 i)  fal
     =/  haz=@F  (muk syd wyd key)
-    =/  ham=@F  (mix (rsh 0 31 haz) (new-end [0 31] haz))
+    =/  ham=@F  (mix (new-rsh [0 31] haz) (new-end [0 31] haz))
     ?.(=(0 ham) ham $(i +(i), syd +(syd)))
   --
 ::                                                      ::
@@ -1153,7 +1158,7 @@
   |-
   =+  [c=(new-end 3 a) d=(new-end 3 b)]
   ?:  =(c d)
-    $(a (rsh 3 1 a), b (rsh 3 1 b))
+    $(a (new-rsh 3 a), b (new-rsh 3 b))
   (lth c d)
 ::  +dor: depth order
 ::
@@ -2184,7 +2189,7 @@
     |=  [b=@ c=@]
     ?:  =(0 b)
       1
-    =+  d=$(b (rsh 0 1 b))
+    =+  d=$(b (new-rsh 0 b))
     =+  e=(pro d d)
     ?:(=(0 (new-end 0 b)) e (pro c e))
   ::
@@ -2213,7 +2218,7 @@
 ++  si                                                  ::  signed integer
   ^?
   |%
-  ++  abs  |=(a=@s (add (new-end 0 a) (rsh 0 1 a)))         ::  absolute value
+  ++  abs  |=(a=@s (add (new-end 0 a) (new-rsh 0 a)))         ::  absolute value
   ++  dif  |=  [a=@s b=@s]                              ::  subtraction
            (sum a (new !(syn b) (abs b)))
   ++  dul  |=  [a=@s b=@]                               ::  modulus
@@ -2357,7 +2362,7 @@
       =+  c=(cmp:si (ibl a) (ibl b))
       ?:  =(c -1)  &  ?:  =(c --1)  |
       ?:  =((cmp:si e.a e.b) -1)
-        (^lth (rsh 0 (abs:si (dif:si e.a e.b)) a.a) a.b)
+        (^lth (new-rsh [0 (abs:si (dif:si e.a e.b))] a.a) a.b)
       (^lth (new-lsh [0 (abs:si (dif:si e.a e.b))] a.a) a.b)
     ::
     ++  equ                                             ::  equals
@@ -2377,7 +2382,7 @@
     ++  uni
       |=  [a=[e=@s a=@u]]
       |-  ?:  =((new-end 0 a.a) 1)  a
-      $(a.a (rsh 0 1 a.a), e.a (sum:si e.a --1))
+      $(a.a (new-rsh 0 a.a), e.a (sum:si e.a --1))
     ::
     ::  expands to either full precision or to denormalized
     ++  xpd
@@ -2412,7 +2417,7 @@
         %-  abs:si  ?:  =(den %i)  --0                  ::  enforce min. exp
         ?:  =((cmp:si e.a emn) -1)  (dif:si emn e.a)  --0
       =^  b  a  :-  (new-end [0 q] a.a)
-        a(e (sum:si e.a (sun:si q)), a (rsh 0 q a.a))
+        a(e (sum:si e.a (sun:si q)), a (new-rsh [0 q] a.a))
       ::
       ?~  a.a
         ?<  =(den %i)
@@ -2455,7 +2460,7 @@
         ==
       ::
       =.  a  ?.  =((met 0 a.a) +(prc))  a
-        a(a (rsh 0 1 a.a), e (sum:si e.a --1))
+        a(a (new-rsh 0 a.a), e (sum:si e.a --1))
       ?~  a.a  [%f & zer]
       ::
       ?:  =(den %i)  [%f & a]
@@ -2515,7 +2520,7 @@
       |=  [a=[e=@s a=@u]]  ^-  fn
       ?.  =((cmp:si e.a --0) -1)  [%f & a]
       =+  x=(abs:si e.a)
-      =+  y=(rsh 0 x a.a)
+      =+  y=(new-rsh [0 x] a.a)
       ?:  |(=(r %d) =(r %z))  [%f & --0 y]
       =+  z=(new-end [0 x] a.a)
       ?:  |(=(r %u) =(r %a))  [%f & --0 ?~(z y +(y))]
@@ -3189,7 +3194,7 @@
 ++  yell                                                ::  tarp from @d
   |=  now=@d
   ^-  tarp
-  =+  sec=(rsh 6 1 now)
+  =+  sec=(new-rsh 6 now)
   =+  ^=  fan
       =+  [muc=4 raw=(new-end 6 now)]
       |-  ^-  (list @ux)
@@ -3295,7 +3300,7 @@
 ++  shaf                                                ::  half sha-256
   |=  [sal=@ ruz=@]
   =+  haz=(shas sal ruz)
-  (mix (new-end 7 haz) (rsh 7 1 haz))
+  (mix (new-end 7 haz) (new-rsh 7 haz))
 ::
 ++  sham                                                ::  128bit noun hash
   |=  yux=*  ^-  @uvH  ^-  @
@@ -3362,8 +3367,8 @@
               n=(wac (sub j 16) wox)
               o=(wac (sub j 7) wox)
           ==
-      =+  x=:(mix (ror 0 7 l) (ror 0 18 l) (rsh 0 3 l))
-      =+  y=:(mix (ror 0 17 m) (ror 0 19 m) (rsh 0 10 m))
+      =+  x=:(mix (ror 0 7 l) (ror 0 18 l) (new-rsh [0 3] l))
+      =+  y=:(mix (ror 0 17 m) (ror 0 19 m) (new-rsh [0 10] m))
       =+  z=:(sum n x o y)
       $(wox (con (new-lsh [5 j] z) wox), j +(j))
   =+  j=0
@@ -3482,8 +3487,8 @@
               n=(wac (sub j 16) wox)
               o=(wac (sub j 7) wox)
           ==
-      =+  x=:(mix (ror 0 1 l) (ror 0 8 l) (rsh 0 7 l))
-      =+  y=:(mix (ror 0 19 m) (ror 0 61 m) (rsh 0 6 m))
+      =+  x=:(mix (ror 0 1 l) (ror 0 8 l) (new-rsh [0 7] l))
+      =+  y=:(mix (ror 0 19 m) (ror 0 61 m) (new-rsh [0 6] m))
       =+  z=:(sum n x o y)
       $(wox (con (new-lsh [6 j] z) wox), j +(j))
   =+  j=0
@@ -4158,7 +4163,7 @@
   ++  enc  |=(a=@ux `@ux`(mix (new-lsh [3 4] a) (tok a)))
   ++  den
     |=  a=@ux  ^-  (unit @ux)
-    =+  b=(rsh 3 4 a)
+    =+  b=(new-rsh [3 4] a)
     ?.  =((tok b) (new-end [3 4] a))
       ~
     `b
@@ -4175,7 +4180,7 @@
               &
             =+  vis=(new-end 3 a)
             ?&  ?|(=('-' vis) ?&((gte vis 'a') (lte vis 'z')))
-                $(a (rsh 3 1 a))
+                $(a (new-rsh 3 a))
             ==
         ==
       rtam
@@ -4213,7 +4218,7 @@
     |-  ^-  tape
     ?:  (gth (met 5 a) 1)
       %+  weld
-        $(a (rsh 5 1 a), b (sub b 4))
+        $(a (new-rsh 5 a), b (sub b 4))
       `tape`['-' '-' $(a (new-end 5 a), b 4)]
     ?:  =(0 b)
       ['~' ~]
@@ -4221,10 +4226,10 @@
       (trip (tos:po a))
     |-  ^-  tape
     ?:  =(2 b)
-      =+  c=(rsh 3 1 a)
+      =+  c=(new-rsh 3 a)
       =+  d=(new-end 3 a)
       (weld (trip (tod:po c)) (trip (tos:po (mix c d))))
-    =+  c=(rsh 3 2 a)
+    =+  c=(new-rsh [3 2] a)
     =+  d=(new-end [3 2] a)
     (weld ^$(a c, b (met 3 c)) `tape`['-' $(a (mix c d), b 2)])
   ::
@@ -4312,7 +4317,7 @@
   ?:  &((lth cur 32) !=(10 cur))  |
   =+  len=(teff cur)
   ?&  |(=(1 len) =+(i=1 |-(|(=(i len) &((gte (cut 3 [i 1] b) 128) $(i +(i)))))))
-      $(b (rsh 3 len b))
+      $(b (new-rsh [3 len] b))
   ==
 ::
 ++  ruth                                                ::  biblical sanity
@@ -4337,7 +4342,7 @@
   |=  a=@  ^-  tape
   ?:  =(0 (met 3 a))
     ~
-  [^-(@ta (new-end 3 a)) $(a (rsh 3 1 a))]
+  [^-(@ta (new-end 3 a)) $(a (new-rsh 3 a))]
 ::
 ++  teff                                                ::  length utf8
   |=  a=@t  ^-  @
@@ -4366,7 +4371,7 @@
         ==
       |=([p=@ q=@] [q (cut 0 [p q] a)])
   ?>  =((tuft c) (new-end [3 b] a))
-  [c $(a (rsh 3 b a))]
+  [c $(a (new-rsh [3 b] a))]
 ::
 ++  tuba                                                ::  utf8 to utf32 tape
   |=  a=tape
@@ -4387,7 +4392,7 @@
   ?:  =(`@`0 a)
     ~
   =+  b=(new-end 5 a)
-  =+  c=$(a (rsh 5 1 a))
+  =+  c=$(a (new-rsh 5 a))
   ?:  (lte b 0x7f)
     [b c]
   ?:  (lte b 0x7ff)
@@ -4445,12 +4450,12 @@
   ?:  =(`@`0 a)
     ~
   =+  b=(new-end 3 a)
-  =+  c=(rsh 3 1 a)
+  =+  c=(new-rsh 3 a)
   ?:  =('.' b)
     [' ' $(a c)]
   ?.  =('~' b)
     [b $(a c)]
-  =>  .(b (new-end 3 c), c (rsh 3 1 c))
+  =>  .(b (new-end 3 c), c (new-rsh 3 c))
   ?+  b  =-  (weld (rip 3 (tuft p.d)) $(a q.d))
          ^=  d
          =+  d=0
@@ -4460,7 +4465,7 @@
          ?<  =(0 c)
          %=    $
             b  (new-end 3 c)
-            c  (rsh 3 1 c)
+            c  (new-rsh 3 c)
             d  %+  add  (mul 16 d)
                %+  sub  b
                ?:  &((gte b '0') (lte b '9'))  48
@@ -4479,7 +4484,7 @@
     ~
   =+  b=(teff a)
   =+  c=(taft (new-end [3 b] a))
-  =+  d=$(a (rsh 3 b a))
+  =+  d=$(a (new-rsh [3 b] a))
   ?:  ?|  &((gte c 'a') (lte c 'z'))
           &((gte c '0') (lte c '9'))
           =(`@`'-' c)
@@ -4492,7 +4497,7 @@
     ?:  =(0 e)
       ['.' d]
     =.  e  (dec e)
-    =+  f=(rsh 2 e c)
+    =+  f=(new-rsh [2 e] c)
     [(add ?:((lte f 9) 48 87) f) $(c (new-end [2 e] c))]
   ::
     %' '  ['.' d]
@@ -4955,7 +4960,7 @@
     [p=p.tub q=[~ u=[p=fad q=tub]]]
   ?:  |(?=(~ q.tub) !=((new-end 3 daf) i.q.tub))
     (fail tub)
-  $(p.tub (lust i.q.tub p.tub), q.tub t.q.tub, daf (rsh 3 1 daf))
+  $(p.tub (lust i.q.tub p.tub), q.tub t.q.tub, daf (new-rsh 3 daf))
 ::
 ++  just                                                ::  XX redundant, jest
   ~/  %just                                             ::  match a char
@@ -5536,7 +5541,7 @@
             imp  +(imp)
             rep  =/  log  (cut 4 [imp 1] sxz)
                  ;:  weld
-                   (trip (tos:po (rsh 3 1 log)))
+                   (trip (tos:po (new-rsh 3 log)))
                    (trip (tod:po (new-end 3 log)))
                    ?:(=((mod imp 4) 0) ?:(=(imp 0) "" "--") "-")
                    rep
@@ -5867,7 +5872,7 @@
     =+  ^=  neg
         |=  [syn=? mol=dime]  ^-  dime
         ?>  =('u' (new-end 3 p.mol))
-        [(cat 3 's' (rsh 3 1 p.mol)) (new:si syn q.mol)]
+        [(cat 3 's' (new-rsh 3 p.mol)) (new:si syn q.mol)]
     ;~  pfix  hep
       ;~  pose
         (cook |=(a=dime (neg | a)) bisk)
@@ -7301,7 +7306,7 @@
       =+  len=(met 3 mot)
       ?:  =(0 len)
         [0 %$]
-      =+  tyl=(rsh 3 (dec len) mot)
+      =+  tyl=(new-rsh [3 (dec len)] mot)
       ?:  &((gte tyl 'A') (lte tyl 'Z'))
         [(sub tyl 64) (new-end [3 (dec len)] mot)]
       [0 mot]
@@ -7313,7 +7318,7 @@
       |-  ?|  =(%$ p.yoz)
               =(%$ p.wux)
               ?&  =((new-end 3 p.yoz) (new-end 3 p.wux))
-                  $(p.yoz (rsh 3 1 p.yoz), p.wux (rsh 3 1 p.wux))
+                  $(p.yoz (new-rsh 3 p.yoz), p.wux (new-rsh 3 p.wux))
               ==
           ==
   ==
@@ -7380,11 +7385,11 @@
     =/  small=@  (met 0 contained)
     ?:  (lte small big)  |
     =/  dif=@  (sub small big)
-    =(container (rsh 0 dif contained))
+    =(container (new-rsh [0 dif] contained))
   ::
   ++  parent
     |=  a=axis
-    `axis`(rsh 0 1 a)
+    `axis`(new-rsh 0 a)
   ::
   ++  sibling
     |=  a=axis
@@ -11054,7 +11059,7 @@
       ['\\' i.mil $(mil t.mil)]
     ?:  (lte ' ' i.mil)
       [i.mil $(mil t.mil)]
-    ['\\' ~(x ne (rsh 2 1 i.mil)) ~(x ne (new-end 2 i.mil)) $(mil t.mil)]
+    ['\\' ~(x ne (new-rsh 2 i.mil)) ~(x ne (new-end 2 i.mil)) $(mil t.mil)]
   ::
   ++  deal  |=(lum=* (dish dole lum))
   ++  dial

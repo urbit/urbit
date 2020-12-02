@@ -1249,7 +1249,7 @@
     =/  advance  (advance-hoon:auto typ p.q.q.p.u.q.vex)
     =?  res  ?=(^ advance)
       =/  to-send
-        (trip (rsh 3 (sub pos back-pos) u.advance))
+        (trip (new-rsh [3 (sub pos back-pos)] u.advance))
       =|  fxs=(list sole-effect)
       =.  .
         |-  ^+  +.$
@@ -1403,7 +1403,7 @@
       =/  back-pos
         (sub pos (met 3 completing))
       =/  to-send
-        (trip (rsh 3 (sub pos back-pos) advance))
+        (trip (new-rsh [3 (sub pos back-pos)] advance))
       =|  fxs=(list sole-effect)
       ::
       :: Cursor is guaranteed to be at end so we don't worry about the

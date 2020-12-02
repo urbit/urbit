@@ -2329,7 +2329,7 @@
         =+  [s=(dec a) t=0]
         |-  ^-  [s=@ t=@]
         ?:  =(0 (new-end 0 s))
-          $(s (rsh 0 1 s), t +(t))
+          $(s (new-rsh 0 s), t +(t))
         [s t]
     ?>  =((mul s.b (bex t.b)) (dec a))
     =+  c=0
@@ -2425,7 +2425,7 @@
     ?:  =(i 0)
       =+  x=(cub r)
       (sit.fq (mul -.x (inv +.x)))
-    =+  m=(rsh 0 i a)
+    =+  m=(new-rsh [0 i] a)
     ?:  =(0 (mod m 2))
        $(i (dec i), s (cad r s one), r (cub r))
     $(i (dec i), r (cad r s one), s (cub s))
@@ -2455,8 +2455,8 @@
           ?:  =(0 b)
             0
           ?:  =(1 (dis 1 b))
-            (dif c $(b (rsh 0 1 b), c (dub c)))
-          $(b (rsh 0 1 b), c (dub c))
+            (dif c $(b (new-rsh 0 b), c (dub c)))
+          $(b (new-rsh 0 b), c (dub c))
         ::                                              ::  ++toe:ga:number
         ++  toe                                         ::  exp+log tables
           =+  ^=  nu
@@ -2779,7 +2779,7 @@
         |=  blk=@H  ^-  @uxH
         =+  (ahem 6 4 12)
         =:
-          key  (rsh 6 1 (~(net fe 8) key))
+          key  (new-rsh 6 (~(net fe 8) key))
           blk  (~(net fe 7) blk)
         ==
         %-  ~(net fe 7)
@@ -2790,7 +2790,7 @@
         |=  blk=@H  ^-  @uxH
         =+  (ahem 6 4 12)
         =:
-          key  (rsh 6 1 (~(net fe 8) key))
+          key  (new-rsh 6 (~(net fe 8) key))
           blk  (~(net fe 7) blk)
         ==
         %-  ~(net fe 7)
@@ -2961,7 +2961,7 @@
         =/  blocks  (add (div len 16) ?:(=((^mod len 16) 0) 0 1))
         ?>  (gte len (met 3 txt))
         %+  mix  txt
-        %^  rsh  3  (sub (mul 16 blocks) len)
+        %+  new-rsh  [3 (sub (mul 16 blocks) len)]
         %+  rep  7
         =|  seed=(list @ux)
         |-  ^+  seed
@@ -2988,7 +2988,7 @@
         =/  blocks  (add (div len 16) ?:(=((^mod len 16) 0) 0 1))
         ?>  (gte len (met 3 txt))
         %+  mix  txt
-        %^  rsh  3  (sub (mul 16 blocks) len)
+        %+  new-rsh  [3 (sub (mul 16 blocks) len)]
         %+  rep  7
         =|  seed=(list @ux)
         |-  ^+  seed
@@ -3015,7 +3015,7 @@
         =/  blocks  (add (div len 16) ?:(=((^mod len 16) 0) 0 1))
         ?>  (gte len (met 3 txt))
         %+  mix  txt
-        %^  rsh  3  (sub (mul 16 blocks) len)
+        %+  new-rsh  [3 (sub (mul 16 blocks) len)]
         %+  rep  7
         =|  seed=(list @ux)
         |-  ^+  seed
@@ -3199,7 +3199,7 @@
         ~/  %en
         |=  txt=@
         ^-  (trel @uxH @ud @ux)
-        =+  [k1=(rsh 7 1 key) k2=(new-end 7 key)]
+        =+  [k1=(new-rsh 7 key) k2=(new-end 7 key)]
         =+  iv=(s2va k1 (weld vec (limo ~[txt])))
         =+  len=(met 3 txt)
         =*  hib  (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)
@@ -3212,7 +3212,7 @@
         ~/  %de
         |=  [iv=@H len=@ txt=@]
         ^-  (unit @ux)
-        =+  [k1=(rsh 7 1 key) k2=(new-end 7 key)]
+        =+  [k1=(new-rsh 7 key) k2=(new-end 7 key)]
         =*  hib  (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)
         =+  ^=  pln
           (~(de ctra k2 7 len hib) txt)
@@ -3229,7 +3229,7 @@
         ~/  %en
         |=  txt=@
         ^-  (trel @uxH @ud @ux)
-        =+  [k1=(rsh 6 3 key) k2=(new-end [6 3] key)]
+        =+  [k1=(new-rsh [6 3] key) k2=(new-end [6 3] key)]
         =+  iv=(s2vb k1 (weld vec (limo ~[txt])))
         =*  hib  (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)
         =+  len=(met 3 txt)
@@ -3241,7 +3241,7 @@
         ~/  %de
         |=  [iv=@H len=@ txt=@]
         ^-  (unit @ux)
-        =+  [k1=(rsh 6 3 key) k2=(new-end [6 3] key)]
+        =+  [k1=(new-rsh [6 3] key) k2=(new-end [6 3] key)]
         =*  hib  (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)
         =+  ^=  pln
           (~(de ctrb k2 7 len hib) txt)
@@ -3258,7 +3258,7 @@
         ~/  %en
         |=  txt=@
         ^-  (trel @uxH @ud @ux)
-        =+  [k1=(rsh 8 1 key) k2=(new-end 8 key)]
+        =+  [k1=(new-rsh 8 key) k2=(new-end 8 key)]
         =+  iv=(s2vc k1 (weld vec (limo ~[txt])))
         =*  hib  (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)
         =+  len=(met 3 txt)
@@ -3271,7 +3271,7 @@
         ~/  %de
         |=  [iv=@H len=@ txt=@]
         ^-  (unit @ux)
-        =+  [k1=(rsh 8 1 key) k2=(new-end 8 key)]
+        =+  [k1=(new-rsh 8 key) k2=(new-end 8 key)]
         =*  hib  (dis iv 0xffff.ffff.ffff.ffff.7fff.ffff.7fff.ffff)
         =+  ^=  pln
           (~(de ctrc k2 7 len hib) txt)
@@ -3425,7 +3425,7 @@
       ~/  %puck
       |=  sk=@I  ^-  @
       ?:  (gth (met 3 sk) 32)  !!
-      =+  h=(shal (rsh 0 3 b) sk)
+      =+  h=(shal (new-rsh [0 3] b) sk)
       =+  ^=  a
           %+  add
             (bex (sub b 2))
@@ -3442,7 +3442,7 @@
       ~/  %shar
       |=  [pub=@ sek=@]
       ^-  @ux
-      =+  exp=(shal (rsh 0 3 b) (suck sek))
+      =+  exp=(shal (new-rsh [0 3] b) (suck sek))
       =.  exp  (dis exp (can 0 ~[[3 0] [251 (fil 0 251 1)]]))
       =.  exp  (con exp (new-lsh [3 31] 0b100.0000))
       =+  prv=(new-end 8 exp)
@@ -3454,7 +3454,7 @@
       |=  [m=@ se=@]  ^-  @
       =+  sk=(suck se)
       =+  pk=(cut 0 [b b] sk)
-      =+  h=(shal (rsh 0 3 b) sk)
+      =+  h=(shal (new-rsh [0 3] b) sk)
       =+  ^=  a
           %+  add
             (bex (sub b 2))
@@ -3484,7 +3484,7 @@
       |=  [s=@ m=@ pk=@]  ^-  ?
       ?:  (gth (div b 4) (met 3 s))  |
       ?:  (gth (div b 8) (met 3 pk))  |
-      =+  cb=(rsh 0 3 b)
+      =+  cb=(new-rsh [0 3] b)
       =+  rr=(deco (cut 0 [0 b] s))
       ?~  rr  |
       =+  aa=(deco pk)
@@ -3507,7 +3507,7 @@
       =+  few==>(fe .(a 5))
       =+  ^=  rot
         |=  [a=@ b=@]
-        (mix (new-end 5 (new-lsh [0 a] b)) (rsh 0 (sub 32 a) b))
+        (mix (new-end 5 (new-lsh [0 a] b)) (new-rsh [0 (sub 32 a)] b))
       =+  ^=  lea
         |=  [a=@ b=@]
         (net:few (sum:few (net:few a) (net:few b)))
@@ -3731,7 +3731,7 @@
         ^-  @ux
         ?~  sek  ~|  %pubkey-only  !!
         ?>  =('b' (new-end 3 bpk))
-        =+  pk=(rsh 8 1 (rsh 3 1 bpk))
+        =+  pk=(new-rsh 8 (new-rsh 3 bpk))
         =+  shar=(shax (shar:ed pk cry.u.sek))
         =+  smsg=(sign msg)
         (jam (~(en siva:aes shar ~) smsg))
@@ -3741,7 +3741,7 @@
         ^-  (unit @ux)
         ?~  sek  ~|  %pubkey-only  !!
         ?>  =('b' (new-end 3 bpk))
-        =+  pk=(rsh 8 1 (rsh 3 1 bpk))
+        =+  pk=(new-rsh 8 (new-rsh 3 bpk))
         =+  shar=(shax (shar:ed pk cry.u.sek))
         =+  ;;([iv=@ len=@ cph=@] (cue txt))
         =+  try=(~(de siva:aes shar ~) iv len cph)
@@ -3796,21 +3796,21 @@
         |=  [w=@ seed=@]
         =+  wid=(add (div w 8) ?:(=((mod w 8) 0) 0 1))
         =+  bits=(shal wid seed)
-        =+  [c=(rsh 8 1 bits) s=(new-end 8 bits)]
+        =+  [c=(new-rsh 8 bits) s=(new-end 8 bits)]
         ..nu(pub [cry=(puck:ed c) sgn=(puck:ed s)], sek `[cry=c sgn=s])
       ::                                                ::  ++nol:nu:crub:crypto
       ++  nol                                           ::  activate secret
         |=  a=ring
-        =+  [mag=(new-end 3 a) bod=(rsh 3 1 a)]
+        =+  [mag=(new-end 3 a) bod=(new-rsh 3 a)]
         ~|  %not-crub-seckey  ?>  =('B' mag)
-        =+  [c=(rsh 8 1 bod) s=(new-end 8 bod)]
+        =+  [c=(new-rsh 8 bod) s=(new-end 8 bod)]
         ..nu(pub [cry=(puck:ed c) sgn=(puck:ed s)], sek `[cry=c sgn=s])
       ::                                                ::  ++com:nu:crub:crypto
       ++  com                                           ::  activate public
         |=  a=pass
-        =+  [mag=(new-end 3 a) bod=(rsh 3 1 a)]
+        =+  [mag=(new-end 3 a) bod=(new-rsh 3 a)]
         ~|  %not-crub-pubkey  ?>  =('b' mag)
-        ..nu(pub [cry=(rsh 8 1 bod) sgn=(new-end 8 bod)], sek ~)
+        ..nu(pub [cry=(new-rsh 8 bod) sgn=(new-end 8 bod)], sek ~)
       --  ::nu
     --  ::crub
   ::                                                    ::
@@ -3989,11 +3989,11 @@
         ::  result.
         =.  res
           %+  con  (new-lsh [0 bitrate] res)
-          (rsh 0 capacity (lanes-to-bytes state))
+          (new-rsh [0 capacity] (lanes-to-bytes state))
         =.  len  (add len bitrate)
         ?:  (gte len output)
           ::  produce the requested bits of output.
-          (rsh 0 (sub len output) res)
+          (new-rsh [0 (sub len output)] res)
         $(res res, state (permute state))
       ::
       ++  bytes-to-lanes
@@ -4254,11 +4254,11 @@
         ?>  =(3 (mod p.domain 4))
         =/  fop  field-p
         =+  [fadd fmul fpow]=[sum.fop pro.fop exp.fop]
-        =/  y=@  %+  fpow  (rsh 0 2 +(p.domain))
+        =/  y=@  %+  fpow  (new-rsh [0 2] +(p.domain))
                  %+  fadd  b.domain
                  %+  fadd  (fpow 3 x)
                 (fmul a.domain x)
-        =/  s=@  (rsh 3 bytes compressed)
+        =/  s=@  (new-rsh [3 bytes] compressed)
         ~|  [`@ux`s `@ux`compressed]
         ?>  |(=(2 s) =(3 s))
         ::  check parity
@@ -4343,8 +4343,8 @@
           ?:  (gte scalar n.domain)
             $(scalar (mod scalar n.domain))
           ?:  =(0 (mod scalar 2))
-            (double $(scalar (rsh 0 1 scalar)))
-          (add a (double $(scalar (rsh 0 1 scalar))))
+            (double $(scalar (new-rsh 0 scalar)))
+          (add a (double $(scalar (new-rsh 0 scalar))))
         --
       ++  add-points
         |=  [a=point b=point]
@@ -4486,7 +4486,7 @@
         =/  fop  field-p.c
         =+  [fadd fmul fpow]=[sum.fop pro.fop exp.fop]
         =/  ysq   (fadd (fpow 3 x) b.domain.c)
-        =/  beta  (fpow (rsh 0 2 +(p.domain.c)) ysq)
+        =/  beta  (fpow (new-rsh [0 2] +(p.domain.c)) ysq)
         =/  y  ?:  =((new-end 0 v.sig) (new-end 0 beta))
                  beta
                (sub p.domain.c beta)
@@ -4582,7 +4582,7 @@
             =.  v
               %-  mod-word
               :^  v  13  16
-              (cury mix (rsh 0 64 t))
+              (cury mix (new-rsh [0 64] t))
             ::  for the last block, invert v14
             =?  v  l
               %-  mod-word
@@ -4594,7 +4594,7 @@
             |^
               ?:  =(i 12)
                 ::  xor upper and lower halves of v into state h
-                =.  h  (mix h (rsh 6 8 v))
+                =.  h  (mix h (new-rsh [6 8] v))
                 (mix h (new-end [6 8] v))
               ::  select message mixing schedule and mix v
               =.  s  (snag (mod i 10) sigma)
@@ -4680,7 +4680,7 @@
       =.  c  (pad [rem c] 128)
       =.  h  (compress h c com &)
       ::  produce output of desired length
-      %^  rsh  3  (sub 64 out)
+      %+  new-rsh  [3 (sub 64 out)]
       ::  do some word
       %+  rep  6
       %+  turn  (flop (gulf 0 7))
@@ -4901,7 +4901,7 @@
         %+  turn  (flop (rip 6 random-block))
         |=  a=@
         ^-  (pair @ @)
-        :-  (rev 3 4 (rsh 5 1 a))
+        :-  (rev 3 4 (new-rsh 5 a))
         (rev 3 4 (new-end 5 a))
       ::
       ::  iterate over the entire segment length
@@ -4949,9 +4949,9 @@
           (mul +(seg) seg-length)
         ::  pseudorandom offset
         =-  %+  sub  (dec -)
-            %^  rsh  0  32
+            %+  new-rsh  [0 32]
             %+  mul  -
-            (rsh 0 32 (mul c1 c1))
+            (new-rsh [0 32] (mul c1 c1))
         ::  reference area size
         ?:  =(0 itn)
           ?:  |(=(0 seg) =(row ref-row))  (dec col)
@@ -5145,12 +5145,12 @@
       ::  desired output size.
       ::
       =+  tmp=(blake2b msg 0^0 64)
-      =+  res=(rsh 3 32 tmp)
+      =+  res=(new-rsh [3 32] tmp)
       =.  out  (sub out 32)
       |-
       ?:  (gth out 64)
         =.  tmp  (blake2b 64^tmp 0^0 64)
-        =.  res  (add (new-lsh [3 32] res) (rsh 3 32 tmp))
+        =.  res  (add (new-lsh [3 32] res) (new-rsh [3 32] tmp))
         $(out (sub out 32))
       %+  add  (new-lsh [3 out] res)
       (blake2b 64^tmp 0^0 out)
@@ -6203,7 +6203,7 @@
           ?~  pad
             ~
           =+  d=(new-end [0 6] pad)
-          [(cut 3 [d 1] cha) $(pad (rsh 0 6 pad))]
+          [(cut 3 [d 1] cha) $(pad (new-rsh [0 6] pad))]
       (weld (flop (slag poc sif)) (reap poc '='))
     ::                                                  ::  ++de-base64:mimes:
     ++  de-base64                                       ::  decode base64
@@ -6583,7 +6583,7 @@
             =('_' tap)
         ==
       [tap ~]
-    ['%' (xen (rsh 0 4 tap)) (xen (new-end [0 4] tap)) ~]
+    ['%' (xen (new-rsh [0 4] tap)) (xen (new-end [0 4] tap)) ~]
   ::                                                    ::  ++de-urlt:html
   ++  de-urlt                                           ::  url decode
     |=  tep=tape
@@ -6630,7 +6630,7 @@
         ?:(&(p.har !?=(hoke r.har)) "https://" "http://")
       ::
         ?-  -.r.har
-          %|  (trip (rsh 3 1 (scot %if p.r.har)))
+          %|  (trip (new-rsh 3 (scot %if p.r.har)))
           %&  =+  rit=(flop p.r.har)
               |-  ^-  tape
               ?~  rit  ~
@@ -6717,7 +6717,7 @@
     ++  dlab                                            ::  2396 domainlabel
       %+  sear
         |=  a=@ta
-        ?.(=('-' (rsh 3 (dec (met 3 a)) a)) [~ u=a] ~)
+        ?.(=('-' (new-rsh [3 (dec (met 3 a))] a)) [~ u=a] ~)
       %+  cook  |=(a=tape (crip (cass a)))
       ;~(plug aln (star alp))
     ::                                                  ::  ++fque:de-purl:html
@@ -8664,7 +8664,7 @@
       |*  [rex=@t tys=(list etyp)]
       =-  (decode-arguments - tys)
       %^  rut  9
-        (rsh 3 2 rex)
+        (new-rsh [3 2] rex)
       (curr rash hex)
     ::
     ++  decode-arguments
@@ -8734,7 +8734,8 @@
         ^-  octs
         ::  parse {bys} bytes from {fro}.
         :-  bys
-        %^  rsh  3
+        %+  new-rsh
+          :-  3
           =+  (mod bys 32)
           ?:(=(0 -) - (sub 32 -))
         %+  rep  8
@@ -9189,7 +9190,7 @@
   ::
   ++  hex-to-num
     |=  a=@t
-    (rash (rsh 3 2 a) hex)
+    (rash (new-rsh [3 2] a) hex)
   --
 ::
 ::  |jstd: json standard library
@@ -9371,7 +9372,7 @@
         %+  turn  u.res
         |=  [id=@t result=@t]
         ^-  [who=ship point:azimuth-types]
-        =/  who  `@p`(slav %ud (rsh 3 4 id))
+        =/  who  `@p`(slav %ud (new-rsh [3 4] id))
         :-  who
         %+  point-from-eth
           who
@@ -9431,7 +9432,7 @@
         %+  turn  u.res
         |=  [id=@t result=@t]
         ^-  (pair @ud ^turf)
-        :-  (slav %ud (rsh 3 5 id))
+        :-  (slav %ud (new-rsh [3 5] id))
         =/  dom=tape
           (decode-results result [%string]~)
         =/  hot=host:eyre

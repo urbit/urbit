@@ -145,7 +145,7 @@
     ?.  =(0 (new-end 3 dat))  ~
     :+  ~
       (mul 8 (dec len))
-    (rsh 3 1 dat)
+    (new-rsh 3 dat)
   ::  +recur:parse:der: parse bytes for a list of +spec:asn1
   ::
   ++  recur

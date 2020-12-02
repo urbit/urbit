@@ -926,7 +926,7 @@
     ::
     ::    Logic duplicates +com:nu:crub:crypto and +sure:as:crub:crypto.
     ::
-    =/  key  (new-end 8 (rsh 3 1 public-key.open-packet))
+    =/  key  (new-end 8 (new-rsh 3 public-key.open-packet))
     ?>  (veri:ed:crypto signature signed key)
     ::  store comet as peer in our state
     ::
@@ -1784,7 +1784,7 @@
           peer-core
         ::  even bone; is this bone a nack-trace bone?
         ::
-        ?:  =(1 (new-end 0 (rsh 0 1 bone)))
+        ?:  =(1 (new-end 0 (new-rsh 0 bone)))
           ::  nack-trace bone; assume .ok, clear nack from |message-sink
           ::
           =/  target-bone=^bone  (mix 0b10 bone)
@@ -1872,7 +1872,7 @@
       ++  on-sink-memo
         ?:  =(1 (new-end 0 bone))
           on-sink-plea
-        ?:  =(0 (new-end 0 (rsh 0 1 bone)))
+        ?:  =(0 (new-end 0 (new-rsh 0 bone)))
           on-sink-boon
         on-sink-nack-trace
       ::  +on-sink-boon: handle response message received by |message-sink
@@ -2904,10 +2904,10 @@
   ^-  symmetric-key
   ::
   ?>  =('b' (new-end 3 public-key))
-  =.  public-key  (rsh 8 1 (rsh 3 1 public-key))
+  =.  public-key  (new-rsh 8 (new-rsh 3 public-key))
   ::
   ?>  =('B' (new-end 3 private-key))
-  =.  private-key  (rsh 8 1 (rsh 3 1 private-key))
+  =.  private-key  (new-rsh 8 (new-rsh 3 private-key))
   ::
   `@`(shar:ed:crypto public-key private-key)
 ::  +encrypt: encrypt $shut-packet into atomic packet content
@@ -2980,7 +2980,7 @@
   ::  first 32 (2^5) bits are header; the rest is body
   ::
   =/  header  (new-end 5 blob)
-  =/  body    (rsh 5 1 blob)
+  =/  body    (new-rsh 5 blob)
   ::
   =/  version    (new-end [0 3] header)
   =/  checksum   (cut 0 [3 20] header)
@@ -3001,7 +3001,7 @@
       ;;  [origin=(unit lane) content=*]
       ~|  %ames-invalid-noun
       %-  cue
-      (rsh 3 (add rcvr-size sndr-size) body)
+      (new-rsh [3 (add rcvr-size sndr-size)] body)
   ::
   [dyad encrypted origin content]
 ::  +decode-ship-size: decode a 2-bit ship type specifier into a byte width

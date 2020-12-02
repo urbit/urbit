@@ -98,7 +98,7 @@
               !=('sj.' (new-end [3 3] (swp 3 file)))
           ==
         out
-      ``@t`(rsh 3 6 file)
+      ``@t`(new-rsh [3 6] file)
     =/  js-name
       (cat 3 'index.' bundle-hash)
     =/  map-name

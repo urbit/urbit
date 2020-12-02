@@ -1076,7 +1076,7 @@
           %+  turn  von
           =/  bem=beam  [[our %home da+now] /whey]
           |=  [lal=@tas =vane]
-          =/  met  (peek ~ (rsh 3 5 lal) bem)
+          =/  met  (peek ~ (new-rsh [3 5] lal) bem)
           ?>  &(?=(^ met) ?=(^ u.met))  :: XX make optional
           lal^|+;;((list mass) q.q.u.u.met)
       ::
@@ -1101,7 +1101,7 @@
       ::  XX vane and care are concatenated
       ::
       =/  lal  (new-end 3 cyr)
-      =/  ren  ;;(@t (rsh 3 1 cyr))
+      =/  ren  ;;(@t (new-rsh 3 cyr))
       ?.  (~(has by van.mod) lal)
         ~
       (peek:(plow lal) lyc ren bem)
