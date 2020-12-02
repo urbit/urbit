@@ -854,11 +854,6 @@
   |=  [a=bloq [b=step c=step] d=@]
   (new-end [a c] (new-rsh [a b] d))
 ::
-++  end                                                 ::  tail
-  ~/  %end
-  |=  [a=bloq b=step c=@]
-  (mod c (bex (mul (bex a) b)))
-::
 ++  new-end                                             ::  tail
   ~/  %new-end
   |=  [a=bite b=@]
@@ -874,11 +869,6 @@
   ?:  =(n b)
     (new-rsh a d)
   $(d (add c (new-lsh a d)), n +(n))
-::
-++  lsh                                                 ::  left-shift
-  ~/  %lsh
-  |=  [a=bloq b=step c=@]
-  (mul (bex (mul (bex a) b)) c)
 ::
 ++  new-lsh                                             ::  left-shift
   ~/  %new-lsh
@@ -933,11 +923,6 @@
   ^-  (list @)
   ?:  =(0 b)  ~
   [(new-end a b) $(b (new-rsh a b))]
-::
-++  rsh                                                 ::  right-shift
-  ~/  %rsh
-  |=  [a=bloq b=step c=@]
-  (div c (bex (mul (bex a) b)))
 ::
 ++  new-rsh                                             ::  right-shift
   ~/  %new-rsh
