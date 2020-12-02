@@ -284,7 +284,10 @@
 +$  move  [p=duct q=(wind note gift:able)]              ::  local move
 +$  note                                                ::  out request $->
   $~  [%b %wait *@da]                                   ::
-  $%  $:  %a                                            ::  to %ames
+  $%  $:  %$                                            ::  to arvo
+          $>(%what waif)                                ::
+      ==                                                ::
+      $:  %a                                            ::  to %ames
           $>(%plea task:able:ames)                      ::
       ==                                                ::
       $:  %b                                            ::  to %behn
@@ -1394,15 +1397,11 @@
     ::  promote and fill in ankh
     ::  promote and fill in mime cache
     ::
-    =/  sys-changes  (need-sys-update changes)
-    ?:  ?&  =(%home syd)
-            !updated
-            |(!=(~ sys-changes) !=(~ (need-vane-update changes)))
-        ==
-      (sys-update yoki new-data changes)
+    ?:  &(=(%home syd) !updated)
+      (sys-update yoki new-data)
     ::  clear caches if zuse reloaded
     ::
-    =/  is-zuse-new=?  !=(~ sys-changes)
+    =/  is-zuse-new=?  (need-sys-update changes)
     =.  fod.dom
       ?:  is-zuse-new
         *ford-cache
@@ -1642,11 +1641,7 @@
     ::
     ++  path-to-hoon
       |=  [data=(map path (each page lobe)) =path]
-      (rain path (path-to-cord data path))
-    ::
-    ++  path-to-cord
-      |=  [data=(map path (each page lobe)) =path]
-      ^-  @t
+      %+  rain  path
       =/  datum  (~(got by data) path)
       ?-  -.datum
         %&  (page-to-cord p.datum)
@@ -1887,100 +1882,45 @@
     ::
     ++  need-sys-update
       |=  changes=(map path (each page lobe))
-      ^-  (map path (each page lobe))
-      ~+
-      ?:  =(0 let.dom)
-        ~
-      %-  malt
-      %+  skim  ~(tap by changes)
+      ^-  ?
+      %+  lien  ~(tap by changes)
       |=  [=path *]
       ?|  =(/sys/hoon/hoon path)
           =(/sys/arvo/hoon path)
           =(/sys/zuse/hoon path)
       ==
     ::
-    ++  need-vane-update
-      |=  changes=(map path (each page lobe))
-      ^-  (map path (each page lobe))
-      ~+
-      ?:  =(0 let.dom)
-        ~
-      %-  malt
-      %+  skim  ~(tap by changes)
-      |=  [=path *]
-      =(/sys/vane (scag 2 path))
-    ::
     ::  Delay current update until sys update is complete
     ::
     ++  sys-update
       |=  $:  =yoki
               data=(map path (each page lobe))
-              changes=(map path (each page lobe))
           ==
       ^+  ..park
-      =/  updates
-        %-  ~(uni by (need-sys-update changes))
-        (need-vane-update changes)
       ?>  =(~ pud)
       =.  pud  `[syd yoki]
       |^  %.  [hen %slip %c %pork ~]
-          =<  emit
-          ?:  (~(has by updates) /sys/hoon/hoon)
-            (reset &)
-          ?:  (~(has by updates) /sys/arvo/hoon)
-            (reset |)
-          ?:  (~(has by updates) /sys/zuse/hoon)
-            reboot
-          =/  vanes=(list [=path *])  ~(tap by updates)
-          |-  ^+  ..park
-          ?~  vanes
-            ..park
-          ?.  ?=([%sys %vane * %hoon ~] path.i.vanes)
-            ~&  [%strange-sys-update path.i.vanes]
-            $(vanes t.vanes)
-          =.  ..park  (reload i.t.t.path.i.vanes)
-          $(vanes t.vanes)
+          emit:(pass-what files)
       ::
-      ++  reset
-        |=  new-hoon=?
+      ++  files
+        ^-  (list (pair path (cask)))
+        %+  murn
+          ~(tap by data)
+        |=  [pax=path dat=(each page lobe)]
+        ^-  (unit (pair path (cask)))
+        =/  xap  (flop pax)
+        ?>  ?=(^ xap)
+        ?.  ?=(%hoon i.xap)  ~
+        :^  ~  (flop t.xap)  %hoon
+        ?-  -.dat
+          %&  (page-to-cord p.dat)
+          %|  (lobe-to-cord p.dat)
+        ==
+      ::
+      ++  pass-what
+        |=  fil=(list (pair path (cask)))
         ^+  ..park
-        ?.  new-hoon
-          =/  arvo=@t  (path-to-cord data /sys/arvo/hoon)
-          =.  ..park  (pass-lyra hoon=~ arvo)
-          reboot
-        =/  hoon=@t  (path-to-cord data /sys/hoon/hoon)
-        =/  arvo=@t  (path-to-cord data /sys/arvo/hoon)
-        =.  ..park  (pass-lyra `hoon arvo)
-        reboot
-      ::
-      ++  pass-lyra
-        |=  [hoon=(unit @t) arvo=@t]
-        ^+  ..park
-        (emit hen %pass /reset %d %flog %lyra hoon arvo)
-      ::
-      ++  reboot
-        =/  zuse=@t  (path-to-cord data /sys/zuse/hoon)
-        =.  ..park
-          %-  emit
-          [hen %pass /reboot %d %flog %veer %$ /sys/zuse/hoon zuse]
-        reload-all
-      ::
-      ++  reload-all
-        =/  vanes=(list term)
-          ~[%ames %behn %clay %dill %eyre %gall %iris %jael]
-        |-  ^+  ..park
-        ?~  vanes
-          ..park
-        =.  ..park  (reload i.vanes)
-        $(vanes t.vanes)
-      ::
-      ++  reload
-        |=  =term
-        =/  vane=@t  (path-to-cord data /sys/vane/[term]/hoon)
-        %-  emit
-        =/  tip  (end 3 term)
-        =/  =path  /sys/vane/[term]/hoon
-        [hen %pass /reload %d %flog %veer tip path vane]
+        (emit hen %pass /what %$ what/fil)
       --
     --
   ::
