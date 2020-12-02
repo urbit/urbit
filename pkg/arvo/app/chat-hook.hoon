@@ -558,7 +558,7 @@
       ::  correctly initialized, no need to do cleanup
       ::
       ~
-    ?.  =((new-end [3 4] i.t.path) 'dm--')
+    ?.  =((end [3 4] i.t.path) 'dm--')
       ~
     :-  =-  [%pass /fixdm %agent [our.bol %chat-view] %poke %chat-view-action -]
         !>  ^-  action:view

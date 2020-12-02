@@ -1058,7 +1058,7 @@
     %+  welp
       cad.pom
     ?~  buf.say.inp  ~
-    :(welp "<" (scow %p (new-end 4 (sham buf.say.inp))) "> ")
+    :(welp "<" (scow %p (end 4 (sham buf.say.inp))) "> ")
   ::
   ++  ta-yan                                          ::  yank
     (snag (sub num.kil pos.kil) old.kil)

@@ -17,7 +17,7 @@
     ^-  (map term knot)
     %-  ~(run by inf:(static:cram (ream mud)))
     |=  a=dime  ^-  cord
-    ?+  (new-end 3 p.a)  (scot a)
+    ?+  (end 3 p.a)  (scot a)
       %t  q.a
     ==
   --

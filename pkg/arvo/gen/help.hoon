@@ -27,7 +27,7 @@
       ==
   =/  c  (to-wain:format a)
   ?~  c  "~"
-  ?.  =('::  ' (new-end [3 4] i.c))
+  ?.  =('::  ' (end [3 4] i.c))
     "<undocumented>"
   (trip i.c)
 ::

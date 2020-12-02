@@ -101,6 +101,6 @@
 ::
 ++  has-test-prefix
   |=  a=term  ^-  ?
-  =((new-end [3 5] a) 'test-')
+  =((end [3 5] a) 'test-')
 --
 

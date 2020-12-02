@@ -753,7 +753,7 @@
     ?-  -.mym
       %|  (error-response 500 "failed tube from {(trip mark)} to mime")
       %&  %+  return-static-data-on-duct  200
-          [(new-rsh 3 (spat p.p.mym)) q.p.mym]
+          [(rsh 3 (spat p.p.mym)) q.p.mym]
     ==
     ::
     ++  find-tube
@@ -1031,7 +1031,7 @@
       =+  pax=/(scot %p our)/code/(scot %da now)/(scot %p our)
       =+  res=((sloy scry) [151 %noun] %j pax)
       ::
-      (new-rsh 3 (scot %p (@ (need (need res)))))
+      (rsh 3 (scot %p (@ (need (need res)))))
     ::  +session-cookie-string: compose session cookie
     ::
     ++  session-cookie-string

@@ -1978,7 +1978,7 @@
         |=  =term
         =/  vane=@t  (path-to-cord data /sys/vane/[term]/hoon)
         %-  emit
-        =/  tip  (new-end 3 term)
+        =/  tip  (end 3 term)
         =/  =path  /sys/vane/[term]/hoon
         [hen %pass /reload %d %flog %veer tip path vane]
       --
@@ -3839,7 +3839,7 @@
       =+  pac=(of-wain (lurk:differ (to-wain (cat 3 txt '\0a')) dif))
       ?~  pac
         ''
-      (new-end [3 (dec (met 3 pac))] pac)
+      (end [3 (dec (met 3 pac))] pac)
     ::
     ::  Gets an arch (directory listing) at a node.
     ::

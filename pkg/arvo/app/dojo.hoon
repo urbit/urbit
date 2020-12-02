@@ -1249,7 +1249,7 @@
     =/  advance  (advance-hoon:auto typ p.q.q.p.u.q.vex)
     =?  res  ?=(^ advance)
       =/  to-send
-        (trip (new-rsh [3 (sub pos back-pos)] u.advance))
+        (trip (rsh [3 (sub pos back-pos)] u.advance))
       =|  fxs=(list sole-effect)
       =.  .
         |-  ^+  +.$
@@ -1340,7 +1340,7 @@
       %+  murn  ~(tap by dir:.^(arch %cy pax))
       |=  [=term ~]
       ^-  (unit [^term tank])
-      ?.  =(app (new-end [3 (met 3 app)] term))
+      ?.  =(app (end [3 (met 3 app)] term))
         ~
       ?~  =<(fil .^(arch %cy (weld pax ~[term %hoon])))
         ~
@@ -1352,7 +1352,7 @@
       %+  murn  ~(tap by var)
       |=  [name=term =cage]
       ^-  (unit [term tank])
-      ?.  =(variable (new-end [3 (met 3 variable)] name))
+      ?.  =(variable (end [3 (met 3 variable)] name))
         ~
       `[name (sell q.cage)]
     ::
@@ -1371,7 +1371,7 @@
       %+  murn
         ~(tap by dir:.^(arch %cy pfix))
       |=  [=term ~]
-      ?.  =(gen (new-end [3 (met 3 gen)] term))
+      ?.  =(gen (end [3 (met 3 gen)] term))
         ~
       ?~  =<(fil .^(arch %cy (weld pfix ~[term %hoon])))
         ~
@@ -1386,7 +1386,7 @@
       %+  murn
         ~(tap by dir:.^(arch %cy pax))
       |=  [=term ~]
-      ?.  =(gen (new-end [3 (met 3 gen)] term))
+      ?.  =(gen (end [3 (met 3 gen)] term))
         ~
       ?~  =<(fil .^(arch %cy (weld pax ~[term %hoon])))
         ~
@@ -1403,7 +1403,7 @@
       =/  back-pos
         (sub pos (met 3 completing))
       =/  to-send
-        (trip (new-rsh [3 (sub pos back-pos)] advance))
+        (trip (rsh [3 (sub pos back-pos)] advance))
       =|  fxs=(list sole-effect)
       ::
       :: Cursor is guaranteed to be at end so we don't worry about the

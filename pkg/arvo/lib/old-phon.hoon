@@ -88,9 +88,9 @@
 ::
 ++  mu
   |_  [top=@ bot=@]
-  ++  zag  [p=(new-end 4 (add top bot)) q=bot]
-  ++  zig  [p=(new-end 4 (add top (sub 0x1.0000 bot))) q=bot]
-  ++  zug  (mix (new-lsh 4 top) bot)
+  ++  zag  [p=(end 4 (add top bot)) q=bot]
+  ++  zig  [p=(end 4 (add top (sub 0x1.0000 bot))) q=bot]
+  ++  zug  (mix (lsh 4 top) bot)
   --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2eN, pseudo-cryptography      ::
@@ -111,7 +111,7 @@
     ?:  =(0 len)
       ~
     =>  .(len (dec len))
-    =+  mog=(zyft :(mix mig (new-end 3 len) (cut 3 [len 1] pyn)))
+    =+  mog=(zyft :(mix mig (end 3 len) (cut 3 [len 1] pyn)))
     [[1 mog] $(mig mog)]
   ::
   ++  wred                                              ::  restore structure
@@ -129,7 +129,7 @@
       ~
     =>  .(len (dec len))
     =+  mog=(cut 3 [len 1] cry)
-    [[1 :(mix mig (new-end 3 len) (zyrt mog))] $(mig mog)]
+    [[1 :(mix mig (end 3 len) (zyrt mog))] $(mig mog)]
   ::
   ++  xafo  |=([a=@ b=@] +((mod (add (dec b) a) 255)))
   ++  xaro  |=([a=@ b=@] +((mod (add (dec b) (sub 255 (mod a 255))) 255)))

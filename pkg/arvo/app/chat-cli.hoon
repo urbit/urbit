@@ -767,7 +767,7 @@
       :-  %chat-view-action
       !>  ^-  action:view
       :*  %create
-          (new-rsh 3 (spat path))
+          (rsh 3 (spat path))
           ''
           real-path  ::  chat
           group-path  ::  group

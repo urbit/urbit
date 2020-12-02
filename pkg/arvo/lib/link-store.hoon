@@ -22,7 +22,7 @@
   =*  host  r.p.u.murl
   ?-  -.host
     %&  (roll (join '.' p.host) (cury cat 3))
-    %|  (new-rsh 3 (scot %if p.host))
+    %|  (rsh 3 (scot %if p.host))
   ==
 ::
 ++  build-discussion-path

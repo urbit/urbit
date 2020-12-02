@@ -94,11 +94,11 @@
       %-  ~(rep by dir)
       |=  [[file=@t ~] out=(unit @t)]
       ?^  out  out
-      ?.  ?&  =((new-end [3 6] file) 'index.')
-              !=('sj.' (new-end [3 3] (swp 3 file)))
+      ?.  ?&  =((end [3 6] file) 'index.')
+              !=('sj.' (end [3 3] (swp 3 file)))
           ==
         out
-      ``@t`(new-rsh [3 6] file)
+      ``@t`(rsh [3 6] file)
     =/  js-name
       (cat 3 'index.' bundle-hash)
     =/  map-name
