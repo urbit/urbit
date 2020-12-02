@@ -14,7 +14,7 @@
 +$  txid  hash256
 +$  rawtx  btc-byts
 +$  buffer  (list @ux)
-+$  utxo  [pos=@ =txid height=@ value=sats]
++$  utxo  [pos=@ =txid height=@ value=sats recvd=(unit @da)]
 ++  address-info
   $:  =address
       confirmed-value=sats

@@ -14,7 +14,7 @@
   ==
 +$  result  [=req-id body=result-body]
 +$  result-body
-  $%  [%address-info utxos=(set utxo) used=? block=@ud time=(unit @da)]
+  $%  [%address-info utxos=(set utxo) used=? block=@ud]
       [%raw-tx =txid =rawtx]
   ==
 +$  error
@@ -41,7 +41,7 @@
     ==
   :: 
   +$  response
-    $%  [%get-address-info utxos=(set utxo) used=? block=@ud time=(unit @da)]
+    $%  [%get-address-info utxos=(set utxo) used=? block=@ud]
         [%get-raw-tx =txid =rawtx]
         [%get-block-count block=@ud]
         [%get-block-and-fee block=@ud fee=sats]
