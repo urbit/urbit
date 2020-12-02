@@ -266,7 +266,6 @@
         c3_c*   dns_c;                      //  -H, ames bootstrap domain
         c3_c*   jin_c;                      //  -I, inject raw event
         c3_c*   imp_c;                      //  -i, import pier state
-        c3_o    exp;                        //  -o, export pier state
         c3_w    hap_w;                      //  -C, cap memo cache
         c3_c*   lit_c;                      //  -J, ivory (fastboot) kernel
         c3_o    tra;                        //  -j, json trace
@@ -289,6 +288,7 @@
         c3_o    tex;                        //  -x, exit after loading
         c3_c*   pek_c;                      //  -X, scry path (/vc/desk/path)
         c3_c*   puk_c;                      //  -Y, scry result filename
+        c3_c*   puf_c;                      //  -Z, scry result format
       } u3_opts;
 
     /* u3_host: entire host.
