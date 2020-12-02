@@ -1317,16 +1317,6 @@
       ++  xeno
         |=  =ovum
         ^+  this
-        ::  XX update clients to %pass to arvo, remove
-        ::
-        ?:  ?=(?(%verb %whey) -.card.ovum)
-          %-  call
-          ~>  %mean.'xeno: bad waif'
-          ;;(waif:pith card.ovum)
-        ::
-        ::  XX uncomment to restore previous routing
-        ::
-        :: =.  wire.ovum  $/wire.ovum
         this(out [ovum out])
       --
     --

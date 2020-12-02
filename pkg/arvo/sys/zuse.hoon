@@ -1101,8 +1101,6 @@
           [%meld ~]                                     ::  unify memory
           [%pack ~]                                     ::  compact memory
           [%trim p=@ud]                                 ::  trim kernel state
-          [%verb ~]                                     ::  verbose mode
-          [%whey ~]                                     ::  memory report
       ==                                                ::
     +$  task                                            ::  in request ->$
       $~  [%vega ~]                                     ::
