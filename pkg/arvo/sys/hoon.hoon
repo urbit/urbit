@@ -368,6 +368,11 @@
   ::
   [(list item) state]
 ::
+++  step
+  ::    atom size or offset, in bloqs
+  ::
+  _`@u`1
+::
 ++  trap
   |$  [product]
   ::    a core with one arm `$`
@@ -821,14 +826,14 @@
   ::
 ++  bex                                                 ::  binary exponent
   ~/  %bex
-  |=  a=@
+  |=  a=bloq
   ^-  @
   ?:  =(0 a)  1
   (mul 2 $(a (dec a)))
 ::
 ++  can                                                 ::  assemble
   ~/  %can
-  |=  [a=bloq b=(list [p=@u q=@])]
+  |=  [a=bloq b=(list [p=step q=@])]
   ^-  @
   ?~  b  0
   (add (end a p.i.b q.i.b) (lsh a p.i.b $(b t.b)))
@@ -840,16 +845,17 @@
 ::
 ++  cut                                                 ::  slice
   ~/  %cut
-  |=  [a=bloq [b=@u c=@u] d=@]
+  |=  [a=bloq [b=step c=step] d=@]
   (end a c (rsh a b d))
 ::
 ++  end                                                 ::  tail
   ~/  %end
-  |=  [a=bloq b=@u c=@]
+  |=  [a=bloq b=step c=@]
   (mod c (bex (mul (bex a) b)))
 ::
 ++  fil                                                 ::  fill bloqstream
-  |=  [a=bloq b=@u c=@]
+  ~/  %fil
+  |=  [a=bloq b=step c=@]
   =+  n=0
   =+  d=c
   |-  ^-  @
@@ -859,7 +865,7 @@
 ::
 ++  lsh                                                 ::  left-shift
   ~/  %lsh
-  |=  [a=bloq b=@u c=@]
+  |=  [a=bloq b=step c=@]
   (mul (bex (mul (bex a) b)) c)
 ::
 ++  met                                                 ::  measure
@@ -928,7 +934,7 @@
 ::
 ++  rsh                                                 ::  right-shift
   ~/  %rsh
-  |=  [a=bloq b=@u c=@]
+  |=  [a=bloq b=step c=@]
   (div c (bex (mul (bex a) b)))
 ::
 ++  swp                                                 ::  naive rev bloq order
