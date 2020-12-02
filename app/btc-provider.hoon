@@ -163,6 +163,7 @@
     ::
       [%raw-tx @ *]
     ?>  ?=([%get-raw-tx *] resp)
+
     :_  state
     ~[(send-update [%.y (get-req-id wire) %raw-tx +.resp])]
     ::

@@ -6,7 +6,7 @@ The below requires norsyr's fix to `decompress-point` in order to work.
 :btc-provider|command [%set-credentials api-url='http://localhost:50002']
 :btc-provider|action ['blockfee' %ping ~]
 
-:btc-provider|action ['addr0' %address-info [%bech32 'bc1q59u5epktervh6fxqay2dlph0wxu9hjnx6v8n66']]
+:btc-provider|action ['addr0' %address-info [%bech32 'bc1qm7cegwfd0pvv9ypvz5nhstage00xkxevtrpshc']]
 :btc-provider|action ['addr1' %address-info [%bech32 'bc1qlwd7mw33uea5m8r2lsnsrkc7gp2qynrxsfxpfm']]
 :btc-provider|action ['addr2' %address-info [%bech32 'bc1qglkc9zfcn04vcc88nn0ljtxcpu5uxfznc3829k']]
 ::  first is an address w balance

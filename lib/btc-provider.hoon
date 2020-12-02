@@ -29,6 +29,7 @@
   ^-  (unit @da)
   ?:  =(0 secs)  ~
   [~ (add ~1970.1.1 `@dr`(mul secs ~s1))]
+
 ::
 ++  to-hex
   |=  h=@t
@@ -93,7 +94,6 @@
     :~  [%utxos (as:dejs:format utxo)]
         [%used bo:dejs:format]
         [%block ni:dejs:format]
-        [%time (cu:dejs:format from-epoch ni:dejs:format)]
     ==
   ++  utxo
     %-  ot:dejs:format
@@ -101,6 +101,7 @@
         ['tx_hash' (cu:dejs:format to-hash256 so:dejs:format)]
         [%height ni:dejs:format]
         [%value ni:dejs:format]
+        [%recvd (cu:dejs:format from-epoch ni:dejs:format)]
     ==
   ++  raw-tx
     %-  ot:dejs:format
