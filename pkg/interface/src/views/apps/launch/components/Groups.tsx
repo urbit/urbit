@@ -44,7 +44,7 @@ export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
 
   return (
     <>
-      {groups.map((group) => {
+      {groups.map((group, index) => {
         const path = group?.["group-path"];
         const unreadCount = graphUnreads(path)
         const notCount = graphNotifications(path);
@@ -52,6 +52,7 @@ export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
         return (
           <Group
             updates={notCount}
+            first={index === 0}
             unreads={unreadCount}
             path={group?.["group-path"]}
             title={group.metadata.title}
@@ -67,11 +68,12 @@ interface GroupProps {
   title: string;
   updates: number;
   unreads: number;
+  first: boolean;
 }
 function Group(props: GroupProps) {
-  const { path, title, unreads, updates } = props;
+  const { path, title, unreads, updates, first = false } = props;
   return (
-    <Tile to={`/~landscape${path}`}>
+    <Tile to={`/~landscape${path}`} gridColumnStart={first ? '1' : null}>
       <Col height="100%" justifyContent="space-between">
         <Text>{title}</Text>
         <Col>

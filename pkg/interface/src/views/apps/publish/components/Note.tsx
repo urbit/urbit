@@ -9,7 +9,7 @@ import { Comments } from "~/views/components/Comments";
 import { NoteNavigation } from "./NoteNavigation";
 import GlobalApi from "~/logic/api/global";
 import { getLatestRevision, getComments } from '~/logic/lib/publish';
-import { Author } from "./Author";
+import Author from "~/views/components/Author";
 import { Contacts, GraphNode, Graph, LocalUpdateRemoteContentPolicy, Association, Unreads } from "~/types";
 
 interface NoteProps {

@@ -807,12 +807,14 @@
       [%x %peek-update-log @ @ ~]
     =/  =ship   (slav %p i.t.t.path)
     =/  =term   i.t.t.t.path
-    =/  update-log=(unit update-log:store)  (~(get by update-logs) [ship term])
-    ?~  update-log  [~ ~]
-    =/  result=(unit [time update:store])
-      (peek:orm-log:store u.update-log)
-    ?~  result  [~ ~]
-    ``noun+!>([~ -.u.result])
+    =/  m-update-log=(unit update-log:store)  (~(get by update-logs) [ship term])
+    :-  ~  :-  ~  :-  %noun
+    !>  ^-  (unit time)
+    %+  biff  m-update-log
+    |=  =update-log:store
+    =/  result=(unit [=time =update:store])
+      (peek:orm-log:store update-log)
+    (bind result |=([=time update:store] time))
   ==
   ++  get-node-children
     |=  [=ship =term =index:store]

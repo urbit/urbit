@@ -102,13 +102,13 @@ export function getLatestCommentRevision(node: GraphNode): [number, Post] {
 export function getComments(node: GraphNode): GraphNode {
   const comments = node.children.get(bigInt(2));
   if(!comments) {
-    return { post: buntPost(), children: new BigIntOrderedMap() } 
+    return { post: buntPost(), children: new BigIntOrderedMap() }
   }
   return comments;
 }
 
 export function getSnippet(body: string) {
-  const start = body.slice(0, 400);
-  return start === body ? start : `${start}...`;
+  const start = body.slice(0, body.indexOf('\n', 2));
+  return (start === body || start.startsWith("![")) ? start : `${start}...`;
 }
- 
+

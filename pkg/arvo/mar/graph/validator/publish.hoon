@@ -8,8 +8,10 @@
   ::
   ++  notification-kind
     ?+  index.p.i   ~
-      [@ %1 @ ~]  `[%note 0 %each]
-      [@ %2 @ @ ~]  `[%comment 1 %count]
+      [@ %1 %1 ~]    `[%note 0 %each]
+      [@ %1 @ ~]     `[%edit-note 0 %each]
+      [@ %2 @ %1 ~]  `[%comment 1 %count]
+      [@ %2 @ @ ~]   `[%edit-comment 1 %count]
     ==
   --
 ++  grab

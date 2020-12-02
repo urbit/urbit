@@ -3,7 +3,7 @@ import moment from "moment";
 import _ from "lodash";
 import { Box, Row, Text, Rule } from "@tlon/indigo-react";
 
-import { OverlaySigil } from './overlay-sigil';
+import OverlaySigil from '~/views/components/OverlaySigil';
 import { uxToHex, cite, writeText } from '~/logic/lib/util';
 import { Envelope, IMessage } from "~/types/chat-update";
 import { Group, Association, Contacts, LocalUpdateRemoteContentPolicy, Post } from "~/types";
@@ -216,16 +216,16 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
           contact={contact}
           color={color}
           sigilClass={sigilClass}
-          association={association}
           group={group}
           hideAvatars={hideAvatars}
           hideNicknames={hideNicknames}
           scrollWindow={scrollWindow}
           history={history}
           api={api}
-          className="fl pr3 v-top pt1 flex-shrink-0"
+          bg="white"
+          className="fl pr3 v-top pt1"
         />
-        <Box flexShrink={0} flexGrow='1' display='block' className="clamp-message">
+        <Box flexGrow={1} display='block' className="clamp-message">
           <Box
             flexShrink={0}
             className="hide-child"
@@ -291,6 +291,11 @@ export const MessageContent = ({ content, contacts, remoteContentPolicy, measure
           }}}
           videoProps={{style: {
             maxWidth: '18rem'
+          }
+          }}
+          textProps={{style: {
+            fontSize: 'inherit',
+            textDecoration: 'underline'
           }}}
         />
       </Text>

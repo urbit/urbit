@@ -1,13 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from "react-router-dom";
 import { Contacts } from '~/types/contact-update';
 import GlobalApi from '~/logic/api/global';
 import { Box, Row, Text } from '@tlon/indigo-react';
 import styled from 'styled-components';
-import { Author } from '~/views/apps/publish/components/Author';
+import Author from '~/views/components/Author';
 import { GraphNode, TextContent } from '~/types/graph-update';
 import tokenizeMessage from '~/logic/lib/tokenizeMessage';
-import { LocalUpdateRemoteContentPolicy } from '~/types';
+import { LocalUpdateRemoteContentPolicy, Group } from '~/types';
 import { MentionText } from '~/views/components/MentionText';
 import { getLatestCommentRevision } from '~/logic/lib/publish';
 
@@ -28,10 +28,11 @@ interface CommentItemProps {
   hideNicknames: boolean;
   hideAvatars: boolean;
   remoteContentPolicy: LocalUpdateRemoteContentPolicy;
+  group: Group;
 }
 
 export function CommentItem(props: CommentItemProps) {
-  const { ship, contacts, name, api, remoteContentPolicy, comment } = props;
+  const { ship, contacts, name, api, remoteContentPolicy, comment, group } = props;
   const [revNum, post] = getLatestCommentRevision(comment);
   const disabled = props.pending || window.ship !== post?.author;
 
@@ -54,6 +55,9 @@ export function CommentItem(props: CommentItemProps) {
           unread={props.unread}
           hideAvatars={props.hideAvatars}
           hideNicknames={props.hideNicknames}
+          remoteContentPolicy={remoteContentPolicy}
+          group={group}
+          api={api}
         >
           {!disabled && (
             <Box display="inline-block" verticalAlign="middle">

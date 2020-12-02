@@ -12,6 +12,8 @@ import { NewGroup } from './components/NewGroup';
 import { JoinGroup } from './components/JoinGroup';
 
 import { cite } from '~/logic/lib/util';
+import { Body } from '../components/Body';
+import { Box } from '@tlon/indigo-react';
 
 
 type LandscapeProps = StoreState & {
@@ -94,12 +96,16 @@ export default class Landscape extends Component<LandscapeProps, {}> {
         <Route path="/~landscape/new"
           render={routeProps=> {
             return (
-              <NewGroup
-                groups={props.groups}
-                contacts={props.contacts}
-                api={props.api}
-                {...routeProps}
-              />
+              <Body>
+                <Box maxWidth="300px">
+                  <NewGroup
+                    groups={props.groups}
+                    contacts={props.contacts}
+                    api={props.api}
+                    {...routeProps}
+                  />
+                </Box>
+              </Body>
             );
           }}
         />
@@ -114,13 +120,17 @@ export default class Landscape extends Component<LandscapeProps, {}> {
             const { ship, name } = routeProps.match.params;
             const autojoin = ship && name ? `${ship}/${name}` : null;
             return (
-              <JoinGroup
-                groups={props.groups}
-                contacts={props.contacts}
-                api={props.api}
-                autojoin={autojoin}
-                {...routeProps}
-              />
+              <Body>
+                <Box maxWidth="300px">
+                  <JoinGroup
+                    groups={props.groups}
+                    contacts={props.contacts}
+                    api={props.api}
+                    autojoin={autojoin}
+                    {...routeProps}
+                  />
+                </Box>
+              </Body>
             );
           }}
         />
