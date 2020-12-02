@@ -56,3 +56,14 @@
     }
   }
 
+u3_noun
+u3wc_new_end(u3_noun cor)
+{
+  u3_atom bloq, step;
+  u3_noun a, b;
+  u3x_mean(cor, u3x_sam_2, &a,
+                u3x_sam_3, &b, 0);
+  u3x_bite(a, &bloq, &step);
+
+  return u3qc_end(bloq, step, u3x_atom(b));
+}
