@@ -706,9 +706,9 @@
   ^-  (quip card _state)
   =/  sty=state-10
     :*  %10
-      (remake-map ;;((tree [path ship]) -.arc))
-      ;;(? +<.arc)
-      (remake-map ;;((tree [path ?]) +>.arc))
+      (remake-map ;;((tree [path ship]) +<.arc))
+      ;;(? +<-.arc)
+      (remake-map ;;((tree [path ?]) +>+.arc))
     ==
   :_  sty
   %+  turn  ~(tap by synced.sty)
