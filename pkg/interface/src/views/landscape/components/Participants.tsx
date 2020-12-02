@@ -347,7 +347,7 @@ function Participant(props: {
               </Action>
               {props.role === 'admin' && (
                 <>
-                  {!isInvite && (
+                  {(!isInvite && contact.patp !== window.ship) && (
                     <StatelessAsyncAction onClick={onBan} bg="transparent">
                       <Text color="red">Ban from {title}</Text>
                     </StatelessAsyncAction>
@@ -358,9 +358,9 @@ function Participant(props: {
                     </StatelessAsyncAction>
                   ) : (
                     <>
-                      <StatelessAsyncAction onClick={onKick} bg="transparent">
+                    {(contact.patp !== window.ship) && (<StatelessAsyncAction onClick={onKick} bg="transparent">
                         <Text color="red">Kick from {title}</Text>
-                      </StatelessAsyncAction>
+                      </StatelessAsyncAction>)}
                       <StatelessAsyncAction onClick={onPromote} bg="transparent">
                         Promote to Admin
                       </StatelessAsyncAction>
