@@ -805,6 +805,30 @@ u3r_bush(u3_noun  a,
   }
 }
 
+/* u3r_bite(): retrieve/default $bloq and $step from $bite.
+*/
+c3_o
+u3r_bite(u3_noun bite, u3_atom* bloq, u3_atom *step)
+{
+  u3_noun hed, tal;
+
+  if ( c3n == u3r_cell(bite, &hed, &tal) ) {
+    *bloq = bite;
+    *step = 1;
+    return c3y;
+  }
+  else if (  (c3n == u3a_is_atom(hed))
+          || (c3n == u3a_is_atom(tal)) )
+  {
+    return c3n;
+  }
+  else {
+    *bloq = hed;
+    *step = tal;
+    return c3y;
+  }
+}
+
 /* u3r_cell():
 **
 **   Factor (a) as a cell (b c).
