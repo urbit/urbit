@@ -93,13 +93,14 @@
     (json-response:gen jon)
   ::
       %import-all
+    ~&  %import-all
     =/  enc  (de:base64 base64-jam.source.com)
     ?~  enc  !!
-    =/  by-app  ;;((list [@tas @]) (cue q.u.enc))
+    =/  by-app  ;;((list [@tas *]) (cue q.u.enc))
     :_  this
     %+  weld  (give-simple-payload:app eyre-id not-found:gen)
     %+  turn  by-app
-    |=  [app=@tas data=@]
+    |=  [app=@tas data=*]
     ^-  card:agent:gall
     [%pass /import-all %agent [our.bowl app] %poke %import !>(data)]
   ==
