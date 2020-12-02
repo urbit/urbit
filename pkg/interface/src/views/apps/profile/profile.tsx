@@ -12,7 +12,16 @@ import { ContactCard } from "~/views/landscape/components/ContactCard";
 
 const SidebarItem = ({ children, view, current }) => {
   const selected = current === view;
-  const color = selected ? "blue" : "black";
+  const icon = (view) => {
+    switch(view) {
+    case 'identity':
+      return 'Smiley';
+    case 'settings':
+      return 'Adjust';
+    default:
+      return 'Circle'
+    }
+  }
   return (
     <Link to={`/~profile/${view}`}>
       <Row
@@ -20,10 +29,10 @@ const SidebarItem = ({ children, view, current }) => {
         verticalAlign="middle"
         py={1}
         px={3}
-        backgroundColor={selected ? "washedBlue" : "white"}
+        backgroundColor={selected ? "washedGray" : "white"}
       >
-        <Icon mr={2} display="inline-block" icon="Circle" color={color} />
-        <Text color={color} fontSize={0}>
+        <Icon mr={2} display="inline-block" icon={icon(view)} color='black' />
+        <Text color='black' fontSize={0}>
           {children}
         </Text>
       </Row>
