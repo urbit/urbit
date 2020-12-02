@@ -1,7 +1,8 @@
 ::  graph-store [landscape]
 ::
 ::
-/+  store=graph-store, sigs=signatures, res=resource, default-agent, dbug
+/+  store=graph-store, sigs=signatures, res=resource, default-agent, dbug,
+    *migrate
 ~%  %graph-store-top  ..is  ~
 |%
 +$  card  card:agent:gall
@@ -617,7 +618,8 @@
   ++  poke-import
     |=  arc=*
     ^-  (quip card _state)
-    =/  sty  ;;(state-2 arc)
+    |^
+    =/  sty=state-2  [%2 (remake-network ;;(tree-network +.arc))]
     :_  sty
     %+  turn  ~(tap by graphs.sty)
     |=  [rid=resource:store =marked-graph:store]
@@ -626,6 +628,130 @@
       =/  =cage  [%push-hook-action !>([%add rid])]
       [%pass / %agent [our.bowl %graph-push-hook] %poke cage]
     (try-rejoin rid 0)
+    ::
+    +$  tree-network
+      $:  graphs=tree-graphs
+          tag-queries=(tree [term (tree resource:store)])
+          update-logs=tree-update-logs
+          archive=tree-graphs
+          validators=(tree ^mark)
+      ==
+    +$  tree-graphs          (tree [resource:store tree-marked-graph])
+    +$  tree-marked-graph    [p=tree-graph q=(unit ^mark)]
+    +$  tree-graph           (tree [atom tree-node])
+    +$  tree-node            [post=tree-post children=tree-internal-graph]
+    +$  tree-internal-graph
+      $~  [%empty ~]
+      $%  [%graph p=tree-graph]
+          [%empty ~]
+      ==
+    +$  tree-update-logs     (tree [resource:store tree-update-log])
+    +$  tree-update-log      (tree [time tree-logged-update])
+    +$  tree-logged-update
+      $:  %0
+          p=time
+          $=  q
+          $%  [%add-nodes =resource:store nodes=(tree [index:store tree-node])]
+              [%remove-nodes =resource:store indices=(tree index:store)]
+              [%add-signatures =uid:store signatures=tree-signatures]
+              [%remove-signatures =uid:store signatures=tree-signatures]
+          ==
+      ==
+    +$  tree-signatures      (tree signature:store)
+    +$  tree-post
+      $:  author=ship
+          =index:store
+          time-sent=time
+          contents=(list content:store)
+          hash=(unit hash:store)
+          signatures=tree-signatures
+      ==
+    ::
+    ++  remake-network
+      |=  t=tree-network
+      ^-  network:store
+      :*  (remake-graphs graphs.t)
+          (remake-jug tag-queries.t)
+          (remake-update-logs update-logs.t)
+          (remake-graphs archive.t)
+          (remake-set validators.t)
+      ==
+    ::
+    ++  remake-graphs
+      |=  t=tree-graphs
+      ^-  graphs:store
+      %-  remake-map
+      (~(run by t) remake-marked-graph)
+    ::
+    ++  remake-marked-graph
+      |=  t=tree-marked-graph
+      ^-  marked-graph:store
+      [(remake-graph p.t) q.t]
+    ::
+    ++  remake-graph
+      |=  t=tree-graph
+      ^-  graph:store
+      %+  gas:orm  *graph:store
+      %+  turn  ~(tap by t)
+      |=  [a=atom tn=tree-node]
+      ^-  [atom node:store]
+      [a (remake-node tn)]
+    ::
+    ++  remake-internal-graph
+      |=  t=tree-internal-graph
+      ^-  internal-graph:store
+      ?:  ?=(%empty -.t)
+        [%empty ~]
+      [%graph (remake-graph p.t)]
+    ::
+    ++  remake-node
+      |=  t=tree-node
+      ^-  node:store
+      :-  (remake-post post.t)
+      (remake-internal-graph children.t)
+    ::
+    ++  remake-update-logs
+      |=  t=tree-update-logs
+      ^-  update-logs:store
+      %-  remake-map
+      (~(run by t) remake-update-log)
+    ::
+    ++  remake-update-log
+      |=  t=tree-update-log
+      ^-  update-log:store
+      =/  ulm  ((ordered-map time logged-update:store) gth)
+      %+  gas:ulm  *update-log:store
+      %+  turn  ~(tap by t)
+      |=  [=time tlu=tree-logged-update]
+      ^-  [^time logged-update:store]
+      [time (remake-logged-update tlu)]
+    ::
+    ++  remake-logged-update
+      |=  t=tree-logged-update
+      ^-  logged-update:store
+      :+  %0  p.t
+      ?-  -.q.t
+          %add-nodes
+        :-  %add-nodes
+        :-  resource.q.t
+        %-  remake-map
+        (~(run by nodes.q.t) remake-node)
+      ::
+          %remove-nodes
+        [%remove-nodes resource.q.t (remake-set indices.q.t)]
+      ::
+          %add-signatures
+        [%add-signatures uid.q.t (remake-set signatures.q.t)]
+      ::
+          %remove-signatures
+        [%remove-signatures uid.q.t (remake-set signatures.q.t)]
+      ==
+    ::
+    ++  remake-post
+      |=  t=tree-post
+      ^-  post:store
+      t(signatures (remake-set signatures.t))
+    --
   ::
   ++  try-rejoin
     |=  [rid=resource:store nack-count=@]
@@ -837,10 +963,11 @@
     [~ this]
   =/  rid=resource:store  (de-path:res t.t.wire)
   ?~  p.sign
-    ::  leave and poke our graph-pull-hook
     =/  =cage  [%pull-hook-action !>([%add entity.rid rid])]
     :_  this
-    [%pass / %agent [our.bowl %graph-pull-hook] %poke cage]~
+    :~  [%pass / %agent [our.bowl %graph-pull-hook] %poke cage]
+        [%pass wire %agent [entity.rid %graph-push-hook] %leave ~]
+    ==
   =/  nack-count=@ud  (slav %ud i.t.wire)
   =/  wakeup=@da
     (add now.bowl (mul ~s1 (bex (min 19 nack-count))))

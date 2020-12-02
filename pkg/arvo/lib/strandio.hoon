@@ -219,6 +219,25 @@
   ;<  ~  bind:m  (send-raw-card card)
   (take-poke-ack /poke)
 ::
+++  raw-poke
+  |=  [=dock =cage]
+  =/  m  (strand ,~)
+  ^-  form:m
+  =/  =card:agent:gall  [%pass /poke %agent dock %poke cage]
+  ;<  ~  bind:m  (send-raw-card card)
+  =/  m  (strand ,~)
+  ^-  form:m
+  |=  tin=strand-input:strand
+  ?+  in.tin  `[%skip ~]
+      ~
+    `[%wait ~]
+  ::
+      [~ %agent * %poke-ack *]
+    ?.  =(/poke wire.u.in.tin)
+      `[%skip ~]
+    `[%done ~]
+  ==
+::
 ++  poke-our
   |=  [=term =cage]
   =/  m  (strand ,~)
