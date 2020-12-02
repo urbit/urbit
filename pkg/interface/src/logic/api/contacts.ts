@@ -32,10 +32,6 @@ export default class ContactsApi extends BaseApi<StoreState> {
     });
   }
 
-  delete(path: Path) {
-    return this.viewAction({ delete: { path } });
-  }
-
   remove(path: Path, ship: Patp) {
     return this.viewAction({ remove: { path, ship } });
   }
