@@ -63,8 +63,6 @@ class Channel {
   }
 
   resetDebounceTimer() {
-    console.log('cancelled, debouncing in 500');
-    console.log(this.outstandingJSON);
     if(this.debounceTimer) {
       clearTimeout(this.debounceTimer);
       this.debounceTimer = null;
@@ -259,9 +257,7 @@ class Channel {
       } else if (obj.response == "diff") {
         // ensure we ack before channel clogs
         if((this.lastEventId - this.lastAcknowledgedEventId) > 30) {
-          clearTimeout(this.debounceTimer);
-          this.debounceTimer = null;
-          this.sendJSONToChannel();
+          this.clearQueue();
         }
 
         let funcs = subFuncs;
