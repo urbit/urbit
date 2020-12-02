@@ -901,14 +901,6 @@
   %+  add  $(i +(i), b t.b)
   (lsh bloq (mul step i) (end bloq step i.b))
 ::
-++  repn
-  ~/  %repn
-  |=  [bits=@ud x=(list @)]
-  =|  c=@ud
-  |-  ^-  @
-  ?~  x  0
-  (add (lsh 0 (mul bits c) (end 0 bits i.x)) $(c +(c), x t.x))
-::
 ++  rev
   ::  reverses block order, accounting for leading zeroes
   ::
@@ -922,15 +914,6 @@
   %^  lsh  boz
     (sub len (met boz dat))
   (swp boz dat)
-::
-::  Like `rip` but produces n-bit blocks instead of 2^n bit blocks.
-::
-++  ripn
-  ~/  %ripn
-  |=  [bits=@ud x=@]
-  ^-  (list @)
-  ?:  =(0 x)  ~
-  [(end 0 bits x) $(x (rsh 0 bits x))]
 ::
 ++  rip                                                 ::  disassemble
   ~/  %rip

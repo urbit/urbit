@@ -33,7 +33,7 @@
   =/  atom-word-width  (div-ceil atom-bit-width wid)
   =/  rslt-word-width  (div-ceil octs-bit-width wid)
   =/  pad              (sub rslt-word-width atom-word-width)
-  =/  x  (ripn wid q.octs)
+  =/  x  (rip [0 wid] q.octs)
   %+  weld  x
   (reap pad 0)
 ::
@@ -128,6 +128,6 @@
     =/  len  (sub (mul 3 (div (add lat dif) 4)) dif)
     :+  ~  len
     %+  swp  3
-    (repn 6 (flop (weld dat (reap dif 0))))
+    (rep [0 6] (flop (weld dat (reap dif 0))))
   --
 --

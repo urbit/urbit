@@ -6192,7 +6192,7 @@
       ++  rule
         %+  cook
           |=  a=(list @)  ^-  octs
-          [(add (dvr (lent a) 2)) (repn 4 (flop a))]
+          [(add (dvr (lent a) 2)) (rep [0 4] (flop a))]
         (star hit)
       --
     ::                                                  ::  ++en-base64:mimes:
