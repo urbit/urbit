@@ -8,7 +8,14 @@
     *metadata-hook,
     *metadata-store,
     *group
-/+  *contact-json, default-agent, dbug, group-store, verb, resource, grpl=group
+/+  *contact-json,
+    default-agent,
+    dbug,
+    group-store,
+    verb,
+    resource,
+    grpl=group,
+    *migrate
 ~%  %contact-hook-top  ..is  ~
 |%
 +$  card  card:agent:gall
@@ -286,7 +293,8 @@
 ++  poke-import
   |=  arc=*
   ^-  (quip card _state)
-  =/  sty=state-three  ;;(state-three arc)
+  =/  sty=state-three
+    [%3 (remake-map ;;((tree [path ship]) +<.arc)) ;;(? +>.arc)]
   :_  sty
   %+  turn  ~(tap by synced.sty)
   |=  [=path =ship]
