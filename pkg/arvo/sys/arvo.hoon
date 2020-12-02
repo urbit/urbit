@@ -88,7 +88,7 @@
 +|  %interface
 ::
 ::  $ball: dynamic kernel action
-::  $curd: tagged, untyped event
+::  $card: tagged, untyped event
 ::  $duct: causal history
 ::  +hobo: %soft task builder
 ::  $goof: crash label and trace XX fail/ruin/crud/flaw/lack/miss
@@ -108,7 +108,7 @@
 ::  +wite: kernel action/error builder
 ::
 +$  ball  (wite [vane=term task=maze] maze)
-+$  curd  (cask)
++$  card  (cask)
 +$  duct  (list wire)
 ++  hobo
   |$  [a]
@@ -121,7 +121,7 @@
           (pair cord (each * (list mass)))
 +$  monk  (each ship (pair @tas @ta))
 +$  move  [=duct =ball]
-+$  ovum  (pair wire curd)
++$  ovum  [=wire =card]
 ::
 +$  roof  (room vase)                                   ::  namespace
 +$  rook  (room meta)                                   ::  meta-namespace
@@ -490,11 +490,8 @@
       ::  $hoof: hoon source
       ::  $news: collated updates
       ::  $oped: module updates
+      ::  $seed: next kernel source
       ::
-      ::    XX replace top-level structures
-      ::
-      +$  card  (cask)
-      +$  ovum  [=wire =card]
       +$  hoof  @t
       +$  news
           $:  ::  sys: installs + replacements
@@ -1273,7 +1270,7 @@
         ?~  wire.ovum
           ~>(%mean.'pith: bad wire' !!)
         ::
-        ?.  ?=(?(%crud %wack %wyrd) -.card.ovum)
+        ?.  ?=(?(%crud %wack %wyrd) p.card.ovum)
           (emit $/~ [*duct (gest ovum)] ~)
         ::
         =/  buz  ~>  %mean.'pith: bad wasp'
@@ -1537,7 +1534,7 @@
       now.sol  now
     ==
   ::
-  ~|  poke+-.q.ovo
+  ~|  poke/p.card.ovo
   =/  zef=(each (pair (list ovum) soul) (trap ^))
     loop:(~(poke le:part [pit vil] sol) ovo)
   ?-  -.zef
@@ -1609,9 +1606,9 @@
   |=  [now=@da ovo=ovum]
   ^-  ^
   =/  wip
-    ~|  [p.ovo p.q.ovo]
+    ~|  poke/p.card.ovo
     ~>  %mean.'arvo: bad wisp'
-    ;;(wisp q.ovo)
+    ;;(wisp card.ovo)
   ::
   =.  ..poke
     |-  ^+  ..poke
