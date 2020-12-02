@@ -9,6 +9,10 @@ export default class BaseSubscription<S extends object> {
     this.channel.setOnChannelOpen(this.onChannelOpen.bind(this));
   }
 
+  clearQueue() {
+    this.channel.clearQueue();
+  }
+
   delete() {
     this.channel.delete();
   }
