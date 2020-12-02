@@ -1503,10 +1503,6 @@ static c3_c* _141_two_end_ha[] = {
   "45a0efc0c4ae4b93f554d480a9d2c52474d5ebd6b1b9b0ab888b9bee2117db55",
   0
 };
-static u3j_harm _141_two_new_end_a[] = {{".2", u3wc_new_end, c3y}, {}};
-static c3_c* _141_two_new_end_ha[] = {
-  0
-};
 static u3j_harm _141_two_gor_a[] = {{".2", u3wc_gor, c3y}, {}};
 static c3_c* _141_two_gor_ha[] = {
   "3ab7d6a56b8b347bd677a77ec43cda984d1eb869bab5c9bc2185f5c4a366703a",
@@ -1515,10 +1511,6 @@ static c3_c* _141_two_gor_ha[] = {
 static u3j_harm _141_two_lsh_a[] = {{".2", u3wc_lsh, c3y}, {}};
 static c3_c* _141_two_lsh_ha[] = {
   "a93f01f1db5bcaf1973d01234bbcec8f8adf9d6402a8d715a1b13b70a140a428",
-  0
-};
-static u3j_harm _141_two_new_lsh_a[] = {{".2", u3wc_new_lsh, c3y}, {}};
-static c3_c* _141_two_new_lsh_ha[] = {
   0
 };
 //  XX appears to be a duplicate of _141_one_mas_a
@@ -1583,10 +1575,6 @@ static c3_c* _141_two_rip_ha[] = {
 static u3j_harm _141_two_rsh_a[] = {{".2", u3wc_rsh, c3y}, {}};
 static c3_c* _141_two_rsh_ha[] = {
   "a401145b4c11ec8d17a729fe30f06c295865ffed1b970b0a788f0fec1ed0a703",
-  0
-};
-static u3j_harm _141_two_new_rsh_a[] = {{".2", u3wc_new_rsh, c3y}, {}};
-static c3_c* _141_two_new_rsh_ha[] = {
   0
 };
 static u3j_harm _141_two_swp_a[] = {{".2", u3wc_swp, c3y}, {}};
@@ -1857,11 +1845,11 @@ static u3j_core _141_two_d[] =
   { "dor", 7, _141_two_dor_a, 0, _141_two_dor_ha },
   { "dvr", 7, _141_two_dvr_a, 0, _141_two_dvr_ha },
   { "end", 7, _141_two_end_a, 0, _141_two_end_ha },
-  { "new-end", 7, _141_two_new_end_a, 0, _141_two_new_end_ha },
+  { "new-end", 7, _141_two_end_a, 0, _141_two_end_ha },
   { "gor", 7, _141_two_gor_a, 0, _141_two_gor_ha },
   { "jam", 7, _141_two_jam_a, 0, _141_two_jam_ha },
   { "lsh", 7, _141_two_lsh_a, 0, _141_two_lsh_ha },
-  { "new-lsh", 7, _141_two_new_lsh_a, 0, _141_two_new_lsh_ha },
+  { "new-lsh", 7, _141_two_lsh_a, 0, _141_two_lsh_ha },
   { "mas", 7, _141_two_mas_a, 0, _141_two_mas_ha },
   { "mat", 7, _141_two_mat_a, 0, _141_two_mat_ha },
   { "met", 7, _141_two_met_a, 0, _141_two_met_ha },
@@ -1874,7 +1862,7 @@ static u3j_core _141_two_d[] =
   { "rev", 7, _141_two_rev_a, 0, _141_two_rev_ha },
   { "rip", 7, _141_two_rip_a, 0, _141_two_rip_ha },
   { "rsh", 7, _141_two_rsh_a, 0, _141_two_rsh_ha },
-  { "new-rsh", 7, _141_two_new_rsh_a, 0, _141_two_new_rsh_ha },
+  { "new-rsh", 7, _141_two_rsh_a, 0, _141_two_rsh_ha },
   { "swp", 7, _141_two_swp_a, 0, _141_two_swp_ha },
   { "rub", 7, _141_two_rub_a, 0, _141_two_rub_ha },
   { "peg", 7, _141_two_peg_a, 0, _141_two_peg_ha },
