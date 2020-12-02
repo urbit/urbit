@@ -6,7 +6,7 @@
 ::  /group/%group-path                      all updates related to this group
 ::
 /-  *metadata-store, *metadata-hook
-/+  default-agent, dbug, verb, grpl=group
+/+  default-agent, dbug, verb, grpl=group, *migrate
 ~%  %metadata-hook-top  ..is  ~
 |%
 +$  card  card:agent:gall
@@ -196,7 +196,8 @@
 ++  poke-import
   |=  arc=*
   ^-  (quip card _state)
-  =/  sty=state-one  ;;(state-one arc)
+  =/  sty=state-one
+    [%1 (remake-map ;;((tree [group-path ship]) +.arc))]
   :_  sty
   %+  murn  ~(tap by synced.sty)
   |=  [=group-path =ship]

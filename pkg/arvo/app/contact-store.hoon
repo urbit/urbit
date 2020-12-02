@@ -2,7 +2,7 @@
 ::
 :: data store that holds group-based contact data
 ::
-/+  *contact-json, default-agent, dbug
+/+  *contact-json, default-agent, dbug, *migrate
 |%
 +$  card  card:agent:gall
 +$  versioned-state
@@ -207,7 +207,10 @@
 ++  poke-import
   |=  arc=*
   ^-  (quip card _state)
-  =/  sty=state-three  ;;(state-three arc)
+  =/  sty=state-three
+    :-  %3
+    %-  remake-map-of-map
+    ;;((tree [path (tree [ship contact])]) +.arc)
   [~ sty]
 ::
 ++  handle-create
