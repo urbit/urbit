@@ -353,9 +353,9 @@ function Participant(props: {
                     </StatelessAsyncAction>
                   )}
                   {role === 'admin' ? (
-                    <StatelessAsyncAction onClick={onDemote} bg="transparent">
+                    group?.tags?.role?.admin?.size > 1 && (<StatelessAsyncAction onClick={onDemote} bg="transparent">
                       Demote from Admin
-                    </StatelessAsyncAction>
+                    </StatelessAsyncAction>)
                   ) : (
                     <>
                     {(contact.patp !== window.ship) && (<StatelessAsyncAction onClick={onKick} bg="transparent">
