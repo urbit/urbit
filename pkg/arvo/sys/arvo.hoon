@@ -271,21 +271,17 @@
   ==
 ::
 +$  waif
-  ::  %lyra: upgrade kernel
   ::  %trim: trim state, spam to all
   ::  %vega: notify vanes post upgrade
   ::  %what: update from files
   ::  %whey: produce $mass                    :: XX remove, scry
   ::  %verb: toggle laconicity
-  ::  %veer: upgrade module
   ::
-  $%  [%lyra hun=(unit @t) van=@t]
-      [%trim p=@ud]
+  $%  [%trim p=@ud]
       [%vega ~]
       [%what p=(list (pair path (cask)))]
       [%whey ~]
       [%verb p=(unit ?)]
-      [%veer lal=@tas pax=path txt=@t]
   ==
 +$  wasp
   ::  %crud: reroute $ovum with $goof
@@ -297,7 +293,7 @@
       [%wyrd p=vere]
   ==
 +$  wisp
-  $%  $>(?(%verb %veer %what) waif)
+  $%  $>(?(%verb %what) waif)
       $>(?(%wack %wyrd) wasp)
       [%whom p=ship]
   ==
@@ -1239,10 +1235,6 @@
         ^+  ..pith
         ?^  dud  ~>(%mean.'pith: goof' !!)
         ?-  -.waif
-          %lyra  =;  wat  $(waif wat)
-                 :+  %what  [/sys/arvo hoon/van.waif]
-                 ?~  hun.waif  ~
-                 [[/sys/hoon hoon/u.hun.waif] ~]
         ::
         ::  %trim: clear state
         ::
@@ -1255,10 +1247,6 @@
         ::
           %vega  (emit $/~ (spam /arvo !>(waif)))  :: XX also out
           %verb  ..pith(lac.fad ?~(p.waif !lac.fad u.p.waif))
-        ::
-          %veer  =/  pax
-                   sys/?:(?=(%$ lal.waif) /zuse /vane/[(grow lal.waif)])
-                 $(waif what/[[pax hoon/txt.waif] ~])
         ::
           %what  ~(kel what p.waif)
           %whey  ..pith(out [[//arvo mass/whey] out])
@@ -1331,7 +1319,7 @@
         ^+  this
         ::  XX update clients to %pass to arvo, remove
         ::
-        ?:  ?=(?(%lyra %veer %verb %whey) -.card.ovum)
+        ?:  ?=(?(%verb %whey) -.card.ovum)
           %-  call
           ~>  %mean.'xeno: bad waif'
           ;;(waif:pith card.ovum)
@@ -1639,10 +1627,6 @@
     |-  ^+  ..poke
     ?-    -.wip
       %verb  ..poke(lac ?~(p.wip !lac u.p.wip))
-    ::
-      %veer  =/  pax
-               sys/?:(?=(%$ lal.wip) /zuse /vane/[(grow lal.wip)])
-             $(q.ovo what/[[pax hoon/txt.wip] ~])
     ::
       %wack  ..poke(eny `p.wip)
     ::

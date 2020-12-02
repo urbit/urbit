@@ -44,9 +44,7 @@
           $>  $?  %crud                                 ::
                   %heft                                 ::
                   %init                                 ::  XX obsolete?
-                  %lyra                                 ::
                   %text                                 ::
-                  %veer                                 ::
                   %verb                                 ::
               ==                                        ::
           task:able:dill                                ::
@@ -118,11 +116,9 @@
                  (crud p.kyz q.kyz)
           %blew  (send %rez p.p.kyz q.p.kyz)
           %heft  (dump %whey ~)
-          %lyra  (dump kyz)
           %meld  (dump kyz)
           %pack  (dump kyz)
           %crop  (dump trim+p.kyz)
-          %veer  (dump kyz)
           %verb  (dump kyz)
         ==
       ::
