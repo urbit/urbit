@@ -926,7 +926,7 @@
     ::
     ::    Logic duplicates +com:nu:crub:crypto and +sure:as:crub:crypto.
     ::
-    =/  key  (end 8 1 (rsh 3 1 public-key.open-packet))
+    =/  key  (new-end 8 (rsh 3 1 public-key.open-packet))
     ?>  (veri:ed:crypto signature signed key)
     ::  store comet as peer in our state
     ::
@@ -1551,7 +1551,7 @@
       =/  pumps=(list message-pump-state)
         %+  murn  ~(tap by snd.peer-state)
         |=  [=bone =message-pump-state]
-        ?:  =(0 (end 0 1 bone))
+        ?:  =(0 (new-end 0 bone))
           ~
         `u=message-pump-state
       ::  clogged: are five or more response messages unsent to this peer?
@@ -1780,11 +1780,11 @@
         ^+  peer-core
         ::  if odd bone, ack is on "subscription update" message; no-op
         ::
-        ?:  =(1 (end 0 1 bone))
+        ?:  =(1 (new-end 0 bone))
           peer-core
         ::  even bone; is this bone a nack-trace bone?
         ::
-        ?:  =(1 (end 0 1 (rsh 0 1 bone)))
+        ?:  =(1 (new-end 0 (rsh 0 1 bone)))
           ::  nack-trace bone; assume .ok, clear nack from |message-sink
           ::
           =/  target-bone=^bone  (mix 0b10 bone)
@@ -1870,9 +1870,9 @@
       ::    even bone, 1 second bit: nack-trace %boon message
       ::
       ++  on-sink-memo
-        ?:  =(1 (end 0 1 bone))
+        ?:  =(1 (new-end 0 bone))
           on-sink-plea
-        ?:  =(0 (end 0 1 (rsh 0 1 bone)))
+        ?:  =(0 (new-end 0 (rsh 0 1 bone)))
           on-sink-boon
         on-sink-nack-trace
       ::  +on-sink-boon: handle response message received by |message-sink
@@ -2903,10 +2903,10 @@
   |=  [=public-key =private-key]
   ^-  symmetric-key
   ::
-  ?>  =('b' (end 3 1 public-key))
+  ?>  =('b' (new-end 3 public-key))
   =.  public-key  (rsh 8 1 (rsh 3 1 public-key))
   ::
-  ?>  =('B' (end 3 1 private-key))
+  ?>  =('B' (new-end 3 private-key))
   =.  private-key  (rsh 8 1 (rsh 3 1 private-key))
   ::
   `@`(shar:ed:crypto public-key private-key)
@@ -2979,22 +2979,22 @@
   ^-  packet
   ::  first 32 (2^5) bits are header; the rest is body
   ::
-  =/  header  (end 5 1 blob)
+  =/  header  (new-end 5 blob)
   =/  body    (rsh 5 1 blob)
   ::
-  =/  version    (end 0 3 header)
+  =/  version    (new-end [0 3] header)
   =/  checksum   (cut 0 [3 20] header)
   =/  sndr-size  (decode-ship-size (cut 0 [23 2] header))
   =/  rcvr-size  (decode-ship-size (cut 0 [25 2] header))
   =/  encrypted  ?+((cut 0 [27 5] header) !! %0 %.y, %1 %.n)
   ::
   =/  =dyad
-    :-  sndr=(end 3 sndr-size body)
+    :-  sndr=(new-end [3 sndr-size] body)
     rcvr=(cut 3 [sndr-size rcvr-size] body)
   ::
   ?.  =(protocol-version version)
     ~|  %ames-protocol^version^dyad  !!
-  ?.  =(checksum (end 0 20 (mug body)))
+  ?.  =(checksum (new-end [0 20] (mug body)))
     ~|  %ames-checksum^dyad  !!
   ::
   =+  ~|  %ames-invalid-packet

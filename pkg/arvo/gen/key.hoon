@@ -17,11 +17,11 @@
 =/  cub  (pit:nu:crub:crypto 512 bur)
 ::
 =/  pub=pass  pub:ex:cub
-=/  mag=cord  (end 3 1 pub)
+=/  mag=cord  (new-end 3 pub)
 ?>  =('b' mag)
 =/  bod=@  (rsh 3 1 pub)
 =/  cry=@  (rsh 8 1 bod)
-=/  sgn=@  (end 8 1 bod)
+=/  sgn=@  (new-end 8 bod)
 %+  print  leaf+"  authentication: 0x{(render-hex-bytes:ethereum 32 sgn)}"
 %+  print  leaf+"  networking:     0x{(render-hex-bytes:ethereum 32 cry)}"
 %+  print  leaf+"ethereum public keys:"

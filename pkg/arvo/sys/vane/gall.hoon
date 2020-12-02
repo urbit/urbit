@@ -332,7 +332,7 @@
         control-duct  hen
         beak          bek
         agent         &+agent
-        nonce         (scot %uw (end 5 1 (shas %yoke-nonce eny)))
+        nonce         (scot %uw (new-end 5 (shas %yoke-nonce eny)))
       ==
     ::
     =/  old  mo-core

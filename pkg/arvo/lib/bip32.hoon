@@ -56,7 +56,7 @@
       ++  take
         |=  b=@ud
         ^-  [v=@ x=@]
-        :-  (end 3 b x)
+        :-  (new-end [3 b] x)
         (rsh 3 b x)
       --
   =^  k  x  (take 33)
@@ -219,7 +219,7 @@
   |=  [vw=@u t=tape]
   =+  x=(de-base58:mimes:html t)
   =+  hash=(sha-256l:sha 32 (sha-256:sha (rsh 3 4 x)))
-  ?>  =((end 3 4 x) (rsh 3 28 hash))
+  ?>  =((new-end [3 4] x) (rsh 3 28 hash))
   (cut 3 [vw (sub (met 3 x) (add 4 vw))] x)
 ::
 ++  hash160

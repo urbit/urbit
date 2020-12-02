@@ -330,17 +330,17 @@
   ++  get-public-key-from-pass
     |=  a=pass
     ^-  [@ @]
-    =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
+    =+  [mag=(new-end 3 a) bod=(rsh 3 1 a)]
     ~|  %not-crub-pubkey  ?>  =('b' mag)
-    [cry=(rsh 8 1 bod) sgn=(end 8 1 bod)]
+    [cry=(rsh 8 1 bod) sgn=(new-end 8 bod)]
   ::
   ::
   ++  get-private-key-from-ring
     |=  a=ring
     ^-  [@ @]
-    =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
+    =+  [mag=(new-end 3 a) bod=(rsh 3 1 a)]
     ~|  %not-crub-seckey  ?>  =('B' mag)
-    =+  [c=(rsh 8 1 bod) s=(end 8 1 bod)]
+    =+  [c=(rsh 8 1 bod) s=(new-end 8 bod)]
     ::  todo: do we puck here?
     [c s]
   ::  +ship-life-to-pubid: fetches public key information from jael

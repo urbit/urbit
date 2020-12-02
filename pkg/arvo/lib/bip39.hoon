@@ -23,7 +23,7 @@
   ::
   =/  pieces
     |-  ^-  (list @)
-    :-  (end 0 11 dat.bits)
+    :-  (new-end [0 11] dat.bits)
     ?:  (lte wid.bits 11)  ~
     $(bits [(sub wid.bits 11) (rsh 0 11 dat.bits)])
   ::

@@ -1340,7 +1340,7 @@
       %+  murn  ~(tap by dir:.^(arch %cy pax))
       |=  [=term ~]
       ^-  (unit [^term tank])
-      ?.  =(app (end 3 (met 3 app) term))
+      ?.  =(app (new-end [3 (met 3 app)] term))
         ~
       ?~  =<(fil .^(arch %cy (weld pax ~[term %hoon])))
         ~
@@ -1352,7 +1352,7 @@
       %+  murn  ~(tap by var)
       |=  [name=term =cage]
       ^-  (unit [term tank])
-      ?.  =(variable (end 3 (met 3 variable) name))
+      ?.  =(variable (new-end [3 (met 3 variable)] name))
         ~
       `[name (sell q.cage)]
     ::
@@ -1371,7 +1371,7 @@
       %+  murn
         ~(tap by dir:.^(arch %cy pfix))
       |=  [=term ~]
-      ?.  =(gen (end 3 (met 3 gen) term))
+      ?.  =(gen (new-end [3 (met 3 gen)] term))
         ~
       ?~  =<(fil .^(arch %cy (weld pfix ~[term %hoon])))
         ~
@@ -1386,7 +1386,7 @@
       %+  murn
         ~(tap by dir:.^(arch %cy pax))
       |=  [=term ~]
-      ?.  =(gen (end 3 (met 3 gen) term))
+      ?.  =(gen (new-end [3 (met 3 gen)] term))
         ~
       ?~  =<(fil .^(arch %cy (weld pax ~[term %hoon])))
         ~

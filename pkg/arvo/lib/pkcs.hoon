@@ -62,7 +62,7 @@
     |-  ^-  wain
     ?~  a
       [(rap 3 ['-----END ' lab '-----' ~]) ~]
-    [(end 3 64 a) $(a (rsh 3 64 a))]
+    [(new-end [3 64] a) $(a (rsh 3 64 a))]
   ::  +de:pem: PEM decode
   ::
   ++  de

@@ -25,7 +25,7 @@
   %+  request-batch-rpc-loose:ethio  url
   %+  turn  (scag step-size txs)
   |=  tx=@ux
-  :-  `(scot %ux (end 3 10 tx))
+  :-  `(scot %ux (new-end [3 10] tx))
   [%eth-send-raw-transaction tx]
 ::  parse tx hashes out of responses, bailing on submission failure
 ::
@@ -42,9 +42,9 @@
     ==
   ::
       %error
-    ?:  ?|  =('known transaction' (end 3 17 message.res))
-            =('Known transaction' (end 3 17 message.res))
-            =('Transaction with the same ' (end 3 26 message.res))
+    ?:  ?|  =('known transaction' (new-end [3 17] message.res))
+            =('Known transaction' (new-end [3 17] message.res))
+            =('Transaction with the same ' (new-end [3 26] message.res))
         ==
       ~&  [%sent-a-known-transaction--skipping id.res]
       $(responses t.responses)

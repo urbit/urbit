@@ -39,7 +39,7 @@
     ['\\' i.mil $(mil t.mil)]
   ?:  (lte ' ' i.mil)
     [i.mil $(mil t.mil)]
-  ['\\' ~(x ne (rsh 2 1 i.mil)) ~(x ne (end 2 1 i.mil)) $(mil t.mil)]
+  ['\\' ~(x ne (rsh 2 1 i.mil)) ~(x ne (new-end 2 i.mil)) $(mil t.mil)]
 ::
 ++  deal  |=(lum=* (dish dole lum))
 ++  dial

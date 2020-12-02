@@ -16,10 +16,10 @@
   ?.  =(1 (met 3 tam))
     tam
   =/  zaz=(list [p=knot ~])
-      (skim van |=([a=term ~] =(tam (end 3 1 a))))
+      (skim van |=([a=term ~] =(tam (new-end 3 a))))
   ?>  ?=([[@ ~] ~] zaz)
   `term`p.i.zaz
-=/  tip  (end 3 1 nam)
+=/  tip  (new-end 3 nam)
 =/  bip  ?:(=('z' tip) %$ tip)
 =/  way  ?:(=('z' tip) (welp top /sys/[nam]) (welp top /sys/vane/[nam]))
 =/  fil  .^(@ %cx (welp way /hoon))

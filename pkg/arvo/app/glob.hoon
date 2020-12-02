@@ -94,8 +94,8 @@
       %-  ~(rep by dir)
       |=  [[file=@t ~] out=(unit @t)]
       ?^  out  out
-      ?.  ?&  =((end 3 6 file) 'index.')
-              !=('sj.' (end 3 3 (swp 3 file)))
+      ?.  ?&  =((new-end [3 6] file) 'index.')
+              !=('sj.' (new-end [3 3] (swp 3 file)))
           ==
         out
       ``@t`(rsh 3 6 file)

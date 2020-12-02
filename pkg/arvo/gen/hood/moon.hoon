@@ -23,7 +23,7 @@
 =/  mon=ship
   ?^  arg
     mon.arg
-  (add our (lsh 5 1 (end 5 1 (shaz eny))))
+  (add our (lsh 5 1 (new-end 5 (shaz eny))))
 =/  seg=ship  (sein:title our now mon)
 ?.  =(our seg)
   %-  %-  slog  :_  ~

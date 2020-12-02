@@ -71,7 +71,7 @@
 ::
 ++  has-test-prefix
   |=  a=term  ^-  ?
-  =((end 3 5 a) 'test-')
+  =((new-end [3 5] a) 'test-')
 ::
 ++  find-test-files
   =|  fiz=(set [=beam test=(unit term)])

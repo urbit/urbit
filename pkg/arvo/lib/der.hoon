@@ -142,7 +142,7 @@
   ++  bit
     |=  [len=@ud dat=@ux]
     ^-  (unit [len=@ud dat=@ux])
-    ?.  =(0 (end 3 1 dat))  ~
+    ?.  =(0 (new-end 3 dat))  ~
     :+  ~
       (mul 8 (dec len))
     (rsh 3 1 dat)
@@ -188,7 +188,7 @@
     =/  [nex=@ len=@]
       ::  faz: meaningful bits in fuz
       ::
-      =/  faz  (end 0 7 fuz)
+      =/  faz  (new-end [0 7] fuz)
       ?:  =(0 (cut 0 [7 1] fuz))
         [0 faz]
       [faz (rep 3 (flop (scag faz t.q.tub)))]

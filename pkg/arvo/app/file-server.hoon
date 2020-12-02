@@ -323,7 +323,7 @@
   ?+  path  (on-peek:def path)
       [%x %clay %base %hash ~]
     =/  versions  (base-hash:version [our now]:bowl)
-    ``hash+!>(?~(versions 0v0 (end 0 25 i.versions)))
+    ``hash+!>(?~(versions 0v0 (new-end [0 25] i.versions)))
   ==
 ++  on-agent  on-agent:def
 ++  on-fail   on-fail:def

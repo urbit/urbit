@@ -1100,7 +1100,7 @@
       ::
       ::  XX vane and care are concatenated
       ::
-      =/  lal  (end 3 1 cyr)
+      =/  lal  (new-end 3 cyr)
       =/  ren  ;;(@t (rsh 3 1 cyr))
       ?.  (~(has by van.mod) lal)
         ~
