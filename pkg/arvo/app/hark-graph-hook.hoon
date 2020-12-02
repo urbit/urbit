@@ -247,7 +247,8 @@
         (weld child-cards self-cards)
       :_  state
       %+  weld  child-cards
-      :-  %^     update-unread-count
+      %+  weld
+          %^     update-unread-count
             mode.u.notif-kind  notif-index 
           [time-sent index]:post.node
       ?.  ?|  =(desc %mention)
@@ -291,10 +292,12 @@
       hark-action+!>(action)
     ::
     ++  update-unread-count
-      |=  [mode=?(%count %each) =index:store time=@da ref=index:graph-store]
-      ?:  ?=(%count mode)
-        (poke-hark %unread-count index time)
-      (poke-hark %unread-each index ref time)
+      |=  [mode=?(%count %each %none) =index:store time=@da ref=index:graph-store]
+      ?-  mode 
+        %count  ~[(poke-hark %unread-count index time)]
+        %each   ~[(poke-hark %unread-each index ref time)]
+        %none  ~
+      ==
     ::
     ++  add-unread
       |=  [=index:store =notification:store]

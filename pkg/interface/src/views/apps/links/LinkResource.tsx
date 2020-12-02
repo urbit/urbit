@@ -68,7 +68,6 @@ export function LinkResource(props: LinkResourceProps) {
           exact
           path={relativePath("")}
           render={(props) => {
-            const graphUnreads = unreads.graph?.[appPath]?.['/']?.unreads || new Set();
             return (
               <Col width="100%" p={4} alignItems="center" maxWidth="768px">
                 <Col width="100%" flexShrink='0'>
@@ -78,12 +77,13 @@ export function LinkResource(props: LinkResourceProps) {
                   const contact = contactDetails[node.post.author];
                   return (
                     <LinkItem
+                      association={resource}
                       contacts={contacts}
                       key={date.toString()}
                       resource={resourcePath}
                       node={node}
                       contacts={contactDetails}
-                      unread={graphUnreads?.has(node.post.index)}
+                      unreads={unreads}
                       nickname={contact?.nickname}
                       hideAvatars={hideAvatars}
                       hideNicknames={hideNicknames}
@@ -130,6 +130,7 @@ export function LinkResource(props: LinkResourceProps) {
                   hideNicknames={hideNicknames}
                   remoteContentPolicy={remoteContentPolicy}
                   baseUrl={resourceUrl}
+                  unreads={unreads}
                   group={group}
                   path={resource["group-path"]}
                   api={api}
@@ -150,7 +151,6 @@ export function LinkResource(props: LinkResourceProps) {
                   editCommentId={editCommentId}
                   history={props.history}
                   baseUrl={`${resourceUrl}/${props.match.params.index}`}
-                  association={association}
                   group={group}
                 />
               </Col>

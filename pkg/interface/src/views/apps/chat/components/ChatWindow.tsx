@@ -60,7 +60,6 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
   private prevSize = 0;
   private loadedNewest = false;
   private loadedOldest = false;
-  private unreadIndex: BigInteger | null = null;
 
   INITIALIZATION_MAX_TIME = 1500;
 
@@ -74,7 +73,6 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
       unreadIndex: bigInt.zero
     };
 
-    this.calculateUnreadIndex();
 
 
     this.dismissUnread = this.dismissUnread.bind(this);
@@ -90,6 +88,8 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
   }
 
   componentDidMount() {
+    this.calculateUnreadIndex();
+    this.virtualList?.calculateVisibleItems();
     window.addEventListener('blur', this.handleWindowBlur);
     window.addEventListener('focus', this.handleWindowFocus);
     setTimeout(() => {
@@ -140,10 +140,6 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
       this.setState({ fetchPending: false });
     }
 
-      /*if ((mailboxSize !== prevProps.mailboxSize) || (envelopes.length !== prevProps.envelopes.length)) {
-      this.virtualList?.calculateVisibleItems();
-      this.stayLockedIfActive();
-    }*/
 
     if (unreadCount > prevProps.unreadCount && this.state.idle) {
       this.calculateUnreadIndex();
@@ -157,16 +153,8 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
       }
       this.prevSize = graph.size;
       this.virtualList?.calculateVisibleItems();
+      this.stayLockedIfActive();
     }
-      /*
-    if (stationPendingMessages.length !== prevProps.stationPendingMessages.length) {
-      this.virtualList?.calculateVisibleItems();
-    }
-
-    if (!this.state.fetchPending && prevState.fetchPending) {
-      this.virtualList?.calculateVisibleItems();
-    }
-       */
 
     if (station !== prevProps.station) {
       this.virtualList?.resetScroll();
@@ -194,9 +182,8 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
     const { association } = this.props;
     if (this.state.fetchPending) return;
     if (this.props.unreadCount === 0) return;
-    //this.props.api.hark.markCountAsRead(association, '/', 'message');
-    //this.props.api.chat.read(this.props.station);
-    //this.props.api.hark.readIndex({ chat: { chat: this.props.station, mention: false }});
+    this.props.api.hark.markCountAsRead(association, '/', 'message');
+    this.props.api.hark.markCountAsRead(association, '/', 'mention');
   }
 
   async fetchMessages(newer: boolean, force = false): Promise<void> {
@@ -220,6 +207,7 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
     } else if(!newer && !this.loadedOldest) {
       const [index] = graph.peekSmallest()!;
       await api.graph.getOlderSiblings(ship,name, 5, `/${index.toString()}`)
+      this.calculateUnreadIndex();
       if(currSize === graph.size) {
         console.log('loaded all oldest');
         this.loadedOldest = true;

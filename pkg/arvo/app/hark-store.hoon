@@ -103,7 +103,6 @@
   ++  initial-updates
     ^-  update:store
     :-  %more
-    =-  ~&(- -)
     ^-  (list update:store)
     :+  give-unreads
       [%set-dnd dnd]
@@ -190,7 +189,6 @@
   ::
   ++  hark-action
     |=  =action:store
-    ~&  -.action
     ^-  (quip card _state)
     |^
     ?-  -.action  
@@ -310,7 +308,7 @@
     ++  read-note
       |=  [time=@da =index:store]
       ^-  (quip card _state)
-      :-  (give:ha [/updates]~ %read time index)
+      :-  (give:ha [/updates]~ %read-note time index)
       %_  state
         +  (upd-unreads:ha index time %.y)
         notifications  (change-read-status:ha time index %.y)

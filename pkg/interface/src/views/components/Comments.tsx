@@ -6,10 +6,9 @@ import CommentInput from './CommentInput';
 import { Contacts } from '~/types/contact-update';
 import GlobalApi from '~/logic/api/global';
 import { FormikHelpers } from 'formik';
-import { GraphNode, LocalUpdateRemoteContentPolicy, Unreads, Association } from '~/types';
+import { Group, GraphNode, LocalUpdateRemoteContentPolicy, Unreads, Association } from '~/types';
 import { createPost, createBlankNodeWithChildPost } from '~/logic/api/graph';
 import { getLatestCommentRevision } from '~/logic/lib/publish';
-import { LocalUpdateRemoteContentPolicy, Group } from '~/types';
 import { scanForMentions } from '~/logic/lib/graph';
 import { getUnreadCount } from '~/logic/lib/hark';
 
@@ -103,8 +102,7 @@ export function Comments(props: CommentsProps) {
   }, [comments.post.index])
 
 
-  const readCount = children.length - getUnreadCount(props.unreads, association['app-path'], parentIndex)
-  console.log(readCount);
+  const readCount = children.length - getUnreadCount(props?.unreads, association['app-path'], parentIndex)
 
   return (
     <Col>

@@ -152,6 +152,7 @@ function readEach(json: any, state: HarkState) {
 function readSince(json: any, state: HarkState) {
   const data = _.get(json, 'read-count');
   if(data) {
+    console.log(data);
     updateUnreadCount(state, data, () => 0)
   }
 }
@@ -182,7 +183,7 @@ function unreads(json: any, state: HarkState) {
       updateNotificationStats(state, index, 'notifications', x => x + notifications);
       updateNotificationStats(state, index, 'last', () => last);
       if('count' in unreads) {
-        updateUnreadCount(state, index, () => unreads.count);
+        updateUnreadCount(state, index, (u = 0) => u + unreads.count);
       } else {
         unreads.each.forEach((u: string) => {
           updateUnreads(state, index, s => s.add(u));
@@ -318,7 +319,7 @@ function setRead(
 }
 
 function read(json: any, state: HarkState) {
-  const data = _.get(json, "read", false);
+  const data = _.get(json, "read-note", false);
   if (data) {
     const { time, index } = data;
     updateNotificationStats(state, index, 'notifications', x => x-1);
@@ -327,7 +328,7 @@ function read(json: any, state: HarkState) {
 }
 
 function unread(json: any, state: HarkState) {
-  const data = _.get(json, "unread", false);
+  const data = _.get(json, "unread-note", false);
   if (data) {
     const { time, index } = data;
     updateNotificationStats(state, index, 'notifications', x => x+1);

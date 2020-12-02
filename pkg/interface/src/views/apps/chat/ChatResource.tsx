@@ -25,8 +25,6 @@ export function ChatResource(props: ChatResourceProps) {
     return null;
   }
 
-  const { envelopes, config } = (props.inbox?.[station]) ? props.inbox[station] : { envelopes: [], config: {} };
-  const { read, length } = (config) ? config : undefined;
 
   const groupPath = props.association['group-path'];
   const group = props.groups[groupPath];
@@ -34,39 +32,19 @@ export function ChatResource(props: ChatResourceProps) {
 
   const graph = props.graphs[station.slice(7)];
 
-  const pendingMessages = (props.pendingMessages.get(station) || []).map(
-    value => ({
-      ...value,
-      pending: true
-    })
-  );
-
   const isChatMissing = !props.graphKeys.has(station.slice(7));
 
-  const isChatLoading =
-    (props.chatInitialized &&
-      !(station in props.inbox) &&
-      props.chatSynced &&
-      station in props.chatSynced) ||
-    false;
-
-  const isChatUnsynced =
-    (props.chatSynced &&
-      !(station in props.chatSynced) &&
-      envelopes.length > 0) ||
-    false;
-
   const unreadCount = props.unreads.graph?.[station]?.['/']?.unreads || 0;
-  const unreadMsg = unreadCount > 0 && envelopes[unreadCount - 1];
 
   const [,, owner, name] = station.split('/');
   const ourContact = contacts?.[window.ship];
-  const lastMsgNum = envelopes.length || 0;
 
   const chatInput = useRef<ChatInput>();
 
   useEffect(() => {
-    props.api.graph.getNewest(owner, name, 20);
+    const count = Math.min(150, unreadCount + 30);
+    console.log(`fetching ${count}`);
+    props.api.graph.getNewest(owner, name, count);
   }, [station]);
 
   const onFileDrag = useCallback(
@@ -117,9 +95,9 @@ export function ChatResource(props: ChatResourceProps) {
         match={props.match as any}
         stationPendingMessages={[]}
         history={props.history}
-        isChatMissing={isChatMissing}
-        isChatLoading={isChatLoading}
-        isChatUnsynced={isChatUnsynced}
+        isChatMissing={false}
+        isChatLoading={false}
+        isChatUnsynced={false}
         graph={graph}
         unreadCount={unreadCount}
         unreadMsg={false}
@@ -138,10 +116,9 @@ export function ChatResource(props: ChatResourceProps) {
       <ChatInput
         ref={chatInput}
         api={props.api}
-        numMsgs={lastMsgNum}
         station={station}
         ourContact={ourContact}
-        envelopes={envelopes || []}
+        envelopes={[]}
         contacts={contacts}
         onUnmount={appendUnsent}
         s3={props.s3}

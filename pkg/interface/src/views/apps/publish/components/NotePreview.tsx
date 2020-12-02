@@ -40,20 +40,23 @@ export function NotePreview(props: NotePreviewProps) {
   }
 
   const numComments = getComments(node).children.size;
-  const url = `${props.baseUrl}/note/${post.index.split('/')[1]}`;
+  const noteId = post.index.split('/')[1];
+  const url = `${props.baseUrl}/note/${noteId}`;
 
   const [rev, title, body, content] = getLatestRevision(node);
-  const isUnread = props.unreads.graph?.[`/ship/${props.host}/${props.book}`]?.['/']?.unreads?.has(content.index);
+  const appPath = `/ship/${props.host}/${props.book}`;
+  const isUnread = props.unreads.graph?.[appPath]?.['/']?.unreads?.has(content.index);
 
   const snippet = getSnippet(body);
 
+  const commColor = (props.unreads.graph?.[appPath]?.[`/${noteId}`]?.unreads ?? 0) > 0 ? 'blue' : 'gray';
   return (
     <Box width='100%'>
       <Link to={url}>
         <Col
           lineHeight='tall'
           width='100%'
-          color={isRead ? 'washedGray' : 'blue'}
+          color={!isUnread ? 'washedGray' : 'blue'}
           border={1}
           borderRadius={2}
           alignItems='flex-start'
@@ -90,8 +93,8 @@ export function NotePreview(props: NotePreviewProps) {
         <Box ml="auto" mr={1}>
           <Link to={url}>
             <Box display='flex'>
-              <Icon color='blue' icon='Chat' />
-              <Text color='blue' ml={1}>{numComments}</Text>
+              <Icon color={commColor} icon='Chat' />
+              <Text color={commColor} ml={1}>{numComments}</Text>
             </Box>
           </Link>
         </Box>
