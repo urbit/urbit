@@ -109,7 +109,10 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
   calculateUnreadIndex() {
     const { graph, unreadCount } = this.props;
     const unreadIndex = graph.keys()[unreadCount];
-    if(!unreadIndex) {
+    if(!unreadIndex || unreadCount === 0) {
+      this.setState({
+        unreadIndex: bigInt.zero
+      });
       return;
     }
     this.setState({

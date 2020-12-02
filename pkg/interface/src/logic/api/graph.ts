@@ -4,7 +4,7 @@ import { Patp, Path, PatpNoSig } from '~/types/noun';
 import _ from 'lodash';
 import {makeResource, resourceFromPath} from '../lib/group';
 import {GroupPolicy, Enc, Post, NodeMap, Content} from '~/types';
-import { numToUd, unixToDa, decToUd } from '~/logic/lib/util';
+import { numToUd, unixToDa, decToUd, deSig } from '~/logic/lib/util';
 
 export const createBlankNodeWithChildPost = (
   parentIndex: string = '',
@@ -24,7 +24,7 @@ export const createBlankNodeWithChildPost = (
       hash: null,
       signatures: []
     },
-    children: { empty: null }
+    children: null
   };
 
   return {
@@ -36,11 +36,17 @@ export const createBlankNodeWithChildPost = (
       hash: null,
       signatures: []
     },
-    children: {
-      graph: childGraph
-    }
+    children: childGraph
   };  
 };
+
+function markPending(nodes: any) {
+  _.forEach(nodes, node => {
+    node.post.author = deSig(node.post.author);
+    node.post.pending = true;
+    markPending(node.children || {});
+  });
+}
 
 export const createPost = (
   contents: Content[],
@@ -182,40 +188,34 @@ export default class GraphApi extends BaseApi<StoreState> {
 
   addPost(ship: Patp, name: string, post: Post) {
     let nodes = {};
-    const resource = { ship, name };
     nodes[post.index] = {
       post,
-      children: { empty: null }
+      children: null
     };
-
-    return this.hookAction(ship, {
-      'add-nodes': {
-        resource,
-        nodes
-      }
-    });
+    return this.addNodes(ship, name, nodes);
   }
 
   addNode(ship: Patp, name: string, node: Object) {
     let nodes = {};
-    const resource = { ship, name };
     nodes[node.post.index] = node;
 
-    return this.hookAction(ship, {
-      'add-nodes': {
-        resource,
-        nodes
-      }
-    });
+    return this.addNodes(ship, name, nodes);
   }
 
   addNodes(ship: Patp, name: string, nodes: Object) {
-    return this.hookAction(ship, {
+    const action = {
       'add-nodes': {
         resource: { ship, name },
         nodes
       }
-    });
+    };
+
+    const promise = this.hookAction(ship, action);
+    markPending(action['add-nodes'].nodes);
+    action['add-nodes'].resource.ship = action['add-nodes'].resource.ship.slice(1);
+    console.log(action);
+    this.store.handleEvent({ data: { 'graph-update': action } });
+    return promise;
   }
 
   removeNodes(ship: Patp, name: string, indices: string[]) {

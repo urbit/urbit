@@ -47,7 +47,7 @@ const tokenizeMessage = (text) => {
         if (isUrl(str) && !isInCodeBlock) {
           if (message.length > 0) {
             // If we're in the middle of a message, add it to the stack and reset
-            messages.push({ text: message.join('') });
+            messages.push({ text: message.join(' ') });
             message = [];
           }
           messages.push({ url: str });
@@ -55,7 +55,7 @@ const tokenizeMessage = (text) => {
         } else if(urbitOb.isValidPatp(str) && !isInCodeBlock) {
           if (message.length > 0) {
             // If we're in the middle of a message, add it to the stack and reset
-            messages.push({ text: message.join('') });
+            messages.push({ text: message.join(' ') });
             message = [];
           }
           messages.push({ mention: str });
@@ -70,7 +70,7 @@ const tokenizeMessage = (text) => {
 
   if (message.length) {
     // Add any remaining message
-    messages.push({ text: message.join('') });
+    messages.push({ text: message.join(' ') });
   }
   return messages;
 };

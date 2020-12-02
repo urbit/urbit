@@ -7,7 +7,7 @@ import { Envelope } from './chat-update';
 export type GraphNotifDescription = "link" | "comment" | "note" | "mention";
 
 export interface UnreadStats {
-  unreads: Set<string> | { index: string; count: number; };
+  unreads: Set<string> | number;
   notifications: number;
   last: number;
 }

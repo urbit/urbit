@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import bigInt from 'big-integer';
 import { Col } from '@tlon/indigo-react';
 import { CommentItem } from './CommentItem';
@@ -10,7 +10,7 @@ import { GraphNode, LocalUpdateRemoteContentPolicy, Unreads, Association } from 
 import { createPost, createBlankNodeWithChildPost } from '~/logic/api/graph';
 import { getLatestCommentRevision } from '~/logic/lib/publish';
 import { scanForMentions } from '~/logic/lib/graph';
-import { getLastSeen } from '~/logic/lib/hark';
+import { getUnreadCount } from '~/logic/lib/hark';
 
 interface CommentsProps {
   comments: GraphNode;
@@ -54,7 +54,7 @@ const { association, comments, ship, name, api, history } = props;
     actions: FormikHelpers<{ comment: string }>
   ) => {
     try {
-      const commentNode = comments.children.get(bigInt(props.editCommentId));
+      const commentNode = comments.children.get(bigInt(props.editCommentId))!;
       const [idx, _] = getLatestCommentRevision(commentNode);
 
       const content = scanForMentions(comment);
@@ -93,15 +93,16 @@ const { association, comments, ship, name, api, history } = props;
   const children = Array.from(comments.children);
 
 
-  const [latestIdx, latest] = children?.[0] || [];
   useEffect(() => {
-    return latest 
-      ? () => api.hark.markSinceAsRead(association, parentIndex, 'comment', latest.post.index) 
-      : () => {};
-  }, [association])
+    console.log(`dismissing ${association?.['app-path']}`);
+    return () => {
+      api.hark.markCountAsRead(association, parentIndex, 'comment') 
+    };
+  }, [comments.post.index])
 
 
-  const lastSeen = getLastSeen(props.unreads, association['app-path'], parentIndex) || latestIdx || bigInt.zero;
+  const readCount = children.length - getUnreadCount(props.unreads, association['app-path'], parentIndex)
+  console.log(readCount);
 
   return (
     <Col>
@@ -115,7 +116,7 @@ const { association, comments, ship, name, api, history } = props;
         />
       ) : null )}
       {children.reverse()
-        .map(([idx, comment]) => {
+        .map(([idx, comment], i) => {
           return (
             <CommentItem
               comment={comment}
@@ -124,7 +125,7 @@ const { association, comments, ship, name, api, history } = props;
               api={api}
               name={name}
               ship={ship}
-              unread={lastSeen.lt(idx)}
+              unread={i >= readCount}
               hideNicknames={props.hideNicknames}
               hideAvatars={props.hideAvatars}
               remoteContentPolicy={props.remoteContentPolicy}

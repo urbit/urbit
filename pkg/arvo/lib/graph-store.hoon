@@ -198,14 +198,17 @@
     ++  graph
       |=  g=^graph
       ^-  json
-      :-  %a
-      %+  turn  (tap:orm g)
+      %-  pairs
+      %+  turn
+        (tap:orm g)
       |=  [a=atom n=^node]
-      ^-  json
-      :-  %a
-      :~  (index [a]~)
-          (node n)
-      ==
+      ^-  [@t json]
+      :_  (node n)
+      =/  idx
+        (numb a)
+      ?>  ?=(%n -.idx)
+      p.idx
+    ::
     ++  node
       |=  n=^node
       ^-  json
@@ -222,14 +225,15 @@
     ++  nodes
       |=  m=(map ^index ^node)
       ^-  json
-      :-  %a
+      %-  pairs
       %+  turn  ~(tap by m)
       |=  [n=^index o=^node]
-      ^-  json
-      :-  %a
-      :~  (index n)
-          (node o)
-      ==
+      ^-  [@t json]
+      :_  (node o)
+      =/  idx
+        (index n)
+      ?>  ?=(%s -.idx)
+      p.idx
     ::
     ++  indices
       |=  i=(set ^index)
@@ -310,12 +314,12 @@
       ==
     ::
     ++  internal-graph
-      ^-  $-(json ^internal-graph)
-      %-  of
-      :~  [%empty ul]
-          [%graph graph]
-      ==
-    ::
+      |=  jon=json
+      ^-  ^internal-graph
+      ?~  jon
+        [%empty ~]
+      [%graph (graph jon)]
+          ::
     ++  post
       %-  ot
       :~  [%author (su ;~(pfix sig fed:ag))]

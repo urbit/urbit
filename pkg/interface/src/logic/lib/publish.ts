@@ -32,23 +32,19 @@ export function newPost(
     [root.index]: {
       post: root,
       children: {
-        graph: {
           1: {
             post: revContainer,
             children: {
-              graph: {
-                1: {
-                  post: firstRevision,
-                  children: { empty: null },
-                },
+              1: {
+                post: firstRevision,
+                children: null,
               },
             },
           },
           2: {
             post: commentsContainer,
-            children: { empty: null },
+            children: null
           },
-        },
       },
     },
   };
@@ -69,7 +65,7 @@ export function editPost(rev: number, noteId: BigInteger, title: string, body: s
   const nodes = {
     [newRev.index]: {
       post: newRev,
-      children: { empty: null }
+      children: null 
     }
   };
 

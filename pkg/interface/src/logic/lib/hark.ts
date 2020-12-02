@@ -15,3 +15,22 @@ export function getLastSeen(
     lastSeenIdx
   );
 }
+
+export function getUnreadCount(
+  unreads: Unreads,
+  path: string,
+  index: string
+): number {
+  const graphUnreads = unreads.graph?.[path]?.[index]?.unreads ?? 0;
+  return typeof graphUnreads === 'number' ? graphUnreads : graphUnreads.size;
+}
+
+export function getNotificationCount(
+  unreads: Unreads,
+  path: string
+): number {
+  const unread = unreads.graph?.[path] || {};
+  return Object.keys(unread)
+    .map(index => unread[index]?.notifications || 0)
+    .reduce(f.add, 0);
+}

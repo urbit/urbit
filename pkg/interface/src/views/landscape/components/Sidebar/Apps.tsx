@@ -46,7 +46,8 @@ export function useGraphModule(
 ): SidebarAppConfig {
   const getStatus = useCallback(
     (s: string) => {
-      if((graphUnreads?.[s]?.['/']?.unreads?.size || 0) > 0) {
+      const unreads = graphUnreads?.[s]?.['/']?.unreads;
+      if(typeof unreads === 'number' ? unreads > 0 : unreads?.size ?? 0 > 0) {
         return 'unread';
       }
       const [, , host, name] = s.split("/");
