@@ -863,8 +863,9 @@
 ++  fil                                                 ::  fill bloqstream
   ~/  %fil
   |=  [a=bloq b=step c=@]
-  =+  n=0
-  =+  d=c
+  =|  n=@ud
+  =.  c  (end a c)
+  =/  d  c
   |-  ^-  @
   ?:  =(n b)
     (rsh a d)
