@@ -8,6 +8,7 @@
   ^-  (list term)
   :~  %graph-pull-hook
       %group-pull-hook
+      %group-push-hook
   ==
 ::
 ++  poke-all-sane
