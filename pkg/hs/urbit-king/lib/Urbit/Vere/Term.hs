@@ -403,8 +403,7 @@ localClient doneSignal = fst <$> mkRAcquire start stop
       TintW    -> ['7']
       TintNull -> ['9']
       TintTrue r g b ->
-        mconcat ["8;2;", bite r, ";", bite g, ";", bite b]
-        where bite = show . flip mod 256
+        mconcat ["8;2;", show r, ";", show g, ";", show b]
 
     -- Wraps the appropriate escape sequence around a piece of styled text
     termRenderStubSegment :: Stye -> [Char] -> [Char]
@@ -420,10 +419,10 @@ localClient doneSignal = fst <$> mkRAcquire start stop
           [ intersperse ';' $ fmap termRenderDeco $ toList decoset
           , case back of
               TintNull -> []
-              tint     -> cons '4' $ termRenderTint tint
+              tint     -> '4' : termRenderTint tint
           , case fore of
               TintNull -> []
-              tint     -> cons '3' $ termRenderTint tint
+              tint     -> '3' : termRenderTint tint
           ]
 
         styled = mconcat [escape, styles, "m", tape, escape, "0m"]

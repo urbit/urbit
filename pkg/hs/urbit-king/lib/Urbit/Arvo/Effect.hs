@@ -13,6 +13,7 @@ import Urbit.Noun.Time
 import Urbit.Prelude
 
 import Control.Monad.Fail (fail)
+import Numeric.Natural    (Natural)
 import Urbit.Arvo.Common (KingId(..), ServId(..))
 import Urbit.Arvo.Common (Header, HttpEvent, HttpServerConf, Method, Mime)
 import Urbit.Arvo.Common (AmesDest, Turf)
@@ -144,7 +145,7 @@ data Tint
     | TintK
     | TintW
     | TintNull
-    | TintTrue Atom Atom Atom
+    | TintTrue Word8 Word8 Word8
   deriving (Eq, Ord, Show)
 
 data Stye = Stye
@@ -184,13 +185,15 @@ instance ToNoun Tint where
     TintK          -> toNoun $ Cord "k"
     TintW          -> toNoun $ Cord "w"
     TintNull       -> Atom 0
-    TintTrue r g b -> Cell (Atom r) $ Cell (Atom g) (Atom b)
+    TintTrue r g b -> Cell (atom r) $ Cell (atom g) (atom b)
+                      where atom a = Atom (fromIntegral a :: Natural)
 
 instance FromNoun Tint where
   parseNoun = named "Tint" . \case
     Atom 0 -> pure TintNull
     Cell (Atom r) (Cell (Atom g) (Atom b))
-           -> pure (TintTrue r g b)
+           -> pure (TintTrue (word r) (word g) (word b))
+              where word w = fromIntegral w :: Word8
     n      -> parseNoun @Cord n <&> unCord >>= \case
                 "r" -> pure TintR
                 "g" -> pure TintG
