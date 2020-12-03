@@ -1090,7 +1090,7 @@ u3_unix_initial_into_card(c3_c* arv_c)
 {
   u3_noun can = _unix_initial_update_dir(arv_c, arv_c);
 
-  return u3nc(u3nt(u3_blip, c3__sync, u3_nul),
+  return u3nc(u3nt(c3__c, c3__sync, u3_nul),
               u3nq(c3__into, u3_nul, c3y, can));
 }
 

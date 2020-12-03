@@ -6,10 +6,11 @@ license-file: LICENSE
 library:
   source-dirs: lib
   ghc-options:
-    - -fwarn-incomplete-patterns
-    - -fwarn-unused-binds
-    - -fwarn-unused-imports
+    - -Wall
     - -Werror
+    - -Wno-type-defaults
+    - -Wno-unused-matches
+    - -Wno-name-shadowing
     - -O2
 
 dependencies:

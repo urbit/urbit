@@ -882,7 +882,7 @@
   ==
 ::
 ++  test-channel-open-never-used-expire
-  =^  results1  eyre-gate  (perform-init-start-channel eyre-gate *sley)
+  =^  results1  eyre-gate  (perform-init-start-channel eyre-gate *roof)
   ::  the behn timer wakes us up; we cancel our subscription
   ::
   =^  results2  eyre-gate
@@ -918,7 +918,7 @@
 ++  test-channel-results-before-open
   ::  common initialization
   ::
-  =^  results1  eyre-gate  (perform-init-start-channel eyre-gate *sley)
+  =^  results1  eyre-gate  (perform-init-start-channel eyre-gate *roof)
   ::  poke gets a success message
   ::
   =^  results2  eyre-gate
@@ -1062,7 +1062,7 @@
 ++  test-channel-second-get-updates-timer
   ::  common initialization
   ::
-  =^  results1  eyre-gate  (perform-init-start-channel eyre-gate *sley)
+  =^  results1  eyre-gate  (perform-init-start-channel eyre-gate *roof)
   ::  perform another poke to a different app
   ::
   ::    Since we haven't connected with a GET, the old timer should be canceled
@@ -1136,7 +1136,7 @@
 ++  test-channel-unsubscribe-stops-events
   ::  common initialization
   ::
-  =^  results1  eyre-gate  (perform-init-start-channel eyre-gate *sley)
+  =^  results1  eyre-gate  (perform-init-start-channel eyre-gate *roof)
   ::  poke gets a success message
   ::
   =^  results2  eyre-gate
@@ -1238,7 +1238,7 @@
 ++  test-channel-double-subscription-works
   ::  common initialization
   ::
-  =^  results1  eyre-gate  (perform-init-start-channel eyre-gate *sley)
+  =^  results1  eyre-gate  (perform-init-start-channel eyre-gate *roof)
   ::  poke gets a success message
   ::
   =^  results2  eyre-gate
@@ -1541,7 +1541,7 @@
 ++  test-channel-sends-unacknowledged-events-on-reconnection
   ::  common initialization
   ::
-  =^  results1  eyre-gate  (perform-init-start-channel eyre-gate *sley)
+  =^  results1  eyre-gate  (perform-init-start-channel eyre-gate *roof)
   ::  poke gets a success message
   ::
   =^  results2  eyre-gate
@@ -1811,7 +1811,7 @@
   ::  common initialization
   ::
   =^  tested-elsewhere  eyre-gate
-    (perform-init-start-channel eyre-gate *sley)
+    (perform-init-start-channel eyre-gate *roof)
   ::
   =/  now=@da  :(add ~1111.1.2 clog-timeout:eyre-gate ~s1)
   ::  subscription gets a success message
@@ -2051,7 +2051,7 @@
 ++  eyre-call
   |=  $:  eyre-gate=_eyre-gate
           now=@da
-          scry=sley
+          scry=roof
           call-args=[=duct type=* wrapped-task=(hobo task:able:eyre-gate)]
           expected-moves=(list move:eyre-gate)
       ==
@@ -2073,7 +2073,7 @@
 ++  eyre-call-with-comparator
   |=  $:  eyre-gate=_eyre-gate
           now=@da
-          scry=sley
+          scry=roof
           call-args=[=duct type=* wrapped-task=(hobo task:able:eyre-gate)]
           move-comparator=$-((list move:eyre-gate) tang)
       ==
@@ -2090,7 +2090,7 @@
 ++  eyre-take
   |=  $:  eyre-gate=_eyre-gate
           now=@da
-          scry=sley
+          scry=roof
           take-args=[=wire =duct wrapped-sign=(hypo sign:eyre-gate)]
           expected-moves=(list move:eyre-gate)
       ==
@@ -2110,7 +2110,7 @@
 ++  eyre-take-with-comparator
   |=  $:  eyre-gate=_eyre-gate
           now=@da
-          scry=sley
+          scry=roof
           take-args=[=wire =duct wrapped-sign=(hypo sign:eyre-gate)]
           move-comparator=$-((list move:eyre-gate) tang)
       ==
@@ -2202,7 +2202,7 @@
 ++  perform-authentication
   |=  $:  eyre-gate=_eyre-gate
           start-now=@da
-          scry=sley
+          scry=roof
       ==
   ^-  [tang _eyre-gate]
   ::  the browser then fetches the login page
@@ -2276,7 +2276,7 @@
 ::
 ++  perform-init-start-channel
   |=  $:  eyre-gate=_eyre-gate
-          scry=sley
+          scry=roof
       ==
   ^-  [tang _eyre-gate]
   ::
@@ -2366,10 +2366,10 @@
   :_  eyre-gate
   :(weld results1 results2 results3)
 ::
-++  scry-provides-code  ^-  sley
-  |=  [* (unit (set monk)) =term =beam]
+++  scry-provides-code  ^-  roof
+  |=  [gang =term =beam]
   ^-  (unit (unit cage))
-  ?:  &(=(%ca term) =(/hoon/handler/gen s.beam))
+  ?:  &(=(%ca term) =(/gen/handler/hoon s.beam))
     :+  ~  ~
     vase+!>(!>(|=(* |=(* [[%404 ~] ~]))))
   ?:  &(=(%cb term) =(/json s.beam))

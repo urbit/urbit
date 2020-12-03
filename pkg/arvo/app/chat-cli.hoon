@@ -1269,7 +1269,7 @@
         ?:(p.timez add sub)
       =+  dat=(yore when)
       =/  t
-        |=  a/@
+        |=  a=@
         %+  weld
           ?:((lth a 10) "0" ~)
         (scow %ud a)

@@ -30,6 +30,7 @@
 #       define c3_assert(x)                       \
           do {                                    \
             if (!(x)) {                           \
+              fflush(stderr);                     \
               fprintf(stderr, "\rAssertion '%s' " \
                       "failed in %s:%d\n",        \
                       #x, __FILE__, __LINE__);    \

@@ -1,9 +1,9 @@
 |%
-+=  revision  @ud
-+=  nodetype  tape
-+=  mnemonic  tape
++$  revision  @ud
++$  nodetype  tape
++$  mnemonic  tape
 ::
-+=  vault
++$  vault
   $:  ownership=node
       voting=node
       management=node
@@ -12,12 +12,12 @@
       network=uode
   ==
 ::
-+=  node  [type=nodetype seed=mnemonic keys=wallet]
-+=  uode  [revi=revision seed=@ux keys=edkeys]
++$  node  [type=nodetype seed=mnemonic keys=wallet]
++$  uode  [revi=revision seed=@ux keys=edkeys]
 ::
-+=  wallet  [keys=[public=@ux private=@ux] addr=@ux chain=@ux]
++$  wallet  [keys=[public=@ux private=@ux] addr=@ux chain=@ux]
 ::
-+=  edkeys  [auth=keypair crypt=keypair]
++$  edkeys  [auth=keypair crypt=keypair]
 ::
-+=  keypair  [public=@ux secret=@ux]
++$  keypair  [public=@ux secret=@ux]
 --

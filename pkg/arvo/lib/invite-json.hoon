@@ -1,7 +1,7 @@
 /-  *invite-store
 /+  resource
 |%
-++  slan  |=(mod/@tas |=(txt/@ta (need (slaw mod txt))))
+++  slan  |=(mod=@tas |=(txt=@ta (need (slaw mod txt))))
 ::
 ++  seri                                              :::  serial
   =,  dejs:format

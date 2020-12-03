@@ -7,15 +7,15 @@
 =/  nec  vane
 =/  bud  vane
 ::
-=.  our.nec        ~nec
-=.  now.nec        ~1111.1.1
-=.  eny.nec        0xdead.beef
-=.  scry-gate.nec  |=(* ``[%noun !>(*(list turf))])
+=.  our.nec  ~nec
+=.  now.nec  ~1111.1.1
+=.  eny.nec  0xdead.beef
+=.  rof.nec  |=(* ``[%noun !>(*(list turf))])
 ::
-=.  our.bud          ~bud
-=.  now.bud          ~1111.1.1
-=.  eny.bud          0xbeef.dead
-=.  scry-gate.bud    |=(* ``[%noun !>(*(list turf))])
+=.  our.bud  ~bud
+=.  now.bud  ~1111.1.1
+=.  eny.bud  0xbeef.dead
+=.  rof.bud  |=(* ``[%noun !>(*(list turf))])
 ::
 =.  crypto-core.ames-state.nec  (pit:nu:crub:crypto 512 (shaz 'nec'))
 =.  crypto-core.ames-state.bud  (pit:nu:crub:crypto 512 (shaz 'bud'))

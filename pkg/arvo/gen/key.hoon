@@ -12,7 +12,7 @@
 %+  print   leaf+"generating keys for {(scow %p who)}, life #{(scow %ud life)}"
 %+  prompt  [%| %pope-pass "passphrase: "]
 %+  parse   (boss 256 (star prn))
-|=  fra/@t
+|=  fra=@t
 =/  bur  (shaz (add who (shaz fra)))
 =/  cub  (pit:nu:crub:crypto 512 bur)
 ::
