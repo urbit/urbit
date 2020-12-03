@@ -61,14 +61,14 @@
 +$  gena  (set address)
 ::
 ::  %add-wallet: add wallet to state and initiate a scan
-::  %scan: start a scan of the next address batch in a wallet
-::         if the scan is complete, update the wallet and remove from scans
-::  %watch-address: watch an address if used, remove from scans batch if not
-::  %update-address: update info of an address if we're watching it 
+::  %address-info: give new data about an address.
+::    - used:  address has been seen on the BTC blockchain?
+::    - block: the most recent block at the time of this information being retrieved
+::  TODO: document
 ::
 +$  action
   $%  [%add-wallet =xpub scan-to=(unit scon) max-gap=(unit @ud) confs=(unit @ud)]
-      [%address-info =xpub =chyg =idx utxos=(set utxo) used=? blockcount=@ud]
+      [%address-info =xpub =chyg =idx utxos=(set utxo) used=? block=@ud]
       [%generate-address =xpub =chyg meta=(unit [payer=ship value=sats])]
       [%generate-txbu =xpub payee=(unit ship) feyb=sats txos=(list txo)]
   ==
@@ -82,6 +82,6 @@
 ::  %cook-address: monitor address until it gets N confs
 ::
 +$  request
-  $%  [%address-info blockcount=@ud a=address =xpub =chyg =idx]
+  $%  [%address-info block=@ud a=address =xpub =chyg =idx]
   ==
 --
