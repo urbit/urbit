@@ -11,10 +11,10 @@
 ::  piym: incoming payments. Stores all ship moons under their planet.
 ::  piym-watch/poym-watch:
 ::   let us link an address back to its incoming/outgoing payment
-::   checked when address updates come from btc-wallet-store
+::   checked when address updates come from btc-wallet-store 
 ::
-+$  btc-state  [blockcount=@ud fee=sats t=@da]
-+$  reqs (map req-id:bp [blockcount=@ud req=request:bws])
++$  btc-state  [block=@ud fee=sats t=@da]
++$  reqs  (map req-id:bp req=request:bws)
 ::
 +$  payment  [=address payer=ship value=sats]
 ::

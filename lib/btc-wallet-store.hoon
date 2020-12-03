@@ -5,46 +5,47 @@
 =,  secp:crypto
 =+  ecc=secp256k1
 |%
-++  enjs
-  =,  enjs:format
-  |%
-  ::
-  ++  txbu
-    |=  =^txbu
-    ^-  json
-    %-  pairs
-    :~  ::  [%inputs [%a (turn txis.txbu txi)]]
-        ['associatedKeysets' [%a (turn txis.txbu |=(=txi (key key.txi)))]]
-        ['changePath' s+'hi']
-        ['outputScriptHex' s+'hi']
-        ['lockTime' s+'hi']
-        ['sigHashType' s+'hi']
-        [%segwit s+'hi']
-        ['initialTimestamp' s+'hi']
-    ==
-    :: TODO inputs, keysets, changeppath, outputscripthex, locktime, sigHashType, segwit, initialTimestamp
-    ::  , additionals ("bech32")
-  ++  txi
-    |=  =^txi  ^-  json
-    ?>  ?=(^ ur.txi)
-    :-  %a
-    :~  s+(en:base16:mimes:html u.ur.txi)
-        n+pos.utxo.txi
-    ==
-  ++  key
-    |=  =^key  ^-  json
-    :-  %s
-    %^  cat  3  'm/'
-    %^  cat  3
-      ?-  bipt.key
-          %bip44  '44'
-          %bip49  '49'
-          %bip84  '84'
-      ==
-    %^  cat  3  '/0\'/0\'/'
-    %^  cat  3  ?:(=(%0 chyg.key) '0/' '1/')
-    (crip ((d-co:co 0) idx.key))
-  --
+::  ++  enjs
+::  =,  enjs:format
+::  |%
+::  ::  TODO: format JS for input to HW wallet like Ledger
+::  ::
+::  ++  txbu
+::    |=  =^txbu
+::    ^-  json
+::    %-  pairs
+::    :~  ::  [%inputs [%a (turn txis.txbu txi)]]
+::        ['associatedKeysets' [%a (turn txis.txbu |=(=txi (key key.txi)))]]
+::        ['changePath' s+'hi']
+::        ['outputScriptHex' s+'hi']
+::        ['lockTime' s+'hi']
+::        ['sigHashType' s+'hi']
+::        [%segwit s+'hi']
+::        ['initialTimestamp' s+'hi']
+::    ==
+::    :: TODO inputs, keysets, changeppath, outputscripthex, locktime, sigHashType, segwit, initialTimestamp
+::    ::  , additionals ("bech32")
+::  ++  txi
+::    |=  =^txi  ^-  json
+::    ?>  ?=(^ ur.txi)
+::    :-  %a
+::    :~  s+(en:base16:mimes:html u.ur.txi)
+::        n+pos.utxo.txi
+::    ==
+::  ++  key
+::    |=  =^key  ^-  json
+::    :-  %s
+::    %^  cat  3  'm/'
+::    %^  cat  3
+::      ?-  bipt.key
+::          %bip44  '44'
+::          %bip49  '49'
+::          %bip84  '84'
+::      ==
+::    %^  cat  3  '/0\'/0\'/'
+::    %^  cat  3  ?:(=(%0 chyg.key) '0/' '1/')
+::    (crip ((d-co:co 0) idx.key))
+::  --
 ::
 ++  defaults
   |%
