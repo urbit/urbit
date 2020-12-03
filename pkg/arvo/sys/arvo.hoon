@@ -1287,9 +1287,11 @@
             ==
           ~
         ?+  s.bem  ~
-          [%whey ~]       ``mass/!>(whey)
-          [%zen %lag ~]   ``noun/!>(lag.zen)
-          [%zen %vere ~]  ``noun/!>(ver.zen)
+          [%whey ~]      ``mass/!>(whey)
+          [%fad %lac ~]  ``noun/!>(lac.fad)
+          [%zen %lag ~]  ``noun/!>(lag.zen)
+          [%zen %ver ~]  ``noun/!>(ver.zen)
+          [%mod %fat *]  ``noun/!>((~(get de fat.mod) t.t.s.bem))
         ==
       ::
       ++  poke
