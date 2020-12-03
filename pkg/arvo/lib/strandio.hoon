@@ -443,7 +443,7 @@
   =/  m  (strand ,vase)
   ^-  form:m
   ;<  =riot:clay  bind:m
-    (warp ship desk ~ %sing %a case (flop spur))
+    (warp ship desk ~ %sing %a case spur)
   ?~  riot
     (strand-fail %build-file >arg< ~)
   ?>  =(%vase p.r.u.riot)
@@ -487,7 +487,7 @@
   |=  [[=ship =desk =case:clay] =spur]
   =*  arg  +<
   =/  m  (strand ,cage)
-  ;<  =riot:clay  bind:m  (warp ship desk ~ %sing %x case (flop spur))
+  ;<  =riot:clay  bind:m  (warp ship desk ~ %sing %x case spur)
   ?~  riot
     (strand-fail %read-file >arg< ~)
   (pure:m r.u.riot)
@@ -495,14 +495,14 @@
 ++  check-for-file
   |=  [[=ship =desk =case:clay] =spur]
   =/  m  (strand ,?)
-  ;<  =riot:clay  bind:m  (warp ship desk ~ %sing %x case (flop spur))
+  ;<  =riot:clay  bind:m  (warp ship desk ~ %sing %x case spur)
   (pure:m ?=(^ riot))
 ::
 ++  list-tree
   |=  [[=ship =desk =case:clay] =spur]
   =*  arg  +<
   =/  m  (strand ,(list path))
-  ;<  =riot:clay  bind:m  (warp ship desk ~ %sing %t case (flop spur))
+  ;<  =riot:clay  bind:m  (warp ship desk ~ %sing %t case spur)
   ?~  riot
     (strand-fail %list-tree >arg< ~)
   (pure:m !<((list path) q.r.u.riot))

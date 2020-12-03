@@ -6,7 +6,7 @@
 =,  eyre
 =,  format
 =,  html
-|_  hit/httr
+|_  hit=httr
 ++  grad  %noun
 ++  grow  |%  ++  wall  (turn wain trip)
               ++  wain  (to-wain cord)

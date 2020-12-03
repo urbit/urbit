@@ -10,7 +10,7 @@
         c3_d    ent_d;                    //  event number
         u3_noun yot;                      //  cached gates
         u3_noun now;                      //  current time, as noun
-        u3_noun wen;                      //  current time, as text
+        u3_noun wen;                      //  current time, as text, XX remove
         u3_noun sev_l;                    //  instance number
         u3_noun sen;                      //  instance string
         u3_noun roc;                      //  kernel core

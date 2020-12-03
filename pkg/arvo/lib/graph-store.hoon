@@ -7,13 +7,13 @@
 |%
 ::  NOTE: move these functions to zuse
 ++  nu                                              ::  parse number as hex
-  |=  jon/json
-  ?>  ?=({$s *} jon)
+  |=  jon=json
+  ?>  ?=([%s *] jon)
   (rash p.jon hex)
 ::
 ++  re                                                ::  recursive reparsers
-  |*  {gar/* sef/_|.(fist:dejs-soft:format)}
-  |=  jon/json
+  |*  [gar=* sef=_|.(fist:dejs-soft:format)]
+  |=  jon=json
   ^-  (unit _gar)
   =-  ~!  gar  ~!  (need -)  -
   ((sef) jon)
@@ -319,7 +319,7 @@
     ++  post
       %-  ot
       :~  [%author (su ;~(pfix sig fed:ag))]
-          [%index index] 
+          [%index index]
           [%time-sent di]
           [%contents (ar content)]
           [%hash (mu nu)]
@@ -375,7 +375,7 @@
     ++  uid
       %-  ot
       :~  [%resource dejs:res]
-          [%index index]          
+          [%index index]
       ==
     ::
     ++  index  (su ;~(pfix fas (more fas dem)))

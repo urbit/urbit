@@ -14,9 +14,9 @@
       return u3m_bail(c3__exit);
     }
     else {
-      c3_g  a_g = a;
-      c3_w  tot_w = 0;
-      c3_w* sal_w;
+      c3_g       a_g = a;
+      c3_w     tot_w = 0;
+      u3i_slab sab_u;
 
       /* Measure and validate the slab required.
       */
@@ -42,31 +42,31 @@
           tot_w += len_w;
           cab = u3t(cab);
         }
+
         if ( 0 == tot_w ) {
           return 0;
         }
-        if ( 0 == (sal_w = u3a_slaq(a_g, tot_w)) ) {
-          return u3m_bail(c3__fail);
-        }
+
+        u3i_slab_init(&sab_u, a_g, tot_w);
       }
 
       /* Chop the list atoms in.
       */
       {
         u3_noun cab = b;
-        c3_w    pos_w = 0;
+        c3_w  pos_w = 0;
 
         while ( 0 != cab ) {
           u3_noun h_cab = u3h(cab);
           c3_w    len_w = u3r_met(a_g, h_cab);
 
-          u3r_chop(a_g, 0, len_w, pos_w, sal_w, h_cab);
+          u3r_chop(a_g, 0, len_w, pos_w, sab_u.buf_w, h_cab);
           pos_w += len_w;
           cab = u3t(cab);
         }
       }
-      // return u3a_moot(sal_w);
-      return u3a_malt(sal_w);
+
+      return u3i_slab_mint(&sab_u);
     }
   }
   u3_noun

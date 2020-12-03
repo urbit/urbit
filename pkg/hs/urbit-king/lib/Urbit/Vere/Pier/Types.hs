@@ -45,13 +45,13 @@ instance Show Nock where
 --------------------------------------------------------------------------------
 
 data Pill = Pill
-  { pBootFormulas   :: [Nock]
-  , pKernelOvums    :: [Ev]
-  , pUserspaceOvums :: [Ev]
+  { pBootFormulas   :: ![Nock]
+  , pKernelOvums    :: ![Ev]
+  , pUserspaceOvums :: ![Ev]
   }
  deriving (Eq, Show)
 
-data BootSeq = BootSeq LogIdentity [Nock] [Ev]
+data BootSeq = BootSeq !LogIdentity ![Nock] ![Ev]
   deriving (Eq, Show)
 
 deriveNoun ''Pill

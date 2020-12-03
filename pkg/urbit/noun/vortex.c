@@ -50,30 +50,29 @@ u3v_boot(u3_noun eve)
 static u3_noun
 _cv_lite(u3_noun pil)
 {
-  u3_noun arv = u3ke_cue(pil);
   u3_noun eve, pro;
 
-  u3x_trel(arv, &eve, 0, 0);
+  u3x_trel(pil, &eve, 0, 0);
 
-  u3l_log("lite: arvo formula %x\r\n", u3r_mug(arv));
+  u3l_log("lite: arvo formula %x\r\n", u3r_mug(pil));
   pro = u3v_life(u3k(eve));
   u3l_log("lite: core %x\r\n", u3r_mug(pro));
 
-  u3z(arv);
+  u3z(pil);
   return pro;
 }
 
 /* u3v_boot_lite(): light bootstrap sequence, just making a kernel.
 */
 c3_o
-u3v_boot_lite(u3_atom lit)
+u3v_boot_lite(u3_noun pil)
 {
   //  ensure zero-initialized kernel
   //
   u3A->roc = 0;
 
   {
-    u3_noun pro = u3m_soft(0, _cv_lite, lit);
+    u3_noun pro = u3m_soft(0, _cv_lite, pil);
 
     if ( u3_blip != u3h(pro) ) {
       u3z(pro);
@@ -165,9 +164,6 @@ u3v_time(u3_noun now)
 {
   u3z(u3A->now);
   u3A->now = now;
-
-  u3z(u3A->wen);
-  u3A->wen = _cv_scot(u3nc(c3__da, u3k(u3A->now)));
 }
 
 /* u3v_numb(): set the instance number.
@@ -195,11 +191,9 @@ _cv_time_bump(u3_reck* rec_u)
 /* u3v_peek(): query the reck namespace (protected).
 */
 u3_noun
-u3v_peek(u3_noun hap)
+u3v_peek(u3_noun sam)
 {
   u3_noun fun = u3n_nock_on(u3k(u3A->roc), u3k(u3x_at(_CVX_PEEK, u3A->roc)));
-  u3_noun sam = u3nc(u3k(u3A->now), hap);
-
   return u3n_slam_on(fun, sam);
 }
 
