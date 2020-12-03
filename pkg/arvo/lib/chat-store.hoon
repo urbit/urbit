@@ -1,9 +1,26 @@
 
 /-  sur=chat-store
+/+  resource
 ^?
 =<  [sur .]
 =,  sur
 |%
+::
+++  nobody
+  ^-  @p
+  (bex 128)
+::
+++  path-to-resource
+  |=  =path
+  ^-  resource
+  ?.  ?=([@ @ ~] path)  
+    nobody^(spat path)
+  =/  m-ship=(unit ship)
+    (slaw %p i.path)
+  ?~  m-ship
+    nobody^(spat path)
+  [u.m-ship i.t.path]
+::
 ++  enjs
   =,  enjs:format
   |%

@@ -6,9 +6,11 @@
     *permission-hook, *group-store, *permission-group-hook,  ::TMP  for upgrade
     hook=chat-hook,
     view=chat-view,
+    push-hook,
+    pull-hook,
     *group
 /+  default-agent, verb, dbug, store=chat-store, group-store, grpl=group,
-    resource
+    resource, graph-store
 ~%  %chat-hook-top  ..is  ~
 |%
 +$  card  card:agent:gall
@@ -90,6 +92,10 @@
     =|  cards=(list card)
     |-
     ?:  ?=(%10 -.old)
+      =.  cards
+        :_  cards
+        =-  [%pass /self-poke %agent [our.bol %chat-hook] %poke -]
+        noun+!>(%migrate-graph)
       [cards this(state old)]
     ?:  ?=(%9 -.old)
       =.  cards
@@ -365,7 +371,9 @@
           %json         (poke-json:cc !<(json vase))
           %chat-action  (poke-chat-action:cc !<(action:store vase))
           %noun
-        (poke-noun:cc !<(?(%fix-dm %fix-out-of-sync %run-upg7 %run-upg9) vase))
+        %-  poke-noun:cc
+        !<  ?(%fix-dm %fix-out-of-sync %run-upg7 %run-upg9 %migrate-graph)
+        vase
       ::
           %chat-hook-action
         (poke-chat-hook-action:cc !<(action:hook vase))
@@ -428,7 +436,7 @@
 ++  grp  ~(. grpl bol)
 ::
 ++  poke-noun
-  |=  a=?(%fix-dm %fix-out-of-sync %run-upg7 %run-upg9)
+  |=  a=?(%fix-dm %fix-out-of-sync %run-upg7 %run-upg9 %migrate-graph)
   ^-  (quip card _state)
   |^
   ?-  a
@@ -436,7 +444,46 @@
       %fix-out-of-sync  [(fix-out-of-sync %fix-out-of-sync) state]
       %run-upg7    run-7-to-8
       %run-upg9   run-9-to-10
+      %migrate-graph  migrate-graph
   ==
+  ::
+  ++  poke-our
+    |=  [app=term =cage]
+    ^-  card
+    [%pass / %agent [our.bol app] %poke cage]
+  ::
+  ++  poke-graph-pull-hook
+    |=  =action:pull-hook
+    ^-  card
+    (poke-our %graph-pull-hook %pull-hook-action !>(action))
+  ::
+  ++  poke-graph-push-hook
+    |=  =action:push-hook
+    ^-  card
+    (poke-our %graph-push-hook %push-hook-action !>(action))
+  ::
+  ++  poke-graph-store
+    |=  =update:graph-store
+    ^-  card
+    (poke-our %graph-store %graph-update !>(update))
+  ::
+  ++  migrate-graph
+    ^-  (quip card _state)
+    :_  state
+    ^-  (list card)
+    %+  turn
+      ~(tap by synced)
+    |=  [=path =ship]
+    ^-  card
+    =/  rid=resource
+      (path-to-resource:store path)
+    ?:  =(nobody:store entity.rid) 
+      %-  poke-graph-store
+      :+  %0  now.bol
+      archive-graph+rid
+    ?:  =(our.bol ship)
+      (poke-graph-push-hook %add rid)
+    (poke-graph-pull-hook %add ship rid)
   ::
   ++  scry-for
     |*  [=mold app=term =path]

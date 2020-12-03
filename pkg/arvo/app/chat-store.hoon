@@ -81,10 +81,6 @@
     ::
     ==
     ::
-    ++  nobody
-      ^-  @p
-      (bex 128)
-    ::
     ++  migrate-inbox
       |=  =inbox:store
       ^-  (list card)
@@ -97,20 +93,10 @@
       ^-  update:graph-store
       :+  %0  now.bowl
       :+  %add-graph
-        (path-to-resource path)
+        (path-to-resource:store path)
       :-  (mailbox-to-graph mailbox)
-      [`%graph-validator-chat %.n]
+      [`%graph-validator-chat %.y]
     ::
-    ++  path-to-resource
-      |=  =path
-      ^-  resource
-      ?.  ?=([@ @ ~] path)  
-        nobody^(spat path)
-      =/  m-ship=(unit ship)
-        (slaw %p i.path)
-      ?~  m-ship
-        nobody^(spat path)
-      [u.m-ship i.t.path]
     ::
     ++  poke-graph-store
       |=  =update:graph-store

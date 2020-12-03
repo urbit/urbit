@@ -89,7 +89,21 @@
     =|  cards=(list card)
     |^
     ?:  ?=(%6 -.old)
-      [cards this(state old)]
+      =/  =^associations
+        (migrate-app-to-graph-store %chat associations.old)
+      :-  cards
+      %_    this
+        associations  associations
+      ::
+          resource-indices
+        (rebuild-resource-indices associations)
+        ::
+          app-indices
+        (rebuild-app-indices associations)
+        ::
+          group-indices
+        (rebuild-group-indices associations)
+      ==
     ?:  ?=(%5 -.old)
       =/  =^associations
         (migrate-app-to-graph-store %publish associations.old)

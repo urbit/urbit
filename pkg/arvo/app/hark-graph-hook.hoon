@@ -161,9 +161,7 @@
   ++  add-graph
     |=  [rid=resource =graph:graph-store]
     ^-  (quip card _state)
-    =^  cards  state
-      (check-nodes (tap-deep:gra graph) rid)
-    :-  cards
+    :-  ~
     ?.  &(watch-on-self =(our.bowl entity.rid))
       state
     state(watching (~(put in watching) [rid ~]))
