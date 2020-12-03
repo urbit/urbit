@@ -23,6 +23,7 @@ import RIO.Directory
 import Urbit.Arvo
 import Urbit.King.App
 import Urbit.Vere.Pier.Types
+import Urbit.Vere.Stat
 
 import Control.Monad.STM      (retry)
 import System.Environment     (getExecutablePath)
@@ -429,9 +430,11 @@ drivers
   -> Site.KingSubsite
   -> RAcquire e ([Ev], RAcquire e Drivers)
 drivers env who isFake plan scry termSys stderr serfSIGINT sub = do
+  stat@Stat{..} <- newStat
+
   (behnBorn, runBehn) <- rio Behn.behn'
-  (termBorn, runTerm) <- rio (Term.term' termSys serfSIGINT)
-  (amesBorn, runAmes) <- rio (Ames.ames' who isFake scry stderr)
+  (termBorn, runTerm) <- rio (Term.term' termSys (renderStat stat) serfSIGINT)
+  (amesBorn, runAmes) <- rio (Ames.ames' who isFake statAmes scry stderr)
   (httpBorn, runEyre) <- rio (Eyre.eyre' who isFake stderr sub)
   (clayBorn, runClay) <- rio Clay.clay'
   (irisBorn, runIris) <- rio Iris.client'

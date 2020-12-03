@@ -34,6 +34,7 @@ where
 
 import Urbit.Prelude
 import Urbit.Vere.Ports
+import Urbit.Vere.Stat
 
 import Network.Socket
 
@@ -156,8 +157,9 @@ realUdpServ
    . (HasLogFunc e, HasPortControlApi e)
   => PortNumber
   -> HostAddress
+  -> AmesStat
   -> RIO e UdpServ
-realUdpServ por hos = do
+realUdpServ por hos sat = do
   logInfo $ displayShow ("AMES", "UDP", "Starting real UDP server.")
 
   env <- ask
@@ -239,6 +241,7 @@ realUdpServ por hos = do
             pure ()
           Right (Just (b, p, a)) -> do
             logDebug "AMES: UDP: Received packet."
+            atomically $ modifyTVar' (asUdp sat) (+ 1)
             enqueueRecvPacket p a b
 
   let shutdown = do

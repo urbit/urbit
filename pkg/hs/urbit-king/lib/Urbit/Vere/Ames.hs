@@ -24,6 +24,7 @@ import Urbit.King.App      (HasKingId(..), HasPierEnv(..))
 import Urbit.Vere.Ames.DNS (NetworkMode(..), ResolvServ(..))
 import Urbit.Vere.Ames.DNS (galaxyPort, resolvServ)
 import Urbit.Vere.Ames.UDP (UdpServ(..), fakeUdpServ, realUdpServ)
+import Urbit.Vere.Stat     (AmesStat(..))
 
 import qualified Urbit.Noun.Time as Time
 
@@ -125,13 +126,14 @@ udpPort isFake who = do
 udpServ :: (HasLogFunc e, HasNetworkConfig e, HasPortControlApi e)
         => Bool
         -> Ship
+        -> AmesStat
         -> RIO e UdpServ
-udpServ isFake who = do
+udpServ isFake who stat =  do
   mode <- netMode isFake
   port <- udpPort isFake who
   case modeAddress mode of
     Nothing   -> fakeUdpServ
-    Just host -> realUdpServ port host
+    Just host -> realUdpServ port host stat
 
 _bornFailed :: e -> WorkError -> IO ()
 _bornFailed env _ = runRIO env $ do
@@ -141,10 +143,11 @@ ames'
   :: HasPierEnv e
   => Ship
   -> Bool
+  -> AmesStat
   -> (Time.Wen -> Gang -> Path -> IO (Maybe (Term, Noun)))
   -> (Text -> RIO e ())
   -> RIO e ([Ev], RAcquire e (DriverApi NewtEf))
-ames' who isFake scry stderr = do
+ames' who isFake stat scry stderr = do
   -- Unfortunately, we cannot use TBQueue because the only behavior
   -- provided for when full is to block the writer. The implementation
   -- below uses materially the same data structures as TBQueue, however.
@@ -168,7 +171,7 @@ ames' who isFake scry stderr = do
       pure pM
 
   env <- ask
-  let (bornEvs, startDriver) = ames env who isFake scry enqueuePacket stderr
+  let (bornEvs, startDriver) = ames env who isFake stat scry enqueuePacket stderr
 
   let runDriver = do
         diOnEffect <- startDriver
@@ -195,11 +198,12 @@ ames
   => e
   -> Ship
   -> Bool
+  -> AmesStat
   -> (Time.Wen -> Gang -> Path -> IO (Maybe (Term, Noun)))
   -> (EvErr -> STM PacketOutcome)
   -> (Text -> RIO e ())
   -> ([Ev], RAcquire e (NewtEf -> IO ()))
-ames env who isFake scry enqueueEv stderr = (initialEvents, runAmes)
+ames env who isFake stat scry enqueueEv stderr = (initialEvents, runAmes)
  where
   king = fromIntegral (env ^. kingIdL)
 
@@ -221,7 +225,7 @@ ames env who isFake scry enqueueEv stderr = (initialEvents, runAmes)
     aDropped <- newTVarIO 0
     aVersion <- newTVarIO Nothing
     aVersTid <- trackVersionThread aVersion
-    aUdpServ <- udpServ isFake who
+    aUdpServ <- udpServ isFake who stat
     aResolvr <- resolvServ aTurfs (usSend aUdpServ) stderr
     aRecvTid <- queuePacketsThread
       aDropped
@@ -229,10 +233,19 @@ ames env who isFake scry enqueueEv stderr = (initialEvents, runAmes)
       cachedScryLane
       (send aUdpServ aResolvr mode)
       aUdpServ
+      stat
 
     pure (AmesDrv { .. })
 
-  hearFailed _ = pure ()
+  hearFailed AmesStat {..} = runRIO env . \case
+    RunSwap{} -> atomically $ modifyTVar' asSwp (+ 1)
+    RunBail gs -> do
+      for gs \(t, es) ->
+        for es \e ->
+          logWarn $ hark
+            ["ames: goof: ", unTerm t, ": ", tankToText e]
+      atomically $ modifyTVar' asBal (+ 1)
+    RunOkay{} -> atomically $ modifyTVar' asOky (+ 1)
 
   trackVersionThread :: HasLogFunc e => TVar (Maybe Version) -> RIO e (Async ())
   trackVersionThread versSlot = async $ forever do
@@ -254,12 +267,15 @@ ames env who isFake scry enqueueEv stderr = (initialEvents, runAmes)
                      -> (Ship -> RIO e (Maybe [AmesDest]))
                      -> (AmesDest -> ByteString -> RIO e ())
                      -> UdpServ
+                     -> AmesStat
                      -> RIO e (Async ())
-  queuePacketsThread dropCtr vers lan forward UdpServ{..} = async $ forever $ do
+  queuePacketsThread dropCtr vers lan forward UdpServ{..} s@(AmesStat{..}) = async $ forever $ do
       -- port number, host address, bytestring
-    (p, a, b) <- atomically usRecv
+    (p, a, b) <- atomically (modifyTVar' asRcv (+ 1) >> usRecv)
     ver <- readTVarIO vers
-
+    serfsUp p a b
+    -- TODO make this make sense with stats
+    {-
     case decode b of
       Right (pkt@Packet {..}) | ver == Nothing || ver == Just pktVersion -> do
         logDebug $ displayShow ("ames: bon packet", pkt, showUD $ bytesAtom b)
@@ -294,10 +310,11 @@ ames env who isFake scry enqueueEv stderr = (initialEvents, runAmes)
       --    they cannot be filtered, as we do not know their semantics
       --
       Left e -> logInfo $ displayShow ("ames: dropping malformed", e)
+      -}
 
     where
       serfsUp p a b =
-        atomically (enqueueEv (EvErr (hearEv p a b) hearFailed)) >>= \case
+        atomically (enqueueEv (EvErr (hearEv p a b) (hearFailed s))) >>= \case
           Intake -> pure ()
           Ouster -> do
             d <- atomically $ do

@@ -27,6 +27,7 @@ import Urbit.Vere.Pier.Types
 import Data.List           ((!!))
 import RIO.Directory       (createDirectoryIfMissing)
 import Urbit.King.API      (readPortsFile)
+import Urbit.Vere.Stat     (RenderedStat)
 import Urbit.TermSize      (TermSize(TermSize))
 import Urbit.Vere.Term.API (Client(Client), ClientTake(..))
 
@@ -556,10 +557,14 @@ localClient doneSignal = fst <$> mkRAcquire start stop
                 loop rd
               else if w == 3 then do
                 -- ETX (^C)
-                logInfo $ displayShow "Ctrl-c interrupt"
+                logInfo $ "Ctrl-c interrupt"
                 atomically $ do
                   writeTQueue wq [Term.Trace "interrupt\r\n"]
                   writeTQueue rq $ Ctl $ Cord "c"
+                loop rd
+              else if w == 20 then do
+                -- DC4 (^T)
+                atomically $ writeTQueue wq [Term.Trace "<stat>\r\n"]
                 loop rd
               else if w <= 26 then do
                 case pack [BS.w2c (w + 97 - 1)] of
@@ -597,9 +602,10 @@ localClient doneSignal = fst <$> mkRAcquire start stop
 term'
   :: HasPierEnv e
   => (TermSize, Client)
+  -> IO RenderedStat
   -> IO ()
   -> RIO e ([Ev], RAcquire e (DriverApi TermEf))
-term' (tsize, client) serfSIGINT = do
+term' (tsize, client) stat serfSIGINT = do
   let TermSize wi hi = tsize
       initEv = [blewEvent wi hi, initialHail]
 
@@ -608,7 +614,7 @@ term' (tsize, client) serfSIGINT = do
   runDriver = do
     env <- ask
     ventQ :: TQueue EvErr <- newTQueueIO
-    diOnEffect <- term env (tsize, client) (writeTQueue ventQ) serfSIGINT
+    diOnEffect <- term env (tsize, client) (writeTQueue ventQ) stat serfSIGINT
 
     let diEventSource = fmap RRWork <$> tryReadTQueue ventQ
 
@@ -621,9 +627,10 @@ term :: forall e. (HasPierEnv e)
      => e
      -> (TermSize, Client)
      -> (EvErr -> STM ())
+     -> IO RenderedStat
      -> IO ()
      -> RAcquire e (TermEf -> IO ())
-term env (tsize, Client{..}) plan serfSIGINT = runTerm
+term env (tsize, Client{..}) plan stat serfSIGINT = runTerm
   where
     runTerm :: RAcquire e (TermEf -> IO ())
     runTerm = do
