@@ -48,7 +48,7 @@
 ++  on-init
   ^-  (quip card _this)
   ~&  >  '%btc-wallet-store initialized'
-  `this(state [%0 *(map xpub:btc walt) *^scans max-gap:defaults 0])
+  `this(state [%0 *(map xpub:btc walt) *^scans *^gena max-gap:defaults 0])
 ++  on-save
   ^-  vase
   !>(state)
