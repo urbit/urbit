@@ -2,7 +2,7 @@ import React from "react";
 import { Route, Link, Switch } from "react-router-dom";
 import Helmet from 'react-helmet';
 
-import { Box, Text, Row, Col, Icon } from "@tlon/indigo-react";
+import { Box, Text, Row, Col, Icon, BaseImage } from "@tlon/indigo-react";
 
 import { Sigil } from "~/logic/lib/sigil";
 import { uxToHex, MOBILE_BROWSER_REGEX } from "~/logic/lib/util";
@@ -12,7 +12,16 @@ import { ContactCard } from "~/views/landscape/components/ContactCard";
 
 const SidebarItem = ({ children, view, current }) => {
   const selected = current === view;
-  const color = selected ? "blue" : "black";
+  const icon = (view) => {
+    switch(view) {
+    case 'identity':
+      return 'Smiley';
+    case 'settings':
+      return 'Adjust';
+    default:
+      return 'Circle'
+    }
+  }
   return (
     <Link to={`/~profile/${view}`}>
       <Row
@@ -20,10 +29,10 @@ const SidebarItem = ({ children, view, current }) => {
         verticalAlign="middle"
         py={1}
         px={3}
-        backgroundColor={selected ? "washedBlue" : "white"}
+        backgroundColor={selected ? "washedGray" : "white"}
       >
-        <Icon mr={2} display="inline-block" icon="Circle" color={color} />
-        <Text color={color} fontSize={0}>
+        <Icon mr={2} display="inline-block" icon={icon(view)} color='black' />
+        <Text color='black' fontSize={0}>
           {children}
         </Text>
       </Row>
@@ -56,6 +65,9 @@ export default function ProfileScreen(props: any) {
           history.replace("/~profile/identity");
         }
 
+        const image = (!props?.hideAvatars && contact?.avatar)
+          ? <BaseImage src={contact.avatar} width='100%' height='100%' style={{ objectFit: 'cover' }} />
+          : <Sigil ship={`~${ship}`} size={80} color={sigilColor} />;
         return (
           <Box height="100%" px={[0, 3]} pb={[0, 3]} borderRadius={1}>
             <Box
@@ -87,7 +99,7 @@ export default function ProfileScreen(props: any) {
                     justifyContent="center"
                     alignItems="center"
                   >
-                    <Sigil ship={`~${ship}`} size={80} color={sigilColor} />
+                    {image}
                   </Box>
                 </Box>
                 <Box width="100%" py={3} zIndex='2'>
@@ -104,6 +116,7 @@ export default function ProfileScreen(props: any) {
                 alignItems="center"
                 px={3}
                 borderBottom={1}
+                fontSize='0'
                 borderBottomColor="washedGray"
               >
                 <Link to="/~profile">{"<- Back"}</Link>
@@ -119,6 +132,8 @@ export default function ProfileScreen(props: any) {
                     path="/~/default"
                     api={props.api}
                     s3={props.s3}
+                    hideAvatars={props.hideAvatars}
+                    hideNicknames={props.hideNicknames}
                   />
                   </>
                 )}
