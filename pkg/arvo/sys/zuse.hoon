@@ -83,7 +83,8 @@
 +$  styl  %+  pair  (unit deco)                         ::  cascading style
           (pair (unit tint) (unit tint))                ::
 +$  styx  (list $@(@t (pair styl styx)))                ::  styled text
-+$  tint  ?(%r %g %b %c %m %y %k %w %~)                 ::  text color
++$  tint  $@  ?(%r %g %b %c %m %y %k %w %~)             ::  text color
+          [r=@uxD g=@uxD b=@uxD]                        ::  24bit true color
 +$  turf  (list @t)                                     ::  domain, tld first
 ::                                                      ::
 ::::                      ++jstd                        ::  json standards structures

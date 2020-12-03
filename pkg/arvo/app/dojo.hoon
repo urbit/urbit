@@ -869,7 +869,7 @@
       ::
           %as
         =/  cag=cage  (dy-cage p.q.bil)
-        =+  .^(=tube:clay cc+(en-beam:format he-beak /[p.bil]/[p.cag]))
+        =+  .^(=tube:clay cc+(en-beam:format he-beak /[p.cag]/[p.bil]))
         (dy-hand p.bil (tube q.cag))
       ::
           %do

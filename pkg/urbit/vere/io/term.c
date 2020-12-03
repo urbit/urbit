@@ -1128,23 +1128,72 @@ u3_term_ef_ctlc(void)
   _term_it_refresh_line(uty_u);
 }
 
+/*  _term_it_put_value(): put numeric color value on lin_w.
+*/
+static c3_w
+_term_it_put_value(c3_w*   lin_w,
+                   u3_atom val)
+{
+  c3_c str_c[4];
+  c3_w len = snprintf(str_c, 4, "%d", val % 256);
+  for ( c3_w i_w = 0; i_w < len; i_w++ ) {
+    lin_w[i_w] = str_c[i_w];
+  }
+  u3z(val);
+  return len;
+}
+
 /* _term_it_put_tint(): put ansi color id on lin_w. RETAINS col.
 */
-static void
-_term_it_put_tint(c3_w* lin_w,
+static c3_w
+_term_it_put_tint(c3_w*   lin_w,
                   u3_noun col)
 {
-  switch ( col ) {
-    default:
-    case u3_nul: *lin_w = '9'; break;
-    case 'k':    *lin_w = '0'; break;
-    case 'r':    *lin_w = '1'; break;
-    case 'g':    *lin_w = '2'; break;
-    case 'y':    *lin_w = '3'; break;
-    case 'b':    *lin_w = '4'; break;
-    case 'm':    *lin_w = '5'; break;
-    case 'c':    *lin_w = '6'; break;
-    case 'w':    *lin_w = '7'; break;
+  u3_noun red, gre, blu;
+  c3_o    tru = u3r_trel(col, &red, &gre, &blu);
+
+  //  24-bit color
+  //
+  if ( c3y == tru ) {
+    c3_w n = 0;
+
+    *lin_w++ = '8';
+    *lin_w++ = ';';
+    *lin_w++ = '2';
+    *lin_w++ = ';';
+
+    c3_w m = _term_it_put_value(lin_w, red);
+    n     += m;
+    lin_w += m;
+
+    *lin_w++ = ';';
+
+    m      = _term_it_put_value(lin_w, gre);
+    n     += m;
+    lin_w += m;
+
+    *lin_w++ = ';';
+
+    n     += _term_it_put_value(lin_w, blu);
+
+    return n + 6;
+  }
+  //  standard color
+  //
+  else {
+    switch ( col ) {
+      default:
+      case u3_nul: *lin_w = '9'; break;
+      case 'k':    *lin_w = '0'; break;
+      case 'r':    *lin_w = '1'; break;
+      case 'g':    *lin_w = '2'; break;
+      case 'y':    *lin_w = '3'; break;
+      case 'b':    *lin_w = '4'; break;
+      case 'm':    *lin_w = '5'; break;
+      case 'c':    *lin_w = '6'; break;
+      case 'w':    *lin_w = '7'; break;
+    }
+    return 1;
   }
 }
 
@@ -1185,11 +1234,11 @@ _term_it_show_stub(u3_utty* uty_u,
 
   //  allocate enough memory for every display character, plus styles
   //
-  //NOTE  we use max 20 characters per styl for escape codes:
-  //      3 for opening, 4 for decorations, 4 for colors, 4 for closing,
+  //NOTE  we use max 31 characters per styl for escape codes:
+  //      3 for opening, 4 for decorations, 15 for colors, 4 for closing,
   //      and 5 as separators between decorations and colors.
   //
-  c3_w* lin_w = c3_malloc(  sizeof(c3_w) * (lec_w + (20 * tuc_w))  );
+  c3_w* lin_w = c3_malloc(  sizeof(c3_w) * (lec_w + (31 * tuc_w))  );
 
   //  write the contents to the buffer,
   //  tracking total and escape characters written
@@ -1243,8 +1292,9 @@ _term_it_show_stub(u3_utty* uty_u,
             sap_w++;
           }
           lin_w[i_w++] = '4';
-          _term_it_put_tint(&lin_w[i_w++], bag);
-          sap_w += 2;
+          c3_w put_w = _term_it_put_tint(&lin_w[i_w], bag);
+          i_w += put_w;
+          sap_w += ++put_w;
           mor_o = c3y;
         }
 
@@ -1256,8 +1306,9 @@ _term_it_show_stub(u3_utty* uty_u,
             sap_w++;
           }
           lin_w[i_w++] = '3';
-          _term_it_put_tint(&lin_w[i_w++], fog);
-          sap_w += 2;
+          c3_w put_w = _term_it_put_tint(&lin_w[i_w], fog);
+          i_w += put_w;
+          sap_w += ++put_w;
           mor_o = c3y;
         }
 

@@ -10,7 +10,7 @@
 ::    and trust it to take care of the rest.
 ::
 /-  view=chat-view, hook=chat-hook,  *group,
-    *permission-store, *group-store, inv=invite-store,
+    *group-store, inv=invite-store,
     sole
 /+  shoe, default-agent, verb, dbug, store=chat-store,
     group-store, grpl=group, resource
