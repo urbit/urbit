@@ -2,7 +2,7 @@
 ::
 :: data store that holds linear sequences of chat messages
 ::
-/+  store=chat-store, default-agent, verb, dbug, group-store
+/+  store=chat-store, default-agent, verb, dbug, group-store, graph-store, resource
 ~%  %chat-store-top  ..is  ~
 |%
 +$  card  card:agent:gall
@@ -17,6 +17,7 @@
 +$  state-1  [%1 =inbox:store]
 +$  state-2  [%2 =inbox:store]
 +$  state-3  [%3 =inbox:store]
++$  state-4  [%4 =inbox:store]
 +$  admin-action
   $%  [%trim ~]
   ==
@@ -47,7 +48,15 @@
     |-
     ^-  (quip card _this)
     ?-  -.old
-        %3  [cards this(state old)]
+    ::    %4  [cards this(state old)]
+      ::
+        %3
+      =.  cards  (weld cards (migrate-inbox inbox.old))
+      [cards this(state old)]
+      ::
+      ::%_    $
+        ::cards  (weld cards migrate-inbox)
+        ::-.old  %4
       ::
         %2
       =/  =inbox:store
@@ -71,6 +80,74 @@
       ?(%0 %1)  $(old (old-to-2 inbox.old))
     ::
     ==
+    ::
+    ++  nobody
+      ^-  @p
+      (bex 128)
+    ::
+    ++  migrate-inbox
+      |=  =inbox:store
+      ^-  (list card)
+      %+  turn
+        ~(tap by inbox)
+      (cork mailbox-to-update poke-graph-store)
+    ::
+    ++  mailbox-to-update
+      |=  [=path =mailbox:store]
+      ^-  update:graph-store
+      :+  %0  now.bowl
+      :+  %add-graph
+        (path-to-resource path)
+      :-  (mailbox-to-graph mailbox)
+      [`%graph-validator-chat %.n]
+    ::
+    ++  path-to-resource
+      |=  =path
+      ^-  resource
+      ?.  ?=([@ @ ~] path)  
+        nobody^(spat path)
+      =/  m-ship=(unit ship)
+        (slaw %p i.path)
+      ?~  m-ship
+        nobody^(spat path)
+      [u.m-ship i.t.path]
+    ::
+    ++  poke-graph-store
+      |=  =update:graph-store
+      ^-  card
+      [%pass / %agent [our.bowl %graph-store] %poke %graph-update !>(update)]
+    ::
+    ++  letter-to-contents
+      |=  =letter:store
+      ^-  (list content:graph-store)
+      :_  ~
+      ?.  ?=(%me -.letter)
+        letter
+      [%text narrative.letter]
+    ::
+    ++   envelope-to-node
+      |=  =envelope:store
+      ^-  [atom:graph-store node:graph-store]
+      =/  contents=(list content:graph-store)
+        (letter-to-contents letter.envelope)
+      =/  =index:graph-store
+        [when.envelope ~]
+      =,  envelope
+      :-  when.envelope
+      :_  [%empty ~]
+      ^-  post:graph-store
+      :*  author
+          index
+          when
+          contents
+          ~  ~
+      ==
+    ::
+    ++  mailbox-to-graph
+      |=  =mailbox:store
+      ^-  graph:graph-store
+      %+  gas:orm:graph-store  *graph:graph-store
+      (turn envelopes.mailbox envelope-to-node)
     ::
     ++  old-to-2
       |=  =inbox:store
