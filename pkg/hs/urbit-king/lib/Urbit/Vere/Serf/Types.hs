@@ -2,7 +2,7 @@ module Urbit.Vere.Serf.Types where
 
 import Urbit.Prelude
 
-import Urbit.Arvo      (Ev, FX)
+import Urbit.Arvo      (Ev, FX, Vere, Wynn)
 import Urbit.Noun.Time (Wen)
 
 
@@ -94,6 +94,7 @@ data RunReq
   | RRSave ()
   | RRKill ()
   | RRPack ()
+  | RRWyrd Vere (Maybe Wynn -> STM ())
   | RRScry Wen Gang Path (Maybe (Term, Noun) -> IO ())
 
 
@@ -111,6 +112,8 @@ data SerfExn
   | SerfNotRunning
   | MissingBootEventsInEventLog Word Word
   | SnapshotAheadOfLog EventId EventId
+  | BailDuringWyrd [Goof]
+  | SwapDuringWyrd Mug (Wen, Noun) FX
  deriving (Show, Exception)
 
 

@@ -84,7 +84,8 @@ import Foreign.Ptr                  (castPtr)
 import Foreign.Storable             (peek, poke)
 import RIO.Prelude                  (decodeUtf8Lenient)
 import System.Posix.Signals         (sigINT, sigKILL, signalProcess)
-import Urbit.Arvo                   (Ev, FX)
+import Urbit.Arvo                   (FX, Vere, Wynn)
+import Urbit.Arvo.Event
 import Urbit.Noun.Time              (Wen)
 
 import qualified Data.ByteString        as BS
@@ -368,12 +369,32 @@ compact serf = withSerfLockIO serf $ \ss -> do
   pure (ss, ())
 
 {-|
+  Tells the serf our version number and puts any returned version information
+  into the passed in d
+-}
+wyrd :: Vere -> (Maybe Wynn -> STM ()) -> Serf -> IO ()
+wyrd v ret serf = withSerfLockIO serf $ \ss -> do
+  now <- Time.now
+  sendWrit serf (WWork 0 now $ EvBlip $ BlipEvArvo $ ArvoEvWyrd v)
+  recvWork serf >>= \case
+    WBail goofs -> do
+      throwIO (BailDuringWyrd goofs)
+    WSwap eid hash (wen, noun) fx -> do
+      throwIO (SwapDuringWyrd hash (wen, noun) fx)
+    WDone eid hash fx -> do
+      -- Looks at the
+
+      pure (ss, ())
+
+      -- yield (eid, fx)
+      -- loop hash eid
+
+{-|
   Peek into the serf state.
 -}
 scry :: Serf -> Wen -> Gang -> Path -> IO (Maybe (Term, Noun))
 scry serf w g p = withSerfLockIO serf $ \ss -> do
   (ss,) <$> sendScryRequest serf w g p
-
 
 {-|
   Given a list of boot events, send them to to the serf in a single
@@ -493,10 +514,14 @@ run serf maxBatchSize getLastEvInLog onInput sendOn spin = topLoop
     RRSave ()      -> doSave
     RRKill ()      -> doKill
     RRPack ()      -> doPack
+    RRWyrd v ret   -> doWyrd v ret
     RRScry w g p k -> doScry w g p k
 
   doPack :: IO ()
   doPack = compact serf >> topLoop
+
+  doWyrd :: Vere -> (Maybe Wynn -> STM ()) -> IO ()
+  doWyrd v w = wyrd v w serf >> topLoop
 
   waitForLog :: IO ()
   waitForLog = do
@@ -530,6 +555,7 @@ run serf maxBatchSize getLastEvInLog onInput sendOn spin = topLoop
     RRSave ()      -> atomically (closeTBMQueue que) >> pure doSave
     RRPack ()      -> atomically (closeTBMQueue que) >> pure doPack
     RRScry w g p k -> atomically (closeTBMQueue que) >> pure (doScry w g p k)
+    RRWyrd v ret   -> atomically (closeTBMQueue que) >> pure (doWyrd v ret)
     RRWork workErr -> atomically (writeTBMQueue que workErr) >> workLoop que
 
   onWorkResp :: Wen -> EvErr -> Work -> IO ()

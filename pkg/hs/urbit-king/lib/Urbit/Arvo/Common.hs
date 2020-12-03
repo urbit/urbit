@@ -12,6 +12,7 @@
 -}
 module Urbit.Arvo.Common
   ( KingId(..), ServId(..)
+  , Vere(..), Wynn(..)
   , Json, JsonNode(..)
   , Desk(..), Mime(..)
   , Port(..), Turf(..)
@@ -21,7 +22,7 @@ module Urbit.Arvo.Common
   , AmesDest, Ipv4(..), Ipv6(..), Patp(..), Galaxy, AmesAddress(..)
   ) where
 
-import Urbit.Prelude hiding (Term)
+import Urbit.Prelude
 
 import Control.Monad.Fail (fail)
 
@@ -45,6 +46,25 @@ newtype KingId = KingId { unKingId :: UV }
 newtype ServId = ServId { unServId :: UV }
   deriving newtype (Eq, Ord, Show, Num, Enum, Integral, Real, FromNoun, ToNoun)
 
+-- Arvo Version Negotiation ----------------------------------------------------
+
+-- Information about the king runtime passed to Arvo.
+data Vere = Vere { vereName :: Term,
+                   vereRev  :: (Term, UD, UD, UD),
+                   vereWynn :: Wynn }
+  deriving (Eq, Ord, Show)
+
+instance ToNoun Vere where
+  toNoun Vere{..} = toNoun ((vereName, vereRev), vereWynn)
+
+instance FromNoun Vere where
+  parseNoun n = named "Vere" $ do
+    ((vereName, vereRev), vereWynn) <- parseNoun n
+    pure $ Vere {..}
+
+-- A list of names and their kelvin numbers, used in version negotiations.
+newtype Wynn = Wynn { unWynn :: [(Term, UD)] }
+  deriving newtype (Eq, Ord, Show, FromNoun, ToNoun)
 
 -- Http Common -----------------------------------------------------------------
 

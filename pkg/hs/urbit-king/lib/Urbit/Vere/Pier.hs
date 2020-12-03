@@ -335,6 +335,10 @@ pier (serf, log) vSlog startedSig injected = do
 
   tSerf <- acquireWorker "Serf" (runCompute serf computeConfig)
 
+  -- TODO: Go through the version negotionation with the serf. Before we start
+  -- the drivers, we send a %wyrd event and wait for a %wynn
+  doVersionNegotiation compute
+
   -- Run all born events and retry them until they succeed.
   wackEv <- EvBlip . BlipEvArvo . ArvoEvWack () <$> genEntropy
   rio $ for_ (wackEv : bootEvents) $ \ev -> do
@@ -414,6 +418,26 @@ death tag tid = do
     Left  exn -> Left (tag, exn)
     Right ()  -> Right tag
 
+-- %wyrd version negotiation ---------------------------------------------------
+
+doVersionNegotiation
+  :: HasPierEnv e
+  => (RunReq -> STM ())
+  -> RAcquire e ()
+doVersionNegotiation compute = do
+  -- What we want to do is actually inspect the effects here.
+  arvoVer <- fromNounExn $ toNoun $ Cord "arvo-kelvin"
+  let k   = Wynn [("zuse", 309),
+                  ("arvo", arvoVer),
+                  ("hoon", 141),
+                  ("nock", 4)]
+      sen = MkTerm "121331"  -- TODO: What is sen? I can just generate a nonce here.
+      v   = Vere sen ("KingHaskell", 0, 10, 9) k
+
+  retVar <- newEmptyTMVarIO
+  atomically $ compute $ RRWyrd v (putTMVar retVar)
+  ret <- atomically $ takeTMVar retVar
+  pure ()
 
 -- Start All Drivers -----------------------------------------------------------
 
