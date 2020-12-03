@@ -180,10 +180,7 @@
       sorted
     $(index +(index), sorted [(~(got by fragments) index) sorted])
   ::
-  %-  cue
-  %+  can   13
-  %+  turn  (flop sorted)
-  |=(a=@ [1 a])
+  (cue (rep 13 (flop sorted)))
 ::  +bind-duct: find or make new $bone for .duct in .ossuary
 ::
 ++  bind-duct
