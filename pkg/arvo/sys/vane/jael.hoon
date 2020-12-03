@@ -1119,6 +1119,11 @@
     ::
     [~ ~ %noun !>(u.r)]
   ::
+      %vile
+    =*   life  lyf.own.pki.lex
+    =/  =seed  [our life (~(got by jaw.own.pki.lex) life) ~]
+    [~ ~ %atom !>((jam seed))]
+  ::
       %deed
     ?.  ?=([@ @ ~] tyl)  [~ ~]
     ?.  &(?=(%& -.why) =(p.why our))

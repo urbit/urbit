@@ -475,6 +475,23 @@ _pier_on_scry_done(void* ptr_v, u3_noun nun)
   else {
     u3l_log("pier: scry succeeded\n");
 
+    //  serialize as desired
+    //
+    u3_atom out;
+    c3_c*   ext_c;
+    {
+      u3_atom puf = u3i_string(u3_Host.ops_u.puf_c);
+      if ( c3y == u3r_sing(c3__jam, puf) ) {
+        out   = u3qe_jam(res);
+        ext_c = "jam";
+      }
+      else {
+        out   = u3dc("scot", u3k(puf), u3k(res));
+        ext_c = "txt";
+      }
+      u3z(puf);
+    }
+
     c3_c* pac_c = u3_Host.ops_u.puk_c;
     if (!pac_c) {
       pac_c = u3_Host.ops_u.pek_c;
@@ -494,9 +511,9 @@ _pier_on_scry_done(void* ptr_v, u3_noun nun)
     }
 
     c3_c fil_c[2048];
-    snprintf(fil_c, 2048, "%s/.urb/put/%s.jam", pir_u->pax_c, pac_c+1);
+    snprintf(fil_c, 2048, "%s/.urb/put/%s.%s", pir_u->pax_c, pac_c+1, ext_c);
 
-    u3_walk_save(fil_c, 0, u3qe_jam(res), pir_u->pax_c, pad);
+    u3_walk_save(fil_c, 0, out, pir_u->pax_c, pad);
     u3l_log("pier: scry in %s\n", fil_c);
   }
 
@@ -588,23 +605,6 @@ _pier_work_init(u3_pier* pir_u)
                         pir_u, _pier_on_scry_done);
     }
     u3z(pex);
-  }
-  else if ( _(u3_Host.ops_u.exp) ) {
-    u3_noun pex = u3do("stab", u3i_string("/gx/lens/export-all/noun"));
-    u3_noun car;
-    u3_noun dek;
-    u3_noun pax;
-    u3r_trel(pex, &car, &dek, &pax);
-    if (!u3_Host.ops_u.puk_c) {
-      u3_Host.ops_u.puk_c = strdup("/archive");
-    }
-    //  run the requested scry, jam to disk, then exit
-    //
-    u3l_log("pier: scry\n");
-    u3_pier_peek_last(pir_u, u3_nul, u3k(car), u3k(dek), u3k(pax),
-                      pir_u, _pier_on_scry_done);
-    u3z(pex);
-
   }
   else {
     //  initialize i/o drivers
