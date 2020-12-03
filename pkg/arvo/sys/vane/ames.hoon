@@ -180,10 +180,7 @@
       sorted
     $(index +(index), sorted [(~(got by fragments) index) sorted])
   ::
-  %-  cue
-  %+  can   13
-  %+  turn  (flop sorted)
-  |=(a=@ [1 a])
+  (cue (rep 13 (flop sorted)))
 ::  +bind-duct: find or make new $bone for .duct in .ossuary
 ::
 ++  bind-duct
@@ -242,11 +239,11 @@
   |=  [=public-key =private-key]
   ^-  symmetric-key
   ::
-  ?>  =('b' (end 3 1 public-key))
-  =.  public-key  (rsh 8 1 (rsh 3 1 public-key))
+  ?>  =('b' (end 3 public-key))
+  =.  public-key  (rsh 8 (rsh 3 public-key))
   ::
-  ?>  =('B' (end 3 1 private-key))
-  =.  private-key  (rsh 8 1 (rsh 3 1 private-key))
+  ?>  =('B' (end 3 private-key))
+  =.  private-key  (rsh 8 (rsh 3 private-key))
   ::
   `@`(shar:ed:crypto public-key private-key)
 ::  +encode-packet: serialize a packet into a bytestream
@@ -262,13 +259,13 @@
   =/  body=@
     ;:  mix
       sndr-tick
-      (lsh 2 1 rcvr-tick)
-      (lsh 3 1 sndr)
-      (lsh 3 +(size.sndr-meta) rcvr)
-      (lsh 3 +((add size.sndr-meta size.rcvr-meta)) content)
+      (lsh 2 rcvr-tick)
+      (lsh 3 sndr)
+      (lsh [3 +(size.sndr-meta)] rcvr)
+      (lsh [3 +((add size.sndr-meta size.rcvr-meta))] content)
     ==
-  =/  checksum  (end 0 20 (mug body))
-  =?  body  ?=(^ origin)  (mix u.origin (lsh 3 6 body))
+  =/  checksum  (end [0 20] (mug body))
+  =?  body  ?=(^ origin)  (mix u.origin (lsh [3 6] body))
   ::
   =/  header=@
     %+  can  0
@@ -280,7 +277,7 @@
         [20 checksum]
         [1 relayed=.?(origin)]
     ==
-  (mix header (lsh 5 1 body))
+  (mix header (lsh 5 body))
 ::  +decode-packet: deserialize packet from bytestream or crash
 ::
 ++  decode-packet
@@ -290,8 +287,8 @@
   ~|  %decode-packet-fail
   ::  first 32 (2^5) bits are header; the rest is body
   ::
-  =/  header  (end 5 1 blob)
-  =/  body    (rsh 5 1 blob)
+  =/  header  (end 5 blob)
+  =/  body    (rsh 5 blob)
   ::  read header; first three bits are reserved
   ::
   =/  is-ames  (cut 0 [3 1] header)
@@ -312,10 +309,10 @@
     ?:  =(| relayed)
       [~ body]
     =/  len  (sub (met 3 body) 6)
-    [`(end 3 6 body) (rsh 3 6 body)]
+    [`(end [3 6] body) (rsh [3 6] body)]
   ::  .checksum does not apply to the origin
   ::
-  ?.  =(checksum (end 0 20 (mug body)))
+  ?.  =(checksum (end [0 20] (mug body)))
     ~|  %ames-checksum  !!
   ::  read fixed-length sndr and rcvr life data from body
   ::
@@ -391,7 +388,7 @@
   ::
   ::    Logic duplicates +com:nu:crub:crypto and +sure:as:crub:crypto.
   ::
-  =/  key  (end 8 1 (rsh 3 1 public-key.open-packet))
+  =/  key  (end 8 (rsh 3 public-key.open-packet))
   ?>  (veri:ed:crypto signature signed key)
   open-packet
 ::  +encode-shut-packet: encrypt and packetize a $shut-packet
@@ -419,7 +416,7 @@
   =/  vec  ~[sndr rcvr sndr-life rcvr-life]
   =/  [siv=@uxH len=@ cyf=@ux]
     (~(en sivc:aes:crypto (shaz symmetric-key) vec) (jam shut-packet))
-  =/  content  :(mix siv (lsh 7 1 len) (lsh 3 18 cyf))
+  =/  content  :(mix siv (lsh 7 len) (lsh [3 18] cyf))
   [[sndr rcvr] (mod sndr-life 16) (mod rcvr-life 16) origin=~ content]
 ::  +decode-shut-packet: decrypt a $shut-packet from a $packet
 ::
@@ -431,9 +428,9 @@
     ~|  ames-sndr-tick+sndr-tick.packet  !!
   ?.  =(rcvr-tick.packet (mod rcvr-life 16))
     ~|  ames-rcvr-tick+rcvr-tick.packet  !!
-  =/  siv  (end 7 1 content.packet)
-  =/  len  (end 4 1 (rsh 7 1 content.packet))
-  =/  cyf  (rsh 3 18 content.packet)
+  =/  siv  (end 7 content.packet)
+  =/  len  (end 4 (rsh 7 content.packet))
+  =/  cyf  (rsh [3 18] content.packet)
   ~|  ames-decrypt+[[sndr rcvr origin]:packet len siv]
   =/  vec  ~[sndr.packet rcvr.packet sndr-life rcvr-life]
   ;;  shut-packet  %-  cue  %-  need
@@ -1880,7 +1877,7 @@
       =/  pumps=(list message-pump-state)
         %+  murn  ~(tap by snd.peer-state)
         |=  [=bone =message-pump-state]
-        ?:  =(0 (end 0 1 bone))
+        ?:  =(0 (end 0 bone))
           ~
         `u=message-pump-state
       ::  clogged: are five or more response messages unsent to this peer?
@@ -2111,11 +2108,11 @@
         ^+  peer-core
         ::  if odd bone, ack is on "subscription update" message; no-op
         ::
-        ?:  =(1 (end 0 1 bone))
+        ?:  =(1 (end 0 bone))
           peer-core
         ::  even bone; is this bone a nack-trace bone?
         ::
-        ?:  =(1 (end 0 1 (rsh 0 1 bone)))
+        ?:  =(1 (end 0 (rsh 0 bone)))
           ::  nack-trace bone; assume .ok, clear nack from |message-sink
           ::
           =/  target-bone=^bone  (mix 0b10 bone)
@@ -2182,9 +2179,9 @@
       ::    even bone, 1 second bit: nack-trace %boon message
       ::
       ++  on-sink-memo
-        ?:  =(1 (end 0 1 bone))
+        ?:  =(1 (end 0 bone))
           on-sink-plea
-        ?:  =(0 (end 0 1 (rsh 0 1 bone)))
+        ?:  =(0 (end 0 (rsh 0 bone)))
           on-sink-boon
         on-sink-nack-trace
       ::  +on-sink-boon: handle response message received by |message-sink

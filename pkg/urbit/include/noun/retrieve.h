@@ -188,6 +188,11 @@
                  u3_noun* b,
                  u3_noun* c);
 
+      /* u3r_bite(): retrieve/default $bloq and $step from $bite.
+      */
+        c3_o
+        u3r_bite(u3_noun bite, u3_atom* bloq, u3_atom *step);
+
       /* u3r_cell():
       **
       **   Divide `a` as a cell `[b c]`.
