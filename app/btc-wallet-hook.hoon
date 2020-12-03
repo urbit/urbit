@@ -39,7 +39,6 @@
       poym=(unit txbu:bws)
   ==
 ::
-::  TODO: find all instances of scan-addr -- make them typed correctly
 +$  card  card:agent:gall
 --
 =|  state-0
@@ -177,7 +176,7 @@
     `state(poym ~)
     ::
       %force-retry
-    [retry-scan-addr state]
+    [retry-reqs state]
   ==
 ::  +handle-provider-status: handle connectivity updates from provider
 ::    if status is %connected, retry all pending address lookups
@@ -191,10 +190,10 @@
   ?-  -.s
       %connected
     :-  ?:  connected.u.provider  ~
-        (weld retry-scan-addr retry-txbu)
+        (weld retry-reqs retry-txbu)
     %=  state
         provider  `[host.u.provider %.y]
-        btc-state  [blockcount.s fee.s now.bowl]
+        btc-state  [block.s fee.s now.bowl]
     ==
       %disconnected
     `state(provider `[host.u.provider %.n])
@@ -206,12 +205,13 @@
   ?.  ?=(%.y -.upd)  `state
   ?-  -.body.p.upd
       %address-info
-    =+  req=(~(get by scan-addr) req-id.p.upd)
+    =/  req=(unit request:bws)
+      (~(get by reqs) req-id.p.upd)
     ?~  req  `state
-    :_  state(scan-addr (~(del by scan-addr) req-id.p.upd))
+    :_  state(reqs (~(del by reqs) req-id.p.upd))
     :~  %-  poke-wallet-store
         :*  %address-info  xpub.u.req  chyg.u.req  idx.u.req
-            utxos.body.p.upd  used.body.p.upd  blockcount.body.p.upd
+            utxos.body.p.upd  used.body.p.upd  block.body.p.upd
         ==
     ==
     ::
@@ -226,9 +226,9 @@
   |=  req=request:bws
   ^-  (quip card _state)
   ?-  -.req
-      %scan-address
+      %address-info
     =+  ri=(gen-req-id:bp eny.bowl)
-    :_  state(scan-addr (~(put by scan-addr) ri req))
+    :_  state(reqs (~(put by reqs) ri req))
     ?~  provider  ~
     ?:  provider-connected
       ~[(get-address-info ri host.u.provider a.req)]
@@ -304,10 +304,10 @@
   %+  levy  txis.u.poym
   |=(t=txi:bws ?=(^ ur.t))
 ::
-++  retry-scan-addr
+++  retry-reqs
   ^-  (list card)
   ?~  provider  ~|("provider not set" !!)
-  %+  turn  ~(tap by scan-addr)
+  %+  turn  ~(tap by reqs)
   |=  [ri=req-id:bp req=request:bws]
   (get-address-info ri host.u.provider a.req)
 ::
