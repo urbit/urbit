@@ -242,10 +242,14 @@
   %-  as-octs:mimes:html
   %-  crip
   %-  en-xml:html
+  =/  favicon  %+
+    weld  "<svg width='10' height='10' viewBox='0 0 10 10' xmlns='http://www.w3.org/2000/svg'>"
+          "<circle r='3.09' cx='5' cy='5' /></svg>"
   ;html
     ;head
       ;meta(charset "utf-8");
       ;meta(name "viewport", content "width=device-width, initial-scale=1, shrink-to-fit=no");
+      ;link(rel "icon", type "image/svg+xml", href (weld "data:image/svg+xml;utf8," favicon));
       ;title:"OS1"
       ;style:'''
              @import url("https://rsms.me/inter/inter.css");
@@ -376,10 +380,11 @@
           =required  "true"
           =minlength  "27"
           =maxlength  "27"
-          :: =pattern  "((\w{6})-?){4}"
+          =pattern  "((?:[a-z]\{6}-)\{3}(?:[a-z]\{6}))"
           =autofocus  "true";
         ;input(type "hidden", name "redirect", value redirect-str);
-        ;+  ?:  failed
+        ;+  ?.  failed
+          ;span;
           ;span.failed
             ;svg(xmlns "http://www.w3.org/2000/svg", viewBox "0 0 12 12")
               ;circle(cx "6", cy "6", r "5.5");
@@ -388,7 +393,6 @@
             ==
             Key is incorrect
           ==
-          ;span;
         ;button(type "submit"):"Continue"
       ==
     ==
