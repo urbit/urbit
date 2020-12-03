@@ -104,6 +104,10 @@ static u3_noun _siv_de(c3_y* key_y,
     return u3_none;
   }
 
+  if ( c3y == u3qa_gth(u3r_met(3, txt), len) ) {
+    return u3_none;
+  }
+
   while (u3_nul != ads) {
     c3_w ad_w = u3r_met(3, u3h(ads));
     c3_y* ad_y = u3a_malloc(ad_w);
@@ -328,9 +332,6 @@ u3qea_sivc_de(u3_atom key,
 {
   c3_y key_y[64];
   if ( u3r_met(3, key) > 64 ) {
-    return u3_none;
-  }
-  if ( c3y == u3qa_gth(u3r_met(3, txt), len) ) {
     return u3_none;
   }
 
