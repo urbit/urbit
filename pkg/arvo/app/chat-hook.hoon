@@ -84,10 +84,7 @@
   ++  on-init
     ^-  (quip card _this)
     :_  this(invite-created %.y)
-    :~  (invite-poke:cc [%create %chat])
-        [%pass /invites %agent [our.bol %invite-store] %watch /invitatory/chat]
-        watch-groups:cc
-    ==
+    [(invite-poke:cc [%create %chat]) ~]
   ++  on-save   !>(state)
   ++  on-load
     |=  old-vase=vase
