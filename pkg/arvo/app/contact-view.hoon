@@ -4,13 +4,10 @@
 ::  into semantic actions for the UI
 ::
 /-
-    group-hook,
     inv=invite-store,
     *contact-hook,
     *metadata-store,
     *metadata-hook,
-    *permission-group-hook,
-    *permission-hook,
     pull-hook,
     push-hook
 /+  *server, *contact-json, default-agent, dbug, verb,
@@ -308,20 +305,6 @@
   |=  act=metadata-hook-action
   ^-  card
   [%pass / %agent [our.bol %metadata-hook] %poke %metadata-hook-action !>(act)]
-::
-++  perm-group-hook-poke
-  |=  act=permission-group-hook-action
-  ^-  card
-  :*  %pass  /  %agent  [our.bol %permission-group-hook]
-      %poke  %permission-group-hook-action  !>(act)
-  ==
-::
-++  permission-hook-poke
-  |=  act=permission-hook-action
-  ^-  card
-  :*  %pass  /  %agent  [our.bol %permission-hook]
-      %poke  %permission-hook-action  !>(act)
-  ==
 ::
 ++  sync-metadata
   |=  [=ship =path]

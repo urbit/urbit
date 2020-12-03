@@ -82,9 +82,6 @@
       %group-store
       %group-pull-hook
       %group-push-hook
-      %permission-store
-      %permission-hook
-      %permission-group-hook
       %invite-store
       %invite-hook
       %chat-store
@@ -95,10 +92,6 @@
       %contact-store
       %contact-hook
       %contact-view
-      %link-store
-      %link-proxy-hook
-      %link-listen-hook
-      %link-view
       %metadata-store
       %metadata-hook
       %s3-store
@@ -227,10 +220,6 @@
   =?  ..on-load  (lte hood-version %4)
     ~>  %slog.0^leaf+"drum: starting os1 agents"
     =>  (se-born | %home %s3-store)
-    =>  (se-born | %home %link-view)
-    =>  (se-born | %home %link-listen-hook)
-    =>  (se-born | %home %link-store)
-    =>  (se-born | %home %link-proxy-hook)
     =>  (se-born | %home %contact-view)
     =>  (se-born | %home %contact-hook)
     =>  (se-born | %home %contact-store)
@@ -364,11 +353,9 @@
     :~
       :: set up stores with priority: depended on, but never depending
       %-  sy
-      :~  %permission-store
-          %chat-store
+      :~  %chat-store
           %contact-store
           %group-store
-          %link-store
           %invite-store
           %metadata-store
       ==

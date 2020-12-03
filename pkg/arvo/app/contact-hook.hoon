@@ -1,8 +1,7 @@
 ::  contact-hook [landscape]
 ::
 ::
-/-  group-hook,
-    *contact-hook,
+/-  *contact-hook,
     *contact-view,
     inv=invite-store,
     *metadata-hook,

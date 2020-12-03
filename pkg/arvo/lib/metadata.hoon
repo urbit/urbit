@@ -58,19 +58,4 @@
     (scot %da now.bowl)
     /resource-indices
   ==
-::
-++  check-resource-permissions
-  |=  [=ship =md-resource]
-  ^-  ?
-  %+  lien  (groups-from-resource md-resource)
-  |=  =group-path
-  .^  ?
-    %gx
-    (scot %p our.bowl)
-    %permission-store
-    (scot %da now.bowl)
-    %permitted
-    (scot %p ship)
-    (snoc group-path %noun)
-  ==
 --
