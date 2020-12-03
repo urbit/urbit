@@ -67,7 +67,7 @@
   ++  octs-to-blocks
     |=  bs=octs  ^-  [padding=@ud (list word24)]
     =/  padding=@ud  (~(dif fo 3) 0 p.bs)
-    =/  padded=octs  [(add padding p.bs) (lsh 3 padding (rev 3 bs))]
+    =/  padded=octs  [(add padding p.bs) (lsh [3 padding] (rev 3 bs))]
     [padding (explode-words 24 padded)]
   ::
   ++  unpad
