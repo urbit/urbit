@@ -1596,19 +1596,18 @@
       ++  deep
         |=  [pax=path src=cord]
         ^-  ?
-        ::  XX scry into arvo
+        ::  XX use roof
         ::
-        ::    //=//=/mod/fat
-        ::    =+  (~(get ^de fat) pax)
-        ::    &(?=(^ fil) ?=(%hoon p.fil) =(src q.fil))
+        :: =/  dat  (rof `[our ~ ~] $/[[our $/da/now] mod/fat/pax])
+        :: ?:  |(?=(~ dat) ?=(~ u.dat))  |
+        :: =/  nod  !<((axal (cask)) q.u.u.dat)
         ::
-        =/  our-lobe=lobe
-          (page-to-lobe hoon/src)
-        =/  =dome  dom:(~(got by dos.rom) %home)
-        =/  =yaki  (~(got by hut.ran) (~(got by hit.dome) let.dome))
-        =/  lobe=(unit lobe)
-          (~(get by q.yaki) (weld pax /hoon))
-        &(?=(^ lobe) =(our-lobe u.lobe))
+        =/  dat
+          ;;  (unit (unit (axal (cask))))
+          ((sloy-light ski) [hoon-version %noun] %$ our %$ da/now mod/fat/pax)
+        ?:  |(?=(~ dat) ?=(~ u.dat))  |
+        =*  nod  u.u.dat
+        &(?=(^ fil.nod) ?=(%hoon p.u.fil.nod) =(src q.u.fil.nod))
       --
     ::
     ++  page-to-cord
