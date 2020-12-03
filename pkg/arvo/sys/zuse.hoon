@@ -29,7 +29,7 @@
 ::  it's important to keep %zuse minimal.  models and
 ::  engines not used outside a vane should stay inside
 ::  that vane.
-~%  %zuse  +>  ~
+~%  %zuse  ..is  ~
 =>
 ::                                                      ::  ::
 ::::                                                    ::  ::  (1) models

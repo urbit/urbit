@@ -18,6 +18,7 @@
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    volume 3, Arvo models and skeleton    ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+=>  ..ride
 =>
 |%
 +|  %global
@@ -212,14 +213,20 @@
 +$  grub
   $:  ::  who: identity once we know it
       ::  eny: entropy once we learn it
-      ::  bod: %zuse once we receive it
+      ::  lac: laconicity as we want it
+      ::  ver: the Outside as we see it
+      ::  fat: source when we attain it
+      ::  lul: %lull when we acquire it
+      ::  zus: %zuse once we receive it
+      ::  van: vanes while we desire it
       ::
       who=(unit ship)
       eny=(unit @)
       lac=?
       ver=(unit vere)
       fat=(unit (axal (cask)))
-      bod=(unit (trap vase))
+      lul=(unit (trap vase))
+      zus=(unit (trap vase))
       van=(map term (trap vase))
   ==
 +$  heir
@@ -248,10 +255,12 @@
       ==
       $=  mod
       $:  ::  fat: filesystem
+          ::  lul: %lull
           ::  zus: %zuse
           ::  van: vanes
           ::
           fat=(axal (cask))
+          lul=vase
           zus=vase
           van=(map term vane)
       ==
@@ -501,7 +510,8 @@
               use=(map path (cask))
           ==
       +$  oped
-        $:  zus=(unit hoof)
+        $:  lul=(unit hoof)
+            zus=(unit hoof)
             van=(list (cask hoof))
         ==
       +$  seed  [hun=(unit hoof) arv=hoof]
@@ -588,8 +598,20 @@
     ++  adorn
       |=  [del=news all=?]
       ^-  (pair oped _fat)
+      ::  lull: shared structures
+      ::
+      =^  lul  fat
+        ?^  hav=(~(get by sys.del) /sys/lull)
+          :-  `(sole u.hav)
+          (~(put de fat) /sys/lull u.hav)
+        :_  fat
+        ~|  %adorn-no-lull
+        ?.(all ~ `(sole (need fil:(~(get de fat) /sys/lull))))
       ::  zuse: shared library
       ::
+      ::    %lull is the subject of %zuse; force all if we have a new %lull
+      ::
+      =.  all  |(all ?=(^ lul))
       =^  zus  fat
         ?^  hav=(~(get by sys.del) /sys/zuse)
           :-  `(sole u.hav)
@@ -601,8 +623,9 @@
       ::
       ::    %zuse is the subject of the vanes; force all if we have a new %zuse
       ::
+      =.  all  |(all ?=(^ zus))
       =|  nav=(map term hoof)
-      =?  nav  |(all ?=(^ zus))
+      =?  nav  all
         %-  ~(gas by nav)
         %+  turn
           ~(tap by dir:(~(get de fat) /sys/vane))
@@ -621,7 +644,7 @@
         [[`@tas`nam (sole q)] (~(put de taf) p q)]
       ::
       =;  van
-        [[zus van] fat]
+        [[lul zus van] fat]
       %+  sort  ~(tap by (~(gas by nav) new))
       |=([[a=@tas *] [b=@tas *]] (aor a b))
     -- :: adapt
@@ -1211,9 +1234,14 @@
           |=  [del=news all=?]
           ^+  ..pith
           =^  job=oped  fat.mod.sol  (~(adorn adapt fat.mod.sol) del all)
+          =?  lul.mod.sol  ?=(^ lul.job)
+            $:(smit:va "lull" pit /sys/lull/hoon u.lul.job)
           =?  zus.mod.sol  ?=(^ zus.job)
-            $:(smit:va "zuse" pit /sys/zuse/hoon u.zus.job)
-          %-  (wyrd kel.ver.zen [zuse/;;(@ud q:(slap zus.mod.sol limb/%zuse)) ~])
+            $:(smit:va "zuse" lul.mod.sol /sys/zuse/hoon u.zus.job)
+          %-  %+  wyrd   kel.ver.zen
+              :~  lull/;;(@ud q:(slap lul.mod.sol limb/%lull))
+                  zuse/;;(@ud q:(slap zus.mod.sol limb/%zuse))
+              ==
           %=    ..pith
               van.mod
             %+  roll  van.job
@@ -1297,7 +1325,8 @@
                      ^-  (list (pair term @))
                      :~  hoon/hoon-version
                          arvo/arvo
-                         zuse/;;(@ q:(slap zus.mod limb/%zuse))
+                         lull/;;(@ud q:(slap lul.mod limb/%lull))
+                         zuse/;;(@ud q:(slap zus.mod limb/%zuse))
                      ==
                  =?  lag.zen  !=(rev.ver.zen rev.p.buz)  ~&(%unlagging |)
                  ..pith(ver.zen p.buz)
@@ -1485,7 +1514,8 @@
       ^-  (list (pair term @))
       :~  hoon/hoon-version
           arvo/arvo
-          zuse/;;(@ q:(slap zus.mod limb/%zuse))
+          lull/;;(@ud q:(slap lul.mod limb/%lull))
+          zuse/;;(@ud q:(slap zus.mod limb/%zuse))
       ==
   ::  restore working state and resume
   ::
@@ -1562,28 +1592,59 @@
 ::    with +wish and vane installation with the %veer event.
 ::
 =>  |%
-    ++  mint
-      |=  [vax=vase lal=term pax=path txt=@t]
-      ^-  (trap vase)
-      =/  cap  ?:(?=(%$ lal) "zuse" "vane {<lal>}")
-      (smit:va:part cap vax pax txt)
-    ::
     ++  molt
       |=  [now=@da grub]
       ^-  (unit heir)
-      ?.  &(?=(^ who) ?=(^ eny) ?=(^ ver) ?=(^ fat) ?=(^ bod))
+      ?.  &(?=(^ who) ?=(^ eny) ?=(^ ver) ?=(^ fat) ?=(^ lul) ?=(^ zus))
         ~
-      =/  zus  $:u.bod
+      =/  lul  $:u.lul
+      =/  zus  $:u.zus
       %-  %+  wyrd  kel.u.ver
           ^-  (list (pair term @))
           :~  hoon/hoon-version
               arvo/arvo
+              lull/;;(@ud q:(slap lul limb/%lull))
               zuse/;;(@ud q:(slap zus limb/%zuse))
           ==
       =/  nav  %-  ~(run by van)
                |=(a=(trap vase) (settle:va:part (slym $:a zus)))
       :^  ~  arvo  *debt
-      [[u.who now u.eny] [lac] [u.ver |] u.fat zus nav]
+      [[u.who now u.eny] [lac] [u.ver |] u.fat lul zus nav]
+    ::
+    ++  what
+      |=  [grub fil=(list (pair path (cask)))]
+      ^-  grub
+      =*  gub  +<-
+      =/  taf  (fall fat *(axal (cask)))
+      =/  del  (~(group adapt:part taf) fil)
+      =/  tub  (~(usurp adapt:part taf) del)
+      ?:  &(?=(^ dir.taf) ?=(^ tub))
+        ~>(%mean.'arvo: larval reboot' !!)    :: XX support
+      ::
+      ::  require, and unconditionally adopt, initial kernel source
+      ::
+      =?  taf  =(~ dir.taf)     ::  XX TMI
+        ~|  %larval-need-kernel
+        ?>  &(?=(^ tub) ?=(^ hun.p.u.tub))
+        (~(gas de taf) q.u.tub)
+      ::
+      =^  job=oped:part  taf  (~(adorn adapt:part taf) del |)
+      =?  lul  ?=(^ lul.job)
+       `(smit:va:part "lull" pit /sys/lull/hoon u.lul.job)
+      =?  zus  ?=(^ zus.job)
+        ?.  ?=(^ lul)
+         ~|(%larval-need-lull !!)
+        `(smit:va:part "zuse" $:u.lul /sys/zuse/hoon u.zus.job)
+      =?  van  !=(~ van.job)    ::  XX TMI
+        ?.  ?=(^ zus)
+         ~|(%larval-need-zuse !!)
+        %+  roll  van.job
+        |=  [[(cask hoof:part)] =_van]
+        ^+  van
+        =/  way  (wilt p)
+        %+  ~(put by van)  way
+        (smit:va:part "vane {<way>}" $:u.zus /sys/vane/[p]/hoon q)
+      gub(fat `taf)
     --
 ::
 ::  larval state, as a discriminable sample
@@ -1605,66 +1666,38 @@
 ++  poke                                                ::  +47
   |=  [now=@da ovo=ovum]
   ^-  ^
+  ~|  poke/p.card.ovo
   =/  wip
-    ~|  poke/p.card.ovo
     ~>  %mean.'arvo: bad wisp'
     ;;(wisp card.ovo)
   ::
   =.  ..poke
-    |-  ^+  ..poke
     ?-    -.wip
       %verb  ..poke(lac ?~(p.wip !lac u.p.wip))
-    ::
       %wack  ..poke(eny `p.wip)
-    ::
-      %what  =/  taf  (fall fat *(axal (cask)))
-             =/  del  (~(group adapt:part taf) p.wip)
-             =/  tub  (~(usurp adapt:part taf) del)
-             ?:  &(?=(^ dir.taf) ?=(^ tub))
-               ~>(%mean.'arvo: larval reboot' !!)    :: XX support
-             ::
-             ::  require, and unconditionally adopt, initial kernel source
-             ::
-             =?  taf  =(~ dir.taf)     ::  XX TMI
-               ~|  %larval-need-kernel
-               ?>  &(?=(^ tub) ?=(^ hun.p.u.tub))
-               (~(gas de taf) q.u.tub)
-             ::
-             =^  job  taf  [p q]:(~(adorn adapt:part taf) del |)
-             =?  bod  ?=(^ zus.job)
-               `(mint pit %$ /sys/zuse/hoon u.zus.job)
-             %=    ..poke
-                 fat  `taf
-                 van
-               %+  roll  van.job
-               |=  [[(cask hoof:part)] =_van]
-               ^+  van
-               ?>  ?=(^ bod)
-               =/  way  (wilt p)
-               (~(put by van) way (mint $:u.bod way /sys/vane/[p]/hoon q))
-             ==
-    ::
+      %what  ..poke(gub (what gub p.wip))
       %whom  ..poke(who ~|(%whom-once ?>(?=(~ who) `p.wip)))
     ::
       %wyrd  %-  %+  wyrd  kel.p.wip
                  ^-  (list (pair term @))
                  :*  hoon/hoon-version
                      arvo/arvo
-                     ?~  bod  ~
-                     [zuse/;;(@ud q:(slap $:u.bod limb/%zuse)) ~]
+                     ?~  lul  ~
+                     :-  lull/;;(@ud q:(slap $:u.lul limb/%lull))
+                     ?~  zus  ~
+                     [zuse/;;(@ud q:(slap $:u.zus limb/%zuse)) ~]
                  ==
              ..poke(ver `p.wip)
     ==
   ::
-  ?~  hir=(molt now gub)
-    [~ ..poke]
-  ::
   ::  upgrade once we've accumulated necessary state
   ::
+  ?~  hir=(molt now gub)
+    [~ ..poke]
   ~>  %slog.[0 leaf+"arvo: metamorphosis"]
   (load u.hir)
 ::
 ++  wish                                                ::  +22
   |=  txt=*
-  q:(slap ?~(bod pit $:u.bod) (ream ;;(@t txt)))
+  q:(slap ?~(zus pit $:u.zus) (ream ;;(@t txt)))
 --

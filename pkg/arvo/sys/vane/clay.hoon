@@ -127,6 +127,7 @@
 +$  reef-cache
   $:  hoon=vase
       arvo=vase
+      lull=vase
       zuse=vase
   ==
 ::
@@ -1401,7 +1402,7 @@
       (sys-update yoki new-data)
     ::  clear caches if zuse reloaded
     ::
-    =/  is-zuse-new=?  (need-sys-update changes)
+    =/  is-zuse-new=?  (need-reef-update changes)
     =.  fod.dom
       ?:  is-zuse-new
         *ford-cache
@@ -1546,89 +1547,68 @@
       (~(put by $(builds t.builds)) i.builds)
     ::
     ++  build-reef
+      =>  |%
+          +$  reef-step
+            ::  vary: source or dependencies changed
+            ::  deep: source and dependencies match kernel
+            ::
+            [vary=? deep=?]
+          --
+      ::
       |=  $:  fer=(unit reef-cache)
               invalid=(set path)
               data=(map path (each page lobe))
           ==
-      ^-  reef-cache
-      ?:  =(%home syd)
-        [!>(..ride) !>(..is) !>(..zuse)]
-      |^
-      ?:  |(?=(~ fer) (~(has in invalid) /sys/hoon/hoon))
-        =/  [home=? hoon=vase]
-          ?:  (same-as-home /sys/hoon/hoon)
-            &+!>(..ride)
-          |+build-hoon
-        :-  hoon
-        =/  [home=? arvo=vase]
-          ?:  &(home (same-as-home /sys/arvo/hoon))
-            &+!>(..is)
-          |+(build-arvo hoon)
-        :-  arvo
-        ?:  &(home (same-as-home /sys/zuse/hoon))
-          !>(..zuse)
-        (build-zuse arvo)
-      :-  hoon.u.fer
-      ?:  (~(has in invalid) /sys/arvo/hoon)
-        =/  [home=? arvo=vase]
-          ?:  &((same-as-home /sys/hoon/hoon) (same-as-home /sys/arvo/hoon))
-            &+!>(..is)
-          |+(build-arvo hoon.u.fer)
-        :-  arvo
-        ?:  &(home (same-as-home /sys/zuse/hoon))
-          !>(..zuse)
-        (build-zuse arvo)
-      :-  arvo.u.fer
-      ?:  (~(has in invalid) /sys/zuse/hoon)
-        ?:  ?&  (same-as-home /sys/hoon/hoon)
-                (same-as-home /sys/arvo/hoon)
-                (same-as-home /sys/zuse/hoon)
+      |^  ^-  reef-cache
+          =/  [tep=reef-step ref=reef-cache]
+            ?^  fer
+              [[vary=| deep=&] u.fer]
+            [[vary=& deep=&] *reef-cache]
+          ::
+          =^  hon  tep  (build tep /sys/hoon hoon.ref !>(**) !,(*hoon ..ride))
+          =^  rav  tep  (build tep /sys/arvo arvo.ref hon !,(*hoon ..part))
+          =^  lul  tep  (build tep /sys/lull lull.ref rav !,(*hoon .))
+          =^  zus  tep  (build tep /sys/zuse zuse.ref rav !,(*hoon .))
+          [hon rav lul zus]
+      ::
+      ++  build
+        |=  [tep=reef-step pax=path pre=vase sub=vase pro=hoon]
+        ^-  (pair vase reef-step)
+        =/  ful  (weld pax /hoon)
+        ?.  ?|  vary.tep
+                (~(has in invalid) ful)
             ==
-          !>(..zuse)
-        (build-zuse arvo.u.fer)
-      zuse.u.fer
-      ::
-      ++  build-hoon
-        %-  road  |.
-        ~>  %slog.0^leaf+"clay: building hoon on {<syd>}"
+          [pre tep]
+        =.  vary.tep  &
+        =/  src  (path-to-cord data ful)
+        ::
+        ?:  &(deep.tep (deep pax src))
+          [(slap !>(..zuse) pro) tep]
+        ::
+        =/  nam=term  ?.(?=([@ta @ta *] pax) %$ i.t.pax)
+        ~>  %slog.0^leaf+"clay: building %{(trip nam)} on %{(trip syd)}"
         =/  gen
-          ~>  %mean.%hoon-parse-fail
-          (path-to-hoon data /sys/hoon/hoon)
-        ~>  %mean.%hoon-compile-fail
-        (slot 7 (slap !>(0) gen))
+          ~_  leaf+"%{(trip nam)}-parse-fail"
+          (rain ful src)
+        ~_  leaf+"%{(trip nam)}-compile-fail"
+        [(slap (slap sub gen) pro) tep(deep |)]
       ::
-      ++  build-arvo
-        |=  hoon=vase
-        %-  road  |.
-        ~>  %slog.0^leaf+"clay: building arvo on {<syd>}"
-        =/  gen
-          ~>  %mean.%arvo-parse-fail
-          (path-to-hoon data /sys/arvo/hoon)
-        ~>  %mean.%arvo-compile-fail
-        (slap (slap hoon gen) !,(*^hoon ..is))
-      ::
-      ++  build-zuse
-        |=  arvo=vase
-        %-  road  |.
-        ~>  %slog.0^leaf+"clay: building zuse on {<syd>}"
-        =/  gen
-          ~>  %mean.%zuse-parse-fail
-          (path-to-hoon data /sys/zuse/hoon)
-        ~>  %mean.%zuse-compile-fail
-        (slap arvo gen)
-      ::
-      ++  same-as-home
-        |=  =path
+      ++  deep
+        |=  [pax=path src=cord]
         ^-  ?
+        ::  XX scry into arvo
+        ::
+        ::    //=//=/mod/fat
+        ::    =+  (~(get ^de fat) pax)
+        ::    &(?=(^ fil) ?=(%hoon p.fil) =(src q.fil))
+        ::
         =/  our-lobe=lobe
-          =/  datum  (~(got by data) path)
-          ?-  -.datum
-            %&  (page-to-lobe %hoon (page-to-cord p.datum))
-            %|  p.datum
-          ==
+          (page-to-lobe hoon/src)
         =/  =dome  dom:(~(got by dos.rom) %home)
         =/  =yaki  (~(got by hut.ran) (~(got by hit.dome) let.dome))
-        =(`our-lobe (~(get by q.yaki) path))
+        =/  lobe=(unit lobe)
+          (~(get by q.yaki) (weld pax /hoon))
+        &(?=(^ lobe) =(our-lobe u.lobe))
       --
     ::
     ++  page-to-cord
@@ -1641,7 +1621,11 @@
     ::
     ++  path-to-hoon
       |=  [data=(map path (each page lobe)) =path]
-      %+  rain  path
+      (rain path (path-to-cord data path))
+    ::
+    ++  path-to-cord
+      |=  [data=(map path (each page lobe)) =path]
+      ^-  @t
       =/  datum  (~(got by data) path)
       ?-  -.datum
         %&  (page-to-cord p.datum)
@@ -1878,15 +1862,16 @@
         test-ankh  (~(got by dir.test-ankh) ta)
       ==
     ::
-    ::  Find /sys changes; does not reload on first commit
+    ::  Find reef dependency changes
     ::
-    ++  need-sys-update
+    ++  need-reef-update
       |=  changes=(map path (each page lobe))
       ^-  ?
       %+  lien  ~(tap by changes)
       |=  [=path *]
       ?|  =(/sys/hoon/hoon path)
           =(/sys/arvo/hoon path)
+          =(/sys/lull/hoon path)
           =(/sys/zuse/hoon path)
       ==
     ::
