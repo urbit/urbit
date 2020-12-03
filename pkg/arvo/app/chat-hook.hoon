@@ -707,7 +707,7 @@
   =/  sty=state-10
     :*  %10
       (remake-map ;;((tree [path ship]) +<.arc))
-      ;;(? +<-.arc)
+      ;;(? +>-.arc)
       (remake-map ;;((tree [path ?]) +>+.arc))
     ==
   :_  sty
