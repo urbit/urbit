@@ -48,7 +48,6 @@ type Version = Word8
 
 data AmesDrv = AmesDrv
   { aTurfs    :: TVar (Maybe [Turf])
-  , aDropped  :: TVar Word
   , aVersion  :: TVar (Maybe Version)
   , aUdpServ  :: UdpServ
   , aResolvr  :: ResolvServ
@@ -167,7 +166,7 @@ ames' who isFake stat scry stderr = do
           pure Ouster
     dequeuePacket = do
       pM <- tryReadTQueue ventQ
-      when (isJust pM) $ modifyTVar avail (+ 1)
+      when (isJust pM) $ modifyTVar' avail (+ 1)
       pure pM
 
   env <- ask
@@ -222,13 +221,11 @@ ames env who isFake stat scry enqueueEv stderr = (initialEvents, runAmes)
     cachedScryLane <- cache scryLane
 
     aTurfs   <- newTVarIO Nothing
-    aDropped <- newTVarIO 0
     aVersion <- newTVarIO Nothing
     aVersTid <- trackVersionThread aVersion
     aUdpServ <- udpServ isFake who stat
     aResolvr <- resolvServ aTurfs (usSend aUdpServ) stderr
     aRecvTid <- queuePacketsThread
-      aDropped
       aVersion
       cachedScryLane
       (send aUdpServ aResolvr mode)
@@ -262,14 +259,13 @@ ames env who isFake stat scry enqueueEv stderr = (initialEvents, runAmes)
     threadDelay (10 * 60 * 1_000_000)  -- 10m
 
   queuePacketsThread :: HasLogFunc e
-                     => TVar Word
-                     -> TVar (Maybe Version)
+                     => TVar (Maybe Version)
                      -> (Ship -> RIO e (Maybe [AmesDest]))
                      -> (AmesDest -> ByteString -> RIO e ())
                      -> UdpServ
                      -> AmesStat
                      -> RIO e (Async ())
-  queuePacketsThread dropCtr vers lan forward UdpServ{..} s@(AmesStat{..}) = async $ forever $ do
+  queuePacketsThread vers lan forward UdpServ{..} s@(AmesStat{..}) = async $ forever $ do
       -- port number, host address, bytestring
     (p, a, b) <- atomically (bump' asRcv >> usRecv)
     ver <- readTVarIO vers
@@ -323,13 +319,12 @@ ames env who isFake stat scry enqueueEv stderr = (initialEvents, runAmes)
     where
       serfsUp p a b =
         atomically (enqueueEv (EvErr (hearEv p a b) (hearFailed s))) >>= \case
-          Intake -> pure ()
+          Intake -> bump asSrf
           Ouster -> do
             d <- atomically $ do
-              d <- readTVar dropCtr
-              writeTVar dropCtr (d + 1)
-              pure d
-            when (d `rem` packetsDroppedPerComplaint == 0) $
+              bump' asQuf
+              readTVar asQuf
+            when (d `rem` packetsDroppedPerComplaint == 1) $
               logWarn "ames: queue full; dropping inbound packets"
 
   stop :: forall e. AmesDrv -> RIO e ()

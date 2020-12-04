@@ -193,6 +193,7 @@ realUdpServ por hos sat = do
       enqueueRecvPacket p a b = do
         did <- atomically (tryWriteTBQueue qRecv (p, a, b))
         when (did == False) $ do
+          bump (asUqf sat)
           logWarn $ displayShow $ ("AMES", "UDP",)
             "Dropping inbound packet because queue is full."
 
@@ -233,9 +234,11 @@ realUdpServ por hos sat = do
       Just sk -> do
         recvPacket sk >>= \case
           Left exn -> do
+            bump (asUdf sat)
             logError "AMES: UDP: Failed to receive packet"
             signalBrokenSocket sk
           Right Nothing -> do
+            bump (asUi6 sat)
             logError "AMES: UDP: Dropping non-ipv4 packet"
             pure ()
           Right (Just (b, p, a)) -> do
