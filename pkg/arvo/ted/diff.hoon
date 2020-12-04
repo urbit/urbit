@@ -6,7 +6,7 @@
 =/  m  (strand ,vase)
 ^-  form:m
 |^
-=+  !<([=a=path =b=path ~] arg)
+=+  !<([~ =a=path =b=path] arg)
 =/  a-mark=mark  -:(flop a-path)
 =/  b-mark=mark  -:(flop b-path)
 ?.  =(a-mark b-mark)

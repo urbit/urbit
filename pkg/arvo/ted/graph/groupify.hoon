@@ -43,7 +43,7 @@
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m
-=+  !<([=action:graph-view ~] arg)
+=+  !<([~ =action:graph-view] arg)
 ?>  ?=(%groupify -.action)
 ;<  =group  bind:m  (scry-group rid.action)
 ?.  hidden.group

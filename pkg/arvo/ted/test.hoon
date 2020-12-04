@@ -104,8 +104,10 @@
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m
+=/  paz=(list path)
+  (tail !<([~ (list path)] arg))
 =/  bez=(list beam)
-  (turn !<((list path) arg) |=(p=path (need (de-beam:format p))))
+  (turn paz |=(p=path (need (de-beam:format p))))
 ;<  fiz=(set [=beam test=(unit term)])  bind:m  (find-test-files bez)
 =>  .(fiz (sort ~(tap in fiz) aor))
 =|  test-arms=(map path (list test-arm))

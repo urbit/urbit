@@ -5,7 +5,8 @@
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m
-=+  !<([who=ship mez=$@(~ [=tape ~])] arg)
-=/  message  ?~(mez '' (crip tape.mez))
+=+  !<([~ arg=$@(who=ship [who=ship mez=tape])] arg)
+=/  [who=ship message=@t]
+  ?@(arg [who.arg ''] [who.arg (crip mez.arg)])
 ;<  ~  bind:m  (poke:strandio [who %hood] %helm-hi !>(message))
 (pure:m !>("hi {<who>} successful"))
