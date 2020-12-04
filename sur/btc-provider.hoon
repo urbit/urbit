@@ -42,6 +42,7 @@
   :: 
   +$  response
     $%  [%get-address-info utxos=(set utxo) used=? block=@ud]
+        [%create-psbt psbt=cord]
         [%get-raw-tx =txid =rawtx]
         [%get-block-count block=@ud]
         [%get-block-and-fee block=@ud fee=sats]

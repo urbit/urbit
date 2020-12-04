@@ -27,7 +27,6 @@
   $:  %0
       walts=(map xpub:btc walt)
       =scans
-      =gena
       batch-size=@ud
       last-block=@ud
   ==
@@ -48,7 +47,7 @@
 ++  on-init
   ^-  (quip card _this)
   ~&  >  '%btc-wallet-store initialized'
-  `this(state [%0 *(map xpub:btc walt) *^scans *^gena max-gap:defaults 0])
+  `this(state [%0 *(map xpub:btc walt) *^scans max-gap:defaults 0])
 ++  on-save
   ^-  vase
   !>(state)
@@ -115,13 +114,7 @@
     (update-address +.act)
     ::
       %generate-address
-    =+  uw=(~(get by walts) xpub.act)
-    ?~  uw
-      ~|("btc-wallet-store: non-existent xpub" !!)
-    =/  [a=address:btc w=walt]
-      ~(gen-address wad u.uw chyg.act)
-    :_  state(walts (~(put by walts) xpub.act w))
-    ~[(send-update [%generate-address a meta.act])]
+    (generate-address +.act)
     ::
       %generate-txbu
     =+  w=(~(get by walts) xpub.act)
@@ -223,13 +216,15 @@
     (bump-batch xpub %1)
   :-  (weld cards0 cards1)
   state(scans (insert-batches xpub batch0 batch1))
-::  watch the address passed, update wallet if it's used
-::  if this idx was the last in todo.scans, do run-scan to see whether scan is done
-::  updates wallet-store state to have last-block
+::  +update-address: watch the address passed; update wallet if it's used
+::  - if address is unused, send %address-info request to monitor it
+::  - if address doesn't have enough confs, send %address-info request to monitor it
+::  - if this idx was the last in todo.scans, do run-scan to see whether scan is done
+::  - updates wallet-store state to have last-block
 ::
 ++  update-address
   |=  [=xpub:btc =chyg =idx utxos=(set utxo) used=? last-block=@ud]
-  ^-  (quip card _state)
+  |^  ^-  (quip card _state)
   =?  state  (gth last-block last-block.state)
     state(last-block last-block)
   =/  w=(unit walt)  (~(get by walts) xpub)
@@ -246,9 +241,48 @@
   ?~  b  `state
   =.  scans
     (iter-scan u.b(has-used ?|(used has-used.u.b)) xpub chyg idx)
+  ::  if address is not used or utxos aren't conf'd, send more-info request
+  ::
   ?:  empty:(scan-status xpub chyg)
-    (run-scan xpub)
-  `state
+    =^  cards  state  (run-scan xpub)
+    [(weld (more-info u.w) cards) state]
+  [(more-info u.w) state]
+  ::
+  ++  more-info
+    |=  w=walt
+    ^-  (list card)
+    ?:  (is-done w)  ~
+    :~
+      %-  send-request
+      :*  %address-info  last-block
+          (~(mk-address wad w chyg) idx)
+          xpub  chyg  idx
+      ==
+    ==
+  ::
+  ++  is-done
+    |=  w=walt
+    ?&  used
+        %+  levy  (turn ~(tap in utxos) num-confs)
+          |=(nc=@ud (gte nc confs:w))
+    ==
+  ::
+  ++  num-confs
+    |=  =utxo:btc
+    ?:  =(0 height.utxo)  0
+    (add 1 (sub last-block height.utxo))
+  --
+::  +generate-address: generate and return address
+::
+++  generate-address
+  |=  [=xpub =chyg meta=(unit [payer=ship value=sats])]
+  =+  uw=(~(get by walts) xpub)
+  ?~  uw
+    ~|("btc-wallet-store: non-existent xpub" !!)
+  =/  [addr=address:btc w=walt]
+    ~(gen-address wad u.uw chyg)
+  :-  ~[(send-update [%generate-address addr meta])]
+  state(walts (~(put by walts) xpub w))
 ::
 ++  scanned-wallets
   ^-  (list xpub)
@@ -270,6 +304,12 @@
       |=(=utxo:btc value.utxo)
     add
   (roll values add)
+::
+++  send-request
+  |=  req=request  ^-  card
+  :*  %give  %fact  ~[/requests]
+      %btc-wallet-store-request  !>(req)
+  ==
 ::
 ++  send-update
   |=  upd=update  ^-  card
