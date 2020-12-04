@@ -6,7 +6,7 @@
   **/
     /* u3v_arvo: modern arvo structure.
     */
-      typedef struct _u3v_arvo {
+      typedef struct __attribute__((__packed__)) _u3v_arvo {
         c3_d  eve_d;                      //  event number
         u3_noun yot;                      //  cached gates
         u3_noun now;                      //  current time
