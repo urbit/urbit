@@ -339,6 +339,7 @@
         ==
       ~
     ``.^(* u.pax)
+  ::
   ++  handle-kick
     |=  [rid=resource =ship]
     ^-  (quip card _state)
@@ -349,13 +350,16 @@
       :-  -:!>(*(unit path)) 
       ?:(?=(%0 -.res) p.res ~)
     =?  failed-kicks  !?=(%0 -.res)
-      =/  tang
+      =/  =tang
         :+  leaf+"failed kick handler, please report" 
           leaf+"{<rid>} in {(trip dap.bowl)}"
         ?:  ?=(%2 -.res)
           p.res
         ?>  ?=(%1 -.res)
-        (turn `(list *)`p.res (cork path smyt))
+        =/  paths=(unit (list path))  ((soft (list path)) p.res)
+        ?~  paths  ~
+        %+  turn  u.paths
+        (cork path smyt)
       %-  (slog tang)
       (~(put by failed-kicks) rid ship)
     ?^  pax
