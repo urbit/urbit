@@ -1100,20 +1100,25 @@
     ^-  tape
     %-  zing
     %+  join  "\0a"
-    %+  turn  contents
-    |=  =content:post
+    %-  turn
+    :_  |=(ls=(list tape) `tape`(zing (join " " ls)))
+    %+  roll  contents
+    |=  [=content:post out=(list (list tape))]
     ?-  -.content
-      %text       (trip text.content)
-      %mention    (scow %p ship.content)  ::TODO  inline w/o newlines
-      %reference  "^"
+      %text       (append-inline out (trip text.content))
+      %mention    (append-inline out (scow %p ship.content))
+      %reference  (append-inline out "^")
     ::
         %code
-      %+  weld  (trip expression.content)
+      %+  snoc  out
+      ^-  (list tape)
+      :-  (trip expression.content)
       ?:  =(~ output.content)  ~
-      :-  '\0a'
-      ~(ram re (snag 0 output.content))
+      :-  "\0a"
+      ~(ram re (snag 0 output.content))^~
     ::
         %url
+      %+  append-inline  out
       =+  wyd=content-width
       =+  ful=(trip url.content)
       ::  if the full url fits, just render it.
@@ -1136,6 +1141,25 @@
       ?~  b  (trip a)
       (welp b '.' (trip a))
     ==
+  ::
+  ++  append-newline
+    |=  [content=(list (list tape)) newline=tape]
+    ^-  (list (list tape))
+    (snoc content ~[newline])
+  ::
+  ++  append-inline
+    |=  [content=(list (list tape)) inline=tape]
+    ^-  (list (list tape))
+    ?:  =(~ content)
+      ~[~[inline]]
+    =/  last
+      (dec (lent content))
+    =/  old=(list tape)
+      (snag last content)
+    =/  new=(list tape)
+      (snoc old inline)
+    (snap content last new)
+
   ::  +activate: produce sole-effect for printing message details
   ::
   ++  render-activate
