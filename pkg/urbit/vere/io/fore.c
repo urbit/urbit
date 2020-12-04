@@ -85,18 +85,11 @@ _fore_inject(u3_auto* car_u, c3_c* pax_c)
 static void
 _fore_import(u3_auto* car_u, c3_c* pax_c)
 {
-  // With apologies
-  u3_noun arc  = u3ke_cue(u3m_file(pax_c));
-  u3_noun b64  = u3do("crip", u3do("en-base64:mimes:html", arc));
-  c3_c * b64_c = u3r_string(b64);
+  u3_noun arc   = u3ke_cue(u3m_file(pax_c));
+  u3_noun imp   = u3do("cat", u3nt(u3i_word(3), u3i_string("#import_"), arc);
+  u3_noun siz   = u3r_met(3, imp));
+  u3_noun dat = u3nt(u3_nul, siz, imp);
 
-  c3_w siz_w   = strlen(b64_c) + 120;
-  c3_c * bod_c = (c3_c *) c3_malloc(siz_w);
-  snprintf(bod_c, siz_w,
-    "{\"source\": {\"import-all\": {\"base64-jam\": \"%s\"}}, \
-    \"sink\": {\"stdout\": null}}", b64_c);
-
-  u3_noun dat = u3nt(u3_nul, u3i_word(strlen(bod_c)), u3i_string(bod_c));
   u3_noun req = u3nt(c3n,
     u3nc(u3i_string("ipv4"), u3i_word(0x7f000001)),
     u3nq(u3i_string("POST"), u3i_string("/"), u3_nul, dat));
