@@ -140,10 +140,12 @@
   =/  w=walt  (~(got by walts) xpub)
   %+  turn  ~(tap in todo.b)
   |=  =idx
-  :*  %give  %fact  pax
-      %btc-wallet-store-request
-      !>([%scan-address (~(mk-address wad w chyg) idx) xpub chyg idx])
-  ==
+  =/  req=request
+    :*  %address-info  last-block=1
+        (~(mk-address wad w chyg) idx)
+        xpub  chyg  idx
+    ==
+  (send-request pax req)
 ::
 ++  scan-status
   |=  [=xpub =chyg]
@@ -235,14 +237,12 @@
       (~(mk-address wad u.w chyg) idx)
     [chyg idx utxos]
   ::  if the wallet is being scanned, update the scan batch
+  ::  if not, just get more-info for the address if still being scanned
   ::
-  ?.  (~(has by scans) [xpub chyg])  `state
-  =/  b=(unit batch)  (~(get by scans) [xpub chyg])
-  ?~  b  `state
+  =+  b=(~(get by scans) [xpub chyg])
+  ?~  b  [(more-info u.w) state]
   =.  scans
     (iter-scan u.b(has-used ?|(used has-used.u.b)) xpub chyg idx)
-  ::  if address is not used or utxos aren't conf'd, send more-info request
-  ::
   ?:  empty:(scan-status xpub chyg)
     =^  cards  state  (run-scan xpub)
     [(weld (more-info u.w) cards) state]
@@ -253,7 +253,7 @@
     ^-  (list card)
     ?:  (is-done w)  ~
     :~
-      %-  send-request
+      %+  send-request  ~[/requests]
       :*  %address-info  last-block
           (~(mk-address wad w chyg) idx)
           xpub  chyg  idx
@@ -273,16 +273,24 @@
     (add 1 (sub last-block height.utxo))
   --
 ::  +generate-address: generate and return address
+::    sends a request for info on the new address (watches it)
 ::
 ++  generate-address
   |=  [=xpub =chyg meta=(unit [payer=ship value=sats])]
   =+  uw=(~(get by walts) xpub)
   ?~  uw
     ~|("btc-wallet-store: non-existent xpub" !!)
-  =/  [addr=address:btc w=walt]
+  ?.  scanned.u.uw
+    ~|("btc-wallet-store: wallet not scanned yet" !!)
+  =/  [addr=address:btc =idx w=walt]
     ~(gen-address wad u.uw chyg)
-  :-  ~[(send-update [%generate-address addr meta])]
-  state(walts (~(put by walts) xpub w))
+  :_  state(walts (~(put by walts) xpub w))
+  :~  (send-update [%generate-address addr meta])
+      %+  send-request  ~[/requests]
+      :*  %address-info  last-block
+          addr  xpub  chyg  idx
+      ==
+  ==
 ::
 ++  scanned-wallets
   ^-  (list xpub)
@@ -306,8 +314,9 @@
   (roll values add)
 ::
 ++  send-request
-  |=  req=request  ^-  card
-  :*  %give  %fact  ~[/requests]
+  |=  [pax=(list path) req=request]  ^-  card
+  ~&  >>   "send-request: {<chyg.req>}, {<idx.req>}"
+  :*  %give  %fact  pax
       %btc-wallet-store-request  !>(req)
   ==
 ::
