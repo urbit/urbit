@@ -24,7 +24,7 @@ import Urbit.King.App      (HasKingId(..), HasPierEnv(..))
 import Urbit.Vere.Ames.DNS (NetworkMode(..), ResolvServ(..))
 import Urbit.Vere.Ames.DNS (galaxyPort, resolvServ)
 import Urbit.Vere.Ames.UDP (UdpServ(..), fakeUdpServ, realUdpServ)
-import Urbit.Vere.Stat     (AmesStat(..))
+import Urbit.Vere.Stat     (AmesStat(..), bump, bump')
 
 import qualified Urbit.Noun.Time as Time
 
@@ -238,14 +238,14 @@ ames env who isFake stat scry enqueueEv stderr = (initialEvents, runAmes)
     pure (AmesDrv { .. })
 
   hearFailed AmesStat {..} = runRIO env . \case
-    RunSwap{} -> atomically $ modifyTVar' asSwp (+ 1)
+    RunSwap{} -> bump asSwp
     RunBail gs -> do
       for gs \(t, es) ->
         for es \e ->
           logWarn $ hark
             ["ames: goof: ", unTerm t, ": ", tankToText e]
-      atomically $ modifyTVar' asBal (+ 1)
-    RunOkay{} -> atomically $ modifyTVar' asOky (+ 1)
+      bump asBal 
+    RunOkay{} -> bump asOky
 
   trackVersionThread :: HasLogFunc e => TVar (Maybe Version) -> RIO e (Async ())
   trackVersionThread versSlot = async $ forever do
@@ -271,28 +271,35 @@ ames env who isFake stat scry enqueueEv stderr = (initialEvents, runAmes)
                      -> RIO e (Async ())
   queuePacketsThread dropCtr vers lan forward UdpServ{..} s@(AmesStat{..}) = async $ forever $ do
       -- port number, host address, bytestring
-    (p, a, b) <- atomically (modifyTVar' asRcv (+ 1) >> usRecv)
+    (p, a, b) <- atomically (bump' asRcv >> usRecv)
     ver <- readTVarIO vers
-    serfsUp p a b
-    -- TODO make this make sense with stats
-    {-
+
     case decode b of
       Right (pkt@Packet {..}) | ver == Nothing || ver == Just pktVersion -> do
         logDebug $ displayShow ("ames: bon packet", pkt, showUD $ bytesAtom b)
 
         if pktRcvr == who
-          then serfsUp p a b
+          then do
+            bump asSup
+            serfsUp p a b
           else lan pktRcvr >>= \case
             Just ls
               |  dest:_ <- filter notSelf ls
-              -> forward dest $ encode pkt
-                { pktOrigin = pktOrigin <|> Just (ipDest p a) }
+              -> do
+                bump asFwd
+                forward dest $ encode pkt
+                  { pktOrigin = pktOrigin <|> Just (ipDest p a) }
               where
                 notSelf (EachYes g) = who /= Ship (fromIntegral g)
                 notSelf (EachNo  _) = True
-            _ -> logInfo $ displayShow ("ames: dropping unroutable", pkt)
 
-      Right pkt -> logInfo $ displayShow ("ames: dropping ill-versed", pkt, ver)
+            _ -> do
+              bump asDrt
+              logInfo $ displayShow ("ames: dropping unroutable", pkt)
+
+      Right pkt -> do
+        bump asDvr
+        logInfo $ displayShow ("ames: dropping ill-versed", pkt, ver)
 
       -- XX better handle misversioned or illegible packets.
       -- Remarks from 67f06ce5, pkg/urbit/vere/io/ames.c, L1010:
@@ -309,8 +316,9 @@ ames env who isFake stat scry enqueueEv stderr = (initialEvents, runAmes)
       --    trigger printfs suggesting upgrade.
       --    they cannot be filtered, as we do not know their semantics
       --
-      Left e -> logInfo $ displayShow ("ames: dropping malformed", e)
-      -}
+      Left e -> do
+        bump asDml
+        logInfo $ displayShow ("ames: dropping malformed", e)
 
     where
       serfsUp p a b =

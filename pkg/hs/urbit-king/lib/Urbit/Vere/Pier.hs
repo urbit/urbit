@@ -296,9 +296,13 @@ pier (serf, log) vSlog startedSig injected = do
         atomically $ writeTQueue scryQ (w, b, g, putMVar res)
         takeMVar res
 
+  -- Set up the runtime stat counters.
+  stat <- newStat
+
   -- Set up the runtime subsite server and its capability to slog
+  -- and display stats.
   siteSlog <- newTVarIO (const $ pure ())
-  runtimeSubsite <- Site.kingSubsite ship scry siteSlog
+  runtimeSubsite <- Site.kingSubsite ship scry (renderStat stat) siteSlog
 
   --  Slogs go to stderr, to the runtime subsite, and to the terminal.
   env <- ask
@@ -312,7 +316,7 @@ pier (serf, log) vSlog startedSig injected = do
     let err = atomically . Term.trace muxed . (<> "\r\n")
     siz <- atomically $ Term.curDemuxSize demux
     let fak = isFake logId
-    drivers env ship fak compute scry (siz, muxed) err sigint runtimeSubsite
+    drivers env ship fak compute scry (siz, muxed) err sigint stat runtimeSubsite
 
   let computeConfig = ComputeConfig { ccOnWork      = takeTMVar computeQ
                                     , ccOnKill      = onKill
@@ -427,10 +431,11 @@ drivers
   -> (TermSize, Term.Client)
   -> (Text -> RIO e ())
   -> IO ()
+  -> Stat
   -> Site.KingSubsite
   -> RAcquire e ([Ev], RAcquire e Drivers)
-drivers env who isFake plan scry termSys stderr serfSIGINT sub = do
-  stat@Stat{..} <- newStat
+drivers env who isFake plan scry termSys stderr serfSIGINT stat sub = do
+  let Stat{..} = stat
 
   (behnBorn, runBehn) <- rio Behn.behn'
   (termBorn, runTerm) <- rio (Term.term' termSys (renderStat stat) serfSIGINT)

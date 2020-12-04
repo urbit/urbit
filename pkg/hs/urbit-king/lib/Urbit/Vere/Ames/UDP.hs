@@ -34,13 +34,12 @@ where
 
 import Urbit.Prelude
 import Urbit.Vere.Ports
-import Urbit.Vere.Stat
 
 import Network.Socket
 
 import Control.Monad.STM         (retry)
 import Network.Socket.ByteString (recvFrom, sendTo)
-
+import Urbit.Vere.Stat           (AmesStat(..), bump)
 
 -- Types -----------------------------------------------------------------------
 
@@ -241,7 +240,7 @@ realUdpServ por hos sat = do
             pure ()
           Right (Just (b, p, a)) -> do
             logDebug "AMES: UDP: Received packet."
-            atomically $ modifyTVar' (asUdp sat) (+ 1)
+            bump (asUdp sat)
             enqueueRecvPacket p a b
 
   let shutdown = do

@@ -17,6 +17,7 @@ import Urbit.Vere.Serf.Types
 
 import Data.Conduit       (ConduitT, Flush(..), yield)
 import Data.Text.Encoding (encodeUtf8Builder)
+import Urbit.Vere.Stat    (RenderedStat)
 
 import qualified Data.Text.Encoding  as E
 import qualified Network.HTTP.Types  as H
@@ -44,9 +45,10 @@ streamSlog a = do
 kingSubsite :: HasLogFunc e
             => Ship
             -> (Time.Wen -> Gang -> Path -> IO (Maybe (Term, Noun)))
+            -> IO RenderedStat
             -> TVar ((Atom, Tank) -> IO ())
             -> RAcquire e KingSubsite
-kingSubsite who scry func = do
+kingSubsite who scry stat func = do
   clients <- newTVarIO (mempty :: Map Word (SlogAction -> IO ()))
   nextId  <- newTVarIO (0 :: Word)
   baton   <- newTMVarIO ()
@@ -77,15 +79,29 @@ kingSubsite who scry func = do
           else
             let loop = yield Flush
                     >> forever (atomically (readTQueue q) >>= streamSlog)
-            in  respond $ W.responseSource (H.mkStatus 200 "OK") heads loop)
+            in  respond $ W.responseSource (H.mkStatus 200 "OK") slogHeads loop)
+
+    ["~_~", "stat"] -> do
+      authed <- authenticated env req
+      if not authed
+        then respond $ emptyResponse 403 "Permission Denied"
+        else do
+          lines <- stat
+          let msg = mconcat ((<> "\n") . encodeUtf8Builder <$> lines)
+                 <> "\nRefresh for more current data."
+          respond $ W.responseBuilder (H.mkStatus 200 "OK") statHeads msg
 
     _ -> respond $ emptyResponse 404 "Not Found"
 
   where
-    heads = [ ("Content-Type" , "text/event-stream")
-            , ("Cache-Control", "no-cache")
-            , ("Connection"   , "keep-alive")
-            ]
+    slogHeads = [ ("Content-Type",  "text/event-stream")
+                , ("Cache-Control", "no-cache")
+                , ("Connection",    "keep-alive")
+                ]
+    
+    statHeads = [ ("Content-Type",  "text/plain")
+                , ("Cache-Control", "no-cache")
+                ]
 
     emptyResponse cod mes = W.responseLBS (H.mkStatus cod mes) [] ""
 
