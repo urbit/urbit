@@ -8,7 +8,8 @@ import {
   Groups,
   Contacts,
   Rolodex,
-  LocalUpdateRemoteContentPolicy
+  LocalUpdateRemoteContentPolicy,
+  Unreads
 } from "~/types";
 import { Center, LoadingSpinner } from "@tlon/indigo-react";
 import { Notebook as INotebook } from "~/types/publish-update";
@@ -26,6 +27,7 @@ interface NotebookRoutesProps {
   book: string;
   graphs: Graphs;
   notebookContacts: Contacts;
+  unreads: Unreads;
   contacts: Rolodex;
   groups: Groups;
   baseUrl: string;
@@ -105,8 +107,10 @@ export function NotebookRoutes(
               ship={ship}
               note={note}
               notebook={graph}
+              unreads={props.unreads}
               noteId={noteIdNum}
               contacts={notebookContacts}
+              association={props.association}
               hideAvatars={props.hideAvatars}
               hideNicknames={props.hideNicknames}
               remoteContentPolicy={props.remoteContentPolicy}

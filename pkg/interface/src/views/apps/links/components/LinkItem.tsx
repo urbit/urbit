@@ -7,7 +7,7 @@ import { writeText } from '~/logic/lib/util';
 import Author from '~/views/components/Author';
 
 import { roleForShip } from '~/logic/lib/group';
-import { Contacts, GraphNode, Group, LocalUpdateRemoteContentPolicy, Rolodex } from '~/types';
+import { Contacts, GraphNode, Group, LocalUpdateRemoteContentPolicy, Rolodex, Unreads } from '~/types';
 import GlobalApi from '~/logic/api/global';
 import { Dropdown } from '~/views/components/Dropdown';
 import RemoteContent from '~/views/components/RemoteContent';
@@ -22,6 +22,7 @@ interface LinkItemProps {
   group: Group;
   path: string;
   contacts: Rolodex[];
+  unreads: Unreads;
 }
 
 export const LinkItem = (props: LinkItemProps) => {
@@ -69,6 +70,14 @@ export const LinkItem = (props: LinkItemProps) => {
     }
   };
 
+  const appPath = `/ship/~${resource}`;
+  const commColor = (props.unreads.graph?.[appPath]?.[`/${index}`]?.unreads ?? 0) > 0 ? 'blue' : 'gray';
+  const isUnread = props.unreads.graph?.[appPath]?.['/']?.unreads?.has(node.post.index);
+
+  const markRead = () => {
+    api.hark.markEachAsRead(props.association, '/', `/${index}`, 'link', 'link');
+    console.log('mark read');
+  }
   return (
     <Box width="100%" {...rest}>
     
@@ -79,9 +88,11 @@ export const LinkItem = (props: LinkItemProps) => {
         width="100%"
         color='washedGray'
         border={1}
+        borderColor={isUnread ? 'blue' : 'washedGray'}
         borderRadius={2}
         alignItems="flex-start"
         overflow="hidden"
+        onClick={markRead}
       >
         <RemoteContent
           url={contents[1].url}
@@ -107,7 +118,7 @@ export const LinkItem = (props: LinkItemProps) => {
             p: 2
           }} />
         <Text color="gray" p={2} flexShrink={0}>
-          <Anchor target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }} href={contents[1].url}>
+          <Anchor  target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }} href={contents[1].url}>
             <Box display='flex'>
               <Icon icon='ArrowExternal' mr={1} />{hostname}
             </Box>
@@ -129,11 +140,11 @@ export const LinkItem = (props: LinkItemProps) => {
         api={api}
       ></Author>
 
-      <Box ml="auto" mr={1}>
+      <Box ml="auto">
         <Link to={`${baseUrl}/${index}`}>
         <Box display='flex'>
-          <Icon color='blue' icon='Chat' />
-          <Text color='blue' ml={1}>{node.children.size}</Text>
+          <Icon color={commColor} icon='Chat' />
+          <Text color={commColor} ml={1}>{node.children.size}</Text>
         </Box>
       </Link>
         </Box>
@@ -155,7 +166,7 @@ export const LinkItem = (props: LinkItemProps) => {
           </Col>
         }
         >
-        <Icon display="block" icon="Ellipsis" color="gray" />
+        <Icon ml="2" display="block" icon="Ellipsis" color="gray" />
       </Dropdown>
       
     </Row>

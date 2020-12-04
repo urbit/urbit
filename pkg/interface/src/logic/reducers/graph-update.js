@@ -34,17 +34,13 @@ const addGraph = (json, state) => {
 
     //  is graph
     let converted = new BigIntOrderedMap();
-    for (let i in node.children) {
-      let item = node.children[i];
-      let index = item[0].split('/').slice(1).map((ind) => {
-        return bigInt(ind);
-      });
-
-      if (index.length === 0) { break; }
+    for (let idx in node.children) {
+      let item = node.children[idx];
+      let index = bigInt(idx);
       
       converted.set(
-        index[index.length - 1],
-        _processNode(item[1])
+        index,
+        _processNode(item)
       );
     }
     node.children = converted;
@@ -60,18 +56,14 @@ const addGraph = (json, state) => {
     let resource = data.resource.ship + '/' + data.resource.name;
     state.graphs[resource] = new BigIntOrderedMap();
 
-    for (let i in data.graph) {
-      let item = data.graph[i];
-      let index = item[0].split('/').slice(1).map((ind) => {
-        return bigInt(ind);
-      });
-
-      if (index.length === 0) { break; }
+    for (let idx in data.graph) {
+      let item = data.graph[idx];
+      let index = bigInt(idx);
       
-      let node = _processNode(item[1]);
+      let node = _processNode(item);
 
       state.graphs[resource].set(
-        index[index.length - 1],
+        index,
         node
       );
     }
@@ -93,9 +85,10 @@ const removeGraph = (json, state) => {
 
 const mapifyChildren = (children) => {
   return new BigIntOrderedMap(
-    children.map(([idx, node]) => {
-      const nd = {...node, children: mapifyChildren(node.children || []) }; 
-      return [bigInt(idx.slice(1)), nd];
+    _.map(children, (node, idx) => {
+      idx = idx && idx.startsWith('/') ? idx.slice(1) : idx;
+      const nd = {...node, children: mapifyChildren(node.children || {}) }; 
+      return [bigInt(idx), nd];
     }));
 };
 
@@ -123,26 +116,27 @@ const addNodes = (json, state) => {
     if (!('graphs' in state)) { return; }
 
     let resource = data.resource.ship + '/' + data.resource.name;
-    if (!(resource in state.graphs)) { return; }
+    if (!(resource in state.graphs)) { 
+      state.graphs[resource] = new BigIntOrderedMap();
+    }
 
-    for (let i in data.nodes) {
-      let item = data.nodes[i];
-      if (item[0].split('/').length === 0) { return; }
+    for (let index in data.nodes) {
+      let node = data.nodes[index];
+      if (index.split('/').length === 0) { return; }
 
-      let index = item[0].split('/').slice(1).map((ind) => {
+      index = index.split('/').slice(1).map((ind) => {
         return bigInt(ind);
       });
 
       if (index.length === 0) { return; }
 
-      item[1].children = mapifyChildren(item[1].children || []);
-
+      node.children = mapifyChildren(node?.children || {});
 
       
       state.graphs[resource] = _addNode(
         state.graphs[resource],
         index,
-        item[1]
+        node
       );
     }
   }

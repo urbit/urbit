@@ -11,6 +11,7 @@ import ChatInput from './components/ChatInput';
 import GlobalApi from '~/logic/api/global';
 import { SubmitDragger } from '~/views/components/s3-upload';
 import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
+import {Loading} from '~/views/components/Loading';
 
 type ChatResourceProps = StoreState & {
   association: Association;
@@ -24,48 +25,27 @@ export function ChatResource(props: ChatResourceProps) {
     return null;
   }
 
-  const { envelopes, config } = (props.inbox?.[station]) ? props.inbox[station] : { envelopes: [], config: {} };
-  const { read, length } = (config) ? config : undefined;
 
   const groupPath = props.association['group-path'];
   const group = props.groups[groupPath];
   const contacts = props.contacts[groupPath] || {};
 
-  const pendingMessages = (props.pendingMessages.get(station) || []).map(
-    value => ({
-      ...value,
-      pending: true
-    })
-  );
+  const graph = props.graphs[station.slice(7)];
 
-  const isChatMissing =
-    (props.chatInitialized &&
-      !(station in props.inbox) &&
-      props.chatSynced &&
-      !(station in props.chatSynced)) ||
-    false;
+  const isChatMissing = !props.graphKeys.has(station.slice(7));
 
-  const isChatLoading =
-    (props.chatInitialized &&
-      !(station in props.inbox) &&
-      props.chatSynced &&
-      station in props.chatSynced) ||
-    false;
+  const unreadCount = props.unreads.graph?.[station]?.['/']?.unreads || 0;
 
-  const isChatUnsynced =
-    (props.chatSynced &&
-      !(station in props.chatSynced) &&
-      envelopes.length > 0) ||
-    false;
-
-  const unreadCount = length - read;
-  const unreadMsg = unreadCount > 0 && envelopes[unreadCount - 1];
-
-  const [, owner, name] = station.split('/');
+  const [,, owner, name] = station.split('/');
   const ourContact = contacts?.[window.ship];
-  const lastMsgNum = envelopes.length || 0;
 
   const chatInput = useRef<ChatInput>();
+
+  useEffect(() => {
+    const count = Math.min(150, unreadCount + 30);
+    console.log(`fetching ${count}`);
+    props.api.graph.getNewest(owner, name, count);
+  }, [station]);
 
   const onFileDrag = useCallback(
     (files: FileList) => {
@@ -102,21 +82,26 @@ export function ChatResource(props: ChatResourceProps) {
     return clear;
   }, [station]);
 
+  if(!graph) {
+    return <Loading />;
+  }
+
   return (
     <Col {...bind} height="100%" overflow="hidden" position="relative">
       {dragging && <SubmitDragger />}
       <ChatWindow
         remoteContentPolicy={props.remoteContentPolicy}
-        mailboxSize={length}
+        mailboxSize={5}
         match={props.match as any}
-        stationPendingMessages={pendingMessages}
+        stationPendingMessages={[]}
         history={props.history}
-        isChatMissing={isChatMissing}
-        isChatLoading={isChatLoading}
-        isChatUnsynced={isChatUnsynced}
+        isChatMissing={false}
+        isChatLoading={false}
+        isChatUnsynced={false}
+        graph={graph}
         unreadCount={unreadCount}
-        unreadMsg={unreadMsg}
-        envelopes={envelopes || []}
+        unreadMsg={false}
+        envelopes={[]}
         contacts={contacts}
         association={props.association}
         group={group}
@@ -131,10 +116,9 @@ export function ChatResource(props: ChatResourceProps) {
       <ChatInput
         ref={chatInput}
         api={props.api}
-        numMsgs={lastMsgNum}
         station={station}
         ourContact={ourContact}
-        envelopes={envelopes || []}
+        envelopes={[]}
         contacts={contacts}
         onUnmount={appendUnsent}
         s3={props.s3}

@@ -55,7 +55,7 @@ export interface Inbox {
   [chatName: string]: Mailbox;
 }
 
-interface Mailbox {
+export interface Mailbox {
   config: MailboxConfig;
   envelopes: Envelope[];
 }

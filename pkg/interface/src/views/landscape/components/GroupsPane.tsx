@@ -95,14 +95,11 @@ export function GroupsPane(props: GroupsPaneProps) {
             string,
             string
           >;
-          const appName = app as AppName;
-          const isGraph = appIsGraph(app);
 
-          const resource = `${isGraph ? "/ship" : ""}/${host}/${name}`;
-          const association =
-            isGraph
-              ? associations.graph[resource]
-              : associations[appName][resource];
+          const appName = app as AppName;
+
+          const resource = `/ship/${host}/${name}`;
+          const association = associations.graph[resource]
           const resourceUrl = `${baseUrl}/resource/${app}${resource}`;
 
           if (!association) {
@@ -133,10 +130,8 @@ export function GroupsPane(props: GroupsPaneProps) {
         path={relativePath("/join/:app/(ship)?/:host/:name")}
         render={(routeProps) => {
           const { app, host, name } = routeProps.match.params;
-          const appName = app as AppName;
-          const isGraph = appIsGraph(app);
-          const appPath = `${isGraph ? '/ship/' : '/'}${host}/${name}`;
-          const association = isGraph ? associations.graph[appPath] : associations[appName][appPath];
+          const appPath = `/ship/${host}/${name}`;
+          const association = associations.graph[appPath];
           const resourceUrl = `${baseUrl}/join/${app}${appPath}`;
 
           if (!association) {

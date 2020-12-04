@@ -57,7 +57,7 @@ export default class GlobalSubscription extends BaseSubscription<StoreState> {
     this.subscribe('/updates', 'hark-store');
     this.subscribe('/updates', 'hark-graph-hook');
     this.subscribe('/updates', 'hark-group-hook');
-    this.subscribe('/updates', 'hark-chat-hook');
+    this.startApp('chat');
   }
 
   restart() {

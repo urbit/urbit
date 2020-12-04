@@ -1,7 +1,8 @@
 ::  hark-graph-hook: notifications for graph-store [landscape]
 ::
 /-  store=hark-store, post, group-store, metadata-store, hook=hark-graph-hook
-/+  resource, metadata, default-agent, dbug, graph-store
+/+  resource, metadata, default-agent, dbug, graph-store, graph
+::
 ::
 ~%  %hark-graph-hook-top  ..is  ~
 |%
@@ -48,6 +49,7 @@
     ha    ~(. +> bowl)
     def   ~(. (default-agent this %|) bowl)
     met   ~(. metadata bowl)
+    gra   ~(. graph bowl)
 ::
 ++  on-init
   :_  this
@@ -57,7 +59,22 @@
 ++  on-load
   |=  old=vase
   ^-  (quip card _this)
-  `this(state !<(state-0 old))
+  :_  this(state !<(state-0 old))
+  %+  welp
+    ?:  (~(has by wex.bowl) [/graph our.bowl %graph-store])
+      ~
+    ~[watch-graph:ha]
+  %+  turn
+    ^-  (list mark)
+    :~  %graph-validator-chat
+        %graph-validator-link
+        %graph-validator-publish
+    ==
+  |=  =mark
+  ^-  card
+  =/  =wire  /validator/[mark]
+  =/  =rave:clay  [%sing %c [%da now.bowl] /[mark]/notification-kind]
+  [%pass wire %arvo %c %warp our.bowl [%home `rave]]
 ::
 ++  on-watch
   |=  =path
@@ -142,32 +159,37 @@
     [cards this]
   ==
   ++  add-graph
-    |=  rid=resource
+    |=  [rid=resource =graph:graph-store]
     ^-  (quip card _state)
+    :-  ~
     ?.  &(watch-on-self =(our.bowl entity.rid))
-      [~ state]
-    `state(watching (~(put in watching) [rid ~]))
+      state
+    state(watching (~(put in watching) [rid ~]))
   ::
   ++  graph-update
     |=  =update:graph-store
     ^-  (quip card _state)
     ?:  ?=(%add-graph -.q.update)
-      (add-graph resource.q.update)
+      (add-graph resource.q.update graph.q.update)
     ?.  ?=(%add-nodes -.q.update)
       [~ state]
-    =/  group=resource
-      (need (group-from-app-resource:met %graph resource.q.update))
-    =/  =metadata:metadata-store
-      (need (peek-metadata:met %graph group resource.q.update))
     =*  rid  resource.q.update
+    (check-nodes ~(tap by nodes.q.update) rid)
+  ::
+  ++  check-nodes
+    |=  $:  nodes=(list [p=index:graph-store q=node:graph-store])
+            rid=resource
+        ==
+    =/  group=resource
+      (need (group-from-app-resource:met %graph rid))
+    =/  =metadata:metadata-store
+      (need (peek-metadata:met %graph group rid))
     =+  %+  scry:ha
            ,mark=(unit mark)
         /gx/graph-store/graph-mark/(scot %p entity.rid)/[name.rid]/noun
     =+  %+  scry:ha
           ,=tube:clay
         /cc/[q.byk.bowl]/[(fall mark %graph-validator-link)]/notification-kind
-    =/  nodes=(list [p=index:graph-store q=node:graph-store])
-      ~(tap by nodes.q.update)
     =|  cards=(list card)
     |^
     ?~  nodes
@@ -204,12 +226,7 @@
       ^-  (quip card _state)
       =^  child-cards  state
         (check-node-children node tube)
-      ?:  =(our.bowl author.post.node)
-        =^  self-cards  state
-          (self-post node)
-        :_  state
-        (weld child-cards self-cards)
-      =+  !<  notif-kind=(unit [name=@t parent-lent=@ud])
+      =+  !<  notif-kind=(unit [name=@t parent-lent=@ud mode=?(%each %count)])
           (tube !>([0 post.node]))
       ?~  notif-kind
         [child-cards state]
@@ -219,17 +236,26 @@
         name.u.notif-kind
       =/  parent=index:post
         (scag parent-lent.u.notif-kind index.post.node)
+      =/  notif-index=index:store
+        [%graph group rid module.metadata desc parent]
+      ?:  =(our.bowl author.post.node)
+        =^  self-cards  state
+          (self-post node notif-index mode.u.notif-kind)
+        :_  state
+        (weld child-cards self-cards)
+      :_  state
+      %+  weld  child-cards
+      %+  weld
+          %^     update-unread-count
+            mode.u.notif-kind  notif-index 
+          [time-sent index]:post.node
       ?.  ?|  =(desc %mention)
               (~(has in watching) [rid parent])
           ==
-        [child-cards state]
-      =/  notif-index=index:store
-        [%graph group rid module.metadata desc]
+        ~
       =/  =contents:store
         [%graph (limo post.node ~)]
-      :_  state
-      %+  snoc  child-cards
-      (add-unread notif-index [time-sent.post.node %.n contents])
+      ~[(add-unread notif-index [time-sent.post.node %.n contents])]
     ::
     ++  is-mention
       |=  contents=(list content:post)
@@ -243,17 +269,37 @@
       $(contents t.contents)
     ::
     ++  self-post
-      |=  =node:graph-store
+      |=  $:  =node:graph-store
+              =index:store
+              mode=?(%count %each)
+          ==
       ^-  (quip card _state)
+      =|  cards=(list card)
+      =?  cards  ?=(%count mode)
+        :_  cards
+        (poke-hark %read-count index)
       ?.  ?=(%.y watch-on-self)
-        [~ state]
-      `state(watching (~(put in watching) [rid index.post.node]))
+        [cards state]
+      :-  cards
+      state(watching (~(put in watching) [rid index.post.node]))
+    ::
+    ++  poke-hark
+      |=  =action:store
+      ^-  card
+      =-  [%pass / %agent [our.bowl %hark-store] %poke -]
+      hark-action+!>(action)
+    ::
+    ++  update-unread-count
+      |=  [mode=?(%count %each %none) =index:store time=@da ref=index:graph-store]
+      ?-  mode 
+        %count  ~[(poke-hark %unread-count index time)]
+        %each   ~[(poke-hark %unread-each index ref time)]
+        %none  ~
+      ==
     ::
     ++  add-unread
       |=  [=index:store =notification:store]
-      ^-  card
-      =-  [%pass / %agent [our.bowl %hark-store] %poke -]
-      hark-action+!>([%add index notification])
+      (poke-hark %add-note index notification)
     ::
     --
   --
@@ -261,7 +307,17 @@
 ++  on-peek  on-peek:def
 ::
 ++  on-leave  on-leave:def
-++  on-arvo  on-arvo:def
+++  on-arvo  
+  |=  [=wire =sign-arvo]
+  ^-  (quip card _this)
+  ?+  wire  (on-arvo:def wire sign-arvo)
+    ::
+      [%validator @ ~]
+    :_  this
+    =*  validator  i.t.wire
+    =/  =rave:clay  [%next %c [%da now.bowl] /[validator]/notification-kind]
+    [%pass wire %arvo %c %warp our.bowl [%home `rave]]~
+  ==
 ++  on-fail   on-fail:def
 --
 

@@ -2,9 +2,11 @@
 ::  mirror chat data from foreign to local based on read
 ::  allow sending chat messages to foreign paths based on write perms
 ::
-/-  inv=invite-store, *metadata-store, *group-store, hook=chat-hook, view=chat-view, *group
+/-  inv=invite-store, *metadata-store, *group-store,
+    hook=chat-hook, view=chat-view, *group,
+    push-hook, pull-hook
 /+  default-agent, verb, dbug, store=chat-store, group-store, grpl=group,
-    resource
+    resource, graph-store
 ~%  %chat-hook-top  ..is  ~
 |%
 +$  card  card:agent:gall
@@ -21,8 +23,13 @@
       state-8
       state-9
       state-10
+      state-11
   ==
 ::
++$  migration-state
+  (map resource @ud)
+::
++$  state-11  [%11 state-base migrate=migration-state]
 +$  state-10  [%10 state-base]
 +$  state-9  [%9 state-base]
 +$  state-8  [%8 state-base]
@@ -55,7 +62,7 @@
   $%  [%chat-update update:store]
   ==
 --
-=|  state-10
+=|  state-11
 =*  state  -
 ::
 %-  agent:dbug
@@ -72,10 +79,7 @@
   ++  on-init
     ^-  (quip card _this)
     :_  this(invite-created %.y)
-    :~  (invite-poke:cc [%create %chat])
-        [%pass /invites %agent [our.bol %invite-store] %watch /invitatory/chat]
-        watch-groups:cc
-    ==
+    [(invite-poke:cc [%create %chat]) ~]
   ++  on-save   !>(state)
   ++  on-load
     |=  old-vase=vase
@@ -84,8 +88,15 @@
     =/  old  !<(versioned-state old-vase)
     =|  cards=(list card)
     |-
-    ?:  ?=(%10 -.old)
+    ?:  ?=(%11 -.old)
       [cards this(state old)]
+    ?:  ?=(%10 -.old)
+      =.  cards
+        :_  cards
+        =-  [%pass /self-poke %agent [our.bol %chat-hook] %poke -]
+        noun+!>(%migrate-graph)
+      $(old [%11 +.old ~])
+    ::
     ?:  ?=(%9 -.old)
       =.  cards
         :_  cards
@@ -298,7 +309,9 @@
           %json         (poke-json:cc !<(json vase))
           %chat-action  (poke-chat-action:cc !<(action:store vase))
           %noun
-        (poke-noun:cc !<(?(%fix-dm %fix-out-of-sync %run-upg7 %run-upg9) vase))
+        %-  poke-noun:cc
+        !<  ?(%fix-dm %fix-out-of-sync %run-upg7 %run-upg9 %migrate-graph)
+        vase
       ::
           %chat-hook-action
         (poke-chat-hook-action:cc !<(action:hook vase))
@@ -319,39 +332,49 @@
     ~/  %chat-hook-agent
     |=  [=wire =sign:agent:gall]
     ^-  (quip card _this)
-    ?+  -.sign  (on-agent:def wire sign)
-        %watch-ack
-      =^  cards  state
-        (watch-ack:cc wire p.sign)
-      [cards this]
+    |^
+    ?.  ?=([%migrate-graph *] wire)
+      (on-agent:def wire sign)
+    =/  rid=resource
+      (de-path:resource t.wire)
+    ?.  ?=(%watch-ack -.sign)
+      ~|  "Expected error, please ignore"
+      (on-agent:def wire sign)
+    ?~  p.sign
+      :_  this(migrate (~(del by migrate) rid))
+      ~[(poke-graph-pull-hook %add entity.rid rid)]
+    =/  nack-count=@ud
+      +((~(gut by migrate) rid 0))
+    ?:  (gte nack-count 24)
+      ~&  >>>  "failed to migrate notebook {<rid>} to graph-store"
+      [~ this]
+    :_  this(migrate (~(put by migrate) rid nack-count))
+    =/  wakeup=@da
+      (add now.bol (mul ~s1 (bex (min 19 nack-count))))
+    [%pass wire %arvo %b %wait wakeup]~
     ::
-        %kick
-      =^  cards  state
-        (kick:cc wire)
-      [cards this]
-    ::
-        %fact
-      ?+  p.cage.sign  (on-agent:def wire sign)
-          %chat-update
-        =^  cards  state
-          (fact-chat-update:cc wire !<(update:store q.cage.sign))
-        [cards this]
-      ::
-          %invite-update
-        =^  cards  state
-          (fact-invite-update:cc wire !<(update:inv q.cage.sign))
-        [cards this]
-      ::
-          %group-update
-        =^  cards  state
-          (fact-group-update:cc wire !<(update:group-store q.cage.sign))
-        [cards this]
-      ==
-    ==
+    ++  poke-graph-pull-hook
+      |=  =action:pull-hook
+      ^-  card
+      =-  [%pass / %agent [our.bol %graph-pull-hook] %poke -]
+      pull-hook-action+!>(action)
+    --
   ::
   ++  on-leave  on-leave:def
   ++  on-peek   on-peek:def
-  ++  on-arvo   on-arvo:def
+  ++  on-arvo   
+    |=  [=wire =sign-arvo]
+    ^-  (quip card _this)
+    ?.  ?=([%migrate-graph *] wire)
+      (on-arvo:def wire sign-arvo)
+    =/  rid=resource
+      (de-path:resource t.wire)
+    ?>  ?=([%b %wake *] sign-arvo)
+    ~?  ?=(^ error.sign-arvo)
+      "behn errored in backoff timers, continuing anyway" 
+    :_  this
+    ~[(watch-graph:cc rid)]
+
   ++  on-fail   on-fail:def
   --
 ::
@@ -359,9 +382,15 @@
 ~%  %chat-hook-library  ..card  ~
 |_  bol=bowl:gall
 ++  grp  ~(. grpl bol)
+++  watch-graph
+  |=  rid=resource
+  ^-  card
+  =/  =path
+    (en-path:resource rid)
+  [%pass migrate-graph+path %agent [entity.rid %graph-push-hook] %watch resource+path]
 ::
 ++  poke-noun
-  |=  a=?(%fix-dm %fix-out-of-sync %run-upg7 %run-upg9)
+  |=  a=?(%fix-dm %fix-out-of-sync %run-upg7 %run-upg9 %migrate-graph)
   ^-  (quip card _state)
   |^
   ?-  a
@@ -369,7 +398,56 @@
       %fix-out-of-sync  [(fix-out-of-sync %fix-out-of-sync) state]
       %run-upg7    run-7-to-8
       %run-upg9   run-9-to-10
+      %migrate-graph  migrate-graph
   ==
+  ::
+  ++  poke-our
+    |=  [app=term =cage]
+    ^-  card
+    [%pass / %agent [our.bol app] %poke cage]
+  ::
+  ++  poke-graph-push-hook
+    |=  =action:push-hook
+    ^-  card
+    (poke-our %graph-push-hook %push-hook-action !>(action))
+  ::
+  ++  poke-graph-store
+    |=  =update:graph-store
+    ^-  card
+    (poke-our %graph-store %graph-update !>(update))
+  ::
+  ++  migrate-graph
+    ^-  (quip card _state)
+    =/  syncs=(list [=path =ship])
+      ~(tap by synced)
+    =|  cards=(list card)
+    |- 
+    ?~  syncs  [cards state]
+    =,  i.syncs
+    =/  rid=resource
+      (path-to-resource:store path)
+    ~&  migrating+path
+    ~&  to+rid
+    ?:  =(nobody:store entity.rid) 
+      %_   $
+       syncs  t.syncs
+       ::
+         cards
+        :_  cards
+        %-  poke-graph-store
+        :+  %0  now.bol
+        archive-graph+rid
+      ==
+    ?:  =(our.bol ship)
+      %_    $  
+        cards  :_(cards (poke-graph-push-hook %add rid))
+        syncs  t.syncs
+      ==
+    %_   $
+      cards    :_(cards (watch-graph rid))
+      syncs    t.syncs
+      migrate  (~(put by migrate) rid 0)
+    ==
   ::
   ++  scry-for
     |*  [=mold app=term =path]
@@ -821,24 +899,6 @@
   ~&  store-migrate+wire
   (kick store+wire)
 ::
-++  watch-ack
-  |=  [wir=wire saw=(unit tang)]
-  ^-  (quip card _state)
-  ?~  saw  [~ state]
-  ?+  wir  [~ state]
-  ::
-      [%store @ *]
-    ?:  =('~' i.t.wir)
-      (migrate-store t.t.wir)
-    (poke-chat-hook-action %remove t.wir)
-  ::
-      [%backlog @ @ @ *]
-    =/  chat=path  (oust [(dec (lent t.wir)) 1] `(list @ta)`t.wir)
-    ?:  =(i.t.wir '~')
-      ?>  ?=(^ chat)
-      (migrate-listen t.chat)
-    [~ state]
-  ==
 ::
 ++  chat-poke
   |=  act=action:store

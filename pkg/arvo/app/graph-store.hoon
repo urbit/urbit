@@ -703,6 +703,65 @@
       [ship term]
     (~(gas by *(map index:store node:store)) [index u.node] ~)
   ::
+      [%x %node-siblings ?(%older %younger) @ @ @ *]
+    =/  older  ?=(%older i.t.t.path)
+    =/  =ship  (slav %p i.t.t.t.path)
+    =/  =term  i.t.t.t.t.path
+    =/  count=(unit @ud)  (slaw %ud i.t.t.t.t.t.path)
+    =/  =index:store
+      (turn t.t.t.t.t.t.path (cury slav %ud))
+    =/  parent=index:store
+      (scag (dec (lent index)) index)
+    =/  graph
+      (get-node-children ship term parent)
+    ?~  graph  [~ ~]
+    :-  ~  :-  ~  :-  %graph-update
+    !>  ^-  update:store
+    :+  %0
+      now.bowl
+    :+  %add-nodes
+      [ship term]
+    %-  ~(gas by *(map index:store node:store))
+    %+  turn
+      %-  ?~  count   same
+          |=   =(list [atom node:store])
+          (slag u.count list)
+      %-  ?:(older same flop)
+      %-  tap:orm
+      %+  subset:orm  u.graph
+      =/  idx
+        (snag (dec (lent index)) index)
+      ?:(older [`idx ~] [~ `idx])
+    |=  [=atom =node:store]
+    ^-  [index:store node:store]
+    [(snoc parent atom) node]
+  ::
+      [%x ?(%newest %oldest) @ @ @ *]
+    =/  newest  ?=(%newest i.t.path)
+    =/  =ship  (slav %p i.t.t.path)
+    =/  =term  i.t.t.t.path
+    =/  count=@ud
+      (slav %ud i.t.t.t.t.path)
+    =/  =index:store
+      (turn t.t.t.t.t.path (cury slav %ud))
+    =/  children
+      (get-node-children ship term index)
+    ?~  children  [~ ~]
+    :-  ~  :-  ~  :-  %graph-update
+    !>  ^-  update:store
+    :+  %0
+      now.bowl
+    :+  %add-nodes
+      [ship term]
+    %-  ~(gas by *(map index:store node:store))
+    %+  turn
+      %+  scag  count
+      %-  ?:(newest same flop)
+      (tap:orm u.children)
+    |=  [=atom =node:store]
+    ^-  [index:store node:store]
+    [(snoc index atom) node]
+  ::
       [%x %node-children-subset @ @ @ @ @ *]
     =/  =ship  (slav %p i.t.t.path)
     =/  =term  i.t.t.t.path
@@ -757,6 +816,20 @@
       (peek:orm-log:store update-log)
     (bind result |=([=time update:store] time))
   ==
+  ++  get-node-children
+    |=  [=ship =term =index:store]
+    ^-  (unit graph:store)
+    ?:  ?=(~ index)
+      =/  graph
+        (~(get by graphs) [ship term])
+      ?~  graph  ~
+      `p.u.graph
+    =/  node
+      (get-node ship term index)
+    ?~  node  ~
+    ?:  ?=(%empty -.children.u.node)
+      ~
+    `p.children.u.node
   ::
   ++  get-node
     |=  [=ship =term =index:store]

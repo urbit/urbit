@@ -66,6 +66,7 @@ export interface StoreState {
   notificationsGroupConfig: GroupNotificationsConfig;
   notificationsChatConfig: string[];
   notificationsCount: number,
+  unreads: Unreads;
   doNotDisturb: boolean;
   unreads: Unreads;
 }
