@@ -1,5 +1,3 @@
-import { Inbox, Envelope } from '~/types/chat-update';
-import { ChatHookUpdate } from '~/types/chat-hook-update';
 import { Path } from '~/types/noun';
 import { Invites } from '~/types/invite-update';
 import { Associations } from '~/types/metadata-update';
@@ -51,20 +49,10 @@ export interface StoreState {
   weather: WeatherState | {} | null;
   userLocation: string | null;
 
-  // publish state
-  notebooks: any;
-
-  // Chat state
-  chatInitialized: boolean;
-  chatSynced: ChatHookUpdate | null;
-  inbox: Inbox;
-  pendingMessages: Map<Path, Envelope[]>;
-
   archivedNotifications: Notifications;
   notifications: Notifications;
   notificationsGraphConfig: NotificationGraphConfig;
   notificationsGroupConfig: GroupNotificationsConfig;
-  notificationsChatConfig: string[];
   notificationsCount: number,
   unreads: Unreads;
   doNotDisturb: boolean;
