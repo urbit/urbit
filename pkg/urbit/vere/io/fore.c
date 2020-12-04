@@ -85,9 +85,9 @@ _fore_inject(u3_auto* car_u, c3_c* pax_c)
 static void
 _fore_import(u3_auto* car_u, c3_c* pax_c)
 {
-  u3_noun arc   = u3ke_cue(u3m_file(pax_c));
-  u3_noun imp   = u3do("cat", u3nt(u3i_word(3), u3i_string("#import_"), arc);
-  u3_noun siz   = u3r_met(3, imp));
+  u3_noun arc = u3ke_cue(u3m_file(pax_c));
+  u3_noun imp = u3dt("cat", 3, u3i_string("#import_"), arc);
+  u3_noun siz = u3r_met(3, imp);
   u3_noun dat = u3nt(u3_nul, siz, imp);
 
   u3_noun req = u3nt(c3n,
@@ -98,10 +98,6 @@ _fore_import(u3_auto* car_u, c3_c* pax_c)
   u3_auto_peer(
     u3_auto_plan(car_u, u3_ovum_init(0, c3__e, wir, cad)),
     0, 0, _fore_import_bail);
-
-  u3z(b64);
-  c3_free(b64_c);
-  c3_free(bod_c);
 }
 
 /* _fore_io_talk():
