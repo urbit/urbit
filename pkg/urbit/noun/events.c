@@ -308,6 +308,14 @@ _ce_patch_verify(u3_ce_patch* pat_u)
 {
   c3_w i_w;
 
+  if ( u3e_version != pat_u->con_u->ver_y ) {
+    fprintf(stderr, "loom: patch version mismatch: have %u, need %u\r\n",
+                    pat_u->con_u->ver_y,
+                    u3e_version);
+    c3_assert(0);
+    return c3n;
+  }
+
   for ( i_w = 0; i_w < pat_u->con_u->pgs_w; i_w++ ) {
     c3_w pag_w = pat_u->con_u->mem_u[i_w].pag_w;
     c3_w mug_w = pat_u->con_u->mem_u[i_w].mug_w;
@@ -571,6 +579,7 @@ _ce_patch_compose(void)
 
     _ce_patch_create(pat_u);
     pat_u->con_u = c3_malloc(sizeof(u3e_control) + (pgs_w * sizeof(u3e_line)));
+    pat_u->con_u->ver_y = u3e_version;
     pgc_w = 0;
 
     for ( i_w = 0; i_w < nor_w; i_w++ ) {

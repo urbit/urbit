@@ -539,10 +539,6 @@ _pier_work_init(u3_pier* pir_u)
 
   _pier_work_time(pir_u);
 
-  //  for i/o drivers that still use u3A->sen
-  //
-  u3v_numb();
-
   //  XX plan kelvin event
   //
 

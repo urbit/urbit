@@ -19,6 +19,7 @@ import Urbit.Vere.Serf.IPC
 import Control.Monad.Trans.Resource (runResourceT)
 import Urbit.Arvo                   (FX)
 import Urbit.King.App.Class         (HasStderrLogFunc(..))
+import Urbit.EventLog.Event         (parseLogEvent)
 
 import qualified Data.Conduit.Combinators as CC
 import qualified System.ProgressBar       as PB
@@ -31,9 +32,6 @@ import qualified Urbit.Vere.Serf.IPC as X (Config (..), EvErr (..), Flag (..),
 
 
 --------------------------------------------------------------------------------
-
-parseLogRow :: MonadIO m => ByteString -> m (Mug, Noun)
-parseLogRow = cueBSExn >=> fromNounExn
 
 withSerf :: HasLogFunc e => Config -> RAcquire e Serf
 withSerf config = mkRAcquire startup kill
@@ -64,7 +62,7 @@ execReplay serf log last = do
 
     evs <- runConduit $ Log.streamEvents log 1
                      .| CC.take (fromIntegral bootSeqLen)
-                     .| CC.mapM (fmap snd . parseLogRow)
+                     .| CC.mapM (fmap snd . parseLogEvent)
                      .| CC.sinkList
 
     let numEvs = fromIntegral (length evs)
@@ -117,7 +115,7 @@ execReplay serf log last = do
       $  runConduit
       $  Log.streamEvents log (lastEventInSnap + 1)
       .| CC.take (fromIntegral numEvs)
-      .| CC.mapM (fmap snd . parseLogRow)
+      .| CC.mapM (fmap snd . parseLogEvent)
       .| replay 5 incProgress serf
 
     res & \case
@@ -153,7 +151,7 @@ collectFX serf log = do
   runResourceT
     $  runConduit
     $  Log.streamEvents log (lastEv + 1)
-    .| CC.mapM (parseLogRow >=> fromNounExn . snd)
+    .| CC.mapM (parseLogEvent >=> fromNounExn . snd)
     .| swim serf
     .| persistFX log
 
