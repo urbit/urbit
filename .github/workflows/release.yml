@@ -1,4 +1,4 @@
-name: Upload urbit release tarball
+name: release
 
 on: [release]
 
@@ -27,7 +27,7 @@ jobs:
           project_id: ${{ secrets.GCS_PROJECT }}
           export_default_credentials: true
 
-      - run: nix-build -A tarball
+      - run: nix-build -A tarball --arg enableStatic true
 
       - name: Run upload to bootstrap.urbit.org
         run: |
