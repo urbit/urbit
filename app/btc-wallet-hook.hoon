@@ -196,8 +196,8 @@
         ==
     ?:  ?!(connected.u.provider)
       (weld (retry-reqs block.s) retry-txbu)
-    ?:  (lte block.btc-state block.s)  ~
-    ~&  >  "got new block, retrying {<(lent (retry-reqs block.s))>} reqs"
+    ?.  (lth block.btc-state block.s)  ~
+    ~&  >  "got new block, retrying {<(lent (retry-reqs block.s))>} reqs "
     (retry-reqs block.s)
     ::
       %disconnected
