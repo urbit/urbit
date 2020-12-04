@@ -215,7 +215,7 @@
   |=  old=(unit versioned-state)
   ^-  (quip card _state)
   ?~  old
-    [~[connect] state]
+    [~[connect] state(width 80)]
   ::
   =?  u.old  ?=(?(~ ^) -.u.old)
     ^-  state-1
