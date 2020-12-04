@@ -183,7 +183,7 @@
   ^-  (quip card _this)
   ?:  ?=([%start ~] wire)
     =/  new-tid=@ta  (cat 3 'glob--' (scot %uv eny.bowl))
-    =/  args  [~ `new-tid %glob !>([hash.state ~])]
+    =/  args  [~ `new-tid %glob !>([~ hash.state])]
     =/  action  !>([%unserve-dir serve-path])
     :_  this(glob.state `[%| new-tid])
     :~  (poke-file-server our.bowl %file-server-action action)

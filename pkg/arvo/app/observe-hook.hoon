@@ -179,7 +179,7 @@
               [our.bowl %spider]
               %poke
               %spider-start
-              !>([~ `tid thread.observer (slop q.cage.sign !>(~))])
+              !>([~ `tid thread.observer (slop !>(~) q.cage.sign)])
       ==  ==
     ==
   ::

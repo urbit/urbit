@@ -127,6 +127,7 @@
 +$  reef-cache
   $:  hoon=vase
       arvo=vase
+      lull=vase
       zuse=vase
   ==
 ::
@@ -284,7 +285,10 @@
 +$  move  [p=duct q=(wind note gift:able)]              ::  local move
 +$  note                                                ::  out request $->
   $~  [%b %wait *@da]                                   ::
-  $%  $:  %a                                            ::  to %ames
+  $%  $:  %$                                            ::  to arvo
+          $>(%what waif)                                ::
+      ==                                                ::
+      $:  %a                                            ::  to %ames
           $>(%plea task:able:ames)                      ::
       ==                                                ::
       $:  %b                                            ::  to %behn
@@ -1394,15 +1398,11 @@
     ::  promote and fill in ankh
     ::  promote and fill in mime cache
     ::
-    =/  sys-changes  (need-sys-update changes)
-    ?:  ?&  =(%home syd)
-            !updated
-            |(!=(~ sys-changes) !=(~ (need-vane-update changes)))
-        ==
-      (sys-update yoki new-data changes)
+    ?:  &(=(%home syd) !updated)
+      (sys-update yoki new-data)
     ::  clear caches if zuse reloaded
     ::
-    =/  is-zuse-new=?  !=(~ sys-changes)
+    =/  is-zuse-new=?  (need-reef-update changes)
     =.  fod.dom
       ?:  is-zuse-new
         *ford-cache
@@ -1547,89 +1547,67 @@
       (~(put by $(builds t.builds)) i.builds)
     ::
     ++  build-reef
+      =>  |%
+          +$  reef-step
+            ::  vary: source or dependencies changed
+            ::  deep: source and dependencies match kernel
+            ::
+            [vary=? deep=?]
+          --
+      ::
       |=  $:  fer=(unit reef-cache)
               invalid=(set path)
               data=(map path (each page lobe))
           ==
-      ^-  reef-cache
-      ?:  =(%home syd)
-        [!>(..ride) !>(..is) !>(..zuse)]
-      |^
-      ?:  |(?=(~ fer) (~(has in invalid) /sys/hoon/hoon))
-        =/  [home=? hoon=vase]
-          ?:  (same-as-home /sys/hoon/hoon)
-            &+!>(..ride)
-          |+build-hoon
-        :-  hoon
-        =/  [home=? arvo=vase]
-          ?:  &(home (same-as-home /sys/arvo/hoon))
-            &+!>(..is)
-          |+(build-arvo hoon)
-        :-  arvo
-        ?:  &(home (same-as-home /sys/zuse/hoon))
-          !>(..zuse)
-        (build-zuse arvo)
-      :-  hoon.u.fer
-      ?:  (~(has in invalid) /sys/arvo/hoon)
-        =/  [home=? arvo=vase]
-          ?:  &((same-as-home /sys/hoon/hoon) (same-as-home /sys/arvo/hoon))
-            &+!>(..is)
-          |+(build-arvo hoon.u.fer)
-        :-  arvo
-        ?:  &(home (same-as-home /sys/zuse/hoon))
-          !>(..zuse)
-        (build-zuse arvo)
-      :-  arvo.u.fer
-      ?:  (~(has in invalid) /sys/zuse/hoon)
-        ?:  ?&  (same-as-home /sys/hoon/hoon)
-                (same-as-home /sys/arvo/hoon)
-                (same-as-home /sys/zuse/hoon)
+      |^  ^-  reef-cache
+          =/  [tep=reef-step ref=reef-cache]
+            ?^  fer
+              [[vary=| deep=&] u.fer]
+            [[vary=& deep=&] *reef-cache]
+          ::
+          =^  hon  tep  (build tep /sys/hoon hoon.ref !>(**) !,(*hoon ..ride))
+          =^  rav  tep  (build tep /sys/arvo arvo.ref hon !,(*hoon ..part))
+          =^  lul  tep  (build tep /sys/lull lull.ref rav !,(*hoon .))
+          =^  zus  tep  (build tep /sys/zuse zuse.ref rav !,(*hoon .))
+          [hon rav lul zus]
+      ::
+      ++  build
+        |=  [tep=reef-step pax=path pre=vase sub=vase pro=hoon]
+        ^-  (pair vase reef-step)
+        =/  ful  (weld pax /hoon)
+        ?.  ?|  vary.tep
+                (~(has in invalid) ful)
             ==
-          !>(..zuse)
-        (build-zuse arvo.u.fer)
-      zuse.u.fer
-      ::
-      ++  build-hoon
-        %-  road  |.
-        ~>  %slog.0^leaf+"clay: building hoon on {<syd>}"
+          [pre tep]
+        =.  vary.tep  &
+        =/  src  (path-to-cord data ful)
+        ::
+        ?:  &(deep.tep (deep pax src))
+          [(slap !>(..zuse) pro) tep]
+        ::
+        =/  nam=term  ?.(?=([@ta @ta *] pax) %$ i.t.pax)
+        ~>  %slog.0^leaf+"clay: building %{(trip nam)} on %{(trip syd)}"
         =/  gen
-          ~>  %mean.%hoon-parse-fail
-          (path-to-hoon data /sys/hoon/hoon)
-        ~>  %mean.%hoon-compile-fail
-        (slot 7 (slap !>(0) gen))
+          ~_  leaf+"%{(trip nam)}-parse-fail"
+          (rain ful src)
+        ~_  leaf+"%{(trip nam)}-compile-fail"
+        [(slap (slap sub gen) pro) tep(deep |)]
       ::
-      ++  build-arvo
-        |=  hoon=vase
-        %-  road  |.
-        ~>  %slog.0^leaf+"clay: building arvo on {<syd>}"
-        =/  gen
-          ~>  %mean.%arvo-parse-fail
-          (path-to-hoon data /sys/arvo/hoon)
-        ~>  %mean.%arvo-compile-fail
-        (slap (slap hoon gen) !,(*^hoon ..is))
-      ::
-      ++  build-zuse
-        |=  arvo=vase
-        %-  road  |.
-        ~>  %slog.0^leaf+"clay: building zuse on {<syd>}"
-        =/  gen
-          ~>  %mean.%zuse-parse-fail
-          (path-to-hoon data /sys/zuse/hoon)
-        ~>  %mean.%zuse-compile-fail
-        (slap arvo gen)
-      ::
-      ++  same-as-home
-        |=  =path
+      ++  deep
+        |=  [pax=path src=cord]
         ^-  ?
-        =/  our-lobe=lobe
-          =/  datum  (~(got by data) path)
-          ?-  -.datum
-            %&  (page-to-lobe %hoon (page-to-cord p.datum))
-            %|  p.datum
-          ==
-        =/  =dome  dom:(~(got by dos.rom) %home)
-        =/  =yaki  (~(got by hut.ran) (~(got by hit.dome) let.dome))
-        =(`our-lobe (~(get by q.yaki) path))
+        ::  XX use roof
+        ::
+        :: =/  dat  (rof `[our ~ ~] $/[[our $/da/now] mod/fat/pax])
+        :: ?:  |(?=(~ dat) ?=(~ u.dat))  |
+        :: =/  nod  !<((axal (cask)) q.u.u.dat)
+        ::
+        =/  dat
+          ;;  (unit (unit (axal (cask))))
+          ((sloy-light ski) [hoon-version %noun] %$ our %$ da/now mod/fat/pax)
+        ?:  |(?=(~ dat) ?=(~ u.dat))  |
+        =*  nod  u.u.dat
+        &(?=(^ fil.nod) ?=(%hoon p.u.fil.nod) =(src q.u.fil.nod))
       --
     ::
     ++  page-to-cord
@@ -1883,104 +1861,50 @@
         test-ankh  (~(got by dir.test-ankh) ta)
       ==
     ::
-    ::  Find /sys changes; does not reload on first commit
+    ::  Find reef dependency changes
     ::
-    ++  need-sys-update
+    ++  need-reef-update
       |=  changes=(map path (each page lobe))
-      ^-  (map path (each page lobe))
-      ~+
-      ?:  =(0 let.dom)
-        ~
-      %-  malt
-      %+  skim  ~(tap by changes)
+      ^-  ?
+      %+  lien  ~(tap by changes)
       |=  [=path *]
       ?|  =(/sys/hoon/hoon path)
           =(/sys/arvo/hoon path)
+          =(/sys/lull/hoon path)
           =(/sys/zuse/hoon path)
       ==
-    ::
-    ++  need-vane-update
-      |=  changes=(map path (each page lobe))
-      ^-  (map path (each page lobe))
-      ~+
-      ?:  =(0 let.dom)
-        ~
-      %-  malt
-      %+  skim  ~(tap by changes)
-      |=  [=path *]
-      =(/sys/vane (scag 2 path))
     ::
     ::  Delay current update until sys update is complete
     ::
     ++  sys-update
       |=  $:  =yoki
               data=(map path (each page lobe))
-              changes=(map path (each page lobe))
           ==
       ^+  ..park
-      =/  updates
-        %-  ~(uni by (need-sys-update changes))
-        (need-vane-update changes)
       ?>  =(~ pud)
       =.  pud  `[syd yoki]
       |^  %.  [hen %slip %c %pork ~]
-          =<  emit
-          ?:  (~(has by updates) /sys/hoon/hoon)
-            (reset &)
-          ?:  (~(has by updates) /sys/arvo/hoon)
-            (reset |)
-          ?:  (~(has by updates) /sys/zuse/hoon)
-            reboot
-          =/  vanes=(list [=path *])  ~(tap by updates)
-          |-  ^+  ..park
-          ?~  vanes
-            ..park
-          ?.  ?=([%sys %vane * %hoon ~] path.i.vanes)
-            ~&  [%strange-sys-update path.i.vanes]
-            $(vanes t.vanes)
-          =.  ..park  (reload i.t.t.path.i.vanes)
-          $(vanes t.vanes)
+          emit:(pass-what files)
       ::
-      ++  reset
-        |=  new-hoon=?
+      ++  files
+        ^-  (list (pair path (cask)))
+        %+  murn
+          ~(tap by data)
+        |=  [pax=path dat=(each page lobe)]
+        ^-  (unit (pair path (cask)))
+        =/  xap  (flop pax)
+        ?>  ?=(^ xap)
+        ?.  ?=(%hoon i.xap)  ~
+        :^  ~  (flop t.xap)  %hoon
+        ?-  -.dat
+          %&  (page-to-cord p.dat)
+          %|  (lobe-to-cord p.dat)
+        ==
+      ::
+      ++  pass-what
+        |=  fil=(list (pair path (cask)))
         ^+  ..park
-        ?.  new-hoon
-          =/  arvo=@t  (path-to-cord data /sys/arvo/hoon)
-          =.  ..park  (pass-lyra hoon=~ arvo)
-          reboot
-        =/  hoon=@t  (path-to-cord data /sys/hoon/hoon)
-        =/  arvo=@t  (path-to-cord data /sys/arvo/hoon)
-        =.  ..park  (pass-lyra `hoon arvo)
-        reboot
-      ::
-      ++  pass-lyra
-        |=  [hoon=(unit @t) arvo=@t]
-        ^+  ..park
-        (emit hen %pass /reset %d %flog %lyra hoon arvo)
-      ::
-      ++  reboot
-        =/  zuse=@t  (path-to-cord data /sys/zuse/hoon)
-        =.  ..park
-          %-  emit
-          [hen %pass /reboot %d %flog %veer %$ /sys/zuse/hoon zuse]
-        reload-all
-      ::
-      ++  reload-all
-        =/  vanes=(list term)
-          ~[%ames %behn %clay %dill %eyre %gall %iris %jael]
-        |-  ^+  ..park
-        ?~  vanes
-          ..park
-        =.  ..park  (reload i.vanes)
-        $(vanes t.vanes)
-      ::
-      ++  reload
-        |=  =term
-        =/  vane=@t  (path-to-cord data /sys/vane/[term]/hoon)
-        %-  emit
-        =/  tip  (end 3 term)
-        =/  =path  /sys/vane/[term]/hoon
-        [hen %pass /reload %d %flog %veer tip path vane]
+        (emit hen %pass /what %$ what/fil)
       --
     --
   ::

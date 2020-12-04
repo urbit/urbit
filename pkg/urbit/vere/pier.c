@@ -793,7 +793,7 @@ _pier_wyrd_card(u3_pier* pir_u)
   //
   u3_noun ver = u3nq(u3i_string(VERE_NAME), VERE_MAJOR, VERE_MINOR, VERE_PATCH);
   u3_noun kel = u3nl(u3nc(c3__zuse, VERE_ZUSE),       //  XX god_u->zus_w
-                     // u3nc(c3__lull, PIER_LULL),    //  XX define
+                     u3nc(c3__lull, u3i_string("lull-kelvin")),    //  XX define
                      u3nc(c3__arvo, u3i_string("arvo-kelvin")), //  XX from both king and serf?
                      u3nc(c3__hoon, 141),  //  god_u->hon_y
                      u3nc(c3__nock, 4),    //  god_u->noc_y

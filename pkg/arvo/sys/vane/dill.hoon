@@ -33,7 +33,10 @@
 +$  move  [p=duct q=(wind note gift:able)]              ::  local move
 +$  note                                                ::  out request $->
   $~  [%d %verb ~]                                      ::
-  $%  $:  %c                                            ::
+  $%  $:  %$                                            ::
+          $>(?(%verb %whey) waif)                       ::
+      ==                                                ::
+      $:  %c                                            ::
           $>  $?  %merg                                 ::  merge desks
                   %perm                                 ::  change permissions
                   %warp                                 ::  wait for clay hack
@@ -44,9 +47,7 @@
           $>  $?  %crud                                 ::
                   %heft                                 ::
                   %init                                 ::  XX obsolete?
-                  %lyra                                 ::
                   %text                                 ::
-                  %veer                                 ::
                   %verb                                 ::
               ==                                        ::
           task:able:dill                                ::
@@ -117,13 +118,11 @@
           %crud  ::  (send `dill-belt`[%cru p.kyz q.kyz])
                  (crud p.kyz q.kyz)
           %blew  (send %rez p.p.kyz q.p.kyz)
-          %heft  (dump %whey ~)
-          %lyra  (dump kyz)
+          %heft  (pass /whey %$ whey/~)
           %meld  (dump kyz)
           %pack  (dump kyz)
           %crop  (dump trim+p.kyz)
-          %veer  (dump kyz)
-          %verb  (dump kyz)
+          %verb  (pass /verb %$ kyz)
         ==
       ::
       ++  crud
