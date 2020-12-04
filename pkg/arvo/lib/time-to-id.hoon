@@ -6,5 +6,5 @@
 ::
 ::::  ~fyr
   ::
-|=  a/time  ^-  tape
+|=  a=time  ^-  tape
 ['c' (s-co:co f:(yell a))]

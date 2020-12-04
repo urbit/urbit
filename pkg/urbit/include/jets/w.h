@@ -20,6 +20,7 @@
     u3_noun u3wb_bind(u3_noun);
     u3_noun u3wb_clap(u3_noun);
     u3_noun u3wb_drop(u3_noun);
+    u3_noun u3wb_find(u3_noun);
     u3_noun u3wb_flop(u3_noun);
     u3_noun u3wb_lent(u3_noun);
     u3_noun u3wb_levy(u3_noun);
@@ -38,6 +39,8 @@
     u3_noun u3wb_sort(u3_noun);
     u3_noun u3wb_turn(u3_noun);
     u3_noun u3wb_weld(u3_noun);
+#   define u3wb_welp u3wb_weld
+    u3_noun u3wb_zing(u3_noun);
 
   /** Tier 3.
   **/
@@ -66,7 +69,6 @@
     u3_noun u3wc_rep(u3_noun);
     u3_noun u3wc_rev(u3_noun);
     u3_noun u3wc_rip(u3_noun);
-    u3_noun u3wc_ripn(u3_noun);
     u3_noun u3wc_rsh(u3_noun);
     u3_noun u3wc_swp(u3_noun);
     u3_noun u3wc_sqt(u3_noun);
@@ -78,6 +80,9 @@
 
   /** Tier 4.
   **/
+    u3_noun u3wdb_all(u3_noun);
+    u3_noun u3wdb_any(u3_noun);
+    u3_noun u3wdb_apt(u3_noun);
     u3_noun u3wdb_bif(u3_noun);
     u3_noun u3wdb_del(u3_noun);
     u3_noun u3wdb_dif(u3_noun);
@@ -86,10 +91,16 @@
     u3_noun u3wdb_has(u3_noun);
     u3_noun u3wdb_int(u3_noun);
     u3_noun u3wdb_jab(u3_noun);
+    u3_noun u3wdb_key(u3_noun);
     u3_noun u3wdb_put(u3_noun);
 #   define u3wdb_tap u3wdi_tap
     u3_noun u3wdb_uni(u3_noun);
+    u3_noun u3wdb_urn(u3_noun);
+#   define u3wdb_rep u3wdi_rep
+    u3_noun u3wdb_run(u3_noun);
+#   define u3wdb_wyt u3wdi_wyt
 
+    u3_noun u3wdi_apt(u3_noun);
     u3_noun u3wdi_bif(u3_noun);
     u3_noun u3wdi_del(u3_noun);
     u3_noun u3wdi_dif(u3_noun);
@@ -97,6 +108,8 @@
     u3_noun u3wdi_has(u3_noun);
     u3_noun u3wdi_int(u3_noun);
     u3_noun u3wdi_put(u3_noun);
+    u3_noun u3wdi_rep(u3_noun);
+    u3_noun u3wdi_run(u3_noun);
     u3_noun u3wdi_tap(u3_noun);
     u3_noun u3wdi_uni(u3_noun);
     u3_noun u3wdi_wyt(u3_noun);
@@ -107,14 +120,20 @@
     u3_noun u3we_jam(u3_noun);
     u3_noun u3we_mat(u3_noun);
     u3_noun u3we_rub(u3_noun);
+    u3_noun u3we_leer(u3_noun);
     u3_noun u3we_lore(u3_noun);
     u3_noun u3we_loss(u3_noun);
     u3_noun u3we_lune(u3_noun);
     u3_noun u3we_mink(u3_noun);
+    u3_noun u3we_mole(u3_noun);
     u3_noun u3we_mule(u3_noun);
     u3_noun u3we_repg(u3_noun);
     u3_noun u3we_rexp(u3_noun);
     u3_noun u3we_trip(u3_noun);
+
+    u3_noun u3we_scow(u3_noun);
+    u3_noun u3we_scot(u3_noun);
+    u3_noun u3we_slaw(u3_noun);
 
     u3_noun u3we_pfix(u3_noun);
     u3_noun u3we_plug(u3_noun);
@@ -180,6 +199,9 @@
     u3_noun u3we_make(u3_noun);
     u3_noun u3we_sign(u3_noun);
     u3_noun u3we_reco(u3_noun);
+
+    u3_noun u3we_en_base16(u3_noun);
+    u3_noun u3we_de_base16(u3_noun);
 
     u3_noun u3we_bend_fun(u3_noun);
     u3_noun u3we_cold_fun(u3_noun);

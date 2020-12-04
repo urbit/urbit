@@ -26,12 +26,13 @@ where
 
 import Urbit.Prelude hiding (Builder)
 
-import Data.Binary.Builder (Builder, fromByteString)
-import Data.Bits           (shiftL, (.|.))
-import Data.Conduit        (ConduitT, Flush(Chunk, Flush), yield)
-import Network.Socket      (SockAddr(..))
-import System.Random       (newStdGen, randoms)
-import Urbit.Arvo          (Address(..), Ipv4(..), Ipv6(..), Method)
+import Data.Binary.Builder         (Builder, fromByteString)
+import Data.Bits                   (shiftL, (.|.))
+import Data.Conduit                (ConduitT, Flush(Chunk, Flush), yield)
+import Network.Socket              (SockAddr(..))
+import System.Random               (newStdGen, randoms)
+import Urbit.Arvo                  (Address(..), Ipv4(..), Ipv6(..), Method)
+import Urbit.Vere.Eyre.KingSubsite (KingSubsite, runKingSubsite)
 
 import qualified Network.HTTP.Types  as H
 import qualified Network.Wai         as W
@@ -179,7 +180,7 @@ streamBlocks env init getAct = send init >> loop
 
   send "" = pure ()
   send c  = do
-    runRIO env (logTrace (display ("sending chunk " <> tshow c)))
+    runRIO env (logDebug (display ("sending chunk " <> tshow c)))
     yield $ Chunk $ fromByteString c
     yield Flush
 
@@ -209,21 +210,25 @@ app
   -> TVar LiveReqs
   -> (Word64 -> ReqInfo -> STM ())
   -> (Word64 -> STM ())
+  -> KingSubsite
   -> W.Application
-app env who liv inform cancel req respond =
-  runRIO env $ rwith (liveReq who liv) $ \(reqId, respApi) -> do
-    bod <- io (toStrict <$> W.strictRequestBody req)
-    met <- maybe (error "bad method") pure (cookMeth req)
+app env who liv inform cancel sub req respond =
+  case W.pathInfo req of
+    ("~_~":_) -> runKingSubsite sub req respond
+    _ ->
+      runRIO env $ rwith (liveReq who liv) $ \(reqId, respApi) -> do
+        bod <- io (toStrict <$> W.strictRequestBody req)
+        met <- maybe (error "bad method") pure (cookMeth req)
 
-    let adr = reqAddr req
-        hdr = W.requestHeaders req
-        url = reqUrl req
+        let adr = reqAddr req
+            hdr = W.requestHeaders req
+            url = reqUrl req
 
-    atomically $ inform reqId $ ReqInfo adr met url hdr bod
+        atomically $ inform reqId $ ReqInfo adr met url hdr bod
 
-    try (sendResponse respond respApi) >>= \case
-      Right rr  -> pure rr
-      Left  exn -> do
-        atomically (cancel reqId)
-        logError $ display ("Exception during request" <> tshow exn)
-        throwIO (exn :: SomeException)
+        try (sendResponse respond respApi) >>= \case
+          Right rr  -> pure rr
+          Left  exn -> do
+            atomically (cancel reqId)
+            logError $ display ("Exception during request" <> tshow exn)
+            throwIO (exn :: SomeException)

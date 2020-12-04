@@ -21,7 +21,7 @@
   =/  expected-moves=(list move:gall-gate)  ~
   ::
   =/  res
-    (gall-call gall-gate time *sley call-args expected-moves)
+    (gall-call gall-gate time *roof call-args expected-moves)
   ::
   -.res
 ::  +test-conf: test %conf; TODO: test clay response
@@ -48,7 +48,7 @@
   =/  expected-moves=(list move:gall-gate)  ~[move]
   ::
   =/  res
-    (gall-call gall-gate time *sley call-args expected-moves)
+    (gall-call gall-gate time *roof call-args expected-moves)
   ::
   -.res
 ::  +gall-call: have %gall run a +task and assert it produces expected-moves
@@ -56,7 +56,7 @@
 ++  gall-call
   |=  $:  gall-gate=_gall-gate
           now=@da
-          scry=sley
+          scry=roof
           call-args=[=duct =type wrapped-task=(hobo task:able:gall)]
           expected-moves=(list move:gall-gate)
       ==

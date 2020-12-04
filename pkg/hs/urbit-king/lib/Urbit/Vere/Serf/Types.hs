@@ -15,21 +15,21 @@ type PlayBail = (EventId, Mug, Goof)
 type Slog = (Atom, Tank)
 
 data SerfState = SerfState
-  { ssLast :: EventId
-  , ssHash :: Mug
+  { ssLast :: !EventId
+  , ssHash :: !Mug
   }
  deriving (Show, Eq)
 
 data RipeInfo = RipeInfo
-  { riProt :: Atom
-  , riHoon :: Atom
-  , riNock :: Atom
+  { riProt :: !Atom
+  , riHoon :: !Atom
+  , riNock :: !Atom
   }
  deriving (Show)
 
 data SerfInfo = SerfInfo
-  { siRipe :: RipeInfo
-  , siStat :: SerfState
+  { siRipe :: !RipeInfo
+  , siStat :: !SerfState
   }
  deriving (Show)
 

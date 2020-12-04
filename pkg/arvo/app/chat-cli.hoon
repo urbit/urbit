@@ -10,7 +10,7 @@
 ::    and trust it to take care of the rest.
 ::
 /-  view=chat-view, hook=chat-hook,  *group,
-    *permission-store, *group-store, inv=invite-store,
+    *group-store, inv=invite-store,
     sole
 /+  shoe, default-agent, verb, dbug, store=chat-store,
     group-store, grpl=group, resource
@@ -767,7 +767,7 @@
       :-  %chat-view-action
       !>  ^-  action:view
       :*  %create
-          (rsh 3 1 (spat path))
+          (rsh 3 (spat path))
           ''
           real-path  ::  chat
           group-path  ::  group
@@ -1269,7 +1269,7 @@
         ?:(p.timez add sub)
       =+  dat=(yore when)
       =/  t
-        |=  a/@
+        |=  a=@
         %+  weld
           ?:((lth a 10) "0" ~)
         (scow %ud a)

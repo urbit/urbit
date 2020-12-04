@@ -78,22 +78,12 @@
       c3_w
       u3e_dirty(void);
 
-    /* u3e_hold(): backup memory images
+    /* u3e_yolo(): disable dirty page tracking, read/write whole loom.
     */
       c3_o
-      u3e_hold(void);
+      u3e_yolo(void);
 
-    /* u3e_drop(): remove backed-up memory images
+    /* u3e_foul(): dirty all the pages of the loom.
     */
-      c3_o
-      u3e_drop(void);
-
-    /* u3e_fall(): restore memory images
-    */
-      c3_o
-      u3e_fall(void);
-
-    /* u3e_wipe(): discard memory images
-    */
-      c3_o
-      u3e_wipe(void);
+      void
+      u3e_foul(void);

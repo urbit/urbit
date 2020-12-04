@@ -175,7 +175,7 @@
 ++  clay-call
   |=  $:  clay-gate=_clay-gate
           now=@da
-          scry=sley
+          scry=roof
           call-args=[=duct =type wrapped-task=(hobo task:able:clay)]
           expected-moves=(list move:clay-gate)
       ==
@@ -196,7 +196,7 @@
 ++  clay-call-with-comparator
   |=  $:  clay-gate=_clay-gate
           now=@da
-          scry=sley
+          scry=roof
           call-args=[=duct =type wrapped-task=(hobo task:able:clay)]
           move-comparator=$-((list move:clay-gate) tang)
       ==
@@ -214,7 +214,7 @@
 ++  clay-take
   |=  $:  clay-gate=_clay-gate
           now=@da
-          scry=sley
+          scry=roof
           take-args=[=wire =duct wrapped-sign=(hypo sign:clay-gate)]
           expected-moves=(list move:clay-gate)
       ==
@@ -235,7 +235,7 @@
 ++  clay-take-with-comparator
   |=  $:  clay-gate=_clay-gate
           now=@da
-          scry=sley
+          scry=roof
           take-args=[=wire =duct wrapped-sign=(hypo sign:clay-gate)]
           move-comparator=$-((list move:clay-gate) tang)
       ==

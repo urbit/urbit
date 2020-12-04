@@ -14,7 +14,7 @@ import qualified Urbit.Vere.Serf as Serf
 data PierConfig = PierConfig
   { _pcPierPath  :: FilePath
   , _pcDryRun    :: Bool
-  , _pcSerfExe   :: Text
+  , _pcSerfExe   :: Maybe Text
   , _pcSerfFlags :: [Serf.Flag]
   } deriving (Show)
 

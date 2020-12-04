@@ -7,11 +7,15 @@
 ::::
   !:
 :-  %say
-|=  [[now=@da * bec=beak] *]
+|=  $:  [now=@da eny=@uvJ bec=beak]
+        arg=$@(~ [top=path ~])
+        ~
+    ==
 :-  %noun
 ::  sys: root path to boot system, `/~me/[desk]/now/sys`
 ::
 =/  sys=path
+  ?^  arg  top.arg
   /(scot %p p.bec)/[q.bec]/(scot %da now)/sys
 ::  compiler-source: hoon source file producing compiler, `sys/hoon`
 ::
@@ -33,8 +37,8 @@
 ::    Parsed with a static path for reproducibility.
 ::
 =/  whole-hoon=hoon
-  :+  %tsbn  compiler-hoon
-  :+  %tsld  (rain /sys/arvo/hoon arvo-source)
+  :+  %tsgr  compiler-hoon
+  :+  %tsgl  (rain /sys/arvo/hoon arvo-source)
   [%$ 7]
 ::  compile the whole schmeer
 ::
@@ -48,8 +52,12 @@
 ::    we include a static path for reproducibility.
 ::
 =/  zuse-ovo=ovum
-  :-  /vane/zuse
-  [%veer %$ /sys/zuse/hoon .^(@ %cx (weld sys /zuse/hoon))]
+  :~  //arvo
+      %what
+      [/sys/hoon hoon/compiler-source]
+      [/sys/arvo hoon/arvo-source]
+      [/sys/zuse hoon/.^(@ %cx (weld sys /zuse/hoon))]
+  ==
 ::  installed: Arvo gate (formal instance) with %zuse installed
 ::
 ::    The :zuse-ovo event occurs at a defaulted date for reproducibility.

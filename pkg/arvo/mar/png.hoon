@@ -1,4 +1,4 @@
-|_  dat/@t
+|_  dat=@t
 ++  grow
   |%
   ++  mime  [/image/png (as-octs:mimes:html dat)]

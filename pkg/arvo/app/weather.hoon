@@ -147,7 +147,7 @@
   |=  [wir=wire err=(unit tang)]
   ^-  (quip card _state)
   ?~  err
-    =/  req/request:http  (request-wttr location)
+    =/  req=request:http  (request-wttr location)
     =/  out  *outbound-config:iris
     :_  state(timer `(add now.bol ~h3))
     :~  [%pass /[(scot %da now.bol)] %arvo %i %request req out]

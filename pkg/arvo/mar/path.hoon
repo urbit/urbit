@@ -1,4 +1,4 @@
-|_  pax/path
+|_  pax=path
 ++  grad  %noun
 ++  grow
   |%

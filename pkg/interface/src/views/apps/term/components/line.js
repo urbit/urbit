@@ -31,7 +31,7 @@ export default React.memo(({line}) => {
         case 'y': prop.color = 'yellow';  break;
         case 'k': prop.color = 'black';   break;
         case 'w': prop.color = 'white';   break;
-        default: console.log('weird fore', part.stye.fore);
+        default: prop.color = '#' + part.stye.fore;
       }
       switch (part.stye.back) {
         case null: break;
@@ -43,7 +43,7 @@ export default React.memo(({line}) => {
         case 'y': prop.backgroundColor = 'yellow';  break;
         case 'k': prop.backgroundColor = 'black';   break;
         case 'w': prop.backgroundColor = 'white';   break;
-        default: console.log('weird back', part.stye.back);
+        default: prop.backgroundColor = '#' + part.stye.back;
       }
       if (Object.keys(prop).length === 0)
       {
@@ -59,11 +59,10 @@ export default React.memo(({line}) => {
   //  render line
   //
   return (
-    <Text color='black' mono display='block' fontSize='0'
+    <Text mono display='flex' fontSize='0'
     style={{ overflowWrap: 'break-word', whiteSpace: 'pre-wrap' }}
     >
       {text}
     </Text>
   );
-
 });

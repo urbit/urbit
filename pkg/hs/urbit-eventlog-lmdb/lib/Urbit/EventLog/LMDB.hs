@@ -41,9 +41,9 @@ import qualified Data.Vector            as V
 -- Public Types ----------------------------------------------------------------
 
 data LogIdentity = LogIdentity
-  { who          :: Ship
-  , isFake       :: Bool
-  , lifecycleLen :: Word
+  { who          :: !Ship
+  , isFake       :: !Bool
+  , lifecycleLen :: !Word
   } deriving (Eq, Ord, Show)
 
 deriveNoun ''LogIdentity
@@ -100,7 +100,7 @@ rawOpen :: MonadIO m => FilePath -> m Env
 rawOpen dir = io $ do
     env <- mdb_env_create
     mdb_env_set_maxdbs env 3
-    mdb_env_set_mapsize env (100 * 1024 * 1024 * 1024)
+    mdb_env_set_mapsize env (1024 * 1024 * 1024 * 1024)
     mdb_env_open env dir []
     pure env
 
@@ -300,7 +300,7 @@ streamEvents log first = do
     for_ batch yield
     streamEvents log (first + word (length batch))
 
-streamEffectsRows :: ∀e. HasLogFunc e
+streamEffectsRows :: forall e. HasLogFunc e
                   => EventLog -> Word64
                   -> ConduitT () (Word64, ByteString) (RIO e) ()
 streamEffectsRows log = go
@@ -352,7 +352,7 @@ readBatch log first = start
 {-|
    Read 1000 rows from the database, starting from key `first`.
 -}
-readRowsBatch :: ∀e. HasLogFunc e
+readRowsBatch :: forall e. HasLogFunc e
               => Env -> Dbi -> Word64 -> RIO e (V.Vector (Word64, ByteString))
 readRowsBatch env dbi first = readRows
   where

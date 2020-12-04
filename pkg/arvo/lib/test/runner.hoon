@@ -31,7 +31,7 @@
           `tang`[[%leaf (weld "FAILED  " name)] ~]
           ::TODO indent
           :: %+  turn  p:run
-          ::   |=  {i/tape}
+          ::   |=  [i=tape]
           ::   ^-  tank
           ::   [%leaf (weld "  " i)]
           p.run
@@ -101,6 +101,6 @@
 ::
 ++  has-test-prefix
   |=  a=term  ^-  ?
-  =((end 3 5 a) 'test-')
+  =((end [3 5] a) 'test-')
 --
 
