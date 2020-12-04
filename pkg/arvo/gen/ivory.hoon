@@ -56,6 +56,7 @@
       %what
       [/sys/hoon hoon/compiler-source]
       [/sys/arvo hoon/arvo-source]
+      [/sys/lull hoon/.^(@ %cx (weld sys /lull/hoon))]
       [/sys/zuse hoon/.^(@ %cx (weld sys /zuse/hoon))]
   ==
 ::  installed: Arvo gate (formal instance) with %zuse installed

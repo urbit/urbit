@@ -696,6 +696,7 @@
 #   define c3__low    c3_s3('l','o','w')
 #   define c3__lsh    c3_s3('l','s','h')
 #   define c3__lt     c3_s2('l','t')
+#   define c3__lull   c3_s4('l','u','l','l')
 #   define c3__lunt   c3_s4('l','u','n','t')
 #   define c3__mack   c3_s4('m','a','c','k')
 #   define c3__mach   c3_s4('m','a','c','h')
