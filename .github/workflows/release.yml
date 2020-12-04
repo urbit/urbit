@@ -1,6 +1,9 @@
 name: release
 
-on: [release]
+on:
+  release: null
+  push:
+    tags: ['*']
 
 jobs:
   upload:
