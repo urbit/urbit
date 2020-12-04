@@ -158,6 +158,7 @@
         og   ~(. pull-hook bowl)
         hc   ~(. +> bowl)
         def  ~(. (default-agent this %|) bowl)
+    ::
     ++  on-init
       ^-  [(list card:agent:gall) agent:gall]
       =^  cards  pull-hook
@@ -311,6 +312,7 @@
     --
   |_  =bowl:gall
   +*  og   ~(. pull-hook bowl)
+  ::
   ++  mule-scry
     |=  [ref=* raw=*]
     =/  pax=(unit path)
