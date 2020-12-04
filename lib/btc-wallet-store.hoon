@@ -82,10 +82,12 @@
   ::  generates and watches the next available address
   ::
   ++  gen-address
-    ^-  (pair address:btc walt)
+    ^-  (trel address:btc idx walt)
     =/  addr  (mk-address nixt-idx)
-    :-  addr
-    (update-address addr [chyg nixt-idx *(set utxo:btc)])
+    :*  addr
+        nixt-idx
+        (update-address addr [chyg nixt-idx *(set utxo:btc)])
+    ==
   ::  insert a new address; update "nixt" free address if this one was it
   ::
   ++  update-address
