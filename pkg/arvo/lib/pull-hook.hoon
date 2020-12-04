@@ -332,7 +332,7 @@
         p.u.cas
       now.bowl
     ::  catch bad gall scries early
-    ?:  ?&  =((end 3 1 i.u.pax) %g)
+    ?:  ?&  =((end 3 i.u.pax) %g)
             ?|  !=(`our.bowl ship)
                 !=(dat now.bowl)
             ==
