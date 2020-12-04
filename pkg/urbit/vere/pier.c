@@ -781,9 +781,22 @@ static u3_noun
 _pier_wyrd_card(u3_pier* pir_u)
 {
   u3_lord* god_u = pir_u->god_u;
+  u3_noun    sen;
 
   _pier_work_time(pir_u);
-  u3v_numb();
+
+  {
+    c3_l  sev_l;
+    u3_noun now;
+    struct timeval tim_u;
+    gettimeofday(&tim_u, 0);
+
+    now   = u3_time_in_tv(&tim_u);
+    sev_l = u3r_mug(now);
+    sen   = u3dc("scot", c3__uv, sev_l);
+
+    u3z(now);
+  }
 
   //  XX god_u not necessarily available yet, refactor call sites
   //
@@ -795,7 +808,7 @@ _pier_wyrd_card(u3_pier* pir_u)
                      u3nc(c3__nock, 4),    //  god_u->noc_y
                      u3_none);
   u3_noun wir = u3nc(c3__arvo, u3_nul);
-  return u3nt(c3__wyrd, u3nc(u3k(u3A->sen), ver), kel);
+  return u3nt(c3__wyrd, u3nc(sen, ver), kel);
 }
 
 /* _pier_wyrd_init(): send %wyrd.
