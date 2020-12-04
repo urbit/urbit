@@ -59,8 +59,18 @@
   =/  request-line  (parse-request-line url.request.inbound-request)
   =/  site  (flop site.request-line)
   ::
+  =/  body=@t  q:(need body.request.inbound-request)
+  ?:  =('#import_' (end [3 8] body))
+    ~&  %import-all
+    =/  by-app  ;;((list [@tas *]) (cue (rsh [3 8] body)))
+    :_  this
+    %+  weld  (give-simple-payload:app eyre-id not-found:gen)
+    %+  turn  by-app
+    |=  [app=@tas data=*]
+    ^-  card:agent:gall
+    [%pass /import-all %agent [our.bowl app] %poke %import !>(data)]
   =/  jon=json
-    (need (de-json:html q:(need body.request.inbound-request)))
+    (need (de-json:html body))
   =/  com=command:lens
     (json:grab:lens-mark jon)
   ::
