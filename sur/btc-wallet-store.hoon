@@ -78,10 +78,9 @@
       [%generate-txbu =xpub =txbu]
       [%scan-done =xpub]
   ==
-::  %scan-address: address we want [used? balance] for
-::  %cook-address: monitor address until it gets N confs
+::  last-block: most recent block this address was checked
 ::
 +$  request
-  $%  [%address-info block=@ud a=address =xpub =chyg =idx]
+  $%  [%address-info last-block=@ud a=address =xpub =chyg =idx]
   ==
 --

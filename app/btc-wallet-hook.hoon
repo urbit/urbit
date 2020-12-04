@@ -176,11 +176,12 @@
     `state(poym ~)
     ::
       %force-retry
-    [retry-reqs state]
+    [(retry-reqs block.btc-state) state]
   ==
 ::  +handle-provider-status: handle connectivity updates from provider
-::    if status is %connected, retry all pending address lookups
-::    only retry if previously disconnected
+::    - if status is %connected, retry all pending address lookups
+::    - only retry all if previously disconnected
+::    - if block is updated, retry all address reqs
 ::
 ++  handle-provider-status
   |=  s=status:bp
@@ -189,12 +190,16 @@
   ?.  =(host.u.provider src.bowl)  `state
   ?-  -.s
       %connected
-    :-  ?:  connected.u.provider  ~
-        (weld retry-reqs retry-txbu)
-    %=  state
-        provider  `[host.u.provider %.y]
-        btc-state  [block.s fee.s now.bowl]
-    ==
+    :_  %=  state
+            provider  `[host.u.provider %.y]
+            btc-state  [block.s fee.s now.bowl]
+        ==
+    ?:  ?!(connected.u.provider)
+      (weld (retry-reqs block.s) retry-txbu)
+    ?:  (lte block.btc-state block.s)  ~
+    ~&  >  "got new block, retrying {<(lent (retry-reqs block.s))>} reqs"
+    (retry-reqs block.s)
+    ::
       %disconnected
     `state(provider `[host.u.provider %.n])
   ==
@@ -221,6 +226,7 @@
     :_  state
     ?:(poym-ready ~[(send-sign-tx u.poym)] ~)
   ==
+::  get address-info for the request if block in request is old
 ::
 ++  handle-wallet-store-request
   |=  req=request:bws
@@ -230,7 +236,9 @@
     =+  ri=(gen-req-id:bp eny.bowl)
     :_  state(reqs (~(put by reqs) ri req))
     ?~  provider  ~
-    ?:  provider-connected
+    ?:  ?&  provider-connected
+            (lth last-block.req block.btc-state)
+        ==
       ~[(get-address-info ri host.u.provider a.req)]
     ~
   ==
@@ -303,13 +311,16 @@
   ?~  poym  %.n
   %+  levy  txis.u.poym
   |=(t=txi:bws ?=(^ ur.t))
+::  +retry-reqs: get-address-info for any reqs with old last-block
 ::
 ++  retry-reqs
+  |=  [latest-block=@ud]
   ^-  (list card)
   ?~  provider  ~|("provider not set" !!)
-  %+  turn  ~(tap by reqs)
+  %+  murn  ~(tap by reqs)
   |=  [ri=req-id:bp req=request:bws]
-  (get-address-info ri host.u.provider a.req)
+  ?:  (gte last-block.req latest-block)  ~
+  `(get-address-info ri host.u.provider a.req)
 ::
 ++  retry-txbu
   ^-  (list card)
