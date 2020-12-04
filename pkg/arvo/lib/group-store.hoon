@@ -417,6 +417,7 @@
   ::
   ++  remove-group
     |=  =json
+    ^-  [resource ~]
     ?>  ?=(%o -.json)
     =/  rid=resource
       (dejs:resource (~(got by p.json) 'resource'))

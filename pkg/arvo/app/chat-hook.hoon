@@ -8,7 +8,7 @@
     view=chat-view,
     *group
 /+  default-agent, verb, dbug, store=chat-store, group-store, grpl=group,
-    resource
+    resource, *migrate
 ~%  %chat-hook-top  ..is  ~
 |%
 +$  card  card:agent:gall
@@ -704,7 +704,12 @@
 ++  poke-import
   |=  arc=*
   ^-  (quip card _state)
-  =/  sty=state-10  ;;(state-10 arc)
+  =/  sty=state-10
+    :*  %10
+      (remake-map ;;((tree [path ship]) +<.arc))
+      ;;(? +>-.arc)
+      (remake-map ;;((tree [path ?]) +>+.arc))
+    ==
   :_  sty
   %+  turn  ~(tap by synced.sty)
   |=  [=path =ship]

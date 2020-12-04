@@ -24,7 +24,7 @@
 ::  /group/%group-path                             associations for group
 ::
 /-  *metadata-store, *metadata-hook
-/+  *metadata-json, default-agent, verb, dbug, resource
+/+  *metadata-json, default-agent, verb, dbug, resource, *migrate
 |%
 +$  card  card:agent:gall
 +$  base-state-0
@@ -378,8 +378,27 @@
 ++  poke-import
   |=  arc=*
   ^-  (quip card _state)
-  =/  sty=state-6  ;;(state-6 arc)
+  |^
+  =/  sty=state-6
+    [%6 (remake-metadata ;;(tree-metadata +.arc))]
   [~ sty]
+  ::
+  +$  tree-metadata
+    $:  associations=(tree [[group-path md-resource] metadata])
+        group-indices=(tree [group-path (tree md-resource)])
+        app-indices=(tree [app-name (tree [group-path app-path])])
+        resource-indices=(tree [md-resource (tree group-path)])
+    ==
+  ::
+  ++  remake-metadata
+    |=  tm=tree-metadata
+    ^-  base-state-1
+    :*  (remake-map associations.tm)
+        (remake-jug group-indices.tm)
+        (remake-jug app-indices.tm)
+        (remake-jug resource-indices.tm)
+    ==
+  --
 ::
 ++  handle-add
   |=  [=group-path =md-resource =metadata]
