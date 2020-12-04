@@ -182,6 +182,7 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
     if (this.props.unreadCount === 0) return;
     this.props.api.chat.read(this.props.station);
     this.props.api.hark.readIndex({ chat: { chat: this.props.station, mention: false }});
+    this.props.api.hark.readIndex({ chat: { chat: this.props.station, mention: true }});
   }
 
   fetchMessages(start, end, force = false): Promise<void> {

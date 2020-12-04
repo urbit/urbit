@@ -69,7 +69,7 @@ export const Content = (props) => {
             <Notifications {...props} />
           )}
         />
-        <GraphApp {...props} />
+        <GraphApp path="/~graph" {...props} />
         <Route
           render={p => (
             <ErrorComponent

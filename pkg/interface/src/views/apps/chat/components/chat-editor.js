@@ -3,7 +3,7 @@ import { UnControlled as CodeEditor } from 'react-codemirror2';
 import { MOBILE_BROWSER_REGEX } from "~/logic/lib/util";
 import CodeMirror from 'codemirror';
 
-import { Row, BaseInput } from '@tlon/indigo-react';
+import { Row, BaseTextArea } from '@tlon/indigo-react';
 
 import 'codemirror/mode/markdown/markdown';
 import 'codemirror/addon/display/placeholder';
@@ -167,9 +167,10 @@ export default class ChatEditor extends Component {
         color="black"
       >
         {MOBILE_BROWSER_REGEX.test(navigator.userAgent)
-          ? <BaseInput
+          ? <BaseTextArea
             fontFamily={inCodeMode ? 'Source Code Pro' : 'Inter'}
             fontSize="14px"
+            lineHeight="tall"
             style={{ width: '100%', background: 'transparent', color: 'currentColor' }}
             placeholder={inCodeMode ? "Code..." : "Message..."}
             onKeyUp={event => {

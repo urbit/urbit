@@ -5,6 +5,8 @@ import Helmet from 'react-helmet';
 import { History } from './components/history';
 import { Input } from './components/input';
 
+import { Box, Col } from '@tlon/indigo-react';
+
 import Api from './api';
 import Store from './store';
 import Subscription from './subscription';
@@ -47,30 +49,30 @@ export default class TermApp extends Component {
         <Helmet>
           <title>OS1 - Terminal</title>
         </Helmet>
-        <div
-          style={{ height: '100%' }}
+        <Box
+          height='100%'
         >
           <Route
             exact
             path="/~term/"
             render={(props) => {
               return (
-                <div className="w-100 h-100 flex-m flex-l flex-xl">
-                  <div
-                    className="db dn-m dn-l dn-xl inter dt w-100"
-                    style={{ height: 40 }}
-                  >
-                  </div>
-                  <div
-                    className={
-                      'pa3 bg-white bg-gray0-d black white-d mono w-100 f8 relative' +
-                      ' h-100-m40-s b--gray2 br1 flex-auto flex flex-column ' +
-                      'mh4-m mh4-l mh4-xl mb4-m mb4-l mb4-xl ba-m ba-l ba-xl'
-                    }
-                    style={{
-                      lineHeight: '1.4',
-                      cursor: 'text'
-                    }}
+                <Box
+                  width='100%'
+                  height='100%'
+                  display='flex'
+                >
+                  <Col
+                    p='3'
+                    backgroundColor='white'
+                    width='100%'
+                    minHeight='0'
+                    color='washedGray'
+                    borderRadius='2'
+                    mx={['0','3']}
+                    mb={['0','3']}
+                    border={['0','1']}
+                    cursor='text'
                   >
                     <History log={this.state.lines.slice(0, -1)} />
                     <Input
@@ -80,12 +82,12 @@ export default class TermApp extends Component {
                       store={this.store}
                       line={this.state.lines.slice(-1)[0]}
                     />
-                  </div>
-                </div>
+                  </Col>
+                </Box>
               );
             }}
           />
-        </div>
+        </Box>
       </>
     );
   }

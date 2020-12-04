@@ -26,6 +26,7 @@
         %sag  ~&  [%save-jamfile-to p.b]  line
         %sav  ~&  [%save-file-to p.b]  line
         %url  ~&  [%activate-url p.b]  line
+        %klr  ~&  %unhandled-case-klr  ""
     ==
   ~?  !=(~ last-line)  last-line
   ~

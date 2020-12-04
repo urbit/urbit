@@ -6,7 +6,7 @@ import { RouteComponentProps } from "react-router-dom";
 import Note from "./Note";
 import { EditPost } from "./EditPost";
 
-import { GraphNode, Graph, Contacts, LocalUpdateRemoteContentPolicy } from "~/types";
+import { GraphNode, Graph, Contacts, LocalUpdateRemoteContentPolicy, Group } from "~/types";
 
 interface NoteRoutesProps {
   ship: string;
@@ -24,8 +24,6 @@ interface NoteRoutesProps {
 }
 
 export function NoteRoutes(props: NoteRoutesProps & RouteComponentProps) {
-  const { ship, book, noteId } = props;
-
   const baseUrl = props.baseUrl || '/~404';
   const rootUrl = props.rootUrl || '/~404';
 

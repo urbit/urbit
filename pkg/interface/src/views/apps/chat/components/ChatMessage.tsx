@@ -3,7 +3,7 @@ import moment from "moment";
 import _ from "lodash";
 import { Box, Row, Text, Rule } from "@tlon/indigo-react";
 
-import { OverlaySigil } from './overlay-sigil';
+import OverlaySigil from '~/views/components/OverlaySigil';
 import { uxToHex, cite, writeText } from '~/logic/lib/util';
 import { Envelope, IMessage } from "~/types/chat-update";
 import { Group, Association, Contacts, LocalUpdateRemoteContentPolicy } from "~/types";
@@ -23,9 +23,9 @@ export const UnreadMarker = React.forwardRef(({ dayBreak, when }, ref) => (
 ));
 
 export const DayBreak = ({ when }) => (
-  <div className="pv3 gray2 b--gray2 flex items-center justify-center f9 w-100">
-    <p>{moment(when).calendar(null, { sameElse: DATESTAMP_FORMAT })}</p>
-  </div>
+  <Row pb='3' alignItems="center" justifyContent="center" width='100%'>
+    <Text gray>{moment(when).calendar(null, { sameElse: DATESTAMP_FORMAT })}</Text>
+  </Row>
 );
 
 interface ChatMessageProps {
@@ -191,7 +191,7 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
     } = this.props;
 
     const datestamp = moment.unix(msg.when / 1000).format(DATESTAMP_FORMAT);
-    const contact = msg.author in contacts ? contacts[msg.author] : false;
+    const contact = msg.author in contacts ? contacts[msg.author] : undefined;
     const showNickname = !hideNicknames && contact && contact.nickname;
     const name = showNickname ? contact.nickname : cite(msg.author);
     const color = contact ? `#${uxToHex(contact.color)}` : this.isDark ?  '#000000' :'#FFFFFF'
@@ -215,16 +215,16 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
           contact={contact}
           color={color}
           sigilClass={sigilClass}
-          association={association}
           group={group}
           hideAvatars={hideAvatars}
           hideNicknames={hideNicknames}
           scrollWindow={scrollWindow}
           history={history}
           api={api}
+          bg="white"
           className="fl pr3 v-top pt1"
         />
-        <Box flexGrow='1' display='block' className="clamp-message">
+        <Box flexGrow={1} display='block' className="clamp-message">
           <Box
             className="hide-child"
             pt={1}
@@ -240,12 +240,12 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
               className={`mw5 db truncate pointer`}
               ref={e => nameSpan = e}
               onClick={() => {
-                writeText(msg.author);
+                writeText(`~${msg.author}`);
                 copyNotice(name);
               }}
               title={`~${msg.author}`}
             >{name}</Text>
-            <Text flexShrink='0' gray mono className="v-mid">{timestamp}</Text>
+            <Text flexShrink={0} gray mono className="v-mid">{timestamp}</Text>
             <Text gray mono ml={2} className="v-mid child dn-s">{datestamp}</Text>
           </Box>
           <Box fontSize={fontSize ? fontSize : '14px'}><MessageContent content={msg.letter} remoteContentPolicy={remoteContentPolicy} measure={measure} fontSize={fontSize} /></Box>
@@ -279,6 +279,11 @@ export const MessageContent = ({ content, remoteContentPolicy, measure, fontSize
           }}}
           videoProps={{style: {
             maxWidth: '18rem'
+          }
+          }}
+          textProps={{style: {
+            fontSize: 'inherit',
+            textDecoration: 'underline'
           }}}
         />
       </Text>

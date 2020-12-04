@@ -85,7 +85,7 @@
   --
 --
 ::
-%+  aqua-vane-thread  ~[%sleep %restore %doze]
+%+  aqua-vane-thread  ~[%sleep %restore %doze %kill]
 |_  =bowl:spider
 +*  this  .
 ++  handle-unix-effect
@@ -96,6 +96,7 @@
       %sleep    abet-pe:handle-sleep:(pe bowl who)
       %restore  abet-pe:handle-restore:(pe bowl who)
       %doze     abet-pe:(handle-doze:(pe bowl who) ue)
+      %kill     `(~(del by piers) who)
     ==
   [cards this]
 ::
