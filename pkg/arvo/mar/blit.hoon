@@ -48,10 +48,15 @@
         ::
           :-  'stye'
           %-  pairs
-          :~  'back'^[?~(. ~ s+.)]:p.q.stye
-              'fore'^[?~(. ~ s+.)]:q.q.stye
-              'deco'^a+(turn ~(tap in p.stye) |=(d=deco ?~(d ~ s+d)))
-          ==
+          |^  :~  'back'^(color p.q.stye)
+                  'fore'^(color q.q.stye)
+                  'deco'^a+(turn ~(tap in p.stye) |=(d=deco ?~(d ~ s+d)))
+              ==
+          ++  color
+            |=  =tint
+            ?@  tint  ?~(tint ~ s+tint)
+            s+(crip ((x-co:co 6) (rep 3 ~[b g r]:tint)))
+          --
       ==
     ==
   --

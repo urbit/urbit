@@ -87,7 +87,7 @@
   %+  skim  ids
   |=  [id=cord *]
   ^-  ?(%.y %.n)
-  =(sid (end 3 (met 3 sid) id))
+  =(sid (end [3 (met 3 sid)] id))
 ::
 ::  Get the longest prefix of a list of identifiers.
 ::
@@ -101,14 +101,14 @@
   |-  ^-  term
   ?:  (gth n last)
     term.i.matches
-  =/  prefix  (end 3 n term.i.matches)
+  =/  prefix  (end [3 n] term.i.matches)
   ?:  |-  ^-  ?
       ?|  ?=(~ t.matches)
-          ?&  =(prefix (end 3 n term.i.t.matches))
+          ?&  =(prefix (end [3 n] term.i.t.matches))
               $(t.matches t.t.matches)
       ==  ==
     $(n +(n))
-  (end 3 (dec n) term.i.matches)
+  (end [3 (dec n)] term.i.matches)
 ::
 ::  Run +find-type safely, printing the first line of the stack trace on
 ::  error.
@@ -369,7 +369,7 @@
   :-  %leaf
   =/  c  (to-wain:format a)
   ?~  c  "~"
-  ?.  =('::  ' (end 3 4 i.c))
+  ?.  =('::  ' (end [3 4] i.c))
     "<undocumented>"
   (trip i.c)
 --

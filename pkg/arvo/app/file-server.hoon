@@ -234,7 +234,7 @@
         ?~  data
           [not-found:gen %.n]
         :_  public.u.content
-        =/  mime-type=@t  (rsh 3 1 (crip <p.u.data>))
+        =/  mime-type=@t  (rsh 3 (crip <p.u.data>))
         ::  Should maybe inspect to see how long cache should hold
         ::
         [[200 ['content-type' mime-type] max-1-da:gen ~] `q.u.data]
@@ -323,7 +323,7 @@
   ?+  path  (on-peek:def path)
       [%x %clay %base %hash ~]
     =/  versions  (base-hash:version [our now]:bowl)
-    ``hash+!>(?~(versions 0v0 (end 0 25 i.versions)))
+    ``hash+!>(?~(versions 0v0 (end [0 25] i.versions)))
   ==
 ++  on-agent  on-agent:def
 ++  on-fail   on-fail:def

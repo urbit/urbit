@@ -29,7 +29,7 @@
 ::      Modify the group. Further documented in /sur/group-store.hoon
 ::
 ::
-/-  *group, permission-store, *contact-view
+/-  *group, *contact-view
 /+  store=group-store, default-agent, verb, dbug, resource, *migrate
 |%
 +$  card  card:agent:gall
