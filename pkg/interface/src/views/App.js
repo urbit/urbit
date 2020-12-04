@@ -142,21 +142,6 @@ class App extends React.Component {
             : null}
         </Helmet>
         <Root background={background}>
-          <Row
-            ref={e => banner = e}
-            display={showBanner}
-            justifyContent="space-between"
-            width='100%'
-            p='2'
-            backgroundColor='yellow'>
-          <Text color='#000000'>
-            A network-wide breach is scheduled for early December 2020. Please visit <Anchor target="_blank" href="https://urbit.org/breach" color='inherit'>urbit.org/breach</Anchor> for more information.
-              </Text>
-            <Text cursor='pointer' fontWeight='500' onClick={() => {
-              banner.style.display = "none";
-              localStorage.setItem("2020BreachBanner", "none");
-            }}>Dismiss</Text>
-          </Row>
           <Router>
             <ErrorBoundary>
               <StatusBarWithRouter
