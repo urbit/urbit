@@ -356,10 +356,9 @@
         ?:  ?=(%2 -.res)
           p.res
         ?>  ?=(%1 -.res)
-        =/  paths=(unit (list path))  ((soft (list path)) p.res)
-        ?~  paths  ~
-        %+  turn  u.paths
-        (cork path smyt)
+        =/  maybe-path=(unit path)  ((soft path) p.res)
+        ?~  maybe-path  ~
+        [(smyt u.maybe-path) ~]
       %-  (slog tang)
       (~(put by failed-kicks) rid ship)
     ?^  pax
