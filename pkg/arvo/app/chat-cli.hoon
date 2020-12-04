@@ -369,6 +369,8 @@
       %remove-graph  (~(notice-remove se i.sez) +.q.upd)
     ::
         %add-nodes
+      ?.  (~(has in viewing.session.i.sez) resource.q.upd)
+        [~ session.i.sez]
       %+  ~(read-posts se i.sez)
         resource.q.upd
       (sort ~(tap by nodes.q.upd) ior)
