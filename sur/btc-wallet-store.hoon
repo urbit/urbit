@@ -9,7 +9,9 @@
 ::  chyg: whether account is (non-)change. 0 or 1
 ::  idx:  an address_index
 ::  nixt: next indices to generate addresses from (non-change/change)
-::  addi: address with metadata inside a change path
+::  addi: HD path along with UTXOs
+::    - poll: whether wallet should keep checking this address
+::            used for newly generated addresses to watch them
 ::  wach: map for watched addresses.
 ::        Membership implies the address is known by outside parties or had prior activity
 ::  scon: indices to initially scan to in (non-)change accounts
@@ -54,11 +56,9 @@
 ::  scanning addresses and monitoring generated addresses
 ::  batch: indexes to scan for a given chyg
 ::  scans: all scans underway (batches)
-::  gena:  any generated address that hasn't had activity yet
 ::
 +$  batch  [todo=(set idx) endpoint=idx has-used=?]
 +$  scans  (map [xpub chyg] batch)
-+$  gena  (set address)
 ::
 ::  %add-wallet: add wallet to state and initiate a scan
 ::  %address-info: give new data about an address.
