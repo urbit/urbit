@@ -562,10 +562,6 @@ localClient doneSignal = fst <$> mkRAcquire start stop
                   writeTQueue wq [Term.Trace "interrupt\r\n"]
                   writeTQueue rq $ Ctl $ Cord "c"
                 loop rd
-              else if w == 20 then do
-                -- DC4 (^T)
-                atomically $ writeTQueue wq [Term.Trace "<stat>\r\n"]
-                loop rd
               else if w <= 26 then do
                 case pack [BS.w2c (w + 97 - 1)] of
                     "d" -> atomically doneSignal
