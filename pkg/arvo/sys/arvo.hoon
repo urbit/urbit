@@ -784,26 +784,19 @@
   ::
   ++  va
     =>  |%
-        ::  XX move next to +slap
-        ::
-        ++  swat
-          |=  [vax=vase gen=hoon]
-          ^-  (trap vase)
-          =/  gun  (~(mint ut p.vax) %noun gen)
-          |.([p.gun .*(q.vax q.gun)])
-        ::
         ++  smit
-          |=  [cap=tape pit=vase pax=path txt=@t]
-          ^-  (trap vase)
+          |=  [cap=tape sub=vase pax=path txt=@t]
+          ^-  vase
           ~>  %slog.[0 leaf+"{cap}: {(scow p+(mug txt))}"]
           %-  road  |.
           ~_  leaf/cap
-          (swat pit (rain pax txt))
+          (slap sub (rain pax txt))
         ::
         ++  create
           |=  [zus=vase lal=term pax=path txt=@t]
           ^-  vase
-          (slym $:(smit "vane {<lal>}" zus pax txt) zus)
+          =/  cap  "vane %{(trip lal)}"
+          (slym (smit cap zus pax txt) zus)
         ::
         ++  settle
           |=  van=vase
@@ -1235,9 +1228,9 @@
           ^+  ..pith
           =^  job=oped  fat.mod.sol  (~(adorn adapt fat.mod.sol) del all)
           =?  lul.mod.sol  ?=(^ lul.job)
-            $:(smit:va "lull" pit /sys/lull/hoon u.lul.job)
+            (smit:va "lull" pit /sys/lull/hoon u.lul.job)
           =?  zus.mod.sol  ?=(^ zus.job)
-            $:(smit:va "zuse" lul.mod.sol /sys/zuse/hoon u.zus.job)
+            (smit:va "zuse" lul.mod.sol /sys/zuse/hoon u.zus.job)
           %-  %+  wyrd   kel.ver.zen
               :~  lull/;;(@ud q:(slap lul.mod.sol limb/%lull))
                   zuse/;;(@ud q:(slap zus.mod.sol limb/%zuse))
@@ -1614,6 +1607,16 @@
       [[u.who now u.eny] [lac] [u.ver |] u.fat lul zus nav]
     ::
     ++  what
+      =>  |%
+          ++  smit
+            |=  [cap=tape sub=(trap vase) pax=path txt=@t]
+            ^-  (trap vase)
+            ~>  %slog.[0 leaf+"{cap}: {(scow p+(mug txt))}"]
+            %-  road  |.
+            ~_  leaf/cap
+            (swat sub (rain pax txt))
+          --
+      ::
       |=  [grub fil=(list (pair path (cask)))]
       ^-  grub
       =*  gub  +<-
@@ -1632,11 +1635,11 @@
       ::
       =^  job=oped:part  taf  (~(adorn adapt:part taf) del |)
       =?  lul  ?=(^ lul.job)
-       `(smit:va:part "lull" pit /sys/lull/hoon u.lul.job)
+       `(smit "lull" |.(pit) /sys/lull/hoon u.lul.job)
       =?  zus  ?=(^ zus.job)
         ?.  ?=(^ lul)
          ~|(%larval-need-lull !!)
-        `(smit:va:part "zuse" $:u.lul /sys/zuse/hoon u.zus.job)
+        `(smit "zuse" u.lul /sys/zuse/hoon u.zus.job)
       =?  van  !=(~ van.job)    ::  XX TMI
         ?.  ?=(^ zus)
          ~|(%larval-need-zuse !!)
@@ -1645,7 +1648,7 @@
         ^+  van
         =/  way  (wilt p)
         %+  ~(put by van)  way
-        (smit:va:part "vane {<way>}" $:u.zus /sys/vane/[p]/hoon q)
+        (smit "vane %{(trip way)}" u.zus /sys/vane/[p]/hoon q)
       gub(fat `taf)
     --
 ::
