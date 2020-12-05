@@ -46,7 +46,7 @@
   $%  ::  %history: full event log history, oldest first
       ::
       [%history =loglist]
-      ::  %log: newly added log
+      ::  %logs: newly added logs
       ::
       [%logs =loglist]
       ::  %disavow: forget logs

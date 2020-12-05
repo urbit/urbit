@@ -97,8 +97,6 @@
   $%  $>(%init vane-task)                               ::  report install
   ==  ==  ==                                            ::
 ::                                                      ::
-+$  peer-sign  (list [=ship =udiff:point])              ::
-::                                                      ::
 +$  sign                                                ::  in result $<-
   $~  [%a %done ~]                                      ::
   $%  $:  %a                                            ::
@@ -587,9 +585,9 @@
           %fact
         ?>  ?=([@ *] tea)
         =*  app  i.tea
-        =/  =peer-sign  ;;(peer-sign q.q.cage.p.+>.hin)
+        =+  ;;(=udiffs:point q.q.cage.p.+>.hin)
         %-  curd  =<  abet
-        (~(new-event su hen our now pki etn) peer-sign)
+        (~(new-event su hen our now pki etn) udiffs)
       ==
     ==
   ::                                                    ::  ++curd:of
@@ -724,9 +722,7 @@
       this-su
     =/  a-point=point  (~(gut by pos.zim.pki) ship.i.udiffs *point)
     =/  a-diff=(unit diff:point)  (udiff-to-diff:point udiff.i.udiffs a-point)
-    =.  this-su
-      ?~  a-diff
-        this-su
+    =?  this-su  ?=(^ a-diff)
       (public-keys:feel original-pos %diff ship.i.udiffs u.a-diff)
     $(udiffs t.udiffs)
   ::
@@ -851,7 +847,8 @@
         |-  ^+  ..feel
         ?~  pointl
           ..feel(pos.zim (~(uni by pos.zim) points.public-keys-result))
-        ::  if changing rift upward, then signal a breach
+        ::  if changing rift upward and we already had keys for them,
+        ::  then signal a breach
         ::
         =?    ..feel
             =/  point
@@ -886,7 +883,8 @@
       =/  a-diff=diff:point  diff.public-keys-result
       =/  maybe-point  (~(get by pos.zim) who)
       =/  =point  (fall maybe-point *point)
-      ::  if changing rift upward, then signal a breach
+      ::  if changing rift upward and we already had keys for them, then
+      ::  signal a breach
       ::
       =?    ..feel
           ?&  (~(has by original) who)
