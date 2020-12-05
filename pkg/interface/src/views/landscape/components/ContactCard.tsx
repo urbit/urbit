@@ -10,6 +10,7 @@ import {
   Box,
   Text,
   Row,
+  BaseImage
 } from "@tlon/indigo-react";
 import { Formik, FormikHelpers } from "formik";
 import { Contact } from "~/types/contact-update";
@@ -25,6 +26,8 @@ interface ContactCardProps {
   api: GlobalApi;
   s3: S3State;
   rootIdentity: Contact;
+  hideAvatars: boolean;
+  hideNicknames: boolean;
 }
 
 const formSchema = Yup.object({
@@ -71,12 +74,15 @@ const emptyContact = {
 export function ContactCard(props: ContactCardProps) {
   const us = `~${window.ship}`;
   const { contact, rootIdentity } = props;
-  const onSubmit = async (values: Contact, actions: FormikHelpers<Contact>) => {
+  const onSubmit = async (values: any, actions: FormikHelpers<Contact>) => {
     try {
       if(!contact) {
         const [,,ship] = props.path.split('/');
         values.color = uxToHex(values.color);
-        await props.api.contacts.share(ship, props.path, us, values)
+        const sharedValues = Object.assign({}, values);
+        sharedValues.avatar = (values.avatar === "") ? null : { url: values.avatar };
+        console.log(values);
+        await props.api.contacts.share(ship, props.path, us, sharedValues);
         actions.setStatus({ success: null });
         return;
       }
@@ -108,6 +114,11 @@ export function ContactCard(props: ContactCardProps) {
   };
 
   const hexColor = contact?.color ? `#${uxToHex(contact.color)}` : "#000000";
+  const image = (!props?.hideAvatars && contact?.avatar)
+    ? <BaseImage src={contact.avatar} width='100%' height='100%' style={{ objectFit: 'cover' }} />
+    : <Sigil ship={us} size={32} color={hexColor} />;
+
+  const nickname = (!props.hideNicknames && contact?.nickname) ? contact.nickname : "";
 
   return (
     <Box p={4} height="100%" overflowY="auto">
@@ -129,9 +140,11 @@ export function ContactCard(props: ContactCardProps) {
             pb={3}
             alignItems="center"
           >
-            <Sigil size={32} classes="" color={hexColor} ship={us} />
+            <Box height='32px' width='32px'>
+              {image}
+            </Box>
             <Box ml={2}>
-              <Text fontFamily="mono">{us}</Text>
+              <Text mono={!Boolean(nickname)}>{nickname}</Text>
             </Box>
           </Row>
           <ImageInput id="avatar" label="Avatar" s3={props.s3} />

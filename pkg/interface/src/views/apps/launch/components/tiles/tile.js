@@ -18,6 +18,7 @@ const SquareBox = styled(Box)`
     position: absolute;
     top: 0;
   }
+  position: relative;
 `;
 const routeList = defaultApps.map(a => `/~${a}`);
 

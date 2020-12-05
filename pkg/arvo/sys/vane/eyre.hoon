@@ -236,16 +236,20 @@
 ::  +login-page: internal page to login to an Urbit
 ::
 ++  login-page
-  |=  [redirect-url=(unit @t) our=@p]
+  |=  [redirect-url=(unit @t) our=@p failed=?]
   ^-  octs
   =+  redirect-str=?~(redirect-url "" (trip u.redirect-url))
   %-  as-octs:mimes:html
   %-  crip
   %-  en-xml:html
+  =/  favicon  %+
+    weld  "<svg width='10' height='10' viewBox='0 0 10 10' xmlns='http://www.w3.org/2000/svg'>"
+          "<circle r='3.09' cx='5' cy='5' /></svg>"
   ;html
     ;head
       ;meta(charset "utf-8");
       ;meta(name "viewport", content "width=device-width, initial-scale=1, shrink-to-fit=no");
+      ;link(rel "icon", type "image/svg+xml", href (weld "data:image/svg+xml;utf8," favicon));
       ;title:"OS1"
       ;style:'''
              @import url("https://rsms.me/inter/inter.css");
@@ -254,167 +258,152 @@
                  src: url("https://storage.googleapis.com/media.urbit.org/fonts/scp-regular.woff");
                  font-weight: 400;
              }
-             html, body {
+             :root {
+               --red05: rgba(255,65,54,0.05);
+               --red100: rgba(255,65,54,1);
+               --blue05: rgba(33,157,255,0.05);
+               --blue30: rgba(33,157,255,0.3);
+               --blue100: rgba(33,157,255,1);
+               --black05: rgba(0,0,0,0.05);
+               --black20: rgba(0,0,0,0.2);
+               --black60: rgba(0,0,0,0.6);
+               --white: rgba(255,255,255,1);
+             }
+             html {
                font-family: Inter, sans-serif;
                height: 100%;
-               margin: 0 !important;
+               margin: 0;
                width: 100%;
-               background: #fff;
-               color: #000;
+               background: var(--white);
+               color: var(--black100);
                -webkit-font-smoothing: antialiased;
                line-height: 1.5;
-               font-size: 12pt;
+               font-size: 12px;
+               display: flex;
+               flex-flow: row nowrap;
+               justify-content: center;
              }
-             a, a:visited {
-               color: #000;
-               text-decoration: none;
-               font-size: 0.875rem;
+             body {
+               display: flex;
+               flex-flow: column nowrap;
+               justify-content: center;
+               max-width: 300px;
+               padding: 1rem;
+               width: 100%;
              }
-             p {
-               margin-block-start: 0;
-               margin-block-end: 0;
-               font-size: 0.875rem;
+             body > *,
+             form > input {
+               width: 100%;
+             }
+             form {
+               display: flex;
+               flex-flow: column;
+               align-items: flex-start;
              }
              input {
-               width: 100%;
-               padding: 0.75rem;
-               border: 1px solid #e6e6e6;
-               margin-top: 0.25rem;
-               margin-bottom: 1rem;
-               font-size: 0.875rem;
+               background: transparent;
+               border: 1px solid var(--black20);
+               padding: 8px;
+               border-radius: 4px;
+               font-size: inherit;
+               color: var(--black);
+               box-shadow: none;
+             }
+             input:disabled {
+               background: var(--black05);
+               color: var(--black60);
              }
              input:focus {
-               outline: 0;
-               border: 1px solid #000;
+               outline: none;
+               border-color: var(--blue30);
              }
-             button {
-               -webkit-appearance: none;
-               padding: 0.75rem;
-               background-color: #eee;
-               border: 1px solid #d1d2d3;
-               color: #666;
-               font-size: 0.875rem;
-               border-radius: 0;
+             input:invalid:not(:focus) {
+               background: var(--red05);
+               border-color: var(--red100);
+               outline: none;
+               color: var(--red100);
              }
-             footer {
-               position: absolute;
-               bottom: 0;
+             button[type=submit] {
+               margin-top: 16px;
+               padding: 8px 16px;
+               border-radius: 4px;
+               background: var(--blue100);
+               color: var(--white);
+               border: 1px solid var(--blue100);
+             }
+             input:invalid ~ button[type=submit] {
+               border-color: currentColor;
+               background: var(--blue05);
+               color: var(--blue30);
+               pointer-events: none;
+             }
+             span.failed {
+               display: flex;
+               flex-flow: row nowrap;
+               height: 16px;
+               align-items: center;
+               margin-top: 6px;
+               color: var(--red100);
+             }
+             span.failed svg {
+               height: 12px;
+              margin-right: 6px;
+             }
+             span.failed circle,
+             span.failed line {
+               fill: transparent;
+               stroke: currentColor
              }
              .mono {
-               font-family: "Source Code Pro", monospace;
-             }
-             .gray2 {
-               color: #7f7f7f;
-             }
-             .f9 {
-               font-size: 0.75rem;
-             }
-             .relative {
-               position: relative;
-             }
-             .absolute {
-               position: absolute;
-             }
-             .w-100 {
-               width: 100%;
-             }
-             .tr {
-               text-align: right;
-             }
-             .pb2 {
-               padding-bottom: 0.5rem;
-             }
-             .pr1 {
-               padding-right: 0.25rem;
-             }
-             .pr2 {
-               padding-right: .5rem;
-             }
-             .dn {
-               display: none;
-             }
-             #main {
-               width: 100%;
-               height: 100%;
-             }
-             #inner {
-               position: fixed;
-               top: 50%;
-               left: 50%;
-               transform: translate(-50%, -50%);
+               font-family: 'Source Code Pro', monospace;
              }
              @media all and (prefers-color-scheme: dark) {
-               html, body {
-                 background-color: #333;
-                 color: #fff;
-               }
-               a, a:visited {
-                 color: #fff;
-               }
-               input {
-                 background: #333;
-                 color: #fff;
-                 border: 1px solid #7f7f7f;
-               }
-               input:focus {
-                 border: 1px solid #fff;
-               }
-             }
-             @media all and (min-width: 34.375rem) {
-               .tc-ns {
-                 text-align: center;
-               }
-               .pr0-ns {
-                 padding-right: 0;
-               }
-               .dib-ns {
-                 display: inline-block;
+               :root {
+                 --white: rgb(51, 51, 51);
+                 --black100: rgba(255,255,255,1);
+                 --black05: rgba(255,255,255,0.05);
+                 --black20: rgba(255,255,255,0.2);
                }
              }
              '''
     ==
     ;body
-      ;div#main
-        ;div#inner
-          ;p:"Urbit ID"
-          ;input(value "{(scow %p our)}", disabled "true", class "mono");
-          ;p:"Access Key"
-          ;p.f9.gray2
-            ; Get key from Bridge, or
-            ;span.mono.pr1:"+code"
-            ; in dojo
-          ==
-          ;form(action "/~/login", method "post", enctype "application/x-www-form-urlencoded")
-            ;input
-              =type  "password"
-              =name  "password"
-              =placeholder  "sampel-ticlyt-migfun-falmel"
-              =class  "mono"
-              =autofocus  "true";
-            ;input(type "hidden", name "redirect", value redirect-str);
-            ;button(type "submit"):"Continue"
-          ==
-        ==
-        ;footer.absolute.w-100
-          ;div.relative.w-100.tr.tc-ns
-            ;p.pr2.pr0-ns.pb2
-              ;a(href "https://bridge.urbit.org", target "_blank")
-                ;span.dn.dib-ns.pr1:"Open"
-                ; Bridge ↗
-              ==
-              ;a
-                =href  "https://urbit.org/using/install/#id"
-                =style  "margin-left: 8px; color: #2aa779;"
-                =target  "_blank"
-                ; Purchase
-                ;span.dn.dib-ns.pr1:"an Urbit ID"
-                ; ↗
-              ==
+      ;p:"Urbit ID"
+      ;input(value "{(scow %p our)}", disabled "true", class "mono");
+      ;p:"Access Key"
+      ;form(action "/~/login", method "post", enctype "application/x-www-form-urlencoded")
+        ;input
+          =type  "password"
+          =name  "password"
+          =placeholder  "sampel-ticlyt-migfun-falmel"
+          =class  "mono"
+          =required  "true"
+          =minlength  "27"
+          =maxlength  "27"
+          =pattern  "((?:[a-z]\{6}-)\{3}(?:[a-z]\{6}))"
+          =autofocus  "true";
+        ;input(type "hidden", name "redirect", value redirect-str);
+        ;+  ?.  failed  ;span;
+          ;span.failed
+            ;svg(xmlns "http://www.w3.org/2000/svg", viewBox "0 0 12 12")
+              ;circle(cx "6", cy "6", r "5.5");
+              ;line(x1 "3.27", y1 "3.27", x2 "8.73", y2 "8.73");
+              ;line(x1 "8.73", y1 "3.27", x2 "3.27", y2 "8.73");
             ==
+            Key is incorrect
           ==
-        ==
+          ;button(type "submit"):"Continue"
       ==
     ==
+    ;script:'''
+            var failSpan = document.querySelector('.failed');
+            if (failSpan) {
+              document.querySelector("input[type=password]")
+                .addEventListener('keyup', function (event) {
+                  failSpan.style.display = 'none';
+                });
+            }
+            '''
   ==
 ::  +render-tang-to-marl: renders a tang and adds <br/> tags between each line
 ::
@@ -862,28 +851,28 @@
         ::
         =+  request-line=(parse-request-line url.request)
         %^  return-static-data-on-duct  200  'text/html'
-        (login-page (get-header:http 'redirect' args.request-line) our)
+        (login-page (get-header:http 'redirect' args.request-line) our %.n)
       ::  if we are not a post, return an error
       ::
       ?.  =('POST' method.request)
-        (return-static-data-on-duct 400 'text/html' (login-page ~ our))
+        (return-static-data-on-duct 400 'text/html' (login-page ~ our %.n))
       ::  we are a post, and must process the body type as form data
       ::
       ?~  body.request
-        (return-static-data-on-duct 400 'text/html' (login-page ~ our))
+        (return-static-data-on-duct 400 'text/html' (login-page ~ our %.n))
       ::
       =/  parsed=(unit (list [key=@t value=@t]))
         (rush q.u.body.request yquy:de-purl:html)
       ?~  parsed
-        (return-static-data-on-duct 400 'text/html' (login-page ~ our))
+        (return-static-data-on-duct 400 'text/html' (login-page ~ our %.n))
       ::
       =/  redirect=(unit @t)  (get-header:http 'redirect' u.parsed)
       ?~  password=(get-header:http 'password' u.parsed)
-        (return-static-data-on-duct 400 'text/html' (login-page redirect our))
+        (return-static-data-on-duct 400 'text/html' (login-page redirect our %.n))
       ::  check that the password is correct
       ::
       ?.  =(u.password code)
-        (return-static-data-on-duct 400 'text/html' (login-page redirect our))
+        (return-static-data-on-duct 400 'text/html' (login-page redirect our %.y))
       ::  mint a unique session cookie
       ::
       =/  session=@uv

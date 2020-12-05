@@ -59,11 +59,10 @@ export default React.memo(({line}) => {
   //  render line
   //
   return (
-    <Text color='black' mono display='flex' fontSize='0'
+    <Text mono display='flex' fontSize='0'
     style={{ overflowWrap: 'break-word', whiteSpace: 'pre-wrap' }}
     >
       {text}
     </Text>
   );
-
 });

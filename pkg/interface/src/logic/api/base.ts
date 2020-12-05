@@ -11,7 +11,7 @@ export default class BaseApi<S extends object = {}> {
     this.channel.unsubscribe(id);
   }
 
-  subscribe(path: Path, method, ship = this.ship, app: string, success, fail, quit) {
+  subscribe(path: Path, method, ship = this.ship, app: string, success, fail, quit, queue = false) {
     this.bindPaths = _.uniq([...this.bindPaths, path]);
 
     return this.channel.subscribe(
@@ -32,7 +32,9 @@ export default class BaseApi<S extends object = {}> {
       },
       (qui) => {
         quit(qui);
-      }
+      },
+      () => {},
+      queue
     );
   }
 

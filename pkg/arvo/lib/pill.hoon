@@ -17,29 +17,6 @@
       [%boot ? $%($>(%fake task:able:jael) $>(%dawn task:able:jael))]
       unix-task
   ==
-::  +module-ova: vane load operations
-::
-::    sys: full path to /sys directory
-::
-++  module-ova
-  |=  sys=path
-  ^-  (list [wire [%veer term path cord]])
-  %+  turn
-    ^-  (list (pair term path))
-    :~  [%$ /zuse]       ::  standard library
-        [%a /vane/ames]  ::  network
-        [%b /vane/behn]  ::  timer
-        [%c /vane/clay]  ::  revision control
-        [%d /vane/dill]  ::  console
-        [%e /vane/eyre]  ::  http server
-        [%g /vane/gall]  ::  applications
-        [%i /vane/iris]  ::  http client
-        [%j /vane/jael]  ::  identity and security
-    ==
-  |=  [=term =path]
-  =/  pax  (weld sys path)
-  =/  txt  .^(@ %cx (weld pax /hoon))
-  [[%vane path] [%veer term pax txt]]
 ::  +file-ovum: userspace filesystem load
 ::
 ::    bas: full path to / directory

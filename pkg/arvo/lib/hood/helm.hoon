@@ -154,47 +154,6 @@
   ?>  ?=([@t ~] pax)
   (flog %text "hi {(trip i.pax)} {?~(cop "" "un")}successful")
 ::
-++  poke-reload  |=(all=(list term) (poke-reload-desk %home all))
-++  poke-reload-desk                                 ::  reload vanes
-  |:  $:,[syd=desk all=(list term)]  =<  abet
-  %-  emil
-  %+  turn  all
-  =+  top=`path`/(scot %p our.bowl)/[syd]/(scot %da now.bowl)
-  =/  van=(list [term ~])
-    :-  zus=[%zuse ~]
-    ~(tap by dir:.^(arch %cy (welp top /sys/vane)))
-  |=  nam=@tas
-    =.  nam
-    ?.  =(1 (met 3 nam))
-      nam
-    =/  zaz=(list [p=knot ~])
-        (skim van |=([a=term ~] =(nam (end 3 a))))
-    ?>  ?=([[@ ~] ~] zaz)
-    `term`p.i.zaz
-  =+  tip=(end 3 nam)
-  =+  zus==('z' tip)
-  =+  way=?:(zus (welp top /sys/[nam]) (welp top /sys/vane/[nam]))
-  =+  fil=.^(@ %cx (welp way /hoon))
-  [%pass /reload %arvo %d %flog %veer ?:(=('z' tip) %$ tip) way fil]
-::  +poke-reset:  send %lyra to initiate kernel upgrade
-::
-::    And reinstall %zuse and the vanes with %veer.
-::    Trigger with |reset.
-::
-++  poke-reset
-  |=  hood-reset=~
-  =<  abet
-  %-  emil
-  ^-  (list card:agent:gall)
-  =/  top=path  /(scot %p our.bowl)/home/(scot %da now.bowl)/sys
-  =/  hun  .^(@t %cx (welp top /hoon/hoon))
-  =/  arv  .^(@t %cx (welp top /arvo/hoon))
-  ~!  *task:able:dill
-  :-  [%pass /reset %arvo %d %flog %lyra `hun arv]
-  %+  turn
-    (module-ova:pill top)
-  |=([=wire =flog:dill] [%pass wire %arvo %d %flog flog])
-::
 ++  poke-trim
   |=  pri=@ud  =<  abet
   (emit %pass /pack %arvo %d %flog %crop pri)
@@ -253,9 +212,6 @@
     %helm-pack             =;(f (f !<(_+<.f vase)) poke-pack)
     %helm-pass             =;(f (f !<(_+<.f vase)) poke-pass)
     %helm-rekey            =;(f (f !<(_+<.f vase)) poke-rekey)
-    %helm-reload           =;(f (f !<(_+<.f vase)) poke-reload)
-    %helm-reload-desk      =;(f (f !<(_+<.f vase)) poke-reload-desk)
-    %helm-reset            =;(f (f !<(_+<.f vase)) poke-reset)
     %helm-send-hi          =;(f (f !<(_+<.f vase)) poke-send-hi)
     %helm-serve            =;(f (f !<(_+<.f vase)) poke-serve)
     %helm-trim             =;(f (f !<(_+<.f vase)) poke-trim)

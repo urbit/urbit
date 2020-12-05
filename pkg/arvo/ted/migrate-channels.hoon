@@ -5,7 +5,7 @@
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m
-=/  [og-path=path ng-path=path ~]  !<([path path ~] arg)
+=/  [~ og-path=path ng-path=path]  !<([~ path path] arg)
 ;<  bol=bowl:spider  bind:m  get-bowl:strandio
 |^
 ::
