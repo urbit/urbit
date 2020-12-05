@@ -29,7 +29,7 @@
 ::  it's important to keep %zuse minimal.  models and
 ::  engines not used outside a vane should stay inside
 ::  that vane.
-~%  %zuse  ..is  ~
+~%  %zuse  ..part  ~
 =>
 ::                                                      ::  ::
 ::::                                                    ::  ::  (1) models
@@ -2526,7 +2526,7 @@
   ::::                    ++aes:crypto                  ::  (2b1) aes, all sizes
     ::                                                  ::::
   ++  aes    !.
-    ~%  %aes  ..is  ~
+    ~%  %aes  ..part  ~
     |%
     ::                                                  ::  ++ahem:aes:crypto
     ++  ahem                                            ::  kernel state
@@ -3287,7 +3287,7 @@
           =+  d=(dif.fq 0 (fra.fq 121.665 121.666))
           =+  ii=(exp.fq (div (dec q) 4) 2)
           [b=b q=q fq=fq l=l d=d ii=ii]
-      ~%  %coed  ..is  ~
+      ~%  %coed  ..part  ~
       |%
       ::                                                ::  ++norm:ed:crypto
       ++  norm                                          ::
@@ -3491,7 +3491,7 @@
   ::::                    ++scr:crypto                  ::  (2b3) scrypt
     ::                                                  ::::
   ++  scr
-    ~%  %scr  ..is  ~
+    ~%  %scr  ..part  ~
     |%
     ::                                                  ::  ++sal:scr:crypto
     ++  sal                                             ::  salsa20 hash
@@ -4151,7 +4151,7 @@
   ::::                    ++hmac:crypto                 ::  (2b8) hmac family
     ::                                                  ::::
   ++  hmac
-    ~%  %hmac  ..is  ~
+    ~%  %hmac  ..part  ~
     =,  sha
     =>  |%
         ++  meet  |=([k=@ m=@] [[(met 3 k) k] [(met 3 m) m]])
@@ -4205,7 +4205,7 @@
     ::                                                  ::::
   ++  secp  !.
     ::  TODO: as-octs and hmc are outside of jet parent
-    =>  :+  ..is
+    =>  :+  ..part
           hmc=hmac-sha256l:hmac:crypto
         as-octs=as-octs:mimes:html
     ~%  %secp  +<  ~
@@ -4497,7 +4497,7 @@
     --
   ::
   ++  blake
-    ~%  %blake  ..is  ~
+    ~%  %blake  ..part  ~
     |%
     ::TODO  generalize for both blake2 variants
     ++  blake2b
@@ -4682,7 +4682,7 @@
     --  ::blake
   ::
   ++  argon2
-    ~%  %argon  ..is  ~
+    ~%  %argon  ..part  ~
     |%
     ::
     ::  structures
@@ -5179,7 +5179,7 @@
     --
   ::
   ++  ripemd
-    ~%  %ripemd  ..is  ~
+    ~%  %ripemd  ..part  ~
     |%
     ++  ripemd-160
       ~/  %ripemd160
@@ -5458,7 +5458,7 @@
   |%
   ::  0 ending a line (invalid @t) is not preserved     ::  ++to-wain:format
   ++  to-wain                                           ::  cord to line list
-    ~%  %leer  ..is  ~
+    ~%  %leer  ..part  ~
     |=  txt=cord
     ^-  wain
     =/  len=@  (met 3 txt)
@@ -5994,7 +5994,7 @@
     ==
   ::                                                    ::  ++loss:differ
   ++  loss                                              ::  longest subsequence
-    ~%  %loss  ..is  ~
+    ~%  %loss  ..part  ~
     |*  [hel=(list) hev=(list)]
     |-  ^+  hev
     =+  ^=  sev
@@ -6143,7 +6143,7 @@
   ::::                    ++mimes:html                  ::  (2e1) MIME
     ::                                                  ::::
   ++  mimes  ^?
-    ~%  %mimes  ..is  ~
+    ~%  %mimes  ..part  ~
     |%
     ::                                                  ::  ++as-octs:mimes:html
     ++  as-octs                                         ::  atom to octstream
@@ -7793,7 +7793,7 @@
     |%
     ::                                                  ::  ++lune:unix:userlib
     ++  lune                                            ::  cord by unix line
-      ~%  %lune  ..is  ~
+      ~%  %lune  ..part  ~
       |=  txt=@t
       ?~  txt
         ^-  (list @t)  ~
@@ -7816,7 +7816,7 @@
       $(off +(off))
     ::                                                  ::  ++nule:unix:userlib
     ++  nule                                            ::  lines to unix cord
-      ~%  %nule  ..is  ~
+      ~%  %nule  ..part  ~
       |=  lin=(list @t)
       ^-  @t
       %+  can  3

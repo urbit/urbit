@@ -8,7 +8,7 @@
     *metadata-store,
     *group
 /+  *contact-json, default-agent, dbug, group-store, verb, resource, grpl=group
-~%  %contact-hook-top  ..is  ~
+~%  %contact-hook-top  ..part  ~
 |%
 +$  card  card:agent:gall
 ::

@@ -1,4 +1,4 @@
-=>  ..is
+=>  ..part
 |%
 ++  lull  %lull-kelvin
 --

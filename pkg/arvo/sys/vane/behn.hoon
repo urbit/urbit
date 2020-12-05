@@ -38,7 +38,7 @@
     --
 ::
 =>
-~%  %behn  ..is  ~
+~%  %behn  ..part  ~
 |%
 ++  per-event
   =|  moves=(list move)
@@ -179,7 +179,7 @@
   ::
   ++  set-unix-wake
     =<  [moves state]
-    ~%  %set-unix-wake  ..is  ~  |-
+    ~%  %set-unix-wake  ..part  ~  |-
     ^+  event-core
     ::
     =*  next-wake  next-wake.state
@@ -213,7 +213,7 @@
   ::  +set-timer: set a timer, maintaining order
   ::
   ++  set-timer
-    ~%  %set-timer  ..is  ~
+    ~%  %set-timer  ..part  ~
     |=  t=timer
     ^+  timers.state
     =/  found  (find-ducts date.t)
@@ -261,7 +261,7 @@
 ::  +call: handle a +task:able:behn request
 ::
 ++  call
-  ~%  %behn-call  ..is  ~
+  ~%  %behn-call  ..part  ~
   |=  $:  hen=duct
           dud=(unit goof)
           type=*

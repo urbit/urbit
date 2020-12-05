@@ -2103,7 +2103,7 @@
 =*  scry-gate  (en-sley rof)
 ::  allow jets to be registered within this core
 ::
-~%  %http-server  ..is  ~
+~%  %http-server  ..part  ~
 |%
 ++  call
   |=  [=duct dud=(unit goof) type=* wrapped-task=(hobo task:able)]

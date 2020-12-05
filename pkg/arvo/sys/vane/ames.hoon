@@ -105,7 +105,7 @@
       rot=`?`%.n  ::  routing attempts
   ==
 =>
-~%  %ames  ..is  ~
+~%  %ames  ..part  ~
 |%
 +|  %helpers
 ::  +trace: print if .verb is set and we're tracking .ship

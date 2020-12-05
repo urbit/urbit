@@ -1,6 +1,6 @@
 /-  *resource
 /+  store=graph-store, graph, default-agent, verb, dbug, pull-hook
-~%  %graph-pull-hook-top  ..is  ~
+~%  %graph-pull-hook-top  ..part  ~
 |%
 +$  card  card:agent:gall
 ++  config

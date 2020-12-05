@@ -1470,13 +1470,11 @@
     %iris  %i
     %jael  %j
   ==
-::
-++  is  &
 --  =>
 ::
 ::  cached reflexives
 ::
-=/  pit=vase  !>(..is)
+=/  pit=vase  !>(..part)
 =/  vil=vile  (viol p.pit)
 ::
 ::  arvo state, as a discriminable sample

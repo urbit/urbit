@@ -97,7 +97,7 @@
 =|  all=axle
 |=  [our=ship now=@da eny=@uvJ rof=roof]                ::  current invocation
 =*  ski  (en-sley rof)
-=>  ~%  %dill  ..is  ~
+=>  ~%  %dill  ..part  ~
     |%
     ++  as                                              ::  per cause
       =|  moz=(list move)

@@ -344,7 +344,7 @@
           $>(%crud vane-task)                           ::  XX strange
   ==  ==                                                ::
 --  =>
-~%  %clay-utilities  ..is  ~
+~%  %clay-utilities  ..part  ~
 ::  %utilities
 ::
 |%

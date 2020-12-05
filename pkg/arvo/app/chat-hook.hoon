@@ -5,7 +5,7 @@
 /-  inv=invite-store, *metadata-store, *group-store, hook=chat-hook, view=chat-view, *group
 /+  default-agent, verb, dbug, store=chat-store, group-store, grpl=group,
     resource
-~%  %chat-hook-top  ..is  ~
+~%  %chat-hook-top  ..part  ~
 |%
 +$  card  card:agent:gall
 ::

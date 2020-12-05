@@ -2,7 +2,7 @@
 ::
 ::
 /+  store=graph-store, sigs=signatures, res=resource, default-agent, dbug
-~%  %graph-store-top  ..is  ~
+~%  %graph-store-top  ..part  ~
 |%
 +$  card  card:agent:gall
 +$  versioned-state

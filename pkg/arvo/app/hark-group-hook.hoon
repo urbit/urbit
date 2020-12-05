@@ -3,7 +3,7 @@
 /-  store=hark-store, post, group-store, metadata-store, hook=hark-group-hook
 /+  resource, metadata, default-agent, dbug, graph-store
 ::
-~%  %hark-group-hook-top  ..is  ~
+~%  %hark-group-hook-top  ..part  ~
 |%
 +$  card  card:agent:gall
 +$  versioned-state

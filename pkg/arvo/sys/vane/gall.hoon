@@ -248,7 +248,7 @@
     ++  stay  ^stay
     ++  take  ^take
     --
-~%  %gall-top  ..is  ~
+~%  %gall-top  ..part  ~
 |%
 ::  +mo: Arvo-level move handling
 ::

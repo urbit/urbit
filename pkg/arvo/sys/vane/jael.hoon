@@ -147,7 +147,7 @@
 ::::                    #  heavy                        ::  heavy engines
   ::                                                    ::::
 =>
-~%  %jael  ..is  ~
+~%  %jael  ..part  ~
 |%
 ::                                                      ::  ++of
 ::::                    ## main^heavy                   ::  main engine

@@ -7,7 +7,7 @@
 ::
 /-  *metadata-store, *metadata-hook
 /+  default-agent, dbug, verb, grpl=group
-~%  %metadata-hook-top  ..is  ~
+~%  %metadata-hook-top  ..part  ~
 |%
 +$  card  card:agent:gall
 +$  versioned-state
