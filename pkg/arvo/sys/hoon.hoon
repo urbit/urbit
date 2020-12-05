@@ -5476,7 +5476,7 @@
             =+  yod=(yore q.p.lot)
             =?  rep  ?=(^ f.t.yod)  ['.' (s-co f.t.yod)]
             =?  rep  ?&  ?=(^ f.t.yod)
-                         !|(=(0 h.t.yod) =(0 m.t.yod) =(0 s.t.yod))
+                         !&(=(0 h.t.yod) =(0 m.t.yod) =(0 s.t.yod))
                      ==
               =.  rep  ['.' (y-co s.t.yod)]
               =.  rep  ['.' (y-co m.t.yod)]

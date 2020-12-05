@@ -48,7 +48,7 @@
       [%history =loglist]
       ::  %log: newly added log
       ::
-      [%log =event-log:rpc:ethereum]
+      [%logs =loglist]
       ::  %disavow: forget logs
       ::
       ::    this is sent when a reorg happens that invalidates
