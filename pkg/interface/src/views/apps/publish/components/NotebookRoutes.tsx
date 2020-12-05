@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { RouteComponentProps, Route, Switch } from "react-router-dom";
 import GlobalApi from "~/logic/api/global";
-import { 
+import {
   Association,
   Associations,
   Graphs,
@@ -55,15 +55,18 @@ export function NotebookRoutes(
       <Route
         path={baseUrl}
         exact
-        render={(routeProps) => (
-          <Notebook
+        render={(routeProps) => {
+          if (!graph) {
+            return <Center height="100%"><LoadingSpinner /></Center>;
+          }
+          return <Notebook
             {...props}
             graph={graph}
             contacts={notebookContacts}
             association={props.association}
             rootUrl={rootUrl}
-            baseUrl={baseUrl} />
-        )}
+            baseUrl={baseUrl} />;
+      }}
       />
       <Route
         path={relativePath("/new")}
@@ -83,7 +86,7 @@ export function NotebookRoutes(
         path={relativePath("/note/:noteId")}
         render={(routeProps) => {
           const { noteId } = routeProps.match.params;
-          const noteIdNum = bigInt(noteId)
+          const noteIdNum = bigInt(noteId);
 
           if(!graph) {
             return <Center height="100%"><LoadingSpinner /></Center>;

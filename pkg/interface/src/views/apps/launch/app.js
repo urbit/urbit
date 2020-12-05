@@ -10,7 +10,10 @@ import Tiles from './components/tiles';
 import Tile from './components/tiles/tile';
 import Welcome from './components/welcome';
 import Groups from './components/Groups';
+import ModalButton from './components/ModalButton';
 import { writeText } from '~/logic/lib/util';
+import { NewGroup } from "~/views/landscape/components/NewGroup";
+import { JoinGroup } from "~/views/landscape/components/JoinGroup";
 
 const ScrollbarLessBox = styled(Box)`
   scrollbar-width: none !important;
@@ -39,19 +42,18 @@ export default function LaunchApp(props) {
           pt={0}
         >
           <Tile
-            bg="transparent"
-            color="green"
+            bg="white"
+            color="scales.black20"
             to="/~landscape/home"
             p={0}
           >
-            <Box p={2} height='100%' width='100%' bg='green'>
+            <Box p={2} height='100%' width='100%' bg='scales.black20'>
               <Row alignItems='center'>
                 <Icon
-                  color="white"
-                  // fill="rgba(0,0,0,0)"
-                  icon="Boot"
+                  color="black"
+                  icon="Mail"
                 />
-                <Text ml="1" mt='1px' color="white">DMs + Drafts</Text>
+                <Text ml="1" mt='1px' color="black">DMs + Drafts</Text>
               </Row>
             </Box>
           </Tile>
@@ -62,7 +64,23 @@ export default function LaunchApp(props) {
             location={props.userLocation}
             weather={props.weather}
           />
-          <Box display={["none", "block"]} width="100%" gridColumn="1 / -1"></Box>
+          <ModalButton
+            icon="Plus"
+            bg="blue"
+            color="#fff"
+            text="Join a Group"
+            style={{ gridColumnStart: 1 }}
+          >
+            <JoinGroup {...props} />
+          </ModalButton>
+          <ModalButton
+            icon="CreateGroup"
+            bg="green"
+            color="#fff"
+            text="Create a Group"
+          >
+            <NewGroup {...props} />
+          </ModalButton>
           <Groups unreads={props.unreads} groups={props.groups} associations={props.associations} />
         </Box>
       </ScrollbarLessBox>

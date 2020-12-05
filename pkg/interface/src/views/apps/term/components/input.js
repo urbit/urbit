@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import { Row, Box, BaseInput } from '@tlon/indigo-react';
-import { cite } from '~/logic/lib/util';
-import { Spinner } from '~/views/components/Spinner';
 
 export class Input extends Component {
   constructor(props) {
@@ -85,15 +83,19 @@ export class Input extends Component {
     }
     return (
       <Row flexGrow='1' position='relative'>
-        <Box flexShrink='0' className="w-100">
+        <Box flexShrink='0' width='100%' color='black' fontSize='0'>
           <BaseInput
             autoFocus
             autoCorrect="off"
             autoCapitalize="off"
+            color='black'
+            minHeight='0'
+            display='inline-block'
+            width='100%'
             spellCheck="false"
             tabindex="0"
             wrap="off"
-            className="mono ml1 flex-auto dib w-100"
+            className="mono"
             id="term"
             cursor={this.props.cursor}
             onKeyDown={this.keyPress}

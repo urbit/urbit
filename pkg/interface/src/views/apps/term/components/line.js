@@ -1,5 +1,5 @@
-import React, { Component, useMemo } from 'react';
-import { Box, Text } from '@tlon/indigo-react';
+import React from 'react';
+import { Text } from '@tlon/indigo-react';
 
 export default React.memo(({line}) => {
 
@@ -59,7 +59,7 @@ export default React.memo(({line}) => {
   //  render line
   //
   return (
-    <Text mono display='block' fontSize='14px'
+    <Text color='black' mono display='block' fontSize='0'
     style={{ overflowWrap: 'break-word', whiteSpace: 'pre-wrap' }}
     >
       {text}

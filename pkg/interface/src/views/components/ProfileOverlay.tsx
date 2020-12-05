@@ -1,14 +1,32 @@
 import React, { PureComponent } from 'react';
+
+import { Contact, Group } from '~/types';
 import { cite } from '~/logic/lib/util';
 import { Sigil } from '~/logic/lib/sigil';
 
-import { Box, Col, Button, Text, BaseImage } from '@tlon/indigo-react';
+import { Box, Col, Button, Text, BaseImage, ColProps } from '@tlon/indigo-react';
 
 export const OVERLAY_HEIGHT = 250;
 
-export class ProfileOverlay extends PureComponent {
-  constructor() {
-    super();
+type ProfileOverlayProps = ColProps & {
+  ship: string;
+  contact?: Contact;
+  color: string;
+  topSpace: number | 'auto'; 
+  bottomSpace: number | 'auto';
+  group?: Group;
+  onDismiss(): void;
+  hideAvatars: boolean;
+  hideNicknames: boolean;
+  history: any;
+  api: any;
+}
+
+export class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
+  public popoverRef: React.Ref<typeof Col>;
+
+  constructor(props) {
+    super(props);
 
     this.popoverRef = React.createRef();
     this.onDocumentClick = this.onDocumentClick.bind(this);
@@ -35,7 +53,19 @@ export class ProfileOverlay extends PureComponent {
   }
 
   render() {
-    const { contact, ship, color, topSpace, bottomSpace, group, hideNicknames, hideAvatars, history } = this.props;
+    const {
+      contact,
+      ship,
+      color,
+      topSpace,
+      bottomSpace,
+      group = false,
+      hideNicknames,
+      hideAvatars,
+      history,
+      onDismiss,
+      ...rest
+    } = this.props;
 
     let top, bottom;
     if (topSpace < OVERLAY_HEIGHT / 2) {
@@ -66,7 +96,7 @@ export class ProfileOverlay extends PureComponent {
     /* if (!group.hidden) {
     }*/
 
-    const isHidden = group.hidden;
+    const isHidden = group ? group.hidden : false;
 
     return (
       <Col
@@ -77,6 +107,7 @@ export class ProfileOverlay extends PureComponent {
         zIndex='3'
         fontSize='0'
         style={containerStyle}
+        {...rest}
       >
         <Box height='160px' width='160px'>
           {img}

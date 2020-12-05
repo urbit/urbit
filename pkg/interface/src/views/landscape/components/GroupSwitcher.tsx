@@ -118,7 +118,7 @@ export function GroupSwitcher(props: {
                     mr={2}
                     color="gray"
                     display="block"
-                    icon="Boot"
+                    icon="Mail"
                   />
                   <Text>DMs + Drafts</Text>
                 </GroupSwitcherItem>}
@@ -127,11 +127,11 @@ export function GroupSwitcher(props: {
                   associations={props.associations}
                 />
                 <GroupSwitcherItem to="/~landscape/new">
-                  <Icon mr="2" color="gray" icon="Plus" />
+                  <Icon mr="2" color="gray" icon="CreateGroup" />
                   <Text> New Group</Text>
                 </GroupSwitcherItem>
                 <GroupSwitcherItem to="/~landscape/join">
-                  <Icon mr="2" color="gray" icon="Boot" />
+                  <Icon mr="2" color="gray" icon="Plus" />
                   <Text> Join Group</Text>
                 </GroupSwitcherItem>
                 {workspace.type === "group" && (

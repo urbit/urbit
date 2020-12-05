@@ -219,6 +219,25 @@
   ;<  ~  bind:m  (send-raw-card card)
   (take-poke-ack /poke)
 ::
+++  raw-poke
+  |=  [=dock =cage]
+  =/  m  (strand ,~)
+  ^-  form:m
+  =/  =card:agent:gall  [%pass /poke %agent dock %poke cage]
+  ;<  ~  bind:m  (send-raw-card card)
+  =/  m  (strand ,~)
+  ^-  form:m
+  |=  tin=strand-input:strand
+  ?+  in.tin  `[%skip ~]
+      ~
+    `[%wait ~]
+  ::
+      [~ %agent * %poke-ack *]
+    ?.  =(/poke wire.u.in.tin)
+      `[%skip ~]
+    `[%done ~]
+  ==
+::
 ++  poke-our
   |=  [=term =cage]
   =/  m  (strand ,~)
@@ -651,11 +670,16 @@
 ::
 ++  start-thread
   |=  file=term
+  (start-thread-with-args file *vase)
+::
+++  start-thread-with-args
+  |=  [file=term args=vase]
   =/  m  (strand ,tid:spider)
   ^-  form:m
   ;<  =bowl:spider  bind:m  get-bowl
-  =/  tid  (scot %ta (cat 3 'strand_' (scot %uv (sham file eny.bowl))))
-  =/  poke-vase  !>([`tid.bowl `tid file *vase])
+  =/  tid
+    (scot %ta (cat 3 (cat 3 'strand_' file) (scot %uv (sham file eny.bowl))))
+  =/  poke-vase  !>([`tid.bowl `tid file args])
   ;<  ~  bind:m  (poke-our %spider %spider-start poke-vase)
   ;<  ~  bind:m  (sleep ~s0)  ::  wait for thread to start
   (pure:m tid)

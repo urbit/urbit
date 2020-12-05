@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Box } from '@tlon/indigo-react';
 
 import Line from './line';
 
@@ -9,16 +10,22 @@ export class History extends Component {
 
   render() {
     return (
-      <div
-        className="h-100 relative flex flex-column-reverse overflow-container flex-auto"
+      <Box
+        height='100%'
+        minHeight='0'
+        display='flex'
+        flexDirection='column-reverse'
+        overflowY='scroll'
         style={{ resize: 'none' }}
       >
-        <div style={{ marginTop: 'auto' }}>
+        <Box
+          mt='auto'
+        >
           {this.props.log.map((line, i) => {
             return <Line key={i} line={line} />;
           })}
-        </div>
-      </div>
+        </Box>
+      </Box>
     );
     }
   }
