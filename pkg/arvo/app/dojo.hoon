@@ -1254,7 +1254,7 @@
     =+  vex=((full parse-command-line:he-parser) [1 1] txt)
     ?.  ?=([* ~ [* @ %ex *] *] vex)
       (he-tab-not-hoon pos :(weld buf (tufa buf.say) "\0a"))
-    =/  typ  p:(slop q:he-hoon-head !>(..dawn))
+    =/  typ  p:(slop q:he-hoon-head !>(..zuse))
     =/  tl  (tab-list-hoon:auto typ p.q.q.p.u.q.vex)
     =/  advance  (advance-hoon:auto typ p.q.q.p.u.q.vex)
     =?  res  ?=(^ advance)
