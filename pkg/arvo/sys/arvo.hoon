@@ -195,6 +195,7 @@
 ::  $vile: reflexive constants
 ::  $waif: arvo task, from anywhere
 ::  $wasp: arvo task, from Outside
+::  $worm: compiler cache
 ::  $wisp: arvo task, larval stage
 ::  $wynn: kelvin stack
 ::
@@ -300,6 +301,13 @@
   $%  [%crud =goof =ovum]
       [%wack p=@uvJ]
       [%wyrd p=vere]
+  ==
++$  worm
+  $:  ::  +nest, +play, and +mint
+      ::
+      nes=(set ^)
+      pay=(map (pair type hoon) type)
+      mit=(map (pair type hoon) (pair type nock))
   ==
 +$  wisp
   $%  $>(?(%verb %what) waif)
@@ -488,6 +496,141 @@
       dir  t.dir
       out  ^$(pax (weld pax /[p.i.dir]), fat q.i.dir)
     ==
+  --
+::
+++  wa                                                  ::  cached compile
+  |_  worm
+  ++  nell  |=(ref=type (nest [%cell %noun %noun] ref)) ::  nest in cell
+  ++  nest                                              ::  nest:ut, cached
+    |=  [sut=type ref=type]
+    ^-  [? worm]
+    ?:  (~(has in nes) [sut ref])  [& +>+<]
+    ?.  (~(nest ut sut) | ref)
+      ~&  %nest-failed
+      =+  foo=(skol ref)
+      =+  bar=(skol sut)
+      ~&  %nest-need
+      ~>  %slog.[0 bar]
+      ~&  %nest-have
+      ~>  %slog.[0 foo]
+      [| +>+<.$]
+    [& +>+<(nes (~(put in nes) [sut ref]))]
+  ::
+  ++  call                                              ::  call gate
+    |=  [vax=vase nam=term som=(each vase ^)]
+    ^-  [vase worm]
+    =^  duf  +>+<.$  (open vax nam som)
+    (slap duf [%limb %$])
+  ::
+  ++  open                                              ::  assemble door
+    |=  [vax=vase nam=term som=(each vase ^)]
+    ^-  [vase worm]
+    =*  key  [%cncb [[%& 2] ~] [[[%& 6] ~] [%$ 3]] ~]
+    =^  dor  +>+<.$  (slap vax [%limb nam])
+    =^  mes  +>+<.$  (slot 6 dor)
+    =^  hip  +>+<.$
+      ?-  -.som
+         %&  (nest p.mes p.p.som)
+         %|  (nets p.mes -.p.som)
+      ==
+    ?>  hip
+    [[p.dor q.dor(+6 +7.som)] +>+<.$]
+  ::
+  ++  neat                                              ::  type compliance
+    |=  [typ=type som=(each vase ^)]
+    ^-  worm
+    =^  hip  +>+<.$
+      ?-  -.som
+        %&  (nest typ p.p.som)
+        %|  (nets typ -.p.som)
+      ==
+    ?>  hip
+    +>+<.$
+  ::
+  ++  nets                                              ::  typeless nest
+    |=  [sut=* ref=*]
+    ^-  [? worm]
+    ?:  (~(has in nes) [sut ref])  [& +>+<]
+    =+  gat=|=([a=type b=type] (~(nest ut a) | b))
+    ?.  (? (slum gat [sut ref]))
+      ~&  %nets-failed
+      =+  tag=`*`skol
+      =+  foo=(tank (slum tag ref))
+      =+  bar=(tank (slum tag sut))
+      ~&  %nets-need
+      ~>  %slog.[0 bar]
+      ~&  %nets-have
+      ~>  %slog.[0 foo]
+      [| +>+<.$]
+    [& +>+<.$(nes (~(put in nes) [sut ref]))]
+  ::  +play: +play:ut, cached
+  ::
+  ++  play
+    |=  [sut=type gen=hoon]
+    ^-  [type worm]
+    =+  old=(~(get by pay) [sut gen])
+    ?^  old  [u.old +>+<.$]
+    =+  new=(~(play ut sut) gen)
+    [new +>+<.$(pay (~(put by pay) [sut gen] new))]
+  ::  +mint: +mint:ut to noun, cached
+  ::
+  ++  mint
+    |=  [sut=type gen=hoon]
+    ^-  [(pair type nock) worm]
+    =+  old=(~(get by mit) [sut gen])
+    ?^  old  [u.old +>+<.$]
+    =+  new=(~(mint ut sut) %noun gen)
+    [new +>+<.$(mit (~(put by mit) [sut gen] new))]
+  ::  +slam: +slam:ut, cached
+  ::
+  ++  slam
+    |=  [gat=vase sam=vase]
+    =/  sut=type  [%cell p.gat p.sam]
+    =/  gen=hoon  [%cnsg [%$ ~] [%$ 2] [%$ 3] ~]
+    =^  new=type  +>+<.$  (play sut gen)
+    [[new (slum q.gat q.sam)] +>+<.$]
+  ::  +slap: +slap:ut, cached
+  ::
+  ++  slap
+    |=  [vax=vase gen=hoon]
+    ^-  [vase worm]
+    =^  gun  +>+<  (mint p.vax gen)
+    [[p.gun .*(q.vax q.gun)] +>+<.$]
+  ::  +slot: +slot:ut, cached
+  ::
+  ++  slot
+    |=  [axe=@ vax=vase]
+    ^-  [vase worm]
+    =^  gun  +>+<  (mint p.vax [%$ axe])
+    [[p.gun .*(q.vax [0 axe])] +>+<.$]
+  ::  +slym: +slym:ut, cached
+  ::
+  ++  slym
+    |=  [gat=vase sam=*]
+    ^-  [vase worm]
+    (slap gat(+<.q sam) [%limb %$])
+  ::
+  ++  sped                                              ::  specialize vase
+    |=  vax=vase
+    ^-  [vase worm]
+    =+  ^=  gen  ^-  hoon
+      ?@  q.vax    [%wtts [%base [%atom %$]] [%& 1]~]
+      ?@  -.q.vax  [%wtts [%leaf %tas -.q.vax] [%& 2]~]
+      [%wtts [%base %cell] [%& 1]~]
+    =^  typ  +>+<.$  (play p.vax [%wtgr gen [%$ 1]])
+    [[typ q.vax] +>+<.$]
+  ::
+  ++  spot                                              ::  slot then sped
+    |=  [axe=@ vax=vase]
+    ^-  [vase worm]
+    =^  xav  +>+<  (slot axe vax)
+    (sped xav)
+  ::
+  ++  stop                                              ::  sped then slot
+    |=  [axe=@ vax=vase]
+    ^-  [vase worm]
+    =^  xav  +>+<  (sped vax)
+    (slot axe xav)
   --
 ::
 ::  |part: arvo structures and engines
