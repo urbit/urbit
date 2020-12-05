@@ -1107,13 +1107,13 @@
       ?:  ?=(%$ cyr)
         (peek:pith lyc %$ bem)
       ::
-      ::  XX vane and care are concatenated
+      ::  vane and care are concatenated
       ::
-      =/  lal  (end 3 cyr)
-      =/  ren  ;;(@t (rsh 3 cyr))
-      ?.  (~(has by van.mod) lal)
+      =/  way=term  (end 3 cyr)
+      =/  car=term  (rsh 3 cyr)
+      ?.  (~(has by van.mod) way)
         ~
-      (peek:(plow lal) lyc ren bem)
+      (peek:(plow way) lyc car bem)
     ::  +call: advance to target
     ::
     ++  call
@@ -1156,13 +1156,14 @@
       ^+  this
       =^  moz  sac
         (~(refine-moves me sac vil) zom)
-      =.  van.mod  (~(put by van.mod) vane.gum [vax sac])
+      =.  van.mod  (~(put by van.mod) (grow vane.gum) [vax sac])
       (emit `plan`[`germ`gum `(list move)`moz])
     ::  +plow: operate on a vane, in time and space
     ::
     ++  plow
       |=  way=term
       ~|  [%plow-failed way]
+      =.  way  (grow way)
       =/  =vane
         ~|  [%missing-vane way]
         (~(got by van.mod) way)
@@ -1175,13 +1176,10 @@
       ++  gest
         |=  =ovum
         ^-  $>(%pass ball)
-        =^  way=term  wire.ovum
-          ~|  %gest-wire
-          ?>  ?=(^ wire.ovum)
-          [(wilt i.wire.ovum) t.wire.ovum]
+        =^  way=term  wire.ovum  wire.ovum
         ::
         ::  %$: default, routed to arvo-proper as trivial vase
-        ::  @:  route to vane XX remove %soft, clam via %zuse
+        ::  @:  route to vane as $hobo
         ::
         =/  =vase
           ?-  way
@@ -1240,11 +1238,10 @@
             %+  roll  van.job
             |=  [[nam=term txt=hoof] van=_van.mod.sol]
             ^+  van
-            =/  way  (wilt nam)
-            =/  nex  (create:va zus.mod.sol way /sys/vane/[nam]/hoon txt)
-            =/  nav  (~(get by van) way)
+            =/  nex  (create:va zus.mod.sol nam /sys/vane/[nam]/hoon txt)
+            =/  nav  (~(get by van) nam)
             =?  nex  ?=(^ nav)  (update:va vase.u.nav nex)
-            (~(put by van) way (settle:va nex))
+            (~(put by van) nam (settle:va nex))
           ==
         --
       ::
@@ -1456,20 +1453,6 @@
     %i  %iris
     %j  %jael
   ==
-::
-++  wilt
-  |=  van=term
-  ?+  van  van
-    %ames  %a
-    %behn  %b
-    %clay  %c
-    %dill  %d
-    %eyre  %e
-    %ford  %f
-    %gall  %g
-    %iris  %i
-    %jael  %j
-  ==
 --  =>
 ::
 ::  cached reflexives
@@ -1642,11 +1625,10 @@
         ?.  ?=(^ zus)
          ~|(%larval-need-zuse !!)
         %+  roll  van.job
-        |=  [[(cask hoof:part)] =_van]
+        |=  [[nam=term txt=hoof:part] =_van]
         ^+  van
-        =/  way  (wilt p)
-        %+  ~(put by van)  way
-        (smit "vane %{(trip way)}" u.zus /sys/vane/[p]/hoon q)
+        %+  ~(put by van)  nam
+        (smit "vane %{(trip nam)}" u.zus /sys/vane/[nam]/hoon txt)
       gub(fat `taf)
     --
 ::
