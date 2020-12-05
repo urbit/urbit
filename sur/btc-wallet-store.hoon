@@ -10,8 +10,7 @@
 ::  idx:  an address_index
 ::  nixt: next indices to generate addresses from (non-change/change)
 ::  addi: HD path along with UTXOs
-::    - poll: whether wallet should keep checking this address
-::            used for newly generated addresses to watch them
+::    - used: whether the address has been used
 ::  wach: map for watched addresses.
 ::        Membership implies the address is known by outside parties or had prior activity
 ::  scon: indices to initially scan to in (non-)change accounts
@@ -21,7 +20,7 @@
 +$  chyg  $?(%0 %1)
 +$  idx   @
 +$  nixt  (pair idx idx)
-+$  addi  [=chyg =idx utxos=(set utxo)]
++$  addi  [used=? =chyg =idx utxos=(set utxo)]
 +$  wach  (map address addi)
 +$  scon  $~([max-index max-index] (pair idx idx))
 +$  wilt  _bip32

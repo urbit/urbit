@@ -86,7 +86,7 @@
     =/  addr  (mk-address nixt-idx)
     :*  addr
         nixt-idx
-        (update-address addr [chyg nixt-idx *(set utxo:btc)])
+        (update-address addr [%.n chyg nixt-idx *(set utxo:btc)])
     ==
   ::  insert a new address; update "nixt" free address if this one was it
   ::
@@ -116,8 +116,10 @@
     :-  nixt-idx
     =/  new-idx=idx  +(nixt-idx)
     |-  ?>  (lte new-idx max-index)
-    ?.  (~(has by wach.w) (mk-address new-idx))
-        (set-nixt new-idx)
+    =/  a=(unit addi)
+      (~(get by wach.w) (mk-address new-idx))
+    ?~  a  (set-nixt new-idx)
+    ?:  ?!(used.u.a)  (set-nixt new-idx)
     $(new-idx +(new-idx))
     ::
     ++  set-nixt
