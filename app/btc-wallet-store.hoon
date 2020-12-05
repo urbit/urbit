@@ -235,7 +235,7 @@
     %+  ~(put by walts)  xpub
     %+  ~(update-address wad u.w chyg)
       (~(mk-address wad u.w chyg) idx)
-    [chyg idx utxos]
+    [used chyg idx utxos]
   ::  if the wallet is being scanned, update the scan batch
   ::  if not, just get more-info for the address if still being scanned
   ::
