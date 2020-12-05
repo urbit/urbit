@@ -461,6 +461,14 @@ u3_pier_peek_last(u3_pier*   pir_u,
   _pier_peek_plan(pir_u, pic_u);
 }
 
+/* _pier_stab(): parse path
+*/
+static u3_noun
+_pier_stab(u3_noun pac)
+{
+  return u3do("stab", pac);
+}
+
 /* _pier_on_scry_done(): scry callback.
 */
 static void
@@ -473,48 +481,64 @@ _pier_on_scry_done(void* ptr_v, u3_noun nun)
     u3l_log("pier: scry failed\n");
   }
   else {
+    u3_weak out,    pad;
+    c3_c   *ext_c, *pac_c;
+
     u3l_log("pier: scry succeeded\n");
 
-    //  serialize as desired
+    if ( u3_Host.ops_u.puk_c ) {
+      pac_c = u3_Host.ops_u.puk_c;
+    }
+    else {
+      pac_c = u3_Host.ops_u.pek_c;
+    }
+
+    //  try to serialize as requested
     //
-    u3_atom out;
-    c3_c*   ext_c;
     {
       u3_atom puf = u3i_string(u3_Host.ops_u.puf_c);
       if ( c3y == u3r_sing(c3__jam, puf) ) {
         out   = u3qe_jam(res);
         ext_c = "jam";
       }
-      else {
+      else if ( c3y == u3a_is_atom(res) ) {
         out   = u3dc("scot", u3k(puf), u3k(res));
         ext_c = "txt";
+      }
+      else {
+        u3l_log("pier: cannot export cell as %s\n", u3_Host.ops_u.puf_c);
+        out   = u3_none;
       }
       u3z(puf);
     }
 
-    c3_c* pac_c = u3_Host.ops_u.puk_c;
-    if (!pac_c) {
-      pac_c = u3_Host.ops_u.pek_c;
-    }
-
-    u3_noun pad;
+    //  try to build export target path
+    //
     {
-      //  XX crashes if [pac_c] is not a valid path
-      //  XX virtualize or fix
-      //
-      u3_noun pax = u3do("stab", u3i_string(pac_c));
-      c3_w len_w = u3kb_lent(u3k(pax));
-      pad = u3nt(c3_s4('.','u','r','b'),
-                 c3_s3('p','u','t'),
-                 u3qb_scag(len_w - 1, pax));
-      u3z(pax);
+      u3_noun pro = u3m_soft(0, _pier_stab, u3i_string(pac_c));
+      if ( 0 == u3h(pro) ) {
+        c3_w len_w = u3kb_lent(u3k(u3t(pro)));
+        pad = u3nt(c3_s4('.', 'u', 'r', 'b'),
+                   c3_s3('p', 'u', 't'),
+                   u3qb_scag(len_w - 1, u3t(pro)));
+      }
+      else {
+        u3l_log("pier: invalid export path %s\n", pac_c);
+        pad = u3_none;
+      }
+      u3z(pro);
     }
 
-    c3_c fil_c[2048];
-    snprintf(fil_c, 2048, "%s/.urb/put/%s.%s", pir_u->pax_c, pac_c+1, ext_c);
+    //  if serialization and export path succeeded, write to disk
+    //
+    if ( (u3_none != out) && (u3_none != pad) ) {
+      c3_c fil_c[2048];
+      snprintf(fil_c, 2048, "%s/.urb/put/%s.%s",
+               pir_u->pax_c, pac_c+1, ext_c);
 
-    u3_walk_save(fil_c, 0, out, pir_u->pax_c, pad);
-    u3l_log("pier: scry in %s\n", fil_c);
+      u3_walk_save(fil_c, 0, out, pir_u->pax_c, pad);
+      u3l_log("pier: scry result in %s\n", fil_c);
+    }
   }
 
   u3l_log("pier: exit\n");
