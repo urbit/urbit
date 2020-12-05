@@ -11585,6 +11585,14 @@
     %-  ~(play ut p.vax)
     [%wtgr [%wtts [%leaf %tas -.q.vax] [%& 2]~] [%$ 1]]
   (~(fuse ut p.vax) [%cell %noun %noun])
+::  +swat: deferred +slap
+::
+++  swat
+  |=  [tap=(trap vase) gen=hoon]
+  ^-  (trap vase)
+  =/  gun  (~(mint ut p:$:tap) %noun gen)
+  |.  ~+
+  [p.gun .*(q:$:tap q.gun)]
 ::
 ::::  5d: parser
   ::
