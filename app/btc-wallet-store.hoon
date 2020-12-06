@@ -14,6 +14,7 @@
 /-  *btc-wallet-store
 /+  dbug, default-agent, *btc-wallet-store, btc, bip32
 |%
+++  requests-path  /requests
 +$  versioned-state
     $%  state-0
     ==
@@ -166,7 +167,9 @@
   ^-  (quip card _state)
   =/  b=batch
     [(sy (gulf 0 endpoint)) endpoint %.n]
-  :-  (weld (req-scan ~[/requests] b xpub %0) (req-scan ~[/requests] b xpub %1))
+  :-  %+  weld
+        (req-scan ~[requests-path] b xpub %0)
+      (req-scan ~[requests-path] b xpub %1)
   state(scans (insert-batches xpub b b))
 ::  if the batch is done but the wallet isn't done scanning,
 ::  returns new address requests and updated batch
@@ -184,7 +187,7 @@
         (add endpoint.b max-gap.w)
         %.n
     ==
-  :-  (req-scan ~[/requests] newb xpub chyg)
+  :-  (req-scan ~[requests-path] newb xpub chyg)
   newb
 ::
 ++  iter-scan
@@ -253,7 +256,7 @@
     ^-  (list card)
     ?:  (is-done w)  ~
     :~
-      %+  send-request  ~[/requests]
+      %+  send-request  ~[requests-path]
       :*  %address-info  last-block
           (~(mk-address wad w chyg) idx)
           xpub  chyg  idx
@@ -285,8 +288,8 @@
   =/  [addr=address:btc =idx w=walt]
     ~(gen-address wad u.uw chyg)
   :_  state(walts (~(put by walts) xpub w))
-  :~  (send-update [%generate-address addr peta])
-      %+  send-request  ~[/requests]
+  :~  (send-update [%generate-address xpub addr peta])
+      %+  send-request  ~[requests-path]
       :*  %address-info  last-block
           addr  xpub  chyg  idx
       ==

@@ -80,6 +80,9 @@
       %get-address-info
     [id.res (address-info res.res)]
     ::
+      %get-tx-vals
+    [id.res (tx-vals res.res)]
+    ::
       %get-raw-tx
     [id.res (raw-tx res.res)]
     ::
@@ -103,6 +106,21 @@
         [%value ni:dejs:format]
         [%recvd (cu:dejs:format from-epoch ni:dejs:format)]
     ==
+  ++  tx-vals
+    %-  ot:dejs:format
+    :~  [%txid (cu:dejs:format to-hash256 so:dejs:format)]
+        [%recvd (cu:dejs:format from-epoch ni:dejs:format)]
+        [%confs ni:dejs:format]
+        [%inputs (ar:dejs:format tx-val)]
+        [%outputs (ar:dejs:format tx-val)]
+    ==
+  ++  tx-val
+    %-  ot:dejs:format
+    :~  [%txid (cu:dejs:format to-hash256 so:dejs:format)]
+        [%pos ni:dejs:format]
+        [%address (cu:dejs:format address-from-cord so:dejs:format)]
+        [%value ni:dejs:format]
+    ==
   ++  raw-tx
     %-  ot:dejs:format
     :~  [%txid (cu:dejs:format to-hash256 so:dejs:format)]
@@ -123,6 +141,10 @@
       %get-address-info
     %+  mk-url  '/addresses/info/'
     (address-to-cord address.ract)
+    ::
+      %get-tx-vals
+    %+  mk-url  '/gettxvals/'
+    (en:base16:mimes:html txid.ract)
     ::
       %get-raw-tx
     %+  mk-url  '/getrawtx/'

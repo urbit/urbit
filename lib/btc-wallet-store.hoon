@@ -56,7 +56,8 @@
 ++  from-xpub
   |=  [=xpub:btc scan-to=(unit scon) max-gap=(unit @ud) confs=(unit @ud)]
   ^-  walt
-  :*  (from-extended:bip32 (trip xpub))
+  :*  xpub
+      (from-extended:bip32 (trip xpub))
       (xpub-type:btc xpub)
       *wach
       [0 0]
@@ -179,8 +180,10 @@
       |=(=utxo:btc [utxo chyg.addi idx.addi])
     ::
     ++  inputs-to-txbu
-      |=  is=(list input)  ^-  txbu
+      |=  is=(list input)
+      ^-  txbu
       :*  (gen-req-id:bp eny)
+          xpub.w
           payee
           (total-vbytes is)
           %+  turn  is

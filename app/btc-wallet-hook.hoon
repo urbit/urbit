@@ -261,7 +261,7 @@
     ::
     ?~  peta.upd  ~&(> address.upd `state)
     =/  [payer=ship value=sats]  u.peta.upd
-    :_  (update-piym address.upd payer value)
+    :_  (update-piym xpub.upd address.upd payer value)
     :~  (poke-wallet-hook payer [%ret-pay-address address.upd payer value])
         (poke-wallet-store [%add-piym address.upd peta.upd])
     ==

@@ -23,11 +23,17 @@
   ==
 ++  tx
   |%
+  +$  val
+    $:  =txid
+        pos=@ud
+        =address
+        value=sats
+    ==
   +$  unsigned
     $:  version=@
         locktime=@
         inputs=(list input)
-        outputs=(list output)
+        outputs=(list val)
     ==
   +$  input
     $:  =txid
@@ -38,11 +44,6 @@
         redeem-script=(unit byts)
         pubkey=(unit byts)
         value=sats
-    ==
-  +$  output
-    $:  =address
-        value=sats
-
     ==
   --
 ++  ops

@@ -31,7 +31,8 @@
 ::  confs:   confirmations required (after this is hit for an address, wallet stops refreshing it)
 ::
 +$  walt
-  $:  =wilt
+  $:  =xpub
+      =wilt
       =bipt
       =wach
       =nixt
@@ -40,20 +41,25 @@
       max-gap=@ud
       confs=@ud
   ==
-::  input: utxo for a transaction::
 ::  feyb: fee per byte in sats
 ::  key:  HD wallet path
 ::  txi/txo:  input/output for a transaction being built
 ::  txbu: tx builder -- all information needed to make a transaction for signing
 ::  peta: optional payment metadata
 ::
-+$  input  [=utxo =chyg =idx]
++$  peta  (unit [payer=ship value=sats])
 +$  feyb  sats
 +$  key  [=bipt =chyg =idx]
 +$  txi  [=utxo ur=(unit rawtx) =key]
 +$  txo  [=address value=sats]
-+$  txbu  [=req-id:bp payee=(unit ship) =vbytes txis=(list txi) txos=(list txo)]
-+$  peta  (unit [payer=ship value=sats])
++$  txbu
+  $:  =req-id:bp
+      =xpub
+      payee=(unit ship)
+      =vbytes
+      txis=(list txi)
+      txos=(list txo)
+  ==
 ::  hest: an entry in the history log
 ::  raw: pending history elements
 ::    - hearsay: %.y if a peer told us about this element and we haven't observed it yet
@@ -88,11 +94,11 @@
       [%address-info =xpub =chyg =idx utxos=(set utxo) used=? block=@ud]
       [%generate-address =xpub =chyg =peta]
       [%generate-txbu =xpub payee=(unit ship) feyb=sats txos=(list txo)]
-      [%add-hest =hest]
+      [%add-history-entry =hest]
   ==
 ::
 +$  update
-  $%  [%generate-address =address =peta]
+  $%  [%generate-address =xpub =address =peta]
       [%generate-txbu =xpub =txbu]
       [%saw-piym s=ship =txid]
       [%scan-done =xpub]

@@ -9,12 +9,14 @@
 +$  action  [=req-id body=action-body]
 +$  action-body
   $%  [%address-info =address]
+      [%tx-info =txid]
       [%raw-tx =txid]
       [%ping ~]
   ==
 +$  result  [=req-id body=result-body]
 +$  result-body
   $%  [%address-info utxos=(set utxo) used=? block=@ud]
+      [%tx-info =txid recvd=(unit @da) confs=@ud inputs=(list val:tx) outputs=(list val:tx)]
       [%raw-tx =txid =rawtx]
   ==
 +$  error
@@ -35,14 +37,15 @@
   +$  action
 
     $%  [%get-address-info =address]
+        [%get-tx-vals =txid]
         [%get-raw-tx =txid]
         [%get-block-count ~]
         [%get-block-and-fee ~]
     ==
-  :: 
+  ::
   +$  response
     $%  [%get-address-info utxos=(set utxo) used=? block=@ud]
-        [%create-psbt psbt=cord]
+        [%get-tx-vals =txid recvd=(unit @da) confs=@ud inputs=(list val:tx) outputs=(list val:tx)]
         [%get-raw-tx =txid =rawtx]
         [%get-block-count block=@ud]
         [%get-block-and-fee block=@ud fee=sats]
