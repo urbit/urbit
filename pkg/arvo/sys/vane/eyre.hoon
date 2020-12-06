@@ -1016,11 +1016,9 @@
     ::
     ++  code
       ^-  @ta
-      ::
-      =+  pax=/(scot %p our)/code/(scot %da now)/(scot %p our)
-      =+  res=((sloy scry) [151 %noun] %j pax)
-      ::
-      (rsh 3 (scot %p (@ (need (need res)))))
+      =/  res=(unit (unit cage))
+        (scry [%141 %noun] ~ %j [our %code da+now] /(scot %p our))
+      (rsh 3 (scot %p ;;(@ q.q:(need (need res)))))
     ::  +session-cookie-string: compose session cookie
     ::
     ++  session-cookie-string
