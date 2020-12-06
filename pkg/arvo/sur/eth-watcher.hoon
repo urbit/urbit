@@ -1,5 +1,6 @@
 ::  eth-watcher: ethereum event log collector
 ::
+/+  ethereum
 =,  able:jael
 |%
 +$  config

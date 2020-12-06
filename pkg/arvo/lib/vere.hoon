@@ -1,6 +1,7 @@
 ::  runtime support code
 ::
-=>  ..zuse  =>
+/+  ethereum, azimuth
+=>  [ethereum=ethereum azimuth=azimuth ..zuse]  =>
 |%
 ::
 ::  |dawn: pre-boot request/response de/serialization and validation

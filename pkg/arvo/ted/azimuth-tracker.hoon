@@ -1,5 +1,5 @@
 /-  spider
-/+  strandio, *azimuth
+/+  strandio, *azimuthio
 =,  strand=strand:spider
 =,  able:jael
 |%

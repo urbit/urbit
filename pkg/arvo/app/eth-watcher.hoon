@@ -1,7 +1,7 @@
 ::  eth-watcher: ethereum event log collector
 ::
 /-  *eth-watcher, spider
-/+  default-agent, verb, dbug
+/+  ethereum, default-agent, verb, dbug
 =,  ethereum-types
 =,  able:jael
 ::

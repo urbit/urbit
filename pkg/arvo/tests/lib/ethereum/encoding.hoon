@@ -1,4 +1,4 @@
-/+  *test
+/+  ethereum, *test
 |%
 ::TODO  copy this:
 ::  https://github.com/ethereum/web3.js/blob/master/test/coder.encodeParam.js

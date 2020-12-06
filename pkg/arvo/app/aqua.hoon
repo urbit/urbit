@@ -21,7 +21,7 @@
 ::  We get ++unix-event and ++pill from /-aquarium
 ::
 /-  aquarium
-/+  pill, default-agent, aqua-azimuth, dbug, verb
+/+  pill, azimuth, default-agent, aqua-azimuth, dbug, verb
 =,  pill-lib=pill
 =,  aquarium
 =>  $~  |%

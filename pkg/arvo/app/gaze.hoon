@@ -7,9 +7,7 @@
 ::    - receive timestamps, process events
 ::
 /-  eth-watcher
-/+  default-agent, verb
-=,  ethereum
-=,  azimuth
+/+  *ethereum, *azimuth, default-agent, verb
 ::
 =>  |%
     +$  state-0

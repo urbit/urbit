@@ -20,9 +20,8 @@
 =,  able:jael
 =,  crypto
 =,  jael
-=,  ethereum
-=,  rpc
-=,  azimuth
+=,  ethereum-types
+=,  azimuth-types
 =,  point=point:able:jael
 ::                                                      ::::
 ::::                    # models                        ::  data structures
@@ -291,7 +290,7 @@
       ::
       =/  spon-points=(list [ship point])
         %+  turn  spon.tac
-        |=  [=ship az-point=point:azimuth]
+        |=  [=ship az-point=point:azimuth-types]
         ~|  [%sponsor-point az-point]
         ?>  ?=(^ net.az-point)
         :*  ship

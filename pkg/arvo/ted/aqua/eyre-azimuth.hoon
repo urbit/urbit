@@ -1,7 +1,7 @@
 ::  Pass-through Eyre driver
 ::
 /-  spider, *aquarium
-/+  ph-io, util=ph-util, strandio
+/+  ethereum, azimuth, ph-io, util=ph-util, strandio
 =,  strand=strand:spider
 |%
 +$  state

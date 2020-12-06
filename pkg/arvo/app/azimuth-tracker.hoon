@@ -1,5 +1,5 @@
 /-  eth-watcher
-/+  default-agent, verb
+/+  ethereum, azimuth, default-agent, verb
 =,  able:jael
 |%
 ++  app-state
