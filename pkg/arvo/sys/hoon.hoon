@@ -9316,9 +9316,9 @@
             (face p.ref rig)
           ::
               [%fork *]
-            =/  thread  ~(tap in p.ref)
+            =/  yed  ~(tap in p.ref)
             =^  wiz  grub
-              (spin thread grub |=([=type =_grub] ^$(ref type)))
+              (spin yed grub |=([=type =_grub] ^$(ref type)))
             :_  grub
             (fork wiz)
           ::
@@ -11159,7 +11159,7 @@
   ++  caching-hemp
     ::  generate formula from foot
     ::
-    |=  [hud/poly gol/type gen/hoon]
+    |=  [hud=poly gol=type gen=hoon]
     ^-  [nock _grub]
     ~+
     =+  %hemp-141
