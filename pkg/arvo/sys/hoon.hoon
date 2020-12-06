@@ -9804,20 +9804,23 @@
       val
     ::
         [%face *]
-      $(sut repo)
+      =^  val  grub  caching-repo
+      $(sut val)
     ::
         [%fork *]
       :_  grub
       [full/[~ ~ ~] ~]
     ::
         [%hint *]
-      $(sut repo)
+      =^  val  grub  caching-repo
+      $(sut val)
     ::
         [%hold *]
       ?:  (~(has in gil) sut)
         :_  grub
         [full/[~ ~ ~] ~]
-      $(sut repo, gil (~(put in gil) sut))
+      =^  val  grub  caching-repo
+      $(sut val, gil (~(put in gil) sut))
     ==
   ::
   ++  burp
