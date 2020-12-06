@@ -2,9 +2,7 @@
 /=  eyre-raw  /sys/vane/eyre
 ::
 !:
-::
-=/  test-pit=vase  !>(..zuse)
-=/  eyre-gate  (eyre-raw test-pit)
+=/  eyre-gate  (eyre-raw ~nul)
 =/  eyre-id  '~.eyre_0v4.elsnk.20412.0h04v.50lom.5lq0o'
 ::
 |%
@@ -296,8 +294,7 @@
         scry=scry-provides-code
         ^=  take-args
           :*  wire=/watch-response/[eyre-id]  duct=~[/http-blah]
-              ^-  (hypo sign:eyre-gate)
-              :-  *type
+              ^-  sign:eyre-gate
               :*  %g  %unto  %fact
                   %http-response-header
                   !>([200 ['content-type' 'text/html']~])
@@ -391,8 +388,7 @@
       scry=scry-provides-code
       ^=  take-args
         :*  wire=/run-app-request/app1  duct=~[/http-blah]
-            ^-  (hypo sign:eyre-gate)
-            :-  *type
+            ^-  sign:eyre-gate
             :*  %g  %unto  %poke-ack  ~
                 :~  [%leaf "/~zod/...../app1:<[1 1].[1 20]>"]
             ==  ==
@@ -494,7 +490,7 @@
       scry=scry-provides-code
       ^=  take-args
         :*  wire=/watch-response/[eyre-id]  duct=~[/http-blah]
-            ^-  (hypo sign:eyre-gate)  :-  *type
+            ^-  sign:eyre-gate
             :*  %g  %unto  %fact
                 %http-response-header
                 !>([200 ['content-type' 'text/html']~])
@@ -513,7 +509,7 @@
       scry=scry-provides-code
       ^=  take-args
         :*  wire=/watch-response/[eyre-id]  duct=~[/http-blah]
-            ^-  (hypo sign:eyre-gate)  :-  *type
+            ^-  sign:eyre-gate
             :*  %g  %unto  %fact
                 %http-response-data
                 !>(`(as-octs:mimes:html 'ya!'))
@@ -609,7 +605,7 @@
       scry=scry-provides-code
       ^=  take-args
         :*  wire=/watch-response/[eyre-id]  duct=~[/http-blah]
-            ^-  (hypo sign:eyre-gate)  :-  *type
+            ^-  sign:eyre-gate
             :*  %g  %unto  %fact
                 %http-response-header
                 !>([303 ['location' '/~/login?redirect=/~landscape/inner-path']~])
@@ -635,7 +631,7 @@
       now=~1111.1.5..1.0.0
       scry=scry-provides-code
       ^=  call-args
-        ^-  [=duct type=* wrapped-task=(hobo task:able:eyre-gate)]
+        ^-  [=duct (unit goof) wrapped-task=(hobo task:able:eyre-gate)]
         :*  duct=~[/http-blah]  ~
             %request
             %.n
@@ -892,8 +888,7 @@
       scry=scry-provides-code
       ^=  take-args
         :*  wire=/channel/timeout/'0123456789abcdef'  duct=~[/http-blah]
-            ^-  (hypo sign:eyre-gate)
-            :-  *type
+            ^-  sign:eyre-gate
             [%b %wake ~]
          ==
       ^=  comparator
@@ -928,8 +923,7 @@
       scry=scry-provides-code
       ^=  take-args
         :*  wire=/channel/poke/'0123456789abcdef'/'0'  duct=~[/http-put-request]
-            ^-  (hypo sign:eyre-gate)
-            :-  *type
+            ^-  sign:eyre-gate
             [%g %unto %poke-ack ~]
          ==
       moves=~
@@ -944,8 +938,7 @@
       ^=  take-args
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
             duct=~[/http-put-request]
-            ^-  (hypo sign:eyre-gate)
-            :-  *type
+            ^-  sign:eyre-gate
             [%g %unto %watch-ack ~]
          ==
       moves=~
@@ -960,8 +953,7 @@
       ^=  take-args
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
             duct=~[/http-put-request]
-            ^-  (hypo sign:eyre-gate)
-            :-  *type
+            ^-  sign:eyre-gate
             [%g %unto %fact %json !>(`json`[%a [%n '1'] [%n '2'] ~])]
          ==
       moves=~
@@ -1146,8 +1138,7 @@
       scry=scry-provides-code
       ^=  take-args
         :*  wire=/channel/poke/'0123456789abcdef'/'0'  duct=~[/http-put-request]
-            ^-  (hypo sign:eyre-gate)
-            :-  *type
+            ^-  sign:eyre-gate
             [%g %unto %poke-ack ~]
          ==
       moves=~
@@ -1162,8 +1153,7 @@
       ^=  take-args
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
             duct=~[/http-put-request]
-            ^-  (hypo sign:eyre-gate)
-            :-  *type
+            ^-  sign:eyre-gate
             [%g %unto %watch-ack ~]
          ==
       moves=~
@@ -1248,8 +1238,7 @@
       scry=scry-provides-code
       ^=  take-args
         :*  wire=/channel/poke/'0123456789abcdef'/'0'  duct=~[/http-put-request]
-            ^-  (hypo sign:eyre-gate)
-            :-  *type
+            ^-  sign:eyre-gate
             [%g %unto %poke-ack ~]
          ==
       moves=~
@@ -1264,8 +1253,7 @@
       ^=  take-args
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
             duct=~[/http-put-request]
-            ^-  (hypo sign:eyre-gate)
-            :-  *type
+            ^-  sign:eyre-gate
             [%g %unto %watch-ack ~]
          ==
       moves=~
@@ -1340,8 +1328,7 @@
       ^=  take-args
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
             duct=~[/http-put-request]
-            ^-  (hypo sign:eyre-gate)
-            :-  *type
+            ^-  sign:eyre-gate
             [%g %unto %fact %json !>(`json`[%a [%n '1'] [%n '2'] ~])]
          ==
       moves=~
@@ -1356,8 +1343,7 @@
       ^=  take-args
         :*  wire=/channel/subscription/'0123456789abcdef'/'2'/~nul/two
             duct=~[/http-put-request]
-            ^-  (hypo sign:eyre-gate)
-            :-  *type
+            ^-  sign:eyre-gate
             [%g %unto %fact %json !>(`json`[%a [%n '1'] [%n '2'] ~])]
          ==
       moves=~
@@ -1479,8 +1465,7 @@
       ^=  take-args
         :*  wire=/channel/subscription/'0123456789abcdef'/'2'/~nul/two
             duct=~[/http-put-request]
-            ^-  (hypo sign:eyre-gate)
-            :-  *type
+            ^-  sign:eyre-gate
             [%g %unto %fact %json !>(`json`[%a [%n '1'] [%n '2'] ~])]
          ==
       ^=  comparator
@@ -1551,8 +1536,7 @@
       scry=scry-provides-code
       ^=  take-args
         :*  wire=/channel/poke/'0123456789abcdef'/'0'  duct=~[/http-put-request]
-            ^-  (hypo sign:eyre-gate)
-            :-  *type
+            ^-  sign:eyre-gate
             [%g %unto %poke-ack ~]
          ==
       moves=~
@@ -1567,8 +1551,7 @@
       ^=  take-args
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
             duct=~[/http-put-request]
-            ^-  (hypo sign:eyre-gate)
-            :-  *type
+            ^-  sign:eyre-gate
             [%g %unto %watch-ack ~]
          ==
       moves=~
@@ -1581,7 +1564,7 @@
       now=(add ~1111.1.2 ~m3)
       scry=scry-provides-code
       ^=  call-args
-      ^-  [duct * (hobo task:able:eyre-gate)]
+      ^-  [duct (unit goof) (hobo task:able:eyre-gate)]
         :*  duct=~[/http-get-open]  ~
             %request
             %.n
@@ -1639,8 +1622,7 @@
       ^=  take-args
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
             duct=~[/http-put-request]
-            ^-  (hypo sign:eyre-gate)
-            :-  *type
+            ^-  sign:eyre-gate
             [%g %unto %fact %json !>(`json`[%a [%n '1'] ~])]
          ==
       ^=  moves
@@ -1728,8 +1710,7 @@
       ^=  take-args
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
             duct=~[/http-put-request]
-            ^-  (hypo sign:eyre-gate)
-            :-  *type
+            ^-  sign:eyre-gate
             [%g %unto %fact %json !>(`json`[%a [%n '2'] ~])]
          ==
       moves=~
@@ -1824,8 +1805,7 @@
       ^=  take-args
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
             duct=~[/http-put-request]
-            ^-  (hypo sign:eyre-gate)
-            :-  *type
+            ^-  sign:eyre-gate
             [%g %unto %watch-ack ~]
          ==
       moves=~
@@ -1838,7 +1818,7 @@
       now
       scry=scry-provides-code
       ^=  call-args
-      ^-  [duct * (hobo task:able:eyre-gate)]
+      ^-  [duct (unit goof) (hobo task:able:eyre-gate)]
         :*  duct=~[/http-get-open]  ~
             %request
             %.n
@@ -1865,8 +1845,7 @@
         ^=  take-args
           :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
               duct=~[/http-put-request]
-              ^-  (hypo sign:eyre-gate)
-              :-  *type
+              ^-  sign:eyre-gate
               [%g %unto %fact %json !>(`json`[%a [%n '1'] ~])]
           ==
         ^=  moves
@@ -1883,8 +1862,7 @@
       ^=  take-args
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
             duct=~[/http-put-request]
-            ^-  (hypo sign:eyre-gate)
-            :-  *type
+            ^-  sign:eyre-gate
             [%g %unto %fact %json !>(`json`[%a [%n '1'] ~])]
         ==
       ^=  moves
@@ -1933,8 +1911,7 @@
       ^=  take-args
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
             duct=~[/http-put-request]
-            ^-  (hypo sign:eyre-gate)
-            :-  *type
+            ^-  sign:eyre-gate
             [%g %unto %fact %json !>(`json`[%a [%n '1'] ~])]
         ==
       ^=  moves
@@ -2052,16 +2029,16 @@
   |=  $:  eyre-gate=_eyre-gate
           now=@da
           scry=roof
-          call-args=[=duct type=* wrapped-task=(hobo task:able:eyre-gate)]
+          call-args=[=duct dud=(unit goof) wrapped-task=(hobo task:able:eyre-gate)]
           expected-moves=(list move:eyre-gate)
       ==
   ^-  [tang _eyre-gate]
   ::
   =/  eyre-core
-    (eyre-gate our=~nul now=now eny=`@uvJ`0xdead.beef scry=scry)
+    (eyre-gate now=now eny=`@uvJ`0xdead.beef scry=scry)
   ::
   =^  moves  eyre-gate
-    (call:eyre-core [duct ~ type wrapped-task]:call-args)
+    (call:eyre-core [duct dud wrapped-task]:call-args)
   ::
   =/  output=tang
     %+  expect-eq
@@ -2074,14 +2051,14 @@
   |=  $:  eyre-gate=_eyre-gate
           now=@da
           scry=roof
-          call-args=[=duct type=* wrapped-task=(hobo task:able:eyre-gate)]
+          call-args=[=duct dud=(unit goof) wrapped-task=(hobo task:able:eyre-gate)]
           move-comparator=$-((list move:eyre-gate) tang)
       ==
   ^-  [tang _eyre-gate]
   ::
-  =/  eyre-core  (eyre-gate our=~nul now=now eny=`@uvJ`0xdead.beef scry=scry)
+  =/  eyre-core  (eyre-gate now=now eny=`@uvJ`0xdead.beef scry=scry)
   ::
-  =^  moves  eyre-gate  (call:eyre-core [duct ~ type wrapped-task]:call-args)
+  =^  moves  eyre-gate  (call:eyre-core [duct dud wrapped-task]:call-args)
   ::
   =/  output=tang  (move-comparator moves)
   ::
@@ -2091,14 +2068,14 @@
   |=  $:  eyre-gate=_eyre-gate
           now=@da
           scry=roof
-          take-args=[=wire =duct wrapped-sign=(hypo sign:eyre-gate)]
+          take-args=[=wire =duct =sign:eyre-gate]
           expected-moves=(list move:eyre-gate)
       ==
   ^-  [tang _eyre-gate]
   ::
-  =/  eyre-core  (eyre-gate our=~nul now=now eny=`@uvJ`0xdead.beef scry=scry)
+  =/  eyre-core  (eyre-gate now=now eny=`@uvJ`0xdead.beef scry=scry)
   ::
-  =^  moves  eyre-gate  (take:eyre-core [wire duct ~ wrapped-sign]:take-args)
+  =^  moves  eyre-gate  (take:eyre-core [wire duct ~ sign]:take-args)
   ::
   =/  output=tang
     %+  expect-eq
@@ -2111,14 +2088,14 @@
   |=  $:  eyre-gate=_eyre-gate
           now=@da
           scry=roof
-          take-args=[=wire =duct wrapped-sign=(hypo sign:eyre-gate)]
+          take-args=[=wire =duct =sign:eyre-gate]
           move-comparator=$-((list move:eyre-gate) tang)
       ==
   ^-  [tang _eyre-gate]
   ::
-  =/  eyre-core  (eyre-gate our=~nul now=now eny=`@uvJ`0xdead.beef scry=scry)
+  =/  eyre-core  (eyre-gate now=now eny=`@uvJ`0xdead.beef scry=scry)
   ::
-  =^  moves  eyre-gate  (take:eyre-core [wire duct ~ wrapped-sign]:take-args)
+  =^  moves  eyre-gate  (take:eyre-core [wire duct ~ sign]:take-args) 
   ::
   =/  output=tang  (move-comparator moves)
   ::

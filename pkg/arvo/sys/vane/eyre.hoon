@@ -1,7 +1,7 @@
 !:
 ::  lighter than eyre
 ::
-|=  pit=vase
+|=  our=ship
 =,  eyre
 ::  internal data structures
 ::
@@ -552,7 +552,7 @@
 ++  per-server-event
   ::  gate that produces the +per-server-event core from event information
   ::
-  |=  [[our=@p eny=@ =duct now=@da scry=sley] state=server-state]
+  |=  [[eny=@ =duct now=@da scry=sley] state=server-state]
   =/  eyre-id  (scot %ta (cat 3 'eyre_' (scot %uv (sham duct))))
   |%
   ::  +request-local: bypass authentication for local lens connections
@@ -2097,14 +2097,14 @@
 =|  ax=axle
 ::  a vane is activated with current date, entropy, and a namespace function
 ::
-|=  [our=ship now=@da eny=@uvJ rof=roof]
+|=  [now=@da eny=@uvJ rof=roof]
 =*  scry-gate  (en-sley rof)
 ::  allow jets to be registered within this core
 ::
 ~%  %http-server  ..part  ~
 |%
 ++  call
-  |=  [=duct dud=(unit goof) type=* wrapped-task=(hobo task:able)]
+  |=  [=duct dud=(unit goof) wrapped-task=(hobo task:able)]
   ^-  [(list move) _http-server-gate]
   ::
   =/  task=task:able  ((harden task:able) wrapped-task)
@@ -2140,7 +2140,7 @@
   ::    XX cancel active too if =(0 trim-priority) ?
   ::
   ?:  ?=(%trim -.task)
-    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
+    =/  event-args  [[eny duct now scry-gate] server-state.ax]
     =*  by-channel  by-channel:(per-server-event event-args)
     =*  channel-state  channel-state.server-state.ax
     ::
@@ -2188,7 +2188,7 @@
         [closed-connections server-state.ax]
       ::
       =/  event-args
-        [[our eny duct.i.connections now scry-gate] server-state.ax]
+        [[eny duct.i.connections now scry-gate] server-state.ax]
       =/  cancel-request  cancel-request:(per-server-event event-args)
       =^  moves  server-state.ax  cancel-request
       ::
@@ -2210,7 +2210,7 @@
     ~>  %slog.[0 leaf+"eyre: code-changed: throwing away cookies and sessions"]
     =.  authentication-state.server-state.ax  *authentication-state
     ::
-    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
+    =/  event-args  [[eny duct now scry-gate] server-state.ax]
     =*  by-channel  by-channel:(per-server-event event-args)
     =*  channel-state  channel-state.server-state.ax
     ::
@@ -2226,7 +2226,7 @@
   ::
   ::  all other commands operate on a per-server-event
   ::
-  =/  event-args  [[our eny duct now scry-gate] server-state.ax]
+  =/  event-args  [[eny duct now scry-gate] server-state.ax]
   =/  server  (per-server-event event-args)
   ::
   ?-    -.task
@@ -2313,13 +2313,10 @@
   ==
 ::
 ++  take
-  |=  [=wire =duct dud=(unit goof) wrapped-sign=(hypo sign)]
+  |=  [=wire =duct dud=(unit goof) =sign]
   ^-  [(list move) _http-server-gate]
   ?^  dud
     ~|(%eyre-take-dud (mean tang.u.dud))
-  ::  unwrap :sign, ignoring unneeded +type in :p.wrapped-sign
-  ::
-  =/  =sign  q.wrapped-sign
   =>  %=    .
           sign
         ?:  ?=(%g -.sign)
@@ -2356,7 +2353,7 @@
       [~ http-server-gate]
     ::  we have an error; propagate it to the client
     ::
-    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
+    =/  event-args  [[eny duct now scry-gate] server-state.ax]
     =/  handle-gall-error
       handle-gall-error:(per-server-event event-args)
     =^  moves  server-state.ax
@@ -2365,7 +2362,7 @@
   ::
   ++  watch-response
     ::
-    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
+    =/  event-args  [[eny duct now scry-gate] server-state.ax]
     ::
     ?>  ?=([@ *] t.wire)
     ?:  ?=([%g %unto %watch-ack *] sign)
@@ -2410,7 +2407,7 @@
   ::
   ++  channel
     ::
-    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
+    =/  event-args  [[eny duct now scry-gate] server-state.ax]
     ::  channel callback wires are triples.
     ::
     ?>  ?=([@ @ @t *] wire)
@@ -2552,7 +2549,7 @@
       :^  ~  ~  %noun
       !>  ^-  ?
       %-  =<  request-is-logged-in:authentication
-          (per-server-event [our eny *duct now scry-gate] server-state.ax)
+          (per-server-event [eny *duct now scry-gate] server-state.ax)
       %*(. *request:http header-list ['cookie' u.cookies]~)
     ==
   ?.  ?=(%$ ren)

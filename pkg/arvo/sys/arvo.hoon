@@ -100,7 +100,6 @@
 ::  $roof: namespace
 ::  $rook: meta-namespace
 ::  +room: generic namespace
-::  $vane-sample: vane wrapper-gate aargument
 ::  $sley: namespace function
 ::  $slyd: super advanced
 ::  $slyt: old namespace
@@ -136,9 +135,6 @@
   %-  unit                                              ::  ~: unknown
   %-  unit                                              ::  ~ ~: invalid
   (cask a)
-::
-+$  vane-sample
-  [our=ship now=@da eny=@uvJ rof=rook]
 ::
 +$  sley
   $-  [* (unit (set monk)) term beam]
@@ -899,6 +895,8 @@
   ::
   ++  va
     =>  |%
+        +$  vane-sample  [now=@da eny=@uvJ rof=rook]
+        ::
         ++  smit
           |=  [cap=tape sub=vase pax=path txt=@t]
           ^-  vase
@@ -908,10 +906,10 @@
           (slap sub (rain pax txt))
         ::
         ++  create
-          |=  [zus=vase lal=term pax=path txt=@t]
+          |=  [our=ship zus=vase lal=term pax=path txt=@t]
           ^-  vase
           =/  cap  "vane %{(trip lal)}"
-          (slym (smit cap zus pax txt) zus)
+          (slym (smit cap zus pax txt) our)
         ::
         ++  settle
           |=  van=vase
@@ -930,7 +928,7 @@
         --
     ::
     ~%  %va  ..va  ~
-    |_  [our=ship vil=vile vax=vase sac=worm]
+    |_  [vil=vile vax=vase sac=worm]
     ::
     ::  |plow:va: operate in time and space
     ::
@@ -945,7 +943,7 @@
         ^-  (unit (unit (cask meta)))
         ::  namespace reads receive no entropy
         ::
-        =/  sam=vane-sample  [our now *@uvJ rok]
+        =/  sam=vane-sample  [now *@uvJ rok]
         =^  rig  sac
           ~>  %mean.'peek: activation failed'
           (~(slym wa sac) vax sam)
@@ -969,7 +967,7 @@
         |=  [hen=duct eny=@uvJ dud=(unit goof)]
         =*  duc  [duc.vil hen]
         =*  err  [dud.vil dud]
-        =/  sam=vane-sample  [our now eny rok]
+        =/  sam=vane-sample  [now eny rok]
         =^  rig  sac
           ~>  %mean.'spin: activation failed'
           (~(slym wa sac) vax sam)
@@ -1004,10 +1002,10 @@
           =^  gat  sac
             (~(slap wa sac) rig [%limb %call])
           ::
-          ::  sample is [duct (unit goof) (hypo (hobo task))]
+          ::  sample is [duct (unit goof) (hobo task)]
           ::
           =/  sam=maze
-            (slid duc (slid err (slix task)))
+            (slid duc (slid err task))
           =^  pro  sac  (slur sac gat sam)
           (peel pro)
         ::  +take:spin:plow:va: retreat statefully
@@ -1021,11 +1019,11 @@
           =/  src=vase
             [[%atom %tas `from] from]
           ::
-          ::  sample is [wire duct (unit goof) (hypo sign=[term gift])]
+          ::  sample is [wire duct (unit goof) sign=[term gift]]
           ::
           =/  sam=maze
             =*  tea  [wir.vil wire]
-            (slid tea (slid duc (slid err (slix (slid src gift)))))
+            (slid tea (slid duc (slid err (slid src gift))))
           =^  pro  sac  (slur sac gat sam)
           (peel pro)
         --
@@ -1281,7 +1279,7 @@
       =/  =vane
         ~|  [%missing-vane way]
         (~(got by van.mod) way)
-      (~(plow va [our vil vane]) now peek)
+      (~(plow va [vil vane]) now peek)
     ::
     ::  |pith: operate on arvo internals
     ::
@@ -1352,7 +1350,7 @@
             %+  roll  van.job
             |=  [[nam=term txt=hoof] van=_van.mod.sol]
             ^+  van
-            =/  nex  (create:va zus.mod.sol nam /sys/vane/[nam]/hoon txt)
+            =/  nex  (create:va our zus.mod.sol nam /sys/vane/[nam]/hoon txt)
             =/  nav  (~(get by van) nam)
             =?  nex  ?=(^ nav)  (update:va vase.u.nav nex)
             (~(put by van) nam (settle:va nex))
@@ -1697,7 +1695,7 @@
               zuse/;;(@ud q:(slap zus limb/%zuse))
           ==
       =/  nav  %-  ~(run by van)
-               |=(a=(trap vase) (settle:va:part (slym $:a zus)))
+               |=(a=(trap vase) (settle:va:part (slym $:a u.who)))
       :^  ~  arvo  *debt
       [[u.who now u.eny] [lac] [u.ver |] u.fat lul zus nav]
     ::

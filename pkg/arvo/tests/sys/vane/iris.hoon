@@ -2,9 +2,7 @@
 /=  http-client-raw  /sys/vane/iris
 ::
 !:
-::
-=/  test-pit=vase  !>(..zuse)
-=/  http-client-gate  (http-client-raw test-pit)
+=/  http-client-gate  (http-client-raw ~nul)
 ::
 |%
 ::  +test-client-request-basic: tests a single request, single reply style http request
@@ -514,15 +512,15 @@
   |=  $:  http-client-gate=_http-client-gate
           now=@da
           scry=roof
-          call-args=[=duct type=* wrapped-task=(hobo task:able:iris)]
+          call-args=[=duct dud=(unit goof) wrapped-task=(hobo task:able:iris)]
           expected-moves=(list move:http-client-gate)
       ==
   ^-  [tang _http-client-gate]
   ::
   =/  http-client-core
-    (http-client-gate our=~nul now=now eny=`@uvJ`0xdead.beef scry=scry)
+    (http-client-gate now=now eny=`@uvJ`0xdead.beef scry=scry)
   ::
-  =^  moves  http-client-gate  (call:http-client-core [duct ~ type wrapped-task]:call-args)
+  =^  moves  http-client-gate  (call:http-client-core [duct dud wrapped-task]:call-args)
   ::
   =/  output=tang
     %+  expect-eq

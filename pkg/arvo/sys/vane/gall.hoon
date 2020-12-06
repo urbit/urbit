@@ -2,7 +2,7 @@
 !?  163
 ::
 ::::
-|=  pit=vase
+|=  our=ship
 =,  gall
 =>
 |%
@@ -140,7 +140,7 @@
 ::
 =<  =*  adult-gate  .
     =|  =spore
-    |=  [our=ship now=@da eny=@uvJ rof=roof]
+    |=  [now=@da eny=@uvJ rof=roof]
     =*  pupal-gate  .
     =*  adult-core  (adult-gate +<)
     =*  ski  (en-sley rof)
@@ -196,7 +196,7 @@
       [moves adult-gate]
     ::
     ++  call
-      |=  [=duct dud=(unit goof) typ=type wrapped-task=(hobo task:able)]
+      |=  [=duct dud=(unit goof) wrapped-task=(hobo task:able)]
       =*  call-args  +<
       ?:  =(~ eggs.spore)
         ~>  %slog.[0 leaf+"gall: direct morphogenesis"]
@@ -211,7 +211,7 @@
     ++  scry  scry:adult-core
     ++  stay  ~|(%gall-subinvolution !!)
     ++  take
-      |=  [=wire =duct dud=(unit goof) typ=type sign=sign-arvo]
+      |=  [=wire =duct dud=(unit goof) sign=sign-arvo]
       =*  take-args  +<
       ?:  =(~ eggs.spore)
         ~>  %slog.[0 leaf+"gall: direct morphogenesis"]
@@ -237,7 +237,7 @@
 ::  adult gall vane interface, for type compatibility with pupa
 ::
 =|  state=state-7
-|=  [our=ship now=@da eny=@uvJ rof=roof]
+|=  [now=@da eny=@uvJ rof=roof]
 =*  gall-payload  .
 =*  ski  (en-sley rof)
 =<  ~%  %gall-wrap  ..mo  ~
@@ -1662,13 +1662,13 @@
 ::
 ++  call
   ~%  %gall-call  +>   ~
-  |=  [=duct dud=(unit goof) hic=(hypo (hobo task:able))]
+  |=  [=duct dud=(unit goof) hic=(hobo task:able)]
   ^-  [(list move) _gall-payload]
   ?^  dud
     ~|(%gall-call-dud (mean tang.u.dud))
   ::
-  ~|  [%gall-call-failed duct q.hic]
-  =/  =task:able  ((harden task:able) q.hic)
+  ~|  [%gall-call-failed duct hic]
+  =/  =task:able  ((harden task:able) hic)
   ::
   =/  mo-core  (mo-abed:mo duct)
   ?-    -.task
@@ -1770,7 +1770,7 @@
 ::
 ++  take
   ~/  %gall-take
-  |=  [=wire =duct dud=(unit goof) typ=type syn=sign-arvo]
+  |=  [=wire =duct dud=(unit goof) syn=sign-arvo]
   ^-  [(list move) _gall-payload]
   ?^  dud
     ~&(%gall-take-dud ((slog tang.u.dud) [~ gall-payload]))

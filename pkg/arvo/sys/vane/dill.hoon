@@ -1,7 +1,7 @@
 !:
 ::  dill (4d), terminal handling
 ::
-|=  pit=vase
+|=  our=ship
 =,  dill
 =>  |%                                                  ::  interface tiles
 +$  gill  (pair ship term)                              ::  general contact
@@ -95,7 +95,7 @@
 ::::::::                                                ::  dill tiles
 --
 =|  all=axle
-|=  [our=ship now=@da eny=@uvJ rof=roof]                ::  current invocation
+|=  [now=@da eny=@uvJ rof=roof]                         ::  current invocation
 =>  ~%  %dill  ..part  ~
     |%
     ++  as                                              ::  per cause
@@ -311,7 +311,6 @@
 ++  call                                                ::  handle request
   |=  $:  hen=duct
           dud=(unit goof)
-          type=*
           wrapped-task=(hobo task:able)
       ==
   ^+  [*(list move) ..^$]
@@ -454,7 +453,7 @@
 ++  stay  all
 ::
 ++  take                                                ::  process move
-  |=  [tea=wire hen=duct dud=(unit goof) hin=(hypo sign)]
+  |=  [tea=wire hen=duct dud=(unit goof) hin=sign]
   ^+  [*(list move) ..^$]
   ?^  dud
     ~|(%dill-take-dud (mean tang.u.dud))
@@ -464,8 +463,8 @@
     ::  :hen is an unrecognized duct
     ::  could be before %boot (or %boot failed)
     ::
-    ~&  [%dill-take-no-flow hen -.q.hin +<.q.hin]
+    ~&  [%dill-take-no-flow hen -.hin +<.hin]
     [~ ..^$]
-  =^  moz  all  abet:(take:u.nus tea q.hin)
+  =^  moz  all  abet:(take:u.nus tea hin)
   [moz ..^$]
 --

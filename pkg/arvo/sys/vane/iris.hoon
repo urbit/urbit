@@ -1,7 +1,7 @@
 !:
 ::  http-client
 ::
-|=  pit=vase
+|=  our=ship
 =,  iris
 ::
 ::
@@ -102,7 +102,7 @@
 ::  +per-client-event: per-event client core
 ::
 ++  per-client-event
-  |=  [[our=@p eny=@ =duct now=@da scry=sley] =state]
+  |=  [[eny=@ =duct now=@da scry=sley] =state]
   |%
   ::  +request: makes an external web request
   ::
@@ -297,14 +297,14 @@
 =|  ax=axle
 ::  a vane is activated with current date, entropy, and a namespace function
 ::
-|=  [our=ship now=@da eny=@uvJ rof=roof]
+|=  [now=@da eny=@uvJ rof=roof]
 =*  scry-gate  (en-sley rof)
 ::  allow jets to be registered within this core
 ::
 ~%  %http-client  ..part  ~
 |%
 ++  call
-  |=  [=duct dud=(unit goof) type=* wrapped-task=(hobo task:able)]
+  |=  [=duct dud=(unit goof) wrapped-task=(hobo task:able)]
   ^-  [(list move) _light-gate]
   ::
   =/  task=task:able  ((harden task:able) wrapped-task)
@@ -331,7 +331,7 @@
   ?:  ?=(%vega -.task)
     [~ light-gate]
   ::
-  =/  event-args  [[our eny duct now scry-gate] state.ax]
+  =/  event-args  [[eny duct now scry-gate] state.ax]
   =/  client  (per-client-event event-args)
   ?-    -.task
   ::
@@ -371,7 +371,7 @@
 ::  http-client issues no requests to other vanes
 ::
 ++  take
-  |=  [=wire =duct dud=(unit goof) wrapped-sign=*]
+  |=  [=wire =duct dud=(unit goof) sign=*]
   ^-  [(list move) _light-gate]
   ?<  ?=(^ dud)
   !!
