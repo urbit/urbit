@@ -253,12 +253,7 @@
       ==
   ==
 +$  vane  [=vase =worm]
-+$  vere
-  $:  $:  non=@ta
-          rev=(pair term (trel @ud @ud @ud)) :: XX path?
-      ==
-      kel=wynn
-  ==
++$  vere  [[non=@ta rev=path] kel=wynn]
 +$  vile
   $:  typ=type    ::  -:!>(*type)
       duc=type    ::  -:!>(*duct)
@@ -341,48 +336,66 @@
       ==
     ~>(%slog.[0 leaf+"arvo: scry-lost"] ~)
   [~ ~ q.vax]
-::  +wyrd: kelvin negotiation
+::  |wyrd: kelvin negotiation
 ::
 ::    specified but unimplemented:
 ::    arvo should produce a [wend/wynn] effect
 ::    to signal downgrade
 ::
 ++  wyrd
-  |=  [run=wynn hav=wynn]
-  ::  wyr: ~: runtime supports all required kelvins
-  ::       ^: runtime support is missing or lagging
+  |%
+  ::  +sane: kelvin stack for validity
   ::
-  =;  wyr  !.
-    ?~  wyr
-      same
-    ~&  wyrd=wyr
-    ~_  :+  %rose
-          [" " ~ ~]
-        :~  =+  p.u.wyr
-            leaf/"%{(trip p)} %{(scow %ud q)} required;"
-            ?~  q.u.wyr
-              leaf/"runtime missing support"
-            leaf/"runtime only supports %{(scow %ud u.q.u.wyr)}"
-        ==
-    ~>  %mean.'arvo: upgrade blocked'
-    ~>  %mean.'wyrd'
-    !!
+  ++  sane
+    |=  kel=wynn
+    ^-  ?
+    &
+    :: ?:  =(~ kel)  &
+    :: =^  las=(pair term @ud)  kel  kel
+    :: |-  ^-  ?
+    :: ?~  kel  &
+    :: ?&  (gte q.las q.i.kel)
+    ::     $(las i.kel, kel t.kel)
+    :: ==
+  ::  +need: require kelvins
   ::
-  |-  ^-  (unit (pair (pair term @ud) (unit @ud)))
-  ?~  hav  ~
-  ::
-  ::  fel: %&: runtime kelvin for [i.hav]
-  ::       %|: no specified runtime support
-  ::
-  =/  fel
-    |-  ^-  (each @ud (pair term @ud))
-    ?~  run  |/i.hav
-    ?:(=(p.i.hav p.i.run) &/q.i.run $(run t.run))
-  ::
-  ?-  -.fel
-    %|  `[p.fel ~]
-    %&  ?.((lte p.fel q.i.hav) `[i.hav `p.fel] $(hav t.hav))
-  ==
+  ++  need
+    |=  [run=wynn hav=wynn]
+    ::  wyr: ~: runtime supports all required kelvins
+    ::       ^: runtime support is missing or lagging
+    ::
+    =;  wyr  !.
+      ?~  wyr
+        same
+      ~&  wyrd=wyr
+      ~_  :+  %rose
+            [" " ~ ~]
+          :~  =+  p.u.wyr
+              leaf/"%{(trip p)} %{(scow %ud q)} required;"
+              ?~  q.u.wyr
+                leaf/"runtime missing support"
+              leaf/"runtime only supports %{(scow %ud u.q.u.wyr)}"
+          ==
+      ~>  %mean.'arvo: upgrade blocked'
+      ~>  %mean.'wyrd'
+      !!
+    ::
+    |-  ^-  (unit (pair (pair term @ud) (unit @ud)))
+    ?~  hav  ~
+    ::
+    ::  fel: %&: runtime kelvin for [i.hav]
+    ::       %|: no specified runtime support
+    ::
+    =/  fel
+      |-  ^-  (each @ud (pair term @ud))
+      ?~  run  |/i.hav
+      ?:(=(p.i.hav p.i.run) &/q.i.run $(run t.run))
+    ::
+    ?-  -.fel
+      %|  `[p.fel ~]
+      %&  ?.((lte p.fel q.i.hav) `[i.hav `p.fel] $(hav t.hav))
+    ==
+  --
 ::
 ::  |de: axal engine
 ::
@@ -1302,7 +1315,7 @@
             (smit:va "lull" pit /sys/lull/hoon u.lul.job)
           =?  zus.mod.sol  ?=(^ zus.job)
             (smit:va "zuse" lul.mod.sol /sys/zuse/hoon u.zus.job)
-          %-  %+  wyrd   kel.ver.zen
+          %-  %+  need:wyrd   kel.ver.zen
               :~  lull/;;(@ud q:(slap lul.mod.sol limb/%lull))
                   zuse/;;(@ud q:(slap zus.mod.sol limb/%zuse))
               ==
@@ -1386,7 +1399,9 @@
         ::
         ::  %wyrd: check for runtime kelvin compatibility
         ::
-          %wyrd  %-  %+  wyrd  kel.p.buz
+          %wyrd  ?.  (sane:wyrd kel.p.buz)
+                   ~>(%mean.'wyrd: insane' !!)
+                 %-  %+  need:wyrd  kel.p.buz
                      ^-  (list (pair term @))
                      :~  hoon/hoon-version
                          arvo/arvo
@@ -1456,7 +1471,7 @@
       ~>(%mean.'wyrd: vega:' !!)
     ::  require runtime compatibility
     ::
-    %-  (wyrd kel [hoon/nex ~])
+    %-  (need:wyrd kel [hoon/nex ~])
     ::
     ::  if we're upgrading language versions, recompile the compiler
     ::
@@ -1559,7 +1574,7 @@
   ::
   =.  van.mod  (~(run by van.mod) |=(=vane vane(worm *worm)))
   ::
-  %-  %+  wyrd  kel.ver.zen
+  %-  %+  need:wyrd  kel.ver.zen
       ^-  (list (pair term @))
       :~  hoon/hoon-version
           arvo/arvo
@@ -1648,7 +1663,7 @@
         ~
       =/  lul  $:u.lul
       =/  zus  $:u.zus
-      %-  %+  wyrd  kel.u.ver
+      %-  %+  need:wyrd  kel.u.ver
           ^-  (list (pair term @))
           :~  hoon/hoon-version
               arvo/arvo
@@ -1736,7 +1751,9 @@
       %what  ..poke(gub (what gub p.wip))
       %whom  ..poke(who ~|(%whom-once ?>(?=(~ who) `p.wip)))
     ::
-      %wyrd  %-  %+  wyrd  kel.p.wip
+      %wyrd  ?.  (sane:wyrd kel.p.wip)
+                   ~>(%mean.'wyrd: insane' !!)
+             %-  %+  need:wyrd  kel.p.wip
                  ^-  (list (pair term @))
                  :*  hoon/hoon-version
                      arvo/arvo

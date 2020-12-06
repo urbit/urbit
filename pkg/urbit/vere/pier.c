@@ -668,11 +668,8 @@ _pier_wyrd_fail(u3_pier* pir_u, u3_ovum* egg_u, u3_noun lud)
 
 //  XX organizing version constants
 //
-#define VERE_NAME   "vere"
-#define VERE_MAJOR  0
-#define VERE_MINOR  10
-#define VERE_PATCH  9
-#define VERE_ZUSE   309
+#define VERE_NAME  "vere"
+#define VERE_ZUSE  309
 
 /* _pier_wyrd_aver(): check for %wend effect and version downgrade. RETAIN
 */
@@ -791,7 +788,9 @@ _pier_wyrd_card(u3_pier* pir_u)
 
   //  XX god_u not necessarily available yet, refactor call sites
   //
-  u3_noun ver = u3nq(u3i_string(VERE_NAME), VERE_MAJOR, VERE_MINOR, VERE_PATCH);
+  u3_noun ver = u3nt(u3i_string(VERE_NAME),
+                     u3dc("scot", c3__ta, u3i_string(URBIT_VERSION)),
+                     u3_nul);
   u3_noun kel = u3nl(u3nc(c3__zuse, VERE_ZUSE),       //  XX god_u->zus_w
                      u3nc(c3__lull, u3i_string("lull-kelvin")),    //  XX define
                      u3nc(c3__arvo, u3i_string("arvo-kelvin")), //  XX from both king and serf?
