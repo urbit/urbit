@@ -1252,7 +1252,7 @@
       ::
       ::  vane and care are concatenated
       ::
-      =/  way=term  (end 3 cyr)
+      =/  way=term  (grow (end 3 cyr))
       =/  car=term  (rsh 3 cyr)
       ?.  (~(has by van.mod) way)
         ~
@@ -1269,7 +1269,7 @@
       %+  push  [way duct bars.gem]
       ~|  bar-stack=`(list ^duct)`[duct bars.gem]
       %.  task
-      call:(spin:(plow way) duct eny dud)
+      call:(spin:(plow (grow way)) duct eny dud)
     ::  +take: retreat along call-stack
     ::
     ++  take
@@ -1291,7 +1291,7 @@
       ~|  wire=wire
       ~|  bar-stack=`(list ^duct)`[duct bars.gem]
       %.  [wire [vane.gem gift]]
-      take:(spin:(plow way) duct eny dud)
+      take:(spin:(plow (grow way)) duct eny dud)
     ::  +push: finalize an individual step
     ::
     ++  push
@@ -1306,7 +1306,6 @@
     ++  plow
       |=  way=term
       ~|  [%plow-failed way]
-      =.  way  (grow way)
       =/  =vane
         ~|  [%missing-vane way]
         (~(got by van.mod) way)
