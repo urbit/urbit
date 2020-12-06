@@ -348,12 +348,11 @@
         ::    %jael init must be deferred (makes http requests)
         ::
         ^-  (list move)
-        :~  [hen %give %init our]
-            [hen %slip %e %init our]
-            [hen %slip %d %init our]
-            [hen %slip %g %init our]
-            [hen %slip %c %init our]
-            [hen %slip %a %init our]
+        :~  [hen %slip %e %init ~]
+            [hen %slip %d %init ~]
+            [hen %slip %g %init ~]
+            [hen %slip %c %init ~]
+            [hen %slip %a %init ~]
         ==
       +>.$
     ::
@@ -390,12 +389,11 @@
       =.  moz
         %+  weld  moz
         ^-  (list move)
-        :~  [hen %give %init our]
-            [hen %slip %e %init our]
-            [hen %slip %d %init our]
-            [hen %slip %g %init our]
-            [hen %slip %c %init our]
-            [hen %slip %a %init our]
+        :~  [hen %slip %e %init ~]
+            [hen %slip %d %init ~]
+            [hen %slip %g %init ~]
+            [hen %slip %c %init ~]
+            [hen %slip %a %init ~]
         ==
       +>.$
     ::

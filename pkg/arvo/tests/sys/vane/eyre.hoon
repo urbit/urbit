@@ -12,7 +12,7 @@
       eyre-gate
       now=~1111.1.1
       scry=scry-provides-code
-      call-args=[duct=~[/init] ~ [%init ~nul]]
+      call-args=[duct=~[/init] ~ [%init ~]]
       expected-moves=~
     ==
   ::
@@ -25,7 +25,7 @@
       eyre-gate
       now=~1111.1.1
       scry=scry-provides-code
-      call-args=[duct=~[/init] ~ [%init ~nul]]
+      call-args=[duct=~[/init] ~ [%init ~]]
       expected-moves=~
     ==
   ::  app1 binds successfully
@@ -62,7 +62,7 @@
       eyre-gate
       now=~1111.1.1
       scry=scry-provides-code
-      call-args=[duct=~[/init] ~ [%init ~nul]]
+      call-args=[duct=~[/init] ~ [%init ~]]
       expected-moves=~
     ==
   ::  app1 binds successfully
@@ -134,7 +134,7 @@
       eyre-gate
       now=~1111.1.1
       scry=scry-provides-code
-      call-args=[duct=~[/init] ~ [%init ~nul]]
+      call-args=[duct=~[/init] ~ [%init ~]]
       expected-moves=~
     ==
   ::  app1 binds successfully
@@ -183,7 +183,7 @@
       eyre-gate
       now=~1111.1.1
       scry=scry-provides-code
-      call-args=[duct=~[/init] ~ [%init ~nul]]
+      call-args=[duct=~[/init] ~ [%init ~]]
       expected-moves=~
     ==
   ::  when there's no configuration and nothing matches, expect 404
@@ -226,7 +226,7 @@
       eyre-gate
       now=~1111.1.1
       scry=scry-provides-code
-      call-args=[duct=~[/init] ~ [%init ~nul]]
+      call-args=[duct=~[/init] ~ [%init ~]]
       expected-moves=~
     ==
   ::  app1 binds successfully
@@ -319,7 +319,7 @@
       eyre-gate
       now=~1111.1.1
       scry=scry-provides-code
-      call-args=[duct=~[/init] ~ [%init ~nul]]
+      call-args=[duct=~[/init] ~ [%init ~]]
       expected-moves=~
     ==
   ::  app1 binds successfully
@@ -422,7 +422,7 @@
       eyre-gate
       now=~1111.1.1
       scry=scry-provides-code
-      call-args=[duct=~[/init] ~ [%init ~nul]]
+      call-args=[duct=~[/init] ~ [%init ~]]
       expected-moves=~
     ==
   ::  app1 binds successfully
@@ -537,7 +537,7 @@
       eyre-gate
       now=~1111.1.1
       scry=scry-provides-code
-      call-args=[duct=~[/init] ~ [%init ~nul]]
+      call-args=[duct=~[/init] ~ [%init ~]]
       expected-moves=~
     ==
   ::  app1 binds successfully
@@ -701,7 +701,7 @@
       eyre-gate
       now=~1111.1.1
       scry=scry-provides-code
-      call-args=[duct=~[/init] ~ [%init ~nul]]
+      call-args=[duct=~[/init] ~ [%init ~]]
       expected-moves=~
     ==
   ::  gen1 binds successfully
@@ -836,7 +836,7 @@
       eyre-gate
       now=~1111.1.1
       scry=scry-provides-code
-      call-args=[duct=~[/init] ~ [%init ~nul]]
+      call-args=[duct=~[/init] ~ [%init ~]]
       expected-moves=~
     ==
   ::
@@ -1926,7 +1926,7 @@
       eyre-gate
       now=~1111.1.1
       scry=scry-provides-code
-      call-args=[duct=~[/init] ~ [%init ~nul]]
+      call-args=[duct=~[/init] ~ [%init ~]]
       expected-moves=~
     ==
   ::  app1 binds successfully
@@ -2262,7 +2262,7 @@
       eyre-gate
       now=~1111.1.1
       scry=scry-provides-code
-      call-args=[duct=~[/init] ~ [%init ~nul]]
+      call-args=[duct=~[/init] ~ [%init ~]]
       expected-moves=~
     ==
   ::  ensure there's an authenticated session

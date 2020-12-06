@@ -46,7 +46,6 @@
       $:  %d                                            ::
           $>  $?  %crud                                 ::
                   %heft                                 ::
-                  %init                                 ::  XX obsolete?
                   %text                                 ::
                   %verb                                 ::
               ==                                        ::
@@ -66,7 +65,7 @@
           task:able:jael                                ::
   ==  ==                                                ::
 +$  sign                                                ::  in result $<-
-  $~  [%j %init *@p]                                    ::
+  $~  [%d %blit ~]                                      ::
   $%  $:  %b                                            ::
           $%  $>(%writ gift:able:clay)                  ::  XX %slip
               $>(%mere gift:able:clay)                  ::  XX %slip
@@ -86,11 +85,6 @@
                   %unto                                 ::
               ==                                        ::
           gift:able:gall                                ::
-      ==                                                ::
-      $:  %j                                            ::
-          $>  $?  %init                                 ::
-              ==                                        ::
-          gift:able:jael                                ::
   ==  ==                                                ::
 ::::::::                                                ::  dill tiles
 --
@@ -261,11 +255,6 @@
         |=  [tea=wire sih=sign]
         ^+  +>
         ?-    sih
-            [%j %init *]
-          ::  pass thru to unix
-          ::
-          +>(moz :_(moz [hen %give +.sih]))
-        ::
             [%g %onto *]
           ::  ~&  [%take-gall-onto +>.sih]
           ?-  -.+>.sih
@@ -338,7 +327,7 @@
       ~|  invalid-boot-event+hen  !!
     =.  lit.all  lit.task
     [[hen %pass / %j u.boot]~ ..^$]
-  ::  we are subsequently initialized. single-home
+  ::  we are subsequently initialized.
   ::
   ?:  ?=(%init -.task)
     ?>  =(~ dug.all)

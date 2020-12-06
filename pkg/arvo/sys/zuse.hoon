@@ -196,7 +196,7 @@
       [%crud p=@tas q=(list tank)]
       ::  boot completed (XX legacy)
       ::
-      [%init p=ship]
+      [%init ~]
       ::  trim state (in response to memory pressure)
       ::
       [%trim p=@ud]
@@ -1096,7 +1096,6 @@
       $%  [%bbye ~]                                     ::  reset prompt
           [%blit p=(list blit)]                         ::  terminal output
           [%burl p=@t]                                  ::  activate url
-          [%init p=@p]                                  ::  set owner
           [%logo ~]                                     ::  logout
           [%meld ~]                                     ::  unify memory
           [%pack ~]                                     ::  compact memory
@@ -1953,8 +1952,7 @@
       ==
     ::                                                  ::
     +$  gift                                            ::  out result <-$
-      $%  [%init p=ship]                                ::  report install unix
-          [%done error=(unit error:ames)]               ::  ames message (n)ack
+      $%  [%done error=(unit error:ames)]               ::  ames message (n)ack
           [%boon payload=*]                             ::  ames response
           [%private-keys =life vein=(map life ring)]    ::  private keys
           [%public-keys =public-keys-result]            ::  ethereum changes
@@ -2163,7 +2161,7 @@
   --  ::  jael
 ::
 +$  gift-arvo                                           ::  out result <-$
-  $~  [%init ~zod]
+  $~  [%doze ~]
   $%  gift:able:ames
       gift:able:behn
       gift:able:clay

@@ -13,7 +13,7 @@
   ::
   =/  call-args
     =/  =duct  ~[/init]
-    =/  =task:able:gall  [%init ~nec]
+    =/  =task:able:gall  [%init ~]
     [duct task]
   ::
   =/  expected-moves=(list move:gall-gate)  ~
