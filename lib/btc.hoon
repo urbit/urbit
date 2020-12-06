@@ -15,7 +15,7 @@
 ::
 ++  sha256
   |=  =byts  ^-  hash256
-  ::  if there are leading 0s, lshift by their amount after flip to little endian to preserve
+  ::  if there are leading 0s, lshift by their amount after flip to little endian to preserve 
   =/  pad=@  (sub wid.byts (met 3 dat.byts))
   =/  little-endian=@
     (lsh 3 pad (swp 3 dat.byts))

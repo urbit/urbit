@@ -109,6 +109,9 @@
         %address-info
       [%get-address-info address.body.act]
       ::
+        %tx-info
+      [%get-tx-vals txid.body.act]
+      ::
         %raw-tx
       [%get-raw-tx txid.body.act]
       ::
@@ -161,9 +164,13 @@
     :_  state
     ~[(send-update [%.y (get-req-id wire) %address-info +.resp])]
     ::
+      [%tx-info @ *]
+    ?>  ?=([%get-tx-vals *] resp)
+    :_  state
+    ~[(send-update [%.y (get-req-id wire) %tx-info +.resp])]
+    ::
       [%raw-tx @ *]
     ?>  ?=([%get-raw-tx *] resp)
-
     :_  state
     ~[(send-update [%.y (get-req-id wire) %raw-tx +.resp])]
     ::
