@@ -14,7 +14,7 @@
 +$  btc-state  [block=@ud fee=sats t=@da]
 +$  reqs  (map req-id:bp req=request:bws)
 ::
-+$  payment  [=address payer=ship value=sats]
++$  payment  [=xpub =address payer=ship value=sats]
 +$  piym  (jar ship payment)
 +$  poym  (unit txbu:bws)
 +$  piym-lock  (map ship txid)
