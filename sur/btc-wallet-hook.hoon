@@ -9,20 +9,19 @@
 ::  payment: a payment expected from another ship 
 ::    - address: address generated for this payment
 ::  piym: incoming payments. Stores all ship moons under their planet.
-::  piym-watch/poym-watch:
-::   let us link an address back to its incoming/outgoing payment
-::   checked when address updates come from btc-wallet-store 
+::  poym: outgoing payments. One at a time: new replaces old
 ::
 +$  btc-state  [block=@ud fee=sats t=@da]
 +$  reqs  (map req-id:bp req=request:bws)
 ::
 +$  payment  [=address payer=ship value=sats]
-::
 +$  piym  (jar ship payment)
-+$  piym-watch  (map address ship)
-+$  poym-watch  (map address ship)
++$  poym  (unit txbu:bws)
++$  piym-lock  (map ship txid)
 ::  req-pay-address: request a payment address from another ship
 ::  gen-pay-address: generate a payment address from our ship to another
+::  ret-pay-address: give an address to a payer who requested it
+::  broadcast-tx: broadcast a signed-psbt, associate with poym
 ::
 +$  action
   $%  [%set-provider provider=ship]
@@ -30,6 +29,7 @@
       [%req-pay-address payee=ship value=sats feyb=(unit sats)]
       [%gen-pay-address value=sats]
       [%ret-pay-address =address payer=ship value=sats]
+      [%broadcast-tx =req-id:bp signed-psbt=cord]
       [%clear-poym ~]
       [%force-retry ~]
   ==
