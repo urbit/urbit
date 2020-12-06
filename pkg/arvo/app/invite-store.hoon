@@ -1,6 +1,6 @@
 ::  invite-store [landscape]
 /-  store=invite-store
-/+  res=resource, default-agent, dbug
+/+  res=resource, default-agent, dbug, *migrate
 |%
 +$  card  card:agent:gall
 +$  versioned-state
@@ -102,8 +102,18 @@
   =^  cards  state
     ?+  mark  (on-poke:def mark vase)
       %invite-action  (poke-invite-action !<(action:store vase))
+      %import         (poke-import q.vase)
     ==
   [cards this]
+  ::
+  ++  poke-import
+    |=  arc=*
+    ^-  (quip card _state)
+    =/  sty=state-1
+      :-  %1
+      %-  remake-map-of-map
+      ;;((tree [term (tree [serial:store invite:store])]) +.arc)
+    [~ sty]
   ::
   ++  poke-invite-action
     |=  =action:store
@@ -205,5 +215,7 @@
     :^  ~  ~  %noun
     !>  ^-  (unit invite:store)
     (~(get by invitatory) serial)
+  ::
+      [%x %export ~]      ``noun+!>(state)
   ==
 --

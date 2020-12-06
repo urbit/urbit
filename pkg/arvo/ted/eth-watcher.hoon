@@ -9,7 +9,7 @@
 ::
 |=  args=vase
 |^
-=+  !<(pup=watchpup args)
+=+  !<([~ pup=watchpup] args)
 =/  m  (strand:strandio ,vase)
 ^-  form:m
 ;<  =latest=block                 bind:m  (get-latest-block:ethio url.pup)
