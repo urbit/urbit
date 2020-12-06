@@ -2,7 +2,7 @@
 ::  m / purpose' / coin_type' / account' / change / address_index
 ::  change can be 0 or 1
 ::
-/-  *btc
+/-  *btc, bp=btc-provider
 /+  bip32
 |%
 ++  max-index  (dec (pow 2 32))
@@ -44,17 +44,35 @@
 ::  feyb: fee per byte in sats
 ::  key:  HD wallet path
 ::  txi/txo:  input/output for a transaction being built
-::  txbu: tx builder -- all information needed to make a transaction for signing 
+::  txbu: tx builder -- all information needed to make a transaction for signing
+::  peta: optional payment metadata
 ::
 +$  input  [=utxo =chyg =idx]
 +$  feyb  sats
 +$  key  [=bipt =chyg =idx]
 +$  txi  [=utxo ur=(unit rawtx) =key]
 +$  txo  [=address value=sats]
-+$  txbu  [payee=(unit ship) =vbytes txis=(list txi) txos=(list txo)]
++$  txbu  [=req-id:bp payee=(unit ship) =vbytes txis=(list txi) txos=(list txo)]
++$  peta  (unit [payer=ship value=sats])
+::  hest: an entry in the history log
+::  raw: pending history elements
+::    - hearsay: %.y if a peer told us about this element and we haven't observed it yet
+::  yum: confirmed history elements
+::
++$  hest
+  $:  =txid
+      recvd=@da
+      inputs=(list [=utxo s=(unit ship)])
+      outputs=(list [=output s=(unit ship)])
+  ==
++$  raw  (list [hearsay=? block=@ud =hest])
++$  yum  ((mop @ud hest) gth)
++$  history  [w=walt =raw =yum]
+::  state/watch variables:
 ::  scanning addresses and monitoring generated addresses
 ::  batch: indexes to scan for a given chyg
 ::  scans: all scans underway (batches)
+::  piym-watch: any address we've been told has an incoming payment promised
 ::
 +$  batch  [todo=(set idx) endpoint=idx has-used=?]
 +$  scans  (map [xpub chyg] batch)
@@ -68,13 +86,15 @@
 +$  action
   $%  [%add-wallet =xpub scan-to=(unit scon) max-gap=(unit @ud) confs=(unit @ud)]
       [%address-info =xpub =chyg =idx utxos=(set utxo) used=? block=@ud]
-      [%generate-address =xpub =chyg meta=(unit [payer=ship value=sats])]
+      [%generate-address =xpub =chyg =peta]
       [%generate-txbu =xpub payee=(unit ship) feyb=sats txos=(list txo)]
+      [%add-hest =hest]
   ==
 ::
 +$  update
-  $%  [%generate-address =address meta=(unit [payer=ship value=sats])]
+  $%  [%generate-address =address =peta]
       [%generate-txbu =xpub =txbu]
+      [%saw-piym s=ship =txid]
       [%scan-done =xpub]
   ==
 ::  last-block: most recent block this address was checked

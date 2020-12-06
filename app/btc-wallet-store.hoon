@@ -219,8 +219,8 @@
   :-  (weld cards0 cards1)
   state(scans (insert-batches xpub batch0 batch1))
 ::  +update-address: watch the address passed; update wallet if it's used
-::  - if address is unused, send %address-info request to monitor it
-::  - if address doesn't have enough confs, send %address-info request to monitor it
+::  - if address is unused, send %address-info request
+::  - if address doesn't have enough confs, send %address-info request
 ::  - if this idx was the last in todo.scans, do run-scan to see whether scan is done
 ::  - updates wallet-store state to have last-block
 ::
@@ -276,7 +276,7 @@
 ::    sends a request for info on the new address (watches it)
 ::
 ++  generate-address
-  |=  [=xpub =chyg meta=(unit [payer=ship value=sats])]
+  |=  [=xpub =chyg =peta]
   =+  uw=(~(get by walts) xpub)
   ?~  uw
     ~|("btc-wallet-store: non-existent xpub" !!)
@@ -285,7 +285,7 @@
   =/  [addr=address:btc =idx w=walt]
     ~(gen-address wad u.uw chyg)
   :_  state(walts (~(put by walts) xpub w))
-  :~  (send-update [%generate-address addr meta])
+  :~  (send-update [%generate-address addr peta])
       %+  send-request  ~[/requests]
       :*  %address-info  last-block
           addr  xpub  chyg  idx
