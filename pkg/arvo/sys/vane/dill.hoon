@@ -96,7 +96,6 @@
 --
 =|  all=axle
 |=  [our=ship now=@da eny=@uvJ rof=roof]                ::  current invocation
-=*  ski  (en-sley rof)
 =>  ~%  %dill  ..part  ~
     |%
     ++  as                                              ::  per cause
@@ -207,11 +206,10 @@
       ::  XX move
       ::
       ++  sein
-        |=  who=ship
-        ;;  ship
-        %-  need  %-  need
-        %-  (sloy-light ski)
-        [[151 %noun] %j our %sein da+now /(scot %p who)]
+        ^-  ship
+        =/  dat=(unit (unit cage))
+          (rof `[our ~ ~] j/[[our sein/da/now] /(scot %p our)])
+        ;;(ship q.q:(need (need dat)))
       ::
       ++  init                                          ::  initialize
         (pass /merg/home [%c %merg %kids our %home da+now %init])
@@ -223,7 +221,7 @@
         =.  tem  ~
         =.  +>  (pass / %g %conf ram)
         =?  +>  ?=(?(%earl %duke %king) can)
-          (ota (sein our) %kids)
+          (ota sein %kids)
         ::  make kids desk publicly readable, so syncs work.
         ::
         =.  +>  (show %kids)

@@ -984,7 +984,7 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ++  de                                                  ::  per desk
-  |=  [our=ship now=@da ski=sley hen=duct raft]
+  |=  [our=ship now=@da rof=roof hen=duct raft]
   |=  [her=ship syd=desk]
   ::  XX ruf=raft crashes in the compiler
   ::
@@ -1596,17 +1596,9 @@
       ++  deep
         |=  [pax=path src=cord]
         ^-  ?
-        ::  XX use roof
-        ::
-        :: =/  dat  (rof `[our ~ ~] $/[[our $/da/now] mod/fat/pax])
-        :: ?:  |(?=(~ dat) ?=(~ u.dat))  |
-        :: =/  nod  !<((axal (cask)) q.u.u.dat)
-        ::
-        =/  dat
-          ;;  (unit (unit (axal (cask))))
-          ((sloy-light ski) [hoon-version %noun] %$ our %$ da/now mod/fat/pax)
+        =/  dat  (rof `[our ~ ~] $/[[our $/da/now] mod/fat/pax])
         ?:  |(?=(~ dat) ?=(~ u.dat))  |
-        =*  nod  u.u.dat
+        =/  nod  !<((axal (cask)) q.u.u.dat)
         &(?=(^ fil.nod) ?=(%hoon p.u.fil.nod) =(src q.u.fil.nod))
       --
     ::
@@ -3625,7 +3617,7 @@
         :^  ~  ~  %uvs  !>
         ^-  (list @uv)
         =/  him  (slav %p i.t.pax)
-        =/  other  dom:((de our now ski hen ruf) him i.t.t.pax)
+        =/  other  dom:((de our now rof hen ruf) him i.t.t.pax)
         ?:  =(0 let.other)
           ~
         =/  our-yaki  (~(got by hut.ran) (~(got by hit.dom) yon))
@@ -3886,7 +3878,6 @@
         ruf=raft                                      ::  revision tree
     ==                                                ::
 |=  [our=ship now=@da eny=@uvJ rof=roof]              ::  current invocation
-=*  ski  (en-sley rof)
 |%                                                    ::
 ++  call                                              ::  handle request
   |=  $:  hen=duct
@@ -3919,7 +3910,7 @@
     =/  des  ~(tap in ~(key by dos.rom.ruf))
     |-
     ?~  des  [[[hen %give %done ~] mos] ..^^$]
-    =/  den  ((de our now ski hen ruf) our i.des)
+    =/  den  ((de our now rof hen ruf) our i.des)
     =^  mor  ruf
       =<  abet:wake
       ?:  ?=(^ cew.req)  den
@@ -3974,7 +3965,7 @@
         %dif  ~|(%dif-not-implemented !!)
       ==
     =^  mos  ruf
-      =/  den  ((de our now ski hen ruf) our des.req)
+      =/  den  ((de our now rof hen ruf) our des.req)
       abet:(info:den deletes changes)
     [mos ..^$]
   ::
@@ -3994,7 +3985,7 @@
     ?~  dos
       !!  ::  fire next in queue
     =^  mos  ruf
-      =/  den  ((de our now ski hen ruf) our q.bem)
+      =/  den  ((de our now rof hen ruf) our q.bem)
       abet:(into:den s.bem all.req fis.req)
     [mos ..^$]
   ::
@@ -4002,14 +3993,14 @@
     ?:  =(%$ des.req)
       ~&(%merg-no-desk !!)
     =^  mos  ruf
-      =/  den  ((de our now ski hen ruf) our des.req)
+      =/  den  ((de our now rof hen ruf) our des.req)
       abet:(start-merge:den her.req dem.req cas.req how.req)
     [mos ..^$]
   ::
       %mont
     =.  hez.ruf  ?^(hez.ruf hez.ruf `[[%$ %sync ~] ~])
     =^  mos  ruf
-      =/  den  ((de our now ski hen ruf) p.bem.req q.bem.req)
+      =/  den  ((de our now rof hen ruf) p.bem.req q.bem.req)
       abet:(mount:den pot.req r.bem.req s.bem.req)
     [mos ..^$]
   ::
@@ -4046,7 +4037,7 @@
   ::
       %park
     =^  mos  ruf
-      =/  den  ((de our now ski hen ruf) our des.req)
+      =/  den  ((de our now rof hen ruf) our des.req)
       abet:(park:den | [yok ran]:req)
     [mos ..^$]
   ::
@@ -4054,13 +4045,13 @@
     =/  [syd=desk =yoki]  (need pud.ruf)
     =.  pud.ruf  ~
     =^  mos  ruf
-      =/  den  ((de our now ski hen ruf) our syd)
+      =/  den  ((de our now rof hen ruf) our syd)
       abet:(park:den & yoki *rang)
     [mos ..^$]
   ::
       %perm
     =^  mos  ruf
-      =/  den  ((de our now ski hen ruf) our des.req)
+      =/  den  ((de our now rof hen ruf) our des.req)
       abet:(perm:den pax.req rit.req)
     [mos ..^$]
   ::
@@ -4083,7 +4074,7 @@
       ?~  desks
         [~ ..^^$]
       =^  moves-1  ..^^$  $(desks t.desks)
-      =^  moves-2  ruf  abet:wake:((de our now ski hen ruf) [ship desk]:i.desks)
+      =^  moves-2  ruf  abet:wake:((de our now rof hen ruf) [ship desk]:i.desks)
       [(weld moves-1 moves-2) ..^^$]
     [wake-moves ..^$]
   ::
@@ -4102,7 +4093,7 @@
     ?>  ?=(%warp -.req)
     =*  rif  rif.req
     =^  mos  ruf
-      =/  den  ((de our now ski hen ruf) wer.req p.rif)
+      =/  den  ((de our now rof hen ruf) wer.req p.rif)
       =<  abet
       ?~  q.rif
         cancel-request:den
@@ -4117,7 +4108,7 @@
     ?:  ?=([%backfill *] pax)
       =+  ;;(=fill res)
       =^  mos  ruf
-        =/  den  ((de our now ski hen ruf) our desk.fill)
+        =/  den  ((de our now rof hen ruf) our desk.fill)
         abet:(give-backfill:den lobe.fill)
       [[[hen %give %done ~] mos] ..^$]
     ?>  ?=([%question *] pax)
@@ -4158,7 +4149,7 @@
   ::TODO  if it ever gets filled properly, pass in the full fur.
   ::
   =/  for=(unit ship)  ?~(lyc ~ ?~(u.lyc ~ `n.u.lyc))
-  =/  den  ((de our now ski [/scryduct ~] ruf) his syd)
+  =/  den  ((de our now rof [/scryduct ~] ruf) his syd)
   =/  result  (mule |.(-:(aver:den for u.run u.luk tyl)))
   ?:  ?=(%| -.result)
     %-  (slog >%clay-scry-fail< p.result)
@@ -4207,7 +4198,7 @@
     =*  ali-desk  i.t.t.t.tea
     =/  germ  (germ i.t.t.t.t.tea)
     =^  mos  ruf
-      =/  den  ((de our now ski hen ruf) our i.t.tea)
+      =/  den  ((de our now rof hen ruf) our i.t.tea)
       abet:(merge:den ali-ship ali-desk germ p.q.hin)
     [mos ..^$]
   ::
@@ -4240,7 +4231,7 @@
       =/  index=@ud  (slav %ud i.t.t.t.tea)
       ::
       =^  mos  ruf
-        =/  den  ((de our now ski hen ruf) her desk)
+        =/  den  ((de our now rof hen ruf) her desk)
         abet:(take-foreign-answer:den index res)
       [mos ..^$]
     ==
@@ -4269,7 +4260,7 @@
       =/  index=@ud  (slav %ud i.t.t.t.tea)
       ::
       =^  mos  ruf
-        =/  den  ((de our now ski hen ruf) her desk)
+        =/  den  ((de our now rof hen ruf) her desk)
         abet:abet:(take-backfill:(foreign-update:den index) blob)
       [mos ..^$]
     ==
@@ -4334,7 +4325,7 @@
     =/  her  (slav %p i.t.tea)
     =/  syd  (slav %tas i.t.t.tea)
     =^  mos  ruf
-      =/  den  ((de our now ski hen ruf) her syd)
+      =/  den  ((de our now rof hen ruf) her syd)
       abet:wake:den
     [mos ..^$]
   ::

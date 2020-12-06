@@ -384,34 +384,6 @@
       ==
     ~>(%slog.[0 leaf+"arvo: scry-lost"] ~)
   [~ ~ +.q.u.u.bop]
-::  +sloy-light: minimal parsing version of sloy
-::
-::    There are several places inside vanes where we manually call the scry
-::    function raw, instead of passing it into +mink. In those cases, we're
-::    paying the price to render the arguments as text, and then are
-::    immediately parsing the passed in data. We can avoid that.
-::
-::    TODO: The entire scrying system needs to be cleaned up in a more
-::    permanent way. This hack fixes up some print/parse costs, but doesn't
-::    recover the print/parse costs of the scry itself, which we could prevent
-::    if we didn't send (list @ta), but instead sent (list dime).
-::
-++  sloy-light
-  ~/  %sloy-light
-  |=  sod=slyd
-  |=  [ref=* ron=@tas fal=@p dyc=@tas ved=case tyl=path]
-  =/  bed=beam  [[fal dyc ved] tyl]
-  =/  bop=(unit (unit (cask meta)))
-    (sod ref ~ ron bed)
-  ?~  bop  ~
-  ?~  u.bop  [~ ~]
-  ::  XX figure out wth to do about hoon-version
-  ::
-  ?.  ?&  ?=([?(%151 %141) *] ref)
-          -:(~(nets wa *worm) +.ref -.q.u.u.bop)
-      ==
-    ~>(%slog.[0 leaf+"arvo: scry-dark"] ~)
-  [~ ~ +.q.u.u.bop]
 ::  +wyrd: kelvin negotiation
 ::
 ::    specified but unimplemented:
