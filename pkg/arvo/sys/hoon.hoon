@@ -10807,7 +10807,7 @@
   ++  caching-find
     |=  [way=vial hyp=wing]
     ^-  [port _grub]
-    ~_  (show [%c %find] %l hyp)
+    ~_  (show [%c %caching-find] %l hyp)
     =^  val  grub  (caching-fond way hyp)
     :_  grub
     ?@  val  !!
@@ -14027,7 +14027,7 @@
       [%hint *]   :_  grub  q.sut
       [%hold *]   (caching-rest [p.sut q.sut])
       %noun       :_  grub  (fork [%atom %$ ~] [%cell %noun %noun] ~)
-      *           ~>(%mean.'repo-fltt' !!)
+      *           ~>(%mean.'caching-repo-fltt' !!)
     ==
   ::
   ++  rest
