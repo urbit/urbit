@@ -5485,24 +5485,6 @@
   ++  of-wall                                           ::  line list to tape
     |=  a=wall  ^-  tape
     ?~(a ~ "{i.a}\0a{$(a t.a)}")
-  ::                                                    ::  ++en-beam:format
-  ++  en-beam                                           ::  beam to path
-    |=  bem=beam
-    ^-  path
-    [(scot %p p.bem) q.bem (scot r.bem) s.bem]
-  ::                                                    ::  ++de-beam:format
-  ++  de-beam                                           ::  parse path to beam
-    |=  pax=path
-    ^-  (unit beam)
-    ?.  ?=([* * * *] pax)  ~
-    %+  biff  (slaw %p i.pax)
-    |=  who=ship
-    %+  biff  (slaw %tas i.t.pax)
-    |=  dex=desk
-    %+  biff  (slay i.t.t.pax)
-    |=  cis=coin
-    ?.  ?=([%$ case] cis)  ~
-    `(unit beam)`[~ [who dex `case`p.cis] t.t.t.pax]
   ::
   ++  json-rn                                           ::  json to rn parser
     %+  knee  *rn  |.

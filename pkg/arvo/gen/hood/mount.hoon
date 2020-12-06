@@ -11,7 +11,7 @@
         [[pax=path pot=$@(~ [v=@tas ~])] ~]
     ==
 ?~  pot
-  =+  bem=(need (de-beam:format pax))
+  =+  bem=(need (de-beam pax))
   $(pot ~[?^(s.bem (rear s.bem) q.bem)])
 :-  %kiln-mount
 [pax v.pot]

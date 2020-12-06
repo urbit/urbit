@@ -117,7 +117,7 @@
   |=  [our=ship dir=beam]
   |%
   ++  default-app         %hood
-  ++  hoon-parser         (vang | (en-beam:format dir))
+  ++  hoon-parser         (vang | (en-beam dir))
   ++  our                 p.dir
   ::
   ++  parse-command-line  ;~(sfix parse-command (star ace) (just '\0a'))
@@ -248,7 +248,7 @@
       ::
       =?  a  &(?=(^ a) =('' i.a))
         t.a
-      (fall (de-beam:format a) [`beak`[p q r]:dir a])
+      (fall (de-beam a) [`beak`[p q r]:dir a])
     =+  vez=hoon-parser
     (sear plex:vez (stag %clsg poor:vez))
   ::
@@ -269,7 +269,7 @@
   ++  parse-rood
     ::  XX should this use +hoon-parser instead to normalize the case?
     ::
-    =>  (vang | (en-beam:format dir))
+    =>  (vang | (en-beam dir))
     ;~  pose
       rood
     ::
@@ -542,9 +542,9 @@
                       ?:  ?=([@ ~] pax)  ~[i.pax %home '0']
                       ?:  ?=([@ @ ~] pax)  ~[i.pax i.t.pax '0']
                       pax
-                  =.  dir  (need (de-beam:format pax))
+                  =.  dir  (need (de-beam pax))
                   =-  +>(..dy (he-diff %tan - ~))
-                  rose+[" " `~]^~[leaf+"=%" (smyt (en-beam:format he-beak s.dir))]
+                  rose+[" " `~]^~[leaf+"=%" (smyt (en-beam he-beak s.dir))]
         ==
       ::
           %poke
@@ -560,7 +560,7 @@
           %file
         %-  he-card(poy ~)
         :*  %pass  /file  %arvo  %c
-            %info  (foal:space:userlib (en-beam:format p.p.mad) cay)
+            %info  (foal:space:userlib (en-beam p.p.mad) cay)
         ==
       ::
           %flat
@@ -874,12 +874,12 @@
           %dv  (dy-sing hand+p.bil %a (snoc p.bil %hoon))
           %ge  (dy-run-generator (dy-cage p.p.p.bil) q.p.bil)
           %sa
-        =+  .^(=dais:clay cb+(en-beam:format he-beak /[p.bil]))
+        =+  .^(=dais:clay cb+(en-beam he-beak /[p.bil]))
         (dy-hand p.bil bunt:dais)
       ::
           %as
         =/  cag=cage  (dy-cage p.q.bil)
-        =+  .^(=tube:clay cc+(en-beam:format he-beak /[p.cag]/[p.bil]))
+        =+  .^(=tube:clay cc+(en-beam he-beak /[p.cag]/[p.bil]))
         (dy-hand p.bil (tube q.cag))
       ::
           %do
@@ -1183,7 +1183,7 @@
           %stdout       [%show %0]
           %output-file  $(sink.com [%command (cat 3 '@' pax.sink.com)])
           %output-pill  $(sink.com [%command (cat 3 '.' pax.sink.com)])
-          %output-clay  [%file (need (de-beam:format pax.sink.com))]
+          %output-clay  [%file (need (de-beam pax.sink.com))]
           %url          [%http %post (crip (en-purl:html url.sink.com))]
           %to-api       !!
           %send-api     [%poke our.hid api.sink.com]
