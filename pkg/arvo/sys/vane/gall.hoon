@@ -143,7 +143,6 @@
     |=  [now=@da eny=@uvJ rof=roof]
     =*  pupal-gate  .
     =*  adult-core  (adult-gate +<)
-    =*  ski  (en-sley rof)
     =<  |%
         ++  call  ^call
         ++  load  ^load
@@ -239,7 +238,6 @@
 =|  state=state-7
 |=  [now=@da eny=@uvJ rof=roof]
 =*  gall-payload  .
-=*  ski  (en-sley rof)
 =<  ~%  %gall-wrap  ..mo  ~
     |%
     ++  call  ^call
@@ -384,7 +382,7 @@
     |=  [dap=term =case:clay]
     ^-  (each agent tang)
     =/  bek=beak  [our %home case]
-    =/  sky  (ski [%141 %noun] ~ %ca bek /app/[dap]/hoon)
+    =/  sky  (rof ~ %ca bek /app/[dap]/hoon)
     ?~  sky  |+[leaf+"gall: {<dap>} scry blocked"]~
     ?~  u.sky  |+[leaf+"gall: {<dap>} scry failed"]~
     =/  =cage  u.u.sky
@@ -834,7 +832,7 @@
     ::
         %raw-poke
       =/  =case:clay  da+now
-      =/  sky  (ski [%141 %noun] ~ %cb [our %home case] /[mark.deal])
+      =/  sky  (rof ~ %cb [our %home case] /[mark.deal])
       ?-    sky
           ?(~ [~ ~])
         =/  ror  "gall: raw-poke fail :{(trip dap)} {<mark.deal>}"
@@ -856,7 +854,7 @@
       =/  =case:clay  da+now
       =/  =mars:clay  [p.cage mark]:deal
       =/  mars-path   /[a.mars]/[b.mars]
-      =/  sky  (ski [%141 %noun] ~ %cc [our %home case] mars-path)
+      =/  sky  (rof ~ %cc [our %home case] mars-path)
       ?-    sky
           ?(~ [~ ~])
         =/  ror  "gall: poke cast fail :{(trip dap)} {<mars>}"
@@ -937,7 +935,7 @@
         ::
         %d
       =/  =case:clay  da+now
-      =/  sky  (ski [%141 %noun] ~ %cb [our %home case] /[mark.ames-response])
+      =/  sky  (rof ~ %cb [our %home case] /[mark.ames-response])
       ?-    sky
           ?(~ [~ ~])
         =/  ror  "gall: ames mark fail {<mark.ames-response>}"
@@ -1103,7 +1101,7 @@
         =/  =case:clay  da+now
         =/  bek=beak    [our %home case]
         =/  mars-path  /[a.mars]/[b.mars]
-        =/  sky  (ski [%141 %noun] ~ %cc bek mars-path)
+        =/  sky  (rof ~ %cc bek mars-path)
         ?-    sky
             ?(~ [~ ~])
           %-  (slog leaf+"watch-as fact conversion find-fail" >sky< ~)
@@ -1264,7 +1262,7 @@
       =/  tub=(unit tube:clay)
         ?:  =(have want)  `(bake same ^vase)
         =/  tuc=(unit (unit cage))
-          (ski [%141 %noun] ~ %cc [our %home da+now] /[have]/[want])
+          (rof ~ %cc [our %home da+now] /[have]/[want])
         ?.  ?=([~ ~ *] tuc)  ~
         `!<(tube:clay q.u.u.tuc)
       ?~  tub
@@ -1539,7 +1537,7 @@
     ++  ap-mule
       |=  run=_^?(|.(*step:agent))
       ^-  (each step:agent tang)
-      =/  res  (mock [run %9 2 %0 1] (sloy ski))
+      =/  res  (mock [run %9 2 %0 1] (look rof ~))
       ?-  -.res
         %0  [%& !<(step:agent [-:!>(*step:agent) p.res])]
         %1  [%| (smyt ;;(path p.res)) ~]
@@ -1550,7 +1548,7 @@
     ++  ap-mule-peek
       |=  run=_^?(|.(*(unit (unit cage))))
       ^-  (each (unit (unit cage)) tang)
-      =/  res  (mock [run %9 2 %0 1] (sloy ski))
+      =/  res  (mock [run %9 2 %0 1] (look rof ~))
       ?-  -.res
         %0  [%& !<((unit (unit cage)) [-:!>(*(unit (unit cage))) p.res])]
         %1  [%| (smyt ;;(path p.res)) ~]

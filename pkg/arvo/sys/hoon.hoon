@@ -10082,7 +10082,7 @@
     ::
         [%dtkt *]
       =+  nef=$(gen [%kttr p.gen])
-      [p.nef [%12 [%1 %151 p.nef] q:$(gen q.gen, gol %noun)]]
+      [p.nef [%12 [%1 hoon-version p.nef] q:$(gen q.gen, gol %noun)]]
     ::
         [%dtls *]  [(nice [%atom %$ ~]) [%4 q:$(gen p.gen, gol [%atom %$ ~])]]
         [%sand *]  [(nice (play gen)) [%1 q.gen]]

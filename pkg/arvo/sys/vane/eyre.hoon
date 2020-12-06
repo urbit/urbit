@@ -552,7 +552,7 @@
 ++  per-server-event
   ::  gate that produces the +per-server-event core from event information
   ::
-  |=  [[eny=@ =duct now=@da scry=sley] state=server-state]
+  |=  [[eny=@ =duct now=@da rof=roof] state=server-state]
   =/  eyre-id  (scot %ta (cat 3 'eyre_' (scot %uv (sham duct))))
   |%
   ::  +request-local: bypass authentication for local lens connections
@@ -634,12 +634,12 @@
         %gen
       =/  bek=beak  [our desk.generator.action da+now]
       =/  sup=spur  path.generator.action
-      =/  ski       (scry [%141 %noun] ~ %ca bek sup)
+      =/  ski       (rof ~ %ca bek sup)
       =/  cag=cage  (need (need ski))
       ?>  =(%vase p.cag)
       =/  gat=vase  !<(vase q.cag)
       =/  res=toon
-        %-  mock  :_  (sloy scry)
+        %-  mock  :_  (look rof ~)
         :_  [%9 2 %0 1]  |.
         %+  slam
           %+  slam  gat
@@ -661,8 +661,7 @@
             authenticated.inbound-request.connection
             url.request.inbound-request.connection
             leaf+"scry blocked on"
-            >p.res<
-            ~
+            (fall (bind (bind ((soft path) p.res) smyt) (late ~)) ~)
         ==
       =/  result  ;;(simple-payload:http +.p.res)
       ::  ensure we have a valid content-length header
@@ -757,7 +756,7 @@
     ++  do-scry
       |=  [care=term =desk =path]
       ^-  (unit (unit cage))
-      (scry [%141 %noun] ~ care [our desk da+now] path)
+      (rof ~ care [our desk da+now] path)
     ::
     ++  error-response
       |=  [status=@ud =tape]
@@ -1017,7 +1016,7 @@
     ++  code
       ^-  @ta
       =/  res=(unit (unit cage))
-        (scry [%141 %noun] ~ %j [our %code da+now] /(scot %p our))
+        (rof ~ %j [our %code da+now] /(scot %p our))
       (rsh 3 (scot %p ;;(@ q.q:(need (need res)))))
     ::  +session-cookie-string: compose session cookie
     ::
@@ -1613,7 +1612,7 @@
       ::
       =*  have=mark  mark.event
       =/  val=(unit (unit cage))
-        (scry [%141 %noun] ~ %cb [our %home da+now] /[have])
+        (rof ~ %cb [our %home da+now] /[have])
       ?.  ?=([~ ~ *] val)
         ((slog leaf+"eyre: no mark {(trip have)}" ~) ~)
       =+  !<(=dais:clay q.u.u.val)
@@ -1637,7 +1636,7 @@
         =*  desc=tape  "from {(trip have)} to json"
         =/  tube=(unit tube:clay)
           =/  tuc=(unit (unit cage))
-            (scry [%141 %noun] ~ %cc [our %home da+now] /[have]/json)
+            (rof ~ %cc [our %home da+now] /[have]/json)
           ?.  ?=([~ ~ *] tuc)  ~
           `!<(tube:clay q.u.u.tuc)
         ?~  tube
@@ -2098,7 +2097,6 @@
 ::  a vane is activated with current date, entropy, and a namespace function
 ::
 |=  [now=@da eny=@uvJ rof=roof]
-=*  scry-gate  (en-sley rof)
 ::  allow jets to be registered within this core
 ::
 ~%  %http-server  ..part  ~
@@ -2140,7 +2138,7 @@
   ::    XX cancel active too if =(0 trim-priority) ?
   ::
   ?:  ?=(%trim -.task)
-    =/  event-args  [[eny duct now scry-gate] server-state.ax]
+    =/  event-args  [[eny duct now rof] server-state.ax]
     =*  by-channel  by-channel:(per-server-event event-args)
     =*  channel-state  channel-state.server-state.ax
     ::
@@ -2188,7 +2186,7 @@
         [closed-connections server-state.ax]
       ::
       =/  event-args
-        [[eny duct.i.connections now scry-gate] server-state.ax]
+        [[eny duct.i.connections now rof] server-state.ax]
       =/  cancel-request  cancel-request:(per-server-event event-args)
       =^  moves  server-state.ax  cancel-request
       ::
@@ -2210,7 +2208,7 @@
     ~>  %slog.[0 leaf+"eyre: code-changed: throwing away cookies and sessions"]
     =.  authentication-state.server-state.ax  *authentication-state
     ::
-    =/  event-args  [[eny duct now scry-gate] server-state.ax]
+    =/  event-args  [[eny duct now rof] server-state.ax]
     =*  by-channel  by-channel:(per-server-event event-args)
     =*  channel-state  channel-state.server-state.ax
     ::
@@ -2226,7 +2224,7 @@
   ::
   ::  all other commands operate on a per-server-event
   ::
-  =/  event-args  [[eny duct now scry-gate] server-state.ax]
+  =/  event-args  [[eny duct now rof] server-state.ax]
   =/  server  (per-server-event event-args)
   ::
   ?-    -.task
@@ -2353,7 +2351,7 @@
       [~ http-server-gate]
     ::  we have an error; propagate it to the client
     ::
-    =/  event-args  [[eny duct now scry-gate] server-state.ax]
+    =/  event-args  [[eny duct now rof] server-state.ax]
     =/  handle-gall-error
       handle-gall-error:(per-server-event event-args)
     =^  moves  server-state.ax
@@ -2362,7 +2360,7 @@
   ::
   ++  watch-response
     ::
-    =/  event-args  [[eny duct now scry-gate] server-state.ax]
+    =/  event-args  [[eny duct now rof] server-state.ax]
     ::
     ?>  ?=([@ *] t.wire)
     ?:  ?=([%g %unto %watch-ack *] sign)
@@ -2407,7 +2405,7 @@
   ::
   ++  channel
     ::
-    =/  event-args  [[eny duct now scry-gate] server-state.ax]
+    =/  event-args  [[eny duct now rof] server-state.ax]
     ::  channel callback wires are triples.
     ::
     ?>  ?=([@ @ @t *] wire)
@@ -2549,7 +2547,7 @@
       :^  ~  ~  %noun
       !>  ^-  ?
       %-  =<  request-is-logged-in:authentication
-          (per-server-event [eny *duct now scry-gate] server-state.ax)
+          (per-server-event [eny *duct now rof] server-state.ax)
       %*(. *request:http header-list ['cookie' u.cookies]~)
     ==
   ?.  ?=(%$ ren)

@@ -730,7 +730,6 @@
     |=  [now=@da eny=@ rof=roof]
     =*  larval-gate  .
     =*  adult-core   (adult-gate +<)
-    =*  scry-gate    (en-sley rof)
     |%
     ::  +call: handle request $task
     ::
@@ -861,7 +860,6 @@
 |=  [now=@da eny=@ rof=roof]
 =*  ames-gate  .
 =*  veb  veb.bug.ames-state
-=*  scry-gate  (en-sley rof)
 |%
 ::  +call: handle request $task
 ::
@@ -880,7 +878,7 @@
       *      [%crud -.task tang.u.dud]
     ==
   ::
-  =/  event-core  (per-event [now eny scry-gate] duct ames-state)
+  =/  event-core  (per-event [now eny rof] duct ames-state)
   ::
   =^  moves  ames-state
     =<  abet
@@ -910,7 +908,7 @@
     ~|(%ames-take-dud (mean tang.u.dud))
   ::
   ::
-  =/  event-core  (per-event [now eny scry-gate] duct ames-state)
+  =/  event-core  (per-event [now eny rof] duct ames-state)
   ::
   =^  moves  ames-state
     =<  abet
@@ -1052,7 +1050,7 @@
 ++  per-event
   =|  moves=(list move)
   ~%  %event-gate  ..per-event  ~
-  |=  [[now=@da eny=@ scry-gate=sley] =duct =ames-state]
+  |=  [[now=@da eny=@ rof=roof] =duct =ames-state]
   =*  veb  veb.bug.ames-state
   ~%  %event-core  ..$  ~
   |%
@@ -1156,8 +1154,7 @@
       %-  silt
       ;;  (list [@da ^duct])
       =<  q.q  %-  need  %-  need
-      %-  scry-gate
-      [[%141 %noun] ~ %b [[our %timers da+now] /]]
+      (rof ~ %b [[our %timers da+now] /])
     =/  to-stir
       %+  skip  next-real-wakes
       |=  [=ship =bone =@da]
@@ -1659,8 +1656,7 @@
       ^-  ship
       ;;  ship
       =<  q.q  %-  need  %-  need
-      %-  scry-gate
-      [[%141 %noun] ~ %j `beam`[[our %sein %da now] /(scot %p who)]]
+      (rof ~ %j `beam`[[our %sein %da now] /(scot %p who)])
     --
   ::  +on-take-turf: relay %turf move from jael to unix
   ::
@@ -1679,7 +1675,7 @@
     =/  turfs
       ;;  (list turf)
       =<  q.q  %-  need  %-  need
-      (scry-gate [%141 %noun] ~ %j `beam`[[our %turf %da now] /])
+      (rof ~ %j `beam`[[our %turf %da now] /])
     ::
     (emit unix-duct.ames-state %give %turf turfs)
   ::  +on-trim: handle request to free memory

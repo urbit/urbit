@@ -102,7 +102,7 @@
 ::  +per-client-event: per-event client core
 ::
 ++  per-client-event
-  |=  [[eny=@ =duct now=@da scry=sley] =state]
+  |=  [[eny=@ =duct now=@da rof=roof] =state]
   |%
   ::  +request: makes an external web request
   ::
@@ -298,7 +298,6 @@
 ::  a vane is activated with current date, entropy, and a namespace function
 ::
 |=  [now=@da eny=@uvJ rof=roof]
-=*  scry-gate  (en-sley rof)
 ::  allow jets to be registered within this core
 ::
 ~%  %http-client  ..part  ~
@@ -331,7 +330,7 @@
   ?:  ?=(%vega -.task)
     [~ light-gate]
   ::
-  =/  event-args  [[eny duct now scry-gate] state.ax]
+  =/  event-args  [[eny duct now rof] state.ax]
   =/  client  (per-client-event event-args)
   ?-    -.task
   ::

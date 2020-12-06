@@ -98,11 +98,9 @@
 ::  $move: cause and action
 ::  $ovum: card with cause
 ::  $roof: namespace
-::  $rook: meta-namespace
+::  $rook: meta-namespace (super advanced)
 ::  +room: generic namespace
-::  $sley: namespace function
-::  $slyd: super advanced
-::  $slyt: old namespace
+::  $root: raw namespace
 ::  +wind: kernel action builder
 ::  $wire: event pretext
 ::  +wite: kernel action/error builder
@@ -135,15 +133,7 @@
   %-  unit                                              ::  ~: unknown
   %-  unit                                              ::  ~ ~: invalid
   (cask a)
-::
-+$  sley
-  $-  [* (unit (set monk)) term beam]
-  (unit (unit cage))
-+$  slyd
-  $~  =>(~ |~(* ~))
-  $-  [* (unit (set monk)) term beam]
-  (unit (unit (cask meta)))
-+$  slyt  $-(^ (unit (unit)))
++$  root  $-(^ (unit (unit)))
 ::
 ++  wind
   |$  ::  a: forward
@@ -331,55 +321,26 @@
   ?.  ?=([%$ case] u.ved)  ~
   `(unit beam)`[~ [`ship`u.who `desk`u.des `case`p.u.ved] t.t.t.p]
 ::
-++  en-sley
-  |=  =roof
-  ^-  sley
-  |=  [typ=* fur=(unit (set monk)) ron=term bed=beam]
-  =/  lyc=gang
-    ?~  fur  ~
-    :-  ~
-    %-  ~(gas in *(set ship))
-    (murn ~(tap in u.fur) |=(m=monk ?-(-.m %| ~, %& `p.m)))
-  (roof lyc ron bed)
-::
-++  sloy
-  ::  +sloy: adapter from old style scrys to new style scrys
-  ::
-  ::    This does path parsing which shows up hot, but removing the last +slay
-  ::    here requires deeper interface changes.
-  ::
-  !:
-  ~/  %sloy
-  |=  sod=slyd
-  ^-  slyt
+++  look
+  ~/  %look
+  |=  [rof=roof lyc=gang]
+  ^-  root
+  ~/  %in
   |=  [ref=* raw=*]
-  =+  pux=((soft path) raw)
-  ?~  pux  ~
-  ?.  ?=([@ @ @ @ *] u.pux)  ~
-  =+  :*  hyr=?~(i.u.pux (some %$) (slaw %tas i.u.pux))
-          fal=(slaw %p i.t.u.pux)
-          dyc=?~(i.t.t.u.pux (some %$) (slaw %tas i.t.t.u.pux))
-          ved=(slay i.t.t.t.u.pux)
-          tyl=t.t.t.t.u.pux
-      ==
-  ?~  hyr  ~
-  ?~  fal  ~
-  ?~  dyc  ~
-  ?.  ?=(^ ved)  ~
-  =/  ron=@tas  u.hyr
-  =/  bed=beam
-    [[u.fal u.dyc (case p.u.ved)] tyl]
-  =/  bop=(unit (unit (cask meta)))
-    (sod ref ~ ron bed)
-  ?~  bop  ~
-  ?~  u.bop  [~ ~]
-  ::  XX figure out wth to do about hoon-version
-  ::
-  ?.  ?&  ?=([?(%151 %141) *] ref)
-          -:(~(nets wa *worm) +.ref -.q.u.u.bop)
+  ?~  pax=((soft path) raw)  ~
+  ?~  u.pax  ~
+  =*  cyr  i.u.pax
+  ?~  bem=(de-beam t.u.pax)  ~
+  ?.  ((sane %tas) cyr)  ~
+  ?~  dat=(rof lyc cyr u.bem)  ~
+  ?~  u.dat  [~ ~]
+  =*  vax  q.u.u.dat
+  ?.  ?&  ?=(^ ref)
+          =(hoon-version -.ref)
+          -:(~(nets wa *worm) +.ref p.vax)
       ==
     ~>(%slog.[0 leaf+"arvo: scry-lost"] ~)
-  [~ ~ +.q.u.u.bop]
+  [~ ~ q.vax]
 ::  +wyrd: kelvin negotiation
 ::
 ::    specified but unimplemented:
