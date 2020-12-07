@@ -6,8 +6,8 @@
 =/  m  (strand ,vase)
 ;<  =bowl:spider  bind:m  get-bowl
 ;<  ~  bind:m  start-simple
+::  must be a better way to background threads
 |-
 =*  loop  $
-~&  >>  %looping
 ;<  ~  bind:m  (sleep ~s5)
 loop

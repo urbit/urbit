@@ -1,3 +1,4 @@
+/+  version
 =,  clay
 =,  space:userlib
 =,  format
@@ -108,9 +109,11 @@
 ++  on-peek
   |=  =path
   ^-  (unit (unit cage))
-  ?.  ?=([%x %kiln %ota ~] path)
-    [~ ~]
-  ``noun+!>(ota)
+  ?+   path  [~ ~]
+    [%x %kiln %ota ~]        ``noun+!>(ota)
+    [%x %kiln %our ~]        ``noun+!>(our)
+    [%x %kiln %base-hash ~]  ``noun+!>((base-hash:version our now))
+  ==
 ::
 ++  poke-commit
   |=  [mon=kiln-commit auto=?]

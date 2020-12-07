@@ -341,4 +341,20 @@
   ?:  =(warped (need (scry-aqua:util (unit @) our now aqua-pax)))
     (pure:m ~)
   loop
+::
+::  Turns poke into a dojo command
+::
+++  poke-app
+  |=  [=ship app=term =mark data=*]
+  =/  m  (strand ,~)
+  ^-  form:m
+  =/  command=tape  ":{(trip app)} &{(trip mark)} {<data>}"
+  (send-events (dojo:util ship command))
+::
+++  dojo-thread
+  |=  [=ship ted=term =mark data=*]
+  =/  m  (strand ,~)
+  ^-  form:m
+  =/  command=tape  "-{(trip ted)} &{(trip mark)} {<data>}"
+  (send-events (dojo:util ship command))
 --

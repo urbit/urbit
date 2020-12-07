@@ -7943,7 +7943,7 @@
       ::  #  constants
       ::
       ::  contract addresses
-      ++  contracts  ropsten-contracts
+      ++  contracts  mainnet-contracts
       ++  mainnet-contracts
         |%
         ::  azimuth: data contract
