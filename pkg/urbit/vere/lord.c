@@ -765,7 +765,6 @@ static u3_writ*
 _lord_writ_new(u3_lord* god_u)
 {
   u3_writ* wit_u = c3_calloc(sizeof(*wit_u));
-  gettimeofday(&wit_u->tim_u, 0);
   return wit_u;
 }
 
@@ -940,16 +939,12 @@ u3_lord_play(u3_lord* god_u, u3_info fon_u)
 /* u3_lord_work(): attempt work.
 */
 void
-u3_lord_work(u3_lord* god_u, u3_ovum* egg_u, u3_noun ovo)
+u3_lord_work(u3_lord* god_u, u3_ovum* egg_u, u3_noun job)
 {
   u3_writ* wit_u = _lord_writ_new(god_u);
   wit_u->typ_e = u3_writ_work;
   wit_u->wok_u.egg_u = egg_u;
-
-  {
-    u3_noun now = u3_time_in_tv(&wit_u->tim_u);
-    wit_u->wok_u.job = u3nc(now, ovo);
-  }
+  wit_u->wok_u.job = job;
 
   //  if not spinning, start
   //

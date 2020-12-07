@@ -95,12 +95,19 @@ _pier_work_send(u3_work* wok_u)
   //
   {
     u3_ovum* egg_u;
-    u3_noun    ovo;
     u3_pico* pic_u;
+    u3_noun    ovo, now, bit = u3qc_bex(48);
+
+    {
+      struct timeval tim_tv;
+      gettimeofday(&tim_tv, 0);
+      now = u3_time_in_tv(&tim_tv);
+    }
 
     while ( len_w && car_u && (egg_u = u3_auto_next(car_u, &ovo)) ) {
       len_w--;
-      u3_lord_work(god_u, egg_u, ovo);
+      u3_lord_work(god_u, egg_u, u3nc(u3k(now), ovo));
+      now = u3ka_add(now, u3k(bit));
 
       //  queue events depth first
       //
@@ -123,6 +130,8 @@ _pier_work_send(u3_work* wok_u)
       u3_lord_peek(god_u, pic_u);
       u3_pico_free(pic_u);
     }
+
+    u3z(now); u3z(bit);
   }
 }
 
@@ -832,7 +841,11 @@ _pier_wyrd_init(u3_pier* pir_u)
 
     c3_assert( u3_auto_next(car_u, &ovo) == egg_u );
 
-    u3_lord_work(god_u, egg_u, ovo);
+    {
+      struct timeval tim_tv;
+      gettimeofday(&tim_tv, 0);
+      u3_lord_work(god_u, egg_u, u3nc(u3_time_in_tv(&tim_tv), ovo));
+    }
   }
 }
 
@@ -1754,30 +1767,33 @@ _pier_boot_plan(u3_pier* pir_u, u3_noun who, u3_noun ven, u3_noun pil)
 
   //  insert module and userspace events
   //
-  //    XX increment [now] deterministically?
-  //
   {
-    struct timeval tim_tv;
     u3_noun ova = bot_u.mod;
+    u3_noun bit = u3qc_bex(48);   //  1/2^16 seconds
     u3_noun now;
 
-    while ( u3_nul != ova ) {
+    {
+      struct timeval tim_tv;
       gettimeofday(&tim_tv, 0);
-      u3_disk_boot_plan(pir_u->log_u,
-                        u3nc(u3_time_in_tv(&tim_tv),
-                             u3k(u3h(ova))));
+      now = u3_time_in_tv(&tim_tv);
+    }
+
+
+    while ( u3_nul != ova ) {
+      u3_disk_boot_plan(pir_u->log_u, u3nc(u3k(now), u3k(u3h(ova))));
+      now = u3ka_add(now, u3k(bit));
       ova = u3t(ova);
     }
 
     ova = bot_u.use;
 
     while ( u3_nul != ova ) {
-      gettimeofday(&tim_tv, 0);
-      u3_disk_boot_plan(pir_u->log_u,
-                        u3nc(u3_time_in_tv(&tim_tv),
-                             u3k(u3h(ova))));
+      u3_disk_boot_plan(pir_u->log_u, u3nc(u3k(now), u3k(u3h(ova))));
+      now = u3ka_add(now, u3k(bit));
       ova = u3t(ova);
     }
+
+    u3z(bit); u3z(now);
   }
 
   u3_disk_boot_save(pir_u->log_u);
