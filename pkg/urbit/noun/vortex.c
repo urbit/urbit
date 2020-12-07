@@ -4,9 +4,10 @@
 #include <stdio.h>
 #include "all.h"
 
-#define _CVX_WISH 22
-#define _CVX_POKE 47
-#define _CVX_PEEK 46
+#define _CVX_LOAD  4
+#define _CVX_PEEK 22
+#define _CVX_POKE 23
+#define _CVX_WISH 10
 
 /* u3v_life(): execute initial lifecycle, producing Arvo core.
 */
