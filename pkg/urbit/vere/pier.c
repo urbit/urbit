@@ -820,7 +820,7 @@ _pier_wyrd_init(u3_pier* pir_u)
 
   pir_u->sat_e = u3_psat_wyrd;
 
-  u3l_log("vere: checking version compatiblity\n");
+  u3l_log("vere: checking version compatibility\n");
 
   {
     u3_lord* god_u = pir_u->god_u;
