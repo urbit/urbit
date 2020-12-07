@@ -52,7 +52,12 @@ _cv_lite(u3_noun pil)
 {
   u3_noun eve, pro;
 
-  u3x_trel(pil, &eve, 0, 0);
+  {
+    u3_noun hed, tal;
+    u3x_cell(pil, &hed, &tal);
+    u3_assent( u3r_sing_c("ivory", hed) );
+    eve = tal;
+  }
 
   u3l_log("lite: arvo formula %x\r\n", u3r_mug(pil));
   pro = u3v_life(u3k(eve));
