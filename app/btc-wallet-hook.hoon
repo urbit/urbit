@@ -13,17 +13,17 @@
 ::    /sign-me
 ::
 /-  *btc, *btc-wallet-hook, bws=btc-wallet-store
-/+  dbug, default-agent, bwsl=btc-wallet-store, bp=btc-provider
+/+  dbug, default-agent, bp=btc-provider
 |%
 ++  defaults
   |%
-  ++  moon-limit  10
+  ++  fam-limit  10
   --
 +$  versioned-state
     $%  state-0
     ==
 ::  provider: maybe ship if provider is set
-::  moon-limit: how many addresses a ship and its moons can request in piym
+::  fam-limit: how many addresses a ship and its moons can request in piym
 ::  feybs: fee/byte in sats used for a given ship payee
 ::
 +$  state-0
@@ -31,12 +31,12 @@
       provider=(unit [host=ship connected=?])
       =btc-state
       def-wallet=(unit xpub)
-      moon-limit=@ud
+      fam-limit=@ud
       feybs=(map ship sats)
       =reqs
       =piym
       =poym
-      =piym-lock
+      =pend-piym
   ==
 ::
 +$  card  card:agent:gall
@@ -54,7 +54,7 @@
 ++  on-init
   ^-  (quip card _this)
   ~&  >  '%btc-wallet-hook initialized'
-  :_  this(moon-limit.state moon-limit:defaults)
+  :_  this(fam-limit.state fam-limit:defaults)
   :~  [%pass /r/[(scot %da now.bowl)] %agent [our.bowl %btc-wallet-store] %watch /requests]
       [%pass /u/[(scot %da now.bowl)] %agent [our.bowl %btc-wallet-store] %watch /updates]
   ==
@@ -152,18 +152,25 @@
     =>  .(poym ~, feybs (~(put by feybs) payee.act feyb))
     :_  state
     ~[(poke-wallet-hook payee.act [%gen-pay-address value.act])]
+    ::  can't pay yourself; comets can't pay (could spam requests)
+    ::  must have default wallet set
+    ::  reuses payment address for ship if exists in piym
     ::
       %gen-pay-address
-    :: TODO: only run this if the moon limit isn't passed
     ~|  "Can't pay ourselves; no comets"
     ?<  =(src.bowl our.bowl)
     ?<  ?=(%pawn (clan:title src.bowl))
+    =^  cards  state
+      (reuse-address src.bowl value.act)
+    ?^  cards  [cards state]
+    ::  if no reuseable address, call store to generate
+    ::
+    =+  f=(fam src.bowl)
+    =+  n=(~(gut by num-fam.piym) f 0)
     ?~  def-wallet  ~|("btc-wallet-hook: no def-wallet set" !!)
-    =+  fam=(piym-key src.bowl)
-    ?~  fam
-      ~&  >>>  "not enough moon space or payer has an unconfirmed tx in to us"
-      `state
-    :_  state
+    ?:  (gte n fam-limit)
+      ~|("More than {<fam-limit>} addresses for moons + planet" !!)
+    :_  state(num-fam.piym (~(put by num-fam.piym) f +(n)))
     :~  %-  poke-wallet-store
         [%generate-address u.def-wallet %0 `[src.bowl value.act]]
     ==
@@ -229,6 +236,9 @@
         ==
     ==
     ::
+      %tx-info
+    `state
+    ::
       %raw-tx
     ?~  poym  `state
     =.  txis.u.poym  (update-poym-txis txis.u.poym +.body.p.upd)
@@ -261,10 +271,8 @@
     ::
     ?~  peta.upd  ~&(> address.upd `state)
     =/  [payer=ship value=sats]  u.peta.upd
-    :_  (update-piym xpub.upd address.upd payer value)
-    :~  (poke-wallet-hook payer [%ret-pay-address address.upd payer value])
-        (poke-wallet-store [%add-piym address.upd peta.upd])
-    ==
+    :_  state(ps.piym (~(put by ps.piym) payer [xpub.upd address.upd payer value]))
+    ~[(poke-wallet-hook payer [%ret-pay-address address.upd payer value])]
     ::
       %generate-txbu
     ::  txbus can potentially use the same UTXO inputs, so if another payment
@@ -275,49 +283,35 @@
     %+  turn  txis.txbu.upd
     |=(=txi:bws (get-raw-tx host.u.provider txid.utxo.txi))
     ::
+      %saw-piym
+    `state
+    ::
       %scan-done
     ?~  def-wallet
       `state(def-wallet `xpub.upd)
     `state
   ==
-::  +piym-key: returns (unit ship), the sponsor of a ship
-::  checks whether
-::    - too many moons are already stored
-::    - input ship is locked (i.e. broadcast a tx not in mempool yet)
+::  +reuse-address: if piym already has address for payer,
+::    replace address and return to payer
 ::
-++  piym-key
-  |=  payer=ship
-  ^-  (unit ship)
-  ?:  (~(has by piym-lock) payer)
-    ~
-  =/  fam=ship
-    ?:  =(%earl (clan:title payer))
-      (sein:title our.bowl now.bowl payer)
-    payer
-  =+  ps=(~(get by piym) fam)
-  ?~  ps  `fam
-  ?:  (lte (lent u.ps) moon-limit.state)
-    `fam
-  ~
-::  +update-piym: store an expected incoming payment by ship
-::    moons are stored with their sponsor
-::    if ship already has a payment for the payer ship, replace
+++  reuse-address
+  |=  [payer=ship value=sats]
+  ^-  (quip card _state)
+  =+  p=(~(get by ps.piym) payer)
+  ?~  p  `state
+  =+  newp=u.p(value value)
+  :_  state(ps.piym (~(put by ps.piym) payer newp))
+  :~  %+  poke-wallet-hook  payer
+          [%ret-pay-address address.newp payer value]
+  ==
 ::
-++  update-piym
-  |=  p=payment
-  |^  ^-  _state
-  =+  fam=(piym-key payer.p)
-  ?~  fam  ~!("Too many moons or payer is locked" !!)
-  =+  ps=(~(get by piym) u.fam)
-  ?~  ps  (insert u.fam ~[p])
-  =/  i=(unit @)
-    (find ~[payer.p] (turn u.ps |=([* py=ship *] py)))
-  ?~  i  (insert u.fam [p u.ps])
-  (insert u.fam (snap u.ps u.i p))
-  ++  insert
-    |=  [u.fam=ship ps=(list payment)]
-    state(piym (~(put by piym) u.fam ps))
-  --
+::  +fam: planet parent if s is a moon 
+::
+++  fam
+  |=  s=ship
+  ^-  ship
+  ?.  =(%earl (clan:title s))  s
+  (sein:title our.bowl now.bowl s)
 ::  +update-poym-txis:
 ::    update outgoing payment with a rawtx, if the txid is in poym's txis
 ::
