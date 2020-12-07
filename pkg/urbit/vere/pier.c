@@ -95,12 +95,19 @@ _pier_work_send(u3_work* wok_u)
   //
   {
     u3_ovum* egg_u;
-    u3_noun    ovo;
     u3_pico* pic_u;
+    u3_noun    ovo, now, bit = u3qc_bex(48);
+
+    {
+      struct timeval tim_tv;
+      gettimeofday(&tim_tv, 0);
+      now = u3_time_in_tv(&tim_tv);
+    }
 
     while ( len_w && car_u && (egg_u = u3_auto_next(car_u, &ovo)) ) {
       len_w--;
-      u3_lord_work(god_u, egg_u, ovo);
+      u3_lord_work(god_u, egg_u, u3nc(u3k(now), ovo));
+      now = u3ka_add(now, u3k(bit));
 
       //  queue events depth first
       //
@@ -123,6 +130,8 @@ _pier_work_send(u3_work* wok_u)
       u3_lord_peek(god_u, pic_u);
       u3_pico_free(pic_u);
     }
+
+    u3z(now); u3z(bit);
   }
 }
 
@@ -811,7 +820,7 @@ _pier_wyrd_init(u3_pier* pir_u)
 
   pir_u->sat_e = u3_psat_wyrd;
 
-  u3l_log("vere: checking version compatiblity\n");
+  u3l_log("vere: checking version compatibility\n");
 
   {
     u3_lord* god_u = pir_u->god_u;
@@ -832,7 +841,11 @@ _pier_wyrd_init(u3_pier* pir_u)
 
     c3_assert( u3_auto_next(car_u, &ovo) == egg_u );
 
-    u3_lord_work(god_u, egg_u, ovo);
+    {
+      struct timeval tim_tv;
+      gettimeofday(&tim_tv, 0);
+      u3_lord_work(god_u, egg_u, u3nc(u3_time_in_tv(&tim_tv), ovo));
+    }
   }
 }
 
@@ -1256,23 +1269,11 @@ _pier_on_lord_slog(void* ptr_v, c3_w pri_w, u3_noun tan)
 {
   u3_pier* pir_u = ptr_v;
 
-  if ( c3y == u3a_is_atom(tan) ) {
-    c3_c* tan_c = u3r_string(tan);
-    u3C.stderr_log_f(tan_c);
-    c3_free(tan_c);
-
-    if ( 0 != pir_u->sog_f ) {
-      pir_u->sog_f(pir_u->sop_p, pri_w, u3k(tan));
-    }
-  }
-  else {
-    u3_pier_tank(0, pri_w, u3k(tan));
-    if ( 0 != pir_u->sog_f ) {
-      pir_u->sog_f(pir_u->sop_p, pri_w, u3k(tan));
-    }
+  if ( 0 != pir_u->sog_f ) {
+    pir_u->sog_f(pir_u->sop_p, pri_w, u3k(tan));
   }
 
-  u3z(tan);
+  u3_pier_tank(0, pri_w, tan);
 }
 
 /* _pier_on_lord_save(): worker (non-portable) snapshot complete.
@@ -1596,64 +1597,88 @@ static u3_boot
 _pier_pill_parse(u3_noun pil)
 {
   u3_boot bot_u;
-  u3_noun pil_p, pil_q, pil_r;
-  u3_noun pro;
+  u3_noun pil_p, pil_q;
 
   c3_assert( c3y == u3du(pil) );
+  u3x_cell(pil, &pil_p, &pil_q);
 
-  if ( c3y == u3h(pil) ) {
-    u3x_trel(pil, 0, &pil_p, &pil_q);
+  {
+    //  XX use faster cue
+    //
+    u3_noun pro = u3m_soft(0, u3ke_cue, u3k(pil_p));
+    u3_noun mot, tag, dat;
+
+    if (  (c3n == u3r_trel(pro, &mot, &tag, &dat))
+       || (u3_blip != mot) )
+    {
+      u3m_p("mot", u3h(pro));
+      fprintf(stderr, "boot: failed: unable to parse pill\r\n");
+      u3_king_bail();
+      exit(1);
+    }
+
+    if ( c3y == u3r_sing_c("ivory", tag) ) {
+      fprintf(stderr, "boot: failed: unable to boot from ivory pill\r\n");
+      exit(1);
+    }
+    else if ( c3__pill != tag ) {
+      if ( c3y == u3a_is_atom(tag) ) {
+        u3m_p("pill", tag);
+      }
+      fprintf(stderr, "boot: failed: unrecognized pill\r\n");
+      u3_king_bail();
+      exit(1);
+    }
+
+    {
+      u3_noun typ;
+      c3_c* typ_c;
+
+      if ( c3n == u3r_qual(dat, &typ, &bot_u.bot, &bot_u.mod, &bot_u.use) ) {
+        fprintf(stderr, "boot: failed: unable to extract pill\r\n");
+        u3_king_bail();
+        exit(1);
+      }
+
+      if ( c3y == u3a_is_atom(typ) ) {
+        c3_c* typ_c = u3r_string(typ);
+        fprintf(stderr, "boot: parsing %%%s pill\r\n", typ_c);
+        c3_free(typ_c);
+      }
+    }
+
+    u3k(bot_u.bot); u3k(bot_u.mod); u3k(bot_u.use);
+    u3z(pro);
   }
-  else {
-    u3x_qual(pil, 0, &pil_p, &pil_q, &pil_r);
-  }
-
-  pro = u3m_soft(0, u3ke_cue, u3k(pil_p));
-
-  if ( 0 != u3h(pro) ) {
-    fprintf(stderr, "boot: failed: unable to parse pill\r\n");
-    exit(1);
-  }
-
-  u3x_trel(u3t(pro), &bot_u.bot, &bot_u.mod, &bot_u.use);
-  u3k(bot_u.bot); u3k(bot_u.mod); u3k(bot_u.use);
 
   //  optionally replace filesystem in userspace
   //
-  if ( c3y == u3h(pil) ) {
-    if ( u3_nul != pil_q ) {
-      c3_w len_w = 0;
-      u3_noun ova = bot_u.use;
-      u3_noun new = u3_nul;
-      u3_noun ovo;
+  if ( u3_nul != pil_q ) {
+    c3_w len_w = 0;
+    u3_noun ova = bot_u.use;
+    u3_noun new = u3_nul;
+    u3_noun ovo;
 
-      while ( u3_nul != ova ) {
-        ovo = u3h(ova);
+    while ( u3_nul != ova ) {
+      ovo = u3h(ova);
 
-        if ( c3__into == u3h(u3t(ovo)) ) {
-          c3_assert( 0 == len_w );
-          len_w++;
-          ovo = u3t(pil_q);
-        }
-
-        new = u3nc(u3k(ovo), new);
-        ova = u3t(ova);
+      if ( c3__into == u3h(u3t(ovo)) ) {
+        c3_assert( 0 == len_w );
+        len_w++;
+        ovo = u3t(pil_q);
       }
 
-      c3_assert( 1 == len_w );
-
-      u3z(bot_u.use);
-      bot_u.use = u3kb_flop(new);
+      new = u3nc(u3k(ovo), new);
+      ova = u3t(ova);
     }
-  }
-  //  prepend %lite module and userspace ova
-  //
-  else {
-    bot_u.mod = u3kb_weld(u3k(pil_q), bot_u.mod);
-    bot_u.use = u3kb_weld(u3k(pil_r), bot_u.use);
+
+    c3_assert( 1 == len_w );
+
+    u3z(bot_u.use);
+    bot_u.use = u3kb_flop(new);
   }
 
-  u3z(pro); u3z(pil);
+  u3z(pil);
 
   return bot_u;
 }
@@ -1742,30 +1767,33 @@ _pier_boot_plan(u3_pier* pir_u, u3_noun who, u3_noun ven, u3_noun pil)
 
   //  insert module and userspace events
   //
-  //    XX increment [now] deterministically?
-  //
   {
-    struct timeval tim_tv;
     u3_noun ova = bot_u.mod;
+    u3_noun bit = u3qc_bex(48);   //  1/2^16 seconds
     u3_noun now;
 
-    while ( u3_nul != ova ) {
+    {
+      struct timeval tim_tv;
       gettimeofday(&tim_tv, 0);
-      u3_disk_boot_plan(pir_u->log_u,
-                        u3nc(u3_time_in_tv(&tim_tv),
-                             u3k(u3h(ova))));
+      now = u3_time_in_tv(&tim_tv);
+    }
+
+
+    while ( u3_nul != ova ) {
+      u3_disk_boot_plan(pir_u->log_u, u3nc(u3k(now), u3k(u3h(ova))));
+      now = u3ka_add(now, u3k(bit));
       ova = u3t(ova);
     }
 
     ova = bot_u.use;
 
     while ( u3_nul != ova ) {
-      gettimeofday(&tim_tv, 0);
-      u3_disk_boot_plan(pir_u->log_u,
-                        u3nc(u3_time_in_tv(&tim_tv),
-                             u3k(u3h(ova))));
+      u3_disk_boot_plan(pir_u->log_u, u3nc(u3k(now), u3k(u3h(ova))));
+      now = u3ka_add(now, u3k(bit));
       ova = u3t(ova);
     }
+
+    u3z(bit); u3z(now);
   }
 
   u3_disk_boot_save(pir_u->log_u);

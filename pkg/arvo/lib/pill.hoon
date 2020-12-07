@@ -4,10 +4,13 @@
 |%
 ::
 +$  pill
-  $:  boot-ova=*
-      kernel-ova=(list unix-event)
-      userspace-ova=(list unix-event)
-  ==
+  $%  [%ivory p=(list)]
+      $:  %pill
+          nam=term
+          boot-ova=(list)
+          kernel-ova=(list unix-event)
+          userspace-ova=(list unix-event)
+  ==  ==
 ::
 +$  unix-event
   %+  pair  wire
@@ -16,6 +19,15 @@
       [%whom p=ship]
       [%boot ? $%($>(%fake task:able:jael) $>(%dawn task:able:jael))]
       unix-task
+  ==
+::  +boot-ovum: boostrap kernel filesystem load
+::
+++  boot-ovum
+  |=  [hoon=cord arvo=cord]
+  :~  //arvo
+      %what
+      [/sys/hoon hoon/hoon]
+      [/sys/arvo hoon/arvo]
   ==
 ::  +file-ovum: userspace filesystem load
 ::

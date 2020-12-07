@@ -96,8 +96,6 @@
   $%  $>(%init vane-task)                               ::  report install
   ==  ==  ==                                            ::
 ::                                                      ::
-+$  peer-sign  [=ship =udiff:point]                     ::
-::                                                      ::
 +$  sign                                                ::  in result $<-
   $~  [%a %done ~]                                      ::
   $%  $:  %a                                            ::
@@ -310,7 +308,7 @@
         (~(gas by points) spon-points)
       =.  +>.$
         %-  curd  =<  abet
-        (public-keys:~(feel su hen now pki etn) %full points)
+        (public-keys:~(feel su hen now pki etn) pos.zim.pki %full points)
       ::
       ::  start subscriptions
       ::
@@ -446,7 +444,7 @@
         ~&  [%not-our-moon ship.tac]
         +>.$
       %-  curd  =<  abet
-      (~(new-event su hen now pki etn) [ship udiff]:tac)
+      (~(new-event su hen now pki etn) [ship udiff]~:tac)
     ::
     ::  rotate web login code
     ::
@@ -539,7 +537,7 @@
         [%a %boon *]
       =+  ;;  [%public-keys-result =public-keys-result]  payload.hin
       %-  curd  =<  abet
-      (public-keys:~(feel su hen now pki etn) public-keys-result)
+      (public-keys:~(feel su hen now pki etn) pos.zim.pki public-keys-result)
     ::
         [%a %lost *]
       ::  TODO: better error handling
@@ -582,9 +580,9 @@
           %fact
         ?>  ?=([@ *] tea)
         =*  app  i.tea
-        =/  =peer-sign  ;;(peer-sign q.q.cage.p.+>.hin)
+        =+  ;;(=udiffs:point q.q.cage.p.+>.hin)
         %-  curd  =<  abet
-        (~(new-event su hen now pki etn) peer-sign)
+        (~(new-event su hen now pki etn) udiffs)
       ==
     ==
   ::                                                    ::  ++curd:of
@@ -710,13 +708,17 @@
     ==
   ::
   ++  new-event
-    |=  [=a=ship =a=udiff:point]
+    |=  =udiffs:point
     ^+  this-su
-    =/  a-point=point  (~(gut by pos.zim.pki) a-ship *point)
-    =/  a-diff=(unit diff:point)  (udiff-to-diff:point a-udiff a-point)
-    ?~  a-diff
+    =/  original-pos  pos.zim.pki
+    |-  ^+  this-su
+    ?~  udiffs
       this-su
-    (public-keys:feel %diff a-ship u.a-diff)
+    =/  a-point=point  (~(gut by pos.zim.pki) ship.i.udiffs *point)
+    =/  a-diff=(unit diff:point)  (udiff-to-diff:point udiff.i.udiffs a-point)
+    =?  this-su  ?=(^ a-diff)
+      (public-keys:feel original-pos %diff ship.i.udiffs u.a-diff)
+    $(udiffs t.udiffs)
   ::
   ++  subscribers-on-ship
     |=  =ship
@@ -831,7 +833,7 @@
     ::  Update public-keys
     ::
     ++  public-keys
-      |=  =public-keys-result
+      |=  [original=(map ship point) =public-keys-result]
       ^+  ..feel
       ?:  ?=(%full -.public-keys-result)
         =/  pointl=(list [who=ship =point])
@@ -839,12 +841,14 @@
         |-  ^+  ..feel
         ?~  pointl
           ..feel(pos.zim (~(uni by pos.zim) points.public-keys-result))
-        ::  if changing rift upward, then signal a breach
+        ::  if changing rift upward and we already had keys for them,
+        ::  then signal a breach
         ::
         =?    ..feel
             =/  point
               (~(get by pos.zim) who.i.pointl)
-            ?&  ?=(^ point)
+            ?&  (~(has by original) who.i.pointl)
+                ?=(^ point)
                 (gth rift.point.i.pointl rift.u.point)
             ==
           =.  ..feel
@@ -873,10 +877,12 @@
       =/  a-diff=diff:point  diff.public-keys-result
       =/  maybe-point  (~(get by pos.zim) who)
       =/  =point  (fall maybe-point *point)
-      ::  if changing rift upward, then signal a breach
+      ::  if changing rift upward and we already had keys for them, then
+      ::  signal a breach
       ::
       =?    ..feel
-          ?&  ?=(^ maybe-point)
+          ?&  (~(has by original) who)
+              ?=(^ maybe-point)
               ?=(%rift -.a-diff)
               (gth to.a-diff rift.point)
           ==

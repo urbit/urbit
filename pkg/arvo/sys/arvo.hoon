@@ -94,7 +94,6 @@
 ::  +hobo: %soft task builder
 ::  $goof: crash label and trace XX fail/ruin/crud/flaw/lack/miss
 ::  $mass: memory usage
-::  $monk: general identity
 ::  $move: cause and action
 ::  $ovum: card with cause
 ::  $roof: namespace
@@ -117,7 +116,6 @@
 +$  goof  [mote=term =tang]
 +$  mass  $~  $+|+~
           (pair cord (each * (list mass)))
-+$  monk  (each ship (pair @tas @ta))
 +$  move  [=duct =ball]
 +$  ovum  [=wire =card]
 ::
@@ -545,6 +543,15 @@
     ^-  [vase worm]
     =^  gun  +>+<  (mint p.vax [%$ axe])
     [[p.gun .*(q.vax [0 axe])] +>+<.$]
+  ::
+  ::  +slur: slam a vase with a maze
+  ::
+  ++  slur
+    |=  [gat=vase sam=maze]
+    ^-  [vase worm]
+    =^  cur  +>+<.$  (slot 6 gat)
+    =.  +>+<.$  (neat p.cur sam)
+    (slym gat q.p.sam)
   ::  +slym: +slym:ut, cached
   ::
   ++  slym
@@ -581,12 +588,10 @@
   =>  |%
       ::  $card: tagged, untyped event
       ::  $ovum: card with cause
-      ::  $hoof: hoon source
       ::  $news: collated updates
       ::  $oped: module updates
       ::  $seed: next kernel source
       ::
-      +$  hoof  @t
       +$  news
           $:  ::  sys: installs + replacements
               ::  use: non-system files
@@ -595,44 +600,148 @@
               use=(map path (cask))
           ==
       +$  oped
-        $:  lul=(unit hoof)
-            zus=(unit hoof)
-            van=(list (cask hoof))
+        $:  lul=(unit cord)
+            zus=(unit cord)
+            van=(list (cask cord))
         ==
-      +$  seed  [hun=(unit hoof) arv=hoof]
+      +$  seed  [hun=(unit cord) arv=cord]
       --
   ::
   ~%  %part  ..part  ~
   |%
   ::
-  +|  %utilities
-  ::
-  ::    XX move into |wa?
-  ::
-  ::  +slur: slam a vase with a maze
-  ::
-  ++  slur
-    |=  [sac=worm gat=vase sam=maze]
-    ^-  [vase worm]
-    =^  cur  sac  (~(slot wa sac) 6 gat)
-    =^  hig  sac
-      ?-  -.sam
-        %&  (~(nest wa sac) p.cur p.p.sam)
-        %|  (~(nets wa sac) p.cur p.p.sam)
-      ==
-    ?>  hig
-    (~(slym wa sac) gat q.p.sam)
-  ::  +slid: cons a vase onto a maze
-  ::
-  ++  slid
-    |=  [hed=vase tal=maze]
-    ^-  maze
-    ?-  -.tal
-      %&  [%& (slop hed p.tal)]
-      %|  [%| [%cell p.hed p.p.tal] [q.hed q.p.tal]]
-    ==
-  ::
   +|  %engines
+  ::
+  ::  |eden: lifecycle and bootstrap formula generators
+  ::
+  ::    while unused by arvo itself, these nock formulas
+  ::    bootstrap arvo and define its lifecycle.
+  ::
+  ::    we're creating an event series E whose lifecycle can be computed
+  ::    with the urbit lifecycle formula L, `[2 [0 3] [0 2]]`.  that is:
+  ::    if E is the list of events processed by a computer in its life,
+  ::    its final state is S, where S is nock(E L).
+  ::
+  ::    in practice, the first five nouns in E are: two boot formulas,
+  ::    a hoon compiler as a nock formula, the same compiler as source,
+  ::    and the arvo kernel as source.
+  ::
+  ::    after the first five special events, we enter an iterative
+  ::    sequence of regular events which continues for the rest of the
+  ::    computer's life.  during this sequence, each state is a function
+  ::    that, passed the next event, produces the next state.
+  ::
+  ::    a regular event is an $ovum, or `[date wire type data]` tuple, where
+  ::    `date` is a 128-bit Urbit date; `wire` is an opaque path which
+  ::    output can match to track causality; `type` is a symbol describing
+  ::    the type of input; and `data` is input data specific to `type`.
+  ::
+  ::    in real life we don't actually run the lifecycle loop,
+  ::    since real life is updated incrementally and also cares
+  ::    about things like output.  we couple to the internal
+  ::    structure of the state machine and work directly with
+  ::    the underlying arvo engine.
+  ::
+  ::    this arvo core, which is at `+7` (Lisp `cddr`) of the state
+  ::    function (see its public interface in `sys/arvo`), gives us
+  ::    extra features, like output, which are relevant to running
+  ::    a real-life urbit vm, but don't affect the formal definition.
+  ::
+  ::    so a real-life urbit interpreter is coupled to the shape of
+  ::    the arvo core.  it becomes very hard to change this shape.
+  ::    fortunately, it is not a very complex interface.
+  ::
+  ++  eden
+    |%
+    ::  +aeon: arvo lifecycle loop
+    ::
+    ::    the first event in a ship's log,
+    ::    computing the final state from the rest of log
+    ::    when invoked via the lifecycle formula: [%2 [%0 3] %0 2]
+    ::
+    ::    the formal urbit state is always just a gate (function)
+    ::    which, passed the next event, produces the next state.
+    ::
+    ++  aeon
+      ^-  *
+      =>  ::  boot: kernel bootstrap, event 2
+          ::  tale: events 3-n
+          ::
+          *log=[boot=* tale=*]
+      !=  ::  arvo: bootstrapped kernel
+          ::  epic: remainder of the log
+          ::
+      =+  [arvo epic]=.*(tale.log boot.log)
+      |-  ^-  *
+      ?@  epic  arvo
+      %=  $
+        epic  +.epic
+        arvo  .*(arvo [%9 2 %10 [6 %1 -.epic] %0 1])
+      ==
+    ::
+    ::  +boot: event 2: bootstrap a kernel from source
+    ::
+    ++  boot
+      ^-  *
+      ::
+      ::  event 2 is the startup formula, which verifies the compiler
+      ::  and starts the main lifecycle.
+      ::
+      =>  ::  fate: event 3: a nock formula producing the hoon bootstrap compiler
+          ::  hoon: event 4: compiler source
+          ::  arvo: event 5: kernel source
+          ::  epic: event 6-n
+          ::
+          *log=[fate=* hoon=@ arvo=@ epic=*]
+      !=
+      ::
+      ::  activate the compiler gate.  the product of this formula
+      ::  is smaller than the formula.  so you might think we should
+      ::  save the gate itself rather than the formula producing it.
+      ::  but we have to run the formula at runtime, to register jets.
+      ::
+      ::  as always, we have to use raw nock as we have no type.
+      ::  the gate is in fact ++ride.
+      ::
+      ~>  %slog.[0 leaf+"1-b"]
+      =/  compiler-gate  .*(0 fate.log)
+      ::
+      ::  compile the compiler source, producing (pair span nock).
+      ::  the compiler ignores its input so we use a trivial span.
+      ::
+      ~>  %slog.[0 leaf+"1-c (compiling compiler, wait a few minutes)"]
+      =/  compiler-tool
+        .*(compiler-gate [%9 2 %10 [6 %1 noun/hoon.log] %0 1])
+      ::
+      ::  switch to the second-generation compiler.  we want to be
+      ::  able to generate matching reflection nouns even if the
+      ::  language changes -- the first-generation formula will
+      ::  generate last-generation spans for `!>`, etc.
+      ::
+      ~>  %slog.[0 leaf+"1-d"]
+      =.  compiler-gate  .*(0 +:compiler-tool)
+      ::
+      ::  get the span (type) of the kernel core, which is the context
+      ::  of the compiler gate.  we just compiled the compiler,
+      ::  so we know the span (type) of the compiler gate.  its
+      ::  context is at tree address `+>` (ie, `+7` or Lisp `cddr`).
+      ::  we use the compiler again to infer this trivial program.
+      ::
+      ~>  %slog.[0 leaf+"1-e"]
+      =/  kernel-span
+        -:.*(compiler-gate [%9 2 %10 [6 %1 [-.compiler-tool '+>']] %0 1])
+      ::
+      ::  compile the arvo source against the kernel core.
+      ::
+      ~>  %slog.[0 leaf+"1-f"]
+      =/  kernel-tool
+        .*(compiler-gate [%9 2 %10 [6 %1 [kernel-span arvo.log]] %0 1])
+      ::
+      ::  create the arvo kernel, whose subject is the kernel core.
+      ::
+      ~>  %slog.[0 leaf+"1-g"]
+      [.*(+>:compiler-gate +:kernel-tool) epic.log]
+    --
   ::
   ::  |adapt
   ::
@@ -640,7 +749,7 @@
     =>  |%
         ::  deep file as source
         ::
-        ++  sole  |=(a=(cask) `hoof`?>(?=([%hoon @t] a) q.a))
+        ++  sole  |=(a=(cask) `cord`?>(?=([%hoon @t] a) q.a))
         --
     |_  fat=(axal (cask))
     ::
@@ -709,7 +818,7 @@
       ::    %zuse is the subject of the vanes; force all if we have a new %zuse
       ::
       =.  all  |(all ?=(^ zus))
-      =|  nav=(map term hoof)
+      =|  nav=(map term cord)
       =?  nav  all
         %-  ~(gas by nav)
         %+  turn
@@ -722,7 +831,7 @@
             |=([p=path *] ?=([%sys %vane @tas ~] p))
           fat
         |=  [[p=path q=(cask)] taf=_fat]
-        ^-  (pair (cask hoof) _fat)
+        ^-  (pair (cask cord) _fat)
         ?>  ?=([%sys %vane @tas ~] p)
         =*  nam  i.t.t.p
         ?>  ((sane %tas) nam)
@@ -946,16 +1055,18 @@
           ~>  %mean.'spin: activation failed'
           (~(slym wa sac) vax sam)
         ::
+        =>  |%
+            ::  +slid: cons a vase onto a maze
+            ::
+            ++  slid
+              |=  [hed=vase tal=maze]
+              ^-  maze
+              ?-  -.tal
+                %&  [%& (slop hed p.tal)]
+                %|  [%| [%cell p.hed p.p.tal] [q.hed q.p.tal]]
+              ==
+            --
         |%
-        ::  +slix: en-hypo
-        ::
-        ++  slix
-          |=  hil=maze
-          ^-  maze
-          ?-  -.hil
-            %&  [%& (slop [typ.vil p.p.hil] p.hil)]
-            %|  [%| [%cell typ.vil p.p.hil] p.hil]
-          ==
         ::  +peel:spin:plow:va: extract products, finalize vane
         ::
         ++  peel
@@ -980,7 +1091,7 @@
           ::
           =/  sam=maze
             (slid duc (slid err task))
-          =^  pro  sac  (slur sac gat sam)
+          =^  pro  sac  (~(slur wa sac) gat sam)
           (peel pro)
         ::  +take:spin:plow:va: retreat statefully
         ::
@@ -998,7 +1109,7 @@
           =/  sam=maze
             =*  tea  [wir.vil wire]
             (slid tea (slid duc (slid err (slid src gift))))
-          =^  pro  sac  (slur sac gat sam)
+          =^  pro  sac  (~(slur wa sac) gat sam)
           (peel pro)
         --
       --
@@ -1322,7 +1433,7 @@
           %=    ..pith
               van.mod
             %+  roll  van.job
-            |=  [[nam=term txt=hoof] van=_van.mod.sol]
+            |=  [[nam=term txt=cord] van=_van.mod.sol]
             ^+  van
             =/  nex  (create:va our zus.mod.sol nam /sys/vane/[nam]/hoon txt)
             =/  nav  (~(get by van) nam)
@@ -1553,14 +1664,9 @@
 =|  [_arvo soul]
 =*  sol  ->
 |%
+::  +load: upgrade from previous state
 ::
-::  +come: load incompatible
-::
-++  come  |=(* !!)                                      ::   +4
-::
-::  +load: load compatible, notifying vanes
-::
-++  load                                                ::  +10
+++  load                                                ::   +4
   |=  hir=$<(%grub heir)
   ^-  ^
   ~|  %load
@@ -1592,7 +1698,7 @@
 ::
 ::  +peek: external inspect
 ::
-++  peek                                                ::  +46
+++  peek                                                ::  +22
   |=  $:  lyc=gang
           $=  nom
           %+  each  path
@@ -1621,9 +1727,12 @@
 ::
 ::  +poke: external apply
 ::
-++  poke                                                ::  +47
+++  poke                                                ::  +23
   |=  [now=@da ovo=ovum]
   ^-  ^
+  ?.  (gth now now.sol)
+    ~|  poke/[now=now last=now.sol wire.ovo p.card.ovo]
+    ~>(%mean.'time-marches-on' !!)
   =:  eny.sol  (shaz (cat 3 eny now))  ::  XX review
       now.sol  now
     ==
@@ -1638,7 +1747,7 @@
 ::
 ::  +wish: external compute
 ::
-++  wish                                                ::  +22
+++  wish                                                ::  +10
   |=  txt=@
   q:(slap zus.mod (ream txt))
 --
@@ -1713,7 +1822,7 @@
         ?.  ?=(^ zus)
          ~|(%larval-need-zuse !!)
         %+  roll  van.job
-        |=  [[nam=term txt=hoof:part] =_van]
+        |=  [[nam=term txt=cord] =_van]
         ^+  van
         %+  ~(put by van)  nam
         (smit "vane %{(trip nam)}" u.zus /sys/vane/[nam]/hoon txt)
@@ -1726,17 +1835,14 @@
 =*  gub  ->+
 ::
 |%
-++  come  ^come                                         ::   +4
-::
-++  load                                                ::  +10
+++  load                                                ::   +4
   |=  hir=heir
   ?:  ?=(%grub -.hir)
     ~>(%mean.'arvo: larval reboot' !!)    :: XX support
   (^load hir)
 ::
-++  peek  _~                                            ::  +46
-::
-++  poke                                                ::  +47
+++  peek  _~                                            ::  +22
+++  poke                                                ::  +23
   |=  [now=@da ovo=ovum]
   ^-  ^
   ~|  poke/p.card.ovo
@@ -1772,7 +1878,7 @@
   ~>  %slog.[0 leaf+"arvo: metamorphosis"]
   (load u.hir)
 ::
-++  wish                                                ::  +22
+++  wish                                                ::  +10
   |=  txt=*
   q:(slap ?~(zus pit $:u.zus) (ream ;;(@t txt)))
 --

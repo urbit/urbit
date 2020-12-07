@@ -305,11 +305,10 @@
 ::
 =/  pit  !>(.)
 =>  |%
-    ++  come  _[~ ..come]
-    ++  load  _[~ ..come]
-    ++  peek  _~                                            ::  +46
-    ++  poke  _[~ ..poke]                                   ::  +47
-    ++  wish                                                ::  +22
+    ++  load  _[~ ..load]                                   ::   +4
+    ++  peek  _~                                            ::  +22
+    ++  poke  _[~ ..poke]                                   ::  +23
+    ++  wish                                                ::  +10
       |=  txt=*
       q:(slap pit (ream ;;(@t txt)))
     --

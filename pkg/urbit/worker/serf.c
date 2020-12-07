@@ -46,7 +46,8 @@
 +$  plea
   $%  [%live ~]
       [%ripe [pro=%1 hon=@ nok=@] eve=@ mug=@]
-      [%slog pri=@ ?(cord tank)]
+      [%slog pri=@ tank]
+      [%flog cord]
       $:  %peek
           $%  [%done dat=(unit (cask))]
               [%bail dud=goof]

@@ -982,10 +982,12 @@
       [%peers @ *]
     =/  who  (slaw %p i.t.tyl)
     ?~  who  [~ ~]
-    ?~  peer=(~(get by peers.ames-state) u.who)
-      [~ ~]
-    ?+  t.t.tyl  [~ ~]
-      ~  ``noun+!>(u.peer)
+    =/  peer  (~(get by peers.ames-state) u.who)
+    ?+    t.t.tyl  [~ ~]
+        ~
+      ?~  peer
+        [~ ~]
+      ``noun+!>(u.peer)
     ::
         [%forward-lane ~]
       ::

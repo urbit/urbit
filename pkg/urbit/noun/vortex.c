@@ -4,9 +4,10 @@
 #include <stdio.h>
 #include "all.h"
 
-#define _CVX_WISH 22
-#define _CVX_POKE 47
-#define _CVX_PEEK 46
+#define _CVX_LOAD  4
+#define _CVX_PEEK 22
+#define _CVX_POKE 23
+#define _CVX_WISH 10
 
 /* u3v_life(): execute initial lifecycle, producing Arvo core.
 */
@@ -52,7 +53,12 @@ _cv_lite(u3_noun pil)
 {
   u3_noun eve, pro;
 
-  u3x_trel(pil, &eve, 0, 0);
+  {
+    u3_noun hed, tal;
+    u3x_cell(pil, &hed, &tal);
+    u3_assent( u3r_sing_c("ivory", hed) );
+    eve = tal;
+  }
 
   u3l_log("lite: arvo formula %x\r\n", u3r_mug(pil));
   pro = u3v_life(u3k(eve));

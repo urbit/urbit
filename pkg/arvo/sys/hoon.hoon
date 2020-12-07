@@ -1905,17 +1905,17 @@
 ++  map
   |$  [key value]                                       ::  table
   $|  (tree (pair key value))
-  |=(a=(tree (pair)) ~(apt by a))
+  |=(a=(tree (pair)) ?:(=(~ a) & ~(apt by a)))
 ::
 ++  qeu
   |$  [item]                                            ::  queue
   $|  (tree item)
-  |=(a=(tree) ~(apt to a))
+  |=(a=(tree) ?:(=(~ a) & ~(apt to a)))
 ::
 ++  set
   |$  [item]                                            ::  set
   $|  (tree item)
-  |=(a=(tree) ~(apt in a))
+  |=(a=(tree) ?:(=(~ a) & ~(apt in a)))
 ::
 ::::  2l: container from container                      ::
   ::                                                    ::
@@ -13822,7 +13822,6 @@
 +$  mart  (list [n=mane v=tape])                        ::  XML attributes
 +$  marx  $~([%$ ~] [n=mane a=mart])                    ::  dynamic XML tag
 +$  mite  (list @ta)                                    ::  mime type
-+$  monk  (each ship [p=@tas q=@ta])                    ::  general identity
 +$  pass  @                                             ::  public key
 +$  ring  @                                             ::  private key
 +$  ship  @p                                            ::  network identity
