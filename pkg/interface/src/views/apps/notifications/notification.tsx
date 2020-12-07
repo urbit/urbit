@@ -137,6 +137,7 @@ export function Notification(props: NotificationProps) {
           index={index}
           contents={c}
           contacts={props.contacts}
+          groups={props.groups}
           read={read}
           archived={archived}
           timebox={props.time}
@@ -157,6 +158,7 @@ export function Notification(props: NotificationProps) {
           index={index}
           contents={c}
           contacts={props.contacts}
+          groups={props.groups}
           read={read}
           timebox={props.time}
           archived={archived}
