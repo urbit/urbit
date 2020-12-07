@@ -1666,14 +1666,9 @@
 =|  [_arvo soul]
 =*  sol  ->
 |%
+::  +load: upgrade from previous state
 ::
-::  +come: load incompatible
-::
-++  come  |=(* !!)                                      ::   +4
-::
-::  +load: load compatible, notifying vanes
-::
-++  load                                                ::  +10
+++  load                                                ::   +4
   |=  hir=$<(%grub heir)
   ^-  ^
   ~|  %load
@@ -1705,7 +1700,7 @@
 ::
 ::  +peek: external inspect
 ::
-++  peek                                                ::  +46
+++  peek                                                ::  +22
   |=  $:  lyc=gang
           $=  nom
           %+  each  path
@@ -1734,7 +1729,7 @@
 ::
 ::  +poke: external apply
 ::
-++  poke                                                ::  +47
+++  poke                                                ::  +23
   |=  [now=@da ovo=ovum]
   ^-  ^
   =:  eny.sol  (shaz (cat 3 eny now))  ::  XX review
@@ -1751,7 +1746,7 @@
 ::
 ::  +wish: external compute
 ::
-++  wish                                                ::  +22
+++  wish                                                ::  +10
   |=  txt=@
   q:(slap zus.mod (ream txt))
 --
@@ -1839,17 +1834,14 @@
 =*  gub  ->+
 ::
 |%
-++  come  ^come                                         ::   +4
-::
-++  load                                                ::  +10
+++  load                                                ::   +4
   |=  hir=heir
   ?:  ?=(%grub -.hir)
     ~>(%mean.'arvo: larval reboot' !!)    :: XX support
   (^load hir)
 ::
-++  peek  _~                                            ::  +46
-::
-++  poke                                                ::  +47
+++  peek  _~                                            ::  +22
+++  poke                                                ::  +23
   |=  [now=@da ovo=ovum]
   ^-  ^
   ~|  poke/p.card.ovo
@@ -1885,7 +1877,7 @@
   ~>  %slog.[0 leaf+"arvo: metamorphosis"]
   (load u.hir)
 ::
-++  wish                                                ::  +22
+++  wish                                                ::  +10
   |=  txt=*
   q:(slap ?~(zus pit $:u.zus) (ream ;;(@t txt)))
 --
