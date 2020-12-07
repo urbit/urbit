@@ -63,9 +63,6 @@
       txos=(list txo)
   ==
 ::  hest: an entry in the history log
-::  raw: pending history elements
-::    - hearsay: %.y if a peer told us about this element and we haven't observed it yet
-::  yum: confirmed history elements
 ::
 +$  hest
   $:  =txid
@@ -73,9 +70,7 @@
       inputs=(list [=utxo s=(unit ship)])
       outputs=(list [=output s=(unit ship)])
   ==
-+$  raw  (list [hearsay=? block=@ud =hest])
-+$  yum  ((mop @ud hest) gth)
-+$  history  [w=walt =raw =yum]
++$  history  (map xpub (map txid hest))
 ::  state/watch variables:
 ::  scanning addresses and monitoring generated addresses
 ::  batch: indexes to scan for a given chyg
@@ -109,5 +104,6 @@
 ::
 +$  request
   $%  [%address-info last-block=@ud a=address =xpub =chyg =idx]
+      [%tx-info last-block=@ud =txid]
   ==
 --

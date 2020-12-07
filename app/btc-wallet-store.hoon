@@ -30,6 +30,7 @@
       =scans
       batch-size=@ud
       last-block=@ud
+      =history
   ==
 ::
 +$  card  card:agent:gall
@@ -112,7 +113,16 @@
     (init-batches xpub.act (dec max-gap.w))
     ::
       %address-info
+    ::  TODO
+    :: if blank address we're watching gets a value
+    :: add it to history
+    :: send a %tx-info request
     (update-address +.act)
+    ::
+      %tx-info
+    :: TODO: update history as these come. Check confs
+    ::  if address in wach and confs low and this txid not there, request %address-info
+    `state
     ::
       %generate-address
     (generate-address +.act)
@@ -122,7 +132,7 @@
     ?~  w  ~&(>>> "btc-wallet-store: non-existent xpub" `state)
     =/  t=(unit txbu)
       %~  select-utxos  sut
-      [u.w eny.bowl payee.act feyb.act txos.act]
+      [u.w eny.bowl last-block payee.act feyb.act txos.act]
     ?~  t  ~&(>>> "btc-wallet-store: insufficient balance" `state)
     :_  state
     ~[(send-update [%generate-txbu xpub.act u.t])]
@@ -266,14 +276,9 @@
   ++  is-done
     |=  w=walt
     ?&  used
-        %+  levy  (turn ~(tap in utxos) num-confs)
+        %+  levy  (turn ~(tap in utxos) (cury num-confs last-block))
           |=(nc=@ud (gte nc confs:w))
     ==
-  ::
-  ++  num-confs
-    |=  =utxo:btc
-    ?:  =(0 height.utxo)  0
-    (add 1 (sub last-block height.utxo))
   --
 ::  +generate-address: generate and return address
 ::    sends a request for info on the new address (watches it)
