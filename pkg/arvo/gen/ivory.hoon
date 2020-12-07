@@ -26,7 +26,9 @@
       =.  sub  (build-sys sub %arvo)
       =.  sub  (build-sys sub %lull)
       =.  sub  (build-sys sub %zuse)
-      (build-lib sub %vere)
+      =.  sub  (build-lib sub & %ethereum)
+      =.  sub  (build-lib sub & %azimuth)
+      (build-lib sub | %vere)
     =/  nok  !.
       =>  *[ver=(trap vase) ~]
       !=  q:$:ver
@@ -38,7 +40,35 @@
   (swat sub (rain /sys/[nam]/hoon .^(@t cx+(welp sys /[nam]/hoon))))
 ::
 ++  build-lib
-  |=  [sub=(trap vase) nam=term]  ^-  (trap vase)
+  |=  [sub=(trap vase) imp=? nam=term]  ^-  (trap vase)
   ~>  %slog.[0 leaf+"ivory: building /lib/{(trip nam)}"]
-  (swat sub (rain /lib/[nam]/hoon .^(@t cx+(welp lib /[nam]/hoon))))
+  =/  hun=hoon
+    %+  mist  /lib/[nam]/hoon
+    .^(@t cx+(welp lib /[nam]/hoon))
+  ?.  imp  (swat sub hun)
+  (swel sub [%ktts nam hun])
+::  +mist: +rain but skipping past ford runes
+::
+++  mist
+  |=  [bon=path txt=@]
+  ^-  hoon
+  =+  vas=vast
+  ~|  bon
+  %+  scan  (trip txt)
+  %-  full
+  =;  fud
+    (ifix [;~(plug gay fud) gay] tall:vas(wer bon))
+  %-  star
+  ;~  pose  vul
+    %+  ifix  [fas (just `@`10)]
+    (star ;~(less (just `@`10) next))
+  ==
+::  +swel: +swat but with +slop
+::
+++  swel
+  |=  [tap=(trap vase) gen=hoon]
+  ^-  (trap vase)
+  =/  gun  (~(mint ut p:$:tap) %noun gen)
+  |.  ~+
+  [[%cell p.gun p:$:tap] [q.gun q:$:tap]]
 --
