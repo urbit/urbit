@@ -119,6 +119,7 @@ const addNodes = (json, state) => {
     if (!(resource in state.graphs)) { 
       state.graphs[resource] = new BigIntOrderedMap();
     }
+    state.graphKeys.add(resource);
 
     for (let index in data.nodes) {
       let node = data.nodes[index];

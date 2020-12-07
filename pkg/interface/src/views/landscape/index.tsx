@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { Route, Switch } from 'react-router-dom';
+import React, { Component, useEffect } from 'react';
+import { Route, Switch, RouteComponentProps } from 'react-router-dom';
 
 import './css/custom.css';
 
@@ -14,12 +14,52 @@ import { JoinGroup } from './components/JoinGroup';
 import { cite } from '~/logic/lib/util';
 import { Body } from '../components/Body';
 import { Box } from '@tlon/indigo-react';
+import { Loading } from '../components/Loading';
 
 
 type LandscapeProps = StoreState & {
   ship: PatpNoSig;
   api: GlobalApi;
   subscription: GlobalSubscription;
+}
+
+export function DMRedirect(props: LandscapeProps & RouteComponentProps & { ship: string; }) {
+  const { ship, api, history, graphKeys } = props;
+
+  useEffect(() => {
+    const station = `/ship/~${window.ship}/dm--${ship}`;
+    const theirStation = `/ship/~${ship}/dm--${window.ship}`;
+
+    if (graphKeys.has(station)) {
+      history.push(`/~landscape/home/resource/chat${station}`);
+      return;
+    }
+
+    if (graphKeys.has(theirStation)) {
+      history.push(`/~landscape/home/resource/chat${theirStation}`);
+      return;
+    }
+
+    const aud = ship !== window.ship ? [`~${ship}`] : [];
+    const title = `${cite(window.ship)} <-> ${cite(ship)}`;
+
+
+    api.graph.createUnmanagedGraph(
+      `dm--${ship}`,
+      title,
+      '',
+      { invite: { pending: aud } },
+      'chat'
+    ).then(() => {
+      history.push(`/~landscape/home/resource/chat${station}`);
+    });
+
+  }, []);
+
+  return (
+    <Loading text="Creating DM" />
+  );
+
 }
 
 export default class Landscape extends Component<LandscapeProps, {}> {
@@ -31,43 +71,11 @@ export default class Landscape extends Component<LandscapeProps, {}> {
   }
 
   createandRedirectToDM(api, ship, history, allStations) {
-    const station = `/~${window.ship}/dm--${ship}`;
-    const theirStation = `/~${ship}/dm--${window.ship}`;
-
-    if (allStations.indexOf(station) !== -1) {
-      history.push(`/~landscape/home/resource/chat${station}`);
-      return;
-    }
-
-    if (allStations.indexOf(theirStation) !== -1) {
-      history.push(`/~landscape/home/resource/chat${theirStation}`);
-      return;
-    }
-
-    const groupPath = `/ship/~${window.ship}/dm--${ship}`;
-    const aud = ship !== window.ship ? [`~${ship}`] : [];
-    const title = `${cite(window.ship)} <-> ${cite(ship)}`;
-
-    api.chat.create(
-      title,
-      '',
-      station,
-      groupPath,
-      { invite: { pending: aud } },
-      aud,
-      true,
-      false
-    );
-
-    //  TODO: make a pretty loading state
-    setTimeout(() => {
-      history.push(`/~landscape/home/resource/chat${station}`);
-    }, 5000);
   }
 
   render() {
     const { props } = this;
-    const { api, inbox } = props;
+    const { api } = props;
 
     return (
       <Switch>
@@ -112,7 +120,7 @@ export default class Landscape extends Component<LandscapeProps, {}> {
         <Route path='/~landscape/dm/:ship?'
         render={routeProps => {
           const { ship } = routeProps.match.params;
-          return this.createandRedirectToDM(api, ship, routeProps.history, Object.keys(inbox));
+          return <DMRedirect {...routeProps} {...props} ship={ship} />
         }}
         />
         <Route path="/~landscape/join/:ship?/:name?"
