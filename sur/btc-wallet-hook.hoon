@@ -24,7 +24,8 @@
 ::   - target of action is local ship
 ::  gen-pay-address: generate a payment address from our ship to another
 ::  ret-pay-address: give an address to a payer who requested it
-::  broadcast-tx: broadcast a signed-psbt, associate with poym
+::  broadcast-tx: broadcast a signed-psbt, must be current poym
+::  expect-payment: tell another ship that we're paying a previously requested address
 ::
 +$  action
   $%  [%set-provider provider=ship]
@@ -33,6 +34,7 @@
       [%gen-pay-address value=sats]
       [%ret-pay-address =address payer=ship value=sats]
       [%broadcast-tx signed-psbt=cord]
+      [%expect-payment payer=ship value=sats]
       [%clear-poym ~]
       [%force-retry ~]
   ==

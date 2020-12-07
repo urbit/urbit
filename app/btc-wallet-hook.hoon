@@ -191,9 +191,21 @@
     ::
       %broadcast-tx
     :: TODO:
-    
+    ::  calc txid from poym's txbu
     ::  calc txid
-    ::: add to pend-piym
+    ::  make sure both are the same
+    ::  remove from poym
+    ::  broadcast to provider
+    ::  add to wallet-store history
+    ::  send message to peer
+    `state
+    ::
+      %expect-payment
+    ::TODO
+    ::  - check that src.bowl isn't past piym-limit in pend-piym
+    ::  - check that payment is in piym
+    ::  - add to pend-piym
+    ::  - retry pend-piym
     `state
     ::
       %clear-poym
@@ -214,6 +226,7 @@
   ?.  =(host.u.provider src.bowl)  `state
   ?-  -.s
       %connected
+    ::  TODO retry pend-piym every time here.
     :_  %=  state
             provider  `[host.u.provider %.y]
             btc-state  [block.s fee.s now.bowl]
@@ -245,6 +258,10 @@
     ==
     ::
       %tx-info
+    :: TODO
+    ::  - pass to store always
+    ::  - check whether txid in pend-piym
+    ::  if yes, add to wallet-store history and delete from pend-piym
     `state
     ::
       %raw-tx

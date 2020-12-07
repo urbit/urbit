@@ -53,6 +53,11 @@
   ++  confs    6
   --
 ::
+++  num-confs
+  |=  [last-block=@ud =utxo:btc]
+  ?:  =(0 height.utxo)  0
+  (add 1 (sub last-block height.utxo))
+::
 ++  from-xpub
   |=  [=xpub:btc scan-to=(unit scon) max-gap=(unit @ud) confs=(unit @ud)]
   ^-  walt
@@ -131,7 +136,7 @@
 ::  sut: door to select utxos
 ::
 ++  sut
-|_  [w=walt eny=@uvJ payee=(unit ship) =feyb txos=(list txo)]
+|_  [w=walt eny=@uvJ last-block=@ud payee=(unit ship) =feyb txos=(list txo)]
   ++  meta-weight  10
   ++  output-weight  31
   ::
@@ -164,6 +169,11 @@
     =/  cost  (mul input-weight feyb)
     ?:  (lte val cost)  0
     (sub val cost)
+  ::  +spendable: whether utxo has enough confs to spend
+  ::
+  ++  spendable
+    |=  =utxo:btc  ^-  ?
+    (gte (num-confs last-block utxo) confs.w)
   ::  Uses naive random selection. Should switch to branch-and-bound later.
   ::
   ++  select-utxos
@@ -205,7 +215,8 @@
     =^  n  rng  (rads:rng (lent is))
     =/  i=input  (snag n is)
     =/  net-val  (net-value value.utxo.i)
-    =?  select  (gth net-val 0)  [i select]                 ::  select if net-value > 0
+    =?  select  ?&((spendable utxo.i) (gth net-val 0))
+      [i select]                                           ::  select if net-value > 0
     =/  new-total  (add total net-val)
     ?:  (gte new-total target)  `select
     %=  $
