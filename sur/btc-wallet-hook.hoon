@@ -18,7 +18,10 @@
 ::
 +$  payment  [=xpub =address payer=ship value=sats]
 +$  piym  [ps=(map ship payment) num-fam=(map ship @ud)]
-+$  pend-piym  [ps=(map txid payment) num=(map ship @ud)]
++$  pend-piym
+  $:  ps=(map txid [pay=payment vout-n=@ud])
+      num=(map ship @ud)
+  ==
 +$  poym  (unit txbu:bws)
 ::  req-pay-address: request a payment address from another ship
 ::   - target of action is local ship
@@ -26,6 +29,7 @@
 ::  ret-pay-address: give an address to a payer who requested it
 ::  broadcast-tx: broadcast a signed-psbt, must be current poym
 ::  expect-payment: tell another ship that we're paying a previously requested address
+::    - vout-n is the index of the output that has value
 ::
 +$  action
   $%  [%set-provider provider=ship]
@@ -34,7 +38,7 @@
       [%gen-pay-address value=sats]
       [%ret-pay-address =address payer=ship value=sats]
       [%broadcast-tx signed-psbt=cord]
-      [%expect-payment =txid payer=ship value=sats]
+      [%expect-payment =txid payer=ship value=sats vout-n=@ud]
       [%clear-poym ~]
       [%force-retry ~]
   ==
