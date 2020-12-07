@@ -1,4 +1,5 @@
 /-  sur=btc
+/+  base64
 ^?
 =<  [sur .]
 =,  sur
@@ -56,6 +57,63 @@
   ?.  =(wid.hex 20)
     ~|("Only 20-byte addresses supported" !!)
   (to-script-pubkey (from-byts:buffer hex))
+::  arms to handle BIP174 PSBTs
+::
+++  psbt
+  |%
+  ::  +txid: extract txid from a valid PSBT
+  ++  txid
+    |=  psbt=cord
+    ^-  ^txid
+    ~|  "Invalid PSBT"
+    =+  p=(de:base64 psbt)
+    ?~  p  !!
+    =/  bigend=@ux  (swp 3 q.u.p)
+    =/  tx=btc-byts
+      %-  raw-tx
+      %+  slag  5
+      (from-byts:buffer [(met 3 bigend) bigend])
+    ::  use buffer for leading/trailing 0s safety
+    ::
+    =/  hash=btc-byts
+      %-  to-byts:buffer
+      %-  flop
+      %-  from-byts:buffer
+      %-  sha256
+      %-  sha256
+      tx
+    ?>  ?=(%32 -.hash)
+    hash
+  ::  +raw-tx: extract hex transaction
+  ::    looks for key 0x0 in global map
+  ::    crashes if tx not in buffer
+  ::
+  ++  raw-tx
+    |=  b=^buffer
+    |-  ^-  btc-byts
+    ?~  b  !!
+    ?:  =(0x0 i.b)  !!
+    =+  np=(next-pair b)
+    ?:  =(0x0 dat.key.np)
+      val.np
+    $(b rest.np)
+  :: +next-pair: returns next key-val in a PSBT map
+  ::   input buffer head must be a map key length
+  ::
+  ++  next-pair
+    |=  b=^buffer
+    ^-  [key=btc-byts val=btc-byts rest=^buffer]
+    =+  klen=(snag 0 b)
+    =+  k=(swag [1 klen] b)
+    =+  vlen=(snag (add 1 klen) b)
+    =+  v=(swag [(add 2 klen) vlen] b)
+    =+  len=(add 2 (add klen vlen))
+    ?>  ?=([^ ^] [k v])
+    :*  (to-byts:buffer k)
+        (to-byts:buffer v)
+        (slag len b)
+    ==
+  --
 ::  list of @ux that is big endian for hashing purposes
 ::  used to preserve 0s when concatenating byte sequences
 ::
