@@ -17,13 +17,16 @@
 |%
 ++  defaults
   |%
-  ++  fam-limit  10
+  ++  fam-limit   10
+  ++  piym-limit  3
   --
 +$  versioned-state
     $%  state-0
     ==
 ::  provider: maybe ship if provider is set
 ::  fam-limit: how many addresses a ship and its moons can request in piym
+::  piym-limit: how many entries a given ship can have in pend-piym
+::    A ship can only broadcast X payments to us until we see one of them in the mempool
 ::  feybs: fee/byte in sats used for a given ship payee
 ::
 +$  state-0
@@ -32,6 +35,7 @@
       =btc-state
       def-wallet=(unit xpub)
       fam-limit=@ud
+      piym-limit=@ud
       feybs=(map ship sats)
       =reqs
       =piym
@@ -186,6 +190,10 @@
     ==
     ::
       %broadcast-tx
+    :: TODO:
+    
+    ::  calc txid
+    ::: add to pend-piym
     `state
     ::
       %clear-poym
