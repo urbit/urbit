@@ -545,6 +545,15 @@
     ^-  [vase worm]
     =^  gun  +>+<  (mint p.vax [%$ axe])
     [[p.gun .*(q.vax [0 axe])] +>+<.$]
+  ::
+  ::  +slur: slam a vase with a maze
+  ::
+  ++  slur
+    |=  [gat=vase sam=maze]
+    ^-  [vase worm]
+    =^  cur  +>+<.$  (slot 6 gat)
+    =.  +>+<.$  (neat p.cur sam)
+    (slym gat q.p.sam)
   ::  +slym: +slym:ut, cached
   ::
   ++  slym
@@ -604,33 +613,6 @@
   ::
   ~%  %part  ..part  ~
   |%
-  ::
-  +|  %utilities
-  ::
-  ::    XX move into |wa?
-  ::
-  ::  +slur: slam a vase with a maze
-  ::
-  ++  slur
-    |=  [sac=worm gat=vase sam=maze]
-    ^-  [vase worm]
-    =^  cur  sac  (~(slot wa sac) 6 gat)
-    =^  hig  sac
-      ?-  -.sam
-        %&  (~(nest wa sac) p.cur p.p.sam)
-        %|  (~(nets wa sac) p.cur p.p.sam)
-      ==
-    ?>  hig
-    (~(slym wa sac) gat q.p.sam)
-  ::  +slid: cons a vase onto a maze
-  ::
-  ++  slid
-    |=  [hed=vase tal=maze]
-    ^-  maze
-    ?-  -.tal
-      %&  [%& (slop hed p.tal)]
-      %|  [%| [%cell p.hed p.p.tal] [q.hed q.p.tal]]
-    ==
   ::
   +|  %engines
   ::
@@ -946,16 +928,18 @@
           ~>  %mean.'spin: activation failed'
           (~(slym wa sac) vax sam)
         ::
+        =>  |%
+            ::  +slid: cons a vase onto a maze
+            ::
+            ++  slid
+              |=  [hed=vase tal=maze]
+              ^-  maze
+              ?-  -.tal
+                %&  [%& (slop hed p.tal)]
+                %|  [%| [%cell p.hed p.p.tal] [q.hed q.p.tal]]
+              ==
+            --
         |%
-        ::  +slix: en-hypo
-        ::
-        ++  slix
-          |=  hil=maze
-          ^-  maze
-          ?-  -.hil
-            %&  [%& (slop [typ.vil p.p.hil] p.hil)]
-            %|  [%| [%cell typ.vil p.p.hil] p.hil]
-          ==
         ::  +peel:spin:plow:va: extract products, finalize vane
         ::
         ++  peel
@@ -980,7 +964,7 @@
           ::
           =/  sam=maze
             (slid duc (slid err task))
-          =^  pro  sac  (slur sac gat sam)
+          =^  pro  sac  (~(slur wa sac) gat sam)
           (peel pro)
         ::  +take:spin:plow:va: retreat statefully
         ::
@@ -998,7 +982,7 @@
           =/  sam=maze
             =*  tea  [wir.vil wire]
             (slid tea (slid duc (slid err (slid src gift))))
-          =^  pro  sac  (slur sac gat sam)
+          =^  pro  sac  (~(slur wa sac) gat sam)
           (peel pro)
         --
       --
