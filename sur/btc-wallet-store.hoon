@@ -41,12 +41,14 @@
       max-gap=@ud
       confs=@ud
   ==
+::  input: utxo for a transaction
 ::  feyb: fee per byte in sats
 ::  key:  HD wallet path
 ::  txi/txo:  input/output for a transaction being built
 ::  txbu: tx builder -- all information needed to make a transaction for signing
 ::  peta: optional payment metadata
 ::
++$  input  [=utxo =chyg =idx]
 +$  peta  (unit [payer=ship value=sats])
 +$  feyb  sats
 +$  key  [=bipt =chyg =idx]
