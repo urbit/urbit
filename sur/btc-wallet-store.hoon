@@ -91,7 +91,7 @@
       [%address-info =xpub =chyg =idx utxos=(set utxo) used=? block=@ud]
       [%generate-address =xpub =chyg =peta]
       [%generate-txbu =xpub payee=(unit ship) feyb=sats txos=(list txo)]
-      [%add-history-entry =hest]
+      [%add-history-entry =xpub =hest]
   ==
 ::
 +$  update

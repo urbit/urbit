@@ -34,7 +34,7 @@
       [%gen-pay-address value=sats]
       [%ret-pay-address =address payer=ship value=sats]
       [%broadcast-tx signed-psbt=cord]
-      [%expect-payment payer=ship value=sats]
+      [%expect-payment =txid payer=ship value=sats]
       [%clear-poym ~]
       [%force-retry ~]
   ==
