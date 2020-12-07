@@ -120,8 +120,10 @@
     (update-address +.act)
     ::
       %tx-info
-    :: TODO: update history as these come. Check confs
-    ::  if address in wach and confs low and this txid not there, request %address-info
+    :: TODO:
+    ::  - check whether this txid in any hest map
+    ::  - update history as these come. Check confs
+    ::  - if address in wach and confs low and this txid not there, request %address-info
     `state
     ::
       %generate-address
@@ -136,6 +138,13 @@
     ?~  t  ~&(>>> "btc-wallet-store: insufficient balance" `state)
     :_  state
     ~[(send-update [%generate-txbu xpub.act u.t])]
+    ::
+      %add-history-entry
+    :: TODO
+    ::  - create map for xpub if doesn't exist
+    ::  - add the hest
+    ::  - send a tx-info request out
+    `state
   ==
 ::  wallet scan algorithm:
 ::  Initiate a batch for each chyg, with max-gap idxs in it
