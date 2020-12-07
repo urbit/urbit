@@ -66,9 +66,10 @@
 ::
 +$  hest
   $:  =txid
-      recvd=@da
-      inputs=(list [=utxo s=(unit ship)])
-      outputs=(list [=output s=(unit ship)])
+      confs=@ud
+      recvd=(unit @da)
+      inputs=(list [=val:tx s=(unit ship)])
+      outputs=(list [=val:tx s=(unit ship)])
   ==
 +$  history  (map xpub (map txid hest))
 ::  state/watch variables:
@@ -89,6 +90,7 @@
 +$  action
   $%  [%add-wallet =xpub scan-to=(unit scon) max-gap=(unit @ud) confs=(unit @ud)]
       [%address-info =xpub =chyg =idx utxos=(set utxo) used=? block=@ud]
+      [%tx-info =info:tx]
       [%generate-address =xpub =chyg =peta]
       [%generate-txbu =xpub payee=(unit ship) feyb=sats txos=(list txo)]
       [%add-history-entry =xpub =hest]

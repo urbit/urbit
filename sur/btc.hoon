@@ -29,6 +29,13 @@
         =address
         value=sats
     ==
+  +$  info
+    $:  =txid
+        confs=@ud
+        recvd=(unit @da)
+        inputs=(list val)
+        outputs=(list val)
+    ==
   +$  unsigned
     $:  version=@
         locktime=@

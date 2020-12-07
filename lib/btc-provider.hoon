@@ -109,8 +109,8 @@
   ++  tx-vals
     %-  ot:dejs:format
     :~  [%txid (cu:dejs:format to-hash256 so:dejs:format)]
-        [%recvd (cu:dejs:format from-epoch ni:dejs:format)]
         [%confs ni:dejs:format]
+        [%recvd (cu:dejs:format from-epoch ni:dejs:format)]
         [%inputs (ar:dejs:format tx-val)]
         [%outputs (ar:dejs:format tx-val)]
     ==

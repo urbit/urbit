@@ -199,24 +199,26 @@
     ::  add to wallet-store history
     ::  send message to peer
     `state
+    ::
     ::  - check that src.bowl isn't past piym-limit in pend-piym
     ::  - check that payment is in piym
-    ::  - add to pend-piym
+    ::  - add payment to pend-piym
     ::  - send tx-info to provider (poke)
     ::
       %expect-payment
-    ~|("Too many %expect-payment sent, or payer+value not found in incoming payments")
-    =+  num-pend  (~(gut by num.pend-piym) payer.act 0)
+    ~|  "Too many %expect-payment sent, or payer+value not found in incoming payments"
+    =+  num-pend=(~(gut by num.pend-piym) payer.act 0)
     ?>  (gte piym-limit num-pend)
     =+  pay=(~(get by ps.piym) payer.act)
     ?~  pay  !!
     ?>  ?&  =(payer.u.pay payer.act)
             =(value.u.pay value.act)
         ==
-    :-  ~[(get-tx-info txid.act)]
+    :-  ?~  provider  ~
+        ~[(get-tx-info host.u.provider txid.act)]
     %=  state
-        ps.pend-piym  (~(put by ps.pend-piym) txid u.pay)
-        num.pend-piym  +(num-pend)
+        ps.pend-piym  (~(put by ps.pend-piym) txid.act [u.pay vout-n.act])
+        num.pend-piym  (~(put by num.pend-piym) payer.act +(num-pend))
     ==
     ::
       %clear-poym
@@ -226,6 +228,7 @@
     [(retry-reqs block.btc-state) state]
   ==
 ::  +handle-provider-status: handle connectivity updates from provider
+::    - retry pend-piym on any %connected event, since we're checking mempool
 ::    - if status is %connected, retry all pending address lookups
 ::    - only retry all if previously disconnected
 ::    - if block is updated, retry all address reqs
@@ -237,16 +240,20 @@
   ?.  =(host.u.provider src.bowl)  `state
   ?-  -.s
       %connected
-    ::  TODO retry pend-piym every time here.
     :_  %=  state
             provider  `[host.u.provider %.y]
             btc-state  [block.s fee.s now.bowl]
         ==
     ?:  ?!(connected.u.provider)
-      (weld (retry-reqs block.s) retry-txbu)
-    ?.  (lth block.btc-state block.s)  ~
+      %-  zing
+      :~  (retry-reqs block.s)
+          retry-txbu
+          retry-pend-piym
+      ==
+    ?.  (lth block.btc-state block.s)
+      retry-pend-piym
     ~&  >  "got new block, retrying {<(lent (retry-reqs block.s))>} reqs "
-    (retry-reqs block.s)
+    (weld retry-pend-piym (retry-reqs block.s))
     ::
       %disconnected
     `state(provider `[host.u.provider %.n])
@@ -261,6 +268,7 @@
     =/  req=(unit request:bws)
       (~(get by reqs) req-id.p.upd)
     ?~  req  `state
+    ?>  ?=([%address-info *] u.req)
     :_  state(reqs (~(del by reqs) req-id.p.upd))
     :~  %-  poke-wallet-store
         :*  %address-info  xpub.u.req  chyg.u.req  idx.u.req
@@ -269,11 +277,17 @@
     ==
     ::
       %tx-info
-    :: TODO
-    ::  - pass to store always
-    ::  - check whether txid in pend-piym
-    ::  if yes, add to wallet-store history and delete from pend-piym
-    `state
+    ::  - forward tx to wallet-store
+    ::  - delete txid from pend-piym and decrement num.pend-piym
+    ::  - check whether payment in pend-piym matches this tx's output values
+    ::    if yes add to wallet-store-history
+    =/  ti=info:tx  +.body.p.upd
+    =/  mh=(unit [=xpub =hest:bws])
+      (mk-hest ti (~(get by ps.pend-piym) txid.ti))
+    :_  state(pend-piym (del-txid txid.ti))
+    %+  weld  ~[(poke-wallet-store [%tx-info ti])]
+    ?~  mh  ~
+    ~[(poke-wallet-store [%add-history-entry xpub.u.mh hest.u.mh])]
     ::
       %raw-tx
     ?~  poym  `state
@@ -286,16 +300,24 @@
 ++  handle-wallet-store-request
   |=  req=request:bws
   ^-  (quip card _state)
+  ?~  provider  `state
+  =/  should-send=?
+    ?&  provider-connected
+        (lth last-block.req block.btc-state)
+    ==
   ?-  -.req
       %address-info
     =+  ri=(gen-req-id:bp eny.bowl)
     :_  state(reqs (~(put by reqs) ri req))
-    ?~  provider  ~
-    ?:  ?&  provider-connected
-            (lth last-block.req block.btc-state)
-        ==
+    ?:  should-send
       ~[(get-address-info ri host.u.provider a.req)]
     ~
+    ::
+      %tx-info
+    :: TODO: push the request out
+    :: put it in reqs
+    :: check whether last-block has passed
+    `state
   ==
 ::
 ++  handle-wallet-store-update
@@ -340,7 +362,43 @@
   :~  %+  poke-wallet-hook  payer
           [%ret-pay-address address.newp payer value]
   ==
+::  +del-txid: delete txid from pend-piym
 ::
+++  del-txid
+  |=  =txid
+  ^-  ^pend-piym
+  =+  p=(~(get by ps.pend-piym) txid)
+  =.  ps.pend-piym  (~(del by ps.pend-piym) txid)
+  ?~  p  pend-piym
+  =*  payer  payer.pay.u.p
+  =+  n=(~(get by num.pend-piym) payer)
+  ?~  n  pend-piym
+  ?:  =(0 u.n)  pend-piym
+  pend-piym(num (~(put by num.pend-piym) payer (dec u.n)))
+::  +mk-hest: make a hest to add to wallet-store's history
+::    - one of the outputs' value must match the payment from pend-piym
+::
+++  mk-hest
+  |=  [=info:tx p=(unit [pay=payment vout-n=@ud])]
+  ^-  (unit [=xpub =hest:bws])
+  ?~  p  ~
+  ?.  ?&  (gth (lent outputs.info) vout-n.u.p)
+          =(value.pay.u.p value:(snag vout-n.u.p outputs.info))
+      ==
+    ~
+  :-  ~
+  :-  xpub.pay.u.p
+  :*  txid.info
+      confs.info
+      recvd.info
+      %+  turn  inputs.info
+        |=(i=val:tx [i `payer.pay.u.p])
+      %+  turn  outputs.info
+        |=  o=val:tx
+        ?:  =(pos.o vout-n.u.p)
+          [o `our.bowl]
+        [o `payer.pay.u.p]
+  ==
 ::  +fam: planet parent if s is a moon 
 ::
 ++  fam
@@ -376,7 +434,13 @@
   %+  murn  ~(tap by reqs)
   |=  [ri=req-id:bp req=request:bws]
   ?:  (gte last-block.req latest-block)  ~
-  `(get-address-info ri host.u.provider a.req)
+  ?-  -.req
+      %address-info
+    `(get-address-info ri host.u.provider a.req)
+    ::
+      %tx-info
+    `(get-tx-info host.u.provider txid.req)
+  ==
 ::
 ++  retry-txbu
   ^-  (list card)
@@ -385,6 +449,13 @@
   %+  turn  txis.u.poym
   |=  =txi:bws
   (get-raw-tx host.u.provider txid.utxo.txi)
+::  +retry-pend-piym: check whether txids in pend-piym are in mempool
+::
+++  retry-pend-piym
+  ^-  (list card)
+  ?~  provider  ~|("provider not set" !!)
+  %+  turn  ~(tap in ~(key by ps.pend-piym))
+  |=(=txid (get-tx-info host.u.provider txid))
 ::
 ++  get-address-info
   |=  [ri=req-id:bp host=ship a=address]

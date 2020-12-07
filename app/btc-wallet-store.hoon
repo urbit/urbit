@@ -49,7 +49,7 @@
 ++  on-init
   ^-  (quip card _this)
   ~&  >  '%btc-wallet-store initialized'
-  `this(state [%0 *(map xpub:btc walt) *^scans max-gap:defaults 0])
+  `this(state [%0 *(map xpub:btc walt) *^scans max-gap:defaults 0 *^history])
 ++  on-save
   ^-  vase
   !>(state)
@@ -332,7 +332,7 @@
 ::
 ++  send-request
   |=  [pax=(list path) req=request]  ^-  card
-  ~&  >>   "send-request: {<chyg.req>}, {<idx.req>}"
+::  ~&  >>   "send-request: {<chyg.req>}, {<idx.req>}"
   :*  %give  %fact  pax
       %btc-wallet-store-request  !>(req)
   ==
