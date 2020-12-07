@@ -199,14 +199,25 @@
     ::  add to wallet-store history
     ::  send message to peer
     `state
-    ::
-      %expect-payment
-    ::TODO
     ::  - check that src.bowl isn't past piym-limit in pend-piym
     ::  - check that payment is in piym
     ::  - add to pend-piym
-    ::  - retry pend-piym
-    `state
+    ::  - send tx-info to provider (poke)
+    ::
+      %expect-payment
+    ~|("Too many %expect-payment sent, or payer+value not found in incoming payments")
+    =+  num-pend  (~(gut by num.pend-piym) payer.act 0)
+    ?>  (gte piym-limit num-pend)
+    =+  pay=(~(get by ps.piym) payer.act)
+    ?~  pay  !!
+    ?>  ?&  =(payer.u.pay payer.act)
+            =(value.u.pay value.act)
+        ==
+    :-  ~[(get-tx-info txid.act)]
+    %=  state
+        ps.pend-piym  (~(put by ps.pend-piym) txid u.pay)
+        num.pend-piym  +(num-pend)
+    ==
     ::
       %clear-poym
     `state(poym ~)
@@ -388,6 +399,14 @@
   =/  ri=req-id:bp  (gen-req-id:bp eny.bowl)
   :*  %pass  /[(scot %da now.bowl)]  %agent  [host %btc-provider]
       %poke  %btc-provider-action  !>([ri %raw-tx txid])
+  ==
+::
+++  get-tx-info
+  |=  [host=ship =txid]
+  ^-  card
+  =/  ri=req-id:bp  (gen-req-id:bp eny.bowl)
+  :*  %pass  /[(scot %da now.bowl)]  %agent  [host %btc-provider]
+      %poke  %btc-provider-action  !>([ri %tx-info txid])
   ==
 ::
 ++  provider-connected
