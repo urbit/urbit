@@ -94,7 +94,6 @@
 ::  +hobo: %soft task builder
 ::  $goof: crash label and trace XX fail/ruin/crud/flaw/lack/miss
 ::  $mass: memory usage
-::  $monk: general identity
 ::  $move: cause and action
 ::  $ovum: card with cause
 ::  $roof: namespace
@@ -117,7 +116,6 @@
 +$  goof  [mote=term =tang]
 +$  mass  $~  $+|+~
           (pair cord (each * (list mass)))
-+$  monk  (each ship (pair @tas @ta))
 +$  move  [=duct =ball]
 +$  ovum  [=wire =card]
 ::

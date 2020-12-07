@@ -13822,7 +13822,6 @@
 +$  mart  (list [n=mane v=tape])                        ::  XML attributes
 +$  marx  $~([%$ ~] [n=mane a=mart])                    ::  dynamic XML tag
 +$  mite  (list @ta)                                    ::  mime type
-+$  monk  (each ship [p=@tas q=@ta])                    ::  general identity
 +$  pass  @                                             ::  public key
 +$  ring  @                                             ::  private key
 +$  ship  @p                                            ::  network identity
