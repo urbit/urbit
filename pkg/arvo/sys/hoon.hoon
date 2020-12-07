@@ -9565,7 +9565,7 @@
             :_  grub
             (cell lef rig)
           :_  grub
-          [%core - q.ref]
+          [%core lef q.ref]
         ::
             [%face *]
           =^  rig  grub  $(ref q.ref)
