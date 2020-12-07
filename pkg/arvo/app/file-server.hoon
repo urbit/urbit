@@ -106,7 +106,7 @@
   |=  [=mark =vase]
   ^-  (quip card _this)
   |^
-  ?>  (team:title our.bowl src.bowl)
+  ?>  (team:title our.bowl ship.src.bowl)
   ?+  mark  (on-poke:def mark vase)
       %file-server-action  (file-server-action !<(action:srv vase))
       %handle-http-request
@@ -294,7 +294,7 @@
   |=  =path
   ^-  (quip card _this)
   |^
-  ?>  (team:title our.bowl src.bowl)
+  ?>  (team:title our.bowl ship.src.bowl)
   ?+  path  (on-watch:def path)
       [%http-response *]  [~ this]
       [%all ~]            [(give [%configuration configuration]) this]
@@ -318,9 +318,9 @@
 ::
 ++  on-leave  on-leave:def
 ++  on-peek
-  |=  =path
+  |=  [prov=path =path]
   ^-  (unit (unit cage))
-  ?+  path  (on-peek:def path)
+  ?+  path  (on-peek:def prov path)
       [%x %clay %base %hash ~]
     =/  versions  (base-hash:version [our now]:bowl)
     ``hash+!>(?~(versions 0v0 (end [0 25] i.versions)))

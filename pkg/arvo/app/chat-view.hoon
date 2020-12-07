@@ -67,7 +67,7 @@
     ~/  %chat-view-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
-    ?>  (team:title our.bol src.bol)
+    ?>  (team:title our.bol ship.src.bol)
     ?+    mark  (on-poke:def mark vase)
         %handle-http-request
       =+  !<([eyre-id=@ta =inbound-request:eyre] vase)
@@ -89,7 +89,7 @@
     ~/  %chat-view-watch
     |=  =path
     ^-  (quip card _this)
-    ?>  (team:title our.bol src.bol)
+    ?>  (team:title our.bol ship.src.bol)
     |^
     ?:  ?=([%http-response *] path)
       [~ this]
@@ -196,14 +196,14 @@
 ++  poke-json
   |=  jon=json
   ^-  (list card)
-  ?>  (team:title our.bol src.bol)
+  ?>  (team:title our.bol ship.src.bol)
   (poke-chat-view-action (action:dejs:view jon))
 ::
 ++  poke-chat-view-action
   |=  act=action:view
   ^-  (list card)
   |^
-  ?>  (team:title our.bol src.bol)
+  ?>  (team:title our.bol ship.src.bol)
   ?-  -.act
       %create
     ?>  ?=(^ app-path.act)

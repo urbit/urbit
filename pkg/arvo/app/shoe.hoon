@@ -65,8 +65,8 @@
       %demo
     :-  ~
     :-  %sole
-    =/  =tape  "{(scow %p src.bowl)} ran the command"
-    ?.  =(src our):bowl
+    =/  =tape  "{(scow %p ship.src.bowl)} ran the command"
+    ?.  =(ship.src our):bowl
       [%txt tape]
     [%klr [[`%br ~ `%g] [(crip tape)]~]~]
   ::
@@ -74,14 +74,14 @@
     :-  [sole-id]~
     :+  %row
       ~[8 27 35 5]
-    ~[p+src.bowl da+now.bowl t+'plenty room here!' t+'less here!']
+    ~[p+ship.src.bowl da+now.bowl t+'plenty room here!' t+'less here!']
   ::
       %table
     :-  [sole-id]~
     :^  %table
         ~[t+'ship' t+'date' t+'long text' t+'tldr']
       ~[8 27 35 5]
-    :~  ~[p+src.bowl da+now.bowl t+'plenty room here!' t+'less here!']
+    :~  ~[p+ship.src.bowl da+now.bowl t+'plenty room here!' t+'less here!']
         ~[p+~marzod t+'yesterday' t+'sometimes:\0anewlines' t+'newlines']
     ==
   ==
@@ -89,8 +89,8 @@
 ++  can-connect
   |=  sole-id=@ta
   ^-  ?
-  ?|  =(~zod src.bowl)
-      (team:title [our src]:bowl)
+  ?|  =(~zod ship.src.bowl)
+      (team:title [our ship.src]:bowl)
   ==
 ::
 ++  on-connect      on-connect:des

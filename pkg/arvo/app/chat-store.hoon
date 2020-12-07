@@ -65,7 +65,7 @@
         (~(put in subs) sub)
       =?  cards  ?=(^ kick-paths)
         :_  cards
-        [%give %kick kick-paths ~]
+        [%give %kick kick-paths ~ ~]
       $(old [%3 inbox])
     ::
       ?(%0 %1)  $(old (old-to-2 inbox.old))
@@ -86,7 +86,7 @@
     ~/  %chat-store-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
-    ?>  (team:title our.bowl src.bowl)
+    ?>  (team:title our.bowl ship.src.bowl)
     =^  cards  state
       ?+  mark  (on-poke:def mark vase)
         %json         (poke-json:cc !<(json vase))
@@ -100,7 +100,7 @@
     |=  =path
     ^-  (quip card _this)
     |^
-    ?>  (team:title our.bowl src.bowl)
+    ?>  (team:title our.bowl ship.src.bowl)
     =/  cards=(list card)
       ?+    path  (on-watch:def path)
           [%keys ~]     (give %chat-update !>([%keys ~(key by inbox)]))
@@ -121,9 +121,9 @@
   ++  on-leave  on-leave:def
   ++  on-peek
     ~/  %chat-store-peek
-    |=  =path
+    |=  [prov=path =path]
     ^-  (unit (unit cage))
-    ?+  path  (on-peek:def path)
+    ?+  path  (on-peek:def prov path)
         [%x %all ~]        ``noun+!>(inbox)
         [%x %keys ~]       ``noun+!>(~(key by inbox))
         [%x %envelopes *]  (peek-x-envelopes:cc t.t.path)

@@ -95,7 +95,7 @@
           |=([=ship =path] path)
         ?~  paths  cards
         :_  cards
-        [%give %kick paths ~]
+        [%give %kick paths ~ ~]
       ==
 
     =/  new-rolodex=^rolodex
@@ -118,7 +118,7 @@
   ++  on-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
-    ?>  (team:title our.bowl src.bowl)
+    ?>  (team:title our.bowl ship.src.bowl)
     =^  cards  state
       ?+  mark  (on-poke:def mark vase)
         ::%json            (poke-json:cc !<(json vase))
@@ -129,7 +129,7 @@
   ++  on-watch
     |=  =path
     ^-  (quip card _this)
-    ?>  (team:title our.bowl src.bowl)
+    ?>  (team:title our.bowl ship.src.bowl)
     |^
     =/  cards=(list card)
       ?+    path  (on-watch:def path)
@@ -149,7 +149,7 @@
   ::
   ++  on-leave  on-leave:def
   ++  on-peek
-    |=  =path
+    |=  [prov=path =path]
     ^-  (unit (unit cage))
     ?+  path  (on-peek:def path)
         [%x %all ~]       ``noun+!>(rolodex)
@@ -182,13 +182,13 @@
 ::++  poke-json
 ::  |=  =json
 ::  ^-  (quip move _this)
-::  ?>  (team:title our.bol src.bol)
+::  ?>  (team:title our.bol ship.src.bol)
 ::  (poke-contact-action (json-to-action json))
 ::
 ++  poke-contact-action
   |=  action=contact-action
   ^-  (quip card _state)
-  ?>  (team:title our.bol src.bol)
+  ?>  (team:title our.bol ship.src.bol)
   ?-  -.action
       %create   (handle-create +.action)
       %delete   (handle-delete +.action)

@@ -52,7 +52,7 @@
     %.n
   |^
   =/  role=(unit (unit role-tag))
-    (role-for-ship:grp resource.update src.bowl)
+    (role-for-ship:grp resource.update ship.src.bowl)
   ?~  role
     non-member
   ?~  u.role
@@ -64,9 +64,9 @@
   ==
   ++  member
     ?:  ?=(%add-members -.update)
-      =(~(tap in ships.update) ~[src.bowl])
+      =(~(tap in ships.update) ~[ship.src.bowl])
     ?:  ?=(%remove-members -.update)
-      =(~(tap in ships.update) ~[src.bowl])
+      =(~(tap in ships.update) ~[ship.src.bowl])
     %.n
   ++  admin
     !?=(?(%remove-group %add-group) -.update)
@@ -76,8 +76,8 @@
     -.update
   ++  non-member
     ?&  ?=(%add-members -.update)
-        (can-join:grp resource.update src.bowl)
-        =(~(tap in ships.update) ~[src.bowl])
+        (can-join:grp resource.update ship.src.bowl)
+        =(~(tap in ships.update) ~[ship.src.bowl])
     ==
   --
 ::
@@ -99,7 +99,7 @@
     =/  paths
       ~[resource+(en-path:resource resource.update)]
     :_  this
-    [%give %kick paths ~]~
+    [%give %kick paths ~ ~]~
   ?.  ?=(%remove-members -.update)
     [~ this]
   =/  paths
@@ -108,7 +108,7 @@
   %+  turn
     ~(tap in ships.update)
   |=  =ship
-  [%give %kick paths `ship]
+  [%give %kick paths `ship ~]
 ::
 ++  initial-watch
   |=  [=path rid=resource]
@@ -116,7 +116,7 @@
   =/  group
     (scry-group:grp rid)
   ?>  ?=(^ group)
-  ?>  (~(has in members.u.group) src.bowl)
+  ?>  (~(has in members.u.group) ship.src.bowl)
   !>  ^-  update:store
   [%initial-group rid u.group]
 ::

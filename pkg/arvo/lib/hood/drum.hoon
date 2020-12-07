@@ -146,9 +146,9 @@
 ++  peer                                              ::
   |=  pax=path
   ~|  [%drum-unauthorized our+our.hid src+src.hid]    ::  ourself
-  ?>  (team:title our.hid src.hid)               ::  or our own moon
+  ?>  (team:title our.hid ship.src.hid)               ::  or our own moon
   =<  se-abet  =<  se-view
-  (se-text "[{<src.hid>}, driving {<our.hid>}]")
+  (se-text "[{<ship.src.hid>}, driving {<our.hid>}]")
 ::
 ++  poke-set-boot-apps                                ::
   |=  lit=?

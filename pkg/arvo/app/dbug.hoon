@@ -43,7 +43,7 @@
     |=  [=mark =vase]
     ^-  (quip card _this)
     ?:  ?=(%noun mark)
-      ?>  (team:title [our src]:bowl)
+      ?>  (team:title [our ship.src]:bowl)
       =/  code  !<((unit @t) vase)
       =/  msg=tape
         ?~  code

@@ -771,12 +771,12 @@
     |=  [app=term =inbound-request:eyre]
     ^-  (list move)
     :~  :*  duct  %pass  /watch-response/[eyre-id]
-            %g  %deal  [our our]  app
+            %g  %deal  [our our /e]  app
             %watch  /http-response/[eyre-id]
         ==
       ::
         :*  duct  %pass  /run-app-request/[eyre-id]
-            %g  %deal  [our our]  app
+            %g  %deal  [our our /e]  app
             %poke  %handle-http-request
             !>([eyre-id inbound-request])
         ==
@@ -799,7 +799,7 @@
       :_  state
       :_  ~
       :*  duct  %pass  /watch-response/[eyre-id]
-          %g  %deal  [our our]  app.action.u.connection
+          %g  %deal  [our our /e]  app.action.u.connection
           %leave  ~
       ==
     ::
@@ -1373,7 +1373,7 @@
           ^-  move
           :^  duct  %pass  /channel/poke/[channel-id]/(scot %ud request-id.i.requests)
           =,  i.requests
-          :*  %g  %deal  `sock`[our ship]  app
+          :*  %g  %deal  `sock`[our ship /e]  app
               `task:agent:gall`[%poke-as mark %json !>(json)]
           ==
         ::
@@ -1388,7 +1388,7 @@
           ^-  move
           :^  duct  %pass
             (subscription-wire channel-id request-id ship app)
-          :*  %g  %deal  [our ship]  app
+          :*  %g  %deal  [our ship /e]  app
               `task:agent:gall`[%watch path]
           ==
         ::
@@ -1423,7 +1423,7 @@
           =,  u.maybe-subscription
           :^  duc  %pass
             (subscription-wire channel-id subscription-id.i.requests ship app)
-          :*  %g  %deal  [our ship]  app
+          :*  %g  %deal  [our ship /e]  app
               `task:agent:gall`[%leave ~]
           ==
         ::
@@ -1473,7 +1473,7 @@
       ^-  move
       :^  duct  %pass
         (subscription-wire channel-id request-id ship app)
-      [%g %deal [our ship] app `task:agent:gall`[%leave ~]]
+      [%g %deal [our ship /e] app `task:agent:gall`[%leave ~]]
     ::  +emit-event: records an event occurred, possibly sending to client
     ::
     ::    When an event occurs, we need to record it, even if we immediately
@@ -1565,7 +1565,7 @@
         =+  (~(got by subscriptions.u.channel) request-id)
         :^  duct  %pass
           (subscription-wire channel-id request-id ship app)
-        [%g %deal [our ship] app %leave ~]
+        [%g %deal [our ship /e] app %leave ~]
       ::  update channel state to reflect the %kick
       ::
       =?  u.channel  kicking
@@ -1758,7 +1758,7 @@
       ^-  move
       :^  duc  %pass
         (subscription-wire channel-id request-id ship app)
-      [%g %deal [our ship] app %leave ~]
+      [%g %deal [our ship /e] app %leave ~]
     --
   ::  +handle-gall-error: a call to +poke-http-response resulted in a %coup
   ::
@@ -1772,7 +1772,7 @@
         ~
       :_  ~
       :*  duct  %pass  /watch-response/[eyre-id]
-          %g  %deal  [our our]  app.action.connection
+          %g  %deal  [our our /e]  app.action.connection
           %leave  ~
       ==
     ::
@@ -1917,7 +1917,7 @@
         ~
       :_  ~
       :*  duct  %pass  /watch-response/[eyre-id]
-          %g  %deal  [our our]  app.action.u.connection-state
+          %g  %deal  [our our /e]  app.action.u.connection-state
           %leave  ~
       ==
     --
@@ -2266,7 +2266,7 @@
       :_  http-server-gate
       =/  cmd
         [%acme %poke `cage`[%acme-order !>(mod)]]
-      [duct %pass /acme/order %g %deal [our our] cmd]~
+      [duct %pass /acme/order %g %deal [our our /e] cmd]~
     ==
   ::
       %request

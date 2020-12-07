@@ -1,12 +1,12 @@
 ::  lib/push-hook: helper for creating a push hook
-::  
+::
 ::   lib/push-hook is a helper for automatically pushing data from a
 ::   local store to the corresponding pull-hook on remote ships. It also
 ::   proxies remote pokes to the store.
 ::
 ::   ## Interfacing notes:
 ::
-::   The inner door may interact with the library by producing cards. 
+::   The inner door may interact with the library by producing cards.
 ::   Do not pass any cards on a wire beginning with /helper as these
 ::   wires are reserved by this library. Any watches/pokes/peeks not
 ::   listed below will be routed to the inner door.
@@ -30,7 +30,7 @@
 +$  card  card:agent:gall
 ::
 ::  $config: configuration for the push hook
-::  
+::
 ::    .store-name: name of the store to proxy pokes and
 ::    subscriptions to
 ::    .store-path: subscription path to receive updates on
@@ -69,7 +69,7 @@
   |_  bowl:gall
   ::
   ::  +resource-for-update: get affected resource from an update
-  ::  
+  ::
   ::    Given a vase of the update, the mark of which is
   ::    update-mark.config, produce the affected resource, if any.
   ::
@@ -133,7 +133,7 @@
     *[(list card) _^|(..on-init)]
   ::
   ++  on-peek
-    |~  path
+    |~  [path path]
     *(unit (unit cage))
   ::
   ++  on-agent
@@ -172,9 +172,9 @@
       =/  old
         !<(versioned-state old-vase)
       =|  cards=(list card:agent:gall)
-      |^ 
+      |^
       ?-  -.old
-          %1  
+          %1
         =^  og-cards   push-hook
           (on-load:og inner-state.old)
         [(weld cards og-cards) this(state old)]
@@ -188,7 +188,7 @@
             kicked-watches
           ?~  paths  cards
           :_   cards
-          [%give %kick paths ~]
+          [%give %kick paths ~ ~]
         ==
       ==
       ::
@@ -213,13 +213,13 @@
       |=  [=mark =vase]
       ^-  (quip card:agent:gall agent:gall)
       ?:  =(mark %push-hook-action)
-        ?>  (team:title our.bowl src.bowl)
+        ?>  (team:title our.bowl ship.src.bowl)
         =^  cards  state
           (poke-hook-action:hc !<(action vase))
         [cards this]
       ::
       ?:  =(mark update-mark.config)
-        ?:  (team:title [our src]:bowl)
+        ?:  (team:title [our ship.src]:bowl)
           :_  this
           (forward-update:hc vase)
         =^  cards  state
@@ -326,7 +326,7 @@
       =.  sharing
         (~(del in sharing) rid)
       :_  state
-      [%give %kick ~(tap in paths) ~]~
+      [%give %kick ~(tap in paths) ~ ~]~
     ::
     ++  revoke
       |=  [ships=(set ship) rid=resource]
@@ -339,7 +339,7 @@
       ^-  (unit card)
       ?.  (~(has in ships) her)
         ~
-      `[%give %kick ~[path] `her]
+      `[%give %kick ~[path] `her ~]
     --
   ++  incoming-subscriptions
     |=  prefix=path

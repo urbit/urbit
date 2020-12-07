@@ -56,7 +56,7 @@
   ==
 --
 |=  [bowl:gall state]
-?>  =(src our)
+?>  =(ship.src our)
 |_  moz=(list card:agent:gall)
 +$  state      ^state      ::  proxy
 +$  any-state  ^any-state  ::  proxy
@@ -106,7 +106,7 @@
   ..abet
 ::
 ++  on-peek
-  |=  =path
+  |=  [prov=path =path]
   ^-  (unit (unit cage))
   ?.  ?=([%x %kiln %ota ~] path)
     [~ ~]

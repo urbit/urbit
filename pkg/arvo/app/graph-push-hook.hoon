@@ -28,9 +28,9 @@
   =/  group-paths  (groups-from-resource:met [%graph (en-path:res resource)])
   ?~  group-paths  %.n
   ?:  requires-admin
-    (is-admin:grp src.bowl i.group-paths)
-  ?|  (is-member:grp src.bowl i.group-paths)
-      (is-admin:grp src.bowl i.group-paths)
+    (is-admin:grp ship.src.bowl i.group-paths)
+  ?|  (is-member:grp ship.src.bowl i.group-paths)
+      (is-admin:grp ship.src.bowl i.group-paths)
   ==
 ::
 ++  is-allowed-remove
@@ -45,7 +45,7 @@
   ^-  ?
   =/  =node:store
     (got-node:gra resource index)
-  ?|  =(author.post.node src.bowl)
+  ?|  =(author.post.node ship.src.bowl)
       (is-allowed resource bowl %.y)
   ==
 --
@@ -137,10 +137,10 @@
   ?+  -.q.update       [~ this]
       %remove-graph
     :_  this
-    [%give %kick ~[resource+(en-path:res resource.q.update)] ~]~
+    [%give %kick ~[resource+(en-path:res resource.q.update)] ~ ~]~
   ::
       %archive-graph
     :_  this
-    [%give %kick ~[resource+(en-path:res resource.q.update)] ~]~
+    [%give %kick ~[resource+(en-path:res resource.q.update)] ~ ~]~
   ==
 --

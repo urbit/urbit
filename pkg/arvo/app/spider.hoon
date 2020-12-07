@@ -143,7 +143,7 @@
       sc           ~(. spider-core bowl)
       def          ~(. (default-agent this %|) bowl)
   ::
-  ++  on-init   
+  ++  on-init
     ^-  (quip card _this)
     :_  this
     ~[bind-eyre:sc]
@@ -154,7 +154,7 @@
     =+  !<(any=clean-slate-any old-state)
     =?  any  ?=(^ -.any)  (old-to-1 any)
     =?  any  ?=(~ -.any)  (old-to-1 any)
-    =^  upgrade-cards  any  
+    =^  upgrade-cards  any
       (old-to-2 any)
     ?>  ?=(%2 -.any)
     ::
@@ -202,7 +202,7 @@
         %spider-start  (handle-start-thread:sc !<(start-args vase))
         %spider-stop   (handle-stop-thread:sc !<([tid ?] vase))
       ::
-          %handle-http-request   
+          %handle-http-request
         (handle-http-request:sc !<([@ta =inbound-request:eyre] vase))
       ==
     [cards this]
@@ -220,9 +220,10 @@
   ::
   ++  on-leave  on-leave:def
   ++  on-peek
-    |=  =path
+    |=  [prov=path =path]
     ^-  (unit (unit cage))
-    ?+    path  (on-peek:def path)
+    ?+    path  (on-peek:def prov path)
+    
         [%x %tree ~]
       ``noun+!>((turn (tap-yarn running.state) head))
     ::
@@ -271,7 +272,7 @@
   |=  [eyre-id=@ta =inbound-request:eyre]
   ^-  (quip card _state)
   ?>  authenticated.inbound-request
-  =/  url 
+  =/  url
     (parse-request-line:server url.request.inbound-request)
   ?>  ?=([%spider @t @t @t ~] site.url)
   =*  input-mark   i.t.site.url
@@ -283,7 +284,7 @@
     (~(put by serving.state) tid [eyre-id output-mark])
   =+  .^
       =tube:clay
-      %cc 
+      %cc
       /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/json/[input-mark]
     ==
   ?>  ?=(^ body.request.inbound-request)
@@ -431,7 +432,7 @@
     ^-  ^card
     ?+  card  card
         [%pass * *]  [%pass [%thread tid p.card] q.card]
-        [%give ?(%fact %kick) *]
+        [%give ?(%fact %kick) * *]
       =-  card(paths.p -)
       %+  turn  paths.p.card
       |=  =path
@@ -461,13 +462,13 @@
   |=  [=tid =term =tang]
   ^-  (list card)
   :~  [%give %fact ~[/thread-result/[tid]] %thread-fail !>([term tang])]
-      [%give %kick ~[/thread-result/[tid]] ~]
+      [%give %kick ~[/thread-result/[tid]] ~ ~]
   ==
 ++  thread-http-fail
   |=  [=tid =term =tang]
   ^-  (quip card ^state)
   =-  (fall - `state)
-  %+  bind  
+  %+  bind
     (~(get by serving.state) tid)
   |=  [eyre-id=@ta output=mark]
   :_  state(serving (~(del by serving.state) tid))
@@ -497,7 +498,7 @@
   |=  [=tid =vase]
   ^-  (quip card ^state)
   =-  (fall - `state)
-  %+  bind  
+  %+  bind
     (~(get by serving.state) tid)
   |=  [eyre-id=@ta output=mark]
   =+    .^
@@ -516,7 +517,7 @@
   =/  =tid  (yarn-to-tid yarn)
   =/  done-cards=(list card)
     :~  [%give %fact ~[/thread-result/[tid]] %thread-done vase]
-        [%give %kick ~[/thread-result/[tid]] ~]
+        [%give %kick ~[/thread-result/[tid]] ~ ~]
     ==
   =^  http-cards  state
     (thread-http-response tid vase)

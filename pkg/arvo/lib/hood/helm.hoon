@@ -140,14 +140,14 @@
   ?:  =(%fail mes)
     ~&  %poke-hi-fail
     !!
-  abet:(flog %text "< {<src.bowl>}: {(trip mes)}")
+  abet:(flog %text "< {<ship.src.bowl>}: {(trip mes)}")
 ::
 ++  poke-atom
   |=  ato=@
   =+  len=(scow %ud (met 3 ato))
   =+  gum=(scow %p (mug ato))
   =<  abet
-  (flog %text "< {<src.bowl>}: atom: {len} bytes, mug {gum}")
+  (flog %text "< {<ship.src.bowl>}: atom: {len} bytes, mug {gum}")
 ::
 ++  coup-hi
   |=  [pax=path cop=(unit tang)]  =<  abet

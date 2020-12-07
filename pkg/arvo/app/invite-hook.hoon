@@ -38,7 +38,7 @@
     =/  act=action  !<(action vase)
     ?+  -.act     ~
         %invites
-      ?.  (team:title [our src]:bowl)  ~
+      ?.  (team:title [our ship.src]:bowl)  ~
       ::  outgoing. we must be inviting other ships. send them each an invite
       ::
       %+  turn  ~(tap in recipients.invites.act)
@@ -56,7 +56,7 @@
       ==
     ::
         %invite
-      ?:  (team:title [our src]:bowl)
+      ?:  (team:title [our ship.src]:bowl)
         ::  outgoing. we must be inviting another ship. send them the invite.
         ::
         ?<  (team:title our.bowl recipient.invite.act)

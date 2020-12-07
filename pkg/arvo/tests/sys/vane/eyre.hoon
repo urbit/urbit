@@ -400,7 +400,7 @@
       ^=  expected-move
         :~  :*  duct=~[/http-blah]  %pass
                 /watch-response/[eyre-id]
-                %g  %deal  [~nul ~nul]  %app1  %leave  ~
+                %g  %deal  [~nul ~nul /nul]  %app1  %leave  ~
             ==
           ::
             :*  duct=~[/http-blah]  %give  %response
@@ -1904,7 +1904,7 @@
             ==
             :*  duct=~[/http-put-request]  %pass
               /channel/subscription/'0123456789abcdef'/'1'/~nul/two
-              %g  %deal  [~nul ~nul]  %two  %leave  ~
+              %g  %deal  [~nul ~nul /null]  %two  %leave  ~
             ==
             :*  duct=~[/http-get-open]
                 %give

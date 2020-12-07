@@ -92,7 +92,7 @@
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
-  ?>  (team:title our.bowl src.bowl)
+  ?>  (team:title our.bowl ship.src.bowl)
   ?.  ?=(%observe-action mark)
     (on-poke:def mark vase)
   =/  =action:sur  !<(action:sur vase)

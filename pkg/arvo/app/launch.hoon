@@ -117,7 +117,7 @@
   |=  [=mark =vase]
   ^-  (quip card _this)
   |^
-  ?>  (team:title our.bowl src.bowl)
+  ?>  (team:title our.bowl ship.src.bowl)
   =^  cards  state
     ?+  mark  (on-poke:def mark vase)
         %launch-action  (poke-action !<(action:store vase))
@@ -172,7 +172,7 @@
   |=  =path
   ^-  (quip card _this)
   |^
-  ?>  (team:title our.bowl src.bowl)
+  ?>  (team:title our.bowl ship.src.bowl)
   =/  cards=(list card)
     ?+  path       (on-watch:def path)
         [%all ~]   (give [%initial tiles tile-ordering first-time])
@@ -187,9 +187,9 @@
   --
 ::
 ++  on-peek
-  |=  =path
+  |=  [prov=path =path]
   ^-  (unit (unit cage))
-  ?.  (team:title our.bowl src.bowl)  ~
+  ?.  (team:title our.bowl ship.src.bowl)  ~
   ?+  path  [~ ~]
       [%x %tiles ~]       ``noun+!>([tiles tile-ordering])
       [%x %first-time ~]  ``noun+!>(first-time)

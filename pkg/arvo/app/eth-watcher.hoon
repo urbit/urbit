@@ -285,7 +285,7 @@
 ::    /block/some-path: get next block number to check for /some-path
 ::
 ++  on-peek
-  |=  =path
+  |=  [prov=path =path]
   ^-  (unit (unit cage))
   ?+    path  ~
       [%x %block ^]

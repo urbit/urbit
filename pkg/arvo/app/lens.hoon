@@ -114,9 +114,9 @@
 ::
 ++  on-leave  on-leave:def
 ++  on-peek
-  |=  =path
+  |=  [prov=path =path]
   ^-  (unit (unit cage))
-  ?+  path  (on-peek:def path)
+  ?+  path  (on-peek:def prov path)
     [%x %export-all ~]
     ``noun+!>((jam (export-all our.bowl now.bowl)))
   ==

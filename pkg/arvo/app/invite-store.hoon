@@ -83,7 +83,7 @@
 ++  on-watch
   |=  =path
   ^-  (quip card _this)
-  ?>  (team:title our.bowl src.bowl)
+  ?>  (team:title our.bowl ship.src.bowl)
   =/  cards=(list card)
     ?+    path  (on-watch:def path)
         [%all ~]      [%give %fact ~ %invite-update !>([%initial invites])]~
@@ -98,7 +98,7 @@
   |=  [=mark =vase]
   ^-  (quip card _this)
   |^
-  ?>  (team:title our.bowl src.bowl)
+  ?>  (team:title our.bowl ship.src.bowl)
   =^  cards  state
     ?+  mark  (on-poke:def mark vase)
       %invite-action  (poke-invite-action !<(action:store vase))
@@ -185,9 +185,9 @@
   --
 ::
 ++  on-peek
-  |=  =path
+  |=  [=prov =path]
   ^-  (unit (unit cage))
-  ?+  path  (on-peek:def path)
+  ?+  path  (on-peek:def prov path)
       [%x %all ~]
     ``noun+!>(invites)
   ::

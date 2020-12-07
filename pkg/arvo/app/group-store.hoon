@@ -120,6 +120,7 @@
       ^-  card
       :+  %give  %kick
       :_  ~
+      :_  ~
       %~  tap  by
       %+  roll  ~(val by sup.bowl)
       |=  [[=ship pax=path] paths=(set path)]
@@ -163,7 +164,7 @@
   ++  on-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
-    ?>  (team:title our.bowl src.bowl)
+    ?>  (team:title our.bowl ship.src.bowl)
     =^  cards  state
       ?+    mark  (on-poke:def mark vase)
           ?(%group-update %group-action)
@@ -175,7 +176,7 @@
   ++  on-watch
     |=  =path
     ^-  (quip card _this)
-    ?>  (team:title our.bowl src.bowl)
+    ?>  (team:title our.bowl ship.src.bowl)
     ?>  ?=([%groups ~] path)
     :_  this
     [%give %fact ~ %group-update !>([%initial groups])]~
@@ -183,9 +184,9 @@
   ++  on-leave  on-leave:def
   ::
   ++  on-peek
-    |=  =path
+    |=  [prov=path =path]
     ^-  (unit (unit cage))
-    ?+  path  (on-peek:def path)
+    ?+  path  (on-peek:def prov path)
         [%y %groups ~]
       =/  =arch
         :-  ~
@@ -248,7 +249,7 @@
 ++  poke-group-update
   |=  =update:store
   ^-  (quip card _state)
-  ?>  (team:title our.bol src.bol)
+  ?>  (team:title our.bol ship.src.bol)
   |^
   ?-  -.update
       %add-group       (add-group +.update)

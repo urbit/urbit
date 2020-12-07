@@ -60,10 +60,10 @@
   [[(emit-event %on-leave path) cards] this]
 ::
 ++  on-peek
-  |=  =path
+  |=  [prov=path =path]
   ^-  (unit (unit cage))
   %-  (print bowl |.("{<dap.bowl>}: on-peek on path {<path>}"))
-  (on-peek:ag path)
+  (on-peek:ag prov path)
 ::
 ++  on-agent
   |=  [=wire =sign:agent:gall]

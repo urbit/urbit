@@ -357,7 +357,7 @@
   ++  on-watch  on-watch:def
   ++  on-leave  on-leave:def
   ++  on-peek
-    |=  =path
+    |=  [prov=path =path]
     ^-  (unit (unit [%noun vase]))
     ?+    path  ~
         [%x %domain-validation @t ~]

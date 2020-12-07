@@ -39,7 +39,7 @@
 ::
 +$  routes
   $:  disclosing=(unit (set ship))
-      attributing=ship
+      attributing=[=ship =path]
   ==
 ::  $yoke: agent runner state
 ::
@@ -88,13 +88,20 @@
 ::    %u: leave
 ::
 +$  ames-request-all
-  $%  [%0 ames-request]
+  $%  [%0 ames-request-0]
+      [%1 ames-request]
   ==
 +$  ames-request
+  $%  [%m prov=path =mark noun=*]
+      [%l prov=path =mark =path]
+      [%s prov=path =path]
+      [%u ~]
+  ==
++$  ames-request-0
   $%  [%m =mark noun=*]
       [%l =mark =path]
       [%s =path]
-      [%u ~]
+      [%u =path]
   ==
 ::  $remote-request: kinds of agent actions that can cross the network
 ::
@@ -250,6 +257,30 @@
     --
 ~%  %gall-top  ..is  ~
 |%
+++  en-snare
+  |=  prov=path
+  ^-  slyt
+  %-  sloy
+  %-  en-sley
+  |=  $:  lyc=gang                                      ::  leakset
+          cyr=term                                      ::  perspective
+          bem=beam                                      ::  path
+      ==
+  ^-  (unit (unit cage))
+  =*  args  +<
+  =/  =shop  &/p.bem
+  =*  dap  q.bem
+  =/  =coin  $/r.bem
+  =*  path  s.bem
+  ?.  ?=(%.y -.shop)
+    ~
+  =/  =ship  p.shop
+  =/  vane  (end 3 cyr)
+  =/  care  ;;(@t (rsh 3 cyr))
+  ?.  =(%g vane)  (rof args)
+  ?:  |(=(care %u) |(=(care %$) =(s.bem /whey)))  (rof args)
+  =/  =routes  [~ ship prov]
+  (mo-peek:mo dap routes care path)
 ::  +mo: Arvo-level move handling
 ::
 ::    An outer core responsible for routing moves to and from Arvo; it calls
@@ -320,7 +351,7 @@
     ?^  existing
       =.  yokes.state
         (~(put by yokes.state) dap u.existing(beak bek))
-      =/  =routes  [disclosing=~ attributing=our]
+      =/  =routes  [disclosing=~ attributing=[our /g]]
       =/  ap-core  (ap-abed:ap dap routes)
       =.  ap-core  (ap-reinstall:ap-core agent)
       =.  mo-core  ap-abet:ap-core
@@ -337,7 +368,7 @@
     ::
     =/  old  mo-core
     =/  wag
-      =/  =routes  [disclosing=~ attributing=our]
+      =/  =routes  [disclosing=~ attributing=[our /g]]
       =/  ap-core  (ap-abed:ap dap routes)
       (ap-upgrade-state:ap-core ~)
     ::
@@ -398,18 +429,18 @@
   ::
   ++  mo-send-foreign-request
     ~/  %mo-send-foreign-request
-    |=  [=ship foreign-agent=term =deal]
+    |=  [=ship foreign-agent=term prov=path =deal]
     ^+  mo-core
     ::
     =.  mo-core  (mo-track-ship ship)
     ?<  ?=(?(%raw-poke %poke-as) -.deal)
     =/  =ames-request-all
-      :-  %0
+      :-  %1
       ?-  -.deal
-        %poke      [%m p.cage.deal q.q.cage.deal]
+        %poke      [%m prov p.cage.deal q.q.cage.deal]
         %leave     [%u ~]
-        %watch-as  [%l [mark path]:deal]
-        %watch     [%s path.deal]
+        %watch-as  [%l prov [mark path]:deal]
+        %watch     [%s prov path.deal]
       ==
     ::
     =/  wire
@@ -424,7 +455,7 @@
         (~(gut by outstanding.state) [wire hen] *(qeu remote-request))
       (~(put by outstanding.state) [wire hen] (~(put to stand) -.deal))
     (mo-pass wire note-arvo)
-  ::  +mo-track-ship: subscribe to ames and jael for notices about .ship
+      ::  +mo-track-ship: subscribe to ames and jael for notices about .ship
   ::
   ++  mo-track-ship
     |=  =ship
@@ -482,7 +513,7 @@
     ?~  agents
       mo-core
     =.  mo-core
-      =/  =routes  [disclosing=~ attributing=ship]
+      =/  =routes  [disclosing=~ attributing=[ship /g]]
       =/  app  (ap-abed:ap name.i.agents routes)
       ap-abet:(ap-breach:app ship)
     $(agents t.agents)
@@ -584,7 +615,7 @@
     ?~  agents  mo-core
     ::
     =.  mo-core
-      =/  =routes  [disclosing=~ attributing=our]
+      =/  =routes  [disclosing=~ attributing=[our /g]]
       =/  app  (ap-abed:ap i.agents routes)
       ap-abet:(ap-clog:app ship.sign-arvo)
     ::
@@ -680,8 +711,8 @@
       ::
       =/  sys-wire  [%sys wire]
       ::  TODO: %drip %kick so app crash can't kill the remote %pull
-      ::
-      =/  =ames-request-all  [%0 %u ~]
+      ::  also: maybe add path to %u case? (how?)
+      =/  =ames-request-all  [%1 %u ~]
       =.  mo-core
         (mo-pass sys-wire %a %plea ship %g /ge/[foreign-agent] ames-request-all)
       =.  mo-core  (mo-give %unto %kick ~)
@@ -717,14 +748,14 @@
         mo-core
       =/  app
         =/  =ship  (slav %p i.t.t.path)
-        =/  =routes  [disclosing=~ attributing=ship]
+        =/  =routes  [disclosing=~ attributing=[ship /[-.sign-arvo]]]
         (ap-abed:ap dap routes)
       ::
       =.  app  (ap-generic-take:app t.t.t.path sign-arvo)
       ap-abet:app
     ?>  ?=([%out @ @ *] t.t.path)
     =/  =ship  (slav %p i.t.t.t.path)
-    =/  =routes  [disclosing=~ attributing=ship]
+    =/  =routes  [disclosing=~ attributing=[ship /[-.sign-arvo]]]
     =/  =sign:agent  +>.sign-arvo
     ?:  ?=(%| -.agent.u.yoke)
       =/  blocked=(qeu blocked-move)
@@ -758,7 +789,7 @@
     =^  [=duct =routes blocker=(each deal sign:agent)]  blocked
       ~(get to blocked)
     =/  =move
-      =/  =sock  [attributing.routes our]
+      =/  =sock  =+(attributing.routes [ship our path])
       =/  card
         ?:  ?=(%& -.blocker)
           [%slip %g %deal sock dap p.blocker]
@@ -767,6 +798,7 @@
     $(moves [move moves])
   ::  +mo-filter-queue: remove all blocked tasks from ship.
   ::
+  ::  TODO: also check path of attributing
   ++  mo-filter-queue
     |=  =ship
     =/  agents=(list [name=term blocked=(qeu blocked-move)])
@@ -785,7 +817,7 @@
         new-agents  (~(put by new-agents) name.i.agents new-blocked)
       ==
     =^  mov=blocked-move  blocked.i.agents  ~(get to blocked.i.agents)
-    =?  new-blocked  !=(ship attributing.routes.mov)
+    =?  new-blocked  !=(ship ship.attributing.routes.mov)
       (~(put to new-blocked) mov)
     $
   ::  +mo-fade: put app to sleep
@@ -793,7 +825,7 @@
   ++  mo-fade
     |=  [dap=term style=?(%slay %idle %jolt)]
     ^+  mo-core
-    =/  =routes  [disclosing=~ attributing=our]
+    =/  =routes  [disclosing=~ attributing=[our /g]]
     =/  app  (ap-abed:ap dap routes)
     =.  mo-core  ap-abet:(ap-fade:app style)
     =.  mo-core
@@ -887,10 +919,10 @@
   ::    +deal.  Otherwise simply apply the action to the agent.
   ::
   ++  mo-handle-local
-    |=  [=ship agent=term =deal]
+    |=  [=ship prov=path agent=term =deal]
     ^+  mo-core
     ::
-    =/  =routes  [disclosing=~ attributing=ship]
+    =/  =routes  [disclosing=~ attributing=[ship prov]]
     =/  running  (~(get by yokes.state) agent)
     =/  is-running  ?~(running %| ?=(%& -.agent.u.running))
     =/  is-blocked  (~(has by blocked.state) agent)
@@ -926,7 +958,13 @@
         %s  [%watch path.ames-request]
         %u  [%leave ~]
       ==
-    (mo-pass wire %g %deal [ship our] agent-name deal)
+    %:  mo-pass
+        wire  %g  %deal
+        :: TODO: maybe add prov to leave?
+        :: don't /really/ need to because it'll find from the outgoing
+        [ship our ?:(?=(?(%m %l %s) -.ames-request) prov.ames-request /leave)]
+        agent-name  deal
+    ==
   ::  +mo-handle-ames-response: handle ames response message.
   ::
   ++  mo-handle-ames-response
@@ -997,7 +1035,7 @@
         ?:  ?=(%| -.res)
           (mean p.res)
         egg(p.old-state `agent`p.res)
-      =/  =routes  [disclosing=~ attributing=our]
+      =/  =routes  [disclosing=~ attributing=[our /g]]
       (ap-yoke dap routes yoke)
     ::  +ap-yoke: initialize agent state, starting from a $yoke
     ::
@@ -1047,13 +1085,13 @@
         =/  inbound-paths=(set path)
           %-  silt
           %+  turn  ~(tap by inbound.watches.current-agent)
-          |=  [=duct =ship =path]
+          |=  [=duct =ship prov=path =path]
           path
         =/  will=(list card:agent:gall)
           %+  welp
             ?:  =(~ inbound-paths)
               ~
-            [%give %kick ~(tap in inbound-paths) ~]~
+            [%give %kick ~(tap in inbound-paths) ~ ~]~
           %+  turn  ~(tap by outbound.watches.current-agent)
           |=  [[=wire =ship =term] ? =path]
           [%pass wire %agent [ship term] %leave ~]
@@ -1076,7 +1114,7 @@
           %give
         =/  =gift:agent  p.card
         ?:  ?=(%kick -.gift)
-          =/  ducts=(list duct)  (ap-ducts-from-paths paths.gift ship.gift)
+          =/  ducts=(list duct)  (ap-ducts-from-paths paths.gift ship.gift prov.gift)
           %+  turn  ducts
           |=  =duct
           ~?  &(=(duct system-duct.state) !=(agent-name %hood))
@@ -1086,7 +1124,7 @@
         ?.  ?=(%fact -.gift)
           [agent-duct %give %unto gift]~
         ::
-        =/  ducts=(list duct)  (ap-ducts-from-paths paths.gift ~)
+        =/  ducts=(list duct)  (ap-ducts-from-paths paths.gift ~ ~)
         =/  =cage  cage.gift
         %-  zing
         %+  turn  ducts
@@ -1127,12 +1165,16 @@
         =.  wire
           ?:  ?=(%agent -.neat)
             [%out (scot %p ship.neat) name.neat wire]
-          [(scot %p attributing.agent-routes) wire]
+          [(scot %p ship.attributing.agent-routes) wire]
         =.  wire  [%use agent-name nonce.current-agent wire]
         =/  =note-arvo
           ?-  -.neat
-            %arvo   note-arvo.neat
-            %agent  [%g %deal [our ship.neat] [name deal]:neat]
+              %arvo   note-arvo.neat
+              %agent
+            :*  %g  %deal
+            [our ship.neat /g/[agent-name]]
+            [name deal]:neat
+            ==
           ==
         [duct %pass wire note-arvo]~
       ==
@@ -1141,7 +1183,7 @@
     ++  ap-breach
       |=  =ship
       ^+  ap-core
-      =/  in=(list [=duct =^ship =path])
+      =/  in=(list [=duct =^ship prov=path =path])
         ~(tap by inbound.watches.current-agent)
       |-  ^+  ap-core
       ?^  in
@@ -1173,7 +1215,7 @@
       |=  =ship
       ^+  ap-core
       ::
-      =/  in=(list [=duct =^ship =path])
+      =/  in=(list [=duct =^ship prov=path =path])
         ~(tap by inbound.watches.current-agent)
       |-  ^+  ap-core
       ?~  in  ap-core
@@ -1190,31 +1232,49 @@
     ::  +ap-ducts-from-paths: get ducts subscribed to paths
     ::
     ++  ap-ducts-from-paths
-      |=  [target-paths=(list path) target-ship=(unit ship)]
+      |=  $:  target-paths=(list path)
+              target-ship=(unit ship)
+              target-prov=(unit path)
+          ==
       ^-  (list duct)
       ?~  target-paths
-        ?~  target-ship
-          ~[agent-duct]
-        %+  murn  ~(tap by inbound.watches.current-agent)
-        |=  [=duct =ship =path]
-        ^-  (unit ^duct)
-        ?:  =(target-ship `ship)
+        ?.  |(?=(~ target-ship) ?=(~ target-prov))
+            ~[agent-duct]
+        ?:  &(?=(~ target-ship) ?=(^ target-prov))
+          %+  murn  ~(tap by inbound.watches.current-agent)
+          |=  [=duct =ship prov=path =path]
+          ^-  (unit ^duct)
+          ?:  =(target-prov `prov)
           `duct
-        ~
+          ~
+        ?:  &(?=(^ target-ship) ?=(~ target-prov))
+          %+  murn  ~(tap by inbound.watches.current-agent)
+          |=  [=duct =ship prov=path =path]
+          ^-  (unit ^duct)
+          ?:  =(target-ship `ship)
+            `duct
+            ~
+        %+  murn  ~(tap by inbound.watches.current-agent)
+        |=  [=duct =ship prov=path =path]
+        ^-  (unit ^duct)
+        ?:  &(=(target-ship `ship) =(target-prov `prov))
+          `duct
+          ~
       %-  zing
       %+  turn  target-paths
       |=  =path
-      (ap-ducts-from-path path target-ship)
+      (ap-ducts-from-path path target-ship target-prov)
     ::  +ap-ducts-from-path: get ducts subscribed to path
     ::
     ++  ap-ducts-from-path
-      |=  [target-path=path target-ship=(unit ship)]
+      |=  [target-path=path target-ship=(unit ship) target-prov=(unit path)]
       ^-  (list duct)
       %+  murn  ~(tap by inbound.watches.current-agent)
-      |=  [=duct =ship =path]
+      |=  [=duct =ship prov=path =path]
       ^-  (unit ^duct)
       ?:  ?&  =(target-path path)
               |(=(target-ship ~) =(target-ship `ship))
+              |(=(target-prov ~) =(target-prov `prov))
           ==
         `duct
       ~
@@ -1246,7 +1306,8 @@
       ::  call the app's +on-peek, producing [~ ~] if it crashes
       ::
       =/  peek-result=(each (unit (unit cage)) tang)
-        (ap-mule-peek |.((on-peek:ap-agent-core [care tyl])))
+        =+  prov=path.attributing.agent-routes
+        (ap-mule-peek |.((on-peek:ap-agent-core prov [care tyl])))
       ?:  ?=(%| -.peek-result)
         ((slog leaf+"peek bad result" p.peek-result) [~ ~])
       ::  for non-%x scries, or failed %x scries, or %x results that already
@@ -1298,8 +1359,8 @@
               attributing.agent-routes                ::  guest
               agent-name                              ::  agent
           ==                                          ::
-          :*  wex=outbound.watches.current-agent  ::  outgoing
-              sup=inbound.watches.current-agent  ::  incoming
+          :*  wex=outbound.watches.current-agent      ::  outgoing
+              sup=inbound.watches.current-agent       ::  incoming
           ==                                          ::
           :*  act=change.stats.current-agent          ::  tick
               eny=eny.stats.current-agent             ::  nonce
@@ -1342,7 +1403,7 @@
       ~/  %ap-subscribe
       |=  pax=path
       ^+  ap-core
-      =/  incoming  [attributing.agent-routes pax]
+      =/  incoming  =+(attributing.agent-routes [ship path pax])
       =.  inbound.watches.current-agent
         (~(put by inbound.watches.current-agent) agent-duct incoming)
       =^  maybe-tang  ap-core
@@ -1491,7 +1552,7 @@
       ::
       =^  maybe-tang  ap-core
         %+  ap-ingest  ~  |.
-        (on-leave:ap-agent-core q.incoming)
+        (on-leave:ap-agent-core r.incoming)
       ?^  maybe-tang
         (ap-error %leave u.maybe-tang)
       ap-core
@@ -1501,7 +1562,7 @@
       ^+  ap-core
       ::
       =>  ap-load-delete
-      (ap-give %kick ~ ~)
+      (ap-give %kick ~ ~ ~)
     ::  +ap-kill-up-slip: 2-sided kill from publisher side by slip
     ::
     ::  +ap-kill-up is reentrant if you call it in the
@@ -1513,7 +1574,7 @@
       |=  =duct
       ^-  (list move)
       ::
-      :~  [duct %slip %g %deal [our our] agent-name %leave ~]
+      :~  [duct %slip %g %deal [our our /g] agent-name %leave ~]
           [duct %give %unto %kick ~]
       ==
     ::  +ap-kill-down: 2-sided kill from subscriber side
@@ -1539,7 +1600,8 @@
     ++  ap-mule
       |=  run=_^?(|.(*step:agent))
       ^-  (each step:agent tang)
-      =/  res  (mock [run %9 2 %0 1] (sloy ski))
+      =+  prov=path.attributing.agent-routes
+      =/  res  (mock [run %9 2 %0 1] (en-snare prov))
       ?-  -.res
         %0  [%& !<(step:agent [-:!>(*step:agent) p.res])]
         %1  [%| (smyt ;;(path p.res)) ~]
@@ -1548,9 +1610,11 @@
     ::  +ap-mule-peek: same as +ap-mule but for (unit (unit cage))
     ::
     ++  ap-mule-peek
+
       |=  run=_^?(|.(*(unit (unit cage))))
       ^-  (each (unit (unit cage)) tang)
-      =/  res  (mock [run %9 2 %0 1] (sloy ski))
+      =+  prov=path.attributing.agent-routes
+      =/  res  (mock [run %9 2 %0 1] (en-snare prov))
       ?-  -.res
         %0  [%& !<((unit (unit cage)) [-:!>(*(unit (unit cage))) p.res])]
         %1  [%| (smyt ;;(path p.res)) ~]
@@ -1612,7 +1676,7 @@
         `duct.move
       ::
       =/  quit-map=bitt
-        (malt (turn quits |=(=duct [duct *[ship path]])))
+        (malt (turn quits |=(=duct [duct *[ship path path]])))
       (~(dif by inbound.watches.current-agent) quit-map)
     ::  +ap-handle-peers: handle new outbound.watches
     ::
@@ -1677,8 +1741,8 @@
     =/  [=sock =term =deal]  [p q r]:task
     ?.  =(q.sock our)
       ?>  =(p.sock our)
-      mo-abet:(mo-send-foreign-request:mo-core q.sock term deal)
-    mo-abet:(mo-handle-local:mo-core p.sock term deal)
+      mo-abet:(mo-send-foreign-request:mo-core q.sock term r.sock deal)
+    mo-abet:(mo-handle-local:mo-core p.sock r.sock term deal)
   ::
       %goad  mo-abet:(mo-goad:mo-core agent.task)
       %init  [~ gall-payload(system-duct.state duct)]
@@ -1692,7 +1756,8 @@
     =/  agent-name  i.t.path
     ::
     =+  ;;(=ames-request-all noun)
-    ?>  ?=(%0 -.ames-request-all)
+    :: TODO: handle %0
+    ?>  ?=(%1 -.ames-request-all)
     =>  (mo-handle-ames-request:mo-core ship agent-name +.ames-request-all)
     mo-abet
   ::
@@ -1750,7 +1815,7 @@
     [~ ~]
   ?.  ?=(^ path)
     ~
-  =/  =routes  [~ ship]
+  =/  =routes  [~ ship /arvo]
   (mo-peek:mo dap routes care path)
 ::  +stay: save without cache
 ::

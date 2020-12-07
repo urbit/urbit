@@ -58,7 +58,7 @@
   |=  [=mark =vase]
   ^-  (quip card _this)
   |^
-  ?>  (team:title our.bowl src.bowl)
+  ?>  (team:title our.bowl ship.src.bowl)
   =^  cards  state
     ?+  mark           (on-poke:def mark vase)
         %hark-group-hook-action

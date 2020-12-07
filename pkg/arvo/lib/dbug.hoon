@@ -48,7 +48,7 @@
         ::  use that vase in place of +on-save's.
         ::
         =/  result=(each ^vase tang)
-          (mule |.(q:(need (need (on-peek:ag /x/dbug/state)))))
+          (mule |.(q:(need (need (on-peek:ag /x/dbug/state /g/dbug)))))
         ?:(?=(%& -.result) p.result on-save:ag)
       %+  slap
         (slop state !>([bowl=bowl ..zuse]))
@@ -60,13 +60,13 @@
         [%leaf "no matching subscriptions"]~
       %+  murn
         %+  sort  ~(tap by sup.bowl)
-        |=  [[* a=[=ship =path]] [* b=[=ship =path]]]
-        (aor [path ship]:a [path ship]:b)
-      |=  [=duct [=ship =path]]
+        |=  [[* a=[=ship prov=path =path]] [* b=[=ship prov=path =path]]]
+        (aor [path ship prov]:a [path ship prov]:b)
+      |=  [=duct [=ship prov=path =path]]
       ^-  (unit tank)
       =;  relevant=?
         ?.  relevant  ~
-        `>[path=path from=ship duct=duct]<
+        `>[path=path from=ship prov=path duct=duct]<
       ?:  ?=(~ about.dbug)  &
       ?-  -.about.dbug
         %ship  =(ship ship.about.dbug)
@@ -99,10 +99,10 @@
     ==
   ::
   ++  on-peek
-    |=  =path
+    |=  [prov=path =path]
     ^-  (unit (unit cage))
     ?.  ?=([@ %dbug *] path)
-      (on-peek:ag path)
+      (on-peek:ag prov path)
     ?+  path  [~ ~]
       [%u %dbug ~]                 ``noun+!>(&)
       [%x %dbug %state ~]          ``noun+!>(on-save:ag)

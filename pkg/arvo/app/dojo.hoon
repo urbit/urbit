@@ -1516,7 +1516,7 @@
         %revoke-remote-login
       =/  who  !<(@p vase)
       :_  state(acl (~(del in acl) who))
-      [%give %kick ~ `who]~
+      [%give %kick ~ `who ~]~
     ::
         %list-remote-logins
       ~&  acl
@@ -1541,8 +1541,8 @@
 ++  on-watch
   |=  =path
   ^-  (quip card:agent:gall _..on-init)
-  ?>  ?|  (team:title our.hid src.hid)
-          (~(has in acl) src.hid)
+  ?>  ?|  (team:title our.hid ship.src.hid)
+          (~(has in acl) ship.src.hid)
       ==
   ?>  ?=([%sole @ ~] path)
   =/  id  i.t.path
@@ -1561,7 +1561,7 @@
   [~ ..on-init]
 ::
 ++  on-peek
-  |=  path
+  |=  [prov=path =path]
   *(unit (unit cage))
 ::
 ++  on-agent

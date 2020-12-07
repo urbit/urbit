@@ -44,10 +44,10 @@
 ::
 ++  on-leave  on-leave:def
 ++  on-peek
-  |=  =path
+  |=  [prov=path =path]
   ^-  (unit (unit cage))
-  ?+  path  (on-peek:def path)
-    [* %kiln *]  (on-peek:kiln-core path)
+  ?+  path  (on-peek:def prov path)
+    [* %kiln *]  (on-peek:kiln-core prov path)
   ==
 ::
 ++  on-save   !>(state)

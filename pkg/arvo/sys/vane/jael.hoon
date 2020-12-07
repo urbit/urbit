@@ -209,7 +209,7 @@
         /[app]/poke
         %g
         %deal
-        [our our]
+        [our our /j]
         app
         %poke
         %azimuth-tracker-poke
@@ -649,7 +649,7 @@
         [app path]
         %g
         %deal
-        [our our]
+        [our our /j]
         app
         %watch
         path

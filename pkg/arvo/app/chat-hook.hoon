@@ -189,7 +189,7 @@
       ?>  ?=(^ old-path)
       ?.  =('~' i.old-path)
         ~
-      [%give %kick ~[mailbox+old-path] ~]~
+      [%give %kick ~[mailbox+old-path] ~ ~]~
     ::
     ++  add-members-group
       |=  [=path ships=(set ship)]
@@ -531,7 +531,7 @@
   ?>  ?=(%message -.act)
   ::  local
   :_  state
-  ?:  (team:title our.bol src.bol)
+  ?:  (team:title our.bol ship.src.bol)
     ?.  (~(has by synced) path.act)
       ~
     =*  letter  letter.envelope.act
@@ -546,8 +546,8 @@
   ?~  ship  ~
   ?.  =(u.ship our.bol)  ~
   ::  check if write is permitted
-  ?.  (is-member:grp src.bol (group-from-chat path.act))  ~
-  =:  author.envelope.act  src.bol
+  ?.  (is-member:grp ship.src.bol (group-from-chat path.act))  ~
+  =:  author.envelope.act  ship.src.bol
       when.envelope.act  now.bol
   ==
   [%pass / %agent [our.bol %chat-store] %poke %chat-action !>(act)]~
@@ -557,7 +557,7 @@
   ^-  (quip card _state)
   ?-  -.act
       %add-owned
-    ?>  (team:title our.bol src.bol)
+    ?>  (team:title our.bol ship.src.bol)
     =/  chat-path  [%mailbox path.act]
     =/  chat-wire  [%store path.act]
     ?:  (~(has by synced) path.act)  [~ state]
@@ -570,7 +570,7 @@
     ==
   ::
       %add-synced
-    ?>  (team:title our.bol src.bol)
+    ?>  (team:title our.bol ship.src.bol)
     ?<  =(ship.act our.bol)
     ?:  (~(has by synced) path.act)  [~ state]
     =.  synced  (~(put by synced) path.act ship.act)
@@ -598,11 +598,11 @@
     ?~  ship
       ~&  [dap.bol %unknown-host-cannot-leave path.act]
       [~ state]
-    ?:  &(!=(u.ship src.bol) ?!((team:title our.bol src.bol)))
+    ?:  &(!=(u.ship ship.src.bol) ?!((team:title our.bol ship.src.bol)))
       [~ state]
     =.  synced  (~(del by synced) path.act)
     :_  state
-    :*  [%give %kick ~[[%mailbox path.act]] ~]
+    :*  [%give %kick ~[[%mailbox path.act]] ~ ~]
         [%give %fact [/synced]~ %chat-hook-update !>([%initial synced])]
         (pull-wire u.ship [%mailbox path.act])
         (pull-wire u.ship [%store path.act])
@@ -613,7 +613,7 @@
 ++  watch-synced
   |=  pax=path
   ^-  (list card)
-  ?>  (team:title our.bol src.bol)
+  ?>  (team:title our.bol ship.src.bol)
   [%give %fact ~ %chat-hook-update !>([%initial synced])]~
 ::
 ++  watch-mailbox
@@ -622,7 +622,7 @@
   ?>  ?=(^ pax)
   ?>  (~(has by synced) pax)
   ::  check if read is permitted
-  ?>  (is-member:grp src.bol (group-from-chat pax))
+  ?>  (is-member:grp ship.src.bol (group-from-chat pax))
   =/  box  (chat-scry pax)
   ?~  box  !!
   [%give %fact ~ %chat-update !>([%create pax])]~
@@ -635,7 +635,7 @@
   =/  backlog-latest=(unit @ud)  (rush (snag last `(list @ta)`pax) dem:ag)
   =/  pas  `path`(oust [last 1] `(list @ta)`pax)
   ?>  ?=([* ^] pas)
-  ?>  (is-member:grp src.bol (group-from-chat pas))
+  ?>  (is-member:grp ship.src.bol (group-from-chat pas))
   =/  envs  envelopes:(need (chat-scry pas))
   =/  length  (lent envs)
   =/  latest
@@ -648,7 +648,7 @@
   :~  [%give %fact ~ %chat-update !>([%create pas])]~
       ?.  ?&(?=(^ backlog-latest) (~(has by allow-history) pas))  ~
       [%give %fact ~ %chat-update vase]~
-      [%give %kick [%backlog pax]~ `src.bol]~
+      [%give %kick [%backlog pax]~ `ship.src.bol ~]~
   ==
 ::
 ++  fact-invite-update
@@ -689,12 +689,12 @@
   %+  turn
     ~(tap in ships.update)
   |=  =ship
-  [%give %kick [%mailbox chat]~ `ship]
+  [%give %kick [%mailbox chat]~ `ship ~]
 ::
 ++  fact-chat-update
   |=  [wir=wire =update:store]
   ^-  (quip card _state)
-  ?:  (team:title our.bol src.bol)
+  ?:  (team:title our.bol ship.src.bol)
     (handle-local update)
   (handle-foreign update)
 ::
@@ -728,18 +728,18 @@
     ?>  ?=([* ^] path.update)
     =/  shp  (~(get by synced) path.update)
     ?~  shp  ~
-    ?.  =(src.bol u.shp)  ~
+    ?.  =(ship.src.bol u.shp)  ~
     [(chat-poke [%create path.update])]~
   ::
       %delete
     ?>  ?=([* ^] path.update)
     =/  shp  (~(get by synced) path.update)
     ?~  shp  [~ state]
-    ?.  =(u.shp src.bol)  [~ state]
+    ?.  =(u.shp ship.src.bol)  [~ state]
     =.  synced  (~(del by synced) path.update)
     :_  state
     :-  (chat-poke [%delete path.update])
-    :~  [%pass [%mailbox path.update] %agent [src.bol %chat-hook] %leave ~]
+    :~  [%pass [%mailbox path.update] %agent [ship.src.bol %chat-hook] %leave ~]
         [%give %fact [/synced]~ %chat-hook-update !>([%initial synced])]
     ==
   ::
@@ -748,7 +748,7 @@
     ?>  ?=([* ^] path.update)
     =/  shp  (~(get by synced) path.update)
     ?~  shp  ~
-    ?.  =(src.bol u.shp)  ~
+    ?.  =(ship.src.bol u.shp)  ~
     [(chat-poke [%message path.update envelope.update])]~
   ::
       %messages
@@ -756,7 +756,7 @@
     ?>  ?=([* ^] path.update)
     =/  shp  (~(get by synced) path.update)
     ?~  shp  ~
-    ?.  =(src.bol u.shp)  ~
+    ?.  =(ship.src.bol u.shp)  ~
     [(chat-poke [%messages path.update envelopes.update])]~
   ==
 ::

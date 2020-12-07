@@ -69,7 +69,7 @@
   ++  on-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
-    ?>  (team:title our.bowl src.bowl)
+    ?>  (team:title our.bowl ship.src.bowl)
     ?+  mark  (on-poke:def mark vase)
         %json                 [(poke-json:cc !<(json vase)) this]
         %contact-view-action
@@ -86,7 +86,7 @@
   ++  on-watch
     |=  =path
     ^-  (quip card _this)
-    ?>  (team:title our.bowl src.bowl)
+    ?>  (team:title our.bowl ship.src.bowl)
     ?:  ?=([%http-response *] path)  [~ this]
     ?.  =(/primary path)  (on-watch:def path)
     [[%give %fact ~ %json !>((update-to-json [%initial all-scry:cc]))]~ this]
@@ -132,13 +132,13 @@
 ++  poke-json
   |=  jon=json
   ^-  (list card)
-  ?>  (team:title our.bol src.bol)
+  ?>  (team:title our.bol ship.src.bol)
   (poke-contact-view-action (json-to-view-action jon))
 ::
 ++  poke-contact-view-action
   |=  act=contact-view-action
   ^-  (list card)
-  ?>  (team:title our.bol src.bol)
+  ?>  (team:title our.bol ship.src.bol)
   ?-  -.act
       %create
     =/  rid=resource

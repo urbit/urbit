@@ -10,7 +10,7 @@
 +$  tid   @tatid
 +$  bowl
   $:  our=ship
-      src=ship
+      src=[=ship =path]
       tid=tid
       mom=(unit tid)
       wex=boat:gall

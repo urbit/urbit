@@ -98,13 +98,13 @@
   |^
   ?-  -.act
       %add-owned
-    ?>  (team:title our.bowl src.bowl)
+    ?>  (team:title our.bowl ship.src.bowl)
     :-  ~
     ?:  (~(has by synced) path.act)  state
     state(synced (~(put by synced) path.act our.bowl))
   ::
       %add-synced
-    ?>  (team:title our.bowl src.bowl)
+    ?>  (team:title our.bowl ship.src.bowl)
     =/  =path  [%group path.act]
     ?:  (~(has by synced) path.act)  [~ state]
     :_  state(synced (~(put by synced) path.act ship.act))
@@ -113,12 +113,12 @@
       %remove
     =/  ship  (~(get by synced) path.act)
     ?~  ship  [~ state]
-    ?:  &(!=(u.ship src.bowl) ?!((team:title our.bowl src.bowl)))
+    ?:  &(!=(u.ship ship.src.bowl) ?!((team:title our.bowl ship.src.bowl)))
       [~ state]
     :_  state(synced (~(del by synced) path.act))
     %-  zing
     :~  (unsubscribe [%group path.act] u.ship)
-        [%give %kick ~[[%group path.act]] ~]~
+        [%give %kick ~[[%group path.act]] ~ ~]~
     ==
   ==
   ::
@@ -134,12 +134,12 @@
   |=  act=metadata-action
   ^-  (list card)
   |^
-  ?:  (team:title our.bowl src.bowl)
+  ?:  (team:title our.bowl ship.src.bowl)
     ?-  -.act
         %add     (send group-path.act)
         %remove  (send group-path.act)
     ==
-  ?>  (is-member:grp src.bowl group-path.act)
+  ?>  (is-member:grp ship.src.bowl group-path.act)
   ?-  -.act
       %add     (metadata-poke our.bowl %metadata-store)
       %remove  (metadata-poke our.bowl %metadata-store)
@@ -171,7 +171,7 @@
   ^-  (list card)
   |^
   ?>  =(our.bowl (~(got by synced) path))
-  ?>  (is-member:grp src.bowl path)
+  ?>  (is-member:grp ship.src.bowl path)
   %+  turn  ~(tap by (metadata-scry path))
   |=  [[=group-path =md-resource] =metadata]
   ^-  card
@@ -193,7 +193,7 @@
   |=  [wir=wire fact=metadata-update]
   ^-  (quip card _state)
   |^
-  [?:((team:title our.bowl src.bowl) handle-local handle-foreign) state]
+  [?:((team:title our.bowl ship.src.bowl) handle-local handle-foreign) state]
   ::
   ++  handle-local
     ?+  -.fact  ~
@@ -213,15 +213,15 @@
   ++  handle-foreign
     ?+  -.fact  ~
         %add
-      ?.  =(src.bowl (~(got by synced) group-path.fact))  ~
+      ?.  =(ship.src.bowl (~(got by synced) group-path.fact))  ~
       (poke fact)
     ::
         %update-metadata
-      ?.  =(src.bowl (~(got by synced) group-path.fact))  ~
+      ?.  =(ship.src.bowl (~(got by synced) group-path.fact))  ~
       (poke [%add +.fact])
     ::
         %remove
-      ?.  =(src.bowl (~(got by synced) group-path.fact))  ~
+      ?.  =(ship.src.bowl (~(got by synced) group-path.fact))  ~
       (poke fact)
     ==
   ::

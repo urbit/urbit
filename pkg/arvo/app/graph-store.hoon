@@ -39,7 +39,7 @@
   =|  cards=(list card)
   |^
   ?-    -.old
-      %0  
+      %0
     %_    $
       -.old  %1
     ::
@@ -153,7 +153,7 @@
         post.node(index (snoc index.post.node atom), hash ~)
       ==
     --
-  ::  
+  ::
   ++  maybe-unix-to-da
     |=  =atom
     ^-  @
@@ -193,7 +193,7 @@
   |=  =path
   ^-  (quip card _this)
   |^
-  ?>  (team:title our.bowl src.bowl)
+  ?>  (team:title our.bowl ship.src.bowl)
   =/  cards=(list card)
     ?+  path       (on-watch:def path)
         [%updates ~]   ~
@@ -213,7 +213,7 @@
   |=  [=mark =vase]
   ^-  (quip card _this)
   |^
-  ?>  (team:title our.bowl src.bowl)
+  ?>  (team:title our.bowl ship.src.bowl)
   =^  cards  state
     ?+  mark           (on-poke:def mark vase)
         %graph-update  (graph-update !<(update:store vase))
@@ -569,7 +569,7 @@
         [cards state]
       =*  update  upd.i.updates
       =^  crds  state
-        %-  graph-update 
+        %-  graph-update
         ^-  update:store
         ?-  -.q.update
             %add-nodes          update(resource.q resource)
@@ -616,11 +616,11 @@
 ::
 ++  on-peek
   ~/  %graph-store-peek
-  |=  =path
+  |=  [prov=path =path]
   ^-  (unit (unit cage))
   |^
-  ?>  (team:title our.bowl src.bowl)
-  ?+  path  (on-peek:def path)
+  ?>  (team:title our.bowl ship.src.bowl)
+  ?+  path  (on-peek:def prov path)
       [%x %graph-mark @ @ ~]
     =/  =ship   (slav %p i.t.t.path)
     =/  =term   i.t.t.t.path
@@ -784,7 +784,7 @@
   ^-  (quip card _this)
   ?+  wire  (on-arvo:def wire sign-arvo)
   ::
-  ::  old wire, do nothing 
+  ::  old wire, do nothing
       [%graph *]  [~ this]
   ::
       [%validator @ ~]

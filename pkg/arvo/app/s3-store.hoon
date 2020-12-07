@@ -36,7 +36,7 @@
   |=  [=mark =vase]
   ^-  (quip card _this)
   |^
-  ?>  (team:title our.bowl src.bowl)
+  ?>  (team:title our.bowl ship.src.bowl)
   =^  cards  state
     ?+  mark        (on-poke:def mark vase)
         %s3-action  (poke-action !<(action vase))
@@ -76,7 +76,7 @@
   |=  =path
   ^-  (quip card _this)
   |^
-  ?>  (team:title our.bowl src.bowl)
+  ?>  (team:title our.bowl ship.src.bowl)
   =/  cards=(list card)
     ?+  path      (on-watch:def path)
         [%all ~]
@@ -95,9 +95,9 @@
 ++  on-leave  on-leave:def
 ++  on-peek
   ~/  %s3-peek
-  |=  =path
+  |=  [prov=path =path]
   ^-  (unit (unit cage))
-  ?.  (team:title our.bowl src.bowl)  ~
+  ?.  (team:title our.bowl ship.src.bowl)  ~
   ?+    path  [~ ~]
       [%x %credentials ~]
     [~ ~ %s3-update !>(`update`[%credentials credentials])]

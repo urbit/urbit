@@ -61,7 +61,7 @@
     (gas:orm *notifications:store (tap:orm archive.old))
   `this(-.state old, +.state (inflate-cache old))
 ::
-++  on-watch  
+++  on-watch
   |=  =path
   ^-  (quip card _this)
   |^
@@ -104,10 +104,10 @@
     [%timebox time archived ~(tap by timebox)]
   --
 ::
-++  on-peek   
-  |=  =path
+++  on-peek
+  |=  [prov=path =path]
   ^-  (unit (unit cage))
-  ?+  path  (on-peek:def path)
+  ?+  path  (on-peek:def prov path)
     ::
       [%x %recent ?(%archive %inbox) @ @ ~]
     =/  is-archive
@@ -122,7 +122,7 @@
     %+  turn
       %+  scag  length
       %+  slag  offset
-      %-  tap-nonempty:ha 
+      %-  tap-nonempty:ha
       ?:(is-archive archive notifications)
     |=  [time=@da =timebox:store]
     ^-  update:store
@@ -135,7 +135,7 @@
   |=  [=mark =vase]
   ^-  (quip card _this)
   |^
-  ?>  (team:title our.bowl src.bowl)
+  ?>  (team:title our.bowl ship.src.bowl)
   =^  cards  state
     ?+  mark           (on-poke:def mark vase)
         %hark-action   (hark-action !<(action:store vase))
@@ -155,7 +155,7 @@
       %unread   (unread +.action)
       %set-dnd  (set-dnd +.action)
     ==
-    ++  add  
+    ++  add
       |=  [=index:store =notification:store]
       ^-  (quip card _state)
       =/  =timebox:store
@@ -184,7 +184,7 @@
       =/  times=(list @da)
         ~(tap in (~(gut by by-index) index ~))
       =|  cards=(list card)
-      |- 
+      |-
       ?~  times
         [cards state]
       =*  time  i.times
@@ -253,7 +253,7 @@
 ++  on-agent  on-agent:def
 ::
 ++  on-leave  on-leave:def
-++  on-arvo  
+++  on-arvo
   |=  [=wire =sign-arvo]
   ^-  (quip card _this)
   ?.  ?=([%autoseen ~] wire)
@@ -339,7 +339,7 @@
   ^+  +.state
   %_    +.state
     ::
-      by-index 
+      by-index
     %.  [index time]
     ?:  read
       ~(del ju by-index)
@@ -356,7 +356,7 @@
     +.state
   =/  unreads  ~(tap by timebox.i.nots)
   |-  =*  inner  $
-  ?~  unreads  
+  ?~  unreads
     outer(nots t.nots)
   =*  notification  q.i.unreads
   =*  index         p.i.unreads

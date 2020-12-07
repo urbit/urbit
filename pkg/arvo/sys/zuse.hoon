@@ -77,7 +77,7 @@
 +$  rift  @ud                                           ::  ship continuity
 +$  mime  (pair mite octs)                              ::  mimetyped data
 +$  octs  (pair @ud @)                                  ::  octet-stream
-+$  sock  (pair ship ship)                              ::  outgoing [our his]
++$  sock  (trel ship ship path)                              ::  outgoing [our his]
 +$  stub  (list (pair stye (list @c)))                  ::  styled unicode
 +$  stye  (pair (set deco) (pair tint tint))            ::  decos/bg/fg
 +$  styl  %+  pair  (unit deco)                         ::  cascading style
@@ -1707,7 +1707,7 @@
     +$  task                                            ::  incoming request
       $~  [%vega ~]                                     ::
       $%  [%conf dap=term]                              ::  start agent
-          [%deal p=sock q=term r=deal]                  ::  full transmission
+          [%deal p=sock q=term r=deal]           ::  full transmission
           [%goad force=? agent=(unit dude)]             ::  rebuild agent(s)
           [%sear =ship]                                 ::  clear pending queues
           [%fade dap=term style=?(%slay %idle %jolt)]   ::  put app to sleep
@@ -1717,13 +1717,13 @@
           $>(%plea vane-task)                           ::  network request
       ==                                                ::
     --  ::able
-  +$  bitt  (map duct (pair ship path))                 ::  incoming subs
+  +$  bitt  (map duct (trel ship path path))            ::  incoming subs
   +$  boat                                              ::  outgoing subs
     %+  map  [=wire =ship =term]                        ::
     [acked=? =path]                                     ::
   +$  bowl                                              ::  standard app state
           $:  $:  our=ship                              ::  host
-                  src=ship                              ::  guest
+                  src=[=ship =path]                      ::  guest
                   dap=term                              ::  agent
               ==                                        ::
               $:  wex=boat                              ::  outgoing subs
@@ -1772,7 +1772,7 @@
       ==
     +$  gift
       $%  [%fact paths=(list path) =cage]
-          [%kick paths=(list path) ship=(unit ship)]
+          [%kick paths=(list path) ship=(unit ship) prov=(unit path)]
           [%watch-ack p=(unit tang)]
           [%poke-ack p=(unit tang)]
       ==
@@ -1808,7 +1808,7 @@
         *(quip card _^|(..on-init))
       ::
       ++  on-peek
-        |~  path
+        |~  [path path]
         *(unit (unit cage))
       ::
       ++  on-agent

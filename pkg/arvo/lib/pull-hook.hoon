@@ -1,8 +1,8 @@
 ::  lib/pull-hook: helper for creating a push hook
-::  
+::
 ::   lib/pull-hook is a helper for automatically pulling data from a
-::   corresponding push-hook to a store. 
-::   
+::   corresponding push-hook to a store.
+::
 ::   ## Interfacing notes:
 ::
 ::   The inner door may interact with the library by producing cards.
@@ -37,7 +37,7 @@
       update-mark=term
       push-hook-name=term
   ==
-::  
+::
 ::  $base-state-0: state for the pull hook
 ::
 ::    .tracking: a map of resources we are pulling, and the ships that
@@ -60,7 +60,7 @@
 ::
 +$  state-2  [%2 base-state-1]
 ::
-+$  versioned-state 
++$  versioned-state
   $%  state-0
       state-1
       state-2
@@ -131,7 +131,7 @@
     *[(list card) _^|(..on-init)]
   ::
   ++  on-peek
-    |~  path
+    |~  [path path]
     *(unit (unit cage))
   ::
   ++  on-agent
@@ -170,16 +170,16 @@
       =/  old
         !<(versioned-state old-vase)
       =|  cards=(list card:agent:gall)
-      |^ 
+      |^
       ?-  -.old
-          %2  
+          %2
         =^  og-cards   pull-hook
           (on-load:og inner-state.old)
         =.  state  old
         =^  retry-cards  state
           retry-failed-kicks
         :_  this
-        :(weld cards og-cards retry-cards) 
+        :(weld cards og-cards retry-cards)
         ::
           %1  $(old [%2 +.old ~])
         ::
@@ -231,7 +231,7 @@
     ++  on-poke
       |=  [=mark =vase]
       ^-  [(list card:agent:gall) agent:gall]
-      ?>  (team:title our.bowl src.bowl)
+      ?>  (team:title our.bowl ship.src.bowl)
       ?.  =(mark %pull-hook-action)
         =^  cards  pull-hook
           (on-poke:og mark vase)
@@ -243,7 +243,7 @@
     ++  on-watch
       |=  =path
       ^-  [(list card:agent:gall) agent:gall]
-      ?>  (team:title our.bowl src.bowl)
+      ?>  (team:title our.bowl ship.src.bowl)
       ?.  ?=([%tracking ~] path)
         =^  cards  pull-hook
           (on-watch:og path)
@@ -265,7 +265,7 @@
       ?+   -.sign  (on-agent:def wire sign)
           %kick
         =^  cards  state
-          (handle-kick:hc rid src.bowl)
+          (handle-kick:hc rid ship.src.bowl)
         [cards this]
       ::
           %watch-ack
@@ -305,10 +305,10 @@
         =^  cards  pull-hook
           (on-fail:og term tang)
         [cards this]
-      ++  on-peek   
-        |=  =path
+      ++  on-peek
+        |=  [prov=path =path]
         ^-  (unit (unit cage))
-        (on-peek:og path)
+        (on-peek:og prov path)
     --
   |_  =bowl:gall
   +*  og   ~(. pull-hook bowl)
@@ -346,12 +346,12 @@
     =/  res=toon
       (mock [|.((on-pull-kick:og rid)) %9 2 %0 1] mule-scry)
     =/  pax=(unit path)
-      !<  (unit path) 
-      :-  -:!>(*(unit path)) 
+      !<  (unit path)
+      :-  -:!>(*(unit path))
       ?:(?=(%0 -.res) p.res ~)
     =?  failed-kicks  !?=(%0 -.res)
       =/  =tang
-        :+  leaf+"failed kick handler, please report" 
+        :+  leaf+"failed kick handler, please report"
           leaf+"{<rid>} in {(trip dap.bowl)}"
         ?:  ?=(%2 -.res)
           p.res

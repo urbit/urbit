@@ -30,7 +30,7 @@
   !!
 ::
 ++  on-peek
-  |~  path
+  |~  [path path]
   ^-  (unit (unit cage))
   !!
 ::

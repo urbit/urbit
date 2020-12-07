@@ -160,7 +160,7 @@
       ::
       ++  deal                                          ::  pass to %gall
         |=  [=wire =deal:gall]
-        (pass wire [%g %deal [our our] ram deal])
+        (pass wire [%g %deal [our our /d] ram deal])
       ::
       ++  pass                                          ::  pass note
         |=  [=wire =note]

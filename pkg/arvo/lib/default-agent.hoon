@@ -29,7 +29,7 @@
   `agent
 ::
 ++  on-peek
-  |=  =path
+  |=  [prov=path =path]
   ~|  "unexpected scry into {<dap.bowl>} on path {<path>}"
   !!
 ::

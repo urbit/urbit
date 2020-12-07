@@ -176,7 +176,7 @@
 ++  on-watch  on-watch:def
 ++  on-leave  on-leave:def
 ++  on-peek
-  |=  =path
+  |=  [prov=path =path]
   ^-  (unit (unit cage))
   ``noun+!>(state)
 ::  +on-agent: handle ames ack

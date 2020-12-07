@@ -98,7 +98,7 @@
     *(quip card _^|(..on-init))
   ::
   ++  on-peek
-    |~  path
+    |~  [path path]
     *(unit (unit cage))
   ::
   ++  on-agent
@@ -132,7 +132,7 @@
   ::
   ++  can-connect
     |=  sole-id=@ta
-    (team:title [our src]:bowl)
+    (team:title [our ship.src]:bowl)
   ::
   ++  on-connect
     |=  sole-id=@ta
@@ -347,7 +347,7 @@
     [(deal cards) this]
   ::
   ++  on-peek
-    |=  =path
+    |=  [prov=path =path]
     ^-  (unit (unit cage))
     ?.  =(/x/dbug/state path)  ~
     ``noun+(slop on-save:og !>(shoe=state))

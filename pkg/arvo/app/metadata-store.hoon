@@ -163,10 +163,10 @@
       %+  turn  ~(tap in ~(key by associations))
       |=  [g=group-path r=md-resource]
       ^-  [md-resource group-path]
-      [r g] 
+      [r g]
     ::
     ++  rebuild-group-indices
-      |=  =^associations 
+      |=  =^associations
       %-  ~(gas ju *(jug group-path md-resource))
       ~(tap in ~(key by associations))
     ::
@@ -186,7 +186,7 @@
       %+  turn  ~(tap by associations)
       |=  [[=group-path =md-resource] m=metadata]
       ^-  [[^group-path ^md-resource] metadata]
-      ?.  =(app-name.md-resource app)  
+      ?.  =(app-name.md-resource app)
         [[group-path md-resource] m]
       =/  new-app-path=path
         ?.  ?=([@ @ ~] app-path.md-resource)
@@ -273,7 +273,7 @@
   ++  on-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
-    ?>  (team:title our.bowl src.bowl)
+    ?>  (team:title our.bowl ship.src.bowl)
     =^  cards  state
       ?+  mark  (on-poke:def mark vase)
           %metadata-action
@@ -302,7 +302,7 @@
   ++  on-watch
     |=  =path
     ^-  (quip card _this)
-    ?>  (team:title our.bowl src.bowl)
+    ?>  (team:title our.bowl ship.src.bowl)
     |^
     =/  cards=(list card)
       ?+  path  (on-watch:def path)
@@ -326,9 +326,9 @@
     --
   ::
   ++  on-peek
-    |=  =path
+    |=  [prov=path =path]
     ^-  (unit (unit cage))
-    ?+  path  (on-peek:def path)
+    ?+  path  (on-peek:def prov path)
         [%y %group-indices ~]     ``noun+!>(group-indices)
         [%y %app-indices ~]       ``noun+!>(app-indices)
         [%y %resource-indices ~]  ``noun+!>(resource-indices)
@@ -362,7 +362,7 @@
 ++  poke-metadata-action
   |=  act=metadata-action
   ^-  (quip card _state)
-  ?>  (team:title our.bowl src.bowl)
+  ?>  (team:title our.bowl ship.src.bowl)
   ?-  -.act
       %add     (handle-add group-path.act resource.act metadata.act)
       %remove  (handle-remove group-path.act resource.act)

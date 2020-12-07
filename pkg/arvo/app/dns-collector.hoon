@@ -68,7 +68,7 @@
   ++  handle-dns-address
     |=  adr=address:dns
     ^-  (quip card _this)
-    =*  who  src.bowl
+    =*  who  ship.src.bowl
     =/  rac  (clan:title who)
     ?.  ?=(?(%king %duke) rac)
       ~|  [%dns-collector-bind-invalid who]  !!
@@ -95,7 +95,7 @@
     ^-  (quip card _this)
     ::  XX or confirm valid binding?
     ::
-    ?.  (team:title [our src]:bowl)
+    ?.  (team:title [our ship.src]:bowl)
       ~|  %complete-yoself  !!
     =*  adr  address.binding
     =*  tuf  turf.binding
@@ -141,7 +141,7 @@
 ::
 ++  on-leave  on-leave:def
 ++  on-peek
-  |=  =path
+  |=  [prov=path =path]
   ^-  (unit (unit cage))
   ?+  path  [~ ~]
       [%x %requested ~]  [~ ~ %requested !>(~(tap by requested.state))]
