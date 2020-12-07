@@ -65,29 +65,12 @@
   =<  q
   %^    spin
       ^-  (list ovum)
-      :~  :~  //arvo
-              %what
-              [/sys/hoon hoon/compiler-src]
-              [/sys/arvo hoon/arvo-src]
-          ==
+      :~  (boot-ovum:pill compiler-src arvo-src)
           (file-ovum2:pill (flop (tail (flop sys))))
       ==
     .*(0 arvo-formula)
   |=  [ovo=ovum ken=*]
   [~ (slum ken [now ovo])]
-::
-::  boot-one: lifecycle formula (from +brass)
-::
-=/  boot-one
-  =>  [boot-formula=** full-sequence=**]
-  !=  =+  [state-gate main-sequence]=.*(full-sequence boot-formula)
-  |-
-  ?@  main-sequence
-    state-gate
-  %=  $
-    main-sequence  +.main-sequence
-    state-gate  .*(state-gate [%9 2 %10 [6 %1 -.main-sequence] %0 1])
-  ==
 ::
 ::  kernel-formula
 ::
@@ -106,7 +89,7 @@
 ::  boot-ova
 ::
 =/  boot-ova=(list)
-  [boot-one boot-two kernel-formula ~]
+  [aeon:eden:part boot-two kernel-formula ~]
 ::
 ::  a pill is a 3-tuple of event-lists: [boot kernel userspace]
 ::
@@ -114,6 +97,7 @@
 ::    Our userspace event-list is a list containing a full %clay
 ::    filesystem sync event.
 ::
+:+  %pill  %solid
 :+  boot-ova  ~
 =/  bas  (flop (tail (flop sys)))
 [(file-ovum:pill bas) ~]
