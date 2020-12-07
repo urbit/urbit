@@ -261,7 +261,6 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
 
     const unreadMarkerRef = this.unreadMarkerRef;
 
-    let lastMessage = 0;
 
     const messageProps = { association, group, contacts, hideAvatars, hideNicknames, remoteContentPolicy, unreadMarkerRef, history, api };
 
@@ -297,7 +296,7 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
               return <MessagePlaceholder key={index.toString()} height="64px" index={index} />;
             }
             const isPending: boolean = 'pending' in msg && Boolean(msg.pending);
-            const isLastMessage: boolean = Boolean(index.eq(bigInt(lastMessage)));
+            const isLastMessage = index.eq(graph.peekLargest()?.[0] ?? bigInt.zero);
             const highlighted = bigInt(this.props.scrollTo || -1).eq(index);
             const graphIdx = keys.findIndex(idx => idx.eq(index));
             const prevIdx = keys[graphIdx+1];

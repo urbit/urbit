@@ -80,7 +80,7 @@ export function ContactCard(props: ContactCardProps) {
         const [,,ship] = props.path.split('/');
         values.color = uxToHex(values.color);
         const sharedValues = Object.assign({}, values);
-        sharedValues.avatar = (values.avatar === "") ? null : { url: values.avatar };
+        sharedValues.avatar = !values.avatar ? null : { url: values.avatar };
         console.log(values);
         await props.api.contacts.share(ship, props.path, us, sharedValues);
         actions.setStatus({ success: null });

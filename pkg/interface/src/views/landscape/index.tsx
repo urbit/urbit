@@ -1,4 +1,4 @@
-import React, { Component, useEffect } from 'react';
+import React, { Component, useEffect, useCallback } from 'react';
 import { Route, Switch, RouteComponentProps } from 'react-router-dom';
 
 import './css/custom.css';
@@ -25,18 +25,21 @@ type LandscapeProps = StoreState & {
 
 export function DMRedirect(props: LandscapeProps & RouteComponentProps & { ship: string; }) {
   const { ship, api, history, graphKeys } = props;
+  const goToGraph = useCallback((graph: string) => {
+    history.push(`/~landscape/home/resource/chat/ship/~${graph}`);
+  }, [history]);
 
   useEffect(() => {
-    const station = `/ship/~${window.ship}/dm--${ship}`;
-    const theirStation = `/ship/~${ship}/dm--${window.ship}`;
+    const station = `${window.ship}/dm--${ship}`;
+    const theirStation = `${ship}/dm--${window.ship}`;
 
     if (graphKeys.has(station)) {
-      history.push(`/~landscape/home/resource/chat${station}`);
+      goToGraph(station);
       return;
     }
 
     if (graphKeys.has(theirStation)) {
-      history.push(`/~landscape/home/resource/chat${theirStation}`);
+      goToGraph(theirStation);
       return;
     }
 
@@ -51,7 +54,7 @@ export function DMRedirect(props: LandscapeProps & RouteComponentProps & { ship:
       { invite: { pending: aud } },
       'chat'
     ).then(() => {
-      history.push(`/~landscape/home/resource/chat${station}`);
+      goToGraph(station);
     });
 
   }, []);
@@ -68,9 +71,6 @@ export default class Landscape extends Component<LandscapeProps, {}> {
 
     this.props.subscription.startApp('groups');
     this.props.subscription.startApp('graph');
-  }
-
-  createandRedirectToDM(api, ship, history, allStations) {
   }
 
   render() {

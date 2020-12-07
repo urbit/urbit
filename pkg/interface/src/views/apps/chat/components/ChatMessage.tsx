@@ -11,6 +11,7 @@ import TextContent from './content/text';
 import CodeContent from './content/code';
 import RemoteContent from '~/views/components/RemoteContent';
 import { Mention } from "~/views/components/MentionText";
+import styled from "styled-components";
 
 export const DATESTAMP_FORMAT = '[~]YYYY.M.D';
 
@@ -251,7 +252,7 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
             <Text flexShrink='0' gray mono className="v-mid">{timestamp}</Text>
             <Text flexShrink={0}  gray mono ml={2} className="v-mid child dn-s">{datestamp}</Text>
           </Box>
-          <Box flexShrink={0} fontSize={fontSize ? fontSize : '14px'}>
+          <ContentBox flexShrink={0} fontSize={fontSize ? fontSize : '14px'}>
             {msg.contents.map(c => 
             <MessageContent 
               contacts={contacts}
@@ -260,19 +261,26 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
               measure={measure}
               fontSize={fontSize}
             />)}
-          </Box>
+          </ContentBox>
         </Box>
       </>
     );
   }
 }
 
+const ContentBox = styled(Box)`
+  & > :first-child {
+    margin-left: 0px;
+  }
+
+`;
+
 export const MessageWithoutSigil = ({ timestamp, contacts, msg, remoteContentPolicy, measure }) => (
   <>
     <Text flexShrink={0} mono gray display='inline-block' pt='2px' lineHeight='tall' className="child">{timestamp}</Text>
-    <Box flexShrink={0} fontSize='14px' className="clamp-message" style={{ flexGrow: 1 }}>
+    <ContentBox flexShrink={0} fontSize='14px' className="clamp-message" style={{ flexGrow: 1 }}>
       {msg.contents.map(c => (<MessageContent contacts={contacts} content={c} remoteContentPolicy={remoteContentPolicy} measure={measure}/>))}
-    </Box>
+    </ContentBox>
   </>
 );
 
@@ -281,7 +289,7 @@ export const MessageContent = ({ content, contacts, remoteContentPolicy, measure
     return <CodeContent content={content} />;
   } else if ('url' in content) {
     return (
-      <Text flexShrink={0} fontSize={fontSize ? fontSize : '14px'} lineHeight="tall" color='black'>
+      <Text mx="2px" flexShrink={0} fontSize={fontSize ? fontSize : '14px'} lineHeight="tall" color='black'>
         <RemoteContent
           url={content.url}
           remoteContentPolicy={remoteContentPolicy}
