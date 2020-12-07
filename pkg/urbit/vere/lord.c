@@ -44,7 +44,8 @@
 +$  plea
   $%  [%live ~]
       [%ripe [pro=%1 hon=@ nok=@] eve=@ mug=@]
-      [%slog pri=@ ?(cord tank)]
+      [%slog pri=@ tank]
+      [%flog cord]
       $:  %peek
           $%  [%done dat=(unit (cask))]
               [%bail dud=goof]
@@ -357,6 +358,24 @@ _lord_plea_slog(u3_lord* god_u, u3_noun dat)
   //
 
   god_u->cb_u.slog_f(god_u->cb_u.ptr_v, pri_w, u3k(tan));
+  u3z(dat);
+}
+
+/* _lord_plea_flog(): hear serf debug output
+*/
+static void
+_lord_plea_flog(u3_lord* god_u, u3_noun dat)
+{
+  u3_noun pri, tan;
+  c3_w pri_w;
+
+  if ( c3n == u3a_is_atom(dat) ) {
+    return _lord_plea_foul(god_u, c3__slog, dat);
+  }
+
+  c3_c* tan_c = u3r_string(tan);
+  u3C.stderr_log_f(tan_c);
+  c3_free(tan_c);
   u3z(dat);
 }
 
@@ -718,6 +737,10 @@ _lord_on_plea(void* ptr_v, c3_d len_d, c3_y* byt_y)
 
     case  c3__slog: {
       _lord_plea_slog(god_u, u3k(dat));
+    } break;
+
+    case  c3__flog: {
+      _lord_plea_flog(god_u, u3k(dat));
     } break;
 
     case c3__play: {
