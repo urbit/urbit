@@ -14,7 +14,7 @@ import GlobalApi from '~/logic/api/global';
 import { AsyncButton } from '~/views/components/AsyncButton';
 import { FormError } from '~/views/components/FormError';
 import { RouteComponentProps } from 'react-router-dom';
-import { stringToSymbol, parentPath } from '~/logic/lib/util';
+import { stringToSymbol, parentPath, deSig } from '~/logic/lib/util';
 import { resourceFromPath } from '~/logic/lib/group';
 import { Associations } from '~/types/metadata-update';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
@@ -81,7 +81,7 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
           resId,
           name,
           description,
-          { invite: { pending: ships.map(s => `~${s}`) } },
+          { invite: { pending: ships.map(s => `~${deSig(s)}`) } },
           moduleType
         );
       }
