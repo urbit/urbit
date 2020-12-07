@@ -590,12 +590,10 @@
   =>  |%
       ::  $card: tagged, untyped event
       ::  $ovum: card with cause
-      ::  $hoof: hoon source
       ::  $news: collated updates
       ::  $oped: module updates
       ::  $seed: next kernel source
       ::
-      +$  hoof  @t
       +$  news
           $:  ::  sys: installs + replacements
               ::  use: non-system files
@@ -604,11 +602,11 @@
               use=(map path (cask))
           ==
       +$  oped
-        $:  lul=(unit hoof)
-            zus=(unit hoof)
-            van=(list (cask hoof))
+        $:  lul=(unit cord)
+            zus=(unit cord)
+            van=(list (cask cord))
         ==
-      +$  seed  [hun=(unit hoof) arv=hoof]
+      +$  seed  [hun=(unit cord) arv=cord]
       --
   ::
   ~%  %part  ..part  ~
@@ -622,7 +620,7 @@
     =>  |%
         ::  deep file as source
         ::
-        ++  sole  |=(a=(cask) `hoof`?>(?=([%hoon @t] a) q.a))
+        ++  sole  |=(a=(cask) `cord`?>(?=([%hoon @t] a) q.a))
         --
     |_  fat=(axal (cask))
     ::
@@ -691,7 +689,7 @@
       ::    %zuse is the subject of the vanes; force all if we have a new %zuse
       ::
       =.  all  |(all ?=(^ zus))
-      =|  nav=(map term hoof)
+      =|  nav=(map term cord)
       =?  nav  all
         %-  ~(gas by nav)
         %+  turn
@@ -704,7 +702,7 @@
             |=([p=path *] ?=([%sys %vane @tas ~] p))
           fat
         |=  [[p=path q=(cask)] taf=_fat]
-        ^-  (pair (cask hoof) _fat)
+        ^-  (pair (cask cord) _fat)
         ?>  ?=([%sys %vane @tas ~] p)
         =*  nam  i.t.t.p
         ?>  ((sane %tas) nam)
@@ -1306,7 +1304,7 @@
           %=    ..pith
               van.mod
             %+  roll  van.job
-            |=  [[nam=term txt=hoof] van=_van.mod.sol]
+            |=  [[nam=term txt=cord] van=_van.mod.sol]
             ^+  van
             =/  nex  (create:va our zus.mod.sol nam /sys/vane/[nam]/hoon txt)
             =/  nav  (~(get by van) nam)
@@ -1697,7 +1695,7 @@
         ?.  ?=(^ zus)
          ~|(%larval-need-zuse !!)
         %+  roll  van.job
-        |=  [[nam=term txt=hoof:part] =_van]
+        |=  [[nam=term txt=cord] =_van]
         ^+  van
         %+  ~(put by van)  nam
         (smit "vane %{(trip nam)}" u.zus /sys/vane/[nam]/hoon txt)
