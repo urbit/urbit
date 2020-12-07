@@ -296,6 +296,9 @@
       =/  =update-log:store  (~(got by update-logs) resource)
       =.  update-log
         (put:orm-log update-log time [%0 time [%add-nodes resource nodes]])
+      =/  new-graph=graph:store
+        (add-node-list resource graph mark (sort-nodes nodes))
+      ?<  =(new-graph graph)
       ::
       :-  (give [/updates]~ [%add-nodes resource nodes])
       %_  state
@@ -303,8 +306,7 @@
           graphs
         %+  ~(put by graphs)
           resource
-        :_  mark
-        (add-node-list resource graph mark (sort-nodes nodes))
+        [new-graph mark]
       ==
       ::
       ++  sort-nodes
