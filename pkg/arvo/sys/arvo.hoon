@@ -1732,6 +1732,9 @@
 ++  poke                                                ::  +23
   |=  [now=@da ovo=ovum]
   ^-  ^
+  ?.  (gth now now.sol)
+    ~|  poke/[now=now last=now.sol wire.ovo p.card.ovo]
+    ~>(%mean.'time-marches-on' !!)
   =:  eny.sol  (shaz (cat 3 eny now))  ::  XX review
       now.sol  now
     ==
