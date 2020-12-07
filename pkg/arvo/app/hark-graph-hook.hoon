@@ -1,7 +1,7 @@
 ::  hark-graph-hook: notifications for graph-store [landscape]
 ::
 /-  store=hark-store, post, group-store, metadata-store, hook=hark-graph-hook
-/+  resource, metadata, default-agent, dbug, graph-store, graph
+/+  resource, metadata, default-agent, dbug, graph-store, graph, grouplib=group
 ::
 ::
 ~%  %hark-graph-hook-top  ..is  ~
@@ -49,6 +49,7 @@
     ha    ~(. +> bowl)
     def   ~(. (default-agent this %|) bowl)
     met   ~(. metadata bowl)
+    grp   ~(. grouplib bowl)
     gra   ~(. graph bowl)
 ::
 ++  on-init
@@ -161,8 +162,17 @@
   ++  add-graph
     |=  [rid=resource =graph:graph-store]
     ^-  (quip card _state)
+    =/  group-rid=(unit resource)
+      (group-from-app-resource:met %graph rid) 
+    ?~  group-rid
+      ~&  no-group+rid
+      `state
+    =/  is-hidden=?
+      !(is-managed:grp u.group-rid)
+    =/  should-watch
+      |(is-hidden &(watch-on-self =(our.bowl entity.rid)))
     :-  ~
-    ?.  &(watch-on-self =(our.bowl entity.rid))
+    ?.  should-watch
       state
     state(watching (~(put in watching) [rid ~]))
   ::
