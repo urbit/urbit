@@ -204,8 +204,7 @@
       |=  [a=atom n=^node]
       ^-  [@t json]
       :_  (node n)
-      =/  idx
-        (numb a)
+      =/  idx  (numb a)
       ?>  ?=(%n -.idx)
       p.idx
     ::
@@ -230,8 +229,7 @@
       |=  [n=^index o=^node]
       ^-  [@t json]
       :_  (node o)
-      =/  idx
-        (index n)
+      =/  idx  (index n)
       ?>  ?=(%s -.idx)
       p.idx
     ::
@@ -319,7 +317,7 @@
       ?~  jon
         [%empty ~]
       [%graph (graph jon)]
-          ::
+    ::
     ++  post
       %-  ot
       :~  [%author (su ;~(pfix sig fed:ag))]
