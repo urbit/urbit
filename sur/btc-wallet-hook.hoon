@@ -6,19 +6,22 @@
 ::    blockcount included so that we only request address info when
 ::    there's a newer block, in the case of addresses we are cooking
 ::
-::  payment: a payment expected from another ship 
+::  payment: a payment expected from another ship
 ::    - address: address generated for this payment
 ::  piym: incoming payments. Stores all ship moons under their planet.
+::    - num-fam: total payments (addresses) outstanding for ship and its moons
+::  pend-piym: incoming payment txs that peer says they have broadcast
 ::  poym: outgoing payments. One at a time: new replaces old
 ::
 +$  btc-state  [block=@ud fee=sats t=@da]
 +$  reqs  (map req-id:bp req=request:bws)
 ::
 +$  payment  [=xpub =address payer=ship value=sats]
-+$  piym  (jar ship payment)
++$  piym  [ps=(map ship payment) num-fam=(map ship @ud)]
++$  pend-piym  (map txid payment)
 +$  poym  (unit txbu:bws)
-+$  piym-lock  (map ship txid)
 ::  req-pay-address: request a payment address from another ship
+::   - target of action is local ship
 ::  gen-pay-address: generate a payment address from our ship to another
 ::  ret-pay-address: give an address to a payer who requested it
 ::  broadcast-tx: broadcast a signed-psbt, associate with poym
