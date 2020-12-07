@@ -5,9 +5,9 @@
   ++  noun  i
   ++  notification-kind
     ?+  index.p.i  ~
-      [@ ~]       `[%link 0 %each]
-      [@ @ %1 ~]  `[%comment 1 %count]
-      [@ @ @ ~]   `[%edit-comment 1 %count]
+      [@ ~]       `[%link 0 %each %.y]
+      [@ @ %1 ~]  `[%comment 1 %count %.n]
+      [@ @ @ ~]   `[%edit-comment 1 %count %.n]
     ==
   --
 ++  grab

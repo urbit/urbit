@@ -18,6 +18,9 @@
       watch-on-self=_&
   ==
 ::
++$  notif-kind
+  [name=@t parent-lent=@ud mode=?(%each %count) watch=?]
+::
 --
 ::
 =|  state-0
@@ -236,7 +239,7 @@
       ^-  (quip card _state)
       =^  child-cards  state
         (check-node-children node tube)
-      =+  !<  notif-kind=(unit [name=@t parent-lent=@ud mode=?(%each %count)])
+      =+  !<  notif-kind=(unit notif-kind)
           (tube !>([0 post.node]))
       ?~  notif-kind
         [child-cards state]
@@ -250,7 +253,7 @@
         [%graph group rid module.metadata desc parent]
       ?:  =(our.bowl author.post.node)
         =^  self-cards  state
-          (self-post node notif-index mode.u.notif-kind)
+          (self-post node notif-index [mode watch]:u.notif-kind)
         :_  state
         (weld child-cards self-cards)
       :_  state
@@ -282,13 +285,14 @@
       |=  $:  =node:graph-store
               =index:store
               mode=?(%count %each)
+              watch=?
           ==
       ^-  (quip card _state)
       =|  cards=(list card)
       =?  cards  ?=(%count mode)
         :_  cards
         (poke-hark %read-count index)
-      ?.  ?=(%.y watch-on-self)
+      ?.  &(watch watch-on-self)
         [cards state]
       :-  cards
       state(watching (~(put in watching) [rid index.post.node]))

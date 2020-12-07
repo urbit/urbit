@@ -4,8 +4,9 @@
   |%
   ++  noun  i
   ++  notification-kind
+   ::
     ?+  index.p.i  ~
-      [@ ~]  `[%message 0 %count]
+      [@ ~]  `[%message 0 %count %.n]
     ==
   --
 ++  grab
