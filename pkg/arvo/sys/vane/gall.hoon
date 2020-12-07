@@ -1706,9 +1706,9 @@
 ::
 ++  scry
   ~/  %gall-scry
-  |=  [lyc=gang cyr=term bem=beam]
+  ^-  roon
+  |=  [lyc=gang care=term bem=beam]
   ^-  (unit (unit cage))
-  =*  care  cyr
   =/  =shop  &/p.bem
   =*  dap  q.bem
   =/  =coin  $/r.bem
