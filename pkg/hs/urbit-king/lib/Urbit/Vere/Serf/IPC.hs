@@ -382,12 +382,9 @@ wyrd v ret serf = withSerfLockIO serf $ \ss -> do
     WSwap eid hash (wen, noun) fx -> do
       throwIO (SwapDuringWyrd hash (wen, noun) fx)
     WDone eid hash fx -> do
-      -- Looks at the
-
+      -- TODO: fish around in the fx for the upgrade event here. The equivalent
+      -- of _pier_on_lord_wyrd_done().
       pure (ss, ())
-
-      -- yield (eid, fx)
-      -- loop hash eid
 
 {-|
   Peek into the serf state.

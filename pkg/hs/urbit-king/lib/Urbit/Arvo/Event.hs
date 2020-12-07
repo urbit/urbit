@@ -362,7 +362,7 @@ instance FromNoun Ev where
   parseNoun = parseNoun >=> \case
     ReOrg ""     s t p v -> fmap EvBlip $ parseNoun $ toNoun (s,t,p,v)
     ReOrg "vane" s t p v -> fmap EvVane $ parseNoun $ toNoun (s,t,p,v)
-    ReOrg _      _ _ _ _ -> fail "First path-elem must be ?($ %vane)"
+    ReOrg x      _ _ _ _ -> fail $ "First path-elem must be ?($ %vane): found " ++ show x
 
 
 -- Short Event Names -----------------------------------------------------------
