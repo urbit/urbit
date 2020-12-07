@@ -9463,8 +9463,9 @@
         [hit grub]
       ::
           %wash
-        =-  =^  played  grub  (~(caching-play ut ref) -)
-            $(ref played)
+        =;  wyng=hoon
+          =^  played  grub  (~(caching-play ut ref) wyng)
+          $(ref played)
         :-  %wing
         |-  ^-  wing
         ?:  =(0 depth.skin)  ~
