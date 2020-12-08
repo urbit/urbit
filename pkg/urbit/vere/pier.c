@@ -662,7 +662,11 @@ _pier_wyrd_fail(u3_pier* pir_u, u3_ovum* egg_u, u3_noun lud)
 
   //  XX only print trace with -v ?
   //
-  u3_auto_bail_slog(egg_u, lud);
+  if ( u3_nul != lud ) {
+    u3_auto_bail_slog(egg_u, u3k(u3t(lud)));
+  }
+
+  u3z(lud);
 
   //  free %wyrd driver and ovum
   //
@@ -678,7 +682,7 @@ _pier_wyrd_fail(u3_pier* pir_u, u3_ovum* egg_u, u3_noun lud)
 //  XX organizing version constants
 //
 #define VERE_NAME  "vere"
-#define VERE_ZUSE  309
+#define VERE_ZUSE  420
 
 /* _pier_wyrd_aver(): check for %wend effect and version downgrade. RETAIN
 */
@@ -800,11 +804,11 @@ _pier_wyrd_card(u3_pier* pir_u)
   u3_noun ver = u3nt(u3i_string(VERE_NAME),
                      u3dc("scot", c3__ta, u3i_string(URBIT_VERSION)),
                      u3_nul);
-  u3_noun kel = u3nl(u3nc(c3__zuse, VERE_ZUSE),       //  XX god_u->zus_w
-                     u3nc(c3__lull, u3i_string("lull-kelvin")),    //  XX define
-                     u3nc(c3__arvo, u3i_string("arvo-kelvin")), //  XX from both king and serf?
-                     u3nc(c3__hoon, 141),  //  god_u->hon_y
-                     u3nc(c3__nock, 4),    //  god_u->noc_y
+  u3_noun kel = u3nl(u3nc(c3__zuse, VERE_ZUSE),  //  XX from both king and serf?
+                     u3nc(c3__lull, 330),        //  XX define
+                     u3nc(c3__arvo, 240),        //  XX from both king and serf?
+                     u3nc(c3__hoon, 140),        //  god_u->hon_y
+                     u3nc(c3__nock, 4),          //  god_u->noc_y
                      u3_none);
   u3_noun wir = u3nc(c3__arvo, u3_nul);
   return u3nt(c3__wyrd, u3nc(u3k(u3A->sen), ver), kel);
