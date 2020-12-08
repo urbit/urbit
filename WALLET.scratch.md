@@ -10,14 +10,14 @@ xpub1 is from mnemonic from PRIVATE.scratch
 
 ### get address at indices
 ```
-=walt1 (from-xpub:bl xpub1 ~ ~)
+=walt1 (from-xpub:bl xpub1 [%4 0x5566.7788] ~ ~ ~)
 (~(mk-address wad:bl walt1 %0) 0)
 ::  gives [%bech32 'bc1q0adfj7ur750hjwufzzlfj5ytqzsnd7fz9fjuzc']
 ```
 
 ### update address data
 ```
-=walt1 (from-xpub:bl xpub1 ~ ~)
+=walt1 (from-xpub:bl xpub1 ~ ~ ~)
 (~(mk-address wad:bl walt1 %0) 0)
 ::  gives bc1q0adfj7ur750hjwufzzlfj5ytqzsnd7fz9fjuzc
 =walt1 (~(watch-address wad:bl walt1 %0) [%bech32 'bc1q0adfj7ur750hjwufzzlfj5ytqzsnd7fz9fjuzc'] [%0 0 ~])

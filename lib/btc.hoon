@@ -68,9 +68,15 @@
 ::
 ++  psbt
   |%
+  ::  +create: make base64 cord of PSBT
+  ::
+  ++  create
+    |=  [=rawtx =txid inputs=(list in:^psbt) outputs=(list out:^psbt)]
+    ^-  cord
+    *cord
   ::
   ++  hd-path
-  |=  [pubkey=btc-byts =target:^psbt =hdkey] 
+    |=  [pubkey=btc-byts =target:^psbt =hdkey] 
     ^-  keyval:^psbt
     =/  k=btc-byts
       %-  to-byts:buffer
