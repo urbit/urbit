@@ -195,7 +195,7 @@ const GraphNode = ({
   return (
     <Row onClick={onClick} gapX="2" pt="2">
       <Col>{img}</Col>
-      <Col alignItems="flex-start">
+      <Col flexGrow={1} alignItems="flex-start">
         <Row
           mb="2"
           height="16px"
