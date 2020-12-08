@@ -25,6 +25,18 @@ bitcoin-cli -rpcuser=__cookie__ -rpcpassword=9e0ca21c70d6b7307b750c8012d12df04ef
 (parse:^psbt:btc psbt)
 ```
 
+## Make an HD Path
+```
+=btc -build-file %/lib/btc/hoon
+=print [4 0x9ca7.9d5b]
+=pubkey [33 0x3.6093.e9e0.6a5f.736e.751f.5486.c1c6.7647.c258.b946.b314.d2d3.f03a.33c2.b5cf.b9ab]
+(hd-path:^psbt:btc print pubkey %output %bip84 %1 11)
+
+:: GIVES
+[ key=[wid=34 dat=0x203.6093.e9e0.6a5f.736e.751f.5486.c1c6.7647.c258.b946.b314.d2d3.f03a.33c2.b5cf.b9ab]
+  val=[wid=21 dat=0x9c.a79d.5b54.0000.8000.0000.8000.0000.8001.0000.000b]]
+```
+
 ## Making Derivation Paths
 Below is hex for `m/84'/0'/0'/0/0`
 `*80 is the ending for hardened paths*

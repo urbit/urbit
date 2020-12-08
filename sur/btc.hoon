@@ -5,6 +5,7 @@
 +$  bech32-address  $%([%bech32 cord])
 +$  address  ?(legacy-address bech32-address)
 +$  bipt  $?(%bip44 %bip49 %bip84)
++$  chyg  $?(%0 %1)
 +$  sats  @ud
 +$  vbytes  @ud
 +$  btc-byts  [wid=@ dat=@ux]
@@ -14,7 +15,7 @@
 +$  txid  hash256
 +$  rawtx  btc-byts
 +$  buffer  (list @ux)
-+$  utxo  [pos=@ =txid height=@ value=sats recvd=(unit @da)]
++$  utxo  [pos=@ =txid height=@ value=sats recvd=(unit @da)] 
 ++  address-info
   $:  =address
       confirmed-value=sats
@@ -55,6 +56,7 @@
   --
 ++  psbt
   |%
+  +$  target  $?(%input %output)
   +$  keyval  [key=btc-byts val=btc-byts]
   +$  map  (list keyval)
   --
