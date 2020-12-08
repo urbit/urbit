@@ -26,7 +26,7 @@
 ::  scan-to
 ::  max-gap: maximum number of consec blank addresses before wallet stops scanning
 ::  confs:   confirmations required (after this is hit for an address, wallet stops refreshing it)
-::
+:: 
 +$  walt
   $:  =xpub
       =fprint
@@ -74,7 +74,7 @@
 ::  scanning addresses and monitoring generated addresses
 ::  batch: indexes to scan for a given chyg
 ::  scans: all scans underway (batches)
-::  piym-watch: any address we've been told has an incoming payment promised
+::  piym-watch: any address we've been told has an incoming payment promised 
 ::
 +$  batch  [todo=(set idx) endpoint=idx has-used=?]
 +$  scans  (map [xpub chyg] batch)
@@ -86,7 +86,7 @@
 ::  TODO: document
 ::
 +$  action
-  $%  [%add-wallet =xpub scan-to=(unit scon) max-gap=(unit @ud) confs=(unit @ud)]
+  $%  [%add-wallet =xpub =fprint scan-to=(unit scon) max-gap=(unit @ud) confs=(unit @ud)]
       [%address-info =xpub =chyg =idx utxos=(set utxo) used=? block=@ud]
       [%tx-info =info:tx]
       [%generate-address =xpub =chyg =peta]
