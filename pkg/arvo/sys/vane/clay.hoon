@@ -339,9 +339,6 @@
       ==                                                ::
       $:  %jael                                         ::s
           $>(%public-keys gift:able:jael)               ::
-      ==                                                ::
-      $:  @tas                                          ::  by any
-          $>(%crud vane-task)                           ::  XX strange
   ==  ==                                                ::
 --  =>
 ~%  %clay-utilities  ..part  ~
@@ -3888,12 +3885,10 @@
   ::
   =/  req=task:able  ((harden task:able) wrapped-task)
   ::
-  ::  error notifications "downcast" to %crud
+  ::  XX handle error notifications
   ::
-  =?  req  ?=(^ dud)
-    ~|  %crud-in-crud
-    ?<  ?=(%crud -.req)
-    [%crud -.req tang.u.dud]
+  ?^  dud
+    [[[hen %slip %d %flog %crud [-.req tang.u.dud]] ~] ..^$]
   ::
   ?-    -.req
       %boat
@@ -3938,9 +3933,6 @@
       |=  [p=path r=rule]
       (~(has in who.r) |+nom.req)
     --
-  ::
-      %crud
-    [[[hen %slip %d %flog req] ~] ..^$]
   ::
       %drop
     ~&  %clay-idle
@@ -4297,8 +4289,6 @@
   ::
   ?-    -.+.hin
       %public-keys  ~|([%public-keys-raw tea] !!)
-      %crud
-    [[[hen %slip %d %flog +.hin] ~] ..^$]
   ::
       %mere
     ?:  ?=(%& -.p.+.hin)

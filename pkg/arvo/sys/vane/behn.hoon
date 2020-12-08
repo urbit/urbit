@@ -269,20 +269,17 @@
   ^-  [(list move) _behn-gate]
   ::
   =/  =task:able  ((harden task:able) wrapped-task)
-  ::
-  ::  error notifications "downcast" to %crud
-  ::
-  =?  task  ?=(^ dud)
-    ~|  %crud-in-crud
-    ?<  ?=(%crud -.task)
-    [%crud -.task tang.u.dud]
-  ::
   =/  event-core  (per-event [now hen] state)
   ::
   =^  moves  state
+    ::
+    ::  handle error notifications
+    ::
+    ?^  dud
+      (crud:event-core -.task tang.u.dud)
+    ::
     ?-  -.task
       %born  born:event-core
-      %crud  (crud:event-core [p q]:task)
       %rest  (rest:event-core date=p.task)
       %drip  (drip:event-core move=p.task)
       %huck  (huck:event-core syn.task)

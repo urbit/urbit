@@ -2099,18 +2099,11 @@
   ::
   =/  task=task:able  ((harden task:able) wrapped-task)
   ::
-  ::  error notifications "downcast" to %crud
+  ::  XX handle error notifications
   ::
-  =?  task  ?=(^ dud)
-    ~|  %crud-in-crud
-    ?<  ?=(%crud -.task)
-    [%crud -.task tang.u.dud]
-  ::
-  ::  %crud: notifies us of an event failure
-  ::
-  ?:  ?=(%crud -.task)
+  ?^  dud
     =/  moves=(list move)
-      [[duct %slip %d %flog task] ~]
+      [[duct %slip %d %flog %crud [-.task tang.u.dud]] ~]
     [moves http-server-gate]
   ::  %init: tells us what our ship name is
   ::

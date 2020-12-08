@@ -738,14 +738,10 @@
       ::
       =/  =task  ((harden task) wrapped-task)
       ::
-      ::  error notifications "downcast" to %crud or %hole
+      ::  reject larval error notifications
       ::
-      =?  task  ?=(^ dud)
-        ?-  -.task
-          %crud  ~|(%crud-in-crud !!)
-          %hear  [%hole [lane blob]:task]
-          *      [%crud -.task tang.u.dud]
-        ==
+      ?^  dud
+        ~|(%ames-larval-call-dud (mean tang.u.dud))
       ::
       ::  %born: set .unix-duct and start draining .queued-events
       ::
@@ -868,26 +864,22 @@
   ^-  [(list move) _ames-gate]
   ::
   =/  =task  ((harden task) wrapped-task)
-  ::
-  ::  error notifications "downcast" to %crud or %hole
-  ::
-  =?  task  ?=(^ dud)
-    ?-  -.task
-      %crud  ~|(%crud-in-crud !!)
-      %hear  [%hole [lane blob]:task]
-      *      [%crud -.task tang.u.dud]
-    ==
-  ::
   =/  event-core  (per-event [now eny rof] duct ames-state)
   ::
   =^  moves  ames-state
     =<  abet
+    ::  handle error notifications
+    ::
+    ?^  dud
+      ?+  -.task
+          (on-crud:event-core -.task tang.u.dud)
+        %hear  (on-hole:event-core [lane blob]:task)
+      ==
+    ::
     ?-  -.task
       %born  on-born:event-core
-      %crud  (on-crud:event-core [p q]:task)
       %hear  (on-hear:event-core [lane blob]:task)
       %heed  (on-heed:event-core ship.task)
-      %hole  (on-hole:event-core [lane blob]:task)
       %init  on-init:event-core
       %jilt  (on-jilt:event-core ship.task)
       %sift  (on-sift:event-core ships.task)
