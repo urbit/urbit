@@ -48,7 +48,7 @@ stdenvNoCC.mkDerivation {
     #  run the unit tests
     #
     herb ./pier -d '~&  ~  ~&  %test-unit-start  ~'
-    herb ./pier -d '####-test %/tests'
+    herb ./pier -d '####-test %/tests ~'
     herb ./pier -d '~&  ~  ~&  %test-unit-end  ~'
 
     #  use the :test app to build all agents, generators, and marks
