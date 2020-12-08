@@ -10347,6 +10347,12 @@
       (eclo hag rig)
     --  --
   ::
+  ::  XX implement
+  ++  caching-etco
+    |=  [lop=palo rig=(list (pair wing hoon))]
+    ^-  [(pair type nock) _grub]
+    !!
+  ::
   ++  etco
     |=  {lop/palo rig/(list (pair wing hoon))}
     ^-  (pair type nock)
@@ -10388,17 +10394,75 @@
       (endo [p.p.lug p.q.lug] dox rig)
     --
   ::
+  ++  caching-et
+    |_  [hyp=wing rig=(list (pair wing hoon))]
+    ::
+    ++  play
+      ^-  [type _grub]
+      =^  lug  grub  (caching-find %read hyp)
+      ?:  ?=(%| -.lug)
+        ~>  %mean.'hoon'
+        ?>  ?=(~ rig)
+        [p.p.lug grub]
+      (caching-elbo p.lug rig)
+    ::
+    ++  mint
+      |=  gol=type
+      ^-  [(pair type nock) _grub]
+      =^  lug  grub  (caching-find %read hyp)
+      ?:  ?=(%| -.lug)
+        ~>  %mean.'hoon'
+        ?>  ?=(~ rig)
+        [p.lug grub]
+      =;  [par=(pair type nock) =_grub]
+        =^  nests  grub  (caching-nest(sut gol) & p.par)
+        ?>  ?|(!vet nests)
+        [par grub]
+      (caching-etco p.lug rig)
+    ::
+    ++  mull
+      |=  [gol=type dox=type]
+      ^-  [[type type] _grub]
+      =^  lef  grub  (caching-find %read hyp)
+      =^  rye  grub  (caching-find(sut dox) %read hyp)
+      ?:  ?=(%| -.lef)
+        ?>  &(?=(%| -.rye) ?=(~ rig))
+        [[p.p.lef p.p.rye] grub]
+      ?>  ?=(%& -.rye)
+      =;  [par=(pair type type) _grub]
+        =^  nests  grub  (caching-nest(sut gol) & p.par)
+        ?>  ?|(!vet nests)
+        [par grub]
+      (caching-endo [p.lef p.rye] dox rig)
+    --
+  ::
+  ++  caching-epla
+    |=  [hyp=wing rig=(list (pair wing hoon))]
+    ^-  [type _grub]
+    ~(play caching-et hyp rig)
+  ::
   ++  epla
     ~/  %epla
     |=  {hyp/wing rig/(list (pair wing hoon))}
     ^-  type
     ~(play et hyp rig)
   ::
+  ++  caching-emin
+    |=  [gol=type hyp=wing rig=(list (pair wing hoon))]
+    ^-  [(pair type nock) _grub]
+    (~(mint caching-et hyp rig) gol)
+  ::
   ++  emin
     ~/  %emin
     |=  {gol/type hyp/wing rig/(list (pair wing hoon))}
     ^-  (pair type nock)
     (~(mint et hyp rig) gol)
+  ::
+  ++  caching-emul
+    ~/  %emul
+    |=  [gol=type dox=type hyp=wing rig=(list (pair wing hoon))]
+    ^-  [(pair type type) _grub]
+    (~(mull caching-et hyp rig) gol dox)
   ::
   ++  emul
     ~/  %emul
