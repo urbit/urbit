@@ -1,5 +1,5 @@
 /-  lens, *sole
-/+  base64, *server, default-agent
+/+  *server, default-agent
 /=  lens-mark  /mar/lens/command  ::  TODO: ask clay to build a $tube
 =,  format
 |%
@@ -83,7 +83,7 @@
     [%pass /export %agent [our.bowl app.source.com] %watch /export]~
   ::
       %import
-    ?~  enc=(de:base64 base64-jam.source.com)
+    ?~  enc=(de:base64:mimes:html base64-jam.source.com)
       !!
     ::
     =/  c=*  (cue q.u.enc)
@@ -96,7 +96,7 @@
     =/  jon
       =/  =atom  (jam (export-all our.bowl now.bowl))
       =/  =octs  [(met 3 atom) atom]
-      =/  enc    (en:base64 octs)
+      =/  enc    (en:base64:mimes:html octs)
       (pairs:enjs:format file+s+output data+s+enc ~)
     :_  this
     %+  give-simple-payload:app  eyre-id
@@ -104,7 +104,7 @@
   ::
       %import-all
     ~&  %import-all
-    =/  enc  (de:base64 base64-jam.source.com)
+    =/  enc  (de:base64:mimes:html base64-jam.source.com)
     ?~  enc  !!
     =/  by-app  ;;((list [@tas *]) (cue q.u.enc))
     :_  this
@@ -192,7 +192,7 @@
     =/  jon=json
       =/  =atom  (jam data)
       =/  =octs  [(met 3 atom) atom]
-      =/  enc  (en:base64 octs)
+      =/  enc  (en:base64:mimes:html octs)
       (pairs:enjs:format file+s+output data+s+enc ~)
     ::
     :_  this
@@ -222,13 +222,11 @@
         [%mime p.fec (as-octs:mimes:html (jam q.fec))]
       ::
           %sav
-        ::  XX use +en:base64 or produce %mime a la %sag
-        ::
         %-  some
         :-  %json
         %-  pairs:enjs:format
         :~  file+s+(crip <`path`p.fec>)
-            data+s+(crip (en-base64:mimes:html q.fec))
+            data+s+(en:base64:mimes:html (met 3 q.fec) q.fec)
         ==
       ::
           %mor

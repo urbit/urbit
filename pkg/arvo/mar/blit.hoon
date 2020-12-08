@@ -1,7 +1,5 @@
 ::  blit: runtime blit structure
 ::
-/+  base64
-::
 |_  =blit:dill
 ++  grad  %noun
 ::  +grab: convert from
@@ -30,13 +28,13 @@
         %sag
       %-  pairs
       :~  'path'^(path p.blit)
-          'file'^s+(en:base64 (as-octs:mimes:html (jam q.blit)))
+          'file'^s+(en:base64:mimes:html (as-octs:mimes:html (jam q.blit)))
       ==
     ::
         %sav
       %-  pairs
       :~  'path'^(path p.blit)
-          'file'^s+(en:base64 (as-octs:mimes:html q.blit))
+          'file'^s+(en:base64:mimes:html (as-octs:mimes:html q.blit))
       ==
     ::
         %klr
