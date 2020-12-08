@@ -70,5 +70,6 @@
   ^-  (trap vase)
   =/  gun  (~(mint ut p:$:tap) %noun gen)
   |.  ~+
-  [[%cell p.gun p:$:tap] [q.gun q:$:tap]]
+  =/  pro  q:$:tap
+  [[%cell p.gun p:$:tap] [.*(pro q.gun) pro]]
 --
