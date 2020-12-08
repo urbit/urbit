@@ -44,9 +44,7 @@ export function ChannelMenu(props: ChannelMenuProps) {
   const baseUrl = `/~landscape${workspace}/resource/${app}${association["app-path"]}`;
   const appPath = association["app-path"];
 
-  const [, ship, name] = appPath.startsWith("/ship/")
-    ? appPath.slice(5).split("/")
-    : appPath.split("/");
+  const [,, ship, name] = appPath.split("/");
 
   const isOurs = ship.slice(1) === window.ship;
 

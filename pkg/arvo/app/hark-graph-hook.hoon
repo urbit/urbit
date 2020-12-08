@@ -174,9 +174,9 @@
       !(is-managed:grp u.group-rid)
     =/  should-watch
       |(is-hidden &(watch-on-self =(our.bowl entity.rid)))
-    :-  ~
     ?.  should-watch
-      state
+      `state
+    :-  (give:ha ~[/updates] %listen [rid ~])
     state(watching (~(put in watching) [rid ~]))
   ::
   ++  graph-update
