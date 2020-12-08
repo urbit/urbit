@@ -128,7 +128,6 @@
     ::
       %generate-address
     (generate-address +.act)
-    ::  TODO: end to end tests
     ::  %generate-txbu
     ::  - get txbu and change amount
     ::  - if txbu is blank, fail
@@ -140,6 +139,7 @@
     ::    - send address update
     ::    - send a request for info on the address (watch it)
     ::
+    ::  TODO: end to end tests
       %generate-txbu
     =+  uw=(~(get by walts) xpub.act)
     ?~  uw
@@ -156,7 +156,7 @@
       [~[(send-update [%generate-txbu xpub.act u.tb])] state]
     =/  [addr=address:btc =idx w=walt]
       ~(gen-address wad u.uw %1)
-    =+  new-txbu=(~(add-output txb u.tb) addr u.chng)
+    =+  new-txbu=(~(add-output txb u.tb) addr u.chng `[fprint.w bipt.w %1 idx])
     :_  state(walts (~(put by walts) xpub.act w))
     :~  (send-update [%generate-txbu xpub.act new-txbu])
         (send-update [%generate-address xpub.act addr ~])
