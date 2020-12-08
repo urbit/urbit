@@ -520,7 +520,7 @@
     ::      should be deleted now that aqua is capable of managing azimuth state
     ::      internally. Its been left this way for now until all the ph tests
     ::      can be rewritten
-    =/  keys=dawn-event:able:jael  (dawn who.ae)
+    =/  keys=dawn-event:jael  (dawn who.ae)
     =.  this  abet-pe:(publish-effect:(pe who.ae) [/ %sleep ~])
     =/  initted
       =<  plow
@@ -736,7 +736,7 @@
 ::
 ++  dawn
   |=  who=ship
-  ^-  dawn-event:able:jael
+  ^-  dawn-event:jael
   ?>  ?=(?(%czar %king %duke) (clan:title who))
   =/  spon=(list [ship point:azimuth])
     %-  flop
@@ -759,7 +759,7 @@
     ?:  ?=(%czar (clan:title ship))
       [a-point]~
     [a-point $(who ship)]
-  =/  =seed:able:jael
+  =/  =seed:jael
     =/  life-rift  (~(got by lives.azi.piers) who)
     =/  =life  lyfe.life-rift
     [who life sec:ex:(get-keys:aqua-azimuth who life) ~]

@@ -1,7 +1,7 @@
 ::  herm: stand-in for term.c with http interface
 ::
 /+  default-agent, dbug, verb
-=,  able:jael
+=,  jael
 |%
 +$  state-0  [%0 ~]
 --

@@ -3,7 +3,7 @@
 /-  *eth-watcher, spider
 /+  ethereum, default-agent, verb, dbug
 =,  ethereum-types
-=,  able:jael
+=,  jael
 ::
 =>  |%
     +$  card  card:agent:gall

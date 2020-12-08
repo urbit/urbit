@@ -5,18 +5,18 @@
 =,  behn
 |=  our=ship
 =>  |%
-    +$  move  [p=duct q=(wite note gift:able)]
+    +$  move  [p=duct q=(wite note gift)]
     +$  note                                            ::  out request $->
       $~  [%b %wait *@da]                               ::
       $%  $:  %b                                        ::   to self
-              $>(%wait task:able)                       ::  set timer
+              $>(%wait task)                       ::  set timer
           ==                                            ::
           $:  %d                                        ::    to %dill
-              $>(%flog task:able:dill)                  ::  log output
+              $>(%flog task:dill)                  ::  log output
       ==  ==                                            ::
     +$  sign
       $~  [%b %wake ~]
-      $%  [%b $>(%wake gift:able)]
+      $%  [%b $>(%wake gift)]
       ==
     ::
     +$  behn-state
@@ -258,17 +258,17 @@
 =*  behn-gate  .
 ^?
 |%
-::  +call: handle a +task:able:behn request
+::  +call: handle a +task:behn request
 ::
 ++  call
   ~%  %behn-call  ..part  ~
   |=  $:  hen=duct
           dud=(unit goof)
-          wrapped-task=(hobo task:able)
+          wrapped-task=(hobo task)
       ==
   ^-  [(list move) _behn-gate]
   ::
-  =/  =task:able  ((harden task:able) wrapped-task)
+  =/  =task  ((harden task) wrapped-task)
   ::
   ::  error notifications "downcast" to %crud
   ::

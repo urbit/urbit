@@ -176,7 +176,7 @@
   |=  $:  clay-gate=_clay-gate
           now=@da
           scry=roof
-          call-args=[=duct wrapped-task=(hobo task:able:clay)]
+          call-args=[=duct wrapped-task=(hobo task:clay)]
           expected-moves=(list move:clay-gate)
       ==
   ^-  [tang _clay-gate]
@@ -197,7 +197,7 @@
   |=  $:  clay-gate=_clay-gate
           now=@da
           scry=roof
-          call-args=[=duct wrapped-task=(hobo task:able:clay)]
+          call-args=[=duct wrapped-task=(hobo task:clay)]
           move-comparator=$-((list move:clay-gate) tang)
       ==
   ^-  [tang _clay-gate]

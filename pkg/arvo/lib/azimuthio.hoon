@@ -1,7 +1,7 @@
 /-  rpc=json-rpc
 /+  ethereum, azimuth, strandio
 =,  strand=strand:strandio
-=,  able:jael
+=,  jael
 |%
 ++  tract  azimuth:contracts:azimuth
 ++  fetch-point

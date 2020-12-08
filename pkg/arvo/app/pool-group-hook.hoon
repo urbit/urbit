@@ -7,7 +7,7 @@
 /-  group-store, spider
 /+  ethereum, azimuth, default-agent, verb
 =,  ethereum-types
-=,  able:jael
+=,  jael
 ::
 =>  |%
     ++  group-path    /invite-peers

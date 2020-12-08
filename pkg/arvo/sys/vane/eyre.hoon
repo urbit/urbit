@@ -17,7 +17,7 @@
       =duct
       ::
       ::
-      card=(wind note gift:able)
+      card=(wind note gift)
   ==
 ::  +note: private request from eyre to another vane
 ::
@@ -42,7 +42,7 @@
       $:  %g
           ::
           ::
-          $>(%deal task:able:gall)
+          $>(%deal task:gall)
   ==  ==
 ::  +sign: private response from another vane to eyre
 ::
@@ -59,8 +59,8 @@
       $:  %g
           ::
           ::
-          gift:able:gall
-          ::  $>(%unto gift:able:gall)
+          gift:gall
+          ::  $>(%unto gift:gall)
   ==  ==
 --
 ::  more structures
@@ -1522,7 +1522,7 @@
         ::NOTE  assertions in this block because =* is flimsy
         ?>  ?=([%| *] state.u.channel)
         :+  p.state.u.channel  %give
-        ^-  gift:able
+        ^-  gift
         :*  %response  %continue
         ::
             ^=  data
@@ -1577,7 +1577,7 @@
       =?  moves  &(kicking ?=([%| *] state.u.channel))
         :_  moves
         :+  p.state.u.channel  %give
-        ^-  gift:able
+        ^-  gift
         :*  %response  %continue
         ::
             ^=  data
@@ -2102,10 +2102,10 @@
 ~%  %http-server  ..part  ~
 |%
 ++  call
-  |=  [=duct dud=(unit goof) wrapped-task=(hobo task:able)]
+  |=  [=duct dud=(unit goof) wrapped-task=(hobo task)]
   ^-  [(list move) _http-server-gate]
   ::
-  =/  task=task:able  ((harden task:able) wrapped-task)
+  =/  task=task  ((harden task) wrapped-task)
   ::
   ::  error notifications "downcast" to %crud
   ::

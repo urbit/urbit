@@ -234,7 +234,7 @@
   `state
 ::
 ++  handle-build
-  |=  [=path =gift:able:clay]
+  |=  [=path =gift:clay]
   ^-  (quip card _state)
   ?>  ?=([%writ *] gift)
   =/  uri=@t

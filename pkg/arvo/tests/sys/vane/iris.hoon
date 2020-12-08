@@ -58,7 +58,7 @@
       scry=*roof
       ^=  call-args
         :+  duct=~[/initial-born-duct]  ~
-        ^-  task:able:iris
+        ^-  task:iris
         :*  %receive
             id=0
             ^-  http-event:http
@@ -154,7 +154,7 @@
       scry=*roof
       ^=  call-args
         :+  duct=~[/initial-born-duct]  ~
-        ^-  task:able:iris
+        ^-  task:iris
         :*  %receive
             id=0
             ^-  http-event:http
@@ -191,7 +191,7 @@
       scry=*roof
       ^=  call-args
         :+  duct=~[/initial-born-duct]  ~
-        ^-  task:able:iris
+        ^-  task:iris
         :*  %receive
             id=0
             ^-  http-event:http
@@ -224,7 +224,7 @@
       scry=*roof
       ^=  call-args
         :+  duct=~[/initial-born-duct]  ~
-        ^-  task:able:iris
+        ^-  task:iris
         :*  %receive
             id=0
             ^-  http-event:http
@@ -311,7 +311,7 @@
       scry=*roof
       ^=  call-args
         :+  duct=~[/initial-born-duct]  ~
-        ^-  task:able:iris
+        ^-  task:iris
         :*  %receive
             id=0
             ^-  http-event:http
@@ -417,7 +417,7 @@
       scry=*roof
       ^=  call-args
         :+  duct=~[/initial-born-duct]  ~
-        ^-  task:able:iris
+        ^-  task:iris
         :*  %receive
             id=0
             ^-  http-event:http
@@ -489,7 +489,7 @@
       scry=*roof
       ^=  call-args
         :+  duct=~[/secondary-born-duct]  ~
-        ^-  task:able:iris
+        ^-  task:iris
         :*  %born
             ~
         ==
@@ -512,7 +512,7 @@
   |=  $:  http-client-gate=_http-client-gate
           now=@da
           scry=roof
-          call-args=[=duct dud=(unit goof) wrapped-task=(hobo task:able:iris)]
+          call-args=[=duct dud=(unit goof) wrapped-task=(hobo task:iris)]
           expected-moves=(list move:http-client-gate)
       ==
   ^-  [tang _http-client-gate]

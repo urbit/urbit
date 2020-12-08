@@ -31,7 +31,7 @@
       ?>  ?=(%king (clan:title i.tar))
       $(tar t.tar, stars (~(put in stars) i.tar))
     ::
-    |-  ^-  seed:able:jael
+    |-  ^-  seed:jael
     =/  cub=acru:ames  (pit:nu:crub:crypto 512 eny)
     =/  who=ship  `@`fig:ex:cub
     ::  disallow 64-bit or smaller addresses
@@ -232,7 +232,7 @@
   ::  +veri:dawn: validate keys, life, discontinuity, &c
   ::
   ++  veri
-    |=  [=seed:able:jael =point:azimuth =live]
+    |=  [=seed:jael =point:azimuth =live]
     ^-  (unit error=term)
     =/  rac  (clan:title who.seed)
     =/  cub  (nol:nu:crub:crypto key.seed)

@@ -3,7 +3,7 @@
 /-  rpc=json-rpc
 /+  ethereum, strandio
 =,  ethereum-types
-=,  able:jael
+=,  jael
 ::
 =>  |%
     +$  topics  (list ?(@ux (list @ux)))

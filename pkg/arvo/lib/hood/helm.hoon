@@ -43,10 +43,10 @@
 ::
 ++  poke-rekey                                        ::  rotate private keys
   |=  des=@t
-  =/  sed=(unit seed:able:jael)
+  =/  sed=(unit seed:jael)
     %+  biff
       (bind (slaw %uw des) cue)
-    (soft seed:able:jael)
+    (soft seed:jael)
   =<  abet
   ?~  sed
     ~&  %invalid-private-key
@@ -73,7 +73,7 @@
   (foal:space:userlib :(welp byk sec+p.hot /atom) cage)
 ::
 ++  poke-moon                                        ::  rotate moon keys
-  |=  sed=(unit [=ship =udiff:point:able:jael])
+  |=  sed=(unit [=ship =udiff:point:jael])
   =<  abet
   ?~  sed
     this

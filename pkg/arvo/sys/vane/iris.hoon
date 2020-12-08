@@ -19,7 +19,7 @@
       =duct
       ::
       ::
-      card=(wind note gift:able)
+      card=(wind note gift)
   ==
 ::  +note: private request from light to another vane
 ::
@@ -303,10 +303,10 @@
 ~%  %http-client  ..part  ~
 |%
 ++  call
-  |=  [=duct dud=(unit goof) wrapped-task=(hobo task:able)]
+  |=  [=duct dud=(unit goof) wrapped-task=(hobo task)]
   ^-  [(list move) _light-gate]
   ::
-  =/  task=task:able  ((harden task:able) wrapped-task)
+  =/  task=task  ((harden task) wrapped-task)
   ::
   ::  error notifications "downcast" to %crud
   ::
