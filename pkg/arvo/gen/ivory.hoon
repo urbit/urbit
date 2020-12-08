@@ -69,6 +69,7 @@
   |=  [tap=(trap vase) gen=hoon]
   ^-  (trap vase)
   =/  gun  (~(mint ut p:$:tap) %noun gen)
+  =>  [tap=tap gun=gun]
   |.  ~+
   =/  pro  q:$:tap
   [[%cell p.gun p:$:tap] [.*(pro q.gun) pro]]
