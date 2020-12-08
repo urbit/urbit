@@ -68,6 +68,37 @@
 ::
 ++  psbt
   |%
+  ++  hd-path
+  |=  [print=btc-byts pubkey=btc-byts =target:^psbt =bipt =chyg idx=@ud]
+    ^-  keyval:^psbt
+    =/  k=btc-byts
+      %-  to-byts:buffer
+      ?-  target
+          %input
+        [0x6 (from-byts:buffer pubkey)]
+          ::
+          %output
+        [0x2 (from-byts:buffer pubkey)]
+      ==
+    =/  bip  ?-  bipt
+               %bip84  0x54
+               %bip49  0x31
+               %bip44  0x2c
+             ==
+    =/  hdpath=^buffer
+      %+  weld
+        :~   bip  0x0  0x0  0x80
+             0x0  0x0  0x0  0x80
+             0x0  0x0  0x0  0x80
+             `@ux`chyg  0x0  0x0  0x0
+        ==
+      (from-atom-le:buffer (met 3 idx) idx)
+    :-  k
+    %-  concat-as-byts:buffer
+    :~  (from-byts:buffer print)
+        hdpath
+    ==
+  ::
   ++  parse
     |=  psbt-base64=cord
     ^-  (list map:^psbt)
@@ -136,6 +167,7 @@
     =/  bigend=@ux  (swp 3 q.u.p)
     (from-byts:buffer [(met 3 bigend) bigend])
   --
+::  buffer: byte buffer utilities
 ::  list of @ux that is big endian for hashing purposes
 ::  used to preserve 0s when concatenating byte sequences
 ::
