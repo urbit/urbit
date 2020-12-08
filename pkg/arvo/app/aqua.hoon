@@ -27,23 +27,21 @@
 =>  $~  |%
     +$  versioned-state
       $%  state-0
-          state-1
       ==
     +$  state-0
       $:  %0
           pil=pill
           assembled=*
           tym=@da
-          fleet-snaps=(map term (map ship pier))
-          piers=(map ship pier)
-      ==
-    +$  state-1
-      $:  %1
-          pil=pill
-          assembled=*
-          tym=@da
           fleet-snaps=(map term fleet)
           piers=fleet
+      ==
+    ::  XX temporarily shadowed, fix and remove
+    ::
+    +$  pill
+      $:  boot-ova=*
+          kernel-ova=(list unix-event)
+          userspace-ova=(list unix-event)
       ==
     ::
     +$  fleet  [ships=(map ship pier) azi=az-state]
@@ -55,7 +53,7 @@
       ==
     --
 ::
-=|  state-1
+=|  state-0
 =*  state  -
 =<
   %-  agent:dbug
@@ -79,13 +77,6 @@
     ::  wipe fleets and piers rather than give them falsely nulled azimuth state
     ::
         %0
-      %_  $
-        -.old            %1
-        fleet-snaps.old  *(map term fleet)
-        piers.old        *fleet
-      ==
-    ::
-        %1
       [cards this(state old)]
     ==
   ::
