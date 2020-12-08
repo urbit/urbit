@@ -1936,7 +1936,13 @@ _http_stream_slog(void* vop_p, c3_w pri_w, u3_noun tan)
     u3_weak data = u3_none;
 
     if ( c3y == u3a_is_atom(tan) ) {
-      data = u3nt(u3_nul, u3r_met(3, tan), u3k(tan));
+      u3_noun lin = u3i_list(u3i_string("data:"),
+                             u3k(tan),
+                             c3_s2('\n', '\n'),
+                             u3_none);
+      u3_atom txt = u3qc_rap(3, lin);
+      data = u3nt(u3_nul, u3r_met(3, txt), txt);
+      u3z(lin);
     }
     else {
       u3_weak wol = u3_none;
