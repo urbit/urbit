@@ -5,48 +5,6 @@
 =,  secp:crypto
 =+  ecc=secp256k1
 |%
-::  ++  enjs
-::  =,  enjs:format
-::  |%
-::  ::  TODO: format JS for input to HW wallet like Ledger
-::  ::
-::  ++  txbu
-::    |=  =^txbu
-::    ^-  json
-::    %-  pairs
-::    :~  ::  [%inputs [%a (turn txis.txbu txi)]]
-::        ['associatedKeysets' [%a (turn txis.txbu |=(=txi (key key.txi)))]]
-::        ['changePath' s+'hi']
-::        ['outputScriptHex' s+'hi']
-::        ['lockTime' s+'hi']
-::        ['sigHashType' s+'hi']
-::        [%segwit s+'hi']
-::        ['initialTimestamp' s+'hi']
-::    ==
-::    :: TODO inputs, keysets, changeppath, outputscripthex, locktime, sigHashType, segwit, initialTimestamp
-::    ::  , additionals ("bech32")
-::  ++  txi
-::    |=  =^txi  ^-  json
-::    ?>  ?=(^ ur.txi)
-::    :-  %a
-::    :~  s+(en:base16:mimes:html u.ur.txi)
-::        n+pos.utxo.txi
-::    ==
-::  ++  key
-::    |=  =^key  ^-  json
-::    :-  %s
-::    %^  cat  3  'm/'
-::    %^  cat  3
-::      ?-  bipt.key
-::          %bip44  '44'
-::          %bip49  '49'
-::          %bip84  '84'
-::      ==
-::    %^  cat  3  '/0\'/0\'/'
-::    %^  cat  3  ?:(=(%0 chyg.key) '0/' '1/')
-::    (crip ((d-co:co 0) idx.key))
-::  --
-::
 ++  defaults
   |%
   ++  max-gap  20
@@ -59,9 +17,10 @@
   (add 1 (sub last-block height.utxo))
 ::
 ++  from-xpub
-  |=  [=xpub:btc scan-to=(unit scon) max-gap=(unit @ud) confs=(unit @ud)]
+  |=  [=xpub:btc =fprint:btc scan-to=(unit scon) max-gap=(unit @ud) confs=(unit @ud)]
   ^-  walt
   :*  xpub
+      fprint
       (from-extended:bip32 (trip xpub))
       (xpub-type:btc xpub)
       *wach
@@ -90,10 +49,16 @@
     (sub in out)
   ::
   ++  add-output
-    |=  [=address:btc value=sats]
+    |=  =txo
     ^-  txbu
-    =/  ntxo=txo  [address value]
-    t(txos [ntxo txos.t])
+    t(txos [txo txos.t])
+  ::
+  ++  to-psbt
+    ^-  cord
+    ''
+  :: TODO
+  ::  get a list of map:psbt:btc
+  
   --
 ::  wad: door for processing walts (wallets)
 ::        parameterized on a walt and it's chyg account
@@ -101,7 +66,7 @@
 ++  wad
   |_  [w=walt =chyg]
   ++  mk-address
-    |=  =idx
+    |=  =idx:btc
     ^-  address:btc
     =/  pubkey=@ux
       %-  compress-point:ecc
@@ -112,7 +77,7 @@
   ::  generates and watches the next available address
   ::
   ++  gen-address
-    ^-  (trel address:btc idx walt)
+    ^-  (trel address:btc idx:btc walt)
     =/  addr  (mk-address nixt-idx)
     :*  addr
         nixt-idx
@@ -142,9 +107,9 @@
   ::  Crashes if max-index is passed
   ::
   ++  bump-nixt
-    |^  ^-  [old=idx new=nixt]
+    |^  ^-  [old=idx:btc new=nixt]
     :-  nixt-idx
-    =/  new-idx=idx  +(nixt-idx)
+    =/  new-idx=idx:btc  +(nixt-idx)
     |-  ?>  (lte new-idx max-index)
     =/  a=(unit addi)
       (~(get by wach.w) (mk-address new-idx))
@@ -153,7 +118,7 @@
     $(new-idx +(new-idx))
     ::
     ++  set-nixt
-      |=  idx=@  ^-  nixt
+      |=  =idx:btc  ^-  nixt
       ?:(?=(%0 chyg) [idx q.nixt.w] [p.nixt.w idx])
     --
   --
@@ -246,7 +211,7 @@
           payee
           (total-vbytes is)
           %+  turn  is
-          |=(i=input [utxo.i ~ [bipt.w chyg.i idx.i]])
+          |=(i=input [utxo.i ~ [fprint.w bipt.w chyg.i idx.i]])
           txos
       ==
     --

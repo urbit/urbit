@@ -186,7 +186,7 @@
     ?>  =(payer.act our.bowl)
     :_  state
     :~  %-  poke-wallet-store
-        [%generate-txbu u.def-wallet `src.bowl feyb ~[[address.act value.act]]]
+        [%generate-txbu u.def-wallet `src.bowl feyb ~[[address.act value.act ~]]]
     ==
     ::
       %broadcast-tx

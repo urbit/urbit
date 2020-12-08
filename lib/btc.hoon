@@ -68,8 +68,9 @@
 ::
 ++  psbt
   |%
+  ::
   ++  hd-path
-  |=  [print=btc-byts pubkey=btc-byts =target:^psbt =bipt =chyg idx=@ud]
+  |=  [pubkey=btc-byts =target:^psbt =hdkey] 
     ^-  keyval:^psbt
     =/  k=btc-byts
       %-  to-byts:buffer
@@ -80,7 +81,7 @@
           %output
         [0x2 (from-byts:buffer pubkey)]
       ==
-    =/  bip  ?-  bipt
+    =/  bip  ?-  bipt.hdkey
                %bip84  0x54
                %bip49  0x31
                %bip44  0x2c
@@ -90,12 +91,12 @@
         :~   bip  0x0  0x0  0x80
              0x0  0x0  0x0  0x80
              0x0  0x0  0x0  0x80
-             `@ux`chyg  0x0  0x0  0x0
+             `@ux`chyg.hdkey  0x0  0x0  0x0
         ==
-      (from-atom-le:buffer (met 3 idx) idx)
+      (from-atom-le:buffer (met 3 idx.hdkey) idx.hdkey)
     :-  k
     %-  concat-as-byts:buffer
-    :~  (from-byts:buffer print)
+    :~  (from-byts:buffer fprint.hdkey)
         hdpath
     ==
   ::
