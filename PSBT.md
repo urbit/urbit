@@ -28,9 +28,9 @@ bitcoin-cli -rpcuser=__cookie__ -rpcpassword=9e0ca21c70d6b7307b750c8012d12df04ef
 ## Make an HD Path
 ```
 =btc -build-file %/lib/btc/hoon
-=print [4 0x9ca7.9d5b]
+=hk [[%4 0x9ca7.9d5b] %bip84 %1 11]
 =pubkey [33 0x3.6093.e9e0.6a5f.736e.751f.5486.c1c6.7647.c258.b946.b314.d2d3.f03a.33c2.b5cf.b9ab]
-(hd-path:^psbt:btc print pubkey %output %bip84 %1 11)
+(hd-path:^psbt:btc pubkey %output hk)
 
 :: GIVES
 [ key=[wid=34 dat=0x203.6093.e9e0.6a5f.736e.751f.5486.c1c6.7647.c258.b946.b314.d2d3.f03a.33c2.b5cf.b9ab]
@@ -53,8 +53,10 @@ Maps:
   - Non Witness TX: 82 byte input tx
   - Wallet Derivation path. 
     * Key: {0x6}|{33byte pubkey}
-    * Val: {4byte master xpub fingerprint}|{17byte HD path}
-3. skips the main output for some reason, even though it's in raw tx hex
+    * Val: {4byte master xpub fingerprint}|{17byte HD path**
+3. skips the main output for some reason, even though it's in raw tx hex. 
+*skips* = double separator, I think
+**we can skip an ouput if the path is on someone else's ship**
 4. 1 keyval
   - Change output Wallet derivation path
     * Key: {0x2}|{33byte pubkey}

@@ -1,11 +1,15 @@
+::  chyg: whether account is (non-)change. 0 or 1
 |%
 +$  network  ?(%main %testnet)
 +$  xpub  @ta
 +$  legacy-address  $%([%legacy @uc])
 +$  bech32-address  $%([%bech32 cord])
 +$  address  ?(legacy-address bech32-address)
++$  fprint  [wid=%4 dat=@ux]
 +$  bipt  $?(%bip44 %bip49 %bip84)
 +$  chyg  $?(%0 %1)
++$  idx   @ud
++$  hdkey  [=fprint =bipt =chyg =idx] 
 +$  sats  @ud
 +$  vbytes  @ud
 +$  btc-byts  [wid=@ dat=@ux]

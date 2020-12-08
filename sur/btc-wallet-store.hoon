@@ -6,7 +6,6 @@
 /+  bip32
 |%
 ++  max-index  (dec (pow 2 32))
-::  chyg: whether account is (non-)change. 0 or 1
 ::  idx:  an address_index
 ::  nixt: next indices to generate addresses from (non-change/change)
 ::  addi: HD path along with UTXOs
@@ -17,8 +16,6 @@
 ::        defaults to 2^32-1 (i.e. all the addresses, ~4B)
 ::  wilt: stores xpub; copulates with thousands of indices to form addresses
 ::
-+$  chyg  $?(%0 %1)
-+$  idx   @
 +$  nixt  (pair idx idx)
 +$  addi  [used=? =chyg =idx utxos=(set utxo)]
 +$  wach  (map address addi)
@@ -32,6 +29,7 @@
 ::
 +$  walt
   $:  =xpub
+      =fprint
       =wilt
       =bipt
       =wach
@@ -43,17 +41,16 @@
   ==
 ::  input: utxo for a transaction
 ::  feyb: fee per byte in sats
-::  key:  HD wallet path
 ::  txi/txo:  input/output for a transaction being built
+::   -txo has an hdkey if it's a change account
 ::  txbu: tx builder -- all information needed to make a transaction for signing
 ::  peta: optional payment metadata
 ::
 +$  input  [=utxo =chyg =idx]
 +$  peta  (unit [payer=ship value=sats])
 +$  feyb  sats
-+$  key  [=bipt =chyg =idx]
-+$  txi  [=utxo ur=(unit rawtx) =key]
-+$  txo  [=address value=sats]
++$  txi  [=utxo ur=(unit rawtx) =hdkey]
++$  txo  [=address value=sats hk=(unit hdkey)]
 +$  txbu
   $:  =req-id:bp
       txinfo=(unit [=txid =rawtx])
