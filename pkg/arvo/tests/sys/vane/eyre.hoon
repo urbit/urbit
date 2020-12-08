@@ -295,7 +295,7 @@
         ^=  take-args
           :*  wire=/watch-response/[eyre-id]  duct=~[/http-blah]
               ^-  sign:eyre-gate
-              :*  %g  %unto  %fact
+              :*  %gall  %unto  %fact
                   %http-response-header
                   !>([200 ['content-type' 'text/html']~])
               ==
@@ -389,7 +389,7 @@
       ^=  take-args
         :*  wire=/run-app-request/app1  duct=~[/http-blah]
             ^-  sign:eyre-gate
-            :*  %g  %unto  %poke-ack  ~
+            :*  %gall  %unto  %poke-ack  ~
                 :~  [%leaf "/~zod/...../app1:<[1 1].[1 20]>"]
             ==  ==
          ==
@@ -491,7 +491,7 @@
       ^=  take-args
         :*  wire=/watch-response/[eyre-id]  duct=~[/http-blah]
             ^-  sign:eyre-gate
-            :*  %g  %unto  %fact
+            :*  %gall  %unto  %fact
                 %http-response-header
                 !>([200 ['content-type' 'text/html']~])
             ==
@@ -510,7 +510,7 @@
       ^=  take-args
         :*  wire=/watch-response/[eyre-id]  duct=~[/http-blah]
             ^-  sign:eyre-gate
-            :*  %g  %unto  %fact
+            :*  %gall  %unto  %fact
                 %http-response-data
                 !>(`(as-octs:mimes:html 'ya!'))
             ==
@@ -606,7 +606,7 @@
       ^=  take-args
         :*  wire=/watch-response/[eyre-id]  duct=~[/http-blah]
             ^-  sign:eyre-gate
-            :*  %g  %unto  %fact
+            :*  %gall  %unto  %fact
                 %http-response-header
                 !>([303 ['location' '/~/login?redirect=/~landscape/inner-path']~])
             ==
@@ -889,7 +889,7 @@
       ^=  take-args
         :*  wire=/channel/timeout/'0123456789abcdef'  duct=~[/http-blah]
             ^-  sign:eyre-gate
-            [%b %wake ~]
+            [%behn %wake ~]
          ==
       ^=  comparator
         |=  moves=(list move:eyre-gate)
@@ -924,7 +924,7 @@
       ^=  take-args
         :*  wire=/channel/poke/'0123456789abcdef'/'0'  duct=~[/http-put-request]
             ^-  sign:eyre-gate
-            [%g %unto %poke-ack ~]
+            [%gall %unto %poke-ack ~]
          ==
       moves=~
     ==
@@ -939,7 +939,7 @@
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
             duct=~[/http-put-request]
             ^-  sign:eyre-gate
-            [%g %unto %watch-ack ~]
+            [%gall %unto %watch-ack ~]
          ==
       moves=~
     ==
@@ -954,7 +954,7 @@
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
             duct=~[/http-put-request]
             ^-  sign:eyre-gate
-            [%g %unto %fact %json !>(`json`[%a [%n '1'] [%n '2'] ~])]
+            [%gall %unto %fact %json !>(`json`[%a [%n '1'] [%n '2'] ~])]
          ==
       moves=~
     ==
@@ -1139,7 +1139,7 @@
       ^=  take-args
         :*  wire=/channel/poke/'0123456789abcdef'/'0'  duct=~[/http-put-request]
             ^-  sign:eyre-gate
-            [%g %unto %poke-ack ~]
+            [%gall %unto %poke-ack ~]
          ==
       moves=~
     ==
@@ -1154,7 +1154,7 @@
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
             duct=~[/http-put-request]
             ^-  sign:eyre-gate
-            [%g %unto %watch-ack ~]
+            [%gall %unto %watch-ack ~]
          ==
       moves=~
     ==
@@ -1239,7 +1239,7 @@
       ^=  take-args
         :*  wire=/channel/poke/'0123456789abcdef'/'0'  duct=~[/http-put-request]
             ^-  sign:eyre-gate
-            [%g %unto %poke-ack ~]
+            [%gall %unto %poke-ack ~]
          ==
       moves=~
     ==
@@ -1254,7 +1254,7 @@
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
             duct=~[/http-put-request]
             ^-  sign:eyre-gate
-            [%g %unto %watch-ack ~]
+            [%gall %unto %watch-ack ~]
          ==
       moves=~
     ==
@@ -1329,7 +1329,7 @@
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
             duct=~[/http-put-request]
             ^-  sign:eyre-gate
-            [%g %unto %fact %json !>(`json`[%a [%n '1'] [%n '2'] ~])]
+            [%gall %unto %fact %json !>(`json`[%a [%n '1'] [%n '2'] ~])]
          ==
       moves=~
     ==
@@ -1344,7 +1344,7 @@
         :*  wire=/channel/subscription/'0123456789abcdef'/'2'/~nul/two
             duct=~[/http-put-request]
             ^-  sign:eyre-gate
-            [%g %unto %fact %json !>(`json`[%a [%n '1'] [%n '2'] ~])]
+            [%gall %unto %fact %json !>(`json`[%a [%n '1'] [%n '2'] ~])]
          ==
       moves=~
     ==
@@ -1466,7 +1466,7 @@
         :*  wire=/channel/subscription/'0123456789abcdef'/'2'/~nul/two
             duct=~[/http-put-request]
             ^-  sign:eyre-gate
-            [%g %unto %fact %json !>(`json`[%a [%n '1'] [%n '2'] ~])]
+            [%gall %unto %fact %json !>(`json`[%a [%n '1'] [%n '2'] ~])]
          ==
       ^=  comparator
         |=  moves=(list move:eyre-gate)
@@ -1537,7 +1537,7 @@
       ^=  take-args
         :*  wire=/channel/poke/'0123456789abcdef'/'0'  duct=~[/http-put-request]
             ^-  sign:eyre-gate
-            [%g %unto %poke-ack ~]
+            [%gall %unto %poke-ack ~]
          ==
       moves=~
     ==
@@ -1552,7 +1552,7 @@
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
             duct=~[/http-put-request]
             ^-  sign:eyre-gate
-            [%g %unto %watch-ack ~]
+            [%gall %unto %watch-ack ~]
          ==
       moves=~
     ==
@@ -1623,7 +1623,7 @@
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
             duct=~[/http-put-request]
             ^-  sign:eyre-gate
-            [%g %unto %fact %json !>(`json`[%a [%n '1'] ~])]
+            [%gall %unto %fact %json !>(`json`[%a [%n '1'] ~])]
          ==
       ^=  moves
         ^-  (list move:eyre-gate)
@@ -1711,7 +1711,7 @@
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
             duct=~[/http-put-request]
             ^-  sign:eyre-gate
-            [%g %unto %fact %json !>(`json`[%a [%n '2'] ~])]
+            [%gall %unto %fact %json !>(`json`[%a [%n '2'] ~])]
          ==
       moves=~
     ==
@@ -1806,7 +1806,7 @@
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
             duct=~[/http-put-request]
             ^-  sign:eyre-gate
-            [%g %unto %watch-ack ~]
+            [%gall %unto %watch-ack ~]
          ==
       moves=~
     ==
@@ -1846,7 +1846,7 @@
           :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
               duct=~[/http-put-request]
               ^-  sign:eyre-gate
-              [%g %unto %fact %json !>(`json`[%a [%n '1'] ~])]
+              [%gall %unto %fact %json !>(`json`[%a [%n '1'] ~])]
           ==
         ^=  moves
         ~  ::NOTE  tested elsewhere
@@ -1863,7 +1863,7 @@
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
             duct=~[/http-put-request]
             ^-  sign:eyre-gate
-            [%g %unto %fact %json !>(`json`[%a [%n '1'] ~])]
+            [%gall %unto %fact %json !>(`json`[%a [%n '1'] ~])]
         ==
       ^=  moves
         :~  :*  duct=~[/http-get-open]
@@ -1912,7 +1912,7 @@
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
             duct=~[/http-put-request]
             ^-  sign:eyre-gate
-            [%g %unto %fact %json !>(`json`[%a [%n '1'] ~])]
+            [%gall %unto %fact %json !>(`json`[%a [%n '1'] ~])]
         ==
       ^=  moves
         ~
@@ -2344,12 +2344,12 @@
   :(weld results1 results2 results3)
 ::
 ++  scry-provides-code  ^-  roof
-  |=  [gang =term =beam]
+  |=  [gang =view =beam]
   ^-  (unit (unit cage))
-  ?:  &(=(%ca term) =(/gen/handler/hoon s.beam))
+  ?:  &(=(%ca view) =(/gen/handler/hoon s.beam))
     :+  ~  ~
     vase+!>(!>(|=(* |=(* [[%404 ~] ~]))))
-  ?:  &(=(%cb term) =(/json s.beam))
+  ?:  &(=(%cb view) =(/json s.beam))
     :^  ~  ~  %dais
     !>  ^-  dais:clay
     |_  sam=vase
@@ -2363,7 +2363,7 @@
     ++  volt  !!
     --
   ::
-  ?>  =(%j term)
+  ?>  =(%j view)
   ?>  =(~nul p.beam)
   ?>  =(%code q.beam)
   ?>  =(%da -.r.beam)

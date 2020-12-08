@@ -203,7 +203,7 @@
     %-  take
     :^  bud  /public-keys  ~[//unix]
     ^-  sign:ames
-    [%j %public-keys %full [n=[~bus point] ~ ~]]
+    [%jael %public-keys %full [n=[~bus point] ~ ~]]
   =^  moves3  bud  (call bud ~[//unix] %hear lane-foo blob)
   ::
   ;:  weld
