@@ -142,6 +142,11 @@ class App extends React.Component {
             : null}
         </Helmet>
         <Root background={background}>
+        <Row backgroundColor="yellow" p='2'>
+          <Text color="#000000">
+              Due to a critical issue with the breach, we will be breaching the network again shortly. The network will go down again for a few hours. If you entered this era using flagday.sh, you will have to run flagday.sh again. For current updates, please consult <Anchor href="https://urbit.org/breach/">urbit.org/breach</Anchor> and <Anchor color="#000000" href="http://twitter.com/zodisok">@zodisok</Anchor>.
+          </Text>
+        </Row>
           <Router>
             <ErrorBoundary>
               <StatusBarWithRouter
