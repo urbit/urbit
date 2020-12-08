@@ -128,16 +128,43 @@
     ::
       %generate-address
     (generate-address +.act)
+    ::  TODO: end to end tests
+    ::  %generate-txbu
+    ::  - get txbu and change amount
+    ::  - if txbu is blank, fail
+    ::  - if change is blank, send txbu as update
+    ::  - if change:
+    ::    - generate new change address
+    ::    - add that address+change value to the txbu
+    ::    - send txbu update
+    ::    - send address update
+    ::    - send a request for info on the address (watch it)
     ::
       %generate-txbu
-    =+  w=(~(get by walts) xpub.act)
-    ?~  w  ~&(>>> "btc-wallet-store: non-existent xpub" `state)
-    =/  t=(unit txbu)
-      %~  select-utxos  sut
-      [u.w eny.bowl last-block payee.act feyb.act txos.act]
-    ?~  t  ~&(>>> "btc-wallet-store: insufficient balance" `state)
-    :_  state
-    ~[(send-update [%generate-txbu xpub.act u.t])]
+    =+  uw=(~(get by walts) xpub.act)
+    ?~  uw
+      ~|("btc-wallet-store: non-existent xpub" !!)
+    ?.  scanned.u.uw
+    ~|("btc-wallet-store: wallet not scanned yet" !!)
+    =/  [tb=(unit txbu) chng=(unit sats)]
+      %~  with-change  sut
+      [u.uw eny.bowl last-block payee.act feyb.act txos.act]
+    ?~  tb  ~&(>>> "btc-wallet-store: insufficient balance" `state)
+    ::  if no change, just return txbu
+    ::
+    ?~  chng
+      [~[(send-update [%generate-txbu xpub.act u.tb])] state]
+    =/  [addr=address:btc =idx w=walt]
+      ~(gen-address wad u.uw %1)
+    =+  new-txbu=(~(add-output txb u.tb) addr u.chng)
+    :_  state(walts (~(put by walts) xpub.act w))
+    :~  (send-update [%generate-txbu xpub.act new-txbu])
+        (send-update [%generate-address xpub.act addr ~])
+        %+  send-request  ~[requests-path]
+          :*  %address-info  last-block
+              addr  xpub.act  %1  idx
+          ==
+    ==
     ::
       %add-history-entry
     :: TODO
@@ -294,6 +321,7 @@
 ::
 ++  generate-address
   |=  [=xpub =chyg =peta]
+  ^-  (quip card _state)
   =+  uw=(~(get by walts) xpub)
   ?~  uw
     ~|("btc-wallet-store: non-existent xpub" !!)
