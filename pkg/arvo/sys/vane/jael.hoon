@@ -17,12 +17,12 @@
 ::
 |=  our=ship
 =,  pki:jael
-=,  able:jael
+=,  jael
 =,  crypto
 =,  jael
 =,  ethereum-types
 =,  azimuth-types
-=,  point=point:able:jael
+=,  point=point:jael
 ::                                                      ::::
 ::::                    # models                        ::  data structures
   ::                                                    ::::
@@ -78,16 +78,16 @@
 +$  note                                                ::  out request $->
   $~  [%a %plea *ship *plea:ames]                       ::
   $%  $:  %a                                            ::    to %ames
-          $>(%plea task:able:ames)                      ::  send request message
+          $>(%plea task:ames)                      ::  send request message
       ==                                                ::
       $:  %b                                            ::    to %behn
-          $>(%wait task:able:behn)                      ::  set timer
+          $>(%wait task:behn)                      ::  set timer
       ==                                                ::
       $:  %e                                            ::    to %eyre
           [%code-changed ~]                             ::  notify code changed
       ==                                                ::
       $:  %g                                            ::    to %gall
-          $>(%deal task:able:gall)                      ::  talk to app
+          $>(%deal task:gall)                      ::  talk to app
       ==                                                ::
       $:  %j                                            ::    to self
           $>(%listen task)                              ::  set ethereum source
@@ -99,18 +99,18 @@
 +$  sign                                                ::  in result $<-
   $~  [%a %done ~]                                      ::
   $%  $:  %a                                            ::
-          $%  $>(%boon gift:able:ames)                  ::  message response
-              $>(%done gift:able:ames)                  ::  message (n)ack
-              $>(%lost gift:able:ames)                  ::  lost boon
+          $%  $>(%boon gift:ames)                  ::  message response
+              $>(%done gift:ames)                  ::  message (n)ack
+              $>(%lost gift:ames)                  ::  lost boon
       ==  ==                                            ::
       $:  %b                                            ::
-          $>(%wake gift:able:behn)                      ::
+          $>(%wake gift:behn)                      ::
       ==                                                ::
       $:  %g                                            ::
           $>  $?  %onto                                 ::
                   %unto                                 ::
               ==                                        ::
-          gift:able:gall                                ::
+          gift:gall                                ::
       ==
   ==                                                    ::
 --  ::
@@ -989,13 +989,13 @@
           ::
           hen=duct
           dud=(unit goof)
-          hic=(hobo task:able)
+          hic=(hobo task)
       ==
   ^-  [(list move) _..^$]
   ?^  dud
     ~|(%jael-call-dud (mean tang.u.dud))
   ::
-  =/  =task:able  ((harden task:able) hic)
+  =/  =task  ((harden task) hic)
   =^  did  lex
     abet:(~(call of [now eny] lex) hen task)
   [did ..^$]

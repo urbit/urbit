@@ -1,7 +1,7 @@
 ::  eth-watcher: ethereum event log collector
 ::
 /+  ethereum
-=,  able:jael
+=,  jael
 |%
 +$  config
   $:  ::  url: ethereum node rpc endpoint

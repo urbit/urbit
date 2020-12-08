@@ -375,71 +375,65 @@
   ::                                                    ::::
 ++  ames  ^?
   |%
-  ::                                                    ::
-  ::::                  ++able:ames                     ::  (1a1) arvo moves
-    ::                                                  ::::
-  ++  able  ^?
-    |%
-    ::  $task: job for ames
+  ::  $task: job for ames
+  ::
+  ::    Messaging Tasks
+  ::
+  ::    %hear: packet from unix
+  ::    %hole: report that packet handling crashed
+  ::    %heed: track peer's responsiveness; gives %clog if slow
+  ::    %jilt: stop tracking peer's responsiveness
+  ::    %plea: request to send message
+  ::
+  ::    System and Lifecycle Tasks
+  ::
+  ::    %born: process restart notification
+  ::    %crud: crash report
+  ::    %init: vane boot
+  ::    %sift: limit verbosity to .ships
+  ::    %spew: set verbosity toggles
+  ::    %trim: release memory
+  ::    %vega: kernel reload notification
+  ::
+  +$  task
+    $%  [%hear =lane =blob]
+        [%hole =lane =blob]
+        [%heed =ship]
+        [%jilt =ship]
+        $>(%plea vane-task)
     ::
-    ::    Messaging Tasks
+        $>(%born vane-task)
+        $>(%crud vane-task)
+        $>(%init vane-task)
+        [%sift ships=(list ship)]
+        [%spew veb=(list verb)]
+        [%stir arg=@t]
+        $>(%trim vane-task)
+        $>(%vega vane-task)
+    ==
+  ::  $gift: effect from ames
+  ::
+  ::    Messaging Gifts
+  ::
+  ::    %boon: response message from remote ship
+  ::    %clog: notify vane that %boon's to peer are backing up locally
+  ::    %done: notify vane that peer (n)acked our message
+  ::    %lost: notify vane that we crashed on %boon
+  ::    %send: packet to unix
+  ::
+  ::    System and Lifecycle Gifts
+  ::
+  ::    %turf: domain report, relayed from jael
+  ::
+  +$  gift
+    $%  [%boon payload=*]
+        [%clog =ship]
+        [%done error=(unit error)]
+        [%lost ~]
+        [%send =lane =blob]
     ::
-    ::    %hear: packet from unix
-    ::    %hole: report that packet handling crashed
-    ::    %heed: track peer's responsiveness; gives %clog if slow
-    ::    %jilt: stop tracking peer's responsiveness
-    ::    %plea: request to send message
-    ::
-    ::    System and Lifecycle Tasks
-    ::
-    ::    %born: process restart notification
-    ::    %crud: crash report
-    ::    %init: vane boot
-    ::    %sift: limit verbosity to .ships
-    ::    %spew: set verbosity toggles
-    ::    %trim: release memory
-    ::    %vega: kernel reload notification
-    ::
-    +$  task
-      $%  [%hear =lane =blob]
-          [%hole =lane =blob]
-          [%heed =ship]
-          [%jilt =ship]
-          $>(%plea vane-task)
-      ::
-          $>(%born vane-task)
-          $>(%crud vane-task)
-          $>(%init vane-task)
-          [%sift ships=(list ship)]
-          [%spew veb=(list verb)]
-          [%stir arg=@t]
-          $>(%trim vane-task)
-          $>(%vega vane-task)
-      ==
-    ::  $gift: effect from ames
-    ::
-    ::    Messaging Gifts
-    ::
-    ::    %boon: response message from remote ship
-    ::    %clog: notify vane that %boon's to peer are backing up locally
-    ::    %done: notify vane that peer (n)acked our message
-    ::    %lost: notify vane that we crashed on %boon
-    ::    %send: packet to unix
-    ::
-    ::    System and Lifecycle Gifts
-    ::
-    ::    %turf: domain report, relayed from jael
-    ::
-    +$  gift
-      $%  [%boon payload=*]
-          [%clog =ship]
-          [%done error=(unit error)]
-          [%lost ~]
-          [%send =lane =blob]
-      ::
-          [%turf turfs=(list turf)]
-      ==
-    --  ::able
+        [%turf turfs=(list turf)]
+    ==
   ::
   ::::                                                  ::  (1a2)
     ::
@@ -750,85 +744,73 @@
   ::                                                    ::::
 ++  behn  ^?
   |%
-  ::                                                    ::
-  ::::                  ++able:behn                     ::  (1b1) arvo moves
-    ::                                                  ::::
-  ++  able  ^?
-    |%
-    +$  gift                                            ::  out result <-$
-      $%  [%doze p=(unit @da)]                          ::  next alarm
-          [%wake error=(unit tang)]                     ::  wakeup or failed
-          [%meta p=vase]
-          [%heck syn=sign-arvo]                         ::  response to %huck
-      ==
-    +$  task                                            ::  in request ->$
-      $~  [%vega ~]                                     ::
-      $%  $>(%born vane-task)                           ::  new unix process
-          $>(%crud vane-task)                           ::  error with trace
-          [%rest p=@da]                                 ::  cancel alarm
-          [%drip p=vase]                                ::  give in next event
-          [%huck syn=sign-arvo]                         ::  give back
-          $>(%trim vane-task)                           ::  trim state
-          $>(%vega vane-task)                           ::  report upgrade
-          [%wait p=@da]                                 ::  set alarm
-          [%wake ~]                                     ::  timer activate
-      ==
-    --  ::able
+  +$  gift                                              ::  out result <-$
+    $%  [%doze p=(unit @da)]                            ::  next alarm
+        [%wake error=(unit tang)]                       ::  wakeup or failed
+        [%meta p=vase]
+        [%heck syn=sign-arvo]                           ::  response to %huck
+    ==
+  +$  task                                              ::  in request ->$
+    $~  [%vega ~]                                       ::
+    $%  $>(%born vane-task)                             ::  new unix process
+        $>(%crud vane-task)                             ::  error with trace
+        [%rest p=@da]                                   ::  cancel alarm
+        [%drip p=vase]                                  ::  give in next event
+        [%huck syn=sign-arvo]                           ::  give back
+        $>(%trim vane-task)                             ::  trim state
+        $>(%vega vane-task)                             ::  report upgrade
+        [%wait p=@da]                                   ::  set alarm
+        [%wake ~]                                       ::  timer activate
+    ==
   --  ::behn
 ::                                                      ::::
 ::::                    ++clay                            ::  (1c) versioning
   ::                                                    ::::
 ++  clay  ^?
   |%
-  ::                                                    ::
-  ::::                  ++able:clay                     ::  (1c1) arvo moves
-    ::                                                  ::::
-  ++  able  ^?
-    |%
-    +$  gift                                            ::  out result <-$
-      $%  [%boon payload=*]                             ::  ames response
-          [%croz rus=(map desk [r=regs w=regs])]        ::  rules for group
-          [%cruz cez=(map @ta crew)]                    ::  permission groups
-          [%dirk p=@tas]                                ::  mark mount dirty
-          [%ergo p=@tas q=mode]                         ::  version update
-          [%hill p=(list @tas)]                         ::  mount points
-          [%done error=(unit error:ames)]               ::  ames message (n)ack
-          [%mere p=(each (set path) (pair term tang))]  ::  merge result
-          [%note p=@tD q=tank]                          ::  debug message
-          [%ogre p=@tas]                                ::  delete mount point
-          [%rule red=dict wit=dict]                     ::  node r+w permissions
-          [%writ p=riot]                                ::  response
-          [%wris p=[%da p=@da] q=(set (pair care path))]  ::  many changes
-      ==                                                ::
-    +$  task                                            ::  in request ->$
-      $~  [%vega ~]                                     ::
-      $%  [%boat ~]                                     ::  pier rebooted
-          [%cred nom=@ta cew=crew]                      ::  set permission group
-          [%crew ~]                                     ::  permission groups
-          [%crow nom=@ta]                               ::  group usage
-          $>(%crud vane-task)                           ::  error with trace
-          [%drop des=desk]                              ::  cancel pending merge
-          [%info des=desk dit=nori]                     ::  internal edit
-          $>(%init vane-task)                           ::  report install
-          [%into des=desk all=? fis=mode]               ::  external edit
-          $:  %merg                                     ::  merge desks
-              des=desk                                  ::  target
-              her=@p  dem=desk  cas=case                ::  source
-              how=germ                                  ::  method
-          ==                                            ::
-          [%mont pot=term bem=beam]                     ::  mount to unix
-          [%dirk des=desk]                              ::  mark mount dirty
-          [%ogre pot=$@(desk beam)]                     ::  delete mount point
-          [%park des=desk yok=yoki ran=rang]            ::  synchronous commit
-          [%perm des=desk pax=path rit=rite]            ::  change permissions
-          [%pork ~]                                     ::  resume commit
-          $>(%trim vane-task)                           ::  trim state
-          $>(%vega vane-task)                           ::  report upgrade
-          [%warp wer=ship rif=riff]                     ::  internal file req
-          [%werp who=ship wer=ship rif=riff-any]        ::  external file req
-          $>(%plea vane-task)                           ::  ames request
-      ==                                                ::
-    --  ::able
+  +$  gift                                              ::  out result <-$
+    $%  [%boon payload=*]                               ::  ames response
+        [%croz rus=(map desk [r=regs w=regs])]          ::  rules for group
+        [%cruz cez=(map @ta crew)]                      ::  permission groups
+        [%dirk p=@tas]                                  ::  mark mount dirty
+        [%ergo p=@tas q=mode]                           ::  version update
+        [%hill p=(list @tas)]                           ::  mount points
+        [%done error=(unit error:ames)]                 ::  ames message (n)ack
+        [%mere p=(each (set path) (pair term tang))]    ::  merge result
+        [%note p=@tD q=tank]                            ::  debug message
+        [%ogre p=@tas]                                  ::  delete mount point
+        [%rule red=dict wit=dict]                       ::  node r+w permissions
+        [%writ p=riot]                                  ::  response
+        [%wris p=[%da p=@da] q=(set (pair care path))]  ::  many changes
+    ==                                                  ::
+  +$  task                                              ::  in request ->$
+    $~  [%vega ~]                                       ::
+    $%  [%boat ~]                                       ::  pier rebooted
+        [%cred nom=@ta cew=crew]                        ::  set permission group
+        [%crew ~]                                       ::  permission groups
+        [%crow nom=@ta]                                 ::  group usage
+        $>(%crud vane-task)                             ::  error with trace
+        [%drop des=desk]                                ::  cancel pending merge
+        [%info des=desk dit=nori]                       ::  internal edit
+        $>(%init vane-task)                             ::  report install
+        [%into des=desk all=? fis=mode]                 ::  external edit
+        $:  %merg                                       ::  merge desks
+            des=desk                                    ::  target
+            her=@p  dem=desk  cas=case                  ::  source
+            how=germ                                    ::  method
+        ==                                              ::
+        [%mont pot=term bem=beam]                       ::  mount to unix
+        [%dirk des=desk]                                ::  mark mount dirty
+        [%ogre pot=$@(desk beam)]                       ::  delete mount point
+        [%park des=desk yok=yoki ran=rang]              ::  synchronous commit
+        [%perm des=desk pax=path rit=rite]              ::  change permissions
+        [%pork ~]                                       ::  resume commit
+        $>(%trim vane-task)                             ::  trim state
+        $>(%vega vane-task)                             ::  report upgrade
+        [%warp wer=ship rif=riff]                       ::  internal file req
+        [%werp who=ship wer=ship rif=riff-any]          ::  external file req
+        $>(%plea vane-task)                             ::  ames request
+    ==                                                  ::
   ::
   ::::                                                  ::  (1c2)
     ::
@@ -1061,47 +1043,41 @@
   ::                                                    ::::
 ++  dill  ^?
   |%
-  ::                                                    ::
-  ::::                  ++able:dill                     ::  (1d1) arvo moves
-    ::                                                  ::::
-  ++  able  ^?
-    |%
-    +$  gift                                            ::  out result <-$
-      $%  [%bbye ~]                                     ::  reset prompt
-          [%blit p=(list blit)]                         ::  terminal output
-          [%burl p=@t]                                  ::  activate url
-          [%logo ~]                                     ::  logout
-          [%meld ~]                                     ::  unify memory
-          [%pack ~]                                     ::  compact memory
-          [%trim p=@ud]                                 ::  trim kernel state
-      ==                                                ::
-    +$  task                                            ::  in request ->$
-      $~  [%vega ~]                                     ::
-      $%  [%belt p=belt]                                ::  terminal input
-          [%blew p=blew]                                ::  terminal config
-          [%boot lit=? p=*]                             ::  weird %dill boot
-          [%crop p=@ud]                                 ::  trim kernel state
-          $>(%crud vane-task)                           ::  error with trace
-          [%flee session=~]                             ::  unwatch session
-          [%flog p=flog]                                ::  wrapped error
-          [%flow p=@tas q=(list gill:gall)]             ::  terminal config
-          [%hail ~]                                     ::  terminal refresh
-          [%heft ~]                                     ::  memory report
-          [%hook ~]                                     ::  this term hung up
-          [%harm ~]                                     ::  all terms hung up
-          $>(%init vane-task)                           ::  after gall ready
-          [%meld ~]                                     ::  unify memory
-          [%noop ~]                                     ::  no operation
-          [%pack ~]                                     ::  compact memory
-          [%talk p=tank]                                ::
-          [%text p=tape]                                ::
-          [%view session=~]                             ::  watch session blits
-          $>(%trim vane-task)                           ::  trim state
-          $>(%vega vane-task)                           ::  report upgrade
-          [%verb ~]                                     ::  verbose mode
-          [%knob tag=term level=?(%hush %soft %loud)]   ::  error verbosity
-      ==                                                ::
-    --  ::able
+  +$  gift                                              ::  out result <-$
+    $%  [%bbye ~]                                       ::  reset prompt
+        [%blit p=(list blit)]                           ::  terminal output
+        [%burl p=@t]                                    ::  activate url
+        [%logo ~]                                       ::  logout
+        [%meld ~]                                       ::  unify memory
+        [%pack ~]                                       ::  compact memory
+        [%trim p=@ud]                                   ::  trim kernel state
+    ==                                                  ::
+  +$  task                                              ::  in request ->$
+    $~  [%vega ~]                                       ::
+    $%  [%belt p=belt]                                  ::  terminal input
+        [%blew p=blew]                                  ::  terminal config
+        [%boot lit=? p=*]                               ::  weird %dill boot
+        [%crop p=@ud]                                   ::  trim kernel state
+        $>(%crud vane-task)                             ::  error with trace
+        [%flee session=~]                               ::  unwatch session
+        [%flog p=flog]                                  ::  wrapped error
+        [%flow p=@tas q=(list gill:gall)]               ::  terminal config
+        [%hail ~]                                       ::  terminal refresh
+        [%heft ~]                                       ::  memory report
+        [%hook ~]                                       ::  this term hung up
+        [%harm ~]                                       ::  all terms hung up
+        $>(%init vane-task)                             ::  after gall ready
+        [%meld ~]                                       ::  unify memory
+        [%noop ~]                                       ::  no operation
+        [%pack ~]                                       ::  compact memory
+        [%talk p=tank]                                  ::
+        [%text p=tape]                                  ::
+        [%view session=~]                               ::  watch session blits
+        $>(%trim vane-task)                             ::  trim state
+        $>(%vega vane-task)                             ::  report upgrade
+        [%verb ~]                                       ::  verbose mode
+        [%knob tag=term level=?(%hush %soft %loud)]     ::  error verbosity
+    ==                                                  ::
   ::
   ::::                                                  ::  (1d2)
     ::
@@ -1168,82 +1144,78 @@
   ::                                                    ::::
 ++  eyre  ^?
   |%
-  ++  able
-    |%
-    +$  gift
-      $%  ::  set-config: configures the external http server
-          ::
-          ::    TODO: We need to actually return a (map (unit @t) http-config)
-          ::    so we can apply configurations on a per-site basis
-          ::
-          [%set-config =http-config]
-          ::  response: response to an event from earth
-          ::
-          [%response =http-event:http]
-          ::  response to a %connect or %serve
-          ::
-          ::    :accepted is whether :binding was valid. Duplicate bindings are
-          ::    not allowed.
-          ::
-          [%bound accepted=? =binding]
-      ==
-    ::
-    +$  task
-      $~  [%vega ~]
-      $%  ::  event failure notification
-          ::
-          $>(%crud vane-task)
-          ::  initializes ourselves with an identity
-          ::
-          $>(%init vane-task)
-          ::  new unix process
-          ::
-          $>(%born vane-task)
-          ::  trim state (in response to memory pressure)
-          ::
-          $>(%trim vane-task)
-          ::  report upgrade
-          ::
-          $>(%vega vane-task)
-          ::  notifies us of the ports of our live http servers
-          ::
-          [%live insecure=@ud secure=(unit @ud)]
-          ::  update http configuration
-          ::
-          [%rule =http-rule]
-          ::  starts handling an inbound http request
-          ::
-          [%request secure=? =address =request:http]
-          ::  starts handling an backdoor http request
-          ::
-          [%request-local secure=? =address =request:http]
-          ::  cancels a previous request
-          ::
-          [%cancel-request ~]
-          ::  connects a binding to an app
-          ::
-          [%connect =binding app=term]
-          ::  connects a binding to a generator
-          ::
-          [%serve =binding =generator]
-          ::  disconnects a binding
-          ::
-          ::    This must be called with the same duct that made the binding in
-          ::    the first place.
-          ::
-          [%disconnect =binding]
-          ::  notifies us that web login code changed
-          ::
-          [%code-changed ~]
-          ::  start responding positively to cors requests from origin
-          ::
-          [%approve-origin =origin]
-          ::  start responding negatively to cors requests from origin
-          ::
-          [%reject-origin =origin]
-      ==
-    ::
-    --
+  +$  gift
+    $%  ::  set-config: configures the external http server
+        ::
+        ::    TODO: We need to actually return a (map (unit @t) http-config)
+        ::    so we can apply configurations on a per-site basis
+        ::
+        [%set-config =http-config]
+        ::  response: response to an event from earth
+        ::
+        [%response =http-event:http]
+        ::  response to a %connect or %serve
+        ::
+        ::    :accepted is whether :binding was valid. Duplicate bindings are
+        ::    not allowed.
+        ::
+        [%bound accepted=? =binding]
+    ==
+  ::
+  +$  task
+    $~  [%vega ~]
+    $%  ::  event failure notification
+        ::
+        $>(%crud vane-task)
+        ::  initializes ourselves with an identity
+        ::
+        $>(%init vane-task)
+        ::  new unix process
+        ::
+        $>(%born vane-task)
+        ::  trim state (in response to memory pressure)
+        ::
+        $>(%trim vane-task)
+        ::  report upgrade
+        ::
+        $>(%vega vane-task)
+        ::  notifies us of the ports of our live http servers
+        ::
+        [%live insecure=@ud secure=(unit @ud)]
+        ::  update http configuration
+        ::
+        [%rule =http-rule]
+        ::  starts handling an inbound http request
+        ::
+        [%request secure=? =address =request:http]
+        ::  starts handling an backdoor http request
+        ::
+        [%request-local secure=? =address =request:http]
+        ::  cancels a previous request
+        ::
+        [%cancel-request ~]
+        ::  connects a binding to an app
+        ::
+        [%connect =binding app=term]
+        ::  connects a binding to a generator
+        ::
+        [%serve =binding =generator]
+        ::  disconnects a binding
+        ::
+        ::    This must be called with the same duct that made the binding in
+        ::    the first place.
+        ::
+        [%disconnect =binding]
+        ::  notifies us that web login code changed
+        ::
+        [%code-changed ~]
+        ::  start responding positively to cors requests from origin
+        ::
+        [%approve-origin =origin]
+        ::  start responding negatively to cors requests from origin
+        ::
+        [%reject-origin =origin]
+    ==
   ::  +origin: request origin as specified in an Origin header
   ::
   +$  origin  @torigin
@@ -1666,30 +1638,24 @@
   ::                                                    ::::
 ++  gall  ^?
   |%
-  ::                                                    ::
-  ::::                  ++able:gall                     ::  (1g1) arvo moves
-    ::                                                  ::::
-  ++  able  ^?
-    |%
-    +$  gift                                            ::  outgoing result
-      $%  [%boon payload=*]                             ::  ames response
-          [%done error=(unit error:ames)]               ::  ames message (n)ack
-          [%onto p=(each suss tang)]                    ::  about agent
-          [%unto p=sign:agent]                          ::
-      ==                                                ::
-    +$  task                                            ::  incoming request
-      $~  [%vega ~]                                     ::
-      $%  [%conf dap=term]                              ::  start agent
-          [%deal p=sock q=term r=deal]                  ::  full transmission
-          [%goad force=? agent=(unit dude)]             ::  rebuild agent(s)
-          [%sear =ship]                                 ::  clear pending queues
-          [%fade dap=term style=?(%slay %idle %jolt)]   ::  put app to sleep
-          $>(%init vane-task)                           ::  set owner
-          $>(%trim vane-task)                           ::  trim state
-          $>(%vega vane-task)                           ::  report upgrade
-          $>(%plea vane-task)                           ::  network request
-      ==                                                ::
-    --  ::able
+  +$  gift                                              ::  outgoing result
+    $%  [%boon payload=*]                               ::  ames response
+        [%done error=(unit error:ames)]                 ::  ames message (n)ack
+        [%onto p=(each suss tang)]                      ::  about agent
+        [%unto p=sign:agent]                            ::
+    ==                                                  ::
+  +$  task                                              ::  incoming request
+    $~  [%vega ~]                                       ::
+    $%  [%conf dap=term]                                ::  start agent
+        [%deal p=sock q=term r=deal]                    ::  full transmission
+        [%goad force=? agent=(unit dude)]               ::  rebuild agent(s)
+        [%sear =ship]                                   ::  clear pending queues
+        [%fade dap=term style=?(%slay %idle %jolt)]     ::  put app to sleep
+        $>(%init vane-task)                             ::  set owner
+        $>(%trim vane-task)                             ::  trim state
+        $>(%vega vane-task)                             ::  report upgrade
+        $>(%plea vane-task)                             ::  network request
+    ==                                                  ::
   +$  bitt  (map duct (pair ship path))                 ::  incoming subs
   +$  boat                                              ::  outgoing subs
     %+  map  [=wire =ship =term]                        ::
@@ -1802,50 +1768,47 @@
 ::
 ++  iris  ^?
   |%
-  ++  able
-    |%
-    ::  +gift: effects the client can emit
-    ::
-    +$  gift
-      $%  ::  %request: outbound http-request to earth
-          ::
-          ::    TODO: id is sort of wrong for this interface; the duct should
-          ::    be enough to identify which request we're talking about?
-          ::
-          [%request id=@ud request=request:http]
-          ::  %cancel-request: tell earth to cancel a previous %request
-          ::
-          [%cancel-request id=@ud]
-          ::  %response: response to the caller
-          ::
-          [%http-response =client-response]
-      ==
-    ::
-    +$  task
-      $~  [%vega ~]
-      $%  ::  event failure notification
-          ::
-          $>(%crud vane-task)
-          ::  system started up; reset open connections
-          ::
-          $>(%born vane-task)
-          ::  trim state (in response to memory pressure)
-          ::
-          $>(%trim vane-task)
-          ::  report upgrade
-          ::
-          $>(%vega vane-task)
-          ::  fetches a remote resource
-          ::
-          [%request =request:http =outbound-config]
-          ::  cancels a previous fetch
-          ::
-          [%cancel-request ~]
-          ::  receives http data from outside
-          ::
-          [%receive id=@ud =http-event:http]
-      ==
-    --
+  ::  +gift: effects the client can emit
+  ::
+  +$  gift
+    $%  ::  %request: outbound http-request to earth
+        ::
+        ::    TODO: id is sort of wrong for this interface; the duct should
+        ::    be enough to identify which request we're talking about?
+        ::
+        [%request id=@ud request=request:http]
+        ::  %cancel-request: tell earth to cancel a previous %request
+        ::
+        [%cancel-request id=@ud]
+        ::  %response: response to the caller
+        ::
+        [%http-response =client-response]
+    ==
+  ::
+  +$  task
+    $~  [%vega ~]
+    $%  ::  event failure notification
+        ::
+        $>(%crud vane-task)
+        ::  system started up; reset open connections
+        ::
+        $>(%born vane-task)
+        ::  trim state (in response to memory pressure)
+        ::
+        $>(%trim vane-task)
+        ::  report upgrade
+        ::
+        $>(%vega vane-task)
+        ::  fetches a remote resource
+        ::
+        [%request =request:http =outbound-config]
+        ::  cancels a previous fetch
+        ::
+        [%cancel-request ~]
+        ::  receives http data from outside
+        ::
+        [%receive id=@ud =http-event:http]
+    ==
   ::  +client-response: one or more client responses given to the caller
   ::
   +$  client-response
@@ -1913,186 +1876,179 @@
   ::                                                    ::::
 ++  jael  ^?
   |%
-  ::                                                    ::
-  ::::                  ++able:jael                     ::  (1h1) arvo moves
-    ::                                                  ::::
-  ++  able  ^?
-    =,  pki
+  +$  public-keys-result
+    $%  [%full points=(map ship point)]
+        [%diff who=ship =diff:point]
+        [%breach who=ship]
+    ==
+  ::                                                  ::
+  +$  gift                                            ::  out result <-$
+    $%  [%done error=(unit error:ames)]               ::  ames message (n)ack
+        [%boon payload=*]                             ::  ames response
+        [%private-keys =life vein=(map life ring)]    ::  private keys
+        [%public-keys =public-keys-result]            ::  ethereum changes
+        [%turf turf=(list turf)]                      ::  domains
+    ==                                                ::
+  ::  +seed: private boot parameters
+  ::
+  +$  seed  [who=ship lyf=life key=ring sig=(unit oath:pki)]
+  ::
+  +$  task                                            ::  in request ->$
+    $~  [%vega ~]                                     ::
+    $%  [%dawn dawn-event]                            ::  boot from keys
+        [%fake =ship]                                 ::  fake boot
+        [%listen whos=(set ship) =source]             ::  set ethereum source
+        ::TODO  %next for generating/putting new private key
+        [%meet =ship =life =pass]                     ::  met after breach
+        [%moon =ship =udiff:point]                    ::  register moon keys
+        [%nuke whos=(set ship)]                       ::  cancel tracker from
+        [%private-keys ~]                             ::  sub to privates
+        [%public-keys ships=(set ship)]               ::  sub to publics
+        [%rekey =life =ring]                          ::  update private keys
+        $>(%trim vane-task)                           ::  trim state
+        [%turf ~]                                     ::  view domains
+        $>(%vega vane-task)                           ::  report upgrade
+        $>(%plea vane-task)                           ::  ames request
+        [%step ~]                                     ::  reset web login code
+    ==                                                ::
+  ::
+  +$  dawn-event
+    $:  =seed
+        spon=(list [=ship point:azimuth-types])
+        czar=(map ship [=rift =life =pass])
+        turf=(list turf)
+        bloq=@ud
+        node=(unit purl:eyre)
+    ==
+  ::
+  ++  block
+    =<  block
     |%
-    +$  public-keys-result
-      $%  [%full points=(map ship point)]
-          [%diff who=ship =diff:point]
-          [%breach who=ship]
-      ==
-    ::                                                  ::
-    +$  gift                                            ::  out result <-$
-      $%  [%done error=(unit error:ames)]               ::  ames message (n)ack
-          [%boon payload=*]                             ::  ames response
-          [%private-keys =life vein=(map life ring)]    ::  private keys
-          [%public-keys =public-keys-result]            ::  ethereum changes
-          [%turf turf=(list turf)]                      ::  domains
-      ==                                                ::
-    ::  +seed: private boot parameters
-    ::
-    +$  seed  [who=ship lyf=life key=ring sig=(unit oath:pki)]
-    ::
-    +$  task                                            ::  in request ->$
-      $~  [%vega ~]                                     ::
-      $%  [%dawn dawn-event]                            ::  boot from keys
-          [%fake =ship]                                 ::  fake boot
-          [%listen whos=(set ship) =source]             ::  set ethereum source
-          ::TODO  %next for generating/putting new private key
-          [%meet =ship =life =pass]                     ::  met after breach
-          [%moon =ship =udiff:point]                    ::  register moon keys
-          [%nuke whos=(set ship)]                       ::  cancel tracker from
-          [%private-keys ~]                             ::  sub to privates
-          [%public-keys ships=(set ship)]               ::  sub to publics
-          [%rekey =life =ring]                          ::  update private keys
-          $>(%trim vane-task)                           ::  trim state
-          [%turf ~]                                     ::  view domains
-          $>(%vega vane-task)                           ::  report upgrade
-          $>(%plea vane-task)                           ::  ames request
-          [%step ~]                                     ::  reset web login code
-      ==                                                ::
-    ::
-    +$  dawn-event
-      $:  =seed
-          spon=(list [=ship point:azimuth-types])
-          czar=(map ship [=rift =life =pass])
-          turf=(list turf)
-          bloq=@ud
-          node=(unit purl:eyre)
+    +$  hash    @uxblockhash
+    +$  number  @udblocknumber
+    +$  id      [=hash =number]
+    +$  block   [=id =parent=hash]
+    --
+  ::
+  ::  Azimuth points form a groupoid, where the objects are all the
+  ::  possible values of +point and the arrows are the possible values
+  ::  of (list point-diff).  Composition of arrows is concatenation,
+  ::  and you can apply the diffs to a +point with +apply.
+  ::
+  ::  It's simplest to consider +point as the coproduct of three
+  ::  groupoids, Rift, Keys, and Sponsor.  Recall that the coproduct
+  ::  of monoids is the free monoid (Kleene star) of the coproduct of
+  ::  the underlying sets of the monoids.  The construction for
+  ::  groupoids is similar.  Thus, the objects of the coproduct are
+  ::  the product of the objects of the underlying groupoids.  The
+  ::  arrows are a list of a sum of the diff types of the underlying
+  ::  groupoids.  Given an arrow=(list diff), you can project to the
+  ::  underlying arrows with +skim filtering on the head of each diff.
+  ::
+  ::  The identity element is ~.  Clearly, composing this with any
+  ::  +diff gives the original +diff.  Since this is a category,
+  ::  +compose must be associative (true, because concatenation is
+  ::  associative).  This is a groupoid, so we must further have that
+  ::  every +point-diff has an inverse.  These are given by the
+  ::  +inverse operation.
+  ::
+  ++  point
+    =<  point
+    |%
+    +$  point
+      $:  =rift
+          =life
+          keys=(map life [crypto-suite=@ud =pass])
+          sponsor=(unit @p)
       ==
     ::
-    ++  block
-      =<  block
-      |%
-      +$  hash    @uxblockhash
-      +$  number  @udblocknumber
-      +$  id      [=hash =number]
-      +$  block   [=id =parent=hash]
-      --
+    +$  key-update  [=life crypto-suite=@ud =pass]
     ::
-    ::  Azimuth points form a groupoid, where the objects are all the
-    ::  possible values of +point and the arrows are the possible values
-    ::  of (list point-diff).  Composition of arrows is concatenation,
-    ::  and you can apply the diffs to a +point with +apply.
+    ::  Invertible diffs
     ::
-    ::  It's simplest to consider +point as the coproduct of three
-    ::  groupoids, Rift, Keys, and Sponsor.  Recall that the coproduct
-    ::  of monoids is the free monoid (Kleene star) of the coproduct of
-    ::  the underlying sets of the monoids.  The construction for
-    ::  groupoids is similar.  Thus, the objects of the coproduct are
-    ::  the product of the objects of the underlying groupoids.  The
-    ::  arrows are a list of a sum of the diff types of the underlying
-    ::  groupoids.  Given an arrow=(list diff), you can project to the
-    ::  underlying arrows with +skim filtering on the head of each diff.
+    +$  diffs  (list diff)
+    +$  diff
+      $%  [%rift from=rift to=rift]
+          [%keys from=key-update to=key-update]
+          [%spon from=(unit @p) to=(unit @p)]
+      ==
     ::
-    ::  The identity element is ~.  Clearly, composing this with any
-    ::  +diff gives the original +diff.  Since this is a category,
-    ::  +compose must be associative (true, because concatenation is
-    ::  associative).  This is a groupoid, so we must further have that
-    ::  every +point-diff has an inverse.  These are given by the
-    ::  +inverse operation.
+    ::  Non-invertible diffs
     ::
-    ++  point
-      =<  point
-      |%
-      +$  point
-        $:  =rift
-            =life
-            keys=(map life [crypto-suite=@ud =pass])
-            sponsor=(unit @p)
+    +$  udiffs  (list [=ship =udiff])
+    +$  udiff
+      $:  =id:block
+      $%  [%rift =rift]
+          [%keys key-update]
+          [%spon sponsor=(unit @p)]
+          [%disavow ~]
+      ==  ==
+    ::
+    ++  udiff-to-diff
+      |=  [=a=udiff =a=point]
+      ^-  (unit diff)
+      ?-    +<.a-udiff
+          %disavow  ~|(%udiff-to-diff-disavow !!)
+          %spon     `[%spon sponsor.a-point sponsor.a-udiff]
+          %rift
+        ?.  (gth rift.a-udiff rift.a-point)
+          ~
+        ~?  !=(rift.a-udiff +(rift.a-point))
+          [%udiff-to-diff-skipped-rift a-udiff a-point]
+        `[%rift rift.a-point rift.a-udiff]
+      ::
+          %keys
+        ?.  (gth life.a-udiff life.a-point)
+          ~
+        ~?  !=(life.a-udiff +(life.a-point))
+          [%udiff-to-diff-skipped-life a-udiff a-point]
+        :^  ~  %keys
+          [life.a-point (~(gut by keys.a-point) life.a-point *[@ud pass])]
+        [life crypto-suite pass]:a-udiff
+      ==
+    ::
+    ++  inverse
+      |=  diffs=(list diff)
+      ^-  (list diff)
+      %-  flop
+      %+  turn  diffs
+      |=  =diff
+      ^-  ^diff
+      ?-  -.diff
+        %rift  [%rift to from]:diff
+        %keys  [%keys to from]:diff
+        %spon  [%spon to from]:diff
+      ==
+    ::
+    ++  compose
+      (bake weld ,[(list diff) (list diff)])
+    ::
+    ++  apply
+      |=  [diffs=(list diff) =a=point]
+      (roll diffs (apply-diff a-point))
+    ::
+    ++  apply-diff
+      |=  a=point
+      |:  [*=diff a-point=a]
+      ^-  point
+      ?-    -.diff
+          %rift
+        ?>  =(rift.a-point from.diff)
+        a-point(rift to.diff)
+      ::
+          %keys
+        ?>  =(life.a-point life.from.diff)
+        ?>  =((~(get by keys.a-point) life.a-point) `+.from.diff)
+        %_  a-point
+          life  life.to.diff
+          keys  (~(put by keys.a-point) life.to.diff +.to.diff)
         ==
       ::
-      +$  key-update  [=life crypto-suite=@ud =pass]
-      ::
-      ::  Invertible diffs
-      ::
-      +$  diffs  (list diff)
-      +$  diff
-        $%  [%rift from=rift to=rift]
-            [%keys from=key-update to=key-update]
-            [%spon from=(unit @p) to=(unit @p)]
-        ==
-      ::
-      ::  Non-invertible diffs
-      ::
-      +$  udiffs  (list [=ship =udiff])
-      +$  udiff
-        $:  =id:block
-        $%  [%rift =rift]
-            [%keys key-update]
-            [%spon sponsor=(unit @p)]
-            [%disavow ~]
-        ==  ==
-      ::
-      ++  udiff-to-diff
-        |=  [=a=udiff =a=point]
-        ^-  (unit diff)
-        ?-    +<.a-udiff
-            %disavow  ~|(%udiff-to-diff-disavow !!)
-            %spon     `[%spon sponsor.a-point sponsor.a-udiff]
-            %rift
-          ?.  (gth rift.a-udiff rift.a-point)
-            ~
-          ~?  !=(rift.a-udiff +(rift.a-point))
-            [%udiff-to-diff-skipped-rift a-udiff a-point]
-          `[%rift rift.a-point rift.a-udiff]
-        ::
-            %keys
-          ?.  (gth life.a-udiff life.a-point)
-            ~
-          ~?  !=(life.a-udiff +(life.a-point))
-            [%udiff-to-diff-skipped-life a-udiff a-point]
-          :^  ~  %keys
-            [life.a-point (~(gut by keys.a-point) life.a-point *[@ud pass])]
-          [life crypto-suite pass]:a-udiff
-        ==
-      ::
-      ++  inverse
-        |=  diffs=(list diff)
-        ^-  (list diff)
-        %-  flop
-        %+  turn  diffs
-        |=  =diff
-        ^-  ^diff
-        ?-  -.diff
-          %rift  [%rift to from]:diff
-          %keys  [%keys to from]:diff
-          %spon  [%spon to from]:diff
-        ==
-      ::
-      ++  compose
-        (bake weld ,[(list diff) (list diff)])
-      ::
-      ++  apply
-        |=  [diffs=(list diff) =a=point]
-        (roll diffs (apply-diff a-point))
-      ::
-      ++  apply-diff
-        |=  a=point
-        |:  [*=diff a-point=a]
-        ^-  point
-        ?-    -.diff
-            %rift
-          ?>  =(rift.a-point from.diff)
-          a-point(rift to.diff)
-        ::
-            %keys
-          ?>  =(life.a-point life.from.diff)
-          ?>  =((~(get by keys.a-point) life.a-point) `+.from.diff)
-          %_  a-point
-            life  life.to.diff
-            keys  (~(put by keys.a-point) life.to.diff +.to.diff)
-          ==
-        ::
-            %spon
-          ?>  =(sponsor.a-point from.diff)
-          a-point(sponsor to.diff)
-        ==
-      --
-    --                                                  ::
+          %spon
+        ?>  =(sponsor.a-point from.diff)
+        a-point(sponsor to.diff)
+      ==
+    --
   ::                                                    ::
   ::::                                                  ::
     ::                                                  ::
@@ -2136,53 +2092,53 @@
 ::
 +$  gift-arvo                                           ::  out result <-$
   $~  [%doze ~]
-  $%  gift:able:ames
-      gift:able:behn
-      gift:able:clay
-      gift:able:dill
-      gift:able:eyre
-      gift:able:gall
-      gift:able:iris
-      gift:able:jael
+  $%  gift:ames
+      gift:behn
+      gift:clay
+      gift:dill
+      gift:eyre
+      gift:gall
+      gift:iris
+      gift:jael
   ==
 +$  task-arvo                                           ::  in request ->$
-  $%  task:able:ames
-      task:able:clay
-      task:able:behn
-      task:able:dill
-      task:able:eyre
-      task:able:gall
-      task:able:iris
-      task:able:jael
+  $%  task:ames
+      task:clay
+      task:behn
+      task:dill
+      task:eyre
+      task:gall
+      task:iris
+      task:jael
   ==
 +$  note-arvo                                           ::  out request $->
   $~  [%b %wake ~]
-  $%  [%a task:able:ames]
-      [%b task:able:behn]
-      [%c task:able:clay]
-      [%d task:able:dill]
-      [%e task:able:eyre]
-      [%g task:able:gall]
-      [%i task:able:iris]
-      [%j task:able:jael]
+  $%  [%a task:ames]
+      [%b task:behn]
+      [%c task:clay]
+      [%d task:dill]
+      [%e task:eyre]
+      [%g task:gall]
+      [%i task:iris]
+      [%j task:jael]
       [@tas %meta vase]
   ==
 +$  sign-arvo                                           ::  in result $<-
-  $%  [%a gift:able:ames]
+  $%  [%a gift:ames]
       $:  %b
-          $%  gift:able:behn
-              $>(%wris gift:able:clay)
-              $>(%writ gift:able:clay)
-              $>(%mere gift:able:clay)
-              $>(%unto gift:able:gall)
+          $%  gift:behn
+              $>(%wris gift:clay)
+              $>(%writ gift:clay)
+              $>(%mere gift:clay)
+              $>(%unto gift:gall)
           ==
       ==
-      [%c gift:able:clay]
-      [%d gift:able:dill]
-      [%e gift:able:eyre]
-      [%g gift:able:gall]
-      [%i gift:able:iris]
-      [%j gift:able:jael]
+      [%c gift:clay]
+      [%d gift:dill]
+      [%e gift:eyre]
+      [%g gift:gall]
+      [%i gift:iris]
+      [%j gift:jael]
   ==
 ::  $unix-task: input from unix
 ::
@@ -2190,13 +2146,13 @@
   $~  [%wake ~]
   $%  ::  %dill: keyboard input
       ::
-      $>(%belt task:able:dill)
+      $>(%belt task:dill)
       ::  %dill: configure terminal (resized)
       ::
-      $>(%blew task:able:dill)
+      $>(%blew task:dill)
       ::  %clay: new process
       ::
-      $>(%boat task:able:clay)
+      $>(%boat task:clay)
       ::  %behn/%eyre/%iris: new process
       ::
       $>(%born vane-task)
@@ -2208,31 +2164,31 @@
       $>(%crud vane-task)
       ::  %dill: reset terminal configuration
       ::
-      $>(%hail task:able:dill)
+      $>(%hail task:dill)
       ::  %ames: hear packet
       ::
-      $>(%hear task:able:ames)
+      $>(%hear task:ames)
       ::  %dill: hangup
       ::
-      $>(%hook task:able:dill)
+      $>(%hook task:dill)
       ::  %clay: external edit
       ::
-      $>(%into task:able:clay)
+      $>(%into task:clay)
       ::  %eyre: learn ports of live http servers
       ::
-      $>(%live task:able:eyre)
+      $>(%live task:eyre)
       ::  %iris: hear (partial) http response
       ::
-      $>(%receive task:able:iris)
+      $>(%receive task:iris)
       ::  %eyre: starts handling an inbound http request
       ::
-      $>(%request task:able:eyre)
+      $>(%request task:eyre)
       ::  %eyre: starts handling an backdoor http request
       ::
-      $>(%request-local task:able:eyre)
+      $>(%request-local task:eyre)
       ::  %behn: wakeup
       ::
-      $>(%wake task:able:behn)
+      $>(%wake task:behn)
   ==
 --  ::
 ::                                                      ::  ::

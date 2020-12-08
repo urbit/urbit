@@ -195,7 +195,7 @@
       [moves adult-gate]
     ::
     ++  call
-      |=  [=duct dud=(unit goof) wrapped-task=(hobo task:able)]
+      |=  [=duct dud=(unit goof) wrapped-task=(hobo task)]
       =*  call-args  +<
       ?:  =(~ eggs.spore)
         ~>  %slog.[0 leaf+"gall: direct morphogenesis"]
@@ -204,7 +204,7 @@
       ?^  dud
         ~>  %slog.[0 leaf+"gall: pupa call dud"]
         (mean >mote.u.dud< tang.u.dud)
-      =/  task  ((harden task:able:gall) wrapped-task)
+      =/  task  ((harden task:gall) wrapped-task)
       (molt duct `[duct %slip %g task])
     ::
     ++  scry  scry:adult-core
@@ -265,7 +265,7 @@
   ++  mo-abed  |=(hun=duct mo-core(hen hun))
   ++  mo-abet  [(flop moves) gall-payload]
   ++  mo-pass  |=(p=[wire note-arvo] mo-core(moves [[hen pass+p] moves]))
-  ++  mo-give  |=(g=gift:able mo-core(moves [[hen give+g] moves]))
+  ++  mo-give  |=(g=gift mo-core(moves [[hen give+g] moves]))
   ::  +mo-boot: ask %ford to build us a core for the specified agent.
   ::
   ++  mo-boot
@@ -1660,13 +1660,13 @@
 ::
 ++  call
   ~%  %gall-call  +>   ~
-  |=  [=duct dud=(unit goof) hic=(hobo task:able)]
+  |=  [=duct dud=(unit goof) hic=(hobo task)]
   ^-  [(list move) _gall-payload]
   ?^  dud
     ~|(%gall-call-dud (mean tang.u.dud))
   ::
   ~|  [%gall-call-failed duct hic]
-  =/  =task:able  ((harden task:able) hic)
+  =/  =task  ((harden task) hic)
   ::
   =/  mo-core  (mo-abed:mo duct)
   ?-    -.task

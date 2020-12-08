@@ -30,7 +30,7 @@
 +$  mess                                                ::
   $%  [%dill-belt p=(hypo dill-belt)]                   ::
   ==                                                    ::
-+$  move  [p=duct q=(wind note gift:able)]              ::  local move
++$  move  [p=duct q=(wind note gift)]              ::  local move
 +$  note                                                ::  out request $->
   $~  [%d %verb ~]                                      ::
   $%  $:  %$                                            ::
@@ -41,7 +41,7 @@
                   %perm                                 ::  change permissions
                   %warp                                 ::  wait for clay hack
               ==                                        ::
-          task:able:clay                                ::
+          task:clay                                ::
       ==                                                ::
       $:  %d                                            ::
           $>  $?  %crud                                 ::
@@ -49,42 +49,42 @@
                   %text                                 ::
                   %verb                                 ::
               ==                                        ::
-          task:able:dill                                ::
+          task:dill                                ::
       ==                                                ::
       $:  %g                                            ::
           $>  $?  %conf                                 ::
                   %deal                                 ::
                   %goad                                 ::
               ==                                        ::
-          task:able:gall                                ::
+          task:gall                                ::
       ==                                                ::
       $:  %j                                            ::
           $>  $?  %dawn                                 ::
                   %fake                                 ::
               ==                                        ::
-          task:able:jael                                ::
+          task:jael                                ::
   ==  ==                                                ::
 +$  sign                                                ::  in result $<-
   $~  [%d %blit ~]                                      ::
   $%  $:  %b                                            ::
-          $%  $>(%writ gift:able:clay)                  ::  XX %slip
-              $>(%mere gift:able:clay)                  ::  XX %slip
+          $%  $>(%writ gift:clay)                  ::  XX %slip
+              $>(%mere gift:clay)                  ::  XX %slip
       ==  ==                                            ::
       $:  %c                                            ::
           $>  $?  %mere                                 ::
                   %note                                 ::
                   %writ                                 ::
               ==                                        ::
-          gift:able:clay                                ::
+          gift:clay                                ::
       ==                                                ::
       $:  %d                                            ::
-          $>(%blit gift:able:dill)                      ::
+          $>(%blit gift:dill)                      ::
       ==                                                ::
       $:  %g                                            ::
           $>  $?  %onto                                 ::
                   %unto                                 ::
               ==                                        ::
-          gift:able:gall                                ::
+          gift:gall                                ::
   ==  ==                                                ::
 ::::::::                                                ::  dill tiles
 --
@@ -100,7 +100,7 @@
         [(flop moz) all(dug (~(put by dug.all) hen +<+))]
       ::
       ++  call                                          ::  receive input
-        |=  kyz=task:able
+        |=  kyz=task
         ^+  +>
         ?+    -.kyz  ~&  [%strange-kiss -.kyz]  +>
           %flow  +>
@@ -139,12 +139,12 @@
         $(wall t.wall, +>.^$ (from %out (tuba i.wall)))
       ::
       ++  dump                                          ::  pass down to hey
-        |=  git=gift:able
+        |=  git=gift
         ?>  ?=(^ hey.all)
         +>(moz [[u.hey.all %give git] moz])
       ::
       ++  done                                          ::  return gift
-        |=  git=gift:able
+        |=  git=gift
         =-  +>.$(moz (weld - moz))
         %+  turn
           :-  hen
@@ -300,11 +300,11 @@
 ++  call                                                ::  handle request
   |=  $:  hen=duct
           dud=(unit goof)
-          wrapped-task=(hobo task:able)
+          wrapped-task=(hobo task)
       ==
   ^+  [*(list move) ..^$]
   ~|  wrapped-task
-  =/  task=task:able  ((harden task:able) wrapped-task)
+  =/  task=task  ((harden task) wrapped-task)
   ::
   ::  error notifications "downcast" to %crud
   ::
@@ -320,7 +320,7 @@
     ?>  =(~ hey.all)
     =.  hey.all  `hen
     =/  boot
-      ((soft $>($?(%dawn %fake) task:able:jael)) p.task)
+      ((soft $>($?(%dawn %fake) task:jael)) p.task)
     ?~  boot
       ~&  %dill-no-boot
       ~&  p.task

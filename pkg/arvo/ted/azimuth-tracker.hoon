@@ -1,7 +1,7 @@
 /-  spider
 /+  strandio, *azimuthio
 =,  strand=strand:spider
-=,  able:jael
+=,  jael
 |%
 +$  pending-udiffs  (map number:block udiffs:point)
 +$  app-state

@@ -17,7 +17,7 @@
   $%  [%wack p=@]
       [%what p=(list (pair path (cask)))]
       [%whom p=ship]
-      [%boot ? $%($>(%fake task:able:jael) $>(%dawn task:able:jael))]
+      [%boot ? $%($>(%fake task:jael) $>(%dawn task:jael))]
       unix-task
   ==
 ::  +boot-ovum: boostrap kernel filesystem load

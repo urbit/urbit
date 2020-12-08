@@ -90,9 +90,8 @@
 !:
 =/  protocol-version=?(%0 %1 %2 %3 %4 %5 %6 %7)  %0
 =,  ames
-=,  able
-=*  point               point:able:jael
-=*  public-keys-result  public-keys-result:able:jael
+=*  point               point:jael
+=*  public-keys-result  public-keys-result:jael
 ::  veb: verbosity flags
 ::
 =/  veb-all-off

@@ -13,7 +13,7 @@
         =rift
     ==
 :-  %helm-moon
-^-  (unit [=ship =udiff:point:able:jael])
+^-  (unit [=ship =udiff:point:jael])
 =*  our  p.bec
 =/  ran  (clan:title our)
 ?:  ?=([?(%earl %pawn)] ran)
@@ -30,4 +30,4 @@
   ?.  =(*^rift rift)
     rift
   +(.^(^rift j+/(scot %p our)/rift/(scot %da now)/(scot %p mon)))
-`[mon *id:block:able:jael %rift rift]
+`[mon *id:block:jael %rift rift]

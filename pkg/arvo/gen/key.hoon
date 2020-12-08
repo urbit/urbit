@@ -26,6 +26,6 @@
 %+  print  leaf+"  networking:     0x{(render-hex-bytes:ethereum 32 cry)}"
 %+  print  leaf+"ethereum public keys:"
 ::
-=/  sed=seed:able:jael
+=/  sed=seed:jael
   [who life sec:ex:cub ~]
 %-  produce  [%atom (scot %uw (jam sed))]

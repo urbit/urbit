@@ -631,7 +631,7 @@
       now=~1111.1.5..1.0.0
       scry=scry-provides-code
       ^=  call-args
-        ^-  [=duct (unit goof) wrapped-task=(hobo task:able:eyre-gate)]
+        ^-  [=duct (unit goof) wrapped-task=(hobo task:eyre-gate)]
         :*  duct=~[/http-blah]  ~
             %request
             %.n
@@ -1564,7 +1564,7 @@
       now=(add ~1111.1.2 ~m3)
       scry=scry-provides-code
       ^=  call-args
-      ^-  [duct (unit goof) (hobo task:able:eyre-gate)]
+      ^-  [duct (unit goof) (hobo task:eyre-gate)]
         :*  duct=~[/http-get-open]  ~
             %request
             %.n
@@ -1818,7 +1818,7 @@
       now
       scry=scry-provides-code
       ^=  call-args
-      ^-  [duct (unit goof) (hobo task:able:eyre-gate)]
+      ^-  [duct (unit goof) (hobo task:eyre-gate)]
         :*  duct=~[/http-get-open]  ~
             %request
             %.n
@@ -2007,7 +2007,7 @@
         ::
         =/  move=move:eyre-gate                              i.t.moves
         =/  =duct                                             duct.move
-        =/  card=(wind note:eyre-gate gift:able:eyre-gate)  card.move
+        =/  card=(wind note:eyre-gate gift:eyre-gate)  card.move
         ::
         %+  weld
           (expect-eq !>(~[/http-blah]) !>(duct))
@@ -2029,7 +2029,7 @@
   |=  $:  eyre-gate=_eyre-gate
           now=@da
           scry=roof
-          call-args=[=duct dud=(unit goof) wrapped-task=(hobo task:able:eyre-gate)]
+          call-args=[=duct dud=(unit goof) wrapped-task=(hobo task:eyre-gate)]
           expected-moves=(list move:eyre-gate)
       ==
   ^-  [tang _eyre-gate]
@@ -2051,7 +2051,7 @@
   |=  $:  eyre-gate=_eyre-gate
           now=@da
           scry=roof
-          call-args=[=duct dud=(unit goof) wrapped-task=(hobo task:able:eyre-gate)]
+          call-args=[=duct dud=(unit goof) wrapped-task=(hobo task:eyre-gate)]
           move-comparator=$-((list move:eyre-gate) tang)
       ==
   ^-  [tang _eyre-gate]
@@ -2095,7 +2095,7 @@
   ::
   =/  eyre-core  (eyre-gate now=now eny=`@uvJ`0xdead.beef scry=scry)
   ::
-  =^  moves  eyre-gate  (take:eyre-core [wire duct ~ sign]:take-args) 
+  =^  moves  eyre-gate  (take:eyre-core [wire duct ~ sign]:take-args)
   ::
   =/  output=tang  (move-comparator moves)
   ::
@@ -2103,7 +2103,7 @@
 ::
 ++  expect-gall-deal
   |=  $:  expected=[wire=path id=sock app=term =deal:gall]
-          actual=(wind note:eyre-gate gift:able:eyre-gate)
+          actual=(wind note:eyre-gate gift:eyre-gate)
       ==
   ^-  tang
   ::
