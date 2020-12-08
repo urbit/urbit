@@ -65,7 +65,7 @@
     ::  pass on dill blits for the session
     ::
       [%view %$ ~]
-    ?.  ?=([%d %blit *] sign-arvo)
+    ?.  ?=([%dill %blit *] sign-arvo)
       ~|  [%unexpected-sign [- +<]:sign-arvo]
       !!
     :_  this
@@ -78,7 +78,7 @@
       [%tube @ @ ~]
     =*  from  i.t.wire
     =*  to  i.t.t.wire
-    ?.  ?=([%c %writ *] sign-arvo)
+    ?.  ?=([%clay %writ *] sign-arvo)
       ~|  [%unexpected-sign [- +<]:sign-arvo]
       !!
     :_  this

@@ -165,9 +165,6 @@
   $%  ::  i/o device replaced (reset state)
       ::
       [%born ~]
-      ::  error report
-      ::
-      [%crud p=@tas q=(list tank)]
       ::  boot completed (XX legacy)
       ::
       [%init ~]
@@ -380,7 +377,6 @@
   ::    Messaging Tasks
   ::
   ::    %hear: packet from unix
-  ::    %hole: report that packet handling crashed
   ::    %heed: track peer's responsiveness; gives %clog if slow
   ::    %jilt: stop tracking peer's responsiveness
   ::    %plea: request to send message
@@ -388,7 +384,6 @@
   ::    System and Lifecycle Tasks
   ::
   ::    %born: process restart notification
-  ::    %crud: crash report
   ::    %init: vane boot
   ::    %sift: limit verbosity to .ships
   ::    %spew: set verbosity toggles
@@ -397,13 +392,11 @@
   ::
   +$  task
     $%  [%hear =lane =blob]
-        [%hole =lane =blob]
         [%heed =ship]
         [%jilt =ship]
         $>(%plea vane-task)
     ::
         $>(%born vane-task)
-        $>(%crud vane-task)
         $>(%init vane-task)
         [%sift ships=(list ship)]
         [%spew veb=(list verb)]
@@ -753,7 +746,6 @@
   +$  task                                              ::  in request ->$
     $~  [%vega ~]                                       ::
     $%  $>(%born vane-task)                             ::  new unix process
-        $>(%crud vane-task)                             ::  error with trace
         [%rest p=@da]                                   ::  cancel alarm
         [%drip p=vase]                                  ::  give in next event
         [%huck syn=sign-arvo]                           ::  give back
@@ -789,7 +781,6 @@
         [%cred nom=@ta cew=crew]                        ::  set permission group
         [%crew ~]                                       ::  permission groups
         [%crow nom=@ta]                                 ::  group usage
-        $>(%crud vane-task)                             ::  error with trace
         [%drop des=desk]                                ::  cancel pending merge
         [%info des=desk dit=nori]                       ::  internal edit
         $>(%init vane-task)                             ::  report install
@@ -1058,7 +1049,7 @@
         [%blew p=blew]                                  ::  terminal config
         [%boot lit=? p=*]                               ::  weird %dill boot
         [%crop p=@ud]                                   ::  trim kernel state
-        $>(%crud vane-task)                             ::  error with trace
+        [%crud p=@tas q=(list tank)]                    ::  print error
         [%flee session=~]                               ::  unwatch session
         [%flog p=flog]                                  ::  wrapped error
         [%flow p=@tas q=(list gill:gall)]               ::  terminal config
@@ -1164,10 +1155,7 @@
   ::
   +$  task
     $~  [%vega ~]
-    $%  ::  event failure notification
-        ::
-        $>(%crud vane-task)
-        ::  initializes ourselves with an identity
+    $%  ::  initializes ourselves with an identity
         ::
         $>(%init vane-task)
         ::  new unix process
@@ -1787,10 +1775,7 @@
   ::
   +$  task
     $~  [%vega ~]
-    $%  ::  event failure notification
-        ::
-        $>(%crud vane-task)
-        ::  system started up; reset open connections
+    $%  ::  system started up; reset open connections
         ::
         $>(%born vane-task)
         ::  trim state (in response to memory pressure)
@@ -2123,9 +2108,11 @@
       [%j task:jael]
       [@tas %meta vase]
   ==
+::  full vane names are required in vanes
+::
 +$  sign-arvo                                           ::  in result $<-
-  $%  [%a gift:ames]
-      $:  %b
+  $%  [%ames gift:ames]
+      $:  %behn
           $%  gift:behn
               $>(%wris gift:clay)
               $>(%writ gift:clay)
@@ -2133,12 +2120,12 @@
               $>(%unto gift:gall)
           ==
       ==
-      [%c gift:clay]
-      [%d gift:dill]
-      [%e gift:eyre]
-      [%g gift:gall]
-      [%i gift:iris]
-      [%j gift:jael]
+      [%clay gift:clay]
+      [%dill gift:dill]
+      [%eyre gift:eyre]
+      [%gall gift:gall]
+      [%iris gift:iris]
+      [%jael gift:jael]
   ==
 ::  $unix-task: input from unix
 ::
@@ -2159,9 +2146,6 @@
       ::  %eyre: cancel request
       ::
       [%cancel-request ~]
-      ::  any vane: error report
-      ::
-      $>(%crud vane-task)
       ::  %dill: reset terminal configuration
       ::
       $>(%hail task:dill)

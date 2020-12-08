@@ -258,7 +258,7 @@
   ^-  (quip card _this)
   ?.  ?=([%autoseen ~] wire)
     (on-arvo:def wire sign-arvo)
-  ?>  ?=([%b %wake *] sign-arvo)
+  ?>  ?=([%behn %wake *] sign-arvo)
   :_  this(last-seen now.bowl)
   ~[autoseen-timer:ha]
 ::

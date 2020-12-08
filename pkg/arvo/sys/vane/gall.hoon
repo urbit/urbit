@@ -1,3 +1,4 @@
+!:
 ::  ::  %gall, agent execution
 !?  163
 ::
@@ -506,7 +507,7 @@
   ++  mo-handle-sys-era
     |=  [=path =sign-arvo]
     ^+  mo-core
-    ?>  ?=([%j %public-keys *] sign-arvo)
+    ?>  ?=([%jael %public-keys *] sign-arvo)
     ?>  ?=([%era ~] path)
     ?.  ?=(%breach -.public-keys-result.sign-arvo)
       mo-core
@@ -521,7 +522,7 @@
     =/  [dap=term her=@ta desk=@ta dat=@ta ~]  t.path
     =/  tim  (slav da+dat)
     =/  =beak  [(slav %p her) desk da+tim]
-    ?>  ?=([?(%b %c) %writ *] sign-arvo)
+    ?>  ?=([?(%behn %clay) %writ *] sign-arvo)
     |^  ^+  mo-core
     ?~  p.sign-arvo
       (fail leaf+"gall: failed to build agent {<dap>}" ~)
@@ -548,7 +549,7 @@
     |=  [=path =sign-arvo]
     ^+  mo-core
     ?>  ?=([%lyv ~] path)
-    ?>  ?=([?(%b %c) %wris *] sign-arvo)
+    ?>  ?=([?(%behn %clay) %wris *] sign-arvo)
     =/  bek=beak  [our %home p.sign-arvo]
     =/  nex=(list [=care:clay =^path])  ~(tap in q.sign-arvo)
     ~>  %slog.[0 leaf+"gall: reloading agents"]
@@ -575,7 +576,7 @@
     ^+  mo-core
     ::
     ?>  ?=([%lag ~] path)
-    ?>  ?=([%a %clog *] sign-arvo)
+    ?>  ?=([%ames %clog *] sign-arvo)
     ::
     =/  agents=(list term)  ~(tap in ~(key by yokes.state))
     |-  ^+  mo-core
@@ -598,7 +599,7 @@
     =/  him  (slav %p i.t.path)
     =/  dap  i.t.t.path
     ::
-    ?>  ?=([?(%g %b) %unto *] sign-arvo)
+    ?>  ?=([?(%gall %behn) %unto *] sign-arvo)
     =/  =sign:agent  +>.sign-arvo
     ::
     ?-    -.sign
@@ -631,7 +632,7 @@
     =/  foreign-agent   i.t.t.wire
     ::
     ?+    sign-arvo  !!
-        [%a %done *]
+        [%ames %done *]
       =^  remote-request  outstanding.state
         ?~  t.t.t.wire
           =/  full-wire  sys+wire
@@ -664,7 +665,7 @@
         %missing   (mo-give:(mo-give %unto %watch-ack err) %unto %poke-ack err)
       ==
     ::
-        [%a %boon *]
+        [%ames %boon *]
       ?^  t.t.t.wire
         ::  kill subscriptions which use the old wire format
         ::
@@ -672,7 +673,7 @@
       =/  =ames-response  ;;(ames-response payload.sign-arvo)
       (mo-handle-ames-response ames-response)
     ::
-        [%a %lost *]
+        [%ames %lost *]
       ::  note this should only happen on reverse bones, so only facts
       ::  and kicks
       ::
@@ -709,7 +710,7 @@
     ?.  =(nonce.u.yoke i.t.path)
       %-  (slog leaf+"gall: got old {<+<.sign-arvo>} for {<dap>}" ~)
       mo-core
-    ?.  ?=([?(%g %b) %unto *] sign-arvo)
+    ?.  ?=([?(%gall %behn) %unto *] sign-arvo)
       ?:  ?=(%| -.agent.u.yoke)
         %-  (slog leaf+"gall: {<dap>} dozing, dropping {<+<.sign-arvo>}" ~)
         mo-core
@@ -760,7 +761,7 @@
       =/  card
         ?:  ?=(%& -.blocker)
           [%slip %g %deal sock dap p.blocker]
-        [%pass /clear-huck %b %huck %g %unto p.blocker]
+        [%pass /clear-huck %b %huck `sign-arvo`[%gall %unto p.blocker]]
       [duct card]
     $(moves [move moves])
   ::  +mo-filter-queue: remove all blocked tasks from ship.
@@ -1525,7 +1526,7 @@
       =.  ap-core
         (ap-pass wire %agent dock %leave ~)
       =/  way  [%out (scot %p p.dock) q.dock wire]
-      (ap-pass way %arvo %b %huck `sign-arvo`[%g %unto %kick ~])
+      (ap-pass way %arvo %b %huck `sign-arvo`[%gall %unto %kick ~])
     ::  +ap-mule: run virtualized with intercepted scry, preserving type
     ::
     ::    Compare +mute and +mule.  Those pass through scry, which
@@ -1706,9 +1707,9 @@
 ::
 ++  scry
   ~/  %gall-scry
-  |=  [lyc=gang cyr=term bem=beam]
+  ^-  roon
+  |=  [lyc=gang care=term bem=beam]
   ^-  (unit (unit cage))
-  =*  care  cyr
   =/  =shop  &/p.bem
   =*  dap  q.bem
   =/  =coin  $/r.bem
@@ -1778,7 +1779,7 @@
   ~|  [%gall-take-failed wire]
   ?>  ?=([?(%sys %use) *] wire)
   =<  mo-abet
-  %.  [t.wire ?:(?=([%b %heck *] syn) syn.syn syn)]
+  %.  [t.wire ?:(?=([%behn %heck *] syn) syn.syn syn)]
   ?-  i.wire
     %sys  mo-handle-sys:(mo-abed:mo duct)
     %use  mo-handle-use:(mo-abed:mo duct)

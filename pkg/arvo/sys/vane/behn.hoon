@@ -15,8 +15,8 @@
               $>(%flog task:dill)                  ::  log output
       ==  ==                                            ::
     +$  sign
-      $~  [%b %wake ~]
-      $%  [%b $>(%wake gift)]
+      $~  [%behn %wake ~]
+      $%  [%behn $>(%wake gift)]
       ==
     ::
     +$  behn-state
@@ -269,20 +269,17 @@
   ^-  [(list move) _behn-gate]
   ::
   =/  =task  ((harden task) wrapped-task)
-  ::
-  ::  error notifications "downcast" to %crud
-  ::
-  =?  task  ?=(^ dud)
-    ~|  %crud-in-crud
-    ?<  ?=(%crud -.task)
-    [%crud -.task tang.u.dud]
-  ::
   =/  event-core  (per-event [now hen] state)
   ::
   =^  moves  state
+    ::
+    ::  handle error notifications
+    ::
+    ?^  dud
+      (crud:event-core -.task tang.u.dud)
+    ::
     ?-  -.task
       %born  born:event-core
-      %crud  (crud:event-core [p q]:task)
       %rest  (rest:event-core date=p.task)
       %drip  (drip:event-core move=p.task)
       %huck  (huck:event-core syn.task)
@@ -304,9 +301,10 @@
 ::    which might or might not show up in the product
 ::
 ++  scry
-  |=  [lyc=gang cyr=term bem=beam]
+  ^-  roon
+  |=  [lyc=gang car=term bem=beam]
   ^-  (unit (unit cage))
-  =*  ren  cyr
+  =*  ren  car
   =*  why=shop  &/p.bem
   =*  syd  q.bem
   =*  lot=coin  $/r.bem

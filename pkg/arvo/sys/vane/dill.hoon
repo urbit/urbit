@@ -30,7 +30,7 @@
 +$  mess                                                ::
   $%  [%dill-belt p=(hypo dill-belt)]                   ::
   ==                                                    ::
-+$  move  [p=duct q=(wind note gift)]              ::  local move
++$  move  [p=duct q=(wind note gift)]                   ::  local move
 +$  note                                                ::  out request $->
   $~  [%d %verb ~]                                      ::
   $%  $:  %$                                            ::
@@ -41,7 +41,7 @@
                   %perm                                 ::  change permissions
                   %warp                                 ::  wait for clay hack
               ==                                        ::
-          task:clay                                ::
+          task:clay                                     ::
       ==                                                ::
       $:  %d                                            ::
           $>  $?  %crud                                 ::
@@ -49,42 +49,42 @@
                   %text                                 ::
                   %verb                                 ::
               ==                                        ::
-          task:dill                                ::
+          task:dill                                     ::
       ==                                                ::
       $:  %g                                            ::
           $>  $?  %conf                                 ::
                   %deal                                 ::
                   %goad                                 ::
               ==                                        ::
-          task:gall                                ::
+          task:gall                                     ::
       ==                                                ::
       $:  %j                                            ::
           $>  $?  %dawn                                 ::
                   %fake                                 ::
               ==                                        ::
-          task:jael                                ::
+          task:jael                                     ::
   ==  ==                                                ::
 +$  sign                                                ::  in result $<-
-  $~  [%d %blit ~]                                      ::
-  $%  $:  %b                                            ::
-          $%  $>(%writ gift:clay)                  ::  XX %slip
-              $>(%mere gift:clay)                  ::  XX %slip
+  $~  [%dill %blit ~]                                   ::
+  $%  $:  %behn                                         ::
+          $%  $>(%writ gift:clay)                       ::  XX %slip
+              $>(%mere gift:clay)                       ::  XX %slip
       ==  ==                                            ::
-      $:  %c                                            ::
+      $:  %clay                                         ::
           $>  $?  %mere                                 ::
                   %note                                 ::
                   %writ                                 ::
               ==                                        ::
-          gift:clay                                ::
+          gift:clay                                     ::
       ==                                                ::
-      $:  %d                                            ::
-          $>(%blit gift:dill)                      ::
+      $:  %dill                                         ::
+          $>(%blit gift:dill)                           ::
       ==                                                ::
-      $:  %g                                            ::
+      $:  %gall                                         ::
           $>  $?  %onto                                 ::
                   %unto                                 ::
               ==                                        ::
-          gift:gall                                ::
+          gift:gall                                     ::
   ==  ==                                                ::
 ::::::::                                                ::  dill tiles
 --
@@ -255,14 +255,14 @@
         |=  [tea=wire sih=sign]
         ^+  +>
         ?-    sih
-            [%g %onto *]
+            [%gall %onto *]
           ::  ~&  [%take-gall-onto +>.sih]
           ?-  -.+>.sih
             %|  (crud %onto p.p.+>.sih)
             %&  (done %blit [%lin (tuba "{<p.p.sih>}")]~)
           ==
         ::
-            [%g %unto *]
+            [%gall %unto *]
           ::  ~&  [%take-gall-unto +>.sih]
           ?-  -.+>.sih
             %poke-ack   ?~(p.p.+>.sih +>.$ (crud %coup u.p.p.+>.sih))
@@ -273,18 +273,18 @@
             %fact       (from ;;(dill-blit q:`vase`+>+>.sih))
           ==
         ::
-            [%c %note *]
+            [%clay %note *]
           (from %out (tuba p.sih ' ' ~(ram re q.sih)))
         ::
-            [?(%b %c) %writ *]
+            [?(%behn %clay) %writ *]
           init
         ::
-            [?(%b %c) %mere *]
+            [?(%behn %clay) %mere *]
           ?:  ?=(%& -.p.sih)
             mere
           (mean >%dill-mere-fail< >p.p.p.sih< q.p.p.sih)
         ::
-            [%d %blit *]
+            [%dill %blit *]
           (done +.sih)
         ==
       --
@@ -399,9 +399,10 @@
   ..^$(all old)
 ::
 ++  scry
-  |=  [lyc=gang cyr=term bem=beam]
+  ^-  roon
+  |=  [lyc=gang car=term bem=beam]
   ^-  (unit (unit cage))
-  =*  ren  cyr
+  =*  ren  car
   =*  why=shop  &/p.bem
   =*  syd  q.bem
   =*  lot=coin  $/r.bem

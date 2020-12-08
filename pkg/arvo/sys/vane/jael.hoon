@@ -78,16 +78,16 @@
 +$  note                                                ::  out request $->
   $~  [%a %plea *ship *plea:ames]                       ::
   $%  $:  %a                                            ::    to %ames
-          $>(%plea task:ames)                      ::  send request message
+          $>(%plea task:ames)                           ::  send request message
       ==                                                ::
       $:  %b                                            ::    to %behn
-          $>(%wait task:behn)                      ::  set timer
+          $>(%wait task:behn)                           ::  set timer
       ==                                                ::
       $:  %e                                            ::    to %eyre
           [%code-changed ~]                             ::  notify code changed
       ==                                                ::
       $:  %g                                            ::    to %gall
-          $>(%deal task:gall)                      ::  talk to app
+          $>(%deal task:gall)                           ::  talk to app
       ==                                                ::
       $:  %j                                            ::    to self
           $>(%listen task)                              ::  set ethereum source
@@ -97,16 +97,16 @@
   ==  ==  ==                                            ::
 ::                                                      ::
 +$  sign                                                ::  in result $<-
-  $~  [%a %done ~]                                      ::
-  $%  $:  %a                                            ::
-          $%  $>(%boon gift:ames)                  ::  message response
-              $>(%done gift:ames)                  ::  message (n)ack
-              $>(%lost gift:ames)                  ::  lost boon
+  $~  [%behn %wake ~]                                   ::
+  $%  $:  %ames                                         ::
+          $%  $>(%boon gift:ames)                       ::  message response
+              $>(%done gift:ames)                       ::  message (n)ack
+              $>(%lost gift:ames)                       ::  lost boon
       ==  ==                                            ::
-      $:  %b                                            ::
-          $>(%wake gift:behn)                      ::
+      $:  %behn                                         ::
+          $>(%wake gift:behn)                           ::
       ==                                                ::
-      $:  %g                                            ::
+      $:  %gall                                         ::
           $>  $?  %onto                                 ::
                   %unto                                 ::
               ==                                        ::
@@ -527,25 +527,25 @@
     |=  [tea=wire hen=duct hin=sign]
     ^+  +>
     ?-  hin
-        [%a %done *]
+        [%ames %done *]
       ?~  error.hin  +>.$
       ~&  [%done-bad tag.u.error.hin]
       %-  (slog tang.u.error.hin)
       ::TODO  fail:et
       +>.$
     ::
-        [%a %boon *]
+        [%ames %boon *]
       =+  ;;  [%public-keys-result =public-keys-result]  payload.hin
       %-  curd  =<  abet
       (public-keys:~(feel su hen now pki etn) pos.zim.pki public-keys-result)
     ::
-        [%a %lost *]
+        [%ames %lost *]
       ::  TODO: better error handling
       ::
       ~|  %jael-ames-lost
       !!
     ::
-        [%b %wake *]
+        [%behn %wake *]
       ?^  error.hin
         %-  %+  slog
               leaf+"jael unable to resubscribe, run :azimuth-tracker|listen"
@@ -558,11 +558,11 @@
       %-  curd  =<  abet
       (sources:~(feel su hen now pki etn) ships source)
     ::
-        [%g %onto *]
+        [%gall %onto *]
       ~&  [%jael-onto tea hin]
       +>.$
     ::
-        [%g %unto *]
+        [%gall %unto *]
       ?-  +>-.hin
           %kick      ~|([%jael-unexpected-quit tea hin] !!)
           %poke-ack
@@ -1006,9 +1006,10 @@
   ..^$(lex old)
 ::                                                      ::  ++scry
 ++  scry                                                ::  inspect
-  |=  [lyc=gang cyr=term bem=beam]
+  ^-  roon
+  |=  [lyc=gang car=term bem=beam]
   ^-  (unit (unit cage))
-  =*  ren  cyr
+  =*  ren  car
   =*  why=shop  &/p.bem
   =*  syd  q.bem
   =*  lot=coin  $/r.bem

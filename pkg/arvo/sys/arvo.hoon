@@ -99,7 +99,9 @@
 ::  $roof: namespace
 ::  $rook: meta-namespace (super advanced)
 ::  +room: generic namespace
+::  +roon: partial namespace
 ::  $root: raw namespace
+::  $view: namespace perspective
 ::  +wind: kernel action builder
 ::  $wire: event pretext
 ::  +wite: kernel action/error builder
@@ -125,13 +127,18 @@
   |$  [a]
   $~  =>(~ |~(* ~))
   $-  $:  lyc=gang                                      ::  leakset
-          cyr=term                                      ::  perspective
+          vis=view                                      ::  perspective
           bem=beam                                      ::  path
       ==                                                ::
   %-  unit                                              ::  ~: unknown
   %-  unit                                              ::  ~ ~: invalid
   (cask a)
++$  roon                                                ::  partial namespace
+  $~  =>(~ |~(* ~))
+  $-  [lyc=gang car=term bem=beam]
+  (unit (unit cage))
 +$  root  $-(^ (unit (unit)))
++$  view  $@(term [way=term car=term])
 ::
 ++  wind
   |$  ::  a: forward
@@ -314,6 +321,27 @@
   ?.  ?=([%$ case] u.ved)  ~
   `(unit beam)`[~ [`ship`u.who `desk`u.des `case`p.u.ved] t.t.t.p]
 ::
+++  en-omen
+  |=  [vis=view bem=beam]
+  ^-  path
+  :_  (en-beam bem)
+  ?@  vis  vis
+  ~(rent co [%many $/tas/way.vis $/tas/car.vis ~])
+::
+++  de-omen
+  |=  pax=path
+  ^-  (unit [vis=view bem=beam])
+  ?~  pax  ~
+  ?~  bem=(de-beam t.pax)  ~
+  ?:  ((sane %tas) i.pax)
+    `[i.pax u.bem]
+  =/  lot=(unit coin)  (rush i.pax ;~(pfix dot perd:so))
+  ?.  ?&  ?=(^ lot)
+          ?=([%many [%$ %tas @] [%$ %tas @] ~] u.lot)
+      ==
+    ~
+  `[[q.p.i q.p.i.t]:p.u.lot u.bem]
+::
 ++  look
   ~/  %look
   |=  [rof=roof lyc=gang]
@@ -321,11 +349,8 @@
   ~/  %in
   |=  [ref=* raw=*]
   ?~  pax=((soft path) raw)  ~
-  ?~  u.pax  ~
-  =*  cyr  i.u.pax
-  ?~  bem=(de-beam t.u.pax)  ~
-  ?.  ((sane %tas) cyr)  ~
-  ?~  dat=(rof lyc cyr u.bem)  ~
+  ?~  mon=(de-omen u.pax)  ~
+  ?~  dat=(rof lyc u.mon)  ~
   ?~  u.dat  [~ ~]
   =*  vax  q.u.u.dat
   ?.  ?&  ?=(^ ref)
@@ -983,9 +1008,9 @@
         ++  smit
           |=  [cap=tape sub=vase pax=path txt=@t]
           ^-  vase
-          ~>  %slog.[0 leaf+"{cap}: {(scow p+(mug txt))}"]
+          ~>  %slog.[0 leaf/"{cap}: {(scow p+(mug txt))}"]
           %-  road  |.
-          ~_  leaf/cap
+          ~_  leaf/"{cap}: build failed"
           (slap sub (rain pax txt))
         ::
         ++  create
@@ -1022,7 +1047,7 @@
       ::
       ++  peek
         ^-  rook
-        |=  [lyc=gang cyr=term bem=beam]
+        |=  [lyc=gang vis=view bem=beam]
         ^-  (unit (unit (cask meta)))
         ::  namespace reads receive no entropy
         ::
@@ -1034,7 +1059,7 @@
           ~>  %mean.'peek: pull failed'
           (~(slap wa sac) rig [%limb %scry])
         ::
-        =/  mas=[gang term beam]  [lyc cyr bem]
+        =/  mas=[gang view beam]  [lyc vis bem]
         ::
         =^  pro  sac
           ~>  %mean.'peek: call failed'
@@ -1227,7 +1252,7 @@
         ::
         ~?  !lac.fad
           :-  (runt [(lent bars.gem) '|'] "")
-          [%slip vane.gem (symp +>-.task) duct]
+          [%slip [vane.gem vane] (symp +>-.task) duct]
         ::
         (call duct vane task)
       ::
@@ -1275,56 +1300,63 @@
         ==
       ::
       =/  von
-        %+  turn
-          (sort ~(tap by van.mod) |=([[a=@tas *] [b=@tas *]] (aor a b)))
-        |=([lal=@tas =vane] (cat 3 %vane- lal)^vane)
+        (sort ~(tap by van.mod) |=([[a=@tas *] [b=@tas *]] (aor a b)))
       ::
       :~  :+  %reports  %|
-          %+  turn  von
           =/  bem=beam  [[our %home da+now] /whey]
-          |=  [lal=@tas =vane]
-          =/  met  (peek ~ (rsh [3 5] lal) bem)
+          %+  turn  von
+          |=  [nam=term =vane]
+          =/  met  (peek [~ ~] nam bem)
+          ~|  mass/nam
           ?>  &(?=(^ met) ?=(^ u.met))  :: XX make optional
-          lal^|+;;((list mass) q.q.u.u.met)
+          nam^|+;;((list mass) q.q.u.u.met)
       ::
           :+  %caches  %|
           %+  turn  von
-          |=([lal=@tas =vane] lal^&+worm.vane)
+          |=([nam=term =vane] nam^&+worm.vane)
       ::
           :+  %dregs  %|
           %+  turn  von
-          |=([lal=@tas =vane] lal^&+vase.vane)
+          |=([nam=term =vane] nam^&+vase.vane)
       ==
     ::  +peek: read from the entire namespace
     ::
     ++  peek
       ^-  rook
-      |=  [lyc=gang cyr=term bem=beam]
+      |=  [lyc=gang vis=view bem=beam]
       ^-  (unit (unit (cask meta)))
+      ::  vane and care may be concatenated
       ::
-      ?:  ?=(%$ cyr)
-        (peek:pith lyc %$ bem)
+      =/  [way=term car=term]
+        ?^  vis  vis
+        ?.  =(2 (met 3 vis))
+          [vis %$]
+        [(end 3 vis) (rsh 3 vis)]
       ::
-      ::  vane and care are concatenated
+      ?:  ?=(%$ way)
+        (peek:pith lyc car bem)
       ::
-      =/  way=term  (grow (end 3 cyr))
-      =/  car=term  (rsh 3 cyr)
-      ?.  (~(has by van.mod) way)
+      =.  way  (grow way)
+      ?~  van=(~(get by van.mod) way)
         ~
-      (peek:(plow way) lyc car bem)
+      %.  [lyc car bem]
+      peek:spin:(~(plow va [vil u.van]) now peek)
     ::  +call: advance to target
     ::
     ++  call
       |=  [=duct way=term task=maze]
       ^+  this
       ?:  ?=(%$ way)
+        ~>  %mean.'arvo: call:pith failed'
+        %-  call:pith
         ~>  %mean.'call: bad waif'
-        (call:pith ;;(waif:pith q.p.task))
+        ;;(waif q.p.task)
       ::
+      =.  way  (grow way)
       %+  push  [way duct bars.gem]
       ~|  bar-stack=`(list ^duct)`[duct bars.gem]
       %.  task
-      call:(spin:(plow (grow way)) duct eny dud)
+      call:(spin:(plow way) duct eny dud)
     ::  +take: retreat along call-stack
     ::
     ++  take
@@ -1336,9 +1368,9 @@
         ::
         ?>  ?=(~ duct)
         (xeno:pith wire ;;(card q.p.gift))
-      ::
       ::  the caller was a vane
       ::
+      =.  way  (grow way)
       %+  push  [way duct bars.gem]
       ::
       ::  cons source onto .gift to make a $sign
@@ -1346,7 +1378,7 @@
       ~|  wire=wire
       ~|  bar-stack=`(list ^duct)`[duct bars.gem]
       %.  [wire [vane.gem gift]]
-      take:(spin:(plow (grow way)) duct eny dud)
+      take:(spin:(plow way) duct eny dud)
     ::  +push: finalize an individual step
     ::
     ++  push
@@ -1354,7 +1386,7 @@
       ^+  this
       =^  moz  sac
         (~(refine-moves me sac vil) zom)
-      =.  van.mod  (~(put by van.mod) (grow vane.gum) [vax sac])
+      =.  van.mod  (~(put by van.mod) vane.gum [vax sac])
       (emit `plan`[`germ`gum `(list move)`moz])
     ::  +plow: operate on a vane, in time and space
     ::
@@ -1465,7 +1497,7 @@
         ==
       ::
       ++  peek
-        ^-  roof
+        ^-  roon
         |=  [lyc=gang car=term bem=beam]
         ^-  (unit (unit cage))
         ?.  ?|  =(our p.bem)
@@ -1702,28 +1734,24 @@
   |=  $:  lyc=gang
           $=  nom
           %+  each  path
-          $%  [%once cyr=term syd=desk tyl=spur]
-              [%beam cyr=term bem=beam]
+          $%  [%once vis=view syd=desk tyl=spur]
+              [%beam vis=view bem=beam]
           ==
       ==
   ^-  (unit (cask))
-  =/  hap=(unit [pat=? cyr=term bem=beam])
+  =/  hap=(unit [pat=? vis=view bem=beam])
     ?-  nom
-      [%& *]        ?~  p.nom  ~
-                    ?~  bem=(de-beam t.p.nom)  ~
-                    `[| i.p.nom u.bem]
-    ::
-      [%| %beam *]  `[| cyr bem]:p.nom
-    ::
-      [%| %once *]  `[& cyr.p.nom [our syd.p.nom da/now] tyl.p.nom]
+      [%& *]        ?~(mon=(de-omen p.nom) ~ `[| u.mon])
+      [%| %beam *]  `[| vis bem]:p.nom
+      [%| %once *]  `[& vis.p.nom [our syd.p.nom da/now] tyl.p.nom]
     ==
   ::
   ?~  hap  ~
-  =/  pro  (~(peek le:part [pit vil] sol) lyc [cyr bem]:u.hap)
+  =/  pro  (~(peek le:part [pit vil] sol) lyc [vis bem]:u.hap)
   ?:  |(?=(~ pro) ?=(~ u.pro))  ~
   =/  dat=(cask)  [p q.q]:u.u.pro
   ?.  pat.u.hap  `dat
-  `[%omen [cyr.u.hap (en-beam bem.u.hap)] dat]
+  `[%omen (en-omen [vis bem]:u.hap) dat]
 ::
 ::  +poke: external apply
 ::
@@ -1789,9 +1817,9 @@
           ++  smit
             |=  [cap=tape sub=(trap vase) pax=path txt=@t]
             ^-  (trap vase)
-            ~>  %slog.[0 leaf+"{cap}: {(scow p+(mug txt))}"]
+            ~>  %slog.[0 leaf/"{cap}: {(scow p+(mug txt))}"]
             %-  road  |.
-            ~_  leaf/cap
+            ~_  leaf/"{cap}: build failed"
             (swat sub (rain pax txt))
           --
       ::

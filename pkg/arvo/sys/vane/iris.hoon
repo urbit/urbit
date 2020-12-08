@@ -308,18 +308,11 @@
   ::
   =/  task=task  ((harden task) wrapped-task)
   ::
-  ::  error notifications "downcast" to %crud
+  ::  XX handle error notifications
   ::
-  =?  task  ?=(^ dud)
-    ~|  %crud-in-crud
-    ?<  ?=(%crud -.task)
-    [%crud -.task tang.u.dud]
-  ::
-  ::  %crud: notifies us of an event failure
-  ::
-  ?:  ?=(%crud -.task)
+  ?^  dud
     =/  moves=(list move)
-      [[duct %slip %d %flog task] ~]
+      [[duct %slip %d %flog %crud [-.task tang.u.dud]] ~]
     [moves light-gate]
   ::  %trim: in response to memory pressure
   ::
@@ -390,9 +383,10 @@
 ::  +scry: request a path in the urbit namespace
 ::
 ++  scry
-  |=  [lyc=gang cyr=term bem=beam]
+  ^-  roon
+  |=  [lyc=gang car=term bem=beam]
   ^-  (unit (unit cage))
-  =*  ren  cyr
+  =*  ren  car
   =*  why=shop  &/p.bem
   =*  syd  q.bem
   =*  lot=coin  $/r.bem

@@ -362,7 +362,7 @@
   =.  starting.state
     (~(jab by starting.state) yarn |=([=trying =vase] [%none vase]))
   ~|  sign+[- +<]:sign-arvo
-  ?>  ?=([?(%b %c) %writ *] sign-arvo)
+  ?>  ?=([?(%behn %clay) %writ *] sign-arvo)
   =/  =riot:clay  p.sign-arvo
   ?~  riot
     (thread-fail-not-running tid %build-thread-error *tang)

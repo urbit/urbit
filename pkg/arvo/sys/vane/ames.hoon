@@ -633,11 +633,11 @@
 ::  $sign: response from other vane
 ::
 +$  sign
-  $~  [%b %wake ~]
-  $%  $:  %b
-      $%  [%wake error=(unit tang)]
+  $~  [%behn %wake ~]
+  $%  $:  %behn
+      $%  $>(%wake gift:behn)
       ==  ==
-      $:  %j
+      $:  %jael
       $%  [%private-keys =life vein=(map life ring)]
           [%public-keys =public-keys-result]
           [%turf turfs=(list turf)]
@@ -737,14 +737,10 @@
       ::
       =/  =task  ((harden task) wrapped-task)
       ::
-      ::  error notifications "downcast" to %crud or %hole
+      ::  reject larval error notifications
       ::
-      =?  task  ?=(^ dud)
-        ?-  -.task
-          %crud  ~|(%crud-in-crud !!)
-          %hear  [%hole [lane blob]:task]
-          *      [%crud -.task tang.u.dud]
-        ==
+      ?^  dud
+        ~|(%ames-larval-call-dud (mean tang.u.dud))
       ::
       ::  %born: set .unix-duct and start draining .queued-events
       ::
@@ -782,7 +778,7 @@
         [~ larval-gate]
       ::  larval event drainage timer; pop and process a queued event
       ::
-      ?.  ?=([%b %wake *] sign)
+      ?.  ?=([%behn %wake *] sign)
         ~>  %slog.0^leaf/"ames: larva: strange sign"
         [~ larval-gate]
       ::  if crashed, print, dequeue, and set next drainage timer
@@ -867,26 +863,22 @@
   ^-  [(list move) _ames-gate]
   ::
   =/  =task  ((harden task) wrapped-task)
-  ::
-  ::  error notifications "downcast" to %crud or %hole
-  ::
-  =?  task  ?=(^ dud)
-    ?-  -.task
-      %crud  ~|(%crud-in-crud !!)
-      %hear  [%hole [lane blob]:task]
-      *      [%crud -.task tang.u.dud]
-    ==
-  ::
   =/  event-core  (per-event [now eny rof] duct ames-state)
   ::
   =^  moves  ames-state
     =<  abet
+    ::  handle error notifications
+    ::
+    ?^  dud
+      ?+  -.task
+          (on-crud:event-core -.task tang.u.dud)
+        %hear  (on-hole:event-core [lane blob]:task)
+      ==
+    ::
     ?-  -.task
       %born  on-born:event-core
-      %crud  (on-crud:event-core [p q]:task)
       %hear  (on-hear:event-core [lane blob]:task)
       %heed  (on-heed:event-core ship.task)
-      %hole  (on-hole:event-core [lane blob]:task)
       %init  on-init:event-core
       %jilt  (on-jilt:event-core ship.task)
       %sift  (on-sift:event-core ships.task)
@@ -915,11 +907,11 @@
       [@ %done *]   (on-take-done:event-core wire error.sign)
       [@ %boon *]   (on-take-boon:event-core wire payload.sign)
     ::
-      [%b %wake *]  (on-take-wake:event-core wire error.sign)
+      [%behn %wake *]  (on-take-wake:event-core wire error.sign)
     ::
-      [%j %turf *]          (on-take-turf:event-core turfs.sign)
-      [%j %private-keys *]  (on-priv:event-core [life vein]:sign)
-      [%j %public-keys *]   (on-publ:event-core wire public-keys-result.sign)
+      [%jael %turf *]          (on-take-turf:event-core turfs.sign)
+      [%jael %private-keys *]  (on-priv:event-core [life vein]:sign)
+      [%jael %public-keys *]   (on-publ:event-core wire public-keys-result.sign)
     ==
   ::
   [moves ames-gate]
@@ -935,9 +927,10 @@
 ::  +scry: dereference namespace
 ::
 ++  scry
-  |=  [lyc=gang cyr=term bem=beam]
+  ^-  roon
+  |=  [lyc=gang car=term bem=beam]
   ^-  (unit (unit cage))
-  =*  ren  cyr
+  =*  ren  car
   =*  why=shop  &/p.bem
   =*  syd  q.bem
   =*  lot=coin  $/r.bem

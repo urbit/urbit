@@ -66,7 +66,7 @@
   ++  on-arvo
     |=  [=wire =sign-arvo]
     ^-  (quip card _this)
-    ?.  ?=([%e %bound *] sign-arvo)
+    ?.  ?=([%eyre %bound *] sign-arvo)
       (on-arvo:def wire sign-arvo)
     ~?  !accepted.sign-arvo
       [dap.bowl "bind rejected!" binding.sign-arvo]

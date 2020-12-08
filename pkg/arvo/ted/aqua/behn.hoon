@@ -102,7 +102,7 @@
 ::
 ++  handle-arvo-response
   |=  [=wire =sign-arvo]
-  ?>  ?=([%b %wake *] sign-arvo)
+  ?>  ?=([%behn %wake *] sign-arvo)
   ?>  ?=([@ *] wire)
   =/  who  (,@p (slav %p i.wire))
   =^  cards  piers

@@ -100,8 +100,8 @@
     ^-  (quip card _this)
     =^  cards  state
       ?+  sign-arvo  (on-arvo:def wire sign-arvo)
-        [%e %bound *]  `state
-        [%c *]  (handle-build:lsp wire +.sign-arvo)
+        [%eyre %bound *]  `state
+        [%clay *]  (handle-build:lsp wire +.sign-arvo)
       ==
     [cards this]
   ::

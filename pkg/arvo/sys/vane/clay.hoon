@@ -282,21 +282,21 @@
           $:  rus=(map desk rede)                       ::  neighbor desks
           ==
 ::
-+$  move  [p=duct q=(wind note gift)]              ::  local move
++$  move  [p=duct q=(wind note gift)]                   ::  local move
 +$  note                                                ::  out request $->
   $~  [%b %wait *@da]                                   ::
   $%  $:  %$                                            ::  to arvo
           $>(%what waif)                                ::
       ==                                                ::
       $:  %a                                            ::  to %ames
-          $>(%plea task:ames)                      ::
+          $>(%plea task:ames)                           ::
       ==                                                ::
       $:  %b                                            ::  to %behn
           $>  $?  %drip                                 ::
                   %rest                                 ::
                   %wait                                 ::
               ==                                        ::
-          task:behn                                ::
+          task:behn                                     ::
       ==                                                ::
       $:  %c                                            ::  to %clay
           $>  $?  %info                                 ::  internal edit
@@ -305,43 +305,40 @@
                   %warp                                 ::
                   %werp                                 ::
               ==                                        ::
-          task                                     ::
+          task                                          ::
       ==                                                ::
       $:  %d                                            ::  to %dill
-          $>(%flog task:dill)                      ::
+          $>(%flog task:dill)                           ::
       ==                                                ::
       $:  %g                                            ::  to %gall
-          $>(%deal task:gall)                      ::
+          $>(%deal task:gall)                           ::
       ==                                                ::
       $:  %j                                            ::  by %jael
-          $>(%public-keys task:jael)               ::
+          $>(%public-keys task:jael)                    ::
   ==  ==                                                ::
 +$  riot  (unit rant)                                   ::  response+complete
 +$  sign                                                ::  in result $<-
-  $~  [%b %wake ~]                                      ::
-  $%  $:  %a                                            ::  by %ames
+  $~  [%behn %wake ~]                                   ::
+  $%  $:  %ames                                         ::
           $>  $?  %boon                                 ::  response
                   %done                                 ::  (n)ack
                   %lost                                 ::  lost boon
               ==                                        ::
-          gift:ames                                ::
+          gift:ames                                     ::
       ==                                                ::
-      $:  %b                                            ::  by %behn
-          $%  $>(%wake gift:behn)                  ::  timer activate
-              $>(%writ gift)                       ::  XX %slip
+      $:  %behn                                         ::
+          $%  $>(%wake gift:behn)                       ::  timer activate
+              $>(%writ gift)                            ::  XX %slip
       ==  ==                                            ::
-      $:  %c                                            ::  by %clay
+      $:  %clay                                         ::
           $>  $?  %mere                                 ::
                   %note                                 ::
                   %writ                                 ::
               ==                                        ::
-          gift                                     ::
+          gift                                          ::
       ==                                                ::
-      $:  %j                                            ::  by %jael
-          $>(%public-keys gift:jael)               ::
-      ==                                                ::
-      $:  @tas                                          ::  by any
-          $>(%crud vane-task)                           ::  XX strange
+      $:  %jael                                         ::
+          $>(%public-keys gift:jael)                    ::
   ==  ==                                                ::
 --  =>
 ~%  %clay-utilities  ..part  ~
@@ -3888,12 +3885,10 @@
   ::
   =/  req=task  ((harden task) wrapped-task)
   ::
-  ::  error notifications "downcast" to %crud
+  ::  XX handle error notifications
   ::
-  =?  req  ?=(^ dud)
-    ~|  %crud-in-crud
-    ?<  ?=(%crud -.req)
-    [%crud -.req tang.u.dud]
+  ?^  dud
+    [[[hen %slip %d %flog %crud [-.req tang.u.dud]] ~] ..^$]
   ::
   ?-    -.req
       %boat
@@ -3938,9 +3933,6 @@
       |=  [p=path r=rule]
       (~(has in who.r) |+nom.req)
     --
-  ::
-      %crud
-    [[[hen %slip %d %flog req] ~] ..^$]
   ::
       %drop
     ~&  %clay-idle
@@ -4125,9 +4117,10 @@
   ..^$(ruf +.old)
 ::
 ++  scry                                              ::  inspect
-  |=  [lyc=gang cyr=term bem=beam]
+  ^-  roon
+  |=  [lyc=gang car=term bem=beam]
   ^-  (unit (unit cage))
-  =*  ren  cyr
+  =*  ren  car
   =/  why=shop  &/p.bem
   =*  syd  q.bem
   =/  lot=coin  $/r.bem
@@ -4296,8 +4289,6 @@
   ::
   ?-    -.+.hin
       %public-keys  ~|([%public-keys-raw tea] !!)
-      %crud
-    [[[hen %slip %d %flog +.hin] ~] ..^$]
   ::
       %mere
     ?:  ?=(%& -.p.+.hin)
