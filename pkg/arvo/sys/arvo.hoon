@@ -1565,7 +1565,8 @@
     =/  lod
       (slap (slot 7 gat) [%limb %load])
     |=  =heir
-    |.  ;;(^ q:(slam lod !>(heir)))
+    |.  ~>  %slog.[1 'arvo: +load next']
+    ;;(^ q:(slam lod !>(heir)))
   ::
   ::  hyp: hoon core type
   ::  hoc: hoon core
@@ -1621,12 +1622,21 @@
   ::
   =/  voc  .*(hoc [%7 +.rav %0 7])
   ::
-  ::  extract the upgrade gate +load at axis +4
+  ::  extract the upgrade gate +load
   ::
-  =/  lod  .*(voc [%0 4])
+  =/  lod
+    ::  vip: type of the arvo.hoon core
+    ::  fol: formula for the +load gate
+    ::
+    =/  vip  -:(slum cop [-.rav '+>'])
+    =/  fol  +:(slum cop [vip 'load'])
+    ::  produce the upgrade gate
+    ::
+    .*(voc fol)
   ::
   |=  =heir
-  |.  ;;(^ (slum lod heir))
+  |.  ~>  %slog.[1 'arvo: +load next']
+  ;;(^ (slum lod heir))
 ::
 ++  viol                                                ::  vane tools
   |=  but=type
