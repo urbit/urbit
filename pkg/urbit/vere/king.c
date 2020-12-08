@@ -259,10 +259,12 @@ _king_get_atom(c3_c* url_c)
   if ( CURLE_OK != result ) {
     u3l_log("failed to fetch %s: %s\n",
             url_c, curl_easy_strerror(result));
+    u3_king_bail();
     exit(1);
   }
   if ( 300 <= cod_l ) {
     u3l_log("error fetching %s: HTTP %ld\n", url_c, cod_l);
+    u3_king_bail();
     exit(1);
   }
 
