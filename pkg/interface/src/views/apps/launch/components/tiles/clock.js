@@ -202,10 +202,9 @@ class Clock extends React.PureComponent {
   }
 
   initGeolocation() {
-    if (typeof this.props.data === 'string') {
-      const latlon = this.props.data.split(',');
-      const lat = latlon[0];
-      const lon = latlon[1];
+    if (typeof this.props.data === 'object') {
+
+      const { latitude: lat, longitude: lon } = this.props.data;
 
       const suncalc = SunCalc.getTimes(new Date(), lat, lon);
 

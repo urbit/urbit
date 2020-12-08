@@ -1,14 +1,20 @@
 ::  contact-hook [landscape]
 ::
 ::
-/-  group-hook,
-    *contact-hook,
+/-  *contact-hook,
     *contact-view,
     inv=invite-store,
     *metadata-hook,
     *metadata-store,
     *group
-/+  *contact-json, default-agent, dbug, group-store, verb, resource, grpl=group
+/+  *contact-json,
+    default-agent,
+    dbug,
+    group-store,
+    verb,
+    resource,
+    grpl=group,
+    *migrate
 ~%  %contact-hook-top  ..is  ~
 |%
 +$  card  card:agent:gall
@@ -132,6 +138,10 @@
       ::
           %contact-hook-action
         (poke-hook-action:cc !<(contact-hook-action vase))
+      ::
+          %import
+        ?>  (team:title our.bol src.bol)
+        (poke-import:cc q.vase)
       ==
     [cards this]
   ::
@@ -170,14 +180,29 @@
     ==
   ::
   ++  on-leave  on-leave:def
-  ++  on-peek   
+  ++  on-peek
     |=  =path
     ^-  (unit (unit cage))
-    ?.  ?=([%x %synced ~] path)
-      (on-peek:def path)
-    ``noun+!>(~(key by synced))
+    ?+  path  (on-peek:def path)
+        [%x %export ~]
+      ``noun+!>(state)
+        [%x %synced ~]
+      ``noun+!>(~(key by synced))
+    ==
+  ++  on-arvo
+    |=  [=wire =sign-arvo]
+    ^-  (quip card _this)
+    ?.  ?=([%try-rejoin @ @ *] wire)
+      (on-arvo:def wire sign-arvo)
+    =/  nack-count=@ud  (slav %ud i.t.wire)
+    =/  who=@p          (slav %p i.t.t.wire)
+    =/  pax             t.t.t.wire
+    ?>  ?=([%b %wake *] sign-arvo)
+    ~?  ?=(^ error.sign-arvo)
+      "behn errored in backoff timers, continuing anyway"
+    :_  this
+    [(try-rejoin:cc who pax +(nack-count))]~
   ::
-  ++  on-arvo   on-arvo:def
   ++  on-fail   on-fail:def
   --
 ::
@@ -266,6 +291,27 @@
     ==
   ==
 ::
+++  poke-import
+  |=  arc=*
+  ^-  (quip card _state)
+  =/  sty=state-three
+    [%3 (remake-map ;;((tree [path ship]) +<.arc)) ;;(? +>.arc)]
+  :_  sty
+  %+  turn  ~(tap by synced.sty)
+  |=  [=path =ship]
+  ^-  card
+  =/  contact-path  [%contacts path]
+  ?:  =(our.bol ship)
+    [%pass contact-path %agent [our.bol %contact-store] %watch contact-path]
+  (try-rejoin ship contact-path 0)
+::
+++  try-rejoin
+  |=  [who=@p pax=path nack-count=@ud]
+  ^-  card
+  =/  =wire
+    [%try-rejoin (scot %ud nack-count) (scot %p who) pax]
+  [%pass wire %agent [who %contact-hook] %watch pax]
+::
 ++  watch-contacts
   |=  pax=path
   ^-  (list card)
@@ -288,6 +334,13 @@
   ^-  (quip card _state)
   ?~  saw
     [~ state]
+  ?:  ?=([%try-rejoin @ *] wir)
+    =/  nack-count=@ud  (slav %ud i.t.wir)
+    =/  wakeup=@da
+      (add now.bol (mul ~s1 (bex (min 19 nack-count))))
+    :_  state
+    [%pass wir %arvo %b %wait wakeup]~
+  ::
   ?>  ?=(^ wir)
   [~ state(synced (~(del by synced) t.wir))]
 ::
@@ -301,6 +354,9 @@
   |=  wir=wire
   ^-  (list card)
   ?+  wir  !!
+      [%try-rejoin @ @ *]
+    $(wir t.t.t.wir)
+  ::
       [%inv ~]
     [%pass /inv %agent [our.bol %invite-store] %watch /invitatory/contacts]~
   ::

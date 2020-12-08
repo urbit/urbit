@@ -1,3 +1,4 @@
+/+  version
 =,  clay
 =,  space:userlib
 =,  format
@@ -73,7 +74,7 @@
   ?~(+< +> $(+< t.+<, +> (emit i.+<)))
 ::
 ++  render
-  |=  {mez/tape sud/desk who/ship syd/desk}
+  |=  [mez=tape sud=desk who=ship syd=desk]
   :^  %palm  [" " ~ ~ ~]  leaf+(weld "kiln: " mez)
   ~[leaf+"from {<sud>}" leaf+"on {<who>}" leaf+"to {<syd>}"]
 ::
@@ -108,12 +109,14 @@
 ++  on-peek
   |=  =path
   ^-  (unit (unit cage))
-  ?.  ?=([%x %kiln %ota ~] path)
-    [~ ~]
-  ``noun+!>(ota)
+  ?+   path  [~ ~]
+    [%x %kiln %ota ~]        ``noun+!>(ota)
+    [%x %kiln %our ~]        ``noun+!>(our)
+    [%x %kiln %base-hash ~]  ``noun+!>((base-hash:version our now))
+  ==
 ::
 ++  poke-commit
-  |=  [mon/kiln-commit auto=?]
+  |=  [mon=kiln-commit auto=?]
   =<  abet
   =.  +>.$  (emit %pass /commit %arvo %c [%dirk mon])
   ?.  auto
@@ -124,7 +127,7 @@
     (emit %pass way.commit-timer %arvo %b [%wait nex.commit-timer])
 ::
 ++  poke-autocommit
-  |=  [mon/kiln-commit auto=?]
+  |=  [mon=kiln-commit auto=?]
   =<  abet
   =.  +>.$  (emit %pass /commit %arvo %c [%dirk mon])
   ?.  auto
@@ -147,7 +150,7 @@
   abet:(emit %pass /mount %arvo %c [%mont pot u.bem])
 ::
 ++  poke-unmount
-  |=  mon/kiln-unmount
+  |=  mon=kiln-unmount
   ?^  mon
     =+  bem=(de-beam mon)
     ?~  bem
@@ -157,7 +160,7 @@
   abet:(emit %pass /unmount-point %arvo %c [%ogre mon])
 ::
 ++  poke-track                                        ::
-  |=  hos/kiln-sync
+  |=  hos=kiln-sync
   ?:  (~(has by syn) hos)
     abet:(spam (render "already tracking" [sud her syd]:hos) ~)
   abet:abet:start-track:(auto hos)
@@ -271,7 +274,7 @@
       =.  ..abet  (render-ket "OTA cancelled (1), retrying" ~)
       (poke-internal `[ship desk]:u.ota)
     =.  ..abet  (render-ket "downloading OTA update" ~)
-    =?  aeon.u.ota  ?=($w p.p.u.p.sign-arvo)
+    =?  aeon.u.ota  ?=(%w p.p.u.p.sign-arvo)
       ud:;;(cass:clay q.q.r.u.p.sign-arvo)
     %:  emit
       %pass  (make-wire /download)  %arvo  %c
@@ -337,7 +340,7 @@
   --
 ::
 ++  poke-sync                                         ::
-  |=  hos/kiln-sync
+  |=  hos=kiln-sync
   ?:  (~(has by syn) hos)
     abet:(spam (render "already syncing" [sud her syd]:hos) ~)
   abet:abet:start-sync:(auto hos)
@@ -361,10 +364,10 @@
   ?:  =(0 ~(wyt by syn))
     [%leaf "no other syncs configured"]~
   %+  turn  ~(tap in ~(key by syn))
-  |=(a/kiln-sync (render "sync configured" [sud her syd]:a))
+  |=(a=kiln-sync (render "sync configured" [sud her syd]:a))
 ::
 ++  poke-unsync                                         ::
-  |=  hus/kiln-unsync
+  |=  hus=kiln-unsync
   ?.  (~(has by syn) hus)
     abet:(spam (render "not syncing" [sud her syd]:hus) ~)
   %*  .  abet:abet:stop:(auto hus)
@@ -381,13 +384,13 @@
   abet:(emit %pass /cancel %arvo %c [%drop a])
 ::
 ++  poke-info
-  |=  {mez/tape tor/(unit toro)}
+  |=  [mez=tape tor=(unit toro)]
   ?~  tor
     abet:(spam leaf+mez ~)
   abet:(emit:(spam leaf+mez ~) %pass /kiln %arvo %c [%info u.tor])
 ::
 ++  poke-rm
-  |=  a/path
+  |=  a=path
   =+  b=.^(arch %cy a)
   ?~  fil.b
     =+  ~[leaf+"No such file:" leaf+"{<a>}"]
@@ -395,19 +398,19 @@
   (poke-info "removed" `(fray a))
 ::
 ++  poke-label
-  |=  {syd/desk lab/@tas}
+  |=  [syd=desk lab=@tas]
   =+  pax=/(scot %p our)/[syd]/[lab]
   (poke-info "labeled {(spud pax)}" `[syd %| lab])
 ::
 ++  poke-schedule
-  |=  {where/path tym/@da eve/@t}
+  |=  [where=path tym=@da eve=@t]
   =.  where  (welp where /sched)
   %+  poke-info  "scheduled"
   =+  old=;;((map @da cord) (fall (file where) ~))
   `(foal where %sched !>((~(put by old) tym eve)))
 ::
 ++  poke-permission
-  |=  {syd/desk pax/path pub/?}
+  |=  [syd=desk pax=path pub=?]
   =<  abet
   %-  emit
   =/  =rite  [%r ~ ?:(pub %black %white) ~]
@@ -447,7 +450,7 @@
   abet:(emit %pass /kiln %arvo %g %sear ship)
 ::
 ++  done
-  |=  {way/wire saw/(unit error:ames)}
+  |=  [way=wire saw=(unit error:ames)]
   ~?  ?=(^ saw)  [%kiln-nack u.saw]
   abet
 ::
@@ -481,24 +484,24 @@
              ?>(?=(%mere +<.sign-arvo) +>.sign-arvo)
     ==
   ==
-++  take  |=(way/wire ?>(?=({@ ~} way) (work i.way))) ::  general handler
+++  take  |=(way=wire ?>(?=([@ ~] way) (work i.way))) ::  general handler
 ++  take-mere                                         ::
-  |=  {way/wire are/(each (set path) (pair term tang))}
+  |=  [way=wire are=(each (set path) (pair term tang))]
   abet:abet:(mere:(take way) are)
 ::
 ++  take-coup-fancy                                   ::
-  |=  {way/wire saw/(unit tang)}
+  |=  [way=wire saw=(unit tang)]
   abet:abet:(coup-fancy:(take way) saw)
 ::
 ++  take-coup-spam                                    ::
-  |=  {way/wire saw/(unit tang)}
+  |=  [way=wire saw=(unit tang)]
   ~?  ?=(^ saw)  [%kiln-spam-lame u.saw]
   abet
 ::
 ++  take-mere-sync                                    ::
-  |=  {way/wire mes/(each (set path) (pair term tang))}
-  ?>  ?=({@ @ @ *} way)
-  =/  hos/kiln-sync
+  |=  [way=wire mes=(each (set path) (pair term tang))]
+  ?>  ?=([@ @ @ *] way)
+  =/  hos=kiln-sync
       :*  syd=(slav %tas i.way)
           her=(slav %p i.t.way)
           sud=(slav %tas i.t.t.way)
@@ -508,9 +511,9 @@
   abet:abet:(mere:(auto hos) mes)
 ::
 ++  take-writ-find-ship                               ::
-  |=  {way/wire rot/riot}
-  ?>  ?=({@ @ @ *} way)
-  =/  hos/kiln-sync
+  |=  [way=wire rot=riot]
+  ?>  ?=([@ @ @ *] way)
+  =/  hos=kiln-sync
       :*  syd=(slav %tas i.way)
           her=(slav %p i.t.way)
           sud=(slav %tas i.t.t.way)
@@ -520,9 +523,9 @@
   abet:abet:(take-find-ship:(auto hos) rot)
 ::
 ++  take-writ-sync                                    ::
-  |=  {way/wire rot/riot}
-  ?>  ?=({@ @ @ *} way)
-  =/  hos/kiln-sync
+  |=  [way=wire rot=riot]
+  ?>  ?=([@ @ @ *] way)
+  =/  hos=kiln-sync
       :*  syd=(slav %tas i.way)
           her=(slav %p i.t.way)
           sud=(slav %tas i.t.t.way)
@@ -546,7 +549,7 @@
 ::
 ::
 ++  spam
-  |=  mes/(list tank)
+  |=  mes=(list tank)
   ((slog mes) ..spam)
 ::
 ++  auto
@@ -557,7 +560,7 @@
     ..auto(syn (~(put by syn) [syd her sud] let))
   ::
   ++  blab
-    |=  new/(list card:agent:gall)
+    |=  new=(list card:agent:gall)
     ^+  +>
     +>.$(moz (welp new moz))
   ::
@@ -598,7 +601,7 @@
           (render "on sync" sud her syd)
         ~
       start-sync
-    =.  let  ?.  ?=($w p.p.u.rot)  let  ud:;;(cass:clay q.q.r.u.rot)
+    =.  let  ?.  ?=(%w p.p.u.rot)  let  ud:;;(cass:clay q.q.r.u.rot)
     =/  =wire  /kiln/sync/merg/[syd]/(scot %p her)/[sud]
     ::  germ: merge mode for sync merges
     ::
@@ -648,7 +651,7 @@
             q.p.mes
         ==
       ::
-          $no-ali-disc
+          %no-ali-disc
         :~  (render "sync activated" sud her syd)
             leaf+"note: blank desk {<sud>} on {<her>}"
         ==
@@ -658,7 +661,7 @@
   --
 ::
 ++  work                                              ::  state machine
-  |=  syd/desk
+  |=  syd=desk
   =/  ,per-desk
       %+  ~(gut by rem)  syd
       =+  *per-desk
@@ -668,7 +671,7 @@
     ..work(rem (~(put by rem) syd auto gem her sud cas))
   ::
   ++  blab
-    |=  new/(list card:agent:gall)
+    |=  new=(list card:agent:gall)
     ^+  +>
     +>.$(moz (welp new moz))
   ::
@@ -685,7 +688,7 @@
     (blab [%pass /kiln/[syd] %arvo %c [%merg syd her sud cas gem]] ~)
   ::
   ++  fancy-merge                                     ::  send to self
-    |=  {syd/desk her/@p sud/desk gem/?($auto germ)}
+    |=  [syd=desk her=@p sud=desk gem=?(%auto germ)]
     ^+  +>
     =/  =cage  [%kiln-merge !>([syd her sud cas gem])]
     %-  blab  :_  ~
@@ -694,9 +697,9 @@
   ++  spam  ::|=(tang ((slog +<) ..spam))
             |*(* +>(..work (^spam +<)))
   ++  merge
-    |=  {her/@p sud/@tas cas/case gim/?($auto germ)}
+    |=  [her=@p sud=@tas cas=case gim=?(%auto germ)]
     ^+  +>
-    ?.  ?=($auto gim)
+    ?.  ?=(%auto gim)
       perform(auto |, gem gim, her her, cas cas, sud sud)
     ?:  =(0 ud:.^(cass:clay %cw /(scot %p our)/[syd]/(scot %da now)))
       =>  $(gim %init)
@@ -705,7 +708,7 @@
     .(auto &)
   ::
   ++  coup-fancy
-    |=  saw/(unit tang)
+    |=  saw=(unit tang)
     ?~  saw
       +>
     =+  :-  "failed to set up conflict resolution scratch space"
@@ -713,7 +716,7 @@
     lose:(spam leaf+-< leaf+-> u.saw)
   ::
   ++  mere
-    |=  are/(each (set path) (pair term tang))
+    |=  are=(each (set path) (pair term tang))
     ^+  +>
     ?:  =(%meld gem)
       ?:  ?=(%& -.are)
@@ -786,27 +789,27 @@
     ?+    gem
       (spam leaf+"strange auto" >gem< ~)
     ::
-        $init
+        %init
       =+  :-  "auto merge failed on strategy %init"
           "I'm out of ideas"
       lose:(spam leaf+-< leaf+-> [>p.p.are< q.p.are])
     ::
-        $fine
-      ?.  ?=($bad-fine-merge p.p.are)
+        %fine
+      ?.  ?=(%bad-fine-merge p.p.are)
         =+  "auto merge failed on strategy %fine"
         lose:(spam leaf+- >p.p.are< q.p.are)
       =>  (spam leaf+"%fine merge failed, trying %meet" ~)
       perform(gem %meet)
     ::
-        $meet
-      ?.  ?=($meet-conflict p.p.are)
+        %meet
+      ?.  ?=(%meet-conflict p.p.are)
         =+  "auto merge failed on strategy %meet"
         lose:(spam leaf+- >p.p.are< q.p.are)
       =>  (spam leaf+"%meet merge failed, trying %mate" ~)
       perform(gem %mate)
     ::
-        $mate
-      ?.  ?=($mate-conflict p.p.are)
+        %mate
+      ?.  ?=(%mate-conflict p.p.are)
         =+  "auto merge failed on strategy %mate"
         lose:(spam leaf+- >p.p.are< q.p.are)
       =>  .(gem %meld)
@@ -824,11 +827,11 @@
     ==
   ::
   ++  tape-to-tanks
-    |=  a/tape  ^-  (list tank)
-    (scan a (more (just '\0a') (cook |=(a/tape leaf+a) (star prn))))
+    |=  a=tape  ^-  (list tank)
+    (scan a (more (just '\0a') (cook |=(a=tape leaf+a) (star prn))))
   ::
   ++  tanks-if-any
-    |=  {a/tape b/(list path) c/tape}  ^-  (list tank)
+    |=  [a=tape b=(list path) c=tape]  ^-  (list tank)
     ?:  =(~ b)  ~
     (welp (tape-to-tanks "\0a{c}{a}") >b< ~)
   --

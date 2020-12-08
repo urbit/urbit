@@ -236,16 +236,20 @@
 ::  +login-page: internal page to login to an Urbit
 ::
 ++  login-page
-  |=  [redirect-url=(unit @t) our=@p]
+  |=  [redirect-url=(unit @t) our=@p failed=?]
   ^-  octs
   =+  redirect-str=?~(redirect-url "" (trip u.redirect-url))
   %-  as-octs:mimes:html
   %-  crip
   %-  en-xml:html
+  =/  favicon  %+
+    weld  "<svg width='10' height='10' viewBox='0 0 10 10' xmlns='http://www.w3.org/2000/svg'>"
+          "<circle r='3.09' cx='5' cy='5' /></svg>"
   ;html
     ;head
       ;meta(charset "utf-8");
       ;meta(name "viewport", content "width=device-width, initial-scale=1, shrink-to-fit=no");
+      ;link(rel "icon", type "image/svg+xml", href (weld "data:image/svg+xml;utf8," favicon));
       ;title:"OS1"
       ;style:'''
              @import url("https://rsms.me/inter/inter.css");
@@ -254,174 +258,159 @@
                  src: url("https://storage.googleapis.com/media.urbit.org/fonts/scp-regular.woff");
                  font-weight: 400;
              }
-             html, body {
+             :root {
+               --red05: rgba(255,65,54,0.05);
+               --red100: rgba(255,65,54,1);
+               --blue05: rgba(33,157,255,0.05);
+               --blue30: rgba(33,157,255,0.3);
+               --blue100: rgba(33,157,255,1);
+               --black05: rgba(0,0,0,0.05);
+               --black20: rgba(0,0,0,0.2);
+               --black60: rgba(0,0,0,0.6);
+               --white: rgba(255,255,255,1);
+             }
+             html {
                font-family: Inter, sans-serif;
                height: 100%;
-               margin: 0 !important;
+               margin: 0;
                width: 100%;
-               background: #fff;
-               color: #000;
+               background: var(--white);
+               color: var(--black100);
                -webkit-font-smoothing: antialiased;
                line-height: 1.5;
-               font-size: 12pt;
+               font-size: 12px;
+               display: flex;
+               flex-flow: row nowrap;
+               justify-content: center;
              }
-             a, a:visited {
-               color: #000;
-               text-decoration: none;
-               font-size: 0.875rem;
+             body {
+               display: flex;
+               flex-flow: column nowrap;
+               justify-content: center;
+               max-width: 300px;
+               padding: 1rem;
+               width: 100%;
              }
-             p {
-               margin-block-start: 0;
-               margin-block-end: 0;
-               font-size: 0.875rem;
+             body > *,
+             form > input {
+               width: 100%;
+             }
+             form {
+               display: flex;
+               flex-flow: column;
+               align-items: flex-start;
              }
              input {
-               width: 100%;
-               padding: 0.75rem;
-               border: 1px solid #e6e6e6;
-               margin-top: 0.25rem;
-               margin-bottom: 1rem;
-               font-size: 0.875rem;
+               background: transparent;
+               border: 1px solid var(--black20);
+               padding: 8px;
+               border-radius: 4px;
+               font-size: inherit;
+               color: var(--black);
+               box-shadow: none;
+             }
+             input:disabled {
+               background: var(--black05);
+               color: var(--black60);
              }
              input:focus {
-               outline: 0;
-               border: 1px solid #000;
+               outline: none;
+               border-color: var(--blue30);
              }
-             button {
-               -webkit-appearance: none;
-               padding: 0.75rem;
-               background-color: #eee;
-               border: 1px solid #d1d2d3;
-               color: #666;
-               font-size: 0.875rem;
-               border-radius: 0;
+             input:invalid:not(:focus) {
+               background: var(--red05);
+               border-color: var(--red100);
+               outline: none;
+               color: var(--red100);
              }
-             footer {
-               position: absolute;
-               bottom: 0;
+             button[type=submit] {
+               margin-top: 16px;
+               padding: 8px 16px;
+               border-radius: 4px;
+               background: var(--blue100);
+               color: var(--white);
+               border: 1px solid var(--blue100);
+             }
+             input:invalid ~ button[type=submit] {
+               border-color: currentColor;
+               background: var(--blue05);
+               color: var(--blue30);
+               pointer-events: none;
+             }
+             span.failed {
+               display: flex;
+               flex-flow: row nowrap;
+               height: 16px;
+               align-items: center;
+               margin-top: 6px;
+               color: var(--red100);
+             }
+             span.failed svg {
+               height: 12px;
+              margin-right: 6px;
+             }
+             span.failed circle,
+             span.failed line {
+               fill: transparent;
+               stroke: currentColor
              }
              .mono {
-               font-family: "Source Code Pro", monospace;
-             }
-             .gray2 {
-               color: #7f7f7f;
-             }
-             .f9 {
-               font-size: 0.75rem;
-             }
-             .relative {
-               position: relative;
-             }
-             .absolute {
-               position: absolute;
-             }
-             .w-100 {
-               width: 100%;
-             }
-             .tr {
-               text-align: right;
-             }
-             .pb2 {
-               padding-bottom: 0.5rem;
-             }
-             .pr1 {
-               padding-right: 0.25rem;
-             }
-             .pr2 {
-               padding-right: .5rem;
-             }
-             .dn {
-               display: none;
-             }
-             #main {
-               width: 100%;
-               height: 100%;
-             }
-             #inner {
-               position: fixed;
-               top: 50%;
-               left: 50%;
-               transform: translate(-50%, -50%);
+               font-family: 'Source Code Pro', monospace;
              }
              @media all and (prefers-color-scheme: dark) {
-               html, body {
-                 background-color: #333;
-                 color: #fff;
-               }
-               a, a:visited {
-                 color: #fff;
-               }
-               input {
-                 background: #333;
-                 color: #fff;
-                 border: 1px solid #7f7f7f;
-               }
-               input:focus {
-                 border: 1px solid #fff;
-               }
-             }
-             @media all and (min-width: 34.375rem) {
-               .tc-ns {
-                 text-align: center;
-               }
-               .pr0-ns {
-                 padding-right: 0;
-               }
-               .dib-ns {
-                 display: inline-block;
+               :root {
+                 --white: rgb(51, 51, 51);
+                 --black100: rgba(255,255,255,1);
+                 --black05: rgba(255,255,255,0.05);
+                 --black20: rgba(255,255,255,0.2);
                }
              }
              '''
     ==
     ;body
-      ;div#main
-        ;div#inner
-          ;p:"Urbit ID"
-          ;input(value "{(scow %p our)}", disabled "true", class "mono");
-          ;p:"Access Key"
-          ;p.f9.gray2
-            ; Get key from Bridge, or
-            ;span.mono.pr1:"+code"
-            ; in dojo
-          ==
-          ;form(action "/~/login", method "post", enctype "application/x-www-form-urlencoded")
-            ;input
-              =type  "password"
-              =name  "password"
-              =placeholder  "sampel-ticlyt-migfun-falmel"
-              =class  "mono"
-              =autofocus  "true";
-            ;input(type "hidden", name "redirect", value redirect-str);
-            ;button(type "submit"):"Continue"
-          ==
-        ==
-        ;footer.absolute.w-100
-          ;div.relative.w-100.tr.tc-ns
-            ;p.pr2.pr0-ns.pb2
-              ;a(href "https://bridge.urbit.org", target "_blank")
-                ;span.dn.dib-ns.pr1:"Open"
-                ; Bridge ↗
-              ==
-              ;a
-                =href  "https://urbit.org/using/install/#id"
-                =style  "margin-left: 8px; color: #2aa779;"
-                =target  "_blank"
-                ; Purchase
-                ;span.dn.dib-ns.pr1:"an Urbit ID"
-                ; ↗
-              ==
+      ;p:"Urbit ID"
+      ;input(value "{(scow %p our)}", disabled "true", class "mono");
+      ;p:"Access Key"
+      ;form(action "/~/login", method "post", enctype "application/x-www-form-urlencoded")
+        ;input
+          =type  "password"
+          =name  "password"
+          =placeholder  "sampel-ticlyt-migfun-falmel"
+          =class  "mono"
+          =required  "true"
+          =minlength  "27"
+          =maxlength  "27"
+          =pattern  "((?:[a-z]\{6}-)\{3}(?:[a-z]\{6}))"
+          =autofocus  "true";
+        ;input(type "hidden", name "redirect", value redirect-str);
+        ;+  ?.  failed  ;span;
+          ;span.failed
+            ;svg(xmlns "http://www.w3.org/2000/svg", viewBox "0 0 12 12")
+              ;circle(cx "6", cy "6", r "5.5");
+              ;line(x1 "3.27", y1 "3.27", x2 "8.73", y2 "8.73");
+              ;line(x1 "8.73", y1 "3.27", x2 "3.27", y2 "8.73");
             ==
+            Key is incorrect
           ==
-        ==
+          ;button(type "submit"):"Continue"
       ==
     ==
+    ;script:'''
+            var failSpan = document.querySelector('.failed');
+            if (failSpan) {
+              document.querySelector("input[type=password]")
+                .addEventListener('keyup', function (event) {
+                  failSpan.style.display = 'none';
+                });
+            }
+            '''
   ==
 ::  +render-tang-to-marl: renders a tang and adds <br/> tags between each line
 ::
 ++  render-tang-to-marl
-  |=  {wid/@u tan/tang}
+  |=  [wid=@u tan=tang]
   ^-  marl
-  =/  raw=(list tape)  (zing (turn tan |=(a/tank (wash 0^wid a))))
+  =/  raw=(list tape)  (zing (turn tan |=(a=tank (wash 0^wid a))))
   ::
   |-  ^-  marl
   ?~  raw  ~
@@ -429,7 +418,7 @@
 ::  +render-tang-to-wall: renders tang as text lines
 ::
 ++  render-tang-to-wall
-  |=  {wid/@u tan/tang}
+  |=  [wid=@u tan=tang]
   ^-  wall
   (zing (turn tan |=(a=tank (wash 0^wid a))))
 ::  +wall-to-octs: text to binary output
@@ -644,7 +633,7 @@
     ?-    -.action
         %gen
       =/  bek=beak  [our desk.generator.action da+now]
-      =/  sup=spur  (flop path.generator.action)
+      =/  sup=spur  path.generator.action
       =/  ski       (scry [%141 %noun] ~ %ca bek sup)
       =/  cag=cage  (need (need ski))
       ?>  =(%vase p.cag)
@@ -753,7 +742,7 @@
     ?-  -.mym
       %|  (error-response 500 "failed tube from {(trip mark)} to mime")
       %&  %+  return-static-data-on-duct  200
-          [(rsh 3 1 (spat p.p.mym)) q.p.mym]
+          [(rsh 3 (spat p.p.mym)) q.p.mym]
     ==
     ::
     ++  find-tube
@@ -768,7 +757,7 @@
     ++  do-scry
       |=  [care=term =desk =path]
       ^-  (unit (unit cage))
-      (scry [%141 %noun] ~ care [our desk da+now] (flop path))
+      (scry [%141 %noun] ~ care [our desk da+now] path)
     ::
     ++  error-response
       |=  [status=@ud =tape]
@@ -862,28 +851,28 @@
         ::
         =+  request-line=(parse-request-line url.request)
         %^  return-static-data-on-duct  200  'text/html'
-        (login-page (get-header:http 'redirect' args.request-line) our)
+        (login-page (get-header:http 'redirect' args.request-line) our %.n)
       ::  if we are not a post, return an error
       ::
       ?.  =('POST' method.request)
-        (return-static-data-on-duct 400 'text/html' (login-page ~ our))
+        (return-static-data-on-duct 400 'text/html' (login-page ~ our %.n))
       ::  we are a post, and must process the body type as form data
       ::
       ?~  body.request
-        (return-static-data-on-duct 400 'text/html' (login-page ~ our))
+        (return-static-data-on-duct 400 'text/html' (login-page ~ our %.n))
       ::
       =/  parsed=(unit (list [key=@t value=@t]))
         (rush q.u.body.request yquy:de-purl:html)
       ?~  parsed
-        (return-static-data-on-duct 400 'text/html' (login-page ~ our))
+        (return-static-data-on-duct 400 'text/html' (login-page ~ our %.n))
       ::
       =/  redirect=(unit @t)  (get-header:http 'redirect' u.parsed)
       ?~  password=(get-header:http 'password' u.parsed)
-        (return-static-data-on-duct 400 'text/html' (login-page redirect our))
+        (return-static-data-on-duct 400 'text/html' (login-page redirect our %.n))
       ::  check that the password is correct
       ::
       ?.  =(u.password code)
-        (return-static-data-on-duct 400 'text/html' (login-page redirect our))
+        (return-static-data-on-duct 400 'text/html' (login-page redirect our %.y))
       ::  mint a unique session cookie
       ::
       =/  session=@uv
@@ -1031,7 +1020,7 @@
       =+  pax=/(scot %p our)/code/(scot %da now)/(scot %p our)
       =+  res=((sloy scry) [151 %noun] %j pax)
       ::
-      (rsh 3 1 (scot %p (@ (need (need res)))))
+      (rsh 3 (scot %p (@ (need (need res)))))
     ::  +session-cookie-string: compose session cookie
     ::
     ++  session-cookie-string
@@ -1650,7 +1639,7 @@
         =*  desc=tape  "from {(trip have)} to json"
         =/  tube=(unit tube:clay)
           =/  tuc=(unit (unit cage))
-            (scry [%141 %noun] ~ %cc [our %home da+now] (flop /[have]/json))
+            (scry [%141 %noun] ~ %cc [our %home da+now] /[have]/json)
           ?.  ?=([~ ~ *] tuc)  ~
           `!<(tube:clay q.u.u.tuc)
         ?~  tube
@@ -2110,7 +2099,8 @@
 =|  ax=axle
 ::  a vane is activated with current date, entropy, and a namespace function
 ::
-|=  [our=ship now=@da eny=@uvJ scry-gate=sley]
+|=  [our=ship now=@da eny=@uvJ rof=roof]
+=*  scry-gate  (en-sley rof)
 ::  allow jets to be registered within this core
 ::
 ~%  %http-server  ..is  ~
@@ -2266,7 +2256,7 @@
         ::
         %turf
       =*  domains  domains.server-state.ax
-      =/  mod/(set turf)
+      =/  mod=(set turf)
         ?:  ?=(%put action.http-rule.task)
           (~(put in domains) turf.http-rule.task)
         (~(del in domains) turf.http-rule.task)
@@ -2506,121 +2496,23 @@
 ::  +load: migrate old state to new state (called on vane reload)
 ::
 ++  load
-  =>  |%
-      +$  axle-2020-9-30
-        [date=%~2020.9.30 server-state=server-state-2020-9-30]
-      ::
-      +$  server-state-2020-9-30
-        $:  bindings=(list [=binding =duct =action])
-            =cors-registry
-            connections=(map duct outstanding-connection)
-            =authentication-state
-            channel-state=channel-state-2020-9-30
-            domains=(set turf)
-            =http-config
-            ports=[insecure=@ud secure=(unit @ud)]
-            outgoing-duct=duct
-        ==
-      ::
-      +$  channel-state-2020-9-30
-        $:  session=(map @t channel-2020-9-30)
-            duct-to-key=(map duct @t)
-        ==
-      ::
-      +$  channel-2020-9-30
-        $:  state=(each timer duct)
-            next-id=@ud
-            events=(qeu [id=@ud lines=wall])
-            subscriptions=(map wire [ship=@p app=term =path duc=duct])
-            heartbeat=(unit timer)
-        ==
-      ::
-      +$  axle-2020-5-29
-        [date=%~2020.5.29 server-state=server-state-2020-5-29]
-      ::
-      +$  server-state-2020-5-29
-        $:  bindings=(list [=binding =duct =action])
-            connections=(map duct outstanding-connection)
-            =authentication-state
-            channel-state=channel-state-2020-9-30
-            domains=(set turf)
-            =http-config
-            ports=[insecure=@ud secure=(unit @ud)]
-            outgoing-duct=duct
-        ==
-      +$  axle-2019-10-6
-        [date=%~2019.10.6 server-state=server-state-2019-10-6]
-      ::
-      +$  server-state-2019-10-6
-        $:  bindings=(list [=binding =duct =action])
-            connections=(map duct outstanding-connection)
-            authentication-state=sessions=(map @uv @da)
-            channel-state=channel-state-2020-9-30
-            domains=(set turf)
-            =http-config
-            ports=[insecure=@ud secure=(unit @ud)]
-            outgoing-duct=duct
-        ==
-      --
-  |=  old=$%(axle axle-2019-10-6 axle-2020-5-29 axle-2020-9-30)
+  |=  old=axle
   ^+  ..^$
-  ::
-  ~!  %loading
-  ?-  -.old
-    %~2020.10.18  ..^$(ax old)
-  ::
-      %~2020.9.30
-    %_  $
-      date.old  %~2020.10.18
-    ::
-      ::NOTE  soft-breaks the reconnect case, but is generally less disruptive
-      ::      than wiping channels entirely.
-        session.channel-state.server-state.old
-      %-  ~(run by session.channel-state.server-state.old)
-      |=  channel-2020-9-30
-      ^-  channel
-      =/  subscriptions
-        %-  ~(gas by *(map @ud [@p term path duct]))
-        %+  turn  ~(tap by subscriptions)
-        |=  [=wire rest=[@p term path duct]]
-        [(slav %ud (snag 3 wire)) rest]
-      :*  state  next-id  now
-          *(qeu [@ud @ud channel-event])
-          *(map @ud @ud)
-          subscriptions  heartbeat
-      ==
-    ==
-  ::
-      %~2020.5.29
-    %_  $
-      date.old          %~2020.9.30
-      server-state.old  [-.server-state.old *cors-registry +.server-state.old]
-    ==
-  ::
-      %~2019.10.6
-    =^  success  bindings.server-state.old
-      %+  insert-binding
-        [[~ /~/logout] [/e/load/logout]~ [%logout ~]]
-      bindings.server-state.old
-    ~?  !success  [%e %failed-to-setup-logout-endpoint]
-    =^  success  bindings.server-state.old
-      %+  insert-binding
-        [[~ /~/scry] [/e/load/scry]~ [%scry ~]]
-      bindings.server-state.old
-    ~?  !success  [%e %failed-to-setup-scry-endpoint]
-    %_  $
-      date.old  %~2020.5.29
-      sessions.authentication-state.server-state.old  ~
-    ==
-  ==
+  ..^$(ax old)
 ::  +stay: produce current state
 ::
 ++  stay  `axle`ax
 ::  +scry: request a path in the urbit namespace
 ::
 ++  scry
-  |=  [fur=(unit (set monk)) ren=@tas why=shop syd=desk lot=coin tyl=path]
+  |=  [lyc=gang cyr=term bem=beam]
   ^-  (unit (unit cage))
+  =*  ren  cyr
+  =*  why=shop  &/p.bem
+  =*  syd  q.bem
+  =/  lot=coin  $/r.bem
+  =*  tyl  s.bem
+  ::
   ?.  ?=(%& -.why)
     ~
   =*  who  p.why

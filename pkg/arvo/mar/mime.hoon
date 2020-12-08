@@ -4,7 +4,7 @@
 /?    310
 ::
 ^|
-|_  own/mime
+|_  own=mime
 ++  grow
   ^?
   |%
@@ -16,7 +16,7 @@
   |%
   +$  noun  mime                                  ::  clam from %noun
   ++  tape
-    |=(a/_"" [/application/x-urb-unknown (as-octt:mimes:html a)])
+    |=(a=_"" [/application/x-urb-unknown (as-octt:mimes:html a)])
   --
 ++  grad
   ^?
@@ -24,6 +24,6 @@
   ++  form  %mime
   ++  diff  |=(mime +<)
   ++  pact  |=(mime +<)
-  ++  join  |=({mime mime} `(unit mime)`~)
+  ++  join  |=([mime mime] `(unit mime)`~)
   --
 --

@@ -1,14 +1,10 @@
 ::  chat-hook [landscape]:
-::  mirror chat data from foreign to local based on read permissions
+::  mirror chat data from foreign to local based on read
 ::  allow sending chat messages to foreign paths based on write perms
 ::
-/-  *permission-store, inv=invite-store, *metadata-store,
-    *permission-hook, *group-store, *permission-group-hook,  ::TMP  for upgrade
-    hook=chat-hook,
-    view=chat-view,
-    *group
+/-  inv=invite-store, *metadata-store, *group-store, hook=chat-hook, view=chat-view, *group
 /+  default-agent, verb, dbug, store=chat-store, group-store, grpl=group,
-    resource
+    resource, *migrate
 ~%  %chat-hook-top  ..is  ~
 |%
 +$  card  card:agent:gall
@@ -51,7 +47,6 @@
 ::
 +$  poke
   $%  [%chat-action action:store]
-      [%permission-action permission-action]
       [%invite-action action:inv]
       [%chat-view-action action:view]
   ==
@@ -119,7 +114,6 @@
       =.  cards
         %+  weld  cards
         :~  watch-groups:cc
-            [%pass /permissions %agent [our.bol %permission-store] %leave ~]
         ==
       =^  new-cards=(list card)  old
         =|  crds=(list card)
@@ -223,15 +217,12 @@
       ^-  (list card)
       =/  host=ship  (slav %p (snag 0 old-chat))
       =/  new-chat  [%'~' old-chat]
-      =/  newp=permission  (unify-permissions old-chat)
       =/  old-group=path  [%chat old-chat]
       %-  zing
       :~  :~  (delete-group host (snoc old-group %read))
               (delete-group host (snoc old-group %write))
           ==
         ::
-          (create-group new-chat who.newp)
-          (hookup-group new-chat kind.newp)
           [(record-group new-chat new-chat)]~
           (recreate-chat host old-chat new-chat)
       ==
@@ -253,38 +244,6 @@
           [%add-synced host new-chat %.y]
       ==
     ::
-    ++  unify-permissions
-      |=  chat=path
-      ^-  permission
-      =/  read=(unit permission)   (get-permission chat %read)
-      =/  write=(unit permission)  (get-permission chat %write)
-      ?.  &(?=(^ read) ?=(^ write))
-        ~&  [%missing-permission chat read=?=(~ read) write=?=(~ write)]
-        [%white [(slav %p (snag 0 chat)) ~ ~]]
-      ?+  [kind.u.read kind.u.write]  !!
-        ::  village: exclusive to writers
-        ::
-        [%white %white]  [%white who.u.write]
-      ::
-        ::  channel: merge blacklists
-        ::
-        [%black %black]  [%black (~(uni in who.u.read) who.u.write)]
-      ::
-        ::  journal: exclusive to writers
-        ::
-        [%black %white]  [%white who.u.write]
-      ::
-        ::  mailbox: exclusive to readers
-        ::
-        [%white %black]  [%white who.u.read]
-      ==
-    ::
-    ++  get-permission
-      |=  [chat=path what=?(%read %write)]
-      %^  scry:cc  (unit permission)
-        %permission-store
-      [%permission %chat (snoc chat what)]
-    ::
     ++  make-poke
       |=  [app=term =mark =vase]
       ^-  card
@@ -293,19 +252,10 @@
     ++  delete-group
       |=  [host=ship group=path]
       ^-  card
-      ::  if we host the group, delete it directly
-      ::
-      ?:  =(our.bol host)
-        %^  make-poke  %group-store
-          %group-action
-        !>  ^-  action:group-store
-        [%remove-group (de-path:resource group) ~]
-      ::  else, just delete the sync in the hook
-      ::
-      %^  make-poke  %permission-hook
-        %permission-hook-action
-      !>  ^-  permission-hook-action
-      [%remove group]
+      %^  make-poke  %group-store
+        %group-action
+      !>  ^-  action:group-store
+      [%remove-group (de-path:resource group) ~]
     ::
     ++  create-group
       |=  [group=path who=(set ship)]
@@ -321,23 +271,6 @@
             %group-action
           !>  ^-  action:group-store
           [%add-members rid who]
-      ==
-    ::
-    ++  hookup-group
-      |=  [group=path =kind]
-      ^-  (list card)
-      :*  %^  make-poke  %permission-group-hook
-            %permission-group-hook-action
-          !>  ^-  permission-group-hook-action
-          [%associate group [group^kind ~ ~]]
-        ::
-          =/  =ship  (slav %p (snag 1 group))
-          ?.  =(our.bol ship)  ~
-          :_  ~
-          %^  make-poke  %permission-hook
-            %permission-hook-action
-          !>  ^-  permission-hook-action
-          [%add-owned group group]
       ==
     ::
     ++  record-group
@@ -369,6 +302,10 @@
       ::
           %chat-hook-action
         (poke-chat-hook-action:cc !<(action:hook vase))
+      ::
+          %import
+        ?>  (team:title our.bol src.bol)
+        (poke-import:cc q.vase)
       ==
     [cards this]
   ::
@@ -417,13 +354,31 @@
     ==
   ::
   ++  on-leave  on-leave:def
-  ++  on-peek   
-    |=   =path
-    ^-   (unit (unit cage))
-    ?.  =(/x/synced path)
-      (on-peek:def path)
-    ``noun+!>(~(key by synced))
-  ++  on-arvo   on-arvo:def
+  ::
+  ++  on-peek
+    |=  =path
+    ^-  (unit (unit cage))
+    ?+  path  (on-peek:def path)
+        [%x %export ~]
+      ``noun+!>(state)
+        [%x %synced ~]
+      ``noun+!>(~(key by synced))
+    ==
+  ::
+  ++  on-arvo
+    |=  [=wire =sign-arvo]
+    ^-  (quip card _this)
+    ?.  ?=([%try-rejoin @ @ *] wire)
+      (on-arvo:def wire sign-arvo)
+    =/  nack-count=@ud  (slav %ud i.t.wire)
+    =/  who=@p          (slav %p i.t.t.wire)
+    =/  pax             t.t.t.wire
+    ?>  ?=([%b %wake *] sign-arvo)
+    ~?  ?=(^ error.sign-arvo)
+      "behn errored in backoff timers, continuing anyway"
+    :_  this
+    [(try-rejoin:cc who pax +(nack-count))]~
+  ::
   ++  on-fail   on-fail:def
   --
 ::
@@ -563,7 +518,7 @@
       ::  correctly initialized, no need to do cleanup
       ::
       ~
-    ?.  =((end 3 4 i.t.path) 'dm--')
+    ?.  =((end [3 4] i.t.path) 'dm--')
       ~
     :-  =-  [%pass /fixdm %agent [our.bol %chat-view] %poke %chat-view-action -]
         !>  ^-  action:view
@@ -681,6 +636,32 @@
         (pull-backlog-subscriptions u.ship path.act)
     ==
   ==
+::
+++  poke-import
+  |=  arc=*
+  ^-  (quip card _state)
+  =/  sty=state-10
+    :*  %10
+      (remake-map ;;((tree [path ship]) +<.arc))
+      ;;(? +>-.arc)
+      (remake-map ;;((tree [path ?]) +>+.arc))
+    ==
+  :_  sty
+  %+  turn  ~(tap by synced.sty)
+  |=  [=path =ship]
+  ^-  card
+  =/  watch-path=^path  [%mailbox path]
+  ?:  =(our.bol ship)
+    =/  store-wire=wire  [%store path]
+    [%pass store-wire %agent [our.bol %chat-store] %watch watch-path]
+  (try-rejoin ship watch-path 0)
+::
+++  try-rejoin
+  |=  [who=@p pax=path nack-count=@ud]
+  ^-  card
+  =/  =wire
+    [%try-rejoin (scot %ud nack-count) (scot %p who) pax]
+  [%pass wire %agent [who %chat-hook] %watch pax]
 ::
 ++  watch-synced
   |=  pax=path
@@ -835,11 +816,10 @@
 ++  kick
   |=  wir=wire
   ^-  (quip card _state)
-  ?:  =(wir /permissions)
-    :_  state
-    [%pass /permissions %agent [our.bol %permission-store] %watch /updates]~
-  ::
   ?+  wir  !!
+    [%try-rejoin @ @ *]
+      $(wir t.t.t.wir)
+  ::
     [%groups ~]  [~[watch-groups] state]
   ::
       [%store @ *]
@@ -914,6 +894,13 @@
       ?>  ?=(^ chat)
       (migrate-listen t.chat)
     [~ state]
+  ::
+      [%try-rejoin @ *]
+    =/  nack-count=@ud  (slav %ud i.t.wir)
+    =/  wakeup=@da
+      (add now.bol (mul ~s1 (bex (min 19 nack-count))))
+    :_  state
+    [%pass wir %arvo %b %wait wakeup]~
   ==
 ::
 ++  chat-poke
@@ -930,11 +917,6 @@
   |=  =action:inv
   ^-  card
   [%pass / %agent [our.bol %invite-store] %poke %invite-action !>(action)]
-::
-++  sec-to-perm
-  |=  [pax=path =kind]
-  ^-  permission-action
-  [%create pax kind *(set ship)]
 ::
 ++  chat-scry
   |=  pax=path

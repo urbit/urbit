@@ -1,5 +1,5 @@
-import React, { useMemo, useCallback } from "react";
-import { Box, Label, Icon, Text, Row, Col } from "@tlon/indigo-react";
+import React, { useMemo, useCallback, ChangeEvent, useState, SyntheticEvent, useEffect } from "react";
+import { Box, Label, Icon, Text, Row, Col, ErrorLabel } from "@tlon/indigo-react";
 import _ from "lodash";
 import ob from "urbit-ob";
 import { useField } from "formik";
@@ -10,6 +10,8 @@ import { Associations, Association } from "~/types/metadata-update";
 import { cite, deSig } from "~/logic/lib/util";
 import { Rolodex, Groups } from "~/types";
 import { HoverBox } from "./HoverBox";
+
+const INVALID_SHIP_ERR = "Invalid ship";
 
 interface InviteSearchProps {
   autoFocus?: boolean;
@@ -45,24 +47,66 @@ const Candidate = ({ title, detail, selected, onClick }) => (
 
 export function ShipSearch(props: InviteSearchProps) {
   const { id, label, caption } = props;
-  const [{ value }, { error }, { setValue, setTouched }] = useField<string[]>(
-    props.id
+  const [{}, meta, { setValue, setTouched, setError: _setError }] = useField<string[]>({
+    name: id,
+    multiple: true
+  });
+
+  const setError = _setError as unknown as (s: string | undefined) => void;
+
+  const { error, touched } = meta;
+
+  const [selected, setSelected] = useState([] as string[]);
+  const [inputShip, setInputShip] = useState(undefined as string | undefined);
+  const [inputTouched, setInputTouched] = useState(false);
+
+  const checkInput = useCallback((valid: boolean, ship: string | undefined) => {
+    if(valid) {
+      setInputShip(ship);
+      setError(error === INVALID_SHIP_ERR ? undefined : error);
+    } else {
+      setError(INVALID_SHIP_ERR);
+      setInputTouched(false);
+    }
+  }, [setError, error, setInputTouched, setInputShip]);
+
+  const onChange = useCallback(
+    (e: any) => {
+      let ship = `~${deSig(e.target.value) || ""}`;
+      if(ob.isValidPatp(ship)) {
+        checkInput(true, ship);
+      } else {
+        checkInput(ship.length !== 1, undefined) 
+      }
+    },
+    [checkInput]
   );
+
+  const onBlur = useCallback(() => {
+    setInputTouched(true);
+  }, [setInputTouched]);
 
   const onSelect = useCallback(
     (s: string) => {
       setTouched(true);
-      setValue([...value, s]);
+      checkInput(true, undefined);
+      s = `~${deSig(s)}`;
+      setSelected(v => _.uniq([...v, s]))
     },
-    [setValue, value]
+    [setTouched, checkInput, setSelected]
   );
 
   const onRemove = useCallback(
     (s: string) => {
-      setValue(value.filter((v) => v !== s));
+      setSelected(ships => ships.filter(ship => ship !== s))
     },
-    [setValue, value]
+    [setSelected]
   );
+
+  useEffect(() => {
+    const newValue = inputShip ? [...selected, inputShip] : selected;
+    setValue(newValue);
+  }, [inputShip, selected])
 
   const [peers, nicknames] = useMemo(() => {
     const peerSet = new Set<string>();
@@ -125,20 +169,22 @@ export function ShipSearch(props: InviteSearchProps) {
         isExact={(s) => {
           const ship = `~${deSig(s)}`;
           const result = ob.isValidPatp(ship);
-          return result ? deSig(s) : undefined;
+          return result ? deSig(s) ?? undefined : undefined;
         }}
         placeholder="Search for ships"
         candidates={peers}
         renderCandidate={renderCandidate}
-        disabled={props.maxLength ? value.length >= props.maxLength : false}
+        disabled={props.maxLength ? selected.length >= props.maxLength : false}
         search={(s: string, t: string) =>
           t.toLowerCase().startsWith(s.toLowerCase())
         }
         getKey={(s: string) => s}
         onSelect={onSelect}
+        onChange={onChange}
+        onBlur={onBlur}
       />
       <Row minHeight="34px" flexWrap="wrap">
-        {value.map((s) => (
+        {selected.map((s) => (
           <Row
             fontFamily="mono"
             alignItems="center"
@@ -161,6 +207,11 @@ export function ShipSearch(props: InviteSearchProps) {
           </Row>
         ))}
       </Row>
+      <ErrorLabel
+        mt="3"
+        hasError={error === INVALID_SHIP_ERR ? inputTouched : !!(touched && error)}>
+        {error}
+      </ErrorLabel>
     </Col>
   );
 }

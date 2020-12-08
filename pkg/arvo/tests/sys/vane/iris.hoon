@@ -16,7 +16,7 @@
     %-  http-client-call  :*
       http-client-gate
       now=~1111.1.1
-      scry=*sley
+      scry=*roof
       call-args=[duct=~[/initial-born-duct] ~ [%born ~]]
       expected-moves=~
     ==
@@ -33,7 +33,7 @@
     %-  http-client-call  :*
       http-client-gate
       now=(add ~1111.1.1 ~s1)
-      scry=*sley
+      scry=*roof
       ^=  call-args
         :*  duct=~[/http-get-request]  ~
             %request
@@ -57,7 +57,7 @@
     %-  http-client-call  :*
       http-client-gate
       now=(add ~1111.1.1 ~s2)
-      scry=*sley
+      scry=*roof
       ^=  call-args
         :+  duct=~[/initial-born-duct]  ~
         ^-  task:able:iris
@@ -112,7 +112,7 @@
     %-  http-client-call  :*
       http-client-gate
       now=~1111.1.1
-      scry=*sley
+      scry=*roof
       call-args=[duct=~[/initial-born-duct] ~ [%born ~]]
       expected-moves=~
     ==
@@ -129,7 +129,7 @@
     %-  http-client-call  :*
       http-client-gate
       now=(add ~1111.1.1 ~s1)
-      scry=*sley
+      scry=*roof
       ^=  call-args
         :*  duct=~[/http-get-request]  ~
             %request
@@ -153,7 +153,7 @@
     %-  http-client-call  :*
       http-client-gate
       now=(add ~1111.1.1 ~s2)
-      scry=*sley
+      scry=*roof
       ^=  call-args
         :+  duct=~[/initial-born-duct]  ~
         ^-  task:able:iris
@@ -190,7 +190,7 @@
     %-  http-client-call  :*
       http-client-gate
       now=(add ~1111.1.1 ~s3)
-      scry=*sley
+      scry=*roof
       ^=  call-args
         :+  duct=~[/initial-born-duct]  ~
         ^-  task:able:iris
@@ -223,7 +223,7 @@
     %-  http-client-call  :*
       http-client-gate
       now=(add ~1111.1.1 ~s4)
-      scry=*sley
+      scry=*roof
       ^=  call-args
         :+  duct=~[/initial-born-duct]  ~
         ^-  task:able:iris
@@ -269,7 +269,7 @@
     %-  http-client-call  :*
       http-client-gate
       now=~1111.1.1
-      scry=*sley
+      scry=*roof
       call-args=[duct=~[/initial-born-duct] ~ [%born ~]]
       expected-moves=~
     ==
@@ -286,7 +286,7 @@
     %-  http-client-call  :*
       http-client-gate
       now=(add ~1111.1.1 ~s1)
-      scry=*sley
+      scry=*roof
       ^=  call-args
         :*  duct=~[/http-get-request]  ~
             %request
@@ -310,7 +310,7 @@
     %-  http-client-call  :*
       http-client-gate
       now=(add ~1111.1.1 ~s2)
-      scry=*sley
+      scry=*roof
       ^=  call-args
         :+  duct=~[/initial-born-duct]  ~
         ^-  task:able:iris
@@ -347,7 +347,7 @@
     %-  http-client-call  :*
       http-client-gate
       now=(add ~1111.1.1 ~s3)
-      scry=*sley
+      scry=*roof
       ^=  call-args
         :*  duct=~[/http-get-request]  ~
             %cancel-request
@@ -375,7 +375,7 @@
     %-  http-client-call  :*
       http-client-gate
       now=~1111.1.1
-      scry=*sley
+      scry=*roof
       call-args=[duct=~[/initial-born-duct] ~ [%born ~]]
       expected-moves=~
     ==
@@ -392,7 +392,7 @@
     %-  http-client-call  :*
       http-client-gate
       now=(add ~1111.1.1 ~s1)
-      scry=*sley
+      scry=*roof
       ^=  call-args
         :*  duct=~[/http-get-request]  ~
             %request
@@ -416,7 +416,7 @@
     %-  http-client-call  :*
       http-client-gate
       now=(add ~1111.1.1 ~s2)
-      scry=*sley
+      scry=*roof
       ^=  call-args
         :+  duct=~[/initial-born-duct]  ~
         ^-  task:able:iris
@@ -448,7 +448,7 @@
     %-  http-client-call  :*
       http-client-gate
       now=~1111.1.1
-      scry=*sley
+      scry=*roof
       call-args=[duct=~[/initial-born-duct] ~ [%born ~]]
       expected-moves=~
     ==
@@ -465,7 +465,7 @@
     %-  http-client-call  :*
       http-client-gate
       now=(add ~1111.1.1 ~s1)
-      scry=*sley
+      scry=*roof
       ^=  call-args
         :*  duct=~[/http-get-request]  ~
             %request
@@ -488,7 +488,7 @@
     %-  http-client-call  :*
       http-client-gate
       now=(add ~1111.1.1 ~s2)
-      scry=*sley
+      scry=*roof
       ^=  call-args
         :+  duct=~[/secondary-born-duct]  ~
         ^-  task:able:iris
@@ -513,7 +513,7 @@
 ++  http-client-call
   |=  $:  http-client-gate=_http-client-gate
           now=@da
-          scry=sley
+          scry=roof
           call-args=[=duct type=* wrapped-task=(hobo task:able:iris)]
           expected-moves=(list move:http-client-gate)
       ==

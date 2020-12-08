@@ -4,7 +4,7 @@
 /?    310
 =,  mimes:html
 =,  html
-|_  own/manx
+|_  own=manx
 ::
 ++  grad  %mime
 ++  grow                                                ::  convert to

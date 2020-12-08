@@ -39,6 +39,8 @@ struct _cd_save {
 };
 
 #undef VERBOSE_DISK
+#undef DISK_TRACE_JAM
+#undef DISK_TRACE_CUE
 
 static void
 _disk_commit(u3_disk* log_u);
@@ -168,10 +170,22 @@ _disk_commit_start(struct _cd_save* req_u)
 static c3_w
 _disk_serialize_v0(u3_fact* tac_u, c3_y** dat_y)
 {
-  u3_atom mat = u3ke_jam(u3nc(tac_u->bug_l, u3k(tac_u->job)));
-  c3_w  len_w = u3r_met(3, mat);
+  u3_noun val = u3nc(tac_u->bug_l, u3k(tac_u->job));
+  u3_atom mat;
+  c3_w  len_w;
+
+#ifdef DISK_TRACE_JAM
+  u3t_event_trace("king disk jam", 'B');
+#endif
+
+  mat    = u3ke_jam(val);
+  len_w  = u3r_met(3, mat);
   *dat_y = c3_malloc(len_w);
   u3r_bytes(0, len_w, *dat_y, mat);
+
+#ifdef DISK_TRACE_JAM
+  u3t_event_trace("king disk jam", 'E');
+#endif
 
   u3z(mat);
 
@@ -368,19 +382,27 @@ _disk_read_one_cb(void* ptr_v, c3_d eve_d, size_t val_i, void* val_p)
   u3_fact* tac_u;
 
   {
-    //  XX u3m_soft?
-    //
-    u3_noun dat = u3ke_cue(u3i_bytes(val_i, val_p));
-    u3_noun mug, job;
+    u3_noun val, mug, job;
     c3_l  bug_l;
 
+#ifdef DISK_TRACE_CUE
+    u3t_event_trace("king disk cue", 'B');
+#endif
 
-    if (  (c3n == u3r_cell(dat, &mug, &job))
+    //  XX u3m_soft?
+    //
+    val = u3ke_cue(u3i_bytes(val_i, val_p));
+
+#ifdef DISK_TRACE_CUE
+    u3t_event_trace("king disk cue", 'E');
+#endif
+
+    if (  (c3n == u3r_cell(val, &mug, &job))
        || (c3n == u3r_safe_word(mug, &bug_l)) ) // XX
     {
       //  failure here triggers cleanup in _disk_read_start_cb()
       //
-      u3z(dat);
+      u3z(val);
       return c3n;
     }
 
@@ -389,7 +411,7 @@ _disk_read_one_cb(void* ptr_v, c3_d eve_d, size_t val_i, void* val_p)
     tac_u = u3_fact_init(eve_d, 0, u3k(job));
     tac_u->bug_l = bug_l;
 
-    u3z(dat);
+    u3z(val);
   }
 
   if ( !red_u->ent_u ) {
@@ -611,6 +633,9 @@ u3_disk_exit(u3_disk* log_u)
 
   //  cancel write thread
   //
+  //    XX can deadlock when called from signal handler
+  //    XX revise SIGTSTP handling
+  //
   if ( c3y == log_u->ted_o ) {
     c3_i sas_i;
 
@@ -643,6 +668,10 @@ u3_disk_exit(u3_disk* log_u)
   u3_dire_free(log_u->com_u);
 
   c3_free(log_u);
+
+#if defined(DISK_TRACE_JAM) || defined(DISK_TRACE_CUE)
+  u3t_trace_close();
+#endif
 }
 
 /* u3_disk_info(): print status info.
@@ -692,7 +721,7 @@ u3_disk_init(c3_c* pax_c, u3_disk_cb cb_u)
   //
   {
     if ( 0 == (log_u->dir_u = u3_foil_folder(pax_c)) ) {
-      fprintf(stderr, "disk: failed to load pier at %s", pax_c);
+      fprintf(stderr, "disk: failed to load pier at %s\r\n", pax_c);
       c3_free(log_u);
       return 0;
     }
@@ -707,7 +736,7 @@ u3_disk_init(c3_c* pax_c, u3_disk_cb cb_u)
     strcat(urb_c, "/.urb");
 
     if ( 0 == (log_u->urb_u = u3_foil_folder(urb_c)) ) {
-      fprintf(stderr, "disk: failed to load /.urb in %s", pax_c);
+      fprintf(stderr, "disk: failed to load /.urb in %s\r\n", pax_c);
       c3_free(urb_c);
       c3_free(log_u);
       return 0;
@@ -740,7 +769,7 @@ u3_disk_init(c3_c* pax_c, u3_disk_cb cb_u)
     strcat(log_c, "/.urb/log");
 
     if ( 0 == (log_u->com_u = u3_foil_folder(log_c)) ) {
-      fprintf(stderr, "disk: failed to load /.urb/log in %s", pax_c);
+      fprintf(stderr, "disk: failed to load /.urb/log in %s\r\n", pax_c);
       c3_free(log_c);
       c3_free(log_u);
       return 0;
@@ -752,10 +781,14 @@ u3_disk_init(c3_c* pax_c, u3_disk_cb cb_u)
     //  "[..] on 64-bit there is no penalty for making this huge (say 1TB)."
     //
     {
-      const size_t siz_i = 1099511627776;
+      #if defined(U3_CPU_aarch64) && defined(U3_OS_linux)
+        const size_t siz_i = 64424509440;
+      #else
+        const size_t siz_i = 1099511627776;
+      #endif
 
       if ( 0 == (log_u->mdb_u = u3_lmdb_init(log_c, siz_i)) ) {
-        fprintf(stderr, "disk: failed to initialize database");
+        fprintf(stderr, "disk: failed to initialize database\r\n");
         c3_free(log_c);
         c3_free(log_u);
         return 0;
@@ -772,7 +805,7 @@ u3_disk_init(c3_c* pax_c, u3_disk_cb cb_u)
     c3_d fir_d;
 
     if ( c3n == u3_lmdb_gulf(log_u->mdb_u, &fir_d, &log_u->dun_d) ) {
-      fprintf(stderr, "disk: failed to load latest event from database");
+      fprintf(stderr, "disk: failed to load latest event from database\r\n");
       c3_free(log_u);
       return 0;
     }
@@ -781,6 +814,10 @@ u3_disk_init(c3_c* pax_c, u3_disk_cb cb_u)
   }
 
   log_u->liv_o = c3y;
+
+#if defined(DISK_TRACE_JAM) || defined(DISK_TRACE_CUE)
+  u3t_trace_open(pax_c);
+#endif
 
   return log_u;
 }

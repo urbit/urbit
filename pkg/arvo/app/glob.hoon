@@ -5,7 +5,7 @@
 /-  glob
 /+  default-agent, verb, dbug
 |%
-++  hash  0v5.67obv.15auf.c2rc7.jpcu2.iain3
+++  hash  0v6.cmrce.5ass7.5gfqi.7c8cg.mdo7n
 +$  state-0  [%0 hash=@uv glob=(unit (each glob:glob tid=@ta))]
 +$  all-states
   $%  state-0
@@ -94,11 +94,11 @@
       %-  ~(rep by dir)
       |=  [[file=@t ~] out=(unit @t)]
       ?^  out  out
-      ?.  ?&  =((end 3 6 file) 'index.')
-              !=('sj.' (end 3 3 (swp 3 file)))
+      ?.  ?&  =((end [3 6] file) 'index.')
+              !=('sj.' (end [3 3] (swp 3 file)))
           ==
         out
-      ``@t`(rsh 3 6 file)
+      ``@t`(rsh [3 6] file)
     =/  js-name
       (cat 3 'index.' bundle-hash)
     =/  map-name
@@ -183,7 +183,7 @@
   ^-  (quip card _this)
   ?:  ?=([%start ~] wire)
     =/  new-tid=@ta  (cat 3 'glob--' (scot %uv eny.bowl))
-    =/  args  [~ `new-tid %glob !>([hash.state ~])]
+    =/  args  [~ `new-tid %glob !>([~ hash.state])]
     =/  action  !>([%unserve-dir serve-path])
     :_  this(glob.state `[%| new-tid])
     :~  (poke-file-server our.bowl %file-server-action action)

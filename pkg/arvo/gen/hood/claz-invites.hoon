@@ -28,7 +28,7 @@
 %+  turn  (gulf min-child max-child)
 |=  child=@ud
 =/  who=ship  (cat 4 star child)
-=/  ticket=@q  (end 3 8 (shas who eny))
+=/  ticket=@q  (end [3 8] (shas who eny))
 =/  owner=address
   =<  addr.keys
   ::NOTE  ~zod because invite wallet convention

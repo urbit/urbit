@@ -16,14 +16,14 @@
 ^-  (unit [=ship =udiff:point:able:jael])
 =*  our  p.bec
 =/  ran  (clan:title our)
-?:  ?=({?($earl $pawn)} ran)
+?:  ?=([?(%earl %pawn)] ran)
   %-  %-  slog  :_  ~
-      leaf+"can't create a moon from a {?:(?=($earl ran) "moon" "comet")}"
+      leaf+"can't create a moon from a {?:(?=(%earl ran) "moon" "comet")}"
   ~
 =/  mon=ship
   ?^  arg
     mon.arg
-  (add our (lsh 5 1 (end 5 1 (shaz eny))))
+  (add our (lsh 5 (end 5 (shaz eny))))
 =/  seg=ship  (sein:title our now mon)
 ?.  =(our seg)
   %-  %-  slog  :_  ~

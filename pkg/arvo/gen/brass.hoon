@@ -8,8 +8,9 @@
 ::::
   !:
 :-  %say
-|=  $:  {now/@da * bec/beak}
-        {~ try/_| ~}
+|=  $:  [now=@da eny=@uvJ bec=beak]
+        arg=$@(~ [top=path ~])
+        ~
     ==
 ::
 ::  we're creating an event series E whose lifecycle can be computed
@@ -153,7 +154,9 @@
 ::
 ::  sys: root path to boot system, `/~me/[desk]/now/sys`
 ::
-=+  sys=`path`/(scot %p p.bec)/[q.bec]/(scot %da now)/sys
+=/  sys=path
+  ?^  arg  top.arg
+  /(scot %p p.bec)/[q.bec]/(scot %da now)/sys
 ::
 ::  compiler-source: hoon source file producing compiler, `sys/hoon`
 ::
@@ -186,6 +189,13 @@
     ==
 ::  a pill is a 3-tuple of event-lists: [boot kernel userspace]
 ::
+=/  bas=path  (flop (tail (flop sys)))
 :+  boot-ova
-  (module-ova:pill sys)
-[(file-ovum:pill (en-beam:format bec /)) ~]
+  :~  :~  //arvo
+          %what
+          [/sys/hoon hoon/compiler-source]
+          [/sys/arvo hoon/arvo-source]
+      ==
+      (file-ovum2:pill bas)
+  ==
+[(file-ovum:pill bas) ~]

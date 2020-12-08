@@ -5,7 +5,7 @@
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m
-=+  !<([pax=path ~] arg)
+=+  !<([~ pax=path] arg)
 ?^  bem=(de-beam:format pax)
   (build-file:strandio u.bem)
 (strand-fail:strand %path-not-beam >pax< ~)

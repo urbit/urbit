@@ -18,7 +18,6 @@ import Urbit.Prelude
 
 import Network.Socket (Socket)
 import Prelude        (read)
-import Urbit.Arvo     (Belt)
 import Urbit.King.App (HasPierPath(..))
 
 import qualified Network.HTTP.Types             as H
@@ -32,7 +31,7 @@ import qualified Urbit.Vere.Term.API            as Term
 
 -- Types -----------------------------------------------------------------------
 
-type TermConn = NounServ.Conn Belt [Term.Ev]
+type TermConn = NounServ.Conn Term.ClientTake [Term.Ev]
 
 type TermConnAPI = TVar (Maybe (TermConn -> STM ()))
 

@@ -34,11 +34,11 @@
   ::                                                  ::  ++apex:en-json:html
   ++  apex
     =,  en-json:html
-    |=  {val/json sor/$-(^ ?) rez/tape}
+    |=  [val=json sor=$-(^ ?) rez=tape]
     ^-  tape
     ?~  val  (weld "null" rez)
     ?-    -.val
-        $a
+        %a
       :-  '['
       =.  rez  [']' rez]
       !.
@@ -47,9 +47,9 @@
       ?~  t.p.val  ^$(val i.p.val)
       ^$(val i.p.val, rez [',' $(p.val t.p.val)])
    ::
-        $b  (weld ?:(p.val "true" "false") rez)
-        $n  (weld (trip p.val) rez)
-        $s
+        %b  (weld ?:(p.val "true" "false") rez)
+        %n  (weld (trip p.val) rez)
+        %s
       :-  '"'
       =.  rez  ['"' rez]
       =+  viz=(trip p.val)
@@ -57,11 +57,11 @@
       |-  ^-  tape
       ?~  viz  rez
       =+  hed=(jesc i.viz)
-      ?:  ?=({@ $~} hed)
+      ?:  ?=([@ ~] hed)
         [i.hed $(viz t.viz)]
       (weld hed $(viz t.viz))
    ::
-        $o
+        %o
       :-  '{'
       =.  rez  ['}' rez]
       =/  viz

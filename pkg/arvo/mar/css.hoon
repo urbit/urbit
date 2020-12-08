@@ -4,7 +4,7 @@
 /?    310
 =,  eyre
 =,  mimes:html
-|_  mud/@t
+|_  mud=@t
 ++  grow                                                ::  convert to
   |%  ++  mime  [/text/css (as-octs mud)]               ::  convert to %mime
       ++  elem  ;style                                  ::  convert to %hymn
@@ -14,7 +14,7 @@
   --
 ++  grab
   |%                                                    ::  convert from
-  ++  mime  |=({p/mite q/octs} (@t q.q))
+  ++  mime  |=([p=mite q=octs] (@t q.q))
   ++  noun  @t                                         ::  clam from %noun
   --
 ++  grad  %mime

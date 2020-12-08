@@ -83,7 +83,7 @@ export default function Inbox(props: {
   const onScroll = useCallback((e) => {
     let container = e.target;
     const { scrollHeight, scrollTop, clientHeight } = container;
-    if((scrollHeight - scrollTop - clientHeight) < 20) {
+    if((scrollHeight - scrollTop) < 1.5 * clientHeight) {
       api.hark.getMore(props.showArchive);
     }
   }, [props.showArchive]);
@@ -94,20 +94,19 @@ export default function Inbox(props: {
       name: invite.resource.name
     };
 
-    let resourcePath = resourceAsPath(invite.resource);
-    if(app === 'chat') {
-      resourcePath = resourcePath.slice(5);
-    }
-
-    let path = `/home/resource/${app}${resourcePath}`;
+    const resourcePath = resourceAsPath(invite.resource);
     if(app === 'contacts') {
       await api.contacts.join(resource);
-      path = resourceAsPath(invite.resource);
-      await waiter(p => path in p.associations?.contacts);
+      await waiter(p => resourcePath in p.associations?.contacts);
+      await api.invite.accept(app, uid);
+      history.push(`/~landscape${resourcePath}`);
+    } else if ( app === 'chat') {
+      await api.invite.accept(app, uid);
+      history.push(`/~landscape/home/resource/chat${resourcePath.slice(5)}`);
+    } else if ( app === 'graph') {
+      await api.invite.accept(app, uid);
+      history.push(`/~graph/join${resourcePath}`);
     }
-    await api.invite.accept(app, uid);
-
-    history.push(`/~landscape${path}`);
   };
 
   const inviteItems = (invites, api) => {
@@ -130,7 +129,7 @@ export default function Inbox(props: {
   };
 
   return (
-    <Col onScroll={onScroll} overflowY="auto" flexGrow={1} minHeight='0' flexShrink={0}>
+    <Col height="100%" overflowY="auto" onScroll={onScroll} >
       {inviteItems(invites, api)}
       {newNotifications && (
         <DaySection
@@ -198,7 +197,8 @@ function DaySection({
   const calendar = latest
     ? MOMENT_CALENDAR_DATE
     : { ...MOMENT_CALENDAR_DATE, sameDay: "[Earlier Today]" };
-  if (timeboxes.length === 0) {
+  const lent = timeboxes.map(([,nots]) => nots.length).reduce(f.add, 0);
+  if (lent === 0 || timeboxes.length === 0) {
     return null;
   }
 

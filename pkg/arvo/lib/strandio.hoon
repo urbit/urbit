@@ -219,6 +219,25 @@
   ;<  ~  bind:m  (send-raw-card card)
   (take-poke-ack /poke)
 ::
+++  raw-poke
+  |=  [=dock =cage]
+  =/  m  (strand ,~)
+  ^-  form:m
+  =/  =card:agent:gall  [%pass /poke %agent dock %poke cage]
+  ;<  ~  bind:m  (send-raw-card card)
+  =/  m  (strand ,~)
+  ^-  form:m
+  |=  tin=strand-input:strand
+  ?+  in.tin  `[%skip ~]
+      ~
+    `[%wait ~]
+  ::
+      [~ %agent * %poke-ack *]
+    ?.  =(/poke wire.u.in.tin)
+      `[%skip ~]
+    `[%done ~]
+  ==
+::
 ++  poke-our
   |=  [=term =cage]
   =/  m  (strand ,~)
@@ -424,7 +443,7 @@
   =/  m  (strand ,vase)
   ^-  form:m
   ;<  =riot:clay  bind:m
-    (warp ship desk ~ %sing %a case (flop spur))
+    (warp ship desk ~ %sing %a case spur)
   ?~  riot
     (strand-fail %build-file >arg< ~)
   ?>  =(%vase p.r.u.riot)
@@ -468,7 +487,7 @@
   |=  [[=ship =desk =case:clay] =spur]
   =*  arg  +<
   =/  m  (strand ,cage)
-  ;<  =riot:clay  bind:m  (warp ship desk ~ %sing %x case (flop spur))
+  ;<  =riot:clay  bind:m  (warp ship desk ~ %sing %x case spur)
   ?~  riot
     (strand-fail %read-file >arg< ~)
   (pure:m r.u.riot)
@@ -476,14 +495,14 @@
 ++  check-for-file
   |=  [[=ship =desk =case:clay] =spur]
   =/  m  (strand ,?)
-  ;<  =riot:clay  bind:m  (warp ship desk ~ %sing %x case (flop spur))
+  ;<  =riot:clay  bind:m  (warp ship desk ~ %sing %x case spur)
   (pure:m ?=(^ riot))
 ::
 ++  list-tree
   |=  [[=ship =desk =case:clay] =spur]
   =*  arg  +<
   =/  m  (strand ,(list path))
-  ;<  =riot:clay  bind:m  (warp ship desk ~ %sing %t case (flop spur))
+  ;<  =riot:clay  bind:m  (warp ship desk ~ %sing %t case spur)
   ?~  riot
     (strand-fail %list-tree >arg< ~)
   (pure:m !<((list path) q.r.u.riot))
@@ -651,11 +670,16 @@
 ::
 ++  start-thread
   |=  file=term
+  (start-thread-with-args file *vase)
+::
+++  start-thread-with-args
+  |=  [file=term args=vase]
   =/  m  (strand ,tid:spider)
   ^-  form:m
   ;<  =bowl:spider  bind:m  get-bowl
-  =/  tid  (scot %ta (cat 3 'strand_' (scot %uv (sham file eny.bowl))))
-  =/  poke-vase  !>([`tid.bowl `tid file *vase])
+  =/  tid
+    (scot %ta (cat 3 (cat 3 'strand_' file) (scot %uv (sham file eny.bowl))))
+  =/  poke-vase  !>([`tid.bowl `tid file args])
   ;<  ~  bind:m  (poke-our %spider %spider-start poke-vase)
   ;<  ~  bind:m  (sleep ~s0)  ::  wait for thread to start
   (pure:m tid)

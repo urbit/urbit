@@ -41,7 +41,7 @@ export class OmniboxResult extends Component {
              (icon === 'Terminal') ? 'Dojo'  : icon;
       graphic = <Icon display="inline-block" verticalAlign="middle" icon={icon} mr='2' size='16px' color={iconFill} />;
     } else if (icon === 'inbox') {
-      graphic = <Box display='flex' verticalAlign='middle'>
+      graphic = <Box display='flex' verticalAlign='middle' position="relative">
         <Icon display='inline-block' verticalAlign='middle' icon='Inbox' mr='2' size='16px' color={iconFill} />
         {(notifications > 0 || inviteCount.length > 0) && (
           <Icon display='inline-block' icon='Bullet' style={{ position: 'absolute', top: -5, left: 5 }} color={bulletFill} />
@@ -52,7 +52,7 @@ export class OmniboxResult extends Component {
     } else if (icon === 'profile') {
       graphic = <Sigil color={sigilFill} classes='dib flex-shrink-0 v-mid mr2' ship={window.ship} size={16} icon padded />;
     } else if (icon === 'home') {
-      graphic = <Icon display='inline-block' verticalAlign='middle' icon='Boot' mr='2' size='16px' color={iconFill} />;
+      graphic = <Icon display='inline-block' verticalAlign='middle' icon='Mail' mr='2' size='16px' color={iconFill} />;
     } else if (icon === 'notifications') {
       graphic = <Icon display='inline-block' verticalAlign='middle' icon='Inbox' mr='2' size='16px' color={iconFill} />;
     } else {

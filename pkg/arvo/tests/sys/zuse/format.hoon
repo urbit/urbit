@@ -18,12 +18,12 @@
     ::  empty string works fine
     ::
     %+  expect-eq
-      !>  ~['']
+      !>  ~
       !>  (to-wain '')
     ::  leading/trailing/consecutive newlines all work fine
     ::
     %+  expect-eq
-      !>  ~['' 'hi' '' '' 'there' '']
+      !>  ~['' 'hi' '' '' 'there']
       !>  (to-wain '\0ahi\0a\0a\0athere\0a')
   ==
 ::  join a list of lines (cords) into a single cord
@@ -85,7 +85,7 @@
 ::    path)
 ::
 ++  test-beam
-  =/  b=beam  [[p=~zod q=%home r=[%ud p=12]] s=/hoon/zuse/sys]
+  =/  b=beam  [[p=~zod q=%home r=[%ud p=12]] s=/sys/zuse/hoon]
   =/  p=path  /~zod/home/12/sys/zuse/hoon
   ;:  weld
     ::  proper encode

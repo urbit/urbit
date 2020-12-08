@@ -14,6 +14,8 @@ import './css/fonts.css';
 import light from './themes/light';
 import dark from './themes/old-dark';
 
+import { Text, Anchor, Row } from '@tlon/indigo-react';
+
 import { Content } from './landscape/components/Content';
 import StatusBar from './components/StatusBar';
 import Omnibox from './components/leap/Omnibox';
@@ -24,6 +26,7 @@ import GlobalSubscription from '~/logic/subscription/global';
 import GlobalApi from '~/logic/api/global';
 import { uxToHex } from '~/logic/lib/util';
 import { foregroundFromBackground } from '~/logic/lib/sigil';
+
 
 const Root = styled.div`
   font-family: ${p => p.theme.fonts.sans};
@@ -127,6 +130,9 @@ class App extends React.Component {
 
     const notificationsCount = state.notificationsCount || 0;
     const doNotDisturb = state.doNotDisturb || false;
+
+    const showBanner = localStorage.getItem("2020BreachBanner") || "flex";
+    let banner = null;
 
     return (
       <ThemeProvider theme={theme}>

@@ -2,8 +2,8 @@
 /+  base64, group-store, resource
 |%
 ++  nu                                              ::  parse number as hex
-  |=  jon/json
-  ?>  ?=({$s *} jon)
+  |=  jon=json
+  ?>  ?=([%s *] jon)
   (rash p.jon hex)
 ::
 ++  hook-update-to-json

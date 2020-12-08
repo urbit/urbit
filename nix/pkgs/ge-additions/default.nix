@@ -1,9 +1,13 @@
-{ pkgs, ed25519 }:
+{ lib, stdenv, ed25519, enableParallelBuilding ? true }:
 
-pkgs.stdenv.mkDerivation rec {
-  name    = "ge-additions";
-  builder = ./builder.sh;
-  src     = ../../../pkg/ge-additions;
+stdenv.mkDerivation {
+  name = "ge-additions";
+  src = lib.cleanSource ../../../pkg/ge-additions;
 
-  nativeBuildInputs = [ ed25519 ];
+  buildInputs = [ ed25519 ];
+
+  installFlags = [ "PREFIX=$(out)" ];
+
+  inherit enableParallelBuilding;
 }
+

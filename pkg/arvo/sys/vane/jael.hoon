@@ -15,7 +15,7 @@
 ::      - scry namespace
 ::      - task for converting invites to tickets
 ::
-|=  pit/vase
+|=  pit=vase
 =,  pki:jael
 =,  able:jael
 =,  crypto
@@ -35,36 +35,10 @@
 ::  manage subscriptions efficiently.
 ::
 =>  |%
-+$  any-state  $%(state-0 state-1)
-::
-+$  state-0
-  $:  %0
-      pki=state-pki-0                                   ::
-      etn=state-eth-node                                ::  eth connection state
-  ==                                                    ::
 +$  state-1
   $:  %1
       pki=state-pki-1                                   ::
       etn=state-eth-node                                ::  eth connection state
-  ==                                                    ::
-+$  state-pki-0                                         ::  urbit metadata
-  $:  $=  own                                           ::  vault (vein)
-        $:  yen=(set duct)                              ::  trackers
-            sig=(unit oath)                             ::  for a moon
-            tuf=(list turf)                             ::  domains
-            boq=@ud                                     ::  boot block
-            nod=purl:eyre                               ::  eth gateway
-            fak=_|                                      ::  fake keys
-            lyf=life                                    ::  version
-            jaw=(map life ring)                         ::  private keys
-        ==                                              ::
-      $=  zim                                           ::  public
-        $:  yen=(jug duct ship)                         ::  trackers
-            ney=(jug ship duct)                         ::  reverse trackers
-            nel=(set duct)                              ::  trackers of all
-            dns=dnses                                   ::  on-chain dns state
-            pos=(map ship point)                        ::  on-chain ship state
-        ==                                              ::
   ==                                                    ::
 +$  state-pki-1                                         ::  urbit metadata
   $:  $=  own                                           ::  vault (vein)
@@ -86,6 +60,9 @@
             pos=(map ship point)                        ::  on-chain ship state
         ==                                              ::
   ==                                                    ::
++$  message-all
+  $%  [%0 message]
+  ==
 +$  message                                             ::  message to her jael
   $%  [%nuke whos=(set ship)]                           ::  cancel trackers
       [%public-keys whos=(set ship)]                    ::  view ethereum events
@@ -119,8 +96,6 @@
       $:  @tas                                          ::
   $%  $>(%init vane-task)                               ::  report install
   ==  ==  ==                                            ::
-::                                                      ::
-+$  peer-sign  [=ship =udiff:point]                     ::
 ::                                                      ::
 +$  sign                                                ::  in result $<-
   $~  [%a %done ~]                                      ::
@@ -198,7 +173,7 @@
   ::  arvo issues: should be merged with the top-level
   ::  vane interface when that gets cleaned up a bit.
   ::
-  =|  moz/(list move)
+  =|  moz=(list move)
   =|  $:  $:  ::  our: identity
               ::  now: current time
               ::  eny: unique entropy
@@ -252,7 +227,7 @@
     (^sein:title who)
   ::                                                    ::  ++saxo:of
   ++  saxo                                              ::  sponsorship chain
-    |=  who/ship
+    |=  who=ship
     ^-  (list ship)
     =/  dad  (sein who)
     [who ?:(=(who dad) ~ $(who dad))]
@@ -261,18 +236,18 @@
     |=  $:  ::  hen: event cause
             ::  tac: event data
             ::
-            hen/duct
-            tac/task
+            hen=duct
+            tac=task
         ==
     ^+  +>
     ?-    -.tac
     ::
     ::  boot from keys
-    ::    $:  $dawn
+    ::    $:  %dawn
     ::        =seed
     ::        spon=ship
     ::        czar=(map ship [=rift =life =pass])
-    ::        turf=(list turf)}
+    ::        turf=(list turf)
     ::        bloq=@ud
     ::        node=purl
     ::    ==
@@ -336,7 +311,7 @@
         (~(gas by points) spon-points)
       =.  +>.$
         %-  curd  =<  abet
-        (public-keys:~(feel su hen our now pki etn) %full points)
+        (public-keys:~(feel su hen our now pki etn) pos.zim.pki %full points)
       ::
       ::  start subscriptions
       ::
@@ -433,9 +408,9 @@
       (sources:~(feel su hen our now pki etn) [whos source]:tac)
     ::
     ::  cancel all trackers from duct
-    ::    {$nuke whos=(set ship)}
+    ::    [%nuke whos=(set ship)]
     ::
-        $nuke
+        %nuke
       =/  ships=(list ship)
         %~  tap  in
         %-  ~(int in whos.tac)
@@ -474,7 +449,7 @@
         ~&  [%not-our-moon ship.tac]
         +>.$
       %-  curd  =<  abet
-      (~(new-event su hen our now pki etn) [ship udiff]:tac)
+      (~(new-event su hen our now pki etn) [ship udiff]~:tac)
     ::
     ::  rotate web login code
     ::
@@ -522,32 +497,34 @@
       +>.$
     ::
     ::  watch private keys
-    ::    {$private-keys $~}
+    ::    [%private-keys ~]
     ::
         %private-keys
       (curd abet:~(private-keys ~(feed su hen our now pki etn) hen))
     ::
     ::  authenticated remote request
-    ::    {$west p/ship q/path r/*}
+    ::    [%west p=ship q=path r=*]
     ::
         %plea
       =*  her  ship.tac
-      =/  mes  ;;(message payload.plea.tac)
-      ?-    -.mes
+      =+  ;;(=message-all payload.plea.tac)
+      ?>  ?=(%0 -.message-all)
+      =/  =message  +.message-all
+      ?-    -.message
       ::
       ::  cancel trackers
       ::    [%nuke whos=(set ship)]
       ::
           %nuke
         =.  moz  [[hen %give %done ~] moz]
-        $(tac mes)
+        $(tac message)
       ::
       ::  view ethereum events
       ::    [%public-keys whos=(set ship)]
       ::
           %public-keys
         =.  moz  [[hen %give %done ~] moz]
-        $(tac mes)
+        $(tac message)
       ==
     ==
   ::
@@ -565,7 +542,7 @@
         [%a %boon *]
       =+  ;;  [%public-keys-result =public-keys-result]  payload.hin
       %-  curd  =<  abet
-      (public-keys:~(feel su hen our now pki etn) public-keys-result)
+      (public-keys:~(feel su hen our now pki etn) pos.zim.pki public-keys-result)
     ::
         [%a %lost *]
       ::  TODO: better error handling
@@ -592,32 +569,32 @@
     ::
         [%g %unto *]
       ?-  +>-.hin
-          $kick      ~|([%jael-unexpected-quit tea hin] !!)
-          $poke-ack
+          %kick      ~|([%jael-unexpected-quit tea hin] !!)
+          %poke-ack
         ?~  p.p.+>.hin
           +>.$
         %-  (slog leaf+"jael-bad-coup" u.p.p.+>.hin)
         +>.$
       ::
-          $watch-ack
+          %watch-ack
         ?~  p.p.+>.hin
           +>.$
         %-  (slog u.p.p.+>.hin)
         ~|([%jael-unexpected-reap tea hin] +>.$)
       ::
-          $fact
+          %fact
         ?>  ?=([@ *] tea)
         =*  app  i.tea
-        =/  =peer-sign  ;;(peer-sign q.q.cage.p.+>.hin)
+        =+  ;;(=udiffs:point q.q.cage.p.+>.hin)
         %-  curd  =<  abet
-        (~(new-event su hen our now pki etn) peer-sign)
+        (~(new-event su hen our now pki etn) udiffs)
       ==
     ==
   ::                                                    ::  ++curd:of
   ++  curd                                              ::  relative moves
-    |=  $:  moz/(list move)
-            pki/state-pki-1
-            etn/state-eth-node
+    |=  $:  moz=(list move)
+            pki=state-pki-1
+            etn=state-eth-node
         ==
     +>(pki pki, etn etn, moz (weld (flop moz) ^moz))
   --
@@ -656,7 +633,7 @@
     +>.$(moz [move moz])
   ::
   ++  exec                                              ::  mass gift
-    |=  {yen/(set duct) cad/card}
+    |=  [yen=(set duct) cad=card]
     =/  noy  ~(tap in yen)
     |-  ^+  this-su
     ?~  noy  this-su
@@ -737,13 +714,17 @@
     ==
   ::
   ++  new-event
-    |=  [=a=ship =a=udiff:point]
+    |=  =udiffs:point
     ^+  this-su
-    =/  a-point=point  (~(gut by pos.zim.pki) a-ship *point)
-    =/  a-diff=(unit diff:point)  (udiff-to-diff:point a-udiff a-point)
-    ?~  a-diff
+    =/  original-pos  pos.zim.pki
+    |-  ^+  this-su
+    ?~  udiffs
       this-su
-    (public-keys:feel %diff a-ship u.a-diff)
+    =/  a-point=point  (~(gut by pos.zim.pki) ship.i.udiffs *point)
+    =/  a-diff=(unit diff:point)  (udiff-to-diff:point udiff.i.udiffs a-point)
+    =?  this-su  ?=(^ a-diff)
+      (public-keys:feel original-pos %diff ship.i.udiffs u.a-diff)
+    $(udiffs t.udiffs)
   ::
   ++  subscribers-on-ship
     |=  =ship
@@ -758,7 +739,7 @@
   ++  feed
     |_  ::  hen: subscription source
         ::
-        hen/duct
+        hen=duct
     ::
     ::  Handle subscription to public-keys
     ::
@@ -858,7 +839,7 @@
     ::  Update public-keys
     ::
     ++  public-keys
-      |=  =public-keys-result
+      |=  [original=(map ship point) =public-keys-result]
       ^+  ..feel
       ?:  ?=(%full -.public-keys-result)
         =/  pointl=(list [who=ship =point])
@@ -866,12 +847,14 @@
         |-  ^+  ..feel
         ?~  pointl
           ..feel(pos.zim (~(uni by pos.zim) points.public-keys-result))
-        ::  if changing rift upward, then signal a breach
+        ::  if changing rift upward and we already had keys for them,
+        ::  then signal a breach
         ::
         =?    ..feel
             =/  point
               (~(get by pos.zim) who.i.pointl)
-            ?&  ?=(^ point)
+            ?&  (~(has by original) who.i.pointl)
+                ?=(^ point)
                 (gth rift.point.i.pointl rift.u.point)
             ==
           =.  ..feel
@@ -900,10 +883,12 @@
       =/  a-diff=diff:point  diff.public-keys-result
       =/  maybe-point  (~(get by pos.zim) who)
       =/  =point  (fall maybe-point *point)
-      ::  if changing rift upward, then signal a breach
+      ::  if changing rift upward and we already had keys for them, then
+      ::  signal a breach
       ::
       =?    ..feel
-          ?&  ?=(^ maybe-point)
+          ?&  (~(has by original) who)
+              ?=(^ maybe-point)
               ?=(%rift -.a-diff)
               (gth to.a-diff rift.point)
           ==
@@ -972,10 +957,9 @@
         ..feed
       ::
       ?:  ?=(%& -.source)
-        =/  send-message
-          |=  =message
-          [hen %pass /public-keys %a %plea p.source %j /public-keys message]
-        (emit (send-message %public-keys whos))
+        %-  emit
+        =/  =message-all  [%0 %public-keys whos]
+        [hen %pass /public-keys %a %plea p.source %j /public-keys message-all]
       (peer p.source whos)
     --
   ::
@@ -993,7 +977,7 @@
 ::
 ::  lex: all durable %jael state
 ::
-=|  lex/state-1
+=|  lex=state-1
 |=  $:  ::
         ::  our: identity
         ::  now: current time
@@ -1003,7 +987,7 @@
         our=ship
         now=@da
         eny=@uvJ
-        ski=sley
+        rof=roof
     ==
 ^?
 |%
@@ -1012,9 +996,9 @@
   |=  $:  ::  hen: cause of this event
           ::  hic: event data
           ::
-          hen/duct
+          hen=duct
           dud=(unit goof)
-          hic/(hypo (hobo task:able))
+          hic=(hypo (hobo task:able))
       ==
   ^-  [(list move) _..^$]
   ?^  dud
@@ -1026,35 +1010,19 @@
   [did ..^$]
 ::                                                      ::  ++load
 ++  load                                                ::  upgrade
-  |=  $:  ::  old: previous state
-          ::
-          ::  old/*
-          old/any-state
-      ==
+  |=  old=state-1
   ^+  ..^$
-  =/  new=state-1
-    ?-  -.old
-      %0  old(- %1, |7.own.pki [step=0 |7.own.pki.old])
-      %1  old
-    ==
-  ..^$(lex new)
+  ..^$(lex old)
 ::                                                      ::  ++scry
 ++  scry                                                ::  inspect
-  |=  $:  ::  fur: event security
-          ::  ren: access mode
-          ::  why: owner
-          ::  syd: desk (branch)
-          ::  lot: case (version)
-          ::  tyl: rest of path
-          ::
-          fur/(unit (set monk))
-          ren/@tas
-          why/shop
-          syd/desk
-          lot/coin
-          tyl/spur
-      ==
+  |=  [lyc=gang cyr=term bem=beam]
   ^-  (unit (unit cage))
+  =*  ren  cyr
+  =*  why=shop  &/p.bem
+  =*  syd  q.bem
+  =*  lot=coin  $/r.bem
+  =*  tyl  s.bem
+  ::
   ::  XX review for security, stability, cases other than now
   ::
   ?.  =(lot [%$ %da now])  ~
@@ -1083,11 +1051,7 @@
     =/  who  (slaw %p i.tyl)
     ?~  who  [~ ~]
     =/  sec  (~(got by jaw.own.pki.lex) lyf.own.pki.lex)
-    =/  cub  (nol:nu:crub:crypto sec)
-    ::  XX use pac:ex:cub?
-    ::
-    =/  sal  (add %pass step.own.pki.lex)
-    ``[%noun !>((end 6 1 (shaf sal (shax sec:ex:cub))))]
+    ``[%noun !>((end 6 (shaf %pass (shax sec))))]
   ::
       %life
     ?.  ?=([@ ~] tyl)  [~ ~]
@@ -1160,6 +1124,11 @@
       [~ ~]
     ::
     [~ ~ %noun !>(u.r)]
+  ::
+      %vile
+    =*   life  lyf.own.pki.lex
+    =/  =seed  [our life (~(got by jaw.own.pki.lex) life) ~]
+    [~ ~ %atom !>((jam seed))]
   ::
       %deed
     ?.  ?=([@ @ ~] tyl)  [~ ~]
@@ -1263,10 +1232,10 @@
           ::  hen: cause
           ::  hin: result
           ::
-          tea/wire
-          hen/duct
+          tea=wire
+          hen=duct
           dud=(unit goof)
-          hin/(hypo sign)
+          hin=(hypo sign)
       ==
   ^-  [(list move) _..^$]
   ?^  dud
