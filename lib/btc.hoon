@@ -70,7 +70,11 @@
   |%
 ::  ++  parse
 ::    |=  psbt=cord
-
+::    ^-  (list )
+::  TODO:
+  ::  - get into a buffer
+  ::  loop through using next-pair
+  ::  every time there's a separator, close the prior on
   ::  +txid: extract txid from a valid PSBT
   ++  get-txid
     |=  psbt=cord
@@ -96,25 +100,25 @@
     ?~  b  !!
     ?:  =(0x0 i.b)  !!
     =+  np=(next-pair b)
-    ?:  =(0x0 dat.key.np)
-      val.np
+    ?:  =(0x0 dat.key.kv.np)
+      val.kv.np
     $(b rest.np)
   :: +next-pair: returns next key-val in a PSBT map
   ::   input buffer head must be a map key length
   ::
   ++  next-pair
     |=  b=^buffer
-    ^-  [key=btc-byts val=btc-byts rest=^buffer]
+    ^-  [kv=keyval:^psbt rest=^buffer]
     =+  klen=(snag 0 b)
     =+  k=(swag [1 klen] b)
     =+  vlen=(snag (add 1 klen) b)
     =+  v=(swag [(add 2 klen) vlen] b)
     =+  len=(add 2 (add klen vlen))
     ?>  ?=([^ ^] [k v])
-    :*  (to-byts:buffer k)
+    :_  (slag len b)
+    :-  (to-byts:buffer k)
         (to-byts:buffer v)
-        (slag len b)
-    ==
+  ::
   ++  to-buffer
     |=  psbt=cord
     ^-  ^buffer
