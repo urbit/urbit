@@ -66,7 +66,10 @@
   =^  d  drum.state  (on-load:drum-core -.old drum.tup)
   =^  h  helm.state  (on-load:helm-core -.old helm.tup)
   =^  k  kiln.state  (on-load:kiln-core -.old kiln.tup)
-  [:(welp d h k) this]
+  :_  this
+  ^-  (list card:agent:gall)
+  :-  [%pass /warn %arvo %b %wait now.bowl]
+  :(welp d h k)
 ::
 ++  on-poke
   |=  [=mark =vase]
@@ -113,5 +116,10 @@
     [%drum *]  =^(c drum.state (take-arvo:drum-core t.wire syn) [c this])
     [%helm *]  =^(c helm.state (take-arvo:helm-core t.wire syn) [c this])
     [%kiln *]  =^(c kiln.state (take-arvo:kiln-core t.wire syn) [c this])
+  ::
+      [%warn *]
+    ~>  %slog.[1 'Due to a critical issue with the breach, we will be breaching the network again shortly. The network will go down again for a few hours. If you entered this era using flagday.sh, you will have to run flagday.sh again. For current updates, please consult urbit.org/breach and twitter.com/zodisok']
+    :_  this
+    [%pass /warn %arvo %b %wait (add now.bowl ~m5)]~
   ==
 --
