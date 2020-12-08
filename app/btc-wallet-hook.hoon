@@ -277,10 +277,12 @@
     ==
     ::
       %tx-info
+    ::  %txinfo
     ::  - forward tx to wallet-store
     ::  - delete txid from pend-piym and decrement num.pend-piym
     ::  - check whether payment in pend-piym matches this tx's output values
     ::    if yes add to wallet-store-history
+    ::
     =/  ti=info:tx  +.body.p.upd
     =/  mh=(unit [=xpub =hest:bws])
       (mk-hest ti (~(get by ps.pend-piym) txid.ti))
@@ -288,10 +290,15 @@
     %+  weld  ~[(poke-wallet-store [%tx-info ti])]
     ?~  mh  ~
     ~[(poke-wallet-store [%add-history-entry xpub.u.mh hest.u.mh])]
+    ::  %raw-tx
+    ::  - if the req-id is for current poym, add txid/rawtx to the poym
+    ::  - if the raw tx matches one of poym's inputs, add it
     ::
       %raw-tx
+    =*  rt  body.p.upd
+    =.  poym  (update-poym-tx req-id.p.upd txid.rt rawtx.rt)
     ?~  poym  `state
-    =.  txis.u.poym  (update-poym-txis txis.u.poym +.body.p.upd)
+    =.  txis.u.poym  (update-poym-txis txis.u.poym txid.rt rawtx.rt)
     :_  state
     ?:(poym-ready ~[(send-sign-tx u.poym)] ~)
   ==
@@ -406,6 +413,18 @@
   ^-  ship
   ?.  =(%earl (clan:title s))  s
   (sein:title our.bowl now.bowl s)
+::  +update-poym-tx
+::   - check whether poym txbu's req-id matches this one
+::   - if it does, add the txid and rawtx
+::
+++  update-poym-tx
+  |=  [ri=req-id:bp =txid rt=rawtx]
+  ^-  ^poym
+  ?~  poym  ~
+  ?~  txinfo.u.poym  poym
+  ?.  =(ri req-id.u.poym)  poym
+  `u.poym(txinfo `[txid rt])
+  :: check poym txbu
 ::  +update-poym-txis:
 ::    update outgoing payment with a rawtx, if the txid is in poym's txis
 ::
@@ -418,13 +437,17 @@
   =?  txis  =(txid txid.utxo.ith)
    (snap txis i `txi:bws`ith(ur `rt))
   $(i +(i))
-::  +poym-ready: whether all txis in poym have rawtxs
+::  +poym-ready: whether poym txbu is ready to sign
+::    - is the txinfo filled in?
+::    - do all txis in poym have rawtxs?
 ::
 ++  poym-ready
   ^-  ?
   ?~  poym  %.n
-  %+  levy  txis.u.poym
-  |=(t=txi:bws ?=(^ ur.t))
+  ?&  ?=(^ txinfo.u.poym)
+      %+  levy  txis.u.poym
+        |=(t=txi:bws ?=(^ ur.t))
+  ==
 ::  +retry-reqs: get-address-info for any reqs with old last-block
 ::
 ++  retry-reqs

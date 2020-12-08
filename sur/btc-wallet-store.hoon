@@ -56,6 +56,7 @@
 +$  txo  [=address value=sats]
 +$  txbu
   $:  =req-id:bp
+      txinfo=(unit [=txid =rawtx])
       =xpub
       payee=(unit ship)
       =vbytes
