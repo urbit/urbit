@@ -2,7 +2,7 @@
 |%
 +|  %global
 ::
-++  arvo  %arvo-kelvin
+++  arvo  %240
 ::
 ::  $arch: node identity
 ::  $axal: fundamental node, recursive

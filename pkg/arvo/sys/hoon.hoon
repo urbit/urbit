@@ -2,13 +2,13 @@
 ::::    /sys/hoon                                       ::
   ::                                                    ::
 =<  ride
-=>  %141  =>
+=>  %140  =>
 ::                                                      ::
 ::::    0: version stub                                 ::
   ::                                                    ::
-~%  %k.141  ~  ~                                        ::
+~%  %k.140  ~  ~                                        ::
 |%
-++  hoon-version  141
+++  hoon-version  +
 --  =>
 ~%  %one  +  ~
 ::  #  %base
