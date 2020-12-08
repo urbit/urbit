@@ -1,23 +1,3 @@
-::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-::::::  ::::::    Postface                              ::::::
-::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-~>  %slog.[0 leaf+"arvo: assembly"]
-~<  %slog.[0 leaf+"arvo: assembled"]
-=<  ::
-    ::  Arvo formal interface
-    ::
-    ::    this lifecycle wrapper makes the arvo door (multi-armed core)
-    ::    look like a gate (function or single-armed core), to fit
-    ::    urbit's formal lifecycle function. a practical interpreter
-    ::    can ignore it.
-    ::
-    |=  [now=@da ovo=ovum]
-    ^-  *
-    ~>  %slog.[0 leaf+"arvo: formal event"]
-    .(+> +:(poke now ovo))
-::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-::::::  ::::::    volume 3, Arvo models and skeleton    ::::::
-::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =>  ..ride
 =>
 |%
@@ -1778,7 +1758,7 @@
 ++  wish                                                ::  +10
   |=  txt=@
   q:(slap zus.mod (ream txt))
---
+--  =>
 ::
 ::  larval stage
 ::
@@ -1910,3 +1890,14 @@
   |=  txt=*
   q:(slap ?~(zus pit $:u.zus) (ream ;;(@t txt)))
 --
+::
+::  Arvo formal interface
+::
+::    this lifecycle wrapper makes the arvo door (multi-armed core)
+::    look like a gate (function or single-armed core), to fit
+::    urbit's formal lifecycle function (see aeon:eden:part).
+::    a practical interpreter can and will ignore it.
+::
+|=  [now=@da ovo=ovum]
+^-  *
+.(+> +:(poke now ovo))
