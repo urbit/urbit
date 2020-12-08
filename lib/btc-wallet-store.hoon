@@ -71,6 +71,30 @@
       (fall max-gap max-gap:defaults)
       (fall confs confs:defaults)
   ==
+::  txb: transaction builder helpers
+::
+++  txb
+  |_  t=txbu
+  ++  value
+    ^-  [in=sats out=sats]
+    :-  %+  roll
+          %+  turn  txis.t
+          |=(=txi value.utxo.txi)
+        add
+    %+  roll
+      (turn txos.t |=(=txo value.txo))
+    add
+  ::
+  ++  fee
+    =/  [in=sats out=sats]  value
+    (sub in out)
+  ::
+  ++  add-output
+    |=  [=address:btc value=sats]
+    ^-  txbu
+    =/  ntxo=txo  [address value]
+    t(txos [ntxo txos.t])
+  --
 ::  wad: door for processing walts (wallets)
 ::        parameterized on a walt and it's chyg account
 ::
@@ -139,6 +163,7 @@
 |_  [w=walt eny=@uvJ last-block=@ud payee=(unit ship) =feyb txos=(list txo)]
   ++  meta-weight  10
   ++  output-weight  31
+  ++  n-txos  (lent txos)
   ::
   ++  target-value
     ^-  sats
@@ -146,9 +171,10 @@
     |=([a=sats b=sats] (add a b))
   ::
   ++  base-weight
+    |=  num-txos=@ud
     ^-  vbytes
     %+  add  meta-weight
-    (mul (lent txos) output-weight)
+    (mul num-txos output-weight)
   ::
   ++  input-weight
     ^-  vbytes
@@ -156,10 +182,15 @@
       ~|("Only bech32 wallets supported" !!)
     102
   ::
+  ++  min-tx-fee
+    ^-  sats
+    %+  mul  feyb
+    (add (base-weight 1) input-weight)
+  ::
   ++  total-vbytes
     |=  selected=(list input)
     ^-  vbytes
-    %+  add  base-weight
+    %+  add  (base-weight n-txos)
     (mul input-weight (lent selected))
   ::  value of an input after fee
   ::  0 if net is <= 0
@@ -169,15 +200,32 @@
     =/  cost  (mul input-weight feyb)
     ?:  (lte val cost)  0
     (sub val cost)
+  ::
   ::  +spendable: whether utxo has enough confs to spend
   ::
   ++  spendable
     |=  =utxo:btc  ^-  ?
     (gte (num-confs last-block utxo) confs.w)
+  ::  +with-change:
+  ::    - choose UTXOs, if there are enough
+  ::    - return txbu and amount of change (if any)
+  ::
+  ++  with-change
+    ^-  [tb=(unit txbu) chng=(unit sats)]
+    =+  tb=select-utxos
+    ?~  tb  [~ ~]
+    =+  fee=~(fee txb u.tb)
+    =/  costs=sats                      ::  cost of this tx + sending another
+      %+  add  min-tx-fee
+      (mul feyb vbytes.u.tb)
+    ?.  (gth fee costs)
+      [tb ~]
+    :-  tb
+    `(sub fee costs)
   ::  Uses naive random selection. Should switch to branch-and-bound later.
   ::
   ++  select-utxos
-    |^  ^-  (unit =txbu)
+    |^  ^-  (unit txbu)
     =/  is=(unit (list input))
       %-  single-random-draw
       %-  zing
@@ -209,7 +257,7 @@
     |=  is=(list input)
     ^-  (unit (list input))
     =/  rng  ~(. og eny)
-    =/  target  (add target-value (mul feyb base-weight))   ::  add base fees to target
+    =/  target  (add target-value (mul feyb (base-weight n-txos)))   ::  add base fees to target
     =|  [select=(list input) total=sats:btc]
     |-  ?:  =(~ is)  ~
     =^  n  rng  (rads:rng (lent is))
