@@ -62,9 +62,9 @@
 ++  psbt
   |%
   ::  +txid: extract txid from a valid PSBT
-  ++  txid
+  ++  get-txid
     |=  psbt=cord
-    ^-  ^txid
+    ^-  txid
     ~|  "Invalid PSBT"
     =+  p=(de:base64 psbt)
     ?~  p  !!
