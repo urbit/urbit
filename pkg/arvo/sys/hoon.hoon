@@ -10347,12 +10347,6 @@
       (eclo hag rig)
     --  --
   ::
-  ::  XX implement
-  ++  caching-etco
-    |=  [lop=palo rig=(list (pair wing hoon))]
-    ^-  [(pair type nock) _grub]
-    !!
-  ::
   ++  etco
     |=  {lop/palo rig/(list (pair wing hoon))}
     ^-  (pair type nock)
@@ -10414,11 +10408,11 @@
         ~>  %mean.'hoon'
         ?>  ?=(~ rig)
         [p.lug grub]
-      =;  [par=(pair type nock) =_grub]
+      =;  par=(pair type nock)
         =^  nests  grub  (caching-nest(sut gol) & p.par)
         ?>  ?|(!vet nests)
         [par grub]
-      (caching-etco p.lug rig)
+      (etco p.lug rig)
     ::
     ++  mull
       |=  [gol=type dox=type]
