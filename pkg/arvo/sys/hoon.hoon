@@ -12891,7 +12891,6 @@
         %=  dext
           sut   val
           gil   (~(put in gil) sums)
-          grub  grub
         ==
       ==
     ++  sint
@@ -13051,7 +13050,6 @@
                 gil   (~(put in gil) [sut ref])
                 sut   sut(p q.q.sut, r.p.q %gold)
                 ref   ref(p q.q.ref, r.p.q %gold)
-                grub  grub
               ==
             :_  grub
             |(case-per-zod case-per-nec)
@@ -13088,7 +13086,6 @@
           sut   val
           seg   (~(put in seg) sut)
           gil   (~(put in gil) [sut ref])
-          grub  grub
         ==
       ==
       ::
@@ -13146,7 +13143,6 @@
           ref   val
           reg   (~(put in reg) ref)
           gil   (~(put in gil) [sut ref])
-          grub  grub
         ==
       ==
     --
@@ -13310,7 +13306,6 @@
       %=  ^$
         axe   lat
         sut   nut
-        grub  grub
       ==
     ::
         [%fork *]
