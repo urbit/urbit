@@ -172,16 +172,6 @@ u3v_time(u3_noun now)
   u3A->now = now;
 }
 
-/* u3v_numb(): set the instance number.
-*/
-void
-u3v_numb()
-{
-  u3A->sev_l = u3r_mug(u3A->now);
-  u3z(u3A->sen);
-  u3A->sen = _cv_scot(u3nc(c3__uv, u3A->sev_l));
-}
-
 #if 0
 /* _cv_time_bump(): advance the reck time by a small increment.
 */
@@ -321,8 +311,6 @@ u3v_mark(FILE* fil_u)
 
   tot_w += u3a_maid(fil_u, "  kernel", u3a_mark_noun(arv_u->roc));
   tot_w += u3a_maid(fil_u, "  date", u3a_mark_noun(arv_u->now));
-  tot_w += u3a_maid(fil_u, "  formatted date", u3a_mark_noun(arv_u->wen));
-  tot_w += u3a_maid(fil_u, "  instance string", u3a_mark_noun(arv_u->sen));
   tot_w += u3a_maid(fil_u, "  wish cache", u3a_mark_noun(arv_u->yot));
   return   u3a_maid(fil_u, "total arvo stuff", tot_w);
 }
@@ -351,14 +339,10 @@ u3v_rewrite_compact()
 
   u3a_rewrite_noun(arv_u->roc);
   u3a_rewrite_noun(arv_u->now);
-  u3a_rewrite_noun(arv_u->wen);
-  u3a_rewrite_noun(arv_u->sen);
   u3a_rewrite_noun(arv_u->yot);
 
   arv_u->roc = u3a_rewritten_noun(arv_u->roc);
   arv_u->now = u3a_rewritten_noun(arv_u->now);
-  arv_u->wen = u3a_rewritten_noun(arv_u->wen);
-  arv_u->sen = u3a_rewritten_noun(arv_u->sen);
   arv_u->yot = u3a_rewritten_noun(arv_u->yot);
 }
 

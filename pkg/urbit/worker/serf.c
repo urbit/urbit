@@ -417,7 +417,7 @@ _serf_sure_core(u3_serf* sef_u, u3_noun cor)
 
   u3z(u3A->roc);
   u3A->roc     = cor;
-  u3A->ent_d   = sef_u->dun_d;
+  u3A->eve_d   = sef_u->dun_d;
   sef_u->mug_l = u3r_mug(u3A->roc);
   sef_u->mut_o = c3y;
 }

@@ -573,10 +573,8 @@ _lord_work_done(u3_lord* god_u,
                 u3_noun    act)
 {
   u3_fact* tac_u = u3_fact_init(eve_d, mug_l, job);
-  tac_u->bug_l   = god_u->mug_l; // XX
-
-  god_u->mug_l = mug_l;
-  god_u->eve_d = eve_d;
+  god_u->mug_l   = mug_l;
+  god_u->eve_d   = eve_d;
 
   u3_gift* gif_u = u3_gift_init(eve_d, act);
 

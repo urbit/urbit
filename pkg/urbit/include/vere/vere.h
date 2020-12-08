@@ -353,7 +353,6 @@
       */
         typedef struct _u3_fact {
           c3_d             eve_d;               //  event number
-          c3_l             bug_l;               //  kernel mug before XX remove
           c3_l             mug_l;               //  kernel mug after
           u3_noun            job;               //  (pair date ovum)
           struct _u3_fact* nex_u;               //  next in queue

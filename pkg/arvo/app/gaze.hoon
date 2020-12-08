@@ -252,8 +252,8 @@
     ?-  -.diff
       %history  ~&  [%got-history (lent loglist.diff)]
                 [loglist.diff state(qued ~, seen ~)]
-      %log      ~&  %got-log
-                [[event-log.diff ~] state]
+      %logs     ~&  %got-log
+                [loglist.diff state]
       %disavow  ~&  %disavow-unimplemented
                 [~ state]
     ==
