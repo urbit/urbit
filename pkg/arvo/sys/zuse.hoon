@@ -2193,9 +2193,11 @@
       [%j task:able:jael]
       [@tas %meta vase]
   ==
+::  full vane names are required in vanes
+::
 +$  sign-arvo                                           ::  in result $<-
-  $%  [%a gift:able:ames]
-      $:  %b
+  $%  [%ames gift:able:ames]
+      $:  %behn
           $%  gift:able:behn
               $>(%wris gift:able:clay)
               $>(%writ gift:able:clay)
@@ -2203,12 +2205,12 @@
               $>(%unto gift:able:gall)
           ==
       ==
-      [%c gift:able:clay]
-      [%d gift:able:dill]
-      [%e gift:able:eyre]
-      [%g gift:able:gall]
-      [%i gift:able:iris]
-      [%j gift:able:jael]
+      [%clay gift:able:clay]
+      [%dill gift:able:dill]
+      [%eyre gift:able:eyre]
+      [%gall gift:able:gall]
+      [%iris gift:able:iris]
+      [%jael gift:able:jael]
   ==
 ::  $unix-task: input from unix
 ::

@@ -173,7 +173,7 @@
   |=  tin=strand-input:strand
   ?+  in.tin  `[%skip ~]
       ~  `[%wait ~]
-      [~ %sign [%wait @ ~] %b %wake *]
+      [~ %sign [%wait @ ~] %behn %wake *]
     ?.  |(?=(~ until) =(`u.until (slaw %da i.t.wire.u.in.tin)))
       `[%skip ~]
     ?~  error.sign-arvo.u.in.tin
@@ -340,7 +340,7 @@
   ;<  ~        bind:m  (send-raw-card card)
   |=  tin=strand-input:strand
   =*  loop  $
-  ?:  ?&  ?=([~ %sign [%timeout @ ~] %b %wake *] in.tin)
+  ?:  ?&  ?=([~ %sign [%timeout @ ~] %behn %wake *] in.tin)
           =((scot %da when) i.t.wire.u.in.tin)
       ==
     `[%fail %timeout ~]
@@ -370,7 +370,7 @@
   |=  tin=strand-input:strand
   ?+  in.tin  `[%skip ~]
       ~  `[%wait ~]
-      [~ %sign [%request ~] %i %http-response %finished *]
+      [~ %sign [%request ~] %iris %http-response %finished *]
     `[%done client-response.sign-arvo.u.in.tin]
   ==
 ::
@@ -395,9 +395,9 @@
   |=  tin=strand-input:strand
   ?+  in.tin  `[%skip ~]
       ~  `[%wait ~]
-      [~ %sign [%request ~] %i %http-response %cancel *]
+      [~ %sign [%request ~] %iris %http-response %cancel *]
     `[%done ~]
-      [~ %sign [%request ~] %i %http-response %finished *]
+      [~ %sign [%request ~] %iris %http-response %finished *]
     `[%done `client-response.sign-arvo.u.in.tin]
   ==
 ::
@@ -516,7 +516,7 @@
   |=  tin=strand-input:strand
   ?+  in.tin  `[%skip ~]
       ~  `[%wait ~]
-      [~ %sign * ?(%b %c) %writ *]
+      [~ %sign * ?(%behn %clay) %writ *]
     ?.  =(wire wire.u.in.tin)
       `[%skip ~]
     `[%done +>.sign-arvo.u.in.tin]

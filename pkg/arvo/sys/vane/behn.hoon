@@ -15,8 +15,8 @@
               $>(%flog task:able:dill)                  ::  log output
       ==  ==                                            ::
     +$  sign
-      $~  [%b %wake ~]
-      $%  [%b $>(%wake gift:able)]
+      $~  [%behn %wake ~]
+      $%  [%behn $>(%wake gift:able)]
       ==
     ::
     +$  behn-state

@@ -47,18 +47,10 @@
 ::  +sign: private response from another vane to eyre
 ::
 +$  sign
-  $%  ::  %b: from behn
-      ::
-      $:  %b
-          ::
-          ::
+  $%  $:  %behn
           $%  [%wake error=(unit tang)]
       ==  ==
-      ::  %g: from gall
-      ::
-      $:  %g
-          ::
-          ::
+      $:  %gall
           gift:able:gall
           ::  $>(%unto gift:able:gall)
   ==  ==
@@ -2317,7 +2309,7 @@
     ~|(%eyre-take-dud (mean tang.u.dud))
   =>  %=    .
           sign
-        ?:  ?=(%g -.sign)
+        ?:  ?=(%gall -.sign)
           ?>  ?=(%unto +<.sign)
           sign
         sign
@@ -2340,7 +2332,7 @@
   ::
   ++  run-app-request
     ::
-    ?>  ?=([%g %unto *] sign)
+    ?>  ?=([%gall %unto *] sign)
     ::
     ::
     ?>  ?=([%poke-ack *] p.sign)
@@ -2363,7 +2355,7 @@
     =/  event-args  [[eny duct now rof] server-state.ax]
     ::
     ?>  ?=([@ *] t.wire)
-    ?:  ?=([%g %unto %watch-ack *] sign)
+    ?:  ?=([%gall %unto %watch-ack *] sign)
       ?~  p.p.sign
         ::  received a positive acknowledgment: take no action
         ::
@@ -2375,13 +2367,13 @@
       =^  moves  server-state.ax  (handle-gall-error u.p.p.sign)
       [moves http-server-gate]
     ::
-    ?:  ?=([%g %unto %kick ~] sign)
+    ?:  ?=([%gall %unto %kick ~] sign)
       =/  handle-response  handle-response:(per-server-event event-args)
       =^  moves  server-state.ax
         (handle-response %continue ~ &)
       [moves http-server-gate]
     ::
-    ?>  ?=([%g %unto %fact *] sign)
+    ?>  ?=([%gall %unto %fact *] sign)
     =/  =mark  p.cage.p.sign
     =/  =vase  q.cage.p.sign
     ?.  ?=  ?(%http-response-header %http-response-data %http-response-cancel)
@@ -2414,7 +2406,7 @@
         ~|([%bad-channel-wire wire] !!)
     ::
         %timeout
-      ?>  ?=([%b %wake *] sign)
+      ?>  ?=([%behn %wake *] sign)
       ?^  error.sign
         [[duct %slip %d %flog %crud %wake u.error.sign]~ http-server-gate]
       =/  discard-channel
@@ -2431,7 +2423,7 @@
       [moves http-server-gate]
     ::
         ?(%poke %subscription)
-      ?>  ?=([%g %unto *] sign)
+      ?>  ?=([%gall %unto *] sign)
       ~|  wire
       ?>  ?=([@ @ @t @ *] wire)
       =*  channel-id  i.t.t.wire
@@ -2448,7 +2440,7 @@
   ::
   ++  sessions
     ::
-    ?>  ?=([%b %wake *] sign)
+    ?>  ?=([%behn %wake *] sign)
     ::
     ?^  error.sign
       [[duct %slip %d %flog %crud %wake u.error.sign]~ http-server-gate]
@@ -2473,7 +2465,7 @@
     (min next expiry-time)
   ::
   ++  acme-ack
-    ?>  ?=([%g %unto *] sign)
+    ?>  ?=([%gall %unto *] sign)
     ::
     ?>  ?=([%poke-ack *] p.sign)
     ?~  p.p.sign

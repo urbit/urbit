@@ -244,7 +244,7 @@
       (on-arvo:def wire sign-arvo)
     =/  =resource       (de-path:resource t.t.wire)
     =/  nack-count=@ud  (slav %ud i.t.wire)
-    ?>  ?=([%b %wake *] sign-arvo)
+    ?>  ?=([%behn %wake *] sign-arvo)
     ~?  ?=(^ error.sign-arvo)
       "behn errored in backoff timers, continuing anyway"
     :_  this

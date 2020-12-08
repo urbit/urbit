@@ -65,22 +65,22 @@
           task:able:jael                                ::
   ==  ==                                                ::
 +$  sign                                                ::  in result $<-
-  $~  [%d %blit ~]                                      ::
-  $%  $:  %b                                            ::
+  $~  [%dill %blit ~]                                   ::
+  $%  $:  %behn                                         ::
           $%  $>(%writ gift:able:clay)                  ::  XX %slip
               $>(%mere gift:able:clay)                  ::  XX %slip
       ==  ==                                            ::
-      $:  %c                                            ::
+      $:  %clay                                         ::
           $>  $?  %mere                                 ::
                   %note                                 ::
                   %writ                                 ::
               ==                                        ::
           gift:able:clay                                ::
       ==                                                ::
-      $:  %d                                            ::
+      $:  %dill                                         ::
           $>(%blit gift:able:dill)                      ::
       ==                                                ::
-      $:  %g                                            ::
+      $:  %gall                                         ::
           $>  $?  %onto                                 ::
                   %unto                                 ::
               ==                                        ::
@@ -255,14 +255,14 @@
         |=  [tea=wire sih=sign]
         ^+  +>
         ?-    sih
-            [%g %onto *]
+            [%gall %onto *]
           ::  ~&  [%take-gall-onto +>.sih]
           ?-  -.+>.sih
             %|  (crud %onto p.p.+>.sih)
             %&  (done %blit [%lin (tuba "{<p.p.sih>}")]~)
           ==
         ::
-            [%g %unto *]
+            [%gall %unto *]
           ::  ~&  [%take-gall-unto +>.sih]
           ?-  -.+>.sih
             %poke-ack   ?~(p.p.+>.sih +>.$ (crud %coup u.p.p.+>.sih))
@@ -273,18 +273,18 @@
             %fact       (from ;;(dill-blit q:`vase`+>+>.sih))
           ==
         ::
-            [%c %note *]
+            [%clay %note *]
           (from %out (tuba p.sih ' ' ~(ram re q.sih)))
         ::
-            [?(%b %c) %writ *]
+            [?(%behn %clay) %writ *]
           init
         ::
-            [?(%b %c) %mere *]
+            [?(%behn %clay) %mere *]
           ?:  ?=(%& -.p.sih)
             mere
           (mean >%dill-mere-fail< >p.p.p.sih< q.p.p.sih)
         ::
-            [%d %blit *]
+            [%dill %blit *]
           (done +.sih)
         ==
       --

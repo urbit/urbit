@@ -318,26 +318,26 @@
   ==  ==                                                ::
 +$  riot  (unit rant)                                   ::  response+complete
 +$  sign                                                ::  in result $<-
-  $~  [%b %wake ~]                                      ::
-  $%  $:  %a                                            ::  by %ames
+  $~  [%behn %wake ~]                                   ::
+  $%  $:  %ames                                         ::
           $>  $?  %boon                                 ::  response
                   %done                                 ::  (n)ack
                   %lost                                 ::  lost boon
               ==                                        ::
           gift:able:ames                                ::
       ==                                                ::
-      $:  %b                                            ::  by %behn
+      $:  %behn                                         ::
           $%  $>(%wake gift:able:behn)                  ::  timer activate
               $>(%writ gift:able)                       ::  XX %slip
       ==  ==                                            ::
-      $:  %c                                            ::  by %clay
+      $:  %clay                                         ::
           $>  $?  %mere                                 ::
                   %note                                 ::
                   %writ                                 ::
               ==                                        ::
           gift:able                                     ::
       ==                                                ::
-      $:  %j                                            ::  by %jael
+      $:  %jael                                         ::s
           $>(%public-keys gift:able:jael)               ::
       ==                                                ::
       $:  @tas                                          ::  by any

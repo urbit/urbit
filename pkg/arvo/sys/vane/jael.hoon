@@ -98,16 +98,16 @@
   ==  ==  ==                                            ::
 ::                                                      ::
 +$  sign                                                ::  in result $<-
-  $~  [%a %done ~]                                      ::
-  $%  $:  %a                                            ::
+  $~  [%behn %wake ~]                                   ::
+  $%  $:  %ames                                         ::
           $%  $>(%boon gift:able:ames)                  ::  message response
               $>(%done gift:able:ames)                  ::  message (n)ack
               $>(%lost gift:able:ames)                  ::  lost boon
       ==  ==                                            ::
-      $:  %b                                            ::
+      $:  %behn                                         ::
           $>(%wake gift:able:behn)                      ::
       ==                                                ::
-      $:  %g                                            ::
+      $:  %gall                                         ::
           $>  $?  %onto                                 ::
                   %unto                                 ::
               ==                                        ::
@@ -528,25 +528,25 @@
     |=  [tea=wire hen=duct hin=sign]
     ^+  +>
     ?-  hin
-        [%a %done *]
+        [%ames %done *]
       ?~  error.hin  +>.$
       ~&  [%done-bad tag.u.error.hin]
       %-  (slog tang.u.error.hin)
       ::TODO  fail:et
       +>.$
     ::
-        [%a %boon *]
+        [%ames %boon *]
       =+  ;;  [%public-keys-result =public-keys-result]  payload.hin
       %-  curd  =<  abet
       (public-keys:~(feel su hen now pki etn) pos.zim.pki public-keys-result)
     ::
-        [%a %lost *]
+        [%ames %lost *]
       ::  TODO: better error handling
       ::
       ~|  %jael-ames-lost
       !!
     ::
-        [%b %wake *]
+        [%behn %wake *]
       ?^  error.hin
         %-  %+  slog
               leaf+"jael unable to resubscribe, run :azimuth-tracker|listen"
@@ -559,11 +559,11 @@
       %-  curd  =<  abet
       (sources:~(feel su hen now pki etn) ships source)
     ::
-        [%g %onto *]
+        [%gall %onto *]
       ~&  [%jael-onto tea hin]
       +>.$
     ::
-        [%g %unto *]
+        [%gall %unto *]
       ?-  +>-.hin
           %kick      ~|([%jael-unexpected-quit tea hin] !!)
           %poke-ack

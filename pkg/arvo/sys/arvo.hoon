@@ -1008,9 +1008,9 @@
         ++  smit
           |=  [cap=tape sub=vase pax=path txt=@t]
           ^-  vase
-          ~>  %slog.[0 leaf+"{cap}: {(scow p+(mug txt))}"]
+          ~>  %slog.[0 leaf/"{cap}: {(scow p+(mug txt))}"]
           %-  road  |.
-          ~_  leaf/cap
+          ~_  leaf/"{cap}: build failed"
           (slap sub (rain pax txt))
         ::
         ++  create
@@ -1252,7 +1252,7 @@
         ::
         ~?  !lac.fad
           :-  (runt [(lent bars.gem) '|'] "")
-          [%slip vane.gem (symp +>-.task) duct]
+          [%slip [vane.gem vane] (symp +>-.task) duct]
         ::
         (call duct vane task)
       ::
@@ -1332,13 +1332,15 @@
         ?.  =(2 (met 3 vis))
           [vis %$]
         [(end 3 vis) (rsh 3 vis)]
-      =.  way  (grow way)
       ::
       ?:  ?=(%$ way)
         (peek:pith lyc car bem)
-      ?.  (~(has by van.mod) way)
+      ::
+      =.  way  (grow way)
+      ?~  van=(~(get by van.mod) way)
         ~
-      (peek:(plow way) lyc car bem)
+      %.  [lyc car bem]
+      peek:spin:(~(plow va [vil u.van]) now peek)
     ::  +call: advance to target
     ::
     ++  call
@@ -1350,10 +1352,11 @@
         ~>  %mean.'call: bad waif'
         ;;(waif q.p.task)
       ::
+      =.  way  (grow way)
       %+  push  [way duct bars.gem]
       ~|  bar-stack=`(list ^duct)`[duct bars.gem]
       %.  task
-      call:(spin:(plow (grow way)) duct eny dud)
+      call:(spin:(plow way) duct eny dud)
     ::  +take: retreat along call-stack
     ::
     ++  take
@@ -1365,9 +1368,9 @@
         ::
         ?>  ?=(~ duct)
         (xeno:pith wire ;;(card q.p.gift))
-      ::
       ::  the caller was a vane
       ::
+      =.  way  (grow way)
       %+  push  [way duct bars.gem]
       ::
       ::  cons source onto .gift to make a $sign
@@ -1375,7 +1378,7 @@
       ~|  wire=wire
       ~|  bar-stack=`(list ^duct)`[duct bars.gem]
       %.  [wire [vane.gem gift]]
-      take:(spin:(plow (grow way)) duct eny dud)
+      take:(spin:(plow way) duct eny dud)
     ::  +push: finalize an individual step
     ::
     ++  push
@@ -1383,7 +1386,7 @@
       ^+  this
       =^  moz  sac
         (~(refine-moves me sac vil) zom)
-      =.  van.mod  (~(put by van.mod) (grow vane.gum) [vax sac])
+      =.  van.mod  (~(put by van.mod) vane.gum [vax sac])
       (emit `plan`[`germ`gum `(list move)`moz])
     ::  +plow: operate on a vane, in time and space
     ::
@@ -1814,9 +1817,9 @@
           ++  smit
             |=  [cap=tape sub=(trap vase) pax=path txt=@t]
             ^-  (trap vase)
-            ~>  %slog.[0 leaf+"{cap}: {(scow p+(mug txt))}"]
+            ~>  %slog.[0 leaf/"{cap}: {(scow p+(mug txt))}"]
             %-  road  |.
-            ~_  leaf/cap
+            ~_  leaf/"{cap}: build failed"
             (swat sub (rain pax txt))
           --
       ::

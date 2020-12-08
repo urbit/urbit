@@ -634,11 +634,11 @@
 ::  $sign: response from other vane
 ::
 +$  sign
-  $~  [%b %wake ~]
-  $%  $:  %b
-      $%  [%wake error=(unit tang)]
+  $~  [%behn %wake ~]
+  $%  $:  %behn
+      $%  $>(%wake gift:able:behn)
       ==  ==
-      $:  %j
+      $:  %jael
       $%  [%private-keys =life vein=(map life ring)]
           [%public-keys =public-keys-result]
           [%turf turfs=(list turf)]
@@ -783,7 +783,7 @@
         [~ larval-gate]
       ::  larval event drainage timer; pop and process a queued event
       ::
-      ?.  ?=([%b %wake *] sign)
+      ?.  ?=([%behn %wake *] sign)
         ~>  %slog.0^leaf/"ames: larva: strange sign"
         [~ larval-gate]
       ::  if crashed, print, dequeue, and set next drainage timer
@@ -916,11 +916,11 @@
       [@ %done *]   (on-take-done:event-core wire error.sign)
       [@ %boon *]   (on-take-boon:event-core wire payload.sign)
     ::
-      [%b %wake *]  (on-take-wake:event-core wire error.sign)
+      [%behn %wake *]  (on-take-wake:event-core wire error.sign)
     ::
-      [%j %turf *]          (on-take-turf:event-core turfs.sign)
-      [%j %private-keys *]  (on-priv:event-core [life vein]:sign)
-      [%j %public-keys *]   (on-publ:event-core wire public-keys-result.sign)
+      [%jael %turf *]          (on-take-turf:event-core turfs.sign)
+      [%jael %private-keys *]  (on-priv:event-core [life vein]:sign)
+      [%jael %public-keys *]   (on-publ:event-core wire public-keys-result.sign)
     ==
   ::
   [moves ames-gate]

@@ -370,7 +370,7 @@
     =/  nack-count=@ud  (slav %ud i.t.wire)
     =/  who=@p          (slav %p i.t.t.wire)
     =/  pax             t.t.t.wire
-    ?>  ?=([%b %wake *] sign-arvo)
+    ?>  ?=([%behns %wake *] sign-arvo)
     ~?  ?=(^ error.sign-arvo)
       "behn errored in backoff timers, continuing anyway"
     :_  this
