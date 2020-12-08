@@ -331,20 +331,22 @@
   |=  [=wire upd=update:bws]
   ^-  (quip card _state)
   ?-  -.upd
-      %generate-address
-    ::  if no peta (payer/value), just prints address
+    ::  %generate-address
+    ::   if no peta (payer/value), just prints address
     ::
+      %generate-address
     ?~  peta.upd  ~&(> address.upd `state)
     =/  [payer=ship value=sats]  u.peta.upd
     :_  state(ps.piym (~(put by ps.piym) payer [xpub.upd address.upd payer value]))
     ~[(poke-wallet-hook payer [%ret-pay-address address.upd payer value])]
+    ::  %generate-txbu
+    ::   - replace current txbu (otherwise can have UTXO overlap)
+    ::   - request provider to create-raw-tx from txbu
     ::
       %generate-txbu
-    ::  txbus can potentially use the same UTXO inputs, so if another payment
-    ::   was in process of fetching raw-txs for a txbu, replace it
-    ::
     :_  state(poym `txbu.upd)
     ?~  provider  ~&(>>> "provider not set" ~)
+    %+  weld  ~[(create-raw-tx host.u.provider txbu.upd)]
     %+  turn  txis.txbu.upd
     |=(=txi:bws (get-raw-tx host.u.provider txid.utxo.txi))
     ::
@@ -483,24 +485,35 @@
 ++  get-address-info
   |=  [ri=req-id:bp host=ship a=address]
   ^-  card
-  :*  %pass  /[(scot %da now.bowl)]  %agent  [host %btc-provider]
-      %poke  %btc-provider-action  !>([ri %address-info a])
-  ==
+  (poke-provider host `ri [%address-info a])
 ::
 ++  get-raw-tx
   |=  [host=ship =txid]
   ^-  card
-  =/  ri=req-id:bp  (gen-req-id:bp eny.bowl)
-  :*  %pass  /[(scot %da now.bowl)]  %agent  [host %btc-provider]
-      %poke  %btc-provider-action  !>([ri %raw-tx txid])
-  ==
+  (poke-provider host ~ [%raw-tx txid])
+::
+++  create-raw-tx
+  |=  [host=ship t=txbu:bws]
+  ^-  card
+  =/  ins=(list [txid @ud])
+    %+  turn  txis.t
+    |=(=txi:bws [txid.utxo.txi pos.utxo.txi])
+  =/  outs=(list [address sats])
+    %+  turn  txos.t
+    |=(=txo:bws [address.txo value.txo])
+  (poke-provider host `req-id.t [%create-raw-tx ins outs])
 ::
 ++  get-tx-info
   |=  [host=ship =txid]
   ^-  card
-  =/  ri=req-id:bp  (gen-req-id:bp eny.bowl)
+  (poke-provider host ~ [%tx-info txid])
+::
+++  poke-provider
+  |=  [host=ship uri=(unit req-id:bp) actb=action-body:bp]
+  ^-  card
+  =+  ri=?^(uri u.uri (gen-req-id:bp eny.bowl))
   :*  %pass  /[(scot %da now.bowl)]  %agent  [host %btc-provider]
-      %poke  %btc-provider-action  !>([ri %tx-info txid])
+      %poke  %btc-provider-action  !>([ri actb])
   ==
 ::
 ++  provider-connected
