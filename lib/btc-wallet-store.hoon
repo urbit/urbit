@@ -241,6 +241,7 @@
       |=  is=(list input)
       ^-  txbu
       :*  (gen-req-id:bp eny)
+          ~
           xpub.w
           payee
           (total-vbytes is)
