@@ -1466,11 +1466,6 @@ static c3_c* _141_two_can_ha[] = {
   "5fe17c6d254a231e8c9ff94bc47f994c0c1bc202cc9fc2705faaf3fb351c78ec",
   0
 };
-
-//  XX appears to be a duplicate of _141_one_cap_a
-//
-static u3j_harm _141_two_cap_a[] = {{".2", u3wc_cap, c3y}, {}};
-static c3_c* _141_two_cap_ha[] = {0};
 static u3j_harm _141_two_cat_a[] = {{".2", u3wc_cat, c3y}, {}};
 static c3_c* _141_two_cat_ha[] = {
   "292d9fd88787d017fc1bfd743950d33143b8847212cad718b391a92ba725475a",
@@ -1496,11 +1491,6 @@ static c3_c* _141_two_dor_ha[] = {
   "277927a2e49e4d942e81ffc7740a71e68a7b732df886a9f84dc7d914be911879",
   0
 };
-
-//  XX appears to be a duplicate of _141_one_dvr_a
-//
-static u3j_harm _141_two_dvr_a[] = {{".2", u3wc_dvr, c3y}, {}};
-static c3_c* _141_two_dvr_ha[] = {0};
 static u3j_harm _141_two_end_a[] = {{".2", u3wc_end, c3y}, {}};
 static c3_c* _141_two_end_ha[] = {
   "45a0efc0c4ae4b93f554d480a9d2c52474d5ebd6b1b9b0ab888b9bee2117db55",
@@ -1516,10 +1506,6 @@ static c3_c* _141_two_lsh_ha[] = {
   "a93f01f1db5bcaf1973d01234bbcec8f8adf9d6402a8d715a1b13b70a140a428",
   0
 };
-//  XX appears to be a duplicate of _141_one_mas_a
-//
-static u3j_harm _141_two_mas_a[] = {{".2", u3wc_mas, c3y}, {}};
-static c3_c* _141_two_mas_ha[] = {0};
 static u3j_harm _141_two_met_a[] = {{".2", u3wc_met, c3y}, {}};
 static c3_c* _141_two_met_ha[] = {
   "6654d029fcee53f56439e35e824d955a1ec4081134916b0c5394941febb17b1e",
@@ -1545,11 +1531,6 @@ static c3_c* _141_two_muk_ha[] = {
   "de425abca39f90204eee4b89958f4b1be21eada95754ffc37597bd76653a689d",
   0
 };
-
-//  XX appears to be a duplicate of _141_one_peg_a
-//
-static u3j_harm _141_two_peg_a[] = {{".2", u3wc_peg, c3y}, {}};
-static c3_c* _141_two_peg_ha[] = {0};
 static u3j_harm _141_two_pow_a[] = {{".2", u3wc_pow, c3y}, {}};
 static c3_c* _141_two_pow_ha[] = {
   "3bc8ad91db75395dc15a996ae7e8c2522f97d8f4b8037e23e2675061c5029792",
@@ -1840,18 +1821,15 @@ static u3j_core _141_two_d[] =
   { "bex", 7, _141_two_bex_a, 0, _141_two_bex_ha },
   { "cat", 7, _141_two_cat_a, 0, _141_two_cat_ha },
   { "can", 7, _141_two_can_a, 0, _141_two_can_ha },
-  { "cap", 7, _141_two_cap_a, 0, _141_two_cap_ha },
   { "con", 7, _141_two_con_a, 0, _141_two_con_ha },
   { "cue", 7, _141_two_cue_a, 0, _141_two_cue_ha },
   { "cut", 7, _141_two_cut_a, 0, _141_two_cut_ha },
   { "dis", 7, _141_two_dis_a, 0, _141_two_dis_ha },
   { "dor", 7, _141_two_dor_a, 0, _141_two_dor_ha },
-  { "dvr", 7, _141_two_dvr_a, 0, _141_two_dvr_ha },
   { "end", 7, _141_two_end_a, 0, _141_two_end_ha },
   { "gor", 7, _141_two_gor_a, 0, _141_two_gor_ha },
   { "jam", 7, _141_two_jam_a, 0, _141_two_jam_ha },
   { "lsh", 7, _141_two_lsh_a, 0, _141_two_lsh_ha },
-  { "mas", 7, _141_two_mas_a, 0, _141_two_mas_ha },
   { "mat", 7, _141_two_mat_a, 0, _141_two_mat_ha },
   { "met", 7, _141_two_met_a, 0, _141_two_met_ha },
   { "mix", 7, _141_two_mix_a, 0, _141_two_mix_ha },
@@ -1865,7 +1843,6 @@ static u3j_core _141_two_d[] =
   { "rsh", 7, _141_two_rsh_a, 0, _141_two_rsh_ha },
   { "swp", 7, _141_two_swp_a, 0, _141_two_swp_ha },
   { "rub", 7, _141_two_rub_a, 0, _141_two_rub_ha },
-  { "peg", 7, _141_two_peg_a, 0, _141_two_peg_ha },
   { "pow", 7, _141_two_pow_a, 0, _141_two_pow_ha },
   { "sqt", 7, _141_two_sqt_a, 0, _141_two_sqt_ha },
   { "xeb", 7, _141_two_xeb_a, 0, _141_two_xeb_ha },
