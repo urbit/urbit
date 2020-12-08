@@ -55,7 +55,7 @@
     def   ~(. (default-agent this %|) bowl)
     hc    ~(. +> bowl)
 ::
-++  on-initb
+++  on-init
   ^-  (quip card _this)
   ~&  >  '%btc-wallet-hook initialized'
   :_  this(fam-limit.state fam-limit:defaults)
