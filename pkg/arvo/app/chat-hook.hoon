@@ -4,7 +4,7 @@
 ::
 /-  inv=invite-store, *metadata-store, *group-store, hook=chat-hook, view=chat-view, *group
 /+  default-agent, verb, dbug, store=chat-store, group-store, grpl=group,
-    resource
+    resource, *migrate
 ~%  %chat-hook-top  ..is  ~
 |%
 +$  card  card:agent:gall
@@ -302,6 +302,10 @@
       ::
           %chat-hook-action
         (poke-chat-hook-action:cc !<(action:hook vase))
+      ::
+          %import
+        ?>  (team:title our.bol src.bol)
+        (poke-import:cc q.vase)
       ==
     [cards this]
   ::
@@ -350,8 +354,28 @@
     ==
   ::
   ++  on-leave  on-leave:def
-  ++  on-peek   on-peek:def
-  ++  on-arvo   on-arvo:def
+  ++  on-peek
+    |=  =path
+    ^-  (unit (unit cage))
+    ?+  path  (on-peek:def path)
+        [%x %export ~]
+      ``noun+!>(state)
+    ==
+  ::
+  ++  on-arvo
+    |=  [=wire =sign-arvo]
+    ^-  (quip card _this)
+    ?.  ?=([%try-rejoin @ @ *] wire)
+      (on-arvo:def wire sign-arvo)
+    =/  nack-count=@ud  (slav %ud i.t.wire)
+    =/  who=@p          (slav %p i.t.t.wire)
+    =/  pax             t.t.t.wire
+    ?>  ?=([%b %wake *] sign-arvo)
+    ~?  ?=(^ error.sign-arvo)
+      "behn errored in backoff timers, continuing anyway"
+    :_  this
+    [(try-rejoin:cc who pax +(nack-count))]~
+  ::
   ++  on-fail   on-fail:def
   --
 ::
@@ -610,6 +634,32 @@
     ==
   ==
 ::
+++  poke-import
+  |=  arc=*
+  ^-  (quip card _state)
+  =/  sty=state-10
+    :*  %10
+      (remake-map ;;((tree [path ship]) +<.arc))
+      ;;(? +>-.arc)
+      (remake-map ;;((tree [path ?]) +>+.arc))
+    ==
+  :_  sty
+  %+  turn  ~(tap by synced.sty)
+  |=  [=path =ship]
+  ^-  card
+  =/  watch-path=^path  [%mailbox path]
+  ?:  =(our.bol ship)
+    =/  store-wire=wire  [%store path]
+    [%pass store-wire %agent [our.bol %chat-store] %watch watch-path]
+  (try-rejoin ship watch-path 0)
+::
+++  try-rejoin
+  |=  [who=@p pax=path nack-count=@ud]
+  ^-  card
+  =/  =wire
+    [%try-rejoin (scot %ud nack-count) (scot %p who) pax]
+  [%pass wire %agent [who %chat-hook] %watch pax]
+::
 ++  watch-synced
   |=  pax=path
   ^-  (list card)
@@ -764,6 +814,9 @@
   |=  wir=wire
   ^-  (quip card _state)
   ?+  wir  !!
+    [%try-rejoin @ @ *]
+      $(wir t.t.t.wir)
+  ::
     [%groups ~]  [~[watch-groups] state]
   ::
       [%store @ *]
@@ -838,6 +891,13 @@
       ?>  ?=(^ chat)
       (migrate-listen t.chat)
     [~ state]
+  ::
+      [%try-rejoin @ *]
+    =/  nack-count=@ud  (slav %ud i.t.wir)
+    =/  wakeup=@da
+      (add now.bol (mul ~s1 (bex (min 19 nack-count))))
+    :_  state
+    [%pass wir %arvo %b %wait wakeup]~
   ==
 ::
 ++  chat-poke

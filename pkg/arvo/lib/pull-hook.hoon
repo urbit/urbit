@@ -228,6 +228,7 @@
       =.  inner-state
         on-save:og
       !>(state)
+    ::
     ++  on-poke
       |=  [=mark =vase]
       ^-  [(list card:agent:gall) agent:gall]
@@ -332,13 +333,14 @@
         p.u.cas
       now.bowl
     ::  catch bad gall scries early
-    ?:  ?&  =((end 3 1 i.u.pax) %g)
+    ?:  ?&  =((end 3 i.u.pax) %g)
             ?|  !=(`our.bowl ship)
                 !=(dat now.bowl)
             ==
         ==
       ~
     ``.^(* u.pax)
+  ::
   ++  handle-kick
     |=  [rid=resource =ship]
     ^-  (quip card _state)
@@ -349,13 +351,15 @@
       :-  -:!>(*(unit path)) 
       ?:(?=(%0 -.res) p.res ~)
     =?  failed-kicks  !?=(%0 -.res)
-      =/  tang
+      =/  =tang
         :+  leaf+"failed kick handler, please report" 
           leaf+"{<rid>} in {(trip dap.bowl)}"
         ?:  ?=(%2 -.res)
           p.res
         ?>  ?=(%1 -.res)
-        (turn `(list *)`p.res (cork path smyt))
+        =/  maybe-path=(unit path)  ((soft path) p.res)
+        ?~  maybe-path  ~
+        [(smyt u.maybe-path) ~]
       %-  (slog tang)
       (~(put by failed-kicks) rid ship)
     ?^  pax
@@ -400,7 +404,7 @@
     =/  =wire
       (make-wire pull+resource+(en-path:resource rid))
     [%pass wire %agent [u.ship push-hook-name.config] %leave ~]~
-
+  ::
   ++  watch-resource
     |=  [rid=resource pax=path]
     ^-  (list card)
@@ -410,7 +414,7 @@
     =/  =path
       (welp resource+(en-path:resource rid) pax)
     =/  =wire
-      (make-wire pull+path)
+      (make-wire pull+resource+(en-path:resource rid))
     [%pass wire %agent [u.ship push-hook-name.config] %watch path]~
   ::
   ++  make-wire
