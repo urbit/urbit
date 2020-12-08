@@ -1066,7 +1066,7 @@ _ames_hear(u3_ames* sam_u,
      || (c3n == _ames_sift_head(&hed_u, hun_y)) )
   {
     sam_u->sat_u.hed_d++;
-    if ( 0 == (sam_u->sat_u.hed_d % 100) ) {
+    if ( 0 == (sam_u->sat_u.hed_d % 100000) ) {
       u3l_log("ames: %" PRIu64 " dropped, failed to read header\n",
               sam_u->sat_u.hed_d);
     }
@@ -1083,7 +1083,7 @@ _ames_hear(u3_ames* sam_u,
      && (sam_u->ver_y != hed_u.ver_y) )
   {
     sam_u->sat_u.vet_d++;
-    if ( 0 == (sam_u->sat_u.vet_d % 100) ) {
+    if ( 0 == (sam_u->sat_u.vet_d % 100000) ) {
       u3l_log("ames: %" PRIu64 " dropped for version mismatch\n",
               sam_u->sat_u.vet_d);
     }
@@ -1113,7 +1113,7 @@ _ames_hear(u3_ames* sam_u,
     //
     if ( bod_u.mug_l != hed_u.mug_l ) {
       sam_u->sat_u.mut_d++;
-      if ( 0 == (sam_u->sat_u.mut_d % 100) ) {
+      if ( 0 == (sam_u->sat_u.mut_d % 100000) ) {
         u3l_log("ames: %" PRIu64 " dropped for invalid mug\n",
                 sam_u->sat_u.mut_d);
       }
