@@ -70,13 +70,20 @@
   |%
   ++  parse
     |=  psbt-base64=cord
-    ^-  (list (list keyval:^psbt))
-    ~[~]
-::  TODO:
-  ::  - get into a buffer
-  ::  loop through using next-pair
-  ::  every time there's a separator, close the prior on
-  ::  +txid: extract txid from a valid PSBT
+    ^-  (list map:^psbt)
+    =/  todo=^buffer
+      %+  slag  5  (to-buffer psbt-base64)
+    =|  acc=(list map:^psbt)
+    =|  m=map:^psbt
+    |-
+    ?~  todo  (snoc acc m)
+    ::  0x0: map separator
+    ?:  =(0x0 i.todo)
+      $(acc (snoc acc m), m *map:^psbt, todo t.todo)
+    =+  [kv rest]=(next-keyval todo)
+    $(m (snoc m kv), todo rest)
+  ::  +get-txid: extract txid from a valid PSBT
+  ::
   ++  get-txid
     |=  psbt-base64=cord
     ^-  txid
@@ -100,14 +107,14 @@
     |-  ^-  btc-byts
     ?~  b  !!
     ?:  =(0x0 i.b)  !!
-    =+  np=(next-pair b)
-    ?:  =(0x0 dat.key.kv.np)
-      val.kv.np
-    $(b rest.np)
-  :: +next-pair: returns next key-val in a PSBT map
+    =+  nk=(next-keyval b)
+    ?:  =(0x0 dat.key.kv.nk)
+      val.kv.nk
+    $(b rest.nk)
+  :: +next-keyval: returns next key-val in a PSBT map
   ::   input buffer head must be a map key length
   ::
-  ++  next-pair
+  ++  next-keyval
     |=  b=^buffer
     ^-  [kv=keyval:^psbt rest=^buffer]
     =+  klen=(snag 0 b)
