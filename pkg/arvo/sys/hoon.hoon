@@ -11871,8 +11871,7 @@
       (caching-grow %gold p.gen %wet [%$ 1] q.gen)
     ::
         [%cnts *]
-      :_  grub
-      (~(mint et p.gen q.gen) gol)
+      (~(mint caching-et p.gen q.gen) gol)
     ::
         [%dtkt *]
       =^  nef  grub  $(gen [%kttr p.gen])
@@ -12378,8 +12377,7 @@
       (caching-grow %gold p.gen %wet [%$ 1] q.gen)
     ::
         [%cnts *]
-      :_  grub
-      (~(mull et p.gen q.gen) gol dox)
+      (~(mull caching-et p.gen q.gen) gol dox)
     ::
         [%dtkt *]
       =^  lef  grub  $(gen q.gen, gol %noun) :: XX ignored?
@@ -13411,8 +13409,7 @@
       (core sut [p.gen %wet %gold] sut *seminoun q.gen)
     ::
         [%cnts *]
-      :_  grub
-      ~(play et p.gen q.gen)
+      ~(play caching-et p.gen q.gen)
     ::
         [%dtkt *]
       $(gen [%kttr p.gen])
