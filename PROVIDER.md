@@ -20,3 +20,12 @@
 :btc-provider|action ['reqid' %tx-info [%32 0x9ece.9c56.9ab3.27db.ada5.a51e.2653.7b3f.7e99.5579.c18a.af4f.8620.304b.ce53.16f1]]
 ::  4 inputs, one output
 ```
+
+##  Generate a Raw TX from Inputs/Outputs
+```
+:btc-provider|command [%set-credentials api-url='http://localhost:50002']
+=inputs ~[[[%32 0xe86.8771.b3bf.f789.525e.21ba.c735.e280.70d1.eff0.fb4d.f59a.dc98.e914.8e2f.85d4] 0]]
+=outputs ~[[[%bech32 'bc1q0ydcskwye4rqky4qankhl4kegajl8nh50plmx0'] 12.500.000]]
+
+:btc-provider|action ['rawtx0' %create-raw-tx inputs outputs]
+```
