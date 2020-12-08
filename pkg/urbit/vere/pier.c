@@ -1619,6 +1619,7 @@ _pier_pill_parse(u3_noun pil)
 
     if ( c3y == u3r_sing_c("ivory", tag) ) {
       fprintf(stderr, "boot: failed: unable to boot from ivory pill\r\n");
+      u3_king_bail();
       exit(1);
     }
     else if ( c3__pill != tag ) {
