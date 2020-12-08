@@ -1,5 +1,4 @@
-=>  ..ride
-=>
+=>  ..ride  =>
 |%
 +|  %global
 ::
@@ -202,7 +201,9 @@
       van=(map term (trap vase))
   ==
 +$  heir
-  $%  [%grub _arvo =grub]
+  $%  $:  %grub
+          $%  [_arvo =grub]
+      ==  ==
       [_arvo =debt =soul]
   ==
 +$  plan  (pair germ (list move))
@@ -248,13 +249,11 @@
 ::
 +$  waif
   ::  %trim: trim state, spam to all
-  ::  %vega: notify vanes post upgrade
   ::  %what: update from files
   ::  %whey: produce $mass                    :: XX remove, scry
   ::  %verb: toggle laconicity
   ::
   $%  [%trim p=@ud]
-      [%vega ~]
       [%what p=(list (pair path (cask)))]
       [%whey ~]
       [%verb p=(unit ?)]
@@ -1171,7 +1170,12 @@
         ==
       ::  apply remaining update
       ::
-      (~(lod what:pith fil.debt) kel.debt)
+      =.  ..this  (~(lod what:pith fil.debt) kel.debt)
+      ::  send upgrade notifications
+      ::
+      =+  [wir car]=[/arvo vega/~]
+      =.  ..this  (xeno:pith $/wir car)
+      (emit $/~ (spam:pith wir !>(car)))
     ::  +emit: enqueue a worklist with source
     ::
     ++  emit
@@ -1412,13 +1416,8 @@
           =/  tub  (~(usurp adapt fat.mod.sol) del)
           ?~  tub
             (mod del |)
-          =/  pos=plan
-            [$/~ [*duct (gest [//arvo vega/~])] ~]
           =/  gat  (boot kel.ver.zen [hun arv]:p.u.tub)
-          %_  ..pith
-            but  `[gat q.u.tub fil]
-            run  (weld run [pos ~])
-          ==
+          ..pith(but `[gat q.u.tub fil])
         ::
         ++  lod
           |=  kel=(list (pair path (cask)))
@@ -1469,9 +1468,7 @@
                    (~(run by van.mod) |=(=vane vane(worm *worm)))
                  (emit $/~ (spam /arvo !>(waif)))
         ::
-          %vega  (emit $/~ (spam /arvo !>(waif)))  :: XX also out
           %verb  ..pith(lac.fad ?~(p.waif !lac.fad u.p.waif))
-        ::
           %what  ~(kel what p.waif)
           %whey  ..pith(out [[//arvo mass/whey] out])
         ==
@@ -1545,8 +1542,8 @@
       ::
       ++  xeno
         |=  =ovum
-        ^+  this
-        this(out [ovum out])
+        ^+  ..pith
+        ..pith(out [ovum out])
       --
     --
   --
@@ -1558,10 +1555,11 @@
 ++  boot
   |=  [kel=wynn hun=(unit @t) van=@t]
   ^-  $-(heir (trap ^))
-  ~>  %mean.'vega: ruin'
+  ~>  %mean.'arvo: upgrade failed'
+  ~>  %slog.[1 'arvo: beginning upgrade']
   ?~  hun
     =/  gat
-      ~>  %slog.[0 leaf/"vega: compiling arvo"]
+      ~>  %slog.[0 'arvo: compiling next arvo']
       %-  road  |.
       (slap !>(..ride) (rain /sys/arvo/hoon van))
     =/  lod
@@ -1577,7 +1575,7 @@
     ::  compile new hoon.hoon source with the current compiler
     ::
     =/  raw
-      ~>  %slog.[0 leaf/"vega: compiling hoon"]
+      ~>  %slog.[0 'arvo: compiling hoon']
       (road |.((ride %noun u.hun)))
     ::  activate the new compiler gate, producing +ride
     ::
@@ -1589,9 +1587,9 @@
     ::  require single-step upgrade
     ::
     ?.  |(=(nex hoon-version) =(+(nex) hoon-version))
-      ::  XX revise hint
-      ::
-      ~>(%mean.'wyrd: vega:' !!)
+      =*  ud  |=(a=@ (scow %ud a))
+      ~_  leaf/"cannot upgrade to hoon %{(ud nex)} from %{(ud hoon-version)}"
+      !!
     ::  require runtime compatibility
     ::
     %-  (need:wyrd kel [hoon/nex ~])
@@ -1602,7 +1600,7 @@
       ?:  =(nex hoon-version)
         [raw cop]
       =/  hot
-        ~>  %slog.[0 leaf+"vega: recompiling hoon %{<`@`nex>}"]
+        ~>  %slog.[0 leaf/"arvo: recompiling hoon %{(scow %ud nex)}"]
         (road |.((slum cop [%noun u.hun])))
       [hot .*(0 +.hot)]
     ::  extract the hoon core from the outer gate (+ride)
@@ -1617,26 +1615,15 @@
   ::  compile arvo
   ::
   =/  rav
-    ~>  %slog.[0 leaf/"vega: compiling arvo"]
+    ~>  %slog.[0 'arvo: compiling next arvo']
     (road |.((slum cop [hyp van])))
   ::  activate arvo and extract the arvo core from the outer gate
   ::
   =/  voc  .*(hoc [%7 +.rav %0 7])
   ::
-  ::  extract the upgrade gate +load
+  ::  extract the upgrade gate +load at axis +4
   ::
-  ::    XX +come is now ignored, remove?
-  ::    XX could be a constant axis now (currently +10)
-  ::
-  =/  lod
-    ::  vip: type of the arvo.hoon core
-    ::  fol: formula for the +load gate
-    ::
-    =/  vip  -:(slum cop [-.rav '+>'])
-    =/  fol  +:(slum cop [vip 'load'])
-    ::  produce the upgrade gate
-    ::
-    .*(voc fol)
+  =/  lod  .*(voc [%0 4])
   ::
   |=  =heir
   |.  ;;(^ (slum lod heir))
@@ -1775,7 +1762,7 @@
 =>  |%
     ++  molt
       |=  [now=@da grub]
-      ^-  (unit heir)
+      ^-  (unit $>(_arvo heir))
       ?.  &(?=(^ who) ?=(^ eny) ?=(^ ver) ?=(^ fat) ?=(^ lul) ?=(^ zus))
         ~
       =/  lul  $:u.lul
