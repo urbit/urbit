@@ -12,6 +12,13 @@
   ?:  =("ypub" prefix)  %bip49
   ?:  =("zpub" prefix)  %bip84
   ~|("invalid xpub: {<xpub>}" !!)
+::  +flip-byts: flip endianness while preserving lead/trail zeroes
+::
+++  flip-byts
+  |=  b=btc-byts
+  %-  to-byts:buffer
+  %-  flop
+  %-  from-byts:buffer  b
 ::  big endian sha256: input and output are both MSB first (big endian)
 ::
 ++  sha256
@@ -61,24 +68,19 @@
 ::
 ++  psbt
   |%
+::  ++  parse
+::    |=  psbt=cord
+
   ::  +txid: extract txid from a valid PSBT
   ++  get-txid
     |=  psbt=cord
     ^-  txid
-    ~|  "Invalid PSBT"
-    =+  p=(de:base64 psbt)
-    ?~  p  !!
-    =/  bigend=@ux  (swp 3 q.u.p)
     =/  tx=btc-byts
       %-  raw-tx
       %+  slag  5
-      (from-byts:buffer [(met 3 bigend) bigend])
-    ::  use buffer for leading/trailing 0s safety
-    ::
+      (to-buffer psbt)
     =/  hash=btc-byts
-      %-  to-byts:buffer
-      %-  flop
-      %-  from-byts:buffer
+      %-  flip-byts
       %-  sha256
       %-  sha256
       tx
@@ -113,6 +115,14 @@
         (to-byts:buffer v)
         (slag len b)
     ==
+  ++  to-buffer
+    |=  psbt=cord
+    ^-  ^buffer
+    ~|  "Invalid PSBT"
+    =+  p=(de:base64 psbt)
+    ?~  p  !!
+    =/  bigend=@ux  (swp 3 q.u.p)
+    (from-byts:buffer [(met 3 bigend) bigend])
   --
 ::  list of @ux that is big endian for hashing purposes
 ::  used to preserve 0s when concatenating byte sequences
