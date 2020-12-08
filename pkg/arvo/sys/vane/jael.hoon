@@ -665,7 +665,7 @@
     ?~  yez  this-su
     =*  d  i.yez
     =.  this-su
-      ?.  &(?=([[%a @ @ *] *] d) !=(%public-keys i.t.i.d))
+      ?.  &(?=([[%ames @ @ *] *] d) !=(%public-keys i.t.i.d))
         %-  emit
         [d %give %public-keys public-keys-result]
       %-  emit
