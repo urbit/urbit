@@ -819,7 +819,6 @@
       ?~  queued-events
         ~>  %slog.0^leaf/"ames: metamorphosis"
         [moves adult-gate]
-      ~>  %slog.0^leaf/"ames: larva: drain"
       ::  set timer to drain next event
       ::
       =.  moves  :_(moves [duct %pass /larva %b %wait now])
