@@ -53,6 +53,10 @@
         value=sats
     ==
   --
+++  psbt
+  |%
+  +$  keyval  [key=btc-byts val=btc-byts]
+  --
 ++  ops
   |%
   ++  op-dup  118
