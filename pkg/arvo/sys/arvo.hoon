@@ -351,14 +351,13 @@
   ++  sane
     |=  kel=wynn
     ^-  ?
-    &
-    :: ?:  =(~ kel)  &
-    :: =^  las=(pair term @ud)  kel  kel
-    :: |-  ^-  ?
-    :: ?~  kel  &
-    :: ?&  (gte q.las q.i.kel)
-    ::     $(las i.kel, kel t.kel)
-    :: ==
+    ?:  =(~ kel)  &
+    =^  las=(pair term @ud)  kel  kel
+    |-  ^-  ?
+    ?~  kel  &
+    ?&  (gte q.las q.i.kel)
+        $(las i.kel, kel t.kel)
+    ==
   ::  +need: require kelvins
   ::
   ++  need
