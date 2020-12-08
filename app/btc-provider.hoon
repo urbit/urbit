@@ -115,6 +115,9 @@
         %raw-tx
       [%get-raw-tx txid.body.act]
       ::
+        %create-raw-tx
+      [%create-raw-tx inputs.body.act outputs.body.act]
+      ::
         %ping
       [%get-block-and-fee ~]
     ==
@@ -170,6 +173,11 @@
     ~[(send-update [%.y (get-req-id wire) %tx-info +.resp])]
     ::
       [%raw-tx @ *]
+    ?>  ?=([%get-raw-tx *] resp)
+    :_  state
+    ~[(send-update [%.y (get-req-id wire) %raw-tx +.resp])]
+    ::
+      [%create-raw-tx @ *]
     ?>  ?=([%get-raw-tx *] resp)
     :_  state
     ~[(send-update [%.y (get-req-id wire) %raw-tx +.resp])]
