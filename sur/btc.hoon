@@ -56,6 +56,7 @@
 ++  psbt
   |%
   +$  keyval  [key=btc-byts val=btc-byts]
+  +$  map  (list keyval)
   --
 ++  ops
   |%
