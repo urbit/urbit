@@ -17419,14 +17419,13 @@
   (rain bon .^(@t %cx (weld bon `path`[%hoon ~])))
 ::
 ++  caching-ride                                        ::  end-to-end compiler
-  |=  {typ/type txt/@}
+  |=  [typ=type txt=@]
   ^-  (pair type nock)
   ~>  %slog.[0 leaf/"caching-ride: parsing"]
   =/  gen  (ream txt)
   ~>  %slog.[0 leaf/"caching-ride: compiling"]
   ~<  %slog.[0 leaf/"caching-ride: compiled"]
-  =>  (~(caching-mint ut typ) %noun gen)
-  -
+  -:(~(caching-mint ut typ) %noun gen)
 ::
 ++  ride                                                ::  end-to-end compiler
   |=  {typ/type txt/@}
