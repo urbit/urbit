@@ -14,18 +14,18 @@
     /* u3e_control: memory change, control file.
     */
       typedef struct _u3e_control {
-        c3_d evt_d;                         //  event number
-        c3_w nor_w;                         //  new page count north
-        c3_w sou_w;                         //  new page count south
-        c3_w pgs_w;                         //  number of changed pages
+        c3_w     ver_y;                     //  version number
+        c3_w     nor_w;                     //  new page count north
+        c3_w     sou_w;                     //  new page count south
+        c3_w     pgs_w;                     //  number of changed pages
         u3e_line mem_u[0];                  //  per page
       } u3e_control;
 
     /* u3_cs_patch: memory change, top level.
     */
       typedef struct _u3_cs_patch {
-        c3_i           ctl_i;
-        c3_i           mem_i;
+        c3_i         ctl_i;
+        c3_i         mem_i;
         u3e_control* con_u;
       } u3_ce_patch;
 
@@ -40,11 +40,10 @@
     /* u3e_pool: entire memory system.
     */
       typedef struct _u3e_pool {
-        c3_c*        dir_c;                     //  path to
-        c3_d         evt_d;                     //  last patch written at event
-        c3_w         dit_w[u3a_pages >> 5];   //  touched since last save
-        u3e_image  nor_u;                     //  north segment
-        u3e_image  sou_u;                     //  south segment
+        c3_c*     dir_c;                     //  path to
+        c3_w      dit_w[u3a_pages >> 5];     //  touched since last save
+        u3e_image nor_u;                     //  north segment
+        u3e_image sou_u;                     //  south segment
       } u3e_pool;
 
 
@@ -55,6 +54,9 @@
       c3_global u3e_pool u3e_Pool;
 #     define u3P u3e_Pool
 
+  /** Constants.
+  **/
+#     define u3e_version 1
 
   /** Functions.
   **/

@@ -39,7 +39,7 @@
       /* u3m_pave(): instantiate or activate image.
       */
         void
-        u3m_pave(c3_o nuu_o, c3_o bug_o);
+        u3m_pave(c3_o nuu_o);
 
       /* u3m_file(): load file, as atom, or bail.
       */

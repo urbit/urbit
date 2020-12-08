@@ -438,66 +438,17 @@ u3m_file(c3_c* pas_c)
   }
 }
 
-/* _find_north(): in restored image, point to a north home.
+/* u3m_mark(): mark all nouns in the road.
 */
-static u3_road*
-_find_north(c3_w* mem_w, c3_w siz_w, c3_w len_w)
+c3_w
+u3m_mark(FILE* fil_u)
 {
-  return (void *) ((mem_w + len_w) - siz_w);
-}
-
-#if 0
-/* _find_south(): in restored image, point to a south home.
-*/
-static u3_road*
-_find_south(c3_w* mem_w, c3_w siz_w, c3_w len_w)
-{
-  return (void *)mem_w;
-}
-#endif
-
-static u3_road*
-_pave_north(c3_w* mem_w, c3_w siz_w, c3_w len_w)
-{
-  c3_w*    rut_w = mem_w;
-  c3_w*    hat_w = rut_w;
-  c3_w*    mat_w = ((mem_w + len_w) - siz_w);
-  c3_w*    cap_w = mat_w;
-  u3_road* rod_u = (void*) mat_w;
-
-  // memset(mem_w, 0, 4 * len_w);     // enable in case of corruption
-  memset(rod_u, 0, 4 * siz_w);
-
-  rod_u->rut_p = u3of(c3_w, rut_w);
-  rod_u->hat_p = u3of(c3_w, hat_w);
-
-  rod_u->mat_p = u3of(c3_w, mat_w);
-  rod_u->cap_p = u3of(c3_w, cap_w);
-
-  return rod_u;
-}
-
-/* _pave_south(): install a south road.
-*/
-static u3_road*
-_pave_south(c3_w* mem_w, c3_w siz_w, c3_w len_w)
-{
-  c3_w*    rut_w = (mem_w + len_w);
-  c3_w*    hat_w = rut_w;
-  c3_w*    mat_w = mem_w;
-  c3_w*    cap_w = mat_w + siz_w;
-  u3_road* rod_u = (void*) mat_w;
-
-  //  memset(mem_w, 0, 4 * len_w);    //  enable in case of corruption
-  memset(rod_u, 0, 4 * siz_w);
-
-  rod_u->rut_p = u3of(c3_w, rut_w);
-  rod_u->hat_p = u3of(c3_w, hat_w);
-
-  rod_u->mat_p = u3of(c3_w, mat_w);
-  rod_u->cap_p = u3of(c3_w, cap_w);
-
-  return rod_u;
+  c3_w tot_w = 0;
+  tot_w += u3v_mark(fil_u);
+  tot_w += u3j_mark(fil_u);
+  tot_w += u3n_mark(fil_u);
+  tot_w += u3a_mark_road(fil_u);
+  return tot_w;
 }
 
 /* _pave_parts(): build internal tables.
@@ -513,37 +464,122 @@ _pave_parts(void)
   u3R->byc.har_p = u3h_new();
 }
 
-/* u3m_mark(): mark all nouns in the road.
+/* _pave_road(): initialize road boundaries
 */
-c3_w
-u3m_mark(FILE* fil_u)
+static u3_road*
+_pave_road(c3_w* rut_w, c3_w* mat_w, c3_w* cap_w, c3_w siz_w)
 {
-  c3_w tot_w = 0;
-  tot_w += u3v_mark(fil_u);
-  tot_w += u3j_mark(fil_u);
-  tot_w += u3n_mark(fil_u);
-  tot_w += u3a_mark_road(fil_u);
-  return tot_w;
+  u3_road* rod_u = (void*) mat_w;
+
+  //  enable in case of corruption
+  //
+  // memset(mem_w, 0, 4 * len_w);
+  memset(rod_u, 0, 4 * siz_w);
+
+  //  the top and bottom of the heap are initially the same
+  //
+  rod_u->rut_p = u3of(c3_w, rut_w);
+  rod_u->hat_p = u3of(c3_w, rut_w);
+
+
+  rod_u->mat_p = u3of(c3_w, mat_w);  //  stack bottom
+  rod_u->cap_p = u3of(c3_w, cap_w);  //  stack top
+
+  return rod_u;
+}
+
+/* _pave_north(): calculate boundaries and initialize north road.
+*/
+static u3_road*
+_pave_north(c3_w* mem_w, c3_w siz_w, c3_w len_w)
+{
+  //  in a north road, the heap is low and the stack is high
+  //
+  //    the heap starts at the base memory pointer [mem_w];
+  //    the stack starts at the end of the memory segment,
+  //    minus space for the road structure [siz_w]
+  //
+  c3_w* rut_w = mem_w;
+  c3_w* mat_w = ((mem_w + len_w) - siz_w);
+  c3_w* cap_w = mat_w;
+
+  return _pave_road(rut_w, mat_w, cap_w, siz_w);
+}
+
+/* _pave_south(): calculate boundaries and initialize south road.
+*/
+static u3_road*
+_pave_south(c3_w* mem_w, c3_w siz_w, c3_w len_w)
+{
+  //  in a south road, the heap is high and the stack is low
+  //
+  //    the heap starts at the end of the memory segment;
+  //    the stack starts at the base memory pointer [mem_w],
+  //    and ends after the space for the road structure [siz_w]
+  //
+  c3_w* rut_w = (mem_w + len_w);
+  c3_w* mat_w = mem_w;
+  c3_w* cap_w = mat_w + siz_w;
+
+  return _pave_road(rut_w, mat_w, cap_w, siz_w);
+}
+
+/* _pave_home(): initialize pristine home road.
+*/
+static void
+_pave_home(void)
+{
+  c3_w* mem_w = u3_Loom + 1;
+  c3_w  siz_w = c3_wiseof(u3v_home);
+  c3_w  len_w = u3a_words - 1;
+
+  u3H = (void *)_pave_north(mem_w, siz_w, len_w);
+  u3H->ver_w = u3v_version;
+  u3R = &u3H->rod_u;
+
+  _pave_parts();
+}
+
+STATIC_ASSERT( ((c3_wiseof(u3v_home) * 4) == sizeof(u3v_home)),
+               "home road alignment" );
+
+/* _find_home(): in restored image, point to home road.
+*/
+static void
+_find_home(void)
+{
+  //  NB: the home road is always north
+  //
+  c3_w* mem_w = u3_Loom + 1;
+  c3_w  siz_w = c3_wiseof(u3v_home);
+  c3_w  len_w = u3a_words - 1;
+
+  {
+    c3_w ver_w = *((mem_w + len_w) - 1);
+
+    if ( u3v_version != ver_w ) {
+      fprintf(stderr, "loom: checkpoint version mismatch: "
+                      "have %u, need %u\r\n",
+                      ver_w,
+                      u3v_version);
+      abort();
+    }
+  }
+
+  u3H = (void *)((mem_w + len_w) - siz_w);
+  u3R = &u3H->rod_u;
 }
 
 /* u3m_pave(): instantiate or activate image.
 */
 void
-u3m_pave(c3_o nuu_o, c3_o bug_o)
+u3m_pave(c3_o nuu_o)
 {
   if ( c3y == nuu_o ) {
-    u3H = (void *)_pave_north(u3_Loom + 1,
-                              c3_wiseof(u3v_home),
-                              u3a_words - 1);
-    u3R = &u3H->rod_u;
-
-    _pave_parts();
+    _pave_home();
   }
   else {
-    u3H = (void *)_find_north(u3_Loom + 1,
-                              c3_wiseof(u3v_home),
-                              u3a_words - 1);
-    u3R = &u3H->rod_u;
+    _find_home();
   }
 }
 
@@ -1676,7 +1712,7 @@ u3m_boot(c3_c* dir_c)
 
   /* Construct or activate the allocator.
   */
-  u3m_pave(nuu_o, c3n);
+  u3m_pave(nuu_o);
 
   /* Initialize the jet system.
   */
@@ -1687,19 +1723,11 @@ u3m_boot(c3_c* dir_c)
 
   /* Reactivate jets on old kernel.
   */
-  if ( !_(nuu_o) ) {
+  if ( c3n == nuu_o ) {
     u3j_ream();
     u3n_ream();
 
-    //  XX unused, removed
-    //
-    //    u3z() temporarily preserved to avoid leaking
-    //    checkpointed values
-    //
-    u3z(u3A->wen);
-    u3A->wen = 0;
-
-    return u3A->ent_d;
+    return u3A->eve_d;
   }
   else {
   /* Basic initialization.
@@ -1727,7 +1755,7 @@ u3m_boot_lite(void)
 
   /* Construct or activate the allocator.
   */
-  u3m_pave(c3y, c3n);
+  u3m_pave(c3y);
 
   /* Initialize the jet system.
   */

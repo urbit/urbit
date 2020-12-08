@@ -98,6 +98,7 @@ typedef struct _u3_h2o_serv {
 */
 typedef struct _u3_httd {
   u3_auto            car_u;             //  driver
+  c3_l               sev_l;             //  instance number
   u3_hfig            fig_u;             //  http configuration
   u3_http*           htp_u;             //  http servers
   SSL_CTX*           tls_u;             //  server SSL_CTX*
@@ -1097,9 +1098,7 @@ _http_serv_link(u3_httd* htd_u, u3_http* htp_u)
     htp_u->sev_l = 1 + htd_u->htp_u->sev_l;
   }
   else {
-    //  XX load from elsewhere
-    //
-    htp_u->sev_l = u3A->sev_l;
+    htp_u->sev_l = htd_u->sev_l;
   }
 
   htp_u->nex_u = htd_u->htp_u;
@@ -1738,7 +1737,9 @@ _http_serv_start_all(u3_httd* htd_u)
 
     //  XX remove [sen]
     //
-    u3_noun wir = u3nt(u3i_string("http-server"), u3k(u3A->sen), u3_nul);
+    u3_noun wir = u3nt(u3i_string("http-server"),
+                       u3dc("scot", c3__uv, htd_u->sev_l),
+                       u3_nul);
     u3_noun cad = u3nt(c3__live, non, sec);
 
     u3_auto_plan(&htd_u->car_u, u3_ovum_init(0, c3__e, wir, cad));
@@ -1848,9 +1849,13 @@ u3_http_ef_form(u3_httd* htd_u, u3_noun fig)
 static void
 _http_io_talk(u3_auto* car_u)
 {
-  //  XX remove u3A->sen
+  u3_httd* htd_u = (u3_httd*)car_u;
+
+  //  XX remove [sen]
   //
-  u3_noun wir = u3nt(u3i_string("http-server"), u3k(u3A->sen), u3_nul);
+  u3_noun wir = u3nt(u3i_string("http-server"),
+                     u3dc("scot", c3__uv, htd_u->sev_l),
+                     u3_nul);
   u3_noun cad = u3nc(c3__born, u3_nul);
 
   u3_auto_plan(car_u, u3_ovum_init(0, c3__e, wir, cad));
@@ -2181,6 +2186,16 @@ u3_http_io_init(u3_pier* pir_u)
   uv_timer_init(u3L, sit_u);
   uv_timer_start(sit_u, _http_seq_heartbeat_cb, HEARTBEAT_TIMEOUT, 0);
   htd_u->fig_u.sit_u = sit_u;
+
+  {
+    u3_noun now;
+    struct timeval tim_u;
+    gettimeofday(&tim_u, 0);
+
+    now = u3_time_in_tv(&tim_u);
+    htd_u->sev_l = u3r_mug(now);
+    u3z(now);
+  }
 
   //  XX retry up to N?
   //

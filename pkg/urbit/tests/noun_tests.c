@@ -9,7 +9,7 @@ static void
 _setup(void)
 {
   u3m_init();
-  u3m_pave(c3y, c3n);
+  u3m_pave(c3y);
 }
 
 /* _util_rand_string(): dynamically allocated len_w random string
