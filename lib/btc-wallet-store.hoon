@@ -54,25 +54,31 @@
     t(txos [txo txos.t])
   ::
   ++  to-psbt
+    |=  w=walt
     ^-  cord
     ''
   :: TODO
+  ::  for each txi, get the pubkey from the hdkey
   ::  get a list of map:psbt:btc
-  
   --
 ::  wad: door for processing walts (wallets)
-::        parameterized on a walt and it's chyg account
+::        parameterized on a walt and it's chyg account 
 ::
 ++  wad
   |_  [w=walt =chyg]
+  ++  pubkey
+    |=  =idx:btc
+    ^-  btc-byts:btc
+    =/  pk=@ux
+      %-  compress-point:ecc
+      pub:(derive-public:(derive-public:wilt.w (@ chyg)) idx)
+    [(met 3 pk) pk]
+  ::
   ++  mk-address
     |=  =idx:btc
     ^-  address:btc
-    =/  pubkey=@ux
-      %-  compress-point:ecc
-      pub:(derive-public:(derive-public:wilt.w (@ chyg)) idx)
     ?:  ?=(%bip84 bipt.w)
-      (need (encode-pubkey:bech32:btc %main pubkey))
+      (need (encode-pubkey:bech32:btc %main dat:(pubkey idx)))
     ~|("legacy addresses not supported yet " !!)
   ::  generates and watches the next available address
   ::
