@@ -1565,7 +1565,7 @@
           =^  hon  tep  (build tep /sys/hoon hoon.ref !>(**) !,(*hoon ..ride))
           =^  rav  tep  (build tep /sys/arvo arvo.ref hon !,(*hoon ..part))
           =^  lul  tep  (build tep /sys/lull lull.ref rav !,(*hoon .))
-          =^  zus  tep  (build tep /sys/zuse zuse.ref rav !,(*hoon .))
+          =^  zus  tep  (build tep /sys/zuse zuse.ref lul !,(*hoon .))
           [hon rav lul zus]
       ::
       ++  build
