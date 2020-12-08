@@ -68,21 +68,22 @@
 ::
 ++  psbt
   |%
-::  ++  parse
-::    |=  psbt=cord
-::    ^-  (list )
+  ++  parse
+    |=  psbt-base64=cord
+    ^-  (list (list keyval:^psbt))
+    ~[~]
 ::  TODO:
   ::  - get into a buffer
   ::  loop through using next-pair
   ::  every time there's a separator, close the prior on
   ::  +txid: extract txid from a valid PSBT
   ++  get-txid
-    |=  psbt=cord
+    |=  psbt-base64=cord
     ^-  txid
     =/  tx=btc-byts
       %-  raw-tx
       %+  slag  5
-      (to-buffer psbt)
+      (to-buffer psbt-base64)
     =/  hash=btc-byts
       %-  flip-byts
       %-  sha256
@@ -120,10 +121,10 @@
         (to-byts:buffer v)
   ::
   ++  to-buffer
-    |=  psbt=cord
+    |=  psbt-base64=cord
     ^-  ^buffer
     ~|  "Invalid PSBT"
-    =+  p=(de:base64 psbt)
+    =+  p=(de:base64 psbt-base64)
     ?~  p  !!
     =/  bigend=@ux  (swp 3 q.u.p)
     (from-byts:buffer [(met 3 bigend) bigend])
