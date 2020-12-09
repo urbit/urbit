@@ -335,7 +335,7 @@
     ::   if no peta (payer/value), just prints address
     ::
       %generate-address
-    ?~  peta.upd  ~&(> address.upd `state)
+    ?~  peta.upd  ~&(> "wallet-hook: %generate-address: {<address.upd>}" `state)
     =/  [payer=ship value=sats]  u.peta.upd
     :_  state(ps.piym (~(put by ps.piym) payer [xpub.upd address.upd payer value]))
     ~[(poke-wallet-hook payer [%ret-pay-address address.upd payer value])]
