@@ -2,24 +2,22 @@
 ::  m / purpose' / coin_type' / account' / change / address_index
 ::  change can be 0 or 1
 ::
-/-  *btc
+/-  *btc, bp=btc-provider
 /+  bip32
 |%
 ++  max-index  (dec (pow 2 32))
-::  chyg: whether account is (non-)change. 0 or 1
 ::  idx:  an address_index
 ::  nixt: next indices to generate addresses from (non-change/change)
-::  addi: address with metadata inside a change path
+::  addi: HD path along with UTXOs
+::    - used: whether the address has been used
 ::  wach: map for watched addresses.
 ::        Membership implies the address is known by outside parties or had prior activity
 ::  scon: indices to initially scan to in (non-)change accounts
 ::        defaults to 2^32-1 (i.e. all the addresses, ~4B)
 ::  wilt: stores xpub; copulates with thousands of indices to form addresses
 ::
-+$  chyg  $?(%0 %1)
-+$  idx   @
 +$  nixt  (pair idx idx)
-+$  addi  [=chyg =idx utxos=(set utxo)]
++$  addi  [used=? =chyg =idx utxos=(set utxo)]
 +$  wach  (map address addi)
 +$  scon  $~([max-index max-index] (pair idx idx))
 +$  wilt  _bip32
@@ -28,9 +26,11 @@
 ::  scan-to
 ::  max-gap: maximum number of consec blank addresses before wallet stops scanning
 ::  confs:   confirmations required (after this is hit for an address, wallet stops refreshing it)
-::
+:: 
 +$  walt
-  $:  =wilt
+  $:  =xpub
+      =fprint
+      =wilt
       =bipt
       =wach
       =nixt
@@ -39,26 +39,45 @@
       max-gap=@ud
       confs=@ud
   ==
-::  input: utxo for a transaction::
+::  input: utxo for a transaction
 ::  feyb: fee per byte in sats
-::  key:  HD wallet path
 ::  txi/txo:  input/output for a transaction being built
-::  txbu: tx builder -- all information needed to make a transaction for signing 
+::   -txo has an hdkey if it's a change account
+::  txbu: tx builder -- all information needed to make a transaction for signing
+::  peta: optional payment metadata
 ::
 +$  input  [=utxo =chyg =idx]
++$  peta  (unit [payer=ship value=sats])
 +$  feyb  sats
-+$  key  [=bipt =chyg =idx]
-+$  txi  [=utxo ur=(unit rawtx) =key]
-+$  txo  [=address value=sats]
-+$  txbu  [payee=(unit ship) =vbytes txis=(list txi) txos=(list txo)]
++$  txi  [=utxo ur=(unit rawtx) =hdkey]
++$  txo  [=address value=sats hk=(unit hdkey)]
++$  txbu
+  $:  =req-id:bp
+      txinfo=(unit [=txid =rawtx])
+      =xpub
+      payee=(unit ship)
+      =vbytes
+      txis=(list txi)
+      txos=(list txo)
+  ==
+::  hest: an entry in the history log
+::
++$  hest
+  $:  =txid
+      confs=@ud
+      recvd=(unit @da)
+      inputs=(list [=val:tx s=(unit ship)])
+      outputs=(list [=val:tx s=(unit ship)])
+  ==
++$  history  (map xpub (map txid hest))
+::  state/watch variables:
 ::  scanning addresses and monitoring generated addresses
 ::  batch: indexes to scan for a given chyg
 ::  scans: all scans underway (batches)
-::  gena:  any generated address that hasn't had activity yet
+::  piym-watch: any address we've been told has an incoming payment promised 
 ::
 +$  batch  [todo=(set idx) endpoint=idx has-used=?]
 +$  scans  (map [xpub chyg] batch)
-+$  gena  (set address)
 ::
 ::  %add-wallet: add wallet to state and initiate a scan
 ::  %address-info: give new data about an address.
@@ -67,21 +86,24 @@
 ::  TODO: document
 ::
 +$  action
-  $%  [%add-wallet =xpub scan-to=(unit scon) max-gap=(unit @ud) confs=(unit @ud)]
+  $%  [%add-wallet =xpub =fprint scan-to=(unit scon) max-gap=(unit @ud) confs=(unit @ud)]
       [%address-info =xpub =chyg =idx utxos=(set utxo) used=? block=@ud]
-      [%generate-address =xpub =chyg meta=(unit [payer=ship value=sats])]
+      [%tx-info =info:tx]
+      [%generate-address =xpub =chyg =peta]
       [%generate-txbu =xpub payee=(unit ship) feyb=sats txos=(list txo)]
+      [%add-history-entry =xpub =hest]
   ==
 ::
 +$  update
-  $%  [%generate-address =address meta=(unit [payer=ship value=sats])]
+  $%  [%generate-address =xpub =address =peta]
       [%generate-txbu =xpub =txbu]
+      [%saw-piym s=ship =txid]
       [%scan-done =xpub]
   ==
-::  %scan-address: address we want [used? balance] for
-::  %cook-address: monitor address until it gets N confs
+::  last-block: most recent block this address was checked
 ::
 +$  request
-  $%  [%address-info block=@ud a=address =xpub =chyg =idx]
+  $%  [%address-info last-block=@ud a=address =xpub =chyg =idx]
+      [%tx-info last-block=@ud =txid]
   ==
 --

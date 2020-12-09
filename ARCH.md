@@ -1,7 +1,9 @@
 # Urbit Bitcoin Architecture
 
 ## Intro
-This architecture is, by Urbit standards, awkward. The awkwardness arises mainly from the asymmetry of full nodes: only a few nodes are providers/full nodes, and they have to keep remote clients updated as to the state of the blockchain. The system also requires providers to run a node side-by-side with their Urbit, although this can mostly be abstracted away as HTTP calls out.
+Urbit Bitcoin allows selected Urbit ships to inject an outside resource, a Bitcoin full node, into Urbit as a service.
+
+This architecture is, by Urbit standards, odd. The oddness arises mainly from the asymmetry of full nodes: only a few nodes are providers/full nodes, and they have to keep remote clients updated as to the state of the blockchain. The system also requires providers to run a node side-by-side with their Urbit, although this can mostly be abstracted away as HTTP calls out.
 
 My goal in designing this was to isolate the architecture's awkwardness as much as possible to specific chokepoints, and to keep the non-provider portions as clean state machine primitives.
 
@@ -27,6 +29,29 @@ rpcport=8332
   * pokes wallet-store with new address info
 - `btc-provider`: 
 - helper BTC libraries for address and transaction generation.
+
+## Address Watching Logic
+
+### in `btc-wallet-store`
+Every time that `btc-wallet-store`
+- receives a new address in `update-address` or
+- generates an address
+it runs the following logic:
+1. Is the address unused (no prior history)? If yes, request info for it again. This is always true for newly generated addresses.
+2. Does the address have any UTXOs with fewer than `confs` (the wallet variable for confs required, default=6). If ys, request info for it.
+3. If neither true (it's used and UTXOs are all confirmed), do nothing.
+
+### in `btc-wallet-hook`
+On receiving an `%address-info` request from the store:
+- is the `last-block` older than the most recent block I've seen? 
+  * If yes, send `%address-info` request to the provider and add to `reqs` (watchlist)
+  * If no, just add to `reqs`
+
+When provider sends a new status update:
+- are we now connected and were previously disconnected?
+  * if yes, retry all reqs and tx information requests
+- is the latest block newer than our previous one?
+  * if yes, retry all older `reqs`
 
 ## btc-wallet-store
 Intentionally very limited in function. It's a primitive for tracking wallet state, including available addresses an existing/watched addresses.

@@ -6,7 +6,7 @@
 ::    current connection state
 ::    results/errors of RPC calls
 ::
-/-  btc
+/-  btc, json-rpc
 /+  *btc-provider, dbug, default-agent
 |%
 +$  versioned-state
@@ -109,8 +109,14 @@
         %address-info
       [%get-address-info address.body.act]
       ::
+        %tx-info
+      [%get-tx-vals txid.body.act]
+      ::
         %raw-tx
       [%get-raw-tx txid.body.act]
+      ::
+        %create-raw-tx
+      [%create-raw-tx inputs.body.act outputs.body.act]
       ::
         %ping
       [%get-block-and-fee ~]
@@ -148,7 +154,7 @@
   ?^  conn-err
     :_  state(connected.host-info %.n)
     ~[(send-status [%disconnected ~]) (send-update [%| u.conn-err])]
-  =/  rpc-resp=response:rpc:jstd
+  =/  rpc-resp=response:json-rpc
     (get-rpc-response response)
   ?.  ?=([%result *] rpc-resp)
     [~[(send-update [%| [%rpc-error ~]])] state]
@@ -161,9 +167,18 @@
     :_  state
     ~[(send-update [%.y (get-req-id wire) %address-info +.resp])]
     ::
+      [%tx-info @ *]
+    ?>  ?=([%get-tx-vals *] resp)
+    :_  state
+    ~[(send-update [%.y (get-req-id wire) %tx-info +.resp])]
+    ::
       [%raw-tx @ *]
     ?>  ?=([%get-raw-tx *] resp)
-
+    :_  state
+    ~[(send-update [%.y (get-req-id wire) %raw-tx +.resp])]
+    ::
+      [%create-raw-tx @ *]
+    ?>  ?=([%get-raw-tx *] resp)
     :_  state
     ~[(send-update [%.y (get-req-id wire) %raw-tx +.resp])]
     ::
@@ -196,8 +211,12 @@
 ++  send-update
   |=  =update
   ^-  card
-  ~&  >>  "send-update: {<update>}"
-  [%give %fact ~[/clients] %btc-provider-update !>(update)]
+  =+  c=[%give %fact ~[/clients] %btc-provider-update !>(update)]
+  ?:  ?=(%.y -.update)
+    ~&  >>  "prov. update: {<body.p.update>}"
+    c
+  ~&   >>  "prov. err: {<p.update>}" 
+  c
 ::
 ++  is-whitelisted
   |=  user=ship  ^-  ?

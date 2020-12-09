@@ -6,23 +6,30 @@
 ::    blockcount included so that we only request address info when
 ::    there's a newer block, in the case of addresses we are cooking
 ::
-::  payment: a payment expected from another ship 
+::  payment: a payment expected from another ship
 ::    - address: address generated for this payment
 ::  piym: incoming payments. Stores all ship moons under their planet.
-::  piym-watch/poym-watch:
-::   let us link an address back to its incoming/outgoing payment
-::   checked when address updates come from btc-wallet-store 
+::    - num-fam: total payments (addresses) outstanding for ship and its moons
+::  pend-piym: incoming payment txs that peer says they have broadcast
+::  poym: outgoing payments. One at a time: new replaces old
 ::
 +$  btc-state  [block=@ud fee=sats t=@da]
 +$  reqs  (map req-id:bp req=request:bws)
 ::
-+$  payment  [=address payer=ship value=sats]
-::
-+$  piym  (jar ship payment)
-+$  piym-watch  (map address ship)
-+$  poym-watch  (map address ship)
++$  payment  [=xpub =address payer=ship value=sats]
++$  piym  [ps=(map ship payment) num-fam=(map ship @ud)]
++$  pend-piym
+  $:  ps=(map txid [pay=payment vout-n=@ud])
+      num=(map ship @ud)
+  ==
++$  poym  (unit txbu:bws)
 ::  req-pay-address: request a payment address from another ship
+::   - target of action is local ship
 ::  gen-pay-address: generate a payment address from our ship to another
+::  ret-pay-address: give an address to a payer who requested it
+::  broadcast-tx: broadcast a signed-psbt, must be current poym
+::  expect-payment: tell another ship that we're paying a previously requested address
+::    - vout-n is the index of the output that has value
 ::
 +$  action
   $%  [%set-provider provider=ship]
@@ -30,6 +37,8 @@
       [%req-pay-address payee=ship value=sats feyb=(unit sats)]
       [%gen-pay-address value=sats]
       [%ret-pay-address =address payer=ship value=sats]
+      [%broadcast-tx signed-psbt=cord]
+      [%expect-payment =txid payer=ship value=sats vout-n=@ud]
       [%clear-poym ~]
       [%force-retry ~]
   ==

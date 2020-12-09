@@ -11,14 +11,21 @@
   ?:  =("ypub" prefix)  %bip49
   ?:  =("zpub" prefix)  %bip84
   ~|("invalid xpub: {<xpub>}" !!)
+::  +flip-byts: flip endianness while preserving lead/trail zeroes
+::
+++  flip-byts
+  |=  b=btc-byts
+  %-  to-byts:buffer
+  %-  flop
+  %-  from-byts:buffer  b
 ::  big endian sha256: input and output are both MSB first (big endian)
 ::
 ++  sha256
   |=  =byts  ^-  hash256
-  ::  if there are leading 0s, lshift by their amount after flip to little endian to preserve
+  ::  if there are leading 0s, lshift by their amount after flip to little endian to preserve 
   =/  pad=@  (sub wid.byts (met 3 dat.byts))
   =/  little-endian=@
-    (lsh 3 pad (swp 3 dat.byts))
+    (lsh [3 pad] (swp 3 dat.byts))
   %-  hash256
   :-  32
   %+  swp  3
@@ -56,6 +63,123 @@
   ?.  =(wid.hex 20)
     ~|("Only 20-byte addresses supported" !!)
   (to-script-pubkey (from-byts:buffer hex))
+::  arms to handle BIP174 PSBTs
+::
+++  psbt
+  |%
+  ::  +create: make base64 cord of PSBT
+  ::
+  ++  create
+    |=  [=rawtx =txid inputs=(list in:^psbt) outputs=(list out:^psbt)]
+    ^-  cord
+    :: TODO
+    ::  make global map
+    :: turn each input and output into a map (or ~)
+    ::  put the 0x0 separator between all
+    ::  parse to hex
+    ::  encode as base64!
+    *cord
+  ::
+  ++  hd-path
+    |=  [pubkey=btc-byts =target:^psbt =hdkey] 
+    ^-  keyval:^psbt
+    =/  k=btc-byts
+      %-  to-byts:buffer
+      ?-  target
+          %input
+        [0x6 (from-byts:buffer pubkey)]
+          ::
+          %output
+        [0x2 (from-byts:buffer pubkey)]
+      ==
+    =/  bip  ?-  bipt.hdkey
+               %bip84  0x54
+               %bip49  0x31
+               %bip44  0x2c
+             ==
+    =/  hdpath=^buffer
+      %+  weld
+        :~   bip  0x0  0x0  0x80
+             0x0  0x0  0x0  0x80
+             0x0  0x0  0x0  0x80
+             `@ux`chyg.hdkey  0x0  0x0  0x0
+        ==
+      (from-atom-le:buffer (met 3 idx.hdkey) idx.hdkey)
+    :-  k
+    %-  concat-as-byts:buffer
+    :~  (from-byts:buffer fprint.hdkey)
+        hdpath
+    ==
+  ::
+  ++  parse
+    |=  psbt-base64=cord
+    ^-  (list map:^psbt)
+    =/  todo=^buffer
+      %+  slag  5  (to-buffer psbt-base64)
+    =|  acc=(list map:^psbt)
+    =|  m=map:^psbt
+    |-
+    ?~  todo  (snoc acc m)
+    ::  0x0: map separator
+    ?:  =(0x0 i.todo)
+      $(acc (snoc acc m), m *map:^psbt, todo t.todo)
+    =+  [kv rest]=(next-keyval todo)
+    $(m (snoc m kv), todo rest)
+  ::  +get-txid: extract txid from a valid PSBT
+  ::
+  ++  get-txid
+    |=  psbt-base64=cord
+    ^-  txid
+    =/  tx=btc-byts
+      %-  raw-tx
+      %+  slag  5
+      (to-buffer psbt-base64)
+    =/  hash=btc-byts
+      %-  flip-byts
+      %-  sha256
+      %-  sha256
+      tx
+    ?>  ?=(%32 -.hash)
+    hash
+  ::  +raw-tx: extract hex transaction
+  ::    looks for key 0x0 in global map
+  ::    crashes if tx not in buffer
+  ::
+  ++  raw-tx
+    |=  b=^buffer
+    |-  ^-  btc-byts
+    ?~  b  !!
+    ?:  =(0x0 i.b)  !!
+    =+  nk=(next-keyval b)
+    ?:  =(0x0 dat.key.kv.nk)
+      val.kv.nk
+    $(b rest.nk)
+  :: +next-keyval: returns next key-val in a PSBT map
+  ::   input buffer head must be a map key length
+  ::
+  ++  next-keyval
+    |=  b=^buffer
+    ^-  [kv=keyval:^psbt rest=^buffer]
+    =+  klen=(snag 0 b)
+    =+  k=(swag [1 klen] b)
+    =+  vlen=(snag (add 1 klen) b)
+    =+  v=(swag [(add 2 klen) vlen] b)
+    =+  len=(add 2 (add klen vlen))
+    ?>  ?=([^ ^] [k v])
+    :_  (slag len b)
+    :-  (to-byts:buffer k)
+        (to-byts:buffer v)
+  ::
+  ++  to-buffer
+    |=  psbt-base64=cord
+    ^-  ^buffer
+    ~|  "Invalid PSBT"
+    =+  p=(de:base64:mimes:html psbt-base64)
+    ?~  p  !!
+    =/  bigend=@ux  (swp 3 q.u.p)
+    (from-byts:buffer [(met 3 bigend) bigend])
+  --
+::  buffer: byte buffer utilities
 ::  list of @ux that is big endian for hashing purposes
 ::  used to preserve 0s when concatenating byte sequences
 ::
@@ -99,7 +223,7 @@
     =/  bits=(list @)  (flop (rip 0 a))
     =/  pad=@  (sub num-bits (lent bits))
     (weld (reap pad 0) bits)
-  ::  converts from bit list to a list of atoms each with bitwidth d(est)
+  ::  +convert: list of bits to a list of atoms each with bitwidth d(est)
   ::
   ++  convert
     |=  [d=@ bits=(list @)]
@@ -109,10 +233,8 @@
     =/  dest-bits  (scag d ((list @) bits))
     ::  left-shift the "missing" number of bits
     =/  num=@
-      %:  lsh  0
-          (sub d (lent dest-bits))
-          (rep 0 (flop dest-bits))
-      ==
+      %+  lsh  [0 (sub d (lent dest-bits))]
+      (rep 0 (flop dest-bits))
     $(ret (snoc ret num), bits (slag d ((list @) bits)))
   ::  Converts e.g. ~[0 0 31 31 31 31 0 0] in base32 (5 bitwidth)
   ::  to ~[0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0]
@@ -149,16 +271,16 @@
       ~[0x3b6a.57b2 0x2650.8e6d 0x1ea1.19fa 0x3d42.33dd 0x2a14.62b3]
     =/  chk=@  1
     |-  ?~  values  chk
-    =/  top  (rsh 0 25 chk)
+    =/  top  (rsh [0 25] chk)
     =.  chk
-      (mix i.values (lsh 0 5 (dis chk 0x1ff.ffff)))
+      (mix i.values (lsh [0 5] (dis chk 0x1ff.ffff)))
     $(values t.values, chk (update-chk chk top gen))
   ::
     ++  update-chk
       |=  [chk=@ top=@ gen=(list @ux)]
       =/  is  (gulf 0 4)
       |-  ?~  is  chk
-      ?:  =(1 (dis 1 (rsh 0 i.is top)))
+      ?:  =(1 (dis 1 (rsh [0 i.is] top)))
         $(is t.is, chk (mix chk (snag i.is gen)))
       $(is t.is)
     --
@@ -166,7 +288,7 @@
   ++  expand-hrp
     |=  hrp=tape
     ^-  (list @)
-    =/  front  (turn hrp |=(p=@tD (rsh 0 5 p)))
+    =/  front  (turn hrp |=(p=@tD (rsh [0 5] p)))
     =/  back   (turn hrp |=(p=@tD (dis 31 p)))
     (zing ~[front ~[0] back])
   ::
@@ -187,7 +309,7 @@
       %-  polymod
       (zing ~[(expand-hrp hrp) data (reap 6 0)])
     %+  turn  (gulf 0 5)
-    |=(i=@ (dis 31 (rsh 0 (mul 5 (sub 5 i)) pmod)))
+    |=(i=@ (dis 31 (rsh [0 (mul 5 (sub 5 i))] pmod)))
   ::
   ++  charset-to-value
     |=  c=@tD
