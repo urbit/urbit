@@ -136,8 +136,8 @@
     ::    - generate new change address
     ::    - add that address+change value to the txbu
     ::    - send txbu update
-    ::    - send address update
     ::    - send a request for info on the address (watch it)
+    ::    - DON'T send an address update for the address, since it's change
     ::
     ::  TODO: end to end tests
       %generate-txbu
@@ -155,11 +155,10 @@
     ?~  chng
       [~[(send-update [%generate-txbu xpub.act u.tb])] state]
     =/  [addr=address:btc =idx w=walt]
-      ~(gen-address wad u.uw %1)
+      ~(nixt-address wad u.uw %1)
     =+  new-txbu=(~(add-output txb u.tb) addr u.chng `[fprint.w bipt.w %1 idx])
     :_  state(walts (~(put by walts) xpub.act w))
     :~  (send-update [%generate-txbu xpub.act new-txbu])
-        (send-update [%generate-address xpub.act addr ~])
         %+  send-request  ~[requests-path]
           :*  %address-info  last-block
               addr  xpub.act  %1  idx
@@ -267,7 +266,8 @@
     (bump-batch xpub %1)
   :-  (weld cards0 cards1)
   state(scans (insert-batches xpub batch0 batch1))
-::  +update-address: watch the address passed; update wallet if it's used
+::  +update-address: watch the address passed;
+::  - update wallet with the address
 ::  - if address is unused, send %address-info request
 ::  - if address doesn't have enough confs, send %address-info request
 ::  - if this idx was the last in todo.scans, do run-scan to see whether scan is done
@@ -280,7 +280,7 @@
     state(last-block last-block)
   =/  w=(unit walt)  (~(get by walts) xpub)
   ?~  w  `state
-  =?  walts  used
+  =.  walts
     %+  ~(put by walts)  xpub
     %+  ~(update-address wad u.w chyg)
       (~(mk-address wad u.w chyg) idx)

@@ -335,7 +335,7 @@
     ::   if no peta (payer/value), just prints address
     ::
       %generate-address
-    ?~  peta.upd  ~&(> address.upd `state)
+    ?~  peta.upd  ~&(> "wallet-hook: %generate-address: {<address.upd>}" `state)
     =/  [payer=ship value=sats]  u.peta.upd
     :_  state(ps.piym (~(put by ps.piym) payer [xpub.upd address.upd payer value]))
     ~[(poke-wallet-hook payer [%ret-pay-address address.upd payer value])]
@@ -344,6 +344,7 @@
     ::   - request provider to create-raw-tx from txbu
     ::
       %generate-txbu
+    :: TODO make tx info fetch correctly
     :_  state(poym `txbu.upd)
     ?~  provider  ~&(>>> "provider not set" ~)
     %+  weld  ~[(create-raw-tx host.u.provider txbu.upd)]
@@ -354,6 +355,7 @@
     `state
     ::
       %scan-done
+    ~&  >  "scanned wallet: {<xpub.upd>}"
     ?~  def-wallet
       `state(def-wallet `xpub.upd)
     `state
@@ -423,7 +425,6 @@
   |=  [ri=req-id:bp =txid rt=rawtx]
   ^-  ^poym
   ?~  poym  ~
-  ?~  txinfo.u.poym  poym
   ?.  =(ri req-id.u.poym)  poym
   `u.poym(txinfo `[txid rt])
   :: check poym txbu
@@ -532,6 +533,8 @@
 ++  send-sign-tx
   |=  =txbu:bws
   ^-  card
+  ~&  >>  "transaction ready to sign"
+  ~&  >  txinfo.txbu
   [%give %fact ~[/sign-me] %btc-wallet-hook-request !>([%sign-tx txbu])]
 ::
 ++  poke-wallet-store

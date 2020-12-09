@@ -80,24 +80,44 @@
     ?:  ?=(%bip84 bipt.w)
       (need (encode-pubkey:bech32:btc %main dat:(pubkey idx)))
     ~|("legacy addresses not supported yet " !!)
-  ::  generates and watches the next available address
+  ::  +nixt-address: used to get change addresses
+  ::   - gets the current next available address
+  ::   - doesn't bump nixt-address if it's unused
+  ::   - if used, fall back to gen-address and make a new one
+  ::
+  ++  nixt-address
+    ^-  (trel address:btc idx:btc walt)
+    =/  addr  (mk-address nixt-idx)
+    ~|  "lib/btc-wallet-store: get-next-address: nixt shouldn't be blank"
+    =/  =addi  (~(got by wach.w) addr)
+    ?.  used.addi
+      [addr nixt-idx w]
+    gen-address
+  ::
+  ::  +gen-address:
+  ::   - generates the next available address
+  ::   - watches it (using update address)
   ::
   ++  gen-address
     ^-  (trel address:btc idx:btc walt)
     =/  addr  (mk-address nixt-idx)
     :*  addr
         nixt-idx
-        (update-address addr [%.n chyg nixt-idx *(set utxo:btc)])
+        %+  update-address  addr
+          [%.n chyg nixt-idx *(set utxo:btc)]
     ==
-  ::  insert a new address; update "nixt" free address if this one was it
+  ::  +update-address
+  ::   - insert a new address
+  ::   - update "nixt" free address if this one was it
+  ::   - watch the new nixt
   ::
   ++  update-address
     |=  [a=address:btc =addi]
     ^-  walt
     ?>  =(chyg chyg.addi)
     ?>  =(a (mk-address idx.addi))
-    =?  nixt.w  (is-nixt addi)
-      new:bump-nixt
+    =?  w  (is-nixt addi)
+      bump-nixt
     w(wach (~(put by wach.w) a addi))
   ::
   ++  is-nixt
@@ -107,20 +127,24 @@
     =(idx.addi q.nixt.w)
   ++  nixt-idx
     ?:(?=(%0 chyg) p.nixt.w q.nixt.w)
-  ::  Returns: the prior idx in the account
-  ::           nixt with account idx bumped
-  ::  Increments idx until an unwatched address is found
-  ::  Crashes if max-index is passed
+  ::  +bump-nixt: return wallet with bumped nixt
+  ::   - find next unused address
+  ::   - watches that address
+  ::   - crashes if max-index is passed
   ::
   ++  bump-nixt
-    |^  ^-  [old=idx:btc new=nixt]
-    :-  nixt-idx
+    |^  ^-  walt
     =/  new-idx=idx:btc  +(nixt-idx)
     |-  ?>  (lte new-idx max-index)
-    =/  a=(unit addi)
-      (~(get by wach.w) (mk-address new-idx))
-    ?~  a  (set-nixt new-idx)
-    ?:  ?!(used.u.a)  (set-nixt new-idx)
+    =+  addr=(mk-address new-idx)
+    =/  =addi
+      %+  ~(gut by wach.w)  addr
+      [%.n chyg new-idx *(set utxo:btc)]
+    ?.  used.addi
+      %=  w
+          nixt  (set-nixt new-idx)
+          wach  (~(put by wach.w) addr addi)
+      ==
     $(new-idx +(new-idx))
     ::
     ++  set-nixt
