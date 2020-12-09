@@ -136,8 +136,8 @@
     ::    - generate new change address
     ::    - add that address+change value to the txbu
     ::    - send txbu update
-    ::    - send address update
     ::    - send a request for info on the address (watch it)
+    ::    - DON'T send an address update for the address, since it's change
     ::
     ::  TODO: end to end tests
       %generate-txbu
@@ -155,11 +155,10 @@
     ?~  chng
       [~[(send-update [%generate-txbu xpub.act u.tb])] state]
     =/  [addr=address:btc =idx w=walt]
-      ~(gen-address wad u.uw %1)
+      ~(nixt-address wad u.uw %1)
     =+  new-txbu=(~(add-output txb u.tb) addr u.chng `[fprint.w bipt.w %1 idx])
     :_  state(walts (~(put by walts) xpub.act w))
     :~  (send-update [%generate-txbu xpub.act new-txbu])
-        (send-update [%generate-address xpub.act addr ~])
         %+  send-request  ~[requests-path]
           :*  %address-info  last-block
               addr  xpub.act  %1  idx
