@@ -80,14 +80,31 @@
     ?:  ?=(%bip84 bipt.w)
       (need (encode-pubkey:bech32:btc %main dat:(pubkey idx)))
     ~|("legacy addresses not supported yet " !!)
-  ::  generates and watches the next available address
+  ::  +nixt-address: used to get change addresses
+  ::   - gets the current next available address
+  ::   - doesn't bump nixt-address if it's unused
+  ::   - if used, fall back to gen-address and make a new one
+  ::
+  ++  nixt-address
+    ^-  (trel address:btc idx:btc walt)
+    =/  addr  (mk-address nixt-idx)
+    ~|  "lib/btc-wallet-store: get-next-address: nixt shouldn't be blank"
+    =/  =addi  (~(got by wach.w) addr)
+    ?.  used.addi
+      [addr nixt-idx w]
+    gen-address
+  ::
+  ::  +gen-address:
+  ::   - generates the next available address
+  ::   - watches it (using update address)
   ::
   ++  gen-address
     ^-  (trel address:btc idx:btc walt)
     =/  addr  (mk-address nixt-idx)
     :*  addr
         nixt-idx
-        (update-address addr [%.n chyg nixt-idx *(set utxo:btc)])
+        %+  update-address  addr
+          [%.n chyg nixt-idx *(set utxo:btc)]
     ==
   ::  +update-address
   ::   - insert a new address
@@ -112,7 +129,7 @@
     ?:(?=(%0 chyg) p.nixt.w q.nixt.w)
   ::  +bump-nixt: return wallet with bumped nixt
   ::   - find next unused address
-  ::   - add that address to wach
+  ::   - watches that address
   ::   - crashes if max-index is passed
   ::
   ++  bump-nixt
