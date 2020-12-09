@@ -690,13 +690,14 @@
   =/  length  (lent envs)
   =/  latest
     ?~  backlog-latest  length
-    ?:  (gth u.backlog-latest length)  length
+    ?:  (gth u.backlog-latest length)  0
     (sub length u.backlog-latest)
   =.  envs  (scag latest envs)
   =/  =vase  !>([%messages pas 0 latest envs])
   %-  zing
   :~  [%give %fact ~ %chat-update !>([%create pas])]~
       ?.  ?&(?=(^ backlog-latest) (~(has by allow-history) pas))  ~
+      ?:  =(0 latest)  ~
       [%give %fact ~ %chat-update vase]~
       [%give %kick [%backlog pax]~ `src.bol]~
   ==
