@@ -335,6 +335,7 @@
     ::   if no peta (payer/value), just prints address
     ::
       %generate-address
+    :: TODO: find a way to not print the below for a change address
     ?~  peta.upd  ~&(> "wallet-hook: %generate-address: {<address.upd>}" `state)
     =/  [payer=ship value=sats]  u.peta.upd
     :_  state(ps.piym (~(put by ps.piym) payer [xpub.upd address.upd payer value]))
