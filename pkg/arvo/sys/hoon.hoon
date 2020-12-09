@@ -10535,7 +10535,9 @@
         (pair type nock)                                ::  synthetic
     --
     ^-  [pony _grub]
-    ?~  hyp  [[%& ~ %& sut] grub]
+    ?~  hyp
+      :_  grub
+      [%& ~ %& sut]
     =^  mor  grub  $(hyp t.hyp)
     ?-    -.mor
         %|
@@ -10646,7 +10648,9 @@
             $(sut val)
           ::
               [%face *]
-            ?:  ?=(~ q.heg)  [here(sut q.sut) grub]
+            ?:  ?=(~ q.heg)
+              :_  grub
+              here(sut q.sut)
             =*  zot  p.sut
             ?@  zot
               :_  grub
