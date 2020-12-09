@@ -211,8 +211,12 @@
 ++  send-update
   |=  =update
   ^-  card
-  ~&  >>  "send-update: {<update>}"
-  [%give %fact ~[/clients] %btc-provider-update !>(update)]
+  =+  c=[%give %fact ~[/clients] %btc-provider-update !>(update)]
+  ?:  ?=(%.y -.update)
+    ~&  >>  "prov. update: {<body.p.update>}"
+    c
+  ~&   >>  "prov. err: {<p.update>}" 
+  c
 ::
 ++  is-whitelisted
   |=  user=ship  ^-  ?

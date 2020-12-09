@@ -230,7 +230,7 @@
 ::  +handle-provider-status: handle connectivity updates from provider
 ::    - retry pend-piym on any %connected event, since we're checking mempool
 ::    - if status is %connected, retry all pending address lookups
-::    - only retry all if previously disconnected
+::      - only retry all if previously disconnected
 ::    - if block is updated, retry all address reqs
 ::
 ++  handle-provider-status

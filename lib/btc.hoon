@@ -73,6 +73,12 @@
   ++  create
     |=  [=rawtx =txid inputs=(list in:^psbt) outputs=(list out:^psbt)]
     ^-  cord
+    :: TODO
+    ::  make global map
+    :: turn each input and output into a map (or ~)
+    ::  put the 0x0 separator between all
+    ::  parse to hex
+    ::  encode as base64!
     *cord
   ::
   ++  hd-path
