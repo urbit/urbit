@@ -190,7 +190,7 @@
   =/  m  (strand ,~)
   ^-  form:m
   ~&  >  "starting {<ship>}"
-  ;<  ~  bind:m  (send-events (init:util ship `*dawn-event:able:jael))
+  ;<  ~  bind:m  (send-events (init:util ship `*dawn-event:jael))
   (check-ship-booted ship)
 ::
 ++  real-ship
@@ -202,7 +202,7 @@
   (check-ship-booted ship)
 ::
 ++  raw-ship
-  |=  [=ship keys=(unit dawn-event:able:jael)]
+  |=  [=ship keys=(unit dawn-event:jael)]
   =/  m  (strand ,~)
   ^-  form:m
   ~&  >  "starting {<ship>}"
@@ -341,4 +341,20 @@
   ?:  =(warped (need (scry-aqua:util (unit @) our now aqua-pax)))
     (pure:m ~)
   loop
+::
+::  Turns poke into a dojo command
+::
+++  poke-app
+  |=  [=ship app=term =mark data=*]
+  =/  m  (strand ,~)
+  ^-  form:m
+  =/  command=tape  ":{(trip app)} &{(trip mark)} {<data>}"
+  (send-events (dojo:util ship command))
+::
+++  dojo-thread
+  |=  [=ship ted=term =mark data=*]
+  =/  m  (strand ,~)
+  ^-  form:m
+  =/  command=tape  "-{(trip ted)} &{(trip mark)} {<data>}"
+  (send-events (dojo:util ship command))
 --

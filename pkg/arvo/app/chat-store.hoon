@@ -2,8 +2,9 @@
 ::
 :: data store that holds linear sequences of chat messages
 ::
-/+  store=chat-store, default-agent, verb, dbug, group-store, graph-store, resource
-~%  %chat-store-top  ..is  ~
+/+  store=chat-store, default-agent, verb, dbug, group-store,
+    graph-store, resource, *migrate
+~%  %chat-store-top  ..part  ~
 |%
 +$  card  card:agent:gall
 +$  versioned-state
@@ -11,6 +12,7 @@
       state-1
       state-2
       state-3
+      state-4
   ==
 ::
 +$  state-0  [%0 =inbox:store]
@@ -23,7 +25,7 @@
   ==
 --
 ::
-=|  state-3
+=|  state-4
 =*  state  -
 ::
 %-  agent:dbug
@@ -48,10 +50,10 @@
     |-
     ^-  (quip card _this)
     ?-  -.old
-    ::    %4  [cards this(state old)]
+        %4  [cards this(state old)]
       ::
         %3
-      =.  cards  (weld cards (migrate-inbox inbox.old))
+      =.  cards  (weld cards (migrate-inbox:cc inbox.old))
       [cards this(state old)]
       ::
       ::%_    $
@@ -81,59 +83,6 @@
     ::
     ==
     ::
-    ++  migrate-inbox
-      |=  =inbox:store
-      ^-  (list card)
-      %+  turn
-        ~(tap by inbox)
-      (cork mailbox-to-update poke-graph-store)
-    ::
-    ++  mailbox-to-update
-      |=  [=path =mailbox:store]
-      ^-  update:graph-store
-      :+  %0  now.bowl
-      :+  %add-graph
-        (path-to-resource:store path)
-      :-  (mailbox-to-graph mailbox)
-      [`%graph-validator-chat %.y]
-    ::
-    ::
-    ++  poke-graph-store
-      |=  =update:graph-store
-      ^-  card
-      [%pass / %agent [our.bowl %graph-store] %poke %graph-update !>(update)]
-    ::
-    ++  letter-to-contents
-      |=  =letter:store
-      ^-  (list content:graph-store)
-      :_  ~
-      ?.  ?=(%me -.letter)
-        letter
-      [%text narrative.letter]
-    ::
-    ++   envelope-to-node
-      |=  =envelope:store
-      ^-  [atom:graph-store node:graph-store]
-      =/  contents=(list content:graph-store)
-        (letter-to-contents letter.envelope)
-      =/  =index:graph-store
-        [when.envelope ~]
-      =,  envelope
-      :-  when.envelope
-      :_  [%empty ~]
-      ^-  post:graph-store
-      :*  author
-          index
-          when
-          contents
-          ~  ~
-      ==
-    ::
-    ++  mailbox-to-graph
-      |=  =mailbox:store
-      ^-  graph:graph-store
-      %+  gas:orm:graph-store  *graph:graph-store
-      (turn envelopes.mailbox envelope-to-node)
     ::
     ++  old-to-2
       |=  =inbox:store
@@ -152,9 +101,10 @@
     ?>  (team:title our.bowl src.bowl)
     =^  cards  state
       ?+  mark  (on-poke:def mark vase)
-        %json         (poke-json:cc !<(json vase))
-        %chat-action  (poke-chat-action:cc !<(action:store vase))
-        %noun         [~ (poke-noun:cc !<(admin-action vase))]
+          %json         (poke-json:cc !<(json vase))
+          %chat-action  (poke-chat-action:cc !<(action:store vase))
+          %noun         [~ (poke-noun:cc !<(admin-action vase))]
+          %import       (poke-import:cc q.vase)
       ==
     [cards this]
   ::
@@ -202,6 +152,9 @@
       ?~  mailbox
         ~
       ``noun+!>(config.u.mailbox)
+    ::
+        [%x %export ~]
+      ``noun+!>(state)
     ==
   ::
   ++  on-agent  on-agent:def
@@ -297,6 +250,13 @@
         =^  read-moves  state  (handle-read [%read path.action])
         [(weld message-moves read-moves) state]
   ==
+::
+++  poke-import
+  |=  arc=*
+  ^-  (quip card _state)
+  =/  sty=state-4  [%4 (remake-map ;;((tree [path mailbox:store]) +.arc))]
+  :_  sty
+  (migrate-inbox inbox.sty)
 ::
 ++  handle-create
   |=  =action:store
@@ -399,4 +359,58 @@
         ~
       (update-subscribers /keys upd)
   ==
+::
+++  migrate-inbox
+  |=  =inbox:store
+  ^-  (list card)
+  %+  turn
+    ~(tap by inbox)
+  (cork mailbox-to-update poke-graph-store)
+::
+++  mailbox-to-update
+  |=  [=path =mailbox:store]
+  ^-  update:graph-store
+  :+  %0  now.bowl
+  :+  %add-graph
+    (path-to-resource:store path)
+  :-  (mailbox-to-graph mailbox)
+  [`%graph-validator-chat %.y]
+::
+::
+++  poke-graph-store
+  |=  =update:graph-store
+  ^-  card
+  [%pass / %agent [our.bowl %graph-store] %poke %graph-update !>(update)]
+::
+++  letter-to-contents
+  |=  =letter:store
+  ^-  (list content:graph-store)
+  :_  ~
+  ?.  ?=(%me -.letter)
+    letter
+  [%text narrative.letter]
+::
+++   envelope-to-node
+  |=  =envelope:store
+  ^-  [atom:graph-store node:graph-store]
+  =/  contents=(list content:graph-store)
+    (letter-to-contents letter.envelope)
+  =/  =index:graph-store
+    [when.envelope ~]
+  =,  envelope
+  :-  when.envelope
+  :_  [%empty ~]
+  ^-  post:graph-store
+  :*  author
+      index
+      when
+      contents
+      ~  ~
+  ==
+::
+++  mailbox-to-graph
+  |=  =mailbox:store
+  ^-  graph:graph-store
+  %+  gas:orm:graph-store  *graph:graph-store
+  (turn envelopes.mailbox envelope-to-node)
 --

@@ -1,4 +1,4 @@
-/+  *test
+/+  *test, *vere
 |%
 ::  example point for ~zod
 ::

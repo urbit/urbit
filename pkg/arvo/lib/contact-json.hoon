@@ -1,5 +1,5 @@
 /-  *contact-view, *contact-hook
-/+  base64, group-store, resource
+/+  group-store, resource
 |%
 ++  nu                                              ::  parse number as hex
   |=  jon=json
@@ -222,7 +222,7 @@
   ?-  -.avatar
       %url   avatar
       %octt
-    =.  octs.avatar  (need (de:base64 q.octs.avatar))
+    =.  octs.avatar  (need (de:base64:mimes:html q.octs.avatar))
     avatar
   ==
   ::

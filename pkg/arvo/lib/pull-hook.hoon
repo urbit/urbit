@@ -228,6 +228,7 @@
       =.  inner-state
         on-save:og
       !>(state)
+    ::
     ++  on-poke
       |=  [=mark =vase]
       ^-  [(list card:agent:gall) agent:gall]
@@ -403,7 +404,7 @@
     =/  =wire
       (make-wire pull+resource+(en-path:resource rid))
     [%pass wire %agent [u.ship push-hook-name.config] %leave ~]~
-
+  ::
   ++  watch-resource
     |=  [rid=resource pax=path]
     ^-  (list card)
@@ -413,7 +414,7 @@
     =/  =path
       (welp resource+(en-path:resource rid) pax)
     =/  =wire
-      (make-wire pull+path)
+      (make-wire pull+resource+(en-path:resource rid))
     [%pass wire %agent [u.ship push-hook-name.config] %watch path]~
   ::
   ++  make-wire

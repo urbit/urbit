@@ -9,7 +9,7 @@
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m
-=+  !<([=update:grp ~] arg)
+=+  !<([~ =update:grp] arg)
 ?.  ?=(%remove-group -.update)
   (pure:m !>(~))
 ;<  =bowl:spider  bind:m  get-bowl:strandio

@@ -44,7 +44,8 @@
 +$  plea
   $%  [%live ~]
       [%ripe [pro=%1 hon=@ nok=@] eve=@ mug=@]
-      [%slog pri=@ ?(cord tank)]
+      [%slog pri=@ tank]
+      [%flog cord]
       $:  %peek
           $%  [%done dat=(unit (cask))]
               [%bail dud=goof]
@@ -360,6 +361,27 @@ _lord_plea_slog(u3_lord* god_u, u3_noun dat)
   u3z(dat);
 }
 
+/* _lord_plea_flog(): hear serf debug output
+*/
+static void
+_lord_plea_flog(u3_lord* god_u, u3_noun dat)
+{
+  u3_pier* pir_u = god_u->cb_u.ptr_v;
+
+  if ( c3n == u3a_is_atom(dat) ) {
+    return _lord_plea_foul(god_u, c3__flog, dat);
+  }
+
+  c3_c* tan_c = u3r_string(dat);
+  u3C.stderr_log_f(tan_c);
+  c3_free(tan_c);
+
+  if ( 0 != pir_u->sog_f ) {
+    pir_u->sog_f(pir_u->sop_p, 0, u3k(dat));
+  }
+  u3z(dat);
+}
+
 /* _lord_plea_peek_bail(): hear serf %peek %bail
 */
 static void
@@ -554,10 +576,8 @@ _lord_work_done(u3_lord* god_u,
                 u3_noun    act)
 {
   u3_fact* tac_u = u3_fact_init(eve_d, mug_l, job);
-  tac_u->bug_l   = god_u->mug_l; // XX
-
-  god_u->mug_l = mug_l;
-  god_u->eve_d = eve_d;
+  god_u->mug_l   = mug_l;
+  god_u->eve_d   = eve_d;
 
   u3_gift* gif_u = u3_gift_init(eve_d, act);
 
@@ -720,6 +740,10 @@ _lord_on_plea(void* ptr_v, c3_d len_d, c3_y* byt_y)
       _lord_plea_slog(god_u, u3k(dat));
     } break;
 
+    case  c3__flog: {
+      _lord_plea_flog(god_u, u3k(dat));
+    } break;
+
     case c3__play: {
       _lord_plea_play(god_u, u3k(dat));
     } break;
@@ -742,7 +766,6 @@ static u3_writ*
 _lord_writ_new(u3_lord* god_u)
 {
   u3_writ* wit_u = c3_calloc(sizeof(*wit_u));
-  gettimeofday(&wit_u->tim_u, 0);
   return wit_u;
 }
 
@@ -917,16 +940,12 @@ u3_lord_play(u3_lord* god_u, u3_info fon_u)
 /* u3_lord_work(): attempt work.
 */
 void
-u3_lord_work(u3_lord* god_u, u3_ovum* egg_u, u3_noun ovo)
+u3_lord_work(u3_lord* god_u, u3_ovum* egg_u, u3_noun job)
 {
   u3_writ* wit_u = _lord_writ_new(god_u);
   wit_u->typ_e = u3_writ_work;
   wit_u->wok_u.egg_u = egg_u;
-
-  {
-    u3_noun now = u3_time_in_tv(&wit_u->tim_u);
-    wit_u->wok_u.job = u3nc(now, ovo);
-  }
+  wit_u->wok_u.job = job;
 
   //  if not spinning, start
   //

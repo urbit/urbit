@@ -4,7 +4,7 @@
 ::
 /-  *group, *invite-store, *resource
 /+  default-agent, verb, dbug, store=group-store, grpl=group, pull-hook
-~%  %group-hook-top  ..is  ~
+~%  %group-hook-top  ..part  ~
 |%
 +$  card  card:agent:gall
 ::

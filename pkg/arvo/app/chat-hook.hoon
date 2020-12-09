@@ -6,8 +6,8 @@
     hook=chat-hook, view=chat-view, *group,
     push-hook, pull-hook
 /+  default-agent, verb, dbug, store=chat-store, group-store, grpl=group,
-    resource, graph-store
-~%  %chat-hook-top  ..is  ~
+    resource, graph-store, *migrate
+~%  %chat-hook-top  ..part  ~
 |%
 +$  card  card:agent:gall
 ::
@@ -315,6 +315,10 @@
       ::
           %chat-hook-action
         (poke-chat-hook-action:cc !<(action:hook vase))
+      ::
+          %import
+        ?>  (team:title our.bol src.bol)
+        (poke-import:cc q.vase)
       ==
     [cards this]
   ::
@@ -361,20 +365,37 @@
     --
   ::
   ++  on-leave  on-leave:def
-  ++  on-peek   on-peek:def
+  ++  on-peek
+    |=  =path
+    ^-  (unit (unit cage))
+    ?+  path  (on-peek:def path)
+        [%x %export ~]
+      ``noun+!>(state)
+    ==
   ++  on-arvo   
     |=  [=wire =sign-arvo]
     ^-  (quip card _this)
-    ?.  ?=([%migrate-graph *] wire)
-      (on-arvo:def wire sign-arvo)
-    =/  rid=resource
-      (de-path:resource t.wire)
-    ?>  ?=([%b %wake *] sign-arvo)
-    ~?  ?=(^ error.sign-arvo)
-      "behn errored in backoff timers, continuing anyway" 
-    :_  this
-    ~[(watch-graph:cc rid)]
-
+    ?+  wire  (on-arvo:def wire sign-arvo)
+        [%migrate-graph *]
+      =/  rid=resource
+        (de-path:resource t.wire)
+      ?>  ?=([%behn %wake *] sign-arvo)
+      ~?  ?=(^ error.sign-arvo)
+        "behn errored in backoff timers, continuing anyway" 
+      :_  this
+      ~[(watch-graph:cc rid)]
+    ::
+        [%try-rejoin @ @ *]
+      ::  TODO: check whether we have migrated to graph yet??
+      =/  nack-count=@ud  (slav %ud i.t.wire)
+      =/  who=@p          (slav %p i.t.t.wire)
+      =/  pax             t.t.t.wire
+      ?>  ?=([%behn %wake *] sign-arvo)
+      ~?  ?=(^ error.sign-arvo)
+        "behn errored in backoff timers, continuing anyway"
+      :_  this
+      [(try-rejoin:cc who pax +(nack-count))]~
+    ==
   ++  on-fail   on-fail:def
   --
 ::
@@ -688,6 +709,28 @@
     ==
   ==
 ::
+++  poke-import
+  |=  arc=*
+  ^-  (quip card _state)
+  =/  sty=state-11
+    :*  %11
+      (remake-map ;;((tree [path ship]) +<.arc))
+      ;;(? +>-.arc)
+      (remake-map ;;((tree [path ?]) +>+.arc))
+      ~
+    ==
+  :_  sty
+  :_  ~
+  =-  [%pass /self-poke %agent [our.bol %chat-hook] %poke -]
+  noun+!>(%migrate-graph)
+::
+++  try-rejoin
+  |=  [who=@p pax=path nack-count=@ud]
+  ^-  card
+  =/  =wire
+    [%try-rejoin (scot %ud nack-count) (scot %p who) pax]
+  [%pass wire %agent [who %chat-hook] %watch pax]
+::
 ++  watch-synced
   |=  pax=path
   ^-  (list card)
@@ -718,13 +761,14 @@
   =/  length  (lent envs)
   =/  latest
     ?~  backlog-latest  length
-    ?:  (gth u.backlog-latest length)  length
+    ?:  (gth u.backlog-latest length)  0
     (sub length u.backlog-latest)
   =.  envs  (scag latest envs)
   =/  =vase  !>([%messages pas 0 latest envs])
   %-  zing
   :~  [%give %fact ~ %chat-update !>([%create pas])]~
       ?.  ?&(?=(^ backlog-latest) (~(has by allow-history) pas))  ~
+      ?:  =(0 latest)  ~
       [%give %fact ~ %chat-update vase]~
       [%give %kick [%backlog pax]~ `src.bol]~
   ==
@@ -842,6 +886,9 @@
   |=  wir=wire
   ^-  (quip card _state)
   ?+  wir  !!
+    [%try-rejoin @ @ *]
+      $(wir t.t.t.wir)
+  ::
     [%groups ~]  [~[watch-groups] state]
   ::
       [%store @ *]
@@ -898,7 +945,6 @@
   ^-  (quip card _state)
   ~&  store-migrate+wire
   (kick store+wire)
-::
 ::
 ++  chat-poke
   |=  act=action:store

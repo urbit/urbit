@@ -19,7 +19,7 @@
     resource,
     mdl=metadata
 ::
-~%  %chat-view-top  ..is  ~
+~%  %chat-view-top  ..part  ~
 |%
 +$  versioned-state
   $%  state-0

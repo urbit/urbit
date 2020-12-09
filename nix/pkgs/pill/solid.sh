@@ -28,7 +28,6 @@ done
 # FIXME: reduce this list
 cp $ARVO/app/lens.hoon   ./pier/home/app/
 cp $ARVO/app/dojo.hoon   ./pier/home/app/
-cp $ARVO/lib/base64.hoon ./pier/home/lib/
 cp $ARVO/lib/plume.hoon  ./pier/home/lib/
 cp $ARVO/lib/server.hoon ./pier/home/lib/
 cp $ARVO/lib/sole.hoon   ./pier/home/lib/

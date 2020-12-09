@@ -353,7 +353,6 @@
       */
         typedef struct _u3_fact {
           c3_d             eve_d;               //  event number
-          c3_l             bug_l;               //  kernel mug before XX remove
           c3_l             mug_l;               //  kernel mug after
           u3_noun            job;               //  (pair date ovum)
           struct _u3_fact* nex_u;               //  next in queue
@@ -428,7 +427,6 @@
       /* u3_writ: ipc message from king to serf
       */
         typedef struct _u3_writ {
-          struct timeval   tim_u;               //  time enqueued
           struct _u3_writ* nex_u;               //  next in queue
           u3_writ_type     typ_e;               //  type-tagged
           union {                               //
@@ -1001,7 +999,7 @@
       /* u3_lord_work(): attempt work.
       */
         void
-        u3_lord_work(u3_lord* god_u, u3_ovum* egg_u, u3_noun ovo);
+        u3_lord_work(u3_lord* god_u, u3_ovum* egg_u, u3_noun job);
 
       /* u3_lord_play(): recompute batch.
       */

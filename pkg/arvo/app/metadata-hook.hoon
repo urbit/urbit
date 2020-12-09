@@ -6,8 +6,8 @@
 ::  /group/%group-path                      all updates related to this group
 ::
 /-  *metadata-store, *metadata-hook
-/+  default-agent, dbug, verb, grpl=group
-~%  %metadata-hook-top  ..is  ~
+/+  default-agent, dbug, verb, grpl=group, *migrate
+~%  %metadata-hook-top  ..part  ~
 |%
 +$  card  card:agent:gall
 +$  versioned-state
@@ -51,9 +51,30 @@
     `this
   ::
   ++  on-leave  on-leave:def
-  ++  on-peek   on-peek:def
-  ++  on-arvo   on-arvo:def
+  ++  on-peek
+    |=  =path
+    ^-  (unit (unit cage))
+    ?+  path  (on-peek:def path)
+        [%x %export ~]
+      ``noun+!>(state)
+    ==
+  ::
+  ++  on-arvo
+    |=  [=wire =sign-arvo]
+    ^-  (quip card _this)
+    ?.  ?=([%try-rejoin @ @ *] wire)
+      (on-arvo:def wire sign-arvo)
+    =/  nack-count=@ud  (slav %ud i.t.wire)
+    =/  who=@p          (slav %p i.t.t.wire)
+    =/  pax             t.t.t.wire
+    ?>  ?=([%behn %wake *] sign-arvo)
+    ~?  ?=(^ error.sign-arvo)
+      "behn errored in backoff timers, continuing anyway"
+    :_  this
+    [(try-rejoin:hc who pax +(nack-count))]~
+  ::
   ++  on-fail   on-fail:def
+  ::
   ++  on-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
@@ -65,6 +86,12 @@
     ::
         %metadata-action
       [(poke-action:hc !<(metadata-action vase)) this]
+    ::
+        %import
+      ?>  (team:title our.bowl src.bowl)
+      =^  cards  state
+        (poke-import:hc q.vase)
+      [cards this]
     ==
   ::
   ++  on-watch
@@ -166,6 +193,26 @@
     !=(i.path '~')
   --
 ::
+++  poke-import
+  |=  arc=*
+  ^-  (quip card _state)
+  =/  sty=state-one
+    [%1 (remake-map ;;((tree [group-path ship]) +.arc))]
+  :_  sty
+  %+  murn  ~(tap by synced.sty)
+  |=  [=group-path =ship]
+  ?:  =(ship our.bowl)
+    ~
+  =/  =path  [%group group-path]
+  `(try-rejoin ship path 0)
+::
+++  try-rejoin
+  |=  [who=@p pax=path nack-count=@ud]
+  ^-  card
+  =/  =wire
+    [%try-rejoin (scot %ud nack-count) (scot %p who) pax]
+  [%pass wire %agent [who %metadata-hook] %watch pax]
+::
 ++  watch-group
   |=  =path
   ^-  (list card)
@@ -240,7 +287,11 @@
   |=  wir=wire
   ^-  (quip card _state)
   :_  state
+  |-
   ?+  wir  !!
+      [%try-rejoin @ @ *]
+    $(wir t.t.t.wir)
+  ::
       [%updates ~]
     [%pass /updates %agent [our.bowl %metadata-store] %watch /updates]~
   ::
@@ -255,6 +306,14 @@
 ++  watch-ack
   |=  [wir=wire saw=(unit tang)]
   ^-  (quip card _state)
+  ?:  ?=([%try-rejoin @ *] wir)
+    ?~  saw
+      [~ state]
+    =/  nack-count=@ud  (slav %ud i.t.wir)
+    =/  wakeup=@da
+      (add now.bowl (mul ~s1 (bex (min 19 nack-count))))
+    :_  state
+    [%pass wir %arvo %b %wait wakeup]~
   ?>  ?=(^ wir)
   [~ ?~(saw state state(synced (~(del by synced) t.wir)))]
 ::

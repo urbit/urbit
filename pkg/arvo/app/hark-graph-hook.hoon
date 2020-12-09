@@ -4,7 +4,7 @@
 /+  resource, metadata, default-agent, dbug, graph-store, graph, grouplib=group
 ::
 ::
-~%  %hark-graph-hook-top  ..is  ~
+~%  %hark-graph-hook-top  ..part  ~
 |%
 +$  card  card:agent:gall
 +$  versioned-state

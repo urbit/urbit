@@ -268,6 +268,13 @@ Contributions:
   [..]
 ```
 
+Ensure the Vere release is marked as the 'latest' release and upload the two
+`.tgz` files to the release as `darwin.tgz` and `linux64.tgz`;
+this allows us to programmatically retrieve the latest release at
+[urbit.org/install/mac/latest/](https://urbit.org/install/mac/latest) and
+[urbit.org/install/linux64/latest](https://urbit.org/install/linux64/latest),
+respectively.
+
 The same schpeel re: release candidates applies here.
 
 Note that the release notes indicate which version of Urbit OS the Vere release

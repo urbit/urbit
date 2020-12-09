@@ -10,7 +10,8 @@
 ++  on-save  !>(~)
 ++  on-load
   |=  =vase
-  `this
+  :_  this
+  ~[%pass /chat %agent [our.bowl %chat-store] %leave ~]
 ++  on-arvo   on-arvo:def
 ++  on-agent  on-agent:def
 ++  on-poke   on-poke:def

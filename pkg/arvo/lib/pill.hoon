@@ -4,18 +4,30 @@
 |%
 ::
 +$  pill
-  $:  boot-ova=*
-      kernel-ova=(list unix-event)
-      userspace-ova=(list unix-event)
-  ==
+  $%  [%ivory p=(list)]
+      $:  %pill
+          nam=term
+          boot-ova=(list)
+          kernel-ova=(list unix-event)
+          userspace-ova=(list unix-event)
+  ==  ==
 ::
 +$  unix-event
   %+  pair  wire
   $%  [%wack p=@]
       [%what p=(list (pair path (cask)))]
       [%whom p=ship]
-      [%boot ? $%($>(%fake task:able:jael) $>(%dawn task:able:jael))]
+      [%boot ? $%($>(%fake task:jael) $>(%dawn task:jael))]
       unix-task
+  ==
+::  +boot-ovum: boostrap kernel filesystem load
+::
+++  boot-ovum
+  |=  [hoon=cord arvo=cord]
+  :~  //arvo
+      %what
+      [/sys/hoon hoon/hoon]
+      [/sys/arvo hoon/arvo]
   ==
 ::  +file-ovum: userspace filesystem load
 ::
@@ -82,7 +94,7 @@
         =/  dat  .^(json %cx pax)
         (as-octt:mimes:html (en-json:html dat))
       ::
-          [%txt *]
+          [?(%md %txt) *]
         =/  dat  .^(wain %cx pax)
         (as-octs:mimes:html (of-wain:format dat))
       ::

@@ -14,7 +14,7 @@
 /+  resource, metadata, default-agent, dbug, graph-store, graphl=graph, verb, store=hark-store
 ::
 ::
-~%  %hark-store-top  ..is  ~
+~%  %hark-store-top  ..part  ~
 |%
 +$  card  card:agent:gall
 +$  versioned-state
@@ -392,7 +392,7 @@
   ^-  (quip card _this)
   ?.  ?=([%autoseen ~] wire)
     (on-arvo:def wire sign-arvo)
-  ?>  ?=([%b %wake *] sign-arvo)
+  ?>  ?=([%behn %wake *] sign-arvo)
   :_  this(current-timebox now.bowl)
   ~[autoseen-timer:ha]
 ::

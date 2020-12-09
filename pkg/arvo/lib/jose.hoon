@@ -1,14 +1,14 @@
-/+  base64, primitive-rsa, *pkcs
+/+  primitive-rsa, *pkcs
 =*  rsa  primitive-rsa
 |%
 ::  +en-base64url: url-safe base64 encoding, without padding
 ::
 ++  en-base64url
-  ~(en base64 | &)
+  ~(en base64:mimes:html | &)
 ::  +de-base64url: url-safe base64 decoding, without padding
 ::
 ++  de-base64url
-  ~(de base64 | &)
+  ~(de base64:mimes:html | &)
 ::  |octn: encode/decode unsigned atoms as big-endian octet stream
 ::
 ++  octn

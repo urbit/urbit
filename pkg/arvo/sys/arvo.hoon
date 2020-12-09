@@ -1,29 +1,8 @@
-::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-::::::  ::::::    Postface                              ::::::
-::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-~>  %slog.[0 leaf+"arvo: assembly"]
-~<  %slog.[0 leaf+"arvo: assembled"]
-=<  ::
-    ::  Arvo formal interface
-    ::
-    ::    this lifecycle wrapper makes the arvo door (multi-armed core)
-    ::    look like a gate (function or single-armed core), to fit
-    ::    urbit's formal lifecycle function. a practical interpreter
-    ::    can ignore it.
-    ::
-    |=  [now=@da ovo=ovum]
-    ^-  *
-    ~>  %slog.[0 leaf+"arvo: formal event"]
-    .(+> +:(poke now ovo))
-::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-::::::  ::::::    volume 3, Arvo models and skeleton    ::::::
-::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-=>  ..ride
-=>
+=>  ..ride  =>
 |%
 +|  %global
 ::
-++  arvo  %arvo-kelvin
+++  arvo  %240
 ::
 ::  $arch: node identity
 ::  $axal: fundamental node, recursive
@@ -94,16 +73,14 @@
 ::  +hobo: %soft task builder
 ::  $goof: crash label and trace XX fail/ruin/crud/flaw/lack/miss
 ::  $mass: memory usage
-::  $monk: general identity
 ::  $move: cause and action
 ::  $ovum: card with cause
 ::  $roof: namespace
-::  $rook: meta-namespace
+::  $rook: meta-namespace (super advanced)
 ::  +room: generic namespace
-::  $vane-sample: vane wrapper-gate aargument
-::  $sley: namespace function
-::  $slyd: super advanced
-::  $slyt: old namespace
+::  +roon: partial namespace
+::  $root: raw namespace
+::  $view: namespace perspective
 ::  +wind: kernel action builder
 ::  $wire: event pretext
 ::  +wite: kernel action/error builder
@@ -120,7 +97,6 @@
 +$  goof  [mote=term =tang]
 +$  mass  $~  $+|+~
           (pair cord (each * (list mass)))
-+$  monk  (each ship (pair @tas @ta))
 +$  move  [=duct =ball]
 +$  ovum  [=wire =card]
 ::
@@ -130,24 +106,18 @@
   |$  [a]
   $~  =>(~ |~(* ~))
   $-  $:  lyc=gang                                      ::  leakset
-          cyr=term                                      ::  perspective
+          vis=view                                      ::  perspective
           bem=beam                                      ::  path
       ==                                                ::
   %-  unit                                              ::  ~: unknown
   %-  unit                                              ::  ~ ~: invalid
   (cask a)
-::
-+$  vane-sample
-  [our=ship now=@da eny=@uvJ rof=rook]
-::
-+$  sley
-  $-  [* (unit (set monk)) term beam]
-  (unit (unit cage))
-+$  slyd
++$  roon                                                ::  partial namespace
   $~  =>(~ |~(* ~))
-  $-  [* (unit (set monk)) term beam]
-  (unit (unit (cask meta)))
-+$  slyt  $-(^ (unit (unit)))
+  $-  [lyc=gang car=term bem=beam]
+  (unit (unit cage))
++$  root  $-(^ (unit (unit)))
++$  view  $@(term [way=term car=term])
 ::
 ++  wind
   |$  ::  a: forward
@@ -195,6 +165,7 @@
 ::  $vile: reflexive constants
 ::  $waif: arvo task, from anywhere
 ::  $wasp: arvo task, from Outside
+::  $worm: compiler cache
 ::  $wisp: arvo task, larval stage
 ::  $wynn: kelvin stack
 ::
@@ -230,7 +201,9 @@
       van=(map term (trap vase))
   ==
 +$  heir
-  $%  [%grub _arvo =grub]
+  $%  $:  %grub
+          $%  [_arvo =grub]
+      ==  ==
       [_arvo =debt =soul]
   ==
 +$  plan  (pair germ (list move))
@@ -266,12 +239,7 @@
       ==
   ==
 +$  vane  [=vase =worm]
-+$  vere
-  $:  $:  non=@ta
-          rev=(pair term (trel @ud @ud @ud)) :: XX path?
-      ==
-      kel=wynn
-  ==
++$  vere  [[non=@ta rev=path] kel=wynn]
 +$  vile
   $:  typ=type    ::  -:!>(*type)
       duc=type    ::  -:!>(*duct)
@@ -281,13 +249,11 @@
 ::
 +$  waif
   ::  %trim: trim state, spam to all
-  ::  %vega: notify vanes post upgrade
   ::  %what: update from files
   ::  %whey: produce $mass                    :: XX remove, scry
   ::  %verb: toggle laconicity
   ::
   $%  [%trim p=@ud]
-      [%vega ~]
       [%what p=(list (pair path (cask)))]
       [%whey ~]
       [%verb p=(unit ?)]
@@ -300,6 +266,13 @@
   $%  [%crud =goof =ovum]
       [%wack p=@uvJ]
       [%wyrd p=vere]
+  ==
++$  worm
+  $:  ::  +nest, +play, and +mint
+      ::
+      nes=(set ^)
+      pay=(map (pair type hoon) type)
+      mit=(map (pair type hoon) (pair type nock))
   ==
 +$  wisp
   $%  $>(?(%verb %what) waif)
@@ -327,125 +300,103 @@
   ?.  ?=([%$ case] u.ved)  ~
   `(unit beam)`[~ [`ship`u.who `desk`u.des `case`p.u.ved] t.t.t.p]
 ::
-++  en-sley
-  |=  =roof
-  ^-  sley
-  |=  [typ=* fur=(unit (set monk)) ron=term bed=beam]
-  =/  lyc=gang
-    ?~  fur  ~
-    :-  ~
-    %-  ~(gas in *(set ship))
-    (murn ~(tap in u.fur) |=(m=monk ?-(-.m %| ~, %& `p.m)))
-  (roof lyc ron bed)
+++  en-omen
+  |=  [vis=view bem=beam]
+  ^-  path
+  :_  (en-beam bem)
+  ?@  vis  vis
+  ~(rent co [%many $/tas/way.vis $/tas/car.vis ~])
 ::
-++  sloy
-  ::  +sloy: adapter from old style scrys to new style scrys
-  ::
-  ::    This does path parsing which shows up hot, but removing the last +slay
-  ::    here requires deeper interface changes.
-  ::
-  !:
-  ~/  %sloy
-  |=  sod=slyd
-  ^-  slyt
-  |=  [ref=* raw=*]
-  =+  pux=((soft path) raw)
-  ?~  pux  ~
-  ?.  ?=([@ @ @ @ *] u.pux)  ~
-  =+  :*  hyr=?~(i.u.pux (some %$) (slaw %tas i.u.pux))
-          fal=(slaw %p i.t.u.pux)
-          dyc=?~(i.t.t.u.pux (some %$) (slaw %tas i.t.t.u.pux))
-          ved=(slay i.t.t.t.u.pux)
-          tyl=t.t.t.t.u.pux
+++  de-omen
+  |=  pax=path
+  ^-  (unit [vis=view bem=beam])
+  ?~  pax  ~
+  ?~  bem=(de-beam t.pax)  ~
+  ?:  ((sane %tas) i.pax)
+    `[i.pax u.bem]
+  =/  lot=(unit coin)  (rush i.pax ;~(pfix dot perd:so))
+  ?.  ?&  ?=(^ lot)
+          ?=([%many [%$ %tas @] [%$ %tas @] ~] u.lot)
       ==
-  ?~  hyr  ~
-  ?~  fal  ~
-  ?~  dyc  ~
-  ?.  ?=(^ ved)  ~
-  =/  ron=@tas  u.hyr
-  =/  bed=beam
-    [[u.fal u.dyc (case p.u.ved)] tyl]
-  =/  bop=(unit (unit (cask meta)))
-    (sod ref ~ ron bed)
-  ?~  bop  ~
-  ?~  u.bop  [~ ~]
-  ::  XX figure out wth to do about hoon-version
-  ::
-  ?.  ?&  ?=([?(%151 %141) *] ref)
-          -:(~(nets wa *worm) +.ref -.q.u.u.bop)
+    ~
+  `[[q.p.i q.p.i.t]:p.u.lot u.bem]
+::
+++  look
+  ~/  %look
+  |=  [rof=roof lyc=gang]
+  ^-  root
+  ~/  %in
+  |=  [ref=* raw=*]
+  ?~  pax=((soft path) raw)  ~
+  ?~  mon=(de-omen u.pax)  ~
+  ?~  dat=(rof lyc u.mon)  ~
+  ?~  u.dat  [~ ~]
+  =*  vax  q.u.u.dat
+  ?.  ?&  ?=(^ ref)
+          =(hoon-version -.ref)
+          -:(~(nets wa *worm) +.ref p.vax)
       ==
     ~>(%slog.[0 leaf+"arvo: scry-lost"] ~)
-  [~ ~ +.q.u.u.bop]
-::  +sloy-light: minimal parsing version of sloy
-::
-::    There are several places inside vanes where we manually call the scry
-::    function raw, instead of passing it into +mink. In those cases, we're
-::    paying the price to render the arguments as text, and then are
-::    immediately parsing the passed in data. We can avoid that.
-::
-::    TODO: The entire scrying system needs to be cleaned up in a more
-::    permanent way. This hack fixes up some print/parse costs, but doesn't
-::    recover the print/parse costs of the scry itself, which we could prevent
-::    if we didn't send (list @ta), but instead sent (list dime).
-::
-++  sloy-light
-  ~/  %sloy-light
-  |=  sod=slyd
-  |=  [ref=* ron=@tas fal=@p dyc=@tas ved=case tyl=path]
-  =/  bed=beam  [[fal dyc ved] tyl]
-  =/  bop=(unit (unit (cask meta)))
-    (sod ref ~ ron bed)
-  ?~  bop  ~
-  ?~  u.bop  [~ ~]
-  ::  XX figure out wth to do about hoon-version
-  ::
-  ?.  ?&  ?=([?(%151 %141) *] ref)
-          -:(~(nets wa *worm) +.ref -.q.u.u.bop)
-      ==
-    ~>(%slog.[0 leaf+"arvo: scry-dark"] ~)
-  [~ ~ +.q.u.u.bop]
-::  +wyrd: kelvin negotiation
+  [~ ~ q.vax]
+::  |wyrd: kelvin negotiation
 ::
 ::    specified but unimplemented:
 ::    arvo should produce a [wend/wynn] effect
 ::    to signal downgrade
 ::
 ++  wyrd
-  |=  [run=wynn hav=wynn]
-  ::  wyr: ~: runtime supports all required kelvins
-  ::       ^: runtime support is missing or lagging
+  |%
+  ::  +sane: kelvin stack for validity
   ::
-  =;  wyr  !.
-    ?~  wyr
-      same
-    ~&  wyrd=wyr
-    ~_  :+  %rose
-          [" " ~ ~]
-        :~  =+  p.u.wyr
-            leaf/"%{(trip p)} %{(scow %ud q)} required;"
-            ?~  q.u.wyr
-              leaf/"runtime missing support"
-            leaf/"runtime only supports %{(scow %ud u.q.u.wyr)}"
-        ==
-    ~>  %mean.'arvo: upgrade blocked'
-    ~>  %mean.'wyrd'
-    !!
+  ++  sane
+    |=  kel=wynn
+    ^-  ?
+    ?:  =(~ kel)  &
+    =^  las=(pair term @ud)  kel  kel
+    |-  ^-  ?
+    ?~  kel  &
+    ?&  (gte q.las q.i.kel)
+        $(las i.kel, kel t.kel)
+    ==
+  ::  +need: require kelvins
   ::
-  |-  ^-  (unit (pair (pair term @ud) (unit @ud)))
-  ?~  hav  ~
-  ::
-  ::  fel: %&: runtime kelvin for [i.hav]
-  ::       %|: no specified runtime support
-  ::
-  =/  fel
-    |-  ^-  (each @ud (pair term @ud))
-    ?~  run  |/i.hav
-    ?:(=(p.i.hav p.i.run) &/q.i.run $(run t.run))
-  ::
-  ?-  -.fel
-    %|  `[p.fel ~]
-    %&  ?.((lte p.fel q.i.hav) `[i.hav `p.fel] $(hav t.hav))
-  ==
+  ++  need
+    |=  [run=wynn hav=wynn]
+    ::  wyr: ~: runtime supports all required kelvins
+    ::       ^: runtime support is missing or lagging
+    ::
+    =;  wyr  !.
+      ?~  wyr
+        same
+      ~&  wyrd=wyr
+      ~_  :+  %rose
+            [" " ~ ~]
+          :~  =+  p.u.wyr
+              leaf/"%{(trip p)} %{(scow %ud q)} required;"
+              ?~  q.u.wyr
+                leaf/"runtime missing support"
+              leaf/"runtime only supports %{(scow %ud u.q.u.wyr)}"
+          ==
+      ~>  %mean.'arvo: upgrade blocked'
+      ~>  %mean.'wyrd'
+      !!
+    ::
+    |-  ^-  (unit (pair (pair term @ud) (unit @ud)))
+    ?~  hav  ~
+    ::
+    ::  fel: %&: runtime kelvin for [i.hav]
+    ::       %|: no specified runtime support
+    ::
+    =/  fel
+      |-  ^-  (each @ud (pair term @ud))
+      ?~  run  |/i.hav
+      ?:(=(p.i.hav p.i.run) &/q.i.run $(run t.run))
+    ::
+    ?-  -.fel
+      %|  `[p.fel ~]
+      %&  ?.((lte p.fel q.i.hav) `[i.hav `p.fel] $(hav t.hav))
+    ==
+  --
 ::
 ::  |de: axal engine
 ::
@@ -490,18 +441,160 @@
     ==
   --
 ::
+++  wa                                                  ::  cached compile
+  |_  worm
+  ++  nell  |=(ref=type (nest [%cell %noun %noun] ref)) ::  nest in cell
+  ++  nest                                              ::  nest:ut, cached
+    |=  [sut=type ref=type]
+    ^-  [? worm]
+    ?:  (~(has in nes) [sut ref])  [& +>+<]
+    ?.  (~(nest ut sut) | ref)
+      ~&  %nest-failed
+      =+  foo=(skol ref)
+      =+  bar=(skol sut)
+      ~&  %nest-need
+      ~>  %slog.[0 bar]
+      ~&  %nest-have
+      ~>  %slog.[0 foo]
+      [| +>+<.$]
+    [& +>+<(nes (~(put in nes) [sut ref]))]
+  ::
+  ++  call                                              ::  call gate
+    |=  [vax=vase nam=term som=(each vase ^)]
+    ^-  [vase worm]
+    =^  duf  +>+<.$  (open vax nam som)
+    (slap duf [%limb %$])
+  ::
+  ++  open                                              ::  assemble door
+    |=  [vax=vase nam=term som=(each vase ^)]
+    ^-  [vase worm]
+    =*  key  [%cncb [[%& 2] ~] [[[%& 6] ~] [%$ 3]] ~]
+    =^  dor  +>+<.$  (slap vax [%limb nam])
+    =^  mes  +>+<.$  (slot 6 dor)
+    =^  hip  +>+<.$
+      ?-  -.som
+         %&  (nest p.mes p.p.som)
+         %|  (nets p.mes -.p.som)
+      ==
+    ?>  hip
+    [[p.dor q.dor(+6 +7.som)] +>+<.$]
+  ::
+  ++  neat                                              ::  type compliance
+    |=  [typ=type som=(each vase ^)]
+    ^-  worm
+    =^  hip  +>+<.$
+      ?-  -.som
+        %&  (nest typ p.p.som)
+        %|  (nets typ -.p.som)
+      ==
+    ?>  hip
+    +>+<.$
+  ::
+  ++  nets                                              ::  typeless nest
+    |=  [sut=* ref=*]
+    ^-  [? worm]
+    ?:  (~(has in nes) [sut ref])  [& +>+<]
+    =+  gat=|=([a=type b=type] (~(nest ut a) | b))
+    ?.  (? (slum gat [sut ref]))
+      ~&  %nets-failed
+      =+  tag=`*`skol
+      =+  foo=(tank (slum tag ref))
+      =+  bar=(tank (slum tag sut))
+      ~&  %nets-need
+      ~>  %slog.[0 bar]
+      ~&  %nets-have
+      ~>  %slog.[0 foo]
+      [| +>+<.$]
+    [& +>+<.$(nes (~(put in nes) [sut ref]))]
+  ::  +play: +play:ut, cached
+  ::
+  ++  play
+    |=  [sut=type gen=hoon]
+    ^-  [type worm]
+    =+  old=(~(get by pay) [sut gen])
+    ?^  old  [u.old +>+<.$]
+    =+  new=(~(play ut sut) gen)
+    [new +>+<.$(pay (~(put by pay) [sut gen] new))]
+  ::  +mint: +mint:ut to noun, cached
+  ::
+  ++  mint
+    |=  [sut=type gen=hoon]
+    ^-  [(pair type nock) worm]
+    =+  old=(~(get by mit) [sut gen])
+    ?^  old  [u.old +>+<.$]
+    =+  new=(~(mint ut sut) %noun gen)
+    [new +>+<.$(mit (~(put by mit) [sut gen] new))]
+  ::  +slam: +slam:ut, cached
+  ::
+  ++  slam
+    |=  [gat=vase sam=vase]
+    =/  sut=type  [%cell p.gat p.sam]
+    =/  gen=hoon  [%cnsg [%$ ~] [%$ 2] [%$ 3] ~]
+    =^  new=type  +>+<.$  (play sut gen)
+    [[new (slum q.gat q.sam)] +>+<.$]
+  ::  +slap: +slap:ut, cached
+  ::
+  ++  slap
+    |=  [vax=vase gen=hoon]
+    ^-  [vase worm]
+    =^  gun  +>+<  (mint p.vax gen)
+    [[p.gun .*(q.vax q.gun)] +>+<.$]
+  ::  +slot: +slot:ut, cached
+  ::
+  ++  slot
+    |=  [axe=@ vax=vase]
+    ^-  [vase worm]
+    =^  gun  +>+<  (mint p.vax [%$ axe])
+    [[p.gun .*(q.vax [0 axe])] +>+<.$]
+  ::
+  ::  +slur: slam a vase with a maze
+  ::
+  ++  slur
+    |=  [gat=vase sam=maze]
+    ^-  [vase worm]
+    =^  cur  +>+<.$  (slot 6 gat)
+    =.  +>+<.$  (neat p.cur sam)
+    (slym gat q.p.sam)
+  ::  +slym: +slym:ut, cached
+  ::
+  ++  slym
+    |=  [gat=vase sam=*]
+    ^-  [vase worm]
+    (slap gat(+<.q sam) [%limb %$])
+  ::
+  ++  sped                                              ::  specialize vase
+    |=  vax=vase
+    ^-  [vase worm]
+    =+  ^=  gen  ^-  hoon
+      ?@  q.vax    [%wtts [%base [%atom %$]] [%& 1]~]
+      ?@  -.q.vax  [%wtts [%leaf %tas -.q.vax] [%& 2]~]
+      [%wtts [%base %cell] [%& 1]~]
+    =^  typ  +>+<.$  (play p.vax [%wtgr gen [%$ 1]])
+    [[typ q.vax] +>+<.$]
+  ::
+  ++  spot                                              ::  slot then sped
+    |=  [axe=@ vax=vase]
+    ^-  [vase worm]
+    =^  xav  +>+<  (slot axe vax)
+    (sped xav)
+  ::
+  ++  stop                                              ::  sped then slot
+    |=  [axe=@ vax=vase]
+    ^-  [vase worm]
+    =^  xav  +>+<  (sped vax)
+    (slot axe xav)
+  --
+::
 ::  |part: arvo structures and engines
 ::
 ++  part
   =>  |%
       ::  $card: tagged, untyped event
       ::  $ovum: card with cause
-      ::  $hoof: hoon source
       ::  $news: collated updates
       ::  $oped: module updates
       ::  $seed: next kernel source
       ::
-      +$  hoof  @t
       +$  news
           $:  ::  sys: installs + replacements
               ::  use: non-system files
@@ -510,44 +603,148 @@
               use=(map path (cask))
           ==
       +$  oped
-        $:  lul=(unit hoof)
-            zus=(unit hoof)
-            van=(list (cask hoof))
+        $:  lul=(unit cord)
+            zus=(unit cord)
+            van=(list (cask cord))
         ==
-      +$  seed  [hun=(unit hoof) arv=hoof]
+      +$  seed  [hun=(unit cord) arv=cord]
       --
   ::
   ~%  %part  ..part  ~
   |%
   ::
-  +|  %utilities
-  ::
-  ::    XX move into |wa?
-  ::
-  ::  +slur: slam a vase with a maze
-  ::
-  ++  slur
-    |=  [sac=worm gat=vase sam=maze]
-    ^-  [vase worm]
-    =^  cur  sac  (~(slot wa sac) 6 gat)
-    =^  hig  sac
-      ?-  -.sam
-        %&  (~(nest wa sac) p.cur p.p.sam)
-        %|  (~(nets wa sac) p.cur p.p.sam)
-      ==
-    ?>  hig
-    (~(slym wa sac) gat q.p.sam)
-  ::  +slid: cons a vase onto a maze
-  ::
-  ++  slid
-    |=  [hed=vase tal=maze]
-    ^-  maze
-    ?-  -.tal
-      %&  [%& (slop hed p.tal)]
-      %|  [%| [%cell p.hed p.p.tal] [q.hed q.p.tal]]
-    ==
-  ::
   +|  %engines
+  ::
+  ::  |eden: lifecycle and bootstrap formula generators
+  ::
+  ::    while unused by arvo itself, these nock formulas
+  ::    bootstrap arvo and define its lifecycle.
+  ::
+  ::    we're creating an event series E whose lifecycle can be computed
+  ::    with the urbit lifecycle formula L, `[2 [0 3] [0 2]]`.  that is:
+  ::    if E is the list of events processed by a computer in its life,
+  ::    its final state is S, where S is nock(E L).
+  ::
+  ::    in practice, the first five nouns in E are: two boot formulas,
+  ::    a hoon compiler as a nock formula, the same compiler as source,
+  ::    and the arvo kernel as source.
+  ::
+  ::    after the first five special events, we enter an iterative
+  ::    sequence of regular events which continues for the rest of the
+  ::    computer's life.  during this sequence, each state is a function
+  ::    that, passed the next event, produces the next state.
+  ::
+  ::    a regular event is an $ovum, or `[date wire type data]` tuple, where
+  ::    `date` is a 128-bit Urbit date; `wire` is an opaque path which
+  ::    output can match to track causality; `type` is a symbol describing
+  ::    the type of input; and `data` is input data specific to `type`.
+  ::
+  ::    in real life we don't actually run the lifecycle loop,
+  ::    since real life is updated incrementally and also cares
+  ::    about things like output.  we couple to the internal
+  ::    structure of the state machine and work directly with
+  ::    the underlying arvo engine.
+  ::
+  ::    this arvo core, which is at `+7` (Lisp `cddr`) of the state
+  ::    function (see its public interface in `sys/arvo`), gives us
+  ::    extra features, like output, which are relevant to running
+  ::    a real-life urbit vm, but don't affect the formal definition.
+  ::
+  ::    so a real-life urbit interpreter is coupled to the shape of
+  ::    the arvo core.  it becomes very hard to change this shape.
+  ::    fortunately, it is not a very complex interface.
+  ::
+  ++  eden
+    |%
+    ::  +aeon: arvo lifecycle loop
+    ::
+    ::    the first event in a ship's log,
+    ::    computing the final state from the rest of log
+    ::    when invoked via the lifecycle formula: [%2 [%0 3] %0 2]
+    ::
+    ::    the formal urbit state is always just a gate (function)
+    ::    which, passed the next event, produces the next state.
+    ::
+    ++  aeon
+      ^-  *
+      =>  ::  boot: kernel bootstrap, event 2
+          ::  tale: events 3-n
+          ::
+          *log=[boot=* tale=*]
+      !=  ::  arvo: bootstrapped kernel
+          ::  epic: remainder of the log
+          ::
+      =+  [arvo epic]=.*(tale.log boot.log)
+      |-  ^-  *
+      ?@  epic  arvo
+      %=  $
+        epic  +.epic
+        arvo  .*(arvo [%9 2 %10 [6 %1 -.epic] %0 1])
+      ==
+    ::
+    ::  +boot: event 2: bootstrap a kernel from source
+    ::
+    ++  boot
+      ^-  *
+      ::
+      ::  event 2 is the startup formula, which verifies the compiler
+      ::  and starts the main lifecycle.
+      ::
+      =>  ::  fate: event 3: a nock formula producing the hoon bootstrap compiler
+          ::  hoon: event 4: compiler source
+          ::  arvo: event 5: kernel source
+          ::  epic: event 6-n
+          ::
+          *log=[fate=* hoon=@ arvo=@ epic=*]
+      !=
+      ::
+      ::  activate the compiler gate.  the product of this formula
+      ::  is smaller than the formula.  so you might think we should
+      ::  save the gate itself rather than the formula producing it.
+      ::  but we have to run the formula at runtime, to register jets.
+      ::
+      ::  as always, we have to use raw nock as we have no type.
+      ::  the gate is in fact ++ride.
+      ::
+      ~>  %slog.[0 leaf+"1-b"]
+      =/  compiler-gate  .*(0 fate.log)
+      ::
+      ::  compile the compiler source, producing (pair span nock).
+      ::  the compiler ignores its input so we use a trivial span.
+      ::
+      ~>  %slog.[0 leaf+"1-c (compiling compiler, wait a few minutes)"]
+      =/  compiler-tool
+        .*(compiler-gate [%9 2 %10 [6 %1 noun/hoon.log] %0 1])
+      ::
+      ::  switch to the second-generation compiler.  we want to be
+      ::  able to generate matching reflection nouns even if the
+      ::  language changes -- the first-generation formula will
+      ::  generate last-generation spans for `!>`, etc.
+      ::
+      ~>  %slog.[0 leaf+"1-d"]
+      =.  compiler-gate  .*(0 +:compiler-tool)
+      ::
+      ::  get the span (type) of the kernel core, which is the context
+      ::  of the compiler gate.  we just compiled the compiler,
+      ::  so we know the span (type) of the compiler gate.  its
+      ::  context is at tree address `+>` (ie, `+7` or Lisp `cddr`).
+      ::  we use the compiler again to infer this trivial program.
+      ::
+      ~>  %slog.[0 leaf+"1-e"]
+      =/  kernel-span
+        -:.*(compiler-gate [%9 2 %10 [6 %1 [-.compiler-tool '+>']] %0 1])
+      ::
+      ::  compile the arvo source against the kernel core.
+      ::
+      ~>  %slog.[0 leaf+"1-f"]
+      =/  kernel-tool
+        .*(compiler-gate [%9 2 %10 [6 %1 [kernel-span arvo.log]] %0 1])
+      ::
+      ::  create the arvo kernel, whose subject is the kernel core.
+      ::
+      ~>  %slog.[0 leaf+"1-g"]
+      [.*(+>:compiler-gate +:kernel-tool) epic.log]
+    --
   ::
   ::  |adapt
   ::
@@ -555,7 +752,7 @@
     =>  |%
         ::  deep file as source
         ::
-        ++  sole  |=(a=(cask) `hoof`?>(?=([%hoon @t] a) q.a))
+        ++  sole  |=(a=(cask) `cord`?>(?=([%hoon @t] a) q.a))
         --
     |_  fat=(axal (cask))
     ::
@@ -624,7 +821,7 @@
       ::    %zuse is the subject of the vanes; force all if we have a new %zuse
       ::
       =.  all  |(all ?=(^ zus))
-      =|  nav=(map term hoof)
+      =|  nav=(map term cord)
       =?  nav  all
         %-  ~(gas by nav)
         %+  turn
@@ -637,7 +834,7 @@
             |=([p=path *] ?=([%sys %vane @tas ~] p))
           fat
         |=  [[p=path q=(cask)] taf=_fat]
-        ^-  (pair (cask hoof) _fat)
+        ^-  (pair (cask cord) _fat)
         ?>  ?=([%sys %vane @tas ~] p)
         =*  nam  i.t.t.p
         ?>  ((sane %tas) nam)
@@ -784,26 +981,21 @@
   ::
   ++  va
     =>  |%
-        ::  XX move next to +slap
-        ::
-        ++  swat
-          |=  [vax=vase gen=hoon]
-          ^-  (trap vase)
-          =/  gun  (~(mint ut p.vax) %noun gen)
-          |.([p.gun .*(q.vax q.gun)])
+        +$  vane-sample  [now=@da eny=@uvJ rof=rook]
         ::
         ++  smit
-          |=  [cap=tape pit=vase pax=path txt=@t]
-          ^-  (trap vase)
-          ~>  %slog.[0 leaf+"{cap}: {(scow p+(mug txt))}"]
+          |=  [cap=tape sub=vase pax=path txt=@t]
+          ^-  vase
+          ~>  %slog.[0 leaf/"{cap}: {(scow p+(mug txt))}"]
           %-  road  |.
-          ~_  leaf/cap
-          (swat pit (rain pax txt))
+          ~_  leaf/"{cap}: build failed"
+          (slap sub (rain pax txt))
         ::
         ++  create
-          |=  [zus=vase lal=term pax=path txt=@t]
+          |=  [our=ship zus=vase lal=term pax=path txt=@t]
           ^-  vase
-          (slym $:(smit "vane {<lal>}" zus pax txt) zus)
+          =/  cap  "vane %{(trip lal)}"
+          (slym (smit cap zus pax txt) our)
         ::
         ++  settle
           |=  van=vase
@@ -822,7 +1014,7 @@
         --
     ::
     ~%  %va  ..va  ~
-    |_  [our=ship vil=vile vax=vase sac=worm]
+    |_  [vil=vile vax=vase sac=worm]
     ::
     ::  |plow:va: operate in time and space
     ::
@@ -833,11 +1025,11 @@
       ::
       ++  peek
         ^-  rook
-        |=  [lyc=gang cyr=term bem=beam]
+        |=  [lyc=gang vis=view bem=beam]
         ^-  (unit (unit (cask meta)))
         ::  namespace reads receive no entropy
         ::
-        =/  sam=vane-sample  [our now *@uvJ rok]
+        =/  sam=vane-sample  [now *@uvJ rok]
         =^  rig  sac
           ~>  %mean.'peek: activation failed'
           (~(slym wa sac) vax sam)
@@ -845,7 +1037,7 @@
           ~>  %mean.'peek: pull failed'
           (~(slap wa sac) rig [%limb %scry])
         ::
-        =/  mas=[gang term beam]  [lyc cyr bem]
+        =/  mas=[gang view beam]  [lyc vis bem]
         ::
         =^  pro  sac
           ~>  %mean.'peek: call failed'
@@ -861,21 +1053,23 @@
         |=  [hen=duct eny=@uvJ dud=(unit goof)]
         =*  duc  [duc.vil hen]
         =*  err  [dud.vil dud]
-        =/  sam=vane-sample  [our now eny rok]
+        =/  sam=vane-sample  [now eny rok]
         =^  rig  sac
           ~>  %mean.'spin: activation failed'
           (~(slym wa sac) vax sam)
         ::
+        =>  |%
+            ::  +slid: cons a vase onto a maze
+            ::
+            ++  slid
+              |=  [hed=vase tal=maze]
+              ^-  maze
+              ?-  -.tal
+                %&  [%& (slop hed p.tal)]
+                %|  [%| [%cell p.hed p.p.tal] [q.hed q.p.tal]]
+              ==
+            --
         |%
-        ::  +slix: en-hypo
-        ::
-        ++  slix
-          |=  hil=maze
-          ^-  maze
-          ?-  -.hil
-            %&  [%& (slop [typ.vil p.p.hil] p.hil)]
-            %|  [%| [%cell typ.vil p.p.hil] p.hil]
-          ==
         ::  +peel:spin:plow:va: extract products, finalize vane
         ::
         ++  peel
@@ -896,11 +1090,11 @@
           =^  gat  sac
             (~(slap wa sac) rig [%limb %call])
           ::
-          ::  sample is [duct (unit goof) (hypo (hobo task))]
+          ::  sample is [duct (unit goof) (hobo task)]
           ::
           =/  sam=maze
-            (slid duc (slid err (slix task)))
-          =^  pro  sac  (slur sac gat sam)
+            (slid duc (slid err task))
+          =^  pro  sac  (~(slur wa sac) gat sam)
           (peel pro)
         ::  +take:spin:plow:va: retreat statefully
         ::
@@ -913,12 +1107,12 @@
           =/  src=vase
             [[%atom %tas `from] from]
           ::
-          ::  sample is [wire duct (unit goof) (hypo sign=[term gift])]
+          ::  sample is [wire duct (unit goof) sign=[term gift]]
           ::
           =/  sam=maze
             =*  tea  [wir.vil wire]
-            (slid tea (slid duc (slid err (slix (slid src gift)))))
-          =^  pro  sac  (slur sac gat sam)
+            (slid tea (slid duc (slid err (slid src gift))))
+          =^  pro  sac  (~(slur wa sac) gat sam)
           (peel pro)
         --
       --
@@ -975,7 +1169,12 @@
         ==
       ::  apply remaining update
       ::
-      (~(lod what:pith fil.debt) kel.debt)
+      =.  ..this  (~(lod what:pith fil.debt) kel.debt)
+      ::  send upgrade notifications
+      ::
+      =+  [wir car]=[/arvo vega/~]
+      =.  ..this  (xeno:pith $/wir car)
+      (emit $/~ (spam:pith wir !>(car)))
     ::  +emit: enqueue a worklist with source
     ::
     ++  emit
@@ -1036,7 +1235,7 @@
         ::
         ~?  !lac.fad
           :-  (runt [(lent bars.gem) '|'] "")
-          [%slip vane.gem (symp +>-.task) duct]
+          [%slip [vane.gem vane] (symp +>-.task) duct]
         ::
         (call duct vane task)
       ::
@@ -1084,52 +1283,59 @@
         ==
       ::
       =/  von
-        %+  turn
-          (sort ~(tap by van.mod) |=([[a=@tas *] [b=@tas *]] (aor a b)))
-        |=([lal=@tas =vane] (cat 3 %vane- lal)^vane)
+        (sort ~(tap by van.mod) |=([[a=@tas *] [b=@tas *]] (aor a b)))
       ::
       :~  :+  %reports  %|
-          %+  turn  von
           =/  bem=beam  [[our %home da+now] /whey]
-          |=  [lal=@tas =vane]
-          =/  met  (peek ~ (rsh [3 5] lal) bem)
+          %+  turn  von
+          |=  [nam=term =vane]
+          =/  met  (peek [~ ~] nam bem)
+          ~|  mass/nam
           ?>  &(?=(^ met) ?=(^ u.met))  :: XX make optional
-          lal^|+;;((list mass) q.q.u.u.met)
+          nam^|+;;((list mass) q.q.u.u.met)
       ::
           :+  %caches  %|
           %+  turn  von
-          |=([lal=@tas =vane] lal^&+worm.vane)
+          |=([nam=term =vane] nam^&+worm.vane)
       ::
           :+  %dregs  %|
           %+  turn  von
-          |=([lal=@tas =vane] lal^&+vase.vane)
+          |=([nam=term =vane] nam^&+vase.vane)
       ==
     ::  +peek: read from the entire namespace
     ::
     ++  peek
       ^-  rook
-      |=  [lyc=gang cyr=term bem=beam]
+      |=  [lyc=gang vis=view bem=beam]
       ^-  (unit (unit (cask meta)))
+      ::  vane and care may be concatenated
       ::
-      ?:  ?=(%$ cyr)
-        (peek:pith lyc %$ bem)
+      =/  [way=term car=term]
+        ?^  vis  vis
+        ?.  =(2 (met 3 vis))
+          [vis %$]
+        [(end 3 vis) (rsh 3 vis)]
       ::
-      ::  XX vane and care are concatenated
+      ?:  ?=(%$ way)
+        (peek:pith lyc car bem)
       ::
-      =/  lal  (end 3 cyr)
-      =/  ren  ;;(@t (rsh 3 cyr))
-      ?.  (~(has by van.mod) lal)
+      =.  way  (grow way)
+      ?~  van=(~(get by van.mod) way)
         ~
-      (peek:(plow lal) lyc ren bem)
+      %.  [lyc car bem]
+      peek:spin:(~(plow va [vil u.van]) now peek)
     ::  +call: advance to target
     ::
     ++  call
       |=  [=duct way=term task=maze]
       ^+  this
       ?:  ?=(%$ way)
+        ~>  %mean.'arvo: call:pith failed'
+        %-  call:pith
         ~>  %mean.'call: bad waif'
-        (call:pith ;;(waif:pith q.p.task))
+        ;;(waif q.p.task)
       ::
+      =.  way  (grow way)
       %+  push  [way duct bars.gem]
       ~|  bar-stack=`(list ^duct)`[duct bars.gem]
       %.  task
@@ -1145,9 +1351,9 @@
         ::
         ?>  ?=(~ duct)
         (xeno:pith wire ;;(card q.p.gift))
-      ::
       ::  the caller was a vane
       ::
+      =.  way  (grow way)
       %+  push  [way duct bars.gem]
       ::
       ::  cons source onto .gift to make a $sign
@@ -1173,7 +1379,7 @@
       =/  =vane
         ~|  [%missing-vane way]
         (~(got by van.mod) way)
-      (~(plow va [our vil vane]) now peek)
+      (~(plow va [vil vane]) now peek)
     ::
     ::  |pith: operate on arvo internals
     ::
@@ -1182,13 +1388,10 @@
       ++  gest
         |=  =ovum
         ^-  $>(%pass ball)
-        =^  way=term  wire.ovum
-          ~|  %gest-wire
-          ?>  ?=(^ wire.ovum)
-          [(wilt i.wire.ovum) t.wire.ovum]
+        =^  way=term  wire.ovum  wire.ovum
         ::
         ::  %$: default, routed to arvo-proper as trivial vase
-        ::  @:  route to vane XX remove %soft, clam via %zuse
+        ::  @:  route to vane as $hobo
         ::
         =/  =vase
           ?-  way
@@ -1212,13 +1415,8 @@
           =/  tub  (~(usurp adapt fat.mod.sol) del)
           ?~  tub
             (mod del |)
-          =/  pos=plan
-            [$/~ [*duct (gest [//arvo vega/~])] ~]
           =/  gat  (boot kel.ver.zen [hun arv]:p.u.tub)
-          %_  ..pith
-            but  `[gat q.u.tub fil]
-            run  (weld run [pos ~])
-          ==
+          ..pith(but `[gat q.u.tub fil])
         ::
         ++  lod
           |=  kel=(list (pair path (cask)))
@@ -1235,23 +1433,22 @@
           ^+  ..pith
           =^  job=oped  fat.mod.sol  (~(adorn adapt fat.mod.sol) del all)
           =?  lul.mod.sol  ?=(^ lul.job)
-            $:(smit:va "lull" pit /sys/lull/hoon u.lul.job)
+            (smit:va "lull" pit /sys/lull/hoon u.lul.job)
           =?  zus.mod.sol  ?=(^ zus.job)
-            $:(smit:va "zuse" lul.mod.sol /sys/zuse/hoon u.zus.job)
-          %-  %+  wyrd   kel.ver.zen
+            (smit:va "zuse" lul.mod.sol /sys/zuse/hoon u.zus.job)
+          %-  %+  need:wyrd   kel.ver.zen
               :~  lull/;;(@ud q:(slap lul.mod.sol limb/%lull))
                   zuse/;;(@ud q:(slap zus.mod.sol limb/%zuse))
               ==
           %=    ..pith
               van.mod
             %+  roll  van.job
-            |=  [[nam=term txt=hoof] van=_van.mod.sol]
+            |=  [[nam=term txt=cord] van=_van.mod.sol]
             ^+  van
-            =/  way  (wilt nam)
-            =/  nex  (create:va zus.mod.sol way /sys/vane/[nam]/hoon txt)
-            =/  nav  (~(get by van) way)
+            =/  nex  (create:va our zus.mod.sol nam /sys/vane/[nam]/hoon txt)
+            =/  nav  (~(get by van) nam)
             =?  nex  ?=(^ nav)  (update:va vase.u.nav nex)
-            (~(put by van) way (settle:va nex))
+            (~(put by van) nam (settle:va nex))
           ==
         --
       ::
@@ -1270,15 +1467,13 @@
                    (~(run by van.mod) |=(=vane vane(worm *worm)))
                  (emit $/~ (spam /arvo !>(waif)))
         ::
-          %vega  (emit $/~ (spam /arvo !>(waif)))  :: XX also out
           %verb  ..pith(lac.fad ?~(p.waif !lac.fad u.p.waif))
-        ::
           %what  ~(kel what p.waif)
           %whey  ..pith(out [[//arvo mass/whey] out])
         ==
       ::
       ++  peek
-        ^-  roof
+        ^-  roon
         |=  [lyc=gang car=term bem=beam]
         ^-  (unit (unit cage))
         ?.  ?|  =(our p.bem)
@@ -1323,7 +1518,9 @@
         ::
         ::  %wyrd: check for runtime kelvin compatibility
         ::
-          %wyrd  %-  %+  wyrd  kel.p.buz
+          %wyrd  ?.  (sane:wyrd kel.p.buz)
+                   ~>(%mean.'wyrd: insane' !!)
+                 %-  %+  need:wyrd  kel.p.buz
                      ^-  (list (pair term @))
                      :~  hoon/hoon-version
                          arvo/arvo
@@ -1344,8 +1541,8 @@
       ::
       ++  xeno
         |=  =ovum
-        ^+  this
-        this(out [ovum out])
+        ^+  ..pith
+        ..pith(out [ovum out])
       --
     --
   --
@@ -1357,16 +1554,18 @@
 ++  boot
   |=  [kel=wynn hun=(unit @t) van=@t]
   ^-  $-(heir (trap ^))
-  ~>  %mean.'vega: ruin'
+  ~>  %mean.'arvo: upgrade failed'
+  ~>  %slog.[1 'arvo: beginning upgrade']
   ?~  hun
     =/  gat
-      ~>  %slog.[0 leaf/"vega: compiling arvo"]
+      ~>  %slog.[0 'arvo: compiling next arvo']
       %-  road  |.
       (slap !>(..ride) (rain /sys/arvo/hoon van))
     =/  lod
       (slap (slot 7 gat) [%limb %load])
     |=  =heir
-    |.  ;;(^ q:(slam lod !>(heir)))
+    |.  ~>  %slog.[1 'arvo: +load next']
+    ;;(^ q:(slam lod !>(heir)))
   ::
   ::  hyp: hoon core type
   ::  hoc: hoon core
@@ -1376,7 +1575,7 @@
     ::  compile new hoon.hoon source with the current compiler
     ::
     =/  raw
-      ~>  %slog.[0 leaf/"vega: compiling hoon"]
+      ~>  %slog.[0 'arvo: compiling hoon']
       (road |.((ride %noun u.hun)))
     ::  activate the new compiler gate, producing +ride
     ::
@@ -1388,12 +1587,12 @@
     ::  require single-step upgrade
     ::
     ?.  |(=(nex hoon-version) =(+(nex) hoon-version))
-      ::  XX revise hint
-      ::
-      ~>(%mean.'wyrd: vega:' !!)
+      =*  ud  |=(a=@ (scow %ud a))
+      ~_  leaf/"cannot upgrade to hoon %{(ud nex)} from %{(ud hoon-version)}"
+      !!
     ::  require runtime compatibility
     ::
-    %-  (wyrd kel [hoon/nex ~])
+    %-  (need:wyrd kel [hoon/nex ~])
     ::
     ::  if we're upgrading language versions, recompile the compiler
     ::
@@ -1401,7 +1600,7 @@
       ?:  =(nex hoon-version)
         [raw cop]
       =/  hot
-        ~>  %slog.[0 leaf+"vega: recompiling hoon %{<`@`nex>}"]
+        ~>  %slog.[0 leaf/"arvo: recompiling hoon %{(scow %ud nex)}"]
         (road |.((slum cop [%noun u.hun])))
       [hot .*(0 +.hot)]
     ::  extract the hoon core from the outer gate (+ride)
@@ -1416,16 +1615,13 @@
   ::  compile arvo
   ::
   =/  rav
-    ~>  %slog.[0 leaf/"vega: compiling arvo"]
+    ~>  %slog.[0 'arvo: compiling next arvo']
     (road |.((slum cop [hyp van])))
   ::  activate arvo and extract the arvo core from the outer gate
   ::
   =/  voc  .*(hoc [%7 +.rav %0 7])
   ::
   ::  extract the upgrade gate +load
-  ::
-  ::    XX +come is now ignored, remove?
-  ::    XX could be a constant axis now (currently +10)
   ::
   =/  lod
     ::  vip: type of the arvo.hoon core
@@ -1438,7 +1634,8 @@
     .*(voc fol)
   ::
   |=  =heir
-  |.  ;;(^ (slum lod heir))
+  |.  ~>  %slog.[1 'arvo: +load next']
+  ;;(^ (slum lod heir))
 ::
 ++  viol                                                ::  vane tools
   |=  but=type
@@ -1463,27 +1660,11 @@
     %i  %iris
     %j  %jael
   ==
-::
-++  wilt
-  |=  van=term
-  ?+  van  van
-    %ames  %a
-    %behn  %b
-    %clay  %c
-    %dill  %d
-    %eyre  %e
-    %ford  %f
-    %gall  %g
-    %iris  %i
-    %jael  %j
-  ==
-::
-++  is  &
 --  =>
 ::
 ::  cached reflexives
 ::
-=/  pit=vase  !>(..is)
+=/  pit=vase  !>(..part)
 =/  vil=vile  (viol p.pit)
 ::
 ::  arvo state, as a discriminable sample
@@ -1491,14 +1672,9 @@
 =|  [_arvo soul]
 =*  sol  ->
 |%
+::  +load: upgrade from previous state
 ::
-::  +come: load incompatible
-::
-++  come  |=(* !!)                                      ::   +4
-::
-::  +load: load compatible, notifying vanes
-::
-++  load                                                ::  +10
+++  load                                                ::   +4
   |=  hir=$<(%grub heir)
   ^-  ^
   ~|  %load
@@ -1512,7 +1688,7 @@
   ::
   =.  van.mod  (~(run by van.mod) |=(=vane vane(worm *worm)))
   ::
-  %-  %+  wyrd  kel.ver.zen
+  %-  %+  need:wyrd  kel.ver.zen
       ^-  (list (pair term @))
       :~  hoon/hoon-version
           arvo/arvo
@@ -1530,38 +1706,41 @@
 ::
 ::  +peek: external inspect
 ::
-++  peek                                                ::  +46
+++  peek                                                ::  +22
   |=  $:  lyc=gang
           $=  nom
           %+  each  path
-          $%  [%once cyr=term syd=desk tyl=spur]
-              [%beam cyr=term bem=beam]
+          $%  [%once vis=view syd=desk tyl=spur]
+              [%beam vis=view bem=beam]
           ==
       ==
   ^-  (unit (cask))
-  =/  hap=(unit [pat=? cyr=term bem=beam])
+  =/  hap=(unit [pat=? vis=view bem=beam])
     ?-  nom
-      [%& *]        ?~  p.nom  ~
-                    ?~  bem=(de-beam t.p.nom)  ~
-                    `[| i.p.nom u.bem]
-    ::
-      [%| %beam *]  `[| cyr bem]:p.nom
-    ::
-      [%| %once *]  `[& cyr.p.nom [our syd.p.nom da/now] tyl.p.nom]
+      [%& *]        ?~(mon=(de-omen p.nom) ~ `[| u.mon])
+      [%| %beam *]  `[| vis bem]:p.nom
+      [%| %once *]  `[& vis.p.nom [our syd.p.nom da/now] tyl.p.nom]
     ==
   ::
   ?~  hap  ~
-  =/  pro  (~(peek le:part [pit vil] sol) lyc [cyr bem]:u.hap)
+  =/  pro  (~(peek le:part [pit vil] sol) lyc [vis bem]:u.hap)
   ?:  |(?=(~ pro) ?=(~ u.pro))  ~
   =/  dat=(cask)  [p q.q]:u.u.pro
   ?.  pat.u.hap  `dat
-  `[%omen [cyr.u.hap (en-beam bem.u.hap)] dat]
+  `[%omen (en-omen [vis bem]:u.hap) dat]
 ::
 ::  +poke: external apply
 ::
-++  poke                                                ::  +47
+++  poke                                                ::  +23
   |=  [now=@da ovo=ovum]
   ^-  ^
+  ::  this assertion is not yet viable, as vere's timestamps
+  ::  are too unreliable. sad!
+  ::
+  :: ?.  (gth now now.sol)
+  ::   ~|  poke/[now=now last=now.sol wire.ovo p.card.ovo]
+  ::   ~>(%mean.'time-marches-on' !!)
+  ::
   =:  eny.sol  (shaz (cat 3 eny now))  ::  XX review
       now.sol  now
     ==
@@ -1576,10 +1755,10 @@
 ::
 ::  +wish: external compute
 ::
-++  wish                                                ::  +22
+++  wish                                                ::  +10
   |=  txt=@
   q:(slap zus.mod (ream txt))
---
+--  =>
 ::
 ::  larval stage
 ::
@@ -1596,12 +1775,12 @@
 =>  |%
     ++  molt
       |=  [now=@da grub]
-      ^-  (unit heir)
+      ^-  (unit $>(_arvo heir))
       ?.  &(?=(^ who) ?=(^ eny) ?=(^ ver) ?=(^ fat) ?=(^ lul) ?=(^ zus))
         ~
       =/  lul  $:u.lul
       =/  zus  $:u.zus
-      %-  %+  wyrd  kel.u.ver
+      %-  %+  need:wyrd  kel.u.ver
           ^-  (list (pair term @))
           :~  hoon/hoon-version
               arvo/arvo
@@ -1609,11 +1788,21 @@
               zuse/;;(@ud q:(slap zus limb/%zuse))
           ==
       =/  nav  %-  ~(run by van)
-               |=(a=(trap vase) (settle:va:part (slym $:a zus)))
+               |=(a=(trap vase) (settle:va:part (slym $:a u.who)))
       :^  ~  arvo  *debt
       [[u.who now u.eny] [lac] [u.ver |] u.fat lul zus nav]
     ::
     ++  what
+      =>  |%
+          ++  smit
+            |=  [cap=tape sub=(trap vase) pax=path txt=@t]
+            ^-  (trap vase)
+            ~>  %slog.[0 leaf/"{cap}: {(scow p+(mug txt))}"]
+            %-  road  |.
+            ~_  leaf/"{cap}: build failed"
+            (swat sub (rain pax txt))
+          --
+      ::
       |=  [grub fil=(list (pair path (cask)))]
       ^-  grub
       =*  gub  +<-
@@ -1632,20 +1821,19 @@
       ::
       =^  job=oped:part  taf  (~(adorn adapt:part taf) del |)
       =?  lul  ?=(^ lul.job)
-       `(smit:va:part "lull" pit /sys/lull/hoon u.lul.job)
+       `(smit "lull" |.(pit) /sys/lull/hoon u.lul.job)
       =?  zus  ?=(^ zus.job)
         ?.  ?=(^ lul)
          ~|(%larval-need-lull !!)
-        `(smit:va:part "zuse" $:u.lul /sys/zuse/hoon u.zus.job)
+        `(smit "zuse" u.lul /sys/zuse/hoon u.zus.job)
       =?  van  !=(~ van.job)    ::  XX TMI
         ?.  ?=(^ zus)
          ~|(%larval-need-zuse !!)
         %+  roll  van.job
-        |=  [[(cask hoof:part)] =_van]
+        |=  [[nam=term txt=cord] =_van]
         ^+  van
-        =/  way  (wilt p)
-        %+  ~(put by van)  way
-        (smit:va:part "vane {<way>}" $:u.zus /sys/vane/[p]/hoon q)
+        %+  ~(put by van)  nam
+        (smit "vane %{(trip nam)}" u.zus /sys/vane/[nam]/hoon txt)
       gub(fat `taf)
     --
 ::
@@ -1655,17 +1843,14 @@
 =*  gub  ->+
 ::
 |%
-++  come  ^come                                         ::   +4
-::
-++  load                                                ::  +10
+++  load                                                ::   +4
   |=  hir=heir
   ?:  ?=(%grub -.hir)
     ~>(%mean.'arvo: larval reboot' !!)    :: XX support
   (^load hir)
 ::
-++  peek  _~                                            ::  +46
-::
-++  poke                                                ::  +47
+++  peek  _~                                            ::  +22
+++  poke                                                ::  +23
   |=  [now=@da ovo=ovum]
   ^-  ^
   ~|  poke/p.card.ovo
@@ -1680,7 +1865,9 @@
       %what  ..poke(gub (what gub p.wip))
       %whom  ..poke(who ~|(%whom-once ?>(?=(~ who) `p.wip)))
     ::
-      %wyrd  %-  %+  wyrd  kel.p.wip
+      %wyrd  ?.  (sane:wyrd kel.p.wip)
+                   ~>(%mean.'wyrd: insane' !!)
+             %-  %+  need:wyrd  kel.p.wip
                  ^-  (list (pair term @))
                  :*  hoon/hoon-version
                      arvo/arvo
@@ -1699,7 +1886,18 @@
   ~>  %slog.[0 leaf+"arvo: metamorphosis"]
   (load u.hir)
 ::
-++  wish                                                ::  +22
+++  wish                                                ::  +10
   |=  txt=*
   q:(slap ?~(zus pit $:u.zus) (ream ;;(@t txt)))
 --
+::
+::  Arvo formal interface
+::
+::    this lifecycle wrapper makes the arvo door (multi-armed core)
+::    look like a gate (function or single-armed core), to fit
+::    urbit's formal lifecycle function (see aeon:eden:part).
+::    a practical interpreter can and will ignore it.
+::
+|=  [now=@da ovo=ovum]
+^-  *
+.(+> +:(poke now ovo))

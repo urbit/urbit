@@ -6,7 +6,7 @@
 /+  default-agent
 /+  dbug
 /+  push-hook
-~%  %graph-push-hook-top  ..is  ~
+~%  %graph-push-hook-top  ..part  ~
 |%
 +$  card  card:agent:gall
 ++  config

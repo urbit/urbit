@@ -36,8 +36,9 @@ export default class Tiles extends React.PureComponent {
             />
           );
         } else if (key === 'clock') {
+          const location = 'nearest-area' in props.weather ? props.weather['nearest-area'][0] : '';
           return (
-            <ClockTile key={key} location={props.location} />
+            <ClockTile key={key} location={location} />
           );
         }
       } else {
