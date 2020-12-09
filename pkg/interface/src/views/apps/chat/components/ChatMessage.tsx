@@ -23,9 +23,9 @@ export const UnreadMarker = React.forwardRef(({ dayBreak, when }, ref) => (
 ));
 
 export const DayBreak = ({ when }) => (
-  <div className="pv3 gray2 b--gray2 flex items-center justify-center f9 w-100">
-    <p>{moment(when).calendar(null, { sameElse: DATESTAMP_FORMAT })}</p>
-  </div>
+  <Row pb='3' alignItems="center" justifyContent="center" width='100%'>
+    <Text gray>{moment(when).calendar(null, { sameElse: DATESTAMP_FORMAT })}</Text>
+  </Row>
 );
 
 interface ChatMessageProps {
@@ -240,7 +240,7 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
               className={`mw5 db truncate pointer`}
               ref={e => nameSpan = e}
               onClick={() => {
-                writeText(msg.author);
+                writeText(`~${msg.author}`);
                 copyNotice(name);
               }}
               title={`~${msg.author}`}

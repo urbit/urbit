@@ -63,12 +63,17 @@
     u3_noun u3qc_peg(u3_atom, u3_atom);
     u3_noun u3qc_pow(u3_atom, u3_atom);
     u3_noun u3qc_rap(u3_atom, u3_noun);
-    u3_noun u3qc_rep(u3_atom, u3_noun);
+    u3_noun u3qc_rep(u3_atom, u3_atom, u3_noun);
     u3_noun u3qc_rev(u3_atom, u3_atom, u3_atom);
-    u3_noun u3qc_rip(u3_atom, u3_atom);
+    u3_noun u3qc_rip(u3_atom, u3_atom, u3_atom);
     u3_noun u3qc_rsh(u3_atom, u3_atom, u3_atom);
     u3_noun u3qc_swp(u3_atom, u3_atom);
     u3_noun u3qc_sqt(u3_atom);
+
+    u3_noun u3_po_find_prefix(c3_y one, c3_y two, c3_y three);
+    u3_noun u3_po_find_suffix(c3_y one, c3_y two, c3_y three);
+    void u3_po_to_prefix(u3_noun id, c3_y* a, c3_y* b, c3_y* c);
+    void u3_po_to_suffix(u3_noun id, c3_y* a, c3_y* b, c3_y* c);
 
   /** Tier 4.
   **/
@@ -257,8 +262,6 @@
 
 #   define u3qfu_van_fan  28
 #   define u3qfu_van_rib  58
-#   define u3qfu_van_vrf  59
-#   define u3qfu_van_vet  118
-#   define u3qfu_van_fab  119
+#   define u3qfu_van_vet  59
 
     void u3qf_test(const c3_c*, u3_noun);

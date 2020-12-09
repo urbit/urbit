@@ -9,7 +9,7 @@ static void
 _setup(void)
 {
   u3m_init();
-  u3m_pave(c3y, c3n);
+  u3m_pave(c3y);
 }
 
 /* _test_bit_manipulation():

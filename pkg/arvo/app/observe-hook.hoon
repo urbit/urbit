@@ -9,14 +9,12 @@
 |%
 +$  card  card:agent:gall
 +$  versioned-state
-  $%  state-0
-      state-1
+  $%  [%0 observers=(map serial observer:sur)]
+      [%1 observers=(map serial observer:sur)]
+      [%2 observers=(map serial observer:sur)]
   ==
 ::
 +$  serial   @uv
-+$  state-0  [%0 observers=(map serial observer:sur)]
-+$  state-1  [%1 observers=(map serial observer:sur)]
-::
 ++  got-by-val
   |=  [a=(map serial observer:sur) b=observer:sur]
   ^-  serial
@@ -27,7 +25,7 @@
 --
 ::
 %-  agent:dbug
-=|  state-1
+=|  [%2 observers=(map serial observer:sur)]
 =*  state  -
 ::
 ^-  agent:gall
@@ -38,20 +36,16 @@
 ++  on-init
   |^  ^-  (quip card _this)
   :_  this
-  :~  %+  act
-        /inv-gra
-      [%watch %invite-store /invitatory/graph %invite-accepted-graph]
-    ::
-      %+  act
-        /grp-gra
-      [%watch %group-store /groups %group-on-leave]
+  :~  (act [%watch %invite-store /invitatory/graph %invite-accepted-graph])
+      (act [%watch %group-store /groups %group-on-leave])
+      (act [%watch %group-store /groups %group-on-remove-member])
   ==
   ::
   ++  act
-    |=  [=wire =action:sur]
+    |=  =action:sur
     ^-  card
     :*  %pass
-        wire
+        /poke
         %agent
         [our.bowl %observe-hook]
         %poke
@@ -65,17 +59,35 @@
 ++  on-load
   |=  old-vase=vase
   ^-  (quip card _this)
+  |^
   =/  old-state  !<(versioned-state old-vase)
-  ?-  -.old-state
-    %1  `this(state old-state)
+  =|  cards=(list card)
+  |-
+  ?:  ?=(%2 -.old-state)
+    [cards this(state old-state)]
+  ?:  ?=(%1 -.old-state)
+    =.  cards
+      :_  cards
+      (act [%watch %group-store /groups %group-on-leave])
+    $(-.old-state %2)
+  =.  cards
+    :_  cards
+    (act [%watch %group-store /groups %group-on-remove-member])
+  $(-.old-state %1)
   ::
-      %0
-    =.  state  [%1 observers.old-state]
-    %+  on-poke
-      %observe-action
-    !>  ^-  action:sur
-    [%watch %group-store /groups %group-on-leave]
-  ==
+  ++  act
+    |=  =action:sur
+    ^-  card
+    :*  %pass
+        /poke
+        %agent
+        [our.bowl %observe-hook]
+        %poke
+        %observe-action
+        !>  ^-  action:sur
+        action
+    ==
+  --
 ::
 ++  on-poke
   |=  [=mark =vase]
@@ -167,7 +179,7 @@
               [our.bowl %spider]
               %poke
               %spider-start
-              !>([~ `tid thread.observer (slop q.cage.sign !>(~))])
+              !>([~ `tid thread.observer (slop !>(~) q.cage.sign)])
       ==  ==
     ==
   ::

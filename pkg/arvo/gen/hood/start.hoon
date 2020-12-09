@@ -7,8 +7,8 @@
 ::::
   ::
 :-  %say
-|=  $:  {now/@da eny/@uvJ bec/beak}
-        {arg/{@ $@(~ {@ ~})} ~}
+|=  $:  [now=@da eny=@uvJ bec=beak]
+        [arg=[@ $@(~ [@ ~])] ~]
     ==
 :-  %drum-start
 ?>  ((sane %tas) -.arg)

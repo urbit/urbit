@@ -1,6 +1,7 @@
 ::  eth-watcher: ethereum event log collector
 ::
-=,  able:jael
+/+  ethereum
+=,  jael
 |%
 +$  config
   $:  ::  url: ethereum node rpc endpoint
@@ -46,9 +47,9 @@
   $%  ::  %history: full event log history, oldest first
       ::
       [%history =loglist]
-      ::  %log: newly added log
+      ::  %logs: newly added logs
       ::
-      [%log =event-log:rpc:ethereum]
+      [%logs =loglist]
       ::  %disavow: forget logs
       ::
       ::    this is sent when a reorg happens that invalidates

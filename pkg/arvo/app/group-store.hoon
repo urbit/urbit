@@ -4,7 +4,7 @@
 ::
 ::    group-store stores groups of ships, so that resources in other apps can be
 ::    associated with a group. The current model of group-store rolls
-::    permissions and invites inside this store for simplicity reasons, although
+::    and invites inside this store for simplicity reasons, although
 ::    these should be prised apart in a future revision of group store.
 ::
 ::
@@ -29,7 +29,7 @@
 ::      Modify the group. Further documented in /sur/group-store.hoon
 ::
 ::
-/-  *group, permission-store, *contact-view
+/-  *group, *contact-view
 /+  store=group-store, default-agent, verb, dbug, resource, *migrate
 |%
 +$  card  card:agent:gall
@@ -165,10 +165,7 @@
     ^-  (quip card _this)
     ?>  (team:title our.bowl src.bowl)
     =^  cards  state
-      ?+  mark  (on-poke:def mark vase)
-          %noun
-        (poke-noun:gc vase)
-      ::
+      ?+    mark  (on-poke:def mark vase)
           ?(%group-update %group-action)
         (poke-group-update:gc !<(update:store vase))
       ::
@@ -247,7 +244,7 @@
       (on-arvo:def wire sign-arvo)
     =/  =resource       (de-path:resource t.t.wire)
     =/  nack-count=@ud  (slav %ud i.t.wire)
-    ?>  ?=([%b %wake *] sign-arvo)
+    ?>  ?=([%behn %wake *] sign-arvo)
     ~?  ?=(^ error.sign-arvo)
       "behn errored in backoff timers, continuing anyway"
     :_  this
@@ -351,93 +348,6 @@
   =/  =wire
     [%try-rejoin (scot %ud nack-count) (en-path:resource rid)]
   [%pass wire %agent [entity.rid %group-push-hook] %poke cage]
-::
-++  poke-noun
-  |=  =vase
-  ^-  (quip card _state)
-  =/  noun
-    !<(%perm-upgrade vase)
-  |^
-  =/  perms=(list path)
-    ~(tap in scry-permissions)
-  |-
-  ?~  perms
-    `state
-  =*  pax  i.perms
-  ?>  ?=(^ pax)
-  ?:  |(!=('~' i.pax) =(4 (lent pax)))
-    $(perms t.perms)
-  =/  rid=resource
-    (make-rid t.pax)
-  =/  perm
-    (scry-group-permissions pax)
-  ?~  perm
-    $(perms t.perms)
-  ?:  (~(has by groups) rid)
-    %_    $
-      perms  t.perms
-    ::
-        groups
-      %+  ~(jab by groups)  rid
-      (update-existing u.perm)
-    ==
-  %_    $
-    perms  t.perms
-    ::
-        groups
-    %+  ~(put by groups)  rid
-    (add-new u.perm)
-  ==
-  ++  make-rid
-    |=  =path
-    ^-  resource
-    ?>  ?=([@ @ *] path)
-    :-  (slav %p i.path)
-    i.t.path
-  ::
-  ++  add-new
-    |=  =permission:permission-store
-    ^-  group
-    ?:  ?=(%black kind.permission)
-      [~ ~ [%open ~ who.permission] %.y]
-    [who.permission ~ [%invite ~] %.y]
-  ::
-  ++  update-existing
-    |=  =permission:permission-store
-    |=  =group
-    ^+  group
-    ?:  ?=(%black kind.permission)
-      group
-    ?>  ?=(%invite -.policy.group)
-    %_  group
-      members  (~(uni in members.group) who.permission)
-    ==
-  ::
-  ++  scry-permissions
-    ^-  (set path)
-    .^  (set path)
-      %gx
-      (scot %p our.bol)
-      %permission-store
-      (scot %da now.bol)
-      /keys/noun
-    ==
-  ::
-  ++  scry-group-permissions
-    |=  pax=path
-    ^-  (unit permission:permission-store)
-    .^  (unit permission:permission-store)
-      %gx
-      (scot %p our.bol)
-      %permission-store
-      (scot %da now.bol)
-      ;:  weld
-        /permission
-        pax
-        /noun
-      ==
-    ==
-  --
 ::
 ++  poke-group-update
   |=  =update:store

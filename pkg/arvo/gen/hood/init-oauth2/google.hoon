@@ -12,11 +12,11 @@
 =,  html
 =,  format
 :-  %ask
-|=  $:  {now/@da eny/@uvJ bec/beak}
-        {arg/$@(~ {jon/json ~})}
+|=  $:  [now=@da eny=@uvJ bec=beak]
+        [arg=$@(~ [jon=json ~])]
         ~
     ==
-^-  (sole-result:sole {$write-sec-atom p/host:eyre q/@})
+^-  (sole-result:sole [%write-sec-atom p=host:eyre q=@])
 %+  print  leaf+"Accepting credentials for https://*.googleapis.com"
 =+  hot=[%& /com/googleapis]
 =-  ?~  arg  -
@@ -24,9 +24,9 @@
 %+  prompt
   [%& %oauth-json "json credentials: "]
 %+  parse  apex:de-json
-|=  jon/json
+|=  jon=json
 =+  ~|  bad-json+jon
-    =-  `{cid/@t cis/@t}`(need (rep jon))
+    =-  `[cid=@t cis=@t]`(need (rep jon))
     rep=(ot web+(ot 'client_id'^so 'client_secret'^so ~) ~):dejs-soft:format
 %+  produce  %write-sec-atom    :: XX typed pair
 [hot (of-wain:format cid cis ~)]

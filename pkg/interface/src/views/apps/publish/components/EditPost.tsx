@@ -50,6 +50,8 @@ export function EditPost(props: EditPostProps & RouteComponentProps) {
   return (
     <PostForm
       initial={initial}
+      cancel
+      history={history}
       onSubmit={onSubmit}
       submitLabel="Update"
       loadingText="Updating..."

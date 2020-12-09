@@ -237,11 +237,7 @@ u3_auto_next(u3_auto* car_u, u3_noun* ovo)
 
       u3_auto_work(egg_u);
 
-      //  XX cons [tar] route onto wire
-      //
-      // *ovo = u3nt(u3nc(u3k(egg_u->tar), u3k(egg_u->wir)),
-      //             u3k(egg_u->cad));
-      *ovo = u3nc(u3nc(u3_blip, u3k(egg_u->wir)),
+      *ovo = u3nc(u3nc(u3k(egg_u->tar), u3k(egg_u->wir)),
                   u3k(egg_u->cad));
 
       return egg_u;
@@ -289,7 +285,12 @@ u3_auto_kick(u3_auto* car_u, u3_noun act)
   while ( u3_nul != act ) {
     fec = u3h(act);
     u3x_cell(fec, &pax, &cad);
-    u3_assent(u3r_p(pax, u3_blip, &wir));
+
+    //  XX temporary backwards compatibility, remove
+    //
+    if ( c3n == u3r_p(pax, u3_blip, &wir) ) {
+      wir = pax;
+    }
 
     while ( c3n == _auto_kick(car_u, u3k(wir), u3k(cad)) ) {
       if ( car_u->nex_u ) {

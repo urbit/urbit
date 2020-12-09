@@ -5,7 +5,7 @@
   |%
   ++  noun  hash
   ++  json
-    s+(rsh 3 2 (scot %uv hash))
+    s+(rsh [3 2] (scot %uv hash))
   --
 ++  grab
   |%

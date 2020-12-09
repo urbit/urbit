@@ -1,8 +1,7 @@
 ::  contact-hook [landscape]
 ::
 ::
-/-  group-hook,
-    *contact-hook,
+/-  *contact-hook,
     *contact-view,
     inv=invite-store,
     *metadata-hook,
@@ -16,7 +15,7 @@
     resource,
     grpl=group,
     *migrate
-~%  %contact-hook-top  ..is  ~
+~%  %contact-hook-top  ..part  ~
 |%
 +$  card  card:agent:gall
 ::
@@ -196,7 +195,7 @@
     =/  nack-count=@ud  (slav %ud i.t.wire)
     =/  who=@p          (slav %p i.t.t.wire)
     =/  pax             t.t.t.wire
-    ?>  ?=([%b %wake *] sign-arvo)
+    ?>  ?=([%behn %wake *] sign-arvo)
     ~?  ?=(^ error.sign-arvo)
       "behn errored in backoff timers, continuing anyway"
     :_  this

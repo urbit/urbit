@@ -347,20 +347,20 @@ function Participant(props: {
               </Action>
               {props.role === 'admin' && (
                 <>
-                  {!isInvite && (
+                  {(!isInvite && contact.patp !== window.ship) && (
                     <StatelessAsyncAction onClick={onBan} bg="transparent">
                       <Text color="red">Ban from {title}</Text>
                     </StatelessAsyncAction>
                   )}
                   {role === 'admin' ? (
-                    <StatelessAsyncAction onClick={onDemote} bg="transparent">
+                    group?.tags?.role?.admin?.size > 1 && (<StatelessAsyncAction onClick={onDemote} bg="transparent">
                       Demote from Admin
-                    </StatelessAsyncAction>
+                    </StatelessAsyncAction>)
                   ) : (
                     <>
-                      <StatelessAsyncAction onClick={onKick} bg="transparent">
+                    {(contact.patp !== window.ship) && (<StatelessAsyncAction onClick={onKick} bg="transparent">
                         <Text color="red">Kick from {title}</Text>
-                      </StatelessAsyncAction>
+                      </StatelessAsyncAction>)}
                       <StatelessAsyncAction onClick={onPromote} bg="transparent">
                         Promote to Admin
                       </StatelessAsyncAction>

@@ -1,4 +1,4 @@
-/-  *group, *metadata-store, hook=group-hook
+/-  *group, *metadata-store
 /+  store=group-store, resource
 ::
 |_  =bowl:gall

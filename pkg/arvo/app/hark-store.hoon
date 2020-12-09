@@ -3,7 +3,7 @@
 /-  store=hark-store, post, group-store, metadata-store
 /+  resource, metadata, default-agent, dbug, graph-store
 ::
-~%  %hark-store-top  ..is  ~
+~%  %hark-store-top  ..part  ~
 |%
 +$  card  card:agent:gall
 +$  versioned-state
@@ -258,7 +258,7 @@
   ^-  (quip card _this)
   ?.  ?=([%autoseen ~] wire)
     (on-arvo:def wire sign-arvo)
-  ?>  ?=([%b %wake *] sign-arvo)
+  ?>  ?=([%behn %wake *] sign-arvo)
   :_  this(last-seen now.bowl)
   ~[autoseen-timer:ha]
 ::

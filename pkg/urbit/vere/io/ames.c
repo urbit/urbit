@@ -35,6 +35,7 @@
       uv_udp_t       wax_u;             //
       uv_handle_t    had_u;             //
     };                                  //
+    c3_l             sev_l;             //  instance number
     ur_cue_test_t*   tes_u;             //  cue-test handle
     u3_cue_xeno*     sil_u;             //  cue handle
     c3_c*            dns_c;             //  domain XX multiple/fallback
@@ -66,11 +67,12 @@
 /* u3_head: ames packet header
 */
   typedef struct _u3_head {
+    c3_o sim_o;                         //  is ames protocol?
     c3_y ver_y;                         //  protocol version
-    c3_l mug_l;                         //  truncated mug hash of u3_body
     c3_y sac_y;                         //  sender class
     c3_y rac_y;                         //  receiver class
-    c3_o enc_o;                         //  encrypted?
+    c3_l mug_l;                         //  truncated mug hash of u3_body
+    c3_o rel_o;                         //  relayed?
   } u3_head;
 
 /* u3_body: ames packet body
@@ -78,8 +80,12 @@
   typedef struct _u3_body {
     c3_d  sen_d[2];                     //  sender
     c3_d  rec_d[2];                     //  receiver
-    c3_w  con_w;                        //  jam size
-    c3_y* con_y;                        //  (jam [origin content])
+    c3_y  sic_y;                        //  sender life tick
+    c3_y  ric_y;                        //  receiver life tick
+    c3_s  con_s;                        //  content size
+    c3_y* con_y;                        //  content
+    c3_d  rog_d;                        //  origin lane (optional)
+    c3_l  mug_l;                        //  checksum
   } u3_body;
 
 /* u3_panc: deconstructed incoming packet
@@ -140,14 +146,6 @@ _ames_panc_free(u3_panc* pac_u)
   c3_free(pac_u);
 }
 
-/* _ames_mug_body(): truncated (20 least-significant bits) mug hash of bytes
-*/
-static c3_l
-_ames_mug_body(c3_w len_w, c3_y* byt_y)
-{
-  return u3r_mug_bytes(byt_y, len_w) & 0xfffff;
-}
-
 /* _ames_sift_head(): parse packet header.
 */
 static c3_o
@@ -158,36 +156,20 @@ _ames_sift_head(u3_head* hed_u, c3_y buf_y[4])
              | (buf_y[2] << 16)
              | (buf_y[3] << 24);
 
-  //  XX only version 0 currently recognized
+  //  first three bits are reserved
   //
-  hed_u->ver_y = hed_w & 0x7;
-  hed_u->mug_l = (hed_w >>  3) & 0xfffff; // 20 bits
-  hed_u->sac_y = (hed_w >> 23) & 0x3;
-  hed_u->rac_y = (hed_w >> 25) & 0x3;
-  hed_u->enc_o = (hed_w >> 27) & 0x1;
-  return c3y;
+  hed_u->sim_o = (hed_w >>  3) & 0x1;
+  hed_u->ver_y = (hed_w >>  4) & 0x7;
+  hed_u->sac_y = (hed_w >>  7) & 0x3;
+  hed_u->rac_y = (hed_w >>  9) & 0x3;
+  hed_u->mug_l = (hed_w >> 11) & 0xfffff; // 20 bits
+  hed_u->rel_o = (hed_w >> 31) & 0x1;
+
+  //  reject packets that don't even claim to be ames packets
+  //
+  return hed_u->sim_o;
 }
 
-/* _ames_etch_head(): serialize packet header.
-*/
-static void
-_ames_etch_head(u3_head* hed_u, c3_y buf_y[4])
-{
-  c3_w hed_w = hed_u->ver_y
-             | (hed_u->mug_l <<  3)
-             | (hed_u->sac_y << 23)
-             | (hed_u->rac_y << 25)
-             | (hed_u->enc_o << 27);
-
-  //  only version 0 currently recognized
-  //
-  c3_assert( 0 == hed_u->ver_y );
-
-  buf_y[0] = hed_w & 0xff;
-  buf_y[1] = (hed_w >>  8) & 0xff;
-  buf_y[2] = (hed_w >> 16) & 0xff;
-  buf_y[3] = (hed_w >> 24) & 0xff;
-}
 
 /* _ames_chub_bytes(): c3_y[8] to c3_d
 ** XX factor out, deduplicate with other conversions
@@ -254,20 +236,67 @@ _ames_sift_body(u3_head* hed_u,
                 c3_w     len_w,
                 c3_y*    bod_y)
 {
-  c3_y sen_y = 2 << hed_u->sac_y;
-  c3_y rec_y = 2 << hed_u->rac_y;
+  c3_y rog_y, sen_y, rec_y;
 
-  if ( (sen_y + rec_y) >= len_w ) {
+  rog_y = ( c3y == hed_u->rel_o )? 6 : 0;
+
+  sen_y = 2 << hed_u->sac_y;
+  rec_y = 2 << hed_u->rac_y;
+
+  if ( (1 + sen_y + rec_y + rog_y) >= len_w ) {
     return c3n;
   }
   else {
-    _ames_ship_to_chubs(bod_u->sen_d, sen_y, bod_y);
-    _ames_ship_to_chubs(bod_u->rec_d, rec_y, bod_y + sen_y);
+    c3_y* gob_y;
+    c3_s  gob_s;
 
-    bod_u->con_w = len_w - sen_y - rec_y;
-    bod_u->con_y = bod_y + sen_y + rec_y;
+    if ( rog_y) {
+      c3_y rag_y[8] = {0};
+      memcpy(rag_y, bod_y, rog_y);
+      bod_u->rog_d = _ames_chub_bytes(rag_y);
+    }
+    else {
+      bod_u->rog_d = 0;
+    }
+
+    gob_y = bod_y + rog_y;
+    gob_s = len_w - rog_y;
+
+    bod_u->mug_l = u3r_mug_bytes(gob_y, gob_s) & 0xfffff;
+
+    bod_u->sic_y = gob_y[0]        & 0xf;
+    bod_u->ric_y = (gob_y[0] >> 4) & 0xf;
+
+    _ames_ship_to_chubs(bod_u->sen_d, sen_y, gob_y + 1);
+    _ames_ship_to_chubs(bod_u->rec_d, rec_y, gob_y + 1 + sen_y);
+
+    bod_u->con_s = gob_s - 1 - sen_y - rec_y;
+    bod_u->con_y = gob_y + 1 + sen_y + rec_y;
+
     return c3y;
   }
+}
+
+/* _ames_etch_head(): serialize packet header.
+*/
+static void
+_ames_etch_head(u3_head* hed_u, c3_y buf_y[4])
+{
+  c3_w hed_w = ((hed_u->sim_o &     0x1) <<  3)
+             ^ ((hed_u->ver_y &     0x7) <<  4)
+             ^ ((hed_u->sac_y &     0x3) <<  7)
+             ^ ((hed_u->rac_y &     0x3) <<  9)
+             ^ ((hed_u->mug_l & 0xfffff) << 11)
+             ^ ((hed_u->rel_o &     0x1) << 31);
+
+  //  only version 0 currently recognized
+  //
+  c3_assert( 0 == hed_u->ver_y );  //  XX remove after testing
+
+  buf_y[0] = hed_w & 0xff;
+  buf_y[1] = (hed_w >>  8) & 0xff;
+  buf_y[2] = (hed_w >> 16) & 0xff;
+  buf_y[3] = (hed_w >> 24) & 0xff;
 }
 
 /* _ames_etch_pack(): serialize packet header and body.
@@ -275,35 +304,37 @@ _ames_sift_body(u3_head* hed_u,
 static c3_w
 _ames_etch_pack(u3_head* hed_u,
                 u3_body* bod_u,
-                c3_o     mug_o,
                 c3_y**   out_y)
 {
-  //  start with the body
-  //
-  c3_y  sen_y = 2 << hed_u->sac_y;             //  sender len
-  c3_y  rec_y = 2 << hed_u->rac_y;             //  receiver len
-  c3_w  bod_w = sen_y + rec_y + bod_u->con_w;  //  body len
-  c3_w  len_w = 4 + bod_w;                     //  packet len
-  c3_y* pac_y = c3_malloc(len_w);
-  c3_y* bod_y = pac_y + 4;
+  c3_y  sen_y = 2 << hed_u->sac_y;                         //  sender len
+  c3_y  rec_y = 2 << hed_u->rac_y;                         //  receiver len
+  c3_y  rog_y = ( c3y == hed_u->rel_o )? 6 : 0;            //  origin len
+  c3_w  bod_w = rog_y + 1 + sen_y + rec_y + bod_u->con_s;  //  body len
+  c3_w  len_w = 4 + bod_w;                                 //  packet len
+  c3_y* pac_y = c3_malloc(len_w);                          //  output buf
+  c3_y* bod_y = pac_y + 4;                                 //  body cursor
+  c3_y* gob_y = bod_y + rog_y;                             //  after origin
 
-  _ames_ship_of_chubs(bod_u->sen_d, sen_y, bod_y);
-  _ames_ship_of_chubs(bod_u->rec_d, rec_y, bod_y + sen_y);
-
-  {
-    c3_y* con_y = bod_y + sen_y + rec_y;
-    memcpy(con_y, bod_u->con_y, bod_u->con_w);
-  }
-
-  //  if we updated the origin lane, we need to update the mug too
-  //
-  if ( c3y == mug_o ) {
-    hed_u->mug_l = _ames_mug_body(bod_w, bod_y);
-  }
-
-  //  now we can serialize the head
+  //  serialize the head
   //
   _ames_etch_head(hed_u, pac_y);
+
+  //  serialize the origin, if present
+  //
+  if ( rog_y ) {
+    c3_y rag_y[8] = {0};
+    _ames_bytes_chub(rag_y, bod_u->rog_d);
+    memcpy(bod_y, rag_y, rog_y);
+  }
+
+  //  serialize the body
+  //
+  gob_y[0] = (bod_u->sic_y & 0xf) ^ ((bod_u->ric_y & 0xf) << 4);
+
+  _ames_ship_of_chubs(bod_u->sen_d, sen_y, gob_y + 1);
+  _ames_ship_of_chubs(bod_u->rec_d, rec_y, gob_y + 1 + sen_y);
+
+  memcpy(gob_y + 1 + sen_y + rec_y, bod_u->con_y, bod_u->con_s);
 
   *out_y = pac_y;
   return len_w;
@@ -371,28 +402,29 @@ _ames_send(u3_pact* pac_u)
 */
 u3_lane
 u3_ames_decode_lane(u3_atom lan) {
-  u3_noun cud, tag, pip, por;
-
-  cud = u3ke_cue(lan);
-  u3x_trel(cud, &tag, &pip, &por);
-  c3_assert( c3__ipv4 == tag );
-
   u3_lane lan_u;
-  lan_u.pip_w = u3r_word(0, pip);
+  c3_d lan_d;
 
-  c3_assert( _(u3a_is_cat(por)) );
-  c3_assert( por < 65536 );
-  lan_u.por_s = por;
+  c3_assert( c3y == u3r_safe_chub(lan, &lan_d) );
+  u3z(lan);
 
-  u3z(cud);
+  lan_u.pip_w = (c3_w)lan_d;
+  lan_u.por_s = (c3_s)(lan_d >> 32);
   return lan_u;
 }
 
-/* u3_ames_encode_lane(): serialize lane to jammed noun
+/* u3_ames_lane_to_chub(): serialize lane to double-word
+*/
+c3_d
+u3_ames_lane_to_chub(u3_lane lan) {
+  return ((c3_d)lan.por_s << 32) ^ (c3_d)lan.pip_w;
+}
+
+/* u3_ames_encode_lane(): serialize lane to noun
 */
 u3_atom
 u3_ames_encode_lane(u3_lane lan) {
-  return u3ke_jam(u3nt(c3__ipv4, u3i_words(1, &lan.pip_w), lan.por_s));
+  return u3i_chub(u3_ames_lane_to_chub(lan));
 }
 
 /* _ames_lane_into_cache(): put las for who into cache, including timestamp
@@ -438,57 +470,18 @@ _ames_lane_from_cache(u3p(u3h_root) lax_p, u3_noun who) {
 static u3_noun
 _ames_serialize_packet(u3_panc* pac_u, c3_o dop_o)
 {
-  c3_o nal_o = c3n;
-
-  //  update the body's lane, if desired
+  //  update the body's lane, if:
+  //    - we're supposed to (dop_o)
+  //    - it hasn't already been updated (rel_o)
+  //    - sender is not a galaxy
   //
-  if ( c3y == dop_o ) {
-    //  unpack (jam [(unit lane) body])
-    //
-    u3_noun lon, bod;
-    {
-      //NOTE we checked for cue safety in _ames_recv_cb
-      //
-      u3_weak old = u3s_cue_xeno_with(pac_u->sam_u->sil_u,
-                                      pac_u->bod_u.con_w,
-                                      pac_u->bod_u.con_y);
-      u3x_cell(u3x_good(old), &lon, &bod);
-      u3k(lon); u3k(bod);
-      u3z(old);
-    }
-
-    //  only replace the lane if it was ~
-    //
-    //NOTE  this sets an opaque lane even in the "sender is galaxy" case,
-    //      but that doesn't matter: ames.hoon ignores origin in that case,
-    //      always using the appropriate galaxy lane instead.
-    //
-    if ( u3_nul == lon ) {
-      c3_w  con_w;
-      c3_y* con_y;
-
-      u3z(lon);
-      lon = u3nt(u3_nul, c3n, u3_ames_encode_lane(pac_u->ore_u));
-      nal_o = c3y;
-
-      //  XX off-loom jam?
-      //
-      {
-        u3_noun jam = u3ke_jam(u3nc(lon, bod));
-        con_w = u3r_met(3, jam);
-        con_y = c3_malloc(con_w);
-        u3r_bytes(0, con_w, con_y, jam);
-        u3z(jam);
-      }
-
-      c3_free(pac_u->ptr_v);
-      pac_u->ptr_v       = con_y;
-      pac_u->bod_u.con_y = con_y;
-      pac_u->bod_u.con_w = con_w;
-    }
-    else {
-      u3z(lon); u3z(bod);
-    }
+  if (  c3y == dop_o
+     && c3n == pac_u->hed_u.rel_o
+     && !( ( 256 > pac_u->bod_u.sen_d[0] )
+        && ( 0  == pac_u->bod_u.sen_d[1] ) ) )
+  {
+    pac_u->hed_u.rel_o = c3y;
+    pac_u->bod_u.rog_d = u3_ames_lane_to_chub(pac_u->ore_u);
   }
 
   //  serialize the packet
@@ -500,7 +493,7 @@ _ames_serialize_packet(u3_panc* pac_u, c3_o dop_o)
     c3_y* pac_y;
     c3_w  len_w = _ames_etch_pack(&pac_u->hed_u,
                                   &pac_u->bod_u,
-                                  nal_o, &pac_y);
+                                  &pac_y);
     pac = u3i_bytes(len_w, pac_y);
     c3_free(pac_y);
 
@@ -989,7 +982,8 @@ _ames_try_forward(u3_ames* sam_u,
     if ( (u3_none == lac) && (1000 < sam_u->sat_u.foq_d) ) {
       sam_u->sat_u.fod_d++;
       if ( 0 == (sam_u->sat_u.fod_d % 10000) ) {
-        u3l_log("ames: dropped %" PRIu64 " forwards total\n", sam_u->sat_u.fod_d);
+        u3l_log("ames: dropped %" PRIu64 " forwards total\n",
+                sam_u->sat_u.fod_d);
       }
 
       c3_free(hun_y);
@@ -1042,7 +1036,7 @@ _ames_try_forward(u3_ames* sam_u,
   }
 }
 
-/* _ames_hear(): parse a (potential packet), dispatch appropriately.
+/* _ames_hear(): parse a (potential) packet, dispatch appropriately.
 */
 static void
 _ames_hear(u3_ames* sam_u,
@@ -1072,8 +1066,9 @@ _ames_hear(u3_ames* sam_u,
      || (c3n == _ames_sift_head(&hed_u, hun_y)) )
   {
     sam_u->sat_u.hed_d++;
-    if ( 0 == (sam_u->sat_u.hed_d % 100) ) {
-      u3l_log("ames: %" PRIu64 " dropped, failed to read header\n", sam_u->sat_u.hed_d);
+    if ( 0 == (sam_u->sat_u.hed_d % 100000) ) {
+      u3l_log("ames: %" PRIu64 " dropped, failed to read header\n",
+              sam_u->sat_u.hed_d);
     }
 
     c3_free(hun_y);
@@ -1088,8 +1083,9 @@ _ames_hear(u3_ames* sam_u,
      && (sam_u->ver_y != hed_u.ver_y) )
   {
     sam_u->sat_u.vet_d++;
-    if ( 0 == (sam_u->sat_u.vet_d % 100) ) {
-      u3l_log("ames: %" PRIu64 " dropped for version mismatch\n", sam_u->sat_u.vet_d);
+    if ( 0 == (sam_u->sat_u.vet_d % 100000) ) {
+      u3l_log("ames: %" PRIu64 " dropped for version mismatch\n",
+              sam_u->sat_u.vet_d);
     }
 
     c3_free(hun_y);
@@ -1100,26 +1096,26 @@ _ames_hear(u3_ames* sam_u,
     c3_w  bod_w = len_w - 4;
     c3_y* bod_y = hun_y + 4;
 
-    //  ensure the mug is valid
+    //  unpack and validate the body
     //
-    if ( _ames_mug_body(bod_w, bod_y) != hed_u.mug_l ) {
-      sam_u->sat_u.mut_d++;
-      if ( 0 == (sam_u->sat_u.mut_d % 100) ) {
-        u3l_log("ames: %" PRIu64 " dropped for invalid mug\n", sam_u->sat_u.mut_d);
+    if ( (c3n == _ames_sift_body(&hed_u, &bod_u, bod_w, bod_y)) ) {
+      sam_u->sat_u.bod_d++;
+      if ( 0 == (sam_u->sat_u.bod_d % 100) ) {
+        u3l_log("ames: %" PRIu64 " dropped, failed to read body\n",
+                sam_u->sat_u.bod_d);
       }
 
       c3_free(hun_y);
       return;
     }
 
-    //  unpack and validate the body
+    //  ensure the mug is valid
     //
-    if (  (c3n == _ames_sift_body(&hed_u, &bod_u, bod_w, bod_y))
-       || !ur_cue_test_with(sam_u->tes_u, bod_u.con_w, bod_u.con_y) )
-    {
-      sam_u->sat_u.bod_d++;
-      if ( 0 == (sam_u->sat_u.bod_d % 100) ) {
-        u3l_log("ames: %" PRIu64 " dropped, failed to read body\n", sam_u->sat_u.bod_d);
+    if ( bod_u.mug_l != hed_u.mug_l ) {
+      sam_u->sat_u.mut_d++;
+      if ( 0 == (sam_u->sat_u.mut_d % 100000) ) {
+        u3l_log("ames: %" PRIu64 " dropped for invalid mug\n",
+                sam_u->sat_u.mut_d);
       }
 
       c3_free(hun_y);
@@ -1323,10 +1319,14 @@ _ames_io_talk(u3_auto* car_u)
   u3_ames* sam_u = (u3_ames*)car_u;
   _ames_io_start(sam_u);
 
-  // send born event
+  //  send born event
   //
   {
-    u3_noun wir = u3nt(c3__newt, u3k(u3A->sen), u3_nul);
+    //  XX remove [sev_l]
+    //
+    u3_noun wir = u3nt(c3__newt,
+                       u3dc("scot", c3__uv, sam_u->sev_l),
+                       u3_nul);
     u3_noun cad = u3nc(c3__born, u3_nul);
 
     u3_auto_plan(car_u, u3_ovum_init(0, c3__a, wir, cad));
@@ -1531,6 +1531,16 @@ u3_ames_io_init(u3_pier* pir_u)
   car_u->io.info_f = _ames_io_info;
   car_u->io.kick_f = _ames_io_kick;
   car_u->io.exit_f = _ames_io_exit;
+
+  {
+    u3_noun now;
+    struct timeval tim_u;
+    gettimeofday(&tim_u, 0);
+
+    now = u3_time_in_tv(&tim_u);
+    sam_u->sev_l = u3r_mug(now);
+    u3z(now);
+  }
 
   return car_u;
 }

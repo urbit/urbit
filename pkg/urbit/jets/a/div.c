@@ -44,3 +44,13 @@
       return u3qa_div(a, b);
     }
   }
+
+
+u3_noun
+u3ka_div(u3_noun a,
+         u3_noun b)
+{
+  u3_noun c = u3qa_div(a, b);
+  u3z(a); u3z(b);
+  return c;
+}

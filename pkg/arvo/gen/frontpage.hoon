@@ -2,7 +2,7 @@
 ::
 ::  outer gate is a standard generator
 ::
-|=  [[now=@da eny=@ bek=beak] $~ $~]
+|=  [[now=@da eny=@ bek=beak] ~ ~]
 ::
 ::  :-  %build
 |=  [authorized=? request:http]

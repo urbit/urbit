@@ -142,10 +142,10 @@
   ++  bit
     |=  [len=@ud dat=@ux]
     ^-  (unit [len=@ud dat=@ux])
-    ?.  =(0 (end 3 1 dat))  ~
+    ?.  =(0 (end 3 dat))  ~
     :+  ~
       (mul 8 (dec len))
-    (rsh 3 1 dat)
+    (rsh 3 dat)
   ::  +recur:parse:der: parse bytes for a list of +spec:asn1
   ::
   ++  recur
@@ -175,7 +175,7 @@
   ::  advance until
   ::
   ++  till
-    |=  tub/nail
+    |=  tub=nail
     ^-  (like (list @D))
     ?~  q.tub
       (fail tub)
@@ -188,7 +188,7 @@
     =/  [nex=@ len=@]
       ::  faz: meaningful bits in fuz
       ::
-      =/  faz  (end 0 7 fuz)
+      =/  faz  (end [0 7] fuz)
       ?:  =(0 (cut 0 [7 1] fuz))
         [0 faz]
       [faz (rep 3 (flop (scag faz t.q.tub)))]

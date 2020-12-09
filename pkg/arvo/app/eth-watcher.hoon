@@ -1,9 +1,9 @@
 ::  eth-watcher: ethereum event log collector
 ::
 /-  *eth-watcher, spider
-/+  default-agent, verb, dbug
+/+  ethereum, default-agent, verb, dbug
 =,  ethereum-types
-=,  able:jael
+=,  jael
 ::
 =>  |%
     +$  card  card:agent:gall
@@ -394,24 +394,26 @@
     =/  rel-number  (sub number.dog 30)
     =/  numbers=(list number:block)  ~(tap in ~(key by pending-logs.dog))
     =.  numbers  (sort numbers lth)
-    |-  ^-  (quip card watchdog)
-    ?~  numbers
-      `dog
-    ?:  (gth i.numbers rel-number)
-      $(numbers t.numbers)
-    =^  cards-1  dog
-      =/  =loglist  (~(get ja pending-logs.dog) i.numbers)
-      =.  pending-logs.dog  (~(del by pending-logs.dog) i.numbers)
-      ?~  loglist
+    =^  logs=(list event-log:rpc:ethereum)  dog
+      |-  ^-  (quip event-log:rpc:ethereum watchdog)
+      ?~  numbers
         `dog
-      =.  history.dog  [loglist history.dog]
-      :_  dog
-      %+  turn  loglist
-      |=  =event-log:rpc:ethereum
-      ^-  card
-      [%give %fact [%logs path]~ %eth-watcher-diff !>([%log event-log])]
-    =^  cards-2  dog  $(numbers t.numbers)
-    [(weld cards-1 cards-2) dog]
+      ?:  (gth i.numbers rel-number)
+        $(numbers t.numbers)
+      =^  rel-logs-1  dog
+        =/  =loglist  (~(get ja pending-logs.dog) i.numbers)
+        =.  pending-logs.dog  (~(del by pending-logs.dog) i.numbers)
+        ?~  loglist
+          `dog
+        =.  history.dog  [loglist history.dog]
+        [loglist dog]
+      =^  rel-logs-2  dog  $(numbers t.numbers)
+      [(weld rel-logs-1 rel-logs-2) dog]
+    :_  dog
+    ?~  logs
+      ~
+    ^-  (list card:agent:gall)
+    [%give %fact [%logs path]~ %eth-watcher-diff !>([%logs logs])]~
   --
 ::
 ++  on-arvo
@@ -461,7 +463,7 @@
       :_  dog(running `[now.bowl new-tid])
       =/  args
         :^  ~  `new-tid  %eth-watcher
-        !>(`watchpup`[- number pending-logs blocks]:dog)
+        !>([~ `watchpup`[- number pending-logs blocks]:dog])
       :~  (watch-spider path our.bowl /thread-result/[new-tid])
           (poke-spider path our.bowl %spider-start !>(args))
       ==

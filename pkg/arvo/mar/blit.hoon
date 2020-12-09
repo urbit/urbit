@@ -1,7 +1,5 @@
 ::  blit: runtime blit structure
 ::
-/+  base64
-::
 |_  =blit:dill
 ++  grad  %noun
 ::  +grab: convert from
@@ -30,13 +28,13 @@
         %sag
       %-  pairs
       :~  'path'^(path p.blit)
-          'file'^s+(en:base64 (as-octs:mimes:html (jam q.blit)))
+          'file'^s+(en:base64:mimes:html (as-octs:mimes:html (jam q.blit)))
       ==
     ::
         %sav
       %-  pairs
       :~  'path'^(path p.blit)
-          'file'^s+(en:base64 (as-octs:mimes:html q.blit))
+          'file'^s+(en:base64:mimes:html (as-octs:mimes:html q.blit))
       ==
     ::
         %klr
@@ -48,10 +46,15 @@
         ::
           :-  'stye'
           %-  pairs
-          :~  'back'^[?~(. ~ s+.)]:p.q.stye
-              'fore'^[?~(. ~ s+.)]:q.q.stye
-              'deco'^a+(turn ~(tap in p.stye) |=(d=deco ?~(d ~ s+d)))
-          ==
+          |^  :~  'back'^(color p.q.stye)
+                  'fore'^(color q.q.stye)
+                  'deco'^a+(turn ~(tap in p.stye) |=(d=deco ?~(d ~ s+d)))
+              ==
+          ++  color
+            |=  =tint
+            ?@  tint  ?~(tint ~ s+tint)
+            s+(crip ((x-co:co 6) (rep 3 ~[b g r]:tint)))
+          --
       ==
     ==
   --
