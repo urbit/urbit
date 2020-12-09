@@ -1,4 +1,4 @@
-/-  spider, *metadata-store, *publish
+/-  spider, *metadata-store
 /+  strandio
 =,  strand=strand:spider
 ^-  thread:spider

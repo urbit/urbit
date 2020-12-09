@@ -2,13 +2,10 @@
 /=  ames  /sys/vane/ames
 ::  construct some test fixtures
 ::
-=/  vane  (ames !>(..zuse))
+=/  nec  (ames ~nec)
+=/  bud  (ames ~bud)
+=/  comet  (ames ~bosrym-podwyl-magnes-dacrys--pander-hablep-masrym-marbud)
 ::
-=/  nec  vane
-=/  bud  vane
-=/  comet  vane
-::
-=.  our.nec        ~nec
 =.  now.nec        ~1111.1.1
 =.  eny.nec        0xdead.beef
 =.  life.ames-state.nec  2
@@ -17,7 +14,6 @@
 =/  nec-pub  pub:ex:crypto-core.ames-state.nec
 =/  nec-sec  sec:ex:crypto-core.ames-state.nec
 ::
-=.  our.bud        ~bud
 =.  now.bud        ~1111.1.1
 =.  eny.bud        0xbeef.dead
 =.  life.ames-state.bud  3
@@ -26,7 +22,6 @@
 =/  bud-pub  pub:ex:crypto-core.ames-state.bud
 =/  bud-sec  sec:ex:crypto-core.ames-state.bud
 ::
-=.  our.comet  ~bosrym-podwyl-magnes-dacrys--pander-hablep-masrym-marbud
 =.  now.comet        ~1111.1.1
 =.  eny.comet        0xbeef.cafe
 =.  rof.comet  |=(* ``[%noun !>(*(list turf))])
@@ -36,12 +31,12 @@
   3q3td.T4UF0.d5sDL.JGpZq.S3A92.QUuWg.IHdw7.izyny.j9W92
 =/  comet-pub  pub:ex:crypto-core.ames-state.comet
 =/  comet-sec  sec:ex:crypto-core.ames-state.comet
-::
-=/  nec-sym  (derive-symmetric-key:vane bud-pub nec-sec)
-=/  bud-sym  (derive-symmetric-key:vane nec-pub bud-sec)
+
+=/  nec-sym  (derive-symmetric-key:ames bud-pub nec-sec)
+=/  bud-sym  (derive-symmetric-key:ames nec-pub bud-sec)
 ?>  =(nec-sym bud-sym)
 ::
-=/  comet-sym  (derive-symmetric-key:vane bud-pub comet-sec)
+=/  comet-sym  (derive-symmetric-key:ames bud-pub comet-sec)  
 ::
 =.  peers.ames-state.nec
   %+  ~(put by peers.ames-state.nec)  ~bud
@@ -68,8 +63,8 @@
   [%known peer-state]
 ::  metamorphose
 ::
-=>  .(nec +:(call:(nec) ~[//unix] ~ ** %born ~))
-=>  .(bud +:(call:(bud) ~[//unix] ~ ** %born ~))
+=>  .(nec +:(call:(nec) ~[//unix] ~ %born ~))
+=>  .(bud +:(call:(bud) ~[//unix] ~ %born ~))
 ::  helper core
 ::
 =>
@@ -100,7 +95,7 @@
   ::
   =/  vane-core  (vane(now `@da`(add ~s1 now.vane)))
   ::
-  (call:vane-core duct ~ ** task)
+  (call:vane-core duct ~ task)
 ::
 ++  take
   |=  [vane=_nec =wire =duct =sign:ames]
@@ -108,7 +103,7 @@
   ::
   =/  vane-core  (vane(now `@da`(add ~s1 now.vane)))
   ::
-  (take:vane-core wire duct ~ ** sign)
+  (take:vane-core wire duct ~ sign)
 --
 ::  test core
 ::
@@ -123,8 +118,8 @@
         content=0xdead.beef
     ==
   ::
-  =/  encoded  (encode-packet:vane packet)
-  =/  decoded  (decode-packet:vane encoded)
+  =/  encoded  (encode-packet:ames packet)
+  =/  decoded  (decode-packet:ames encoded)
   ::
   %+  expect-eq
     !>  packet
@@ -140,8 +135,8 @@
         content=0xdead.beef
     ==
   ::
-  =/  encoded  (encode-packet:vane packet)
-  =/  decoded  (decode-packet:vane encoded)
+  =/  encoded  (encode-packet:ames packet)
+  =/  decoded  (decode-packet:ames encoded)
   ::
   %+  expect-eq
     !>  packet
@@ -187,7 +182,7 @@
     ==
   ::
   =/  =packet:ames
-    %:  encode-shut-packet:vane
+    %:  encode-shut-packet:ames
       shut-packet
       nec-sym
       ~bus
@@ -196,7 +191,7 @@
       rcvr-life=3
     ==
   ::
-  =/  =blob:ames   (encode-packet:vane packet)
+  =/  =blob:ames   (encode-packet:ames packet)
   =^  moves1  bud  (call bud ~[//unix] %hear lane-foo blob)
   =^  moves2  bud
     =/  =point:ames
@@ -208,7 +203,7 @@
     %-  take
     :^  bud  /public-keys  ~[//unix]
     ^-  sign:ames
-    [%j %public-keys %full [n=[~bus point] ~ ~]]
+    [%jael %public-keys %full [n=[~bus point] ~ ~]]
   =^  moves3  bud  (call bud ~[//unix] %hear lane-foo blob)
   ::
   ;:  weld
@@ -239,8 +234,9 @@
         rcvr-life=3
     ==
   =/  packet
-    (encode-open-packet:vane open-packet crypto-core.ames-state.comet)
-  =/  blob  (encode-packet:vane packet)
+    ~!  ames
+    (encode-open-packet:ames open-packet crypto-core.ames-state.comet)
+  =/  blob  (encode-packet:ames packet)
   ::
   =^  moves0  bud  (call bud ~[//unix] %hear lane-foo blob)
   ::
@@ -251,7 +247,7 @@
         [%& num-fragments=1 fragment-num=0 (jam plea)]
     ==
   =/  =packet:ames
-    %:  encode-shut-packet:vane
+    %:  encode-shut-packet:ames
       shut-packet
       comet-sym
       our.comet
@@ -259,7 +255,7 @@
       sndr-life=1
       rcvr-life=3
     ==
-  =/  blob  (encode-packet:vane packet)
+  =/  blob  (encode-packet:ames packet)
   =^  moves1  bud  (call bud ~[//unix] %hear lane-foo blob)
   ::
   ;:  weld

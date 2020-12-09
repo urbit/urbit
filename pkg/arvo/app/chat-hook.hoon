@@ -5,7 +5,7 @@
 /-  inv=invite-store, *metadata-store, *group-store, hook=chat-hook, view=chat-view, *group
 /+  default-agent, verb, dbug, store=chat-store, group-store, grpl=group,
     resource, *migrate
-~%  %chat-hook-top  ..is  ~
+~%  %chat-hook-top  ..part  ~
 |%
 +$  card  card:agent:gall
 ::
@@ -370,7 +370,7 @@
     =/  nack-count=@ud  (slav %ud i.t.wire)
     =/  who=@p          (slav %p i.t.t.wire)
     =/  pax             t.t.t.wire
-    ?>  ?=([%b %wake *] sign-arvo)
+    ?>  ?=([%behn %wake *] sign-arvo)
     ~?  ?=(^ error.sign-arvo)
       "behn errored in backoff timers, continuing anyway"
     :_  this
@@ -690,13 +690,14 @@
   =/  length  (lent envs)
   =/  latest
     ?~  backlog-latest  length
-    ?:  (gth u.backlog-latest length)  length
+    ?:  (gth u.backlog-latest length)  0
     (sub length u.backlog-latest)
   =.  envs  (scag latest envs)
   =/  =vase  !>([%messages pas 0 latest envs])
   %-  zing
   :~  [%give %fact ~ %chat-update !>([%create pas])]~
       ?.  ?&(?=(^ backlog-latest) (~(has by allow-history) pas))  ~
+      ?:  =(0 latest)  ~
       [%give %fact ~ %chat-update vase]~
       [%give %kick [%backlog pax]~ `src.bol]~
   ==

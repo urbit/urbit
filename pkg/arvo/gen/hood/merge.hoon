@@ -38,7 +38,7 @@
         =+((pars bek.arg) [who dez (opt-case caz) gem])
     ==
 ++  opt-case  |=(a=case ?:(=(*case cas) a cas))  :: override
-++  pars  |=(a=beaky `[[who=ship dez=desk caz=case] *]`(need (de-beam:format a)))
+++  pars  |=(a=beaky `[[who=ship dez=desk caz=case] *]`(need (de-beam a)))
 ++  pars-src
   |=  syd=$@(desk beaky)
   ?@  syd  syd

@@ -190,7 +190,7 @@
   =/  m  (strand ,~)
   ^-  form:m
   ~&  >  "starting {<ship>}"
-  ;<  ~  bind:m  (send-events (init:util ship `*dawn-event:able:jael))
+  ;<  ~  bind:m  (send-events (init:util ship `*dawn-event:jael))
   (check-ship-booted ship)
 ::
 ++  real-ship
@@ -202,7 +202,7 @@
   (check-ship-booted ship)
 ::
 ++  raw-ship
-  |=  [=ship keys=(unit dawn-event:able:jael)]
+  |=  [=ship keys=(unit dawn-event:jael)]
   =/  m  (strand ,~)
   ^-  form:m
   ~&  >  "starting {<ship>}"

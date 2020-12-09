@@ -35,6 +35,7 @@
       uv_udp_t       wax_u;             //
       uv_handle_t    had_u;             //
     };                                  //
+    c3_l             sev_l;             //  instance number
     ur_cue_test_t*   tes_u;             //  cue-test handle
     u3_cue_xeno*     sil_u;             //  cue handle
     c3_c*            dns_c;             //  domain XX multiple/fallback
@@ -1065,7 +1066,7 @@ _ames_hear(u3_ames* sam_u,
      || (c3n == _ames_sift_head(&hed_u, hun_y)) )
   {
     sam_u->sat_u.hed_d++;
-    if ( 0 == (sam_u->sat_u.hed_d % 100) ) {
+    if ( 0 == (sam_u->sat_u.hed_d % 100000) ) {
       u3l_log("ames: %" PRIu64 " dropped, failed to read header\n",
               sam_u->sat_u.hed_d);
     }
@@ -1082,7 +1083,7 @@ _ames_hear(u3_ames* sam_u,
      && (sam_u->ver_y != hed_u.ver_y) )
   {
     sam_u->sat_u.vet_d++;
-    if ( 0 == (sam_u->sat_u.vet_d % 100) ) {
+    if ( 0 == (sam_u->sat_u.vet_d % 100000) ) {
       u3l_log("ames: %" PRIu64 " dropped for version mismatch\n",
               sam_u->sat_u.vet_d);
     }
@@ -1112,7 +1113,7 @@ _ames_hear(u3_ames* sam_u,
     //
     if ( bod_u.mug_l != hed_u.mug_l ) {
       sam_u->sat_u.mut_d++;
-      if ( 0 == (sam_u->sat_u.mut_d % 100) ) {
+      if ( 0 == (sam_u->sat_u.mut_d % 100000) ) {
         u3l_log("ames: %" PRIu64 " dropped for invalid mug\n",
                 sam_u->sat_u.mut_d);
       }
@@ -1318,10 +1319,14 @@ _ames_io_talk(u3_auto* car_u)
   u3_ames* sam_u = (u3_ames*)car_u;
   _ames_io_start(sam_u);
 
-  // send born event
+  //  send born event
   //
   {
-    u3_noun wir = u3nt(c3__newt, u3k(u3A->sen), u3_nul);
+    //  XX remove [sev_l]
+    //
+    u3_noun wir = u3nt(c3__newt,
+                       u3dc("scot", c3__uv, sam_u->sev_l),
+                       u3_nul);
     u3_noun cad = u3nc(c3__born, u3_nul);
 
     u3_auto_plan(car_u, u3_ovum_init(0, c3__a, wir, cad));
@@ -1526,6 +1531,16 @@ u3_ames_io_init(u3_pier* pir_u)
   car_u->io.info_f = _ames_io_info;
   car_u->io.kick_f = _ames_io_kick;
   car_u->io.exit_f = _ames_io_exit;
+
+  {
+    u3_noun now;
+    struct timeval tim_u;
+    gettimeofday(&tim_u, 0);
+
+    now = u3_time_in_tv(&tim_u);
+    sam_u->sev_l = u3r_mug(now);
+    u3z(now);
+  }
 
   return car_u;
 }

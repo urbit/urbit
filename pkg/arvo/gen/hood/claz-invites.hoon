@@ -4,8 +4,7 @@
 ::
 ::    eg: |claz-invites ~marzod 1 10 %/example-invites/txt
 ::
-/+  keygen
-=,  ethereum
+/+  keygen, *ethereum
 ::
 :-  %say
 |=  $:  [now=@da eny=@uvJ =beak]
@@ -37,5 +36,5 @@
 ;:  weld
   (scow %p who)  ","
   (slag 1 (scow %q ticket))  ","
-  (address-to-hex:ethereum owner)
+  (address-to-hex owner)
 ==

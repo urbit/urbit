@@ -2,13 +2,13 @@
 ::::    /sys/hoon                                       ::
   ::                                                    ::
 =<  ride
-=>  %141  =>
+=>  %140  =>
 ::                                                      ::
 ::::    0: version stub                                 ::
   ::                                                    ::
-~%  %k.141  ~  ~                                        ::
+~%  %k.140  ~  ~                                        ::
 |%
-++  hoon-version  141
+++  hoon-version  +
 --  =>
 ~%  %one  +  ~
 ::  #  %base
@@ -1905,17 +1905,17 @@
 ++  map
   |$  [key value]                                       ::  table
   $|  (tree (pair key value))
-  |=(a=(tree (pair)) ~(apt by a))
+  |=(a=(tree (pair)) ?:(=(~ a) & ~(apt by a)))
 ::
 ++  qeu
   |$  [item]                                            ::  queue
   $|  (tree item)
-  |=(a=(tree) ~(apt to a))
+  |=(a=(tree) ?:(=(~ a) & ~(apt to a)))
 ::
 ++  set
   |$  [item]                                            ::  set
   $|  (tree item)
-  |=(a=(tree) ~(apt in a))
+  |=(a=(tree) ?:(=(~ a) & ~(apt in a)))
 ::
 ::::  2l: container from container                      ::
   ::                                                    ::
@@ -5867,10 +5867,7 @@
     ~+
     ;~  pose
       %+  stag  %blob
-      %+  sear
-        ::  XX use +mole once available
-        ::
-        |=(a=@ `(unit)`=/(b (mule |.((cue a))) ?-(-.b %| ~, %& `p.b)))
+      %+  sear  |=(a=@ (mole |.((cue a))))
       ;~(pfix (just '0') vum:ag)
     ::
       (stag %$ crub)
@@ -6609,11 +6606,6 @@
           ==                                            ::
 +$  what  (unit (pair cord (list sect)))                ::  help slogan/section
 +$  wing  (list limb)                                   ::  search path
-+$  worm                                                ::  compiler cache
-  $:  nes=(set ^)                                       ::  ++nest
-      pay=(map (pair type hoon) type)                   ::  ++play
-      mit=(map (pair type hoon) (pair type nock))       ::  ++mint
-  ==                                                    ::
 ::
 ::  +block: abstract identity of resource awaited
 ::
@@ -6697,9 +6689,8 @@
   ::    5b: macro expansion                             ::
   ::    5c: compiler backend and prettyprinter          ::
   ::    5d: parser                                      ::
-  ::    5e: caching compiler                            ::
-  ::    5f: molds and mold builders                     ::
-  ::    5g: profiling support (XX remove)               ::
+  ::    5e: molds and mold builders                     ::
+  ::    5f: profiling support (XX remove)               ::
   ::
 ~%    %pen
     +
@@ -10091,7 +10082,7 @@
     ::
         [%dtkt *]
       =+  nef=$(gen [%kttr p.gen])
-      [p.nef [%12 [%1 %151 p.nef] q:$(gen q.gen, gol %noun)]]
+      [p.nef [%12 [%1 hoon-version p.nef] q:$(gen q.gen, gol %noun)]]
     ::
         [%dtls *]  [(nice [%atom %$ ~]) [%4 q:$(gen p.gen, gol [%atom %$ ~])]]
         [%sand *]  [(nice (play gen)) [%1 q.gen]]
@@ -11585,6 +11576,14 @@
     %-  ~(play ut p.vax)
     [%wtgr [%wtts [%leaf %tas -.q.vax] [%& 2]~] [%$ 1]]
   (~(fuse ut p.vax) [%cell %noun %noun])
+::  +swat: deferred +slap
+::
+++  swat
+  |=  [tap=(trap vase) gen=hoon]
+  ^-  (trap vase)
+  =/  gun  (~(mint ut p:$:tap) %noun gen)
+  |.  ~+
+  [p.gun .*(q:$:tap q.gun)]
 ::
 ::::  5d: parser
   ::
@@ -13814,144 +13813,7 @@
   ~<  %slog.[0 leaf/"ride: compiled"]
   (~(mint ut typ) %noun gen)
 ::
-::::  5e: caching compiler
-  ::
-++  wa                                                  ::  cached compile
-  |_  worm
-  ++  nell  |=(ref=type (nest [%cell %noun %noun] ref)) ::  nest in cell
-  ++  nest                                              ::  nest:ut, cached
-    |=  [sut=type ref=type]
-    ^-  [? worm]
-    ?:  (~(has in nes) [sut ref])  [& +>+<]
-    ?.  (~(nest ut sut) | ref)
-      ~&  %nest-failed
-      =+  foo=(skol ref)
-      =+  bar=(skol sut)
-      ~&  %nest-need
-      ~>  %slog.[0 bar]
-      ~&  %nest-have
-      ~>  %slog.[0 foo]
-      [| +>+<.$]
-    [& +>+<(nes (~(put in nes) [sut ref]))]
-  ::
-  ++  call                                              ::  call gate
-    |=  [vax=vase nam=term som=(each vase ^)]
-    ^-  [vase worm]
-    =^  duf  +>+<.$  (open vax nam som)
-    (slap duf [%limb %$])
-  ::
-  ++  open                                              ::  assemble door
-    |=  [vax=vase nam=term som=(each vase ^)]
-    ^-  [vase worm]
-    =*  key  [%cncb [[%& 2] ~] [[[%& 6] ~] [%$ 3]] ~]
-    =^  dor  +>+<.$  (slap vax [%limb nam])
-    =^  mes  +>+<.$  (slot 6 dor)
-    =^  hip  +>+<.$
-      ?-  -.som
-         %&  (nest p.mes p.p.som)
-         %|  (nets p.mes -.p.som)
-      ==
-    ?>  hip
-    [[p.dor q.dor(+6 +7.som)] +>+<.$]
-  ::
-  ++  neat                                              ::  type compliance
-    |=  [typ=type som=(each vase ^)]
-    ^-  worm
-    =^  hip  +>+<.$
-      ?-  -.som
-        %&  (nest typ p.p.som)
-        %|  (nets typ -.p.som)
-      ==
-    ?>  hip
-    +>+<.$
-  ::
-  ++  nets                                              ::  typeless nest
-    |=  [sut=* ref=*]
-    ^-  [? worm]
-    ?:  (~(has in nes) [sut ref])  [& +>+<]
-    =+  gat=|=([a=type b=type] (~(nest ut a) | b))
-    ?.  (? (slum gat [sut ref]))
-      ~&  %nets-failed
-      =+  tag=`*`skol
-      =+  foo=(tank (slum tag ref))
-      =+  bar=(tank (slum tag sut))
-      ~&  %nets-need
-      ~>  %slog.[0 bar]
-      ~&  %nets-have
-      ~>  %slog.[0 foo]
-      [| +>+<.$]
-    [& +>+<.$(nes (~(put in nes) [sut ref]))]
-  ::  +play: +play:ut, cached
-  ::
-  ++  play
-    |=  [sut=type gen=hoon]
-    ^-  [type worm]
-    =+  old=(~(get by pay) [sut gen])
-    ?^  old  [u.old +>+<.$]
-    =+  new=(~(play ut sut) gen)
-    [new +>+<.$(pay (~(put by pay) [sut gen] new))]
-  ::  +mint: +mint:ut to noun, cached
-  ::
-  ++  mint
-    |=  [sut=type gen=hoon]
-    ^-  [(pair type nock) worm]
-    =+  old=(~(get by mit) [sut gen])
-    ?^  old  [u.old +>+<.$]
-    =+  new=(~(mint ut sut) %noun gen)
-    [new +>+<.$(mit (~(put by mit) [sut gen] new))]
-  ::  +slam: +slam:ut, cached
-  ::
-  ++  slam
-    |=  [gat=vase sam=vase]
-    =/  sut=type  [%cell p.gat p.sam]
-    =/  gen=hoon  [%cnsg [%$ ~] [%$ 2] [%$ 3] ~]
-    =^  new=type  +>+<.$  (play sut gen)
-    [[new (slum q.gat q.sam)] +>+<.$]
-  ::  +slap: +slap:ut, cached
-  ::
-  ++  slap
-    |=  [vax=vase gen=hoon]
-    ^-  [vase worm]
-    =^  gun  +>+<  (mint p.vax gen)
-    [[p.gun .*(q.vax q.gun)] +>+<.$]
-  ::  +slot: +slot:ut, cached
-  ::
-  ++  slot
-    |=  [axe=@ vax=vase]
-    ^-  [vase worm]
-    =^  gun  +>+<  (mint p.vax [%$ axe])
-    [[p.gun .*(q.vax [0 axe])] +>+<.$]
-  ::  +slym: +slym:ut, cached
-  ::
-  ++  slym
-    |=  [gat=vase sam=*]
-    ^-  [vase worm]
-    (slap gat(+<.q sam) [%limb %$])
-  ::
-  ++  sped                                              ::  specialize vase
-    |=  vax=vase
-    ^-  [vase worm]
-    =+  ^=  gen  ^-  hoon
-      ?@  q.vax    [%wtts [%base [%atom %$]] [%& 1]~]
-      ?@  -.q.vax  [%wtts [%leaf %tas -.q.vax] [%& 2]~]
-      [%wtts [%base %cell] [%& 1]~]
-    =^  typ  +>+<.$  (play p.vax [%wtgr gen [%$ 1]])
-    [[typ q.vax] +>+<.$]
-  ::
-  ++  spot                                              ::  slot then sped
-    |=  [axe=@ vax=vase]
-    ^-  [vase worm]
-    =^  xav  +>+<  (slot axe vax)
-    (sped xav)
-  ::
-  ++  stop                                              ::  sped then slot
-    |=  [axe=@ vax=vase]
-    ^-  [vase worm]
-    =^  xav  +>+<  (sped vax)
-    (slot axe xav)
-  --
-::
-::::  5f: molds and mold builders
+::::  5e: molds and mold builders
   ::
 +$  mane  $@(@tas [@tas @tas])                          ::  XML name+space
 +$  manx  $~([[%$ ~] ~] [g=marx c=marl])                ::  dynamic XML node
@@ -13960,7 +13822,6 @@
 +$  mart  (list [n=mane v=tape])                        ::  XML attributes
 +$  marx  $~([%$ ~] [n=mane a=mart])                    ::  dynamic XML tag
 +$  mite  (list @ta)                                    ::  mime type
-+$  monk  (each ship [p=@tas q=@ta])                    ::  general identity
 +$  pass  @                                             ::  public key
 +$  ring  @                                             ::  private key
 +$  ship  @p                                            ::  network identity
@@ -13968,7 +13829,7 @@
 +$  spur  path                                          ::  ship desk case spur
 +$  time  @da                                           ::  galactic time
 ::
-::::  5g: profiling support (XX move)
+::::  5f: profiling support (XX move)
   ::
 ::
 ++  pi-heck

@@ -1719,14 +1719,6 @@ _term_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
           u3_Host.xit_i = dat;
         } break;
 
-        //  XX obsolete, remove in %zuse and %dill
-        case c3__init: {
-          // daemon ignores %init
-          // u3A->own = u3nc(u3k(p_fav), u3A->own);
-          // u3l_log("kick: init: %d\n", p_fav);
-          ret_o = c3y;
-        } break;
-
         case c3__mass: {
           ret_o = c3y;
 

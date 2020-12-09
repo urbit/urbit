@@ -3,7 +3,7 @@
 /-  spider, *eth-watcher
 /+  strandio, ethio
 =,  ethereum-types
-=,  able:jael
+=,  jael
 ::
 ::  Main loop: get updates since last checked
 ::

@@ -3,7 +3,7 @@
 /-  store=hark-store, post, group-store, metadata-store, hook=hark-chat-hook
 /+  resource, metadata, default-agent, dbug, chat-store, grpl=group
 ::
-~%  %hark-chat-hook-top  ..is  ~
+~%  %hark-chat-hook-top  ..part  ~
 |%
 +$  card  card:agent:gall
 +$  versioned-state

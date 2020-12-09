@@ -69,24 +69,10 @@ static c3_w sag_w;
   ==
 ::  +pill: boot-sequence ingredients
 ::
-+$  pill
-  %+  each
-    ::  %&: complete pill (either +brass or +solid)
-    ::
-    ::  p: jammed pill
-    ::  q: optional %into ovum overriding that of .p
-    ::
-    [p=@ q=(unit ovum)]
-  ::  %|: incomplete pill (+ivory)
-  ::
-  ::    XX not implemented, needs generation of
-  ::    %veer ova for install %zuse and the vanes
-  ::
-  ::  p: jammed pill
-  ::  q: module ova
-  ::  r: userspace ova
-  ::
-  [p=@ q=(list ovum) r=(list ovum)]
+::    p: jammed pill
+::    q: optional %into ovum overriding that of .p
+::
++$  pill  [p=@ q=(unit ovum)]
 --
 */
 
@@ -273,10 +259,12 @@ _king_get_atom(c3_c* url_c)
   if ( CURLE_OK != result ) {
     u3l_log("failed to fetch %s: %s\n",
             url_c, curl_easy_strerror(result));
+    u3_king_bail();
     exit(1);
   }
   if ( 300 <= cod_l ) {
     u3l_log("error fetching %s: HTTP %ld\n", url_c, cod_l);
+    u3_king_bail();
     exit(1);
   }
 
@@ -382,7 +370,7 @@ _boothack_pill(void)
     arv = u3nc(u3_nul, u3_unix_initial_into_card(u3_Host.ops_u.arv_c));
   }
 
-  return u3nt(c3y, pil, arv);
+  return u3nc(pil, arv);
 }
 
 /* _boothack_key(): parse a private key file or value

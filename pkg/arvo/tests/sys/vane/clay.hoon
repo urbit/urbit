@@ -9,7 +9,7 @@
 =,  format
 ::
 =/  bud=vase  !>(..zuse)
-=/  clay-gate  (clay-raw bud)
+=/  clay-gate  (clay-raw ~nul)
 =/  fusion  fusion:clay-gate
 ::
 |%
@@ -176,14 +176,14 @@
   |=  $:  clay-gate=_clay-gate
           now=@da
           scry=roof
-          call-args=[=duct =type wrapped-task=(hobo task:able:clay)]
+          call-args=[=duct wrapped-task=(hobo task:clay)]
           expected-moves=(list move:clay-gate)
       ==
   ^-  [tang _clay-gate]
   ::
-  =/  clay-core  (clay-gate our=~nul now=now eny=`@`0xdead.beef scry=scry)
+  =/  clay-core  (clay-gate now=now eny=`@`0xdead.beef scry=scry)
   ::
-  =^  moves  clay-gate  (call:clay-core [duct ~ type wrapped-task]:call-args)
+  =^  moves  clay-gate  (call:clay-core [duct ~ wrapped-task]:call-args)
   ::
   =/  output=tang
     %+  expect-eq
@@ -197,14 +197,14 @@
   |=  $:  clay-gate=_clay-gate
           now=@da
           scry=roof
-          call-args=[=duct =type wrapped-task=(hobo task:able:clay)]
+          call-args=[=duct wrapped-task=(hobo task:clay)]
           move-comparator=$-((list move:clay-gate) tang)
       ==
   ^-  [tang _clay-gate]
   ::
-  =/  clay-core  (clay-gate our=~nul now=now eny=`@`0xdead.beef scry=scry)
+  =/  clay-core  (clay-gate now=now eny=`@`0xdead.beef scry=scry)
   ::
-  =^  moves  clay-gate  (call:clay-core [duct ~ type wrapped-task]:call-args)
+  =^  moves  clay-gate  (call:clay-core [duct ~ wrapped-task]:call-args)
   ::
   =/  output=tang  (move-comparator moves)
   ::
@@ -215,14 +215,14 @@
   |=  $:  clay-gate=_clay-gate
           now=@da
           scry=roof
-          take-args=[=wire =duct wrapped-sign=(hypo sign:clay-gate)]
+          take-args=[=wire =duct =sign:clay-gate]
           expected-moves=(list move:clay-gate)
       ==
   ^-  [tang _clay-gate]
   ::
-  =/  clay-core  (clay-gate our=~nul now=now eny=`@`0xdead.beef scry=scry)
+  =/  clay-core  (clay-gate now=now eny=`@`0xdead.beef scry=scry)
   ::
-  =^  moves  clay-gate  (take:clay-core [wire duct ~ wrapped-sign]:take-args)
+  =^  moves  clay-gate  (take:clay-core [wire duct ~ sign]:take-args)
   ::
   =/  output=tang
     %+  expect-eq
@@ -236,14 +236,14 @@
   |=  $:  clay-gate=_clay-gate
           now=@da
           scry=roof
-          take-args=[=wire =duct wrapped-sign=(hypo sign:clay-gate)]
+          take-args=[=wire =duct =sign:clay-gate]
           move-comparator=$-((list move:clay-gate) tang)
       ==
   ^-  [tang _clay-gate]
   ::
-  =/  clay-core  (clay-gate our=~nul now=now eny=`@`0xdead.beef scry=scry)
+  =/  clay-core  (clay-gate now=now eny=`@`0xdead.beef scry=scry)
   ::
-  =^  moves  clay-gate  (take:clay-core [wire duct ~ wrapped-sign]:take-args)
+  =^  moves  clay-gate  (take:clay-core [wire duct ~ sign]:take-args)
   ::
   =/  output=tang  (move-comparator moves)
   ::

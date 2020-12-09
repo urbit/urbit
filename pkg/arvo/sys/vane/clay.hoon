@@ -9,7 +9,7 @@
 ::  worth noting that many of the clay-related structures are defined in zuse.
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-|=  pit=vase
+|=  our=ship
 =,  clay
 =>  |%
 +$  aeon  @ud                                           ::  version number
@@ -282,21 +282,21 @@
           $:  rus=(map desk rede)                       ::  neighbor desks
           ==
 ::
-+$  move  [p=duct q=(wind note gift:able)]              ::  local move
++$  move  [p=duct q=(wind note gift)]                   ::  local move
 +$  note                                                ::  out request $->
   $~  [%b %wait *@da]                                   ::
   $%  $:  %$                                            ::  to arvo
           $>(%what waif)                                ::
       ==                                                ::
       $:  %a                                            ::  to %ames
-          $>(%plea task:able:ames)                      ::
+          $>(%plea task:ames)                           ::
       ==                                                ::
       $:  %b                                            ::  to %behn
           $>  $?  %drip                                 ::
                   %rest                                 ::
                   %wait                                 ::
               ==                                        ::
-          task:able:behn                                ::
+          task:behn                                     ::
       ==                                                ::
       $:  %c                                            ::  to %clay
           $>  $?  %info                                 ::  internal edit
@@ -305,46 +305,43 @@
                   %warp                                 ::
                   %werp                                 ::
               ==                                        ::
-          task:able                                     ::
+          task                                          ::
       ==                                                ::
       $:  %d                                            ::  to %dill
-          $>(%flog task:able:dill)                      ::
+          $>(%flog task:dill)                           ::
       ==                                                ::
       $:  %g                                            ::  to %gall
-          $>(%deal task:able:gall)                      ::
+          $>(%deal task:gall)                           ::
       ==                                                ::
       $:  %j                                            ::  by %jael
-          $>(%public-keys task:able:jael)               ::
+          $>(%public-keys task:jael)                    ::
   ==  ==                                                ::
 +$  riot  (unit rant)                                   ::  response+complete
 +$  sign                                                ::  in result $<-
-  $~  [%b %wake ~]                                      ::
-  $%  $:  %a                                            ::  by %ames
+  $~  [%behn %wake ~]                                   ::
+  $%  $:  %ames                                         ::
           $>  $?  %boon                                 ::  response
                   %done                                 ::  (n)ack
                   %lost                                 ::  lost boon
               ==                                        ::
-          gift:able:ames                                ::
+          gift:ames                                     ::
       ==                                                ::
-      $:  %b                                            ::  by %behn
-          $%  $>(%wake gift:able:behn)                  ::  timer activate
-              $>(%writ gift:able)                       ::  XX %slip
+      $:  %behn                                         ::
+          $%  $>(%wake gift:behn)                       ::  timer activate
+              $>(%writ gift)                            ::  XX %slip
       ==  ==                                            ::
-      $:  %c                                            ::  by %clay
+      $:  %clay                                         ::
           $>  $?  %mere                                 ::
                   %note                                 ::
                   %writ                                 ::
               ==                                        ::
-          gift:able                                     ::
+          gift                                          ::
       ==                                                ::
-      $:  %j                                            ::  by %jael
-          $>(%public-keys gift:able:jael)               ::
-      ==                                                ::
-      $:  @tas                                          ::  by any
-          $>(%crud vane-task)                           ::  XX strange
+      $:  %jael                                         ::
+          $>(%public-keys gift:jael)                    ::
   ==  ==                                                ::
 --  =>
-~%  %clay-utilities  ..is  ~
+~%  %clay-utilities  ..part  ~
 ::  %utilities
 ::
 |%
@@ -984,11 +981,11 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ++  de                                                  ::  per desk
-  |=  [our=ship now=@da ski=sley hen=duct raft]
+  |=  [now=@da rof=roof hen=duct raft]
   |=  [her=ship syd=desk]
   ::  XX ruf=raft crashes in the compiler
   ::
-  =*  ruf  |4.+6.^$
+  =*  ruf  |3.+6.^$
   ::
   =/  [mow=(list move) hun=(unit duct) rede]
       ?.  =(our her)
@@ -1568,7 +1565,7 @@
           =^  hon  tep  (build tep /sys/hoon hoon.ref !>(**) !,(*hoon ..ride))
           =^  rav  tep  (build tep /sys/arvo arvo.ref hon !,(*hoon ..part))
           =^  lul  tep  (build tep /sys/lull lull.ref rav !,(*hoon .))
-          =^  zus  tep  (build tep /sys/zuse zuse.ref rav !,(*hoon .))
+          =^  zus  tep  (build tep /sys/zuse zuse.ref lul !,(*hoon .))
           [hon rav lul zus]
       ::
       ++  build
@@ -1596,17 +1593,9 @@
       ++  deep
         |=  [pax=path src=cord]
         ^-  ?
-        ::  XX use roof
-        ::
-        :: =/  dat  (rof `[our ~ ~] $/[[our $/da/now] mod/fat/pax])
-        :: ?:  |(?=(~ dat) ?=(~ u.dat))  |
-        :: =/  nod  !<((axal (cask)) q.u.u.dat)
-        ::
-        =/  dat
-          ;;  (unit (unit (axal (cask))))
-          ((sloy-light ski) [hoon-version %noun] %$ our %$ da/now mod/fat/pax)
+        =/  dat  (rof `[our ~ ~] $/[[our $/da/now] mod/fat/pax])
         ?:  |(?=(~ dat) ?=(~ u.dat))  |
-        =*  nod  u.u.dat
+        =/  nod  !<((axal (cask)) q.u.u.dat)
         &(?=(^ fil.nod) ?=(%hoon p.u.fil.nod) =(src q.u.fil.nod))
       --
     ::
@@ -3625,7 +3614,7 @@
         :^  ~  ~  %uvs  !>
         ^-  (list @uv)
         =/  him  (slav %p i.t.pax)
-        =/  other  dom:((de our now ski hen ruf) him i.t.t.pax)
+        =/  other  dom:((de now rof hen ruf) him i.t.t.pax)
         ?:  =(0 let.other)
           ~
         =/  our-yaki  (~(got by hut.ran) (~(got by hit.dom) yon))
@@ -3885,25 +3874,21 @@
     $:  ver=%6                                        ::  vane version
         ruf=raft                                      ::  revision tree
     ==                                                ::
-|=  [our=ship now=@da eny=@uvJ rof=roof]              ::  current invocation
-=*  ski  (en-sley rof)
+|=  [now=@da eny=@uvJ rof=roof]                       ::  current invocation
 |%                                                    ::
 ++  call                                              ::  handle request
   |=  $:  hen=duct
           dud=(unit goof)
-          type=*
-          wrapped-task=(hobo task:able)
+          wrapped-task=(hobo task)
       ==
   ^-  [(list move) _..^$]
   ::
-  =/  req=task:able  ((harden task:able) wrapped-task)
+  =/  req=task  ((harden task) wrapped-task)
   ::
-  ::  error notifications "downcast" to %crud
+  ::  XX handle error notifications
   ::
-  =?  req  ?=(^ dud)
-    ~|  %crud-in-crud
-    ?<  ?=(%crud -.req)
-    [%crud -.req tang.u.dud]
+  ?^  dud
+    [[[hen %slip %d %flog %crud [-.req tang.u.dud]] ~] ..^$]
   ::
   ?-    -.req
       %boat
@@ -3919,7 +3904,7 @@
     =/  des  ~(tap in ~(key by dos.rom.ruf))
     |-
     ?~  des  [[[hen %give %done ~] mos] ..^^$]
-    =/  den  ((de our now ski hen ruf) our i.des)
+    =/  den  ((de now rof hen ruf) our i.des)
     =^  mor  ruf
       =<  abet:wake
       ?:  ?=(^ cew.req)  den
@@ -3949,9 +3934,6 @@
       (~(has in who.r) |+nom.req)
     --
   ::
-      %crud
-    [[[hen %slip %d %flog req] ~] ..^$]
-  ::
       %drop
     ~&  %clay-idle
     [~ ..^$]
@@ -3974,7 +3956,7 @@
         %dif  ~|(%dif-not-implemented !!)
       ==
     =^  mos  ruf
-      =/  den  ((de our now ski hen ruf) our des.req)
+      =/  den  ((de now rof hen ruf) our des.req)
       abet:(info:den deletes changes)
     [mos ..^$]
   ::
@@ -3994,7 +3976,7 @@
     ?~  dos
       !!  ::  fire next in queue
     =^  mos  ruf
-      =/  den  ((de our now ski hen ruf) our q.bem)
+      =/  den  ((de now rof hen ruf) our q.bem)
       abet:(into:den s.bem all.req fis.req)
     [mos ..^$]
   ::
@@ -4002,14 +3984,14 @@
     ?:  =(%$ des.req)
       ~&(%merg-no-desk !!)
     =^  mos  ruf
-      =/  den  ((de our now ski hen ruf) our des.req)
+      =/  den  ((de now rof hen ruf) our des.req)
       abet:(start-merge:den her.req dem.req cas.req how.req)
     [mos ..^$]
   ::
       %mont
     =.  hez.ruf  ?^(hez.ruf hez.ruf `[[%$ %sync ~] ~])
     =^  mos  ruf
-      =/  den  ((de our now ski hen ruf) p.bem.req q.bem.req)
+      =/  den  ((de now rof hen ruf) p.bem.req q.bem.req)
       abet:(mount:den pot.req r.bem.req s.bem.req)
     [mos ..^$]
   ::
@@ -4046,7 +4028,7 @@
   ::
       %park
     =^  mos  ruf
-      =/  den  ((de our now ski hen ruf) our des.req)
+      =/  den  ((de now rof hen ruf) our des.req)
       abet:(park:den | [yok ran]:req)
     [mos ..^$]
   ::
@@ -4054,13 +4036,13 @@
     =/  [syd=desk =yoki]  (need pud.ruf)
     =.  pud.ruf  ~
     =^  mos  ruf
-      =/  den  ((de our now ski hen ruf) our syd)
+      =/  den  ((de now rof hen ruf) our syd)
       abet:(park:den & yoki *rang)
     [mos ..^$]
   ::
       %perm
     =^  mos  ruf
-      =/  den  ((de our now ski hen ruf) our des.req)
+      =/  den  ((de now rof hen ruf) our des.req)
       abet:(perm:den pax.req rit.req)
     [mos ..^$]
   ::
@@ -4083,7 +4065,7 @@
       ?~  desks
         [~ ..^^$]
       =^  moves-1  ..^^$  $(desks t.desks)
-      =^  moves-2  ruf  abet:wake:((de our now ski hen ruf) [ship desk]:i.desks)
+      =^  moves-2  ruf  abet:wake:((de now rof hen ruf) [ship desk]:i.desks)
       [(weld moves-1 moves-2) ..^^$]
     [wake-moves ..^$]
   ::
@@ -4102,7 +4084,7 @@
     ?>  ?=(%warp -.req)
     =*  rif  rif.req
     =^  mos  ruf
-      =/  den  ((de our now ski hen ruf) wer.req p.rif)
+      =/  den  ((de now rof hen ruf) wer.req p.rif)
       =<  abet
       ?~  q.rif
         cancel-request:den
@@ -4117,7 +4099,7 @@
     ?:  ?=([%backfill *] pax)
       =+  ;;(=fill res)
       =^  mos  ruf
-        =/  den  ((de our now ski hen ruf) our desk.fill)
+        =/  den  ((de now rof hen ruf) our desk.fill)
         abet:(give-backfill:den lobe.fill)
       [[[hen %give %done ~] mos] ..^$]
     ?>  ?=([%question *] pax)
@@ -4135,9 +4117,10 @@
   ..^$(ruf +.old)
 ::
 ++  scry                                              ::  inspect
-  |=  [lyc=gang cyr=term bem=beam]
+  ^-  roon
+  |=  [lyc=gang car=term bem=beam]
   ^-  (unit (unit cage))
-  =*  ren  cyr
+  =*  ren  car
   =/  why=shop  &/p.bem
   =*  syd  q.bem
   =/  lot=coin  $/r.bem
@@ -4158,7 +4141,7 @@
   ::TODO  if it ever gets filled properly, pass in the full fur.
   ::
   =/  for=(unit ship)  ?~(lyc ~ ?~(u.lyc ~ `n.u.lyc))
-  =/  den  ((de our now ski [/scryduct ~] ruf) his syd)
+  =/  den  ((de now rof [/scryduct ~] ruf) his syd)
   =/  result  (mule |.(-:(aver:den for u.run u.luk tyl)))
   ?:  ?=(%| -.result)
     %-  (slog >%clay-scry-fail< p.result)
@@ -4195,36 +4178,36 @@
   ==
 ::
 ++  take                                              ::  accept response
-  |=  [tea=wire hen=duct dud=(unit goof) hin=(hypo sign)]
+  |=  [tea=wire hen=duct dud=(unit goof) hin=sign]
   ^+  [*(list move) ..^$]
   ?^  dud
     ~|(%clay-take-dud (mean tang.u.dud))
   ::
   ?:  ?=([%merge @ @ @ @ ~] tea)
-    ?>  ?=(%writ +<.q.hin)
+    ?>  ?=(%writ +<.hin)
     =*  syd  i.t.tea
     =/  ali-ship  (slav %p i.t.t.tea)
     =*  ali-desk  i.t.t.t.tea
     =/  germ  (germ i.t.t.t.t.tea)
     =^  mos  ruf
-      =/  den  ((de our now ski hen ruf) our i.t.tea)
-      abet:(merge:den ali-ship ali-desk germ p.q.hin)
+      =/  den  ((de now rof hen ruf) our i.t.tea)
+      abet:(merge:den ali-ship ali-desk germ p.hin)
     [mos ..^$]
   ::
   ?:  ?=([%foreign-warp *] tea)
-    ?>  ?=(%writ +<.q.hin)
+    ?>  ?=(%writ +<.hin)
     :_  ..^$
-    [hen %give %boon `(unit rand)`(bind `riot`p.q.hin rant-to-rand)]~
+    [hen %give %boon `(unit rand)`(bind `riot`p.hin rant-to-rand)]~
   ::
   ?:  ?=([%warp-index @ @ @ ~] tea)
-    ?+    +<.q.hin  ~|  %clay-warp-index-strange  !!
+    ?+    +<.hin  ~|  %clay-warp-index-strange  !!
         %done
-      ?~  error.q.hin
+      ?~  error.hin
         [~ ..^$]
       ::  TODO better error handling
       ::
-      ~&  %clay-take-warp-index-error^our^tea^tag.u.error.q.hin
-      %-  (slog tang.u.error.q.hin)
+      ~&  %clay-take-warp-index-error^our^tea^tag.u.error.hin
+      %-  (slog tang.u.error.hin)
       [~ ..^$]
     ::
         %lost
@@ -4233,27 +4216,27 @@
       !!
     ::
         %boon
-      =+  ;;  res=(unit rand)  payload.q.hin
+      =+  ;;  res=(unit rand)  payload.hin
       ::
       =/  her=ship   (slav %p i.t.tea)
       =/  =desk      (slav %tas i.t.t.tea)
       =/  index=@ud  (slav %ud i.t.t.t.tea)
       ::
       =^  mos  ruf
-        =/  den  ((de our now ski hen ruf) her desk)
+        =/  den  ((de now rof hen ruf) her desk)
         abet:(take-foreign-answer:den index res)
       [mos ..^$]
     ==
   ::
   ?:  ?=([%back-index @ @ @ ~] tea)
-    ?+    +<.q.hin  ~|  %clay-backfill-index-strange  !!
+    ?+    +<.hin  ~|  %clay-backfill-index-strange  !!
         %done
-      ?~  error.q.hin
+      ?~  error.hin
         [~ ..^$]
       ::  TODO better error handling
       ::
-      ~&  %clay-take-backfill-index-error^our^tea^tag.u.error.q.hin
-      %-  (slog tang.u.error.q.hin)
+      ~&  %clay-take-backfill-index-error^our^tea^tag.u.error.hin
+      %-  (slog tang.u.error.hin)
       [~ ..^$]
     ::
         %lost
@@ -4262,23 +4245,23 @@
       !!
     ::
         %boon
-      =+  ;;  =blob  payload.q.hin
+      =+  ;;  =blob  payload.hin
       ::
       =/  her=ship   (slav %p i.t.tea)
       =/  =desk      (slav %tas i.t.t.tea)
       =/  index=@ud  (slav %ud i.t.t.t.tea)
       ::
       =^  mos  ruf
-        =/  den  ((de our now ski hen ruf) her desk)
+        =/  den  ((de now rof hen ruf) her desk)
         abet:abet:(take-backfill:(foreign-update:den index) blob)
       [mos ..^$]
     ==
   ::
   ?:  ?=([%sinks ~] tea)
-    ?>  ?=(%public-keys +<.q.hin)
-    ?.  ?=(%breach -.public-keys-result.q.hin)
+    ?>  ?=(%public-keys +<.hin)
+    ?.  ?=(%breach -.public-keys-result.hin)
       [~ ..^$]
-    =/  who  who.public-keys-result.q.hin
+    =/  who  who.public-keys-result.hin
     ?:  =(our who)
       [~ ..^$]
     ::  Cancel subscriptions
@@ -4304,29 +4287,27 @@
     =.  hoy.ruf  (~(del by hoy.ruf) who)
     [cancel-moves ..^$]
   ::
-  ?-    -.+.q.hin
+  ?-    -.+.hin
       %public-keys  ~|([%public-keys-raw tea] !!)
-      %crud
-    [[[hen %slip %d %flog +.q.hin] ~] ..^$]
   ::
       %mere
-    ?:  ?=(%& -.p.+.q.hin)
+    ?:  ?=(%& -.p.+.hin)
       ~&  'initial merge succeeded'
       [~ ..^$]
     ~>  %slog.
         :^  0  %rose  [" " "[" "]"]
         :^    leaf+"initial merge failed"
             leaf+"my most sincere apologies"
-          >p.p.p.+.q.hin<
-        q.p.p.+.q.hin
+          >p.p.p.+.hin<
+        q.p.p.+.hin
     [~ ..^$]
   ::
-      %note  [[hen %give +.q.hin]~ ..^$]
+      %note  [[hen %give +.hin]~ ..^$]
       %wake
     ::  TODO: handle behn errors
     ::
-    ?^  error.q.hin
-      [[hen %slip %d %flog %crud %wake u.error.q.hin]~ ..^$]
+    ?^  error.hin
+      [[hen %slip %d %flog %crud %wake u.error.hin]~ ..^$]
     ::
     ?.  ?=([%tyme @ @ ~] tea)
       ~&  [%clay-strange-timer tea]
@@ -4334,7 +4315,7 @@
     =/  her  (slav %p i.t.tea)
     =/  syd  (slav %tas i.t.t.tea)
     =^  mos  ruf
-      =/  den  ((de our now ski hen ruf) her syd)
+      =/  den  ((de now rof hen ruf) her syd)
       abet:wake:den
     [mos ..^$]
   ::
@@ -4347,7 +4328,7 @@
     [~ ..^$]
   ::
       %done
-    ?~  error=error.q.hin
+    ?~  error=error.hin
       [~ ..^$]
     %-  (slog >%clay-lost< >tag.u.error< tang.u.error)
     [~ ..^$]

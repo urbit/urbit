@@ -4,9 +4,10 @@
 #include <stdio.h>
 #include "all.h"
 
-#define _CVX_WISH 22
-#define _CVX_POKE 47
-#define _CVX_PEEK 46
+#define _CVX_LOAD  4
+#define _CVX_PEEK 22
+#define _CVX_POKE 23
+#define _CVX_WISH 10
 
 /* u3v_life(): execute initial lifecycle, producing Arvo core.
 */
@@ -52,7 +53,12 @@ _cv_lite(u3_noun pil)
 {
   u3_noun eve, pro;
 
-  u3x_trel(pil, &eve, 0, 0);
+  {
+    u3_noun hed, tal;
+    u3x_cell(pil, &hed, &tal);
+    u3_assent( u3r_sing_c("ivory", hed) );
+    eve = tal;
+  }
 
   u3l_log("lite: arvo formula %x\r\n", u3r_mug(pil));
   pro = u3v_life(u3k(eve));
@@ -164,16 +170,6 @@ u3v_time(u3_noun now)
 {
   u3z(u3A->now);
   u3A->now = now;
-}
-
-/* u3v_numb(): set the instance number.
-*/
-void
-u3v_numb()
-{
-  u3A->sev_l = u3r_mug(u3A->now);
-  u3z(u3A->sen);
-  u3A->sen = _cv_scot(u3nc(c3__uv, u3A->sev_l));
 }
 
 #if 0
@@ -315,8 +311,6 @@ u3v_mark(FILE* fil_u)
 
   tot_w += u3a_maid(fil_u, "  kernel", u3a_mark_noun(arv_u->roc));
   tot_w += u3a_maid(fil_u, "  date", u3a_mark_noun(arv_u->now));
-  tot_w += u3a_maid(fil_u, "  formatted date", u3a_mark_noun(arv_u->wen));
-  tot_w += u3a_maid(fil_u, "  instance string", u3a_mark_noun(arv_u->sen));
   tot_w += u3a_maid(fil_u, "  wish cache", u3a_mark_noun(arv_u->yot));
   return   u3a_maid(fil_u, "total arvo stuff", tot_w);
 }
@@ -345,14 +339,10 @@ u3v_rewrite_compact()
 
   u3a_rewrite_noun(arv_u->roc);
   u3a_rewrite_noun(arv_u->now);
-  u3a_rewrite_noun(arv_u->wen);
-  u3a_rewrite_noun(arv_u->sen);
   u3a_rewrite_noun(arv_u->yot);
 
   arv_u->roc = u3a_rewritten_noun(arv_u->roc);
   arv_u->now = u3a_rewritten_noun(arv_u->now);
-  arv_u->wen = u3a_rewritten_noun(arv_u->wen);
-  arv_u->sen = u3a_rewritten_noun(arv_u->sen);
   arv_u->yot = u3a_rewritten_noun(arv_u->yot);
 }
 

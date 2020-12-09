@@ -90,9 +90,8 @@
 !:
 =/  protocol-version=?(%0 %1 %2 %3 %4 %5 %6 %7)  %0
 =,  ames
-=,  able
-=*  point               point:able:jael
-=*  public-keys-result  public-keys-result:able:jael
+=*  point               point:jael
+=*  public-keys-result  public-keys-result:jael
 ::  veb: verbosity flags
 ::
 =/  veb-all-off
@@ -105,7 +104,7 @@
       rot=`?`%.n  ::  routing attempts
   ==
 =>
-~%  %ames  ..is  ~
+~%  %ames  ..part  ~
 |%
 +|  %helpers
 ::  +trace: print if .verb is set and we're tracking .ship
@@ -598,8 +597,8 @@
 ::  $queued-event: event to be handled after initial boot completes
 ::
 +$  queued-event
-  $%  [%call =duct type=* wrapped-task=(hobo task)]
-      [%take =wire =duct type=* =sign]
+  $%  [%call =duct wrapped-task=(hobo task)]
+      [%take =wire =duct =sign]
   ==
 ::  $note: request to other vane
 ::
@@ -634,11 +633,11 @@
 ::  $sign: response from other vane
 ::
 +$  sign
-  $~  [%b %wake ~]
-  $%  $:  %b
-      $%  [%wake error=(unit tang)]
+  $~  [%behn %wake ~]
+  $%  $:  %behn
+      $%  $>(%wake gift:behn)
       ==  ==
-      $:  %j
+      $:  %jael
       $%  [%private-keys =life vein=(map life ring)]
           [%public-keys =public-keys-result]
           [%turf turfs=(list turf)]
@@ -721,39 +720,34 @@
 --
 ::  external vane interface
 ::
-|=  pit=vase
+|=  our=ship
 ::  larval ames, before %born sets .unix-duct; wraps adult ames core
 ::
 =<  =*  adult-gate  .
     =|  queued-events=(qeu queued-event)
     ::
-    |=  [our=ship now=@da eny=@ rof=roof]
+    |=  [now=@da eny=@ rof=roof]
     =*  larval-gate  .
     =*  adult-core   (adult-gate +<)
-    =*  scry-gate    (en-sley rof)
     |%
     ::  +call: handle request $task
     ::
     ++  call
-      |=  [=duct dud=(unit goof) type=* wrapped-task=(hobo task)]
+      |=  [=duct dud=(unit goof) wrapped-task=(hobo task)]
       ::
       =/  =task  ((harden task) wrapped-task)
       ::
-      ::  error notifications "downcast" to %crud or %hole
+      ::  reject larval error notifications
       ::
-      =?  task  ?=(^ dud)
-        ?-  -.task
-          %crud  ~|(%crud-in-crud !!)
-          %hear  [%hole [lane blob]:task]
-          *      [%crud -.task tang.u.dud]
-        ==
+      ?^  dud
+        ~|(%ames-larval-call-dud (mean tang.u.dud))
       ::
       ::  %born: set .unix-duct and start draining .queued-events
       ::
       ?:  ?=(%born -.task)
         ::  process %born using wrapped adult ames
         ::
-        =^  moves  adult-gate  (call:adult-core duct dud type task)
+        =^  moves  adult-gate  (call:adult-core duct dud task)
         ::  if no events were queued up, metamorphose
         ::
         ?~  queued-events
@@ -767,12 +761,12 @@
       ::
       ::    XX what to do with errors?
       ::
-      =.  queued-events  (~(put to queued-events) %call duct type task)
+      =.  queued-events  (~(put to queued-events) %call duct task)
       [~ larval-gate]
     ::  +take: handle response $sign
     ::
     ++  take
-      |=  [=wire =duct dud=(unit goof) type=* =sign]
+      |=  [=wire =duct dud=(unit goof) =sign]
       ?^  dud
         ~|(%ames-larval-take-dud (mean tang.u.dud))
       ::  enqueue event if not a larval drainage timer
@@ -780,11 +774,11 @@
       ::    XX what to do with errors?
       ::
       ?.  =(/larva wire)
-        =.  queued-events  (~(put to queued-events) %take wire duct type sign)
+        =.  queued-events  (~(put to queued-events) %take wire duct sign)
         [~ larval-gate]
       ::  larval event drainage timer; pop and process a queued event
       ::
-      ?.  ?=([%b %wake *] sign)
+      ?.  ?=([%behn %wake *] sign)
         ~>  %slog.0^leaf/"ames: larva: strange sign"
         [~ larval-gate]
       ::  if crashed, print, dequeue, and set next drainage timer
@@ -817,15 +811,14 @@
       =^  first-event  queued-events  ~(get to queued-events)
       =^  moves  adult-gate
         ?-  -.first-event
-          %call  (call:adult-core [duct ~ type wrapped-task]:+.first-event)
-          %take  (take:adult-core [wire duct ~ type sign]:+.first-event)
+          %call  (call:adult-core [duct ~ wrapped-task]:+.first-event)
+          %take  (take:adult-core [wire duct ~ sign]:+.first-event)
         ==
       ::  .queued-events has been cleared; metamorphose
       ::
       ?~  queued-events
         ~>  %slog.0^leaf/"ames: metamorphosis"
         [moves adult-gate]
-      ~>  %slog.0^leaf/"ames: larva: drain"
       ::  set timer to drain next event
       ::
       =.  moves  :_(moves [duct %pass /larva %b %wait now])
@@ -858,39 +851,34 @@
 ::
 =<
 =|  =ames-state
-|=  [our=ship now=@da eny=@ rof=roof]
+|=  [now=@da eny=@ rof=roof]
 =*  ames-gate  .
 =*  veb  veb.bug.ames-state
-=*  scry-gate  (en-sley rof)
 |%
 ::  +call: handle request $task
 ::
 ++  call
-  |=  [=duct dud=(unit goof) type=* wrapped-task=(hobo task)]
+  |=  [=duct dud=(unit goof) wrapped-task=(hobo task)]
   ^-  [(list move) _ames-gate]
   ::
   =/  =task  ((harden task) wrapped-task)
-  ::
-  ::  error notifications "downcast" to %crud or %hole
-  ::
-  =?  task  ?=(^ dud)
-    ?-  -.task
-      %crud  ~|(%crud-in-crud !!)
-      %hear  [%hole [lane blob]:task]
-      *      [%crud -.task tang.u.dud]
-    ==
-  ::
-  =/  event-core  (per-event [our now eny scry-gate] duct ames-state)
+  =/  event-core  (per-event [now eny rof] duct ames-state)
   ::
   =^  moves  ames-state
     =<  abet
+    ::  handle error notifications
+    ::
+    ?^  dud
+      ?+  -.task
+          (on-crud:event-core -.task tang.u.dud)
+        %hear  (on-hole:event-core [lane blob]:task)
+      ==
+    ::
     ?-  -.task
       %born  on-born:event-core
-      %crud  (on-crud:event-core [p q]:task)
       %hear  (on-hear:event-core [lane blob]:task)
       %heed  (on-heed:event-core ship.task)
-      %hole  (on-hole:event-core [lane blob]:task)
-      %init  (on-init:event-core ship=p.task)
+      %init  on-init:event-core
       %jilt  (on-jilt:event-core ship.task)
       %sift  (on-sift:event-core ships.task)
       %spew  (on-spew:event-core veb.task)
@@ -904,13 +892,13 @@
 ::  +take: handle response $sign
 ::
 ++  take
-  |=  [=wire =duct dud=(unit goof) type=* =sign]
+  |=  [=wire =duct dud=(unit goof) =sign]
   ^-  [(list move) _ames-gate]
   ?^  dud
     ~|(%ames-take-dud (mean tang.u.dud))
   ::
   ::
-  =/  event-core  (per-event [our now eny scry-gate] duct ames-state)
+  =/  event-core  (per-event [now eny rof] duct ames-state)
   ::
   =^  moves  ames-state
     =<  abet
@@ -918,11 +906,11 @@
       [@ %done *]   (on-take-done:event-core wire error.sign)
       [@ %boon *]   (on-take-boon:event-core wire payload.sign)
     ::
-      [%b %wake *]  (on-take-wake:event-core wire error.sign)
+      [%behn %wake *]  (on-take-wake:event-core wire error.sign)
     ::
-      [%j %turf *]          (on-take-turf:event-core turfs.sign)
-      [%j %private-keys *]  (on-priv:event-core [life vein]:sign)
-      [%j %public-keys *]   (on-publ:event-core wire public-keys-result.sign)
+      [%jael %turf *]          (on-take-turf:event-core turfs.sign)
+      [%jael %private-keys *]  (on-priv:event-core [life vein]:sign)
+      [%jael %public-keys *]   (on-publ:event-core wire public-keys-result.sign)
     ==
   ::
   [moves ames-gate]
@@ -938,9 +926,10 @@
 ::  +scry: dereference namespace
 ::
 ++  scry
-  |=  [lyc=gang cyr=term bem=beam]
+  ^-  roon
+  |=  [lyc=gang car=term bem=beam]
   ^-  (unit (unit cage))
-  =*  ren  cyr
+  =*  ren  car
   =*  why=shop  &/p.bem
   =*  syd  q.bem
   =*  lot=coin  $/r.bem
@@ -1054,7 +1043,7 @@
 ++  per-event
   =|  moves=(list move)
   ~%  %event-gate  ..per-event  ~
-  |=  [[our=ship now=@da eny=@ scry-gate=sley] =duct =ames-state]
+  |=  [[now=@da eny=@ rof=roof] =duct =ames-state]
   =*  veb  veb.bug.ames-state
   ~%  %event-core  ..$  ~
   |%
@@ -1158,8 +1147,7 @@
       %-  silt
       ;;  (list [@da ^duct])
       =<  q.q  %-  need  %-  need
-      %-  scry-gate
-      [[%141 %noun] ~ %b [[our %timers da+now] /]]
+      (rof ~ %b [[our %timers da+now] /])
     =/  to-stir
       %+  skip  next-real-wakes
       |=  [=ship =bone =@da]
@@ -1410,7 +1398,6 @@
   ::  +on-init: first boot; subscribe to our info from jael
   ::
   ++  on-init
-    |=  our=ship
     ^+  event-core
     ::
     =~  (emit duct %pass /turf %j %turf ~)
@@ -1662,8 +1649,7 @@
       ^-  ship
       ;;  ship
       =<  q.q  %-  need  %-  need
-      %-  scry-gate
-      [[%141 %noun] ~ %j `beam`[[our %sein %da now] /(scot %p who)]]
+      (rof ~ %j `beam`[[our %sein %da now] /(scot %p who)])
     --
   ::  +on-take-turf: relay %turf move from jael to unix
   ::
@@ -1682,7 +1668,7 @@
     =/  turfs
       ;;  (list turf)
       =<  q.q  %-  need  %-  need
-      (scry-gate [%141 %noun] ~ %j `beam`[[our %turf %da now] /])
+      (rof ~ %j `beam`[[our %turf %da now] /])
     ::
     (emit unix-duct.ames-state %give %turf turfs)
   ::  +on-trim: handle request to free memory

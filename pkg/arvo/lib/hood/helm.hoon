@@ -43,10 +43,10 @@
 ::
 ++  poke-rekey                                        ::  rotate private keys
   |=  des=@t
-  =/  sed=(unit seed:able:jael)
+  =/  sed=(unit seed:jael)
     %+  biff
       (bind (slaw %uw des) cue)
-    (soft seed:able:jael)
+    (soft seed:jael)
   =<  abet
   ?~  sed
     ~&  %invalid-private-key
@@ -67,13 +67,13 @@
   =.  p.hot  (scag 2 p.hot)      :: ignore subdomain
   =.  dat  (scot %uw (en:crub:crypto ames-secret dat))
   =-  abet:(emit %pass /write %arvo %c %info -)
-  =/  byk=path  (en-beam:format byk.bowl(r da+now.bowl) ~)
+  =/  byk=path  (en-beam byk.bowl(r da+now.bowl) ~)
   =+  .^(=tube:clay cc+(welp byk /mime/atom))
   =/  =cage  atom+(tube !>([/ (as-octs:mimes:html dat)]))
   (foal:space:userlib :(welp byk sec+p.hot /atom) cage)
 ::
 ++  poke-moon                                        ::  rotate moon keys
-  |=  sed=(unit [=ship =udiff:point:able:jael])
+  |=  sed=(unit [=ship =udiff:point:jael])
   =<  abet
   ?~  sed
     this

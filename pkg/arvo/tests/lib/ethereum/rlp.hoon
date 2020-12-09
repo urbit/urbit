@@ -1,7 +1,7 @@
 ::NOTE  tests lightly modified from the examples here:
 ::      https://github.com/ethereum/wiki/wiki/RLP
 ::
-/+  *test
+/+  ethereum, *test
 =,  rlp:ethereum
 ::
 =/  vectors=(list [nom=tape dat=@ rlp=item])

@@ -11,7 +11,7 @@
 =/  b-mark=mark  -:(flop b-path)
 ?.  =(a-mark b-mark)
   (strand-fail:strandio %files-not-same-type ~)
-=/  a-beam  (need (de-beam:format a-path))
+=/  a-beam  (need (de-beam a-path))
 ;<  =a=cage     bind:m  (get-file a-path)
 ;<  =b=cage     bind:m  (get-file b-path)
 ;<  =dais:clay  bind:m  (build-mark:strandio -.a-beam a-mark)
@@ -21,7 +21,7 @@
   |=  =path
   =/  m  (strand ,cage)
   ^-  form:m
-  =/  beam  (need (de-beam:format path))
+  =/  beam  (need (de-beam path))
   ;<  =riot:clay  bind:m
     (warp:strandio p.beam q.beam ~ %sing %x r.beam s.beam)
   ?~  riot

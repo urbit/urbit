@@ -1,4 +1,4 @@
-/+  *test
+/+  ethereum, *test
 |%
 ::NOTE  results for test cases generated with web3.js
 ::
