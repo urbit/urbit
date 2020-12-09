@@ -1,5 +1,4 @@
 /-  sur=btc
-/+  base64
 ^?
 =<  [sur .]
 =,  sur
@@ -26,7 +25,7 @@
   ::  if there are leading 0s, lshift by their amount after flip to little endian to preserve 
   =/  pad=@  (sub wid.byts (met 3 dat.byts))
   =/  little-endian=@
-    (lsh 3 pad (swp 3 dat.byts))
+    (lsh [3 pad] (swp 3 dat.byts))
   %-  hash256
   :-  32
   %+  swp  3
@@ -175,7 +174,7 @@
     |=  psbt-base64=cord
     ^-  ^buffer
     ~|  "Invalid PSBT"
-    =+  p=(de:base64 psbt-base64)
+    =+  p=(de:base64:mimes:html psbt-base64)
     ?~  p  !!
     =/  bigend=@ux  (swp 3 q.u.p)
     (from-byts:buffer [(met 3 bigend) bigend])
@@ -224,7 +223,7 @@
     =/  bits=(list @)  (flop (rip 0 a))
     =/  pad=@  (sub num-bits (lent bits))
     (weld (reap pad 0) bits)
-  ::  converts from bit list to a list of atoms each with bitwidth d(est)
+  ::  +convert: list of bits to a list of atoms each with bitwidth d(est)
   ::
   ++  convert
     |=  [d=@ bits=(list @)]
@@ -234,10 +233,8 @@
     =/  dest-bits  (scag d ((list @) bits))
     ::  left-shift the "missing" number of bits
     =/  num=@
-      %:  lsh  0
-          (sub d (lent dest-bits))
-          (rep 0 (flop dest-bits))
-      ==
+      %+  lsh  [0 (sub d (lent dest-bits))]
+      (rep 0 (flop dest-bits))
     $(ret (snoc ret num), bits (slag d ((list @) bits)))
   ::  Converts e.g. ~[0 0 31 31 31 31 0 0] in base32 (5 bitwidth)
   ::  to ~[0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0]
@@ -274,16 +271,16 @@
       ~[0x3b6a.57b2 0x2650.8e6d 0x1ea1.19fa 0x3d42.33dd 0x2a14.62b3]
     =/  chk=@  1
     |-  ?~  values  chk
-    =/  top  (rsh 0 25 chk)
+    =/  top  (rsh [0 25] chk)
     =.  chk
-      (mix i.values (lsh 0 5 (dis chk 0x1ff.ffff)))
+      (mix i.values (lsh [0 5] (dis chk 0x1ff.ffff)))
     $(values t.values, chk (update-chk chk top gen))
   ::
     ++  update-chk
       |=  [chk=@ top=@ gen=(list @ux)]
       =/  is  (gulf 0 4)
       |-  ?~  is  chk
-      ?:  =(1 (dis 1 (rsh 0 i.is top)))
+      ?:  =(1 (dis 1 (rsh [0 i.is] top)))
         $(is t.is, chk (mix chk (snag i.is gen)))
       $(is t.is)
     --
@@ -291,7 +288,7 @@
   ++  expand-hrp
     |=  hrp=tape
     ^-  (list @)
-    =/  front  (turn hrp |=(p=@tD (rsh 0 5 p)))
+    =/  front  (turn hrp |=(p=@tD (rsh [0 5] p)))
     =/  back   (turn hrp |=(p=@tD (dis 31 p)))
     (zing ~[front ~[0] back])
   ::
@@ -312,7 +309,7 @@
       %-  polymod
       (zing ~[(expand-hrp hrp) data (reap 6 0)])
     %+  turn  (gulf 0 5)
-    |=(i=@ (dis 31 (rsh 0 (mul 5 (sub 5 i)) pmod)))
+    |=(i=@ (dis 31 (rsh [0 (mul 5 (sub 5 i))] pmod)))
   ::
   ++  charset-to-value
     |=  c=@tD
