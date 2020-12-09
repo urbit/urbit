@@ -533,6 +533,8 @@
 ++  send-sign-tx
   |=  =txbu:bws
   ^-  card
+  ~&  >>  "transaction ready to sign"
+  ~&  >  txinfo.txbu
   [%give %fact ~[/sign-me] %btc-wallet-hook-request !>([%sign-tx txbu])]
 ::
 ++  poke-wallet-store
