@@ -1,7 +1,7 @@
 ::  Create a private key-file
 ::
 /-  *sole
-/+  *generators
+/+  *generators, ethereum
 ::
 :-  %ask
 |=  $:  [now=@da eny=@uvJ bec=beak]

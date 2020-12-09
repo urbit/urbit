@@ -1,7 +1,7 @@
 ::  list of ethereum transactions
 ::
+/+  *ethereum
 =,  format
-=,  ethereum
 =,  rpc
 =,  mimes:html
 ::
