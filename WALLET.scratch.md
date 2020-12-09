@@ -81,10 +81,12 @@ All on `~zod`:
 :btc-provider|command [%set-credentials api-url='http://localhost:50002']
 :btc-wallet-hook|action [%set-provider ~zod]
 =scan-xpub 'zpub6rFR7y4Q2AijBEqTUquhVz398htDFrtymD9xYYfG1m4wAcvPhXNfE3EfH1r1ADqtfSdVCToUG868RvUUkgDKf31mGDtKsAYz2oz2AGutZYs'
-:btc-wallet-store|action [%add-wallet scan-xpub ~ [~ 3] [~ 6]]
+=fprint [%4 0xdead.beef]
+:btc-wallet-store|action [%add-wallet scan-xpub fprint ~ [~ 3] [~ 6]]
 
 :btc-wallet-store|action [%generate-address scan-xpub %0 meta=~]
 ```
+:: make sure that the above address is watched
 
 
 ## Make a full TXBU
