@@ -335,7 +335,6 @@
     ::   if no peta (payer/value), just prints address
     ::
       %generate-address
-    :: TODO: find a way to not print the below for a change address
     ?~  peta.upd  ~&(> "wallet-hook: %generate-address: {<address.upd>}" `state)
     =/  [payer=ship value=sats]  u.peta.upd
     :_  state(ps.piym (~(put by ps.piym) payer [xpub.upd address.upd payer value]))
@@ -345,6 +344,7 @@
     ::   - request provider to create-raw-tx from txbu
     ::
       %generate-txbu
+    :: TODO make tx info fetch correctly
     :_  state(poym `txbu.upd)
     ?~  provider  ~&(>>> "provider not set" ~)
     %+  weld  ~[(create-raw-tx host.u.provider txbu.upd)]
@@ -425,7 +425,6 @@
   |=  [ri=req-id:bp =txid rt=rawtx]
   ^-  ^poym
   ?~  poym  ~
-  ?~  txinfo.u.poym  poym
   ?.  =(ri req-id.u.poym)  poym
   `u.poym(txinfo `[txid rt])
   :: check poym txbu
