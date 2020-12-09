@@ -713,12 +713,11 @@
   |=  arc=*
   ^-  (quip card _state)
   =/  sty=state-11
-    :*  %11
-      (remake-map ;;((tree [path ship]) +<.arc))
-      ;;(? +>-.arc)
+    :+  %11
+      :+  (remake-map ;;((tree [path ship]) +<.arc))
+        ;;(? +>-.arc)
       (remake-map ;;((tree [path ?]) +>+.arc))
-      ~
-    ==
+    ~
   :_  sty
   :_  ~
   =-  [%pass /self-poke %agent [our.bol %chat-hook] %poke -]

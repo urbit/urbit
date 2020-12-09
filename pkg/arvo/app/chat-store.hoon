@@ -54,7 +54,7 @@
       ::
         %3
       =.  cards  (weld cards (migrate-inbox:cc inbox.old))
-      [cards this(state old)]
+      $(old [%4 inbox])
       ::
       ::%_    $
         ::cards  (weld cards migrate-inbox)
@@ -370,7 +370,7 @@
 ++  mailbox-to-update
   |=  [=path =mailbox:store]
   ^-  update:graph-store
-  :+  %0  now.bowl
+  :+  %0  now.bol
   :+  %add-graph
     (path-to-resource:store path)
   :-  (mailbox-to-graph mailbox)
@@ -380,7 +380,7 @@
 ++  poke-graph-store
   |=  =update:graph-store
   ^-  card
-  [%pass / %agent [our.bowl %graph-store] %poke %graph-update !>(update)]
+  [%pass / %agent [our.bol %graph-store] %poke %graph-update !>(update)]
 ::
 ++  letter-to-contents
   |=  =letter:store

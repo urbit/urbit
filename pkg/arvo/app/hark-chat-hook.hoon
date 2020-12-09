@@ -11,7 +11,7 @@
 ++  on-load
   |=  =vase
   :_  this
-  ~[%pass /chat %agent [our.bowl %chat-store] %leave ~]
+  [%pass /chat %agent [our.bowl %chat-store] %leave ~]~
 ++  on-arvo   on-arvo:def
 ++  on-agent  on-agent:def
 ++  on-poke   on-poke:def
