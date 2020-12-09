@@ -1,5 +1,5 @@
-/-  sur=btc-provider
-/+  base64, *btc
+/-  sur=btc-provider, json-rpc
+/+  *btc
 ^?
 =<  [sur .]
 =,  sur
@@ -41,10 +41,10 @@
   ?:  =('' h)  0x0
   ::  Add leading 00
   ::
-  =+  (lsh 3 2 h)
+  =+  (lsh [3 2] h)
   ::  Group by 4-size block
   ::
-  =+  (rsh 3 2 -)
+  =+  (rsh [3 2] -)
   ::  Parse hex to atom
   ::
   `@ux`(rash - hex)
@@ -114,7 +114,7 @@
   ^-  result
   *result
 ++  parse-response
-  |=  res=response:rpc:jstd
+  |=  res=response:json-rpc
   |^  ^-  response:rpc
   ~|  -.res
   ::  ignores RPC responses of %error, %fails and %batch
@@ -221,19 +221,19 @@
 ::
 ++  httr-to-rpc-response
   |=  hit=httr:eyre
-  ^-  response:rpc:jstd
+  ^-  response:json-rpc
   ~|  hit
   =/  jon=json  (need (de-json:html q:(need r.hit)))
   ?.  =(%2 (div p.hit 100))
     (parse-rpc-error jon)
   =,  dejs-soft:format
-  ^-  response:rpc:jstd
+  ^-  response:json-rpc
   =;  dere
     =+  res=((ar dere) jon)
     ?~  res  (need (dere jon))
     [%batch u.res]
   |=  jon=json
-  ^-  (unit response:rpc:jstd)
+  ^-  (unit response:json-rpc)
   =/  res=[id=(unit @t) res=(unit json) err=(unit json)]
     %.  jon
     =,  dejs:format
@@ -249,7 +249,7 @@
 ::
 ++  get-rpc-response
   |=  response=client-response:iris
-  ^-  response:rpc:jstd
+  ^-  response:json-rpc
   ?>  ?=(%finished -.response)
   %-  httr-to-rpc-response
     %+  to-httr:iris
@@ -258,7 +258,7 @@
 ::
 ++  parse-rpc-error
   |=  =json
-  ^-  response:rpc:jstd
+  ^-  response:json-rpc
   :-  %error
   ?~  json  ['' '' '']
   %.  json

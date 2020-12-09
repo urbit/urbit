@@ -6,7 +6,7 @@
 ::    current connection state
 ::    results/errors of RPC calls
 ::
-/-  btc
+/-  btc, json-rpc
 /+  *btc-provider, dbug, default-agent
 |%
 +$  versioned-state
@@ -154,7 +154,7 @@
   ?^  conn-err
     :_  state(connected.host-info %.n)
     ~[(send-status [%disconnected ~]) (send-update [%| u.conn-err])]
-  =/  rpc-resp=response:rpc:jstd
+  =/  rpc-resp=response:json-rpc
     (get-rpc-response response)
   ?.  ?=([%result *] rpc-resp)
     [~[(send-update [%| [%rpc-error ~]])] state]
