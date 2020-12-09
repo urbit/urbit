@@ -6695,7 +6695,8 @@
 ~%    %pen
     +
   ==
-    %ut  ut
+    %ap    ap
+    %ut    ut
   ==
 |%
 ::
@@ -8196,7 +8197,12 @@
   --
 ::
 ++  ap                                                  ::  hoon engine
-  ~%  %ap  +>+  ~
+  ~%    %ap
+      +>+
+    ==
+      %open  open
+      %rake  rake
+    ==
   |_  gen=hoon
   ::
   ++  grip
@@ -8728,9 +8734,46 @@
   ~%    %ut
       +>+
     ==
+      %ar     ar
       %fan    fan
       %rib    rib
       %vet    vet
+      %blow   blow
+      %burp   burp
+      %busk   busk
+      %buss   buss
+      %crop   crop
+      %duck   duck
+      %dune   dune
+      %dunk   dunk
+      %epla   epla
+      %emin   emin
+      %emul   emul
+      %feel   feel
+      %felt   felt
+      %fine   fine
+      %fire   fire
+      %fish   fish
+      %fond   fond
+      %fund   fund
+      %funk   funk
+      %fuse   fuse
+      %gain   gain
+      %lose   lose
+      %mile   mile
+      %mine   mine
+      %mint   mint
+      %moot   moot
+      %mull   mull
+      %nest   nest
+      %peel   peel
+      %play   play
+      %peek   peek
+      %repo   repo
+      %rest   rest
+      %tack   tack
+      %toss   toss
+      %wrap   wrap
     ==
   =+  :*  fan=*(set [type hoon])
           rib=*(set [type type hoon])
@@ -8745,8 +8788,14 @@
   ::
   ::  +ar: texture engine
   ::
-  ++  ar
-    ~%  %ar  +>  ~
+  ++  ar  !:
+    ~%    %ar
+        +>
+      ==
+        %fish  fish
+        %gain  gain
+        %lose  lose
+      ==
     |_  [ref=type =skin]
     ::
     ::  =fish: make a $nock that tests a .ref at .axis for .skin
@@ -9715,6 +9764,7 @@
     |=  [hud=poly gol=type gen=hoon]
     ^-  nock
     ~+
+    =+  %hemp-141
     ?-  hud
       %dry  q:(mint gol gen)
       %wet  q:(mint(vet |) gol gen)
@@ -9726,6 +9776,7 @@
     |=  [nym=(unit term) hud=poly dom=(map term tome)]
     ~+
     ^-  seminoun
+    =+  %hemp-141
     ::  tal: map from battery axis to foot
     ::
     =;  tal=(map @ud hoon)
@@ -10628,7 +10679,6 @@
     ==
   ::                                                    ::
   ++  redo                                              ::  refurbish faces
-    ~/  %redo
     |=  $:  ::  ref: raw payload
             ::
             ref=type
@@ -11532,7 +11582,6 @@
   |=  [tap=(trap vase) gen=hoon]
   ^-  (trap vase)
   =/  gun  (~(mint ut p:$:tap) %noun gen)
-  =>  [tap=tap gun=gun]
   |.  ~+
   [p.gun .*(q:$:tap q.gun)]
 ::
@@ -13758,7 +13807,10 @@
 ++  ride                                                ::  end-to-end compiler
   |=  [typ=type txt=@]
   ^-  (pair type nock)
+  ~>  %slog.[0 leaf/"ride: parsing"]
   =/  gen  (ream txt)
+  ~>  %slog.[0 leaf/"ride: compiling"]
+  ~<  %slog.[0 leaf/"ride: compiled"]
   (~(mint ut typ) %noun gen)
 ::
 ::::  5e: molds and mold builders
