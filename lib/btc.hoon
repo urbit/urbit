@@ -15,9 +15,9 @@
 ::
 ++  flip-byts
   |=  b=btc-byts
-  %-  to-byts:buffer
+  %-  to-byts:buf
   %-  flop
-  %-  from-byts:buffer  b
+  %-  from-byts:buf  b
 ::  big endian sha256: input and output are both MSB first (big endian)
 ::
 ++  sha256
@@ -44,14 +44,14 @@
   %-  sha256  [(met 3 pubkey) pubkey]
 ::
 ++  to-script-pubkey
-  |=  script=^buffer  ^-  ^buffer
+  |=  script=buffer  ^-  buffer
   %-  zing
   :~  ~[0x19 0x76 0xa9 0x14]
       script
       ~[0x88 0xac]
   ==
 ++  address-to-script-pubkey
-  |=  =address  ^-  ^buffer
+  |=  =address  ^-  buffer
   =/  hex=byts
     ?-  -.address
         %bech32
@@ -62,7 +62,7 @@
     ==
   ?.  =(wid.hex 20)
     ~|("Only 20-byte addresses supported" !!)
-  (to-script-pubkey (from-byts:buffer hex))
+  (to-script-pubkey (from-byts:buf hex))
 ::  arms to handle BIP174 PSBTs
 ::
 ++  psbt
@@ -112,37 +112,37 @@
     |=  [pubkey=btc-byts =target:^psbt =hdkey] 
     ^-  keyval:^psbt
     =/  k=btc-byts
-      %-  to-byts:buffer
+      %-  to-byts:buf
       ?-  target
           %input
-        [0x6 (from-byts:buffer pubkey)]
+        [0x6 (from-byts:buf pubkey)]
           ::
           %output
-        [0x2 (from-byts:buffer pubkey)]
+        [0x2 (from-byts:buf pubkey)]
       ==
     =/  bip  ?-  bipt.hdkey
                %bip84  0x54
                %bip49  0x31
                %bip44  0x2c
              ==
-    =/  hdpath=^buffer
+    =/  hdpath=buffer
       %+  weld
         :~   bip  0x0  0x0  0x80
              0x0  0x0  0x0  0x80
              0x0  0x0  0x0  0x80
              `@ux`chyg.hdkey  0x0  0x0  0x0
         ==
-      (from-atom-le:buffer (met 3 idx.hdkey) idx.hdkey)
+      (from-atom-le:buf (met 3 idx.hdkey) idx.hdkey)
     :-  k
-    %-  concat-as-byts:buffer
-    :~  (from-byts:buffer fprint.hdkey)
+    %-  concat-as-byts:buf
+    :~  (from-byts:buf fprint.hdkey)
         hdpath
     ==
   ::
   ++  parse
     |=  psbt-base64=cord
     ^-  (list map:^psbt)
-    =/  todo=^buffer
+    =/  todo=buffer
       %+  slag  5  (to-buffer psbt-base64)
     =|  acc=(list map:^psbt)
     =|  m=map:^psbt
@@ -174,7 +174,7 @@
   ::    crashes if tx not in buffer
   ::
   ++  raw-tx
-    |=  b=^buffer
+    |=  b=buffer
     |-  ^-  btc-byts
     ?~  b  !!
     ?:  =(0x0 i.b)  !!
@@ -186,8 +186,8 @@
   ::   input buffer head must be a map key length
   ::
   ++  next-keyval
-    |=  b=^buffer
-    ^-  [kv=keyval:^psbt rest=^buffer]
+    |=  b=buffer
+    ^-  [kv=keyval:^psbt rest=buffer]
     =+  klen=(snag 0 b)
     =+  k=(swag [1 klen] b)
     =+  vlen=(snag (add 1 klen) b)
@@ -195,26 +195,26 @@
     =+  len=(add 2 (add klen vlen))
     ?>  ?=([^ ^] [k v])
     :_  (slag len b)
-    :-  (to-byts:buffer k)
-        (to-byts:buffer v)
+    :-  (to-byts:buf k)
+        (to-byts:buf v)
   ::
   ++  to-buffer
     |=  psbt-base64=cord
-    ^-  ^buffer
+    ^-  buffer
     ~|  "Invalid PSBT"
     =+  p=(de:base64:mimes:html psbt-base64)
     ?~  p  !!
     =/  bigend=@ux  (swp 3 q.u.p)
-    (from-byts:buffer [(met 3 bigend) bigend])
+    (from-byts:buf [(met 3 bigend) bigend])
   --
 ::  buffer: byte buffer utilities
 ::  list of @ux that is big endian for hashing purposes
 ::  used to preserve 0s when concatenating byte sequences
 ::
-++  buffer
+++  buf
   |%
   ++  from-byts
-    |=  =byts  ^-  ^buffer
+    |=  =byts  ^-  buffer
     =/  b=(list @ux)
       (flop (rip 3 dat.byts))
     =/  pad=@  (sub wid.byts (lent b))
@@ -224,23 +224,31 @@
   ::  0xff11 with wid=8 becomes ~[0x11 0xff 0x0 0x0 0x0 0x0 0x0 0x0]
   ::
   ++  from-atom-le
-    |=  [wid=@ a=@]  ^-  ^buffer
+    |=  [wid=@ a=@]  ^-  buffer
     =/  b=(list @ux)  (rip 3 a)
     =/  pad=@  (sub wid (lent b))
     (weld b (reap pad 0x0))
   ::
   ++  to-byts
-    |=  b=^buffer  ^-  byts
+    |=  b=buffer  ^-  byts
     [(lent b) (rep 3 (flop b))]
   ::
   ++  concat-as-byts
-    |=  bs=(list ^buffer)  ^-  byts
+    |=  bs=(list buffer)  ^-  byts
     %-  to-byts  (zing bs)
+  --
+++  byt
+  |%
+  ++  cat
+    |=  bs=(list byts)
+    ^-  byts
+    :-  (roll (turn bs |=(b=byts -.b)) add)
+    (can 3 (flop bs))
   --
 ::  Converts a list of bits to a list of n-bit numbers
 ::  input-bits should be big-endian
 ::
-++  bits
+++  bit
   |%
   ::  rip atom a with num-bits. Preserve leading 0s, big endian
   ::  returns a list of bits
@@ -396,14 +404,14 @@
     =/  d=(unit raw-decoded)  (decode-raw b)
     ?~  d  ~|("Invalid bech32 address" !!)
     =/  bs=(list @)
-      (from-digits:bits 5 (slag 1 data.u.d))
+      (from-digits:bit 5 (slag 1 data.u.d))
     =/  byt-len=@  (div (lent bs) 8)
     ?.  =(0 (mod (lent bs) 8))
       ~|("Invalid bech32 address: not 8bit" !!)
     ?.  ?|(?=(%20 byt-len) ?=(%32 byt-len))
       ~|("Invalid bech32 address: must be 20 (P2WPKH) or 32 (P2WSH) bytes" !!)
     %-  hash
-    [byt-len (to-atom:bits bs)]
+    [byt-len (to-atom:bit bs)]
   ::  pubkey is the 33 byte ECC compressed public key
   ::
   ++  encode-pubkey
@@ -415,7 +423,7 @@
     ?~  prefix  ~
     :-  ~
     %+  encode-raw  u.prefix
-    [0 (convert:bits 5 (zeros-brip:bits 160 dat:(hash-160 pubkey)))]
+    [0 (convert:bit 5 (zeros-brip:bit 160 dat:(hash-160 pubkey)))]
   ++  encode-hash-160
     |=  [=network h160=byts]
     ^-  (unit bech32-address)
@@ -423,7 +431,7 @@
     ?~  prefix  ~
     :-  ~
     %+  encode-raw  u.prefix
-    [0 (convert:bits 5 (zeros-brip:bits 160 dat.h160))]
+    [0 (convert:bit 5 (zeros-brip:bit 160 dat.h160))]
   --
 ::
 --
