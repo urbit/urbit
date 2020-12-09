@@ -89,15 +89,18 @@
         nixt-idx
         (update-address addr [%.n chyg nixt-idx *(set utxo:btc)])
     ==
-  ::  insert a new address; update "nixt" free address if this one was it
+  ::  +update-address
+  ::   - insert a new address
+  ::   - update "nixt" free address if this one was it
+  ::   - watch the new nixt
   ::
   ++  update-address
     |=  [a=address:btc =addi]
     ^-  walt
     ?>  =(chyg chyg.addi)
     ?>  =(a (mk-address idx.addi))
-    =?  nixt.w  (is-nixt addi)
-      new:bump-nixt
+    =?  w  (is-nixt addi)
+      bump-nixt
     w(wach (~(put by wach.w) a addi))
   ::
   ++  is-nixt
@@ -107,20 +110,24 @@
     =(idx.addi q.nixt.w)
   ++  nixt-idx
     ?:(?=(%0 chyg) p.nixt.w q.nixt.w)
-  ::  Returns: the prior idx in the account
-  ::           nixt with account idx bumped
-  ::  Increments idx until an unwatched address is found
-  ::  Crashes if max-index is passed
+  ::  +bump-nixt: return wallet with bumped nixt
+  ::   - find next unused address
+  ::   - add that address to wach
+  ::   - crashes if max-index is passed
   ::
   ++  bump-nixt
-    |^  ^-  [old=idx:btc new=nixt]
-    :-  nixt-idx
+    |^  ^-  walt
     =/  new-idx=idx:btc  +(nixt-idx)
     |-  ?>  (lte new-idx max-index)
-    =/  a=(unit addi)
-      (~(get by wach.w) (mk-address new-idx))
-    ?~  a  (set-nixt new-idx)
-    ?:  ?!(used.u.a)  (set-nixt new-idx)
+    =+  addr=(mk-address new-idx)
+    =/  =addi
+      %+  ~(gut by wach.w)  addr
+      [%.n chyg new-idx *(set utxo:btc)]
+    ?.  used.addi
+      %=  w
+          nixt  (set-nixt new-idx)
+          wach  (~(put by wach.w) addr addi)
+      ==
     $(new-idx +(new-idx))
     ::
     ++  set-nixt
