@@ -266,7 +266,8 @@
     (bump-batch xpub %1)
   :-  (weld cards0 cards1)
   state(scans (insert-batches xpub batch0 batch1))
-::  +update-address: watch the address passed; update wallet if it's used
+::  +update-address: watch the address passed;
+::  - update wallet with the address
 ::  - if address is unused, send %address-info request
 ::  - if address doesn't have enough confs, send %address-info request
 ::  - if this idx was the last in todo.scans, do run-scan to see whether scan is done
@@ -279,7 +280,7 @@
     state(last-block last-block)
   =/  w=(unit walt)  (~(get by walts) xpub)
   ?~  w  `state
-  =?  walts  used
+  =.  walts
     %+  ~(put by walts)  xpub
     %+  ~(update-address wad u.w chyg)
       (~(mk-address wad u.w chyg) idx)
