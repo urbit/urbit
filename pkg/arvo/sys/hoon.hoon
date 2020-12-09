@@ -10560,8 +10560,9 @@
               heg=?^(i.hyp i.hyp [%| p=0 q=(some i.hyp)])
           ==
       ?:  ?=(%& -.heg)
+        =^  rig  grub  (caching-peek way p.heg)
         :_  grub
-        [%& [`p.heg lon] %& (peek way p.heg)]
+        [%& [`p.heg lon] %& rig]
       =|  gil=(set type)
       =<  $
       |%
