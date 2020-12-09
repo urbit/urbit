@@ -1,34 +1,3 @@
-## NOTE
-The below requires norsyr's fix to `decompress-point` in order to work.
-
-## Transactions
-bc1q59u5epktervh6fxqay2dlph0wxu9hjnx6v8n66
-
-```
-createrawtransaction '[{"txid" : "033f693fdf995a5ea7fe5c951ab6858c7e6a5fffc58579922cd4fc319c614c5b", "vout" : 0}]' '{"bc1qwsqxh3sdjqgdxl7ewgxftdfm8jjajta5xmv8eu" : 0.00001}'
-```
-
-## Handling XPubs
-**Import lib; optionally set up env**
-XPub is BIP84, mnemonic:
-abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about
-```
-=b -build-file %/lib/btc-scratch/hoon
-=xpub "zpub6rFR7y4Q2AijBEqTUquhVz398htDFrtymD9xYYfG1m4wAcvPhXNfE3EfH1r1ADqtfSdVCToUG868RvUUkgDKf31mGDtKsAYz2oz2AGutZYs"
-(~(address bip84:b %main xpub))
-```
-
-### with `~norsyr-torryn`'s bip32 library
-```
-=bip32 -build-file %/lib/bip32/hoon
-=ecc secp256k1:secp:crypto
-
-=xpub "zpub6rFR7y4Q2AijBEqTUquhVz398htDFrtymD9xYYfG1m4wAcvPhXNfE3EfH1r1ADqtfSdVCToUG868RvUUkgDKf31mGDtKsAYz2oz2AGutZYs"
-`@ux`(compress-point:ecc pub:(derive-public:(derive-public:(from-extended:bip32 xpub) 0) 0))
-::  gives 0x3.30d5.4fd0.dd42.0a6e.5f8d.3624.f5f3.482c.ae35.0f79.d5f0.753b.f5be.ef9c.2d91.af3c
-::  gets 0 index in non-change account
-```
-
 ## Legacy BTC Address Parsing
 ```
 
