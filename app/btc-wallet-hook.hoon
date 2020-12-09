@@ -354,6 +354,7 @@
     `state
     ::
       %scan-done
+    ~&  >  "scanned wallet: {<xpub.upd>}"
     ?~  def-wallet
       `state(def-wallet `xpub.upd)
     `state
