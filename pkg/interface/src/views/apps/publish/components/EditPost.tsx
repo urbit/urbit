@@ -4,7 +4,7 @@ import { PostFormSchema, PostForm } from "./NoteForm";
 import { FormikHelpers } from "formik";
 import GlobalApi from "~/logic/api/global";
 import { RouteComponentProps, useLocation } from "react-router-dom";
-import { GraphNode, TextContent, Association } from "~/types";
+import { GraphNode, TextContent, Association, S3State } from "~/types";
 import { getLatestRevision, editPost } from "~/logic/lib/publish";
 import {useWaitForProps} from "~/logic/lib/useWaitForProps";
 interface EditPostProps {
@@ -13,10 +13,11 @@ interface EditPostProps {
   note: GraphNode;
   api: GlobalApi;
   book: string;
+  s3: S3State;
 }
 
 export function EditPost(props: EditPostProps & RouteComponentProps) {
-  const { note, book, noteId, api, ship, history } = props;
+  const { note, book, noteId, api, ship, history, s3 } = props;
   const [revNum, title, body] = getLatestRevision(note);
   const location = useLocation();
 
@@ -53,6 +54,7 @@ export function EditPost(props: EditPostProps & RouteComponentProps) {
       cancel
       history={history}
       onSubmit={onSubmit}
+      s3={s3}
       submitLabel="Update"
       loadingText="Updating..."
     />

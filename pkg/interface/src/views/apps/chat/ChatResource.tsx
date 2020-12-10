@@ -9,8 +9,9 @@ import { useFileDrag } from '~/logic/lib/useDrag';
 import ChatWindow from './components/ChatWindow';
 import ChatInput from './components/ChatInput';
 import GlobalApi from '~/logic/api/global';
-import { SubmitDragger } from '~/views/components/s3-upload';
+import SubmitDragger from '~/views/components/SubmitDragger';
 import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
+import useS3 from '~/logic/lib/useS3';
 
 type ChatResourceProps = StoreState & {
   association: Association;
@@ -65,20 +66,6 @@ export function ChatResource(props: ChatResourceProps) {
   const ourContact = contacts?.[window.ship];
   const lastMsgNum = envelopes.length || 0;
 
-  const chatInput = useRef<ChatInput>();
-
-  const onFileDrag = useCallback(
-    (files: FileList) => {
-      if (!chatInput.current) {
-        return;
-      }
-      chatInput.current?.uploadFiles(files);
-    },
-    [chatInput?.current]
-  );
-
-  const { bind, dragging } = useFileDrag(onFileDrag);
-
   const [unsent, setUnsent] = useLocalStorageState<Record<string, string>>(
     'chat-unsent',
     {}
@@ -89,13 +76,29 @@ export function ChatResource(props: ChatResourceProps) {
     [station]
   );
 
-  const clearUnsent = useCallback(() => setUnsent(s => _.omit(s, station)), [
-    station
-  ]);
+  const clearUnsent = useCallback(
+    () => setUnsent(s => _.omit(s, station)),
+    [station]
+  );
+
+  const chatInput = useRef<ChatInput>();
+
+  const onFileDrag = useCallback(
+    (files: FileList | File[]) => {
+      if (!chatInput.current) {
+        return;
+      }
+      chatInput.current.uploadFiles(files);
+    },
+    [chatInput.current]
+  );
+
+  const { bind, dragging } = useFileDrag(onFileDrag);
 
   const scrollTo = new URLSearchParams(location.search).get('msg');
+
   useEffect(() => {
-    const clear =  () => {
+    const clear = () => {
       props.history.replace(location.pathname);
     };
     setTimeout(clear, 10000);
