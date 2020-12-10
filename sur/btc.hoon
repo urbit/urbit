@@ -1,23 +1,24 @@
 ::  chyg: whether account is (non-)change. 0 or 1
+::  bytc: "btc-byts" with dat cast to @ux
 |%
 +$  network  ?(%main %testnet)
 +$  xpub  @ta
 +$  legacy-address  $%([%legacy @uc])
 +$  bech32-address  $%([%bech32 cord])
 +$  address  ?(legacy-address bech32-address)
-+$  fprint  [wid=%4 dat=@ux]
-+$  bipt  $?(%bip44 %bip49 %bip84)
++$  fprint  [%4 @ux]
++$  bipt  $?(%44 %49 %84)
 +$  chyg  $?(%0 %1)
 +$  idx   @ud
 +$  hdkey  [=fprint =bipt =chyg =idx] 
 +$  sats  @ud
 +$  vbytes  @ud
-+$  btc-byts  [wid=@ dat=@ux]
++$  bytc  [wid=@ dat=@ux]
 +$  hash256  [wid=%32 dat=@ux]
 +$  hash160  [wid=%20 dat=@ux]
 +$  hash  ?(hash256 hash160)
 +$  txid  hash256
-+$  rawtx  btc-byts
++$  rawtx  bytc
 +$  buffer  (list @ux)
 +$  utxo  [pos=@ =txid height=@ value=sats recvd=(unit @da)] 
 ++  address-info
@@ -60,10 +61,10 @@
   --
 ++  psbt
   |%
-  +$  in  [pubkey=btc-byts =utxo =rawtx =hdkey]
+  +$  in  [pubkey=bytc =utxo =rawtx =hdkey]
   +$  out  [=address hk=(unit hdkey)]
   +$  target  $?(%input %output)
-  +$  keyval  [key=btc-byts val=btc-byts]
+  +$  keyval  [key=bytc val=bytc]
   +$  map  (list keyval)
   --
 ++  ops

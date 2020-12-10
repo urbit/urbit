@@ -53,9 +53,9 @@
   |=  h=@t
   (hash256 [32 (to-hex h)])
 ::
-++  to-btc-byts
+++  to-bytc
   |=  h=@t
-  ^-  btc-byts
+  ^-  bytc
   [(lent (trip h)) (to-hex h)]
 ::
 ++  get-request
@@ -171,7 +171,7 @@
   ++  raw-tx
     %-  ot:dejs:format
     :~  [%txid (cu:dejs:format to-hash256 so:dejs:format)]
-        [%rawtx (cu:dejs:format to-btc-byts so:dejs:format)]
+        [%rawtx (cu:dejs:format to-bytc so:dejs:format)]
     ==
   ++  block-and-fee
     %-  ot:dejs:format
