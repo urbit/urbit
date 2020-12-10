@@ -69,6 +69,7 @@ export function Mention(props: {
       <Box
         position="relative"
         display="inline-block"
+        cursor="pointer"
       >
       {showOverlay && (
         <ProfileOverlay
