@@ -3,6 +3,7 @@
 ## xpub
 xpub1 is from mnemonic from PRIVATE.scratch
 ```
+=bl -build-file %/lib/btc-wallet-store/hoon
 =xpub1 'zpub6r8dKyWJ31XF6n69KKeEwLjVC5ruqAbiJ4QCqLsrV36Mvx9WEjUaiPNPGFLHNCCqgCdy6iZC8ZgHsm6a1AUTVBMVbKGemNcWFcwBGSjJKbD'
 =xpub2 'xpub6D7yaZieZEeG617UcKXDhbsDeso6bmxSAiGWkvkASoiwcjaRtrH5HeNRnDT25s7zmxYzj6MtFe32dVqcf9YcBKKgn9THHjwn2uSjkvobK4e'
 =bl -build-file %/lib/btc-wallet-store/hoon

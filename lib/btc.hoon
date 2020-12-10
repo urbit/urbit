@@ -62,25 +62,44 @@
     ++  globals
       |=  =rawtx
       ^-  map:psbt
-      *map:psbt
-    ++  inputs
-      |=  (list in:psbt)
+      :~  [[1 0x0] rawtx]
+      ==
+    ::
+    ++  input
+      |=   i=in:psbt
       ^-  map:psbt
-      *map:psbt
-    ++  outputs
-      |=  (list out:psbt)
+      :~  [[1 0x0] rawtx.i]
+          (witness-tx i)
+          (hdkey %input hdkey.i)
+      ==
+    ::
+    ++  output
+      |=  =out:psbt
       ^-  map:psbt
-      *map:psbt
-    --
+      ?~  hk.out  ~
+      :~  (hdkey %output u.hk.out)
+      ==
+    ::
+    ++  witness-tx
+      |=  i=in:psbt
+      ^-  keyval:psbt
+      :-  [1 0x1]
+      %-  cat:byt
+      :~  (flip:byt 4^value.utxo.i)
+          1^0x16
+          2^0x14
+          (hash-160 dat.pubkey.hdkey.i)
+      ==
+    ::
     ++  hdkey
-      |=  [pubkey=bytc =target:psbt h=^hdkey]
+      |=  [=target:psbt h=^hdkey]
       ^-  keyval:psbt
       =/  typ=@ux
         ?-  target
           %input   0x6
           %output  0x2
         ==
-      :-  (cat:byt ~[1^typ pubkey])
+      :-  (cat:byt ~[1^typ pubkey.h])
       %-  cat:byt
       :~  fprint.h
           %-  to-byts:buf
@@ -91,11 +110,14 @@
             ==
           (flip:byt [(met 3 idx.h) idx.h])
       ==
+    --
   ::  +encode: make base64 cord of PSBT
   ::
   ++  encode
-  |=  [=rawtx =txid inputs=(list in:psbt) outputs=(list out:psbt)]
-  ^-  cord
+    |=  [=rawtx =txid inputs=(list in:psbt) outputs=(list out:psbt)]
+    ^-  cord
+::    (globals rawtx)
+    
   :: TODO
   ::  make global map
   ::  raw tx hex
@@ -104,18 +126,6 @@
   ::  parse to hex
   ::  encode as base64!
   *cord
-  ::  +create: make base64 cord of PSBT
-  ::
-  ++  create
-    |=  [=rawtx =txid inputs=(list in:psbt) outputs=(list out:psbt)]
-    ^-  cord
-    :: TODO
-    ::  make global map
-    :: turn each input and output into a map (or ~)
-    ::  put the 0x0 separator between all
-    ::  parse to hex
-    ::  encode as base64!
-    *cord
   ::
   ++  parse
     |=  psbt-base64=cord
