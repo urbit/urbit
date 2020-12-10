@@ -133,8 +133,8 @@
   ::
   ++  encode
     |=  [=rawtx =txid inputs=(list in:psbt) outputs=(list out:psbt)]
-::    ^-  cord
-    ^-  (list bytc)
+    ^-  base64:psbt
+    :: TODO: make sure the base64 is in the right order
     =/  final=(list (unit bytc))
       %+  join  `(unit bytc)`[~ 1^0x0]
       %+  turn
@@ -144,6 +144,9 @@
             (turn outputs output:en)
         ==
       map-byts:en
+    %-  en:base64:mimes:html
+    %-  cat:byt
+    %+  weld  ~[[5 0x70.7362.74ff]]
     (murn final same)
   ::
   ++  parse

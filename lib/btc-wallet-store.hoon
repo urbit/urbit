@@ -57,8 +57,7 @@
   ::   - all inputs have an associated rawtx
   ::
   ++  to-psbt
-    ^-  (unit (list bytc))
-::    ^-  (unit base64:psbt:btc)
+    ^-  (unit base64:psbt:btc) 
     ?~  txinfo.t  ~
     =/  ins=(list in:psbt:btc)
       %+  murn  txis.t
