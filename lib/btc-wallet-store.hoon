@@ -74,6 +74,11 @@
       pub:(derive-public:(derive-public:wilt.w (@ chyg)) idx)
     [(met 3 pk) pk]
   ::
+  ++  hdkey
+    |=  =idx:btc
+    ^-  hdkey:btc
+    [fprint.w (~(pubkey wad w chyg) idx) bipt.w chyg idx]
+  ::
   ++  mk-address
     |=  =idx:btc
     ^-  address:btc
@@ -241,7 +246,8 @@
           payee
           (total-vbytes is)
           %+  turn  is
-          |=(i=input [utxo.i ~ [fprint.w bipt.w chyg.i idx.i]])
+            |=  i=input
+            [utxo.i ~ (~(hdkey wad w chyg.i) idx.i)]
           txos
       ==
     --
