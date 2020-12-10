@@ -56,7 +56,8 @@
 ++  to-bytc
   |=  h=@t
   ^-  bytc
-  [(lent (trip h)) (to-hex h)]
+  :-  (div (lent (trip h)) 2)
+  (to-hex h)
 ::
 ++  get-request
   |=  url=@t

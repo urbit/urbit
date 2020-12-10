@@ -61,6 +61,7 @@
   --
 ++  psbt
   |%
+  +$  base64  cord
   +$  in  [=utxo =rawtx =hdkey]
   +$  out  [=address hk=(unit hdkey)]
   +$  target  $?(%input %output)
