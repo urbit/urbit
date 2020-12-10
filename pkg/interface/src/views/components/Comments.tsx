@@ -97,7 +97,7 @@ export function Comments(props: CommentsProps) {
   useEffect(() => {
     console.log(`dismissing ${association?.['app-path']}`);
     return () => {
-      api.hark.markCountAsRead(association, parentIndex, 'comment') 
+      api.hark.markCountAsRead(association, parentIndex, 'comment')
     };
   }, [comments.post.index])
 
@@ -130,6 +130,7 @@ export function Comments(props: CommentsProps) {
               hideAvatars={props.hideAvatars}
               remoteContentPolicy={props.remoteContentPolicy}
               baseUrl={props.baseUrl}
+              group={group}
               pending={idx.toString() === props.editCommentId}
             />
           );

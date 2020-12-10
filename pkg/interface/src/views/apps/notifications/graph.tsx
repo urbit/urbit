@@ -79,6 +79,7 @@ const GraphNodeContent = ({ group, post, contacts, mod, description, index, remo
       return <MentionText
         content={contents}
         contacts={contacts}
+        group={group}
         remoteContentPolicy={remoteContentPolicy}
       />
     }
@@ -88,6 +89,7 @@ const GraphNodeContent = ({ group, post, contacts, mod, description, index, remo
     if (idx[1] === "2") {
       return <MentionText
         content={contents}
+        group={group}
         contacts={contacts}
         remoteContentPolicy={remoteContentPolicy}
       />
@@ -182,7 +184,7 @@ const GraphNode = ({
     );
 
   const groupContacts = contacts[groupPath] ?? {};
-  
+
   const nodeUrl = getNodeUrl(mod, group.hidden ? '/home' : groupPath, graph, index);
 
   const onClick = useCallback(() => {

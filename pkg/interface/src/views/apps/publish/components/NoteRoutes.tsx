@@ -22,6 +22,7 @@ interface NoteRoutesProps {
   association: Association;
   baseUrl?: string;
   rootUrl?: string;
+  group: Group;
 }
 
 export function NoteRoutes(props: NoteRoutesProps & RouteComponentProps) {
@@ -38,7 +39,7 @@ export function NoteRoutes(props: NoteRoutesProps & RouteComponentProps) {
       />
       <Route
         path={relativePath("/:commentId?")}
-        render={(routeProps) => 
+        render={(routeProps) =>
           <Note
             baseUrl={baseUrl}
             {...props}

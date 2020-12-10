@@ -10,7 +10,7 @@ import { NoteNavigation } from "./NoteNavigation";
 import GlobalApi from "~/logic/api/global";
 import { getLatestRevision, getComments } from '~/logic/lib/publish';
 import Author from "~/views/components/Author";
-import { Contacts, GraphNode, Graph, LocalUpdateRemoteContentPolicy, Association, Unreads } from "~/types";
+import { Contacts, GraphNode, Graph, LocalUpdateRemoteContentPolicy, Association, Unreads, Group } from "~/types";
 
 interface NoteProps {
   ship: string;
@@ -26,12 +26,13 @@ interface NoteProps {
   remoteContentPolicy: LocalUpdateRemoteContentPolicy;
   rootUrl: string;
   baseUrl: string;
+  group: Group;
 }
 
 export function Note(props: NoteProps & RouteComponentProps) {
   const [deleting, setDeleting] = useState(false);
 
-  const { notebook, note, contacts, ship, book, api, rootUrl, baseUrl } = props;
+  const { notebook, note, contacts, ship, book, api, rootUrl, baseUrl, group } = props;
   const editCommentId = props.match.params.commentId;
 
   const deletePost = async () => {
@@ -126,6 +127,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
         baseUrl={baseUrl}
         editCommentId={editCommentId}
         history={props.history}
+        group={group}
       />
       <Spinner
         text="Deleting post..."

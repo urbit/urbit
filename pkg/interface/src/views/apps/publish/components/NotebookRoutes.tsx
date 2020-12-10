@@ -42,13 +42,15 @@ interface NotebookRoutesProps {
 export function NotebookRoutes(
   props: NotebookRoutesProps & RouteComponentProps
 ) {
-  const { ship, book, api, notebookContacts, baseUrl, rootUrl } = props;
+  const { ship, book, api, notebookContacts, baseUrl, rootUrl, groups } = props;
 
   useEffect(() => {
     ship && book && api.graph.getGraph(ship, book);
   }, [ship, book]);
 
   const graph = props.graphs[`${ship.slice(1)}/${book}`];
+
+  const group = groups?.[props.association?.['group-path']];
 
 
   const relativePath = (path: string) => `${baseUrl}${path}`;
@@ -114,6 +116,7 @@ export function NotebookRoutes(
               hideAvatars={props.hideAvatars}
               hideNicknames={props.hideNicknames}
               remoteContentPolicy={props.remoteContentPolicy}
+              group={group}
               {...routeProps}
             />
           );

@@ -15,10 +15,11 @@ import {useHistory} from "react-router-dom";
 interface MentionTextProps {
   contacts: Contacts;
   content: Content[];
+  group: Group;
   remoteContentPolicy: LocalUpdateRemoteContentPolicy;
 }
 export function MentionText(props: MentionTextProps) {
-  const { content, contacts } = props;
+  const { content, contacts, group } = props;
 
   return (
     <>
@@ -35,7 +36,7 @@ export function MentionText(props: MentionTextProps) {
           );
         } else if ("mention" in c) {
           return (
-            <Mention key={idx} contacts={contacts || {}} ship={c.mention} />
+            <Mention key={idx} contacts={contacts || {}} group={group} ship={c.mention} />
           );
         }
         return null;

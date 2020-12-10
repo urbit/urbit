@@ -79,6 +79,7 @@ export function CommentItem(props: CommentItemProps) {
       <Box mb={2}>
         <MentionText
           contacts={contacts}
+          group={group}
           content={post?.contents}
           remoteContentPolicy={remoteContentPolicy}
         />
