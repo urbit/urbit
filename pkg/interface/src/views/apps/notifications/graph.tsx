@@ -94,7 +94,7 @@ const GraphNodeContent = ({ contents, contacts, mod, description, index, remoteC
           <Box mb="2" fontWeight="500">
             <Text>{header}</Text>
           </Box>
-          <Box overflow="hidden" maxHeight="400px">
+          <Box overflow="hidden" maxHeight="400px" position="relative">
             <Text lineHeight="tall">{snippet}</Text>
             <FilterBox
               width="100%"
