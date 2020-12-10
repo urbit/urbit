@@ -228,9 +228,7 @@
   ++  flip
     |=  b=byts
     ^-  byts
-    :-  wid.b
-    %+  lsh  [3 (sub wid.b (met 3 dat.b))]
-    (swp 3 dat.b)
+    [wid.b (rev 3 b)]
 ::  Converts a list of bits to a list of n-bit numbers 
 ::  input-bits should be big-endian
 ::
