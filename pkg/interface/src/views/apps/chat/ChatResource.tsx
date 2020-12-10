@@ -70,8 +70,6 @@ export function ChatResource(props: ChatResourceProps) {
     [station]
   );
 
-  const { bind, dragging } = useFileDrag(onFileDrag);
-
   const scrollTo = new URLSearchParams(location.search).get('msg');
 
   useEffect(() => {
