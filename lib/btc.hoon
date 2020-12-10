@@ -110,22 +110,41 @@
             ==
           (flip:byt [(met 3 idx.h) idx.h])
       ==
+    ::
+    ++  keyval-byts
+      |=  kv=keyval:psbt
+      ^-  bytc
+      %-  cat:byt
+      :~  1^wid.key.kv
+          key.kv
+          1^wid.val.kv
+          val.kv
+      ==
+    ::
+    ++  map-byts
+      |=  m=map:psbt
+      ^-  (unit bytc)
+      ?~  m  ~
+      :-  ~
+      %-  cat:byt
+      (turn m keyval-byts)
     --
   ::  +encode: make base64 cord of PSBT
   ::
   ++  encode
     |=  [=rawtx =txid inputs=(list in:psbt) outputs=(list out:psbt)]
-    ^-  cord
-::    (globals rawtx)
-    
-  :: TODO
-  ::  make global map
-  ::  raw tx hex
-  :: turn each input and output into a map (or ~)
-  ::  put the 0x0 separator between all
-  ::  parse to hex
-  ::  encode as base64!
-  *cord
+::    ^-  cord
+    ^-  (list bytc)
+    =/  final=(list (unit bytc))
+      %+  join  `(unit bytc)`[~ 1^0x0]
+      %+  turn
+        %-  zing
+        :~  ~[(globals:en rawtx)]
+            (turn inputs input:en)
+            (turn outputs output:en)
+        ==
+      map-byts:en
+    (murn final same)
   ::
   ++  parse
     |=  psbt-base64=cord
