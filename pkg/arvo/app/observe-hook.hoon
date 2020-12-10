@@ -134,9 +134,9 @@
   ^-  (quip card _this)
   |^
   ?+  wire  (on-agent:def wire sign)
-    [%observer @ ~]        on-observer
+    [%observer @ ~]          on-observer
     [%thread-result @ @ ~]   on-thread-result
-    [%thread-start @ @ ~]  on-thread-start
+    [%thread-start @ @ ~]    on-thread-start
   ==
   ::
   ++  on-observer
