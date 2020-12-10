@@ -192,7 +192,7 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
       fontSize
     } = this.props;
 
-    const datestamp = moment.unix(msg['time-sent']).format(DATESTAMP_FORMAT);
+    const datestamp = moment.unix(msg['time-sent'] / 1000).format(DATESTAMP_FORMAT);
     const contact = msg.author in contacts ? contacts[msg.author] : false;
     const showNickname = !hideNicknames && contact && contact.nickname;
     const name = showNickname ? contact!.nickname : cite(msg.author);
@@ -289,16 +289,18 @@ export const MessageContent = ({ content, contacts, remoteContentPolicy, measure
     return <CodeContent content={content} />;
   } else if ('url' in content) {
     return (
-      <Text mx="2px" flexShrink={0} fontSize={fontSize ? fontSize : '14px'} lineHeight="tall" color='black'>
+      <Box mx="2px" flexShrink={0} fontSize={fontSize ? fontSize : '14px'} lineHeight="tall" color='black'>
         <RemoteContent
           url={content.url}
           remoteContentPolicy={remoteContentPolicy}
           onLoad={measure}
           imageProps={{style: {
-              maxWidth: '18rem'
+            maxWidth: '18rem',
+            display: 'block'
           }}}
           videoProps={{style: {
-            maxWidth: '18rem'
+            maxWidth: '18rem',
+            display: 'block'
           }
           }}
           textProps={{style: {
@@ -306,7 +308,7 @@ export const MessageContent = ({ content, contacts, remoteContentPolicy, measure
             textDecoration: 'underline'
           }}}
         />
-      </Text>
+      </Box>
     );
   } else if ('text' in content) {
     return <TextContent fontSize={fontSize} content={content} />;
