@@ -257,11 +257,17 @@
               ?&  !(~(has by archive) resource)
                   !(~(has by graphs) resource)
           ==  ==
+      =/  old-graph=(unit marked-graph:store)
+        (~(get by graphs) resource)
       ?>  (validate-graph graph mark)
       :_  %_  state
               graphs       (~(put by graphs) resource [graph mark])
               update-logs  (~(put by update-logs) resource (gas:orm-log ~ ~))
-              archive      (~(del by archive) resource)
+              archive      
+            ?~  old-graph
+              (~(del by archive) resource)
+            (~(put by archive) resource u.old-graph)
+            ::
               validators
             ?~  mark  validators
             (~(put in validators) u.mark)

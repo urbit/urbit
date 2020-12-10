@@ -37,8 +37,10 @@
 ::
 ?.  =(our.bowl entity.rid.action)
   (strand-fail:strandio %bad-request ~)
+=/  overwrite=?
+  ?=(%policy -.associated.action)
 =/  =update:graph
-  [%0 now.bowl %add-graph rid.action *graph:graph mark.action %.n]
+  [%0 now.bowl %add-graph rid.action *graph:graph mark.action overwrite]
 ;<  ~  bind:m
   (poke-our %graph-store graph-update+!>(update))
 ;<  ~  bind:m
