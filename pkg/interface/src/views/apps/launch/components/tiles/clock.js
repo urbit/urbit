@@ -76,7 +76,7 @@ const Moon = ({ angle, ...props }) => {
         id="moonbg"
         cx={CX + (RADIUS - 12) * Math.cos(degToRad(angle))}
         cy={CY + (RADIUS - 12) * Math.sin(degToRad(angle))}
-        fill="rgba(255,255,255,0.6)"
+        fill="#ADA09D"
         r={CELESTIAL_BODY_SIZE / 2}
         {...props}
       ></circle>
