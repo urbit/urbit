@@ -68,7 +68,7 @@
   |_  [w=walt =chyg]
   ++  pubkey
     |=  =idx:btc
-    ^-  btc-byts:btc
+    ^-  bytc:btc
     =/  pk=@ux
       %-  compress-point:ecc
       pub:(derive-public:(derive-public:wilt.w (@ chyg)) idx)
@@ -77,7 +77,7 @@
   ++  mk-address
     |=  =idx:btc
     ^-  address:btc
-    ?:  ?=(%bip84 bipt.w)
+    ?:  ?=(%84 bipt.w)
       (need (encode-pubkey:bech32:btc %main dat:(pubkey idx)))
     ~|("legacy addresses not supported yet " !!)
   ::  +nixt-address: used to get change addresses
@@ -173,7 +173,7 @@
   ::
   ++  input-weight
     ^-  vbytes
-    ?.  ?=(%bip84 bipt.w)
+    ?.  ?=(%84 bipt.w)
       ~|("Only bech32 wallets supported" !!)
     102
   ::
