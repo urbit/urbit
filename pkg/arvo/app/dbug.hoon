@@ -143,7 +143,6 @@
       %js    (js-response:gen u.file)
       %css   (css-response:gen u.file)
       %png   (png-response:gen u.file)
-      %woff2   (woff2-response:gen u.file)
     ==
   ::  get data matching the json and convert it
   ::
@@ -401,7 +400,7 @@
 ++  get-file-at
   |=  [base=path file=path ext=@ta]
   ^-  (unit octs)
-  ?.  ?=(?(%html %css %js %png %woff2) ext)
+  ?.  ?=(?(%html %css %js %png) ext)
     ~
   =/  =path
     :*  (scot %p our.bowl)
