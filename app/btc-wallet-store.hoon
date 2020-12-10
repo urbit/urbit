@@ -156,7 +156,8 @@
       [~[(send-update [%generate-txbu xpub.act u.tb])] state]
     =/  [addr=address:btc =idx w=walt]
       ~(nixt-address wad u.uw %1)
-    =+  new-txbu=(~(add-output txb u.tb) addr u.chng `[fprint.w bipt.w %1 idx])
+    =/  new-txbu=txbu
+      (~(add-output txb u.tb) addr u.chng `(~(hdkey wad w %1) idx))
     :_  state(walts (~(put by walts) xpub.act w))
     :~  (send-update [%generate-txbu xpub.act new-txbu])
         %+  send-request  ~[requests-path]

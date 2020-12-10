@@ -22,7 +22,7 @@ bitcoin-cli -rpcuser=__cookie__ -rpcpassword=9e0ca21c70d6b7307b750c8012d12df04ef
 =btc -build-file %/lib/btc/hoon
 =psbt 'cHNidP8BAKACAAAAAqsJSaCMWvfEm4IS9Bfi8Vqz9cM9zxU4IagTn4d6W3vkAAAAAAD+////qwlJoIxa98SbghL0F+LxWrP1wz3PFTghqBOfh3pbe+QBAAAAAP7///8CYDvqCwAAAAAZdqkUdopAu9dAy+gdmI5x3ipNXHE5ax2IrI4kAAAAAAAAGXapFG9GILVT+glechue4O/p+gOcykWXiKwAAAAAAAEHakcwRAIgR1lmF5fAGwNrJZKJSGhiGDR9iYZLcZ4ff89X0eURZYcCIFMJ6r9Wqk2Ikf/REf3xM286KdqGbX+EhtdVRs7tr5MZASEDXNxh/HupccC1AaZGoqg7ECy0OIEhfKaC3Ibi1z+ogpIAAQEgAOH1BQAAAAAXqRQ1RebjO4MsRwUPJNPuuTycA5SLx4cBBBYAFIXRNTfy4mVAWjTbr6nj3aAfuCMIAAAA'
 
-(parse:^psbt:btc psbt)
+(parse:pbt:btc psbt)
 ```
 
 ## Make an HD Path
@@ -53,7 +53,7 @@ Maps:
   - Non Witness TX: 82 byte input tx
   - Wallet Derivation path. 
     * Key: {0x6}|{33byte pubkey}
-    * Val: {4byte master xpub fingerprint}|{17byte HD path**
+    * Val: {4byte master xpub fingerprint}|{17byte HD path}
 3. skips the main output for some reason, even though it's in raw tx hex. 
 *skips* = double separator, I think
 **we can skip an ouput if the path is on someone else's ship**

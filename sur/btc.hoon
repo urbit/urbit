@@ -10,7 +10,7 @@
 +$  bipt  $?(%44 %49 %84)
 +$  chyg  $?(%0 %1)
 +$  idx   @ud
-+$  hdkey  [=fprint =bipt =chyg =idx] 
++$  hdkey  [=fprint pubkey=bytc =bipt =chyg =idx]
 +$  sats  @ud
 +$  vbytes  @ud
 +$  bytc  [wid=@ dat=@ux]
@@ -20,7 +20,7 @@
 +$  txid  hash256
 +$  rawtx  bytc
 +$  buffer  (list @ux)
-+$  utxo  [pos=@ =txid height=@ value=sats recvd=(unit @da)] 
++$  utxo  [pos=@ =txid height=@ value=sats recvd=(unit @da)]
 ++  address-info
   $:  =address
       confirmed-value=sats
@@ -61,7 +61,7 @@
   --
 ++  psbt
   |%
-  +$  in  [pubkey=bytc =utxo =rawtx =hdkey]
+  +$  in  [=utxo =rawtx =hdkey]
   +$  out  [=address hk=(unit hdkey)]
   +$  target  $?(%input %output)
   +$  keyval  [key=bytc val=bytc]
