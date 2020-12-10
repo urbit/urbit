@@ -11,7 +11,7 @@ import { RouteComponentProps } from "react-router-dom";
 import { LinkItem } from "./components/LinkItem";
 import { LinkSubmit } from "./components/link-submit";
 import { LinkPreview } from "./components/link-preview";
-import { Comments } from "~/views/components/comments";
+import { Comments } from "~/views/components/Comments";
 
 import "./css/custom.css";
 
