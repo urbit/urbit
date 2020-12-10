@@ -7,36 +7,26 @@
   |=  =xpub
   ^-  bipt
   =/  prefix=tape  (scag 4 (trip xpub))
-  ?:  =("xpub" prefix)  %bip44
-  ?:  =("ypub" prefix)  %bip49
-  ?:  =("zpub" prefix)  %bip84
+  ?:  =("xpub" prefix)  %44
+  ?:  =("ypub" prefix)  %49
+  ?:  =("zpub" prefix)  %84
   ~|("invalid xpub: {<xpub>}" !!)
-::  +flip-byts: flip endianness while preserving lead/trail zeroes
-::
-++  flip-byts
-  |=  b=btc-byts
-  %-  to-byts:buf
-  %-  flop
-  %-  from-byts:buf  b
 ::  big endian sha256: input and output are both MSB first (big endian)
 ::
 ++  sha256
-  |=  =byts  ^-  hash256
-  ::  if there are leading 0s, lshift by their amount after flip to little endian to preserve 
-  =/  pad=@  (sub wid.byts (met 3 dat.byts))
-  =/  little-endian=@
-    (lsh [3 pad] (swp 3 dat.byts))
+  |=  =byts
+  ^-  hash256
   %-  hash256
-  :-  32
-  %+  swp  3
-  (shay wid.byts little-endian)
+  %-  flip:byt
+  [32 (shay (flip:byt byts))]
 ::
 ++  dsha256
   |=  =byts
   (sha256 (sha256 byts))
 ::
 ++  hash-160
-  |=  pubkey=@ux  ^-  hash160
+  |=  pubkey=@ux
+  ^-  hash160
   =,  ripemd:crypto
   %-  hash160
   :-  20
@@ -65,27 +55,46 @@
   (to-script-pubkey (from-byts:buf hex))
 ::  arms to handle BIP174 PSBTs
 ::
-++  psbt
+++  pbt
   |%
   ++  en
     |%
     ++  globals
       |=  =rawtx
-      ^-  map:^psbt
-      *map:^psbt
+      ^-  map:psbt
+      *map:psbt
     ++  inputs
-      |=  (list in:^psbt)
-      ^-  map:^psbt
-      *map:^psbt
+      |=  (list in:psbt)
+      ^-  map:psbt
+      *map:psbt
     ++  outputs
-      |=  (list out:^psbt)
-      ^-  map:^psbt
-      *map:^psbt
+      |=  (list out:psbt)
+      ^-  map:psbt
+      *map:psbt
     --
+    ++  hdkey
+      |=  [pubkey=bytc =target:psbt =^hdkey]
+      ^-  keyval:psbt
+      =/  typ=@ux
+        ?-  target
+          %input   0x6
+          %output  0x2
+        ==
+      :-  (cat:byt ~[1^typ pubkey])
+      %-  cat:byt
+      :~  fprint.hdkey
+          %-  to-byts:buf
+            :~   `@ux`bipt.hdkey  0x0  0x0  0x80
+                 0x0  0x0  0x0  0x80
+                 0x0  0x0  0x0  0x80
+                 `@ux`chyg.hdkey  0x0  0x0  0x0
+            ==
+          (flip:byt [(met 3 idx.hdkey) idx.hdkey])
+      ==
   ::  +encode: make base64 cord of PSBT
   ::
   ++  encode
-  |=  [=rawtx =txid inputs=(list in:^psbt) outputs=(list out:^psbt)]
+  |=  [=rawtx =txid inputs=(list in:psbt) outputs=(list out:psbt)]
   ^-  cord
   :: TODO
   ::  make global map
@@ -98,7 +107,7 @@
   ::  +create: make base64 cord of PSBT
   ::
   ++  create
-    |=  [=rawtx =txid inputs=(list in:^psbt) outputs=(list out:^psbt)]
+    |=  [=rawtx =txid inputs=(list in:psbt) outputs=(list out:psbt)]
     ^-  cord
     :: TODO
     ::  make global map
@@ -108,49 +117,18 @@
     ::  encode as base64!
     *cord
   ::
-  ++  hd-path
-    |=  [pubkey=btc-byts =target:^psbt =hdkey] 
-    ^-  keyval:^psbt
-    =/  k=btc-byts
-      %-  to-byts:buf
-      ?-  target
-          %input
-        [0x6 (from-byts:buf pubkey)]
-          ::
-          %output
-        [0x2 (from-byts:buf pubkey)]
-      ==
-    =/  bip  ?-  bipt.hdkey
-               %bip84  0x54
-               %bip49  0x31
-               %bip44  0x2c
-             ==
-    =/  hdpath=buffer
-      %+  weld
-        :~   bip  0x0  0x0  0x80
-             0x0  0x0  0x0  0x80
-             0x0  0x0  0x0  0x80
-             `@ux`chyg.hdkey  0x0  0x0  0x0
-        ==
-      (from-atom-le:buf (met 3 idx.hdkey) idx.hdkey)
-    :-  k
-    %-  concat-as-byts:buf
-    :~  (from-byts:buf fprint.hdkey)
-        hdpath
-    ==
-  ::
   ++  parse
     |=  psbt-base64=cord
-    ^-  (list map:^psbt)
+    ^-  (list map:psbt)
     =/  todo=buffer
       %+  slag  5  (to-buffer psbt-base64)
-    =|  acc=(list map:^psbt)
-    =|  m=map:^psbt
+    =|  acc=(list map:psbt)
+    =|  m=map:psbt
     |-
     ?~  todo  (snoc acc m)
     ::  0x0: map separator
     ?:  =(0x0 i.todo)
-      $(acc (snoc acc m), m *map:^psbt, todo t.todo)
+      $(acc (snoc acc m), m *map:psbt, todo t.todo)
     =+  [kv rest]=(next-keyval todo)
     $(m (snoc m kv), todo rest)
   ::  +get-txid: extract txid from a valid PSBT
@@ -158,24 +136,21 @@
   ++  get-txid
     |=  psbt-base64=cord
     ^-  txid
-    =/  tx=btc-byts
+    =/  tx=bytc
       %-  raw-tx
       %+  slag  5
       (to-buffer psbt-base64)
-    =/  hash=btc-byts
-      %-  flip-byts
-      %-  sha256
-      %-  sha256
-      tx
-    ?>  ?=(%32 -.hash)
-    hash
+    %-  txid
+    %-  flip:byt
+    %-  sha256
+    (sha256 tx)
   ::  +raw-tx: extract hex transaction
   ::    looks for key 0x0 in global map
   ::    crashes if tx not in buffer
   ::
   ++  raw-tx
     |=  b=buffer
-    |-  ^-  btc-byts
+    |-  ^-  bytc
     ?~  b  !!
     ?:  =(0x0 i.b)  !!
     =+  nk=(next-keyval b)
@@ -187,7 +162,7 @@
   ::
   ++  next-keyval
     |=  b=buffer
-    ^-  [kv=keyval:^psbt rest=buffer]
+    ^-  [kv=keyval:psbt rest=buffer]
     =+  klen=(snag 0 b)
     =+  k=(swag [1 klen] b)
     =+  vlen=(snag (add 1 klen) b)
@@ -219,14 +194,14 @@
       (flop (rip 3 dat.byts))
     =/  pad=@  (sub wid.byts (lent b))
     (weld (reap pad 0x0) b)
-  ::  converts an atom to a little endian buffer with wid length (trailing 0s)
+    ::  converts byts to a little endian buffer with wid length (trailing 0s)
   ::  atom 1 with wid=4 becomes ~[0x1 0x0 0x0 0x0]
   ::  0xff11 with wid=8 becomes ~[0x11 0xff 0x0 0x0 0x0 0x0 0x0 0x0]
   ::
-  ++  from-atom-le
-    |=  [wid=@ a=@]  ^-  buffer
-    =/  b=(list @ux)  (rip 3 a)
-    =/  pad=@  (sub wid (lent b))
+  ++  from-byts-le
+    |=  =byts  ^-  buffer
+    =/  b=(list @ux)  (rip 3 dat.byts)
+    =/  pad=@  (sub wid.byts (lent b))
     (weld b (reap pad 0x0))
   ::
   ++  to-byts
@@ -239,13 +214,24 @@
   --
 ++  byt
   |%
+  ::  +cat: concat byts, preserving MSB order
+  ::  (cat:byt ~[4^0xaa00 4^0xbb00]) => [8 0xaa00.00bb.0000]
+  ::
   ++  cat
     |=  bs=(list byts)
     ^-  byts
     :-  (roll (turn bs |=(b=byts -.b)) add)
     (can 3 (flop bs))
   --
-::  Converts a list of bits to a list of n-bit numbers
+  ::  +flip:byt: flip endianness while preserving lead/trail zeroes
+  ::
+  ++  flip
+    |=  b=byts
+    ^-  byts
+    :-  wid.b
+    %+  lsh  [3 (sub wid.b (met 3 dat.b))]
+    (swp 3 dat.b)
+::  Converts a list of bits to a list of n-bit numbers 
 ::  input-bits should be big-endian
 ::
 ++  bit
