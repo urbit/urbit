@@ -164,7 +164,7 @@ export default class VirtualScroller extends Component<VirtualScrollerProps, Vir
       [...startBuffer].reverse().slice(0, (visibleItems.size - visibleItems.size % 5))
     );
 
-    
+
     startBuffer.forEach((_datum, index) => {
       startgap -= this.heightOf(index);
     });
@@ -175,7 +175,7 @@ export default class VirtualScroller extends Component<VirtualScrollerProps, Vir
     if (smallest && smallest[0].eq(firstVisibleKey)) {
       this.loadRows(false);
     }
-    const lastVisibleKey = 
+    const lastVisibleKey =
       visibleItems.peekLargest()?.[0]
       ?? bigInt(this.estimateIndexFromScrollTop(scrollTop + windowHeight)!);
 
@@ -238,13 +238,13 @@ export default class VirtualScroller extends Component<VirtualScrollerProps, Vir
 
     this.window = element;
     if (this.props.origin === 'bottom') {
-      /*      element.addEventListener('wheel', (event) => {
+       element.addEventListener('wheel', (event) => {
         event.preventDefault();
         const normalized = normalizeWheel(event);
         element.scrollBy(0, normalized.pixelY * -1);
         return false;
       }, { passive: false });
-       */
+
       window.addEventListener('keydown', this.invertedKeyHandler, { passive: false });
     }
     this.resetScroll();
