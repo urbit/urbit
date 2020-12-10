@@ -73,7 +73,7 @@
       *map:psbt
     --
     ++  hdkey
-      |=  [pubkey=bytc =target:psbt =^hdkey]
+      |=  [pubkey=bytc =target:psbt h=^hdkey]
       ^-  keyval:psbt
       =/  typ=@ux
         ?-  target
@@ -82,14 +82,14 @@
         ==
       :-  (cat:byt ~[1^typ pubkey])
       %-  cat:byt
-      :~  fprint.hdkey
+      :~  fprint.h
           %-  to-byts:buf
-            :~   `@ux`bipt.hdkey  0x0  0x0  0x80
+            :~   `@ux`bipt.h  0x0  0x0  0x80
                  0x0  0x0  0x0  0x80
                  0x0  0x0  0x0  0x80
-                 `@ux`chyg.hdkey  0x0  0x0  0x0
+                 `@ux`chyg.h  0x0  0x0  0x0
             ==
-          (flip:byt [(met 3 idx.hdkey) idx.hdkey])
+          (flip:byt [(met 3 idx.h) idx.h])
       ==
   ::  +encode: make base64 cord of PSBT
   ::
