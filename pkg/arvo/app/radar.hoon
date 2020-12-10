@@ -1,72 +1,114 @@
-/+  default-agent, *server
+/+  default-agent, *server, dbug
 ::
 |%
 +$  card  card:agent:gall
-+$  versioned-state
-  $%  [%0 state-0]
-  ==
-+$  ship-status
-  $%  [%waiting-for-coup poked=@da]
-      [%on-delay wake=@da]
-  ==
-+$  data  (list [poked=@da couped=@da])
-+$  ship-info  (map @p [status=ship-status =data])
-+$  state-0
+::
++$  state-1
   $:  =ship-info
   ==
+::
++$  ship-info    (map @p info)
++$  info         [status=ship-status data=(list datum)]
++$  datum        [sent=@da resp=[wen=@da wat=@uv]]
++$  ship-status
+  $%  [%await-resp sent=@da]
+      [%await-wake wake=@da]
+  ==
+::
 ++  jael-delay  ~m10
-++  poke-delay  ~m30
+++  poke-delay  ~h1
 --
 ::
-=|  [%0 state-0]
+=|  [%1 state-1]
 =*  state  -
 ^-  agent:gall
+%-  agent:dbug
+::
+=>  |%
+    ++  deeded-ships
+      |=  bowl:gall
+      .^((set @p) %j /(scot %p our)/ships-with-deeds/(scot %da now))
+    ::
+    ++  request-kids-cz
+      |=  [who=ship wen=@da]
+      ^-  card:agent:gall
+      :+  %pass  /clay-read/(scot %p who)
+      [%arvo %c %warp who %kids ~ %sing %z da+wen /]
+    ::
+    ++  request-new
+      |=  [woz=(set ship) =^ship-info wen=@da]
+      %-  ~(rep in woz)
+      |=  [who=@p [cad=(list card) dat=_ship-info]]
+      :-  [(request-kids-cz who wen) cad]
+      %+  ~(put by dat)  who
+      [[%await-resp wen] data:(~(gut by dat) who *info)]
+    --
 |_  =bowl:gall
 +*  this  .
     def  ~(. (default-agent this %|) bowl)
 ::
 ++  on-init
   ^-  (quip card _this)
-  =/  ships
-    .^((set @p) %j /(scot %p our.bowl)/ships-with-deeds/(scot %da now.bowl))
-  =^  pokes  ship-info
-    %-  ~(rep in ships)
-    |=  [who=@p [cad=(list card) dat=_ship-info]]
-    :_  (~(put by dat) who [%waiting-for-coup now.bowl] ~)
-    :_  cad
-    [%pass /poke/(scot %p who) %agent [who %publish] %poke %noun !>('')]
-  :_  this
-  %+  welp  pokes
-  :~  [%pass /bind %arvo %e %connect [~ /'~radar'] dap.bowl]
-      [%pass /jael-scry %arvo %b %wait (add now.bowl jael-delay)]
-  ==
+  =/  jampath=path
+    /(scot %p our.bowl)/home/(scot %da now.bowl)/radar/jam
+  |^  =^  pokes  ship-info
+        ?:  .^(? %cu jampath)  import
+        =/  ships=(set ship)
+          (deeded-ships bowl)
+        (request-new ships ship-info now.bowl)
+      :_  this
+      %+  welp  pokes
+      :~  [%pass /bind %arvo %e %connect [~ /'~radar'] dap.bowl]
+          [%pass /jael-scry %arvo %b %wait (add now.bowl jael-delay)]
+      ==
+  ::.
+  ++  import
+    ^-  (quip card ^ship-info)
+    =/  old
+      ;;  versioned-state
+      (cue .^(@ %cx jampath))
+    =?  old  ?=(%0 -.old)
+      :-  %1
+      %-  ~(run by ship-info.old)
+      |=  [status=ship-status-0 =data]
+      ^-  [ship-status (list datum)]
+      :-  ^-  ship-status
+          ?-  -.status
+            %waiting-for-coup  [%await-resp poked.status]
+            %on-delay          [%await-wake wake.status]
+          ==
+      ^-  (list datum)
+      %+  turn  data
+      |=  [poked=@da couped=@da]
+      [poked [couped 0v0]]
+    ?>  ?=(%1 -.old)
+    (request-new ~(key by ship-info.old) ship-info.old now.bowl)
+  ::
+  +$  versioned-state
+    $%  [%0 ship-info=ship-info-0]
+        [%1 state-1]
+    ==
+  ::
+  +$  ship-info-0  (map @p [status=ship-status-0 =data])
+  +$  data         (list [poked=@da couped=@da])
+  +$  ship-status-0
+    $%  [%waiting-for-coup poked=@da]
+        [%on-delay wake=@da]
+    ==
+  --
 ::
 ++  on-save   !>(state)
 ::
 ++  on-load
   |=  old=vase
   ^-  (quip card _this)
-  =/  old-state  !<([%0 state-0] old)
+  =/  old-state  !<([%1 state-1] old)
   [~ this(state old-state)]
-::
-++  on-agent
-  |=  [wir=wire sin=sign:agent:gall]
-  ^-  (quip card _this)
-  ?.  ?=(%poke-ack -.sin)
-    [~ this]
-  ?>  ?=([%poke @ ~] wir)
-  =/  who=ship  (slav %p i.t.wir)
-  =/  info  (~(got by ship-info) who)
-  ?>  ?=(%waiting-for-coup -.status.info)
-  =.  data.info  [[poked.status.info now.bowl] data.info]
-  =/  wake-time=@da  (add now.bowl poke-delay)
-  =.  ship-info  (~(put by ship-info) who [%on-delay wake-time] data.info)
-  :_  this
-  [%pass /delay/(scot %p who) %arvo %b %wait wake-time]~
 ::
 ++  on-arvo
   |=  [wir=wire sin=sign-arvo]
   ^-  (quip card _this)
+  ~|  wir
   ?+  wir  !!
   ::
       [%bind ~]
@@ -74,22 +116,17 @@
   ::
       [%jael-scry ~]
     ?>  ?=(%wake +<.sin)
-    =/  new-ships
-      .^((set @p) %j /(scot %p our.bowl)/ships-with-deeds/(scot %da now.bowl))
+    =/  new-ships  (deeded-ships bowl)
     =/  old-ships  ~(key by ship-info)
-    =/  added    (~(dif in new-ships) old-ships)
+    =/  added      (~(dif in new-ships) old-ships)
     ::  removed should always be empty? do nothing with it for now
-    =/  removed  (~(dif in old-ships) new-ships)
+    =/  removed    (~(dif in old-ships) new-ships)
     ~?  (gth ~(wyt in added) 0)
       [%added added]
     ~?  (gth ~(wyt in removed) 0)
       [%removed removed]
     =^  pokes  ship-info
-      %-  ~(rep in added)
-      |=  [who=@p [cad=(list card) dat=_ship-info]]
-      :_  (~(put by dat) who [%waiting-for-coup now.bowl] ~)
-      :_  cad
-      [%pass /poke/(scot %p who) %agent [who %hood] %poke %helm-hi !>('')]
+      (request-new added ship-info now.bowl)
     :_  this
     :_  pokes
     [%pass /jael-scry %arvo %b %wait (add now.bowl jael-delay)]
@@ -98,11 +135,31 @@
     ?>  ?=(%wake +<.sin)
     =/  who=ship  (slav %p i.t.wir)
     =/  info  (~(got by ship-info) who)
-    ?>  ?=(%on-delay -.status.info)
+    ?>  ?=(%await-wake -.status.info)
     =.  ship-info
-      (~(put by ship-info) who [%waiting-for-coup now.bowl] data.info)
+      (~(put by ship-info) who [%await-resp now.bowl] data.info)
     :_  this
-    [%pass /poke/(scot %p who) %agent [who %publish] %poke %noun !>('')]~
+    [(request-kids-cz who now.bowl)]~
+  ::
+      [%clay-read @ ~]
+    ~|  [%sign +<.sin]
+    ?>  ?=(%writ +<.sin)
+    =/  res=@uv
+      ::NOTE  we don't *really* care about the result, only the ping,
+      ::      but if we get it, it's a nice side-effect
+      ::
+      ?~  p.sin  0v0
+      ~|  p.r.u.p.sin
+      !<(@uvI q.r.u.p.sin)
+    =/  who=ship  (slav %p i.t.wir)
+    =/  info      (~(got by ship-info) who)
+    ~|  [%status -.status.info]
+    ?>  ?=(%await-resp -.status.info)
+    =/  wake-time=@da  (add now.bowl poke-delay)
+    =.  data.info  [[sent.status.info now.bowl res] data.info]
+    =.  ship-info  (~(put by ship-info) who [%await-wake wake-time] data.info)
+    :_  this
+    [%pass /delay/(scot %p who) %arvo %b %wait wake-time]~
   ==
 ::
 ++  on-poke
@@ -125,14 +182,15 @@
       %-  json-response:gen
       :-  %o
       %-  ~(rep by ship-info)
-      |=  [[who=@p ship-status =data] out=(map @t json)]
+      |=  [[who=@p ship-status data=(list datum)] out=(map @t json)]
       %+  ~(put by out)  (scot %p who)
       :-  %a
-      %+  turn  data
-      |=  [poked=@da couped=@da]
+      %+  turn  (scag 100 data)
+      |=  datum
       %-  pairs:enjs:format
-      :~  ping+(time:enjs:format poked)
-          response+(time:enjs:format couped)
+      :~  ping+(time:enjs:format sent)
+          response+(time:enjs:format wen.resp)
+          result+s+(scot %uv wat.resp)
       ==
     ::
         [[[~ %json] [%'~radar' %alive @ ~]] ~]
@@ -144,7 +202,7 @@
       ?~  ship=(rush i.t.t.site.url fed:ag)  |
       ?~  info=(~(get by ship-info) u.ship)  |
       ?~  data.u.info                        |
-      (gth couped.i.data.u.info (sub now.bowl ~d1))
+      (gth wen.resp.i.data.u.info (sub now.bowl ~d1))
     ==
   ==
 ::
@@ -155,6 +213,7 @@
     [%http-response *]  [~ this]
   ==
 ::
+++  on-agent  on-agent:def
 ++  on-fail   on-fail:def
 ++  on-leave  on-leave:def
 ++  on-peek   on-peek:def
