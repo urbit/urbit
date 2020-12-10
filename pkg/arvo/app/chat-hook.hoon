@@ -338,7 +338,7 @@
     ^-  (quip card _this)
     |^
     ?.  ?=([%migrate-graph *] wire)
-      (on-agent:def wire sign)
+      `this
     =/  rid=resource
       (de-path:resource t.wire)
     ?.  ?=(%watch-ack -.sign)

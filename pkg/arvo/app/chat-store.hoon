@@ -2,8 +2,9 @@
 ::
 :: data store that holds linear sequences of chat messages
 ::
+/-  *group
 /+  store=chat-store, default-agent, verb, dbug, group-store,
-    graph-store, resource, *migrate
+    graph-store, resource, *migrate, grpl=group, mdl=metadata
 ~%  %chat-store-top  ..part  ~
 |%
 +$  card  card:agent:gall
@@ -22,6 +23,7 @@
 +$  state-4  [%4 =inbox:store]
 +$  admin-action
   $%  [%trim ~]
+      [%migrate-graph ~]
   ==
 --
 ::
@@ -53,12 +55,8 @@
         %4  [cards this(state old)]
       ::
         %3
-      =.  cards  (weld cards (migrate-inbox:cc inbox.old))
-      $(old [%4 inbox])
-      ::
-      ::%_    $
-        ::cards  (weld cards migrate-inbox)
-        ::-.old  %4
+      =.  cards  :_(cards (poke-admin %migrate-graph ~))
+      $(old [%4 inbox.old])
       ::
         %2
       =/  =inbox:store
@@ -82,7 +80,10 @@
       ?(%0 %1)  $(old (old-to-2 inbox.old))
     ::
     ==
-    ::
+    ++  poke-admin
+      |=  =admin-action
+      ^-  card
+      [%pass / %agent [our dap]:bowl %poke noun+!>(admin-action)]
     ::
     ++  old-to-2
       |=  =inbox:store
@@ -103,7 +104,7 @@
       ?+  mark  (on-poke:def mark vase)
           %json         (poke-json:cc !<(json vase))
           %chat-action  (poke-chat-action:cc !<(action:store vase))
-          %noun         [~ (poke-noun:cc !<(admin-action vase))]
+          %noun         (poke-noun:cc !<(admin-action vase))
           %import       (poke-import:cc q.vase)
       ==
     [cards this]
@@ -165,6 +166,9 @@
 ::
 ~%  %chat-store-library  ..card  ~
 |_  bol=bowl:gall
+++  met  ~(. mdl bol)
+++  grp  ~(. grpl bol)
+::
 ::
 ++  peek-x-envelopes
   |=  pax=path
@@ -206,8 +210,12 @@
 ::
 ++  poke-noun
   |=  nou=admin-action
-  ^-  _state
+  ^-  (quip card _state)
+  ?:  ?=([%migrate-graph ~] nou)
+    :_  state
+    (migrate-inbox inbox)
   ~&  %trimming-chat-store
+  :-  ~
   %_  state
       inbox
     %-  ~(urn by inbox)
@@ -363,19 +371,44 @@
 ++  migrate-inbox
   |=  =inbox:store
   ^-  (list card)
-  %+  turn
-    ~(tap by inbox)
-  (cork mailbox-to-update poke-graph-store)
+  %-  zing
+  (turn ~(tap by inbox) mailbox-to-updates)
 ::
-++  mailbox-to-update
-  |=  [=path =mailbox:store]
-  ^-  update:graph-store
+++  add-graph
+  |=  [rid=resource =mailbox:store]
+  %-  poke-graph-store
   :+  %0  now.bol
-  :+  %add-graph
-    (path-to-resource:store path)
+  :+  %add-graph  rid
   :-  (mailbox-to-graph mailbox)
   [`%graph-validator-chat %.y]
 ::
+++  archive-graph
+  |=  rid=resource
+  %-  poke-graph-store
+  [%0 now.bol %archive-graph rid]
+::
+++  mailbox-to-updates
+  |=  [=path =mailbox:store]
+  ^-  (list card)
+  =/  app-rid=resource
+    (path-to-resource:store path)
+  =/  group-rid=resource
+    (fall (group-from-app-resource:met %graph app-rid) [nobody:store %bad-group])
+  =/  group=(unit group)
+    (scry-group:grp group-rid)
+  :-  (add-graph app-rid mailbox)
+  ?~  group  ~
+  ?.  &((lte ~(wyt in members.u.group) 1) hidden.u.group)  ~
+  ~&  >>>  "archiving {<app-rid>}"
+  :~  (archive-graph app-rid)
+      (remove-group group-rid)
+  ==
+::
+++  remove-group
+  |=  group=resource
+  ^-  card
+  =-  [%pass / %agent [our.bol %group-store] %poke -]
+  group-update+!>([%remove-group group ~])
 ::
 ++  poke-graph-store
   |=  =update:graph-store
