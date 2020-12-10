@@ -52,14 +52,29 @@
     |=  =txo
     ^-  txbu
     t(txos [txo txos.t])
+  ::  +to-psbt: returns a based 64 PSBT if
+  ::   - txinfo is present
+  ::   - all inputs have an associated rawtx
   ::
   ++  to-psbt
-    |=  w=walt
-    ^-  cord
-    ''
-  :: TODO
-  ::  for each txi, get the pubkey from the hdkey
-  ::  get a list of map:psbt:btc
+    ^-  (unit (list bytc))
+::    ^-  (unit base64:psbt:btc)
+    ?~  txinfo.t  ~
+    =/  ins=(list in:psbt:btc)
+      %+  murn  txis.t
+      |=  =txi
+      ?~  ur.txi  ~
+      `[utxo.txi u.ur.txi hdkey.txi]
+    ?:  (lth (lent ins) (lent txis.t))
+      ~
+    =/  outs=(list out:psbt:btc)
+      %+  turn  txos.t
+      |=(=txo [address.txo hk.txo])
+    :-  ~
+    %:  encode:pbt:btc
+        rawtx.u.txinfo.t  txid.u.txinfo.t
+        ins  outs
+    ==
   --
 ::  wad: door for processing walts (wallets)
 ::        parameterized on a walt and it's chyg account 
