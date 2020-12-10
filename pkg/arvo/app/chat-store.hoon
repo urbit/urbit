@@ -397,8 +397,8 @@
   =/  group=(unit group)
     (scry-group:grp group-rid)
   :-  (add-graph app-rid mailbox)
-  ?~  group  ~
-  ?.  &((lte ~(wyt in members.u.group) 1) hidden.u.group)  ~
+  ?~  group  (archive-graph app-rid)^~
+  ?.  &(=(~ members.u.group) hidden.u.group)  ~
   ~&  >>>  "archiving {<app-rid>}"
   :~  (archive-graph app-rid)
       (remove-group group-rid)
