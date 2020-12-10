@@ -1,7 +1,7 @@
 ::  Pass-through Eyre driver
 ::
 /-  spider, *aquarium
-/+  ph-io, util=ph-util, strandio
+/+  ethereum, azimuth, ph-io, util=ph-util, strandio
 =,  strand=strand:spider
 |%
 +$  state
@@ -191,14 +191,14 @@
     ==
   ::
   ++  number-to-hash
-    |=  =number:block:able:jael
+    |=  =number:block:jael
     ^-  @
     ?:  (lth number launch:contracts:azimuth)
       (cat 3 0x5364 (sub launch:contracts:azimuth number))
     (cat 3 0x5363 (sub number launch:contracts:azimuth))
   ::
   ++  hash-to-number
-    |=  =hash:block:able:jael
+    |=  =hash:block:jael
     (add launch:contracts:azimuth (div hash 0x1.0000))
   ::
   ++  logs-by-range
@@ -214,8 +214,8 @@
     logs.state
   ::
   ++  logs-by-hash
-    |=  =hash:block:able:jael
-    =/  =number:block:able:jael  (hash-to-number hash)
+    |=  =hash:block:jael
+    =/  =number:block:jael  (hash-to-number hash)
     (logs-by-range number number)
   ::
   ++  logs-to-json
@@ -287,7 +287,7 @@
         0w9N.5uIvA.Jg0cx.NCD2R.o~MtZ.uEQOB.9uTbp.6LHvg.0yYTP.
         3q3td.T4UF0.d5sDL.JGpZq.S3A92.QUuWg.IHdw7.izyny.j9W92
       (pit:nu:crub:crypto 512 (shaz (jam who life=1 %entropy)))
-    =/  =seed:able:jael
+    =/  =seed:jael
       [who 1 sec:ex:cub ~]
     =/  =pass  pub:ex:cub
     =/  com=tape
@@ -299,8 +299,8 @@
   ==
 ::
 ++  dawn
-  |=  [who=ship seed=(unit seed:able:jael)]
-  ^-  dawn-event:able:jael
+  |=  [who=ship seed=(unit seed:jael)]
+  ^-  dawn-event:jael
   =/  spon=(list [ship point:azimuth])
     %-  flop
     |-  ^-  (list [ship point:azimuth])
@@ -322,7 +322,7 @@
     ?:  ?=(%czar (clan:title ship))
       [a-point]~
     [a-point $(who ship)]
-  =/  =seed:able:jael
+  =/  =seed:jael
     ?^  seed
       u.seed
     =/  life-rift  (~(got by lives.state) who)
@@ -426,8 +426,8 @@
 ::
 ++  get-public
   |=  [who=@p lyfe=life typ=?(%auth %crypt)]
-  =/  bod  (rsh 3 1 pub:ex:(get-keys who lyfe))
-  =+  [enc=(rsh 8 1 bod) aut=(end 8 1 bod)]
+  =/  bod  (rsh 3 pub:ex:(get-keys who lyfe))
+  =+  [enc=(rsh 8 bod) aut=(end 8 bod)]
   ?:  =(%auth typ)
     aut
   enc

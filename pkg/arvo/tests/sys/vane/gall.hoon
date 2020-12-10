@@ -1,8 +1,7 @@
 /+  *test
 /=  gall-raw  /sys/vane/gall
 ::
-=/  test-pit=vase  !>(..zuse)
-=/  gall-gate  (gall-raw test-pit)
+=/  gall-gate  (gall-raw ~nec)
 ::
 |%
 ::  +test-init: test %init
@@ -14,14 +13,13 @@
   ::
   =/  call-args
     =/  =duct  ~[/init]
-    =/  =type  -:!>(*task:able:gall)
-    =/  =task:able:gall  [%init ~nec]
-    [duct type task]
+    =/  =task:gall  [%init ~]
+    [duct task]
   ::
   =/  expected-moves=(list move:gall-gate)  ~
   ::
   =/  res
-    (gall-call gall-gate time *sley call-args expected-moves)
+    (gall-call gall-gate time *roof call-args expected-moves)
   ::
   -.res
 ::  +test-conf: test %conf; TODO: test clay response
@@ -35,9 +33,8 @@
   =/  ship  ~nec
   ::
   =/  call-args
-    =/  =type  -:!>(*task:able:gall)
-    =/  =task:able:gall  [%conf dap]
-    [duct type task]
+    =/  =task:gall  [%conf dap]
+    [duct task]
   ::
   =/  =move:gall-gate
     =/  =wire  /sys/cor/[dap]/(scot %p ship)/home/(scot %da time)
@@ -48,7 +45,7 @@
   =/  expected-moves=(list move:gall-gate)  ~[move]
   ::
   =/  res
-    (gall-call gall-gate time *sley call-args expected-moves)
+    (gall-call gall-gate time *roof call-args expected-moves)
   ::
   -.res
 ::  +gall-call: have %gall run a +task and assert it produces expected-moves
@@ -56,15 +53,15 @@
 ++  gall-call
   |=  $:  gall-gate=_gall-gate
           now=@da
-          scry=sley
-          call-args=[=duct =type wrapped-task=(hobo task:able:gall)]
+          scry=roof
+          call-args=[=duct wrapped-task=(hobo task:gall)]
           expected-moves=(list move:gall-gate)
       ==
-  =/  gall-core  (gall-gate our=~nec now=now eny=`@`0xdead.beef scry=scry)
+  =/  gall-core  (gall-gate now=now eny=`@`0xdead.beef scry=scry)
   ::
   =/  res
-    =/  =type  -:!>(*task:able:gall)
-    (call:gall-core duct.call-args dud=~ type wrapped-task.call-args)
+    =/  =type  -:!>(*task:gall)
+    (call:gall-core duct.call-args dud=~ wrapped-task.call-args)
   ::
   =/  output=tang
     %+  expect-eq

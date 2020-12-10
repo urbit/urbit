@@ -4,6 +4,7 @@ const path = require('path');
 const urbitrc = require('./urbitrc');
 const fs = require('fs');
 const util = require('util');
+const _ = require('lodash');
 const exec = util.promisify(require('child_process').exec);
 
 function copyFile(src,dest) {
@@ -49,6 +50,8 @@ let devServer = {
   historyApiFallback: true
 };
 
+const router =  _.mapKeys(urbitrc.FLEET || {}, (value, key) => `${key}.localhost:9000`);
+
 if(urbitrc.URL) {
   devServer = {
     ...devServer,
@@ -56,13 +59,17 @@ if(urbitrc.URL) {
     proxy: {
       '/~landscape/js/bundle/index.*.js': {
         target: 'http://localhost:9000',
-        pathRewrite: (req, path) => '/index.js'
+        pathRewrite: (req, path) => {
+          return '/index.js'
+        }
       },
       '**': {
+        changeOrigin: true,
         target: urbitrc.URL,
+        router,
         // ensure proxy doesn't timeout channels
-        proxyTimeout: 0
-      }
+        proxyTimeout: 0,
+     }
     }
   };
 }

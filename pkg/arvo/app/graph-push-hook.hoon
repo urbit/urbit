@@ -6,7 +6,7 @@
 /+  default-agent
 /+  dbug
 /+  push-hook
-~%  %graph-push-hook-top  ..is  ~
+~%  %graph-push-hook-top  ..part  ~
 |%
 +$  card  card:agent:gall
 ++  config
@@ -31,6 +31,22 @@
     (is-admin:grp src.bowl i.group-paths)
   ?|  (is-member:grp src.bowl i.group-paths)
       (is-admin:grp src.bowl i.group-paths)
+  ==
+::
+++  is-allowed-remove
+  |=  [=resource:res indices=(set index:store) =bowl:gall]
+  ^-  ?
+  =/  gra   ~(. graph bowl)
+  ?.  (is-allowed resource bowl %.n)
+    %.n
+  %+  levy
+    ~(tap in indices)
+  |=  =index:store
+  ^-  ?
+  =/  =node:store
+    (got-node:gra resource index)
+  ?|  =(author.post.node src.bowl)
+      (is-allowed resource bowl %.y)
   ==
 --
 ::
@@ -63,7 +79,7 @@
       %add-graph          (is-allowed resource.q.update bowl %.y)
       %remove-graph       (is-allowed resource.q.update bowl %.y)
       %add-nodes          (is-allowed resource.q.update bowl %.n)
-      %remove-nodes       (is-allowed resource.q.update bowl %.y)
+      %remove-nodes       (is-allowed-remove resource.q.update indices.q.update bowl)
       %add-signatures     (is-allowed resource.uid.q.update bowl %.n)
       %remove-signatures  (is-allowed resource.uid.q.update bowl %.y)
       %archive-graph      (is-allowed resource.q.update bowl %.y)
@@ -108,6 +124,8 @@
     (get-graph:gra resource)
   ::  resubscribe
   ::
+  ?~  (get-update-log:gra resource)
+    (get-graph:gra resource)
   =/  =time  (slav %da i.path)
   =/  =update-log:store  (get-update-log-subset:gra resource time)
   [%0 now.bowl [%run-updates resource update-log]]

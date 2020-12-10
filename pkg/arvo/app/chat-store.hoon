@@ -2,8 +2,8 @@
 ::
 :: data store that holds linear sequences of chat messages
 ::
-/+  store=chat-store, default-agent, verb, dbug, group-store
-~%  %chat-store-top  ..is  ~
+/+  store=chat-store, default-agent, verb, dbug, group-store, *migrate
+~%  %chat-store-top  ..part  ~
 |%
 +$  card  card:agent:gall
 +$  versioned-state
@@ -89,9 +89,10 @@
     ?>  (team:title our.bowl src.bowl)
     =^  cards  state
       ?+  mark  (on-poke:def mark vase)
-        %json         (poke-json:cc !<(json vase))
-        %chat-action  (poke-chat-action:cc !<(action:store vase))
-        %noun         [~ (poke-noun:cc !<(admin-action vase))]
+          %json         (poke-json:cc !<(json vase))
+          %chat-action  (poke-chat-action:cc !<(action:store vase))
+          %noun         [~ (poke-noun:cc !<(admin-action vase))]
+          %import       (poke-import:cc q.vase)
       ==
     [cards this]
   ::
@@ -139,6 +140,9 @@
       ?~  mailbox
         ~
       ``noun+!>(config.u.mailbox)
+    ::
+        [%x %export ~]
+      ``noun+!>(state)
     ==
   ::
   ++  on-agent  on-agent:def
@@ -234,6 +238,12 @@
         =^  read-moves  state  (handle-read [%read path.action])
         [(weld message-moves read-moves) state]
   ==
+::
+++  poke-import
+  |=  arc=*
+  ^-  (quip card _state)
+  =/  sty=state-3  [%3 (remake-map ;;((tree [path mailbox:store]) +.arc))]
+  [~ sty]
 ::
 ++  handle-create
   |=  =action:store

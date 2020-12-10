@@ -28,7 +28,10 @@ export class Omnibox extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (prevProps !== this.props) {
-      this.setState({ index: index(this.props.associations, this.props.apps.tiles) });
+      const { pathname } = this.props.location;
+      const selectedGroup = pathname.startsWith('/~landscape/ship/') ? '/' + pathname.split('/').slice(2,5).join('/') : null;
+
+      this.setState({ index: index(this.props.associations, this.props.apps.tiles, selectedGroup, this.props.groups) });
     }
 
     if (prevProps && (prevProps.apps !== this.props.apps) && (this.state.query === '')) {
@@ -52,7 +55,7 @@ export class Omnibox extends Component {
   }
 
   getSearchedCategories() {
-    return ['apps', 'commands', 'groups', 'subscriptions', 'other'];
+    return ['other', 'commands', 'groups', 'subscriptions', 'apps'];
   }
 
   control(evt) {
@@ -103,9 +106,6 @@ export class Omnibox extends Component {
       if (!this.state) {
         return [category, []];
       }
-      if (category === 'apps') {
-        return ['apps', this.state.index.get('apps')];
-      }
       if (category === 'other') {
         return ['other', this.state.index.get('other')];
       }
@@ -117,7 +117,13 @@ export class Omnibox extends Component {
     const { props } = this;
     this.setState({ results: this.initialResults(), query: '' }, () => {
       props.api.local.setOmnibox();
-      if (defaultApps.includes(app.toLowerCase()) || app === 'profile' || app === 'Links') {
+      if (defaultApps.includes(app.toLowerCase())
+          || app === 'profile'
+          || app === 'Links'
+          || app === 'Terminal'
+          || app === 'home'
+          || app === 'inbox')
+      {
         props.history.push(link);
       } else {
         window.location.href = link;
@@ -154,7 +160,7 @@ export class Omnibox extends Component {
             result.title.toLowerCase().includes(query) ||
             result.link.toLowerCase().includes(query) ||
             result.app.toLowerCase().includes(query) ||
-            (result.host !== null ? result.host.includes(query) : false)
+            (result.host !== null ? result.host.toLowerCase().includes(query) : false)
           );
         })
       );
@@ -216,7 +222,7 @@ export class Omnibox extends Component {
   renderResults() {
     const { props, state } = this;
     return <Box
-            maxHeight="400px"
+            maxHeight={['200px', "400px"]}
             overflowY="auto"
             overflowX="hidden"
             borderBottomLeftRadius='2'
@@ -241,7 +247,9 @@ export class Omnibox extends Component {
                 link={result.link}
                 navigate={() => this.navigate(result.app, result.link)}
                 selected={selected}
-                dark={props.dark} />
+                invites={props.invites}
+                notifications={props.notifications}
+              />
             ))}
           </Box>
         );
@@ -258,8 +266,8 @@ export class Omnibox extends Component {
     return (
         <Box
           backgroundColor='scales.black30'
-          width='100vw'
-          height='100vh'
+          width='100%'
+          height='100%'
           position='absolute'
           top='0'
           right='0'
@@ -267,7 +275,7 @@ export class Omnibox extends Component {
           display={props.show ? 'block' : 'none'}>
           <Row justifyContent='center'>
             <Box
-              mt='20vh'
+              mt={['10vh', '20vh']}
               width='max(50vw, 300px)'
               maxWidth='600px'
               borderRadius='2'

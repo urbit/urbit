@@ -3,13 +3,9 @@
 ::  sets up chat JS client, paginates data, and combines commands
 ::  into semantic actions for the UI
 ::
-/-  *permission-store,
-    *permission-hook,
-    *group,
-    *invite-store,
+/-  *group,
+    inv=invite-store,
     *metadata-store,
-    group-hook,
-    *permission-group-hook,
     *chat-hook,
     *metadata-hook,
     hook=chat-hook,
@@ -23,7 +19,7 @@
     resource,
     mdl=metadata
 ::
-~%  %chat-view-top  ..is  ~
+~%  %chat-view-top  ..part  ~
 |%
 +$  versioned-state
   $%  state-0
@@ -37,8 +33,6 @@
   $%  [%chat-action action:store]
       [%group-action action:group-store]
       [%chat-hook-action action:hook]
-      [%permission-hook-action permission-hook-action]
-      [%permission-group-hook-action permission-group-hook-action]
   ==
 ::
 +$  card  card:agent:gall
@@ -220,8 +214,7 @@
       ~&  %chat-already-exists
       ~
     %-  zing
-    :~  (create-chat app-path.act allow-history.act)
-        %-  create-group
+    :~  %-  create-group
         :*  group-path.act
             app-path.act
             policy.act
@@ -231,6 +224,7 @@
             managed.act
         ==
         (create-metadata title.act description.act group-path.act app-path.act)
+        (create-chat app-path.act allow-history.act)
     ==
   ::
       %delete
@@ -407,13 +401,14 @@
     ^-  card
     =/  managed=?
       !=(ship+app-path group-path)
-    =/  =invite
+    =/  =invite:inv
       :*  our.bol
           ?:(managed %contact-hook %chat-hook)
-          ?:(managed group-path app-path)
+          (de-path:resource ?:(managed group-path ship+app-path))
           ship  ''
       ==
-    =/  act=invite-action  [%invite ?:(managed /contacts /chat) (shaf %msg-uid eny.bol) invite]
+    =/  act=action:inv
+      [%invite ?:(managed %contacts %chat) (shaf %msg-uid eny.bol) invite]
     [%pass / %agent [our.bol %invite-hook] %poke %invite-action !>(act)]
   ::
   ++  chat-scry
@@ -487,8 +482,8 @@
     (en-path:resource rid)
   ?>  ?=(^ path)
   :~  (group-pull-hook-poke %add ship rid)
-      (chat-hook-poke %add-synced ship t.path ask-history)
       (metadata-hook-poke %add-synced ship path)
+      (chat-hook-poke %add-synced ship t.path ask-history)
   ==
 ::
 ++  diff-chat-update
@@ -517,29 +512,10 @@
   ^-  card
   [%pass / %agent [entity.resource.act %group-push-hook] %poke %group-update !>(act)]
 ::
-++  permission-poke
-  |=  act=permission-action
-  ^-  card
-  [%pass / %agent [our.bol %permission-store] %poke %permission-action !>(act)]
-::
 ++  chat-hook-poke
   |=  act=action:hook
   ^-  card
   [%pass / %agent [our.bol %chat-hook] %poke %chat-hook-action !>(act)]
-::
-++  permission-hook-poke
-  |=  act=permission-hook-action
-  ^-  card
-  :*  %pass  /  %agent  [our.bol %permission-hook]
-      %poke  %permission-hook-action  !>(act)
-  ==
-::
-++  perm-group-hook-poke
-  |=  act=permission-group-hook-action
-  ^-  card
-  :*  %pass  /  %agent  [our.bol %permission-group-hook]
-      %poke  %permission-group-hook-action  !>(act)
-  ==
 ::
 ++  metadata-hook-poke
   |=  act=metadata-hook-action

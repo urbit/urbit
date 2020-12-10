@@ -93,7 +93,7 @@ export function BucketList({
           </Box>
         ))}
         <Input mt="2" label="New Bucket" id="newBucket" />
-        <Button mt="2" borderColor="washedGrey" type="submit">
+        <Button mt="2" style={{ cursor: 'pointer' }} borderColor="washedGrey" type="submit">
           Add
         </Button>
       </Form>

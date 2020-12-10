@@ -85,6 +85,12 @@ ram = \case
         loop [x]    = ram x <> r
         loop (x:xs) = ram x <> p <> loop xs
 
+tankToText :: Tank -> Text
+tankToText (Tank t) = unlines $ fmap unTape $ wash (WashCfg 0 80) t
+
+textToTank :: Text -> Tank
+textToTank = Tank . Leaf . Tape
+
 {-
   ++  win
     |=  {tab/@ edg/@}

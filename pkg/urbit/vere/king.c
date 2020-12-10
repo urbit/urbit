@@ -5,8 +5,10 @@
 #include <curl/curl.h>
 #include <unistd.h>
 #include <uv.h>
+
 #include "all.h"
 #include "vere/vere.h"
+#include "ur/ur.h"
 
 #include "ivory.h"
 
@@ -67,24 +69,10 @@ static c3_w sag_w;
   ==
 ::  +pill: boot-sequence ingredients
 ::
-+$  pill
-  %+  each
-    ::  %&: complete pill (either +brass or +solid)
-    ::
-    ::  p: jammed pill
-    ::  q: optional %into ovum overriding that of .p
-    ::
-    [p=@ q=(unit ovum)]
-  ::  %|: incomplete pill (+ivory)
-  ::
-  ::    XX not implemented, needs generation of
-  ::    %veer ova for install %zuse and the vanes
-  ::
-  ::  p: jammed pill
-  ::  q: module ova
-  ::  r: userspace ova
-  ::
-  [p=@ q=(list ovum) r=(list ovum)]
+::    p: jammed pill
+::    q: optional %into ovum overriding that of .p
+::
++$  pill  [p=@ q=(unit ovum)]
 --
 */
 
@@ -271,10 +259,12 @@ _king_get_atom(c3_c* url_c)
   if ( CURLE_OK != result ) {
     u3l_log("failed to fetch %s: %s\n",
             url_c, curl_easy_strerror(result));
+    u3_king_bail();
     exit(1);
   }
   if ( 300 <= cod_l ) {
     u3l_log("error fetching %s: HTTP %ld\n", url_c, cod_l);
+    u3_king_bail();
     exit(1);
   }
 
@@ -380,7 +370,7 @@ _boothack_pill(void)
     arv = u3nc(u3_nul, u3_unix_initial_into_card(u3_Host.ops_u.arv_c));
   }
 
-  return u3nt(c3y, pil, arv);
+  return u3nc(pil, arv);
 }
 
 /* _boothack_key(): parse a private key file or value
@@ -692,6 +682,50 @@ _king_loop_exit()
   unlink(u3K.certs_c);
 }
 
+static void
+_king_boot_ivory(void)
+{
+  c3_d  len_d;
+  c3_y* byt_y;
+
+  if ( u3_Host.ops_u.lit_c ) {
+    if ( c3n == u3u_mmap_read("lite", u3_Host.ops_u.lit_c, &len_d, &byt_y) ) {
+      u3l_log("lite: unable to load ivory pill at %s\n",
+              u3_Host.ops_u.lit_c);
+      exit(1);
+    }
+  }
+  else {
+    len_d = u3_Ivory_pill_len;
+    byt_y = u3_Ivory_pill;
+  }
+
+  {
+    u3_cue_xeno* sil_u = u3s_cue_xeno_init_with(ur_fib27, ur_fib28);
+    u3_weak        pil;
+
+    if ( u3_none == (pil = u3s_cue_xeno_with(sil_u, len_d, byt_y)) ) {
+      u3l_log("lite: unable to cue ivory pill\r\n");
+      exit(1);
+    }
+
+    u3s_cue_xeno_done(sil_u);
+
+    if ( c3n == u3v_boot_lite(pil)) {
+      u3l_log("lite: boot failed\r\n");
+      exit(1);
+    }
+  }
+
+  if ( u3_Host.ops_u.lit_c ) {
+    if ( c3n == u3u_munmap(len_d, byt_y) ) {
+      u3l_log("lite: unable to unmap ivory pill at %s\n",
+              u3_Host.ops_u.lit_c);
+      exit(1);
+    }
+  }
+}
+
 /* u3_king_commence(): start the daemon
 */
 void
@@ -704,10 +738,11 @@ u3_king_commence()
   uv_timer_init(u3L, &u3K.tim_u);
 
   //  start up a "fast-compile" arvo for internal use only
-  //  (with hashboard always disabled)
+  //  (with hashboard and sample-profiling always disabled)
   //
   sag_w = u3C.wag_w;
   u3C.wag_w |= u3o_hashless;
+  u3C.wag_w &= ~u3o_debug_cpu;
 
   u3m_boot_lite();
 
@@ -726,21 +761,7 @@ u3_king_commence()
 
   //  boot the ivory pill
   //
-  {
-    u3_noun lit;
-
-    if ( 0 != u3_Host.ops_u.lit_c ) {
-      lit = u3m_file(u3_Host.ops_u.lit_c);
-    }
-    else {
-      lit = u3i_bytes(u3_Ivory_pill_len, u3_Ivory_pill);
-    }
-
-    if ( c3n == u3v_boot_lite(lit)) {
-      u3l_log("lite: boot failed\r\n");
-      exit(1);
-    }
-  }
+  _king_boot_ivory();
 
   //  disable core dumps (due to lmdb size)
   //

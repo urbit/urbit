@@ -38,16 +38,32 @@
       push-hook-name=term
   ==
 ::  
-::  $state-0: state for the pull hook
+::  $base-state-0: state for the pull hook
 ::
 ::    .tracking: a map of resources we are pulling, and the ships that
 ::    we are pulling them from.
 ::    .inner-state: state given to internal door
 ::
-+$  state-0
-  $:  %0
-    tracking=(map resource ship)
-    inner-state=vase
++$  base-state-0
+  $:  tracking=(map resource ship)
+      inner-state=vase
+  ==
+::
++$  base-state-1
+  $:  base-state-0
+      failed-kicks=(map resource ship)
+  ==
+::
++$  state-0  [%0 base-state-0]
+::
++$  state-1  [%1 base-state-0]
+::
++$  state-2  [%2 base-state-1]
+::
++$  versioned-state 
+  $%  state-0
+      state-1
+      state-2
   ==
 ::
 ++  default
@@ -133,7 +149,7 @@
 ++  agent
   |*  =config
   |=  =(pull-hook config)
-  =|  state-0
+  =|  state-2
   =*  state  -
   ^-  agent:gall
   =<
@@ -142,24 +158,77 @@
         og   ~(. pull-hook bowl)
         hc   ~(. +> bowl)
         def  ~(. (default-agent this %|) bowl)
+    ::
     ++  on-init
       ^-  [(list card:agent:gall) agent:gall]
       =^  cards  pull-hook
         on-init:og
       [cards this]
+    ::
     ++  on-load
       |=  =old=vase
-      ^-  [(list card:agent:gall) agent:gall]
       =/  old
-        !<(state-0 old-vase)
-      =^  cards   pull-hook
-        (on-load:og inner-state.old)
-      [cards this(state old)]
+        !<(versioned-state old-vase)
+      =|  cards=(list card:agent:gall)
+      |^ 
+      ?-  -.old
+          %2  
+        =^  og-cards   pull-hook
+          (on-load:og inner-state.old)
+        =.  state  old
+        =^  retry-cards  state
+          retry-failed-kicks
+        :_  this
+        :(weld cards og-cards retry-cards) 
+        ::
+          %1  $(old [%2 +.old ~])
+        ::
+          %0
+        %_    $
+            -.old  %1
+          ::
+            cards
+          (weld cards (missing-subscriptions tracking.old))
+        ==
+      ==
+      ::
+      ++  retry-failed-kicks
+        =|  acc-cards=(list card)
+        =/  failures=(list [rid=resource =ship])
+          ~(tap by failed-kicks)
+        =.  tracking
+          (~(uni by tracking) failed-kicks)
+        =.  failed-kicks  ~
+        |-  ^-  (quip card _state)
+        ?~  failures
+          [acc-cards state]
+        =,  failures
+        =^  crds  state
+          (handle-kick:hc i)
+        $(failures t, acc-cards (weld acc-cards crds))
+      ::
+      ++  missing-subscriptions
+        |=  tracking=(map resource ship)
+        ^-  (list card:agent:gall)
+        %+  murn
+          ~(tap by tracking)
+        |=  [rid=resource =ship]
+        ^-  (unit card:agent:gall)
+        =/  =path
+          resource+(en-path:resource rid)
+        =/  =wire
+          (make-wire pull+path)
+        ?:  (~(has by wex.bowl) [wire ship push-hook-name.config])
+          ~
+        `[%pass wire %agent [ship push-hook-name.config] %watch path]
+      --
+    ::
     ++  on-save
       ^-  vase
       =.  inner-state
         on-save:og
       !>(state)
+    ::
     ++  on-poke
       |=  [=mark =vase]
       ^-  [(list card:agent:gall) agent:gall]
@@ -196,15 +265,9 @@
         (de-path:resource t.t.t.t.wire)
       ?+   -.sign  (on-agent:def wire sign)
           %kick
-        =/  pax=(unit path)
-          (on-pull-kick:og rid)
-        ?^  pax
-          :_  this
-          ~[(watch-resource:hc rid u.pax)]
-        =.  tracking
-          (~(del by tracking) rid)
-        :_  this
-        ~[give-update]
+        =^  cards  state
+          (handle-kick:hc rid src.bowl)
+        [cards this]
       ::
           %watch-ack
         ?~  p.sign
@@ -251,6 +314,62 @@
   |_  =bowl:gall
   +*  og   ~(. pull-hook bowl)
   ::
+  ++  mule-scry
+    |=  [ref=* raw=*]
+    =/  pax=(unit path)
+      ((soft path) raw)
+    ?~  pax  ~
+    ?.  ?=([@ @ @ @ *] u.pax)  ~
+    =/  ship
+      (slaw %p i.t.u.pax)
+    =/  ved
+      (slay i.t.t.t.u.pax)
+    =/  dat
+      ?~  ved  now.bowl
+      =/  cas=(unit case)
+        ((soft case) p.u.ved)
+      ?~  cas  now.bowl
+      ?:  ?=(%da -.u.cas)
+        p.u.cas
+      now.bowl
+    ::  catch bad gall scries early
+    ?:  ?&  =((end 3 i.u.pax) %g)
+            ?|  !=(`our.bowl ship)
+                !=(dat now.bowl)
+            ==
+        ==
+      ~
+    ``.^(* u.pax)
+  ::
+  ++  handle-kick
+    |=  [rid=resource =ship]
+    ^-  (quip card _state)
+    =/  res=toon
+      (mock [|.((on-pull-kick:og rid)) %9 2 %0 1] mule-scry)
+    =/  pax=(unit path)
+      !<  (unit path) 
+      :-  -:!>(*(unit path)) 
+      ?:(?=(%0 -.res) p.res ~)
+    =?  failed-kicks  !?=(%0 -.res)
+      =/  =tang
+        :+  leaf+"failed kick handler, please report" 
+          leaf+"{<rid>} in {(trip dap.bowl)}"
+        ?:  ?=(%2 -.res)
+          p.res
+        ?>  ?=(%1 -.res)
+        =/  maybe-path=(unit path)  ((soft path) p.res)
+        ?~  maybe-path  ~
+        [(smyt u.maybe-path) ~]
+      %-  (slog tang)
+      (~(put by failed-kicks) rid ship)
+    ?^  pax
+      :_  state
+      (watch-resource rid u.pax)
+    =.  tracking
+      (~(del by tracking) rid)
+    :_  state
+    ~[give-update]
+  ::
   ++  poke-hook-action
     |=  =action
     ^-  [(list card:agent:gall) _state]
@@ -268,33 +387,35 @@
       =.  tracking
         (~(put by tracking) resource ship)
       :_  state
-      ~[(watch-resource resource /)]
+      (watch-resource resource /)
     ::
     ++  remove
       |=  =resource
-      :-  ~[(leave-resource resource)]
+      :-  (leave-resource resource)
       state(tracking (~(del by tracking) resource))
     --
   ::
   ++  leave-resource
     |=  rid=resource
-    ^-  card
-    =/  =ship
-      (~(got by tracking) rid)
+    ^-  (list card)
+    =/  ship=(unit ship)
+      (~(get by tracking) rid)
+    ?~  ship  ~
     =/  =wire
       (make-wire pull+resource+(en-path:resource rid))
-    [%pass wire %agent [ship push-hook-name.config] %leave ~]
-
+    [%pass wire %agent [u.ship push-hook-name.config] %leave ~]~
+  ::
   ++  watch-resource
     |=  [rid=resource pax=path]
-    ^-  card
-    =/  =ship
-      (~(got by tracking) rid)
+    ^-  (list card)
+    =/  ship=(unit ship)
+      (~(get by tracking) rid)
+    ?~  ship  ~
     =/  =path
       (welp resource+(en-path:resource rid) pax)
     =/  =wire
-      (make-wire pull+path)
-    [%pass wire %agent [ship push-hook-name.config] %watch path]
+      (make-wire pull+resource+(en-path:resource rid))
+    [%pass wire %agent [u.ship push-hook-name.config] %watch path]~
   ::
   ++  make-wire
     |=  =wire

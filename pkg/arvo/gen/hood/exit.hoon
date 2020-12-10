@@ -9,8 +9,8 @@
   ::
 =,  sole
 :-  %say
-|=  $:  {now/@da eny/@ bec/beak}
-        {~ ~}
+|=  $:  [now=@da eny=@ bec=beak]
+        [~ ~]
     ==
 ~&  %drum-exit
 [%drum-exit ~]

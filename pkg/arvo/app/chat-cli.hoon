@@ -10,7 +10,7 @@
 ::    and trust it to take care of the rest.
 ::
 /-  view=chat-view, hook=chat-hook,  *group,
-    *permission-store, *group-store, *invite-store,
+    *group-store, inv=invite-store,
     sole
 /+  shoe, default-agent, verb, dbug, store=chat-store,
     group-store, grpl=group, resource
@@ -27,7 +27,7 @@
 +$  state-2
   $:  %2
       grams=(list mail)                             ::  all messages
-      known=(set [target serial])                   ::  known message lookup
+      known=(set [target serial:store])             ::  known message lookup
       count=@ud                                     ::  (lent grams)
       bound=(map target glyph)                      ::  bound circle glyphs
       binds=(jug glyph target)                      ::  circle glyph lookup
@@ -54,7 +54,7 @@
 ::
 +$  state-0
   $:  grams=(list [[=ship =path] envelope:store])   ::  all messages
-      known=(set [[=ship =path] serial])            ::  known message lookup
+      known=(set [[=ship =path] serial:store])      ::  known message lookup
       count=@ud                                     ::  (lent grams)
       bound=(map [=ship =path] glyph)               ::  bound circle glyphs
       binds=(jug glyph [=ship =path])               ::  circle glyph lookup
@@ -161,7 +161,7 @@
           %fact
         ?+  p.cage.sign  ~|([%chat-cli-bad-sub-mark wire p.cage.sign] !!)
           %chat-update    (diff-chat-update:tc wire !<(update:store q.cage.sign))
-          %invite-update  (handle-invite-update:tc !<(invite-update q.cage.sign))
+          %invite-update  (handle-invite-update:tc !<(update:inv q.cage.sign))
         ==
       ==
     [cards this]
@@ -224,9 +224,9 @@
       grams  ~  ::NOTE  this only impacts historic message lookup in chat-cli
     ::
         known
-      ^-  (set [target serial])
+      ^-  (set [target serial:store])
       %-  ~(run in known.u.old)
-      |=  [t=[ship path] s=serial]
+      |=  [t=[ship path] s=serial:store]
       [`target`[| t] s]
     ::
         bound
@@ -324,7 +324,7 @@
 ::  +handle-invite-update: get new invites
 ::
 ++  handle-invite-update
-  |=  upd=invite-update
+  |=  upd=update:inv
   ^-  (quip card _state)
   ?+  -.upd  [~ state]
     %invite  [[(show-invite:sh-out invite.upd) ~] state]
@@ -534,10 +534,10 @@
     ::     ;~(pfix ace ;~(plug i.opt $(opt t.opt)))
     ::   --
     ::
-    ++  group  ;~((glue net) ship sym)
+    ++  group  ;~((glue fas) ship sym)
     ++  tag   |*(a=@tas (cold a (jest a)))  ::TODO  into stdlib
     ++  ship  ;~(pfix sig fed:ag)
-    ++  path  ;~(pfix net ;~(plug urs:ab (easy ~)))  ::NOTE  short only, tmp
+    ++  path  ;~(pfix fas ;~(plug urs:ab (easy ~)))  ::NOTE  short only, tmp
     ::  +mang: un/managed indicator prefix
     ::
     ::    deprecated, as sig prefix is no longer used
@@ -619,7 +619,7 @@
     ++  letter
       ;~  pose
         (stag %url turl)
-        (stag %me ;~(pfix vat text))
+        (stag %me ;~(pfix pat text))
         (stag %text ;~(less mic hax text))
       ==
     ::  +turl: url parser
@@ -722,12 +722,11 @@
           %poke
           %invite-action
         ::
-          !>
-          ^-  invite-action
-          :^  %invite  /chat
+          !>  ^-  action:inv
+          :^  %invite  %chat
             (shax (jam [our-self where] who))
-          ^-  invite
-          [our-self %chat-hook where who '']
+          ^-  invite:inv
+          [our-self %chat-hook (de-path:resource where) who '']
       ==
     ::  +set-target: set audience, update prompt
     ::
@@ -768,7 +767,7 @@
       :-  %chat-view-action
       !>  ^-  action:view
       :*  %create
-          (rsh 3 1 (spat path))
+          (rsh 3 (spat path))
           ''
           real-path  ::  chat
           group-path  ::  group
@@ -865,7 +864,7 @@
       |=  =letter:store
       ^-  (quip card _state)
       ~!  bowl
-      =/  =serial  (shaf %msg-uid eny.bowl)
+      =/  =serial:store  (shaf %msg-uid eny.bowl)
       :_  state
       ^-  (list card)
       %+  turn  ~(tap in audience)
@@ -1132,11 +1131,9 @@
   ::  +show-invite: print incoming invite notification
   ::
   ++  show-invite
-    |=  invite
+    |=  invite:inv
     ^-  card
-    %-  note
-    %+  weld  "invited to: "
-    ~(phat tr (path-to-target path))
+    (note "invited to: {(scow %p entity.resource)} {(trip name.resource)}")
   --
 ::
 ::  +tr: render targets
@@ -1272,7 +1269,7 @@
         ?:(p.timez add sub)
       =+  dat=(yore when)
       =/  t
-        |=  a/@
+        |=  a=@
         %+  weld
           ?:((lth a 10) "0" ~)
         (scow %ud a)

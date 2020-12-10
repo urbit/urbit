@@ -1,7 +1,14 @@
-{ pkgs }:
+{ lib, stdenv, enableParallelBuilding ? true }:
 
-pkgs.stdenv.mkDerivation rec {
-  name    = "ent-7506f";
-  builder = ./builder.sh;
-  src     = ../../../pkg/ent;
+stdenv.mkDerivation {
+  name = "ent";
+  src = lib.cleanSource ../../../pkg/ent;
+
+  postPatch = ''
+    patchShebangs ./configure
+  '';
+
+  installFlags = [ "PREFIX=$(out)" ];
+
+  inherit enableParallelBuilding;
 }

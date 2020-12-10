@@ -14,11 +14,13 @@ module Urbit.Noun.Core
   , pattern Cell, pattern Atom
   , pattern C, pattern A
   , textToUtf8Atom, utf8AtomToText
+  , mug
   ) where
 
 import ClassyPrelude hiding (hash)
 
 import Urbit.Atom
+import Urbit.Noun.Mug
 
 import Data.Bits                 (xor)
 import Data.Function             ((&))
@@ -34,13 +36,19 @@ import qualified Data.Char as C
 -- Types -----------------------------------------------------------------------
 
 data Noun
-    = NCell Int Word Noun Noun
-    | NAtom Int Atom
+    = NCell ~Mug Word Noun Noun
+    | NAtom ~Mug Atom
+
+pattern Cell :: Noun -> Noun -> Noun
+pattern Atom :: Atom -> Noun
 
 pattern Cell x y <- NCell _ _ x y where Cell = mkCell
 pattern Atom a   <- NAtom _ a     where Atom = mkAtom
 
 {-# COMPLETE Cell, Atom #-}
+
+pattern C :: Noun -> Noun -> Noun
+pattern A :: Atom -> Noun
 
 pattern C x y <- NCell _ _ x y where C = mkCell
 pattern A a   <- NAtom _ a     where A = mkAtom
@@ -51,10 +59,9 @@ pattern A a   <- NAtom _ a     where A = mkAtom
 --------------------------------------------------------------------------------
 
 instance Hashable Noun where
-  hash = \case NCell h _ _ _ -> h
-               NAtom h _     -> h
+  hash = fromIntegral . mug
   {-# INLINE hash #-}
-  hashWithSalt = defaultHashWithSalt
+  hashWithSalt salt x = salt `combine` hash x
   {-# INLINE hashWithSalt #-}
 
 textToUtf8Atom :: Text -> Noun
@@ -140,6 +147,10 @@ genAtom = do
     False -> genNatural
     True  -> (`mod` 16) <$> genNatural
 
+-- From http://hackage.haskell.org/package/hashable-1.2.7.0/docs/src/Data-Hashable-Class.html
+combine :: Int -> Int -> Int
+combine h1 h2 = (h1 * 16777619) `xor` h2
+
 --------------------------------------------------------------------------------
 
 {-# INLINE nounSize #-}
@@ -148,24 +159,18 @@ nounSize = \case
   NCell _ s _ _ -> s
   NAtom _ _     -> 1
 
+{-# INLINE mug #-}
+mug :: Noun -> Mug
+mug = \case NCell h _ _ _ -> h
+            NAtom h _     -> h
+
 {-# INLINE mkAtom #-}
 mkAtom :: Atom -> Noun
-mkAtom a = NAtom (hash a) a
+mkAtom a = NAtom (mugAtom a) a
 
 {-# INLINE mkCell #-}
 mkCell :: Noun -> Noun -> Noun
 mkCell h t = NCell has siz h t
   where
     siz = nounSize h + nounSize t
-    has = hash h `combine` hash t
-
-
--- Stolen from Hashable Library ------------------------------------------------
-
-{-# INLINE combine #-}
-combine :: Int -> Int -> Int
-combine h1 h2 = (h1 * 16777619) `xor` h2
-
-{-# INLINE defaultHashWithSalt #-}
-defaultHashWithSalt :: Hashable a => Int -> a -> Int
-defaultHashWithSalt salt x = salt `combine` hash x
+    has = mugBoth (mug h) (mug t)

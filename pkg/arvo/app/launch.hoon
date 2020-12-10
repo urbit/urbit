@@ -11,6 +11,8 @@
       [%2 *]
       [%3 *]
       [%4 state-zero]
+      [%5 state-zero]
+      [%6 state-zero]
   ==
 ::
 +$  state-zero
@@ -20,7 +22,7 @@
   ==
 --
 ::
-=|  [%4 state-zero]
+=|  [%6 state-zero]
 =*  state  -
 %-  agent:dbug
 ^-  agent:gall
@@ -35,59 +37,81 @@
     %_  new-state
         tiles
       %-  ~(gas by *tiles:store)
-      %+  turn  `(list term)`[%chat %publish %links %weather %clock %dojo ~]
+      %+  turn  `(list term)`[%weather %clock %term ~]
       |=  =term
       :-  term
       ^-  tile:store
-      ?+  term      [[%custom ~] %.y]
-          %chat     [[%basic 'Chat' '/~landscape/img/Chat.png' '/~chat'] %.y]
-          %links    [[%basic 'Links' '/~landscape/img/Links.png' '/~link'] %.y]
-          %dojo     [[%basic 'Dojo' '/~landscape/img/Dojo.png' '/~dojo'] %.y]
-          %publish
-        [[%basic 'Publish' '/~landscape/img/Publish.png' '/~publish'] %.y]
+      ?+  term  [[%custom ~] %.y]
+        %term   [[%basic 'Terminal' '/~landscape/img/term.png' '/~term'] %.y]
       ==
-        tile-ordering  [%chat %publish %links %weather %clock %dojo ~]
+        tile-ordering  [%weather %clock %term ~]
     ==
-  [~ this(state [%4 new-state])]
+  [~ this(state [%6 new-state])]
 ::
 ++  on-save  !>(state)
 ++  on-load
   |=  old=vase
   ^-  (quip card _this)
   =/  old-state  !<(versioned-state old)
+  =|  cards=(list card)
+  |-  ^-  (quip card _this)
+  ?:  ?=(%6 -.old-state)
+    [cards this(state old-state)]
+  ?:  ?=(%5 -.old-state)
+    ::  replace %dojo with %term
+    ::
+    =.  tiles.old-state
+      %+  ~(put by (~(del by tiles.old-state) %dojo))
+        %term
+      :_  is-shown:(~(gut by tiles.old-state) %dojo *tile:store)
+      [%basic 'Terminal' '/~landscape/img/term.png' '/~term']
+    =.  tile-ordering.old-state
+      %+  turn  tile-ordering.old-state
+      |=(t=term ?:(=(%dojo t) %term t))
+    $(old-state [%6 +.old-state])
   ?:  ?=(%4 -.old-state)
-    :-  [%pass / %arvo %e %disconnect [~ /]]~
-    this(state old-state)
+    =.  cards
+      %+  snoc  cards
+      [%pass / %arvo %e %disconnect [~ /]]
+    =.  tiles.old-state
+      (~(del by tiles.old-state) %chat)
+    =.  tiles.old-state
+      (~(del by tiles.old-state) %publish)
+    =.  tiles.old-state
+      (~(del by tiles.old-state) %links)
+    =.  tile-ordering.old-state
+      (skip tile-ordering.old-state |=(=term ?=(?(%links %chat %publish) term)))
+    $(old-state [%5 +.old-state])
   =/  new-state  *state-zero
   =.  new-state
     %_  new-state
         tiles
       %-  ~(gas by *tiles:store)
-      %+  turn  `(list term)`[%chat %publish %links %weather %clock %dojo ~]
+      %+  turn  `(list term)`[%weather %clock %dojo ~]
       |=  =term
       :-  term
       ^-  tile:store
       ?+  term      [[%custom ~] %.y]
-          %chat     [[%basic 'Chat' '/~landscape/img/Chat.png' '/~chat'] %.y]
-          %links    [[%basic 'Links' '/~landscape/img/Links.png' '/~link'] %.y]
           %dojo     [[%basic 'Dojo' '/~landscape/img/Dojo.png' '/~dojo'] %.y]
-          %publish
-        [[%basic 'Publish' '/~landscape/img/Publish.png' '/~publish'] %.y]
       ==
-        tile-ordering  [%chat %publish %links %weather %clock %dojo ~]
+        tile-ordering  [%weather %clock %dojo ~]
     ==
-  :_  this(state [%4 new-state])
-  %+  welp
-    :~  [%pass / %arvo %e %disconnect [~ /]]
-        :*  %pass  /srv  %agent  [our.bowl %file-server]
-            %poke  %file-server-action
-            !>([%serve-dir / /app/landscape %.n %.y])
-        ==
-    ==
-  %+  turn  ~(tap by wex.bowl)
-  |=  [[=wire =ship =term] *]
-  ^-  card
-  [%pass wire %agent [ship term] %leave ~]
+  %_  $
+    old-state  [%5 new-state]
+  ::
+      cards
+    %+  welp
+      :~  [%pass / %arvo %e %disconnect [~ /]]
+          :*  %pass  /srv  %agent  [our.bowl %file-server]
+              %poke  %file-server-action
+              !>([%serve-dir / /app/landscape %.n %.y])
+          ==
+      ==
+    %+  turn  ~(tap by wex.bowl)
+    |=  [[=wire =ship =term] *]
+    ^-  card
+    [%pass wire %agent [ship term] %leave ~]
+  ==
 ::
 ++  on-poke
   |=  [=mark =vase]

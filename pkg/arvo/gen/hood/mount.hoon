@@ -7,11 +7,11 @@
 ::::
   ::
 :-  %say
-|=  $:  {now/@da eny/@uvJ bec/beak}
-        {{pax/path pot/$@(~ {v/@tas ~})} ~}
+|=  $:  [now=@da eny=@uvJ bec=beak]
+        [[pax=path pot=$@(~ [v=@tas ~])] ~]
     ==
 ?~  pot
-  =+  bem=(need (de-beam:format pax))
-  $(pot ~[?^(s.bem i.s.bem q.bem)])
+  =+  bem=(need (de-beam pax))
+  $(pot ~[?^(s.bem (rear s.bem) q.bem)])
 :-  %kiln-mount
 [pax v.pot]

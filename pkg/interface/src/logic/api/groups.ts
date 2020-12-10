@@ -26,7 +26,11 @@ export default class GroupsApi extends BaseApi<StoreState> {
     return this.proxyAction({ addMembers: { resource, ships } });
   }
 
-  changePolicy(resource: Resource, diff: GroupPolicyDiff) {
+  removeGroup(resource: Resource) {
+    return this.storeAction({ removeGroup: { resource } });
+  }
+
+  changePolicy(resource: Resource, diff: Enc<GroupPolicyDiff>) {
     return this.proxyAction({ changePolicy: { resource, diff } });
   }
 
@@ -35,6 +39,7 @@ export default class GroupsApi extends BaseApi<StoreState> {
   }
 
   private storeAction(action: GroupAction) {
-    return this.action('group-store', 'group-action', action);
+    console.log(action);
+    return this.action('group-store', 'group-update', action);
   }
 }

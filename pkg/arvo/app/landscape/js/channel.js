@@ -15,6 +15,7 @@ class Channel {
   }
 
   init() {
+    this.debounceInterval = 500;
     //  unique identifier: current time and random number
     //
     this.uid =
@@ -55,6 +56,20 @@ class Channel {
     //    disconnect function may be called exactly once.
     //
     this.outstandingSubscriptions = new Map();
+
+    this.outstandingJSON = [];
+
+    this.debounceTimer = null;
+  }
+
+  resetDebounceTimer() {
+    if(this.debounceTimer) {
+      clearTimeout(this.debounceTimer);
+      this.debounceTimer = null;
+    }
+    this.debounceTimer = setTimeout(() => {
+      this.sendJSONToChannel();
+    }, this.debounceInterval)
   }
 
   setOnChannelError(onError = (err) => {}) {
@@ -66,9 +81,15 @@ class Channel {
   }
 
   deleteOnUnload() {
-    window.addEventListener("unload", (event) => {
+    window.addEventListener("beforeunload", (event) => {
       this.delete();
     });
+  }
+
+  clearQueue() { 
+    clearTimeout(this.debounceTimer);
+    this.debounceTimer = null;
+    this.sendJSONToChannel();
   }
 
   //  sends a poke to an app on an urbit ship
@@ -83,14 +104,16 @@ class Channel {
       }
     );
 
-    this.sendJSONToChannel({
-        id,
-        action: "poke",
-        ship,
-        app,
-        mark,
-        json
-      });
+    const j = {
+      id,
+      action: "poke",
+      ship,
+      app,
+      mark,
+      json
+    };
+
+    this.sendJSONToChannel(j);
   }
 
   //  subscribes to a path on an specific app and ship.
@@ -104,7 +127,8 @@ class Channel {
       connectionErrFunc = () => {},
       eventFunc = () => {},
       quitFunc = () => {},
-      subAckFunc = () => {}) {
+      subAckFunc = () => {},
+  ) {
     let id = this.nextId();
     this.outstandingSubscriptions.set(
       id,
@@ -116,14 +140,17 @@ class Channel {
       }
     );
 
-    this.sendJSONToChannel({
+    const json = {
       id,
       action: "subscribe",
       ship,
       app,
       path
-    });
+    }
 
+    this.resetDebounceTimer();
+
+    this.outstandingJSON.push(json);
     return id;
   }
 
@@ -131,6 +158,7 @@ class Channel {
   //
   delete() {
     let id = this.nextId();
+    clearInterval(this.ackTimer);
     navigator.sendBeacon(this.channelURL(), JSON.stringify([{
       id,
       action: "delete"
@@ -154,12 +182,18 @@ class Channel {
   //  sends a JSON command command to the server.
   //
   sendJSONToChannel(j) {
+    if(!j && this.outstandingJSON.length === 0) {
+      return;
+    }
     let req = new XMLHttpRequest();
     req.open("PUT", this.channelURL());
     req.setRequestHeader("Content-Type", "application/json");
 
     if (this.lastEventId == this.lastAcknowledgedEventId) {
-      let x = JSON.stringify([j]);
+      if(j) {
+        this.outstandingJSON.push(j);
+      }
+      let x = JSON.stringify(this.outstandingJSON);
       req.send(x);
     } else {
       //  we add an acknowledgment to clear the server side queue
@@ -167,13 +201,19 @@ class Channel {
       //    The server side puts messages it sends us in a queue until we
       //    acknowledge that we received it.
       //
-      let x = JSON.stringify(
-        [{action: "ack", "event-id": parseInt(this.lastEventId)}, j]
-      );
+      let payload = [
+        ...this.outstandingJSON, 
+        {action: "ack", "event-id": parseInt(this.lastEventId)}
+      ];
+      if(j) {
+        payload.push(j)
+      }
+      let x = JSON.stringify(payload);
       req.send(x);
 
       this.lastEventId = this.lastAcknowledgedEventId;
     }
+    this.outstandingJSON = [];
 
     this.connectIfDisconnected();
   }
@@ -215,6 +255,11 @@ class Channel {
           funcs["subAck"](obj);
         }
       } else if (obj.response == "diff") {
+        // ensure we ack before channel clogs
+        if((this.lastEventId - this.lastAcknowledgedEventId) > 30) {
+          this.clearQueue();
+        }
+
         let funcs = subFuncs;
         funcs["event"](obj.json);
       } else if (obj.response == "quit") {

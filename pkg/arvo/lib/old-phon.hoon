@@ -45,19 +45,19 @@
       /lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes'
   |%
   ++  ins  ::~/  %ins                                     ::  parse prefix
-           |=  a/@tas
+           |=  a=@tas
            =+  b=0
            |-  ^-  (unit @)
            ?:(=(256 b) ~ ?:(=(a (tos b)) [~ b] $(b +(b))))
   ++  ind  ::~/  %ind                                     ::  parse suffix
-           |=  a/@tas
+           |=  a=@tas
            =+  b=0
            |-  ^-  (unit @)
            ?:(=(256 b) ~ ?:(=(a (tod b)) [~ b] $(b +(b))))
   ++  tos  ::~/  %tos                                     ::  fetch prefix
-           |=(a/@ ?>((lth a 256) (cut 3 [(mul 3 a) 3] sis)))
+           |=(a=@ ?>((lth a 256) (cut 3 [(mul 3 a) 3] sis)))
   ++  tod  ::~/  %tod                                     ::  fetch suffix
-           |=(a/@ ?>((lth a 256) (cut 3 [(mul 3 a) 3] dex)))
+           |=(a=@ ?>((lth a 256) (cut 3 [(mul 3 a) 3] dex)))
   --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2eL, formatting (path)        ::
@@ -66,11 +66,11 @@
   |%
   ++  hif  (boss 256 ;~(plug tip tiq (easy ~)))
   ++  huf  %+  cook
-             |=({a/@ b/@} (wred:un ~(zug mu ~(zag mu [a b]))))
+             |=([a=@ b=@] (wred:un ~(zug mu ~(zag mu [a b]))))
            ;~(plug hif ;~(pfix hep hif))
   ++  hyf  (bass 0x1.0000.0000 ;~(plug huf ;~(pfix hep huf) (easy ~)))
-  ++  tip  (sear |=(a/@ (ins:po a)) til)
-  ++  tiq  (sear |=(a/@ (ind:po a)) til)
+  ++  tip  (sear |=(a=@ (ins:po a)) til)
+  ++  tiq  (sear |=(a=@ (ind:po a)) til)
   ++  til  (boss 256 (stun [3 3] low))
   --
 ++  ag
@@ -87,10 +87,10 @@
   --
 ::
 ++  mu
-  |_  {top/@ bot/@}
-  ++  zag  [p=(end 4 1 (add top bot)) q=bot]
-  ++  zig  [p=(end 4 1 (add top (sub 0x1.0000 bot))) q=bot]
-  ++  zug  (mix (lsh 4 1 top) bot)
+  |_  [top=@ bot=@]
+  ++  zag  [p=(end 4 (add top bot)) q=bot]
+  ++  zig  [p=(end 4 (add top (sub 0x1.0000 bot))) q=bot]
+  ++  zug  (mix (lsh 4 top) bot)
   --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2eN, pseudo-cryptography      ::
@@ -98,44 +98,44 @@
 ++  un                                                  ::  =(x (wred (wren x)))
   |%
   ++  wren                                              ::  conceal structure
-    |=  pyn/@  ^-  @
+    |=  pyn=@  ^-  @
     =+  len=(met 3 pyn)
     ?:  =(0 len)
       0
     =>  .(len (dec len))
     =+  mig=(zaft (xafo len (cut 3 [len 1] pyn)))
     %+  can  3
-    %-  flop  ^-  (list {@ @})
+    %-  flop  ^-  (list [@ @])
     :-  [1 mig]
-    |-  ^-  (list {@ @})
+    |-  ^-  (list [@ @])
     ?:  =(0 len)
       ~
     =>  .(len (dec len))
-    =+  mog=(zyft :(mix mig (end 3 1 len) (cut 3 [len 1] pyn)))
+    =+  mog=(zyft :(mix mig (end 3 len) (cut 3 [len 1] pyn)))
     [[1 mog] $(mig mog)]
   ::
   ++  wred                                              ::  restore structure
-    |=  cry/@  ^-  @
+    |=  cry=@  ^-  @
     =+  len=(met 3 cry)
     ?:  =(0 len)
       0
     =>  .(len (dec len))
     =+  mig=(cut 3 [len 1] cry)
     %+  can  3
-    %-  flop  ^-  (list {@ @})
+    %-  flop  ^-  (list [@ @])
     :-  [1 (xaro len (zart mig))]
-    |-  ^-  (list {@ @})
+    |-  ^-  (list [@ @])
     ?:  =(0 len)
       ~
     =>  .(len (dec len))
     =+  mog=(cut 3 [len 1] cry)
-    [[1 :(mix mig (end 3 1 len) (zyrt mog))] $(mig mog)]
+    [[1 :(mix mig (end 3 len) (zyrt mog))] $(mig mog)]
   ::
-  ++  xafo  |=({a/@ b/@} +((mod (add (dec b) a) 255)))
-  ++  xaro  |=({a/@ b/@} +((mod (add (dec b) (sub 255 (mod a 255))) 255)))
+  ++  xafo  |=([a=@ b=@] +((mod (add (dec b) a) 255)))
+  ++  xaro  |=([a=@ b=@] +((mod (add (dec b) (sub 255 (mod a 255))) 255)))
   ::
   ++  zaft                                              ::  forward 255-sbox
-    |=  a/@D
+    |=  a=@D
     =+  ^=  b
         0xcc.75bc.86c8.2fb1.9a42.f0b3.79a0.92ca.21f6.1e41.cde5.fcc0.
         7e85.51ae.1005.c72d.1246.07e8.7c64.a914.8d69.d9f4.59c2.8038.
@@ -151,7 +151,7 @@
     (cut 3 [(dec a) 1] b)
   ::
   ++  zart                                              ::  reverse 255-sbox
-    |=  a/@D
+    |=  a=@D
     =+  ^=  b
         0x68.4f07.ea1c.73c9.75c2.efc8.d559.5125.f621.a7a8.8591.5613.
         dd52.40eb.65a2.60b7.4bcb.1123.ceb0.1bd6.3c84.2906.b164.19b3.
@@ -167,7 +167,7 @@
     (cut 3 [(dec a) 1] b)
   ::
   ++  zyft                                              ::  forward 256-sbox
-    |=  a/@D
+    |=  a=@D
     =+  ^=  b
         0xbb49.b71f.b881.b402.17e4.6b86.69b5.1647.115f.dddb.7ca5.
           8371.4bd5.19a9.b092.605d.0d9b.e030.a0cc.78ba.5706.4d2d.
@@ -184,7 +184,7 @@
     (cut 3 [a 1] b)
   ::
   ++  zyrt                                              ::  reverse 256-sbox
-    |=  a/@D
+    |=  a=@D
     =+  ^=  b
         0x9fc8.2753.6e02.8fcf.8b35.2b20.5598.7caa.c9a9.30b0.9b48.
           47ce.6371.80f6.407d.00dd.0aa5.ed10.ecb7.0f5a.5c3a.e605.

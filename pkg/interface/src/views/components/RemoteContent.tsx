@@ -1,12 +1,13 @@
 import React, { PureComponent, Fragment } from 'react';
 import { LocalUpdateRemoteContentPolicy } from "~/types/local-update";
-import { Button } from '@tlon/indigo-react';
+import { BaseAnchor, BaseImage, Box, Button, Text } from '@tlon/indigo-react';
 import { hasProvider } from 'oembed-parser';
 import EmbedContainer from 'react-oembed-container';
 import { memoize } from 'lodash';
 
 interface RemoteContentProps {
   url: string;
+  text?: string;
   remoteContentPolicy: LocalUpdateRemoteContentPolicy;
   unfold?: boolean;
   renderUrl?: boolean;
@@ -14,6 +15,7 @@ interface RemoteContentProps {
   audioProps?: any;
   videoProps?: any;
   oembedProps?: any;
+  textProps?: any;
   style?: any;
   onLoad?(): void;
 }
@@ -26,8 +28,6 @@ interface RemoteContentState {
 const IMAGE_REGEX = new RegExp(/(jpg|img|png|gif|tiff|jpeg|webp|webm|svg)$/i);
 const AUDIO_REGEX = new RegExp(/(mp3|wav|ogg)$/i);
 const VIDEO_REGEX = new RegExp(/(mov|mp4|ogv)$/i);
-
-const memoizedFetch = memoize(fetch);
 
 export default class RemoteContent extends PureComponent<RemoteContentProps, RemoteContentState> {
   private fetchController: AbortController | undefined;
@@ -48,7 +48,8 @@ export default class RemoteContent extends PureComponent<RemoteContentProps, Rem
     }
   }
 
-  unfoldEmbed() {
+  unfoldEmbed(event: Event) {
+    event.stopPropagation();
     let unfoldState = this.state.unfold;
     unfoldState = !unfoldState;
     this.setState({ unfold: unfoldState });
@@ -57,7 +58,7 @@ export default class RemoteContent extends PureComponent<RemoteContentProps, Rem
 
   loadOembed() {
     this.fetchController = new AbortController();
-    memoizedFetch(`https://noembed.com/embed?url=${this.props.url}`, {
+    fetch(`https://noembed.com/embed?url=${this.props.url}`, {
       signal: this.fetchController.signal
     })
     .then(response => response.clone().json())
@@ -70,26 +71,31 @@ export default class RemoteContent extends PureComponent<RemoteContentProps, Rem
   }
 
   wrapInLink(contents) {
-    return (<a
+    const { style } = this.props;
+    return (<BaseAnchor
       href={this.props.url}
-      className={`word-break-all ${(typeof contents === 'string') ? 'bb b--white-d b--black' : ''}`}
+      style={{ color: 'inherit', textDecoration: 'none', ...style }}
+      className={`word-break-all ${(typeof contents === 'string') ? 'bb' : ''}`}
       target="_blank"
+      width="100%"
       rel="noopener noreferrer"
     >
       {contents}
-    </a>);
+    </BaseAnchor>);
   }
 
   render() {
     const {
       remoteContentPolicy,
       url,
+      text,
       unfold = false,
       renderUrl = true,
       imageProps = {},
       audioProps = {},
       videoProps = {},
       oembedProps = {},
+      textProps = {},
       style = {},
       onLoad = () => {},
       ...props
@@ -101,7 +107,7 @@ export default class RemoteContent extends PureComponent<RemoteContentProps, Rem
 
     if (isImage && remoteContentPolicy.imageShown) {
       return this.wrapInLink(
-        <img
+        <BaseImage
           src={url}
           style={style}
           onLoad={onLoad}
@@ -112,7 +118,9 @@ export default class RemoteContent extends PureComponent<RemoteContentProps, Rem
     } else if (isAudio && remoteContentPolicy.audioShown) {
       return (
         <>
-          {renderUrl ? this.wrapInLink(url) : null}
+          {renderUrl
+            ? this.wrapInLink(<Text {...textProps}>{text || url}</Text>)
+            : null}
           <audio
             controls
             className="db"
@@ -126,7 +134,9 @@ export default class RemoteContent extends PureComponent<RemoteContentProps, Rem
     } else if (isVideo && remoteContentPolicy.videoShown) {
       return (
         <>
-          {renderUrl ? this.wrapInLink(url) : null}
+          {renderUrl
+            ? this.wrapInLink(<Text {...textProps}>{text || url}</Text>)
+            : null}
           <video
             controls
             className="db"
@@ -139,23 +149,32 @@ export default class RemoteContent extends PureComponent<RemoteContentProps, Rem
         </>
       );
     } else if (isOembed && remoteContentPolicy.oembedShown) {
-      if (!this.state.embed) {
+      if (!this.state.embed || this.state.embed?.html === '') {
         this.loadOembed();
       }
 
       return (
         <Fragment>
-          {renderUrl ? this.wrapInLink(this.state.embed && this.state.embed.title ? this.state.embed.title : url) : null}
-          {this.state.embed !== 'error' && !unfold ? <Button
+          {renderUrl
+            ? this.wrapInLink(<Text {...textProps}>{(this.state.embed && this.state.embed.title)
+              ? this.state.embed.title
+              : (text || url)}</Text>)
+            : null}
+          {this.state.embed !== 'error' && this.state.embed?.html && !unfold ? <Button
+            display='inline-flex'
             border={1}
-            style={{ display: 'inline-flex', height: '1.66em' }} // Height is hacked to line-height until Button supports proper size
+            height={3}
             ml={1}
             onClick={this.unfoldEmbed}
+            style={{ cursor: 'pointer' }}
           >
             {this.state.unfold ? 'collapse' : 'expand'}
           </Button> : null}
-          <div
-            className={'embed-container mb2 w-100 w-75-l w-50-xl ' + (this.state.unfold ? 'db' : 'dn')}
+          <Box
+            mb='2'
+            width='100%'
+            display={this.state.unfold ? 'block' : 'none'}
+            className='embed-container'
             style={style}
             onLoad={onLoad}
             {...oembedProps}
@@ -166,11 +185,13 @@ export default class RemoteContent extends PureComponent<RemoteContentProps, Rem
               <div dangerouslySetInnerHTML={{__html: this.state.embed.html}}></div>
             </EmbedContainer>
             : null}
-          </div>
+          </Box>
         </Fragment>
       );
     } else {
-      return renderUrl ? this.wrapInLink(url) : null;
+      return renderUrl
+        ? this.wrapInLink(<Text {...textProps}>{text || url}</Text>) 
+        : null;
     }
   }
 }

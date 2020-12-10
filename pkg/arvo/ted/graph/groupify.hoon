@@ -43,7 +43,7 @@
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m
-=+  !<(=action:graph-view arg)
+=+  !<([~ =action:graph-view] arg)
 ?>  ?=(%groupify -.action)
 ;<  =group  bind:m  (scry-group rid.action)
 ?.  hidden.group
@@ -67,5 +67,5 @@
   %+  poke-our  %metadata-store
   metadata-action+!>([%remove app-path graph+app-path])
 ;<  ~  bind:m
-  (poke-our %group-store %group-update !>([%remove-group rid.action]))
+  (poke-our %group-store %group-update !>([%remove-group rid.action ~]))
 (pure:m !>(~))

@@ -2,7 +2,7 @@
 
 set -e
 
-URBIT_VERSION="0.10.8"
+URBIT_VERSION="$(cat ./version)"
 
 deps="                                                                \
   curl gmp sigsegv argon2 ed25519 ent h2o scrypt uv murmur3 secp256k1 \
@@ -30,7 +30,7 @@ if [ -n "${HOST-}" ]
 then os=$(sed 's$^[^-]*-\([^-]*\)-.*$\1$' <<< "$HOST")
      cpu=$(sed 's$-.*$$' <<< ${HOST})
 else os=$(uname -s)
-     cpu=$(uname -p)
+     cpu=$(uname -m)
 fi
 
 case $(tr A-Z a-z <<< $cpu) in
@@ -45,6 +45,10 @@ case $(tr A-Z a-z <<< $cpu) in
      ;;
   x86_64)
      defmacro U3_OS_ENDIAN_little 1
+     ;;
+  aarch64)
+     defmacro U3_OS_ENDIAN_little 1
+     defmacro U3_CPU_aarch64 1
      ;;
   *)
      echo "Unknown or unsupported CPU: '$cpu'" >&2

@@ -1,7 +1,7 @@
 /-  spider, graph=graph-store, *metadata-store, *group, group-store
 /+  strandio, resource, graph-view
 =>
-|% 
+|%
 ++  strand  strand:spider
 ++  poke  poke:strandio
 ++  poke-our   poke-our:strandio
@@ -11,7 +11,9 @@
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m
-=+  !<([rid=resource title=@t description=@t group=resource module=@t ~] arg)
+=+  !<
+      [~ rid=resource title=@t description=@t group=resource module=@t ~]
+    arg
 ;<  =bowl:spider  bind:m  get-bowl:strandio
 ::  unarchive graph and share it
 ;<  ~  bind:m
