@@ -74,7 +74,7 @@
   =/  old
    !<(versioned-state old-vase)
   =|  cards=(list card)
-  |-  
+  |^  
   ?-  -.old
       %1
     [cards this(+.state (inflate-cache:ha old), -.state old)]
@@ -84,9 +84,64 @@
     %_   $
       ::
         old
-      *state-1
+      %*  .  *state-1
+        notifications    (convert-notifications-1 notifications.old)
+        archive          (convert-notifications-1 archive.old)
+        current-timebox  current-timebox.old
+        dnd              dnd.old
+      ==
     ==
   ==
+  ++  convert-notifications-1
+    |=  old=notifications:state-zero:store
+    %+  gas:orm  *notifications:store
+    ^-  (list [@da timebox:store])
+    %+  murn  
+      (tap:orm:state-zero:store old)
+    |=  [time=@da =timebox:state-zero:store]
+    ^-  (unit [@da timebox:store])
+    =/  new-timebox=timebox:store
+      (convert-timebox-1 timebox)
+    ?:  =(0 ~(wyt by new-timebox))
+      ~ 
+    `[time new-timebox]
+  ::
+  ++  convert-timebox-1
+    |=  =timebox:state-zero:store
+    ^-  timebox:store
+    %-  ~(gas by *timebox:store)
+    ^-  (list [index:store notification:store])
+    %+  murn
+      ~(tap by timebox)
+    |=  [=index:state-zero:store =notification:state-zero:store]
+    ^-  (unit [index:store notification:store])
+    =/  new-index=(unit index:store)
+      (convert-index-1 index)
+    =/  new-notification=(unit notification:store)
+      (convert-notification-1 notification)
+    ?~  new-index  ~
+    ?~  new-notification  ~
+    `[u.new-index u.new-notification]
+
+  ::
+  ++  convert-index-1
+    |=  =index:state-zero:store 
+    ^-  (unit index:store)
+    ?+  -.index  `index
+      %chat  ~
+      ::
+        %graph  
+      =,  index
+      `[%graph group graph module description ~]
+    ==
+  ::
+  ++  convert-notification-1
+    |=  =notification:state-zero:store
+    ^-  (unit notification:store)
+    ?:  ?=(%chat -.contents.notification)
+      ~
+    `notification
+  --
 ::
 ++  on-watch  
   |=  =path
@@ -405,10 +460,6 @@
   |=  [existing=notification:store new=notification:store]
   ^-  notification:store
   ?-    -.contents.existing
-    ::
-      %chat
-    ?>  ?=(%chat -.contents.new)
-    existing(read %.n, list.contents (weld list.contents.existing list.contents.new))
     ::
       %graph
     ?>  ?=(%graph -.contents.new)

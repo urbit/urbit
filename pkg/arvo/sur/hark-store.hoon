@@ -7,9 +7,11 @@
     $:  %0
         notifications=notifications
         archive=notifications
-        last-seen=@da
+        current-timebox=@da
         dnd=_|
     ==
+  ++  orm
+    ((ordered-map @da timebox) gth)
   ::
   +$  notifications
     ((mop @da timebox) gth)
@@ -22,6 +24,15 @@
         [%group group=resource description=@t]
         [%chat chat=path mention=?]
     ==
+  ::
+  +$  contents
+    $%  [%graph =(list post:post)]
+        [%group =(list group-contents)]
+        [%chat =(list envelope:chat-store)]
+    ==
+  ::
+  +$  notification
+    [date=@da read=? =contents]
   --
 ::
 +$  index
@@ -33,7 +44,6 @@
           =index:graph-store
       ==
       [%group group=resource description=@t]
-      [%chat chat=path mention=?]
   ==
 ::
 +$  group-contents
@@ -48,7 +58,6 @@
 +$  contents
   $%  [%graph =(list post:post)]
       [%group =(list group-contents)]
-      [%chat =(list envelope:chat-store)]
   ==
 ::
 +$  timebox
