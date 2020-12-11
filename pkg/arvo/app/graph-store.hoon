@@ -281,7 +281,7 @@
             (~(put in validators) u.mark)
           ==
       %-  zing
-      :~  (give [/keys ~] %keys ~(key by graphs))
+      :~  (give [/keys ~] %keys (~(put in ~(key by graphs)) resource))
           (give [/updates ~] %add-graph resource *graph:store mark overwrite)
           clay-backup
           ?~  mark  ~
