@@ -144,12 +144,12 @@ export default class ChatMessage extends Component<ChatMessageProps> {
         style={style}
         mb={1}
       >
-        {dayBreak && !isLastRead ? <DayBreak when={msg.when} /> : null}
+        {dayBreak && !isLastRead ? <DayBreak when={msg['time-sent']} /> : null}
         {renderSigil
           ? <MessageWithSigil {...messageProps} />
           : <MessageWithoutSigil {...messageProps} />}
         <Box flexShrink={0} fontSize={0} position='relative' width='100%' overflow='visible' style={unreadContainerStyle}>{isLastRead
-          ? <UnreadMarker dayBreak={dayBreak} when={msg.when} ref={unreadMarkerRef} />
+          ? <UnreadMarker dayBreak={dayBreak} when={msg['time-sent']} ref={unreadMarkerRef} />
           : null}</Box>
       </Box>
     );
