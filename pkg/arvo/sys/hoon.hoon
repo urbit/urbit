@@ -10679,6 +10679,7 @@
     ==
   ::                                                    ::
   ++  redo                                              ::  refurbish faces
+    ~/  %redo
     |=  $:  ::  ref: raw payload
             ::
             ref=type
