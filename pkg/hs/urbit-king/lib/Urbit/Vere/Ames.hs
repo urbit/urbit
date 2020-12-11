@@ -24,6 +24,7 @@ import Urbit.King.App      (HasKingId(..), HasPierEnv(..))
 import Urbit.Vere.Ames.DNS (NetworkMode(..), ResolvServ(..))
 import Urbit.Vere.Ames.DNS (galaxyPort, resolvServ)
 import Urbit.Vere.Ames.UDP (UdpServ(..), fakeUdpServ, realUdpServ)
+import Urbit.Vere.Stat     (AmesStat(..), bump, bump')
 
 import qualified Urbit.Noun.Time as Time
 
@@ -47,7 +48,6 @@ type Version = Word8
 
 data AmesDrv = AmesDrv
   { aTurfs    :: TVar (Maybe [Turf])
-  , aDropped  :: TVar Word
   , aVersion  :: TVar (Maybe Version)
   , aUdpServ  :: UdpServ
   , aResolvr  :: ResolvServ
@@ -125,13 +125,14 @@ udpPort isFake who = do
 udpServ :: (HasLogFunc e, HasNetworkConfig e, HasPortControlApi e)
         => Bool
         -> Ship
+        -> AmesStat
         -> RIO e UdpServ
-udpServ isFake who = do
+udpServ isFake who stat =  do
   mode <- netMode isFake
   port <- udpPort isFake who
   case modeAddress mode of
     Nothing   -> fakeUdpServ
-    Just host -> realUdpServ port host
+    Just host -> realUdpServ port host stat
 
 _bornFailed :: e -> WorkError -> IO ()
 _bornFailed env _ = runRIO env $ do
@@ -141,10 +142,11 @@ ames'
   :: HasPierEnv e
   => Ship
   -> Bool
+  -> AmesStat
   -> (Time.Wen -> Gang -> Path -> IO (Maybe (Term, Noun)))
   -> (Text -> RIO e ())
   -> RIO e ([Ev], RAcquire e (DriverApi NewtEf))
-ames' who isFake scry stderr = do
+ames' who isFake stat scry stderr = do
   -- Unfortunately, we cannot use TBQueue because the only behavior
   -- provided for when full is to block the writer. The implementation
   -- below uses materially the same data structures as TBQueue, however.
@@ -164,11 +166,11 @@ ames' who isFake scry stderr = do
           pure Ouster
     dequeuePacket = do
       pM <- tryReadTQueue ventQ
-      when (isJust pM) $ modifyTVar avail (+ 1)
+      when (isJust pM) $ modifyTVar' avail (+ 1)
       pure pM
 
   env <- ask
-  let (bornEvs, startDriver) = ames env who isFake scry enqueuePacket stderr
+  let (bornEvs, startDriver) = ames env who isFake stat scry enqueuePacket stderr
 
   let runDriver = do
         diOnEffect <- startDriver
@@ -195,11 +197,12 @@ ames
   => e
   -> Ship
   -> Bool
+  -> AmesStat
   -> (Time.Wen -> Gang -> Path -> IO (Maybe (Term, Noun)))
   -> (EvErr -> STM PacketOutcome)
   -> (Text -> RIO e ())
   -> ([Ev], RAcquire e (NewtEf -> IO ()))
-ames env who isFake scry enqueueEv stderr = (initialEvents, runAmes)
+ames env who isFake stat scry enqueueEv stderr = (initialEvents, runAmes)
  where
   king = fromIntegral (env ^. kingIdL)
 
@@ -218,21 +221,28 @@ ames env who isFake scry enqueueEv stderr = (initialEvents, runAmes)
     cachedScryLane <- cache scryLane
 
     aTurfs   <- newTVarIO Nothing
-    aDropped <- newTVarIO 0
     aVersion <- newTVarIO Nothing
     aVersTid <- trackVersionThread aVersion
-    aUdpServ <- udpServ isFake who
+    aUdpServ <- udpServ isFake who stat
     aResolvr <- resolvServ aTurfs (usSend aUdpServ) stderr
     aRecvTid <- queuePacketsThread
-      aDropped
       aVersion
       cachedScryLane
       (send aUdpServ aResolvr mode)
       aUdpServ
+      stat
 
     pure (AmesDrv { .. })
 
-  hearFailed _ = pure ()
+  hearFailed AmesStat {..} = runRIO env . \case
+    RunSwap{} -> bump asSwp
+    RunBail gs -> do
+      for gs \(t, es) ->
+        for es \e ->
+          logWarn $ hark
+            ["ames: goof: ", unTerm t, ": ", tankToText e]
+      bump asBal 
+    RunOkay{} -> bump asOky
 
   trackVersionThread :: HasLogFunc e => TVar (Maybe Version) -> RIO e (Async ())
   trackVersionThread versSlot = async $ forever do
@@ -249,15 +259,15 @@ ames env who isFake scry enqueueEv stderr = (initialEvents, runAmes)
     threadDelay (10 * 60 * 1_000_000)  -- 10m
 
   queuePacketsThread :: HasLogFunc e
-                     => TVar Word
-                     -> TVar (Maybe Version)
+                     => TVar (Maybe Version)
                      -> (Ship -> RIO e (Maybe [AmesDest]))
                      -> (AmesDest -> ByteString -> RIO e ())
                      -> UdpServ
+                     -> AmesStat
                      -> RIO e (Async ())
-  queuePacketsThread dropCtr vers lan forward UdpServ{..} = async $ forever $ do
+  queuePacketsThread vers lan forward UdpServ{..} s@(AmesStat{..}) = async $ forever $ do
       -- port number, host address, bytestring
-    (p, a, b) <- atomically usRecv
+    (p, a, b) <- atomically (bump' asRcv >> usRecv)
     ver <- readTVarIO vers
 
     case decode b of
@@ -265,18 +275,27 @@ ames env who isFake scry enqueueEv stderr = (initialEvents, runAmes)
         logDebug $ displayShow ("ames: bon packet", pkt, showUD $ bytesAtom b)
 
         if pktRcvr == who
-          then serfsUp p a b
+          then do
+            bump asSup
+            serfsUp p a b
           else lan pktRcvr >>= \case
             Just ls
               |  dest:_ <- filter notSelf ls
-              -> forward dest $ encode pkt
-                { pktOrigin = pktOrigin <|> Just (ipDest p a) }
+              -> do
+                bump asFwd
+                forward dest $ encode pkt
+                  { pktOrigin = pktOrigin <|> Just (ipDest p a) }
               where
                 notSelf (EachYes g) = who /= Ship (fromIntegral g)
                 notSelf (EachNo  _) = True
-            _ -> logInfo $ displayShow ("ames: dropping unroutable", pkt)
 
-      Right pkt -> logInfo $ displayShow ("ames: dropping ill-versed", pkt, ver)
+            _ -> do
+              bump asDrt
+              logInfo $ displayShow ("ames: dropping unroutable", pkt)
+
+      Right pkt -> do
+        bump asDvr
+        logInfo $ displayShow ("ames: dropping ill-versed", pkt, ver)
 
       -- XX better handle misversioned or illegible packets.
       -- Remarks from 67f06ce5, pkg/urbit/vere/io/ames.c, L1010:
@@ -293,18 +312,19 @@ ames env who isFake scry enqueueEv stderr = (initialEvents, runAmes)
       --    trigger printfs suggesting upgrade.
       --    they cannot be filtered, as we do not know their semantics
       --
-      Left e -> logInfo $ displayShow ("ames: dropping malformed", e)
+      Left e -> do
+        bump asDml
+        logInfo $ displayShow ("ames: dropping malformed", e)
 
     where
       serfsUp p a b =
-        atomically (enqueueEv (EvErr (hearEv p a b) hearFailed)) >>= \case
-          Intake -> pure ()
+        atomically (enqueueEv (EvErr (hearEv p a b) (hearFailed s))) >>= \case
+          Intake -> bump asSrf
           Ouster -> do
             d <- atomically $ do
-              d <- readTVar dropCtr
-              writeTVar dropCtr (d + 1)
-              pure d
-            when (d `rem` packetsDroppedPerComplaint == 0) $
+              bump' asQuf
+              readTVar asQuf
+            when (d `rem` packetsDroppedPerComplaint == 1) $
               logWarn "ames: queue full; dropping inbound packets"
 
   stop :: forall e. AmesDrv -> RIO e ()
