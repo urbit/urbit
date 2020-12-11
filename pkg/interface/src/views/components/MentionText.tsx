@@ -76,7 +76,7 @@ export function Mention(props: {
         <ProfileOverlay
           ship={ship}
           contact={contact}
-          color={uxToHex(contact?.color ?? '0x0')}
+          color={`#${uxToHex(contact?.color ?? '0x0')}`}
           group={group}
           onDismiss={onDismiss}
           hideAvatars={false}
