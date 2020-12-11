@@ -325,7 +325,7 @@ export const MessageContent = ({ content, contacts, remoteContentPolicy, measure
   } else if ('text' in content) {
     return <TextContent fontSize={fontSize} content={content} />;
   } else if ('mention' in content) {
-    return <Mention group={group} ship={content.mention} contacts={contacts} hideNicknames={hideNicknames} hideAvatars={hideAvatars} />
+    return <Mention group={group} ship={content.mention} contact={contacts?.[content.mention]} hideNicknames={hideNicknames} hideAvatars={hideAvatars} />
   } else {
     return null;
   }

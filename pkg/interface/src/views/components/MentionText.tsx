@@ -2,6 +2,7 @@ import React, { useState, useCallback } from "react";
 import _ from "lodash";
 import { Text, Box } from "@tlon/indigo-react";
 import {
+  Contact,
   Contacts,
   Content,
   LocalUpdateRemoteContentPolicy,
@@ -13,7 +14,8 @@ import { ProfileOverlay } from "./ProfileOverlay";
 import {useHistory} from "react-router-dom";
 
 interface MentionTextProps {
-  contacts: Contacts;
+  contact?: Contact;
+  contacts?: Contacts;
   content: Content[];
   group: Group;
   remoteContentPolicy: LocalUpdateRemoteContentPolicy;
@@ -21,7 +23,7 @@ interface MentionTextProps {
   hideAvatars: boolean;
 }
 export function MentionText(props: MentionTextProps) {
-  const { content, contacts, group, hideNicknames } = props;
+  const { content, contacts, contact, group, hideNicknames, hideAvatars } = props;
 
   return (
     <>
@@ -38,7 +40,7 @@ export function MentionText(props: MentionTextProps) {
           );
         } else if ("mention" in c) {
           return (
-            <Mention key={idx} contacts={contacts || {}} group={group} ship={c.mention} hideNicknames={hideNicknames} hideAvatars={hideAvatars} />
+            <Mention key={idx} contacts={contacts || {}} contact={contact || {}} group={group} ship={c.mention} hideNicknames={hideNicknames} hideAvatars={hideAvatars} />
           );
         }
         return null;
@@ -49,13 +51,17 @@ export function MentionText(props: MentionTextProps) {
 
 export function Mention(props: {
   ship: string;
-  contacts: Contacts;
+  contact: Contact;
+  contacts?: Contacts;
   group: Group;
   hideNicknames: boolean;
   hideAvatars: boolean;
 }) {
   const { contacts, ship, hideNicknames, hideAvatars } = props;
-  const contact = contacts[ship];
+  let { contact } = props;
+
+  contact = (contact?.nickname) ? contact : contacts?.[ship];
+
   const showNickname = (Boolean(contact?.nickname) && !hideNicknames);
   const name = showNickname ? contact?.nickname : cite(ship);
   const [showOverlay, setShowOverlay] = useState(false);
