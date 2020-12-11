@@ -85,7 +85,7 @@
       ^-  keyval:psbt
       :-  [1 0x1]
       %-  cat:byt
-      :~  (flip:byt 4^value.utxo.i)
+      :~  (flip:byt 8^value.utxo.i)
           1^0x16
           2^0x14
           (hash-160 dat.pubkey.hdkey.i)
@@ -108,7 +108,7 @@
                  0x0  0x0  0x0  0x80
                  `@ux`chyg.h  0x0  0x0  0x0
             ==
-          (flip:byt [(met 3 idx.h) idx.h])
+          (flip:byt 4^idx.h)
       ==
     ::
     ++  keyval-byts
@@ -129,12 +129,16 @@
       %-  cat:byt
       (turn m keyval-byts)
     --
+    ++  base64
+      |=  b=bytc
+      ^-  base64:psbt
+      %-  en:base64:mimes:html
+      (flip:byt b)
   ::  +encode: make base64 cord of PSBT
   ::
   ++  encode
     |=  [=rawtx =txid inputs=(list in:psbt) outputs=(list out:psbt)]
     ^-  base64:psbt
-    :: TODO: make sure the base64 is in the right order
     =/  final=(list (unit bytc))
       %+  join  `(unit bytc)`[~ 1^0x0]
       %+  turn
@@ -144,7 +148,7 @@
             (turn outputs output:en)
         ==
       map-byts:en
-    %-  en:base64:mimes:html
+    %-  base64:en
     %-  cat:byt
     %+  weld  ~[[5 0x70.7362.74ff]]
     (murn final same)
@@ -211,8 +215,7 @@
     ~|  "Invalid PSBT"
     =+  p=(de:base64:mimes:html psbt-base64)
     ?~  p  !!
-    =/  bigend=@ux  (swp 3 q.u.p)
-    (from-byts:buf [(met 3 bigend) bigend])
+    (from-byts:buf (flip:byt u.p))
   --
 ::  buffer: byte buffer utilities
 ::  list of @ux that is big endian for hashing purposes
