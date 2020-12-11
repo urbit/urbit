@@ -75,10 +75,12 @@ const addGraph = (json, state) => {
 const removeGraph = (json, state) => {
   const data = _.get(json, 'remove-graph', false);
   if (data) {
+
     if (!('graphs' in state)) {
       state.graphs = {};
     }
     let resource = data.ship + '/' + data.name;
+    state.graphKeys.delete(resource);
     delete state.graphs[resource];
   }
 };
