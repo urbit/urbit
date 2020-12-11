@@ -52,14 +52,28 @@
     |=  =txo
     ^-  txbu
     t(txos [txo txos.t])
+  ::  +to-psbt: returns a based 64 PSBT if
+  ::   - txinfo is present
+  ::   - all inputs have an associated rawtx
   ::
   ++  to-psbt
-    |=  w=walt
-    ^-  cord
-    ''
-  :: TODO
-  ::  for each txi, get the pubkey from the hdkey
-  ::  get a list of map:psbt:btc
+    ^-  (unit base64:psbt:btc) 
+    ?~  txinfo.t  ~
+    =/  ins=(list in:psbt:btc)
+      %+  murn  txis.t
+      |=  =txi
+      ?~  ur.txi  ~
+      `[utxo.txi u.ur.txi hdkey.txi]
+    ?:  (lth (lent ins) (lent txis.t))
+      ~
+    =/  outs=(list out:psbt:btc)
+      %+  turn  txos.t
+      |=(=txo [address.txo hk.txo])
+    :-  ~
+    %:  encode:pbt:btc
+        rawtx.u.txinfo.t  txid.u.txinfo.t
+        ins  outs
+    ==
   --
 ::  wad: door for processing walts (wallets)
 ::        parameterized on a walt and it's chyg account 
@@ -68,16 +82,21 @@
   |_  [w=walt =chyg]
   ++  pubkey
     |=  =idx:btc
-    ^-  btc-byts:btc
+    ^-  bytc:btc
     =/  pk=@ux
       %-  compress-point:ecc
       pub:(derive-public:(derive-public:wilt.w (@ chyg)) idx)
     [(met 3 pk) pk]
   ::
+  ++  hdkey
+    |=  =idx:btc
+    ^-  hdkey:btc
+    [fprint.w (~(pubkey wad w chyg) idx) bipt.w chyg idx]
+  ::
   ++  mk-address
     |=  =idx:btc
     ^-  address:btc
-    ?:  ?=(%bip84 bipt.w)
+    ?:  ?=(%84 bipt.w)
       (need (encode-pubkey:bech32:btc %main dat:(pubkey idx)))
     ~|("legacy addresses not supported yet " !!)
   ::  +nixt-address: used to get change addresses
@@ -173,7 +192,7 @@
   ::
   ++  input-weight
     ^-  vbytes
-    ?.  ?=(%bip84 bipt.w)
+    ?.  ?=(%84 bipt.w)
       ~|("Only bech32 wallets supported" !!)
     102
   ::
@@ -241,7 +260,8 @@
           payee
           (total-vbytes is)
           %+  turn  is
-          |=(i=input [utxo.i ~ [fprint.w bipt.w chyg.i idx.i]])
+            |=  i=input
+            [utxo.i ~ (~(hdkey wad w chyg.i) idx.i)]
           txos
       ==
     --

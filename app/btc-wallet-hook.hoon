@@ -12,8 +12,8 @@
 ::  Sends updates to:
 ::    /sign-me
 ::
-/-  *btc, *btc-wallet-hook, bws=btc-wallet-store
-/+  dbug, default-agent, bp=btc-provider
+/-  *btc-wallet-hook, bws=btc-wallet-store
+/+  dbug, default-agent, bp=btc-provider, bwsl=btc-wallet-store, *btc
 |%
 ++  defaults
   |%
@@ -300,7 +300,11 @@
     ?~  poym  `state
     =.  txis.u.poym  (update-poym-txis txis.u.poym txid.rt rawtx.rt)
     :_  state
-    ?:(poym-ready ~[(send-sign-tx u.poym)] ~)
+    =+  pb=~(to-psbt txb:bwsl u.poym)
+    ?~  pb  ~
+    ~&  >  "PSBT ready:"
+    ~&  >>  u.pb
+    ~[(send-sign-tx u.poym)]
   ==
 ::  get address-info for the request if block in request is old
 ::
@@ -344,7 +348,6 @@
     ::   - request provider to create-raw-tx from txbu
     ::
       %generate-txbu
-    :: TODO make tx info fetch correctly
     :_  state(poym `txbu.upd)
     ?~  provider  ~&(>>> "provider not set" ~)
     %+  weld  ~[(create-raw-tx host.u.provider txbu.upd)]
@@ -440,17 +443,6 @@
   =?  txis  =(txid txid.utxo.ith)
    (snap txis i `txi:bws`ith(ur `rt))
   $(i +(i))
-::  +poym-ready: whether poym txbu is ready to sign
-::    - is the txinfo filled in?
-::    - do all txis in poym have rawtxs?
-::
-++  poym-ready
-  ^-  ?
-  ?~  poym  %.n
-  ?&  ?=(^ txinfo.u.poym)
-      %+  levy  txis.u.poym
-        |=(t=txi:bws ?=(^ ur.t))
-  ==
 ::  +retry-reqs: get-address-info for any reqs with old last-block
 ::
 ++  retry-reqs
@@ -533,8 +525,6 @@
 ++  send-sign-tx
   |=  =txbu:bws
   ^-  card
-  ~&  >>  "transaction ready to sign"
-  ~&  >  txinfo.txbu
   [%give %fact ~[/sign-me] %btc-wallet-hook-request !>([%sign-tx txbu])]
 ::
 ++  poke-wallet-store
