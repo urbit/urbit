@@ -2,7 +2,6 @@ import React, {ReactNode} from "react";
 import moment from "moment";
 import { Row, Box } from "@tlon/indigo-react";
 
-import { Sigil } from "~/logic/lib/sigil"
 import { uxToHex, cite } from "~/logic/lib/util";
 import { Contacts, Rolodex } from "~/types/contact-update";
 import OverlaySigil from "./OverlaySigil";
@@ -18,6 +17,7 @@ interface AuthorProps {
   hideAvatars: boolean;
   hideNicknames: boolean;
   children?: ReactNode;
+  unread?: boolean;
   group: Group;
   api: GlobalApi;
 }
@@ -62,7 +62,7 @@ export default function Author(props: AuthorProps) {
       >
         {name}
       </Box>
-      <Box ml={2} color="gray">
+      <Box ml={2} color={props.unread ? "blue" : "gray"}>
         {dateFmt}
       </Box>
       {props.children}

@@ -3,10 +3,11 @@ import ChatEditor from './chat-editor';
 import { IuseS3 } from '~/logic/lib/useS3';
 import { uxToHex } from '~/logic/lib/util';
 import { Sigil } from '~/logic/lib/sigil';
+import { createPost } from '~/logic/api/graph';
 import tokenizeMessage, { isUrl } from '~/logic/lib/tokenizeMessage';
 import GlobalApi from '~/logic/api/global';
 import { Envelope } from '~/types/chat-update';
-import { Contacts } from '~/types';
+import { Contacts, Content } from '~/types';
 import { Row, BaseImage, Box, Icon, LoadingSpinner } from '@tlon/indigo-react';
 import withS3 from '~/views/components/withS3';
 
@@ -57,64 +58,26 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
     });
   }
 
-  getLetterType(letter) {
-    if (letter.startsWith('/me ')) {
-      letter = letter.slice(4);
-      // remove insignificant leading whitespace.
-      // aces might be relevant to style.
-      while (letter[0] === '\n') {
-        letter = letter.slice(1);
-      }
-
-      return {
-        me: letter
-      };
-    } else if (isUrl(letter)) {
-      return {
-        url: letter
-      };
-    } else {
-      return {
-        text: letter
-      };
-    }
-  }
-
   submit(text) {
     const { props, state } = this;
+    const [,,ship,name] = props.station.split('/');
     if (state.inCodeMode) {
       this.setState({
         inCodeMode: false
-      }, () => {
-        props.api.chat.message(
-          props.station,
-          `~${window.ship}`,
-          Date.now(), {
-            code: {
-              expression: text,
-              output: undefined
-            }
-          }
-        );
+      }, async () => {
+        const output = await props.api.graph.eval(text);
+        const contents: Content[] = [{ code: {  output, expression: text }}];
+        const post = createPost(contents);
+        props.api.graph.addPost(ship, name, post);
       });
       return;
     }
 
-    const messages = tokenizeMessage(text);
+    const post = createPost(tokenizeMessage((text)))
 
     props.deleteMessage();
 
-    messages.forEach((message) => {
-      if (message.length > 0) {
-        message = this.getLetterType(message.join(' '));
-        props.api.chat.message(
-          props.station,
-          `~${window.ship}`,
-          Date.now(),
-          message
-        );
-      }
-    });
+    props.api.graph.addPost(ship,name, post);
   }
 
   uploadSuccess(url) {
@@ -123,12 +86,8 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
       this.chatEditor.current.editor.setValue(url);
       this.setState({ uploadingPaste: false });
     } else {
-      props.api.chat.message(
-        props.station,
-        `~${window.ship}`,
-        Date.now(),
-        { url }
-      );
+      const [,,ship,name] = props.station.split('/');
+      props.api.graph.addPost(ship,name, createPost([{ url }]));
     }
   }
 

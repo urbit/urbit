@@ -9,6 +9,7 @@ import {
   Contacts,
   Rolodex,
   LocalUpdateRemoteContentPolicy,
+  Unreads,
   S3State
 } from "~/types";
 import { Center, LoadingSpinner } from "@tlon/indigo-react";
@@ -27,6 +28,7 @@ interface NotebookRoutesProps {
   book: string;
   graphs: Graphs;
   notebookContacts: Contacts;
+  unreads: Unreads;
   contacts: Rolodex;
   groups: Groups;
   baseUrl: string;
@@ -42,13 +44,15 @@ interface NotebookRoutesProps {
 export function NotebookRoutes(
   props: NotebookRoutesProps & RouteComponentProps
 ) {
-  const { ship, book, api, notebookContacts, baseUrl, rootUrl } = props;
+  const { ship, book, api, notebookContacts, baseUrl, rootUrl, groups } = props;
 
   useEffect(() => {
     ship && book && api.graph.getGraph(ship, book);
   }, [ship, book]);
 
   const graph = props.graphs[`${ship.slice(1)}/${book}`];
+
+  const group = groups?.[props.association?.['group-path']];
 
 
   const relativePath = (path: string) => `${baseUrl}${path}`;
@@ -108,11 +112,14 @@ export function NotebookRoutes(
               ship={ship}
               note={note}
               notebook={graph}
+              unreads={props.unreads}
               noteId={noteIdNum}
               contacts={notebookContacts}
+              association={props.association}
               hideAvatars={props.hideAvatars}
               hideNicknames={props.hideNicknames}
               remoteContentPolicy={props.remoteContentPolicy}
+              group={group}
               s3={props.s3}
               {...routeProps}
             />

@@ -31,6 +31,7 @@ export function LinkResource(props: LinkResourceProps) {
     groups,
     associations,
     graphKeys,
+    unreads,
     s3,
     hideAvatars,
     hideNicknames,
@@ -76,10 +77,14 @@ export function LinkResource(props: LinkResourceProps) {
                   const contact = contactDetails[node.post.author];
                   return (
                     <LinkItem
+                      association={resource}
                       contacts={contacts}
                       key={date.toString()}
                       resource={resourcePath}
                       node={node}
+                      contacts={contactDetails}
+                      unreads={unreads}
+                      nickname={contact?.nickname}
                       hideAvatars={hideAvatars}
                       hideNicknames={hideNicknames}
                       remoteContentPolicy={remoteContentPolicy}
@@ -125,6 +130,7 @@ export function LinkResource(props: LinkResourceProps) {
                   hideNicknames={hideNicknames}
                   remoteContentPolicy={remoteContentPolicy}
                   baseUrl={resourceUrl}
+                  unreads={unreads}
                   group={group}
                   path={resource["group-path"]}
                   api={api}
@@ -135,6 +141,8 @@ export function LinkResource(props: LinkResourceProps) {
                   name={name}
                   comments={node}
                   resource={resourcePath}
+                  association={association}
+                  unreads={unreads}
                   contacts={contactDetails}
                   api={api}
                   hideAvatars={hideAvatars}
@@ -143,7 +151,6 @@ export function LinkResource(props: LinkResourceProps) {
                   editCommentId={editCommentId}
                   history={props.history}
                   baseUrl={`${resourceUrl}/${props.match.params.index}`}
-                  association={association}
                   group={group}
                 />
               </Col>

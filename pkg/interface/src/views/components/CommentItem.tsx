@@ -21,6 +21,7 @@ interface CommentItemProps {
   comment: GraphNode;
   baseUrl: string;
   contacts: Contacts;
+  unread: boolean;
   name: string;
   ship: string;
   api: GlobalApi;
@@ -44,13 +45,14 @@ export function CommentItem(props: CommentItemProps) {
   const updateUrl = `${props.baseUrl}/${commentIndex}`
 
   return (
-    <Box mb={4} opacity={props.pending ? '60%' : '100%'}>
+    <Box mb={4} opacity={post?.pending ? '60%' : '100%'}>
       <Row bg="white" my={3}>
         <Author
           showImage
           contacts={contacts}
           ship={post?.author}
           date={post?.['time-sent']}
+          unread={props.unread}
           hideAvatars={props.hideAvatars}
           hideNicknames={props.hideNicknames}
           remoteContentPolicy={remoteContentPolicy}
@@ -77,6 +79,7 @@ export function CommentItem(props: CommentItemProps) {
       <Box mb={2}>
         <MentionText
           contacts={contacts}
+          group={group}
           content={post?.contents}
           remoteContentPolicy={remoteContentPolicy}
         />

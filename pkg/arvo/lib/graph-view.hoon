@@ -16,6 +16,7 @@
         join+join
         leave+leave
         groupify+groupify
+        eval+so
         ::invite+invite
     ==
     ::

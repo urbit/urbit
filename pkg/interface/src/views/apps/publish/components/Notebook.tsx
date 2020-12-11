@@ -1,11 +1,13 @@
-import React from 'react';
-import { Link, RouteComponentProps } from 'react-router-dom';
-import { NotebookPosts } from './NotebookPosts';
-import { Box, Button, Text, Row, Col } from '@tlon/indigo-react';
-import { Groups } from '~/types/group-update';
-import { Contacts, Rolodex } from '~/types/contact-update';
-import GlobalApi from '~/logic/api/global';
-import { Associations, Graph, Association } from '~/types';
+import React, { PureComponent } from "react";
+import { Link, RouteComponentProps, Route, Switch } from "react-router-dom";
+import { NotebookPosts } from "./NotebookPosts";
+import { roleForShip } from "~/logic/lib/group";
+import { Box, Button, Text, Row, Col } from "@tlon/indigo-react";
+import GlobalApi from "~/logic/api/global";
+import styled from "styled-components";
+import { Contacts, Rolodex, Groups, Associations, Graph, Association, Unreads } from "~/types";
+import { deSig } from "~/logic/lib/util";
+import { StatelessAsyncButton } from "~/views/components/StatelessAsyncButton";
 
 interface NotebookProps {
   api: GlobalApi;
@@ -21,6 +23,7 @@ interface NotebookProps {
   hideAvatars: boolean;
   baseUrl: string;
   rootUrl: string;
+  unreads: Unreads;
 }
 
 interface NotebookState {
@@ -83,6 +86,7 @@ export function Notebook(props: NotebookProps & RouteComponentProps) {
         book={book}
         contacts={notebookContacts ? notebookContacts : {}}
         hideNicknames={hideNicknames}
+        unreads={props.unreads}
         hideAvatars={hideAvatars}
         baseUrl={props.baseUrl}
         api={props.api}

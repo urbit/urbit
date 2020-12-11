@@ -1,17 +1,25 @@
-import React from "react";
+import React, { useState, useCallback } from "react";
 import _ from "lodash";
-import { Text } from "@tlon/indigo-react";
-import { Contacts, Content, LocalUpdateRemoteContentPolicy } from "~/types";
+import { Text, Box } from "@tlon/indigo-react";
+import {
+  Contacts,
+  Content,
+  LocalUpdateRemoteContentPolicy,
+  Group,
+} from "~/types";
 import RichText from "~/views/components/RichText";
-import { cite } from "~/logic/lib/util";
+import { cite, uxToHex } from "~/logic/lib/util";
+import { ProfileOverlay } from "./ProfileOverlay";
+import {useHistory} from "react-router-dom";
 
 interface MentionTextProps {
   contacts: Contacts;
   content: Content[];
+  group: Group;
   remoteContentPolicy: LocalUpdateRemoteContentPolicy;
 }
 export function MentionText(props: MentionTextProps) {
-  const { content, contacts } = props;
+  const { content, contacts, group } = props;
 
   return (
     <>
@@ -28,7 +36,7 @@ export function MentionText(props: MentionTextProps) {
           );
         } else if ("mention" in c) {
           return (
-            <Mention key={idx} contacts={contacts || {}} ship={c.mention} />
+            <Mention key={idx} contacts={contacts || {}} group={group} ship={c.mention} />
           );
         }
         return null;
@@ -37,15 +45,55 @@ export function MentionText(props: MentionTextProps) {
   );
 }
 
-function Mention(props: { ship: string; contacts: Contacts }) {
+export function Mention(props: {
+  ship: string;
+  contacts: Contacts;
+  group: Group;
+}) {
   const { contacts, ship } = props;
   const contact = contacts[ship];
   const showNickname = !!contact?.nickname;
   const name = showNickname ? contact?.nickname : cite(ship);
+  const [showOverlay, setShowOverlay] = useState(false);
+  const onDismiss = useCallback(() => {
+    setShowOverlay(false);
+  }, [setShowOverlay]);
+  const onClick = useCallback(() => {
+    setShowOverlay(true);
+  }, [setShowOverlay]);
+
+  const group = props.group ?? { hidden: true };
+
+  const history = useHistory();
 
   return (
-    <Text mx="2px" px="2px" bg="washedBlue" color="blue" mono={!showNickname}>
-      {name}
-    </Text>
+      <Box
+        position="relative"
+        display="inline-block"
+        cursor="pointer"
+      >
+      {showOverlay && (
+        <ProfileOverlay
+          ship={ship}
+          contact={contact}
+          color={`#${uxToHex(contact?.color ?? '0x0')}`}
+          group={group}
+          onDismiss={onDismiss}
+          hideAvatars={false}
+          hideNicknames={false}
+          history={history}
+        />
+      )}
+      <Text
+        onClick={onClick}
+        mx="2px"
+        px="2px"
+        bg="washedBlue"
+        color="blue"
+        mono={!showNickname}
+      >
+        {name}
+      </Text>
+    </Box>
   );
 }

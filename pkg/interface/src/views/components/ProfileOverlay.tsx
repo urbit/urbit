@@ -12,7 +12,7 @@ type ProfileOverlayProps = ColProps & {
   ship: string;
   contact?: Contact;
   color: string;
-  topSpace: number | 'auto'; 
+  topSpace: number | 'auto';
   bottomSpace: number | 'auto';
   group?: Group;
   onDismiss(): void;
@@ -98,6 +98,8 @@ export class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
 
     const isHidden = group ? group.hidden : false;
 
+    const rootSettings = history.location.pathname.slice(0, history.location.pathname.indexOf("/resource"));
+
     return (
       <Col
         ref={this.popoverRef}
@@ -135,7 +137,7 @@ export class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
               mt='2'
               width='100%'
               style={{ cursor: 'pointer ' }}
-              onClick={() => (isHidden) ? history.push('/~profile/identity') : history.push(`${history.location.pathname}/popover/profile`)}
+              onClick={() => (isHidden) ? history.push('/~profile/identity') : history.push(`${rootSettings}/popover/profile`)}
             >
               Edit Identity
             </Button>

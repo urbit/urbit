@@ -92,7 +92,7 @@ function NotificationWrapper(props: {
 
   const changeMuteDesc = isMuted ? "Unmute" : "Mute";
   return (
-    <Row flexShrink={0} alignItems="top" justifyContent="space-between">
+    <Row width="100%" flexShrink={0} alignItems="top" justifyContent="space-between">
       {children}
       <Row gapX="2" p="2" pt='3' alignItems="top">
         <StatelessAsyncAction name={changeMuteDesc} onClick={onChangeMute} backgroundColor="transparent">
@@ -137,6 +137,7 @@ export function Notification(props: NotificationProps) {
           index={index}
           contents={c}
           contacts={props.contacts}
+          groups={props.groups}
           read={read}
           archived={archived}
           timebox={props.time}
@@ -157,6 +158,7 @@ export function Notification(props: NotificationProps) {
           index={index}
           contents={c}
           contacts={props.contacts}
+          groups={props.groups}
           read={read}
           timebox={props.time}
           archived={archived}

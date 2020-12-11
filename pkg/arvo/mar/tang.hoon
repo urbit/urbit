@@ -9,6 +9,14 @@
 ++  grow
   |%
   ++  noun  tan
+  ++  json
+    =/  result=(each (list ^json) tang)
+      (mule |.((turn tan tank:enjs:format)))
+    ?-  -.result
+      %&  a+p.result
+      %|  a+[a+[%s '[[output rendering error]]']~]~
+    ==
+  ::
   ++  elem
     =-  ;pre:code:"{(of-wall -)}"
     ^-  wall  %-  zing  ^-  (list wall)
