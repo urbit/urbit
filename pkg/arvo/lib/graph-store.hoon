@@ -339,9 +339,7 @@
     ::
     ++  tang 
       |=  jon=^json
-      ~&  jon
       ^-  ^tang
-      =-  ~&(- -)
       ?>  ?=(%a -.jon)
       %-  zing
       %+  turn
