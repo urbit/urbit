@@ -17,9 +17,11 @@ interface MentionTextProps {
   content: Content[];
   group: Group;
   remoteContentPolicy: LocalUpdateRemoteContentPolicy;
+  hideNicknames: boolean;
+  hideAvatars: boolean;
 }
 export function MentionText(props: MentionTextProps) {
-  const { content, contacts, group } = props;
+  const { content, contacts, group, hideNicknames } = props;
 
   return (
     <>
@@ -36,7 +38,7 @@ export function MentionText(props: MentionTextProps) {
           );
         } else if ("mention" in c) {
           return (
-            <Mention key={idx} contacts={contacts || {}} group={group} ship={c.mention} />
+            <Mention key={idx} contacts={contacts || {}} group={group} ship={c.mention} hideNicknames={hideNicknames} hideAvatars={hideAvatars} />
           );
         }
         return null;
@@ -49,10 +51,12 @@ export function Mention(props: {
   ship: string;
   contacts: Contacts;
   group: Group;
+  hideNicknames: boolean;
+  hideAvatars: boolean;
 }) {
-  const { contacts, ship } = props;
+  const { contacts, ship, hideNicknames, hideAvatars } = props;
   const contact = contacts[ship];
-  const showNickname = !!contact?.nickname;
+  const showNickname = (Boolean(contact?.nickname) && !hideNicknames);
   const name = showNickname ? contact?.nickname : cite(ship);
   const [showOverlay, setShowOverlay] = useState(false);
   const onDismiss = useCallback(() => {
@@ -79,8 +83,8 @@ export function Mention(props: {
           color={`#${uxToHex(contact?.color ?? '0x0')}`}
           group={group}
           onDismiss={onDismiss}
-          hideAvatars={false}
-          hideNicknames={false}
+          hideAvatars={hideAvatars || false}
+          hideNicknames={hideNicknames}
           history={history}
         />
       )}
