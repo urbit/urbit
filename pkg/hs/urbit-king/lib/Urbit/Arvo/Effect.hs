@@ -254,14 +254,23 @@ data Ef
     | EfExit Cord EvilPath -- second path component, rest of path
   deriving (Eq, Ord, Show)
 
+-- XX HACK
+clip :: Noun -> Noun
+clip (C (C _ x) y) = C x y
+clip _ = error "misclip"
+
+tack :: Noun -> Noun
+tack (C x y) = C (C (A 0) x) y
+tack _ = error "mistack"
+
 instance ToNoun Ef where
-  toNoun = \case
+  toNoun = clip . \case
     EfVane v   -> toNoun $ reorgThroughNoun ("", v)
     EfExit s p -> toNoun $ ReOrg "" s "exit" p (A 0)
     EfVega s p -> toNoun $ ReOrg "" s "vega" p (A 0)
 
 instance FromNoun Ef where
-  parseNoun = parseNoun >=> \case
+  parseNoun = tack >>> parseNoun >=> \case
     ReOrg "" s "exit" p (A 0) -> pure (EfExit s p)
     ReOrg "" s "exit" p _     -> fail "%exit effect expects nil value"
     ReOrg "" s "vega" p (A 0) -> pure (EfVega s p)

@@ -218,9 +218,7 @@ instance Show Entropy where
 data ArvoEv
     = ArvoEvWhom ()   Ship
     | ArvoEvWack ()   Entropy
-    | ArvoEvWarn Path Noun
     | ArvoEvCrud Path Noun
-    | ArvoEvVeer Atom Noun
   deriving (Eq, Ord, Show)
 
 deriveNoun ''ArvoEv
@@ -318,50 +316,29 @@ data BlipEv
 deriveNoun ''BlipEv
 
 
--- Boot Events -----------------------------------------------------------------
-
-data Vane
-    = VaneVane VaneEv
-    | VaneZuse ZuseEv
-  deriving (Eq, Ord, Show)
-
-data VaneName
-    = Ames | Behn | Clay | Dill | Eyre | Ford | Gall | Iris | Jael
-  deriving (Eq, Ord, Show, Enum, Bounded)
-
-data ZuseEv
-    = ZEVeer () Cord Path BigCord
-    | ZEVoid Void
-  deriving (Eq, Ord, Show)
-
-data VaneEv
-    = VEVeer (VaneName, ()) Cord Path BigCord
-    | VEVoid Void
-  deriving (Eq, Ord, Show)
-
-deriveNoun ''Vane
-deriveNoun ''VaneName
-deriveNoun ''VaneEv
-deriveNoun ''ZuseEv
-
-
 -- The Main Event Type ---------------------------------------------------------
 
 data Ev
     = EvBlip BlipEv
-    | EvVane Vane
   deriving (Eq, Show)
 
 instance ToNoun Ev where
-  toNoun = \case
-    EvBlip v -> toNoun $ reorgThroughNoun (Cord "",     v)
-    EvVane v -> toNoun $ reorgThroughNoun (Cord "vane", v)
+  toNoun = toNoun . \case
+    EvBlip v@BlipEvAmes{}       -> reorgThroughNoun ("ames", v)
+    EvBlip v@BlipEvArvo{}       -> reorgThroughNoun ("",  v)
+    EvBlip v@BlipEvBehn{}       -> reorgThroughNoun ("behn", v)
+    EvBlip v@BlipEvBoat{}       -> reorgThroughNoun ("clay", v)
+    EvBlip v@BlipEvHttpClient{} -> reorgThroughNoun ("iris", v)
+    EvBlip v@BlipEvHttpServer{} -> reorgThroughNoun ("eyre", v)
+    EvBlip v@BlipEvNewt{}       -> reorgThroughNoun ("ames", v)
+    EvBlip v@BlipEvSync{}       -> reorgThroughNoun ("clay", v)
+    EvBlip v@BlipEvTerm{}       -> reorgThroughNoun ("dill", v)
 
+-- XX We really should check the first path element, but since this is used only
+-- in the event browser, which otherwise is broken, I don't care right now.
 instance FromNoun Ev where
   parseNoun = parseNoun >=> \case
-    ReOrg ""     s t p v -> fmap EvBlip $ parseNoun $ toNoun (s,t,p,v)
-    ReOrg "vane" s t p v -> fmap EvVane $ parseNoun $ toNoun (s,t,p,v)
-    ReOrg _      _ _ _ _ -> fail "First path-elem must be ?($ %vane)"
+    ReOrg _ s t p v -> fmap EvBlip $ parseNoun $ toNoun (s,t,p,v)
 
 
 -- Short Event Names -----------------------------------------------------------
@@ -373,7 +350,6 @@ instance FromNoun Ev where
 -}
 getSpinnerNameForEvent :: Ev -> Maybe Text
 getSpinnerNameForEvent = \case
-    EvVane _ -> Nothing
     EvBlip b -> case b of
         BlipEvAmes _           -> Just "ames"
         BlipEvArvo _           -> Just "arvo"
