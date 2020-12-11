@@ -292,6 +292,8 @@
   ::
   ?>  ?=(%3 -.u.old)
   :_  u.old
+  %+  welp
+    cards
   ?:  %-  ~(has by wex.bowl)
       [/graph-store our-self %graph-store]
     ~
