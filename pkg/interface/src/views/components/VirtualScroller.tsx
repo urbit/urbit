@@ -143,13 +143,15 @@ export default class VirtualScroller extends Component<VirtualScrollerProps, Vir
     const { data, size: totalSize, onCalculateVisibleItems } = this.props;
     console.log(windowHeight);
 
+    const overscan = Math.max(windowHeight / 2, 200);
+
 
     [...data].forEach(([index, datum]) => {
       const height = this.heightOf(index);
-      if (startgap < (scrollTop - height) && !startGapFilled) {
+      if (startgap < (scrollTop - overscan) && !startGapFilled) {
         startBuffer.set(index, datum);
         startgap += height;
-      } else if (heightShown < (windowHeight + height)) {
+      } else if (heightShown < (windowHeight + overscan)) {
         startGapFilled = true;
         visibleItems.set(index, datum);
         heightShown += height;
