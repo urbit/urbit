@@ -192,14 +192,15 @@
       %broadcast-tx
     :: TODO:
     ::  calc txid from poym's txbu
-    ::  calc txid
-    ::  make sure both are the same
+    ::  calc txid from TX, or send it back to me
+      ::  make sure both are the same; USE RETURN VALUE FROM RPC (sendrawtransaction)
     ::  remove from poym
     ::  broadcast to provider
     ::  add to wallet-store history
-    ::  send message to peer
+    ::  poke to peer
     `state
     ::
+    ::  %expect-payment
     ::  - check that src.bowl isn't past piym-limit in pend-piym
     ::  - check that payment is in piym
     ::  - add payment to pend-piym

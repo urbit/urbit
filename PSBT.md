@@ -66,3 +66,8 @@ Maps:
   - Change output Wallet derivation path
     * Key: {0x2}|{33byte pubkey}
     * Val: {4byte master xpub fingerprint}|{17byte HD path}
+
+### Signed
+Input: keeps above keyvals, and adds one more for the partial signature:
+* (key type {0x2}|{publicKey})
+* val: 71 byte signature
