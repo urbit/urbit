@@ -139,8 +139,9 @@
   ++  encode
     |=  [=rawtx =txid inputs=(list in:psbt) outputs=(list out:psbt)]
     ^-  base64:psbt
+    =/  sep=(unit bytc)  `1^0x0
     =/  final=(list (unit bytc))
-      %+  join  `(unit bytc)`[~ 1^0x0]
+      %+  join  sep
       %+  turn
         %-  zing
         :~  ~[(globals:en rawtx)]
@@ -151,7 +152,7 @@
     %-  base64:en
     %-  cat:byt
     %+  weld  ~[[5 0x70.7362.74ff]]
-    (murn final same)
+    (murn (snoc final sep) same)
   ::
   ++  parse
     |=  psbt-base64=cord
