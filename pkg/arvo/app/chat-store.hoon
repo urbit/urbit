@@ -2,8 +2,8 @@
 ::
 :: data store that holds linear sequences of chat messages
 ::
-/-  *group
-/+  store=chat-store, default-agent, verb, dbug, group-store,
+/-  *group, store=chat-store
+/+  default-agent, verb, dbug, group-store,
     graph-store, resource, *migrate, grpl=group, mdl=metadata
 ~%  %chat-store-top  ..part  ~
 |%
@@ -102,36 +102,12 @@
     ?>  (team:title our.bowl src.bowl)
     =^  cards  state
       ?+  mark  (on-poke:def mark vase)
-          %json         (poke-json:cc !<(json vase))
-          %chat-action  (poke-chat-action:cc !<(action:store vase))
           %noun         (poke-noun:cc !<(admin-action vase))
           %import       (poke-import:cc q.vase)
       ==
     [cards this]
   ::
-  ++  on-watch
-    ~/  %chat-store-watch
-    |=  =path
-    ^-  (quip card _this)
-    |^
-    ?>  (team:title our.bowl src.bowl)
-    =/  cards=(list card)
-      ?+    path  (on-watch:def path)
-          [%keys ~]     (give %chat-update !>([%keys ~(key by inbox)]))
-          [%all ~]      (give %chat-update !>([%initial inbox]))
-          [%updates ~]  ~
-          [%mailbox @ *]
-        ?>  (~(has by inbox) t.path)
-        (give %chat-update !>([%create t.path]))
-      ==
-    [cards this]
-    ::
-    ++  give
-      |=  =cage
-      ^-  (list card)
-      [%give %fact ~ cage]~
-    --
-  ::
+  ++  on-watch  on-watch:def
   ++  on-leave  on-leave:def
   ++  on-peek
     ~/  %chat-store-peek
@@ -163,12 +139,10 @@
   ++  on-fail   on-fail:def
   --
 ::
-::
 ~%  %chat-store-library  ..card  ~
 |_  bol=bowl:gall
 ++  met  ~(. mdl bol)
 ++  grp  ~(. grpl bol)
-::
 ::
 ++  peek-x-envelopes
   |=  pax=path
@@ -238,116 +212,12 @@
     [[len len] (flop out)]
   ==
 ::
-++  poke-json
-  |=  jon=json
-  ^-  (quip card _state)
-  (poke-chat-action (action:dejs:store jon))
-::
-++  poke-chat-action
-  |=  =action:store
-  ^-  (quip card _state)
-  ?-  -.action
-      %create    (handle-create action)
-      %delete    (handle-delete action)
-      %read      (handle-read action)
-      %messages  (handle-messages action)
-      %message
-        ?.  =(our.bol author.envelope.action)
-          (handle-message action)
-        =^  message-moves  state  (handle-message action)
-        =^  read-moves  state  (handle-read [%read path.action])
-        [(weld message-moves read-moves) state]
-  ==
-::
 ++  poke-import
   |=  arc=*
   ^-  (quip card _state)
   =/  sty=state-4  [%4 (remake-map ;;((tree [path mailbox:store]) +.arc))]
   :_  sty
   (migrate-inbox inbox.sty)
-::
-++  handle-create
-  |=  =action:store
-  ^-  (quip card _state)
-  ?>  ?=(%create -.action)
-  ?:  (~(has by inbox) path.action)  [~ state]
-  :-  (send-diff path.action action)
-  state(inbox (~(put by inbox) path.action *mailbox:store))
-::
-++  handle-delete
-  |=  =action:store
-  ^-  (quip card _state)
-  ?>  ?=(%delete -.action)
-  =/  mailbox=(unit mailbox:store)
-    (~(get by inbox) path.action)
-  ?~  mailbox  [~ state]
-  :-  (send-diff path.action action)
-  state(inbox (~(del by inbox) path.action))
-::
-++  handle-message
-  |=  =action:store
-  ^-  (quip card _state)
-  ?>  ?=(%message -.action)
-  =/  mailbox=(unit mailbox:store)
-    (~(get by inbox) path.action)
-  ?~  mailbox
-    [~ state]
-  =.  letter.envelope.action  (evaluate-letter [author letter]:envelope.action)
-  =^  envelope  u.mailbox  (prepend-envelope u.mailbox envelope.action)
-  :_  state(inbox (~(put by inbox) path.action u.mailbox))
-  (send-diff path.action action(envelope envelope))
-::
-++  handle-messages
-  |=  act=action:store
-  ^-  (quip card _state)
-  ?>  ?=(%messages -.act)
-  =/  mailbox=(unit mailbox:store)
-    (~(get by inbox) path.act)
-  ?~  mailbox
-    [~ state]
-  =.  envelopes.act  (flop envelopes.act)
-  =|  evaluated-envelopes=(list envelope:store)
-  |-  ^-  (quip card _state)
-  ?~  envelopes.act
-    :_  state(inbox (~(put by inbox) path.act u.mailbox))
-    %+  send-diff  path.act
-    [%messages path.act 0 (lent evaluated-envelopes) evaluated-envelopes]
-  =.  letter.i.envelopes.act  (evaluate-letter [author letter]:i.envelopes.act)
-  =^  envelope  u.mailbox  (prepend-envelope u.mailbox i.envelopes.act)
-  =.  evaluated-envelopes  [envelope evaluated-envelopes]
-  $(envelopes.act t.envelopes.act)
-::
-++  handle-read
-  |=  act=action:store
-  ^-  (quip card _state)
-  ?>  ?=(%read -.act)
-  =/  mailbox=(unit mailbox:store)  (~(get by inbox) path.act)
-  ?~  mailbox
-    [~ state]
-  =.  read.config.u.mailbox  length.config.u.mailbox
-  :-  (send-diff path.act act)
-  state(inbox (~(put by inbox) path.act u.mailbox))
-::
-++  evaluate-letter
-  |=  [author=ship =letter:store]
-  ^-  letter:store
-  =?  letter
-      ?&  ?=(%code -.letter)
-          ?=(~ output.letter)
-          (team:title our.bol author)
-      ==
-    =/  =hoon  (ream expression.letter)
-    letter(output (eval:store bol hoon))
-  letter
-::
-++  prepend-envelope
-  |=  [=mailbox:store =envelope:store]
-  ^+  [envelope mailbox]
-  =.  number.envelope  +(length.config.mailbox)
-  =:  length.config.mailbox  +(length.config.mailbox)
-      envelopes.mailbox  [envelope envelopes.mailbox]
-  ==
-  [envelope mailbox]
 ::
 ++  update-subscribers
   |=  [pax=path =update:store]
@@ -387,13 +257,28 @@
   %-  poke-graph-store
   [%0 now.bol %archive-graph rid]
 ::
+++  nobody
+  ^-  @p
+  (bex 128)
+::
+++  path-to-resource
+  |=  =path
+  ^-  resource
+  ?.  ?=([@ @ ~] path)  
+    nobody^(spat path)
+  =/  m-ship=(unit ship)
+    (slaw %p i.path)
+  ?~  m-ship
+    nobody^(spat path)
+  [u.m-ship i.t.path]
+::
 ++  mailbox-to-updates
   |=  [=path =mailbox:store]
   ^-  (list card)
   =/  app-rid=resource
-    (path-to-resource:store path)
+    (path-to-resource path)
   =/  group-rid=resource
-    (fall (group-from-app-resource:met %graph app-rid) [nobody:store %bad-group])
+    (fall (group-from-app-resource:met %graph app-rid) [nobody %bad-group])
   =/  group=(unit group)
     (scry-group:grp group-rid)
   :-  (add-graph app-rid mailbox)
