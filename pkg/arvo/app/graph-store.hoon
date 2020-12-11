@@ -260,13 +260,21 @@
       =/  old-graph=(unit marked-graph:store)
         (~(get by graphs) resource)
       ?>  (validate-graph graph mark)
+      =/  clay-backup=(list card)
+        ?~  old-graph  ~
+        =/  =wire
+          backup+(en-path:res resource)
+        =/  =update:store
+          [%0 now.bowl %add-graph resource p.u.old-graph q.u.old-graph %.y]
+        =/  =cage
+          graph-update+!>(update)
+        =/  =soba:clay
+          [(welp wire /[(scot %da now.bowl)]/graph-update) ins+cage]~
+        [%pass wire %arvo %c %info %home &+soba]~
       :_  %_  state
               graphs       (~(put by graphs) resource [graph mark])
               update-logs  (~(put by update-logs) resource (gas:orm-log ~ ~))
-              archive      
-            ?~  old-graph
-              (~(del by archive) resource)
-            (~(put by archive) resource u.old-graph)
+              archive      (~(del by archive) resource)
             ::
               validators
             ?~  mark  validators
@@ -274,6 +282,7 @@
           ==
       %-  zing
       :~  (give [/updates /keys ~] [%add-graph resource graph mark overwrite])
+          clay-backup
           ?~  mark  ~
           ?:  (~(has in validators) u.mark)  ~
           =/  wire  /validator/[u.mark]
