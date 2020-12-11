@@ -281,7 +281,8 @@
             (~(put in validators) u.mark)
           ==
       %-  zing
-      :~  (give [/updates /keys ~] [%add-graph resource graph mark overwrite])
+      :~  (give [/keys ~] %keys ~(key by graphs))
+          (give [/updates ~] %add-graph resource *graph:store mark overwrite)
           clay-backup
           ?~  mark  ~
           ?:  (~(has in validators) u.mark)  ~
@@ -887,8 +888,10 @@
     :+  %add-nodes
       [ship term]
     %-  ~(gas by *(map index:store node:store))
-    %+  turn
-      =-  ?:(older (slag (sub (lent -) count) -) (scag count -))
+    :: TODO time complexity not desirable
+    ::   replace with custom ordered map functions
+    %+  turn  
+      =-  ?.(older (slag (safe-sub (lent -) count) -) (scag count -))
       %-  tap:orm
       %+  subset:orm  u.graph
       =/  idx
@@ -978,6 +981,14 @@
       (peek:orm-log:store update-log)
     (bind result |=([=time update:store] time))
   ==
+  ::
+  ++  safe-sub
+    |=  [a=@ b=@]
+    ^-  @
+    ?:  (gte b a)
+      0
+    (sub a b)
+  ::
   ++  get-node-children
     |=  [=ship =term =index:store]
     ^-  (unit graph:store)
