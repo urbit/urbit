@@ -42,6 +42,11 @@ Below is hex for `m/84'/0'/0'/0/0`
 `*80 is the ending for hardened paths*
 54.00.00.80 00.00.00.80 00.00.00.80 00.00.00.00 00.00.00.00.00`
 
+## CLI Debugging
+```
+bitcoin-cli -rpcuser=__cookie__ -rpcpassword=$(./rpc-password.sh) decodepsbt $PSBT
+```
+
 ## ColdCard PSBT Export Structure
 If we don't have the master fingerprint, can probably fake it. It's not "load-bearing".
 
