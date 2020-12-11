@@ -185,7 +185,7 @@ const GraphNode = ({
 
   const groupContacts = contacts[groupPath] ?? {};
 
-  const nodeUrl = getNodeUrl(mod, group.hidden ? '/home' : groupPath, graph, index);
+  const nodeUrl = getNodeUrl(mod, group?.hidden ? '/home' : groupPath, graph, index);
 
   const onClick = useCallback(() => {
     if(!read) {

@@ -64,8 +64,9 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
     if (state.inCodeMode) {
       this.setState({
         inCodeMode: false
-      }, () => {
-        const contents: Content[] = [{ code: {  expression: text, output: undefined }}];
+      }, async () => {
+        const output = await props.api.graph.eval(text);
+        const contents: Content[] = [{ code: {  output, expression: text }}];
         const post = createPost(contents);
         props.api.graph.addPost(ship, name, post);
       });

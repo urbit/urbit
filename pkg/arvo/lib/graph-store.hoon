@@ -337,17 +337,31 @@
           [%code eval]
       ==
     ::
+    ++  tang 
+      |=  jon=^json
+      ~&  jon
+      ^-  ^tang
+      =-  ~&(- -)
+      ?>  ?=(%a -.jon)
+      %-  zing
+      %+  turn
+        p.jon
+      |=  jo=^json
+      ^-  (list tank)
+      ?>  ?=(%a -.jo)
+      %+  turn
+        p.jo
+      |=  j=^json
+      ?>  ?=(%s -.j)
+      ^-  tank
+      leaf+(trip p.j)
+    ::
     ++  eval
-      |=  a=^json
-      ^-  [cord (list tank)]
-      =,  ^?  dejs-soft:format
-      =+  exp=((ot expression+so ~) a)
-      %-  need
-      ?~  exp  [~ '' ~]
-      :+  ~  u.exp
-      ::  NOTE: when sending, if output is an empty list,
-      ::  graph-store will evaluate
-      (fall ((ot output+(ar dank) ~) a) ~)
+      %-  ot
+      :~  expression+so
+          output+tang
+      ==
+
     ::
     ++  remove-nodes
       %-  ot

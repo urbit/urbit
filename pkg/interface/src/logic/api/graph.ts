@@ -176,6 +176,12 @@ export default class GraphApi extends BaseApi<StoreState> {
     });
   }
 
+  eval(cord: string) {
+    return this.spider('graph-view-action', 'tang', 'graph-eval', {
+      eval: cord
+    });
+  }
+
   addGraph(ship: Patp, name: string, graph: any, mark: any) {
     return this.storeAction({
       'add-graph': {
