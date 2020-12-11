@@ -11,47 +11,25 @@ Runs the full node API services.
 ## Start Agents
 On `~zod`
 ```
+|commit %home
 |start %btc-provider
 |start %btc-wallet-hook
 |start %btc-wallet-store
 
 :btc-provider|command [%set-credentials api-url='http://localhost:50002']
 :btc-wallet-hook|action [%set-provider ~zod]
-```
-
-On `~dopzod`
-```
-|start %btc-wallet-hook
-|start %btc-wallet-store
-```
-
-## Connect to Provider from Another Ship
-On `~dopzod`
-```
-:btc-wallet-hook|action [%set-provider ~zod]
-```
-
-So we whitelist.
-On `~zod`
-```
 :btc-provider|command [%whitelist-clients `(set ship)`(sy ~[~dopzod])]
 ```
 
-And try again on `~dopzod`
+On `~dopzod`
 ```
+|commit %home
+|start %btc-wallet-hook
+|start %btc-wallet-store
 :btc-wallet-hook|action [%set-provider ~zod]
-:btc-wallet-hook +dbug [%state 'provider']
 ```
 
-## Simulate Loss of Connectivity
-* Shut down BTC services
-* Observe `~zod` sending "not connected" updates
-* dbug on `~dopzod` shows `%.n` for connected
-```
-:btc-wallet-hook +dbug
-```
-
-### Add a Wallet While Disconnected
+### Add Wallets
 `~dopzod`
 XPUB is the "absurd sick..." mnemonic
 ```
@@ -59,13 +37,13 @@ XPUB is the "absurd sick..." mnemonic
 =fprint [%4 0xbeef.dead]
 :btc-wallet-store|action [%add-wallet xpubp fprint ~ [~ 8] [~ 6]]
 ```
-Lots of `scans` backed up, because we're disconnected.
 
-* start services back up
-* provider will keep re-checking, and once connected, we'll observe address updates
-* re-run `:btc-wallet-store +dbug`; note that the wallet is `scanned`
-
-Key point: provider connectivity doesn't add mental overhead for the client.
+`~zod`
+```
+=xpubzod 'zpub6rFR7y4Q2AijBEqTUquhVz398htDFrtymD9xYYfG1m4wAcvPhXNfE3EfH1r1ADqtfSdVCToUG868RvUUkgDKf31mGDtKsAYz2oz2AGutZYs'
+=fprint [%4 0xbeef.dead]
+:btc-wallet-store|action [%add-wallet xpubzod fprint ~ [~ 8] [~ 6]]
+```
 
 ## Check Balance
 `~dopzod`
@@ -75,13 +53,6 @@ Key point: provider connectivity doesn't add mental overhead for the client.
 
 ## Pay a Ship
 `~dopzod` will pay `~zod`. Both are acting as clients here (and use `~zod` as the provider).
-
-`~zod` adds a wallet:
-```
-=xpubzod 'zpub6rFR7y4Q2AijBEqTUquhVz398htDFrtymD9xYYfG1m4wAcvPhXNfE3EfH1r1ADqtfSdVCToUG868RvUUkgDKf31mGDtKsAYz2oz2AGutZYs'
-=fprint [%4 0xbeef.dead]
-:btc-wallet-store|action [%add-wallet xpubzod fprint ~ [~ 8] [~ 6]]
-```
 
 `~dopzod`
 ```

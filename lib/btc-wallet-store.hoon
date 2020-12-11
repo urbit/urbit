@@ -127,15 +127,16 @@
     ==
   ::  +update-address
   ::   - insert a new address
-  ::   - update "nixt" free address if this one was it
-  ::   - watch the new nixt
+  ::   - if it's used, move "nixt" to the next free address
+  ::   - watch address
   ::
   ++  update-address
     |=  [a=address:btc =addi]
+    :: TODO: check whether addi is used or not before bumping nixt
     ^-  walt
     ?>  =(chyg chyg.addi)
     ?>  =(a (mk-address idx.addi))
-    =?  w  (is-nixt addi)
+    =?  w  ?&(used.addi (is-nixt addi))
       bump-nixt
     w(wach (~(put by wach.w) a addi))
   ::
