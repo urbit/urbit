@@ -64,6 +64,9 @@
   =|  cards=(list card)
   |-
   ?:  ?=(%2 -.old-state)
+    =.  cards
+      :_  cards
+      (act [%watch %group-store /groups %group-on-leave])
     [cards this(state old-state)]
   ?:  ?=(%1 -.old-state)
     =.  cards
