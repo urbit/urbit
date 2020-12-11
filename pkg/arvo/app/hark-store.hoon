@@ -391,23 +391,27 @@
     ::
     ++  read-boxes
       |=  [boxes=(set @da) =index:store]
-      ^+  state
+      ^-  (quip card _state)
       =/  boxes=(list @da)
         ~(tap in boxes)
+      =|  crds=(list card)
       |- 
-      ?~  boxes  state
+      ?~  boxes  [crds state]
       =*  box  i.boxes
       =^  cards  state
         (read-note box index)
-      $(boxes t.boxes)
+      $(boxes t.boxes, crds (welp crds cards))
     ::
     ++  read-index
       |=  =index:store
       ^-  (quip card _state)
       =/  boxes=(set @da)
         (~(get ju by-index) index)
-      :-  (give:ha ~[/updates] %read-index index)
-      (read-boxes boxes index)
+      =^  cards  state
+        (read-boxes boxes index)
+      :_  state
+      %+  welp  cards
+      (give:ha ~[/updates] %read-index index)
     ::
     ++  read-all
       ^-  (quip card _state)
