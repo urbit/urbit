@@ -121,7 +121,7 @@ export class Eyre extends Component {
       </>);
       const subscriptionItems = c.subscriptions.map(s => {
         //NOTE jsx sorta copied from /components/subscriptions
-        return {key: `${s.id} ${s.app} ${s.ship} ${s.path}`, jsx: (
+        return {key: `${s.id} ${s.ship} ${s.app} ${s.path}`, jsx: (
           <div class="flex">
             <div class="flex-auto" style={{maxWidth: '15%'}}>
               {s.id}
@@ -144,7 +144,7 @@ export class Eyre extends Component {
       return {key: c.session, jsx: (
         <Summary summary={summary} details={(
           <SearchableList
-            placeholder="id, app, ship, path"
+            placeholder="id, ship, app, path"
             items={subscriptionItems}
           />
         )} />
