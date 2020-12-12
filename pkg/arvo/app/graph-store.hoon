@@ -257,20 +257,7 @@
               ?&  !(~(has by archive) resource)
                   !(~(has by graphs) resource)
           ==  ==
-      =/  old-graph=(unit marked-graph:store)
-        (~(get by graphs) resource)
       ?>  (validate-graph graph mark)
-      =/  clay-backup=(list card)
-        ?~  old-graph  ~
-        =/  =wire
-          backup+(en-path:res resource)
-        =/  =update:store
-          [%0 now.bowl %add-graph resource p.u.old-graph q.u.old-graph %.y]
-        =/  =cage
-          graph-update+!>(update)
-        =/  =soba:clay
-          [(welp wire /[(scot %da now.bowl)]/graph-update) ins+cage]~
-        [%pass wire %arvo %c %info %home &+soba]~
       :_  %_  state
               graphs       (~(put by graphs) resource [graph mark])
               update-logs  (~(put by update-logs) resource (gas:orm-log ~ ~))
@@ -283,7 +270,6 @@
       %-  zing
       :~  (give [/keys ~] %keys (~(put in ~(key by graphs)) resource))
           (give [/updates ~] %add-graph resource *graph:store mark overwrite)
-          clay-backup
           ?~  mark  ~
           ?:  (~(has in validators) u.mark)  ~
           =/  wire  /validator/[u.mark]
@@ -311,6 +297,8 @@
       |^
       =/  [=graph:store mark=(unit mark:store)]
         (~(got by graphs) resource)
+      ~|  "cannot add duplicate nodes to {<resource>}"
+      ?<  (check-for-duplicates graph ~(key by nodes))
       =/  =update-log:store  (~(got by update-logs) resource)
       =.  update-log
         (put:orm-log update-log time [%0 time [%add-nodes resource nodes]])
@@ -324,6 +312,31 @@
         :_  mark
         (add-node-list resource graph mark (sort-nodes nodes))
       ==
+      ::
+      ++  check-for-duplicates
+        |=  [=graph:store nodes=(set index:store)]
+        ^-  ?
+        =/  node-list  ~(tap in nodes)
+        |-
+        ?~  node-list  %.n
+        ?:  (has-node graph i.node-list)  %.y
+        $(node-list t.node-list)
+      ::
+      ++  has-node
+        |=  [=graph:store =index:store]
+        ^-  ?
+        =/  node=(unit node:store)  ~
+        |-
+        ?~  index
+          ?=(^ node)
+        ?~  t.index
+          ?=(^ (get:orm graph i.index))
+        =.  node  (get:orm graph i.index)
+        ?~  node  %.n
+        ?-  -.children.u.node
+            %empty  %.n
+            %graph  $(graph p.children.u.node, index t.index)
+        ==
       ::
       ++  sort-nodes
         |=  nodes=(map index:store node:store)

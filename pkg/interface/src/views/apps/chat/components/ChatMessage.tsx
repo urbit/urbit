@@ -144,12 +144,12 @@ export default class ChatMessage extends Component<ChatMessageProps> {
         style={style}
         mb={1}
       >
-        {dayBreak && !isLastRead ? <DayBreak when={msg.when} /> : null}
+        {dayBreak && !isLastRead ? <DayBreak when={msg['time-sent']} /> : null}
         {renderSigil
           ? <MessageWithSigil {...messageProps} />
           : <MessageWithoutSigil {...messageProps} />}
         <Box flexShrink={0} fontSize={0} position='relative' width='100%' overflow='visible' style={unreadContainerStyle}>{isLastRead
-          ? <UnreadMarker dayBreak={dayBreak} when={msg.when} ref={unreadMarkerRef} />
+          ? <UnreadMarker dayBreak={dayBreak} when={msg['time-sent']} ref={unreadMarkerRef} />
           : null}</Box>
       </Box>
     );
@@ -261,6 +261,8 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
               measure={measure}
               fontSize={fontSize}
               group={group}
+              hideNicknames={hideNicknames}
+              hideAvatars={hideAvatars}
             />)}
           </ContentBox>
         </Box>
@@ -276,16 +278,25 @@ const ContentBox = styled(Box)`
 
 `;
 
-export const MessageWithoutSigil = ({ timestamp, contacts, msg, remoteContentPolicy, measure, group }) => (
+export const MessageWithoutSigil = ({ timestamp, contacts, msg, remoteContentPolicy, measure, group, hideNicknames, hideAvatars }) => (
   <>
     <Text flexShrink={0} mono gray display='inline-block' pt='2px' lineHeight='tall' className="child">{timestamp}</Text>
     <ContentBox flexShrink={0} fontSize='14px' className="clamp-message" style={{ flexGrow: 1 }}>
-      {msg.contents.map(c => (<MessageContent contacts={contacts} content={c} group={group} remoteContentPolicy={remoteContentPolicy} measure={measure}/>))}
+      {msg.contents.map((c, i) => (
+        <MessageContent
+          key={i}
+          contacts={contacts}
+          content={c}
+          group={group}
+          remoteContentPolicy={remoteContentPolicy}
+          measure={measure}
+          hideNicknames={hideNicknames}
+          hideAvatars={hideAvatars}/>))}
     </ContentBox>
   </>
 );
 
-export const MessageContent = ({ content, contacts, remoteContentPolicy, measure, fontSize, group }) => {
+export const MessageContent = ({ content, contacts, remoteContentPolicy, measure, fontSize, group, hideNicknames, hideAvatars }) => {
   if ('code' in content) {
     return <CodeContent content={content} />;
   } else if ('url' in content) {
@@ -314,7 +325,7 @@ export const MessageContent = ({ content, contacts, remoteContentPolicy, measure
   } else if ('text' in content) {
     return <TextContent fontSize={fontSize} content={content} />;
   } else if ('mention' in content) {
-    return <Mention group={group} ship={content.mention} contacts={contacts} />
+    return <Mention group={group} ship={content.mention} contact={contacts?.[content.mention]} hideNicknames={hideNicknames} hideAvatars={hideAvatars} />
   } else {
     return null;
   }

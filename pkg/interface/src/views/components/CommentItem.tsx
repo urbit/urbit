@@ -82,6 +82,8 @@ export function CommentItem(props: CommentItemProps) {
           group={group}
           content={post?.contents}
           remoteContentPolicy={remoteContentPolicy}
+          hideNicknames={props.hideNicknames}
+          hideAvatars={props.hideAvatars}
         />
       </Box>
     </Box>
