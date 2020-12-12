@@ -43,10 +43,10 @@ export function SidebarListHeader(props: {
       justifyContent="space-between"
       py={2}
       pr={2}
-      pl={3}
+      pl={2}
     >
       <Box flexShrink='0'>
-        <Text>
+        <Text bold>
           {props.initialValues.hideUnjoined ? "Joined Channels" : "All Channels"}
         </Text>
       </Box>
