@@ -22,21 +22,16 @@
     dep   ~(. (default:pull-hook this config) bowl)
     gra   ~(. graph bowl)
 ::
-++  on-init       on-init:def
-++  on-save       !>(~)
-++  on-load       on-load:def
-++  on-poke       on-poke:def
-++  on-peek       on-peek:def
-++  on-arvo       on-arvo:def
-++  on-fail       on-fail:def
-++  on-agent
-  |=  [=wire =sign:agent:gall]
-  ^-  (quip card _this)
-  ?:  ?=(%poke-ack -.sign)  `this
-  (on-agent:def wire sign)
-::
-++  on-watch      on-watch:def
-++  on-leave      on-leave:def
+++  on-init   on-init:def
+++  on-save   !>(~)
+++  on-load   on-load:def
+++  on-poke   on-poke:def
+++  on-peek   on-peek:def
+++  on-arvo   on-arvo:def
+++  on-fail   on-fail:def
+++  on-agent  on-agent:def
+++  on-watch  on-watch:def
+++  on-leave  on-leave:def
 ++  on-pull-nack
   |=  [=resource =tang]
   ^-  (quip card _this)
