@@ -29,7 +29,12 @@
 ++  on-peek       on-peek:def
 ++  on-arvo       on-arvo:def
 ++  on-fail       on-fail:def
-++  on-agent      on-agent:def
+++  on-agent
+  |=  [=wire =sign:agent:gall]
+  ^-  (quip card _this)
+  ?:  ?=(%poke-ack -.sign)  `this
+  (on-agent:def wire sign)
+::
 ++  on-watch      on-watch:def
 ++  on-leave      on-leave:def
 ++  on-pull-nack
