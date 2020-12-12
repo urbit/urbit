@@ -190,9 +190,9 @@ export function ShipSearch(props: InviteSearchProps) {
             alignItems="center"
             py={1}
             px={2}
-            border={1}
-            borderColor="washedGrey"
             color="black"
+            borderRadius='2'
+            bg='washedGray'
             fontSize={0}
             mt={2}
             mr={2}
