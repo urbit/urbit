@@ -297,10 +297,8 @@
       |^
       =/  [=graph:store mark=(unit mark:store)]
         (~(got by graphs) resource)
-      ::  no-op if we already have any of the nodes
-      ?:  (check-for-duplicates resource ~(key by nodes))
-        ::~&  nooped-due-to-duplicate-nodes+[resource nodes]
-        [~ state]
+      ~|  "cannot add duplicate nodes to {<resource>}"
+      ?<  (check-for-duplicates graph ~(key by nodes))
       =/  =update-log:store  (~(got by update-logs) resource)
       =.  update-log
         (put:orm-log update-log time [%0 time [%add-nodes resource nodes]])
@@ -316,24 +314,21 @@
       ==
       ::
       ++  check-for-duplicates
-        |=  [=resource:store nodes=(set index:store)]
+        |=  [=graph:store nodes=(set index:store)]
         ^-  ?
-        =|  has-duplicates=_|
+        =/  has-duplicates  %.n
         =/  node-list  ~(tap in nodes)
         |-
         ?~  node-list
           has-duplicates
-        =?  has-duplicates  (has-node resource i.node-list)  %.y
+        =.  has-duplicates
+          |(has-duplicates (has-node graph i.node-list))
         $(node-list t.node-list)
       ::
       ++  has-node
-        |=  [=resource:store =index:store]
+        |=  [=graph:store =index:store]
         ^-  ?
-        =/  parent-graph=(unit marked-graph:store)
-          (~(get by graphs) resource)
-        ?~  parent-graph  %.n
         =/  node=(unit node:store)  ~
-        =/  =graph:store  p.u.parent-graph
         |-
         ?~  index
           ?=(^ node)
