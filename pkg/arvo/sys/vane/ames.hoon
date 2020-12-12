@@ -871,12 +871,12 @@
     ?^  dud
       ?+  -.task
           (on-crud:event-core -.task tang.u.dud)
-        %hear  (on-hole:event-core [lane blob]:task)
+        %hear  (on-hear:event-core lane.task blob.task dud)
       ==
     ::
     ?-  -.task
       %born  on-born:event-core
-      %hear  (on-hear:event-core [lane blob]:task)
+      %hear  (on-hear:event-core [lane blob ~]:task)
       %heed  (on-heed:event-core ship.task)
       %init  on-init:event-core
       %jilt  (on-jilt:event-core ship.task)
@@ -1194,15 +1194,15 @@
     =/  =channel     [[our ship] now channel-state -.peer-state]
     abet:on-jilt:(make-peer-core peer-state channel)
   ::  +on-hear: handle raw packet receipt
-  ::  +on-hole: handle packet crash notification
   ::
-  ++  on-hear  |=([l=lane b=blob] (on-hear-packet l (decode-packet b) ok=&))
-  ++  on-hole  |=([l=lane b=blob] (on-hear-packet l (decode-packet b) ok=|))
+  ++  on-hear
+    |=  [l=lane b=blob d=(unit goof)]
+    (on-hear-packet l (decode-packet b) d)
   ::  +on-hear-packet: handle mildly processed packet receipt
   ::
   ++  on-hear-packet
     ~/  %on-hear-packet
-    |=  [=lane =packet ok=?]
+    |=  [=lane =packet dud=(unit goof)]
     ^+  event-core
     ::
     ?:  =(our sndr.packet)
@@ -1226,7 +1226,7 @@
   ::
   ++  on-hear-forward
     ~/  %on-hear-forward
-    |=  [=lane =packet ok=?]
+    |=  [=lane =packet dud=(unit goof)]
     ^+  event-core
     %-  %^  trace  for.veb  sndr.packet
         |.("forward: {<sndr.packet>} -> {<rcvr.packet>}")
@@ -1246,7 +1246,7 @@
   ::
   ++  on-hear-open
     ~/  %on-hear-open
-    |=  [=lane =packet ok=?]
+    |=  [=lane =packet dud=(unit goof)]
     ^+  event-core
     ::  assert the comet can't pretend to be a moon or other address
     ::
@@ -1283,7 +1283,7 @@
   ::
   ++  on-hear-shut
     ~/  %on-hear-shut
-    |=  [=lane =packet ok=?]
+    |=  [=lane =packet dud=(unit goof)]
     ^+  event-core
     =/  sndr-state  (~(get by peers.ames-state) sndr.packet)
     ::  if we don't know them, maybe enqueue a jael %public-keys request
@@ -1338,7 +1338,7 @@
     ::  perform peer-specific handling of packet
     ::
     =/  peer-core  (make-peer-core peer-state channel)
-    abet:(on-hear-shut-packet:peer-core lane shut-packet ok)
+    abet:(on-hear-shut-packet:peer-core lane shut-packet dud)
   ::  +on-take-boon: receive request to give message to peer
   ::
   ++  on-take-boon
@@ -1897,7 +1897,7 @@
     ::  +on-hear-shut-packet: handle receipt of ack or message fragment
     ::
     ++  on-hear-shut-packet
-      |=  [=lane =shut-packet ok=?]
+      |=  [=lane =shut-packet dud=(unit goof)]
       ^+  peer-core
       ::  update and print connection status
       ::
@@ -1906,12 +1906,15 @@
       =/  =bone  bone.shut-packet
       ::
       ?:  ?=(%& -.meat.shut-packet)
-        (run-message-sink bone %hear lane shut-packet ok)
-      ::  ignore .ok for |message-pump; just try again on error
+        (run-message-sink bone %hear lane shut-packet ?=(~ dud))
+      ::  Just try again on error, printing trace
       ::
       ::    Note this implies that vanes should never crash on %done,
       ::    since we have no way to continue using the flow if they do.
       ::
+      =+  ?~  dud  ~
+          %.  ~
+          (slog leaf+"ames: crashed on message ack" >mote.u.dud< tang.u.dud)
       (run-message-pump bone %hear [message-num +.meat]:shut-packet)
     ::  +on-memo: handle request to send message
     ::
