@@ -25,7 +25,7 @@ const ScrollbarLessBox = styled(Box)`
 
 export default function LaunchApp(props) {
   const [hashText, setHashText] = useState(props.baseHash);
-
+  console.log('it works')
   return (
     <>
       <Helmet>

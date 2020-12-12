@@ -233,10 +233,9 @@ export class Omnibox extends Component {
         .filter(category => category.categoryResults.length > 0)
         .map(({ category, categoryResults }, i) => {
           const categoryTitle = (category === 'other')
-            ? null : <Text gray ml={2}>{category.charAt(0).toUpperCase() + category.slice(1)}</Text>;
+            ? null : <Row pl='2' height='5' alignItems='center' bg='washedGray'><Text gray bold>{category.charAt(0).toUpperCase() + category.slice(1)}</Text></Row>;
           const selected = this.state.selected?.length ? this.state.selected[1] : '';
           return (<Box key={i} width='max(50vw, 300px)' maxWidth='600px'>
-            <Rule borderTopWidth="0.5px" color="washedGray" />
             {categoryTitle}
             {categoryResults.map((result, i2) => (
               <OmniboxResult
@@ -263,6 +262,7 @@ export class Omnibox extends Component {
     if (state?.selected?.length === 0 && Array.from(this.state.results.values()).flat().length) {
       this.setNextSelected();
     }
+
     return (
         <Box
           backgroundColor='scales.black30'
