@@ -2381,6 +2381,19 @@
     ::
     =.  queued-message-acks.state
       (~(del by queued-message-acks.state) current.state)
+    ::  clear all packets from this message from the packet pump
+    ::
+    ::    Note we did this when the original packet came in, a few lines
+    ::    above.  It's not clear why, but it doesn't always clear the
+    ::    packets when it's not the current message.  As a workaround,
+    ::    we clear the packets again when we catch up to this packet.
+    ::
+    ::    This is slightly inefficient because we run this twice for
+    ::    each packet and it may emit a few unnecessary packets, but
+    ::    but it's not incorrect.  pump-metrics are updated only once,
+    ::    at the time when we actually delete the packet.
+    ::
+    =.  message-pump  (run-packet-pump %done current.state lag=*@dr)
     ::  give %done to vane if we're ready
     ::
     ?-    -.u.cur
