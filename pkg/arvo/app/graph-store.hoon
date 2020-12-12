@@ -316,13 +316,10 @@
       ++  check-for-duplicates
         |=  [=graph:store nodes=(set index:store)]
         ^-  ?
-        =/  has-duplicates  %.n
         =/  node-list  ~(tap in nodes)
         |-
-        ?~  node-list
-          has-duplicates
-        =.  has-duplicates
-          |(has-duplicates (has-node graph i.node-list))
+        ?~  node-list  %.n
+        ?:  (has-node graph i.node-list)  %.y
         $(node-list t.node-list)
       ::
       ++  has-node
