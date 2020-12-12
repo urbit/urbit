@@ -105,7 +105,7 @@ export function NewGroup(props: NewGroupProps & RouteComponentProps) {
               <Checkbox
                 id="isPrivate"
                 label="Private Group"
-                caption="Is your group private?"
+                caption="Anyone can join a public group. A private group is only joinable by invite."
               />
               <AsyncButton>Create Group</AsyncButton>
             </Col>
