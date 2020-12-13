@@ -192,10 +192,11 @@
 ++  handle-rpc-error
   |=  [=wire e=error:rpc-types]
   ^-  (quip card _state)
-  :: TODO: broadcast this error to subscribers
-  :: use the wire to get req-id
-  ::  (get-req-id wire)
-  `state
+  ?+  e  [~[(send-update [%.n [%rpc-error ~]])] state]
+      %tx-inputs-missing-or-spent
+    :_  state
+    ~[(send-update [%.y (get-req-id wire) %broadcast-tx %.n %tx-inputs-missing-or-spent])]
+  ==
 ::
 ++  handle-rpc-result
   |=  [=wire r=result:rpc-types]
@@ -220,6 +221,11 @@
     ?>  ?=([%get-raw-tx *] r)
     :_  state
     ~[(send-update [%.y (get-req-id wire) %raw-tx +.r])]
+    ::
+      [%broadcast-raw-tx @ *]
+    ?>  ?=([%broadcast-tx *] r)
+    :_  state
+    ~[(send-update [%.y (get-req-id wire) %broadcast-tx %.y +.r])]
     ::
       [%ping @ *]
     ?>  ?=([%get-block-and-fee *] r)
