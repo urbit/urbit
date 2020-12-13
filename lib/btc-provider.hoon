@@ -128,25 +128,20 @@
   ::
   ++  parse-error
     |=  res=response:json-rpc
-    |^  ^-  error:rpc-types
+    ^-  error:rpc-types
     ?>  ?=(%error -.res)
-    %tx-inputs-missing-or-spent
-    :: if code = -25, then return
-    :: -28 is blocks not ready
-    ::    ?+  code:(error res.res)
-    ++  error
-      %-  ot:dejs:format
-      :~  [%code ni:dejs:format]
-          [%message so:dejs:format]
-      ==
-    --
+    ?:  =('-25' code.res)
+      %tx-inputs-missing-or-spent
+    ?:  =('28' code.res)
+      %blocks-not-ready
+    %connection-error
   ::
   ++  parse-result
     |=  res=response:json-rpc
     |^  ^-  result:rpc-types
     ~|  -.res
     ?>  ?=(%result -.res)
-    ?+  id.res  ~|([%unsupported-response id.res] !!)
+    ?+  id.res  ~|([%unsupported-result id.res] !!)
         %get-address-info
       [id.res (address-info res.res)]
       ::
@@ -158,6 +153,9 @@
       ::
         %create-raw-tx
       [%get-raw-tx (raw-tx res.res)]
+      ::
+        %broadcast-tx
+      [%broadcast-tx ((cu:dejs:format to-hash256 so:dejs:format) res.res)]
       ::
         %get-block-count
       [id.res (ni:dejs:format res.res)]
