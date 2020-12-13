@@ -104,7 +104,7 @@
   ?.  ?|(connected.host-info =(-.body.act %ping))
     ~&  >>>  "Not connected to RPC"
     [~[(send-update [%| %not-connected 500])] state]
-  =/  ract=action:rpc
+  =/  ract=action:rpc-types
     ?-  -.body.act
         %address-info
       [%get-address-info address.body.act]
@@ -118,13 +118,16 @@
         %create-raw-tx
       [%create-raw-tx inputs.body.act outputs.body.act]
       ::
+        %broadcast-tx 
+      [%broadcast-tx rawtx.body.act]
+      ::
         %ping
       [%get-block-and-fee ~]
     ==
   [~[(req-card act ract)] state]
 ::
 ++  req-card
-  |=  [act=action ract=action:rpc]
+  |=  [act=action ract=action:rpc-types]
   =|  out=outbound-config:iris
   =/  req=request:http
     (gen-request host-info ract)
@@ -154,44 +157,26 @@
   ?^  conn-err
     :_  state(connected.host-info %.n)
     ~[(send-status [%disconnected ~]) (send-update [%| u.conn-err])]
-  =/  rpc-resp=response:json-rpc
-    (get-rpc-response response)
-  ?.  ?=([%result *] rpc-resp)
-    [~[(send-update [%| [%rpc-error ~]])] state]
-  ::  no error, switch on wire to handle RPC data
   ::
-  =/  resp=response:rpc  (parse-response rpc-resp)
-  ?+  wire  ~|("Unexpected HTTP response" !!)
-      [%address-info @ *]
-    ?>  ?=([%get-address-info *] resp)
-    :_  state
-    ~[(send-update [%.y (get-req-id wire) %address-info +.resp])]
+  ::  TODO: make sure below works
+  =/  resp=response:rpc-types
+    %-  parse-response:rpc
+    (get-rpc-response response)
+  ?-  -.resp
+      %error
+    (handle-rpc-error wire +.resp)
     ::
-      [%tx-info @ *]
-    ?>  ?=([%get-tx-vals *] resp)
-    :_  state
-    ~[(send-update [%.y (get-req-id wire) %tx-info +.resp])]
+      %result
+    (handle-rpc-result wire +.resp)
     ::
-      [%raw-tx @ *]
-    ?>  ?=([%get-raw-tx *] resp)
-    :_  state
-    ~[(send-update [%.y (get-req-id wire) %raw-tx +.resp])]
-    ::
-      [%create-raw-tx @ *]
-    ?>  ?=([%get-raw-tx *] resp)
-    :_  state
-    ~[(send-update [%.y (get-req-id wire) %raw-tx +.resp])]
-    ::
-      [%ping @ *]
-    ?>  ?=([%get-block-and-fee *] resp)
-    :-  ~[(send-status [%connected block.resp fee.resp])]
-    state(connected.host-info %.y)
+      %unhandled-response
+    [~[(send-update [%| [%rpc-error ~]])] state]
   ==
 ::
 ++  connection-error
   |=  status=@ud
   ^-  [(unit error) _state]
-  ?+  status  [`[%http-error status] state]
+  ?+  status  [`[%rpc-error ~] state]
       %200
     [~ state]
       %400
@@ -202,6 +187,44 @@
     [`[%not-connected status] state(connected.host-info %.n)]
       %504
     [`[%not-connected status] state(connected.host-info %.n)]
+  ==
+::
+++  handle-rpc-error
+  |=  [=wire e=error:rpc-types]
+  ^-  (quip card _state)
+  :: TODO: broadcast this error to subscribers
+  :: use the wire to get req-id
+  ::  (get-req-id wire)
+  `state
+::
+++  handle-rpc-result
+  |=  [=wire r=result:rpc-types]
+  ^-  (quip card _state)
+  ?+  wire  ~|("Unexpected HTTP response" !!)
+      [%address-info @ *]
+    ?>  ?=([%get-address-info *] r)
+    :_  state
+    ~[(send-update [%.y (get-req-id wire) %address-info +.r])]
+    ::
+      [%tx-info @ *]
+    ?>  ?=([%get-tx-vals *] r)
+    :_  state
+    ~[(send-update [%.y (get-req-id wire) %tx-info +.r])]
+    ::
+      [%raw-tx @ *]
+    ?>  ?=([%get-raw-tx *] r)
+    :_  state
+    ~[(send-update [%.y (get-req-id wire) %raw-tx +.r])]
+    ::
+      [%create-raw-tx @ *]
+    ?>  ?=([%get-raw-tx *] r)
+    :_  state
+    ~[(send-update [%.y (get-req-id wire) %raw-tx +.r])]
+    ::
+      [%ping @ *]
+    ?>  ?=([%get-block-and-fee *] r)
+    :-  ~[(send-status [%connected block.r fee.r])]
+    state(connected.host-info %.y)
   ==
 ::
 ++  send-status

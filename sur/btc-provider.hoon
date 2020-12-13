@@ -12,6 +12,7 @@
       [%tx-info =txid]
       [%raw-tx =txid]
       [%create-raw-tx inputs=(list [=txid pos=@ud]) outputs=(list [=address value=sats])]
+      [%broadcast-tx =rawtx]
       [%ping ~]
   ==
 +$  result  [=req-id body=result-body]
@@ -26,7 +27,6 @@
   $%  [%not-connected status=@ud]
       [%bad-request status=@ud]
       [%no-auth status=@ud]
-      [%http-error status=@ud]
       [%rpc-error ~]
   ==
 +$  update  (each result error)
@@ -35,19 +35,29 @@
       [%disconnected ~]
   ==
 ::
-++  rpc
+++  rpc-types
   |%
   +$  action
-
-    $%  [%get-address-info =address]
+  $%  [%get-address-info =address]
         [%get-tx-vals =txid]
         [%get-raw-tx =txid]
         [%create-raw-tx inputs=(list [=txid pos=@ud]) outputs=(list [=address value=sats])]
+        [%broadcast-tx =rawtx]
         [%get-block-count ~]
         [%get-block-and-fee ~]
     ==
   ::
   +$  response
+    $%  [%error error]
+        [%result result]
+        [%unhandled-response ~]
+    ==
+  +$  error
+    $?  %tx-inputs-missing-or-spent
+        %blocks-not-ready
+        %connection-error
+    ==
+  +$  result
     $%  [%get-address-info utxos=(set utxo) used=? block=@ud]
         [%get-tx-vals =info:tx]
         [%get-raw-tx =txid =rawtx]
