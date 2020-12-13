@@ -22,7 +22,7 @@
   $%  [%address-info utxos=(set utxo) used=? block=@ud]
       [%tx-info =info:tx]
       [%raw-tx =txid =rawtx]
-      [%broadcast-tx (each txid %tx-inputs-missing-or-spent)]
+      [%broadcast-tx =txid broadcast=? included=?]
   ==
 +$  error
   $%  [%not-connected status=@ud]
@@ -48,22 +48,12 @@
         [%get-block-and-fee ~]
     ==
   ::
-  +$  response
-    $%  [%error error]
-        [%result result]
-        [%unhandled-response ~]
-    ==
-  +$  error
-    $?  %tx-inputs-missing-or-spent 
-        %blocks-not-ready
-        %connection-error
-    ==
   +$  result
     $%  [%get-address-info utxos=(set utxo) used=? block=@ud]
         [%get-tx-vals =info:tx]
         [%get-raw-tx =txid =rawtx]
         [%create-raw-tx =rawtx]
-        [%broadcast-tx =txid] 
+        [%broadcast-tx =txid broadcast=? included=?]
         [%get-block-count block=@ud]
         [%get-block-and-fee block=@ud fee=sats]
 
