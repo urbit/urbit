@@ -29,3 +29,12 @@
 
 :btc-provider|action ['rawtx0' %create-raw-tx inputs outputs]
 ```
+
+## Send a Stale TX
+Should get an RPC error
+```
+:btc-provider|command [%set-credentials api-url='http://localhost:50002']
+=old-tx [191 0x1.0000.0000.0101.bee9.55e9.5966.c35c.9b4f.1b9b.59b8.d84b.6104.4b1b.6c5d.5c38.0c3b.6ed8.938c.1d6d.0000.0000.00ff.ffff.ff01.385c.b010.0000.0000.1600.14ea.13bc.0f69.262d.7ab1.cb30.7668.1054.7375.4b23.bc02.4730.4402.204c.0a3c.2aed.0d4f.c7b6.e9b7.0cc9.bd0e.489a.a825.4741.9ba7.a209.e555.2d66.59e2.7402.2015.8043.b25a.7342.cc23.1b15.eb39.217b.29de.cc7d.3ca5.5953.f47a.0461.b3eb.0255.b201.2102.b791.e56d.195e.0b59.7c84.d351.9531.76a2.5501.9dd5.d0ad.8b62.10fa.590d.20f4.5b4c.0000.0000]
+
+:btc-provider|action ['broadcast-tx' %broadcast-tx old-tx]
+```
