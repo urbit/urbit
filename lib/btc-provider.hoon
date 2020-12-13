@@ -116,26 +116,6 @@
 ::
 ++  rpc
   |%
-  ++  parse-response
-    |=  res=response:json-rpc
-    ^-  response:rpc-types
-    ?+  -.res  [%unhandled-response ~]
-        %error
-      [%error (parse-error res)]
-        %result
-      [%result (parse-result res)]
-    ==
-  ::
-  ++  parse-error
-    |=  res=response:json-rpc
-    ^-  error:rpc-types
-    ?>  ?=(%error -.res)
-    ?:  =('-25' code.res)
-      %tx-inputs-missing-or-spent
-    ?:  =('28' code.res)
-      %blocks-not-ready
-    %connection-error
-  ::
   ++  parse-result
     |=  res=response:json-rpc
     |^  ^-  result:rpc-types
@@ -155,7 +135,7 @@
       [%get-raw-tx (raw-tx res.res)]
       ::
         %broadcast-tx
-      [%broadcast-tx ((cu:dejs:format to-hash256 so:dejs:format) res.res)]
+      [%broadcast-tx (broadcast-tx res.res)]
       ::
         %get-block-count
       [id.res (ni:dejs:format res.res)]
@@ -196,6 +176,12 @@
       %-  ot:dejs:format
       :~  [%txid (cu:dejs:format to-hash256 so:dejs:format)]
           [%rawtx (cu:dejs:format to-bytc so:dejs:format)]
+      ==
+    ++  broadcast-tx
+      %-  ot:dejs:format
+      :~  [%txid (cu:dejs:format to-hash256 so:dejs:format)]
+          [%broadcast bo:dejs:format]
+          [%included bo:dejs:format]
       ==
     ++  block-and-fee
       %-  ot:dejs:format

@@ -158,20 +158,9 @@
     :_  state(connected.host-info %.n)
     ~[(send-status [%disconnected ~]) (send-update [%| u.conn-err])]
   ::
-  ::  TODO: make sure below works
-  =/  resp=response:rpc-types
-    %-  parse-response:rpc
-    (get-rpc-response response)
-  ?-  -.resp
-      %error
-    (handle-rpc-error wire +.resp)
-    ::
-      %result
-    (handle-rpc-result wire +.resp)
-    ::
-      %unhandled-response
-    [~[(send-update [%| [%rpc-error ~]])] state]
-  ==
+  %+  handle-rpc-result  wire
+  %-  parse-result:rpc
+  (get-rpc-response response)
 ::
 ++  connection-error
   |=  status=@ud
@@ -187,15 +176,6 @@
     [`[%not-connected status] state(connected.host-info %.n)]
       %504
     [`[%not-connected status] state(connected.host-info %.n)]
-  ==
-::
-++  handle-rpc-error
-  |=  [=wire e=error:rpc-types]
-  ^-  (quip card _state)
-  ?+  e  [~[(send-update [%.n [%rpc-error ~]])] state]
-      %tx-inputs-missing-or-spent
-    :_  state
-    ~[(send-update [%.y (get-req-id wire) %broadcast-tx %.n %tx-inputs-missing-or-spent])]
   ==
 ::
 ++  handle-rpc-result
@@ -215,17 +195,17 @@
       [%raw-tx @ *]
     ?>  ?=([%get-raw-tx *] r)
     :_  state
-    ~[(send-update [%.y (get-req-id wire) %raw-tx +.r])]
+    ~[(send-update [%.y (get-req-id wire) %raw-tx +.r])] 
     ::
       [%create-raw-tx @ *]
     ?>  ?=([%get-raw-tx *] r)
     :_  state
     ~[(send-update [%.y (get-req-id wire) %raw-tx +.r])]
     ::
-      [%broadcast-raw-tx @ *]
+      [%broadcast-tx @ *]
     ?>  ?=([%broadcast-tx *] r)
     :_  state
-    ~[(send-update [%.y (get-req-id wire) %broadcast-tx %.y +.r])]
+    ~[(send-update [%.y (get-req-id wire) %broadcast-tx +.r])]
     ::
       [%ping @ *]
     ?>  ?=([%get-block-and-fee *] r)
