@@ -297,6 +297,13 @@
       |^
       =/  [=graph:store mark=(unit mark:store)]
         (~(got by graphs) resource)
+      ::  TODO: turn back on assertion once issue with 8-10x facts being
+      ::  issued is resolved. Too noisy for now
+      ::
+      ::  ~|  "cannot add duplicate nodes to {<resource>}"
+      ::  ?<  (check-for-duplicates graph ~(key by nodes))
+      ?:  (check-for-duplicates graph ~(key by nodes))
+        [~ state]
       =/  =update-log:store  (~(got by update-logs) resource)
       =.  update-log
         (put:orm-log update-log time [%0 time [%add-nodes resource nodes]])
@@ -310,6 +317,31 @@
         :_  mark
         (add-node-list resource graph mark (sort-nodes nodes))
       ==
+      ::
+      ++  check-for-duplicates
+        |=  [=graph:store nodes=(set index:store)]
+        ^-  ?
+        =/  node-list  ~(tap in nodes)
+        |-
+        ?~  node-list  %.n
+        ?:  (has-node graph i.node-list)  %.y
+        $(node-list t.node-list)
+      ::
+      ++  has-node
+        |=  [=graph:store =index:store]
+        ^-  ?
+        =/  node=(unit node:store)  ~
+        |-
+        ?~  index
+          ?=(^ node)
+        ?~  t.index
+          ?=(^ (get:orm graph i.index))
+        =.  node  (get:orm graph i.index)
+        ?~  node  %.n
+        ?-  -.children.u.node
+            %empty  %.n
+            %graph  $(graph p.children.u.node, index t.index)
+        ==
       ::
       ++  sort-nodes
         |=  nodes=(map index:store node:store)
