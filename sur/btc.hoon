@@ -29,6 +29,12 @@
   ==
 ++  tx
   |%
+  +$  data
+    $:  is=(list input)
+        os=(list output) 
+        locktime=@ud
+        witness=@ud
+    ==
   +$  val
     $:  =txid
         pos=@ud
@@ -50,12 +56,15 @@
     ==
   +$  input
     $:  =txid
-        tx-index=@
-        witness-ver=@
+        pos=@ud
+        witness-ver=@ud
         sequence=byts
-        script-pubkey=byts
         redeem-script=(unit byts)
         pubkey=(unit byts)
+        value=sats
+    ==
+  +$  output
+    $:  =address
         value=sats
     ==
   --

@@ -53,7 +53,24 @@
   ?.  =(wid.hex 20)
     ~|("Only 20-byte addresses supported" !!)
   (to-script-pubkey (from-byts:buf hex))
-::  arms to handle BIP174 PSBTs
+::  +txu: tx utility functions
+++  txu
+  |%
+  ++  en
+    |=  data:tx
+    ^-  bytc
+    *bytc
+  ++  de
+    |=  b=bytc
+    ^-  data:tx
+    *data:tx
+    :: TODO parse out signatures
+  ++  get-id
+    |=  b=bytc
+    ^-  txid
+    (dsha256 b)
+  --
+::  core to handle BIP174 PSBTs
 ::
 ++  pbt
   |%
