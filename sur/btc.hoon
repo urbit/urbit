@@ -34,6 +34,7 @@
         os=(list output) 
         locktime=@ud
         nversion=@ud
+        segwit=(unit @ud)
     ==
   +$  val
     $:  =txid
