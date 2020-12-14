@@ -38,8 +38,7 @@ export function ChatResource(props: ChatResourceProps) {
   const chatInput = useRef<ChatInput>();
 
   useEffect(() => {
-    const count = Math.min(150, unreadCount + 30);
-    console.log(`fetching ${count}`);
+    const count = Math.min(50, unreadCount + 15);
     props.api.graph.getNewest(owner, name, count);
   }, [station]);
 
