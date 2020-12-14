@@ -33,7 +33,7 @@
     $:  is=(list input)
         os=(list output) 
         locktime=@ud
-        witness=@ud
+        nversion=@ud
     ==
   +$  val
     $:  =txid
@@ -48,19 +48,13 @@
         inputs=(list val)
         outputs=(list val)
     ==
-  +$  unsigned
-    $:  version=@
-        locktime=@
-        inputs=(list input)
-        outputs=(list val)
-    ==
   +$  input
     $:  =txid
         pos=@ud
         witness-ver=@ud
-        sequence=byts
-        redeem-script=(unit byts)
-        pubkey=(unit byts)
+        sequence=bytc
+        redeem-script=(unit bytc)
+        pubkey=(unit bytc)
         value=sats
     ==
   +$  output
