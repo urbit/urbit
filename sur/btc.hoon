@@ -51,14 +51,13 @@
   +$  input
     $:  =txid
         pos=@ud
-        witness-ver=@ud
         sequence=bytc
         redeem-script=(unit bytc)
         pubkey=(unit bytc)
         value=sats
     ==
   +$  output
-    $:  =address
+    $:  script-pubkey=bytc
         value=sats
     ==
   --

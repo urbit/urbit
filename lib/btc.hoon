@@ -69,10 +69,76 @@
       |=  o=output:tx
       ^-  bytc
       %-  cat:byt
-      :~  (flip:byt 8^value.o)
-          (script-pubkey address.o)
+      ~[(flip:byt 8^value.o) script-pubkey.o]
+    --
+  ::
+  ++  de
+    |%
+    ++  nversion
+      |=  b=buffer
+      ^-  [nversion=@ud rest=buffer]
+      :_  (slag 4 b)
+      =<  dat
+      %-  flip:byt
+      (to-byts:buf (scag 4 b))
+    ::
+    ++  segwit
+      |=  b=buffer
+      ^-  [segwit=@ud rest=buffer]
+      :_  (slag 2 b)
+      =<  dat
+      (to-byts:buf (scag 2 b))
+    ::  returns value as 0 since we don't know when we decode
+    ::
+    ++  input
+      |=  b=buffer
+      ^-  input:tx
+      :*  (txid (to-byts:buf (scag 32 b)))
+          =<(dat (flip:byt (to-byts:buf (swag [32 4] b))))
+          (flip:byt (to-byts:buf (swag [37 4] b)))
+          ~
+          ~
+          0
+      ==
+    ::
+    ++  output
+      |=  b=buffer
+      ^-  output:tx
+      :-  (to-byts:buf (slag 8 b))
+      =<  dat
+      (flip:byt (to-byts:buf (scag 8 b)))
+    ::
+    ++  inputs
+      |=  b=buffer
+      ^-  [is=(list input:tx) rest=buffer]
+      =|  acc=(list input:tx)
+      =^  count  b
+        [(snag 0 b) (slag 1 b)]
+      |-
+      ?:  =(0 count)  [acc b]
+      %=  $
+          acc  %+  snoc  acc
+               (input (scag 41 b))
+          b  (slag 41 b)
+          count  (dec count)
+      ==
+    ::
+    ++  outputs
+      |=  b=buffer
+      ^-  [os=(list output:tx) rest=buffer]
+      =|  acc=(list output:tx)
+      =^  count  b
+        [(snag 0 b) (slag 1 b)]
+      |-
+      ?:  =(0 count)  [acc b]
+      %=  $
+          acc  %+  snoc  acc
+               (output (scag 31 b))
+          b  (slag 31 b)
+          count  (dec count)
       ==
     --
+  ::
   ++  encode
     |=  =data:tx
     ^-  bytc
@@ -92,11 +158,21 @@
     %-  txid
     %-  flip:byt
     (dsha256 b)
-  ++  decode
+  ::  TODO: check whether segwit is present by seeing whether the first byte after nversion is 0x0 or not
+  ::
+  ++  decode-signed
     |=  b=bytc
     ^-  data:tx
+    =/  bu=buffer  (from-byts:buf b)
+    =^  nversion  bu
+      (nversion:de bu)
+    =^  segwit  bu
+      (segwit:de bu)
+    =^  inputs  bu
+      (inputs:de bu)
+    =^  outputs  bu
+      (outputs:de bu)
     *data:tx
-    :: TODO parse out signatures
   --
 ::  core to handle BIP174 PSBTs
 ::
