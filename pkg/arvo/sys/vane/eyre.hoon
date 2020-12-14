@@ -1064,7 +1064,14 @@
         (on-put-request channel-id request)
       ::
       ?:  =('GET' method.request)
-        (on-get-request channel-id request)
+        =|  args=(map @t @t)
+        =.  args
+          (~(gas by args) args.request-line)
+        =/  last-event-id=(unit @ud)
+          %+  biff
+            (~(get by args) %last-event-id)
+          (curr rush dum:ag)
+        (on-get-request channel-id last-event-id request)
       ?:  =('POST' method.request)
         ::  POST methods are used solely for deleting channels
         (on-put-request channel-id request)
@@ -1186,7 +1193,7 @@
     ::    client in text/event-stream format.
     ::
     ++  on-get-request
-      |=  [channel-id=@t =request:http]
+      |=  [channel-id=@t last-event-id=(unit @ud) =request:http]
       ^-  [(list move) server-state]
       ::  if there's no channel-id, we must 404
       ::
@@ -1206,7 +1213,7 @@
       ::
       =/  maybe-last-event-id=(unit @ud)
         ?~  maybe-raw-header=(get-header:http 'Last-Event-ID' header-list.request)
-          ~
+          last-event-id
         (rush u.maybe-raw-header dum:ag)
       ::  flush events older than the passed in 'Last-Event-ID'
       ::
