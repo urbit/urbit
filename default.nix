@@ -11,7 +11,7 @@
    Note that on linux the previous command is equivalent to:
 
      $ nix-build -A urbit --argstr crossSystem x86_64-unknown-linux-musl \
-                          --arg enableSatic true
+                          --arg enableStatic true
 
    Static urbit-king binary:
 
