@@ -147,9 +147,17 @@ Can lookup in blockchain as:
 ```
 =btc -build-file %/lib/btc/hoon
 =in0 [%32^0x3d6a.f8a8.32b2.ef3f.82f4.dd9c.ccc9.a5af.23db.dbe9.2eae.86f0.7b06.fd41.9525.62b5 62 1 4^0xffff.ffff ~ ~ 10.950.904]
-=out0 [address=[%bech32 'bc1q59u5epktervh6fxqay2dlph0wxu9hjnx6v8n66'] value=10.944.414]
+=out0 [script-pubkey=(script-pubkey:btc [%bech32 'bc1q59u5epktervh6fxqay2dlph0wxu9hjnx6v8n66']) value=10.944.414]
 
 (get-id:txu:btc (encode:txu:btc [~[in0] ~[out0] 0 1]))
+```
+
+## TX Decoding/Parsing
+Signed TX:
+`01000000000101bee955e95966c35c9b4f1b9b59b8d84b61044b1b6c5d5c380c3b6ed8938c1d6d0000000000ffffffff01385cb01000000000160014ea13bc0f69262d7ab1cb307668105473754b23bc0247304402204c0a3c2aed0d4fc7b6e9b70cc9bd0e489aa82547419ba7a209e5552d6659e2740220158043b25a7342cc231b15eb39217b29decc7d3ca55953f47a0461b3eb0255b2012102b791e56d195e0b597c84d351953176a255019dd5d0ad8b6210fa590d20f45b4c00000000`
+
+```
+=inputs 0x1be.e955.e959.66c3.5c9b.4f1b.9b59.b8d8.4b61.044b.1b6c.5d5c.380c.3b6e.d893.8c1d.6d00.0000.0000.ffff.ffff
 ```
 
 ## Unsigned Transactions
