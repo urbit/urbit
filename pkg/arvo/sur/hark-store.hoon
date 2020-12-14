@@ -79,6 +79,8 @@
       [%read-note time=@da index]
       [%unread-note time=@da index]
     ::
+      [%seen-index time=@da =index]
+    ::
       [%read-all ~]
       [%set-dnd dnd=?]
       [%seen ~]

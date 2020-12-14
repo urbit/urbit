@@ -140,6 +140,14 @@ function reduce(data: any, state: HarkState) {
   readSince(data, state);
   unreadSince(data, state);
   unreadEach(data, state);
+  seenIndex(data, state);
+}
+
+function seenIndex(json: any, state: HarkState) {
+  const data = _.get(json, 'seen-index');
+  if(data) {
+    updateNotificationStats(state, data.index, 'last', () => data.time);
+  }
 }
 
 function readEach(json: any, state: HarkState) {
@@ -159,8 +167,8 @@ function readSince(json: any, state: HarkState) {
 
 function unreadSince(json: any, state: HarkState) {
   const data = _.get(json, 'unread-count');
-  console.log(data);
   if(data) {
+    console.log(data);
     updateNotificationStats(state, data.index, 'last', () => data.last)
     updateUnreadCount(state, data.index, u => u + 1);
   }

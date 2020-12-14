@@ -33,7 +33,6 @@
   %^  scry  [our now]
     tube:clay
   /cc/[desk]/[mark]/notification-kind
-
 ::
 --
 ::
@@ -323,15 +322,14 @@
       (scag parent-lent.not-kind index.post.node)
     =/  notif-index=index:store
       [%graph group rid module desc parent]
-    =?  update-core  =(our.bowl author.post.node)
+    ?:  =(our.bowl author.post.node)
       (self-post node notif-index [mode watch]:not-kind)
     =.  update-core
       (update-unread-count mode.not-kind notif-index [time-sent index]:post.node)
     =?    update-core
-        ?&  !=(our.bowl author.post.node)
         ?|  =(desc %mention)
             (~(has in watching) [rid parent])
-        ==  == 
+        ==
       =/  =contents:store
         [%graph (limo post.node ~)]
       (add-unread notif-index [time-sent.post.node %.n contents])
@@ -352,6 +350,8 @@
             watch=?
         ==
     ^+  update-core 
+    =.  update-core
+      (hark %seen-index time-sent.post.node index)
     =?  update-core  ?=(%count mode)
       (hark %read-count index)
     =?  update-core  &(watch watch-on-self)

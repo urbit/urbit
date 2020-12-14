@@ -84,6 +84,7 @@
         %read-count  (index +.upd)
         %unread-each  (unread-each +.upd)
         %unread-count  (unread-count +.upd)
+        %seen-index  (seen-index +.upd)
         %unreads   (unreads +.upd)
         ::
           ?(%archive %read-note %unread-note)
@@ -137,6 +138,13 @@
       :~  time+s+(scot %ud tim)
           index+(index idx)
       ==
+    ++  seen-index
+      |=  [tim=@da idx=^index]
+      ^-  json
+      %-  pairs
+      :~  time+(time tim)
+          index+(index idx)
+      ==     
     ::
     ++  more
       |=  upds=(list ^update)

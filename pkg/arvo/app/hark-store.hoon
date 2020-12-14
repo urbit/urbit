@@ -259,6 +259,8 @@
       %read-note     (read-note +.action)
       %unread-note   (unread-note +.action)
     ::
+      %seen-index    (seen-index +.action)
+    ::
       %read-all      read-all
     ::
       %set-dnd       (set-dnd +.action)
@@ -412,6 +414,14 @@
       :_  state
       %+  welp  cards
       (give:ha ~[/updates] %read-index index)
+    ::
+    ++  seen-index
+      |=  [time=@da =index:store]
+      ^-  (quip card _state)
+      :-  (give:ha ~[/updates] %seen-index time index)
+      %_  state
+        last-seen  (~(put by last-seen) index time)
+      ==
     ::
     ++  read-all
       ^-  (quip card _state)
