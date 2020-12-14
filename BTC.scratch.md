@@ -140,6 +140,18 @@ process child keen cargo design install parrot hold pole unveil dance reason dri
 0x3.109a.2082.eaa6.8925.1465.5393.d635.7fb9.d9b5.e191.3826.8837.69cd.db88.7a4b.b4f0
 ```
 
+## TX Hashing
+Final TXID: `0x33f.693f.df99.5a5e.a7fe.5c95.1ab6.858c.7e6a.5fff.c585.7992.2cd4.fc31.9c61.4c5b`
+Can lookup in blockchain as:
+033f693fdf995a5ea7fe5c951ab6858c7e6a5fffc58579922cd4fc319c614c5b
+```
+=btc -build-file %/lib/btc/hoon
+=in0 [%32^0x3d6a.f8a8.32b2.ef3f.82f4.dd9c.ccc9.a5af.23db.dbe9.2eae.86f0.7b06.fd41.9525.62b5 62 1 4^0xffff.ffff ~ ~ 10.950.904]
+=out0 [address=[%bech32 'bc1q59u5epktervh6fxqay2dlph0wxu9hjnx6v8n66'] value=10.944.414]
+
+(get-id:txu:btc (encode:txu:btc [~[in0] ~[out0] 0 1]))
+```
+
 ## Unsigned Transactions
 Using [BIP 143](https://github.com/bitcoin/bips/blob/master/bip-0143.mediawiki#P2SHP2WPKH) as a reference.
 
