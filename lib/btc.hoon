@@ -95,7 +95,9 @@
     ++  input
       |=  b=buffer
       ^-  input:tx
-      :*  (txid (to-byts:buf (scag 32 b)))
+      :*  %-  txid
+            %-  flip:byt
+            (to-byts:buf (scag 32 b))
           =<(dat (flip:byt (to-byts:buf (swag [32 4] b))))
           (flip:byt (to-byts:buf (swag [37 4] b)))
           ~
@@ -155,12 +157,15 @@
         ~[(flip:byt 4^locktime.data)]
     ==
   ++  get-id
-    |=  b=bytc
+    |=  =data:tx
     ^-  txid
     %-  txid
     %-  flip:byt
-    (dsha256 b)
+    %-  dsha256
+    (encode data)
   ::
+  ::  TODO: extract locktime (at the very end)
+  ::  TODO: gives the wrong txid currently
   ++  decode
     |=  b=bytc
     ^-  data:tx
@@ -173,7 +178,7 @@
       (inputs:de bu)
     =^  outputs  bu
       (outputs:de bu)
-    *data:tx
+    [inputs outputs 0 nversion segwit]
   --
 ::  core to handle BIP174 PSBTs
 ::
