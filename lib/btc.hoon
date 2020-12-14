@@ -84,11 +84,13 @@
     ::
     ++  segwit
       |=  b=buffer
-      ^-  [segwit=@ud rest=buffer]
+      ^-  [segwit=(unit @ud) rest=buffer]
+      ?.  =(0x0 (snag 0 b))
+        [~ b]
       :_  (slag 2 b)
-      =<  dat
+      =<  [~ dat]
       (to-byts:buf (scag 2 b))
-    ::  returns value as 0 since we don't know when we decode
+    ::  returns value as 0 since we don't know it when we decode
     ::
     ++  input
       |=  b=buffer
@@ -158,9 +160,8 @@
     %-  txid
     %-  flip:byt
     (dsha256 b)
-  ::  TODO: check whether segwit is present by seeing whether the first byte after nversion is 0x0 or not
   ::
-  ++  decode-signed
+  ++  decode
     |=  b=bytc
     ^-  data:tx
     =/  bu=buffer  (from-byts:buf b)
