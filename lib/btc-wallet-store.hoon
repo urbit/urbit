@@ -46,6 +46,7 @@
         |=  i=insel
         [utxo.i ~ (~(hdkey wad w chyg.i) idx.i)]
       txos
+      ~
   ==
 ::  txb: transaction builder helpers
 ::
@@ -88,11 +89,12 @@
   ::
   ++  get-rawtx
     (encode:txu:btc tx-data)
+  ::  +add-output: append output (usually change) to txos
   ::
   ++  add-output
     |=  =txo
     ^-  txbu
-    t(txos [txo txos.t])
+    t(txos (snoc [txos.t] txo))
   ::  +to-psbt: returns a based 64 PSBT if
   ::   - all inputs have an associated rawtx
   ::

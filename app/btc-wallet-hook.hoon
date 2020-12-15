@@ -10,7 +10,7 @@
 ::      - updates to existing address info
 ::
 ::  Sends updates to:
-::    /sign-me
+::    /updates
 ::
 /-  *btc-wallet-hook, bws=btc-wallet-store
 /+  dbug, default-agent, bp=btc-provider, bwsl=btc-wallet-store, *btc
@@ -141,17 +141,21 @@
     ?.  (gth (lent xs) 0)  `state
     `state(def-wallet `(snag 0 xs))
     ::
-      %req-pay-address
+    ::  %req-pay-address
     ::  overwrites any payment being built currently
+    ::  can't pay if there's an outstanding payment being broadcast
     ::  can't pay yourself; comets can't pay (could spam requests)
     ::  forwards poke to payee if payee isn't us
     ::  deletes poym since we'll be making a new outgoing payment
     ::  lets us set fee per byte and recall it once we get a payment address back
     ::  wire is /payer/value/timestamp
     ::
-    ~|  "Can't pay ourselves; no comets"
+      %req-pay-address
+    ?:  broadcasting  ~|("Broadcasting a transaction" !!)
+    ~|  "Can't pay ourselves; no comets; can't do while tx is being signed"
     ?<  =(src.bowl payee.act)
     ?<  ?=(%pawn (clan:title payee.act))
+    ?<  broadcasting
     =+  feyb=?~(feyb.act fee.btc-state u.feyb.act)
     =>  .(poym ~, feybs (~(put by feybs) payee.act feyb))
     :_  state
@@ -181,24 +185,30 @@
     ::
       %ret-pay-address
     ?:  =(src.bowl our.bowl)  ~|("Can't pay ourselves" !!)
-    ?~  def-wallet  ~|("btc-wallet-hook: no def-wallet set" !!)
+    ?:  broadcasting  ~|("Broadcasting a transaction" !!)
+    ?~  def-wallet  ~|("btc-wallet-hook: no def(ault)-wallet set" !!)
     =+  feyb=(~(gut by feybs) src.bowl fee.btc-state)
     ?>  =(payer.act our.bowl)
     :_  state
     :~  %-  poke-wallet-store
         [%generate-txbu u.def-wallet `src.bowl feyb ~[[address.act value.act ~]]]
     ==
+    ::  %broadcast-tx
+    ::   - poym txid must match incoming txid
+    ::   - update sitx in poym
+    ::   - send to provider
     ::
       %broadcast-tx
-    :: TODO:
-    ::  calc txid from poym's txbu
-    ::  calc txid from TX, or send it back to me
-      ::  make sure both are the same; USE RETURN VALUE FROM RPC (sendrawtransaction)
-    ::  remove from poym
-    ::  broadcast to provider
-    ::  add to wallet-store history
-    ::  poke to peer
-    `state
+    =/  tx-match=?
+      ?~  poym  %.n
+      =((get-id:txu (decode:txu signed.act)) ~(get-txid txb:bwsl u.poym))
+    :_  ?.  tx-match  state
+        ?~  poym  state
+        state(sitx.u.poym `signed.act)
+    ?.  tx-match
+      ~[(send-update [%broadcast-tx-mismatch-poym signed.act])]
+    ?~  provider  ~|("Provider not connected" !!)
+    ~[(poke-provider host.u.provider ~ [%broadcast-tx signed.act])]
     ::
     ::  %expect-payment
     ::  - check that src.bowl isn't past piym-limit in pend-piym
@@ -207,7 +217,7 @@
     ::  - send tx-info to provider (poke)
     ::
       %expect-payment
-    ~|  "Too many %expect-payment sent, or payer+value not found in incoming payments"
+    ~|  "Too many pending %expect-payment sent, or payer+value not found in incoming payments"
     =+  num-pend=(~(gut by num.pend-piym) payer.act 0)
     ?>  (gte piym-limit num-pend)
     =+  pay=(~(get by ps.piym) payer.act)
@@ -277,20 +287,17 @@
         ==
     ==
     ::
-      %tx-info
     ::  %txinfo
+    ::  - call piyom-to-history to add entry to store history if necessary
     ::  - forward tx to wallet-store
-    ::  - delete txid from pend-piym and decrement num.pend-piym
     ::  - check whether payment in pend-piym matches this tx's output values
-    ::    if yes add to wallet-store-history
     ::
-    =/  ti=info:tx  +.body.p.upd
-    =/  mh=(unit [=xpub =hest:bws])
-      (mk-hest ti (~(get by ps.pend-piym) txid.ti))
+      %tx-info
+    =^  cards  state
+      (pioym-to-history +.body.p.upd)
     :_  state(pend-piym (del-txid txid.ti))
-    %+  weld  ~[(poke-wallet-store [%tx-info ti])]
-    ?~  mh  ~
-    ~[(poke-wallet-store [%add-history-entry xpub.u.mh hest.u.mh])]
+    [(poke-wallet-store [%tx-info ti]) cards]
+    ::
     ::  %raw-tx
     ::  - if the req-id is for current poym, add txid/rawtx to the poym
     ::  - if the raw tx matches one of poym's inputs, add it
@@ -304,13 +311,40 @@
     ?~  pb  ~
     ~&  >  "PSBT ready:"
     ~&  >>  u.pb
-    ~[(send-sign-tx u.poym)]
+    ~[(send-update [%sign-tx u.poym])]
+    ::
+    ::  %broadcast-tx
+    ::   If no provider, return; Try again on-reconnect
+    ::   If tx is included or broadcast
+    ::    - send %expect-payment to peer
+    ::    - send a %txinfo request
+    ::   If tx it is not included and not broadcast
+    ::    - clear poym
+    ::    - send a %broadcast-tx-spent-utxos update/error
     ::
       %broadcast-tx
-    :: TODO: fill in
-    `state
+    =*  res  body.p.upd
+    ?~  provider  `state
+    ?~  poym  `state
+    ?.  =(~(get-txid txb:bwsl u.poym) txid.res)
+      `state
+    =/  success=?  ?|(broadcast.res included.res)
+    :_  ?:(success state state(poym ~))
+    ?.  success
+      ~[(send-update [%broadcast-tx-spent-utxos txid.res])] 
+    %+  weld  ~[(poke-provider host.u.provider ~ )]
+    ?~  payee.u.poym  ~
+    :_  ~
+    %-  poke-wallet-hook
+    :*  u.payee.u.poym
+        %expect-payment
+        txid.res
+        our.bowl
+        value:(snag 0 txos.u.poym)
+        ::  first output of poym is to payee, by convention
+        0
+    ==
   ==
-::  get address-info for the request if block in request is old
 ::
 ++  handle-wallet-store-request
   |=  req=request:bws
@@ -392,12 +426,21 @@
   ?~  n  pend-piym
   ?:  =(0 u.n)  pend-piym
   pend-piym(num (~(put by num.pend-piym) payer (dec u.n)))
-::  +mk-hest: make a hest to add to wallet-store's history
-::    - one of the outputs' value must match the payment from pend-piym
 ::
-++  mk-hest
-  |=  [=info:tx p=(unit [pay=payment vout-n=@ud])]
-  ^-  (unit [=xpub =hest:bws])
+::  +pioym-to-history: tx info checks against pend-piym/poym
+::   %add-history-entry to wallet-store if matches
+::   If in pend-piym/poym, remove
+::
+++  pioym-to-history
+  |=  ti=info:tx
+  |^  ^-  (quip card _state)
+  ::  calcuate in-pend-piym, in-poym
+  ::   in-pend-piym also should compute vout as a unit
+  ::  unless one of those, return
+  ::  =?  state  in-pend-piym
+  ::  =?  state  in-poym
+  ::
+  ::  compute [xpub payer] (depending on which it was)
   ?~  p  ~
   ?.  ?&  (gth (lent outputs.info) vout-n.u.p)
           =(value.pay.u.p value:(snag vout-n.u.p outputs.info))
@@ -410,12 +453,20 @@
       recvd.info
       %+  turn  inputs.info
         |=(i=val:tx [i `payer.pay.u.p])
+      :: TODO: make below into a helper fn
       %+  turn  outputs.info
         |=  o=val:tx
         ?:  =(pos.o vout-n.u.p)
           [o `our.bowl]
         [o `payer.pay.u.p]
   ==
+  ++  output-w-payee
+    |=  o=val:tx
+    ^-  [val:tx (unit ship)]
+  --
+  :: TODO: add the below poke here
+::  ~[(poke-wallet-store [%add-history-entry xpub.u.mh hest.u.mh])]
+::
 ::  +fam: planet parent if s is a moon 
 ::
 ++  fam
@@ -490,6 +541,12 @@
       %poke  %btc-provider-action  !>([ri actb])
   ==
 ::
+++  broadcasting
+  ^-  ?
+  ?~  poym  %.n
+  ?~  sitx.u.poym  %.n
+  %.y
+::
 ++  provider-connected
   ^-  ?
   ?~  provider  %.n
@@ -503,10 +560,10 @@
       %btc-wallet-hook-action  !>(act)
   ==
 ::
-++  send-sign-tx
-  |=  =txbu:bws
+++  send-update
+  |=  =update
   ^-  card
-  [%give %fact ~[/sign-me] %btc-wallet-hook-request !>([%sign-tx txbu])]
+  [%give %fact ~[/updates] %btc-wallet-hook-update !>(update)]
 ::
 ++  poke-wallet-store
   |=  act=action:bws
