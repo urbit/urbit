@@ -10,12 +10,14 @@ import { NoteNavigation } from "./NoteNavigation";
 import GlobalApi from "~/logic/api/global";
 import { getLatestRevision, getComments } from '~/logic/lib/publish';
 import Author from "~/views/components/Author";
-import { Contacts, GraphNode, Graph, LocalUpdateRemoteContentPolicy } from "~/types";
+import { Contacts, GraphNode, Graph, LocalUpdateRemoteContentPolicy, Association, Unreads, Group } from "~/types";
 
 interface NoteProps {
   ship: string;
   book: string;
   note: GraphNode;
+  unreads: Unreads;
+  association: Association;
   notebook: Graph;
   contacts: Contacts;
   api: GlobalApi;
@@ -24,12 +26,13 @@ interface NoteProps {
   remoteContentPolicy: LocalUpdateRemoteContentPolicy;
   rootUrl: string;
   baseUrl: string;
+  group: Group;
 }
 
 export function Note(props: NoteProps & RouteComponentProps) {
   const [deleting, setDeleting] = useState(false);
 
-  const { notebook, note, contacts, ship, book, api, rootUrl, baseUrl } = props;
+  const { notebook, note, contacts, ship, book, api, rootUrl, baseUrl, group } = props;
   const editCommentId = props.match.params.commentId;
 
   const deletePost = async () => {
@@ -39,8 +42,13 @@ export function Note(props: NoteProps & RouteComponentProps) {
     props.history.push(rootUrl);
   };
 
+
   const comments = getComments(note);
   const [revNum, title, body, post] = getLatestRevision(note);
+  useEffect(() => {
+    api.hark.markEachAsRead(props.association, '/', post.index, 'note', 'publish');
+  }, [props.association]);
+
 
   const noteId = bigInt(note.post.index.split('/')[1]);
 
@@ -108,8 +116,10 @@ export function Note(props: NoteProps & RouteComponentProps) {
       <Comments
         ship={ship}
         name={props.book}
+        unreads={props.unreads}
         comments={comments}
         contacts={props.contacts}
+        association={props.association}
         api={props.api}
         hideNicknames={props.hideNicknames}
         hideAvatars={props.hideAvatars}
@@ -117,6 +127,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
         baseUrl={baseUrl}
         editCommentId={editCommentId}
         history={props.history}
+        group={group}
       />
       <Spinner
         text="Deleting post..."

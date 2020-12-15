@@ -198,14 +198,16 @@
     ++  graph
       |=  g=^graph
       ^-  json
-      :-  %a
-      %+  turn  (tap:orm g)
+      %-  pairs
+      %+  turn
+        (tap:orm g)
       |=  [a=atom n=^node]
-      ^-  json
-      :-  %a
-      :~  (index [a]~)
-          (node n)
-      ==
+      ^-  [@t json]
+      :_  (node n)
+      =/  idx  (numb a)
+      ?>  ?=(%n -.idx)
+      p.idx
+    ::
     ++  node
       |=  n=^node
       ^-  json
@@ -222,14 +224,14 @@
     ++  nodes
       |=  m=(map ^index ^node)
       ^-  json
-      :-  %a
+      %-  pairs
       %+  turn  ~(tap by m)
       |=  [n=^index o=^node]
-      ^-  json
-      :-  %a
-      :~  (index n)
-          (node o)
-      ==
+      ^-  [@t json]
+      :_  (node o)
+      =/  idx  (index n)
+      ?>  ?=(%s -.idx)
+      p.idx
     ::
     ++  indices
       |=  i=(set ^index)
@@ -310,11 +312,11 @@
       ==
     ::
     ++  internal-graph
-      ^-  $-(json ^internal-graph)
-      %-  of
-      :~  [%empty ul]
-          [%graph graph]
-      ==
+      |=  jon=json
+      ^-  ^internal-graph
+      ?~  jon
+        [%empty ~]
+      [%graph (graph jon)]
     ::
     ++  post
       %-  ot
@@ -335,17 +337,29 @@
           [%code eval]
       ==
     ::
+    ++  tang 
+      |=  jon=^json
+      ^-  ^tang
+      ?>  ?=(%a -.jon)
+      %-  zing
+      %+  turn
+        p.jon
+      |=  jo=^json
+      ^-  (list tank)
+      ?>  ?=(%a -.jo)
+      %+  turn
+        p.jo
+      |=  j=^json
+      ?>  ?=(%s -.j)
+      ^-  tank
+      leaf+(trip p.j)
+    ::
     ++  eval
-      |=  a=^json
-      ^-  [cord (list tank)]
-      =,  ^?  dejs-soft:format
-      =+  exp=((ot expression+so ~) a)
-      %-  need
-      ?~  exp  [~ '' ~]
-      :+  ~  u.exp
-      ::  NOTE: when sending, if output is an empty list,
-      ::  graph-store will evaluate
-      (fall ((ot output+(ar dank) ~) a) ~)
+      %-  ot
+      :~  expression+so
+          output+tang
+      ==
+
     ::
     ++  remove-nodes
       %-  ot

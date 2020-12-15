@@ -1,15 +1,17 @@
 import React, { Component } from 'react';
 import ChatEditor from './chat-editor';
-import { S3Upload } from '~/views/components/s3-upload' ;
+import { IuseS3 } from '~/logic/lib/useS3';
 import { uxToHex } from '~/logic/lib/util';
 import { Sigil } from '~/logic/lib/sigil';
+import { createPost } from '~/logic/api/graph';
 import tokenizeMessage, { isUrl } from '~/logic/lib/tokenizeMessage';
 import GlobalApi from '~/logic/api/global';
 import { Envelope } from '~/types/chat-update';
-import { Contacts } from '~/types';
-import { Row, BaseImage, Box, Icon } from '@tlon/indigo-react';
+import { Contacts, Content } from '~/types';
+import { Row, BaseImage, Box, Icon, LoadingSpinner } from '@tlon/indigo-react';
+import withS3 from '~/views/components/withS3';
 
-interface ChatInputProps {
+type ChatInputProps = IuseS3 & {
   api: GlobalApi;
   numMsgs: number;
   station: any;
@@ -22,7 +24,6 @@ interface ChatInputProps {
   message: string;
   deleteMessage(): void;
   hideAvatars: boolean;
-  onPaste?(): void;
 }
 
 interface ChatInputState {
@@ -31,8 +32,7 @@ interface ChatInputState {
   uploadingPaste: boolean;
 }
 
-export default class ChatInput extends Component<ChatInputProps, ChatInputState> {
-  public s3Uploader: React.RefObject<S3Upload>;
+class ChatInput extends Component<ChatInputProps, ChatInputState> {
   private chatEditor: React.RefObject<ChatEditor>;
 
   constructor(props) {
@@ -44,11 +44,12 @@ export default class ChatInput extends Component<ChatInputProps, ChatInputState>
       uploadingPaste: false
     };
 
-    this.s3Uploader = React.createRef();
     this.chatEditor = React.createRef();
 
     this.submit = this.submit.bind(this);
     this.toggleCode = this.toggleCode.bind(this);
+    this.uploadSuccess = this.uploadSuccess.bind(this);
+    this.uploadError = this.uploadError.bind(this);
   }
 
   toggleCode() {
@@ -57,64 +58,26 @@ export default class ChatInput extends Component<ChatInputProps, ChatInputState>
     });
   }
 
-  getLetterType(letter) {
-    if (letter.startsWith('/me ')) {
-      letter = letter.slice(4);
-      // remove insignificant leading whitespace.
-      // aces might be relevant to style.
-      while (letter[0] === '\n') {
-        letter = letter.slice(1);
-      }
-
-      return {
-        me: letter
-      };
-    } else if (isUrl(letter)) {
-      return {
-        url: letter
-      };
-    } else {
-      return {
-        text: letter
-      };
-    }
-  }
-
   submit(text) {
     const { props, state } = this;
+    const [,,ship,name] = props.station.split('/');
     if (state.inCodeMode) {
       this.setState({
         inCodeMode: false
-      }, () => {
-        props.api.chat.message(
-          props.station,
-          `~${window.ship}`,
-          Date.now(), {
-            code: {
-              expression: text,
-              output: undefined
-            }
-          }
-        );
+      }, async () => {
+        const output = await props.api.graph.eval(text);
+        const contents: Content[] = [{ code: {  output, expression: text }}];
+        const post = createPost(contents);
+        props.api.graph.addPost(ship, name, post);
       });
       return;
     }
 
-    const messages = tokenizeMessage(text);
+    const post = createPost(tokenizeMessage((text)))
 
     props.deleteMessage();
 
-    messages.forEach((message) => {
-      if (message.length > 0) {
-        message = this.getLetterType(message.join(' '));
-        props.api.chat.message(
-          props.station,
-          `~${window.ship}`,
-          Date.now(),
-          message
-        );
-      }
-    });
+    props.api.graph.addPost(ship,name, post);
   }
 
   uploadSuccess(url) {
@@ -123,21 +86,13 @@ export default class ChatInput extends Component<ChatInputProps, ChatInputState>
       this.chatEditor.current.editor.setValue(url);
       this.setState({ uploadingPaste: false });
     } else {
-      props.api.chat.message(
-        props.station,
-        `~${window.ship}`,
-        Date.now(),
-        { url }
-      );
+      const [,,ship,name] = props.station.split('/');
+      props.api.graph.addPost(ship,name, createPost([{ url }]));
     }
   }
 
   uploadError(error) {
     //  no-op for now
-  }
-
-  readyToUpload(): boolean {
-    return Boolean(this.s3Uploader.current?.inputRef.current);
   }
 
   onPaste(codemirrorInstance, event: ClipboardEvent) {
@@ -150,16 +105,15 @@ export default class ChatInput extends Component<ChatInputProps, ChatInputState>
     this.uploadFiles(event.clipboardData.files);
   }
 
-  uploadFiles(files: FileList) {
-    if (!this.readyToUpload()) {
+  uploadFiles(files: FileList | File[]) {
+    if (!this.props.canUpload) {
       return;
     }
-    if (!this.s3Uploader.current || !this.s3Uploader.current.inputRef.current)
-return;
-    this.s3Uploader.current.inputRef.current.files = files;
-    const fire = document.createEvent('HTMLEvents');
-    fire.initEvent('change', true, true);
-    this.s3Uploader.current?.inputRef.current?.dispatchEvent(fire);
+    Array.from(files).forEach(file => {
+      this.props.uploadDefault(file)
+        .then(this.uploadSuccess)
+        .catch(this.uploadError);
+    });
   }
 
   render() {
@@ -189,13 +143,13 @@ return;
       <Row
         alignItems='center'
         position='relative'
-        flexGrow='1'
-        flexShrink='0'
-        borderTop='1'
+        flexGrow={1}
+        flexShrink={0}
+        borderTop={1}
         borderTopColor='washedGray'
         backgroundColor='white'
         className='cf'
-        zIndex='0'
+        zIndex={0}
       >
         <Row p='2' alignItems='center'>
           {avatar}
@@ -210,29 +164,26 @@ return;
           placeholder='Message...'
         />
         <Box
-          mx='2'
-          flexShrink='0'
+          mx={2}
+          flexShrink={0}
           height='16px'
           width='16px'
           flexBasis='16px'
         >
-          <S3Upload
-            ref={this.s3Uploader}
-            configuration={props.s3.configuration}
-            credentials={props.s3.credentials}
-            uploadSuccess={this.uploadSuccess.bind(this)}
-            uploadError={this.uploadError.bind(this)}
-            accept="*"
-          >
-            <Icon icon='Links'
-              width="16"
-              height="16"
-            />
-          </S3Upload>
+          {this.props.canUpload
+            ? this.props.uploading
+              ? <LoadingSpinner />
+              : <Icon icon='Links'
+                width="16"
+                height="16"
+                onClick={() => this.props.promptUpload().then(this.uploadSuccess)}
+              />
+            : null
+          }
         </Box>
         <Box
-          mr='2'
-          flexShrink='0'
+          mr={2}
+          flexShrink={0}
           height='16px'
           width='16px'
           flexBasis='16px'
@@ -247,3 +198,5 @@ return;
     );
   }
 }
+
+export default withS3(ChatInput, {accept: 'image/*'});

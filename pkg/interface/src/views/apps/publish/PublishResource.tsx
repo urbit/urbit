@@ -36,9 +36,11 @@ export function PublishResource(props: PublishResourceProps) {
         match={props.match}
         location={props.location}
         hideAvatars={props.hideAvatars}
+        unreads={props.unreads}
         hideNicknames={props.hideNicknames}
         remoteContentPolicy={props.remoteContentPolicy}
         graphs={props.graphs}
+        s3={props.s3}
       />
     </Box>
   );

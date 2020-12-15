@@ -1,6 +1,5 @@
 import { Patp } from '~/types/noun';
 import BaseApi from './base';
-import ChatApi from './chat';
 import { StoreState } from '../store/type';
 import GlobalStore from '../store/store';
 import LocalApi from './local';
@@ -14,7 +13,6 @@ import S3Api from './s3';
 import {HarkApi} from './hark';
 
 export default class GlobalApi extends BaseApi<StoreState> {
-  chat = new ChatApi(this.ship, this.channel, this.store);
   local = new LocalApi(this.ship, this.channel, this.store);
   invite = new InviteApi(this.ship, this.channel, this.store);
   metadata = new MetadataApi(this.ship, this.channel, this.store);

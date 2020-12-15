@@ -6,15 +6,17 @@ import { Box, Row, Text, Rule } from "@tlon/indigo-react";
 import OverlaySigil from '~/views/components/OverlaySigil';
 import { uxToHex, cite, writeText } from '~/logic/lib/util';
 import { Envelope, IMessage } from "~/types/chat-update";
-import { Group, Association, Contacts, LocalUpdateRemoteContentPolicy } from "~/types";
+import { Group, Association, Contacts, LocalUpdateRemoteContentPolicy, Post } from "~/types";
 import TextContent from './content/text';
 import CodeContent from './content/code';
 import RemoteContent from '~/views/components/RemoteContent';
+import { Mention } from "~/views/components/MentionText";
+import styled from "styled-components";
 
 export const DATESTAMP_FORMAT = '[~]YYYY.M.D';
 
 export const UnreadMarker = React.forwardRef(({ dayBreak, when }, ref) => (
-  <Row ref={ref} color='blue' alignItems='center' fontSize='0' position='absolute' width='100%' py='2'>
+  <Row flexShrink={0} ref={ref} color='blue' alignItems='center' fontSize='0' position='absolute' width='100%' py='2'>
     <Rule borderColor='blue' display={['none', 'block']} m='0' width='2rem' />
     <Text flexShrink='0' display='block' zIndex='2' mx='4' color='blue'>New messages below</Text>
     <Rule borderColor='blue' flexGrow='1' m='0'/>
@@ -30,9 +32,9 @@ export const DayBreak = ({ when }) => (
 
 interface ChatMessageProps {
   measure(element): void;
-  msg: Envelope | IMessage;
-  previousMsg?: Envelope | IMessage;
-  nextMsg?: Envelope | IMessage;
+  msg: Post;
+  previousMsg?: Post;
+  nextMsg?: Post;
   isLastRead: boolean;
   group: Group;
   association: Association;
@@ -91,13 +93,13 @@ export default class ChatMessage extends Component<ChatMessageProps> {
     } = this.props;
 
     const renderSigil = Boolean((nextMsg && msg.author !== nextMsg.author) || !nextMsg || msg.number === 1);
-    const dayBreak = nextMsg && new Date(msg.when).getDate() !== new Date(nextMsg.when).getDate();
+    const dayBreak = nextMsg && new Date(msg['time-sent']).getDate() !== new Date(nextMsg['time-sent']).getDate();
 
     const containerClass = `${renderSigil
       ? `cf pl2 lh-copy`
       : `items-top cf hide-child`} ${isPending ? 'o-40' : ''} ${className}`
 
-    const timestamp = moment.unix(msg.when / 1000).format(renderSigil ? 'hh:mm a' : 'hh:mm');
+    const timestamp = moment.unix(msg['time-sent'] / 1000).format(renderSigil ? 'hh:mm a' : 'hh:mm');
 
     const reboundMeasure = (event) => {
       return measure(this.divRef.current);
@@ -130,6 +132,7 @@ export default class ChatMessage extends Component<ChatMessageProps> {
     return (
       <Box
         bg={highlighted ? 'washedBlue' : 'white'}
+        flexShrink={0}
         width='100%'
         display='flex'
         flexWrap='wrap'
@@ -139,15 +142,14 @@ export default class ChatMessage extends Component<ChatMessageProps> {
         ref={this.divRef}
         className={containerClass}
         style={style}
-        data-number={msg.number}
         mb={1}
       >
-        {dayBreak && !isLastRead ? <DayBreak when={msg.when} /> : null}
+        {dayBreak && !isLastRead ? <DayBreak when={msg['time-sent']} /> : null}
         {renderSigil
           ? <MessageWithSigil {...messageProps} />
           : <MessageWithoutSigil {...messageProps} />}
-        <Box fontSize={0} position='relative' width='100%' overflow='visible' style={unreadContainerStyle}>{isLastRead
-          ? <UnreadMarker dayBreak={dayBreak} when={msg.when} ref={unreadMarkerRef} />
+        <Box flexShrink={0} fontSize={0} position='relative' width='100%' overflow='visible' style={unreadContainerStyle}>{isLastRead
+          ? <UnreadMarker dayBreak={dayBreak} when={msg['time-sent']} ref={unreadMarkerRef} />
           : null}</Box>
       </Box>
     );
@@ -155,7 +157,7 @@ export default class ChatMessage extends Component<ChatMessageProps> {
 }
 
 interface MessageProps {
-  msg: Envelope | IMessage;
+  msg: Post;
   timestamp: string;
   group: Group;
   association: Association;
@@ -190,10 +192,10 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
       fontSize
     } = this.props;
 
-    const datestamp = moment.unix(msg.when / 1000).format(DATESTAMP_FORMAT);
-    const contact = msg.author in contacts ? contacts[msg.author] : undefined;
+    const datestamp = moment.unix(msg['time-sent'] / 1000).format(DATESTAMP_FORMAT);
+    const contact = msg.author in contacts ? contacts[msg.author] : false;
     const showNickname = !hideNicknames && contact && contact.nickname;
-    const name = showNickname ? contact.nickname : cite(msg.author);
+    const name = showNickname ? contact!.nickname : cite(msg.author);
     const color = contact ? `#${uxToHex(contact.color)}` : this.isDark ?  '#000000' :'#FFFFFF'
     const sigilClass = contact ? '' : this.isDark ? 'mix-blend-diff' : 'mix-blend-darken';
 
@@ -226,6 +228,7 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
         />
         <Box flexGrow={1} display='block' className="clamp-message">
           <Box
+            flexShrink={0}
             className="hide-child"
             pt={1}
             pb={1}
@@ -235,6 +238,7 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
             <Text
               fontSize={0}
               mr={3}
+              flexShrink={0}
               mono={!showNickname}
               fontWeight={(showNickname) ? '500' : '400'}
               className={`mw5 db truncate pointer`}
@@ -245,40 +249,70 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
               }}
               title={`~${msg.author}`}
             >{name}</Text>
-            <Text flexShrink={0} gray mono className="v-mid">{timestamp}</Text>
-            <Text gray mono ml={2} className="v-mid child dn-s">{datestamp}</Text>
+            <Text flexShrink='0' gray mono className="v-mid">{timestamp}</Text>
+            <Text flexShrink={0}  gray mono ml={2} className="v-mid child dn-s">{datestamp}</Text>
           </Box>
-          <Box fontSize={fontSize ? fontSize : '14px'}><MessageContent content={msg.letter} remoteContentPolicy={remoteContentPolicy} measure={measure} fontSize={fontSize} /></Box>
+          <ContentBox flexShrink={0} fontSize={fontSize ? fontSize : '14px'}>
+            {msg.contents.map(c =>
+            <MessageContent
+              contacts={contacts}
+              content={c}
+              remoteContentPolicy={remoteContentPolicy}
+              measure={measure}
+              fontSize={fontSize}
+              group={group}
+              hideNicknames={hideNicknames}
+              hideAvatars={hideAvatars}
+            />)}
+          </ContentBox>
         </Box>
       </>
     );
   }
 }
 
-export const MessageWithoutSigil = ({ timestamp, msg, remoteContentPolicy, measure }) => (
+const ContentBox = styled(Box)`
+  & > :first-child {
+    margin-left: 0px;
+  }
+
+`;
+
+export const MessageWithoutSigil = ({ timestamp, contacts, msg, remoteContentPolicy, measure, group, hideNicknames, hideAvatars }) => (
   <>
-    <Text mono gray display='inline-block' pt='2px' lineHeight='tall' className="child">{timestamp}</Text>
-    <Box fontSize='14px' className="clamp-message" style={{ flexGrow: 1 }}>
-      <MessageContent content={msg.letter} remoteContentPolicy={remoteContentPolicy} measure={measure}/>
-    </Box>
+    <Text flexShrink={0} mono gray display='inline-block' pt='2px' lineHeight='tall' className="child">{timestamp}</Text>
+    <ContentBox flexShrink={0} fontSize='14px' className="clamp-message" style={{ flexGrow: 1 }}>
+      {msg.contents.map((c, i) => (
+        <MessageContent
+          key={i}
+          contacts={contacts}
+          content={c}
+          group={group}
+          remoteContentPolicy={remoteContentPolicy}
+          measure={measure}
+          hideNicknames={hideNicknames}
+          hideAvatars={hideAvatars}/>))}
+    </ContentBox>
   </>
 );
 
-export const MessageContent = ({ content, remoteContentPolicy, measure, fontSize }) => {
+export const MessageContent = ({ content, contacts, remoteContentPolicy, measure, fontSize, group, hideNicknames, hideAvatars }) => {
   if ('code' in content) {
     return <CodeContent content={content} />;
   } else if ('url' in content) {
     return (
-      <Text fontSize={fontSize ? fontSize : '14px'} lineHeight="tall" color='black'>
+      <Box mx="2px" flexShrink={0} fontSize={fontSize ? fontSize : '14px'} lineHeight="tall" color='black'>
         <RemoteContent
           url={content.url}
           remoteContentPolicy={remoteContentPolicy}
           onLoad={measure}
           imageProps={{style: {
-              maxWidth: '18rem'
+            maxWidth: '18rem',
+            display: 'block'
           }}}
           videoProps={{style: {
-            maxWidth: '18rem'
+            maxWidth: '18rem',
+            display: 'block'
           }
           }}
           textProps={{style: {
@@ -286,17 +320,12 @@ export const MessageContent = ({ content, remoteContentPolicy, measure, fontSize
             textDecoration: 'underline'
           }}}
         />
-      </Text>
+      </Box>
     );
-  } else if ('me' in content) {
-    return (
-      <Text fontStyle='italic' fontSize={fontSize ? fontSize : '14px'} lineHeight='tall' color='black'>
-        {content.me}
-      </Text>
-    );
-  }
-  else if ('text' in content) {
+  } else if ('text' in content) {
     return <TextContent fontSize={fontSize} content={content} />;
+  } else if ('mention' in content) {
+    return <Mention group={group} ship={content.mention} contact={contacts?.[content.mention]} hideNicknames={hideNicknames} hideAvatars={hideAvatars} />
   } else {
     return null;
   }

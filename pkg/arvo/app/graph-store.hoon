@@ -262,12 +262,14 @@
               graphs       (~(put by graphs) resource [graph mark])
               update-logs  (~(put by update-logs) resource (gas:orm-log ~ ~))
               archive      (~(del by archive) resource)
+            ::
               validators
             ?~  mark  validators
             (~(put in validators) u.mark)
           ==
       %-  zing
-      :~  (give [/updates /keys ~] [%add-graph resource graph mark overwrite])
+      :~  (give [/keys ~] %keys (~(put in ~(key by graphs)) resource))
+          (give [/updates ~] %add-graph resource *graph:store mark overwrite)
           ?~  mark  ~
           ?:  (~(has in validators) u.mark)  ~
           =/  wire  /validator/[u.mark]
@@ -295,6 +297,8 @@
       |^
       =/  [=graph:store mark=(unit mark:store)]
         (~(got by graphs) resource)
+      ~|  "cannot add duplicate nodes to {<resource>}"
+      ?<  (check-for-duplicates graph ~(key by nodes))
       =/  =update-log:store  (~(got by update-logs) resource)
       =.  update-log
         (put:orm-log update-log time [%0 time [%add-nodes resource nodes]])
@@ -308,6 +312,31 @@
         :_  mark
         (add-node-list resource graph mark (sort-nodes nodes))
       ==
+      ::
+      ++  check-for-duplicates
+        |=  [=graph:store nodes=(set index:store)]
+        ^-  ?
+        =/  node-list  ~(tap in nodes)
+        |-
+        ?~  node-list  %.n
+        ?:  (has-node graph i.node-list)  %.y
+        $(node-list t.node-list)
+      ::
+      ++  has-node
+        |=  [=graph:store =index:store]
+        ^-  ?
+        =/  node=(unit node:store)  ~
+        |-
+        ?~  index
+          ?=(^ node)
+        ?~  t.index
+          ?=(^ (get:orm graph i.index))
+        =.  node  (get:orm graph i.index)
+        ?~  node  %.n
+        ?-  -.children.u.node
+            %empty  %.n
+            %graph  $(graph p.children.u.node, index t.index)
+        ==
       ::
       ++  sort-nodes
         |=  nodes=(map index:store node:store)
@@ -853,6 +882,64 @@
       [ship term]
     (~(gas by *(map index:store node:store)) [index u.node] ~)
   ::
+      [%x %node-siblings ?(%older %younger) @ @ @ *]
+    =/  older  ?=(%older i.t.t.path)
+    =/  =ship  (slav %p i.t.t.t.path)
+    =/  =term  i.t.t.t.t.path
+    =/  count  (slav %ud i.t.t.t.t.t.path)
+    =/  =index:store
+      (turn t.t.t.t.t.t.path (cury slav %ud))
+    =/  parent=index:store
+      (scag (dec (lent index)) index)
+    =/  graph
+      (get-node-children ship term parent)
+    ?~  graph  [~ ~]
+    :-  ~  :-  ~  :-  %graph-update
+    !>  ^-  update:store
+    :+  %0
+      now.bowl
+    :+  %add-nodes
+      [ship term]
+    %-  ~(gas by *(map index:store node:store))
+    :: TODO time complexity not desirable
+    ::   replace with custom ordered map functions
+    %+  turn  
+      =-  ?.(older (slag (safe-sub (lent -) count) -) (scag count -))
+      %-  tap:orm
+      %+  subset:orm  u.graph
+      =/  idx
+        (snag (dec (lent index)) index)
+      ?:(older [`idx ~] [~ `idx])
+    |=  [=atom =node:store]
+    ^-  [index:store node:store]
+    [(snoc parent atom) node]
+  ::
+      [%x ?(%newest %oldest) @ @ @ *]
+    =/  newest  ?=(%newest i.t.path)
+    =/  =ship  (slav %p i.t.t.path)
+    =/  =term  i.t.t.t.path
+    =/  count=@ud
+      (slav %ud i.t.t.t.t.path)
+    =/  =index:store
+      (turn t.t.t.t.t.path (cury slav %ud))
+    =/  children
+      (get-node-children ship term index)
+    ?~  children  [~ ~]
+    :-  ~  :-  ~  :-  %graph-update
+    !>  ^-  update:store
+    :+  %0
+      now.bowl
+    :+  %add-nodes
+      [ship term]
+    %-  ~(gas by *(map index:store node:store))
+    %+  turn
+      %+  scag  count
+      %-  ?:(newest same flop)
+      (tap:orm u.children)
+    |=  [=atom =node:store]
+    ^-  [index:store node:store]
+    [(snoc index atom) node]
+  ::
       [%x %node-children-subset @ @ @ @ @ *]
     =/  =ship  (slav %p i.t.t.path)
     =/  =term  i.t.t.t.path
@@ -907,6 +994,28 @@
       (peek:orm-log:store update-log)
     (bind result |=([=time update:store] time))
   ==
+  ::
+  ++  safe-sub
+    |=  [a=@ b=@]
+    ^-  @
+    ?:  (gte b a)
+      0
+    (sub a b)
+  ::
+  ++  get-node-children
+    |=  [=ship =term =index:store]
+    ^-  (unit graph:store)
+    ?:  ?=(~ index)
+      =/  graph
+        (~(get by graphs) [ship term])
+      ?~  graph  ~
+      `p.u.graph
+    =/  node
+      (get-node ship term index)
+    ?~  node  ~
+    ?:  ?=(%empty -.children.u.node)
+      ~
+    `p.children.u.node
   ::
   ++  get-node
     |=  [=ship =term =index:store]

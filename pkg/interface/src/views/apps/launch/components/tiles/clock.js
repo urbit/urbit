@@ -76,7 +76,7 @@ const Moon = ({ angle, ...props }) => {
         id="moonbg"
         cx={CX + (RADIUS - 12) * Math.cos(degToRad(angle))}
         cy={CY + (RADIUS - 12) * Math.sin(degToRad(angle))}
-        fill="rgba(255,255,255,0.6)"
+        fill="#ADA09D"
         r={CELESTIAL_BODY_SIZE / 2}
         {...props}
       ></circle>
@@ -202,10 +202,9 @@ class Clock extends React.PureComponent {
   }
 
   initGeolocation() {
-    if (typeof this.props.data === 'string') {
-      const latlon = this.props.data.split(',');
-      const lat = latlon[0];
-      const lon = latlon[1];
+    if (typeof this.props.data === 'object') {
+
+      const { latitude: lat, longitude: lon } = this.props.data;
 
       const suncalc = SunCalc.getTimes(new Date(), lat, lon);
 

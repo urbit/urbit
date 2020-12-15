@@ -5,10 +5,11 @@ import {
   Row,
   Col,
   Button
-} from '@tlon/indigo-react';
-import { AsyncButton } from '../../../components/AsyncButton';
-import { Formik, Form, FormikHelpers } from 'formik';
-import { MarkdownField } from './MarkdownField';
+} from "@tlon/indigo-react";
+import { AsyncButton } from "../../../components/AsyncButton";
+import { Formik, Form, FormikHelpers } from "formik";
+import { MarkdownField } from "./MarkdownField";
+import { S3State } from "~/types";
 
 interface PostFormProps {
   initial: PostFormSchema;
@@ -20,6 +21,7 @@ interface PostFormProps {
   ) => Promise<any>;
   submitLabel: string;
   loadingText: string;
+  s3: S3State;
 }
 
 const formSchema = Yup.object({
@@ -33,7 +35,7 @@ export interface PostFormSchema {
 }
 
 export function PostForm(props: PostFormProps) {
-  const { initial, onSubmit, cancel, submitLabel, loadingText, history } = props;
+  const { initial, onSubmit, submitLabel, loadingText, s3, cancel, history } = props;
 
   return (
     <Col width="100%" height="100%" p={[2, 4]}>
@@ -64,7 +66,7 @@ export function PostForm(props: PostFormProps) {
               type="button">Cancel</Button>}
             </Row>
           </Row>
-          <MarkdownField flexGrow={1} id="body" />
+          <MarkdownField flexGrow={1} id="body" s3={s3} />
         </Form>
       </Formik>
     </Col>

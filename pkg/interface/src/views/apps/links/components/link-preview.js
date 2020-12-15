@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { cite } from '~/logic/lib/util';
 import RemoteContent from '~/views/components/RemoteContent';
 
@@ -19,6 +19,10 @@ export const LinkPreview = (props) => {
 
   const timeSent =
     moment.unix(props.post['time-sent'] / 1000).format('hh:mm a');
+
+  useEffect(() => {
+    return () => props.api.hark.markEachAsRead(props.association, '/', props.post.index, 'link', 'link');
+  }, [props.association, props.post.index]);
 
   const embed = (
     <RemoteContent

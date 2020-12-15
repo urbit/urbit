@@ -11,7 +11,7 @@ import {
 } from "@tlon/indigo-react";
 import { useField } from "formik";
 import { S3State } from "~/types/s3-update";
-import { useS3 } from "~/logic/lib/useS3";
+import useS3 from "~/logic/lib/useS3";
 
 type ImageInputProps = Parameters<typeof Box>[0] & {
   id: string;
@@ -23,9 +23,7 @@ type ImageInputProps = Parameters<typeof Box>[0] & {
 export function ImageInput(props: ImageInputProps) {
   const { id, label, s3, caption, placeholder, ...rest } = props;
 
-  const { uploadDefault, canUpload } = useS3(s3);
-
-  const [uploading, setUploading] = useState(false);
+  const { uploadDefault, canUpload, uploading } = useS3(s3);
 
   const [field, meta, { setValue, setError }] = useField(id);
 
@@ -38,14 +36,12 @@ export function ImageInput(props: ImageInputProps) {
       return;
     }
     try {
-      setUploading(true);
       const url = await uploadDefault(file);
-      setUploading(false);
       setValue(url);
     } catch (e) {
       setError(e.message);
     }
-  }, [ref.current, uploadDefault, canUpload, setUploading, setValue]);
+  }, [ref.current, uploadDefault, canUpload, setValue]);
 
   const onClick = useCallback(() => {
     ref.current?.click();

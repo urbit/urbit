@@ -17,6 +17,17 @@
   %+  scry-for  update:store
   /graph/(scot %p entity.res)/[name.res]
 ::
+++  gut-younger-node-siblings
+  |=  [res=resource =index:store]
+  ^-  (map index:store node:store)
+  =+  %+  scry-for  ,=update:store
+      %+  weld
+        /node-siblings/younger/(scot %p entity.res)/[name.res]/all
+      (turn index (cury scot %ud))
+  ?>  ?=(%0 -.update)
+  ?>  ?=(%add-nodes -.q.update)
+  nodes.q.update
+::
 ++  got-node
   |=  [res=resource =index:store]
   ^-  node:store
@@ -53,4 +64,27 @@
   ?>  ?=(%0 -.update)
   ?>  ?=(%keys -.q.update)
   resources.q.update
+::
+++  tap-deep
+  |=  =graph:store
+  ^-  (list [index:store node:store])
+  =|  =index:store
+  =/  nodes=(list [atom node:store])
+    (tap:orm:store graph)
+  |-  =*  tap-nodes  $
+  ^-  (list [index:store node:store])
+  %-  zing
+  %+  turn
+    nodes
+  |=  [=atom =node:store]
+  ^-  (list [index:store node:store])
+  %+  welp
+    ^-  (list [index:store node:store])
+    [(snoc index atom) node]~
+  ?.  ?=(%graph -.children.node)
+    ~
+  %_  tap-nodes
+    index  (snoc index atom)
+    nodes  (tap:orm:store p.children.node)
+  ==
 --

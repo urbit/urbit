@@ -9,8 +9,8 @@ export const UnreadNotice = (props) => {
     return null;
   }
 
-  let datestamp = moment.unix(unreadMsg.when / 1000).format('YYYY.M.D');
-  const timestamp = moment.unix(unreadMsg.when / 1000).format('HH:mm');
+  let datestamp = moment.unix(unreadMsg.post['time-sent'] / 1000).format('YYYY.M.D');
+  const timestamp = moment.unix(unreadMsg.post['time-sent'] / 1000).format('HH:mm');
 
   if (datestamp === moment().format('YYYY.M.D')) {
     datestamp = null;

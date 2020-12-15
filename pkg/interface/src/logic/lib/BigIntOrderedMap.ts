@@ -170,6 +170,42 @@ export class BigIntOrderedMap<V> implements Iterable<[BigInteger, V]> {
     };
     return inner(nod);
   }
+  
+  peekLargest(): [BigInteger, V] | undefined {
+    const inner = (node: MapNode<V>) => {
+      if(!node) {
+        return undefined;
+      }
+      if(node.l) {
+        return inner(node.l);
+      }
+      return node.n;
+    }
+    return inner(this.root);
+  }
+
+  peekSmallest(): [BigInteger, V] | undefined {
+    const inner = (node: MapNode<V>) => {
+      if(!node) {
+        return undefined;
+      }
+      if(node.r) {
+        return inner(node.r);
+      }
+      return node.n;
+    }
+    return inner(this.root);
+  }
+
+  keys(): BigInteger[] {
+    const list = Array.from(this);
+    return list.map(([key]) => key);
+  }
+
+  forEach(f: (value: V, key: BigInteger) => void) {
+    const list = Array.from(this);
+    return list.forEach(([k,v]) => f(v,k));
+  }
 
   [Symbol.iterator](): IterableIterator<[BigInteger, V]> {
     let result: [BigInteger, V][] = [];
