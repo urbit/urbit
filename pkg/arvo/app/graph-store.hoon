@@ -297,13 +297,8 @@
       |^
       =/  [=graph:store mark=(unit mark:store)]
         (~(got by graphs) resource)
-      ::  TODO: turn back on assertion once issue with 8-10x facts being
-      ::  issued is resolved. Too noisy for now
-      ::
-      ::  ~|  "cannot add duplicate nodes to {<resource>}"
-      ::  ?<  (check-for-duplicates graph ~(key by nodes))
-      ?:  (check-for-duplicates graph ~(key by nodes))
-        [~ state]
+      ~|  "cannot add duplicate nodes to {<resource>}"
+      ?<  (check-for-duplicates graph ~(key by nodes))
       =/  =update-log:store  (~(got by update-logs) resource)
       =.  update-log
         (put:orm-log update-log time [%0 time [%add-nodes resource nodes]])
