@@ -349,7 +349,7 @@
     ~[(poke-wallet-hook payer [%ret-pay-address address.upd payer value])]
     ::  %generate-txbu
     ::   - replace current txbu (otherwise can have UTXO overlap)
-    ::   - request provider to create-raw-tx from txbu
+    ::   - get rawtxs for each input
     ::
       %generate-txbu
     :_  state(poym `txbu.upd)
