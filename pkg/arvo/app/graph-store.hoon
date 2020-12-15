@@ -593,7 +593,7 @@
       ?<  (~(has by archive) resource)
       ?>  (~(has by graphs) resource)
       =/  updates=(list [=time upd=logged-update:store])
-        (tap:orm-log update-log)
+        (flop (tap:orm-log update-log))
       =|  cards=(list card)
       |-  ^-  (quip card _state)
       ?~  updates
