@@ -593,6 +593,7 @@
       ?<  (~(has by archive) resource)
       ?>  (~(has by graphs) resource)
       =/  updates=(list [=time upd=logged-update:store])
+        ::  TODO: add +bap:orm (backwards tap) and use that
         (flop (tap:orm-log update-log))
       =|  cards=(list card)
       |-  ^-  (quip card _state)
