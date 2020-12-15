@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback } from "react";
 import f from "lodash/fp";
 import _ from "lodash";
-import { Icon, Col, Row, Box, Text, Anchor } from "@tlon/indigo-react";
+import { Icon, Col, Row, Box, Text, Anchor, Rule } from "@tlon/indigo-react";
 import moment from "moment";
 import { Notifications, Rolodex, Timebox, IndexedNotification, Groups } from "~/types";
 import { MOMENT_CALENDAR_DATE, daToUnix, resourceAsPath } from "~/logic/lib/util";
@@ -129,8 +129,10 @@ export default function Inbox(props: {
   };
 
   return (
-    <Col height="100%" overflowY="auto" onScroll={onScroll} >
-      {inviteItems(invites, api)}
+    <Col position="relative" height="100%" overflowY="auto" onScroll={onScroll} >
+      <Col zIndex={4} gapY={2} bg="white" top="0px" position="sticky">
+        {inviteItems(invites, api)}
+      </Col>
       {newNotifications && (
         <DaySection
           latest
