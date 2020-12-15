@@ -193,10 +193,12 @@
       ==
     ::
     ++  input
-      |=   i=in:psbt
+      |=  [only-witness=? i=in:psbt]
       ^-  map:psbt
-      :~  [[1 0x0] rawtx.i]
-          (witness-tx i)
+      %+  weld
+        ?:  only-witness  ~
+        ~[[1^0x0 rawtx.i]]
+      :~  (witness-tx i)
           (hdkey %input hdkey.i)
       ==
     ::
@@ -262,9 +264,14 @@
       %-  en:base64:mimes:html
       (flip:byt b)
   ::  +encode: make base64 cord of PSBT
+  ::   - only-witness: don't include non-witness UTXO
   ::
   ++  encode
-    |=  [=rawtx =txid inputs=(list in:psbt) outputs=(list out:psbt)]
+    |=  $:  only-witness=?
+            =rawtx  =txid
+            inputs=(list in:psbt)
+            outputs=(list out:psbt)
+        ==
     ^-  base64:psbt
     =/  sep=(unit bytc)  `1^0x0
     =/  final=(list (unit bytc))
@@ -272,7 +279,7 @@
       %+  turn
         %-  zing
         :~  ~[(globals:en rawtx)]
-            (turn inputs input:en)
+            (turn inputs (cury input:en only-witness))
             (turn outputs output:en)
         ==
       map-byts:en
