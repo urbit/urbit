@@ -26,7 +26,7 @@
 ::  scan-to
 ::  max-gap: maximum number of consec blank addresses before wallet stops scanning
 ::  confs:   confirmations required (after this is hit for an address, wallet stops refreshing it)
-:: 
+::
 +$  walt
   $:  =xpub
       =fprint
@@ -39,22 +39,20 @@
       max-gap=@ud
       confs=@ud
   ==
-::  input: utxo for a transaction
+::  insel: a selected utxo for input to a transaction
+::  peta: optional payment metadata
 ::  feyb: fee per byte in sats
 ::  txi/txo:  input/output for a transaction being built
 ::   -txo has an hdkey if it's a change account
 ::  txbu: tx builder -- all information needed to make a transaction for signing
-::  peta: optional payment metadata
 ::
-+$  input  [=utxo =chyg =idx]
++$  insel  [=utxo =chyg =idx]
 +$  peta  (unit [payer=ship value=sats])
 +$  feyb  sats
 +$  txi  [=utxo ur=(unit rawtx) =hdkey]
 +$  txo  [=address value=sats hk=(unit hdkey)]
 +$  txbu
-  $:  =req-id:bp
-      txinfo=(unit [=txid =rawtx])
-      =xpub
+  $:  =xpub
       payee=(unit ship)
       =vbytes
       txis=(list txi)

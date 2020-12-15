@@ -30,6 +30,23 @@
       (fall max-gap max-gap:defaults)
       (fall confs confs:defaults)
   ==
+::
+++  new-txbu
+  |=  $:  w=walt
+          payee=(unit ship)
+          =vbytes:btc
+          is=(list insel)
+          txos=(list txo)
+      ==
+  ^-  txbu
+  :*  xpub.w
+      payee
+      vbytes
+      %+  turn  is
+        |=  i=insel
+        [utxo.i ~ (~(hdkey wad w chyg.i) idx.i)]
+      txos
+  ==
 ::  txb: transaction builder helpers
 ::
 ++  txb
@@ -44,21 +61,43 @@
       (turn txos.t |=(=txo value.txo))
     add
   ::
+  ++  tx-data
+    |^  ^-  data:tx:btc
+    :*  (turn txis.t txi-data)
+        (turn txos.t txo-data)
+        0  1  `1
+    ==
+    ::
+    ++  txi-data
+      |=  =txi
+      :*  txid.utxo.txi  pos.utxo.txi
+          4^0xffff.ffff  ~  ~  value.utxo.txi
+      ==
+    ++  txo-data
+      |=  =txo
+      [(script-pubkey:btc address.txo) value.txo]
+    --
+  ::
   ++  fee
     =/  [in=sats out=sats]  value
     (sub in out)
+  ::
+  ++  get-txid
+    ^-  txid
+    (get-id:txu:btc tx-data)
+  ::
+  ++  get-rawtx
+    (encode:txu:btc tx-data)
   ::
   ++  add-output
     |=  =txo
     ^-  txbu
     t(txos [txo txos.t])
   ::  +to-psbt: returns a based 64 PSBT if
-  ::   - txinfo is present
   ::   - all inputs have an associated rawtx
   ::
   ++  to-psbt
-    ^-  (unit base64:psbt:btc) 
-    ?~  txinfo.t  ~
+    ^-  (unit base64:psbt:btc)
     =/  ins=(list in:psbt:btc)
       %+  murn  txis.t
       |=  =txi
@@ -69,11 +108,7 @@
     =/  outs=(list out:psbt:btc)
       %+  turn  txos.t
       |=(=txo [address.txo hk.txo])
-    :-  ~
-    %:  encode:pbt:btc
-        rawtx.u.txinfo.t  txid.u.txinfo.t
-        ins  outs
-    ==
+    `(encode:pbt:btc get-rawtx get-txid ins outs)
   --
 ::  wad: door for processing walts (wallets)
 ::        parameterized on a walt and it's chyg account 
@@ -132,7 +167,6 @@
   ::
   ++  update-address
     |=  [a=address:btc =addi]
-    :: TODO: check whether addi is used or not before bumping nixt
     ^-  walt
     ?>  =(chyg chyg.addi)
     ?>  =(a (mk-address idx.addi))
@@ -203,7 +237,7 @@
     (add (base-weight 1) input-weight)
   ::
   ++  total-vbytes
-    |=  selected=(list input)
+    |=  selected=(list insel)
     ^-  vbytes
     %+  add  (base-weight n-txos)
     (mul input-weight (lent selected))
@@ -241,44 +275,32 @@
   ::
   ++  select-utxos
     |^  ^-  (unit txbu)
-    =/  is=(unit (list input))
+    =/  is=(unit (list insel))
       %-  single-random-draw
       %-  zing
-      (turn ~(val by wach.w) to-inputs)
-    ?~(is ~ `(inputs-to-txbu u.is))
+      (turn ~(val by wach.w) to-insels)
+    ?~  is  ~
+    `(new-txbu w payee (total-vbytes u.is) u.is txos)
     ::
-    ++  to-inputs
-      |=  =addi  ^-  (list input)
+    ++  to-insels
+      |=  =addi
+      ^-  (list insel)
       %+  turn  ~(tap in utxos.addi)
       |=(=utxo:btc [utxo chyg.addi idx.addi])
-    ::
-    ++  inputs-to-txbu
-      |=  is=(list input)
-      ^-  txbu
-      :*  (gen-req-id:bp eny)
-          ~
-          xpub.w
-          payee
-          (total-vbytes is)
-          %+  turn  is
-            |=  i=input
-            [utxo.i ~ (~(hdkey wad w chyg.i) idx.i)]
-          txos
-      ==
     --
   ::  single-random-draw
   ::    randomly choose utxos until target is hit
-  ::    only use an input if its net-value > 0
+  ::    only use an insel if its net-value > 0
   ::
   ++  single-random-draw
-    |=  is=(list input)
-    ^-  (unit (list input))
+    |=  is=(list insel)
+    ^-  (unit (list insel))
     =/  rng  ~(. og eny)
     =/  target  (add target-value (mul feyb (base-weight n-txos)))   ::  add base fees to target
-    =|  [select=(list input) total=sats:btc]
+    =|  [select=(list insel) total=sats:btc]
     |-  ?:  =(~ is)  ~
     =^  n  rng  (rads:rng (lent is))
-    =/  i=input  (snag n is)
+    =/  i=insel  (snag n is)
     =/  net-val  (net-value value.utxo.i)
     =?  select  ?&((spendable utxo.i) (gth net-val 0))
       [i select]                                           ::  select if net-value > 0

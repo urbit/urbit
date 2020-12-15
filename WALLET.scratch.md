@@ -110,7 +110,8 @@ On `~zod`:
 
 on `~dopzod`:
 ```
-=xpubp PRIVATE.md
+::  FROM PRIVATE.md
+=xpubp 'zpub6r8dKyWJ31XF6n69KKeEwLjVC5ruqAbiJ4QCqLsrV36Mvx9WEjUaiPNPGFLHNCCqgCdy6iZC8ZgHsm6a1AUTVBMVbKGemNcWFcwBGSjJKbD'
 
 |start %btc-wallet-store
 |start %btc-wallet-hook
@@ -122,6 +123,12 @@ on `~dopzod`:
 on `~dopzod`:
 ```
 :btc-wallet-hook|action [%req-pay-address payee=~zod value=2.000 [~ 10]]
+```
+
+### Check TXBU TXID Generation
+TODO here
+```
+
 ```
 
 
