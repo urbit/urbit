@@ -793,6 +793,7 @@
     ?-  fec
       [%bel *]  ta-bel
       [%blk *]  +>
+      [%bye *]  +>(..ta (se-klin gyl))
       [%clr *]  +>(..ta (se-blit fec))
       [%det *]  (ta-got +.fec)
       [%err *]  (ta-err p.fec)
