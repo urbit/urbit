@@ -1707,20 +1707,18 @@ _pier_boot_make(u3_noun who, u3_noun wyr, u3_noun ven, u3_noun pil)
   //  prepend entropy and identity to the module sequence
   //
   {
-    u3_noun wir, cad;
+    u3_noun cad, wir = u3nt(u3_blip, c3__arvo, u3_nul);
     c3_w    eny_w[16];
-
     c3_rand(eny_w);
-    wir = u3nt(u3_blip, c3__arvo, u3_nul);
+
     cad = u3nc(c3__wack, u3i_words(16, eny_w));
-    bot_u.mod = u3nc(u3nc(wir, cad), bot_u.mod);
+    bot_u.mod = u3nc(u3nc(u3k(wir), cad), bot_u.mod);
+
+    cad = u3nc(c3__whom, who);                    // transfer [who]
+    bot_u.mod = u3nc(u3nc(u3k(wir), cad), bot_u.mod);
 
     wir = u3nt(u3_blip, c3__arvo, u3_nul);
-    cad = u3nc(c3__whom, who);  // transfer
-    bot_u.mod = u3nc(u3nc(wir, cad), bot_u.mod);
-
-    wir = u3nt(u3_blip, c3__arvo, u3_nul);
-    bot_u.mod = u3nc(u3nc(wir, wyr), bot_u.mod);
+    bot_u.mod = u3nc(u3nc(wir, wyr), bot_u.mod);  // transfer [wir] and [wyr]
   }
 
   //  prepend legacy boot event to the userspace sequence
