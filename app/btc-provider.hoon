@@ -115,7 +115,7 @@
         %raw-tx
       [%get-raw-tx txid.body.act]
       ::
-        %broadcast-tx 
+        %broadcast-tx
       [%broadcast-tx rawtx.body.act]
       ::
         %ping
