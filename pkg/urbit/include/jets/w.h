@@ -99,6 +99,8 @@
 #   define u3wdb_rep u3wdi_rep
     u3_noun u3wdb_run(u3_noun);
 #   define u3wdb_wyt u3wdi_wyt
+    u3_noun u3wdo_get(u3_noun);
+    u3_noun u3wdo_put(u3_noun);
 
     u3_noun u3wdi_apt(u3_noun);
     u3_noun u3wdi_bif(u3_noun);

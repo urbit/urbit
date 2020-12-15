@@ -107,6 +107,9 @@
     u3_noun u3qdi_uni(u3_noun, u3_noun);
     u3_noun u3qdi_wyt(u3_noun);
 
+    u3_noun u3qdo_get(u3_noun, u3_noun, u3_noun);
+    u3_noun u3qdo_put(u3_noun, u3_noun, u3_noun, u3_noun);
+
   /** Tier 5.
   **/
     u3_noun u3qe_cue(u3_atom);
