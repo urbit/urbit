@@ -17,7 +17,7 @@ module Urbit.Vere.Pier.Types
   )
 where
 
-import Urbit.Prelude hiding (Term)
+import Urbit.Prelude
 
 import Urbit.Arvo
 import Urbit.Noun.Time
@@ -44,11 +44,14 @@ instance Show Nock where
 
 --------------------------------------------------------------------------------
 
-data Pill = Pill
-  { pBootFormulas   :: ![Nock]
-  , pKernelOvums    :: ![Ev]
-  , pUserspaceOvums :: ![Ev]
-  }
+data Pill
+  = PillIvory [Noun]
+  | PillPill
+    { pName         :: Term
+    , pBootFormulae :: ![Nock]
+    , pKernelOva    :: ![Ev]
+    , pUserspaceOva :: ![Ev]
+    }
  deriving (Eq, Show)
 
 data BootSeq = BootSeq !LogIdentity ![Nock] ![Ev]

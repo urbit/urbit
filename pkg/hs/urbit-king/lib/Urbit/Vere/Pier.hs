@@ -70,16 +70,20 @@ setupPierDirectory shipPath = do
 
 -- Load pill into boot sequence. -----------------------------------------------
 
+data CannotBootFromIvoryPill = CannotBootFromIvoryPill
+  deriving (Show, Exception)
+
 genEntropy :: MonadIO m => m Entropy
 genEntropy = Entropy . fromIntegral . bytesAtom <$> io (Ent.getEntropy 64)
 
 genBootSeq :: MonadIO m => Ship -> Pill -> Bool -> LegacyBootEvent -> m BootSeq
-genBootSeq ship Pill {..} lite boot = io $ do
+genBootSeq _    PillIvory {}   _    _    = throwIO CannotBootFromIvoryPill
+genBootSeq ship PillPill  {..} lite boot = io $ do
   ent <- genEntropy
-  let ovums = preKern ent <> pKernelOvums <> postKern <> pUserspaceOvums
-  pure $ BootSeq ident pBootFormulas ovums
+  let ova = preKern ent <> pKernelOva <> postKern <> pUserspaceOva
+  pure $ BootSeq ident pBootFormulae ova
  where
-  ident = LogIdentity ship isFake (fromIntegral $ length pBootFormulas)
+  ident = LogIdentity ship isFake (fromIntegral $ length pBootFormulae)
   preKern ent =
     [ EvBlip $ BlipEvArvo $ ArvoEvWhom () ship
     , EvBlip $ BlipEvArvo $ ArvoEvWack () ent
