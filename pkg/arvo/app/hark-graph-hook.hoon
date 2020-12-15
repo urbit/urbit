@@ -189,11 +189,13 @@
     |=  $:  nodes=(list node:graph-store)
             rid=resource
         ==
-    =/  group=resource
-      (need (group-from-app-resource:met %graph rid))
-    =/  =metadata:metadata-store
-      (need (peek-metadata:met %graph group rid))
-    abet:check:(abed:handle-update:ha rid nodes group module.metadata)
+    =/  group=(unit resource)
+      (group-from-app-resource:met %graph rid)
+    ?~  group  `state
+    =/  metadata=(unit metadata:metadata-store)
+      (peek-metadata:met %graph u.group rid)
+    ?~  metadata  `state
+    abet:check:(abed:handle-update:ha rid nodes u.group module.u.metadata)
   --
 ::
 ++  on-peek  on-peek:def
@@ -254,7 +256,7 @@
   ::
   ++  abed
     |=  [r=resource upds=(list node:graph-store) grp=resource mod=term]
-    update-core(rid r, updates upds)
+    update-core(rid r, updates upds, group grp, module mod)
   ::
   ++  get-conversion
     ^-  tube:clay

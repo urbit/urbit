@@ -238,219 +238,14 @@
   =^  cards  state
     ?+  mark           (on-poke:def mark vase)
         %hark-action   (hark-action !<(action:store vase))
-        %noun   ~&  +.state  [~ state]
+        %noun          ~&  +.state  [~ state]
     ==
   [cards this]
   ::
   ++  hark-action
     |=  =action:store
     ^-  (quip card _state)
-    |^
-    ?-  -.action  
-      %add-note      (add-note +.action)
-      %archive       (do-archive +.action)
-    ::
-      %read-each     (read-each +.action)
-      %unread-each   (unread-each +.action)
-    ::
-      %read-count    (read-count +.action)
-      %unread-count  (unread-count +.action)
-    ::
-      %read-note     (read-note +.action)
-      %unread-note   (unread-note +.action)
-    ::
-      %seen-index    (seen-index +.action)
-    ::
-      %read-all      read-all
-    ::
-      %set-dnd       (set-dnd +.action)
-      %seen        seen
-    ==
-    ::
-    ++  add-note
-      |=  [=index:store =notification:store]
-      ^-  (quip card _state)
-      =/  =timebox:store
-        (gut-orm:ha notifications current-timebox)
-      =/  existing-notif
-        (~(get by timebox) index)
-      =/  new=notification:store
-        ?~  existing-notif
-          notification
-        (merge-notification:ha u.existing-notif notification)
-      =/  new-read=?
-        ?~  existing-notif
-          %.y
-        read.u.existing-notif
-      =.  read.new  %.n
-      =/  new-timebox=timebox:store
-        (~(put by timebox) index new)
-      :-  (give:ha [/updates]~ %added current-timebox index new)
-      %_  state
-        +  ?.(new-read +.state (upd-unreads:ha index current-timebox %.n))
-        notifications  (put:orm notifications current-timebox new-timebox)
-      ==
-    ::
-    ++  do-archive
-      |=  [time=@da =index:store]
-      ^-  (quip card _state)
-      =/  =timebox:store
-        (gut-orm:ha notifications time)
-      =/  =notification:store
-        (~(got by timebox) index)
-      =/  new-timebox=timebox:store
-        (~(del by timebox) index)
-      :-  (give:ha [/updates]~ %archive time index)
-      %_  state
-        +  ?.(read.notification (upd-unreads:ha index time %.y) +.state)
-        ::
-          notifications
-        (put:orm notifications time new-timebox)
-        ::
-          archive
-        %^  jub-orm:ha  archive  time
-        |=  archive-box=timebox:store
-        ^-  timebox:store
-        (~(put by archive-box) index notification(read %.y))
-      ==
-    ::
-    ++  unread-each
-      |=  [=index:store unread=index:graph-store time=@da]
-      :-  (give:ha ~[/updates] %unread-each index unread time)
-      %_  state
-          unreads-each
-        %+  jub  index
-        |=  indices=(set index:graph-store)
-        (~(put in indices) unread)
-        ::
-          last-seen
-        (~(put by last-seen) index time)
-      ==
-    ::
-    ++  jub
-      |=  [=index:store f=$-((set index:graph-store) (set index:graph-store))]
-      ^-  (jug index:store index:graph-store)
-      =/  val=(set index:graph-store)
-        (~(gut by unreads-each) index ~)
-      (~(put by unreads-each) index (f val))
-    ::
-    ++  read-each
-      |=  [=index:store ref=index:graph-store]
-      =/  to-dismiss=(list @da)
-        %+  skim
-          ~(tap in (~(get ju by-index) index))
-        |=  time=@da
-        =/  =timebox:store
-          (gut-orm notifications time)
-        =/  not=(unit notification:store)
-          (~(get by timebox) index)
-        ?~  not  %.n
-        ?>  ?=(%graph -.contents.u.not)
-        (lien list.contents.u.not |=(p=post:post =(index.p ref)))
-      =|  cards=(list card)
-      |- 
-      ?^  to-dismiss
-        =^  crds  state
-          (read-note i.to-dismiss index)
-        $(cards (weld cards crds), to-dismiss t.to-dismiss)
-      :-  (weld cards (give:ha ~[/updates] %read-each index ref))
-      %_    state
-        ::
-          unreads-each
-        %+  jub  index
-        |=  indices=(set index:graph-store)
-        (~(del in indices) ref)
-      ==
-    ::
-    ++  read-note
-      |=  [time=@da =index:store]
-      ^-  (quip card _state)
-      :-  (give:ha [/updates]~ %read-note time index)
-      %_  state
-        +  (upd-unreads:ha index time %.y)
-        notifications  (change-read-status:ha time index %.y)
-      ==
-    ::
-    ++  unread-note
-      |=  [time=@da =index:store]
-      ^-  (quip card _state)
-      :-  (give:ha [/updates]~ %unread-note time index)
-      %_  state
-        +  (upd-unreads:ha index time %.n)
-        notifications  (change-read-status:ha time index %.n)
-      ==
-    ::
-    ++  read-count
-      |=  =index:store
-      ^-  (quip card _state)
-      =^  cards  state
-        (read-index index)
-      :-  %+  weld  cards
-          (give:ha [/updates]~ %read-count index)
-      %_  state
-        unreads-count  (~(put by unreads-count) index 0)
-      ==
-    ::
-    ++  read-boxes
-      |=  [boxes=(set @da) =index:store]
-      ^-  (quip card _state)
-      =/  boxes=(list @da)
-        ~(tap in boxes)
-      =|  crds=(list card)
-      |- 
-      ?~  boxes  [crds state]
-      =*  box  i.boxes
-      =^  cards  state
-        (read-note box index)
-      $(boxes t.boxes, crds (welp crds cards))
-    ::
-    ++  read-index
-      |=  =index:store
-      ^-  (quip card _state)
-      =/  boxes=(set @da)
-        (~(get ju by-index) index)
-      =^  cards  state
-        (read-boxes boxes index)
-      :_  state
-      %+  welp  cards
-      (give:ha ~[/updates] %read-index index)
-    ::
-    ++  seen-index
-      |=  [time=@da =index:store]
-      ^-  (quip card _state)
-      :-  (give:ha ~[/updates] %seen-index time index)
-      %_  state
-        last-seen  (~(put by last-seen) index time)
-      ==
-    ::
-    ++  read-all
-      ^-  (quip card _state)
-      `state
-    ::
-    ++  unread-count
-      |=  [=index:store time=@da]
-      ^-  (quip card _state)
-      :-  (give:ha [/updates]~ %unread-count index time)
-      =/  curr=@ud
-        (~(gut by unreads-count) index 0)
-      %_  state
-        last-seen      (~(put by last-seen) index time)
-        unreads-count  (~(put by unreads-count) index +(curr))
-      ==
-    ::
-    ++  seen
-      ^-  (quip card _state)
-      :_  state(current-timebox now.bowl)
-      :~  cancel-autoseen:ha
-          autoseen-timer:ha
-      ==
-    ::
-    ++  set-dnd
-      |=  d=?
-      ^-  (quip card _state)
-      :_  state(dnd d)
-      (give:ha [/updates]~ %set-dnd d)
-    --
+    abet:translate:(abed:poke-engine:ha action)
   --
 ::
 ++  on-agent  on-agent:def
@@ -469,35 +264,218 @@
 --
 |_  =bowl:gall
 +*  met  ~(. metadata bowl)
+++  poke-engine
+  |_  [in=action:store out=(list update:store) cards=(list card)]
+  ++  poke-core  .
+  ::
+  ++  abed 
+    |=  =action:store  poke-core(in action)
+  ::
+  ++  abet
+    ^-  (quip card _state)
+    :_  state
+    %+  snoc  (flop cards)
+    [%give %fact ~[/updates] %hark-update !>([%more (flop out)])]
+  :: 
+  ++  give
+    |=  =update:store  poke-core(out [update out])
+  ::
+  ++  emit
+    |=  =card  poke-core(cards [card cards])
+  ::
+  ++  translate
+    ^+  poke-core
+    ?+  -.in  poke-core
+    ::
+      %add-note      (add-note +.in)
+      %archive       (do-archive +.in)
+    ::
+      %unread-count  (unread-count +.in)
+      %read-count    (read-count +.in)
+    ::
+      %read-each    (read-each +.in)
+      %unread-each  (unread-each +.in)
+    ::
+      %read-note    (read-note +.in)
+      %unread-note  (unread-note +.in)
+    ::
+      %seen-index   (seen-index +.in)
+      %set-dnd      (set-dnd +.in)
+      %seen         seen
+    ==
+  ::
+  ::  +|  %note
+  ::  
+  ::  notification tracking
+  ++  upd-cache
+    |=  [read=? time=@da =index:store]
+    poke-core(+.state (^upd-cache read time index))
+  ::
+  ++  put-notifs
+    |=  [time=@da =timebox:store]
+    poke-core(notifications (put:orm notifications time timebox))
+  ::
+  ++  add-note
+    |=  [=index:store =notification:store]
+    ^+  poke-core
+    =/  =timebox:store
+      (gut-orm notifications current-timebox)
+    =/  existing-notif
+      (~(get by timebox) index)
+    =/  new=notification:store
+      (merge-notification existing-notif notification)
+    =/  new-read=?
+      ?~  existing-notif  %.y
+      read.u.existing-notif
+    =/  new-timebox=timebox:store
+      (~(put by timebox) index new)
+    =.  poke-core  (put-notifs current-timebox new-timebox)
+    =?  poke-core  new-read
+      (upd-cache %.n current-timebox index)
+    (give %added current-timebox index new)
+  ::
+  ++  do-archive
+    |=  [time=@da =index:store]
+    ^+  poke-core  
+    =/  =timebox:store
+      (gut-orm notifications time)
+    =/  =notification:store
+      (~(got by timebox) index)
+    =/  new-timebox=timebox:store
+      (~(del by timebox) index)
+    =?  poke-core  !read.notification
+      (upd-cache %.y time index)
+    =.  poke-core
+      (put-notifs time new-timebox)
+    =.  archive
+      %^  jub-orm  archive  time
+      |=  archive-box=timebox:store
+      (~(put by archive-box) index notification(read %.y))
+    (give %archive time index)
+  ::
+  ++  change-read-status
+    |=  [time=@da =index:store read=?]
+    =.  poke-core  (upd-cache read time index)
+    %_  poke-core
+        notifications
+      %^  jub-orm  notifications  time
+      |=  =timebox:store
+      %+  ~(jab by timebox)  index
+      |=  n=notification:store
+      ?>(!=(read read.n) n(read read))
+    ==
+  ::
+  ++  read-note
+    |=  [time=@da =index:store]
+    %.  [%read-note time index]
+    give:(change-read-status time index %.y)
+  ::
+  ++  unread-note
+    |=  [time=@da =index:store]
+    %.  [%unread-note time index]
+    give:(change-read-status time index %.n)
+  ::
+  ::  +|  %each
+  ::  
+  ::  each unread tracking
+  ::
+  ++  unread-each
+    |=  [=index:store unread=index:graph-store time=@da]
+    =.  poke-core  (seen-index time index)
+    %+  jub-unreads-each:(give %unread-each index unread time)
+      index
+    |=  indices=(set index:graph-store)
+    (~(put ^in indices) unread)
+  ::
+  ++  read-index-each
+    |=  [=index:store ref=index:graph-store]
+    %+  read-boxes  index 
+    %+  skim
+      ~(tap ^in (~(get ju by-index) index))
+    |=  time=@da
+    =/  =timebox:store
+      (gut-orm notifications time)
+    =/  not=notification:store
+      (~(gut by timebox) index [now.bowl %.n %graph ~])
+    ?>  ?=(%graph -.contents.not)
+    (lien list.contents.not |=(p=post:post =(index.p ref)))
+  ::
+  ++  read-each
+    |=  [=index:store ref=index:graph-store]
+    =.  poke-core  (read-index-each index ref)
+    %+  jub-unreads-each:(give %read-each index ref)
+      index
+    |=  indices=(set index:graph-store)
+    (~(del ^in indices) ref)
+  ::
+  ++  jub-unreads-each
+    |=  $:  =index:store
+            f=$-((set index:graph-store) (set index:graph-store))
+        ==
+    poke-core(unreads-each (jub index f))
+  ::
+  ++  unread-count
+    |=  [=index:store time=@da]
+    =/  new-count
+      +((~(gut by unreads-count) index 0))
+    =.  unreads-count
+      (~(put by unreads-count) index new-count)
+    (seen-index:(give %unread-count index time) time index)
+  ::
+  ++  read-count
+    |=  =index:store
+    =.  unreads-count  (~(put by unreads-count) index 0)
+    (give:(read-index index) %read-count index)
+  :: 
+  ++  read-index
+    |=  =index:store
+    (read-boxes index ~(tap ^in (~(get ju by-index) index)))
+  ::
+  ++  read-boxes
+    |=  [=index:store boxes=(list @da)]
+    ?~  boxes  poke-core
+    =/  core=_poke-core
+      (read-note i.boxes index)
+    $(poke-core core, boxes t.boxes)
+  ::
+  ++  seen-index
+    |=  [time=@da =index:store]
+    =/  new-time=@da
+      (max time (~(gut by last-seen) index 0))
+    =.  last-seen
+      (~(put by last-seen) index new-time)
+    (give %seen-index new-time index)
+  ::
+  ++  seen
+    =>  (emit cancel-autoseen)
+    =>  (emit autoseen-timer)
+    poke-core(current-timebox now.bowl)
+  ::
+  ++  set-dnd
+    |=  d=?
+    (give:poke-core(dnd d) %set-dnd d)
+  --
 ::
 ++  merge-notification
-  |=  [existing=notification:store new=notification:store]
+  |=  [existing=(unit notification:store) new=notification:store]
   ^-  notification:store
-  ?-    -.contents.existing
+  ?~  existing  new
+  ?-    -.contents.u.existing
     ::
       %graph
     ?>  ?=(%graph -.contents.new)
-    existing(read %.n, list.contents (weld list.contents.existing list.contents.new))
+    u.existing(read %.n, list.contents (weld list.contents.u.existing list.contents.new))
     ::
        %group
     ?>  ?=(%group -.contents.new)
-    existing(read %.n, list.contents (weld list.contents.existing list.contents.new))
+    u.existing(read %.n, list.contents (weld list.contents.u.existing list.contents.new))
   ==
 ::
-++  change-read-status
-  |=  [time=@da =index:store read=?]
-  ^+  notifications
-  %^  jub-orm  notifications  time
-  |=  =timebox:store
-  %+  ~(jab by timebox)  index
-  |=  =notification:store
-  ?>  !=(read read.notification)
-  notification(read read)
 ::  +key-orm: +key:by for ordered maps
 ++   key-orm
   |=  =notifications:store
   ^-  (list @da)
-  (turn (tap:orm notifications) |=([key=@da =timebox:store] key))
+  (turn (tap:orm notifications) |=([@da *] +<-))
 ::  +jub-orm: combo +jab/+gut for ordered maps
 ::    TODO: move to zuse.hoon
 ++  jub-orm
@@ -506,6 +484,12 @@
   =/  =timebox:store
     (fun (gut-orm notifications time))
   (put:orm notifications time timebox)
+++  jub
+  |=  [=index:store f=$-((set index:graph-store) (set index:graph-store))]
+  ^-  (jug index:store index:graph-store)
+  =/  val=(set index:graph-store)
+    (~(gut by unreads-each) index ~)
+  (~(put by unreads-each) index (f val))
 ::  +gut-orm: +gut:by for ordered maps
 ::    TODO: move to zuse.hoon
 ++  gut-orm
@@ -533,8 +517,14 @@
   ^-  (list card)
   [%give %fact paths [%hark-update !>(update)]]~
 ::
-++  upd-unreads
-  |=  [=index:store time=@da read=?]
+++  tap-nonempty
+  |=  =notifications:store
+  ^-  (list [@da timebox:store])
+  %+  skim  (tap:orm notifications)
+  |=([@da =timebox:store] !=(~(wyt by timebox) 0))
+::
+++  upd-cache
+  |=  [read=? time=@da =index:store]
   ^+  +.state
   %_    +.state
     ::
@@ -545,35 +535,13 @@
     ~(put ju by-index)
   ==
 ::
-++  group-for-index
-  |=  =index:store
-  ^-  (unit resource)
-  ?.  ?=(%graph -.index)
-    ~
-  `group.index
-::
-++  give-dirtied-unreads
-  |=  [=index:store =update:store]
-  ^-  (list card)
-  =/  group
-    (group-for-index index)
-  ?~  group  ~
-  (give ~[group+(en-path:resource u.group)] update) 
-::
-++  tap-nonempty
-  |=  =notifications:store
-  ^-  (list [@da timebox:store])
-  %+  skim  (tap:orm notifications)
-  |=([@da =timebox:store] !=(~(wyt by timebox) 0))
-::
 ++  inflate-cache
   |=  state-1
   ^+  +.state
   =/  nots=(list [p=@da =timebox:store])
     (tap:orm notifications)
   |-  =*  outer  $
-  ?~  nots
-    +.state
+  ?~  nots  +.state
   =/  unreads  ~(tap by timebox.i.nots)
   |-  =*  inner  $
   ?~  unreads  
@@ -583,6 +551,6 @@
   ?:  read.notification
     inner(unreads t.unreads)
   =.  +.state
-    (upd-unreads index p.i.nots %.n)
+    (upd-cache %.n p.i.nots index)
   inner(unreads t.unreads)
 --

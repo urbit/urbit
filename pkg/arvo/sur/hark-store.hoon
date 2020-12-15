@@ -101,8 +101,6 @@
   $%  action
       [%more more=(list update)]
       [%added time=@da =index =notification]
-      [%read-index =index]
-      [%read time=@da =index]
       [%timebox time=@da archived=? =(list [index notification])]
       [%count count=@ud]
       [%unreads unreads=(list [index index-stats])]
