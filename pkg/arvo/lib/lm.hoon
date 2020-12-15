@@ -1,6 +1,13 @@
 ::
 ::::  Matrix type in single-precision floating-point @rs
   ::
+::  Conventions:
+::
+::  m,n,p   always dimensions (or dimension composites in the case of p)
+::  i,j,k   always indices (also ii,jj,kk)
+::  a,b,c   always lists
+::  u,v,w   always vector/matrix atoms
+::  s,t     always real/floats
 /+  *lv
 |%
 ++  lms
@@ -9,43 +16,26 @@
   |_  r/$?($n $u $d $z)   :: round nearest, round up, round down, round to zero
   ::
   ::  Manipulators
-  ::
-  ::    Cantor pairing function
-  ::      This is used so that the dimensions can be stored as a unique number.
-  ++  cantor
-    ~/  %cantor
-    |=  [m=@ud n=@ud]  ^-  @ud
-    (add (div (mul (add m n) (add m (add n 1))) 2) n)
-  ++  decantor
-    ~/  %decantor
-    |=  [z=@ud]  ^-  (list @ud)
-    =/  w  (div (sub p:(sqt (add (mul 8 z) 1)) 1) 2)
-    =/  t  (div (add (mul w w) w) 2)
-    =/  y  (sub z t)
-    =/  x  (sub w y)
-    ~[x y]
-  ::
   ::    Zeroes
   ++  zeros
     ~/  %zeros
     |=  [m=@ud n=@ud]  ^-  @lms
     ~_  leaf+"lagoon-fail"
-    :: There is a vanishingly small chance of getting a NaN in a matrix which
-    :: collides with this, but it's like getting a hash table collision, very
-    :: very unlikely.  Also the Urbit NaN is hard-coded, `SINGNAN`.
-    =/  nan  0xffff.ffff
-    =/  p  (cantor m n)
-    `@lms`(not 5 +((mul m n)) (rap 5 ~[(fil 5 (mul m n) nan) (not 5 1 p)]))
+    =/  p  (rep [4 1] ~[m n])
+    `@lms`(lsh [5 (mul m n)] p)
+  ::
+  ::    Fill value
+  ++  fill
+    ~/  %fill
+    |=  [m=@ud n=@ud s=@rs]  ^-  @lms
+    `@lms`(mix (zeros m n) (fil 5 (mul m n) s))
   ::
   ::    Ones
   ++  ones
     ~/  %ones
-    |=  [m=@ud n=@ud]  ^-  @lms
+    |=  n=@ud  ^-  @lvs
     ~_  leaf+"lagoon-fail"
-    =/  one  (bit:rs [%f s=%.y e=-0 a=1])
-    =/  not-one  (not 5 1 one)
-    =/  p  (cantor m n)
-    `@lms`(not 5 +((mul m n)) (rap 5 ~[(fil 5 (mul m n) not-one) (not 5 1 p)]))
+    (fill m n .1)
   ::
   ::    Identity
   ++  id
@@ -56,12 +46,12 @@
     =/  i  1
     |-
       ?:  |(=(i m) =(i n))  u
-    $(i +(i), u (set u i i .1))  :: TODO test Hoon version (jet works)
+    $(i +(i), u (set u i i .1))
   ::
   ::    Shape of matrix
   ++  shape
     |=  u=@lms  ^-  (list @ud)
-    (decantor (snag 0 (flop (rip 5 u))))
+    (rip [4 1] (end [5 1] (swp 5 u)))
   ::
   ::    Produce a matrix from `(list (list @rs))`
   ::    Rows across, columns "down" (meaning modulus m)
@@ -70,41 +60,35 @@
     ~_  leaf+"lagoon-fail"
     (not 5 1 a)
   ++  make
-    |=  [u=(list (list @rs))]  ^-  @lms
+    |=  [a=(list (list @rs))]  ^-  @lms
     ~_  leaf+"lagoon-fail"
-    =/  m  `@ud`(lent u)
-    =/  n  `@ud`(lent (snag 0 u))
-    =/  size  (mul m n)
-    =/  p  (cantor m n)
-    ~&  [m n size p]
+    =/  m  `@ud`(lent a)
+    =/  n  `@ud`(lent (snag 0 a))
     =/  i  0  :: index over rows
-    =/  not-w  `(list @rs)`~
+    =/  w  (zeros m n)
     |-  ^-  @lms
-      ?:  =(i m)  `@lms`(not 5 +(size) (rep 5 (weld `(list @rs)`not-w ~[(not 5 1 p)])))
-      =/  not-u  `(list @rs)`(flop (turn (snag i u) not-rs))
-    $(i +(i), not-w `(list @rs)`(weld `(list @rs)`not-u `(list @rs)`not-w))
+      ?:  =(i m)  w
+    $(i +(i), w (setr w i (make:lvs (snag i a))))
   ++  unmake
     |=  [u=@lms]  ^-  (list (list @rs))
     ~_  leaf+"lagoon-fail"
-    %-  flop
+    %-  flop  :: TODO XXX check this
     =/  mn  `(list @ud)`(shape u)
     =/  m   `@ud`-:mn
     =/  n   `@ud`+<:mn
     =/  size  (mul m n)
-    =/  p  (cantor m n)
-    =/  nan  0xffff.ffff
-    =/  ut  (swp 5 (cat 5 nan (cat 5 u nan)))
-    =/  rc  `(list @rs)`(oust [size 1] (oust [0 2] (rip 5 ut)))
-    =/  q  `(list (list @rs))`~
     =/  i  0  :: index over rows
+    =/  a  `(list @rs)`(oust [0 1] (flop (rip 5 u)))
+    =/  b  `(list (list @rs))`~
     |-  ^-  (list (list @rs))
       ?:  =(i m)  `(list (list @rs))`q
-      =/  r  (mul i n)
-      =/  v  `(list @rs)`(swag [r n] `(list @rs)`rc)
-    $(i +(i), q `(list (list @rs))`(weld `(list (list @rs))`~[v] `(list (list @rs))`q))
+      =/  b  `(list @rs)`(scag n (slag (mul i n) a))
+    $(i +(i), q `(list (list @rs))`(weld ~[b] a))
   ::
   ::    Pretty-print the contents of the matrix.
   ++  pprint  !!
+  ::  |=  u=@lms  ^-  tape
+  ::  `tape`(zing (join " " (turn (unmake u) |=(s=@rs <s>))))
   ::
   ::    Get the value at an index, using mathematical indices 1..n.
   ++  get
