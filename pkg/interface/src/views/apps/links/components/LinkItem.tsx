@@ -21,7 +21,7 @@ interface LinkItemProps {
   api: GlobalApi;
   group: Group;
   path: string;
-  contacts: Rolodex[];
+  contacts: Rolodex;
   unreads: Unreads;
 }
 

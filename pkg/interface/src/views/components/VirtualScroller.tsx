@@ -141,7 +141,6 @@ export default class VirtualScroller extends Component<VirtualScrollerProps, Vir
     const { scrollTop, offsetHeight: windowHeight } = this.window;
     const { averageHeight } = this.state;
     const { data, size: totalSize, onCalculateVisibleItems } = this.props;
-    console.log(windowHeight);
 
     const overscan = Math.max(windowHeight / 2, 200);
 
@@ -161,10 +160,6 @@ export default class VirtualScroller extends Component<VirtualScrollerProps, Vir
         endgap += height;
       }
     });
-
-    startBuffer = new BigIntOrderedMap(
-      [...startBuffer].reverse().slice(0, (visibleItems.size - visibleItems.size % 5))
-    );
 
 
     startBuffer.forEach((_datum, index) => {
@@ -303,7 +298,7 @@ export default class VirtualScroller extends Component<VirtualScrollerProps, Vir
       data
     } = this.props;
 
-    const indexesToRender = visibleItems.keys().reverse();
+    const indexesToRender = origin === 'top' ? visibleItems.keys() : visibleItems.keys().reverse();
 
     const transform = origin === 'top' ? 'scale3d(1, 1, 1)' : 'scale3d(1, -1, 1)';
 

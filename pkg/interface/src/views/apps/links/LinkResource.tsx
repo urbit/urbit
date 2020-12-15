@@ -11,6 +11,7 @@ import { RouteComponentProps } from "react-router-dom";
 import { LinkItem } from "./components/LinkItem";
 import LinkSubmit from "./components/LinkSubmit";
 import { LinkPreview } from "./components/link-preview";
+import { LinkWindow } from "./LinkWindow";
 import { Comments } from "~/views/components/Comments";
 
 import "./css/custom.css";
@@ -73,27 +74,23 @@ export function LinkResource(props: LinkResourceProps) {
                 <Col width="100%" flexShrink='0'>
                   <LinkSubmit s3={s3} name={name} ship={ship.slice(1)} api={api} />
                 </Col>
-                {Array.from(graph).map(([date, node]) => {
-                  const contact = contactDetails[node.post.author];
-                  return (
-                    <LinkItem
-                      association={resource}
-                      contacts={contacts}
-                      key={date.toString()}
-                      resource={resourcePath}
-                      node={node}
-                      contacts={contactDetails}
-                      unreads={unreads}
-                      nickname={contact?.nickname}
-                      hideAvatars={hideAvatars}
-                      hideNicknames={hideNicknames}
-                      remoteContentPolicy={remoteContentPolicy}
-                      baseUrl={resourceUrl}
-                      group={group}
-                      path={resource["group-path"]}
-                      api={api}
-                      mb={3}
-                    />
+                <LinkWindow
+                  association={resource}
+                  contacts={contacts}
+                  key={date.toString()}
+                  resource={resourcePath}
+                  graph={graph}
+                  unreads={unreads}
+                  nickname={contact?.nickname}
+                  hideAvatars={hideAvatars}
+                  hideNicknames={hideNicknames}
+                  remoteContentPolicy={remoteContentPolicy}
+                  baseUrl={resourceUrl}
+                  group={group}
+                  path={resource["group-path"]}
+                  api={api}
+                  mb={3}
+                />
                   );
                 })}
               </Col>
