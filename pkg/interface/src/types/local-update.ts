@@ -1,7 +1,3 @@
-interface LocalUpdateSidebarToggle {
-  sidebarToggle: boolean;
-}
-
 interface LocalUpdateSetDark {
   setDark: boolean;
 }
@@ -26,7 +22,7 @@ interface LocalUpdateSetOmniboxShown {
   omniboxShown: boolean;
 }
 
-export interface LocalUpdateRemoteContentPolicy {
+export interface RemoteContentPolicy {
   imageShown: boolean;
   audioShown: boolean;
   videoShown: boolean;
@@ -46,11 +42,10 @@ interface BackgroundConfigColor {
 export type BackgroundConfig = BackgroundConfigUrl | BackgroundConfigColor | undefined;
 
 export type LocalUpdate =
-  LocalUpdateSidebarToggle
 | LocalUpdateSetDark
 | LocalUpdateBaseHash
 | LocalUpdateBackgroundConfig
 | LocalUpdateHideAvatars
 | LocalUpdateHideNicknames
 | LocalUpdateSetOmniboxShown
-| LocalUpdateRemoteContentPolicy;
+| RemoteContentPolicy;

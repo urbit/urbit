@@ -19,8 +19,6 @@ interface NotePreviewProps {
   host: string;
   book: string;
   node: GraphNode;
-  hideAvatars?: boolean;
-  hideNicknames?: boolean;
   baseUrl: string;
   unreads: Unreads;
   contacts: Contacts;
@@ -33,7 +31,7 @@ const WrappedBox = styled(Box)`
 `;
 
 export function NotePreview(props: NotePreviewProps) {
-  const { node, contacts, hideAvatars, hideNicknames, group } = props;
+  const { node, contacts, group } = props;
   const { post } = node;
   if (!post) {
     return null;
@@ -84,8 +82,6 @@ export function NotePreview(props: NotePreviewProps) {
           contacts={contacts}
           ship={post?.author}
           date={post?.['time-sent']}
-          hideAvatars={hideAvatars || false}
-          hideNicknames={hideNicknames || false}
           group={group}
           unread={isUnread}
           api={props.api}

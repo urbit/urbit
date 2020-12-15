@@ -1,7 +1,9 @@
 import { useEffect } from 'react';
 import _ from "lodash";
-import f from "lodash/fp";
+import f, { memoize } from "lodash/fp";
 import bigInt, { BigInteger } from "big-integer";
+import { Contact } from '~/types';
+import useLocalState from '../state/local';
 
 export const MOBILE_BROWSER_REGEX = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i;
 
@@ -353,4 +355,9 @@ export function usePreventWindowUnload(shouldPreventDefault: boolean, message = 
 
 export function pluralize(text: string, isPlural = false, vowel = false) {
   return isPlural ? `${text}s`: `${vowel ? 'an' : 'a'} ${text}`;
+}
+
+export function useShowNickname(contact: Contact | null): boolean {
+  const hideNicknames = useLocalState(state => state.hideNicknames);
+  return !!(contact && contact.nickname && !hideNicknames);
 }

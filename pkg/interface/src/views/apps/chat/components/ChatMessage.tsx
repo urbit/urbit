@@ -4,14 +4,14 @@ import _ from "lodash";
 import { Box, Row, Text, Rule } from "@tlon/indigo-react";
 
 import OverlaySigil from '~/views/components/OverlaySigil';
-import { uxToHex, cite, writeText } from '~/logic/lib/util';
-import { Envelope, IMessage } from "~/types/chat-update";
-import { Group, Association, Contacts, LocalUpdateRemoteContentPolicy, Post } from "~/types";
+import { uxToHex, cite, writeText, useShowNickname } from '~/logic/lib/util';
+import { Group, Association, Contacts, Post } from "~/types";
 import TextContent from './content/text';
 import CodeContent from './content/code';
 import RemoteContent from '~/views/components/RemoteContent';
 import { Mention } from "~/views/components/MentionText";
 import styled from "styled-components";
+import useLocalState from "~/logic/state/local";
 
 export const DATESTAMP_FORMAT = '[~]YYYY.M.D';
 
@@ -39,9 +39,6 @@ interface ChatMessageProps {
   group: Group;
   association: Association;
   contacts: Contacts;
-  hideAvatars: boolean;
-  hideNicknames: boolean;
-  remoteContentPolicy: LocalUpdateRemoteContentPolicy;
   className?: string;
   isPending: boolean;
   style?: any;
@@ -76,9 +73,6 @@ export default class ChatMessage extends Component<ChatMessageProps> {
       group,
       association,
       contacts,
-      hideAvatars,
-      hideNicknames,
-      remoteContentPolicy,
       className = '',
       isPending,
       style,
@@ -109,11 +103,8 @@ export default class ChatMessage extends Component<ChatMessageProps> {
       msg,
       timestamp,
       contacts,
-      hideNicknames,
       association,
       group,
-      hideAvatars,
-      remoteContentPolicy,
       measure: reboundMeasure.bind(this),
       style,
       containerClass,
@@ -162,9 +153,6 @@ interface MessageProps {
   group: Group;
   association: Association;
   contacts: Contacts;
-  hideAvatars: boolean;
-  hideNicknames: boolean;
-  remoteContentPolicy: LocalUpdateRemoteContentPolicy;
   containerClass: string;
   isPending: boolean;
   style: any;
@@ -172,104 +160,95 @@ interface MessageProps {
   scrollWindow: HTMLDivElement;
 };
 
-export class MessageWithSigil extends PureComponent<MessageProps> {
-  isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+export const MessageWithSigil = (props) => {
+  const {
+    msg,
+    timestamp,
+    contacts,
+    association,
+    group,
+    measure,
+    api,
+    history,
+    scrollWindow,
+    fontSize
+  } = props;
 
-  render() {
-    const {
-      msg,
-      timestamp,
-      contacts,
-      hideNicknames,
-      association,
-      group,
-      hideAvatars,
-      remoteContentPolicy,
-      measure,
-      api,
-      history,
-      scrollWindow,
-      fontSize
-    } = this.props;
+  const dark = useLocalState(state => state.dark);
 
-    const datestamp = moment.unix(msg['time-sent'] / 1000).format(DATESTAMP_FORMAT);
-    const contact = msg.author in contacts ? contacts[msg.author] : false;
-    const showNickname = !hideNicknames && contact && contact.nickname;
-    const name = showNickname ? contact!.nickname : cite(msg.author);
-    const color = contact ? `#${uxToHex(contact.color)}` : this.isDark ?  '#000000' :'#FFFFFF'
-    const sigilClass = contact ? '' : this.isDark ? 'mix-blend-diff' : 'mix-blend-darken';
+  const datestamp = moment.unix(msg['time-sent'] / 1000).format(DATESTAMP_FORMAT);
+  const contact = msg.author in contacts ? contacts[msg.author] : false;
+  const showNickname = useShowNickname(contact);
+  const name = showNickname ? contact.nickname : cite(msg.author);
+  const color = contact ? `#${uxToHex(contact.color)}` : dark ?  '#000000' :'#FFFFFF'
+  const sigilClass = contact ? '' : dark ? 'mix-blend-diff' : 'mix-blend-darken';
 
-    let nameSpan = null;
+  let nameSpan = null;
 
-    const copyNotice = (saveName) => {
-      if (nameSpan !== null) {
-        nameSpan.innerText = 'Copied';
-        setTimeout(() => {
-          nameSpan.innerText = saveName;
-        }, 800);
-      }
-    };
+  const copyNotice = (saveName) => {
+    if (nameSpan !== null) {
+      nameSpan.innerText = 'Copied';
+      setTimeout(() => {
+        nameSpan.innerText = saveName;
+      }, 800);
+    }
+  };
 
-    return (
-      <>
-        <OverlaySigil
-          ship={msg.author}
-          contact={contact}
-          color={color}
-          sigilClass={sigilClass}
-          group={group}
-          hideAvatars={hideAvatars}
-          hideNicknames={hideNicknames}
-          scrollWindow={scrollWindow}
-          history={history}
-          api={api}
-          bg="white"
-          className="fl pr3 v-top pt1"
-        />
-        <Box flexGrow={1} display='block' className="clamp-message">
-          <Box
+  return (
+    <>
+      <OverlaySigil
+        ship={msg.author}
+        contact={contact}
+        color={color}
+        sigilClass={sigilClass}
+        group={group}
+        scrollWindow={scrollWindow}
+        history={history}
+        api={api}
+        bg="white"
+        className="fl pr3 v-top pt1"
+      />
+      <Box flexGrow={1} display='block' className="clamp-message">
+        <Box
+          flexShrink={0}
+          className="hide-child"
+          pt={1}
+          pb={1}
+          display='flex'
+          alignItems='center'
+        >
+          <Text
+            fontSize={0}
+            mr={3}
             flexShrink={0}
-            className="hide-child"
-            pt={1}
-            pb={1}
-            display='flex'
-            alignItems='center'
-          >
-            <Text
-              fontSize={0}
-              mr={3}
-              flexShrink={0}
-              mono={!showNickname}
-              fontWeight={(showNickname) ? '500' : '400'}
-              className={`mw5 db truncate pointer`}
-              ref={e => nameSpan = e}
-              onClick={() => {
-                writeText(`~${msg.author}`);
-                copyNotice(name);
-              }}
-              title={`~${msg.author}`}
-            >{name}</Text>
-            <Text flexShrink='0' gray mono className="v-mid">{timestamp}</Text>
-            <Text flexShrink={0}  gray mono ml={2} className="v-mid child dn-s">{datestamp}</Text>
-          </Box>
-          <ContentBox flexShrink={0} fontSize={fontSize ? fontSize : '14px'}>
-            {msg.contents.map(c =>
-            <MessageContent
-              contacts={contacts}
-              content={c}
-              remoteContentPolicy={remoteContentPolicy}
-              measure={measure}
-              fontSize={fontSize}
-              group={group}
-              hideNicknames={hideNicknames}
-              hideAvatars={hideAvatars}
-            />)}
-          </ContentBox>
+            mono={!showNickname}
+            fontWeight={(showNickname) ? '500' : '400'}
+            className={`mw5 db truncate pointer`}
+            ref={e => nameSpan = e}
+            onClick={() => {
+              writeText(`~${msg.author}`);
+              copyNotice(name);
+            }}
+            title={`~${msg.author}`}
+          >{name}</Text>
+          <Text flexShrink='0' gray mono className="v-mid">{timestamp}</Text>
+          <Text flexShrink={0}  gray mono ml={2} className="v-mid child dn-s">{datestamp}</Text>
         </Box>
-      </>
-    );
-  }
+        <ContentBox flexShrink={0} fontSize={fontSize ? fontSize : '14px'}>
+          {msg.contents.map(c =>
+          <MessageContent
+            contacts={contacts}
+            content={c}
+            measure={measure}
+            fontSize={fontSize}
+            group={group}
+          />)}
+        </ContentBox>
+      </Box>
+    </>
+  );
 }
+
 
 const ContentBox = styled(Box)`
   & > :first-child {
@@ -278,7 +257,7 @@ const ContentBox = styled(Box)`
 
 `;
 
-export const MessageWithoutSigil = ({ timestamp, contacts, msg, remoteContentPolicy, measure, group, hideNicknames, hideAvatars }) => (
+export const MessageWithoutSigil = ({ timestamp, contacts, msg, measure, group }) => (
   <>
     <Text flexShrink={0} mono gray display='inline-block' pt='2px' lineHeight='tall' className="child">{timestamp}</Text>
     <ContentBox flexShrink={0} fontSize='14px' className="clamp-message" style={{ flexGrow: 1 }}>
@@ -288,15 +267,12 @@ export const MessageWithoutSigil = ({ timestamp, contacts, msg, remoteContentPol
           contacts={contacts}
           content={c}
           group={group}
-          remoteContentPolicy={remoteContentPolicy}
-          measure={measure}
-          hideNicknames={hideNicknames}
-          hideAvatars={hideAvatars}/>))}
+          measure={measure}/>))}
     </ContentBox>
   </>
 );
 
-export const MessageContent = ({ content, contacts, remoteContentPolicy, measure, fontSize, group, hideNicknames, hideAvatars }) => {
+export const MessageContent = ({ content, contacts, measure, fontSize, group }) => {
   if ('code' in content) {
     return <CodeContent content={content} />;
   } else if ('url' in content) {
@@ -304,7 +280,6 @@ export const MessageContent = ({ content, contacts, remoteContentPolicy, measure
       <Box mx="2px" flexShrink={0} fontSize={fontSize ? fontSize : '14px'} lineHeight="tall" color='black'>
         <RemoteContent
           url={content.url}
-          remoteContentPolicy={remoteContentPolicy}
           onLoad={measure}
           imageProps={{style: {
             maxWidth: '18rem',
@@ -325,7 +300,7 @@ export const MessageContent = ({ content, contacts, remoteContentPolicy, measure
   } else if ('text' in content) {
     return <TextContent fontSize={fontSize} content={content} />;
   } else if ('mention' in content) {
-    return <Mention group={group} ship={content.mention} contact={contacts?.[content.mention]} hideNicknames={hideNicknames} hideAvatars={hideAvatars} />
+    return <Mention group={group} ship={content.mention} contact={contacts?.[content.mention]} />
   } else {
     return null;
   }

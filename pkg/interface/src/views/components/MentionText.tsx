@@ -5,25 +5,21 @@ import {
   Contact,
   Contacts,
   Content,
-  LocalUpdateRemoteContentPolicy,
   Group,
 } from "~/types";
 import RichText from "~/views/components/RichText";
-import { cite, uxToHex } from "~/logic/lib/util";
-import { ProfileOverlay } from "./ProfileOverlay";
-import {useHistory} from "react-router-dom";
+import { cite, useShowNickname, uxToHex } from "~/logic/lib/util";
+import ProfileOverlay from "./ProfileOverlay";
+import { useHistory } from "react-router-dom";
 
 interface MentionTextProps {
   contact?: Contact;
   contacts?: Contacts;
   content: Content[];
   group: Group;
-  remoteContentPolicy: LocalUpdateRemoteContentPolicy;
-  hideNicknames: boolean;
-  hideAvatars: boolean;
 }
 export function MentionText(props: MentionTextProps) {
-  const { content, contacts, contact, group, hideNicknames, hideAvatars } = props;
+  const { content, contacts, contact, group } = props;
 
   return (
     <>
@@ -33,14 +29,13 @@ export function MentionText(props: MentionTextProps) {
             <RichText
               inline
               key={idx}
-              remoteContentPolicy={props.remoteContentPolicy}
             >
               {c.text}
             </RichText>
           );
         } else if ("mention" in c) {
           return (
-            <Mention key={idx} contacts={contacts || {}} contact={contact || {}} group={group} ship={c.mention} hideNicknames={hideNicknames} hideAvatars={hideAvatars} />
+            <Mention key={idx} contacts={contacts || {}} contact={contact || {}} group={group} ship={c.mention} />
           );
         }
         return null;
@@ -54,15 +49,14 @@ export function Mention(props: {
   contact: Contact;
   contacts?: Contacts;
   group: Group;
-  hideNicknames: boolean;
-  hideAvatars: boolean;
 }) {
-  const { contacts, ship, hideNicknames, hideAvatars } = props;
+  const { contacts, ship } = props;
   let { contact } = props;
 
   contact = (contact?.nickname) ? contact : contacts?.[ship];
 
-  const showNickname = (Boolean(contact?.nickname) && !hideNicknames);
+  const showNickname = useShowNickname(contact);
+
   const name = showNickname ? contact?.nickname : cite(ship);
   const [showOverlay, setShowOverlay] = useState(false);
   const onDismiss = useCallback(() => {
@@ -89,8 +83,6 @@ export function Mention(props: {
           color={`#${uxToHex(contact?.color ?? '0x0')}`}
           group={group}
           onDismiss={onDismiss}
-          hideAvatars={hideAvatars || false}
-          hideNicknames={hideNicknames}
           history={history}
         />
       )}
