@@ -1,6 +1,13 @@
 ::
 ::::  Vector type in single-precision floating-point @rs
   ::
+::  Conventions:
+::
+::  m,n,p   always dimensions
+::  i,j,k   always indices (also ii,jj,kk)
+::  a,b,c   always lists
+::  u,v,w   always vector/matrix atoms
+::  s,t     always real/floats
 |%
 ++  lvs
   ^|
@@ -14,13 +21,13 @@
     ~/  %zeros
     |=  n=@ud  ^-  @lvs
     ~_  leaf+"lagoon-fail"
-    `@lvs`(lsh 5 n n)
+    `@lvs`(lsh [5 n] n)
   ::
   ::    Fill value
   ++  fill
     ~/  %fill
-    |=  [n=@ud v=@rs]  ^-  @lvs
-    `@lvs`(mix (zeros n) (fil 5 n v))
+    |=  [n=@ud s=@rs]  ^-  @lvs
+    `@lvs`(mix (zeros n) (fil 5 n s))
   ::
   ::    Ones
   ++  ones
@@ -33,25 +40,25 @@
   ++  length
     |=  u=@lvs  ^-  @ud
     ~_  leaf+"lagoon-fail"
-    (end 5 1 (swp 5 u))
+    (end [5 1] (swp 5 u))
   ::
   ::    Produce a vector from `(list @u)` (of natural numbers)
-  ++  make-nat
+  ++  make-u
     |=  a=(list @u)  ^-  @lvs
     (make (turn a sun:rs))
   ::
   ::    APL-style index list
   ++  iota
-    |=  a=@u  ^-  @lvs
-    (make-nat (gulf 1 a))
+    |=  n=@u  ^-  @lvs
+    (make-u (gulf 1 n))
   ++  make
-    |=  [u=(list @rs)]  ^-  @lvs
+    |=  [a=(list @rs)]  ^-  @lvs
     ~_  leaf+"lagoon-fail"
-    `@lvs`(mix (rep 5 u) (zeros (lent u)))
+    `@lvs`(mix (rep [5 1] a) (zeros (lent a)))
   ++  unmake
     |=  [u=@lvs]  ^-  (list @rs)
     ~_  leaf+"lagoon-fail"
-    `(list @rs)`(scag 5 (rip 5 u))
+    (flop `(list @rs)`+:(flop (rip 5 u)))
   ::
   ::    Get the value at an index, using mathematical indices 1..n.
   ++  get
@@ -63,20 +70,20 @@
   ::    Pretty-print the contents of the vector.
   ++  pprint
     |=  u=@lvs  ^-  tape
-    `tape`(zing (join " " (turn (unmake u) |=(a=@rs <a>))))
+    `tape`(zing (join " " (turn (unmake u) |=(s=@rs <s>))))
   ::
   ::    Set the value of an element within a vector, using math indices 1..n.
   ++  set
     ~/  %set
-    |=  [u=@lvs i=@ud x=@rs]  ^-  @lvs
+    |=  [u=@lvs i=@ud s=@rs]  ^-  @lvs
     ~_  leaf+"lagoon-fail"
     ?:  (gth i (length u))  !!
-    `@lvs`(cat 5 (cat 5 (cut 5 [0 i] u) x) (cut 5 [+(i) (length u)] u))
+    `@lvs`(cat 5 (cat 5 (cut 5 [0 (dec i)] u) s) (cut 5 [i (length u)] u))
   ::
   ::    Return larger of two single-precision floats.
   ++  max-rs
-    |=  [a=@rs b=@rs]  ^-  @rs
-    ?:  (gth:rs a b)  a  b
+    |=  [s=@rs t=@rs]  ^-  @rs
+    ?:  (gth:rs s t)  s  t
   ::
   ::    Find maximum value in array.
   ++  max
@@ -202,14 +209,14 @@
     (end 6 1 (swp 6 u))
   ::
   ::    Produce a vector from `(list @u)` (of natural numbers)
-  ++  make-nat
+  ++  make-u
     |=  a=(list @u)  ^-  @lvd
     (make (turn a sun:rd))
   ::
   ::    APL-style index list
   ++  iota
     |=  a=@u  ^-  @lvd
-    (make-nat (gulf 1 a))
+    (make-u (gulf 1 a))
   ++  make
     |=  [u=(list @rd)]  ^-  @lvd
     ~_  leaf+"lagoon-fail"
