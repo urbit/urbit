@@ -164,8 +164,6 @@
     %-  dsha256
     (encode data)
   ::
-  ::  TODO: extract locktime (at the very end)
-  ::  TODO: gives the wrong txid currently
   ++  decode
     |=  b=bytc
     ^-  data:tx
@@ -178,7 +176,9 @@
       (inputs:de bu)
     =^  outputs  bu
       (outputs:de bu)
-    [inputs outputs 0 nversion segwit]
+    =/  locktime=@ud
+      dat:(to-byts:buf (scag 4 (flop bu)))
+    [inputs outputs locktime nversion segwit]
   --
 ::  core to handle BIP174 PSBTs
 ::
