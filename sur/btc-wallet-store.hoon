@@ -43,8 +43,10 @@
 ::  peta: optional payment metadata
 ::  feyb: fee per byte in sats
 ::  txi/txo:  input/output for a transaction being built
-::   -txo has an hdkey if it's a change account
+::   - txo has an hdkey if it's a change account
+::   - by convention, first output of txo is to the payee, if one is present
 ::  txbu: tx builder -- all information needed to make a transaction for signing
+::   - sitx: signed hex transaction
 ::
 +$  insel  [=utxo =chyg =idx]
 +$  peta  (unit [payer=ship value=sats])
@@ -57,6 +59,7 @@
       =vbytes
       txis=(list txi)
       txos=(list txo)
+      sitx=(unit bytc)
   ==
 ::  hest: an entry in the history log
 ::

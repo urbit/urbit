@@ -37,12 +37,22 @@
       [%req-pay-address payee=ship value=sats feyb=(unit sats)]
       [%gen-pay-address value=sats]
       [%ret-pay-address =address payer=ship value=sats]
-      [%broadcast-tx signed-psbt=cord]
+      [%broadcast-tx signed=rawtx]
       [%expect-payment =txid payer=ship value=sats vout-n=@ud]
       [%clear-poym ~]
       [%force-retry ~]
   ==
++$  update
+  $%  request
+      error
+  ==
+::
 +$  request
   $%  [%sign-tx txbu:bws]
+  ==
+::
++$  error
+  $%  [%broadcast-tx-mismatch-poym signed=rawtx]
+      [%broadcast-tx-spent-utxos =txid]
   ==
 --
