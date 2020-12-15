@@ -108,7 +108,7 @@
     =/  outs=(list out:psbt:btc)
       %+  turn  txos.t
       |=(=txo [address.txo hk.txo])
-    `(encode:pbt:btc get-rawtx get-txid ins outs)
+    `(encode:pbt:btc %.y get-rawtx get-txid ins outs)
   --
 ::  wad: door for processing walts (wallets)
 ::        parameterized on a walt and it's chyg account 
