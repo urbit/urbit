@@ -297,7 +297,6 @@
     ::
       %raw-tx
     =*  rt  body.p.upd
-    =.  poym  (update-poym-tx req-id.p.upd txid.rt rawtx.rt)
     ?~  poym  `state
     =.  txis.u.poym  (update-poym-txis txis.u.poym txid.rt rawtx.rt)
     :_  state
@@ -306,6 +305,10 @@
     ~&  >  "PSBT ready:"
     ~&  >>  u.pb
     ~[(send-sign-tx u.poym)]
+    ::
+      %broadcast-tx
+    :: TODO: fill in
+    `state
   ==
 ::  get address-info for the request if block in request is old
 ::
@@ -351,7 +354,6 @@
       %generate-txbu
     :_  state(poym `txbu.upd)
     ?~  provider  ~&(>>> "provider not set" ~)
-    %+  weld  ~[(create-raw-tx host.u.provider txbu.upd)]
     %+  turn  txis.txbu.upd
     |=(=txi:bws (get-raw-tx host.u.provider txid.utxo.txi))
     ::
@@ -421,17 +423,6 @@
   ^-  ship
   ?.  =(%earl (clan:title s))  s
   (sein:title our.bowl now.bowl s)
-::  +update-poym-tx
-::   - check whether poym txbu's req-id matches this one
-::   - if it does, add the txid and rawtx
-::
-++  update-poym-tx
-  |=  [ri=req-id:bp =txid rt=rawtx]
-  ^-  ^poym
-  ?~  poym  ~
-  ?.  =(ri req-id.u.poym)  poym
-  `u.poym(txinfo `[txid rt])
-  :: check poym txbu
 ::  +update-poym-txis:
 ::    update outgoing payment with a rawtx, if the txid is in poym's txis
 ::
@@ -485,17 +476,6 @@
   |=  [host=ship =txid]
   ^-  card
   (poke-provider host ~ [%raw-tx txid])
-::
-++  create-raw-tx
-  |=  [host=ship t=txbu:bws]
-  ^-  card
-  =/  ins=(list [txid @ud])
-    %+  turn  txis.t
-    |=(=txi:bws [txid.utxo.txi pos.utxo.txi])
-  =/  outs=(list [address sats])
-    %+  turn  txos.t
-    |=(=txo:bws [address.txo value.txo])
-  (poke-provider host `req-id.t [%create-raw-tx ins outs])
 ::
 ++  get-tx-info
   |=  [host=ship =txid]
