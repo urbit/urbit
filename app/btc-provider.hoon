@@ -115,9 +115,6 @@
         %raw-tx
       [%get-raw-tx txid.body.act]
       ::
-        %create-raw-tx
-      [%create-raw-tx inputs.body.act outputs.body.act]
-      ::
         %broadcast-tx 
       [%broadcast-tx rawtx.body.act]
       ::
@@ -132,7 +129,7 @@
   =/  req=request:http
     (gen-request host-info ract)
   [%pass (rpc-wire act) %arvo %i %request req out]
-::  wire structure: /action-tas/req-id/now
+::  wire structure: /action-tas/req-id/now 
 ::
 ++  rpc-wire
   |=  act=action  ^-  wire
@@ -196,11 +193,6 @@
     ?>  ?=([%get-raw-tx *] r)
     :_  state
     ~[(send-update [%.y (get-req-id wire) %raw-tx +.r])] 
-    ::
-      [%create-raw-tx @ *]
-    ?>  ?=([%get-raw-tx *] r)
-    :_  state
-    ~[(send-update [%.y (get-req-id wire) %raw-tx +.r])]
     ::
       [%broadcast-tx @ *]
     ?>  ?=([%broadcast-tx *] r)

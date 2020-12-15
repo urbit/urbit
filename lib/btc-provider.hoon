@@ -86,34 +86,6 @@
   %+  rpc-action-to-http
   api-url.host-info  ract
 ::
-++  action-to-json
-  |=  ract=action:rpc-types
-  |^  ^-  json
-  =,  enjs:format
-  ?+  -.ract  ~|("Unsupported action for POST" !!)
-      %create-raw-tx
-    %-  pairs
-    :~  [%inputs [%a (turn inputs.ract input)]]
-        [%outputs [%a (turn outputs.ract output)]]
-    ==
-  ==
-  ::
-  ++  input
-    |=  [=txid pos=@ud]
-    ^-  json
-    =,  enjs:format
-    %-  pairs
-    :~  [%txid [%s (txid-to-cord txid)]]
-        [%vout (numb pos)]
-    ==
-  ++  output
-    |=  [=address value=sats]
-    =,  enjs:format
-    ^-  json
-    %-  frond
-    [(address-to-cord address) (numb value)]
-  --
-::
 ++  rpc
   |%
   ++  parse-result
@@ -130,10 +102,7 @@
       ::
         %get-raw-tx
       [id.res (raw-tx res.res)]
-      ::
-        %create-raw-tx
-      [%get-raw-tx (raw-tx res.res)]
-      ::
+      :: 
         %broadcast-tx
       [%broadcast-tx (broadcast-tx res.res)]
       ::
@@ -209,11 +178,6 @@
     %-  get-request
     %+  mk-url  '/getrawtx/'
     (txid-to-cord txid.ract)
-    ::
-      %create-raw-tx
-    %+  post-request
-      (mk-url '/createrawtx' '')
-    (action-to-json ract)
     ::
       %broadcast-tx
     %-  get-request

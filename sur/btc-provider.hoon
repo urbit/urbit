@@ -11,13 +11,10 @@
   $%  [%address-info =address]
       [%tx-info =txid]
       [%raw-tx =txid]
-      [%create-raw-tx inputs=(list [=txid pos=@ud]) outputs=(list [=address value=sats])]
       [%broadcast-tx =rawtx]
       [%ping ~]
   ==
 +$  result  [=req-id body=result-body]
-::  %raw-tx: result type for both %raw-tx and %create-raw-tx actions
-::
 +$  result-body
   $%  [%address-info utxos=(set utxo) used=? block=@ud]
       [%tx-info =info:tx]
@@ -35,14 +32,13 @@
   $%  [%connected block=@ud fee=@ud]
       [%disconnected ~]
   ==
-::
+:: 
 ++  rpc-types
   |%
   +$  action
   $%  [%get-address-info =address]
         [%get-tx-vals =txid]
         [%get-raw-tx =txid]
-        [%create-raw-tx inputs=(list [=txid pos=@ud]) outputs=(list [=address value=sats])]
         [%broadcast-tx =rawtx]
         [%get-block-count ~]
         [%get-block-and-fee ~]
