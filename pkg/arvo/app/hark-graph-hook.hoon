@@ -1,7 +1,7 @@
 ::  hark-graph-hook: notifications for graph-store [landscape]
 ::
-/-  store=hark-store, post, group-store, metadata-store, hook=hark-graph-hook
-/+  resource, metadata, default-agent, dbug, graph-store, graph, grouplib=group
+/-  post, group-store, metadata-store, hook=hark-graph-hook
+/+  resource, metadata, default-agent, dbug, graph-store, graph, grouplib=group, store=hark-store
 ::
 ::
 ~%  %hark-graph-hook-top  ..part  ~
@@ -191,7 +191,8 @@
         ==
     =/  group=(unit resource)
       (group-from-app-resource:met %graph rid)
-    ?~  group  `state
+    ?~  group  
+      `state
     =/  metadata=(unit metadata:metadata-store)
       (peek-metadata:met %graph u.group rid)
     ?~  metadata  `state
@@ -327,7 +328,7 @@
     ?:  =(our.bowl author.post.node)
       (self-post node notif-index [mode watch]:not-kind)
     =.  update-core
-      (update-unread-count mode.not-kind notif-index [time-sent index]:post.node)
+      (update-unread-count not-kind notif-index [time-sent index]:post.node)
     =?    update-core
         ?|  =(desc %mention)
             (~(has in watching) [rid parent])
@@ -338,10 +339,13 @@
     update-core
   ::
   ++  update-unread-count
-    |=  [mode=?(%count %each %none) =index:store time=@da ref=index:graph-store]
-    ?-  mode 
-      %count  (hark %unread-count index time)
-      %each   (hark %unread-each index ref time)
+    |=  [=notif-kind =index:store time=@da ref=index:graph-store]
+    =.  description.index  name.notif-kind
+    =/  =stats-index:store
+      (to-stats-index:store index)
+    ?-  mode.notif-kind 
+      %count  (hark %unread-count stats-index time)
+      %each   (hark %unread-each stats-index ref time)
       %none   update-core
     ==
   ::
@@ -352,10 +356,12 @@
             watch=?
         ==
     ^+  update-core 
+    =/  =stats-index:store
+      (to-stats-index:store index)
     =.  update-core
-      (hark %seen-index time-sent.post.node index)
+      (hark %seen-index time-sent.post.node stats-index)
     =?  update-core  ?=(%count mode)
-      (hark %read-count index)
+      (hark %read-count stats-index)
     =?  update-core  &(watch watch-on-self)
       (new-watch index.post.node)
     update-core

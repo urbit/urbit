@@ -35,6 +35,19 @@
     [date=@da read=? =contents]
   --
 ::
+++  state-one
+  |%
+  +$  state-1
+    $:  unreads-each=(jug index index:graph-store)
+        unreads-count=(map index @ud)
+        last-seen=(map index @da)
+        =notifications
+        archive=notifications
+        current-timebox=@da
+        dnd=_|
+    ==
+  --
+::
 +$  index
   $%  $:  %graph
           group=resource
@@ -70,26 +83,32 @@
   $%  [%add-note =index =notification]
       [%archive time=@da index]
     ::
-      [%unread-count =index =time]
-      [%read-count =index]
+      [%unread-count =stats-index =time]
+      [%read-count =stats-index]
     ::
-      [%unread-each =index ref=index:graph-store time=@da]
-      [%read-each index ref=index:graph-store]
+    ::
+      [%unread-each =stats-index ref=index:graph-store time=@da]
+      [%read-each =stats-index ref=index:graph-store]
     ::
       [%read-note time=@da index]
       [%unread-note time=@da index]
     ::
-      [%seen-index time=@da =index]
+      [%seen-index time=@da =stats-index]
     ::
       [%read-all ~]
       [%set-dnd dnd=?]
       [%seen ~]
   ==
 ::
+++  stats-index
+  $%  [%graph graph=resource =index:graph-store]
+      [%group group=resource]
+  ==
+::
 +$  indexed-notification
   [index notification]
 ::
-+$  index-stats
++$  stats
   [notifications=@ud =unreads last-seen=@da]
 ::
 +$  unreads
@@ -103,6 +122,6 @@
       [%added time=@da =index =notification]
       [%timebox time=@da archived=? =(list [index notification])]
       [%count count=@ud]
-      [%unreads unreads=(list [index index-stats])]
+      [%unreads unreads=(list [stats-index stats])]
   ==
 --
