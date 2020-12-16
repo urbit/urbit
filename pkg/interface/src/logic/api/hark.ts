@@ -199,7 +199,7 @@ export class HarkApi extends BaseApi<StoreState> {
   getMore(archive = false) {
     const offset = this.store.state[
       archive ? 'archivedNotifications' : 'notifications'
-    ].size;
+    ]?.size || 0;
     const count = 3;
     return this.getSubset(offset,count, archive);
   }

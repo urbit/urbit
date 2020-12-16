@@ -205,7 +205,6 @@ function updateUnreadCount(state: HarkState, index: NotifIndex, count: (c: numbe
   const property = [index.graph.graph, index.graph.index, 'unreads'];
   const curr = _.get(state.unreads.graph, property, 0);
   const newCount = count(curr)
-  state.notifications = state.notificationsCount + (newCount - curr);
   _.set(state.unreads.graph, property, newCount);
 }
 
@@ -217,7 +216,6 @@ function updateUnreads(state: HarkState, index: NotifIndex, f: (us: Set<string>)
   const oldSize = unreads.size;
   f(unreads);
   const newSize = unreads.size;
-  state.notificationsCount += (newSize - oldSize);
   _.set(state.unreads.graph, [index.graph.graph, index.graph.index, 'unreads'], unreads);
 }
 
