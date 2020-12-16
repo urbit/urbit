@@ -37,6 +37,7 @@ import Urbit.TermSize         (TermSize(..), termSize)
 import Urbit.Vere.Serf        (Serf)
 
 import qualified Data.Text                   as T
+import qualified Data.List as L
 import qualified System.Entropy              as Ent
 import qualified Urbit.EventLog.LMDB         as Log
 import qualified Urbit.King.API              as King
@@ -316,9 +317,9 @@ pier (serf, log) vSlog startedSig injected = do
       io $ readTVarIO siteSlog >>= ($ s)
       logOther "serf" (display $ T.strip $ tankToText tank)
 
+  let err = atomically . Term.trace muxed . (<> "\r\n")
   (bootEvents, startDrivers) <- do
     env <- ask
-    let err = atomically . Term.trace muxed . (<> "\r\n")
     siz <- atomically $ Term.curDemuxSize demux
     let fak = isFake logId
     drivers env ship fak compute scry (siz, muxed) err sigint stat runtimeSubsite
@@ -335,9 +336,7 @@ pier (serf, log) vSlog startedSig injected = do
 
   tSerf <- acquireWorker "Serf" (runCompute serf computeConfig)
 
-  -- TODO: Go through the version negotionation with the serf. Before we start
-  -- the drivers, we send a %wyrd event and wait for a %wynn
-  doVersionNegotiation compute
+  doVersionNegotiation compute err
 
   -- Run all born events and retry them until they succeed.
   wackEv <- EvBlip . BlipEvArvo . ArvoEvWack () <$> genEntropy
@@ -420,18 +419,26 @@ death tag tid = do
 
 -- %wyrd version negotiation ---------------------------------------------------
 
+data PierVersionNegotiationFailed = PierVersionNegotiationFailed
+ deriving (Show, Exception)
+
+zuseVersion :: Word
+zuseVersion = 420
+
 doVersionNegotiation
   :: HasPierEnv e
   => (RunReq -> STM ())
+  -> (Text -> RIO e ())
   -> RAcquire e ()
-doVersionNegotiation compute = do
-  -- What we want to do is actually inspect the effects here.
-  let k   = Wynn [("zuse", 420),
+doVersionNegotiation compute stderr = do
+  king <- tshow <$> view kingIdL
+
+  let k   = Wynn [("zuse", zuseVersion),
                   ("lull", 330),
                   ("arvo", 240),
                   ("hoon", 140),
                   ("nock", 4)]
-      sen = MkTerm "121331"  -- TODO: I can just generate a nonce here.
+      sen = MkTerm king
       v   = Vere sen [Cord "kh", Cord "1.0"] k
       ev  = EvBlip $ BlipEvArvo $ ArvoEvWyrd () v
 
@@ -443,18 +450,29 @@ doVersionNegotiation compute = do
         RunSwap _ _ _ _ fx -> putMVar okaySig (Right fx)
         RunBail goofs      -> putMVar okaySig (Left goofs)
 
-  -- OK, we are actually getting an exception from the remote side here.
-  logDebug "About to inject wyrd"
+  rio $ stderr "vere: checking version compatibility"
   io inject
-  logDebug "Injected wyrd"
 
   takeMVar okaySig >>= \case
-    Left goof -> logError $ display @Text ("Goof in wyrd event: " <>
-                                           tshow goof)
+    Left goof -> do
+      rio $ stderr "pier: version negotation failed"
+      logError $ display @Text ("Goof in wyrd event: " <> tshow goof)
+      throwIO PierVersionNegotiationFailed
+
     Right fx  -> do
-      -- TODO: We need to actually iterate over the fx list to search for
-      -- version negotiation events.
-      logDebug $ display @Text ("FX list: " <> tshow fx)
+      -- Walk through the returned fx looking for a wend effect. If we find
+      -- one, check the zuse versions.
+      rio $ for_ fx $ \case
+        GoodParse (EfWend (Wynn xs)) -> case L.lookup "zuse" xs of
+          Nothing -> pure ()
+          Just zuseVerInWynn ->
+            if zuseVerInWynn /= zuseVersion
+            then do
+              rio $ stderr "pier: pier: version negotiation failed; downgrade"
+              throwIO PierVersionNegotiationFailed
+            else
+              pure ()
+        _ -> pure ()
 
 
 -- Start All Drivers -----------------------------------------------------------
@@ -544,6 +562,7 @@ router slog waitFx Drivers {..} = do
       case ef of
         GoodParse (EfVega _ _              ) -> vega
         GoodParse (EfExit _ _              ) -> exit
+        GoodParse (EfWend _                ) -> pure ()
         GoodParse (EfVane (VEBehn       ef)) -> io (dBehn ef)
         GoodParse (EfVane (VEBoat       ef)) -> io (dSync ef)
         GoodParse (EfVane (VEClay       ef)) -> io (dSync ef)

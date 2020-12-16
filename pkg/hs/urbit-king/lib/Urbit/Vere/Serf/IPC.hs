@@ -164,7 +164,6 @@ sendWrit s = sendBytes s . jamBS . toNoun
 recvPlea :: Serf -> IO Plea
 recvPlea w = do
   b <- recvResp w
-  putStrLn "recvPleas recvResp"
   n <- fromRightExn (cueBS b) (const $ BadPleaAtom $ bytesAtom b)
   p <- fromRightExn (fromNounErr @Plea n) (\(p, m) -> BadPleaNoun n p m)
   pure p

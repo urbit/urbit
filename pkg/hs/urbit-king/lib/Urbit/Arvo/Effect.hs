@@ -18,7 +18,7 @@ import Urbit.Arvo.Common (KingId(..), ServId(..))
 import Urbit.Arvo.Common (Header, HttpEvent, HttpServerConf, Method, Mime)
 import Urbit.Arvo.Common (AmesDest, Turf)
 import Urbit.Arvo.Common (ReOrg(..), reorgThroughNoun)
-import Urbit.Arvo.Common (Desk)
+import Urbit.Arvo.Common (Desk, Wynn)
 
 
 -- Newt Effects ----------------------------------------------------------------
@@ -259,6 +259,7 @@ data Ef
     = EfVane VaneEf
     | EfVega Cord EvilPath -- second path component, rest of path
     | EfExit Cord EvilPath -- second path component, rest of path
+    | EfWend Wynn
   deriving (Eq, Ord, Show)
 
 -- XX HACK
@@ -275,6 +276,7 @@ instance ToNoun Ef where
     EfVane v   -> toNoun $ reorgThroughNoun ("", v)
     EfExit s p -> toNoun $ ReOrg "" s "exit" p (A 0)
     EfVega s p -> toNoun $ ReOrg "" s "vega" p (A 0)
+    EfWend w   -> toNoun $ reorgThroughNoun ("", w)
 
 instance FromNoun Ef where
   parseNoun = tack >>> parseNoun >=> \case
@@ -282,6 +284,7 @@ instance FromNoun Ef where
     ReOrg "" s "exit" p _     -> fail "%exit effect expects nil value"
     ReOrg "" s "vega" p (A 0) -> pure (EfVega s p)
     ReOrg "" s "vega" p _     -> fail "%vega effect expects nil value"
+    ReOrg "" s "wend" p val   -> EfWend <$> parseNoun val
     ReOrg "" s tag    p val   -> EfVane <$> parseNoun (toNoun (s, tag, p, val))
     ReOrg _  _ _      _ _     -> fail "Non-empty first path-element"
 
