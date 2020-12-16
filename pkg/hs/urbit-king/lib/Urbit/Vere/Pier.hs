@@ -426,14 +426,14 @@ doVersionNegotiation
   -> RAcquire e ()
 doVersionNegotiation compute = do
   -- What we want to do is actually inspect the effects here.
-  let k   = Wynn [("zuse", toNoun $ UD 309),
-                  ("lull", toNoun $ UD 303),
-                  ("arvo", toNoun $ UD 240),
-                  ("hoon", toNoun $ UD 141),
-                  ("nock", toNoun $ UD 4)]
+  let k   = Wynn [("zuse", 420),
+                  ("lull", 330),
+                  ("arvo", 240),
+                  ("hoon", 140),
+                  ("nock", 4)]
       sen = MkTerm "121331"  -- TODO: I can just generate a nonce here.
-      v   = Vere sen [Cord "KingHaskell", Cord "1.0"] k
-      ev  = EvBlip $ BlipEvArvo $ ArvoEvWyrd v
+      v   = Vere sen [Cord "kh", Cord "1.0"] k
+      ev  = EvBlip $ BlipEvArvo $ ArvoEvWyrd () v
 
   okaySig :: MVar (Either [Goof] FX) <- newEmptyMVar
   let inject = atomically $ compute $ RRWork $ EvErr ev $ cb

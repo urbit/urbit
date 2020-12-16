@@ -219,7 +219,7 @@ data ArvoEv
     = ArvoEvWhom ()   Ship
     | ArvoEvWack ()   Entropy
     | ArvoEvCrud Path Noun
-    | ArvoEvWyrd Vere
+    | ArvoEvWyrd ()   Vere
   deriving (Eq, Ord, Show)
 
 deriveNoun ''ArvoEv

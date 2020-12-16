@@ -63,7 +63,7 @@ instance FromNoun Vere where
     pure $ Vere {..}
 
 -- A list of names and their kelvin numbers, used in version negotiations.
-newtype Wynn = Wynn { unWynn :: [(Term, Noun)] }
+newtype Wynn = Wynn { unWynn :: [(Term, Word)] }
   deriving newtype (Eq, Ord, Show, FromNoun, ToNoun)
 
 -- Http Common -----------------------------------------------------------------
