@@ -50,7 +50,7 @@ newtype ServId = ServId { unServId :: UV }
 
 -- Information about the king runtime passed to Arvo.
 data Vere = Vere { vereName :: Term,
-                   vereRev  :: (Term, UD, UD, UD),
+                   vereRev  :: [Cord],
                    vereWynn :: Wynn }
   deriving (Eq, Ord, Show)
 
@@ -63,7 +63,7 @@ instance FromNoun Vere where
     pure $ Vere {..}
 
 -- A list of names and their kelvin numbers, used in version negotiations.
-newtype Wynn = Wynn { unWynn :: [(Term, UD)] }
+newtype Wynn = Wynn { unWynn :: [(Term, Noun)] }
   deriving newtype (Eq, Ord, Show, FromNoun, ToNoun)
 
 -- Http Common -----------------------------------------------------------------

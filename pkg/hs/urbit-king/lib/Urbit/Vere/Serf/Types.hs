@@ -2,7 +2,7 @@ module Urbit.Vere.Serf.Types where
 
 import Urbit.Prelude
 
-import Urbit.Arvo      (Ev, FX, Vere, Wynn)
+import Urbit.Arvo      (Ev, FX)
 import Urbit.Noun.Time (Wen)
 
 
@@ -82,7 +82,7 @@ data EvErr = EvErr Ev (WorkError -> IO ())
 data WorkError -- TODO Rename type and constructors
   = RunSwap EventId Mug Wen Noun FX -- TODO Maybe provide less info here?
   | RunBail [Goof]
-  | RunOkay EventId
+  | RunOkay EventId FX
 
 {-
   - RRWork: Ask the serf to do work, will output (Fact, FX) if work
@@ -94,7 +94,6 @@ data RunReq
   | RRSave ()
   | RRKill ()
   | RRPack ()
-  | RRWyrd Vere (Maybe Wynn -> STM ())
   | RRScry Wen Gang Path (Maybe (Term, Noun) -> IO ())
 
 

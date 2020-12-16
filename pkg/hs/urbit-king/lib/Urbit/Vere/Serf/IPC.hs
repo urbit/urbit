@@ -84,7 +84,7 @@ import Foreign.Ptr                  (castPtr)
 import Foreign.Storable             (peek, poke)
 import RIO.Prelude                  (decodeUtf8Lenient)
 import System.Posix.Signals         (sigINT, sigKILL, signalProcess)
-import Urbit.Arvo                   (FX, Vere, Wynn)
+import Urbit.Arvo                   (FX)
 import Urbit.Arvo.Event
 import Urbit.Noun.Time              (Wen)
 
@@ -164,6 +164,7 @@ sendWrit s = sendBytes s . jamBS . toNoun
 recvPlea :: Serf -> IO Plea
 recvPlea w = do
   b <- recvResp w
+  putStrLn "recvPleas recvResp"
   n <- fromRightExn (cueBS b) (const $ BadPleaAtom $ bytesAtom b)
   p <- fromRightExn (fromNounErr @Plea n) (\(p, m) -> BadPleaNoun n p m)
   pure p
@@ -369,24 +370,6 @@ compact serf = withSerfLockIO serf $ \ss -> do
   pure (ss, ())
 
 {-|
-  Tells the serf our version number and puts any returned version information
-  into the passed in d
--}
-wyrd :: Vere -> (Maybe Wynn -> STM ()) -> Serf -> IO ()
-wyrd v ret serf = withSerfLockIO serf $ \ss -> do
-  now <- Time.now
-  sendWrit serf (WWork 0 now $ EvBlip $ BlipEvArvo $ ArvoEvWyrd v)
-  recvWork serf >>= \case
-    WBail goofs -> do
-      throwIO (BailDuringWyrd goofs)
-    WSwap eid hash (wen, noun) fx -> do
-      throwIO (SwapDuringWyrd hash (wen, noun) fx)
-    WDone eid hash fx -> do
-      -- TODO: fish around in the fx for the upgrade event here. The equivalent
-      -- of _pier_on_lord_wyrd_done().
-      pure (ss, ())
-
-{-|
   Peek into the serf state.
 -}
 scry :: Serf -> Wen -> Gang -> Path -> IO (Maybe (Term, Noun))
@@ -511,14 +494,10 @@ run serf maxBatchSize getLastEvInLog onInput sendOn spin = topLoop
     RRSave ()      -> doSave
     RRKill ()      -> doKill
     RRPack ()      -> doPack
-    RRWyrd v ret   -> doWyrd v ret
     RRScry w g p k -> doScry w g p k
 
   doPack :: IO ()
   doPack = compact serf >> topLoop
-
-  doWyrd :: Vere -> (Maybe Wynn -> STM ()) -> IO ()
-  doWyrd v w = wyrd v w serf >> topLoop
 
   waitForLog :: IO ()
   waitForLog = do
@@ -552,19 +531,19 @@ run serf maxBatchSize getLastEvInLog onInput sendOn spin = topLoop
     RRSave ()      -> atomically (closeTBMQueue que) >> pure doSave
     RRPack ()      -> atomically (closeTBMQueue que) >> pure doPack
     RRScry w g p k -> atomically (closeTBMQueue que) >> pure (doScry w g p k)
-    RRWyrd v ret   -> atomically (closeTBMQueue que) >> pure (doWyrd v ret)
     RRWork workErr -> atomically (writeTBMQueue que workErr) >> workLoop que
 
   onWorkResp :: Wen -> EvErr -> Work -> IO ()
   onWorkResp wen (EvErr evn err) = \case
     WDone eid hash fx -> do
-      io $ err (RunOkay eid)
+      io $ err (RunOkay eid fx)
       atomically $ sendOn ((Fact eid hash wen (toNoun evn)), fx)
     WSwap eid hash (wen, noun) fx -> do
       io $ err (RunSwap eid hash wen noun fx)
       atomically $ sendOn (Fact eid hash wen noun, fx)
     WBail goofs -> do
       io $ err (RunBail goofs)
+
 
 {-|
   Given:

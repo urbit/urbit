@@ -350,7 +350,7 @@ pier (serf, log) vSlog startedSig injected = do
         cb :: Int -> WorkError -> IO ()
         cb n | n >= 3 = error ("boot event failed: " <> show ev)
         cb n          = \case
-          RunOkay _         -> putMVar okaySig ()
+          RunOkay _ _       -> putMVar okaySig ()
           RunSwap _ _ _ _ _ -> putMVar okaySig ()
           RunBail _         -> inject (n + 1)
 
@@ -377,7 +377,7 @@ pier (serf, log) vSlog startedSig injected = do
     let inject = atomically $ compute $ RRWork $ EvErr ev $ cb
         cb :: WorkError -> IO ()
         cb = \case
-          RunOkay _         -> putMVar okaySig (Right ())
+          RunOkay _ _       -> putMVar okaySig (Right ())
           RunSwap _ _ _ _ _ -> putMVar okaySig (Right ())
           RunBail goofs     -> putMVar okaySig (Left goofs)
 
@@ -426,18 +426,36 @@ doVersionNegotiation
   -> RAcquire e ()
 doVersionNegotiation compute = do
   -- What we want to do is actually inspect the effects here.
-  arvoVer <- fromNounExn $ toNoun $ Cord "arvo-kelvin"
-  let k   = Wynn [("zuse", 309),
-                  ("arvo", arvoVer),
-                  ("hoon", 141),
-                  ("nock", 4)]
-      sen = MkTerm "121331"  -- TODO: What is sen? I can just generate a nonce here.
-      v   = Vere sen ("KingHaskell", 0, 10, 9) k
+  let k   = Wynn [("zuse", toNoun $ UD 309),
+                  ("lull", toNoun $ UD 303),
+                  ("arvo", toNoun $ UD 240),
+                  ("hoon", toNoun $ UD 141),
+                  ("nock", toNoun $ UD 4)]
+      sen = MkTerm "121331"  -- TODO: I can just generate a nonce here.
+      v   = Vere sen [Cord "KingHaskell", Cord "1.0"] k
+      ev  = EvBlip $ BlipEvArvo $ ArvoEvWyrd v
 
-  retVar <- newEmptyTMVarIO
-  atomically $ compute $ RRWyrd v (putTMVar retVar)
-  ret <- atomically $ takeTMVar retVar
-  pure ()
+  okaySig :: MVar (Either [Goof] FX) <- newEmptyMVar
+  let inject = atomically $ compute $ RRWork $ EvErr ev $ cb
+      cb :: WorkError -> IO ()
+      cb = \case
+        RunOkay _ fx       -> putMVar okaySig (Right fx)
+        RunSwap _ _ _ _ fx -> putMVar okaySig (Right fx)
+        RunBail goofs      -> putMVar okaySig (Left goofs)
+
+  -- OK, we are actually getting an exception from the remote side here.
+  logDebug "About to inject wyrd"
+  io inject
+  logDebug "Injected wyrd"
+
+  takeMVar okaySig >>= \case
+    Left goof -> logError $ display @Text ("Goof in wyrd event: " <>
+                                           tshow goof)
+    Right fx  -> do
+      -- TODO: We need to actually iterate over the fx list to search for
+      -- version negotiation events.
+      logDebug $ display @Text ("FX list: " <> tshow fx)
+
 
 -- Start All Drivers -----------------------------------------------------------
 
