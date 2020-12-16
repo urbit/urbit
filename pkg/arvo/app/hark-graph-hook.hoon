@@ -1,6 +1,6 @@
 ::  hark-graph-hook: notifications for graph-store [landscape]
 ::
-/-  post, group-store, metadata-store, hook=hark-graph-hook
+/-  post, group-store, metadata-store, hook=hark-graph-hook, store=hark-store
 /+  resource, metadata, default-agent, dbug, graph-store, graph, grouplib=group, store=hark-store
 ::
 ::
@@ -19,7 +19,7 @@
   ==
 ::
 +$  notif-kind
-  [name=@t parent-lent=@ud mode=?(%each %count) watch=?]
+  [name=@t parent-lent=@ud mode=?(%each %count %none) watch=?]
 ::
 ++  scry
   |*  [[our=@p now=@da] =mold p=path]
@@ -340,7 +340,6 @@
   ::
   ++  update-unread-count
     |=  [=notif-kind =index:store time=@da ref=index:graph-store]
-    =.  description.index  name.notif-kind
     =/  =stats-index:store
       (to-stats-index:store index)
     ?-  mode.notif-kind 
@@ -352,10 +351,11 @@
   ++  self-post
     |=  $:  =node:graph-store
             =index:store
-            mode=?(%count %each)
+            mode=?(%count %each %none)
             watch=?
         ==
     ^+  update-core 
+    ?:  ?=(%none mode)  update-core
     =/  =stats-index:store
       (to-stats-index:store index)
     =.  update-core

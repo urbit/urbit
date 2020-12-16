@@ -37,8 +37,9 @@
 ::
 ++  state-one
   |%
-  +$  state-1
-    $:  unreads-each=(jug index index:graph-store)
+  +$  state
+    $:  %1
+        unreads-each=(jug index index:graph-store)
         unreads-count=(map index @ud)
         last-seen=(map index @da)
         =notifications

@@ -31,12 +31,12 @@
   ++  stats-index
     %-  of
     :~  graph+graph-stats-index
-        group+dejs:resource
+        group+dejs-path:resource
     ==
   ++  graph-stats-index
     %-  ot
-    :~  graph+dejs:resource
-        index+graph-index
+    :~  graph+dejs-path:resource
+        index+graph-store-index
     ==
   ::  parse date as @ud
   ::    TODO: move to zuse
@@ -52,7 +52,7 @@
     :~  time+sd
         index+index
     ==
-  ++  graph-index
+  ++  graph-store-index
     (su ;~(pfix fas (more fas dem)))
   ::
   ++  add
@@ -62,7 +62,7 @@
   ++  read-graph-index
     %-  ot
     :~  index+stats-index
-        target+graph-index
+        target+graph-store-index
     ==
   ::
   ++  action
@@ -110,13 +110,13 @@
       |^
       ?-  -.s
         %graph  (graph-stats-index +.s)
-        %group  (enjs:resource +.s)
+        %group  s+(enjs-path:resource +.s)
       ==
       ::
       ++  graph-stats-index
         |=  [graph=resource =index:graph-store]
         %-  pairs
-        :~  graph+(enjs:resource graph)
+        :~  graph+s+(enjs-path:resource graph)
             index+(index:enjs:graph-store index)
         ==
       --
