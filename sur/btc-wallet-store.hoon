@@ -64,13 +64,14 @@
 ::  hest: an entry in the history log
 ::
 +$  hest
-  $:  =txid
+  $:  =xpub
+      =txid
       confs=@ud
       recvd=(unit @da)
       inputs=(list [=val:tx s=(unit ship)])
       outputs=(list [=val:tx s=(unit ship)])
   ==
-+$  history  (map xpub (map txid hest))
++$  history  (map txid hest)
 ::  state/watch variables:
 ::  scanning addresses and monitoring generated addresses
 ::  batch: indexes to scan for a given chyg
@@ -89,10 +90,10 @@
 +$  action
   $%  [%add-wallet =xpub =fprint scan-to=(unit scon) max-gap=(unit @ud) confs=(unit @ud)]
       [%address-info =xpub =chyg =idx utxos=(set utxo) used=? block=@ud]
-      [%tx-info =info:tx]
+      [%tx-info =info:tx block=@ud]
       [%generate-address =xpub =chyg =peta]
       [%generate-txbu =xpub payee=(unit ship) feyb=sats txos=(list txo)]
-      [%add-history-entry =xpub =hest]
+      [%add-history-entry =hest]
   ==
 ::
 +$  update
