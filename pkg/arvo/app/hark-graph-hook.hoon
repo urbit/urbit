@@ -222,7 +222,6 @@
       ~&  no-group+rid
       `state
     =/  metadata=(unit metadata:metadata-store)
-      ~&  no-metadata+rid
       (peek-metadata:met %graph u.group rid)
     ?~  metadata  `state
     abet:check:(abed:handle-update:ha rid nodes u.group module.u.metadata)
