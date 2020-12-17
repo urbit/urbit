@@ -159,7 +159,7 @@
     [cards this]
   ==
   ++  add-graph
-    |=  [rid=resource =graph:graph-store]
+    |=  rid=resource
     ^-  (quip card _state)
     =/  group-rid=(unit resource)
       (group-from-app-resource:met %graph rid) 
@@ -172,14 +172,20 @@
       |(is-hidden &(watch-on-self =(our.bowl entity.rid)))
     ?.  should-watch
       `state
-    :-  (give:ha ~[/updates] %listen [rid ~])
-    state(watching (~(put in watching) [rid ~]))
+    =/  graph=graph:graph-store  :: graph in subscription is bunted 
+      (get-graph-mop:gra rid)
+    =/  node=(unit node:graph-store)
+      (bind (peek:orm:graph-store graph) |=([@ =node:graph-store] node))
+    =^  cards  state
+      (check-nodes (drop node) rid)
+    :_   state(watching (~(put in watching) [rid ~]))
+    (weld cards (give:ha ~[/updates] %listen [rid ~]))
   ::
   ++  graph-update
     |=  =update:graph-store
     ^-  (quip card _state)
     ?:  ?=(%add-graph -.q.update)
-      (add-graph resource.q.update graph.q.update)
+      (add-graph resource.q.update)
     ?.  ?=(%add-nodes -.q.update)
       [~ state]
     =*  rid  resource.q.update

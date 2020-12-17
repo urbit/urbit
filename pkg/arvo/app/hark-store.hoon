@@ -198,15 +198,8 @@
     ^-  update:store
     :-  %more
     ^-  (list update:store)
-    :+  give-unreads
-      [%set-dnd dnd]
-    %+  weld
-      %+  turn
-        (tap-nonempty:ha archive)
-      (timebox-update &)
-    %+  turn
-      (tap-nonempty:ha notifications)
-    (timebox-update |)
+    :-  give-unreads
+    [%set-dnd dnd]~
   ::
   ++  give-since-unreads
     ^-  (list [stats-index:store stats:store])
@@ -234,12 +227,6 @@
     ^-  update:store
     :-  %unreads
     (weld give-each-unreads give-since-unreads)
-  ::
-  ++  timebox-update
-    |=  archived=?
-    |=  [time=@da =timebox:store]
-    ^-  update:store
-    [%timebox time archived ~(tap by timebox)]
   --
 ::
 ++  on-peek   
