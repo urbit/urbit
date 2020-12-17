@@ -1,5 +1,8 @@
 # PSBT Handling
 
+## Signing with JS
+See `psbt_sign.js` and follow instructions in that file.
+
 ## Sample Unsigned
 From BIP174 docs.
 Uses `bitcoin-cli decodepsbt` to parse.
