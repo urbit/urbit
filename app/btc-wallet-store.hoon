@@ -115,16 +115,27 @@
       %address-info
     ::  TODO
     :: if blank address we're watching gets a value
+    :: "blank" = unused
     :: add it to history
     :: send a %tx-info request
     (update-address +.act)
+    ::  %txinfo
+    ::  - check whether this txid is in history
+    ::   - if yes, update its confs and received
+    ::   - request info on the tx again if not enough confs
     ::
       %tx-info
-    :: TODO:
-    ::  - check whether this txid in any hest map
-    ::  - update history as these come. Check confs
-    ::  - if address in wach and confs low and this txid not there, request %address-info
-    `state
+    =*  ti  info.act
+    =+  h=(~(get by history) txid.ti)
+    ?~  h  `state
+    =+  w=(~(get by walts) xpub.u.h)
+    ?~  w  `state
+    =.  history
+      %+  ~(put by history)  txid.ti
+      u.h(confs confs.ti, recvd recvd.ti)
+    :_  state
+    ?:  (gte confs.ti confs.u.w)  ~
+    ~[(send-request ~[requests-path] [%tx-info block.act txid.ti])]
     ::
       %generate-address
     (generate-address +.act)
@@ -139,7 +150,6 @@
     ::    - send a request for info on the address (watch it)
     ::    - DON'T send an address update for the address, since it's change
     ::
-    ::  TODO: end to end tests
       %generate-txbu
     =+  uw=(~(get by walts) xpub.act)
     ?~  uw
