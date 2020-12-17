@@ -97,6 +97,7 @@
         %read-count  (stats-index +.upd)
         %unread-each  (unread-each +.upd)
         %unread-count  (unread-count +.upd)
+        %remove-graph  s+(enjs-path:resource +.upd)
         %seen-index  (seen-index +.upd)
         %unreads   (unreads +.upd)
         ::

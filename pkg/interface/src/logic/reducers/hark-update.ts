@@ -142,6 +142,14 @@ function reduce(data: any, state: HarkState) {
   unreadSince(data, state);
   unreadEach(data, state);
   seenIndex(data, state);
+  removeGraph(data, state);
+}
+
+function removeGraph(json: any, state: HarkState) {
+  const data = _.get(json, 'remove-graph');
+  if(data) {
+    delete state.unreads.graph[data];
+  }
 }
 
 function seenIndex(json: any, state: HarkState) {

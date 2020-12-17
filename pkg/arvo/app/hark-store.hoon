@@ -326,6 +326,7 @@
       %unread-note  (unread-note +.in)
     ::
       %seen-index   (seen-index +.in)
+      %remove-graph  (remove-graph +.in)
       %set-dnd      (set-dnd +.in)
       %seen         seen
     ==
@@ -487,6 +488,62 @@
     =.  last-seen
       (~(put by last-seen) stats-index new-time)
     (give %seen-index new-time stats-index)
+  ::
+  ++  remove-graph
+    |=  rid=resource
+    |^  
+    =/  indices  get-stats-indices
+    =.  poke-core
+      (give %remove-graph rid)
+    =.  poke-core
+      (remove-notifications indices)
+    =.  unreads-count
+      ((dif-map-by-key ,@ud) unreads-count indices)
+    =.  unreads-each
+      %+  (dif-map-by-key ,(set index:graph-store))
+      unreads-each  indices
+    =.  last-seen
+      ((dif-map-by-key ,@da) last-seen indices)
+    =.  by-index
+      ((dif-map-by-key ,(set @da)) by-index indices)
+    poke-core
+    ::
+    ++  get-stats-indices
+      %-  ~(gas ^in *(set stats-index:store))
+      %+  skim
+        ;:  weld
+          ~(tap ^in ~(key by unreads-count))
+          ~(tap ^in ~(key by last-seen))
+          ~(tap ^in ~(key by unreads-each))
+          ~(tap ^in ~(key by by-index))
+        ==
+      |=  =stats-index:store
+      ?.  ?=(%graph -.stats-index)  %.n
+      =(graph.stats-index rid)
+    ::
+    ++  dif-map-by-key
+      |*  value=mold
+      |=  [=(map stats-index:store value) =(set stats-index:store)]
+      =/  to-remove   ~(tap ^in set)
+      |-  
+      ?~  to-remove  map
+      =.  map
+        (~(del by map) i.to-remove)
+      $(to-remove t.to-remove)
+    ::
+    ++  remove-notifications
+      |=  =(set stats-index:store)
+      ^+  poke-core
+      =/  indices
+        ~(tap ^in set)
+      |- 
+      ?~  indices  poke-core
+      =/  times=(list @da)
+        ~(tap ^in (~(get ju by-index) i.indices))
+      =.  poke-core
+        (read-index i.indices times)
+      $(indices t.indices)
+    --
   ::
   ++  seen
     =>  (emit cancel-autoseen)

@@ -158,6 +158,36 @@
       (graph-update !<(update:graph-store q.cage.sign))
     [cards this]
   ==
+  ::
+  ++  graph-update
+    |=  =update:graph-store
+    ^-  (quip card _state)
+    ?+    -.q.update  `state
+        %add-graph  (add-graph resource.q.update)
+      ::
+        ?(%remove-graph %archive-graph)  
+      (remove-graph resource.q.update)
+      ::
+        %add-nodes
+      =*  rid  resource.q.update
+      (check-nodes ~(val by nodes.q.update) rid)
+    ==
+  ::
+  ++  remove-graph
+    |=  rid=resource
+    =/  unwatched
+      %-  ~(gas in *_watching)
+      %+  skim  ~(tap in watching)
+      |=  [r=resource idx=index:graph-store]
+      =(r rid)
+    :_  state(watching (~(dif in watching) unwatched))
+    ^-  (list card)
+    :-  (poke-hark:ha %remove-graph rid)
+    %-  zing
+    %+  turn  ~(tap in unwatched)
+    |=  [r=resource =index:graph-store]
+    (give:ha ~[/updates] %ignore r index)
+  ::
   ++  add-graph
     |=  rid=resource
     ^-  (quip card _state)
@@ -181,15 +211,6 @@
     :_   state(watching (~(put in watching) [rid ~]))
     (weld cards (give:ha ~[/updates] %listen [rid ~]))
   ::
-  ++  graph-update
-    |=  =update:graph-store
-    ^-  (quip card _state)
-    ?:  ?=(%add-graph -.q.update)
-      (add-graph resource.q.update)
-    ?.  ?=(%add-nodes -.q.update)
-      [~ state]
-    =*  rid  resource.q.update
-    (check-nodes ~(val by nodes.q.update) rid)
   ::
   ++  check-nodes
     |=  $:  nodes=(list node:graph-store)
@@ -198,8 +219,10 @@
     =/  group=(unit resource)
       (group-from-app-resource:met %graph rid)
     ?~  group  
+      ~&  no-group+rid
       `state
     =/  metadata=(unit metadata:metadata-store)
+      ~&  no-metadata+rid
       (peek-metadata:met %graph u.group rid)
     ?~  metadata  `state
     abet:check:(abed:handle-update:ha rid nodes u.group module.u.metadata)

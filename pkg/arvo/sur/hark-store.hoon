@@ -95,6 +95,7 @@
       [%unread-note time=@da index]
     ::
       [%seen-index time=@da =stats-index]
+      [%remove-graph =resource]
     ::
       [%read-all ~]
       [%set-dnd dnd=?]
@@ -123,6 +124,7 @@
       [%added time=@da =index =notification]
       [%timebox time=@da archived=? =(list [index notification])]
       [%count count=@ud]
+      [%clear =stats-index]
       [%unreads unreads=(list [stats-index stats])]
   ==
 --

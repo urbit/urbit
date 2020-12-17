@@ -22,7 +22,7 @@
   ^-  graph:store
   =/  =update:store
     (get-graph res)
-  ?>  ?=(%0 -.res)
+  ?>  ?=(%0 -.update)
   ?>  ?=(%add-graph -.q.update)
   graph.q.update
 ::
