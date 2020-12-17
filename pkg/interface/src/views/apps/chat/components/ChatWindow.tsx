@@ -199,14 +199,14 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
     const currSize = graph.size;
     if(newer && !this.loadedNewest) {
       const [index] = graph.peekLargest()!;
-      await api.graph.getYoungerSiblings(ship,name, 100, `/${index.toString()}`)
+      await api.graph.getYoungerSiblings(ship,name, 20, `/${index.toString()}`)
       if(currSize === graph.size) {
         console.log('loaded all newest');
         this.loadedNewest = true;
       }
     } else if(!newer && !this.loadedOldest) {
       const [index] = graph.peekSmallest()!;
-      await api.graph.getOlderSiblings(ship,name, 100, `/${index.toString()}`)
+      await api.graph.getOlderSiblings(ship,name, 20, `/${index.toString()}`)
       this.calculateUnreadIndex();
       if(currSize === graph.size) {
         console.log('loaded all oldest');
