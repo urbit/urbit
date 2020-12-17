@@ -300,7 +300,7 @@
         (poym-to-history ti)
       `state
     :_  state
-    [(poke-wallet-store [%tx-info ti]) cards]
+    [(poke-wallet-store [%tx-info ti block.btc-state]) cards]
     ::
     ::  %raw-tx
     ::  - if the req-id is for current poym, add txid/rawtx to the poym
@@ -501,9 +501,7 @@
   ^-  card
   %-  poke-wallet-store
   :*  %add-history-entry
-      xpub
-      ::  hest
-      txid.ti  confs.ti  recvd.ti
+      xpub  txid.ti  confs.ti  recvd.ti
       (turn inputs.ti |=(i=val:tx [i `payer]))
       %+  turn  outputs.ti
         |=  o=val:tx
