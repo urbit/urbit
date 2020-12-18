@@ -148,7 +148,6 @@ export default function Inbox(props: {
           api={api}
         />
       )}
-
       {_.map(
         notificationsByDay,
         (timeboxes, idx) =>
