@@ -681,7 +681,7 @@
         |
       ?.  ?=([[@ *] *] b)
         &
-      (lth i.i.a i.i.b)
+      (lth (end 3 i.i.a) (end 3 i.i.b))
     --
   ::
   ++  get-source
