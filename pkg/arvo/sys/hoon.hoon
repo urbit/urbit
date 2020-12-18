@@ -8363,7 +8363,7 @@
         [%bust *]  ~(example ax %base p.gen)
         [%ktcl *]  ~(factory ax p.gen)
         [%dbug *]   q.gen
-        [%eror *]  ~>(%slog.[0 leaf=p.gen] !!)
+        [%eror *]  ~_((crip p.gen) !!)
     ::
         [%knit *]                                       ::
       :+  %tsgr  [%ktts %v %$ 1]                        ::  =>  v=.
