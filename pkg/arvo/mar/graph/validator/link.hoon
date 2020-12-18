@@ -7,7 +7,7 @@
     ?+  index.p.i  ~
       [@ ~]       `[%link 0 %each %.y]
       [@ @ %1 ~]  `[%comment 1 %count %.n]
-      [@ @ @ ~]   `[%edit-comment 1 %count %.n]
+      [@ @ @ ~]   `[%edit-comment 1 %none %.n]
     ==
   --
 ++  grab
