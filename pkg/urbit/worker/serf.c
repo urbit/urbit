@@ -199,11 +199,11 @@ _serf_prof(FILE* fil_u, c3_w den, u3_noun mas)
 /* _serf_grab(): garbage collect, checking for profiling. RETAIN.
 */
 static void
-_serf_grab(u3_serf* sef_u)
+_serf_grab(u3_noun sac)
 {
-  if ( u3_nul == sef_u->sac) {
+  if ( u3_nul == sac) {
     if ( u3C.wag_w & (u3o_debug_ram | u3o_check_corrupt) ) {
-      u3m_grab(sef_u->sac, u3_none);
+      u3m_grab(sac, u3_none);
     }
   }
   else {
@@ -241,9 +241,9 @@ _serf_grab(u3_serf* sef_u)
     c3_assert( u3R == &(u3H->rod_u) );
     fprintf(fil_u, "\r\n");
 
-    tot_w += u3a_maid(fil_u, "total userspace", _serf_prof(fil_u, 0, sef_u->sac));
+    tot_w += u3a_maid(fil_u, "total userspace", _serf_prof(fil_u, 0, sac));
     tot_w += u3m_mark(fil_u);
-    tot_w += u3a_maid(fil_u, "space profile", u3a_mark_noun(sef_u->sac));
+    tot_w += u3a_maid(fil_u, "space profile", u3a_mark_noun(sac));
 
     u3a_print_memory(fil_u, "total marked", tot_w);
     u3a_print_memory(fil_u, "free lists", u3a_idle(u3R));
@@ -257,8 +257,7 @@ _serf_grab(u3_serf* sef_u)
     }
 #endif
 
-    u3z(sef_u->sac);
-    sef_u->sac = u3_nul;
+    u3z(sac);
 
     u3l_log("\n");
   }
@@ -269,13 +268,33 @@ _serf_grab(u3_serf* sef_u)
 void
 u3_serf_grab(void)
 {
+  u3_noun sac = u3_nul;
+
   c3_assert( u3R == &(u3H->rod_u) );
 
+  {
+    u3_noun pax = u3nc(u3i_string("whey"), u3_nul);
+    u3_noun lyc = u3nc(u3_nul, u3_nul);
+    u3_noun sam = u3nt(lyc, c3n, u3nq(c3__once, u3_blip, u3_blip, pax));
+    u3_noun gon = u3m_soft(0, u3v_peek, sam);
+    u3_noun tag, dat, val;
+    u3x_cell(gon, &tag, &dat);
+
+    if (  (u3_blip == tag)
+       && (u3_nul  != dat)
+       && (c3y == u3r_pq(u3t(dat), c3__omen, 0, &val)) )
+    {
+      u3r_p(val, c3__mass, &sac);
+      u3k(sac);
+    }
+
+    u3z(gon);
+  }
+
   fprintf(stderr, "serf: measuring memory:\r\n");
-  u3a_print_memory(stderr, "total marked", u3m_mark(stderr));
-  u3a_print_memory(stderr, "free lists", u3a_idle(u3R));
-  u3a_print_memory(stderr, "sweep", u3a_sweep());
-  fprintf(stderr, "\r\n");
+  //  XX refactor to fallback if sac is ~
+  //
+  _serf_grab(sac);
   fflush(stderr);
 }
 
@@ -292,7 +311,8 @@ u3_serf_post(u3_serf* sef_u)
   //  XX this runs on replay too, |mass s/b elsewhere
   //
   if ( c3y == sef_u->mut_o ) {
-    _serf_grab(sef_u);
+    _serf_grab(sef_u->sac);
+    sef_u->sac   = u3_nul;
     sef_u->mut_o = c3n;
   }
 
