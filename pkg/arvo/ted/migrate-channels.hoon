@@ -1,11 +1,11 @@
-/-  spider, *metadata-store, *publish
+/-  spider, *metadata-store
 /+  strandio
 =,  strand=strand:spider
 ^-  thread:spider
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m
-=/  [og-path=path ng-path=path ~]  !<([path path ~] arg)
+=/  [~ og-path=path ng-path=path]  !<([~ path path] arg)
 ;<  bol=bowl:spider  bind:m  get-bowl:strandio
 |^
 ::
@@ -17,7 +17,7 @@
   (pure:m !>("no such group: {<ng-path>}"))
 ::
 =/  assoc=associations  (scry-for associations %metadata-store [%group og-path])
-=/  assoc-list=(list [[group-path resource] metadata])  ~(tap by assoc)
+=/  assoc-list=(list [[group-path md-resource] metadata])  ~(tap by assoc)
 ::
 |-
 =*  loop  $
@@ -25,7 +25,7 @@
   ;<  ~  bind:m
     (poke-our:strandio %group-store %group-action !>([%unbundle og-path]))
   (pure:m !>("done"))
-=/  [[g-path=group-path res=resource] meta=metadata]  i.assoc-list
+=/  [[g-path=group-path res=md-resource] meta=metadata]  i.assoc-list
 ?.  =(our.bol creator.meta)
   loop(assoc-list t.assoc-list)
 ?>  =(g-path og-path)

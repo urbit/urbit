@@ -90,7 +90,9 @@ export function InvitePopover(props: InvitePopoverProps) {
             borderColor="washedGray"
             borderRadius={1}
             maxHeight="472px"
-            width="380px"
+            width="100%"
+            maxWidth="380px"
+            mx={[4,0]}
             bg="white"
           >
             <Formik

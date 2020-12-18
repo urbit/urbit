@@ -72,7 +72,7 @@
   |=  [=mark =vase]
   ^-  step:agent:gall
   |^
-  =/  fin  (end 3 4 mark)
+  =/  fin  (end [3 4] mark)
   ?:  =(%drum fin)  poke-drum
   ?:  =(%helm fin)  poke-helm
   ?:  =(%kiln fin)  poke-kiln

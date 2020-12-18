@@ -53,6 +53,14 @@ _hind_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
         ret_o = c3y;
         u3l_log("<<<reset>>>\n");
       } break;
+
+      //  NB: startup explicitly handled in pier.c
+      //
+      //    XX review arvo upgrade scenaria
+      //
+      case c3__wend: {
+        ret_o = c3y;
+      } break;
     }
   }
 

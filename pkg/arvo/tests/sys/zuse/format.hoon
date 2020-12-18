@@ -85,7 +85,7 @@
 ::    path)
 ::
 ++  test-beam
-  =/  b=beam  [[p=~zod q=%home r=[%ud p=12]] s=/hoon/zuse/sys]
+  =/  b=beam  [[p=~zod q=%home r=[%ud p=12]] s=/sys/zuse/hoon]
   =/  p=path  /~zod/home/12/sys/zuse/hoon
   ;:  weld
     ::  proper encode

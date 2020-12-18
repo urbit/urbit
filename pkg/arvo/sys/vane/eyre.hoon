@@ -1,7 +1,7 @@
 !:
 ::  lighter than eyre
 ::
-|=  pit=vase
+|=  our=ship
 =,  eyre
 ::  internal data structures
 ::
@@ -17,7 +17,7 @@
       =duct
       ::
       ::
-      card=(wind note gift:able)
+      card=(wind note gift)
   ==
 ::  +note: private request from eyre to another vane
 ::
@@ -42,25 +42,17 @@
       $:  %g
           ::
           ::
-          $>(%deal task:able:gall)
+          $>(%deal task:gall)
   ==  ==
 ::  +sign: private response from another vane to eyre
 ::
 +$  sign
-  $%  ::  %b: from behn
-      ::
-      $:  %b
-          ::
-          ::
+  $%  $:  %behn
           $%  [%wake error=(unit tang)]
       ==  ==
-      ::  %g: from gall
-      ::
-      $:  %g
-          ::
-          ::
-          gift:able:gall
-          ::  $>(%unto gift:able:gall)
+      $:  %gall
+          gift:gall
+          ::  $>(%unto gift:gall)
   ==  ==
 --
 ::  more structures
@@ -236,16 +228,20 @@
 ::  +login-page: internal page to login to an Urbit
 ::
 ++  login-page
-  |=  [redirect-url=(unit @t) our=@p]
+  |=  [redirect-url=(unit @t) our=@p failed=?]
   ^-  octs
   =+  redirect-str=?~(redirect-url "" (trip u.redirect-url))
   %-  as-octs:mimes:html
   %-  crip
   %-  en-xml:html
+  =/  favicon  %+
+    weld  "<svg width='10' height='10' viewBox='0 0 10 10' xmlns='http://www.w3.org/2000/svg'>"
+          "<circle r='3.09' cx='5' cy='5' /></svg>"
   ;html
     ;head
       ;meta(charset "utf-8");
       ;meta(name "viewport", content "width=device-width, initial-scale=1, shrink-to-fit=no");
+      ;link(rel "icon", type "image/svg+xml", href (weld "data:image/svg+xml;utf8," favicon));
       ;title:"OS1"
       ;style:'''
              @import url("https://rsms.me/inter/inter.css");
@@ -254,174 +250,159 @@
                  src: url("https://storage.googleapis.com/media.urbit.org/fonts/scp-regular.woff");
                  font-weight: 400;
              }
-             html, body {
+             :root {
+               --red05: rgba(255,65,54,0.05);
+               --red100: rgba(255,65,54,1);
+               --blue05: rgba(33,157,255,0.05);
+               --blue30: rgba(33,157,255,0.3);
+               --blue100: rgba(33,157,255,1);
+               --black05: rgba(0,0,0,0.05);
+               --black20: rgba(0,0,0,0.2);
+               --black60: rgba(0,0,0,0.6);
+               --white: rgba(255,255,255,1);
+             }
+             html {
                font-family: Inter, sans-serif;
                height: 100%;
-               margin: 0 !important;
+               margin: 0;
                width: 100%;
-               background: #fff;
-               color: #000;
+               background: var(--white);
+               color: var(--black100);
                -webkit-font-smoothing: antialiased;
                line-height: 1.5;
-               font-size: 12pt;
+               font-size: 12px;
+               display: flex;
+               flex-flow: row nowrap;
+               justify-content: center;
              }
-             a, a:visited {
-               color: #000;
-               text-decoration: none;
-               font-size: 0.875rem;
+             body {
+               display: flex;
+               flex-flow: column nowrap;
+               justify-content: center;
+               max-width: 300px;
+               padding: 1rem;
+               width: 100%;
              }
-             p {
-               margin-block-start: 0;
-               margin-block-end: 0;
-               font-size: 0.875rem;
+             body > *,
+             form > input {
+               width: 100%;
+             }
+             form {
+               display: flex;
+               flex-flow: column;
+               align-items: flex-start;
              }
              input {
-               width: 100%;
-               padding: 0.75rem;
-               border: 1px solid #e6e6e6;
-               margin-top: 0.25rem;
-               margin-bottom: 1rem;
-               font-size: 0.875rem;
+               background: transparent;
+               border: 1px solid var(--black20);
+               padding: 8px;
+               border-radius: 4px;
+               font-size: inherit;
+               color: var(--black);
+               box-shadow: none;
+             }
+             input:disabled {
+               background: var(--black05);
+               color: var(--black60);
              }
              input:focus {
-               outline: 0;
-               border: 1px solid #000;
+               outline: none;
+               border-color: var(--blue30);
              }
-             button {
-               -webkit-appearance: none;
-               padding: 0.75rem;
-               background-color: #eee;
-               border: 1px solid #d1d2d3;
-               color: #666;
-               font-size: 0.875rem;
-               border-radius: 0;
+             input:invalid:not(:focus) {
+               background: var(--red05);
+               border-color: var(--red100);
+               outline: none;
+               color: var(--red100);
              }
-             footer {
-               position: absolute;
-               bottom: 0;
+             button[type=submit] {
+               margin-top: 16px;
+               padding: 8px 16px;
+               border-radius: 4px;
+               background: var(--blue100);
+               color: var(--white);
+               border: 1px solid var(--blue100);
+             }
+             input:invalid ~ button[type=submit] {
+               border-color: currentColor;
+               background: var(--blue05);
+               color: var(--blue30);
+               pointer-events: none;
+             }
+             span.failed {
+               display: flex;
+               flex-flow: row nowrap;
+               height: 16px;
+               align-items: center;
+               margin-top: 6px;
+               color: var(--red100);
+             }
+             span.failed svg {
+               height: 12px;
+              margin-right: 6px;
+             }
+             span.failed circle,
+             span.failed line {
+               fill: transparent;
+               stroke: currentColor
              }
              .mono {
-               font-family: "Source Code Pro", monospace;
-             }
-             .gray2 {
-               color: #7f7f7f;
-             }
-             .f9 {
-               font-size: 0.75rem;
-             }
-             .relative {
-               position: relative;
-             }
-             .absolute {
-               position: absolute;
-             }
-             .w-100 {
-               width: 100%;
-             }
-             .tr {
-               text-align: right;
-             }
-             .pb2 {
-               padding-bottom: 0.5rem;
-             }
-             .pr1 {
-               padding-right: 0.25rem;
-             }
-             .pr2 {
-               padding-right: .5rem;
-             }
-             .dn {
-               display: none;
-             }
-             #main {
-               width: 100%;
-               height: 100%;
-             }
-             #inner {
-               position: fixed;
-               top: 50%;
-               left: 50%;
-               transform: translate(-50%, -50%);
+               font-family: 'Source Code Pro', monospace;
              }
              @media all and (prefers-color-scheme: dark) {
-               html, body {
-                 background-color: #333;
-                 color: #fff;
-               }
-               a, a:visited {
-                 color: #fff;
-               }
-               input {
-                 background: #333;
-                 color: #fff;
-                 border: 1px solid #7f7f7f;
-               }
-               input:focus {
-                 border: 1px solid #fff;
-               }
-             }
-             @media all and (min-width: 34.375rem) {
-               .tc-ns {
-                 text-align: center;
-               }
-               .pr0-ns {
-                 padding-right: 0;
-               }
-               .dib-ns {
-                 display: inline-block;
+               :root {
+                 --white: rgb(51, 51, 51);
+                 --black100: rgba(255,255,255,1);
+                 --black05: rgba(255,255,255,0.05);
+                 --black20: rgba(255,255,255,0.2);
                }
              }
              '''
     ==
     ;body
-      ;div#main
-        ;div#inner
-          ;p:"Urbit ID"
-          ;input(value "{(scow %p our)}", disabled "true", class "mono");
-          ;p:"Access Key"
-          ;p.f9.gray2
-            ; Get key from Bridge, or
-            ;span.mono.pr1:"+code"
-            ; in dojo
-          ==
-          ;form(action "/~/login", method "post", enctype "application/x-www-form-urlencoded")
-            ;input
-              =type  "password"
-              =name  "password"
-              =placeholder  "sampel-ticlyt-migfun-falmel"
-              =class  "mono"
-              =autofocus  "true";
-            ;input(type "hidden", name "redirect", value redirect-str);
-            ;button(type "submit"):"Continue"
-          ==
-        ==
-        ;footer.absolute.w-100
-          ;div.relative.w-100.tr.tc-ns
-            ;p.pr2.pr0-ns.pb2
-              ;a(href "https://bridge.urbit.org", target "_blank")
-                ;span.dn.dib-ns.pr1:"Open"
-                ; Bridge ↗
-              ==
-              ;a
-                =href  "https://urbit.org/using/install/#id"
-                =style  "margin-left: 8px; color: #2aa779;"
-                =target  "_blank"
-                ; Purchase
-                ;span.dn.dib-ns.pr1:"an Urbit ID"
-                ; ↗
-              ==
+      ;p:"Urbit ID"
+      ;input(value "{(scow %p our)}", disabled "true", class "mono");
+      ;p:"Access Key"
+      ;form(action "/~/login", method "post", enctype "application/x-www-form-urlencoded")
+        ;input
+          =type  "password"
+          =name  "password"
+          =placeholder  "sampel-ticlyt-migfun-falmel"
+          =class  "mono"
+          =required  "true"
+          =minlength  "27"
+          =maxlength  "27"
+          =pattern  "((?:[a-z]\{6}-)\{3}(?:[a-z]\{6}))"
+          =autofocus  "true";
+        ;input(type "hidden", name "redirect", value redirect-str);
+        ;+  ?.  failed  ;span;
+          ;span.failed
+            ;svg(xmlns "http://www.w3.org/2000/svg", viewBox "0 0 12 12")
+              ;circle(cx "6", cy "6", r "5.5");
+              ;line(x1 "3.27", y1 "3.27", x2 "8.73", y2 "8.73");
+              ;line(x1 "8.73", y1 "3.27", x2 "3.27", y2 "8.73");
             ==
+            Key is incorrect
           ==
-        ==
+          ;button(type "submit"):"Continue"
       ==
     ==
+    ;script:'''
+            var failSpan = document.querySelector('.failed');
+            if (failSpan) {
+              document.querySelector("input[type=password]")
+                .addEventListener('keyup', function (event) {
+                  failSpan.style.display = 'none';
+                });
+            }
+            '''
   ==
 ::  +render-tang-to-marl: renders a tang and adds <br/> tags between each line
 ::
 ++  render-tang-to-marl
-  |=  {wid/@u tan/tang}
+  |=  [wid=@u tan=tang]
   ^-  marl
-  =/  raw=(list tape)  (zing (turn tan |=(a/tank (wash 0^wid a))))
+  =/  raw=(list tape)  (zing (turn tan |=(a=tank (wash 0^wid a))))
   ::
   |-  ^-  marl
   ?~  raw  ~
@@ -429,7 +410,7 @@
 ::  +render-tang-to-wall: renders tang as text lines
 ::
 ++  render-tang-to-wall
-  |=  {wid/@u tan/tang}
+  |=  [wid=@u tan=tang]
   ^-  wall
   (zing (turn tan |=(a=tank (wash 0^wid a))))
 ::  +wall-to-octs: text to binary output
@@ -563,7 +544,7 @@
 ++  per-server-event
   ::  gate that produces the +per-server-event core from event information
   ::
-  |=  [[our=@p eny=@ =duct now=@da scry=sley] state=server-state]
+  |=  [[eny=@ =duct now=@da rof=roof] state=server-state]
   =/  eyre-id  (scot %ta (cat 3 'eyre_' (scot %uv (sham duct))))
   |%
   ::  +request-local: bypass authentication for local lens connections
@@ -644,13 +625,13 @@
     ?-    -.action
         %gen
       =/  bek=beak  [our desk.generator.action da+now]
-      =/  sup=spur  (flop path.generator.action)
-      =/  ski       (scry [%141 %noun] ~ %ca bek sup)
+      =/  sup=spur  path.generator.action
+      =/  ski       (rof ~ %ca bek sup)
       =/  cag=cage  (need (need ski))
       ?>  =(%vase p.cag)
       =/  gat=vase  !<(vase q.cag)
       =/  res=toon
-        %-  mock  :_  (sloy scry)
+        %-  mock  :_  (look rof ~)
         :_  [%9 2 %0 1]  |.
         %+  slam
           %+  slam  gat
@@ -672,8 +653,7 @@
             authenticated.inbound-request.connection
             url.request.inbound-request.connection
             leaf+"scry blocked on"
-            >p.res<
-            ~
+            (fall (bind (bind ((soft path) p.res) smyt) (late ~)) ~)
         ==
       =/  result  ;;(simple-payload:http +.p.res)
       ::  ensure we have a valid content-length header
@@ -753,7 +733,7 @@
     ?-  -.mym
       %|  (error-response 500 "failed tube from {(trip mark)} to mime")
       %&  %+  return-static-data-on-duct  200
-          [(rsh 3 1 (spat p.p.mym)) q.p.mym]
+          [(rsh 3 (spat p.p.mym)) q.p.mym]
     ==
     ::
     ++  find-tube
@@ -768,7 +748,7 @@
     ++  do-scry
       |=  [care=term =desk =path]
       ^-  (unit (unit cage))
-      (scry [%141 %noun] ~ care [our desk da+now] (flop path))
+      (rof ~ care [our desk da+now] path)
     ::
     ++  error-response
       |=  [status=@ud =tape]
@@ -862,28 +842,28 @@
         ::
         =+  request-line=(parse-request-line url.request)
         %^  return-static-data-on-duct  200  'text/html'
-        (login-page (get-header:http 'redirect' args.request-line) our)
+        (login-page (get-header:http 'redirect' args.request-line) our %.n)
       ::  if we are not a post, return an error
       ::
       ?.  =('POST' method.request)
-        (return-static-data-on-duct 400 'text/html' (login-page ~ our))
+        (return-static-data-on-duct 400 'text/html' (login-page ~ our %.n))
       ::  we are a post, and must process the body type as form data
       ::
       ?~  body.request
-        (return-static-data-on-duct 400 'text/html' (login-page ~ our))
+        (return-static-data-on-duct 400 'text/html' (login-page ~ our %.n))
       ::
       =/  parsed=(unit (list [key=@t value=@t]))
         (rush q.u.body.request yquy:de-purl:html)
       ?~  parsed
-        (return-static-data-on-duct 400 'text/html' (login-page ~ our))
+        (return-static-data-on-duct 400 'text/html' (login-page ~ our %.n))
       ::
       =/  redirect=(unit @t)  (get-header:http 'redirect' u.parsed)
       ?~  password=(get-header:http 'password' u.parsed)
-        (return-static-data-on-duct 400 'text/html' (login-page redirect our))
+        (return-static-data-on-duct 400 'text/html' (login-page redirect our %.n))
       ::  check that the password is correct
       ::
       ?.  =(u.password code)
-        (return-static-data-on-duct 400 'text/html' (login-page redirect our))
+        (return-static-data-on-duct 400 'text/html' (login-page redirect our %.y))
       ::  mint a unique session cookie
       ::
       =/  session=@uv
@@ -1027,11 +1007,9 @@
     ::
     ++  code
       ^-  @ta
-      ::
-      =+  pax=/(scot %p our)/code/(scot %da now)/(scot %p our)
-      =+  res=((sloy scry) [151 %noun] %j pax)
-      ::
-      (rsh 3 1 (scot %p (@ (need (need res)))))
+      =/  res=(unit (unit cage))
+        (rof ~ %j [our %code da+now] /(scot %p our))
+      (rsh 3 (scot %p ;;(@ q.q:(need (need res)))))
     ::  +session-cookie-string: compose session cookie
     ::
     ++  session-cookie-string
@@ -1536,7 +1514,7 @@
         ::NOTE  assertions in this block because =* is flimsy
         ?>  ?=([%| *] state.u.channel)
         :+  p.state.u.channel  %give
-        ^-  gift:able
+        ^-  gift
         :*  %response  %continue
         ::
             ^=  data
@@ -1591,7 +1569,7 @@
       =?  moves  &(kicking ?=([%| *] state.u.channel))
         :_  moves
         :+  p.state.u.channel  %give
-        ^-  gift:able
+        ^-  gift
         :*  %response  %continue
         ::
             ^=  data
@@ -1626,7 +1604,7 @@
       ::
       =*  have=mark  mark.event
       =/  val=(unit (unit cage))
-        (scry [%141 %noun] ~ %cb [our %home da+now] /[have])
+        (rof ~ %cb [our %home da+now] /[have])
       ?.  ?=([~ ~ *] val)
         ((slog leaf+"eyre: no mark {(trip have)}" ~) ~)
       =+  !<(=dais:clay q.u.u.val)
@@ -1650,7 +1628,7 @@
         =*  desc=tape  "from {(trip have)} to json"
         =/  tube=(unit tube:clay)
           =/  tuc=(unit (unit cage))
-            (scry [%141 %noun] ~ %cc [our %home da+now] (flop /[have]/json))
+            (rof ~ %cc [our %home da+now] /[have]/json)
           ?.  ?=([~ ~ *] tuc)  ~
           `!<(tube:clay q.u.u.tuc)
         ?~  tube
@@ -2110,29 +2088,22 @@
 =|  ax=axle
 ::  a vane is activated with current date, entropy, and a namespace function
 ::
-|=  [our=ship now=@da eny=@uvJ scry-gate=sley]
+|=  [now=@da eny=@uvJ rof=roof]
 ::  allow jets to be registered within this core
 ::
-~%  %http-server  ..is  ~
+~%  %http-server  ..part  ~
 |%
 ++  call
-  |=  [=duct dud=(unit goof) type=* wrapped-task=(hobo task:able)]
+  |=  [=duct dud=(unit goof) wrapped-task=(hobo task)]
   ^-  [(list move) _http-server-gate]
   ::
-  =/  task=task:able  ((harden task:able) wrapped-task)
+  =/  task=task  ((harden task) wrapped-task)
   ::
-  ::  error notifications "downcast" to %crud
+  ::  XX handle error notifications
   ::
-  =?  task  ?=(^ dud)
-    ~|  %crud-in-crud
-    ?<  ?=(%crud -.task)
-    [%crud -.task tang.u.dud]
-  ::
-  ::  %crud: notifies us of an event failure
-  ::
-  ?:  ?=(%crud -.task)
+  ?^  dud
     =/  moves=(list move)
-      [[duct %slip %d %flog task] ~]
+      [[duct %slip %d %flog %crud [-.task tang.u.dud]] ~]
     [moves http-server-gate]
   ::  %init: tells us what our ship name is
   ::
@@ -2152,7 +2123,7 @@
   ::    XX cancel active too if =(0 trim-priority) ?
   ::
   ?:  ?=(%trim -.task)
-    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
+    =/  event-args  [[eny duct now rof] server-state.ax]
     =*  by-channel  by-channel:(per-server-event event-args)
     =*  channel-state  channel-state.server-state.ax
     ::
@@ -2200,7 +2171,7 @@
         [closed-connections server-state.ax]
       ::
       =/  event-args
-        [[our eny duct.i.connections now scry-gate] server-state.ax]
+        [[eny duct.i.connections now rof] server-state.ax]
       =/  cancel-request  cancel-request:(per-server-event event-args)
       =^  moves  server-state.ax  cancel-request
       ::
@@ -2222,7 +2193,7 @@
     ~>  %slog.[0 leaf+"eyre: code-changed: throwing away cookies and sessions"]
     =.  authentication-state.server-state.ax  *authentication-state
     ::
-    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
+    =/  event-args  [[eny duct now rof] server-state.ax]
     =*  by-channel  by-channel:(per-server-event event-args)
     =*  channel-state  channel-state.server-state.ax
     ::
@@ -2238,7 +2209,7 @@
   ::
   ::  all other commands operate on a per-server-event
   ::
-  =/  event-args  [[our eny duct now scry-gate] server-state.ax]
+  =/  event-args  [[eny duct now rof] server-state.ax]
   =/  server  (per-server-event event-args)
   ::
   ?-    -.task
@@ -2266,7 +2237,7 @@
         ::
         %turf
       =*  domains  domains.server-state.ax
-      =/  mod/(set turf)
+      =/  mod=(set turf)
         ?:  ?=(%put action.http-rule.task)
           (~(put in domains) turf.http-rule.task)
         (~(del in domains) turf.http-rule.task)
@@ -2325,16 +2296,13 @@
   ==
 ::
 ++  take
-  |=  [=wire =duct dud=(unit goof) wrapped-sign=(hypo sign)]
+  |=  [=wire =duct dud=(unit goof) =sign]
   ^-  [(list move) _http-server-gate]
   ?^  dud
     ~|(%eyre-take-dud (mean tang.u.dud))
-  ::  unwrap :sign, ignoring unneeded +type in :p.wrapped-sign
-  ::
-  =/  =sign  q.wrapped-sign
   =>  %=    .
           sign
-        ?:  ?=(%g -.sign)
+        ?:  ?=(%gall -.sign)
           ?>  ?=(%unto +<.sign)
           sign
         sign
@@ -2357,7 +2325,7 @@
   ::
   ++  run-app-request
     ::
-    ?>  ?=([%g %unto *] sign)
+    ?>  ?=([%gall %unto *] sign)
     ::
     ::
     ?>  ?=([%poke-ack *] p.sign)
@@ -2368,7 +2336,7 @@
       [~ http-server-gate]
     ::  we have an error; propagate it to the client
     ::
-    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
+    =/  event-args  [[eny duct now rof] server-state.ax]
     =/  handle-gall-error
       handle-gall-error:(per-server-event event-args)
     =^  moves  server-state.ax
@@ -2377,10 +2345,10 @@
   ::
   ++  watch-response
     ::
-    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
+    =/  event-args  [[eny duct now rof] server-state.ax]
     ::
     ?>  ?=([@ *] t.wire)
-    ?:  ?=([%g %unto %watch-ack *] sign)
+    ?:  ?=([%gall %unto %watch-ack *] sign)
       ?~  p.p.sign
         ::  received a positive acknowledgment: take no action
         ::
@@ -2392,13 +2360,13 @@
       =^  moves  server-state.ax  (handle-gall-error u.p.p.sign)
       [moves http-server-gate]
     ::
-    ?:  ?=([%g %unto %kick ~] sign)
+    ?:  ?=([%gall %unto %kick ~] sign)
       =/  handle-response  handle-response:(per-server-event event-args)
       =^  moves  server-state.ax
         (handle-response %continue ~ &)
       [moves http-server-gate]
     ::
-    ?>  ?=([%g %unto %fact *] sign)
+    ?>  ?=([%gall %unto %fact *] sign)
     =/  =mark  p.cage.p.sign
     =/  =vase  q.cage.p.sign
     ?.  ?=  ?(%http-response-header %http-response-data %http-response-cancel)
@@ -2422,7 +2390,7 @@
   ::
   ++  channel
     ::
-    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
+    =/  event-args  [[eny duct now rof] server-state.ax]
     ::  channel callback wires are triples.
     ::
     ?>  ?=([@ @ @t *] wire)
@@ -2431,7 +2399,7 @@
         ~|([%bad-channel-wire wire] !!)
     ::
         %timeout
-      ?>  ?=([%b %wake *] sign)
+      ?>  ?=([%behn %wake *] sign)
       ?^  error.sign
         [[duct %slip %d %flog %crud %wake u.error.sign]~ http-server-gate]
       =/  discard-channel
@@ -2448,7 +2416,7 @@
       [moves http-server-gate]
     ::
         ?(%poke %subscription)
-      ?>  ?=([%g %unto *] sign)
+      ?>  ?=([%gall %unto *] sign)
       ~|  wire
       ?>  ?=([@ @ @t @ *] wire)
       =*  channel-id  i.t.t.wire
@@ -2465,7 +2433,7 @@
   ::
   ++  sessions
     ::
-    ?>  ?=([%b %wake *] sign)
+    ?>  ?=([%behn %wake *] sign)
     ::
     ?^  error.sign
       [[duct %slip %d %flog %crud %wake u.error.sign]~ http-server-gate]
@@ -2490,7 +2458,7 @@
     (min next expiry-time)
   ::
   ++  acme-ack
-    ?>  ?=([%g %unto *] sign)
+    ?>  ?=([%gall %unto *] sign)
     ::
     ?>  ?=([%poke-ack *] p.sign)
     ?~  p.p.sign
@@ -2506,121 +2474,24 @@
 ::  +load: migrate old state to new state (called on vane reload)
 ::
 ++  load
-  =>  |%
-      +$  axle-2020-9-30
-        [date=%~2020.9.30 server-state=server-state-2020-9-30]
-      ::
-      +$  server-state-2020-9-30
-        $:  bindings=(list [=binding =duct =action])
-            =cors-registry
-            connections=(map duct outstanding-connection)
-            =authentication-state
-            channel-state=channel-state-2020-9-30
-            domains=(set turf)
-            =http-config
-            ports=[insecure=@ud secure=(unit @ud)]
-            outgoing-duct=duct
-        ==
-      ::
-      +$  channel-state-2020-9-30
-        $:  session=(map @t channel-2020-9-30)
-            duct-to-key=(map duct @t)
-        ==
-      ::
-      +$  channel-2020-9-30
-        $:  state=(each timer duct)
-            next-id=@ud
-            events=(qeu [id=@ud lines=wall])
-            subscriptions=(map wire [ship=@p app=term =path duc=duct])
-            heartbeat=(unit timer)
-        ==
-      ::
-      +$  axle-2020-5-29
-        [date=%~2020.5.29 server-state=server-state-2020-5-29]
-      ::
-      +$  server-state-2020-5-29
-        $:  bindings=(list [=binding =duct =action])
-            connections=(map duct outstanding-connection)
-            =authentication-state
-            channel-state=channel-state-2020-9-30
-            domains=(set turf)
-            =http-config
-            ports=[insecure=@ud secure=(unit @ud)]
-            outgoing-duct=duct
-        ==
-      +$  axle-2019-10-6
-        [date=%~2019.10.6 server-state=server-state-2019-10-6]
-      ::
-      +$  server-state-2019-10-6
-        $:  bindings=(list [=binding =duct =action])
-            connections=(map duct outstanding-connection)
-            authentication-state=sessions=(map @uv @da)
-            channel-state=channel-state-2020-9-30
-            domains=(set turf)
-            =http-config
-            ports=[insecure=@ud secure=(unit @ud)]
-            outgoing-duct=duct
-        ==
-      --
-  |=  old=$%(axle axle-2019-10-6 axle-2020-5-29 axle-2020-9-30)
+  |=  old=axle
   ^+  ..^$
-  ::
-  ~!  %loading
-  ?-  -.old
-    %~2020.10.18  ..^$(ax old)
-  ::
-      %~2020.9.30
-    %_  $
-      date.old  %~2020.10.18
-    ::
-      ::NOTE  soft-breaks the reconnect case, but is generally less disruptive
-      ::      than wiping channels entirely.
-        session.channel-state.server-state.old
-      %-  ~(run by session.channel-state.server-state.old)
-      |=  channel-2020-9-30
-      ^-  channel
-      =/  subscriptions
-        %-  ~(gas by *(map @ud [@p term path duct]))
-        %+  turn  ~(tap by subscriptions)
-        |=  [=wire rest=[@p term path duct]]
-        [(slav %ud (snag 3 wire)) rest]
-      :*  state  next-id  now
-          *(qeu [@ud @ud channel-event])
-          *(map @ud @ud)
-          subscriptions  heartbeat
-      ==
-    ==
-  ::
-      %~2020.5.29
-    %_  $
-      date.old          %~2020.9.30
-      server-state.old  [-.server-state.old *cors-registry +.server-state.old]
-    ==
-  ::
-      %~2019.10.6
-    =^  success  bindings.server-state.old
-      %+  insert-binding
-        [[~ /~/logout] [/e/load/logout]~ [%logout ~]]
-      bindings.server-state.old
-    ~?  !success  [%e %failed-to-setup-logout-endpoint]
-    =^  success  bindings.server-state.old
-      %+  insert-binding
-        [[~ /~/scry] [/e/load/scry]~ [%scry ~]]
-      bindings.server-state.old
-    ~?  !success  [%e %failed-to-setup-scry-endpoint]
-    %_  $
-      date.old  %~2020.5.29
-      sessions.authentication-state.server-state.old  ~
-    ==
-  ==
+  ..^$(ax old)
 ::  +stay: produce current state
 ::
 ++  stay  `axle`ax
 ::  +scry: request a path in the urbit namespace
 ::
 ++  scry
-  |=  [fur=(unit (set monk)) ren=@tas why=shop syd=desk lot=coin tyl=path]
+  ^-  roon
+  |=  [lyc=gang car=term bem=beam]
   ^-  (unit (unit cage))
+  =*  ren  car
+  =*  why=shop  &/p.bem
+  =*  syd  q.bem
+  =/  lot=coin  $/r.bem
+  =*  tyl  s.bem
+  ::
   ?.  ?=(%& -.why)
     ~
   =*  who  p.why
@@ -2662,7 +2533,7 @@
       :^  ~  ~  %noun
       !>  ^-  ?
       %-  =<  request-is-logged-in:authentication
-          (per-server-event [our eny *duct now scry-gate] server-state.ax)
+          (per-server-event [eny *duct now rof] server-state.ax)
       %*(. *request:http header-list ['cookie' u.cookies]~)
     ==
   ?.  ?=(%$ ren)

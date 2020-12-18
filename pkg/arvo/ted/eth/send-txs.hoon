@@ -2,6 +2,7 @@
 ::
 ::    produces hex string result, for use with +decode-results:rpc:ethereum
 ::
+/-  rpc=json-rpc
 /+  ethio, strandio
 ::
 =>
@@ -21,11 +22,11 @@
 ?:  =(~ txs)  (pure:m !>(~))
 ::  send a step-size batch of transactions
 ::
-;<  responses=(list response:rpc:jstd)  bind:m
+;<  responses=(list response:rpc)  bind:m
   %+  request-batch-rpc-loose:ethio  url
   %+  turn  (scag step-size txs)
   |=  tx=@ux
-  :-  `(scot %ux (end 3 10 tx))
+  :-  `(scot %ux (end [3 10] tx))
   [%eth-send-raw-transaction tx]
 ::  parse tx hashes out of responses, bailing on submission failure
 ::
@@ -33,7 +34,7 @@
   =|  pending=(list @ux)
   |-
   ?~  responses  &+(sy pending)
-  =/  res=response:rpc:jstd  i.responses  ::NOTE  =* breaks typechecks
+  =/  res=response:rpc  i.responses  ::NOTE  =* breaks typechecks
   ?+  -.res  |+[%unexpected-non-result >res< ~]
       %result
     %_  $
@@ -42,9 +43,9 @@
     ==
   ::
       %error
-    ?:  ?|  =('known transaction' (end 3 17 message.res))
-            =('Known transaction' (end 3 17 message.res))
-            =('Transaction with the same ' (end 3 26 message.res))
+    ?:  ?|  =('known transaction' (end [3 17] message.res))
+            =('Known transaction' (end [3 17] message.res))
+            =('Transaction with the same ' (end [3 26] message.res))
         ==
       ~&  [%sent-a-known-transaction--skipping id.res]
       $(responses t.responses)
@@ -69,7 +70,7 @@
 ~&  [~(wyt in p.pending) 'txs awaiting confirmation']
 ::  get receipts
 ::
-;<  responses=(list response:rpc:jstd)  bind:m
+;<  responses=(list response:rpc)  bind:m
   %+  request-batch-rpc-loose:ethio  url
   %+  turn  ~(tap in p.pending)
   |=  txh=@ux
@@ -81,7 +82,7 @@
   =|  done=(list @ux)
   |-
   ?~  responses  &+(~(dif in p.pending) (sy done))
-  =/  res=response:rpc:jstd  i.responses  ::NOTE  =* breaks typechecks
+  =/  res=response:rpc  i.responses  ::NOTE  =* breaks typechecks
   ?.  ?=(?(%error %result) -.res)
     |+[%unexpected-non-result >res< ~]
   =/  txh=@ux  (tape-to-ux (trip id.res))

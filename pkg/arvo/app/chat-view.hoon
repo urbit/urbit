@@ -3,13 +3,9 @@
 ::  sets up chat JS client, paginates data, and combines commands
 ::  into semantic actions for the UI
 ::
-/-  *permission-store,
-    *permission-hook,
-    *group,
+/-  *group,
     inv=invite-store,
     *metadata-store,
-    group-hook,
-    *permission-group-hook,
     *chat-hook,
     *metadata-hook,
     hook=chat-hook,
@@ -23,7 +19,7 @@
     resource,
     mdl=metadata
 ::
-~%  %chat-view-top  ..is  ~
+~%  %chat-view-top  ..part  ~
 |%
 +$  versioned-state
   $%  state-0
@@ -37,8 +33,6 @@
   $%  [%chat-action action:store]
       [%group-action action:group-store]
       [%chat-hook-action action:hook]
-      [%permission-hook-action permission-hook-action]
-      [%permission-group-hook-action permission-group-hook-action]
   ==
 ::
 +$  card  card:agent:gall
@@ -518,29 +512,10 @@
   ^-  card
   [%pass / %agent [entity.resource.act %group-push-hook] %poke %group-update !>(act)]
 ::
-++  permission-poke
-  |=  act=permission-action
-  ^-  card
-  [%pass / %agent [our.bol %permission-store] %poke %permission-action !>(act)]
-::
 ++  chat-hook-poke
   |=  act=action:hook
   ^-  card
   [%pass / %agent [our.bol %chat-hook] %poke %chat-hook-action !>(act)]
-::
-++  permission-hook-poke
-  |=  act=permission-hook-action
-  ^-  card
-  :*  %pass  /  %agent  [our.bol %permission-hook]
-      %poke  %permission-hook-action  !>(act)
-  ==
-::
-++  perm-group-hook-poke
-  |=  act=permission-group-hook-action
-  ^-  card
-  :*  %pass  /  %agent  [our.bol %permission-group-hook]
-      %poke  %permission-group-hook-action  !>(act)
-  ==
 ::
 ++  metadata-hook-poke
   |=  act=metadata-hook-action

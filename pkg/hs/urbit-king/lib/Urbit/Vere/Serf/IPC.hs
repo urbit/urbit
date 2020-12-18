@@ -84,7 +84,8 @@ import Foreign.Ptr                  (castPtr)
 import Foreign.Storable             (peek, poke)
 import RIO.Prelude                  (decodeUtf8Lenient)
 import System.Posix.Signals         (sigINT, sigKILL, signalProcess)
-import Urbit.Arvo                   (Ev, FX)
+import Urbit.Arvo                   (FX)
+import Urbit.Arvo.Event
 import Urbit.Noun.Time              (Wen)
 
 import qualified Data.ByteString        as BS
@@ -374,7 +375,6 @@ scry :: Serf -> Wen -> Gang -> Path -> IO (Maybe (Term, Noun))
 scry serf w g p = withSerfLockIO serf $ \ss -> do
   (ss,) <$> sendScryRequest serf w g p
 
-
 {-|
   Given a list of boot events, send them to to the serf in a single
   %play message. They must all be sent in a single %play event so that
@@ -535,13 +535,14 @@ run serf maxBatchSize getLastEvInLog onInput sendOn spin = topLoop
   onWorkResp :: Wen -> EvErr -> Work -> IO ()
   onWorkResp wen (EvErr evn err) = \case
     WDone eid hash fx -> do
-      io $ err (RunOkay eid)
+      io $ err (RunOkay eid fx)
       atomically $ sendOn ((Fact eid hash wen (toNoun evn)), fx)
     WSwap eid hash (wen, noun) fx -> do
       io $ err (RunSwap eid hash wen noun fx)
       atomically $ sendOn (Fact eid hash wen noun, fx)
     WBail goofs -> do
       io $ err (RunBail goofs)
+
 
 {-|
   Given:

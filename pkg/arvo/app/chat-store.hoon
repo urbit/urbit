@@ -3,7 +3,7 @@
 :: data store that holds linear sequences of chat messages
 ::
 /+  store=chat-store, default-agent, verb, dbug, group-store, *migrate
-~%  %chat-store-top  ..is  ~
+~%  %chat-store-top  ..part  ~
 |%
 +$  card  card:agent:gall
 +$  versioned-state

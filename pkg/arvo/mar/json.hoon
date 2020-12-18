@@ -8,7 +8,7 @@
 =,  eyre
 =,  format
 =,  html
-|_  jon/json
+|_  jon=json
 ::
 ++  grow                                                ::  convert to
   |%

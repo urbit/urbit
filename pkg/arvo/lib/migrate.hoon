@@ -1,4 +1,4 @@
-|%
+^?  |%
 ++  remake-set
   |*  s=(tree)
   (sy ~(tap in s))

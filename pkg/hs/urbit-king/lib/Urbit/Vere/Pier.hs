@@ -23,18 +23,21 @@ import RIO.Directory
 import Urbit.Arvo
 import Urbit.King.App
 import Urbit.Vere.Pier.Types
+import Urbit.Vere.Stat
 
 import Control.Monad.STM      (retry)
 import System.Environment     (getExecutablePath)
 import System.FilePath        (splitFileName)
 import System.Posix.Files     (ownerModes, setFileMode)
 import Urbit.EventLog.LMDB    (EventLog)
+import Urbit.EventLog.Event   (buildLogEvent)
 import Urbit.King.API         (TermConn)
 import Urbit.Noun.Time        (Wen)
 import Urbit.TermSize         (TermSize(..), termSize)
 import Urbit.Vere.Serf        (Serf)
 
 import qualified Data.Text                   as T
+import qualified Data.List as L
 import qualified System.Entropy              as Ent
 import qualified Urbit.EventLog.LMDB         as Log
 import qualified Urbit.King.API              as King
@@ -107,11 +110,15 @@ writeJobs log !jobs = do
   fromJob (expectedId, job) = do
     unless (expectedId == jobId job) $ error $ show
       ("bad job id!", expectedId, jobId job)
-    pure $ jamBS $ jobPayload job
+    pure $ buildLogEvent (jobMug job) (jobPayload job)
+
+  jobMug :: Job -> Mug
+  jobMug (RunNok (LifeCyc _ m _)) = m
+  jobMug (DoWork (Work _ m _ _)) = m
 
   jobPayload :: Job -> Noun
-  jobPayload (RunNok (LifeCyc _ m n)) = toNoun (m, n)
-  jobPayload (DoWork (Work _ m d o )) = toNoun (m, d, o)
+  jobPayload (RunNok (LifeCyc _ _ n)) = toNoun n
+  jobPayload (DoWork (Work _ _ d o))  = toNoun (d, o)
 
 
 -- Acquire a running serf. -----------------------------------------------------
@@ -299,9 +306,13 @@ pier (serf, log) vSlog startedSig injected = do
         atomically $ writeTQueue scryQ (w, b, g, putMVar res)
         takeMVar res
 
+  -- Set up the runtime stat counters.
+  stat <- newStat
+
   -- Set up the runtime subsite server and its capability to slog
+  -- and display stats.
   siteSlog <- newTVarIO (const $ pure ())
-  runtimeSubsite <- Site.kingSubsite ship scry siteSlog
+  runtimeSubsite <- Site.kingSubsite ship scry (renderStat stat) siteSlog
 
   --  Slogs go to stderr, to the runtime subsite, and to the terminal.
   env <- ask
@@ -310,12 +321,12 @@ pier (serf, log) vSlog startedSig injected = do
       io $ readTVarIO siteSlog >>= ($ s)
       logOther "serf" (display $ T.strip $ tankToText tank)
 
+  let err = atomically . Term.trace muxed . (<> "\r\n")
   (bootEvents, startDrivers) <- do
     env <- ask
-    let err = atomically . Term.trace muxed . (<> "\r\n")
     siz <- atomically $ Term.curDemuxSize demux
     let fak = isFake logId
-    drivers env ship fak compute scry (siz, muxed) err sigint runtimeSubsite
+    drivers env ship fak compute scry (siz, muxed) err sigint stat runtimeSubsite
 
   let computeConfig = ComputeConfig { ccOnWork      = takeTMVar computeQ
                                     , ccOnKill      = onKill
@@ -329,6 +340,8 @@ pier (serf, log) vSlog startedSig injected = do
 
   tSerf <- acquireWorker "Serf" (runCompute serf computeConfig)
 
+  doVersionNegotiation compute err
+
   -- Run all born events and retry them until they succeed.
   wackEv <- EvBlip . BlipEvArvo . ArvoEvWack () <$> genEntropy
   rio $ for_ (wackEv : bootEvents) $ \ev -> do
@@ -340,7 +353,7 @@ pier (serf, log) vSlog startedSig injected = do
         cb :: Int -> WorkError -> IO ()
         cb n | n >= 3 = error ("boot event failed: " <> show ev)
         cb n          = \case
-          RunOkay _         -> putMVar okaySig ()
+          RunOkay _ _       -> putMVar okaySig ()
           RunSwap _ _ _ _ _ -> putMVar okaySig ()
           RunBail _         -> inject (n + 1)
 
@@ -367,7 +380,7 @@ pier (serf, log) vSlog startedSig injected = do
     let inject = atomically $ compute $ RRWork $ EvErr ev $ cb
         cb :: WorkError -> IO ()
         cb = \case
-          RunOkay _         -> putMVar okaySig (Right ())
+          RunOkay _ _       -> putMVar okaySig (Right ())
           RunSwap _ _ _ _ _ -> putMVar okaySig (Right ())
           RunBail goofs     -> putMVar okaySig (Left goofs)
 
@@ -408,6 +421,63 @@ death tag tid = do
     Left  exn -> Left (tag, exn)
     Right ()  -> Right tag
 
+-- %wyrd version negotiation ---------------------------------------------------
+
+data PierVersionNegotiationFailed = PierVersionNegotiationFailed
+ deriving (Show, Exception)
+
+zuseVersion :: Word
+zuseVersion = 420
+
+doVersionNegotiation
+  :: HasPierEnv e
+  => (RunReq -> STM ())
+  -> (Text -> RIO e ())
+  -> RAcquire e ()
+doVersionNegotiation compute stderr = do
+  king <- tshow <$> view kingIdL
+
+  let k   = Wynn [("zuse", zuseVersion),
+                  ("lull", 330),
+                  ("arvo", 240),
+                  ("hoon", 140),
+                  ("nock", 4)]
+      sen = MkTerm king
+      v   = Vere sen [Cord "kh", Cord "1.0"] k
+      ev  = EvBlip $ BlipEvArvo $ ArvoEvWyrd () v
+
+  okaySig :: MVar (Either [Goof] FX) <- newEmptyMVar
+  let inject = atomically $ compute $ RRWork $ EvErr ev $ cb
+      cb :: WorkError -> IO ()
+      cb = \case
+        RunOkay _ fx       -> putMVar okaySig (Right fx)
+        RunSwap _ _ _ _ fx -> putMVar okaySig (Right fx)
+        RunBail goofs      -> putMVar okaySig (Left goofs)
+
+  rio $ stderr "vere: checking version compatibility"
+  io inject
+
+  takeMVar okaySig >>= \case
+    Left goof -> do
+      rio $ stderr "pier: version negotation failed"
+      logError $ display @Text ("Goof in wyrd event: " <> tshow goof)
+      throwIO PierVersionNegotiationFailed
+
+    Right fx  -> do
+      -- Walk through the returned fx looking for a wend effect. If we find
+      -- one, check the zuse versions.
+      rio $ for_ fx $ \case
+        GoodParse (EfWend (Wynn xs)) -> case L.lookup "zuse" xs of
+          Nothing -> pure ()
+          Just zuseVerInWynn ->
+            if zuseVerInWynn /= zuseVersion
+            then do
+              rio $ stderr "pier: pier: version negotiation failed; downgrade"
+              throwIO PierVersionNegotiationFailed
+            else
+              pure ()
+        _ -> pure ()
+
 
 -- Start All Drivers -----------------------------------------------------------
 
@@ -430,12 +500,15 @@ drivers
   -> (TermSize, Term.Client)
   -> (Text -> RIO e ())
   -> IO ()
+  -> Stat
   -> Site.KingSubsite
   -> RAcquire e ([Ev], RAcquire e Drivers)
-drivers env who isFake plan scry termSys stderr serfSIGINT sub = do
+drivers env who isFake plan scry termSys stderr serfSIGINT stat sub = do
+  let Stat{..} = stat
+
   (behnBorn, runBehn) <- rio Behn.behn'
-  (termBorn, runTerm) <- rio (Term.term' termSys serfSIGINT)
-  (amesBorn, runAmes) <- rio (Ames.ames' who isFake scry stderr)
+  (termBorn, runTerm) <- rio (Term.term' termSys (renderStat stat) serfSIGINT)
+  (amesBorn, runAmes) <- rio (Ames.ames' who isFake statAmes scry stderr)
   (httpBorn, runEyre) <- rio (Eyre.eyre' who isFake stderr sub)
   (clayBorn, runClay) <- rio Clay.clay'
   (irisBorn, runIris) <- rio Iris.client'
@@ -493,6 +566,7 @@ router slog waitFx Drivers {..} = do
       case ef of
         GoodParse (EfVega _ _              ) -> vega
         GoodParse (EfExit _ _              ) -> exit
+        GoodParse (EfWend _                ) -> pure ()
         GoodParse (EfVane (VEBehn       ef)) -> io (dBehn ef)
         GoodParse (EfVane (VEBoat       ef)) -> io (dSync ef)
         GoodParse (EfVane (VEClay       ef)) -> io (dSync ef)
@@ -596,7 +670,7 @@ runPersist log inpQ out = do
       do
         unless (expectedId == eve) $ do
           throwIO (BadEventId expectedId eve)
-        pure $ jamBS $ toNoun (mug, wen, non)
+        pure $ buildLogEvent mug $ toNoun (wen, non)
     pure (fromList lis)
 
   getBatchFromQueue :: STM (NonNull [(Fact, FX)])

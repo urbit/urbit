@@ -44,6 +44,15 @@ instance Show Nock where
 
 --------------------------------------------------------------------------------
 
+-- A Pill is a pair of [pil_p pil_q], where pil_p is cued and pil_q is an
+-- optional set of userspace ovums.
+--
+-- The cued pil_p is a trel of [mot tag dat], where mot is 0 (version number?),
+-- tag is a cord about the type of pill, and dat is the traditional trel of
+-- [pBootForumlas pKernelOvums pUserspaceOvums].
+--
+-- So what's with pil_q? It looks like it is search for the %into.
+
 data Pill
   = PillIvory [Noun]
   | PillPill

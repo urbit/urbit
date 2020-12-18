@@ -290,7 +290,7 @@
   =/  body=json
     (need (de-json:html q.u.body.request.inbound-request))
   =/  input=vase
-    (slop (tube !>(body)) !>(~))
+    (slop !>(~) (tube !>(body)))
   =/  =start-args
     [~ `tid thread input]
   =^  cards  state
@@ -362,7 +362,7 @@
   =.  starting.state
     (~(jab by starting.state) yarn |=([=trying =vase] [%none vase]))
   ~|  sign+[- +<]:sign-arvo
-  ?>  ?=([?(%b %c) %writ *] sign-arvo)
+  ?>  ?=([?(%behn %clay) %writ *] sign-arvo)
   =/  =riot:clay  p.sign-arvo
   ?~  riot
     (thread-fail-not-running tid %build-thread-error *tang)

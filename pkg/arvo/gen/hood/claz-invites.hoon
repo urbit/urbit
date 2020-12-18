@@ -4,8 +4,7 @@
 ::
 ::    eg: |claz-invites ~marzod 1 10 %/example-invites/txt
 ::
-/+  keygen
-=,  ethereum
+/+  keygen, *ethereum
 ::
 :-  %say
 |=  $:  [now=@da eny=@uvJ =beak]
@@ -28,7 +27,7 @@
 %+  turn  (gulf min-child max-child)
 |=  child=@ud
 =/  who=ship  (cat 4 star child)
-=/  ticket=@q  (end 3 8 (shas who eny))
+=/  ticket=@q  (end [3 8] (shas who eny))
 =/  owner=address
   =<  addr.keys
   ::NOTE  ~zod because invite wallet convention
@@ -37,5 +36,5 @@
 ;:  weld
   (scow %p who)  ","
   (slag 1 (scow %q ticket))  ","
-  (address-to-hex:ethereum owner)
+  (address-to-hex owner)
 ==

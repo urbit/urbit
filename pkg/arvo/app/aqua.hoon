@@ -21,29 +21,27 @@
 ::  We get ++unix-event and ++pill from /-aquarium
 ::
 /-  aquarium
-/+  pill, default-agent, aqua-azimuth, dbug, verb
+/+  pill, azimuth, default-agent, aqua-azimuth, dbug, verb
 =,  pill-lib=pill
 =,  aquarium
 =>  $~  |%
     +$  versioned-state
       $%  state-0
-          state-1
       ==
     +$  state-0
       $:  %0
           pil=pill
           assembled=*
           tym=@da
-          fleet-snaps=(map term (map ship pier))
-          piers=(map ship pier)
-      ==
-    +$  state-1
-      $:  %1
-          pil=pill
-          assembled=*
-          tym=@da
           fleet-snaps=(map term fleet)
           piers=fleet
+      ==
+    ::  XX temporarily shadowed, fix and remove
+    ::
+    +$  pill
+      $:  boot-ova=*
+          kernel-ova=(list unix-event)
+          userspace-ova=(list unix-event)
       ==
     ::
     +$  fleet  [ships=(map ship pier) azi=az-state]
@@ -55,7 +53,7 @@
       ==
     --
 ::
-=|  state-1
+=|  state-0
 =*  state  -
 =<
   %-  agent:dbug
@@ -79,13 +77,6 @@
     ::  wipe fleets and piers rather than give them falsely nulled azimuth state
     ::
         %0
-      %_  $
-        -.old            %1
-        fleet-snaps.old  *(map term fleet)
-        piers.old        *fleet
-      ==
-    ::
-        %1
       [cards this(state old)]
     ==
   ::
@@ -520,7 +511,7 @@
     ::      should be deleted now that aqua is capable of managing azimuth state
     ::      internally. Its been left this way for now until all the ph tests
     ::      can be rewritten
-    =/  keys=dawn-event:able:jael  (dawn who.ae)
+    =/  keys=dawn-event:jael  (dawn who.ae)
     =.  this  abet-pe:(publish-effect:(pe who.ae) [/ %sleep ~])
     =/  initted
       =<  plow
@@ -736,7 +727,7 @@
 ::
 ++  dawn
   |=  who=ship
-  ^-  dawn-event:able:jael
+  ^-  dawn-event:jael
   ?>  ?=(?(%czar %king %duke) (clan:title who))
   =/  spon=(list [ship point:azimuth])
     %-  flop
@@ -759,7 +750,7 @@
     ?:  ?=(%czar (clan:title ship))
       [a-point]~
     [a-point $(who ship)]
-  =/  =seed:able:jael
+  =/  =seed:jael
     =/  life-rift  (~(got by lives.azi.piers) who)
     =/  =life  lyfe.life-rift
     [who life sec:ex:(get-keys:aqua-azimuth who life) ~]

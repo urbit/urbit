@@ -27,6 +27,7 @@ import Urbit.Vere.Pier.Types
 import Data.List           ((!!))
 import RIO.Directory       (createDirectoryIfMissing)
 import Urbit.King.API      (readPortsFile)
+import Urbit.Vere.Stat     (RenderedStat)
 import Urbit.TermSize      (TermSize(TermSize))
 import Urbit.Vere.Term.API (Client(Client), ClientTake(..))
 
@@ -391,17 +392,19 @@ localClient doneSignal = fst <$> mkRAcquire start stop
       DecoBl   -> '5'
       DecoNull -> '0'
 
-    termRenderTint :: Tint -> Char
+    termRenderTint :: Tint -> [Char]
     termRenderTint = \case
-      TintK    -> '0'
-      TintR    -> '1'
-      TintG    -> '2'
-      TintY    -> '3'
-      TintB    -> '4'
-      TintM    -> '5'
-      TintC    -> '6'
-      TintW    -> '7'
-      TintNull -> '9'
+      TintK    -> ['0']
+      TintR    -> ['1']
+      TintG    -> ['2']
+      TintY    -> ['3']
+      TintB    -> ['4']
+      TintM    -> ['5']
+      TintC    -> ['6']
+      TintW    -> ['7']
+      TintNull -> ['9']
+      TintTrue r g b ->
+        mconcat ["8;2;", show r, ";", show g, ";", show b]
 
     -- Wraps the appropriate escape sequence around a piece of styled text
     termRenderStubSegment :: Stye -> [Char] -> [Char]
@@ -417,10 +420,10 @@ localClient doneSignal = fst <$> mkRAcquire start stop
           [ intersperse ';' $ fmap termRenderDeco $ toList decoset
           , case back of
               TintNull -> []
-              tint     -> ['4', termRenderTint tint]
+              tint     -> '4' : termRenderTint tint
           , case fore of
               TintNull -> []
-              tint     -> ['3', termRenderTint tint]
+              tint     -> '3' : termRenderTint tint
           ]
 
         styled = mconcat [escape, styles, "m", tape, escape, "0m"]
@@ -556,7 +559,7 @@ localClient doneSignal = fst <$> mkRAcquire start stop
                 loop rd
               else if w == 3 then do
                 -- ETX (^C)
-                logInfo $ displayShow "Ctrl-c interrupt"
+                logInfo $ "Ctrl-c interrupt"
                 atomically $ do
                   writeTQueue wq [Term.Trace "interrupt\r\n"]
                   writeTQueue rq $ Ctl $ Cord "c"
@@ -597,9 +600,10 @@ localClient doneSignal = fst <$> mkRAcquire start stop
 term'
   :: HasPierEnv e
   => (TermSize, Client)
+  -> IO RenderedStat
   -> IO ()
   -> RIO e ([Ev], RAcquire e (DriverApi TermEf))
-term' (tsize, client) serfSIGINT = do
+term' (tsize, client) stat serfSIGINT = do
   let TermSize wi hi = tsize
       initEv = [blewEvent wi hi, initialHail]
 
@@ -608,7 +612,7 @@ term' (tsize, client) serfSIGINT = do
   runDriver = do
     env <- ask
     ventQ :: TQueue EvErr <- newTQueueIO
-    diOnEffect <- term env (tsize, client) (writeTQueue ventQ) serfSIGINT
+    diOnEffect <- term env (tsize, client) (writeTQueue ventQ) stat serfSIGINT
 
     let diEventSource = fmap RRWork <$> tryReadTQueue ventQ
 
@@ -621,9 +625,10 @@ term :: forall e. (HasPierEnv e)
      => e
      -> (TermSize, Client)
      -> (EvErr -> STM ())
+     -> IO RenderedStat
      -> IO ()
      -> RAcquire e (TermEf -> IO ())
-term env (tsize, Client{..}) plan serfSIGINT = runTerm
+term env (tsize, Client{..}) plan stat serfSIGINT = runTerm
   where
     runTerm :: RAcquire e (TermEf -> IO ())
     runTerm = do

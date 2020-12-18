@@ -1,5 +1,5 @@
 /-  lens
-|_  com/command:lens
+|_  com=command:lens
 ++  grad  %noun
 ++  grow
   |%
@@ -9,7 +9,7 @@
   |%
   ++  noun  command:lens
   ++  json
-    |=  jon/^json
+    |=  jon=^json
     ^-  command:lens
     ~|  jon=jon
     %-  need
@@ -22,7 +22,7 @@
     |%
     ++  source
       ^-  $-(^^json (unit source:lens))
-      |=  jon/^^json
+      |=  jon=^^json
       =+  tuple=%.(jon (ar source))
       ?^  tuple
         `[%tuple u.tuple]

@@ -3,7 +3,7 @@
 /-  *claz
 /+  *claz, ethio, strandio
 =,  ethereum-types
-=,  able:jael
+=,  jael
 ::
 |=  args=vase
 =/  [url=@t =command]

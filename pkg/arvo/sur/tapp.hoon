@@ -18,7 +18,7 @@
       [%rule wire %turf %put turf]
       [%source wire whos=(set ship) src=source:jael]
       [%sources wire ~]
-      [%new-event wire =ship =udiff:point:able:jael]
+      [%new-event wire =ship =udiff:point:jael]
       [%listen wire whos=(set ship) =source:jael]
       [%flog wire flog:dill]
   ==

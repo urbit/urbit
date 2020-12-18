@@ -10,7 +10,7 @@
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m
-=+  !<([=update:inv ~] arg)
+=+  !<([~ =update:inv] arg)
 ?.  ?=(%accepted -.update)
   (pure:m !>(~))
 ;<  =bowl:spider  bind:m  get-bowl:strandio
@@ -21,8 +21,7 @@
 ;<  ~  bind:m
   %+  poke-our  %spider
   =-  spider-start+!>([`tid.bowl ~ %graph-join -])
-  %+  slop
-    !>  ^-  action:graph-view
-    [%join resource.invite ship.invite]
-  !>(~)
+  %+  slop  !>(~)
+  !>  ^-  action:graph-view
+  [%join resource.invite ship.invite]
 (pure:m !>(~))

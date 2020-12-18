@@ -119,7 +119,8 @@ defaultLogFile :: IO FilePath
 defaultLogFile = do
   logDir <- getXdgDirectory XdgCache "urbit"
   createDirectoryIfMissing True logDir
-  pure (logDir </> "king.log")
+  logId :: Word32 <- randomIO
+  pure (logDir </> "king-" <> show logId <> ".log")
 
 runKingEnvNoLog :: RIO KingEnv a -> IO a
 runKingEnvNoLog act = runKingEnv mempty mempty act

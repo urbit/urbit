@@ -4,7 +4,7 @@
 /?    310
 ::
 =,  format
-|_  tan/(list tank)
+|_  tan=(list tank)
 ++  grad  %noun
 ++  grow
   |%

@@ -12,7 +12,7 @@ module Urbit.Arvo.Event where
 import Urbit.Prelude hiding (Term)
 
 import Control.Monad.Fail (fail)
-import Urbit.Arvo.Common (KingId(..), ServId(..))
+import Urbit.Arvo.Common (KingId(..), ServId(..), Vere(..))
 import Urbit.Arvo.Common (Desk, Mime)
 import Urbit.Arvo.Common (Header(..), HttpEvent)
 import Urbit.Arvo.Common (AmesDest, Ipv4, Ipv6, Port, Turf)
@@ -219,6 +219,7 @@ data ArvoEv
     = ArvoEvWhom ()   Ship
     | ArvoEvWack ()   Entropy
     | ArvoEvCrud Path Noun
+    | ArvoEvWyrd ()   Vere
   deriving (Eq, Ord, Show)
 
 deriveNoun ''ArvoEv

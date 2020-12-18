@@ -3,7 +3,7 @@
   ::
 /?    310
 =,  eyre
-|_  url/purl
+|_  url=purl
 ++  grad  %noun
 ::
 ++  grow

@@ -98,6 +98,11 @@
         void
         u3x_mean(u3_noun a, ...);
 
+      /* u3x_bite(): xtract/default $bloq and $step from $bite.
+      */
+        void
+        u3x_bite(u3_noun bite, u3_atom* bloq, u3_atom *step);
+
       /* u3x_cell():
       **
       **   Divide `a` as a cell `[b c]`.

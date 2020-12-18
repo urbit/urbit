@@ -1,7 +1,7 @@
 ::  herm: stand-in for term.c with http interface
 ::
 /+  default-agent, dbug, verb
-=,  able:jael
+=,  jael
 |%
 +$  state-0  [%0 ~]
 --
@@ -65,7 +65,7 @@
     ::  pass on dill blits for the session
     ::
       [%view %$ ~]
-    ?.  ?=([%d %blit *] sign-arvo)
+    ?.  ?=([%dill %blit *] sign-arvo)
       ~|  [%unexpected-sign [- +<]:sign-arvo]
       !!
     :_  this
@@ -78,7 +78,7 @@
       [%tube @ @ ~]
     =*  from  i.t.wire
     =*  to  i.t.t.wire
-    ?.  ?=([%c %writ *] sign-arvo)
+    ?.  ?=([%clay %writ *] sign-arvo)
       ~|  [%unexpected-sign [- +<]:sign-arvo]
       !!
     :_  this

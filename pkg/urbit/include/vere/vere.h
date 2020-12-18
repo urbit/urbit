@@ -353,7 +353,6 @@
       */
         typedef struct _u3_fact {
           c3_d             eve_d;               //  event number
-          c3_l             bug_l;               //  kernel mug before XX remove
           c3_l             mug_l;               //  kernel mug after
           u3_noun            job;               //  (pair date ovum)
           struct _u3_fact* nex_u;               //  next in queue
@@ -382,8 +381,7 @@
       */
         typedef enum {
           u3_pico_full = 0,
-          u3_pico_mine = 1,
-          u3_pico_last = 2
+          u3_pico_once = 1
         } u3_pico_type;
 
       /* u3_pico: proto-peek
@@ -395,12 +393,8 @@
           u3_noun            gan;               //  leakset
           u3_pico_type     typ_e;               //  type-tagged
           union {                               //
-            u3_noun          ful;               //  full: /care/beam
-            struct {                            //  mine:
-              c3_m         car_m;               //    care
-              u3_noun        pax;               //    /desk/case/path
-            } min_u;                            //
-            struct {                            //  last:
+            u3_noun          ful;               //  (each path [%beam term beam])
+            struct {                            //  once:
               c3_m         car_m;               //    care
               u3_atom        des;               //    desk
               u3_noun        pax;               //    /path
@@ -413,9 +407,8 @@
         typedef struct _u3_peek {
           void*            ptr_v;               //  context
           u3_peek_cb       fun_f;               //  callback
-          u3_noun            now;               //  XX
-          u3_noun            gan;               //  leakset
-          u3_noun            ful;               //  /care/beam
+          u3_pico_type     typ_e;               //  type
+          u3_noun            sam;               //  +peek sample
         } u3_peek;
 
       /* u3_writ_type: king->serf ipc message types
@@ -434,7 +427,6 @@
       /* u3_writ: ipc message from king to serf
       */
         typedef struct _u3_writ {
-          struct timeval   tim_u;               //  time enqueued
           struct _u3_writ* nex_u;               //  next in queue
           u3_writ_type     typ_e;               //  type-tagged
           union {                               //
@@ -544,8 +536,9 @@
           u3_psat_init = 0,                   //  initialized
           u3_psat_boot = 1,                   //  bootstrap
           u3_psat_play = 2,                   //  replaying
-          u3_psat_work = 3,                   //  working
-          u3_psat_done = 4                    //  shutting down
+          u3_psat_wyrd = 3,                   //  versioning
+          u3_psat_work = 4,                   //  working
+          u3_psat_done = 5                    //  shutting down
         } u3_psat;
 
       /* u3_boot: bootstrap event sequence
@@ -1006,7 +999,7 @@
       /* u3_lord_work(): attempt work.
       */
         void
-        u3_lord_work(u3_lord* god_u, u3_ovum* egg_u, u3_noun ovo);
+        u3_lord_work(u3_lord* god_u, u3_ovum* egg_u, u3_noun job);
 
       /* u3_lord_play(): recompute batch.
       */
@@ -1239,16 +1232,6 @@
                      u3_noun      ful,
                      void*      ptr_v,
                      u3_peek_cb fun_f);
-
-      /* u3_pier_peek_mine(): read namespace, injecting ship.
-      */
-        void
-        u3_pier_peek_mine(u3_pier*   pir_u,
-                          u3_noun      gan,
-                          c3_m       car_m,
-                          u3_noun      pax,
-                          void*      ptr_v,
-                          u3_peek_cb fun_f);
 
       /* u3_pier_peek_last(): read namespace, injecting ship and case.
       */

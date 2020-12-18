@@ -3,7 +3,7 @@
 ::
 /+  store=graph-store, sigs=signatures, res=resource, default-agent, dbug,
     *migrate
-~%  %graph-store-top  ..is  ~
+~%  %graph-store-top  ..part  ~
 |%
 +$  card  card:agent:gall
 +$  versioned-state
@@ -946,7 +946,7 @@
       [%try-rejoin @ *]
     =/  rid=resource:store  (de-path:res t.t.wire)
     =/  nack-count    (slav %ud i.t.wire)
-    ?>  ?=([%b %wake *] sign-arvo)
+    ?>  ?=([%behn %wake *] sign-arvo)
     ~?  ?=(^ error.sign-arvo)
       "behn errored in backoff timers, continuing anyway"
     =/  new=^wire  [%try-rejoin (scot %ud +(nack-count)) t.t.wire]

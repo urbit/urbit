@@ -48,7 +48,7 @@
   ::
   ++  nu
     |=  jon=json
-    ?>  ?=({$s *} jon)
+    ?>  ?=([%s *] jon)
     (rash p.jon hex)
   ::
   ++  metadata

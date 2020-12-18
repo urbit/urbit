@@ -8,7 +8,7 @@ static void
 _setup(void)
 {
   u3m_init();
-  u3m_pave(c3y, c3n);
+  u3m_pave(c3y);
 }
 
 /* _ames_writ_ex(): |hi packet from fake ~zod to fake ~nec
