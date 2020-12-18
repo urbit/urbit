@@ -10,7 +10,7 @@
 ::      - updates to existing address info
 ::
 ::  Sends updates to:
-::    /sign-me
+::    /updates
 ::
 /-  *btc-wallet-hook, bws=btc-wallet-store
 /+  dbug, default-agent, bp=btc-provider, bwsl=btc-wallet-store, *btc
@@ -141,17 +141,21 @@
     ?.  (gth (lent xs) 0)  `state
     `state(def-wallet `(snag 0 xs))
     ::
-      %req-pay-address
+    ::  %req-pay-address
     ::  overwrites any payment being built currently
+    ::  can't pay if there's an outstanding payment being broadcast
     ::  can't pay yourself; comets can't pay (could spam requests)
     ::  forwards poke to payee if payee isn't us
     ::  deletes poym since we'll be making a new outgoing payment
     ::  lets us set fee per byte and recall it once we get a payment address back
     ::  wire is /payer/value/timestamp
     ::
-    ~|  "Can't pay ourselves; no comets"
+      %req-pay-address
+    ?:  broadcasting  ~|("Broadcasting a transaction" !!)
+    ~|  "Can't pay ourselves; no comets; can't do while tx is being signed"
     ?<  =(src.bowl payee.act)
     ?<  ?=(%pawn (clan:title payee.act))
+    ?<  broadcasting
     =+  feyb=?~(feyb.act fee.btc-state u.feyb.act)
     =>  .(poym ~, feybs (~(put by feybs) payee.act feyb))
     :_  state
@@ -181,45 +185,52 @@
     ::
       %ret-pay-address
     ?:  =(src.bowl our.bowl)  ~|("Can't pay ourselves" !!)
-    ?~  def-wallet  ~|("btc-wallet-hook: no def-wallet set" !!)
+    ?:  broadcasting  ~|("Broadcasting a transaction" !!)
+    ?~  def-wallet  ~|("btc-wallet-hook: no def(ault)-wallet set" !!)
     =+  feyb=(~(gut by feybs) src.bowl fee.btc-state)
     ?>  =(payer.act our.bowl)
     :_  state
     :~  %-  poke-wallet-store
         [%generate-txbu u.def-wallet `src.bowl feyb ~[[address.act value.act ~]]]
     ==
+    ::  %broadcast-tx
+    ::   - poym txid must match incoming txid
+    ::   - update sitx in poym
+    ::   - send to provider
     ::
       %broadcast-tx
-    :: TODO:
-    ::  calc txid from poym's txbu
-    ::  calc txid
-    ::  make sure both are the same
-    ::  remove from poym
-    ::  broadcast to provider
-    ::  add to wallet-store history
-    ::  send message to peer
-    `state
+    =/  tx-match=?
+      ?~  poym  %.n
+      =((get-id:txu (decode:txu signed.act)) ~(get-txid txb:bwsl u.poym))
+    :_  ?.  tx-match  state
+        ?~  poym  state
+        state(sitx.u.poym `signed.act)
+    ?.  tx-match
+      ~[(send-update [%broadcast-tx-mismatch-poym signed.act])]
+    ?~  provider  ~|("Provider not connected" !!)
+    ~[(poke-provider host.u.provider ~ [%broadcast-tx signed.act])]
     ::
-    ::  - check that src.bowl isn't past piym-limit in pend-piym
+    ::  %expect-payment
     ::  - check that payment is in piym
-    ::  - add payment to pend-piym
-    ::  - send tx-info to provider (poke)
+    ::  - replace pend.payment with incoming txid (lock)
+    ::  - add txid to pend-piym
+    ::  - request tx-info from provider
     ::
       %expect-payment
-    ~|  "Too many %expect-payment sent, or payer+value not found in incoming payments"
-    =+  num-pend=(~(gut by num.pend-piym) payer.act 0)
-    ?>  (gte piym-limit num-pend)
-    =+  pay=(~(get by ps.piym) payer.act)
+    |^  =+  pay=(~(get by ps.piym) src.bowl)
+    ~|  "%expect-payment: matching payment not in piym"
     ?~  pay  !!
-    ?>  ?&  =(payer.u.pay payer.act)
-            =(value.u.pay value.act)
-        ==
-    :-  ?~  provider  ~
-        ~[(get-tx-info host.u.provider txid.act)]
-    %=  state
-        ps.pend-piym  (~(put by ps.pend-piym) txid.act [u.pay vout-n.act])
-        num.pend-piym  (~(put by num.pend-piym) payer.act +(num-pend))
-    ==
+    ?>  (piym-matches u.pay)
+    :_  (update-pend-piym txid.act u.pay(pend `txid.act))
+    ?~  provider  ~
+    ~[(get-tx-info host.u.provider txid.act)]
+    ::
+    ++  piym-matches
+      |=  p=payment
+      ?&  =(payer.p src.bowl)
+          =(value.p value.act)
+      ==
+    --
     ::
       %clear-poym
     `state(poym ~)
@@ -247,7 +258,7 @@
     ?:  ?!(connected.u.provider)
       %-  zing
       :~  (retry-reqs block.s)
-          retry-txbu
+          retry-poym
           retry-pend-piym
       ==
     ?.  (lth block.btc-state block.s)
@@ -276,27 +287,27 @@
         ==
     ==
     ::
-      %tx-info
     ::  %txinfo
-    ::  - forward tx to wallet-store
-    ::  - delete txid from pend-piym and decrement num.pend-piym
-    ::  - check whether payment in pend-piym matches this tx's output values
-    ::    if yes add to wallet-store-history
+    ::  - insert into wallet-store history if pend-piym or poym matches txid
+    ::  - forward tx to wallet-store regardless
     ::
-    =/  ti=info:tx  +.body.p.upd
-    =/  mh=(unit [=xpub =hest:bws])
-      (mk-hest ti (~(get by ps.pend-piym) txid.ti))
-    :_  state(pend-piym (del-txid txid.ti))
-    %+  weld  ~[(poke-wallet-store [%tx-info ti])]
-    ?~  mh  ~
-    ~[(poke-wallet-store [%add-history-entry xpub.u.mh hest.u.mh])]
+      %tx-info
+    =*  ti  info.body.p.upd
+    =^  cards  state
+      ?:  (~(has by pend-piym) txid.ti)
+        (piym-to-history ti)
+      ?:  (poym-has-txid txid.ti)
+        (poym-to-history ti)
+      `state
+    :_  state
+    [(poke-wallet-store [%tx-info ti block.btc-state]) cards]
+    ::
     ::  %raw-tx
     ::  - if the req-id is for current poym, add txid/rawtx to the poym
     ::  - if the raw tx matches one of poym's inputs, add it
     ::
       %raw-tx
     =*  rt  body.p.upd
-    =.  poym  (update-poym-tx req-id.p.upd txid.rt rawtx.rt)
     ?~  poym  `state
     =.  txis.u.poym  (update-poym-txis txis.u.poym txid.rt rawtx.rt)
     :_  state
@@ -304,9 +315,38 @@
     ?~  pb  ~
     ~&  >  "PSBT ready:"
     ~&  >>  u.pb
-    ~[(send-sign-tx u.poym)]
+    ~[(send-update [%sign-tx u.poym])]
+    ::
+    ::  %broadcast-tx
+    ::   If no provider, return; try again on-reconnect
+    ::   If tx is included or broadcast
+    ::    - send %expect-payment to peer
+    ::    - send a %txinfo request
+    ::   If tx it is not included and not broadcast
+    ::    - clear poym
+    ::    - send a %broadcast-tx-spent-utxos update/error
+    ::
+      %broadcast-tx
+    =*  res  body.p.upd
+    ?~  provider  `state
+    ?~  poym  `state
+    ?.  =(~(get-txid txb:bwsl u.poym) txid.res)
+      `state
+    =/  success=?  ?|(broadcast.res included.res)
+    :_  ?:(success state state(poym ~))
+    ?.  success
+      ~[(send-update [%broadcast-tx-spent-utxos txid.res])]
+    ::  send %tx-info and %expect-payment
+    %+  weld  ~[(poke-provider host.u.provider ~ [%tx-info txid.res])]
+    ?~  payee.u.poym  ~
+    :_  ~
+    %-  poke-wallet-hook
+    :*  u.payee.u.poym
+        %expect-payment
+        txid.res
+        value:(snag 0 txos.u.poym)
+    ==
   ==
-::  get address-info for the request if block in request is old
 ::
 ++  handle-wallet-store-request
   |=  req=request:bws
@@ -341,16 +381,15 @@
       %generate-address
     ?~  peta.upd  ~&(> "wallet-hook: %generate-address: {<address.upd>}" `state)
     =/  [payer=ship value=sats]  u.peta.upd
-    :_  state(ps.piym (~(put by ps.piym) payer [xpub.upd address.upd payer value]))
+    :_  state(ps.piym (~(put by ps.piym) payer [~ xpub.upd address.upd payer value]))
     ~[(poke-wallet-hook payer [%ret-pay-address address.upd payer value])]
     ::  %generate-txbu
     ::   - replace current txbu (otherwise can have UTXO overlap)
-    ::   - request provider to create-raw-tx from txbu
+    ::   - get rawtxs for each input
     ::
       %generate-txbu
     :_  state(poym `txbu.upd)
     ?~  provider  ~&(>>> "provider not set" ~)
-    %+  weld  ~[(create-raw-tx host.u.provider txbu.upd)]
     %+  turn  txis.txbu.upd
     |=(=txi:bws (get-raw-tx host.u.provider txid.utxo.txi))
     ::
@@ -365,53 +404,110 @@
   ==
 ::  +reuse-address: if piym already has address for payer,
 ::    replace address and return to payer
+::   - if payment is pending, crash. Shouldn't be getting an address request
 ::
 ++  reuse-address
   |=  [payer=ship value=sats]
   ^-  (quip card _state)
   =+  p=(~(get by ps.piym) payer)
   ?~  p  `state
+  ?^  pend.u.p  ~|("%gen-address: {<payer>} already has pending payment to us" !!)
   =+  newp=u.p(value value)
   :_  state(ps.piym (~(put by ps.piym) payer newp))
   :~  %+  poke-wallet-hook  payer
           [%ret-pay-address address.newp payer value]
   ==
-::  +del-txid: delete txid from pend-piym
 ::
-++  del-txid
-  |=  =txid
-  ^-  ^pend-piym
-  =+  p=(~(get by ps.pend-piym) txid)
-  =.  ps.pend-piym  (~(del by ps.pend-piym) txid)
-  ?~  p  pend-piym
-  =*  payer  payer.pay.u.p
-  =+  n=(~(get by num.pend-piym) payer)
-  ?~  n  pend-piym
-  ?:  =(0 u.n)  pend-piym
-  pend-piym(num (~(put by num.pend-piym) payer (dec u.n)))
-::  +mk-hest: make a hest to add to wallet-store's history
-::    - one of the outputs' value must match the payment from pend-piym
+++  poym-has-txid
+  |=  =txid  ^-  ?
+  ?~  poym  %.n
+  ?~  sitx.u.poym  %.n
+  =(txid (get-id:txu (decode:txu u.sitx.u.poym)))
+::  +poym-to-history:
+::   - checks whether the txinfo is in poym
+::   - clears poym
+::   - returns card that adds hest to wallet-store history
 ::
-++  mk-hest
-  |=  [=info:tx p=(unit [pay=payment vout-n=@ud])]
-  ^-  (unit [=xpub =hest:bws])
-  ?~  p  ~
-  ?.  ?&  (gth (lent outputs.info) vout-n.u.p)
-          =(value.pay.u.p value:(snag vout-n.u.p outputs.info))
-      ==
-    ~
-  :-  ~
-  :-  xpub.pay.u.p
-  :*  txid.info
-      confs.info
-      recvd.info
-      %+  turn  inputs.info
-        |=(i=val:tx [i `payer.pay.u.p])
-      %+  turn  outputs.info
+++  poym-to-history
+  |=  ti=info:tx
+  |^  ^-  (quip card _state)
+  ?~  poym  `state
+  ?~  sitx.u.poym  `state
+  ?.  (poym-has-txid txid.ti)
+    `state
+  =+  vout=(get-vout txos.u.poym)
+  ?~  vout  ~|("pioym-to-history: poym should always have an output" !!)
+  :_  state(poym ~)
+  ~[(add-history-entry ti xpub.u.poym our.bowl payee.u.poym u.vout)]
+  ::
+  ++  get-vout
+    |=  txos=(list txo:bws)
+    ^-  (unit @ud)
+    =|  idx=@ud
+    |-  ?~  txos  ~
+    ?~  hk.i.txos  `idx
+    $(idx +(idx), txos t.txos)
+  --
+::  +piym-to-history
+::   - checks whether txid in pend-piym
+::   - checks whether ti has a matching value output to piym
+::   - if no match found, just deletes pend-piym with this tx
+::     stops peer from spamming txids
+::
+++  piym-to-history
+  |=  ti=info:tx
+  |^  ^-  (quip card _state)
+  =+  pay=(~(get by pend-piym) txid.ti)
+  ?~  pay  `state
+  ::  if no matching output in piym, delete from pend-piym to stop DDOS of txids
+  ::
+  =+  vout=(get-vout value.u.pay)
+  ?~  vout
+    `(del-pend-piym txid.ti)
+  :_  (del-all-piym txid.ti payer.u.pay)
+  :~  %-  add-history-entry
+      [ti xpub.u.pay payer.u.pay `our.bowl u.vout]
+  ==
+  ::
+  ++  get-vout
+    |=  value=sats
+    ^-  (unit @ud)
+    =|  idx=@ud
+    =+  os=outputs.ti
+    |-  ?~  os  ~
+    ?:  =(value.i.os value)
+      `value
+    $(os t.os)
+  ::
+  ::
+  ++  del-pend-piym
+    |=  =txid
+    ^-  _state
+    state(pend-piym (~(del by pend-piym) txid.ti))
+  ::
+  ++  del-all-piym
+    |=  [=txid payer=ship]
+    ^-  _state
+    =+  nf=(~(gut by num-fam.piym) payer 1)
+    %=  state
+        pend-piym  (~(del by pend-piym) txid)
+        ps.piym    (~(del by ps.piym) payer)
+        num-fam.piym  (~(put by num-fam.piym) payer (dec nf))
+    ==
+  --
+::
+++  add-history-entry
+  |=  [ti=info:tx =xpub payer=ship payee=(unit ship) vout=@ud]
+  ^-  card
+  %-  poke-wallet-store
+  :*  %add-history-entry
+      xpub  txid.ti  confs.ti  recvd.ti
+      (turn inputs.ti |=(i=val:tx [i `payer]))
+      %+  turn  outputs.ti
         |=  o=val:tx
-        ?:  =(pos.o vout-n.u.p)
-          [o `our.bowl]
-        [o `payer.pay.u.p]
+        ?:  =(pos.o vout)
+          [o payee]
+        [o `payer]
   ==
 ::  +fam: planet parent if s is a moon 
 ::
@@ -420,17 +516,19 @@
   ^-  ship
   ?.  =(%earl (clan:title s))  s
   (sein:title our.bowl now.bowl s)
-::  +update-poym-tx
-::   - check whether poym txbu's req-id matches this one
-::   - if it does, add the txid and rawtx
+::  +update-pend-piym
+::   - set pend.payment to txid (lock)
+::   - add txid to pend-piym
 ::
-++  update-poym-tx
-  |=  [ri=req-id:bp =txid rt=rawtx]
-  ^-  ^poym
-  ?~  poym  ~
-  ?.  =(ri req-id.u.poym)  poym
-  `u.poym(txinfo `[txid rt])
-  :: check poym txbu
+++  update-pend-piym
+  |=  [=txid p=payment]
+  ^-  _state
+  ?~  pend.p  ~|("update-pend-piym: empty pend.payment" !!)
+  %=  state
+      ps.piym  (~(put by ps.piym) payer.p p)
+      pend-piym  (~(put by pend-piym) txid p)
+  ==
+::
 ::  +update-poym-txis:
 ::    update outgoing payment with a rawtx, if the txid is in poym's txis
 ::
@@ -460,19 +558,23 @@
     `(get-tx-info host.u.provider txid.req)
   ==
 ::
-++  retry-txbu
+++  retry-poym
   ^-  (list card)
   ?~  poym  ~
   ?~  provider  ~|("provider not set" !!)
+  =*  host  host.u.provider
+  %+  weld
+    ?~  sitx.u.poym  ~
+    ~[(poke-provider host ~ [%broadcast-tx u.sitx.u.poym])]
   %+  turn  txis.u.poym
   |=  =txi:bws
-  (get-raw-tx host.u.provider txid.utxo.txi)
+  (get-raw-tx host txid.utxo.txi)
 ::  +retry-pend-piym: check whether txids in pend-piym are in mempool
 ::
 ++  retry-pend-piym
   ^-  (list card)
   ?~  provider  ~|("provider not set" !!)
-  %+  turn  ~(tap in ~(key by ps.pend-piym))
+  %+  turn  ~(tap in ~(key by pend-piym))
   |=(=txid (get-tx-info host.u.provider txid))
 ::
 ++  get-address-info
@@ -484,17 +586,6 @@
   |=  [host=ship =txid]
   ^-  card
   (poke-provider host ~ [%raw-tx txid])
-::
-++  create-raw-tx
-  |=  [host=ship t=txbu:bws]
-  ^-  card
-  =/  ins=(list [txid @ud])
-    %+  turn  txis.t
-    |=(=txi:bws [txid.utxo.txi pos.utxo.txi])
-  =/  outs=(list [address sats])
-    %+  turn  txos.t
-    |=(=txo:bws [address.txo value.txo])
-  (poke-provider host `req-id.t [%create-raw-tx ins outs])
 ::
 ++  get-tx-info
   |=  [host=ship =txid]
@@ -509,6 +600,12 @@
       %poke  %btc-provider-action  !>([ri actb])
   ==
 ::
+++  broadcasting
+  ^-  ?
+  ?~  poym  %.n
+  ?~  sitx.u.poym  %.n
+  %.y
+::
 ++  provider-connected
   ^-  ?
   ?~  provider  %.n
@@ -522,10 +619,10 @@
       %btc-wallet-hook-action  !>(act)
   ==
 ::
-++  send-sign-tx
-  |=  =txbu:bws
+++  send-update
+  |=  =update
   ^-  card
-  [%give %fact ~[/sign-me] %btc-wallet-hook-request !>([%sign-tx txbu])]
+  [%give %fact ~[/updates] %btc-wallet-hook-update !>(update)]
 ::
 ++  poke-wallet-store
   |=  act=action:bws

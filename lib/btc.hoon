@@ -33,27 +33,154 @@
   %-  ripemd-160
   %-  sha256  [(met 3 pubkey) pubkey]
 ::
-++  to-script-pubkey
-  |=  script=buffer  ^-  buffer
-  %-  zing
-  :~  ~[0x19 0x76 0xa9 0x14]
-      script
-      ~[0x88 0xac]
-  ==
-++  address-to-script-pubkey
-  |=  =address  ^-  buffer
-  =/  hex=byts
+++  script-pubkey
+  |=  =address
+  ^-  bytc
+  =/  h=bytc
     ?-  -.address
         %bech32
       (to-hex:bech32 address)
+      :: TODO: implement legacy
         %legacy
-      =/  h=@ux  (@ux +.address)
-      [(met 3 h) h]
+      ~|("legacy addresess not supported to script-pubkey yet" !!)
     ==
-  ?.  =(wid.hex 20)
-    ~|("Only 20-byte addresses supported" !!)
-  (to-script-pubkey (from-byts:buf hex))
-::  arms to handle BIP174 PSBTs
+  %-  cat:byt
+  :~  1^(add 2 wid.h)
+      1^0x0
+      1^wid.h
+      h
+  ==
+::  +txu: tx utility functions
+++  txu
+  |%
+  ++  en
+    |%
+    ++  input
+      |=  i=input:tx
+      ^-  bytc
+      %-  cat:byt
+      :~  (flip:byt txid.i)
+          (flip:byt 4^pos.i)
+          1^0x0
+          (flip:byt sequence.i)
+      ==
+    ::
+    ++  output
+      |=  o=output:tx
+      ^-  bytc
+      %-  cat:byt
+      ~[(flip:byt 8^value.o) script-pubkey.o]
+    --
+  ::
+  ++  de
+    |%
+    ++  nversion
+      |=  b=buffer
+      ^-  [nversion=@ud rest=buffer]
+      :_  (slag 4 b)
+      =<  dat
+      %-  flip:byt
+      (to-byts:buf (scag 4 b))
+    ::
+    ++  segwit
+      |=  b=buffer
+      ^-  [segwit=(unit @ud) rest=buffer]
+      ?.  =(0x0 (snag 0 b))
+        [~ b]
+      :_  (slag 2 b)
+      =<  [~ dat]
+      (to-byts:buf (scag 2 b))
+    ::  returns value as 0 since we don't know it when we decode
+    ::
+    ++  input
+      |=  b=buffer
+      ^-  input:tx
+      :*  %-  txid
+            %-  flip:byt
+            (to-byts:buf (scag 32 b))
+          =<(dat (flip:byt (to-byts:buf (swag [32 4] b))))
+          (flip:byt (to-byts:buf (swag [37 4] b)))
+          ~
+          ~
+          0
+      ==
+    ::
+    ++  output
+      |=  b=buffer
+      ^-  output:tx
+      :-  (to-byts:buf (slag 8 b))
+      =<  dat
+      (flip:byt (to-byts:buf (scag 8 b)))
+    ::
+    ++  inputs
+      |=  b=buffer
+      ^-  [is=(list input:tx) rest=buffer]
+      =|  acc=(list input:tx)
+      =^  count  b
+        [(snag 0 b) (slag 1 b)]
+      |-
+      ?:  =(0 count)  [acc b]
+      %=  $
+          acc  %+  snoc  acc
+               (input (scag 41 b))
+          b  (slag 41 b)
+          count  (dec count)
+      ==
+    ::
+    ++  outputs
+      |=  b=buffer
+      ^-  [os=(list output:tx) rest=buffer]
+      =|  acc=(list output:tx)
+      =^  count  b
+        [(snag 0 b) (slag 1 b)]
+      |-
+      ?:  =(0 count)  [acc b]
+      %=  $
+          acc  %+  snoc  acc
+               (output (scag 31 b))
+          b  (slag 31 b)
+          count  (dec count)
+      ==
+    --
+  ::
+  ++  encode
+    |=  =data:tx
+    ^-  bytc
+    %-  cat:byt
+    %-  zing
+    :~  :~  (flip:byt 4^nversion.data)
+            1^(lent is.data)
+        ==
+        (turn is.data input:en)
+        ~[1^(lent os.data)]
+        (turn os.data output:en)
+        ~[(flip:byt 4^locktime.data)]
+    ==
+  ++  get-id
+    |=  =data:tx
+    ^-  txid
+    %-  txid
+    %-  flip:byt
+    %-  dsha256
+    (encode data)
+  ::
+  ++  decode
+    |=  b=bytc
+    ^-  data:tx
+    =/  bu=buffer  (from-byts:buf b)
+    =^  nversion  bu
+      (nversion:de bu)
+    =^  segwit  bu
+      (segwit:de bu)
+    =^  inputs  bu
+      (inputs:de bu)
+    =^  outputs  bu
+      (outputs:de bu)
+    =/  locktime=@ud
+      dat:(to-byts:buf (scag 4 (flop bu)))
+    [inputs outputs locktime nversion segwit]
+  --
+::  core to handle BIP174 PSBTs
 ::
 ++  pbt
   |%
@@ -66,10 +193,12 @@
       ==
     ::
     ++  input
-      |=   i=in:psbt
+      |=  [only-witness=? i=in:psbt]
       ^-  map:psbt
-      :~  [[1 0x0] rawtx.i]
-          (witness-tx i)
+      %+  weld
+        ?:  only-witness  ~
+        ~[[1^0x0 rawtx.i]]
+      :~  (witness-tx i)
           (hdkey %input hdkey.i)
       ==
     ::
@@ -135,9 +264,14 @@
       %-  en:base64:mimes:html
       (flip:byt b)
   ::  +encode: make base64 cord of PSBT
+  ::   - only-witness: don't include non-witness UTXO
   ::
   ++  encode
-    |=  [=rawtx =txid inputs=(list in:psbt) outputs=(list out:psbt)]
+    |=  $:  only-witness=?
+            =rawtx  =txid
+            inputs=(list in:psbt)
+            outputs=(list out:psbt)
+        ==
     ^-  base64:psbt
     =/  sep=(unit bytc)  `1^0x0
     =/  final=(list (unit bytc))
@@ -145,7 +279,7 @@
       %+  turn
         %-  zing
         :~  ~[(globals:en rawtx)]
-            (turn inputs input:en)
+            (turn inputs (cury input:en only-witness))
             (turn outputs output:en)
         ==
       map-byts:en
@@ -420,7 +554,8 @@
   ::  goes from a bech32 address to hex. Returns byts to preserve leading 0s
   ::
   ++  to-hex
-    |=  b=bech32-address  ^-  hash
+    |=  b=bech32-address
+    ^-  bytc
     =/  d=(unit raw-decoded)  (decode-raw b)
     ?~  d  ~|("Invalid bech32 address" !!)
     =/  bs=(list @)

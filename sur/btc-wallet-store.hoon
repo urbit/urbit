@@ -26,7 +26,7 @@
 ::  scan-to
 ::  max-gap: maximum number of consec blank addresses before wallet stops scanning
 ::  confs:   confirmations required (after this is hit for an address, wallet stops refreshing it)
-:: 
+::
 +$  walt
   $:  =xpub
       =fprint
@@ -39,37 +39,39 @@
       max-gap=@ud
       confs=@ud
   ==
-::  input: utxo for a transaction
+::  insel: a selected utxo for input to a transaction
+::  peta: optional payment metadata
 ::  feyb: fee per byte in sats
 ::  txi/txo:  input/output for a transaction being built
-::   -txo has an hdkey if it's a change account
+::   - txo has an hdkey if it's a change account
+::   - by convention, first output of txo is to the payee, if one is present
 ::  txbu: tx builder -- all information needed to make a transaction for signing
-::  peta: optional payment metadata
+::   - sitx: signed hex transaction
 ::
-+$  input  [=utxo =chyg =idx]
++$  insel  [=utxo =chyg =idx]
 +$  peta  (unit [payer=ship value=sats])
 +$  feyb  sats
 +$  txi  [=utxo ur=(unit rawtx) =hdkey]
 +$  txo  [=address value=sats hk=(unit hdkey)]
 +$  txbu
-  $:  =req-id:bp
-      txinfo=(unit [=txid =rawtx])
-      =xpub
+  $:  =xpub
       payee=(unit ship)
       =vbytes
       txis=(list txi)
       txos=(list txo)
+      sitx=(unit bytc)
   ==
 ::  hest: an entry in the history log
 ::
 +$  hest
-  $:  =txid
+  $:  =xpub
+      =txid
       confs=@ud
       recvd=(unit @da)
       inputs=(list [=val:tx s=(unit ship)])
       outputs=(list [=val:tx s=(unit ship)])
   ==
-+$  history  (map xpub (map txid hest))
++$  history  (map txid hest)
 ::  state/watch variables:
 ::  scanning addresses and monitoring generated addresses
 ::  batch: indexes to scan for a given chyg
@@ -88,10 +90,10 @@
 +$  action
   $%  [%add-wallet =xpub =fprint scan-to=(unit scon) max-gap=(unit @ud) confs=(unit @ud)]
       [%address-info =xpub =chyg =idx utxos=(set utxo) used=? block=@ud]
-      [%tx-info =info:tx]
+      [%tx-info =info:tx block=@ud]
       [%generate-address =xpub =chyg =peta]
       [%generate-txbu =xpub payee=(unit ship) feyb=sats txos=(list txo)]
-      [%add-history-entry =xpub =hest]
+      [%add-history-entry =hest]
   ==
 ::
 +$  update

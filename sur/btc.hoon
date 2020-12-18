@@ -29,6 +29,13 @@
   ==
 ++  tx
   |%
+  +$  data
+    $:  is=(list input)
+        os=(list output) 
+        locktime=@ud
+        nversion=@ud
+        segwit=(unit @ud)
+    ==
   +$  val
     $:  =txid
         pos=@ud
@@ -42,20 +49,16 @@
         inputs=(list val)
         outputs=(list val)
     ==
-  +$  unsigned
-    $:  version=@
-        locktime=@
-        inputs=(list input)
-        outputs=(list val)
-    ==
   +$  input
     $:  =txid
-        tx-index=@
-        witness-ver=@
-        sequence=byts
-        script-pubkey=byts
-        redeem-script=(unit byts)
-        pubkey=(unit byts)
+        pos=@ud
+        sequence=bytc
+        redeem-script=(unit bytc)
+        pubkey=(unit bytc)
+        value=sats
+    ==
+  +$  output
+    $:  script-pubkey=bytc
         value=sats
     ==
   --

@@ -16,12 +16,9 @@
 +$  btc-state  [block=@ud fee=sats t=@da]
 +$  reqs  (map req-id:bp req=request:bws)
 ::
-+$  payment  [=xpub =address payer=ship value=sats]
++$  payment  [pend=(unit txid) =xpub =address payer=ship value=sats]
 +$  piym  [ps=(map ship payment) num-fam=(map ship @ud)]
-+$  pend-piym
-  $:  ps=(map txid [pay=payment vout-n=@ud])
-      num=(map ship @ud)
-  ==
++$  pend-piym  (map txid payment)
 +$  poym  (unit txbu:bws)
 ::  req-pay-address: request a payment address from another ship
 ::   - target of action is local ship
@@ -37,12 +34,22 @@
       [%req-pay-address payee=ship value=sats feyb=(unit sats)]
       [%gen-pay-address value=sats]
       [%ret-pay-address =address payer=ship value=sats]
-      [%broadcast-tx signed-psbt=cord]
-      [%expect-payment =txid payer=ship value=sats vout-n=@ud]
+      [%broadcast-tx signed=rawtx]
+      [%expect-payment =txid value=sats]
       [%clear-poym ~]
       [%force-retry ~]
   ==
++$  update
+  $%  request
+      error
+  ==
+::
 +$  request
   $%  [%sign-tx txbu:bws]
+  ==
+::
++$  error
+  $%  [%broadcast-tx-mismatch-poym signed=rawtx]
+      [%broadcast-tx-spent-utxos =txid]
   ==
 --

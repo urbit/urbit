@@ -98,6 +98,7 @@ Provider is `~zod`, `~dopzod` is a client.  Use the xpub from PRIVATE.md to have
 ### setup
 On `~zod`:
 ```
+|commit %home
 |start %btc-provider
 |start %btc-wallet-store
 |start %btc-wallet-hook
@@ -105,23 +106,29 @@ On `~zod`:
 :btc-provider|command [%whitelist-clients `(set ship)`(sy ~[~dopzod])]
 =xpubzod 'zpub6rFR7y4Q2AijBEqTUquhVz398htDFrtymD9xYYfG1m4wAcvPhXNfE3EfH1r1ADqtfSdVCToUG868RvUUkgDKf31mGDtKsAYz2oz2AGutZYs'
 :btc-wallet-hook|action [%set-provider ~zod]
-:btc-wallet-store|action [%add-wallet xpubzod ~ [~ 20] [~ 6]]
+
+=fprint [%4 0xdead.beef]
+:btc-wallet-store|action [%add-wallet xpubzod fprint ~ [~ 8] [~ 6]]
 ```
 
 on `~dopzod`:
 ```
-=xpubp PRIVATE.md
+::  xpub from PRIVATE.md
 
+|commit %home
 |start %btc-wallet-store
 |start %btc-wallet-hook
 :btc-wallet-hook|action [%set-provider ~zod]
-:btc-wallet-store|action [%add-wallet xpubp ~ [~ 20] [~ 6]]
+=xpubp 'zpub6r8dKyWJ31XF6n69KKeEwLjVC5ruqAbiJ4QCqLsrV36Mvx9WEjUaiPNPGFLHNCCqgCdy6iZC8ZgHsm6a1AUTVBMVbKGemNcWFcwBGSjJKbD'
+=fprint [%4 0xbeef.dead]
+:btc-wallet-store|action [%add-wallet xpubp fprint ~ [~ 8] [~ 6]]
 ```
 
 ### request address
 on `~dopzod`:
 ```
 :btc-wallet-hook|action [%req-pay-address payee=~zod value=2.000 [~ 10]]
+:btc-wallet-hook +dbug [%state 'poym']
 ```
 
 

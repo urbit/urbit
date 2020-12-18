@@ -23,6 +23,10 @@
     ~|("legacy addresses not yet supported" !!)
   [%bech32 addrc]
 ::
+++  bytc-to-cord
+  |=  =bytc  ^-  cord
+  (en:base16:mimes:html bytc)
+::
 ++  txid-to-cord
   |=  =txid  ^-  cord
   (en:base16:mimes:html txid)
@@ -77,112 +81,87 @@
   ==
 ::
 ++  gen-request
- |=  [=host-info ract=action:rpc]
+ |=  [=host-info ract=action:rpc-types]
   ^-  request:http
   %+  rpc-action-to-http
   api-url.host-info  ract
 ::
-++  action-to-json
-  |=  ract=action:rpc
-  |^  ^-  json
-  =,  enjs:format
-  ?+  -.ract  ~|("Unsupported action for POST" !!)
-      %create-raw-tx
-    %-  pairs
-    :~  [%inputs [%a (turn inputs.ract input)]]
-        [%outputs [%a (turn outputs.ract output)]]
+++  rpc
+  |%
+  ++  parse-result
+    |=  res=response:json-rpc
+    |^  ^-  result:rpc-types
+    ~|  -.res
+    ?>  ?=(%result -.res)
+    ?+  id.res  ~|([%unsupported-result id.res] !!)
+        %get-address-info
+      [id.res (address-info res.res)]
+      ::
+        %get-tx-vals
+      [id.res (tx-vals res.res)]
+      ::
+        %get-raw-tx
+      [id.res (raw-tx res.res)]
+      :: 
+        %broadcast-tx
+      [%broadcast-tx (broadcast-tx res.res)]
+      ::
+        %get-block-count
+      [id.res (ni:dejs:format res.res)]
+      ::
+        %get-block-and-fee
+      [id.res (block-and-fee res.res)]
     ==
-  ==
-  ::
-  ++  input
-    |=  [=txid pos=@ud]
-    ^-  json
-    =,  enjs:format
-    %-  pairs
-    :~  [%txid [%s (txid-to-cord txid)]]
-        [%vout (numb pos)]
-    ==
-  ++  output
-    |=  [=address value=sats]
-    =,  enjs:format
-    ^-  json
-    %-  frond
-    [(address-to-cord address) (numb value)]
-  --
-::
-++  to-response
-  |=  result:rpc
-  ^-  result
-  *result
-++  parse-response
-  |=  res=response:json-rpc
-  |^  ^-  response:rpc
-  ~|  -.res
-  ::  ignores RPC responses of %error, %fails and %batch
-  ::
-  ?>  ?=(%result -.res)
-  ?+  id.res  ~|([%unsupported-response id.res] !!)
-      %get-address-info
-    [id.res (address-info res.res)]
-    ::
-      %get-tx-vals
-    [id.res (tx-vals res.res)]
-    ::
-      %get-raw-tx
-    [id.res (raw-tx res.res)]
-    ::
-      %create-raw-tx
-    [%get-raw-tx (raw-tx res.res)]
-    ::
-      %get-block-count
-    [id.res (ni:dejs:format res.res)]
-    ::
-      %get-block-and-fee
-    [id.res (block-and-fee res.res)]
-  ==
-  ++  address-info
-    %-  ot:dejs:format
-    :~  [%utxos (as:dejs:format utxo)]
-        [%used bo:dejs:format]
-        [%block ni:dejs:format]
-    ==
-  ++  utxo
-    %-  ot:dejs:format
-    :~  ['tx_pos' ni:dejs:format]
-        ['tx_hash' (cu:dejs:format to-hash256 so:dejs:format)]
-        [%height ni:dejs:format]
-        [%value ni:dejs:format]
-        [%recvd (cu:dejs:format from-epoch ni:dejs:format)]
-    ==
-  ++  tx-vals
-    %-  ot:dejs:format
-    :~  [%txid (cu:dejs:format to-hash256 so:dejs:format)]
-        [%confs ni:dejs:format]
-        [%recvd (cu:dejs:format from-epoch ni:dejs:format)]
-        [%inputs (ar:dejs:format tx-val)]
-        [%outputs (ar:dejs:format tx-val)]
-    ==
-  ++  tx-val
-    %-  ot:dejs:format
-    :~  [%txid (cu:dejs:format to-hash256 so:dejs:format)]
-        [%pos ni:dejs:format]
-        [%address (cu:dejs:format address-from-cord so:dejs:format)]
-        [%value ni:dejs:format]
-    ==
-  ++  raw-tx
-    %-  ot:dejs:format
-    :~  [%txid (cu:dejs:format to-hash256 so:dejs:format)]
-        [%rawtx (cu:dejs:format to-bytc so:dejs:format)]
-    ==
-  ++  block-and-fee
-    %-  ot:dejs:format
-    :~  [%block ni:dejs:format]
-        [%fee ni:dejs:format]
-    ==
+    ++  address-info
+      %-  ot:dejs:format
+      :~  [%utxos (as:dejs:format utxo)]
+          [%used bo:dejs:format]
+          [%block ni:dejs:format]
+      ==
+    ++  utxo
+      %-  ot:dejs:format
+      :~  ['tx_pos' ni:dejs:format]
+          ['tx_hash' (cu:dejs:format to-hash256 so:dejs:format)]
+          [%height ni:dejs:format]
+          [%value ni:dejs:format]
+          [%recvd (cu:dejs:format from-epoch ni:dejs:format)]
+      ==
+    ++  tx-vals
+      %-  ot:dejs:format
+      :~  [%txid (cu:dejs:format to-hash256 so:dejs:format)]
+          [%confs ni:dejs:format]
+          [%recvd (cu:dejs:format from-epoch ni:dejs:format)]
+          [%inputs (ar:dejs:format tx-val)]
+          [%outputs (ar:dejs:format tx-val)]
+      ==
+    ++  tx-val
+      %-  ot:dejs:format
+      :~  [%txid (cu:dejs:format to-hash256 so:dejs:format)]
+          [%pos ni:dejs:format]
+          [%address (cu:dejs:format address-from-cord so:dejs:format)]
+          [%value ni:dejs:format]
+      ==
+    ++  raw-tx
+      %-  ot:dejs:format
+      :~  [%txid (cu:dejs:format to-hash256 so:dejs:format)]
+          [%rawtx (cu:dejs:format to-bytc so:dejs:format)]
+      ==
+    ++  broadcast-tx
+      %-  ot:dejs:format
+      :~  [%txid (cu:dejs:format to-hash256 so:dejs:format)]
+          [%broadcast bo:dejs:format]
+          [%included bo:dejs:format]
+      ==
+    ++  block-and-fee
+      %-  ot:dejs:format
+      :~  [%block ni:dejs:format]
+          [%fee ni:dejs:format]
+      ==
+    --
   --
 ::
 ++  rpc-action-to-http
-  |=  [endpoint=@t ract=action:rpc]
+  |=  [endpoint=@t ract=action:rpc-types]
   |^  ^-  request:http
   ?-  -.ract
       %get-address-info
@@ -200,10 +179,10 @@
     %+  mk-url  '/getrawtx/'
     (txid-to-cord txid.ract)
     ::
-      %create-raw-tx
-    %+  post-request
-      (mk-url '/createrawtx' '')
-    (action-to-json ract)
+      %broadcast-tx
+    %-  get-request
+    %+  mk-url  '/broadcasttx/'
+    (bytc-to-cord rawtx.ract)
     ::
       %get-block-count
     %-  get-request
