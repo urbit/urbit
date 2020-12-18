@@ -206,6 +206,8 @@
         ~>  %slog.[0 leaf+"gall: pupa call dud"]
         (mean >mote.u.dud< tang.u.dud)
       =/  task  ((harden task:gall) wrapped-task)
+      ?:  ?=(%vega -.task)
+        [~ pupal-gate]
       (molt duct `[duct %slip %g task])
     ::
     ++  scry  scry:adult-core
@@ -367,6 +369,7 @@
       %-  ~(gas in *(set [care:clay path]))
       :*  [%z /sys/hoon/hoon]
           [%z /sys/arvo/hoon]
+          [%z /sys/lull/hoon]
           [%z /sys/zuse/hoon]
           [%z /sys/vane/gall/hoon]
           %+  murn  ~(tap by yokes.state)
