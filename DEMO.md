@@ -56,7 +56,7 @@ XPUB is the "absurd sick..." mnemonic
 
 `~dopzod`
 ```
-:btc-wallet-hook|action [%req-pay-address ~zod 4.000 feyb=[~ 10]]
+:btc-wallet-hook|action [%req-pay-address ~zod 3.000 feyb=[~ 30]]
 ```
 
 ### Check State on ~zod/~dopzod
