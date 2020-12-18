@@ -363,12 +363,5 @@ function archive(json: any, state: HarkState) {
       notifIdxEqual(index, idxNotif.index)
     );
     state.notifications.set(time, unarchived);
-    state.archivedNotifications.set(time, [
-      ...archiveBox,
-      ...archived.map(({ notification, index }) => ({
-        notification: { ...notification, read: true },
-        index,
-      })),
-    ]);
   }
 }
