@@ -76,7 +76,6 @@ export const LinkItem = (props: LinkItemProps) => {
 
   const markRead = () => {
     api.hark.markEachAsRead(props.association, '/', `/${index}`, 'link', 'link');
-    console.log('mark read');
   }
   return (
     <Box width="100%" {...rest}>
