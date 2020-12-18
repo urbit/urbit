@@ -45,12 +45,14 @@ export function Note(props: NoteProps & RouteComponentProps) {
 
   const comments = getComments(note);
   const [revNum, title, body, post] = getLatestRevision(note);
+  const index = note.post.index.split('/');
+
+  const noteId = bigInt(index[1]);
   useEffect(() => {
-    api.hark.markEachAsRead(props.association, '/', post.index, 'note', 'publish');
+    api.hark.markEachAsRead(props.association, '/',`/${index[1]}/1/1`, 'note', 'publish');
   }, [props.association]);
 
 
-  const noteId = bigInt(note.post.index.split('/')[1]);
 
   let adminLinks: JSX.Element | null = null;
   if (window.ship === note?.post?.author) {
