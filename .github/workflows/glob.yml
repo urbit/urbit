@@ -2,16 +2,18 @@ name: glob
 on:
   push:
     branches:
-      - 'jt/lacd'
+      - 'release/next-js'
   pull_request:
     branches:
-      - 'jt/lacd'
+      - 'release/next-js'
 jobs:
   glob:
     runs-on: ubuntu-latest
     name: "Create and deploy a glob to ~lomlyx-lopsem-nidsut-tomdun"
     steps:
       - uses: actions/checkout@v2
+        with:
+          lfs: true
       - uses: ./.github/actions/glob
         with:
           ship: 'lomlyx-lopsem-nidsut-tomdun'
