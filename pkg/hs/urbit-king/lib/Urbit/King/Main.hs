@@ -382,7 +382,7 @@ replayPartEvs top last = do
 {-|
     Interesting
 -}
-testPill :: HasLogFunc e => FilePath -> Bool -> Bool -> RIO e ()
+testPill :: HasKingEnv e => FilePath -> Bool -> Bool -> RIO e ()
 testPill pax showPil showSeq = do
   logInfo "Reading pill file."
   pillBytes <- readFile pax

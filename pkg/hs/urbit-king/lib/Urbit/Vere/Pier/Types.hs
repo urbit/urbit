@@ -14,6 +14,7 @@ module Urbit.Vere.Pier.Types
   , jobId
   , jobMug
   , DriverApi(..)
+  , ScryFunc
   )
 where
 
@@ -56,8 +57,8 @@ instance Show Nock where
 data Pill
   = PillIvory [Noun]
   | PillPill
-    { pName         :: Term
-    , pBootFormulae :: ![Nock]
+    { pName         :: Noun
+    , pBootFormulae :: ![Nock]  -- XX not actually nock, semantically
     , pKernelOva    :: ![Ev]
     , pUserspaceOva :: ![Ev]
     }
@@ -98,6 +99,10 @@ data DriverApi ef = DriverApi
   , diOnEffect       :: ef -> IO ()
   }
 
+
+-- Scrying  --------------------------------------------------------------------
+
+type ScryFunc = Gang -> ScryReq -> IO (Maybe (Term, Noun))
 
 -- Instances -------------------------------------------------------------------
 

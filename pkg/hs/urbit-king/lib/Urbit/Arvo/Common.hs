@@ -132,7 +132,7 @@ deriveNoun ''HttpServerConf
 -- Desk and Mime ---------------------------------------------------------------
 
 newtype Desk = Desk { unDesk :: Cord }
-  deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
+  deriving newtype (Eq, Ord, Show, ToNoun, FromNoun, IsString)
 
 data Mime = Mime Path File
   deriving (Eq, Ord, Show)

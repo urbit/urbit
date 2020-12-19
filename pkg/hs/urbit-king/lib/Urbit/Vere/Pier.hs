@@ -32,7 +32,6 @@ import System.Posix.Files     (ownerModes, setFileMode)
 import Urbit.EventLog.LMDB    (EventLog)
 import Urbit.EventLog.Event   (buildLogEvent)
 import Urbit.King.API         (TermConn)
-import Urbit.Noun.Time        (Wen)
 import Urbit.TermSize         (TermSize(..), termSize)
 import Urbit.Vere.Serf        (Serf)
 
@@ -79,11 +78,13 @@ data CannotBootFromIvoryPill = CannotBootFromIvoryPill
 genEntropy :: MonadIO m => m Entropy
 genEntropy = Entropy . fromIntegral . bytesAtom <$> io (Ent.getEntropy 64)
 
-genBootSeq :: MonadIO m => Ship -> Pill -> Bool -> LegacyBootEvent -> m BootSeq
+genBootSeq :: HasKingEnv e
+           => Ship -> Pill -> Bool -> LegacyBootEvent -> RIO e BootSeq
 genBootSeq _    PillIvory {}   _    _    = throwIO CannotBootFromIvoryPill
-genBootSeq ship PillPill  {..} lite boot = io $ do
-  ent <- genEntropy
-  let ova = preKern ent <> pKernelOva <> postKern <> pUserspaceOva
+genBootSeq ship PillPill  {..} lite boot = do
+  ent <- io genEntropy
+  wyr <- wyrd
+  let ova = preKern ent <> [wyr] <> pKernelOva <> postKern <> pUserspaceOva
   pure $ BootSeq ident pBootFormulae ova
  where
   ident = LogIdentity ship isFake (fromIntegral $ length pBootFormulae)
@@ -301,9 +302,9 @@ pier (serf, log) vSlog startedSig injected = do
   let execute = writeTQueue executeQ
   let persist = writeTQueue persistQ
   let sigint  = Serf.sendSIGINT serf
-  let scry    = \w b g -> do
+  let scry    = \g r -> do
         res <- newEmptyMVar
-        atomically $ writeTQueue scryQ (w, b, g, putMVar res)
+        atomically $ writeTQueue scryQ (g, r, putMVar res)
         takeMVar res
 
   -- Set up the runtime stat counters.
@@ -429,12 +430,8 @@ data PierVersionNegotiationFailed = PierVersionNegotiationFailed
 zuseVersion :: Word
 zuseVersion = 420
 
-doVersionNegotiation
-  :: HasPierEnv e
-  => (RunReq -> STM ())
-  -> (Text -> RIO e ())
-  -> RAcquire e ()
-doVersionNegotiation compute stderr = do
+wyrd :: HasKingEnv e => RIO e Ev
+wyrd = do
   king <- tshow <$> view kingIdL
 
   let k   = Wynn [("zuse", zuseVersion),
@@ -443,8 +440,17 @@ doVersionNegotiation compute stderr = do
                   ("hoon", 140),
                   ("nock", 4)]
       sen = MkTerm king
-      v   = Vere sen [Cord "kh", Cord "1.0"] k
-      ev  = EvBlip $ BlipEvArvo $ ArvoEvWyrd () v
+      v   = Vere sen [Cord "king-haskell", Cord "1.0"] k
+
+  pure $ EvBlip $ BlipEvArvo $ ArvoEvWyrd () v
+
+doVersionNegotiation
+  :: HasPierEnv e
+  => (RunReq -> STM ())
+  -> (Text -> RIO e ())
+  -> RAcquire e ()
+doVersionNegotiation compute stderr = do
+  ev <- rio wyrd
 
   okaySig :: MVar (Either [Goof] FX) <- newEmptyMVar
   let inject = atomically $ compute $ RRWork $ EvErr ev $ cb
@@ -496,7 +502,7 @@ drivers
   -> Ship
   -> Bool
   -> (RunReq -> STM ())
-  -> (Wen -> Gang -> Path -> IO (Maybe (Term, Noun)))
+  -> ScryFunc
   -> (TermSize, Term.Client)
   -> (Text -> RIO e ())
   -> IO ()
@@ -602,7 +608,7 @@ data ComputeConfig = ComputeConfig
   { ccOnWork      :: STM RunReq
   , ccOnKill      :: STM ()
   , ccOnSave      :: STM ()
-  , ccOnScry      :: STM (Wen, Gang, Path, Maybe (Term, Noun) -> IO ())
+  , ccOnScry      :: STM (Gang, ScryReq, Maybe (Term, Noun) -> IO ())
   , ccPutResult   :: (Fact, FX) -> STM ()
   , ccShowSpinner :: Maybe Text -> STM ()
   , ccHideSpinner :: STM ()
@@ -616,7 +622,7 @@ runCompute serf ComputeConfig {..} = do
   let onRR = asum [ ccOnKill <&> Serf.RRKill
                   , ccOnSave <&> Serf.RRSave
                   , ccOnWork
-                  , ccOnScry <&> \(w,g,p,k) -> Serf.RRScry w g p k
+                  , ccOnScry <&> \(g,r,k) -> Serf.RRScry g r k
                   ]
 
   vEvProcessing :: TMVar Ev <- newEmptyTMVarIO

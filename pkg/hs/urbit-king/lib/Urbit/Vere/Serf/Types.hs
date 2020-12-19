@@ -2,7 +2,7 @@ module Urbit.Vere.Serf.Types where
 
 import Urbit.Prelude
 
-import Urbit.Arvo      (Ev, FX)
+import Urbit.Arvo      (Desk, Ev, FX)
 import Urbit.Noun.Time (Wen)
 
 
@@ -94,7 +94,19 @@ data RunReq
   | RRSave ()
   | RRKill ()
   | RRPack ()
-  | RRScry Wen Gang Path (Maybe (Term, Noun) -> IO ())
+  | RRScry Gang ScryReq (Maybe (Term, Noun) -> IO ())
+
+type ScryReq = (Each Path Demi)
+
+data Demi
+  = DemiOnce Term Desk Path
+  | DemiBeam Term Beam
+  deriving (Show)
+
+-- TODO
+type Beam = Void
+
+deriveNoun ''Demi
 
 
 -- Exceptions ------------------------------------------------------------------

@@ -9,7 +9,7 @@
 -}
 module Urbit.Arvo.Event where
 
-import Urbit.Prelude hiding (Term)
+import Urbit.Prelude
 
 import Control.Monad.Fail (fail)
 import Urbit.Arvo.Common (KingId(..), ServId(..), Vere(..))
@@ -218,8 +218,12 @@ instance Show Entropy where
 data ArvoEv
     = ArvoEvWhom ()   Ship
     | ArvoEvWack ()   Entropy
-    | ArvoEvCrud Path Noun
     | ArvoEvWyrd ()   Vere
+    | ArvoEvCrud Path Noun
+    | ArvoEvTrim UD
+    | ArvoEvWhat [Noun]
+    | ArvoEvWhey ()
+    | ArvoEvVerb (Maybe Bool)
   deriving (Eq, Ord, Show)
 
 deriveNoun ''ArvoEv
