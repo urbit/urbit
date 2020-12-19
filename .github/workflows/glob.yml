@@ -12,7 +12,7 @@ jobs:
     name: "Create and deploy a glob to ~lomlyx-lopsem-nidsut-tomdun"
     steps:
       - uses: actions/checkout@v2
-      - uses: .github/actions/glob
+      - uses: ./.github/actions/glob
         with:
           ship: 'lomlyx-lopsem-nidsut-tomdun'
           credentials: ${{ secrets.JANEWAY_SERVICE_KEY }}
