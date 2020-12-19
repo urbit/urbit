@@ -46,8 +46,8 @@ export default class TermApp extends Component {
   render() {
     return (
       <>
-        <Helmet>
-          <title>OS1 - Terminal</title>
+        <Helmet defer={false}>
+          <title>{ props.notificationsCount ? `(${String(this.props.notificationsCount) }) `: '' }Landscape</title>
         </Helmet>
         <Box
           height='100%'

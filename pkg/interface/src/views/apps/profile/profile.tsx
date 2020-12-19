@@ -45,7 +45,7 @@ export default function ProfileScreen(props: any) {
   return (
     <>
     <Helmet defer={false}>
-      <title>OS1 - Profile</title>
+      <title>{ props.notificationsCount ? `(${String(props.notificationsCount) }) `: '' }Landscape - Profile</title>
     </Helmet>
     <Switch>
     <Route

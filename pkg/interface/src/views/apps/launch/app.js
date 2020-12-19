@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Helmet from 'react-helmet';
 import styled from 'styled-components';
 
 import { Box, Row, Icon, Text } from '@tlon/indigo-react';
@@ -14,6 +13,7 @@ import ModalButton from './components/ModalButton';
 import { writeText } from '~/logic/lib/util';
 import { NewGroup } from "~/views/landscape/components/NewGroup";
 import { JoinGroup } from "~/views/landscape/components/JoinGroup";
+import { Helmet } from 'react-helmet';
 
 const ScrollbarLessBox = styled(Box)`
   scrollbar-width: none !important;
@@ -28,8 +28,8 @@ export default function LaunchApp(props) {
 
   return (
     <>
-      <Helmet>
-        <title>OS1 - Home</title>
+      <Helmet defer={false}>
+        <title>{ props.notificationsCount ? `(${String(props.notificationsCount) }) `: '' }Landscape</title>
       </Helmet>
       <ScrollbarLessBox height='100%' overflowY='scroll'>
         <Welcome firstTime={props.launch.firstTime} api={props.api} />
