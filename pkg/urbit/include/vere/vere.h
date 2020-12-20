@@ -148,7 +148,6 @@
           c3_y* lin_y;                      //  current line (utf8)
           c3_w  byt_w;                      //  utf8 line-length
           c3_w  wor_w;                      //  utf32 line-length
-          c3_w  sap_w;                      //  escape chars in line
           c3_w  cus_w;                      //  cursor position
         } mir;
 

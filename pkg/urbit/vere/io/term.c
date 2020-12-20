@@ -220,7 +220,6 @@ u3_term_log_init(void)
       uty_u->tat_u.mir.lin_y = 0;
       uty_u->tat_u.mir.byt_w = 0;
       uty_u->tat_u.mir.wor_w = 0;
-      uty_u->tat_u.mir.sap_w = 0;
       uty_u->tat_u.mir.cus_w = 0;
 
       uty_u->tat_u.esc.ape = c3n;
@@ -463,27 +462,16 @@ _term_it_show_blank(u3_utty* uty_u)
 static void
 _term_it_show_cursor(u3_utty* uty_u, c3_w cur_w)
 {
-  c3_w cus_w = uty_u->tat_u.mir.cus_w;
-  c3_w dif_w;
+  c3_c cur_c[5];
+  c3_c len_c = sprintf(cur_c, "%d", cur_w + 1);
 
-  //NOTE  assumes all styled text precedes the cursor. drum enforces this.
-  //
-  cur_w += uty_u->tat_u.mir.sap_w;
+  uv_buf_t esc_u = TERM_LIT_BUF("\033[");
+  uv_buf_t pos_u = uv_buf_init(cur_c, len_c);
+  uv_buf_t cha_u = TERM_LIT_BUF("G");
 
-  if ( cur_w < cus_w ) {
-    dif_w = cus_w - cur_w;
-
-    while ( dif_w-- ) {
-      _term_it_dump_buf(uty_u, &uty_u->ufo_u.out.cub1_u);
-    }
-  }
-  else if ( cur_w > cus_w ) {
-    dif_w = cur_w - cus_w;
-
-    while ( dif_w-- ) {
-      _term_it_dump_buf(uty_u, &uty_u->ufo_u.out.cuf1_u);
-    }
-  }
+  _term_it_dump_buf(uty_u, &esc_u);
+  _term_it_dump_buf(uty_u, &pos_u);
+  _term_it_dump_buf(uty_u, &cha_u);
 
   uty_u->tat_u.mir.cus_w = cur_w;
 }
@@ -491,7 +479,7 @@ _term_it_show_cursor(u3_utty* uty_u, c3_w cur_w)
 /* _term_it_show_line(): render current line.
 */
 static void
-_term_it_show_line(u3_utty* uty_u, c3_w wor_w, c3_w sap_w)
+_term_it_show_line(u3_utty* uty_u, c3_w wor_w)
 {
   u3_utat* tat_u = &uty_u->tat_u;
 
@@ -511,7 +499,6 @@ _term_it_show_line(u3_utty* uty_u, c3_w wor_w, c3_w sap_w)
   //
   tat_u->mir.cus_w += wor_w;
   tat_u->mir.wor_w = wor_w;
-  tat_u->mir.sap_w = sap_w;
 }
 
 /* _term_it_refresh_line(): refresh current line.
@@ -521,11 +508,10 @@ _term_it_refresh_line(u3_utty* uty_u)
 {
   u3_utat* tat_u = &uty_u->tat_u;
   c3_w     wor_w = tat_u->mir.wor_w;
-  c3_w     sap_w = tat_u->mir.sap_w;
   c3_w     cus_w = tat_u->mir.cus_w;
 
   _term_it_show_clear(uty_u);
-  _term_it_show_line(uty_u, wor_w, sap_w);
+  _term_it_show_line(uty_u, wor_w);
   _term_it_show_cursor(uty_u, cus_w);
 }
 
@@ -534,8 +520,7 @@ _term_it_refresh_line(u3_utty* uty_u)
 static void
 _term_it_set_line(u3_utty* uty_u,
                   c3_w*    lin_w,
-                  c3_w     wor_w,
-                  c3_w     sap_w)
+                  c3_w     wor_w)
 {
   u3_utat* tat_u = &uty_u->tat_u;
   c3_y*    hun_y = (c3_y*)lin_w;
@@ -577,9 +562,8 @@ _term_it_set_line(u3_utty* uty_u,
   tat_u->mir.lin_y = hun_y;
   tat_u->mir.byt_w = byt_w;
   tat_u->mir.wor_w = wor_w;
-  tat_u->mir.sap_w = sap_w;
 
-  _term_it_show_line(uty_u, wor_w, sap_w);
+  _term_it_show_line(uty_u, wor_w);
 }
 
 /* _term_it_show_more(): new current line.
@@ -1244,7 +1228,6 @@ _term_it_show_stub(u3_utty* uty_u,
   //  tracking total and escape characters written
   //
   c3_w   i_w = 0;
-  c3_w sap_w = 0;
   {
     u3_noun nub = tub;
     while ( u3_nul != nub ) {
@@ -1264,7 +1247,6 @@ _term_it_show_stub(u3_utty* uty_u,
         c3_o mor_o = c3n;
         lin_w[i_w++] = 27;
         lin_w[i_w++] = '[';
-        sap_w += 2;
 
         //  text decorations
         //
@@ -1274,10 +1256,8 @@ _term_it_show_stub(u3_utty* uty_u,
           while ( u3_nul != des ) {
             if ( c3y == mor_o ) {
               lin_w[i_w++] = ';';
-              sap_w++;
             }
             _term_it_put_deco(&lin_w[i_w++], u3h(des));
-            sap_w++;
             mor_o = c3y;
             des = u3t(des);
           }
@@ -1289,12 +1269,10 @@ _term_it_show_stub(u3_utty* uty_u,
         if ( u3_nul != bag ) {
           if ( c3y == mor_o ) {
             lin_w[i_w++] = ';';
-            sap_w++;
           }
           lin_w[i_w++] = '4';
           c3_w put_w = _term_it_put_tint(&lin_w[i_w], bag);
           i_w += put_w;
-          sap_w += ++put_w;
           mor_o = c3y;
         }
 
@@ -1303,17 +1281,14 @@ _term_it_show_stub(u3_utty* uty_u,
         if ( u3_nul != fog ) {
           if ( c3y == mor_o ) {
             lin_w[i_w++] = ';';
-            sap_w++;
           }
           lin_w[i_w++] = '3';
           c3_w put_w = _term_it_put_tint(&lin_w[i_w], fog);
           i_w += put_w;
-          sap_w += ++put_w;
           mor_o = c3y;
         }
 
         lin_w[i_w++] = 'm';
-        sap_w++;
       }
 
       //  write the text itself
@@ -1329,14 +1304,13 @@ _term_it_show_stub(u3_utty* uty_u,
         lin_w[i_w++] = '[';
         lin_w[i_w++] = '0';
         lin_w[i_w++] = 'm';
-        sap_w += 4;
       }
 
       nub = u3t(nub);
     }
   }
 
-  _term_it_set_line(uty_u, lin_w, i_w, sap_w);
+  _term_it_set_line(uty_u, lin_w, i_w);
 
   u3z(tub);
 }
@@ -1358,7 +1332,7 @@ _term_it_show_tour(u3_utty* uty_u,
     }
   }
 
-  _term_it_set_line(uty_u, lin_w, len_w, 0);
+  _term_it_set_line(uty_u, lin_w, len_w);
 
   u3z(lin);
 }
