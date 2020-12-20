@@ -725,7 +725,7 @@
     (ta-hom %del (dec pos.inp))
   ::
   ++  ta-ctl                                          ::  hear control
-    |=  key=@ud
+    |=  key=@c
     ^+  +>
     =.  ris  ?.(?=(?(%g %r) key) ~ ris)
     ?+    key    ta-bel
@@ -790,11 +790,10 @@
   ++  ta-fec                                          ::  apply effect
     |=  fec=sole-effect
     ^+  +>
-    ?-  fec
+    ?+  fec  +>(..ta (se-blit fec))
       [%bel *]  ta-bel
       [%blk *]  +>
       [%bye *]  +>(..ta (se-klin gyl))
-      [%clr *]  +>(..ta (se-blit fec))
       [%det *]  (ta-got +.fec)
       [%err *]  (ta-err p.fec)
       [%klr *]  +>(..ta (se-blit %klr (make:klr p.fec)))
@@ -805,10 +804,7 @@
       [%pro *]  (ta-pro +.fec)
       [%tab *]  +>(..ta (se-tab p.fec))
       [%tan *]  +>(..ta (se-dump p.fec))
-      [%sag *]  +>(..ta (se-blit fec))
-      [%sav *]  +>(..ta (se-blit fec))
       [%txt *]  +>(..ta (se-text p.fec))
-      [%url *]  +>(..ta (se-blit fec))
     ==
   ::
   ++  ta-dog                                          ::  change cursor
@@ -878,7 +874,7 @@
     ==
   ::
   ++  ta-met                                          ::  meta key
-    |=  key=@ud
+    |=  key=@c
     ^+  +>
     =.  ris  ~
     ?+    key    ta-bel

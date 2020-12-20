@@ -63,7 +63,7 @@ export default class Store {
         this.state.lines[this.state.lines.length - 1] = blit;
         this.setState({ lines: this.state.lines });
         break;
-      case 'mor':
+      case 'nel':
         this.state.lines.push('');
         this.setState({ lines: this.state.lines });
         break;

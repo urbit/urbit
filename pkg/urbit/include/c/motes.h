@@ -770,6 +770,7 @@
 #   define c3__ne     c3_s2('n','e')
 #   define c3__need   c3_s4('n','e','e','d')
 #   define c3__neft   c3_s4('n','e','f','t')
+#   define c3__nel    c3_s3('n','e','l')
 #   define c3__nest   c3_s4('n','e','s','t')
 #   define c3__netd   c3_s4('n','e','t','d')
 #   define c3__new    c3_s3('n','e','w')

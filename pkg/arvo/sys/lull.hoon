@@ -1045,7 +1045,7 @@
   ::::                                                  ::  (1d2)
     ::
   +$  blew  [p=@ud q=@ud]                               ::  columns rows
-  +$  belt                                              ::  old belt
+  +$  belt                                              ::  outside belt
     $%  [%aro p=?(%d %l %r %u)]                         ::  arrow key
         [%bac ~]                                        ::  true backspace
         [%ctl p=@c]                                     ::  control-key
@@ -1054,43 +1054,31 @@
         [%ret ~]                                        ::  return
         [%txt p=(list @c)]                              ::  utf32 text
     ==                                                  ::
-  +$  blit                                              ::  old blit
+  +$  blit                                              ::  outside blit
     $%  [%bel ~]                                        ::  make a noise
         [%clr ~]                                        ::  clear the screen
         [%hop p=@ud]                                    ::  set cursor position
         [%klr p=stub]                                   ::  set styled line
         [%lin p=(list @c)]                              ::  set current line
-        [%mor ~]                                        ::  newline
+        [%nel ~]                                        ::  newline
         [%sag p=path q=*]                               ::  save to jamfile
         [%sav p=path q=@]                               ::  save to file
         [%url p=@t]                                     ::  activate url
     ==                                                  ::
-  +$  dill-belt                                         ::  new belt
-    $%  [%aro p=?(%d %l %r %u)]                         ::  arrow key
-        [%bac ~]                                        ::  true backspace
+  +$  dill-belt                                         ::  inside belt
+    $%  belt                                            ::  outside belt
         [%cru p=@tas q=(list tank)]                     ::  echo error
-        [%ctl p=@]                                      ::  control-key
-        [%del ~]                                        ::  true delete
         [%hey ~]                                        ::  refresh
-        [%met p=@]                                      ::  meta-key
-        [%ret ~]                                        ::  return
         [%rez p=@ud q=@ud]                              ::  resize, cols, rows
-        [%txt p=(list @c)]                              ::  utf32 text
         [%yow p=gill:gall]                              ::  connect to app
     ==                                                  ::
-  +$  dill-blit                                         ::  new blit
-    $%  [%bel ~]                                        ::  make a noise
-        [%clr ~]                                        ::  clear the screen
-        [%hop p=@ud]                                    ::  set cursor position
-        [%klr p=stub]                                   ::  styled text
+  +$  dill-blit                                         ::  inside blit
+    $%  blit                                            ::  outside blit
         [%mor p=(list dill-blit)]                       ::  multiple blits
         [%pom p=stub]                                   ::  styled prompt
         [%pro p=(list @c)]                              ::  show as cursor+line
         [%qit ~]                                        ::  close console
         [%out p=(list @c)]                              ::  send output line
-        [%sag p=path q=*]                               ::  save to jamfile
-        [%sav p=path q=@]                               ::  save to file
-        [%url p=@t]                                     ::  activate url
     ==                                                  ::
   +$  flog                                              ::  sent to %dill
     $%  [%crop p=@ud]                                   ::  trim kernel state

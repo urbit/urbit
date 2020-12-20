@@ -169,14 +169,14 @@
         ?:  ?=(%out -.bit)
           %+  done  %blit
           :~  [%lin p.bit]
-              [%mor ~]
+              [%nel ~]
               see
               [%hop pos]
           ==
         ?:  ?=(%klr -.bit)
           %+  done  %blit
           :~  [%klr p.bit]
-              [%mor ~]
+              [%nel ~]
               see
               [%hop pos]
           ==

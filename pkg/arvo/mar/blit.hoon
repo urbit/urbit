@@ -22,7 +22,7 @@
       %clr  b+&
       %hop  (numb p.blit)
       %lin  a+(turn p.blit |=(c=@c s+(tuft c)))
-      %mor  b+&
+      %nel  b+&
       %url  s+p.blit
     ::
         %sag
