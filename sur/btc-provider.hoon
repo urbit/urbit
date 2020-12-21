@@ -32,7 +32,7 @@
   $%  [%connected block=@ud fee=@ud]
       [%disconnected ~]
   ==
-:: 
+::
 ++  rpc-types
   |%
   +$  action

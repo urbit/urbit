@@ -29,16 +29,29 @@
 ::    - vout-n is the index of the output that has value
 ::
 +$  action
+  $%  settings
+      local
+      peer
+  ==
++$  settings
   $%  [%set-provider provider=ship]
       [%set-default-wallet ~]
-      [%req-pay-address payee=ship value=sats feyb=(unit sats)]
-      [%gen-pay-address value=sats]
-      [%ret-pay-address =address payer=ship value=sats]
-      [%broadcast-tx signed=rawtx]
-      [%expect-payment =txid value=sats]
       [%clear-poym ~]
       [%force-retry ~]
   ==
++$  local
+  $%  [%req-pay-address payee=ship value=sats feyb=(unit sats)]
+      [%broadcast-tx signed=rawtx]
+      [%poym-add-txi]
+      [%poym-to-history]
+  ==
++$  peer
+  $%  [%gen-pay-address value=sats]
+      [%ret-pay-address =address payer=ship value=sats]
+      [%expect-payment =txid value=sats]
+  ==
+::
+::
 +$  update
   $%  request
       error

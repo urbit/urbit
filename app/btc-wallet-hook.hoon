@@ -288,6 +288,7 @@
     ==
     ::
     ::  %txinfo
+    ::  - TODO: handle case where tx is blank
     ::  - insert into wallet-store history if pend-piym or poym matches txid
     ::  - forward tx to wallet-store regardless
     ::
