@@ -21,6 +21,13 @@
 ::  4 inputs, one output
 ```
 
+## TX Info for Non-Existent TX
+```
+
+:btc-provider|action ['reqid' %tx-info [%32 0x63a.bc87.c9e6.9f8f.4a76.d838.abc0.fd77.082f.9716.09a0.0b18.b45b.d3ab.793c.82df]]
+::  should be %.n for included
+```
+
 ##  Generate a Raw TX from Inputs/Outputs
 ```
 :btc-provider|command [%set-credentials api-url='http://localhost:50002']

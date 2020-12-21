@@ -102,7 +102,7 @@
       ::
         %get-raw-tx
       [id.res (raw-tx res.res)]
-      :: 
+      ::
         %broadcast-tx
       [%broadcast-tx (broadcast-tx res.res)]
       ::
@@ -126,9 +126,10 @@
           [%value ni:dejs:format]
           [%recvd (cu:dejs:format from-epoch ni:dejs:format)]
       ==
-    ++  tx-vals
+    ++  tx-vals 
       %-  ot:dejs:format
-      :~  [%txid (cu:dejs:format to-hash256 so:dejs:format)]
+      :~  [%included bo:dejs:format]
+          [%txid (cu:dejs:format to-hash256 so:dejs:format)]
           [%confs ni:dejs:format]
           [%recvd (cu:dejs:format from-epoch ni:dejs:format)]
           [%inputs (ar:dejs:format tx-val)]
