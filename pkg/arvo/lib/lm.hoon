@@ -73,9 +73,7 @@
     |=  [u=@lms]  ^-  (list (list @rs))
     ~_  leaf+"lagoon-fail"
     %-  flop  :: TODO XXX check this
-    =/  mn  `(list @ud)`(shape u)
-    =/  m   `@ud`-:mn
-    =/  n   `@ud`+<:mn
+    =+  [m n]=[&1 &2]:(shape u)
     =/  size  (mul m n)
     =/  i  0  :: index over rows
     =/  a  `(list @rs)`(oust [0 1] (flop (rip 5 u)))
@@ -85,7 +83,7 @@
       =/  b  `(list @rs)`(scag n (slag (mul i n) a))
     $(i +(i), q `(list (list @rs))`(weld ~[b] a))
   ::
-  ::    Pretty-print the contents of the matrix.
+  ::    Pretty-print the contents of the matrix.  XX deal with rows better
   ++  pprint  !!
   ::  |=  u=@lms  ^-  tape
   ::  `tape`(zing (join " " (turn (unmake u) |=(s=@rs <s>))))
@@ -95,54 +93,45 @@
     ~/  %get
     |=  [u=@lms i=@ud j=@ud]  ^-  @rs
     ~_  leaf+"lagoon-fail"
-    =/  mn  `(list @ud)`(shape u)
-    =/  m   `@ud`-:mn
-    =/  n   `@ud`+<:mn
-    =/  row  (snag (dec i) (unmake u))
-    (snag (dec j) row)
+    =+  [m n]=[&1 &2]:(shape u)
+    (cut 5 [(add (mul n (dec i)) j) 1] u)
   ::
   ::    Set the value of an element within a matrix, using math indices 1..n.
   ++  set
     ~/  %set
-    |=  [u=@lms i=@ud j=@ud x=@rs]  ^-  @lms
+    |=  [u=@lms i=@ud j=@ud s=@rs]  ^-  @lms
     ~_  leaf+"lagoon-fail"
-    `@lms`(setr u i (set:lvs (getr u i) j x))
+    `@lms`(setr u i (set:lvs (getr u i) j s))
   ::
   ::    Get the value of a column as @lvs in 1..n
   ++  getc
     ~/  %getc
     |=  [u=@lms i=@ud]  ^-  @lvs
     ~_  leaf+"lagoon-fail"
-    =/  mn  `(list @ud)`(shape u)
-    =/  m   `@ud`-:mn
-    =/  n   `@ud`+<:mn
-    =/  w  `(list @rs)`~
-    =/  uu  `(list (list @rs))`(unmake u)
-    =/  count  1
+    =+  [m n]=[&1 &2]:(shape u)
+    =/  mn  (mul m n)
+    =/  j  0  :: index over columns
+    =/  v  (zeros:lvs m)
     |-  ^-  @lvs
-      ?:  (gth count m)  `@lvs`(make:lvs w)
-      =/  row  `(list @rs)`(snag (dec count) `(list (list @rs))`uu)
-      =/  elem  `@rs`(snag (dec i) row)
-    $(count +(count), w `(list @rs)`(weld w `(list @rs)`~[elem]))
+      ?:  (gth j mn)  v
+    $(j (add j n), v (append:lvs (cut 5 [j 1] u)))
   ::
   ::    Set the value of a column to incoming @lvs in 1..n
   ++  setc
     ~/  %setc
     |=  [u=@lms j=@ud c=@lvs]  ^-  @lms
     ~_  leaf+"lagoon-fail"
-    =/  mn  `(list @ud)`(shape u)
-    =/  m   `@ud`-:mn
-    =/  n   `@ud`+<:mn
+    =+  [m n]=[&1 &2]:(shape u)
     =/  w  `(list (list @rs))`~
     =/  uu  `(list (list @rs))`(unmake u)
-    =/  count  1
+    =/  i  0
     |-  ^-  @lms
-      ?:  (gth count m)  `@lms`(make w)
-      =/  src  (snag (dec count) `(list (list @rs))`uu)
-      =/  ell  `@rs`(get:lvs c count)
+      ?:  =(i m)  `@lms`(make w)
+      =/  src  (snag i `(list (list @rs))`uu)
+      =/  ell  `@rs`(get:lvs c +(i))
       =/  trg  (set:lvs (make:lvs src) j ell)
       =/  row  (unmake:lvs trg)
-    $(count +(count), w `(list (list @rs))`(weld w `(list (list @rs))`~[row]))
+    $(i +(i), w `(list (list @rs))`(weld w `(list (list @rs))`~[row]))
   ::
   ::
   ::    Get the value of a row as @lvs in 1..m
@@ -157,9 +146,7 @@
     ~/  %setr
     |=  [u=@lms i=@ud r=@lvs]  ^-  @lms
     ~_  leaf+"lagoon-fail"
-    =/  mn  `(list @ud)`(shape u)
-    =/  m   `@ud`-:mn
-    =/  n   `@ud`+<:mn
+    =+  [m n]=[&1 &2]:(shape u)
     =/  w  `(list (list @rs))`~
     =/  uu  `(list (list @rs))`(unmake u)
     =/  count  1
@@ -191,9 +178,7 @@
     ~/  %trans
     |=  [u=@lms]  ^-  @lms
     ~_  leaf+"lagoon-fail"
-    =/  mn  `(list @ud)`(shape u)
-    =/  m   `@ud`-:mn
-    =/  n   `@ud`+<:mn
+    =+  [m n]=[&1 &2]:(shape u)
     =/  count  1
     =/  w  `@lms`(zeros n m)
     |-  ^-  @lms
@@ -207,9 +192,7 @@
     ~/  %adds
     |=  [u=@lms v=@rs]  ^-  @lms
     ~_  leaf+"lagoon-fail"
-    =/  mn  `(list @ud)`(shape u)
-    =/  m   `@ud`-:mn
-    =/  n   `@ud`+<:mn
+    =+  [m n]=[&1 &2]:(shape u)
     =/  size  (mul m n)
     =/  p  (cantor m n)
     =/  w  `@lms`p
@@ -226,9 +209,7 @@
     ~/  %subs
     |=  [u=@lms v=@rs]  ^-  @lms
     ~_  leaf+"lagoon-fail"
-    =/  mn  `(list @ud)`(shape u)
-    =/  m   `@ud`-:mn
-    =/  n   `@ud`+<:mn
+    =+  [m n]=[&1 &2]:(shape u)
     =/  size  (mul m n)
     =/  p  (cantor m n)
     =/  w  `@lms`p
@@ -245,9 +226,7 @@
     ~/  %muls
     |=  [u=@lms v=@rs]  ^-  @lms
     ~_  leaf+"lagoon-fail"
-    =/  mn  `(list @ud)`(shape u)
-    =/  m   `@ud`-:mn
-    =/  n   `@ud`+<:mn
+    =+  [m n]=[&1 &2]:(shape u)
     =/  size  (mul m n)
     =/  p  (cantor m n)
     =/  w  `@lms`p
@@ -264,9 +243,7 @@
     ~/  %divs
     |=  [u=@lms v=@rs]  ^-  @lms
     ~_  leaf+"lagoon-fail"
-    =/  mn  `(list @ud)`(shape u)
-    =/  m   `@ud`-:mn
-    =/  n   `@ud`+<:mn
+    =+  [m n]=[&1 &2]:(shape u)
     =/  size  (mul m n)
     =/  p  (cantor m n)
     =/  w  `@lms`p

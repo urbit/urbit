@@ -59,6 +59,10 @@
     |=  [u=@lvs]  ^-  (list @rs)
     ~_  leaf+"lagoon-fail"
     (flop `(list @rs)`+:(flop (rip 5 u)))
+  ++  append
+    |=  [u=@lvs s=@rs]  ^-  @lvs
+    (make (snoc (unmake v) s))
+    ::  XX could be done faster with a mix/lsh
   ::
   ::    Get the value at an index, using mathematical indices 1..n.
   ++  get
@@ -229,6 +233,10 @@
     |=  [u=@lvd]  ^-  (list @rd)
     ~_  leaf+"lagoon-fail"
     (flop `(list @rd)`+:(flop (rip 6 u)))
+  ++  append
+    |=  [u=@lvd s=@rd]  ^-  @lvd
+    (make (snoc (unmake v) s))
+    ::  XX could be done faster with a mix/lsh
   ::
   ::    Get the value at an index, using mathematical indices 1..n.
   ++  get
