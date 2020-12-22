@@ -4,7 +4,7 @@
 ::  Conventions:
 ::
 ::  m,n,p   always dimensions
-::  i,j,k   always indices (also ii,jj,kk)
+::  i,j,k   always indices (also ii,jj,kk for coder-spec not user-spec)
 ::  a,b,c   always lists
 ::  u,v,w   always vector/matrix atoms
 ::  s,t     always real/floats
@@ -83,6 +83,7 @@
     ~_  leaf+"lagoon-fail"
     ?:  (gth i (length u))  !!
     `@lvs`(cat 5 (cat 5 (cut 5 [0 (dec i)] u) s) (cut 5 [i (length u)] u))
+    ::  XX do as a ++sew, like (sew 5 [3 1 (get:lvs c ii)] v)
   ::
   ::    Return larger of two single-precision floats.
   ++  max-rs

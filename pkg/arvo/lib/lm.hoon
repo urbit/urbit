@@ -4,7 +4,7 @@
 ::  Conventions:
 ::
 ::  m,n,p   always dimensions (or dimension composites in the case of p)
-::  i,j,k   always indices (also ii,jj,kk)
+::  i,j,k   always indices (also ii,jj,kk for coder-spec not user-spec)
 ::  a,b,c   always lists
 ::  u,v,w   always vector/matrix atoms
 ::  s,t     always real/floats
@@ -59,7 +59,7 @@
     |=  a=@rs
     ~_  leaf+"lagoon-fail"
     (not 5 1 a)
-  ++  make
+  ++  make :: TODO
     |=  [a=(list (list @rs))]  ^-  @lms
     ~_  leaf+"lagoon-fail"
     =/  m  `@ud`(lent a)
@@ -69,7 +69,7 @@
     |-  ^-  @lms
       ?:  =(i m)  w
     $(i +(i), w (setr w i (make:lvs (snag i a))))
-  ++  unmake
+  ++  unmake :: TODO
     |=  [u=@lms]  ^-  (list (list @rs))
     ~_  leaf+"lagoon-fail"
     %-  flop  :: TODO XXX check this
@@ -106,32 +106,26 @@
   ::    Get the value of a column as @lvs in 1..n
   ++  getc
     ~/  %getc
-    |=  [u=@lms i=@ud]  ^-  @lvs
+    |=  [u=@lms j=@ud]  ^-  @lvs
     ~_  leaf+"lagoon-fail"
     =+  [m n]=[&1 &2]:(shape u)
-    =/  mn  (mul m n)
-    =/  j  0  :: index over columns
+    =/  ii  1  :: index over rows
     =/  v  (zeros:lvs m)
     |-  ^-  @lvs
-      ?:  (gth j mn)  v
-    $(j (add j n), v (append:lvs (cut 5 [j 1] u)))
+      ?:  (gth i m)  v
+    $(ii +(ii), v (set:lvs v ii (get:lms u ii j)))
   ::
   ::    Set the value of a column to incoming @lvs in 1..n
   ++  setc
     ~/  %setc
-    |=  [u=@lms j=@ud c=@lvs]  ^-  @lms
+    |=  [u=@lms j=@ud w=@lvs]  ^-  @lms
     ~_  leaf+"lagoon-fail"
     =+  [m n]=[&1 &2]:(shape u)
-    =/  w  `(list (list @rs))`~
-    =/  uu  `(list (list @rs))`(unmake u)
-    =/  i  0
+    =/  ii  1  :: index over rows
+    =/  v  u
     |-  ^-  @lms
-      ?:  =(i m)  `@lms`(make w)
-      =/  src  (snag i `(list (list @rs))`uu)
-      =/  ell  `@rs`(get:lvs c +(i))
-      =/  trg  (set:lvs (make:lvs src) j ell)
-      =/  row  (unmake:lvs trg)
-    $(i +(i), w `(list (list @rs))`(weld w `(list (list @rs))`~[row]))
+      ?:  (gth i m)  v
+    $(ii +(ii), v (set v ii j (get:lvs w ii)))
   ::
   ::
   ::    Get the value of a row as @lvs in 1..m
@@ -139,39 +133,40 @@
     ~/  %getr
     |=  [u=@lms i=@ud]  ^-  @lvs
     ~_  leaf+"lagoon-fail"
-    (make:lvs (snag (dec i) `(list (list @rs))`(unmake u)))
+    =+  [m n]=[&1 &2]:(shape u)
+    ?:  (gth i m)  !!
+    (cut 5 [(mul i n) n] u)
   ::
   ::    Set the value of a row to incoming @lvs in 1..m
   ++  setr
     ~/  %setr
-    |=  [u=@lms i=@ud r=@lvs]  ^-  @lms
+    |=  [u=@lms i=@ud w=@lvs]  ^-  @lms
     ~_  leaf+"lagoon-fail"
     =+  [m n]=[&1 &2]:(shape u)
-    =/  w  `(list (list @rs))`~
-    =/  uu  `(list (list @rs))`(unmake u)
-    =/  count  1
+    =/  jj  1  :: index over columns
+    =/  v  u
     |-  ^-  @lms
-      ?:  (gth count m)  `@lms`(make w)
-      ?:  =(count i)
-      $(count +(count), w `(list (list @rs))`(weld w `(list (list @rs))`~[(unmake:lvs r)]))
-      =/  row  (snag (dec count) `(list (list @rs))`uu)
-    $(count +(count), w `(list (list @rs))`(weld w `(list (list @rs))`~[row]))
+      ?:  (gth i m)  v
+    $(jj +(jj), v (sew 5 [(add i jj) 1 (get:lvs w jj)] v))
+    ::  XX check positioning with better tests
   ::
   ::    Swap the value of two columns
   ++  swapc
     ~/  %swapc
     |=  [u=@lms i=@ud j=@ud]  ^-  @lms
     ~_  leaf+"lagoon-fail"
-    =/  t  (getc u j)
-    (setc (setc u j (getc u i)) i t)  :: TODO I think this Hoon may be broken
+    =/  v  (getc u j)
+    =/  w  (setc u j (getc u i))
+    (setc w i v)
   ::
   ::    Swap the value of two rows
   ++  swapr
     ~/  %swapc
     |=  [u=@lms i=@ud j=@ud]  ^-  @lms
     ~_  leaf+"lagoon-fail"
-    =/  t  (getr u j)
-    (setr (setr u j (getr u i)) i t)
+    =/  v  (getr u j)
+    =/  w  (setr u j (getr u i))
+    (setr w i v)
   ::
   ::    Transpose the entire matrix, essentially a flopped unmake
   ++  trans
@@ -179,104 +174,68 @@
     |=  [u=@lms]  ^-  @lms
     ~_  leaf+"lagoon-fail"
     =+  [m n]=[&1 &2]:(shape u)
-    =/  count  1
-    =/  w  `@lms`(zeros n m)
+    =/  ii  1  :: index over rows/columns
+    =/  w  (zeros n m)
     |-  ^-  @lms
-      ?:  (gth count n)  `@lms`w
-    $(count +(count), w (setr w count (getc u count)))
+      ?:  (gth ii n)  w
+    $(ii +(ii), w (setr w ii (getc u ii)))
   ::
   ::  Arithmetic operators
   ::
   ::    Scalar addition
   ++  adds
     ~/  %adds
-    |=  [u=@lms v=@rs]  ^-  @lms
-    ~_  leaf+"lagoon-fail"
+    |=  [u=@lms s=@rs]  ^-  @lms
     =+  [m n]=[&1 &2]:(shape u)
-    =/  size  (mul m n)
-    =/  p  (cantor m n)
-    =/  w  `@lms`p
-    =/  count  0
-    =/  u  (end 5 size u)  :: strip off length bits
-    |-  ^-  @lms
-      ?:  =(count size)  `@lms`w
-      =/  ul  `@rs`(end 5 1 (swp 5 u))  :: grab the high bytes
-      =/  wl  `@rs`(add:rs ul v)
-    $(count +(count), u (end 5 (sub (dec size) count) u), w (add (lsh 5 1 w) wl))
+    =/  ss  (fill m n s)
+    (addm u ss)
   ::
   ::    Scalar subtraction
   ++  subs
     ~/  %subs
-    |=  [u=@lms v=@rs]  ^-  @lms
-    ~_  leaf+"lagoon-fail"
+    |=  [u=@lms s=@rs]  ^-  @lms
     =+  [m n]=[&1 &2]:(shape u)
-    =/  size  (mul m n)
-    =/  p  (cantor m n)
-    =/  w  `@lms`p
-    =/  count  0
-    =/  u  (end 5 size u)  :: strip off length bits
-    |-  ^-  @lms
-      ?:  =(count size)  `@lms`w
-      =/  ul  `@rs`(end 5 1 (swp 5 u))  :: grab the high bytes
-      =/  wl  `@rs`(sub:rs ul v)
-    $(count +(count), u (end 5 (sub (dec size) count) u), w (add (lsh 5 1 w) wl))
+    =/  ss  (fill m n s)
+    (subm u ss)
   ::
   ::    Scalar multiplication
   ++  muls
     ~/  %muls
-    |=  [u=@lms v=@rs]  ^-  @lms
-    ~_  leaf+"lagoon-fail"
+    |=  [u=@lms s=@rs]  ^-  @lms
     =+  [m n]=[&1 &2]:(shape u)
-    =/  size  (mul m n)
-    =/  p  (cantor m n)
-    =/  w  `@lms`p
-    =/  count  0
-    =/  u  (end 5 size u)  :: strip off length bits
-    |-  ^-  @lms
-      ?:  =(count size)  `@lms`w
-      =/  ul  `@rs`(end 5 1 (swp 5 u))  :: grab the high bytes
-      =/  wl  `@rs`(mul:rs ul v)
-    $(count +(count), u (end 5 (sub (dec size) count) u), w (add (lsh 5 1 w) wl))
+    =/  ss  (fill m n s)
+    (mulm u ss)
   ::
   ::    Scalar division
   ++  divs
     ~/  %divs
-    |=  [u=@lms v=@rs]  ^-  @lms
-    ~_  leaf+"lagoon-fail"
+    |=  [u=@lms s=@rs]  ^-  @lms
     =+  [m n]=[&1 &2]:(shape u)
-    =/  size  (mul m n)
-    =/  p  (cantor m n)
-    =/  w  `@lms`p
-    =/  count  0
-    =/  u  (end 5 size u)  :: strip off length bits
-    |-  ^-  @lms
-      ?:  =(count size)  `@lms`w
-      =/  ul  `@rs`(end 5 1 (swp 5 u))  :: grab the high bytes
-      =/  wl  `@rs`(div:rs ul v)
-    $(count +(count), u (end 5 (sub (dec size) count) u), w (add (lsh 5 1 w) wl))
+    =/  ss  (fill m n s)
+    (divm u ss)
   ::
-  ::    Columnar addition of @rs
+  ::    Column-wise addition of @rs
   ++  addsc
     ~/  %addsc
     |=  [u=@lms i=@ud v=@rs]  ^-  @lms
     ~_  leaf+"lagoon-fail"
     (setc u i (adds:lvs (getc u i) v))
   ::
-  ::    Columnar subtraction of @rs
+  ::    Column-wise subtraction of @rs
   ++  subsc
     ~/  %subsc
     |=  [u=@lms i=@ud v=@rs]  ^-  @lms
     ~_  leaf+"lagoon-fail"
     (setc u i (subs:lvs (getc u i) v))
   ::
-  ::    Columnar multiplication by @rs
+  ::    Column-wise multiplication by @rs
   ++  mulsc
     ~/  %mulsc
     |=  [u=@lms i=@ud v=@rs]  ^-  @lms
     ~_  leaf+"lagoon-fail"
     (setc u i (muls:lvs (getc u i) v))
   ::
-  ::    Columnar division by @rs
+  ::    Column-wise division by @rs
   ++  divsc
     ~/  %divsc
     |=  [u=@lms i=@ud v=@rs]  ^-  @lms
@@ -311,28 +270,28 @@
     ~_  leaf+"lagoon-fail"
     (setr u i (divs:lvs (getr u i) v))
   ::
-  ::    Columnar addition of @lvs
+  ::    Column-wise addition of @lvs
   ++  addvc
     ~/  %addvc
     |=  [u=@lms i=@ud v=@lvs]  ^-  @lms
     ~_  leaf+"lagoon-fail"
     (setc u i (addv:lvs (getc u i) v))
   ::
-  ::    Columnar subtraction of @lvs
+  ::    Column-wise subtraction of @lvs
   ++  subvc
     ~/  %subvc
     |=  [u=@lms i=@ud v=@lvs]  ^-  @lms
     ~_  leaf+"lagoon-fail"
     (setc u i (subv:lvs (getc u i) v))
   ::
-  ::    Columnar multiplication by @lvs
+  ::    Column-wise multiplication by @lvs
   ++  mulvc
     ~/  %mulvc
     |=  [u=@lms i=@ud v=@lvs]  ^-  @lms
     ~_  leaf+"lagoon-fail"
     (setc u i (mulv:lvs (getc u i) v))
   ::
-  ::    Columnar division by @lvs
+  ::    Column-wise division by @lvs
   ++  divvc
     ~/  %divvc
     |=  [u=@lms i=@ud v=@lvs]  ^-  @lms
@@ -367,81 +326,38 @@
     ~_  leaf+"lagoon-fail"
     (setr u i (divv:lvs (getr u i) v))
   ::
-  ::    Elementwise addition of @lms
-  ++  addm
-    ~/  %addm
+  ::    Turn on a gate of two variables.
+  ++  turn2  :: I guess not in hoon.hoon
+    |=  [[a=(list @rs) b=(list @rs)] f=$-([@rs @rs] @rs)]
+    ^-  (list @rs)
+    ?+  +<-  ~|(%turn2-length !!)
+      [~ ~]  ~
+      [^ ^]  [(f i.a i.b) $(a t.a, b t.b)]
+    ==
+  ::
+  ::    Apply a two-variable function across a matrix input.
+  ++  funm
+    ~/  %funm
+    |=  f=$-([@rs @rs] @rs)
     |=  [u=@lms v=@lms]  ^-  @lms
     ~_  leaf+"lagoon-fail"
-    =/  mnu  `(list @ud)`(shape u)
-    =/  mu  `@ud`-:mnu
-    =/  nu  `@ud`+<:mnu
-    =/  mnv  `(list @ud)`(shape v)
-    =/  mv  `@ud`-:mnv
-    =/  nv  `@ud`+<:mnv
-    ?.  =(mu mv)  !!  :: make sure this is a valid operation
-    ?.  =(nu nv)  !!  :: make sure this is a valid operation
-    =/  w  `@lms`u
-    =/  count  1
-    |-  ^-  @lms
-      ?:  (gth count mu)  `@lms`w
-    $(count +(count), w (addvr w count (getr v count)))
+    (make (turn2 [(unmake u) (unmake v)] f))
+  ::
+  ::    Elementwise addition of @lms
+  ++  addm
+    (funm add:rs)
   ::
   ::    Elementwise subtraction of @lms
   ++  subm
-    ~/  %subm
-    |=  [u=@lms v=@lms]  ^-  @lms
-    ~_  leaf+"lagoon-fail"
-    =/  mnu  `(list @ud)`(shape u)
-    =/  mu  `@ud`-:mnu
-    =/  nu  `@ud`+<:mnu
-    =/  mnv  `(list @ud)`(shape v)
-    =/  mv  `@ud`-:mnv
-    =/  nv  `@ud`+<:mnv
-    ?.  =(mu mv)  !!  :: make sure this is a valid operation
-    ?.  =(nu nv)  !!  :: make sure this is a valid operation
-    =/  w  `@lms`u
-    =/  count  1
-    |-  ^-  @lms
-      ?:  (gth count mu)  `@lms`w
-    $(count +(count), w (subvr w count (getr v count)))
+    (funm sub:rs)
   ::
   ::    Elementwise multiplication by @lms
   ++  mulm
-    ~/  %mulm
-    |=  [u=@lms v=@lms]  ^-  @lms
-    ~_  leaf+"lagoon-fail"
-    =/  mnu  `(list @ud)`(shape u)
-    =/  mu  `@ud`-:mnu
-    =/  nu  `@ud`+<:mnu
-    =/  mnv  `(list @ud)`(shape v)
-    =/  mv  `@ud`-:mnv
-    =/  nv  `@ud`+<:mnv
-    ?.  =(mu mv)  !!  :: make sure this is a valid operation
-    ?.  =(nu nv)  !!  :: make sure this is a valid operation
-    =/  w  `@lms`u
-    =/  count  1
-    |-  ^-  @lms
-      ?:  (gth count mu)  `@lms`w
-    $(count +(count), w (mulvr w count (getr v count)))
+    (funm mul:rs)
   ::
   ::    Elementwise division by @lms
   ++  divm
-    ~/  %divm
-    |=  [u=@lms v=@lms]  ^-  @lms
-    ~_  leaf+"lagoon-fail"
-    =/  mnu  `(list @ud)`(shape u)
-    =/  mu  `@ud`-:mnu
-    =/  nu  `@ud`+<:mnu
-    =/  mnv  `(list @ud)`(shape v)
-    =/  mv  `@ud`-:mnv
-    =/  nv  `@ud`+<:mnv
-    ?.  =(mu mv)  !!  :: make sure this is a valid operation
-    ?.  =(nu nv)  !!  :: make sure this is a valid operation
-    =/  w  `@lms`u
-    =/  count  1
-    |-  ^-  @lms
-      ?:  (gth count mu)  `@lms`w
-    $(count +(count), w (divvr w count (getr v count)))
+    (funm div:rs)
   ::
   ::    Matrix--matrix multiplication
   ::    Note:  We opt here for clarity NOT efficiency.  Leave that to the jets.
@@ -449,51 +365,41 @@
     ~/  %mmul
     |=  [u=@lms v=@lms]  ^-  @lms
     ~_  leaf+"lagoon-fail"
-    =/  mn  `(list @ud)`(shape u)
-    =/  mu  `@ud`-:mn
-    =/  nu  `@ud`+<:mn
-    =/  np  `(list @ud)`(shape v)
-    =/  nv  `@ud`-:np
-    =/  pv  `@ud`+<:np
-    ?.  =(nu nv)  !!  :: make sure this is a valid operation
-    =/  w  `@lms`(zeros mu pv)
-    =/  i  1
-    =/  j  1
+    =+  [mu nu]=[&1 &2]:(shape u)
+    =+  [mv nv]=[&1 &2]:(shape v)
+    ?.  =(nu mv)  !!  :: make sure this is a valid operation
+    =/  w  (zeros mu nv)
+    =/  ii  1  :: index over rows
+    =/  jj  1  :: index over columns
     |-  ^-  @lms
-      ?:  (gth i mu)  `@lms`w
-      ?:  (gth j pv)
-        $(i +(i), j 1, w w)
-      $(i i, j +(j), w `@lms`(set w i j (inner:lvs (getr u i) (getc v j))))
+      ?:  (gth ii mu)  w
+      ?:  (gth jj nv)  $(ii +(ii), jj 1, w w)
+      $(ii ii, jj +(jj), w `@lms`(set w ii jj (inner:lvs (getr u ii) (getc v jj))))
   ::
   ::    Matrix exponentiation (A**N, not e(A))
   ++  mpow
     ~/  %mpow
     |=  [u=@lms i=@ud]  ^-  @lms
     ~_  leaf+"lagoon-fail"
-    =/  mnu  `(list @ud)`(shape u)
-    =/  mu  `@ud`-:mnu
-    =/  nu  `@ud`+<:mnu
-    =/  w  `@lms`u
-    =/  count  1
+    =+  [m n]=[&1 &2]:(shape u)
+    =/  w  u
+    =/  ii  1  :: index over rows
     |-  ^-  @lms
-      ?:  (gth count mu)  `@lms`w
-    $(count +(count), w (mmul u w))  :: TODO check this in Hoon
-  ++  norm  !!
+      ?:  (gth ii i)  w
+    $(ii +(ii), w (mmul u w))  :: TODO check this in Hoon
   ::
   ::    Matrix trace (sum of main diagonal elements); square matrices only
   ++  trace
     ~/  %trace
     |=  [u=@lms]  ^-  @rs
     ~_  leaf+"lagoon-fail"
-    =/  mnu  `(list @ud)`(shape u)
-    =/  mu  `@ud`-:mnu
-    =/  nu  `@ud`+<:mnu
-    ?.  =(mu nu)  !!  :: make sure this is a valid operation (square matrix)
+    =+  [m n]=[&1 &2]:(shape u)
+    ?.  =(m n)  !!  :: make sure this is a valid operation (square matrix)
     =/  sum  .0
-    =/  count  1
+    =/  ii  1  :: index over rows
     |-  ^-  @rs
-      ?:  (gth count mu)  sum
-    $(count +(count), sum (add:rs sum (get u count count)))
+      ?:  (gth ii m)  sum
+    $(ii +(ii), sum (add:rs sum (get u ii ii)))
   ::
   ::    Operations related to matrix inversion
   ::    As with matrix multiplication, we're opting for clarity, not efficiency.
@@ -501,9 +407,7 @@
     ~/  %submatrix
     |=  [u=@lms ia=@ud ib=@ud ja=@ud jb=@ud]  ^-  @lms
     ~_  leaf+"lagoon-fail"
-    =/  mnu  `(list @ud)`(shape u)
-    =/  mu  `@ud`-:mnu
-    =/  nu  `@ud`+<:mnu
+    =+  [mu nu]=[&1 &2]:(shape u)
     ?:  (lth ia 1)  !!
     ?:  (lth ja 1)  !!
     ?:  (gth ia mu)  !!
@@ -512,7 +416,7 @@
     ?:  (gth ja jb)  !!
     =/  mw  +((sub ib ia))
     =/  nw  +((sub jb ja))
-    =/  w  `@lms`(zeros mw nw)
+    =/  w  (zeros mw nw)
     =/  ii  ia
     =/  jj  ja
     =/  mi  1
@@ -525,17 +429,15 @@
     ~/  %augment
     |=  [u=@lms]  ^-  @lms
     ~_  leaf+"lagoon-fail"
-    =/  mnu  `(list @ud)`(shape u)
-    =/  mu  `@ud`-:mnu
-    =/  nu  `@ud`+<:mnu
+    =+  [mu nu]=[&1 &2]:(shape u)
     ?.  =(mu nu)  !!  :: make sure this is a valid operation (square matrix)
-    =/  w  `@lms`(zeros mu (mul mu 2))
-    =/  count  1
+    =/  w  (zeros mu (mul mu 2))
+    =/  ii  1  :: index over rows
     |-  ^-  @lms
-      ?:  (gth count mu)  `@lms`w
-      =/  ir  (snap (reap mu .0) (dec count) .1)
-      =/  wl  (make:lvs (weld (unmake:lvs (getr u count)) ir))
-    $(count +(count), w (setr w count wl))
+      ?:  (gth ii mu)  `@lms`w
+      =/  ir  (snap (reap mu .0) (dec ii) .1)
+      =/  wl  (make:lvs (weld (unmake:lvs (getr u ii)) ir))
+    $(ii +(ii), w (setr w ii wl))
   ::
   ::    Inverse of positive definite symmetric matrix, per Bauer & Reinsch 1971.
   ++  invert
@@ -544,21 +446,18 @@
     ~_  leaf+"lagoon-fail"
     (gauss-elim u)
   ++  abs
-    |=  [x=@rs]  ^-  @rs
-    ?:  (gth x .0)  x
-    (sub:rs .0 x)
+    |=  [s=@rs]  ^-  @rs
+    ?:  (gth s .0)  s  (sub:rs .0 s)
   ::
   ::  |x-y| <= tol
   ++  isclose
-    |=  [x=@rs y=@rs tol=@rs]
-    (lth:rs (abs (sub:rs x y)) tol)
+    |=  [s=@rs t=@rs tol=@rs]
+    (lth:rs (abs (sub:rs s t)) tol)
   ++  gauss-find-next-row
     |=  [u=@lms i=@ud]  ^-  @ud
     ~_  leaf+"lagoon-fail"
-    =/  mnu  `(list @ud)`(shape u)
-    =/  mu  `@ud`-:mnu
-    =/  nu  `@ud`+<:mnu
-    =/  ii  i
+    =+  [mu nu]=[&1 &2]:(shape u)
+    =/  ii  i  :: index over rows
     |-  ^-  @ud
       ?:  (gth ii mu)  i
       ?.  (isclose (get u ii i) .0 .1e-6)  ii
@@ -570,25 +469,21 @@
   ++  gauss-replace-down
     |=  [u=@lms i=@ud]  ^-  @lms
     ~_  leaf+"lagoon-fail"
-    =/  mnu  `(list @ud)`(shape u)
-    =/  mu  `@ud`-:mnu
-    =/  nu  `@ud`+<:mnu
-    =/  j  +(i)
+    =+  [mu nu]=[&1 &2]:(shape u)
+    =/  jj  +(i)
     |-  ^-  @lms
-      ?:  (gth j mu)  `@lms`u
-      ?:  (isclose (get u j i) .0 .1e-6)  $(j +(j), u u)
+      ?:  (gth jj mu)  u
+      ?:  (isclose (get u jj i) .0 .1e-6)  $(jj +(jj), u u)
       ::need to divide through by first element then subtract row i
-    $(j +(j), u (setr u j (subv:lvs (getr u j) (muls:lvs (getr u i) (get u j i)))))
+    $(jj +(jj), u (setr u jj (subv:lvs (getr u jj) (muls:lvs (getr u i) (get u jj i)))))
   ::
   ::  Row reduction has two phases:  check for zero in ith column, if so swap.
   ::  Then replace down and rescale.
   ++  gauss-row-reduce
     |=  [u=@lms i=@ud]  ^-  @lms
     ~_  leaf+"lagoon-fail"
-    =/  mnu  `(list @ud)`(shape u)
-    =/  mu  `@ud`-:mnu
-    =/  nu  `@ud`+<:mnu
-    =/  i  1
+    =+  [mu nu]=[&1 &2]:(shape u)
+    =/  i  1  :: XX TODO wut?
     |-  ^-  @lms
       ?:  (gth i mu)  `@lms`u
       ?.  (isclose (get u i i) .0 .1e-6)  $(i +(i), u (gauss-replace-down (gauss-scale u i) i))
@@ -631,14 +526,10 @@
     ~/  %minor
     |=  [u=@lms i=@ud j=@ud]  ^-  @lms
     ~_  leaf+"lagoon-fail"
-    =/  mnu  `(list @ud)`(shape u)
-    =/  mu  `@ud`-:mnu
-    =/  nu  `@ud`+<:mnu
-    =/  mw  `@ud`(dec mu)
-    =/  nw  `@ud`(dec nu)
-    =/  w  (zeros mw nw)
-    =/  ii  1
-    =/  jj  1
+    =+  [m n]=[&1 &2]:(shape u)
+    =/  w  (zeros (dec m) (dec n))
+    =/  ii  1  :: index over rows
+    =/  jj  1  :: index over columns
     |-  ^-  @lms
       ?:  (gth ii mu)  w
       ?:  (gth jj nu)  $(ii +(ii), jj 1)
