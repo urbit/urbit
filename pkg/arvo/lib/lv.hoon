@@ -43,14 +43,14 @@
     (end [5 1] (swp 5 u))
   ::
   ::    Produce a vector from `(list @u)` (of natural numbers)
-  ++  make-u
+  ++  make-nat
     |=  a=(list @u)  ^-  @lvs
     (make (turn a sun:rs))
   ::
   ::    APL-style index list
   ++  iota
     |=  n=@u  ^-  @lvs
-    (make-u (gulf 1 n))
+    (make-nat (gulf 1 n))
   ++  make
     |=  [a=(list @rs)]  ^-  @lvs
     ~_  leaf+"lagoon-fail"
@@ -180,6 +180,11 @@
     ~_  leaf+"lagoon-fail"
     (sum (mulv u v))
   ++  outer  !!
+  ++  catenate
+    |=  [u=@lvs v=@lvs]
+    ~_  leaf+"lagoon-fail"
+    (make (weld (unmake u) (unmake v)))
+    :: XX slow way, do in bits
   --
 ::
 ::::  Vector type in single-precision floating-point @rs
@@ -218,14 +223,14 @@
     (end [6 1] (swp 6 u))
   ::
   ::    Produce a vector from `(list @u)` (of natural numbers)
-  ++  make-u
+  ++  make-nat
     |=  a=(list @u)  ^-  @lvd
     (make (turn a sun:rd))
   ::
   ::    APL-style index list
   ++  iota
     |=  n=@u  ^-  @lvd
-    (make-u (gulf 1 n))
+    (make-nat (gulf 1 n))
   ++  make
     |=  [a=(list @rd)]  ^-  @lvd
     ~_  leaf+"lagoon-fail"
@@ -354,5 +359,10 @@
     ~_  leaf+"lagoon-fail"
     (sum (mulv u v))
   ++  outer  !!
+  ++  catenate
+    |=  [u=@lvd v=@lvd]
+    ~_  leaf+"lagoon-fail"
+    (make (weld (unmake u) (unmake v)))
+    :: XX slow way, do in bits
   --
 --

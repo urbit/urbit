@@ -405,7 +405,7 @@
   ::
   ++  catenate
     |=  [u=@lms w=@lms]  ^-  @lms
-    (make (turn (paired (unmake u) (unmake w) catenate:lvs))))
+    (make (turn (paired (unmake u) (unmake w) catenate:lvs)))
   ++  augment
     |=  u=@lms  ^-  @lms
     =+  [m n]=[&1 &2]:(shape u)

@@ -11,7 +11,7 @@
   union trip {
     float32_t s;    //struct containing v, uint_32
     c3_w c;         //uint_32
-    float b;       //float_32
+    float b;        //float_32, compiler-native but useful for debugging printfs
   };
 
 /* functions
@@ -85,6 +85,9 @@
          c3n == u3ud(a) )
     {
       return u3m_bail(c3__exit);
+    }
+    else if ( !_(u3a_is_cat(a)) ) {
+      return u3m_bail(c3__fail);
     }
     else {
       return u3qelvd_zeros(a);
