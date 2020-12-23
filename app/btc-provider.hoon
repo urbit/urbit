@@ -101,22 +101,22 @@
 ++  handle-action
   |=  act=action
   ^-  (quip card _state)
-  ?.  ?|(connected.host-info =(-.body.act %ping))
+  ?.  ?|(connected.host-info =(-.act %ping))
     ~&  >>>  "Not connected to RPC"
     [~[(send-update [%| %not-connected 500])] state]
   =/  ract=action:rpc-types
-    ?-  -.body.act
+    ?-  -.act
         %address-info
-      [%get-address-info address.body.act]
+      [%get-address-info address.act]
       ::
         %tx-info
-      [%get-tx-vals txid.body.act]
+      [%get-tx-vals txid.act]
       ::
         %raw-tx
-      [%get-raw-tx txid.body.act]
+      [%get-raw-tx txid.act]
       ::
         %broadcast-tx
-      [%broadcast-tx rawtx.body.act]
+      [%broadcast-tx rawtx.act]
       ::
         %ping
       [%get-block-and-fee ~]
@@ -129,15 +129,12 @@
   =/  req=request:http
     (gen-request host-info ract)
   [%pass (rpc-wire act) %arvo %i %request req out]
-::  wire structure: /action-tas/req-id/now 
+::  wire structure: /action-tas/now
 ::
 ++  rpc-wire
   |=  act=action  ^-  wire
-  /[-.body.act]/[req-id.act]/[(scot %da now.bowl)]
+  /[-.act]/[(scot %da now.bowl)]
 ::
-++  get-req-id
-  |=  =wire  ^-  req-id
-  +<.wire
 ::  Handles HTTP responses from RPC servers. Parses for errors, then handles response. 
 ::  For actions that require collating multiple RPC calls, uses req-card to call out
 ::    to RPC again if more information is required.
@@ -178,28 +175,28 @@
 ++  handle-rpc-result
   |=  [=wire r=result:rpc-types]
   ^-  (quip card _state)
-  ?+  wire  ~|("Unexpected HTTP response" !!)
-      [%address-info @ *]
+  ?+  -.wire  ~|("Unexpected HTTP response" !!)
+      %address-info
     ?>  ?=([%get-address-info *] r)
     :_  state
-    ~[(send-update [%.y (get-req-id wire) %address-info +.r])]
+    ~[(send-update [%.y %address-info +.r])]
     ::
-      [%tx-info @ *]
+      %tx-info
     ?>  ?=([%get-tx-vals *] r)
     :_  state
-    ~[(send-update [%.y (get-req-id wire) %tx-info +.r])]
+    ~[(send-update [%.y %tx-info +.r])]
     ::
-      [%raw-tx @ *]
+      %raw-tx
     ?>  ?=([%get-raw-tx *] r)
     :_  state
-    ~[(send-update [%.y (get-req-id wire) %raw-tx +.r])] 
+    ~[(send-update [%.y %raw-tx +.r])] 
     ::
-      [%broadcast-tx @ *]
+      %broadcast-tx
     ?>  ?=([%broadcast-tx *] r)
     :_  state
-    ~[(send-update [%.y (get-req-id wire) %broadcast-tx +.r])]
+    ~[(send-update [%.y %broadcast-tx +.r])]
     ::
-      [%ping @ *]
+      %ping
     ?>  ?=([%get-block-and-fee *] r)
     :-  ~[(send-status [%connected block.r fee.r])]
     state(connected.host-info %.y)
@@ -214,9 +211,9 @@
   ^-  card
   =+  c=[%give %fact ~[/clients] %btc-provider-update !>(update)]
   ?:  ?=(%.y -.update)
-    ~&  >>  "prov. update: {<body.p.update>}"
+    ~&  >>  "prov. update: {<p.update>}"
     c
-  ~&   >>  "prov. err: {<p.update>}" 
+  ~&   >>  "prov. err: {<p.update>}"
   c
 ::
 ++  is-whitelisted
