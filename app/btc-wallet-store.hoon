@@ -111,15 +111,18 @@
     =/  w=walt  (from-xpub +.act)
     =.  walts  (~(put by walts) xpub.act w)
     (init-batches xpub.act (dec max-gap.w))
-    ::
-      %address-info
     ::  TODO
     :: if blank address we're watching gets a value
     :: "blank" = unused
     :: add it to history
     :: send a %tx-info request
+    ::
+      %address-info
     (update-address +.act)
-    ::  %txinfo
+    ::
+    ::  - if txid not "included" in blockchain AND was in history
+    ::   - delete from history
+    ::   - send info request again just in case
     ::  - check whether this txid is in history
     ::   - if yes, update its confs and received
     ::   - request info on the tx again if not enough confs
@@ -128,6 +131,9 @@
     =*  ti  info.act
     =+  h=(~(get by history) txid.ti)
     ?~  h  `state
+    ?.  included.ti
+      :_  state(history (~(del by history) txid.ti))
+      ~[(send-request ~[requests-path] [%tx-info block.act txid.ti])]
     =+  w=(~(get by walts) xpub.u.h)
     ?~  w  `state
     =.  history
@@ -178,7 +184,6 @@
     ::
       %add-history-entry
     :: TODO
-    ::  - create map for xpub if doesn't exist
     ::  - add the hest
     ::  - send a tx-info request out
     `state
@@ -337,7 +342,7 @@
 ::    sends a request for info on the new address (watches it)
 ::
 ++  generate-address
-  |=  [=xpub =chyg =peta]
+  |=  [=xpub =chyg =pmet]
   ^-  (quip card _state)
   =+  uw=(~(get by walts) xpub)
   ?~  uw
@@ -347,7 +352,7 @@
   =/  [addr=address:btc =idx w=walt]
     ~(gen-address wad u.uw chyg)
   :_  state(walts (~(put by walts) xpub w))
-  :~  (send-update [%generate-address xpub addr peta])
+  :~  (send-update [%generate-address xpub addr pmet])
       %+  send-request  ~[requests-path]
       :*  %address-info  last-block
           addr  xpub  chyg  idx

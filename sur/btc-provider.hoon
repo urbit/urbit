@@ -1,21 +1,18 @@
 /-  *btc
 |%
 +$  host-info  [api-url=@t connected=? clients=(set ship)]
-+$  req-id  @t
 +$  command
   $%  [%set-credentials api-url=@t]
       [%whitelist-clients clients=(set ship)]
   ==
-+$  action  [=req-id body=action-body]
-+$  action-body
++$  action
   $%  [%address-info =address]
       [%tx-info =txid]
       [%raw-tx =txid]
       [%broadcast-tx =rawtx]
       [%ping ~]
   ==
-+$  result  [=req-id body=result-body]
-+$  result-body
++$  result
   $%  [%address-info utxos=(set utxo) used=? block=@ud]
       [%tx-info =info:tx]
       [%raw-tx =txid =rawtx]

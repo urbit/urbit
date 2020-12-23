@@ -40,7 +40,7 @@
       confs=@ud
   ==
 ::  insel: a selected utxo for input to a transaction
-::  peta: optional payment metadata
+::  pmet: optional payment metadata
 ::  feyb: fee per byte in sats
 ::  txi/txo:  input/output for a transaction being built
 ::   - txo has an hdkey if it's a change account
@@ -49,7 +49,7 @@
 ::   - sitx: signed hex transaction
 ::
 +$  insel  [=utxo =chyg =idx]
-+$  peta  (unit [payer=ship value=sats])
++$  pmet  (unit [payer=ship value=sats])
 +$  feyb  sats
 +$  txi  [=utxo ur=(unit rawtx) =hdkey]
 +$  txo  [=address value=sats hk=(unit hdkey)]
@@ -91,14 +91,14 @@
   $%  [%add-wallet =xpub =fprint scan-to=(unit scon) max-gap=(unit @ud) confs=(unit @ud)]
       [%address-info =xpub =chyg =idx utxos=(set utxo) used=? block=@ud]
       [%tx-info =info:tx block=@ud]
-      [%generate-address =xpub =chyg =peta]
+      [%generate-address =xpub =chyg =pmet]
       [%generate-txbu =xpub payee=(unit ship) feyb=sats txos=(list txo)]
       [%add-history-entry =hest]
       [%del-history-entry =txid]
   ==
 ::
 +$  update
-  $%  [%generate-address =xpub =address =peta]
+  $%  [%generate-address =xpub =address =pmet]
       [%generate-txbu =xpub =txbu]
       [%saw-piym s=ship =txid]
       [%scan-done =xpub]
