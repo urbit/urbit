@@ -160,9 +160,48 @@
     =>  .(poym ~, feybs (~(put by feybs) payee.act feyb))
     :_  state
     ~[(poke-wallet-hook payee.act [%gen-pay-address value.act])]
+    ::
+    ::  %broadcast-tx
+    ::   - poym txid must match incoming txid
+    ::   - update sitx in poym
+    ::   - send to provider
+    ::
+      %broadcast-tx
+    =/  tx-match=?
+      ?~  poym  %.n
+      =((get-id:txu (decode:txu signed.act)) ~(get-txid txb:bwsl u.poym))
+    :_  ?.  tx-match  state
+        ?~  poym  state
+        state(sitx.u.poym `signed.act)
+    ?.  tx-match
+      ~[(send-update [%broadcast-tx-mismatch-poym signed.act])]
+    ?~  provider  ~|("Provider not connected" !!)
+    ~[(poke-provider host.u.provider ~ [%broadcast-tx signed.act])]
     ::  can't pay yourself; comets can't pay (could spam requests)
     ::  must have default wallet set
     ::  reuses payment address for ship if exists in piym
+    ::
+      %add-piym
+    `state
+    ::
+      %add-poym
+    `state
+    ::
+      %add-poym-txi
+    `state
+    ::
+      %finish-piym
+    `state
+    ::
+      %finish-poym
+    `state
+    ::
+      %fail-broadcast-tx
+    `state
+    ::
+      %succeed-broadcast-tx
+    `state
+    ::
     ::
       %gen-pay-address
     ~|  "Can't pay ourselves; no comets"
@@ -193,23 +232,6 @@
     :~  %-  poke-wallet-store
         [%generate-txbu u.def-wallet `src.bowl feyb ~[[address.act value.act ~]]]
     ==
-    ::  %broadcast-tx
-    ::   - poym txid must match incoming txid
-    ::   - update sitx in poym
-    ::   - send to provider
-    ::
-      %broadcast-tx
-    =/  tx-match=?
-      ?~  poym  %.n
-      =((get-id:txu (decode:txu signed.act)) ~(get-txid txb:bwsl u.poym))
-    :_  ?.  tx-match  state
-        ?~  poym  state
-        state(sitx.u.poym `signed.act)
-    ?.  tx-match
-      ~[(send-update [%broadcast-tx-mismatch-poym signed.act])]
-    ?~  provider  ~|("Provider not connected" !!)
-    ~[(poke-provider host.u.provider ~ [%broadcast-tx signed.act])]
-    ::
     ::  %expect-payment
     ::  - check that payment is in piym
     ::  - replace pend.payment with incoming txid (lock)
@@ -288,7 +310,8 @@
     ==
     ::
     ::  %txinfo
-    ::  - TODO: handle case where tx is blank
+    ::  TODO: leads to %finish-piym/%finish-poym
+    ::  - TODO: handle case where tx is blank (included == %.n)
     ::  - insert into wallet-store history if pend-piym or poym matches txid
     ::  - forward tx to wallet-store regardless
     ::
@@ -338,7 +361,7 @@
     ?.  success
       ~[(send-update [%broadcast-tx-spent-utxos txid.res])]
     ::  send %tx-info and %expect-payment
-    %+  weld  ~[(poke-provider host.u.provider ~ [%tx-info txid.res])]
+    %+  weld  ~[(get-tx-info host.u.provider txid.res)]
     ?~  payee.u.poym  ~
     :_  ~
     %-  poke-wallet-hook
@@ -377,6 +400,7 @@
   ^-  (quip card _state)
   ?-  -.upd
     ::  %generate-address
+    ::  TODO move to action
     ::   if no peta (payer/value), just prints address
     ::
       %generate-address

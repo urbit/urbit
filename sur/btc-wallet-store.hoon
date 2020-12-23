@@ -94,6 +94,7 @@
       [%generate-address =xpub =chyg =peta]
       [%generate-txbu =xpub payee=(unit ship) feyb=sats txos=(list txo)]
       [%add-history-entry =hest]
+      [%del-history-entry =txid]
   ==
 ::
 +$  update
