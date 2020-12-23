@@ -89,7 +89,7 @@
 ::
 +$  action
   $%  [%add-wallet =xpub =fprint scan-to=(unit scon) max-gap=(unit @ud) confs=(unit @ud)]
-      [%address-info =xpub =chyg =idx utxos=(set utxo) used=? block=@ud]
+      [%address-info =address utxos=(set utxo) used=? block=@ud]
       [%tx-info =info:tx block=@ud]
       [%generate-address =xpub =chyg =pmet]
       [%generate-txbu =xpub payee=(unit ship) feyb=sats txos=(list txo)]
@@ -106,7 +106,7 @@
 ::  last-block: most recent block this address was checked
 ::
 +$  request
-  $%  [%address-info last-block=@ud a=address =xpub =chyg =idx]
+  $%  [%address-info last-block=@ud a=address]
       [%tx-info last-block=@ud =txid]
   ==
 --
