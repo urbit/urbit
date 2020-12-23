@@ -32,7 +32,7 @@
 +$  state-0
   $:  %0
       prov=(unit [host=ship connected=?])
-      reqs=(set request:bws)
+      =reqs
       =btc-state
       def-wallet=(unit xpub)
       fam-limit=@ud
@@ -176,7 +176,7 @@
     ?.  tx-match
       ~[(send-update [%broadcast-tx-mismatch-poym signed.act])]
     ?~  prov  ~|("Provider not connected" !!)
-    ~[(poke-provider host.u.prov ~ [%broadcast-tx signed.act])]
+    ~[(poke-provider host.u.prov [%broadcast-tx signed.act])]
     ::
       %add-piym
     ?>  =(src.bowl our.bowl)
@@ -204,7 +204,7 @@
       %close-pym
     ?>  =(src.bowl our.bowl)
     =^  cards  state
-      ?.  included.ti
+      ?.  included.ti.act
         `state
       ?:  (~(has by pend-piym) txid.ti.act)
         (piym-to-history ti.act)
@@ -216,12 +216,25 @@
     ::
       %fail-broadcast-tx
     ?>  =(src.bowl our.bowl)
-    `state
+    :_  state(poym ~)
+    ~[(send-update [%broadcast-tx-spent-utxos txid.act])]
     ::
       %succeed-broadcast-tx
     ?>  =(src.bowl our.bowl)
-    `state
-    ::
+    :_  %=  state
+          poym  ~
+          reqs  (~(put by reqs) txid.act [%tx-info 0 txid.act])
+        ==
+    ?~  prov  ~
+    :-  (poke-provider host.u.prov [%tx-info txid.act])
+    ?~  payee.u.poym  ~
+    :_  ~
+    %-  poke-hook
+    :*  u.payee.u.poym
+        %expect-payment
+        txid.act
+        value:(snag 0 txos.u.poym)
+    ==
     ::  can't pay yourself; comets can't pay (could spam requests)
     ::  must have default wallet set
     ::  reuses payment address for ship if exists in piym
@@ -268,7 +281,7 @@
     ?>  (piym-matches u.pay)
     :_  (update-pend-piym txid.act u.pay(pend `txid.act))
     ?~  prov  ~
-    ~[(get-tx-info host.u.prov txid.act)]
+    ~[(poke-provider host.u.prov [%txinfo txid.act])]
     ::
     ++  piym-matches
       |=  p=payment
@@ -319,57 +332,27 @@
   |=  upd=update:bp
   ^-  (quip card _state)
   ?.  ?=(%.y -.upd)  `state
-  ?-  -.body.p.upd
+  ?-  -.p.upd
       %address-info
-    =/  req=(unit request:bws)
-      (~(get by reqs) req-id.p.upd)
-    ?~  req  `state
-    ?>  ?=([%address-info *] u.req)
-    :_  state(reqs (~(del by reqs) req-id.p.upd))
-    :~  %-  poke-store
-        :*  %address-info  xpub.u.req  chyg.u.req  idx.u.req
-            utxos.body.p.upd  used.body.p.upd  block.body.p.upd
-        ==
-    ==
+    :_  state(reqs (~(del by reqs) address.p.upd))
+    ~[(poke-store p.upd)]
+    ::
       %tx-info
-    :_  state
-    ~[(poke-hook our.bowl [%close-pym info.body.p.upd])]
+    :_  state(reqs (~(del by reqs) txid.info.p.upd))
+    ~[(poke-hook our.bowl [%close-pym info.p.upd])]
     ::
       %raw-tx
     :_  state
-    ~[(poke-hook our.bowl [%add-poym-txi +.body.p.upd])]
-    ::
-    ::  %broadcast-tx
-    ::  TODO: better than provider is to put %txinfo in reqs
-    ::   If no provider, return; try again on-reconnect
-    ::   If tx is included or broadcast
-    ::    - send %expect-payment to peer
-    ::    - send a %txinfo request
-    ::   If tx it is not included and not broadcast
-    ::    - clear poym
-    ::    - send a %broadcast-tx-spent-utxos update/error
+    ~[(poke-hook our.bowl [%add-poym-txi +.p.upd])]
     ::
       %broadcast-tx
-    ::  IF NO PROVIDER, SEND TX ID TO reqs?
-    =*  res  body.p.upd
-    ?~  prov  `state
     ?~  poym  `state
-    ?.  =(~(get-txid txb:bwsl u.poym) txid.res)
+    ?.  =(~(get-txid txb:bwsl u.poym) txid.p.upd)
       `state
-    =/  success=?  ?|(broadcast.res included.res)
-    :_  ?:(success state state(poym ~))
-    ?.  success
-      ~[(send-update [%broadcast-tx-spent-utxos txid.res])]
-    ::  send %tx-info and %expect-payment
-    %+  weld  ~[(get-tx-info host.u.prov txid.res)]
-    ?~  payee.u.poym  ~
-    :_  ~
-    %-  poke-hook
-    :*  u.payee.u.poym
-        %expect-payment
-        txid.res
-        value:(snag 0 txos.u.poym)
-    ==
+    :_  state
+    ?:  ?|(broadcast.p.upd included.p.upd)
+      ~[(poke-hook our.bowl [%succeed-broadcast-tx txid.p.upd])]
+    ~[(poke-hook our.bowl [%fail-broadcast-tx txid.p.upd])]
   ==
 ::
 ++  handle-wallet-store-request
@@ -382,16 +365,14 @@
     ==
   ?-  -.req
       %address-info
-    :_  state(req (~(put in reqs) req))
-    ?:  should-send
-      ~[(get-address-info ri host.u.prov a.req)]
-    ~
+    :_  state(reqs (~(put by reqs) a.req req))
+    ?.  should-send  ~
+    ~[(poke-provider host.u.prov [%address-info a.req])]
     ::
       %tx-info
-    :: TODO: push the request out
-    :: put it in reqs
-    :: check whether last-block has passed
-    `state
+    :_  state(reqs (~(put by reqs) txid.req req))
+    ?.  should-send  ~
+    ~[(poke-provider host.u.prov [%tx-info txid.req])]
   ==
 ::
 ++  handle-wallet-store-update
@@ -564,15 +545,14 @@
   |=  [latest-block=@ud]
   ^-  (list card)
   ?~  prov  ~|("provider not set" !!)
-  %+  murn  ~(tap by reqs)
-  |=  [ri=req-id:bp req=request:bws]
+  %+  murn  ~(val by reqs)
+  |=  [req=request:bws]
   ?:  (gte last-block.req latest-block)  ~
+  :-  ~
+  %+  poke-provider  host.u.prov
   ?-  -.req
-      %address-info
-    `(get-address-info ri host.u.prov a.req)
-    ::
-      %tx-info
-    `(get-tx-info host.u.prov txid.req)
+    %address-info  [%address-info a.req]
+    %tx-info       [%tx-info txid.req]
   ==
 ::
 ++  retry-poym
@@ -582,7 +562,7 @@
   =*  host  host.u.prov
   %+  weld
     ?~  sitx.u.poym  ~
-    ~[(poke-prov host ~ [%broadcast-tx u.sitx.u.poym])]
+    ~[(poke-provider host [%broadcast-tx u.sitx.u.poym])]
   %+  turn  txis.u.poym
   |=  =txi:bws
   (get-raw-tx host txid.utxo.txi)
@@ -592,29 +572,18 @@
   ^-  (list card)
   ?~  prov  ~|("provider not set" !!)
   %+  turn  ~(tap in ~(key by pend-piym))
-  |=(=txid (get-tx-info host.u.prov txid))
-::
-++  get-address-info
-  |=  [ri=req-id:bp host=ship a=address]
-  ^-  card
-  (poke-provider host `ri [%address-info a])
+  |=(=txid (poke-provider host.u.prov [%txinfo txid]))
 ::
 ++  get-raw-tx
   |=  [host=ship =txid]
   ^-  card
-  (poke-provider host ~ [%raw-tx txid])
-::
-++  get-tx-info
-  |=  [host=ship =txid]
-  ^-  card
-  (poke-provider host ~ [%tx-info txid])
+  (poke-provider host [%raw-tx txid])
 ::
 ++  poke-provider
-  |=  [host=ship uri=(unit req-id:bp) actb=action-body:bp]
+  |=  [host=ship act=action:bp]
   ^-  card
-  =+  ri=?^(uri u.uri (gen-req-id:bp eny.bowl))
   :*  %pass  /[(scot %da now.bowl)]  %agent  [host %btc-provider]
-      %poke  %btc-provider-action  !>([ri actb])
+      %poke  %btc-provider-action  !>([act])
   ==
 ::
 ++  broadcasting
