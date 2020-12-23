@@ -13,7 +13,7 @@
       [%ping ~]
   ==
 +$  result
-  $%  [%address-info utxos=(set utxo) used=? block=@ud]
+  $%  [%address-info =address utxos=(set utxo) used=? block=@ud]
       [%tx-info =info:tx]
       [%raw-tx =txid =rawtx]
       [%broadcast-tx =txid broadcast=? included=?]
@@ -33,7 +33,7 @@
 ++  rpc-types
   |%
   +$  action
-  $%  [%get-address-info =address]
+    $%  [%get-address-info =address]
         [%get-tx-vals =txid]
         [%get-raw-tx =txid]
         [%broadcast-tx =rawtx]
@@ -42,7 +42,7 @@
     ==
   ::
   +$  result
-    $%  [%get-address-info utxos=(set utxo) used=? block=@ud]
+    $%  [%get-address-info =address utxos=(set utxo) used=? block=@ud]
         [%get-tx-vals =info:tx]
         [%get-raw-tx =txid =rawtx]
         [%create-raw-tx =rawtx]

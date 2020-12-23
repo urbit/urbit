@@ -109,7 +109,8 @@
     ==
     ++  address-info
       %-  ot:dejs:format
-      :~  [%utxos (as:dejs:format utxo)]
+      :~  [%address (cu:dejs:format address-from-cord so:dejs:format)]
+          [%utxos (as:dejs:format utxo)]
           [%used bo:dejs:format]
           [%block ni:dejs:format]
       ==
