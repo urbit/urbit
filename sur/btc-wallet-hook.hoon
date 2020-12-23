@@ -42,8 +42,18 @@
 +$  local
   $%  [%req-pay-address payee=ship value=sats feyb=(unit sats)]
       [%broadcast-tx signed=rawtx]
-      [%poym-add-txi]
-      [%poym-to-history]
+      :: from wallet-store %generate-address
+      [%add-piym =xpub =address payer=ship value=sats]
+      :: wallet-store %generate-txbu
+      [%add-poym =txbu:bws]
+      ::  from %raw-tx
+      [%add-poym-txi =rawtx]
+      :: from %tx-info
+      [%finish-piym =info:tx]
+      [%finish-poym =info:tx]
+      :: from %broadcast-tx
+      [%fail-broadcast-tx =txid]  ::  clear poym; remove from wallet-history?
+      [%succeed-broadcast-tx =txid]  :: p
   ==
 +$  peer
   $%  [%gen-pay-address value=sats]

@@ -182,6 +182,12 @@
     ::  - add the hest
     ::  - send a tx-info request out
     `state
+    ::
+      %del-history-entry
+    ::  - delete txid from history
+    ::  - send a tx-info request out in case it gets added
+    ::
+    `state
   ==
 ::  wallet scan algorithm:
 ::  Initiate a batch for each chyg, with max-gap idxs in it
