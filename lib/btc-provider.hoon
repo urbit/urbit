@@ -4,11 +4,6 @@
 =<  [sur .]
 =,  sur
 |%
-++  gen-req-id
-  |=  eny=@uvJ  ^-  req-id
-  %+  scot  %ux
-  (ripemd-160:ripemd:crypto [(met 3 eny) eny])
-::
 ++  address-to-cord
   |=  =address  ^-  cord
   ?:  ?=([%legacy *] address)
