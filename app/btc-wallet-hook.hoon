@@ -227,6 +227,7 @@
         ==
     ?~  prov  ~
     :-  (poke-provider host.u.prov [%tx-info txid.act])
+    ?~  poym          ~
     ?~  payee.u.poym  ~
     :_  ~
     %-  poke-hook
@@ -281,7 +282,7 @@
     ?>  (piym-matches u.pay)
     :_  (update-pend-piym txid.act u.pay(pend `txid.act))
     ?~  prov  ~
-    ~[(poke-provider host.u.prov [%txinfo txid.act])]
+    ~[(poke-provider host.u.prov [%tx-info txid.act])]
     ::
     ++  piym-matches
       |=  p=payment
@@ -334,8 +335,11 @@
   ?.  ?=(%.y -.upd)  `state
   ?-  -.p.upd
       %address-info
+    =+  r=(~(get by reqs) address.p.upd)
     :_  state(reqs (~(del by reqs) address.p.upd))
-    ~[(poke-store p.upd)]
+    ?~  r  ~
+    ?>  ?=(%address-info -.u.r)
+    ~[(poke-store [%address-info xpub.u.r chyg.u.r idx.u.r +>.p.upd])]
     ::
       %tx-info
     :_  state(reqs (~(del by reqs) txid.info.p.upd))
@@ -572,7 +576,7 @@
   ^-  (list card)
   ?~  prov  ~|("provider not set" !!)
   %+  turn  ~(tap in ~(key by pend-piym))
-  |=(=txid (poke-provider host.u.prov [%txinfo txid]))
+  |=(=txid (poke-provider host.u.prov [%tx-info txid]))
 ::
 ++  get-raw-tx
   |=  [host=ship =txid]
