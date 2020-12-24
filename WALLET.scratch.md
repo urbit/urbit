@@ -99,6 +99,7 @@ Provider is `~zod`, `~dopzod` is a client.  Use the xpub from PRIVATE.md to have
 On `~zod`:
 ```
 |commit %home
+
 |start %btc-provider
 |start %btc-wallet-store
 |start %btc-wallet-hook
@@ -116,6 +117,7 @@ on `~dopzod`:
 ::  xpub from PRIVATE.md
 
 |commit %home
+
 |start %btc-wallet-store
 |start %btc-wallet-hook
 :btc-wallet-hook|action [%set-provider ~zod]
