@@ -133,7 +133,7 @@
 ::
 ++  rpc-wire
   |=  act=action  ^-  wire
-  /[-.act]/[(scot %da now.bowl)]
+  /[-.act]/[(scot %ux (cut 3 [0 20] eny.bowl))]
 ::
 ::  Handles HTTP responses from RPC servers. Parses for errors, then handles response. 
 ::  For actions that require collating multiple RPC calls, uses req-card to call out
@@ -232,9 +232,10 @@
 ::
 ++  do-ping
   ^-  (list card)
+  =/  act=action  [%ping ~]
   :~  :*  %pass  /ping/[(scot %da now.bowl)]  %agent
           [our.bowl %btc-provider]  %poke
-          %btc-provider-action  !>([%blank-id %ping ~])
+          %btc-provider-action  !>(act)
       ==
       (start-ping-timer ~s30)
   ==
