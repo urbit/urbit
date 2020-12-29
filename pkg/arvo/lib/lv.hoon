@@ -11,8 +11,8 @@
 |%
 ++  lvs
   ^|
-  ~%  %lvs  ..is  ~
-  |_  r/$?($n $u $d $z)   :: round nearest, round up, round down, round to zero
+  ~%  %lvs  +>  ~
+  |_  r=$?(%n %u %d %z)   :: round nearest, round up, round down, round to zero
   ::
   ::  Manipulators
   ::
@@ -61,8 +61,21 @@
     (flop `(list @rs)`+:(flop (rip 5 u)))
   ++  append
     |=  [u=@lvs s=@rs]  ^-  @lvs
-    (make (snoc (unmake v) s))
+    (make (snoc (unmake u) s))
     ::  XX could be done faster with a mix/lsh
+  ::
+  ::  |x|
+  ++  abs
+    |=  [s=@rs]
+    ?:  (gth s .0)  s  (sub:rs .0 s)
+  ::
+  ::  |x-y| <= tol
+  ++  isclose
+    |=  [s=@rs t=@rs tol=@rs]
+    (lth:rs (abs (sub:rs s t)) tol)
+  ++  near0
+    |=  s=@rs
+    (isclose s .0 .1e-6)
   ::
   ::    Get the value at an index, using mathematical indices 1..n.
   ++  get
@@ -187,12 +200,12 @@
     :: XX slow way, do in bits
   --
 ::
-::::  Vector type in single-precision floating-point @rs
+::::  Vector type in double-precision floating-point @rd
   ::
 ++  lvd
   ^|
-  ~%  %lvs  ..is  ~
-  |_  r/$?($n $u $d $z)   :: round nearest, round up, round down, round to zero
+  ~%  %lvd  +>  ~
+  |_  r=$?(%n %u %d %z)   :: round nearest, round up, round down, round to zero
   ::
   ::  Manipulators
   ::
@@ -214,7 +227,7 @@
     ~/  %ones
     |=  n=@ud  ^-  @lvd
     ~_  leaf+"lagoon-fail"
-    (fill n .1)
+    (fill n .~1)
   ::
   ::    Length of vector
   ++  length
@@ -241,8 +254,21 @@
     (flop `(list @rd)`+:(flop (rip 6 u)))
   ++  append
     |=  [u=@lvd s=@rd]  ^-  @lvd
-    (make (snoc (unmake v) s))
+    (make (snoc (unmake u) s))
     ::  XX could be done faster with a mix/lsh
+  ::
+  ::  |x|
+  ++  abs
+    |=  [s=@rd]
+    ?:  (gth s .~0)  s  (sub:rd .~0 s)
+  ::
+  ::  |x-y| <= tol
+  ++  isclose
+    |=  [s=@rd t=@rd tol=@rd]
+    (lth:rd (abs (sub:rd s t)) tol)
+  ++  near0
+    |=  s=@rd
+    (isclose s .~0 .~1e-6)
   ::
   ::    Get the value at an index, using mathematical indices 1..n.
   ++  get
@@ -263,9 +289,10 @@
     ~_  leaf+"lagoon-fail"
     ?:  (gth i (length u))  !!
     `@lvd`(cat 6 (cat 6 (cut 6 [0 (dec i)] u) s) (cut 6 [i (length u)] u))
+    ::  XX do as a ++sew, like (sew 6 [3 1 (get:lvd c ii)] v)
   ::
-  ::    Return larger of two single-precision floats.
-  ++  max-rs
+  ::    Return larger of two double-precision floats.
+  ++  max-rd
     |=  [s=@rd t=@rd]  ^-  @rd
     ?:  (gth:rd s t)  s  t
   ::
@@ -273,7 +300,7 @@
   ++  max
     |=  [u=@lvd]  ^-  @rd
     ~_  leaf+"lagoon-fail"
-    `@rd`(reel (unmake u) max-rs)
+    `@rd`(reel (unmake u) max-rd)
   ::
   ::    Return index of maximum value in array, 1-indexed
   ::    DOES NOT handle repeated values, returns first match
