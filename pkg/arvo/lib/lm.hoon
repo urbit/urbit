@@ -8,14 +8,20 @@
 ::  a,b,c   always lists
 ::  u,v,w   always vector/matrix atoms
 ::  s,t     always real/floats
+::
+::  Caveats:
+::
+::  - The size of matrices is limited to one-half the width of the current
+::    floating-point bitwidth.
+::
 /+  *lv
 |%
-++  lvs  ~(. ^lvs r)  :: transmit zeroing mode
-++  lvd  ~(. ^lvd r)  :: transmit zeroing mode
 ++  lms
   ^|
-  ~%  %lms  ..is  ~
-  |_  r/$?($n $u $d $z)   :: round nearest, round up, round down, round to zero
+  ~%  %lms  +>  ~
+  |_  r=$?(%n %u %d %z)   :: round nearest, round up, round down, round to zero
+  ++  lvs  ~(. ^lvs r)  :: transmit zeroing mode
+  ++  lvd  ~(. ^lvd r)  :: transmit zeroing mode
   ::
   ::  Manipulators
   ::    Zeroes
@@ -35,7 +41,7 @@
   ::    Ones
   ++  ones
     ~/  %ones
-    |=  n=@ud  ^-  @lvs
+    |=  [m=@ud n=@ud]  ^-  @lms
     ~_  leaf+"lagoon-fail"
     (fill m n .1)
   ::
@@ -44,7 +50,7 @@
     ~/  %id
     |=  [m=@ud]  ^-  @lms
     ~_  leaf+"lagoon-fail"
-    =/  u  (zeros m n)
+    =/  u  (zeros m m)
     =/  ii  1  :: index over rows
     |-
       ?:  =(ii m)  u
@@ -58,38 +64,34 @@
   ::
   ::    Produce a matrix from `(list (list @rs))`
   ::    Rows across, columns "down" (meaning modulus m)
-  ++  not-rs
-    |=  a=@rs
-    ~_  leaf+"lagoon-fail"
-    (not 5 1 a)
-  ++  make :: TODO
+  ++  make
     |=  [a=(list (list @rs))]  ^-  @lms
     ~_  leaf+"lagoon-fail"
     =/  m  `@ud`(lent a)
     =/  n  `@ud`(lent (snag 0 a))
-    =/  i  0  :: index over rows
+    =/  ii  1  :: index over rows
     =/  w  (zeros m n)
     |-  ^-  @lms
-      ?:  =(i m)  w
-    $(i +(i), w (setr w i (make:lvs (snag i a))))
-  ++  unmake :: TODO
+      ?:  (gth ii m)  w
+    $(ii +(ii), w (setr w ii (make:lvs (snag (dec ii) a))))
+  ++  unmake
     |=  [u=@lms]  ^-  (list (list @rs))
     ~_  leaf+"lagoon-fail"
-    %-  flop  :: TODO XXX check this
+    ::%-  flop
     =+  [m n]=[&1 &2]:(shape u)
     =/  size  (mul m n)
     =/  i  0  :: index over rows
     =/  a  `(list @rs)`(oust [0 1] (flop (rip 5 u)))
     =/  b  `(list (list @rs))`~
     |-  ^-  (list (list @rs))
-      ?:  =(i m)  `(list (list @rs))`q
-      =/  b  `(list @rs)`(scag n (slag (mul i n) a))
-    $(i +(i), q `(list (list @rs))`(weld ~[b] a))
+      ?:  =(i m)  `(list (list @rs))`b
+      =/  c  `(list @rs)`(scag n (slag (mul i n) a))
+    $(i +(i), b `(list (list @rs))`(weld b ~[c]))
   ::
   ::    Pretty-print the contents of the matrix.  XX deal with rows better
-  ++  pprint  !!
-  ::  |=  u=@lms  ^-  tape
-  ::  `tape`(zing (join " " (turn (unmake u) |=(s=@rs <s>))))
+  ++  pprint
+    |=  u=@lms  ^-  tape
+    `tape`(zing (join " " (turn `(list @rs)`(zing (unmake u)) |=(s=@rs <s>))))
   ::
   ::    Get the value at an index, using mathematical indices 1..n.
   ++  get
@@ -97,7 +99,7 @@
     |=  [u=@lms i=@ud j=@ud]  ^-  @rs
     ~_  leaf+"lagoon-fail"
     =+  [m n]=[&1 &2]:(shape u)
-    (cut 5 [(add (mul n (dec i)) j) 1] u)
+    (cut 5 [(sub (mul m n) (add (mul n (dec i)) j)) 1] u)
   ::
   ::    Set the value of an element within a matrix, using math indices 1..n.
   ++  set
@@ -115,7 +117,7 @@
     =/  ii  1  :: index over rows
     =/  v  (zeros:lvs m)
     |-  ^-  @lvs
-      ?:  (gth i m)  v
+      ?:  (gth ii m)  v
     $(ii +(ii), v (set:lvs v ii (get:lms u ii j)))
   ::
   ::    Set the value of a column to incoming @lvs in 1..n
@@ -127,7 +129,7 @@
     =/  ii  1  :: index over rows
     =/  v  u
     |-  ^-  @lms
-      ?:  (gth i m)  v
+      ?:  (gth ii m)  v
     $(ii +(ii), v (set v ii j (get:lvs w ii)))
   ::
   ::
@@ -137,8 +139,14 @@
     |=  [u=@lms i=@ud]  ^-  @lvs
     ~_  leaf+"lagoon-fail"
     =+  [m n]=[&1 &2]:(shape u)
-    ?>  (lth (dec i) m)
-    (cut 5 [(mul i n) n] u)
+    =/  jj  1  :: index over columns
+    =/  v  (zeros:lvs n)
+    |-  ^-  @lvs
+      ?:  (gth jj n)  v
+    $(jj +(jj), v (set:lvs v jj (get:lms u i jj)))
+    ::?>  (lth (dec i) m)
+    ::=/  v  (cut 5 [(sub (mul m n) (mul n i)) +(n)] u)
+    ::(con (zeros:lvs n) (swp 5 v))
     ::(mix (zeros:lvs n) (cut 5 [(mul m i) n] u))
   ::
   ::    Set the value of a row to incoming @lvs in 1..m
@@ -147,11 +155,13 @@
     |=  [u=@lms i=@ud w=@lvs]  ^-  @lms
     ~_  leaf+"lagoon-fail"
     =+  [m n]=[&1 &2]:(shape u)
+    =/  i  (dec i)
     =/  jj  1  :: index over columns
     =/  v  u
     |-  ^-  @lms
-      ?:  (gth i m)  v
-    $(jj +(jj), v (sew 5 [(add i jj) 1 (get:lvs w jj)] v))
+      ?:  (gth jj n)  v
+      ::~&  [i "/" m "," jj "/" n (mul m n) (mul n i) (add (mul n i) jj) (get:lvs w jj)]
+    $(jj +(jj), v (sew 5 [(sub (mul m n) (add (mul n i) jj)) 1 (get:lvs w jj)] v))
     ::  XX check positioning with better tests
   ::
   ::    Swap the value of two columns
@@ -307,7 +317,9 @@
     ~/  %addvr
     |=  [u=@lms i=@ud v=@lvs]  ^-  @lms
     ~_  leaf+"lagoon-fail"
-    (setr u i (addv:lvs (getr u i) v))
+    ~&  (unmake:lvs (getr u i))
+    ~&  (unmake:lvs v)
+    (setr u i (addv:lvs (getr u i) v))  :: TODO in flipped order!
   ::
   ::    Row-wise subtraction of @lvs
   ++  subvr
@@ -330,14 +342,26 @@
     ~_  leaf+"lagoon-fail"
     (setr u i (divv:lvs (getr u i) v))
   ::
-  ::    Turn on a gate of two variables.
-  ++  turn2  :: I guess not in hoon.hoon
-    |=  [[a=(list @rs) b=(list @rs)] f=$-([@rs @rs] @rs)]
-    ^-  (list @rs)
-    ?+  +<-  ~|(%turn2-length !!)
-      [~ ~]  ~
-      [^ ^]  [(f i.a i.b) $(a t.a, b t.b)]
-    ==
+  ++  process
+    |=  [[a=(list (list @rs)) b=(list (list @rs))] f=$-([@rs @rs] @rs)]
+    ^-  (list (list @rs))
+    =/  ma  (lent a)
+    =/  na  (lent (snag 0 a))
+    =/  mb  (lent b)
+    =/  nb  (lent (snag 0 b))
+    ?>  =(ma mb)  :: make sure this is a valid operation
+    ?>  =(na nb)  :: make sure this is a valid operation
+    =/  ii  1
+    =/  jj  1
+    =/  c  `(list (list @rs))`~
+    =/  cc  `(list @rs)`~
+    :: for each row, apply turn2
+    |-
+      ?:  (gth ii ma)  c
+      ?:  (gth jj na)  $(ii +(ii), jj 1, c (snoc c cc))
+      =/  aa  `@rs`(snag ii (snag jj a))
+      =/  bb  `@rs`(snag ii (snag jj b))
+    $(ii ii, jj +(jj), cc (snoc cc (f aa bb)))
   ::
   ::    Apply a two-variable function across a matrix input.
   ++  funm
@@ -345,7 +369,7 @@
     |=  f=$-([@rs @rs] @rs)
     |=  [u=@lms v=@lms]  ^-  @lms
     ~_  leaf+"lagoon-fail"
-    (make (turn2 [(unmake u) (unmake v)] f))
+    (make (process [(unmake u) (unmake v)] f))
   ::
   ::    Elementwise addition of @lms
   ++  addm
@@ -385,9 +409,9 @@
     ~/  %mpow
     |=  [u=@lms n=@ud]  ^-  @lms
     ~_  leaf+"lagoon-fail"
-    ?~  i  !!
+    ?~  n  (id -:(shape u))
     =/  w  u
-    |-(?:(=(1 i) w $(w (mmul u w), i (dec i))))
+    |-(?:(=(1 n) w $(w (mmul u w), n (dec n))))
   ::
   ::    Matrix trace (sum of main diagonal elements); square matrices only
   ++  trace  |=(u=@lms (sum:lvs (diag u)))
@@ -399,17 +423,32 @@
   ::    Operations related to matrix inversion
   ::    As with matrix multiplication, we're opting for clarity, not efficiency.
   ++  submatrix
-    |=  [u=@lms [i=@ud ie=@ud] [j=@ud je=@ud]]  ^-  @lms
-    =+  [is js]=[(dec i)^(sub ie (dec i)) (dec j)^(sub jb (dec j))]
+    |=  [u=@lms [ia=@ud ib=@ud] [ja=@ud jb=@ud]]  ^-  @lms
+    =+  [is js]=[(dec ia)^(sub ib (dec ia)) (dec ja)^(sub jb (dec ja))]
     (make (turn (swag is (unmake u)) |=(a=(list @rs) (swag js a))))
   ::
-  ++  catenate
-    |=  [u=@lms w=@lms]  ^-  @lms
-    (make (turn (paired (unmake u) (unmake w) catenate:lvs)))
-  ++  augment
-    |=  u=@lms  ^-  @lms
-    =+  [m n]=[&1 &2]:(shape u)
-    (catenate u (id m n))
+  ::++  catenate
+  ::  |=  [u=@lms w=@lms]  ^-  @lms
+  ::  (make (turn (paired (unmake u) (unmake w) catenate:lvs)))
+  ::++  augment
+  ::  |=  u=@lms  ^-  @lms
+  ::  =+  [m n]=[&1 &2]:(shape u)
+  ::  (catenate u (id m n))
+  ++  augment  :: TODO XX replace once ++paired written
+    ~/  %augment
+    |=  [u=@lms]  ^-  @lms
+    ~_  leaf+"lagoon-fail"
+    =/  mnu  `(list @ud)`(shape u)
+    =/  mu  `@ud`-:mnu
+    =/  nu  `@ud`+<:mnu
+    ?.  =(mu nu)  !!  :: make sure this is a valid operation (square matrix)
+    =/  w  `@lms`(zeros mu (mul mu 2))
+    =/  count  1
+    |-  ^-  @lms
+      ?:  (gth count mu)  `@lms`w
+      =/  ir  (snap (reap mu .0) (dec count) .1)
+      =/  wl  (make:lvs (weld (unmake:lvs (getr u count)) ir))
+    $(count +(count), w (setr w count wl))
   ::
   ::    Inverse of positive definite symmetric matrix, per Bauer & Reinsch 1971.
   ++  invert
@@ -417,7 +456,7 @@
     |=  [u=@lms]  ^-  @lms
     ~_  leaf+"lagoon-fail"
     =+  [m n]=[&1 &2]:(shape u)
-    (submatrix [1 m] [+(n) (mul 2 n)] (gauss-elim u))
+    (submatrix (gauss-elim u) [1 m] [+(n) (mul 2 n)])
   ++  abs
     |=  [s=@rs]  ^-  @rs
     ?:  (gth s .0)  s  (sub:rs .0 s)
@@ -428,7 +467,7 @@
     (lth:rs (abs (sub:rs s t)) tol)
   ++  near0
     |=  x=@rs
-    (isclose .0 .1e-6)
+    (isclose x .0 .1e-6)
   ++  gauss-find-next-row
     |=  [u=@lms i=@ud]  ^-  @ud
     ~_  leaf+"lagoon-fail"
@@ -451,7 +490,7 @@
       ?:  (gth jj mu)  u
       ?:  (isclose (get u jj i) .0 .1e-6)  $(jj +(jj), u u)
       ::need to divide through by first element then subtract row i
-    $(jj +(jj), u (subvr u jj (getr u jj) (muls:lvs (getr u i) (get u jj i))))
+    $(jj +(jj), u (subvr u jj (muls:lvs (getr u i) (get u jj i))))
   ::
   ::  Row reduction has two phases:  check for zero in ith column, if so swap.
   ::  Then replace down and rescale.
@@ -489,14 +528,12 @@
     ::~/  %gauss-elim
     |=  [u=@lms]  ^-  @lms
     ~_  leaf+"lagoon-fail"
-    =/  mnu  `(list @ud)`(shape u)
-    =/  mu  `@ud`-:mnu
-    =/  nu  `@ud`+<:mnu
-    ?>  =(mu nu)  :: make sure this is a valid operation (square matrix)
+    =+  [m n]=[&1 &2]:(shape u)
+    ?>  =(m n)  :: make sure this is a valid operation (square matrix)
     =/  i  1
     =/  u  (augment u)
     |-  ^-  @lms
-      ?:  (gth i mu)  (gauss-row-replace u)
+      ?:  (gth i m)  (gauss-row-replace u)
     $(i +(i), u (gauss-row-reduce u i))
   ++  minor
     ~/  %minor
@@ -507,10 +544,10 @@
     =/  ii  1  :: index over rows
     =/  jj  1  :: index over columns
     |-  ^-  @lms
-      ?:  (gth ii mu)  w
-      ?:  (gth jj nu)  $(ii +(ii), jj 1)
-      ?:  =(ii i)      $(ii +(ii))
-      ?:  =(jj j)      $(jj +(jj))
+      ?:  (gth ii m)  w
+      ?:  (gth jj n)  $(ii +(ii), jj 1)
+      ?:  =(ii i)     $(ii +(ii))
+      ?:  =(jj j)     $(jj +(jj))
       =/  iii  ?:((gth ii i) (dec ii) ii)
       =/  jjj  ?:((gth jj j) (dec jj) jj)
       $(jj +(jj), w (set w iii jjj (get u ii jj)))
