@@ -11,27 +11,27 @@
 |%
 ++  lvs
   ^|
-  ~%  %lvs  +>  ~
+  ::~%  %lvs  +>  ~
   |_  r=$?(%n %u %d %z)   :: round nearest, round up, round down, round to zero
   ::
   ::  Manipulators
   ::
   ::    Zeroes
   ++  zeros
-    ~/  %zeros
+    ::~/  %zeros
     |=  n=@ud  ^-  @lvs
     ~_  leaf+"lagoon-fail"
     `@lvs`(lsh [5 n] n)
   ::
   ::    Fill value
   ++  fill
-    ~/  %fill
+    ::~/  %fill
     |=  [n=@ud s=@rs]  ^-  @lvs
     `@lvs`(mix (zeros n) (fil 5 n s))
   ::
   ::    Ones
   ++  ones
-    ~/  %ones
+    ::~/  %ones
     |=  n=@ud  ^-  @lvs
     ~_  leaf+"lagoon-fail"
     (fill n .1)
@@ -79,7 +79,7 @@
   ::
   ::    Get the value at an index, using mathematical indices 1..n.
   ++  get
-    ~/  %get
+    ::~/  %get
     |=  [u=@lvs i=@ud]  ^-  @rs
     ~_  leaf+"lagoon-fail"
     (cut 5 [(dec i) 1] u)
@@ -91,12 +91,16 @@
   ::
   ::    Set the value of an element within a vector, using math indices 1..n.
   ++  set
-    ~/  %set
+    ::~/  %set
     |=  [u=@lvs i=@ud s=@rs]  ^-  @lvs
     ~_  leaf+"lagoon-fail"
     ?:  (gth i (length u))  !!
-    `@lvs`(cat 5 (cat 5 (cut 5 [0 (dec i)] u) s) (cut 5 [i (length u)] u))
-    ::  XX do as a ++sew, like (sew 5 [3 1 (get:lvs c ii)] v)
+    =/  full  0xffff.ffff
+    =/  n  (length u)
+    =/  mask  (mix (fil 5 +(n) full) (lsh [5 (dec i)] full))
+    =/  cleared  (dis mask u)
+    =/  value  (lsh [5 (dec i)] s)
+    (con cleared value)
   ::
   ::    Return larger of two single-precision floats.
   ++  max-rs
@@ -153,7 +157,7 @@
   ::
   ::    Apply a two-variable function across a vector input.
   ++  funv
-    ~/  %funv
+    ::~/  %funv
     |=  f=$-([@rs @rs] @rs)
     |=  [u=@lvs v=@lvs]  ^-  @lvs
     ~_  leaf+"lagoon-fail"
@@ -188,7 +192,7 @@
   ::
   ::    Inner or Euclidean dot product, a · b
   ++  inner
-    ~/  %inner
+    ::~/  %inner
     |=  [u=@lvs v=@lvs]  ^-  @rs
     ~_  leaf+"lagoon-fail"
     (sum (mulv u v))
@@ -204,27 +208,27 @@
   ::
 ++  lvd
   ^|
-  ~%  %lvd  +>  ~
+  ::~%  %lvd  +>  ~
   |_  r=$?(%n %u %d %z)   :: round nearest, round up, round down, round to zero
   ::
   ::  Manipulators
   ::
   ::    Zeroes
   ++  zeros
-    ~/  %zeros
+    ::~/  %zeros
     |=  n=@ud  ^-  @lvd
     ~_  leaf+"lagoon-fail"
     `@lvd`(lsh [6 n] n)
   ::
   ::    Fill value
   ++  fill
-    ~/  %fill
+    ::~/  %fill
     |=  [n=@ud s=@rd]  ^-  @lvd
     `@lvd`(mix (zeros n) (fil 6 n s))
   ::
   ::    Ones
   ++  ones
-    ~/  %ones
+    ::~/  %ones
     |=  n=@ud  ^-  @lvd
     ~_  leaf+"lagoon-fail"
     (fill n .~1)
@@ -272,10 +276,10 @@
   ::
   ::    Get the value at an index, using mathematical indices 1..n.
   ++  get
-    ~/  %get
+    ::~/  %get
     |=  [u=@lvd i=@ud]  ^-  @rd
     ~_  leaf+"lagoon-fail"
-    (cut 6 [(dec i) 1] u)
+    (con (zeros (length u)) (cut 6 [(dec i) 1] u))
   ::
   ::    Pretty-print the contents of the vector.
   ++  pprint
@@ -284,12 +288,16 @@
   ::
   ::    Set the value of an element within a vector, using math indices 1..n.
   ++  set
-    ~/  %set
+    ::~/  %set
     |=  [u=@lvd i=@ud s=@rd]  ^-  @lvd
     ~_  leaf+"lagoon-fail"
     ?:  (gth i (length u))  !!
-    `@lvd`(cat 6 (cat 6 (cut 6 [0 (dec i)] u) s) (cut 6 [i (length u)] u))
-    ::  XX do as a ++sew, like (sew 6 [3 1 (get:lvd c ii)] v)
+    =/  full  0xffff.ffff.ffff.ffff
+    =/  n  (length u)
+    =/  mask  (mix (fil 6 +(n) full) (lsh [6 (dec i)] full))
+    =/  cleared  (dis mask u)
+    =/  value  (lsh [6 (dec i)] s)
+    (con cleared value)
   ::
   ::    Return larger of two double-precision floats.
   ++  max-rd
@@ -346,7 +354,7 @@
   ::
   ::    Apply a two-variable function across a vector input.
   ++  funv
-    ~/  %funv
+    ::~/  %funv
     |=  f=$-([@rd @rd] @rd)
     |=  [u=@lvd v=@lvd]  ^-  @lvd
     ~_  leaf+"lagoon-fail"
@@ -381,7 +389,7 @@
   ::
   ::    Inner or Euclidean dot product, a · b
   ++  inner
-    ~/  %inner
+    ::~/  %inner
     |=  [u=@lvd v=@lvd]  ^-  @rd
     ~_  leaf+"lagoon-fail"
     (sum (mulv u v))

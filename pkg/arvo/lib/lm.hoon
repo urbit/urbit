@@ -18,7 +18,7 @@
 |%
 ++  lms
   ^|
-  ~%  %lms  +>  ~
+  ::~%  %lms  +  ~
   |_  r=$?(%n %u %d %z)   :: round nearest, round up, round down, round to zero
   ++  lvs  ~(. ^lvs r)  :: transmit zeroing mode
   ++  lvd  ~(. ^lvd r)  :: transmit zeroing mode
@@ -26,7 +26,7 @@
   ::  Manipulators
   ::    Zeroes
   ++  zeros
-    ~/  %zeros
+    ::~/  %zeros
     |=  [m=@ud n=@ud]  ^-  @lms
     ~_  leaf+"lagoon-fail"
     =/  p  (rep [4 1] ~[m n])
@@ -34,20 +34,20 @@
   ::
   ::    Fill value
   ++  fill
-    ~/  %fill
+    ::~/  %fill
     |=  [m=@ud n=@ud s=@rs]  ^-  @lms
     `@lms`(mix (zeros m n) (fil 5 (mul m n) s))
   ::
   ::    Ones
   ++  ones
-    ~/  %ones
+    ::~/  %ones
     |=  [m=@ud n=@ud]  ^-  @lms
     ~_  leaf+"lagoon-fail"
     (fill m n .1)
   ::
   ::    Identity
   ++  id
-    ~/  %id
+    ::~/  %id
     |=  [m=@ud]  ^-  @lms
     ~_  leaf+"lagoon-fail"
     =/  u  (zeros m m)
@@ -95,7 +95,7 @@
   ::
   ::    Get the value at an index, using mathematical indices 1..n.
   ++  get
-    ~/  %get
+    ::~/  %get
     |=  [u=@lms i=@ud j=@ud]  ^-  @rs
     ~_  leaf+"lagoon-fail"
     =+  [m n]=[&1 &2]:(shape u)
@@ -103,14 +103,14 @@
   ::
   ::    Set the value of an element within a matrix, using math indices 1..n.
   ++  set
-    ~/  %set
+    ::~/  %set
     |=  [u=@lms i=@ud j=@ud s=@rs]  ^-  @lms
     ~_  leaf+"lagoon-fail"
     `@lms`(setr u i (set:lvs (getr u i) j s))
   ::
   ::    Get the value of a column as @lvs in 1..n
   ++  getc
-    ~/  %getc
+    ::~/  %getc
     |=  [u=@lms j=@ud]  ^-  @lvs
     ~_  leaf+"lagoon-fail"
     =+  [m n]=[&1 &2]:(shape u)
@@ -118,11 +118,11 @@
     =/  v  (zeros:lvs m)
     |-  ^-  @lvs
       ?:  (gth ii m)  v
-    $(ii +(ii), v (set:lvs v ii (get:lms u ii j)))
+    $(ii +(ii), v (set:lvs v ii (get u ii j)))
   ::
   ::    Set the value of a column to incoming @lvs in 1..n
   ++  setc
-    ~/  %setc
+    ::~/  %setc
     |=  [u=@lms j=@ud w=@lvs]  ^-  @lms
     ~_  leaf+"lagoon-fail"
     =+  [m n]=[&1 &2]:(shape u)
@@ -135,7 +135,7 @@
   ::
   ::    Get the value of a row as @lvs in 1..m
   ++  getr
-    ~/  %getr
+    ::~/  %getr
     |=  [u=@lms i=@ud]  ^-  @lvs
     ~_  leaf+"lagoon-fail"
     =+  [m n]=[&1 &2]:(shape u)
@@ -151,7 +151,7 @@
   ::
   ::    Set the value of a row to incoming @lvs in 1..m
   ++  setr
-    ~/  %setr
+    ::~/  %setr
     |=  [u=@lms i=@ud w=@lvs]  ^-  @lms
     ~_  leaf+"lagoon-fail"
     =+  [m n]=[&1 &2]:(shape u)
@@ -160,13 +160,12 @@
     =/  v  u
     |-  ^-  @lms
       ?:  (gth jj n)  v
-      ::~&  [i "/" m "," jj "/" n (mul m n) (mul n i) (add (mul n i) jj) (get:lvs w jj)]
     $(jj +(jj), v (sew 5 [(sub (mul m n) (add (mul n i) jj)) 1 (get:lvs w jj)] v))
     ::  XX check positioning with better tests
   ::
   ::    Swap the value of two columns
   ++  swapc
-    ~/  %swapc
+    ::~/  %swapc
     |=  [u=@lms i=@ud j=@ud]  ^-  @lms
     ~_  leaf+"lagoon-fail"
     =/  v  (getc u j)
@@ -175,7 +174,7 @@
   ::
   ::    Swap the value of two rows
   ++  swapr
-    ~/  %swapc
+    ::~/  %swapc
     |=  [u=@lms i=@ud j=@ud]  ^-  @lms
     ~_  leaf+"lagoon-fail"
     =/  v  (getr u j)
@@ -184,7 +183,7 @@
   ::
   ::    Transpose the entire matrix, essentially a flopped unmake
   ++  trans
-    ~/  %trans
+    ::~/  %trans
     |=  [u=@lms]  ^-  @lms
     ~_  leaf+"lagoon-fail"
     =+  [m n]=[&1 &2]:(shape u)
@@ -198,7 +197,7 @@
   ::
   ::    Scalar addition
   ++  adds
-    ~/  %adds
+    ::~/  %adds
     |=  [u=@lms s=@rs]  ^-  @lms
     =+  [m n]=[&1 &2]:(shape u)
     =/  ss  (fill m n s)
@@ -206,7 +205,7 @@
   ::
   ::    Scalar subtraction
   ++  subs
-    ~/  %subs
+    ::~/  %subs
     |=  [u=@lms s=@rs]  ^-  @lms
     =+  [m n]=[&1 &2]:(shape u)
     =/  ss  (fill m n s)
@@ -214,7 +213,7 @@
   ::
   ::    Scalar multiplication
   ++  muls
-    ~/  %muls
+    ::~/  %muls
     |=  [u=@lms s=@rs]  ^-  @lms
     =+  [m n]=[&1 &2]:(shape u)
     =/  ss  (fill m n s)
@@ -222,7 +221,7 @@
   ::
   ::    Scalar division
   ++  divs
-    ~/  %divs
+    ::~/  %divs
     |=  [u=@lms s=@rs]  ^-  @lms
     =+  [m n]=[&1 &2]:(shape u)
     =/  ss  (fill m n s)
@@ -230,114 +229,112 @@
   ::
   ::    Column-wise addition of @rs
   ++  addsc
-    ~/  %addsc
-    |=  [u=@lms i=@ud v=@rs]  ^-  @lms
+    ::~/  %addsc
+    |=  [u=@lms i=@ud s=@rs]  ^-  @lms
     ~_  leaf+"lagoon-fail"
-    (setc u i (adds:lvs (getc u i) v))
+    (setc u i (adds:lvs (getc u i) s))
   ::
   ::    Column-wise subtraction of @rs
   ++  subsc
-    ~/  %subsc
-    |=  [u=@lms i=@ud v=@rs]  ^-  @lms
+    ::~/  %subsc
+    |=  [u=@lms i=@ud s=@rs]  ^-  @lms
     ~_  leaf+"lagoon-fail"
-    (setc u i (subs:lvs (getc u i) v))
+    (setc u i (subs:lvs (getc u i) s))
   ::
   ::    Column-wise multiplication by @rs
   ++  mulsc
-    ~/  %mulsc
-    |=  [u=@lms i=@ud v=@rs]  ^-  @lms
+    ::~/  %mulsc
+    |=  [u=@lms i=@ud s=@rs]  ^-  @lms
     ~_  leaf+"lagoon-fail"
-    (setc u i (muls:lvs (getc u i) v))
+    (setc u i (muls:lvs (getc u i) s))
   ::
   ::    Column-wise division by @rs
   ++  divsc
-    ~/  %divsc
-    |=  [u=@lms i=@ud v=@rs]  ^-  @lms
+    ::~/  %divsc
+    |=  [u=@lms i=@ud s=@rs]  ^-  @lms
     ~_  leaf+"lagoon-fail"
-    (setc u i (divs:lvs (getc u i) v))
+    (setc u i (divs:lvs (getc u i) s))
   ::
   ::    Row-wise addition of @rs
   ++  addsr
-    ~/  %addsr
-    |=  [u=@lms i=@ud v=@rs]  ^-  @lms
+    ::~/  %addsr
+    |=  [u=@lms i=@ud s=@rs]  ^-  @lms
     ~_  leaf+"lagoon-fail"
-    (setr u i (adds:lvs (getr u i) v))
+    (setr u i (adds:lvs (getr u i) s))
   ::
   ::    Row-wise subtraction of @rs
   ++  subsr
-    ~/  %subsr
-    |=  [u=@lms i=@ud v=@rs]  ^-  @lms
+    ::~/  %subsr
+    |=  [u=@lms i=@ud s=@rs]  ^-  @lms
     ~_  leaf+"lagoon-fail"
-    (setr u i (subs:lvs (getr u i) v))
+    (setr u i (subs:lvs (getr u i) s))
   ::
   ::    Row-wise multiplication by @rs
   ++  mulsr
-    ~/  %mulsr
-    |=  [u=@lms i=@ud v=@rs]  ^-  @lms
+    ::~/  %mulsr
+    |=  [u=@lms i=@ud s=@rs]  ^-  @lms
     ~_  leaf+"lagoon-fail"
-    (setr u i (muls:lvs (getr u i) v))
+    (setr u i (muls:lvs (getr u i) s))
   ::
   ::    Row-wise division by @rs
   ++  divsr
-    ~/  %divsr
-    |=  [u=@lms i=@ud v=@rs]  ^-  @lms
+    ::~/  %divsr
+    |=  [u=@lms i=@ud s=@rs]  ^-  @lms
     ~_  leaf+"lagoon-fail"
-    (setr u i (divs:lvs (getr u i) v))
+    (setr u i (divs:lvs (getr u i) s))
   ::
   ::    Column-wise addition of @lvs
   ++  addvc
-    ~/  %addvc
+    ::~/  %addvc
     |=  [u=@lms i=@ud v=@lvs]  ^-  @lms
     ~_  leaf+"lagoon-fail"
     (setc u i (addv:lvs (getc u i) v))
   ::
   ::    Column-wise subtraction of @lvs
   ++  subvc
-    ~/  %subvc
+    ::~/  %subvc
     |=  [u=@lms i=@ud v=@lvs]  ^-  @lms
     ~_  leaf+"lagoon-fail"
     (setc u i (subv:lvs (getc u i) v))
   ::
   ::    Column-wise multiplication by @lvs
   ++  mulvc
-    ~/  %mulvc
+    ::~/  %mulvc
     |=  [u=@lms i=@ud v=@lvs]  ^-  @lms
     ~_  leaf+"lagoon-fail"
     (setc u i (mulv:lvs (getc u i) v))
   ::
   ::    Column-wise division by @lvs
   ++  divvc
-    ~/  %divvc
+    ::~/  %divvc
     |=  [u=@lms i=@ud v=@lvs]  ^-  @lms
     ~_  leaf+"lagoon-fail"
     (setc u i (divv:lvs (getc u i) v))
   ::
   ::    Row-wise addition of @lvs
   ++  addvr
-    ~/  %addvr
+    ::~/  %addvr
     |=  [u=@lms i=@ud v=@lvs]  ^-  @lms
     ~_  leaf+"lagoon-fail"
-    ~&  (unmake:lvs (getr u i))
-    ~&  (unmake:lvs v)
-    (setr u i (addv:lvs (getr u i) v))  :: TODO in flipped order!
+    (setr u i (addv:lvs (getr u i) v))
   ::
   ::    Row-wise subtraction of @lvs
   ++  subvr
-    ~/  %subvr
+    ::~/  %subvr
     |=  [u=@lms i=@ud v=@lvs]  ^-  @lms
     ~_  leaf+"lagoon-fail"
     (setr u i (subv:lvs (getr u i) v))
   ::
   ::    Row-wise multiplication by @lvs
   ++  mulvr
-    ~/  %mulvr
+    ::~/  %mulvr
     |=  [u=@lms i=@ud v=@lvs]  ^-  @lms
     ~_  leaf+"lagoon-fail"
     (setr u i (mulv:lvs (getr u i) v))
   ::
   ::    Row-wise division by @lvs
   ++  divvr
-    ~/  %divvr
+    ::~/  %divvr
     |=  [u=@lms i=@ud v=@lvs]  ^-  @lms
     ~_  leaf+"lagoon-fail"
     (setr u i (divv:lvs (getr u i) v))
@@ -365,7 +362,7 @@
   ::
   ::    Apply a two-variable function across a matrix input.
   ++  funm
-    ~/  %funm
+    ::~/  %funm
     |=  f=$-([@rs @rs] @rs)
     |=  [u=@lms v=@lms]  ^-  @lms
     ~_  leaf+"lagoon-fail"
@@ -390,7 +387,7 @@
   ::    Matrix--matrix multiplication
   ::    Note:  We opt here for clarity NOT efficiency.  Leave that to the jets.
   ++  mmul
-    ~/  %mmul
+    ::~/  %mmul
     |=  [u=@lms v=@lms]  ^-  @lms
     ~_  leaf+"lagoon-fail"
     =+  [mu nu]=[&1 &2]:(shape u)
@@ -406,7 +403,7 @@
   ::
   ::    Matrix exponentiation (A**N, not e(A))
   ++  mpow
-    ~/  %mpow
+    ::~/  %mpow
     |=  [u=@lms n=@ud]  ^-  @lms
     ~_  leaf+"lagoon-fail"
     ?~  n  (id -:(shape u))
@@ -435,7 +432,7 @@
   ::  =+  [m n]=[&1 &2]:(shape u)
   ::  (catenate u (id m n))
   ++  augment  :: TODO XX replace once ++paired written
-    ~/  %augment
+    ::~/  %augment
     |=  [u=@lms]  ^-  @lms
     ~_  leaf+"lagoon-fail"
     =/  mnu  `(list @ud)`(shape u)
@@ -452,7 +449,7 @@
   ::
   ::    Inverse of positive definite symmetric matrix, per Bauer & Reinsch 1971.
   ++  invert
-    ~/  %invert
+    ::~/  %invert
     |=  [u=@lms]  ^-  @lms
     ~_  leaf+"lagoon-fail"
     =+  [m n]=[&1 &2]:(shape u)
@@ -525,7 +522,7 @@
       ?:  (gth i mu)  `@lms`u
     $(i +(i), u (gauss-replace-up u i))
   ++  gauss-elim
-    ::~/  %gauss-elim
+    ::::~/  %gauss-elim
     |=  [u=@lms]  ^-  @lms
     ~_  leaf+"lagoon-fail"
     =+  [m n]=[&1 &2]:(shape u)
@@ -536,7 +533,7 @@
       ?:  (gth i m)  (gauss-row-replace u)
     $(i +(i), u (gauss-row-reduce u i))
   ++  minor
-    ~/  %minor
+    ::~/  %minor
     |=  [u=@lms i=@ud j=@ud]  ^-  @lms
     ~_  leaf+"lagoon-fail"
     =+  [m n]=[&1 &2]:(shape u)
