@@ -593,8 +593,9 @@
       ?<  (~(has by archive) resource)
       ?>  (~(has by graphs) resource)
       =/  updates=(list [=time upd=logged-update:store])
-        ::  TODO: add +bap:orm (backwards tap) and use that
-        (flop (tap:orm-log update-log))
+        ::  updates are time-ordered with most recent first
+        ::  process with earliest first
+        (bap:orm-log update-log)
       =|  cards=(list card)
       |-  ^-  (quip card _state)
       ?~  updates
