@@ -45,7 +45,7 @@ export function NotePreview(props: NotePreviewProps) {
 
   const [rev, title, body, content] = getLatestRevision(node);
   const appPath = `/ship/${props.host}/${props.book}`;
-  const isUnread = props.unreads.graph?.[appPath]?.['/']?.unreads?.has(content.index);
+  const isUnread = props.unreads.graph?.[appPath]?.['/']?.unreads?.has(`/${noteId}/1/1`);
 
   const snippet = getSnippet(body);
 
