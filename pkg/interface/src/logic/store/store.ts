@@ -51,19 +51,7 @@ export default class GlobalStore extends BaseStore<StoreState> {
   initialState(): StoreState {
     return {
       connection: 'connected',
-      sidebarShown: true,
-      omniboxShown: false,
-      suspendedFocus: null,
       baseHash: null,
-      background: undefined,
-      remoteContentPolicy: {
-        imageShown: true,
-        audioShown: true,
-        videoShown: true,
-        oembedShown: true,
-      },
-      hideAvatars: false,
-      hideNicknames: false,
       invites: {},
       associations: {
         contacts: {},
@@ -88,7 +76,6 @@ export default class GlobalStore extends BaseStore<StoreState> {
         credentials: null
       },
       contacts: {},
-      dark: false,
       notifications: new BigIntOrderedMap<Timebox>(),
       archivedNotifications: new BigIntOrderedMap<Timebox>(),
       notificationsGroupConfig: [],

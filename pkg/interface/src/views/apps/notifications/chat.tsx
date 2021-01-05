@@ -34,9 +34,8 @@ export function ChatNotification(props: {
   contacts: Rolodex;
   groups: Groups;
   api: GlobalApi;
-  remoteContentPolicy: any;
 }) {
-  const { index, contents, read, time, api, timebox, remoteContentPolicy } = props;
+  const { index, contents, read, time, api, timebox } = props;
   const authors = _.map(contents, "author");
 
   const { chat, mention } = index;
@@ -90,7 +89,6 @@ export function ChatNotification(props: {
                 contacts={groupContacts}
                 fontSize='0'
                 pt='2'
-                remoteContentPolicy={remoteContentPolicy}
               />
             </Link>
           );

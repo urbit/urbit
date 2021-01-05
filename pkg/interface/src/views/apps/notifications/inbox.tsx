@@ -144,7 +144,6 @@ export default function Inbox(props: {
           graphConfig={props.notificationsGraphConfig}
           groupConfig={props.notificationsGroupConfig}
           chatConfig={props.notificationsChatConfig}
-          remoteContentPolicy={props.remoteContentPolicy}
           api={api}
         />
       )}
@@ -163,7 +162,6 @@ export default function Inbox(props: {
               graphConfig={props.notificationsGraphConfig}
               groupConfig={props.notificationsGroupConfig}
               chatConfig={props.notificationsChatConfig}
-              remoteContentPolicy={props.remoteContentPolicy}
             />
           )
       )}
@@ -229,7 +227,6 @@ function DaySection({
               contacts={contacts}
               groups={groups}
               time={date}
-              remoteContentPolicy={remoteContentPolicy}
             />
           </React.Fragment>
         ))
