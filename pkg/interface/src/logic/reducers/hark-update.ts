@@ -8,6 +8,7 @@ import {
 import { makePatDa } from "~/logic/lib/util";
 import _ from "lodash";
 import {StoreState} from "../store/type";
+import { BigIntOrderedMap } from '../lib/BigIntOrderedMap';
 
 type HarkState = Pick<StoreState, "notifications" | "notificationsGraphConfig" | "notificationsGroupConfig" | "unreads" | "notificationsChatConfig">;
 
@@ -189,6 +190,7 @@ function unreadEach(json: any, state: HarkState) {
 function unreads(json: any, state: HarkState) {
   const data = _.get(json, 'unreads');
   if(data) {
+    clearState(state);
     data.forEach(({ index, stats }) => {
       const { unreads, notifications, last } = stats;
       updateNotificationStats(state, index, 'notifications', x => x + notifications);
@@ -204,9 +206,32 @@ function unreads(json: any, state: HarkState) {
   }
 }
 
+function clearState(state){
+  let initialState = {
+    notifications: new BigIntOrderedMap<Timebox>(),
+    archivedNotifications: new BigIntOrderedMap<Timebox>(),
+    notificationsGroupConfig: [],
+    notificationsChatConfig: [],
+    notificationsGraphConfig: {
+      watchOnSelf: false,
+      mentions: false,
+      watching: [],
+    },
+    unreads: {
+      graph: {},
+      group: {}
+    },
+    notificationsCount: 0
+  };
+
+  Object.keys(initialState).forEach(key => {
+    state[key] = initialState[key];
+  });
+}
+
 function updateUnreadCount(state: HarkState, index: NotifIndex, count: (c: number) => number) {
   if(!('graph' in index)) {
-    return; 
+    return;
   }
   const property = [index.graph.graph, index.graph.index, 'unreads'];
   const curr = _.get(state.unreads.graph, property, 0);
@@ -216,7 +241,7 @@ function updateUnreadCount(state: HarkState, index: NotifIndex, count: (c: numbe
 
 function updateUnreads(state: HarkState, index: NotifIndex, f: (us: Set<string>) => void) {
   if(!('graph' in index)) {
-    return; 
+    return;
   }
   const unreads = _.get(state.unreads.graph, [index.graph.graph, index.graph.index, 'unreads'], new Set<string>());
   const oldSize = unreads.size;
@@ -236,7 +261,7 @@ function updateNotificationStats(state: HarkState, index: NotifIndex, statField:
     } else if('group' in index) {
       const curr = _.get(state.unreads.group, [index.group.group, statField], 0);
       _.set(state.unreads.group, [index.group.group, statField], f(curr));
-    } 
+    }
 }
 
 function added(json: any, state: HarkState) {
