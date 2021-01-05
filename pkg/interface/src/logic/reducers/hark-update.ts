@@ -128,7 +128,6 @@ function graphWatchSelf(json: any, state: HarkState) {
 }
 
 function reduce(data: any, state: HarkState) {
-  console.log(data);
   unread(data, state);
   read(data, state);
   archive(data, state);
@@ -190,7 +189,6 @@ function unreadEach(json: any, state: HarkState) {
 function unreads(json: any, state: HarkState) {
   const data = _.get(json, 'unreads');
   if(data) {
-    console.log(data);
     data.forEach(({ index, stats }) => {
       const { unreads, notifications, last } = stats;
       updateNotificationStats(state, index, 'notifications', x => x + notifications);
