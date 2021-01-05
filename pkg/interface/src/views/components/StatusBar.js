@@ -45,6 +45,20 @@ const StatusBar = (props) => {
         />
       </Row>
       <Row justifyContent="flex-end" collapse>
+        <StatusBarItem
+          mr='2'
+          backgroundColor='yellow'
+          display={process.env.LANDSCAPE_STREAM === 'development' ? 'flex' : 'none'}
+          justifyContent="flex-end"
+          flexShrink='0'
+          onClick={() => window.open(
+            'https://github.com/urbit/landscape/issues/new' +
+            '?assignees=&labels=development-stream&title=&' +
+            `body=commit:%20${process.env.LANDSCAPE_SHORTHASH}`
+            )}
+          >
+          <Text color='#000000'>Submit an issue</Text>
+        </StatusBarItem>
         <StatusBarItem px={'2'} flexShrink='0' onClick={() => props.history.push('/~profile')}>
           <Sigil ship={props.ship} size={16} color='black' classes='mix-blend-diff' icon />
           <Text ml={2} display={["none", "inline"]} fontFamily="mono">~{props.ship}</Text>
