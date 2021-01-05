@@ -31,7 +31,6 @@ interface NotificationProps {
   graphConfig: NotificationGraphConfig;
   groupConfig: GroupNotificationsConfig;
   chatConfig: string[];
-  remoteContentPolicy: any;
 }
 
 function getMuted(
@@ -100,7 +99,7 @@ function NotificationWrapper(props: {
         </StatelessAsyncAction>
         {!props.archived && (
           <StatelessAsyncAction name={time.toString()} onClick={onArchive} backgroundColor="transparent">
-            Archive
+            Dismiss
           </StatelessAsyncAction>
         )}
       </Row>
@@ -143,7 +142,6 @@ export function Notification(props: NotificationProps) {
           timebox={props.time}
           time={time}
           associations={associations}
-          remoteContentPolicy={props.remoteContentPolicy}
         />
       </Wrapper>
     );
@@ -184,7 +182,6 @@ export function Notification(props: NotificationProps) {
           timebox={props.time}
           time={time}
           associations={associations}
-          remoteContentPolicy={props.remoteContentPolicy}
         />
       </Wrapper>
     );

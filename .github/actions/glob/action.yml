@@ -1,0 +1,25 @@
+name: 'glob'
+description: 'Create a glob and deploy it to a moon'
+inputs:
+  ship:
+    description: "Ship to deploy to"
+    required: true
+  credentials:
+    description: "base64-encoded GCP Service Account credentials"
+    required: true
+  ssh-sec-key:
+    description: "A base64-encoded SSH secret key for the container to use"
+    required: true
+  ssh-pub-key:
+    description: "The corresponding base64-encoded SSH public key"
+    required: true
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.ship }}
+    - ${{ inputs.credentials }}
+    - ${{ inputs.ssh-sec-key }}
+    - ${{ inputs.ssh-pub-key }}
+

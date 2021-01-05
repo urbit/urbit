@@ -17,6 +17,15 @@
   %+  scry-for  update:store
   /graph/(scot %p entity.res)/[name.res]
 ::
+++  get-graph-mop
+  |=  res=resource
+  ^-  graph:store
+  =/  =update:store
+    (get-graph res)
+  ?>  ?=(%0 -.update)
+  ?>  ?=(%add-graph -.q.update)
+  graph.q.update
+::
 ++  gut-younger-node-siblings
   |=  [res=resource =index:store]
   ^-  (map index:store node:store)

@@ -4,11 +4,12 @@ import { Row, Box, Text, Icon, Button } from '@tlon/indigo-react';
 import ReconnectButton from './ReconnectButton';
 import { StatusBarItem } from './StatusBarItem';
 import { Sigil } from '~/logic/lib/sigil';
+import useLocalState from '~/logic/state/local';
 
 const StatusBar = (props) => {
   const invites = [].concat(...Object.values(props.invites).map(obj => Object.values(obj)));
   const metaKey = (window.navigator.platform.includes('Mac')) ? '⌘' : 'Ctrl+';
-
+  const toggleOmnibox = useLocalState(state => state.toggleOmnibox);
   return (
     <Box
       display='grid'
@@ -24,7 +25,7 @@ const StatusBar = (props) => {
         <Icon icon='Spaces' color='black'/>
       </Button>
 
-        <StatusBarItem mr={2} onClick={() => props.api.local.setOmnibox()}>
+        <StatusBarItem mr={2} onClick={() => toggleOmnibox()}>
         { !props.doNotDisturb && (props.notificationsCount > 0 || invites.length > 0) &&
           (<Box display="block" right="-8px" top="-8px" position="absolute" >
             <Icon color="blue" icon="Bullet" />

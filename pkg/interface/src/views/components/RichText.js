@@ -19,13 +19,21 @@ const DISABLED_BLOCK_TOKENS = [
 
 const DISABLED_INLINE_TOKENS = [];
 
-const RichText = React.memo(({ remoteContentPolicy, ...props }) => (
+const RichText = React.memo(({ disableRemoteContent, ...props }) => (
   <ReactMarkdown
     {...props}
     renderers={{
       link: (props) => {
+        if (disableRemoteContent) {
+          props.remoteContentPolicy = {
+            imageShown: false,
+            audioShown: false,
+            videoShown: false,
+            oembedShown: false
+          };
+        }
         if (hasProvider(props.href)) {
-          return <RemoteContent className="mw-100" url={props.href} remoteContentPolicy={remoteContentPolicy} />;
+          return <RemoteContent className="mw-100" url={props.href} />;
         }
         return <BaseAnchor target='_blank' rel='noreferrer noopener' borderBottom='1px solid' {...props}>{props.children}</BaseAnchor>;
       },

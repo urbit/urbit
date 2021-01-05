@@ -13,12 +13,7 @@ type ProfileProps = StoreState & { api: GlobalApi; ship: string };
 
 export default function Settings({
   api,
-  s3,
-  dark,
-  hideAvatars,
-  hideNicknames,
-  background,
-  remoteContentPolicy
+  s3
 }: ProfileProps) {
   return (
     <Box
@@ -32,13 +27,9 @@ export default function Settings({
     >
       <DisplayForm
         api={api}
-        dark={dark}
-        hideNicknames={hideNicknames}
-        hideAvatars={hideAvatars}
-        background={background}
         s3={s3}
       />
-      <RemoteContentForm {...{ api, remoteContentPolicy }} />
+      <RemoteContentForm api={api} />
       <S3Form api={api} s3={s3} />
       <SecuritySettings api={api} />
     </Box>

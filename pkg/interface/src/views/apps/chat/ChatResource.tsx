@@ -38,8 +38,7 @@ export function ChatResource(props: ChatResourceProps) {
   const chatInput = useRef<ChatInput>();
 
   useEffect(() => {
-    const count = Math.min(150, unreadCount + 30);
-    console.log(`fetching ${count}`);
+    const count = Math.min(50, unreadCount + 15);
     props.api.graph.getNewest(owner, name, count);
   }, [station]);
 
@@ -88,7 +87,6 @@ export function ChatResource(props: ChatResourceProps) {
     <Col {...bind} height="100%" overflow="hidden" position="relative">
       {dragging && <SubmitDragger />}
       <ChatWindow
-        remoteContentPolicy={props.remoteContentPolicy}
         mailboxSize={5}
         match={props.match as any}
         stationPendingMessages={[]}
@@ -106,8 +104,6 @@ export function ChatResource(props: ChatResourceProps) {
         ship={owner}
         station={station}
         api={props.api}
-        hideNicknames={props.hideNicknames}
-        hideAvatars={props.hideAvatars}
         location={props.location}
         scrollTo={scrollTo ? parseInt(scrollTo, 10) : undefined}
       />
@@ -120,7 +116,6 @@ export function ChatResource(props: ChatResourceProps) {
         contacts={contacts}
         onUnmount={appendUnsent}
         s3={props.s3}
-        hideAvatars={props.hideAvatars}
         placeholder="Message..."
         message={unsent[station] || ''}
         deleteMessage={clearUnsent}

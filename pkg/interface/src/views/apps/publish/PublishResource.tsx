@@ -35,10 +35,7 @@ export function PublishResource(props: PublishResourceProps) {
         history={props.history}
         match={props.match}
         location={props.location}
-        hideAvatars={props.hideAvatars}
         unreads={props.unreads}
-        hideNicknames={props.hideNicknames}
-        remoteContentPolicy={props.remoteContentPolicy}
         graphs={props.graphs}
         s3={props.s3}
       />

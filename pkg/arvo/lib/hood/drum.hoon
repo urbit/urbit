@@ -564,7 +564,12 @@
 ::
 ++  se-klin                                           ::  disconnect app
   |=  gyl=gill:gall
-  +>(eel (~(del in eel) gyl))
+  =/  gil=(unit gill:gall)  se-agon
+  =.  eel  (~(del in eel) gyl)
+  ?~  gil  +>.$
+  ?:  =(gyl u.gil)
+    +>.$(inx 0)
+  (se-alas u.gil)
 ::
 ++  se-link                                           ::  connect to app
   |=  gyl=gill:gall
@@ -788,6 +793,7 @@
     ?-  fec
       [%bel *]  ta-bel
       [%blk *]  +>
+      [%bye *]  +>(..ta (se-klin gyl))
       [%clr *]  +>(..ta (se-blit fec))
       [%det *]  (ta-got +.fec)
       [%err *]  (ta-err p.fec)
