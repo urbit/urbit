@@ -92,7 +92,6 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
       if(this.props.scrollTo) {
         this.scrollToUnread();
       }
-
       this.setState({ initialized: true });
     }, this.INITIALIZATION_MAX_TIME);
   }
@@ -127,13 +126,17 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
     }
   }
 
-  componentDidUpdate(prevProps: ChatWindowProps, prevState) {
+  componentDidUpdate(prevProps: ChatWindowProps, prevState: ChatWindowState) {
     const { isChatMissing, history, graph, unreadCount, station } = this.props;
 
     if (isChatMissing) {
       history.push("/~404");
     } else if (graph.size !== prevProps.graph.size && this.state.fetchPending) {
       this.setState({ fetchPending: false });
+    }
+
+    if (this.state.initialized === true && this.state.initialized !== prevState.initialized) {
+      this.dismissIfLineVisible();
     }
 
 
@@ -170,7 +173,6 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
     if(unreadIndex.eq(bigInt.zero)) {
       return;
     }
-
     this.virtualList?.scrollToData(unreadIndex);
   }
 
@@ -197,7 +199,6 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
       const [index] = graph.peekLargest()!;
       await api.graph.getYoungerSiblings(ship,name, 20, `/${index.toString()}`)
       if(currSize === graph.size) {
-        console.log('loaded all newest');
         this.loadedNewest = true;
       }
     } else if(!newer && !this.loadedOldest) {
@@ -205,7 +206,6 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
       await api.graph.getOlderSiblings(ship,name, 20, `/${index.toString()}`)
       this.calculateUnreadIndex();
       if(currSize === graph.size) {
-        console.log('loaded all oldest');
         this.loadedOldest = true;
       }
     }
@@ -247,7 +247,6 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
       association,
       group,
       contacts,
-      mailboxSize,
       graph,
       history
     } = this.props;
