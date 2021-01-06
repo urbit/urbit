@@ -6,6 +6,7 @@ import ErrorBoundary from '~/views/components/ErrorBoundary';
 import Tile from './tile';
 
 export const weatherStyleMap = {
+  Clear: 'rgba(67, 169, 255, 0.4)',
   Sunny: 'rgba(67, 169, 255, 0.4)',
   PartlyCloudy: 'rgba(178, 211, 255, 0.33)',
   Cloudy: 'rgba(136, 153, 176, 0.43)',
