@@ -57,7 +57,7 @@ const StatusBar = (props) => {
             `body=commit:%20${process.env.LANDSCAPE_SHORTHASH}`
             )}
           >
-          <Text color='#000000'>Submit <Text display={['none', 'inline']}>an</Text> issue</Text>
+          <Text color='#000000'>Submit <Text color='#000000' display={['none', 'inline']}>an</Text> issue</Text>
         </StatusBarItem>
         <StatusBarItem px={'2'} flexShrink='0' onClick={() => props.history.push('/~profile')}>
           <Sigil ship={props.ship} size={16} color='black' classes='mix-blend-diff' icon />
