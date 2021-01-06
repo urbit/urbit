@@ -2,7 +2,7 @@ name: merge
 on:
   push:
     branches:
-      - 'jt/merge-workflow'
+      - 'master'
 jobs:
   merge-to-next-js:
     runs-on: ubuntu-latest
@@ -12,7 +12,6 @@ jobs:
       - uses: devmasx/merge-branch@v1.3.1
         with:
           type: now
-          from_branch: jt/test-merge-workflow
-          target_branch: jt/merge-workflow
+          target_branch: release/next-js
           github_token: ${{ github.token }}
 
