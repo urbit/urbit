@@ -10,7 +10,6 @@ import { RouteComponentProps } from "react-router-dom";
 
 import { LinkItem } from "./components/LinkItem";
 import LinkSubmit from "./components/LinkSubmit";
-import { LinkPreview } from "./components/link-preview";
 import { Comments } from "~/views/components/Comments";
 
 import "./css/custom.css";
@@ -33,9 +32,6 @@ export function LinkResource(props: LinkResourceProps) {
     graphKeys,
     unreads,
     s3,
-    hideAvatars,
-    hideNicknames,
-    remoteContentPolicy,
     history
   } = props;
 
@@ -85,9 +81,6 @@ export function LinkResource(props: LinkResourceProps) {
                       contacts={contactDetails}
                       unreads={unreads}
                       nickname={contact?.nickname}
-                      hideAvatars={hideAvatars}
-                      hideNicknames={hideNicknames}
-                      remoteContentPolicy={remoteContentPolicy}
                       baseUrl={resourceUrl}
                       group={group}
                       path={resource["group-path"]}
@@ -126,9 +119,6 @@ export function LinkResource(props: LinkResourceProps) {
                   key={node.post.index}
                   resource={resourcePath}
                   node={node}
-                  hideAvatars={hideAvatars}
-                  hideNicknames={hideNicknames}
-                  remoteContentPolicy={remoteContentPolicy}
                   baseUrl={resourceUrl}
                   unreads={unreads}
                   group={group}
@@ -145,9 +135,6 @@ export function LinkResource(props: LinkResourceProps) {
                   unreads={unreads}
                   contacts={contactDetails}
                   api={api}
-                  hideAvatars={hideAvatars}
-                  hideNicknames={hideNicknames}
-                  remoteContentPolicy={remoteContentPolicy}
                   editCommentId={editCommentId}
                   history={props.history}
                   baseUrl={`${resourceUrl}/${props.match.params.index}`}

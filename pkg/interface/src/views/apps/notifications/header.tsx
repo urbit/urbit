@@ -4,7 +4,7 @@ import f from "lodash/fp";
 import _ from "lodash";
 import moment from "moment";
 import { PropFunc } from "~/types/util";
-import { getContactDetails } from "~/logic/lib/util";
+import { getContactDetails, useShowNickname } from "~/logic/lib/util";
 import { Associations, Contact, Contacts, Rolodex } from "~/types";
 
 const Text = (props: PropFunc<typeof Text>) => (
@@ -14,7 +14,7 @@ const Text = (props: PropFunc<typeof Text>) => (
 function Author(props: { patp: string; contacts: Contacts; last?: boolean }) {
   const contact: Contact | undefined = props.contacts?.[props.patp];
 
-  const showNickname = !!contact?.nickname;
+  const showNickname = useShowNickname(contact);
   const name = contact?.nickname || `~${props.patp}`;
 
   return (

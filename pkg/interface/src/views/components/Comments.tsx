@@ -6,7 +6,7 @@ import CommentInput from './CommentInput';
 import { Contacts } from '~/types/contact-update';
 import GlobalApi from '~/logic/api/global';
 import { FormikHelpers } from 'formik';
-import { Group, GraphNode, LocalUpdateRemoteContentPolicy, Unreads, Association } from '~/types';
+import { Group, GraphNode, Association } from '~/types';
 import { createPost, createBlankNodeWithChildPost } from '~/logic/api/graph';
 import { getLatestCommentRevision } from '~/logic/lib/publish';
 import { scanForMentions } from '~/logic/lib/graph';
@@ -21,9 +21,6 @@ interface CommentsProps {
   baseUrl: string;
   contacts: Contacts;
   api: GlobalApi;
-  hideAvatars: boolean;
-  hideNicknames: boolean;
-  remoteContentPolicy: LocalUpdateRemoteContentPolicy;
   group: Group;
 }
 
@@ -126,9 +123,6 @@ export function Comments(props: CommentsProps) {
               name={name}
               ship={ship}
               unread={i >= readCount}
-              hideNicknames={props.hideNicknames}
-              hideAvatars={props.hideAvatars}
-              remoteContentPolicy={props.remoteContentPolicy}
               baseUrl={props.baseUrl}
               group={group}
               pending={idx.toString() === props.editCommentId}

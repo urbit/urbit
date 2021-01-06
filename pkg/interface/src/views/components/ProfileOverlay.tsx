@@ -1,10 +1,11 @@
 import React, { PureComponent } from 'react';
 
 import { Contact, Group } from '~/types';
-import { cite } from '~/logic/lib/util';
+import { cite, useShowNickname } from '~/logic/lib/util';
 import { Sigil } from '~/logic/lib/sigil';
 
 import { Box, Col, Button, Text, BaseImage, ColProps } from '@tlon/indigo-react';
+import { withLocalState } from '~/logic/state/local';
 
 export const OVERLAY_HEIGHT = 250;
 
@@ -17,12 +18,11 @@ type ProfileOverlayProps = ColProps & {
   group?: Group;
   onDismiss(): void;
   hideAvatars: boolean;
-  hideNicknames: boolean;
   history: any;
   api: any;
 }
 
-export class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
+class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
   public popoverRef: React.Ref<typeof Col>;
 
   constructor(props) {
@@ -60,7 +60,6 @@ export class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
       topSpace,
       bottomSpace,
       group = false,
-      hideNicknames,
       hideAvatars,
       history,
       onDismiss,
@@ -90,7 +89,7 @@ export class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
         classes="brt2"
         svgClass="brt2"
         />;
-    const showNickname = contact?.nickname && !hideNicknames;
+    const showNickname = useShowNickname(contact);
 
     //  TODO: we need to rethink this "top-level profile view" of other ships
     /* if (!group.hidden) {
@@ -147,3 +146,5 @@ export class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
     );
   }
 }
+
+export default withLocalState(ProfileOverlay, ['hideAvatars']);

@@ -71,11 +71,6 @@ export default function NotificationsScreen(props: any) {
                       </HeaderLink>
                     </Box>
                     <Box>
-                      <HeaderLink current={view} view="archive">
-                        Archive
-                      </HeaderLink>
-                    </Box>
-                    <Box>
                       <HeaderLink current={view} view="preferences">
                         Preferences
                       </HeaderLink>
@@ -115,14 +110,6 @@ export default function NotificationsScreen(props: any) {
                     </Box>
                   </Dropdown>
                 </Row>
-                {view === "archive" && (
-                  <Inbox
-                    {...props}
-                    archive={props.archivedNotifications}
-                    showArchive
-                    filter={filter.groups}
-                  />
-                )}
                 {view === "preferences" && (
                   <NotificationPreferences
                     graphConfig={props.notificationsGraphConfig}

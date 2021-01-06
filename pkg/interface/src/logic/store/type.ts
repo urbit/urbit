@@ -11,23 +11,13 @@ import {
   Notifications,
   NotificationGraphConfig, 
   GroupNotificationsConfig,
-  LocalUpdateRemoteContentPolicy,
-  BackgroundConfig,
   Unreads
 } from "~/types";
 
 export interface StoreState {
   // local state
-  sidebarShown: boolean;
-  omniboxShown: boolean;
-  suspendedFocus: HTMLInputElement | null;
-  dark: boolean;
   connection: ConnectionStatus;
   baseHash: string | null;
-  background: BackgroundConfig;
-  remoteContentPolicy: LocalUpdateRemoteContentPolicy;
-  hideAvatars: boolean;
-  hideNicknames: boolean;
 
   // invite state
   invites: Invites;
