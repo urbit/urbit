@@ -48,7 +48,7 @@ const StatusBar = (props) => {
         <StatusBarItem
           mr='2'
           backgroundColor='yellow'
-          display={process.env.NODE_ENV === 'development' ? 'flex' : 'none'}
+          display={process.env.LANDSCAPE_STREAM === 'development' ? 'flex' : 'none'}
           justifyContent="flex-end"
           flexShrink='0'
           onClick={() => window.open(
