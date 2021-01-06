@@ -2,8 +2,9 @@ const path = require('path');
 // const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
+const webpack = require('webpack');
 
-module.exports = {
+module.exports = (env) => return {
   mode: 'production',
   entry: {
      app: './src/index.js'
@@ -53,6 +54,10 @@ module.exports = {
   plugins: [
     new MomentLocalesPlugin(),
     new CleanWebpackPlugin(),
+    new webpack.DefinePlugin({
+      'process.env.LANDSCAPE_STREAM': JSON.stringify(process.env.LANDSCAPE_STREAM),
+      'process.env.LANDSCAPE_SHORTHASH': JSON.stringify(process.env.LANDSCAPE_SHORTHASH)
+    })
     // new HtmlWebpackPlugin({
     //   title: 'Hot Module Replacement',
     //   template: './public/index.html',
