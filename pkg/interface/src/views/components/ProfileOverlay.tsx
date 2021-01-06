@@ -18,6 +18,7 @@ type ProfileOverlayProps = ColProps & {
   group?: Group;
   onDismiss(): void;
   hideAvatars: boolean;
+  hideNicknames: boolean;
   history: any;
   api: any;
 }
@@ -61,6 +62,7 @@ class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
       bottomSpace,
       group = false,
       hideAvatars,
+      hideNicknames,
       history,
       onDismiss,
       ...rest
@@ -89,7 +91,7 @@ class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
         classes="brt2"
         svgClass="brt2"
         />;
-    const showNickname = useShowNickname(contact);
+    const showNickname = useShowNickname(contact, hideNicknames);
 
     //  TODO: we need to rethink this "top-level profile view" of other ships
     /* if (!group.hidden) {
@@ -147,4 +149,4 @@ class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
   }
 }
 
-export default withLocalState(ProfileOverlay, ['hideAvatars']);
+export default withLocalState(ProfileOverlay, ['hideAvatars', 'hideNicknames']);
