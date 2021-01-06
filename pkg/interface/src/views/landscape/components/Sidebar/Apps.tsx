@@ -46,16 +46,17 @@ export function useGraphModule(
 ): SidebarAppConfig {
   const getStatus = useCallback(
     (s: string) => {
-      const unreads = graphUnreads?.[s]?.['/']?.unreads;
-      if(typeof unreads === 'number' ? unreads > 0 : unreads?.size ?? 0 > 0) {
-        return 'unread';
-      }
       const [, , host, name] = s.split("/");
       const graphKey = `${host.slice(1)}/${name}`;
-
       if (!graphKeys.has(graphKey)) {
         return "unsubscribed";
       }
+
+      const unreads = graphUnreads?.[s]?.['/']?.unreads;
+      if (typeof unreads === 'number' ? unreads > 0 : unreads?.size ?? 0 > 0) {
+        return 'unread';
+      }
+
       return undefined;
     },
     [graphs, graphKeys, graphUnreads]
