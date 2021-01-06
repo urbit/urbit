@@ -4,7 +4,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
 const webpack = require('webpack');
 
-module.exports = (env) => return {
+module.exports = {
   mode: 'production',
   entry: {
      app: './src/index.js'
@@ -66,7 +66,7 @@ module.exports = (env) => return {
   output: {
     filename: 'index.[contenthash].js',
     path: path.resolve(__dirname, '../../arvo/app/landscape/js/bundle'),
-    publicPath: '/',
+    publicPath: '/'
   },
   optimization: {
     minimize: true,
