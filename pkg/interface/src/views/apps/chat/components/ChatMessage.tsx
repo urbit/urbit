@@ -260,7 +260,7 @@ const ContentBox = styled(Box)`
 export const MessageWithoutSigil = ({ timestamp, contacts, msg, measure, group }) => (
   <>
     <Text flexShrink={0} mono gray display='inline-block' pt='2px' lineHeight='tall' className="child">{timestamp}</Text>
-    <ContentBox flexShrink={0} fontSize='14px' className="clamp-message" style={{ flexGrow: 1 }}>
+    <ContentBox display='flex' flexShrink={0} fontSize='14px' className="clamp-message" style={{ flexGrow: 1 }}>
       {msg.contents.map((c, i) => (
         <MessageContent
           key={i}

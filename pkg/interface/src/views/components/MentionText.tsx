@@ -66,6 +66,7 @@ export function Mention(props: {
         position="relative"
         display="inline-block"
         cursor="pointer"
+        lineHeight='tall'
       >
       {showOverlay && (
         <ProfileOverlay

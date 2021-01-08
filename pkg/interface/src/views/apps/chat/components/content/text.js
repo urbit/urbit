@@ -29,7 +29,7 @@ const renderers = {
     return <Text mono p='1' backgroundColor='washedGray' style={{ whiteSpace: 'preWrap'}}>{value}</Text>
   },
   paragraph: ({ children }) => {
-    return (<Text fontSize="14px">{children}</Text>);
+    return (<Text display='block' lineHeight='tall' fontSize="14px">{children}</Text>);
   },
   code: ({language, value}) => {
     return <Text
@@ -96,7 +96,7 @@ export default class TextContent extends Component {
       );
     } else {
       return (
-        <Text mx="2px" flexShrink={0} color='black' fontSize={props.fontSize ? props.fontSize : '14px'} lineHeight="tall" style={{ overflowWrap: 'break-word' }}>
+        <Text display='flex' flexDirection='column' mx="2px" flexShrink={0} color='black' fontSize={props.fontSize ? props.fontSize : '14px'} lineHeight="tall" style={{ overflowWrap: 'break-word' }}>
           <MessageMarkdown source={content.text} />
         </Text>
       );
