@@ -193,7 +193,7 @@ function unreads(json: any, state: HarkState) {
     clearState(state);
     data.forEach(({ index, stats }) => {
       const { unreads, notifications, last } = stats;
-      updateNotificationStats(state, index, 'notifications', x => x + notifications);
+      updateNotificationStats(state, index, 'notifications', x => x + notifications, false);
       updateNotificationStats(state, index, 'last', () => last);
       if('count' in unreads) {
         updateUnreadCount(state, index, (u = 0) => u + unreads.count);
@@ -235,7 +235,7 @@ function updateUnreadCount(state: HarkState, index: NotifIndex, count: (c: numbe
   }
   const property = [index.graph.graph, index.graph.index, 'unreads'];
   const curr = _.get(state.unreads.graph, property, 0);
-  const newCount = count(curr)
+  const newCount = count(curr);
   _.set(state.unreads.graph, property, newCount);
 }
 
@@ -251,17 +251,23 @@ function updateUnreads(state: HarkState, index: NotifIndex, f: (us: Set<string>)
 }
 
 
-function updateNotificationStats(state: HarkState, index: NotifIndex, statField: 'notifications' | 'unreads' | 'last', f: (x: number) => number) {
-    if(statField === 'notifications') {
-      state.notificationsCount = f(state.notificationsCount);
+function updateNotificationStats(state: HarkState, index: NotifIndex, statField: 'notifications' | 'unreads' | 'last', f: (x: number) => number, notify = true) {
+  if(statField === 'notifications') {
+    const newCount = f(state.notificationsCount);
+    if (newCount > state.notificationsCount && notify) {
+      new Notification('New Landscape Notification', {
+        tag: 'landscape'
+      });
     }
-    if('graph' in index) {
-      const curr = _.get(state.unreads.graph, [index.graph.graph, index.graph.index, statField], 0);
-      _.set(state.unreads.graph, [index.graph.graph, index.graph.index, statField], f(curr));
-    } else if('group' in index) {
-      const curr = _.get(state.unreads.group, [index.group.group, statField], 0);
-      _.set(state.unreads.group, [index.group.group, statField], f(curr));
-    }
+    state.notificationsCount = newCount;
+  }
+  if('graph' in index) {
+    const curr = _.get(state.unreads.graph, [index.graph.graph, index.graph.index, statField], 0);
+    _.set(state.unreads.graph, [index.graph.graph, index.graph.index, statField], f(curr));
+  } else if('group' in index) {
+    const curr = _.get(state.unreads.group, [index.group.group, statField], 0);
+    _.set(state.unreads.group, [index.group.group, statField], f(curr));
+  }
 }
 
 function added(json: any, state: HarkState) {

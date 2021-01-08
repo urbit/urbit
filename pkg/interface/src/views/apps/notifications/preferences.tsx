@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 
-import { Box, Col, ManagedCheckboxField as Checkbox } from "@tlon/indigo-react";
+import { Box, Button, Col, ManagedCheckboxField as Checkbox } from "@tlon/indigo-react";
 import { Formik, Form, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import _ from "lodash";
@@ -82,6 +82,7 @@ export default function NotificationPreferences(
             id="mentions"
             caption="Notify me if someone mentions my @p in a channel I've joined"
           />
+          {Notification.permission === 'default' ? <Button onClick={() => Notification.requestPermission()}>Allow Notifications</Button>: null}
         </Col>
       </Form>
     </FormikOnBlur>
