@@ -47,7 +47,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
   const noteId = bigInt(index[1]);
   useEffect(() => {
     api.hark.markEachAsRead(props.association, '/',`/${index[1]}/1/1`, 'note', 'publish');
-  }, [props.association]);
+  }, [props.association, props.note]);
 
 
 
