@@ -22,25 +22,16 @@ export function MentionText(props: MentionTextProps) {
   const { content, contacts, contact, group } = props;
 
   return (
-    <>
-      {_.map(content, (c, idx) => {
+    <RichText contacts={contacts} contact={contact} group={group}>
+      {content.reduce((accum, c) => {
         if ("text" in c) {
-          return (
-            <RichText
-              inline
-              key={idx}
-            >
-              {c.text}
-            </RichText>
-          );
+          return accum + c.text;
         } else if ("mention" in c) {
-          return (
-            <Mention key={idx} contacts={contacts || {}} contact={contact || {}} group={group} ship={c.mention} />
-          );
+          return accum + `[~${c.mention}]`;
         }
-        return null;
-      })}
-    </>
+        return accum;
+      }, '')}
+    </RichText>
   );
 }
 
