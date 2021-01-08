@@ -27,7 +27,7 @@ function SidebarItemIndicator(props: { status?: SidebarItemStatus }) {
 const getAppIcon = (app: string, mod: string) => {
   if (app === "graph") {
     if (mod === "link") {
-      return "Links";
+      return "Collection";
     }
     return _.capitalize(mod);
   }

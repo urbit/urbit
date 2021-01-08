@@ -25,7 +25,7 @@ import ChatMessage, {MessageWithoutSigil} from "../chat/components/ChatMessage";
 
 function getGraphModuleIcon(module: string) {
   if (module === "link") {
-    return "Links";
+    return "Collection";
   }
   return _.capitalize(module);
 }
