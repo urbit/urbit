@@ -88,7 +88,11 @@
 ::  render results
 ::
 :-  (tac 'the date is ' (scot %da now))
-:-  :(tac 'you are in ' (render-number (lent groups)) ' group(s).')
+:-  :(tac 'you are in ' (render-number (lent groups)) ' group(s):')
+:-  =-  (roll - tac)
+    %+  join  ', '
+    %+  turn  groups
+    |=([* r=resource:re *] (render-resource r))
 :-  :(tac 'you are hosting ' (render-number (lent crowds)) ' group(s):')
 %-  zing
 %+  turn  activity
