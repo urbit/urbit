@@ -64,6 +64,8 @@ export function ShipSearch(props: InviteSearchProps) {
     if(valid) {
       setInputShip(ship);
       setError(error === INVALID_SHIP_ERR ? undefined : error);
+    } else if (ship === undefined) {
+      return;
     } else {
       setError(INVALID_SHIP_ERR);
       setInputTouched(false);
