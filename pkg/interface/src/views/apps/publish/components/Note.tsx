@@ -75,6 +75,13 @@ export function Note(props: NoteProps & RouteComponentProps) {
     );
   }
 
+  const windowRef = React.useRef(null);
+  useEffect(() => {
+    if (windowRef.current) {
+      windowRef.current.parentElement.scrollTop = 0;
+    }
+  }, [windowRef, note]);
+
   return (
     <Box
       my={3}
@@ -86,6 +93,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
       width="100%"
       gridRowGap={4}
       mx="auto"
+      ref={windowRef}
     >
       <Link to={rootUrl}>
         <Text>{"<- Notebook Index"}</Text>
