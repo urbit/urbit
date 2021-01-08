@@ -173,8 +173,9 @@ export default class ChatEditor extends Component {
             lineHeight="tall"
             style={{ width: '100%', background: 'transparent', color: 'currentColor' }}
             placeholder={inCodeMode ? "Code..." : "Message..."}
-            onKeyUp={event => {
+            onKeyDown={event => {
               if (event.key === 'Enter') {
+                event.preventDefault();
                 this.submit();
               } else {
                 this.messageChange(null, null, event.target.value);
