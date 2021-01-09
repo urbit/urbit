@@ -115,6 +115,8 @@ let
 
     urbit = callPackage ./nix/pkgs/urbit { inherit enableStatic; };
 
+    docker-image = callPackage ./nix/pkgs/docker-image { };
+
     hs = callPackage ./nix/pkgs/hs {
       inherit enableStatic;
       inherit (pkgsCross) haskell-nix;
