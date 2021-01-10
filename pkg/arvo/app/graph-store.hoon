@@ -869,6 +869,15 @@
     ^-  [index:store node:store]
     [~[atom] node]
   ::
+      [%x %node-exists @ @ @ *]
+    =/  =ship  (slav %p i.t.t.path)
+    =/  =term  i.t.t.t.path
+    =/  =index:store
+      (turn t.t.t.t.path (cury slav %ud))
+    =/  node=(unit node:store)
+      (get-node ship term index)
+    ``noun+!>(?=(^ node))
+  ::
       [%x %node @ @ @ *]
     =/  =ship  (slav %p i.t.t.path)
     =/  =term  i.t.t.t.path
