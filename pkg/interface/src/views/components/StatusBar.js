@@ -54,7 +54,7 @@ const StatusBar = (props) => {
           onClick={() => window.open(
             'https://github.com/urbit/landscape/issues/new' +
             '?assignees=&labels=development-stream&title=&' +
-            `body=commit:%20${process.env.LANDSCAPE_SHORTHASH}`
+            `body=commit:%20urbit/urbit@${process.env.LANDSCAPE_SHORTHASH}`
             )}
           >
           <Text color='#000000'>Submit <Text color='#000000' display={['none', 'inline']}>an</Text> issue</Text>
