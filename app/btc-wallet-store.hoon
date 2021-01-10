@@ -14,7 +14,7 @@
 /-  *btc-wallet-store
 /+  dbug, default-agent, *btc-wallet-store, btc, bip32
 |%
-++  requests-path  /requests
+++  req-pax  /requests
 +$  versioned-state
     $%  state-0
     ==
@@ -114,34 +114,13 @@
     ::  TODO
     :: if blank address we're watching gets a value
     :: "blank" = unused
-    :: add it to history
-    :: send a %tx-info request
+    :: send a %tx-info request--txinfo handles history stuff
     ::
       %address-info
     (update-address +.act)
     ::
-    ::  - if txid not "included" in blockchain AND was in history
-    ::   - delete from history
-    ::   - send info request again just in case
-    ::  - check whether this txid is in history
-    ::   - if yes, update its confs and received
-    ::   - request info on the tx again if not enough confs
-    ::
       %tx-info
-    =*  ti  info.act
-    =+  h=(~(get by history) txid.ti)
-    ?~  h  `state
-    ?.  included.ti
-      :_  state(history (~(del by history) txid.ti))
-      ~[(send-request ~[requests-path] [%tx-info block.act txid.ti])]
-    =+  w=(~(get by walts) xpub.u.h)
-    ?~  w  `state
-    =.  history
-      %+  ~(put by history)  txid.ti
-      u.h(confs confs.ti, recvd recvd.ti)
-    :_  state
-    ?:  (gte confs.ti confs.u.w)  ~
-    ~[(send-request ~[requests-path] [%tx-info block.act txid.ti])]
+    (handle-tx-info +.act)
     ::
       %generate-address
     (generate-address +.act)
@@ -176,23 +155,19 @@
       (~(add-output txb u.tb) addr u.chng `(~(hdkey wad w %1) idx))
     :_  state(walts (~(put by walts) xpub.act w))
     :~  (send-update [%generate-txbu xpub.act new-txbu])
-        %+  send-request  ~[requests-path]
+        %+  send-req  ~[req-pax]
           :*  %address-info  last-block
               addr  xpub.act  %1  idx
           ==
     ==
     ::
       %add-history-entry
-    :: TODO
-    ::  - add the hest
-    ::  - send a tx-info request out
-    `state
+    :_  state(history (~(put by history) txid.hest.act hest.act))
+    ~[(send-req ~[req-pax] [%tx-info last-block txid.hest.act])]
     ::
       %del-history-entry
-    ::  - delete txid from history
-    ::  - send a tx-info request out in case it gets added
-    ::
-    `state
+    :_  state(history (~(del by history) txid.act))
+    ~[(send-req ~[req-pax] [%tx-info last-block txid.act])]
   ==
 ::  wallet scan algorithm:
 ::  Initiate a batch for each chyg, with max-gap idxs in it
@@ -213,7 +188,7 @@
         (~(mk-address wad w chyg) idx)
         xpub  chyg  idx
     ==
-  (send-request pax req)
+  (send-req pax req)
 ::
 ++  scan-status
   |=  [=xpub =chyg]
@@ -235,8 +210,8 @@
   =/  b=batch
     [(sy (gulf 0 endpoint)) endpoint %.n]
   :-  %+  weld
-        (req-scan ~[requests-path] b xpub %0)
-      (req-scan ~[requests-path] b xpub %1)
+        (req-scan ~[req-pax] b xpub %0)
+      (req-scan ~[req-pax] b xpub %1)
   state(scans (insert-batches xpub b b))
 ::  if the batch is done but the wallet isn't done scanning,
 ::  returns new address requests and updated batch
@@ -254,7 +229,7 @@
         (add endpoint.b max-gap.w)
         %.n
     ==
-  :-  (req-scan ~[requests-path] newb xpub chyg)
+  :-  (req-scan ~[req-pax] newb xpub chyg)
   newb
 ::
 ++  iter-scan
@@ -324,7 +299,7 @@
     ^-  (list card)
     ?:  (is-done w)  ~
     :~
-      %+  send-request  ~[requests-path]
+      %+  send-req  ~[req-pax]
       :*  %address-info  last-block
           (~(mk-address wad w chyg) idx)
           xpub  chyg  idx
@@ -338,8 +313,90 @@
           |=(nc=@ud (gte nc confs:w))
     ==
   --
+::
+::  -if txid not in history but has one of our wallet addresses
+::   - add it to history and request info on the addresses+tx
+::  - if txid not "included" in blockchain AND was in history
+::   - delete from history
+::   - send txinfo request again
+::  - check whether this txid is in history
+::   - if yes, update its confs and received
+::   - request info on all its addresses
+::   - request info on the tx again if not enough confs
+::
+++  handle-tx-info
+  |=  [ti=info:tx:btc block=@ud]
+  |^
+  =.  state  state(last-block block)
+  =+  h=(~(get by history) txid.ti)
+  =/  rs=(list request)  (address-reqs ti)
+  =/  cards=(list card)  (turn rs to-card)
+  ?~  h
+    ?~  rs  `state
+    ::  when addresses in our wallets, but tx is not
+    ::
+    :-  [(send-req ~[req-pax] [%tx-info block.act txid.ti]) cards]
+    state(history (~(put by history) (mk-hest rs)))
+  ?.  included.ti
+    :_  state(history (~(del by history) txid.ti))
+    ~[(send-req ~[req-pax] [%tx-info block.act txid.ti])]
+  =+  w=(~(get by walts) xpub.u.h)
+  ?~  w  `state
+  =.  history
+    %+  ~(put by history)  txid.ti
+    u.h(confs confs.ti, recvd recvd.ti)
+  :_  state
+  ?:  (gte confs.ti confs.u.w)  cards
+  [(send-req ~[req-pax] [%tx-info block.act txid.ti]) cards]
+  ::
+  ++  address-reqs
+    |=  ti=info:tx:btc
+    ^-  (list request)
+    =|  rs=(list request)
+    =/  ws=(list walt)  ~(val by walts)
+    |-  ?~  ws  rs
+    %=  $
+        ws  t.ws
+        rs
+      %-  zing
+      :~  rs
+          (murn inputs.ti (cury to-req i.ws))
+          (murn outputs.ti (cury to-req i.ws))
+      ==
+    ==
+  ::
+  ++  to-req
+    |=  [w=walt v=val:tx:btc]
+    ^-  (unit request)
+    =+  addi=(~(get by wach.w) address.v)
+    ?~  addi  ~
+    `[%address-info last-block address.v xpub.w chyg.u.addi idx.u.addi]
+  ::
+  ++  to-card
+    |=  r=request  ^-  card
+    (send-request ~[req-pax] r)
+  ::
+  ++  mk-hest
+      |=  rs=(lest request)
+      ^-  hest
+      =/  as=(set address:btc)
+        %-  sy
+        %+  turn  rs
+        |=(r=request ?>(?=(-.r %address-info) a.r))
+      :*  ?>(?=(-.i.rs %address-info) xpub.i.rs)
+          txid.ti
+          confs.ti
+          recvd.ti
+          (turn inputs.ti (cury as our-ship))
+          (turn outputs.ti (cury as our-ship))
+      ==
+    ++  our-ship
+      |=  [as=(set address:btc) v=val:tx:btc]
+      ^-  [=val:tx s=(unit ship)]
+      [v ?:((~(has in as) address.v) `our.bowl ~)]
+    --
 ::  +generate-address: generate and return address
-::    sends a request for info on the new address (watches it)
+::    sends a request for info on the new address
 ::
 ++  generate-address
   |=  [=xpub =chyg =pmet]
@@ -353,7 +410,7 @@
     ~(gen-address wad u.uw chyg)
   :_  state(walts (~(put by walts) xpub w))
   :~  (send-update [%generate-address xpub addr pmet])
-      %+  send-request  ~[requests-path]
+      %+  send-req  ~[req-pax]
       :*  %address-info  last-block
           addr  xpub  chyg  idx
       ==
@@ -380,9 +437,9 @@
     add
   (roll values add)
 ::
-++  send-request
+++  send-req
   |=  [pax=(list path) req=request]  ^-  card
-::  ~&  >>   "send-request: {<chyg.req>}, {<idx.req>}"
+::  ~&  >>   "send-req: {<chyg.req>}, {<idx.req>}"
   :*  %give  %fact  pax
       %btc-wallet-store-request  !>(req)
   ==

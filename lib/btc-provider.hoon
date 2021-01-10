@@ -32,7 +32,6 @@
   ^-  (unit @da)
   ?:  =(0 secs)  ~
   [~ (add ~1970.1.1 `@dr`(mul secs ~s1))]
-
 ::
 ++  to-hex
   |=  h=@t
@@ -48,6 +47,11 @@
   ::
   `@ux`(rash - hex)
 ::
+++  to-rawtx
+  |=  h=@t
+  ^-  rawtx
+  =+  bs=(to-hex h)
+  [(div (lent (trip h)) 2) bs]
 ++  to-hash256
   |=  h=@t
   (hash256 [32 (to-hex h)])
