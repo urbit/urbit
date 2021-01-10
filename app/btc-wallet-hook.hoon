@@ -167,16 +167,18 @@
     ::   - send to provider
     ::
       %broadcast-tx
+    ?>  =(src.bowl our.bowl)
+    ?~  prov  ~|("Provider not connected" !!)
+    =+  signed=(to-rawtx:bp txhex.act)
     =/  tx-match=?
       ?~  poym  %.n
-      =((get-id:txu (decode:txu signed.act)) ~(get-txid txb:bwsl u.poym))
+      =((get-id:txu (decode:txu signed)) ~(get-txid txb:bwsl u.poym))
     :_  ?.  tx-match  state
         ?~  poym  state
-        state(sitx.u.poym `signed.act)
+        state(sitx.u.poym `signed)
     ?.  tx-match
-      ~[(send-update [%broadcast-tx-mismatch-poym signed.act])]
-    ?~  prov  ~|("Provider not connected" !!)
-    ~[(poke-provider host.u.prov [%broadcast-tx signed.act])]
+      ~[(send-update [%broadcast-tx-mismatch-poym signed])]
+    ~[(poke-provider host.u.prov [%broadcast-tx signed])]
     ::
       %add-piym
     ?>  =(src.bowl our.bowl)
@@ -216,11 +218,13 @@
     ::
       %fail-broadcast-tx
     ?>  =(src.bowl our.bowl)
+    ~&  >  "%fail-broadcast-tx"
     :_  state(poym ~)
     ~[(send-update [%broadcast-tx-spent-utxos txid.act])]
     ::
       %succeed-broadcast-tx
     ?>  =(src.bowl our.bowl)
+    ~&  >  "%succeed-broadcast-tx"
     :_  %=  state
           poym  ~
           reqs  (~(put by reqs) txid.act [%tx-info 0 txid.act])
@@ -322,7 +326,6 @@
       ==
     ?.  (lth block.btc-state block.s)
       retry-pend-piym
-    ~&  >  "got new block, retrying {<(lent (retry-reqs block.s))>} reqs "
     (weld retry-pend-piym (retry-reqs block.s))
     ::
       %disconnected
@@ -425,20 +428,25 @@
   ?~  sitx.u.poym  %.n
   =(txid (get-id:txu (decode:txu u.sitx.u.poym)))
 ::  +poym-to-history:
-::   - checks whether the txinfo is in poym
+::   - checks whether poym has a signed tx
+::   - checks whether the txid matches that signed tx
+::     - if not, skip
 ::   - clears poym
 ::   - returns card that adds hest to wallet-store history
 ::
 ++  poym-to-history
   |=  ti=info:tx
   |^  ^-  (quip card _state)
+  :: TODO: delete prints
+  ~&  >  "poym: {<poym>}"
   ?~  poym  `state
   ?~  sitx.u.poym  `state
   ?.  (poym-has-txid txid.ti)
     `state
   =+  vout=(get-vout txos.u.poym)
-  ?~  vout  ~|("pioym-to-history: poym should always have an output" !!)
+  ?~  vout  ~|("poym-to-history: poym should always have an output" !!)
   :_  state(poym ~)
+  ~&  >>>  "poym: adding history"
   ~[(add-history-entry ti xpub.u.poym our.bowl payee.u.poym u.vout)]
   ::
   ++  get-vout
@@ -457,13 +465,16 @@
 ::   - returns card that adds hest to wallet-store history
 ::
 ++  piym-to-history
+  :: TODO: delete prints
   |=  ti=info:tx
   |^  ^-  (quip card _state)
   =+  pay=(~(get by pend-piym) txid.ti)
+  ~&  >  "piym-to-history pay: {<pay>}"
   ?~  pay  `state
   ::  if no matching output in piym, delete from pend-piym to stop DDOS of txids
   ::
   =+  vout=(get-vout value.u.pay)
+  ~&  >  "piym-to-history vout: {<vout>}"
   ?~  vout
     `(del-pend-piym txid.ti)
   :_  (del-all-piym txid.ti payer.u.pay)
@@ -477,9 +488,11 @@
     =|  idx=@ud
     =+  os=outputs.ti
     |-  ?~  os  ~
+    ~&  >>>  "vout idx: {<idx>}"
+    ~&  >>>  "vout loop value: {<value.i.os>}"
     ?:  =(value.i.os value)
-      `value
-    $(os t.os)
+      `idx
+    $(os t.os, idx +(idx))
   ::
   ::
   ++  del-pend-piym

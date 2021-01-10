@@ -1,8 +1,9 @@
 /*
 Usage:
-var = require("./psbt_sign.js")
+var p = require("./psbt_sign.js")
 const psbt = PSBT_STRING_BASE64
 const mnemonics = MNEMONICS_STRING
+const [psbt, mnemonics] = []
 p.run(mnemonics, psbt)
   */
 
