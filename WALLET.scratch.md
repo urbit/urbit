@@ -53,31 +53,6 @@ Mnemonic
 abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about
 ```
 
-### DEPRECATED manual scanning of empty wallet
-SEE Address Generation instead
-Uses `btc-wallet-hook`, with max-gap=3
-```
-:btc-provider|command [%set-credentials api-url='http://localhost:50002']
-:btc-wallet-hook|action [%set-provider ~zod]
-=scan-xpub 'zpub6rFR7y4Q2AijBEqTUquhVz398htDFrtymD9xYYfG1m4wAcvPhXNfE3EfH1r1ADqtfSdVCToUG868RvUUkgDKf31mGDtKsAYz2oz2AGutZYs'
-=fprint [%4 0xdead.beef]
-:btc-wallet-store|action [%add-wallet scan-xpub fprint ~ [~ 3] [~ 6]]
-:btc-wallet-store +dbug
-:: shows scans with the xpub and {0 1 2} todos
-
-::  %0 account has no used
-=btc -build-file %/lib/btc/hoon
-:btc-wallet-store|action [%address-info scan-xpub %0 1 *(set utxo:btc) used=%.n 655000]
-:btc-wallet-store|action [%address-info scan-xpub %0 2 *(set utxo:btc) used=%.n 655000]
-:btc-wallet-store|action [%address-info scan-xpub %0 0 *(set utxo:btc) used=%.n 655000]
-::  dbug should give empty for scans: [xpub %0]
-:btc-wallet-store|action [%address-info scan-xpub %1 2 *(set utxo:btc) used=%.n 655000]
-:btc-wallet-store|action [%address-info scan-xpub %1 0 *(set utxo:btc) used=%.n 655000]
-:btc-wallet-store|action [%address-info scan-xpub %1 1 *(set utxo:btc) used=%.y 655000]
-:: dbug should show re-filled scans: [xpub %1]
-```
-
-
 ## Address Generation Integration Test
 All on `~zod`:
 ```
@@ -133,6 +108,18 @@ on `~dopzod`:
 :btc-wallet-hook +dbug [%state 'poym']
 ```
 
+Sign the tx, then paste:
+```
+=tx TXHEX
+:btc-wallet-hook|action [%broadcast-tx tx]
+```
+
+### Send Transaction
+
+Check wallet store
+```
+:btc-wallet-store +dbug [%state 'history']
+```
 
 ## scrys
 ```
