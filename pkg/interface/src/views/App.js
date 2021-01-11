@@ -90,7 +90,7 @@ class App extends React.Component {
     this.themeWatcher.onchange = this.updateTheme;
     setTimeout(() => {
       // Something about how the store works doesn't like changing it
-      // before the app has actually rendered, hence the timeout
+      // before the app has actually rendered, hence the timeout.
       this.updateTheme(this.themeWatcher);
     }, 500);
     this.api.local.getBaseHash();
