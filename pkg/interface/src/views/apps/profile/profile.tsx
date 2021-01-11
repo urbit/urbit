@@ -9,6 +9,7 @@ import { uxToHex, MOBILE_BROWSER_REGEX } from "~/logic/lib/util";
 
 import Settings from "./components/settings";
 import { ContactCard } from "~/views/landscape/components/ContactCard";
+import useLocalState from "~/logic/state/local";
 
 const SidebarItem = ({ children, view, current }) => {
   const selected = current === view;
@@ -42,10 +43,11 @@ const SidebarItem = ({ children, view, current }) => {
 
 export default function ProfileScreen(props: any) {
   const { ship, dark } = props;
+  const hideAvatars = useLocalState(state => state.hideAvatars);
   return (
     <>
     <Helmet defer={false}>
-      <title>OS1 - Profile</title>
+      <title>{ props.notificationsCount ? `(${String(props.notificationsCount) }) `: '' }Landscape - Profile</title>
     </Helmet>
     <Switch>
     <Route
@@ -65,7 +67,7 @@ export default function ProfileScreen(props: any) {
           history.replace("/~profile/identity");
         }
 
-        const image = (!props?.hideAvatars && contact?.avatar)
+        const image = (!hideAvatars && contact?.avatar)
           ? <BaseImage src={contact.avatar} width='100%' height='100%' style={{ objectFit: 'cover' }} />
           : <Sigil ship={`~${ship}`} size={80} color={sigilColor} />;
         return (
@@ -132,8 +134,6 @@ export default function ProfileScreen(props: any) {
                     path="/~/default"
                     api={props.api}
                     s3={props.s3}
-                    hideAvatars={props.hideAvatars}
-                    hideNicknames={props.hideNicknames}
                   />
                   </>
                 )}

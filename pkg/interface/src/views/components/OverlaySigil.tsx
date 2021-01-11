@@ -3,12 +3,10 @@ import React, { PureComponent } from 'react';
 import { Sigil } from '~/logic/lib/sigil';
 import { Contact, Group } from '~/types';
 
-import {
-  ProfileOverlay,
-  OVERLAY_HEIGHT
-} from './ProfileOverlay';
+import ProfileOverlay, { OVERLAY_HEIGHT } from './ProfileOverlay';
 
 import { Box, BaseImage, ColProps } from '@tlon/indigo-react';
+import { withLocalState } from '~/logic/state/local';
 
 type OverlaySigilProps = ColProps & {
   ship: string;
@@ -16,12 +14,11 @@ type OverlaySigilProps = ColProps & {
   color: string;
   sigilClass: string;
   group?: Group;
-  hideAvatars: boolean;
-  hideNicknames: boolean;
   scrollWindow?: HTMLElement;
   history: any;
   api: any;
   className: string;
+  hideAvatars: boolean;
 }
 
 interface OverlaySigilState {
@@ -30,7 +27,7 @@ interface OverlaySigilState {
   bottomSpace: number | 'auto';
 }
 
-export default class OverlaySigil extends PureComponent<OverlaySigilProps, OverlaySigilState> {
+class OverlaySigil extends PureComponent<OverlaySigilProps, OverlaySigilState> {
   public containerRef: React.Ref<HTMLDivElement>;
 
   constructor(props) {
@@ -89,11 +86,10 @@ export default class OverlaySigil extends PureComponent<OverlaySigilProps, Overl
       contact,
       color,
       group,
-      hideAvatars,
-      hideNicknames,
       history,
       api,
       sigilClass,
+      hideAvatars,
       ...rest
     } = this.props;
 
@@ -127,8 +123,6 @@ export default class OverlaySigil extends PureComponent<OverlaySigilProps, Overl
             bottomSpace={state.bottomSpace}
             group={group}
             onDismiss={this.profileHide}
-            hideAvatars={hideAvatars}
-            hideNicknames={hideNicknames}
             history={history}
              api={api}
              {...rest}
@@ -139,3 +133,5 @@ export default class OverlaySigil extends PureComponent<OverlaySigilProps, Overl
     );
   }
 }
+
+export default withLocalState(OverlaySigil, ['hideAvatars']);

@@ -27,7 +27,7 @@ function SidebarItemIndicator(props: { status?: SidebarItemStatus }) {
 const getAppIcon = (app: string, mod: string) => {
   if (app === "graph") {
     if (mod === "link") {
-      return "Links";
+      return "Collection";
     }
     return _.capitalize(mod);
   }
@@ -93,7 +93,7 @@ export function SidebarItem(props: {
       justifyContent="space-between"
       alignItems="center"
       py={1}
-      pl={4}
+      pl={2}
       pr={2}
       selected={selected}
     >
