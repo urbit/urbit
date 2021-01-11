@@ -388,21 +388,21 @@
     |=  [time=@da =index:store read=?]
     ^+  poke-core
     =.  poke-core  (upd-cache read time index)
-    =/  t=(unit timebox:store)
+    =/  tib=(unit timebox:store)
       (get:orm notifications time)
-    ?~  t  poke-core
-    =/  n=(unit notification:store)
-      (~(get by u.t) index)
-    ?~  n  poke-core
+    ?~  tib  poke-core
+    =/  not=(unit notification:store)
+      (~(get by u.tib) index)
+    ?~  not  poke-core
     =?    poke-core
         ::  cache is inconsistent iff we didn't directly
         ::  call this through %read-note or %unread-note
-        &(=(read read.u.n) !?=(?(%read-note %unread-note) -.in))
+        &(=(read read.u.not) !?=(?(%read-note %unread-note) -.in))
       rebuild-cache
-    =.  u.t
-      (~(put by u.t) index u.n(read read))
+    =.  u.tib
+      (~(put by u.tib) index u.not(read read))
     =.  notifications
-      (put:orm notifications time u.t)
+      (put:orm notifications time u.tib)
     poke-core
   ::
   ++  read-note
