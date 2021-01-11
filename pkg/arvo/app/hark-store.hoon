@@ -338,6 +338,9 @@
     |=  [read=? time=@da =index:store]
     poke-core(+.state (^upd-cache read time index))
   ::
+  ++  rebuild-cache
+    poke-core(+.state (inflate-cache -.state))
+  ::
   ++  put-notifs
     |=  [time=@da =timebox:store]
     poke-core(notifications (put:orm notifications time timebox))
@@ -380,17 +383,28 @@
       (~(put by archive-box) index notification(read %.y))
     (give %archive time index)
   ::
+  ::  if we detect cache inconsistencies, wipe and rebuild
+  ::  TODO: where are these coming from?
   ++  change-read-status
     |=  [time=@da =index:store read=?]
+    ^+  poke-core
     =.  poke-core  (upd-cache read time index)
-    %_  poke-core
-        notifications
-      %^  jub-orm  notifications  time
-      |=  =timebox:store
-      %+  ~(jab by timebox)  index
-      |=  n=notification:store
-      ?>(!=(read read.n) n(read read))
-    ==
+    =/  t=(unit timebox:store)
+      (get:orm notifications time)
+    ?~  t  poke-core
+    =/  n=(unit notification:store)
+      (~(get by u.t) index)
+    ?~  n  poke-core
+    =?    poke-core
+        ::  cache is inconsistent iff we didn't directly
+        ::  call this through %read-note or %unread-note
+        &(=(read read.u.n) !?=(?(%read-note %unread-note) -.in))
+      rebuild-cache
+    =.  u.t
+      (~(put by u.t) index u.n(read read))
+    =.  notifications
+      (put:orm notifications time u.t)
+    poke-core
   ::
   ++  read-note
     |=  [time=@da =index:store]
