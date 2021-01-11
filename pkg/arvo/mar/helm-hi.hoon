@@ -4,7 +4,7 @@
 /?    310
 =,  mimes:html
 =,  format
-|_  txt/cord
+|_  txt=cord
 ::
 ++  grad  %mime
 ++  grab                                                ::  convert from

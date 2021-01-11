@@ -2,9 +2,7 @@
 ::
 ::TODO  implement rest of the azimuth.sol read functions
 ::
-/+  ethio, strandio
-=,  ethereum
-=,  azimuth
+/+  *ethereum, *azimuth, ethio, strandio
 ::
 ^|
 |_  [url=@ta contract=address]

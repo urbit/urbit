@@ -1,8 +1,7 @@
 ::  azio: asynchronous azimuth reads and related operations
 ::
 /+  az=azio-azimuth, ec=azio-ecliptic, ds=azio-delegated-sending,
-    strandio
-=,  ethereum
+    *ethereum, strandio
 ::
 ^|
 |_  $:  url=@ta

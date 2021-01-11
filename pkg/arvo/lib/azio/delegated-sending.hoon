@@ -2,8 +2,7 @@
 ::
 ::TODO  implement rest of the delegated-sending.sol read functions
 ::
-/+  ethio, strandio
-=,  ethereum
+/+  *ethereum, ethio, strandio
 ::
 ^|
 |_  [url=@ta contract=address]

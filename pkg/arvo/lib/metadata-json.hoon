@@ -48,7 +48,7 @@
   ::
   ++  nu
     |=  jon=json
-    ?>  ?=({$s *} jon)
+    ?>  ?=([%s *] jon)
     (rash p.jon hex)
   ::
   ++  metadata
@@ -58,6 +58,7 @@
         [%color nu]
         [%date-created (se %da)]
         [%creator (su ;~(pfix sig fed:ag))]
+        [%module so]
     ==
   ++  md-resource
     %-  ot
@@ -76,12 +77,13 @@
       [%color s+(scot %ux color.met)]
       [%date-created s+(scot %da date-created.met)]
       [%creator s+(scot %p creator.met)]
+      [%module s+module.met]
   ==
 ::
 ++  update-to-json
   |=  upd=metadata-update
-  =,  enjs:format
   ^-  json
+  =,  enjs:format
   %+  frond  %metadata-update
   %-  pairs
   :~  ?-  -.upd

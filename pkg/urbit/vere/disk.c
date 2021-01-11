@@ -39,6 +39,8 @@ struct _cd_save {
 };
 
 #undef VERBOSE_DISK
+#undef DISK_TRACE_JAM
+#undef DISK_TRACE_CUE
 
 static void
 _disk_commit(u3_disk* log_u);
@@ -163,19 +165,34 @@ _disk_commit_start(struct _cd_save* req_u)
                                     _disk_commit_after_cb);
 }
 
-/* _disk_serialize_v0(): serialize events in format v0.
+/* _disk_serialize_v1(): serialize events in format v1.
 */
 static c3_w
-_disk_serialize_v0(u3_fact* tac_u, c3_y** dat_y)
+_disk_serialize_v1(u3_fact* tac_u, c3_y** out_y)
 {
-  u3_atom mat = u3ke_jam(u3nc(tac_u->bug_l, u3k(tac_u->job)));
-  c3_w  len_w = u3r_met(3, mat);
-  *dat_y = c3_malloc(len_w);
-  u3r_bytes(0, len_w, *dat_y, mat);
+#ifdef DISK_TRACE_JAM
+  u3t_event_trace("king disk jam", 'B');
+#endif
 
-  u3z(mat);
+  {
+    u3_atom mat = u3qe_jam(tac_u->job);
+    c3_w  len_w = u3r_met(3, mat);
+    c3_y* dat_y = c3_malloc(4 + len_w);
+    dat_y[0] = tac_u->mug_l & 0xff;
+    dat_y[1] = (tac_u->mug_l >> 8) & 0xff;
+    dat_y[2] = (tac_u->mug_l >> 16) & 0xff;
+    dat_y[3] = (tac_u->mug_l >> 24) & 0xff;
+    u3r_bytes(0, len_w, dat_y + 4, mat);
 
-  return len_w;
+#ifdef DISK_TRACE_JAM
+    u3t_event_trace("king disk jam", 'E');
+#endif
+
+    u3z(mat);
+
+    *out_y = dat_y;
+    return len_w + 4;
+  }
 }
 
 /* _disk_batch(): create a write batch
@@ -199,7 +216,7 @@ _disk_batch(u3_disk* log_u, c3_d len_d)
   for ( c3_d i_d = 0ULL; i_d < len_d; ++i_d) {
     c3_assert( (req_u->eve_d + i_d) == tac_u->eve_d );
 
-    req_u->siz_i[i_d] = _disk_serialize_v0(tac_u, &req_u->byt_y[i_d]);
+    req_u->siz_i[i_d] = _disk_serialize_v1(tac_u, &req_u->byt_y[i_d]);
 
     tac_u = tac_u->nex_u;
   }
@@ -262,7 +279,6 @@ u3_disk_boot_plan(u3_disk* log_u, u3_noun job)
   //  NB, boot mugs are 0
   //
   u3_fact* tac_u = u3_fact_init(++log_u->sen_d, 0, job);
-  tac_u->bug_l   = 0;  // XX
 
   if ( !log_u->put_u.ent_u ) {
     c3_assert( !log_u->put_u.ext_u );
@@ -367,41 +383,41 @@ _disk_read_one_cb(void* ptr_v, c3_d eve_d, size_t val_i, void* val_p)
   u3_disk* log_u = red_u->log_u;
   u3_fact* tac_u;
 
+  if ( 4 >= val_i ) {
+    return c3n;
+  }
+
   {
+    u3_noun job;
+    c3_y* dat_y = val_p;
+    c3_l  mug_l = dat_y[0]
+                ^ (dat_y[1] <<  8)
+                ^ (dat_y[2] << 16)
+                ^ (dat_y[3] << 24);
+
+#ifdef DISK_TRACE_CUE
+    u3t_event_trace("king disk cue", 'B');
+#endif
+
     //  XX u3m_soft?
     //
-    u3_noun dat = u3ke_cue(u3i_bytes(val_i, val_p));
-    u3_noun mug, job;
-    c3_l  bug_l;
+    job = u3ke_cue(u3i_bytes(val_i - 4, dat_y + 4));
 
+#ifdef DISK_TRACE_CUE
+    u3t_event_trace("king disk cue", 'E');
+#endif
 
-    if (  (c3n == u3r_cell(dat, &mug, &job))
-       || (c3n == u3r_safe_word(mug, &bug_l)) ) // XX
-    {
-      //  failure here triggers cleanup in _disk_read_start_cb()
-      //
-      u3z(dat);
-      return c3n;
-    }
-
-    //  NB: mug is unknown due to log format
-    //
-    tac_u = u3_fact_init(eve_d, 0, u3k(job));
-    tac_u->bug_l = bug_l;
-
-    u3z(dat);
+    tac_u = u3_fact_init(eve_d, mug_l, job);
   }
 
   if ( !red_u->ent_u ) {
     c3_assert( !red_u->ext_u );
 
     c3_assert( red_u->eve_d == eve_d );
-    // tac_u->mug_l = 0;  // XX
     red_u->ent_u = red_u->ext_u = tac_u;
   }
   else {
     c3_assert( (1ULL + red_u->ent_u->eve_d) == eve_d );
-    // log_u->get_u.ent_u->mug_l = tac_u->bug_l; // XX
     red_u->ent_u->nex_u = tac_u;
     red_u->ent_u = tac_u;
   }
@@ -466,19 +482,15 @@ u3_disk_read(u3_disk* log_u, c3_d eve_d, c3_d len_d)
 static c3_o
 _disk_save_meta(u3_disk* log_u, const c3_c* key_c, u3_atom dat)
 {
-  u3_atom mat = u3ke_jam(dat);
-  c3_w  len_w = u3r_met(3, mat);
+  c3_w  len_w = u3r_met(3, dat);
   c3_y* byt_y = c3_malloc(len_w);
-  c3_o  ret_o;
+  u3r_bytes(0, len_w, byt_y, dat);
 
-  u3r_bytes(0, len_w, byt_y, mat);
-
-  ret_o = u3_lmdb_save_meta(log_u->mdb_u, key_c, len_w, byt_y);
-
-  u3z(mat);
-  c3_free(byt_y);
-
-  return ret_o;
+  {
+    c3_o ret_o = u3_lmdb_save_meta(log_u->mdb_u, key_c, len_w, byt_y);
+    c3_free(byt_y);
+    return ret_o;
+  }
 }
 
 /* u3_disk_save_meta(): save metadata.
@@ -491,8 +503,9 @@ u3_disk_save_meta(u3_disk* log_u,
 {
   c3_assert( c3y == u3a_is_cat(lif_w) );
 
-  if (  (c3n == _disk_save_meta(log_u, "who", u3i_chubs(2, who_d)))
-     || (c3n == _disk_save_meta(log_u, "is-fake", fak_o))
+  if (  (c3n == _disk_save_meta(log_u, "version", 1))
+     || (c3n == _disk_save_meta(log_u, "who", u3i_chubs(2, who_d)))
+     || (c3n == _disk_save_meta(log_u, "fake", fak_o))
      || (c3n == _disk_save_meta(log_u, "life", lif_w)) )
   {
     return c3n;
@@ -518,24 +531,8 @@ _disk_meta_read_cb(void* ptr_v, size_t val_i, void* val_p)
 static u3_weak
 _disk_read_meta(u3_disk* log_u, const c3_c* key_c)
 {
-  u3_weak mat = u3_none;
   u3_weak dat = u3_none;
-  u3_noun pro;
-
-  u3_lmdb_read_meta(log_u->mdb_u, &mat, key_c, _disk_meta_read_cb);
-
-  if ( u3_none != mat ) {
-    pro = u3m_soft(0, u3ke_cue, mat);
-
-    if ( u3_blip != u3h(pro) ) {
-      fprintf(stderr, "disk: meta cue failed\r\n");
-    }
-    else {
-      dat = u3k(u3t(pro));
-    }
-  }
-
-  u3z(pro);
+  u3_lmdb_read_meta(log_u->mdb_u, &dat, key_c, _disk_meta_read_cb);
   return dat;
 }
 
@@ -547,34 +544,45 @@ u3_disk_read_meta(u3_disk* log_u,
                   c3_o*    fak_o,
                   c3_w*    lif_w)
 {
-  u3_weak who = _disk_read_meta(log_u, "who");
-  u3_weak fak = _disk_read_meta(log_u, "is-fake");
-  u3_weak lif = _disk_read_meta(log_u, "life");
+  u3_weak ver, who, fak, lif;
 
-  if ( u3_none == who ) {
+  if ( u3_none == (ver = _disk_read_meta(log_u, "version")) ) {
+    fprintf(stderr, "disk: read meta: no version\r\n");
+    return c3n;
+  }
+  if ( u3_none == (who = _disk_read_meta(log_u, "who")) ) {
     fprintf(stderr, "disk: read meta: no indentity\r\n");
     return c3n;
   }
-  else if ( u3_none == fak ) {
+  if ( u3_none == (fak = _disk_read_meta(log_u, "fake")) ) {
     fprintf(stderr, "disk: read meta: no fake bit\r\n");
-    u3z(who);
     return c3n;
   }
-  else if ( u3_none == lif ) {
+  if ( u3_none == (lif = _disk_read_meta(log_u, "life")) ) {
     fprintf(stderr, "disk: read meta: no lifecycle length\r\n");
-    u3z(who);
     return c3n;
   }
 
-  if ( !((c3y == fak ) || (c3n == fak )) ) {
-    fprintf(stderr, "disk: read meta: invalid fake bit\r\n");
-    u3z(who); u3z(fak); u3z(lif);
-    return c3n;
-  }
-  else if ( c3n == u3a_is_cat(lif) ) {
-    fprintf(stderr, "disk: read meta: invalid lifecycle length\r\n");
-    u3z(who); u3z(fak); u3z(lif);
-    return c3n;
+  {
+    c3_o val_o = c3y;
+
+    if ( 1 != ver ) {
+      fprintf(stderr, "disk: read meta: unknown version %u\r\n", ver);
+      val_o = c3n;
+    }
+    else if ( !((c3y == fak ) || (c3n == fak )) ) {
+      fprintf(stderr, "disk: read meta: invalid fake bit\r\n");
+      val_o = c3n;
+    }
+    else if ( c3n == u3a_is_cat(lif) ) {
+      fprintf(stderr, "disk: read meta: invalid lifecycle length\r\n");
+      val_o = c3n;
+    }
+
+    if ( c3n == val_o ) {
+      u3z(ver); u3z(who); u3z(fak); u3z(lif);
+      return c3n;
+    }
   }
 
   if ( who_d ) {
@@ -611,6 +619,9 @@ u3_disk_exit(u3_disk* log_u)
 
   //  cancel write thread
   //
+  //    XX can deadlock when called from signal handler
+  //    XX revise SIGTSTP handling
+  //
   if ( c3y == log_u->ted_o ) {
     c3_i sas_i;
 
@@ -643,6 +654,10 @@ u3_disk_exit(u3_disk* log_u)
   u3_dire_free(log_u->com_u);
 
   c3_free(log_u);
+
+#if defined(DISK_TRACE_JAM) || defined(DISK_TRACE_CUE)
+  u3t_trace_close();
+#endif
 }
 
 /* u3_disk_info(): print status info.
@@ -692,7 +707,7 @@ u3_disk_init(c3_c* pax_c, u3_disk_cb cb_u)
   //
   {
     if ( 0 == (log_u->dir_u = u3_foil_folder(pax_c)) ) {
-      fprintf(stderr, "disk: failed to load pier at %s", pax_c);
+      fprintf(stderr, "disk: failed to load pier at %s\r\n", pax_c);
       c3_free(log_u);
       return 0;
     }
@@ -707,7 +722,7 @@ u3_disk_init(c3_c* pax_c, u3_disk_cb cb_u)
     strcat(urb_c, "/.urb");
 
     if ( 0 == (log_u->urb_u = u3_foil_folder(urb_c)) ) {
-      fprintf(stderr, "disk: failed to load /.urb in %s", pax_c);
+      fprintf(stderr, "disk: failed to load /.urb in %s\r\n", pax_c);
       c3_free(urb_c);
       c3_free(log_u);
       return 0;
@@ -740,7 +755,7 @@ u3_disk_init(c3_c* pax_c, u3_disk_cb cb_u)
     strcat(log_c, "/.urb/log");
 
     if ( 0 == (log_u->com_u = u3_foil_folder(log_c)) ) {
-      fprintf(stderr, "disk: failed to load /.urb/log in %s", pax_c);
+      fprintf(stderr, "disk: failed to load /.urb/log in %s\r\n", pax_c);
       c3_free(log_c);
       c3_free(log_u);
       return 0;
@@ -752,10 +767,14 @@ u3_disk_init(c3_c* pax_c, u3_disk_cb cb_u)
     //  "[..] on 64-bit there is no penalty for making this huge (say 1TB)."
     //
     {
-      const size_t siz_i = 1099511627776;
+      #if defined(U3_CPU_aarch64) && defined(U3_OS_linux)
+        const size_t siz_i = 64424509440;
+      #else
+        const size_t siz_i = 1099511627776;
+      #endif
 
       if ( 0 == (log_u->mdb_u = u3_lmdb_init(log_c, siz_i)) ) {
-        fprintf(stderr, "disk: failed to initialize database");
+        fprintf(stderr, "disk: failed to initialize database\r\n");
         c3_free(log_c);
         c3_free(log_u);
         return 0;
@@ -772,7 +791,7 @@ u3_disk_init(c3_c* pax_c, u3_disk_cb cb_u)
     c3_d fir_d;
 
     if ( c3n == u3_lmdb_gulf(log_u->mdb_u, &fir_d, &log_u->dun_d) ) {
-      fprintf(stderr, "disk: failed to load latest event from database");
+      fprintf(stderr, "disk: failed to load latest event from database\r\n");
       c3_free(log_u);
       return 0;
     }
@@ -781,6 +800,10 @@ u3_disk_init(c3_c* pax_c, u3_disk_cb cb_u)
   }
 
   log_u->liv_o = c3y;
+
+#if defined(DISK_TRACE_JAM) || defined(DISK_TRACE_CUE)
+  u3t_trace_open(pax_c);
+#endif
 
   return log_u;
 }

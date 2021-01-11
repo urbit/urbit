@@ -1,6 +1,8 @@
-:: contact-store: data store that holds group-based contact data
+:: contact-store [landscape]:
 ::
-/+  *contact-json, default-agent, dbug
+:: data store that holds group-based contact data
+::
+/+  *contact-json, default-agent, dbug, *migrate
 |%
 +$  card  card:agent:gall
 +$  versioned-state
@@ -119,8 +121,12 @@
     ?>  (team:title our.bowl src.bowl)
     =^  cards  state
       ?+  mark  (on-poke:def mark vase)
-        ::%json            (poke-json:cc !<(json vase))
-        %contact-action  (poke-contact-action:cc !<(contact-action vase))
+          ::%json            (poke-json:cc !<(json vase))
+          %contact-action
+        (poke-contact-action:cc !<(contact-action vase))
+      ::
+          %import
+        (poke-import:cc q.vase)
       ==
     [cards this]
   ::
@@ -167,6 +173,9 @@
       ?~  contacts
         ~
       ``noun+!>((~(get by u.contacts) ship))
+    ::
+        [%x %export ~]
+      ``noun+!>(state)
     ==
   ::
   ++  on-agent  on-agent:def
@@ -194,6 +203,15 @@
       %remove   (handle-remove +.action)
       %edit     (handle-edit +.action)
   ==
+::
+++  poke-import
+  |=  arc=*
+  ^-  (quip card _state)
+  =/  sty=state-three
+    :-  %3
+    %-  remake-map-of-map
+    ;;((tree [path (tree [ship contact])]) +.arc)
+  [~ sty]
 ::
 ++  handle-create
   |=  =path
@@ -253,7 +271,7 @@
 ++  send-diff
   |=  [pax=path upd=contact-update]
   ^-  (list card)
-  :~  :*  
+  :~  :*
     %give  %fact
     ~[/all /updates [%contacts pax]]
     %contact-update  !>(upd)

@@ -100,8 +100,8 @@
     ^-  (quip card _this)
     =^  cards  state
       ?+  sign-arvo  (on-arvo:def wire sign-arvo)
-        [%e %bound *]  `state
-        [%c *]  (handle-build:lsp wire +.sign-arvo)
+        [%eyre %bound *]  `state
+        [%clay *]  (handle-build:lsp wire +.sign-arvo)
       ==
     [cards this]
   ::
@@ -113,7 +113,7 @@
 ++  json-response
   |=  [eyre-id=@ta jon=json]
   ^-  (list card)
-  (give-simple-payload:app eyre-id (json-response:gen (json-to-octs jon)))
+  (give-simple-payload:app eyre-id (json-response:gen jon))
 ::
 ++  give-rpc-notification
   |=  res=out:notification:lsp-sur
@@ -234,7 +234,7 @@
   `state
 ::
 ++  handle-build
-  |=  [=path =gift:able:clay]
+  |=  [=path =gift:clay]
   ^-  (quip card _state)
   ?>  ?=([%writ *] gift)
   =/  uri=@t
@@ -247,7 +247,7 @@
     (~(put by builds) uri q.r.u.p.gift)
   =.  ford-diagnostics
     (~(del by ford-diagnostics) uri)
-  =+  .^(=open:clay %cs /(scot %p our.bow)/home/(scot %da now.bow)/open)
+  =+  .^(=open:clay %cs /(scot %p our.bow)/home/(scot %da now.bow)/open/foo)
   =/  =type  -:(open (uri-to-path:build uri))
   =.  preludes
     (~(put by preludes) uri type)

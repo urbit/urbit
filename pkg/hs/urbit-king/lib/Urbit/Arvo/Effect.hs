@@ -1,3 +1,9 @@
+{-# LANGUAGE StrictData #-}
+
+-- This is required due to the use of 'Void' in a constructor slot in
+-- combination with 'deriveNoun' which generates an unreachable pattern.
+{-# OPTIONS_GHC -Wno-overlapping-patterns #-}
+
 {-|
     Effect Types and Their Noun Conversions
 -}
@@ -6,6 +12,8 @@ module Urbit.Arvo.Effect where
 import Urbit.Noun.Time
 import Urbit.Prelude
 
+import Control.Monad.Fail (fail)
+import Numeric.Natural    (Natural)
 import Urbit.Arvo.Common (KingId(..), ServId(..))
 import Urbit.Arvo.Common (Header, HttpEvent, HttpServerConf, Method, Mime)
 import Urbit.Arvo.Common (AmesDest, Turf)
@@ -112,6 +120,7 @@ data Blit
     = Bel ()
     | Clr ()
     | Hop Word64
+    | Klr Stub
     | Lin [Char]
     | Mor ()
     | Sag Path Noun
@@ -119,12 +128,90 @@ data Blit
     | Url Cord
   deriving (Eq, Ord)
 
+data Deco
+    = DecoBl
+    | DecoBr
+    | DecoUn
+    | DecoNull
+  deriving (Eq, Ord, Show)
+
+data Tint
+    = TintR
+    | TintG
+    | TintB
+    | TintC
+    | TintM
+    | TintY
+    | TintK
+    | TintW
+    | TintNull
+    | TintTrue Word8 Word8 Word8
+  deriving (Eq, Ord, Show)
+
+data Stye = Stye
+    { deco :: (HoonSet Deco)
+    , back :: Tint
+    , fore :: Tint
+    }
+  deriving (Eq, Ord, Show)
+
+newtype Stub = Stub [(Stye, [Char])]
+  deriving (Eq, Ord, Show)
+
+instance ToNoun Deco where
+  toNoun = \case
+    DecoBl   -> toNoun $ Cord "bl"
+    DecoBr   -> toNoun $ Cord "br"
+    DecoUn   -> toNoun $ Cord "un"
+    DecoNull -> Atom 0
+
+instance FromNoun Deco where
+  parseNoun = named "Deco" . \case
+    Atom 0 -> pure DecoNull
+    n      -> parseNoun @Cord n <&> unCord >>= \case
+                "bl" -> pure DecoBl
+                "br" -> pure DecoBr
+                "un" -> pure DecoUn
+                t    -> fail ("invalid: " <> unpack t)
+
+instance ToNoun Tint where
+  toNoun = \case
+    TintR          -> toNoun $ Cord "r"
+    TintG          -> toNoun $ Cord "g"
+    TintB          -> toNoun $ Cord "b"
+    TintC          -> toNoun $ Cord "c"
+    TintM          -> toNoun $ Cord "m"
+    TintY          -> toNoun $ Cord "y"
+    TintK          -> toNoun $ Cord "k"
+    TintW          -> toNoun $ Cord "w"
+    TintNull       -> Atom 0
+    TintTrue r g b -> Cell (atom r) $ Cell (atom g) (atom b)
+                      where atom a = Atom (fromIntegral a :: Natural)
+
+instance FromNoun Tint where
+  parseNoun = named "Tint" . \case
+    Atom 0 -> pure TintNull
+    Cell (Atom r) (Cell (Atom g) (Atom b))
+           -> pure (TintTrue (word r) (word g) (word b))
+              where word w = fromIntegral w :: Word8
+    n      -> parseNoun @Cord n <&> unCord >>= \case
+                "r" -> pure TintR
+                "g" -> pure TintG
+                "b" -> pure TintB
+                "c" -> pure TintC
+                "m" -> pure TintM
+                "y" -> pure TintY
+                "k" -> pure TintK
+                "w" -> pure TintW
+                t   -> fail ("invalid: " <> unpack t)
+
 -- Manual instance to not save the noun/atom in Sag/Sav, because these can be
 -- megabytes and makes king hang.
 instance Show Blit where
   show (Bel ())     = "Bel ()"
   show (Clr ())     = "Clr ()"
   show (Hop x)      = "Hop " ++ (show x)
+  show (Klr s)      = "Klr " ++ (show s)
   show (Lin c)      = "Lin " ++ (show c)
   show (Mor ())     = "Mor ()"
   show (Sag path _) = "Sag " ++ (show path)
@@ -144,6 +231,8 @@ data TermEf
     | TermEfMass Path Noun -- Irrelevant
   deriving (Eq, Ord, Show)
 
+deriveNoun ''Stye
+deriveNoun ''Stub
 deriveNoun ''Blit
 deriveNoun ''TermEf
 

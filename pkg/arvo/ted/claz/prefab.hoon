@@ -2,14 +2,13 @@
 ::
 ::    writes to .txt with line-format ~planet,~ticket,0xaddress,0xauth,0xcrypt
 ::
-::    eg: -claz-prefab 'http://some-endpoint' ~marzod 10 %/prefab-invites/txt
+::    eg: *%/prefab-invites/txt -claz-prefab 'http://some-endpoint' ~marzod 10
 ::
-/+  keygen, azio, strandio
-=,  ethereum
+/+  keygen, azio, azimuth, *ethereum, strandio
 ::
 |=  args=vase
-=/  [url=@t star=@p amount=@ud out=path ~]
-  !<([@t @p @ud path ~] args)
+=/  [~ url=@t star=@p amount=@ud]
+  !<([~ @t @p @ud] args)
 =*  az  ~(. azio url [azimuth ecliptic delegated-sending]:contracts:azimuth)
 =/  m  (strand:strandio ,vase)
 ^-  form:m
@@ -35,24 +34,19 @@
 ;<  eny=@uvJ  bind:m  get-entropy:strandio
 ::
 ~&  'patience, slow derivation...'
-:: :-  %kiln-info
-:: :-  "wrote generated invites to {(spud out)}"
-:: %-  some
-:: %+  foal:space:userlib  out
-:: :-  %txt
 %-  pure:m
 !>  ^-  (list @t)
 %+  turn  kids
 |=  child=@p
 ^-  @t
-=/  ticket=@q  (end 3 8 (shas child eny))
+=/  ticket=@q  (end 3^8 (shas child eny))
 =+  (full-wallet-from-ticket:keygen child 8^ticket 0 ~)
 %-  crip
 ;:  weld
-  (scow %p child)                                 ","
-  (slag 1 (scow %q ticket))                       ","
-  (address-to-hex:ethereum addr.keys.ownership)   ","
-  (address-to-hex:ethereum addr.keys.management)  ","
-  ((x-co:co 64) public.crypt.keys.network)        ","
+  (scow %p child)                           ","
+  (slag 1 (scow %q ticket))                 ","
+  (address-to-hex addr.keys.ownership)      ","
+  (address-to-hex addr.keys.management)     ","
+  ((x-co:co 64) public.crypt.keys.network)  ","
   ((x-co:co 64) public.auth.keys.network)
 ==

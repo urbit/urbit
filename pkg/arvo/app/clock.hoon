@@ -1,4 +1,6 @@
-::  clock: deprecated, should be removed
+::  clock [landscape]:
+::
+::  deprecated, should be removed
 ::
 /+  *server, default-agent, verb, dbug
 =,  format

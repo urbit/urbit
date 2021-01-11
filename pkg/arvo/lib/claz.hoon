@@ -1,8 +1,7 @@
 ::  claz: call data generation
 ::
 /-  *claz
-::
-=,  ethereum
+/+  *ethereum, azimuth
 ::
 |%
 ++  read-invites

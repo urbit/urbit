@@ -175,14 +175,15 @@ the pill to have the new files/hash.  For most things, it is sufficient to run
 However, if you've made a change to Landscape's JS, then you will need to build
 a "glob" and upload it to bootstrap.urbit.org.  To do this, run `npm install;
 npm run build:prod` in `pkg/interface`, and add the resulting
-`pkg/arvo/app/landscape/index.js` to a fakezod at that path (or just create a
+`pkg/arvo/app/landscape/index.[hash].js` to a fakezod at that path (or just create a
 new fakezod with `urbit -F zod -B bin/solid.pill -A pkg/arvo`).  Run
 `:glob|make`, and this will output a file in `fakezod/.urb/put/glob-0vXXX.glob`.
 
 Upload this file to bootstrap.urbit.org, and modify `+hash` at the top of
-`pkg/arvo/app/glob.hoon` to match the hash in the filename.  Do not commit the
-produced `index.js` and make sure it doesn't end up in your pills (they should
-be less than 10MB each).
+`pkg/arvo/app/glob.hoon` to match the hash in the filename of the `.glob` file.
+Amend `pkg/arvo/app/landscape/index.html` to import the hashed JS bundle, instead
+of the unversioned index.js. Do not commit the produced `index.js` and
+make sure it doesn't end up in your pills (they should be less than 10MB each).
 
 ### Tag the resulting commit
 
@@ -267,6 +268,13 @@ Contributions:
   [..]
 ```
 
+Ensure the Vere release is marked as the 'latest' release and upload the two
+`.tgz` files to the release as `darwin.tgz` and `linux64.tgz`;
+this allows us to programmatically retrieve the latest release at
+[urbit.org/install/mac/latest/](https://urbit.org/install/mac/latest) and
+[urbit.org/install/linux64/latest](https://urbit.org/install/linux64/latest),
+respectively.
+
 The same schpeel re: release candidates applies here.
 
 Note that the release notes indicate which version of Urbit OS the Vere release
@@ -297,6 +305,13 @@ $ herb zod -p hood -d "+hood/merge %kids our %home"
 
 For Vere updates, this means simply shutting down each desired ship, installing
 the new binary, and restarting the pier with it.
+
+#### Continuous deployment
+
+A subset of release branches are deployed continuously to the network. Thus far
+this only includes `release/next-js`, which deploys livenet-compatible
+JavaScript changes to select QA ships. Any push to master will automatically
+merge master into `release/next-js` to keep the streams at parity.
 
 ### Announce the update
 

@@ -20,7 +20,7 @@
   %+  category
     ::  only first 100 chars, meme happens for super long values
     ::
-    (trip (end 3 100 msg))
+    (trip (end [3 100] msg))
   %+  expect-eq
     !>  out.i.ves
     !>  `@ux`(ripemd-160 wid (rev 3 wid msg))

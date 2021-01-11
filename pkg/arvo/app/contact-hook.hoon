@@ -1,14 +1,21 @@
-::  contact-hook:
+::  contact-hook [landscape]
 ::
-/-  group-hook,
-    *contact-hook,
+::
+/-  *contact-hook,
     *contact-view,
-    *invite-store,
+    inv=invite-store,
     *metadata-hook,
     *metadata-store,
     *group
-/+  *contact-json, default-agent, dbug, group-store, verb, resource, grpl=group
-~%  %contact-hook-top  ..is  ~
+/+  *contact-json,
+    default-agent,
+    dbug,
+    group-store,
+    verb,
+    resource,
+    grpl=group,
+    *migrate
+~%  %contact-hook-top  ..part  ~
 |%
 +$  card  card:agent:gall
 ::
@@ -43,7 +50,7 @@
   ++  on-init
     ^-  (quip card _this)
     :_  this(invite-created %.y)
-    :~  (invite-poke:cc [%create /contacts])
+    :~  (invite-poke:cc [%create %contacts])
         [%pass /inv %agent [our.bol %invite-store] %watch /invitatory/contacts]
         [%pass /group %agent [our.bol %group-store] %watch /groups]
     ==
@@ -54,7 +61,7 @@
     =/  old  !<(versioned-state old-vase)
     =|  cards=(list card)
     |^
-    |-  ^-  (quip card _this) 
+    |-  ^-  (quip card _this)
     ?:  ?=(%3 -.old)
       [cards this(state old)]
     ?:  ?=(%2 -.old)
@@ -80,7 +87,7 @@
       %_    $
         -.old  %2
         ::
-          synced.old  
+          synced.old
         %-  malt
         %+  turn
           ~(tap by synced.old)
@@ -126,11 +133,15 @@
           %json
         (poke-json:cc !<(json vase))
       ::
-          %contact-action  
+          %contact-action
         (poke-contact-action:cc !<(contact-action vase))
       ::
           %contact-hook-action
         (poke-hook-action:cc !<(contact-hook-action vase))
+      ::
+          %import
+        ?>  (team:title our.bol src.bol)
+        (poke-import:cc q.vase)
       ==
     [cards this]
   ::
@@ -149,7 +160,7 @@
         %kick       [(kick:cc wire) this]
         %watch-ack
       =^  cards  state
-        (watch-ack:cc wire p.sign) 
+        (watch-ack:cc wire p.sign)
       [cards this]
     ::
         %fact
@@ -164,16 +175,32 @@
           (fact-group-update:cc wire !<(update:group-store q.cage.sign))
         [cards this]
       ::
-          %invite-update
-        =^  cards  state
-          (fact-invite-update:cc wire !<(invite-update q.cage.sign))
-        [cards this]
+        %invite-update  [~ this]
       ==
     ==
   ::
   ++  on-leave  on-leave:def
-  ++  on-peek   on-peek:def
-  ++  on-arvo   on-arvo:def
+  ++  on-peek
+    |=  =path
+    ^-  (unit (unit cage))
+    ?+  path  (on-peek:def path)
+        [%x %export ~]
+      ``noun+!>(state)
+    ==
+  ++  on-arvo
+    |=  [=wire =sign-arvo]
+    ^-  (quip card _this)
+    ?.  ?=([%try-rejoin @ @ *] wire)
+      (on-arvo:def wire sign-arvo)
+    =/  nack-count=@ud  (slav %ud i.t.wire)
+    =/  who=@p          (slav %p i.t.t.wire)
+    =/  pax             t.t.t.wire
+    ?>  ?=([%behn %wake *] sign-arvo)
+    ~?  ?=(^ error.sign-arvo)
+      "behn errored in backoff timers, continuing anyway"
+    :_  this
+    [(try-rejoin:cc who pax +(nack-count))]~
+  ::
   ++  on-fail   on-fail:def
   --
 ::
@@ -262,6 +289,27 @@
     ==
   ==
 ::
+++  poke-import
+  |=  arc=*
+  ^-  (quip card _state)
+  =/  sty=state-three
+    [%3 (remake-map ;;((tree [path ship]) +<.arc)) ;;(? +>.arc)]
+  :_  sty
+  %+  turn  ~(tap by synced.sty)
+  |=  [=path =ship]
+  ^-  card
+  =/  contact-path  [%contacts path]
+  ?:  =(our.bol ship)
+    [%pass contact-path %agent [our.bol %contact-store] %watch contact-path]
+  (try-rejoin ship contact-path 0)
+::
+++  try-rejoin
+  |=  [who=@p pax=path nack-count=@ud]
+  ^-  card
+  =/  =wire
+    [%try-rejoin (scot %ud nack-count) (scot %p who) pax]
+  [%pass wire %agent [who %contact-hook] %watch pax]
+::
 ++  watch-contacts
   |=  pax=path
   ^-  (list card)
@@ -284,6 +332,13 @@
   ^-  (quip card _state)
   ?~  saw
     [~ state]
+  ?:  ?=([%try-rejoin @ *] wir)
+    =/  nack-count=@ud  (slav %ud i.t.wir)
+    =/  wakeup=@da
+      (add now.bol (mul ~s1 (bex (min 19 nack-count))))
+    :_  state
+    [%pass wir %arvo %b %wait wakeup]~
+  ::
   ?>  ?=(^ wir)
   [~ state(synced (~(del by synced) t.wir))]
 ::
@@ -297,6 +352,9 @@
   |=  wir=wire
   ^-  (list card)
   ?+  wir  !!
+      [%try-rejoin @ @ *]
+    $(wir t.t.t.wir)
+  ::
       [%inv ~]
     [%pass /inv %agent [our.bol %invite-store] %watch /invitatory/contacts]~
   ::
@@ -304,8 +362,8 @@
     [%pass /group %agent [our.bol %group-store] %watch /groups]~
   ::
       [%contacts @ *]
-    =/  wir  
-      ?:  =(%ship i.t.wir) 
+    =/  wir
+      ?:  =(%ship i.t.wir)
         wir
       (migrate wir)
     ?>  ?=([%contacts @ @ *] wir)
@@ -469,36 +527,10 @@
           (contact-poke [%delete path])
         (contact-poke [%remove path ship])
     ==
-  ::
-  ++  send-invite-poke
-    |=  [=path =ship]
-    ^-  card
-    =/  =invite
-      :*  our.bol  %contact-hook
-          path  ship  ''
-      ==
-    =/  act=invite-action  [%invite /contacts (shaf %msg-uid eny.bol) invite]
-    [%pass / %agent [our.bol %invite-hook] %poke %invite-action !>(act)]
   --
 ::
-++  fact-invite-update
-  |=  [wir=wire fact=invite-update]
-  ^-  (quip card _state)
-  ?+  -.fact  [~ state]
-      %accepted
-    =/  rid=resource
-      (de-path:resource path.invite.fact)
-    :_  state
-    ~[(contact-view-poke %join rid)]
-  ==
-::
-++  group-hook-poke
-  |=  =action:group-hook
-  ^-  card
-  [%pass / %agent [our.bol %group-hook] %poke %group-hook-action !>(action)]
-::
 ++  invite-poke
-  |=  act=invite-action
+  |=  act=action:inv
   ^-  card
   [%pass / %agent [our.bol %invite-store] %poke %invite-action !>(act)]
 ::
@@ -506,26 +538,6 @@
   |=  act=contact-action
   ^-  card
   [%pass / %agent [our.bol %contact-store] %poke %contact-action !>(act)]
-::
-++  contact-view-poke
-  |=  act=contact-view-action
-  ^-  card
-  [%pass / %agent [our.bol %contact-view] %poke %contact-view-action !>(act)]
-::
-++  group-poke
-  |=  act=action:group-store
-  ^-  card
-  [%pass / %agent [our.bol %group-store] %poke %group-action !>(act)]
-::
-++  metadata-poke
-  |=  act=metadata-action
-  ^-  card
-  [%pass / %agent [our.bol %metadata-store] %poke %metadata-action !>(act)]
-::
-++  metadata-hook-poke
-  |=  act=metadata-hook-action
-  ^-  card
-  [%pass / %agent [our.bol %metadata-hook] %poke %metadata-hook-action !>(act)]
 ::
 ++  contacts-scry
   |=  pax=path
@@ -537,16 +549,6 @@
       /noun
     ==
   .^((unit contacts) %gx pax)
-::
-++  invite-scry
-  |=  uid=serial
-  ^-  (unit invite)
-  =/  pax
-    ;:  weld
-      /(scot %p our.bol)/invite-store/(scot %da now.bol)
-      /invite/contacts/(scot %uv uid)/noun
-    ==
-  .^((unit invite) %gx pax)
 ::
 ++  group-scry
   |=  pax=path

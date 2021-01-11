@@ -26,8 +26,15 @@
 ::  $shoe-effect: easier sole-effects
 ::
 +$  shoe-effect
-  $%  [%sole effect=sole-effect]
-      ::TODO  complex screen-draw effects
+  $%  ::  %sole: raw sole-effect
+      ::
+      [%sole effect=sole-effect]
+      ::  %table: sortable, filterable data, with suggested column char widths
+      ::
+      [%table head=(list dime) wide=(list @ud) rows=(list (list dime))]
+      ::  %row: line sections with suggested char widths
+      ::
+      [%row wide=(list @ud) cols=(list dime)]
   ==
 ::  +shoe: gall agent core with extra arms
 ::
@@ -159,6 +166,17 @@
           ~(tap in ~(key by soles))
         |=  sole-id=@ta
         /sole/[sole-id]
+      ::
+          %table
+        =;  fez=(list sole-effect)
+          $(effect.card [%sole %mor fez])
+        =,  +.effect.card
+        :-  (row:draw & wide head)
+        %+  turn  rows
+        (cury (cury row:draw |) wide)
+      ::
+          %row
+        $(effect.card [%sole (row:draw | +.effect.card)])
       ==
     --
   ::
@@ -225,7 +243,10 @@
         %+  rose  (tufa buf.cli-state)
         (command-parser:og sole-id)
       ?:  ?=(%& -.res)
-        ?.  &(?=(^ p.res) run.u.p.res) 
+        ::  only auto-run eligible commands if they were typed out
+        ::  (that is, not retrieved from command history)
+        ::
+        ?.  &(?=(^ p.res) run.u.p.res !?=(%set -.ted.sole-change))
           [[~ cli-state] shoe]
         (run-command cmd.u.p.res)
       :_  shoe
@@ -281,7 +302,7 @@
         (longest-match:auto options)
       =/  to-send=tape
         %-  trip
-        (rsh 3 (met 3 needle) advance)
+        (rsh [3 (met 3 needle)] advance)
       =/  send-pos=@ud
         %+  add  pos
         (met 3 (fall forward ''))
@@ -325,7 +346,11 @@
     =^  cards  shoe  (on-leave:og path)
     [(deal cards) this]
   ::
-  ++  on-peek  on-peek:og
+  ++  on-peek
+    |=  =path
+    ^-  (unit (unit cage))
+    ?.  =(/x/dbug/state path)  ~
+    ``noun+(slop on-save:og !>(shoe=state))
   ::
   ++  on-agent
     |=  [=wire =sign:agent:gall]
@@ -344,5 +369,164 @@
     ^-  (quip card:agent:gall agent:gall)
     =^  cards  shoe  (on-fail:og term tang)
     [(deal cards) this]
+  --
+::
+++  draw
+  |%
+  ++  row
+    |=  [bold=? wide=(list @ud) cols=(list dime)]
+    ^-  sole-effect
+    :-  %mor
+    ^-  (list sole-effect)
+    =/  cows=(list [wid=@ud col=dime])
+      %-  head
+      %^  spin  cols  wide
+      |=  [col=dime wiz=(list @ud)]
+      ~|  [%too-few-wide col]
+      ?>  ?=(^ wiz)
+      [[i.wiz col] t.wiz]
+    =/  cobs=(list [wid=@ud (list tape)])
+      (turn cows col-as-lines)
+    =+  [lin=0 any=|]
+    =|  fez=(list sole-effect)
+    |-  ^+  fez
+    =;  out=tape
+      ::  done when we're past the end of all columns
+      ::
+      ?:  (levy out (cury test ' '))
+        (flop fez)
+      =;  fec=sole-effect
+        $(lin +(lin), fez [fec fez])
+      ?.  bold  txt+out
+      klr+[[`%br ~ ~]^[(crip out)]~]~
+    %+  roll  cobs
+    |=  [[wid=@ud lines=(list tape)] out=tape]
+    %+  weld  out
+    %+  weld  ?~(out "" " ")
+    =+  l=(swag [lin 1] lines)
+    ?^(l i.l (reap wid ' '))
+  ::
+  ++  col-as-lines
+    |=  [wid=@ud col=dime]
+    ^-  [@ud (list tape)]
+    :-  wid
+    %+  turn
+      (break wid (col-as-text col) (break-sets -.col))
+    (cury (cury pad wid) (alignment -.col))
+  ::
+  ++  col-as-text
+    |=  col=dime
+    ^-  tape
+    ?+  p.col  (scow col)
+      %t       (trip q.col)
+      %tas     ['%' (scow col)]
+    ==
+  ::
+  ++  alignment
+    |=  wut=@ta
+    ^-  ?(%left %right)
+    ?:  ?=(?(%t %ta %tas %da) wut)
+      %left
+    %right
+  ::
+  ++  break-sets
+    |=  wut=@ta
+    ::  for: may break directly before these characters
+    ::  aft: may break directly after these characters
+    ::  new: always break on these characters, consuming them
+    ::
+    ^-  [for=(set @t) aft=(set @t) new=(set @t)]
+    ?+  wut  [(sy " ") (sy ".:-/") (sy "\0a")]
+      ?(%p %q)  [(sy "-") (sy "-") ~]
+      %ux       [(sy ".") ~ ~]
+    ==
+  ::
+  ++  break
+    |=  [wid=@ud cot=tape brs=_*break-sets]
+    ^-  (list tape)
+    ~|  [wid cot]
+    ?:  =("" cot)  ~
+    =;  [lin=tape rem=tape]
+      [lin $(cot rem)]
+    ::  take snip of max width+1, search for breakpoint on that.
+    ::  we grab one char extra, to look-ahead for for.brs.
+    ::  later on, we always transfer _at least_ the extra char.
+    ::
+    =^  lin=tape  cot
+      [(scag +(wid) cot) (slag +(wid) cot)]
+    =+  len=(lent lin)
+    ::  find the first newline character
+    ::
+    =/  new=(unit @ud)
+      =+  new=~(tap in new.brs)
+      =|  las=(unit @ud)
+      |-
+      ?~  new  las
+      $(new t.new, las (hunt lth las (find [i.new]~ lin)))
+    ::  if we found a newline, break on it
+    ::
+    ?^  new
+      :-  (scag u.new lin)
+      (weld (slag +(u.new) lin) cot)
+    ::  if it fits, we're done
+    ::
+    ?:  (lte len wid)
+      [lin cot]
+    =+  nil=(flop lin)
+    ::  search for latest aft match
+    ::
+    =/  aft=(unit @ud)
+      ::  exclude the look-ahead character from search
+      ::
+      =.  len  (dec len)
+      =.  nil  (slag 1 nil)
+      =-  ?~(- ~ `+(u.-))
+      ^-  (unit @ud)
+      =+  aft=~(tap in aft.brs)
+      =|  las=(unit @ud)
+      |-
+      ?~  aft  (bind las (cury sub (dec len)))
+      $(aft t.aft, las (hunt lth las (find [i.aft]~ nil)))
+    ::  search for latest for match
+    ::
+    =/  for=(unit @ud)
+      =+  for=~(tap in for.brs)
+      =|  las=(unit @ud)
+      |-
+      ?~  for  (bind las (cury sub (dec len)))
+      =-  $(for t.for, las (hunt lth las -))
+      =+  (find [i.for]~ nil)
+      ::  don't break before the first character
+      ::
+      ?:(=(`(dec len) -) ~ -)
+    ::  if any result, break as late as possible
+    ::
+    =+  brk=(hunt gth aft for)
+    ?~  brk
+      ::  lin can't break, produce it in its entirety
+      ::  (after moving the look-ahead character back)
+      ::
+      :-  (scag wid lin)
+      (weld (slag wid lin) cot)
+    :-  (scag u.brk lin)
+    =.  cot  (weld (slag u.brk lin) cot)
+    ::  eat any leading whitespace the next line might have, "clean break"
+    ::
+    |-  ^+  cot
+    ?~  cot  ~
+    ?.  ?=(?(%' ' %'\09') i.cot)
+      cot
+    $(cot t.cot)
+  ::
+  ++  pad
+    |=  [wid=@ud lyn=?(%left %right) lin=tape]
+    ^+  lin
+    =+  l=(lent lin)
+    ?:  (gte l wid)  lin
+    =+  p=(reap (sub wid l) ' ')
+    ?-  lyn
+      %left   (weld lin p)
+      %right  (weld p lin)
+    ==
   --
 --

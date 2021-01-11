@@ -1,14 +1,13 @@
-::  contact-view: sets up contact JS client and combines commands
+::  contact-view [landscape]:
+::
+::  sets up contact JS client and combines commands
 ::  into semantic actions for the UI
 ::
 /-
-    group-hook,
-    *invite-store,
+    inv=invite-store,
     *contact-hook,
     *metadata-store,
     *metadata-hook,
-    *permission-group-hook,
-    *permission-hook,
     pull-hook,
     push-hook
 /+  *server, *contact-json, default-agent, dbug, verb,
@@ -48,7 +47,7 @@
         (contact-poke:cc [%add /~/default our.bowl *contact])
         :*  %pass  /srv  %agent  [our.bol %file-server]
             %poke  %file-server-action
-            !>([%serve-dir /'~groups' /app/landscape %.n])
+            !>([%serve-dir /'~groups' /app/landscape %.n %.y])
         ==
     ==
   ::
@@ -63,7 +62,7 @@
         [%pass / %arvo %e %connect [~ /'contact-view'] %contact-view]
         :*  %pass  /srv  %agent  [our.bol %file-server]
             %poke  %file-server-action
-            !>([%serve-dir /'~groups' /app/landscape %.n])
+            !>([%serve-dir /'~groups' /app/landscape %.n %.y])
         ==
     ==
   ::
@@ -159,47 +158,27 @@
       %+  turn
         ~(tap in pending.policy.act)
       |=  =ship
-      (send-invite our.bol %contacts path ship '')
+      (send-invite our.bol %contacts rid ship '')
     ==
   ::
       %join
-    =/  =path
-      (en-path:resource resource.act)
     =/  =cage
       :-  %group-update
       !>  ^-  update:group-store
       [%add-members resource.act (sy our.bol ~)]
     =/  =wire
-      [%join-group path]
+      [%join-group (en-path:resource resource.act)]
     [%pass wire %agent [entity.resource.act %group-push-hook] %poke cage]~
   ::
       %invite
     =*  rid  resource.act
-    =/  =path
-      (en-path:resource rid)
-    =/  =group
-      (need (scry-group:grp rid))
-    :-  (send-invite entity.rid %contacts path ship.act text.act)
+    =/  =group  (need (scry-group:grp rid))
+    :-  (send-invite entity.rid %contacts rid ship.act text.act)
     ?.  ?=(%invite -.policy.group)  ~
     ~[(add-pending rid ship.act)]
   ::
       %delete
-    =/  rid=resource
-      (de-path:resource path.act)
-    =/  group-pokes=(list card)
-      ?:  =(our.bol entity.rid)
-        ~[(group-push-poke %remove rid)]
-      :~  (group-proxy-poke %remove-members rid (sy our.bol ~))
-          (group-pull-poke %remove rid)
-      ==
-    ;:  weld
-      group-pokes
-      :~  (contact-hook-poke [%remove path.act])
-          (group-poke [%remove-group rid ~])
-          (contact-poke [%delete path.act])
-      ==
-      (delete-metadata path.act)
-    ==
+    ~
   ::
       %remove
     =/  rid=resource
@@ -268,18 +247,18 @@
       %group-store
     %group-push-hook
   =/  =cage
-    :-  %group-action
+    :-  %group-update
     !>  ^-  action:group-store
     [%change-policy rid %invite %add-invites (sy ship ~)]
   [%pass / %agent [entity.rid app] %poke cage]
 ::
 ++  send-invite
-  |=  =invite
+  |=  =invite:inv
   ^-  card
   =/  =cage
     :-  %invite-action
-    !>  ^-  invite-action
-    [%invite /contacts (shaf %invite-uid eny.bol) invite]
+    !>  ^-  action:inv
+    [%invite %contacts (shaf %invite-uid eny.bol) invite]
   [%pass / %agent [recipient.invite %invite-hook] %poke cage]
 ::
 ++  contact-poke
@@ -327,20 +306,6 @@
   ^-  card
   [%pass / %agent [our.bol %metadata-hook] %poke %metadata-hook-action !>(act)]
 ::
-++  perm-group-hook-poke
-  |=  act=permission-group-hook-action
-  ^-  card
-  :*  %pass  /  %agent  [our.bol %permission-group-hook]
-      %poke  %permission-group-hook-action  !>(act)
-  ==
-::
-++  permission-hook-poke
-  |=  act=permission-hook-action
-  ^-  card
-  :*  %pass  /  %agent  [our.bol %permission-hook]
-      %poke  %permission-hook-action  !>(act)
-  ==
-::
 ++  sync-metadata
   |=  [=ship =path]
   ^-  card
@@ -358,13 +323,6 @@
     ==
   :~  (metadata-poke [%add path [%contacts path] metadata])
       (metadata-hook-poke [%add-owned path])
-  ==
-::
-++  delete-metadata
-  |=  =path
-  ^-  (list card)
-  :~  (metadata-poke [%remove path [%contacts path]])
-      (metadata-hook-poke [%remove path])
   ==
 ::
 ++  all-scry

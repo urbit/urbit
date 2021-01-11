@@ -80,9 +80,11 @@
   ++  max-1-wk  ['cache-control' 'max-age=604800']
   ::
   ++  html-response
+    =|  cache=?
     |=  =octs
     ^-  simple-payload:http
-    [[200 [['content-type' 'text/html'] max-1-wk ~]] `octs]
+    :_  `octs
+    [200 [['content-type' 'text/html'] ?:(cache [max-1-wk ~] ~)]]
   ::
   ++  js-response
     |=  =octs
@@ -90,9 +92,9 @@
     [[200 [['content-type' 'text/javascript'] max-1-da ~]] `octs]
   ::
   ++  json-response
-    |=  =octs
+    |=  =json
     ^-  simple-payload:http
-    [[200 ['content-type' 'application/json']~] `octs]
+    [[200 ['content-type' 'application/json']~] `(json-to-octs json)]
   ::
   ++  css-response
     |=  =octs

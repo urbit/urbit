@@ -7,7 +7,7 @@ static void
 _setup(void)
 {
   u3m_init();
-  u3m_pave(c3y, c3n);
+  u3m_pave(c3y);
 }
 
 /* _test_ames(): spot check ames helpers
@@ -38,6 +38,10 @@ main(int argc, char* argv[])
   _setup();
 
   _test_ames();
+
+  //  GC
+  //
+  u3m_grab(u3_none);
 
   fprintf(stderr, "ames okeedokee\n");
   return 0;
