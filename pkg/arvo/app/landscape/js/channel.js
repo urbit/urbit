@@ -182,19 +182,19 @@ class Channel {
   //  sends a JSON command command to the server.
   //
   sendJSONToChannel(j) {
-    if(!j && this.outstandingJSON.length === 0) {
-      return;
-    }
     let req = new XMLHttpRequest();
     req.open("PUT", this.channelURL());
     req.setRequestHeader("Content-Type", "application/json");
 
     if (this.lastEventId == this.lastAcknowledgedEventId) {
-      if(j) {
+      if (j) {
         this.outstandingJSON.push(j);
       }
-      let x = JSON.stringify(this.outstandingJSON);
-      req.send(x);
+
+      if (this.outstandingJSON.length > 0) {
+        let x = JSON.stringify(this.outstandingJSON);
+        req.send(x);
+      }
     } else {
       //  we add an acknowledgment to clear the server side queue
       //
@@ -205,7 +205,7 @@ class Channel {
         ...this.outstandingJSON, 
         {action: "ack", "event-id": parseInt(this.lastEventId)}
       ];
-      if(j) {
+      if (j) {
         payload.push(j)
       }
       let x = JSON.stringify(payload);
