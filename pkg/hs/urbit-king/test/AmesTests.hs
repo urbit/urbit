@@ -108,9 +108,10 @@ instance Arbitrary LogIdentity where
 instance Arbitrary Packet where
   arbitrary = do
     pktVersion   <- suchThat arb (< 8)
-    pktEncrypted <- arb
     pktSndr      <- arb
     pktRcvr      <- arb
+    pktSndrTick  <- suchThat arb (< 16)
+    pktRcvrTick  <- suchThat arb (< 16)
     pktOrigin    <- arb
     pktContent   <- arb
     pure Packet {..}

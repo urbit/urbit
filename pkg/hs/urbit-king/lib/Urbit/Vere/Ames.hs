@@ -15,11 +15,11 @@ import Urbit.Arvo                  hiding (Fake)
 import Urbit.King.Config
 import Urbit.King.Scry
 import Urbit.Vere.Ames.LaneCache
---import Urbit.Vere.Ames.Packet
+import Urbit.Vere.Ames.Packet
 import Urbit.Vere.Pier.Types
 import Urbit.Vere.Ports
 
--- import Data.Serialize      (decode, encode)
+import Data.Serialize      (decode, encode)
 import Urbit.King.App      (HasKingId(..), HasPierEnv(..))
 import Urbit.Vere.Ames.DNS (NetworkMode(..), ResolvServ(..))
 import Urbit.Vere.Ames.DNS (galaxyPort, resolvServ)
@@ -145,6 +145,12 @@ ames'
   -> (Text -> RIO e ())
   -> RIO e ([Ev], RAcquire e (DriverApi NewtEf))
 ames' who isFake stat scry stderr = do
+  stderr "YO-HOI"
+  stderr $ tshow (AAIpv4 (Ipv4 16777343) 60008)
+  -- stderr $ pack $ showUD $ bytesAtom $ encode
+  --        $ Packet 0 (Ship 1) (Ship 0) 2 3 Nothing "hi"
+  -- stderr $ pack $ showUD $ bytesAtom $ encode
+  --        $ Packet 0 (Ship 1) (Ship 0) 2 3 (Just $ AAIpv4 (Ipv4 0xffeeffee) 0xaacc) "hi"
   -- Unfortunately, we cannot use TBQueue because the only behavior
   -- provided for when full is to block the writer. The implementation
   -- below uses materially the same data structures as TBQueue, however.
@@ -267,9 +273,6 @@ ames env who isFake stat scry enqueueEv stderr = (initialEvents, runAmes)
       -- port number, host address, bytestring
     (p, a, b) <- atomically (bump' asRcv >> usRecv)
     ver <- readTVarIO vers
-    -- TODO
-    serfsUp p a b
-    {-
     case decode b of
       Right (pkt@Packet {..}) | ver == Nothing || ver == Just pktVersion -> do
         logDebug $ displayShow ("ames: bon packet", pkt, showUD $ bytesAtom b)
@@ -284,7 +287,8 @@ ames env who isFake stat scry enqueueEv stderr = (initialEvents, runAmes)
               -> do
                 bump asFwd
                 forward dest $ encode pkt
-                  { pktOrigin = pktOrigin <|> Just (ipDest p a) }
+                  { pktOrigin = pktOrigin
+                            <|> Just (AAIpv4 (Ipv4 a) (fromIntegral p)) }
               where
                 notSelf (EachYes g) = who /= Ship (fromIntegral g)
                 notSelf (EachNo  _) = True
@@ -315,7 +319,6 @@ ames env who isFake stat scry enqueueEv stderr = (initialEvents, runAmes)
       Left e -> do
         bump asDml
         logInfo $ displayShow ("ames: dropping malformed", e)
-    -}
 
     where
       serfsUp p a b =

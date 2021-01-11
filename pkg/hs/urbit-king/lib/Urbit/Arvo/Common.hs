@@ -25,6 +25,7 @@ module Urbit.Arvo.Common
 import Urbit.Prelude
 
 import Control.Monad.Fail (fail)
+import Data.Bits
 
 import qualified Network.HTTP.Types.Method as H
 import qualified Urbit.Ob                  as Ob
@@ -166,7 +167,14 @@ newtype Port = Port { unPort :: Word16 }
 
 -- @if
 newtype Ipv4 = Ipv4 { unIpv4 :: Word32 }
-  deriving newtype (Eq, Ord, Show, Enum, Real, Integral, Num, ToNoun, FromNoun)
+  deriving newtype (Eq, Ord, Enum, Real, Integral, Num, ToNoun, FromNoun)
+
+instance Show Ipv4 where
+  show (Ipv4 i) =
+    show ((shiftL i 24) .&. 0xff) ++ "." ++
+    show ((shiftL i 16) .&. 0xff) ++ "." ++
+    show ((shiftL i  8) .&. 0xff) ++ "." ++
+    show (i .&. 0xff)
 
 -- @is
 newtype Ipv6 = Ipv6 { unIpv6 :: Word128 }
