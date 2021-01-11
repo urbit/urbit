@@ -21,13 +21,13 @@
   $%  state:state-zero:store
       state:state-one:store
       state-2
+      state-3
   ==
 +$  unread-stats
   [indices=(set index:graph-store) last=@da]
 ::
-+$  state-2
-  $:  %2
-      unreads-each=(jug stats-index:store index:graph-store)
++$  base-state 
+  $:  unreads-each=(jug stats-index:store index:graph-store)
       unreads-count=(map stats-index:store @ud)
       last-seen=(map stats-index:store @da)
       =notifications:store
@@ -36,8 +36,14 @@
       dnd=_|
   ==
 ::
++$  state-2
+  [%2 base-state]
+::
++$  state-3
+  [%3 base-state]
+::
 +$  inflated-state
-  $:  state-2
+  $:  state-3
       cache
   ==
 ::  $cache: useful to have precalculated, but can be derived from state
@@ -78,9 +84,19 @@
   =|  cards=(list card)
   |^  
   ?-  -.old
-      %2  
-    :-  cards
+      %3  
+    :-  (flop cards)
     this(-.state old, +.state (inflate-cache:ha old))
+    ::
+      %2
+    %_  $
+      -.old  %3
+      ::
+        cards
+      :_  cards
+      [%pass / %agent [our dap]:bowl %poke noun+!>(%fix-dangling)]
+    ==
+    
     ::
       %1
     %_  $
@@ -264,9 +280,40 @@
   =^  cards  state
     ?+  mark           (on-poke:def mark vase)
         %hark-action   (hark-action !<(action:store vase))
-        %noun          ~&  +.state  [~ state]
+        %noun          (poke-noun !<(* vase))
     ==
   [cards this]
+  ::
+  ++  poke-noun
+    |=  val=*
+    ?+  val  ~|(%bad-noun-poke !!)
+      %fix-dangling  fix-dangling
+      %print  ~&(+.state [~ state])
+    ==
+  ::
+  ++  fix-dangling
+    =/  graphs  get-keys:gra
+    :_  state
+    %+  roll
+      ~(tap by unreads-each)
+    |=  $:  [=stats-index:store indices=(set index:graph-store)]
+            out=(list card)
+        ==
+    ?.  ?=(%graph -.stats-index)  out
+    ?.  (~(has in graphs) graph.stats-index)
+      :_(out (poke-us %remove-graph graph.stats-index))
+    %+  welp  out
+    %+  turn
+      %+  skip
+        ~(tap in indices) 
+      |=  =index:graph-store
+      (check-node-existence:gra graph.stats-index index)
+    |=(=index:graph-store (poke-us %read-each stats-index index))
+  ::
+  ++  poke-us
+    |=  =action:store
+    ^-  card
+    [%pass / %agent [our dap]:bowl %poke hark-action+!>(action)]
   ::
   ++  hark-action
     |=  =action:store
@@ -636,7 +683,7 @@
   ==
 ::
 ++  inflate-cache
-  |=  state-2
+  |=  state-3
   ^+  +.state
   =/  nots=(list [p=@da =timebox:store])
     (tap:orm notifications)
