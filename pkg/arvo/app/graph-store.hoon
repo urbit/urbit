@@ -452,18 +452,16 @@
       ++  get-descendants
         |=  =graph:store
         =|  indices=(list index:store)
-        =/  nodes=(list [atom node:store])
-          (tap:orm:store graph)
+        =/  nodes  (tap:orm:store graph)
         %-  ~(gas in *(set index:store))
         |-  =*  tap-nodes  $
         ^+  indices
         %-  zing
-        %+  turn
-          nodes
+        %+  turn  nodes
         |=  [atom =node:store]
         ^-  (list index:store)
         %+  welp
-          (limo index.post.node ~)
+          index.post.node^~
         ?.  ?=(%graph -.children.node)
           ~
         %_  tap-nodes
@@ -473,18 +471,18 @@
       ++  remove-index
         =|  indices=(set index:store)
         |=  [=graph:store =index:store]
-        ^-  [_indices graph:store]
+        ^-  [(set index:store) graph:store]
         ?~  index  [indices graph]
         =*  atom   i.index
         ::  last index in list
         ::
         ?~  t.index
-          =^  u-val  graph  (del:orm graph atom)
-          ?~  u-val  `graph
-          ?.  ?=(%graph -.children.u.u-val)
+          =^  rm-node  graph  (del:orm graph atom)
+          ?~  rm-node  `graph
+          ?.  ?=(%graph -.children.u.rm-node)
             `graph
           =/  new-indices
-            (get-descendants p.children.u.u-val)
+            (get-descendants p.children.u.rm-node)
           [(~(uni in indices) new-indices) graph]
         =/  =node:store
           ~|  "parent index does not exist to remove a node from!"

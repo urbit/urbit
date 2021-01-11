@@ -197,7 +197,8 @@
     =/  =stats-index:store
       [%graph rid (scag parent-lent.notif-kind index)]
     ?.  ?=(%each mode.notif-kind)  out
-    :_(out (poke-hark %read-each stats-index index))
+    :_  out 
+    (poke-hark %read-each stats-index index)
   ::
   ++  poke-hark
     |=  =action:store

@@ -85,13 +85,16 @@
   |^  
   ?-  -.old
       %3  
-    :-  cards
+    :-  (flop cards)
     this(-.state old, +.state (inflate-cache:ha old))
     ::
       %2
     %_  $
       -.old  %3
-      cards  :_(cards [%pass / %agent [our dap]:bowl %poke noun+!>(%fix-dangling)])
+      ::
+        cards
+      :_  cards
+      [%pass / %agent [our dap]:bowl %poke noun+!>(%fix-dangling)]
     ==
     
     ::
@@ -289,8 +292,7 @@
     ==
   ::
   ++  fix-dangling
-    =/  graphs=(set resource)
-      get-keys:gra
+    =/  graphs  get-keys:gra
     :_  state
     %+  roll
       ~(tap by unreads-each)
@@ -300,13 +302,12 @@
     ?.  ?=(%graph -.stats-index)  out
     ?.  (~(has in graphs) graph.stats-index)
       :_(out (poke-us %remove-graph graph.stats-index))
-    %+  weld  out
-    ^-  (list card)
+    %+  welp  out
     %+  turn
-      ^-  (list index:graph-store)
       %+  skip
-        `(list index:graph-store)`~(tap in indices) 
-      |=(=index:graph-store (check-node-existence:gra graph.stats-index index))
+        ~(tap in indices) 
+      |=  =index:graph-store
+      (check-node-existence:gra graph.stats-index index)
     |=(=index:graph-store (poke-us %read-each stats-index index))
   ::
   ++  poke-us
