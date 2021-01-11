@@ -176,7 +176,7 @@
   ++  remove-graph
     |=  rid=resource
     =/  unwatched
-      %-  ~(gas in *_watching)
+      %-  ~(gas in *(set [resource index:graph-store]))
       %+  skim  ~(tap in watching)
       |=  [r=resource idx=index:graph-store]
       =(r rid)
