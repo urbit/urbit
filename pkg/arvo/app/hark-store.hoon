@@ -384,7 +384,6 @@
     (give %archive time index)
   ::
   ::  if we detect cache inconsistencies, wipe and rebuild
-  ::  TODO: where are these coming from?
   ++  change-read-status
     |=  [time=@da =index:store read=?]
     ^+  poke-core
@@ -490,6 +489,10 @@
     ?~  keys
       poke-core
     ?.  (stats-index-is-index:store stats-index i.keys)
+      $(keys t.keys)
+    =/  =notification:store
+      (~(got by (gut-orm notifications time)) i.keys)
+    ?:  read.notification
       $(keys t.keys)
     =/  core
       (read-note time i.keys)
