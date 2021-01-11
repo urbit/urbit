@@ -5,74 +5,41 @@ import { Contact, ContactEdit } from '~/types/contact-update';
 import { GroupPolicy, Resource } from '~/types/group-update';
 
 export default class ContactsApi extends BaseApi<StoreState> {
-  create(
-    name: string,
-    policy: Enc<GroupPolicy>,
-    title: string,
-    description: string
-  ) {
-    return this.viewAction({
-      create: {
-        name,
-        policy,
-        title,
-        description,
-      },
-    });
+  add(ship: Patp, contact: any) {
+    return this.storeAction({ add: { ship, contact } });
   }
 
-  share(recipient: Patp, path: Patp, ship: Patp, contact: Contact) {
-    return this.viewAction({
-      share: {
-        recipient,
-        path,
-        ship,
-        contact,
-      },
-    });
+  remove(ship: Patp) {
+    return this.storeAction({ remove: { ship } });
   }
 
-  remove(path: Path, ship: Patp) {
-    return this.viewAction({ remove: { path, ship } });
-  }
-
-  edit(path: Path, ship: Patp, editField: ContactEdit) {
+  edit(ship: Patp, editField: ContactEdit) {
     /* editField can be...
     {nickname: ''}
     {email: ''}
     {phone: ''}
     {website: ''}
-    {notes: ''}
     {color: 'fff'}  // with no 0x prefix
     {avatar: null}
-    {avatar: {url: ''}}
+    {avatar: ''}
     */
-    return this.hookAction({
+    return this.storeAction({
       edit: {
-        path,
         ship,
         'edit-field': editField,
       },
     });
   }
 
-  invite(resource: Resource, ship: Patp, text = '') {
-    return this.viewAction({
-      invite: { resource, ship, text },
-    });
+  private storeAction(action: any): Promise<any> {
+    return this.action('contact-store', 'contact-update', action)
   }
 
-  join(resource: Resource) {
-    return this.viewAction({
-      join: resource,
-    });
+  private viewAction(threadName: string, action: any) {
+    return this.spider('contact-view-action', 'json', threadName, action);
   }
 
-  private hookAction(data) {
-    return this.action('contact-hook', 'contact-action', data);
-  }
-
-  private viewAction(data) {
-    return this.action('contact-view', 'json', data);
+  private hookAction(ship: Patp, action: any): Promise<any> {
+    return this.action('contact-push-hook', 'contact-update', action);
   }
 }
