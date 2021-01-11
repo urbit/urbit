@@ -148,7 +148,9 @@
     |=  [=index:store =notification:store]
     ^-  card 
     =-  [%pass / %agent [our.bowl %hark-store] %poke -]
-    hark-action+!>([%add index notification])
+    :-  %hark-action
+    !>  ^-  action:store
+    [%add-note index notification]
   --
 ::
 ++  on-peek  on-peek:def
