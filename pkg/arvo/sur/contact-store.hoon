@@ -1,4 +1,3 @@
-/-  *identity
 |%
 +$  rolodex  (map ship contact)
 +$  contact

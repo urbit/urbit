@@ -30,12 +30,8 @@
   |=  old-vase=vase
   ^-  (quip card _this)
   =/  old  !<(versioned-state old-vase)
-  ?-  -.old
-      %4  [~ this(state old)]
-      %3  [~ this]
-      %2  [~ this]
-      %1  [~ this]
-      %0  [~ this]
+  ?+    -.old  [~ this]
+    %4  [~ this(state old)]
   ==
 ::
 ++  on-watch
@@ -128,6 +124,7 @@
   ++  import
     |=  arc=*
     ^-  (quip card _state)
+    ::  note: we are purposefully wiping all state before state-4
     [~ *state-4]
   --
 ::

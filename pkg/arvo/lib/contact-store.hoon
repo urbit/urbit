@@ -13,78 +13,71 @@
   ++  update
     |=  upd=^update
     ^-  json
-    |^  (frond %contact-update (pairs ~[(encode upd)]))
-    ::
-    ++  encode
-      |=  upd=update-0
-      ^-  [cord json]
-      ?-  -.upd
-          %initial
-        ::  TODO: initial
-        :-  %initial
-        *json
-          %add
-        :-  %add
-        %-  pairs
-        :~  [%path (path path.upd)]
-            [%ship (ship ship.upd)]
-            [%contact (contact-to-json path.upd ship.upd contact.upd)]
-        ==
-      ::
-          %remove
-        :-  %remove
-        %-  pairs
-        :~  [%path (path path.upd)]
-            [%ship (ship ship.upd)]
-        ==
-      ::
-          %edit
-        :-  %edit
-        %-  pairs
-        :~  [%path (path path.upd)]
-            [%ship (ship ship.upd)]
-            [%edit-field (edit-to-json edit-field.upd)]
-        ==
-      ==
-    --
-  ::
-  ++  rolodex-to-json
-    |=  rol=rolodex:store
-    ^-  json
-    %-  pairs:enjs:format
-    %+  turn  ~(tap by rol)
-    |=  [=ship =contact:store]
+    %+  frond  %contact-update
+    %-  pairs
+    :_  ~
     ^-  [cord json]
-    [(crip (slag 1 (scow %p ship))) (contact-to-json contact)]
-  ::
-  ++  contact-to-json
-    |=  con=contact:store
-    ^-  json
-    %-  pairs:enjs:format
-    :~  [%nickname s+nickname.con]
-        [%email s+email.con]
-        [%phone s+phone.con]
-        [%website s+website.con]
-        [%color s+(scot %ux color.con)]
-        [%avatar ?~(avatar.edit ~ s+u.avatar.con)]
+    ?-  -.upd
+        %initial
+      :-  %initial
+      (pairs [%rolodex (rolo rolodex.upd)]~)
+    ::
+        %add
+      :-  %add
+      %-  pairs
+      :~  [%ship (ship ship.upd)]
+          [%contact (cont contact.upd)]
+      ==
+    ::
+        %remove
+      :-  %remove
+      (pairs [%ship (ship ship.upd)]~)
+    ::
+        %edit
+      :-  %edit
+      %-  pairs
+      :~  [%ship (ship ship.upd)]
+          [%edit-field (edit edit-field.upd)]
+      ==
     ==
   ::
-  ++  edit-to-json
-    |=  edit=edit-field
+  ++  rolo
+    |=  =rolodex
     ^-  json
-    %+  frond:enjs:format  -.edit
-    ?-  -.edit
-      %nickname  s+nickname.edit
-      %email     s+email.edit
-      %phone     s+phone.edit
-      %website   s+website.edit
-      %color     s+(scot %ux color.edit)
-      %avatar    ?~(avatar.edit ~ s+u.avatar.edit)
+    %-  pairs
+    %+  turn  ~(tap by rolodex)
+    |=  [=^ship =contact]
+    ^-  [cord json]
+    [(scot %p ship) (cont contact)]
+  ::
+  ++  cont
+    |=  =contact
+    ^-  json
+    %-  pairs
+    :~  [%nickname s+nickname.contact]
+        [%email s+email.contact]
+        [%phone s+phone.contact]
+        [%website s+website.contact]
+        [%color s+(scot %ux color.contact)]
+        [%avatar ?~(avatar.contact ~ s+u.avatar.contact)]
+    ==
+  ::
+  ++  edit
+    |=  field=edit-field
+    ^-  json
+    %+  frond  -.field
+    ?-  -.field
+      %nickname  s+nickname.field
+      %email     s+email.field
+      %phone     s+phone.field
+      %website   s+website.field
+      %color     s+(scot %ux color.field)
+      %avatar    ?~(avatar.field ~ s+u.avatar.field)
     ==
   --
 ::
 ++  dej
-  =,  dejs:formats
+  =,  dejs:format
   |%
   ++  update
     |=  jon=json
@@ -99,6 +92,22 @@
           [%edit edit-contact]
       ==
     ::
+    ++  initial  (op ;~(pfix sig fed:ag) cont)
+    ::
+    ++  add-contact
+      %-  ot
+      :~  [%ship (su ;~(pfix sig fed:ag))]
+          [%contact cont]
+      ==
+    ::
+    ++  remove-contact  (ot [%ship (su ;~(pfix sig fed:ag))]~)
+    ::
+    ++  edit-contact
+      %-  ot
+      :~  [%ship (su ;~(pfix sig fed:ag))]
+          [%edit-field edit]
+      ==
+    ::
     ++  cont
       %-  ot
       :~  [%nickname so]
@@ -109,7 +118,7 @@
           [%avatar (mu so)]
       ==
     ::
-    ++  edit-fi
+    ++  edit
       %-  of
       :~  [%nickname so]
           [%email so]
