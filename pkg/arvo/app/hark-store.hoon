@@ -398,6 +398,7 @@
         ::  cache is inconsistent iff we didn't directly
         ::  call this through %read-note or %unread-note
         &(=(read read.u.not) !?=(?(%read-note %unread-note) -.in))
+      ~&  >>  "Inconsistent hark cache, rebuilding"
       rebuild-cache
     =.  u.tib
       (~(put by u.tib) index u.not(read read))
