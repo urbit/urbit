@@ -2,11 +2,16 @@
 ::
 :: data store that holds individual contact data
 ::
-/-  store=contact-store
+/-  store=contact-store, *resource
 /+  default-agent, dbug, *migrate
 |%
 +$  card  card:agent:gall
-+$  state-4  [%4 =rolodex:store]
++$  state-4
+  $:  %4
+      =rolodex:store
+      allowed-groups=(set resource)
+      allowed-ships=(set ship)
+  ==
 +$  versioned-state
   $%  [%0 *]
       [%1 *]
@@ -41,14 +46,15 @@
   |^
   =/  cards=(list card)
     ?+  path  (on-watch:def path)
+      [%all ~]      (give [%initial rolodex])
       [%updates ~]  ~
     ==
   [cards this]
   ::
   ++  give
-    |=  =cage
+    |=  =update:store
     ^-  (list card)
-    [%give %fact ~ cage]~
+    [%give %fact ~ [%contact-update !>(update)]]~
   --
 ::
 ++  on-poke
@@ -68,10 +74,12 @@
     ^-  (quip card _state)
     |^
     ?-  -.update
-      %initial  (handle-initial +.update)
-      %add      (handle-add +.update)
-      %remove   (handle-remove +.update)
-      %edit     (handle-edit +.update)
+      %initial   (handle-initial +.update)
+      %add       (handle-add +.update)
+      %remove    (handle-remove +.update)
+      %edit      (handle-edit +.update)
+      %allow     (handle-allow +.update)
+      %disallow  (handle-disallow +.update)
     ==
     ::
     ++  handle-initial
@@ -97,22 +105,42 @@
     ::
     ++  handle-edit
       |=  [=ship =edit-field:store]
+      |^
       ^-  (quip card _state)
       =/  contact  (~(got by rolodex) ship)
       =.  contact  (edit-contact contact edit-field)
       :-  (send-diff [%edit ship edit-field])
       state(rolodex (~(put by rolodex) ship contact))
+      ::
+      ++  edit-contact
+        |=  [=contact:store edit=edit-field:store]
+        ^-  contact:store
+        ?-  -.edit
+            %nickname  contact(nickname nickname.edit)
+            %email     contact(email email.edit)
+            %phone     contact(phone phone.edit)
+            %website   contact(website website.edit)
+            %color     contact(color color.edit)
+            %avatar    contact(avatar avatar.edit)
+        ==
+      --
     ::
-    ++  edit-contact
-      |=  [=contact:store edit=edit-field:store]
-      ^-  contact:store
-      ?-  -.edit
-          %nickname  contact(nickname nickname.edit)
-          %email     contact(email email.edit)
-          %phone     contact(phone phone.edit)
-          %website   contact(website website.edit)
-          %color     contact(color color.edit)
-          %avatar    contact(avatar avatar.edit)
+    ++  handle-allow
+      |=  =beings:store
+      ^-  (quip card _state)
+      :-  (send-diff [%allow beings])
+      ?-  -.beings
+        %group  state(allowed-groups (~(put in allowed-groups) resource.beings))
+        %ships  state(allowed-ships (~(uni in allowed-ships) ships.beings))
+      ==
+    ::
+    ++  handle-disallow
+      |=  =beings:store
+      ^-  (quip card _state)
+      :-  (send-diff [%disallow beings])
+      ?-  -.beings
+        %group  state(allowed-groups (~(del in allowed-groups) resource.beings))
+        %ships  state(allowed-ships (~(dif in allowed-ships) ships.beings))
       ==
     ::
     ++  send-diff
@@ -133,12 +161,11 @@
   ^-  (unit (unit cage))
   ?+    path  (on-peek:def path)
     [%x %all ~]     ``noun+!>(rolodex)
-    [%x %export ~]  ``noun+!>(state)
   ::
       [%x %contact @ ~]
     =/  =ship  (slav %p i.t.t.path)
     =/  contact=(unit contact:store)  (~(get by rolodex) ship)
-    ?~  contact  ~
+    ?~  contact  [~ ~]
     :-  ~  :-  ~  :-  %contact-update
     !>  ^-  update:store
     [%add ship u.contact]

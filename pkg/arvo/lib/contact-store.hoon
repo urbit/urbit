@@ -1,4 +1,5 @@
 /-  sur=contact-store
+/+  res=resource
 =<  [sur .]
 =,  sur
 |%
@@ -19,8 +20,7 @@
     ^-  [cord json]
     ?-  -.upd
         %initial
-      :-  %initial
-      (pairs [%rolodex (rolo rolodex.upd)]~)
+      [%initial (rolo rolodex.upd)]
     ::
         %add
       :-  %add
@@ -39,6 +39,14 @@
       :~  [%ship (ship ship.upd)]
           [%edit-field (edit edit-field.upd)]
       ==
+    ::
+        %allow
+      :-  %allow
+      (pairs [%beings (beng beings.upd)]~)
+    ::
+        %disallow
+      :-  %disallow
+      (pairs [%beings (beng beings.upd)]~)
     ==
   ::
   ++  rolo
@@ -74,9 +82,17 @@
       %color     s+(scot %ux color.field)
       %avatar    ?~(avatar.field ~ s+u.avatar.field)
     ==
+  ::
+  ++  beng
+    |=  =beings
+    ^-  json
+    ?-  -.beings
+      %ships  [%a (turn ~(tap in ships.beings) |=(s=^ship s+(scot %p s)))]
+      %group  (enjs:res resource.beings)
+    ==
   --
 ::
-++  dej
+++  dejs
   =,  dejs:format
   |%
   ++  update
@@ -90,6 +106,8 @@
           [%add add-contact]
           [%remove remove-contact]
           [%edit edit-contact]
+          [%allow beings]
+          [%disallow beings]
       ==
     ::
     ++  initial  (op ;~(pfix sig fed:ag) cont)
@@ -106,6 +124,12 @@
       %-  ot
       :~  [%ship (su ;~(pfix sig fed:ag))]
           [%edit-field edit]
+      ==
+    ::
+    ++  beings
+      %-  of
+      :~  [%ships (as (su ;~(pfix sig fed:ag)))]
+          [%group dejs:res]
       ==
     ::
     ++  cont

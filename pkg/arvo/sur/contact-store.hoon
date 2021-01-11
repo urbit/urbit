@@ -1,3 +1,4 @@
+/-  *resource
 |%
 +$  rolodex  (map ship contact)
 +$  contact
@@ -18,10 +19,17 @@
       [%avatar avatar=(unit @t)]
   ==
 ::
++$  beings
+  $%  [%ships ships=(set ship)]
+      [%group =resource]
+  ==
+::
 +$  update
   $%  [%initial =rolodex]
       [%add =ship =contact]
       [%remove =ship]
       [%edit =ship =edit-field]
+      [%allow =beings]
+      [%disallow =beings]
   ==
 --
