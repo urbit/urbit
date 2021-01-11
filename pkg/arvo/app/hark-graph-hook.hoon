@@ -168,10 +168,41 @@
         ?(%remove-graph %archive-graph)  
       (remove-graph resource.q.update)
       ::
+        %remove-nodes
+      (remove-nodes resource.q.update indices.q.update)
+      ::
         %add-nodes
       =*  rid  resource.q.update
       (check-nodes ~(val by nodes.q.update) rid)
     ==
+  ::  this is awful, but notification kind should always switch
+  ::  on the index, so hopefully doesn't matter
+  ::  TODO: rethink this
+  ++  remove-nodes
+    |=  [rid=resource indices=(set index:graph-store)]
+    =/  to-remove
+      %-  ~(gas by *(set [resource index:graph-store]))
+      (turn ~(tap in indices) (lead rid))
+    :_  state(watching (~(dif in watching) to-remove))
+    =/  =tube:clay
+      (get-conversion:ha rid)
+    %+  roll
+      ~(tap in indices)
+    |=  [=index:graph-store out=(list card)]
+    =|  =indexed-post:graph-store
+    =.  index.p.indexed-post  index
+    =+  !<(u-notif-kind=(unit notif-kind) (tube !>(indexed-post)))
+    ?~  u-notif-kind  out
+    =*  notif-kind  u.u-notif-kind
+    =/  =stats-index:store
+      [%graph rid (scag parent-lent.notif-kind index)]
+    ?.  ?=(%each mode.notif-kind)  out
+    :_(out (poke-hark %read-each stats-index index))
+  ::
+  ++  poke-hark
+    |=  =action:store
+    ^-  card
+    [%pass / %agent [our.bowl %hark-store] %poke hark-action+!>(action)]
   ::
   ++  remove-graph
     |=  rid=resource
@@ -246,6 +277,15 @@
 ::
 |_  =bowl:gall
 ::
+++  get-conversion
+  |=  rid=resource
+  ^-  tube:clay
+  =+  %^  scry  [our now]:bowl
+         ,mark=(unit mark)
+      /gx/graph-store/graph-mark/(scot %p entity.rid)/[name.rid]/noun
+  ?~  mark
+    |=(v=vase !>(~))
+  (scry-conversion [our now]:bowl q.byk.bowl u.mark)
 ::
 ++  give
   |=  [paths=(list path) =update:hook]
@@ -288,13 +328,7 @@
     update-core(rid r, updates upds, group grp, module mod)
   ::
   ++  get-conversion
-    ^-  tube:clay
-    =+  %^  scry  [our now]:bowl
-           ,mark=(unit mark)
-        /gx/graph-store/graph-mark/(scot %p entity.rid)/[name.rid]/noun
-    ?~  mark
-      |=(v=vase !>(~))
-    (scry-conversion [our now]:bowl q.byk.bowl u.mark)
+    (^get-conversion rid)
   ::
   ++  abet
     ^-  (quip card _state)
