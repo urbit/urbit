@@ -63,7 +63,7 @@ class Channel {
   }
 
   resetDebounceTimer() {
-    if(this.debounceTimer) {
+    if (this.debounceTimer) {
       clearTimeout(this.debounceTimer);
       this.debounceTimer = null;
     }
@@ -203,7 +203,7 @@ class Channel {
       //
       let payload = [
         ...this.outstandingJSON, 
-        {action: "ack", "event-id": parseInt(this.lastEventId)}
+        {action: "ack", "event-id": this.lastEventId}
       ];
       if (j) {
         payload.push(j)
@@ -211,7 +211,7 @@ class Channel {
       let x = JSON.stringify(payload);
       req.send(x);
 
-      this.lastEventId = this.lastAcknowledgedEventId;
+      this.lastAcknowledgedEventId = this.lastEventId;
     }
     this.outstandingJSON = [];
 
@@ -227,7 +227,7 @@ class Channel {
 
     this.eventSource = new EventSource(this.channelURL(), {withCredentials:true});
     this.eventSource.onmessage = e => {
-      this.lastEventId = e.lastEventId;
+      this.lastEventId = parseInt(e.lastEventId, 10);
 
       let obj = JSON.parse(e.data);
       let pokeFuncs = this.outstandingPokes.get(obj.id);
