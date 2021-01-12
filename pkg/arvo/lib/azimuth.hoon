@@ -79,15 +79,7 @@
     ::
     ::  contract addresses
     ++  contracts  mainnet-contracts
-    ++  local-contracts
-      |%
-      ++  ecliptic  0x56db.68f2.9203.ff44.a803.faa2.404a.44ec.bb7a.7480
-      ++  azimuth  0x863d.9c2e.5c4c.1335.96cf.ac29.d552.55f0.d0f8.6381
-      ++  delegated-sending  0xb71c.0b6c.ee1b.cae5.6dfe.95cd.9d3e.41dd.d7ea.fc43
-      ++  linear-star-release  0x3c3.dc12.be65.8158.d1d7.f9e6.6e08.ec40.99c5.68e4
-      ++  conditional-star-release  0x35eb.3b10.2d9c.1b69.ac14.69c1.b1fe.1799.850c.d3eb
-      ++  launch  0
-      --
+
     ++  mainnet-contracts
       |%
       ::  azimuth: data contract
@@ -137,6 +129,27 @@
       ::
       ++  launch  4.601.630
       ++  public  launch
+      --
+    ::
+    ::  Local contract addresses
+    ::
+    ::  These addresses are only reproducible if you use the deploy
+    ::  script in bridge
+    ::
+    ++  local-contracts
+      |%
+      ++  ecliptic  
+        0x56db.68f2.9203.ff44.a803.faa2.404a.44ec.bb7a.7480
+      ++  azimuth  
+        0x863d.9c2e.5c4c.1335.96cf.ac29.d552.55f0.d0f8.6381
+      ++  delegated-sending
+        0xb71c.0b6c.ee1b.cae5.6dfe.95cd.9d3e.41dd.d7ea.fc43
+      ++  linear-star-release
+        0x3c3.dc12.be65.8158.d1d7.f9e6.6e08.ec40.99c5.68e4
+      ++  conditional-star-release
+        0x35eb.3b10.2d9c.1b69.ac14.69c1.b1fe.1799.850c.d3eb
+      ++  launch  0
+      ++  public  0
       --
     ::
       ::  ++  azimuth  0x863d.9c2e.5c4c.1335.96cf.ac29.d552.55f0.d0f8.6381  ::  local bridge
