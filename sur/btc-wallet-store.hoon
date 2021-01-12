@@ -107,6 +107,6 @@
 ::
 +$  request
   $%  [%address-info last-block=@ud a=address =xpub =chyg =idx]
-      [%tx-info last-block=@ud =txidtxid]
+      [%tx-info last-block=@ud =txid]
   ==
 --
