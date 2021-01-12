@@ -10,7 +10,7 @@ import { NoteNavigation } from "./NoteNavigation";
 import GlobalApi from "~/logic/api/global";
 import { getLatestRevision, getComments } from '~/logic/lib/publish';
 import Author from "~/views/components/Author";
-import { Contacts, GraphNode, Graph, LocalUpdateRemoteContentPolicy, Association, Unreads, Group } from "~/types";
+import { Contacts, GraphNode, Graph, Association, Unreads, Group } from "~/types";
 
 interface NoteProps {
   ship: string;
@@ -21,9 +21,6 @@ interface NoteProps {
   notebook: Graph;
   contacts: Contacts;
   api: GlobalApi;
-  hideAvatars: boolean;
-  hideNicknames: boolean;
-  remoteContentPolicy: LocalUpdateRemoteContentPolicy;
   rootUrl: string;
   baseUrl: string;
   group: Group;
@@ -45,12 +42,14 @@ export function Note(props: NoteProps & RouteComponentProps) {
 
   const comments = getComments(note);
   const [revNum, title, body, post] = getLatestRevision(note);
+  const index = note.post.index.split('/');
+
+  const noteId = bigInt(index[1]);
   useEffect(() => {
-    api.hark.markEachAsRead(props.association, '/', post.index, 'note', 'publish');
-  }, [props.association]);
+    api.hark.markEachAsRead(props.association, '/',`/${index[1]}/1/1`, 'note', 'publish');
+  }, [props.association, props.note]);
 
 
-  const noteId = bigInt(note.post.index.split('/')[1]);
 
   let adminLinks: JSX.Element | null = null;
   if (window.ship === note?.post?.author) {
@@ -76,6 +75,13 @@ export function Note(props: NoteProps & RouteComponentProps) {
     );
   }
 
+  const windowRef = React.useRef(null);
+  useEffect(() => {
+    if (windowRef.current) {
+      windowRef.current.parentElement.scrollTop = 0;
+    }
+  }, [windowRef, note]);
+
   return (
     <Box
       my={3}
@@ -87,6 +93,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
       width="100%"
       gridRowGap={4}
       mx="auto"
+      ref={windowRef}
     >
       <Link to={rootUrl}>
         <Text>{"<- Notebook Index"}</Text>
@@ -95,8 +102,6 @@ export function Note(props: NoteProps & RouteComponentProps) {
         <Text display="block" mb={2}>{title || ""}</Text>
         <Box display="flex">
           <Author
-            hideNicknames={props?.hideNicknames}
-            hideAvatars={props?.hideAvatars}
             ship={post?.author}
             contacts={contacts}
             date={post?.["time-sent"]}
@@ -121,9 +126,6 @@ export function Note(props: NoteProps & RouteComponentProps) {
         contacts={props.contacts}
         association={props.association}
         api={props.api}
-        hideNicknames={props.hideNicknames}
-        hideAvatars={props.hideAvatars}
-        remoteContentPolicy={props.remoteContentPolicy}
         baseUrl={baseUrl}
         editCommentId={editCommentId}
         history={props.history}

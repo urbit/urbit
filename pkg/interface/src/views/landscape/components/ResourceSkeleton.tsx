@@ -38,12 +38,6 @@ export function ResourceSkeleton(props: ResourceSkeletonProps) {
   const workspace =
     baseUrl === "/~landscape/home" ? "/home" : association["group-path"];
   const title = props.title || association?.metadata?.title;
-  const disableRemoteContent = {
-    audioShown: false,
-    imageShown: false,
-    oembedShown: false,
-    videoShown: false,
-  };
   return (
     <Col width="100%" height="100%" overflowY="hidden">
       <Box
@@ -91,9 +85,9 @@ export function ResourceSkeleton(props: ResourceSkeletonProps) {
             >
               <RichText
                 color="gray"
-                remoteContentPolicy={disableRemoteContent}
                 mb="0"
                 display="inline-block"
+                disableRemoteContent
               >
                 {association?.metadata?.description}
               </RichText>

@@ -5,6 +5,7 @@ import index from '~/logic/lib/omnibox';
 import Mousetrap from 'mousetrap';
 import OmniboxInput from './OmniboxInput';
 import OmniboxResult from './OmniboxResult';
+import { withLocalState } from '~/logic/state/local';
 
 import defaultApps from '~/logic/lib/default-apps';
 
@@ -39,7 +40,7 @@ export class Omnibox extends Component {
     }
 
     if (prevProps && this.props.show && prevProps.show !== this.props.show) {
-      Mousetrap.bind('escape', () => this.props.api.local.setOmnibox());
+      Mousetrap.bind('escape', this.props.toggle);
       document.addEventListener('mousedown', this.handleClickOutside);
       const touchstart = new Event('touchstart');
       this.omniInput.input.dispatchEvent(touchstart);
@@ -63,7 +64,7 @@ export class Omnibox extends Component {
       if (this.state.query.length > 0) {
         this.setState({ query: '', results: this.initialResults(), selected: [] });
       } else if (this.props.show) {
-        this.props.api.local.setOmnibox();
+        this.props.toggleOmnibox();
       }
     };
 
@@ -96,7 +97,7 @@ export class Omnibox extends Component {
   handleClickOutside(evt) {
     if (this.props.show && !this.omniBox.contains(evt.target)) {
       this.setState({ results: this.initialResults(), query: '', selected: [] }, () => {
-        this.props.api.local.setOmnibox();
+        this.props.toggleOmnibox();
       });
     }
   }
@@ -116,7 +117,7 @@ export class Omnibox extends Component {
   navigate(app, link) {
     const { props } = this;
     this.setState({ results: this.initialResults(), query: '' }, () => {
-      props.api.local.setOmnibox();
+      props.toggleOmnibox();
       if (defaultApps.includes(app.toLowerCase())
           || app === 'profile'
           || app === 'Links'
@@ -233,10 +234,9 @@ export class Omnibox extends Component {
         .filter(category => category.categoryResults.length > 0)
         .map(({ category, categoryResults }, i) => {
           const categoryTitle = (category === 'other')
-            ? null : <Text gray ml={2}>{category.charAt(0).toUpperCase() + category.slice(1)}</Text>;
+            ? null : <Row pl='2' height='5' alignItems='center' bg='washedGray'><Text gray bold>{category.charAt(0).toUpperCase() + category.slice(1)}</Text></Row>;
           const selected = this.state.selected?.length ? this.state.selected[1] : '';
           return (<Box key={i} width='max(50vw, 300px)' maxWidth='600px'>
-            <Rule borderTopWidth="0.5px" color="washedGray" />
             {categoryTitle}
             {categoryResults.map((result, i2) => (
               <OmniboxResult
@@ -263,6 +263,7 @@ export class Omnibox extends Component {
     if (state?.selected?.length === 0 && Array.from(this.state.results.values()).flat().length) {
       this.setNextSelected();
     }
+
     return (
         <Box
           backgroundColor='scales.black30'
@@ -299,4 +300,4 @@ export class Omnibox extends Component {
   }
 }
 
-export default withRouter(Omnibox);
+export default withRouter(withLocalState(Omnibox, ['toggleOmnibox', 'omniboxShown']));

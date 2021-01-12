@@ -25,7 +25,7 @@ import ChatMessage, {MessageWithoutSigil} from "../chat/components/ChatMessage";
 
 function getGraphModuleIcon(module: string) {
   if (module === "link") {
-    return "Links";
+    return "Collection";
   }
   return _.capitalize(module);
 }
@@ -80,7 +80,6 @@ const GraphNodeContent = ({ group, post, contacts, mod, description, index, remo
         content={contents}
         contacts={contacts}
         group={group}
-        remoteContentPolicy={remoteContentPolicy}
       />
     }
     return null;
@@ -91,7 +90,6 @@ const GraphNodeContent = ({ group, post, contacts, mod, description, index, remo
         content={contents}
         group={group}
         contacts={contacts}
-        remoteContentPolicy={remoteContentPolicy}
       />
     } else if (idx[1] === "1") {
       const [{ text: header }, { text: body }] = contents;
@@ -132,7 +130,6 @@ const GraphNodeContent = ({ group, post, contacts, mod, description, index, remo
         msg={post}
         fontSize='0'
         pt='2'
-        remoteContentPolicy={remoteContentPolicy}
       />
     </Row>);
 
@@ -219,7 +216,6 @@ const GraphNode = ({
             mod={mod}
             description={description}
             index={index}
-            remoteContentPolicy={remoteContentPolicy}
             group={group}
           />
         </Row>
@@ -239,9 +235,8 @@ export function GraphNotification(props: {
   groups: Groups;
   contacts: Rolodex;
   api: GlobalApi;
-  remoteContentPolicy: any;
 }) {
-  const { contents, index, read, time, api, timebox, remoteContentPolicy, groups } = props;
+  const { contents, index, read, time, api, timebox, groups } = props;
 
   const authors = _.map(contents, "author");
   const { graph, group } = index;
@@ -287,7 +282,6 @@ return (
             groupPath={group}
             read={read}
             onRead={onClick}
-            remoteContentPolicy={remoteContentPolicy}
           />
         ))}
       </Col>

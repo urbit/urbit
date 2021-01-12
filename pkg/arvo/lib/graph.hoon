@@ -17,6 +17,15 @@
   %+  scry-for  update:store
   /graph/(scot %p entity.res)/[name.res]
 ::
+++  get-graph-mop
+  |=  res=resource
+  ^-  graph:store
+  =/  =update:store
+    (get-graph res)
+  ?>  ?=(%0 -.update)
+  ?>  ?=(%add-graph -.q.update)
+  graph.q.update
+::
 ++  gut-younger-node-siblings
   |=  [res=resource =index:store]
   ^-  (map index:store node:store)
@@ -39,6 +48,14 @@
   ?>  ?=(%add-nodes -.q.update)
   ?>  ?=(^ nodes.q.update)
   q.n.nodes.q.update
+::
+++  check-node-existence
+  |=  [res=resource =index:store]
+  ^-  ?
+  %+  scry-for  ,?
+  %+  weld
+    /node-exists/(scot %p entity.res)/[name.res]
+  (turn index (cury scot %ud))
 ::
 ++  get-update-log
   |=  rid=resource 

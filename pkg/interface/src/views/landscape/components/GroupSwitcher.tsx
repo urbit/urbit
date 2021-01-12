@@ -183,7 +183,7 @@ export function GroupSwitcher(props: {
                   />
                 </Link>)}
                 <Link to={navTo("/popover/settings")}>
-                  <Icon color='gray' display="block" m={2} icon="Gear" />
+                  <Icon color='gray' display="block" m={1} icon="Gear" />
                 </Link>
               </>
             )}

@@ -9,8 +9,7 @@ import { Contacts } from "~/types/contact-update";
 import { Association } from "~/types/metadata-update";
 import { Group } from "~/types/group-update";
 import { Envelope, IMessage } from "~/types/chat-update";
-import { LocalUpdateRemoteContentPolicy, Graph } from "~/types";
-import { BigIntOrderedMap } from "~/logic/lib/BigIntOrderedMap";
+import { Graph } from "~/types";
 
 import VirtualScroller from "~/views/components/VirtualScroller";
 
@@ -41,9 +40,6 @@ type ChatWindowProps = RouteComponentProps<{
   ship: Patp;
   station: any;
   api: GlobalApi;
-  hideNicknames: boolean;
-  hideAvatars: boolean;
-  remoteContentPolicy: LocalUpdateRemoteContentPolicy;
   scrollTo?: number;
 }
 
@@ -253,19 +249,16 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
       contacts,
       mailboxSize,
       graph,
-      hideAvatars,
-      hideNicknames,
-      remoteContentPolicy,
       history
     } = this.props;
 
     const unreadMarkerRef = this.unreadMarkerRef;
 
 
-    const messageProps = { association, group, contacts, hideAvatars, hideNicknames, remoteContentPolicy, unreadMarkerRef, history, api };
+    const messageProps = { association, group, contacts, unreadMarkerRef, history, api };
 
     const keys = graph.keys().reverse();
-    const unreadIndex = keys[this.props.unreadCount];
+    const unreadIndex = graph.keys()[this.props.unreadCount];
     const unreadMsg = unreadIndex && graph.get(unreadIndex);
 
     return (

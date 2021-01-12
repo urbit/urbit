@@ -34,9 +34,6 @@ export function LinkResource(props: LinkResourceProps) {
     graphKeys,
     unreads,
     s3,
-    hideAvatars,
-    hideNicknames,
-    remoteContentPolicy,
     history
   } = props;
 
@@ -77,22 +74,15 @@ export function LinkResource(props: LinkResourceProps) {
                 <LinkWindow
                   association={resource}
                   contacts={contacts}
-                  key={date.toString()}
                   resource={resourcePath}
                   graph={graph}
                   unreads={unreads}
-                  nickname={contact?.nickname}
-                  hideAvatars={hideAvatars}
-                  hideNicknames={hideNicknames}
-                  remoteContentPolicy={remoteContentPolicy}
                   baseUrl={resourceUrl}
                   group={group}
                   path={resource["group-path"]}
                   api={api}
                   mb={3}
                 />
-                  );
-                })}
               </Col>
             );
           }}
@@ -123,9 +113,6 @@ export function LinkResource(props: LinkResourceProps) {
                   key={node.post.index}
                   resource={resourcePath}
                   node={node}
-                  hideAvatars={hideAvatars}
-                  hideNicknames={hideNicknames}
-                  remoteContentPolicy={remoteContentPolicy}
                   baseUrl={resourceUrl}
                   unreads={unreads}
                   group={group}
@@ -142,9 +129,6 @@ export function LinkResource(props: LinkResourceProps) {
                   unreads={unreads}
                   contacts={contactDetails}
                   api={api}
-                  hideAvatars={hideAvatars}
-                  hideNicknames={hideNicknames}
-                  remoteContentPolicy={remoteContentPolicy}
                   editCommentId={editCommentId}
                   history={props.history}
                   baseUrl={`${resourceUrl}/${props.match.params.index}`}
