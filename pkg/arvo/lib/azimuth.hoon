@@ -79,7 +79,6 @@
     ::
     ::  contract addresses
     ++  contracts  mainnet-contracts
-
     ++  mainnet-contracts
       |%
       ::  azimuth: data contract
