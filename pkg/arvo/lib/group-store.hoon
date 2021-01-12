@@ -167,6 +167,7 @@
     %+  turn
       ~(tap in sit)
     item
+  ::
   ++  tag
     |=  =^tag
     ^-  json
@@ -175,6 +176,7 @@
     %-  pairs
     :~  app+s+app.tag
         tag+s+tag.tag
+        resource+s+(enjs-path:resource resource.tag)
     ==
   ::
   ++  policy
@@ -366,6 +368,7 @@
     %.  json
     %-  ot
     :~  app+so
+        resource+dejs-path:resource
         tag+so
     ==
 
