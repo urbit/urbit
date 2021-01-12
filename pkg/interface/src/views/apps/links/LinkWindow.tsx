@@ -20,7 +20,6 @@ interface LinkWindowProps {
   unreads: Unreads;
   hideNicknames: boolean;
   hideAvatars: boolean;
-  remoteContentPolicy: LocalUpdateRemoteContentPolicy;
   baseUrl: string;
   group: Group;
   path: string;
@@ -33,49 +32,22 @@ export function LinkWindow(props: LinkWindowProps) {
   const virtualList = useRef<VirtualScroller>();
   const fetchLinks = useCallback(
     async (newer: boolean) => {
-      /* stubbed, should we generalize the display of graphs in virtualscroller?
-       * this is copied verbatim from chatwindow
-      const [, , ship, name] = association["app-path"].split("/");
-      const currSize = graph.size;
-      if (newer && !loadedNewest.current) {
-        const [index] = graph.peekLargest()!;
-        await api.graph.getYoungerSiblings(
-          ship,
-          name,
-          20,
-          `/${index.toString()}`
-        );
-        if (currSize === graph.size) {
-          loadedNewest.current = true;
-        }
-      } else if (!newer && !loadedOldest.current) {
-        const [index] = graph.peekSmallest()!;
-        await api.graph.getOlderSiblings(
-          ship,
-          name,
-          20,
-          `/${index.toString()}`
-        );
-        if (currSize === graph.size) {
-          console.log("loaded all oldest");
-          loadedOldest.current = true;
-        }
-      }
-       */
-    },
-    [api, graph, association, loadedNewest, loadedOldest]
+      /* stubbed, should we generalize the display of graphs in virtualscroller? */
+    }, []
   );
 
   useEffect(() => {
     const list = virtualList?.current;
     if(!list) return;
     list.calculateVisibleItems();
-  }, [graph.size])
+  }, [graph.size]);
+
+
   return (
     <VirtualScroller
       ref={(l) => (virtualList.current = l ?? undefined)}
       origin="top"
-      style={{ height: "100%" }}
+      style={{ height: "100%", width: "100%" }}
       onStartReached={() => {}}
       onScroll={() => {}}
       data={graph}
@@ -84,7 +56,6 @@ export function LinkWindow(props: LinkWindowProps) {
         const node = graph.get(index);
         const post = node?.post;
         if (!node || !post) return null;
-        const isPending = "pending" in post && post.pending;
         const linkProps = {
           ...props,
           node,
