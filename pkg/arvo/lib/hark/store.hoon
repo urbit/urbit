@@ -245,11 +245,9 @@
         |=  =(list ^group-contents)
         ^-  json
         :-  %a
-        %+  murn  list
+        %+  turn  list
         |=  =^group-contents
-        ?.  ?=(?(%add-members %remove-members) -.group-contents)
-          ~
-        `(update:enjs:group-store group-contents)
+        (update:enjs:group-store group-contents)
       --
     :: 
     ++  indexed-notification

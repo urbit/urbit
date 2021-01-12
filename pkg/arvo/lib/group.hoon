@@ -44,15 +44,15 @@
   (scry-group-path group-path)
 ::
 ++  is-member
-  |=  [=ship =group-path]
+  |=  [=ship group=resource]
   ^-  ?
   =-  (~(has in -) ship)
-  (members-from-path group-path)
+  (members group)
 ::
 ++  is-admin
-  |=  [=ship =group-path]
+  |=  [=ship group=resource]
   ^-  ?
-  =/  tags  tags:(fall (scry-group-path group-path) *group)
+  =/  tags  tags:(fall (scry-group group) *^group)
   =/  admins=(set ^ship)  (~(gut by tags) %admin ~)
   (~(has in admins) ship)
 ::  +role-for-ship: get role for user

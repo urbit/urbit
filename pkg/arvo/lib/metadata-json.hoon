@@ -1,4 +1,5 @@
 /-  *metadata-store
+/+  resource
 |%
 ++  associations-to-json
   |=  =associations
@@ -6,19 +7,19 @@
   ^-  json
   %-  pairs
   %+  turn  ~(tap by associations)
-  |=  [[=group-path =md-resource] =metadata]
+  |=  [[group=resource =md-resource] =metadata]
   ^-  [cord json]
   :-
   %-  crip
   ;:  weld
-      (trip (spat group-path))
+      (trip (spat (en-path:resource group)))
       (weld "/" (trip app-name.md-resource))
-      (trip (spat app-path.md-resource))
+      (trip (spat (en-path:resource resource.md-resource)))
   ==
   %-  pairs
-  :~  [%group-path (path group-path)]
+  :~  [%group s+(enjs-path:resource group)]
       [%app-name s+app-name.md-resource]
-      [%app-path (path app-path.md-resource)]
+      [%resource s+(enjs-path:resource resource.md-resource)]
       [%metadata (metadata-to-json metadata)]
   ==
 ::
@@ -36,13 +37,13 @@
   ::
   ++  add
     %-  ot
-    :~  [%group-path pa]
+    :~  [%group dejs-path:resource]
         [%resource md-resource]
         [%metadata metadata]
     ==
   ++  remove
     %-  ot
-    :~  [%group-path pa]
+    :~  [%group dejs-path:resource]
         [%resource md-resource]
     ==
   ::
@@ -60,10 +61,12 @@
         [%creator (su ;~(pfix sig fed:ag))]
         [%module so]
     ==
+  ::
   ++  md-resource
+    ^-  $-(json ^md-resource)
     %-  ot
     :~  [%app-name so]
-        [%app-path pa]
+        [%resource dejs-path:resource]
     ==
   --
 ::
@@ -90,27 +93,27 @@
       %add
     :-  %add
     %-  pairs
-    :~  [%group-path (path group-path.upd)]
+    :~  [%group s+(enjs-path:resource group.upd)]
         [%app-name s+app-name.resource.upd]
-        [%app-path (path app-path.resource.upd)]
+        [%resource s+(enjs-path:resource resource.resource.upd)]
         [%metadata (metadata-to-json metadata.upd)]
     ==
   ::
       %update-metadata
     :-  %update-metadata
     %-  pairs
-    :~  [%group-path (path group-path.upd)]
+    :~  [%group s+(enjs-path:resource group.upd)]
         [%app-name s+app-name.resource.upd]
-        [%app-path (path app-path.resource.upd)]
+        [%resource s+(enjs-path:resource resource.resource.upd)]
         [%metadata (metadata-to-json metadata.upd)]
     ==
   ::
       %remove
       :-  %remove
       %-  pairs
-      :~  [%group-path (path group-path.upd)]
+      :~  [%group s+(enjs-path:resource group.upd)]
           [%app-name s+app-name.resource.upd]
-          [%app-path (path app-path.resource.upd)]
+          [%resource s+(enjs-path:resource resource.resource.upd)]
       ==
   ::
       %associations

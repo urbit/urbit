@@ -73,6 +73,8 @@
 ++  on-load
   |=  =old=vase
   ^-  (quip card _this)
+  ?:  =(1 1)
+    `this
   =/  old
    !<(versioned-state old-vase)
   =|  cards=(list card)

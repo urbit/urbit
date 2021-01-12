@@ -5,12 +5,12 @@
 ::
 |_  =bowl:gall
 ++  app-paths-from-group
-  |=  [=app-name =group-path]
-  ^-  (list app-path)
+  |=  [=app-name group=resource]
+  ^-  (list resource)
   %+  murn
     %~  tap  in
-    =-  (~(gut by -) group-path ~)
-    .^  (jug ^group-path md-resource)
+    =-  (~(gut by -) group ~)
+    .^  (jug resource md-resource)
       %gy
       (scot %p our.bowl)
       %metadata-store
@@ -18,9 +18,9 @@
       /group-indices
     ==
   |=  =md-resource
-  ^-  (unit app-path)
+  ^-  (unit resource)
   ?.  =(app-name.md-resource app-name)  ~
-  `app-path.md-resource
+  `resource.md-resource
 ::
 ++  peek-metadata
   |=  [app-name=term =group=resource:res =app=resource:res]
@@ -35,23 +35,21 @@
   ==
 ::
 ++  group-from-app-resource
-  |=  [app=term =app=resource:res]
+  |=  =md-resource
   ^-  (unit resource:res)
-  =/  app-path  (en-path:res app-resource)
-  =/  group-paths  (groups-from-resource app app-path)
-  ?~  group-paths
-    ~
-  `(de-path:res i.group-paths)
+  =/  groups  (groups-from-resource md-resource)
+  ?~  groups  ~
+  `i.groups
 ::
 ++  groups-from-resource
   |=  =md-resource
-  ^-  (list group-path)
+  ^-  (list resource)
   =;  resources
     %~  tap  in
     %+  ~(gut by resources)
       md-resource
-    *(set group-path)
-  .^  (jug ^md-resource group-path)
+    *(set resource)
+  .^  (jug ^md-resource resource)
     %gy
     (scot %p our.bowl)
     %metadata-store

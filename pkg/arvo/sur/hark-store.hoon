@@ -62,9 +62,7 @@
 ::
 +$  group-contents
   $~  [%add-members *resource ~]
-  $%  $>(?(%add-members %remove-members) update:group-store)
-      metadata-action:metadata-store
-  ==
+  $>(?(%add-members %remove-members) update:group-store)
 ::
 +$  notification
   [date=@da read=? =contents]

@@ -1,9 +1,11 @@
+/-  *resource
 |%
+::
 +$  group-path    path
 +$  app-name      term
 +$  app-path      path
-+$  md-resource   [=app-name =app-path]
-+$  associations  (map [group-path md-resource] metadata)
++$  md-resource   [=app-name =resource]
++$  associations  (map [group=resource md-resource] metadata)
 ::
 +$  color  @ux
 +$  metadata
@@ -16,13 +18,13 @@
   ==
 ::
 +$  metadata-action
-  $%  [%add =group-path resource=md-resource =metadata]
-      [%remove =group-path resource=md-resource]
+  $%  [%add group=resource resource=md-resource =metadata]
+      [%remove group=resource resource=md-resource]
   ==
 ::
 +$  metadata-update
   $%  metadata-action
       [%associations =associations]
-      [%update-metadata =group-path resource=md-resource =metadata]
+      [%update-metadata group=resource resource=md-resource =metadata]
   ==
 --

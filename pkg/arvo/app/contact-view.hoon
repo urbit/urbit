@@ -297,9 +297,9 @@
   [%pass / %agent [our.bol %group-pull-hook] %poke %pull-hook-action !>(act)]
 ::
 ++  metadata-poke
-  |=  act=metadata-action
+  |=  act=*
   ^-  card
-  [%pass / %agent [our.bol %metadata-store] %poke %metadata-action !>(act)]
+  *card
 ::
 ++  metadata-hook-poke
   |=  act=metadata-hook-action
