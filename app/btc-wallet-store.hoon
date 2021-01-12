@@ -317,6 +317,7 @@
 ::  -if txid not in history but has one of our wallet addresses
 ::   - add it to history and request info on the addresses+tx
 ::  - if txid not "included" in blockchain AND was in history
+::   - ("included" = in mempool or blockchain)
 ::   - delete from history
 ::   - send txinfo request again
 ::  - check whether this txid is in history
@@ -331,15 +332,15 @@
   =+  h=(~(get by history) txid.ti)
   =/  rs=(list request)  (address-reqs ti)
   =/  cards=(list card)  (turn rs to-card)
+  ::  when addresses in wallets, but tx not in history
+  ::
   ?~  h
     ?~  rs  `state
-    ::  when addresses in our wallets, but tx is not
-    ::
-    :-  [(send-req ~[req-pax] [%tx-info block.act txid.ti]) cards]
-    state(history (~(put by history) (mk-hest rs)))
+    :-  [(send-req ~[req-pax] [%tx-info block txid.ti]) cards]
+    state(history (~(put by history) txid.ti (mk-hest rs)))
   ?.  included.ti
     :_  state(history (~(del by history) txid.ti))
-    ~[(send-req ~[req-pax] [%tx-info block.act txid.ti])]
+    ~[(send-req ~[req-pax] [%tx-info block txid.ti])]
   =+  w=(~(get by walts) xpub.u.h)
   ?~  w  `state
   =.  history
@@ -347,7 +348,7 @@
     u.h(confs confs.ti, recvd recvd.ti)
   :_  state
   ?:  (gte confs.ti confs.u.w)  cards
-  [(send-req ~[req-pax] [%tx-info block.act txid.ti]) cards]
+  [(send-req ~[req-pax] [%tx-info block txid.ti]) cards]
   ::
   ++  address-reqs
     |=  ti=info:tx:btc
@@ -374,21 +375,21 @@
   ::
   ++  to-card
     |=  r=request  ^-  card
-    (send-request ~[req-pax] r)
+    (send-req ~[req-pax] r)
   ::
   ++  mk-hest
       |=  rs=(lest request)
       ^-  hest
       =/  as=(set address:btc)
-        %-  sy
+      %-  sy
         %+  turn  rs
-        |=(r=request ?>(?=(-.r %address-info) a.r))
-      :*  ?>(?=(-.i.rs %address-info) xpub.i.rs)
+        |=(r=request ?>(?=(%address-info -.r) a.r))
+      :*  ?>(?=(%address-info -.i.rs) xpub.i.rs)
           txid.ti
           confs.ti
           recvd.ti
-          (turn inputs.ti (cury as our-ship))
-          (turn outputs.ti (cury as our-ship))
+          (turn inputs.ti |=(v=val:tx:btc (our-ship as v)))
+          (turn outputs.ti |=(v=val:tx:btc (our-ship as v)))
       ==
     ++  our-ship
       |=  [as=(set address:btc) v=val:tx:btc]
