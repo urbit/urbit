@@ -1,13 +1,12 @@
 import React, { useState }  from 'react';
 import { Link } from 'react-router-dom';
-import { Row, Col, Anchor, Box, Text, BaseImage, Icon, Action } from '@tlon/indigo-react';
+import { Row, Col, Anchor, Box, Text, Icon, Action } from '@tlon/indigo-react';
 
-import { Sigil } from '~/logic/lib/sigil';
 import { writeText } from '~/logic/lib/util';
 import Author from '~/views/components/Author';
 
 import { roleForShip } from '~/logic/lib/group';
-import { Contacts, GraphNode, Group, LocalUpdateRemoteContentPolicy, Rolodex } from '~/types';
+import { Contacts, GraphNode, Group, Rolodex, Unreads } from '~/types';
 import GlobalApi from '~/logic/api/global';
 import { Dropdown } from '~/views/components/Dropdown';
 import RemoteContent from '~/views/components/RemoteContent';
@@ -15,22 +14,17 @@ import RemoteContent from '~/views/components/RemoteContent';
 interface LinkItemProps {
   node: GraphNode;
   resource: string;
-  hideAvatars: boolean;
-  hideNicknames: boolean;
-  remoteContentPolicy: LocalUpdateRemoteContentPolicy;
   api: GlobalApi;
   group: Group;
   path: string;
   contacts: Rolodex[];
+  unreads: Unreads;
 }
 
 export const LinkItem = (props: LinkItemProps) => {
   const {
     node,
     resource,
-    hideAvatars,
-    hideNicknames,
-    remoteContentPolicy,
     api,
     group,
     path,
@@ -69,6 +63,13 @@ export const LinkItem = (props: LinkItemProps) => {
     }
   };
 
+  const appPath = `/ship/~${resource}`;
+  const commColor = (props.unreads.graph?.[appPath]?.[`/${index}`]?.unreads ?? 0) > 0 ? 'blue' : 'gray';
+  const isUnread = props.unreads.graph?.[appPath]?.['/']?.unreads?.has(node.post.index);
+
+  const markRead = () => {
+    api.hark.markEachAsRead(props.association, '/', `/${index}`, 'link', 'link');
+  }
   return (
     <Box width="100%" {...rest}>
     
@@ -79,14 +80,15 @@ export const LinkItem = (props: LinkItemProps) => {
         width="100%"
         color='washedGray'
         border={1}
+        borderColor={isUnread ? 'blue' : 'washedGray'}
         borderRadius={2}
         alignItems="flex-start"
         overflow="hidden"
+        onClick={markRead}
       >
         <RemoteContent
           url={contents[1].url}
           text={contents[0].text}
-          remoteContentPolicy={remoteContentPolicy}
           unfold={true}
           style={{ alignSelf: 'center' }}
           oembedProps={{
@@ -107,7 +109,7 @@ export const LinkItem = (props: LinkItemProps) => {
             p: 2
           }} />
         <Text color="gray" p={2} flexShrink={0}>
-          <Anchor target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }} href={contents[1].url}>
+          <Anchor  target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }} href={contents[1].url}>
             <Box display='flex'>
               <Icon icon='ArrowExternal' mr={1} />{hostname}
             </Box>
@@ -119,21 +121,18 @@ export const LinkItem = (props: LinkItemProps) => {
       
       <Author
         showImage
-        contacts={contacts[path]}
+        contacts={contacts}
         ship={author}
         date={node.post['time-sent']}
-        hideAvatars={hideAvatars}
-        hideNicknames={hideNicknames}
-        remoteContentPolicy={remoteContentPolicy}
         group={group}
         api={api}
       ></Author>
 
-      <Box ml="auto" mr={1}>
+      <Box ml="auto">
         <Link to={`${baseUrl}/${index}`}>
         <Box display='flex'>
-          <Icon color='blue' icon='Chat' />
-          <Text color='blue' ml={1}>{node.children.size}</Text>
+          <Icon color={commColor} icon='Chat' />
+          <Text color={commColor} ml={1}>{node.children.size}</Text>
         </Box>
       </Link>
         </Box>
@@ -155,7 +154,7 @@ export const LinkItem = (props: LinkItemProps) => {
           </Col>
         }
         >
-        <Icon display="block" icon="Ellipsis" color="gray" />
+        <Icon ml="2" display="block" icon="Ellipsis" color="gray" />
       </Dropdown>
       
     </Row>

@@ -1,11 +1,10 @@
-import React from 'react';
-import { Link, RouteComponentProps } from 'react-router-dom';
-import { NotebookPosts } from './NotebookPosts';
-import { Box, Button, Text, Row, Col } from '@tlon/indigo-react';
-import { Groups } from '~/types/group-update';
-import { Contacts, Rolodex } from '~/types/contact-update';
-import GlobalApi from '~/logic/api/global';
-import { Associations, Graph, Association } from '~/types';
+import React from "react";
+import { Link, RouteComponentProps } from "react-router-dom";
+import { NotebookPosts } from "./NotebookPosts";
+import { Box, Button, Text, Row, Col } from "@tlon/indigo-react";
+import GlobalApi from "~/logic/api/global";
+import { Contacts, Rolodex, Groups, Associations, Graph, Association, Unreads } from "~/types";
+import { useShowNickname } from "~/logic/lib/util";
 
 interface NotebookProps {
   api: GlobalApi;
@@ -17,15 +16,9 @@ interface NotebookProps {
   associations: Associations;
   contacts: Rolodex;
   groups: Groups;
-  hideNicknames: boolean;
-  hideAvatars: boolean;
   baseUrl: string;
   rootUrl: string;
-}
-
-interface NotebookState {
-  isUnsubscribing: boolean;
-  tab: string;
+  unreads: Unreads;
 }
 
 export function Notebook(props: NotebookProps & RouteComponentProps) {
@@ -34,8 +27,6 @@ export function Notebook(props: NotebookProps & RouteComponentProps) {
     book,
     notebookContacts,
     groups,
-    hideNicknames,
-    hideAvatars,
     association,
     graph
   } = props;
@@ -43,7 +34,7 @@ export function Notebook(props: NotebookProps & RouteComponentProps) {
 
   const group = groups[association?.['group-path']];
   if (!group) {
-    return null; // Waitin on groups to populate
+    return null; // Waiting on groups to populate
   }
 
   const relativePath = (p: string) => props.baseUrl + p;
@@ -56,7 +47,7 @@ export function Notebook(props: NotebookProps & RouteComponentProps) {
     isWriter = isOwn || group.tags?.publish?.[`writers-${book}`]?.has(window.ship);
   }
 
-  const showNickname = contact?.nickname && !hideNicknames;
+  const showNickname = useShowNickname(contact);
 
   return (
     <Col gapY="4" pt={4} mx="auto" px={3} maxWidth="768px">
@@ -82,8 +73,7 @@ export function Notebook(props: NotebookProps & RouteComponentProps) {
         host={ship}
         book={book}
         contacts={notebookContacts ? notebookContacts : {}}
-        hideNicknames={hideNicknames}
-        hideAvatars={hideAvatars}
+        unreads={props.unreads}
         baseUrl={props.baseUrl}
         api={props.api}
         group={group}

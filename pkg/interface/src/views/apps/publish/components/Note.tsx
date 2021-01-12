@@ -10,26 +10,26 @@ import { NoteNavigation } from "./NoteNavigation";
 import GlobalApi from "~/logic/api/global";
 import { getLatestRevision, getComments } from '~/logic/lib/publish';
 import Author from "~/views/components/Author";
-import { Contacts, GraphNode, Graph, LocalUpdateRemoteContentPolicy } from "~/types";
+import { Contacts, GraphNode, Graph, Association, Unreads, Group } from "~/types";
 
 interface NoteProps {
   ship: string;
   book: string;
   note: GraphNode;
+  unreads: Unreads;
+  association: Association;
   notebook: Graph;
   contacts: Contacts;
   api: GlobalApi;
-  hideAvatars: boolean;
-  hideNicknames: boolean;
-  remoteContentPolicy: LocalUpdateRemoteContentPolicy;
   rootUrl: string;
   baseUrl: string;
+  group: Group;
 }
 
 export function Note(props: NoteProps & RouteComponentProps) {
   const [deleting, setDeleting] = useState(false);
 
-  const { notebook, note, contacts, ship, book, api, rootUrl, baseUrl } = props;
+  const { notebook, note, contacts, ship, book, api, rootUrl, baseUrl, group } = props;
   const editCommentId = props.match.params.commentId;
 
   const deletePost = async () => {
@@ -39,10 +39,17 @@ export function Note(props: NoteProps & RouteComponentProps) {
     props.history.push(rootUrl);
   };
 
+
   const comments = getComments(note);
   const [revNum, title, body, post] = getLatestRevision(note);
+  const index = note.post.index.split('/');
 
-  const noteId = bigInt(note.post.index.split('/')[1]);
+  const noteId = bigInt(index[1]);
+  useEffect(() => {
+    api.hark.markEachAsRead(props.association, '/',`/${index[1]}/1/1`, 'note', 'publish');
+  }, [props.association]);
+
+
 
   let adminLinks: JSX.Element | null = null;
   if (window.ship === note?.post?.author) {
@@ -87,8 +94,6 @@ export function Note(props: NoteProps & RouteComponentProps) {
         <Text display="block" mb={2}>{title || ""}</Text>
         <Box display="flex">
           <Author
-            hideNicknames={props?.hideNicknames}
-            hideAvatars={props?.hideAvatars}
             ship={post?.author}
             contacts={contacts}
             date={post?.["time-sent"]}
@@ -108,15 +113,15 @@ export function Note(props: NoteProps & RouteComponentProps) {
       <Comments
         ship={ship}
         name={props.book}
+        unreads={props.unreads}
         comments={comments}
         contacts={props.contacts}
+        association={props.association}
         api={props.api}
-        hideNicknames={props.hideNicknames}
-        hideAvatars={props.hideAvatars}
-        remoteContentPolicy={props.remoteContentPolicy}
         baseUrl={baseUrl}
         editCommentId={editCommentId}
         history={props.history}
+        group={group}
       />
       <Spinner
         text="Deleting post..."

@@ -6,6 +6,7 @@ import ErrorBoundary from '~/views/components/ErrorBoundary';
 import Tile from './tile';
 
 export const weatherStyleMap = {
+  Clear: 'rgba(67, 169, 255, 0.4)',
   Sunny: 'rgba(67, 169, 255, 0.4)',
   PartlyCloudy: 'rgba(178, 211, 255, 0.33)',
   Cloudy: 'rgba(136, 153, 176, 0.43)',
@@ -186,10 +187,10 @@ export default class WeatherTile extends React.Component {
     const d = data['weather'][0];
     const bg = this.colorFromCondition(data);
 
-    const sunset = moment(d.date + ' '  + d.astronomy[0].sunset, 'YYYY-MM-DD hh:mm A');
+    const sunset = moment(moment().format('YYYY-MM-DD') + ' '  + d.astronomy[0].sunset, 'YYYY-MM-DD hh:mm A');
     const sunsetDiff = sunset.diff(moment(), 'hours');
 
-    const sunrise = moment(d.date + ' '  + d.astronomy[0].sunrise, 'YYYY-MM-DD hh:mm A');
+    const sunrise = moment(moment().format('YYYY-MM-DD') + ' '  + d.astronomy[0].sunrise, 'YYYY-MM-DD hh:mm A');
     let sunriseDiff = sunrise.diff(moment(), 'hours');
 
     if (sunriseDiff > 24) {

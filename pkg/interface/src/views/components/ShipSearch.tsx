@@ -76,7 +76,7 @@ export function ShipSearch(props: InviteSearchProps) {
       if(ob.isValidPatp(ship)) {
         checkInput(true, ship);
       } else {
-        checkInput(ship.length !== 1, undefined) 
+        checkInput(ship.length !== 1, undefined)
       }
     },
     [checkInput]
@@ -90,7 +90,7 @@ export function ShipSearch(props: InviteSearchProps) {
     (s: string) => {
       setTouched(true);
       checkInput(true, undefined);
-      s = `~${deSig(s)}`;
+      s = `${deSig(s)}`;
       setSelected(v => _.uniq([...v, s]))
     },
     [setTouched, checkInput, setSelected]

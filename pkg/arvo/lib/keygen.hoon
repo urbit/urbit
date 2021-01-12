@@ -2,7 +2,7 @@
 ::
 /-  keygen
 ::
-/+  bip32, bip39
+/+  ethereum, bip32, bip39
 ::
 =,  keygen
 ::

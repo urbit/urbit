@@ -19,6 +19,7 @@ import { ColorInput } from "~/views/components/ColorInput";
 import GlobalApi from "~/logic/api/global";
 import { ImageInput } from "~/views/components/ImageInput";
 import { S3State } from "~/types";
+import useLocalState from "~/logic/state/local";
 
 interface ContactCardProps {
   contact: Contact;
@@ -26,8 +27,6 @@ interface ContactCardProps {
   api: GlobalApi;
   s3: S3State;
   rootIdentity: Contact;
-  hideAvatars: boolean;
-  hideNicknames: boolean;
 }
 
 const formSchema = Yup.object({
@@ -72,6 +71,9 @@ const emptyContact = {
 };
 
 export function ContactCard(props: ContactCardProps) {
+  const { hideAvatars, hideNicknames } = useLocalState(({ hideAvatars, hideNicknames }) => ({
+    hideAvatars, hideNicknames
+  }));
   const us = `~${window.ship}`;
   const { contact, rootIdentity } = props;
   const onSubmit = async (values: any, actions: FormikHelpers<Contact>) => {
@@ -80,7 +82,7 @@ export function ContactCard(props: ContactCardProps) {
         const [,,ship] = props.path.split('/');
         values.color = uxToHex(values.color);
         const sharedValues = Object.assign({}, values);
-        sharedValues.avatar = (values.avatar === "") ? null : { url: values.avatar };
+        sharedValues.avatar = !values.avatar ? null : { url: values.avatar };
         console.log(values);
         await props.api.contacts.share(ship, props.path, us, sharedValues);
         actions.setStatus({ success: null });
@@ -114,11 +116,11 @@ export function ContactCard(props: ContactCardProps) {
   };
 
   const hexColor = contact?.color ? `#${uxToHex(contact.color)}` : "#000000";
-  const image = (!props?.hideAvatars && contact?.avatar)
+  const image = (!hideAvatars && contact?.avatar)
     ? <BaseImage src={contact.avatar} width='100%' height='100%' style={{ objectFit: 'cover' }} />
     : <Sigil ship={us} size={32} color={hexColor} />;
 
-  const nickname = (!props.hideNicknames && contact?.nickname) ? contact.nickname : "";
+  const nickname = (!hideNicknames && contact?.nickname) ? contact.nickname : "";
 
   return (
     <Box p={4} height="100%" overflowY="auto">

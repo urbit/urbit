@@ -14,10 +14,7 @@ export default class GraphApp extends PureComponent {
     const graphKeys = props.graphKeys || new Set([]);
     const graphs = props.graphs || {};
 
-    const {
-      api, sidebarShown, s3,
-      hideAvatars, hideNicknames, remoteContentPolicy
-    } = this.props;
+    const { api } = this.props;
 
     return (
       <Switch>

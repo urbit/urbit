@@ -20,22 +20,13 @@ interface UnjoinedResourceProps {
   inbox: Inbox;
 }
 
-function isJoined(app: string, path: string) {
+function isJoined(path: string) {
   return function (
-    props: Pick<UnjoinedResourceProps, "inbox" | "graphKeys">
+    props: Pick<UnjoinedResourceProps, "graphKeys">
   ) {
     const graphKey = path.substr(7);
-    switch (app) {
-      case "link":
-      case "publish":
-        return props.graphKeys.has(graphKey);
-      case "chat":
-        return !!props.inbox[path];
-      default:
-        console.log("Bad app name");
-        return false;
-    }
-  };
+    return props.graphKeys.has(graphKey);
+  }
 }
 
 export function UnjoinedResource(props: UnjoinedResourceProps) {
@@ -48,26 +39,14 @@ export function UnjoinedResource(props: UnjoinedResourceProps) {
   const app = useMemo(() => module || appName, [props.association]);
 
   const onJoin = async () => {
-    let ship, name;
-    switch (app) {
-      case "publish":
-      case "link":
-        [, , ship, name] = appPath.split("/");
-        await api.graph.joinGraph(ship, name);
-        break;
-      case "chat":
-        [, ship, name] = appPath.split("/");
-        await api.chat.join(ship, appPath, true);
-        break;
-      default:
-        throw new Error("Unknown resource type");
-    }
-    await waiter(isJoined(app, appPath));
+    const [, , ship, name] = appPath.split("/");
+    await api.graph.joinGraph(ship, name);
+    await waiter(isJoined(appPath));
     history.push(`${props.baseUrl}/resource/${app}${appPath}`);
   };
 
   useEffect(() => {
-    if (isJoined(app, appPath)({ inbox, graphKeys })) {
+    if (isJoined(appPath)({ graphKeys })) {
       history.push(`${props.baseUrl}/resource/${app}${appPath}`);
     }
   }, [props.association, inbox, graphKeys, notebooks]);

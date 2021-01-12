@@ -9,9 +9,8 @@ import { uxToHex } from '~/logic/lib/util';
 import { RouteComponentProps } from "react-router-dom";
 
 import { LinkItem } from "./components/LinkItem";
-import { LinkSubmit } from "./components/link-submit";
-import { LinkPreview } from "./components/link-preview";
-import { Comments } from "~/views/components/comments";
+import LinkSubmit from "./components/LinkSubmit";
+import { Comments } from "~/views/components/Comments";
 
 import "./css/custom.css";
 
@@ -31,10 +30,8 @@ export function LinkResource(props: LinkResourceProps) {
     groups,
     associations,
     graphKeys,
+    unreads,
     s3,
-    hideAvatars,
-    hideNicknames,
-    remoteContentPolicy,
     history
   } = props;
 
@@ -76,13 +73,14 @@ export function LinkResource(props: LinkResourceProps) {
                   const contact = contactDetails[node.post.author];
                   return (
                     <LinkItem
+                      association={resource}
                       contacts={contacts}
                       key={date.toString()}
                       resource={resourcePath}
                       node={node}
-                      hideAvatars={hideAvatars}
-                      hideNicknames={hideNicknames}
-                      remoteContentPolicy={remoteContentPolicy}
+                      contacts={contactDetails}
+                      unreads={unreads}
+                      nickname={contact?.nickname}
                       baseUrl={resourceUrl}
                       group={group}
                       path={resource["group-path"]}
@@ -121,10 +119,8 @@ export function LinkResource(props: LinkResourceProps) {
                   key={node.post.index}
                   resource={resourcePath}
                   node={node}
-                  hideAvatars={hideAvatars}
-                  hideNicknames={hideNicknames}
-                  remoteContentPolicy={remoteContentPolicy}
                   baseUrl={resourceUrl}
+                  unreads={unreads}
                   group={group}
                   path={resource["group-path"]}
                   api={api}
@@ -135,15 +131,13 @@ export function LinkResource(props: LinkResourceProps) {
                   name={name}
                   comments={node}
                   resource={resourcePath}
+                  association={association}
+                  unreads={unreads}
                   contacts={contactDetails}
                   api={api}
-                  hideAvatars={hideAvatars}
-                  hideNicknames={hideNicknames}
-                  remoteContentPolicy={remoteContentPolicy}
                   editCommentId={editCommentId}
                   history={props.history}
                   baseUrl={`${resourceUrl}/${props.match.params.index}`}
-                  association={association}
                   group={group}
                 />
               </Col>

@@ -4,7 +4,7 @@
 ::
 /-  *group, *invite-store, *resource
 /+  default-agent, verb, dbug, store=group-store, grpl=group, pull-hook
-~%  %group-hook-top  ..is  ~
+~%  %group-hook-top  ..part  ~
 |%
 +$  card  card:agent:gall
 ::
@@ -42,7 +42,9 @@
 ++  on-pull-nack
   |=   [=resource =tang]
   ^-  (quip card _this)
-  [~ this]
+  :_  this
+  =-  [%pass / %agent [our.bowl %group-store] %poke -]~
+  group-update+!>([%remove-group resource ~])
 ++  on-pull-kick
   |=  =resource
   ^-  (unit path)

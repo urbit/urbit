@@ -11,7 +11,7 @@
    Note that on linux the previous command is equivalent to:
 
      $ nix-build -A urbit --argstr crossSystem x86_64-unknown-linux-musl \
-                          --arg enableSatic true
+                          --arg enableStatic true
 
    Static urbit-king binary:
 
@@ -153,7 +153,8 @@ let
       contents = {
         "${name}/urbit" = "${urbit}/bin/urbit";
         "${name}/urbit-worker" = "${urbit}/bin/urbit-worker";
-        "${name}/urbit-king" = "${urbit-king}/bin/urbit-king";
+        # temporarily removed for compatibility reasons
+        # "${name}/urbit-king" = "${urbit-king}/bin/urbit-king";
       };
     };
 

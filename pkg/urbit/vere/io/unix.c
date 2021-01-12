@@ -62,6 +62,7 @@ struct _u3_ufil;
 */
   typedef struct _u3_unix {
     u3_auto     car_u;
+    c3_l        sev_l;                  //  instance number
     u3_umon*    mon_u;                  //  mount points
     c3_c*       pax_c;                  //  pier directory
     c3_o        alm;                    //  timer set
@@ -956,7 +957,9 @@ _unix_update_mount(u3_unix* unx_u, u3_umon* mon_u, u3_noun all)
     {
       //  XX remove u3A->sen
       //
-      u3_noun wir = u3nt(c3__sync, u3k(u3A->sen), u3_nul);
+      u3_noun wir = u3nt(c3__sync,
+                        u3dc("scot", c3__uv, unx_u->sev_l),
+                        u3_nul);
       u3_noun cad = u3nq(c3__into, u3i_string(mon_u->nam_c), all, can);
 
       u3_auto_plan(&unx_u->car_u, u3_ovum_init(0, c3__c, wir, cad));
@@ -1472,6 +1475,16 @@ u3_unix_io_init(u3_pier* pir_u)
   //  XX wat do
   //
   // car_u->ev.bail_f = ...l;
+
+  {
+    u3_noun now;
+    struct timeval tim_u;
+    gettimeofday(&tim_u, 0);
+
+    now = u3_time_in_tv(&tim_u);
+    unx_u->sev_l = u3r_mug(now);
+    u3z(now);
+  }
 
   return car_u;
 }

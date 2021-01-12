@@ -2,8 +2,7 @@ import React, {ReactNode} from "react";
 import moment from "moment";
 import { Row, Box } from "@tlon/indigo-react";
 
-import { Sigil } from "~/logic/lib/sigil"
-import { uxToHex, cite } from "~/logic/lib/util";
+import { uxToHex, cite, useShowNickname } from "~/logic/lib/util";
 import { Contacts, Rolodex } from "~/types/contact-update";
 import OverlaySigil from "./OverlaySigil";
 import { Group, Association } from "~/types";
@@ -15,24 +14,23 @@ interface AuthorProps {
   ship: string;
   date: number;
   showImage?: boolean;
-  hideAvatars: boolean;
-  hideNicknames: boolean;
   children?: ReactNode;
+  unread?: boolean;
   group: Group;
   api: GlobalApi;
 }
 
 export default function Author(props: AuthorProps) {
-  const { contacts, ship = '', date, showImage, hideAvatars, hideNicknames, group, api } = props;
+  const { contacts, ship = '', date, showImage, group, api } = props;
   const history = useHistory();
   let contact;
   if (contacts) {
     contact = ship in contacts ? contacts[ship] : null;
   }
   const color = contact?.color ? `#${uxToHex(contact?.color)}` : "#000000";
-  const showNickname = !props.hideNicknames && contact?.nickname;
+  const showNickname = useShowNickname(contact);
 
-  const name = showNickname ? contact?.nickname : cite(ship);
+  const name = showNickname ? contact.nickname : cite(ship);
   const dateFmt = moment(date).fromNow();
   return (
     <Row alignItems="center" width="auto">
@@ -44,8 +42,6 @@ export default function Author(props: AuthorProps) {
           color={color}
           sigilClass={''}
           group={group}
-          hideAvatars={hideAvatars}
-          hideNicknames={hideNicknames}
           history={history}
           api={api}
           bg="white"
@@ -62,7 +58,7 @@ export default function Author(props: AuthorProps) {
       >
         {name}
       </Box>
-      <Box ml={2} color="gray">
+      <Box ml={2} color={props.unread ? "blue" : "gray"}>
         {dateFmt}
       </Box>
       {props.children}

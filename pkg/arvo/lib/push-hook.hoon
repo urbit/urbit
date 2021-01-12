@@ -268,7 +268,6 @@
         %+  weld
           (push-updates:hc q.cage.sign)
         cards
-
       ==
       ++  on-leave
         |=  =path
@@ -379,6 +378,8 @@
     =/  prefix=path
       resource+(en-path:resource u.rid)
     =/  paths=(list path)
+      %~  tap  in
+      %-  silt
       %+  turn
         (incoming-subscriptions prefix)
       |=([ship pax=path] pax)

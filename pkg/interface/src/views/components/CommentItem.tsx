@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import Author from '~/views/components/Author';
 import { GraphNode, TextContent } from '~/types/graph-update';
 import tokenizeMessage from '~/logic/lib/tokenizeMessage';
-import { LocalUpdateRemoteContentPolicy, Group } from '~/types';
+import { Group } from '~/types';
 import { MentionText } from '~/views/components/MentionText';
 import { getLatestCommentRevision } from '~/logic/lib/publish';
 
@@ -21,17 +21,15 @@ interface CommentItemProps {
   comment: GraphNode;
   baseUrl: string;
   contacts: Contacts;
+  unread: boolean;
   name: string;
   ship: string;
   api: GlobalApi;
-  hideNicknames: boolean;
-  hideAvatars: boolean;
-  remoteContentPolicy: LocalUpdateRemoteContentPolicy;
   group: Group;
 }
 
 export function CommentItem(props: CommentItemProps) {
-  const { ship, contacts, name, api, remoteContentPolicy, comment, group } = props;
+  const { ship, contacts, name, api, comment, group } = props;
   const [revNum, post] = getLatestCommentRevision(comment);
   const disabled = props.pending || window.ship !== post?.author;
 
@@ -44,16 +42,14 @@ export function CommentItem(props: CommentItemProps) {
   const updateUrl = `${props.baseUrl}/${commentIndex}`
 
   return (
-    <Box mb={4} opacity={props.pending ? '60%' : '100%'}>
+    <Box mb={4} opacity={post?.pending ? '60%' : '100%'}>
       <Row bg="white" my={3}>
         <Author
           showImage
           contacts={contacts}
           ship={post?.author}
           date={post?.['time-sent']}
-          hideAvatars={props.hideAvatars}
-          hideNicknames={props.hideNicknames}
-          remoteContentPolicy={remoteContentPolicy}
+          unread={props.unread}
           group={group}
           api={api}
         >
@@ -77,8 +73,8 @@ export function CommentItem(props: CommentItemProps) {
       <Box mb={2}>
         <MentionText
           contacts={contacts}
+          group={group}
           content={post?.contents}
-          remoteContentPolicy={remoteContentPolicy}
         />
       </Box>
     </Box>

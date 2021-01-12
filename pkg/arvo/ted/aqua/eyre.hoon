@@ -118,7 +118,7 @@
 ++  handle-arvo-response
   |=  [=wire =sign-arvo]
   ^-  (quip card:agent:gall _this)
-  ?>  ?=([%i %http-response %finished *] sign-arvo)
+  ?>  ?=([%iris %http-response %finished *] sign-arvo)
   ?>  ?=([@ *] wire)
   =/  who  (,@p (slav %p i.wire))
   =/  =httr:eyre

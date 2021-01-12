@@ -28,7 +28,7 @@
 +$  pill        pill:pill-lib
 ::
 +$  aqua-event
-  $%  [%init-ship who=ship keys=(unit dawn-event:able:jael)]
+  $%  [%init-ship who=ship keys=(unit dawn-event:jael)]
       [%pause-events who=ship]
       [%snap-ships lab=term hers=(list ship)]
       [%restore-snap lab=term]

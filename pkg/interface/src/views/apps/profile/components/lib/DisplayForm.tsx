@@ -12,6 +12,7 @@ import GlobalApi from '~/logic/api/global';
 import { uxToHex } from '~/logic/lib/util';
 import { S3State, BackgroundConfig } from '~/types';
 import { BackgroundPicker, BgType } from './BackgroundPicker';
+import useLocalState, { LocalState } from '~/logic/state/local';
 
 const formSchema = Yup.object().shape({
   bgType: Yup.string()
@@ -33,15 +34,13 @@ interface FormSchema {
 
 interface DisplayFormProps {
   api: GlobalApi;
-  dark: boolean;
-  background: BackgroundConfig;
-  hideAvatars: boolean;
-  hideNicknames: boolean;
   s3: S3State;
 }
 
 export default function DisplayForm(props: DisplayFormProps) {
-  const { api, background, hideAvatars, hideNicknames, s3 } = props;
+  const { api, s3 } = props;
+
+  const { hideAvatars, hideNicknames, background, set: setLocalState } = useLocalState();
 
   let bgColor, bgUrl;
   if (background?.type === 'url') {
@@ -72,10 +71,11 @@ export default function DisplayForm(props: DisplayFormProps) {
             ? { type: 'url', url: values.bgUrl || '' }
             : undefined;
 
-        api.local.setBackground(bgConfig);
-        api.local.hideAvatars(values.avatars);
-        api.local.hideNicknames(values.nicknames);
-        api.local.dehydrate();
+        setLocalState((state: LocalState) => {
+          state.background = bgConfig;
+          state.hideAvatars = values.avatars;
+          state.hideNicknames = values.nicknames;
+        });
         actions.setSubmitting(false);
       }}
     >

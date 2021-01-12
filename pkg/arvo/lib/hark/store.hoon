@@ -1,5 +1,5 @@
 /-  sur=hark-store, post
-/+  resource, graph-store, group-store, chat-store
+/+  resource, graph-store, group-store
 ^?
 =<  [. sur]
 =,  sur
@@ -11,13 +11,6 @@
     %-  of
     :~  graph+graph-index
         group+group-index
-        chat+chat-index
-    ==
-  ::
-  ++  chat-index
-    %-  ot
-    :~  chat+pa
-        mention+bo
     ==
   ::
   ++  group-index
@@ -32,6 +25,18 @@
         graph+dejs-path:resource
         module+so
         description+so
+        index+(su ;~(pfix fas (more fas dem)))
+    ==
+  ::
+  ++  stats-index
+    %-  of
+    :~  graph+graph-stats-index
+        group+dejs-path:resource
+    ==
+  ++  graph-stats-index
+    %-  ot
+    :~  graph+dejs-path:resource
+        index+graph-store-index
     ==
   ::  parse date as @ud
   ::    TODO: move to zuse
@@ -40,7 +45,6 @@
     ^-  @da
     ?>  ?=(%s -.jon)
     `@da`(rash p.jon dem:ag)
-
   ::
   ++  notif-ref
     ^-  $-(json [@da ^index])
@@ -48,21 +52,30 @@
     :~  time+sd
         index+index
     ==
+  ++  graph-store-index
+    (su ;~(pfix fas (more fas dem)))
   ::
   ++  add
     |=  jon=json
     [*^index *notification]
+  ::
+  ++  read-graph-index
+    %-  ot
+    :~  index+stats-index
+        target+graph-store-index
+    ==
   ::
   ++  action
     ^-  $-(json ^action)
     %-  of
     :~  seen+ul
         archive+notif-ref
-        unread+notif-ref
-        read+notif-ref
-        add+add
+        unread-note+notif-ref
+        read-note+notif-ref
+        add-note+add
         set-dnd+bo
-        read-index+index
+        read-count+stats-index
+        read-each+read-graph-index
     ==
   --
 ::
@@ -79,25 +92,67 @@
         %timebox  (timebox +.upd)
         %set-dnd  b+dnd.upd
         %count    (numb count.upd)
-        %unreads  (unreads unreads.upd)
         %more     (more +.upd)
+        %read-each  (read-each +.upd)
+        %read-count  (stats-index +.upd)
+        %unread-each  (unread-each +.upd)
+        %unread-count  (unread-count +.upd)
+        %remove-graph  s+(enjs-path:resource +.upd)
+        %seen-index  (seen-index +.upd)
+        %unreads   (unreads +.upd)
         ::
-          ?(%archive %read %unread)
+          ?(%archive %read-note %unread-note)
         (notif-ref +.upd)
     ==
     ::
+    ++  stats-index
+      |=  s=^stats-index
+      %+  frond  -.s
+      |^
+      ?-  -.s
+        %graph  (graph-stats-index +.s)
+        %group  s+(enjs-path:resource +.s)
+      ==
+      ::
+      ++  graph-stats-index
+        |=  [graph=resource =index:graph-store]
+        %-  pairs
+        :~  graph+s+(enjs-path:resource graph)
+            index+(index:enjs:graph-store index)
+        ==
+      --
+    ::
     ++  unreads
-      |=  l=(list [^index @ud]) 
+      |=  l=(list [^stats-index ^stats]) 
       ^-  json 
       :-  %a
       ^-  (list json)
       %+  turn  l
-      |=  [idx=^index unread=@ud]
+      |=  [idx=^stats-index s=^stats]
       %-  pairs
-      :~  unread+(numb unread)
-          index+(index idx)
+      :~  stats+(stats s)
+          index+(stats-index idx)
       ==
     ::
+    ++  unread
+      |=  =^unreads
+      %+  frond
+        -.unreads
+      ?-  -.unreads
+        %each   a+(turn ~(tap by indices.unreads) index:enjs:graph-store)
+        ::
+          %count
+        (numb num.unreads)
+      ==
+    ::
+    ++  stats
+      |=  s=^stats
+      ^-  json
+      %-  pairs
+      :~  unreads+(unread unreads.s)
+          notifications+(numb notifications.s)
+          last+(time last-seen.s)
+      ==
     ++  added
       |=  [tim=@da idx=^index not=^notification]
       ^-  json
@@ -114,6 +169,13 @@
       :~  time+s+(scot %ud tim)
           index+(index idx)
       ==
+    ++  seen-index
+      |=  [tim=@da idx=^stats-index]
+      ^-  json
+      %-  pairs
+      :~  time+(time tim)
+          index+(stats-index idx)
+      ==     
     ::
     ++  more
       |=  upds=(list ^update)
@@ -127,25 +189,22 @@
       ?-  -.index
         %graph  (graph-index +.index)
         %group  (group-index +.index)
-        %chat   (chat-index +.index)
       ==
-      ::
-      ++  chat-index
-        |=  [chat=^path mention=?]
-        ^-  json
-        %-  pairs
-        :~  chat+(path chat)
-            mention+b+mention
-        ==
       :: 
       ++  graph-index
-        |=  [group=resource graph=resource module=@t description=@t]
+        |=  $:  group=resource
+                graph=resource
+                module=@t
+                description=@t
+                idx=index:graph-store
+            ==
         ^-  json
         %-  pairs
         :~  group+s+(enjs-path:resource group)
             graph+s+(enjs-path:resource graph)
             module+s+module
             description+s+description
+            index+(index:enjs:graph-store idx)
         ==
       ::
       ++  group-index
@@ -174,14 +233,7 @@
       ?-  -.contents
         %graph  (graph-contents +.contents)
         %group  (group-contents +.contents)
-        %chat   (chat-contents +.contents)
       ==
-      ::
-      ++  chat-contents
-        |=  =(list envelope:chat-store)
-        ^-  json
-        :-  %a
-        (turn list envelope:enjs:chat-store)
       ::
       ++  graph-contents
         |=  =(list post:post)
@@ -221,6 +273,47 @@
           ^-  json
           (indexed-notification index notification)
       ==
+    ::
+    ++  read-each
+      |=  [s=^stats-index target=index:graph-store]
+      %-  pairs
+      :~  index+(stats-index s)
+          target+(index:enjs:graph-store target)
+      ==
+    ::
+    ++  unread-each
+      |=  [s=^stats-index target=index:graph-store tim=@da]
+      %-  pairs
+      :~  index+(stats-index s)
+          target+(index:enjs:graph-store target)
+          last+(time tim)
+      ==
+    ::
+    ++  unread-count
+      |=  [s=^stats-index tim=@da]
+      %-  pairs
+      :~  index+(stats-index s)
+          last+(time tim)
+      ==
     --
   --
+::
+++  to-stats-index
+  |=  =index
+  ^-  stats-index
+  ?-  -.index
+    %graph  [%graph graph.index index.index]
+    %group  [%group group.index]
+  ==
+++  stats-index-is-index
+  |=  [=stats-index =index]
+  ?-    -.index
+      %graph  
+    ?.  ?=(%graph -.stats-index)  %.n
+    =([graph index]:index [graph index]:stats-index)
+    ::
+      %group  
+    ?.  ?=(%group -.stats-index)  %.n
+    =(group:index group:stats-index)
+  ==
 --

@@ -5,6 +5,7 @@ import index from '~/logic/lib/omnibox';
 import Mousetrap from 'mousetrap';
 import OmniboxInput from './OmniboxInput';
 import OmniboxResult from './OmniboxResult';
+import { withLocalState } from '~/logic/state/local';
 
 import defaultApps from '~/logic/lib/default-apps';
 
@@ -39,7 +40,7 @@ export class Omnibox extends Component {
     }
 
     if (prevProps && this.props.show && prevProps.show !== this.props.show) {
-      Mousetrap.bind('escape', () => this.props.api.local.setOmnibox());
+      Mousetrap.bind('escape', this.props.toggle);
       document.addEventListener('mousedown', this.handleClickOutside);
       const touchstart = new Event('touchstart');
       this.omniInput.input.dispatchEvent(touchstart);
@@ -63,7 +64,7 @@ export class Omnibox extends Component {
       if (this.state.query.length > 0) {
         this.setState({ query: '', results: this.initialResults(), selected: [] });
       } else if (this.props.show) {
-        this.props.api.local.setOmnibox();
+        this.props.toggleOmnibox();
       }
     };
 
@@ -96,7 +97,7 @@ export class Omnibox extends Component {
   handleClickOutside(evt) {
     if (this.props.show && !this.omniBox.contains(evt.target)) {
       this.setState({ results: this.initialResults(), query: '', selected: [] }, () => {
-        this.props.api.local.setOmnibox();
+        this.props.toggleOmnibox();
       });
     }
   }
@@ -116,7 +117,7 @@ export class Omnibox extends Component {
   navigate(app, link) {
     const { props } = this;
     this.setState({ results: this.initialResults(), query: '' }, () => {
-      props.api.local.setOmnibox();
+      props.toggleOmnibox();
       if (defaultApps.includes(app.toLowerCase())
           || app === 'profile'
           || app === 'Links'
@@ -299,4 +300,4 @@ export class Omnibox extends Component {
   }
 }
 
-export default withRouter(Omnibox);
+export default withRouter(withLocalState(Omnibox, ['toggleOmnibox', 'omniboxShown']));

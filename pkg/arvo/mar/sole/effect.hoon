@@ -3,7 +3,6 @@
   ::
 /?    310
 /-    sole
-/+    base64
 !:
 ::
 ::::
@@ -76,7 +75,7 @@
           info+(tape ~(ram re tank))
       ==
     ::
-        ?(%bel %clr %nex)
+        ?(%bel %clr %nex %bye)
       (frond %act %s -.sef)
     ==
   --

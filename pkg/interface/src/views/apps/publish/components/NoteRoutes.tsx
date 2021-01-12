@@ -6,7 +6,7 @@ import { RouteComponentProps } from "react-router-dom";
 import Note from "./Note";
 import { EditPost } from "./EditPost";
 
-import { GraphNode, Graph, Contacts, LocalUpdateRemoteContentPolicy, Group } from "~/types";
+import { GraphNode, Graph, Contacts, Association, S3State, Group } from "~/types";
 
 interface NoteRoutesProps {
   ship: string;
@@ -16,11 +16,11 @@ interface NoteRoutesProps {
   notebook: Graph;
   contacts: Contacts;
   api: GlobalApi;
-  remoteContentPolicy: LocalUpdateRemoteContentPolicy;
-  hideNicknames: boolean;
-  hideAvatars: boolean;
+  association: Association;
   baseUrl?: string;
   rootUrl?: string;
+  group: Group;
+  s3: S3State;
 }
 
 export function NoteRoutes(props: NoteRoutesProps & RouteComponentProps) {
@@ -37,7 +37,7 @@ export function NoteRoutes(props: NoteRoutesProps & RouteComponentProps) {
       />
       <Route
         path={relativePath("/:commentId?")}
-        render={(routeProps) => 
+        render={(routeProps) =>
           <Note
             baseUrl={baseUrl}
             {...props}

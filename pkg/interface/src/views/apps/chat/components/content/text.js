@@ -28,6 +28,9 @@ const renderers = {
   inlineCode: ({language, value}) => {
     return <Text mono p='1' backgroundColor='washedGray' style={{ whiteSpace: 'preWrap'}}>{value}</Text>
   },
+  paragraph: ({ children }) => {
+    return (<Text fontSize="14px">{children}</Text>);
+  },
   code: ({language, value}) => {
     return <Text
               p='1'
@@ -83,7 +86,7 @@ export default class TextContent extends Component {
       && (urbitOb.isValidPatp(group[2]) // valid patp?
       && (group[0] === content.text))) { // entire message is room name?
       return (
-        <Text fontSize={props.fontSize ? props.fontSize : '14px'} color='black' lineHeight="tall">
+        <Text mx="2px" flexShrink={0} fontSize={props.fontSize ? props.fontSize : '14px'} color='black' lineHeight="tall">
           <Link
             className="bb b--black b--white-d mono"
             to={'/~landscape/join/' + group.input}>
@@ -93,7 +96,7 @@ export default class TextContent extends Component {
       );
     } else {
       return (
-        <Text color='black' fontSize={props.fontSize ? props.fontSize : '14px'} lineHeight="tall" style={{ overflowWrap: 'break-word' }}>
+        <Text mx="2px" flexShrink={0} color='black' fontSize={props.fontSize ? props.fontSize : '14px'} lineHeight="tall" style={{ overflowWrap: 'break-word' }}>
           <MessageMarkdown source={content.text} />
         </Text>
       );

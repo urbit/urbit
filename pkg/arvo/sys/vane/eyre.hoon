@@ -1,7 +1,7 @@
 !:
 ::  lighter than eyre
 ::
-|=  pit=vase
+|=  our=ship
 =,  eyre
 ::  internal data structures
 ::
@@ -17,7 +17,7 @@
       =duct
       ::
       ::
-      card=(wind note gift:able)
+      card=(wind note gift)
   ==
 ::  +note: private request from eyre to another vane
 ::
@@ -42,25 +42,17 @@
       $:  %g
           ::
           ::
-          $>(%deal task:able:gall)
+          $>(%deal task:gall)
   ==  ==
 ::  +sign: private response from another vane to eyre
 ::
 +$  sign
-  $%  ::  %b: from behn
-      ::
-      $:  %b
-          ::
-          ::
+  $%  $:  %behn
           $%  [%wake error=(unit tang)]
       ==  ==
-      ::  %g: from gall
-      ::
-      $:  %g
-          ::
-          ::
-          gift:able:gall
-          ::  $>(%unto gift:able:gall)
+      $:  %gall
+          gift:gall
+          ::  $>(%unto gift:gall)
   ==  ==
 --
 ::  more structures
@@ -552,7 +544,7 @@
 ++  per-server-event
   ::  gate that produces the +per-server-event core from event information
   ::
-  |=  [[our=@p eny=@ =duct now=@da scry=sley] state=server-state]
+  |=  [[eny=@ =duct now=@da rof=roof] state=server-state]
   =/  eyre-id  (scot %ta (cat 3 'eyre_' (scot %uv (sham duct))))
   |%
   ::  +request-local: bypass authentication for local lens connections
@@ -634,12 +626,12 @@
         %gen
       =/  bek=beak  [our desk.generator.action da+now]
       =/  sup=spur  path.generator.action
-      =/  ski       (scry [%141 %noun] ~ %ca bek sup)
+      =/  ski       (rof ~ %ca bek sup)
       =/  cag=cage  (need (need ski))
       ?>  =(%vase p.cag)
       =/  gat=vase  !<(vase q.cag)
       =/  res=toon
-        %-  mock  :_  (sloy scry)
+        %-  mock  :_  (look rof ~)
         :_  [%9 2 %0 1]  |.
         %+  slam
           %+  slam  gat
@@ -661,8 +653,7 @@
             authenticated.inbound-request.connection
             url.request.inbound-request.connection
             leaf+"scry blocked on"
-            >p.res<
-            ~
+            (fall (bind (bind ((soft path) p.res) smyt) (late ~)) ~)
         ==
       =/  result  ;;(simple-payload:http +.p.res)
       ::  ensure we have a valid content-length header
@@ -757,7 +748,7 @@
     ++  do-scry
       |=  [care=term =desk =path]
       ^-  (unit (unit cage))
-      (scry [%141 %noun] ~ care [our desk da+now] path)
+      (rof ~ care [our desk da+now] path)
     ::
     ++  error-response
       |=  [status=@ud =tape]
@@ -1016,11 +1007,9 @@
     ::
     ++  code
       ^-  @ta
-      ::
-      =+  pax=/(scot %p our)/code/(scot %da now)/(scot %p our)
-      =+  res=((sloy scry) [151 %noun] %j pax)
-      ::
-      (rsh 3 (scot %p (@ (need (need res)))))
+      =/  res=(unit (unit cage))
+        (rof ~ %j [our %code da+now] /(scot %p our))
+      (rsh 3 (scot %p ;;(@ q.q:(need (need res)))))
     ::  +session-cookie-string: compose session cookie
     ::
     ++  session-cookie-string
@@ -1525,7 +1514,7 @@
         ::NOTE  assertions in this block because =* is flimsy
         ?>  ?=([%| *] state.u.channel)
         :+  p.state.u.channel  %give
-        ^-  gift:able
+        ^-  gift
         :*  %response  %continue
         ::
             ^=  data
@@ -1580,7 +1569,7 @@
       =?  moves  &(kicking ?=([%| *] state.u.channel))
         :_  moves
         :+  p.state.u.channel  %give
-        ^-  gift:able
+        ^-  gift
         :*  %response  %continue
         ::
             ^=  data
@@ -1615,7 +1604,7 @@
       ::
       =*  have=mark  mark.event
       =/  val=(unit (unit cage))
-        (scry [%141 %noun] ~ %cb [our %home da+now] /[have])
+        (rof ~ %cb [our %home da+now] /[have])
       ?.  ?=([~ ~ *] val)
         ((slog leaf+"eyre: no mark {(trip have)}" ~) ~)
       =+  !<(=dais:clay q.u.u.val)
@@ -1639,7 +1628,7 @@
         =*  desc=tape  "from {(trip have)} to json"
         =/  tube=(unit tube:clay)
           =/  tuc=(unit (unit cage))
-            (scry [%141 %noun] ~ %cc [our %home da+now] /[have]/json)
+            (rof ~ %cc [our %home da+now] /[have]/json)
           ?.  ?=([~ ~ *] tuc)  ~
           `!<(tube:clay q.u.u.tuc)
         ?~  tube
@@ -2099,30 +2088,22 @@
 =|  ax=axle
 ::  a vane is activated with current date, entropy, and a namespace function
 ::
-|=  [our=ship now=@da eny=@uvJ rof=roof]
-=*  scry-gate  (en-sley rof)
+|=  [now=@da eny=@uvJ rof=roof]
 ::  allow jets to be registered within this core
 ::
-~%  %http-server  ..is  ~
+~%  %http-server  ..part  ~
 |%
 ++  call
-  |=  [=duct dud=(unit goof) type=* wrapped-task=(hobo task:able)]
+  |=  [=duct dud=(unit goof) wrapped-task=(hobo task)]
   ^-  [(list move) _http-server-gate]
   ::
-  =/  task=task:able  ((harden task:able) wrapped-task)
+  =/  task=task  ((harden task) wrapped-task)
   ::
-  ::  error notifications "downcast" to %crud
+  ::  XX handle error notifications
   ::
-  =?  task  ?=(^ dud)
-    ~|  %crud-in-crud
-    ?<  ?=(%crud -.task)
-    [%crud -.task tang.u.dud]
-  ::
-  ::  %crud: notifies us of an event failure
-  ::
-  ?:  ?=(%crud -.task)
+  ?^  dud
     =/  moves=(list move)
-      [[duct %slip %d %flog task] ~]
+      [[duct %slip %d %flog %crud [-.task tang.u.dud]] ~]
     [moves http-server-gate]
   ::  %init: tells us what our ship name is
   ::
@@ -2142,7 +2123,7 @@
   ::    XX cancel active too if =(0 trim-priority) ?
   ::
   ?:  ?=(%trim -.task)
-    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
+    =/  event-args  [[eny duct now rof] server-state.ax]
     =*  by-channel  by-channel:(per-server-event event-args)
     =*  channel-state  channel-state.server-state.ax
     ::
@@ -2190,7 +2171,7 @@
         [closed-connections server-state.ax]
       ::
       =/  event-args
-        [[our eny duct.i.connections now scry-gate] server-state.ax]
+        [[eny duct.i.connections now rof] server-state.ax]
       =/  cancel-request  cancel-request:(per-server-event event-args)
       =^  moves  server-state.ax  cancel-request
       ::
@@ -2212,7 +2193,7 @@
     ~>  %slog.[0 leaf+"eyre: code-changed: throwing away cookies and sessions"]
     =.  authentication-state.server-state.ax  *authentication-state
     ::
-    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
+    =/  event-args  [[eny duct now rof] server-state.ax]
     =*  by-channel  by-channel:(per-server-event event-args)
     =*  channel-state  channel-state.server-state.ax
     ::
@@ -2228,7 +2209,7 @@
   ::
   ::  all other commands operate on a per-server-event
   ::
-  =/  event-args  [[our eny duct now scry-gate] server-state.ax]
+  =/  event-args  [[eny duct now rof] server-state.ax]
   =/  server  (per-server-event event-args)
   ::
   ?-    -.task
@@ -2315,16 +2296,13 @@
   ==
 ::
 ++  take
-  |=  [=wire =duct dud=(unit goof) wrapped-sign=(hypo sign)]
+  |=  [=wire =duct dud=(unit goof) =sign]
   ^-  [(list move) _http-server-gate]
   ?^  dud
     ~|(%eyre-take-dud (mean tang.u.dud))
-  ::  unwrap :sign, ignoring unneeded +type in :p.wrapped-sign
-  ::
-  =/  =sign  q.wrapped-sign
   =>  %=    .
           sign
-        ?:  ?=(%g -.sign)
+        ?:  ?=(%gall -.sign)
           ?>  ?=(%unto +<.sign)
           sign
         sign
@@ -2347,7 +2325,7 @@
   ::
   ++  run-app-request
     ::
-    ?>  ?=([%g %unto *] sign)
+    ?>  ?=([%gall %unto *] sign)
     ::
     ::
     ?>  ?=([%poke-ack *] p.sign)
@@ -2358,7 +2336,7 @@
       [~ http-server-gate]
     ::  we have an error; propagate it to the client
     ::
-    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
+    =/  event-args  [[eny duct now rof] server-state.ax]
     =/  handle-gall-error
       handle-gall-error:(per-server-event event-args)
     =^  moves  server-state.ax
@@ -2367,10 +2345,10 @@
   ::
   ++  watch-response
     ::
-    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
+    =/  event-args  [[eny duct now rof] server-state.ax]
     ::
     ?>  ?=([@ *] t.wire)
-    ?:  ?=([%g %unto %watch-ack *] sign)
+    ?:  ?=([%gall %unto %watch-ack *] sign)
       ?~  p.p.sign
         ::  received a positive acknowledgment: take no action
         ::
@@ -2382,13 +2360,13 @@
       =^  moves  server-state.ax  (handle-gall-error u.p.p.sign)
       [moves http-server-gate]
     ::
-    ?:  ?=([%g %unto %kick ~] sign)
+    ?:  ?=([%gall %unto %kick ~] sign)
       =/  handle-response  handle-response:(per-server-event event-args)
       =^  moves  server-state.ax
         (handle-response %continue ~ &)
       [moves http-server-gate]
     ::
-    ?>  ?=([%g %unto %fact *] sign)
+    ?>  ?=([%gall %unto %fact *] sign)
     =/  =mark  p.cage.p.sign
     =/  =vase  q.cage.p.sign
     ?.  ?=  ?(%http-response-header %http-response-data %http-response-cancel)
@@ -2412,7 +2390,7 @@
   ::
   ++  channel
     ::
-    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
+    =/  event-args  [[eny duct now rof] server-state.ax]
     ::  channel callback wires are triples.
     ::
     ?>  ?=([@ @ @t *] wire)
@@ -2421,7 +2399,7 @@
         ~|([%bad-channel-wire wire] !!)
     ::
         %timeout
-      ?>  ?=([%b %wake *] sign)
+      ?>  ?=([%behn %wake *] sign)
       ?^  error.sign
         [[duct %slip %d %flog %crud %wake u.error.sign]~ http-server-gate]
       =/  discard-channel
@@ -2438,7 +2416,7 @@
       [moves http-server-gate]
     ::
         ?(%poke %subscription)
-      ?>  ?=([%g %unto *] sign)
+      ?>  ?=([%gall %unto *] sign)
       ~|  wire
       ?>  ?=([@ @ @t @ *] wire)
       =*  channel-id  i.t.t.wire
@@ -2455,7 +2433,7 @@
   ::
   ++  sessions
     ::
-    ?>  ?=([%b %wake *] sign)
+    ?>  ?=([%behn %wake *] sign)
     ::
     ?^  error.sign
       [[duct %slip %d %flog %crud %wake u.error.sign]~ http-server-gate]
@@ -2480,7 +2458,7 @@
     (min next expiry-time)
   ::
   ++  acme-ack
-    ?>  ?=([%g %unto *] sign)
+    ?>  ?=([%gall %unto *] sign)
     ::
     ?>  ?=([%poke-ack *] p.sign)
     ?~  p.p.sign
@@ -2505,9 +2483,10 @@
 ::  +scry: request a path in the urbit namespace
 ::
 ++  scry
-  |=  [lyc=gang cyr=term bem=beam]
+  ^-  roon
+  |=  [lyc=gang car=term bem=beam]
   ^-  (unit (unit cage))
-  =*  ren  cyr
+  =*  ren  car
   =*  why=shop  &/p.bem
   =*  syd  q.bem
   =/  lot=coin  $/r.bem
@@ -2554,7 +2533,7 @@
       :^  ~  ~  %noun
       !>  ^-  ?
       %-  =<  request-is-logged-in:authentication
-          (per-server-event [our eny *duct now scry-gate] server-state.ax)
+          (per-server-event [eny *duct now rof] server-state.ax)
       %*(. *request:http header-list ['cookie' u.cookies]~)
     ==
   ?.  ?=(%$ ren)

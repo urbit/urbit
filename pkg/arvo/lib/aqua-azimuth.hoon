@@ -1,4 +1,5 @@
 /-  *aquarium
+/+  ethereum, azimuth
 ::
 |%
 ::
@@ -133,14 +134,14 @@
     ==
   ::
   ++  number-to-hash
-    |=  =number:block:able:jael
+    |=  =number:block:jael
     ^-  @
     ?:  (lth number launch:contracts:azimuth)
       (cat 3 0x5364 (sub launch:contracts:azimuth number))
     (cat 3 0x5363 (sub number launch:contracts:azimuth))
   ::
   ++  hash-to-number
-    |=  =hash:block:able:jael
+    |=  =hash:block:jael
     (add launch:contracts:azimuth (div hash 0x1.0000))
   ::
   ++  logs-by-range
@@ -156,8 +157,8 @@
     logs.azi
   ::
   ++  logs-by-hash
-    |=  =hash:block:able:jael
-    =/  =number:block:able:jael  (hash-to-number hash)
+    |=  =hash:block:jael
+    =/  =number:block:jael  (hash-to-number hash)
     (logs-by-range number number)
   ::
   ++  logs-to-json

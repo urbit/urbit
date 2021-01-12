@@ -80,15 +80,18 @@
   [%remove g.i.entries m.i.entries]
 ::  archive graph associated with group
 ::
+=/  app-resource  (de-path-soft:res app-path.m.i.entries)
+?~  app-resource
+  loop(entries t.entries)
 ;<  ~  bind:m
   %+  raw-poke
     [our.bowl %graph-store]
   :-  %graph-update
   !>  ^-  update:gra
-  [%0 now.bowl [%archive-graph (de-path:res app-path.m.i.entries)]]
+  [%0 now.bowl [%archive-graph u.app-resource]]
 ;<  ~  bind:m
   %+  raw-poke
     [our.bowl %graph-pull-hook]
   :-  %pull-hook-action
-  !>([%remove (de-path:res app-path.m.i.entries)])
+  !>([%remove u.app-resource])
 loop(entries t.entries)
