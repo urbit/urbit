@@ -94,7 +94,7 @@ export function ChatNotification(props: {
           );
         })}
         {contents.length > 5 && (
-          <Box ml="4" mt="3" mb="2" color="gray" fontSize="14px">
+          <Box ml="4" mt="3" mb="2" color="gray" fontSize="1">
             and {contents.length - 5} other message
             {contents.length > 6 ? "s" : ""}
           </Box>

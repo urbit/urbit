@@ -11,8 +11,8 @@ import 'mousetrap-global-bind';
 
 import './css/indigo-static.css';
 import './css/fonts.css';
-import light from './themes/light';
-import dark from './themes/old-dark';
+import light from '@tlon/indigo-light';
+import dark from '@tlon/indigo-dark';
 
 import { Text, Anchor, Row } from '@tlon/indigo-react';
 
@@ -40,7 +40,7 @@ const Root = styled.div`
     background-size: cover;
     ` : p.background?.type === 'color' ? `
     background-color: ${p.background.color};
-    ` : ''
+    ` : `background-color: ${p.theme.colors.white};`
   }
   display: flex;
   flex-flow: column nowrap;
