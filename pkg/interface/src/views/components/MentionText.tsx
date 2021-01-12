@@ -44,7 +44,7 @@ export function Mention(props: {
   const { contacts, ship } = props;
   let { contact } = props;
 
-  contact = (contact?.nickname) ? contact : contacts?.[ship];
+  contact = (contact?.color) ? contact : contacts?.[ship];
 
   const showNickname = useShowNickname(contact);
 
