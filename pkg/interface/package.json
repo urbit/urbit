@@ -10,7 +10,7 @@
     "@reach/tabs": "^0.10.5",
     "@tlon/indigo-dark": "^1.0.6",
     "@tlon/indigo-light": "^1.0.6",
-    "@tlon/indigo-react": "1.2.15",
+    "@tlon/indigo-react": "1.2.16",
     "@tlon/sigil-js": "^1.4.3",
     "aws-sdk": "^2.726.0",
     "big-integer": "^1.6.48",
