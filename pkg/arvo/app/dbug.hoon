@@ -66,7 +66,7 @@
   ++  on-arvo
     |=  [=wire =sign-arvo]
     ^-  (quip card _this)
-    ?.  ?=([%e %bound *] sign-arvo)
+    ?.  ?=([%eyre %bound *] sign-arvo)
       (on-arvo:def wire sign-arvo)
     ~?  !accepted.sign-arvo
       [dap.bowl "bind rejected!" binding.sign-arvo]
@@ -362,7 +362,7 @@
       (gth expiry-time.a expiry-time.b)
     |=  [cookie=@uv session:eyre]
     %-  pairs
-    :~  'cookie'^s+(end 3 4 (rsh 3 2 (scot %x (shax cookie))))
+    :~  'cookie'^s+(end [3 4] (rsh [3 2] (scot %x (shax cookie))))
         'expiry'^(time expiry-time)
         'channels'^(numb ~(wyt in channels))
     ==

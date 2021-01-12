@@ -7,8 +7,8 @@
 ::::
   ::
 :-  %say
-|=  $:  {now/@da eny/@uvJ bec/beak}
-        {arg/(list term) ~}
+|=  $:  [now=@da eny=@uvJ bec=beak]
+        [arg=(list term) ~]
     ==
 :+  %helm-reload-desk  %base
 arg

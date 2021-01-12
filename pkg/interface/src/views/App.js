@@ -14,6 +14,8 @@ import './css/fonts.css';
 import light from '@tlon/indigo-light';
 import dark from '@tlon/indigo-dark';
 
+import { Text, Anchor, Row } from '@tlon/indigo-react';
+
 import { Content } from './landscape/components/Content';
 import StatusBar from './components/StatusBar';
 import Omnibox from './components/leap/Omnibox';
@@ -24,6 +26,8 @@ import GlobalSubscription from '~/logic/subscription/global';
 import GlobalApi from '~/logic/api/global';
 import { uxToHex } from '~/logic/lib/util';
 import { foregroundFromBackground } from '~/logic/lib/sigil';
+import { withLocalState } from '~/logic/state/local';
+
 
 const Root = styled.div`
   font-family: ${p => p.theme.fonts.sans};
@@ -83,23 +87,29 @@ class App extends React.Component {
   componentDidMount() {
     this.subscription.start();
     this.themeWatcher = window.matchMedia('(prefers-color-scheme: dark)');
-    this.api.local.setDark(this.themeWatcher.matches);
-    this.themeWatcher.addListener(this.updateTheme);
+    this.themeWatcher.onchange = this.updateTheme;
+    setTimeout(() => {
+      // Something about how the store works doesn't like changing it
+      // before the app has actually rendered, hence the timeout.
+      this.updateTheme(this.themeWatcher);
+    }, 500);
     this.api.local.getBaseHash();
     this.store.rehydrate();
     Mousetrap.bindGlobal(['command+/', 'ctrl+/'], (e) => {
       e.preventDefault();
       e.stopImmediatePropagation();
-      this.api.local.setOmnibox();
+      this.props.toggleOmnibox();
     });
   }
 
   componentWillUnmount() {
-    this.themeWatcher.removeListener(this.updateTheme);
+    this.themeWatcher.onchange = undefined;
   }
 
   updateTheme(e) {
-    this.api.local.setDark(e.matches);
+    this.props.set(state => {
+      state.dark = e.matches;
+    });
   }
 
   faviconString() {
@@ -119,11 +129,17 @@ class App extends React.Component {
   }
 
   render() {
-    const { state } = this;
+    const { state, props } = this;
     const associations = state.associations ?
       state.associations : { contacts: {} };
-    const theme = state.dark ? dark : light;
-    const { background } = state;
+    const theme = props.dark ? dark : light;
+    const background = this.props.background;
+
+    const notificationsCount = state.notificationsCount || 0;
+    const doNotDisturb = state.doNotDisturb || false;
+
+    const showBanner = localStorage.getItem("2020BreachBanner") || "flex";
+    let banner = null;
 
     return (
       <ThemeProvider theme={theme}>
@@ -143,6 +159,8 @@ class App extends React.Component {
                 connection={this.state.connection}
                 subscription={this.subscription}
                 ship={this.ship}
+                doNotDisturb={doNotDisturb}
+                notificationsCount={notificationsCount}
               />
             </ErrorBoundary>
             <ErrorBoundary>
@@ -150,9 +168,10 @@ class App extends React.Component {
                 associations={state.associations}
                 apps={state.launch}
                 api={this.api}
-                dark={state.dark}
+                notifications={state.notificationsCount}
+                invites={state.invites}
                 groups={state.groups}
-                show={state.omniboxShown}
+                show={this.props.omniboxShown}
               />
             </ErrorBoundary>
             <ErrorBoundary>
@@ -171,5 +190,5 @@ class App extends React.Component {
   }
 }
 
-export default process.env.NODE_ENV === 'production' ? App : hot(App);
+export default withLocalState(process.env.NODE_ENV === 'production' ? App : hot(App));
 

@@ -87,6 +87,10 @@ h2 {
   mix-blend-mode: difference;
 }
 
+.mix-blend-darken {
+  mix-blend-mode: darken;
+}
+
 .placeholder-inter::placeholder {
   font-family: "Inter", sans-serif;
 }

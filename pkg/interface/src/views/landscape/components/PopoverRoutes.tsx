@@ -3,16 +3,15 @@ import { Route, Switch, RouteComponentProps, Link } from "react-router-dom";
 import { Box, Row, Col, Icon, Text } from "@tlon/indigo-react";
 import { useOutsideClick } from "~/logic/lib/useOutsideClick";
 import { HoverBoxLink } from "~/views/components/HoverBox";
-import { Contacts } from "~/types/contact-update";
+import { Contacts, Contact } from "~/types/contact-update";
 import { Group } from "~/types/group-update";
 import { Association } from "~/types/metadata-update";
 import GlobalApi from "~/logic/api/global";
-import {S3State} from "~/types";
+import {GroupNotificationsConfig, S3State} from "~/types";
 
 import { ContactCard } from "./ContactCard";
-import { GroupSettings } from "./GroupSettings";
+import { GroupSettings } from "./GroupSettings/GroupSettings";
 import { Participants } from "./Participants";
-
 
 const SidebarItem = ({ selected, icon, text, to }) => {
   return (
@@ -39,8 +38,8 @@ export function PopoverRoutes(
     association: Association;
     s3: S3State;
     api: GlobalApi;
-    hideAvatars: boolean;
-    hideNicknames: boolean;
+    notificationsGroupConfig: GroupNotificationsConfig;
+    rootIdentity: Contact;
   } & RouteComponentProps
 ) {
   const relativeUrl = (url: string) => `${props.baseUrl}/popover${url}`;
@@ -125,6 +124,7 @@ export function PopoverRoutes(
                         group={props.group}
                         association={props.association}
                         api={props.api}
+                        notificationsGroupConfig={props.notificationsGroupConfig}
                       />
                     )}
                     {view === "participants" && (
@@ -133,13 +133,12 @@ export function PopoverRoutes(
                         contacts={props.contacts}
                         association={props.association}
                         api={props.api}
-                        hideAvatars={props.hideAvatars}
-                        hideNicknames={props.hideNicknames}
                       />
                     )}
                     {view === "profile" && (
                       <ContactCard
                         contact={props.contacts[window.ship]}
+                        rootIdentity={props.rootIdentity}
                         api={props.api}
                         path={props.association["group-path"]}
                         s3={props.s3}

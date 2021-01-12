@@ -12,9 +12,8 @@ module Urbit.Noun.Convert
 
 import ClassyPrelude hiding (hash)
 
+import Control.Monad.Fail (MonadFail (fail))
 import Urbit.Noun.Core
-
-import qualified Control.Monad.Fail as Fail
 
 
 -- Types -----------------------------------------------------------------------
@@ -22,85 +21,13 @@ import qualified Control.Monad.Fail as Fail
 type ParseStack = [Text]
 
 
--- IResult ---------------------------------------------------------------------
-
-data IResult a = IError ParseStack String | ISuccess a
-  deriving (Eq, Show, Typeable, Functor, Foldable, Traversable)
-
-instance Applicative IResult where
-    pure  = ISuccess
-    (<*>) = ap
-
-instance Fail.MonadFail IResult where
-    fail err = IError [] err
-
-instance Monad IResult where
-    return = pure
-    fail   = Fail.fail
-    ISuccess a      >>= k = k a
-    IError path err >>= _ = IError path err
-
-instance MonadPlus IResult where
-    mzero = fail "mzero"
-    mplus a@(ISuccess _) _ = a
-    mplus _ b              = b
-
-instance Alternative IResult where
-    empty = mzero
-    (<|>) = mplus
-
-instance Semigroup (IResult a) where
-    (<>) = mplus
-
-instance Monoid (IResult a) where
-    mempty  = fail "mempty"
-    mappend = (<>)
-
-
--- Result ----------------------------------------------------------------------
-
-data Result a = Error String | Success a
-  deriving (Eq, Show, Typeable, Functor, Foldable, Traversable)
-
-instance Applicative Result where
-    pure  = Success
-    (<*>) = ap
-
-instance Fail.MonadFail Result where
-    fail err = Error err
-
-instance Monad Result where
-    return = pure
-    fail   = Fail.fail
-
-    Success a >>= k = k a
-    Error err >>= _ = Error err
-
-instance MonadPlus Result where
-    mzero = fail "mzero"
-    mplus a@(Success _) _ = a
-    mplus _ b             = b
-
-instance Alternative Result where
-    empty = mzero
-    (<|>) = mplus
-
-instance Semigroup (Result a) where
-    (<>) = mplus
-    {-# INLINE (<>) #-}
-
-instance Monoid (Result a) where
-    mempty  = fail "mempty"
-    mappend = (<>)
-
-
 -- "Parser" --------------------------------------------------------------------
 
-type Failure f r   = ParseStack -> String -> f r
-type Success a f r = a -> f r
+type Failure a   = ParseStack -> String -> a
+type Success a b = a -> b
 
 newtype Parser a = Parser {
-  runParser :: forall f r.  ParseStack -> Failure f r -> Success a f r -> f r
+  runParser :: forall r. ParseStack -> Failure r -> Success a r -> r
 }
 
 named :: Text -> Parser a -> Parser a
@@ -111,9 +38,8 @@ instance Monad Parser where
     m >>= g = Parser $ \path kf ks -> let ks' a = runParser (g a) path kf ks
                                        in runParser m path kf ks'
     return = pure
-    fail = Fail.fail
 
-instance Fail.MonadFail Parser where
+instance MonadFail Parser where
     fail msg = Parser $ \path kf _ks -> kf (reverse path) msg
 
 instance Functor Parser where
@@ -160,13 +86,13 @@ fromNoun :: FromNoun a => Noun -> Maybe a
 fromNoun n = runParser (parseNoun n) [] onFail onSuccess
   where
     onFail p m  = Nothing
-    onSuccess x = Just x
+    onSuccess !x = Just x
 
 fromNounErr :: FromNoun a => Noun -> Either ([Text], Text) a
 fromNounErr n = runParser (parseNoun n) [] onFail onSuccess
   where
     onFail p m  = Left (p, pack m)
-    onSuccess x = Right x
+    onSuccess !x = Right x
 
 data BadNoun = BadNoun [Text] String
   deriving (Eq, Ord)
@@ -186,7 +112,7 @@ fromNounExn :: MonadIO m => FromNoun a => Noun -> m a
 fromNounExn n = runParser (parseNoun n) [] onFail onSuccess
   where
     onFail p m  = throwIO (BadNoun p m)
-    onSuccess x = pure x
+    onSuccess !x = pure x
 
 
 -- Cord Conversions ------------------------------------------------------------

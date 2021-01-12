@@ -10,6 +10,7 @@ import {
   Box,
   Text,
   Row,
+  BaseImage
 } from "@tlon/indigo-react";
 import { Formik, FormikHelpers } from "formik";
 import { Contact } from "~/types/contact-update";
@@ -18,12 +19,14 @@ import { ColorInput } from "~/views/components/ColorInput";
 import GlobalApi from "~/logic/api/global";
 import { ImageInput } from "~/views/components/ImageInput";
 import { S3State } from "~/types";
+import useLocalState from "~/logic/state/local";
 
 interface ContactCardProps {
   contact: Contact;
   path: string;
   api: GlobalApi;
   s3: S3State;
+  rootIdentity: Contact;
 }
 
 const formSchema = Yup.object({
@@ -63,19 +66,25 @@ const emptyContact = {
   nickname: '',
   email: '',
   phone: '',
-  website: '', 
+  website: '',
   notes: ''
 };
 
 export function ContactCard(props: ContactCardProps) {
+  const { hideAvatars, hideNicknames } = useLocalState(({ hideAvatars, hideNicknames }) => ({
+    hideAvatars, hideNicknames
+  }));
   const us = `~${window.ship}`;
-  const { contact } = props;
-  const onSubmit = async (values: Contact, actions: FormikHelpers<Contact>) => {
+  const { contact, rootIdentity } = props;
+  const onSubmit = async (values: any, actions: FormikHelpers<Contact>) => {
     try {
       if(!contact) {
         const [,,ship] = props.path.split('/');
         values.color = uxToHex(values.color);
-        await props.api.contacts.share(ship, props.path, us, values)
+        const sharedValues = Object.assign({}, values);
+        sharedValues.avatar = !values.avatar ? null : { url: values.avatar };
+        console.log(values);
+        await props.api.contacts.share(ship, props.path, us, sharedValues);
         actions.setStatus({ success: null });
         return;
       }
@@ -107,12 +116,17 @@ export function ContactCard(props: ContactCardProps) {
   };
 
   const hexColor = contact?.color ? `#${uxToHex(contact.color)}` : "#000000";
+  const image = (!hideAvatars && contact?.avatar)
+    ? <BaseImage src={contact.avatar} width='100%' height='100%' style={{ objectFit: 'cover' }} />
+    : <Sigil ship={us} size={32} color={hexColor} />;
+
+  const nickname = (!hideNicknames && contact?.nickname) ? contact.nickname : "";
 
   return (
     <Box p={4} height="100%" overflowY="auto">
       <Formik
         validationSchema={formSchema}
-        initialValues={contact || emptyContact}
+        initialValues={contact || rootIdentity || emptyContact}
         onSubmit={onSubmit}
       >
         <Form
@@ -128,9 +142,11 @@ export function ContactCard(props: ContactCardProps) {
             pb={3}
             alignItems="center"
           >
-            <Sigil size={32} classes="" color={hexColor} ship={us} />
+            <Box height='32px' width='32px'>
+              {image}
+            </Box>
             <Box ml={2}>
-              <Text fontFamily="mono">{us}</Text>
+              <Text mono={!Boolean(nickname)}>{nickname}</Text>
             </Box>
           </Row>
           <ImageInput id="avatar" label="Avatar" s3={props.s3} />
@@ -141,7 +157,7 @@ export function ContactCard(props: ContactCardProps) {
           <Input id="website" label="Website" />
           <Input id="notes" label="Notes" />
           <AsyncButton primary loadingText="Updating..." border>
-            Save
+            {(contact) ? "Save" : "Share Contact"}
           </AsyncButton>
         </Form>
       </Formik>

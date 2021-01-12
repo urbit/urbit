@@ -4,7 +4,7 @@
 ::
 ::    group-store stores groups of ships, so that resources in other apps can be
 ::    associated with a group. The current model of group-store rolls
-::    permissions and invites inside this store for simplicity reasons, although
+::    and invites inside this store for simplicity reasons, although
 ::    these should be prised apart in a future revision of group store.
 ::
 ::
@@ -29,8 +29,8 @@
 ::      Modify the group. Further documented in /sur/group-store.hoon
 ::
 ::
-/-  *group, permission-store
-/+  store=group-store, default-agent, verb, dbug, resource
+/-  *group, *contact-view
+/+  store=group-store, default-agent, verb, dbug, resource, *migrate
 |%
 +$  card  card:agent:gall
 ::
@@ -166,11 +166,11 @@
     ?>  (team:title our.bowl src.bowl)
     =^  cards  state
       ?+    mark  (on-poke:def mark vase)
-        %noun  (poke-noun:gc vase)
-        ::
           ?(%group-update %group-action)
         (poke-group-update:gc !<(update:store vase))
-        ::
+      ::
+          %import
+        (poke-import:gc q.vase)
       ==
     [cards this]
   ::
@@ -214,10 +214,42 @@
         (slav %p i.t.t.t.t.t.t.path)
       ?~  rid  ~
       ``noun+!>((peek-group-join u.rid ship))
+    ::
+        [%x %export ~]
+      ``noun+!>(state)
     ==
   ::
-  ++  on-agent  on-agent:def
-  ++  on-arvo   on-arvo:def
+  ++  on-agent
+    |=  [=wire =sign:agent:gall]
+    ^-  (quip card _this)
+    ?.  ?=([%try-rejoin @ *] wire)
+      (on-agent:def wire sign)
+    ?>  ?=(%poke-ack -.sign)
+    =/  rid=resource  (de-path:resource t.t.wire)
+    ?~  p.sign
+      =/  =cage
+        [%pull-hook-action !>([%add entity.rid rid])]
+      :_  this
+      [%pass / %agent [our.bowl %group-pull-hook] %poke cage]~
+    =/  nack-count=@ud  (slav %ud i.t.wire)
+    =/  wakeup=@da
+      (add now.bowl (mul ~s1 (bex (min 19 nack-count))))
+    :_  this
+    [%pass wire %arvo %b %wait wakeup]~
+  ::
+  ++  on-arvo
+    |=  [=wire =sign-arvo]
+    ^-  (quip card _this)
+    ?.  ?=([%try-rejoin @ *] wire)
+      (on-arvo:def wire sign-arvo)
+    =/  =resource       (de-path:resource t.t.wire)
+    =/  nack-count=@ud  (slav %ud i.t.wire)
+    ?>  ?=([%behn %wake *] sign-arvo)
+    ~?  ?=(^ error.sign-arvo)
+      "behn errored in backoff timers, continuing anyway"
+    :_  this
+    [(try-rejoin:gc resource +(nack-count))]~
+  ::
   ++  on-fail   on-fail:def
   --
 ::
@@ -226,7 +258,7 @@
   |=  rid=resource
   ^-  (unit group)
   (~(get by groups) rid)
-
+::
 ++  peek-group-join
   |=  [rid=resource =ship]
   =/  ugroup
@@ -246,92 +278,76 @@
       (~(has in ban-ranks.policy) (clan:title ship))
     ==
   ==
-++  poke-noun
-  |=  =vase
+::
+++  poke-import
+  |=  arc=*
   ^-  (quip card _state)
-  =/  noun
-    !<(%perm-upgrade vase)
   |^
-  =/  perms=(list path)
-    ~(tap in scry-permissions)
-  |-
-  ?~  perms
-    `state
-  =*  pax  i.perms
-  ?>  ?=(^ pax)
-  ?:  |(!=('~' i.pax) =(4 (lent pax)))
-    $(perms t.perms)
-  =/  rid=resource
-    (make-rid t.pax)
-  =/  perm
-    (scry-group-permissions pax)
-  ?~  perm
-    $(perms t.perms)
-  ?:  (~(has by groups) rid)
-    %_    $
-      perms  t.perms
-    ::
-        groups
-      %+  ~(jab by groups)  rid
-      (update-existing u.perm)
+  =/  sty=state-one
+    [%1 (remake-groups ;;((tree [resource tree-group]) +.arc))]
+  :_  sty
+  %+  roll  ~(tap by groups.sty)
+  |=  [[rid=resource grp=group] out=(list card)]
+  ?:  =(entity.rid our.bol)
+    %+  weld  out
+    %+  roll  ~(tap in members.grp)
+    |=  [recipient=@p out=(list card)]
+    ?:  =(recipient our.bol)
+      out
+    :_  out
+    %-  poke-contact
+    :*  %invite  rid  recipient
+        (crip "Rejoin disconnected group {<entity.rid>}/{<name.rid>}")
     ==
-  %_    $
-    perms  t.perms
-    ::
-        groups
-    %+  ~(put by groups)  rid
-    (add-new u.perm)
-  ==
-  ++  make-rid
-    |=  =path
-    ^-  resource
-    ?>  ?=([@ @ *] path)
-    :-  (slav %p i.path)
-    i.t.path
+  :_  out
+  (try-rejoin rid 0)
   ::
-  ++  add-new
-    |=  =permission:permission-store
+  ++  remake-groups
+    |=  grps=(tree [resource tree-group])
+    ^-  ^groups
+    %-  remake-map
+    (~(run by grps) remake-group)
+  ::
+  ++  remake-group
+    |=  grp=tree-group
     ^-  group
-    ?:  ?=(%black kind.permission)
-      [~ ~ [%open ~ who.permission] %.y]
-    [who.permission ~ [%invite ~] %.y]
-  ::
-  ++  update-existing
-    |=  =permission:permission-store
-    |=  =group
-    ^+  group
-    ?:  ?=(%black kind.permission)
-      group
-    ?>  ?=(%invite -.policy.group)
-    %_  group
-      members  (~(uni in members.group) who.permission)
+    %=  grp
+      members  (remake-set members.grp)
+      tags     (remake-jug tags.grp)
+      policy   (remake-policy policy.grp)
     ==
   ::
-  ++  scry-permissions
-    ^-  (set path)
-    .^  (set path)
-      %gx
-      (scot %p our.bol)
-      %permission-store
-      (scot %da now.bol)
-      /keys/noun
+  +$  tree-group
+    $:  members=(tree ship)
+        tags=(tree [tag (tree ship)])
+        policy=tree-policy
+        hidden=?
     ==
   ::
-  ++  scry-group-permissions
-    |=  pax=path
-    ^-  (unit permission:permission-store)
-    .^  (unit permission:permission-store)
-      %gx
-      (scot %p our.bol)
-      %permission-store
-      (scot %da now.bol)
-      ;:  weld
-        /permission
-        pax
-        /noun
-      ==
+  +$  tree-policy
+    $%  [%invite pending=(tree ship)]
+        [%open ban-ranks=(tree rank:title) banned=(tree ship)]
+    ==
+  ::
+  ++  remake-policy
+    |=  pl=tree-policy
+    ^-  policy
+    ?-  -.pl
+      %invite  [%invite (remake-set pending.pl)]
+      %open    [%open (remake-set ban-ranks.pl) (remake-set banned.pl)]
     ==
   --
+::
+++  try-rejoin
+  |=  [rid=resource nack-count=@ud]
+  ^-  card
+  =/  =cage
+    :-  %group-update
+    !>  ^-  update:store
+    [%add-members rid (sy our.bol ~)]
+  =/  =wire
+    [%try-rejoin (scot %ud nack-count) (en-path:resource rid)]
+  [%pass wire %agent [entity.rid %group-push-hook] %poke cage]
 ::
 ++  poke-group-update
   |=  =update:store
@@ -604,6 +620,11 @@
   |=  =action:store
   ^-  card
   [%pass / %agent [our.bol %group-store] %poke %group-action !>(action)]
+::
+++  poke-contact
+  |=  act=contact-view-action
+  ^-  card
+  [%pass / %agent [our.bol %contact-view] %poke %contact-view-action !>(act)]
 ::  +send-diff: update subscribers of new state
 ::
 ::    We only allow subscriptions on /groups

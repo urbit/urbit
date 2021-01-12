@@ -6,7 +6,7 @@
 /+  default-agent
 /+  dbug
 /+  push-hook
-~%  %graph-push-hook-top  ..is  ~
+~%  %graph-push-hook-top  ..part  ~
 |%
 +$  card  card:agent:gall
 ++  config
@@ -124,6 +124,8 @@
     (get-graph:gra resource)
   ::  resubscribe
   ::
+  ?~  (get-update-log:gra resource)
+    (get-graph:gra resource)
   =/  =time  (slav %da i.path)
   =/  =update-log:store  (get-update-log-subset:gra resource time)
   [%0 now.bowl [%run-updates resource update-log]]

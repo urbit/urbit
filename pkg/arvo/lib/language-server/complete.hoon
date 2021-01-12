@@ -9,7 +9,7 @@
 ::  Like +rose except also produces line number
 ::
 ++  lily
-  |*  {los/tape sab/rule}
+  |*  [los=tape sab=rule]
   =+  vex=(sab [[1 1] los])
   ?~  q.vex
     [%| p=p.vex(q (dec q.p.vex))]
@@ -87,7 +87,7 @@
   %+  skim  ids
   |=  [id=cord *]
   ^-  ?(%.y %.n)
-  =(sid (end 3 (met 3 sid) id))
+  =(sid (end [3 (met 3 sid)] id))
 ::
 ::  Get the longest prefix of a list of identifiers.
 ::
@@ -101,14 +101,14 @@
   |-  ^-  term
   ?:  (gth n last)
     term.i.matches
-  =/  prefix  (end 3 n term.i.matches)
+  =/  prefix  (end [3 n] term.i.matches)
   ?:  |-  ^-  ?
       ?|  ?=(~ t.matches)
-          ?&  =(prefix (end 3 n term.i.t.matches))
+          ?&  =(prefix (end [3 n] term.i.t.matches))
               $(t.matches t.t.matches)
       ==  ==
     $(n +(n))
-  (end 3 (dec n) term.i.matches)
+  (end [3 (dec n)] term.i.matches)
 ::
 ::  Run +find-type safely, printing the first line of the stack trace on
 ::  error.
@@ -142,9 +142,8 @@
     `['' (~(play ut sut) wing+t.p.gen)]
   ::
       [^ *]      (both p.gen q.gen)
-      [%ktcn *]  loop(gen p.gen)
       [%brcn *]  (grow q.gen)
-      [%brvt *]  (grow q.gen)
+      [%brpt *]  (grow q.gen)
       [%cnts *]
     |-  ^-  (unit [term type])
     =*  inner-loop  $
@@ -165,13 +164,13 @@
       [%hand *]  ~
       [%ktbr *]  loop(gen p.gen)
       [%ktls *]  (both p.gen q.gen)
-      [%ktpd *]  loop(gen p.gen)
+      [%ktpm *]  loop(gen p.gen)
       [%ktsg *]  loop(gen p.gen)
       [%ktwt *]  loop(gen p.gen)
       [%note *]  loop(gen q.gen)
       [%sgzp *]  (both p.gen q.gen)
-      [%sgbn *]  loop(gen q.gen)  ::  should check for hoon in p.gen
-      [%tsbn *]  (change p.gen q.gen)
+      [%sggr *]  loop(gen q.gen)  ::  should check for hoon in p.gen
+      [%tsgr *]  (change p.gen q.gen)
       [%tscm *]
     %+  replace
       loop(gen p.gen)
@@ -185,7 +184,7 @@
       [%lost *]  loop(gen p.gen)
       [%zpmc *]  (both p.gen q.gen)
       [%zpts *]  loop(gen p.gen)
-      [%zpvt *]  (both q.gen r.gen)
+      [%zppt *]  (both q.gen r.gen)
       [%zpzp *]  ~
       *
     =+  doz=~(open ap gen)
@@ -370,7 +369,7 @@
   :-  %leaf
   =/  c  (to-wain:format a)
   ?~  c  "~"
-  ?.  =('::  ' (end 3 4 i.c))
+  ?.  =('::  ' (end [3 4] i.c))
     "<undocumented>"
   (trip i.c)
 --

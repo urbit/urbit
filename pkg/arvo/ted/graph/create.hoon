@@ -19,6 +19,8 @@
   =/  =action:group-store
     [%add-group rid policy.associated %&]
   ;<  ~  bind:m  (poke-our %group-store %group-action !>(action))
+  ;<  =bowl:spider  bind:m  get-bowl:strandio
+  ;<  ~  bind:m  (poke-our %group-store %group-action !>([%add-members rid (sy our.bowl ~)]))
   ;<  ~  bind:m
     (poke-our %group-push-hook %push-hook-action !>([%add rid]))
   (pure:m rid)
@@ -29,7 +31,7 @@
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m
-=+  !<([=action:graph-view ~] arg)
+=+  !<([~ =action:graph-view] arg)
 ?>  ?=(%create -.action)
 ;<  =bowl:spider  bind:m  get-bowl:strandio
 ::
@@ -37,8 +39,10 @@
 ::
 ?.  =(our.bowl entity.rid.action)
   (strand-fail:strandio %bad-request ~)
+=/  overwrite=?
+  ?=(%policy -.associated.action)
 =/  =update:graph
-  [%0 now.bowl %add-graph rid.action *graph:graph mark.action]
+  [%0 now.bowl %add-graph rid.action *graph:graph mark.action overwrite]
 ;<  ~  bind:m
   (poke-our %graph-store graph-update+!>(update))
 ;<  ~  bind:m

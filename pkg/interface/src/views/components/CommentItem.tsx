@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
-import { Comment, NoteId } from '~/types/publish-update';
+import { Link } from "react-router-dom";
 import { Contacts } from '~/types/contact-update';
 import GlobalApi from '~/logic/api/global';
-import { Box, Row } from '@tlon/indigo-react';
+import { Box, Row, Text } from '@tlon/indigo-react';
 import styled from 'styled-components';
-import { Author } from '~/views/apps/publish/components/Author';
+import Author from '~/views/components/Author';
 import { GraphNode, TextContent } from '~/types/graph-update';
 import tokenizeMessage from '~/logic/lib/tokenizeMessage';
-import RichText from '~/views/components/RichText';
-import { LocalUpdateRemoteContentPolicy } from '~/types';
+import { Group } from '~/types';
+import { MentionText } from '~/views/components/MentionText';
+import { getLatestCommentRevision } from '~/logic/lib/publish';
 
 const ClickBox = styled(Box)`
   cursor: pointer;
@@ -18,50 +19,63 @@ const ClickBox = styled(Box)`
 interface CommentItemProps {
   pending?: boolean;
   comment: GraphNode;
+  baseUrl: string;
   contacts: Contacts;
+  unread: boolean;
   name: string;
   ship: string;
   api: GlobalApi;
-  hideNicknames: boolean;
-  hideAvatars: boolean;
-  remoteContentPolicy: LocalUpdateRemoteContentPolicy;
+  group: Group;
 }
 
 export function CommentItem(props: CommentItemProps) {
-  const { ship, contacts, name, api, remoteContentPolicy } = props;
-  const commentData = props.comment?.post;
-  const comment = commentData.contents[0] as TextContent;
-
-  const content = tokenizeMessage(comment.text).flat().join(' ');
-
-  const disabled = props.pending || window.ship !== commentData.author;
+  const { ship, contacts, name, api, comment, group } = props;
+  const [revNum, post] = getLatestCommentRevision(comment);
+  const disabled = props.pending || window.ship !== post?.author;
 
   const onDelete = async () => {
-    await api.graph.removeNodes(ship, name, [commentData?.index]);
+    await api.graph.removeNodes(ship, name, [comment.post?.index]);
   };
 
+  const commentIndexArray = (comment.post?.index || '/').split('/');
+  const commentIndex = commentIndexArray[commentIndexArray.length - 1];
+  const updateUrl = `${props.baseUrl}/${commentIndex}`
+
   return (
-    <Box mb={4} opacity={commentData?.pending ? '60%' : '100%'}>
+    <Box mb={4} opacity={post?.pending ? '60%' : '100%'}>
       <Row bg="white" my={3}>
         <Author
           showImage
           contacts={contacts}
-          ship={commentData?.author}
-          date={commentData?.['time-sent']}
-          hideAvatars={props.hideAvatars}
-          hideNicknames={props.hideNicknames}
+          ship={post?.author}
+          date={post?.['time-sent']}
+          unread={props.unread}
+          group={group}
+          api={api}
         >
           {!disabled && (
-            <>
-              <ClickBox color="red" onClick={onDelete}>
+            <Box display="inline-block" verticalAlign="middle">
+              <Link to={updateUrl}>
+                <Text
+                  color="green"
+                  ml={2}
+                >
+                  Update
+                </Text>
+              </Link>
+              <ClickBox display="inline-block" color="red" onClick={onDelete}>
                 Delete
               </ClickBox>
-            </>
+            </Box>
           )}
         </Author>
       </Row>
       <Box mb={2}>
-        <RichText className="f9 white-d" remoteContentPolicy={remoteContentPolicy}>{content}</RichText>
+        <MentionText
+          contacts={contacts}
+          group={group}
+          content={post?.contents}
+        />
       </Box>
     </Box>
   );

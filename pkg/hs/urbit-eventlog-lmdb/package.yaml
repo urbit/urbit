@@ -14,6 +14,7 @@ library:
 
 dependencies:
   - base
+  - cereal
   - classy-prelude
   - stm
   - rio

@@ -1,15 +1,19 @@
 import React, { Component } from "react";
 import { Col } from "@tlon/indigo-react";
 import { NotePreview } from "./NotePreview";
-import { Contacts, Graph } from "~/types";
+import { Contacts, Graph, Unreads, Group } from "~/types";
 
 interface NotebookPostsProps {
   contacts: Contacts;
   graph: Graph;
   host: string;
   book: string;
-  hideNicknames?: boolean;
   baseUrl: string;
+  unreads: Unreads;
+  hideAvatars?: boolean;
+  hideNicknames?: boolean;
+  api: GlobalApi;
+  group: Group;
 }
 
 export function NotebookPosts(props: NotebookPostsProps) {
@@ -22,10 +26,13 @@ export function NotebookPosts(props: NotebookPostsProps) {
               key={date.toString()}
               host={props.host}
               book={props.book}
+              unreads={props.unreads}
               contact={props.contacts[node.post.author]}
+              contacts={props.contacts}
               node={node}
-              hideNicknames={props.hideNicknames}
               baseUrl={props.baseUrl}
+              api={props.api}
+              group={props.group}
             />
           )
       )}

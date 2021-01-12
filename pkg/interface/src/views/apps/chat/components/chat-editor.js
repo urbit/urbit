@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import { UnControlled as CodeEditor } from 'react-codemirror2';
 import { MOBILE_BROWSER_REGEX } from "~/logic/lib/util";
 import CodeMirror from 'codemirror';
+import styled from "styled-components";
 
-import { Row, BaseInput } from '@tlon/indigo-react';
+import { Row, BaseTextArea, Box } from '@tlon/indigo-react';
 
 import 'codemirror/mode/markdown/markdown';
 import 'codemirror/addon/display/placeholder';
@@ -52,8 +53,39 @@ const inputProxy = (input) => new Proxy(input, {
     if (property === 'setValue') {
       return (val) => target.value = val;
     }
+    if (property === 'element') {
+      return input;
+    }
   }
 });
+
+const MobileBox = styled(Box)`
+  display: inline-grid;
+  vertical-align: center;
+  align-items: stretch;
+  position: relative;
+  justify-content: flex-start;
+  width: 100%;
+
+  &:after,
+  textarea {
+    grid-area: 2 / 1;
+    width: auto;
+    min-width: 1em;
+    font: inherit;
+    padding: 0.25em;
+    margin: 0;
+    resize: none;
+    background: none;
+    appearance: none;
+    border: none;
+  }
+  &::after {
+    content: attr(data-value) ' ';
+    visibility: hidden;
+    white-space: pre-wrap;
+  }
+`;
 
 export default class ChatEditor extends Component {
   constructor(props) {
@@ -167,24 +199,41 @@ export default class ChatEditor extends Component {
         color="black"
       >
         {MOBILE_BROWSER_REGEX.test(navigator.userAgent)
-          ? <BaseInput
-            fontFamily={inCodeMode ? 'Source Code Pro' : 'Inter'}
-            fontSize="14px"
-            style={{ width: '100%', background: 'transparent', color: 'currentColor' }}
-            placeholder={inCodeMode ? "Code..." : "Message..."}
-            onKeyUp={event => {
-              if (event.key === 'Enter') {
-                this.submit();
-              } else {
+          ? <MobileBox
+              data-value={this.state.message}
+              fontSize="14px"
+              lineHeight="tall"
+              onClick={event => {
+                if (this.editor) {
+                  this.editor.element.focus();
+                }
+              }}
+            >
+            <BaseTextArea
+              fontFamily={inCodeMode ? 'Source Code Pro' : 'Inter'}
+              fontSize="14px"
+              lineHeight="tall"
+              rows="1"
+              style={{ width: '100%', background: 'transparent', color: 'currentColor' }}
+              placeholder={inCodeMode ? "Code..." : "Message..."}
+              onChange={event => {
                 this.messageChange(null, null, event.target.value);
-              }
-            }}
-            ref={input => {
-              if (!input) return;
-              this.editor = inputProxy(input);
-            }}
-            {...props}
-          />
+              }}
+              onKeyDown={event => {
+                if (event.key === 'Enter') {
+                  event.preventDefault();
+                  this.submit();
+                } else {
+                  this.messageChange(null, null, event.target.value);
+                }
+              }}
+              ref={input => {
+                if (!input) return;
+                this.editor = inputProxy(input);
+              }}
+              {...props}
+            />
+          </MobileBox>
           : <CodeEditor
           className="lh-copy"
           value={message}

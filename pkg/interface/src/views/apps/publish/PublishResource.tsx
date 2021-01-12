@@ -35,10 +35,9 @@ export function PublishResource(props: PublishResourceProps) {
         history={props.history}
         match={props.match}
         location={props.location}
-        hideAvatars={props.hideAvatars}
-        hideNicknames={props.hideNicknames}
-        remoteContentPolicy={props.remoteContentPolicy}
+        unreads={props.unreads}
         graphs={props.graphs}
+        s3={props.s3}
       />
     </Box>
   );

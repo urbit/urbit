@@ -1,5 +1,5 @@
 /-  asn1
-/+  primitive-rsa, der, base64
+/+  primitive-rsa, der
 =*  rsa  primitive-rsa
 ::::  %/lib/pkcs
 |%
@@ -58,11 +58,11 @@
     ^-  wain
     :: XX validate label?
     :-  (rap 3 ['-----BEGIN ' lab '-----' ~])
-    =/  a  (en:base64 len `@`der)
+    =/  a  (en:base64:mimes:html len `@`der)
     |-  ^-  wain
     ?~  a
       [(rap 3 ['-----END ' lab '-----' ~]) ~]
-    [(end 3 64 a) $(a (rsh 3 64 a))]
+    [(end [3 64] a) $(a (rsh [3 64] a))]
   ::  +de:pem: PEM decode
   ::
   ++  de
@@ -74,7 +74,7 @@
     ?.  =((rap 3 ['-----BEGIN ' lab '-----' ~]) i.mep)  ~
     ?.  =((rap 3 ['-----END ' lab '-----' ~]) (snag a t.mep))  ~
     ^-  (unit [@ @])
-    (de:base64 (rap 3 (scag a t.mep)))
+    (de:base64:mimes:html (rap 3 (scag a t.mep)))
   --
 ::  |pkcs1: RSA asymmetric cryptography (rfc3447)
 ::

@@ -31,6 +31,7 @@ import { Dropdown } from '~/views/components/Dropdown';
 import GlobalApi from '~/logic/api/global';
 import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
 import styled from 'styled-components';
+import useLocalState from '~/logic/state/local';
 
 const TruncText = styled(Box)`
   white-space: nowrap;
@@ -104,10 +105,8 @@ export function Participants(props: {
   group: Group;
   association: Association;
   api: GlobalApi;
-  hideAvatars: boolean;
-  hideNicknames: boolean;
 }) {
-  const { api, hideAvatars, hideNicknames } = props;
+  const { api } = props;
   const tabFilters: Record<
     ParticipantsTabId,
     (p: Participant) => boolean
@@ -232,8 +231,6 @@ export function Participants(props: {
                       group={props.group}
                       contact={c}
                       association={props.association}
-                      hideAvatars={hideAvatars}
-                      hideNicknames={hideNicknames}
                     />
                   ))
                 ) : (
@@ -254,11 +251,12 @@ function Participant(props: {
   group: Group;
   role?: RoleTags;
   api: GlobalApi;
-  hideAvatars: boolean;
-  hideNicknames: boolean;
 }) {
   const { contact, association, group, api } = props;
   const { title } = association.metadata;
+  const { hideAvatars, hideNicknames } = useLocalState(
+    ({ hideAvatars, hideNicknames }) => ({ hideAvatars, hideNicknames })
+  );
 
   const color = uxToHex(contact.color);
   const isInvite = 'invite' in group.policy;
@@ -296,13 +294,13 @@ function Participant(props: {
   }, [api, association]);
 
   const avatar =
-    contact?.avatar !== null && !props.hideAvatars ? (
+    contact?.avatar !== null && !hideAvatars ? (
       <img src={contact.avatar} height={32} width={32} className="dib" />
     ) : (
       <Sigil ship={contact.patp} size={32} color={`#${color}`} />
     );
 
-  const hasNickname = contact.nickname && !props.hideNicknames;
+  const hasNickname = contact.nickname && !hideNicknames;
 
   return (
     <>
@@ -347,20 +345,20 @@ function Participant(props: {
               </Action>
               {props.role === 'admin' && (
                 <>
-                  {!isInvite && (
+                  {(!isInvite && contact.patp !== window.ship) && (
                     <StatelessAsyncAction onClick={onBan} bg="transparent">
                       <Text color="red">Ban from {title}</Text>
                     </StatelessAsyncAction>
                   )}
                   {role === 'admin' ? (
-                    <StatelessAsyncAction onClick={onDemote} bg="transparent">
+                    group?.tags?.role?.admin?.size > 1 && (<StatelessAsyncAction onClick={onDemote} bg="transparent">
                       Demote from Admin
-                    </StatelessAsyncAction>
+                    </StatelessAsyncAction>)
                   ) : (
                     <>
-                      <StatelessAsyncAction onClick={onKick} bg="transparent">
+                    {(contact.patp !== window.ship) && (<StatelessAsyncAction onClick={onKick} bg="transparent">
                         <Text color="red">Kick from {title}</Text>
-                      </StatelessAsyncAction>
+                      </StatelessAsyncAction>)}
                       <StatelessAsyncAction onClick={onPromote} bg="transparent">
                         Promote to Admin
                       </StatelessAsyncAction>

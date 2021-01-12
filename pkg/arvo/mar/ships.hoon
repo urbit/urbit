@@ -3,7 +3,7 @@
   ::
 /?    310
 =,  format
-|_  all/(list ship)
+|_  all=(list ship)
 ++  grab  |%
           ++  noun  (list ship)
           ++  json  (ar (su fed:ag)):dejs

@@ -49,7 +49,7 @@
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m
-=+  !<([=action:graph-view ~] arg)
+=+  !<([~ =action:graph-view] arg)
 ?>  ?=(%leave -.action)
 ;<  =bowl:spider  bind:m  get-bowl:strandio
 ?:  =(our.bowl entity.rid.action)
@@ -69,8 +69,8 @@
     (en-path:resource rid.action)
   [%graph (en-path:resource rid.action)]
 ;<  ~  bind:m
-  (poke-our %group-pull-hook %pull-hook-action !>([%remove rid.action]))
-;<  ~  bind:m
   (poke-our %group-store %group-action !>([%remove-group rid.action ~]))
+;<  ~  bind:m
+  (poke-our %group-pull-hook %pull-hook-action !>([%remove rid.action]))
 ;<  ~  bind:m  (delete-graph now.bowl rid.action)
 (pure:m !>(~))

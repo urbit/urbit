@@ -6,13 +6,14 @@ import { Link } from "react-router-dom";
 import { ChatResource } from "~/views/apps/chat/ChatResource";
 import { PublishResource } from "~/views/apps/publish/PublishResource";
 
-import RichText from '~/views/components/RichText';
+import RichText from "~/views/components/RichText";
 
 import { Association } from "~/types/metadata-update";
 import GlobalApi from "~/logic/api/global";
 import { RouteComponentProps, Route, Switch } from "react-router-dom";
 import { ChannelSettings } from "./ChannelSettings";
 import { ChannelMenu } from "./ChannelMenu";
+import { NotificationGraphConfig } from "~/types";
 
 const TruncatedBox = styled(Box)`
   white-space: nowrap;
@@ -22,6 +23,7 @@ const TruncatedBox = styled(Box)`
 
 type ResourceSkeletonProps = {
   association: Association;
+  notificationsGraphConfig: NotificationGraphConfig;
   api: GlobalApi;
   baseUrl: string;
   children: ReactNode;
@@ -33,14 +35,9 @@ export function ResourceSkeleton(props: ResourceSkeletonProps) {
   const { association, api, baseUrl, children, atRoot } = props;
   const app = association?.metadata?.module || association["app-name"];
   const appPath = association["app-path"];
-  const workspace = (baseUrl === '/~landscape/home') ? '/home' : association["group-path"];
+  const workspace =
+    baseUrl === "/~landscape/home" ? "/home" : association["group-path"];
   const title = props.title || association?.metadata?.title;
-  const disableRemoteContent = {
-    audioShown: false,
-    imageShown: false,
-    oembedShown: false,
-    videoShown: false
-  };
   return (
     <Col width="100%" height="100%" overflowY="hidden">
       <Box
@@ -64,11 +61,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps) {
             <Link to={`/~landscape${workspace}`}> {"<- Back"}</Link>
           </Box>
         ) : (
-          <Box
-            color="blue"
-            pr={2}
-            mr={2}
-          >
+          <Box color="blue" pr={2} mr={2}>
             <Link to={`/~landscape${workspace}/resource/${app}${appPath}`}>
               <Text color="blue">Go back to channel</Text>
             </Link>
@@ -78,22 +71,34 @@ export function ResourceSkeleton(props: ResourceSkeletonProps) {
         {atRoot && (
           <>
             <Box pr={1} mr={2}>
-              <Text display='inline-block' verticalAlign='middle'>{title}</Text>
+              <Text display="inline-block" verticalAlign="middle">
+                {title}
+              </Text>
             </Box>
             <TruncatedBox
               display={["none", "block"]}
               maxWidth="60%"
-              verticalAlign='middle'
+              verticalAlign="middle"
               flexShrink={1}
               title={association?.metadata?.description}
               color="gray"
             >
-              <RichText color='gray' remoteContentPolicy={disableRemoteContent} mb='0' display='inline-block'>
-              {association?.metadata?.description}
+              <RichText
+                color="gray"
+                mb="0"
+                display="inline-block"
+                disableRemoteContent
+              >
+                {association?.metadata?.description}
               </RichText>
             </TruncatedBox>
             <Box flexGrow={1} />
-            <ChannelMenu association={association} api={api} />
+            <ChannelMenu
+              graphNotificationConfig={props.notificationsGraphConfig}
+              chatNotificationConfig={props.notificationsChatConfig}
+              association={association}
+              api={api}
+            />
           </>
         )}
       </Box>

@@ -1,7 +1,8 @@
-import React, { useCallback } from "react";
-import { UnControlled as CodeEditor } from "react-codemirror2";
+import React, { createRef, useCallback, useRef } from "react";
+import { IUnControlledCodeMirror, UnControlled as CodeEditor } from "react-codemirror2";
 import { useFormikContext } from 'formik';
 import { Prompt } from 'react-router-dom';
+import { Editor } from 'codemirror';
 
 import { MOBILE_BROWSER_REGEX, usePreventWindowUnload } from "~/logic/lib/util";
 import { PropFunc } from "~/types/util";
@@ -12,6 +13,10 @@ import "codemirror/addon/display/placeholder";
 
 import "codemirror/lib/codemirror.css";
 import { Box } from "@tlon/indigo-react";
+import { useFileDrag } from "~/logic/lib/useDrag";
+import SubmitDragger from "~/views/components/SubmitDragger";
+import useS3 from "~/logic/lib/useS3";
+import { S3State } from "~/types";
 
 const MARKDOWN_CONFIG = {
   name: "markdown",
@@ -22,6 +27,7 @@ interface MarkdownEditorProps {
   value: string;
   onChange: (s: string) => void;
   onBlur?: (e: any) => void;
+  s3: S3State;
 }
 
 const PromptIfDirty = () => {
@@ -50,6 +56,8 @@ export function MarkdownEditor(
     placeholder: placeholder || "",
   };
 
+  const editor: React.RefObject<any> = useRef();
+
   const handleChange = useCallback(
     (_e, _d, v: string) => {
       onChange(v);
@@ -64,10 +72,33 @@ export function MarkdownEditor(
     [onBlur]
   );
 
+  const { uploadDefault, canUpload } = useS3(props.s3);
+
+  const onFileDrag = useCallback(
+    async (files: FileList | File[], e: DragEvent) => {
+      if (!canUpload || !editor.current) {
+        return;
+      }
+      const codeMirror: Editor = editor.current.editor;
+      const doc = codeMirror.getDoc();
+
+      Array.from(files).forEach(async file => {
+        const placeholder = `![Uploading ${file.name}](...)`;
+        doc.setValue(doc.getValue() + placeholder);
+        const url = await uploadDefault(file);
+        const markdown = `![${file.name}](${url})`;
+        doc.setValue(doc.getValue().replace(placeholder, markdown));
+      });
+    },
+    [uploadDefault, canUpload, value, onChange]
+  );
+
+  const { bind, dragging } = useFileDrag(onFileDrag);
+
   return (
     <Box
       height="100%"
-      position="static"
+      position="relative"
       className="publish"
       p={1}
       border={1}
@@ -78,12 +109,18 @@ export function MarkdownEditor(
     >
       <PromptIfDirty />
       <CodeEditor
+        ref={editor}
         autoCursor={false}
         onBlur={onBlur}
         value={value}
         options={options}
         onChange={handleChange}
+        onDragLeave={(editor, e) => bind.onDragLeave(e)}
+        onDragOver={(editor, e) => bind.onDragOver(e)}
+        onDrop={(editor, e) => bind.onDrop(e)}
+        onDragEnter={(editor, e) => bind.onDragEnter(e)}
       />
+      {dragging && <SubmitDragger />}
     </Box>
   );
 }

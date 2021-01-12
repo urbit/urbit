@@ -2,10 +2,10 @@
 ::
 ::  allow syncing group data from foreign paths to local paths
 ::
-/-  *group, hook=group-hook, *invite-store
+/-  *group, *invite-store
 /+  default-agent, verb, dbug, store=group-store, grpl=group, push-hook,
     resource
-~%  %group-hook-top  ..is  ~
+~%  %group-hook-top  ..part  ~
 |%
 +$  card  card:agent:gall
 

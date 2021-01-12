@@ -3,8 +3,10 @@ import { Link, useHistory } from "react-router-dom";
 
 import { Icon, Row, Col, Button, Text, Box, Action } from "@tlon/indigo-react";
 import { Dropdown } from "~/views/components/Dropdown";
-import { Association } from "~/types";
+import { Association, NotificationGraphConfig } from "~/types";
 import GlobalApi from "~/logic/api/global";
+import { StatelessAsyncAction } from "~/views/components/StatelessAsyncAction";
+import { appIsGraph } from "~/logic/lib/util";
 
 const ChannelMenuItem = ({
   icon,
@@ -27,6 +29,8 @@ const ChannelMenuItem = ({
 interface ChannelMenuProps {
   association: Association;
   api: GlobalApi;
+  graphNotificationConfig: NotificationGraphConfig;
+  chatNotificationConfig: string[];
 }
 
 export function ChannelMenu(props: ChannelMenuProps) {
@@ -34,64 +38,69 @@ export function ChannelMenu(props: ChannelMenuProps) {
   const history = useHistory();
   const { metadata } = association;
   const app = metadata.module || association["app-name"];
-  const workspace = history.location.pathname.startsWith('/~landscape/home')
-    ? '/home' : association?.['group-path'];
+  const workspace = history.location.pathname.startsWith("/~landscape/home")
+    ? "/home"
+    : association?.["group-path"];
   const baseUrl = `/~landscape${workspace}/resource/${app}${association["app-path"]}`;
   const appPath = association["app-path"];
 
-  const [, ship, name] = appPath.startsWith("/ship/")
-    ? appPath.slice(5).split("/")
-    : appPath.split("/");
+  const [,, ship, name] = appPath.split("/");
 
   const isOurs = ship.slice(1) === window.ship;
+
+  const isMuted = 
+    props.graphNotificationConfig.watching.findIndex(
+        (a) => a.graph === appPath && a.index === "/"
+    ) === -1;
+
+  const onChangeMute = async () => {
+    const func = isMuted ? "listenGraph" : "ignoreGraph";
+    await api.hark[func](appPath, "/");
+  };
   const onUnsubscribe = useCallback(async () => {
-    const app = metadata.module || association["app-name"];
-    switch (app) {
-      case "chat":
-        await api.chat.delete(appPath);
-        break;
-      case "publish":
-        await api.graph.leaveGraph(ship, name);
-        break;
-      case "link":
-        await api.graph.leaveGraph(ship, name);
-        break;
-      default:
-        throw new Error("Invalid app name");
-    }
+    await api.graph.leaveGraph(ship, name);
     history.push(`/~landscape${workspace}`);
   }, [api, association]);
 
   const onDelete = useCallback(async () => {
-    const app = metadata.module || association["app-name"];
-    switch (app) {
-      case "chat":
-        await api.chat.delete(appPath);
-        break;
-      case "publish":
-        await api.graph.deleteGraph(name);
-        break;
-      case "link":
-        await api.graph.deleteGraph(name);
-        break;
-      default:
-        throw new Error("Invalid app name");
+    if (confirm('Are you sure you want to delete this channel?')) {
+      await api.graph.deleteGraph(name);
+      history.push(`/~landscape${workspace}`);
     }
-    history.push(`/~landscape${workspace}`);
   }, [api, association]);
 
   return (
     <Dropdown
       options={
-        <Col backgroundColor="white" border={1} borderRadius={1} borderColor="lightGray">
+        <Col
+          backgroundColor="white"
+          border={1}
+          borderRadius={1}
+          borderColor="lightGray"
+        >
+          <ChannelMenuItem color="blue" icon="Inbox">
+            <StatelessAsyncAction
+              m="2"
+              bg="white"
+              name="notif"
+              onClick={onChangeMute}
+            >
+              {isMuted ? "Unmute" : "Mute"} this channel
+            </StatelessAsyncAction>
+          </ChannelMenuItem>
           {isOurs ? (
             <>
               <ChannelMenuItem color="red" icon="TrashCan">
-                <Action m="2" backgroundColor='white' destructive onClick={onDelete}>
+                <Action
+                  m="2"
+                  backgroundColor="white"
+                  destructive
+                  onClick={onDelete}
+                >
                   Delete Channel
                 </Action>
               </ChannelMenuItem>
-              <ChannelMenuItem bottom icon="Gear" color='black'>
+              <ChannelMenuItem bottom icon="Gear" color="black">
                 <Link to={`${baseUrl}/settings`}>
                   <Box fontSize={0} p="2">
                     Channel Settings

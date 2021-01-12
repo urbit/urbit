@@ -1,3 +1,5 @@
+import urbitOb from 'urbit-ob';
+
 const URL_REGEX = new RegExp(String(/^((\w+:\/\/)[-a-zA-Z0-9:@;?&=\/%\+\.\*!'\(\),\$_\{\}\^~\[\]`#|]+)/.source));
 
 const isUrl = (string) => {
@@ -45,11 +47,23 @@ const tokenizeMessage = (text) => {
         if (isUrl(str) && !isInCodeBlock) {
           if (message.length > 0) {
             // If we're in the middle of a message, add it to the stack and reset
-            messages.push(message);
+            messages.push({ text: message.join(' ') });
             message = [];
           }
-          messages.push([str]);
+          messages.push({ url: str });
           message = [];
+        } else if (urbitOb.isValidPatp(str.replace(/[^a-z\-\~]/g, '')) && !isInCodeBlock) {
+          if (message.length > 0) {
+            // If we're in the middle of a message, add it to the stack and reset
+            messages.push({ text: message.join(' ') });
+            message = [];
+          }
+          messages.push({ mention: str.replace(/[^a-z\-\~]/g, '') });
+          if (str.replace(/[a-z\-\~]/g, '').length > 0) {
+            messages.push({ text: str.replace(/[a-z\-\~]/g, '') });
+          }
+          message = [];
+
         } else {
           message.push(str);
         }
@@ -59,7 +73,7 @@ const tokenizeMessage = (text) => {
 
   if (message.length) {
     // Add any remaining message
-    messages.push(message);
+    messages.push({ text: message.join(' ') });
   }
   return messages;
 };

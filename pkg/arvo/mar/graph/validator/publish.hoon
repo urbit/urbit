@@ -3,6 +3,16 @@
 ++  grow
   |%
   ++  noun  i
+  ::  +notification-kind
+  ::    Ignore all containers, only notify on content
+  ::
+  ++  notification-kind
+    ?+  index.p.i   ~
+      [@ %1 %1 ~]    `[%note 0 %each %.n]
+      [@ %1 @ ~]     `[%edit-note 0 %none %.n]
+      [@ %2 @ %1 ~]  `[%comment 1 %count %.n]
+      [@ %2 @ @ ~]   `[%edit-comment 1 %none %.n]
+    ==
   --
 ++  grab
   |%
@@ -12,6 +22,10 @@
     |=  p=*
     =/  ip  ;;(indexed-post p)
     ?+    index.p.ip  !!
+    ::  top level post must have no content
+        [@ ~]
+      ?>  ?=(~ contents.p.ip)
+      ip
     ::  container for revisions
     ::
         [@ %1 ~]  
@@ -26,16 +40,19 @@
       ?>  ?=(%text -.i.contents.p.ip)
       ip
     ::  container for comments
+    ::
         [@ %2 ~]
       ?>  ?=(~ contents.p.ip)
       ip
-    ::  comment
+    ::  container for comment revisions
+    ::
         [@ %2 @ ~]
-      ?>  ?=(^ contents.p.ip)
-      ip
-    ::  top level post must have no content
-        [@ ~]
       ?>  ?=(~ contents.p.ip)
+      ip
+    ::  specific comment revision
+    ::
+        [@ %2 @ @ ~]
+      ?>  ?=(^ contents.p.ip)
       ip
     ==
   --

@@ -1,18 +1,16 @@
 import React, { useEffect } from "react";
-import { Box, Row, Col, Center, LoadingSpinner } from "@tlon/indigo-react";
+import { Box, Row, Col, Center, LoadingSpinner, Text } from "@tlon/indigo-react";
 import { Switch, Route, Link } from "react-router-dom";
 import bigInt from 'big-integer';
 
 import GlobalApi from "~/logic/api/global";
 import { StoreState } from "~/logic/store/type";
 import { uxToHex } from '~/logic/lib/util';
-import { Association, GraphNode } from "~/types";
 import { RouteComponentProps } from "react-router-dom";
 
-import { LinkItem } from "./components/link-item";
-import { LinkSubmit } from "./components/link-submit";
-import { LinkPreview } from "./components/link-preview";
-import { Comments } from "~/views/components/comments";
+import { LinkItem } from "./components/LinkItem";
+import LinkSubmit from "./components/LinkSubmit";
+import { Comments } from "~/views/components/Comments";
 
 import "./css/custom.css";
 
@@ -32,10 +30,9 @@ export function LinkResource(props: LinkResourceProps) {
     groups,
     associations,
     graphKeys,
+    unreads,
     s3,
-    hideAvatars,
-    hideNicknames,
-    remoteContentPolicy,
+    history
   } = props;
 
   const appPath = association["app-path"];
@@ -76,16 +73,19 @@ export function LinkResource(props: LinkResourceProps) {
                   const contact = contactDetails[node.post.author];
                   return (
                     <LinkItem
+                      association={resource}
+                      contacts={contacts}
                       key={date.toString()}
                       resource={resourcePath}
                       node={node}
+                      contacts={contactDetails}
+                      unreads={unreads}
                       nickname={contact?.nickname}
-                      hideAvatars={hideAvatars}
-                      hideNicknames={hideNicknames}
                       baseUrl={resourceUrl}
-                      color={uxToHex(contact?.color || '0x0')}
                       group={group}
+                      path={resource["group-path"]}
                       api={api}
+                      mb={3}
                     />
                   );
                 })}
@@ -94,15 +94,15 @@ export function LinkResource(props: LinkResourceProps) {
           }}
         />
         <Route
-          path={relativePath("/:index")}
+          path={relativePath("/:index(\\d+)/:commentId?")}
           render={(props) => {
-            const indexArr = props.match.params.index.split("-");
+            const index = bigInt(props.match.params.index);
+            const editCommentId = props.match.params.commentId || null;
 
-            if (indexArr.length <= 1) {
+            if (!index) {
               return <div>Malformed URL</div>;
             }
 
-            const index = bigInt(indexArr[1]);
             const node = !!graph ? graph.get(index) : null;
 
             if (!node) {
@@ -112,26 +112,33 @@ export function LinkResource(props: LinkResourceProps) {
             const contact = contactDetails[node.post.author];
 
             return (
-              <Col width="100%" p={3} maxWidth="640px">
-                <Link to={resourceUrl}>{"<- Back"}</Link>
-                <LinkPreview
-                  resourcePath={resourcePath}
-                  post={node.post}
-                  nickname={contact?.nickname}
-                  hideNicknames={hideNicknames}
-                  commentNumber={node.children.size}
-                  remoteContentPolicy={remoteContentPolicy}
+              <Col width="100%" p={3} maxWidth="768px">
+                <Link to={resourceUrl}><Text bold>{"<- Back"}</Text></Link>
+                <LinkItem
+                  contacts={contacts}
+                  key={node.post.index}
+                  resource={resourcePath}
+                  node={node}
+                  baseUrl={resourceUrl}
+                  unreads={unreads}
+                  group={group}
+                  path={resource["group-path"]}
+                  api={api}
+                  mt={3}
                 />
                 <Comments
                   ship={ship}
                   name={name}
                   comments={node}
                   resource={resourcePath}
+                  association={association}
+                  unreads={unreads}
                   contacts={contactDetails}
                   api={api}
-                  hideAvatars={hideAvatars}
-                  hideNicknames={hideNicknames}
-                  remoteContentPolicy={remoteContentPolicy}
+                  editCommentId={editCommentId}
+                  history={props.history}
+                  baseUrl={`${resourceUrl}/${props.match.params.index}`}
+                  group={group}
                 />
               </Col>
             );

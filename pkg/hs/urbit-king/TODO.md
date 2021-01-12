@@ -63,12 +63,6 @@ Polish:
       changed too quickly.
 
 
-# Finding the Serf Executable
-
-- [ ] Right now, `urbit-worker` is found by looking it up in the PATH. This
-      is wrong, but what is right?
-
-
 # Take Advantage of New IPC Features
 
 - [ ] Hook up `scry` to drivers.
@@ -91,11 +85,12 @@ Implement Pier-wide process start events
 - [x] Handle %trim effect
 - [x] Inject entropy event on pier start: ``[//arvo [%wack ENT]]`
 - [ ] Verbose flag: `-v` injects `[%verb ~]`
-- [ ] CLI event injection: `-I file-path`. The `file-path` is a jammed
-  noun representing an event: `[wire card]`.
-  1. Just parse it as an `Ev` for now.
-  2. Make the serf IPC code not care about the shape of events and effects.
-  3. Support invalid events throughout the system (use `Lenient`?)
+
+- CLI event injection: `-I file-path`. The `file-path` is a jammed noun
+  representing an event: `[wire card]`.
+  - [x] Just parse it as an `Ev` for now.
+  - [ ] Make the serf IPC code not care about the shape of events and effects.
+  - [ ] Support invalid events throughout the system (use `Lenient`?)
 
 # Polish
 

@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import { Col, Box, Text } from "@tlon/indigo-react";
 import _ from "lodash";
+import Helmet from 'react-helmet';
 
 import { Resource } from "./Resource";
 import { PopoverRoutes } from "./PopoverRoutes";
@@ -39,6 +40,7 @@ export function GroupsPane(props: GroupsPaneProps) {
   const groupPath = getGroupFromWorkspace(workspace);
 
   const groupContacts = (groupPath && contacts[groupPath]) || undefined;
+  const rootIdentity = contacts?.["/~/default"]?.[window.ship];
   const groupAssociation =
     (groupPath && associations.contacts[groupPath]) || undefined;
   const group = (groupPath && groups[groupPath]) || undefined;
@@ -62,12 +64,13 @@ export function GroupsPane(props: GroupsPaneProps) {
      ( <>
         {groupPath && ( <PopoverRoutes
           contacts={groupContacts || {}}
+          rootIdentity={rootIdentity}
           association={groupAssociation!}
           group={group!}
           api={api}
           s3={props.s3}
-          hideAvatars={props.hideAvatars}
-          hideNicknames={props.hideNicknames}
+          notificationsGroupConfig={props.notificationsGroupConfig}
+
           {...routeProps}
           baseUrl={baseUrl}
         />)}
@@ -91,14 +94,11 @@ export function GroupsPane(props: GroupsPaneProps) {
             string,
             string
           >;
-          const appName = app as AppName;
-          const isGraph = appIsGraph(app);
 
-          const resource = `${isGraph ? "/ship" : ""}/${host}/${name}`;
-          const association =
-            isGraph
-              ? associations.graph[resource]
-              : associations[appName][resource];
+          const appName = app as AppName;
+
+          const resource = `/ship/${host}/${name}`;
+          const association = associations.graph[resource]
           const resourceUrl = `${baseUrl}/resource/${app}${resource}`;
 
           if (!association) {
@@ -129,33 +129,39 @@ export function GroupsPane(props: GroupsPaneProps) {
         path={relativePath("/join/:app/(ship)?/:host/:name")}
         render={(routeProps) => {
           const { app, host, name } = routeProps.match.params;
-          const appName = app as AppName;
-          const isGraph = appIsGraph(app);
-          const appPath = `${isGraph ? '/ship/' : '/'}${host}/${name}`;
-          const association = isGraph ? associations.graph[appPath] : associations[appName][appPath];
+          const appPath = `/ship/${host}/${name}`;
+          const association = associations.graph[appPath];
           const resourceUrl = `${baseUrl}/join/${app}${appPath}`;
+          let title = groupAssociation?.metadata?.title ?? 'Landscape';
 
           if (!association) {
             return <Loading />;
           }
+
+          title += ` - ${association.metadata.title}`;
           return (
-            <Skeleton
-              recentGroups={recentGroups}
-              mobileHide
-              selected={appPath}
-              {...props}
-              baseUrl={baseUrl}
-            >
-              <UnjoinedResource
-                graphKeys={props.graphKeys}
-                notebooks={props.notebooks}
-                inbox={props.inbox}
+            <>
+              <Helmet defer={false}>
+                <title>{props.notificationsCount ? `(${String(props.notificationsCount)}) ` : ''}{ title }</title>
+              </Helmet>
+              <Skeleton
+                recentGroups={recentGroups}
+                mobileHide
+                selected={appPath}
+                {...props}
                 baseUrl={baseUrl}
-                api={api}
-                association={association}
-              />
-              {popovers(routeProps, resourceUrl)}
-            </Skeleton>
+              >
+                <UnjoinedResource
+                  graphKeys={props.graphKeys}
+                  notebooks={props.notebooks}
+                  inbox={props.inbox}
+                  baseUrl={baseUrl}
+                  api={api}
+                  association={association}
+                />
+                {popovers(routeProps, resourceUrl)}
+              </Skeleton>
+            </>
           );
         }}
       />
@@ -169,6 +175,7 @@ export function GroupsPane(props: GroupsPaneProps) {
                 {...routeProps}
                 api={api}
                 baseUrl={baseUrl}
+                chatSynced={props.chatSynced}
                 associations={associations}
                 groups={groups}
                 group={groupPath}
@@ -186,20 +193,26 @@ export function GroupsPane(props: GroupsPaneProps) {
           const hasDescription = groupAssociation?.metadata?.description;
           const description = (hasDescription && hasDescription !== "")
             ? hasDescription : "Create or select a channel to get started"
+          const title = groupAssociation?.metadata?.title ?? 'Landscape';
           return (
-            <Skeleton recentGroups={recentGroups} {...props} baseUrl={baseUrl}>
-              <Col
-                alignItems="center"
-                justifyContent="center"
-                display={["none", "flex"]}
-                p='4'
-              >
-                <Box p="4"><Text fontSize="0" color='gray'>
-                  {description}
-                </Text></Box>
-              </Col>
-              {popovers(routeProps, baseUrl)}
-            </Skeleton>
+            <>
+              <Helmet defer={false}>
+                <title>{props.notificationsCount ? `(${String(props.notificationsCount)}) ` : ''}{ title }</title>
+              </Helmet>
+              <Skeleton recentGroups={recentGroups} {...props} baseUrl={baseUrl}>
+                <Col
+                  alignItems="center"
+                  justifyContent="center"
+                  display={["none", "flex"]}
+                  p='4'
+                >
+                  <Box p="4"><Text fontSize="0" color='gray'>
+                    {description}
+                  </Text></Box>
+                </Col>
+                {popovers(routeProps, baseUrl)}
+              </Skeleton>
+            </>
           );
         }}
       />

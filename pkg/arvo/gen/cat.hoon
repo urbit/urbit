@@ -8,10 +8,10 @@
 ::::
   ::
 :-  %say
-|=  {^ {arg/(list path)} vane/?($g $c)}
+|=  [^ [arg=(list path)] vane=?(%g %c)]
 =-  tang+(flop `tang`(zing -))
 %+  turn  arg
-|=  pax/path
+|=  pax=path
 ^-  tang
 =+  ark=.^(arch (cat 3 vane %y) pax)
 ?^  fil.ark
@@ -22,7 +22,7 @@
     ~
   [rose+[" " `~]^~[leaf+"~" (smyt pax)]]~
 ::
-    {{@t ~} ~ ~}
+    [[@t ~] ~ ~]
   $(pax (welp pax /[p.n.dir.ark]))
 ::
     *

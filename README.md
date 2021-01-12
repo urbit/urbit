@@ -36,13 +36,26 @@ If you're interested in Urbit development, keep reading.
 
 ## Development
 
-[![Build Status](https://travis-ci.org/urbit/urbit.svg?branch=master)][trav]
+[![License][license-badge]][license]
+[![Build][build-badge]][build]
+[![Nix][nix-badge]][nix]
+[![Cachix][cachix-badge]][cachix]
 
 Urbit uses [Nix][nix] to manage builds.  On Linux and macOS you can install Nix
 via:
 
 ```
 curl -L https://nixos.org/nix/install | sh
+```
+
+You can optionally setup Nix to pull build artefacts from the binary cache 
+that continuous integration uses. This will improve build times and avoid 
+unnecessary recompilations of common dependencies.  Once Nix has been installed 
+you can setup Cachix via:
+
+```
+nix-env -iA cachix -f https://cachix.org/api/v1/install
+cachix use ares
 ```
 
 The Makefile in the project's root directory contains useful phony targets for
@@ -69,8 +82,14 @@ git lfs install
 git lfs pull
 ```
 
-[trav]: https://github.com/urbit/urbit.git
-[nix]: https://nixos.org/nix/
+[license]: https://raw.githubusercontent.com/urbit/urbit/master/LICENSE.txt
+[license-badge]: https://img.shields.io/badge/license-MIT-blue.svg
+[build]: https://github.com/urbit/urbit/actions
+[build-badge]: https://github.com/urbit/urbit/workflows/build/badge.svg
+[cachix]: https://ares.cachix.org
+[cachix-badge]: https://img.shields.io/badge/cachix-ares-purple.svg
+[nix]: https://nixos.org
+[nix-badge]: https://img.shields.io/badge/builtwith-nix-purple.svg
 [git-lfs]: https://git-lfs.github.com
 
 ## Contributing

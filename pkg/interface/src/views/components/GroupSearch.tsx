@@ -79,7 +79,7 @@ export function GroupSearch(props: InviteSearchProps) {
       : Object.values(props.associations?.contacts || {});
   }, [props.associations?.contacts]);
 
-  const [{ value }, meta, { setValue }] = useField(props.id);
+  const [{ value }, meta, { setValue, setTouched }] = useField(props.id);
 
   const { title: groupTitle } =
     props.associations.contacts?.[value]?.metadata || {};
@@ -87,12 +87,14 @@ export function GroupSearch(props: InviteSearchProps) {
   const onSelect = useCallback(
     (a: Association) => {
       setValue(a["group-path"]);
+      setTouched(true);
     },
     [setValue]
   );
 
   const onUnselect = useCallback(() => {
     setValue(undefined);
+    setTouched(true);
   }, [setValue]);
 
   return (
