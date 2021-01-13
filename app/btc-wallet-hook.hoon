@@ -172,8 +172,6 @@
     =+  signed=(to-rawtx:bp txhex.act)
     =/  tx-match=?
       ?~  poym  %.n
-      ~&  >>  (get-id:txu (decode:txu signed))
-      ~&  >>>  ~(get-txid txb:bwsl u.poym)
       =((get-id:txu (decode:txu signed)) ~(get-txid txb:bwsl u.poym))
     :_  ?.  tx-match  state
         ?~  poym  state
@@ -206,11 +204,6 @@
     ~[(send-update [%sign-tx u.poym])]
     ::
       %close-pym
-    ::  TODO: print out that results of the bools
-    ~&  >>>  "%close-pym: in pend-piym?"
-    ~&  >>>  (~(has by pend-piym) txid.ti.act)
-    ~&  >>>  "%close-pym: in pend-poym?"
-    ~&  >>>  (poym-has-txid txid.ti.act)
     ?>  =(src.bowl our.bowl)
     =^  cards  state
       ?.  included.ti.act
@@ -232,9 +225,8 @@
       %succeed-broadcast-tx
     ?>  =(src.bowl our.bowl)
     ~&  >  "%succeed-broadcast-tx"
-    :_  %=  state
-          poym  ~
-          reqs  (~(put by reqs) txid.act [%tx-info 0 txid.act])
+    :_  %_  state
+            reqs  (~(put by reqs) txid.act [%tx-info 0 txid.act])
         ==
     ?~  prov  ~
     :-  (poke-provider host.u.prov [%tx-info txid.act])
