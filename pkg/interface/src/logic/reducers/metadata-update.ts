@@ -11,6 +11,7 @@ export default class MetadataReducer<S extends MetadataState> {
   reduce(json: Cage, state: S) {
     let data = json['metadata-update']
     if (data) {
+      console.log(data);
       this.associations(data, state);
       this.add(data, state);
       this.update(data, state);

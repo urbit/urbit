@@ -23,7 +23,7 @@
   $%  [%add group=resource resource=md-resource =metadata]
       [%remove group=resource resource=md-resource]
       [%update group=resource resource=md-resource =metadata]
-      [%initial-group group=resource resources=(map md-resource metadata)]
+      [%initial-group group=resource =associations]
   ==
 ::
 +$  metadata-update

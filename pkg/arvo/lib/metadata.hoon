@@ -22,6 +22,24 @@
   ?.  =(app-name.md-resource app-name)  ~
   `resource.md-resource
 ::
+++  metadata-for-group
+  |=  group=resource
+  .^  associations
+    %gx  (scot %p our.bowl)  %metadata-store  (scot %da now.bowl)
+    %group  (en-path:resource group)  %noun
+  ==
+::
+++  md-resources-from-group
+  |=  group=resource
+  =-  (~(get ju -) group)
+  .^  (jug resource md-resource)
+    %gy
+    (scot %p our.bowl)
+    %metadata-store
+    (scot %da now.bowl)
+    /group-indices
+  ==
+::
 ++  peek-association
   |=  [app-name=term rid=resource]
   .^  (unit association)
