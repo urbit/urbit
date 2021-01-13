@@ -24,7 +24,7 @@
 ::  /group/%group-path                             associations for group
 ::
 /-  *metadata-store, *metadata-hook
-/+  *metadata-json, default-agent, verb, dbug, resource, *migrate
+/+  *metadata-json, default-agent, verb, dbug, resource, *migrate, bi
 |%
 +$  card  card:agent:gall
 +$  base-state-0
@@ -58,7 +58,7 @@
 +$  cached-indices
   $:  group-indices=(jug resource md-resource)
       app-indices=(jug app-name [group=resource =resource])
-      resource-indices=(jug md-resource resource)
+      resource-indices=(map md-resource resource)
   ==
 ::
 +$  base-state-2
@@ -155,7 +155,7 @@
     |=  =path
     ^-  (unit (unit cage))
     ?+  path  (on-peek:def path)
-        [%y %group-indices ~]     ``noun+!>(group-indices)
+        :: [%y %group-indices ~]     ``noun+!>(group-indices)
         [%y %app-indices ~]       ``noun+!>(app-indices)
         [%y %resource-indices ~]  ``noun+!>(resource-indices)
         [%x %associations ~]      ``noun+!>(associations)
@@ -167,15 +167,15 @@
       =/  group=resource  (de-path:resource t.t.path)
       ``noun+!>((metadata-for-group:mc group))
     ::
-        [%x %metadata @ @ @ ~]
-      =/  group=resource  (de-path:resource (stab (slav %t i.t.t.path)))
-      =/  =md-resource  [`term`i.t.t.t.path (de-path:resource (stab (slav %t i.t.t.t.t.path)))]
-      ``noun+!>((~(get by associations) [group md-resource]))
+        [%x %metadata @ @ @ @ ~]
+      =/  =md-resource
+        [i.t.t.t.path (de-path:resource t.t.t.t.path)]
+      ``noun+!>((~(get by associations) md-resource))
     ::
         [%x %resource @ *]
       =/  app=term        i.t.t.path
       =/  rid=resource    (de-path:resource t.t.t.path)
-      ``noun+!>((~(get by resource-indices) app rid))
+      ``noun+!>((~(get by associations) [app rid]))
     ::
         [%x %export ~]
       ``noun+!>(-.state)
@@ -204,11 +204,11 @@
          resource-indices
        (rebuild-resource-indices associations.old)
       ::
+         group-indices
+      (rebuild-group-indices associations.old)
+      ::
         app-indices
       (rebuild-app-indices associations.old)
-      ::
-        group-indices
-      (rebuild-group-indices associations.old)
     ==
   ?:  ?=(%6 -.old)
     =/  old-assoc=associations-1
@@ -230,24 +230,25 @@
   ::
   ++  rebuild-resource-indices
     |=  =^associations
-    %-  ~(gas ju *(jug md-resource resource))
-    %+  turn  ~(tap in ~(key by associations))
-    |=  [g=resource r=md-resource]
-    ^-  [md-resource resource]
+    %-  ~(gas by *(map md-resource resource))
+    %+  turn  ~(tap by associations)
+    |=  [r=md-resource g=resource =metadata]
     [r g] 
   ::
   ++  rebuild-group-indices
-    |=  =^associations 
+    |=  =^associations
     %-  ~(gas ju *(jug resource md-resource))
-    ~(tap in ~(key by associations))
+    %+  turn
+      ~(tap by associations)
+    |=  [r=md-resource g=resource =metadata]
+    [g r]
   ::
   ++  rebuild-app-indices
     |=  =^associations
     %-  ~(gas ju *(jug app-name [group=resource resource]))
-    %+  turn  ~(tap in ~(key by associations))
-    |=  [g=resource r=md-resource]
-    ^-  [app-name [resource resource]]
-    [app-name.r [g resource.r]]
+    %+  turn  ~(tap by associations)
+    |=  [r=md-resource g=resource =metadata]
+    [app-name.r g resource.r]
   ::
   ++  migrate-app-to-graph-store
     |=  [app=@tas associations=associations-1]
@@ -269,7 +270,7 @@
   |=  act=metadata-action
   ^-  (quip card _state)
   ?>  (team:title our.bowl src.bowl)
-  ?-  -.act
+  ?+  -.act  !!
       %add     (handle-add group.act resource.act metadata.act)
       %remove  (handle-remove group.act resource.act)
   ==
@@ -281,7 +282,7 @@
   (on-load !>([%7 (remake-metadata ;;(tree-metadata +.arc))]))
   ::
   +$  tree-metadata
-    $:  associations=(tree [[resource md-resource] metadata])
+    $:  associations=(tree [md-resource [resource metadata]])
         ~
     ==
   ::
@@ -298,14 +299,11 @@
   ^-  (quip card _state)
   :-  %+  send-diff  app-name.md-resource
       ?:  (~(has by resource-indices) md-resource)
-        [%update-metadata group md-resource metadata]
+        [%updated-metadata group md-resource metadata metadata]
       [%add group md-resource metadata]
   %=  state
       associations
-    (~(put by associations) [group md-resource] metadata)
-  ::
-      group-indices
-    (~(put ju group-indices) group md-resource)
+    (~(put by associations) md-resource [group metadata])
   ::
       app-indices
     %+  ~(put ju app-indices)
@@ -313,7 +311,7 @@
     [group resource.md-resource]
   ::
       resource-indices
-    (~(put ju resource-indices) md-resource group)
+    (~(put by resource-indices) md-resource group)
   ==
 ::
 ++  handle-remove
@@ -322,10 +320,7 @@
   :-  (send-diff app-name.md-resource [%remove group md-resource])
   %=  state
       associations
-    (~(del by associations) [group md-resource])
-  ::
-      group-indices
-    (~(del ju group-indices) group md-resource)
+    (~(del by associations) md-resource)
   ::
       app-indices
     %+  ~(del ju app-indices)
@@ -333,26 +328,30 @@
     [group resource.md-resource]
   ::
       resource-indices
-    (~(del ju resource-indices) md-resource group)
+    (~(del by resource-indices) md-resource)
   ==
 ::
 ++  metadata-for-app
   |=  =app-name
-  ^-  ^associations
-  %-  ~(gas by *^associations)
-  %+  turn  ~(tap in (~(gut by app-indices) app-name ~))
-  |=  [group=resource rid=resource]
-  :-  [group [app-name rid]]
-  (~(got by associations) [group [app-name rid]])
+  ^+  associations
+  %+  roll  ~(tap in (~(gut by app-indices) app-name ~))
+  |=  [[group=resource rid=resource] out=^associations]
+  =/  =md-resource
+    [app-name rid]
+  =/  [resource =metadata]
+    (~(got by associations) md-resource)
+  (~(put by out) md-resource [group metadata])
 ::
 ++  metadata-for-group
   |=  group=resource
-  ^-  ^associations
-  %-  ~(gas by *^associations)
-  %+  turn  ~(tap in (~(gut by group-indices) group ~))
-  |=  =md-resource
-  :-  [group md-resource]
-  (~(got by associations) [group md-resource])
+  =/  resources=(set md-resource)
+    (~(get ju group-indices) group)
+  %+  roll
+    ~(tap in resources)
+  |=  [=md-resource out=^associations]
+  =/  [resource =metadata]
+    (~(got by associations) md-resource)
+  (~(put by out) md-resource [group metadata])
 ::
 ++  send-diff
   |=  [=app-name upd=metadata-update]

@@ -7,7 +7,7 @@
   ^-  json
   %-  pairs
   %+  turn  ~(tap by associations)
-  |=  [[group=resource =md-resource] =metadata]
+  |=  [=md-resource [group=resource =metadata]]
   ^-  [cord json]
   :-
   %-  crip
@@ -89,18 +89,9 @@
   =,  enjs:format
   %+  frond  %metadata-update
   %-  pairs
-  :~  ?-  -.upd
+  :~  ?+  -.upd  *[cord json]
       %add
     :-  %add
-    %-  pairs
-    :~  [%group s+(enjs-path:resource group.upd)]
-        [%app-name s+app-name.resource.upd]
-        [%resource s+(enjs-path:resource resource.resource.upd)]
-        [%metadata (metadata-to-json metadata.upd)]
-    ==
-  ::
-      %update-metadata
-    :-  %update-metadata
     %-  pairs
     :~  [%group s+(enjs-path:resource group.upd)]
         [%app-name s+app-name.resource.upd]
