@@ -1,5 +1,5 @@
-import React, { ReactNode, useCallback, useMemo } from "react";
-import { Row, Box, Col, Text, Anchor, Icon, Action } from "@tlon/indigo-react";
+import React, { ReactNode, useCallback, useMemo, useState } from "react";
+import { Row, Box } from "@tlon/indigo-react";
 import _ from "lodash";
 import {
   GraphNotificationContents,
@@ -7,7 +7,6 @@ import {
   GroupNotificationContents,
   NotificationGraphConfig,
   GroupNotificationsConfig,
-  NotifIndex,
   Groups,
   Associations,
   Contacts,
@@ -89,6 +88,8 @@ function NotificationWrapper(props: {
     return api.hark[func](notif);
   }, [notif, api, isMuted]);
 
+  const [visible, setVisible] = useState(false);
+
   const changeMuteDesc = isMuted ? "Unmute" : "Mute";
   return (
     <Box
@@ -98,9 +99,11 @@ function NotificationWrapper(props: {
       gridTemplateRows="auto"
       gridTemplateAreas="'header actions' 'main main'"
       pb={2}
+      onMouseEnter={() => setVisible(true)}
+      onMouseLeave={() => setVisible(false)}
     >
       {children}
-      <Row gapX="2" p="2" pt='3' gridArea="actions" justifyContent="flex-end">
+      <Row gapX="2" p="2" pt='3' gridArea="actions" justifyContent="flex-end" opacity={[1, visible ? 1 : 0]}>
         <StatelessAsyncAction name={changeMuteDesc} onClick={onChangeMute} backgroundColor="transparent">
           {changeMuteDesc}
         </StatelessAsyncAction>
