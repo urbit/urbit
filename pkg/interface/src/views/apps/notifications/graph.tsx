@@ -270,7 +270,7 @@ return (
         description={desc}
         associations={props.associations}
       />
-      <Box flexGrow={1} width="100%" pl={4} gridArea="main">
+      <Box flexGrow={1} width="100%" pl={5} gridArea="main">
         {_.map(contents, (content, idx) => (
           <GraphNode
             post={content}

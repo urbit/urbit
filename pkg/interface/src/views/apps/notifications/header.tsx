@@ -1,5 +1,5 @@
 import React from "react";
-import { Text as NormalText, Row, Icon, Rule } from "@tlon/indigo-react";
+import { Text as NormalText, Row, Icon, Rule, Box } from "@tlon/indigo-react";
 import f from "lodash/fp";
 import _ from "lodash";
 import moment from "moment";
@@ -71,11 +71,11 @@ export function Header(props: {
     channel;
 
   return (
-    <Row onClick={props.onClick} p="2" flexWrap="wrap" gapX="1" alignItems="center" gridArea="header">
+    <Row onClick={props.onClick} p="2" flexWrap="wrap" alignItems="center" gridArea="header">
       {!props.archived && (
         <Icon
           display="block"
-          mr="1"
+          mr={2}
           icon={read ? "Circle" : "Bullet"}
           color="blue"
         />
@@ -84,13 +84,13 @@ export function Header(props: {
         {authorDesc}
       </Text>
       <Text mr="1">{description}</Text>
-      {!!moduleIcon && <Icon icon={moduleIcon as any} />}
-      {!!channel && <Text fontWeight="500">{channelTitle}</Text>}
-      <Rule vertical height="12px" />
+      {!!moduleIcon && <Icon icon={moduleIcon as any} mr={1} />}
+      {!!channel && <Text fontWeight="500" mr={1}>{channelTitle}</Text>}
+      <Rule vertical height="12px" mr={1} />
       {groupTitle &&
          <>
-          <Text fontWeight="500">{groupTitle}</Text>
-          <Rule vertical height="12px"/>
+          <Text fontWeight="500" mr={1}>{groupTitle}</Text>
+          <Rule vertical height="12px" mr={1} />
         </>
       }
       <Text fontWeight="regular" color="lightGray">
