@@ -945,6 +945,20 @@
   ::
   +$  mars  [a=mark b=mark]
   +$  tube  $-(vase vase)
+  +$  nave
+    |$  [typ dif]
+    $_
+    |%
+    ++  bunt  *typ
+    ++  diff  |~([old=typ new=typ] *dif)
+    ++  form  *mark
+    ++  join  |~([a=dif b=dif] *(unit (unit dif)))
+    ++  mash
+      |~  [a=[ship desk dif] b=[ship desk dif]]
+      *(unit dif)
+    ++  pact  |~([typ dif] *typ)
+    ++  vale  typ
+    --
   ::  $dais: processed mark core
   ::
   +$  dais
@@ -959,7 +973,6 @@
       *(unit vase)
     ++  pact  |~(diff=vase sam)
     ++  vale  |~(noun sam)
-    ++  volt  |~(noun sam)
     --
   ::
   ++  get-fit
