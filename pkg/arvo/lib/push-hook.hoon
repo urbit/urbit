@@ -67,16 +67,6 @@
   |*  =config
   $_  ^|
   |_  bowl:gall
-  ::
-  ::  +resource-for-update: get affected resource from an update
-  ::  
-  ::    Given a vase of the update, the mark of which is
-  ::    update-mark.config, produce the affected resource, if any.
-  ::
-  ++  resource-for-update
-    |~  vase
-    *(unit resource)
-  ::
   ::  +take-update: handle update from store
   ::
   ::    Given an update from the store, do other things after proxying
