@@ -26,7 +26,7 @@
   |=  group=resource
   .^  associations
     %gx  (scot %p our.bowl)  %metadata-store  (scot %da now.bowl)
-    %group  (en-path:resource group)  %noun
+    %group  (snoc (en-path:resource group) %noun)
   ==
 ::
 ++  md-resources-from-group
@@ -44,7 +44,7 @@
   |=  [app-name=term rid=resource]
   .^  (unit association)
     %gx  (scot %p our.bowl)  %metadata-store  (scot %da now.bowl)
-    %metadata  app-name  (en-path:resource rid)  %noun
+    %metadata  app-name  (snoc (en-path:resource rid) %noun)
   ==
 ::
 ++  peek-metadata
@@ -54,6 +54,7 @@
 ::
 ++  peek-group
   |=  =md-resource
+  ^-  (unit resource)
   %+  bind  (peek-association md-resource)
   |=(association group)
 --

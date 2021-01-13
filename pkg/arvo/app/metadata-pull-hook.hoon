@@ -43,6 +43,7 @@
 ++  on-pull-nack
   |=   [=resource =tang]
   ^-  (quip card _this)
+  ~&  nacked+resource
   `this
 ::
 ++  on-pull-kick

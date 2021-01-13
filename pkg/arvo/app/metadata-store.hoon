@@ -24,7 +24,7 @@
 ::  /group/%group-path                             associations for group
 ::
 /-  *metadata-store, *metadata-hook
-/+  *metadata-json, default-agent, verb, dbug, resource, *migrate, bi
+/+  *metadata-json, default-agent, verb, dbug, resource, *migrate
 |%
 +$  card  card:agent:gall
 +$  base-state-0
@@ -117,11 +117,13 @@
     ?>  (team:title our.bowl src.bowl)
     =^  cards  state
       ?+  mark  (on-poke:def mark vase)
-          %metadata-action
-        (poke-metadata-action:mc !<(metadata-action vase))
+          ?(%metadata-action %metadata-update)
+        (poke-metadata-update:mc !<(metadata-update vase))
       ::
           %import
         (poke-import:mc q.vase)
+      ::
+        %noun  ~&  +.state  `state
       ==
     [cards this]
   ::
@@ -155,7 +157,7 @@
     |=  =path
     ^-  (unit (unit cage))
     ?+  path  (on-peek:def path)
-        :: [%y %group-indices ~]     ``noun+!>(group-indices)
+        [%y %group-indices ~]     ``noun+!>(group-indices)
         [%y %app-indices ~]       ``noun+!>(app-indices)
         [%y %resource-indices ~]  ``noun+!>(resource-indices)
         [%x %associations ~]      ``noun+!>(associations)
@@ -169,13 +171,14 @@
     ::
         [%x %metadata @ @ @ @ ~]
       =/  =md-resource
-        [i.t.t.t.path (de-path:resource t.t.t.t.path)]
+        [i.t.t.path (de-path:resource t.t.t.path)]
       ``noun+!>((~(get by associations) md-resource))
     ::
         [%x %resource @ *]
       =/  app=term        i.t.t.path
       =/  rid=resource    (de-path:resource t.t.t.path)
-      ``noun+!>((~(get by associations) [app rid]))
+      ``noun+!>((~(get by resource-indices) [app rid]))
+      
     ::
         [%x %export ~]
       ``noun+!>(-.state)
@@ -257,7 +260,6 @@
     %+  turn  ~(tap by associations)
     |=  [[=group-path md-resource=md-resource-1] m=metadata]
     ^-  [[^group-path md-resource-1] metadata]
-    ~!  md-resource
     ?.  =(app-name.md-resource app)  
       [[group-path md-resource] m]
     =/  new-app-path=path
@@ -266,13 +268,14 @@
       ship+app-path.md-resource
     [[group-path [%graph new-app-path]] m(module app)]
   --
-++  poke-metadata-action
-  |=  act=metadata-action
+++  poke-metadata-update
+  |=  upd=metadata-update
   ^-  (quip card _state)
-  ?>  (team:title our.bowl src.bowl)
-  ?+  -.act  !!
-      %add     (handle-add group.act resource.act metadata.act)
-      %remove  (handle-remove group.act resource.act)
+  ?>  (team:title [our src]:bowl)
+  ?+  -.upd  !!
+      %add     (handle-add +.upd)
+      %remove  (handle-remove +.upd)
+      %initial-group  (handle-initial-group +.upd)
   ==
 ::
 ++  poke-import
@@ -312,6 +315,9 @@
   ::
       resource-indices
     (~(put by resource-indices) md-resource group)
+  ::
+      group-indices
+    (~(put ju group-indices) group md-resource)
   ==
 ::
 ++  handle-remove
@@ -329,7 +335,24 @@
   ::
       resource-indices
     (~(del by resource-indices) md-resource)
+  ::
+      group-indices
+    (~(del ju group-indices) group md-resource)
   ==
+::
+++  handle-initial-group
+  |=  [group=resource =^associations]
+  =/  assocs=(list [=md-resource grp=resource =metadata])
+    ~(tap by associations)
+  =|  cards=(list card)
+  |-
+  ?~  assocs
+    [cards state]
+  =,  assocs
+  ?>  =(group grp.i)
+  =^  new-cards  state
+    (handle-add group [md-resource metadata]:i)
+  $(cards (weld cards new-cards), assocs t)
 ::
 ++  metadata-for-app
   |=  =app-name

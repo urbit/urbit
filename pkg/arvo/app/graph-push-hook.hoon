@@ -26,7 +26,7 @@
   =/  grp  ~(. group bowl)
   =/  met  ~(. metadata bowl)
   =/  group=(unit resource:res)
-    (peek-group:met [%graph resource])
+    (peek-group:met %graph resource)
   ?~  group  %.n
   ?:  requires-admin
     (is-admin:grp src.bowl u.group)
