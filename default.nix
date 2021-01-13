@@ -160,6 +160,8 @@ let
       };
     };
 
+    inherit (pkgsNative) skopeo;
+
     # A convenience function for constructing a shell.nix for any of the
     # pkgsLocal derivations by automatically propagating any dependencies 
     # to the nix-shell.

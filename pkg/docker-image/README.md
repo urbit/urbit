@@ -10,16 +10,15 @@ To use this image, you should mount a volume with a keyfile, comet file, or exis
 as described below.
 
 ### Volume Mount
-This image expects a volume mounted at `/urbit`. This volume should initially obtain one of
+This image expects a volume mounted at `/urbit`. This volume should initially contain one of
 
 - A keyfile `<shipname>.key` for a galaxy, star, planet, or moon. See the setup instructions for Urbit for information on [obtaining a keyfile](https://urbit.org/using/install/). 
   * e.g. `sampel-palnet.key` for the planet `sampel-palnet`.
-  to urbit to boot a ship from an existing pier, and in most cases (other than comets) will be named for the ship.
 - An empty file with the extension `.comet`. This will cause Urbit to boot a [comet](https://urbit.org/docs/glossary/comet/) in a pier named for the `.comet` file (less the extension).
   * e.g. starting with an empty file `my-urbit-bot.comet` will result in Urbit booting a comet into the pier
     `my-urbit-bot` under your volume.
 - An existing pier as a directory `<shipname>`. You can migrate an existing ship to a new docker container in this way by placing its pier under the volume.
-  * e.g. if your ship is `sampel-palnet` then you likely have a directory `sampel-palnet` whose path you pass to `./urbit` when starting. While your ship is not running, move this directory to the volume and then start the container.
+  * e.g. if your ship is `sampel-palnet` then you likely have a directory `sampel-palnet` whose path you pass to `./urbit` when starting. [Move your pier](https://urbit.org/using/operations/using-your-ship/#moving-your-pier) directory to the volume and then start the container.
 
 The first two options result in Urbit attempting to boot either the ship named by the name of the keyfile, or a comet. In both cases, after that boot is successful, the `.key` or `.comet` file will be removed from the volume and the pier will take its place.
 
@@ -36,4 +35,3 @@ You likely do not want to extend this image. External applications which interac
 
 ## Development
 The docker image is built by a Nix derivation in the [`nix/pkgs/docker-image/default.nix`](https://github.com/urbit/urbit/tree/master/nix/pkgs/docker-image/default.nix) file under the Urbit git repository.
-
