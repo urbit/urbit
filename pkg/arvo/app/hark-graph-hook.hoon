@@ -192,7 +192,7 @@
     |=  rid=resource
     ^-  (quip card _state)
     =/  group-rid=(unit resource)
-      (group-from-app-resource:met %graph rid) 
+      (peek-group:met %graph rid) 
     ?~  group-rid
       ~&  no-group+rid
       `state
@@ -217,12 +217,12 @@
             rid=resource
         ==
     =/  group=(unit resource)
-      (group-from-app-resource:met %graph rid)
+      (peek-group:met %graph rid)
     ?~  group  
       ~&  no-group+rid
       `state
     =/  metadata=(unit metadata:metadata-store)
-      (peek-metadata:met %graph u.group rid)
+      (peek-metadata:met %graph rid)
     ?~  metadata  `state
     abet:check:(abed:handle-update:ha rid nodes u.group module.u.metadata)
   --

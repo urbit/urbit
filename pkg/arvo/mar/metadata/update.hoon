@@ -1,3 +1,4 @@
+/-  *metadata-store
 /+  *metadata-json
 |_  upd=metadata-update
 ++  grad  %noun

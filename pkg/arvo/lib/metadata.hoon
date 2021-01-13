@@ -1,7 +1,7 @@
 ::  metadata: helpers for getting data from the metadata-store
 ::
 /-  *metadata-store
-/+  res=resource
+/+  resource
 ::
 |_  =bowl:gall
 ++  app-paths-from-group
@@ -22,38 +22,20 @@
   ?.  =(app-name.md-resource app-name)  ~
   `resource.md-resource
 ::
-++  peek-metadata
-  |=  [app-name=term =group=resource:res =app=resource:res]
-  ^-  (unit metadata)
-  =/  group-cord=cord  (scot %t (spat (en-path:res group-resource)))
-  =/  app-cord=cord    (scot %t (spat (en-path:res app-resource)))
-  =/  our=cord  (scot %p our.bowl)
-  =/  now=cord  (scot %da now.bowl)
-  .^  (unit metadata)
+++  peek-association
+  |=  [app-name=term rid=resource]
+  .^  (unit association)
     %gx  (scot %p our.bowl)  %metadata-store  (scot %da now.bowl)
-    %metadata  group-cord  app-name  app-cord  /noun
+    %metadata  app-name  (en-path:resource rid)  %noun
   ==
 ::
-++  group-from-app-resource
+++  peek-metadata
   |=  =md-resource
-  ^-  (unit resource:res)
-  =/  groups  (groups-from-resource md-resource)
-  ?~  groups  ~
-  `i.groups
+  %+  bind  (peek-association md-resource)
+  |=(association metadata)
 ::
-++  groups-from-resource
+++  peek-group
   |=  =md-resource
-  ^-  (list resource)
-  =;  resources
-    %~  tap  in
-    %+  ~(gut by resources)
-      md-resource
-    *(set resource)
-  .^  (jug ^md-resource resource)
-    %gy
-    (scot %p our.bowl)
-    %metadata-store
-    (scot %da now.bowl)
-    /resource-indices
-  ==
+  %+  bind  (peek-association md-resource)
+  |=(association group)
 --

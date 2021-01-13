@@ -1,4 +1,5 @@
 /-  *resource
+^?
 |%
 ::
 +$  group-path    path

@@ -1,5 +1,6 @@
 /-  *metadata-store
 /+  resource
+^?
 |%
 ++  associations-to-json
   |=  =associations
