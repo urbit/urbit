@@ -91,9 +91,16 @@ function NotificationWrapper(props: {
 
   const changeMuteDesc = isMuted ? "Unmute" : "Mute";
   return (
-    <Row width="100%" flexShrink={0} alignItems="top" justifyContent="space-between">
+    <Box
+      width="100%"
+      display="grid"
+      gridTemplateColumns="1fr 200px"
+      gridTemplateRows="auto"
+      gridTemplateAreas="'header actions' 'main main'"
+      pb={2}
+    >
       {children}
-      <Row gapX="2" p="2" pt='3' alignItems="top">
+      <Row gapX="2" p="2" pt='3' gridArea="actions" justifyContent="flex-end">
         <StatelessAsyncAction name={changeMuteDesc} onClick={onChangeMute} backgroundColor="transparent">
           {changeMuteDesc}
         </StatelessAsyncAction>
@@ -103,7 +110,7 @@ function NotificationWrapper(props: {
           </StatelessAsyncAction>
         )}
       </Row>
-    </Row>
+    </Box>
   );
 }
 

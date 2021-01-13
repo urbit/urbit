@@ -71,7 +71,7 @@ export function Header(props: {
     channel;
 
   return (
-    <Row onClick={props.onClick} p="2" flexWrap="wrap" gapX="1" alignItems="center">
+    <Row onClick={props.onClick} p="2" flexWrap="wrap" gapX="1" alignItems="center" gridArea="header">
       {!props.archived && (
         <Icon
           display="block"
