@@ -40,7 +40,7 @@
   ==
 +$  local
   $%  [%req-pay-address payee=ship value=sats feyb=(unit sats)]
-      [%broadcast-tx txhex=cord] 
+      [%broadcast-tx txhex=cord]
       [%add-piym =xpub =address payer=ship value=sats]
       [%add-poym =txbu:bws]
       [%add-poym-txi =txid =rawtx]

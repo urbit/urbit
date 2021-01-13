@@ -172,6 +172,8 @@
     =+  signed=(to-rawtx:bp txhex.act)
     =/  tx-match=?
       ?~  poym  %.n
+      ~&  >>  (get-id:txu (decode:txu signed))
+      ~&  >>>  ~(get-txid txb:bwsl u.poym)
       =((get-id:txu (decode:txu signed)) ~(get-txid txb:bwsl u.poym))
     :_  ?.  tx-match  state
         ?~  poym  state
@@ -204,6 +206,11 @@
     ~[(send-update [%sign-tx u.poym])]
     ::
       %close-pym
+    ::  TODO: print out that results of the bools
+    ~&  >>>  "%close-pym: in pend-piym?"
+    ~&  >>>  (~(has by pend-piym) txid.ti.act)
+    ~&  >>>  "%close-pym: in pend-poym?"
+    ~&  >>>  (poym-has-txid txid.ti.act)
     ?>  =(src.bowl our.bowl)
     =^  cards  state
       ?.  included.ti.act
@@ -280,7 +287,8 @@
     ::  - request tx-info from provider
     ::
       %expect-payment
-    |^  =+  pay=(~(get by ps.piym) src.bowl)
+    |^
+    =+  pay=(~(get by ps.piym) src.bowl)
     ~|  "%expect-payment: matching payment not in piym"
     ?~  pay  !!
     ?>  (piym-matches u.pay)
@@ -439,6 +447,7 @@
   |^  ^-  (quip card _state)
   :: TODO: delete prints
   ~&  >  "poym: {<poym>}"
+  ~&  >>>  "txid: {<txid.ti>}"
   ?~  poym  `state
   ?~  sitx.u.poym  `state
   ?.  (poym-has-txid txid.ti)
@@ -469,12 +478,10 @@
   |=  ti=info:tx
   |^  ^-  (quip card _state)
   =+  pay=(~(get by pend-piym) txid.ti)
-  ~&  >  "piym-to-history pay: {<pay>}"
   ?~  pay  `state
   ::  if no matching output in piym, delete from pend-piym to stop DDOS of txids
   ::
   =+  vout=(get-vout value.u.pay)
-  ~&  >  "piym-to-history vout: {<vout>}"
   ?~  vout
     `(del-pend-piym txid.ti)
   :_  (del-all-piym txid.ti payer.u.pay)
@@ -488,8 +495,6 @@
     =|  idx=@ud
     =+  os=outputs.ti
     |-  ?~  os  ~
-    ~&  >>>  "vout idx: {<idx>}"
-    ~&  >>>  "vout loop value: {<value.i.os>}"
     ?:  =(value.i.os value)
       `idx
     $(os t.os, idx +(idx))

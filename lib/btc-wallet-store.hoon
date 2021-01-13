@@ -58,9 +58,7 @@
           %+  turn  txis.t
           |=(=txi value.utxo.txi)
         add
-    %+  roll
-      (turn txos.t |=(=txo value.txo))
-    add
+    (roll (turn txos.t |=(=txo value.txo)) add)
   ::
   ++  tx-data
     |^  ^-  data:tx:btc
@@ -265,6 +263,7 @@
     ^-  [tb=(unit txbu) chng=(unit sats)]
     =+  tb=select-utxos
     ?~  tb  [~ ~]
+    ~&  >>>  tb
     =+  fee=~(fee txb u.tb)
     =/  costs=sats                      ::  cost of this tx + sending another
       %+  add  min-tx-fee
@@ -300,12 +299,15 @@
     =/  rng  ~(. og eny)
     =/  target  (add target-value (mul feyb (base-weight n-txos)))   ::  add base fees to target
     =|  [select=(list insel) total=sats:btc]
-    |-  ?:  =(~ is)  ~
+    |-
+    ?:  =(~ is)  ~
     =^  n  rng  (rads:rng (lent is))
     =/  i=insel  (snag n is)
+    ?.  (spendable utxo.i)
+      $(is (oust [n 1] is))
     =/  net-val  (net-value value.utxo.i)
-    =?  select  ?&((spendable utxo.i) (gth net-val 0))
-      [i select]                                           ::  select if net-value > 0
+    =?  select  (gth net-val 0)
+      [i select]
     =/  new-total  (add total net-val)
     ?:  (gte new-total target)  `select
     %=  $
