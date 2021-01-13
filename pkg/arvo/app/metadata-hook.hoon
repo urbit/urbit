@@ -55,6 +55,8 @@
     |=  =path
     ^-  (unit (unit cage))
     ?+  path  (on-peek:def path)
+        [%x %synced ~]
+      ``noun+!>(~(key by synced))
         [%x %export ~]
       ``noun+!>(state)
     ==
