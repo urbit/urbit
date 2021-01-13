@@ -16,19 +16,6 @@ import ConnectionReducer from '../reducers/connection';
 import {OrderedMap} from '../lib/OrderedMap';
 import { BigIntOrderedMap } from '../lib/BigIntOrderedMap';
 
-export const homeAssociation = {
-  "app-path": "/home",
-  "app-name": "contact",
-  "group-path": "/home",
-  metadata: {
-    color: "0x0",
-    title: "DMs + Drafts",
-    description: "",
-    "date-created": "",
-    module: "",
-  },
-};
-
 
 export default class GlobalStore extends BaseStore<StoreState> {
   inviteReducer = new InviteReducer();

@@ -36,15 +36,15 @@ const getAppIcon = (app: string, mod: string) => {
 
 const DM_REGEX = /ship\/~([a-z]|-)*\/dm--/;
 function getItemTitle(association: Association) {
-  if(DM_REGEX.test(association['app-path'])) {
-    const [,,ship,name] = association['app-path'].split('/');
+  if(DM_REGEX.test(association.resource)) {
+    const [,,ship,name] = association.resource.split('/');
     if(ship.slice(1) === window.ship) {
       return cite(`~${name.slice(4)}`);
     }
     return cite(ship);
 
   }
-  return association.metadata.title || association['app-path'];
+  return association.metadata.title || association.resource 
 }
 
 export function SidebarItem(props: {
@@ -59,8 +59,8 @@ export function SidebarItem(props: {
   const title = getItemTitle(association);
   const appName = association?.["app-name"];
   const mod = association?.metadata?.module || appName;
-  const appPath = association?.["app-path"];
-  const groupPath = association?.["group-path"];
+  const rid = association?.resource
+  const groupPath = association?.group;
   const app = apps[appName];
   const isUnmanaged = groups?.[groupPath]?.hidden || false;
   if (!app) {
@@ -74,8 +74,8 @@ export function SidebarItem(props: {
   const baseUrl = isUnmanaged ? `/~landscape/home` : `/~landscape${groupPath}`;
 
   const to = isSynced
-    ? `${baseUrl}/resource/${mod}${appPath}`
-    : `${baseUrl}/join/${mod}${appPath}`;
+    ? `${baseUrl}/resource/${mod}${rid}`
+    : `${baseUrl}/join/${mod}${rid}`;
 
   const color = selected ? "black" : isSynced ? "gray" : "lightGray";
 

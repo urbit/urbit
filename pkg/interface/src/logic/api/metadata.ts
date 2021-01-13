@@ -6,13 +6,13 @@ import { Path, Patp, Association, Metadata } from '~/types';
 export default class MetadataApi extends BaseApi<StoreState> {
 
 
-  metadataAdd(appName: string, appPath: Path, groupPath: Path, title: string, description: string, dateCreated: string, color: string, moduleName: string) {
+  metadataAdd(appName: string, resource: Path, group: Path, title: string, description: string, dateCreated: string, color: string, moduleName: string) {
     const creator = `~${this.ship}`;
     return this.metadataAction({
       add: {
-        'group-path': groupPath,
+        group,
         resource: {
-          'app-path': appPath,
+          resource,
           'app-name': appName
         },
         metadata: {
@@ -31,10 +31,10 @@ export default class MetadataApi extends BaseApi<StoreState> {
     const metadata = {...association.metadata, ...newMetadata };
     return this.metadataAction({ 
       add: {
-        'group-path': association['group-path'], 
+        group: association.group,
         resource: {
-          'app-path': association['app-path'],
-          'app-name': association['app-name'],
+          resource: association.resource,
+          'app-name': association['app-name']
         },
         metadata
       }

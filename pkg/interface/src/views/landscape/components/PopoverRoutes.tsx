@@ -140,7 +140,7 @@ export function PopoverRoutes(
                         contact={props.contacts[window.ship]}
                         rootIdentity={props.rootIdentity}
                         api={props.api}
-                        path={props.association["group-path"]}
+                        path={props.association.group}
                         s3={props.s3}
                       />
                     )}

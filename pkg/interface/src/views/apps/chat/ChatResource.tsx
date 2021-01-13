@@ -21,8 +21,8 @@ type ChatResourceProps = StoreState & {
 } & RouteComponentProps;
 
 export function ChatResource(props: ChatResourceProps) {
-  const station = props.association['app-path'];
-  const groupPath = props.association['group-path'];
+  const station = props.association.resource;
+  const groupPath = props.association.group;
   const group = props.groups[groupPath];
   const contacts = props.contacts[groupPath] || {};
 

@@ -10,8 +10,8 @@ export class Writers extends Component {
   render() {
     const { association, groups, contacts, api } = this.props;
 
-    const [,,,name] = association?.['app-path'].split('/');
-    const resource = resourceFromPath(association?.['group-path']);
+    const [,,,name] = association?.resource.split('/');
+    const resource = resourceFromPath(association?.group);
 
     const onSubmit = async (values, actions) => {
       try {
@@ -28,7 +28,7 @@ export class Writers extends Component {
         actions.setStatus({ error: e.message });
       }
     };
-    const writers = Array.from(groups?.[association?.['group-path']]?.tags.publish?.[`writers-${name}`] || new Set()).map(e => cite(`~${e}`)).join(', ');
+    const writers = Array.from(groups?.[association?.group]?.tags.publish?.[`writers-${name}`] || new Set()).map(e => cite(`~${e}`)).join(', ');
 
     return (
       <Box maxWidth='512px'>

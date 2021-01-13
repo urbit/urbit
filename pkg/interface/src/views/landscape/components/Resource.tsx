@@ -27,13 +27,13 @@ type ResourceProps = StoreState & {
 } & RouteComponentProps;
 
 export function Resource(props: ResourceProps) {
-  const { association, api } = props;
+  const { association, api, notificationsGraphConfig } = props;
   const app = association.metadata.module || association["app-name"];
-  const appPath = association["app-path"];
-  const selectedGroup = association["group-path"];
+  const rid = association.resource;
+  const selectedGroup = association.group;
   const relativePath = (p: string) =>
-    `${props.baseUrl}/resource/${app}${appPath}${p}`;
-  const skelProps = { api, association };
+    `${props.baseUrl}/resource/${app}${rid}${p}`;
+  const skelProps = { api, association, notificationsGraphConfig };
   return (
     <Switch>
       <Route

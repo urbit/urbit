@@ -34,9 +34,9 @@ type ResourceSkeletonProps = {
 export function ResourceSkeleton(props: ResourceSkeletonProps) {
   const { association, api, baseUrl, children, atRoot } = props;
   const app = association?.metadata?.module || association["app-name"];
-  const appPath = association["app-path"];
+  const rid = association.resource; 
   const workspace =
-    baseUrl === "/~landscape/home" ? "/home" : association["group-path"];
+    baseUrl === "/~landscape/home" ? "/home" : association.group;
   const title = props.title || association?.metadata?.title;
   return (
     <Col width="100%" height="100%" overflowY="hidden">
@@ -62,7 +62,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps) {
           </Box>
         ) : (
           <Box color="blue" pr={2} mr={2}>
-            <Link to={`/~landscape${workspace}/resource/${app}${appPath}`}>
+            <Link to={`/~landscape${workspace}/resource/${app}${rid}`}>
               <Text color="blue">Go back to channel</Text>
             </Link>
           </Box>
@@ -95,7 +95,6 @@ export function ResourceSkeleton(props: ResourceSkeletonProps) {
             <Box flexGrow={1} />
             <ChannelMenu
               graphNotificationConfig={props.notificationsGraphConfig}
-              chatNotificationConfig={props.notificationsChatConfig}
               association={association}
               api={api}
             />

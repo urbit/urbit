@@ -119,7 +119,6 @@ export function Notification(props: NotificationProps) {
       api={props.api}
       graphConfig={props.graphConfig}
       groupConfig={props.groupConfig}
-      chatConfig={props.chatConfig}
     >
       {children}
     </NotificationWrapper>
@@ -160,26 +159,6 @@ export function Notification(props: NotificationProps) {
           read={read}
           timebox={props.time}
           archived={archived}
-          time={time}
-          associations={associations}
-        />
-      </Wrapper>
-    );
-  }
-  if ("chat" in notification.index) {
-    const index = notification.index.chat;
-    const c: ChatNotificationContents = (contents as any).chat;
-    return (
-      <Wrapper>
-        <ChatNotification
-          api={props.api}
-          index={index}
-          contents={c}
-          contacts={props.contacts}
-          read={read}
-          archived={archived}
-          groups={props.groups}
-          timebox={props.time}
           time={time}
           associations={associations}
         />

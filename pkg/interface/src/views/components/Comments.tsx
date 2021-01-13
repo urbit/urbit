@@ -92,14 +92,14 @@ export function Comments(props: CommentsProps) {
 
 
   useEffect(() => {
-    console.log(`dismissing ${association?.['app-path']}`);
+    console.log(`dismissing ${association?.resource}`);
     return () => {
       api.hark.markCountAsRead(association, parentIndex, 'comment')
     };
   }, [comments.post.index])
 
 
-  const readCount = children.length - getUnreadCount(props?.unreads, association['app-path'], parentIndex)
+  const readCount = children.length - getUnreadCount(props?.unreads, association.resource, parentIndex)
 
   return (
     <Col>

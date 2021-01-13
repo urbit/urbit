@@ -33,12 +33,12 @@ function DeleteGroup(props: {
 }) {
   const history = useHistory();
   const onDelete = async () => {
-    const name = props.association['group-path'].split('/').pop();
+    const name = props.association.group.split('/').pop();
     if (props.owner) {
       const shouldDelete = (prompt(`To confirm deleting this group, type ${name}`) === name);
       if (!shouldDelete) return;
     }
-    const resource = resourceFromPath(props.association["group-path"])
+    const resource = resourceFromPath(props.association.group)
     await props.api.groups.removeGroup(resource);
     history.push("/");
   };
@@ -71,7 +71,7 @@ export function GroupPersonalSettings(props: {
   notificationsGroupConfig: GroupNotificationsConfig;
 }) {
 
-  const groupPath = props.association['group-path'];
+  const groupPath = props.association.group;
 
   const watching = props.notificationsGroupConfig.findIndex(g => g === groupPath) !== -1;
 

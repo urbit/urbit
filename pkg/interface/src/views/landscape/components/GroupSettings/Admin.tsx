@@ -67,7 +67,7 @@ export function GroupAdminSettings(props: GroupAdminSettingsProps) {
         color: uxColor,
       });
       if (isPrivate !== currentPrivate) {
-        const resource = resourceFromPath(props.association["group-path"]);
+        const resource = resourceFromPath(props.association.group);
         const newPolicy: Enc<GroupPolicy> = isPrivate
           ? { invite: { pending: [] } }
           : { open: { banRanks: [], banned: [] } };
@@ -83,7 +83,7 @@ export function GroupAdminSettings(props: GroupAdminSettingsProps) {
   };
 
   const disabled =
-    resourceFromPath(association["group-path"]).ship.slice(1) !== window.ship &&
+    resourceFromPath(association.group).ship.slice(1) !== window.ship &&
     roleForShip(group, window.ship) !== "admin";
 
   return (

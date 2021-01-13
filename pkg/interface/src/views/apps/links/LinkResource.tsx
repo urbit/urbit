@@ -35,24 +35,24 @@ export function LinkResource(props: LinkResourceProps) {
     history
   } = props;
 
-  const appPath = association["app-path"];
+  const rid = association.resource; 
 
   const relativePath = (p: string) => `${baseUrl}/resource/link${appPath}${p}`;
 
   const [, , ship, name] = appPath.split("/");
   const resourcePath = `${ship.slice(1)}/${name}`;
-  const resource = associations.graph[appPath]
-    ? associations.graph[appPath]
+  const resource = associations.graph[rid]
+    ? associations.graph[rid]
     : { metadata: {} };
-  const contactDetails = contacts[resource["group-path"]] || {};
-  const group = groups[resource["group-path"]] || {};
+  const contactDetails = contacts[resource?.group] || {};
+  const group = groups[resource?.group] || {};
   const graph = graphs[resourcePath] || null;
 
   useEffect(() => {
     api.graph.getGraph(ship, name);
   }, [association]);
 
-  const resourceUrl = `${baseUrl}/resource/link${appPath}`;
+  const resourceUrl = `${baseUrl}/resource/link${rid}`;
   if (!graph) {
     return <Center width='100%' height='100%'><LoadingSpinner/></Center>;
   }
@@ -83,7 +83,7 @@ export function LinkResource(props: LinkResourceProps) {
                       nickname={contact?.nickname}
                       baseUrl={resourceUrl}
                       group={group}
-                      path={resource["group-path"]}
+                      path={resource?.group}
                       api={api}
                       mb={3}
                     />
@@ -122,7 +122,7 @@ export function LinkResource(props: LinkResourceProps) {
                   baseUrl={resourceUrl}
                   unreads={unreads}
                   group={group}
-                  path={resource["group-path"]}
+                  path={resource?.group}
                   api={api}
                   mt={3}
                 />

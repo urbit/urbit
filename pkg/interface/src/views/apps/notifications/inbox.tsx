@@ -27,10 +27,7 @@ function filterNotification(associations: Associations, groups: string[]) {
     } else if ("group" in n.index) {
       const { group } = n.index.group;
       return groups.findIndex((g) => group === g) !== -1;
-    } else if ("chat" in n.index) {
-      const group = associations.chat[n.index.chat.chat]?.["group-path"];
-      return groups.findIndex((g) => group === g) !== -1;
-    }
+    } 
     return true;
   };
 }

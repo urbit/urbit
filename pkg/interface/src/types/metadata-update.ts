@@ -25,7 +25,7 @@ type MetadataUpdateUpdate = {
 
 type MetadataUpdateRemove = {
   remove: Resource & {
-    'group-path': Path;
+    group: Path;
   }
 }
 
@@ -36,12 +36,12 @@ export type AppAssociations = {
 }
 
 interface Resource {
-  'app-path': Path;
+  resource: Path;
   'app-name': AppName;
 }
 
 export type Association = Resource & {
-  'group-path': Path;
+  group: Path;
   metadata: Metadata;
 };
 
