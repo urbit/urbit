@@ -125,6 +125,6 @@ Check wallet store
 ```
 .^((list @t) %gx /=btc-wallet-store=/scanned/noun)
 
-.^(@ud %gx /=btc-wallet-store=/balance/[xpub]/noun)
+.^(@ud %gx /=btc-wallet-store=/balance/[xpubp]/noun)
 ```
 
