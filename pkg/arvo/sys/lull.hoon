@@ -942,10 +942,11 @@
   +$  taut  [face=(unit term) pax=term]
   ::  $mars: mark conversion request
   ::  $tube: mark conversion gate
+  ::  $nave: typed mark core
   ::
   +$  mars  [a=mark b=mark]
   +$  tube  $-(vase vase)
-  +$  nave
+  ++  nave
     |$  [typ dif]
     $_
     |%

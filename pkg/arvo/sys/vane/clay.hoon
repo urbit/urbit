@@ -459,7 +459,7 @@
     [+<- +<+>-]  ::  cache.state
   ::
   ++  ford
-    !.
+    ::!.  ::  TODO: reinstate
     =>  |%
         +$  build
           $%  [%file =path]
@@ -527,7 +527,7 @@
     ::
     ++  get-nave
       |=  mak=mark
-      ^-  [nave state]
+      ^-  [vase state]
       ~|  %error-building-mark^mak
       ?^  got=(~(get by naves.cache.nub) mak)
         =?  stack.nub  ?=(^ stack.nub)
@@ -681,7 +681,7 @@
         :_  nub
         %+  slap  (with-faces cor+old ~)
         ^-  hoon
-        :+  %brts  !,(*hoon $=(v bunt:cor))
+        :+  %brts  bcts/[%v like/[bunt/~ ~[cor/~]]]
         :+  %tsgl  limb/b
         !,(*hoon ~(grow cor v))
       ::  try direct +grab
@@ -705,8 +705,8 @@
       =^  uno=vase  nub  (get-cast x y)
       =^  dos=vase  nub  (get-cast y z)
       :_  nub
-      %+  slam
-        (with-faces uno+uno dos+dos cork+cork ~)
+      %+  slap
+        (with-faces uno+uno dos+dos cork+!>(cork) ~)
       !,(*hoon (cork uno dos))
     ::  +get-tube: produce a $tube mark conversion gate from .a to .b
     ::
@@ -727,7 +727,7 @@
         =.  tubes.cache.nub  (~(put by tubes.cache.nub) [a b] [tube.res top])
         [tube.res nub]
       =^  gat=vase  nub  (get-cast a b)
-      :_(nub |=(v=vase (slap gat v)))
+      :_(nub |=(v=vase (slam gat v)))
     ::
     ++  lobe-to-page
       |=  =lobe
@@ -751,7 +751,7 @@
       ?:  =(mak p.page)
         (page-to-cage page)
       =^  [mark vax=vase]  nub  (page-to-cage page)
-      =^  =tube  nub  (get-cast p.page mak)
+      =^  =tube  nub  (get-tube p.page mak)
       :_(nub [mak (tube vax)])
     ::
     ++  page-to-cage
@@ -772,7 +772,7 @@
       =^  cag=cage  nub  (get-value path)
       ?:  =(mok mak)
         [cag nub]
-      =^  =tube  nub  (get-cast mok mak)
+      =^  =tube  nub  (get-tube mok mak)
       ~|  error-running-cast+[path mok mak]
       :_(nub [mak (tube q.cag)])
     ::
@@ -3498,12 +3498,12 @@
         [~ fod.dom]
       ?.  ?=([@ @ ~] path)
         [[~ ~] fod.dom]
-      =/  cached=(unit [=tube *])  (~(get by casts.fod.dom) [i i.t]:path)
+      =/  cached=(unit [=tube *])  (~(get by tubes.fod.dom) [i i.t]:path)
       ?^  cached
         :_(fod.dom [~ ~ %& %tube !>(tube.u.cached)])
       =^  =tube  fod.dom
         %-  wrap:fusion
-        (get-cast:(ford:fusion static-ford-args) [i i.t]:path)
+        (get-tube:(ford:fusion static-ford-args) [i i.t]:path)
       :_(fod.dom [~ ~ %& %tube !>(tube)])
     ::
     ::  Gets the permissions that apply to a particular node.
