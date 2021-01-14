@@ -49,7 +49,7 @@
 ::  $cache: useful to have precalculated, but can be derived from state
 ::  albeit expensively
 +$  cache
-  $:  by-index=(jug stats-index:store @da)
+  $:  by-index=(jug stats-index:store [time=@da =index:store])
       ~
   ==
 ::
@@ -228,6 +228,7 @@
         [%count count]
         (~(gut by last-seen) stats-index *time)
     ==
+  ::
   ++  give-each-unreads
     ^-  (list [stats-index:store stats:store])
     %+  turn
@@ -477,19 +478,16 @@
   ::
   ++  read-index-each
     |=  [=stats-index:store ref=index:graph-store]
-    %+  read-index  stats-index 
+    %-  read-indices
     %+  skim
       ~(tap ^in (~(get ju by-index) stats-index))
-    |=  time=@da
+    |=  [time=@da =index:store]
     =/  =timebox:store
       (gut-orm notifications time)
-    %+  roll
-      ~(tap ^in timebox)
-    |=  [[=index:store not=notification:store] out=?]
-    ?:  out  out
-    ?.  (stats-index-is-index:store stats-index index)  out
-    ?.  ?=(%graph -.index)  out
-    ?.  ?=(%graph -.contents.not)  out
+    =/  not=notification:store
+      (~(got by timebox) index)
+    ?.  ?=(%graph -.index)  %.n
+    ?.  ?=(%graph -.contents.not)  %.n
     (lien list.contents.not |=(p=post:post =(index.p ref)))
   ::
   ++  read-each
@@ -517,34 +515,17 @@
   ++  read-count
     |=  =stats-index:store
     =.  unreads-count  (~(put by unreads-count) stats-index 0)
-    =/  times=(list @da)
+    =/  times=(list [@da index:store])
       ~(tap ^in (~(get ju by-index) stats-index))
-    (give:(read-index stats-index times) %read-count stats-index)
+    (give:(read-indices times) %read-count stats-index)
   :: 
-  ++  read-index
-    |=  [=stats-index:store times=(list @da)]
+  ++  read-indices
+    |=  times=(list [time=@da =index:store])
     |- 
     ?~  times  poke-core
     =/  core
-      (read-stats-index i.times stats-index)
+      (read-note i.times)
     $(poke-core core, times t.times)
-  ::
-  ++  read-stats-index
-    |=  [time=@da =stats-index:store]
-    =/  keys
-      ~(tap ^in ~(key by (gut-orm notifications time)))
-    |-  ^+  poke-core
-    ?~  keys
-      poke-core
-    ?.  (stats-index-is-index:store stats-index i.keys)
-      $(keys t.keys)
-    =/  =notification:store
-      (~(got by (gut-orm notifications time)) i.keys)
-    ?:  read.notification
-      $(keys t.keys)
-    =/  core
-      (read-note time i.keys)
-    $(poke-core core, keys t.keys)
   ::
   ++  seen-index
     |=  [time=@da =stats-index:store]
@@ -570,7 +551,7 @@
     =.  last-seen
       ((dif-map-by-key ,@da) last-seen indices)
     =.  by-index
-      ((dif-map-by-key ,(set @da)) by-index indices)
+      ((dif-map-by-key ,(set [@da =index:store])) by-index indices)
     poke-core
     ::
     ++  get-stats-indices
@@ -603,10 +584,10 @@
         ~(tap ^in set)
       |- 
       ?~  indices  poke-core
-      =/  times=(list @da)
+      =/  times=(list [time=@da =index:store])
         ~(tap ^in (~(get ju by-index) i.indices))
       =.  poke-core
-        (read-index i.indices times)
+        (read-indices times)
       $(indices t.indices)
     --
   ::
@@ -694,7 +675,7 @@
   %_    +.state
     ::
       by-index 
-    %.  [(to-stats-index:store index) time]
+    %.  [(to-stats-index:store index) time index]
     ?:  read
       ~(del ju by-index)
     ~(put ju by-index)
