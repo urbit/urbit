@@ -18,6 +18,7 @@ import { GroupNotification } from "./group";
 import { GraphNotification } from "./graph";
 import { ChatNotification } from "./chat";
 import { BigInteger } from "big-integer";
+import { useHovering } from "~/logic/lib/util";
 
 interface NotificationProps {
   notification: IndexedNotification;
@@ -88,7 +89,7 @@ function NotificationWrapper(props: {
     return api.hark[func](notif);
   }, [notif, api, isMuted]);
 
-  const [visible, setVisible] = useState(false);
+  const { hovering, bind } = useHovering();
 
   const changeMuteDesc = isMuted ? "Unmute" : "Mute";
   return (
@@ -99,11 +100,10 @@ function NotificationWrapper(props: {
       gridTemplateRows="auto"
       gridTemplateAreas="'header actions' 'main main'"
       pb={2}
-      onMouseEnter={() => setVisible(true)}
-      onMouseLeave={() => setVisible(false)}
+      {...bind}
     >
       {children}
-      <Row gapX="2" p="2" pt='3' gridArea="actions" justifyContent="flex-end" opacity={[1, visible ? 1 : 0]}>
+      <Row gapX="2" p="2" pt='3' gridArea="actions" justifyContent="flex-end" opacity={[1, hovering ? 1 : 0]}>
         <StatelessAsyncAction name={changeMuteDesc} onClick={onChangeMute} backgroundColor="transparent">
           {changeMuteDesc}
         </StatelessAsyncAction>
