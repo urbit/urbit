@@ -437,9 +437,6 @@
 ++  poym-to-history
   |=  ti=info:tx
   |^  ^-  (quip card _state)
-  :: TODO: delete prints
-  ~&  >  "poym: {<poym>}"
-  ~&  >>>  "txid: {<txid.ti>}"
   ?~  poym  `state
   ?~  sitx.u.poym  `state
   ?.  (poym-has-txid txid.ti)
@@ -447,7 +444,6 @@
   =+  vout=(get-vout txos.u.poym)
   ?~  vout  ~|("poym-to-history: poym should always have an output" !!)
   :_  state(poym ~)
-  ~&  >>>  "poym: adding history"
   ~[(add-history-entry ti xpub.u.poym our.bowl payee.u.poym u.vout)]
   ::
   ++  get-vout
