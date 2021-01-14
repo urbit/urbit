@@ -61,6 +61,7 @@
         [%date-created (se %da)]
         [%creator (su ;~(pfix sig fed:ag))]
         [%module so]
+        [%picture so]
     ==
   ::
   ++  md-resource
@@ -82,6 +83,7 @@
       [%date-created s+(scot %da date-created.met)]
       [%creator s+(scot %p creator.met)]
       [%module s+module.met]
+      [%picture s+picture.met]
   ==
 ::
 ++  update-to-json

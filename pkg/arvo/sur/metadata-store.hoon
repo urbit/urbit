@@ -10,6 +10,7 @@
 +$  associations  (map md-resource association)
 ::
 +$  color  @ux
++$  url    @t
 +$  metadata
   $:  title=cord
       description=cord
@@ -17,6 +18,7 @@
       date-created=time
       creator=ship
       module=term
+      picture=url
   ==
 ::
 +$  metadata-action
