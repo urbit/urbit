@@ -9,11 +9,17 @@
 +$  card  card:agent:gall
 +$  versioned-state
   $%  state-0
+      state-1
   ==
 ::
 +$  state-0
-  $:  %0
-      watching=(set [resource index:post])
+  [%0 base-state-0]
+::
++$  state-1
+  [%1 base-state-0]
+::
++$  base-state-0
+  $:  watching=(set [resource index:post])
       mentions=_&
       watch-on-self=_&
   ==
@@ -36,7 +42,7 @@
 ::
 --
 ::
-=|  state-0
+=|  state-1
 =*  state  -
 ::
 =<
@@ -57,13 +63,25 @@
 ::
 ++  on-save  !>(state)
 ++  on-load
-  |=  old=vase
+  |=  =vase
   ^-  (quip card _this)
-  :_  this(state !<(state-0 old))
+  =+  !<(old=versioned-state vase)
+  =|  cards=(list card)
+  |-
+  ?:  ?=(%0 -.old)
+    %_    $
+      -.old  %1
+      ::
+        cards  
+      :_  cards
+      [%pass / %agent [our dap]:bowl %poke noun+!>(%rewatch-dms)]
+    ==
+  :_  this(state old)
+  =.  cards  (flop cards)
   %+  welp
     ?:  (~(has by wex.bowl) [/graph our.bowl %graph-store])
-      ~
-    ~[watch-graph:ha]
+      cards
+    [watch-graph:ha cards]
   %+  turn
     ^-  (list mark)
     :~  %graph-validator-chat
@@ -103,8 +121,22 @@
     ?+  mark           (on-poke:def mark vase)
         %hark-graph-hook-action
       (hark-graph-hook-action !<(action:hook vase))
+        %noun
+      (poke-noun !<(* vase))
     ==
   [cards this]
+  ::
+  ++  poke-noun
+    |=  non=*
+    ?>  ?=(%rewatch-dms non)
+    =/  graphs=(list resource)
+      ~(tap in get-keys:gra)
+    :-  ~
+    %_   state
+        watching  
+      %-  ~(gas in watching)
+      (murn graphs |=(rid=resource ?:((should-watch:ha rid) `[rid ~] ~)))
+    ==
   ::
   ++  hark-graph-hook-action
     |=  =action:hook
@@ -223,23 +255,14 @@
   ++  add-graph
     |=  rid=resource
     ^-  (quip card _state)
-    =/  group-rid=(unit resource)
-      (group-from-app-resource:met %graph rid) 
-    ?~  group-rid
-      ~&  no-group+rid
-      `state
-    =/  is-hidden=?
-      !(is-managed:grp u.group-rid)
-    =/  should-watch
-      |(is-hidden &(watch-on-self =(our.bowl entity.rid)))
-    ?.  should-watch
-      `state
     =/  graph=graph:graph-store  :: graph in subscription is bunted 
       (get-graph-mop:gra rid)
     =/  node=(unit node:graph-store)
       (bind (peek:orm:graph-store graph) |=([@ =node:graph-store] node))
     =^  cards  state
       (check-nodes (drop node) rid)
+    ?.  (should-watch:ha rid)
+      [cards state]
     :_   state(watching (~(put in watching) [rid ~]))
     (weld cards (give:ha ~[/updates] %listen [rid ~]))
   ::
@@ -277,6 +300,9 @@
 --
 ::
 |_  =bowl:gall
++*  met   ~(. metadata bowl)
+    grp   ~(. grouplib bowl)
+    gra   ~(. graph bowl)
 ::
 ++  get-conversion
   |=  rid=resource
@@ -313,6 +339,16 @@
   ?:  =(our.bowl ship.i.contents)
     %.y
   $(contents t.contents)
+::
+++  should-watch
+  |=  rid=resource
+  ^-  ?
+  =/  group-rid=(unit resource)
+    (group-from-app-resource:met %graph rid) 
+  ?~  group-rid  %.n
+  ?|  !(is-managed:grp u.group-rid)
+      &(watch-on-self =(our.bowl entity.rid))
+  ==
 ::
 ++  handle-update
   |_  $:  rid=resource  ::  input
