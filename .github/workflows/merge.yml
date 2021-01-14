@@ -13,5 +13,5 @@ jobs:
         with:
           type: now
           target_branch: release/next-js
-          github_token: ${{ github.token }}
+          github_token: ${{ secrets.JANEWAY_BOT_TOKEN }}
 
