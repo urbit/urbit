@@ -263,7 +263,6 @@
     ^-  [tb=(unit txbu) chng=(unit sats)]
     =+  tb=select-utxos
     ?~  tb  [~ ~]
-    ~&  >>>  tb
     =+  fee=~(fee txb u.tb)
     =/  costs=sats                      ::  cost of this tx + sending another
       %+  add  min-tx-fee

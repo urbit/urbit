@@ -104,7 +104,7 @@ on `~dopzod`:
 ### request address
 on `~dopzod`:
 ```
-:btc-wallet-hook|action [%req-pay-address payee=~zod value=2.000 [~ 10]]
+:btc-wallet-hook|action [%req-pay-address payee=~zod value=2.000 [~ 30]]
 :btc-wallet-hook +dbug [%state 'poym']
 ```
 
