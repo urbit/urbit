@@ -4,11 +4,6 @@
 =<  [sur .]
 =,  sur
 |%
-++  gen-req-id
-  |=  eny=@uvJ  ^-  req-id
-  %+  scot  %ux
-  (ripemd-160:ripemd:crypto [(met 3 eny) eny])
-::
 ++  address-to-cord
   |=  =address  ^-  cord
   ?:  ?=([%legacy *] address)
@@ -37,7 +32,6 @@
   ^-  (unit @da)
   ?:  =(0 secs)  ~
   [~ (add ~1970.1.1 `@dr`(mul secs ~s1))]
-
 ::
 ++  to-hex
   |=  h=@t
@@ -53,6 +47,11 @@
   ::
   `@ux`(rash - hex)
 ::
+++  to-rawtx
+  |=  h=@t
+  ^-  rawtx
+  =+  bs=(to-hex h)
+  [(div (lent (trip h)) 2) bs]
 ++  to-hash256
   |=  h=@t
   (hash256 [32 (to-hex h)])
@@ -102,7 +101,7 @@
       ::
         %get-raw-tx
       [id.res (raw-tx res.res)]
-      :: 
+      ::
         %broadcast-tx
       [%broadcast-tx (broadcast-tx res.res)]
       ::
@@ -114,7 +113,8 @@
     ==
     ++  address-info
       %-  ot:dejs:format
-      :~  [%utxos (as:dejs:format utxo)]
+      :~  [%address (cu:dejs:format address-from-cord so:dejs:format)]
+          [%utxos (as:dejs:format utxo)]
           [%used bo:dejs:format]
           [%block ni:dejs:format]
       ==
@@ -126,9 +126,10 @@
           [%value ni:dejs:format]
           [%recvd (cu:dejs:format from-epoch ni:dejs:format)]
       ==
-    ++  tx-vals
+    ++  tx-vals 
       %-  ot:dejs:format
-      :~  [%txid (cu:dejs:format to-hash256 so:dejs:format)]
+      :~  [%included bo:dejs:format]
+          [%txid (cu:dejs:format to-hash256 so:dejs:format)]
           [%confs ni:dejs:format]
           [%recvd (cu:dejs:format from-epoch ni:dejs:format)]
           [%inputs (ar:dejs:format tx-val)]

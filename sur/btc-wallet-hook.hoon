@@ -1,10 +1,8 @@
 /-  *btc, bws=btc-wallet-store, bp=btc-provider
 |%
 ::  btc-state: state from the provider; t is last update time
-::  req-id: hash of [xpub chyg idx]
-::  reqs: lookup of req-id -> requests from wallet-store+blockcount
-::    blockcount included so that we only request address info when
-::    there's a newer block, in the case of addresses we are cooking
+::  reqs: last block checked for an address/tx request to provider.
+::   Used to determine whether to retry request
 ::
 ::  payment: a payment expected from another ship
 ::    - address: address generated for this payment
@@ -13,8 +11,9 @@
 ::  pend-piym: incoming payment txs that peer says they have broadcast
 ::  poym: outgoing payments. One at a time: new replaces old
 ::
-+$  btc-state  [block=@ud fee=sats t=@da]
-+$  reqs  (map req-id:bp req=request:bws)
++$  block  @ud
++$  btc-state  [=block fee=sats t=@da]
++$  reqs  (map $?(address txid) request:bws)
 ::
 +$  payment  [pend=(unit txid) =xpub =address payer=ship value=sats]
 +$  piym  [ps=(map ship payment) num-fam=(map ship @ud)]
@@ -29,16 +28,33 @@
 ::    - vout-n is the index of the output that has value
 ::
 +$  action
+  $%  settings
+      local
+      peer
+  ==
++$  settings
   $%  [%set-provider provider=ship]
       [%set-default-wallet ~]
-      [%req-pay-address payee=ship value=sats feyb=(unit sats)]
-      [%gen-pay-address value=sats]
-      [%ret-pay-address =address payer=ship value=sats]
-      [%broadcast-tx signed=rawtx]
-      [%expect-payment =txid value=sats]
       [%clear-poym ~]
       [%force-retry ~]
   ==
++$  local
+  $%  [%req-pay-address payee=ship value=sats feyb=(unit sats)]
+      [%broadcast-tx txhex=cord]
+      [%add-piym =xpub =address payer=ship value=sats]
+      [%add-poym =txbu:bws]
+      [%add-poym-txi =txid =rawtx]
+      [%close-pym ti=info:tx]
+      [%fail-broadcast-tx =txid]
+      [%succeed-broadcast-tx =txid]
+  ==
++$  peer
+  $%  [%gen-pay-address value=sats]
+      [%ret-pay-address =address payer=ship value=sats]
+      [%expect-payment =txid value=sats]
+  ==
+::
+::
 +$  update
   $%  request
       error

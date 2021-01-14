@@ -42,8 +42,11 @@
         =address
         value=sats
     ==
+  ::  included: whether tx is in the mempool or blockchain
+  ::
   +$  info
-    $:  =txid
+    $:  included=?
+        =txid
         confs=@ud
         recvd=(unit @da)
         inputs=(list val)
