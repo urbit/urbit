@@ -1,5 +1,5 @@
-import React, { ReactNode, useCallback, useMemo } from "react";
-import { Row, Box, Col, Text, Anchor, Icon, Action } from "@tlon/indigo-react";
+import React, { ReactNode, useCallback, useMemo, useState } from "react";
+import { Row, Box } from "@tlon/indigo-react";
 import _ from "lodash";
 import {
   GraphNotificationContents,
@@ -7,7 +7,6 @@ import {
   GroupNotificationContents,
   NotificationGraphConfig,
   GroupNotificationsConfig,
-  NotifIndex,
   Groups,
   Associations,
   Contacts,
@@ -19,6 +18,7 @@ import { GroupNotification } from "./group";
 import { GraphNotification } from "./graph";
 import { ChatNotification } from "./chat";
 import { BigInteger } from "big-integer";
+import { useHovering } from "~/logic/lib/util";
 
 interface NotificationProps {
   notification: IndexedNotification;
@@ -89,11 +89,21 @@ function NotificationWrapper(props: {
     return api.hark[func](notif);
   }, [notif, api, isMuted]);
 
+  const { hovering, bind } = useHovering();
+
   const changeMuteDesc = isMuted ? "Unmute" : "Mute";
   return (
-    <Row width="100%" flexShrink={0} alignItems="top" justifyContent="space-between">
+    <Box
+      width="100%"
+      display="grid"
+      gridTemplateColumns="1fr 200px"
+      gridTemplateRows="auto"
+      gridTemplateAreas="'header actions' 'main main'"
+      pb={2}
+      {...bind}
+    >
       {children}
-      <Row gapX="2" p="2" pt='3' alignItems="top">
+      <Row gapX="2" p="2" pt='3' gridArea="actions" justifyContent="flex-end" opacity={[1, hovering ? 1 : 0]}>
         <StatelessAsyncAction name={changeMuteDesc} onClick={onChangeMute} backgroundColor="transparent">
           {changeMuteDesc}
         </StatelessAsyncAction>
@@ -103,7 +113,7 @@ function NotificationWrapper(props: {
           </StatelessAsyncAction>
         )}
       </Row>
-    </Row>
+    </Box>
   );
 }
 

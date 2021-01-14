@@ -90,6 +90,8 @@ const GraphNodeContent = ({ group, post, contacts, mod, description, index, remo
         content={contents}
         group={group}
         contacts={contacts}
+        fontSize='14px'
+        lineHeight="tall"
       />
     } else if (idx[1] === "1") {
       const [{ text: header }, { text: body }] = contents;
@@ -164,13 +166,14 @@ const GraphNode = ({
   group,
   read,
   onRead,
+  showContact = false,
   remoteContentPolicy
 }) => {
   const { contents } = post;
   author = deSig(author);
   const history = useHistory();
 
-  const img = (
+  const img = showContact ? (
     <Sigil
       ship={`~${author}`}
       size={16}
@@ -178,7 +181,7 @@ const GraphNode = ({
       color={`#000000`}
       classes="mix-blend-diff"
     />
-    );
+    ) : <Box style={{ width: '16px' }}></Box>;
 
   const groupContacts = contacts[groupPath] ?? {};
 
@@ -192,10 +195,10 @@ const GraphNode = ({
   }, [read, onRead]);
 
   return (
-    <Row onClick={onClick} gapX="2" pt="2">
+    <Row onClick={onClick} gapX="2" pt={showContact ? 2 : 0}>
       <Col>{img}</Col>
       <Col flexGrow={1} alignItems="flex-start">
-        <Row
+        {showContact && <Row
           mb="2"
           height="16px"
           alignItems="center"
@@ -208,8 +211,8 @@ const GraphNode = ({
           <Text ml="2" gray>
             {moment(time).format("HH:mm")}
           </Text>
-        </Row>
-        <Row width="100%" p="1">
+        </Row>}
+        <Row width="100%" p="1" flexDirection="column">
           <GraphNodeContent
             contacts={groupContacts}
             post={post}
@@ -253,7 +256,7 @@ export function GraphNotification(props: {
   }, [api, timebox, index, read]);
 
 return (
-    <Col flexGrow={1} width="100%" p="2">
+    <>
       <Header
         onClick={onClick}
         archived={props.archived}
@@ -267,7 +270,7 @@ return (
         description={desc}
         associations={props.associations}
       />
-      <Col flexGrow={1} width="100%" pl="5">
+      <Box flexGrow={1} width="100%" pl={5} gridArea="main">
         {_.map(contents, (content, idx) => (
           <GraphNode
             post={content}
@@ -282,9 +285,10 @@ return (
             groupPath={group}
             read={read}
             onRead={onClick}
+            showContact={idx === 0}
           />
         ))}
-      </Col>
-    </Col>
+      </Box>
+    </>
   );
 }
