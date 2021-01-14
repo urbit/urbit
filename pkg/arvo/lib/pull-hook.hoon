@@ -233,13 +233,21 @@
       |=  [=mark =vase]
       ^-  [(list card:agent:gall) agent:gall]
       ?>  (team:title our.bowl src.bowl)
-      ?.  =(mark %pull-hook-action)
-        =^  cards  pull-hook
-          (on-poke:og mark vase)
-        [cards this]
-      =^  cards  state
-        (poke-hook-action:hc !<(action vase))
-      [cards this]
+        ?+   mark
+          =^  cards  pull-hook
+            (on-poke:og mark vase)
+          [cards this]
+        ::
+            %sane
+          =^  cards  state
+            poke-sane:hc
+          [cards this]
+        ::
+            %pull-hook-action
+          =^  cards  state
+            (poke-hook-action:hc !<(action vase))
+          [cards this]
+        ==
     ::
     ++  on-watch
       |=  =path
@@ -309,10 +317,47 @@
       ++  on-peek   
         |=  =path
         ^-  (unit (unit cage))
-        (on-peek:og path)
+        ?.  =(/x/tracking path)
+          (on-peek:og path)
+        ``noun+!>(~(key by tracking))
     --
   |_  =bowl:gall
   +*  og   ~(. pull-hook bowl)
+  ++  poke-sane
+    ^-  (quip card:agent:gall _state)
+    =/  cards
+      restart-subscriptions
+    ~?  >  ?=(^ cards)
+      "Fixed subscriptions in {<dap.bowl>}"
+    :_  state
+    restart-subscriptions
+  ::
+  ++  check-subscription
+    |=  [rid=resource =ship]
+    ^-  ?
+    %+  lien
+      ~(tap in ~(key by wex.bowl))
+    |=  [=wire her=^ship app=term]
+    ^-  ?
+    ?&  =(app push-hook-name.config)
+        =(ship her)
+        =((scag 4 wire) /helper/pull-hook/pull/resource)
+        =(`rid (de-path-soft:resource (slag 4 wire)))
+    ==
+  ::
+  ++  restart-subscriptions
+    ^-  (list card:agent:gall)
+    %-  zing
+    %+  turn
+      ~(tap by tracking)
+    |=  [rid=resource =ship] 
+    ^-  (list card:agent:gall)
+    ?:  (check-subscription rid ship)  ~
+    ~&  >>  "restarting: {<rid>}"
+    =/  pax=(unit path)
+      (on-pull-kick:og rid)
+    ?~  pax  ~
+    (watch-resource rid u.pax)
   ::
   ++  mule-scry
     |=  [ref=* raw=*]

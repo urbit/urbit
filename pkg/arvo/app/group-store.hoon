@@ -189,17 +189,7 @@
     ^-  (unit (unit cage))
     ?+  path  (on-peek:def path)
         [%y %groups ~]
-      =/  =arch
-        :-  ~
-        %-  malt
-        %+  turn
-          ~(tap by groups)
-        |=  [rid=resource *]
-        ^-  [@ta ~]
-        =/  group=^path
-          (en-path:resource rid)
-        [(spat group) ~]
-      ``noun+!>(arch)
+      ``noun+!>(~(key by groups))
     ::
         [%x %groups %ship @ @ ~]
       =/  rid=(unit resource)

@@ -27,7 +27,7 @@
 +$   state-two
   [%2 ~]
 --
-=|  state-one
+=|  state-two
 =*  state  -
 %-  agent:dbug
 %+  verb  |
@@ -69,7 +69,7 @@
     ^-  card
     (poke-our %metadata-pull-hook pull-hook-action+!>([%add ship rid]))
   --
-  
+::
 ++  on-poke   on-poke:def
 ++  on-watch  on-watch:def
 ++  on-peek   on-peek:def
@@ -78,6 +78,3 @@
 ++  on-arvo   on-arvo:def
 ++  on-fail   on-fail:def
 --
-::
-
-
