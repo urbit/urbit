@@ -2,7 +2,7 @@ name: merge
 on:
   push:
     branches:
-      - 'jt/merge-via-bot'
+      - 'master'
 jobs:
   merge-to-next-js:
     runs-on: ubuntu-latest
@@ -12,6 +12,6 @@ jobs:
       - uses: devmasx/merge-branch@v1.3.1
         with:
           type: now
-          target_branch: jt/testo
+          target_branch: release/next-js
           github_token: ${{ secrets.JANEWAY_BOT_TOKEN }}
 
