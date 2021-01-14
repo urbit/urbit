@@ -44,9 +44,18 @@
       creator=@p
   ==
 ::
++$  metadata-1
+  $:  title=@t
+      description=@t
+      color=@ux
+      date-created=@da
+      creator=@p
+      module=term
+  ==
+::
 +$  md-resource-1   [=app-name =app-path]
 ::
-+$  associations-1  (map [group-path md-resource-1] metadata)
++$  associations-1  (map [group-path md-resource-1] metadata-1)
 ::
 +$  base-state-1
   $:  associations=associations-1
@@ -198,6 +207,7 @@
   =/  old  !<(versioned-state vase)
   =|  cards=(list card)
   |^
+  =*  loop  $
   ?:  ?=(%7 -.old)
     :-  cards
     %_  state
@@ -226,10 +236,37 @@
       associations.old  associations
     ==
   ::  pre-breach, can safely throw away
-  $(old *state-7)
+  loop(old *state-7)
+  ::
   ++  associations-1-to-2
-    |=  assoc=*
-    *^associations
+    |=  assoc=associations-1
+    ^-  ^associations
+    %-  ~(gas by *^associations)
+    %+  murn
+      ~(tap by assoc)
+    |=  [[group=path m=md-resource-1] met=metadata-1]
+    %+  biff  (de-path-soft:resource group)
+    |=  g=resource
+    %+  bind  (md-resource-1-to-2 m)
+    |=  =md-resource 
+    [md-resource g (metadata-1-to-2 met)]
+  ::
+  ++  md-resource-1-to-2
+    |=  m=md-resource-1
+    ^-  (unit md-resource)
+    %+  bind  (de-path-soft:resource app-path.m)
+    |=(rid=resource [app-name.m rid])
+  ::
+  ++  metadata-1-to-2
+    |=  m=metadata-1
+    %*  .  *metadata
+      title         title.m
+      description   description.m
+      color         color.m
+      date-created  date-created.m
+      creator       creator.m
+      module        module.m
+    ==
   ::
   ++  rebuild-resource-indices
     |=  =^associations
@@ -258,8 +295,8 @@
     ^-  associations-1
     %-  malt
     %+  turn  ~(tap by associations)
-    |=  [[=group-path md-resource=md-resource-1] m=metadata]
-    ^-  [[^group-path md-resource-1] metadata]
+    |=  [[=group-path md-resource=md-resource-1] m=metadata-1]
+    ^-  [[^group-path md-resource-1] metadata-1]
     ?.  =(app-name.md-resource app)  
       [[group-path md-resource] m]
     =/  new-app-path=path
