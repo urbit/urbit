@@ -46,7 +46,7 @@ export function SidebarListHeader(props: {
       pl={2}
     >
       <Box flexShrink='0'>
-        <Text bold>
+        <Text>
           {props.initialValues.hideUnjoined ? "Joined Channels" : "All Channels"}
         </Text>
       </Box>
@@ -71,7 +71,7 @@ export function SidebarListHeader(props: {
       </Box>
       <Dropdown
         flexShrink='0'
-        width="200px"
+        width="auto"
         alignY="top"
         alignX={["right", "left"]}
         options={
@@ -100,7 +100,7 @@ export function SidebarListHeader(props: {
           </FormikOnBlur>
         }
       >
-        <Icon color="gray" icon="Adjust" />
+        <Icon color="gray" icon="Adjust" pr='2' />
       </Dropdown>
     </Row>
   );

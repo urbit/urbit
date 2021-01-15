@@ -81,17 +81,15 @@ export function GroupSwitcher(props: {
   const title = getTitleFromWorkspace(associations, workspace);
   const navTo = (to: string) => `${props.baseUrl}${to}`;
   return (
-    <Box zIndex="2" position="sticky" top="0px" p={2}>
+    <Box backgroundColor="white" zIndex="2" position="sticky" top="0px" p={2}>
       <Col
         justifyContent="center"
         bg="white"
-        borderRadius={1}
-        border={1}
-        borderColor="washedGray"
       >
         <Row alignItems="center" justifyContent="space-between">
           <Dropdown
-            width="231px"
+            width="100%"
+            dropWidth="231px"
             alignY="top"
             options={
               <Col
@@ -165,25 +163,26 @@ export function GroupSwitcher(props: {
               </Col>
             }
           >
-            <Row p={2} alignItems="center" width='100%' minWidth='0'>
-              <Row alignItems="center" mr={1} flex='1' width='100%' minWidth='0'>
-                <Text overflow='hidden' display='inline-block' flexShrink='1' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre'}}>{title}</Text>
-                <Icon size='12px' ml='1' mt="0px" display="inline-block" icon="ChevronSouth" />
+            <Row pb='2' alignItems="center" width='100%' minWidth='0' flexShrink={0}>
+              <Row justifyContent="space-between" alignItems="center" mr={1} flexShrink={0} width='100%' minWidth='0'>
+                <Text fontWeight="700" overflow='hidden' display='inline-block' flexShrink='1' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre'}}>{title}</Text>
+                <Icon size='14px' ml='1' mt="0px" display="inline-block" icon="ChevronDouble" />
               </Row>
             </Row>
           </Dropdown>
-          <Row pr={1} justifyContent="flex-end" alignItems="center">
+          <Row pr={1} justifyContent="flex-end" alignSelf='flex-start' mt='1px'>
             {(workspace.type === "group") && (
               <>
                 {isAdmin && (<Link to={navTo("/invites")}>
                   <Icon
-                    display="block"
+                    display="inline-block"
                     color='blue'
                     icon="Users"
+                    ml='12px'
                   />
                 </Link>)}
                 <Link to={navTo("/popover/settings")}>
-                  <Icon color='gray' display="block" m={1} icon="Gear" />
+                  <Icon color='gray' display="inline-block" ml={'12px'} icon="Gear" />
                 </Link>
               </>
             )}
