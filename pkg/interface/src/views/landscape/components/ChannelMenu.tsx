@@ -48,7 +48,7 @@ export function ChannelMenu(props: ChannelMenuProps) {
 
   const isOurs = ship.slice(1) === window.ship;
 
-  const isMuted = 
+  const isMuted =
     props.graphNotificationConfig.watching.findIndex(
         (a) => a.graph === appPath && a.index === "/"
     ) === -1;
@@ -119,7 +119,7 @@ export function ChannelMenu(props: ChannelMenuProps) {
       }
       alignX="right"
       alignY="top"
-      width="250px"
+      dropWidth="250px"
     >
       <Icon display="block" icon="Menu" color="gray" />
     </Dropdown>
