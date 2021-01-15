@@ -1,3 +1,4 @@
+/-  *metadata-store
 /+  *metadata-json
 =,  dejs:format
 |_  act=metadata-action

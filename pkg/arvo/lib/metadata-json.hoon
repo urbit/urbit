@@ -112,5 +112,15 @@
   ::
       %associations
     [%associations (associations-to-json associations.upd)]
+  ::
+      %preview
+    :-  %preview
+    %-  pairs
+    :~  [%group s+(enjs-path:resource group.upd)]
+        [%channels (associations-to-json channels.upd)]
+        [%members (numb members.upd)]
+        [%channel-count (numb channel-count.upd)]
+        [%metadata (metadata-to-json metadata.upd)]
+    ==
   ==  ==
 --

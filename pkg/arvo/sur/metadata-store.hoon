@@ -8,6 +8,13 @@
 +$  md-resource   [=app-name =resource]
 +$  association   [group=resource =metadata]
 +$  associations  (map md-resource association)
++$  group-preview
+  $:  group=resource
+      channels=associations
+      members=@ud
+      channel-count=@ud
+      =metadata
+  ==
 ::
 +$  color  @ux
 +$  url    @t
@@ -32,5 +39,6 @@
   $%  metadata-action
       [%associations =associations]
       [%updated-metadata group=resource resource=md-resource before=metadata =metadata]
+      [%preview group-preview]
   ==
 --

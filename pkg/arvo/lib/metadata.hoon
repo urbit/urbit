@@ -22,6 +22,14 @@
   ?.  =(app-name.md-resource app-name)  ~
   `resource.md-resource
 ::
+++  app-metadata-for-group
+  |=  [group=resource =app-name]
+  =/  =associations
+    (metadata-for-group group)
+  %-  ~(gas by *^associations)
+  %+  skim  ~(tap by associations)
+  |=([=md-resource association] =(app-name app-name.md-resource))
+::
 ++  metadata-for-group
   |=  group=resource
   .^  associations

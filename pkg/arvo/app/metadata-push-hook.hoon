@@ -2,7 +2,7 @@
 ::
 /-  *group, *invite-store, *metadata-store
 /+  default-agent, verb, dbug, grpl=group, push-hook,
-    resource, mdl=metadata
+    resource, mdl=metadata, gral=graph
 ~%  %group-hook-top  ..part  ~
 |%
 +$  card  card:agent:gall
@@ -30,13 +30,46 @@
     def         ~(. (default-agent this %|) bowl)
     grp       ~(. grpl bowl)
     met       ~(. mdl bowl)
+    gra       ~(. gral bowl)
 ::
 ++  on-init  on-init:def
 ++  on-save  !>(~)
 ++  on-load    on-load:def
 ++  on-poke   on-poke:def
 ++  on-agent  on-agent:def
-++  on-watch    on-watch:def
+++  on-watch    
+  |=  =path
+  ~&  path
+  ^-  (quip card _this)
+  ?.  ?=([%preview @ @ @ ~] path)
+    (on-watch:def path)
+  =/  rid=resource
+    (de-path:resource t.path)
+  |^
+  ?>  =(entity.rid our.bowl)
+  ?>  (can-join:grp rid src.bowl)
+  =/  members
+    ~(wyt in (members:grp rid))
+  =/  =metadata
+    (need (peek-metadata:met %contacts rid))
+  :_  this
+  =;  =cage
+    :~  [%give %fact ~ cage]
+        [%give %kick ~ ~]
+    ==
+  :-  %metadata-update
+  !>  ^-  metadata-update
+  [%preview rid channels members channel-count metadata]
+    ::  TODO: rank by popularity
+  ::  how tho, if the group owner isn't in some graphs
+  ++  channels
+    =-  ~&(- -)
+    %-  ~(gas by *associations)
+    (scag 3 ~(tap by (app-metadata-for-group:met rid %graph)))
+  ++  channel-count
+    ~(wyt by (app-metadata-for-group:met rid %graph))
+  --
+::
 ++  on-leave    on-leave:def
 ++  on-peek   on-peek:def
 ++  on-arvo   on-arvo:def
