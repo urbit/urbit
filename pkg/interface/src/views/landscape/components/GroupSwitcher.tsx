@@ -81,12 +81,11 @@ export function GroupSwitcher(props: {
   const title = getTitleFromWorkspace(associations, workspace);
   const navTo = (to: string) => `${props.baseUrl}${to}`;
   return (
-    <Box backgroundColor="white" zIndex="2" position="sticky" top="0px" p={2}>
+    <Box height='48px' backgroundColor="white" zIndex="2" position="sticky" top="0px" py={3} pl='3' borderBottom='1px solid' borderColor='washedGray'>
       <Col
-        justifyContent="center"
         bg="white"
       >
-        <Row alignItems="center" justifyContent="space-between">
+        <Row justifyContent="space-between">
           <Dropdown
             width="100%"
             dropWidth="231px"
@@ -163,14 +162,13 @@ export function GroupSwitcher(props: {
               </Col>
             }
           >
-            <Row pb='2' alignItems="center" width='100%' minWidth='0' flexShrink={0}>
-              <Row justifyContent="space-between" alignItems="center" mr={1} flexShrink={0} width='100%' minWidth='0'>
-                <Text fontWeight="700" overflow='hidden' display='inline-block' flexShrink='1' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre'}}>{title}</Text>
-                <Icon size='14px' ml='1' mt="0px" display="inline-block" icon="ChevronDouble" />
+            <Row width='100%' minWidth='0' flexShrink={0}>
+              <Row justifyContent="space-between" mr={1} flexShrink={0} width='100%' minWidth='0'>
+                <Text lineHeight="1" fontSize='2' fontWeight="700" overflow='hidden' display='inline-block' flexShrink='1' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre'}}>{title}</Text>
               </Row>
             </Row>
           </Dropdown>
-          <Row justifyContent="flex-end" alignSelf='flex-start' mt='1px'>
+          <Row pr='3' verticalAlign="middle">
             {(workspace.type === "group") && (
               <>
                 {isAdmin && (<Link to={navTo("/invites")}>

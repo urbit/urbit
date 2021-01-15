@@ -48,20 +48,6 @@ interface SidebarProps {
   workspace: Workspace;
 }
 
-// Magic spacer that because firefox doesn't correctly calculate
-// position: sticky on a flex child
-// remove when https://bugzilla.mozilla.org/show_bug.cgi?id=1488080
-// is fixed
-const SidebarStickySpacer = styled(Box)`
-  height: 0px;
-  flex-grow: 1;
-  @-moz-document url-prefix() {
-    & {
-      height: ${p => p.theme.space[6] }px;
-    }
-  }
-`;
-
 export function Sidebar(props: SidebarProps) {
   const { invites, api, associations, selected, apps, workspace } = props;
   const groupPath = getGroupFromWorkspace(workspace);
@@ -118,7 +104,6 @@ export function Sidebar(props: SidebarProps) {
         apps={props.apps}
         baseUrl={props.baseUrl}
       />
-      <SidebarStickySpacer flexShrink={0} />
       <Box
         flexShrink="0"
         display={isAdmin ? "flex" : "none"}

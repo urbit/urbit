@@ -14,7 +14,8 @@ import { Dropdown } from "~/views/components/Dropdown";
 import { FormikHelpers } from "formik";
 import { SidebarListConfig, Workspace } from "./types";
 import { Link, useHistory } from 'react-router-dom';
-import {ShipSearch} from "~/views/components/ShipSearch";
+import { getGroupFromWorkspace } from "~/logic/lib/workspace";
+import { roleForShip } from "~/logic/lib/group";
 import {Groups, Rolodex} from "~/types";
 
 export function SidebarListHeader(props: {
@@ -36,14 +37,18 @@ export function SidebarListHeader(props: {
     [props.handleSubmit]
   );
 
+  const groupPath = getGroupFromWorkspace(props.workspace);
+  const role = props.groups?.[groupPath] ? roleForShip(props.groups[groupPath], window.ship) : undefined;
+  const isAdmin = (role === "admin") || (props.workspace?.type === 'home');
+
   return (
     <Row
       flexShrink="0"
       alignItems="center"
       justifyContent="space-between"
       py={2}
-      pr={2}
-      pl={2}
+      px={3}
+      height='48px'
     >
       <Box flexShrink='0'>
         <Text>
@@ -51,12 +56,18 @@ export function SidebarListHeader(props: {
         </Text>
       </Box>
       <Box
-        width='100%'
         textAlign='right'
-        mr='2'
-        display={(props.workspace?.type === 'home') ? 'inline-block' : 'none'}
+        display='flex'
       >
-       <Link to={`${props.baseUrl}/invites`}>
+       <Link
+        style={{
+          display: isAdmin ? "inline-block" : "none" }}
+        to={
+         !!groupPath ? `/~landscape${groupPath}/new` : `/~landscape/home/new`}>
+           <Icon icon="Plus" color="gray" pr='2'/>
+       </Link>
+       <Link to={`${props.baseUrl}/invites`}
+        style={{ display: (props.workspace?.type === 'home') ? 'inline-block' : 'none', verticalAlign: 'bottom' }}>
           <Text
             display='inline-block'
             verticalAlign='middle'
@@ -68,7 +79,6 @@ export function SidebarListHeader(props: {
               + DM
             </Text>
         </Link>
-      </Box>
       <Dropdown
         flexShrink='0'
         width="auto"
@@ -102,6 +112,7 @@ export function SidebarListHeader(props: {
       >
         <Icon color="gray" icon="Adjust" />
       </Dropdown>
+      </Box>
     </Row>
   );
 }
