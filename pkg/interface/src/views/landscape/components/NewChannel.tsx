@@ -85,7 +85,7 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
           moduleType
         );
       }
-      
+
       if (!group) {
         await waiter(p => Boolean(p?.groups?.[`/ship/~${window.ship}/${resId}`]));
       }
@@ -99,11 +99,11 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
       actions.setStatus({ error: 'Channel creation failed' });
     }
   };
-  
+
   return (
     <Col overflowY="auto" p={3}>
       <Box pb='3' display={['block', 'none']} onClick={() => history.push(props.baseUrl)}>
-        {'<- Back'}
+        <Text fontSize='0' bold>{'<- Back'}</Text>
       </Box>
       <Box fontWeight="bold" mb={4} color="black">
         New Channel

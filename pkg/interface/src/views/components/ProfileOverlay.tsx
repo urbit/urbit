@@ -129,7 +129,7 @@ class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
           )}
           <Text mono gray>{cite(`~${ship}`)}</Text>
           {!isOwn && (
-            <Button mt={2} width="100%" style={{ cursor: 'pointer' }} onClick={() => history.push(`/~landscape/dm/${ship}`)}>
+            <Button mt={2} fontSize='0' width="100%" style={{ cursor: 'pointer' }} onClick={() => history.push(`/~landscape/dm/${ship}`)}>
               Send Message
             </Button>
           )}

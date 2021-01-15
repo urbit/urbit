@@ -16,7 +16,6 @@ import { getParentIndex } from "~/logic/lib/notification";
 import { StatelessAsyncAction } from "~/views/components/StatelessAsyncAction";
 import { GroupNotification } from "./group";
 import { GraphNotification } from "./graph";
-import { ChatNotification } from "./chat";
 import { BigInteger } from "big-integer";
 import { useHovering } from "~/logic/lib/util";
 
@@ -54,9 +53,6 @@ function getMuted(
   }
   if ("group" in index) {
     return _.findIndex(groups || [], (g) => g === index.group.group) === -1;
-  }
-  if ("chat" in index) {
-    return _.findIndex(chat || [], (c) => c === index.chat.chat) === -1;
   }
   return false;
 }
@@ -170,26 +166,6 @@ export function Notification(props: NotificationProps) {
           read={read}
           timebox={props.time}
           archived={archived}
-          time={time}
-          associations={associations}
-        />
-      </Wrapper>
-    );
-  }
-  if ("chat" in notification.index) {
-    const index = notification.index.chat;
-    const c: ChatNotificationContents = (contents as any).chat;
-    return (
-      <Wrapper>
-        <ChatNotification
-          api={props.api}
-          index={index}
-          contents={c}
-          contacts={props.contacts}
-          read={read}
-          archived={archived}
-          groups={props.groups}
-          timebox={props.time}
           time={time}
           associations={associations}
         />

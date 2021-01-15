@@ -67,7 +67,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
           color="red"
           ml={2}
           onClick={deletePost}
-          css={{ cursor: "pointer" }}
+          style={{ cursor: "pointer" }}
         >
           Delete
         </Text>
