@@ -1,21 +1,18 @@
-import React from "react";
+import React from 'react';
 import {
-  Center,
   Box,
   Col,
   Row,
   Text,
-  IconButton,
-  Button,
-  Icon,
-} from "@tlon/indigo-react";
-import { uxToHex } from "~/logic/lib/util";
-import { Link } from "react-router-dom";
+  Icon
+} from '@tlon/indigo-react';
+import { uxToHex } from '~/logic/lib/util';
+import { Link } from 'react-router-dom';
 
-import { Association, Associations } from "~/types/metadata-update";
-import { Dropdown } from "~/views/components/Dropdown";
-import { Workspace } from "~/types";
-import { getTitleFromWorkspace } from "~/logic/lib/workspace";
+import { Associations } from '~/types/metadata-update';
+import { Dropdown } from '~/views/components/Dropdown';
+import { Workspace } from '~/types';
+import { getTitleFromWorkspace } from '~/logic/lib/workspace';
 
 const GroupSwitcherItem = ({ to, children, bottom = false, ...rest }) => (
   <Link to={to}>
@@ -47,7 +44,7 @@ function RecentGroups(props: { recent: string[]; associations: Associations }) {
         return (e in associations?.contacts);
       }).slice(1, 5).map((g) => {
         const assoc = associations.contacts[g];
-        const color = uxToHex(assoc?.metadata?.color || "0x0");
+        const color = uxToHex(assoc?.metadata?.color || '0x0');
         return (
           <Link key={g} style={{ minWidth: 0 }} to={`/~landscape${g}`}>
           <Row px={1} pb={2} alignItems="center">
@@ -60,7 +57,7 @@ function RecentGroups(props: { recent: string[]; associations: Associations }) {
               bg={`#${color}`}
               mr={2}
               display="block"
-              flexShrink='0'
+              flexShrink={0}
             />
               <Text verticalAlign='top' maxWidth='100%' overflow='hidden' display='inline-block' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}>{assoc?.metadata?.title}</Text>
             </Row>
@@ -76,6 +73,7 @@ export function GroupSwitcher(props: {
   workspace: Workspace;
   baseUrl: string;
   recentGroups: string[];
+  isAdmin: any;
 }) {
   const { associations, workspace, isAdmin } = props;
   const title = getTitleFromWorkspace(associations, workspace);
@@ -131,9 +129,9 @@ export function GroupSwitcher(props: {
                   <Icon mr="2" color="gray" icon="Plus" />
                   <Text> Join Group</Text>
                 </GroupSwitcherItem>
-                {workspace.type === "group" && (
+                {workspace.type === 'group' && (
                   <>
-                    <GroupSwitcherItem to={navTo("/popover/participants")}>
+                    <GroupSwitcherItem to={navTo('/popover/participants')}>
                       <Icon
                         mr={2}
                         color="gray"
@@ -141,7 +139,7 @@ export function GroupSwitcher(props: {
                       />
                       <Text> Participants</Text>
                     </GroupSwitcherItem>
-                    <GroupSwitcherItem to={navTo("/popover/settings")}>
+                    <GroupSwitcherItem to={navTo('/popover/settings')}>
                       <Icon
                         mr={2}
                         color="gray"
@@ -149,7 +147,7 @@ export function GroupSwitcher(props: {
                       />
                       <Text> Group Settings</Text>
                     </GroupSwitcherItem>
-                    {isAdmin && (<GroupSwitcherItem bottom to={navTo("/invites")}>
+                    {isAdmin && (<GroupSwitcherItem bottom to={navTo('/invites')}>
                       <Icon
                         mr={2}
                         color="blue"
@@ -164,14 +162,14 @@ export function GroupSwitcher(props: {
           >
             <Row width='100%' minWidth='0' flexShrink={0}>
               <Row justifyContent="space-between" mr={1} flexShrink={0} width='100%' minWidth='0'>
-                <Text lineHeight="1" fontSize='2' fontWeight="700" overflow='hidden' display='inline-block' flexShrink='1' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre'}}>{title}</Text>
+                <Text lineHeight="1" fontSize='2' fontWeight="700" overflow='hidden' display='inline-block' flexShrink='1' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}>{title}</Text>
               </Row>
             </Row>
           </Dropdown>
           <Row pr='3' verticalAlign="middle">
-            {(workspace.type === "group") && (
+            {(workspace.type === 'group') && (
               <>
-                {isAdmin && (<Link to={navTo("/invites")}>
+                {isAdmin && (<Link to={navTo('/invites')}>
                   <Icon
                     display="inline-block"
                     color='blue'
@@ -179,7 +177,7 @@ export function GroupSwitcher(props: {
                     ml='12px'
                   />
                 </Link>)}
-                <Link to={navTo("/popover/settings")}>
+                <Link to={navTo('/popover/settings')}>
                   <Icon color='gray' display="inline-block" ml={'12px'} icon="Gear" />
                 </Link>
               </>
