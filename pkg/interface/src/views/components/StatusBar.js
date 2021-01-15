@@ -22,7 +22,7 @@ const StatusBar = (props) => {
       pb='3'
       >
       <Row collapse>
-      <Button borderColor='washedGray' mr='2' px='2' onClick={() => props.history.push('/')} {...props}>
+      <Button width="32px" borderColor='washedGray' mr='2' px='2' onClick={() => props.history.push('/')} {...props}>
         <Icon icon='Spaces' color='black'/>
       </Button>
 
@@ -60,7 +60,7 @@ const StatusBar = (props) => {
           >
           <Text color='#000000'>Submit <Text color='#000000' display={['none', 'inline']}>an</Text> issue</Text>
         </StatusBarItem>
-        <StatusBarItem px={'2'} flexShrink='0' onClick={() => props.history.push('/~profile')}>
+        <StatusBarItem width={['32px', 'auto']} px={'2'} flexShrink='0' onClick={() => props.history.push('/~profile')}>
           <Sigil ship={props.ship} size={16} color='black' classes='mix-blend-diff' icon />
           <Text ml={2} display={["none", "inline"]} fontFamily="mono">{cite(props.ship)}</Text>
         </StatusBarItem>
