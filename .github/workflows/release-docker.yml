@@ -42,6 +42,6 @@ jobs:
           version="$(cat ./pkg/urbit/version)"
           skopeo="$(nix-build -A skopeo)/bin/skopeo"
           image="$(nix-build -A docker-image)"
-          $skopeo --insecure-policy copy tarball:$docker docker://${{ secrets.DOCKERHUB_USERNAME }}/urbit:v$version 
+          $skopeo --insecure-policy copy tarball:$image docker://${{ secrets.DOCKERHUB_USERNAME }}/urbit:v$version 
           # Apply 'latest' tag. This won't re-copy any layers since layers are checked by hash before copying
-          $skopeo --insecure-policy copy tarball:$docker docker://${{ secrets.DOCKERHUB_USERNAME }}/urbit:latest
+          $skopeo --insecure-policy copy tarball:$image docker://${{ secrets.DOCKERHUB_USERNAME }}/urbit:latest
