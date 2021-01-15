@@ -75,8 +75,9 @@ export function Header(props: {
       {!props.archived && (
         <Icon
           display="block"
+          opacity={read ? 0 : 1}
           mr={2}
-          icon={read ? "Circle" : "Bullet"}
+          icon="Bullet"
           color="blue"
         />
       )}

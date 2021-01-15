@@ -247,12 +247,11 @@ export function GraphNotification(props: {
   const desc = describeNotification(index.description, contents.length !== 1);
 
   const onClick = useCallback(() => {
-    if (props.archived) {
+    if (props.archived || read) {
       return;
     }
 
-    const func = read ? "unread" : "read";
-    return api.hark[func](timebox, { graph: index });
+    return api.hark["read"](timebox, { graph: index });
   }, [api, timebox, index, read]);
 
 return (
