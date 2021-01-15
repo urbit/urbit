@@ -5,6 +5,7 @@ import ReconnectButton from './ReconnectButton';
 import { StatusBarItem } from './StatusBarItem';
 import { Sigil } from '~/logic/lib/sigil';
 import useLocalState from '~/logic/state/local';
+import { cite } from '~/logic/lib/util';
 
 const StatusBar = (props) => {
   const invites = [].concat(...Object.values(props.invites).map(obj => Object.values(obj)));
@@ -54,14 +55,14 @@ const StatusBar = (props) => {
           onClick={() => window.open(
             'https://github.com/urbit/landscape/issues/new' +
             '?assignees=&labels=development-stream&title=&' +
-            `body=commit:%20${process.env.LANDSCAPE_SHORTHASH}`
+            `body=commit:%20urbit/urbit@${process.env.LANDSCAPE_SHORTHASH}`
             )}
           >
           <Text color='#000000'>Submit <Text color='#000000' display={['none', 'inline']}>an</Text> issue</Text>
         </StatusBarItem>
         <StatusBarItem px={'2'} flexShrink='0' onClick={() => props.history.push('/~profile')}>
           <Sigil ship={props.ship} size={16} color='black' classes='mix-blend-diff' icon />
-          <Text ml={2} display={["none", "inline"]} fontFamily="mono">~{props.ship}</Text>
+          <Text ml={2} display={["none", "inline"]} fontFamily="mono">{cite(props.ship)}</Text>
         </StatusBarItem>
       </Row>
     </Box>

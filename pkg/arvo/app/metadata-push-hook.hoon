@@ -53,14 +53,6 @@
   ?~  u.role  %.n
   ?=(?(%admin %moderator) u.u.role)
 ::
-++  resource-for-update
-  |=  =vase
-  ^-  (unit resource)
-  =+  !<(upd=metadata-update vase)
-  ?.  ?=(?(%add %remove %update) -.upd)
-    ~
-  `group.upd
-::
 ++  take-update
   |=   =vase
   ^-  [(list card) agent]

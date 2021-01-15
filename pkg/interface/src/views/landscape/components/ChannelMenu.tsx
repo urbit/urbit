@@ -63,8 +63,10 @@ export function ChannelMenu(props: ChannelMenuProps) {
   }, [api, association]);
 
   const onDelete = useCallback(async () => {
-    await api.graph.deleteGraph(name);
-    history.push(`/~landscape${workspace}`);
+    if (confirm('Are you sure you want to delete this channel?')) {
+      await api.graph.deleteGraph(name);
+      history.push(`/~landscape${workspace}`);
+    }
   }, [api, association]);
 
   return (

@@ -37,7 +37,7 @@ export class OmniboxResult extends Component {
         || icon.toLowerCase() === 'links'
         || icon.toLowerCase() === 'terminal')
     {
-      icon = (icon === 'Link')     ? 'Links' :
+      icon = (icon === 'Link')     ? 'Collection' :
              (icon === 'Terminal') ? 'Dojo'  : icon;
       graphic = <Icon display="inline-block" verticalAlign="middle" icon={icon} mr='2' size='16px' color={iconFill} />;
     } else if (icon === 'inbox') {

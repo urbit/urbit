@@ -77,7 +77,7 @@ export function Comments(props: CommentsProps) {
       if ('text' in curr) {
         val = val + curr.text;
       } else if ('mention' in curr) {
-        val = val + curr.mention;
+        val = val + `~${curr.mention}`;
       } else if ('url' in curr) {
         val = val + curr.url;
       } else if ('code' in curr) {

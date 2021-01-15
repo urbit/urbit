@@ -21,13 +21,13 @@
   $%  state:state-zero:store
       state:state-one:store
       state-2
+      state-3
   ==
 +$  unread-stats
   [indices=(set index:graph-store) last=@da]
 ::
-+$  state-2
-  $:  %2
-      unreads-each=(jug stats-index:store index:graph-store)
++$  base-state 
+  $:  unreads-each=(jug stats-index:store index:graph-store)
       unreads-count=(map stats-index:store @ud)
       last-seen=(map stats-index:store @da)
       =notifications:store
@@ -36,14 +36,20 @@
       dnd=_|
   ==
 ::
++$  state-2
+  [%2 base-state]
+::
++$  state-3
+  [%3 base-state]
+::
 +$  inflated-state
-  $:  state-2
+  $:  state-3
       cache
   ==
 ::  $cache: useful to have precalculated, but can be derived from state
 ::  albeit expensively
 +$  cache
-  $:  by-index=(jug stats-index:store @da)
+  $:  by-index=(jug stats-index:store [time=@da =index:store])
       ~
   ==
 ::
@@ -80,9 +86,19 @@
   =|  cards=(list card)
   |^  
   ?-  -.old
-      %2  
-    :-  cards
+      %3  
+    :-  (flop cards)
     this(-.state old, +.state (inflate-cache:ha old))
+    ::
+      %2
+    %_  $
+      -.old  %3
+      ::
+        cards
+      :_  cards
+      [%pass / %agent [our dap]:bowl %poke noun+!>(%fix-dangling)]
+    ==
+    
     ::
       %1
     %_  $
@@ -214,6 +230,7 @@
         [%count count]
         (~(gut by last-seen) stats-index *time)
     ==
+  ::
   ++  give-each-unreads
     ^-  (list [stats-index:store stats:store])
     %+  turn
@@ -266,9 +283,40 @@
   =^  cards  state
     ?+  mark           (on-poke:def mark vase)
         %hark-action   (hark-action !<(action:store vase))
-        %noun          ~&  +.state  [~ state]
+        %noun          (poke-noun !<(* vase))
     ==
   [cards this]
+  ::
+  ++  poke-noun
+    |=  val=*
+    ?+  val  ~|(%bad-noun-poke !!)
+      %fix-dangling  fix-dangling
+      %print  ~&(+.state [~ state])
+    ==
+  ::
+  ++  fix-dangling
+    =/  graphs  get-keys:gra
+    :_  state
+    %+  roll
+      ~(tap by unreads-each)
+    |=  $:  [=stats-index:store indices=(set index:graph-store)]
+            out=(list card)
+        ==
+    ?.  ?=(%graph -.stats-index)  out
+    ?.  (~(has in graphs) graph.stats-index)
+      :_(out (poke-us %remove-graph graph.stats-index))
+    %+  welp  out
+    %+  turn
+      %+  skip
+        ~(tap in indices) 
+      |=  =index:graph-store
+      (check-node-existence:gra graph.stats-index index)
+    |=(=index:graph-store (poke-us %read-each stats-index index))
+  ::
+  ++  poke-us
+    |=  =action:store
+    ^-  card
+    [%pass / %agent [our dap]:bowl %poke hark-action+!>(action)]
   ::
   ++  hark-action
     |=  =action:store
@@ -340,6 +388,9 @@
     |=  [read=? time=@da =index:store]
     poke-core(+.state (^upd-cache read time index))
   ::
+  ++  rebuild-cache
+    poke-core(+.state (inflate-cache -.state))
+  ::
   ++  put-notifs
     |=  [time=@da =timebox:store]
     poke-core(notifications (put:orm notifications time timebox))
@@ -382,17 +433,28 @@
       (~(put by archive-box) index notification(read %.y))
     (give %archive time index)
   ::
+  ::  if we detect cache inconsistencies, wipe and rebuild
   ++  change-read-status
     |=  [time=@da =index:store read=?]
+    ^+  poke-core
     =.  poke-core  (upd-cache read time index)
-    %_  poke-core
-        notifications
-      %^  jub-orm  notifications  time
-      |=  =timebox:store
-      %+  ~(jab by timebox)  index
-      |=  n=notification:store
-      ?>(!=(read read.n) n(read read))
-    ==
+    =/  tib=(unit timebox:store)
+      (get:orm notifications time)
+    ?~  tib  poke-core
+    =/  not=(unit notification:store)
+      (~(get by u.tib) index)
+    ?~  not  poke-core
+    =?    poke-core
+        ::  cache is inconsistent iff we didn't directly
+        ::  call this through %read-note or %unread-note
+        &(=(read read.u.not) !?=(?(%read-note %unread-note) -.in))
+      ~&  >>  "Inconsistent hark cache, rebuilding"
+      rebuild-cache
+    =.  u.tib
+      (~(put by u.tib) index u.not(read read))
+    =.  notifications
+      (put:orm notifications time u.tib)
+    poke-core
   ::
   ++  read-note
     |=  [time=@da =index:store]
@@ -418,19 +480,16 @@
   ::
   ++  read-index-each
     |=  [=stats-index:store ref=index:graph-store]
-    %+  read-index  stats-index 
+    %-  read-indices
     %+  skim
       ~(tap ^in (~(get ju by-index) stats-index))
-    |=  time=@da
+    |=  [time=@da =index:store]
     =/  =timebox:store
       (gut-orm notifications time)
-    %+  roll
-      ~(tap ^in timebox)
-    |=  [[=index:store not=notification:store] out=?]
-    ?:  out  out
-    ?.  (stats-index-is-index:store stats-index index)  out
-    ?.  ?=(%graph -.index)  out
-    ?.  ?=(%graph -.contents.not)  out
+    =/  not=notification:store
+      (~(got by timebox) index)
+    ?.  ?=(%graph -.index)  %.n
+    ?.  ?=(%graph -.contents.not)  %.n
     (lien list.contents.not |=(p=post:post =(index.p ref)))
   ::
   ++  read-each
@@ -458,30 +517,17 @@
   ++  read-count
     |=  =stats-index:store
     =.  unreads-count  (~(put by unreads-count) stats-index 0)
-    =/  times=(list @da)
+    =/  times=(list [@da index:store])
       ~(tap ^in (~(get ju by-index) stats-index))
-    (give:(read-index stats-index times) %read-count stats-index)
+    (give:(read-indices times) %read-count stats-index)
   :: 
-  ++  read-index
-    |=  [=stats-index:store times=(list @da)]
+  ++  read-indices
+    |=  times=(list [time=@da =index:store])
     |- 
     ?~  times  poke-core
     =/  core
-      (read-stats-index i.times stats-index)
+      (read-note i.times)
     $(poke-core core, times t.times)
-  ::
-  ++  read-stats-index
-    |=  [time=@da =stats-index:store]
-    =/  keys
-      ~(tap ^in ~(key by (gut-orm notifications time)))
-    |-  ^+  poke-core
-    ?~  keys
-      poke-core
-    ?.  (stats-index-is-index:store stats-index i.keys)
-      $(keys t.keys)
-    =/  core
-      (read-note time i.keys)
-    $(poke-core core, keys t.keys)
   ::
   ++  seen-index
     |=  [time=@da =stats-index:store]
@@ -507,7 +553,7 @@
     =.  last-seen
       ((dif-map-by-key ,@da) last-seen indices)
     =.  by-index
-      ((dif-map-by-key ,(set @da)) by-index indices)
+      ((dif-map-by-key ,(set [@da =index:store])) by-index indices)
     poke-core
     ::
     ++  get-stats-indices
@@ -540,10 +586,10 @@
         ~(tap ^in set)
       |- 
       ?~  indices  poke-core
-      =/  times=(list @da)
+      =/  times=(list [time=@da =index:store])
         ~(tap ^in (~(get ju by-index) i.indices))
       =.  poke-core
-        (read-index i.indices times)
+        (read-indices times)
       $(indices t.indices)
     --
   ::
@@ -631,14 +677,14 @@
   %_    +.state
     ::
       by-index 
-    %.  [(to-stats-index:store index) time]
+    %.  [(to-stats-index:store index) time index]
     ?:  read
       ~(del ju by-index)
     ~(put ju by-index)
   ==
 ::
 ++  inflate-cache
-  |=  state-2
+  |=  state-3
   ^+  +.state
   =/  nots=(list [p=@da =timebox:store])
     (tap:orm notifications)
