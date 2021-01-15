@@ -29,6 +29,14 @@ type MetadataUpdateRemove = {
   }
 }
 
+export interface MetadataUpdatePreview {
+  group: string;
+  channels: Associations;
+  "channel-count": number;
+  members: number;
+  metadata: Metadata;
+}
+
 export type Associations = Record<AppName, AppAssociations>;
 
 export type AppAssociations = {

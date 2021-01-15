@@ -16,6 +16,13 @@ export const MOMENT_CALENDAR_DATE = {
   sameElse: "DD/MM/YYYY",
 };
 
+export const getModuleIcon = (mod: string) => {
+ if (mod === "link") {
+    return "Collection";
+  }
+  return _.capitalize(mod);
+}
+
 export function appIsGraph(app: string) {
   return app === 'publish' || app == 'link';
 }

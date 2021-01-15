@@ -1,7 +1,7 @@
 
 import BaseApi from './base';
 import { StoreState } from '../store/type';
-import { Path, Patp, Association, Metadata } from '~/types';
+import { Path, Patp, Association, Metadata, MetadataUpdatePreview } from '~/types';
 
 export default class MetadataApi extends BaseApi<StoreState> {
 
@@ -41,7 +41,37 @@ export default class MetadataApi extends BaseApi<StoreState> {
     });
   }
 
+  preview(group: string) {
+    return new Promise<MetadataUpdatePreview>((resolve, reject) => {
+      const tempChannel: any = new (window as any).channel();
+      let done = false;
+      tempChannel.subscribe(window.ship, "metadata-pull-hook", `/preview${group}`,
+        (err) => {
+          reject(err);
+          tempChannel.delete();
+        },
+        (ev: any) => {
+          done = true;
+          tempChannel.delete();
+          const upd = ev['metadata-update'].preview as MetadataUpdatePreview;
+          resolve(upd);
+        },
+        (quit) => {
+          tempChannel.delete();
+          if(!done) {
+            reject(quit)
+          }
+        },
+        (a) => {
+          console.log(a);
+        }
+      );
+    })
+  }
+
+
+
   private metadataAction(data) {
-    return this.action('metadata-hook', 'metadata-action', data);
+    return this.action('metadata-push-hook', 'metadata-update', data);
   }
 }

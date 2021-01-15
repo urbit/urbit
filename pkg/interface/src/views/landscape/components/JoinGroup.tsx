@@ -2,6 +2,8 @@ import React, { useState, useCallback, useEffect } from "react";
 import { Body } from "~/views/components/Body";
 import {
   Col,
+  Row,
+  Icon,
   Box,
   Text,
   ManagedTextInputField as Input
@@ -14,6 +16,10 @@ import { useWaitForProps } from "~/logic/lib/useWaitForProps";
 import GlobalApi from "~/logic/api/global";
 import { RouteComponentProps } from "react-router-dom";
 import urbitOb from "urbit-ob";
+import {resourceFromPath} from "~/logic/lib/group";
+import { StatelessAsyncButton } from "~/views/components/StatelessAsyncButton";
+import { uxToHex, getModuleIcon } from "~/logic/lib/util";
+import {FormError} from "~/views/components/FormError";
 
 const formSchema = Yup.object({
   group: Yup.string()
@@ -57,22 +63,30 @@ export function JoinGroup(props: JoinGroupProps & RouteComponentProps) {
   };
 
   const waiter = useWaitForProps(props);
+  const [preview, setPreview] = useState<MetadataUpdatePreview | null>(null);
+
+  const onConfirm = useCallback(async () => {
+    const { group } = preview;
+    await api.contacts.join(resourceFromPath(group))
+    await waiter(({ contacts, groups }) => {
+      return group in contacts && group in groups;
+    });
+    history.push(`/~landscape${group}`);
+
+  }, [api, preview, waiter]);
 
   const onSubmit = useCallback(
     async (values: FormSchema, actions: FormikHelpers<FormSchema>) => {
       try {
         const [ship, name] = values.group.split("/");
-        await api.contacts.join({ ship, name });
         const path = `/ship/${ship}/${name}`;
-        await waiter(({ contacts, groups }) => {
-          return path in contacts && path in groups;
-        });
 
+        const prev = await api.metadata.preview(path);
         actions.setStatus({ success: null });
-        history.push(`/~landscape${path}`);
+        setPreview(prev);
       } catch (e) {
         console.error(e);
-        actions.setStatus({ error: e.message });
+        actions.setStatus({ error: e.message || 'error' });
       }
     },
     [api, waiter, history]
@@ -80,10 +94,44 @@ export function JoinGroup(props: JoinGroupProps & RouteComponentProps) {
 
   return (
     <>
-      <Col overflowY="auto" p="3">
+      <Col overflowY="auto" p="4">
         <Box mb={3}>
-          <Text fontWeight="bold">Join Group</Text>
+          <Text fontSize="2" fontWeight="bold">Join  a Group</Text>
         </Box>
+        { preview ? (
+          <Col gapY="4">
+            <Row gapX="2">
+              <Box
+                borderRadius="1"
+                width="36px" height="36px"
+                bg={`#${uxToHex(preview.metadata.color)}`} 
+              />
+              <Col justifyContent="space-between">
+                <Text fontSize="1">{preview.metadata.title}</Text>
+                <Row gapX="2" justifyContent="space-between">
+                  <Text fontSize="1" gray>{preview.members} participants</Text>
+                  <Text fontSize="1" gray>{preview["channel-count"]} channels</Text>
+                </Row>
+              </Col>
+            </Row>
+            {preview.metadata.description && (
+              <Text gray fontSize="1">{preview.metadata.description}</Text>
+            )}
+            <Col gapY="2" p="2" borderRadius="2" border="1" borderColor="washedGray" bg="washedBlue">
+              <Text gray fontSize="1">Channels</Text>
+          {Object.values(preview.channels).map(({ metadata }: any) => (
+            <Row>
+              <Icon mr="2" color="blue" icon={getModuleIcon(metadata.module) as any} />
+              <Text color="blue">{metadata.title} </Text>
+            </Row>
+          ))}
+            </Col>
+            <StatelessAsyncButton primary name="join" onClick={onConfirm}>
+              Join {preview.metadata.title}
+            </StatelessAsyncButton>
+          </Col>
+
+        ) : (
         <Formik
           validationSchema={formSchema}
           initialValues={initialValues}
@@ -99,9 +147,11 @@ export function JoinGroup(props: JoinGroupProps & RouteComponentProps) {
                 placeholder="~sampel-palnet/test-group"
               />
               <AsyncButton>Join Group</AsyncButton>
+              <FormError message="Unable to join group, you may not have the correct permissions" />
             </Col>
           </Form>
         </Formik>
+      )}
       </Col>
     </>
   );

@@ -37,9 +37,9 @@ export function LinkResource(props: LinkResourceProps) {
 
   const rid = association.resource; 
 
-  const relativePath = (p: string) => `${baseUrl}/resource/link${appPath}${p}`;
+  const relativePath = (p: string) => `${baseUrl}/resource/link${rid}${p}`;
 
-  const [, , ship, name] = appPath.split("/");
+  const [, , ship, name] = rid.split("/");
   const resourcePath = `${ship.slice(1)}/${name}`;
   const resource = associations.graph[rid]
     ? associations.graph[rid]

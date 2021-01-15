@@ -7,7 +7,7 @@ import { SidebarAppConfigs, SidebarItemStatus } from "./Sidebar";
 import { HoverBoxLink } from "~/views/components/HoverBox";
 import { Groups, Association } from "~/types";
 
-import { cite } from "~/logic/lib/util";
+import { cite, getModuleIcon } from "~/logic/lib/util";
 
 function SidebarItemIndicator(props: { status?: SidebarItemStatus }) {
   switch (props.status) {
@@ -24,15 +24,7 @@ function SidebarItemIndicator(props: { status?: SidebarItemStatus }) {
   }
 }
 
-const getAppIcon = (app: string, mod: string) => {
-  if (app === "graph") {
-    if (mod === "link") {
-      return "Collection";
-    }
-    return _.capitalize(mod);
-  }
-  return _.capitalize(app);
-};
+;
 
 const DM_REGEX = /ship\/~([a-z]|-)*\/dm--/;
 function getItemTitle(association: Association) {
@@ -101,7 +93,7 @@ export function SidebarItem(props: {
         <Icon
           display="block"
           color={color}
-          icon={getAppIcon(appName, mod) as any}
+          icon={getModuleIcon(mod) as any}
         />
         <Box width='100%' flexShrink={2} ml={2} display='flex' overflow='hidden'>
           <Text
