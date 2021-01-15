@@ -170,7 +170,7 @@ export function GroupSwitcher(props: {
               </Row>
             </Row>
           </Dropdown>
-          <Row pr={1} justifyContent="flex-end" alignSelf='flex-start' mt='1px'>
+          <Row justifyContent="flex-end" alignSelf='flex-start' mt='1px'>
             {(workspace.type === "group") && (
               <>
                 {isAdmin && (<Link to={navTo("/invites")}>

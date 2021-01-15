@@ -100,7 +100,7 @@ export function SidebarListHeader(props: {
           </FormikOnBlur>
         }
       >
-        <Icon color="gray" icon="Adjust" pr='2' />
+        <Icon color="gray" icon="Adjust" />
       </Dropdown>
     </Row>
   );
