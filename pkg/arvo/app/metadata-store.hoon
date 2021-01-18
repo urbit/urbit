@@ -319,7 +319,23 @@
   |=  arc=*
   ^-  (quip card _state)
   |^
-  (on-load !>([%7 (remake-metadata ;;(tree-metadata +.arc))]))
+  =^  cards  state  
+    (on-load !>([%7 (remake-metadata ;;(tree-metadata +.arc))]))
+  :_  state
+  %+  weld  cards
+  %+  turn  ~(tap in ~(key by group-indices))
+  |=  rid=resource
+  %-  poke-our
+  ?:  =(entity.rid our.bowl)
+    :-  %metadata-push-hook
+    push-hook-action+!>([%add rid])
+  :-  %metadata-pull-hook
+  pull-hook-action+!>([%add [entity .]:rid])
+  ::
+  ++  poke-our
+    |=  [app=term =cage]
+    ^-  card
+    [%pass / %agent [our.bowl app] %poke cage]
   ::
   +$  tree-metadata
     $:  associations=(tree [md-resource [resource metadata]])
