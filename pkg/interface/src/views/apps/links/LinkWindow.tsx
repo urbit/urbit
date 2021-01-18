@@ -1,4 +1,6 @@
-import React, { useRef, useCallback, useEffect } from "react";
+import React, { useRef, useCallback, useEffect, useMemo } from "react";
+import { Col } from "@tlon/indigo-react";
+import bigInt from 'big-integer';
 import {
   Association,
   Graph,
@@ -7,10 +9,12 @@ import {
   LocalUpdateRemoteContentPolicy,
   Group,
   Rolodex,
+  S3State,
 } from "~/types";
 import GlobalApi from "~/logic/api/global";
 import VirtualScroller from "~/views/components/VirtualScroller";
 import { LinkItem } from "./components/LinkItem";
+import LinkSubmit from "./components/LinkSubmit";
 
 interface LinkWindowProps {
   association: Association;
@@ -24,6 +28,7 @@ interface LinkWindowProps {
   group: Group;
   path: string;
   api: GlobalApi;
+  s3: S3State;
 }
 export function LinkWindow(props: LinkWindowProps) {
   const { graph, api, association } = props;
@@ -42,12 +47,24 @@ export function LinkWindow(props: LinkWindowProps) {
     list.calculateVisibleItems();
   }, [graph.size]);
 
+  const first = graph.peekLargest()?.[0];
+
+  const [,,ship, name] = association['app-path'].split('/');
+
+  const style = useMemo(() => 
+    ({ 
+      height: "100%", 
+      width: "100%",
+      display: 'flex', 
+      flexDirection: 'column', 
+      alignItems: 'center' 
+    }), []);
 
   return (
     <VirtualScroller
       ref={(l) => (virtualList.current = l ?? undefined)}
       origin="top"
-      style={{ height: "100%", width: "100%" }}
+      style={style}
       onStartReached={() => {}}
       onScroll={() => {}}
       data={graph}
@@ -59,8 +76,17 @@ export function LinkWindow(props: LinkWindowProps) {
         const linkProps = {
           ...props,
           node,
+          measure,
           key: index.toString()
         };
+        if(index.eq(first ?? bigInt.zero)) {
+          return (
+            <Col mx="auto" mt="4" maxWidth="768px" width="100%" flexShrink='0'>
+              <LinkSubmit s3={props.s3} name={name} ship={ship.slice(1)} api={api} />
+              <LinkItem {...linkProps} />
+            </Col>
+          )
+        }
         return <LinkItem {...linkProps} />;
       }}
       loadRows={fetchLinks}

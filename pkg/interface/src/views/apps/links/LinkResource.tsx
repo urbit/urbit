@@ -60,30 +60,26 @@ export function LinkResource(props: LinkResourceProps) {
   }
 
   return (
-    <Col alignItems="center" height="100%" width="100%" overflowY="auto">
+    <Col alignItems="center" height="100%" width="100%" overflowY="hidden">
       <Switch>
         <Route
           exact
           path={relativePath("")}
           render={(props) => {
             return (
-              <Col width="100%" p={4} alignItems="center" maxWidth="768px">
-                <Col width="100%" flexShrink='0'>
-                  <LinkSubmit s3={s3} name={name} ship={ship.slice(1)} api={api} />
-                </Col>
-                <LinkWindow
-                  association={resource}
-                  contacts={contacts}
-                  resource={resourcePath}
-                  graph={graph}
-                  unreads={unreads}
-                  baseUrl={resourceUrl}
-                  group={group}
-                  path={resource["group-path"]}
-                  api={api}
-                  mb={3}
-                />
-              </Col>
+              <LinkWindow
+                s3={s3}
+                association={resource}
+                contacts={contacts}
+                resource={resourcePath}
+                graph={graph}
+                unreads={unreads}
+                baseUrl={resourceUrl}
+                group={group}
+                path={resource["group-path"]}
+                api={api}
+                mb={3}
+              />
             );
           }}
         />
