@@ -63,7 +63,6 @@
     ::  TODO: rank by popularity
   ::  how tho, if the group owner isn't in some graphs
   ++  channels
-    =-  ~&(- -)
     %-  ~(gas by *associations)
     (scag 3 ~(tap by (app-metadata-for-group:met rid %graph)))
   ++  channel-count

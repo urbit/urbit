@@ -3,13 +3,14 @@ import { useFormikContext } from "formik";
 import { ErrorLabel } from "@tlon/indigo-react";
 import {PropFunc} from "~/types/util";
 
-export function FormError(props: { message: string } & PropFunc<typeof ErrorLabel>) {
+export function FormError(props: { message?: string } & PropFunc<typeof ErrorLabel>) {
   const { status } = useFormikContext();
   const { message, ...rest } = props;
 
   let s = status || {};
+  const contents = message || s?.error;
 
   return (
-    <ErrorLabel {...rest} hasError={"error" in s}>{message}</ErrorLabel>
+    <ErrorLabel {...rest} hasError={"error" in s}>{contents}</ErrorLabel>
   );
 }

@@ -47,11 +47,15 @@
     ==
   ::
       %watch-ack
-    ?^(p.sign [%give %kick ~[wire] ~]~ ~)
+    ?~  p.sign  ~
+    :~  [%give %fact ~[wire] tang+!>(u.p.sign)]
+        [%give %kick ~[wire] ~]
+    ==
   ==
 ::
 ++  on-watch  
   |=  =path
+  ?>  (team:title [our src]:bowl)
   ?.  ?=([%preview @ @ @ ~] path)
     (on-watch:def path)
   =/  rid=resource
@@ -59,11 +63,26 @@
   :_  this
   =/  =dock
     [entity.rid %metadata-push-hook]
-  [%pass path %agent dock %watch path]~
+  :~  [%pass path %arvo %b %wait (add now.bowl ~s20)]
+      [%pass path %agent dock %watch path]
+  ==
 ::
 ++  on-leave  on-leave:def
 ++  on-peek   on-peek:def
-++  on-arvo   on-arvo:def
+++  on-arvo   
+  |=  [=wire =sign-arvo]
+  ?.  ?=([%preview @ @ @ ~] wire)
+    (on-arvo:def wire sign-arvo)
+  =/  rid=resource
+    (de-path:resource t.wire)
+  =/  =dock
+    [entity.rid %metadata-push-hook]
+  :_  this
+  ?.  (~(has by wex.bowl) [wire dock])  ~
+  :~  [%pass wire %agent dock %leave ~]
+      [%give %kick ~[wire] ~]
+  ==
+::
 ++  on-fail   on-fail:def
 ++  on-pull-nack
   |=   [=resource =tang]

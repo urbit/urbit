@@ -51,15 +51,22 @@ export default class MetadataApi extends BaseApi<StoreState> {
           tempChannel.delete();
         },
         (ev: any) => {
-          done = true;
-          tempChannel.delete();
-          const upd = ev['metadata-update'].preview as MetadataUpdatePreview;
-          resolve(upd);
+          console.log(ev);
+          if ('metadata-update' in ev) {
+            done = true;
+            tempChannel.delete();
+            const upd = ev['metadata-update'].preview as MetadataUpdatePreview;
+            resolve(upd);
+          } else {
+            done = true;
+            tempChannel.delete();
+            reject(new Error("no-permissions"));
+          }
         },
         (quit) => {
           tempChannel.delete();
           if(!done) {
-            reject(quit)
+            reject(new Error("offline"))
           }
         },
         (a) => {

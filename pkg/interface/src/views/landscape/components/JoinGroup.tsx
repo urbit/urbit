@@ -85,8 +85,14 @@ export function JoinGroup(props: JoinGroupProps & RouteComponentProps) {
         actions.setStatus({ success: null });
         setPreview(prev);
       } catch (e) {
-        console.error(e);
-        actions.setStatus({ error: e.message || 'error' });
+        console.log(e);
+        if(!(e instanceof Error)) {
+          actions.setStatus({ error: "Unknown error" });
+        } else if (e.message === "no-permissions" ) { 
+          actions.setStatus({ error: "Unable to join group, you do not have the correct permissions" })
+        } else if (e.message === "offline" ) {
+          actions.setStatus({ error: "Group host is offline, please try again later" });
+        }
       }
     },
     [api, waiter, history]
@@ -147,7 +153,7 @@ export function JoinGroup(props: JoinGroupProps & RouteComponentProps) {
                 placeholder="~sampel-palnet/test-group"
               />
               <AsyncButton>Join Group</AsyncButton>
-              <FormError message="Unable to join group, you may not have the correct permissions" />
+              <FormError />
             </Col>
           </Form>
         </Formik>
