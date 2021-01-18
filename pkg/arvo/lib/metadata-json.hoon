@@ -62,6 +62,7 @@
         [%creator (su ;~(pfix sig fed:ag))]
         [%module so]
         [%picture so]
+        [%preview bo]
     ==
   ::
   ++  md-resource
@@ -84,6 +85,7 @@
       [%creator s+(scot %p creator.met)]
       [%module s+module.met]
       [%picture s+picture.met]
+      [%preview b+preview.met]
   ==
 ::
 ++  update-to-json
@@ -94,6 +96,14 @@
   %-  pairs
   :~  ?+  -.upd  *[cord json]
       %add
+    :-  %add
+    %-  pairs
+    :~  [%group s+(enjs-path:resource group.upd)]
+        [%app-name s+app-name.resource.upd]
+        [%resource s+(enjs-path:resource resource.resource.upd)]
+        [%metadata (metadata-to-json metadata.upd)]
+    ==
+      %updated-metadata
     :-  %add
     %-  pairs
     :~  [%group s+(enjs-path:resource group.upd)]

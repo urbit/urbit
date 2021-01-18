@@ -2,6 +2,7 @@
 import BaseApi from './base';
 import { StoreState } from '../store/type';
 import { Path, Patp, Association, Metadata, MetadataUpdatePreview } from '~/types';
+import {uxToHex} from '../lib/util';
 
 export default class MetadataApi extends BaseApi<StoreState> {
 
@@ -27,8 +28,21 @@ export default class MetadataApi extends BaseApi<StoreState> {
     });
   }
 
+  remove(appName: string, resource: string, group: string) {
+    return this.metadataAction({
+      remove: {
+        group,
+        resource: {
+          resource,
+          'app-name': appName
+        }
+      }
+    });
+  }
+
   update(association: Association, newMetadata: Partial<Metadata>) {
     const metadata = {...association.metadata, ...newMetadata };
+    metadata.color = uxToHex(metadata.color);
     return this.metadataAction({ 
       add: {
         group: association.group,

@@ -26,12 +26,12 @@
       creator=ship
       module=term
       picture=url
+      preview=?
   ==
 ::
 +$  metadata-action
   $%  [%add group=resource resource=md-resource =metadata]
       [%remove group=resource resource=md-resource]
-      [%update group=resource resource=md-resource =metadata]
       [%initial-group group=resource =associations]
   ==
 ::

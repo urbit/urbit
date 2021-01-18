@@ -39,7 +39,6 @@
 ++  on-agent  on-agent:def
 ++  on-watch    
   |=  =path
-  ~&  path
   ^-  (quip card _this)
   ?.  ?=([%preview @ @ @ ~] path)
     (on-watch:def path)
@@ -64,7 +63,9 @@
   ::  how tho, if the group owner isn't in some graphs
   ++  channels
     %-  ~(gas by *associations)
-    (scag 3 ~(tap by (app-metadata-for-group:met rid %graph)))
+    %+  skim  ~(tap by (app-metadata-for-group:met rid %graph))
+    |=([=md-resource group=resource =metadata] preview.metadata)
+    
   ++  channel-count
     ~(wyt by (app-metadata-for-group:met rid %graph))
   --

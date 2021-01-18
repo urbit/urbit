@@ -70,6 +70,7 @@ export function GroupsPane(props: GroupsPaneProps) {
           api={api}
           s3={props.s3}
           notificationsGroupConfig={props.notificationsGroupConfig}
+          associations={associations}
 
           {...routeProps}
           baseUrl={baseUrl}
