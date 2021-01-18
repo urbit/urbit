@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import { Box, Row, Col, Center, LoadingSpinner, Text } from "@tlon/indigo-react";
 import { Switch, Route, Link } from "react-router-dom";
 import bigInt from 'big-integer';
@@ -15,6 +15,8 @@ import { LinkWindow } from "./LinkWindow";
 import { Comments } from "~/views/components/Comments";
 
 import "./css/custom.css";
+
+const emptyMeasure = () => {};
 
 type LinkResourceProps = StoreState & {
   association: Association;
@@ -59,6 +61,7 @@ export function LinkResource(props: LinkResourceProps) {
     return <Center width='100%' height='100%'><LoadingSpinner/></Center>;
   }
 
+
   return (
     <Col alignItems="center" height="100%" width="100%" overflowY="hidden">
       <Switch>
@@ -102,6 +105,7 @@ export function LinkResource(props: LinkResourceProps) {
             const contact = contactDetails[node.post.author];
 
             return (
+              <Col alignItems="center" overflowY="auto" width="100%">
               <Col width="100%" p={3} maxWidth="768px">
                 <Link to={resourceUrl}><Text bold>{"<- Back"}</Text></Link>
                 <LinkItem
@@ -115,6 +119,7 @@ export function LinkResource(props: LinkResourceProps) {
                   path={resource["group-path"]}
                   api={api}
                   mt={3}
+                  measure={emptyMeasure}
                 />
                 <Comments
                   ship={ship}
@@ -131,6 +136,7 @@ export function LinkResource(props: LinkResourceProps) {
                   group={group}
                 />
               </Col>
+            </Col>
             );
           }}
         />
