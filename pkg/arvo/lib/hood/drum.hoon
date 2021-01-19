@@ -91,6 +91,8 @@
       %herm
       %contact-store
       %contact-hook
+      %contact-push-hook
+      %contact-pull-hook
       %contact-view
       %metadata-store
       %metadata-hook
@@ -248,6 +250,9 @@
     =>  (se-born | %home %hark-store)
     =>  (se-born | %home %observe-hook)
     (se-born | %home %herm)
+  =?  ..on-load  (lte hood-version %12)
+    =>  (se-born | %home %contact-push-hook)
+    (se-born | %home %contact-pull-hook)
   ..on-load
 ::
 ++  reap-phat                                         ::  ack connect

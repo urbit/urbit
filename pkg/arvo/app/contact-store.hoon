@@ -155,7 +155,7 @@
       ^-  (list card)
       =/  paths=(list path)
         ?:  our
-          `(list path)`[/updates /our]~
+          [/updates /our ~]
         ~[/updates]
       [%give %fact paths %contact-update !>(update)]~
     --

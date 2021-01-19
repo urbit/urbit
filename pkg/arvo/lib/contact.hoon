@@ -1,4 +1,4 @@
-/-  store=contact-store
+/-  store=contact-store, *resource
 /+  group
 |_  =bowl:gall
 ++  scry-for
@@ -28,7 +28,7 @@
   =/  grp  ~(. group bowl)
   |-
   ?~  allowed-groups  %.n
-  ?:  ~(has in (members:grp i.allowed-groups) ship)
+  ?:  (~(has in (members:grp i.allowed-groups)) ship)
     %.y
   $(allowed-groups t.allowed-groups)
 --
