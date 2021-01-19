@@ -60,7 +60,7 @@ export function Notebook(props: NotebookProps & RouteComponentProps) {
           </Text>
         </Box>
         {isWriter && (
-          <Link to={relativePath('/new')}>
+          <Link to={relativePath('/new')} style={{ flexShrink: '0' }}>
             <Button primary style={{ cursor: 'pointer' }}>
               New Post
             </Button>
