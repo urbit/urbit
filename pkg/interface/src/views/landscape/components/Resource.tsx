@@ -52,6 +52,7 @@ export function Resource(props: ResourceProps) {
             return (
               <ResourceSkeleton
                 baseUrl={props.baseUrl}
+                groupTags={props.groups?.[selectedGroup]?.tags}
                 {...skelProps}
               >
                 <ChannelSettings
@@ -72,6 +73,7 @@ export function Resource(props: ResourceProps) {
               notificationsGraphConfig={props.notificationsGraphConfig}
               notificationsChatConfig={props.notificationsChatConfig}
               baseUrl={props.baseUrl}
+              groupTags={props.groups?.[selectedGroup]?.tags}
               {...skelProps}
               atRoot
             >

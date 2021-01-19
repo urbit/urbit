@@ -16,7 +16,7 @@ import { ChannelMenu } from "./ChannelMenu";
 import { NotificationGraphConfig } from "~/types";
 
 const TruncatedBox = styled(Box)`
-  white-space: nowrap;
+  white-space: pre;
   text-overflow: ellipsis;
   overflow: hidden;
 `;
@@ -29,15 +29,28 @@ type ResourceSkeletonProps = {
   children: ReactNode;
   atRoot?: boolean;
   title?: string;
+  groupTags?: any;
 };
 
 export function ResourceSkeleton(props: ResourceSkeletonProps) {
-  const { association, api, baseUrl, children, atRoot } = props;
+  const { association, api, baseUrl, children, atRoot, groupTags } = props;
   const app = association?.metadata?.module || association["app-name"];
   const appPath = association["app-path"];
   const workspace =
     baseUrl === "/~landscape/home" ? "/home" : association["group-path"];
   const title = props.title || association?.metadata?.title;
+
+  const [, , ship, resource] = appPath.split("/");
+
+  const resourcePath = (p: string) => baseUrl + `/resource/${app}/ship/${ship}/${resource}` + p;
+
+  const isOwn = `~${window.ship}` === ship;
+  let isWriter = (app === 'publish') ? true : false;
+
+  if (groupTags?.publish?.[`writers-${resource}`]) {
+    isWriter = isOwn || groupTags?.publish?.[`writers-${resource}`]?.has(window.ship);
+  }
+
   return (
     <Col width="100%" height="100%" overflowY="hidden">
       <Box
@@ -79,8 +92,8 @@ export function ResourceSkeleton(props: ResourceSkeletonProps) {
             </Box>
             <TruncatedBox
               display={["none", "block"]}
-              maxWidth="60%"
               verticalAlign="middle"
+              maxWidth='60%'
               flexShrink={1}
               title={association?.metadata?.description}
               color="gray"
@@ -95,6 +108,11 @@ export function ResourceSkeleton(props: ResourceSkeletonProps) {
               </RichText>
             </TruncatedBox>
             <Box flexGrow={1} />
+            {isWriter && (
+              <Link to={resourcePath('/new')} style={{ flexShrink: '0' }}>
+                <Text bold pr='3' color='blue'>+ New Post</Text>
+              </Link>
+            )}
             <ChannelMenu
               graphNotificationConfig={props.notificationsGraphConfig}
               chatNotificationConfig={props.notificationsChatConfig}
