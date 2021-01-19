@@ -193,6 +193,8 @@ export default class ChatEditor extends Component {
         alignItems='center'
         flexGrow='1'
         height='100%'
+        paddingTop={MOBILE_BROWSER_REGEX.test(navigator.userAgent) ? '16px' : '0'}
+        paddingBottom={MOBILE_BROWSER_REGEX.test(navigator.userAgent) ? '16px' : '0'}
         maxHeight='224px'
         width='calc(100% - 88px)'
         className={inCodeMode ? 'chat code' : 'chat'}
