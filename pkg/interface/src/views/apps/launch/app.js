@@ -102,7 +102,7 @@ export default function LaunchApp(props) {
             icon="CreateGroup"
             bg="green"
             color="#fff"
-            text="Create a Group"
+            text="Create Group"
           >
             <NewGroup {...props} />
           </ModalButton>
