@@ -48,6 +48,14 @@
     ?+  path  (on-watch:def path)
       [%all ~]      (give [%initial rolodex])
       [%updates ~]  ~
+    ::
+        [%our ~]
+      %-  give
+      :+  %add
+        our.bowl
+      =/  contact=(unit contact:store)  (~(get by rolodex) our.bowl)
+      ?~  contact  *contact:store
+      u.contact
     ==
   [cards this]
   ::
@@ -87,20 +95,19 @@
       ^-  (quip card _state)
       =.  rolodex  (~(uni by rolodex) rolo)
       :_  state(rolodex rolodex)
-      (send-diff [%initial rolodex])
+      (send-diff [%initial rolodex] %.n)
     ::
     ++  handle-add
       |=  [=ship =contact:store]
       ^-  (quip card _state)
-      ?<  (~(has by rolodex) ship)
-      :-  (send-diff [%add ship contact])
+      :-  (send-diff [%add ship contact] =(ship our.bowl))
       state(rolodex (~(put by rolodex) ship contact))
     ::
     ++  handle-remove
       |=  =ship
       ^-  (quip card _state)
       ?>  (~(has by rolodex) ship)
-      :-  (send-diff [%remove ship])
+      :-  (send-diff [%remove ship] =(ship our.bowl))
       state(rolodex (~(del by rolodex) ship))
     ::
     ++  handle-edit
@@ -109,7 +116,7 @@
       ^-  (quip card _state)
       =/  contact  (~(got by rolodex) ship)
       =.  contact  (edit-contact contact edit-field)
-      :-  (send-diff [%edit ship edit-field])
+      :-  (send-diff [%edit ship edit-field] =(ship our.bowl))
       state(rolodex (~(put by rolodex) ship contact))
       ::
       ++  edit-contact
@@ -128,7 +135,7 @@
     ++  handle-allow
       |=  =beings:store
       ^-  (quip card _state)
-      :-  (send-diff [%allow beings])
+      :-  (send-diff [%allow beings] %.n)
       ?-  -.beings
         %group  state(allowed-groups (~(put in allowed-groups) resource.beings))
         %ships  state(allowed-ships (~(uni in allowed-ships) ships.beings))
@@ -137,16 +144,20 @@
     ++  handle-disallow
       |=  =beings:store
       ^-  (quip card _state)
-      :-  (send-diff [%disallow beings])
+      :-  (send-diff [%disallow beings] %.y)
       ?-  -.beings
         %group  state(allowed-groups (~(del in allowed-groups) resource.beings))
         %ships  state(allowed-ships (~(dif in allowed-ships) ships.beings))
       ==
     ::
     ++  send-diff
-      |=  =update:store
+      |=  [=update:store our=?]
       ^-  (list card)
-      [%give %fact ~[/updates] %contact-update !>(update)]~
+      =/  paths=(list path)
+        ?:  our
+          `(list path)`[/updates /our]~
+        ~[/updates]
+      [%give %fact paths %contact-update !>(update)]~
     --
   ::
   ++  import
@@ -169,6 +180,13 @@
     :-  ~  :-  ~  :-  %contact-update
     !>  ^-  update:store
     [%add ship u.contact]
+  ::
+      [%x %allowed-ship @ ~]
+    =/  =ship  (slav %p i.t.t.path)
+    ``noun+!>((~(has in allowed-ships) ship))
+  ::
+      [%x %allowed-groups ~]
+    ``noun+!>(allowed-groups)
   ==
 ::
 ++  on-leave  on-leave:def
