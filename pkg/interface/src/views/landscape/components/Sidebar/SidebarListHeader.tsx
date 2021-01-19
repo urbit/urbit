@@ -67,12 +67,12 @@ export function SidebarListHeader(props: {
            <Icon icon="Plus" color="gray" pr='2'/>
        </Link>
        <Link to={`${props.baseUrl}/invites`}
-        style={{ display: (props.workspace?.type === 'home') ? 'inline-block' : 'none', verticalAlign: 'bottom' }}>
+        style={{ display: (props.workspace?.type === 'home') ? 'inline-block' : 'none'}}>
           <Text
             display='inline-block'
-            verticalAlign='middle'
             py='1px'
             px='3px'
+            mr='2'
             backgroundColor='washedBlue'
             color='blue'
             borderRadius='1'>
