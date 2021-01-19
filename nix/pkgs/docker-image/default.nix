@@ -5,6 +5,15 @@ let
 
     set -eu
 
+    # If the container is not started with the `-i` flag
+    # then STDIN will be closed and we need to start
+    # Urbit/vere with the `-t` flag.
+    ttyflag=""
+    if [ ! -t 0 ]; then
+      echo "Running with no STDIN"
+      ttyflag="-t"
+    fi
+
     # Check if there is a keyfile, if so boot a ship with its name, and then remove the key
     if [ -e *.key ]; then
       # Get the name of the key
@@ -14,7 +23,7 @@ let
       mv $keyname /tmp
 
       # Boot urbit with the key, exit when done booting
-      urbit -w $(basename $keyname .key) -k /tmp/$keyname -c $(basename $keyname .key) -p ${toString amesPort} -x
+      urbit $ttyflag -w $(basename $keyname .key) -k /tmp/$keyname -c $(basename $keyname .key) -p ${toString amesPort} -x
 
       # Remove the keyfile for security
       rm /tmp/$keyname
@@ -25,7 +34,7 @@ let
       cometname=''${comets[0]}
       rm *.comet
 
-      urbit -c $(basename $cometname .comet) -p ${toString amesPort} -x
+      urbit $ttyflag -c $(basename $cometname .comet) -p ${toString amesPort} -x
     fi
 
     # Find the first directory and start urbit with the ship therein
@@ -33,7 +42,7 @@ let
     dirs=( $dirnames )
     dirname=''${dirnames[0]}
 
-    urbit -p ${toString amesPort} $dirname
+    urbit $ttyflag -p ${toString amesPort} $dirname
     '';
     
     
