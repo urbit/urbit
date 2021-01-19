@@ -59,13 +59,13 @@
       [~ this]
     ::
         [%bucket @ ~]
-      =/  bucket-key  i.t.pax
+      =*  bucket-key  i.t.pax
       ?>  (~(has by settings) bucket-key)
       [~ this]
     ::
         [%entry @ @ ~]
-      =/  bucket-key  i.t.pax
-      =/  entry-key  i.t.t.pax
+      =*  bucket-key  i.t.pax
+      =*  entry-key   i.t.t.pax
       =/  bucket  (~(got by settings) bucket-key)
       ?>  (~(has by bucket) entry-key)
       [~ this]
@@ -79,14 +79,14 @@
       ``noun+!>(settings)
     ::
         [%x %bucket @ ~]
-      =/  buc  i.t.t.pax
+      =*  buc  i.t.t.pax
       =/  bucket=(unit bucket)  (~(get by settings) buc)
       ?~  bucket  [~ ~]
       ``noun+!>(u.bucket)
     ::
         [%x %entry @ @ ~]
-      =/  buc  i.t.t.pax
-      =/  key  i.t.t.t.pax
+      =*  buc  i.t.t.pax
+      =*  key  i.t.t.t.pax
       =/  =bucket  (fall (~(get by settings) buc) ~)
       =/  entry=(unit val)  (~(get by bucket) key)
       ?~  entry  [~ ~]
