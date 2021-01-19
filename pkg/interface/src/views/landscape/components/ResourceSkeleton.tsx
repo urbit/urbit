@@ -42,6 +42,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps) {
     <Col width="100%" height="100%" overflowY="hidden">
       <Box
         flexShrink="0"
+        height='48px'
         py="2"
         px="2"
         display="flex"
@@ -54,6 +55,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps) {
             borderRight={1}
             borderRightColor="gray"
             pr={3}
+            fontSize='1'
             mr={3}
             my="1"
             display={["block", "none"]}
@@ -71,7 +73,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps) {
         {atRoot && (
           <>
             <Box pr={1} mr={2}>
-              <Text display="inline-block" verticalAlign="middle">
+              <Text fontSize='2' fontWeight='700' display="inline-block" verticalAlign="middle" textOverflow="ellipsis" overflow="hidden" whiteSpace="pre">
                 {title}
               </Text>
             </Box>

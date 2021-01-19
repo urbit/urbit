@@ -121,7 +121,7 @@ export function ChannelMenu(props: ChannelMenuProps) {
       alignY="top"
       dropWidth="250px"
     >
-      <Icon display="block" icon="Menu" color="gray" />
+      <Icon display="block" icon="Menu" color="gray" pr='2' />
     </Dropdown>
   );
 }
