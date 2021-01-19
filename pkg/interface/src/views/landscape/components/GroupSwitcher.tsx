@@ -162,7 +162,7 @@ export function GroupSwitcher(props: {
           >
             <Row width='100%' minWidth='0' flexShrink={0}>
               <Row justifyContent="space-between" mr={1} flexShrink={0} width='100%' minWidth='0'>
-                <Text lineHeight="1" fontSize='2' fontWeight="700" overflow='hidden' display='inline-block' flexShrink='1' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}>{title}</Text>
+                <Text lineHeight="1.1" fontSize='2' fontWeight="700" overflow='hidden' display='inline-block' flexShrink='1' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}>{title}</Text>
               </Row>
             </Row>
           </Dropdown>
