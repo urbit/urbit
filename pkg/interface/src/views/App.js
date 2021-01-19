@@ -137,6 +137,8 @@ class App extends React.Component {
 
     const notificationsCount = state.notificationsCount || 0;
     const doNotDisturb = state.doNotDisturb || false;
+    const ourContact = this.state.contacts[this.ship] || null;
+    console.log(ourContact, this.state.contacts, this.ship);
 
     const showBanner = localStorage.getItem("2020BreachBanner") || "flex";
     let banner = null;
@@ -155,6 +157,7 @@ class App extends React.Component {
                 props={this.props}
                 associations={associations}
                 invites={this.state.invites}
+                ourContact={ourContact}
                 api={this.api}
                 connection={this.state.connection}
                 subscription={this.subscription}

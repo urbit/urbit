@@ -10,6 +10,8 @@ const StatusBar = (props) => {
   const invites = [].concat(...Object.values(props.invites).map(obj => Object.values(obj)));
   const metaKey = (window.navigator.platform.includes('Mac')) ? '⌘' : 'Ctrl+';
   const toggleOmnibox = useLocalState(state => state.toggleOmnibox);
+
+  const color = !!props.ourContact ? props.ourContact.color : 'black';
   return (
     <Box
       display='grid'
@@ -24,7 +26,6 @@ const StatusBar = (props) => {
       <Button borderColor='washedGray' mr='2' px='2' onClick={() => props.history.push('/')} {...props}>
         <Icon icon='Spaces' color='black'/>
       </Button>
-
         <StatusBarItem mr={2} onClick={() => toggleOmnibox()}>
         { !props.doNotDisturb && (props.notificationsCount > 0 || invites.length > 0) &&
           (<Box display="block" right="-8px" top="-8px" position="absolute" >
@@ -59,9 +60,11 @@ const StatusBar = (props) => {
           >
           <Text color='#000000'>Submit <Text color='#000000' display={['none', 'inline']}>an</Text> issue</Text>
         </StatusBarItem>
+        <StatusBarItem mr={2} px={'2'} flexShrink='0' onClick={() => props.history.push('/~settings')}>
+          <Icon icon='Gear' color='black'/>
+        </StatusBarItem>
         <StatusBarItem px={'2'} flexShrink='0' onClick={() => props.history.push('/~profile')}>
-          <Sigil ship={props.ship} size={16} color='black' classes='mix-blend-diff' icon />
-          <Text ml={2} display={["none", "inline"]} fontFamily="mono">~{props.ship}</Text>
+          <Sigil ship={props.ship} size={16} color={color} classes='mix-blend-diff' icon />
         </StatusBarItem>
       </Row>
     </Box>

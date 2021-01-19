@@ -13,7 +13,7 @@ export const ContactReducer = (json, state) => {
     add(data, state);
     remove(data, state);
     edit(data, state);
-    console.log(state);
+    console.log(state.contacts);
   }
 };
 
