@@ -40,8 +40,12 @@ jobs:
 
       - run: |
           version="$(cat ./pkg/urbit/version)"
-          skopeo="$(nix-build -A skopeo)/bin/skopeo"
           image="$(nix-build -A docker-image)"
-          $skopeo --insecure-policy copy tarball:$docker docker://${{ secrets.DOCKERHUB_USERNAME }}/urbit:v$version 
-          # Apply 'latest' tag. This won't re-copy any layers since layers are checked by hash before copying
-          $skopeo --insecure-policy copy tarball:$docker docker://${{ secrets.DOCKERHUB_USERNAME }}/urbit:latest
+          imageName="$(nix-instantiate --eval -A docker-image.imageName | cut -d'"' -f2)"
+          imageTag="$(nix-instantiate --eval -A docker-image.imageTag | cut -d'"' -f2)"
+          # Load the image from the nix-built tarball
+          docker load -i $image
+          docker tag "$imageName:$imageTag" ${{secrets.DOCKERHUB_USERNAME }}/urbit:v$version
+          docker tag "$imageName:$imageTag" ${{secrets.DOCKERHUB_USERNAME }}/urbit:latest
+          docker push ${{secrets.DOCKERHUB_USERNAME }}/urbit:v$version
+          docker push ${{secrets.DOCKERHUB_USERNAME }}/urbit:latest
