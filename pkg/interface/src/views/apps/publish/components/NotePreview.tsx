@@ -61,9 +61,9 @@ export function NotePreview(props: NotePreviewProps) {
           overflow='hidden'
           p='2'
         >
-          <WrappedBox mb={2}><Text bold fontSize='0'>{title}</Text></WrappedBox>
+          <WrappedBox mb={2}><Text bold>{title}</Text></WrappedBox>
           <WrappedBox>
-          <Text fontSize='14px'>
+          <Text fontSize='14px' lineHeight='tall'>
             <ReactMarkdown
               unwrapDisallowed
               allowedTypes={['text', 'root', 'break', 'paragraph', 'image']}
