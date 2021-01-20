@@ -85,7 +85,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps) {
 
         {atRoot && (
           <>
-            <Box pr={1} mr={2}>
+            <Box px={1} mr={2}>
               <Text fontSize='2' fontWeight='700' display="inline-block" verticalAlign="middle" textOverflow="ellipsis" overflow="hidden" whiteSpace="pre">
                 {title}
               </Text>

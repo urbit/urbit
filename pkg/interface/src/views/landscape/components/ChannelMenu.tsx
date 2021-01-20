@@ -102,7 +102,7 @@ export function ChannelMenu(props: ChannelMenuProps) {
               </ChannelMenuItem>
               <ChannelMenuItem bottom icon="Gear" color="black">
                 <Link to={`${baseUrl}/settings`}>
-                  <Box fontSize={0} p="2">
+                  <Box fontSize={1} p="2">
                     Channel Settings
                   </Box>
                 </Link>
