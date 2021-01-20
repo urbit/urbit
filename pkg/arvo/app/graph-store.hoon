@@ -230,7 +230,7 @@
     ?>  ?=(%0 -.update)
     =?  p.update  =(p.update *time)  now.bowl
     ?-  -.q.update
-        %add-graph          (add-graph +.q.update)
+        %add-graph          (add-graph p.update +.q.update)
         %remove-graph       (remove-graph +.q.update)
         %add-nodes          (add-nodes p.update +.q.update)
         %remove-nodes       (remove-nodes p.update +.q.update)
@@ -247,7 +247,8 @@
     ==
     ::
     ++  add-graph
-      |=  $:  =resource:store
+      |=  $:  =time
+              =resource:store
               =graph:store
               mark=(unit mark:store)
               overwrite=?
@@ -258,9 +259,13 @@
                   !(~(has by graphs) resource)
           ==  ==
       ?>  (validate-graph graph mark)
+      =/  =logged-update:store
+        [%0 time %add-graph resource graph mark overwrite]
+      =/  =update-log:store
+        (gas:orm-log ~ [time logged-update] ~)
       :_  %_  state
               graphs       (~(put by graphs) resource [graph mark])
-              update-logs  (~(put by update-logs) resource (gas:orm-log ~ ~))
+              update-logs  (~(put by update-logs) resource update-log)
               archive      (~(del by archive) resource)
             ::
               validators
@@ -643,6 +648,7 @@
         %-  graph-update 
         ^-  update:store
         ?-  -.q.update
+            %add-graph          update(resource.q resource)
             %add-nodes          update(resource.q resource)
             %remove-nodes       update(resource.q resource)
             %add-signatures     update(resource.uid.q resource)
