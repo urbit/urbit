@@ -18,6 +18,17 @@
 ::
 +$  color  @ux
 +$  url    @t
+::
+::  $permissions: tag identifying variation in permissions
+::
+::    This will be passed to the graph-permissions mark
+::    conversion to allow for custom permissions.
+::
+::    %reader-comments: Allow readers to comment, regardless
+::      of whether they can write.
+::    %$: No variation
+::
++$  permissions  ?(%reader-comments %$)
 +$  metadata
   $:  title=cord
       description=cord
@@ -27,6 +38,7 @@
       module=term
       picture=url
       preview=?
+      =permissions
   ==
 ::
 +$  metadata-action

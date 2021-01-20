@@ -53,6 +53,13 @@
     ?>  ?=([%s *] jon)
     (rash p.jon hex)
   ::
+  ++  permissions
+    %-  su
+    ;~  pose
+      (tag %$)
+      (tag %reader-comments)
+    ==
+  ::
   ++  metadata
     %-  ot
     :~  [%title so]
@@ -63,7 +70,10 @@
         [%module so]
         [%picture so]
         [%preview bo]
+        [%permissions permissions]
     ==
+  ::
+  ++  tag   |*(a=@tas (cold a (jest a)))
   ::
   ++  md-resource
     ^-  $-(json ^md-resource)
@@ -86,6 +96,7 @@
       [%module s+module.met]
       [%picture s+picture.met]
       [%preview b+preview.met]
+      [%permissions s+`@t`permissions.met]
   ==
 ::
 ++  update-to-json

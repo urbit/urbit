@@ -62,4 +62,7 @@ export interface Metadata {
   module: string;
   url: string;
   preview: boolean;
+  permissions: Permissions;
 }
+
+export type Permissions = '' | 'reader-comments';
