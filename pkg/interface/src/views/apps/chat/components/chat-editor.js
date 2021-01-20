@@ -193,6 +193,8 @@ export default class ChatEditor extends Component {
         alignItems='center'
         flexGrow='1'
         height='100%'
+        paddingTop={MOBILE_BROWSER_REGEX.test(navigator.userAgent) ? '16px' : '0'}
+        paddingBottom={MOBILE_BROWSER_REGEX.test(navigator.userAgent) ? '16px' : '0'}
         maxHeight='224px'
         width='calc(100% - 88px)'
         className={inCodeMode ? 'chat code' : 'chat'}
@@ -201,7 +203,7 @@ export default class ChatEditor extends Component {
         {MOBILE_BROWSER_REGEX.test(navigator.userAgent)
           ? <MobileBox
               data-value={this.state.message}
-              fontSize="14px"
+              fontSize="1"
               lineHeight="tall"
               onClick={event => {
                 if (this.editor) {
@@ -211,7 +213,7 @@ export default class ChatEditor extends Component {
             >
             <BaseTextArea
               fontFamily={inCodeMode ? 'Source Code Pro' : 'Inter'}
-              fontSize="14px"
+              fontSize="1"
               lineHeight="tall"
               rows="1"
               style={{ width: '100%', background: 'transparent', color: 'currentColor' }}

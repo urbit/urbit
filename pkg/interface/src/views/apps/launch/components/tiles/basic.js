@@ -20,8 +20,8 @@ export default class BasicTile extends React.PureComponent {
               size='12px'
               display='inline-block'
               verticalAlign='top'
-              pt='5px'
-              pr='2px'
+              mt='5px'
+              mr='2'
               />
             : null
           }{props.title}

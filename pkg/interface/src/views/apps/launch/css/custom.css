@@ -40,12 +40,12 @@ button {
 /*  stolen from  indigo-react reset.css
  *  TODO: remove and add reset.css properly
  */
-  
+
 @keyframes loadingSpinnerRotation {
     from {
         transform: rotate(0deg);
       }
-    
+
       to {
         transform: rotate(360deg);
       }
@@ -53,9 +53,6 @@ button {
 
 /* dark */
 @media all and (prefers-color-scheme: dark) {
-  body {
-    background-color: #333;
-  }
   .bg-gray0-d {
     background-color: #333;
   }
