@@ -58,13 +58,14 @@ export function SidebarListHeader(props: {
       <Box
         textAlign='right'
         display='flex'
+        alignItems='center'
       >
        <Link
         style={{
           display: isAdmin ? "inline-block" : "none" }}
         to={
          !!groupPath ? `/~landscape${groupPath}/new` : `/~landscape/home/new`}>
-           <Icon icon="Plus" color="gray" pr='2'/>
+           <Icon icon="Plus" color="gray" pr='12px'/>
        </Link>
        <Link to={`${props.baseUrl}/invites`}
         style={{ display: (props.workspace?.type === 'home') ? 'inline-block' : 'none'}}>
@@ -72,7 +73,7 @@ export function SidebarListHeader(props: {
             display='inline-block'
             py='1px'
             px='3px'
-            mr='2'
+            mr='12px'
             backgroundColor='washedBlue'
             color='blue'
             borderRadius='1'>
