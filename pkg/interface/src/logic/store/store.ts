@@ -1,5 +1,4 @@
 import BaseStore from './base';
-import InviteReducer from '../reducers/invite-update';
 import MetadataReducer from '../reducers/metadata-update';
 import LocalReducer from '../reducers/local';
 
@@ -31,7 +30,6 @@ export const homeAssociation = {
 
 
 export default class GlobalStore extends BaseStore<StoreState> {
-  inviteReducer = new InviteReducer();
   metadataReducer = new MetadataReducer();
   localReducer = new LocalReducer();
   contactReducer = new ContactReducer();
@@ -52,7 +50,6 @@ export default class GlobalStore extends BaseStore<StoreState> {
     return {
       connection: 'connected',
       baseHash: null,
-      invites: {},
       associations: {
         contacts: {},
         graph: {},
@@ -94,7 +91,6 @@ export default class GlobalStore extends BaseStore<StoreState> {
   }
 
   reduce(data: Cage, state: StoreState) {
-    this.inviteReducer.reduce(data, this.state);
     this.metadataReducer.reduce(data, this.state);
     this.localReducer.reduce(data, this.state);
     this.contactReducer.reduce(data, this.state);

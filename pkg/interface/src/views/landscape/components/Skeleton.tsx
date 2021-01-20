@@ -28,7 +28,6 @@ interface SkeletonProps {
   linkListening: Set<Path>;
   links: LinkCollections;
   notebooks: Notebooks;
-  invites: Invites;
   inbox: Inbox;
   selected?: string;
   selectedApp?: AppName;
@@ -65,7 +64,6 @@ export function Skeleton(props: SkeletonProps) {
           recentGroups={props.recentGroups}
           selected={props.selected}
           associations={props.associations}
-          invites={props.invites}
           apps={config}
           baseUrl={props.baseUrl}
           groups={props.groups}

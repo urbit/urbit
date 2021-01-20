@@ -1,5 +1,5 @@
 import { ContactUpdate } from "./contact-update";
-import { InviteUpdate } from "./invite-update";
+import { InviteUpdate } from "@urbit/api/invite";
 import { LocalUpdate } from "./local-update";
 import { MetadataUpdate } from "./metadata-update";
 import { GroupUpdate } from "./group-update";

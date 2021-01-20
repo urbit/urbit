@@ -1,4 +1,4 @@
-import { Serial, PatpNoSig, Path } from './noun';
+import { Serial, PatpNoSig, Path } from '../..';
 
 export type InviteUpdate =
   InviteUpdateInitial
@@ -8,24 +8,23 @@ export type InviteUpdate =
 | InviteUpdateAccepted
 | InviteUpdateDecline;
 
-
-interface InviteUpdateInitial {
+export interface InviteUpdateInitial {
   initial: Invites;
 }
 
-interface InviteUpdateCreate {
+export interface InviteUpdateCreate {
   create: {
     path: Path;
   };
 }
 
-interface InviteUpdateDelete {
+export interface InviteUpdateDelete {
   delete: {
     path: Path;
   };
 }
 
-interface InviteUpdateInvite {
+export interface InviteUpdateInvite {
   invite: {
     path: Path;
     uid: Serial;
@@ -33,19 +32,38 @@ interface InviteUpdateInvite {
   };
 }
 
-interface InviteUpdateAccepted {
+export interface InviteUpdateAccepted {
   accepted: {
     path: Path;
     uid: Serial;
   };
 }
 
-interface InviteUpdateDecline {
+export interface InviteUpdateDecline {
   decline: {
     path: Path;
     uid: Serial;
   };
 }
+
+export type InviteAction =
+  InviteActionAccept
+| InviteActionDecline;
+
+export interface InviteActionAccept {
+  accept: {
+    term: string,
+    uid: Serial
+  }
+}
+
+export interface InviteActionDecline {
+  decline: {
+    term: string,
+    uid: Serial
+  }
+}
+
 
 // actual datastructures
 
@@ -61,7 +79,7 @@ export type AppInvites = {
 export interface Invite {
   app: string;
   path: Path;
-  recipeint: PatpNoSig;
+  recipient: PatpNoSig;
   ship: PatpNoSig;
   text: string;
 }

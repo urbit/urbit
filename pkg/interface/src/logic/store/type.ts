@@ -1,5 +1,5 @@
 import { Path } from '~/types/noun';
-import { Invites } from '~/types/invite-update';
+import { Invites } from '@urbit/api/invite';
 import { Associations } from '~/types/metadata-update';
 import { Rolodex } from '~/types/contact-update';
 import { Groups } from '~/types/group-update';
@@ -19,8 +19,6 @@ export interface StoreState {
   connection: ConnectionStatus;
   baseHash: string | null;
 
-  // invite state
-  invites: Invites;
   // metadata state
   associations: Associations;
   // contact state

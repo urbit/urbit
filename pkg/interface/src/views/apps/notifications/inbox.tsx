@@ -13,6 +13,7 @@ import { cite } from '~/logic/lib/util';
 import { InviteItem } from '~/views/components/Invite';
 import { useWaitForProps } from "~/logic/lib/useWaitForProps";
 import { useHistory } from "react-router-dom";
+import useInviteState from "~/logic/state/invite";
 
 type DatedTimebox = [BigInteger, Timebox];
 
@@ -44,9 +45,9 @@ export default function Inbox(props: {
   associations: Associations;
   contacts: Rolodex;
   filter: string[];
-  invites: any;
 }) {
-  const { api, associations, invites } = props;
+  const { api, associations } = props;
+  const { accept, decline, invites } = useInviteState();
   const waiter = useWaitForProps(props)
   const history = useHistory();
   useEffect(() => {
@@ -98,13 +99,13 @@ export default function Inbox(props: {
     if(app === 'contacts') {
       await api.contacts.join(resource);
       await waiter(p => resourcePath in p.associations?.contacts);
-      await api.invite.accept(app, uid);
+      await accept(app, uid);
       history.push(`/~landscape${resourcePath}`);
     } else if ( app === 'chat') {
-      await api.invite.accept(app, uid);
+      await accept(app, uid);
       history.push(`/~landscape/home/resource/chat${resourcePath.slice(5)}`);
     } else if ( app === 'graph') {
-      await api.invite.accept(app, uid);
+      await accept(app, uid);
       history.push(`/~graph/join${resourcePath}`);
     }
   };
@@ -120,7 +121,7 @@ export default function Inbox(props: {
             key={uid}
             invite={invite}
             onAccept={acceptInvite(appKey, uid)}
-            onDecline={() => api.invite.decline(appKey, uid)}
+            onDecline={() => decline(appKey, uid)}
           />;
         returned.push(inviteItem);
       });

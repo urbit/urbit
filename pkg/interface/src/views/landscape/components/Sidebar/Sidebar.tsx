@@ -35,7 +35,6 @@ interface SidebarProps {
   contacts: Rolodex;
   children: ReactNode;
   recentGroups: string[];
-  invites: Invites ;
   api: GlobalApi;
   associations: Associations;
   selected?: string;
@@ -63,7 +62,7 @@ const SidebarStickySpacer = styled(Box)`
 `;
 
 export function Sidebar(props: SidebarProps) {
-  const { invites, api, associations, selected, apps, workspace } = props;
+  const { associations, selected, apps, workspace } = props;
   const groupPath = getGroupFromWorkspace(workspace);
   const display = props.mobileHide ? ["none", "flex"] : "flex";
   if (!associations) {

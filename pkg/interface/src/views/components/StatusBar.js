@@ -5,9 +5,11 @@ import ReconnectButton from './ReconnectButton';
 import { StatusBarItem } from './StatusBarItem';
 import { Sigil } from '~/logic/lib/sigil';
 import useLocalState from '~/logic/state/local';
+import useInviteState from '~/logic/state/invite';
 
 const StatusBar = (props) => {
-  const invites = [].concat(...Object.values(props.invites).map(obj => Object.values(obj)));
+  const inviteState = useInviteState(state => state.invites);
+  const invites = [].concat(...Object.values(inviteState).map(obj => Object.values(obj)));
   const metaKey = (window.navigator.platform.includes('Mac')) ? '⌘' : 'Ctrl+';
   const toggleOmnibox = useLocalState(state => state.toggleOmnibox);
   return (

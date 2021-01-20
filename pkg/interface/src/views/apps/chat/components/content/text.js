@@ -29,7 +29,7 @@ const renderers = {
     return <Text mono p='1' backgroundColor='washedGray' style={{ whiteSpace: 'preWrap'}}>{value}</Text>
   },
   paragraph: ({ children }) => {
-    return (<Text fontSize="14px">{children}</Text>);
+    return (<Text display='block' fontSize="14px">{children}</Text>);
   },
   code: ({language, value}) => {
     return <Text

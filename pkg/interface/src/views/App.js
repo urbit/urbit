@@ -21,6 +21,7 @@ import StatusBar from './components/StatusBar';
 import Omnibox from './components/leap/Omnibox';
 import ErrorBoundary from '~/views/components/ErrorBoundary';
 
+import useApi from '~/logic/lib/useApi';
 import GlobalStore from '~/logic/store/store';
 import GlobalSubscription from '~/logic/subscription/global';
 import GlobalApi from '~/logic/api/global';
@@ -85,6 +86,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
+    useApi();
     this.subscription.start();
     this.themeWatcher = window.matchMedia('(prefers-color-scheme: dark)');
     this.themeWatcher.onchange = this.updateTheme;

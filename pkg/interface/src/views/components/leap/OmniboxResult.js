@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Box, Row, Icon, Text } from '@tlon/indigo-react';
 import defaultApps from '~/logic/lib/default-apps';
 import Sigil from '~/logic/lib/sigil';
+import useInviteState from '~/logic/state/invite';
 
 export class OmniboxResult extends Component {
   constructor(props) {
@@ -67,7 +68,8 @@ export class OmniboxResult extends Component {
   }
 
   render() {
-    const { icon, text, subtext, link, navigate, selected, invites, notifications } = this.props;
+    const { icon, text, subtext, link, navigate, selected, notifications } = this.props;
+    const invites = useInviteState.getState().invites;
 
     const graphic = this.getIcon(icon, selected, link, invites, notifications);
 

@@ -11,6 +11,8 @@
     "@tlon/indigo-light": "^1.0.3",
     "@tlon/indigo-react": "1.2.15",
     "@tlon/sigil-js": "^1.4.2",
+    "@urbit/http-api": "file:../npm/http-api",
+    "@urbit/api": "file:../npm/api",
     "aws-sdk": "^2.726.0",
     "big-integer": "^1.6.48",
     "classnames": "^2.2.6",

@@ -1,0 +1,5 @@
+{
+  "files.watcherExclude": {
+    "**/node_modules/**": false
+  }
+}

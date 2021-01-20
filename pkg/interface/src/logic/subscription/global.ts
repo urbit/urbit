@@ -31,7 +31,7 @@ export default class GlobalSubscription extends BaseSubscription<StoreState> {
 
   start() {
     this.subscribe('/all', 'metadata-store');
-    this.subscribe('/all', 'invite-store');
+    // this.subscribe('/all', 'invite-store');
     this.subscribe('/all', 'launch');
     this.subscribe('/all', 'weather');
     this.subscribe('/groups', 'group-store');

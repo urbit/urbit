@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Invite } from '~/types/invite-update';
+import { Invite } from '@urbit/api/invite/types';
 import { Text, Box, Button, Row, Rule } from '@tlon/indigo-react';
 import { StatelessAsyncAction } from "~/views/components/StatelessAsyncAction";
 import { cite } from '~/logic/lib/util';
