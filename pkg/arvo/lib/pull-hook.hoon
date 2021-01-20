@@ -293,7 +293,7 @@
             (on-agent:og wire sign)
           [cards this]
         :_  this
-        ~[(update-store:hc q.cage.sign)]
+        ~[(update-store:hc rid q.cage.sign)]
       ==
       ++  on-leave
         |=  =path
@@ -469,15 +469,24 @@
       /helper/pull-hook
     wire
   ::
+  ++  get-conversion
+    .^  tube:clay
+      %cc  (scot %p our.bowl)  %home  (scot %da now.bowl)
+      /[update-mark.config]/resource
+    ==
+  ::
   ++  give-update
     ^-  card
     [%give %fact ~[/tracking] %pull-hook-update !>(tracking)]
   ::
   ++  update-store
-    |=  =vase
+    |=  [wire-rid=resource =vase]
     ^-  card
     =/  =wire
       (make-wire /store)
+    =+  !<(rid=resource (get-conversion vase))
+    ?>  =(src.bowl (~(got by tracking) rid))
+    ?>  =(wire-rid rid)
     [%pass wire %agent [our.bowl store-name.config] %poke update-mark.config vase]
   --
 --

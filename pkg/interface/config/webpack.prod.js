@@ -26,7 +26,7 @@ module.exports = {
             ]
           }
         },
-        exclude: /node_modules/
+        exclude: /node_modules\/(?!(@tlon\/indigo-dark|@tlon\/indigo-light)\/).*/
       },
       {
          test: /\.css$/i,

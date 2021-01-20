@@ -180,9 +180,9 @@ new fakezod with `urbit -F zod -B bin/solid.pill -A pkg/arvo`).  Run
 `:glob|make`, and this will output a file in `fakezod/.urb/put/glob-0vXXX.glob`.
 
 Upload this file to bootstrap.urbit.org, and modify `+hash` at the top of
-`pkg/arvo/app/glob.hoon` to match the hash in the filename of the `.glob` file. 
+`pkg/arvo/app/glob.hoon` to match the hash in the filename of the `.glob` file.
 Amend `pkg/arvo/app/landscape/index.html` to import the hashed JS bundle, instead
-of the unversioned index.js. Do not commit the produced `index.js` and 
+of the unversioned index.js. Do not commit the produced `index.js` and
 make sure it doesn't end up in your pills (they should be less than 10MB each).
 
 ### Tag the resulting commit
@@ -305,6 +305,13 @@ $ herb zod -p hood -d "+hood/merge %kids our %home"
 
 For Vere updates, this means simply shutting down each desired ship, installing
 the new binary, and restarting the pier with it.
+
+#### Continuous deployment
+
+A subset of release branches are deployed continuously to the network. Thus far
+this only includes `release/next-js`, which deploys livenet-compatible
+JavaScript changes to select QA ships. Any push to master will automatically
+merge master into `release/next-js` to keep the streams at parity.
 
 ### Announce the update
 
