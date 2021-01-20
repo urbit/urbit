@@ -52,13 +52,14 @@ export default function Author(props: AuthorProps) {
       <Box
         ml={showImage ? 2 : 0}
         color="black"
+        fontSize='1'
         lineHeight='tall'
         fontFamily={showNickname ? "sans" : "mono"}
         fontWeight={showNickname ? '500' : '400'}
       >
         {name}
       </Box>
-      <Box ml={2} color={props.unread ? "blue" : "gray"}>
+      <Box fontSize='1' ml={2} color={props.unread ? "blue" : "gray"}>
         {dateFmt}
       </Box>
       {props.children}

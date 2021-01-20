@@ -72,7 +72,7 @@ export const LinkItem = (props: LinkItemProps) => {
   }
   return (
     <Box width="100%" {...rest}>
-    
+
       <Box
         lineHeight="tall"
         display='flex'
@@ -116,9 +116,9 @@ export const LinkItem = (props: LinkItemProps) => {
           </Anchor>
         </Text>
       </Box>
-      
+
       <Row minWidth='0' flexShrink={0} width="100%" justifyContent="space-between" py={3} bg="white">
-      
+
       <Author
         showImage
         contacts={contacts}
@@ -136,9 +136,9 @@ export const LinkItem = (props: LinkItemProps) => {
         </Box>
       </Link>
         </Box>
-        
+
       <Dropdown
-        width="200px"
+        dropWidth="200px"
         alignX="right"
         alignY="top"
         options={
@@ -156,7 +156,7 @@ export const LinkItem = (props: LinkItemProps) => {
         >
         <Icon ml="2" display="block" icon="Ellipsis" color="gray" />
       </Dropdown>
-      
+
     </Row>
   </Box>);
 };

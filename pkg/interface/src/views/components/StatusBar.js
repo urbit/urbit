@@ -62,7 +62,6 @@ const StatusBar = (props) => {
         </StatusBarItem>
         <StatusBarItem width={['32px', 'auto']} px={'2'} flexShrink='0' onClick={() => props.history.push('/~profile')}>
           <Sigil ship={props.ship} size={16} color='black' classes='mix-blend-diff' icon />
-          <Text ml={2} display={["none", "inline"]} fontFamily="mono">{cite(props.ship)}</Text>
         </StatusBarItem>
       </Row>
     </Box>
