@@ -18,9 +18,10 @@ export default function ProfileScreen(props: any) {
       <title>OS1 - Profile</title>
     </Helmet>
     <Route
-      path={"/~profile/:ship"}
+      path={"/~profile/:ship/:edit?"}
       render={({ match, history }) => {
         const ship = match.params.ship;
+        const isEdit = match.url.includes('edit');
         const contact = props.contacts?.[ship];
         const sigilColor = contact?.color
           ? `#${uxToHex(contact.color)}`
@@ -44,6 +45,7 @@ export default function ProfileScreen(props: any) {
                   contact={contact}
                   api={props.api}
                   s3={props.s3}
+                  isEdit={isEdit}
                 />
               </Box>
             </Box>
