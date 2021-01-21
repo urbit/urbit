@@ -62,6 +62,16 @@ export default class MetadataApi extends BaseApi<StoreState> {
     return new Promise<MetadataUpdatePreview>((resolve, reject) => {
       const tempChannel: any = new (window as any).channel();
       let done = false;
+
+      setTimeout(() => {
+        if(done) {
+          return;
+        }
+        done = true;
+        tempChannel.delete();
+        reject(new Error("offline"))
+      }, 30000);
+
       tempChannel.subscribe(window.ship, "metadata-pull-hook", `/preview${group}`,
         (err) => {
           reject(err);
