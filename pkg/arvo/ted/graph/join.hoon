@@ -31,13 +31,14 @@
     (en-path:resource rid)
   =/  hold=@dr  ~s0..8000
   |-  ^-  form:m
+  ?>  (lte hold ~m5)
   =*  loop  $
   ;<  u-group=(unit group)  bind:m  
     (scry:strandio ,(unit group) (weld /gx/group-store/groups (snoc pax %noun)))
   ?^  u-group
     (pure:m ~)
   ;<  ~  bind:m  (sleep:strandio hold)
-  =.  hold  (min (mul hold 2) ~m5)
+  =.  hold  (mul hold 2)
   loop
 ::
 ++  wait-for-md
@@ -48,13 +49,14 @@
     (en-path:resource rid)
   =/  hold=@dr  ~s0..8000
   |-  ^-  form:m
+  ?>  (lte hold ~m5)
   =*  loop  $
-  ;<  groups=(set path)  bind:m  
-    (scry:strandio ,(set path) /gy/metadata-store/group-indices) 
-  ?:  (~(has in groups) pax)
+  ;<  groups=(jug path md-resource)  bind:m
+    (scry:strandio ,(jug path md-resource) /gy/metadata-store/group-indices)
+  ?:  (~(has by groups) pax)
     (pure:m ~)
   ;<  ~  bind:m  (sleep:strandio hold)
-  =.  hold  (min (mul hold 2) ~m5)
+  =.  hold  (mul hold 2)
   loop
 --
 ::
