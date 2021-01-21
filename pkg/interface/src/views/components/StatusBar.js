@@ -63,7 +63,10 @@ const StatusBar = (props) => {
         <StatusBarItem mr={2} px={'2'} flexShrink='0' onClick={() => props.history.push('/~settings')}>
           <Icon icon='Gear' color='black'/>
         </StatusBarItem>
-        <StatusBarItem px={'2'} flexShrink='0' onClick={() => props.history.push('/~profile')}>
+        <StatusBarItem
+          px={'2'}
+          flexShrink='0'
+          onClick={() => props.history.push('/~profile/' + window.ship)}>
           <Sigil ship={props.ship} size={16} color={color} classes='mix-blend-diff' icon />
         </StatusBarItem>
       </Row>
