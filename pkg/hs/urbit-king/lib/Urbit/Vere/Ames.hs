@@ -145,12 +145,6 @@ ames'
   -> (Text -> RIO e ())
   -> RIO e ([Ev], RAcquire e (DriverApi NewtEf))
 ames' who isFake stat scry stderr = do
-  stderr "YO-HOI"
-  stderr $ tshow (AAIpv4 (Ipv4 16777343) 60008)
-  -- stderr $ pack $ showUD $ bytesAtom $ encode
-  --        $ Packet 0 (Ship 1) (Ship 0) 2 3 Nothing "hi"
-  -- stderr $ pack $ showUD $ bytesAtom $ encode
-  --        $ Packet 0 (Ship 1) (Ship 0) 2 3 (Just $ AAIpv4 (Ipv4 0xffeeffee) 0xaacc) "hi"
   -- Unfortunately, we cannot use TBQueue because the only behavior
   -- provided for when full is to block the writer. The implementation
   -- below uses materially the same data structures as TBQueue, however.

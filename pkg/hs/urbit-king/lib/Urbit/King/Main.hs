@@ -678,10 +678,13 @@ main = do
   runKingEnv args log =
     let
       verb = verboseLogging args
+      runStderr = case args of
+        CLI.CmdRun {} -> runKingEnvStderrRaw
+        _             -> runKingEnvStderr
       CLI.Log {..} = log
     in case logTarget lTarget args of
        CLI.LogFile f -> runKingEnvLogFile verb lLevel f
-       CLI.LogStderr -> runKingEnvStderr  verb lLevel
+       CLI.LogStderr -> runStderr         verb lLevel
        CLI.LogOff    -> runKingEnvNoLog
 
   setupSignalHandlers = do
