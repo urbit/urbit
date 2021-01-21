@@ -282,7 +282,7 @@ export const MessageContent = ({ content, contacts, measure, fontSize, group }) 
           url={content.url}
           onLoad={measure}
           imageProps={{style: {
-            maxWidth: '18rem',
+            maxWidth: 'min(100%,18rem)',
             display: 'block'
           }}}
           videoProps={{style: {
