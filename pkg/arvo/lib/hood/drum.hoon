@@ -93,7 +93,6 @@
       %contact-hook
       %contact-view
       %metadata-store
-      %metadata-hook
       %s3-store
       %file-server
       %glob
@@ -105,6 +104,8 @@
       %hark-group-hook
       %hark-chat-hook
       %observe-hook
+      %metadata-push-hook
+      %metadata-pull-hook
   ==
 ::
 ++  deft-fish                                           ::  default connects
@@ -247,6 +248,8 @@
     =>  (se-born | %home %hark-chat-hook)
     =>  (se-born | %home %hark-store)
     =>  (se-born | %home %observe-hook)
+    =>  (se-born | %home %metadata-pull-hook)
+    =>  (se-born | %home %metadata-push-hook)
     (se-born | %home %herm)
   ..on-load
 ::

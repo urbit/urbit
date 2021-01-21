@@ -37,7 +37,7 @@
       creator=ship
       module=term
       picture=url
-      preview=?
+      preview=_|
       =permissions
   ==
 ::
