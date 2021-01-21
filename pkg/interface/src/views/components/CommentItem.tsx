@@ -1,15 +1,13 @@
-import React, { useState } from 'react';
+import React, { useCallback } from 'react';
 import { Link } from "react-router-dom";
 import { Contacts } from '~/types/contact-update';
 import GlobalApi from '~/logic/api/global';
 import { Box, Row, Text } from '@tlon/indigo-react';
 import styled from 'styled-components';
 import Author from '~/views/components/Author';
-import { GraphNode, TextContent } from '~/types/graph-update';
-import tokenizeMessage from '~/logic/lib/tokenizeMessage';
+import { Post } from '~/types/graph-update';
 import { Group } from '~/types';
 import { MentionText } from '~/views/components/MentionText';
-import { getLatestCommentRevision } from '~/logic/lib/publish';
 
 const ClickBox = styled(Box)`
   cursor: pointer;
@@ -18,7 +16,7 @@ const ClickBox = styled(Box)`
 
 interface CommentItemProps {
   pending?: boolean;
-  comment: GraphNode;
+  post: Post;
   baseUrl: string;
   contacts: Contacts;
   unread: boolean;
@@ -26,18 +24,18 @@ interface CommentItemProps {
   ship: string;
   api: GlobalApi;
   group: Group;
+  index: string;
 }
 
 export function CommentItem(props: CommentItemProps) {
-  const { ship, contacts, name, api, comment, group } = props;
-  const [revNum, post] = getLatestCommentRevision(comment);
+  const { ship, contacts, name, api, post, index, group } = props;
   const disabled = props.pending || window.ship !== post?.author;
 
-  const onDelete = async () => {
-    await api.graph.removeNodes(ship, name, [comment.post?.index]);
-  };
+  const onDelete = useCallback(async () => {
+    await api.graph.removeNodes(ship, name, [index]);
+  }, [index])
 
-  const commentIndexArray = (comment.post?.index || '/').split('/');
+  const commentIndexArray = (index || '/').split('/');
   const commentIndex = commentIndexArray[commentIndexArray.length - 1];
   const updateUrl = `${props.baseUrl}/${commentIndex}`
 
@@ -63,8 +61,8 @@ export function CommentItem(props: CommentItemProps) {
                   Update
                 </Text>
               </Link>
-              <ClickBox display="inline-block" color="red" onClick={onDelete}>
-                Delete
+              <ClickBox display="inline-block" onClick={onDelete}>
+                <Text color="red">Delete</Text>
               </ClickBox>
             </Box>
           )}

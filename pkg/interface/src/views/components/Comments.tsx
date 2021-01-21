@@ -114,9 +114,12 @@ export function Comments(props: CommentsProps) {
       ) : null )}
       {children.reverse()
         .map(([idx, comment], i) => {
+          const [revNum, post] = getLatestCommentRevision(comment);
+          if (!post.index) return;
           return (
             <CommentItem
-              comment={comment}
+              post={post}
+              index={comment.post.index}
               key={idx.toString()}
               contacts={props.contacts}
               api={api}
