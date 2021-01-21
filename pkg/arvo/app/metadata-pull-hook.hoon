@@ -16,6 +16,8 @@
       %metadata-update
       %metadata-push-hook
   ==
++$  state-zero
+  [%0 previews=(map resource group-preview)]
 ::
 --
 ::
@@ -25,6 +27,8 @@
 ^-  agent:gall
 %-  (agent:pull-hook config)
 ^-  (pull-hook:pull-hook config)
+=|  state-zero
+=*  state  -
 |_  =bowl:gall
 +*  this        .
     def         ~(. (default-agent this %|) bowl)
@@ -32,21 +36,31 @@
     met         ~(. mdl bowl)
 ::
 ++  on-init  on-init:def
-++  on-save  !>(~)
-++  on-load  on-load:def
+++  on-save  !>(state)
+++  on-load  
+  |=  =vase
+  =+  !<(old=state-zero vase)
+  `this(state old)
+::
 ++  on-poke  on-poke:def
 ++  on-agent  
   |=  [=wire =sign:agent:gall]
   ?.  ?=([%preview @ @ @ ~] wire)
     (on-agent:def wire sign)
-  :_  this
-  ?+  -.sign  ~ 
+  =/  rid=resource
+    (de-path:resource t.wire)
+  ?+  -.sign  `this 
       %fact  
+    ?>  =(%metadata-update p.cage.sign)
+    =+  !<(upd=metadata-update q.cage.sign)
+    ?>  ?=(%preview -.upd)
+    :_  this(previews (~(put by previews) rid +.upd))
     :~  [%give %fact ~[wire] cage.sign]
         [%give %kick ~[wire] ~]
     ==
   ::
       %watch-ack
+    :_  this
     ?~  p.sign  ~
     :~  [%give %fact ~[wire] tang+!>(u.p.sign)]
         [%give %kick ~[wire] ~]
@@ -60,28 +74,20 @@
     (on-watch:def path)
   =/  rid=resource
     (de-path:resource t.path)
+  =/  prev=(unit group-preview)
+    (~(get by previews) rid)
   :_  this
+  ?^  prev
+    :~  [%give %fact ~ metadata-update+!>([%preview u.prev])]
+        [%give %kick ~ ~]
+    ==
   =/  =dock
     [entity.rid %metadata-push-hook]
-  :~  [%pass path %arvo %b %wait (add now.bowl ~s20)]
-      [%pass path %agent dock %watch path]
-  ==
+  [%pass path %agent dock %watch path]~
 ::
 ++  on-leave  on-leave:def
 ++  on-peek   on-peek:def
-++  on-arvo   
-  |=  [=wire =sign-arvo]
-  ?.  ?=([%preview @ @ @ ~] wire)
-    (on-arvo:def wire sign-arvo)
-  =/  rid=resource
-    (de-path:resource t.wire)
-  =/  =dock
-    [entity.rid %metadata-push-hook]
-  :_  this
-  ?.  (~(has by wex.bowl) [wire dock])  ~
-  :~  [%pass wire %agent dock %leave ~]
-      [%give %kick ~[wire] ~]
-  ==
+++  on-arvo   on-arvo:def
 ::
 ++  on-fail   on-fail:def
 ++  on-pull-nack

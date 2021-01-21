@@ -59,13 +59,12 @@
   :-  %metadata-update
   !>  ^-  metadata-update
   [%preview rid channels members channel-count metadata]
-    ::  TODO: rank by popularity
-  ::  how tho, if the group owner isn't in some graphs
+  ::
   ++  channels
     %-  ~(gas by *associations)
     %+  skim  ~(tap by (app-metadata-for-group:met rid %graph))
     |=([=md-resource group=resource =metadata] preview.metadata)
-    
+  ::   
   ++  channel-count
     ~(wyt by (app-metadata-for-group:met rid %graph))
   --
