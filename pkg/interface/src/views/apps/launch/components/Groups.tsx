@@ -56,6 +56,7 @@ export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
             unreads={unreadCount}
             path={group?.group}
             title={group.metadata.title}
+            picture={group.metadata.picture}
           />
         );
       })}

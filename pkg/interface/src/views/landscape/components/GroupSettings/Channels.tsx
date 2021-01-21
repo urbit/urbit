@@ -40,11 +40,11 @@ export function GroupChannelSettings(props: GroupChannelSettingsProps) {
     roleForShip(group, window.ship) !== "admin";
 
   return (
-    <Col width="100%">
-      <Text mb="4" fontSize="2">
+    <Col maxWidth="384px" width="100%">
+      <Text p="4" id="channels" fontWeight="600" fontSize="2">
         Channels
       </Text>
-      <Col width="100%" gapY="3">
+      <Col p="4" width="100%" gapY="3">
         {channels.map(({ resource, metadata }) => (
           <Row justifyContent="space-between" width="100%" key={resource}>
             <Row gapX="2">
@@ -60,8 +60,8 @@ export function GroupChannelSettings(props: GroupChannelSettingsProps) {
                     border="1"
                     borderRadius="1"
                     borderColor="lightGray"
-                    gapY="2"
-                    p="2"
+                    p="1"
+                    gapY="1"
                   >
                     <StatelessAsyncAction
                       bg="transparent"

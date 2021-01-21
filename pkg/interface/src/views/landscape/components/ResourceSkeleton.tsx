@@ -40,7 +40,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps) {
     baseUrl === "/~landscape/home" ? "/home" : association.group;
   const title = props.title || association?.metadata?.title;
 
-  const [, , ship, resource] = appPath.split("/");
+  const [, , ship, resource] = rid.split("/");
 
   const resourcePath = (p: string) => baseUrl + `/resource/${app}/ship/${ship}/${resource}` + p;
 

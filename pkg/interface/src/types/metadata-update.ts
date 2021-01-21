@@ -60,7 +60,7 @@ export interface Metadata {
   description: string;
   title: string;
   module: string;
-  url: string;
+  picture: string;
   preview: boolean;
   permissions: Permissions;
 }

@@ -23,7 +23,7 @@ export function StatelessAsyncAction({
   } = useStatelessAsyncClickable(onClick, name);
 
   return (
-    <Action onClick={handleClick} {...rest}>
+    <Action height="18px" onClick={handleClick} {...rest}>
       {state === "error" ? (
         "Error"
       ) : state === "loading" ? (

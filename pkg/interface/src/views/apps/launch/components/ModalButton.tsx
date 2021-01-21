@@ -56,7 +56,9 @@ const ModalButton = (props) => {
             alignItems="stretch"
             flexDirection="column"
           >
-            {props.children}
+            {typeof props.children === 'function' 
+              ? props.children(() => setModalShown(false)) 
+              : props.children}
           </Box>
         </Box>
       )}
