@@ -3,20 +3,21 @@
 +$  rolodex  (map ship contact)
 +$  contact
   $:  nickname=@t
-      email=@t
-      phone=@t
-      website=@t
+      bio=@t
+      status=@t
       color=@ux
       avatar=(unit @t)
+      cover=(unit @t)
+      last-updated=@da
   ==
 ::
 +$  edit-field
   $%  [%nickname nickname=@t]
-      [%email email=@t]
-      [%phone phone=@t]
-      [%website website=@t]
+      [%bio bio=@t]
+      [%status status=@t]
       [%color color=@ux]
       [%avatar avatar=(unit @t)]
+      [%cover cover=(unit @t)]
   ==
 ::
 +$  beings

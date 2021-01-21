@@ -100,6 +100,7 @@
     ++  handle-add
       |=  [=ship =contact:store]
       ^-  (quip card _state)
+      =.  last-updated.contact  now.bowl
       :-  (send-diff [%add ship contact] =(ship our.bowl))
       state(rolodex (~(put by rolodex) ship contact))
     ::
@@ -116,6 +117,7 @@
       ^-  (quip card _state)
       =/  contact  (~(got by rolodex) ship)
       =.  contact  (edit-contact contact edit-field)
+      =.  last-updated.contact  now.bowl
       :-  (send-diff [%edit ship edit-field] =(ship our.bowl))
       state(rolodex (~(put by rolodex) ship contact))
       ::
@@ -124,11 +126,11 @@
         ^-  contact:store
         ?-  -.edit
             %nickname  contact(nickname nickname.edit)
-            %email     contact(email email.edit)
-            %phone     contact(phone phone.edit)
-            %website   contact(website website.edit)
+            %bio       contact(bio bio.edit)
+            %status    contact(status status.edit)
             %color     contact(color color.edit)
             %avatar    contact(avatar avatar.edit)
+            %cover     contact(cover cover.edit)
         ==
       --
     ::

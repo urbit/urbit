@@ -63,11 +63,12 @@
     ^-  json
     %-  pairs
     :~  [%nickname s+nickname.contact]
-        [%email s+email.contact]
-        [%phone s+phone.contact]
-        [%website s+website.contact]
+        [%bio s+bio.contact]
+        [%status s+status.contact]
         [%color s+(scot %ux color.contact)]
         [%avatar ?~(avatar.contact ~ s+u.avatar.contact)]
+        [%cover ?~(cover.contact ~ s+u.cover.contact)]
+        [%last-updated (time last-updated.contact)]
     ==
   ::
   ++  edit
@@ -76,11 +77,11 @@
     %+  frond  -.field
     ?-  -.field
       %nickname  s+nickname.field
-      %email     s+email.field
-      %phone     s+phone.field
-      %website   s+website.field
+      %bio       s+bio.field
+      %status    s+status.field
       %color     s+(scot %ux color.field)
       %avatar    ?~(avatar.field ~ s+u.avatar.field)
+      %cover     ?~(cover.field ~ s+u.cover.field)
     ==
   ::
   ++  beng
@@ -135,21 +136,22 @@
     ++  cont
       %-  ot
       :~  [%nickname so]
-          [%email so]
-          [%phone so]
-          [%website so]
+          [%bio so]
+          [%status so]
           [%color nu]
           [%avatar (mu so)]
+          [%cover (mu so)]
+          [%last-updated di]
       ==
     ::
     ++  edit
       %-  of
       :~  [%nickname so]
-          [%email so]
-          [%phone so]
-          [%website so]
+          [%bio so]
+          [%status so]
           [%color nu]
           [%avatar (mu so)]
+          [%cover (mu so)]
       ==
     --
   --
