@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import RemarkDisableTokenizers from 'remark-disable-tokenizers';
+import RemarkBreaks from 'remark-breaks';
 import urbitOb from 'urbit-ob';
 import { Text } from '@tlon/indigo-react';
 
@@ -67,6 +68,7 @@ const MessageMarkdown = React.memo(props => (
       return true;
     }}
     plugins={[[
+      RemarkBreaks,
       RemarkDisableTokenizers,
       { block: DISABLED_BLOCK_TOKENS, inline: DISABLED_INLINE_TOKENS }
     ]]} />

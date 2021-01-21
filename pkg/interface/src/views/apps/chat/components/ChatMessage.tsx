@@ -231,8 +231,8 @@ export const MessageWithSigil = (props) => {
             }}
             title={`~${msg.author}`}
           >{name}</Text>
-          <Text flexShrink='0' gray mono className="v-mid">{timestamp}</Text>
-          <Text flexShrink={0}  gray mono ml={2} className="v-mid child dn-s">{datestamp}</Text>
+          <Text flexShrink='0' fontSize='0' gray mono className="v-mid">{timestamp}</Text>
+          <Text flexShrink={0} gray mono ml={2} className="v-mid child dn-s">{datestamp}</Text>
         </Box>
         <ContentBox flexShrink={0} fontSize={fontSize ? fontSize : '14px'}>
           {msg.contents.map(c =>

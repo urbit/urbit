@@ -85,8 +85,8 @@ export function SidebarItem(props: {
       justifyContent="space-between"
       alignItems="center"
       py={1}
-      pl={2}
-      pr={2}
+      pl={3}
+      pr={3}
       selected={selected}
     >
       <Row width='100%' alignItems="center" flex='1 auto' minWidth='0'>
@@ -97,7 +97,7 @@ export function SidebarItem(props: {
         />
         <Box width='100%' flexShrink={2} ml={2} display='flex' overflow='hidden'>
           <Text
-            lineHeight="short"
+            lineHeight="tall"
             display='inline-block'
             flex='1'
             overflow='hidden'

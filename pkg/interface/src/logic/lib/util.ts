@@ -13,7 +13,7 @@ export const MOMENT_CALENDAR_DATE = {
   nextWeek: "dddd",
   lastDay: "[Yesterday]",
   lastWeek: "[Last] dddd",
-  sameElse: "DD/MM/YYYY",
+  sameElse: "~YYYY.M.D",
 };
 
 export const getModuleIcon = (mod: string) => {

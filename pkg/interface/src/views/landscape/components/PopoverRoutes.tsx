@@ -81,7 +81,7 @@ export function PopoverRoutes(
                 <Box
                   display="grid"
                   gridTemplateRows={["32px 1fr", "100%"]}
-                  gridTemplateColumns={["100%", "150px 1fr"]}
+                  gridTemplateColumns={["100%", "250px 1fr"]}
                   height="100%"
                   width="100%"
                 >

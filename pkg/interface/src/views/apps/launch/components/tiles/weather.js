@@ -171,7 +171,7 @@ export default class WeatherTile extends React.Component {
         onClick={() => this.setState({ manualEntry: !this.state.manualEntry })}
       >
         <Box>
-          <Icon icon='Weather' display='inline-block' verticalAlign='top' pt='3px' pr='2px' />
+          <Icon icon='Weather' display='inline-block' verticalAlign='top' mt='3px' mr='2' />
           <Text>Weather</Text>
         </Box>
         <Text style={{ cursor: 'pointer' }}>
@@ -217,15 +217,14 @@ export default class WeatherTile extends React.Component {
         title={`${locationName} Weather`}
       >
         <Text>
-          <Icon icon='Weather' display='inline' style={{ position: 'relative', top: '.3em' }} />
-          Weather
+          <Icon icon='Weather' display='inline' mr='2' style={{ position: 'relative', top: '.3em' }} />
             <Text
               cursor='pointer'
               onClick={() =>
                 this.setState({ manualEntry: !this.state.manualEntry })
               }
             >
-            ->
+            Weather ->
           </Text>
         </Text>
 
@@ -268,7 +267,7 @@ export default class WeatherTile extends React.Component {
           flexDirection="column"
           justifyContent="flex-start"
         >
-          <Text><Icon icon='Weather' color='black' display='inline' style={{ position: 'relative', top: '.3em' }} /> Weather</Text>
+          <Text><Icon icon='Weather' color='black' display='inline' mr='2' style={{ position: 'relative', top: '.3em' }} /> Weather</Text>
           <Text width='100%' display='flex' flexDirection='column' mt={1}>
             Loading, please check again later...
           </Text>

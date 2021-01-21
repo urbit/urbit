@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import { Box, Row, Col, Center, LoadingSpinner, Text } from "@tlon/indigo-react";
 import { Switch, Route, Link } from "react-router-dom";
 import bigInt from 'big-integer';
@@ -10,9 +10,13 @@ import { RouteComponentProps } from "react-router-dom";
 
 import { LinkItem } from "./components/LinkItem";
 import LinkSubmit from "./components/LinkSubmit";
+import { LinkPreview } from "./components/link-preview";
+import { LinkWindow } from "./LinkWindow";
 import { Comments } from "~/views/components/Comments";
 
 import "./css/custom.css";
+
+const emptyMeasure = () => {};
 
 type LinkResourceProps = StoreState & {
   association: Association;
@@ -57,39 +61,28 @@ export function LinkResource(props: LinkResourceProps) {
     return <Center width='100%' height='100%'><LoadingSpinner/></Center>;
   }
 
+
   return (
-    <Col alignItems="center" height="100%" width="100%" overflowY="auto">
+    <Col alignItems="center" height="100%" width="100%" overflowY="hidden">
       <Switch>
         <Route
           exact
           path={relativePath("")}
           render={(props) => {
             return (
-              <Col width="100%" p={4} alignItems="center" maxWidth="768px">
-                <Col width="100%" flexShrink='0'>
-                  <LinkSubmit s3={s3} name={name} ship={ship.slice(1)} api={api} />
-                </Col>
-                {Array.from(graph).map(([date, node]) => {
-                  const contact = contactDetails[node.post.author];
-                  return (
-                    <LinkItem
-                      association={resource}
-                      contacts={contacts}
-                      key={date.toString()}
-                      resource={resourcePath}
-                      node={node}
-                      contacts={contactDetails}
-                      unreads={unreads}
-                      nickname={contact?.nickname}
-                      baseUrl={resourceUrl}
-                      group={group}
-                      path={resource?.group}
-                      api={api}
-                      mb={3}
-                    />
-                  );
-                })}
-              </Col>
+              <LinkWindow
+                s3={s3}
+                association={resource}
+                contacts={contacts}
+                resource={resourcePath}
+                graph={graph}
+                unreads={unreads}
+                baseUrl={resourceUrl}
+                group={group}
+                path={resource.group}
+                api={api}
+                mb={3}
+              />
             );
           }}
         />
@@ -112,6 +105,7 @@ export function LinkResource(props: LinkResourceProps) {
             const contact = contactDetails[node.post.author];
 
             return (
+              <Col alignItems="center" overflowY="auto" width="100%">
               <Col width="100%" p={3} maxWidth="768px">
                 <Link to={resourceUrl}><Text bold>{"<- Back"}</Text></Link>
                 <LinkItem
@@ -125,6 +119,7 @@ export function LinkResource(props: LinkResourceProps) {
                   path={resource?.group}
                   api={api}
                   mt={3}
+                  measure={emptyMeasure}
                 />
                 <Comments
                   ship={ship}
@@ -141,6 +136,7 @@ export function LinkResource(props: LinkResourceProps) {
                   group={group}
                 />
               </Col>
+            </Col>
             );
           }}
         />

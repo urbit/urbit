@@ -40,4 +40,12 @@ jobs:
 
       - run: |
           version="$(cat ./pkg/urbit/version)"
-          $(nix-build -A skopeo)/bin/skopeo --insecure-policy copy tarball:$(nix-build -A docker-image) docker://${{ secrets.DOCKERHUB_USERNAME }}/urbit:v$version
+          image="$(nix-build -A docker-image)"
+          imageName="$(nix-instantiate --eval -A docker-image.imageName | cut -d'"' -f2)"
+          imageTag="$(nix-instantiate --eval -A docker-image.imageTag | cut -d'"' -f2)"
+          # Load the image from the nix-built tarball
+          docker load -i $image
+          docker tag "$imageName:$imageTag" ${{secrets.DOCKERHUB_USERNAME }}/urbit:v$version
+          docker tag "$imageName:$imageTag" ${{secrets.DOCKERHUB_USERNAME }}/urbit:latest
+          docker push ${{secrets.DOCKERHUB_USERNAME }}/urbit:v$version
+          docker push ${{secrets.DOCKERHUB_USERNAME }}/urbit:latest
