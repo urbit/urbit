@@ -51,13 +51,13 @@ export function LinkWindow(props: LinkWindowProps) {
 
   const [,,ship, name] = association['app-path'].split('/');
 
-  const style = useMemo(() => 
-    ({ 
-      height: "100%", 
+  const style = useMemo(() =>
+    ({
+      height: "100%",
       width: "100%",
-      display: 'flex', 
-      flexDirection: 'column', 
-      alignItems: 'center' 
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center'
     }), []);
 
   return (
@@ -81,10 +81,12 @@ export function LinkWindow(props: LinkWindowProps) {
         };
         if(index.eq(first ?? bigInt.zero)) {
           return (
-            <Col key={index.toString()} mx="auto" mt="4" maxWidth="768px" width="100%" flexShrink='0'>
+            <>
+            <Col key={index.toString()} mx="auto" mt="4" maxWidth="768px" width="100%" flexShrink='0' px={3}>
               <LinkSubmit s3={props.s3} name={name} ship={ship.slice(1)} api={api} />
-              <LinkItem {...linkProps} />
             </Col>
+              <LinkItem {...linkProps} />
+            </>
           )
         }
         return <LinkItem {...linkProps} />;
