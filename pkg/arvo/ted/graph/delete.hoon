@@ -33,7 +33,7 @@
   (pure:m (need ugroup))
 ::
 ++  delete-graph
-  |=  rid=resource
+  |=  [group-rid=resource rid=resource]
   =/  m  (strand ,~)
   ^-  form:m
   ;<  =bowl:spider  bind:m  get-bowl:strandio
@@ -43,12 +43,9 @@
     (poke-our %graph-push-hook %push-hook-action !>([%remove rid]))
   ;<  ~  bind:m
     %+  poke-our  %metadata-hook
-    metadata-hook-action+!>([%remove (en-path:resource rid)])
-  ;<  ~  bind:m
-    %+  poke-our  %metadata-store
     :-  %metadata-action
     !>  :+  %remove 
-      (en-path:resource rid)
+      (en-path:resource group-rid)
     [%graph (en-path:resource rid)]
   (pure:m ~)
 --
@@ -69,11 +66,14 @@
   (scry-group u.ugroup-rid)
 ?.  hidden.group
   ;<  ~  bind:m
-    (delete-graph rid.action)
+    (delete-graph u.ugroup-rid rid.action)
   (pure:m !>(~))
 ;<  ~  bind:m
   (poke-our %group-store %group-action !>([%remove-group rid.action ~]))
 ;<  ~  bind:m
   (poke-our %group-push-hook %push-hook-action !>([%remove rid.action]))
-;<  ~  bind:m  (delete-graph rid.action)
+;<  ~  bind:m  (delete-graph u.ugroup-rid rid.action)
+;<  ~  bind:m
+  %+  poke-our  %metadata-hook
+  metadata-hook-action+!>([%remove (en-path:resource u.ugroup-rid)])
 (pure:m !>(~))

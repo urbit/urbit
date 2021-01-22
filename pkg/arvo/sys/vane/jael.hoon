@@ -681,7 +681,7 @@
         |
       ?.  ?=([[@ *] *] b)
         &
-      (lth i.i.a i.i.b)
+      (lth (end 3 i.i.a) (end 3 i.i.b))
     --
   ::
   ++  get-source
@@ -1043,7 +1043,8 @@
     =/  who  (slaw %p i.tyl)
     ?~  who  [~ ~]
     =/  sec  (~(got by jaw.own.pki.lex) lyf.own.pki.lex)
-    ``[%noun !>((end 6 (shaf %pass (shax sec))))]
+    =/  sal  (add %pass step.own.pki.lex)
+    ``[%noun !>((end 6 (shaf sal (shax sec))))]
   ::
       %life
     ?.  ?=([@ ~] tyl)  [~ ~]

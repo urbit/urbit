@@ -61,20 +61,36 @@ export default function Inbox(props: {
     };
   }, []);
 
-  const [newNotifications, ...notifications] =
+  const notifications =
     Array.from(props.showArchive ? props.archive : props.notifications) || [];
+  
+  const calendar = {
+    ...MOMENT_CALENDAR_DATE, sameDay: function (now) {
+      if (this.subtract(6, 'hours').isBefore(now)) {
+        return "[Earlier Today]";
+      } else {
+        return MOMENT_CALENDAR_DATE.sameDay;
+      }
+    }
+  };
 
-  const notificationsByDay = f.flow(
+  let notificationsByDay = f.flow(
     f.map<DatedTimebox>(([date, nots]) => [
       date,
       nots.filter(filterNotification(associations, props.filter)),
     ]),
-    f.groupBy<DatedTimebox>(([date]) =>
-      moment(daToUnix(date)).format("DDMMYYYY")
-    ),
-    f.values,
-    f.reverse
+    f.groupBy<DatedTimebox>(([date]) => {
+      date = moment(daToUnix(date));
+      if (moment().subtract(6, 'hours').isBefore(date)) {
+        return 'latest';
+      } else {
+        return date.format("YYYYMMDD");
+      }
+    }),
   )(notifications);
+  notificationsByDay = new Map(Object.keys(notificationsByDay).sort().reverse().map(timebox => {
+    return [timebox, notificationsByDay[timebox]];
+  }));
 
   useEffect(() => {
     api.hark.getMore(props.showArchive);
@@ -130,44 +146,27 @@ export default function Inbox(props: {
 
   return (
     <Col position="relative" height="100%" overflowY="auto" onScroll={onScroll} >
-      <Col zIndex={4} gapY={2} bg="white" top="0px" position="sticky">
+      <Col zIndex={4} gapY={2} bg="white" top="0px" position="sticky" flexShrink={0}>
         {inviteItems(invites, api)}
       </Col>
-      {newNotifications && (
-        <DaySection
-          latest
-          timeboxes={[newNotifications]}
-          contacts={props.contacts}
-          archive={!!props.showArchive}
-          associations={props.associations}
-          groups={props.groups}
-          graphConfig={props.notificationsGraphConfig}
-          groupConfig={props.notificationsGroupConfig}
-          chatConfig={props.notificationsChatConfig}
-          remoteContentPolicy={props.remoteContentPolicy}
-          api={api}
-        />
-      )}
-
-      {_.map(
-        notificationsByDay,
-        (timeboxes, idx) =>
-          timeboxes.length > 0 && (
-            <DaySection
-              key={idx}
-              timeboxes={timeboxes}
-              contacts={props.contacts}
-              archive={!!props.showArchive}
-              associations={props.associations}
-              api={api}
-              groups={props.groups}
-              graphConfig={props.notificationsGraphConfig}
-              groupConfig={props.notificationsGroupConfig}
-              chatConfig={props.notificationsChatConfig}
-              remoteContentPolicy={props.remoteContentPolicy}
-            />
-          )
-      )}
+      {[...notificationsByDay.keys()].map((day, index) => {
+        const timeboxes = notificationsByDay.get(day);
+        return timeboxes.length > 0 && (
+          <DaySection
+            key={day}
+            label={day === 'latest' ? 'Today' : moment(day).calendar(null, calendar)}
+            timeboxes={timeboxes}
+            contacts={props.contacts}
+            archive={!!props.showArchive}
+            associations={props.associations}
+            api={api}
+            groups={props.groups}
+            graphConfig={props.notificationsGraphConfig}
+            groupConfig={props.notificationsGroupConfig}
+            chatConfig={props.notificationsChatConfig}
+          />
+        );
+      })}
     </Col>
   );
 }
@@ -184,21 +183,18 @@ function sortIndexedNotification(
 }
 
 function DaySection({
+  label,
   contacts,
   groups,
   archive,
   timeboxes,
-  latest = false,
   associations,
   api,
   groupConfig,
   graphConfig,
   chatConfig,
-  remoteContentPolicy
 }) {
-  const calendar = latest
-    ? MOMENT_CALENDAR_DATE
-    : { ...MOMENT_CALENDAR_DATE, sameDay: "[Earlier Today]" };
+  
   const lent = timeboxes.map(([,nots]) => nots.length).reduce(f.add, 0);
   if (lent === 0 || timeboxes.length === 0) {
     return null;
@@ -209,7 +205,7 @@ function DaySection({
       <Box position="sticky" zIndex="3" top="-1px" bg="white">
         <Box p="2" bg="scales.black05">
           <Text>
-            {moment(daToUnix(timeboxes[0][0])).calendar(null, calendar)}
+            {label}
           </Text>
         </Box>
       </Box>
@@ -230,7 +226,6 @@ function DaySection({
               contacts={contacts}
               groups={groups}
               time={date}
-              remoteContentPolicy={remoteContentPolicy}
             />
           </React.Fragment>
         ))

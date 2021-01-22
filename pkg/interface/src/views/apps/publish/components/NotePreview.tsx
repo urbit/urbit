@@ -19,8 +19,6 @@ interface NotePreviewProps {
   host: string;
   book: string;
   node: GraphNode;
-  hideAvatars?: boolean;
-  hideNicknames?: boolean;
   baseUrl: string;
   unreads: Unreads;
   contacts: Contacts;
@@ -33,7 +31,7 @@ const WrappedBox = styled(Box)`
 `;
 
 export function NotePreview(props: NotePreviewProps) {
-  const { node, contacts, hideAvatars, hideNicknames, group } = props;
+  const { node, contacts, group } = props;
   const { post } = node;
   if (!post) {
     return null;
@@ -45,7 +43,7 @@ export function NotePreview(props: NotePreviewProps) {
 
   const [rev, title, body, content] = getLatestRevision(node);
   const appPath = `/ship/${props.host}/${props.book}`;
-  const isUnread = props.unreads.graph?.[appPath]?.['/']?.unreads?.has(content.index);
+  const isUnread = props.unreads.graph?.[appPath]?.['/']?.unreads?.has(`/${noteId}/1/1`);
 
   const snippet = getSnippet(body);
 
@@ -63,9 +61,9 @@ export function NotePreview(props: NotePreviewProps) {
           overflow='hidden'
           p='2'
         >
-          <WrappedBox mb={2}><Text bold fontSize='0'>{title}</Text></WrappedBox>
+          <WrappedBox mb={2}><Text bold>{title}</Text></WrappedBox>
           <WrappedBox>
-          <Text fontSize='14px'>
+          <Text fontSize='14px' lineHeight='tall'>
             <ReactMarkdown
               unwrapDisallowed
               allowedTypes={['text', 'root', 'break', 'paragraph', 'image']}
@@ -84,8 +82,6 @@ export function NotePreview(props: NotePreviewProps) {
           contacts={contacts}
           ship={post?.author}
           date={post?.['time-sent']}
-          hideAvatars={hideAvatars || false}
-          hideNicknames={hideNicknames || false}
           group={group}
           unread={isUnread}
           api={props.api}

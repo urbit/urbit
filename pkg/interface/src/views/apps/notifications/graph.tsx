@@ -25,7 +25,7 @@ import ChatMessage, {MessageWithoutSigil} from "../chat/components/ChatMessage";
 
 function getGraphModuleIcon(module: string) {
   if (module === "link") {
-    return "Links";
+    return "Collection";
   }
   return _.capitalize(module);
 }
@@ -80,7 +80,6 @@ const GraphNodeContent = ({ group, post, contacts, mod, description, index, remo
         content={contents}
         contacts={contacts}
         group={group}
-        remoteContentPolicy={remoteContentPolicy}
       />
     }
     return null;
@@ -91,7 +90,8 @@ const GraphNodeContent = ({ group, post, contacts, mod, description, index, remo
         content={contents}
         group={group}
         contacts={contacts}
-        remoteContentPolicy={remoteContentPolicy}
+        fontSize='14px'
+        lineHeight="tall"
       />
     } else if (idx[1] === "1") {
       const [{ text: header }, { text: body }] = contents;
@@ -132,7 +132,6 @@ const GraphNodeContent = ({ group, post, contacts, mod, description, index, remo
         msg={post}
         fontSize='0'
         pt='2'
-        remoteContentPolicy={remoteContentPolicy}
       />
     </Row>);
 
@@ -167,13 +166,14 @@ const GraphNode = ({
   group,
   read,
   onRead,
+  showContact = false,
   remoteContentPolicy
 }) => {
   const { contents } = post;
   author = deSig(author);
   const history = useHistory();
 
-  const img = (
+  const img = showContact ? (
     <Sigil
       ship={`~${author}`}
       size={16}
@@ -181,7 +181,7 @@ const GraphNode = ({
       color={`#000000`}
       classes="mix-blend-diff"
     />
-    );
+    ) : <Box style={{ width: '16px' }}></Box>;
 
   const groupContacts = contacts[groupPath] ?? {};
 
@@ -195,10 +195,10 @@ const GraphNode = ({
   }, [read, onRead]);
 
   return (
-    <Row onClick={onClick} gapX="2" pt="2">
+    <Row onClick={onClick} gapX="2" pt={showContact ? 2 : 0}>
       <Col>{img}</Col>
       <Col flexGrow={1} alignItems="flex-start">
-        <Row
+        {showContact && <Row
           mb="2"
           height="16px"
           alignItems="center"
@@ -211,15 +211,14 @@ const GraphNode = ({
           <Text ml="2" gray>
             {moment(time).format("HH:mm")}
           </Text>
-        </Row>
-        <Row width="100%" p="1">
+        </Row>}
+        <Row width="100%" p="1" flexDirection="column">
           <GraphNodeContent
             contacts={groupContacts}
             post={post}
             mod={mod}
             description={description}
             index={index}
-            remoteContentPolicy={remoteContentPolicy}
             group={group}
           />
         </Row>
@@ -239,9 +238,8 @@ export function GraphNotification(props: {
   groups: Groups;
   contacts: Rolodex;
   api: GlobalApi;
-  remoteContentPolicy: any;
 }) {
-  const { contents, index, read, time, api, timebox, remoteContentPolicy, groups } = props;
+  const { contents, index, read, time, api, timebox, groups } = props;
 
   const authors = _.map(contents, "author");
   const { graph, group } = index;
@@ -249,16 +247,15 @@ export function GraphNotification(props: {
   const desc = describeNotification(index.description, contents.length !== 1);
 
   const onClick = useCallback(() => {
-    if (props.archived) {
+    if (props.archived || read) {
       return;
     }
 
-    const func = read ? "unread" : "read";
-    return api.hark[func](timebox, { graph: index });
+    return api.hark["read"](timebox, { graph: index });
   }, [api, timebox, index, read]);
 
 return (
-    <Col flexGrow={1} width="100%" p="2">
+    <>
       <Header
         onClick={onClick}
         archived={props.archived}
@@ -272,7 +269,7 @@ return (
         description={desc}
         associations={props.associations}
       />
-      <Col flexGrow={1} width="100%" pl="5">
+      <Box flexGrow={1} width="100%" pl={5} gridArea="main">
         {_.map(contents, (content, idx) => (
           <GraphNode
             post={content}
@@ -287,10 +284,10 @@ return (
             groupPath={group}
             read={read}
             onRead={onClick}
-            remoteContentPolicy={remoteContentPolicy}
+            showContact={idx === 0}
           />
         ))}
-      </Col>
-    </Col>
+      </Box>
+    </>
   );
 }

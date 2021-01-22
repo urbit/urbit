@@ -63,7 +63,7 @@ class Channel {
   }
 
   resetDebounceTimer() {
-    if(this.debounceTimer) {
+    if (this.debounceTimer) {
       clearTimeout(this.debounceTimer);
       this.debounceTimer = null;
     }
@@ -182,19 +182,19 @@ class Channel {
   //  sends a JSON command command to the server.
   //
   sendJSONToChannel(j) {
-    if(!j && this.outstandingJSON.length === 0) {
-      return;
-    }
     let req = new XMLHttpRequest();
     req.open("PUT", this.channelURL());
     req.setRequestHeader("Content-Type", "application/json");
 
     if (this.lastEventId == this.lastAcknowledgedEventId) {
-      if(j) {
+      if (j) {
         this.outstandingJSON.push(j);
       }
-      let x = JSON.stringify(this.outstandingJSON);
-      req.send(x);
+
+      if (this.outstandingJSON.length > 0) {
+        let x = JSON.stringify(this.outstandingJSON);
+        req.send(x);
+      }
     } else {
       //  we add an acknowledgment to clear the server side queue
       //
@@ -203,15 +203,15 @@ class Channel {
       //
       let payload = [
         ...this.outstandingJSON, 
-        {action: "ack", "event-id": parseInt(this.lastEventId)}
+        {action: "ack", "event-id": this.lastEventId}
       ];
-      if(j) {
+      if (j) {
         payload.push(j)
       }
       let x = JSON.stringify(payload);
       req.send(x);
 
-      this.lastEventId = this.lastAcknowledgedEventId;
+      this.lastAcknowledgedEventId = this.lastEventId;
     }
     this.outstandingJSON = [];
 
@@ -227,7 +227,7 @@ class Channel {
 
     this.eventSource = new EventSource(this.channelURL(), {withCredentials:true});
     this.eventSource.onmessage = e => {
-      this.lastEventId = e.lastEventId;
+      this.lastEventId = parseInt(e.lastEventId, 10);
 
       let obj = JSON.parse(e.data);
       let pokeFuncs = this.outstandingPokes.get(obj.id);

@@ -10,6 +10,7 @@ import CodeMirror from "codemirror";
 
 import "codemirror/mode/markdown/markdown";
 import "codemirror/addon/display/placeholder";
+import "codemirror/addon/edit/continuelist";
 
 import "codemirror/lib/codemirror.css";
 import { Box } from "@tlon/indigo-react";
@@ -54,6 +55,7 @@ export function MarkdownEditor(
     scrollbarStyle: "native",
     // cursorHeight: 0.85,
     placeholder: placeholder || "",
+    extraKeys: { 'Enter': 'newlineAndIndentContinueMarkdownList' }
   };
 
   const editor: React.RefObject<any> = useRef();

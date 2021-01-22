@@ -206,6 +206,8 @@
         ~>  %slog.[0 leaf+"gall: pupa call dud"]
         (mean >mote.u.dud< tang.u.dud)
       =/  task  ((harden task:gall) wrapped-task)
+      ?:  ?=(%vega -.task)
+        [~ pupal-gate]
       (molt duct `[duct %slip %g task])
     ::
     ++  scry  scry:adult-core
@@ -367,6 +369,7 @@
       %-  ~(gas in *(set [care:clay path]))
       :*  [%z /sys/hoon/hoon]
           [%z /sys/arvo/hoon]
+          [%z /sys/lull/hoon]
           [%z /sys/zuse/hoon]
           [%z /sys/vane/gall/hoon]
           %+  murn  ~(tap by yokes.state)
@@ -1064,9 +1067,17 @@
     ::    We convert from cards to duct-indexed moves when resolving
     ::    them in Arvo.
     ::
+    ::    We accept %huck to "fake" being a message to a ship but
+    ::    actually send it to a vane.
+    ::
+    +$  neet
+      $%  neat
+          [%huck [=ship name=term] =note-arvo]
+      ==
+    ::
     ++  ap-from-internal
       ~/  %ap-from-internal
-      |=  card=(wind neat gift:agent)
+      |=  card=(wind neet gift:agent)
       ^-  (list move)
       ::
       ?-    -.card
@@ -1122,16 +1133,19 @@
           %pass
         =/  =duct  system-duct.state
         =/  =wire  p.card
-        =/  =neat  q.card
+        =/  =neet  q.card
         =.  wire
-          ?:  ?=(%agent -.neat)
-            [%out (scot %p ship.neat) name.neat wire]
-          [(scot %p attributing.agent-routes) wire]
+          ?-  -.neet
+            %agent  [%out (scot %p ship.neet) name.neet wire]
+            %huck   [%out (scot %p ship.neet) name.neet wire]
+            %arvo   [(scot %p attributing.agent-routes) wire]
+          ==
         =.  wire  [%use agent-name nonce.current-agent wire]
         =/  =note-arvo
-          ?-  -.neat
-            %arvo   note-arvo.neat
-            %agent  [%g %deal [our ship.neat] [name deal]:neat]
+          ?-  -.neet
+            %arvo   note-arvo.neet
+            %huck   note-arvo.neet
+            %agent  [%g %deal [our ship.neet] [name deal]:neet]
           ==
         [duct %pass wire note-arvo]~
       ==
@@ -1308,10 +1322,10 @@
     ::  +ap-pass: request action.
     ::
     ++  ap-pass
-      |=  [=path =neat]
+      |=  [=path =neet]
       ^+  ap-core
       =/  internal-moves
-        (ap-from-internal %pass path neat)
+        (ap-from-internal %pass path neet)
       ap-core(agent-moves (weld internal-moves agent-moves))
     ::  +ap-reinstall: reinstall.
     ::
@@ -1525,8 +1539,7 @@
       ::
       =.  ap-core
         (ap-pass wire %agent dock %leave ~)
-      =/  way  [%out (scot %p p.dock) q.dock wire]
-      (ap-pass way %arvo %b %huck `sign-arvo`[%gall %unto %kick ~])
+      (ap-pass wire %huck dock %b %huck `sign-arvo`[%gall %unto %kick ~])
     ::  +ap-mule: run virtualized with intercepted scry, preserving type
     ::
     ::    Compare +mute and +mule.  Those pass through scry, which

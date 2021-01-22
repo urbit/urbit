@@ -38,8 +38,6 @@ export function PopoverRoutes(
     association: Association;
     s3: S3State;
     api: GlobalApi;
-    hideAvatars: boolean;
-    hideNicknames: boolean;
     notificationsGroupConfig: GroupNotificationsConfig;
     rootIdentity: Contact;
   } & RouteComponentProps
@@ -82,7 +80,7 @@ export function PopoverRoutes(
                 <Box
                   display="grid"
                   gridTemplateRows={["32px 1fr", "100%"]}
-                  gridTemplateColumns={["100%", "150px 1fr"]}
+                  gridTemplateColumns={["100%", "250px 1fr"]}
                   height="100%"
                   width="100%"
                 >
@@ -135,8 +133,6 @@ export function PopoverRoutes(
                         contacts={props.contacts}
                         association={props.association}
                         api={props.api}
-                        hideAvatars={props.hideAvatars}
-                        hideNicknames={props.hideNicknames}
                       />
                     )}
                     {view === "profile" && (
@@ -144,8 +140,6 @@ export function PopoverRoutes(
                         contact={props.contacts[window.ship]}
                         rootIdentity={props.rootIdentity}
                         api={props.api}
-                        hideAvatars={props.hideAvatars}
-                        hideNicknames={props.hideNicknames}
                         path={props.association["group-path"]}
                         s3={props.s3}
                       />

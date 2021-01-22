@@ -50,11 +50,11 @@ const useS3 = (s3: S3State, { accept = '*' } = { accept: '*' }): IuseS3 => {
         ACL: "public-read",
         ContentType: file.type,
       };
-    
+
       setUploading(true);
 
       const { Location } = await client.current.upload(params).promise();
-    
+
       setUploading(false);
 
       return Location;
@@ -75,6 +75,7 @@ const useS3 = (s3: S3State, { accept = '*' } = { accept: '*' }): IuseS3 => {
         const fileSelector = document.createElement('input');
         fileSelector.setAttribute('type', 'file');
         fileSelector.setAttribute('accept', accept);
+        fileSelector.style.visibility = 'hidden';
         fileSelector.addEventListener('change', () => {
           const files = fileSelector.files;
           if (!files || files.length <= 0) {
@@ -82,10 +83,12 @@ const useS3 = (s3: S3State, { accept = '*' } = { accept: '*' }): IuseS3 => {
             return;
           }
           uploadDefault(files[0]).then(resolve);
+          document.body.removeChild(fileSelector);
         })
+        document.body.appendChild(fileSelector);
         fileSelector.click();
       })
-      
+
     },
     [uploadDefault]
   );
