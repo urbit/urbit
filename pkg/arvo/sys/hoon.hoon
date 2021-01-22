@@ -9261,6 +9261,7 @@
                  [[%| 0 ~] $(depth.skin (dec depth.skin))]
       ==
     ::
+    ::  XX audited
     ++  caching-gain
       |-  ^-  [type _grub]
       ?@  skin  [[%face skin ref] grub]
@@ -9474,6 +9475,7 @@
         [[%| 0 ~] $(depth.skin (dec depth.skin))]
       ==
     ::
+    ::  XX audited
     ++  caching-lose
       |-  ^-  [type _grub]
       ?@  skin  :_  grub  [%face skin ref]
@@ -9736,6 +9738,7 @@
       ==
     --
   ::
+  ::  XX audited
   ++  caching-blow
     |=  [gol=type gen=hoon]
     ^-  [[type nock] _grub]
@@ -9776,6 +9779,7 @@
                  $(sut repo, gil (~(put in gil) sut))
     ==
   ::
+  ::  XX audited
   ++  caching-bran
     ~+
     =|  gil=(set type)
@@ -9861,6 +9865,7 @@
     ^-  type
     [%face [[[cog ~ gen] ~ ~] ~] sut]
   ::
+  ::  XX audited
   ++  caching-crop
     ~/  %crop
     |=  ref=type
@@ -9909,6 +9914,7 @@
       ::
           [%fork *]
         =/  yed  ~(tap in p.sut)
+        ::  XX WEIRD benign change
         =^  wiz  grub
           (spin yed grub |=([=type =_grub] dext(sut type)))
         :_  grub
@@ -9921,10 +9927,12 @@
       ::
           [%hold *]
         ?<  (~(has in bix) [sut ref])
-        dext(sut repo, bix (~(put in bix) [sut ref]))
+        =^  lef  grub  caching-repo
+        dext(sut lef, bix (~(put in bix) [sut ref]))
       ::
           %noun
-        dext(sut repo)
+        =^  rig  grub  caching-repo
+        dext(sut rig)
       ::
           %void
         [%void grub]
