@@ -62,7 +62,7 @@ jobs:
 
       - uses: cachix/cachix-action@v8
         with:
-          name: ${{ secrets.CACHIX_NAME }}
+          name: ares
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - run: nix-build -A urbit --arg enableStatic true
@@ -88,7 +88,7 @@ jobs:
       - uses: cachix/install-nix-action@v12
       - uses: cachix/cachix-action@v8
         with:
-          name: ${{ secrets.CACHIX_NAME }}
+          name: ares
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - run: nix-build -A hs.urbit-king.components.exes.urbit-king --arg enableStatic true
