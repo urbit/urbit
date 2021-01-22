@@ -12072,8 +12072,7 @@
       ~>  %mean.'mint-fragment'
       ?>  &(?=(%& -.fid) ?=(%& -.q.p.fid))
       :_  grub
-      :-  lef
-      (~(fish ar `type`p.q.p.fid `skin`p.gen) (tend p.p.fid))
+      [lef (~(fish ar `type`p.q.p.fid `skin`p.gen) (tend p.p.fid))]
     ::
         [%fits *]
       =^  nic  grub  (caching-nice bool)
@@ -12130,8 +12129,7 @@
         [%zpld *]
       =^  wor  grub  (caching-play [%kttr p.gen])
       =^  typ  grub  (caching-nice wor)
-      =/  val
-        =<  q
+      =^  val  grub
         %_    $
             gol  %noun
             gen
@@ -12144,7 +12142,7 @@
           [%zpzp ~]
         ==
       :_  grub
-      [typ val]
+      [typ q.val]
     ::
         [%zpts *]
       =^  lef  grub  (caching-nice %noun)
