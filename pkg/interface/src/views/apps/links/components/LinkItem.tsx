@@ -1,4 +1,4 @@
-import React, { useState }  from 'react';
+import React, { useState, useEffect, useRef, useCallback }  from 'react';
 import { Link } from 'react-router-dom';
 import { Row, Col, Anchor, Box, Text, Icon, Action } from '@tlon/indigo-react';
 
@@ -17,8 +17,9 @@ interface LinkItemProps {
   api: GlobalApi;
   group: Group;
   path: string;
-  contacts: Rolodex[];
+  contacts: Rolodex;
   unreads: Unreads;
+  measure: (el: any) => void;
 }
 
 export const LinkItem = (props: LinkItemProps) => {
@@ -29,8 +30,11 @@ export const LinkItem = (props: LinkItemProps) => {
     group,
     path,
     contacts,
+    measure,
     ...rest
   } = props;
+
+  const ref = useRef<HTMLDivElement | null>(null);
 
   const URLparser = new RegExp(
     /((?:([\w\d\.-]+)\:\/\/?){1}(?:(www)\.?){0,1}(((?:[\w\d-]+\.)*)([\w\d-]+\.[\w\d]+))){1}(?:\:(\d+)){0,1}((\/(?:(?:[^\/\s\?]+\/)*))(?:([^\?\/\s#]+?(?:.[^\?\s]+){0,1}){0,1}(?:\?([^\s#]+)){0,1})){0,1}(?:#([^#\s]+)){0,1}/
@@ -70,9 +74,18 @@ export const LinkItem = (props: LinkItemProps) => {
   const markRead = () => {
     api.hark.markEachAsRead(props.association, '/', `/${index}`, 'link', 'link');
   }
-  return (
-    <Box width="100%" {...rest}>
 
+
+  const onMeasure = useCallback(() => {
+    ref.current && measure(ref.current);
+  }, [ref.current, measure])
+
+  useEffect(() => {
+    onMeasure();
+  }, [onMeasure]);
+
+  return (
+    <Box mx="auto" px={3} maxWidth="768px" ref={ref} width="100%" {...rest}>
       <Box
         lineHeight="tall"
         display='flex'
@@ -90,6 +103,7 @@ export const LinkItem = (props: LinkItemProps) => {
           url={contents[1].url}
           text={contents[0].text}
           unfold={true}
+          onLoad={onMeasure}
           style={{ alignSelf: 'center' }}
           oembedProps={{
             p: 2,

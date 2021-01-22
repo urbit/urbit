@@ -8,6 +8,7 @@ import { useFormikContext } from "formik";
 interface AsyncActionProps {
   children: ReactNode;
   name: string;
+  disabled?: boolean;
   onClick: (e: React.MouseEvent) => Promise<void>;
 }
 
@@ -15,6 +16,7 @@ export function StatelessAsyncAction({
   children,
   onClick,
   name = '',
+  disabled = false,
   ...rest
 }: AsyncActionProps & Parameters<typeof Action>[0]) {
   const {
@@ -23,7 +25,10 @@ export function StatelessAsyncAction({
   } = useStatelessAsyncClickable(onClick, name);
 
   return (
-    <Action onClick={handleClick} {...rest}>
+    <Action
+      hideDisabled={!disabled}
+      disabled={disabled || state === 'loading'}
+      onClick={handleClick} {...rest}>
       {state === "error" ? (
         "Error"
       ) : state === "loading" ? (

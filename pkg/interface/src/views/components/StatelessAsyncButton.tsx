@@ -7,7 +7,7 @@ import { useStatelessAsyncClickable } from "~/logic/lib/useStatelessAsyncClickab
 
 interface AsyncButtonProps {
   children: ReactNode;
-  name: string;
+  name?: string;
   onClick: (e: React.MouseEvent) => Promise<void>;
 }
 
@@ -15,6 +15,7 @@ export function StatelessAsyncButton({
   children,
   onClick,
   name = "",
+  disabled = false,
   ...rest
 }: AsyncButtonProps & Parameters<typeof Button>[0]) {
   const {
@@ -23,7 +24,12 @@ export function StatelessAsyncButton({
   } = useStatelessAsyncClickable(onClick, name);
 
   return (
-    <Button onClick={handleClick} {...rest}>
+    <Button 
+      hideDisabled={!disabled}
+      disabled={disabled || state === 'loading'}
+      onClick={handleClick}
+      {...rest}
+    >
       {state === "error" ? (
         "Error"
       ) : state === "loading" ? (
