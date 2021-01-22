@@ -10439,7 +10439,7 @@
         ?>  &(?=(%| -.rye) ?=(~ rig))
         [[p.p.lef p.p.rye] grub]
       ?>  ?=(%& -.rye)
-      =;  [par=(pair type type) _grub]
+      =;  [par=(pair type type) =_grub]
         =^  nests  grub  (caching-nest(sut gol) & p.par)
         ?>  ?|(!vet nests)
         [par grub]
