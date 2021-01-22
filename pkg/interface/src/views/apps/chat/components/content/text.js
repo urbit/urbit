@@ -55,7 +55,7 @@ const MessageMarkdown = React.memo(props => (
     renderers={renderers}
     // shim until we uncover why RemarkBreaks and
     // RemarkDisableTokenizers can't be loaded simultaneously
-    disallowedTypes={['heading', 'list', 'listItem']}
+    disallowedTypes={['heading', 'list', 'listItem', 'link']}
     allowNode={(node, index, parent) => {
       if (
         node.type === 'blockquote'
