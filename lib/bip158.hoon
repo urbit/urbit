@@ -3,6 +3,7 @@
 ++  params
   |%
   ++  p  19
+  ++  m  784.931
   --
 ++  siphash
   |=  [k=byts m=byts]
@@ -111,6 +112,9 @@
 ++  gol
   |%
   ::  +en: encode x and append to end of s
+  ::   - s: bits stream
+  ::   - x: number to add to the stream
+  ::   - p: golomb-rice p param
   ::
   ++  en
     |=  [s=bits x=@ p=@]
