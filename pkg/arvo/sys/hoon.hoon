@@ -14195,6 +14195,7 @@
     =.  fan  (~(put in fan) leg)
     (caching-play(sut p.leg) q.leg)
   ::
+  ::  XX audited
   ++  caching-take
     |=  [vit=vein duz=$-(type [type _grub])]
     ^-  [(pair axis type) _grub]
@@ -14253,7 +14254,8 @@
     ::
         [%core *]
       ?:  =(2 now)
-        $(sut repo)
+        =^  val  grub  caching-repo
+        $(sut val)
       =^  lef  grub  $(sut p.sut, u.i.vit lat)
       :_  grub
       (core lef q.sut)
@@ -14277,7 +14279,8 @@
         [%hold *]
       ?:  (~(has in vil) sut)
         [%void grub]
-      $(sut repo, vil (~(put in vil) sut))
+      =^  val  grub  caching-repo
+      $(sut val, vil (~(put in vil) sut))
     ==
   ::
   ++  take
