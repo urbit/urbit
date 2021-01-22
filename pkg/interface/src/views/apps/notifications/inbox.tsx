@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect, useCallback, useState, useMemo } from "react";
 import f from "lodash/fp";
 import _ from "lodash";
 import { Icon, Col, Row, Box, Text, Anchor, Rule } from "@tlon/indigo-react";
@@ -13,6 +13,8 @@ import { cite } from '~/logic/lib/util';
 import { InviteItem } from '~/views/components/Invite';
 import { useWaitForProps } from "~/logic/lib/useWaitForProps";
 import { useHistory } from "react-router-dom";
+import {useModal} from "~/logic/lib/useModal";
+import {JoinGroup} from "~/views/landscape/components/JoinGroup";
 
 type DatedTimebox = [BigInteger, Timebox];
 
@@ -101,6 +103,27 @@ export default function Inbox(props: {
     }
   }, [props.showArchive]);
 
+  const [joining, setJoining] = useState<[string, string] | null>(null);
+
+  const { modal, showModal } = useModal(
+    { modal: useCallback(
+      (dismiss) => (
+        <JoinGroup
+          groups={props.groups}
+          contacts={props.contacts}
+          api={props.api}
+          autojoin={joining?.[0]?.slice(6)} 
+          inviteUid={joining?.[1]}
+        />
+        ),
+      [props.contacts, props.groups, props.api, joining]
+  )})
+
+  const joinGroup = useCallback((group: string, uid: string) => {
+    setJoining([group, uid]);
+    showModal();
+  }, [setJoining, showModal]);
+
   const acceptInvite = (app: string, uid: string) => async (invite) => {
     const resource = {
       ship: `~${invite.resource.ship}`,
@@ -109,10 +132,7 @@ export default function Inbox(props: {
 
     const resourcePath = resourceAsPath(invite.resource);
     if(app === 'contacts') {
-      await api.contacts.join(resource);
-      await waiter(p => resourcePath in p.associations?.contacts);
-      await api.invite.accept(app, uid);
-      history.push(`/~landscape${resourcePath}`);
+      joinGroup(resourcePath, uid);
     } else if ( app === 'chat') {
       await api.invite.accept(app, uid);
       history.push(`/~landscape/home/resource/chat${resourcePath.slice(5)}`);
@@ -121,6 +141,9 @@ export default function Inbox(props: {
       history.push(`/~graph/join${resourcePath}`);
     }
   };
+
+
+
 
   const inviteItems = (invites, api) => {
     const returned = [];
@@ -143,6 +166,7 @@ export default function Inbox(props: {
 
   return (
     <Col position="relative" height="100%" overflowY="auto" onScroll={onScroll} >
+      {modal}
       <Col zIndex={4} gapY={2} bg="white" top="0px" position="sticky">
         {inviteItems(invites, api)}
       </Col>

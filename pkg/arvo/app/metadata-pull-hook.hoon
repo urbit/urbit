@@ -2,7 +2,7 @@
 ::
 ::  allow syncing group data from foreign paths to local paths
 ::
-/-  *group, *invite-store, *metadata-store
+/-  *group, invite-store, *metadata-store
 /+  default-agent, verb, dbug, store=group-store, grpl=group, pull-hook
 /+  resource, mdl=metadata
 ~%  %group-hook-top  ..part  ~
@@ -29,43 +29,86 @@
 ^-  (pull-hook:pull-hook config)
 =|  state-zero
 =*  state  -
+=>  |_  =bowl:gall
+    ++  def   ~(. (default-agent state %|) bowl)
+    ++  watch-preview
+      |=  rid=resource
+      ^-  card
+      =/  =path
+        preview+(en-path:resource rid)
+      =/  =dock
+        [entity.rid %metadata-push-hook]
+      [%pass path %agent dock %watch path]
+    ::
+    ++  watch-invites
+      ^-  card
+      [%pass /invites %agent [our.bowl %invite-store] %watch /updates]
+    ::
+    ++  take-invites
+      |=  =sign:agent:gall
+      ^-  (quip card _state)
+      ?+  -.sign  (on-agent:def /invites sign)
+          %fact
+        ?>  ?=(%invite-update p.cage.sign)
+        =+  !<(=update:invite-store q.cage.sign)
+        :_  state
+        ?.  ?=(%invite -.update)  ~
+        ?.  =(%contacts term.update)  ~
+        (watch-preview resource.invite.update)^~
+      ::
+        %kick  [watch-invites^~ state]
+      ==
+    ::
+    ++  take-preview
+      |=  [=wire =sign:agent:gall]
+      ^-  (quip card _state)
+      ?>  ?=([%preview @ *] wire)
+      =/  rid=resource
+        (de-path:resource t.wire)
+      ?+  -.sign  (on-agent:def wire sign)
+          %fact  
+        ?>  =(%metadata-update p.cage.sign)
+        =+  !<(upd=metadata-update q.cage.sign)
+        ?>  ?=(%preview -.upd)
+        :_  state(previews (~(put by previews) rid +.upd))
+        :~  [%give %fact ~[wire] cage.sign]
+            [%give %kick ~[wire] ~]
+        ==
+      ::
+          %watch-ack
+        :_  state
+        ?~  p.sign  ~
+        :~  [%give %fact ~[wire] tang+!>(u.p.sign)]
+            [%give %kick ~[wire] ~]
+        ==
+      ==
+    --
 |_  =bowl:gall
 +*  this        .
     def         ~(. (default-agent this %|) bowl)
     dep         ~(. (default:pull-hook this config) bowl)
     met         ~(. mdl bowl)
+    hc          ~(. +> bowl)
 ::
 ++  on-init  on-init:def
 ++  on-save  !>(state)
 ++  on-load  
   |=  =vase
+  ?:  =(1 1)  `this
   =+  !<(old=state-zero vase)
-  `this(state old)
+  :_  this(state old)
+  ?:  (~(has by wex.bowl) [/invites our.bowl %invite-store])  ~
+  watch-invites^~
 ::
 ++  on-poke  on-poke:def
 ++  on-agent  
   |=  [=wire =sign:agent:gall]
-  ?.  ?=([%preview @ @ @ ~] wire)
-    (on-agent:def wire sign)
-  =/  rid=resource
-    (de-path:resource t.wire)
-  ?+  -.sign  `this 
-      %fact  
-    ?>  =(%metadata-update p.cage.sign)
-    =+  !<(upd=metadata-update q.cage.sign)
-    ?>  ?=(%preview -.upd)
-    :_  this(previews (~(put by previews) rid +.upd))
-    :~  [%give %fact ~[wire] cage.sign]
-        [%give %kick ~[wire] ~]
+  =^  cards  state
+    ?+  wire  (on-agent:def:hc wire sign)
+      [%invites ~]        (take-invites:hc sign)
+      [%preview @ @ @ ~]  (take-preview:hc wire sign)
     ==
-  ::
-      %watch-ack
-    :_  this
-    ?~  p.sign  ~
-    :~  [%give %fact ~[wire] tang+!>(u.p.sign)]
-        [%give %kick ~[wire] ~]
-    ==
-  ==
+  [cards this]
 ::
 ++  on-watch  
   |=  =path

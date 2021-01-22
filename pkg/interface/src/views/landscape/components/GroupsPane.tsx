@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, ReactNode } from "react";
 import {
   Switch,
   Route,
@@ -27,6 +27,7 @@ import "~/views/apps/links/css/custom.css";
 import "~/views/apps/publish/css/custom.css";
 import { Workspace } from "~/types";
 import { getGroupFromWorkspace } from "~/logic/lib/workspace";
+import {GroupSummary} from "./GroupSummary";
 
 type GroupsPaneProps = StoreState & {
   baseUrl: string;
@@ -192,8 +193,21 @@ export function GroupsPane(props: GroupsPaneProps) {
         path={relativePath("")}
         render={(routeProps) => {
           const hasDescription = groupAssociation?.metadata?.description;
-          const description = (hasDescription && hasDescription !== "")
-            ? hasDescription : "Create or select a channel to get started"
+          let summary: ReactNode;
+          if(groupAssociation?.group) {
+            const memberCount = props.groups[groupAssociation.group].members.size;
+            summary = <GroupSummary 
+              memberCount={memberCount}
+              channelCount={0}
+              metadata={groupAssociation.metadata}
+            />
+          } else {
+            summary = (<Box p="4"><Text fontSize="0" color='gray'>
+                        Create or select a channel to get started
+                      </Text></Box>);
+
+
+          }
           const title = groupAssociation?.metadata?.title ?? 'Landscape';
           return (
             <>
@@ -207,9 +221,7 @@ export function GroupsPane(props: GroupsPaneProps) {
                   display={["none", "flex"]}
                   p='4'
                 >
-                  <Box p="4"><Text fontSize="0" color='gray'>
-                    {description}
-                  </Text></Box>
+                {summary}
                 </Col>
                 {popovers(routeProps, baseUrl)}
               </Skeleton>
