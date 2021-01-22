@@ -44,6 +44,8 @@ export default class VirtualScroller extends Component<VirtualScrollerProps, Vir
     timeout: ReturnType<typeof setTimeout>;
   } | undefined;
 
+  overscan = 150;
+
   OVERSCAN_SIZE = 100; // Minimum number of messages on either side before loadRows is called
 
   constructor(props: VirtualScrollerProps) {
@@ -53,7 +55,7 @@ export default class VirtualScroller extends Component<VirtualScrollerProps, Vir
       visibleItems: new BigIntOrderedMap(),
       endgap: props.origin === 'bottom' ? 0 : undefined,
       totalHeight: 0,
-      averageHeight: 64,
+      averageHeight: 130,
       scrollTop: props.origin === 'top' ? 0 : undefined
     };
 
@@ -61,8 +63,8 @@ export default class VirtualScroller extends Component<VirtualScrollerProps, Vir
     this.window = null;
     this.cache = new BigIntOrderedMap();
 
-    this.recalculateTotalHeight = this.recalculateTotalHeight.bind(this);
-    this.calculateVisibleItems = this.calculateVisibleItems.bind(this);
+    this.recalculateTotalHeight = _.throttle(this.recalculateTotalHeight.bind(this), 200);
+    this.calculateVisibleItems = _.throttle(this.calculateVisibleItems.bind(this), 200);
     this.estimateIndexFromScrollTop = this.estimateIndexFromScrollTop.bind(this);
     this.invertedKeyHandler = this.invertedKeyHandler.bind(this);
     this.heightOf = this.heightOf.bind(this);
@@ -74,6 +76,8 @@ export default class VirtualScroller extends Component<VirtualScrollerProps, Vir
 
   componentDidMount() {
     this.calculateVisibleItems();
+
+    this.recalculateTotalHeight();
   }
 
   componentDidUpdate(prevProps: VirtualScrollerProps, prevState: VirtualScrollerState) {
@@ -107,7 +111,7 @@ export default class VirtualScroller extends Component<VirtualScrollerProps, Vir
     let { averageHeight } = this.state;
     let totalHeight = 0;
     this.props.data.forEach((datum, index) => {
-      totalHeight += this.heightOf(index);
+      totalHeight += Math.max(this.heightOf(index), 0);
     });
     averageHeight = Number((totalHeight / this.props.data.size).toFixed());
     totalHeight += (this.props.size - this.props.data.size) * averageHeight;
@@ -136,41 +140,23 @@ export default class VirtualScroller extends Component<VirtualScrollerProps, Vir
     let startgap = 0, heightShown = 0, endgap = 0;
     let startGapFilled = false;
     let visibleItems = new BigIntOrderedMap<any>();
-    let startBuffer = new BigIntOrderedMap<any>();
-    let endBuffer = new BigIntOrderedMap<any>();
     const { scrollTop, offsetHeight: windowHeight } = this.window;
-    const { averageHeight } = this.state;
+    const { averageHeight, totalHeight } = this.state;
     const { data, size: totalSize, onCalculateVisibleItems } = this.props;
-    console.log(windowHeight);
-
-    const overscan = Math.max(windowHeight / 2, 200);
 
 
     [...data].forEach(([index, datum]) => {
       const height = this.heightOf(index);
-      if (startgap < (scrollTop - overscan) && !startGapFilled) {
-        startBuffer.set(index, datum);
+      if (startgap < (scrollTop - this.overscan) && !startGapFilled) {
         startgap += height;
-      } else if (heightShown < (windowHeight + overscan)) {
+      } else if (heightShown < (windowHeight + this.overscan)) {
         startGapFilled = true;
         visibleItems.set(index, datum);
         heightShown += height;
-      } else if (endBuffer.size < visibleItems.size) {
-        endBuffer.set(index, data.get(index));
-      } else {
-        endgap += height;
-      }
+      } 
     });
 
-    startBuffer = new BigIntOrderedMap(
-      [...startBuffer].reverse().slice(0, (visibleItems.size - visibleItems.size % 5))
-    );
-
-
-    startBuffer.forEach((_datum, index) => {
-      startgap -= this.heightOf(index);
-    });
-
+    endgap = totalHeight - heightShown - startgap;
 
     const firstVisibleKey = visibleItems.peekSmallest()?.[0] ?? this.estimateIndexFromScrollTop(scrollTop)!;
     const smallest = data.peekSmallest();
@@ -189,7 +175,7 @@ export default class VirtualScroller extends Component<VirtualScrollerProps, Vir
     onCalculateVisibleItems ? onCalculateVisibleItems(visibleItems) : null;
     this.setState({
       startgap: Number(startgap.toFixed()),
-      visibleItems: new BigIntOrderedMap([...startBuffer, ...visibleItems, ...endBuffer]),
+      visibleItems,
       endgap: Number(endgap.toFixed()),
     });
   }
@@ -237,6 +223,8 @@ export default class VirtualScroller extends Component<VirtualScrollerProps, Vir
         window.removeEventListener('keydown', this.invertedKeyHandler);
       }
     }
+
+    this.overscan = Math.max(element.offsetHeight * 3, 500);
 
     this.window = element;
     if (this.props.origin === 'bottom') {
@@ -303,7 +291,7 @@ export default class VirtualScroller extends Component<VirtualScrollerProps, Vir
       data
     } = this.props;
 
-    const indexesToRender = visibleItems.keys().reverse();
+    const indexesToRender = origin === 'top' ? visibleItems.keys() : visibleItems.keys().reverse();
 
     const transform = origin === 'top' ? 'scale3d(1, 1, 1)' : 'scale3d(1, -1, 1)';
 
@@ -314,7 +302,7 @@ export default class VirtualScroller extends Component<VirtualScrollerProps, Vir
             height: element.offsetHeight,
             element
           });
-          _.debounce(this.recalculateTotalHeight, 500)();
+          this.recalculateTotalHeight();
         }
       };
       return renderer({ index, measure, scrollWindow: this.window });
@@ -322,7 +310,7 @@ export default class VirtualScroller extends Component<VirtualScrollerProps, Vir
 
     return (
       <Box overflowY='scroll' ref={this.setWindow.bind(this)} onScroll={this.onScroll.bind(this)} style={{ ...style, ...{ transform } }}>
-        <Box ref={this.scrollContainer} style={{ transform }}>
+        <Box ref={this.scrollContainer} style={{ transform, width: '100%' }}>
           <Box style={{ height: `${origin === 'top' ? startgap : endgap}px` }}></Box>
           {indexesToRender.map(render)}
           <Box style={{ height: `${origin === 'top' ? endgap : startgap}px` }}></Box>

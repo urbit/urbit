@@ -78,7 +78,7 @@ export default function LaunchApp(props) {
                   color="black"
                   icon="Mail"
                 />
-                <Text ml="1" mt='1px' color="black">DMs + Drafts</Text>
+                <Text ml="2" mt='1px' color="black">DMs + Drafts</Text>
               </Row>
             </Box>
           </Tile>
@@ -102,7 +102,7 @@ export default function LaunchApp(props) {
             icon="CreateGroup"
             bg="green"
             color="#fff"
-            text="Create a Group"
+            text="Create Group"
           >
             <NewGroup {...props} />
           </ModalButton>

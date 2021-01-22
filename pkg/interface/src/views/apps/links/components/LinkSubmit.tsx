@@ -132,7 +132,6 @@ const LinkSubmit = (props: LinkSubmitProps) => {
     position="absolute"
     px={2}
     pt={2}
-    fontSize={0}
     style={{ pointerEvents: 'none' }}
   >{canUpload
     ? <>
@@ -180,7 +179,6 @@ const LinkSubmit = (props: LinkSubmitProps) => {
             type="url"
             pl={2}
             width="100%"
-            fontSize={0}
             py={2}
             color="black"
             backgroundColor="transparent"
@@ -198,8 +196,8 @@ const LinkSubmit = (props: LinkSubmitProps) => {
           pl={2}
           backgroundColor="transparent"
           width="100%"
-          fontSize={0}
           color="black"
+          fontSize={1}
           style={{
             resize: 'none',
             height: 40

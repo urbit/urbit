@@ -33,7 +33,7 @@ const SidebarItem = ({ children, view, current }) => {
         backgroundColor={selected ? "washedGray" : "white"}
       >
         <Icon mr={2} display="inline-block" icon={icon(view)} color='black' />
-        <Text color='black' fontSize={0}>
+        <Text color='black'>
           {children}
         </Text>
       </Row>
@@ -76,7 +76,7 @@ export default function ProfileScreen(props: any) {
               height="100%"
               width="100%"
               display="grid"
-              gridTemplateColumns={["100%", "200px 1fr"]}
+              gridTemplateColumns={["100%", "250px 1fr"]}
               gridTemplateRows={["48px 1fr", "1fr"]}
               borderRadius={1}
               bg="white"
@@ -95,8 +95,8 @@ export default function ProfileScreen(props: any) {
                     bg={sigilColor}
                     borderRadius={8}
                     my={4}
-                    height={128}
-                    width={128}
+                    height={160}
+                    width={160}
                     display="flex"
                     justifyContent="center"
                     alignItems="center"
