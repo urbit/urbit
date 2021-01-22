@@ -292,7 +292,8 @@ export const MessageContent = ({ content, contacts, measure, fontSize, group }) 
           }}
           textProps={{style: {
             fontSize: 'inherit',
-            textDecoration: 'underline'
+            borderBottom: '1px solid',
+            textDecoration: 'none'
           }}}
         />
       </Box>
