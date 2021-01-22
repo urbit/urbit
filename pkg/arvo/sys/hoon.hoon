@@ -12164,7 +12164,7 @@
       =/  doz  ~(open ap gen)
       ?:  =(doz gen)
         ~_  (show [%c 'hoon'] [%q gen])
-        ~>(%mean.'mint-open' !!)
+        ~>(%mean.'caching-mint-open' !!)
       $(gen doz)
     ==
     ::
@@ -12353,6 +12353,7 @@
       [(nice p.pul) (cons q.pul q.dan)]
     --
   ::
+  ::  XX audited
   ++  caching-moot
     =+  gil=*(set type)
     |-  ^-  [? _grub]
@@ -12410,6 +12411,7 @@
       $void      &
     ==
   ::
+  ::  XX audited
   ++  caching-mull
     |=  [gol=type dox=type gen=hoon]
     ^-  [[p=type q=type] _grub]
@@ -12445,12 +12447,12 @@
     ::
         [%dtkt *]
       =^  lef  grub  $(gen q.gen, gol %noun)
-      =+  lef :: XX WEIRD
+      =+  lef :: XX WEIRD why?
       $(gen [%kttr p.gen])
     ::
         [%dtls *]
       =^  lef  grub  $(gen p.gen, gol [%atom %$ ~])
-      =+  lef :: XX WEIRD
+      =+  lef :: XX WEIRD why?
       (caching-beth [%atom %$ ~])
     ::
         [%sand *]
@@ -12464,18 +12466,18 @@
         [%dttr *]
       =^  lef  grub  $(gen p.gen, gol %noun)
       =^  rig  grub  $(gen q.gen, gol %noun)
-      =+  [lef rig]  :: XX WEIRD
+      =+  [lef rig]  :: XX WEIRD why?
       (caching-beth %noun)
     ::
         [%dtts *]
       =^  lef  grub  $(gen p.gen, gol %noun)
       =^  rig  grub  $(gen q.gen, gol %noun)
-      =+  [lef rig]  :: XX WEIRD
+      =+  [lef rig]  :: XX WEIRD why?
       (caching-beth bool)
     ::
         [%dtwt *]
       =^  lef  grub  $(gen p.gen, gol %noun)
-      =+  lef  :: XX WEIRD
+      =+  lef  :: XX WEIRD why?
       (caching-beth bool) ::  XX  =|
     ::
         [%hand *]
@@ -12495,7 +12497,7 @@
       =^  rig  grub  (caching-play(sut dox) p.gen)
       =/  hif  [p=lef q=rig]
       =^  val  grub  $(gen q.gen, gol p.hif)
-      =+  val :: XX WEIRD
+      =+  val :: XX WEIRD why?
       [hif grub]
     ::
         [%ktpd *]
@@ -12848,6 +12850,7 @@
   ::
   ++  meet  |=(ref/type &((nest | ref) (nest(sut ref) | sut)))
   ::
+  ::  XX audited
   ++  caching-meet
     |=  ref=type
     ^-  [? _grub]
@@ -12902,6 +12905,7 @@
       ==           ==
     --
   ::
+  ::  XX audited
   ++  caching-miss                                      ::  nonintersection
     |=  $:  ::  ref: symmetric type
             ::
@@ -12980,6 +12984,7 @@
   ::
   ++  mite  |=(ref/type |((nest | ref) (nest(sut ref) & sut)))
   ::
+  ::  XX audited
   ++  caching-mite
     |=  ref=type
     =^  lef  grub  (caching-nest | ref)
@@ -12987,6 +12992,7 @@
     :_  grub
     |(lef rig)
   ::
+  ::  XX audited
   ++  caching-nest
     |=  [tel=? ref=type]
     =/  cached  (~(get by nes.grub) [sut ref])
@@ -13071,8 +13077,14 @@
       =<  $
       |.
       ^-  [? _grub]
-      =^  checked  grub
-      ::
+      =;  [checked=? =_grub]
+        :_  grub
+        ?:  checked  &
+        ?.  tel  |
+        ~_  (dunk %need)
+        ~_  (dunk(sut ref) %have)
+        ~>  %mean.'nest-fail'
+        !!
       ?:  =(sut ref)  [& grub]
       ?-    sut
           %void
@@ -13154,14 +13166,6 @@
           gil   (~(put in gil) [sut ref])
         ==
       ==
-      ::
-      :_  grub
-      ?:  checked  &
-      ?.  tel  |
-      ~_  (dunk %need)
-      ~_  (dunk(sut ref) %have)
-      ~>  %mean.'nest-fail'
-      !!
     ::
     ++  meet
       =^  lef  grub  dext
@@ -13328,6 +13332,7 @@
       ==            ==
     --
   ::
+  ::  XX audited
   ++  caching-peek
     |=  [way=?(%read %rite %both %free) axe=axis]
     ^-  [type _grub]
@@ -13348,8 +13353,8 @@
       ?:(=(2 now) lef rig)
     ::
         [%core *]
+      ::  XX WEIRD worth going over again due to complexity
       ?.  =(3 now)
-    ::
         [%noun grub]
       =/  pec  (peel way r.p.q.sut)
       =/  tow
@@ -13453,6 +13458,7 @@
       $rite  [?=($iron met) |]
     ==
   ::
+  ::  XX audited
   ++  caching-play
     =.  vet  |
     |=  gen=hoon
@@ -13492,13 +13498,10 @@
       [%atom %$ ~]
     ::
         [%rock *]
-      |-  ^-  [type _grub]
-      ?@  q.gen
-        :_  grub  [%atom p.gen `q.gen]
-      =^  lef  grub  $(q.gen -.q.gen)
-      =^  rig  grub  $(q.gen +.q.gen)
       :_  grub
-      [%cell lef rig]
+      |-  ^-  type
+      ?@  q.gen  [%atom p.gen `q.gen]
+      [%cell $(q.gen -.q.gen) $(q.gen +.q.gen)]
     ::
         [%sand *]
       ?@  q.gen
@@ -13553,7 +13556,7 @@
       (hint [sut p.gen] rig)
     ::
         [%sgzp *]
-      =^  rig  grub  $(gen p.gen) :: XX WEIRD
+      =^  rig  grub  $(gen p.gen) :: XX WEIRD original uses ket
       ~_  duck(sut rig)
       $(gen q.gen)
     ::
@@ -13623,7 +13626,7 @@
       =/  doz  ~(open ap gen)
       ?:  =(doz gen)
         ~_  (show [%c 'hoon'] [%q gen])
-        ~>  %mean.'play-open'
+        ~>  %mean.'caching-play-open'
         !!
       $(gen doz)
     ==
@@ -13687,6 +13690,7 @@
                  $(gen doz)
     ==
   ::
+  ::  XX audited
   ++  caching-redo                                      ::  refurbish faces
     |=  $:  ::  ref: raw payload
             ::
@@ -13787,11 +13791,18 @@
         ?>  ?=([%cell *] sut)
         ::  leaf with possible recursive descent
         ::
+        ::  XX WEIRD some variation here
         =:  hos  ~
             wec  [~ ~ ~]
         ==
-        =^  lef  grub  dext(sut p.sut, ref (peek(sut ref) %free 2))
-        =^  rig  grub  dext(sut p.sut, ref (peek(sut ref) %free 3))
+        ::  descend into cell
+        ::
+        =^  lep  grub  (caching-peek(sut ref) %free 2)
+        =^  rep  grub  (caching-peek(sut ref) %free 3)
+        ::
+        =^  lef  grub  dext(sut p.sut, ref lep)
+        =^  rig  grub  dext(sut p.sut, ref rep)
+        ::
         :_  grub
         done(sut [%cell lef rig])
       ::
@@ -14148,6 +14159,7 @@
       *           ~>(%mean.'repo-fltt' !!)
     ==
   ::
+  ::  XX audited
   ++  caching-repo
     ^-  [type _grub]
     ?-  sut
@@ -14168,6 +14180,7 @@
     =.  fan  (~(put in fan) leg)
     (play(sut p.leg) q.leg)
   ::
+  ::  XX audited
   ++  caching-rest
     |=  leg=[p=type q=hoon]
     ^-  [type _grub]
