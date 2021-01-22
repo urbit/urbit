@@ -11170,6 +11170,7 @@
         $void       %void
     ==
   ::
+  ::  XX audited
   ++  caching-fuse
     |=  ref=type
     =|  bix=(set [type type])
@@ -11210,7 +11211,8 @@
       ==
     ::
         [%core *]
-      $(sut repo)
+      =^  val  grub  caching-repo
+      $(sut val)
     ::
         [%face *]
       =^  rig  grub  $(sut q.sut)
@@ -11231,7 +11233,7 @@
     ::
         [%hold *]
       ?:  (~(has in bix) [sut ref])
-        ~>(%mean.'fuse-loop' !!)
+        ~>(%mean.'caching-fuse-loop' !!)
       =^  lef  grub  caching-repo
       $(sut lef, bix (~(put in bix) [sut ref]))
     ::
@@ -11242,6 +11244,7 @@
       [%void grub]
     ==
   ::
+  ::  XX audited
   ++  caching-gain
     |=  gen=hoon
     ^-  [type _grub]
@@ -11252,6 +11255,7 @@
     |=  gen/hoon  ^-  type
     (chip & gen)
   ::
+  ::  XX audited
   ++  caching-hemp
     ::  generate formula from foot
     ::
@@ -11355,6 +11359,7 @@
       ==         ==     ==
     --
   ::
+  ::  XX audited
   ++  caching-lose
     |=  gen=hoon
     ^-  [type _grub]
@@ -11365,6 +11370,7 @@
     |=  gen/hoon  ^-  type
     (chip | gen)
   ::
+  ::  XX audited
   ++  caching-chip
     |=  [how=? gen=hoon]
     ^-  [type _grub]
@@ -11419,6 +11425,7 @@
     =+  neg=~(open ap gen)
     ?:(=(neg gen) sut $(gen neg))
   ::
+  ::  XX audited
   ++  caching-bake
     |=  [dox=type hud=poly dab=(map term hoon)]
     ^-  [* _grub]
@@ -11471,6 +11478,7 @@
       {* * *}  [dov $(dab l.dab) $(dab r.dab)]
     ==
   ::
+  ::  XX audited
   ++  caching-balk
     |=  [dox=type hud=poly dom=(map term tome)]
     ^-  [* _grub]
@@ -11511,6 +11519,7 @@
       {* * *}   [dov $(dom l.dom) $(dom r.dom)]
     ==
   ::
+  ::  XX audited
   ++  caching-mile
     ::  mull all chapters and feet in a core
     ::
@@ -11532,6 +11541,7 @@
     =+  (balk(sut yet) hum hud dom)
     [yet hum]
   ::
+  ::  XX audited
   ++  caching-mine
     ::  mint all chapters and feet in a core
     ::
@@ -11615,7 +11625,10 @@
     ++  core-check
       |=  log=type
       |-  ^-  [gol-type _grub]
-      ?-    log
+      ?+    log
+              =^  rig  grub  caching-repo(sut log)
+              $(log rig)
+      ::
           %noun
         :_  grub
         (nice log &)
@@ -11642,16 +11655,14 @@
         =^  val  grub
           |-  ^-  [(set gol-type) _grub]
           ?~  tys
-            [~ grub]
+            :_  grub
+            ~
           =^  a  grub  ^$(log i.tys)
           =^  b  grub  $(tys t.tys)
-          [(~(put in b) a) grub]
+          :_  grub
+          (~(put in b) a)
         :_  grub
         [%fork val]
-      ::
-          *
-        =^  rig  grub  caching-repo(sut log)
-        $(log rig)
       ==
     ::  check we have the expected number of chapters
     ::
@@ -11668,6 +11679,7 @@
         |-  ^-  gol-type
         ?~  tys
           log
+        ::  XX WEIRD ignored?
         =/  a  ^$(log i.tys)
         =/  b  $(tys t.tys)
         log
@@ -11714,6 +11726,7 @@
       a
     ::  get expected type of this arm
     ::
+    ::  XX WEIRD may be worth another look due to complexity
     ++  get-arm-type
       |=  [log=gol-type dag=(unit (map term hoon)) nam=term]
       ^-  [type _grub]
@@ -11883,6 +11896,7 @@
       !!
     --
   ::
+  ::  XX audited
   ++  caching-mint
     |=  [gol=type gen=hoon]
     ^-  [(pair type nock) _grub]
@@ -11954,7 +11968,7 @@
       =^  lef  grub  (caching-nice bool)
       =^  mid  grub  $(gen p.gen, gol %noun)
       =^  rig  grub  $(gen q.gen, gol %noun)
-      :: XX weird
+      :: XX WEIRD ignored
       =+  [one two]=[mid rig]
       :_  grub
       [lef [%5 q.mid q.rig]]
@@ -12054,11 +12068,11 @@
     ::
         [%wthx *]
       =^  lef  grub  (caching-nice bool)
-      :_  grub
-      :-  lef
       =^  fid  grub  (caching-find %read [[%& 1] q.gen])
       ~>  %mean.'mint-fragment'
       ?>  &(?=(%& -.fid) ?=(%& -.q.p.fid))
+      :_  grub
+      :-  lef
       (~(fish ar `type`p.q.p.fid `skin`p.gen) (tend p.p.fid))
     ::
         [%fits *]
