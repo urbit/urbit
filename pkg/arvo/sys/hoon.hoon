@@ -10020,6 +10020,7 @@
       ==
     --
   ::
+  ::  XX audited
   ++  caching-cool
     |=  [pol=? hyp=wing ref=type]
     ^-  [type _grub]
@@ -10028,6 +10029,7 @@
         %|
       [sut grub]
     ::
+    ::  XX WEIRD confusing use of 'q' in original
         %&
       =;  [val=(pair axis type) =_grub]
         [q.val grub]
@@ -10057,6 +10059,7 @@
       [['.' ~] ['-' ~] ~ ~]
     [[%leaf (mesc (trip paz))] duck ~]
   ::
+  ::  XX audited
   ++  caching-elbo
     |=  [lop=palo rig=(list (pair wing hoon))]
     ^-  [type _grub]
@@ -10103,6 +10106,7 @@
       hag  q.dix
     ==
   ::
+  ::  XX audited
   ++  caching-ergo
     |=  [lop=palo rig=(list (pair wing hoon))]
     ^-  [(pair type nock) _grub]
@@ -10163,6 +10167,7 @@
       hej  [[p.dix q.zil] hej]
     ==
   ::
+  ::  XX audited
   ++  caching-endo
     |=  [lop=(pair palo palo) dox=type rig=(list (pair wing hoon))]
     ^-  [(pair type type) _grub]
@@ -10398,6 +10403,7 @@
       (endo [p.p.lug p.q.lug] dox rig)
     --
   ::
+  ::  XX audited
   ++  caching-et
     |_  [hyp=wing rig=(list (pair wing hoon))]
     ::
@@ -10440,6 +10446,7 @@
       (caching-endo [p.lef p.rye] dox rig)
     --
   ::
+  ::  XX audited
   ++  caching-epla
     |=  [hyp=wing rig=(list (pair wing hoon))]
     ^-  [type _grub]
@@ -10451,6 +10458,7 @@
     ^-  type
     ~(play et hyp rig)
   ::
+  ::  XX audited
   ++  caching-emin
     |=  [gol=type hyp=wing rig=(list (pair wing hoon))]
     ^-  [(pair type nock) _grub]
@@ -10462,6 +10470,7 @@
     ^-  (pair type nock)
     (~(mint et hyp rig) gol)
   ::
+  ::  XX audited
   ++  caching-emul
     ~/  %emul
     |=  [gol=type dox=type hyp=wing rig=(list (pair wing hoon))]
@@ -10487,6 +10496,7 @@
           [%core q.q.a q.a]
     ==
   ::
+  ::  XX audited
   ++  caching-feel                                      :: detect existence
     |=  rot=(list wing)
     ^-  [? _grub]
@@ -10574,6 +10584,7 @@
         :_  grub
         [%& [`p.heg lon] %& rig]
       =|  gil=(set type)
+      ::  XX consider using |^ here
       =<  $
       |%
         ++  here
@@ -10652,7 +10663,8 @@
             =/  pec  (peel way r.p.q.sut)
             ?.  sam.pec  [lose grub]
             ?:  con.pec  $(sut p.sut, axe (peg axe 3))
-            $(sut (peek(sut p.sut) way 2), axe (peg axe 6))
+            =^  lef  grub  (caching-peek(sut p.sut) way 2)
+            $(sut lef, axe (peg axe 6))
           ::
               [%hint *]
             =^  val  grub  caching-repo
