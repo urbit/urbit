@@ -8,11 +8,11 @@ import {
   Groups,
   Contacts,
   Rolodex,
-  LocalUpdateRemoteContentPolicy
+  Unreads,
+  S3State
 } from "~/types";
 import { Center, LoadingSpinner } from "@tlon/indigo-react";
-import { Notebook as INotebook } from "~/types/publish-update";
-import bigInt, { BigInteger } from 'big-integer';
+import bigInt from 'big-integer';
 
 import Notebook from "./Notebook";
 import NewPost from "./new-post";
@@ -26,27 +26,28 @@ interface NotebookRoutesProps {
   book: string;
   graphs: Graphs;
   notebookContacts: Contacts;
+  unreads: Unreads;
   contacts: Rolodex;
   groups: Groups;
   baseUrl: string;
   rootUrl: string;
-  hideAvatars: boolean;
-  hideNicknames: boolean;
   association: Association;
-  remoteContentPolicy: LocalUpdateRemoteContentPolicy;
   associations: Associations;
+  s3: S3State;
 }
 
 export function NotebookRoutes(
   props: NotebookRoutesProps & RouteComponentProps
 ) {
-  const { ship, book, api, notebookContacts, baseUrl, rootUrl } = props;
+  const { ship, book, api, notebookContacts, baseUrl, rootUrl, groups } = props;
 
   useEffect(() => {
     ship && book && api.graph.getGraph(ship, book);
   }, [ship, book]);
 
   const graph = props.graphs[`${ship.slice(1)}/${book}`];
+
+  const group = groups?.[props.association?.['group-path']];
 
 
   const relativePath = (path: string) => `${baseUrl}${path}`;
@@ -79,6 +80,7 @@ export function NotebookRoutes(
             association={props.association}
             graph={graph}
             baseUrl={baseUrl}
+            s3={props.s3}
           />
         )}
       />
@@ -105,11 +107,12 @@ export function NotebookRoutes(
               ship={ship}
               note={note}
               notebook={graph}
+              unreads={props.unreads}
               noteId={noteIdNum}
               contacts={notebookContacts}
-              hideAvatars={props.hideAvatars}
-              hideNicknames={props.hideNicknames}
-              remoteContentPolicy={props.remoteContentPolicy}
+              association={props.association}
+              group={group}
+              s3={props.s3}
               {...routeProps}
             />
           );

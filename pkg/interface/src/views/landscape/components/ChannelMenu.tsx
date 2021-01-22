@@ -44,60 +44,29 @@ export function ChannelMenu(props: ChannelMenuProps) {
   const baseUrl = `/~landscape${workspace}/resource/${app}${association["app-path"]}`;
   const appPath = association["app-path"];
 
-  const [, ship, name] = appPath.startsWith("/ship/")
-    ? appPath.slice(5).split("/")
-    : appPath.split("/");
+  const [,, ship, name] = appPath.split("/");
 
   const isOurs = ship.slice(1) === window.ship;
 
-  const isMuted = appIsGraph(app)
-    ? props.graphNotificationConfig.watching.findIndex(
+  const isMuted =
+    props.graphNotificationConfig.watching.findIndex(
         (a) => a.graph === appPath && a.index === "/"
-      ) === -1
-    : props.chatNotificationConfig.findIndex((a) => a === appPath) === -1;
+    ) === -1;
 
   const onChangeMute = async () => {
-    if (association["app-name"] === "chat") {
-      const func = isMuted ? "listenChat" : "ignoreChat";
-      return api.hark[func](appPath);
-    }
     const func = isMuted ? "listenGraph" : "ignoreGraph";
     await api.hark[func](appPath, "/");
   };
   const onUnsubscribe = useCallback(async () => {
-    const app = metadata.module || association["app-name"];
-    switch (app) {
-      case "chat":
-        await api.chat.delete(appPath);
-        break;
-      case "publish":
-        await api.graph.leaveGraph(ship, name);
-        break;
-      case "link":
-        await api.graph.leaveGraph(ship, name);
-        break;
-      default:
-        throw new Error("Invalid app name");
-    }
+    await api.graph.leaveGraph(ship, name);
     history.push(`/~landscape${workspace}`);
   }, [api, association]);
 
   const onDelete = useCallback(async () => {
-    const app = metadata.module || association["app-name"];
-    switch (app) {
-      case "chat":
-        await api.chat.delete(appPath);
-        break;
-      case "publish":
-        await api.graph.deleteGraph(name);
-        break;
-      case "link":
-        await api.graph.deleteGraph(name);
-        break;
-      default:
-        throw new Error("Invalid app name");
+    if (confirm('Are you sure you want to delete this channel?')) {
+      await api.graph.deleteGraph(name);
+      history.push(`/~landscape${workspace}`);
     }
-    history.push(`/~landscape${workspace}`);
   }, [api, association]);
 
   return (
@@ -133,7 +102,7 @@ export function ChannelMenu(props: ChannelMenuProps) {
               </ChannelMenuItem>
               <ChannelMenuItem bottom icon="Gear" color="black">
                 <Link to={`${baseUrl}/settings`}>
-                  <Box fontSize={0} p="2">
+                  <Box fontSize={1} p="2">
                     Channel Settings
                   </Box>
                 </Link>
@@ -150,9 +119,9 @@ export function ChannelMenu(props: ChannelMenuProps) {
       }
       alignX="right"
       alignY="top"
-      width="250px"
+      dropWidth="250px"
     >
-      <Icon display="block" icon="Menu" color="gray" />
+      <Icon display="block" icon="Menu" color="gray" pr='2' />
     </Dropdown>
   );
 }

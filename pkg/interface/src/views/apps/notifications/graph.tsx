@@ -10,6 +10,7 @@ import {
   Associations,
   Content,
   Rolodex,
+  Groups,
 } from "~/types";
 import { Header } from "./header";
 import { cite, deSig, pluralize } from "~/logic/lib/util";
@@ -20,10 +21,11 @@ import ReactMarkdown from "react-markdown";
 import { getSnippet } from "~/logic/lib/publish";
 import styled from "styled-components";
 import {MentionText} from "~/views/components/MentionText";
+import ChatMessage, {MessageWithoutSigil} from "../chat/components/ChatMessage";
 
 function getGraphModuleIcon(module: string) {
   if (module === "link") {
-    return "Links";
+    return "Collection";
   }
   return _.capitalize(module);
 }
@@ -50,6 +52,8 @@ function describeNotification(description: string, plural: boolean) {
       return `updated ${pluralize("note", plural)} in`;
     case "mention":
       return "mentioned you on";
+    case "message":
+      return `sent ${pluralize("message", plural)} to`;
     default:
       return description;
   }
@@ -64,7 +68,8 @@ const GraphUrl = ({ url, title }) => (
   </Box>
 );
 
-const GraphNodeContent = ({ contents, contacts, mod, description, index, remoteContentPolicy }) => {
+const GraphNodeContent = ({ group, post, contacts, mod, description, index, remoteContentPolicy }) => {
+  const { contents } = post;
   const idx = index.slice(1).split("/");
   if (mod === "link") {
     if (idx.length === 1) {
@@ -74,7 +79,7 @@ const GraphNodeContent = ({ contents, contacts, mod, description, index, remoteC
       return <MentionText
         content={contents}
         contacts={contacts}
-        remoteContentPolicy={remoteContentPolicy}
+        group={group}
       />
     }
     return null;
@@ -83,8 +88,10 @@ const GraphNodeContent = ({ contents, contacts, mod, description, index, remoteC
     if (idx[1] === "2") {
       return <MentionText
         content={contents}
+        group={group}
         contacts={contacts}
-        remoteContentPolicy={remoteContentPolicy}
+        fontSize='14px'
+        lineHeight="tall"
       />
     } else if (idx[1] === "1") {
       const [{ text: header }, { text: body }] = contents;
@@ -94,7 +101,7 @@ const GraphNodeContent = ({ contents, contacts, mod, description, index, remoteC
           <Box mb="2" fontWeight="500">
             <Text>{header}</Text>
           </Box>
-          <Box overflow="hidden" maxHeight="400px">
+          <Box overflow="hidden" maxHeight="400px" position="relative">
             <Text lineHeight="tall">{snippet}</Text>
             <FilterBox
               width="100%"
@@ -108,6 +115,27 @@ const GraphNodeContent = ({ contents, contacts, mod, description, index, remoteC
       );
     }
   }
+
+  if(mod === 'chat') {
+    return (
+      <Row
+        width="100%"
+      flexShrink={0}
+      flexGrow={1}
+      flexWrap="wrap"
+    >
+      <MessageWithoutSigil
+        containerClass="items-top cf hide-child"
+        measure={() => {}}
+        group={group}
+        contacts={contacts}
+        msg={post}
+        fontSize='0'
+        pt='2'
+      />
+    </Row>);
+
+  }
   return null;
 };
 
@@ -120,11 +148,13 @@ function getNodeUrl(mod: string, group: string, graph: string, index: string) {
   } else if (mod === "link") {
     const [linkId] = idx;
     return `${graphUrl}/${linkId}`;
+  } else if (mod === 'chat') {
+    return graphUrl;
   }
   return "";
 }
 const GraphNode = ({
-  contents,
+  post,
   contacts,
   author,
   mod,
@@ -132,15 +162,18 @@ const GraphNode = ({
   time,
   index,
   graph,
+  groupPath,
   group,
   read,
   onRead,
+  showContact = false,
   remoteContentPolicy
 }) => {
+  const { contents } = post;
   author = deSig(author);
   const history = useHistory();
 
-  const img = (
+  const img = showContact ? (
     <Sigil
       ship={`~${author}`}
       size={16}
@@ -148,11 +181,11 @@ const GraphNode = ({
       color={`#000000`}
       classes="mix-blend-diff"
     />
-    );
+    ) : <Box style={{ width: '16px' }}></Box>;
 
-  const groupContacts = contacts[group];
+  const groupContacts = contacts[groupPath] ?? {};
 
-  const nodeUrl = getNodeUrl(mod, group, graph, index);
+  const nodeUrl = getNodeUrl(mod, group?.hidden ? '/home' : groupPath, graph, index);
 
   const onClick = useCallback(() => {
     if(!read) {
@@ -162,10 +195,10 @@ const GraphNode = ({
   }, [read, onRead]);
 
   return (
-    <Row onClick={onClick} gapX="2" pt="2">
+    <Row onClick={onClick} gapX="2" pt={showContact ? 2 : 0}>
       <Col>{img}</Col>
-      <Col alignItems="flex-start">
-        <Row
+      <Col flexGrow={1} alignItems="flex-start">
+        {showContact && <Row
           mb="2"
           height="16px"
           alignItems="center"
@@ -178,15 +211,15 @@ const GraphNode = ({
           <Text ml="2" gray>
             {moment(time).format("HH:mm")}
           </Text>
-        </Row>
-        <Row p="1">
+        </Row>}
+        <Row width="100%" p="1" flexDirection="column">
           <GraphNodeContent
             contacts={groupContacts}
-            contents={contents}
+            post={post}
             mod={mod}
             description={description}
             index={index}
-            remoteContentPolicy={remoteContentPolicy}
+            group={group}
           />
         </Row>
       </Col>
@@ -202,11 +235,11 @@ export function GraphNotification(props: {
   time: number;
   timebox: BigInteger;
   associations: Associations;
+  groups: Groups;
   contacts: Rolodex;
   api: GlobalApi;
-  remoteContentPolicy: any;
 }) {
-  const { contents, index, read, time, api, timebox, remoteContentPolicy } = props;
+  const { contents, index, read, time, api, timebox, groups } = props;
 
   const authors = _.map(contents, "author");
   const { graph, group } = index;
@@ -214,16 +247,15 @@ export function GraphNotification(props: {
   const desc = describeNotification(index.description, contents.length !== 1);
 
   const onClick = useCallback(() => {
-    if (props.archived) {
+    if (props.archived || read) {
       return;
     }
 
-    const func = read ? "unread" : "read";
-    return api.hark[func](timebox, { graph: index });
+    return api.hark["read"](timebox, { graph: index });
   }, [api, timebox, index, read]);
 
-  return (
-    <Col p="2">
+return (
+    <>
       <Header
         onClick={onClick}
         archived={props.archived}
@@ -237,24 +269,25 @@ export function GraphNotification(props: {
         description={desc}
         associations={props.associations}
       />
-      <Col pl="5">
+      <Box flexGrow={1} width="100%" pl={5} gridArea="main">
         {_.map(contents, (content, idx) => (
           <GraphNode
+            post={content}
             author={content.author}
-            contents={content.contents}
             contacts={props.contacts}
             mod={index.module}
-            time={content["time-sent"]}
+            time={content?.["time-sent"]}
             description={index.description}
             index={content.index}
             graph={graph}
-            group={group}
+            group={groups[group]}
+            groupPath={group}
             read={read}
             onRead={onClick}
-            remoteContentPolicy={remoteContentPolicy}
+            showContact={idx === 0}
           />
         ))}
-      </Col>
-    </Col>
+      </Box>
+    </>
   );
 }

@@ -230,7 +230,7 @@
     ?>  ?=(%0 -.update)
     =?  p.update  =(p.update *time)  now.bowl
     ?-  -.q.update
-        %add-graph          (add-graph +.q.update)
+        %add-graph          (add-graph p.update +.q.update)
         %remove-graph       (remove-graph +.q.update)
         %add-nodes          (add-nodes p.update +.q.update)
         %remove-nodes       (remove-nodes p.update +.q.update)
@@ -247,7 +247,8 @@
     ==
     ::
     ++  add-graph
-      |=  $:  =resource:store
+      |=  $:  =time
+              =resource:store
               =graph:store
               mark=(unit mark:store)
               overwrite=?
@@ -258,16 +259,22 @@
                   !(~(has by graphs) resource)
           ==  ==
       ?>  (validate-graph graph mark)
+      =/  =logged-update:store
+        [%0 time %add-graph resource graph mark overwrite]
+      =/  =update-log:store
+        (gas:orm-log ~ [time logged-update] ~)
       :_  %_  state
               graphs       (~(put by graphs) resource [graph mark])
-              update-logs  (~(put by update-logs) resource (gas:orm-log ~ ~))
+              update-logs  (~(put by update-logs) resource update-log)
               archive      (~(del by archive) resource)
+            ::
               validators
             ?~  mark  validators
             (~(put in validators) u.mark)
           ==
       %-  zing
-      :~  (give [/updates /keys ~] [%add-graph resource graph mark overwrite])
+      :~  (give [/keys ~] %keys (~(put in ~(key by graphs)) resource))
+          (give [/updates ~] %add-graph resource *graph:store mark overwrite)
           ?~  mark  ~
           ?:  (~(has in validators) u.mark)  ~
           =/  wire  /validator/[u.mark]
@@ -295,6 +302,8 @@
       |^
       =/  [=graph:store mark=(unit mark:store)]
         (~(got by graphs) resource)
+      ~|  "cannot add duplicate nodes to {<resource>}"
+      ?<  (check-for-duplicates graph ~(key by nodes))
       =/  =update-log:store  (~(got by update-logs) resource)
       =.  update-log
         (put:orm-log update-log time [%0 time [%add-nodes resource nodes]])
@@ -308,6 +317,31 @@
         :_  mark
         (add-node-list resource graph mark (sort-nodes nodes))
       ==
+      ::
+      ++  check-for-duplicates
+        |=  [=graph:store nodes=(set index:store)]
+        ^-  ?
+        =/  node-list  ~(tap in nodes)
+        |-
+        ?~  node-list  %.n
+        ?:  (has-node graph i.node-list)  %.y
+        $(node-list t.node-list)
+      ::
+      ++  has-node
+        |=  [=graph:store =index:store]
+        ^-  ?
+        =/  node=(unit node:store)  ~
+        |-
+        ?~  index
+          ?=(^ node)
+        ?~  t.index
+          ?=(^ (get:orm graph i.index))
+        =.  node  (get:orm graph i.index)
+        ?~  node  %.n
+        ?-  -.children.u.node
+            %empty  %.n
+            %graph  $(graph p.children.u.node, index t.index)
+        ==
       ::
       ++  sort-nodes
         |=  nodes=(map index:store node:store)
@@ -389,43 +423,81 @@
       =/  =update-log:store  (~(got by update-logs) resource)
       =.  update-log
         (put:orm-log update-log time [%0 time [%remove-nodes resource indices]])
+      =/  [affected-indices=(set index:store) new-graph=graph:store]
+        (remove-indices resource graph (sort ~(tap in indices) by-lent))
       ::
-      :-  (give [/updates]~ [%remove-nodes resource indices])
+      :-  (give [/updates]~ [%remove-nodes resource (~(uni in indices) affected-indices)])
       %_  state
           update-logs  (~(put by update-logs) resource update-log)
           graphs
         %+  ~(put by graphs)
           resource
-        [(remove-indices resource graph ~(tap in indices)) mark]
+        [new-graph mark]
       ==
       ::
+      :: we always want to remove the deepest node first,
+      :: so we don't remove parents before children
+      ++  by-lent
+        |*  [a=(list) b=(list)]
+        ^-  ?
+        (gth (lent a) (lent b))
+      ::
       ++  remove-indices
+        =|  affected=(set index:store)
         |=  [=resource:store =graph:store indices=(list index:store)]
-        ^-  graph:store
-        ?~  indices  graph
+        ^-  [(set index:store) graph:store]
+        ?~  indices  [affected graph]
+        =^  new-affected  graph
+          (remove-index graph i.indices)
         %_  $
             indices  t.indices
-            graph    (remove-index graph i.indices)
+            affected  (~(uni in affected) new-affected)
+        ==
+      ::
+      ++  get-descendants
+        |=  =graph:store
+        =|  indices=(list index:store)
+        =/  nodes  (tap:orm:store graph)
+        %-  ~(gas in *(set index:store))
+        |-  =*  tap-nodes  $
+        ^+  indices
+        %-  zing
+        %+  turn  nodes
+        |=  [atom =node:store]
+        ^-  (list index:store)
+        %+  welp
+          index.post.node^~
+        ?.  ?=(%graph -.children.node)
+          ~
+        %_  tap-nodes
+          nodes  (tap:orm p.children.node)
         ==
       ::
       ++  remove-index
+        =|  indices=(set index:store)
         |=  [=graph:store =index:store]
-        ^-  graph:store
-        ?~  index  graph
+        ^-  [(set index:store) graph:store]
+        ?~  index  [indices graph]
         =*  atom   i.index
         ::  last index in list
         ::
         ?~  t.index
-          +:`[* graph:store]`(del:orm graph atom)
+          =^  rm-node  graph  (del:orm graph atom)
+          ?~  rm-node  `graph
+          ?.  ?=(%graph -.children.u.rm-node)
+            `graph
+          =/  new-indices
+            (get-descendants p.children.u.rm-node)
+          [(~(uni in indices) new-indices) graph]
         =/  =node:store
           ~|  "parent index does not exist to remove a node from!"
           (need (get:orm graph atom))
         ~|  "child index does not exist to remove a node from!"
         ?>  ?=(%graph -.children.node)
-        %^  put:orm
-            graph
-          atom
-        node(p.children $(graph p.children.node, index t.index))
+        =^  new-indices  p.children.node
+          $(graph p.children.node, index t.index)
+        :-  (~(uni in indices) new-indices)
+        (put:orm graph atom node)
       --
     ::
     ++  add-signatures
@@ -564,7 +636,9 @@
       ?<  (~(has by archive) resource)
       ?>  (~(has by graphs) resource)
       =/  updates=(list [=time upd=logged-update:store])
-        (tap:orm-log update-log)
+        ::  updates are time-ordered with most recent first
+        ::  process with earliest first
+        (bap:orm-log update-log)
       =|  cards=(list card)
       |-  ^-  (quip card _state)
       ?~  updates
@@ -574,6 +648,7 @@
         %-  graph-update 
         ^-  update:store
         ?-  -.q.update
+            %add-graph          update(resource.q resource)
             %add-nodes          update(resource.q resource)
             %remove-nodes       update(resource.q resource)
             %add-signatures     update(resource.uid.q resource)
@@ -838,6 +913,15 @@
     ^-  [index:store node:store]
     [~[atom] node]
   ::
+      [%x %node-exists @ @ @ *]
+    =/  =ship  (slav %p i.t.t.path)
+    =/  =term  i.t.t.t.path
+    =/  =index:store
+      (turn t.t.t.t.path (cury slav %ud))
+    =/  node=(unit node:store)
+      (get-node ship term index)
+    ``noun+!>(?=(^ node))
+  ::
       [%x %node @ @ @ *]
     =/  =ship  (slav %p i.t.t.path)
     =/  =term  i.t.t.t.path
@@ -852,6 +936,64 @@
     :+  %add-nodes
       [ship term]
     (~(gas by *(map index:store node:store)) [index u.node] ~)
+  ::
+      [%x %node-siblings ?(%older %younger) @ @ @ *]
+    =/  older  ?=(%older i.t.t.path)
+    =/  =ship  (slav %p i.t.t.t.path)
+    =/  =term  i.t.t.t.t.path
+    =/  count  (slav %ud i.t.t.t.t.t.path)
+    =/  =index:store
+      (turn t.t.t.t.t.t.path (cury slav %ud))
+    =/  parent=index:store
+      (scag (dec (lent index)) index)
+    =/  graph
+      (get-node-children ship term parent)
+    ?~  graph  [~ ~]
+    :-  ~  :-  ~  :-  %graph-update
+    !>  ^-  update:store
+    :+  %0
+      now.bowl
+    :+  %add-nodes
+      [ship term]
+    %-  ~(gas by *(map index:store node:store))
+    :: TODO time complexity not desirable
+    ::   replace with custom ordered map functions
+    %+  turn  
+      =-  ?.(older (slag (safe-sub (lent -) count) -) (scag count -))
+      %-  tap:orm
+      %+  subset:orm  u.graph
+      =/  idx
+        (snag (dec (lent index)) index)
+      ?:(older [`idx ~] [~ `idx])
+    |=  [=atom =node:store]
+    ^-  [index:store node:store]
+    [(snoc parent atom) node]
+  ::
+      [%x ?(%newest %oldest) @ @ @ *]
+    =/  newest  ?=(%newest i.t.path)
+    =/  =ship  (slav %p i.t.t.path)
+    =/  =term  i.t.t.t.path
+    =/  count=@ud
+      (slav %ud i.t.t.t.t.path)
+    =/  =index:store
+      (turn t.t.t.t.t.path (cury slav %ud))
+    =/  children
+      (get-node-children ship term index)
+    ?~  children  [~ ~]
+    :-  ~  :-  ~  :-  %graph-update
+    !>  ^-  update:store
+    :+  %0
+      now.bowl
+    :+  %add-nodes
+      [ship term]
+    %-  ~(gas by *(map index:store node:store))
+    %+  turn
+      %+  scag  count
+      %-  ?:(newest same flop)
+      (tap:orm u.children)
+    |=  [=atom =node:store]
+    ^-  [index:store node:store]
+    [(snoc index atom) node]
   ::
       [%x %node-children-subset @ @ @ @ @ *]
     =/  =ship  (slav %p i.t.t.path)
@@ -907,6 +1049,28 @@
       (peek:orm-log:store update-log)
     (bind result |=([=time update:store] time))
   ==
+  ::
+  ++  safe-sub
+    |=  [a=@ b=@]
+    ^-  @
+    ?:  (gte b a)
+      0
+    (sub a b)
+  ::
+  ++  get-node-children
+    |=  [=ship =term =index:store]
+    ^-  (unit graph:store)
+    ?:  ?=(~ index)
+      =/  graph
+        (~(get by graphs) [ship term])
+      ?~  graph  ~
+      `p.u.graph
+    =/  node
+      (get-node ship term index)
+    ?~  node  ~
+    ?:  ?=(%empty -.children.u.node)
+      ~
+    `p.children.u.node
   ::
   ++  get-node
     |=  [=ship =term =index:store]

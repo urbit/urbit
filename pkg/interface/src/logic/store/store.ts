@@ -2,7 +2,6 @@ import BaseStore from './base';
 import InviteReducer from '../reducers/invite-update';
 import MetadataReducer from '../reducers/metadata-update';
 import LocalReducer from '../reducers/local';
-import ChatReducer from '../reducers/chat-update';
 
 import { StoreState } from './type';
 import { Timebox } from '~/types';
@@ -35,7 +34,6 @@ export default class GlobalStore extends BaseStore<StoreState> {
   inviteReducer = new InviteReducer();
   metadataReducer = new MetadataReducer();
   localReducer = new LocalReducer();
-  chatReducer = new ChatReducer();
   contactReducer = new ContactReducer();
   s3Reducer = new S3Reducer();
   groupReducer = new GroupReducer();
@@ -52,25 +50,10 @@ export default class GlobalStore extends BaseStore<StoreState> {
 
   initialState(): StoreState {
     return {
-      pendingMessages: new Map(),
-      chatInitialized: false,
       connection: 'connected',
-      sidebarShown: true,
-      omniboxShown: false,
-      suspendedFocus: null,
       baseHash: null,
-      background: undefined,
-      remoteContentPolicy: {
-        imageShown: true,
-        audioShown: true,
-        videoShown: true,
-        oembedShown: true,
-      },
-      hideAvatars: false,
-      hideNicknames: false,
       invites: {},
       associations: {
-        chat: {},
         contacts: {},
         graph: {},
       },
@@ -92,11 +75,7 @@ export default class GlobalStore extends BaseStore<StoreState> {
         },
         credentials: null
       },
-      notebooks: {},
       contacts: {},
-      dark: false,
-      inbox: {},
-      chatSynced: null,
       notifications: new BigIntOrderedMap<Timebox>(),
       archivedNotifications: new BigIntOrderedMap<Timebox>(),
       notificationsGroupConfig: [],
@@ -106,12 +85,11 @@ export default class GlobalStore extends BaseStore<StoreState> {
         mentions: false,
         watching: [],
       },
-      notificationsCount: 0,
       unreads: {
         graph: {},
-        group: {},
-        chat: {},
-      }
+        group: {}
+      },
+      notificationsCount: 0
     };
   }
 
@@ -119,7 +97,6 @@ export default class GlobalStore extends BaseStore<StoreState> {
     this.inviteReducer.reduce(data, this.state);
     this.metadataReducer.reduce(data, this.state);
     this.localReducer.reduce(data, this.state);
-    this.chatReducer.reduce(data, this.state);
     this.contactReducer.reduce(data, this.state);
     this.s3Reducer.reduce(data, this.state);
     this.groupReducer.reduce(data, this.state);

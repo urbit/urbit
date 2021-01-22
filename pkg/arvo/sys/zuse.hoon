@@ -5293,6 +5293,17 @@
     ?~  a  b
     ::
     $(a l.a, b [n.a $(a r.a)])
+  ::  +bap: convert to list, largest to smallest
+  ::
+  ++  bap
+    |=  a=(tree item)
+    ^-  (list item)
+    ::
+    =|  b=(list item)
+    |-  ^+  b
+    ?~  a  b
+    ::
+    $(a r.a, b [n.a $(a l.a)])
   ::  +gas: put a list of items
   ::
   ++  gas

@@ -64,6 +64,9 @@
   =|  cards=(list card)
   |-
   ?:  ?=(%2 -.old-state)
+    =.  cards
+      :_  cards
+      (act [%watch %group-store /groups %group-on-leave])
     [cards this(state old-state)]
   ?:  ?=(%1 -.old-state)
     =.  cards
@@ -134,9 +137,9 @@
   ^-  (quip card _this)
   |^
   ?+  wire  (on-agent:def wire sign)
-    [%observer @ ~]        on-observer
-    [%thread-result @ ~]   on-thread-result
-    [%thread-start @ @ ~]  on-thread-start
+    [%observer @ ~]          on-observer
+    [%thread-result @ @ ~]   on-thread-result
+    [%thread-start @ @ ~]    on-thread-start
   ==
   ::
   ++  on-observer
@@ -167,7 +170,7 @@
       =/  tid  (scot %uv (sham eny.bowl))
       :_  this
       :~  :*  %pass
-              [%thread-result i.t.wire ~]
+              [%thread-result i.t.wire tid ~]
               %agent
               [our.bowl %spider]
               %watch
@@ -184,7 +187,7 @@
     ==
   ::
   ++  on-thread-result
-    ?>  ?=([%thread-result @ ~] wire)
+    ?>  ?=([%thread-result @ @ ~] wire)
     ?+    -.sign  (on-agent:def wire sign)
       %kick       [~ this]
       %watch-ack  [~ this]

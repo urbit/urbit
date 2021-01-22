@@ -1,16 +1,16 @@
 import React, { PureComponent, Fragment } from 'react';
-import { LocalUpdateRemoteContentPolicy } from "~/types/local-update";
 import { BaseAnchor, BaseImage, Box, Button, Text } from '@tlon/indigo-react';
 import { hasProvider } from 'oembed-parser';
 import EmbedContainer from 'react-oembed-container';
-import { memoize } from 'lodash';
+import { withLocalState } from '~/logic/state/local';
+import { RemoteContentPolicy } from '~/types/local-update';
 
 interface RemoteContentProps {
   url: string;
   text?: string;
-  remoteContentPolicy: LocalUpdateRemoteContentPolicy;
   unfold?: boolean;
   renderUrl?: boolean;
+  remoteContentPolicy: RemoteContentPolicy;
   imageProps?: any;
   audioProps?: any;
   videoProps?: any;
@@ -29,7 +29,7 @@ const IMAGE_REGEX = new RegExp(/(jpg|img|png|gif|tiff|jpeg|webp|webm|svg)$/i);
 const AUDIO_REGEX = new RegExp(/(mp3|wav|ogg)$/i);
 const VIDEO_REGEX = new RegExp(/(mov|mp4|ogv)$/i);
 
-export default class RemoteContent extends PureComponent<RemoteContentProps, RemoteContentState> {
+class RemoteContent extends PureComponent<RemoteContentProps, RemoteContentState> {
   private fetchController: AbortController | undefined;
   constructor(props) {
     super(props);
@@ -74,6 +74,7 @@ export default class RemoteContent extends PureComponent<RemoteContentProps, Rem
     const { style } = this.props;
     return (<BaseAnchor
       href={this.props.url}
+      flexShrink={0}
       style={{ color: 'inherit', textDecoration: 'none', ...style }}
       className={`word-break-all ${(typeof contents === 'string') ? 'bb' : ''}`}
       target="_blank"
@@ -108,6 +109,7 @@ export default class RemoteContent extends PureComponent<RemoteContentProps, Rem
     if (isImage && remoteContentPolicy.imageShown) {
       return this.wrapInLink(
         <BaseImage
+          flexShrink={0}
           src={url}
           style={style}
           onLoad={onLoad}
@@ -166,6 +168,7 @@ export default class RemoteContent extends PureComponent<RemoteContentProps, Rem
             height={3}
             ml={1}
             onClick={this.unfoldEmbed}
+            flexShrink={0}
             style={{ cursor: 'pointer' }}
           >
             {this.state.unfold ? 'collapse' : 'expand'}
@@ -173,9 +176,11 @@ export default class RemoteContent extends PureComponent<RemoteContentProps, Rem
           <Box
             mb='2'
             width='100%'
+            flexShrink={0}
             display={this.state.unfold ? 'block' : 'none'}
             className='embed-container'
             style={style}
+            flexShrink={0}
             onLoad={onLoad}
             {...oembedProps}
             {...props}
@@ -195,3 +200,5 @@ export default class RemoteContent extends PureComponent<RemoteContentProps, Rem
     }
   }
 }
+
+export default withLocalState(RemoteContent, ['remoteContentPolicy']);

@@ -3,11 +3,11 @@ import _ from 'lodash';
 
 import { Icon, Row, Box, Text } from "@tlon/indigo-react";
 
-import { Association } from "~/types/metadata-update";
-
 import { SidebarAppConfigs, SidebarItemStatus } from "./Sidebar";
 import { HoverBoxLink } from "~/views/components/HoverBox";
-import { Groups } from "~/types";
+import { Groups, Association } from "~/types";
+
+import { cite } from "~/logic/lib/util";
 
 function SidebarItemIndicator(props: { status?: SidebarItemStatus }) {
   switch (props.status) {
@@ -27,21 +27,21 @@ function SidebarItemIndicator(props: { status?: SidebarItemStatus }) {
 const getAppIcon = (app: string, mod: string) => {
   if (app === "graph") {
     if (mod === "link") {
-      return "Links";
+      return "Collection";
     }
     return _.capitalize(mod);
   }
   return _.capitalize(app);
 };
 
-const DM_REGEX = /\/~([a-z]|-)*\/dm--/;
+const DM_REGEX = /ship\/~([a-z]|-)*\/dm--/;
 function getItemTitle(association: Association) {
   if(DM_REGEX.test(association['app-path'])) {
-    const [,ship,name] = association['app-path'].split('/');
+    const [,,ship,name] = association['app-path'].split('/');
     if(ship.slice(1) === window.ship) {
-      return `~${name.slice(4)}`;
+      return cite(`~${name.slice(4)}`);
     }
-    return ship;
+    return cite(ship);
 
   }
   return association.metadata.title || association['app-path'];
@@ -93,8 +93,8 @@ export function SidebarItem(props: {
       justifyContent="space-between"
       alignItems="center"
       py={1}
-      pl={4}
-      pr={2}
+      pl={3}
+      pr={3}
       selected={selected}
     >
       <Row width='100%' alignItems="center" flex='1 auto' minWidth='0'>
@@ -105,7 +105,7 @@ export function SidebarItem(props: {
         />
         <Box width='100%' flexShrink={2} ml={2} display='flex' overflow='hidden'>
           <Text
-            lineHeight="short"
+            lineHeight="tall"
             display='inline-block'
             flex='1'
             overflow='hidden'

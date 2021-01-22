@@ -6,6 +6,7 @@ import ErrorBoundary from '~/views/components/ErrorBoundary';
 import Tile from './tile';
 
 export const weatherStyleMap = {
+  Clear: 'rgba(67, 169, 255, 0.4)',
   Sunny: 'rgba(67, 169, 255, 0.4)',
   PartlyCloudy: 'rgba(178, 211, 255, 0.33)',
   Cloudy: 'rgba(136, 153, 176, 0.43)',
@@ -170,7 +171,7 @@ export default class WeatherTile extends React.Component {
         onClick={() => this.setState({ manualEntry: !this.state.manualEntry })}
       >
         <Box>
-          <Icon icon='Weather' display='inline-block' verticalAlign='top' pt='3px' pr='2px' />
+          <Icon icon='Weather' display='inline-block' verticalAlign='top' mt='3px' mr='2' />
           <Text>Weather</Text>
         </Box>
         <Text style={{ cursor: 'pointer' }}>
@@ -186,10 +187,10 @@ export default class WeatherTile extends React.Component {
     const d = data['weather'][0];
     const bg = this.colorFromCondition(data);
 
-    const sunset = moment(d.date + ' '  + d.astronomy[0].sunset, 'YYYY-MM-DD hh:mm A');
+    const sunset = moment(moment().format('YYYY-MM-DD') + ' '  + d.astronomy[0].sunset, 'YYYY-MM-DD hh:mm A');
     const sunsetDiff = sunset.diff(moment(), 'hours');
 
-    const sunrise = moment(d.date + ' '  + d.astronomy[0].sunrise, 'YYYY-MM-DD hh:mm A');
+    const sunrise = moment(moment().format('YYYY-MM-DD') + ' '  + d.astronomy[0].sunrise, 'YYYY-MM-DD hh:mm A');
     let sunriseDiff = sunrise.diff(moment(), 'hours');
 
     if (sunriseDiff > 24) {
@@ -216,15 +217,14 @@ export default class WeatherTile extends React.Component {
         title={`${locationName} Weather`}
       >
         <Text>
-          <Icon icon='Weather' display='inline' style={{ position: 'relative', top: '.3em' }} />
-          Weather
+          <Icon icon='Weather' display='inline' mr='2' style={{ position: 'relative', top: '.3em' }} />
             <Text
               cursor='pointer'
               onClick={() =>
                 this.setState({ manualEntry: !this.state.manualEntry })
               }
             >
-            ->
+            Weather ->
           </Text>
         </Text>
 
@@ -267,7 +267,7 @@ export default class WeatherTile extends React.Component {
           flexDirection="column"
           justifyContent="flex-start"
         >
-          <Text><Icon icon='Weather' color='black' display='inline' style={{ position: 'relative', top: '.3em' }} /> Weather</Text>
+          <Text><Icon icon='Weather' color='black' display='inline' mr='2' style={{ position: 'relative', top: '.3em' }} /> Weather</Text>
           <Text width='100%' display='flex' flexDirection='column' mt={1}>
             Loading, please check again later...
           </Text>

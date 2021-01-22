@@ -6,6 +6,7 @@ import { MarkdownEditor } from "./MarkdownEditor";
 
 export const MarkdownField = ({
   id,
+  s3,
   ...rest
 }: { id: string } & Parameters<typeof Box>[0]) => {
   const [{ value, onBlur }, { error, touched }, { setValue }] = useField(id);
@@ -13,7 +14,6 @@ export const MarkdownField = ({
   const handleBlur = useCallback(
     (e: any) => {
       _.set(e, "target.id", id);
-      console.log(e);
       onBlur && onBlur(e);
     },
     [onBlur, id]
@@ -35,6 +35,7 @@ export const MarkdownField = ({
         onBlur={handleBlur}
         value={value}
         onChange={setValue}
+        s3={s3}
       />
       <ErrorLabel mt="2" hasError={!!(error && touched)}>
         {error}

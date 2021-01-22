@@ -11,7 +11,7 @@
    Note that on linux the previous command is equivalent to:
 
      $ nix-build -A urbit --argstr crossSystem x86_64-unknown-linux-musl \
-                          --arg enableSatic true
+                          --arg enableStatic true
 
    Static urbit-king binary:
 
@@ -115,6 +115,8 @@ let
 
     urbit = callPackage ./nix/pkgs/urbit { inherit enableStatic; };
 
+    docker-image = callPackage ./nix/pkgs/docker-image { };
+
     hs = callPackage ./nix/pkgs/hs {
       inherit enableStatic;
       inherit (pkgsCross) haskell-nix;
@@ -157,6 +159,8 @@ let
         # "${name}/urbit-king" = "${urbit-king}/bin/urbit-king";
       };
     };
+
+    inherit (pkgsNative) skopeo;
 
     # A convenience function for constructing a shell.nix for any of the
     # pkgsLocal derivations by automatically propagating any dependencies 

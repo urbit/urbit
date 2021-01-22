@@ -29,10 +29,15 @@ export function AsyncButton({
   }, [status]);
 
   return (
-    <Button disabled={!isValid} type="submit" {...rest}>
+    <Button
+      hideDisabled={isSubmitting}
+      disabled={!isValid || isSubmitting}
+      type="submit"
+      {...rest}
+    >
       {isSubmitting ? (
         <LoadingSpinner
-          foreground={rest.primary ? "white" : 'black'}
+          foreground={rest.primary ? "white" : "black"}
           background="gray"
         />
       ) : success === true ? (

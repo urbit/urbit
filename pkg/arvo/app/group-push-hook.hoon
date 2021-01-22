@@ -81,15 +81,6 @@
     ==
   --
 ::
-++  resource-for-update
-  |=  =vase
-  ^-  (unit resource)
-  =/  =update:store
-    !<(update:store vase)
-  ?:  ?=(%initial -.update)
-    ~
-  `resource.update
-::
 ++  take-update
   |=   =vase
   ^-  [(list card) agent]

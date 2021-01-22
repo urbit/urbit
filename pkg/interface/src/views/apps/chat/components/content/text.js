@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import RemarkDisableTokenizers from 'remark-disable-tokenizers';
+import RemarkBreaks from 'remark-breaks';
 import urbitOb from 'urbit-ob';
 import { Text } from '@tlon/indigo-react';
 
@@ -26,7 +27,10 @@ const DISABLED_INLINE_TOKENS = [
 
 const renderers = {
   inlineCode: ({language, value}) => {
-    return <Text mono p='1' backgroundColor='washedGray' style={{ whiteSpace: 'preWrap'}}>{value}</Text>
+    return <Text mono p='1' backgroundColor='washedGray' fontSize='0' style={{ whiteSpace: 'preWrap'}}>{value}</Text>
+  },
+  paragraph: ({ children }) => {
+    return (<Text fontSize="1">{children}</Text>);
   },
   code: ({language, value}) => {
     return <Text
@@ -35,6 +39,7 @@ const renderers = {
               display='block'
               borderRadius='1'
               mono
+              fontSize='0'
               backgroundColor='washedGray'
               overflowX='auto'
               style={{ whiteSpace: 'pre'}}>
@@ -63,6 +68,7 @@ const MessageMarkdown = React.memo(props => (
       return true;
     }}
     plugins={[[
+      RemarkBreaks,
       RemarkDisableTokenizers,
       { block: DISABLED_BLOCK_TOKENS, inline: DISABLED_INLINE_TOKENS }
     ]]} />
@@ -83,7 +89,7 @@ export default class TextContent extends Component {
       && (urbitOb.isValidPatp(group[2]) // valid patp?
       && (group[0] === content.text))) { // entire message is room name?
       return (
-        <Text fontSize={props.fontSize ? props.fontSize : '14px'} color='black' lineHeight="tall">
+        <Text mx="2px" flexShrink={0} fontSize={props.fontSize ? props.fontSize : '14px'} color='black' lineHeight="tall">
           <Link
             className="bb b--black b--white-d mono"
             to={'/~landscape/join/' + group.input}>
@@ -93,7 +99,7 @@ export default class TextContent extends Component {
       );
     } else {
       return (
-        <Text color='black' fontSize={props.fontSize ? props.fontSize : '14px'} lineHeight="tall" style={{ overflowWrap: 'break-word' }}>
+        <Text mx="2px" flexShrink={0} color='black' fontSize={props.fontSize ? props.fontSize : '14px'} lineHeight="tall" style={{ overflowWrap: 'break-word' }}>
           <MessageMarkdown source={content.text} />
         </Text>
       );

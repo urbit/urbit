@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import bigInt from 'big-integer';
 import { Col } from '@tlon/indigo-react';
 import { CommentItem } from './CommentItem';
@@ -6,28 +6,26 @@ import CommentInput from './CommentInput';
 import { Contacts } from '~/types/contact-update';
 import GlobalApi from '~/logic/api/global';
 import { FormikHelpers } from 'formik';
-import { GraphNode } from '~/types/graph-update';
+import { Group, GraphNode, Association } from '~/types';
 import { createPost, createBlankNodeWithChildPost } from '~/logic/api/graph';
 import { getLatestCommentRevision } from '~/logic/lib/publish';
-import { LocalUpdateRemoteContentPolicy, Group } from '~/types';
 import { scanForMentions } from '~/logic/lib/graph';
+import { getUnreadCount } from '~/logic/lib/hark';
 
 interface CommentsProps {
   comments: GraphNode;
+  association: Association;
   name: string;
   ship: string;
   editCommentId: string;
   baseUrl: string;
   contacts: Contacts;
   api: GlobalApi;
-  hideAvatars: boolean;
-  hideNicknames: boolean;
-  remoteContentPolicy: LocalUpdateRemoteContentPolicy;
   group: Group;
 }
 
 export function Comments(props: CommentsProps) {
-  const { comments, ship, name, api, baseUrl, history, group } = props;
+  const { association, comments, ship, name, api, history, baseUrl, group } = props;
 
   const onSubmit = async (
     { comment },
@@ -54,7 +52,7 @@ export function Comments(props: CommentsProps) {
     actions: FormikHelpers<{ comment: string }>
   ) => {
     try {
-      const commentNode = comments.children.get(bigInt(props.editCommentId));
+      const commentNode = comments.children.get(bigInt(props.editCommentId))!;
       const [idx, _] = getLatestCommentRevision(commentNode);
 
       const content = scanForMentions(comment);
@@ -79,7 +77,7 @@ export function Comments(props: CommentsProps) {
       if ('text' in curr) {
         val = val + curr.text;
       } else if ('mention' in curr) {
-        val = val + curr.mention;
+        val = val + `~${curr.mention}`;
       } else if ('url' in curr) {
         val = val + curr.url;
       } else if ('code' in curr) {
@@ -88,6 +86,20 @@ export function Comments(props: CommentsProps) {
       return val;
     }, '');
   }
+  const parentIndex = `/${comments?.post.index.slice(1).split('/')[0]}`;
+
+  const children = Array.from(comments.children);
+
+
+  useEffect(() => {
+    console.log(`dismissing ${association?.['app-path']}`);
+    return () => {
+      api.hark.markCountAsRead(association, parentIndex, 'comment')
+    };
+  }, [comments.post.index])
+
+
+  const readCount = children.length - getUnreadCount(props?.unreads, association['app-path'], parentIndex)
 
   return (
     <Col>
@@ -100,8 +112,8 @@ export function Comments(props: CommentsProps) {
           initial={commentContent}
         />
       ) : null )}
-      {Array.from(comments.children).reverse()
-        .map(([idx, comment]) => {
+      {children.reverse()
+        .map(([idx, comment], i) => {
           return (
             <CommentItem
               comment={comment}
@@ -110,10 +122,9 @@ export function Comments(props: CommentsProps) {
               api={api}
               name={name}
               ship={ship}
-              hideNicknames={props.hideNicknames}
-              hideAvatars={props.hideAvatars}
-              remoteContentPolicy={props.remoteContentPolicy}
+              unread={i >= readCount}
               baseUrl={props.baseUrl}
+              group={group}
               pending={idx.toString() === props.editCommentId}
             />
           );

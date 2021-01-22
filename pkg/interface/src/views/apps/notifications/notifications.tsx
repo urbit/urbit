@@ -2,6 +2,7 @@ import React, { useCallback, useState } from "react";
 import _ from 'lodash';
 import { Box, Col, Text, Row } from "@tlon/indigo-react";
 import { Link, Switch, Route } from "react-router-dom";
+import Helmet from "react-helmet";
 
 import { Body } from "~/views/components/Body";
 import { PropFunc } from "~/types/util";
@@ -52,87 +53,79 @@ export default function NotificationsScreen(props: any) {
         render={(routeProps) => {
           const { view } = routeProps.match.params;
           return (
-            <Body>
-              <Col overflowY="hidden" height="100%">
-                <Row
-                  p="3"
-                  alignItems="center"
-                  height="48px"
-                  justifyContent="space-between"
-                  width="100%"
-                  borderBottom="1"
-                  borderBottomColor="washedGray"
-                >
-                  <Text>Updates</Text>
-                  <Row>
-                    <Box>
-                      <HeaderLink current={view} view="">
-                        Inbox
-                      </HeaderLink>
-                    </Box>
-                    <Box>
-                      <HeaderLink current={view} view="archive">
-                        Archive
-                      </HeaderLink>
-                    </Box>
-                    <Box>
-                      <HeaderLink current={view} view="preferences">
-                        Preferences
-                      </HeaderLink>
-                    </Box>
-                  </Row>
-                  <Dropdown
-                    alignX="right"
-                    alignY="top"
-                    options={
-                      <Col
-                        p="2"
-                        backgroundColor="white"
-                        border={1}
-                        borderRadius={1}
-                        borderColor="lightGray"
-                        gapY="2"
-                      >
-                        <FormikOnBlur
-                          initialValues={filter}
-                          onSubmit={onSubmit}
-                        >
-                          <GroupSearch
-                            id="groups"
-                            label="Filter Groups"
-                            caption="Only show notifications from this group"
-                            associations={props.associations}
-                          />
-                        </FormikOnBlur>
-                      </Col>
-                    }
+            <>
+              <Helmet defer={false}>
+                <title>{ props.notificationsCount ? `(${String(props.notificationsCount) }) `: '' }Landscape - Notifications</title>
+              </Helmet>
+              <Body>
+                <Col overflowY="hidden" height="100%">
+                  <Row
+                    p="3"
+                    alignItems="center"
+                    height="48px"
+                    justifyContent="space-between"
+                    width="100%"
+                    borderBottom="1"
+                    borderBottomColor="washedGray"
                   >
-                    <Box>
-                      <Text mr="1" gray>
-                        Filter:
-                      </Text>
-                      <Text>{groupFilterDesc}</Text>
-                    </Box>
-                  </Dropdown>
-                </Row>
-                {view === "archive" && (
-                  <Inbox
-                    {...props}
-                    archive={props.archivedNotifications}
-                    showArchive
-                    filter={filter.groups}
-                  />
-                )}
-                {view === "preferences" && (
-                  <NotificationPreferences
-                    graphConfig={props.notificationsGraphConfig}
-                    api={props.api}
-                    dnd={props.doNotDisturb}
-                  />
-                )}
-                {!view && <Inbox {...props} filter={filter.groups} />}
-              </Col>
-            </Body>
+                    <Text>Updates</Text>
+                    <Row>
+                      <Box>
+                        <HeaderLink current={view} view="">
+                          Inbox
+                        </HeaderLink>
+                      </Box>
+                      <Box>
+                        <HeaderLink current={view} view="preferences">
+                          Preferences
+                        </HeaderLink>
+                      </Box>
+                    </Row>
+                    <Dropdown
+                      alignX="right"
+                      alignY="top"
+                      options={
+                        <Col
+                          p="2"
+                          backgroundColor="white"
+                          border={1}
+                          borderRadius={1}
+                          borderColor="lightGray"
+                          gapY="2"
+                        >
+                          <FormikOnBlur
+                            initialValues={filter}
+                            onSubmit={onSubmit}
+                          >
+                            <GroupSearch
+                              id="groups"
+                              label="Filter Groups"
+                              caption="Only show notifications from this group"
+                              associations={props.associations}
+                            />
+                          </FormikOnBlur>
+                        </Col>
+                      }
+                    >
+                      <Box>
+                        <Text mr="1" gray>
+                          Filter:
+                        </Text>
+                        <Text>{groupFilterDesc}</Text>
+                      </Box>
+                    </Dropdown>
+                  </Row>
+                  {view === "preferences" && (
+                    <NotificationPreferences
+                      graphConfig={props.notificationsGraphConfig}
+                      api={props.api}
+                      dnd={props.doNotDisturb}
+                    />
+                  )}
+                  {!view && <Inbox {...props} filter={filter.groups} />}
+                </Col>
+              </Body>
+            </>
           );
         }}
       />

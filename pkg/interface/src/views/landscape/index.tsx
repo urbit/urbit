@@ -1,5 +1,6 @@
-import React, { Component } from 'react';
-import { Route, Switch } from 'react-router-dom';
+import React, { Component, useEffect, useCallback } from 'react';
+import { Route, Switch, RouteComponentProps } from 'react-router-dom';
+import Helmet from 'react-helmet';
 
 import './css/custom.css';
 
@@ -14,6 +15,7 @@ import { JoinGroup } from './components/JoinGroup';
 import { cite } from '~/logic/lib/util';
 import { Body } from '../components/Body';
 import { Box } from '@tlon/indigo-react';
+import { Loading } from '../components/Loading';
 
 
 type LandscapeProps = StoreState & {
@@ -22,120 +24,129 @@ type LandscapeProps = StoreState & {
   subscription: GlobalSubscription;
 }
 
-export default class Landscape extends Component<LandscapeProps, {}> {
-  componentDidMount() {
-    document.title = 'OS1 - Landscape';
+export function DMRedirect(props: LandscapeProps & RouteComponentProps & { ship: string; }) {
+  const { ship, api, history, graphKeys } = props;
+  const goToGraph = useCallback((graph: string) => {
+    history.push(`/~landscape/home/resource/chat/ship/~${graph}`);
+  }, [history]);
 
-    this.props.subscription.startApp('groups');
-    this.props.subscription.startApp('chat');
-    this.props.subscription.startApp('graph');
-  }
+  useEffect(() => {
+    const station = `${window.ship}/dm--${ship}`;
+    const theirStation = `${ship}/dm--${window.ship}`;
 
-  createandRedirectToDM(api, ship, history, allStations) {
-    const station = `/~${window.ship}/dm--${ship}`;
-    const theirStation = `/~${ship}/dm--${window.ship}`;
-
-    if (allStations.indexOf(station) !== -1) {
-      history.push(`/~landscape/home/resource/chat${station}`);
+    if (graphKeys.has(station)) {
+      goToGraph(station);
       return;
     }
 
-    if (allStations.indexOf(theirStation) !== -1) {
-      history.push(`/~landscape/home/resource/chat${theirStation}`);
+    if (graphKeys.has(theirStation)) {
+      goToGraph(theirStation);
       return;
     }
 
-    const groupPath = `/ship/~${window.ship}/dm--${ship}`;
     const aud = ship !== window.ship ? [`~${ship}`] : [];
     const title = `${cite(window.ship)} <-> ${cite(ship)}`;
 
-    api.chat.create(
+
+    api.graph.createUnmanagedGraph(
+      `dm--${ship}`,
       title,
       '',
-      station,
-      groupPath,
       { invite: { pending: aud } },
-      aud,
-      true,
-      false
-    );
+      'chat'
+    ).then(() => {
+      goToGraph(station);
+    });
 
-    //  TODO: make a pretty loading state
-    setTimeout(() => {
-      history.push(`/~landscape/home/resource/chat${station}`);
-    }, 5000);
+  }, []);
+
+  return (
+    <Loading text="Creating DM" />
+  );
+
+}
+
+export default class Landscape extends Component<LandscapeProps, {}> {
+  componentDidMount() {
+    this.props.subscription.startApp('groups');
+    this.props.subscription.startApp('graph');
   }
 
   render() {
     const { props } = this;
-    const { api, inbox } = props;
+    const { api } = props;
 
     return (
-      <Switch>
-        <Route path="/~landscape/ship/:host/:name"
-          render={routeProps => {
-            const {
-              host,
-              name
-            } = routeProps.match.params as Record<string, string>;
-            const groupPath = `/ship/${host}/${name}`;
-            const baseUrl = `/~landscape${groupPath}`;
-            const ws: Workspace = { type: 'group', group: groupPath };
+      <>
+        <Helmet defer={false}>
+          <title>{ props.notificationsCount ? `(${String(props.notificationsCount) }) `: '' }Landscape</title>
+        </Helmet>
+        <Switch>
+          <Route path="/~landscape/ship/:host/:name"
+            render={routeProps => {
+              const {
+                host,
+                name
+              } = routeProps.match.params as Record<string, string>;
+              const groupPath = `/ship/${host}/${name}`;
+              const baseUrl = `/~landscape${groupPath}`;
+              const ws: Workspace = { type: 'group', group: groupPath };
 
-            return (
-              <GroupsPane workspace={ws} baseUrl={baseUrl} {...props} />
-            )
-          }}/>
-        <Route path="/~landscape/home"
+              return (
+                <GroupsPane workspace={ws} baseUrl={baseUrl} {...props} />
+              )
+            }}/>
+          <Route path="/~landscape/home"
+            render={routeProps => {
+              const ws: Workspace = { type: 'home' };
+              return (
+                <GroupsPane workspace={ws} baseUrl="/~landscape/home" {...props} />
+              );
+            }}
+          />
+          <Route path="/~landscape/new"
+            render={routeProps=> {
+              return (
+                <Body>
+                  <Box maxWidth="300px">
+                    <NewGroup
+                      groups={props.groups}
+                      contacts={props.contacts}
+                      api={props.api}
+                      {...routeProps}
+                    />
+                  </Box>
+                </Body>
+              );
+            }}
+          />
+          <Route path='/~landscape/dm/:ship?'
           render={routeProps => {
-            const ws: Workspace = { type: 'home' };
-            return (
-              <GroupsPane workspace={ws} baseUrl="/~landscape/home" {...props} />
-            );
+            const { ship } = routeProps.match.params;
+            return <DMRedirect {...routeProps} {...props} ship={ship} />
           }}
-        />
-        <Route path="/~landscape/new"
-          render={routeProps=> {
-            return (
-              <Body>
-                <Box maxWidth="300px">
-                  <NewGroup
-                    groups={props.groups}
-                    contacts={props.contacts}
-                    api={props.api}
-                    {...routeProps}
-                  />
-                </Box>
-              </Body>
-            );
-          }}
-        />
-        <Route path='/~landscape/dm/:ship?'
-        render={routeProps => {
-          const { ship } = routeProps.match.params;
-          return this.createandRedirectToDM(api, ship, routeProps.history, Object.keys(inbox));
-        }}
-        />
-        <Route path="/~landscape/join/:ship?/:name?"
-          render={routeProps=> {
-            const { ship, name } = routeProps.match.params;
-            const autojoin = ship && name ? `${ship}/${name}` : null;
-            return (
-              <Body>
-                <Box maxWidth="300px">
-                  <JoinGroup
-                    groups={props.groups}
-                    contacts={props.contacts}
-                    api={props.api}
-                    autojoin={autojoin}
-                    {...routeProps}
-                  />
-                </Box>
-              </Body>
-            );
-          }}
-        />
-      </Switch>
+          />
+          <Route path="/~landscape/join/:ship?/:name?"
+            render={routeProps=> {
+              const { ship, name } = routeProps.match.params;
+              const autojoin = ship && name ? `${ship}/${name}` : null;
+              return (
+                <Body>
+                  <Box maxWidth="300px">
+                    <JoinGroup
+                      groups={props.groups}
+                      contacts={props.contacts}
+                      api={props.api}
+                      autojoin={autojoin}
+                      {...routeProps}
+                    />
+                  </Box>
+                </Body>
+              );
+            }}
+          />
+        </Switch>
+      </>
     );
   }
 }

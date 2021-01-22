@@ -4,13 +4,20 @@ import { GroupUpdate } from "./group-update";
 import { BigIntOrderedMap } from "~/logic/lib/BigIntOrderedMap";
 import { Envelope } from './chat-update';
 
-type GraphNotifDescription = "link" | "comment" | "note" | "mention";
+export type GraphNotifDescription = "link" | "comment" | "note" | "mention";
+
+export interface UnreadStats {
+  unreads: Set<string> | number;
+  notifications: number;
+  last: number;
+}
 
 export interface GraphNotifIndex {
   graph: string;
   group: string;
   description: GraphNotifDescription;
   module: string;
+  index: string;
 }
 
 export interface GroupNotifIndex {
@@ -61,9 +68,9 @@ export interface NotificationGraphConfig {
 }
 
 export interface Unreads {
-  chat: Record<string, number>;
-  group: Record<string, number>;
-  graph: Record<string, number>;
+  chat: Record<string, UnreadStats>;
+  graph: Record<string, Record<string, UnreadStats>>;
+  group: Record<string, UnreadStats>;
 }
 
 interface WatchedIndex {

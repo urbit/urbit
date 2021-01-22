@@ -392,17 +392,20 @@
 ++  handle-stop-thread
   |=  [=tid nice=?]
   ^-  (quip card ^state)
-  =/  =yarn  (~(got by tid.state) tid)
-  ?:  (has-yarn running.state yarn)
+  =/  yarn=(unit yarn)  (~(get by tid.state) tid)
+  ?~  yarn
+    ~&  %stopping-nonexistent-thread
+    [~ state]
+  ?:  (has-yarn running.state u.yarn)
     ?:  nice
-      (thread-done yarn *vase)
-    (thread-fail yarn %cancelled ~)
-  ?:  (~(has by starting.state) yarn)
+      (thread-done u.yarn *vase)
+    (thread-fail u.yarn %cancelled ~)
+  ?:  (~(has by starting.state) u.yarn)
     (thread-fail-not-running tid %stopped-before-started ~)
-  ~&  [%thread-not-started yarn]
+  ~&  [%thread-not-started u.yarn]
   ?:  nice
-    (thread-done yarn *vase)
-  (thread-fail yarn %cancelled ~)
+    (thread-done u.yarn *vase)
+  (thread-fail u.yarn %cancelled ~)
 ::
 ++  take-input
   |=  [=yarn input=(unit input:strand)]
@@ -486,7 +489,7 @@
 ++  thread-fail
   |=  [=yarn =term =tang]
   ^-  (quip card ^state)
-  ::  %-  (slog leaf+"strand {<yarn>} failed" leaf+<term> tang)
+  ::%-  (slog leaf+"strand {<yarn>} failed" leaf+<term> tang)
   =/  =tid  (yarn-to-tid yarn)
   =/  fail-cards  (thread-say-fail tid term tang)
   =^  cards  state  (thread-clean yarn)
