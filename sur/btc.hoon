@@ -3,9 +3,9 @@
 |%
 +$  network  ?(%main %testnet)
 +$  xpub  @ta
-+$  legacy-address  $%([%legacy @uc])
-+$  bech32-address  $%([%bech32 cord])
-+$  address  ?(legacy-address bech32-address)
++$  address  ?(base58-a bech32-a)
++$  base58-a  $%([%base58 @uc])
++$  bech32-a  $%([%bech32 cord])
 +$  fprint  [%4 @ux]
 +$  bipt  $?(%44 %49 %84)
 +$  chyg  $?(%0 %1)

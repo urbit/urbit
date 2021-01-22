@@ -1,6 +1,15 @@
 # Installing on a Moon
 Requires base hash at least: `rd3oe`
 
+Moon keys:
+```
+~sarsev-dapwel-timluc-miptev
+0w2.LVGJb.ufXUR.0bn--.rQ6qF.L5Foj.lkIzX.pR~pr.BHZ7x.G~HGK.JUGoG.riHNr.g7v8o.UZ~Hl.Stsdh.uqwRc.4bJcM.Zi~-1.Q84g0.efa28.mu072.tg0g1
+
+~pidlun-hadwyx-timluc-miptev
+0w5fCcu.UT9HM.853Z5.2vBGL.YglSz.H9wVI.BIjZT.xOpnG.A31-6.qR29j.Fq7Gu.ZSeI4.No9n0.0HCXS.5eloq.3Be9X.GEz7Q.hgwf0.0URA4.yL01M.Dk7E1
+```
+
 ## Create Moon
 In your Urbit:
 ```
@@ -10,40 +19,63 @@ Copy the key and note the moon name.
 
 ## Install New `zuse.hoon`
 ```
-./urbit -w $MOON_NAME -G $COPIED_KEY
+./urbit -w $MOON_NAME -G $COPIED_KEY -c $PIER_DIR
 ```
 The moon will compile and apply OTAs. After that is done, run:
 ```
 |mount %
 ```
 
-Back outside:
-```
-cd $BTC_AGENTS_DIR
-./install-zuse.sh $MOON_PIER
-```
-
-In moon:
-```
-|commit %home
-|reset
-```
-
-Install the rest of the files:
+Install files:
 ```
 ./install.sh $MOON_PIER
 ```
 
-The kernel will recompile. Then test that the new `decompress-point` is included.
-The below should yield: `0x3.30d5.4fd0.dd42.0a6e.5f8d.3624.f5f3.482c.ae35.0f79.d5f0.753b.f5be.ef9c.2d91.af3c`
+## End to End
+
+### On Moon1:
 ```
-=bip32 -build-file %/lib/bip32/hoon
-=ecc secp256k1:secp:crypto
-=xpub "zpub6rFR7y4Q2AijBEqTUquhVz398htDFrtymD9xYYfG1m4wAcvPhXNfE3EfH1r1ADqtfSdVCToUG868RvUUkgDKf31mGDtKsAYz2oz2AGutZYs"
-`@ux`(compress-point:ecc pub:(derive-public:(derive-public:(from-extended:bip32 xpub) 0) 0))
+=moon1 ~sarsev-dapwel-timluc-miptev
+=moon2 ~pidlun-hadwyx-timluc-miptev
+|commit %home
+
+|start %btc-provider
+|start %btc-wallet-store
+|start %btc-wallet-hook
+:btc-provider|command [%set-credentials api-url='http://localhost:50002']
+:btc-provider|command [%whitelist-clients `(set ship)`(sy ~[moon2])]
+=xpub1 'zpub6rFR7y4Q2AijBEqTUquhVz398htDFrtymD9xYYfG1m4wAcvPhXNfE3EfH1r1ADqtfSdVCToUG868RvUUkgDKf31mGDtKsAYz2oz2AGutZYs'
+:btc-wallet-hook|action [%set-provider moon1]
+
+=fprint [%4 0xdead.beef]
+:btc-wallet-store|action [%add-wallet xpub1 fprint ~ [~ 8] [~ 6]]
 ```
 
-## Start `btc-provider`
+### On Moon2:
 ```
-:btc-provider|command [%set-credentials api-url='http://localhost:50002']
+::  xpub from PRIVATE.md
+=moon1 ~sarsev-dapwel-timluc-miptev
+=moon2 ~pidlun-hadwyx-timluc-miptev
+|commit %home
+
+|start %btc-wallet-store
+|start %btc-wallet-hook
+:btc-wallet-hook|action [%set-provider moon1]
+=xpub2 'zpub6r8dKyWJ31XF6n69KKeEwLjVC5ruqAbiJ4QCqLsrV36Mvx9WEjUaiPNPGFLHNCCqgCdy6iZC8ZgHsm6a1AUTVBMVbKGemNcWFcwBGSjJKbD'
+=fprint [%4 0xbeef.dead]
+:btc-wallet-store|action [%add-wallet xpub2 fprint ~ [~ 8] [~ 6]]
+```
+
+### Request Address
+Moon2:
+```
+:btc-wallet-hook|action [%req-pay-address payee=moon1 value=2.000 [~ 30]]
+:btc-wallet-hook +dbug [%state 'poym']
+```
+
+## scrys
+```
+.^((list @t) %gx /=btc-wallet-store=/scanned/noun)
+
+.^(@ud %gx /=btc-wallet-store=/balance/[xpub2]/noun)
 ```

@@ -6,7 +6,7 @@
 |%
 ++  address-to-cord
   |=  =address  ^-  cord
-  ?:  ?=([%legacy *] address)
+  ?:  ?=([%base58 *] address)
     (scot %uc +.address)
   +.address
 ::
@@ -15,7 +15,7 @@
   ?.  ?|  =("bc1" (scag 3 (trip addrc)))
           =("tb1" (scag 3 (trip addrc)))
       ==
-    ~|("legacy addresses not yet supported" !!)
+    ~|("base58 addresses not yet supported" !!)
   [%bech32 addrc]
 ::
 ++  bytc-to-cord
