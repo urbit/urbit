@@ -94,11 +94,13 @@ Use `@uc` to make the Hash-160 into a BTC P2PKH address
 ```
 =pubkey 0x2.5086.3ad6.4a87.ae8a.2fe8.3c1a.f1a8.403c.b53f.53e4.86d8.511d.ad8a.0488.7e5b.2352
 (hash-160:btc pubkey)
-::  gives 0xf54a.5851.e937.2b87.810a.8e60.cdd2.e7cf.d80b.6e31
+::  gives [%20 0xf54a.5851.e937.2b87.810a.8e60.cdd2.e7cf.d80b.6e31]
 
-`@uc`(hash-160:btc pubkey)
+`@uc`dat:(hash-160:btc pubkey)
 :: gives 1PMycacnJaSqwwJqjawXBErnLsZ7RkXUAs
 ```
+0x3.724a.a081.bd67.a2bd.7dc3.a4b6.a36d.69c2.c148.483e.27bd.50dc.7ee7.27f9.dc87.b8b4
+0x3.fda0.6514.80ec.ac75.cd91.ec65.7123.9a24.c657.cc25.f0f8.def2.0554.5230.2d12.6488
 
 ### trailing zero
 Need to test with this because it shows need to input num bytes

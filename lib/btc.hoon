@@ -41,8 +41,8 @@
         %bech32
       (to-hex:bech32 address)
       :: TODO: implement legacy
-        %legacy
-      ~|("legacy addresess not supported to script-pubkey yet" !!)
+        %base58
+      ~|("base58 addresess not supported to script-pubkey yet" !!)
     ==
   %-  cat:byt
   :~  1^(add 2 wid.h)
@@ -524,14 +524,14 @@
   ::
   ++  encode-raw
     |=  [hrp=tape data=(list @)]
-    ^-  bech32-address
+    ^-  bech32-a
     =/  combined=(list @)
       (weld data (checksum hrp data))
     :-  %bech32
     %-  crip
     (zing ~[hrp "1" (tape (murn combined value-to-charset))])
   ++  decode-raw
-    |=  b=bech32-address
+    |=  b=bech32-a
     ^-  (unit raw-decoded)
     =/  bech  (cass (trip +.b))              ::  to lowercase
     =/  pos  (flop (fand "1" bech))
@@ -554,7 +554,7 @@
   ::  goes from a bech32 address to hex. Returns byts to preserve leading 0s
   ::
   ++  to-hex
-    |=  b=bech32-address
+    |=  b=bech32-a
     ^-  bytc
     =/  d=(unit raw-decoded)  (decode-raw b)
     ?~  d  ~|("Invalid bech32 address" !!)
@@ -571,7 +571,7 @@
   ::
   ++  encode-pubkey
     |=  [=network pubkey=@ux]
-    ^-  (unit bech32-address)
+    ^-  (unit bech32-a)
     ?.  =(33 (met 3 pubkey))
       ~|('pubkey must be a 33 byte ECC compressed public key' !!)
     =/  prefix  (~(get by prefixes) network)
@@ -581,7 +581,7 @@
     [0 (convert:bit 5 (zeros-brip:bit 160 dat:(hash-160 pubkey)))]
   ++  encode-hash-160
     |=  [=network h160=byts]
-    ^-  (unit bech32-address)
+    ^-  (unit bech32-a)
     =/  prefix  (~(get by prefixes) network)
     ?~  prefix  ~
     :-  ~
