@@ -10542,6 +10542,7 @@
                 ==
     ==    ==
   ::
+  ::  XX audited
   ++  caching-fond
     |=  [way=vial hyp=wing]
     =>
@@ -10890,6 +10891,7 @@
       --
     ==
   ::
+  ::  XX audited
   ++  caching-find
     |=  [way=vial hyp=wing]
     ^-  [port _grub]
@@ -10922,6 +10924,7 @@
         ==    ==
     (fond way hyp)
   ::
+  ::  XX audited
   ++  caching-fund
     |=  [way=vial gen=hoon]
     ^-  [port _grub]
@@ -10941,6 +10944,7 @@
       [%| (mint %noun gen)]
     (find way u.hup)
   ::
+  ::  XX audited
   ++  caching-fine
     |=  tor=port
     ^-  [(pair type nock) _grub]
@@ -10975,6 +10979,7 @@
             %|  [(fire ~(tap in q.q.p.tor)) [%9 p.q.p.tor %0 axe]]
     ==    ==
   ::
+  ::  XX audited
   ++  caching-fire
     |=  hag=(list [p=type q=foot])
     ^-  [type _grub]
@@ -11071,6 +11076,7 @@
       $(sut repo)
     ==
   ::
+  ::  XX audited
   ++  caching-fish
     |=  axe=axis
     =|  vot=(set type)
@@ -11120,7 +11126,8 @@
       ?:  (~(has in vot) sut)
         ~>(%mean.'fish-loop' !!)
       =.  vot  (~(put in vot) sut)
-      $(sut repo)
+      =^  val  grub  caching-repo
+      $(sut val)
     ==
   ::
   ++  fuse
