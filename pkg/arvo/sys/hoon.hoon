@@ -6595,11 +6595,12 @@
               r/(pair seminoun (map term tome))         ::  chapters
           ==                                            ::
 +$  garb  (trel (unit term) poly vair)                  ::  core
-+$  grub                                                ::  new compiler cache
-  $:  nes=(map (pair type type) ?)                      ::  +nest
-      res=(map (pair type hoon) type)                   ::  +rest
-      pay=(map (pair type hoon) type)                   ::  +play
-      mit=(map (trel type type hoon) (pair type nock))  ::  +mint
++$  grub                                                     ::  ut cache
+  $:  nes=(map (pair type type) ?)                           ::  +nest
+      res=(map (trel type type hoon) type)                   ::  +rest
+      pay=(map (pair type hoon) type)                        ::  +play
+      mit=(map (trel type type hoon) (pair type nock))       ::  +mint
+      mul=(map (qual type type type hoon) (pair type type))  ::  +mull
   ==                                                    ::
 +$  poly  ?(%wet %dry)                                  ::  polarity
 +$  foot  $%  {$dry p/hoon}                             ::  dry arm, geometric
@@ -9351,7 +9352,7 @@
             [%cell *]
           =^  won  grub  ^$(skin skin.skin, ref p.ref)
           ?:  =(%void won)  [%void grub]
-          =^  tew  grub  ^$(skin skin.skin, ref q.ref)
+          =^  tew  grub  ^$(skin ^skin.skin, ref q.ref)
           :_  grub
           (cell won tew)
         ::
@@ -9455,11 +9456,12 @@
         $(skin skin.skin, sut val)
       ::
           %spec
-        ::  XX grub not used well here
+        ::  XX WEIRD grub not used well here
         ::
         =^  yon  grub  $(skin skin.skin)
         =^  hit  grub  (~(caching-play ut sut) ~(example ax fab spec.skin))
-        ?>  -:(~(caching-nest ut hit) & yon)
+        =^  nests  grub  (~(caching-nest ut hit) & yon)
+        ?>  nests
         [hit grub]
       ::
           %wash
@@ -11531,16 +11533,19 @@
         ::
             [* ~ *]
           =^  val  grub  $(dab r.dab)
-          [[vad val] grub]
+          :_  grub
+          [vad val]
         ::
             [* * ~]
           =^  val  grub  $(dab l.dab)
-          [[vad val] grub]
+          :_  grub
+          [vad val]
         ::
             [* * *]
           =^  lef  grub  $(dab l.dab)
           =^  rig  grub  $(dab r.dab)
-          [[vad lef rig] grub]
+          :_  grub
+          [vad lef rig]
         ==
       ?-      dom
           [* ~ ~]
@@ -11548,16 +11553,19 @@
       ::
           [* ~ *]
         =^  val  grub  $(dom r.dom)
-        [[dov val] grub]
+        :_  grub
+        [dov val]
       ::
           [* * ~]
         =^  val  grub  $(dom l.dom)
-        [[dov val] grub]
+        :_  grub
+        [dov val]
       ::
           [* * *]
         =^  lef  grub  $(dom l.dom)
         =^  rig  grub  $(dom r.dom)
-        [[dov lef rig] grub]
+        :_  grub
+        [dov lef rig]
       ==
     =/  cor  (core sut [nym hud mel] sut [[%full ~] dez] dom)
     :_  grub
@@ -11919,8 +11927,8 @@
       =^  lef  grub  (caching-nice bool)
       =^  mid  grub  $(gen p.gen, gol %noun)
       =^  rig  grub  $(gen q.gen, gol %noun)
-      :: XX ignored?
-      :: =+  [one two]=[$(gen p.gen, gol %noun) $(gen q.gen, gol %noun)]
+      :: XX weird
+      =+  [one two]=[mid rig]
       :_  grub
       [lef [%5 q.mid q.rig]]
     ::
@@ -12122,16 +12130,16 @@
     ==
     ::
     ++  caching-nice
-      |=  typ=type
+      |=  =type
       ~_  leaf+"mint-nice"
-      =^  nests  grub  (caching-nest(sut gol) & typ)
+      =^  nests  grub  (caching-nest(sut gol) & type)
       ?>  ?|(!vet nests)
-      [typ grub]
+      [type grub]
     ::
     ++  caching-grow
       |=  [mel=vair nym=(unit term) hud=poly ruf=hoon dom=(map term tome)]
       ^-  [[p=type q=nock] _grub]
-      =^  dan  grub  ^$(gen ruf, gol %noun)
+      =^  dan  grub  ^$(gen ruf, gol %noun) :: XX WEIRD suspicious
       =^  pul  grub  (caching-mine gol mel nym hud dom)
       =^  lef  grub  (caching-nice p.pul)
       :_  grub
@@ -12366,9 +12374,15 @@
   ++  caching-mull
     |=  [gol=type dox=type gen=hoon]
     ^-  [[p=type q=type] _grub]
+    =/  cached  (~(get by mul.grub) [sut gol dox gen])
+    ?^  cached
+      [u.cached grub]
+    =;  [mulled=(pair type type) =_grub]
+      :_  grub(mul (~(put by mul.grub) [sut gol dox gen] mulled))
+      mulled
     |^  ^-  [[p=type q=type] _grub]
     ?:  =(%void sut)
-      ~>(%mean.'mull-none' !!)
+      ~>(%mean.'caching-mull-none' !!)
     ?-    gen
     ::
         [^ *]
@@ -12391,11 +12405,13 @@
       (~(mull caching-et p.gen q.gen) gol dox)
     ::
         [%dtkt *]
-      =^  lef  grub  $(gen q.gen, gol %noun) :: XX ignored?
+      =^  lef  grub  $(gen q.gen, gol %noun)
+      =+  lef :: XX WEIRD
       $(gen [%kttr p.gen])
     ::
         [%dtls *]
-      =^  lef  grub  $(gen p.gen, gol [%atom %$ ~]) :: XX ignored?
+      =^  lef  grub  $(gen p.gen, gol [%atom %$ ~])
+      =+  lef :: XX WEIRD
       (caching-beth [%atom %$ ~])
     ::
         [%sand *]
@@ -12407,17 +12423,20 @@
       (caching-beth rig)
     ::
         [%dttr *]
-      =^  lef  grub  $(gen p.gen, gol %noun)  :: XX ignored?
-      =^  rig  grub  $(gen q.gen, gol %noun)  :: XX ignored?
+      =^  lef  grub  $(gen p.gen, gol %noun)
+      =^  rig  grub  $(gen q.gen, gol %noun)
+      =+  [lef rig]  :: XX WEIRD
       (caching-beth %noun)
     ::
         [%dtts *]
-      =^  lef  grub  $(gen p.gen, gol %noun)  :: XX ignored?
-      =^  rig  grub  $(gen q.gen, gol %noun)  :: XX ignored?
+      =^  lef  grub  $(gen p.gen, gol %noun)
+      =^  rig  grub  $(gen q.gen, gol %noun)
+      =+  [lef rig]  :: XX WEIRD
       (caching-beth bool)
     ::
         [%dtwt *]
-      =^  lef  grub  $(gen p.gen, gol %noun)  :: XX ignored?
+      =^  lef  grub  $(gen p.gen, gol %noun)
+      =+  lef  :: XX WEIRD
       (caching-beth bool) ::  XX  =|
     ::
         [%hand *]
@@ -12436,7 +12455,8 @@
       =^  lef  grub  (caching-nice wor)
       =^  rig  grub  (caching-play(sut dox) p.gen)
       =/  hif  [p=lef q=rig]
-      =^  val  grub  $(gen q.gen, gol p.hif)  :: XX ignored?
+      =^  val  grub  $(gen q.gen, gol p.hif)
+      =+  val :: XX WEIRD
       [hif grub]
     ::
         [%ktpd *]
@@ -12600,23 +12620,23 @@
     ==
     ::
     ++  caching-beth
-      |=  typ=type
-      =^  lef  grub  (caching-nice typ)
+      |=  =type
+      =^  lef  grub  (caching-nice type)
       :_  grub
-      [lef typ]
+      [lef type]
     ::
     ++  caching-nice
-      |=  typ=type
-      ~_  leaf+"mull-nice"
-      =^  nests  grub  (caching-nest(sut gol) & typ)
+      |=  =type
+      ~_  leaf+"caching-mull-nice"
+      =^  nests  grub  (caching-nest(sut gol) & type)
       ?>  ?|(!vet nests)
-      [typ grub]
+      [type grub]
     ::
     ++  caching-grow
       |=  [mel=vair nym=(unit term) hud=poly ruf=hoon dom=(map term tome)]
-      ~_  leaf+"mull-grow"
+      ~_  leaf+"caching-mull-grow"
       ^-  [[p=type q=type] _grub]
-      =^  dan  grub  ^$(gen ruf, gol %noun)
+      =^  dan  grub  ^$(gen ruf, gol %noun) :: XX WEIRD suspicious
       =^  yaz  grub  (caching-mile(sut p.dan) q.dan mel nym hud dom)
       =^  lef  grub  (caching-nice p.yaz)
       :_  grub
@@ -12930,13 +12950,17 @@
   ::
   ++  caching-nest
     |=  [tel=? ref=type]
+    =/  cached  (~(get by nes.grub) [sut ref])
+    ?^  cached
+      [u.cached grub]
+    =;  [nested=? =_grub]
+      ~&  [%nest-caching key=[sut ref] val=nested]
+      :_  grub(nes (~(put by nes.grub) [sut ref] nested))
+      nested
     =|  $:  seg=(set type)                              ::  degenerate sut
             reg=(set type)                              ::  degenerate ref
             gil=(set (pair type type))                  ::  assume nest
         ==
-    =/  cached  (~(get by nes.grub) [sut ref])
-    ?^  cached
-      [u.cached grub]
     =<  dext
     |%
     ++  deem
@@ -13005,9 +13029,6 @@
       ==
     ::
     ++  dext
-      =;  [nests=? =_grub]
-        :_  grub(nes (~(put by nes.grub) [sut ref] nests))
-        nests
       =<  $
       |.
       ^-  [? _grub]
@@ -13036,7 +13057,8 @@
         &(lef rig)
       ::
           [%core *]
-        ?.  ?=([%core *] ref)  sint
+        ?.  ?=([%core *] ref)
+          sint
         ?:  =(q.sut q.ref)  dext(sut p.sut, ref p.ref)
         ::
         =/  case-zod  =(q.p.q.sut q.p.q.ref)  ::  same wet/dry
@@ -13492,7 +13514,7 @@
       (hint [sut p.gen] rig)
     ::
         [%sgzp *]
-      =^  rig  grub  $(gen p.gen) :: XX change from ^$
+      =^  rig  grub  $(gen p.gen) :: XX WEIRD
       ~_  duck(sut rig)
       $(gen q.gen)
     ::
@@ -14110,15 +14132,16 @@
   ++  caching-rest
     |=  leg=[p=type q=hoon]
     ^-  [type _grub]
-    =/  cached  (~(get by res.grub) leg)
+    =/  cached  (~(get by res.grub) [sut leg])
     ?^  cached
       [u.cached grub]
+    =;  [rested=type =_grub]
+      :_  grub(res (~(put by res.grub) [sut leg] rested))
+      rested
     ?:  (~(has in fan) leg)
       ~>(%mean.'rest-loop' !!)
     =.  fan  (~(put in fan) leg)
-    =^  played  grub  (caching-play(sut p.leg) q.leg)
-    :_  grub(res (~(put by res.grub) leg played))
-    played
+    (caching-play(sut p.leg) q.leg)
   ::
   ++  caching-take
     |=  [vit=vein duz=$-(type [type _grub])]
