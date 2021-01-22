@@ -53,6 +53,9 @@ const MessageMarkdown = React.memo(props => (
     {...props}
     unwrapDisallowed={true}
     renderers={renderers}
+    // shim until we uncover why RemarkBreaks and
+    // RemarkDisableTokenizers can't be loaded simultaneously
+    disallowedTypes={['heading', 'list', 'listItem', 'link']}
     allowNode={(node, index, parent) => {
       if (
         node.type === 'blockquote'
@@ -67,11 +70,7 @@ const MessageMarkdown = React.memo(props => (
 
       return true;
     }}
-    plugins={[[
-      RemarkBreaks,
-      RemarkDisableTokenizers,
-      { block: DISABLED_BLOCK_TOKENS, inline: DISABLED_INLINE_TOKENS }
-    ]]} />
+    plugins={[RemarkBreaks]} />
 ));
 
 
