@@ -169,6 +169,18 @@
         items  t.items
     ==
   --
+::  +get-n: get N from head of block filter, little endian
+::
+++  get-n
+  |=  filter=@ux
+  =+  start=(dec (met 3 filter))
+  =/  n=@ux
+    (cut 3 [start 1] filter)
+  %+  swp  3
+    ?:  =(n 0xfd)  (cut 3 [(sub start 2) 2] filter)
+    ?:  =(n 0xfe)  (cut 3 [(sub start 4) 4] filter)
+    ?:  =(n 0xff)  (cut 3 [(sub start 8) 8] filter)
+    n
 ::  +match
 ::   - k: key for siphash (end of blockhash, reversed)
 ::   - gcs: block-filter with first byte (N) removed
@@ -177,4 +189,5 @@
   |=  [k=byts gcs-set=byts targets=(list byts) p=@ n=@ m=@]
   =+  target-hs=(set-construct:hsh targets k (mul n m))
   :: TODO fill in w algo
-  --
+  %.y
+--
