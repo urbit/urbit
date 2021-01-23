@@ -182,17 +182,27 @@
     n
 ++  parse-filter
   |=  [filter=@ux]
-  ^-  [n=@ux gcs-set=byts]
+  ^-  [n=@ux gcs-set=bits]
   =+  n=(get-n filter)
   =+  gcs-size=(sub (met 3 filter) (met 3 n))
-  [n [gcs-size (end [3 gcs-size] filter)]]
-::  +match
+  [n [(mul 8 gcs-size) `@ub`(end [3 gcs-size] filter)]]
+::  +match: whether block filter matches *any* target scriptpubkeys
+::   - filter: full block filter, with leading N
 ::   - k: key for siphash (end of blockhash, reversed)
-::   - gcs: block-filter with first byte (N) removed
+::   - targets: scriptpubkeys to match
 ::
 ++  match
-  |=  [k=byts gcs-set=byts targets=(list byts) p=@ n=@ m=@]
+  |=  [filter=@ux k=byts targets=(list byts)]
+  ^-  ?
+  =/  [p=@ m=@]  [p:params m:params]
+  =/  [n=@ux gcs-set=bits]  (parse-filter filter)
   =+  target-hs=(set-construct:hsh targets k (mul n m))
+  =|  last-val=@
+  |-
+  ?:  (lth wid.gcs-set p)  %.n
+  =^  delta  gcs-set
+    (de:gol gcs-set p)
   :: TODO fill in w algo
+  :: TODO decode all the items in a loop
   %.y
 --
