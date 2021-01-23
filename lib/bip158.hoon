@@ -161,18 +161,17 @@
   ++  set-construct
   |=  [items=(list byts) k=byts f=@]
     ^-  (list @)
-    =|  si=(list @)
-    |-
-    ?~  items  (sort si lth)
-    %=  $
-        si  [(to-range i.items f k) si]
-        items  t.items
-    ==
+    %+  sort
+      %+  turn  items
+      |=  item=byts
+      (to-range item f k)
+    lth
   --
 ::  +get-n: get N from head of block filter, little endian
 ::
 ++  get-n
   |=  filter=@ux
+  ^-  @ux
   =+  start=(dec (met 3 filter))
   =/  n=@ux
     (cut 3 [start 1] filter)
@@ -181,6 +180,12 @@
     ?:  =(n 0xfe)  (cut 3 [(sub start 4) 4] filter)
     ?:  =(n 0xff)  (cut 3 [(sub start 8) 8] filter)
     n
+++  parse-filter
+  |=  [filter=@ux]
+  ^-  [n=@ux gcs-set=byts]
+  =+  n=(get-n filter)
+  =+  gcs-size=(sub (met 3 filter) (met 3 n))
+  [n [gcs-size (end [3 gcs-size] filter)]]
 ::  +match
 ::   - k: key for siphash (end of blockhash, reversed)
 ::   - gcs: block-filter with first byte (N) removed
