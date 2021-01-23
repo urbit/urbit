@@ -143,4 +143,38 @@
       $(first-bit b, q +(q))
     --
   --
---
+::  +hsh
+::
+++  hsh
+  |%
+  ::  +to-range
+  ::   - item: scriptpubkey to hash
+  ::   - f: N*M
+  ::   - k: key for siphash (end of blockhash, reversed)
+  ::
+  ++  to-range
+    |=  [item=byts f=@ k=byts]
+    ^-  @
+    (rsh [0 64] (mul f (swp 3 dat:(siphash k item))))
+  ::  +set-construct: return sorted hashes of scriptpubkeys
+  ::
+  ++  set-construct
+  |=  [items=(list byts) k=byts f=@]
+    ^-  (list @)
+    =|  si=(list @)
+    |-
+    ?~  items  (sort si lth)
+    %=  $
+        si  [(to-range i.items f k) si]
+        items  t.items
+    ==
+  --
+::  +match
+::   - k: key for siphash (end of blockhash, reversed)
+::   - gcs: block-filter with first byte (N) removed
+::
+++  match
+  |=  [k=byts gcs-set=byts targets=(list byts) p=@ n=@ m=@]
+  =+  target-hs=(set-construct:hsh targets k (mul n m))
+  :: TODO fill in w algo
+  --
