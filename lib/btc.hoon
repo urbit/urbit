@@ -3,6 +3,19 @@
 =<  [sur .]
 =,  sur
 |%
+++  to-hex
+  |=  h=@t
+  ^-  @ux
+  ?:  =('' h)  0x0
+  ::  Add leading 00
+  ::
+  =+  (lsh [3 2] h)
+  ::  Group by 4-size block
+  ::
+  =+  (rsh [3 2] -)
+  ::  Parse hex to atom
+  ::
+  `@ux`(rash - hex)
 ++  xpub-type
   |=  =xpub
   ^-  bipt
@@ -399,6 +412,14 @@
     |=  b=byts
     ^-  byts
     [wid.b (rev 3 b)]
+  ::  +take: take n bytes from front of byts
+  ::  pads front with extra zeroes if n is longer than byts
+  ::
+  ++  take
+    |=  [n=@ b=byts]
+    ?:  (gth n wid.b)
+      [n dat.b]
+    [n (rsh [3 (sub wid.b n)] dat.b)]
 ::  Converts a list of bits to a list of n-bit numbers 
 ::  input-bits should be big-endian
 ::
