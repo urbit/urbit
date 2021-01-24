@@ -1,3 +1,4 @@
+/+  btc
 |%
 +$  bits  [wid=@ dat=@ub]
 ++  params
@@ -5,6 +6,7 @@
   ++  p  19
   ++  m  784.931
   --
+::
 ++  siphash
   |=  [k=byts m=byts]
   ^-  byts
@@ -180,12 +182,21 @@
     ?:  =(n 0xfe)  (cut 3 [(sub start 4) 4] filter)
     ?:  =(n 0xff)  (cut 3 [(sub start 8) 8] filter)
     n
+::
 ++  parse-filter
   |=  [filter=@ux]
   ^-  [n=@ux gcs-set=bits]
   =+  n=(get-n filter)
   =+  gcs-size=(sub (met 3 filter) (met 3 n))
   [n [(mul 8 gcs-size) `@ub`(end [3 gcs-size] filter)]]
+::  +to-key: blockhash (little endian) to key for siphash
+::
+++  to-key
+  |=  blockhash=tape
+  ^-  byts
+  %+  take:byt:btc  16
+  %-  flip:byt:btc
+  [32 (to-hex:btc (crip blockhash))]
 ::  +match: whether block filter matches *any* target scriptpubkeys
 ::   - filter: full block filter, with leading N
 ::   - k: key for siphash (end of blockhash, reversed)
@@ -197,12 +208,51 @@
   =/  [p=@ m=@]  [p:params m:params]
   =/  [n=@ux gcs-set=bits]  (parse-filter filter)
   =+  target-hs=(set-construct:hsh targets k (mul n m))
-  =|  last-val=@
+  =+  last-val=0
   |-
   ?:  (lth wid.gcs-set p)  %.n
+  ?~  target-hs  %.n
   =^  delta  gcs-set
     (de:gol gcs-set p)
-  :: TODO fill in w algo
-  :: TODO decode all the items in a loop
-  %.y
+  =.  last-val
+    (add delta last-val)
+  ?:  =(last-val i.target-hs)
+    %.y
+  ?:  (lth last-val i.target-hs)
+    $
+  $(target-hs t.target-hs)
+::  +all-match: returns all target byts that match
+::   - filter: full block filter, with leading N
+::   - k: key for siphash (end of blockhash, reversed)
+::   - targets: scriptpubkeys to match
+::
+++  all-match
+  |=  [filter=@ux k=byts targets=(list byts)]
+  ^-  (list byts)
+  =/  [p=@ m=@]  [p:params m:params]
+  =/  [n=@ux gcs-set=bits]  (parse-filter filter)
+  =/  target-map=(map @ byts)
+    %-  ~(gas by *(map @ byts))
+    %+  turn  targets
+    |=(t=byts [(to-range:hsh t (mul n m) k) t])
+  =+  target-hs=~(tap in ~(key by target-map))
+  =+  last-val=0
+  =|  matches=(list @)
+  |-
+  ?:  (lth wid.gcs-set p)
+    (murn matches ~(get by target-map))
+  ?~  target-hs
+    (murn matches ~(get by target-map))
+  =^  delta  gcs-set
+    (de:gol gcs-set p)
+  =.  last-val
+    (add delta last-val)
+  ?:  =(last-val i.target-hs)
+    %=  $
+        target-hs  t.target-hs
+        matches    [last-val matches]
+    ==
+  ?:  (lth last-val i.target-hs)
+    $
+  $(target-hs t.target-hs)
 --
