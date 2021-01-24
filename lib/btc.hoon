@@ -51,15 +51,17 @@
   ^-  bytc
   =/  h=bytc
     ?-  -.address
+        ::  TODO: make work for P2WSH (32 byte bech32)
         %bech32
       (to-hex:bech32 address)
       :: TODO: implement legacy
+      ::  https://bitcoinops.org/en/tools/calc-size/
+      ::  above link shows how to make P2PKH and P2SH, which I'd need here
         %base58
       ~|("base58 addresess not supported to script-pubkey yet" !!)
     ==
   %-  cat:byt
-  :~  1^(add 2 wid.h)
-      1^0x0
+  :~  1^0x0
       1^wid.h
       h
   ==
@@ -82,7 +84,10 @@
       |=  o=output:tx
       ^-  bytc
       %-  cat:byt
-      ~[(flip:byt 8^value.o) script-pubkey.o]
+      :~  (flip:byt 8^value.o)
+          1^wid.script-pubkey.o
+          script-pubkey.o
+      ==
     --
   ::
   ++  de
@@ -121,7 +126,8 @@
     ++  output
       |=  b=buffer
       ^-  output:tx
-      :-  (to-byts:buf (slag 8 b))
+      ::  slag 9 instead of 8 to skip the length byte
+      :-  (to-byts:buf (slag 9 b))
       =<  dat
       (flip:byt (to-byts:buf (scag 8 b)))
     ::

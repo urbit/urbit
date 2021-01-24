@@ -61,7 +61,8 @@
     (roll (turn txos.t |=(=txo value.txo)) add)
   ::
   ++  tx-data
-    |^  ^-  data:tx:btc
+    |^
+    ^-  data:tx:btc
     :*  (turn txis.t txi-data)
         (turn txos.t txo-data)
         0  1  `1
@@ -74,7 +75,8 @@
       ==
     ++  txo-data
       |=  =txo
-      [(script-pubkey:btc address.txo) value.txo]
+      :*  (script-pubkey:btc address.txo)
+          value.txo
     --
   ::
   ++  fee
