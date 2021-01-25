@@ -70,9 +70,12 @@
       resource-indices=(map md-resource resource)
   ==
 ::
++$  previews
+  (map resource group-preview)
+::
 +$  base-state-2
   $:  =associations
-      ~
+      =previews
   ==
 ::
 +$  state-0   [%0 base-state-0]
@@ -132,7 +135,11 @@
           %import
         (poke-import:mc q.vase)
       ::
-        %noun  ~&  +.state  `state
+          %noun  
+        ?+  q.vase  !!
+          %print  ~&(+.state `state)
+          %clear  `state(previews ~)
+        ==
       ==
     [cards this]
   ::
@@ -187,7 +194,10 @@
       =/  app=term        i.t.t.path
       =/  rid=resource    (de-path:resource t.t.t.path)
       ``noun+!>((~(get by resource-indices) [app rid]))
-      
+    ::
+        [%x %preview @ *]
+      =/  rid=resource  (de-path:resource t.t.path)
+      ``noun+!>((~(get by previews) rid))
     ::
         [%x %export ~]
       ``noun+!>(-.state)
@@ -313,6 +323,7 @@
       %add     (handle-add +.upd)
       %remove  (handle-remove +.upd)
       %initial-group  (handle-initial-group +.upd)
+      %preview        (handle-preview +.upd)
   ==
 ::
 ++  poke-import
@@ -358,6 +369,8 @@
         [%updated-metadata group md-resource metadata metadata]
       [%add group md-resource metadata]
   %=  state
+    previews  (~(del by previews) group)
+  ::
       associations
     (~(put by associations) md-resource [group metadata])
   ::
@@ -406,6 +419,10 @@
   =^  new-cards  state
     (handle-add group [md-resource metadata]:i)
   $(cards (weld cards new-cards), assocs t)
+::
+++  handle-preview
+  |=  prev=group-preview
+  `state(previews (~(put by previews) [group .]:prev))
 ::
 ++  metadata-for-app
   |=  =app-name
