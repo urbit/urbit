@@ -13460,7 +13460,6 @@
   ::
   ::  XX audited
   ++  caching-play
-    =.  vet  |
     |=  gen=hoon
     ^-  [type _grub]
     =/  cached  (~(get by pay.grub) [sut gen])
@@ -13469,6 +13468,7 @@
     =;  [played=type =_grub]
       :_  grub(pay (~(put by pay.grub) [sut gen] played))
       played
+    =.  vet  |
     ?-    gen
         [^ *]
       =^  lef  grub  $(gen p.gen)
@@ -13853,14 +13853,6 @@
         ?:  =(val -.rig)
           sut
         val
-        ::
-        :: =+  repo
-        :: =-  ?:(=(- +<) sut -)
-        :: dext(sut -, gil (~(put in gil) sut ref))
-        ::
-        :: =^  val  grub  dext(sut rig, gil (~(put in gil) sut ref))
-        :: ?:  =(
-        :: =-  ?:(=(- +<) sut -)
       ==
     ::                                                  ::
     ++  done                                            ::  complete assembly
@@ -14199,9 +14191,10 @@
   ++  caching-take
     |=  [vit=vein duz=$-(type [type _grub])]
     ^-  [(pair axis type) _grub]
+    =/  tiv  (tend vit)
     =;  [=type =_grub]
       :_  grub
-      [(tend vit) type]
+      [tiv type]
     =.  vit  (flop vit)
     |-  ^-  [type _grub]
     ?~  vit  (duz sut)
