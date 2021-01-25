@@ -38,13 +38,39 @@
   (sha256 (sha256 byts))
 ::
 ++  hash-160
-  |=  pubkey=@ux
+  |=  val=byts
   ^-  hash160
   =,  ripemd:crypto
   %-  hash160
   :-  20
   %-  ripemd-160
-  %-  sha256  [(met 3 pubkey) pubkey]
+  (sha256 val)
+::
+++  base58check
+  |%
+  ++  checksum  dsha256
+  ++  encode
+    |=  body=byts
+    ^-  tape
+    =>  :-  .
+        %-  cat:byt
+        :~  body
+            (take:byt 4 (checksum body))
+        ==
+    (en-base58:mimes:html dat)
+  ::
+  ++  decode
+    |=  b=tape
+    ^-  byts
+    ~|  "Invalid base58check input: {<b>}"
+    =/  h=@ux
+      (de-base58:mimes:html b)
+    =/  len=@  (met 3 h)
+    =/  body=byts  (take (sub len 4) len^h)
+    =/  check=byts  (drop:byt (sub len 4) len^h)
+    ?>  =(check (take:byt 4 (checksum body)))
+    body
+  --
 ::
 ++  script-pubkey
   |=  =address
@@ -236,7 +262,7 @@
       :~  (flip:byt 8^value.utxo.i)
           1^0x16
           2^0x14
-          (hash-160 dat.pubkey.hdkey.i)
+          (hash-160 pubkey.hdkey.i)
       ==
     ::
     ++  hdkey
@@ -426,6 +452,16 @@
     ?:  (gth n wid.b)
       [n dat.b]
     [n (rsh [3 (sub wid.b n)] dat.b)]
+  ::  +drop: drop n bytes from the front of byts
+  ::  returns 0^0x0 if n >= wid.byts
+  ::
+  ++  drop
+    |=  [n=@ b=byts]
+    ^-  byts
+    ?:  (gte n wid.b)
+      0^0x0
+    =+  n-take=(sub wid.b n)
+    [n-take (end [3 n-take] dat.b)]
 ::  Converts a list of bits to a list of n-bit numbers 
 ::  input-bits should be big-endian
 ::
@@ -597,9 +633,9 @@
   ::  pubkey is the 33 byte ECC compressed public key
   ::
   ++  encode-pubkey
-    |=  [=network pubkey=@ux]
+    |=  [=network pubkey=byts]
     ^-  (unit bech32-a)
-    ?.  =(33 (met 3 pubkey))
+    ?.  =(33 wid.pubkey)
       ~|('pubkey must be a 33 byte ECC compressed public key' !!)
     =/  prefix  (~(get by prefixes) network)
     ?~  prefix  ~
