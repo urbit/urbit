@@ -48,4 +48,6 @@
   =/  maybe-time  (peek-update-log:gra resource)
   ?~  maybe-time  `/
   `/(scot %da u.maybe-time)
+::
+++  take-update  take-update:dep
 --

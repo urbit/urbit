@@ -76,6 +76,10 @@
     %-  (slog tank tang)
     [~ pull-hook]
   ::
+  ++  take-update
+    |=  [=resource =vase]
+    `pull-hook
+  ::
   ++  on-pull-kick
     |=  =resource
     *(unit path)
@@ -106,6 +110,12 @@
   ++  on-pull-kick
     |~  resource
     *(unit path)
+  ::  +take-update: process store update
+  ::
+  ::    Perform actions before the store receives the update
+  ++  take-update
+    |~  [resource vase]
+    *[(list card) _^|(..on-init)]
   ::
   ::  from agent:gall
   ++  on-init
@@ -292,8 +302,10 @@
           =^  cards  pull-hook
             (on-agent:og wire sign)
           [cards this]
+        =^  cards  pull-hook
+          (take-update:og rid q.cage.sign)
         :_  this
-        ~[(update-store:hc rid q.cage.sign)]
+        (snoc cards (update-store:hc rid q.cage.sign))
       ==
       ++  on-leave
         |=  =path
