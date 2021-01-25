@@ -40,7 +40,8 @@ const useLocalState = create<LocalState>(persist((set, get) => ({
     }
   })),
   set: fn => set(produce(fn))
-}), {
+  }), {
+  blacklist: ['suspendedFocus', 'toggleOmnibox'],
   name: 'localReducer'
 }));
 
