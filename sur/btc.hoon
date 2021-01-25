@@ -4,7 +4,7 @@
 +$  network  ?(%main %testnet)
 +$  xpub  @ta
 +$  address  ?(base58-a bech32-a)
-+$  base58-a  $%([%base58 @uc])
++$  base58-a  $%([%base58 cord])
 +$  bech32-a  $%([%bech32 cord])
 +$  fprint  [%4 @ux]
 +$  bipt  $?(%44 %49 %84)
