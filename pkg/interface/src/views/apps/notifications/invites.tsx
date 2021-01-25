@@ -34,9 +34,6 @@ export function Invites(props: InvitesProps) {
       await waiter((p) => resourcePath in p.associations?.contacts);
       await api.invite.accept(app, uid);
       history.push(`/~landscape${resourcePath}`);
-    } else if (app === "chat") {
-      await api.invite.accept(app, uid);
-      history.push(`/~landscape/home/resource/chat${resourcePath.slice(5)}`);
     } else if (app === "graph") {
       await api.invite.accept(app, uid);
       history.push(`/~graph/join${resourcePath}`);

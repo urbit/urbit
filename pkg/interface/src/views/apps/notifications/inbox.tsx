@@ -1,7 +1,7 @@
-import React, { useEffect, useCallback, useRef } from "react";
+import React, { useEffect, useCallback, useRef, useState } from "react";
 import f from "lodash/fp";
 import _ from "lodash";
-import { Icon, Col, Row, Box, Text, Anchor, Rule } from "@tlon/indigo-react";
+import { Icon, Col, Row, Box, Text, Anchor, Rule, Center } from "@tlon/indigo-react";
 import moment from "moment";
 import { Notifications, Rolodex, Timebox, IndexedNotification, Groups, GroupNotificationsConfig, NotificationGraphConfig } from "~/types";
 import { MOMENT_CALENDAR_DATE, daToUnix, resourceAsPath } from "~/logic/lib/util";
@@ -95,7 +95,11 @@ export default function Inbox(props: {
 
   const scrollRef = useRef(null);
 
-  useLazyScroll(scrollRef, 0.2, () => api.hark.getMore());
+  const loadMore = useCallback(async () => {
+    return api.hark.getMore();
+  }, [api]);
+
+  const loadedAll = useLazyScroll(scrollRef, 0.2, loadMore);
 
 
   return (
@@ -118,6 +122,11 @@ export default function Inbox(props: {
           />
         );
       })}
+      {loadedAll && (
+        <Center mt="2" borderTop={notifications.length !== 0 ? 1 : 0} borderTopColor="washedGray" width="100%" height="96px">
+          <Text gray fontSize="1">No more notifications</Text>
+        </Center>
+      )}
     </Col>
   );
 }
