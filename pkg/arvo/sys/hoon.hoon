@@ -14225,7 +14225,8 @@
     |-  ^-  [type _grub]
     ?:  =(1 u.i.vit)
       ^$(vit t.vit)
-    =+  [now lat]=(cap u.i.vit)^(mas u.i.vit)
+    =/  now  (cap u.i.vit)
+    =/  lat  (mas u.i.vit)
     ?-  sut
         %noun
       $(sut [%cell %noun %noun])
