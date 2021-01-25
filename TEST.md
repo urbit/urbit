@@ -4,6 +4,7 @@
 ```
 |commit %home
 =test -build-file %/tests/btc/hoon
+run:test
 ```
 
 ## BIP158
