@@ -264,7 +264,7 @@
     background-color: #333;
   }
   .publish .cm-s-tlon.CodeMirror {
-    background: #333;
+    background: unset;
     color: #fff;
   }
 

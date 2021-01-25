@@ -167,7 +167,7 @@ export default function Inbox(props: {
   return (
     <Col position="relative" height="100%" overflowY="auto" onScroll={onScroll} >
       {modal}
-      <Col zIndex={4} gapY={2} bg="white" top="0px" position="sticky">
+      <Col zIndex={4} gapY={2} bg="white" top="0px" position="sticky" flexShrink={0}>
         {inviteItems(invites, api)}
       </Col>
       {[...notificationsByDay.keys()].map((day, index) => {

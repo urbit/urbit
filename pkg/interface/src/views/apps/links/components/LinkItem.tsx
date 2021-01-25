@@ -85,7 +85,7 @@ export const LinkItem = (props: LinkItemProps) => {
   }, [onMeasure]);
 
   return (
-    <Box mx="auto" maxWidth="768px" ref={ref} width="100%" {...rest}>
+    <Box mx="auto" px={3} maxWidth="768px" ref={ref} width="100%" {...rest}>
       <Box
         lineHeight="tall"
         display='flex'

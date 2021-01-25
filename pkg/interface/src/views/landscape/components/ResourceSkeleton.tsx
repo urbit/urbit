@@ -72,6 +72,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps) {
             mr={3}
             my="1"
             display={["block", "none"]}
+            flexShrink={0}
           >
             <Link to={`/~landscape${workspace}`}> {"<- Back"}</Link>
           </Box>
@@ -85,8 +86,8 @@ export function ResourceSkeleton(props: ResourceSkeletonProps) {
 
         {atRoot && (
           <>
-            <Box px={1} mr={2}>
-              <Text fontSize='2' fontWeight='700' display="inline-block" verticalAlign="middle" textOverflow="ellipsis" overflow="hidden" whiteSpace="pre">
+            <Box px={1} mr={2} minWidth={0} display="flex">
+              <Text fontSize='2' fontWeight='700' display="inline-block" verticalAlign="middle" textOverflow="ellipsis" overflow="hidden" whiteSpace="pre" minWidth={0}>
                 {title}
               </Text>
             </Box>
