@@ -90,6 +90,8 @@ class OverlaySigil extends PureComponent<OverlaySigilProps, OverlaySigilState> {
       api,
       sigilClass,
       hideAvatars,
+      pr = 0,
+      pl = 0,
       ...rest
     } = this.props;
 
@@ -113,6 +115,8 @@ class OverlaySigil extends PureComponent<OverlaySigilProps, OverlaySigilState> {
         onClick={this.profileShow}
          ref={this.containerRef}
          className={className}
+         pr={pr}
+         pl={pl}
       >
         {state.clicked && (
           <ProfileOverlay
