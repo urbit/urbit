@@ -48,7 +48,7 @@
       txos
       ~
   ==
-::  txb: transaction builder helpers
+::  txb: transaction builder helpers 
 ::
 ++  txb
   |_  t=txbu
@@ -119,7 +119,7 @@
   |_  [w=walt =chyg]
   ++  pubkey
     |=  =idx:btc
-    ^-  bytc:btc
+    ^-  hexb:btc
     =/  pk=@ux
       %-  compress-point:ecc
       pub:(derive-public:(derive-public:wilt.w (@ chyg)) idx)

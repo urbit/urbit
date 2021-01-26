@@ -3,10 +3,10 @@
 =<  [sur .]
 =,  sur
 |%
-++  to-hex
+++  to-hexb
   |=  h=@t
-  ^-  @ux
-  ?:  =('' h)  0x0
+  ^-  hexb
+  ?:  =('' h)  1^0x0
   ::  Add leading 00
   ::
   =+  (lsh [3 2] h)
@@ -15,6 +15,7 @@
   =+  (rsh [3 2] -)
   ::  Parse hex to atom
   ::
+  :-  (div (lent (trip h)) 2)
   `@ux`(rash - hex)
 ++  xpub-type
   |=  =xpub
@@ -28,8 +29,7 @@
 ::
 ++  sha256
   |=  =byts
-  ^-  hash256
-  %-  hash256
+  ^-  hexb
   %-  flip:byt
   [32 (shay (flip:byt byts))]
 ::
@@ -39,9 +39,8 @@
 ::
 ++  hash-160
   |=  val=byts
-  ^-  hash160
+  ^-  hexb
   =,  ripemd:crypto
-  %-  hash160
   :-  20
   %-  ripemd-160
   (sha256 val)
@@ -50,7 +49,7 @@
   |%
   ++  checksum  dsha256
   ++  encode
-    |=  body=byts
+    |=  body=hexb
     ^-  tape
     =>  :-  .
         %-  cat:byt
@@ -61,35 +60,39 @@
   ::
   ++  decode
     |=  b=tape
-    ^-  byts
+    ^-  hexb
     ~|  "Invalid base58check input: {<b>}"
     =/  h=@ux
       (de-base58:mimes:html b)
-    =/  len=@  (met 3 h)
-    =/  body=byts  (take (sub len 4) len^h)
-    =/  check=byts  (drop:byt (sub len 4) len^h)
+    ::  handle leading 0 ('1' in base68)
+    =/  len=@
+      ?:  =('1' (snag 0 b))
+        (add 1 (met 3 h))
+      (met 3 h)
+    =/  body=hexb  (take (sub len 4) len^h)
+    =/  check=hexb  (drop:byt (sub len 4) len^h)
     ?>  =(check (take:byt 4 (checksum body)))
     body
   --
 ::
 ++  script-pubkey
   |=  =address
-  ^-  bytc
-  =/  h=bytc
-    ?-  -.address
-        ::  TODO: make work for P2WSH (32 byte bech32)
-        %bech32
-      (to-hex:bech32 address)
-      :: TODO: implement legacy
-      ::  https://bitcoinops.org/en/tools/calc-size/
-      ::  above link shows how to make P2PKH and P2SH, which I'd need here
-        %base58
-      ~|("base58 addresess not supported to script-pubkey yet" !!)
+  ^-  hexb
+  ?-  -.address
+    ::  TODO: make work for P2WSH (32 byte bech32)
+      %bech32
+    =+  h=(to-hex:bech32 address)
+    %-  cat:byt
+    :~  1^0x0
+        1^wid.h
+        h
     ==
-  %-  cat:byt
-  :~  1^0x0
-      1^wid.h
-      h
+    ::  TODO switch on 1/3 below
+    ::  https://bitcoinops.org/en/tools/calc-size/
+    ::  above link shows how to make P2PKH and P2SH, which I'd need here
+      %base58
+    ~|("base58 not supported" !!)
+::      (decode:base58check (trip +.address))
   ==
 ::  +txu: tx utility functions
 ++  txu
@@ -98,7 +101,7 @@
     |%
     ++  input
       |=  i=input:tx
-      ^-  bytc
+      ^-  hexb
       %-  cat:byt
       :~  (flip:byt txid.i)
           (flip:byt 4^pos.i)
@@ -108,7 +111,7 @@
     ::
     ++  output
       |=  o=output:tx
-      ^-  bytc
+      ^-  hexb
       %-  cat:byt
       :~  (flip:byt 8^value.o)
           1^wid.script-pubkey.o
@@ -139,9 +142,8 @@
     ++  input
       |=  b=buffer
       ^-  input:tx
-      :*  %-  txid
-            %-  flip:byt
-            (to-byts:buf (scag 32 b))
+      :*  (flip:byt (to-byts:buf (scag 32 b)))
+
           =<(dat (flip:byt (to-byts:buf (swag [32 4] b))))
           (flip:byt (to-byts:buf (swag [37 4] b)))
           ~
@@ -190,7 +192,7 @@
   ::
   ++  encode
     |=  =data:tx
-    ^-  bytc
+    ^-  hexb
     %-  cat:byt
     %-  zing
     :~  :~  (flip:byt 4^nversion.data)
@@ -203,14 +205,13 @@
     ==
   ++  get-id
     |=  =data:tx
-    ^-  txid
-    %-  txid
+    ^-  hexb
     %-  flip:byt
     %-  dsha256
     (encode data)
   ::
   ++  decode
-    |=  b=bytc
+    |=  b=hexb
     ^-  data:tx
     =/  bu=buffer  (from-byts:buf b)
     =^  nversion  bu
@@ -232,7 +233,7 @@
   ++  en
     |%
     ++  globals
-      |=  =rawtx
+      |=  rawtx=hexb
       ^-  map:psbt
       :~  [[1 0x0] rawtx]
       ==
@@ -287,7 +288,7 @@
     ::
     ++  keyval-byts
       |=  kv=keyval:psbt
-      ^-  bytc
+      ^-  hexb
       %-  cat:byt
       :~  1^wid.key.kv
           key.kv
@@ -297,14 +298,14 @@
     ::
     ++  map-byts
       |=  m=map:psbt
-      ^-  (unit bytc)
+      ^-  (unit hexb)
       ?~  m  ~
       :-  ~
       %-  cat:byt
       (turn m keyval-byts)
     --
     ++  base64
-      |=  b=bytc
+      |=  b=hexb
       ^-  base64:psbt
       %-  en:base64:mimes:html
       (flip:byt b)
@@ -313,13 +314,14 @@
   ::
   ++  encode
     |=  $:  only-witness=?
-            =rawtx  =txid
+            rawtx=hexb
+            txid=hexb
             inputs=(list in:psbt)
             outputs=(list out:psbt)
         ==
     ^-  base64:psbt
-    =/  sep=(unit bytc)  `1^0x0
-    =/  final=(list (unit bytc))
+    =/  sep=(unit hexb)  `1^0x0
+    =/  final=(list (unit hexb))
       %+  join  sep
       %+  turn
         %-  zing
@@ -351,12 +353,11 @@
   ::
   ++  get-txid
     |=  psbt-base64=cord
-    ^-  txid
-    =/  tx=bytc
+    ^-  hexb
+    =/  tx=hexb
       %-  raw-tx
       %+  slag  5
       (to-buffer psbt-base64)
-    %-  txid
     %-  flip:byt
     %-  sha256
     (sha256 tx)
@@ -366,7 +367,7 @@
   ::
   ++  raw-tx
     |=  b=buffer
-    |-  ^-  bytc
+    |-  ^-  hexb
     ?~  b  !!
     ?:  =(0x0 i.b)  !!
     =+  nk=(next-keyval b)
@@ -414,7 +415,8 @@
   ::  0xff11 with wid=8 becomes ~[0x11 0xff 0x0 0x0 0x0 0x0 0x0 0x0]
   ::
   ++  from-byts-le
-    |=  =byts  ^-  buffer
+    |=  =byts
+    ^-  buffer
     =/  b=(list @ux)  (rip 3 dat.byts)
     =/  pad=@  (sub wid.byts (lent b))
     (weld b (reap pad 0x0))
@@ -618,7 +620,7 @@
   ::
   ++  to-hex
     |=  b=bech32-a
-    ^-  bytc
+    ^-  hexb
     =/  d=(unit raw-decoded)  (decode-raw b)
     ?~  d  ~|("Invalid bech32 address" !!)
     =/  bs=(list @)
@@ -628,7 +630,6 @@
       ~|("Invalid bech32 address: not 8bit" !!)
     ?.  ?|(?=(%20 byt-len) ?=(%32 byt-len))
       ~|("Invalid bech32 address: must be 20 (P2WPKH) or 32 (P2WSH) bytes" !!)
-    %-  hash
     [byt-len (to-atom:bit bs)]
   ::  pubkey is the 33 byte ECC compressed public key
   ::
