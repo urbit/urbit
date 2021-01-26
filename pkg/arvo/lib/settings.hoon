@@ -57,7 +57,7 @@
     |=  [buc=key =key]
     ^-  json
     %-  pairs
-    :~  bucket-key+s+key
+    :~  bucket-key+s+buc
         entry-key+s+key
     ==
   ::

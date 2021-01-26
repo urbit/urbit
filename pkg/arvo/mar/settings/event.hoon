@@ -4,7 +4,9 @@
 ++  grow
   |%
   ++  noun  evt
-  ++  json  (event:enjs evt)
+  ++  json
+    %+  frond:enjs:format  %settings-event
+    (event:enjs evt)
   --
 ++  grab
   |%
