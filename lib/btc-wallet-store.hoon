@@ -75,8 +75,8 @@
       ==
     ++  txo-data
       |=  =txo
-      :*  (script-pubkey:btc address.txo)
-          value.txo
+      :-  (script-pubkey:btc address.txo)
+      value.txo
     --
   ::
   ++  fee
@@ -134,8 +134,8 @@
     |=  =idx:btc
     ^-  address:btc
     ?:  ?=(%84 bipt.w)
-      (need (encode-pubkey:bech32:btc %main dat:(pubkey idx)))
-    ~|("legacy addresses not supported yet " !!)
+      (need (encode-pubkey:bech32:btc %main (pubkey idx)))
+    ~|("base58 addresses not supported yet " !!)
   ::  +nixt-address: used to get change addresses
   ::   - gets the current next available address
   ::   - doesn't bump nixt-address if it's unused

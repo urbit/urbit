@@ -108,8 +108,8 @@
         %get-block-count
       [id.res (ni:dejs:format res.res)]
       ::
-        %get-block-and-fee
-      [id.res (block-and-fee res.res)]
+        %get-block-info
+      [id.res (block-info res.res)]
     ==
     ++  address-info
       %-  ot:dejs:format
@@ -126,7 +126,7 @@
           [%value ni:dejs:format]
           [%recvd (cu:dejs:format from-epoch ni:dejs:format)]
       ==
-    ++  tx-vals 
+    ++  tx-vals
       %-  ot:dejs:format
       :~  [%included bo:dejs:format]
           [%txid (cu:dejs:format to-hash256 so:dejs:format)]
@@ -153,10 +153,12 @@
           [%broadcast bo:dejs:format]
           [%included bo:dejs:format]
       ==
-    ++  block-and-fee
+    ++  block-info
       %-  ot:dejs:format
       :~  [%block ni:dejs:format]
           [%fee ni:dejs:format]
+          [%blockhash (cu:dejs:format to-bytc so:dejs:format)]
+          [%blockfilter (cu:dejs:format to-bytc so:dejs:format)]
       ==
     --
   --
@@ -189,9 +191,9 @@
     %-  get-request
     (mk-url '/getblockcount' '')
     ::
-      %get-block-and-fee
+      %get-block-info
     %-  get-request
-    (mk-url '/getblockandfee' '')
+    (mk-url '/getblockinfo' '')
   ==
   ++  mk-url
     |=  [base=@t params=@t]

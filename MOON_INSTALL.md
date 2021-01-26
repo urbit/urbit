@@ -63,13 +63,13 @@ Install files:
 :btc-wallet-hook|action [%set-provider moon1]
 =xpub2 'zpub6r8dKyWJ31XF6n69KKeEwLjVC5ruqAbiJ4QCqLsrV36Mvx9WEjUaiPNPGFLHNCCqgCdy6iZC8ZgHsm6a1AUTVBMVbKGemNcWFcwBGSjJKbD'
 =fprint [%4 0xbeef.dead]
-:btc-wallet-store|action [%add-wallet xpub2 fprint ~ [~ 8] [~ 6]]
+:btc-wallet-store|action [%add-wallet xpub2 fprint ~ [~ 8] [~ 1]]
 ```
 
 ### Request Address
 Moon2:
 ```
-:btc-wallet-hook|action [%req-pay-address payee=moon1 value=2.000 [~ 30]]
+:btc-wallet-hook|action [%req-pay-address payee=~sarsev-dapwel-timluc-miptev value=10.000 [~ 37]]
 :btc-wallet-hook +dbug [%state 'poym']
 ```
 
