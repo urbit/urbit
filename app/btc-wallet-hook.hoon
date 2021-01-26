@@ -31,7 +31,7 @@
 ::
 +$  state-0
   $:  %0
-      prov=(unit [host=ship connected=?])
+      prov=(unit provider)
       =reqs
       =btc-state
       def-wallet=(unit xpub)
@@ -310,27 +310,44 @@
 ++  handle-provider-status
   |=  s=status:bp
   ^-  (quip card _state)
+  |^
   ?~  prov  `state
   ?.  =(host.u.prov src.bowl)  `state
   ?-  -.s
+      %new-block
+    ~&  >>  "%new-block"
+    (connected u.prov block.s fee.s `blockhash.s `blockfilter.s)
+    ::
       %connected
-    :_  %=  state
-            prov  `[host.u.prov %.y]
-            btc-state  [block.s fee.s now.bowl]
-        ==
-    ?:  ?!(connected.u.prov)
-      %-  zing
-      :~  (retry-reqs block.s)
-          retry-poym
-          retry-pend-piym
-      ==
-    ?.  (lth block.btc-state block.s)
-      retry-pend-piym
-    (weld retry-pend-piym (retry-reqs block.s))
+    ~&  >>  "%connected"
+    (connected u.prov block.s fee.s ~ ~)
     ::
       %disconnected
     `state(prov `[host.u.prov %.n])
   ==
+  ::
+  ++  connected
+    |=  $:  p=provider
+            block=@ud
+            fee=sats
+            blockhash=(unit bytc)
+            blockfilter=(unit bytc)
+        ==
+    ^-  (quip card _state)
+    :_  %_  state
+            prov  `[host.p %.y]
+            btc-state  [block fee now.bowl]
+        ==
+    ?:  ?!(connected.p)
+      %-  zing
+      :~  (retry-reqs block)
+          retry-poym
+          retry-pend-piym
+      ==
+    ?.  (lth block.btc-state block)
+      retry-pend-piym
+    (weld retry-pend-piym (retry-reqs block))
+  --
 ::
 ++  handle-provider-update
   |=  upd=update:bp
