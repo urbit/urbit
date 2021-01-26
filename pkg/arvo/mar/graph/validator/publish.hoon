@@ -3,16 +3,16 @@
 ++  grow
   |%
   ++  noun  i
-  ++  graph-add-permissions
+  ++  graph-permissions-add
     |=  vip=vip-metadata:met
     ?+  index.p.i  !!
       [@ ~]            [%yes %yes %no]  :: new note
-      [@ %1 @ @ ~]     [%self %self %no]
+      [@ %1 @ ~]       [%self %self %no]
       [@ %2 @ ~]       [%yes %yes ?:(?=(%reader-comments vip) %yes %no)]
       [@ %2 @ @ ~]     [%self %self %self]
     ==
   ::
-  ++  graph-remove-permissions
+  ++  graph-permissions-remove
     |=  vip=vip-metadata:met
     ?+  index.p.i  !!
       [@ ~]            [%yes %self %self]

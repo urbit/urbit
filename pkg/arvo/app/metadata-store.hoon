@@ -354,8 +354,6 @@
   |=  [group=resource =md-resource =metadata]
   ^-  (quip card _state)
   :-  %+  send-diff  app-name.md-resource
-      ?:  (~(has by resource-indices) md-resource)
-        [%updated-metadata group md-resource metadata metadata]
       [%add group md-resource metadata]
   %=  state
       associations

@@ -64,11 +64,12 @@
     date-created  now.bowl
     creator       our.bowl
     module        module.action
+    preview       %.n
   ==
 =/  =metadata-action
   [%add group graph+rid.action metadata]
 ;<  ~  bind:m
-  (poke-our %metadata-store %metadata-action !>(metadata-action))
+  (poke-our %metadata-push-hook %metadata-update !>(metadata-action))
 ;<  ~  bind:m
   (poke-our %metadata-push-hook %push-hook-action !>([%add group]))
 ::

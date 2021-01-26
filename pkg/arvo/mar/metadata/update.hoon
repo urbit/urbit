@@ -6,7 +6,7 @@
   |%
   ++  noun  upd
   ++  resource
-    ?>  ?=(?(%add %remove %initial-group) -.upd)
+    ?>  ?=(?(%add %remove %initial-group %updated-metadata) -.upd)
     group.upd
   ++  json  (update-to-json upd)
   --

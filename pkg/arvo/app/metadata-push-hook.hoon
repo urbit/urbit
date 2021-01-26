@@ -76,13 +76,19 @@
 ++  should-proxy-update
   |=  =vase
   =+  !<(upd=metadata-update vase)
-  ?.  ?=(?(%add %remove %update) -.upd)
+  ?.  ?=(?(%add %remove) -.upd)
     %.n
   =/  role=(unit (unit role-tag))
     (role-for-ship:grp group.upd src.bowl)
+  =/  =metadata
+    (need (peek-metadata:met %contacts group.upd))
   ?~  role  %.n
-  ?~  u.role  %.n
-  ?=(?(%admin %moderator) u.u.role)
+  ?^  u.role  
+    ?=(?(%admin %moderator) u.u.role)
+  ?.  ?=(%add -.upd)  %.n
+  ?&  =(src.bowl entity.resource.resource.upd)
+      ?=(%member-metadata vip.metadata)
+  ==
 ::
 ++  take-update
   |=   =vase

@@ -80,7 +80,7 @@
       %add-graph          %.n
       %remove-graph       %.n
       %add-nodes          (is-allowed-add:hc resource.q.update nodes.q.update)
-      %remove-nodes       (is-allowed-remove:hc resource.q.update indices.q.update bowl)
+      %remove-nodes       (is-allowed-remove:hc resource.q.update indices.q.update)
       %add-signatures     %.n
       %remove-signatures  %.n
       %archive-graph      %.n
@@ -148,22 +148,34 @@
   .^  (unit mark)  
     (scry %gx %graph-store /graph-mark/(scot %p entity.resource)/[name.resource]/noun)
   ==
-
-++  add-mark
-  |=  [=resource:res =indexed-post:store vip=vip-metadata:met]
+::
+++  perm-mark-name
+  |=  perm=@t
+  ^-  @t
+  (cat 3 'graph-permissions-' perm)
+::
+++  perm-mark
+  |=  [=resource:res perm=@t vip=vip-metadata:met =indexed-post:store]
   ^-  permissions:store
   =-  (check vip)
   !<  check=$-(vip-metadata:met permissions:store)
   %.  !>(indexed-post)
-  =/  mark=(unit mark)
-    (get-mark:gra resource)
-  ?~  mark   |=(=vase !>([%no %no %no]))
-  .^(tube:clay (scry %cc %home /[u.mark]/graph-add-permissions))
+  =/  mark  (get-mark:gra resource)
+  ?~  mark  |=(=vase !>([%no %no %no]))
+  .^(tube:clay (scry %cc %home /[u.mark]/(perm-mark-name perm)))
+::
+++  add-mark
+  |=  [=resource:res vip=vip-metadata:met =indexed-post:store]
+  (perm-mark resource %add vip indexed-post)
+::
+++  remove-mark
+  |=  [=resource:res vip=vip-metadata:met =indexed-post:store]
+  (perm-mark resource %remove vip indexed-post)
 ::
 ++  get-permission
-  |=  [=permissions:store role=(unit role-tag) writers=(set ship)]
+  |=  [=permissions:store is-admin=? writers=(set ship)]
   ^-  permission-level:store
-  ?:  ?=(?([~ %admin] [~ %moderator]) role)
+  ?:  is-admin
     admin.permissions
   ?:  =(~ writers)
     writer.permissions
@@ -175,27 +187,41 @@
  |=  *
  %.y
 ::
-++  is-allowed-add
-  |=  [=resource:res nodes=(map index:store node:store)] 
-  ^-  ?
+++  get-roles-writers-variation
+  |=  =resource:res
+  ^-  (unit [is-admin=? writers=(set ship) vip=vip-metadata:met])
   =/  assoc=(unit association:met)
      (peek-association:met %graph resource)
-  ?~  assoc  %.n
+  ?~  assoc  ~
   =/  role=(unit (unit role-tag))
     (role-for-ship:grp group.u.assoc src.bowl)
   =/  writers=(set ship)
     (get-tagged-ships:grp group.u.assoc [%graph resource %writers])
-  ?~  role  %.n
+  ?~  role  ~
   =/  is-admin=?
     ?=(?([~ %admin] [~ %moderator]) u.role)
+  `[is-admin writers vip.metadata.u.assoc]
+::
+++  node-to-indexed-post
+  |=  =node:store
+  ^-  indexed-post:store
+  =*  index  index.post.node
+  [(snag (dec (lent index)) index) post.node]
+::
+++  is-allowed-add
+  |=  [=resource:res nodes=(map index:store node:store)] 
+  ^-  ?
+  %-  (bond |.(%.n))
+  %+  biff  (get-roles-writers-variation resource)
+  |=  [is-admin=? writers=(set ship) vip=vip-metadata:met]
+  %-  some  
   %+  levy  ~(tap by nodes)
   |=  [=index:store =node:store]
   =/  =permissions:store
-    %^  add-mark  resource 
-      [(snag (dec (lent index)) index) post.node]
-    vip.metadata.u.assoc
+    %^  add-mark  resource  vip
+    (node-to-indexed-post node)
   =/  =permission-level:store
-    (get-permission permissions u.role writers)
+    (get-permission permissions is-admin writers)
   ~&  permission-level
   ?-  permission-level
       %yes  %.y
@@ -206,32 +232,36 @@
         (scag (dec (lent index)) index)
       =/  parent-node=node:store
         (got-node:gra resource parent-index)
-      =(author.post.node src.bowl)
+      =(author.post.parent-node src.bowl)
   ==
 ::
 ++  is-allowed-remove
-  |=  [=resource:res indices=(set index:store) =bowl:gall]
+  |=  [=resource:res indices=(set index:store)]
   ^-  ?
-  =/  gra   ~(. graph bowl)
-  ?.  (is-allowed resource bowl %.n)
-    %.n
-  %+  levy
-    ~(tap in indices)
+  %-  (bond |.(%.n))
+  %+  biff  (get-roles-writers-variation)
+  |=  [is-admin=? writers=(set ship) vip=vip-metadata:met]
+  %-  some  
+  %+  levy  ~(tap by indices)
   |=  =index:store
-  ^-  ?
   =/  =node:store
     (got-node:gra resource index)
-  ?|  =(author.post.node src.bowl)
-      (is-allowed resource bowl %.y)
+  =/  =permissions:store
+    %^  remove-mark  resource  vip
+    (node-to-indexed-post node)
+  =/  =permission-level:store
+    (get-permission permissions is-admin writers)
+  ?-  permission-level
+    %yes   %.y
+    %no    %.n
+    %self  =(author.post.node src.bowl)
   ==
 ::
 ++  build-permissions
   |=  [=mark kind=?(%add %remove) mode=?(%sing %next)]
   ^-  card
   =/  =wire  /perms/[mark]/[kind]
-  =/  perm-mark=@t
-    (cat 3 %graph-permissions kind)
-  =/  =mood:clay  [%c da+now.bowl /[mark]/[perm-mark]]
+  =/  =mood:clay  [%c da+now.bowl /[mark]/(perm-mark-name kind)]
   =/  =rave:clay  ?:(?=(%sing mode) [mode mood] [mode mood])
   [%pass wire %arvo %c %warp our.bowl %home `rave]
 --
