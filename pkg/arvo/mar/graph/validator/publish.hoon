@@ -16,8 +16,8 @@
     |=  vip=vip-metadata:met
     ?+  index.p.i  !!
       [@ ~]            [%yes %self %self]
-      [@ %1 @ @ ~]     [%self %self %self]
-      [@ %2 @ ~]       [%yes %self ?:(?=(%reader-comments vip) %self %no)]
+      [@ %1 @ @ ~]     [%yes %self %self]
+      [@ %2 @ ~]       [%yes %self %self]
       [@ %2 @ @ ~]     [%yes %self %self]
     ==
   ::  +notification-kind
