@@ -37,8 +37,39 @@
 ++  on-load    on-load:def
 ++  on-poke   on-poke:def
 ++  on-agent  on-agent:def
-++  on-watch  on-watch:def
-++  on-leave  on-leave:def
+++  on-watch    
+  |=  =path
+  ^-  (quip card _this)
+  ?.  ?=([%preview @ @ @ ~] path)
+    (on-watch:def path)
+  =/  rid=resource
+    (de-path:resource t.path)
+  |^
+  ?>  =(entity.rid our.bowl)
+  ?>  (can-join:grp rid src.bowl)
+  =/  members
+    ~(wyt in (members:grp rid))
+  =/  =metadata
+    (need (peek-metadata:met %contacts rid))
+  :_  this
+  =;  =cage
+    :~  [%give %fact ~ cage]
+        [%give %kick ~ ~]
+    ==
+  :-  %metadata-update
+  !>  ^-  metadata-update
+  [%preview rid channels members channel-count metadata]
+  ::
+  ++  channels
+    %-  ~(gas by *associations)
+    %+  skim  ~(tap by (app-metadata-for-group:met rid %graph))
+    |=([=md-resource group=resource =metadata] preview.metadata)
+  ::   
+  ++  channel-count
+    ~(wyt by (app-metadata-for-group:met rid %graph))
+  --
+::
+++  on-leave    on-leave:def
 ++  on-peek   on-peek:def
 ++  on-arvo   on-arvo:def
 ++  on-fail   on-fail:def
@@ -66,27 +97,9 @@
     (scry-group:grp rid)
   =/  =associations
     (metadata-for-group:met rid)
-  ?>  =(entity.rid our.bowl)
   ?>  ?=(^ group)
+  ?>  (~(has in members.u.group) src.bowl)
   !>  ^-  metadata-update
-  ?:  (~(has in members.u.group) src.bowl)  
-    [%initial-group rid associations]
-  |^
-  ?>  (can-join:grp rid src.bowl)
-  [%preview rid channels members channel-count metadata]
-  ::
-  ++  members
-    ~(wyt in members.u.group)
-  ::
-  ++  channels
-    %-  ~(gas by *^associations)
-    %+  skim  ~(tap by (app-metadata-for-group:met rid %graph))
-    |=([=md-resource group=resource =^metadata] preview.metadata)
-  ::   
-  ++  channel-count
-    ~(wyt by (app-metadata-for-group:met rid %graph))
-  ::
-  ++  metadata
-    (need (peek-metadata:met %contacts rid))
-  --
+  [%initial-group rid associations]
+::
 --

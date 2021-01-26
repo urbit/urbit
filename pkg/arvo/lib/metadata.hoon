@@ -65,11 +65,4 @@
   ^-  (unit resource)
   %+  bind  (peek-association md-resource)
   |=(association group)
-::
-++  peek-preview
-  |=  rid=resource
-  .^  (unit group-preview)
-    %gx  (scot %p our.bowl)  %metadata-store  (scot %da now.bowl)
-    %preview  (snoc (en-path:resource rid) %noun)
-  ==
 --

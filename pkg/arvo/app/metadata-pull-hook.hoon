@@ -31,26 +31,11 @@
 =*  state  -
 =>  |_  =bowl:gall
     ++  def   ~(. (default-agent state %|) bowl)
-    ::
-    ++  poke-our
-      |=  [app=term =cage]
-      ^-  card
-      [%pass / %agent [our.bowl app] %poke cage]
-    ::
     ++  add-resource
       |=  rid=resource
-      %+  poke-our  dap.bowl 
+      ^-  card
+      =-  [%pass / %agent [our dap]:bowl %poke -]
       pull-hook-action+!>(`action:pull-hook`[%add [entity .]:rid])
-    ::
-    ++  remove-resource
-      |=  rid=resource
-      %+  poke-our  dap.bowl
-      pull-hook-action+!>(`action:pull-hook`[%remove rid])
-    ::
-    ++  poke-store
-      |=  upd=metadata-update
-      ^-  card 
-      (poke-our %metadata-store metadata-update+!>(upd))
     ::
     ++  watch-invites
       ^-  card
@@ -83,11 +68,11 @@
 ++  on-save  !>(state)
 ++  on-load  
   |=  =vase
-  ^-  (quip card _this)
+  ?:  =(1 1)  `this
   =+  !<(old=state-zero vase)
-  :_  this
+  :_  this(state old)
   ?:  (~(has by wex.bowl) [/invites our.bowl %invite-store])  ~
-  ~[watch-invites:hc]
+  watch-invites^~
 ::
 ++  on-poke  on-poke:def
 ++  on-agent  
@@ -105,14 +90,15 @@
     (on-watch:def path)
   =/  rid=resource
     (de-path:resource t.path)
-  =/  prev=(unit group-preview)  
-    (peek-preview:met rid)
+  =/  prev=(unit group-preview)  ~
   :_  this
   ?^  prev
-    :~  [%give %fact ~ metadata-update+!>(u.prev)]
+    :~  [%give %fact ~ metadata-update+!>([%preview u.prev])]
         [%give %kick ~ ~]
     ==
-  ~[(add-resource:hc rid)]
+  =/  =dock
+    [entity.rid %metadata-push-hook]
+  [%pass path %agent dock %watch path]~
 ::
 ++  on-leave  on-leave:def
 ++  on-peek   on-peek:def
@@ -120,30 +106,25 @@
 ::
 ++  on-fail   on-fail:def
 ++  on-pull-nack
-  |=   [rid=resource =tang]
+  |=   [=resource =tang]
   ^-  (quip card _this)
   =/  =associations
-    (metadata-for-group:met rid)
+    (metadata-for-group:met resource)
   :_  this
   %+  turn  ~(tap by associations)
   |=  [=md-resource =association]
-  (poke-store:hc [%remove rid md-resource])
+  =-  [%pass / %agent [our.bowl %metadata-store] %poke -]
+  :-  %metadata-update
+  !>  ^-  metadata-update
+  [%remove resource md-resource]
 ::
 ++  on-pull-kick
   |=  rid=resource
   ^-  (unit path)
+  ?.  (is-member:grp our.bowl rid)  ~
   `/
 ::
 ++  take-update
   |=  [rid=resource =vase]
-  ^-  (quip card _this)
-  =+  !<(upd=metadata-update vase)
-  :_  this
-  ?.  ?=(%preview -.upd)  ~
-  =/  paths=(list path)
-    ~[preview+(en-path:resource rid)]
-  :~  [%give %fact paths metadata-update+vase]
-      [%give %kick paths ~]
-      (remove-resource:hc rid)
-  ==
+  `this
 --
