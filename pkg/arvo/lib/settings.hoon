@@ -3,6 +3,21 @@
 ++  enjs
   =,  enjs:format
   |%
+  ++  data
+    |=  dat=^data
+    ^-  json
+    %+  frond  -.dat
+    ?-  -.dat
+      %all     (settings +.dat)
+      %bucket  (bucket +.dat)
+      %entry   (value +.dat)
+    ==
+  ::
+  ++  settings
+    |=  s=^settings
+    ^-  json
+    [%o (~(run by s) bucket)]
+  ::
   ++  event
     |=  evt=^event
     ^-  json

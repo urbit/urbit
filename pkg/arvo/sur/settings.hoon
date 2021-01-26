@@ -13,4 +13,9 @@
       [%put-entry buc=key =key =val]
       [%del-entry buc=key =key]
   ==
++$  data
+  $%  [%all =settings]
+      [%bucket =bucket]
+      [%entry =val]
+  ==
 --
