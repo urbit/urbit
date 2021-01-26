@@ -75,21 +75,21 @@ const StatusBar = (props) => {
                 p={1}
                 color='black'
                 fontSize={0}
-                onClick={() => props.history.push('/~profile/' + window.ship)}>
+                onClick={() => props.history.push('/~profile/~' + window.ship)}>
                 View Profile
               </Row>
               <Row
                 p={1}
                 color='black'
                 fontSize={0}
-                onClick={() => props.history.push('/~profile/' + window.ship)}>
+                onClick={() => props.history.push('/~profile/~' + window.ship)}>
                 Set Status
               </Row>
               <Row
                 p={1}
                 color='black'
                 fontSize={0}
-                onClick={() => props.history.push('/~profile/' + window.ship)}>
+                onClick={() => props.history.push('/~profile/~' + window.ship)}>
                 System Settings
               </Row>
             </Col>
