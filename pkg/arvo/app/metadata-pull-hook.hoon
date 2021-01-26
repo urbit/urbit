@@ -17,7 +17,7 @@
       %metadata-push-hook
   ==
 +$  state-zero
-  [%0 ~]
+  [%0 previews=(map resource group-preview)]
 ::
 --
 ::
@@ -31,11 +31,14 @@
 =*  state  -
 =>  |_  =bowl:gall
     ++  def   ~(. (default-agent state %|) bowl)
-    ++  add-resource
+    ++  watch-preview
       |=  rid=resource
       ^-  card
-      =-  [%pass / %agent [our dap]:bowl %poke -]
-      pull-hook-action+!>(`action:pull-hook`[%add [entity .]:rid])
+      =/  =path
+        preview+(en-path:resource rid)
+      =/  =dock
+        [entity.rid %metadata-push-hook]
+      [%pass path %agent dock %watch path]
     ::
     ++  watch-invites
       ^-  card
@@ -51,9 +54,33 @@
         :_  state
         ?.  ?=(%invite -.update)  ~
         ?.  =(%contacts term.update)  ~
-        (add-resource resource.invite.update)^~
+        (watch-preview resource.invite.update)^~
       ::
         %kick  [watch-invites^~ state]
+      ==
+    ::
+    ++  take-preview
+      |=  [=wire =sign:agent:gall]
+      ^-  (quip card _state)
+      ?>  ?=([%preview @ *] wire)
+      =/  rid=resource
+        (de-path:resource t.wire)
+      ?+  -.sign  (on-agent:def wire sign)
+          %fact  
+        ?>  =(%metadata-update p.cage.sign)
+        =+  !<(upd=metadata-update q.cage.sign)
+        ?>  ?=(%preview -.upd)
+        :_  state(previews (~(put by previews) rid +.upd))
+        :~  [%give %fact ~[wire] cage.sign]
+            [%give %kick ~[wire] ~]
+        ==
+      ::
+          %watch-ack
+        :_  state
+        ?~  p.sign  ~
+        :~  [%give %fact ~[wire] tang+!>(u.p.sign)]
+            [%give %kick ~[wire] ~]
+        ==
       ==
     --
 |_  =bowl:gall
@@ -61,7 +88,6 @@
     def         ~(. (default-agent this %|) bowl)
     dep         ~(. (default:pull-hook this config) bowl)
     met         ~(. mdl bowl)
-    grp         ~(. grpl bowl)
     hc          ~(. +> bowl)
 ::
 ++  on-init  on-init:def
@@ -80,6 +106,7 @@
   =^  cards  state
     ?+  wire  (on-agent:def:hc wire sign)
       [%invites ~]        (take-invites:hc sign)
+      [%preview @ @ @ ~]  (take-preview:hc wire sign)
     ==
   [cards this]
 ::
@@ -90,7 +117,8 @@
     (on-watch:def path)
   =/  rid=resource
     (de-path:resource t.path)
-  =/  prev=(unit group-preview)  ~
+  =/  prev=(unit group-preview)
+    (~(get by previews) rid)
   :_  this
   ?^  prev
     :~  [%give %fact ~ metadata-update+!>([%preview u.prev])]
@@ -119,12 +147,7 @@
   [%remove resource md-resource]
 ::
 ++  on-pull-kick
-  |=  rid=resource
+  |=  =resource
   ^-  (unit path)
-  ?.  (is-member:grp our.bowl rid)  ~
   `/
-::
-++  take-update
-  |=  [rid=resource =vase]
-  `this
 --

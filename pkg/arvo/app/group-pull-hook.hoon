@@ -49,6 +49,4 @@
   |=  =resource
   ^-  (unit path)
   `/
-::
-++  take-update  take-update:dep
 --
