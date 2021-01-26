@@ -6,7 +6,6 @@ import { Dropdown } from './Dropdown';
 import { StatusBarItem } from './StatusBarItem';
 import { Sigil } from '~/logic/lib/sigil';
 import useLocalState from '~/logic/state/local';
-import { cite } from '~/logic/lib/util';
 
 const StatusBar = (props) => {
   const invites = [].concat(...Object.values(props.invites).map(obj => Object.values(obj)));
@@ -66,28 +65,34 @@ const StatusBar = (props) => {
           <Icon icon='Gear' color='black'/>
         </StatusBarItem>
         <Dropdown
-          width="200px"
+          dropWidth="150px"
+          width="auto"
+          alignY="top"
+          alignX="right"
           options={
-            <Box backgroundColor="white">
+            <Col mt='6' p='1' backgroundColor="white" color="washedGray" border={1} borderRadius={2} borderColor="lightGray" boxShadow="0px 0px 0px 3px">
               <Row
                 p={1}
                 color='black'
+                fontSize={0}
                 onClick={() => props.history.push('/~profile/' + window.ship)}>
                 View Profile
               </Row>
               <Row
                 p={1}
                 color='black'
+                fontSize={0}
                 onClick={() => props.history.push('/~profile/' + window.ship)}>
                 Set Status
               </Row>
               <Row
                 p={1}
                 color='black'
+                fontSize={0}
                 onClick={() => props.history.push('/~profile/' + window.ship)}>
                 System Settings
               </Row>
-            </Box>
+            </Col>
           }>
           <StatusBarItem
             px={'2'}
