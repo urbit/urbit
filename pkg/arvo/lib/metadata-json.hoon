@@ -53,11 +53,12 @@
     ?>  ?=([%s *] jon)
     (rash p.jon hex)
   ::
-  ++  permissions
+  ++  vip
     %-  su
     ;~  pose
       (tag %$)
       (tag %reader-comments)
+      (tag %member-metadata)
     ==
   ::
   ++  metadata
@@ -70,7 +71,7 @@
         [%module so]
         [%picture so]
         [%preview bo]
-        [%permissions permissions]
+        [%vip vip]
     ==
   ::
   ++  tag   |*(a=@tas (cold a (jest a)))
@@ -96,7 +97,7 @@
       [%module s+module.met]
       [%picture s+picture.met]
       [%preview b+preview.met]
-      [%permissions s+`@t`permissions.met]
+      [%vip s+`@t`vip.met]
   ==
 ++  hook-update-to-json
   |=  upd=metadata-hook-update

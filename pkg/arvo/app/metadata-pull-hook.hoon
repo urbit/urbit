@@ -72,11 +72,10 @@
 ++  on-save  !>(state)
 ++  on-load  
   |=  =vase
-  ?:  =(1 1)  `this
   =+  !<(old=state-zero vase)
   :_  this(state old)
   ?:  (~(has by wex.bowl) [/invites our.bowl %invite-store])  ~
-  watch-invites^~
+  ~[watch-invites:hc]
 ::
 ++  on-poke  
   |=  [=mark =vase]

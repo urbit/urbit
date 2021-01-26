@@ -19,16 +19,17 @@
 +$  color  @ux
 +$  url    @t
 ::
-::  $permissions: tag identifying variation in permissions
+::  $vip-metadata: variation in permissions
 ::
 ::    This will be passed to the graph-permissions mark
 ::    conversion to allow for custom permissions.
 ::
 ::    %reader-comments: Allow readers to comment, regardless
-::      of whether they can write.
+::      of whether they can write. (notebook, collections)
+::    %member-metadata: Allow members to add channels (groups)
 ::    %$: No variation
 ::
-+$  permissions  ?(%reader-comments %$)
++$  vip-metadata  ?(%reader-comments %member-metadata %$)
 +$  metadata
   $:  title=cord
       description=cord
@@ -37,8 +38,8 @@
       creator=ship
       module=term
       picture=url
-      preview=_|
-      =permissions
+      preview=?
+      vip=vip-metadata
   ==
 ::
 +$  metadata-action

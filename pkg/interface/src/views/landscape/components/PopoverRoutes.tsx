@@ -122,7 +122,9 @@ export function PopoverRoutes(
                       </SidebarItem>
                       { admin && (
                         <>
-                          <Text my="1" mx="3" gray>Administration</Text>
+                          <Box pt="3" mb="1" mx="3">
+                            <Text gray>Administration</Text>
+                          </Box>
                           <SidebarItem
                             icon="Groups"
                             to={relativeUrl("/settings#group-details")}
