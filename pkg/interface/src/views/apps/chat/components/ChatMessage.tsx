@@ -243,7 +243,7 @@ export const MessageWithSigil = (props) => {
             gray
             mono
             ml={2}
-            display={['block', hovering ? 'block' : 'none']}
+            display={['none', hovering ? 'block' : 'none']}
           >{datestamp}</Text>
         </Box>
         <ContentBox flexShrink={0} fontSize={fontSize ? fontSize : '14px'}>
