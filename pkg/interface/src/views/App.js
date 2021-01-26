@@ -139,9 +139,6 @@ class App extends React.Component {
     const doNotDisturb = state.doNotDisturb || false;
     const ourContact = this.state.contacts[this.ship] || null;
 
-    const showBanner = localStorage.getItem("2020BreachBanner") || "flex";
-    let banner = null;
-
     return (
       <ThemeProvider theme={theme}>
         <Helmet>
@@ -170,6 +167,7 @@ class App extends React.Component {
                 associations={state.associations}
                 apps={state.launch}
                 api={this.api}
+                contacts={state.contacts}
                 notifications={state.notificationsCount}
                 invites={state.invites}
                 groups={state.groups}

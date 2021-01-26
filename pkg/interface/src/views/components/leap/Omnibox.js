@@ -32,7 +32,7 @@ export class Omnibox extends Component {
       const { pathname } = this.props.location;
       const selectedGroup = pathname.startsWith('/~landscape/ship/') ? '/' + pathname.split('/').slice(2,5).join('/') : null;
 
-      this.setState({ index: index(this.props.associations, this.props.apps.tiles, selectedGroup, this.props.groups) });
+      this.setState({ index: index(this.props.contacts, this.props.associations, this.props.apps.tiles, selectedGroup, this.props.groups) });
     }
 
     if (prevProps && (prevProps.apps !== this.props.apps) && (this.state.query === '')) {
@@ -56,7 +56,7 @@ export class Omnibox extends Component {
   }
 
   getSearchedCategories() {
-    return ['other', 'commands', 'groups', 'subscriptions', 'apps'];
+    return ['ships', 'other', 'commands', 'groups', 'subscriptions', 'apps'];
   }
 
   control(evt) {
@@ -249,6 +249,7 @@ export class Omnibox extends Component {
                 selected={selected}
                 invites={props.invites}
                 notifications={props.notifications}
+                contacts={props.contacts}
               />
             ))}
           </Box>
