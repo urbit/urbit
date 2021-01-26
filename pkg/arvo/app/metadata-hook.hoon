@@ -39,6 +39,8 @@
 ++  on-save   !>(state)
 ++  on-load
   |=  =vase
+  ?:  =(1 1)
+    `this
   =+  !<(old=versioned-state vase)
   |^
   ?:  ?=(%2 -.old)

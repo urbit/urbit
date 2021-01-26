@@ -56,9 +56,9 @@
   ++  vip
     %-  su
     ;~  pose
-      (tag %$)
       (tag %reader-comments)
       (tag %member-metadata)
+      (tag %$)
     ==
   ::
   ++  metadata

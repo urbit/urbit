@@ -3,6 +3,7 @@
 ++  grow
   |%
   ++  noun  i
+  ::  ?(%no %writer)
   ++  notification-kind
    ::
     ?+  index.p.i  ~

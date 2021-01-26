@@ -1,10 +1,27 @@
-/-  *post
+/-  *post, met=metadata-store
 |_  i=indexed-post
 ++  grow
   |%
   ++  noun  i
+  ++  graph-add-permissions
+    |=  vip=vip-metadata:met
+    ?+  index.p.i  !!
+      [@ ~]            [%yes %yes %no]  :: new note
+      [@ %1 @ @ ~]     [%self %self %no]
+      [@ %2 @ ~]       [%yes %yes ?:(?=(%reader-comments vip) %yes %no)]
+      [@ %2 @ @ ~]     [%self %self %self]
+    ==
+  ::
+  ++  graph-remove-permissions
+    |=  vip=vip-metadata:met
+    ?+  index.p.i  !!
+      [@ ~]            [%yes %self %self]
+      [@ %1 @ @ ~]     [%self %self %self]
+      [@ %2 @ ~]       [%yes %self ?:(?=(%reader-comments vip) %self %no)]
+      [@ %2 @ @ ~]     [%yes %self %self]
+    ==
   ::  +notification-kind
-  ::    Ignore all containers, only notify on content
+  ::    ignore all containers, only notify on content
   ::
   ++  notification-kind
     ?+  index.p.i   ~
@@ -16,7 +33,7 @@
   --
 ++  grab
   |%
-  :: +noun: Validate publish post
+  :: +noun: validate publish post
   :: 
   ++  noun
     |=  p=*

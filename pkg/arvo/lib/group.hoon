@@ -99,6 +99,14 @@
     (en-path:resource rid)
   ship
 ::
+++  get-tagged-ships
+  |=  [rid=resource =tag]
+  ^-  (set ship)
+  =/  grp=(unit group)
+   (scry-group rid)
+  ?~  grp   ~
+  (~(get ju tags.u.grp) tag)
+::
 ++  is-managed-path
   |=  =path
   ^-  ?
