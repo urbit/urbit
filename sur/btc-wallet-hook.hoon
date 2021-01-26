@@ -11,6 +11,7 @@
 ::  pend-piym: incoming payment txs that peer says they have broadcast
 ::  poym: outgoing payments. One at a time: new replaces old
 ::
++$  txid  hexb
 +$  provider  [host=ship connected=?]
 +$  block  @ud
 +$  btc-state  [=block fee=sats t=@da]
@@ -44,15 +45,15 @@
       [%broadcast-tx txhex=cord]
       [%add-piym =xpub =address payer=ship value=sats]
       [%add-poym =txbu:bws]
-      [%add-poym-txi =txid =rawtx]
+      [%add-poym-txi txid=hexb rawtx=hexb]
       [%close-pym ti=info:tx]
-      [%fail-broadcast-tx =txid]
-      [%succeed-broadcast-tx =txid]
+      [%fail-broadcast-tx txid=hexb]
+      [%succeed-broadcast-tx txid=hexb]
   ==
 +$  peer
   $%  [%gen-pay-address value=sats]
       [%ret-pay-address =address payer=ship value=sats]
-      [%expect-payment =txid value=sats]
+      [%expect-payment txid=hexb value=sats]
   ==
 ::
 ::
@@ -66,7 +67,7 @@
   ==
 ::
 +$  error
-  $%  [%broadcast-tx-mismatch-poym signed=rawtx]
-      [%broadcast-tx-spent-utxos =txid]
+  $%  [%broadcast-tx-mismatch-poym signed=hexb]
+      [%broadcast-tx-spent-utxos txid=hexb]
   ==
 --

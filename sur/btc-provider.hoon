@@ -12,16 +12,16 @@
   ==
 +$  action
   $%  [%address-info =address]
-      [%tx-info =txid]
-      [%raw-tx =txid]
-      [%broadcast-tx =rawtx]
+      [%tx-info txid=hexb]
+      [%raw-tx txid=hexb]
+      [%broadcast-tx rawtx=hexb]
       [%ping ~]
   ==
 +$  result
   $%  [%address-info =address utxos=(set utxo) used=? block=@ud]
       [%tx-info =info:tx]
-      [%raw-tx =txid =rawtx]
-      [%broadcast-tx =txid broadcast=? included=?]
+      [%raw-tx txid=hexb rawtx=hexb]
+      [%broadcast-tx txid=hexb broadcast=? included=?]
   ==
 +$  error
   $%  [%not-connected status=@ud]
@@ -32,7 +32,7 @@
 +$  update  (each result error)
 +$  status
   $%  [%connected block=@ud fee=sats]
-      [%new-block block=@ud fee=sats blockhash=bytc blockfilter=bytc]
+      [%new-block block=@ud fee=sats blockhash=hexb blockfilter=hexb]
       [%disconnected ~]
   ==
 ::
@@ -40,9 +40,9 @@
   |%
   +$  action
     $%  [%get-address-info =address]
-        [%get-tx-vals =txid]
-        [%get-raw-tx =txid]
-        [%broadcast-tx =rawtx]
+        [%get-tx-vals txid=hexb]
+        [%get-raw-tx txid=hexb]
+        [%broadcast-tx rawtx=hexb]
         [%get-block-count ~]
         [%get-block-info ~]
     ==
@@ -50,11 +50,11 @@
   +$  result
     $%  [%get-address-info =address utxos=(set utxo) used=? block=@ud]
         [%get-tx-vals =info:tx]
-        [%get-raw-tx =txid =rawtx]
-        [%create-raw-tx =rawtx]
-        [%broadcast-tx =txid broadcast=? included=?]
+        [%get-raw-tx txid=hexb rawtx=hexb]
+        [%create-raw-tx rawtx=hexb]
+        [%broadcast-tx txid=hexb broadcast=? included=?]
         [%get-block-count block=@ud]
-        [%get-block-info block=@ud fee=sats blockhash=bytc blockfilter=bytc]
+        [%get-block-info block=@ud fee=sats blockhash=hexb blockfilter=hexb]
 
     ==
   --

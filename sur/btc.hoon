@@ -2,25 +2,20 @@
 ::  bytc: "btc-byts" with dat cast to @ux
 |%
 +$  network  ?(%main %testnet)
++$  hexb  [wid=@ dat=@ux]                :: hex byts
 +$  xpub  @ta
 +$  address  ?(base58-a bech32-a)
 +$  base58-a  $%([%base58 cord])
 +$  bech32-a  $%([%bech32 cord])
-+$  fprint  [%4 @ux]
++$  fprint  hexb
 +$  bipt  $?(%44 %49 %84)
 +$  chyg  $?(%0 %1)
 +$  idx   @ud
-+$  hdkey  [=fprint pubkey=bytc =bipt =chyg =idx]
++$  hdkey  [=fprint pubkey=hexb =bipt =chyg =idx]
 +$  sats  @ud
 +$  vbytes  @ud
-+$  bytc  [wid=@ dat=@ux]
-+$  hash256  [wid=%32 dat=@ux]
-+$  hash160  [wid=%20 dat=@ux]
-+$  hash  ?(hash256 hash160)
-+$  txid  hash256
-+$  rawtx  bytc
 +$  buffer  (list @ux)
-+$  utxo  [pos=@ =txid height=@ value=sats recvd=(unit @da)]
++$  utxo  [pos=@ txid=hexb height=@ value=sats recvd=(unit @da)]
 ++  address-info
   $:  =address
       confirmed-value=sats
@@ -37,7 +32,7 @@
         segwit=(unit @ud)
     ==
   +$  val
-    $:  =txid
+    $:  txid=hexb
         pos=@ud
         =address
         value=sats
@@ -46,32 +41,32 @@
   ::
   +$  info
     $:  included=?
-        =txid
+        txid=hexb
         confs=@ud
         recvd=(unit @da)
         inputs=(list val)
         outputs=(list val)
     ==
   +$  input
-    $:  =txid
+    $:  txid=hexb
         pos=@ud
-        sequence=bytc
-        redeem-script=(unit bytc)
-        pubkey=(unit bytc)
+        sequence=hexb
+        redeem-script=(unit hexb)
+        pubkey=(unit hexb)
         value=sats
     ==
   +$  output
-    $:  script-pubkey=bytc
+    $:  script-pubkey=hexb
         value=sats
     ==
   --
 ++  psbt
   |%
   +$  base64  cord
-  +$  in  [=utxo =rawtx =hdkey]
+  +$  in  [=utxo rawtx=hexb =hdkey]
   +$  out  [=address hk=(unit hdkey)]
   +$  target  $?(%input %output)
-  +$  keyval  [key=bytc val=bytc]
+  +$  keyval  [key=hexb val=hexb]
   +$  map  (list keyval)
   --
 ++  ops

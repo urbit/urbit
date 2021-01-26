@@ -5,6 +5,7 @@
 /-  *btc, bp=btc-provider
 /+  bip32
 |%
++$  txid  hexb
 ++  max-index  (dec (pow 2 32))
 ::  idx:  an address_index
 ::  nixt: next indices to generate addresses from (non-change/change)
@@ -51,7 +52,7 @@
 +$  insel  [=utxo =chyg =idx]
 +$  pmet  (unit [payer=ship value=sats])
 +$  feyb  sats
-+$  txi  [=utxo ur=(unit rawtx) =hdkey]
++$  txi  [=utxo ur=(unit hexb) =hdkey]
 +$  txo  [=address value=sats hk=(unit hdkey)]
 +$  txbu
   $:  =xpub
@@ -59,20 +60,20 @@
       =vbytes
       txis=(list txi)
       txos=(list txo)
-      sitx=(unit bytc)
+      sitx=(unit hexb)
   ==
 ::  hest: an entry in the history log
 ::
 +$  hest
   $:  =xpub
-      =txid
+      txid=hexb
       confs=@ud
       recvd=(unit @da)
       inputs=(list [=val:tx s=(unit ship)])
       outputs=(list [=val:tx s=(unit ship)])
   ==
-+$  history  (map txid hest)
-::  state/watch variables:
++$  history  (map hexb hest)
+::  state/watch variables: 
 ::  scanning addresses and monitoring generated addresses
 ::  batch: indexes to scan for a given chyg
 ::  scans: all scans underway (batches)
@@ -94,19 +95,19 @@
       [%generate-address =xpub =chyg =pmet]
       [%generate-txbu =xpub payee=(unit ship) feyb=sats txos=(list txo)]
       [%add-history-entry =hest]
-      [%del-history-entry =txid]
+      [%del-history-entry txid=hexb]
   ==
 ::
 +$  update
   $%  [%generate-address =xpub =address =pmet]
       [%generate-txbu =xpub =txbu]
-      [%saw-piym s=ship =txid]
+      [%saw-piym s=ship txid=hexb]
       [%scan-done =xpub]
   ==
 ::  last-block: most recent block this address was checked
 ::
 +$  request
   $%  [%address-info last-block=@ud a=address =xpub =chyg =idx]
-      [%tx-info last-block=@ud =txid]
+      [%tx-info last-block=@ud txid=hexb]
   ==
 --
