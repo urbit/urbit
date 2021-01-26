@@ -47,7 +47,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
   const noteId = bigInt(index[1]);
   useEffect(() => {
     api.hark.markEachAsRead(props.association, '/',`/${index[1]}/1/1`, 'note', 'publish');
-  }, [props.association]);
+  }, [props.association, props.note]);
 
 
 
@@ -67,13 +67,20 @@ export function Note(props: NoteProps & RouteComponentProps) {
           color="red"
           ml={2}
           onClick={deletePost}
-          css={{ cursor: "pointer" }}
+          style={{ cursor: "pointer" }}
         >
           Delete
         </Text>
       </Box>
     );
   }
+
+  const windowRef = React.useRef(null);
+  useEffect(() => {
+    if (windowRef.current) {
+      windowRef.current.parentElement.scrollTop = 0;
+    }
+  }, [windowRef, note]);
 
   return (
     <Box
@@ -86,6 +93,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
       width="100%"
       gridRowGap={4}
       mx="auto"
+      ref={windowRef}
     >
       <Link to={rootUrl}>
         <Text>{"<- Notebook Index"}</Text>

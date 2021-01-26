@@ -386,5 +386,7 @@ function archive(json: any, state: HarkState) {
       notifIdxEqual(index, idxNotif.index)
     );
     state.notifications.set(time, unarchived);
+    const newlyRead = archived.filter(x => !x.notification.read).length;
+    updateNotificationStats(state, index, 'notifications', (x) => x - newlyRead);
   }
 }

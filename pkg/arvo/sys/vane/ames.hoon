@@ -180,6 +180,9 @@
     $(index +(index), sorted [(~(got by fragments) index) sorted])
   ::
   (cue (rep 13 (flop sorted)))
+::  +jim: caching +jam
+::
+++  jim  |=(n=* ~+((jam n)))
 ::  +bind-duct: find or make new $bone for .duct in .ossuary
 ::
 ++  bind-duct
@@ -1931,7 +1934,7 @@
           ==
         now
       ::
-      =/  =message-blob  (dedup-message (jam payload))
+      =/  =message-blob  (dedup-message (jim payload))
       =.  peer-core  (run-message-pump bone %memo message-blob)
       ::
       ?:  &(=(%boon valence) ?=(?(%dead %unborn) -.qos.peer-state))

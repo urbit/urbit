@@ -6,6 +6,7 @@ import { Dropdown } from './Dropdown';
 import { StatusBarItem } from './StatusBarItem';
 import { Sigil } from '~/logic/lib/sigil';
 import useLocalState from '~/logic/state/local';
+import { cite } from '~/logic/lib/util';
 
 const StatusBar = (props) => {
   const invites = [].concat(...Object.values(props.invites).map(obj => Object.values(obj)));
@@ -24,7 +25,7 @@ const StatusBar = (props) => {
       pb='3'
       >
       <Row collapse>
-      <Button borderColor='washedGray' mr='2' px='2' onClick={() => props.history.push('/')} {...props}>
+      <Button width="32px" borderColor='washedGray' mr='2' px='2' onClick={() => props.history.push('/')} {...props}>
         <Icon icon='Spaces' color='black'/>
       </Button>
         <StatusBarItem mr={2} onClick={() => toggleOmnibox()}>
@@ -56,7 +57,7 @@ const StatusBar = (props) => {
           onClick={() => window.open(
             'https://github.com/urbit/landscape/issues/new' +
             '?assignees=&labels=development-stream&title=&' +
-            `body=commit:%20${process.env.LANDSCAPE_SHORTHASH}`
+            `body=commit:%20urbit/urbit@${process.env.LANDSCAPE_SHORTHASH}`
             )}
           >
           <Text color='#000000'>Submit <Text color='#000000' display={['none', 'inline']}>an</Text> issue</Text>

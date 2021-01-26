@@ -206,9 +206,6 @@
 }
 
 @media all and (prefers-color-scheme: dark) {
-  body {
-    background-color: #333;
-  }
   .bg-black-d {
     background-color: black;
   }
@@ -267,7 +264,7 @@
     background-color: #333;
   }
   .publish .cm-s-tlon.CodeMirror {
-    background: #333;
+    background: unset;
     color: #fff;
   }
 

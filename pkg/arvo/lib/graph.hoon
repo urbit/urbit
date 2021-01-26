@@ -49,6 +49,14 @@
   ?>  ?=(^ nodes.q.update)
   q.n.nodes.q.update
 ::
+++  check-node-existence
+  |=  [res=resource =index:store]
+  ^-  ?
+  %+  scry-for  ,?
+  %+  weld
+    /node-exists/(scot %p entity.res)/[name.res]
+  (turn index (cury scot %ud))
+::
 ++  get-update-log
   |=  rid=resource 
   ^-  update-log:store

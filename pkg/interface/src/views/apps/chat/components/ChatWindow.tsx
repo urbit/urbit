@@ -258,7 +258,7 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
     const messageProps = { association, group, contacts, unreadMarkerRef, history, api };
 
     const keys = graph.keys().reverse();
-    const unreadIndex = keys[this.props.unreadCount];
+    const unreadIndex = graph.keys()[this.props.unreadCount];
     const unreadMsg = unreadIndex && graph.get(unreadIndex);
 
     return (

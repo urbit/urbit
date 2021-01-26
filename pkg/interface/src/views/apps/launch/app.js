@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Helmet from 'react-helmet';
 import styled from 'styled-components';
 
 import { Box, Row, Icon, Text } from '@tlon/indigo-react';
@@ -14,6 +13,7 @@ import ModalButton from './components/ModalButton';
 import { writeText } from '~/logic/lib/util';
 import { NewGroup } from "~/views/landscape/components/NewGroup";
 import { JoinGroup } from "~/views/landscape/components/JoinGroup";
+import { Helmet } from 'react-helmet';
 
 const ScrollbarLessBox = styled(Box)`
   scrollbar-width: none !important;
@@ -25,13 +25,38 @@ const ScrollbarLessBox = styled(Box)`
 
 export default function LaunchApp(props) {
   const [hashText, setHashText] = useState(props.baseHash);
-
+  const hashBox = (
+    <Box
+      position={["relative", "absolute"]}
+      fontFamily="mono"
+      left="0"
+      bottom="0"
+      color="scales.black20"
+      bg="white"
+      ml={3}
+      mb={3}
+      borderRadius={2}
+      fontSize={0}
+      p={2}
+      boxShadow="0 0 0px 1px inset"
+      cursor="pointer"
+      onClick={() => {
+        writeText(props.baseHash);
+        setHashText('copied');
+        setTimeout(() => {
+          setHashText(props.baseHash);
+        }, 2000);
+      }}
+    >
+      <Text color="gray">{hashText || props.baseHash}</Text>
+    </Box>
+  );
   return (
     <>
-      <Helmet>
-        <title>OS1 - Home</title>
+      <Helmet defer={false}>
+        <title>{ props.notificationsCount ? `(${String(props.notificationsCount) }) `: '' }Landscape</title>
       </Helmet>
-      <ScrollbarLessBox height='100%' overflowY='scroll'>
+      <ScrollbarLessBox height='100%' overflowY='scroll' display="flex" flexDirection="column">
         <Welcome firstTime={props.launch.firstTime} api={props.api} />
         <Box
           mx='2'
@@ -53,7 +78,7 @@ export default function LaunchApp(props) {
                   color="black"
                   icon="Mail"
                 />
-                <Text ml="1" mt='1px' color="black">DMs + Drafts</Text>
+                <Text ml="2" mt='1px' color="black">DMs + Drafts</Text>
               </Row>
             </Box>
           </Tile>
@@ -77,36 +102,15 @@ export default function LaunchApp(props) {
             icon="CreateGroup"
             bg="green"
             color="#fff"
-            text="Create a Group"
+            text="Create Group"
           >
             <NewGroup {...props} />
           </ModalButton>
           <Groups unreads={props.unreads} groups={props.groups} associations={props.associations} />
         </Box>
+        <Box alignSelf="flex-start" display={["block", "none"]}>{hashBox}</Box>
       </ScrollbarLessBox>
-      <Box
-        position="absolute"
-        fontFamily="mono"
-        left="0"
-        bottom="0"
-        color="gray"
-        bg="white"
-        ml={3}
-        mb={3}
-        borderRadius={2}
-        fontSize={0}
-        p={2}
-        cursor="pointer"
-        onClick={() => {
-          writeText(props.baseHash);
-          setHashText('copied');
-          setTimeout(() => {
-            setHashText(props.baseHash);
-          }, 2000);
-        }}
-      >
-        {hashText || props.baseHash}
-      </Box>
+      <Box display={["none", "block"]}>{hashBox}</Box>
     </>
   );
 }
