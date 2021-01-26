@@ -55,7 +55,7 @@ export function Profile(props: any) {
           </Center>
         </Row>
         { isEdit ? (
-          <EditProfile ship={ship} contact={contact} />
+          <EditProfile ship={ship} contact={contact} s3={props.s3} />
         ) : (
           <ViewProfile ship={ship} contact={contact} />
         ) }

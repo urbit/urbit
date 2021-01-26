@@ -2,7 +2,10 @@ import React from "react";
 import * as Yup from "yup";
 
 import {
+  ManagedForm as Form,
+  ManagedTextInputField as Input,
   Center,
+  Col,
   Box,
   Text,
   Row,
@@ -21,7 +24,8 @@ import { ImageInput } from "~/views/components/ImageInput";
 const formSchema = Yup.object({
   nickname: Yup.string(),
   bio: Yup.string(),
-  color: Yup.string()
+  color: Yup.string(),
+  avatar: Yup.string().nullable()
 });
 
 const emptyContact = {
@@ -58,19 +62,10 @@ export function EditProfile(props: any) {
 
       await Object.keys(values).reduce((acc, key) => {
         const newValue = key !== "color" ? values[key] : uxToHex(values[key]);
-        if (newValue !== contact[key]) {
-          if (key === "avatar") {
-            return acc.then(() =>
-              props.api.contacts.edit(props.path, us, {
-                avatar: { url: newValue },
-              } as any)
-            );
-          }
 
+        if (newValue !== contact[key]) {
           return acc.then(() =>
-            props.api.contacts.edit(props.path, us, {
-              [key]: newValue,
-            } as any)
+            props.api.contacts.edit(ship, { [key]: newValue })
           );
         }
         return acc;
@@ -90,36 +85,19 @@ export function EditProfile(props: any) {
       initialValues={contact || emptyContact}
       onSubmit={onSubmit}
     >
-      <Form
-        display="grid"
-        gridAutoRows="auto"
-        gridTemplateColumns="100%"
-        gridRowGap="5"
-        maxWidth="400px"
-        width="100%"
-      >
-        <Row
-          borderBottom={1}
-          borderBottomColor="washedGray"
-          pb={3}
-          alignItems="center"
-        >
-          <Box height='32px' width='32px'>
-            {image}
-          </Box>
-          <Box ml={2}>
-            <Text mono={!Boolean(nickname)}>{nickname}</Text>
-          </Box>
+      <Form width="100%" p={2}>
+        <Input id="nickname" label="Name" mb={3} />
+        <Input id="bio" label="Description" mb={3} />
+        <Row mb={3} width="100%">
+          <Col pr={2} width="40%">
+            <ColorInput id="color" label="Sigil Color" />
+          </Col>
+          <Col pl={2} width="60%">
+            <ImageInput id="avatar" label="Profile Picture" s3={props.s3} />
+          </Col>
         </Row>
-        <ImageInput id="avatar" label="Avatar" s3={props.s3} />
-        <ColorInput id="color" label="Sigil Color" />
-        <Input id="nickname" label="Nickname" />
-        <Input id="bio" label="Email" />
-        <Input id="phone" label="Phone" />
-        <Input id="website" label="Website" />
-        <Input id="notes" label="Notes" />
         <AsyncButton primary loadingText="Updating..." border>
-          {(contact) ? "Save" : "Share Contact"}
+          Submit
         </AsyncButton>
       </Form>
     </Formik>
