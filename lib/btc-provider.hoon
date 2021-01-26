@@ -18,12 +18,13 @@
     ~|("base58 addresses not yet supported" !!)
   [%bech32 addrc]
 ::
-++  bytc-to-cord
-  |=  =bytc  ^-  cord
-  (en:base16:mimes:html bytc)
+++  hexb-to-cord
+  |=  =hexb  ^-  cord
+  (en:base16:mimes:html hexb)
 ::
 ++  txid-to-cord
-  |=  =txid  ^-  cord
+  |=  txid=hexb
+  ^-  cord
   (en:base16:mimes:html txid)
 ::  +from-epoch: time since Jan 1, 1970 in seconds.
 ::
@@ -32,35 +33,6 @@
   ^-  (unit @da)
   ?:  =(0 secs)  ~
   [~ (add ~1970.1.1 `@dr`(mul secs ~s1))]
-::
-++  to-hex
-  |=  h=@t
-  ^-  @ux
-  ?:  =('' h)  0x0
-  ::  Add leading 00
-  ::
-  =+  (lsh [3 2] h)
-  ::  Group by 4-size block
-  ::
-  =+  (rsh [3 2] -)
-  ::  Parse hex to atom
-  ::
-  `@ux`(rash - hex)
-::
-++  to-rawtx
-  |=  h=@t
-  ^-  rawtx
-  =+  bs=(to-hex h)
-  [(div (lent (trip h)) 2) bs]
-++  to-hash256
-  |=  h=@t
-  (hash256 [32 (to-hex h)])
-::
-++  to-bytc
-  |=  h=@t
-  ^-  bytc
-  :-  (div (lent (trip h)) 2)
-  (to-hex h)
 ::
 ++  get-request
   |=  url=@t
@@ -121,7 +93,7 @@
     ++  utxo
       %-  ot:dejs:format
       :~  ['tx_pos' ni:dejs:format]
-          ['tx_hash' (cu:dejs:format to-hash256 so:dejs:format)]
+          ['tx_hash' (cu:dejs:format to-hexb so:dejs:format)]
           [%height ni:dejs:format]
           [%value ni:dejs:format]
           [%recvd (cu:dejs:format from-epoch ni:dejs:format)]
@@ -129,7 +101,7 @@
     ++  tx-vals
       %-  ot:dejs:format
       :~  [%included bo:dejs:format]
-          [%txid (cu:dejs:format to-hash256 so:dejs:format)]
+          [%txid (cu:dejs:format to-hexb so:dejs:format)]
           [%confs ni:dejs:format]
           [%recvd (cu:dejs:format from-epoch ni:dejs:format)]
           [%inputs (ar:dejs:format tx-val)]
@@ -137,19 +109,19 @@
       ==
     ++  tx-val
       %-  ot:dejs:format
-      :~  [%txid (cu:dejs:format to-hash256 so:dejs:format)]
+      :~  [%txid (cu:dejs:format to-hexb so:dejs:format)]
           [%pos ni:dejs:format]
           [%address (cu:dejs:format address-from-cord so:dejs:format)]
           [%value ni:dejs:format]
       ==
     ++  raw-tx
       %-  ot:dejs:format
-      :~  [%txid (cu:dejs:format to-hash256 so:dejs:format)]
-          [%rawtx (cu:dejs:format to-bytc so:dejs:format)]
+      :~  [%txid (cu:dejs:format to-hexb so:dejs:format)]
+          [%rawtx (cu:dejs:format to-hexb so:dejs:format)]
       ==
     ++  broadcast-tx
       %-  ot:dejs:format
-      :~  [%txid (cu:dejs:format to-hash256 so:dejs:format)]
+      :~  [%txid (cu:dejs:format to-hexb so:dejs:format)]
           [%broadcast bo:dejs:format]
           [%included bo:dejs:format]
       ==
@@ -157,8 +129,8 @@
       %-  ot:dejs:format
       :~  [%block ni:dejs:format]
           [%fee ni:dejs:format]
-          [%blockhash (cu:dejs:format to-bytc so:dejs:format)]
-          [%blockfilter (cu:dejs:format to-bytc so:dejs:format)]
+          [%blockhash (cu:dejs:format to-hexb so:dejs:format)]
+          [%blockfilter (cu:dejs:format to-hexb so:dejs:format)]
       ==
     --
   --
@@ -185,7 +157,7 @@
       %broadcast-tx
     %-  get-request
     %+  mk-url  '/broadcasttx/'
-    (bytc-to-cord rawtx.ract)
+    (hexb-to-cord rawtx.ract)
     ::
       %get-block-count
     %-  get-request

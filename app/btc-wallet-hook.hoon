@@ -169,7 +169,7 @@
       %broadcast-tx
     ?>  =(src.bowl our.bowl)
     ?~  prov  ~|("Provider not connected" !!)
-    =+  signed=(to-rawtx:bp txhex.act)
+    =+  signed=(to-hexb txhex.act)
     =/  tx-match=?
       ?~  poym  %.n
       =((get-id:txu (decode:txu signed)) ~(get-txid txb:bwsl u.poym))
@@ -330,8 +330,8 @@
     |=  $:  p=provider
             block=@ud
             fee=sats
-            blockhash=(unit bytc)
-            blockfilter=(unit bytc)
+            blockhash=(unit hexb)
+            blockfilter=(unit hexb)
         ==
     ^-  (quip card _state)
     :_  %_  state
@@ -440,7 +440,8 @@
   ==
 ::
 ++  poym-has-txid
-  |=  =txid  ^-  ?
+  |=  txid=hexb
+  ^-  ?
   ?~  poym  %.n
   ?~  sitx.u.poym  %.n
   =(txid (get-id:txu (decode:txu u.sitx.u.poym)))
@@ -506,12 +507,12 @@
   ::
   ::
   ++  del-pend-piym
-    |=  =txid
+    |=  txid=hexb
     ^-  _state
     state(pend-piym (~(del by pend-piym) txid.ti))
   ::
   ++  del-all-piym
-    |=  [=txid payer=ship]
+    |=  [txid=hexb payer=ship]
     ^-  _state
     =+  nf=(~(gut by num-fam.piym) payer 1)
     %=  state
@@ -546,7 +547,7 @@
 ::   - add txid to pend-piym
 ::
 ++  update-pend-piym
-  |=  [=txid p=payment]
+  |=  [txid=hexb p=payment]
   ^-  _state
   ?~  pend.p  ~|("update-pend-piym: empty pend.payment" !!)
   %=  state
@@ -558,7 +559,7 @@
 ::    update outgoing payment with a rawtx, if the txid is in poym's txis
 ::
 ++  update-poym-txis
-  |=  [txis=(list txi:bws) =txid rt=rawtx]
+  |=  [txis=(list txi:bws) txid=hexb rt=hexb]
   ^-  (list txi:bws)
   =|  i=@
   |-  ?:  (gte i (lent txis))  txis
@@ -599,10 +600,10 @@
   ^-  (list card)
   ?~  prov  ~|("provider not set" !!)
   %+  turn  ~(tap in ~(key by pend-piym))
-  |=(=txid (poke-provider host.u.prov [%tx-info txid]))
+  |=(txid=hexb (poke-provider host.u.prov [%tx-info txid]))
 ::
 ++  get-raw-tx
-  |=  [host=ship =txid]
+  |=  [host=ship txid=hexb]
   ^-  card
   (poke-provider host [%raw-tx txid])
 ::
