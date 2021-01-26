@@ -8,6 +8,7 @@
       color=@ux
       avatar=(unit @t)
       cover=(unit @t)
+      groups=(set resource)
       last-updated=@da
   ==
 ::
@@ -17,6 +18,8 @@
       [%status status=@t]
       [%color color=@ux]
       [%avatar avatar=(unit @t)]
+      [%add-group =resource]
+      [%remove-group =resource]
       [%cover cover=(unit @t)]
   ==
 ::

@@ -68,6 +68,7 @@
         [%color s+(scot %ux color.contact)]
         [%avatar ?~(avatar.contact ~ s+u.avatar.contact)]
         [%cover ?~(cover.contact ~ s+u.cover.contact)]
+        [%groups a+(turn ~(tap in groups.contact) |=(r=resource (enjs:res r)))]
         [%last-updated (time last-updated.contact)]
     ==
   ::
@@ -76,12 +77,14 @@
     ^-  json
     %+  frond  -.field
     ?-  -.field
-      %nickname  s+nickname.field
-      %bio       s+bio.field
-      %status    s+status.field
-      %color     s+(scot %ux color.field)
-      %avatar    ?~(avatar.field ~ s+u.avatar.field)
-      %cover     ?~(cover.field ~ s+u.cover.field)
+      %nickname      s+nickname.field
+      %bio           s+bio.field
+      %status        s+status.field
+      %color         s+(scot %ux color.field)
+      %avatar        ?~(avatar.field ~ s+u.avatar.field)
+      %cover         ?~(cover.field ~ s+u.cover.field)
+      %add-group     (enjs:res resource.field)
+      %remove-group  (enjs:res resource.field)
     ==
   ::
   ++  beng
@@ -141,6 +144,7 @@
           [%color nu]
           [%avatar (mu so)]
           [%cover (mu so)]
+          [%groups (as dejs:res)]
           [%last-updated di]
       ==
     ::
@@ -152,6 +156,8 @@
           [%color nu]
           [%avatar (mu so)]
           [%cover (mu so)]
+          [%add-group dejs:res]
+          [%remove-group dejs:res]
       ==
     --
   --

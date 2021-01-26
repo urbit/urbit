@@ -35,7 +35,10 @@
   |=  old-vase=vase
   ^-  (quip card _this)
   =/  old  !<(versioned-state old-vase)
-  ?+    -.old  [~ this]
+  ?+    -.old
+    =.  rolodex  (~(put by rolodex) our.bowl *contact:store)
+    [~ this(state state)]
+  ::
     %4  [~ this(state old)]
   ==
 ::
@@ -109,6 +112,8 @@
       ^-  (quip card _state)
       ?>  (~(has by rolodex) ship)
       :-  (send-diff [%remove ship] =(ship our.bowl))
+      ?:  =(ship our.bowl)
+        state(rolodex (~(put by rolodex) *contact:store))
       state(rolodex (~(del by rolodex) ship))
     ::
     ++  handle-edit
@@ -125,12 +130,18 @@
         |=  [=contact:store edit=edit-field:store]
         ^-  contact:store
         ?-  -.edit
-            %nickname  contact(nickname nickname.edit)
-            %bio       contact(bio bio.edit)
-            %status    contact(status status.edit)
-            %color     contact(color color.edit)
-            %avatar    contact(avatar avatar.edit)
-            %cover     contact(cover cover.edit)
+          %nickname  contact(nickname nickname.edit)
+          %bio       contact(bio bio.edit)
+          %status    contact(status status.edit)
+          %color     contact(color color.edit)
+          %avatar    contact(avatar avatar.edit)
+          %cover     contact(cover cover.edit)
+        ::
+            %add-group
+          contact(groups (~(put in groups.contact) resource.edit))
+        ::
+            %remove-group
+          contact(groups (~(del in groups.contact) resource.edit))
         ==
       --
     ::
