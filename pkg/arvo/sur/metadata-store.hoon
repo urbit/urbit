@@ -47,10 +47,14 @@
       [%initial-group group=resource =associations]
   ==
 ::
++$  metadata-hook-update
+   $%  [%req-preview group=resource]
+       [%preview group-preview]
+   ==
+::
 +$  metadata-update
   $%  metadata-action
       [%associations =associations]
       [%updated-metadata group=resource resource=md-resource before=metadata =metadata]
-      [%preview group-preview]
   ==
 --

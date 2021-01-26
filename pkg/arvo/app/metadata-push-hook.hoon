@@ -35,15 +35,14 @@
 ++  on-init  on-init:def
 ++  on-save  !>(~)
 ++  on-load    on-load:def
-++  on-poke   on-poke:def
-++  on-agent  on-agent:def
-++  on-watch    
-  |=  =path
-  ^-  (quip card _this)
-  ?.  ?=([%preview @ @ @ ~] path)
-    (on-watch:def path)
-  =/  rid=resource
-    (de-path:resource t.path)
+++  on-poke   
+  |=  [=mark =vase]
+  ?.  ?=(%metadata-hook-update mark)
+    (on-poke:def mark vase)
+  =+  !<(upd=metadata-hook-update vase)
+  ?.  ?=(%req-preview -.upd)
+    (on-poke:def mark vase)
+  =*  rid  group.upd
   |^
   ?>  =(entity.rid our.bowl)
   ?>  (can-join:grp rid src.bowl)
@@ -53,11 +52,9 @@
     (need (peek-metadata:met %contacts rid))
   :_  this
   =;  =cage
-    :~  [%give %fact ~ cage]
-        [%give %kick ~ ~]
-    ==
-  :-  %metadata-update
-  !>  ^-  metadata-update
+    [%pass / %agent [src.bowl %metadata-pull-hook] %poke cage]~
+  :-  %metadata-hook-update
+  !>  ^-  metadata-hook-update
   [%preview rid channels members channel-count metadata]
   ::
   ++  channels
@@ -68,8 +65,10 @@
   ++  channel-count
     ~(wyt by (app-metadata-for-group:met rid %graph))
   --
-::
-++  on-leave    on-leave:def
+
+++  on-agent  on-agent:def
+++  on-watch  on-watch:def
+++  on-leave  on-leave:def
 ++  on-peek   on-peek:def
 ++  on-arvo   on-arvo:def
 ++  on-fail   on-fail:def

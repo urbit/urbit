@@ -31,14 +31,16 @@
 =*  state  -
 =>  |_  =bowl:gall
     ++  def   ~(. (default-agent state %|) bowl)
-    ++  watch-preview
+    ++  get-preview
       |=  rid=resource
       ^-  card
       =/  =path
         preview+(en-path:resource rid)
       =/  =dock
         [entity.rid %metadata-push-hook]
-      [%pass path %agent dock %watch path]
+      =/  =cage
+        metadata-hook-update+!>([%req-preview rid])
+      [%pass path %agent dock %poke cage]
     ::
     ++  watch-invites
       ^-  card
@@ -54,33 +56,9 @@
         :_  state
         ?.  ?=(%invite -.update)  ~
         ?.  =(%contacts term.update)  ~
-        (watch-preview resource.invite.update)^~
+        (get-preview resource.invite.update)^~
       ::
         %kick  [watch-invites^~ state]
-      ==
-    ::
-    ++  take-preview
-      |=  [=wire =sign:agent:gall]
-      ^-  (quip card _state)
-      ?>  ?=([%preview @ *] wire)
-      =/  rid=resource
-        (de-path:resource t.wire)
-      ?+  -.sign  (on-agent:def wire sign)
-          %fact  
-        ?>  =(%metadata-update p.cage.sign)
-        =+  !<(upd=metadata-update q.cage.sign)
-        ?>  ?=(%preview -.upd)
-        :_  state(previews (~(put by previews) rid +.upd))
-        :~  [%give %fact ~[wire] cage.sign]
-            [%give %kick ~[wire] ~]
-        ==
-      ::
-          %watch-ack
-        :_  state
-        ?~  p.sign  ~
-        :~  [%give %fact ~[wire] tang+!>(u.p.sign)]
-            [%give %kick ~[wire] ~]
-        ==
       ==
     --
 |_  =bowl:gall
@@ -100,13 +78,34 @@
   ?:  (~(has by wex.bowl) [/invites our.bowl %invite-store])  ~
   watch-invites^~
 ::
-++  on-poke  on-poke:def
+++  on-poke  
+  |=  [=mark =vase]
+  ?.  ?=(%metadata-hook-update mark)
+    (on-poke:def mark vase)
+  =+  !<(upd=metadata-hook-update vase)
+  ?.  ?=(%preview -.upd)
+    (on-poke:def mark vase)
+  :_  this(previews (~(put by previews) group.upd +.upd))
+  =/  paths=(list path)
+    ~[preview+(en-path:resource group.upd)]
+  :~  [%give %fact paths mark^vase]
+      [%give %kick paths ~]
+  ==
+::
 ++  on-agent  
   |=  [=wire =sign:agent:gall]
   =^  cards  state
     ?+  wire  (on-agent:def:hc wire sign)
       [%invites ~]        (take-invites:hc sign)
-      [%preview @ @ @ ~]  (take-preview:hc wire sign)
+      ::
+        [%preview @ @ @ ~]
+      ?.  ?=(%poke-ack -.sign)
+        (on-agent:def:hc wire sign)
+      :_  state
+      ?~  p.sign  ~
+      :~  [%give %fact ~[wire] tang+!>(u.p.sign)]
+          [%give %kick ~[wire] ~]
+      ==
     ==
   [cards this]
 ::
@@ -120,13 +119,9 @@
   =/  prev=(unit group-preview)
     (~(get by previews) rid)
   :_  this
-  ?^  prev
-    :~  [%give %fact ~ metadata-update+!>([%preview u.prev])]
-        [%give %kick ~ ~]
-    ==
-  =/  =dock
-    [entity.rid %metadata-push-hook]
-  [%pass path %agent dock %watch path]~
+  ?~  prev
+    (get-preview rid)^~
+  [%give %fact ~ metadata-hook-update+!>([%preview u.prev])]~
 ::
 ++  on-leave  on-leave:def
 ++  on-peek   on-peek:def

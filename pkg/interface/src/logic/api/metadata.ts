@@ -79,10 +79,10 @@ export default class MetadataApi extends BaseApi<StoreState> {
         },
         (ev: any) => {
           console.log(ev);
-          if ('metadata-update' in ev) {
+          if ('metadata-hook-update' in ev) {
             done = true;
             tempChannel.delete();
-            const upd = ev['metadata-update'].preview as MetadataUpdatePreview;
+            const upd = ev['metadata-hook-update'].preview as MetadataUpdatePreview;
             resolve(upd);
           } else {
             done = true;

@@ -232,22 +232,23 @@
     ++  on-poke
       |=  [=mark =vase]
       ^-  [(list card:agent:gall) agent:gall]
-      ?>  (team:title our.bowl src.bowl)
-        ?+   mark
-          =^  cards  pull-hook
-            (on-poke:og mark vase)
-          [cards this]
-        ::
-            %sane
-          =^  cards  state
-            poke-sane:hc
-          [cards this]
-        ::
-            %pull-hook-action
-          =^  cards  state
-            (poke-hook-action:hc !<(action vase))
-          [cards this]
-        ==
+      ?+   mark
+        =^  cards  pull-hook
+          (on-poke:og mark vase)
+        [cards this]
+      ::
+          %sane
+        ?>  (team:title [our src]:bowl)
+        =^  cards  state
+          poke-sane:hc
+        [cards this]
+      ::
+          %pull-hook-action
+        ?>  (team:title [our src]:bowl)
+        =^  cards  state
+          (poke-hook-action:hc !<(action vase))
+        [cards this]
+      ==
     ::
     ++  on-watch
       |=  =path
