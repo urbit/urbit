@@ -29,7 +29,10 @@
 +*  this  .
     def   ~(. (default-agent this %|) bowl)
 ::
-++  on-init   on-init:def
+++  on-init
+  =.  rolodex  (~(put by rolodex) our.bowl *contact:store)
+  [~ this(state state)]
+::
 ++  on-save   !>(state)
 ++  on-load
   |=  old-vase=vase
@@ -168,8 +171,8 @@
       ^-  (list card)
       =/  paths=(list path)
         ?:  our
-          [/updates /our ~]
-        ~[/updates]
+          [/updates /our /all ~]
+        [/updates /all ~]
       [%give %fact paths %contact-update !>(update)]~
     --
   ::
