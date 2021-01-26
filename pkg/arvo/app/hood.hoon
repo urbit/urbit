@@ -193,8 +193,12 @@
   `..on-init
 ::
 ++  on-peek
-  |=  path
-  *(unit (unit cage))
+  |=  =path
+  ^-  (unit (unit cage))
+  ?+  path  (on-peek:def path)
+    [%x %date ~]
+    ``date+!>(now:bowl)
+  ==
 ::
 ++  on-agent
   |=  [=wire =sign:agent:gall]
