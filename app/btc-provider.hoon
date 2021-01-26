@@ -31,7 +31,7 @@
 ++  on-init
   ^-  (quip card _this)
   ~&  >  '%btc-provider initialized successfully'
-  `this(host-info ['' connected=%.n clients=*(set ship)], whitelist *(set ship))
+  `this(host-info ['' connected=%.n block=0 clients=*(set ship)], whitelist *(set ship))
 ++  on-save
   ^-  vase
   !>(state)
@@ -77,7 +77,7 @@
   =^  cards  state
   ?+    +<.sign-arvo    (on-arvo:def wire sign-arvo)
       %http-response
-      (handle-rpc-response:hc wire client-response.sign-arvo)
+    (handle-rpc-response:hc wire client-response.sign-arvo)
   ==
   [cards this]
 ::
@@ -91,7 +91,7 @@
   ?-  -.comm
       %set-credentials
     :-  do-ping
-    state(host-info [api-url.comm connected=%.n clients=*(set ship)])
+    state(host-info [api-url.comm connected=%.n block=0 clients=*(set ship)])
     ::
       %whitelist-clients
     `state(whitelist (~(uni in whitelist) clients.comm))
@@ -119,7 +119,7 @@
       [%broadcast-tx rawtx.act]
       ::
         %ping
-      [%get-block-and-fee ~]
+      [%get-block-info ~]
     ==
   [~[(req-card act ract)] state]
 ::
@@ -197,9 +197,11 @@
     ~[(send-update [%.y %broadcast-tx +.r])]
     ::
       %ping
-    ?>  ?=([%get-block-and-fee *] r)
-    :-  ~[(send-status [%connected block.r fee.r])]
-    state(connected.host-info %.y)
+    ?>  ?=([%get-block-info *] r)
+    :_  state(connected.host-info %.y, block.host-info block.r)
+    ?:  =(block.host-info block.r)
+      ~[(send-status [%connected block.r fee.r])]
+    ~[(send-status [%new-block block.r fee.r blockhash.r blockfilter.r])]
   ==
 ::
 ++  send-status

@@ -11,6 +11,7 @@
 ::  pend-piym: incoming payment txs that peer says they have broadcast
 ::  poym: outgoing payments. One at a time: new replaces old
 ::
++$  provider  [host=ship connected=?]
 +$  block  @ud
 +$  btc-state  [=block fee=sats t=@da]
 +$  reqs  (map $?(address txid) request:bws)
