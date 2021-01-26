@@ -1,6 +1,11 @@
 /-  *btc
 |%
-+$  host-info  [api-url=@t connected=? clients=(set ship)]
++$  host-info
+  $:  api-url=@t
+      connected=?
+      block=@ud
+      clients=(set ship)
+  ==
 +$  command
   $%  [%set-credentials api-url=@t]
       [%whitelist-clients clients=(set ship)]
@@ -26,7 +31,8 @@
   ==
 +$  update  (each result error)
 +$  status
-  $%  [%connected block=@ud fee=@ud]
+  $%  [%connected block=@ud fee=sats]
+      [%new-block block=@ud fee=sats blockhash=bytc blockfilter=bytc]
       [%disconnected ~]
   ==
 ::
@@ -38,7 +44,7 @@
         [%get-raw-tx =txid]
         [%broadcast-tx =rawtx]
         [%get-block-count ~]
-        [%get-block-and-fee ~]
+        [%get-block-info ~]
     ==
   ::
   +$  result
@@ -48,7 +54,7 @@
         [%create-raw-tx =rawtx]
         [%broadcast-tx =txid broadcast=? included=?]
         [%get-block-count block=@ud]
-        [%get-block-and-fee block=@ud fee=sats]
+        [%get-block-info block=@ud fee=sats blockhash=bytc blockfilter=bytc]
 
     ==
   --
