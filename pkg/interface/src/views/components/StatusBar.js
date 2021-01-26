@@ -74,6 +74,7 @@ const StatusBar = (props) => {
               <Row
                 p={1}
                 color='black'
+                cursor='pointer'
                 fontSize={0}
                 onClick={() => props.history.push('/~profile/~' + window.ship)}>
                 View Profile
@@ -81,6 +82,7 @@ const StatusBar = (props) => {
               <Row
                 p={1}
                 color='black'
+                cursor='pointer'
                 fontSize={0}
                 onClick={() => props.history.push('/~profile/~' + window.ship)}>
                 Set Status
@@ -88,6 +90,7 @@ const StatusBar = (props) => {
               <Row
                 p={1}
                 color='black'
+                cursor='pointer'
                 fontSize={0}
                 onClick={() => props.history.push('/~profile/~' + window.ship)}>
                 System Settings
