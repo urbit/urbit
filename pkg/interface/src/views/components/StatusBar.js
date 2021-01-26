@@ -1,7 +1,8 @@
 import React from 'react';
 
-import { Row, Box, Text, Icon, Button } from '@tlon/indigo-react';
+import { Col, Row, Box, Text, Icon, Button } from '@tlon/indigo-react';
 import ReconnectButton from './ReconnectButton';
+import { Dropdown } from './Dropdown';
 import { StatusBarItem } from './StatusBarItem';
 import { Sigil } from '~/logic/lib/sigil';
 import useLocalState from '~/logic/state/local';
@@ -11,7 +12,7 @@ const StatusBar = (props) => {
   const metaKey = (window.navigator.platform.includes('Mac')) ? '⌘' : 'Ctrl+';
   const toggleOmnibox = useLocalState(state => state.toggleOmnibox);
 
-  const color = !!props.ourContact ? props.ourContact.color : 'black';
+  const color = !!props.ourContact ? props.ourContact.color : '#000';
   return (
     <Box
       display='grid'
@@ -63,12 +64,37 @@ const StatusBar = (props) => {
         <StatusBarItem mr={2} px={'2'} flexShrink='0' onClick={() => props.history.push('/~settings')}>
           <Icon icon='Gear' color='black'/>
         </StatusBarItem>
-        <StatusBarItem
-          px={'2'}
-          flexShrink='0'
-          onClick={() => props.history.push('/~profile/' + window.ship)}>
-          <Sigil ship={props.ship} size={16} color={color} classes='mix-blend-diff' icon />
-        </StatusBarItem>
+        <Dropdown
+          width="200px"
+          options={
+            <Box backgroundColor="white">
+              <Row
+                p={1}
+                color='black'
+                onClick={() => props.history.push('/~profile/' + window.ship)}>
+                View Profile
+              </Row>
+              <Row
+                p={1}
+                color='black'
+                onClick={() => props.history.push('/~profile/' + window.ship)}>
+                Set Status
+              </Row>
+              <Row
+                p={1}
+                color='black'
+                onClick={() => props.history.push('/~profile/' + window.ship)}>
+                System Settings
+              </Row>
+            </Box>
+          }>
+          <StatusBarItem
+            px={'2'}
+            flexShrink='0'
+            backgroundColor={color}>
+            <Sigil ship={props.ship} size={16} color={color} icon />
+          </StatusBarItem>
+        </Dropdown>
       </Row>
     </Box>
   );
