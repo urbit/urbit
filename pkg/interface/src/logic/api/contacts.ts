@@ -23,6 +23,7 @@ export default class ContactsApi extends BaseApi<StoreState> {
     {avatar: null}
     {avatar: ''}
     */
+    console.log(ship, editField);
     return this.storeAction({
       edit: {
         ship,

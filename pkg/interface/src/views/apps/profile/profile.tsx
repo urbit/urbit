@@ -22,7 +22,8 @@ export default function ProfileScreen(props: any) {
       render={({ match, history }) => {
         const ship = match.params.ship;
         const isEdit = match.url.includes('edit');
-        const contact = props.contacts?.[ship];
+        const contact = props.contacts?.[`~${ship}`];
+        console.log(props.contacts);
         const sigilColor = contact?.color
           ? `#${uxToHex(contact.color)}`
           : dark

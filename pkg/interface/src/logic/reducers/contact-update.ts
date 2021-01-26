@@ -43,14 +43,15 @@ const remove = (json: ContactUpdate, state: S) => {
 
 const edit = (json: ContactUpdate, state: S) => {
   const data = _.get(json, 'edit', false);
+  const ship = `~${data.ship}`;
   if (
     data &&
-    (data.ship in state.contacts)
+    (ship in state.contacts)
   ) {
     const edit = Object.keys(data['edit-field']);
     if (edit.length !== 1) {
       return;
     }
-    state.contacts[data.ship][edit[0]] = data['edit-field'][edit[0]];
+    state.contacts[ship][edit[0]] = data['edit-field'][edit[0]];
   }
 };

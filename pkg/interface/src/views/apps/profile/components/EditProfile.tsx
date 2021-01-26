@@ -14,7 +14,7 @@ import {
 import { Formik, FormikHelpers } from "formik";
 import { useHistory } from "react-router-dom";
 
-import GlobalApi from "~/logic/api/global";
+import { uxToHex } from "~/logic/lib/util";
 import { Sigil } from "~/logic/lib/sigil";
 import { AsyncButton } from "~/views/components/AsyncButton";
 import { ColorInput } from "~/views/components/ColorInput";
@@ -41,31 +41,23 @@ const emptyContact = {
 
 
 export function EditProfile(props: any) {
-  const { contact, ship } = props;
+  const { contact, ship, api } = props;
   if (ship !== window.ship) {
     return null;
   }
+  console.log(contact);
   const history = useHistory();
 
-  const onSubmit = async (values: any, actions: FormikHelpers<Contact>) => {
+  const onSubmit = async (values: any, actions: any) => {
+    console.log(values);
     try {
-      if(!contact) {
-        const [,,ship] = props.path.split('/');
-        values.color = uxToHex(values.color);
-        const sharedValues = Object.assign({}, values);
-        sharedValues.avatar = !!values.avatar ? values.avatar : null;
-        console.log(values);
-        await props.api.contacts.share(ship, props.path, us, sharedValues);
-        actions.setStatus({ success: null });
-        return;
-      }
-
       await Object.keys(values).reduce((acc, key) => {
+        console.log(key);
         const newValue = key !== "color" ? values[key] : uxToHex(values[key]);
 
-        if (newValue !== contact[key]) {
+        if (newValue !== contact[key] && key !== "groups" && key !== "last-updated") {
           return acc.then(() =>
-            props.api.contacts.edit(ship, { [key]: newValue })
+            api.contacts.edit(`~${ship}`, { [key]: newValue })
           );
         }
         return acc;
@@ -77,14 +69,13 @@ export function EditProfile(props: any) {
     }
   };
 
-
-
   return (
-    <Formik
-      validationSchema={formSchema}
-      initialValues={contact || emptyContact}
-      onSubmit={onSubmit}
-    >
+    <Box width="100%">
+      <Formik
+        validationSchema={formSchema}
+        initialValues={contact || emptyContact}
+        onSubmit={onSubmit}
+      >
       <Form width="100%" p={2}>
         <Input id="nickname" label="Name" mb={3} />
         <Input id="bio" label="Description" mb={3} />
@@ -101,5 +92,6 @@ export function EditProfile(props: any) {
         </AsyncButton>
       </Form>
     </Formik>
+  </Box>
   );
 }
