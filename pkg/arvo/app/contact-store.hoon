@@ -113,7 +113,7 @@
       ?>  (~(has by rolodex) ship)
       :-  (send-diff [%remove ship] =(ship our.bowl))
       ?:  =(ship our.bowl)
-        state(rolodex (~(put by rolodex) *contact:store))
+        state(rolodex (~(put by rolodex) our.bowl *contact:store))
       state(rolodex (~(del by rolodex) ship))
     ::
     ++  handle-edit
