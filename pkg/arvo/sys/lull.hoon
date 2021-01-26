@@ -949,6 +949,7 @@
   ++  nave
     |$  [typ dif]
     $_
+    ^?
     |%
     ++  bunt  *typ
     ++  diff  |~([old=typ new=typ] *dif)
@@ -958,7 +959,7 @@
       |~  [a=[ship desk dif] b=[ship desk dif]]
       *(unit dif)
     ++  pact  |~([typ dif] *typ)
-    ++  vale  typ
+    ++  vale  |~(noun *typ)
     --
   ::  $dais: processed mark core
   ::

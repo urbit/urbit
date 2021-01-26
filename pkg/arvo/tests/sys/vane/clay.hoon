@@ -1,9 +1,10 @@
 /+  *test
 /=  clay-raw  /sys/vane/clay
-/*  hello-gen     %hoon  /gen/hello/hoon
-/*  strandio-lib  %hoon  /lib/strandio/hoon
-/*  strand-lib    %hoon  /lib/strand/hoon
-/*  spider-sur    %hoon  /sur/spider/hoon
+/*  gen-hello     %hoon  /gen/hello/hoon
+/*  lib-strandio  %hoon  /lib/strandio/hoon
+/*  lib-strand    %hoon  /lib/strand/hoon
+/*  sur-spider    %hoon  /sur/spider/hoon
+/*  mar-mime      %hoon  /mar/mime/hoon
 ::
 !:
 =,  format
@@ -89,7 +90,35 @@
   %-  expect-fail
   |.  (parse-pile:(ford):fusion /sur/foo/hoon "[")
 ::
-++  test-hello-gen  ^-  tang
+++  test-mar-mime  ^-  tang
+  =/  =ankh:clay
+    :-  fil=~
+    %-  ~(gas by *(map @tas ankh:clay))
+    :~  :+  %mar  fil=~
+        %-  ~(gas by *(map @tas ankh:clay))
+        :~  :+  %hoon  fil=`[*lobe:clay hoon+!>(mar-mime)]  dir=~
+    ==  ==
+  =/  ford
+    %:  ford:fusion
+      bud
+      ankh
+      deletes=~
+      changes=(my [/mar/mime/hoon &+hoon+mar-mime]~)
+      file-store=~
+      *ford-cache:fusion
+    ==
+    =/  [res=vase nub=state:ford:fusion]  (get-nave:ford %mime)
+    ;:  weld
+      %+  expect-eq
+        !>(*mime)
+        (slap res limb/%bunt)
+    ::
+      %+  expect-eq
+        !>  (~(gas in *(set path)) /mar/mime/hoon ~)
+        !>  dez:(~(got by vases.cache.nub) /mar/mime/hoon)
+    ==
+::
+++  test-gen-hello  ^-  tang
   =/  =ankh:clay
     :-  fil=~
     %-  ~(gas by *(map @tas ankh:clay))
@@ -97,14 +126,14 @@
         %-  ~(gas by *(map @tas ankh:clay))
         :~  :+  %hello  fil=~
             %-  ~(gas by *(map @tas ankh:clay))
-            :~  :+  %hoon  fil=`[*lobe:clay hoon+!>(hello-gen)]  dir=~
+            :~  :+  %hoon  fil=`[*lobe:clay hoon+!>(gen-hello)]  dir=~
     ==  ==  ==
   =/  ford
     %:  ford:fusion
       bud
       ankh
       deletes=~
-      changes=(my [/gen/hello/hoon &+hoon+hello-gen]~)
+      changes=(my [/gen/hello/hoon &+hoon+gen-hello]~)
       file-store=~
       *ford-cache:fusion
     ==
@@ -119,7 +148,7 @@
       !>  dez:(~(got by vases.cache.nub) /gen/hello/hoon)
   ==
 ::
-++  test-strandio-lib  ^-  tang
+++  test-lib-strandio  ^-  tang
   =/  =ankh:clay
     :-  fil=~
     %-  ~(gas by *(map @tas ankh:clay))
@@ -127,19 +156,19 @@
         %-  ~(gas by *(map @tas ankh:clay))
         :~  :+  %strandio  fil=~
             %-  ~(gas by *(map @tas ankh:clay))
-            :~  :+  %hoon  fil=`[*lobe:clay hoon+!>(strandio-lib)]  dir=~
+            :~  :+  %hoon  fil=`[*lobe:clay hoon+!>(lib-strandio)]  dir=~
             ==
         ::
             :+  %strand  fil=~
             %-  ~(gas by *(map @tas ankh:clay))
-            :~  :+  %hoon  fil=`[*lobe:clay hoon+!>(strand-lib)]  dir=~
+            :~  :+  %hoon  fil=`[*lobe:clay hoon+!>(lib-strand)]  dir=~
         ==  ==
     ::
         :+  %sur  fil=~
         %-  ~(gas by *(map @tas ankh:clay))
         :~  :+  %spider  fil=~
             %-  ~(gas by *(map @tas ankh:clay))
-            :~  :+  %hoon  fil=`[*lobe:clay hoon+!>(spider-sur)]  dir=~
+            :~  :+  %hoon  fil=`[*lobe:clay hoon+!>(sur-spider)]  dir=~
     ==  ==  ==
   =/  ford
     %:  ford:fusion

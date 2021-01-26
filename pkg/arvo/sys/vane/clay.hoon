@@ -543,7 +543,7 @@
         =.  naves.cache.nub  (~(put by naves.cache.nub) mak [vase.res top])
         [vase.res nub]
       =^  cor=vase  nub  (build-fit %mar mak)
-      =/  gad=vase  (slap cor %limb %grad)
+      =/  gad=vase  (slap cor limb/%grad)
       ?@  q.gad
         =+  !<(mok=mark gad)
         =^  deg=vase  nub  $(mak mok)
@@ -575,23 +575,27 @@
       :_  nub
       =+  !<(fom=mark (slap gad %limb %form))
       ^-  vase  ::  vase of nave
-      %+  slap
-        (with-faces cor+cor nave+!>(nave) ~)
+      %+  slap  (slop (with-face cor+cor) bud)
       !,  *hoon
-      =/  typ=mold  _+<.cor
-      =/  dif=mold  diff:grad:cor
-      ^-  (nave typ dif)
+      =/  typ  _+<.cor
+      =/  dif  _*diff:grad:cor
+      ^-  (nave:clay typ dif)
       |%
       ++  bunt  +<.cor
       ++  diff  |=([old=typ new=typ] (diff:~(grad cor old) new))
       ++  form  form:grad:cor
-      ++  join  join:grad:cor
+      ++  join
+        |=  [a=dif b=dif]
+        ^-  (unit (unit dif))
+        ?:  =(a b)
+          ~
+        `(join:grad:cor a b)
       ++  mash
         |=  [a=[=ship =desk =dif] b=[=ship =desk =dif]]
         ^-  (unit dif)
         ?:  =(dif.a dif.b)
           ~
-        `(mash:grad:cor a b)
+        (mash:grad:cor a b)
       ++  pact  |=([v=typ d=dif] (pact:~(grad cor v) d))
       ++  vale  noun:grab:cor
       --
@@ -629,7 +633,7 @@
         =/  res=vase  (slam (slap nav limb/%join) (slop a b))
         ?~  q.res    ~
         ?~  +.q.res  [~ ~]
-        ``(slap res wing/u/u/~)
+        ``(slap res !,(*hoon ?>(?=([~ ~ *] .) u.u)))
       ++  mash
         |=  [a=[=ship =desk diff=vase] b=[=ship =desk diff=vase]]
         ^-  (unit vase)
@@ -640,7 +644,7 @@
           :(slop !>(ship.b) !>(desk.b) diff.b)
         ?~  q.res
           ~
-        `(slap res limb/%u)
+        `(slap res !,(*hoon ?>((^ .) u)))
       ++  pact
         |=  diff=vase
         (slam (slap nav limb/%pact) (slop sam diff))
@@ -681,7 +685,7 @@
         :_  nub
         %+  slap  (with-faces cor+old ~)
         ^-  hoon
-        :+  %brts  bcts/[%v like/[bunt/~ ~[cor/~]]]
+        :+  %brcl  tsgr/[limb/%cor limb/%bunt]
         :+  %tsgl  limb/b
         !,(*hoon ~(grow cor v))
       ::  try direct +grab
@@ -3453,7 +3457,7 @@
     ::  ford
     ::
     ++  read-a
-      !.
+      ::!.  TODO reinstate
       |=  [=aeon =path]
       ^-  [(unit (unit (each cage lobe))) ford-cache]
       ?.  =(aeon let.dom)
@@ -3475,7 +3479,7 @@
       :_(fod.dom [~ ~ %& %vase !>(vase)])
     ::
     ++  read-b
-      !.
+      ::!.  TODO reinstate
       |=  [=aeon =path]
       ^-  [(unit (unit (each cage lobe))) ford-cache]
       ?.  =(aeon let.dom)
@@ -3491,7 +3495,7 @@
       :_(fod.dom [~ ~ %& %dais !>(dais)])
     ::
     ++  read-c
-      !.
+      ::!.  TODO reinstate
       |=  [=aeon =path]
       ^-  [(unit (unit (each cage lobe))) ford-cache]
       ?.  =(aeon let.dom)
@@ -3849,7 +3853,7 @@
         [~ fod]
       ::  virtualize to catch and produce deterministic failures
       ::
-      !.
+      ::!.  TODO reinstate
       =-  ?:(?=(%& -<) p.- ((slog p.-) [[~ ~] fod]))
       %-  mule  |.
       ?-  care.mun
