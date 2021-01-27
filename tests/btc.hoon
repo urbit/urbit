@@ -60,6 +60,29 @@
             [wid=34 dat=0x20.1863.143c.14c5.1668.04bd.1920.3356.da13.6c98.5678.cd4d.27a1.b8c6.3296.0490.3262]
         ==
         ::
+        :*  [%bech32 'tb1q6rz28mcfaxtmd6v789l9rrlrusdprr9pqcpvkl']
+            [wid=22 dat=0x14.d0c4.a3ef.09e9.97b6.e99e.397e.518f.e3e4.1a11.8ca1]
+        ==
+        ::
+        :*  [%base58 0c1LqBGSKuX5yYUonjxT5qGfpUsXKYYWeabA]
+            [wid=25 dat=0x76.a914.d986.ed01.b7a2.2225.a70e.dbf2.ba7c.fb63.a15c.b3aa.88ac]
+        ==
+        ::
+        :*  [%base58 0cmxVFsFW5N4mu1HPkxPttorvocvzeZ7KZyk]
+            [wid=25 dat=0x76.a914.ba27.f99e.007c.7f60.5a83.05e3.18c1.abde.3cd2.20ac.88ac]
+        ==
+        ::
+        :*  [%base58 0cmfWxJ45yp2SFn7UciZyNpvDKrzbhyfKrY8]
+            [wid=25 dat=0x76.a914.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.88ac]
+        ==
+        ::
+        :*  [%base58 0c37VucYSaXLCAsxYyAPfbSi9eh4iEcbShgf]
+            [wid=23 dat=0xa9.143f.b6e9.5812.e57b.b469.1f9a.4a62.8862.a61a.4f76.9b87]
+        ==
+        ::
+        :*  [%base58 0c2MvLWCyKPQQ6oqJKSJ9ic8hYVmLyNry6yuF]
+            [wid=23 dat=0xa9.1421.e7fe.f309.cf6f.6cfc.fe94.c572.e541.d74f.d848.5487]
+        ==
     ==
   --
 ::
