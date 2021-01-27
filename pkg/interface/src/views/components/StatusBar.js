@@ -61,9 +61,6 @@ const StatusBar = (props) => {
           >
           <Text color='#000000'>Submit <Text color='#000000' display={['none', 'inline']}>an</Text> issue</Text>
         </StatusBarItem>
-        <StatusBarItem mr={2} px={'2'} flexShrink='0' onClick={() => props.history.push('/~settings')}>
-          <Icon icon='Gear' color='black'/>
-        </StatusBarItem>
         <Dropdown
           dropWidth="150px"
           width="auto"
@@ -84,7 +81,7 @@ const StatusBar = (props) => {
                 color='black'
                 cursor='pointer'
                 fontSize={0}
-                onClick={() => props.history.push('/~profile/~' + window.ship)}>
+                onClick={() => console.log('TODO, show a modal')}>
                 Set Status
               </Row>
               <Row
@@ -92,7 +89,7 @@ const StatusBar = (props) => {
                 color='black'
                 cursor='pointer'
                 fontSize={0}
-                onClick={() => props.history.push('/~profile/~' + window.ship)}>
+                onClick={() => props.history.push('/~settings')}>
                 System Settings
               </Row>
             </Col>

@@ -34,9 +34,7 @@ export function ViewProfile(props: any) {
         alignItems="center"
         width="100%">
         <Center width="100%">
-          <Text mono color="darkGray">
-            {`${ship}`}
-          </Text>
+          <Text mono color="darkGray">{ship}</Text>
         </Center>
       </Row>
       <Row
@@ -49,7 +47,7 @@ export function ViewProfile(props: any) {
           </RichText>
         </Center>
       </Row>
-      { (ship === window.ship) ? (
+      { (ship === `~${window.ship}`) ? (
           <Row
             pb={2}
             alignItems="center"
@@ -72,7 +70,7 @@ export function ViewProfile(props: any) {
         border={1}
         borderColor="washedGray">
         <Center height="100%">
-          <Text mono pr={1} color="gray">{`${ship} `}</Text>
+          <Text mono pr={1} color="gray">{ship}</Text>
           <Text color="gray">remains private</Text>
         </Center>
       </Box>

@@ -42,10 +42,6 @@ const emptyContact = {
 
 export function EditProfile(props: any) {
   const { contact, ship, api } = props;
-  if (ship !== window.ship) {
-    return null;
-  }
-  console.log(contact);
   const history = useHistory();
 
   const onSubmit = async (values: any, actions: any) => {
@@ -57,7 +53,7 @@ export function EditProfile(props: any) {
 
         if (newValue !== contact[key] && key !== "groups" && key !== "last-updated") {
           return acc.then(() =>
-            api.contacts.edit(`~${ship}`, { [key]: newValue })
+            api.contacts.edit(ship, { [key]: newValue })
           );
         }
         return acc;
