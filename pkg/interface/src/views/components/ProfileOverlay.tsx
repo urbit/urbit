@@ -134,7 +134,14 @@ class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
             >
               {showNickname ? contact.nickname : cite(ship)}
             </Text>
-          {contact?.status && (<Text>{contact.status}</Text>)}
+          <Text
+            contentEditable={isOwn}
+            display={(!contact?.status && !isOwn) ? 'none' : 'inline'}
+            gray={(!contact?.status && isOwn)}
+            // onBlur={() => api.contacts.edit()...}
+            >
+              {(!contact?.status && isOwn) ? "Set a status" : contact.status}
+            </Text>
         </Col>
       </Col>
     );
