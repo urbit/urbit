@@ -363,11 +363,11 @@ export function useShowNickname(contact: Contact | null, hide?: boolean): boolea
   return !!(contact && contact.nickname && !hideNicknames);
 }
 
-export function useHovering() {
+export const useHovering = (props: {withParent?: boolean} = {}): Record<string, unknown> => {
   const [hovering, setHovering] = useState(false);
   const bind = {
-    onMouseEnter: () => setHovering(true),
+    ...(props.withParent === true ? { onMouseOver: () => setHovering(true) } : { onMouseEnter: () => setHovering(true) }),
     onMouseLeave: () => setHovering(false)
   };
   return { hovering, bind };
-}
+};
