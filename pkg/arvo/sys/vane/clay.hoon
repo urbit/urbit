@@ -554,8 +554,8 @@
         %+  slap
           (with-faces deg+deg tub+tub but+but cor+cor nave+!>(nave) ~)
         !,  *hoon
-        =/  typ=mold  _+<.cor
-        =/  dif=mold  vale:deg
+        =/  typ  _+<.cor
+        =/  dif  vale:deg
         ^-  (nave typ dif)
         |%
         ++  bunt  +<.cor
@@ -573,7 +573,6 @@
         ++  vale  noun:grab:cor
         --
       :_  nub
-      =+  !<(fom=mark (slap gad %limb %form))
       ^-  vase  ::  vase of nave
       %+  slap  (slop (with-face cor+cor) bud)
       !,  *hoon
@@ -595,7 +594,7 @@
         ^-  (unit dif)
         ?:  =(dif.a dif.b)
           ~
-        (mash:grad:cor a b)
+        `(mash:grad:cor a b)
       ++  pact  |=([v=typ d=dif] (pact:~(grad cor v) d))
       ++  vale  noun:grab:cor
       --

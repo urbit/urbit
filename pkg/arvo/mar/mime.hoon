@@ -24,6 +24,9 @@
   ++  diff  |=(mime +<)
   ++  pact  |=(mime +<)
   ++  join  |=([mime mime] `(unit mime)`~)
-  ++  mash  |=([[ship desk mime] [ship desk mime]] ~|(%mime-mash !!))
+  ++  mash
+    |=  [[ship desk mime] [ship desk mime]]
+    ^-  mime
+    ~|(%mime-mash !!)
   --
 --
