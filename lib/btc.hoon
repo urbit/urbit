@@ -45,56 +45,71 @@
   %-  ripemd-160
   (sha256 val)
 ::
-++  base58check
-  |%
-  ++  checksum  dsha256
-  ++  encode
-    |=  body=hexb
-    ^-  tape
-    =>  :-  .
-        %-  cat:byt
-        :~  body
-            (take:byt 4 (checksum body))
+++  pubkey-to-address
+  |=  [=bipt =network pubkey=hexb]
+  ^-  address
+  ?-  bipt
+      %44
+    :-  %base58
+    =<  ^-(@uc dat)
+    %-  cat:byt
+    :-  ?-  network
+            %main     1^0x0
+            %testnet  1^0x6f
         ==
-    (en-base58:mimes:html dat)
-  ::
-  ++  decode
-    |=  b=tape
-    ^-  hexb
-    ~|  "Invalid base58check input: {<b>}"
-    =/  h=@ux
-      (de-base58:mimes:html b)
-    ::  handle leading 0 ('1' in base68)
-    =/  len=@
-      ?:  =('1' (snag 0 b))
-        (add 1 (met 3 h))
-      (met 3 h)
-    =/  body=hexb  (take (sub len 4) len^h)
-    =/  check=hexb  (drop:byt (sub len 4) len^h)
-    ?>  =(check (take:byt 4 (checksum body)))
-    body
-  --
+    ~[(hash-160 pubkey)]
+    ::
+      %49
+    :-  %base58
+    =<  ^-(@uc dat)
+    %-  cat:byt
+    :~  ?-  network
+          %main     1^0x5
+          %testnet  1^0xc4
+        ==
+        %-  hash-160
+        (cat:byt ~[2^0x14 (hash-160 pubkey)])
+    ==
+    ::
+      %84
+    :-  %bech32
+    (need (encode-pubkey:bech32 network pubkey))
+  ==
 ::
 ++  script-pubkey
   |=  =address
   ^-  hexb
   ?-  -.address
-    ::  TODO: make work for P2WSH (32 byte bech32)
       %bech32
-    =+  h=(to-hex:bech32 address)
+    =+  h=(from-address:bech32 +.address)
     %-  cat:byt
     :~  1^0x0
         1^wid.h
         h
     ==
-    ::  TODO switch on 1/3 below
-    ::  https://bitcoinops.org/en/tools/calc-size/
-    ::  above link shows how to make P2PKH and P2SH, which I'd need here
+    ::
       %base58
-    ~|("base58 not supported" !!)
-::      (decode:base58check (trip +.address))
+    =/  h=hexb  [21 `@ux`+.address]
+    =+  lead-byt=dat:(take:byt 1 h)
+    =/  version-network=[bipt network]
+      ?:  =(0x0 lead-byt)   [%44 %main]
+      ?:  =(0x6f lead-byt)  [%44 %testnet]
+      ?:  =(0x5 lead-byt)   [%49 %main]
+      ?:  =(0x6f lead-byt)  [%49 %testnet]
+      ~|("Invalid base58 address: {<+.address>}" !!)
+    %-  cat:byt
+    ?:  ?=(%44 -.version-network)
+      :~  3^0x76.a914
+          (drop:byt 1 h)
+          2^0x88ac
+      ==
+    :~  2^0xa914
+        (drop:byt 1 h)
+        1^0x87
+    ==
   ==
 ::  +txu: tx utility functions
+::
 ++  txu
   |%
   ++  en
@@ -451,6 +466,7 @@
   ::
   ++  take
     |=  [n=@ b=byts]
+    ^-  byts
     ?:  (gth n wid.b)
       [n dat.b]
     [n (rsh [3 (sub wid.b n)] dat.b)]
@@ -464,50 +480,52 @@
       0^0x0
     =+  n-take=(sub wid.b n)
     [n-take (end [3 n-take] dat.b)]
-::  Converts a list of bits to a list of n-bit numbers 
-::  input-bits should be big-endian
 ::
 ++  bit
   |%
-  ::  rip atom a with num-bits. Preserve leading 0s, big endian
-  ::  returns a list of bits
+  ++  cat
+    |=  bs=(list bits)
+    ^-  bits
+    :-  (roll (turn bs |=(b=bits wid.b)) add)
+    (can 0 (flop bs))
   ::
-  ++  zeros-brip
-    |=  [num-bits=@ a=@]
-    ^-  (list @)
-    =/  bits=(list @)  (flop (rip 0 a))
-    =/  pad=@  (sub num-bits (lent bits))
-    (weld (reap pad 0) bits)
-  ::  +convert: list of bits to a list of atoms each with bitwidth d(est)
+  ++  take
+    |=  [n=@ b=bits]
+    ^-  bits
+    ?:  (gth n wid.b)
+    [n dat.b]
+    [n (rsh [0 (sub wid.b n)] dat.b)]
   ::
-  ++  convert
-    |=  [d=@ bits=(list @)]
-    ^-  (list @)
-    =|  ret=(list @)
-    |-  ?~  bits  ret
-    =/  dest-bits  (scag d ((list @) bits))
-    ::  left-shift the "missing" number of bits
-    =/  num=@
-      %+  lsh  [0 (sub d (lent dest-bits))]
-      (rep 0 (flop dest-bits))
-    $(ret (snoc ret num), bits (slag d ((list @) bits)))
-  ::  Converts e.g. ~[0 0 31 31 31 31 0 0] in base32 (5 bitwidth)
-  ::  to ~[0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0]
+  ++  drop
+    |=  [n=@ b=byts]
+    ^-  bits
+    ?:  (gte n wid.b)
+      0^0b0
+    =+  n-take=(sub wid.b n)
+    [n-take (end [0 n-take] dat.b)]
+  ::  +from-atoms: convert atoms of bitwidth to bits
   ::
-  ++  from-digits
+  ++  from-atoms
     |=  [bitwidth=@ digits=(list @)]
-    ^-  (list @)
-    %-  zing
+    ^-  bits
+    %-  cat:bit
     %+  turn  digits
-    |=  d=@  (zeros-brip bitwidth d)
-  ::  converts 40 bits: ~[0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0]
-  ::  to 0x3fff.fc00 when cast to hex
+    |=  a=@
+    ?>  (lte (met 0 a) bitwidth)
+    [bitwidth `@ub`a]
+  ::  +to-atoms: convert bits to atoms of bitwidth
   ::
-  ++  to-atom
-    |=  bits=(list @)
-    ^-  @
-    %+  rep  0
-    %-  flop  bits
+   ++  to-atoms
+    |=  [bitwidth=@ bs=bits]
+    ^-  (list @)
+    =|  res=(list @)
+    ?>  =(0 (mod wid.bs bitwidth))
+    |-
+    ?:  =(0 wid.bs)  res
+    %=  $
+        res  (snoc res dat:(take bitwidth bs))
+        bs   (drop bitwidth bs)
+    ==
   --
 ::
 ++  bech32
@@ -550,8 +568,7 @@
   ++  verify-checksum
     |=  [hrp=tape data-and-checksum=(list @)]
     ^-  ?
-    %+  |=([a=@ b=@] =(a b))
-      1
+    %-  |=(a=@ =(1 a))
     %-  polymod
     (weld (expand-hrp hrp) data-and-checksum)
   ::
@@ -559,6 +576,7 @@
     |=  [hrp=tape data=(list @)]
     ^-  (list @)
     ::  xor 1 with the polymod
+    ::
     =/  pmod=@
       %+  mix  1
       %-  polymod
@@ -589,16 +607,15 @@
   ::
   ++  encode-raw
     |=  [hrp=tape data=(list @)]
-    ^-  bech32-a
+    ^-  cord
     =/  combined=(list @)
       (weld data (checksum hrp data))
-    :-  %bech32
     %-  crip
     (zing ~[hrp "1" (tape (murn combined value-to-charset))])
   ++  decode-raw
-    |=  b=bech32-a
+    |=  body=cord
     ^-  (unit raw-decoded)
-    =/  bech  (cass (trip +.b))              ::  to lowercase
+    =/  bech  (cass (trip body))              ::  to lowercase
     =/  pos  (flop (fand "1" bech))
     ?~  pos  ~
     =/  last-1=@  i.pos
@@ -616,41 +633,35 @@
       ~
     =/  checksum-pos  (sub (lent data-and-checksum) 6)
     `[hrp (scag checksum-pos data-and-checksum) (slag checksum-pos data-and-checksum)]
-  ::  goes from a bech32 address to hex. Returns byts to preserve leading 0s
+  ::  +from-address: BIP173 bech32 address encoding to hex
+  ::  https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki
+  ::  expects to drop a leading 5-bit 0 (the witness version)
   ::
-  ++  to-hex
-    |=  b=bech32-a
+  ++  from-address
+    |=  body=cord
     ^-  hexb
-    =/  d=(unit raw-decoded)  (decode-raw b)
-    ?~  d  ~|("Invalid bech32 address" !!)
-    =/  bs=(list @)
-      (from-digits:bit 5 (slag 1 data.u.d))
-    =/  byt-len=@  (div (lent bs) 8)
-    ?.  =(0 (mod (lent bs) 8))
-      ~|("Invalid bech32 address: not 8bit" !!)
-    ?.  ?|(?=(%20 byt-len) ?=(%32 byt-len))
-      ~|("Invalid bech32 address: must be 20 (P2WPKH) or 32 (P2WSH) bytes" !!)
-    [byt-len (to-atom:bit bs)]
+    ~|  "Invalid bech32 address"
+    =/  d=(unit raw-decoded)  (decode-raw body)
+    ?>  ?=(^ d)
+    =/  bs=bits  (from-atoms:bit 5 data.u.d)
+    =/  byt-len=@  (div (sub wid.bs 5) 8)
+    ?>  =(5^0b0 (take:bit 5 bs))
+    ?>  ?|  =(20 byt-len)
+            =(32 byt-len)
+        ==
+    [byt-len `@ux`dat:(take:bit (mul 8 byt-len) (drop:bit 5 bs))]
   ::  pubkey is the 33 byte ECC compressed public key
   ::
   ++  encode-pubkey
     |=  [=network pubkey=byts]
-    ^-  (unit bech32-a)
+    ^-  (unit cord)
     ?.  =(33 wid.pubkey)
       ~|('pubkey must be a 33 byte ECC compressed public key' !!)
     =/  prefix  (~(get by prefixes) network)
     ?~  prefix  ~
     :-  ~
     %+  encode-raw  u.prefix
-    [0 (convert:bit 5 (zeros-brip:bit 160 dat:(hash-160 pubkey)))]
-  ++  encode-hash-160
-    |=  [=network h160=byts]
-    ^-  (unit bech32-a)
-    =/  prefix  (~(get by prefixes) network)
-    ?~  prefix  ~
-    :-  ~
-    %+  encode-raw  u.prefix
-    [0 (convert:bit 5 (zeros-brip:bit 160 dat.h160))]
+    [0v0 (to-atoms:bit 5 [160 `@ub`dat:(hash-160 pubkey)])]
   --
 ::
 --
