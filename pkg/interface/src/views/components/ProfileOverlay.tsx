@@ -4,7 +4,7 @@ import { Contact, Group } from '~/types';
 import { cite, useShowNickname } from '~/logic/lib/util';
 import { Sigil } from '~/logic/lib/sigil';
 
-import { Box, Col, Button, Text, BaseImage, ColProps } from '@tlon/indigo-react';
+import { Box, Col, Row, Button, Text, BaseImage, ColProps, Icon } from '@tlon/indigo-react';
 import { withLocalState } from '~/logic/state/local';
 
 export const OVERLAY_HEIGHT = 250;
@@ -60,7 +60,6 @@ class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
       color,
       topSpace,
       bottomSpace,
-      group = false,
       hideAvatars,
       hideNicknames,
       history,
@@ -78,72 +77,65 @@ class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
     if (!(top || bottom)) {
       bottom = `-${Math.round(OVERLAY_HEIGHT / 2)}px`;
     }
-    const containerStyle = { top, bottom, left: '100%', maxWidth: '160px' };
+    const containerStyle = { top, bottom, left: '100%' };
 
     const isOwn = window.ship === ship;
 
     const img = contact?.avatar && !hideAvatars
-      ? <BaseImage display='inline-block' src={contact.avatar} height={160} width={160} className="brt2" />
+      ? <BaseImage display='inline-block' src={contact.avatar} height={72} width={72} className="brt2" />
       : <Sigil
         ship={ship}
-        size={160}
+        size={72}
         color={color}
         classes="brt2"
         svgClass="brt2"
         />;
     const showNickname = useShowNickname(contact, hideNicknames);
 
-    //  TODO: we need to rethink this "top-level profile view" of other ships
-    /* if (!group.hidden) {
-    }*/
-
-    const isHidden = group ? group.hidden : false;
-
     const rootSettings = history.location.pathname.slice(0, history.location.pathname.indexOf("/resource"));
 
     return (
       <Col
         ref={this.popoverRef}
-        boxShadow="2px 4px 20px rgba(0, 0, 0, 0.25)"
+        backgroundColor="white"
+        color="washedGray"
+        border={1}
+        borderRadius={2}
+        borderColor="lightGray"
+        boxShadow="0px 0px 0px 3px"
         position='absolute'
-        backgroundColor='white'
         zIndex='3'
         fontSize='0'
+        height="250px"
+        width="250px"
+        padding={3}
+        justifyContent="space-between"
         style={containerStyle}
         {...rest}
       >
-        <Box height='160px' width='160px'>
+        <Row color='black' width='100%' height="3rem">
+          <Icon icon="Menu"/>
+          {(!isOwn) && (
+          <Icon icon="Chat" size={16} onClick={() => history.push(`/~landscape/dm/${ship}`)}/>
+          )}
+        </Row>
+        <Box alignSelf="center" height="72px">
           {img}
         </Box>
-        <Box p='3'>
-          {showNickname && (
+        <Col height="3rem" alignItems="end" justifyContent="flex-end">
             <Text
               fontWeight='600'
+              mono={!showNickname}
               display='block'
               textOverflow='ellipsis'
               overflow='hidden'
               whiteSpace='pre'
+              lineHeight="tall"
             >
-              {contact.nickname}
+              {showNickname ? contact.nickname : cite(ship)}
             </Text>
-          )}
-          <Text mono gray>{cite(`~${ship}`)}</Text>
-          {!isOwn && (
-            <Button mt={2} fontSize='0' width="100%" style={{ cursor: 'pointer' }} onClick={() => history.push(`/~landscape/dm/${ship}`)}>
-              Send Message
-            </Button>
-          )}
-          {(isOwn) ? (
-            <Button
-              mt='2'
-              width='100%'
-              style={{ cursor: 'pointer ' }}
-              onClick={() => (isHidden) ? history.push('/~profile/identity') : history.push(`${rootSettings}/popover/profile`)}
-            >
-              Edit Identity
-            </Button>
-          ) : <div />}
-        </Box>
+          {contact?.status && (<Text>{contact.status}</Text>)}
+        </Col>
       </Col>
     );
   }
