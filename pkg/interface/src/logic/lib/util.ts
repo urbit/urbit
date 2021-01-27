@@ -363,10 +363,18 @@ export function useShowNickname(contact: Contact | null, hide?: boolean): boolea
   return !!(contact && contact.nickname && !hideNicknames);
 }
 
-export const useHovering = (props: {withParent?: boolean} = {}): Record<string, unknown> => {
+interface useHoveringInterface {
+  hovering: boolean;
+  bind: {
+    onMouseOver: () => void,
+    onMouseLeave: () => void
+  }
+}
+
+export const useHovering = (): useHoveringInterface => {
   const [hovering, setHovering] = useState(false);
   const bind = {
-    ...(props.withParent === true ? { onMouseOver: () => setHovering(true) } : { onMouseEnter: () => setHovering(true) }),
+    onMouseOver: () => setHovering(true),
     onMouseLeave: () => setHovering(false)
   };
   return { hovering, bind };
