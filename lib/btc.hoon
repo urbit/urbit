@@ -95,7 +95,7 @@
       ?:  =(0x0 lead-byt)   [%44 %main]
       ?:  =(0x6f lead-byt)  [%44 %testnet]
       ?:  =(0x5 lead-byt)   [%49 %main]
-      ?:  =(0x6f lead-byt)  [%49 %testnet]
+      ?:  =(0xc4 lead-byt)  [%49 %testnet]
       ~|("Invalid base58 address: {<+.address>}" !!)
     %-  cat:byt
     ?:  ?=(%44 -.version-network)
