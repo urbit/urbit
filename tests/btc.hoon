@@ -1,5 +1,6 @@
-/+  *test, *btc
+/+  *test, *btc, bip32
 |%
++$  xpub-vec  [=xpub pubkey=hexb]
 +$  pubkey-vec  [=bipt =network pubkey=hexb =address]
 +$  script-pubkey-vec  [=address spk=hexb]
 ++  vectors
@@ -11,6 +12,12 @@
   ::  below use mnemonic:
   ::  abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about
   ::
+  ++  xpubs
+    ^-  (list xpub-vec)
+    :~  :*  'vpub5Y6cjg78GGuNLsaPhmYsiw4gYX3HoQiRBiSwDaBXKUafCt9bNwWQiitDk5VZ5BVxYnQdwoTyXSs2JHRPAgjAvtbBrf8ZhDYe2jWAqvZVnsc'
+            33^0x2.e7ab.2537.b5d4.9e97.0309.aae0.6e9e.49f3.6ce1.c9fe.bbd4.4ec8.e0d1.cca0.b4f9.c319
+        ==
+    ==
   ++  pubkeys
     ^-  (list pubkey-vec)
     :~  :*  %84
@@ -95,7 +102,11 @@
           =((to-atoms:bit 5 bits) atoms)
       ==
     ~|("base32 bit manipulation failed" !!)
+  ::  xpubs
+  ::
+  ~&  >  (from-extended:bip32 (trip 'vpub5baxyhXRwCQ1N4KuQfdVSfnYahk6HDRCqDhQJjgSbxo8SzP5ghgHugxZuQ9TpfGC2oTBYdVi8thxMGhqjcVbNPMBNRKMX9x1PZW4LXNyq7q'))
   ::  pubkey to address
+  ::
   ?.  %+  levy  pubkeys:vectors
       |=  [=bipt =network pubkey=hexb =address]
       =(address (pubkey-to-address bipt network pubkey))
