@@ -3,10 +3,12 @@
 |%
 +$  network  ?(%main %testnet)
 +$  hexb  [wid=@ dat=@ux]                :: hex byts
++$  bits  [wid=@ dat=@ub]
 +$  xpub  @ta
-+$  address  ?(base58-a bech32-a)
-+$  base58-a  $%([%base58 cord])
-+$  bech32-a  $%([%bech32 cord])
++$  address
+  $%  [%base58 @uc]
+      [%bech32 cord]
+  ==
 +$  fprint  hexb
 +$  bipt  $?(%44 %49 %84)
 +$  chyg  $?(%0 %1)
@@ -26,7 +28,7 @@
   |%
   +$  data
     $:  is=(list input)
-        os=(list output) 
+        os=(list output)
         locktime=@ud
         nversion=@ud
         segwit=(unit @ud)
