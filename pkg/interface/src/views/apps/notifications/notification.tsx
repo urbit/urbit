@@ -84,7 +84,7 @@ function NotificationWrapper(props: {
     return api.hark[func](notif);
   }, [notif, api, isMuted]);
 
-  const { hovering, bind } = useHovering({ withParent: true });
+  const { hovering, bind } = useHovering();
 
   const changeMuteDesc = isMuted ? "Unmute" : "Mute";
   return (
