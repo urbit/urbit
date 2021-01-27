@@ -91,6 +91,7 @@ export class OmniboxResult extends Component {
         <Text
         display="inline-block"
         verticalAlign="middle"
+        mono={(icon == 'profile' && text.startsWith('~'))}
         color={this.state.hovered || selected === link ? 'white' : 'black'}
         maxWidth="60%"
         style={{ flexShrink: 0 }}
