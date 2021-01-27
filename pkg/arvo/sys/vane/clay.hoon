@@ -685,7 +685,7 @@
         :_  nub
         %+  slap  (with-faces cor+old ~)
         ^-  hoon
-        :+  %brcl  tsgr/[limb/%cor limb/%bunt]
+        :+  %brcl  !,(*hoon v=+<.cor)
         :+  %tsgl  limb/b
         !,(*hoon ~(grow cor v))
       ::  try direct +grab

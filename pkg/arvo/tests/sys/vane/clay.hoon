@@ -5,6 +5,7 @@
 /*  lib-strand    %hoon  /lib/strand/hoon
 /*  sur-spider    %hoon  /sur/spider/hoon
 /*  mar-mime      %hoon  /mar/mime/hoon
+/*  mar-html      %hoon  /mar/html/hoon
 ::
 !:
 =,  format
@@ -91,17 +92,10 @@
   |.  (parse-pile:(ford):fusion /sur/foo/hoon "[")
 ::
 ++  test-mar-mime  ^-  tang
-  =/  =ankh:clay
-    :-  fil=~
-    %-  ~(gas by *(map @tas ankh:clay))
-    :~  :+  %mar  fil=~
-        %-  ~(gas by *(map @tas ankh:clay))
-        :~  :+  %hoon  fil=`[*lobe:clay hoon+!>(mar-mime)]  dir=~
-    ==  ==
   =/  ford
     %:  ford:fusion
       bud
-      ankh
+      *ankh:clay
       deletes=~
       changes=(my [/mar/mime/hoon &+hoon+mar-mime]~)
       file-store=~
@@ -117,6 +111,26 @@
         !>  (~(gas in *(set path)) /mar/mime/hoon ~)
         !>  dez:(~(got by vases.cache.nub) /mar/mime/hoon)
     ==
+::
+++  test-cast-html-mime  ^-  tang
+  =/  changes
+    %-  my
+    :~  [/mar/mime/hoon &+hoon+mar-mime]
+        [/mar/html/hoon &+hoon+mar-html]
+    ==
+  =/  ford
+    %:  ford:fusion
+      bud
+      *ankh:clay
+      deletes=~
+      changes
+      file-store=~
+      *ford-cache:fusion
+    ==
+  =/  [res=vase nub=state:ford:fusion]  (get-cast:ford %html %mime)
+  %+  expect-eq
+    (slam res !>('<html></html>'))
+    !>  `mime`[/text/html 13 '<html></html>']
 ::
 ++  test-gen-hello  ^-  tang
   =/  =ankh:clay
