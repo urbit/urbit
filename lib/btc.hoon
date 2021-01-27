@@ -19,11 +19,14 @@
   `@ux`(rash - hex)
 ++  xpub-type
   |=  =xpub
-  ^-  bipt
+  ^-  [=bipt =network]
   =/  prefix=tape  (scag 4 (trip xpub))
-  ?:  =("xpub" prefix)  %44
-  ?:  =("ypub" prefix)  %49
-  ?:  =("zpub" prefix)  %84
+  ?:  =("tpub" prefix)  [%44 %testnet]
+  ?:  =("upub" prefix)  [%49 %testnet]
+  ?:  =("vpub" prefix)  [%84 %testnet]
+  ?:  =("xpub" prefix)  [%44 %main]
+  ?:  =("ypub" prefix)  [%49 %main]
+  ?:  =("zpub" prefix)  [%84 %main]
   ~|("invalid xpub: {<xpub>}" !!)
 ::  big endian sha256: input and output are both MSB first (big endian)
 ::
