@@ -4,7 +4,8 @@ import { Contact, Group } from '~/types';
 import { cite, useShowNickname } from '~/logic/lib/util';
 import { Sigil } from '~/logic/lib/sigil';
 
-import { Box, Col, Row, Button, Text, BaseImage, ColProps, Icon } from '@tlon/indigo-react';
+import { Box, Col, Row, Text, BaseImage, ColProps, Icon } from '@tlon/indigo-react';
+import { Dropdown } from './Dropdown';
 import { withLocalState } from '~/logic/state/local';
 
 export const OVERLAY_HEIGHT = 250;
@@ -114,7 +115,44 @@ class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
         {...rest}
       >
         <Row color='black' width='100%' height="3rem">
-          <Icon icon="Menu"/>
+          <Dropdown
+          dropWidth="150px"
+          width="auto"
+          alignY="top"
+          alignX="left"
+          options={
+            <Col
+              mt='4'
+              p='1'
+              backgroundColor="white"
+              color="washedGray"
+              border={1}
+              borderRadius={2}
+              borderColor="lightGray"
+              boxShadow="0px 0px 0px 3px">
+                <Row
+                  p={1}
+                  color='black'
+                  cursor='pointer'
+                  fontSize={0}
+                  onClick={() => history.push('/~profile/' + window.ship)}>
+                View Profile
+              </Row>
+              {(!isOwn) && (
+                <Row
+                  p={1}
+                  color='black'
+                  cursor='pointer'
+                  fontSize={0}
+                  onClick={() => history.push(`/~landscape/dm/${ship}`)}
+                >
+                  Send Message
+                </Row>
+              )}
+            </Col>
+          }>
+            <Icon icon="Menu" mr='3'/>
+          </Dropdown>
           {(!isOwn) && (
           <Icon icon="Chat" size={16} onClick={() => history.push(`/~landscape/dm/${ship}`)}/>
           )}
