@@ -47,6 +47,9 @@
         %disallow
       :-  %disallow
       (pairs [%beings (beng beings.upd)]~)
+    ::
+        %set-public
+      [%set-public b+public.upd]
     ==
   ::
   ++  rolo
@@ -112,6 +115,7 @@
           [%edit edit-contact]
           [%allow beings]
           [%disallow beings]
+          [%set-public bo]
       ==
     ::
     ++  initial  (op ;~(pfix sig fed:ag) cont)

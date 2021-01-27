@@ -11,6 +11,7 @@
       =rolodex:store
       allowed-groups=(set resource)
       allowed-ships=(set ship)
+      is-public=_|
   ==
 +$  versioned-state
   $%  [%0 *]
@@ -88,12 +89,13 @@
     ^-  (quip card _state)
     |^
     ?-  -.update
-      %initial   (handle-initial +.update)
-      %add       (handle-add +.update)
-      %remove    (handle-remove +.update)
-      %edit      (handle-edit +.update)
-      %allow     (handle-allow +.update)
-      %disallow  (handle-disallow +.update)
+      %initial     (handle-initial +.update)
+      %add         (handle-add +.update)
+      %remove      (handle-remove +.update)
+      %edit        (handle-edit +.update)
+      %allow       (handle-allow +.update)
+      %disallow    (handle-disallow +.update)
+      %set-public  (handle-set-public +.update)
     ==
     ::
     ++  handle-initial
@@ -165,6 +167,12 @@
         %group  state(allowed-groups (~(del in allowed-groups) resource.beings))
         %ships  state(allowed-ships (~(dif in allowed-ships) ships.beings))
       ==
+    ::
+    ++  handle-set-public
+      |=  public=?
+      ^-  (quip card _state)
+      :_  state(is-public public)
+      (send-diff [%set-public public] %.n)
     ::
     ++  send-diff
       |=  [=update:store our=?]

@@ -5,10 +5,10 @@
 ++  config
   ^-  config:push-hook
   :*  %contact-store
-      /our
+      /updates
       update:store
       %contact-update
-      %graph-pull-hook
+      %contact-pull-hook
   ==
 ::
 +$  agent  (push-hook:push-hook config)
@@ -39,25 +39,13 @@
   ^-  ?
   =/  =update:store  !<(update:store vase)
   ?-  -.update
-    %initial   %.n
-    %add       %.y
-    %remove    %.y
-    %edit      %.y
-    %allow     %.n
-    %disallow  %.n
-  ==
-::
-++  resource-for-update
-  |=  =vase
-  ^-  (unit resource:res)
-  =/  =update:store  !<(update:store vase)
-  ?-  -.update
-    %initial   ~
-    %add       `[our.bowl %our]
-    %remove    `[our.bowl %our]
-    %edit      `[our.bowl %our]
-    %allow     ~
-    %disallow  `[our.bowl %our]
+    %initial     %.n
+    %add         %.y
+    %remove      %.y
+    %edit        %.y
+    %allow       %.n
+    %disallow    %.n
+    %set-public  %.n
   ==
 ::
 ++  initial-watch

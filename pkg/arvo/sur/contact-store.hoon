@@ -35,5 +35,6 @@
       [%edit =ship =edit-field]
       [%allow =beings]
       [%disallow =beings]
+      [%set-public public=?]
   ==
 --
