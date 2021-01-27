@@ -3,9 +3,6 @@ on:
   push:
     branches:
       - 'release/next-js'
-  pull_request:
-    branches:
-      - 'release/next-js'
 jobs:
   glob:
     runs-on: ubuntu-latest

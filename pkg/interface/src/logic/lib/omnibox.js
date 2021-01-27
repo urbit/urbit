@@ -1,6 +1,7 @@
 import { cite } from '~/logic/lib/util';
 
   const indexes = new Map([
+    ['ships', []],
     ['commands', []],
     ['subscriptions', []],
     ['groups', []],
@@ -16,6 +17,14 @@ const result = function(title, link, app, host) {
     'app': app,
     'host': host
   };
+};
+
+const shipIndex = function(contacts) {
+  const ships = [];
+  Object.keys(contacts).map((e) => {
+    return ships.push(result(e, `/~profile/${e}`, 'profile', contacts[e]?.status));
+  });
+  return ships;
 };
 
 const commandIndex = function (currentGroup) {
@@ -62,7 +71,8 @@ const otherIndex = function() {
   return other;
 };
 
-export default function index(associations, apps, currentGroup, groups) {
+export default function index(contacts, associations, apps, currentGroup, groups) {
+  indexes.set('ships', shipIndex(contacts));
   // all metadata from all apps is indexed
   // into subscriptions and landscape
   const subscriptions = [];

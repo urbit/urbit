@@ -24,7 +24,7 @@ const StatusBar = (props) => {
       pb='3'
       >
       <Row collapse>
-      <Button borderColor='washedGray' mr='2' px='2' onClick={() => props.history.push('/')} {...props}>
+      <Button width="32px" borderColor='washedGray' mr='2' px='2' onClick={() => props.history.push('/')} {...props}>
         <Icon icon='Spaces' color='black'/>
       </Button>
         <StatusBarItem mr={2} onClick={() => toggleOmnibox()}>
@@ -56,7 +56,7 @@ const StatusBar = (props) => {
           onClick={() => window.open(
             'https://github.com/urbit/landscape/issues/new' +
             '?assignees=&labels=development-stream&title=&' +
-            `body=commit:%20${process.env.LANDSCAPE_SHORTHASH}`
+            `body=commit:%20urbit/urbit@${process.env.LANDSCAPE_SHORTHASH}`
             )}
           >
           <Text color='#000000'>Submit <Text color='#000000' display={['none', 'inline']}>an</Text> issue</Text>
@@ -65,28 +65,37 @@ const StatusBar = (props) => {
           <Icon icon='Gear' color='black'/>
         </StatusBarItem>
         <Dropdown
-          width="200px"
+          dropWidth="150px"
+          width="auto"
+          alignY="top"
+          alignX="right"
           options={
-            <Box backgroundColor="white">
+            <Col mt='6' p='1' backgroundColor="white" color="washedGray" border={1} borderRadius={2} borderColor="lightGray" boxShadow="0px 0px 0px 3px">
               <Row
                 p={1}
                 color='black'
-                onClick={() => props.history.push('/~profile/' + window.ship)}>
+                cursor='pointer'
+                fontSize={0}
+                onClick={() => props.history.push('/~profile/~' + window.ship)}>
                 View Profile
               </Row>
               <Row
                 p={1}
                 color='black'
-                onClick={() => props.history.push('/~profile/' + window.ship)}>
+                cursor='pointer'
+                fontSize={0}
+                onClick={() => props.history.push('/~profile/~' + window.ship)}>
                 Set Status
               </Row>
               <Row
                 p={1}
                 color='black'
-                onClick={() => props.history.push('/~profile/' + window.ship)}>
+                cursor='pointer'
+                fontSize={0}
+                onClick={() => props.history.push('/~profile/~' + window.ship)}>
                 System Settings
               </Row>
-            </Box>
+            </Col>
           }>
           <StatusBarItem
             px={'2'}

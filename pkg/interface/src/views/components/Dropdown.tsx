@@ -21,6 +21,7 @@ interface DropdownProps {
   alignY: AlignY | AlignY[];
   alignX: AlignX | AlignX[];
   width?: string;
+  dropWidth?: string;
 }
 
 const ClickBox = styled(Box)`
@@ -111,14 +112,14 @@ export function Dropdown(props: DropdownProps) {
   });
 
   return (
-    <Box flexShrink={1} position={open ? "relative" : "static"} minWidth='0'>
+    <Box flexShrink={1} position={open ? "relative" : "static"} minWidth='0' width={props?.width ? props.width : 'auto'}>
       <ClickBox width='100%' ref={anchorRef} onClick={onOpen}>
         {children}
       </ClickBox>
       {open && (
         <Portal>
           <DropdownOptions
-            width={props.width || "max-content"}
+            width={props?.dropWidth || "max-content"}
             {...coords}
             ref={dropdownRef}
           >

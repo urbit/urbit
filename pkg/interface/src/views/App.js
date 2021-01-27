@@ -11,8 +11,8 @@ import 'mousetrap-global-bind';
 
 import './css/indigo-static.css';
 import './css/fonts.css';
-import light from './themes/light';
-import dark from './themes/old-dark';
+import light from '@tlon/indigo-light';
+import dark from '@tlon/indigo-dark';
 
 import { Text, Anchor, Row } from '@tlon/indigo-react';
 
@@ -40,7 +40,7 @@ const Root = styled.div`
     background-size: cover;
     ` : p.background?.type === 'color' ? `
     background-color: ${p.background.color};
-    ` : ''
+    ` : `background-color: ${p.theme.colors.white};`
   }
   display: flex;
   flex-flow: column nowrap;
@@ -90,7 +90,7 @@ class App extends React.Component {
     this.themeWatcher.onchange = this.updateTheme;
     setTimeout(() => {
       // Something about how the store works doesn't like changing it
-      // before the app has actually rendered, hence the timeout
+      // before the app has actually rendered, hence the timeout.
       this.updateTheme(this.themeWatcher);
     }, 500);
     this.api.local.getBaseHash();
@@ -139,9 +139,6 @@ class App extends React.Component {
     const doNotDisturb = state.doNotDisturb || false;
     const ourContact = this.state.contacts[this.ship] || null;
 
-    const showBanner = localStorage.getItem("2020BreachBanner") || "flex";
-    let banner = null;
-
     return (
       <ThemeProvider theme={theme}>
         <Helmet>
@@ -170,6 +167,7 @@ class App extends React.Component {
                 associations={state.associations}
                 apps={state.launch}
                 api={this.api}
+                contacts={state.contacts}
                 notifications={state.notificationsCount}
                 invites={state.invites}
                 groups={state.groups}

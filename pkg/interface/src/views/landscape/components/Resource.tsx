@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { Row, Box, Col } from "@tlon/indigo-react";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+import Helmet from 'react-helmet';
 
 import { ChatResource } from "~/views/apps/chat/ChatResource";
 import { PublishResource } from "~/views/apps/publish/PublishResource";
@@ -34,47 +34,60 @@ export function Resource(props: ResourceProps) {
   const relativePath = (p: string) =>
     `${props.baseUrl}/resource/${app}${appPath}${p}`;
   const skelProps = { api, association };
+  let title = props.association.metadata.title;
+  if ('workspace' in props) {
+    if ('group' in props.workspace && props.workspace.group in props.associations.contacts) {
+      title = `${props.associations.contacts[props.workspace.group].metadata.title} - ${props.association.metadata.title}`;
+    }
+  }
   return (
-    <Switch>
-      <Route
-        path={relativePath("/settings")}
-        render={(routeProps) => {
-          return (
+    <>
+      <Helmet defer={false}>
+        <title>{props.notificationsCount ? `(${String(props.notificationsCount)}) ` : ''}{ title }</title>
+      </Helmet>
+      <Switch>
+        <Route
+          path={relativePath("/settings")}
+          render={(routeProps) => {
+            return (
+              <ResourceSkeleton
+                baseUrl={props.baseUrl}
+                groupTags={props.groups?.[selectedGroup]?.tags}
+                {...skelProps}
+              >
+                <ChannelSettings
+                  groups={props.groups}
+                  contacts={props.contacts}
+                  associations={props.associations}
+                  api={api}
+                  association={association}
+                />
+              </ResourceSkeleton>
+            );
+          }}
+        />
+        <Route
+          path={relativePath("")}
+          render={(routeProps) => (
             <ResourceSkeleton
+              notificationsGraphConfig={props.notificationsGraphConfig}
+              notificationsChatConfig={props.notificationsChatConfig}
               baseUrl={props.baseUrl}
+              groupTags={props.groups?.[selectedGroup]?.tags}
               {...skelProps}
+              atRoot
             >
-              <ChannelSettings
-                groups={props.groups}
-                contacts={props.contacts}
-                associations={props.associations}
-                api={api}
-                association={association}
-              />
+              {app === "chat" ? (
+                <ChatResource {...props} />
+              ) : app === "publish" ? (
+                <PublishResource {...props} />
+              ) : (
+                <LinkResource {...props} />
+              )}
             </ResourceSkeleton>
-          );
-        }}
-      />
-      <Route
-        path={relativePath("")}
-        render={(routeProps) => (
-          <ResourceSkeleton
-            notificationsGraphConfig={props.notificationsGraphConfig}
-            notificationsChatConfig={props.notificationsChatConfig}
-            baseUrl={props.baseUrl}
-            {...skelProps}
-            atRoot
-          >
-            {app === "chat" ? (
-              <ChatResource {...props} />
-            ) : app === "publish" ? (
-              <PublishResource {...props} />
-            ) : (
-              <LinkResource {...props} />
-            )}
-          </ResourceSkeleton>
-        )}
-      />
-    </Switch>
+          )}
+        />
+      </Switch>
+    </>
   );
 }

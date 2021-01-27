@@ -35,7 +35,7 @@ export function ViewProfile(props: any) {
         width="100%">
         <Center width="100%">
           <Text mono color="darkGray">
-            {`~${ship}`}
+            {`${ship}`}
           </Text>
         </Center>
       </Row>
@@ -63,7 +63,7 @@ export function ViewProfile(props: any) {
               </Button>
             </Center>
           </Row>
-        ) : null 
+        ) : null
       }
       <Box
         height="200px"
@@ -72,7 +72,7 @@ export function ViewProfile(props: any) {
         border={1}
         borderColor="washedGray">
         <Center height="100%">
-          <Text mono pr={1} color="gray">{`~${ship} `}</Text>
+          <Text mono pr={1} color="gray">{`${ship} `}</Text>
           <Text color="gray">remains private</Text>
         </Center>
       </Box>

@@ -3,8 +3,8 @@ import { StoreState } from '../store/type';
 import { Patp, Path, PatpNoSig } from '~/types/noun';
 import _ from 'lodash';
 import {makeResource, resourceFromPath} from '../lib/group';
-import {GroupPolicy, Enc, Post, NodeMap, Content} from '~/types';
-import { numToUd, unixToDa, decToUd, deSig } from '~/logic/lib/util';
+import {GroupPolicy, Enc, Post, NodeMap, Content, Resource} from '~/types';
+import { numToUd, unixToDa, decToUd, deSig, resourceAsPath } from '~/logic/lib/util';
 
 export const createBlankNodeWithChildPost = (
   parentIndex: string = '',
@@ -81,6 +81,8 @@ function moduleToMark(mod: string): string | undefined {
 
 export default class GraphApi extends BaseApi<StoreState> {
 
+  joiningGraphs = new Set<string>();
+
   private storeAction(action: any): Promise<any> {
     return this.action('graph-store', 'graph-update', action)
   }
@@ -138,11 +140,19 @@ export default class GraphApi extends BaseApi<StoreState> {
 
   joinGraph(ship: Patp, name: string) {
     const resource = makeResource(ship, name);
+    const rid = resourceAsPath(resource);
+    if(this.joiningGraphs.has(rid)) {
+      return Promise.resolve();
+    }
+    this.joiningGraphs.add(rid);
     return this.viewAction('graph-join', {
       join: {
         resource,
         ship,
       }
+    }).then(res => {
+      this.joiningGraphs.delete(rid);
+      return res;
     });
   }
 

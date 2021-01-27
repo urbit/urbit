@@ -29,7 +29,7 @@ export function Profile(props: any) {
 
   const image = (!hideAvatars && contact?.avatar)
     ? <BaseImage src={contact.avatar} width='100%' height='100%' style={{ objectFit: 'cover' }} />
-    : <Sigil ship={`~${ship}`} size={96} color={hexColor} />;
+    : <Sigil ship={`${ship}`} size={96} color={hexColor} />;
 
   return (
     <Center

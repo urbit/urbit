@@ -31,7 +31,7 @@ const useLocalState = create<LocalState>(persist((set, get) => ({
   suspendedFocus: undefined,
   toggleOmnibox: () => set(produce(state => {
     state.omniboxShown = !state.omniboxShown;
-    if (state.suspendedFocus) {
+    if (typeof state.suspendedFocus?.focus === 'function') {
       state.suspendedFocus.focus();
       state.suspendedFocus = undefined;
     } else {
@@ -40,7 +40,8 @@ const useLocalState = create<LocalState>(persist((set, get) => ({
     }
   })),
   set: fn => set(produce(fn))
-}), {
+  }), {
+  blacklist: ['suspendedFocus', 'toggleOmnibox', 'omniboxShown'],
   name: 'localReducer'
 }));
 
