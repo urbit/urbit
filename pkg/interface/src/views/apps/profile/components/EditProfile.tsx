@@ -83,13 +83,13 @@ export function EditProfile(props: any) {
   };
 
   return (
-    <Box width="100%">
+    <>
       <Formik
         validationSchema={formSchema}
         initialValues={contact || emptyContact}
         onSubmit={onSubmit}
       >
-      <Form width="100%" p={2}>
+      <Form width="100%" height="100%" p={2}>
         <Input id="nickname" label="Name" mb={3} />
         <Col width="100%">
           <Text mb={2}>Description</Text>
@@ -110,6 +110,6 @@ export function EditProfile(props: any) {
         </AsyncButton>
       </Form>
     </Formik>
-  </Box>
+  </>
   );
 }

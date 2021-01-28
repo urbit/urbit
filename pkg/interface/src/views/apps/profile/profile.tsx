@@ -39,8 +39,10 @@ export default function ProfileScreen(props: any) {
               bg="white"
               border={1}
               borderColor="washedGray"
+              overflowY="auto"
+              flexGrow
             >
-              <Box overflowY="auto" flexGrow={1}>
+              <Box>
                 <Profile
                   ship={ship}
                   contact={contact}

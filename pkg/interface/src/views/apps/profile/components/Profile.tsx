@@ -2,6 +2,7 @@ import React from "react";
 import { Sigil } from "~/logic/lib/sigil";
 import { ViewProfile } from './ViewProfile';
 import { EditProfile } from './EditProfile';
+import { SetStatus } from './SetStatus';
 
 import { uxToHex } from "~/logic/lib/util";
 import {
@@ -9,6 +10,8 @@ import {
   Box,
   Row,
   BaseImage,
+  StatelessTextInput as Input,
+  Button
 } from "@tlon/indigo-react";
 import useLocalState from "~/logic/state/local";
 import { useHistory } from "react-router-dom";
@@ -35,11 +38,14 @@ export function Profile(props: any) {
     <Center
       p={4}
       height="100%"
-      width="100%"
-      overflowY="auto">
+      width="100%">
       <Box
         maxWidth="600px"
         width="100%">
+        { ship === `~${window.ship}` ? (
+            <SetStatus ship={ship} contact={contact} api={props.api} />
+          ) : null
+        }
         <Row width="100%" height="300px">
           {cover}
         </Row>
