@@ -8,13 +8,11 @@ type ContactState  = Pick<StoreState, 'contacts'>;
 export const ContactReducer = (json, state) => {
   const data = _.get(json, 'contact-update', false);
   if (data) {
-    console.log(data);
     initial(data, state);
     add(data, state);
     remove(data, state);
     edit(data, state);
     setPublic(data, state);
-    console.log(state.contacts);
   }
 };
 
@@ -59,7 +57,7 @@ const edit = (json: ContactUpdate, state: S) => {
 };
 
 const setPublic = (json: ContactUpdate, state: S) => {
-  const data = _.get(json, 'set-public', false);
+  const data = _.get(json, 'set-public', state.isContactPublic);
   state.isContactPublic = data;
 };
 
