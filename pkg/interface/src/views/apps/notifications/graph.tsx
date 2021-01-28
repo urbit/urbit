@@ -180,6 +180,7 @@ const GraphNode = ({
       icon
       color={`#000000`}
       classes="mix-blend-diff"
+      padded
     />
     ) : <Box style={{ width: '16px' }}></Box>;
 
