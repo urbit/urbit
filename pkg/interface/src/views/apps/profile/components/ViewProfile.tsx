@@ -7,6 +7,7 @@ import {
   Text,
   Row,
   Button,
+  Col
 } from "@tlon/indigo-react";
 import { AsyncButton } from "~/views/components/AsyncButton";
 import RichText from "~/views/components/RichText";
@@ -37,16 +38,17 @@ export function ViewProfile(props: any) {
           <Text mono color="darkGray">{ship}</Text>
         </Center>
       </Row>
-      <Row
+      <Col
         pb={2}
         alignItems="center"
+        justifyContent="center"
         width="100%">
-        <Center width="100%">
-          <RichText>
+          <Center flexDirection="column" maxWidth='32rem'>
+          <RichText width='100%'>
             {(contact?.bio ? contact.bio : "")}
           </RichText>
-        </Center>
-      </Row>
+          </Center>
+      </Col>
       { (ship === `~${window.ship}`) ? (
           <Row
             pb={2}
