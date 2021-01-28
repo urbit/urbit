@@ -16,8 +16,8 @@ On `~zod`
 |start %btc-wallet-hook
 |start %btc-wallet-store
 
-:btc-provider|command [%set-credentials api-url='http://localhost:50002']
-:btc-wallet-hook|action [%set-provider ~zod]
+:btc-provider|command [%set-credentials api-url='http://localhost:50002' %main]
+:btc-wallet-hook|action [%set-provider ~zod %main]
 :btc-provider|command [%whitelist-clients `(set ship)`(sy ~[~dopzod])]
 ```
 
@@ -26,7 +26,7 @@ On `~dopzod`
 |commit %home
 |start %btc-wallet-hook
 |start %btc-wallet-store
-:btc-wallet-hook|action [%set-provider ~zod]
+:btc-wallet-hook|action [%set-provider ~zod %main]
 ```
 
 ### Add Wallets

@@ -3,11 +3,12 @@
 +$  host-info
   $:  api-url=@t
       connected=?
+      =network
       block=@ud
       clients=(set ship)
   ==
 +$  command
-  $%  [%set-credentials api-url=@t]
+  $%  [%set-credentials api-url=@t =network] 
       [%whitelist-clients clients=(set ship)]
   ==
 +$  action

@@ -315,11 +315,9 @@
   ?.  =(host.u.prov src.bowl)  `state
   ?-  -.s
       %new-block
-    ~&  >>  "%new-block"
     (connected u.prov block.s fee.s `blockhash.s `blockfilter.s)
     ::
       %connected
-    ~&  >>  "%connected"
     (connected u.prov block.s fee.s ~ ~)
     ::
       %disconnected

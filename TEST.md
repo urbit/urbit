@@ -1,5 +1,10 @@
 # Tests
 
+```
+|commit %home
+=btc -build-file %/lib/btc/hoon
+```
+
 ## BTC libs
 ```
 |commit %home

@@ -42,10 +42,10 @@ Install files:
 |start %btc-provider
 |start %btc-wallet-store
 |start %btc-wallet-hook
-:btc-provider|command [%set-credentials api-url='http://localhost:50002']
+:btc-provider|command [%set-credentials api-url='http://localhost:50002' %main]
 :btc-provider|command [%whitelist-clients `(set ship)`(sy ~[moon2])]
 =xpub1 'zpub6rFR7y4Q2AijBEqTUquhVz398htDFrtymD9xYYfG1m4wAcvPhXNfE3EfH1r1ADqtfSdVCToUG868RvUUkgDKf31mGDtKsAYz2oz2AGutZYs'
-:btc-wallet-hook|action [%set-provider moon1]
+:btc-wallet-hook|action [%set-provider moon1 %main]
 
 =fprint [%4 0xdead.beef]
 :btc-wallet-store|action [%add-wallet xpub1 fprint ~ [~ 8] [~ 6]]
@@ -60,7 +60,7 @@ Install files:
 
 |start %btc-wallet-store
 |start %btc-wallet-hook
-:btc-wallet-hook|action [%set-provider moon1]
+:btc-wallet-hook|action [%set-provider moon1 %main]
 =xpub2 'zpub6r8dKyWJ31XF6n69KKeEwLjVC5ruqAbiJ4QCqLsrV36Mvx9WEjUaiPNPGFLHNCCqgCdy6iZC8ZgHsm6a1AUTVBMVbKGemNcWFcwBGSjJKbD'
 =fprint [%4 0xbeef.dead]
 :btc-wallet-store|action [%add-wallet xpub2 fprint ~ [~ 8] [~ 1]]
