@@ -11,6 +11,7 @@ import { createPost, createBlankNodeWithChildPost } from '~/logic/api/graph';
 import { getLatestCommentRevision } from '~/logic/lib/publish';
 import { scanForMentions } from '~/logic/lib/graph';
 import { getUnreadCount } from '~/logic/lib/hark';
+import {isWriter} from '~/logic/lib/group';
 
 interface CommentsProps {
   comments: GraphNode;
@@ -92,18 +93,19 @@ export function Comments(props: CommentsProps) {
 
 
   useEffect(() => {
-    console.log(`dismissing ${association?.resource}`);
     return () => {
       api.hark.markCountAsRead(association, parentIndex, 'comment')
     };
   }, [comments.post.index])
 
 
-  const readCount = children.length - getUnreadCount(props?.unreads, association.resource, parentIndex)
+  const readCount = children.length - getUnreadCount(props?.unreads, association.resource, parentIndex);
+
+  const canComment = isWriter(group, association.resource) || association.metadata.vip === 'reader-comments';
 
   return (
     <Col>
-      {( !props.editCommentId ? <CommentInput onSubmit={onSubmit} /> : null )}
+      {( !props.editCommentId && canComment ? <CommentInput onSubmit={onSubmit} /> : null )}
       {( !!props.editCommentId ? (
         <CommentInput
           onSubmit={onEdit}

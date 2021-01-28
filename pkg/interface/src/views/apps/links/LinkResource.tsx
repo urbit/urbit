@@ -61,7 +61,6 @@ export function LinkResource(props: LinkResourceProps) {
     return <Center width='100%' height='100%'><LoadingSpinner/></Center>;
   }
 
-
   return (
     <Col alignItems="center" height="100%" width="100%" overflowY="hidden">
       <Switch>

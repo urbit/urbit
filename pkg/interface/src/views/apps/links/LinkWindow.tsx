@@ -15,6 +15,7 @@ import GlobalApi from "~/logic/api/global";
 import VirtualScroller from "~/views/components/VirtualScroller";
 import { LinkItem } from "./components/LinkItem";
 import LinkSubmit from "./components/LinkSubmit";
+import {isWriter} from "~/logic/lib/group";
 
 interface LinkWindowProps {
   association: Association;
@@ -50,6 +51,7 @@ export function LinkWindow(props: LinkWindowProps) {
   const first = graph.peekLargest()?.[0];
 
   const [,,ship, name] = association.resource.split('/');
+  const canWrite = isWriter(props.group, association.resource)
 
   const style = useMemo(() =>
     ({
@@ -79,10 +81,10 @@ export function LinkWindow(props: LinkWindowProps) {
           measure,
           key: index.toString()
         };
-        if(index.eq(first ?? bigInt.zero)) {
+        if(canWrite && index.eq(first ?? bigInt.zero)) {
           return (
             <>
-            <Col key={index.toString()} mx="auto" mt="4" maxWidth="768px" width="100%" flexShrink='0' px={3}>
+            <Col key={index.toString()} mx="auto" mt="4" maxWidth="768px" width="100%" flexShrink={0} px={3}>
               <LinkSubmit s3={props.s3} name={name} ship={ship.slice(1)} api={api} />
             </Col>
               <LinkItem {...linkProps} />
