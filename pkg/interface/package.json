@@ -44,6 +44,10 @@
     "styled-system": "^5.1.5",
     "suncalc": "^1.8.0",
     "urbit-ob": "^5.0.1",
+    "workbox-core": "^6.0.2",
+    "workbox-precaching": "^6.0.2",
+    "workbox-recipes": "^6.0.2",
+    "workbox-routing": "^6.0.2",
     "yup": "^0.29.3",
     "zustand": "^3.3.1"
   },

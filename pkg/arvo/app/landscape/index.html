@@ -24,6 +24,13 @@
     <div id="portal-root"></div>
     <script src="/~landscape/js/channel.js"></script>
     <script src="/~landscape/js/session.js"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/serviceworker.js');
+        });
+      }
+    </script>
     <script src="/~landscape/js/bundle/index.5fdbe84c6b57646a6a6b.js"></script>
   </body>
 </html>

@@ -7,7 +7,8 @@ const webpack = require('webpack');
 module.exports = {
   mode: 'production',
   entry: {
-     app: './src/index.js'
+     app: './src/index.js',
+     serviceworker: './src/serviceworker.js'
   },
   module: {
     rules: [
@@ -64,7 +65,9 @@ module.exports = {
     // }),
   ],
   output: {
-    filename: 'index.[contenthash].js',
+    filename: (pathData) => {
+      return pathData.chunk.name === 'app' ? 'index.[contenthash].js' : '[name].js';
+    },
     path: path.resolve(__dirname, '../../arvo/app/landscape/js/bundle'),
     publicPath: '/'
   },
