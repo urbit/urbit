@@ -1,4 +1,4 @@
-/-  spider, graph-view, graph=graph-store, *metadata-store, *group
+/-  spider, graph-view, graph=graph-store, *metadata-store, *group, group-store
 /+  strandio, resource
 =>
 |% 
@@ -48,6 +48,28 @@
       (en-path:resource group-rid)
     [%graph (en-path:resource rid)]
   (pure:m ~)
+::
+++  delete-tags
+  |=  [graph=resource grp-rid=resource =group]
+  =/  m  (strand ,~)
+  ^-  form:m
+  =/  tags=(list [=tag tagged=(set ship)])
+    %+  skim  ~(tap by tags.group)
+    |=  [=tag tagged=(set ship)]
+    ?@  tag  %.n
+    ?&  =(app.tag %graph)
+        =(resource.tag graph)
+    ==
+  |-  =*  loop  $
+  ^-  form:m
+  ?~  tags
+    (pure:m ~)
+  ;<  ~  bind:m
+    %+  poke  [entity.grp-rid %group-push-hook]
+    :-  %group-update
+    !>  ^-  update:group-store
+    [%remove-tag grp-rid tag.i.tags tagged.i.tags]
+  loop(tags t.tags)
 --
 ::
 ^-  thread:spider
@@ -64,6 +86,8 @@
 ?~  ugroup-rid  !!
 ;<  =group  bind:m
   (scry-group u.ugroup-rid)
+;<  ~  bind:m
+  (delete-tags rid.action u.ugroup-rid group)
 ?.  hidden.group
   ;<  ~  bind:m
     (delete-graph u.ugroup-rid rid.action)

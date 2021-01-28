@@ -54,11 +54,21 @@ export function ChannelPopoverRoutesSidebar(props: {
             text="Permissions"
             to={relativePath("/settings#permissions")}
           />
-          <SidebarItem
-            icon="TrashCan"
-            text="Archive Channel"
-            to={relativePath("/settings#archive")}
-          />
+          { isOwner ? (
+            <SidebarItem
+              icon="TrashCan"
+              text="Archive Channel"
+              to={relativePath("/settings#archive")}
+              color="red"
+            />
+          ) : (
+            <SidebarItem
+              icon="TrashCan"
+              text="Archive Channel"
+              to={relativePath("/settings#remove")}
+              color="red"
+            />
+          )}
         </>
       )}
     </Col>

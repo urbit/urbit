@@ -76,9 +76,7 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
         };
 
         const resource = resourceFromPath(group); 
-        console.log(writers);
         writers = _.compact(writers);
-        console.log(writers);
         const us = `~${window.ship}`;
         if(values.writePerms === 'self') {
           await api.groups.addTag(resource, tag, [us]);

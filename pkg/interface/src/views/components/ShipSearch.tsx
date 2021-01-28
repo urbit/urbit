@@ -122,8 +122,6 @@ export function ShipSearch<I extends string, V extends Value<I>>(
 
   const selected: string[] = values[id] ?? [];
 
-  console.log(selected);
-
   const name = () => `${props.id}[${inputIdx.current}]`;
 
   const pills = selected.slice(0, inputIdx.current);
