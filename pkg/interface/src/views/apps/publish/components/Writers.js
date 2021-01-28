@@ -18,7 +18,7 @@ export class Writers extends Component {
         const ships = values.ships.map(e => `~${e}`);
         await api.groups.addTag(
           resource,
-          { app: 'publish', tag: `writers-${name}` },
+          { app: 'graph', resource: association.resource, tag: `writers` },
           ships
         );
         actions.resetForm();
@@ -28,7 +28,8 @@ export class Writers extends Component {
         actions.setStatus({ error: e.message });
       }
     };
-    const writers = Array.from(groups?.[association?.group]?.tags.publish?.[`writers-${name}`] || new Set()).map(e => cite(`~${e}`)).join(', ');
+    const writers = Array.from(groups?.[association?.group]?.tags.graph[association.resource]?.writers || []).map(s => `~${s}`).join(', ');
+
 
     return (
       <Box maxWidth='512px'>
@@ -51,10 +52,14 @@ export class Writers extends Component {
             </AsyncButton>
           </Form>
         </Formik>
-        {writers.length > 0 && <>
+        {writers.length > 0 ? <>
         <Text display='block' mt='2'>Current writers:</Text>
         <Text mt='2' display='block' mono>{writers}</Text>
-        </>}
+        </> : 
+          <Text display='block' mt='2'>
+            All group members can write to this channel
+          </Text>
+        }
       </Box>
     );
   }
