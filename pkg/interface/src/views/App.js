@@ -137,7 +137,7 @@ class App extends React.Component {
 
     const notificationsCount = state.notificationsCount || 0;
     const doNotDisturb = state.doNotDisturb || false;
-    const ourContact = this.state.contacts[this.ship] || null;
+    const ourContact = this.state.contacts[`~${this.ship}`] || null;
 
     return (
       <ThemeProvider theme={theme}>

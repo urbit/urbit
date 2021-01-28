@@ -19,6 +19,7 @@ import { Sigil } from "~/logic/lib/sigil";
 import { AsyncButton } from "~/views/components/AsyncButton";
 import { ColorInput } from "~/views/components/ColorInput";
 import { ImageInput } from "~/views/components/ImageInput";
+import { MarkdownField } from "~/views/apps/publish/components/MarkdownField";
 
 
 const formSchema = Yup.object({
@@ -74,7 +75,10 @@ export function EditProfile(props: any) {
       >
       <Form width="100%" p={2}>
         <Input id="nickname" label="Name" mb={3} />
-        <Input id="bio" label="Description" mb={3} />
+        <Col width="100%">
+          <Text mb={2}>Description</Text>
+          <MarkdownField id="bio" mb={3} s3={props.s3} /> 
+        </Col>
         <Row mb={3} width="100%">
           <Col pr={2} width="40%">
             <ColorInput id="color" label="Sigil Color" />

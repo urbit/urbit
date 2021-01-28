@@ -1,18 +1,43 @@
 import React from 'react';
 
-import { Col, Row, Box, Text, Icon, Button } from '@tlon/indigo-react';
+import {
+  Col,
+  Row,
+  Box,
+  Text,
+  Icon,
+  Button,
+  BaseImage
+} from '@tlon/indigo-react';
 import ReconnectButton from './ReconnectButton';
 import { Dropdown } from './Dropdown';
 import { StatusBarItem } from './StatusBarItem';
 import { Sigil } from '~/logic/lib/sigil';
+import { uxToHex } from "~/logic/lib/util";
+
 import useLocalState from '~/logic/state/local';
 
 const StatusBar = (props) => {
+  const { ourContact } = props;
   const invites = [].concat(...Object.values(props.invites).map(obj => Object.values(obj)));
   const metaKey = (window.navigator.platform.includes('Mac')) ? '⌘' : 'Ctrl+';
-  const toggleOmnibox = useLocalState(state => state.toggleOmnibox);
+  const { toggleOmnibox, hideAvatars } =
+    useLocalState(({ toggleOmnibox, hideAvatars }) => 
+      ({ toggleOmnibox, hideAvatars })
+    );
 
-  const color = !!props.ourContact ? props.ourContact.color : '#000';
+  const color = !!ourContact ? `#${uxToHex(props.ourContact.color)}` : '#000';
+  const xPadding = (!hideAvatars && ourContact?.avatar) ? '0' : '2';
+  const bgColor = (!hideAvatars && ourContact?.avatar) ? '' : color;
+  const profileImage = (!hideAvatars && ourContact?.avatar) ? (
+    <BaseImage
+      src={ourContact.avatar}
+      borderRadius={2}
+      width='32px'
+      height='32px'
+      style={{ objectFit: 'cover' }} />
+  ) : <Sigil ship={ship} size={16} color={color} icon />;
+
   return (
     <Box
       display='grid'
@@ -103,10 +128,10 @@ const StatusBar = (props) => {
             </Col>
           }>
           <StatusBarItem
-            px={'2'}
+            px={xPadding}
             flexShrink='0'
-            backgroundColor={color}>
-            <Sigil ship={props.ship} size={16} color={color} icon />
+            backgroundColor={bgColor}>
+            {profileImage}
           </StatusBarItem>
         </Dropdown>
       </Row>
