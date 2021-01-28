@@ -37,6 +37,7 @@ interface DropdownSearchExtraProps<C> {
   placeholder?: string;
   onChange?: (e: ChangeEvent<HTMLTextAreaElement>) => void;
   onBlur?: (e: any) => void;
+  onFocus?:  (e: FocusEvent) => void;
 }
 
 type DropdownSearchProps<C> = PropFunc<typeof Box> &
@@ -53,6 +54,7 @@ export function DropdownSearch<C>(props: DropdownSearchProps<C>) {
     renderCandidate,
     disabled,
     placeholder,
+    onFocus = () => {},
     onChange = () => {},
     onBlur = () => {},
     ...rest
@@ -101,7 +103,7 @@ export function DropdownSearch<C>(props: DropdownSearchProps<C>) {
     return () => {
       mousetrap.unbind(["down", "tab"]);
       mousetrap.unbind(["up", "shift+tab"]);
-      mousetrap.unbind("enter", onEnter);
+      mousetrap.unbind("enter");
     };
   }, [textarea.current, next, back, onEnter]);
 
