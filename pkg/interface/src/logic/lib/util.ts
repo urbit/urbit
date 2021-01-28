@@ -363,11 +363,19 @@ export function useShowNickname(contact: Contact | null, hide?: boolean): boolea
   return !!(contact && contact.nickname && !hideNicknames);
 }
 
-export function useHovering() {
+interface useHoveringInterface {
+  hovering: boolean;
+  bind: {
+    onMouseOver: () => void,
+    onMouseLeave: () => void
+  }
+}
+
+export const useHovering = (): useHoveringInterface => {
   const [hovering, setHovering] = useState(false);
   const bind = {
-    onMouseEnter: () => setHovering(true),
+    onMouseOver: () => setHovering(true),
     onMouseLeave: () => setHovering(false)
   };
   return { hovering, bind };
-}
+};
