@@ -18,18 +18,18 @@
 ::
 ++  from-xpub
   |=  $:  =xpub:btc
-          =network:btc
           =fprint:btc
           scan-to=(unit scon)
           max-gap=(unit @ud)
           confs=(unit @ud)
       ==
   ^-  walt
+  =/  [=bipt =network]  (xpub-type:btc xpub)
   :*  xpub
       network
       fprint
       (from-extended:bip32 (trip xpub))
-      (xpub-type:btc xpub)
+      bipt
       *wach
       [0 0]
       %.n
