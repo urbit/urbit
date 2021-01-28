@@ -13,6 +13,7 @@ import GlobalApi from "~/logic/api/global";
 import { RouteComponentProps, Route, Switch } from "react-router-dom";
 import { ChannelSettings } from "./ChannelSettings";
 import { ResourceSkeleton } from "./ResourceSkeleton";
+import {ChannelPopoverRoutes} from "./ChannelPopoverRoutes";
 
 const TruncatedBox = styled(Box)`
   white-space: nowrap;
@@ -27,14 +28,14 @@ type ResourceProps = StoreState & {
 } & RouteComponentProps;
 
 export function Resource(props: ResourceProps) {
-  const { association, api, notificationsGraphConfig } = props;
+  const { association, api, notificationsGraphConfig, groups } = props;
   const app = association.metadata.module || association["app-name"];
   const rid = association.resource;
   const selectedGroup = association.group;
   const relativePath = (p: string) =>
 
     `${props.baseUrl}/resource/${app}${rid}${p}`;
-  const skelProps = { api, association };
+  const skelProps = { api, association, groups };
   let title = props.association.metadata.title;
   if ('workspace' in props) {
     if ('group' in props.workspace && props.workspace.group in props.associations.contacts) {
@@ -46,47 +47,34 @@ export function Resource(props: ResourceProps) {
       <Helmet defer={false}>
         <title>{props.notificationsCount ? `(${String(props.notificationsCount)}) ` : ''}{ title }</title>
       </Helmet>
+      <ResourceSkeleton
+        {...skelProps}
+        baseUrl={relativePath("")}
+      >
+        {app === "chat" ? (
+          <ChatResource {...props} />
+        ) : app === "publish" ? (
+          <PublishResource {...props} />
+        ) : (
+          <LinkResource {...props} />
+        )}
+      </ResourceSkeleton>
       <Switch>
         <Route
           path={relativePath("/settings")}
           render={(routeProps) => {
             return (
-              <ResourceSkeleton
-                baseUrl={props.baseUrl}
-                groupTags={props.groups?.[selectedGroup]?.tags}
-                {...skelProps}
-              >
-                <ChannelSettings
-                  groups={props.groups}
-                  contacts={props.contacts}
-                  associations={props.associations}
-                  api={api}
-                  association={association}
-                />
-              </ResourceSkeleton>
+              <ChannelPopoverRoutes
+                association={association} 
+                group={props.groups?.[selectedGroup]}
+                groups={props.groups}
+                contacts={props.contacts}
+                api={props.api}
+                baseUrl={relativePath("")} 
+                notificationsGraphConfig={notificationsGraphConfig}
+              />
             );
           }}
-        />
-        <Route
-          path={relativePath("")}
-          render={(routeProps) => (
-            <ResourceSkeleton
-              notificationsGraphConfig={props.notificationsGraphConfig}
-              notificationsChatConfig={props.notificationsChatConfig}
-              baseUrl={props.baseUrl}
-              groupTags={props.groups?.[selectedGroup]?.tags}
-              {...skelProps}
-              atRoot
-            >
-              {app === "chat" ? (
-                <ChatResource {...props} />
-              ) : app === "publish" ? (
-                <PublishResource {...props} />
-              ) : (
-                <LinkResource {...props} />
-              )}
-            </ResourceSkeleton>
-          )}
         />
       </Switch>
     </>
