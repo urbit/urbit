@@ -35,7 +35,7 @@
       peer
   ==
 +$  settings
-  $%  [%set-provider provider=ship]
+  $%  [%set-provider provider=ship =network]
       [%set-default-wallet ~]
       [%clear-poym ~]
       [%force-retry ~]

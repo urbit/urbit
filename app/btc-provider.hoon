@@ -30,8 +30,8 @@
 ::
 ++  on-init
   ^-  (quip card _this)
-  ~&  >  '%btc-provider initialized successfully'
-  `this(host-info ['' connected=%.n block=0 clients=*(set ship)], whitelist *(set ship))
+  ~&  >  '%btc-provider initialized successfully' 
+  `this(host-info ['' connected=%.n %main block=0 clients=*(set ship)], whitelist *(set ship))
 ++  on-save
   ^-  vase
   !>(state)
@@ -60,7 +60,7 @@
   ?.  (is-whitelisted:hc src.bowl)
     ~&  >>>  "btc-provider: blocked client {<src.bowl>}"
     [~[[%give %kick ~ ~]] this]
-  ~&  >  "btc-provider: added client {<src.bowl>}"
+  ~&  >  "btc-provider: accepted client {<src.bowl>}"
   :-  do-ping:hc
   this(clients.host-info (~(put in clients.host-info) src.bowl))
 ::
@@ -91,7 +91,7 @@
   ?-  -.comm
       %set-credentials
     :-  do-ping
-    state(host-info [api-url.comm connected=%.n block=0 clients=*(set ship)])
+    state(host-info [api-url.comm connected=%.n network.comm block=0 clients=*(set ship)])
     ::
       %whitelist-clients
     `state(whitelist (~(uni in whitelist) clients.comm))
