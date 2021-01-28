@@ -47,7 +47,7 @@ const Candidate = ({ title, detail, selected, onClick }) => (
 
 export function ShipSearch(props: InviteSearchProps) {
   const { id, label, caption } = props;
-  const [{}, meta, { setValue, setTouched, setError: _setError }] = useField<string[]>({
+  const [{ value }, meta, { setValue, setTouched, setError: _setError }] = useField<string[]>({
     name: id,
     multiple: true
   });
@@ -56,7 +56,7 @@ export function ShipSearch(props: InviteSearchProps) {
 
   const { error, touched } = meta;
 
-  const [selected, setSelected] = useState([] as string[]);
+  const [selected, setSelected] = useState(value);
   const [inputShip, setInputShip] = useState(undefined as string | undefined);
   const [inputTouched, setInputTouched] = useState(false);
 
@@ -92,7 +92,7 @@ export function ShipSearch(props: InviteSearchProps) {
     (s: string) => {
       setTouched(true);
       checkInput(true, undefined);
-      s = `${deSig(s)}`;
+      s = `~${deSig(s)}`;
       setSelected(v => _.uniq([...v, s]))
     },
     [setTouched, checkInput, setSelected]
