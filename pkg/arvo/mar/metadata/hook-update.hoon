@@ -1,16 +1,15 @@
-/-  *metadata-store
-/+  *metadata-json
-|_  upd=metadata-hook-update
+/+  store=metadata-store
+|_  =hook-update:store
 ++  grad  %noun
 ++  grow
   |%
-  ++  noun  upd
-  ++  json  (hook-update-to-json upd)
+  ++  noun  hook-update
+  ++  json  (hook-update:enjs:store hook-update)
   --
 ::
 ++  grab
   |%
-  ++  noun  metadata-hook-update
+  ++  noun  hook-update:store
   --
 --
 
