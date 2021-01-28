@@ -1,6 +1,9 @@
 /+  *test, *btc, bip32
+=,  secp:crypto
+=+  ecc=secp256k1
 |%
-+$  xpub-vec  [=xpub pubkey=hexb]
++$  chyg  ?(%0 %1)
++$  xpub-vec  [=xpub =hdkey =address]
 +$  pubkey-vec  [=bipt =network pubkey=hexb =address]
 +$  script-pubkey-vec  [=address spk=hexb]
 ++  vectors
@@ -14,8 +17,53 @@
   ::
   ++  xpubs
     ^-  (list xpub-vec)
-    :~  :*  'vpub5Y6cjg78GGuNLsaPhmYsiw4gYX3HoQiRBiSwDaBXKUafCt9bNwWQiitDk5VZ5BVxYnQdwoTyXSs2JHRPAgjAvtbBrf8ZhDYe2jWAqvZVnsc'
-            33^0x2.e7ab.2537.b5d4.9e97.0309.aae0.6e9e.49f3.6ce1.c9fe.bbd4.4ec8.e0d1.cca0.b4f9.c319
+   :~
+        :*  'tpubDC5FSnBiZDMmhiuCmWAYsLwgLYrrT9rAqvTySfuCCrgsWz8wxMXUS9Tb9iVMvcRbvFcAHGkMD5Kx8koh4GquNGNTfohfk7pgjhaPCdXpoba'
+             :*  4^0xdead.beef
+                 33^0x2.a745.1395.7353.69f2.ecdf.c829.c0f7.74e8.8ef1.303d.fe5b.2f04.dbaa.b30a.535d.fdd6
+                 %44  %0  %0
+             ==
+             [%base58 0cmkpZhYtJu2r87Js3pDiWJDmPte2NRZ8bJV]
+        ==
+        ::
+        :*  'upub5EFU65HtV5TeiSHmZZm7FUffBGy8UKeqp7vw43jYbvZPpoVsgU93oac7Wk3u6moKegAEWtGNF8DehrnHtv21XXEMYRUocHqguyjknFHYfgY'
+            :*  4^0xdead.beef
+                33^0x3.a1af.804a.c108.a8a5.1782.198c.2d03.4b28.bf90.c880.3f5a.53f7.6276.fa69.a4ea.e77f
+                %49  %0  %0
+            ==
+            [%base58 0c2Mww8dCYPUpKHofjgcXcBCEGmniw9CoaiD2]
+        ==
+        ::
+        :*  'vpub5Y6cjg78GGuNLsaPhmYsiw4gYX3HoQiRBiSwDaBXKUafCt9bNwWQiitDk5VZ5BVxYnQdwoTyXSs2JHRPAgjAvtbBrf8ZhDYe2jWAqvZVnsc'
+            :*  4^0xdead.beef
+                33^0x2.e7ab.2537.b5d4.9e97.0309.aae0.6e9e.49f3.6ce1.c9fe.bbd4.4ec8.e0d1.cca0.b4f9.c319
+                %84  %0  %0
+            ==
+            [%bech32 'tb1q6rz28mcfaxtmd6v789l9rrlrusdprr9pqcpvkl']
+        ==
+        ::
+        :*  'xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj'
+             :*  4^0xdead.beef
+                 33^0x3.aaeb.52dd.7494.c361.049d.e67c.c680.e83e.bcbb.bdbe.b136.37d9.2cd8.45f7.0308.af5e
+                 %44  %0  %0
+             ==
+             [%base58 0c1LqBGSKuX5yYUonjxT5qGfpUsXKYYWeabA]
+        ==
+        ::
+        :*  'ypub6Ww3ibxVfGzLrAH1PNcjyAWenMTbbAosGNB6VvmSEgytSER9azLDWCxoJwW7Ke7icmizBMXrzBx9979FfaHxHcrArf3zbeJJJUZPf663zsP'
+            :*  4^0xdead.beef
+                33^0x3.9b3b.694b.8fc5.b5e0.7fb0.69c7.83ca.c754.f5d3.8c3e.08be.d196.0e31.fdb1.dda3.5c24
+                %49  %0  %0
+            ==
+            [%base58 0c37VucYSaXLCAsxYyAPfbSi9eh4iEcbShgf]
+        ==
+        ::
+        :*  'zpub6rFR7y4Q2AijBEqTUquhVz398htDFrtymD9xYYfG1m4wAcvPhXNfE3EfH1r1ADqtfSdVCToUG868RvUUkgDKf31mGDtKsAYz2oz2AGutZYs'
+            :*  4^0xdead.beef
+                33^0x3.30d5.4fd0.dd42.0a6e.5f8d.3624.f5f3.482c.ae35.0f79.d5f0.753b.f5be.ef9c.2d91.af3c
+                %84  %0  %0
+            ==
+            [%bech32 'bc1qcr8te4kr609gcawutmrza0j4xv80jy8z306fyu']
         ==
     ==
   ++  pubkeys
@@ -93,6 +141,14 @@
     ==
   --
 ::
+++  mk-pubkey
+|=  [=xpub =chyg =idx]
+  ^-  hexb
+  =/  pk=@ux
+    %-  compress-point:ecc
+    pub:(derive-public:(derive-public:(from-extended:bip32 (trip xpub)) (@ chyg)) idx)
+ [(met 3 pk) pk]
+::
 ++  run
   ::  bit manipulation
   ::
@@ -102,9 +158,13 @@
           =((to-atoms:bit 5 bits) atoms)
       ==
     ~|("base32 bit manipulation failed" !!)
-  ::  xpubs
+  ::  xpubs to HD paths to addresses
   ::
-  ~&  >  (from-extended:bip32 (trip 'vpub5baxyhXRwCQ1N4KuQfdVSfnYahk6HDRCqDhQJjgSbxo8SzP5ghgHugxZuQ9TpfGC2oTBYdVi8thxMGhqjcVbNPMBNRKMX9x1PZW4LXNyq7q'))
+  ?.  %+  levy  xpubs:vectors
+      |=  [x=xpub h=hdkey a=address]
+      =/  [b=bipt n=network]  (xpub-type x)
+      =(a (pubkey-to-address b n (mk-pubkey x chyg.h idx.h)))
+    ~|("xpub didn't converto to pubkey" !!)
   ::  pubkey to address
   ::
   ?.  %+  levy  pubkeys:vectors
