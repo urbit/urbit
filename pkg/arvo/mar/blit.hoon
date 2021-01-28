@@ -20,7 +20,8 @@
     ?-  -.blit
       %bel  b+&
       %clr  b+&
-      %hop  (numb p.blit)
+      %hop  ?@  p.blit  (numb p.blit)
+            (pairs 'row'^(numb r.p.blit) 'col'^(numb c.p.blit) ~)
       %lin  a+(turn p.blit |=(c=@c s+(tuft c)))
       %nel  b+&
       %url  s+p.blit

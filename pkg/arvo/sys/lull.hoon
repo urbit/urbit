@@ -1057,7 +1057,7 @@
   +$  blit                                              ::  outside blit
     $%  [%bel ~]                                        ::  make a noise
         [%clr ~]                                        ::  clear the screen
-        [%hop p=@ud]                                    ::  set cursor position
+        [%hop p=$@(@ud [r=@ud c=@ud])]                  ::  set cursor row/pos
         [%klr p=stub]                                   ::  set styled line
         [%lin p=(list @c)]                              ::  set current line
         [%nel ~]                                        ::  newline

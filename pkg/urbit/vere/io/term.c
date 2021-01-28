@@ -457,23 +457,32 @@ _term_it_show_blank(u3_utty* uty_u)
   _term_it_dump_buf(uty_u, &uty_u->ufo_u.out.clear_u);
 }
 
-/* _term_it_show_cursor(): set current line, transferring pointer.
+/* _term_it_move_cursor(): move cursor to row & column
+   NOTE: row 0 is at the bottom, col 0 is to the left
 */
 static void
-_term_it_show_cursor(u3_utty* uty_u, c3_w cur_w)
+_term_it_move_cursor(u3_utty* uty_u, c3_w row_w, c3_w col_w)
 {
-  c3_c cur_c[5];
-  c3_c len_c = sprintf(cur_c, "%d", cur_w + 1);
+  c3_c col_c[5];
+  c3_c wol_c = sprintf(col_c, "%d", col_w + 1);
+
+  c3_c row_c[5];
+  c3_c wow_c = sprintf(row_c, "%d", ( uty_u->tat_u.siz.row_l - row_w ));
 
   uv_buf_t esc_u = TERM_LIT_BUF("\033[");
-  uv_buf_t pos_u = uv_buf_init(cur_c, len_c);
-  uv_buf_t cha_u = TERM_LIT_BUF("G");
+  uv_buf_t col_u = uv_buf_init(col_c, wol_c);
+  uv_buf_t sep_u = TERM_LIT_BUF(";");
+  uv_buf_t row_u = uv_buf_init(row_c, wow_c);
+  uv_buf_t cha_u = TERM_LIT_BUF("H");
 
   _term_it_dump_buf(uty_u, &esc_u);
-  _term_it_dump_buf(uty_u, &pos_u);
+  _term_it_dump_buf(uty_u, &row_u);
+  _term_it_dump_buf(uty_u, &sep_u);
+  _term_it_dump_buf(uty_u, &col_u);
   _term_it_dump_buf(uty_u, &cha_u);
 
-  uty_u->tat_u.mir.cus_w = cur_w;
+  //TODO  should also store row
+  uty_u->tat_u.mir.cus_w = col_w;
 }
 
 /* _term_it_show_line(): render current line.
@@ -512,7 +521,7 @@ _term_it_refresh_line(u3_utty* uty_u)
 
   _term_it_show_clear(uty_u);
   _term_it_show_line(uty_u, wor_w);
-  _term_it_show_cursor(uty_u, cus_w);
+  _term_it_move_cursor(uty_u, 0, cus_w);
 }
 
 /* _term_it_set_line(): set current line.
@@ -1361,7 +1370,13 @@ _term_ef_blit(u3_utty* uty_u,
 
     case c3__hop: {
       if ( c3n == u3_Host.ops_u.tem ) {
-        _term_it_show_cursor(uty_u, u3t(blt));
+        u3_noun pos = u3t(blt);
+        if ( c3y == u3r_ud(pos) ) {
+          _term_it_move_cursor(uty_u, 0, pos);
+        }
+        else {
+          _term_it_move_cursor(uty_u, u3h(pos), u3t(pos));
+        }
       }
     } break;
 

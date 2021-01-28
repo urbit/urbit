@@ -21,7 +21,7 @@
   $:  ram=term                                          ::  console program
       tem=(unit (list dill-belt))                       ::  pending, reverse
       wid=_80                                           ::  terminal width
-      pos=@ud                                           ::  cursor position
+      pos=$@(@ud [@ud @ud])                             ::  cursor position
       see=$%([%lin (list @c)] [%klr stub])              ::  current line
   ==                                                    ::
 +$  log-level  ?(%hush %soft %loud)                     ::  none, line, full
@@ -430,7 +430,7 @@
     ?~  session=(~(get by dug.all) u.hey.all)  [~ ~]
     ?+  t.t.tyl  ~
       [%line ~]    ``blit+!>(`blit`see.u.session)
-      [%cursor ~]  ``atom+!>(pos.u.session)
+      [%cursor ~]  ``blit+!>(`blit`hop+pos.u.session)
     ==
   ==
 ::
