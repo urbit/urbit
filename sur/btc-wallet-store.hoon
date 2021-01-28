@@ -30,6 +30,7 @@
 ::
 +$  walt
   $:  =xpub
+      =network
       =fprint
       =wilt
       =bipt

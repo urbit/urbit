@@ -17,9 +17,16 @@
   (add 1 (sub last-block height.utxo))
 ::
 ++  from-xpub
-  |=  [=xpub:btc =fprint:btc scan-to=(unit scon) max-gap=(unit @ud) confs=(unit @ud)]
+  |=  $:  =xpub:btc
+          =network:btc
+          =fprint:btc
+          scan-to=(unit scon)
+          max-gap=(unit @ud)
+          confs=(unit @ud)
+      ==
   ^-  walt
   :*  xpub
+      network
       fprint
       (from-extended:bip32 (trip xpub))
       (xpub-type:btc xpub)
@@ -48,7 +55,7 @@
       txos
       ~
   ==
-::  txb: transaction builder helpers 
+::  txb: transaction builder helpers
 ::
 ++  txb
   |_  t=txbu
@@ -133,9 +140,7 @@
   ++  mk-address
     |=  =idx:btc
     ^-  address:btc
-    ?:  ?=(%84 bipt.w)
-      (need (encode-pubkey:bech32:btc %main (pubkey idx)))
-    ~|("base58 addresses not supported yet " !!)
+    (pubkey-to-address:btc bipt.w network.w (pubkey idx))
   ::  +nixt-address: used to get change addresses
   ::   - gets the current next available address
   ::   - doesn't bump nixt-address if it's unused
