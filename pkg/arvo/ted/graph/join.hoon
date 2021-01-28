@@ -11,18 +11,15 @@
   |=  rid=resource
   =/  m  (strand ,(unit resource))
   ^-  form:m
-  ;<  pax=(unit (set path))  bind:m
-    %+  scry:strandio   ,(unit (set path))
+  ;<  res=(unit resource)  bind:m
+    %+  scry:strandio   ,(unit resource)
     ;:  weld
       /gx/metadata-store/resource/graph
       (en-path:resource rid)
       /noun
     ==
-  %-  pure:m
-  ?~  pax  ~
-  ?~  u.pax  ~
-  `(de-path:resource n.u.pax)
-::
+  (pure:m res)
+  ::
 ++  wait-for-group-join
   |=  rid=resource
   =/  m  (strand ,~)
@@ -89,9 +86,8 @@
 ;<  ~  bind:m  (wait-for-group-join rid.action)
 ::
 ;<  ~  bind:m
-  %+  poke-our  %metadata-hook
-  metadata-hook-action+!>([%add-synced ship.action (en-path:resource rid.action)])
-::
+  %+  poke-our  %metadata-pull-hook
+  pull-hook-action+!>([%add ship.action rid.action])::
 ;<  ~  bind:m  (wait-for-md rid.action)
 ::
 ;<  ~  bind:m  

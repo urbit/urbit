@@ -40,22 +40,22 @@ export function ChannelMenu(props: ChannelMenuProps) {
   const app = metadata.module || association["app-name"];
   const workspace = history.location.pathname.startsWith("/~landscape/home")
     ? "/home"
-    : association?.["group-path"];
-  const baseUrl = `/~landscape${workspace}/resource/${app}${association["app-path"]}`;
-  const appPath = association["app-path"];
+    : association?.group;
+  const baseUrl = `/~landscape${workspace}/resource/${app}${association.resource}`;
+  const rid = association.resource;
 
-  const [,, ship, name] = appPath.split("/");
+  const [,, ship, name] = rid.split("/");
 
   const isOurs = ship.slice(1) === window.ship;
 
   const isMuted =
     props.graphNotificationConfig.watching.findIndex(
-        (a) => a.graph === appPath && a.index === "/"
+        (a) => a.graph === rid && a.index === "/"
     ) === -1;
 
   const onChangeMute = async () => {
     const func = isMuted ? "listenGraph" : "ignoreGraph";
-    await api.hark[func](appPath, "/");
+    await api.hark[func](rid, "/");
   };
   const onUnsubscribe = useCallback(async () => {
     await api.graph.leaveGraph(ship, name);

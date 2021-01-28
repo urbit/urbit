@@ -74,7 +74,7 @@ export default function index(associations, apps, currentGroup, groups) {
       // iterate through each app's metadata object
       Object.keys(associations[e]).map((association) => {
         const each = associations[e][association];
-        let title = each['app-path'];
+        let title = each.resource;
         if (each.metadata.title !== '') {
           title = each.metadata.title;
         }
@@ -88,25 +88,25 @@ export default function index(associations, apps, currentGroup, groups) {
           app = each.metadata.module;
         }
 
-        const shipStart = each['app-path'].substr(each['app-path'].indexOf('~'));
+        const shipStart = each.resource.substr(each.resource.indexOf('~'));
 
         if (app === 'groups') {
           const obj = result(
             title,
-            `/~landscape${each['app-path']}`,
+            `/~landscape${each.resource}`,
             app.charAt(0).toUpperCase() + app.slice(1),
             cite(shipStart.slice(0, shipStart.indexOf('/')))
           );
           landscape.push(obj);
         } else {
           const app = each.metadata.module || each['app-name'];
-          const group = (groups[each['group-path']]?.hidden)
-            ? '/home' : each['group-path'];
+          const group = (groups[each.group]?.hidden)
+            ? '/home' : each.group;
           const obj = result(
             title,
-            `/~landscape${group}/join/${app}${each['app-path']}`,
+            `/~landscape${group}/join/${app}${each.resource}`,
             app.charAt(0).toUpperCase() + app.slice(1),
-            (associations?.contacts?.[each['group-path']]?.metadata?.title || null)
+            (associations?.contacts?.[each.group]?.metadata?.title || null)
           );
           subscriptions.push(obj);
         }

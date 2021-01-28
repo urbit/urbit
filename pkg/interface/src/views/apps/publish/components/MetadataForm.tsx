@@ -64,11 +64,11 @@ export function MetadataForm(props: MetadataFormProps) {
       const { name, description } = values;
       await api.metadata.metadataAdd(
         "publish",
-        props.association["app-path"],
-        props.association["group-path"],
+        props.association.resource,
+        props.association.group,
         name,
         description,
-        props.association.metadata["date-created"],
+        props.association.metadata["date-created"],,
         uxToHex(props.association.metadata.color)
       );
       actions.setStatus({ success: null });

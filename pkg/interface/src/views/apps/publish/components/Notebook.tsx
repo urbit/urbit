@@ -30,7 +30,7 @@ export function Notebook(props: NotebookProps & RouteComponentProps) {
     graph
   } = props;
 
-  const group = groups[association?.['group-path']];
+  const group = groups[association?.group];
   if (!group) {
     return null; // Waiting on groups to populate
   }

@@ -6,8 +6,7 @@
 /-
     inv=invite-store,
     *contact-hook,
-    *metadata-store,
-    *metadata-hook,
+    metadata=metadata-store,
     pull-hook,
     push-hook
 /+  *server, *contact-json, default-agent, dbug, verb,
@@ -152,7 +151,7 @@
           (contact-poke [%create path])
           (contact-hook-poke [%add-owned path])
       ==
-      (create-metadata path title.act description.act)
+      (create-metadata rid title.act description.act)
       ?.  ?=(%invite -.policy.act)
         ~
       %+  turn
@@ -200,7 +199,7 @@
           (contact-poke [%create path])
           (contact-hook-poke [%add-owned path])
       ==
-    (create-metadata path title.act description.act)
+    (create-metadata resource.act title.act description.act)
   ==
 ++  poke-handle-http-request
   |=  =inbound-request:eyre
@@ -234,7 +233,7 @@
     (de-path:resource path)
   :~  (group-pull-poke [%add entity.rid rid])
       (contact-hook-poke [%add-synced entity.rid path])
-      (sync-metadata entity.rid path)
+      (pull-metadata rid)
   ==
 ::
 ::  +utilities
@@ -297,33 +296,35 @@
   [%pass / %agent [our.bol %group-pull-hook] %poke %pull-hook-action !>(act)]
 ::
 ++  metadata-poke
-  |=  act=metadata-action
+  |=  =action:metadata
   ^-  card
-  [%pass / %agent [our.bol %metadata-store] %poke %metadata-action !>(act)]
-::
-++  metadata-hook-poke
-  |=  act=metadata-hook-action
-  ^-  card
-  [%pass / %agent [our.bol %metadata-hook] %poke %metadata-hook-action !>(act)]
-::
-++  sync-metadata
-  |=  [=ship =path]
-  ^-  card
-  (metadata-hook-poke %add-synced ship path)
+  [%pass / %agent [our.bol %metadata-store] %poke metadata-action+!>(action)]
 ::
 ++  create-metadata
-  |=  [=path title=@t description=@t]
+  |=  [rid=resource title=@t description=@t]
   ^-  (list card)
-  =/  =metadata
-    %*  .  *metadata
+  =/  =metadatum:metadata
+    %*  .  *metadatum:metadata
         title         title
         description   description
         date-created  now.bol
         creator       our.bol
     ==
-  :~  (metadata-poke [%add path [%contacts path] metadata])
-      (metadata-hook-poke [%add-owned path])
+  :~  (metadata-poke [%add rid [%contacts rid] metadatum])
+      (push-metadata rid)
   ==
+::
+++  push-metadata
+  |=  rid=resource
+  ^-  card
+  =-  [%pass / %agent [our.bol %metadata-push-hook] %poke -]
+  push-hook-action+!>([%add rid])
+::
+++  pull-metadata
+  |=  rid=resource
+  ^-  card
+  =-  [%pass / %agent [our.bol %metadata-pull-hook] %poke -]
+  pull-hook-action+!>([%add [entity .]:rid])
 ::
 ++  all-scry
   ^-  rolodex

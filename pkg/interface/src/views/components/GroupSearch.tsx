@@ -86,7 +86,7 @@ export function GroupSearch(props: InviteSearchProps) {
 
   const onSelect = useCallback(
     (a: Association) => {
-      setValue(a["group-path"]);
+      setValue(a.group);
       setTouched(true);
     },
     [setValue]
@@ -128,7 +128,7 @@ export function GroupSearch(props: InviteSearchProps) {
           search={(s: string, a: Association) =>
             a.metadata.title.toLowerCase().startsWith(s.toLowerCase())
           }
-          getKey={(a: Association) => a["group-path"]}
+          getKey={(a: Association) => a.group}
           onSelect={onSelect}
         />
       )}

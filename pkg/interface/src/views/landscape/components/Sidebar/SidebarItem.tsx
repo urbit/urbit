@@ -7,7 +7,7 @@ import { SidebarAppConfigs, SidebarItemStatus } from "./Sidebar";
 import { HoverBoxLink } from "~/views/components/HoverBox";
 import { Groups, Association } from "~/types";
 
-import { cite } from "~/logic/lib/util";
+import { cite, getModuleIcon } from "~/logic/lib/util";
 
 function SidebarItemIndicator(props: { status?: SidebarItemStatus }) {
   switch (props.status) {
@@ -24,27 +24,19 @@ function SidebarItemIndicator(props: { status?: SidebarItemStatus }) {
   }
 }
 
-const getAppIcon = (app: string, mod: string) => {
-  if (app === "graph") {
-    if (mod === "link") {
-      return "Collection";
-    }
-    return _.capitalize(mod);
-  }
-  return _.capitalize(app);
-};
+;
 
 const DM_REGEX = /ship\/~([a-z]|-)*\/dm--/;
 function getItemTitle(association: Association) {
-  if(DM_REGEX.test(association['app-path'])) {
-    const [,,ship,name] = association['app-path'].split('/');
+  if(DM_REGEX.test(association.resource)) {
+    const [,,ship,name] = association.resource.split('/');
     if(ship.slice(1) === window.ship) {
       return cite(`~${name.slice(4)}`);
     }
     return cite(ship);
 
   }
-  return association.metadata.title || association['app-path'];
+  return association.metadata.title || association.resource 
 }
 
 export function SidebarItem(props: {
@@ -59,8 +51,8 @@ export function SidebarItem(props: {
   const title = getItemTitle(association);
   const appName = association?.["app-name"];
   const mod = association?.metadata?.module || appName;
-  const appPath = association?.["app-path"];
-  const groupPath = association?.["group-path"];
+  const rid = association?.resource
+  const groupPath = association?.group;
   const app = apps[appName];
   const isUnmanaged = groups?.[groupPath]?.hidden || false;
   if (!app) {
@@ -74,8 +66,8 @@ export function SidebarItem(props: {
   const baseUrl = isUnmanaged ? `/~landscape/home` : `/~landscape${groupPath}`;
 
   const to = isSynced
-    ? `${baseUrl}/resource/${mod}${appPath}`
-    : `${baseUrl}/join/${mod}${appPath}`;
+    ? `${baseUrl}/resource/${mod}${rid}`
+    : `${baseUrl}/join/${mod}${rid}`;
 
   const color = selected ? "black" : isSynced ? "gray" : "lightGray";
 
@@ -101,7 +93,7 @@ export function SidebarItem(props: {
         <Icon
           display="block"
           color={color}
-          icon={getAppIcon(appName, mod) as any}
+          icon={getModuleIcon(mod) as any}
         />
         <Box width='100%' flexShrink={2} ml={2} display='flex' overflow='hidden'>
           <Text
