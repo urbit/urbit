@@ -2,13 +2,14 @@
 /+  resource
 ^?
 |%
+::
 ++  associations-to-json
   |=  =associations
   =,  enjs:format
   ^-  json
   %-  pairs
   %+  turn  ~(tap by associations)
-  |=  [=md-resource [group=resource =metadata]]
+  |=  [=md-resource [group=resource =metadatum]]
   ^-  [cord json]
   :-
   %-  crip
@@ -21,12 +22,12 @@
   :~  [%group s+(enjs-path:resource group)]
       [%app-name s+app-name.md-resource]
       [%resource s+(enjs-path:resource resource.md-resource)]
-      [%metadata (metadata-to-json metadata)]
+      [%metadata (metadata-to-json metadatum)]
   ==
 ::
 ++  json-to-action
   |=  jon=json
-  ^-  metadata-action
+  ^-  action
   =,  dejs:format
   =<  (parse-json jon)
   |%
@@ -40,7 +41,7 @@
     %-  ot
     :~  [%group dejs-path:resource]
         [%resource md-resource]
-        [%metadata metadata]
+        [%metadata metadatum]
     ==
   ++  remove
     %-  ot
@@ -61,7 +62,7 @@
       (tag %member-metadata)
     ==
   ::
-  ++  metadata
+  ++  metadatum
     %-  ot
     :~  [%title so]
         [%description so]
@@ -85,7 +86,7 @@
   --
 ::
 ++  metadata-to-json
-  |=  met=metadata
+  |=  met=metadatum
   ^-  json
   =,  enjs:format
   %-  pairs
@@ -100,7 +101,7 @@
       [%vip s+`@t`vip.met]
   ==
 ++  hook-update-to-json
-  |=  upd=metadata-hook-update
+  |=  upd=hook-update
   =,  enjs:format
   %+  frond  %metadata-hook-update
   %+  frond  -.upd
@@ -111,7 +112,7 @@
         [%channels (associations-to-json channels.upd)]
         [%members (numb members.upd)]
         [%channel-count (numb channel-count.upd)]
-        [%metadata (metadata-to-json metadata.upd)]
+        [%metadata (metadata-to-json metadatum.upd)]
     ==
       %req-preview
     ~[group+s+(enjs-path:resource group.upd)]
@@ -119,7 +120,7 @@
 
 ::
 ++  update-to-json
-  |=  upd=metadata-update
+  |=  upd=update
   ^-  json
   =,  enjs:format
   %+  frond  %metadata-update
@@ -131,7 +132,7 @@
     :~  [%group s+(enjs-path:resource group.upd)]
         [%app-name s+app-name.resource.upd]
         [%resource s+(enjs-path:resource resource.resource.upd)]
-        [%metadata (metadata-to-json metadata.upd)]
+        [%metadata (metadata-to-json metadatum.upd)]
     ==
       %updated-metadata
     :-  %add
@@ -139,7 +140,7 @@
     :~  [%group s+(enjs-path:resource group.upd)]
         [%app-name s+app-name.resource.upd]
         [%resource s+(enjs-path:resource resource.resource.upd)]
-        [%metadata (metadata-to-json metadata.upd)]
+        [%metadata (metadata-to-json metadatum.upd)]
     ==
   ::
       %remove

@@ -6,8 +6,7 @@
 /-
     inv=invite-store,
     *contact-hook,
-    *metadata-store,
-    *metadata-hook,
+    metadata=metadata-store,
     pull-hook,
     push-hook
 /+  *server, *contact-json, default-agent, dbug, verb,
@@ -297,31 +296,21 @@
   [%pass / %agent [our.bol %group-pull-hook] %poke %pull-hook-action !>(act)]
 ::
 ++  metadata-poke
-  |=  act=metadata-action
+  |=  =action:metadata
   ^-  card
-  [%pass / %agent [our.bol %metadata-store] %poke metadata-action+!>(act)]
-::
-++  metadata-hook-poke
-  |=  act=metadata-hook-action
-  ^-  card
-  [%pass / %agent [our.bol %metadata-hook] %poke %metadata-hook-action !>(act)]
-::
-++  sync-metadata
-  |=  [=ship =path]
-  ^-  card
-  (metadata-hook-poke %add-synced ship path)
+  [%pass / %agent [our.bol %metadata-store] %poke metadata-action+!>(action)]
 ::
 ++  create-metadata
   |=  [rid=resource title=@t description=@t]
   ^-  (list card)
-  =/  =metadata
-    %*  .  *metadata
+  =/  =metadatum:metadata
+    %*  .  *metadatum:metadata
         title         title
         description   description
         date-created  now.bol
         creator       our.bol
     ==
-  :~  (metadata-poke [%add rid [%contacts rid] metadata])
+  :~  (metadata-poke [%add rid [%contacts rid] metadatum])
       (push-metadata rid)
   ==
 ::
