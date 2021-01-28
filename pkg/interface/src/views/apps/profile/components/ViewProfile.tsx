@@ -15,7 +15,7 @@ import { useHistory } from "react-router-dom";
 
 export function ViewProfile(props: any) {
   const history = useHistory();
-  const { contact, ship } = props;
+  const { contact, isPublic, ship } = props;
 
   return (
     <>
@@ -63,17 +63,20 @@ export function ViewProfile(props: any) {
           </Row>
         ) : null
       }
-      <Box
-        height="200px"
-        borderRadius={1}
-        bg="white"
-        border={1}
-        borderColor="washedGray">
-        <Center height="100%">
-          <Text mono pr={1} color="gray">{ship}</Text>
-          <Text color="gray">remains private</Text>
-        </Center>
-      </Box>
+      { !isPublic && ship === `~${window.ship}` ? (
+        <Box
+          height="200px"
+          borderRadius={1}
+          bg="white"
+          border={1}
+          borderColor="washedGray">
+          <Center height="100%">
+            <Text mono pr={1} color="gray">{ship}</Text>
+            <Text color="gray">remains private</Text>
+          </Center>
+        </Box>
+      ) : null
+      }
     </>
   );
 }

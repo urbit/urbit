@@ -29,7 +29,7 @@
   ==
 ::
 +$  update
-  $%  [%initial =rolodex]
+  $%  [%initial =rolodex is-public=?]
       [%add =ship =contact]
       [%remove =ship]
       [%edit =ship =edit-field]

@@ -53,7 +53,7 @@
   |^
   =/  cards=(list card)
     ?+  path  (on-watch:def path)
-      [%all ~]      (give [%initial rolodex])
+      [%all ~]      (give [%initial rolodex is-public])
       [%updates ~]  ~
     ::
         [%our ~]
@@ -99,11 +99,11 @@
     ==
     ::
     ++  handle-initial
-      |=  rolo=rolodex:store
+      |=  [rolo=rolodex:store is-public=?]
       ^-  (quip card _state)
       =.  rolodex  (~(uni by rolodex) rolo)
-      :_  state(rolodex rolodex)
-      (send-diff [%initial rolodex] %.n)
+      :_  state(rolodex rolodex, is-public is-public)
+      (send-diff [%initial rolodex is-public] %.n)
     ::
     ++  handle-add
       |=  [=ship =contact:store]

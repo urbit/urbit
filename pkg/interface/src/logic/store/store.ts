@@ -74,6 +74,7 @@ export default class GlobalStore extends BaseStore<StoreState> {
         },
         credentials: null
       },
+      isContactPublic: false,
       contacts: {},
       notifications: new BigIntOrderedMap<Timebox>(),
       archivedNotifications: new BigIntOrderedMap<Timebox>(),

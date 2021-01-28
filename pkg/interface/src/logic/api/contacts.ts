@@ -32,6 +32,12 @@ export default class ContactsApi extends BaseApi<StoreState> {
     });
   }
 
+  setPublic(setPublic: any) {
+    return this.storeAction({
+      'set-public': setPublic
+    });
+  }
+
   private storeAction(action: any): Promise<any> {
     return this.action('contact-store', 'contact-update', action)
   }

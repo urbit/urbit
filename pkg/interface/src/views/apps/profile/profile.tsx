@@ -22,6 +22,7 @@ export default function ProfileScreen(props: any) {
       render={({ match, history }) => {
         const ship = match.params.ship;
         const isEdit = match.url.includes('edit');
+        const isPublic = props.isContactPublic;
         const contact = props.contacts?.[ship];
         const sigilColor = contact?.color
           ? `#${uxToHex(contact.color)}`
@@ -46,6 +47,7 @@ export default function ProfileScreen(props: any) {
                   api={props.api}
                   s3={props.s3}
                   isEdit={isEdit}
+                  isPublic={isPublic}
                 />
               </Box>
             </Box>

@@ -20,7 +20,11 @@
     ^-  [cord json]
     ?-  -.upd
         %initial
-      [%initial (rolo rolodex.upd)]
+      :-  %initial
+      %-  pairs
+      :~  [%rolodex (rolo rolodex.upd)]
+          [%is-public b+is-public.upd]
+      ==
     ::
         %add
       :-  %add
@@ -118,7 +122,11 @@
           [%set-public bo]
       ==
     ::
-    ++  initial  (op ;~(pfix sig fed:ag) cont)
+    ++  initial
+      %-  ot
+      :~  [%rolodex (op ;~(pfix sig fed:ag) cont)]
+          [%is-public bo]
+      ==
     ::
     ++  add-contact
       %-  ot

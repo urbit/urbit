@@ -21,7 +21,7 @@ export function Profile(props: any) {
   if (!props.ship) {
     return null;
   }
-  const { contact, isEdit, ship } = props;
+  const { contact, isPublic, isEdit, ship } = props;
   const hexColor = contact?.color ? `#${uxToHex(contact.color)}` : "#000000";
   const cover = (contact?.cover)
     ? <BaseImage src={contact.cover} width='100%' height='100%' style={{ objectFit: 'cover' }} />
@@ -55,9 +55,14 @@ export function Profile(props: any) {
           </Center>
         </Row>
         { isEdit ? (
-          <EditProfile ship={ship} contact={contact} s3={props.s3} api={props.api} />
+          <EditProfile
+            ship={ship}
+            contact={contact}
+            s3={props.s3}
+            api={props.api}
+            isPublic={isPublic}/>
         ) : (
-          <ViewProfile ship={ship} contact={contact} />
+          <ViewProfile ship={ship} contact={contact} isPublic={isPublic} />
         ) }
       </Box>
     </Center>

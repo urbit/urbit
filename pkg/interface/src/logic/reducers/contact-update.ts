@@ -13,6 +13,7 @@ export const ContactReducer = (json, state) => {
     add(data, state);
     remove(data, state);
     edit(data, state);
+    setPublic(data, state);
     console.log(state.contacts);
   }
 };
@@ -20,7 +21,8 @@ export const ContactReducer = (json, state) => {
 const initial = (json: ContactUpdate, state: S) => {
   const data = _.get(json, 'initial', false);
   if (data) {
-    state.contacts = data;
+    state.contacts = data.rolodex;
+    state.isContactPublic = data['is-public'];
   }
 };
 
@@ -55,3 +57,10 @@ const edit = (json: ContactUpdate, state: S) => {
     state.contacts[ship][edit[0]] = data['edit-field'][edit[0]];
   }
 };
+
+const setPublic = (json: ContactUpdate, state: S) => {
+  const data = _.get(json, 'set-public', false);
+  state.isContactPublic = data;
+};
+
+
