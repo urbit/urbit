@@ -23,9 +23,9 @@ export default class MetadataApi extends BaseApi<StoreState> {
           'date-created': dateCreated,
           creator,
           'module': moduleName,
-          preview: false,
           picture: '',
-          permissions: ''
+          preview: false,
+          vip: ''
         }
       }
     });

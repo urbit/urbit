@@ -23,6 +23,12 @@ export const getModuleIcon = (mod: string) => {
   return _.capitalize(mod);
 }
 
+export function wait(ms: number) {
+  return new Promise((resolve, reject) => {
+    setTimeout(resolve, ms);
+  });
+}
+
 export function appIsGraph(app: string) {
   return app === 'publish' || app == 'link';
 }
