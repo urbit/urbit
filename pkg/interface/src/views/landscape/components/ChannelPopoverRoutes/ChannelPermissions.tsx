@@ -3,21 +3,18 @@ import _ from "lodash";
 import * as Yup from "yup";
 import {
   Label,
-  ManagedTextInputField as Input,
   ManagedToggleSwitchField as Checkbox,
   Box,
   Col,
   Text,
-  Row,
-  ManagedRadioButtonField as Radio,
 } from "@tlon/indigo-react";
-import { Formik, Form, FormikHelpers } from "formik";
+import { Formik, Form } from "formik";
 import { PermVariation, Association, Group, Groups, Rolodex } from "~/types";
-import { ShipSearch } from "~/views/components/ShipSearch";
+import { shipSearchSchemaInGroup, } from "~/views/components/ShipSearch";
 import GlobalApi from "~/logic/api/global";
 import { resourceFromPath } from "~/logic/lib/group";
-import { AsyncButton } from "~/views/components/AsyncButton";
 import { FormSubmit } from "~/views/components/FormSubmit";
+import { ChannelWritePerms } from "../ChannelWritePerms";
 
 function PermissionsSummary(props: {
   writersSize: number;
@@ -70,7 +67,7 @@ interface FormSchema {
 const formSchema = (members: string[]) => {
   return Yup.object({
     writePerms: Yup.string(),
-    writers: Yup.array(Yup.string().oneOf(members, "${value} is not in group")),
+    writers: shipSearchSchemaInGroup(members),
     readerComments: Yup.boolean(),
   });
 };
@@ -105,13 +102,14 @@ export function GraphPermissions(props: GraphPermissionsProps) {
   };
 
   const onSubmit = async (values: FormSchema, actions) => {
+    values.writers = _.compact(values.writers);
     const resource = resourceFromPath(association.group);
     const tag = {
       app: "graph",
       resource: association.resource,
       tag: "writers",
     };
-    const allWriters = Array.from(writers).map(w => `~${w}`);
+    const allWriters = Array.from(writers).map((w) => `~${w}`);
     if (values.readerComments !== readerComments) {
       await api.metadata.update(association, {
         vip: values.readerComments ? "reader-comments" : "",
@@ -123,36 +121,38 @@ export function GraphPermissions(props: GraphPermissionsProps) {
         actions.setStatus({ success: null });
         return;
       }
-      await api.groups.removeTag(
-        resource,
-        tag,
-        allWriters
-      );
+      await api.groups.removeTag(resource, tag, allWriters);
     } else if (values.writePerms === "self") {
       if (writePerms === "self") {
         actions.setStatus({ success: null });
         return;
       }
-      await api.groups.removeTag(
-        resource,
-        tag,
-        allWriters
-      );
-      await api.groups.addTag(resource, tag, [`~${hostShip}`]);
+      let promises: Promise<any>[] = [];
+      allWriters.length > 0 &&
+        promises.push(api.groups.removeTag(resource, tag, allWriters));
+      promises.push(api.groups.addTag(resource, tag, [`~${hostShip}`]));
+      await Promise.all(promises);
       actions.setStatus({ success: null });
     } else if (values.writePerms === "subset") {
-      const toRemove = _.difference(allWriters, values.writers)
+      const toRemove = _.difference(allWriters, values.writers);
 
-      const toAdd = [..._.difference(values.writers, allWriters), `~${hostShip}`];
+      const toAdd = [
+        ..._.difference(values.writers, allWriters),
+        `~${hostShip}`,
+      ];
 
-      toRemove.length > 0 && await api.groups.removeTag(resource, tag, toRemove);
-      toAdd.length > 0 && await api.groups.addTag(resource, tag, toAdd);
+      let promises: Promise<any>[] = [];
+      toRemove.length > 0 &&
+        promises.push(api.groups.removeTag(resource, tag, toRemove));
+      toAdd.length > 0 &&
+        promises.push(api.groups.addTag(resource, tag, toAdd));
+      await Promise.all(promises);
 
       actions.setStatus({ success: null });
     }
   };
 
-  const schema = formSchema(Array.from(group.members).map(m => `~${m}`));
+  const schema = formSchema(Array.from(group.members).map((m) => `~${m}`));
 
   return (
     <Formik
@@ -160,61 +160,35 @@ export function GraphPermissions(props: GraphPermissionsProps) {
       initialValues={initialValues}
       onSubmit={onSubmit}
     >
-      {({ values }) => (
-        <Form style={{ display: "contents" }}>
-          <Col mt="4" flexShrink={0} gapY="5">
-            <Col gapY="1">
-              <Text id="permissions" fontWeight="bold" fontSize="2">
-                Permissions
-              </Text>
-              <Text gray>
-                Add or remove read/write privileges to this channel. Group
-                admins can always write to a channel
-              </Text>
-            </Col>
-            <Col>
-              <Label mb="2">Permissions Summary</Label>
-              <PermissionsSummary
-                writersSize={writers.size}
-                vip={association.metadata.vip}
-              />
-            </Col>
-            <Col gapY="3">
-              <Label> Write Access</Label>
-              <Radio
-                name="writePerms"
-                id="everyone"
-                label="All group members"
-              />
-              <Radio name="writePerms" id="self" label="Only host" />
-              <Radio
-                name="writePerms"
-                id="subset"
-                label="Host and selected ships"
-              />
-              {values.writePerms === "subset" && (
-                <ShipSearch
-                  groups={props.groups}
-                  contacts={props.contacts}
-                  id="writers"
-                  label=""
-                  maxLength={undefined}
-                />
-              )}
-            </Col>
-            {association.metadata.module !== "chat" && (
-              <Checkbox
-                id="readerComments"
-                label="Allow readers to comment"
-                caption="If enabled, all members of the group can comment on this channel"
-              />
-            )}
-            <FormSubmit>
-              Update Permissions
-            </FormSubmit>
+      <Form style={{ display: "contents" }}>
+        <Col mt="4" flexShrink={0} gapY="5">
+          <Col gapY="1">
+            <Text id="permissions" fontWeight="bold" fontSize="2">
+              Permissions
+            </Text>
+            <Text gray>
+              Add or remove read/write privileges to this channel. Group admins
+              can always write to a channel
+            </Text>
           </Col>
-        </Form>
-      )}
+          <Col>
+            <Label mb="2">Permissions Summary</Label>
+            <PermissionsSummary
+              writersSize={writers.size}
+              vip={association.metadata.vip}
+            />
+          </Col>
+          <ChannelWritePerms contacts={props.contacts} groups={props.groups} />
+          {association.metadata.module !== "chat" && (
+            <Checkbox
+              id="readerComments"
+              label="Allow readers to comment"
+              caption="If enabled, all members of the group can comment on this channel"
+            />
+          )}
+          <FormSubmit>Update Permissions</FormSubmit>
+        </Col>
+      </Form>
     </Formik>
   );
 }
