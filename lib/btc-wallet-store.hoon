@@ -270,14 +270,14 @@
     ^-  [tb=(unit txbu) chng=(unit sats)]
     =+  tb=select-utxos
     ?~  tb  [~ ~]
-    =+  fee=~(fee txb u.tb)
-    =/  costs=sats                      ::  cost of this tx + sending another
+    =+  excess=~(fee txb u.tb)        ::  (inputs - outputs)
+    =/  new-fee=sats                   ::  cost of this tx + sending another
       %+  add  min-tx-fee
       (mul feyb vbytes.u.tb)
-    ?.  (gth fee costs)
+    ?.  (gth excess new-fee)
       [tb ~]
     :-  tb
-    `(sub fee costs)
+    `(sub excess new-fee)
   ::  Uses naive random selection. Should switch to branch-and-bound later.
   ::
   ++  select-utxos
