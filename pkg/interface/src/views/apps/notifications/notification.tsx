@@ -29,7 +29,6 @@ interface NotificationProps {
   contacts: Contacts;
   graphConfig: NotificationGraphConfig;
   groupConfig: GroupNotificationsConfig;
-  chatConfig: string[];
 }
 
 function getMuted(

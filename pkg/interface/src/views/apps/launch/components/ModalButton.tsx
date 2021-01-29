@@ -60,7 +60,7 @@ const ModalButton = (props) => {
           </Box>
         </Box>
       )}
-      <Box
+      <Button
         onClick={() => setModalShown(true)}
         display="flex"
         alignItems="center"
@@ -73,7 +73,7 @@ const ModalButton = (props) => {
         {...rest}
       >
         <Icon icon={props.icon} mr={2} color={color}></Icon><Text color={color}>{props.text}</Text>
-      </Box>
+      </Button>
     </>
   );
 }
