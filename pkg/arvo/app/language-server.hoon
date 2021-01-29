@@ -275,12 +275,14 @@
 ++  handle-did-open
   |=  item=text-document-item:lsp-sur
   ^-  (quip card _state)
+  =/  =path
+    (uri-to-path:build uri.item)
+  ?:  ?=(%sys -.path)
+    `state
   =/  buf=wall
     (to-wall (trip text.item))
   =.  bufs
     (~(put by bufs) uri.item buf)
-  =/  =path
-    (uri-to-path:build uri.item)
   :_  state
   %+  weld
     (give-rpc-notification (get-diagnostics uri.item))
