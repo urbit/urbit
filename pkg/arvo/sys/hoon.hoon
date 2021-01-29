@@ -9089,8 +9089,8 @@
       %toss   toss
       %wrap   wrap
     ==
-  =+  :*  fan=*(set {type hoon})
-          rib=*(set {type type hoon})
+  =+  :*  fan=*(set [type hoon])
+          rib=*(set [type type hoon])
           vet=`?`&
           fab=`?`&
           grub=*grub
@@ -11285,6 +11285,82 @@
       $wet  q:(mint(vet |) gol gen)
     ==
   ::
+  ++  caching-laze
+    ::  produce lazy core generator for static execution
+    ::
+    |=  [nym=(unit term) hud=poly dom=(map term tome)]
+    ::  XX WEIRD removed ~+, consider re-adding
+    ^-  [seminoun _grub]
+    =+  %hemp-141
+    ::  tal: map from battery axis to foot
+    ::
+    =;  tal=(map @ud hoon)
+      =/  =stencil
+        :+  %lazy  1
+        |=  axe=@ud
+        ^-  (unit noun)
+        %+  bind  (~(get by tal) axe)
+        |=  gen=hoon
+        ^-  nock
+        =^  hemped  grub
+          %.  [hud %noun gen]
+          %=  caching-hemp
+            sut  (core sut [nym hud %gold] sut [[%lazy 1 ..^$] ~] dom)
+          ==
+        hemped
+      [[stencil ~] grub]
+    ::
+    %-  ~(gas by *(map @ud hoon))
+    =|  yeb=(list (pair @ud hoon))
+    =/  axe  1
+    |^
+    ?-  dom
+      ~        yeb
+      [* ~ ~]  (chapter q.q.n.dom)
+      [* * ~]  %=  $
+                 dom  l.dom
+                 axe  (peg axe 3)
+                 yeb  (chapter(axe (peg axe 2)) q.q.n.dom)
+               ==
+      [* ~ *]  %=  $
+                 dom  r.dom
+                 axe  (peg axe 3)
+                 yeb  (chapter(axe (peg axe 2)) q.q.n.dom)
+               ==
+      [* * *]  %=  $
+                 dom  r.dom
+                 axe  (peg axe 7)
+                 yeb  %=  $
+                        dom  l.dom
+                        axe  (peg axe 6)
+                        yeb  (chapter(axe (peg axe 2)) q.q.n.dom)
+      ==       ==     ==
+    ++  chapter
+      |=  dab=(map term hoon)
+      ^+  yeb
+      ?-  dab
+        ~        yeb
+        [* ~ ~]  [[axe q.n.dab] yeb]
+        [* * ~]  %=  $
+                   dab  l.dab
+                   axe  (peg axe 3)
+                   yeb  [[(peg axe 2) q.n.dab] yeb]
+                 ==
+        [* ~ *]  %=  $
+                   dab  r.dab
+                   axe  (peg axe 3)
+                   yeb  [[(peg axe 2) q.n.dab] yeb]
+                 ==
+        [* * *]  %=  $
+                   dab  r.dab
+                   axe  (peg axe 7)
+                   yeb  %=  $
+                          dab  l.dab
+                          axe  (peg axe 6)
+                          yeb  [[(peg axe 2) q.n.dab] yeb]
+      ==         ==     ==
+    --
+  ::
   ++  laze
     ::  produce lazy core generator for static execution
     ::
@@ -11525,8 +11601,9 @@
     ::
     |=  [dox=type mel=vair nym=(unit term) hud=poly dom=(map term tome)]
     ^-  [(pair type type) _grub]
-    =/  yet  (core sut [nym hud %gold] sut (laze nym hud dom) dom)
-    =/  hum  (core dox [nym hud %gold] dox (laze nym hud dom) dom)
+    =^  lazed  grub  (caching-laze nym hud dom)
+    =/  yet  (core sut [nym hud %gold] sut lazed dom)
+    =/  hum  (core dox [nym hud %gold] dox lazed dom)
     =^  val  grub  (caching-balk(sut yet) hum hud dom)
     :_  grub
     [yet hum]
@@ -11552,7 +11629,8 @@
     =/  log  (chapters-check checked)
     =/  dog  (get-tomes log)
     =^  dez  grub
-      =.  sut  (core sut [nym hud %gold] sut (laze nym hud dom) dom)
+      =^  lazed  grub  (caching-laze nym hud dom)
+      =.  sut  (core sut [nym hud %gold] sut lazed dom)
       |-  ^-  [?(~ ^) _grub]
       ?:  ?=(~ dom)
         [~ grub]
@@ -12999,7 +13077,6 @@
     ?^  cached
       [u.cached grub]
     =;  [nested=? =_grub]
-      ~&  [%nest-caching key=[sut ref] val=nested]
       :_  grub(nes (~(put by nes.grub) [sut ref] nested))
       nested
     =|  $:  seg=(set type)                              ::  degenerate sut
