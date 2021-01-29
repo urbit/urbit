@@ -1,4 +1,4 @@
-/-  view=group-view
+/+  view=group-view
 |_  =action:view
 ++  grad  %noun
 ++  grow
@@ -8,5 +8,6 @@
 ++  grab
   |%
   ++  noun  action:view
+  ++  json  action:dejs:view
   --
 --
