@@ -382,7 +382,7 @@ replayPartEvs top last = do
 {-|
     Interesting
 -}
-testPill :: HasLogFunc e => FilePath -> Bool -> Bool -> RIO e ()
+testPill :: HasKingEnv e => FilePath -> Bool -> Bool -> RIO e ()
 testPill pax showPil showSeq = do
   logInfo "Reading pill file."
   pillBytes <- readFile pax
@@ -678,10 +678,13 @@ main = do
   runKingEnv args log =
     let
       verb = verboseLogging args
+      runStderr = case args of
+        CLI.CmdRun {} -> runKingEnvStderrRaw
+        _             -> runKingEnvStderr
       CLI.Log {..} = log
     in case logTarget lTarget args of
        CLI.LogFile f -> runKingEnvLogFile verb lLevel f
-       CLI.LogStderr -> runKingEnvStderr  verb lLevel
+       CLI.LogStderr -> runStderr         verb lLevel
        CLI.LogOff    -> runKingEnvNoLog
 
   setupSignalHandlers = do
