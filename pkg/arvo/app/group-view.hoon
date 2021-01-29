@@ -1,4 +1,4 @@
-/-  view-sur=group-view, group-store, *group, *metadata-store
+/-  view-sur=group-view, group-store, *group, metadata=metadata-store
 /+  default-agent, agentio, mdl=metadata, resource, dbug, grpl=group, verb
 |%
 ++  card  card:agent:gall
@@ -85,8 +85,7 @@
   ::
   ++  tx-fact
     |=  =progress:view
-    ~&  +<
-    =;  cage
+    =;  =cage
       (fact:io cage /all tx+(en-path:resource rid) ~)
     group-view-update+!>([%progress rid progress]) 
   ::
@@ -115,7 +114,7 @@
     =.  jn-core
       (jn-abed rid)
     =/  maybe-group
-       (group-from-app-resource:met %contacts rid)
+       (peek-group:met %contacts rid)
     ?^  maybe-group
       ~|("already joined group {<rid>}" !!)
     :_  state
@@ -184,24 +183,25 @@
         `state
       :_  state
       :_  ~
-      %+  poke-our:(jn-pass-io /pull-md)  %metadata-hook
-      metadata-hook-action+!>([%add-synced ship (en-path:resource rid)])
+      %+  poke-our:(jn-pass-io /pull-md)  %metadata-push-hook
+      pull-hook-action+!>([%add [entity .]:rid])
     ::
     ++  md-fact
       |=  [=mark =vase]
       ?.  ?=(%metadata-update mark)  `state
-      =+  !<(upd=metadata-update vase)
-      ~&  upd
-      ?.  ?=(%add -.upd)  `state
-      ?.  =(group-path.upd (en-path:resource rid))  `state
+      =+  !<(=update:metadata vase)
+      ?.  ?=(%initial-group -.update)  `state
+      ?.  =(group.update rid)  `state
       =^  cards  state
         (cleanup %done)
       :_  state
       %+  welp  cards
       ?.  hidden:(need (scry-group:grp rid))  ~
-      =/  app-rid=resource
-        (de-path:resource app-path.resource.upd)
-      :_  ~
+      %+  murn  ~(tap by associations.update)
+      |=  [=md-resource:metadata =association:metadata]
+      ?.  =(app-name.md-resource %graph)  ~
+      =*  rid  resource.md-resource
+      :-  ~
       %+  poke-our:(jn-pass-io /pull-graph)  %graph-pull-hook
       pull-hook-action+!>([%add [entity .]:rid])
     ::
