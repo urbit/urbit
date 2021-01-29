@@ -50,7 +50,7 @@
     (en-path:res resource.update)
     /noun
   ==
-=/  entries=(list [m=md-resource:met g=resource:res =metadata:met])
+=/  entries=(list [m=md-resource:met g=resource:res *])
   ~(tap by associations)
 |-  ^-  form:m
 =*  loop  $
@@ -62,7 +62,7 @@
   %+  raw-poke
     [our.bowl %metadata-store]
   :-  %metadata-action
-  !>  ^-  metadata-action:met
+  !>  ^-  action:met
   [%remove g.i.entries m.i.entries]
 ::  archive graph associated with group
 ::

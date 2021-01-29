@@ -24,7 +24,7 @@
 ::  /group/%path                             associations for group
 ::
 /-  store=metadata-store
-/+  *metadata-json, default-agent, verb, dbug, resource, *migrate
+/+  default-agent, verb, dbug, resource, *migrate
 |%
 +$  card  card:agent:gall
 +$  base-state-0
