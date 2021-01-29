@@ -217,6 +217,11 @@
 ::
 ++  sut
 |_  [w=walt eny=@uvJ last-block=@ud payee=(unit ship) =feyb txos=(list txo)]
+  ++  dust-sats  3
+  ++  dust-threshold
+    |=  output-bipt=bipt:btc
+    ^-  vbytes
+    (mul dust-sats (input-weight output-bipt))
   ++  meta-weight  11
   ++  output-weight
     |=  b=bipt:btc
@@ -225,6 +230,15 @@
       %44  34
       %49  32
       %84  31
+    ==
+  ::
+  ++  input-weight
+    |=  b=bipt:btc
+    ^-  vbytes
+    ?-  b
+      %44  148
+      %49  91
+      %84  68
     ==
   ::
   ++  target-value
@@ -240,25 +254,18 @@
       |=(=txo (output-weight (address-bipt:btc address.txo)))
     add
   ::
-  ++  input-weight
-    ^-  vbytes
-    ?-  bipt.w
-      %44  148
-      %49  297
-      %84  68
-    ==
-  ::
   ++  total-vbytes
     |=  selected=(list insel)
     ^-  vbytes
     %+  add  base-weight
-    (mul input-weight (lent selected))
+    (mul (input-weight bipt.w) (lent selected))
   ::  value of an input after fee
   ::  0 if net is <= 0
   ::
   ++  net-value
-    |=  val=sats  ^-  sats
-    =/  cost  (mul input-weight feyb)
+    |=  val=sats
+    ^-  sats
+    =/  cost  (mul (input-weight bipt.w) feyb)
     ?:  (lte val cost)  0
     (sub val cost)
   ::
@@ -280,12 +287,19 @@
       (mul feyb (add (output-weight bipt.w) vbytes.u.tb))
     ?.  (gth excess new-fee)
       [tb ~]
+    ?.  (gth (sub excess new-fee) (dust-threshold bipt.w))
+      [tb ~]
     :-  tb
     `(sub excess new-fee)
   ::  Uses naive random selection. Should switch to branch-and-bound later.
   ::
   ++  select-utxos
     |^  ^-  (unit txbu)
+    ?.  %+  levy  txos
+        |=  =txo
+        %+  gth  value.txo
+        (dust-threshold (address-bipt:btc address.txo))
+      ~|("One or more suggested outputs is dust." !!)
     =/  is=(unit (list insel))
       %-  single-random-draw
       %-  zing
