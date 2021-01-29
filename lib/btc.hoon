@@ -28,6 +28,16 @@
   ?:  =("ypub" prefix)  [%49 %main]
   ?:  =("zpub" prefix)  [%84 %main]
   ~|("invalid xpub: {<xpub>}" !!)
+::
+++  address-bipt
+  |=  a=address
+  ^-  bipt
+  =/  spk=hexb  (script-pubkey a)
+  ?:  =(25 wid.spk)  %44
+  ?:  =(23 wid.spk)  %49
+  ?:  =(22 wid.spk)  %84
+  ?:  =(34 wid.spk)  %84
+  ~|("Invalid address" !!)
 ::  big endian sha256: input and output are both MSB first (big endian)
 ::
 ++  sha256
@@ -377,8 +387,7 @@
       %+  slag  5
       (to-buffer psbt-base64)
     %-  flip:byt
-    %-  sha256
-    (sha256 tx)
+    (dsha256 tx)
   ::  +raw-tx: extract hex transaction
   ::    looks for key 0x0 in global map
   ::    crashes if tx not in buffer

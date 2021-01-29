@@ -217,9 +217,15 @@
 ::
 ++  sut
 |_  [w=walt eny=@uvJ last-block=@ud payee=(unit ship) =feyb txos=(list txo)]
-  ++  meta-weight  10
-  ++  output-weight  31
-  ++  n-txos  (lent txos)
+  ++  meta-weight  11
+  ++  output-weight
+    |=  b=bipt:btc
+    ^-  vbytes
+    ?-  b
+      %44  34
+      %49  32
+      %84  31
+    ==
   ::
   ++  target-value
     ^-  sats
@@ -227,26 +233,25 @@
     |=([a=sats b=sats] (add a b))
   ::
   ++  base-weight
-    |=  num-txos=@ud
     ^-  vbytes
     %+  add  meta-weight
-    (mul num-txos output-weight)
+    %+  roll
+      %+  turn  txos
+      |=(=txo (output-weight (address-bipt:btc address.txo)))
+    add
   ::
   ++  input-weight
     ^-  vbytes
-    ?.  ?=(%84 bipt.w)
-      ~|("Only bech32 wallets supported" !!)
-    102
-  ::
-  ++  min-tx-fee
-    ^-  sats
-    %+  mul  feyb
-    (add (base-weight 1) input-weight)
+    ?-  bipt.w
+      %44  148
+      %49  297
+      %84  68
+    ==
   ::
   ++  total-vbytes
     |=  selected=(list insel)
     ^-  vbytes
-    %+  add  (base-weight n-txos)
+    %+  add  base-weight
     (mul input-weight (lent selected))
   ::  value of an input after fee
   ::  0 if net is <= 0
@@ -271,9 +276,8 @@
     =+  tb=select-utxos
     ?~  tb  [~ ~]
     =+  excess=~(fee txb u.tb)        ::  (inputs - outputs)
-    =/  new-fee=sats                   ::  cost of this tx + sending another
-      %+  add  min-tx-fee
-      (mul feyb vbytes.u.tb)
+    =/  new-fee=sats                   ::  cost of this tx + one more output
+      (mul feyb (add (output-weight bipt.w) vbytes.u.tb))
     ?.  (gth excess new-fee)
       [tb ~]
     :-  tb
@@ -303,7 +307,7 @@
     |=  is=(list insel)
     ^-  (unit (list insel))
     =/  rng  ~(. og eny)
-    =/  target  (add target-value (mul feyb (base-weight n-txos)))   ::  add base fees to target
+    =/  target  (add target-value (mul feyb base-weight))   ::  add base fees to target
     =|  [select=(list insel) total=sats:btc]
     |-
     ?:  =(~ is)  ~
