@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 import BaseStore from './base';
 import InviteReducer from '../reducers/invite-update';
 import MetadataReducer from '../reducers/metadata-update';
@@ -39,6 +41,18 @@ export default class GlobalStore extends BaseStore<StoreState> {
   groupReducer = new GroupReducer();
   launchReducer = new LaunchReducer();
   connReducer = new ConnectionReducer();
+
+  pastActions: Record<string, any> = {}
+
+  constructor() {
+    super();
+    (window as any).debugStore = this.debugStore.bind(this);
+  }
+
+  debugStore(tag: string, ...stateKeys: string[]) {
+    console.log(this.pastActions[tag]);
+    console.log(_.pick(this.state, stateKeys));
+  }
 
   rehydrate() {
     this.localReducer.rehydrate(this.state);
@@ -94,6 +108,11 @@ export default class GlobalStore extends BaseStore<StoreState> {
   }
 
   reduce(data: Cage, state: StoreState) {
+    //  debug shim
+    const tag = Object.keys(data)[0];
+    const oldActions = this.pastActions[tag] || [];
+    this.pastActions[tag] = [data[tag], ...oldActions.slice(0,14)];
+
     this.inviteReducer.reduce(data, this.state);
     this.metadataReducer.reduce(data, this.state);
     this.localReducer.reduce(data, this.state);
