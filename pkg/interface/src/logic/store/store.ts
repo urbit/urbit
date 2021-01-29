@@ -16,6 +16,7 @@ import ConnectionReducer from '../reducers/connection';
 import SettingsReducer from '../reducers/settings-update';
 import {OrderedMap} from '../lib/OrderedMap';
 import { BigIntOrderedMap } from '../lib/BigIntOrderedMap';
+import {GroupViewReducer} from '../reducers/group-view';
 
 
 export default class GlobalStore extends BaseStore<StoreState> {
@@ -95,5 +96,6 @@ export default class GlobalStore extends BaseStore<StoreState> {
     GraphReducer(data, this.state);
     HarkReducer(data, this.state);
     this.settingsReducer.reduce(data, this.state);
+    GroupViewReducer(data, this.state);
   }
 }

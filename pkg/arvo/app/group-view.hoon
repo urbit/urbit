@@ -12,7 +12,7 @@
 =*  state  -
 ::
 %-  agent:dbug
-%+  verb  &
+%+  verb  |
 ^-  agent:gall
 =<
 |_  =bowl:gall
@@ -27,7 +27,8 @@
 ::
 ++  on-load
   |=  =vase
-  `this
+  =+  !<(old=state-zero vase)
+  `this(state old)
 ::
 ++  on-poke
   |=  [=mark =vase]
@@ -47,9 +48,7 @@
     (fact:io group-view-update+!>([%initial ~(key by joining)]) ~)^~
   ==
 ::
-++  on-peek
-  |=  =path
-  [~ ~]
+++  on-peek  on-peek:def
 ::
 ++  on-agent
   |=  [=wire =sign:agent:gall]
@@ -63,13 +62,9 @@
     ==
   [cards this]
 ::
-++  on-arvo
-  |=  [=wire =sign-arvo]
-  `this
+++  on-arvo  on-arvo:def
 ::
-++  on-leave
-  |=  =path
-  `this
+++  on-leave  on-leave:def
 ::
 ++  on-fail  on-fail:def
 --
@@ -122,6 +117,7 @@
           [ship %group-push-hook]
         group-update+!>([%add-members rid (silt our.bowl ~)])
         ::
+        (tx-fact %start)
         watch-md
         watch-groups
     ==
@@ -136,9 +132,10 @@
       ?^  p.sign
         (cleanup %no-perms)
       :_  state
-      :_  ~
-      %+  poke-our:(jn-pass-io /pull-groups)  %group-pull-hook 
-      pull-hook-action+!>([%add ship rid])
+      :~  (tx-fact %added)
+          %+  poke-our:(jn-pass-io /pull-groups)  %group-pull-hook 
+          pull-hook-action+!>([%add ship rid])
+      ==
       ::
         %pull-groups
       ?>  ?=(%poke-ack -.sign)
