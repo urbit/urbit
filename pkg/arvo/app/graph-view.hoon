@@ -30,7 +30,7 @@
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
-  ?.  ?=(%graph-view-action mark)
+  ?.  ?=(?(%graph-view-action %noun) mark)
     (on-poke:def mark vase)
   =+  !<(=action:view-sur vase)
   =^  cards  state
@@ -42,7 +42,9 @@
 ::
 ++  on-watch
   |=  =path
-  `this
+  ?:  ?=(?([%all ~] [%join @ ~]) path)
+    `this
+  (on-watch:def path)
 ::
 ++  on-peek
   |=  =path
@@ -82,6 +84,12 @@
 ++  join
   |_  [uid=@uv rid=resource =ship]
   ++  jn-core  .
+  ++  watch-md
+    (watch-our:(jn-pass-io /md) %metadata-store /updates)
+  ::
+  ++  watch-groups
+    (watch-our:(jn-pass-io /groups) %group-store /groups)
+  ::
   ++  jn-pass-io
     |=  =path
     ~(. pass:io (weld /join/(scot %uv uid) path))
@@ -102,13 +110,17 @@
     =/  maybe-group
        (group-from-app-resource:met %contacts rid)
     :_  state(joining (~(put by joining) uid [rid ship]))
-    :_  ~
     ?^  maybe-group
+      :_  ~
       %+   poke-our:(jn-pass-io /pull-graph)  %graph-pull-hook
       pull-hook-action+!>([%add rid ship])
-    %+  poke:(jn-pass-io /add)
-      [ship %group-push-hook]
-    group-update+!>([%add-members rid (silt our.bowl ~)])
+    :~  %+  poke:(jn-pass-io /add)
+          [ship %group-push-hook]
+        group-update+!>([%add-members rid (silt our.bowl ~)])
+        ::
+        watch-md
+        watch-groups
+    ==
   ::
   ++  jn-agent
     |=  [=wire =sign:agent:gall]
@@ -127,7 +139,7 @@
         ::  do nothing, wait for update from store
         `state
       ::  shouldn't ever fail
-      weird-failure
+      (cleanup %strange)
       ::
         %groups
       ?+  -.sign  !!
@@ -139,7 +151,7 @@
         %pull-md
       ?>  ?=(%poke-ack -.sign)
       ?~  p.sign  `state
-      weird-failure
+      (cleanup %strange)
       ::
         %md
       ?+  -.sign  !!
@@ -150,10 +162,8 @@
       ::
         %pull-graph
       ?>  ?=(%poke-ack -.sign)
-      ?^  p.sign
-        weird-failure
-      :_  state(joining (~(del by joining) uid))
-      (tx-fact %join uid %done)^~
+      %-  cleanup
+      ?^(p.sign %strange %done)
     ==
     ++  groups-fact
       |=  =cage
@@ -165,12 +175,9 @@
       ?.  =(rid resource.update)
         `state
       :_  state
-      :~
-        (leave-our:(jn-pass-io /groups) %group-store)
-        ::
-        %+  poke-our:(jn-pass-io /pull-md)  %metadata-hook
-        metadata-hook-action+!>([%add-synced ship (en-path:resource rid)])
-      ==
+      :_  ~
+      %+  poke-our:(jn-pass-io /pull-md)  %metadata-hook
+      metadata-hook-action+!>([%add-synced ship (en-path:resource rid)])
     ::
     ++  md-fact
       |=  [=mark =vase]
@@ -179,16 +186,9 @@
       =+  !<(upd=metadata-update vase)
       ?.  ?=(%add -.upd)  ~
       ?.  =(group-path.upd (en-path:resource rid))  ~
-      :~  
-        (leave-our:(jn-pass-io /md) %metadata-store)
-        %+  poke-our:(jn-pass-io /pull-graph)  %graph-pull-hook
-        pull-hook-action+!>([%add ship rid])
-      ==
-    ++  watch-md
-      (watch-our:(jn-pass-io /md) %metadata-store /updates)
-    ::
-    ++  watch-groups
-      (watch-our:(jn-pass-io /groups) %group-store /groups)
+      :_  ~
+      %+  poke-our:(jn-pass-io /pull-graph)  %graph-pull-hook
+      pull-hook-action+!>([%add ship rid])
     ::
     ++  groups-kick
       :_  state
@@ -201,26 +201,22 @@
     ++  ack
       |=  err=(unit tang)
       ?~  err  `state
-      weird-failure
+      (cleanup %strange)
     ::
-    ++  join-failed
-      ::  failed do not continue
+    ++  cleanup
+      |=  fact=@t
       :_  state(joining (~(del by joining) uid))
-      (tx-fact %join uid %no-perms)^~
+      :~  (leave-our:(jn-pass-io /groups) %group-store)
+          (leave-our:(jn-pass-io /md) %metadata-store)
+          (tx-fact %join uid %no-perms)
+      ==
     ::
     ++  joined
       :_  state
-      :~
-        watch-groups
-        ::
-        %+  poke-our:(jn-pass-io /pull-group)  %group-pull-hook
-        pull-hook-action+!>([%add ship rid])
-      ==
+      :_  ~
+      %+  poke-our:(jn-pass-io /pull-group)  %group-pull-hook
+      pull-hook-action+!>([%add ship rid])
     ::
-    ++  weird-failure
-      ~&  >>>  "Weird failure joining {<rid>}, please report"
-      :_  state(joining (~(del by joining) uid))
-      (tx-fact %join uid %strange)^~
     --
   --
 --
