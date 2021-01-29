@@ -185,6 +185,7 @@
       [%zpmc *]  (both p.gen q.gen)
       [%zpts *]  loop(gen p.gen)
       [%zppt *]  (both q.gen r.gen)
+      [%zpgl *]  (spec-and-hoon p.gen q.gen)
       [%zpzp *]  ~
       *
     =+  doz=~(open ap gen)
