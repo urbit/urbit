@@ -13,21 +13,9 @@ import { ContactReducer } from '../reducers/contact-update';
 import GroupReducer from '../reducers/group-update';
 import LaunchReducer from '../reducers/launch-update';
 import ConnectionReducer from '../reducers/connection';
+import SettingsReducer from '../reducers/settings-update';
 import {OrderedMap} from '../lib/OrderedMap';
 import { BigIntOrderedMap } from '../lib/BigIntOrderedMap';
-
-export const homeAssociation = {
-  "app-path": "/home",
-  "app-name": "contact",
-  "group-path": "/home",
-  metadata: {
-    color: "0x0",
-    title: "DMs + Drafts",
-    description: "",
-    "date-created": "",
-    module: "",
-  },
-};
 
 
 export default class GlobalStore extends BaseStore<StoreState> {
@@ -38,6 +26,7 @@ export default class GlobalStore extends BaseStore<StoreState> {
   groupReducer = new GroupReducer();
   launchReducer = new LaunchReducer();
   connReducer = new ConnectionReducer();
+  settingsReducer = new SettingsReducer();
 
   rehydrate() {
     this.localReducer.rehydrate(this.state);
@@ -89,7 +78,8 @@ export default class GlobalStore extends BaseStore<StoreState> {
         graph: {},
         group: {}
       },
-      notificationsCount: 0
+      notificationsCount: 0,
+      settings: {}
     };
   }
 
@@ -104,5 +94,6 @@ export default class GlobalStore extends BaseStore<StoreState> {
     GraphReducer(data, this.state);
     HarkReducer(data, this.state);
     ContactReducer(data, this.state);
+    this.settingsReducer.reduce(data, this.state);
   }
 }

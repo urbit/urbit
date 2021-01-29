@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useRef, useState } from "react";
+import React, { useEffect, useCallback, useState, useMemo, useRef } from "react";
 import f from "lodash/fp";
 import _ from "lodash";
 import { Icon, Col, Row, Box, Text, Anchor, Rule, Center } from "@tlon/indigo-react";
@@ -9,8 +9,16 @@ import { BigInteger } from "big-integer";
 import GlobalApi from "~/logic/api/global";
 import { Notification } from "./notification";
 import { Associations } from "~/types";
+
 import {Invites} from "./invites";
 import {useLazyScroll} from "~/logic/lib/useLazyScroll";
+
+import { cite } from '~/logic/lib/util';
+import { InviteItem } from '~/views/components/Invite';
+import { useWaitForProps } from "~/logic/lib/useWaitForProps";
+import { useHistory } from "react-router-dom";
+import {useModal} from "~/logic/lib/useModal";
+import {JoinGroup} from "~/views/landscape/components/JoinGroup";
 
 type DatedTimebox = [BigInteger, Timebox];
 
@@ -25,10 +33,7 @@ function filterNotification(associations: Associations, groups: string[]) {
     } else if ("group" in n.index) {
       const { group } = n.index.group;
       return groups.findIndex((g) => group === g) !== -1;
-    } else if ("chat" in n.index) {
-      const group = associations.chat[n.index.chat.chat]?.["group-path"];
-      return groups.findIndex((g) => group === g) !== -1;
-    }
+    } 
     return true;
   };
 }
@@ -94,7 +99,6 @@ export default function Inbox(props: {
   );
 
   const scrollRef = useRef(null);
-
   const loadMore = useCallback(async () => {
     return api.hark.getMore();
   }, [api]);

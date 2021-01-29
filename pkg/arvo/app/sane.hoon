@@ -33,9 +33,8 @@
 +$  issue  
   $%  [%lib-pull-hook-desync app=term =resource]
       [%lib-push-hook-desync app=term =resource]
-      [%md-hook-desync =path]
       [%contact-hook-desync =path]
-      [%dangling-md =path]
+      [%dangling-md =resource]
   ==
 ::
 +$  issues
@@ -125,6 +124,7 @@
   ++  check-all
     =>  (lib-hooks-desync %group scry-groups)
     =>  (lib-hooks-desync %graph get-keys:gra)
+    =>  (lib-hooks-desync %metadata scry-groups)
     =>  groups
     metadata
   ::
@@ -136,22 +136,18 @@
     ?~  groups
       fk-core
     =*  group  i.groups
-    =?  fk-core  !(~(has in scry-md-syncs) group)
-      (report %md-hook-desync (en-path:resource group))
     =?  fk-core  &((is-managed:grp group) !(~(has in scry-contact-syncs) group))
       (report %contact-hook-desync (en-path:resource group))
     $(groups t.groups)
   ::
   ++  metadata
     ^+  fk-core
-    =/  md-groups=(list path)
+    =/  md-groups=(list resource)
       ~(tap in ~(key by md-group-indices))
     |- 
     ?~  md-groups
       fk-core
-    =/  rid=resource
-      (de-path:resource i.md-groups)
-    =?  fk-core  !(~(has in scry-groups) rid)
+    =?  fk-core  !(~(has in scry-groups) i.md-groups)
       (report %dangling-md i.md-groups)
     $(md-groups t.md-groups)
   ::
@@ -213,15 +209,6 @@
       %lib-push-hook-desync
     (poke-our app.issue push-hook-action+!>([%add resource.issue]))^~
     ::
-      %md-hook-desync
-    =/  rid=resource
-      (de-path:resource path.issue)
-    =/  act
-      ?:  =(entity.rid our.bowl)
-        [%add-owned path.issue]
-      [%add-synced entity.rid path.issue]
-    (poke-our %metadata-hook metadata-hook-action+!>(act))^~
-    ::
       %contact-hook-desync
     =/  rid=resource
       (de-path:resource path.issue)
@@ -233,12 +220,12 @@
     :: 
       %dangling-md
     =/  app-indices
-      (~(get ju md-group-indices) path.issue)
+      (~(get ju md-group-indices) resource.issue)
     %+  turn
       ~(tap in app-indices)
     |=  =md-resource
     ^-  card
-    (poke-our %metadata-store metadata-action+!>([%remove path.issue md-resource]))
+    (poke-our %metadata-store metadata-action+!>([%remove resource.issue md-resource]))
   ==
   ::
   ++  poke-our
@@ -265,13 +252,6 @@
     ,(set resource)
   /x/[hook]/sharing/noun
 ::
-++  scry-md-syncs
-  ^-  (set resource)
-  =-  (~(run in -) de-path:resource)
-  %+  scry
-    ,(set path)
-  /x/metadata-hook/synced/noun
-::
 ++  scry-contact-syncs
   ^-  (set resource)
   =-  (~(run in -) de-path:resource)
@@ -291,8 +271,9 @@
     ,(set path)
   /x/chat-store/keys/noun
 ::
+::
 ++  md-group-indices
-  (scry (jug group-path md-resource) /y/metadata-store/group-indices)
+  (scry (jug resource md-resource) /y/metadata-store/group-indices)
 ::
 ++  scry
   |*  [=mold =path]

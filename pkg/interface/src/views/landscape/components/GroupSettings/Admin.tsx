@@ -8,6 +8,7 @@ import {
   Col,
   Label,
   Button,
+  Text,
 } from "@tlon/indigo-react";
 import { Formik, Form, useFormikContext, FormikHelpers } from "formik";
 import { FormError } from "~/views/components/FormError";
@@ -21,12 +22,15 @@ import { ColorInput } from "~/views/components/ColorInput";
 import { useHistory } from "react-router-dom";
 
 import { uxToHex } from "~/logic/lib/util";
+import {S3State} from "~/types";
+import {ImageInput} from "~/views/components/ImageInput";
 
 interface FormSchema {
   title: string;
   description: string;
   color: string;
   isPrivate: boolean;
+  picture: string;
 }
 
 const formSchema = Yup.object({
@@ -40,10 +44,11 @@ interface GroupAdminSettingsProps {
   group: Group;
   association: Association;
   api: GlobalApi;
+  s3: S3State;
 }
 
 export function GroupAdminSettings(props: GroupAdminSettingsProps) {
-  const { group, association } = props;
+  const { group, association, s3 } = props;
   const { metadata } = association;
   const history = useHistory();
   const currentPrivate = "invite" in props.group.policy;
@@ -51,6 +56,7 @@ export function GroupAdminSettings(props: GroupAdminSettingsProps) {
     title: metadata?.title,
     description: metadata?.description,
     color: metadata?.color,
+    picture: metadata?.picture,
     isPrivate: currentPrivate,
   };
 
@@ -59,15 +65,16 @@ export function GroupAdminSettings(props: GroupAdminSettingsProps) {
     actions: FormikHelpers<FormSchema>
   ) => {
     try {
-      const { title, description, color, isPrivate } = values;
+      const { title, description, picture, color, isPrivate } = values;
       const uxColor = uxToHex(color);
       await props.api.metadata.update(props.association, {
         title,
         description,
+        picture,
         color: uxColor,
       });
       if (isPrivate !== currentPrivate) {
-        const resource = resourceFromPath(props.association["group-path"]);
+        const resource = resourceFromPath(props.association.group);
         const newPolicy: Enc<GroupPolicy> = isPrivate
           ? { invite: { pending: [] } }
           : { open: { banRanks: [], banned: [] } };
@@ -83,8 +90,9 @@ export function GroupAdminSettings(props: GroupAdminSettingsProps) {
   };
 
   const disabled =
-    resourceFromPath(association["group-path"]).ship.slice(1) !== window.ship &&
+    resourceFromPath(association.group).ship.slice(1) !== window.ship &&
     roleForShip(group, window.ship) !== "admin";
+  if(disabled) return null;
 
   return (
     <Formik
@@ -93,7 +101,8 @@ export function GroupAdminSettings(props: GroupAdminSettingsProps) {
       onSubmit={onSubmit}
     >
       <Form>
-        <Col gapY={4}>
+        <Box p="4" fontWeight="600" fontSize="2" id="group-details">Group Details</Box>
+        <Col pb="4" px="4" maxWidth="384px" gapY={4}>
           <Input
             id="title"
             label="Group Name"
@@ -111,6 +120,14 @@ export function GroupAdminSettings(props: GroupAdminSettingsProps) {
             label="Group color"
             caption="A color to represent your group"
             disabled={disabled}
+          />
+          <ImageInput
+            id="picture"
+            label="Group picture"
+            caption="A picture for your group"
+            placeholder="Enter URL"
+            disabled={disabled}
+            s3={s3}
           />
           <Checkbox
             id="isPrivate"

@@ -75,8 +75,8 @@ export class HarkApi extends BaseApi<StoreState> {
     return this.harkAction(
       {  'read-count': {
          graph: {
-        graph: association['app-path'],
-        group: association['group-path'],
+        graph: association.resource,
+        group: association.group,
         module: association.metadata.module,
         description,
         index: parent
@@ -91,8 +91,8 @@ export class HarkApi extends BaseApi<StoreState> {
       'read-each': {
         index: 
           { graph:
-            { graph: association['app-path'], 
-              group: association['group-path'],
+            { graph: association.resource, 
+              group: association.group,
               description, 
               module: mod,
               index: parent 

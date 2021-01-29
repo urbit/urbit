@@ -124,7 +124,6 @@ export function Notification(props: NotificationProps) {
       api={props.api}
       graphConfig={props.graphConfig}
       groupConfig={props.groupConfig}
-      chatConfig={props.chatConfig}
     >
       {children}
     </NotificationWrapper>

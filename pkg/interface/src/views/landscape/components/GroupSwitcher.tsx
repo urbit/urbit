@@ -13,6 +13,7 @@ import { Associations } from '~/types/metadata-update';
 import { Dropdown } from '~/views/components/Dropdown';
 import { Workspace } from '~/types';
 import { getTitleFromWorkspace } from '~/logic/lib/workspace';
+import {MetadataIcon} from './MetadataIcon';
 
 const GroupSwitcherItem = ({ to, children, bottom = false, ...rest }) => (
   <Link to={to}>
@@ -77,15 +78,18 @@ export function GroupSwitcher(props: {
 }) {
   const { associations, workspace, isAdmin } = props;
   const title = getTitleFromWorkspace(associations, workspace);
+  const metadata = workspace.type === 'home' ? undefined : associations.contacts[workspace.group].metadata;
   const navTo = (to: string) => `${props.baseUrl}${to}`;
   return (
-    <Box height='48px' backgroundColor="white" zIndex="2" position="sticky" top="0px" py={3} pl='3' borderBottom='1px solid' borderColor='washedGray'>
+    <Row width="100%" alignItems="center" height='48px' backgroundColor="white" zIndex="2" position="sticky" top="0px" pl='3' borderBottom='1px solid' borderColor='washedGray'>
       <Col
         bg="white"
+        width="100%"
+        height="100%"
       >
-        <Row justifyContent="space-between">
+        <Row flexGrow={1} alignItems="center" justifyContent="space-between">
           <Dropdown
-            width="100%"
+            width="auto"
             dropWidth="231px"
             alignY="top"
             options={
@@ -160,8 +164,9 @@ export function GroupSwitcher(props: {
               </Col>
             }
           >
-            <Row width='100%' minWidth='0' flexShrink={0}>
-              <Row justifyContent="space-between" mr={1} flexShrink={0} width='100%' minWidth='0'>
+            <Row flexGrow={1} alignItems="center" width='100%' minWidth='0' flexShrink={0}>
+              { metadata && <MetadataIcon mr="2" border="1" borderColor="lightGray" borderRadius="1" metadata={metadata} height="24px" width="24px" /> }
+              <Row justifyContent="space-between" mr={1} flexShrink={0} flexGrow={1} minWidth='0'>
                 <Text lineHeight="1.1" fontSize='2' fontWeight="700" overflow='hidden' display='inline-block' flexShrink='1' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}>{title}</Text>
               </Row>
             </Row>
@@ -185,6 +190,6 @@ export function GroupSwitcher(props: {
           </Row>
         </Row>
       </Col>
-    </Box>
+    </Row>
   );
 }

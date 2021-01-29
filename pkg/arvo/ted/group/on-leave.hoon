@@ -3,6 +3,7 @@
 ::
 =*  strand    strand:spider
 =*  raw-poke  raw-poke:strandio
+=*  raw-poke-our  raw-poke-our:strandio
 =*  scry      scry:strandio
 ::
 ^-  thread:spider
@@ -36,12 +37,12 @@
 ::  stop serving or syncing metadata associated with group
 ::
 ;<  ~  bind:m
-  %+  raw-poke
-    [our.bowl %metadata-hook]
-  :-  %metadata-hook-action
-  !>([%remove (en-path:res resource.update)])
-::  get metadata associated with group
-::
+  %-  raw-poke-our
+  ?:  =(our.bowl entity.resource.update)
+    :-  %metadata-push-hook
+    push-hook-action+!>([%remove resource.update])
+  :-  %metadata-pull-hook
+  pull-hook-action+!>([%remove resource.update])
 ;<  =associations:met  bind:m
   %+  scry  associations:met
   ;:  weld
@@ -49,8 +50,8 @@
     (en-path:res resource.update)
     /noun
   ==
-=/  entries=(list [g=group-path:met m=md-resource:met])
-  ~(tap in ~(key by associations))
+=/  entries=(list [m=md-resource:met g=resource:res =metadata:met])
+  ~(tap by associations)
 |-  ^-  form:m
 =*  loop  $
 ?~  entries
@@ -65,18 +66,16 @@
   [%remove g.i.entries m.i.entries]
 ::  archive graph associated with group
 ::
-=/  app-resource  (de-path-soft:res app-path.m.i.entries)
-?~  app-resource
-  loop(entries t.entries)
+=*  app-resource  resource.m.i.entries
 ;<  ~  bind:m
   %+  raw-poke
     [our.bowl %graph-store]
   :-  %graph-update
   !>  ^-  update:gra
-  [%0 now.bowl [%archive-graph u.app-resource]]
+  [%0 now.bowl [%archive-graph app-resource]]
 ;<  ~  bind:m
   %+  raw-poke
     [our.bowl %graph-pull-hook]
   :-  %pull-hook-action
-  !>([%remove u.app-resource])
+  !>([%remove app-resource])
 loop(entries t.entries)

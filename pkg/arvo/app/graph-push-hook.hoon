@@ -25,12 +25,13 @@
   ^-  ?
   =/  grp  ~(. group bowl)
   =/  met  ~(. metadata bowl)
-  =/  group-paths  (groups-from-resource:met [%graph (en-path:res resource)])
-  ?~  group-paths  %.n
+  =/  group=(unit resource:res)
+    (peek-group:met %graph resource)
+  ?~  group  %.n
   ?:  requires-admin
-    (is-admin:grp src.bowl i.group-paths)
-  ?|  (is-member:grp src.bowl i.group-paths)
-      (is-admin:grp src.bowl i.group-paths)
+    (is-admin:grp src.bowl u.group)
+  ?|  (is-member:grp src.bowl u.group)
+      (is-admin:grp src.bowl u.group)
   ==
 ::
 ++  is-allowed-remove

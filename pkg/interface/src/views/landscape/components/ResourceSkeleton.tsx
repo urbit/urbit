@@ -35,12 +35,12 @@ type ResourceSkeletonProps = {
 export function ResourceSkeleton(props: ResourceSkeletonProps) {
   const { association, api, baseUrl, children, atRoot, groupTags } = props;
   const app = association?.metadata?.module || association["app-name"];
-  const appPath = association["app-path"];
+  const rid = association.resource; 
   const workspace =
-    baseUrl === "/~landscape/home" ? "/home" : association["group-path"];
+    baseUrl === "/~landscape/home" ? "/home" : association.group;
   const title = props.title || association?.metadata?.title;
 
-  const [, , ship, resource] = appPath.split("/");
+  const [, , ship, resource] = rid.split("/");
 
   const resourcePath = (p: string) => baseUrl + `/resource/${app}/ship/${ship}/${resource}` + p;
 
@@ -78,7 +78,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps) {
           </Box>
         ) : (
           <Box color="blue" pr={2} mr={2}>
-            <Link to={`/~landscape${workspace}/resource/${app}${appPath}`}>
+            <Link to={`/~landscape${workspace}/resource/${app}${rid}`}>
               <Text color="blue">Go back to channel</Text>
             </Link>
           </Box>
@@ -116,7 +116,6 @@ export function ResourceSkeleton(props: ResourceSkeletonProps) {
             )}
             <ChannelMenu
               graphNotificationConfig={props.notificationsGraphConfig}
-              chatNotificationConfig={props.notificationsChatConfig}
               association={association}
               api={api}
             />

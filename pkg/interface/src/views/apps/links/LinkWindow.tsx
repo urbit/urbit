@@ -48,7 +48,7 @@ export function LinkWindow(props: LinkWindowProps) {
   }, [graph.size]);
 
   const first = graph.peekLargest()?.[0];
-  const [,,ship, name] = association['app-path'].split('/');
+  const [,,ship, name] = association.resource.split('/');
 
     const style = useMemo(() =>
     ({
