@@ -42,9 +42,9 @@ function RecentGroups(props: { recent: string[]; associations: Associations }) {
         Recent Groups
       </Box>
       {props.recent.filter((e) => {
-        return (e in associations?.contacts);
+        return (e in associations?.groups);
       }).slice(1, 5).map((g) => {
-        const assoc = associations.contacts[g];
+        const assoc = associations.groups[g];
         const color = uxToHex(assoc?.metadata?.color || '0x0');
         return (
           <Link key={g} style={{ minWidth: 0 }} to={`/~landscape${g}`}>
@@ -78,7 +78,7 @@ export function GroupSwitcher(props: {
 }) {
   const { associations, workspace, isAdmin } = props;
   const title = getTitleFromWorkspace(associations, workspace);
-  const metadata = workspace.type === 'home' ? undefined : associations.contacts[workspace.group].metadata;
+  const metadata = workspace.type === 'home' ? undefined : associations.groups[workspace.group].metadata;
   const navTo = (to: string) => `${props.baseUrl}${to}`;
   return (
     <Row width="100%" alignItems="center" height='48px' backgroundColor="white" zIndex="2" position="sticky" top="0px" pl='3' borderBottom='1px solid' borderColor='washedGray'>

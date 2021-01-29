@@ -37,8 +37,8 @@ export function Resource(props: ResourceProps) {
   const skelProps = { api, association };
   let title = props.association.metadata.title;
   if ('workspace' in props) {
-    if ('group' in props.workspace && props.workspace.group in props.associations.contacts) {
-      title = `${props.associations.contacts[props.workspace.group].metadata.title} - ${props.association.metadata.title}`;
+    if ('group' in props.workspace && props.workspace.group in props.associations.groups) {
+      title = `${props.associations.groups[props.workspace.group].metadata.title} - ${props.association.metadata.title}`;
     }
   }
   return (

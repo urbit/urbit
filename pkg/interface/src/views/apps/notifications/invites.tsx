@@ -31,7 +31,7 @@ export function Invites(props: InvitesProps) {
     const resourcePath = resourceAsPath(invite.resource);
     if (app === "contacts") {
       await api.contacts.join(resource);
-      await waiter((p) => resourcePath in p.associations?.contacts);
+      await waiter((p) => resourcePath in p.associations?.groups);
       await api.invite.accept(app, uid);
       history.push(`/~landscape${resourcePath}`);
     } else if (app === "graph") {

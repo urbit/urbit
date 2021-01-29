@@ -116,7 +116,7 @@ export default function index(contacts, associations, apps, currentGroup, groups
             title,
             `/~landscape${group}/join/${app}${each.resource}`,
             app.charAt(0).toUpperCase() + app.slice(1),
-            (associations?.contacts?.[each.group]?.metadata?.title || null)
+            (associations?.groups?.[each.group]?.metadata?.title || null)
           );
           subscriptions.push(obj);
         }
