@@ -1,4 +1,7 @@
-import React from 'react';
+import React, {
+  useState,
+  useEffect
+} from 'react';
 
 import {
   Col,
@@ -14,11 +17,13 @@ import { Dropdown } from './Dropdown';
 import { StatusBarItem } from './StatusBarItem';
 import { Sigil } from '~/logic/lib/sigil';
 import { uxToHex } from "~/logic/lib/util";
+import { SetStatusBarModal } from './SetStatusBarModal';
 
 import useLocalState from '~/logic/state/local';
 
+
 const StatusBar = (props) => {
-  const { ourContact } = props;
+  const { ourContact, api, ship } = props;
   const invites = [].concat(...Object.values(props.invites).map(obj => Object.values(obj)));
   const metaKey = (window.navigator.platform.includes('Mac')) ? '⌘' : 'Ctrl+';
   const { toggleOmnibox, hideAvatars } =
@@ -106,17 +111,13 @@ const StatusBar = (props) => {
                 color='black'
                 cursor='pointer'
                 fontSize={0}
-                onClick={() => props.history.push('/~profile/~' + window.ship)}>
+                onClick={() => props.history.push(`/~profile/~${ship}`)}>
                 View Profile
               </Row>
-              <Row
-                p={1}
-                color='black'
-                cursor='pointer'
-                fontSize={0}
-                onClick={() => console.log('TODO, show a modal')}>
-                Set Status
-              </Row>
+              <SetStatusBarModal
+                ship={`~${ship}`}
+                contact={ourContact}
+                api={api} />
               <Row
                 p={1}
                 color='black'

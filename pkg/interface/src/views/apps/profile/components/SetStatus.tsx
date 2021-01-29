@@ -13,7 +13,7 @@ import {
 
 
 export function SetStatus(props: any) {
-  const { contact, ship, api } = props;
+  const { contact, ship, api, callback } = props;
   const [_status, setStatus] = useState('');
   const onStatusChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
@@ -28,6 +28,10 @@ export function SetStatus(props: any) {
 
   const editStatus = () => {
     api.contacts.edit(ship, {status: _status});
+
+    if (callback) {
+      callback();
+    }
   };
 
   return (
