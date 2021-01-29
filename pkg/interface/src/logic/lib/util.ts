@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import _ from "lodash";
 import f, { memoize } from "lodash/fp";
 import bigInt, { BigInteger } from "big-integer";
@@ -13,8 +13,15 @@ export const MOMENT_CALENDAR_DATE = {
   nextWeek: "dddd",
   lastDay: "[Yesterday]",
   lastWeek: "[Last] dddd",
-  sameElse: "DD/MM/YYYY",
+  sameElse: "~YYYY.M.D",
 };
+
+export const getModuleIcon = (mod: string) => {
+ if (mod === "link") {
+    return "Collection";
+  }
+  return _.capitalize(mod);
+}
 
 export function appIsGraph(app: string) {
   return app === 'publish' || app == 'link';
@@ -357,7 +364,17 @@ export function pluralize(text: string, isPlural = false, vowel = false) {
   return isPlural ? `${text}s`: `${vowel ? 'an' : 'a'} ${text}`;
 }
 
-export function useShowNickname(contact: Contact | null): boolean {
-  const hideNicknames = useLocalState(state => state.hideNicknames);
+// Hide is an optional second parameter for when this function is used in class components
+export function useShowNickname(contact: Contact | null, hide?: boolean): boolean {
+  const hideNicknames = typeof hide !== 'undefined' ? hide : useLocalState(state => state.hideNicknames);
   return !!(contact && contact.nickname && !hideNicknames);
+}
+
+export function useHovering() {
+  const [hovering, setHovering] = useState(false);
+  const bind = {
+    onMouseEnter: () => setHovering(true),
+    onMouseLeave: () => setHovering(false)
+  };
+  return { hovering, bind };
 }

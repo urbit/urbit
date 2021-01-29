@@ -25,12 +25,13 @@
   ^-  ?
   =/  grp  ~(. group bowl)
   =/  met  ~(. metadata bowl)
-  =/  group-paths  (groups-from-resource:met [%graph (en-path:res resource)])
-  ?~  group-paths  %.n
+  =/  group=(unit resource:res)
+    (peek-group:met %graph resource)
+  ?~  group  %.n
   ?:  requires-admin
-    (is-admin:grp src.bowl i.group-paths)
-  ?|  (is-member:grp src.bowl i.group-paths)
-      (is-admin:grp src.bowl i.group-paths)
+    (is-admin:grp src.bowl u.group)
+  ?|  (is-member:grp src.bowl u.group)
+      (is-admin:grp src.bowl u.group)
   ==
 ::
 ++  is-allowed-remove
@@ -90,27 +91,6 @@
       %tags               %.n
       %tag-queries        %.n
       %run-updates        (is-allowed resource.q.update bowl %.y)
-  ==
-::
-++  resource-for-update
-  |=  =vase
-  ^-  (unit resource:res)
-  =/  =update:store  !<(update:store vase)
-  ?-  -.q.update
-      %add-graph          `resource.q.update
-      %remove-graph       `resource.q.update
-      %add-nodes          `resource.q.update
-      %remove-nodes       `resource.q.update
-      %add-signatures     `resource.uid.q.update
-      %remove-signatures  `resource.uid.q.update
-      %archive-graph      `resource.q.update
-      %unarchive-graph    ~
-      %add-tag            ~
-      %remove-tag         ~
-      %keys               ~
-      %tags               ~
-      %tag-queries        ~
-      %run-updates        `resource.q.update
   ==
 ::
 ++  initial-watch

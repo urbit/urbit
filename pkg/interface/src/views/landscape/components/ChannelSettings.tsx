@@ -45,8 +45,8 @@ export function ChannelSettings(props: ChannelSettingsProps) {
   ) => {
     try {
       const app = association["app-name"];
-      const resource = association["app-path"];
-      const group = association["group-path"];
+      const resource = association.resource;
+      const group = association.group;
       const date = metadata["date-created"];
       const { title, description, color } = values;
       await api.metadata.metadataAdd(

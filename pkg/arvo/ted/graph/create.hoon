@@ -66,11 +66,11 @@
     module        module.action
   ==
 =/  =metadata-action
-  [%add group-path graph+(en-path:resource rid.action) metadata]
+  [%add group graph+rid.action metadata]
 ;<  ~  bind:m
-  (poke-our %metadata-hook %metadata-action !>(metadata-action))
+  (poke-our %metadata-store %metadata-action !>(metadata-action))
 ;<  ~  bind:m
-  (poke-our %metadata-hook %metadata-hook-action !>([%add-owned group-path]))
+  (poke-our %metadata-push-hook %push-hook-action !>([%add group]))
 ::
 ::  Send invites
 ::

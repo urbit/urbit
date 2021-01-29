@@ -19,28 +19,19 @@ interface MentionTextProps {
   group: Group;
 }
 export function MentionText(props: MentionTextProps) {
-  const { content, contacts, contact, group } = props;
+  const { content, contacts, contact, group, ...rest } = props;
 
   return (
-    <>
-      {_.map(content, (c, idx) => {
+    <RichText contacts={contacts} contact={contact} group={group} {...rest}>
+      {content.reduce((accum, c) => {
         if ("text" in c) {
-          return (
-            <RichText
-              inline
-              key={idx}
-            >
-              {c.text}
-            </RichText>
-          );
+          return accum + c.text;
         } else if ("mention" in c) {
-          return (
-            <Mention key={idx} contacts={contacts || {}} contact={contact || {}} group={group} ship={c.mention} />
-          );
+          return accum + `[~${c.mention}]`;
         }
-        return null;
-      })}
-    </>
+        return accum;
+      }, '')}
+    </RichText>
   );
 }
 
@@ -53,7 +44,7 @@ export function Mention(props: {
   const { contacts, ship } = props;
   let { contact } = props;
 
-  contact = (contact?.nickname) ? contact : contacts?.[ship];
+  contact = (contact?.color) ? contact : contacts?.[ship];
 
   const showNickname = useShowNickname(contact);
 

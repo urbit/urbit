@@ -53,7 +53,7 @@ export function InvitePopover(props: InvitePopoverProps) {
     }
     //  TODO: how to invite via email?
     try {
-      const resource = resourceFromPath(association["group-path"]);
+      const resource = resourceFromPath(association.group);
       await ships.reduce(
         (acc, s) => acc.then(() => api.contacts.invite(resource, `~${deSig(s)}`)),
         Promise.resolve()

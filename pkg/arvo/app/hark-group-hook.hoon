@@ -1,7 +1,7 @@
 ::  hark-group-hook: notifications for groups [landscape]
 ::
-/-  store=hark-store, post, group-store, metadata-store, hook=hark-group-hook
-/+  resource, metadata, default-agent, dbug, graph-store
+/-  store=hark-store, post, group-store, metadata=metadata-store, hook=hark-group-hook
+/+  resource, mdl=metadata, default-agent, dbug, graph-store
 ::
 ~%  %hark-group-hook-top  ..part  ~
 |%
@@ -28,7 +28,7 @@
 +*  this  .
     ha    ~(. +> bowl)
     def   ~(. (default-agent this %|) bowl)
-    met   ~(. metadata bowl)
+    met   ~(. mdl bowl)
 ::
 ++  on-init
   :_  this
@@ -115,7 +115,7 @@
     ::
         %metadata-update
       =^  cards  state
-        (metadata-update !<(metadata-update:metadata-store q.cage.sign))
+        (metadata-update !<(update:metadata q.cage.sign))
       [cards this]
     ==
   ==
@@ -140,7 +140,7 @@
   ::    - We have no way of retrieving old metadata to e.g. get a
   ::    channel's old name when it is renamed
   ++  metadata-update
-    |=  update=metadata-update:metadata-store
+    |=  =update:metadata
     ^-  (quip card _state)
     [~ state]
   ::
@@ -148,7 +148,9 @@
     |=  [=index:store =notification:store]
     ^-  card 
     =-  [%pass / %agent [our.bowl %hark-store] %poke -]
-    hark-action+!>([%add index notification])
+    :-  %hark-action
+    !>  ^-  action:store
+    [%add-note index notification]
   --
 ::
 ++  on-peek  on-peek:def

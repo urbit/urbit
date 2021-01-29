@@ -1,16 +1,18 @@
-/-  *group, *metadata-store
+/-  *group
 /+  store=group-store, resource
 ::
 |_  =bowl:gall
 +$  card  card:agent:gall
 ++  scry-for
   |*  [=mold =path]
+  =.  path
+    (snoc path %noun)
   .^  mold
     %gx
     (scot %p our.bowl)
     %group-store
     (scot %da now.bowl)
-    (snoc `^path`path %noun)
+    path
   ==
 ++  scry-tag
   |=  [rid=resource =tag]
@@ -21,38 +23,27 @@
     ~
   `(~(gut by tags.u.group) tag ~)
 ::
-++  scry-group-path
-  |=  =path
-  %+  scry-for
-    (unit group)
-  [%groups path]
-::
 ++  scry-group
   |=  rid=resource
-  %-  scry-group-path
-  (en-path:resource rid)
+  %+  scry-for  ,(unit group)
+  `path`groups+(en-path:resource rid)
 ::
 ++  members
   |=  rid=resource
-  %-  members-from-path
-  (en-path:resource rid)
-::
-++  members-from-path
-  |=  =group-path
-  ^-  (set ship)
-  =-  members:(fall - *group)
-  (scry-group-path group-path)
+  =;  =group
+    members.group
+  (fall (scry-group rid) *group)
 ::
 ++  is-member
-  |=  [=ship =group-path]
+  |=  [=ship group=resource]
   ^-  ?
   =-  (~(has in -) ship)
-  (members-from-path group-path)
+  (members group)
 ::
 ++  is-admin
-  |=  [=ship =group-path]
+  |=  [=ship group=resource]
   ^-  ?
-  =/  tags  tags:(fall (scry-group-path group-path) *group)
+  =/  tags  tags:(fall (scry-group group) *^group)
   =/  admins=(set ^ship)  (~(gut by tags) %admin ~)
   (~(has in admins) ship)
 ::  +role-for-ship: get role for user
@@ -85,31 +76,18 @@
     [~ ~]
   ~
 ::
-++  can-join-from-path
-  |=  [=path =ship]
-  %+  scry-for
-    ?
-  %+  welp
-    [%groups path]
-  /join/[(scot %p ship)]
-::
 ++  can-join
   |=  [rid=resource =ship]
-  %+  can-join-from-path
-    (en-path:resource rid)
-  ship
-::
-++  is-managed-path
-  |=  =path
-  ^-  ?
-  =/  group=(unit group)
-    (scry-group-path path)
-  ?~  group  %.n
-  !hidden.u.group
+  %+  scry-for  ,?
+  ^-  path
+  :-  %groups
+  (weld (en-path:resource rid) /join/(scot %p ship))
 ::
 ++  is-managed
   |=  rid=resource
-  %-  is-managed-path
-  (en-path:resource rid)
+  =/  group=(unit group)
+    (scry-group rid)
+  ?~  group  %.n
+  !hidden.u.group
 ::
 --

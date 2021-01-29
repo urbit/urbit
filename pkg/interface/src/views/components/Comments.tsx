@@ -77,7 +77,7 @@ export function Comments(props: CommentsProps) {
       if ('text' in curr) {
         val = val + curr.text;
       } else if ('mention' in curr) {
-        val = val + curr.mention;
+        val = val + `~${curr.mention}`;
       } else if ('url' in curr) {
         val = val + curr.url;
       } else if ('code' in curr) {
@@ -92,14 +92,14 @@ export function Comments(props: CommentsProps) {
 
 
   useEffect(() => {
-    console.log(`dismissing ${association?.['app-path']}`);
+    console.log(`dismissing ${association?.resource}`);
     return () => {
       api.hark.markCountAsRead(association, parentIndex, 'comment')
     };
   }, [comments.post.index])
 
 
-  const readCount = children.length - getUnreadCount(props?.unreads, association['app-path'], parentIndex)
+  const readCount = children.length - getUnreadCount(props?.unreads, association.resource, parentIndex)
 
   return (
     <Col>

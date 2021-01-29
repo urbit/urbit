@@ -7,13 +7,16 @@ import { Contacts, Contact } from "~/types/contact-update";
 import { Group } from "~/types/group-update";
 import { Association } from "~/types/metadata-update";
 import GlobalApi from "~/logic/api/global";
-import {GroupNotificationsConfig, S3State} from "~/types";
+import { GroupNotificationsConfig, S3State, Associations } from "~/types";
 
 import { ContactCard } from "./ContactCard";
 import { GroupSettings } from "./GroupSettings/GroupSettings";
 import { Participants } from "./Participants";
+import {useHashLink} from "~/logic/lib/useHashLink";
+import {DeleteGroup} from "./DeleteGroup";
+import {resourceFromPath} from "~/logic/lib/group";
 
-const SidebarItem = ({ selected, icon, text, to }) => {
+const SidebarItem = ({ selected, icon, text, to, children = null }) => {
   return (
     <HoverBoxLink
       to={to}
@@ -21,11 +24,15 @@ const SidebarItem = ({ selected, icon, text, to }) => {
       bg="white"
       bgActive="washedGray"
       display="flex"
-      px={3}
-      py={1}
+      px="3"
+      py="1"
+      justifyContent="space-between"
     >
-      <Icon icon={icon} mr='2'/>
-      <Text color={selected ? "black" : "gray"}>{text}</Text>
+      <Row>
+        <Icon icon={icon} mr='2'/>
+        <Text color={selected ? "black" : "gray"}>{text}</Text>
+      </Row>
+      {children}
     </HoverBoxLink>
   );
 };
@@ -36,6 +43,7 @@ export function PopoverRoutes(
     contacts: Contacts;
     group: Group;
     association: Association;
+    associations: Associations;
     s3: S3State;
     api: GlobalApi;
     notificationsGroupConfig: GroupNotificationsConfig;
@@ -49,6 +57,14 @@ export function PopoverRoutes(
     props.history.push(props.baseUrl);
   }, [props.history.push, props.baseUrl]);
   useOutsideClick(innerRef, onOutsideClick);
+
+  useHashLink();
+
+  const groupSize = props.group.members.size;
+
+  const owner = resourceFromPath(props.association.group).ship.slice(1) === window.ship;
+
+  const admin = props.group?.tags?.role?.admin.has(window.ship) || false;
 
   return (
     <Switch>
@@ -80,34 +96,49 @@ export function PopoverRoutes(
                 <Box
                   display="grid"
                   gridTemplateRows={["32px 1fr", "100%"]}
-                  gridTemplateColumns={["100%", "150px 1fr"]}
+                  gridTemplateColumns={["100%", "250px 1fr"]}
                   height="100%"
                   width="100%"
                 >
                   <Col
                     display={!!view ? ["none", "flex"] : "flex"}
-                    py={3}
                     borderRight={1}
                     borderRightColor="washedGray"
                   >
-                    <SidebarItem
-                      icon="Node"
-                      selected={view === "participants"}
-                      to={relativeUrl("/participants")}
-                      text="Participants"
-                    />
-                    <SidebarItem
-                      icon="Gear"
-                      selected={view === "settings"}
-                      to={relativeUrl("/settings")}
-                      text="Group Settings"
-                    />
-                    <SidebarItem
-                      icon="Smiley"
-                      selected={view === "profile"}
-                      to={relativeUrl("/profile")}
-                      text="Group Profile"
-                    />
+                    <Text my="4" mx="3" fontWeight="600" fontSize="2">Group Settings</Text>
+                    <Col gapY="2">
+                      <Text my="1" mx="3" gray>Group</Text>
+                      <SidebarItem
+                        icon="Inbox"
+                        to={relativeUrl("/settings#notifications")}
+                        text="Notifications"
+                      />
+                      <SidebarItem
+                        icon="Users"
+                        to={relativeUrl("/participants")}
+                        text="Participants"
+                        selected={view === "participants"}
+                      ><Text gray>{groupSize}</Text>
+                      </SidebarItem>
+                      { admin && (
+                        <>
+                          <Box pt="3" mb="1" mx="3">
+                            <Text gray>Administration</Text>
+                          </Box>
+                          <SidebarItem
+                            icon="Groups"
+                            to={relativeUrl("/settings#group-details")}
+                            text="Group Details"
+                          />
+                          <SidebarItem
+                            icon="Spaces"
+                            to={relativeUrl("/settings#channels")}
+                            text="Channel Management"
+                          />
+                        </>
+                      )}
+                      <DeleteGroup owner={owner} api={props.api} association={props.association} />
+                    </Col>
                   </Col>
                   <Box
                     gridArea={"1 / 1 / 2 / 2"}
@@ -121,10 +152,13 @@ export function PopoverRoutes(
                   <Box overflow="hidden">
                     {view === "settings" && (
                       <GroupSettings
+                        baseUrl={`${props.baseUrl}/popover`}
                         group={props.group}
                         association={props.association}
                         api={props.api}
                         notificationsGroupConfig={props.notificationsGroupConfig}
+                        associations={props.associations}
+                        s3={props.s3}
                       />
                     )}
                     {view === "participants" && (
@@ -133,15 +167,6 @@ export function PopoverRoutes(
                         contacts={props.contacts}
                         association={props.association}
                         api={props.api}
-                      />
-                    )}
-                    {view === "profile" && (
-                      <ContactCard
-                        contact={props.contacts[window.ship]}
-                        rootIdentity={props.rootIdentity}
-                        api={props.api}
-                        path={props.association["group-path"]}
-                        s3={props.s3}
                       />
                     )}
                   </Box>

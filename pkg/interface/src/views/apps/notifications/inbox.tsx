@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect, useCallback, useState, useMemo } from "react";
 import f from "lodash/fp";
 import _ from "lodash";
 import { Icon, Col, Row, Box, Text, Anchor, Rule } from "@tlon/indigo-react";
@@ -13,6 +13,8 @@ import { cite } from '~/logic/lib/util';
 import { InviteItem } from '~/views/components/Invite';
 import { useWaitForProps } from "~/logic/lib/useWaitForProps";
 import { useHistory } from "react-router-dom";
+import {useModal} from "~/logic/lib/useModal";
+import {JoinGroup} from "~/views/landscape/components/JoinGroup";
 
 type DatedTimebox = [BigInteger, Timebox];
 
@@ -27,10 +29,7 @@ function filterNotification(associations: Associations, groups: string[]) {
     } else if ("group" in n.index) {
       const { group } = n.index.group;
       return groups.findIndex((g) => group === g) !== -1;
-    } else if ("chat" in n.index) {
-      const group = associations.chat[n.index.chat.chat]?.["group-path"];
-      return groups.findIndex((g) => group === g) !== -1;
-    }
+    } 
     return true;
   };
 }
@@ -61,20 +60,36 @@ export default function Inbox(props: {
     };
   }, []);
 
-  const [newNotifications, ...notifications] =
+  const notifications =
     Array.from(props.showArchive ? props.archive : props.notifications) || [];
+  
+  const calendar = {
+    ...MOMENT_CALENDAR_DATE, sameDay: function (now) {
+      if (this.subtract(6, 'hours').isBefore(now)) {
+        return "[Earlier Today]";
+      } else {
+        return MOMENT_CALENDAR_DATE.sameDay;
+      }
+    }
+  };
 
-  const notificationsByDay = f.flow(
+  let notificationsByDay = f.flow(
     f.map<DatedTimebox>(([date, nots]) => [
       date,
       nots.filter(filterNotification(associations, props.filter)),
     ]),
-    f.groupBy<DatedTimebox>(([date]) =>
-      moment(daToUnix(date)).format("DDMMYYYY")
-    ),
-    f.values,
-    f.reverse
+    f.groupBy<DatedTimebox>(([date]) => {
+      date = moment(daToUnix(date));
+      if (moment().subtract(6, 'hours').isBefore(date)) {
+        return 'latest';
+      } else {
+        return date.format("YYYYMMDD");
+      }
+    }),
   )(notifications);
+  notificationsByDay = new Map(Object.keys(notificationsByDay).sort().reverse().map(timebox => {
+    return [timebox, notificationsByDay[timebox]];
+  }));
 
   useEffect(() => {
     api.hark.getMore(props.showArchive);
@@ -88,6 +103,27 @@ export default function Inbox(props: {
     }
   }, [props.showArchive]);
 
+  const [joining, setJoining] = useState<[string, string] | null>(null);
+
+  const { modal, showModal } = useModal(
+    { modal: useCallback(
+      (dismiss) => (
+        <JoinGroup
+          groups={props.groups}
+          contacts={props.contacts}
+          api={props.api}
+          autojoin={joining?.[0]?.slice(6)} 
+          inviteUid={joining?.[1]}
+        />
+        ),
+      [props.contacts, props.groups, props.api, joining]
+  )})
+
+  const joinGroup = useCallback((group: string, uid: string) => {
+    setJoining([group, uid]);
+    showModal();
+  }, [setJoining, showModal]);
+
   const acceptInvite = (app: string, uid: string) => async (invite) => {
     const resource = {
       ship: `~${invite.resource.ship}`,
@@ -96,10 +132,7 @@ export default function Inbox(props: {
 
     const resourcePath = resourceAsPath(invite.resource);
     if(app === 'contacts') {
-      await api.contacts.join(resource);
-      await waiter(p => resourcePath in p.associations?.contacts);
-      await api.invite.accept(app, uid);
-      history.push(`/~landscape${resourcePath}`);
+      joinGroup(resourcePath, uid);
     } else if ( app === 'chat') {
       await api.invite.accept(app, uid);
       history.push(`/~landscape/home/resource/chat${resourcePath.slice(5)}`);
@@ -108,6 +141,9 @@ export default function Inbox(props: {
       history.push(`/~graph/join${resourcePath}`);
     }
   };
+
+
+
 
   const inviteItems = (invites, api) => {
     const returned = [];
@@ -130,41 +166,28 @@ export default function Inbox(props: {
 
   return (
     <Col position="relative" height="100%" overflowY="auto" onScroll={onScroll} >
-      <Col zIndex={4} gapY={2} bg="white" top="0px" position="sticky">
+      {modal}
+      <Col zIndex={4} gapY={2} bg="white" top="0px" position="sticky" flexShrink={0}>
         {inviteItems(invites, api)}
       </Col>
-      {newNotifications && (
-        <DaySection
-          latest
-          timeboxes={[newNotifications]}
-          contacts={props.contacts}
-          archive={!!props.showArchive}
-          associations={props.associations}
-          groups={props.groups}
-          graphConfig={props.notificationsGraphConfig}
-          groupConfig={props.notificationsGroupConfig}
-          chatConfig={props.notificationsChatConfig}
-          api={api}
-        />
-      )}
-      {_.map(
-        notificationsByDay,
-        (timeboxes, idx) =>
-          timeboxes.length > 0 && (
-            <DaySection
-              key={idx}
-              timeboxes={timeboxes}
-              contacts={props.contacts}
-              archive={!!props.showArchive}
-              associations={props.associations}
-              api={api}
-              groups={props.groups}
-              graphConfig={props.notificationsGraphConfig}
-              groupConfig={props.notificationsGroupConfig}
-              chatConfig={props.notificationsChatConfig}
-            />
-          )
-      )}
+      {[...notificationsByDay.keys()].map((day, index) => {
+        const timeboxes = notificationsByDay.get(day);
+        return timeboxes.length > 0 && (
+          <DaySection
+            key={day}
+            label={day === 'latest' ? 'Today' : moment(day).calendar(null, calendar)}
+            timeboxes={timeboxes}
+            contacts={props.contacts}
+            archive={!!props.showArchive}
+            associations={props.associations}
+            api={api}
+            groups={props.groups}
+            graphConfig={props.notificationsGraphConfig}
+            groupConfig={props.notificationsGroupConfig}
+            chatConfig={props.notificationsChatConfig}
+          />
+        );
+      })}
     </Col>
   );
 }
@@ -181,21 +204,18 @@ function sortIndexedNotification(
 }
 
 function DaySection({
+  label,
   contacts,
   groups,
   archive,
   timeboxes,
-  latest = false,
   associations,
   api,
   groupConfig,
   graphConfig,
   chatConfig,
-  remoteContentPolicy
 }) {
-  const calendar = latest
-    ? MOMENT_CALENDAR_DATE
-    : { ...MOMENT_CALENDAR_DATE, sameDay: "[Earlier Today]" };
+  
   const lent = timeboxes.map(([,nots]) => nots.length).reduce(f.add, 0);
   if (lent === 0 || timeboxes.length === 0) {
     return null;
@@ -206,7 +226,7 @@ function DaySection({
       <Box position="sticky" zIndex="3" top="-1px" bg="white">
         <Box p="2" bg="scales.black05">
           <Text>
-            {moment(daToUnix(timeboxes[0][0])).calendar(null, calendar)}
+            {label}
           </Text>
         </Box>
       </Box>

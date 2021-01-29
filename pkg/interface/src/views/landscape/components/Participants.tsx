@@ -270,26 +270,26 @@ function Participant(props: {
   );
 
   const onPromote = useCallback(async () => {
-    const resource = resourceFromPath(association['group-path']);
+    const resource = resourceFromPath(association.group);
     await api.groups.addTag(resource, { tag: 'admin' }, [`~${contact.patp}`]);
   }, [api, association]);
 
   const onDemote = useCallback(async () => {
-    const resource = resourceFromPath(association['group-path']);
+    const resource = resourceFromPath(association.group);
     await api.groups.removeTag(resource, { tag: 'admin' }, [
       `~${contact.patp}`
     ]);
   }, [api, association]);
 
   const onBan = useCallback(async () => {
-    const resource = resourceFromPath(association['group-path']);
+    const resource = resourceFromPath(association.group);
     await api.groups.changePolicy(resource, {
       open: { banShips: [`~${contact.patp}`] }
     });
   }, [api, association]);
 
   const onKick = useCallback(async () => {
-    const resource = resourceFromPath(association['group-path']);
+    const resource = resourceFromPath(association.group);
     await api.groups.remove(resource, [`~${contact.patp}`]);
   }, [api, association]);
 

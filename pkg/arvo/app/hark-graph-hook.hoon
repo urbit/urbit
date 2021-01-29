@@ -1,7 +1,7 @@
 ::  hark-graph-hook: notifications for graph-store [landscape]
 ::
-/-  post, group-store, metadata-store, hook=hark-graph-hook, store=hark-store
-/+  resource, metadata, default-agent, dbug, graph-store, graph, grouplib=group, store=hark-store
+/-  post, group-store, metadata=metadata-store, hook=hark-graph-hook, store=hark-store
+/+  resource, mdl=metadata, default-agent, dbug, graph-store, graph, grouplib=group, store=hark-store
 ::
 ::
 ~%  %hark-graph-hook-top  ..part  ~
@@ -9,11 +9,17 @@
 +$  card  card:agent:gall
 +$  versioned-state
   $%  state-0
+      state-1
   ==
 ::
 +$  state-0
-  $:  %0
-      watching=(set [resource index:post])
+  [%0 base-state-0]
+::
++$  state-1
+  [%1 base-state-0]
+::
++$  base-state-0
+  $:  watching=(set [resource index:post])
       mentions=_&
       watch-on-self=_&
   ==
@@ -36,7 +42,7 @@
 ::
 --
 ::
-=|  state-0
+=|  state-1
 =*  state  -
 ::
 =<
@@ -47,7 +53,7 @@
 +*  this  .
     ha    ~(. +> bowl)
     def   ~(. (default-agent this %|) bowl)
-    met   ~(. metadata bowl)
+    met   ~(. mdl bowl)
     grp   ~(. grouplib bowl)
     gra   ~(. graph bowl)
 ::
@@ -57,13 +63,25 @@
 ::
 ++  on-save  !>(state)
 ++  on-load
-  |=  old=vase
+  |=  =vase
   ^-  (quip card _this)
-  :_  this(state !<(state-0 old))
+  =+  !<(old=versioned-state vase)
+  =|  cards=(list card)
+  |-
+  ?:  ?=(%0 -.old)
+    %_    $
+      -.old  %1
+      ::
+        cards  
+      :_  cards
+      [%pass / %agent [our dap]:bowl %poke noun+!>(%rewatch-dms)]
+    ==
+  :_  this(state old)
+  =.  cards  (flop cards)
   %+  welp
     ?:  (~(has by wex.bowl) [/graph our.bowl %graph-store])
-      ~
-    ~[watch-graph:ha]
+      cards
+    [watch-graph:ha cards]
   %+  turn
     ^-  (list mark)
     :~  %graph-validator-chat
@@ -103,8 +121,22 @@
     ?+  mark           (on-poke:def mark vase)
         %hark-graph-hook-action
       (hark-graph-hook-action !<(action:hook vase))
+        %noun
+      (poke-noun !<(* vase))
     ==
   [cards this]
+  ::
+  ++  poke-noun
+    |=  non=*
+    ?>  ?=(%rewatch-dms non)
+    =/  graphs=(list resource)
+      ~(tap in get-keys:gra)
+    :-  ~
+    %_   state
+        watching  
+      %-  ~(gas in watching)
+      (murn graphs |=(rid=resource ?:((should-watch:ha rid) `[rid ~] ~)))
+    ==
   ::
   ++  hark-graph-hook-action
     |=  =action:hook
@@ -168,15 +200,47 @@
         ?(%remove-graph %archive-graph)  
       (remove-graph resource.q.update)
       ::
+        %remove-nodes
+      (remove-nodes resource.q.update indices.q.update)
+      ::
         %add-nodes
       =*  rid  resource.q.update
       (check-nodes ~(val by nodes.q.update) rid)
     ==
+  ::  this is awful, but notification kind should always switch
+  ::  on the index, so hopefully doesn't matter
+  ::  TODO: rethink this
+  ++  remove-nodes
+    |=  [rid=resource indices=(set index:graph-store)]
+    =/  to-remove
+      %-  ~(gas by *(set [resource index:graph-store]))
+      (turn ~(tap in indices) (lead rid))
+    :_  state(watching (~(dif in watching) to-remove))
+    =/  =tube:clay
+      (get-conversion:ha rid)
+    %+  roll
+      ~(tap in indices)
+    |=  [=index:graph-store out=(list card)]
+    =|  =indexed-post:graph-store
+    =.  index.p.indexed-post  index
+    =+  !<(u-notif-kind=(unit notif-kind) (tube !>(indexed-post)))
+    ?~  u-notif-kind  out
+    =*  notif-kind  u.u-notif-kind
+    =/  =stats-index:store
+      [%graph rid (scag parent-lent.notif-kind index)]
+    ?.  ?=(%each mode.notif-kind)  out
+    :_  out 
+    (poke-hark %read-each stats-index index)
+  ::
+  ++  poke-hark
+    |=  =action:store
+    ^-  card
+    [%pass / %agent [our.bowl %hark-store] %poke hark-action+!>(action)]
   ::
   ++  remove-graph
     |=  rid=resource
     =/  unwatched
-      %-  ~(gas in *_watching)
+      %-  ~(gas in *(set [resource index:graph-store]))
       %+  skim  ~(tap in watching)
       |=  [r=resource idx=index:graph-store]
       =(r rid)
@@ -191,23 +255,14 @@
   ++  add-graph
     |=  rid=resource
     ^-  (quip card _state)
-    =/  group-rid=(unit resource)
-      (group-from-app-resource:met %graph rid) 
-    ?~  group-rid
-      ~&  no-group+rid
-      `state
-    =/  is-hidden=?
-      !(is-managed:grp u.group-rid)
-    =/  should-watch
-      |(is-hidden &(watch-on-self =(our.bowl entity.rid)))
-    ?.  should-watch
-      `state
     =/  graph=graph:graph-store  :: graph in subscription is bunted 
       (get-graph-mop:gra rid)
     =/  node=(unit node:graph-store)
       (bind (peek:orm:graph-store graph) |=([@ =node:graph-store] node))
     =^  cards  state
       (check-nodes (drop node) rid)
+    ?.  (should-watch:ha rid)
+      [cards state]
     :_   state(watching (~(put in watching) [rid ~]))
     (weld cards (give:ha ~[/updates] %listen [rid ~]))
   ::
@@ -217,14 +272,14 @@
             rid=resource
         ==
     =/  group=(unit resource)
-      (group-from-app-resource:met %graph rid)
+      (peek-group:met %graph rid)
     ?~  group  
       ~&  no-group+rid
       `state
-    =/  metadata=(unit metadata:metadata-store)
-      (peek-metadata:met %graph u.group rid)
-    ?~  metadata  `state
-    abet:check:(abed:handle-update:ha rid nodes u.group module.u.metadata)
+    =/  metadatum=(unit metadatum:metadata)
+      (peek-metadatum:met %graph rid)
+    ?~  metadatum  `state
+    abet:check:(abed:handle-update:ha rid nodes u.group module.u.metadatum)
   --
 ::
 ++  on-peek  on-peek:def
@@ -245,7 +300,19 @@
 --
 ::
 |_  =bowl:gall
++*  met   ~(. mdl bowl)
+    grp   ~(. grouplib bowl)
+    gra   ~(. graph bowl)
 ::
+++  get-conversion
+  |=  rid=resource
+  ^-  tube:clay
+  =+  %^  scry  [our now]:bowl
+         ,mark=(unit mark)
+      /gx/graph-store/graph-mark/(scot %p entity.rid)/[name.rid]/noun
+  ?~  mark
+    |=(v=vase !>(~))
+  (scry-conversion [our now]:bowl q.byk.bowl u.mark)
 ::
 ++  give
   |=  [paths=(list path) =update:hook]
@@ -273,6 +340,16 @@
     %.y
   $(contents t.contents)
 ::
+++  should-watch
+  |=  rid=resource
+  ^-  ?
+  =/  group-rid=(unit resource)
+    (peek-group:met %graph rid) 
+  ?~  group-rid  %.n
+  ?|  !(is-managed:grp u.group-rid)
+      &(watch-on-self =(our.bowl entity.rid))
+  ==
+::
 ++  handle-update
   |_  $:  rid=resource  ::  input
           updates=(list node:graph-store)
@@ -288,13 +365,7 @@
     update-core(rid r, updates upds, group grp, module mod)
   ::
   ++  get-conversion
-    ^-  tube:clay
-    =+  %^  scry  [our now]:bowl
-           ,mark=(unit mark)
-        /gx/graph-store/graph-mark/(scot %p entity.rid)/[name.rid]/noun
-    ?~  mark
-      |=(v=vase !>(~))
-    (scry-conversion [our now]:bowl q.byk.bowl u.mark)
+    (^get-conversion rid)
   ::
   ++  abet
     ^-  (quip card _state)

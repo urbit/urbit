@@ -40,22 +40,22 @@ export function ChannelMenu(props: ChannelMenuProps) {
   const app = metadata.module || association["app-name"];
   const workspace = history.location.pathname.startsWith("/~landscape/home")
     ? "/home"
-    : association?.["group-path"];
-  const baseUrl = `/~landscape${workspace}/resource/${app}${association["app-path"]}`;
-  const appPath = association["app-path"];
+    : association?.group;
+  const baseUrl = `/~landscape${workspace}/resource/${app}${association.resource}`;
+  const rid = association.resource;
 
-  const [,, ship, name] = appPath.split("/");
+  const [,, ship, name] = rid.split("/");
 
   const isOurs = ship.slice(1) === window.ship;
 
-  const isMuted = 
+  const isMuted =
     props.graphNotificationConfig.watching.findIndex(
-        (a) => a.graph === appPath && a.index === "/"
+        (a) => a.graph === rid && a.index === "/"
     ) === -1;
 
   const onChangeMute = async () => {
     const func = isMuted ? "listenGraph" : "ignoreGraph";
-    await api.hark[func](appPath, "/");
+    await api.hark[func](rid, "/");
   };
   const onUnsubscribe = useCallback(async () => {
     await api.graph.leaveGraph(ship, name);
@@ -63,8 +63,10 @@ export function ChannelMenu(props: ChannelMenuProps) {
   }, [api, association]);
 
   const onDelete = useCallback(async () => {
-    await api.graph.deleteGraph(name);
-    history.push(`/~landscape${workspace}`);
+    if (confirm('Are you sure you want to delete this channel?')) {
+      await api.graph.deleteGraph(name);
+      history.push(`/~landscape${workspace}`);
+    }
   }, [api, association]);
 
   return (
@@ -100,7 +102,7 @@ export function ChannelMenu(props: ChannelMenuProps) {
               </ChannelMenuItem>
               <ChannelMenuItem bottom icon="Gear" color="black">
                 <Link to={`${baseUrl}/settings`}>
-                  <Box fontSize={0} p="2">
+                  <Box fontSize={1} p="2">
                     Channel Settings
                   </Box>
                 </Link>
@@ -117,9 +119,9 @@ export function ChannelMenu(props: ChannelMenuProps) {
       }
       alignX="right"
       alignY="top"
-      width="250px"
+      dropWidth="250px"
     >
-      <Icon display="block" icon="Menu" color="gray" />
+      <Icon display="block" icon="Menu" color="gray" pr='2' />
     </Dropdown>
   );
 }

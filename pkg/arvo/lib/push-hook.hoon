@@ -67,16 +67,6 @@
   |*  =config
   $_  ^|
   |_  bowl:gall
-  ::
-  ::  +resource-for-update: get affected resource from an update
-  ::  
-  ::    Given a vase of the update, the mark of which is
-  ::    update-mark.config, produce the affected resource, if any.
-  ::
-  ++  resource-for-update
-    |~  vase
-    *(unit resource)
-  ::
   ::  +take-update: handle update from store
   ::
   ::    Given an update from the store, do other things after proxying
@@ -175,9 +165,11 @@
       |^ 
       ?-  -.old
           %1  
+        =.  cards
+          :_(cards (build-mark:hc %sing))
         =^  og-cards   push-hook
           (on-load:og inner-state.old)
-        [(weld cards og-cards) this(state old)]
+        [(weld (flop cards) og-cards) this(state old)]
         ::
           %0
         %_    $
@@ -274,17 +266,29 @@
         =^  cards  push-hook
           (on-leave:og path)
         [cards this]
+      ::
       ++  on-arvo
         |=  [=wire =sign-arvo]
-        =^  cards  push-hook
-          (on-arvo:og wire sign-arvo)
-        [cards this]
+        ?.  ?=([%helper %push-hook @ *] wire)
+          =^  cards  push-hook
+            (on-arvo:og wire sign-arvo)
+          [cards this]
+        ?.  ?=(%resource-conversion i.t.t.wire)
+          (on-arvo:def wire sign-arvo)
+        :_  this
+        ~[(build-mark:hc %next)]
+      ::
       ++  on-fail
         |=  [=term =tang]
         =^  cards  push-hook
           (on-fail:og term tang)
         [cards this]
-      ++  on-peek   on-peek:og
+      ++  on-peek   
+        |=  =path
+        ^-  (unit (unit cage))
+        ?.  =(/x/sharing path)
+          (on-peek:og path)
+        ``noun+!>(sharing)
     --
   |_  =bowl:gall
   +*  og   ~(. push-hook bowl)
@@ -368,7 +372,7 @@
     |=  =vase
     ^-  (list card:agent:gall)
     =/  rid=(unit resource)
-      (resource-for-update:og vase)
+      (resource-for-update vase)
     ?~  rid  ~
     =/  prefix=path
       resource+(en-path:resource u.rid)
@@ -385,7 +389,7 @@
     |=  =vase
     ^-  (list card:agent:gall)
     =/  rid=(unit resource)
-      (resource-for-update:og vase)
+      (resource-for-update vase)
     ?~  rid  ~
     =/  =path
       resource+(en-path:resource u.rid)
@@ -394,5 +398,30 @@
     =/  dap=term
       ?:(=(our.bowl entity.u.rid) store-name.config dap.bowl)
     [%pass wire %agent [entity.u.rid dap] %poke update-mark.config vase]~
+  ::
+  ++  get-conversion
+    .^  tube:clay
+      %cc  (scot %p our.bowl)  %home  (scot %da now.bowl)
+      /[update-mark.config]/resource
+    ==
+  ::
+  ++  resource-for-update
+    |=  update=vase
+    =/  =tube:clay
+      get-conversion
+    %+  bind
+      (mole |.((tube update)))
+    |=(=vase !<(resource vase))
+  ::
+  ++  build-mark
+    |=  rav=?(%sing %next)
+    ^-  card
+    =/  =wire
+      (make-wire /resource-conversion)
+    =/  =mood:clay
+     [%c da+now.bowl /[update-mark.config]/resource]
+    =/  =rave:clay
+      ?:(?=(%next rav) [rav mood] [rav mood])
+    [%pass wire %arvo %c %warp our.bowl [%home `rave]]
   --
 --

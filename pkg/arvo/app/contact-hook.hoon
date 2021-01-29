@@ -186,6 +186,8 @@
     ?+  path  (on-peek:def path)
         [%x %export ~]
       ``noun+!>(state)
+        [%x %synced ~]
+      ``noun+!>(~(key by synced))
     ==
   ++  on-arvo
     |=  [=wire =sign-arvo]
