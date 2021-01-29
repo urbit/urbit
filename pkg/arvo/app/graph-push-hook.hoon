@@ -1,6 +1,7 @@
 /-  *group
+/-  metadata=metadata-store
 /+  store=graph-store
-/+  metadata
+/+  mdl=metadata
 /+  res=resource
 /+  graph
 /+  group
@@ -135,7 +136,7 @@
 --
 |_  =bowl:gall
 +*  grp  ~(. group bowl)
-    met  ~(. metadata bowl)
+    met  ~(. mdl bowl)
     gra   ~(. graph bowl)
 ++  scry
   |=  [care=@t desk=@t =path]
@@ -155,21 +156,21 @@
   (cat 3 'graph-permissions-' perm)
 ::
 ++  perm-mark
-  |=  [=resource:res perm=@t vip=vip-metadata:met =indexed-post:store]
+  |=  [=resource:res perm=@t vip=vip-metadata:metadata =indexed-post:store]
   ^-  permissions:store
   =-  (check vip)
-  !<  check=$-(vip-metadata:met permissions:store)
+  !<  check=$-(vip-metadata:metadata permissions:store)
   %.  !>(indexed-post)
   =/  mark  (get-mark:gra resource)
   ?~  mark  |=(=vase !>([%no %no %no]))
   .^(tube:clay (scry %cc %home /[u.mark]/(perm-mark-name perm)))
 ::
 ++  add-mark
-  |=  [=resource:res vip=vip-metadata:met =indexed-post:store]
+  |=  [=resource:res vip=vip-metadata:metadata =indexed-post:store]
   (perm-mark resource %add vip indexed-post)
 ::
 ++  remove-mark
-  |=  [=resource:res vip=vip-metadata:met =indexed-post:store]
+  |=  [=resource:res vip=vip-metadata:metadata =indexed-post:store]
   (perm-mark resource %remove vip indexed-post)
 ::
 ++  get-permission
@@ -189,8 +190,8 @@
 ::
 ++  get-roles-writers-variation
   |=  =resource:res
-  ^-  (unit [is-admin=? writers=(set ship) vip=vip-metadata:met])
-  =/  assoc=(unit association:met)
+  ^-  (unit [is-admin=? writers=(set ship) vip=vip-metadata:metadata])
+  =/  assoc=(unit association:metadata)
      (peek-association:met %graph resource)
   ?~  assoc  ~
   =/  role=(unit (unit role-tag))
@@ -200,7 +201,7 @@
   ?~  role  ~
   =/  is-admin=?
     ?=(?([~ %admin] [~ %moderator]) u.role)
-  `[is-admin writers vip.metadata.u.assoc]
+  `[is-admin writers vip.metadatum.u.assoc]
 ::
 ++  node-to-indexed-post
   |=  =node:store
@@ -213,7 +214,7 @@
   ^-  ?
   %-  (bond |.(%.n))
   %+  biff  (get-roles-writers-variation resource)
-  |=  [is-admin=? writers=(set ship) vip=vip-metadata:met]
+  |=  [is-admin=? writers=(set ship) vip=vip-metadata:metadata]
   %-  some  
   %+  levy  ~(tap by nodes)
   |=  [=index:store =node:store]
@@ -240,7 +241,7 @@
   ^-  ?
   %-  (bond |.(%.n))
   %+  biff  (get-roles-writers-variation)
-  |=  [is-admin=? writers=(set ship) vip=vip-metadata:met]
+  |=  [is-admin=? writers=(set ship) vip=vip-metadata:metadata]
   %-  some  
   %+  levy  ~(tap by indices)
   |=  =index:store

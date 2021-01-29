@@ -81,12 +81,12 @@
   =/  role=(unit (unit role-tag))
     (role-for-ship:grp group.update src.bowl)
   =/  =metadatum:store
-    (need (peek-metadata:met %contacts group.upd))
+    (need (peek-metadatum:met %contacts group.update))
   ?~  role  %.n
   ?^  u.role  
     ?=(?(%admin %moderator) u.u.role)
-  ?.  ?=(%add -.upd)  %.n
-  ?&  =(src.bowl entity.resource.resource.upd)
+  ?.  ?=(%add -.update)  %.n
+  ?&  =(src.bowl entity.resource.resource.update)
       ?=(%member-metadata vip.metadatum)
   ==
 ::
