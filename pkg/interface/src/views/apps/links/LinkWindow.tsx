@@ -51,7 +51,7 @@ export function LinkWindow(props: LinkWindowProps) {
 
   const [,,ship, name] = association.resource.split('/');
 
-  const style = useMemo(() =>
+    const style = useMemo(() =>
     ({
       height: "100%",
       width: "100%",
@@ -59,6 +59,14 @@ export function LinkWindow(props: LinkWindowProps) {
       flexDirection: 'column',
       alignItems: 'center'
     }), []);
+
+  if (!first) {
+    return (
+        <Col key={0} mx="auto" mt="4" maxWidth="768px" width="100%" flexShrink={0} px={3}>
+            <LinkSubmit s3={props.s3} name={name} ship={ship.slice(1)} api={api} />
+        </Col>
+    );
+  }
 
   return (
     <VirtualScroller
@@ -82,7 +90,7 @@ export function LinkWindow(props: LinkWindowProps) {
         if(index.eq(first ?? bigInt.zero)) {
           return (
             <>
-            <Col key={index.toString()} mx="auto" mt="4" maxWidth="768px" width="100%" flexShrink='0' px={3}>
+            <Col key={index.toString()} mx="auto" mt="4" maxWidth="768px" width="100%" flexShrink={0} px={3}>
               <LinkSubmit s3={props.s3} name={name} ship={ship.slice(1)} api={api} />
             </Col>
               <LinkItem {...linkProps} />
