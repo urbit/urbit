@@ -155,8 +155,7 @@ let
       contents = {
         "${name}/urbit" = "${urbit}/bin/urbit";
         "${name}/urbit-worker" = "${urbit}/bin/urbit-worker";
-        # temporarily removed for compatibility reasons
-        # "${name}/urbit-king" = "${urbit-king}/bin/urbit-king";
+        "${name}/urbit-king" = "${urbit-king}/bin/urbit-king";
       };
     };
 

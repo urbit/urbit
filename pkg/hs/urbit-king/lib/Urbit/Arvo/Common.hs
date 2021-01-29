@@ -12,6 +12,7 @@
 -}
 module Urbit.Arvo.Common
   ( KingId(..), ServId(..)
+  , Vere(..), Wynn(..)
   , Json, JsonNode(..)
   , Desk(..), Mime(..)
   , Port(..), Turf(..)
@@ -21,9 +22,10 @@ module Urbit.Arvo.Common
   , AmesDest, Ipv4(..), Ipv6(..), Patp(..), Galaxy, AmesAddress(..)
   ) where
 
-import Urbit.Prelude hiding (Term)
+import Urbit.Prelude
 
 import Control.Monad.Fail (fail)
+import Data.Bits
 
 import qualified Network.HTTP.Types.Method as H
 import qualified Urbit.Ob                  as Ob
@@ -45,6 +47,25 @@ newtype KingId = KingId { unKingId :: UV }
 newtype ServId = ServId { unServId :: UV }
   deriving newtype (Eq, Ord, Show, Num, Enum, Integral, Real, FromNoun, ToNoun)
 
+-- Arvo Version Negotiation ----------------------------------------------------
+
+-- Information about the king runtime passed to Arvo.
+data Vere = Vere { vereName :: Term,
+                   vereRev  :: [Cord],
+                   vereWynn :: Wynn }
+  deriving (Eq, Ord, Show)
+
+instance ToNoun Vere where
+  toNoun Vere{..} = toNoun ((vereName, vereRev), vereWynn)
+
+instance FromNoun Vere where
+  parseNoun n = named "Vere" $ do
+    ((vereName, vereRev), vereWynn) <- parseNoun n
+    pure $ Vere {..}
+
+-- A list of names and their kelvin numbers, used in version negotiations.
+newtype Wynn = Wynn { unWynn :: [(Term, Word)] }
+  deriving newtype (Eq, Ord, Show, FromNoun, ToNoun)
 
 -- Http Common -----------------------------------------------------------------
 
@@ -112,7 +133,7 @@ deriveNoun ''HttpServerConf
 -- Desk and Mime ---------------------------------------------------------------
 
 newtype Desk = Desk { unDesk :: Cord }
-  deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
+  deriving newtype (Eq, Ord, Show, ToNoun, FromNoun, IsString)
 
 data Mime = Mime Path File
   deriving (Eq, Ord, Show)
@@ -146,7 +167,14 @@ newtype Port = Port { unPort :: Word16 }
 
 -- @if
 newtype Ipv4 = Ipv4 { unIpv4 :: Word32 }
-  deriving newtype (Eq, Ord, Show, Enum, Real, Integral, Num, ToNoun, FromNoun)
+  deriving newtype (Eq, Ord, Enum, Real, Integral, Num, ToNoun, FromNoun)
+
+instance Show Ipv4 where
+  show (Ipv4 i) =
+    show ((shiftL i 24) .&. 0xff) ++ "." ++
+    show ((shiftL i 16) .&. 0xff) ++ "." ++
+    show ((shiftL i  8) .&. 0xff) ++ "." ++
+    show (i .&. 0xff)
 
 -- @is
 newtype Ipv6 = Ipv6 { unIpv6 :: Word128 }

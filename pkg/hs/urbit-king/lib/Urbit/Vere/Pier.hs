@@ -32,11 +32,11 @@ import System.Posix.Files     (ownerModes, setFileMode)
 import Urbit.EventLog.LMDB    (EventLog)
 import Urbit.EventLog.Event   (buildLogEvent)
 import Urbit.King.API         (TermConn)
-import Urbit.Noun.Time        (Wen)
 import Urbit.TermSize         (TermSize(..), termSize)
 import Urbit.Vere.Serf        (Serf)
 
 import qualified Data.Text                   as T
+import qualified Data.List as L
 import qualified System.Entropy              as Ent
 import qualified Urbit.EventLog.LMDB         as Log
 import qualified Urbit.King.API              as King
@@ -72,16 +72,22 @@ setupPierDirectory shipPath = do
 
 -- Load pill into boot sequence. -----------------------------------------------
 
+data CannotBootFromIvoryPill = CannotBootFromIvoryPill
+  deriving (Show, Exception)
+
 genEntropy :: MonadIO m => m Entropy
 genEntropy = Entropy . fromIntegral . bytesAtom <$> io (Ent.getEntropy 64)
 
-genBootSeq :: MonadIO m => Ship -> Pill -> Bool -> LegacyBootEvent -> m BootSeq
-genBootSeq ship Pill {..} lite boot = io $ do
-  ent <- genEntropy
-  let ovums = preKern ent <> pKernelOvums <> postKern <> pUserspaceOvums
-  pure $ BootSeq ident pBootFormulas ovums
+genBootSeq :: HasKingEnv e
+           => Ship -> Pill -> Bool -> LegacyBootEvent -> RIO e BootSeq
+genBootSeq _    PillIvory {}   _    _    = throwIO CannotBootFromIvoryPill
+genBootSeq ship PillPill  {..} lite boot = do
+  ent <- io genEntropy
+  wyr <- wyrd
+  let ova = preKern ent <> [wyr] <> pKernelOva <> postKern <> pUserspaceOva
+  pure $ BootSeq ident pBootFormulae ova
  where
-  ident = LogIdentity ship isFake (fromIntegral $ length pBootFormulas)
+  ident = LogIdentity ship isFake (fromIntegral $ length pBootFormulae)
   preKern ent =
     [ EvBlip $ BlipEvArvo $ ArvoEvWhom () ship
     , EvBlip $ BlipEvArvo $ ArvoEvWack () ent
@@ -296,9 +302,9 @@ pier (serf, log) vSlog startedSig injected = do
   let execute = writeTQueue executeQ
   let persist = writeTQueue persistQ
   let sigint  = Serf.sendSIGINT serf
-  let scry    = \w b g -> do
+  let scry    = \g r -> do
         res <- newEmptyMVar
-        atomically $ writeTQueue scryQ (w, b, g, putMVar res)
+        atomically $ writeTQueue scryQ (g, r, putMVar res)
         takeMVar res
 
   -- Set up the runtime stat counters.
@@ -316,9 +322,9 @@ pier (serf, log) vSlog startedSig injected = do
       io $ readTVarIO siteSlog >>= ($ s)
       logOther "serf" (display $ T.strip $ tankToText tank)
 
+  let err = atomically . Term.trace muxed . (<> "\r\n")
   (bootEvents, startDrivers) <- do
     env <- ask
-    let err = atomically . Term.trace muxed . (<> "\r\n")
     siz <- atomically $ Term.curDemuxSize demux
     let fak = isFake logId
     drivers env ship fak compute scry (siz, muxed) err sigint stat runtimeSubsite
@@ -335,6 +341,8 @@ pier (serf, log) vSlog startedSig injected = do
 
   tSerf <- acquireWorker "Serf" (runCompute serf computeConfig)
 
+  doVersionNegotiation compute err
+
   -- Run all born events and retry them until they succeed.
   wackEv <- EvBlip . BlipEvArvo . ArvoEvWack () <$> genEntropy
   rio $ for_ (wackEv : bootEvents) $ \ev -> do
@@ -346,7 +354,7 @@ pier (serf, log) vSlog startedSig injected = do
         cb :: Int -> WorkError -> IO ()
         cb n | n >= 3 = error ("boot event failed: " <> show ev)
         cb n          = \case
-          RunOkay _         -> putMVar okaySig ()
+          RunOkay _ _       -> putMVar okaySig ()
           RunSwap _ _ _ _ _ -> putMVar okaySig ()
           RunBail _         -> inject (n + 1)
 
@@ -373,7 +381,7 @@ pier (serf, log) vSlog startedSig injected = do
     let inject = atomically $ compute $ RRWork $ EvErr ev $ cb
         cb :: WorkError -> IO ()
         cb = \case
-          RunOkay _         -> putMVar okaySig (Right ())
+          RunOkay _ _       -> putMVar okaySig (Right ())
           RunSwap _ _ _ _ _ -> putMVar okaySig (Right ())
           RunBail goofs     -> putMVar okaySig (Left goofs)
 
@@ -414,6 +422,68 @@ death tag tid = do
     Left  exn -> Left (tag, exn)
     Right ()  -> Right tag
 
+-- %wyrd version negotiation ---------------------------------------------------
+
+data PierVersionNegotiationFailed = PierVersionNegotiationFailed
+ deriving (Show, Exception)
+
+zuseVersion :: Word
+zuseVersion = 420
+
+wyrd :: HasKingEnv e => RIO e Ev
+wyrd = do
+  king <- tshow <$> view kingIdL
+
+  let k   = Wynn [("zuse", zuseVersion),
+                  ("lull", 330),
+                  ("arvo", 240),
+                  ("hoon", 140),
+                  ("nock", 4)]
+      sen = MkTerm king
+      v   = Vere sen [Cord "king-haskell", Cord "1.0"] k
+
+  pure $ EvBlip $ BlipEvArvo $ ArvoEvWyrd () v
+
+doVersionNegotiation
+  :: HasPierEnv e
+  => (RunReq -> STM ())
+  -> (Text -> RIO e ())
+  -> RAcquire e ()
+doVersionNegotiation compute stderr = do
+  ev <- rio wyrd
+
+  okaySig :: MVar (Either [Goof] FX) <- newEmptyMVar
+  let inject = atomically $ compute $ RRWork $ EvErr ev $ cb
+      cb :: WorkError -> IO ()
+      cb = \case
+        RunOkay _ fx       -> putMVar okaySig (Right fx)
+        RunSwap _ _ _ _ fx -> putMVar okaySig (Right fx)
+        RunBail goofs      -> putMVar okaySig (Left goofs)
+
+  rio $ stderr "vere: checking version compatibility"
+  io inject
+
+  takeMVar okaySig >>= \case
+    Left goof -> do
+      rio $ stderr "pier: version negotation failed"
+      logError $ display @Text ("Goof in wyrd event: " <> tshow goof)
+      throwIO PierVersionNegotiationFailed
+
+    Right fx  -> do
+      -- Walk through the returned fx looking for a wend effect. If we find
+      -- one, check the zuse versions.
+      rio $ for_ fx $ \case
+        GoodParse (EfWend (Wynn xs)) -> case L.lookup "zuse" xs of
+          Nothing -> pure ()
+          Just zuseVerInWynn ->
+            if zuseVerInWynn /= zuseVersion
+            then do
+              rio $ stderr "pier: pier: version negotiation failed; downgrade"
+              throwIO PierVersionNegotiationFailed
+            else
+              pure ()
+        _ -> pure ()
+
 
 -- Start All Drivers -----------------------------------------------------------
 
@@ -432,7 +502,7 @@ drivers
   -> Ship
   -> Bool
   -> (RunReq -> STM ())
-  -> (Wen -> Gang -> Path -> IO (Maybe (Term, Noun)))
+  -> ScryFunc
   -> (TermSize, Term.Client)
   -> (Text -> RIO e ())
   -> IO ()
@@ -502,6 +572,7 @@ router slog waitFx Drivers {..} = do
       case ef of
         GoodParse (EfVega _ _              ) -> vega
         GoodParse (EfExit _ _              ) -> exit
+        GoodParse (EfWend _                ) -> pure ()
         GoodParse (EfVane (VEBehn       ef)) -> io (dBehn ef)
         GoodParse (EfVane (VEBoat       ef)) -> io (dSync ef)
         GoodParse (EfVane (VEClay       ef)) -> io (dSync ef)
@@ -537,7 +608,7 @@ data ComputeConfig = ComputeConfig
   { ccOnWork      :: STM RunReq
   , ccOnKill      :: STM ()
   , ccOnSave      :: STM ()
-  , ccOnScry      :: STM (Wen, Gang, Path, Maybe (Term, Noun) -> IO ())
+  , ccOnScry      :: STM (Gang, ScryReq, Maybe (Term, Noun) -> IO ())
   , ccPutResult   :: (Fact, FX) -> STM ()
   , ccShowSpinner :: Maybe Text -> STM ()
   , ccHideSpinner :: STM ()
@@ -551,7 +622,7 @@ runCompute serf ComputeConfig {..} = do
   let onRR = asum [ ccOnKill <&> Serf.RRKill
                   , ccOnSave <&> Serf.RRSave
                   , ccOnWork
-                  , ccOnScry <&> \(w,g,p,k) -> Serf.RRScry w g p k
+                  , ccOnScry <&> \(g,r,k) -> Serf.RRScry g r k
                   ]
 
   vEvProcessing :: TMVar Ev <- newEmptyTMVarIO

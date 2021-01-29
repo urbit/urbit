@@ -26,8 +26,6 @@ import Urbit.Vere.Ames.DNS (galaxyPort, resolvServ)
 import Urbit.Vere.Ames.UDP (UdpServ(..), fakeUdpServ, realUdpServ)
 import Urbit.Vere.Stat     (AmesStat(..), bump, bump')
 
-import qualified Urbit.Noun.Time as Time
-
 
 -- Constants -------------------------------------------------------------------
 
@@ -143,7 +141,7 @@ ames'
   => Ship
   -> Bool
   -> AmesStat
-  -> (Time.Wen -> Gang -> Path -> IO (Maybe (Term, Noun)))
+  -> ScryFunc
   -> (Text -> RIO e ())
   -> RIO e ([Ev], RAcquire e (DriverApi NewtEf))
 ames' who isFake stat scry stderr = do
@@ -198,7 +196,7 @@ ames
   -> Ship
   -> Bool
   -> AmesStat
-  -> (Time.Wen -> Gang -> Path -> IO (Maybe (Term, Noun)))
+  -> ScryFunc
   -> (EvErr -> STM PacketOutcome)
   -> (Text -> RIO e ())
   -> ([Ev], RAcquire e (NewtEf -> IO ()))
@@ -269,7 +267,6 @@ ames env who isFake stat scry enqueueEv stderr = (initialEvents, runAmes)
       -- port number, host address, bytestring
     (p, a, b) <- atomically (bump' asRcv >> usRecv)
     ver <- readTVarIO vers
-
     case decode b of
       Right (pkt@Packet {..}) | ver == Nothing || ver == Just pktVersion -> do
         logDebug $ displayShow ("ames: bon packet", pkt, showUD $ bytesAtom b)
@@ -284,7 +281,8 @@ ames env who isFake stat scry enqueueEv stderr = (initialEvents, runAmes)
               -> do
                 bump asFwd
                 forward dest $ encode pkt
-                  { pktOrigin = pktOrigin <|> Just (ipDest p a) }
+                  { pktOrigin = pktOrigin
+                            <|> Just (AAIpv4 (Ipv4 a) (fromIntegral p)) }
               where
                 notSelf (EachYes g) = who /= Ship (fromIntegral g)
                 notSelf (EachNo  _) = True
@@ -362,12 +360,12 @@ ames env who isFake stat scry enqueueEv stderr = (initialEvents, runAmes)
         EachNo  addr -> to (ipv4Addr addr)
 
   scryVersion :: HasLogFunc e => RIO e (Maybe Version)
-  scryVersion = scryNow scry "ax" who "" ["protocol", "version"]
+  scryVersion = scryNow scry "ax" "" ["protocol", "version"]
 
   scryLane :: HasLogFunc e
            => Ship
            -> RIO e (Maybe [AmesDest])
-  scryLane ship = scryNow scry "ax" who "" ["peers", tshow ship, "forward-lane"]
+  scryLane ship = scryNow scry "ax" "" ["peers", tshow ship, "forward-lane"]
 
   ipv4Addr (Jammed (AAVoid v  )) = absurd v
   ipv4Addr (Jammed (AAIpv4 a p)) = SockAddrInet (fromIntegral p) (unIpv4 a)

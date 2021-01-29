@@ -13,7 +13,6 @@ import Urbit.Prelude hiding (Builder)
 
 import Data.ByteString.Builder
 import Urbit.King.Scry
-import Urbit.Vere.Serf.Types
 
 import Data.Conduit       (ConduitT, Flush(..), yield)
 import Data.Text.Encoding (encodeUtf8Builder)
@@ -23,7 +22,6 @@ import qualified Data.Text.Encoding  as E
 import qualified Network.HTTP.Types  as H
 import qualified Network.Wai         as W
 import qualified Network.Wai.Conduit as W
-import qualified Urbit.Noun.Time     as Time
 
 newtype KingSubsite = KS { runKingSubsite :: W.Application }
 
@@ -44,7 +42,7 @@ streamSlog a = do
 
 kingSubsite :: HasLogFunc e
             => Ship
-            -> (Time.Wen -> Gang -> Path -> IO (Maybe (Term, Noun)))
+            -> ScryFunc
             -> IO RenderedStat
             -> TVar ((Atom, Tank) -> IO ())
             -> RAcquire e KingSubsite
@@ -118,7 +116,7 @@ kingSubsite who scry stat func = do
               => Text
               -> RIO e (Maybe Bool)
     scryAuth cookie =
-      scryNow scry "ex" who "" ["authenticated", "cookie", textAsTa cookie]
+      scryNow scry "ex" "" ["authenticated", "cookie", textAsTa cookie]
 
 fourOhFourSubsite :: Ship -> KingSubsite
 fourOhFourSubsite who = KS $ \req respond ->
