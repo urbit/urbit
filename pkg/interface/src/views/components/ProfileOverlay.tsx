@@ -26,11 +26,13 @@ type ProfileOverlayProps = ColProps & {
 
 class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
   public popoverRef: React.Ref<typeof Col>;
+  public dropdownRef: React.Ref<typeof Col>;
 
   constructor(props) {
     super(props);
 
     this.popoverRef = React.createRef();
+    this.dropdownRef = React.createRef();
     this.onDocumentClick = this.onDocumentClick.bind(this);
   }
 
@@ -45,9 +47,9 @@ class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
   }
 
   onDocumentClick(event) {
-    const { popoverRef } = this;
+    const { popoverRef, dropdownRef } = this;
     // Do nothing if clicking ref's element or descendent elements
-    if (!popoverRef.current || popoverRef.current.contains(event.target)) {
+    if (!popoverRef.current || dropdownRef.current.contains(event.target) || popoverRef.current.contains(event.target)) {
       return;
     }
 
@@ -129,13 +131,14 @@ class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
               border={1}
               borderRadius={2}
               borderColor="lightGray"
+              ref={this.dropdownRef}
               boxShadow="0px 0px 0px 3px">
                 <Row
                   p={1}
                   color='black'
                   cursor='pointer'
                   fontSize={0}
-                  onClick={() => history.push('/~profile/' + window.ship)}>
+                  onClick={() => history.push('/~profile/~' + window.ship)}>
                 View Profile
               </Row>
               {(!isOwn) && (
