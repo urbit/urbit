@@ -320,12 +320,12 @@
   ?~  p.tab-list  ~
   ?~  u.p.tab-list  ~
   :-  ~
-  %-  crip
-  ;:  weld
-    "`"
-    ~(ram re ~(duck easy-print detail.i.u.p.tab-list))
-    "`"
-  ==
+  =-  (crip :(weld "```hoon\0a" tape "\0a```"))
+  ^-  =tape
+  %-  zing
+  %+  join  "\0a"
+  %+  scag  20
+  (~(win re ~(duck easy-print detail.i.u.p.tab-list)) 2 80)
 ::
 ++  sync-buf
   |=  [buf=wall changes=(list change:lsp-sur)]
