@@ -1,16 +1,18 @@
-/-  view-sur=graph-view, group-store, *group, *metadata-store
-/+  default-agent, agentio, mdl=metadata, resource, dbug
+/-  view-sur=group-view, group-store, *group, *metadata-store
+/+  default-agent, agentio, mdl=metadata, resource, dbug, grpl=group, verb
 |%
 ++  card  card:agent:gall
 +$  state-zero
   $:  %0
-      joining=(map @uv [rid=resource =ship])
+      joining=(map rid=resource =ship)
   ==
+++  view  view-sur
 --
 =|  state-zero
 =*  state  -
 ::
 %-  agent:dbug
+%+  verb  &
 ^-  agent:gall
 =<
 |_  =bowl:gall
@@ -30,21 +32,20 @@
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
-  ?.  ?=(?(%graph-view-action %noun) mark)
+  ?.  ?=(?(%group-view-action %noun) mark)
     (on-poke:def mark vase)
-  =+  !<(=action:view-sur vase)
+  =+  !<(=action:view vase)
   =^  cards  state
-    ?+    -.action  `state
-        %join
-      (jn-start:join:gc +.action)
-    ==
+    (jn-start:join:gc +.action)
   [cards this]
 ::
 ++  on-watch
   |=  =path
-  ?:  ?=(?([%all ~] [%join @ ~]) path)
-    `this
-  (on-watch:def path)
+  ?+  path  (on-watch:def path)
+      [%all ~]  
+    :_  this
+    (fact:io group-view-update+!>([%initial ~(key by joining)]) ~)^~
+  ==
 ::
 ++  on-peek
   |=  =path
@@ -54,10 +55,11 @@
   |=  [=wire =sign:agent:gall]
   =^  cards  state
     ?+    wire  `state
-        [%join @ *]
-      =/  uid=@uv
-        (slav %uv i.t.wire)
-      (jn-agent:(jn-abed:join:gc uid) t.t.wire sign)
+        [%join %ship @ @ *]
+      =/  rid
+        (de-path:resource t.wire)
+      ?.  (~(has by joining) rid)  `state
+      (jn-agent:(jn-abed:join:gc rid) t.t.t.t.wire sign)
     ==
   [cards this]
 ::
@@ -69,21 +71,25 @@
   |=  =path
   `this
 ::
-++  on-fail
-  |=  [=term =tang]
-  `this
+++  on-fail  on-fail:def
 --
 |_  =bowl:gall
 ++  met  ~(. mdl bowl)
+++  grp  ~(. grpl bowl)
 ++  io   ~(. agentio bowl)
 ::
-++  tx-fact
-  |=  [kind=@tas uid=@uv fact=@tas]
-  (fact:io graph-view-update+!>([kind uid fact]) /all /tx/(scot %uv uid) ~)
 ::
 ++  join
-  |_  [uid=@uv rid=resource =ship]
+  |_  [rid=resource =ship]
   ++  jn-core  .
+  ::
+  ++  tx-fact
+    |=  =progress:view
+    ~&  +<
+    =;  cage
+      (fact:io cage /all tx+(en-path:resource rid) ~)
+    group-view-update+!>([%progress rid progress]) 
+  ::
   ++  watch-md
     (watch-our:(jn-pass-io /md) %metadata-store /updates)
   ::
@@ -91,29 +97,28 @@
     (watch-our:(jn-pass-io /groups) %group-store /groups)
   ::
   ++  jn-pass-io
-    |=  =path
-    ~(. pass:io (weld /join/(scot %uv uid) path))
+    |=  pax=path
+    ~(. pass:io (welp join+(en-path:resource rid) pax))
   :: 
   ++  jn-abed
-    |=  uid=@uv 
-    =/  [r=resource s=^ship]
-      (~(got by joining) uid)
-    jn-core(uid uid, rid r, ship s)
+    |=  r=resource
+    =/  s=^ship
+      (~(got by joining) r)
+    jn-core(rid r, ship s)
   ::
   ++  jn-start
     |=  [rid=resource =^ship]
     ^-  (quip card _state)
-    =/  uid=@uv
-      (shaf %join eny.bowl)
+    ?<  (~(has by joining) rid)
+    =.  joining
+      (~(put by joining) rid ship)
     =.  jn-core
-      jn-core(uid uid, rid rid, ship ship)
+      (jn-abed rid)
     =/  maybe-group
        (group-from-app-resource:met %contacts rid)
-    :_  state(joining (~(put by joining) uid [rid ship]))
     ?^  maybe-group
-      :_  ~
-      %+   poke-our:(jn-pass-io /pull-graph)  %graph-pull-hook
-      pull-hook-action+!>([%add rid ship])
+      ~|("already joined group {<rid>}" !!)
+    :_  state
     :~  %+  poke:(jn-pass-io /add)
           [ship %group-push-hook]
         group-update+!>([%add-members rid (silt our.bowl ~)])
@@ -130,8 +135,11 @@
         %add  :: join group
       ?>  ?=(%poke-ack -.sign)
       ?^  p.sign
-        join-failed
-      joined
+        (cleanup %no-perms)
+      :_  state
+      :_  ~
+      %+  poke-our:(jn-pass-io /pull-groups)  %group-pull-hook 
+      pull-hook-action+!>([%add ship rid])
       ::
         %pull-groups
       ?>  ?=(%poke-ack -.sign)
@@ -160,7 +168,7 @@
         %kick  md-kick
       ==
       ::
-        %pull-graph
+        %pull-graphs
       ?>  ?=(%poke-ack -.sign)
       %-  cleanup
       ?^(p.sign %strange %done)
@@ -181,14 +189,21 @@
     ::
     ++  md-fact
       |=  [=mark =vase]
-      :_  state
-      ?.  ?=(%metadata-update mark)  ~
+      ?.  ?=(%metadata-update mark)  `state
       =+  !<(upd=metadata-update vase)
-      ?.  ?=(%add -.upd)  ~
-      ?.  =(group-path.upd (en-path:resource rid))  ~
+      ~&  upd
+      ?.  ?=(%add -.upd)  `state
+      ?.  =(group-path.upd (en-path:resource rid))  `state
+      =^  cards  state
+        (cleanup %done)
+      :_  state
+      %+  welp  cards
+      ?.  hidden:(need (scry-group:grp rid))  ~
+      =/  app-rid=resource
+        (de-path:resource app-path.resource.upd)
       :_  ~
       %+  poke-our:(jn-pass-io /pull-graph)  %graph-pull-hook
-      pull-hook-action+!>([%add ship rid])
+      pull-hook-action+!>([%add [entity .]:rid])
     ::
     ++  groups-kick
       :_  state
@@ -204,19 +219,13 @@
       (cleanup %strange)
     ::
     ++  cleanup
-      |=  fact=@t
-      :_  state(joining (~(del by joining) uid))
+      |=  =progress:view
+      ^-  (quip card _state)
+      :_  state(joining (~(del by joining) rid))
       :~  (leave-our:(jn-pass-io /groups) %group-store)
           (leave-our:(jn-pass-io /md) %metadata-store)
-          (tx-fact %join uid %no-perms)
+          (tx-fact progress)
       ==
-    ::
-    ++  joined
-      :_  state
-      :_  ~
-      %+  poke-our:(jn-pass-io /pull-group)  %group-pull-hook
-      pull-hook-action+!>([%add ship rid])
-    ::
     --
   --
 --
