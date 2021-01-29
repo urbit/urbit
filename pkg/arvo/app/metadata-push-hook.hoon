@@ -1,6 +1,6 @@
 ::  metadata-push-hook [landscape]:
 ::
-/-  *group, *invite-store, *metadata-store
+/-  *group, *invite-store, store=metadata-store
 /+  default-agent, verb, dbug, grpl=group, push-hook,
     resource, mdl=metadata, gral=graph
 ~%  %group-hook-top  ..part  ~
@@ -11,7 +11,7 @@
   ^-  config:push-hook
   :*  %metadata-store
       /all
-      metadata-update
+      update:store
       %metadata-update
       %metadata-pull-hook
   ==
@@ -39,28 +39,28 @@
   |=  [=mark =vase]
   ?.  ?=(%metadata-hook-update mark)
     (on-poke:def mark vase)
-  =+  !<(upd=metadata-hook-update vase)
-  ?.  ?=(%req-preview -.upd)
+  =+  !<(=hook-update:store vase)
+  ?.  ?=(%req-preview -.hook-update)
     (on-poke:def mark vase)
-  =*  rid  group.upd
+  =*  rid  group.hook-update
   |^
   ?>  =(entity.rid our.bowl)
   ?>  (can-join:grp rid src.bowl)
   =/  members
     ~(wyt in (members:grp rid))
-  =/  =metadata
-    (need (peek-metadata:met %contacts rid))
+  =/  =metadatum:store
+    (need (peek-metadatum:met %contacts rid))
   :_  this
   =;  =cage
     [%pass / %agent [src.bowl %metadata-pull-hook] %poke cage]~
   :-  %metadata-hook-update
-  !>  ^-  metadata-hook-update
-  [%preview rid channels members channel-count metadata]
+  !>  ^-  hook-update:store
+  [%preview rid channels members channel-count metadatum]
   ::
   ++  channels
-    %-  ~(gas by *associations)
+    %-  ~(gas by *associations:store)
     %+  skim  ~(tap by (app-metadata-for-group:met rid %graph))
-    |=([=md-resource group=resource =metadata] preview.metadata)
+    |=([=md-resource:store group=resource =metadatum:store] preview.metadatum)
   ::   
   ++  channel-count
     ~(wyt by (app-metadata-for-group:met rid %graph))
@@ -75,19 +75,19 @@
 ::
 ++  should-proxy-update
   |=  =vase
-  =+  !<(upd=metadata-update vase)
-  ?.  ?=(?(%add %remove) -.upd)
+  =+  !<(=update:store vase)
+  ?.  ?=(?(%add %remove) -.update)
     %.n
   =/  role=(unit (unit role-tag))
-    (role-for-ship:grp group.upd src.bowl)
-  =/  =metadata
+    (role-for-ship:grp group.update src.bowl)
+  =/  =metadatum:store
     (need (peek-metadata:met %contacts group.upd))
   ?~  role  %.n
   ?^  u.role  
     ?=(?(%admin %moderator) u.u.role)
   ?.  ?=(%add -.upd)  %.n
   ?&  =(src.bowl entity.resource.resource.upd)
-      ?=(%member-metadata vip.metadata)
+      ?=(%member-metadata vip.metadatum)
   ==
 ::
 ++  take-update
@@ -100,11 +100,11 @@
   ^-  vase
   =/  group
     (scry-group:grp rid)
-  =/  =associations
+  =/  =associations:store
     (metadata-for-group:met rid)
   ?>  ?=(^ group)
   ?>  (~(has in members.u.group) src.bowl)
-  !>  ^-  metadata-update
+  !>  ^-  update:store
   [%initial-group rid associations]
 ::
 --

@@ -94,6 +94,7 @@ class App extends React.Component {
       this.updateTheme(this.themeWatcher);
     }, 500);
     this.api.local.getBaseHash();
+    this.api.settings.getAll();
     this.store.rehydrate();
     Mousetrap.bindGlobal(['command+/', 'ctrl+/'], (e) => {
       e.preventDefault();

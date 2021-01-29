@@ -2,18 +2,16 @@
 ^?
 |%
 ::
-+$  group-path    path
 +$  app-name      term
-+$  app-path      path
 +$  md-resource   [=app-name =resource]
-+$  association   [group=resource =metadata]
++$  association   [group=resource =metadatum]
 +$  associations  (map md-resource association)
 +$  group-preview
   $:  group=resource
       channels=associations
       members=@ud
       channel-count=@ud
-      =metadata
+      =metadatum
   ==
 ::
 +$  color  @ux
@@ -30,7 +28,7 @@
 ::    %$: No variation
 ::
 +$  vip-metadata  ?(%reader-comments %member-metadata %$)
-+$  metadata
++$  metadatum
   $:  title=cord
       description=cord
       =color
@@ -42,20 +40,25 @@
       vip=vip-metadata
   ==
 ::
-+$  metadata-action
-  $%  [%add group=resource resource=md-resource =metadata]
++$  action
+  $%  [%add group=resource resource=md-resource =metadatum]
       [%remove group=resource resource=md-resource]
       [%initial-group group=resource =associations]
   ==
 ::
-+$  metadata-hook-update
++$  hook-update
    $%  [%req-preview group=resource]
        [%preview group-preview]
    ==
 ::
-+$  metadata-update
-  $%  metadata-action
++$  update
+  $%  action
       [%associations =associations]
-      [%updated-metadata group=resource resource=md-resource before=metadata =metadata]
+      $:  %updated-metadata 
+          group=resource
+          resource=md-resource 
+          before=metadatum
+          =metadatum
+      ==
   ==
 --

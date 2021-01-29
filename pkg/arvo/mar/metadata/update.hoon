@@ -1,20 +1,18 @@
-/-  *metadata-store
-/+  *metadata-json
-|_  upd=metadata-update
+/+  store=metadata-store
+|_  =update:store
 ++  grad  %noun
 ++  grow
   |%
-  ++  noun  upd
+  ++  noun  update
   ++  resource
-    ?>  ?=(?(%add %remove %initial-group %updated-metadata) -.upd)
-    group.upd
-  ++  json  (update-to-json upd)
+    ?>  ?=(?(%add %remove %initial-group) -.update)
+    group.update
+  ++  json  (update:enjs:store update)
   --
 ::
 ++  grab
   |%
-  ++  noun  metadata-update
-  ++  json  json-to-action
+  ++  noun  update:store
+  ++  json  action:dejs:store
   --
-::
 --

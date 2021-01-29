@@ -2,7 +2,7 @@
 ::
 ::  allow syncing group data from foreign paths to local paths
 ::
-/-  *group, invite-store, *metadata-store
+/-  *group, invite-store, metadata=metadata-store
 /+  default-agent, verb, dbug, store=group-store, grpl=group, pull-hook
 /+  resource, mdl=metadata
 ~%  %group-hook-top  ..part  ~
@@ -12,12 +12,12 @@
 ++  config
   ^-  config:pull-hook
   :*  %metadata-store
-      metadata-update
+      update:metadata
       %metadata-update
       %metadata-push-hook
   ==
 +$  state-zero
-  [%0 previews=(map resource group-preview)]
+  [%0 previews=(map resource group-preview:metadata)]
 ::
 --
 ::
@@ -81,12 +81,12 @@
   |=  [=mark =vase]
   ?.  ?=(%metadata-hook-update mark)
     (on-poke:def mark vase)
-  =+  !<(upd=metadata-hook-update vase)
-  ?.  ?=(%preview -.upd)
+  =+  !<(=hook-update:metadata vase)
+  ?.  ?=(%preview -.hook-update)
     (on-poke:def mark vase)
-  :_  this(previews (~(put by previews) group.upd +.upd))
+  :_  this(previews (~(put by previews) group.hook-update +.hook-update))
   =/  paths=(list path)
-    ~[preview+(en-path:resource group.upd)]
+    ~[preview+(en-path:resource group.hook-update)]
   :~  [%give %fact paths mark^vase]
       [%give %kick paths ~]
   ==
@@ -115,7 +115,7 @@
     (on-watch:def path)
   =/  rid=resource
     (de-path:resource t.path)
-  =/  prev=(unit group-preview)
+  =/  prev=(unit group-preview:metadata)
     (~(get by previews) rid)
   :_  this
   ?~  prev
@@ -130,14 +130,14 @@
 ++  on-pull-nack
   |=   [=resource =tang]
   ^-  (quip card _this)
-  =/  =associations
+  =/  =associations:metadata
     (metadata-for-group:met resource)
   :_  this
   %+  turn  ~(tap by associations)
-  |=  [=md-resource =association]
+  |=  [=md-resource:metadata =association:metadata]
   =-  [%pass / %agent [our.bowl %metadata-store] %poke -]
   :-  %metadata-update
-  !>  ^-  metadata-update
+  !>  ^-   update:metadata
   [%remove resource md-resource]
 ::
 ++  on-pull-kick
