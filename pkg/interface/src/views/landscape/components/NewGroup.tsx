@@ -65,7 +65,7 @@ export function NewGroup(props: NewGroupProps & RouteComponentProps) {
         await api.contacts.create(name, policy, title, description);
         const path = `/ship/~${window.ship}/${name}`;
         await waiter(({ contacts, groups, associations }) => {
-          return path in contacts && path in groups && path in associations.contacts;
+          return path in contacts && path in groups && path in associations.groups;
         });
 
         actions.setStatus({ success: null });

@@ -21,6 +21,8 @@ import { AsyncButton } from "~/views/components/AsyncButton";
 import { ColorInput } from "~/views/components/ColorInput";
 import { ImageInput } from "~/views/components/ImageInput";
 import { MarkdownField } from "~/views/apps/publish/components/MarkdownField";
+import { resourceFromPath } from "~/logic/lib/group";
+import GroupSearch from "~/views/components/GroupSearch";
 
 
 const formSchema = Yup.object({
@@ -62,8 +64,15 @@ export function EditProfile(props: any) {
             return acc.then(() =>
               api.contacts.setPublic(newValue)
             );
+          } else if (key === 'groups') {
+            newValue.map((e) => {
+              if (!contact['groups']?.[e]) {
+                return acc.then(() => {
+                  api.contacts.edit(ship, { 'add-group': resourceFromPath(e) });
+                });
+              }
+            })
           } else if (
-            key !== "groups" &&
             key !== "last-updated" &&
             key !== "isPublic"
           ) {
@@ -93,7 +102,7 @@ export function EditProfile(props: any) {
         <Input id="nickname" label="Name" mb={3} />
         <Col width="100%">
           <Text mb={2}>Description</Text>
-          <MarkdownField id="bio" mb={3} s3={props.s3} /> 
+          <MarkdownField id="bio" mb={3} s3={props.s3} />
         </Col>
         <ColorInput id="color" label="Sigil Color" mb={3} />
         <Row mb={3} width="100%">
@@ -105,7 +114,8 @@ export function EditProfile(props: any) {
           </Col>
         </Row>
         <Checkbox mb={3} id="isPublic" label="Public Profile" />
-        <AsyncButton primary loadingText="Updating..." border>
+        <GroupSearch label="Pinned Groups" id="groups" groups={props.groups} associations={props.associations} />
+        <AsyncButton primary loadingText="Updating..." border mt={3}>
           Submit
         </AsyncButton>
       </Form>

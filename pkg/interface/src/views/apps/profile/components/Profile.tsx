@@ -66,6 +66,8 @@ export function Profile(props: any) {
             contact={contact}
             s3={props.s3}
             api={props.api}
+            groups={props.groups}
+            associations={props.associations}
             isPublic={isPublic}/>
         ) : (
           <ViewProfile ship={ship} contact={contact} isPublic={isPublic} />

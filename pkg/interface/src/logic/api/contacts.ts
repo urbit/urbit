@@ -22,6 +22,8 @@ export default class ContactsApi extends BaseApi<StoreState> {
     {color: 'fff'}  // with no 0x prefix
     {avatar: null}
     {avatar: ''}
+    {add-group: {ship, name}}
+    {remove-group: {ship, name}}
     */
     console.log(ship, editField);
     return this.storeAction({

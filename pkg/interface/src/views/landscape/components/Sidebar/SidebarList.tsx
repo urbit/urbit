@@ -57,7 +57,7 @@ export function SidebarList(props: {
       const assoc = associations[a];
       return group
         ? assoc.group === group
-        : !(assoc.group in props.associations.contacts);
+        : !(assoc.group in props.associations.groups);
     })
     .sort(sidebarSort(associations, props.apps)[config.sortBy]);
 

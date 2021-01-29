@@ -45,6 +45,8 @@ export default function ProfileScreen(props: any) {
               <Box>
                 <Profile
                   ship={ship}
+                  associations={props.associations}
+                  groups={props.groups}
                   contact={contact}
                   api={props.api}
                   s3={props.s3}

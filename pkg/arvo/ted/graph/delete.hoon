@@ -1,4 +1,4 @@
-/-  spider, graph-view, graph=graph-store, *metadata-store, *group
+/-  spider, graph-view, graph=graph-store, met=metadata-store, *group
 /+  strandio, resource
 =>
 |% 
@@ -9,16 +9,14 @@
 ++  scry-metadata
   |=  rid=resource
   =/  m  (strand ,(unit resource))
-  ;<  paxs=(unit (set path))  bind:m
-    %+  scry:strandio   ,(unit (set path))
+  ;<  group=(unit resource)  bind:m
+    %+  scry:strandio   ,(unit resource)
     ;:  weld
       /gx/metadata-store/resource/graph
       (en-path:resource rid)
       /noun
     ==
-  ?~  paxs  (pure:m ~)
-  ?~  u.paxs  (pure:m ~)
-  (pure:m `(de-path:resource n.u.paxs))
+  (pure:m group)
 ::
 ++  scry-group
   |=  rid=resource
@@ -42,11 +40,7 @@
   ;<  ~  bind:m
     (poke-our %graph-push-hook %push-hook-action !>([%remove rid]))
   ;<  ~  bind:m
-    %+  poke-our  %metadata-hook
-    :-  %metadata-action
-    !>  :+  %remove 
-      (en-path:resource group-rid)
-    [%graph (en-path:resource rid)]
+    (poke-our %metadata-push-hook %push-hook-action !>([%remove rid]))
   (pure:m ~)
 --
 ::
@@ -74,6 +68,5 @@
   (poke-our %group-push-hook %push-hook-action !>([%remove rid.action]))
 ;<  ~  bind:m  (delete-graph u.ugroup-rid rid.action)
 ;<  ~  bind:m
-  %+  poke-our  %metadata-hook
-  metadata-hook-action+!>([%remove (en-path:resource u.ugroup-rid)])
+  (poke-our %metadata-push-hook %push-hook-action !>([%remove rid.action]))
 (pure:m !>(~))
