@@ -67,6 +67,10 @@
         add
     (roll (turn txos.t |=(=txo value.txo)) add)
   ::
+  ++  fee
+    =/  [in=sats out=sats]  value
+    (sub in out)
+  ::
   ++  tx-data
     |^
     ^-  data:tx:btc
@@ -85,10 +89,6 @@
       :-  (script-pubkey:btc address.txo)
       value.txo
     --
-  ::
-  ++  fee
-    =/  [in=sats out=sats]  value
-    (sub in out)
   ::
   ++  get-txid
     ^-  txid

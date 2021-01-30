@@ -37,7 +37,7 @@
               [[%bech32 'bc1qlwd7mw33uea5m8r2lsnsrkc7gp2qynrxsfxpfm'] 200.000 ~]
           ==
           :*  `~[[(mk-utxo 500.000) %0 2]]
-              `98.400
+              `332.500
           ==
       ==
       ::
@@ -54,7 +54,7 @@
               [[%bech32 'bc1qlwd7mw33uea5m8r2lsnsrkc7gp2qynrxsfxpfm'] 200.000 ~]
           ==
           :*  `~[[(mk-utxo 235.000) %1 2] [(mk-utxo 200.000) %0 1]]
-              `64.000
+              `297.500
           ==
       ==
       ::
@@ -70,9 +70,37 @@
               *(unit sats:btc)
           ==
       ==
+      :*  'zpub6rFR7y4Q2AijBEqTUquhVz398htDFrtymD9xYYfG1m4wAcvPhXNfE3EfH1r1ADqtfSdVCToUG868RvUUkgDKf31mGDtKsAYz2oz2AGutZYs'
+          0v1gt.mc4ca.lfs0m.q1dal.lqobu.mmlbd.2umnp.lj9dr.4pf4s.pvclr.dps96.4a6i8.rt6n9.krp0r.11kqu.ckqe4.1tmat.gr754.463aj.a4b41.jj7qg
+          999
+          10
+          ~[[(mk-utxo 500.000) %0 2]]
+          :~  [[%bech32 'bc1q59u5epktervh6fxqay2dlph0wxu9hjnx6v8n66'] 298.580 ~]
+              [[%bech32 'bc1qlwd7mw33uea5m8r2lsnsrkc7gp2qynrxsfxpfm'] 200.000 ~]
+          ==
+          :*  `~[[(mk-utxo 500.000) %0 2]]
+              *(unit sats:btc)
+          ==
+      ==
   ==
 ::
-++  dust-vectors  %.n
+++  dust-output-vectors
+  =|  w=walt
+  ^-  (list vector)
+  :~
+      :*  'zpub6rFR7y4Q2AijBEqTUquhVz398htDFrtymD9xYYfG1m4wAcvPhXNfE3EfH1r1ADqtfSdVCToUG868RvUUkgDKf31mGDtKsAYz2oz2AGutZYs'
+          0v1gt.mc4ca.lfs0m.q1dal.lqobu.mmlbd.2umnp.lj9dr.4pf4s.pvclr.dps96.4a6i8.rt6n9.krp0r.11kqu.ckqe4.1tmat.gr754.463aj.a4b41.jj7qg
+          999
+          10
+          ~[[(mk-utxo 500.000) %0 2]]
+          :~  [[%bech32 'bc1q59u5epktervh6fxqay2dlph0wxu9hjnx6v8n66'] 298.580 ~]
+              [[%bech32 'bc1qlwd7mw33uea5m8r2lsnsrkc7gp2qynrxsfxpfm'] 204 ~]
+          ==
+          :*  `~[[(mk-utxo 500.000) %0 2]]
+              *(unit sats:btc)
+          ==
+      ==
+  ==
 ::
 ++  test-vectors
   ^-  tang
@@ -83,6 +111,8 @@
           %+  category  "select with change"
           (zing (turn vectors check-change))
           ::
+          %+  category  "don't allow dust outputs"
+          (zing (turn dust-output-vectors check-dust-output))
       ==
   ::
   ++  check-single-random-draw
@@ -95,17 +125,33 @@
   ++  check-change
     |=  v=vector
     =/  w=walt  (from-xpub xpub.v fprint ~ ~ ~)
-    =/  addis=(list [address:btc addi])
+    =.  wach.w
+      %-  ~(gas by *(map address:btc addi))
       %+  turn  ins.v
       |=  i=insel
       :-  (~(mk-address wad w chyg.i) idx.i)
       [%.y %0 0 (sy ~[utxo.i])]
-    ?~  addis  ~
-    =.  w  w(wach (my addis
     %+  expect-eq
       !>(chng.expect.v)
-      !>(+:~(with-change sut [w eny.v block.v ~ feyb.v outs.v]))
+      !>(chng:~(with-change sut [w eny.v block.v ~ feyb.v outs.v]))
+  ::
+  ++  check-dust-output
+    |=  v=vector
+    =/  w=walt  (from-xpub xpub.v fprint ~ ~ ~)
+    =.  wach.w  (insels-to-wach w ins.v)
+    %-  expect-fail
+    |.(~(with-change sut [w eny.v block.v ~ feyb.v outs.v]))
+  ::
+  ++  insels-to-wach
+    |=  [w=walt is=(list insel)]
+    ^-  wach
+    %-  ~(gas by *(map address:btc addi))
+    %+  turn  is
+    |=  i=insel
+    :-  (~(mk-address wad w chyg.i) idx.i)
+    [%.y %0 0 (sy ~[utxo.i])]
   --
-  ::  don't allow dust outputs
+  ::  if a non-change output is dust, error
+  ::  change shouldn't be returned when change is dust
   ::
 --
