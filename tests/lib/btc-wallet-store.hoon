@@ -75,7 +75,7 @@
           999
           10
           ~[[(mk-utxo 500.000) %0 2]]
-          :~  [[%bech32 'bc1q59u5epktervh6fxqay2dlph0wxu9hjnx6v8n66'] 298.580 ~]
+          :~  [[%bech32 'bc1q59u5epktervh6fxqay2dlph0wxu9hjnx6v8n66'] 298.500 ~]
               [[%bech32 'bc1qlwd7mw33uea5m8r2lsnsrkc7gp2qynrxsfxpfm'] 200.000 ~]
           ==
           :*  `~[[(mk-utxo 500.000) %0 2]]
