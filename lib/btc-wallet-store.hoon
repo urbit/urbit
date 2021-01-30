@@ -67,6 +67,10 @@
         add
     (roll (turn txos.t |=(=txo value.txo)) add)
   ::
+  ++  fee
+    =/  [in=sats out=sats]  value
+    (sub in out)
+  ::
   ++  tx-data
     |^
     ^-  data:tx:btc
@@ -85,10 +89,6 @@
       :-  (script-pubkey:btc address.txo)
       value.txo
     --
-  ::
-  ++  fee
-    =/  [in=sats out=sats]  value
-    (sub in out)
   ::
   ++  get-txid
     ^-  txid
@@ -217,9 +217,29 @@
 ::
 ++  sut
 |_  [w=walt eny=@uvJ last-block=@ud payee=(unit ship) =feyb txos=(list txo)]
-  ++  meta-weight  10
-  ++  output-weight  31
-  ++  n-txos  (lent txos)
+  ++  dust-sats  3
+  ++  dust-threshold
+    |=  output-bipt=bipt:btc
+    ^-  vbytes
+    (mul dust-sats (input-weight output-bipt))
+  ++  meta-weight  11
+  ++  output-weight
+    |=  b=bipt:btc
+    ^-  vbytes
+    ?-  b
+      %44  34
+      %49  32
+      %84  31
+    ==
+  ::
+  ++  input-weight
+    |=  b=bipt:btc
+    ^-  vbytes
+    ?-  b
+      %44  148
+      %49  91
+      %84  68
+    ==
   ::
   ++  target-value
     ^-  sats
@@ -227,33 +247,25 @@
     |=([a=sats b=sats] (add a b))
   ::
   ++  base-weight
-    |=  num-txos=@ud
     ^-  vbytes
     %+  add  meta-weight
-    (mul num-txos output-weight)
-  ::
-  ++  input-weight
-    ^-  vbytes
-    ?.  ?=(%84 bipt.w)
-      ~|("Only bech32 wallets supported" !!)
-    102
-  ::
-  ++  min-tx-fee
-    ^-  sats
-    %+  mul  feyb
-    (add (base-weight 1) input-weight)
+    %+  roll
+      %+  turn  txos
+      |=(=txo (output-weight (address-bipt:btc address.txo)))
+    add
   ::
   ++  total-vbytes
     |=  selected=(list insel)
     ^-  vbytes
-    %+  add  (base-weight n-txos)
-    (mul input-weight (lent selected))
+    %+  add  base-weight
+    (mul (input-weight bipt.w) (lent selected))
   ::  value of an input after fee
   ::  0 if net is <= 0
   ::
   ++  net-value
-    |=  val=sats  ^-  sats
-    =/  cost  (mul input-weight feyb)
+    |=  val=sats
+    ^-  sats
+    =/  cost  (mul (input-weight bipt.w) feyb)
     ?:  (lte val cost)  0
     (sub val cost)
   ::
@@ -270,18 +282,24 @@
     ^-  [tb=(unit txbu) chng=(unit sats)]
     =+  tb=select-utxos
     ?~  tb  [~ ~]
-    =+  fee=~(fee txb u.tb)
-    =/  costs=sats                      ::  cost of this tx + sending another
-      %+  add  min-tx-fee
-      (mul feyb vbytes.u.tb)
-    ?.  (gth fee costs)
+    =+  excess=~(fee txb u.tb)        ::  (inputs - outputs)
+    =/  new-fee=sats                   ::  cost of this tx + one more output
+      (mul feyb (add (output-weight bipt.w) vbytes.u.tb))
+    ?.  (gth excess new-fee)
+      [tb ~]
+    ?.  (gth (sub excess new-fee) (dust-threshold bipt.w))
       [tb ~]
     :-  tb
-    `(sub fee costs)
+    `(sub excess new-fee)
   ::  Uses naive random selection. Should switch to branch-and-bound later.
   ::
   ++  select-utxos
     |^  ^-  (unit txbu)
+    ?.  %+  levy  txos
+        |=  =txo
+        %+  gth  value.txo
+        (dust-threshold (address-bipt:btc address.txo))
+      ~|("One or more suggested outputs is dust." !!)
     =/  is=(unit (list insel))
       %-  single-random-draw
       %-  zing
@@ -303,7 +321,7 @@
     |=  is=(list insel)
     ^-  (unit (list insel))
     =/  rng  ~(. og eny)
-    =/  target  (add target-value (mul feyb (base-weight n-txos)))   ::  add base fees to target
+    =/  target  (add target-value (mul feyb base-weight))   ::  add base fees to target
     =|  [select=(list insel) total=sats:btc]
     |-
     ?:  =(~ is)  ~
