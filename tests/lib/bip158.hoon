@@ -1,20 +1,30 @@
 /+  *test, *bip158
 |%
 +$  filter  [blockhash=tape fil=@ux]
++$  vector
+  $:  =filter
+      included-script-pubkeys=(list hexb)
+      excluded-script-pubkeys=(list hexb)
+      expect=[hashed-set=(list @)]
+  ==
 ::
-++  block-filters
-  |%
-  ++  test-genesis
-    ^-  filter
+++  block-filter-vectors
+  ^-  (list filter)
+  :~
+    ::  genesis block
+    ::
     :*  "000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943"
         0x19d.fca8
     ==
-  ++  test-926485
-    ^-  filter
+    ::  block 926485
+    ::
     :*  "000000000000015d6077a411a8f5cc95caf775ccf11c54e27df75ce58d187313"
         0x9.027a.cea6.1b6c.c3fb.33f5.d52f.7d08.8a6b.2f75.d234.e89c.a800
     ==
-  --
+  ==
+::
+++  vectors  3
+::
 ++  run
   =/  [p=@ m=@]  [p:params m:params]
   ::  Filter parsing and GCS decoding
