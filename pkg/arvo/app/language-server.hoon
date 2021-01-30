@@ -5,7 +5,7 @@
     easy-print=language-server-easy-print,
     rune-snippet=language-server-rune-snippet,
     build=language-server-build,
-    default-agent
+    default-agent, verb
 |%
 +$  card  card:agent:gall
 +$  lsp-req
@@ -44,6 +44,7 @@
   ==
 --
 ^-  agent:gall
+%+  verb  |
 =|  state-zero
 =*  state  -
 =<
@@ -69,7 +70,7 @@
     |=  old-state=vase
     ^-  (quip card _this)
     ~&  >  %lsp-upgrade
-    [~ this(state *state-zero)]
+    [~ this(state !<(state-zero old-state))]
   ::
   ++  on-poke
     ^+  on-poke:*agent:gall
@@ -324,8 +325,8 @@
   ^-  =tape
   %-  zing
   %+  join  "\0a"
-  %+  scag  20
-  (~(win re ~(duck easy-print detail.i.u.p.tab-list)) 2 80)
+  %+  scag  40
+  (~(win re ~(duck easy-print detail.i.u.p.tab-list)) 0 140)
 ::
 ++  sync-buf
   |=  [buf=wall changes=(list change:lsp-sur)]
