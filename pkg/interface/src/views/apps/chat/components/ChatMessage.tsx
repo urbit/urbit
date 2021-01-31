@@ -185,14 +185,20 @@ export const MessageWithSigil = (props) => {
   const color = contact ? `#${uxToHex(contact.color)}` : dark ?  '#000000' :'#FFFFFF'
   const sigilClass = contact ? '' : dark ? 'mix-blend-diff' : 'mix-blend-darken';
   const [displayName, setDisplayName] = useState(shipName);
+  const [nameMono, setNameMono] = useState((showNickname ? false : true));
   const { hovering, bind } = useHovering();
 
   const showCopyNotice = () => {
     setDisplayName(copyNotice);
+    setNameMono(false);
   };
 
   useEffect(() => {
-    const timer = setTimeout(() => setDisplayName(shipName), 800);
+    const resetDisplay = () => {
+      setDisplayName(shipName);
+      setNameMono((showNickname ? false : true));
+    };
+    const timer = setTimeout(() => resetDisplay(), 800);
     return () => clearTimeout(timer);
   }, [displayName]);
 
@@ -225,15 +231,17 @@ export const MessageWithSigil = (props) => {
             fontSize={0}
             mr={3}
             flexShrink={0}
-            mono={!showNickname}
-            fontWeight={(showNickname) ? '500' : '400'}
+            mono={nameMono}
+            fontWeight={nameMono ? '400' : '500'}
             className={`mw5 db truncate pointer`}
             onClick={() => {
               writeText(`~${msg.author}`),
               showCopyNotice();
             }}
             title={`~${msg.author}`}
-          >{displayName}</Text>
+          >
+            {displayName}
+          </Text>
           <Text flexShrink={0} fontSize={0} gray mono>{timestamp}</Text>
           <Text
             flexShrink={0}
