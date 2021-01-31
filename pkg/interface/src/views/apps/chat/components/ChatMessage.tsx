@@ -235,7 +235,7 @@ export const MessageWithSigil = (props) => {
             fontWeight={nameMono ? '400' : '500'}
             className={`mw5 db truncate pointer`}
             onClick={() => {
-              writeText(`~${msg.author}`),
+              writeText(`~${msg.author}`);
               showCopyNotice();
             }}
             title={`~${msg.author}`}
