@@ -102,7 +102,7 @@
       ==
   ==
 ::
-++  test-vectors
+++  test-all-vectors
   ^-  tang
   |^  ;:  weld
           %+  category  "single-random-draw"
