@@ -178,7 +178,7 @@ export const MessageWithSigil = (props) => {
   const dark = useLocalState(state => state.dark);
 
   const datestamp = moment.unix(msg['time-sent'] / 1000).format(DATESTAMP_FORMAT);
-  const contact = msg.author in contacts ? contacts[msg.author] : false;
+  const contact = `~${msg.author}` in contacts ? contacts[`~${msg.author}`] : false;
   const showNickname = useShowNickname(contact);
   const name = showNickname ? contact.nickname : cite(msg.author);
   const color = contact ? `#${uxToHex(contact.color)}` : dark ?  '#000000' :'#FFFFFF'

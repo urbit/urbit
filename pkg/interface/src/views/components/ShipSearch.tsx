@@ -173,7 +173,7 @@ export function ShipSearch(props: InviteSearchProps) {
           const result = ob.isValidPatp(ship);
           return result ? deSig(s) ?? undefined : undefined;
         }}
-        placeholder="Search for ships"
+        placeholder="Search for ships..."
         candidates={peers}
         renderCandidate={renderCandidate}
         disabled={props.maxLength ? selected.length >= props.maxLength : false}

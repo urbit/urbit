@@ -8,23 +8,23 @@ import LocalReducer from '../reducers/local';
 import { StoreState } from './type';
 import { Timebox } from '~/types';
 import { Cage } from '~/types/cage';
-import ContactReducer from '../reducers/contact-update';
 import S3Reducer from '../reducers/s3-update';
 import { GraphReducer } from '../reducers/graph-update';
 import { HarkReducer } from '../reducers/hark-update';
+import { ContactReducer } from '../reducers/contact-update';
 import GroupReducer from '../reducers/group-update';
 import LaunchReducer from '../reducers/launch-update';
 import ConnectionReducer from '../reducers/connection';
 import SettingsReducer from '../reducers/settings-update';
 import {OrderedMap} from '../lib/OrderedMap';
 import { BigIntOrderedMap } from '../lib/BigIntOrderedMap';
+import {GroupViewReducer} from '../reducers/group-view';
 
 
 export default class GlobalStore extends BaseStore<StoreState> {
   inviteReducer = new InviteReducer();
   metadataReducer = new MetadataReducer();
   localReducer = new LocalReducer();
-  contactReducer = new ContactReducer();
   s3Reducer = new S3Reducer();
   groupReducer = new GroupReducer();
   launchReducer = new LaunchReducer();
@@ -57,7 +57,7 @@ export default class GlobalStore extends BaseStore<StoreState> {
       baseHash: null,
       invites: {},
       associations: {
-        contacts: {},
+        groups: {},
         graph: {},
       },
       groups: {},
@@ -78,6 +78,7 @@ export default class GlobalStore extends BaseStore<StoreState> {
         },
         credentials: null
       },
+      isContactPublic: false,
       contacts: {},
       notifications: new BigIntOrderedMap<Timebox>(),
       archivedNotifications: new BigIntOrderedMap<Timebox>(),
@@ -93,7 +94,8 @@ export default class GlobalStore extends BaseStore<StoreState> {
         group: {}
       },
       notificationsCount: 0,
-      settings: {}
+      settings: {},
+      pendingJoin: {},
     };
   }
 
@@ -106,13 +108,14 @@ export default class GlobalStore extends BaseStore<StoreState> {
     this.inviteReducer.reduce(data, this.state);
     this.metadataReducer.reduce(data, this.state);
     this.localReducer.reduce(data, this.state);
-    this.contactReducer.reduce(data, this.state);
     this.s3Reducer.reduce(data, this.state);
     this.groupReducer.reduce(data, this.state);
     this.launchReducer.reduce(data, this.state);
     this.connReducer.reduce(data, this.state);
     GraphReducer(data, this.state);
     HarkReducer(data, this.state);
+    ContactReducer(data, this.state);
     this.settingsReducer.reduce(data, this.state);
+    GroupViewReducer(data, this.state);
   }
 }

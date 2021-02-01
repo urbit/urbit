@@ -138,9 +138,7 @@ class App extends React.Component {
 
     const notificationsCount = state.notificationsCount || 0;
     const doNotDisturb = state.doNotDisturb || false;
-
-    const showBanner = localStorage.getItem("2020BreachBanner") || "flex";
-    let banner = null;
+    const ourContact = this.state.contacts[`~${this.ship}`] || null;
 
     return (
       <ThemeProvider theme={theme}>
@@ -156,6 +154,7 @@ class App extends React.Component {
                 props={this.props}
                 associations={associations}
                 invites={this.state.invites}
+                ourContact={ourContact}
                 api={this.api}
                 connection={this.state.connection}
                 subscription={this.subscription}
@@ -169,6 +168,7 @@ class App extends React.Component {
                 associations={state.associations}
                 apps={state.launch}
                 api={this.api}
+                contacts={state.contacts}
                 notifications={state.notificationsCount}
                 invites={state.invites}
                 groups={state.groups}

@@ -386,18 +386,17 @@
     [%give %fact paths update-mark.config vase]~
   ::
   ++  forward-update
-    |=  =vase
+    |=  update=vase
     ^-  (list card:agent:gall)
-    =/  rid=(unit resource)
-      (resource-for-update vase)
-    ?~  rid  ~
+    =/  rid=resource
+      (need (resource-for-update update))
     =/  =path
-      resource+(en-path:resource u.rid)
+      resource+(en-path:resource rid)
     =/  =wire
-      (make-wire resource+(en-path:resource u.rid))
+      (make-wire resource+(en-path:resource rid))
     =/  dap=term
-      ?:(=(our.bowl entity.u.rid) store-name.config dap.bowl)
-    [%pass wire %agent [entity.u.rid dap] %poke update-mark.config vase]~
+      ?:(=(our.bowl entity.rid) store-name.config dap.bowl)
+    [%pass wire %agent [entity.rid dap] %poke update-mark.config update]~
   ::
   ++  get-conversion
     .^  tube:clay
@@ -407,11 +406,13 @@
   ::
   ++  resource-for-update
     |=  update=vase
-    =/  =tube:clay
-      get-conversion
-    %+  bind
-      (mole |.((tube update)))
-    |=(=vase !<(resource vase))
+    ^-  (unit resource)
+    =/  converted=(each vase (list tank))
+      (mule |.((get-conversion update)))
+    ?:  ?=(%| -.converted)
+      %-  (slog p.converted)
+      ~
+    [~ !<(resource p.converted)]
   ::
   ++  build-mark
     |=  rav=?(%sing %next)

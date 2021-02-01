@@ -24,7 +24,7 @@
 ::  /group/%path                             associations for group
 ::
 /-  store=metadata-store
-/+  *metadata-json, default-agent, verb, dbug, resource, *migrate
+/+  default-agent, verb, dbug, resource, *migrate
 |%
 +$  card  card:agent:gall
 +$  base-state-0
@@ -353,7 +353,7 @@
 ++  handle-add
   |=  [group=resource =md-resource:store =metadatum:store]
   ^-  (quip card _state)
-  :-  %+  send-diff  app-name.md-resource
+  :-  %-  send-diff
       [%add group md-resource metadatum]
   %=  state
       associations
@@ -374,7 +374,7 @@
 ++  handle-remove
   |=  [group=resource =md-resource:store]
   ^-  (quip card _state)
-  :-  (send-diff app-name.md-resource [%remove group md-resource])
+  :-  (send-diff [%remove group md-resource])
   %=  state
       associations
     (~(del by associations) md-resource)
@@ -395,15 +395,15 @@
   |=  [group=resource =associations:store]
   =/  assocs=(list [=md-resource:store grp=resource =metadatum:store])
     ~(tap by associations)
-  =|  cards=(list card)
+  :-  (send-diff %initial-group group associations)
   |-
   ?~  assocs
-    [cards state]
+    state
   =,  assocs
   ?>  =(group grp.i)
-  =^  new-cards  state
+  =^  cards  state
     (handle-add group [md-resource metadatum]:i)
-  $(cards (weld cards new-cards), assocs t)
+  $(assocs t)
 ::
 ++  metadata-for-app
   |=  =app-name:store
@@ -428,13 +428,12 @@
   (~(put by out) md-resource [group metadatum])
 ::
 ++  send-diff
-  |=  [=app-name:store =update:store]
+  |=  =update:store
   ^-  (list card)
   |^
   %-  zing
   :~  (update-subscribers /all update)
       (update-subscribers /updates update)
-      (update-subscribers [%app-name app-name ~] update)
   ==
   ::
   ++  update-subscribers

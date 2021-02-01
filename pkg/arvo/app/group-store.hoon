@@ -29,7 +29,7 @@
 ::      Modify the group. Further documented in /sur/group-store.hoon
 ::
 ::
-/-  *group, *contact-view
+/-  *group
 /+  store=group-store, default-agent, verb, dbug, resource, *migrate
 |%
 +$  card  card:agent:gall
@@ -284,11 +284,8 @@
     |=  [recipient=@p out=(list card)]
     ?:  =(recipient our.bol)
       out
-    :_  out
-    %-  poke-contact
-    :*  %invite  rid  recipient
-        (crip "Rejoin disconnected group {<entity.rid>}/{<name.rid>}")
-    ==
+    ::  TODO: figure out contacts integration
+    out
   :_  out
   (try-rejoin rid 0)
   ::
@@ -610,11 +607,6 @@
   |=  =action:store
   ^-  card
   [%pass / %agent [our.bol %group-store] %poke %group-action !>(action)]
-::
-++  poke-contact
-  |=  act=contact-view-action
-  ^-  card
-  [%pass / %agent [our.bol %contact-view] %poke %contact-view-action !>(act)]
 ::  +send-diff: update subscribers of new state
 ::
 ::    We only allow subscriptions on /groups

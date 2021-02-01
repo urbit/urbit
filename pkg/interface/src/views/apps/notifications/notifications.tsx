@@ -44,7 +44,7 @@ export default function NotificationsScreen(props: any) {
     filter.groups.length === 0
       ? "All"
       : filter.groups
-          .map((g) => props.associations?.contacts?.[g]?.metadata?.title)
+          .map((g) => props.associations?.groups?.[g]?.metadata?.title)
           .join(", ");
   return (
     <Switch>

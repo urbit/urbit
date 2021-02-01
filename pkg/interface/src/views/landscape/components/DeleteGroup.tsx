@@ -1,5 +1,5 @@
 import React from "react";
-import { Col, Label, Row, Button } from "@tlon/indigo-react";
+import { Icon, Text, Col, Label, Row, Button, Action } from "@tlon/indigo-react";
 import { useHistory } from "react-router-dom";
 
 import GlobalApi from "~/logic/api/global";
@@ -7,6 +7,8 @@ import { Association } from "~/types";
 import { resourceFromPath } from "~/logic/lib/group";
 import { StatelessAsyncButton } from "~/views/components/StatelessAsyncButton";
 import ModalButton from "~/views/apps/launch/components/ModalButton";
+import {useModal} from "~/logic/lib/useModal";
+import {SidebarItem} from "./Sidebar/SidebarItem";
 
 export function DeleteGroup(props: {
   owner: boolean;
@@ -15,14 +17,17 @@ export function DeleteGroup(props: {
 }) {
   const history = useHistory();
   const onDelete = async () => {
-    const name = props.association.group.split("/").pop();
+    const { ship, name } = resourceFromPath(props.association.group);
     if (props.owner) {
       const shouldDelete =
         prompt(`To confirm deleting this group, type ${name}`) === name;
       if (!shouldDelete) return;
     }
-    const resource = resourceFromPath(props.association.group);
-    await props.api.groups.removeGroup(resource);
+    if(props.owner) {
+      await props.api.groups.deleteGroup(ship, name);
+    } else {
+      await props.api.groups.leaveGroup(ship, name);
+    }
     history.push("/");
   };
 
@@ -32,15 +37,8 @@ export function DeleteGroup(props: {
     : "You can rejoin if it is an open group, or if you are reinvited";
 
   const icon = props.owner ? "X" : "SignOut";
-  return (
-    <ModalButton
-      ml="2"
-      color="red"
-      boxShadow="none"
-      icon={icon}
-      text={`${action} group`}
-    >
-      {(dismiss: () => void) => (
+  const { modal, showModal } = useModal({ modal: 
+    (dismiss: () => void) => (
         <Col p="4">
           <Label>{action} Group</Label>
           <Label gray mt="2">
@@ -59,7 +57,14 @@ export function DeleteGroup(props: {
             </StatelessAsyncButton>
           </Row>
         </Col>
-      )}
-    </ModalButton>
+      )});
+  return (
+    <Row px="3" py="1" onClick={showModal} cursor="pointer">
+      {modal}
+      <Icon icon={icon} color="red" mr="2" />
+      <Text color="red">
+        {action} group
+      </Text>
+    </Row>
   );
 }

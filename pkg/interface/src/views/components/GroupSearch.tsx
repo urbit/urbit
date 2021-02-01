@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from "react";
+import React, { useMemo, useCallback, useState, useEffect } from 'react';
 import {
   Box,
   Text,
@@ -6,17 +6,17 @@ import {
   Row,
   Col,
   Icon,
-  ErrorLabel,
-} from "@tlon/indigo-react";
-import _ from "lodash";
-import { useField } from "formik";
-import styled from "styled-components";
+  ErrorLabel
+} from '@tlon/indigo-react';
+import _ from 'lodash';
+import { useField } from 'formik';
+import styled from 'styled-components';
 
-import { roleForShip } from "~/logic/lib/group";
+import { roleForShip } from '~/logic/lib/group';
 
-import { DropdownSearch } from "./DropdownSearch";
-import { Groups } from "~/types";
-import { Associations, Association } from "~/types/metadata-update";
+import { DropdownSearch } from './DropdownSearch';
+import { Groups } from '~/types';
+import { Associations, Association } from '~/types/metadata-update';
 
 interface InviteSearchProps {
   disabled?: boolean;
@@ -26,11 +26,12 @@ interface InviteSearchProps {
   label: string;
   caption?: string;
   id: string;
+  maxLength?: number;
 }
 
 const CandidateBox = styled(Box)<{ selected: boolean }>`
   &:hover {
-    background-color: ${(p) => p.theme.colors.washedGray};
+    background-color: ${p => p.theme.colors.washedGray};
   }
 `;
 
@@ -64,38 +65,45 @@ function renderCandidate(
 
 export function GroupSearch(props: InviteSearchProps) {
   const { id, caption, label } = props;
+  const [selected, setSelected] = useState([] as string[]);
   const groups: Association[] = useMemo(() => {
     return props.adminOnly
       ? Object.values(
-          Object.keys(props.associations?.contacts)
+          Object.keys(props.associations?.groups)
             .filter(
-              (e) => roleForShip(props.groups[e], window.ship) === "admin"
+              e => roleForShip(props.groups[e], window.ship) === 'admin'
             )
             .reduce((obj, key) => {
-              obj[key] = props.associations?.contacts[key];
+              obj[key] = props.associations?.groups[key];
               return obj;
             }, {}) || {}
         )
-      : Object.values(props.associations?.contacts || {});
-  }, [props.associations?.contacts]);
+      : Object.values(props.associations?.groups || {});
+  }, [props.associations?.groups]);
 
   const [{ value }, meta, { setValue, setTouched }] = useField(props.id);
 
+  useEffect(() => {
+    setValue(selected);
+  }, [selected])
+
   const { title: groupTitle } =
-    props.associations.contacts?.[value]?.metadata || {};
+    props.associations.groups?.[value]?.metadata || {};
 
   const onSelect = useCallback(
     (a: Association) => {
-      setValue(a.group);
       setTouched(true);
+      setSelected(v => _.uniq([...v, a.group]));
     },
-    [setValue]
+    [setTouched, setSelected]
   );
 
-  const onUnselect = useCallback(() => {
-    setValue(undefined);
-    setTouched(true);
-  }, [setValue]);
+  const onRemove = useCallback(
+    (s: string) => {
+      setSelected(groups => groups.filter(group => group !== s))
+    },
+    [setSelected]
+  );
 
   return (
     <Col>
@@ -105,25 +113,11 @@ export function GroupSearch(props: InviteSearchProps) {
           {caption}
         </Label>
       )}
-      {value && (
-        <Row
-          borderRadius="1"
-          mt="2"
-          width="fit-content"
-          border="1"
-          borderColor="gray"
-          height="32px"
-          px="2"
-          alignItems="center"
-        >
-          <Text mr="2">{groupTitle || value}</Text>
-          <Icon onClick={onUnselect} icon="X" />
-        </Row>
-      )}
-      {!value && (
         <DropdownSearch<Association>
           mt="2"
           candidates={groups}
+          placeholder="Search for groups..."
+          disabled={props.maxLength ? selected.length >= props.maxLength : false}
           renderCandidate={renderCandidate}
           search={(s: string, a: Association) =>
             a.metadata.title.toLowerCase().startsWith(s.toLowerCase())
@@ -131,8 +125,27 @@ export function GroupSearch(props: InviteSearchProps) {
           getKey={(a: Association) => a.group}
           onSelect={onSelect}
         />
+        {value?.length > 0 && (
+          value.map((e) => {
+            return (
+              <Row
+                key={e}
+                borderRadius="1"
+                mt="2"
+                width="fit-content"
+                border="1"
+                borderColor="gray"
+                height="32px"
+                px="2"
+                alignItems="center"
+              >
+                <Text mr="2">{groupTitle || e}</Text>
+                <Icon onClick={onRemove} icon="X" />
+              </Row>
+            );
+          })
       )}
-      <ErrorLabel hasError={!!(meta.touched && meta.error)}>
+      <ErrorLabel hasError={Boolean(meta.touched && meta.error)}>
         {meta.error}
       </ErrorLabel>
     </Col>

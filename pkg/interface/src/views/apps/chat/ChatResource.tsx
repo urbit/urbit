@@ -24,7 +24,7 @@ export function ChatResource(props: ChatResourceProps) {
   const station = props.association.resource;
   const groupPath = props.association.group;
   const group = props.groups[groupPath];
-  const contacts = props.contacts[groupPath] || {};
+  const contacts = props.contacts;
 
   const graph = props.graphs[station.slice(7)];
 
@@ -33,7 +33,7 @@ export function ChatResource(props: ChatResourceProps) {
   const unreadCount = props.unreads.graph?.[station]?.['/']?.unreads || 0;
 
   const [,, owner, name] = station.split('/');
-  const ourContact = contacts?.[window.ship];
+  const ourContact = contacts?.[`~${window.ship}`];
 
   const chatInput = useRef<ChatInput>();
 

@@ -7,6 +7,7 @@ import LaunchApp from '~/views/apps/launch/app';
 import TermApp from '~/views/apps/term/app';
 import Landscape from '~/views/landscape/index';
 import Profile from '~/views/apps/profile/profile';
+import Settings from '~/views/apps/settings/settings';
 import ErrorComponent from '~/views/components/Error';
 import Notifications from '~/views/apps/notifications/notifications';
 import GraphApp from '../../apps/graph/app';
@@ -59,6 +60,14 @@ export const Content = (props) => {
           path="/~profile"
           render={ p => (
             <Profile
+             {...props}
+            />
+          )}
+        />
+        <Route
+          path="/~settings"
+          render={ p => (
+            <Settings
              {...props}
             />
           )}

@@ -16,6 +16,15 @@ export default class MetadataReducer<S extends MetadataState> {
       this.add(data, state);
       this.update(data, state);
       this.remove(data, state);
+      this.groupInitial(data, state);
+    }
+  }
+
+  groupInitial(json: MetadataUpdate, state: S) {
+    const data = _.get(json, 'initial-group', false);
+    console.log(data);
+    if(data) {
+      this.associations(data, state);
     }
   }
 
