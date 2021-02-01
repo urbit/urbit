@@ -62,10 +62,10 @@ export function NewGroup(props: NewGroupProps & RouteComponentProps) {
                 banned: [],
               },
             };
-        await api.contacts.create(name, policy, title, description);
+        await api.groups.create(name, policy, title, description);
         const path = `/ship/~${window.ship}/${name}`;
-        await waiter(({ contacts, groups, associations }) => {
-          return path in contacts && path in groups && path in associations.groups;
+        await waiter(({ groups, associations }) => {
+          return path in groups && path in associations.groups;
         });
 
         actions.setStatus({ success: null });

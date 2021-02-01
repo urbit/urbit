@@ -57,7 +57,7 @@ export function GroupsPane(props: GroupsPaneProps) {
     setRecentGroups((gs) => _.uniq([workspace.group, ...gs]));
   }, [workspace]);
 
-  if (!associations) {
+  if (!(associations && (groupPath ? groupPath in groups : true))) {
     return null;
   }
 

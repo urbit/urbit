@@ -41,12 +41,42 @@ export default class GroupsApi extends BaseApi<StoreState> {
     return this.viewAction({ join: { resource, ship }});
   }
 
+  create(name: string, policy: Enc<GroupPolicy>, title: string, description: string) {
+    return this.viewThread('group-create', {
+      create: {
+        name,
+        policy,
+        title,
+        description
+      }
+    });
+  }
+
+  deleteGroup(ship: string, name: string) {
+    const resource = makeResource(ship, name);
+
+    return this.viewThread('group-delete', {
+      remove: resource
+    });
+  }
+
+  leaveGroup(ship: string, name: string) {
+    const resource = makeResource(ship, name);
+    return this.viewThread('group-leave', {
+      leave: resource
+    });
+  }
+
   private proxyAction(action: GroupAction) {
     return this.action('group-push-hook', 'group-update', action);
   }
 
   private storeAction(action: GroupAction) {
     return this.action('group-store', 'group-update', action);
+  }
+
+  private viewThread(thread: string, action: any) {
+    return this.spider('group-view-action', 'json', thread, action);
   }
 
   private viewAction(action: any) {
