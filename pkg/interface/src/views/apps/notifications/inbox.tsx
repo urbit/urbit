@@ -1,10 +1,10 @@
 import React, { useEffect, useCallback, useState, useMemo } from "react";
 import f from "lodash/fp";
 import _ from "lodash";
-import { Icon, Col, Row, Box, Text, Anchor, Rule } from "@tlon/indigo-react";
+import { Icon, Col, Row, Box, Text, Anchor, Rule, SegmentedProgressBar } from "@tlon/indigo-react";
 import moment from "moment";
-import { Notifications, Rolodex, Timebox, IndexedNotification, Groups } from "~/types";
-import { MOMENT_CALENDAR_DATE, daToUnix, resourceAsPath } from "~/logic/lib/util";
+import { Notifications, Rolodex, Timebox, IndexedNotification, Groups, joinProgress, JoinRequests } from "~/types";
+import { MOMENT_CALENDAR_DATE, daToUnix, resourceAsPath, clamp } from "~/logic/lib/util";
 import { BigInteger } from "big-integer";
 import GlobalApi from "~/logic/api/global";
 import { Notification } from "./notification";
@@ -15,6 +15,7 @@ import { useWaitForProps } from "~/logic/lib/useWaitForProps";
 import { useHistory } from "react-router-dom";
 import {useModal} from "~/logic/lib/useModal";
 import {JoinGroup} from "~/views/landscape/components/JoinGroup";
+import {JoiningStatus} from "./joining";
 
 type DatedTimebox = [BigInteger, Timebox];
 
@@ -44,6 +45,7 @@ export default function Inbox(props: {
   contacts: Rolodex;
   filter: string[];
   invites: any;
+  pendingJoin: JoinRequests;
 }) {
   const { api, associations, invites } = props;
   const waiter = useWaitForProps(props)
@@ -164,10 +166,31 @@ export default function Inbox(props: {
     return returned;
   };
 
+  const joinRequests = (requests) => {
+    if(Object.keys(requests).length === 0) {
+      return null;
+    }
+    return (
+      <Col px="5" py="3" gapY="3">
+        { Object
+          .keys(requests)
+          .map(resource => (
+            <JoiningStatus 
+              key={resource}
+              resource={resource}
+              status={requests[resource]} 
+              api={api} />
+            ))
+        }
+      </Col>
+    );
+  };
+
   return (
     <Col position="relative" height="100%" overflowY="auto" onScroll={onScroll} >
       {modal}
       <Col zIndex={4} gapY={2} bg="white" top="0px" position="sticky" flexShrink={0}>
+        {joinRequests(props.pendingJoin)}
         {inviteItems(invites, api)}
       </Col>
       {[...notificationsByDay.keys()].map((day, index) => {

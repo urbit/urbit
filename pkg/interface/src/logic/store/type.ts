@@ -11,7 +11,8 @@ import {
   Notifications,
   NotificationGraphConfig, 
   GroupNotificationsConfig,
-  Unreads
+  Unreads,
+  JoinRequests
 } from "~/types";
 
 export interface StoreState {
@@ -46,5 +47,5 @@ export interface StoreState {
   notificationsCount: number,
   unreads: Unreads;
   doNotDisturb: boolean;
-  unreads: Unreads;
+  pendingJoin: JoinRequests;
 }

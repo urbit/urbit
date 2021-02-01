@@ -4,19 +4,19 @@ import { resourceAsPath } from "~/logic/lib/util";
 const initial = (json: any, state: any) => {
   const data = json.initial;
   if(data) {
-    state.pendingJoin = new Set(data);
+    state.pendingJoin = data;
   }
 }
 
 const progress = (json: any, state: any) => {
   const data = json.progress;
   if(data) {
-    const res = resourceAsPath(data.resource);
-    const { progress } = data;
-    if(progress === 'start') {
-      state.pendingJoin.add(res);
-    } else if (progress !== 'added') {
-      state.pendingJoin.delete(res);
+    const { progress, resource } = data;
+    state.pendingJoin = {...state.pendingJoin, [resource]: progress };
+    if(progress === 'done') {
+      setTimeout(() => {
+        delete state.pendingJoin[resource];
+      }, 10000);
     }
   }
 }

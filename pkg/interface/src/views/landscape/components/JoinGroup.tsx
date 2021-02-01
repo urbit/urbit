@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect } from "react";
+import _ from 'lodash';
 import { Body } from "~/views/components/Body";
 import {
   Col,
@@ -11,7 +12,7 @@ import {
 import { Formik, Form, FormikHelpers, useFormikContext } from "formik";
 import { AsyncButton } from "~/views/components/AsyncButton";
 import * as Yup from "yup";
-import { Groups, Rolodex } from "~/types";
+import { Groups, Rolodex, MetadataUpdatePreview, Associations } from "~/types";
 import { useWaitForProps } from "~/logic/lib/useWaitForProps";
 import GlobalApi from "~/logic/api/global";
 import { RouteComponentProps, useHistory } from "react-router-dom";
@@ -42,6 +43,7 @@ interface FormSchema {
 interface JoinGroupProps {
   groups: Groups;
   contacts: Rolodex;
+  associations: Associations;
   api: GlobalApi;
   autojoin?: string;
   inviteUid?: string;
@@ -60,38 +62,53 @@ function Autojoin(props: { autojoin: string | null }) {
 }
 
 export function JoinGroup(props: JoinGroupProps) {
-  const { api, autojoin } = props;
+  const { api, autojoin, associations, groups } = props;
   const history = useHistory();
   const initialValues: FormSchema = {
     group: autojoin || "",
   };
+  const [preview, setPreview] = useState<
+    MetadataUpdatePreview | string | null
+  >(null);
 
-  const waiter = useWaitForProps(props);
-  const [preview, setPreview] = useState<MetadataUpdatePreview | null>(null);
+
+  const waiter = useWaitForProps(props, _.isString(preview) ? 1 : 5000);
 
   const onConfirm = useCallback(async () => {
-    const { group } = preview;
-    await api.contacts.join(resourceFromPath(group));
+    const group = _.isString(preview) ? preview : preview?.group!;
+    const [,,ship,name] = group.split('/');
+    await api.groups.join(ship, name);
     if (props.inviteUid) {
       api.invite.accept("contacts", props.inviteUid);
     }
-    await waiter(({ contacts, groups }) => {
-      return group in contacts && group in groups;
-    });
-    history.push(`/~landscape${group}`);
-  }, [api, preview, waiter]);
+    try {
+      await waiter((p: JoinGroupProps) => {
+        return group in p.groups && 
+          (group in p.associations.graph
+            || group in p.associations.contacts)
+      });
+      if(props.groups?.[group]?.hidden) {
+        const { metadata } = associations.graph[group];
+        history.push(`/~landscape/home/resource/${metadata.module}${group}`);
+        return;
+      } else {
+        history.push(`/~landscape${group}`);
+      }
+    } catch (e) {
+      //  drop them into inbox to show join request still pending
+      history.push('/~notifications');
+    }
+  }, [api, preview, waiter, history, associations, groups]);
 
   const onSubmit = useCallback(
     async (values: FormSchema, actions: FormikHelpers<FormSchema>) => {
+      const [ship, name] = values.group.split("/");
+      const path = `/ship/${ship}/${name}`;
       try {
-        const [ship, name] = values.group.split("/");
-        const path = `/ship/${ship}/${name}`;
-
         const prev = await api.metadata.preview(path);
         actions.setStatus({ success: null });
         setPreview(prev);
       } catch (e) {
-        console.log(e);
         if (!(e instanceof Error)) {
           actions.setStatus({ error: "Unknown error" });
         } else if (e.message === "no-permissions") {
@@ -100,9 +117,7 @@ export function JoinGroup(props: JoinGroupProps) {
               "Unable to join group, you do not have the correct permissions",
           });
         } else if (e.message === "offline") {
-          actions.setStatus({
-            error: "Group host is offline, please try again later",
-          });
+          setPreview(path);
         }
       }
     },
@@ -117,13 +132,21 @@ export function JoinGroup(props: JoinGroupProps) {
             Join a Group
           </Text>
         </Box>
-        {preview ? (
+        {_.isString(preview) ? (
+          <Col width="100%" maxWidth="300px" gapY="4">
+            <Text>The host appears to be offline. Join anyway?</Text>
+            <StatelessAsyncButton primary name="join" onClick={onConfirm}>
+              Join anyway
+            </StatelessAsyncButton>
+          </Col>
+        ) : preview ? (
           <GroupSummary
             metadata={preview.metadata}
             memberCount={preview?.members}
             channelCount={preview?.["channel-count"]}
           >
-            <Col
+            { Object.keys(preview.channels).length > 0 && (
+              <Col
               gapY="2"
               p="2"
               borderRadius="2"
@@ -145,6 +168,7 @@ export function JoinGroup(props: JoinGroupProps) {
                 </Row>
               ))}
             </Col>
+            )}
             <StatelessAsyncButton primary name="join" onClick={onConfirm}>
               Join {preview.metadata.title}
             </StatelessAsyncButton>
