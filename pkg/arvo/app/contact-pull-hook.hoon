@@ -35,11 +35,7 @@
 ++  on-pull-nack
   |=  [=resource =tang]
   ^-  (quip card _this)
-  :_  this
-  ?~  (get-contact:con entity.resource)  ~
-  =-  [%pass /pl-nack %agent [our.bowl %contact-store] %poke %contact-update -]~
-  !>  ^-  update:store
-  [%remove entity.resource]
+  [~ this]
 ::
 ++  on-pull-kick  |=(=resource `/)
 --
