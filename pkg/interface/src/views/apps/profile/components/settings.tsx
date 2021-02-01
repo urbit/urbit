@@ -23,7 +23,7 @@ export default function Settings({
       gridTemplateColumns="1fr"
       gridRowGap={7}
       p={4}
-      maxWidth="400px"
+      maxWidth="500px"
     >
       <DisplayForm
         api={api}
