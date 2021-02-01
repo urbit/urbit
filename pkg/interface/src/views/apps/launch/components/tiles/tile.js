@@ -48,7 +48,7 @@ export default class Tile extends React.Component {
         overflow="hidden"
         bg={bg || "white"}
         color={props?.color || 'washedGray'}
-        boxShadow={boxShadow || '0 0 0px 1px inset currentColor'}
+        boxShadow={boxShadow || '0 0 0px 1px inset'}
         style={{ gridColumnStart }}
       >
         <Box
