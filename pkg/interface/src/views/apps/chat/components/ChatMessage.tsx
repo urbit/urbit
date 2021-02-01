@@ -1,4 +1,4 @@
-import React, { Component, PureComponent } from "react";
+import React, { useState, useEffect, Component, PureComponent } from "react";
 import moment from "moment";
 import _ from "lodash";
 import { Box, Row, Text, Rule } from "@tlon/indigo-react";
@@ -180,22 +180,27 @@ export const MessageWithSigil = (props) => {
   const datestamp = moment.unix(msg['time-sent'] / 1000).format(DATESTAMP_FORMAT);
   const contact = msg.author in contacts ? contacts[msg.author] : false;
   const showNickname = useShowNickname(contact);
-  const name = showNickname ? contact.nickname : cite(msg.author);
+  const shipName = showNickname ? contact.nickname : cite(msg.author);
+  const copyNotice = 'Copied';
   const color = contact ? `#${uxToHex(contact.color)}` : dark ?  '#000000' :'#FFFFFF'
   const sigilClass = contact ? '' : dark ? 'mix-blend-diff' : 'mix-blend-darken';
+  const [displayName, setDisplayName] = useState(shipName);
+  const [nameMono, setNameMono] = useState((showNickname ? false : true));
+  const { hovering, bind } = useHovering();
 
-  let nameSpan = null;
-
-  const copyNotice = (saveName) => {
-    if (nameSpan !== null) {
-      nameSpan.innerText = 'Copied';
-      setTimeout(() => {
-        nameSpan.innerText = saveName;
-      }, 800);
-    }
+  const showCopyNotice = () => {
+    setDisplayName(copyNotice);
+    setNameMono(false);
   };
 
-  const { hovering, bind } = useHovering();
+  useEffect(() => {
+    const resetDisplay = () => {
+      setDisplayName(shipName);
+      setNameMono((showNickname ? false : true));
+    };
+    const timer = setTimeout(() => resetDisplay(), 800);
+    return () => clearTimeout(timer);
+  }, [displayName]);
 
   return (
     <>
@@ -226,16 +231,17 @@ export const MessageWithSigil = (props) => {
             fontSize={0}
             mr={3}
             flexShrink={0}
-            mono={!showNickname}
-            fontWeight={(showNickname) ? '500' : '400'}
+            mono={nameMono}
+            fontWeight={nameMono ? '400' : '500'}
             className={`mw5 db truncate pointer`}
-            ref={e => nameSpan = e}
             onClick={() => {
               writeText(`~${msg.author}`);
-              copyNotice(name);
+              showCopyNotice();
             }}
             title={`~${msg.author}`}
-          >{name}</Text>
+          >
+            {displayName}
+          </Text>
           <Text flexShrink={0} fontSize={0} gray mono>{timestamp}</Text>
           <Text
             flexShrink={0}
