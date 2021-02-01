@@ -1,6 +1,6 @@
 /-  spider,
     graph=graph-store,
-    *metadata-store,
+    metadata=metadata-store,
     *group,
     group-store,
     inv=invite-store
@@ -16,13 +16,8 @@
   =/  m  (strand ,resource)
   ?:  ?=(%group -.associated)
     (pure:m rid.associated)
-  =/  =action:group-store
-    [%add-group rid policy.associated %&]
-  ;<  ~  bind:m  (poke-our %group-store %group-action !>(action))
-  ;<  =bowl:spider  bind:m  get-bowl:strandio
-  ;<  ~  bind:m  (poke-our %group-store %group-action !>([%add-members rid (sy our.bowl ~)]))
-  ;<  ~  bind:m
-    (poke-our %group-push-hook %push-hook-action !>([%add rid]))
+  ;<  ~  bind:m    
+    (poke-our %metadata-push-hook %push-hook-action !>([%add rid]))
   (pure:m rid)
 --
 ::
@@ -52,25 +47,21 @@
 ::
 ;<  group=resource  bind:m
   (handle-group rid.action associated.action)
-=/  group-path=path
-  (en-path:resource group)
 ::
 ::  Setup metadata
 ::
-=/  =metadata
-  %*  .  *metadata
+=/  =metadatum:metadata
+  %*  .  *metadatum:metadata
     title         title.action
     description   description.action
     date-created  now.bowl
     creator       our.bowl
     module        module.action
   ==
-=/  =metadata-action
-  [%add group graph+rid.action metadata]
+=/  met-action=action:metadata
+  [%add group graph+rid.action metadatum]
 ;<  ~  bind:m
-  (poke-our %metadata-store %metadata-action !>(metadata-action))
-;<  ~  bind:m
-  (poke-our %metadata-push-hook %push-hook-action !>([%add group]))
+  (poke-our %metadata-push-hook metadata-update+!>(met-action))
 ::
 ::  Send invites
 ::

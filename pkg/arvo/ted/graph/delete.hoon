@@ -64,16 +64,11 @@
 ?~  ugroup-rid  !!
 ;<  =group  bind:m
   (scry-group u.ugroup-rid)
+;<  ~  bind:m
+  (delete-graph u.ugroup-rid rid.action)
 ?.  hidden.group
-  ;<  ~  bind:m
-    (delete-graph u.ugroup-rid rid.action)
   (pure:m !>(~))
-;<  ~  bind:m
-  (poke-our %group-store %group-action !>([%remove-group rid.action ~]))
-;<  ~  bind:m
-  (poke-our %group-push-hook %push-hook-action !>([%remove rid.action]))
-;<  ~  bind:m  (delete-graph u.ugroup-rid rid.action)
-;<  ~  bind:m
-  %+  poke-our  %metadata-hook
-  metadata-hook-action+!>([%remove (en-path:resource u.ugroup-rid)])
+;<  =thread-result:strandio  bind:m
+  (await-thread:strandio %group-delete !>([%delete rid.action]))
 (pure:m !>(~))
+
