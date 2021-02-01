@@ -1,6 +1,5 @@
-/+  btc
+/+  *btc
 |%
-+$  bits  [wid=@ dat=@ub]
 ++  params
   |%
   ++  p  19
@@ -172,87 +171,87 @@
 ::  +get-n: get N from head of block filter, little endian
 ::
 ++  get-n
-  |=  filter=@ux
-  ^-  @ux
-  =+  start=(dec (met 3 filter))
-  =/  n=@ux
-    (cut 3 [start 1] filter)
-  %+  swp  3
-    ?:  =(n 0xfd)  (cut 3 [(sub start 2) 2] filter)
-    ?:  =(n 0xfe)  (cut 3 [(sub start 4) 4] filter)
-    ?:  =(n 0xff)  (cut 3 [(sub start 8) 8] filter)
+  |=  filter=hexb
+  ^-  hexb
+  =/  n=hexb  (take:byt 1 filter)
+  %-  flip:byt
+    ?:  =(dat.n 0xfd)  (take:byt 2 (drop:byt 1 filter))
+    ?:  =(dat.n 0xfe)  (take:byt 4 (drop:byt 1 filter))
+    ?:  =(dat.n 0xff)  (take:byt 8 (drop:byt 1 filter))
     n
 ::
 ++  parse-filter
-  |=  [filter=@ux]
+  |=  filter=hexb
   ^-  [n=@ux gcs-set=bits]
   =+  n=(get-n filter)
-  =+  gcs-size=(sub (met 3 filter) (met 3 n))
-  [n [(mul 8 gcs-size) `@ub`(end [3 gcs-size] filter)]]
+  =/  lead=@  ?:(=(1 wid.n) 1 +(wid.n))
+  :-  dat.n
+  [(mul 8 (sub wid.filter lead)) `@ub`dat:(drop:byt lead filter)]
 ::  +to-key: blockhash (little endian) to key for siphash
 ::
 ++  to-key
   |=  blockhash=tape
   ^-  byts
-  %+  take:byt:btc  16
-  %-  flip:byt:btc
-  [32 (to-hex:btc (crip blockhash))]
+  %+  take:byt  16
+  %-  flip:byt
+  (to-hexb (crip blockhash))
 ::  +match: whether block filter matches *any* target scriptpubkeys
 ::   - filter: full block filter, with leading N
 ::   - k: key for siphash (end of blockhash, reversed)
 ::   - targets: scriptpubkeys to match
 ::
 ++  match
-  |=  [filter=@ux k=byts targets=(list byts)]
+  |=  [filter=hexb k=byts targets=(list byts)]
   ^-  ?
   =/  [p=@ m=@]  [p:params m:params]
   =/  [n=@ux gcs-set=bits]  (parse-filter filter)
   =+  target-hs=(set-construct:hsh targets k (mul n m))
   =+  last-val=0
   |-
-  ?:  (lth wid.gcs-set p)  %.n
   ?~  target-hs  %.n
-  =^  delta  gcs-set
-    (de:gol gcs-set p)
-  =.  last-val
-    (add delta last-val)
   ?:  =(last-val i.target-hs)
     %.y
-  ?:  (lth last-val i.target-hs)
-    $
-  $(target-hs t.target-hs)
+  ?:  (gth last-val i.target-hs)
+    $(target-hs t.target-hs)
+  ::  last-val is less than target: check next val in GCS, if any
+  ::
+  ?:  (lth wid.gcs-set p)  %.n
+  =^  delta  gcs-set
+    (de:gol gcs-set p)
+  $(last-val (add delta last-val))
 ::  +all-match: returns all target byts that match
 ::   - filter: full block filter, with leading N
 ::   - k: key for siphash (end of blockhash, reversed)
 ::   - targets: scriptpubkeys to match
 ::
 ++  all-match
-  |=  [filter=@ux k=byts targets=(list byts)]
-  ^-  (list byts)
+  |=  [filter=hexb k=byts targets=(list byts)]
+  ^-  (set hexb)
+  %-  ~(gas in *(set hexb))
   =/  [p=@ m=@]  [p:params m:params]
   =/  [n=@ux gcs-set=bits]  (parse-filter filter)
-  =/  target-map=(map @ byts)
-    %-  ~(gas by *(map @ byts))
+  =/  target-map=(map @ hexb)
+    %-  ~(gas by *(map @ hexb))
     %+  turn  targets
-    |=(t=byts [(to-range:hsh t (mul n m) k) t])
-  =+  target-hs=~(tap in ~(key by target-map))
+    |=(t=hexb [(to-range:hsh t (mul n m) k) t])
+  =+  target-hs=(sort ~(tap in ~(key by target-map)) lth)
   =+  last-val=0
   =|  matches=(list @)
   |-
-  ?:  (lth wid.gcs-set p)
-    (murn matches ~(get by target-map))
   ?~  target-hs
     (murn matches ~(get by target-map))
-  =^  delta  gcs-set
-    (de:gol gcs-set p)
-  =.  last-val
-    (add delta last-val)
   ?:  =(last-val i.target-hs)
     %=  $
         target-hs  t.target-hs
         matches    [last-val matches]
     ==
-  ?:  (lth last-val i.target-hs)
-    $
-  $(target-hs t.target-hs)
+  ?:  (gth last-val i.target-hs)
+    $(target-hs t.target-hs)
+  ::  last-val is less than target: get next val in GCS, if any
+  ::
+  ?:  (lth wid.gcs-set p)
+    (murn matches ~(get by target-map))
+  =^  delta  gcs-set
+    (de:gol gcs-set p)
+  $(last-val (add delta last-val))
 --
