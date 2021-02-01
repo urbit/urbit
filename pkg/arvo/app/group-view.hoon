@@ -4,7 +4,7 @@
 ++  card  card:agent:gall
 +$  state-zero
   $:  %0
-      joining=(map rid=resource =ship)
+      joining=(map rid=resource [=ship =progress:view])
   ==
 ++  view  view-sur
 --
@@ -37,7 +37,7 @@
     (on-poke:def mark vase)
   =+  !<(=action:view vase)
   =^  cards  state
-    (jn-start:join:gc +.action)
+    jn-abet:(jn-start:join:gc +.action)
   [cards this]
 ::
 ++  on-watch
@@ -45,7 +45,12 @@
   ?+  path  (on-watch:def path)
       [%all ~]  
     :_  this
-    (fact:io group-view-update+!>([%initial ~(key by joining)]) ~)^~
+    :_  ~
+    %+  fact:io  
+      :-  %group-view-update
+      !>  ^-  update:view
+      [%initial (~(run by joining) |=([=ship =progress:view] progress))]
+    ~
   ==
 ::
 ++  on-peek  on-peek:def
@@ -58,7 +63,7 @@
       =/  rid
         (de-path:resource t.wire)
       ?.  (~(has by joining) rid)  `state
-      (jn-agent:(jn-abed:join:gc rid) t.t.t.t.wire sign)
+      jn-abet:(jn-agent:(jn-abed:join:gc rid) t.t.t.t.wire sign)
     ==
   [cards this]
 ::
@@ -75,20 +80,28 @@
 ::
 ::
 ++  join
-  |_  [rid=resource =ship]
+  |_  [rid=resource =ship cards=(list card)]
   ++  jn-core  .
+  ++  emit-many
+    |=  crds=(list card)
+    jn-core(cards (weld (flop crds) cards))
+  ++  emit
+    |=  =card
+    jn-core(cards [card cards])
   ::
-  ++  tx-fact
+  ++  tx-progress
     |=  =progress:view
+    =.  joining
+      (~(put by joining) rid [ship progress])
     =;  =cage
-      (fact:io cage /all tx+(en-path:resource rid) ~)
+      (emit (fact:io cage /all tx+(en-path:resource rid) ~))
     group-view-update+!>([%progress rid progress]) 
   ::
   ++  watch-md
-    (watch-our:(jn-pass-io /md) %metadata-store /updates)
+    (emit (watch-our:(jn-pass-io /md) %metadata-store /updates))
   ::
   ++  watch-groups
-    (watch-our:(jn-pass-io /groups) %group-store /groups)
+    (emit (watch-our:(jn-pass-io /groups) %group-store /groups))
   ::
   ++  jn-pass-io
     |=  pax=path
@@ -96,72 +109,69 @@
   :: 
   ++  jn-abed
     |=  r=resource
-    =/  s=^ship
+    =/  [s=^ship =progress:view]
       (~(got by joining) r)
     jn-core(rid r, ship s)
   ::
+  ++  jn-abet
+    ^-  (quip card _state)
+    [(flop cards) state]
+  ::
   ++  jn-start
     |=  [rid=resource =^ship]
-    ^-  (quip card _state)
+    ^+  jn-core
     ?<  (~(has by joining) rid)
     =.  joining
-      (~(put by joining) rid ship)
+      (~(put by joining) rid [ship %start])
     =.  jn-core
       (jn-abed rid)
     =/  maybe-group
        (peek-group:met %contacts rid)
     ?^  maybe-group
       ~|("already joined group {<rid>}" !!)
-    :_  state
-    :~  %+  poke:(jn-pass-io /add)
-          [ship %group-push-hook]
-        group-update+!>([%add-members rid (silt our.bowl ~)])
-        ::
-        (tx-fact %start)
-        watch-md
-        watch-groups
-    ==
+    =.  jn-core
+      %-  emit
+      %+  poke:(jn-pass-io /add)
+        [ship %group-push-hook]
+      group-update+!>([%add-members rid (silt our.bowl ~)])
+    =.  jn-core  (tx-progress %start)
+    =>  watch-md
+    watch-groups
   ::
   ++  jn-agent
     |=  [=wire =sign:agent:gall]
-    ^-  (quip card _state)
+    ^+  jn-core
     |^  
     ?+    -.wire  ~|("bad %join wire" !!)
         %add  :: join group
       ?>  ?=(%poke-ack -.sign)
       ?^  p.sign
         (cleanup %no-perms)
-      :_  state
-      :~  (tx-fact %added)
+      =>  %-  emit
           %+  poke-our:(jn-pass-io /pull-groups)  %group-pull-hook 
           pull-hook-action+!>([%add ship rid])
-      ==
+      (tx-progress %added)
       ::
         %pull-groups
       ?>  ?=(%poke-ack -.sign)
-      ?~  p.sign
-        ::  do nothing, wait for update from store
-        `state
-      ::  shouldn't ever fail
-      (cleanup %strange)
+      (ack +.sign)
       ::
         %groups
       ?+  -.sign  !!
         %fact  (groups-fact +.sign)
         %watch-ack  (ack +.sign)
-        %kick  groups-kick
+        %kick  watch-groups
       ==
       ::
         %pull-md
       ?>  ?=(%poke-ack -.sign)
-      ?~  p.sign  `state
-      (cleanup %strange)
+      (ack +.sign)
       ::
         %md
       ?+  -.sign  !!
         %fact  (md-fact +.sign)
         %watch-ack  (ack +.sign)
-        %kick  md-kick
+        %kick  watch-md
       ==
       ::
         %pull-graphs
@@ -171,58 +181,46 @@
     ==
     ++  groups-fact
       |=  =cage
-      ?.  ?=(%group-update p.cage)
-        `state
+      ?.  ?=(%group-update p.cage)  jn-core
       =+  !<(=update:group-store q.cage)
-      ?.  ?=(%initial-group -.update)
-        `state
-      ?.  =(rid resource.update)
-        `state
-      :_  state
-      :_  ~
-      %+  poke-our:(jn-pass-io /pull-md)  %metadata-push-hook
+      ?.  ?=(%initial-group -.update)  jn-core
+      ?.  =(rid resource.update)  jn-core
+      %-  emit
+      %+  poke-our:(jn-pass-io /pull-md)  %metadata-pull-hook
       pull-hook-action+!>([%add [entity .]:rid])
     ::
     ++  md-fact
       |=  [=mark =vase]
-      ?.  ?=(%metadata-update mark)  `state
+      ?.  ?=(%metadata-update mark)    jn-core
       =+  !<(=update:metadata vase)
-      ?.  ?=(%initial-group -.update)  `state
-      ?.  =(group.update rid)  `state
-      =^  cards  state
-        (cleanup %done)
-      :_  state
-      %+  welp  cards
-      ?.  hidden:(need (scry-group:grp rid))  ~
+      ?.  ?=(%initial-group -.update)  jn-core
+      ?.  =(group.update rid)          jn-core
+      =.  jn-core  (cleanup %done)
+      ?.  hidden:(need (scry-group:grp rid))  jn-core
+      %-  emit-many
       %+  murn  ~(tap by associations.update)
       |=  [=md-resource:metadata =association:metadata]
+      ^-  (unit card)
       ?.  =(app-name.md-resource %graph)  ~
       =*  rid  resource.md-resource
       :-  ~
       %+  poke-our:(jn-pass-io /pull-graph)  %graph-pull-hook
       pull-hook-action+!>([%add [entity .]:rid])
     ::
-    ++  groups-kick
-      :_  state
-      watch-groups^~
-    ::
-    ++  md-kick
-      :_  state
-      watch-md^~
-    ::
     ++  ack
       |=  err=(unit tang)
-      ?~  err  `state
+      ?~  err  jn-core
+      %-  (slog u.err)
       (cleanup %strange)
     ::
     ++  cleanup
       |=  =progress:view
-      ^-  (quip card _state)
-      :_  state(joining (~(del by joining) rid))
-      :~  (leave-our:(jn-pass-io /groups) %group-store)
-          (leave-our:(jn-pass-io /md) %metadata-store)
-          (tx-fact progress)
-      ==
+      =.  jn-core
+        (tx-progress progress)
+      =.  joining  (~(del by joining) rid)
+      =.  jn-core
+        (emit (leave-our:(jn-pass-io /groups) %group-store))
+      (emit (leave-our:(jn-pass-io /md) %metadata-store))
     --
   --
 --

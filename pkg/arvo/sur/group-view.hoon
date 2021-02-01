@@ -12,7 +12,7 @@
   ?(%no-perms %strange %done)
 ::
 +$  update
-  $%  [%initial =resources]
+  $%  [%initial initial=(map resource progress)]
       [%progress =resource =progress]
   ==
 --

@@ -15,7 +15,7 @@
   ++  join
     %-  ot
     :~  resource+dejs:resource
-        ship+ship
+        ship+(su ;~(pfix sig fed:ag))
     ==
   --
 ::
@@ -39,8 +39,11 @@
     ==
   ::
   ++  initial
-    |=  resources=(set resource)
-    ^-  json
-    a+(turn ~(tap in resources) (cork enjs-path:resource (lead %s)))
+    |=  init=(map resource ^progress)
+    %-  pairs
+    %+  turn  ~(tap by init)
+    |=  [rid=resource prog=^progress]
+    :_  s+prog
+    (enjs-path:resource rid)
   --
 --
