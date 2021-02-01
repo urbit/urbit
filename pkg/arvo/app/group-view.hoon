@@ -69,9 +69,7 @@
   [cards this]
 ::
 ++  on-arvo  on-arvo:def
-::
 ++  on-leave  on-leave:def
-::
 ++  on-fail  on-fail:def
 --
 |_  =bowl:gall
@@ -86,6 +84,7 @@
   ++  emit-many
     |=  crds=(list card)
     jn-core(cards (weld (flop crds) cards))
+  ::
   ++  emit
     |=  =card
     jn-core(cards [card cards])
@@ -152,43 +151,50 @@
           %+  poke-our:(jn-pass-io /pull-groups)  %group-pull-hook 
           pull-hook-action+!>([%add ship rid])
       (tx-progress %added)
-      ::
+    ::
         %pull-groups
       ?>  ?=(%poke-ack -.sign)
       (ack +.sign)
-      ::
+    ::
         %groups
       ?+  -.sign  !!
         %fact  (groups-fact +.sign)
         %watch-ack  (ack +.sign)
         %kick  watch-groups
       ==
-      ::
+    ::
         %pull-md
       ?>  ?=(%poke-ack -.sign)
       (ack +.sign)
-      ::
+    ::
+        %pull-co
+      ?>  ?=(%poke-ack -.sign)
+      (ack +.sign)
+    ::
         %md
       ?+  -.sign  !!
         %fact  (md-fact +.sign)
         %watch-ack  (ack +.sign)
         %kick  watch-md
       ==
-      ::
+    ::
         %pull-graphs
       ?>  ?=(%poke-ack -.sign)
       %-  cleanup
       ?^(p.sign %strange %done)
     ==
+    ::
     ++  groups-fact
       |=  =cage
       ?.  ?=(%group-update p.cage)  jn-core
       =+  !<(=update:group-store q.cage)
       ?.  ?=(%initial-group -.update)  jn-core
       ?.  =(rid resource.update)  jn-core
-      %-  emit
-      %+  poke-our:(jn-pass-io /pull-md)  %metadata-pull-hook
-      pull-hook-action+!>([%add [entity .]:rid])
+      %-  emit-many
+      =/  cag=^cage  pull-hook-action+!>([%add [entity .]:rid])
+      :~  (poke-our:(jn-pass-io /pull-md) %metadata-pull-hook cag)
+          (poke-our:(jn-pass-io /pull-co) %contact-pull-hook cag)
+      ==
     ::
     ++  md-fact
       |=  [=mark =vase]
