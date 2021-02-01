@@ -9,7 +9,6 @@ import { BigInteger } from "big-integer";
 import GlobalApi from "~/logic/api/global";
 import { Notification } from "./notification";
 import { Associations } from "~/types";
-import { cite } from '~/logic/lib/util';
 import { InviteItem } from '~/views/components/Invite';
 import { useWaitForProps } from "~/logic/lib/useWaitForProps";
 import { useHistory } from "react-router-dom";

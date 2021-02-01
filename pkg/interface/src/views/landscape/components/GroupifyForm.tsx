@@ -14,7 +14,7 @@ const formSchema = Yup.object({
 });
 
 interface FormSchema {
-  group: string | null;
+  group: string[] | null;
 }
 
 interface GroupifyFormProps {
@@ -37,7 +37,7 @@ export function GroupifyForm(props: GroupifyFormProps) {
       await props.api.graph.groupifyGraph(
         ship,
         name,
-        values.group || undefined
+        values.group?.toString() || undefined
       );
       const mod = association.metadata.module || association['app-name'];
       const newGroup = values.group || association.group;
@@ -79,6 +79,7 @@ export function GroupifyForm(props: GroupifyFormProps) {
             groups={props.groups}
             associations={props.associations}
             adminOnly
+            maxLength={1}
           />
           <AsyncButton primary loadingText="Groupifying..." border>
             Groupify

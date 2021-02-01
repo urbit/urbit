@@ -135,6 +135,7 @@ export function ContactCard(props: ContactCardProps) {
           gridTemplateColumns="100%"
           gridRowGap="5"
           maxWidth="400px"
+          width="100%"
         >
           <Row
             borderBottom={1}

@@ -1,6 +1,6 @@
 /-  spider,
     graph=graph-store,
-    metadata=metadata-store,
+    met=metadata-store,
     *group,
     group-store,
     inv=invite-store,
@@ -65,8 +65,8 @@
 ::
 ::  Setup metadata
 ::
-=/  =metadatum:metadata
-  %*  .  *metadatum:metadata
+=/  =metadatum:met
+  %*  .  *metadatum:met
     title         title.action
     description   description.action
     date-created  now.bowl
@@ -74,7 +74,7 @@
     module        module.action
     preview       %.n
   ==
-=/  met-action=action:metadata
+=/  met-action=action:met
   [%add group graph+rid.action metadatum]
 ;<  ~  bind:m
   (poke-our %metadata-push-hook metadata-update+!>(met-action))

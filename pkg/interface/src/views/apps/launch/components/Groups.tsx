@@ -16,7 +16,7 @@ const sortGroupsAlph = (a: Association, b: Association) =>
   alphabeticalOrder(a.metadata.title, b.metadata.title);
 
 
-const getGraphUnreads = (associations: Associations, unreads: Unreads) => (path: string) => 
+const getGraphUnreads = (associations: Associations, unreads: Unreads) => (path: string) =>
   f.flow(
     f.pickBy((a: Association) => a.group === path),
     f.map('resource'),
@@ -24,7 +24,7 @@ const getGraphUnreads = (associations: Associations, unreads: Unreads) => (path:
     f.reduce(f.add, 0)
   )(associations.graph);
 
-const getGraphNotifications = (associations: Associations, unreads: Unreads) => (path: string) => 
+const getGraphNotifications = (associations: Associations, unreads: Unreads) => (path: string) =>
   f.flow(
     f.pickBy((a: Association) => a.group === path),
     f.map('resource'),
@@ -36,7 +36,7 @@ const getGraphNotifications = (associations: Associations, unreads: Unreads) => 
 export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
   const { associations, unreads, inbox, ...boxProps } = props;
 
-  const groups = Object.values(associations?.contacts || {})
+  const groups = Object.values(associations?.groups || {})
     .filter((e) => e?.group in props.groups)
     .sort(sortGroupsAlph);
   const graphUnreads = getGraphUnreads(associations || {}, unreads);
@@ -78,10 +78,10 @@ function Group(props: GroupProps) {
       <Col height="100%" justifyContent="space-between">
         <Text>{title}</Text>
         <Col>
-          {unreads > 0 && 
+          {unreads > 0 &&
             (<Text gray>{unreads} unread{unreads !== 1 && 's'} </Text>)
           }
-          {updates > 0 && 
+          {updates > 0 &&
             (<Text mt="1" color="blue">{updates} update{updates !== 1 && 's'} </Text>)
           }
         </Col>

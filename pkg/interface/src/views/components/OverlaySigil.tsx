@@ -110,7 +110,6 @@ class OverlaySigil extends PureComponent<OverlaySigilProps, OverlaySigilState> {
 
      return (
       <Box
-        cursor='pointer'
         position='relative'
         onClick={this.profileShow}
          ref={this.containerRef}

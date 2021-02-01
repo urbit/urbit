@@ -9,7 +9,6 @@ import { Association } from "~/types/metadata-update";
 import GlobalApi from "~/logic/api/global";
 import { GroupNotificationsConfig, S3State, Associations } from "~/types";
 
-import { ContactCard } from "./ContactCard";
 import { GroupSettings } from "./GroupSettings/GroupSettings";
 import { Participants } from "./Participants";
 import {useHashLink} from "~/logic/lib/useHashLink";

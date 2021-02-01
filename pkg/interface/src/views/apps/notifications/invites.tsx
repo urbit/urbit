@@ -21,8 +21,6 @@ interface InvitesProps {
 export function Invites(props: InvitesProps) {
   const { api, invites, pendingJoin } = props;
   const [selected, setSelected] = useState<[string, string, Invite] | undefined>()
-  const history = useHistory();
-  const waiter = useWaitForProps(props);
 
   const acceptInvite = (
     app: string,

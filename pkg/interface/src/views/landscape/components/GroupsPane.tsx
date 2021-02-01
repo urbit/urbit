@@ -43,7 +43,7 @@ export function GroupsPane(props: GroupsPaneProps) {
   const groupContacts = (groupPath && contacts[groupPath]) || undefined;
   const rootIdentity = contacts?.["/~/default"]?.[window.ship];
   const groupAssociation =
-    (groupPath && associations.contacts[groupPath]) || undefined;
+    (groupPath && associations.groups[groupPath]) || undefined;
   const group = (groupPath && groups[groupPath]) || undefined;
   const [recentGroups, setRecentGroups] = useLocalStorageState<string[]>(
     "recent-groups",
@@ -196,7 +196,7 @@ export function GroupsPane(props: GroupsPaneProps) {
           let summary: ReactNode;
           if(groupAssociation?.group) {
             const memberCount = props.groups[groupAssociation.group].members.size;
-            summary = <GroupSummary 
+            summary = <GroupSummary
               memberCount={memberCount}
               channelCount={0}
               metadata={groupAssociation.metadata}

@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 /-  spider, graph-view, graph=graph-store, metadata=metadata-store, *group
+=======
+/-  spider, graph-view, graph=graph-store, met=metadata-store, *group
+>>>>>>> origin/la/contact-store
 /+  strandio, resource
 =>
 |% 
@@ -8,7 +12,11 @@
 ::
 ++  scry-metadata
   |=  rid=resource
+<<<<<<< HEAD
   =/  m  (strand ,resource)
+=======
+  =/  m  (strand ,(unit resource))
+>>>>>>> origin/la/contact-store
   ;<  group=(unit resource)  bind:m
     %+  scry:strandio   ,(unit resource)
     ;:  weld
@@ -16,7 +24,11 @@
       (en-path:resource rid)
       /noun
     ==
+<<<<<<< HEAD
   (pure:m (need group))
+=======
+  (pure:m group)
+>>>>>>> origin/la/contact-store
 ::
 ++  scry-group
   |=  rid=resource
