@@ -1,4 +1,4 @@
-/-  spider, graph-view, graph=graph-store, *metadata-store, *group
+/-  spider, graph-view, graph=graph-store, metadata=metadata-store, *group
 /+  strandio, resource
 =>
 |% 
@@ -8,17 +8,15 @@
 ::
 ++  scry-metadata
   |=  rid=resource
-  =/  m  (strand ,(unit resource))
-  ;<  paxs=(unit (set path))  bind:m
-    %+  scry:strandio   ,(unit (set path))
+  =/  m  (strand ,resource)
+  ;<  group=(unit resource)  bind:m
+    %+  scry:strandio   ,(unit resource)
     ;:  weld
       /gx/metadata-store/resource/graph
       (en-path:resource rid)
       /noun
     ==
-  ?~  paxs  (pure:m ~)
-  ?~  u.paxs  (pure:m ~)
-  (pure:m `(de-path:resource n.u.paxs))
+  (pure:m (need group))
 ::
 ++  scry-group
   |=  rid=resource
@@ -42,11 +40,10 @@
   ;<  ~  bind:m
     (poke-our %graph-push-hook %push-hook-action !>([%remove rid]))
   ;<  ~  bind:m
-    %+  poke-our  %metadata-hook
-    :-  %metadata-action
-    !>  :+  %remove 
-      (en-path:resource group-rid)
-    [%graph (en-path:resource rid)]
+    %+  poke-our  %metadata-push-hook
+    :-  %metadata-update
+    !>  ^-  action:metadata
+    [%remove group-rid [%graph rid]]
   (pure:m ~)
 --
 ::
@@ -59,16 +56,15 @@
 ;<  =bowl:spider  bind:m  get-bowl:strandio
 ?.  =(our.bowl entity.rid.action)
   (strand-fail:strandio %bad-request ~)
-;<  ugroup-rid=(unit resource)  bind:m  
+;<  group-rid=resource  bind:m  
   (scry-metadata rid.action)
-?~  ugroup-rid  !!
 ;<  =group  bind:m
-  (scry-group u.ugroup-rid)
+  (scry-group group-rid)
 ;<  ~  bind:m
-  (delete-graph u.ugroup-rid rid.action)
+  (delete-graph group-rid rid.action)
 ?.  hidden.group
   (pure:m !>(~))
 ;<  =thread-result:strandio  bind:m
-  (await-thread:strandio %group-delete !>([%delete rid.action]))
+  (await-thread:strandio %group-delete !>(`[%remove rid.action]))
 (pure:m !>(~))
 

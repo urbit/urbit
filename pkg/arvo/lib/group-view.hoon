@@ -68,8 +68,9 @@
   ^-  form:m
   ;<  =associations:metadata  bind:m  
     %+  scry:strandio  associations:metadata
-    %+  weld  /metadata-store/group 
+    %+  weld  /gx/metadata-store/group 
     (snoc (en-path:resource rid) %noun)
+  ~&  associations
   =/  assocs=(list [=md-resource:metadata association:metadata])
     ~(tap by associations) 
   |-  

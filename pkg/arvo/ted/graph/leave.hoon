@@ -54,9 +54,9 @@
   (strand-fail:strandio %bad-request ~)
 ;<  group-rid=resource  bind:m  (scry-metadata rid.action)
 ;<  g=group  bind:m  (scry-group group-rid)
+;<  ~  bind:m  (delete-graph now.bowl rid.action)
 ?.  hidden.g
-  ;<  ~  bind:m  (delete-graph now.bowl rid.action)
   (pure:m !>(~))
 ;<  =thread-result:strandio  bind:m
-  (await-thread:strandio %group-leave !>([%leave rid.action]))
+  (await-thread:strandio %group-leave !>([~ [%leave rid.action]]))
 (pure:m !>(~))

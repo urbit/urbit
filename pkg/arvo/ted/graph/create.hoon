@@ -3,7 +3,8 @@
     metadata=metadata-store,
     *group,
     group-store,
-    inv=invite-store
+    inv=invite-store,
+    push-hook
 /+  strandio, resource, graph-view
 =>
 |% 
@@ -16,8 +17,22 @@
   =/  m  (strand ,resource)
   ?:  ?=(%group -.associated)
     (pure:m rid.associated)
+  =/  push-hook-act=cage
+    :-  %push-hook-action 
+    !>  ^-  action:push-hook
+    [%add rid]
   ;<  ~  bind:m    
-    (poke-our %metadata-push-hook %push-hook-action !>([%add rid]))
+    (poke-our %metadata-push-hook push-hook-act)
+  ;<  ~  bind:m
+     %+  poke-our  %group-store
+     :-  %group-update
+     !>  ^-  update:group-store
+     [%add-group rid policy.associated %.y]
+  ;<  =bowl:spider  bind:m  get-bowl:strandio
+  ;<  ~  bind:m
+    (poke-our %group-store group-update+!>([%add-members rid (sy our.bowl ~)]))
+  ;<  ~  bind:m
+    (poke-our %group-push-hook push-hook-act)
   (pure:m rid)
 --
 ::
@@ -57,6 +72,7 @@
     date-created  now.bowl
     creator       our.bowl
     module        module.action
+    preview       %.n
   ==
 =/  met-action=action:metadata
   [%add group graph+rid.action metadatum]

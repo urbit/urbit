@@ -36,6 +36,7 @@
   ?.  ?=(?(%group-view-action %noun) mark)
     (on-poke:def mark vase)
   =+  !<(=action:view vase)
+  ?>  ?=(%join -.action)
   =^  cards  state
     jn-abet:(jn-start:join:gc +.action)
   [cards this]

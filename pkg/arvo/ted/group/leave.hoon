@@ -17,14 +17,13 @@
 =+  !<([~ =action:view] arg)
 ?>  ?=(%leave -.action)
 ;<  =bowl:spider  bind:m  get-bowl:strandio
-?>  =(our.bowl entity.resource.action)
 =*  rid  resource.action
 =/  pull-hook-act=cage
   :-  %pull-hook-action
   !>  ^-  action:pull-hook
   [%remove rid]
-;<  ~  bind:m  (cleanup-md:view rid)
-;<  ~  bind:m  (poke-our %group-store %group-update !>([%remove-group rid ~]))
 ;<  ~  bind:m  (poke-our %metadata-pull-hook pull-hook-act)
 ;<  ~  bind:m  (poke-our %group-pull-hook pull-hook-act)
+;<  ~  bind:m  (poke-our %group-store %group-update !>([%remove-group rid ~]))
+;<  ~  bind:m  (cleanup-md:view rid)
 (pure:m !>(~))
