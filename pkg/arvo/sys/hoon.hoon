@@ -10236,6 +10236,132 @@
       hag  [q.p.dix q.q.dix]
     ==
   ::
+  ++  caching-ad
+    |%
+    ++  arc
+      |%
+      ++  deft                                          ::  generic
+        |%
+        ++  bath  *                                     ::  leg match type
+        ++  claw  *                                     ::  arm match type
+        ++  form  |*({* *} p=+<-)                       ::  attach build state
+        ++  skin  |*(p/* p)                             ::  reveal build state
+        ++  meat  |*(p/* p)                             ::  remove build state
+        --
+      ++  make                                          ::  for mint
+        |%
+        ++  bath  type                                  ::  leg match type
+        ++  claw  onyx                                  ::  arm
+        ++  form  |*({* *} [p=+<- q=+<+])               ::
+        ++  skin  |*({p/* q/*} q)                       ::  unwrap baggage
+        ++  meat  |*({p/* q/*} p)                       ::  unwrap filling
+        --
+      --
+    ++  def
+      =+  deft:arc
+      |@  ++  $
+      =>  +<
+      |%
+      ++  pord  |*(* (form +< *nock))                   ::  wrap mint formula
+      ++  rosh  |*(* (form +< *(list pock)))            ::  wrap mint changes
+      ++  fleg  _(pord $:bath)                          ::  legmatch + code
+      ++  fram  _(pord $:claw)                          ::  armmatch +
+      ++  foat  _(rosh $:bath)                          ::  leg with changes
+      ++  fult  _(rosh $:claw)                          ::  arm with changes
+      --  --
+    ::
+    ++  lib
+      |%
+      ++  deft
+        =>  (def deft:arc)
+        |%
+        ++  halp  ^|(|:($:hoon $:fleg))
+        ++  vant
+          |%  ++  trep  ^|(|:($:{bath wing bath} $:{axis bath}))
+              ++  tasp  ^|(|:($:{{axis bath} fleg foat} $:foat))
+              ++  tyle  ^|(|:($:foat $:foat))
+          --
+        ++  vunt
+          |%  ++  trep  ^|(|:($:{claw wing bath} $:{axis claw}))
+              ++  tasp  ^|(|:($:{{axis claw} fleg fult} $:fult))
+              ++  tyle  ^|(|:($:fult $:foat))
+        --  --
+      ::
+      ++  make
+        =>  (def make:arc)
+        |%
+        ++  halp  |~  a=hoon
+                  ^-  fleg
+                  -:(caching-mint %noun a)
+        ++  vant
+          |%  ++  trep  |:  $:{a/type b/wing c/type}
+                        ^-  {axis type}
+                        -:(caching-tack(sut a) b c)
+              ++  tasp  |:  $:{a/(pair axis type) b/fleg c/foat}
+                        ^-  foat
+                        [q.a [[p.a (skin b)] (skin c)]]
+              ++  tyle  |:($:foat +<)
+          --
+        ++  vunt
+          |%  ++  trep  |:  $:{a/claw b/wing c/bath}
+                        ^-  (pair axis claw)
+                        -:(caching-toss b c a)
+              ++  tasp  |:  $:{a/(pair axis claw) b/fleg c/fult}
+                        ^-  fult
+                        [q.a [[p.a (skin b)] (skin c)]]
+              ++  tyle  |:  $:fult
+                        ^-  foat
+                        [-:(caching-fire +<-) +<+]
+      --  --  --
+    ::
+    ++  bin
+      =+  deft:lib
+      |@  ++  $
+      =>  +<
+      |%
+      ++  rame
+        =>  vant  |%
+            ++  clom  bath
+            ++  chog  fleg
+            ++  ceut  foat
+        --
+      ++  gelp
+        =>  vunt  |%
+            ++  clom  claw
+            ++  chog  fram
+            ++  ceut  fult
+        --
+      ++  ecbo  (ecco rame)
+      ++  eclo  (ecco gelp)
+      ++  ecco
+        =+  rame
+        |@  ++  $
+        =>  +<
+        |:  $:{rum/clom rig/(list (pair wing hoon))}
+        ^-  foat
+        %-  tyle
+        |-  ^-  ceut
+        ?~  rig  (rosh rum)
+        =+  mor=$(rig t.rig)
+        =+  zil=(halp q.i.rig)
+        =+  dar=(trep (meat mor) p.i.rig (meat zil))
+        (tasp dar zil mor)
+      --  --  --  --
+  ::
+  ++  caching-oc
+    =/  inc  (bin:caching-ad)
+    |@  ++  $
+    =>  inc
+    |%
+    ++  echo
+      |:  $:,[rum=bath rig=(list (pair wing hoon))]
+      (ecbo rum rig)
+    ::
+    ++  ecmo
+      |:  $:,[hag=claw rig=(list (pair wing hoon))]
+      (eclo hag rig)
+    --  --
+  ::
   ++  ad
     |%
     ++  arc
