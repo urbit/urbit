@@ -1,22 +1,26 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { Box, Row, Col } from "@tlon/indigo-react";
 import GlobalApi from "~/logic/api/global";
-import { Invites as IInvites, Associations, Invite, JoinRequests } from "~/types";
+import { Invites as IInvites, Associations, Invite, JoinRequests, Groups } from "~/types";
 import { resourceAsPath } from "~/logic/lib/util";
 import { useHistory } from "react-router-dom";
 import { useWaitForProps } from "~/logic/lib/useWaitForProps";
 import InviteItem from "~/views/components/Invite";
 import {JoiningStatus} from "./joining";
+import {useModal} from "~/logic/lib/useModal";
+import {JoinGroup} from "~/views/landscape/components/JoinGroup";
 
 interface InvitesProps {
   api: GlobalApi;
   invites: IInvites;
+  groups: Groups;
   associations: Associations;
   pendingJoin: JoinRequests;
 }
 
 export function Invites(props: InvitesProps) {
   const { api, invites, pendingJoin } = props;
+  const [selected, setSelected] = useState<[string, string, Invite] | undefined>()
   const history = useHistory();
   const waiter = useWaitForProps(props);
 
@@ -25,27 +29,30 @@ export function Invites(props: InvitesProps) {
     uid: string,
     invite: Invite
   ) => async () => {
-    const resource = {
-      ship: `~${invite.resource.ship}`,
-      name: invite.resource.name,
-    };
-
-    const resourcePath = resourceAsPath(invite.resource);
-    if (app === "contacts") {
-      await api.contacts.join(resource);
-      await waiter((p) => resourcePath in p.associations?.contacts);
-      await api.invite.accept(app, uid);
-      history.push(`/~landscape${resourcePath}`);
-    } else if (app === "graph") {
-      await api.invite.accept(app, uid);
-      history.push(`/~graph/join${resourcePath}`);
-    }
+    setSelected([app, uid, invite]);
+    showModal();
   };
 
   const declineInvite = useCallback(
     (app: string, uid: string) => () => api.invite.decline(app, uid),
     [api]
   );
+
+  const { modal, showModal } = useModal({ modal: () => {
+    const [app, uid, invite] = selected!;
+    const autojoin = `~${invite.resource.ship}/${invite.resource.name}`;
+    return (
+    <JoinGroup
+      groups={props.groups}
+      associations={props.associations}
+      api={api}
+      autojoin={autojoin}
+      inviteUid={uid}
+      inviteApp={app}
+    />
+  )}});
+
+
 
   return (
     <Col
@@ -56,6 +63,7 @@ export function Invites(props: InvitesProps) {
       position="sticky"
       flexShrink={0}
     >
+     {modal}
      { Object
         .keys(props.pendingJoin)
         .map(resource => (

@@ -94,7 +94,8 @@ export default class GlobalStore extends BaseStore<StoreState> {
         group: {}
       },
       notificationsCount: 0,
-      settings: {}
+      settings: {},
+      pendingJoin: {},
     };
   }
 

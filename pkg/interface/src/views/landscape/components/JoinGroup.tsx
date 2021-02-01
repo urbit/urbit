@@ -42,11 +42,11 @@ interface FormSchema {
 
 interface JoinGroupProps {
   groups: Groups;
-  contacts: Rolodex;
   associations: Associations;
   api: GlobalApi;
   autojoin?: string;
   inviteUid?: string;
+  inviteApp?: string;
 }
 
 function Autojoin(props: { autojoin: string | null }) {
@@ -78,14 +78,14 @@ export function JoinGroup(props: JoinGroupProps) {
     const group = _.isString(preview) ? preview : preview?.group!;
     const [,,ship,name] = group.split('/');
     await api.groups.join(ship, name);
-    if (props.inviteUid) {
-      api.invite.accept("contacts", props.inviteUid);
+    if (props.inviteUid && props.inviteApp) {
+      api.invite.accept(props.inviteApp, props.inviteUid);
     }
     try {
       await waiter((p: JoinGroupProps) => {
         return group in p.groups && 
-          (group in p.associations.graph
-            || group in p.associations.contacts)
+          (group in (p.associations?.graph ?? {})
+            || group in (p.associations?.contacts ?? {}))
       });
       if(props.groups?.[group]?.hidden) {
         const { metadata } = associations.graph[group];
@@ -181,7 +181,7 @@ export function JoinGroup(props: JoinGroupProps) {
               onSubmit={onSubmit}
             >
               <Form style={{ display: "contents" }}>
-                <Autojoin autojoin={autojoin} />
+                <Autojoin autojoin={autojoin ?? null} />
                 <Input
                   id="group"
                   label="Group"
