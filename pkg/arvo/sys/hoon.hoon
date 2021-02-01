@@ -11125,7 +11125,7 @@
       :_  grub
       p.i.hag
     =^  wiz  grub
-      %^  spin  hag  grub
+      %^  spin  hag.$  grub
       |=  [[p=type q=foot] =_grub]
       ?.  ?=([%core *] p)
         ~_  (dunk %fire-type)
@@ -11141,15 +11141,15 @@
       ?>  ?=(%wet -.q)
       =^  done  grub  (caching-redo(sut p.p) q.q.p)
       =.  p.p  done
+      ?:  |(!vet (~(has in rib) [sut dox p.q]))
+        :_  grub
+        [%hold [p p.q]]
       =^  rumi  grub
         %^    caching-mull(sut p, rib (~(put in rib) sut dox p.q))
             %noun
           dox
         p.q
-      ?>  ?|  !vet
-              (~(has in rib) [sut dox p.q])
-              !=(** rumi)
-          ==
+      ?>  !=(** rumi)
       :_  grub
       [%hold [p p.q]]
     :_  grub
