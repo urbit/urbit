@@ -91,9 +91,9 @@ export function GroupSearch(props: InviteSearchProps) {
     props.associations.groups?.[value]?.metadata || {};
 
   const onSelect = useCallback(
-    (s: string) => {
+    (a: Association) => {
       setTouched(true);
-      setSelected(v => _.uniq([...v, s]));
+      setSelected(v => _.uniq([...v, a.group]));
     },
     [setTouched, setSelected]
   );
