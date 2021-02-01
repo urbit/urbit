@@ -1,5 +1,5 @@
-/-  sur=group-view
-/+  resource
+/-  sur=group-view, spider
+/+  resource, strandio, metadata=metadata-store
 ^?
 =<  [. sur]
 =,  sur
@@ -46,4 +46,22 @@
     :_  s+prog
     (enjs-path:resource rid)
   --
+++  cleanup-md
+  |=  rid=resource
+  =/  m  (strand:spider ,~)
+  ^-  form:m
+  ;<  =associations:metadata  bind:m  
+    %+  scry:strandio  associations:metadata
+    %+  weld  /metadata-store/group 
+    (snoc (en-path:resource rid) %noun)
+  =/  assocs=(list [=md-resource:metadata association:metadata])
+    ~(tap by associations) 
+  |-  
+  =*  loop  $
+  ?~  assocs
+    (pure:m ~)
+  ;<  ~  bind:m
+    %+  poke-our:strandio  %metadata-store
+    metadata-action+!>([%remove rid md-resource.i.assocs])
+  loop(assocs t.assocs)
 --
