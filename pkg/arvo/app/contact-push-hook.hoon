@@ -88,13 +88,22 @@
 ++  initial-watch
   |=  [=path =resource:res]
   ^-  vase
+  |^
   ?>  (is-allowed:con src.bowl)
   !>  ^-  update:store
-  =/  contact=(unit contact:store)  (get-contact:con our.bowl)
-  :+  %add
-    our.bowl
-  ?^  contact  u.contact
-  *contact:store
+  [%initial rolo %.n]
+  ::
+  ++  rolo
+    ^-  rolodex:store
+    =/  ugroup  (scry-group:grp resource)
+    ?~  ugroup  *rolodex:store
+    %-  ~(gas by *rolodex:store)
+    %+  murn  ~(tap in (members:grp resource))
+    |=  s=ship
+    ^-  (unit [ship contact:store])
+    =/  c=(unit contact:store)  (get-contact:con s)
+    ?~(c ~ `[s u.c])
+  --
 ::
 ++  take-update
   |=  =vase
