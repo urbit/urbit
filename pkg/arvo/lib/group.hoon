@@ -28,6 +28,15 @@
   %+  scry-for  ,(unit group)
   `path`groups+(en-path:resource rid)
 ::
+++  scry-groups
+  .^  ,(set resource)
+    %gy
+    (scot %p our.bowl)
+    %group-store
+    (scot %da now.bowl)
+    /groups/noun
+  ==
+::
 ++  members
   |=  rid=resource
   =;  =group

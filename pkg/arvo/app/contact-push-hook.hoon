@@ -1,4 +1,5 @@
-/+  store=contact-store, res=resource, contact, default-agent, dbug, push-hook
+/+  store=contact-store, res=resource, contact, group,
+    default-agent, dbug, push-hook
 ~%  %contact-push-hook-top  ..part  ~
 |%
 +$  card  card:agent:gall
@@ -22,6 +23,7 @@
 +*  this  .
     def   ~(. (default-agent this %|) bowl)
     con   ~(. contact bowl)
+    grp   ~(. group bowl)
 ::
 ++  on-init   on-init:def
 ++  on-save   !>(~)
@@ -51,17 +53,37 @@
 ++  resource-for-update
   |=  =vase
   ^-  (list resource:res)
+  |^
   =/  =update:store  !<(update:store vase)
-  ~
-  ::?-  -.update
-  ::  %initial     !!
-  ::  %add         !!
-  ::  %remove      !!
-  ::  %edit        !!
-  ::  %allow       !!
-  ::  %disallow    !!
-  ::  %set-public  !!
-  ::==
+  ?-  -.update
+    %initial     ~
+    %add         (rids-for-ship ship.update)
+    %remove      (rids-for-ship ship.update)
+    %edit        (rids-for-ship ship.update)
+    %allow       ~
+    %disallow    ~
+    %set-public  ~
+  ==
+  ::
+  ++  rids-for-ship
+    |=  s=ship
+    ^-  (list resource:res)
+    ::  if the ship is in any group that I am pushing updates for, push
+    ::  it out to that resource.
+    ::
+    %+  skim  ~(tap in scry-sharing)
+    |=  r=resource:res
+    (is-member:grp s r)
+  ::
+  ++  scry-sharing
+    .^  (set resource:res)
+      %gx
+      (scot %p our.bowl)
+      %contact-push-hook
+      (scot %da now.bowl)
+      /sharing/noun
+    ==
+  --
 ::
 ++  initial-watch
   |=  [=path =resource:res]

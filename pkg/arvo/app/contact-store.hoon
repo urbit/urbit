@@ -101,7 +101,9 @@
     ++  handle-initial
       |=  [rolo=rolodex:store is-public=?]
       ^-  (quip card _state)
+      =/  our-contact  (~(got by rolodex) our.bowl)
       =.  rolodex  (~(uni by rolodex) rolo)
+      =.  rolodex  (~(put by rolodex) our.bowl our-contact)
       :_  state(rolodex rolodex, is-public is-public)
       (send-diff [%initial rolodex is-public] %.n)
     ::
