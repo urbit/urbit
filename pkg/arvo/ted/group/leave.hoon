@@ -22,6 +22,7 @@
   :-  %pull-hook-action
   !>  ^-  action:pull-hook
   [%remove rid]
+;<  ~  bind:m  (poke-our %contact-pull-hook pull-hook-act)
 ;<  ~  bind:m  (poke-our %metadata-pull-hook pull-hook-act)
 ;<  ~  bind:m  (poke-our %group-pull-hook pull-hook-act)
 ;<  ~  bind:m  (poke-our %group-store %group-update !>([%remove-group rid ~]))
