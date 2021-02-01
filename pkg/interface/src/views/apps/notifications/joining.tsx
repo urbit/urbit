@@ -40,7 +40,7 @@ export function JoiningStatus(props: JoiningStatusProps) {
   const title = preview?.metadata?.title ?? resource;
   const isError = joinError.indexOf(status as any) !== -1;
   return (
-    <Col gapY="2">
+    <Col py="3" mx="5" gapY="2">
       <Text fontSize="1">{isError ? "Failed to join " : "Joining "} {title}</Text>
       <Text color={isError ? "red" : "gray"}>{desc}</Text>
       <SegmentedProgressBar current={current + 1} segments={3} />

@@ -17,7 +17,7 @@ const ModalButton = (props) => {
   return (
     <>
       {modal}
-      <Box
+      <Button
         onClick={showModal}
         display="flex"
         alignItems="center"
@@ -30,7 +30,7 @@ const ModalButton = (props) => {
         {...rest}
       >
         <Icon icon={props.icon} mr={2} color={color}></Icon><Text color={color}>{props.text}</Text>
-      </Box>
+      </Button>
     </>
   );
 }

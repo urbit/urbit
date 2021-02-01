@@ -1,4 +1,5 @@
 import { Serial, PatpNoSig, Path } from './noun';
+import {Resource} from './group-update';
 
 export type InviteUpdate =
   InviteUpdateInitial
@@ -60,8 +61,8 @@ export type AppInvites = {
 
 export interface Invite {
   app: string;
-  path: Path;
-  recipeint: PatpNoSig;
+  recipient: PatpNoSig;
+  resource: Resource;
   ship: PatpNoSig;
   text: string;
 }
