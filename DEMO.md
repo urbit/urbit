@@ -8,8 +8,8 @@ Runs the full node API services.
 ./local-start.sh
 ```
 
-## Start Agents
-On `~zod`
+## Start Agents and set XPUBs
+On `~zod`. Uses "abandon abandon..." mnemonic
 ```
 |commit %home
 |start %btc-provider
@@ -19,36 +19,38 @@ On `~zod`
 :btc-provider|command [%set-credentials api-url='http://localhost:50002' %main]
 :btc-wallet-hook|action [%set-provider ~zod %main]
 :btc-provider|command [%whitelist-clients `(set ship)`(sy ~[~dopzod])]
+
+=fprint [%4 0xbeef.dead]
+=xpubmain 'zpub6rFR7y4Q2AijBEqTUquhVz398htDFrtymD9xYYfG1m4wAcvPhXNfE3EfH1r1ADqtfSdVCToUG868RvUUkgDKf31mGDtKsAYz2oz2AGutZYs'
+=xpubtest 'vpub5Y6cjg78GGuNLsaPhmYsiw4gYX3HoQiRBiSwDaBXKUafCt9bNwWQiitDk5VZ5BVxYnQdwoTyXSs2JHRPAgjAvtbBrf8ZhDYe2jWAqvZVnsc'
 ```
 
-On `~dopzod`
+On `~dopzod`. Uses "absurd sick..." mnemonic from PRIVATE.scratch.md
 ```
 |commit %home
 |start %btc-wallet-hook
 |start %btc-wallet-store
 :btc-wallet-hook|action [%set-provider ~zod %main]
+
+=fprint [%4 0xdead.beef]
+=xpubmain 'zpub6r8dKyWJ31XF6n69KKeEwLjVC5ruqAbiJ4QCqLsrV36Mvx9WEjUaiPNPGFLHNCCqgCdy6iZC8ZgHsm6a1AUTVBMVbKGemNcWFcwBGSjJKbD'
+=xpubtest 'vpub5ZpY66FvUHYMSST9uWoUSFYBYxGx3aSFfQP8qg2HqGUuL8k9ReiWuKxSKZBwFmBKug8YStuGTmxsnL8ySc9dfPJQdJTM4dYAZcgJhSfRWKL'
 ```
 
 ### Add Wallets
-`~dopzod`
-XPUB is the "absurd sick..." mnemonic
+On both `~zod`/`dopzod`, choose depending on whether you're on test or main
 ```
-=xpubp 'zpub6r8dKyWJ31XF6n69KKeEwLjVC5ruqAbiJ4QCqLsrV36Mvx9WEjUaiPNPGFLHNCCqgCdy6iZC8ZgHsm6a1AUTVBMVbKGemNcWFcwBGSjJKbD'
-=fprint [%4 0xbeef.dead]
-:btc-wallet-store|action [%add-wallet xpubp fprint ~ [~ 8] [~ 6]]
-```
+:btc-wallet-store|action [%add-wallet xpubmain fprint ~ [~ 8] [~ 6]]
 
-`~zod`
-```
-=xpubzod 'zpub6rFR7y4Q2AijBEqTUquhVz398htDFrtymD9xYYfG1m4wAcvPhXNfE3EfH1r1ADqtfSdVCToUG868RvUUkgDKf31mGDtKsAYz2oz2AGutZYs'
-=fprint [%4 0xbeef.dead]
-:btc-wallet-store|action [%add-wallet xpubzod fprint ~ [~ 8] [~ 6]]
+:btc-wallet-store|action [%add-wallet xpubtest fprint ~ [~ 8] [~ 6]]
 ```
 
 ## Check Balance
 `~dopzod`
 ```
-.^(@ud %gx /=btc-wallet-store=/balance/[xpubp]/noun)
+.^(@ud %gx /=btc-wallet-store=/balance/[xpubmain]/noun)
+
+.^(@ud %gx /=btc-wallet-store=/balance/[xpubtest]/noun)
 ```
 
 ## Pay a Ship
