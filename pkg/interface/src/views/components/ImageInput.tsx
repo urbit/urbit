@@ -69,6 +69,7 @@ export function ImageInput(props: ImageInputProps) {
               border={1}
               borderColor="lightGray"
               onClick={onClick}
+              flexShrink={0}
             >
               {uploading ? "Uploading" : "Upload"}
             </Button>
