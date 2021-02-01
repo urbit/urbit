@@ -9261,7 +9261,6 @@
                  [[%| 0 ~] $(depth.skin (dec depth.skin))]
       ==
     ::
-    ::  XX audited
     ++  caching-gain
       |-  ^-  [type _grub]
       ?@  skin  [[%face skin ref] grub]
@@ -9475,7 +9474,6 @@
         [[%| 0 ~] $(depth.skin (dec depth.skin))]
       ==
     ::
-    ::  XX audited
     ++  caching-lose
       |-  ^-  [type _grub]
       ?@  skin  :_  grub  [%face skin ref]
@@ -9738,7 +9736,6 @@
       ==
     --
   ::
-  ::  XX audited
   ++  caching-blow
     |=  [gol=type gen=hoon]
     ^-  [[type nock] _grub]
@@ -9779,7 +9776,6 @@
                  $(sut repo, gil (~(put in gil) sut))
     ==
   ::
-  ::  XX audited
   ++  caching-bran
     ~+
     =|  gil=(set type)
@@ -9865,7 +9861,6 @@
     ^-  type
     [%face [[[cog ~ gen] ~ ~] ~] sut]
   ::
-  ::  XX audited
   ++  caching-crop
     ~/  %crop
     |=  ref=type
@@ -10020,7 +10015,6 @@
       ==
     --
   ::
-  ::  XX audited
   ++  caching-cool
     |=  [pol=? hyp=wing ref=type]
     ^-  [type _grub]
@@ -10059,7 +10053,6 @@
       [['.' ~] ['-' ~] ~ ~]
     [[%leaf (mesc (trip paz))] duck ~]
   ::
-  ::  XX audited
   ++  caching-elbo
     |=  [lop=palo rig=(list (pair wing hoon))]
     ^-  [type _grub]
@@ -10106,7 +10099,6 @@
       hag  q.dix
     ==
   ::
-  ::  XX audited
   ++  caching-ergo
     |=  [lop=palo rig=(list (pair wing hoon))]
     ^-  [(pair type nock) _grub]
@@ -10167,7 +10159,6 @@
       hej  [[p.dix q.zil] hej]
     ==
   ::
-  ::  XX audited
   ++  caching-endo
     |=  [lop=(pair palo palo) dox=type rig=(list (pair wing hoon))]
     ^-  [(pair type type) _grub]
@@ -10541,7 +10532,6 @@
     =-  [p.- [%9 p.q.lop (hike axe q.-)]]
     (ecmo:cin ~(tap in q.q.lop) rig)
   ::
-  ::  XX audited
   ++  caching-et
     |_  [hyp=wing rig=(list (pair wing hoon))]
     ::
@@ -10584,7 +10574,6 @@
       (caching-endo [p.lef p.rye] dox rig)
     --
   ::
-  ::  XX audited
   ++  caching-epla
     |=  [hyp=wing rig=(list (pair wing hoon))]
     ^-  [type _grub]
@@ -10596,7 +10585,6 @@
     ^-  type
     ~(play et hyp rig)
   ::
-  ::  XX audited
   ++  caching-emin
     |=  [gol=type hyp=wing rig=(list (pair wing hoon))]
     ^-  [(pair type nock) _grub]
@@ -10608,7 +10596,6 @@
     ^-  (pair type nock)
     (~(mint et hyp rig) gol)
   ::
-  ::  XX audited
   ++  caching-emul
     ~/  %emul
     |=  [gol=type dox=type hyp=wing rig=(list (pair wing hoon))]
@@ -10634,7 +10621,6 @@
           [%core q.q.a q.a]
     ==
   ::
-  ::  XX audited
   ++  caching-feel                                      :: detect existence
     |=  rot=(list wing)
     ^-  [? _grub]
@@ -10680,7 +10666,6 @@
                 ==
     ==    ==
   ::
-  ::  XX audited
   ++  caching-fond
     |=  [way=vial hyp=wing]
     =>
@@ -11029,7 +11014,6 @@
       --
     ==
   ::
-  ::  XX audited
   ++  caching-find
     |=  [way=vial hyp=wing]
     ^-  [port _grub]
@@ -11062,7 +11046,6 @@
         ==    ==
     (fond way hyp)
   ::
-  ::  XX audited
   ++  caching-fund
     |=  [way=vial gen=hoon]
     ^-  [port _grub]
@@ -11082,7 +11065,6 @@
       [%| (mint %noun gen)]
     (find way u.hup)
   ::
-  ::  XX audited
   ++  caching-fine
     |=  tor=port
     ^-  [(pair type nock) _grub]
@@ -11117,7 +11099,6 @@
             %|  [(fire ~(tap in q.q.p.tor)) [%9 p.q.p.tor %0 axe]]
     ==    ==
   ::
-  ::  XX audited
   ++  caching-fire
     |=  hag=(list [p=type q=foot])
     ^-  [type _grub]
@@ -11214,7 +11195,6 @@
       $(sut repo)
     ==
   ::
-  ::  XX audited
   ++  caching-fish
     |=  axe=axis
     =|  vot=(set type)
@@ -11308,7 +11288,6 @@
         $void       %void
     ==
   ::
-  ::  XX audited
   ++  caching-fuse
     |=  ref=type
     =|  bix=(set [type type])
@@ -11382,7 +11361,6 @@
       [%void grub]
     ==
   ::
-  ::  XX audited
   ++  caching-gain
     |=  gen=hoon
     ^-  [type _grub]
@@ -11393,7 +11371,6 @@
     |=  gen/hoon  ^-  type
     (chip & gen)
   ::
-  ::  XX audited
   ++  caching-hemp
     ::  generate formula from foot
     ::
@@ -11573,7 +11550,6 @@
       ==         ==     ==
     --
   ::
-  ::  XX audited
   ++  caching-lose
     |=  gen=hoon
     ^-  [type _grub]
@@ -11584,7 +11560,6 @@
     |=  gen/hoon  ^-  type
     (chip | gen)
   ::
-  ::  XX audited
   ++  caching-chip
     |=  [how=? gen=hoon]
     ^-  [type _grub]
@@ -11639,7 +11614,6 @@
     =+  neg=~(open ap gen)
     ?:(=(neg gen) sut $(gen neg))
   ::
-  ::  XX audited
   ++  caching-bake
     |=  [dox=type hud=poly dab=(map term hoon)]
     ^-  [* _grub]
@@ -11692,7 +11666,6 @@
       {* * *}  [dov $(dab l.dab) $(dab r.dab)]
     ==
   ::
-  ::  XX audited
   ++  caching-balk
     |=  [dox=type hud=poly dom=(map term tome)]
     ^-  [* _grub]
@@ -11733,7 +11706,6 @@
       {* * *}   [dov $(dom l.dom) $(dom r.dom)]
     ==
   ::
-  ::  XX audited
   ++  caching-mile
     ::  mull all chapters and feet in a core
     ::
@@ -11756,7 +11728,6 @@
     =+  (balk(sut yet) hum hud dom)
     [yet hum]
   ::
-  ::  XX audited
   ++  caching-mine
     ::  mint all chapters and feet in a core
     ::
@@ -12112,7 +12083,6 @@
       !!
     --
   ::
-  ::  XX audited
   ++  caching-mint
     |=  [gol=type gen=hoon]
     ^-  [(pair type nock) _grub]
@@ -12569,7 +12539,6 @@
       [(nice p.pul) (cons q.pul q.dan)]
     --
   ::
-  ::  XX audited
   ++  caching-moot
     =+  gil=*(set type)
     |-  ^-  [? _grub]
@@ -12627,7 +12596,6 @@
       $void      &
     ==
   ::
-  ::  XX audited
   ++  caching-mull
     |=  [gol=type dox=type gen=hoon]
     ^-  [[p=type q=type] _grub]
@@ -13066,7 +13034,6 @@
   ::
   ++  meet  |=(ref/type &((nest | ref) (nest(sut ref) | sut)))
   ::
-  ::  XX audited
   ++  caching-meet
     |=  ref=type
     ^-  [? _grub]
@@ -13121,7 +13088,6 @@
       ==           ==
     --
   ::
-  ::  XX audited
   ++  caching-miss                                      ::  nonintersection
     |=  $:  ::  ref: symmetric type
             ::
@@ -13200,7 +13166,6 @@
   ::
   ++  mite  |=(ref/type |((nest | ref) (nest(sut ref) & sut)))
   ::
-  ::  XX audited
   ++  caching-mite
     |=  ref=type
     =^  lef  grub  (caching-nest | ref)
@@ -13208,7 +13173,6 @@
     :_  grub
     |(lef rig)
   ::
-  ::  XX audited
   ++  caching-nest
     |=  [tel=? ref=type]
     =/  cached  (~(get by nes.grub) [sut ref])
@@ -13547,7 +13511,6 @@
       ==            ==
     --
   ::
-  ::  XX audited
   ++  caching-peek
     |=  [way=?(%read %rite %both %free) axe=axis]
     ^-  [type _grub]
@@ -13673,7 +13636,6 @@
       $rite  [?=($iron met) |]
     ==
   ::
-  ::  XX audited
   ++  caching-play
     |=  gen=hoon
     ^-  [type _grub]
@@ -13905,7 +13867,6 @@
                  $(gen doz)
     ==
   ::
-  ::  XX audited
   ++  caching-redo                                      ::  refurbish faces
     |=  $:  ::  ref: raw payload
             ::
@@ -14375,7 +14336,6 @@
       *           ~>(%mean.'repo-fltt' !!)
     ==
   ::
-  ::  XX audited
   ++  caching-repo
     ^-  [type _grub]
     ?-  sut
@@ -14396,7 +14356,6 @@
     =.  fan  (~(put in fan) leg)
     (play(sut p.leg) q.leg)
   ::
-  ::  XX audited
   ++  caching-rest
     |=  leg=[p=type q=hoon]
     ^-  [type _grub]
@@ -14411,7 +14370,6 @@
     =.  fan  (~(put in fan) leg)
     (caching-play(sut p.leg) q.leg)
   ::
-  ::  XX audited
   ++  caching-take
     |=  [vit=vein duz=$-(type [type _grub])]
     ^-  [(pair axis type) _grub]
