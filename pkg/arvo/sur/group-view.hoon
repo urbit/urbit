@@ -1,9 +1,18 @@
-/-  *resource
+/-  *resource, *group
 ^?
 |%
 ::
 +$  action
-  [%join =resource =ship]
+  $%  ::  host side
+      [%create name=term =policy title=@t description=@t]
+      [%remove =resource]
+      ::  client side
+      [%join =resource =ship]
+      [%leave =resource]
+      ::
+      [%groupify =resource title=@t description=@t]
+  ==
+
 ::
 +$  progress
   ?(%start %added final)
