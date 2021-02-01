@@ -1,3 +1,6 @@
+::  lib/btc.hoon
+::  Utilities for working with BTC data types and transactions
+::
 /-  sur=btc
 ^?
 =<  [sur .]

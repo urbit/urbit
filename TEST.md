@@ -1,16 +1,10 @@
 # Tests
 
-```
-|commit %home
-=btc -build-file %/lib/btc/hoon
-=b158 -build-file %/lib/bip158/hoon
-```
-
 ## BTC libs
 ```
 |commit %home
 =test -build-file %/tests/lib/btc/hoon
-run:test
+((slog test-all-vectors:test) ~)
 ```
 
 ## BIP158
