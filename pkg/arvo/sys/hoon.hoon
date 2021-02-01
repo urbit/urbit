@@ -10529,6 +10529,18 @@
       (endo [p.p.lug p.q.lug] dox rig)
     --
   ::
+  ++  caching-etco
+    |=  {lop/palo rig/(list (pair wing hoon))}
+    ^-  (pair type nock)
+    =/  cin  (oc (bin:caching-ad make:lib:caching-ad))
+    =.  rig  (flop rig)         ::  XX this unbreaks, void order in devulc
+    =/  axe  (tend p.lop)
+    ?:  ?=(%& -.q.lop)
+      =-  [p.- (hike axe q.-)]
+      (echo:cin p.q.lop rig)
+    =-  [p.- [%9 p.q.lop (hike axe q.-)]]
+    (ecmo:cin ~(tap in q.q.lop) rig)
+  ::
   ::  XX audited
   ++  caching-et
     |_  [hyp=wing rig=(list (pair wing hoon))]
@@ -10554,7 +10566,7 @@
         =^  nests  grub  (caching-nest(sut gol) & p.par)
         ?>  ?|(!vet nests)
         [par grub]
-      (etco p.lug rig)
+      (caching-etco p.lug rig)
     ::
     ++  mull
       |=  [gol=type dox=type]
