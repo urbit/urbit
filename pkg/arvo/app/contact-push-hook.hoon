@@ -48,6 +48,21 @@
     %set-public  %.n
   ==
 ::
+++  resource-for-update
+  |=  =vase
+  ^-  (list resource:res)
+  =/  =update:store  !<(update:store vase)
+  ~
+  ::?-  -.update
+  ::  %initial     !!
+  ::  %add         !!
+  ::  %remove      !!
+  ::  %edit        !!
+  ::  %allow       !!
+  ::  %disallow    !!
+  ::  %set-public  !!
+  ::==
+::
 ++  initial-watch
   |=  [=path =resource:res]
   ^-  vase

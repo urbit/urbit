@@ -142,6 +142,14 @@
     ==
   --
 ::
+++  resource-for-update
+  |=  =vase
+  ^-  (list resource)
+  =/  =update:store  !<(update:store vase)
+  ?:  ?=(%initial -.update)
+    ~
+  ~[resource.update]
+::
 ++  take-update
   |=   =vase
   ^-  [(list card) agent]
