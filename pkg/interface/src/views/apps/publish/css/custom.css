@@ -192,6 +192,7 @@
 }
 .md code, .md pre {
   font-family: "Source Code Pro", mono;
+  white-space: pre-wrap;
 }
 .md ul>li, .md ol>li {
   line-height: 1.5;
