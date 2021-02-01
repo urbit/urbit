@@ -35,7 +35,7 @@ export const UnreadNotice = (props) => {
         border='1'
         borderColor='blue'>
         <Text flexShrink='1' textOverflow='ellipsis' whiteSpace='pre' overflow='hidden' display='block' cursor='pointer' onClick={onClick}>
-          {unreadCount} new messages since{' '}
+          {unreadCount} new message{unreadCount > 1 ? 's' : ''} since{' '}
           {datestamp && (
             <>
               <Text color='blue'>~{datestamp}</Text> at{' '}
