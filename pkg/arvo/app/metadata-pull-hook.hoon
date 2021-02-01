@@ -55,7 +55,6 @@
         =+  !<(=update:invite-store q.cage.sign)
         :_  state
         ?.  ?=(%invite -.update)  ~
-        ?.  =(%contacts term.update)  ~
         (get-preview resource.invite.update)^~
       ::
         %kick  [watch-invites^~ state]

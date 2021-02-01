@@ -121,7 +121,7 @@
   ::
   ++  initial-group
     |=  json
-    [%initial-group *resource *associations]
+    [*resource *associations]
   ::
   ++  add
     %-  ot

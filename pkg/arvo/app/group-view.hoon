@@ -127,7 +127,7 @@
     =.  jn-core
       (jn-abed rid)
     =/  maybe-group
-       (peek-group:met %contacts rid)
+       (peek-group:met %groups rid)
     ?^  maybe-group
       ~|("already joined group {<rid>}" !!)
     =.  jn-core

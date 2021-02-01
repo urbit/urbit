@@ -24,8 +24,8 @@
 =/  rid=resource
   [our.bowl name.action]
 =/  group-act=action:store
-  [%add-group rid policy.action &]
-;<  ~  bind:m  (poke-our %group-store %group-action !>(action))
+  [%add-group rid policy.action %.n]
+;<  ~  bind:m  (poke-our %group-store %group-action !>(group-act))
 ;<  =bowl:spider  bind:m  get-bowl:strandio
 ;<  ~  bind:m  (poke-our %group-store %group-action !>([%add-members rid (sy our.bowl ~)]))
 =/  push-hook-act=cage

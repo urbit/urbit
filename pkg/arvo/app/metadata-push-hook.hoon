@@ -50,7 +50,7 @@
     ~(wyt in (members:grp rid))
   =/  =metadatum:store
     %-  need
-    %+  mate  (peek-metadatum:met %contacts rid)
+    %+  mate  (peek-metadatum:met %groups rid)
     (peek-metadatum:met %graph rid)
   :_  this
   =;  =cage
