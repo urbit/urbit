@@ -1,5 +1,5 @@
 /-  sur=group-view, spider
-/+  resource, strandio, metadata=metadata-store
+/+  resource, strandio, metadata=metadata-store, store=group-store
 ^?
 =<  [. sur]
 =,  sur
@@ -8,9 +8,25 @@
   =,  dejs:format
   |%
   ++  action
+    ^-  $-(json ^action)
     %-  of
-    :~  join+join
+    :~  create+create
+        remove+remove
+        join+join
+        leave+leave
     ==
+  ::
+  ++  create
+    %-  ot
+    :~  name+so
+        policy+policy:dejs:store
+        title+so
+        description+so
+    ==
+  ::
+  ++  remove  dejs:resource
+  ::
+  ++  leave  dejs:resource
   ::
   ++  join
     %-  ot

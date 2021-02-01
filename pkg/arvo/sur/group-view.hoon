@@ -9,8 +9,6 @@
       ::  client side
       [%join =resource =ship]
       [%leave =resource]
-      ::
-      [%groupify =resource title=@t description=@t]
   ==
 
 ::
