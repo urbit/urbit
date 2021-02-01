@@ -14006,7 +14006,12 @@
         ?>  ?=([%cell *] sut)
         ::  leaf with possible recursive descent
         ::
+        ::  clear face stacks for descent
+        ::
         ::  XX WEIRD some variation here
+        =/  tos  hos
+        =/  tec  wec
+        ::
         =:  hos  ~
             wec  [~ ~ ~]
         ==
@@ -14017,6 +14022,10 @@
         ::
         =^  lef  grub  dext(sut p.sut, ref lep)
         =^  rig  grub  dext(sut p.sut, ref rep)
+        ::
+        =:  hos  tos
+            wec  tec
+        ==
         ::
         :_  grub
         done(sut [%cell lef rig])
@@ -14065,7 +14074,7 @@
         =^  rig  grub  caching-repo
         =^  val  grub  dext(sut rig, gil (~(put in gil) sut ref))
         :_  grub
-        ?:  =(val -.rig)
+        ?:  =(val rig)
           sut
         val
       ==
@@ -14115,7 +14124,7 @@
         ::
         =;  [val=(pair (set (list tool)) (list type)) =_grub]
           :_  grub
-          +(wec p.val, ref (fork q.val))
+          +(wec -.val, ref (fork +.val))
         =/  moy  ~(tap in p.ref)
         |-  ^-  [(pair (set (list tool)) (list type)) _grub]
         ?~  moy  [[~ ~] grub]
