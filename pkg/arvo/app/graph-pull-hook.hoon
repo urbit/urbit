@@ -9,6 +9,7 @@
       update:store
       %graph-update
       %graph-push-hook
+      %.n
   ==
 --
 ::
@@ -48,4 +49,6 @@
   =/  maybe-time  (peek-update-log:gra resource)
   ?~  maybe-time  `/
   `/(scot %da u.maybe-time)
+::
+++  resource-for-update  resource-for-update:gra
 --

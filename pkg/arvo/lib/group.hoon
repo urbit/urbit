@@ -3,6 +3,15 @@
 ::
 |_  =bowl:gall
 +$  card  card:agent:gall
+::
+++  resource-for-update
+  |=  =vase
+  ^-  (list resource)
+  =/  =update:store  !<(update:store vase)
+  ?:  ?=(%initial -.update)
+    ~
+  ~[resource.update]
+::
 ++  scry-for
   |*  [=mold =path]
   =.  path

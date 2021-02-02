@@ -92,27 +92,7 @@
       %tag-queries        %.n
       %run-updates        (is-allowed resource.q.update bowl %.y)
   ==
-::
-++  resource-for-update
-  |=  =vase
-  ^-  (list resource:res)
-  =/  =update:store  !<(update:store vase)
-  ?-  -.q.update
-      %add-graph          ~[resource.q.update]
-      %remove-graph       ~[resource.q.update]
-      %add-nodes          ~[resource.q.update]
-      %remove-nodes       ~[resource.q.update]
-      %add-signatures     ~[resource.uid.q.update]
-      %remove-signatures  ~[resource.uid.q.update]
-      %archive-graph      ~[resource.q.update]
-      %unarchive-graph    ~
-      %add-tag            ~
-      %remove-tag         ~
-      %keys               ~
-      %tags               ~
-      %tag-queries        ~
-      %run-updates        ~[resource.q.update]
-  ==
+++  resource-for-update  resource-for-update:gra
 ::
 ++  initial-watch
   |=  [=path =resource:res]

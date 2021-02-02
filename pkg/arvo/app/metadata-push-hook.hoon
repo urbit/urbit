@@ -86,13 +86,7 @@
   ?~  u.role  %.n
   ?=(?(%admin %moderator) u.u.role)
 ::
-++  resource-for-update
-  |=  =vase
-  ^-  (list resource)
-  =/  =update:store  !<(update:store vase)
-  ?.  ?=(?(%add %remove %initial-group) -.update)  ~
-  ~[group.update]
-::
+++  resource-for-update  resource-for-update:met
 ++  take-update
   |=   =vase
   ^-  [(list card) agent]
