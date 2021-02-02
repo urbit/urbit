@@ -38,3 +38,11 @@ The below calls will print RPC results.
 
 ```
 
+## Running Tests
+```
+|commit %home
+-test %/tests/lib/bip158 ~
+-test %/tests/lib/btc-wallet-store ~
+-test %/tests/lib/btc ~
+```
+

@@ -16,7 +16,7 @@
 ++  bits-vectors
   ^-  (list bits-vector)
   :~  :*  5
-          ~[0 31 31 0 31 0]
+          ~[0 31 31 0 31 0] 
           [30 0b1.1111.1111.1000.0011.1110.0000]
       ==
   ==
@@ -35,7 +35,7 @@
       :*  'upub5EFU65HtV5TeiSHmZZm7FUffBGy8UKeqp7vw43jYbvZPpoVsgU93oac7Wk3u6moKegAEWtGNF8DehrnHtv21XXEMYRUocHqguyjknFHYfgY'
           %testnet
           [%49 %0 0]
-          33^0x3.a1af.804a.c108.a8a5.1782.198c.2d03.4b28.bf90.c880.3f5a.53f7.6276.fa69.a4ea.e77f  
+          33^0x3.a1af.804a.c108.a8a5.1782.198c.2d03.4b28.bf90.c880.3f5a.53f7.6276.fa69.a4ea.e77f
           [%base58 0c2Mww8dCYPUpKHofjgcXcBCEGmniw9CoaiD2]
       ==
       ::
