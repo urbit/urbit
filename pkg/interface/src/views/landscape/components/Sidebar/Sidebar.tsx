@@ -93,6 +93,8 @@ export function Sidebar(props: SidebarProps) {
         handleSubmit={setConfig}
         selected={selected || ''}
         workspace={workspace}
+        api={props.api}
+        history={props.history}
       />
       <SidebarList
         config={config}
@@ -102,6 +104,8 @@ export function Sidebar(props: SidebarProps) {
         groups={props.groups}
         apps={props.apps}
         baseUrl={props.baseUrl}
+        workspace={workspace}
+        contacts={props.contacts}
       />
     </ScrollbarLessCol>
   );

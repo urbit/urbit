@@ -3,10 +3,7 @@ import {
   Box,
   ManagedTextInputField as Input,
   Col,
-  ManagedRadioButtonField as Radio,
-  Text,
-  Icon,
-  Row
+  Text
 } from '@tlon/indigo-react';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
@@ -21,8 +18,8 @@ import { useWaitForProps } from '~/logic/lib/useWaitForProps';
 import { Groups } from '~/types/group-update';
 import { ShipSearch, shipSearchSchemaInGroup, shipSearchSchema } from '~/views/components/ShipSearch';
 import { Rolodex, Workspace } from '~/types';
-import {IconRadio} from '~/views/components/IconRadio';
-import {ChannelWriteFieldSchema, ChannelWritePerms} from './ChannelWritePerms';
+import { IconRadio } from '~/views/components/IconRadio';
+import { ChannelWriteFieldSchema, ChannelWritePerms } from './ChannelWritePerms';
 
 type FormSchema = {
   name: string;
@@ -32,7 +29,7 @@ type FormSchema = {
 } & ChannelWriteFieldSchema;
 
 const formSchema = (members?: string[]) => Yup.object({
-  name: Yup.string().required('Channel must have a name'),
+  name: Yup.string(),
   description: Yup.string(),
   ships: Yup.array(Yup.string()),
   moduleType: Yup.string().required('Must choose channel type'),
@@ -55,11 +52,16 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
   const waiter = useWaitForProps(props, 5000);
 
   const onSubmit = async (values: FormSchema, actions) => {
+    const name = (values.name) ? values.name : values.moduleType;
     const resId: string = stringToSymbol(values.name)
-    + ((workspace?.type !== 'home') ? `-${Math.floor(Math.random() * 10000)}`
+    + ((workspace?.type !== 'messages') ? `-${Math.floor(Math.random() * 10000)}`
     : '');
     try {
-      let { name, description, moduleType, ships, writers } = values;
+      let { description, moduleType, ships, writers } = values;
+      ships = ships.filter(e => e !== "");
+      if (workspace?.type === 'messages' && ships.length === 1) {
+        return history.push(`/~landscape/dm/${deSig(ships[0])}`);
+      }
       if (group) {
         await api.graph.createManagedGraph(
           resId,
@@ -83,7 +85,6 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
           writers.push(us);
           await api.groups.addTag(resource, tag, writers);
         }
-
       } else {
         await api.graph.createUnmanagedGraph(
           resId,
@@ -115,13 +116,13 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
       <Box pb='3' display={['block', 'none']} onClick={() => history.push(props.baseUrl)}>
         <Text fontSize='0' bold>{'<- Back'}</Text>
       </Box>
-      <Box fontSize="1" fontWeight="bold" mb={4} color="black">
-        New Channel
+      <Box color="black">
+        <Text fontSize={2} bold>{workspace?.type === 'messages' ? 'Direct Message' : 'New Channel'}</Text>
       </Box>
       <Formik
         validationSchema={formSchema(members)}
         initialValues={{
-          moduleType: 'chat',
+          moduleType: (workspace?.type === 'home') ? 'publish' : 'chat',
           name: '',
           description: '',
           group: '',
@@ -136,37 +137,54 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
           maxWidth="348px"
           gapY="4"
           >
-            <Col gapY="2">
+            <Col pt={4} gapY="2" display={(workspace?.type === "messages") ? 'none' : 'flex'}>
               <Box fontSize="1" color="black" mb={2}>Channel Type</Box>
-              <IconRadio icon="Chat" label="Chat" id="chat" name="moduleType" />
-              <IconRadio icon="Publish" label="Notebook" id="publish" name="moduleType" />
-              <IconRadio icon="Links" label="Collection" id="link" name="moduleType" />
+              <IconRadio
+                display={!(workspace?.type === 'home') ? 'flex' : 'none'}
+                icon="Chat"
+                label="Chat"
+                id="chat"
+                name="moduleType"
+              />
+              <IconRadio
+                icon="Publish"
+                label="Notebook"
+                id="publish"
+                name="moduleType"
+              />
+              <IconRadio
+                icon="Links"
+                label="Collection"
+                id="link"
+                name="moduleType"
+              />
             </Col>
             <Input
+            display={workspace?.type === 'messages' ? 'none' : 'flex'}
             id="name"
             label="Name"
             caption="Provide a name for your channel"
             placeholder="eg. My Channel"
             />
             <Input
+            display={workspace?.type === 'messages' ? 'none' : 'flex'}
             id="description"
             label="Description"
             caption="What's your channel about?"
             placeholder="Channel description"
             />
-            {(workspace?.type === 'home') ? (
+            {(workspace?.type === 'home' || workspace?.type === 'messages') ? (
             <ShipSearch
             groups={props.groups}
             contacts={props.contacts}
             id="ships"
             label="Invitees"
-          />) : (
+            />) : (
             <ChannelWritePerms
               groups={props.groups}
               contacts={props.contacts}
             />
           )}
-
             <Box justifySelf="start">
               <AsyncButton
               primary
@@ -174,7 +192,7 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
               type="submit"
               border
               >
-                Create Channel
+                Create
               </AsyncButton>
             </Box>
           <FormError message="Channel creation failed" />

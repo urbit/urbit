@@ -27,7 +27,7 @@ type LandscapeProps = StoreState & {
 export function DMRedirect(props: LandscapeProps & RouteComponentProps & { ship: string; }) {
   const { ship, api, history, graphKeys } = props;
   const goToGraph = useCallback((graph: string) => {
-    history.push(`/~landscape/home/resource/chat/ship/~${graph}`);
+    history.push(`/~landscape/messages/resource/chat/ship/~${graph}`);
   }, [history]);
 
   useEffect(() => {

@@ -28,14 +28,14 @@ type ResourceProps = StoreState & {
 } & RouteComponentProps;
 
 export function Resource(props: ResourceProps) {
-  const { association, api, notificationsGraphConfig, groups } = props;
+  const { association, api, notificationsGraphConfig, groups, contacts } = props;
   const app = association.metadata.module || association["app-name"];
   const rid = association.resource;
   const selectedGroup = association.group;
   const relativePath = (p: string) =>
 
     `${props.baseUrl}/resource/${app}${rid}${p}`;
-  const skelProps = { api, association, groups };
+  const skelProps = { api, association, groups, contacts };
   let title = props.association.metadata.title;
   if ('workspace' in props) {
     if ('group' in props.workspace && props.workspace.group in props.associations.groups) {
@@ -65,12 +65,12 @@ export function Resource(props: ResourceProps) {
           render={(routeProps) => {
             return (
               <ChannelPopoverRoutes
-                association={association} 
+                association={association}
                 group={props.groups?.[selectedGroup]}
                 groups={props.groups}
                 contacts={props.contacts}
                 api={props.api}
-                baseUrl={relativePath("")} 
+                baseUrl={relativePath("")}
                 notificationsGraphConfig={notificationsGraphConfig}
               />
             );

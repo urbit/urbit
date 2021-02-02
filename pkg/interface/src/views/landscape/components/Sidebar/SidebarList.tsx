@@ -37,22 +37,28 @@ function sidebarSort(
 
 export function SidebarList(props: {
   apps: SidebarAppConfigs;
+  contacts: any;
   config: SidebarListConfig;
   associations: Associations;
   groups: Groups;
   baseUrl: string;
   group?: string;
   selected?: string;
+  workspace: Workspace;
 }) {
-  const { selected, group, config } = props;
+  const { selected, group, config, workspace } = props;
   const associations = { ...props.associations.graph };
 
   const ordered = Object.keys(associations)
     .filter((a) => {
       const assoc = associations[a];
-      return group
-        ? assoc.group === group
-        : !(assoc.group in props.associations.groups);
+      if (workspace?.type === 'messages') {
+        return (!(assoc.group in props.associations.groups) && assoc.metadata.module === "chat");
+      } else {
+        return group
+          ? assoc.group === group
+          : (!(assoc.group in props.associations.groups) && assoc.metadata.module !== "chat");
+      }
     })
     .sort(sidebarSort(associations, props.apps)[config.sortBy]);
 
@@ -69,6 +75,8 @@ export function SidebarList(props: {
             apps={props.apps}
             hideUnjoined={config.hideUnjoined}
             groups={props.groups}
+            contacts={props.contacts}
+            workspace={workspace}
           />
         );
       })}

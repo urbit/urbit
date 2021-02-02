@@ -63,6 +63,7 @@ export function Skeleton(props: SkeletonProps) {
         groups={props.groups}
         mobileHide={props.mobileHide}
         workspace={props.workspace}
+        history={props.history}
       />
       {props.children}
     </Body>

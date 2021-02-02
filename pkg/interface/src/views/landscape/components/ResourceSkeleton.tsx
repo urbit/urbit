@@ -15,6 +15,8 @@ import { ChannelSettings } from "./ChannelSettings";
 import { ChannelMenu } from "./ChannelMenu";
 import { NotificationGraphConfig, Groups } from "~/types";
 import {isWriter} from "~/logic/lib/group";
+import urbitOb from 'urbit-ob';
+import { getItemTitle } from '~/logic/lib/util';
 
 const TruncatedBox = styled(Box)`
   white-space: pre;
@@ -24,6 +26,7 @@ const TruncatedBox = styled(Box)`
 
 type ResourceSkeletonProps = {
   groups: Groups;
+  contacts: any;
   association: Association;
   api: GlobalApi;
   baseUrl: string;
@@ -35,16 +38,30 @@ type ResourceSkeletonProps = {
 export function ResourceSkeleton(props: ResourceSkeletonProps) {
   const { association, api, baseUrl, children, atRoot, groups } = props;
   const app = association?.metadata?.module || association["app-name"];
-  const rid = association.resource; 
+  const rid = association.resource;
   const group = groups[association.group];
-  const workspace =
-    group?.hidden ? "/home" : association.group;
+  let workspace = association.group;
 
-  const title = props.title || association?.metadata?.title;
+  if (group?.hidden && app === "chat") {
+    workspace = "/messages";
+  } else if (group?.hidden) {
+    workspace = "/home";
+  }
+
+  let title = (workspace === "/messages")
+    ? getItemTitle(association)
+    : association?.metadata?.title;
+
+  let recipient = false;
+
+  if (urbitOb.isValidPatp(title)) {
+    recipient = title;
+    title = (props.contacts?.[title]?.nickname) ? props.contacts[title].nickname : title;
+  }
 
   const [, , ship, resource] = rid.split("/");
 
-  const resourcePath = (p: string) => baseUrl + `/resource/${app}/ship/${ship}/${resource}` + p;
+  const resourcePath = (p: string) => baseUrl + p;
 
   const isOwn = `~${window.ship}` === ship;
   let canWrite = (app === 'publish') ? true : false;
@@ -78,7 +95,16 @@ export function ResourceSkeleton(props: ResourceSkeletonProps) {
           <Link to={`/~landscape${workspace}`}> {"<- Back"}</Link>
         </Box>
         <Box px={1} mr={2} minWidth={0} display="flex">
-          <Text fontSize='2' fontWeight='700' display="inline-block" verticalAlign="middle" textOverflow="ellipsis" overflow="hidden" whiteSpace="pre" minWidth={0}>
+          <Text
+            mono={urbitOb.isValidPatp(title)}
+            fontSize='2'
+            fontWeight='700'
+            display="inline-block"
+            verticalAlign="middle"
+            textOverflow="ellipsis"
+            overflow="hidden"
+            whiteSpace="pre"
+            minWidth={0}>
             {title}
           </Text>
         </Box>
@@ -91,12 +117,13 @@ export function ResourceSkeleton(props: ResourceSkeletonProps) {
           color="gray"
         >
           <RichText
+            display={(workspace === '/messages' && (urbitOb.isValidPatp(title))) ? "none" : "inline-block"}
+            mono={(workspace === '/messages' && !(urbitOb.isValidPatp(title)))}
             color="gray"
             mb="0"
-            display="inline-block"
             disableRemoteContent
           >
-            {association?.metadata?.description}
+            {(workspace === "/messages") ? recipient : association?.metadata?.description}
           </RichText>
         </TruncatedBox>
         <Box flexGrow={1} />
