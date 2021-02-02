@@ -398,14 +398,17 @@ _ames_send(u3_pact* pac_u)
   }
 }
 
-/* u3_ames_decode_lane(): deserialize noun to lane
+/* u3_ames_decode_lane(): deserialize noun to lane; 0.0.0.0:0 if invalid
 */
 u3_lane
 u3_ames_decode_lane(u3_atom lan) {
   u3_lane lan_u;
   c3_d lan_d;
 
-  c3_assert( c3y == u3r_safe_chub(lan, &lan_d) );
+  if ( c3n == u3r_safe_chub(lan, &lan_d) || (lan_d >> 48) != 0 ) {
+    return (u3_lane){0, 0};
+  }
+
   u3z(lan);
 
   lan_u.pip_w = (c3_w)lan_d;
@@ -725,6 +728,11 @@ _ames_ef_send(u3_ames* sam_u, u3_noun lan, u3_noun pac)
     //  if in local-only mode, don't send remote packets
     //
     if ( (c3n == u3_Host.ops_u.net) && (0x7f000001 != lan_u.pip_w) ) {
+      _ames_pact_free(pac_u);
+    }
+    //  if the lane is uninterpretable, silently drop the packet
+    //
+    else if ( 0 == lan_u.por_s ) {
       _ames_pact_free(pac_u);
     }
     //  otherwise, mutate destination and send packet

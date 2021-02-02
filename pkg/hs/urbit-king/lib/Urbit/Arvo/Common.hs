@@ -26,6 +26,7 @@ import Urbit.Prelude
 
 import Control.Monad.Fail (fail)
 import Data.Bits
+import Data.Serialize
 
 import qualified Network.HTTP.Types.Method as H
 import qualified Urbit.Ob                  as Ob
@@ -185,14 +186,27 @@ type Galaxy = Patp Word8
 instance Integral a => Show (Patp a) where
   show = show . Ob.renderPatp . Ob.patp . fromIntegral . unPatp
 
-data AmesAddress
-    = AAIpv4 Ipv4 Port
-    | AAVoid Void
+data AmesAddress = AAIpv4 Ipv4 Port
   deriving (Eq, Ord, Show)
 
-deriveNoun ''AmesAddress
+instance Serialize AmesAddress where
+  get = AAIpv4 <$> (Ipv4 <$> getWord32le) <*> (Port <$> getWord16le)
+  put (AAIpv4 (Ipv4 ip) (Port port)) = putWord32le ip >> putWord16le port
 
-type AmesDest = Each Galaxy (Jammed AmesAddress)
+instance FromNoun AmesAddress where
+  parseNoun = named "AmesAddress" . \case
+    A (atomBytes -> bs)
+      -- Atoms lose leading 0s, but since lsb, these become trailing NULs
+      | length bs <= 6  -> case decode $ bs <> replicate (6 - length bs) 0 of
+        Right aa -> pure aa
+        Left msg -> fail msg
+      | otherwise      -> fail ("putative address " <> show bs <> " too long")
+    C{} -> fail "unexpected cell in ames address"
+
+instance ToNoun AmesAddress where
+  toNoun = A . bytesAtom . encode
+
+type AmesDest = Each Galaxy AmesAddress
 
 
 -- Path+Tagged Restructuring ---------------------------------------------------
