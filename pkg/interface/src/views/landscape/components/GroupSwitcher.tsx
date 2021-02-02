@@ -117,9 +117,9 @@ export function GroupSwitcher(props: {
                     mr={2}
                     color="gray"
                     display="block"
-                    icon="Mail"
+                    icon="Home"
                   />
-                  <Text>DMs + Drafts</Text>
+                  <Text>My Channels</Text>
                 </GroupSwitcherItem>}
                 <RecentGroups
                   recent={props.recentGroups}
