@@ -1,20 +1,21 @@
-/*
-Usage:
-var p = require("./psbt_sign.js")
-const psbt = PSBT_STRING_BASE64
-const mnemonics = MNEMONICS_STRING
-const [psbt, mnemonics] = []
-p.run(mnemonics, psbt)
-  */
-
 const bitcoin = require('bitcoinjs-lib');
 const ecpair = bitcoin.ECPair;
 const crypto = bitcoin.crypto;
 const bscript = bitcoin.script;
 const bip39 = require('bip39');
-const NETWORK = bitcoin.networks.bitcoin;
 const LOCK_TIME = 0;
 const SIGHASH_ALL = 1;
+let NETWORK;
+
+/*
+Usage:
+var p = require("./psbt_sign.js")
+var psbt = PSBT_STRING_BASE64
+const mnemonics = MNEMONICS_STRING
+
+p.run("TESTNET", mnemonics, psbt)
+p.run("MAIN", mnemonics, psbt)
+  */
 
 const isSegwitTx = (rawTx) => {
     return rawTx.substring(8, 12) === '0001';
@@ -22,7 +23,15 @@ const isSegwitTx = (rawTx) => {
 
 //  const PATHS = ["m/84'/0'/0'/0/0", "m/84'/0'/0'/1/0"];
 
-const run = async(mnemonics, psbtStr) => {
+const run = async(network, mnemonics, psbtStr) => {
+    let NETWORK;
+    if (network === "MAIN") {
+        NETWORK = bitcoin.networks.bitcoin;
+    }
+    else if (network = "TESTNET") {
+        NETWORK = bitcoin.networks.testnet;
+    }
+
     const psbt = bitcoin.Psbt.fromBase64(psbtStr);
     const is = psbt.data.inputs;
     const seed = await bip39.mnemonicToSeed(mnemonics);
