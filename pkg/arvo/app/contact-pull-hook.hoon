@@ -9,6 +9,7 @@
       update:store
       %contact-update
       %contact-push-hook
+      %.y  :: necessary to enable p2p
   ==
 --
 ::
@@ -32,6 +33,7 @@
 ++  on-agent  on-agent:def
 ++  on-watch  on-watch:def
 ++  on-leave  on-leave:def
+++  resource-for-update  resource-for-update:con
 ++  on-pull-nack
   |=  [=resource =tang]
   ^-  (quip card _this)

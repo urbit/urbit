@@ -49,45 +49,7 @@
     %disallow    %.n
     %set-public  %.n
   ==
-::
-++  resource-for-update
-  |=  =vase
-  ^-  (list resource:res)
-  |^
-  =/  =update:store  !<(update:store vase)
-  ?-  -.update
-    %initial     ~
-    %add         (rids-for-ship ship.update)
-    %remove      (rids-for-ship ship.update)
-    %edit        (rids-for-ship ship.update)
-    %allow       ~
-    %disallow    ~
-    %set-public  ~
-  ==
-  ::
-  ++  rids-for-ship
-    |=  s=ship
-    ^-  (list resource:res)
-    ::  if the ship is in any group that I am pushing updates for, push
-    ::  it out to that resource.
-    ::
-    =/  rids
-      %+  skim  ~(tap in scry-sharing)
-      |=  r=resource:res
-      (is-member:grp s r)
-    ?.  =(s our.bowl)
-      rids
-    (snoc rids [our.bowl %''])
-  ::
-  ++  scry-sharing
-    .^  (set resource:res)
-      %gx
-      (scot %p our.bowl)
-      %contact-push-hook
-      (scot %da now.bowl)
-      /sharing/noun
-    ==
-  --
+++  resource-for-update  resource-for-update:con
 ::
 ++  initial-watch
   |=  [=path =resource:res]
