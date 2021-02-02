@@ -219,10 +219,10 @@
     ``noun+!>(allowed-groups)
 
   ::
-      [%x %is-allowed @ ~]
-    =/  =ship  (slav %p i.t.t.path)
-    ~&  ship
-    ``json+!>(`json`b+(is-allowed:con [our.bowl %''] ship))
+      [%x %is-allowed @ @ @ ~]
+    =/  =resource  [(slav %p i.t.t.path) i.t.t.t.path]
+    =/  =ship  (slav %p i.t.t.t.t.path)
+    ``json+!>(`json`b+(is-allowed:con resource ship))
   ==
 ::
 ++  on-leave  on-leave:def
