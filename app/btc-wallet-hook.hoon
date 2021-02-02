@@ -200,7 +200,10 @@
     :_  state
     =+  pb=~(to-psbt txb:bwsl u.poym)
     ?~  pb  ~
-    ~&  >>  "PSBT: {<u.pb>}"
+    =+  vb=~(vbytes txb:bwsl u.poym)
+    =+  fee=~(fee txb:bwsl u.poym)
+    ~&  >>  "{<vb>} vbytes, {<(div fee vb)>} sats/byte, {<fee>} sats fee"
+    %-  (slog [%leaf "PSBT: {<u.pb>}"]~) 
     ~[(send-update [%sign-tx u.poym])]
     ::
       %close-pym

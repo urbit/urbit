@@ -206,6 +206,9 @@
 ::
 ++  send-status
   |=  =status  ^-  card
+  %-  ?:  ?=(%new-block -.status)
+        ~&(>> "%new-block: {<block.status>}" same)
+      same
   [%give %fact ~[/clients] %btc-provider-status !>(status)]
 ::
 ++  send-update
@@ -213,7 +216,7 @@
   ^-  card
   =+  c=[%give %fact ~[/clients] %btc-provider-update !>(update)]
   ?:  ?=(%.y -.update)
-    ~&  >>  "prov. update: {<p.update>}"
+::    ~&  >>  "prov. update: {<p.update>}"
     c
   ~&   >>  "prov. err: {<p.update>}"
   c
