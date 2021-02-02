@@ -9,6 +9,8 @@
       ::  client side
       [%join =resource =ship]
       [%leave =resource]
+      ::
+      [%invite =resource ships=(set ship) description=@t]
   ==
 
 ::
