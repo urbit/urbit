@@ -71,9 +71,13 @@
     ::  if the ship is in any group that I am pushing updates for, push
     ::  it out to that resource.
     ::
-    %+  skim  ~(tap in scry-sharing)
-    |=  r=resource:res
-    (is-member:grp s r)
+    =/  rids
+      %+  skim  ~(tap in scry-sharing)
+      |=  r=resource:res
+      (is-member:grp s r)
+    ?.  =(s our.bowl)
+      rids
+    (snoc rids [our.bowl %''])
   ::
   ++  scry-sharing
     .^  (set resource:res)
@@ -96,8 +100,12 @@
   ++  rolo
     ^-  rolodex:store
     =/  ugroup  (scry-group:grp resource)
-    ?~  ugroup  *rolodex:store
     %-  ~(gas by *rolodex:store)
+    ?~  ugroup
+      =/  c=(unit contact:store)  (get-contact:con our.bowl)
+      ?~  c
+        [our.bowl *contact:store]~
+      [our.bowl u.c]~
     %+  murn  ~(tap in (members:grp resource))
     |=  s=ship
     ^-  (unit [ship contact:store])
