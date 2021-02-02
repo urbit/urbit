@@ -74,7 +74,6 @@ export default class Landscape extends Component<LandscapeProps, {}> {
 
   render() {
     const { props } = this;
-    const { api } = props;
 
     return (
       <>
@@ -101,6 +100,14 @@ export default class Landscape extends Component<LandscapeProps, {}> {
               const ws: Workspace = { type: 'home' };
               return (
                 <GroupsPane workspace={ws} baseUrl="/~landscape/home" {...props} />
+              );
+            }}
+          />
+          <Route path="/~landscape/messages"
+            render={routeProps => {
+              const ws: Workspace = { type: 'messages' };
+              return (
+                <GroupsPane workspace={ws} baseUrl="/~landscape/messages" {...props} />
               );
             }}
           />

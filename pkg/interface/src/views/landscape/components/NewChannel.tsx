@@ -44,7 +44,6 @@ interface NewChannelProps {
   api: GlobalApi;
   associations: Associations;
   contacts: Rolodex;
-  chatSynced: any;
   groups: Groups;
   group?: string;
   workspace: Workspace;
@@ -69,13 +68,13 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
           group,
           moduleType
         );
-        const tag = { 
+        const tag = {
           app: 'graph',
-          resource: `/ship/~${window.ship}/${resId}`, 
-          tag: 'writers' 
+          resource: `/ship/~${window.ship}/${resId}`,
+          tag: 'writers'
         };
 
-        const resource = resourceFromPath(group); 
+        const resource = resourceFromPath(group);
         writers = _.compact(writers);
         const us = `~${window.ship}`;
         if(values.writePerms === 'self') {
@@ -167,7 +166,7 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
               contacts={props.contacts}
             />
           )}
-            
+
             <Box justifySelf="start">
               <AsyncButton
               primary

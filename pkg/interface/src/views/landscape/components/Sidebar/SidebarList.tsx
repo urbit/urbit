@@ -45,12 +45,7 @@ export function SidebarList(props: {
   selected?: string;
 }) {
   const { selected, group, config } = props;
-  const associations = {
-      ...props.associations.chat,
-      ...props.associations.publish,
-      ...props.associations.link,
-      ...props.associations.graph,
-  };
+  const associations = { ...props.associations.graph };
 
   const ordered = Object.keys(associations)
     .filter((a) => {
