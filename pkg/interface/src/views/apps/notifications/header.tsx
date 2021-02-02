@@ -63,7 +63,7 @@ export function Header(props: {
 
   const time = moment(props.time).format("HH:mm");
   const groupTitle =
-    props.associations.contacts?.[props.group]?.metadata?.title;
+    props.associations.groups?.[props.group]?.metadata?.title;
 
   const app = props.chat ? 'chat' : 'graph';
   const channelTitle =

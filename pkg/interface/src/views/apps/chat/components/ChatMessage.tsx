@@ -4,7 +4,7 @@ import _ from "lodash";
 import { Box, Row, Text, Rule } from "@tlon/indigo-react";
 
 import OverlaySigil from '~/views/components/OverlaySigil';
-import { uxToHex, cite, writeText, useShowNickname } from '~/logic/lib/util';
+import { uxToHex, cite, writeText, useShowNickname, useHovering } from '~/logic/lib/util';
 import { Group, Association, Contacts, Post } from "~/types";
 import TextContent from './content/text';
 import CodeContent from './content/code';
@@ -134,6 +134,7 @@ export default class ChatMessage extends Component<ChatMessageProps> {
         className={containerClass}
         style={style}
         mb={1}
+        position="relative"
       >
         {dayBreak && !isLastRead ? <DayBreak when={msg['time-sent']} /> : null}
         {renderSigil
@@ -177,7 +178,7 @@ export const MessageWithSigil = (props) => {
   const dark = useLocalState(state => state.dark);
 
   const datestamp = moment.unix(msg['time-sent'] / 1000).format(DATESTAMP_FORMAT);
-  const contact = msg.author in contacts ? contacts[msg.author] : false;
+  const contact = `~${msg.author}` in contacts ? contacts[`~${msg.author}`] : false;
   const showNickname = useShowNickname(contact);
   const name = showNickname ? contact.nickname : cite(msg.author);
   const color = contact ? `#${uxToHex(contact.color)}` : dark ?  '#000000' :'#FFFFFF'
@@ -194,6 +195,8 @@ export const MessageWithSigil = (props) => {
     }
   };
 
+  const { hovering, bind } = useHovering();
+
   return (
     <>
       <OverlaySigil
@@ -206,9 +209,11 @@ export const MessageWithSigil = (props) => {
         history={history}
         api={api}
         bg="white"
-        className="fl pr3 v-top pt1"
+        className="fl v-top pt1"
+        pr={3}
+        pl={2}
       />
-      <Box flexGrow={1} display='block' className="clamp-message">
+      <Box flexGrow={1} display='block' className="clamp-message" {...bind}>
         <Box
           flexShrink={0}
           className="hide-child"
@@ -231,8 +236,15 @@ export const MessageWithSigil = (props) => {
             }}
             title={`~${msg.author}`}
           >{name}</Text>
-          <Text flexShrink='0' fontSize='0' gray mono className="v-mid">{timestamp}</Text>
-          <Text flexShrink={0} gray mono ml={2} className="v-mid child dn-s">{datestamp}</Text>
+          <Text flexShrink={0} fontSize={0} gray mono>{timestamp}</Text>
+          <Text
+            flexShrink={0}
+            fontSize={0}
+            gray
+            mono
+            ml={2}
+            display={['none', hovering ? 'block' : 'none']}
+          >{datestamp}</Text>
         </Box>
         <ContentBox flexShrink={0} fontSize={fontSize ? fontSize : '14px'}>
           {msg.contents.map(c =>
@@ -257,20 +269,40 @@ const ContentBox = styled(Box)`
 
 `;
 
-export const MessageWithoutSigil = ({ timestamp, contacts, msg, measure, group }) => (
-  <>
-    <Text flexShrink={0} mono gray display='inline-block' pt='2px' lineHeight='tall' className="child" fontSize='0'>{timestamp}</Text>
-    <ContentBox flexShrink={0} fontSize='14px' className="clamp-message" style={{ flexGrow: 1 }}>
-      {msg.contents.map((c, i) => (
-        <MessageContent
-          key={i}
-          contacts={contacts}
-          content={c}
-          group={group}
-          measure={measure}/>))}
-    </ContentBox>
-  </>
-);
+export const MessageWithoutSigil = ({ timestamp, contacts, msg, measure, group }) => {
+  const { hovering, bind } = useHovering();
+  return (
+    <>
+      <Text
+        flexShrink={0}
+        mono
+        gray
+        display={hovering ? 'block': 'none'}
+        pt='2px'
+        lineHeight='tall'
+        fontSize={0}
+        position="absolute"
+        left={1}
+      >{timestamp}</Text>
+      <ContentBox
+        flexShrink={0}
+        fontSize='14px'
+        className="clamp-message"
+        style={{ flexGrow: 1 }}
+        {...bind}
+        pl={6}
+      >
+        {msg.contents.map((c, i) => (
+          <MessageContent
+            key={i}
+            contacts={contacts}
+            content={c}
+            group={group}
+            measure={measure}/>))}
+      </ContentBox>
+    </>
+  )
+};
 
 export const MessageContent = ({ content, contacts, measure, fontSize, group }) => {
   if ('code' in content) {
@@ -292,7 +324,8 @@ export const MessageContent = ({ content, contacts, measure, fontSize, group }) 
           }}
           textProps={{style: {
             fontSize: 'inherit',
-            textDecoration: 'underline'
+            borderBottom: '1px solid',
+            textDecoration: 'none'
           }}}
         />
       </Box>

@@ -1,16 +1,48 @@
-import React from 'react';
+import React, {
+  useState,
+  useEffect
+} from 'react';
 
-import { Row, Box, Text, Icon, Button } from '@tlon/indigo-react';
+import {
+  Col,
+  Row,
+  Box,
+  Text,
+  Icon,
+  Button,
+  BaseImage
+} from '@tlon/indigo-react';
 import ReconnectButton from './ReconnectButton';
+import { Dropdown } from './Dropdown';
 import { StatusBarItem } from './StatusBarItem';
 import { Sigil } from '~/logic/lib/sigil';
+import { uxToHex } from "~/logic/lib/util";
+import { SetStatusBarModal } from './SetStatusBarModal';
+
 import useLocalState from '~/logic/state/local';
-import { cite } from '~/logic/lib/util';
+
 
 const StatusBar = (props) => {
+  const { ourContact, api, ship } = props;
   const invites = [].concat(...Object.values(props.invites).map(obj => Object.values(obj)));
   const metaKey = (window.navigator.platform.includes('Mac')) ? '⌘' : 'Ctrl+';
-  const toggleOmnibox = useLocalState(state => state.toggleOmnibox);
+  const { toggleOmnibox, hideAvatars } =
+    useLocalState(({ toggleOmnibox, hideAvatars }) => 
+      ({ toggleOmnibox, hideAvatars })
+    );
+
+  const color = !!ourContact ? `#${uxToHex(props.ourContact.color)}` : '#000';
+  const xPadding = (!hideAvatars && ourContact?.avatar) ? '0' : '2';
+  const bgColor = (!hideAvatars && ourContact?.avatar) ? '' : color;
+  const profileImage = (!hideAvatars && ourContact?.avatar) ? (
+    <BaseImage
+      src={ourContact.avatar}
+      borderRadius={2}
+      width='32px'
+      height='32px'
+      style={{ objectFit: 'cover' }} />
+  ) : <Sigil ship={ship} size={16} color={color} icon />;
+
   return (
     <Box
       display='grid'
@@ -25,7 +57,6 @@ const StatusBar = (props) => {
       <Button width="32px" borderColor='washedGray' mr='2' px='2' onClick={() => props.history.push('/')} {...props}>
         <Icon icon='Spaces' color='black'/>
       </Button>
-
         <StatusBarItem mr={2} onClick={() => toggleOmnibox()}>
         { !props.doNotDisturb && (props.notificationsCount > 0 || invites.length > 0) &&
           (<Box display="block" right="-8px" top="-8px" position="absolute" >
@@ -60,9 +91,50 @@ const StatusBar = (props) => {
           >
           <Text color='#000000'>Submit <Text color='#000000' display={['none', 'inline']}>an</Text> issue</Text>
         </StatusBarItem>
-        <StatusBarItem width={['32px', 'auto']} px={'2'} flexShrink='0' onClick={() => props.history.push('/~profile')}>
-          <Sigil ship={props.ship} size={16} color='black' classes='mix-blend-diff' icon />
-        </StatusBarItem>
+        <Dropdown
+          dropWidth="150px"
+          width="auto"
+          alignY="top"
+          alignX="right"
+          options={
+            <Col
+              mt='6'
+              p='1'
+              backgroundColor="white"
+              color="washedGray"
+              border={1}
+              borderRadius={2}
+              borderColor="lightGray"
+              boxShadow="0px 0px 0px 3px">
+              <Row
+                p={1}
+                color='black'
+                cursor='pointer'
+                fontSize={0}
+                onClick={() => props.history.push(`/~profile/~${ship}`)}>
+                View Profile
+              </Row>
+              <SetStatusBarModal
+                ship={`~${ship}`}
+                contact={ourContact}
+                api={api} />
+              <Row
+                p={1}
+                color='black'
+                cursor='pointer'
+                fontSize={0}
+                onClick={() => props.history.push('/~settings')}>
+                System Settings
+              </Row>
+            </Col>
+          }>
+          <StatusBarItem
+            px={xPadding}
+            flexShrink='0'
+            backgroundColor={bgColor}>
+            {profileImage}
+          </StatusBarItem>
+        </Dropdown>
       </Row>
     </Box>
   );

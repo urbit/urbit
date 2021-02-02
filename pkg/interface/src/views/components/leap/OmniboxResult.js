@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Box, Row, Icon, Text } from '@tlon/indigo-react';
 import defaultApps from '~/logic/lib/default-apps';
 import Sigil from '~/logic/lib/sigil';
+import { uxToHex } from '~/logic/lib/util';
 
 export class OmniboxResult extends Component {
   constructor(props) {
@@ -25,9 +26,8 @@ export class OmniboxResult extends Component {
       }
   }
 
-  getIcon(icon, selected, link, invites, notifications) {
+  getIcon(icon, selected, link, invites, notifications, text, color) {
     const iconFill = (this.state.hovered || (selected === link)) ? 'white' : 'black';
-    const sigilFill = (this.state.hovered || (selected === link)) ? '#3a8ff7' : '#ffffff';
     const bulletFill = (this.state.hovered || (selected === link)) ? 'white' : 'blue';
 
     const inviteCount = [].concat(...Object.values(invites).map(obj => Object.values(obj)));
@@ -39,22 +39,23 @@ export class OmniboxResult extends Component {
     {
       icon = (icon === 'Link')     ? 'Collection' :
              (icon === 'Terminal') ? 'Dojo'  : icon;
-      graphic = <Icon display="inline-block" verticalAlign="middle" icon={icon} mr='2' size='16px' color={iconFill} />;
+      graphic = <Icon display="inline-block" verticalAlign="middle" icon={icon} mr='2' size='18px' color={iconFill} />;
     } else if (icon === 'inbox') {
       graphic = <Box display='flex' verticalAlign='middle' position="relative">
-        <Icon display='inline-block' verticalAlign='middle' icon='Inbox' mr='2' size='16px' color={iconFill} />
+        <Icon display='inline-block' verticalAlign='middle' icon='Inbox' mr='2' size='18px' color={iconFill} />
         {(notifications > 0 || inviteCount.length > 0) && (
           <Icon display='inline-block' icon='Bullet' style={{ position: 'absolute', top: -5, left: 5 }} color={bulletFill} />
         )}
       </Box>;
     } else if (icon === 'logout') {
-      graphic = <Icon display="inline-block" verticalAlign="middle" icon='SignOut' mr='2' size='16px' color={iconFill} />;
+      graphic = <Icon display="inline-block" verticalAlign="middle" icon='SignOut' mr='2' size='18px' color={iconFill} />;
     } else if (icon === 'profile') {
-      graphic = <Sigil color={sigilFill} classes='dib flex-shrink-0 v-mid mr2' ship={window.ship} size={16} icon padded />;
+      text = text.startsWith('Profile') ? window.ship : text;
+      graphic = <Sigil color={color} classes='dib flex-shrink-0 v-mid mr2' ship={text} size={18} icon padded />;
     } else if (icon === 'home') {
-      graphic = <Icon display='inline-block' verticalAlign='middle' icon='Mail' mr='2' size='16px' color={iconFill} />;
+      graphic = <Icon display='inline-block' verticalAlign='middle' icon='Mail' mr='2' size='18px' color={iconFill} />;
     } else if (icon === 'notifications') {
-      graphic = <Icon display='inline-block' verticalAlign='middle' icon='Inbox' mr='2' size='16px' color={iconFill} />;
+      graphic = <Icon display='inline-block' verticalAlign='middle' icon='Inbox' mr='2' size='18px' color={iconFill} />;
     } else {
       graphic = <Icon display='inline-block' icon='NullIcon' verticalAlign="middle" mr='2' size="16px" color={iconFill} />;
     }
@@ -67,9 +68,10 @@ export class OmniboxResult extends Component {
   }
 
   render() {
-    const { icon, text, subtext, link, navigate, selected, invites, notifications } = this.props;
+    const { icon, text, subtext, link, navigate, selected, invites, notifications, contacts } = this.props;
 
-    const graphic = this.getIcon(icon, selected, link, invites, notifications);
+    const color = contacts?.[text] ? `#${uxToHex(contacts[text].color)}` : "#000000";
+    const graphic = this.getIcon(icon, selected, link, invites, notifications, text, color);
 
     return (
       <Row
@@ -89,6 +91,7 @@ export class OmniboxResult extends Component {
         <Text
         display="inline-block"
         verticalAlign="middle"
+        mono={(icon == 'profile' && text.startsWith('~'))}
         color={this.state.hovered || selected === link ? 'white' : 'black'}
         maxWidth="60%"
         style={{ flexShrink: 0 }}

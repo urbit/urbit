@@ -9,6 +9,7 @@ import { useFileDrag } from '~/logic/lib/useDrag';
 import ChatWindow from './components/ChatWindow';
 import ChatInput from './components/ChatInput';
 import GlobalApi from '~/logic/api/global';
+import { ShareProfile } from '~/views/apps/chat/components/ShareProfile';
 import SubmitDragger from '~/views/components/SubmitDragger';
 import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
 import { Loading } from '~/views/components/Loading';
@@ -25,7 +26,7 @@ export function ChatResource(props: ChatResourceProps) {
   const station = props.association.resource;
   const groupPath = props.association.group;
   const group = props.groups[groupPath];
-  const contacts = props.contacts[groupPath] || {};
+  const contacts = props.contacts;
 
   const graph = props.graphs[station.slice(7)];
 
@@ -34,7 +35,7 @@ export function ChatResource(props: ChatResourceProps) {
   const unreadCount = props.unreads.graph?.[station]?.['/']?.unreads || 0;
 
   const [,, owner, name] = station.split('/');
-  const ourContact = contacts?.[window.ship];
+  const ourContact = contacts?.[`~${window.ship}`];
 
   const chatInput = useRef<ChatInput>();
 
@@ -88,6 +89,7 @@ export function ChatResource(props: ChatResourceProps) {
 
   return (
     <Col {...bind} height="100%" overflow="hidden" position="relative">
+      <ShareProfile our={ourContact} />
       {dragging && <SubmitDragger />}
       <ChatWindow
         mailboxSize={5}

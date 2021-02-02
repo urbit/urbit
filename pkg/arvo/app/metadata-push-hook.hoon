@@ -49,7 +49,9 @@
   =/  members
     ~(wyt in (members:grp rid))
   =/  =metadatum:store
-    (need (peek-metadatum:met %contacts rid))
+    %-  need
+    %+  mate  (peek-metadatum:met %groups rid)
+    (peek-metadatum:met %graph rid)
   :_  this
   =;  =cage
     [%pass / %agent [src.bowl %metadata-pull-hook] %poke cage]~

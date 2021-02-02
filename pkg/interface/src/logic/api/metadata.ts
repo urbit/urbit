@@ -70,7 +70,7 @@ export default class MetadataApi extends BaseApi<StoreState> {
         done = true;
         tempChannel.delete();
         reject(new Error("offline"))
-      }, 30000);
+      }, 15000);
 
       tempChannel.subscribe(window.ship, "metadata-pull-hook", `/preview${group}`,
         (err) => {

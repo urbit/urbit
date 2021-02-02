@@ -7,6 +7,14 @@
 ++  enjs
   =,  enjs:format
   |%
+  ::
+  ++  initial-group
+    |=  [group=resource assocs=^associations]
+    %-  pairs
+    :~  group+s+(enjs-path:resource group)
+        associations+(associations assocs)
+    ==
+  ::
   ++  associations
     |=  =^associations
     =,  enjs:format
@@ -49,7 +57,7 @@
     ^-  json
     %+  frond  %metadata-update
     %-  pairs
-    :~  ?+  -.upd  *[cord json]
+    :~  ?-  -.upd
         %add
       :-  %add
       %-  pairs
@@ -77,6 +85,9 @@
     ::
         %associations
       [%associations (associations associations.upd)]
+    ::
+        %initial-group
+      [%initial-group (initial-group +.upd)]
     ::
     ==  ==
   ::
@@ -110,7 +121,7 @@
   ::
   ++  initial-group
     |=  json
-    [%initial-group *resource *associations]
+    [*resource *associations]
   ::
   ++  add
     %-  ot

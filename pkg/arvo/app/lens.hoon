@@ -28,8 +28,6 @@
         %contact-store
         %contact-hook
         %invite-store
-        %chat-store
-        %chat-hook
         %graph-store
     ==
   |=  app=@tas

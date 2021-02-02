@@ -8,7 +8,7 @@ export function getTitleFromWorkspace(
     case "home":
       return "DMs + Drafts";
     case "group":
-      const association = associations.contacts[workspace.group];
+      const association = associations.groups[workspace.group];
       return association?.metadata?.title || "";
   }
 }
