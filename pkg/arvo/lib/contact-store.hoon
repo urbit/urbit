@@ -75,7 +75,7 @@
         [%color s+(scot %ux color.contact)]
         [%avatar ?~(avatar.contact ~ s+u.avatar.contact)]
         [%cover ?~(cover.contact ~ s+u.cover.contact)]
-        [%groups a+(turn ~(tap in groups.contact) |=(r=resource (enjs:res r)))]
+        [%groups a+(turn ~(tap in groups.contact) (cork enjs-path:res (lead %s)))]
         [%last-updated (time last-updated.contact)]
     ==
   ::
@@ -90,8 +90,8 @@
       %color         s+(scot %ux color.field)
       %avatar        ?~(avatar.field ~ s+u.avatar.field)
       %cover         ?~(cover.field ~ s+u.cover.field)
-      %add-group     (enjs:res resource.field)
-      %remove-group  (enjs:res resource.field)
+      %add-group     s+(enjs-path:res resource.field)
+      %remove-group  s+(enjs-path:res resource.field)
     ==
   ::
   ++  beng

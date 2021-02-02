@@ -1,5 +1,6 @@
 import React from "react";
 import * as Yup from "yup";
+import _ from 'lodash';
 
 import {
   ManagedForm as Form,
@@ -65,13 +66,24 @@ export function EditProfile(props: any) {
               api.contacts.setPublic(newValue)
             );
           } else if (key === 'groups') {
-            newValue.map((e) => {
-              if (!contact['groups']?.[e]) {
-                return acc.then(() => {
-                  api.contacts.edit(ship, { 'add-group': resourceFromPath(e) });
-                });
-              }
-            })
+            const toRemove: string[] = _.difference(contact?.groups || [], newValue);
+            console.log(toRemove);
+            const toAdd: string[] = _.difference(newValue, contact?.groups || []);
+            console.log(toAdd);
+            let promises: Promise<any>[] = [];
+
+            promises.concat(
+              toRemove.map(e =>
+                api.contacts.edit(ship, {'remove-group': resourceFromPath(e) })
+              )
+            );
+            promises.concat(
+              toAdd.map(e =>
+                api.contacts.edit(ship, {'add-group': resourceFromPath(e) })
+              )
+            );
+            return acc.then(() => Promise.all(promises));
+
           } else if (
             key !== "last-updated" &&
             key !== "isPublic"
