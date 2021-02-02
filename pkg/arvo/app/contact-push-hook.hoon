@@ -28,7 +28,13 @@
     con   ~(. contact bowl)
     grp   ~(. group bowl)
 ::
-++  on-init   on-init:def
+++  on-init
+  ^-  (quip card _this)
+  :_  this  :_  ~
+  =-  [%pass /us %agent [our.bowl %contact-push-hook] %poke %push-hook-action -]
+  !>  ^-  action:push-hook
+  [%add [our.bowl %'']]
+::
 ++  on-save   !>(~)
 ++  on-load   on-load:def
 ++  on-poke
