@@ -1,3 +1,4 @@
+/-  pull-hook
 /+  store=contact-store, res=resource, contact, group,
     default-agent, dbug, push-hook
 ~%  %contact-push-hook-top  ..part  ~
@@ -13,6 +14,8 @@
   ==
 ::
 +$  agent  (push-hook:push-hook config)
+::
++$  share  [%share =ship]
 --
 ::
 %-  agent:dbug
@@ -28,7 +31,23 @@
 ++  on-init   on-init:def
 ++  on-save   !>(~)
 ++  on-load   on-load:def
-++  on-poke   on-poke:def
+++  on-poke
+  |=  [=mark =vase]
+  ^-  (quip card _this)
+  ?.  =(mark %contact-share)  (on-poke:def mark vase)
+  =/  =share  !<(share vase)
+  ?>  =(src.bowl ship.share)
+  :_  this  :_  ~
+  :*  %pass
+      /(scot %p src.bowl)/share
+      %agent
+      [our.bowl %contact-pull-hook]
+      %poke
+      %pull-hook-action
+      !>  ^-  action:pull-hook
+      [%add ship.share [ship.share %'']]
+  ==
+::
 ++  on-agent  on-agent:def
 ++  on-watch  on-watch:def
 ++  on-leave  on-leave:def
@@ -49,6 +68,7 @@
     %disallow    %.n
     %set-public  %.n
   ==
+::
 ++  resource-for-update  resource-for-update:con
 ::
 ++  initial-watch

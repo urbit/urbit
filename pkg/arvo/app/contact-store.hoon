@@ -211,6 +211,9 @@
     =/  =ship  (slav %p i.t.t.path)
     ``noun+!>((~(has in allowed-ships) ship))
   ::
+      [%x %is-public ~]
+    ``noun+!>(is-public)
+  ::
       [%x %allowed-groups ~]
     ``noun+!>(allowed-groups)
   ==

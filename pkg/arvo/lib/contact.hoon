@@ -57,11 +57,24 @@
     (scry-for rolodex:store /all)
   (~(get by rolodex) ship)
 ::
+++  scry-is-public
+  .^  ?
+    %gx
+    (scot %p our.bowl)
+    %contact-store
+    (scot %da now.bowl)
+    /is-public/noun
+  ==
+::
 ++  is-allowed
   |=  [rid=resource =ship]
   ^-  ?
   =/  grp  ~(. group bowl)
   =/  shp  (scry-for ? /allowed-ship/(scot %p ship))
+  ?:  ?&  scry-is-public
+          =(rid [our.bowl %''])
+      ==
+    %.y
   ?:  shp  %.y
   ?:  ?&  (~(has in scry-sharing) rid)
           (~(has in (members:grp rid)) ship)

@@ -1,5 +1,6 @@
 /-  view-sur=group-view, group-store, *group, metadata=metadata-store
-/+  default-agent, agentio, mdl=metadata, resource, dbug, grpl=group, verb
+/+  default-agent, agentio, mdl=metadata,
+    resource, dbug, grpl=group, con=contact, verb
 |%
 ++  card  card:agent:gall
 +$  state-zero
@@ -171,6 +172,10 @@
       ?>  ?=(%poke-ack -.sign)
       (ack +.sign)
     ::
+        %share-co
+      ?>  ?=(%poke-ack -.sign)
+      (ack +.sign)
+    ::
         %md
       ?+  -.sign  !!
         %fact  (md-fact +.sign)
@@ -192,8 +197,14 @@
       ?.  =(rid resource.update)  jn-core
       %-  emit-many
       =/  cag=^cage  pull-hook-action+!>([%add [entity .]:rid])
-      :~  (poke-our:(jn-pass-io /pull-md) %metadata-pull-hook cag)
-          (poke-our:(jn-pass-io /pull-co) %contact-pull-hook cag)
+      %-  zing
+      :~  [(poke-our:(jn-pass-io /pull-md) %metadata-pull-hook cag)]~
+          [(poke-our:(jn-pass-io /pull-co) %contact-pull-hook cag)]~
+          ?.  scry-is-public:con  ~
+          :_  ~
+          %+  poke:(jn-pass-io /share-co)
+            [entity.rid %contact-push-hook]
+          [%contact-share !>([%share our.bowl])]
       ==
     ::
     ++  md-fact
