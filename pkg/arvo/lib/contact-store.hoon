@@ -173,4 +173,10 @@
       ==
     --
   --
+::
+++  share-dejs
+  =,  dejs:format
+  |%
+  ++  share  (ot [%share (su ;~(pfix sig fed:ag))]~)
+  --
 --

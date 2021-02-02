@@ -3,7 +3,7 @@
 :: data store that holds individual contact data
 ::
 /-  store=contact-store, *resource
-/+  default-agent, dbug, *migrate
+/+  default-agent, dbug, *migrate, contact
 |%
 +$  card  card:agent:gall
 +$  state-4
@@ -29,6 +29,7 @@
 |_  =bowl:gall
 +*  this  .
     def   ~(. (default-agent this %|) bowl)
+    con   ~(. contact bowl)
 ::
 ++  on-init
   =.  rolodex  (~(put by rolodex) our.bowl *contact:store)
@@ -216,6 +217,12 @@
   ::
       [%x %allowed-groups ~]
     ``noun+!>(allowed-groups)
+
+  ::
+      [%x %is-allowed @ ~]
+    =/  =ship  (slav %p i.t.t.path)
+    ~&  ship
+    ``json+!>(`json`b+(is-allowed:con [our.bowl %''] ship))
   ==
 ::
 ++  on-leave  on-leave:def
