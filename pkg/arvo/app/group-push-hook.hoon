@@ -141,14 +141,7 @@
         =(~(tap in ships.update) ~[src.bowl])
     ==
   --
-::
-++  resource-for-update
-  |=  =vase
-  ^-  (list resource)
-  =/  =update:store  !<(update:store vase)
-  ?:  ?=(%initial -.update)
-    ~
-  ~[resource.update]
+++  resource-for-update  resource-for-update:grp
 ::
 ++  take-update
   |=   =vase
