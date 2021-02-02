@@ -74,11 +74,11 @@
       outputs=(list [=val:tx s=(unit ship)])
   ==
 +$  history  (map hexb hest)
-::  state/watch variables: 
+::  state/watch variables:
 ::  scanning addresses and monitoring generated addresses
 ::  batch: indexes to scan for a given chyg
 ::  scans: all scans underway (batches)
-::  piym-watch: any address we've been told has an incoming payment promised 
+::  piym-watch: any address we've been told has an incoming payment promised
 ::
 +$  batch  [todo=(set idx) endpoint=idx has-used=?]
 +$  scans  (map [xpub chyg] batch)
@@ -87,7 +87,6 @@
 ::  %address-info: give new data about an address.
 ::    - used:  address has been seen on the BTC blockchain?
 ::    - block: the most recent block at the time of this information being retrieved
-::  TODO: document
 ::
 +$  action
   $%  [%add-wallet =xpub =fprint scan-to=(unit scon) max-gap=(unit @ud) confs=(unit @ud)]

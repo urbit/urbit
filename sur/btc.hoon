@@ -16,7 +16,7 @@
 +$  bipt  $?(%44 %49 %84)
 +$  chyg  $?(%0 %1)
 +$  idx   @ud
-+$  hdkey  [=fprint pubkey=hexb =bipt =chyg =idx]
++$  hdkey  [=fprint pubkey=hexb =network =bipt =chyg =idx]
 +$  sats  @ud
 +$  vbytes  @ud
 +$  buffer  (list @ux)
