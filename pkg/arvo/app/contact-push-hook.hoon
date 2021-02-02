@@ -55,7 +55,7 @@
   |=  [=path =resource:res]
   ^-  vase
   |^
-  ?>  (is-allowed:con src.bowl)
+  ?>  (is-allowed:con resource src.bowl)
   !>  ^-  update:store
   [%initial rolo %.n]
   ::

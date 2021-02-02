@@ -40,32 +40,34 @@
     ?.  =(s our.bowl)
       rids
     (snoc rids [our.bowl %''])
-  ::
-  ++  scry-sharing
-    .^  (set resource)
-      %gx
-      (scot %p our.bowl)
-      %contact-push-hook
-      (scot %da now.bowl)
-      /sharing/noun
-    ==
   --
+++  scry-sharing
+  .^  (set resource)
+    %gx
+    (scot %p our.bowl)
+    %contact-push-hook
+    (scot %da now.bowl)
+    /sharing/noun
+  ==
 ::
 ++  get-contact
   |=  =ship
   ^-  (unit contact:store)
-  =/  upd  (scry-for (unit update:store) /contact/(scot %p ship))
-  ?~  upd  ~
-  ?>  ?=(%add -.u.upd)
-  `contact.u.upd
+  =/  =rolodex:store
+    (scry-for rolodex:store /all)
+  (~(get by rolodex) ship)
 ::
 ++  is-allowed
-  |=  =ship
+  |=  [rid=resource =ship]
   ^-  ?
+  =/  grp  ~(. group bowl)
   =/  shp  (scry-for ? /allowed-ship/(scot %p ship))
   ?:  shp  %.y
+  ?:  ?&  (~(has in scry-sharing) rid)
+          (~(has in (members:grp rid)) ship)
+      ==
+    %.y
   =/  allowed-groups  ~(tap in (scry-for (set resource) /allowed-groups))
-  =/  grp  ~(. group bowl)
   |-
   ?~  allowed-groups  %.n
   ?:  (~(has in (members:grp i.allowed-groups)) ship)
