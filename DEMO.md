@@ -30,6 +30,7 @@ On `~dopzod`. Uses "absurd sick..." mnemonic from PRIVATE.scratch.md
 |commit %home
 |start %btc-wallet-hook
 |start %btc-wallet-store
+
 :btc-wallet-hook|action [%set-provider ~zod %main]
 
 =fprint [%4 0xdead.beef]
