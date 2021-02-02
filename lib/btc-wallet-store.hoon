@@ -68,9 +68,20 @@
     (roll (turn txos.t |=(=txo value.txo)) add)
   ::
   ++  fee
+    ^-  sats:btc
     =/  [in=sats out=sats]  value
     (sub in out)
   ::
+  ++  vbytes
+    ^-  vbytes:btc
+    %+  add  overhead-weight:btc
+    %+  add
+      %+  roll
+      (turn txis.t |=(t=txi (input-weight:btc bipt.hdkey.t)))
+      add
+    %+  roll
+      (turn txos.t |=(t=txo (output-weight:btc (address-bipt:btc address.t))))
+    add
   ++  tx-data
     |^
     ^-  data:tx:btc
@@ -101,6 +112,7 @@
   ++  add-output
     |=  =txo
     ^-  txbu
+    :: todo update vbytes
     t(txos (snoc [txos.t] txo))
   ::  +to-psbt: returns a based 64 PSBT if
   ::   - all inputs have an associated rawtx
@@ -135,7 +147,7 @@
   ++  hdkey
     |=  =idx:btc
     ^-  hdkey:btc
-    [fprint.w (~(pubkey wad w chyg) idx) bipt.w chyg idx]
+    [fprint.w (~(pubkey wad w chyg) idx) network.w bipt.w chyg idx]
   ::
   ++  mk-address
     |=  =idx:btc
@@ -221,25 +233,7 @@
   ++  dust-threshold
     |=  output-bipt=bipt:btc
     ^-  vbytes
-    (mul dust-sats (input-weight output-bipt))
-  ++  meta-weight  11
-  ++  output-weight
-    |=  b=bipt:btc
-    ^-  vbytes
-    ?-  b
-      %44  34
-      %49  32
-      %84  31
-    ==
-  ::
-  ++  input-weight
-    |=  b=bipt:btc
-    ^-  vbytes
-    ?-  b
-      %44  148
-      %49  91
-      %84  68
-    ==
+    (mul dust-sats (input-weight:btc output-bipt))
   ::
   ++  target-value
     ^-  sats
@@ -248,24 +242,24 @@
   ::
   ++  base-weight
     ^-  vbytes
-    %+  add  meta-weight
+    %+  add  overhead-weight:btc
     %+  roll
       %+  turn  txos
-      |=(=txo (output-weight (address-bipt:btc address.txo)))
+      |=(=txo (output-weight:btc (address-bipt:btc address.txo)))
     add
   ::
   ++  total-vbytes
     |=  selected=(list insel)
     ^-  vbytes
     %+  add  base-weight
-    (mul (input-weight bipt.w) (lent selected))
+    (mul (input-weight:btc bipt.w) (lent selected))
   ::  value of an input after fee
   ::  0 if net is <= 0
   ::
   ++  net-value
     |=  val=sats
     ^-  sats
-    =/  cost  (mul (input-weight bipt.w) feyb)
+    =/  cost  (mul (input-weight:btc bipt.w) feyb)
     ?:  (lte val cost)  0
     (sub val cost)
   ::
@@ -284,7 +278,7 @@
     ?~  tb  [~ ~]
     =+  excess=~(fee txb u.tb)        ::  (inputs - outputs)
     =/  new-fee=sats                   ::  cost of this tx + one more output
-      (mul feyb (add (output-weight bipt.w) vbytes.u.tb))
+      (mul feyb (add (output-weight:btc bipt.w) vbytes.u.tb))
     ?.  (gth excess new-fee)
       [tb ~]
     ?.  (gth (sub excess new-fee) (dust-threshold bipt.w))

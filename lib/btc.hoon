@@ -20,6 +20,25 @@
   ::
   :-  (div (lent (trip h)) 2)
   `@ux`(rash - hex)
+::
+++  overhead-weight  ^-(vbytes 11)
+++  input-weight
+  |=  =bipt
+  ^-  vbytes
+  ?-  bipt
+    %44  148
+    %49  91
+    %84  68
+  ==
+++  output-weight
+  |=  =bipt
+  ^-  vbytes
+  ?-  bipt
+    %44  34
+    %49  32
+    %84  31
+  ==
+::
 ++  xpub-type
   |=  =xpub
   ^-  [=bipt =network]
@@ -310,7 +329,7 @@
       :~  fprint.h
           %-  to-byts:buf
             :~   `@ux`bipt.h  0x0  0x0  0x80
-                 0x0  0x0  0x0  0x80
+                 ?:(?=(%main network.h) 0x0 0x1)  0x0  0x0  0x80
                  0x0  0x0  0x0  0x80
                  `@ux`chyg.h  0x0  0x0  0x0
             ==
