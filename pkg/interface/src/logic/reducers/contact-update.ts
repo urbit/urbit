@@ -48,11 +48,24 @@ const edit = (json: ContactUpdate, state: S) => {
     data &&
     (ship in state.contacts)
   ) {
-    const edit = Object.keys(data['edit-field']);
-    if (edit.length !== 1) {
+    console.log(data);
+    const [field] = Object.keys(data['edit-field']);
+    if (!field) {
       return;
     }
-    state.contacts[ship][edit[0]] = data['edit-field'][edit[0]];
+    const contact = state.contacts?.[ship];
+    const value = data['edit-field'][field];
+    if(!contact) {
+      return; 
+    }
+    
+    if(field === 'add-group') {
+      contact.groups.push(value);
+    } else if (field === 'remove-group') {
+      contact.groups = contact.groups.filter(g => g !== value);
+    } else {
+      contact[field] = value;
+    }
   }
 };
 

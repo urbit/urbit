@@ -9,6 +9,7 @@ import { useFileDrag } from '~/logic/lib/useDrag';
 import ChatWindow from './components/ChatWindow';
 import ChatInput from './components/ChatInput';
 import GlobalApi from '~/logic/api/global';
+import { ShareProfile } from '~/views/apps/chat/components/ShareProfile';
 import SubmitDragger from '~/views/components/SubmitDragger';
 import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
 import { Loading } from '~/views/components/Loading';
@@ -85,6 +86,7 @@ export function ChatResource(props: ChatResourceProps) {
 
   return (
     <Col {...bind} height="100%" overflow="hidden" position="relative">
+      <ShareProfile our={ourContact} />
       {dragging && <SubmitDragger />}
       <ChatWindow
         mailboxSize={5}

@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useState, useEffect } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   Box,
   Text,
@@ -9,7 +9,7 @@ import {
   ErrorLabel
 } from '@tlon/indigo-react';
 import _ from 'lodash';
-import { useField } from 'formik';
+import { useField, useFormikContext, FieldArray } from 'formik';
 import styled from 'styled-components';
 
 import { roleForShip } from '~/logic/lib/group';
@@ -18,14 +18,14 @@ import { DropdownSearch } from './DropdownSearch';
 import { Groups } from '~/types';
 import { Associations, Association } from '~/types/metadata-update';
 
-interface InviteSearchProps {
+interface GroupSearchProps<I extends string> {
   disabled?: boolean;
-  adminOnly: boolean;
+  adminOnly?: boolean;
   groups: Groups;
   associations: Associations;
   label: string;
   caption?: string;
-  id: string;
+  id: I;
   maxLength?: number;
 }
 
@@ -63,9 +63,26 @@ function renderCandidate(
   return <Candidate title={title} selected={selected} onClick={onClick} />;
 }
 
-export function GroupSearch(props: InviteSearchProps) {
+type FormValues<I extends string> = {
+  [id in I]: string[];
+};
+
+export function GroupSearch<I extends string, V extends FormValues<I>>(props: GroupSearchProps<I>) {
   const { id, caption, label } = props;
-  const [selected, setSelected] = useState([] as string[]);
+  const { 
+    values,
+    touched: touchedFields,
+    errors,
+    initialValues,
+    setFieldValue
+  } = useFormikContext<V>();
+  const [inputIdx, setInputIdx] = useState(initialValues[id].length);
+  const name = `${id}[${inputIdx}]`;
+
+  const value: string[] = values[id];
+  const touched = touchedFields[id] ?? false;
+  const error = _.compact(errors[id] as string[]);
+
   const groups: Association[] = useMemo(() => {
     return props.adminOnly
       ? Object.values(
@@ -81,74 +98,68 @@ export function GroupSearch(props: InviteSearchProps) {
       : Object.values(props.associations?.groups || {});
   }, [props.associations?.groups]);
 
-  const [{ value }, meta, { setValue, setTouched }] = useField(props.id);
-
-  useEffect(() => {
-    setValue(selected);
-  }, [selected])
-
-  const { title: groupTitle } =
-    props.associations.groups?.[value]?.metadata || {};
-
-  const onSelect = useCallback(
-    (a: Association) => {
-      setTouched(true);
-      setSelected(v => _.uniq([...v, a.group]));
-    },
-    [setTouched, setSelected]
-  );
-
-  const onRemove = useCallback(
-    (s: string) => {
-      setSelected(groups => groups.filter(group => group !== s))
-    },
-    [setSelected]
-  );
-
   return (
-    <Col>
-      <Label htmlFor={id}>{label}</Label>
-      {caption && (
-        <Label gray mt="2">
-          {caption}
-        </Label>
-      )}
-        <DropdownSearch<Association>
-          mt="2"
-          candidates={groups}
-          placeholder="Search for groups..."
-          disabled={props.maxLength ? selected.length >= props.maxLength : false}
-          renderCandidate={renderCandidate}
-          search={(s: string, a: Association) =>
-            a.metadata.title.toLowerCase().startsWith(s.toLowerCase())
-          }
-          getKey={(a: Association) => a.group}
-          onSelect={onSelect}
-        />
-        {value?.length > 0 && (
-          value.map((e) => {
-            return (
-              <Row
-                key={e}
-                borderRadius="1"
+    <FieldArray
+      name={id}
+      render={(arrayHelpers) => {
+        const onSelect = (a: Association) => {
+          setFieldValue(name, a.group);
+          setInputIdx(s => s+1);
+        };
+
+        const onRemove = (idx: number) => {
+          setInputIdx(s => s - 1);
+          arrayHelpers.remove(idx);
+        };
+
+        return (
+          <Col>
+            <Label htmlFor={id}>{label}</Label>
+            {caption && (
+              <Label gray mt="2">
+                {caption}
+              </Label>
+            )}
+              <DropdownSearch<Association>
                 mt="2"
-                width="fit-content"
-                border="1"
-                borderColor="gray"
-                height="32px"
-                px="2"
-                alignItems="center"
-              >
-                <Text mr="2">{groupTitle || e}</Text>
-                <Icon onClick={onRemove} icon="X" />
-              </Row>
-            );
-          })
-      )}
-      <ErrorLabel hasError={Boolean(meta.touched && meta.error)}>
-        {meta.error}
-      </ErrorLabel>
-    </Col>
+                candidates={groups}
+                placeholder="Search for groups..."
+                disabled={props.maxLength ? value.length >= props.maxLength : false}
+                renderCandidate={renderCandidate}
+                search={(s: string, a: Association) =>
+                  a.metadata.title.toLowerCase().startsWith(s.toLowerCase())
+                }
+                getKey={(a: Association) => a.group}
+                onSelect={onSelect}
+              />
+              {value?.length > 0 && (
+                value.map((e, idx: number) => {
+                  const { title } =
+                    props.associations.groups?.[e]?.metadata || {};
+                  return (
+                    <Row
+                      key={e}
+                      borderRadius="1"
+                      mt="2"
+                      width="fit-content"
+                      border="1"
+                      borderColor="gray"
+                      height="32px"
+                      px="2"
+                      alignItems="center"
+                    >
+                      <Text mr="2">{title || e}</Text>
+                      <Icon onClick={() => onRemove(idx)} icon="X" />
+                    </Row>
+                  );
+                })
+            )}
+            <ErrorLabel hasError={Boolean(touched && error.length > 0)}>
+              {error.join(', ')}
+            </ErrorLabel>
+          </Col>
+        );
+      }} />
   );
 }
 
