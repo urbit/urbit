@@ -420,6 +420,34 @@ _term_it_send(u3_utty*    uty_u,
   _term_it_write(uty_u, &buf_u, (void*)hun_y);
 }
 
+/* _term_it_send_csi(): send csi escape sequence
+*/
+static void
+_term_it_send_csi(u3_utty *uty_u, c3_c cmd_c, c3_w num_w, ...)
+{
+  va_list ap;
+  va_start(ap, num_w);
+
+  uv_buf_t esc_u = TERM_LIT_BUF("\033[");
+  _term_it_dump_buf(uty_u, &esc_u);
+
+  uv_buf_t sep_u = TERM_LIT_BUF(";");  //REVIEW  re-use works fine, but is it?
+  while ( num_w > 0 ) {
+    c3_w par_w = va_arg(ap, c3_w);
+    c3_c pas_c[5];
+    c3_c was_c = sprintf(pas_c, "%d", par_w);
+    uv_buf_t pas_u = uv_buf_init(pas_c, was_c);
+    _term_it_dump_buf(uty_u, &pas_u);
+
+    if ( --num_w > 0 ) {
+      _term_it_dump_buf(uty_u, &sep_u);
+    }
+  }
+
+  uv_buf_t cmd_u = uv_buf_init(&cmd_c, 1);
+  _term_it_dump_buf(uty_u, &cmd_u);
+}
+
 /* _term_it_send_cord(): write a cord.
 */
 static void
@@ -463,23 +491,7 @@ _term_it_show_blank(u3_utty* uty_u)
 static void
 _term_it_move_cursor(u3_utty* uty_u, c3_w row_w, c3_w col_w)
 {
-  c3_c col_c[5];
-  c3_c wol_c = sprintf(col_c, "%d", col_w + 1);
-
-  c3_c row_c[5];
-  c3_c wow_c = sprintf(row_c, "%d", ( uty_u->tat_u.siz.row_l - row_w ));
-
-  uv_buf_t esc_u = TERM_LIT_BUF("\033[");
-  uv_buf_t col_u = uv_buf_init(col_c, wol_c);
-  uv_buf_t sep_u = TERM_LIT_BUF(";");
-  uv_buf_t row_u = uv_buf_init(row_c, wow_c);
-  uv_buf_t cha_u = TERM_LIT_BUF("H");
-
-  _term_it_dump_buf(uty_u, &esc_u);
-  _term_it_dump_buf(uty_u, &row_u);
-  _term_it_dump_buf(uty_u, &sep_u);
-  _term_it_dump_buf(uty_u, &col_u);
-  _term_it_dump_buf(uty_u, &cha_u);
+  _term_it_send_csi(uty_u, 'H', 2, uty_u->tat_u.siz.row_l - row_w, col_w + 1);
 
   //TODO  should also store row
   uty_u->tat_u.mir.cus_w = col_w;
