@@ -70,20 +70,30 @@
   |=  [rid=resource =ship]
   ^-  ?
   =/  grp  ~(. group bowl)
-  =/  shp  (scry-for ? /allowed-ship/(scot %p ship))
-  ?:  ?&  scry-is-public
-          =(rid [our.bowl %''])
-      ==
-    %.y
-  ?:  shp  %.y
-  ?:  ?&  (~(has in scry-sharing) rid)
+  =/  allowed-groups  (scry-for (set resource) /allowed-groups)
+  ?|  ::  if they are requesting our personal profile, check if we are
+      ::  either public, or if they are on the allowed-ships list.
+      ::  this is used for direct messages and leap searches
+      ::
+      ?&  =(rid [our.bowl %''])
+          ?|  ::  if our profile is public, allow
+              ::
+              scry-is-public
+              ::  if the requester is an allowed-ship, allow
+              ::
+              (scry-for ? /allowed-ship/(scot %p ship))
+              ::  if the requester of our profile is the host of one of
+              ::  our allowed-groups, allow
+              ::
+              %+  lien  ~(tap in allowed-groups)
+              |=  res=resource
+              =(entity.res ship)
+      ==  ==
+      ::  if they are requesting our contact data within a group,
+      ::  we make sure that we are sharing that group,
+      ::  and that they are a member of the group
+      ::
+      ?&  (~(has in scry-sharing) rid)
           (~(has in (members:grp rid)) ship)
-      ==
-    %.y
-  =/  allowed-groups  ~(tap in (scry-for (set resource) /allowed-groups))
-  |-
-  ?~  allowed-groups  %.n
-  ?:  (~(has in (members:grp i.allowed-groups)) ship)
-    %.y
-  $(allowed-groups t.allowed-groups)
+  ==  == 
 --

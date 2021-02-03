@@ -1,3 +1,5 @@
+/+  *contact-store
+::
 |_  share=[%share =ship]
 ++  grad  %noun
 ++  grow
@@ -7,6 +9,7 @@
 ::
 ++  grab
   |%
-  ++  noun  share
+  ++  noun  _share
+  ++  json  share:share-dejs
   --
 --
