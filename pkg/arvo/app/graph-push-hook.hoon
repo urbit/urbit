@@ -97,7 +97,7 @@
 ++  initial-watch
   |=  [=path =resource:res]
   ^-  vase
-  ?>  (is-allowed resource bowl %.n)
+  ?>  (is-allowed resource)
   !>  ^-  update:store
   ?~  path
     ::  new subscribe
@@ -185,8 +185,10 @@
   reader.permissions
 ::
 ++  is-allowed
- |=  *
- %.y
+  |=  =resource:res
+  =/  group-res=resource:res
+    (need (peek-group:met %graph resource))
+  (is-member:grp src.bowl group-res)
 ::
 ++  get-roles-writers-variation
   |=  =resource:res
