@@ -1,8 +1,16 @@
 import React, { useCallback, useRef, useMemo } from "react";
+import _ from 'lodash';
 import { Switch, Route, useHistory } from "react-router-dom";
 import { Formik, Form } from "formik";
 import * as Yup from 'yup';
-import { Box, Text, Col, Button, Row } from "@tlon/indigo-react";
+import {
+  ManagedTextInputField as Input,
+  Box,
+  Text,
+  Col,
+  Button,
+  Row
+} from "@tlon/indigo-react";
 
 import { ShipSearch } from "~/views/components/ShipSearch";
 import { Association } from "~/types/metadata-update";
@@ -25,6 +33,7 @@ interface InvitePopoverProps {
 
 interface FormSchema {
   emails: string[];
+  description: string;
   ships: string[];
 }
 
@@ -46,18 +55,20 @@ export function InvitePopover(props: InvitePopoverProps) {
   }, [history.push, props.baseUrl]);
   useOutsideClick(innerRef, onOutsideClick);
 
-  const onSubmit = async ({ ships, emails }: { ships: string[] }, actions) => {
+  const onSubmit = async ({ ships, description }: FormSchema, actions) => {
     if(props.workspace.type === 'home') {
       history.push(`/~landscape/dm/${deSig(ships[0])}`);
       return;
     }
     //  TODO: how to invite via email?
     try {
-      const resource = resourceFromPath(association.group);
-      await ships.reduce(
-        (acc, s) => acc.then(() => api.contacts.invite(resource, `~${deSig(s)}`)),
-        Promise.resolve()
+      const { ship, name }  = resourceFromPath(association.group);
+      await api.groups.invite(
+        ship, name, 
+        _.compact(ships).map(s => `~${deSig(s)}`),
+        description
       );
+
       actions.setStatus({ success: null });
       onOutsideClick();
     } catch (e) {
@@ -66,7 +77,7 @@ export function InvitePopover(props: InvitePopoverProps) {
     }
   };
 
-  const initialValues: FormSchema = { ships: [], emails: [] };
+  const initialValues: FormSchema = { ships: [], emails: [], description: '' };
 
 
   return (
@@ -114,6 +125,10 @@ export function InvitePopover(props: InvitePopoverProps) {
                     label=""
                     maxLength={props.workspace.type === 'home' ? 1 : undefined}
                     autoFocus
+                  />
+                  <Input
+                    id="description"
+                    label="Enter a message for the invite"
                   />
                   <FormError message="Failed to invite" />
                   {/* <ChipInput
