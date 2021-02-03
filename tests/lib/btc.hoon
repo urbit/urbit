@@ -144,9 +144,7 @@
  [(met 3 pk) pk]
 ::
 ++  test-all-vectors
-::  TODO: add bit/byt tests
-::  TODO: add PSBT and TX parsing tests
-  ^-  tang
+^-  tang
   |^  ;:  weld
           %+  category  "bit manipulation"
           (zing (turn bits-vectors check-bits))
