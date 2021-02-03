@@ -99,21 +99,21 @@ export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {
               <ChannelDetails {...props} />
               <GraphPermissions {...props} />
               { isOwner ? (
-              <Col mt="5" mb="6">
-              <Text id="archive" fontSize="2" fontWeight="bold">
-                Archive channel
-              </Text>
-              <Text mt="1" maxWidth="450px" gray>
-                Archiving a channel will prevent further updates to the channel.
-                Users who are currently joined to the channel will retain a copy
-                of the channel.
-              </Text>
-              <Row mt="3">
-                <StatelessAsyncButton destructive onClick={handleArchive}>
-                  Archive {props.association.metadata.title}
-                </StatelessAsyncButton>
-              </Row>
-            </Col> 
+              <Col mt="5" mb="6" flexShrink={0}>
+                <Text id="archive" fontSize="2" fontWeight="bold">
+                  Archive channel
+                </Text>
+                <Text mt="1" maxWidth="450px" gray>
+                  Archiving a channel will prevent further updates to the channel.
+                  Users who are currently joined to the channel will retain a copy
+                  of the channel.
+                </Text>
+                <Row mt="3">
+                  <StatelessAsyncButton destructive onClick={handleArchive}>
+                    Archive {props.association.metadata.title}
+                  </StatelessAsyncButton>
+                </Row>
+              </Col> 
 
               ) : (
               <Col mt="5" mb="6">
