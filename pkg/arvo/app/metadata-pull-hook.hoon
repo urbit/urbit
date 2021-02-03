@@ -2,7 +2,7 @@
 ::
 ::  allow syncing group data from foreign paths to local paths
 ::
-/-  *group, invite-store, metadata=metadata-store
+/-  *group, invite-store, metadata=metadata-store, contact=contact-store
 /+  default-agent, verb, dbug, store=group-store, grpl=group, pull-hook
 /+  resource, mdl=metadata
 ~%  %group-hook-top  ..part  ~
@@ -31,6 +31,7 @@
 =*  state  -
 =>  |_  =bowl:gall
     ++  def   ~(. (default-agent state %|) bowl)
+    ++  met   ~(. mdl bowl)
     ++  get-preview
       |=  rid=resource
       ^-  card
@@ -59,6 +60,52 @@
       ::
         %kick  [watch-invites^~ state]
       ==
+    ::
+    ++  watch-contacts
+      ^-  card
+      [%pass /contacts %agent [our.bowl %contact-store] %watch /all]
+    ::
+    ++  take-contacts
+      |=  =sign:agent:gall
+      ^-  (quip card _state)
+      ?+  -.sign  (on-agent:def /contacts sign)
+        %kick  [~[watch-contacts] state]
+        ::
+          %fact
+        :_  state
+        ?>  ?=(%contact-update p.cage.sign)
+        =+  !<(=update:contact q.cage.sign)
+        ?+  -.update  ~
+            %add
+          (check-contact contact.update)
+        ::
+            %edit
+          ?.  ?=(%add-group -.edit-field.update)  ~
+          %-  add-missing-previews 
+          (~(gas in *(set resource)) resource.edit-field.update ~)
+        ::
+            %initial
+          ^-  (list card)
+          %-  zing
+          %+  turn  ~(tap by rolodex.update)
+          |=([ship =contact:contact] (check-contact contact))
+        ==
+      ==
+    ++  check-contact
+      |=  =contact:contact
+      ^-  (list card)
+      (add-missing-previews groups.contact)
+    ::
+    ++  add-missing-previews
+      |=  groups=(set resource)
+      ^-  (list card)
+      =/  missing=(set resource)
+        (~(dif in ~(key by previews)) groups)
+      %+  murn  ~(tap by missing)
+      |=  group=resource
+      ^-  (unit card)
+      ?^  (peek-metadatum:met %groups group)  ~
+      `(get-preview group)
     --
 |_  =bowl:gall
 +*  this        .
@@ -73,8 +120,12 @@
   |=  =vase
   =+  !<(old=state-zero vase)
   :_  this(state old)
-  ?:  (~(has by wex.bowl) [/invites our.bowl %invite-store])  ~
-  ~[watch-invites:hc]
+  %-  zing
+  :~  ?:  (~(has by wex.bowl) [/invites our.bowl %invite-store])  ~
+      ~[watch-invites:hc]
+      ?:  (~(has by wex.bowl) [/contacts our.bowl %contact-store])  ~
+      ~[watch-contacts:hc]
+  ==
 ::
 ++  on-poke  
   |=  [=mark =vase]
@@ -95,6 +146,7 @@
   =^  cards  state
     ?+  wire  (on-agent:def:hc wire sign)
       [%invites ~]        (take-invites:hc sign)
+      [%contacts ~]       (take-invites:hc sign)
       ::
         [%preview @ @ @ ~]
       ?.  ?=(%poke-ack -.sign)
