@@ -79,7 +79,13 @@ export function Profile(props: any) {
             associations={props.associations}
             isPublic={isPublic}/>
         ) : (
-          <ViewProfile nacked={nacked} ship={ship} contact={contact} isPublic={isPublic} />
+          <ViewProfile 
+            api={props.api}
+            nacked={nacked}
+            ship={ship}
+            contact={contact}
+            isPublic={isPublic} 
+          />
         ) }
       </Box>
     </Center>
