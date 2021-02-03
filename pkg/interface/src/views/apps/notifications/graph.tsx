@@ -139,8 +139,13 @@ const GraphNodeContent = ({ group, post, contacts, mod, description, index, remo
   return null;
 };
 
-function getNodeUrl(mod: string, group: string, graph: string, index: string) {
-  const graphUrl = `/~landscape${group}/resource/${mod}${graph}`;
+function getNodeUrl(mod: string, group: boolean, groupPath: string, graph: string, index: string) {
+  if (!group && mod === 'chat') {
+    groupPath = '/messages';
+  } else if (!group) {
+    groupPath = '/home';
+  }
+  const graphUrl = `/~landscape${groupPath}/resource/${mod}${graph}`;
   const idx = index.slice(1).split("/");
   if (mod === "publish") {
     const [noteId] = idx;
@@ -186,7 +191,7 @@ const GraphNode = ({
 
   const groupContacts = contacts[groupPath] ?? {};
 
-  const nodeUrl = getNodeUrl(mod, group?.hidden ? '/home' : groupPath, graph, index);
+  const nodeUrl = getNodeUrl(mod, group?.hidden, groupPath, graph, index);
 
   const onClick = useCallback(() => {
     if(!read) {
