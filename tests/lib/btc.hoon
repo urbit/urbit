@@ -4,6 +4,10 @@
 |%
 +$  chyg  ?(%0 %1)
 +$  bits-vector  [bitwidth=@ atoms=(list @) =bits]
++$  psbt-vector
+  $:  =hdkey
+      hdkey-hex=hexb
+  ==
 +$  xpub-vector
   $:  =xpub
       =network
@@ -16,8 +20,36 @@
 ++  bits-vectors
   ^-  (list bits-vector)
   :~  :*  5
-          ~[0 31 31 0 31 0] 
+          ~[0 31 31 0 31 0]
           [30 0b1.1111.1111.1000.0011.1110.0000]
+      ==
+  ==
+::
+++  fprint  4^0xdead.beef
+++  psbt-vectors
+  ^-  (list psbt-vector)
+  :~  :*  [fprint 33^0x1 %testnet %44 %0 1]
+          20^0x2c00.0080.0100.0080.0000.0080.0000.0000.0100.0000
+  ==
+      ::
+      :*  [fprint 33^0x1 %testnet %49 %0 1]
+          20^0x3100.0080.0100.0080.0000.0080.0000.0000.0100.0000
+      ==
+      ::
+      :*  [fprint 33^0x1 %testnet %84 %0 1]
+          20^0x5400.0080.0100.0080.0000.0080.0000.0000.0100.0000
+      ==
+      ::
+      :*  [fprint 33^0x1 %main %44 %0 1]
+          20^0x2c00.0080.0000.0080.0000.0080.0000.0000.0100.0000
+      ==
+      ::
+      :*  [fprint 33^0x1 %main %49 %0 1]
+          20^0x3100.0080.0000.0080.0000.0080.0000.0000.0100.0000
+      ==
+      ::
+      :*  [fprint 33^0x1 %main %84 %0 1]
+          20^0x5400.0080.0000.0080.0000.0080.0000.0000.0100.0000
       ==
   ==
 ::  below use mnemonic:
@@ -118,6 +150,8 @@
   |^  ;:  weld
           %+  category  "bit manipulation"
           (zing (turn bits-vectors check-bits))
+          %+  category  "check PSBT"
+          (zing (turn psbt-vectors check-psbt))
           %+  category  "xpub parsing"
           (zing (turn xpub-vectors check-xpub-parsing))
           %+  category  "pubkey derivation"
@@ -138,6 +172,14 @@
         !>(atoms.v)
         !>((to-atoms:bit bitwidth.v bits.v))
     ==
+  ::
+  ++  check-psbt
+    |=  v=psbt-vector
+    =/  key=hexb
+      (cat:byt ~[1^0x6 pubkey.hdkey.v])          ::  %input target
+    %+  expect-eq
+      !>([key (cat:byt ~[fprint.hdkey.v hdkey-hex.v])])
+      !>((hdkey:en:pbt %input hdkey.v))
   ::
   ++  check-xpub-parsing
     |=  v=xpub-vector
