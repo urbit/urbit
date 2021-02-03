@@ -10570,8 +10570,10 @@
         [[p.p.lef p.p.rye] grub]
       ?>  ?=(%& -.rye)
       =;  [par=(pair type type) =_grub]
+        ?.  vet
+          [par grub]
         =^  nests  grub  (caching-nest(sut gol) & p.par)
-        ?>  ?|(!vet nests)
+        ?>  nests
         [par grub]
       (caching-endo [p.lef p.rye] dox rig)
     --
@@ -11117,8 +11119,11 @@
         ~>(%mean.'fire-core' !!)
       =/  dox  [%core q.q.p q.p(r.p %gold)]
       ?:  ?=(%dry -.q)
+        ?.  vet
+          :_  grub
+          [%hold [dox p.q]]
         =^  nests  grub  (caching-nest(sut q.q.p) & p.p)
-        ?>  ?|(!vet nests)
+        ?>  nests
         :_  grub
         [%hold [dox p.q]]
       ?>  ?=(%wet -.q)
@@ -12359,8 +12364,10 @@
     ++  caching-nice
       |=  =type
       ~_  leaf+"mint-nice"
+      ?.  vet
+        [type grub]
       =^  nests  grub  (caching-nest(sut gol) & type)
-      ?>  ?|(!vet nests)
+      ?>  nests
       [type grub]
     ::
     ++  caching-grow
@@ -12855,8 +12862,10 @@
     ++  caching-nice
       |=  =type
       ~_  leaf+"caching-mull-nice"
+      ?.  vet
+        [type grub]
       =^  nests  grub  (caching-nest(sut gol) & type)
-      ?>  ?|(!vet nests)
+      ?>  nests
       [type grub]
     ::
     ++  caching-grow
