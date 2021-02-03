@@ -10553,8 +10553,10 @@
         ?>  ?=(~ rig)
         [p.lug grub]
       =;  par=(pair type nock)
+        ?.  vet
+          [par grub]
         =^  nests  grub  (caching-nest(sut gol) & p.par)
-        ?>  ?|(!vet nests)
+        ?>  nests
         [par grub]
       (caching-etco p.lug rig)
     ::
