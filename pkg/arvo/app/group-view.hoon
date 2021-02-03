@@ -1,6 +1,6 @@
 /-  view-sur=group-view, group-store, *group, metadata=metadata-store
 /+  default-agent, agentio, mdl=metadata,
-    resource, dbug, grpl=group, con=contact, verb
+    resource, dbug, grpl=group, conl=contact, verb
 |%
 ++  card  card:agent:gall
 +$  state-zero
@@ -77,6 +77,7 @@
 ++  met  ~(. mdl bowl)
 ++  grp  ~(. grpl bowl)
 ++  io   ~(. agentio bowl)
+++  con  ~(. conl bowl)
 ::
 ::
 ++  join
