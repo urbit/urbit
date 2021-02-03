@@ -14,6 +14,7 @@
 --
 ::
 %-  agent:dbug
+%+  verb  |
 ^-  agent:gall
 %-  (agent:pull-hook config)
 ^-  (pull-hook:pull-hook config)

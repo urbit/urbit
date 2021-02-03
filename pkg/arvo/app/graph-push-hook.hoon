@@ -1,13 +1,7 @@
-/-  *group
-/-  metadata=metadata-store
-/+  store=graph-store
-/+  mdl=metadata
-/+  res=resource
-/+  graph
-/+  group
-/+  default-agent
-/+  dbug
-/+  push-hook
+/-  *group, metadata=metadata-store
+/+  store=graph-store, mdl=metadata, res=resource, graph, group, default-agent,
+    dbug, verb, push-hook
+::
 ~%  %graph-push-hook-top  ..part  ~
 |%
 +$  card  card:agent:gall
@@ -32,6 +26,7 @@
 =|  state-zero
 =*  state  -
 %-  agent:dbug
+%+  verb  |
 ^-  agent:gall
 %-  (agent:push-hook config)
 ^-  agent
@@ -98,7 +93,7 @@
 ++  initial-watch
   |=  [=path =resource:res]
   ^-  vase
-  ?>  (is-allowed resource)
+  ?>  (is-allowed:hc resource)
   !>  ^-  update:store
   ?~  path
     ::  new subscribe
