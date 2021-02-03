@@ -9,7 +9,7 @@
 ::
 ++  grab
   |%
-  ++  noun  share
+  ++  noun  _share
   ++  json  share:share-dejs
   --
 --

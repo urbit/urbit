@@ -176,6 +176,10 @@
       ?>  ?=(%poke-ack -.sign)
       (ack +.sign)
     ::
+        %push-co
+      ?>  ?=(%poke-ack -.sign)
+      (ack +.sign)
+    ::
         %md
       ?+  -.sign  !!
         %fact  (md-fact +.sign)
@@ -200,6 +204,7 @@
       %-  zing
       :~  [(poke-our:(jn-pass-io /pull-md) %metadata-pull-hook cag)]~
           [(poke-our:(jn-pass-io /pull-co) %contact-pull-hook cag)]~
+        ::
           ?.  scry-is-public:con  ~
           :_  ~
           %+  poke:(jn-pass-io /share-co)

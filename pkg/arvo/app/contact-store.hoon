@@ -219,8 +219,12 @@
     ``noun+!>(allowed-groups)
 
   ::
-      [%x %is-allowed @ @ @ ~]
-    =/  =resource  [(slav %p i.t.t.path) i.t.t.t.path]
+      [%x %is-allowed @ @ @ @ ~]
+    =/  is-personal  =(i.t.t.t.t.t.path 'true')
+    =/  =resource
+      ?:  is-personal
+        [our.bowl %'']
+      [(slav %p i.t.t.path) i.t.t.t.path]
     =/  =ship  (slav %p i.t.t.t.t.path)
     ``json+!>(`json`b+(is-allowed:con resource ship))
   ==

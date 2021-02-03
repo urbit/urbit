@@ -76,14 +76,24 @@
       ::  this is used for direct messages and leap searches
       ::
       ?&  =(rid [our.bowl %''])
-          ?|  scry-is-public
+          ?|  ::  if our profile is public, allow
+              ::
+              scry-is-public
+              ::  if the requester is an allowed-ship, allow
+              ::
               (scry-for ? /allowed-ship/(scot %p ship))
+              ::  if the requester of our profile is the host of one of
+              ::  our allowed-groups, allow
+              ::
+              %+  lien  ~(tap in allowed-groups)
+              |=  res=resource
+              =(entity.res ship)
       ==  ==
-      ::  if they are requesting our profile within a group, make sure we
-      ::  are the host of that group and that they are a member of the group
+      ::  if they are requesting our contact data within a group,
+      ::  we make sure that we are sharing that group,
+      ::  and that they are a member of the group
       ::
-      ?&  (~(has in allowed-groups) rid)
-          (~(has in scry-sharing) rid)
+      ?&  (~(has in scry-sharing) rid)
           (~(has in (members:grp rid)) ship)
-  ==  ==
+  ==  == 
 --
