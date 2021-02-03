@@ -16,10 +16,11 @@ import { SidebarListConfig, Workspace } from "./types";
 import { Link, useHistory } from 'react-router-dom';
 import { getGroupFromWorkspace } from "~/logic/lib/workspace";
 import { roleForShip } from "~/logic/lib/group";
-import {Groups, Rolodex} from "~/types";
+import {Groups, Rolodex, Associations} from "~/types";
 
 export function SidebarListHeader(props: {
   initialValues: SidebarListConfig;
+  associations: Associations;
   groups: Groups;
   contacts: Rolodex;
   baseUrl: string;
@@ -39,7 +40,10 @@ export function SidebarListHeader(props: {
 
   const groupPath = getGroupFromWorkspace(props.workspace);
   const role = props.groups?.[groupPath] ? roleForShip(props.groups[groupPath], window.ship) : undefined;
-  const isAdmin = (role === "admin") || (props.workspace?.type === 'home');
+  const memberMetadata = 
+    groupPath ? props.associations.contacts?.[groupPath].metadata.vip === 'member-metadata' : false;
+
+  const isAdmin = memberMetadata || (role === "admin") || (props.workspace?.type === 'home');
 
   return (
     <Row

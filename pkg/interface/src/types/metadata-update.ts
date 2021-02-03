@@ -62,7 +62,7 @@ export interface Metadata {
   module: string;
   picture: string;
   preview: boolean;
-  permissions: Permissions;
+  vip: PermVariation;
 }
 
-export type Permissions = '' | 'reader-comments';
+export type PermVariation = '' | 'reader-comments' | 'member-metadata';

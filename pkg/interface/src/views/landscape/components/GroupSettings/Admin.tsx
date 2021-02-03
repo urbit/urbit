@@ -31,6 +31,7 @@ interface FormSchema {
   color: string;
   isPrivate: boolean;
   picture: string;
+  adminMetadata: boolean;
 }
 
 const formSchema = Yup.object({
@@ -38,6 +39,7 @@ const formSchema = Yup.object({
   description: Yup.string(),
   color: Yup.string(),
   isPrivate: Yup.boolean(),
+  adminMetadata: Yup.boolean()
 });
 
 interface GroupAdminSettingsProps {
@@ -58,6 +60,7 @@ export function GroupAdminSettings(props: GroupAdminSettingsProps) {
     color: metadata?.color,
     picture: metadata?.picture,
     isPrivate: currentPrivate,
+    adminMetadata: metadata.vip !== 'member-metadata'
   };
 
   const onSubmit = async (
@@ -65,13 +68,15 @@ export function GroupAdminSettings(props: GroupAdminSettingsProps) {
     actions: FormikHelpers<FormSchema>
   ) => {
     try {
-      const { title, description, picture, color, isPrivate } = values;
+      const { title, description, picture, color, isPrivate, adminMetadata } = values;
       const uxColor = uxToHex(color);
+      const vip = adminMetadata ? '' : 'member-metadata';
       await props.api.metadata.update(props.association, {
         title,
         description,
         picture,
         color: uxColor,
+        vip
       });
       if (isPrivate !== currentPrivate) {
         const resource = resourceFromPath(props.association.group);
@@ -135,6 +140,13 @@ export function GroupAdminSettings(props: GroupAdminSettingsProps) {
             caption="If enabled, users must be invited to join the group"
             disabled={disabled}
           />
+          <Checkbox
+            id="adminMetadata"
+            label="Restrict channel adding to admins"
+            caption="If enabled, users must be an admin to add a channel to the group"
+            disabled={disabled}
+          />
+
           <AsyncButton
             disabled={disabled}
             primary

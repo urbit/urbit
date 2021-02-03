@@ -85,6 +85,7 @@ export function Sidebar(props: SidebarProps) {
         workspace={props.workspace}
       />
       <SidebarListHeader
+        associations={associations}
         contacts={props.contacts}
         baseUrl={props.baseUrl}
         groups={props.groups}
