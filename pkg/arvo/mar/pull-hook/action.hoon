@@ -1,12 +1,13 @@
-/-  *pull-hook
-|_  act=action
+/+  pull-hook
+|_  =action:pull-hook
 ++  grab
   |%
-  ++  noun  action
+  ++  noun  action:pull-hook
+  ++  json  action:dejs:pull-hook
   --
 ++  grow
   |%
-  ++  noun  act
+  ++  noun  action
   --
 ++  grad  %noun
 --

@@ -31,13 +31,20 @@
 ++  on-arvo   on-arvo:def
 ++  on-fail   on-fail:def
 ++  on-agent  on-agent:def
-++  on-watch  on-watch:def
+++  on-watch  
+  |=  =path
+  ?.  ?=([%nacks ~] path)
+    (on-watch:def path)
+  ?>  (team:title [src our]:bowl)
+  `this
+::
 ++  on-leave  on-leave:def
 ++  resource-for-update  resource-for-update:con
 ++  on-pull-nack
   |=  [=resource =tang]
   ^-  (quip card _this)
-  [~ this]
+  :_  this
+  [%give %fact ~[/nacks] resource+!>(resource)]~
 ::
 ++  on-pull-kick  |=(=resource `/)
 --
