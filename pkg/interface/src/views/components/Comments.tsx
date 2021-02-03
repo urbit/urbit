@@ -9,7 +9,7 @@ import { FormikHelpers } from 'formik';
 import { Group, GraphNode, Association } from '~/types';
 import { createPost, createBlankNodeWithChildPost } from '~/logic/api/graph';
 import { getLatestCommentRevision } from '~/logic/lib/publish';
-import { scanForMentions } from '~/logic/lib/graph';
+import tokenizeMessage from '~/logic/lib/tokenizeMessage';
 import { getUnreadCount } from '~/logic/lib/hark';
 
 interface CommentsProps {
@@ -32,7 +32,7 @@ export function Comments(props: CommentsProps) {
     actions: FormikHelpers<{ comment: string }>
   ) => {
     try {
-      const content = scanForMentions(comment);
+      const content = tokenizeMessage(comment);
       const node = createBlankNodeWithChildPost(
         comments?.post?.index,
         '1',
@@ -55,7 +55,7 @@ export function Comments(props: CommentsProps) {
       const commentNode = comments.children.get(bigInt(props.editCommentId))!;
       const [idx, _] = getLatestCommentRevision(commentNode);
 
-      const content = scanForMentions(comment);
+      const content = tokenizeMessage(comment);
       const post = createPost(
         content,
         commentNode.post.index,
