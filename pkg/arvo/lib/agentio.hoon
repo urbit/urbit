@@ -88,6 +88,18 @@
   |=  [paths=(list path) fac=mold]
   (fact mark^!>(fac) paths)
 ::
+++  fact-kick
+  |=  [=path =cage]
+  ^-  (list card)
+  :~  (fact cage ~[path])
+      (kick ~[path])
+  ==
+::
+++  fact-init
+  |=  =cage
+  ^-  card
+  [%give %fact ~ cage]
+::
 ++  fact
   |=  [=cage paths=(list path)]
   ^-  card
