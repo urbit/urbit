@@ -93,6 +93,7 @@
       %tag-queries        %.n
       %run-updates        %.n
   ==
+++  resource-for-update  resource-for-update:gra
 ::
 ++  initial-watch
   |=  [=path =resource:res]

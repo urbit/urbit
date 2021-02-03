@@ -15,6 +15,7 @@
       update:metadata
       %metadata-update
       %metadata-push-hook
+      %.n
   ==
 +$  state-zero
   [%0 previews=(map resource group-preview:metadata)]
@@ -191,6 +192,7 @@
 ++  on-arvo   on-arvo:def
 ::
 ++  on-fail   on-fail:def
+++  resource-for-update  resource-for-update:met
 ++  on-pull-nack
   |=   [=resource =tang]
   ^-  (quip card _this)

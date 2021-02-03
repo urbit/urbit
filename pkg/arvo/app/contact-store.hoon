@@ -3,7 +3,7 @@
 :: data store that holds individual contact data
 ::
 /-  store=contact-store, *resource
-/+  default-agent, dbug, *migrate
+/+  default-agent, dbug, *migrate, contact
 |%
 +$  card  card:agent:gall
 +$  state-4
@@ -29,6 +29,7 @@
 |_  =bowl:gall
 +*  this  .
     def   ~(. (default-agent this %|) bowl)
+    con   ~(. contact bowl)
 ::
 ++  on-init
   =.  rolodex  (~(put by rolodex) our.bowl *contact:store)
@@ -101,8 +102,10 @@
     ++  handle-initial
       |=  [rolo=rolodex:store is-public=?]
       ^-  (quip card _state)
+      =/  our-contact  (~(got by rolodex) our.bowl)
       =.  rolodex  (~(uni by rolodex) rolo)
-      :_  state(rolodex rolodex, is-public is-public)
+      =.  rolodex  (~(put by rolodex) our.bowl our-contact)
+      :_  state(rolodex rolodex)
       (send-diff [%initial rolodex is-public] %.n)
     ::
     ++  handle-add
@@ -209,8 +212,21 @@
     =/  =ship  (slav %p i.t.t.path)
     ``noun+!>((~(has in allowed-ships) ship))
   ::
+      [%x %is-public ~]
+    ``noun+!>(is-public)
+  ::
       [%x %allowed-groups ~]
     ``noun+!>(allowed-groups)
+
+  ::
+      [%x %is-allowed @ @ @ @ ~]
+    =/  is-personal  =(i.t.t.t.t.t.path 'true')
+    =/  =resource
+      ?:  is-personal
+        [our.bowl %'']
+      [(slav %p i.t.t.path) i.t.t.t.path]
+    =/  =ship  (slav %p i.t.t.t.t.path)
+    ``json+!>(`json`b+(is-allowed:con resource ship))
   ==
 ::
 ++  on-leave  on-leave:def

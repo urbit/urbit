@@ -30,12 +30,15 @@
 ::    .store-name: name of the store to send subscription updates to.
 ::    .update-mark: mark that updates will be tagged with
 ::    .push-hook-name: name of the corresponding push-hook
+::    .no-validate: If true, don't validate that resource/wire/src match
+::    up
 ::
 +$  config
   $:  store-name=term
       update=mold
       update-mark=term
       push-hook-name=term
+      no-validate=_|
   ==
 ::  
 ::  $base-state-0: state for the pull hook
@@ -106,6 +109,14 @@
   ++  on-pull-kick
     |~  resource
     *(unit path)
+  ::  +resource-for-update: get resources from vase
+  ::
+  ::    This should be identical to the +resource-for-update arm in the
+  ::    corresponding push-hook
+  ::
+  ++  resource-for-update
+    |~  vase
+    *(list resource)
   ::
   ::  from agent:gall
   ++  on-init
@@ -470,24 +481,30 @@
       /helper/pull-hook
     wire
   ::
-  ++  get-conversion
-    .^  tube:clay
-      %cc  (scot %p our.bowl)  %home  (scot %da now.bowl)
-      /[update-mark.config]/resource
-    ==
-  ::
   ++  give-update
     ^-  card
     [%give %fact ~[/tracking] %pull-hook-update !>(tracking)]
+  ::
+  ++  check-src
+    |=  resources=(set resource)
+    ^-  ?
+    %+  roll  ~(tap in resources)
+    |=  [rid=resource out=_|]
+    ?:  out  %.y
+    ?~  ship=(~(get by tracking) rid)
+      %.n
+    =(src.bowl u.ship)
   ::
   ++  update-store
     |=  [wire-rid=resource =vase]
     ^-  card
     =/  =wire
       (make-wire /store)
-    =+  !<(rid=resource (get-conversion vase))
-    ?>  =(src.bowl (~(got by tracking) rid))
-    ?>  =(wire-rid rid)
+    =+  resources=(~(gas in *(set resource)) (resource-for-update:og vase))
+    ?>  ?|  no-validate.config
+        ?&  (check-src resources)
+            (~(has in resources) wire-rid)
+        ==  ==
     [%pass wire %agent [our.bowl store-name.config] %poke update-mark.config vase]
   --
 --

@@ -34,10 +34,33 @@ export default class ContactsApi extends BaseApi<StoreState> {
     });
   }
 
+  allow(ship) {
+    return this.storeAction({
+      allow: ship
+    });
+  }
+
   setPublic(setPublic: any) {
     return this.storeAction({
       'set-public': setPublic
     });
+  }
+
+  share(recipient, us) {
+    return this.action(
+      'contact-push-hook',
+      'contact-share',
+      { share: us },
+      recipient
+    );
+  }
+
+  fetchIsAllowed(entity, name, ship, personal) {
+    const isPersonal = personal ? 'true' : 'false';
+    return this.scry<any>(
+      'contact-store',
+      `/is-allowed/${entity}/${name}/${ship}/${isPersonal}`
+    );
   }
 
   private storeAction(action: any): Promise<any> {

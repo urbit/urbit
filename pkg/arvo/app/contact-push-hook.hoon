@@ -1,4 +1,6 @@
-/+  store=contact-store, res=resource, contact, default-agent, dbug, push-hook
+/-  pull-hook
+/+  store=contact-store, res=resource, contact, group,
+    default-agent, dbug, push-hook
 ~%  %contact-push-hook-top  ..part  ~
 |%
 +$  card  card:agent:gall
@@ -12,6 +14,8 @@
   ==
 ::
 +$  agent  (push-hook:push-hook config)
+::
++$  share  [%share =ship]
 --
 ::
 %-  agent:dbug
@@ -22,11 +26,34 @@
 +*  this  .
     def   ~(. (default-agent this %|) bowl)
     con   ~(. contact bowl)
+    grp   ~(. group bowl)
 ::
-++  on-init   on-init:def
+++  on-init
+  ^-  (quip card _this)
+  :_  this  :_  ~
+  =-  [%pass /us %agent [our.bowl %contact-push-hook] %poke %push-hook-action -]
+  !>  ^-  action:push-hook
+  [%add [our.bowl %'']]
+::
 ++  on-save   !>(~)
 ++  on-load   on-load:def
-++  on-poke   on-poke:def
+++  on-poke
+  |=  [=mark =vase]
+  ^-  (quip card _this)
+  ?.  =(mark %contact-share)  (on-poke:def mark vase)
+  =/  =share  !<(share vase)
+  ?>  =(src.bowl ship.share)
+  :_  this  :_  ~
+  :*  %pass
+      /(scot %p src.bowl)/share
+      %agent
+      [our.bowl %contact-pull-hook]
+      %poke
+      %pull-hook-action
+      !>  ^-  action:pull-hook
+      [%add ship.share [ship.share %'']]
+  ==
+::
 ++  on-agent  on-agent:def
 ++  on-watch  on-watch:def
 ++  on-leave  on-leave:def
@@ -48,16 +75,31 @@
     %set-public  %.n
   ==
 ::
+++  resource-for-update  resource-for-update:con
+::
 ++  initial-watch
   |=  [=path =resource:res]
   ^-  vase
-  ?>  (is-allowed:con src.bowl)
+  |^
+  ?>  (is-allowed:con resource src.bowl)
   !>  ^-  update:store
-  =/  contact=(unit contact:store)  (get-contact:con our.bowl)
-  :+  %add
-    our.bowl
-  ?^  contact  u.contact
-  *contact:store
+  [%initial rolo %.n]
+  ::
+  ++  rolo
+    ^-  rolodex:store
+    =/  ugroup  (scry-group:grp resource)
+    %-  ~(gas by *rolodex:store)
+    ?~  ugroup
+      =/  c=(unit contact:store)  (get-contact:con our.bowl)
+      ?~  c
+        [our.bowl *contact:store]~
+      [our.bowl u.c]~
+    %+  murn  ~(tap in (members:grp resource))
+    |=  s=ship
+    ^-  (unit [ship contact:store])
+    =/  c=(unit contact:store)  (get-contact:con s)
+    ?~(c ~ `[s u.c])
+  --
 ::
 ++  take-update
   |=  =vase

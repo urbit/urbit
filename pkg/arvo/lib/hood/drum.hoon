@@ -90,10 +90,8 @@
       %chat-cli
       %herm
       %contact-store
-      %contact-hook
       %contact-push-hook
       %contact-pull-hook
-      %contact-view
       %metadata-store
       %s3-store
       %file-server

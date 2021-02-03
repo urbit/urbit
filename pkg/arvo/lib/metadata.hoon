@@ -4,6 +4,13 @@
 /+  resource
 ::
 |_  =bowl:gall
+++  resource-for-update
+  |=  =vase
+  ^-  (list resource)
+  =/  =update:store  !<(update:store vase)
+  ?.  ?=(?(%add %remove %initial-group) -.update)  ~
+  ~[group.update]
+::  
 ++  app-paths-from-group
   |=  [=app-name:store group=resource]
   ^-  (list resource)

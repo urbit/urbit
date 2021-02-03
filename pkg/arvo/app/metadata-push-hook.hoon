@@ -92,6 +92,7 @@
       ?=(%member-metadata vip.metadatum)
   ==
 ::
+++  resource-for-update  resource-for-update:met
 ++  take-update
   |=   =vase
   ^-  [(list card) agent]
