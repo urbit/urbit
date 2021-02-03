@@ -16,7 +16,7 @@ import { useHistory } from "react-router-dom";
 
 export function ViewProfile(props: any) {
   const history = useHistory();
-  const { contact, isPublic, ship } = props;
+  const { contact, nacked, isPublic, ship } = props;
 
   return (
     <>
@@ -65,7 +65,7 @@ export function ViewProfile(props: any) {
           </Row>
         ) : null
       }
-      { !isPublic && ship === `~${window.ship}` ? (
+      { (nacked || (!isPublic && ship === `~${window.ship}`)) ? (
         <Box
           height="200px"
           borderRadius={1}

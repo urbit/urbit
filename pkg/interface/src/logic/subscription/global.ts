@@ -45,6 +45,7 @@ export default class GlobalSubscription extends BaseSubscription<StoreState> {
     this.subscribe('/updates', 'hark-group-hook');
     this.subscribe('/all', 'settings-store');
     this.subscribe('/all', 'group-view');
+    this.subscribe('/nacks', 'contact-pull-hook');
   }
 
   restart() {

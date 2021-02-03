@@ -73,6 +73,16 @@ export default class ContactsApi extends BaseApi<StoreState> {
     );
   }
 
+  retrieve(ship: string) {
+    const resource = { ship, name: '' };
+    return this.action('contact-pull-hook', 'pull-hook-action', {
+      add: {
+        resource,
+        ship
+      }
+    });
+  }
+
   private storeAction(action: any): Promise<any> {
     return this.action('contact-store', 'contact-update', action)
   }

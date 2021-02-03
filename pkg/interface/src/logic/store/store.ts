@@ -80,6 +80,7 @@ export default class GlobalStore extends BaseStore<StoreState> {
       },
       isContactPublic: false,
       contacts: {},
+      nackedContacts: new Set(),
       notifications: new BigIntOrderedMap<Timebox>(),
       archivedNotifications: new BigIntOrderedMap<Timebox>(),
       notificationsGroupConfig: [],
