@@ -24,11 +24,11 @@ export function makeResource(ship: string, name: string) {
 
 export function isWriter(group: Group, resource: string) {
   const writers: Set<string> | undefined = _.get(
-    group.tags,
-    ["graph", resource, "writers"],
+    group,
+    ["tags", "graph", resource, "writers"],
     undefined
   );
-  const admins = group.tags?.role?.admin ?? new Set();
+  const admins = group?.tags?.role?.admin ?? new Set();
   if (_.isUndefined(writers)) {
     return true;
   } else {

@@ -76,7 +76,7 @@ export function GraphPermissions(props: GraphPermissionsProps) {
   const { api, group, association } = props;
 
   const writers = _.get(
-    group.tags,
+    group?.tags,
     ["graph", association.resource, "writers"],
     new Set()
   );

@@ -87,6 +87,7 @@ export function JoinGroup(props: JoinGroupProps) {
           (group in (p.associations?.graph ?? {})
             || group in (p.associations?.groups ?? {}))
       });
+
       if(props.groups?.[group]?.hidden) {
         const { metadata } = associations.graph[group];
         history.push(`/~landscape/home/resource/${metadata.module}${group}`);
