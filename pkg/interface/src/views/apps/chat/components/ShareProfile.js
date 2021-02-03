@@ -22,48 +22,53 @@ const pathAsResource = (path) => {
 };
 
 export const ShareProfile = (props) => {
-  const { api, recipient, hideBanner, group, groupPath } = props;
-  console.log(groupPath);
-  //  TODO: use isContactPublic somewhere
+  const { api, hideBanner, group, groupPath } = props;
 
   const [showBanner, setShowBanner] = useState(false);
   const res = pathAsResource(groupPath);
+  const [recipients, setRecipients] = useState([]);
 
   useEffect(() => {
+    (async () => {
     if (!res) { return; }
     if (!group) { return; }
-    console.log(group);
     if (group.hidden) {
-      // TODO:
-      // take the union of the pending set and the members set,
-      // subtract ourselves, then if *anyone* has not already been shared with,
-      // show the banner
-      // Promise.all all the members of the set
-      let check = 
-      Promise.all()
-      props.api.contacts.fetchIsAllowed(
-        `~${window.ship}`,
-        'personal',  // not used
-        recipient,
-        true
-      ).then((retVal) => {
-        console.log(retVal);
-        setShowBanner(!retVal);
-      });
+      const members = _.compact(await Promise.all(
+        Array.from(group.members)
+          .map(s => {
+            const ship = `~${s}`;
+            if(s === window.ship) {
+              return Promise.resolve(null);
+            }
+            return props.api.contacts.fetchIsAllowed(
+              `~${window.ship}`,
+              'personal',
+              ship,
+              true
+            ).then(isAllowed => {
+              return isAllowed ? null : ship;
+            });
+          })
+      ));
+      if(members.length > 0) {
+        setShowBanner(true);
+        setRecipients(members);
+      } else {
+        setShowBanner(false);
+      }
+
     } else {
-      // TODO:
-      // if the group is not in the allowed-groups set, then show the banner
-      props.api.contacts.fetchIsAllowed(
+      const groupShared = await props.api.contacts.fetchIsAllowed(
         res.entity,
         res.name,
-        recipient,
+        res.entity,
         false
-      ).then((retVal) => {
-        console.log(retVal);
-        setShowBanner(!retVal);
-      });
+      );
+      setShowBanner(!groupShared);
     }
-  }, [recipient, res, group]);
+    })();
+    
+  }, [groupPath]);
 
   const image = (props?.our?.avatar)
   ? (
@@ -87,11 +92,17 @@ export const ShareProfile = (props) => {
     </Row>
   );
 
-  const onClick = () => {
-    api.contacts.allow(recipient).then(() => {
-      api.contacts.share(recipient, window.ship);
-    });
-    hideBanner();
+  const onClick = async () => {
+    if(group.hidden && recipients.length > 0) {
+      await api.contacts.allowShips(recipients);
+      await Promise.all(recipients.map(r => api.contacts.share(r)))
+      setShowBanner(false);
+    } else if (!group.hidden) { 
+      const [,,ship,name] = groupPath.split('/');
+      await api.contacts.allowGroup(ship,name);
+      await api.contacts.share(ship);
+      setShowBanner(false);
+    }
   };
 
   return showBanner ? (
