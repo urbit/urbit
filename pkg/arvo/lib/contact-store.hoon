@@ -177,6 +177,8 @@
 ++  share-dejs
   =,  dejs:format
   |%
-  ++  share  (ot [%share (su ;~(pfix sig fed:ag))]~)
+  ++  share  
+      ^-  $-(json [%share ship])
+      (of share+(su ;~(pfix sig fed:ag)) ~)
   --
 --

@@ -167,12 +167,14 @@ class App extends React.Component {
               <Omnibox
                 associations={state.associations}
                 apps={state.launch}
+                tiles={state.launch.tiles}
                 api={this.api}
                 contacts={state.contacts}
                 notifications={state.notificationsCount}
                 invites={state.invites}
                 groups={state.groups}
                 show={this.props.omniboxShown}
+                toggle={this.props.toggleOmnibox}
               />
             </ErrorBoundary>
             <ErrorBoundary>

@@ -96,9 +96,7 @@ export function ChatResource(props: ChatResourceProps) {
         recipient={owner}
         group={group}
         groupPath={groupPath}
-        hideBanner={() => {
-          setProfileAllowed(true);
-        }} />
+       />
       {dragging && <SubmitDragger />}
       <ChatWindow
         mailboxSize={5}

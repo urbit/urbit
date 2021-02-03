@@ -107,6 +107,7 @@
       %metadata-push-hook
       %metadata-pull-hook
       %group-view
+      %settings-store
   ==
 ::
 ++  deft-fish                                           ::  default connects
@@ -255,6 +256,7 @@
   =?  ..on-load  (lte hood-version %12)
     =>  (se-born | %home %contact-push-hook)
     =>  (se-born | %home %contact-pull-hook)
+    =>  (se-born | %home %settings-store)
     (se-born | %home %group-view)
   ..on-load
 ::

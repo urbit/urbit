@@ -20,6 +20,22 @@
 ::
 /-  *pull-hook
 /+  default-agent, resource
+|%
+::  JSON conversions
+++  dejs
+  =,  dejs:format
+  |%
+  ++  action
+    %-  of
+    :~  add+add
+    ==
+  ++  add
+    %-  ot
+    :~  ship+(su ;~(pfix sig fed:ag))
+        resource+dejs:resource
+    ==
+  --
+--
 ::
 ::
 |%

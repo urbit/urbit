@@ -2,6 +2,7 @@ import _ from 'lodash';
 import { StoreState } from '../../store/type';
 import { Cage } from '~/types/cage';
 import { ContactUpdate } from '~/types/contact-update';
+import {resourceAsPath} from '../lib/util';
 
 type ContactState  = Pick<StoreState, 'contacts'>;
 
@@ -13,6 +14,12 @@ export const ContactReducer = (json, state) => {
     remove(data, state);
     edit(data, state);
     setPublic(data, state);
+  }
+
+  // TODO: better isolation
+  const res = _.get(json, 'resource', false);
+  if(res) {
+    state.nackedContacts = state.nackedContacts.add(`~${res.ship}`);
   }
 };
 

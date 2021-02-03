@@ -9,7 +9,7 @@
 ::
 ++  grab
   |%
-  ++  noun  _share
+  +$  noun  [%share ship]
   ++  json  share:share-dejs
   --
 --
