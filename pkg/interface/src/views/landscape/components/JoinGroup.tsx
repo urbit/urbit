@@ -85,7 +85,7 @@ export function JoinGroup(props: JoinGroupProps) {
       await waiter((p: JoinGroupProps) => {
         return group in p.groups && 
           (group in (p.associations?.graph ?? {})
-            || group in (p.associations?.contacts ?? {}))
+            || group in (p.associations?.groups ?? {}))
       });
       if(props.groups?.[group]?.hidden) {
         const { metadata } = associations.graph[group];
