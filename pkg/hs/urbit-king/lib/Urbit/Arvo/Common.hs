@@ -172,9 +172,9 @@ newtype Ipv4 = Ipv4 { unIpv4 :: Word32 }
 
 instance Show Ipv4 where
   show (Ipv4 i) =
-    show ((shiftL i 24) .&. 0xff) ++ "." ++
-    show ((shiftL i 16) .&. 0xff) ++ "." ++
-    show ((shiftL i  8) .&. 0xff) ++ "." ++
+    show ((shiftR i 24) .&. 0xff) ++ "." ++
+    show ((shiftR i 16) .&. 0xff) ++ "." ++
+    show ((shiftR i  8) .&. 0xff) ++ "." ++
     show (i .&. 0xff)
 
 -- @is
