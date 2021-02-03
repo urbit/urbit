@@ -324,15 +324,20 @@
           %input   0x6
           %output  0x2
         ==
+      =/  coin-type=hexb
+        ?-  network.h
+            %main
+          1^0x0
+            %testnet
+          1^0x1
+        ==
       :-  (cat:byt ~[1^typ pubkey.h])
       %-  cat:byt
       :~  fprint.h
-          %-  to-byts:buf
-            :~   `@ux`bipt.h  0x0  0x0  0x80
-                 ?:(?=(%main network.h) 0x0 0x1)  0x0  0x0  0x80
-                 0x0  0x0  0x0  0x80
-                 `@ux`chyg.h  0x0  0x0  0x0
-            ==
+          1^`@ux`bipt.h  3^0x80
+          coin-type      3^0x80
+          4^0x80
+          1^`@ux`chyg.h  3^0x0
           (flip:byt 4^idx.h)
       ==
     ::
