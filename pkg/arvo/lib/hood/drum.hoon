@@ -90,10 +90,8 @@
       %chat-cli
       %herm
       %contact-store
-      %contact-hook
       %contact-push-hook
       %contact-pull-hook
-      %contact-view
       %metadata-store
       %s3-store
       %file-server
@@ -109,6 +107,7 @@
       %metadata-push-hook
       %metadata-pull-hook
       %group-view
+      %settings-store
   ==
 ::
 ++  deft-fish                                           ::  default connects
@@ -257,6 +256,7 @@
   =?  ..on-load  (lte hood-version %12)
     =>  (se-born | %home %contact-push-hook)
     =>  (se-born | %home %contact-pull-hook)
+    =>  (se-born | %home %settings-store)
     (se-born | %home %group-view)
   ..on-load
 ::

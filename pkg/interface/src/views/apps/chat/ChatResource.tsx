@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useEffect } from 'react';
+import React, { useRef, useCallback, useEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { Col } from '@tlon/indigo-react';
 import _ from 'lodash';
@@ -36,6 +36,7 @@ export function ChatResource(props: ChatResourceProps) {
 
   const [,, owner, name] = station.split('/');
   const ourContact = contacts?.[`~${window.ship}`];
+  console.log(contacts);
 
   const chatInput = useRef<ChatInput>();
 
@@ -89,7 +90,13 @@ export function ChatResource(props: ChatResourceProps) {
 
   return (
     <Col {...bind} height="100%" overflow="hidden" position="relative">
-      <ShareProfile our={ourContact} />
+      <ShareProfile
+        our={ourContact}
+        api={props.api}
+        recipient={owner}
+        group={group}
+        groupPath={groupPath}
+       />
       {dragging && <SubmitDragger />}
       <ChatWindow
         mailboxSize={5}

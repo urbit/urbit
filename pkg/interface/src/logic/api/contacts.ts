@@ -34,9 +34,52 @@ export default class ContactsApi extends BaseApi<StoreState> {
     });
   }
 
+  allowShips(ships: Patp[]) {
+    return this.storeAction({
+      allow: {
+        ships
+      }
+    });
+  }
+
+  allowGroup(ship: string, name: string) {
+    const group = { ship, name };
+    return this.storeAction({
+      allow: {
+        group
+      }
+    });
+  }
+
   setPublic(setPublic: any) {
     return this.storeAction({
       'set-public': setPublic
+    });
+  }
+
+  share(recipient: Patp) {
+    return this.action(
+      'contact-push-hook',
+      'contact-share',
+      { share: recipient },
+    );
+  }
+
+  fetchIsAllowed(entity, name, ship, personal) {
+    const isPersonal = personal ? 'true' : 'false';
+    return this.scry<any>(
+      'contact-store',
+      `/is-allowed/${entity}/${name}/${ship}/${isPersonal}`
+    );
+  }
+
+  retrieve(ship: string) {
+    const resource = { ship, name: '' };
+    return this.action('contact-pull-hook', 'pull-hook-action', {
+      add: {
+        resource,
+        ship
+      }
     });
   }
 

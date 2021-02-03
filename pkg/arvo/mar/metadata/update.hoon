@@ -4,9 +4,6 @@
 ++  grow
   |%
   ++  noun  update
-  ++  resource
-    ?>  ?=(?(%add %remove %initial-group) -.update)
-    group.update
   ++  json  (update:enjs:store update)
   --
 ::

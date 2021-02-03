@@ -45,6 +45,7 @@
   [%add rid groups+rid metadatum]
 ;<  ~  bind:m  (poke-our %metadata-store %metadata-action !>(met-action))
 ;<  ~  bind:m  (poke-our %metadata-push-hook push-hook-act)
+;<  ~  bind:m  (poke-our %contact-push-hook push-hook-act)
 (pure:m !>(~))
 
 

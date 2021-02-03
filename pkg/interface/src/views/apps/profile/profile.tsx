@@ -45,6 +45,7 @@ export default function ProfileScreen(props: any) {
               <Box>
                 <Profile
                   ship={ship}
+                  hasLoaded={Object.keys(props.contacts).length !== 0}
                   associations={props.associations}
                   groups={props.groups}
                   contact={contact}
@@ -52,6 +53,7 @@ export default function ProfileScreen(props: any) {
                   s3={props.s3}
                   isEdit={isEdit}
                   isPublic={isPublic}
+                  nackedContacts={props.nackedContacts}
                 />
               </Box>
             </Box>

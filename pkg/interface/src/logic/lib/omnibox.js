@@ -22,7 +22,7 @@ const result = function(title, link, app, host) {
 const shipIndex = function(contacts) {
   const ships = [];
   Object.keys(contacts).map((e) => {
-    return ships.push(result(e, `/~profile/${e}`, 'profile', contacts[e]?.status));
+    return ships.push(result(e, `/~profile/${e}`, 'profile', contacts[e]?.status || ""));
   });
   return ships;
 };

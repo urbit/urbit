@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { Sigil } from "~/logic/lib/sigil";
 import { ViewProfile } from './ViewProfile';
 import { EditProfile } from './EditProfile';
@@ -24,7 +24,16 @@ export function Profile(props: any) {
   if (!props.ship) {
     return null;
   }
-  const { contact, isPublic, isEdit, ship } = props;
+  const { contact, nackedContacts, hasLoaded, isPublic, isEdit, ship } = props;
+  const nacked = nackedContacts.has(ship);
+
+  useEffect(() => {
+    if(hasLoaded && !contact && !nacked) {
+      props.api.contacts.retrieve(ship);
+    }
+  }, [hasLoaded, contact])
+
+  
   const hexColor = contact?.color ? `#${uxToHex(contact.color)}` : "#000000";
   const cover = (contact?.cover)
     ? <BaseImage src={contact.cover} width='100%' height='100%' style={{ objectFit: 'cover' }} />
@@ -70,7 +79,13 @@ export function Profile(props: any) {
             associations={props.associations}
             isPublic={isPublic}/>
         ) : (
-          <ViewProfile ship={ship} contact={contact} isPublic={isPublic} />
+          <ViewProfile 
+            api={props.api}
+            nacked={nacked}
+            ship={ship}
+            contact={contact}
+            isPublic={isPublic} 
+          />
         ) }
       </Box>
     </Center>
