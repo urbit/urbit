@@ -733,6 +733,9 @@ _ames_ef_send(u3_ames* sam_u, u3_noun lan, u3_noun pac)
     //  if the lane is uninterpretable, silently drop the packet
     //
     else if ( 0 == lan_u.por_s ) {
+      if ( u3C.wag_w & u3o_verbose ) {
+        u3l_log("ames: inscrutable lane\n");
+      }
       _ames_pact_free(pac_u);
     }
     //  otherwise, mutate destination and send packet
