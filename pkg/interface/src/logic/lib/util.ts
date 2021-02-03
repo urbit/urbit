@@ -23,6 +23,12 @@ export const getModuleIcon = (mod: string) => {
   return _.capitalize(mod);
 }
 
+export function wait(ms: number) {
+  return new Promise((resolve, reject) => {
+    setTimeout(resolve, ms);
+  });
+}
+
 export function appIsGraph(app: string) {
   return app === 'publish' || app == 'link';
 }
@@ -385,4 +391,17 @@ export const useHovering = (): useHoveringInterface => {
     onMouseLeave: () => setHovering(false)
   };
   return { hovering, bind };
+};
+
+const DM_REGEX = /ship\/~([a-z]|-)*\/dm--/;
+export function getItemTitle(association: Association) {
+  if(DM_REGEX.test(association.resource)) {
+    const [,,ship,name] = association.resource.split('/');
+    if(ship.slice(1) === window.ship) {
+      return cite(`~${name.slice(4)}`);
+    }
+    return cite(ship);
+
+  }
+  return association.metadata.title || association.resource
 };

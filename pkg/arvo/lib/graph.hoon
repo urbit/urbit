@@ -125,4 +125,8 @@
     index  (snoc index atom)
     nodes  (tap:orm:store p.children.node)
   ==
+::
+++  get-mark
+  |=  res=resource
+  (scry-for ,(unit mark) /graph-mark/(scot %p entity.res)/[name.res])
 --

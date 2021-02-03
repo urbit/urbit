@@ -78,13 +78,19 @@
 ++  should-proxy-update
   |=  =vase
   =+  !<(=update:store vase)
-  ?.  ?=(?(%add %remove %update) -.update)
+  ?.  ?=(?(%add %remove) -.update)
     %.n
   =/  role=(unit (unit role-tag))
     (role-for-ship:grp group.update src.bowl)
+  =/  =metadatum:store
+    (need (peek-metadatum:met %contacts group.update))
   ?~  role  %.n
-  ?~  u.role  %.n
-  ?=(?(%admin %moderator) u.u.role)
+  ?^  u.role  
+    ?=(?(%admin %moderator) u.u.role)
+  ?.  ?=(%add -.update)  %.n
+  ?&  =(src.bowl entity.resource.resource.update)
+      ?=(%member-metadata vip.metadatum)
+  ==
 ::
 ++  resource-for-update  resource-for-update:met
 ++  take-update

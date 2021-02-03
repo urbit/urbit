@@ -63,7 +63,7 @@ const appIndex = function (apps) {
 
 const otherIndex = function() {
   const other = [];
-  other.push(result('DMs + Drafts', '/~landscape/home', 'home', null));
+  other.push(result('My Channels', '/~landscape/home', 'home', null));
   other.push(result('Notifications', '/~notifications', 'inbox', null));
   other.push(result('Profile and Settings', '/~profile/identity', 'profile', null));
   other.push(result('Log Out', '/~/logout', 'logout', null));
@@ -110,8 +110,12 @@ export default function index(contacts, associations, apps, currentGroup, groups
           landscape.push(obj);
         } else {
           const app = each.metadata.module || each['app-name'];
-          const group = (groups[each.group]?.hidden)
-            ? '/home' : each.group;
+          let group = each.group;
+          if (groups[each.group]?.hidden && app === 'chat') {
+            group = '/messages';
+          } else if (groups[each.group]?.hidden) {
+            group = '/home';
+          }
           const obj = result(
             title,
             `/~landscape${group}/join/${app}${each.resource}`,

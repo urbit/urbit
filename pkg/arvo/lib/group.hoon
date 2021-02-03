@@ -101,6 +101,14 @@
   :-  %groups
   (weld (en-path:resource rid) /join/(scot %p ship))
 ::
+++  get-tagged-ships
+  |=  [rid=resource =tag]
+  ^-  (set ship)
+  =/  grp=(unit group)
+   (scry-group rid)
+  ?~  grp   ~
+  (~(get ju tags.u.grp) tag)
+::
 ++  is-managed
   |=  rid=resource
   =/  group=(unit group)

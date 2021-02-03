@@ -6,7 +6,9 @@ export function getTitleFromWorkspace(
 ) {
   switch (workspace.type) {
     case "home":
-      return "DMs + Drafts";
+      return "My Channels";
+    case "messages":
+      return "Messages";
     case "group":
       const association = associations.groups[workspace.group];
       return association?.metadata?.title || "";

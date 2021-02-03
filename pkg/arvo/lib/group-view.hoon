@@ -14,6 +14,7 @@
         remove+remove
         join+join
         leave+leave
+        invite+invite
     ==
   ::
   ++  create
@@ -32,6 +33,13 @@
     %-  ot
     :~  resource+dejs:resource
         ship+(su ;~(pfix sig fed:ag))
+    ==
+  ::
+  ++  invite
+    %-  ot
+    :~  resource+dejs:resource
+        ships+(as (su ;~(pfix sig fed:ag)))
+        description+so
     ==
   --
 ::

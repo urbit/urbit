@@ -14,6 +14,7 @@ import SubmitDragger from '~/views/components/SubmitDragger';
 import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
 import { Loading } from '~/views/components/Loading';
 import useS3 from '~/logic/lib/useS3';
+import {isWriter} from '~/logic/lib/group';
 
 type ChatResourceProps = StoreState & {
   association: Association;
@@ -38,6 +39,8 @@ export function ChatResource(props: ChatResourceProps) {
   console.log(contacts);
 
   const chatInput = useRef<ChatInput>();
+
+  const canWrite = isWriter(group, station);
 
   useEffect(() => {
     const count = Math.min(50, unreadCount + 15);
@@ -118,6 +121,7 @@ export function ChatResource(props: ChatResourceProps) {
         location={props.location}
         scrollTo={scrollTo ? parseInt(scrollTo, 10) : undefined}
       />
+      { canWrite && (
       <ChatInput
         ref={chatInput}
         api={props.api}
@@ -130,7 +134,7 @@ export function ChatResource(props: ChatResourceProps) {
         placeholder="Message..."
         message={unsent[station] || ''}
         deleteMessage={clearUnsent}
-      />
+      /> )}
     </Col>
   );
 }

@@ -5,9 +5,12 @@ import React, {
   SyntheticEvent,
   useMemo,
   useEffect,
+  useRef,
 } from "react";
 
 import { Box } from "@tlon/indigo-react";
+import { useOutsideClick } from "./useOutsideClick";
+import { ModalOverlay } from "~/views/components/ModalOverlay";
 
 type ModalFunc = (dismiss: () => void) => JSX.Element;
 interface UseModalProps {
@@ -19,11 +22,8 @@ interface UseModalResult {
   showModal: () => void;
 }
 
-const stopPropagation = (e: SyntheticEvent) => {
-  e.stopPropagation();
-};
-
 export function useModal(props: UseModalProps): UseModalResult {
+  const innerRef = useRef<HTMLElement>();
   const [modalShown, setModalShown] = useState(false);
 
   const dismiss = useCallback(() => {
@@ -44,54 +44,25 @@ export function useModal(props: UseModalProps): UseModalResult {
     [modalShown, props.modal, dismiss]
   );
 
-  const handleKeyDown = useCallback(
-    (event) => {
-      if (event.key === "Escape") {
-        dismiss();
-      }
-    },
-    [dismiss]
-  );
-
-  useEffect(() => {
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [modalShown]);
+  useOutsideClick(innerRef, dismiss);
 
   const modal = useMemo(
     () =>
       !inner ? null : (
-        <Box
-          backgroundColor="scales.black30"
-          left="0px"
-          top="0px"
+        <ModalOverlay
+          ref={innerRef}
+          maxWidth="500px"
           width="100%"
-          height="100%"
-          zIndex={10}
-          position="fixed"
+          bg="white"
+          borderRadius={2}
+          border={[0, 1]}
+          borderColor={["washedGray", "washedGray"]}
           display="flex"
-          justifyContent="center"
-          alignItems="center"
-          onClick={dismiss}
+          alignItems="stretch"
+          flexDirection="column"
         >
-          <Box
-            maxWidth="500px"
-            width="100%"
-            bg="white"
-            borderRadius={2}
-            border={[0, 1]}
-            borderColor={["washedGray", "washedGray"]}
-            onClick={stopPropagation}
-            display="flex"
-            alignItems="stretch"
-            flexDirection="column"
-          >
-            {inner}
-          </Box>
-        </Box>
+          {inner}
+        </ModalOverlay>
       ),
     [inner, dismiss]
   );

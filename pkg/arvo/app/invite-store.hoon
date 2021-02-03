@@ -38,7 +38,9 @@
   %_  this
       invites.state
     %-  ~(gas by *invites:store)
-    [%graph *invitatory:store]~
+    :~  [%graph *invitatory:store]
+        [%groups *invitatory:store]
+    ==
   ==
 ::
 ++  on-save   !>(state)

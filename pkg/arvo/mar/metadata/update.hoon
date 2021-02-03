@@ -12,5 +12,4 @@
   ++  noun  update:store
   ++  json  action:dejs:store
   --
-::
 --

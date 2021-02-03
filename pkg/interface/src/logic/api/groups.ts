@@ -67,6 +67,18 @@ export default class GroupsApi extends BaseApi<StoreState> {
     });
   }
 
+  invite(ship: string, name: string, ships: Patp[], description: string) {
+    const resource = makeResource(ship, name);
+    return this.viewThread('group-invite', {
+      invite: {
+        resource,
+        ships,
+        description
+      }
+    });
+
+  }
+
   private proxyAction(action: GroupAction) {
     return this.action('group-push-hook', 'group-update', action);
   }
