@@ -10523,7 +10523,7 @@
   ++  caching-etco
     |=  {lop/palo rig/(list (pair wing hoon))}
     ^-  (pair type nock)
-    =/  cin  (oc (bin:caching-ad make:lib:caching-ad))
+    =/  cin  (caching-oc (bin:caching-ad make:lib:caching-ad))
     =.  rig  (flop rig)         ::  XX this unbreaks, void order in devulc
     =/  axe  (tend p.lop)
     ?:  ?=(%& -.q.lop)
