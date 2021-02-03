@@ -83,7 +83,7 @@ export const ShareProfile = (props) => {
       p={1}
       alignItems="center"
       borderRadius={2}
-      backgroundColor={!props.our ? `#${uxToHex(props.our.color)}` : "#000000"}>
+      backgroundColor={!!props.our ? `#${uxToHex(props.our.color)}` : "#000000"}>
       <Sigil
         ship={window.ship}
         size={16}
