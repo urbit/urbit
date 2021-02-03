@@ -27,7 +27,7 @@ const StatusBar = (props) => {
   const invites = [].concat(...Object.values(props.invites).map(obj => Object.values(obj)));
   const metaKey = (window.navigator.platform.includes('Mac')) ? '⌘' : 'Ctrl+';
   const { toggleOmnibox, hideAvatars } =
-    useLocalState(({ toggleOmnibox, hideAvatars }) => 
+    useLocalState(({ toggleOmnibox, hideAvatars }) =>
       ({ toggleOmnibox, hideAvatars })
     );
 
@@ -90,6 +90,9 @@ const StatusBar = (props) => {
             )}
           >
           <Text color='#000000'>Submit <Text color='#000000' display={['none', 'inline']}>an</Text> issue</Text>
+        </StatusBarItem>
+        <StatusBarItem mr={2} onClick={() => props.history.push('/~landscape/messages')}>
+            <Icon icon="Users"/>
         </StatusBarItem>
         <Dropdown
           dropWidth="150px"

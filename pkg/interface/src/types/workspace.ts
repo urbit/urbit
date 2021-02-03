@@ -9,4 +9,8 @@ interface HomeWorkspace {
   type: 'home'
 }
 
-export type Workspace = HomeWorkspace | GroupWorkspace;
+interface Messages {
+  type: 'messages'
+}
+
+export type Workspace = HomeWorkspace | GroupWorkspace | Messages;

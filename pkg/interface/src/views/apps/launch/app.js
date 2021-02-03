@@ -76,9 +76,9 @@ export default function LaunchApp(props) {
               <Row alignItems='center'>
                 <Icon
                   color="black"
-                  icon="Mail"
+                  icon="Home"
                 />
-                <Text ml="2" mt='1px' color="black">DMs + Drafts</Text>
+                <Text ml="2" mt='1px' color="black">My Channels</Text>
               </Row>
             </Box>
           </Tile>

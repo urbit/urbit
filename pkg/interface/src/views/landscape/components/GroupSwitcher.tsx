@@ -78,7 +78,9 @@ export function GroupSwitcher(props: {
 }) {
   const { associations, workspace, isAdmin } = props;
   const title = getTitleFromWorkspace(associations, workspace);
-  const metadata = workspace.type === 'home' ? undefined : associations.groups[workspace.group].metadata;
+  const metadata = (workspace.type === 'home' || workspace.type  === 'messages')
+    ? undefined
+    : associations.groups[workspace.group].metadata;
   const navTo = (to: string) => `${props.baseUrl}${to}`;
   return (
     <Row width="100%" alignItems="center" height='48px' backgroundColor="white" zIndex="2" position="sticky" top="0px" pl='3' borderBottom='1px solid' borderColor='washedGray'>
@@ -117,9 +119,9 @@ export function GroupSwitcher(props: {
                     mr={2}
                     color="gray"
                     display="block"
-                    icon="Mail"
+                    icon="Home"
                   />
-                  <Text>DMs + Drafts</Text>
+                  <Text>My Channels</Text>
                 </GroupSwitcherItem>}
                 <RecentGroups
                   recent={props.recentGroups}

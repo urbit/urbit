@@ -56,15 +56,11 @@ export function InvitePopover(props: InvitePopoverProps) {
   useOutsideClick(innerRef, onOutsideClick);
 
   const onSubmit = async ({ ships, description }: FormSchema, actions) => {
-    if(props.workspace.type === 'home') {
-      history.push(`/~landscape/dm/${deSig(ships[0])}`);
-      return;
-    }
     //  TODO: how to invite via email?
     try {
       const { ship, name }  = resourceFromPath(association.group);
       await api.groups.invite(
-        ship, name, 
+        ship, name,
         _.compact(ships).map(s => `~${deSig(s)}`),
         description
       );
@@ -116,14 +112,13 @@ export function InvitePopover(props: InvitePopoverProps) {
                 <Col gapY="3" pt={3} px={3}>
                   <Box>
                     <Text>Invite to </Text>
-                    <Text fontWeight="800">{title || "DM"}</Text>
+                    <Text fontWeight="800">{title}</Text>
                   </Box>
                   <ShipSearch
                     groups={props.groups}
                     contacts={props.contacts}
                     id="ships"
                     label=""
-                    maxLength={props.workspace.type === 'home' ? 1 : undefined}
                     autoFocus
                   />
                   <Input

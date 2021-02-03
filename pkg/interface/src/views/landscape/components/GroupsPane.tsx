@@ -177,7 +177,6 @@ export function GroupsPane(props: GroupsPaneProps) {
                 {...routeProps}
                 api={api}
                 baseUrl={baseUrl}
-                chatSynced={props.chatSynced}
                 associations={associations}
                 groups={groups}
                 group={groupPath}
