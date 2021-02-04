@@ -233,7 +233,7 @@ u3_term_log_init(void)
     //
     {
       uty_u->tat_u.siz.col_l = 80;
-      uty_u->tat_u.siz.row_l = 24;
+      uty_u->tat_u.siz.row_l = 0;
     }
 
     //  initialize spinner state
@@ -1452,7 +1452,7 @@ u3_term_io_hija(void)
 {
   u3_utty* uty_u = _term_main();
 
-  if ( uty_u ) {
+  if ( uty_u && uty_u->tat_u.siz.row_l ) {
     if ( uty_u->fid_i > 2 ) {
       //  We *should* in fact, produce some kind of fake FILE* for
       //  non-console terminals.  If we use this interface enough...
@@ -1477,11 +1477,16 @@ u3_term_io_hija(void)
           perror("hija-fcntl-0");
           c3_assert(!"hija-fcntl");
         }
-        _write(uty_u->fid_i, "\r", 1);
-        {
-          uv_buf_t* buf_u = &uty_u->ufo_u.out.el_u;
-          _write(uty_u->fid_i, buf_u->base, buf_u->len);
-        }
+
+        //  save cursor position,
+        //  set scroll region to exclude the prompt,
+        //  scroll up one line to make space,
+        //  and move the cursor onto that space.
+        //
+        _term_it_send_csi(uty_u, 's', 0);
+        _term_it_send_csi(uty_u, 'r', 2, 1, uty_u->tat_u.siz.row_l - 1);
+        _term_it_send_csi(uty_u, 'S', 1, 1);
+        _term_it_send_csi(uty_u, 'H', 2, uty_u->tat_u.siz.row_l - 1, 1);
       }
       return stdout;
     }
@@ -1496,7 +1501,7 @@ u3_term_io_loja(int x)
 {
   u3_utty* uty_u = _term_main();
 
-  if ( uty_u ) {
+  if ( uty_u && uty_u->tat_u.siz.row_l ) {
     if ( uty_u->fid_i > 2 ) {
       //  We *should* in fact, produce some kind of fake FILE* for
       //  non-console terminals.  If we use this interface enough...
@@ -1524,9 +1529,17 @@ u3_term_io_loja(int x)
           perror("hija-fcntl-0");
           c3_assert(!"loja-fcntl");
         }
-        _term_it_refresh_line(uty_u);
+
+        //  clear the scrolling region we set previously,
+        //  and restore cursor to its original position.
+        //
+        _term_it_send_csi(uty_u, 'r', 0);
+        _term_it_send_csi(uty_u, 'u', 0);
       }
     }
+  }
+  else {
+    fprintf(stdout, "\n");
   }
 }
 
@@ -1536,7 +1549,9 @@ void
 u3_term_io_log(c3_c* line)
 {
   FILE* stream = u3_term_io_hija();
-  u3_term_io_loja(fprintf(stream, "%s", line));
+  int x = fprintf(stream, "%s", line);
+  fflush(stream);
+  u3_term_io_loja(x);  //TODO  remove arg? unused...
 }
 
 /* u3_term_tape_to(): dump a tape to a file.
