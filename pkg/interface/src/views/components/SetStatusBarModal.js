@@ -78,7 +78,7 @@ export const SetStatusBarModal = (props) => {
         p={1}
         color='black'
         cursor='pointer'
-        fontSize={0}
+        fontSize={1}
         onClick={() => setModalShown(true)}>
         Set Status
       </Row>
