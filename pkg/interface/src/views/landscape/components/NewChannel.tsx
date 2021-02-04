@@ -5,6 +5,7 @@ import {
   Col,
   Text
 } from '@tlon/indigo-react';
+import _ from 'lodash';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import GlobalApi from '~/logic/api/global';
