@@ -127,14 +127,14 @@ export function JoinGroup(props: JoinGroupProps) {
 
   return (
     <>
-      <Col width="100%" alignItems="center" overflowY="auto" p="4">
+      <Col overflowY="auto" p="3">
         <Box mb={3}>
           <Text fontSize="2" fontWeight="bold">
             Join a Group
           </Text>
         </Box>
         {_.isString(preview) ? (
-          <Col width="100%" maxWidth="300px" gapY="4">
+          <Col width="100%" gapY="4">
             <Text>The host appears to be offline. Join anyway?</Text>
             <StatelessAsyncButton primary name="join" onClick={onConfirm}>
               Join anyway
@@ -175,7 +175,7 @@ export function JoinGroup(props: JoinGroupProps) {
             </StatelessAsyncButton>
           </GroupSummary>
         ) : (
-          <Col width="100%" maxWidth="300px" gapY="4">
+          <Col width="100%" gapY="4">
             <Formik
               validationSchema={formSchema}
               initialValues={initialValues}
