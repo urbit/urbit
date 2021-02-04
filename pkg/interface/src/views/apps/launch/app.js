@@ -31,7 +31,7 @@ export default function LaunchApp(props) {
       fontFamily="mono"
       left="0"
       bottom="0"
-      color="scales.black20"
+      color="washedGray"
       bg="white"
       ml={3}
       mb={3}

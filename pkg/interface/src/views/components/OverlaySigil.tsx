@@ -60,14 +60,8 @@ class OverlaySigil extends PureComponent<OverlaySigilProps, OverlaySigilState> {
     if (this.containerRef && this.containerRef.current) {
       const container = this.containerRef.current;
       const scrollWindow = this.props.scrollWindow;
-
-      const bottomSpace = scrollWindow
-        ? scrollWindow.scrollHeight - container.offsetTop - scrollWindow.scrollTop
-        : 'auto';
-      const topSpace = scrollWindow
-        ? scrollWindow.offsetHeight - bottomSpace - OVERLAY_HEIGHT
-        : 0;
-
+      const bottomSpace =  scrollWindow ? scrollWindow.clientHeight - ((container.getBoundingClientRect().top + OVERLAY_HEIGHT) - scrollWindow.getBoundingClientRect().top) : 'auto';
+      const topSpace = scrollWindow ? container.getBoundingClientRect().top - scrollWindow.getBoundingClientRect().top : 0;
       this.setState({
         topSpace,
         bottomSpace

@@ -32,7 +32,7 @@ export function BackgroundPicker({
   return (
     <Col>
       <Label mb="2">Landscape Background</Label>
-      <Row {...rowSpace}>
+      <Row flexWrap="wrap" {...rowSpace}>
         <Radio {...radioProps} label="Image" id="url" />
         {bgType === "url" && (
           <ImageInput

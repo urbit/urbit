@@ -109,7 +109,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
           <Text ml={2}>{adminLinks}</Text>
         </Box>
       </Col>
-      <Box color="black" className="md" style={{ overflowWrap: "break-word" }}>
+      <Box color="black" className="md" style={{ overflowWrap: "break-word", overflow: "hidden" }}>
         <ReactMarkdown source={body} linkTarget={"_blank"} />
       </Box>
       <NoteNavigation

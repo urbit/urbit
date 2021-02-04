@@ -55,7 +55,7 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
   private loadedNewest = false;
   private loadedOldest = false;
 
-  INITIALIZATION_MAX_TIME = 1500;
+  INITIALIZATION_MAX_TIME = 100;
 
   constructor(props: ChatWindowProps) {
     super(props);
