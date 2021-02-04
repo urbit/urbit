@@ -14104,7 +14104,8 @@
         =^  mor  grub  $(moy t.moy)
         ::  prune reference cases outside subject
         ::
-        ?:  (miss i.moy)  [mor grub]
+        =^  missed  grub  (caching-miss i.moy)
+        ?:  missed  [mor grub]
         ::  unify all cases
         ::
         =^  dis  grub  ^$(ref i.moy)
