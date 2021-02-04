@@ -55,9 +55,9 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
   const waiter = useWaitForProps(props, 5000);
 
   const onSubmit = async (values: FormSchema, actions) => {
-    const resId: string = stringToSymbol(values.name)
-    + ((workspace?.type !== 'home') ? `-${Math.floor(Math.random() * 10000)}`
-    : '');
+    const resId = `${
+      stringToSymbol(values.name)}-${Math.floor(Math.random() * 10000)}`;
+
     try {
       const { name, description, moduleType, ships, writers } = values;
       if(moduleType === 'publish' && writers.length > 0) {
