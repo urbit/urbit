@@ -7,6 +7,7 @@ import { Sigil } from '~/logic/lib/sigil';
 import { Box, Col, Row, Text, BaseImage, ColProps, Icon } from '@tlon/indigo-react';
 import { Dropdown } from './Dropdown';
 import { withLocalState } from '~/logic/state/local';
+import { ProfileStatus } from './ProfileStatus';
 
 export const OVERLAY_HEIGHT = 250;
 
@@ -49,7 +50,7 @@ class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
   onDocumentClick(event) {
     const { popoverRef, dropdownRef } = this;
     // Do nothing if clicking ref's element or descendent elements
-    if (!popoverRef.current || dropdownRef.current.contains(event.target) || popoverRef.current.contains(event.target)) {
+    if (!popoverRef.current || dropdownRef?.current?.contains(event.target) || popoverRef?.current?.contains(event.target)) {
       return;
     }
 
@@ -95,7 +96,11 @@ class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
         />;
     const showNickname = useShowNickname(contact, hideNicknames);
 
-    const rootSettings = history.location.pathname.slice(0, history.location.pathname.indexOf("/resource"));
+    const rootSettings =
+      history.location.pathname.slice(
+        0,
+        history.location.pathname.indexOf("/resource")
+      );
 
     return (
       <Col
@@ -138,7 +143,7 @@ class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
                   color='black'
                   cursor='pointer'
                   fontSize={0}
-                  onClick={() => history.push('/~profile/~' + window.ship)}>
+                  onClick={() => history.push(`/~profile/~${ship}`)}>
                 View Profile
               </Row>
               {(!isOwn) && (
@@ -175,14 +180,18 @@ class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
             >
               {showNickname ? contact.nickname : cite(ship)}
             </Text>
-          <Text
-            contentEditable={isOwn}
-            display={(!contact?.status && !isOwn) ? 'none' : 'inline'}
-            gray={(!contact?.status && isOwn)}
-            // onBlur={() => api.contacts.edit()...}
-            >
-              {(!contact?.status && isOwn) ? "Set a status" : contact.status}
+          { isOwn ? (
+            <ProfileStatus
+              api={this.props.api}
+              ship={`~${ship}`}
+              contact={contact}
+            />
+          ) : (
+            <Text gray>
+              {contact?.status ? contact.status : ''}
             </Text>
+          )
+          }
         </Col>
       </Col>
     );
