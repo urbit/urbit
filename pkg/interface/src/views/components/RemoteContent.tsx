@@ -109,6 +109,7 @@ class RemoteContent extends PureComponent<RemoteContentProps, RemoteContentState
     if (isImage && remoteContentPolicy.imageShown) {
       return this.wrapInLink(
         <BaseImage
+          crossOrigin="anonymous"
           flexShrink={0}
           src={url}
           style={style}
