@@ -50,7 +50,7 @@ interface ChatMessageProps {
   highlighted?: boolean;
 }
 
-export default class ChatMessage extends Component<ChatMessageProps> {
+export default class ChatMessage extends PureComponent<ChatMessageProps> {
   private divRef: React.RefObject<HTMLDivElement>;
 
   constructor(props) {

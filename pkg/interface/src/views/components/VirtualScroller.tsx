@@ -72,6 +72,9 @@ export default class VirtualScroller extends Component<VirtualScrollerProps, Vir
     this.scrollToData = this.scrollToData.bind(this);
     this.scrollKeyMap = this.scrollKeyMap.bind(this);
     this.loadRows = _.debounce(this.loadRows, 300, { leading: true }).bind(this);
+    this.onScroll = this.onScroll.bind(this);
+    this.measure = _.memoize(this.measure.bind(this), idx => idx.toString())
+    this.renderIndex = this.renderIndex.bind(this);
   }
 
   componentDidMount() {
@@ -221,12 +224,15 @@ export default class VirtualScroller extends Component<VirtualScrollerProps, Vir
         return;
       } else {
         window.removeEventListener('keydown', this.invertedKeyHandler);
+        window.removeEventListener('scroll', this.onScroll);
       }
     }
 
     this.overscan = Math.max(element.offsetHeight * 3, 500);
 
     this.window = element;
+    // setup scroll listener manually so we can mark it passive
+    this.window?.addEventListener('scroll', this.onScroll, { passive: true });
     if (this.props.origin === 'bottom') {
        element.addEventListener('wheel', (event) => {
         event.preventDefault();
@@ -276,6 +282,23 @@ export default class VirtualScroller extends Component<VirtualScrollerProps, Vir
     }
   }
 
+  measure(index: BigInteger) {
+    return (element: any) => {
+      if (element) {
+        this.cache.set(index, {
+          height: element.offsetHeight,
+          element
+        });
+        this.recalculateTotalHeight();
+      }
+    }
+  }
+
+  renderIndex(index: BigInteger) {
+    const measure = this.measure(index);
+    return this.props.renderer({ index, measure, scrollWindow: this.window });
+  };
+
   render() {
     const {
       startgap,
@@ -286,7 +309,6 @@ export default class VirtualScroller extends Component<VirtualScrollerProps, Vir
     const {
       origin = 'top',
       loadRows,
-      renderer,
       style,
       data
     } = this.props;
@@ -295,24 +317,11 @@ export default class VirtualScroller extends Component<VirtualScrollerProps, Vir
 
     const transform = origin === 'top' ? 'scale3d(1, 1, 1)' : 'scale3d(1, -1, 1)';
 
-    const render = (index: BigInteger) => {
-      const measure = (element: any) => {
-        if (element) {
-          this.cache.set(index, {
-            height: element.offsetHeight,
-            element
-          });
-          this.recalculateTotalHeight();
-        }
-      };
-      return renderer({ index, measure, scrollWindow: this.window });
-    };
-
     return (
-      <Box overflowY='scroll' ref={this.setWindow.bind(this)} onScroll={this.onScroll.bind(this)} style={{ ...style, ...{ transform } }}>
+      <Box overflowY='scroll' ref={this.setWindow.bind(this)} style={{ ...style, ...{ transform } }}>
         <Box ref={this.scrollContainer} style={{ transform, width: '100%' }}>
           <Box style={{ height: `${origin === 'top' ? startgap : endgap}px` }}></Box>
-          {indexesToRender.map(render)}
+          {indexesToRender.map(this.renderIndex)}
           <Box style={{ height: `${origin === 'top' ? endgap : startgap}px` }}></Box>
         </Box>
       </Box>
