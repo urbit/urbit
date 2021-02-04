@@ -448,6 +448,7 @@
         &(=(read read.u.not) !?=(?(%read-note %unread-note) -.in))
       ~&  >>  "Inconsistent hark cache, rebuilding"
       rebuild-cache
+    ?<  &(=(read read.u.not) ?=(?(%read-note %unread-note) -.in))
     =.  u.tib
       (~(put by u.tib) index u.not(read read))
     =.  notifications
