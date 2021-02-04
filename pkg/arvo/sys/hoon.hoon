@@ -13975,12 +13975,11 @@
         ::
         =^  cor  grub  (sint &)
         =>  cor
-        ?>  ?=([%cell *] sut)
+        ?>  ?=([%cell *] sut) :: XX why?
         ::  leaf with possible recursive descent
         ::
         ::  clear face stacks for descent
         ::
-        ::  XX WEIRD some variation here
         =/  tos  hos
         =/  tec  wec
         ::
@@ -13993,7 +13992,7 @@
         =^  rep  grub  (caching-peek(sut ref) %free 3)
         ::
         =^  lef  grub  dext(sut p.sut, ref lep)
-        =^  rig  grub  dext(sut p.sut, ref rep)
+        =^  rig  grub  dext(sut q.sut, ref rep)
         ::
         =:  hos  tos
             wec  tec
