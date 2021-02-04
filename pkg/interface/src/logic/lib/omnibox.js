@@ -65,7 +65,7 @@ const otherIndex = function() {
   const other = [];
   other.push(result('My Channels', '/~landscape/home', 'home', null));
   other.push(result('Notifications', '/~notifications', 'inbox', null));
-  other.push(result('Profile and Settings', '/~profile/identity', 'profile', null));
+  other.push(result('Profile and Settings', `/~profile/~${window.ship}`, 'profile', null));
   other.push(result('Log Out', '/~/logout', 'logout', null));
 
   return other;
