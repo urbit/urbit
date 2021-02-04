@@ -25,7 +25,7 @@ export function ChannelNotifications(props: ChannelNotificationsProps) {
   };
 
   return (
-    <Col mb="6" gapY="4">
+    <Col mb="6" gapY="4" flexShrink={0}>
       <Text id="notifications" fontSize="2" fontWeight="bold">
         Channel Notifications
       </Text>
