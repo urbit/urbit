@@ -255,7 +255,10 @@
     |=  m=md-resource-1
     ^-  (unit md-resource:store)
     %+  bind  (de-path-soft:resource path.m)
-    |=(rid=resource [app-name.m rid])
+    |=  rid=resource
+    :_  rid
+    ?:  =(%contacts app-name.m)   %groups
+    app-name.m
   ::
   ++  metadata-1-to-2
     |=  m=metadata-1

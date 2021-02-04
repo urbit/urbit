@@ -18,11 +18,11 @@
 ::
 +$  state-zero
   $:  %0
-      synced=(map group-path ship)
+      synced=(map path ship)
   ==
 +$   state-one
   $:  %1
-      synced=(map group-path ship)
+      synced=(map path ship)
   ==
 +$   state-two
   [%2 ~]
@@ -39,8 +39,6 @@
 ++  on-save   !>(state)
 ++  on-load
   |=  =vase
-  ?:  =(1 1)
-    `this
   =+  !<(old=versioned-state vase)
   |^
   ?:  ?=(%2 -.old)
