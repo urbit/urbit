@@ -113,7 +113,7 @@ const StatusBar = (props) => {
                 p={1}
                 color='black'
                 cursor='pointer'
-                fontSize={0}
+                fontSize={1}
                 onClick={() => props.history.push(`/~profile/~${ship}`)}>
                 View Profile
               </Row>
@@ -125,7 +125,7 @@ const StatusBar = (props) => {
                 p={1}
                 color='black'
                 cursor='pointer'
-                fontSize={0}
+                fontSize={1}
                 onClick={() => props.history.push('/~settings')}>
                 System Settings
               </Row>
