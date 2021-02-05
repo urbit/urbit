@@ -111,6 +111,11 @@
     ++  handle-add
       |=  [=ship =contact:store]
       ^-  (quip card _state)
+      ::  ensure difference
+      =/  old=(unit contact:store)  (~(get by rolodex) ship)
+      ?>  ?|  ?=(~ old)
+              !=(contact(last-updated *@da) u.old(last-updated *@da))
+          ==
       =.  last-updated.contact  now.bowl
       :-  (send-diff [%add ship contact] =(ship our.bowl))
       state(rolodex (~(put by rolodex) ship contact))
