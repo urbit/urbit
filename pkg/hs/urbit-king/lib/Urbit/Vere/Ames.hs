@@ -80,15 +80,13 @@ modeAddress = \case
 
 okFakeAddr :: AmesDest -> Bool
 okFakeAddr = \case
-  EachYes _                            -> True
-  EachNo  (Jammed (AAIpv4 (Ipv4 a) _)) -> a == localhost
-  EachNo  (Jammed (AAVoid v         )) -> absurd v
+  EachYes _                   -> True
+  EachNo  (AAIpv4 (Ipv4 a) _) -> a == localhost
 
 localAddr :: NetworkMode -> AmesDest -> SockAddr
 localAddr mode = \case
-  EachYes g                     -> SockAddrInet (galaxyPort mode g) localhost
-  EachNo  (Jammed (AAIpv4 _ p)) -> SockAddrInet (fromIntegral p) localhost
-  EachNo  (Jammed (AAVoid v  )) -> absurd v
+  EachYes g            -> SockAddrInet (galaxyPort mode g) localhost
+  EachNo  (AAIpv4 _ p) -> SockAddrInet (fromIntegral p) localhost
 
 bornEv :: KingId -> Ev
 bornEv inst = EvBlip $ BlipEvNewt $ NewtEvBorn (fromIntegral inst, ()) ()
@@ -98,7 +96,7 @@ hearEv p a bs =
   EvBlip $ BlipEvAmes $ AmesEvHear () (ipDest p a) (MkBytes bs)
 
 ipDest :: PortNumber -> HostAddress -> AmesDest
-ipDest p a = EachNo $ Jammed $ AAIpv4 (Ipv4 a) (fromIntegral p)
+ipDest p a = EachNo $ AAIpv4 (Ipv4 a) (fromIntegral p)
 
 
 --------------------------------------------------------------------------------
@@ -367,5 +365,4 @@ ames env who isFake stat scry enqueueEv stderr = (initialEvents, runAmes)
            -> RIO e (Maybe [AmesDest])
   scryLane ship = scryNow scry "ax" "" ["peers", tshow ship, "forward-lane"]
 
-  ipv4Addr (Jammed (AAVoid v  )) = absurd v
-  ipv4Addr (Jammed (AAIpv4 a p)) = SockAddrInet (fromIntegral p) (unIpv4 a)
+  ipv4Addr (AAIpv4 a p) = SockAddrInet (fromIntegral p) (unIpv4 a)

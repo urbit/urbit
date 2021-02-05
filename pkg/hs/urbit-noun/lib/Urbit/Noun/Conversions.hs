@@ -494,7 +494,7 @@ instance Show BigTape where
 -- Bytes -----------------------------------------------------------------------
 
 newtype Bytes = MkBytes { unBytes :: ByteString }
-  deriving newtype (Eq, Ord, Show)
+  deriving newtype (Eq, Ord, Show, IsString)
 
 instance ToNoun Bytes where
     toNoun = Atom . bytesAtom . unBytes
