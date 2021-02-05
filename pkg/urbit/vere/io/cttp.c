@@ -562,7 +562,7 @@ _cttp_creq_new(u3_cttp* ctp_u, c3_l num_l, u3_noun hes)
   // Parse the url out of the new style url passed to us.
   u3_noun unit_pul = u3do("de-purl:html", u3k(url));
   if (c3n == u3r_du(unit_pul)) {
-    u3l_log("cttp: url parsing failed\n");
+    u3l_log("cttp: url parsing failed");
     u3z(hes);
     return 0;
   }
@@ -737,7 +737,7 @@ _cttp_creq_fail(u3_creq* ceq_u, const c3_c* err_c)
   // XX anything other than a 504?
   c3_w cod_w = 504;
 
-  u3l_log("http: fail (%d, %d): %s\r\n", ceq_u->num_l, cod_w, err_c);
+  u3l_log("http: fail (%d, %d): %s", ceq_u->num_l, cod_w, err_c);
 
   // XX include err_c as response body?
   _cttp_http_client_receive(ceq_u, cod_w, u3_nul, u3_nul);
@@ -973,7 +973,7 @@ _cttp_ef_http_client(u3_cttp* ctp_u, u3_noun tag, u3_noun dat)
     if (  (c3n == u3r_cell(dat, &num, &req))
        || (c3n == u3r_safe_word(num, &num_l)) )
     {
-      u3l_log("cttp: strange request\n");
+      u3l_log("cttp: strange request");
       ret_o = c3n;
     }
     else if ( (ceq_u = _cttp_creq_new(ctp_u, num_l, u3k(req))) ) {
@@ -981,7 +981,7 @@ _cttp_ef_http_client(u3_cttp* ctp_u, u3_noun tag, u3_noun dat)
       ret_o = c3y;
     }
     else {
-      u3l_log("cttp: strange request (unparsable url)\n");
+      u3l_log("cttp: strange request (unparsable url)");
       ret_o = c3n;
     }
   }
@@ -989,7 +989,7 @@ _cttp_ef_http_client(u3_cttp* ctp_u, u3_noun tag, u3_noun dat)
     c3_l num_l;
 
     if ( c3n == u3r_safe_word(dat, &num_l) ) {
-      u3l_log("cttp: strange cancel-request\n");
+      u3l_log("cttp: strange cancel-request");
       ret_o = c3n;
     }
     else if ( (ceq_u =_cttp_creq_find(ctp_u, num_l)) ) {
@@ -1003,7 +1003,7 @@ _cttp_ef_http_client(u3_cttp* ctp_u, u3_noun tag, u3_noun dat)
     }
   }
   else {
-    u3l_log("cttp: strange effect (unknown type)\n");
+    u3l_log("cttp: strange effect (unknown type)");
     ret_o = c3n;
   }
 

@@ -330,7 +330,7 @@ _term_it_write_cb(uv_write_t* wri_u, c3_i sas_i)
   //  write failure is logged, but otherwise ignored.
   //
   if ( 0 != sas_i ) {
-    u3l_log("term: write: %s\n", uv_strerror(sas_i));
+    u3l_log("term: write: %s", uv_strerror(sas_i));
   }
 
   c3_free(wri_u->data);
@@ -382,7 +382,7 @@ _term_it_write(u3_utty*  uty_u,
     //  synchronous write failure is logged, but otherwise ignored
     //
     if ( ret_i < 0 ) {
-      u3l_log("term: write: %s\n", uv_strerror(ret_i));
+      u3l_log("term: write: %s", uv_strerror(ret_i));
     }
 
     c3_free(ptr_v);
@@ -837,14 +837,14 @@ _term_suck(u3_utty* uty_u, const c3_y* buf, ssize_t siz_i)
       //  The process hangs if we do nothing (and ctrl-z
       //  then corrupts the event log), so we force shutdown.
       //
-      u3l_log("term: hangup (EOF)\r\n");
+      u3l_log("term: hangup (EOF)");
 
       //  XX revise
       //
       u3_pier_bail(u3_king_stub());
     }
     else if ( siz_i < 0 ) {
-      u3l_log("term %d: read: %s\n", uty_u->tid_l, uv_strerror(siz_i));
+      u3l_log("term %d: read: %s", uty_u->tid_l, uv_strerror(siz_i));
     }
     else {
       c3_i i;
@@ -1688,7 +1688,7 @@ _term_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
        || (u3_nul != q_pud)
        || (c3n == _reck_orchid(c3__ud, u3k(p_pud), &tid_l)) )
     {
-      u3l_log("term: bad tire\n");
+      u3l_log("term: bad tire");
       ret_o = c3n;
     }
     else {
@@ -1709,8 +1709,8 @@ _term_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
           {
             u3_utty* uty_u = _term_ef_get(tid_l);
             if ( 0 == uty_u ) {
-              // u3l_log("no terminal %d\n", tid_l);
-              // u3l_log("uty_u %p\n", u3_Host.uty_u);
+              // u3l_log("no terminal %d", tid_l);
+              // u3l_log("uty_u %p", u3_Host.uty_u);
             }
             else {
               u3_noun bis = dat;

@@ -82,7 +82,8 @@ _cw_serf_send_slog(u3_noun hod)
 static void
 _cw_serf_send_stdr(c3_c* str_c)
 {
-  _cw_serf_send(u3nc(c3__flog, u3i_string(str_c)));
+  // _cw_serf_send(u3nc(c3__flog, u3i_string(str_c)));
+  _cw_serf_send(u3nc(c3__flog, u3i_string("lmao")));
 }
 
 

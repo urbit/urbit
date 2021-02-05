@@ -159,7 +159,7 @@ u3qc_rip(u3_atom a,
     return _bit_rip(b, c);
   }
 
-  u3l_log("rip: stub\r\n");
+  u3l_log("rip: stub");
   return u3m_bail(c3__fail);
 }
 
