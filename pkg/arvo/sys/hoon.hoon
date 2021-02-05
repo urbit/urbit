@@ -9167,6 +9167,94 @@
           %wash  [%1 1]
       ==
     ::
+    ::  =caching-fish: make a $nock that tests a .ref at .axis for .skin
+    ::
+    ++  caching-fish
+      |=  =axis
+      ^-  [nock _grub]
+      ?@  skin
+        :_  grub
+        [%1 &]
+      ?-    -.skin
+      ::
+          %base
+        ?-    base.skin
+        ::
+            %cell
+          $(skin [%cell [%base %noun] [%base %noun]])
+        ::
+            %flag
+          =^  nests  grub  (caching-nest(sut bool) | ref)
+          ?:  nests
+            :_  grub
+            [%1 &]
+          =^  val  grub  $(skin [%base %atom %$])
+          :_  grub
+          %+  flan
+            val
+          %+  flor
+            [%5 [%0 axis] [%1 &]]
+          [%5 [%0 axis] [%1 |]]
+        ::
+            %noun
+          :_  grub
+          [%1 &]
+        ::
+            %null
+          $(skin [%leaf %n ~])
+        ::
+            %void
+          :_  grub
+          [%1 |]
+        ::
+            [%atom *]
+          =^  atom-nests  grub  (caching-nest(sut [%atom %$ ~]) | ref)
+          ?:  atom-nests
+            :_  grub
+            [%1 &]
+          =^  cell-nests  grub  (caching-nest(sut [%cell %noun %noun]) | ref)
+          :_  grub
+          ?:  cell-nests
+            [%1 |]
+          (flip [%3 %0 axis])
+        ==
+      ::
+          %cell
+        =^  atom-nests  grub  (caching-nest(sut [%atom %$ ~]) | ref)
+        ?:  atom-nests
+          :_  grub
+          [%1 |]
+        ::
+        =^  cell-nests  grub  (caching-nest(sut [%cell %noun %noun]) | ref)
+        ::
+        =^  lep  grub  (caching-peek(sut ref) %free 2)
+        =^  rep  grub  (caching-peek(sut ref) %free 3)
+        ::
+        =^  lef  grub  $(ref lep, skin skin.skin)
+        =^  rig  grub  $(ref rep, skin ^skin.skin)
+        ::
+        :_  grub
+        %+  flan
+          ?:  cell-nests
+            [%1 &]
+          [%3 %0 axis]
+        (flan lef rig)
+      ::
+          %leaf
+        =^  nests  grub  (caching-nest(sut [%atom %$ `atom.skin]) | ref)
+        :_  grub
+        ?:  nests
+          [%1 &]
+        [%5 [%1 atom.skin] [%0 axis]]
+      ::
+          %dbug  $(skin skin.skin)
+          %help  $(skin skin.skin)
+          %name  $(skin skin.skin)
+          %over  $(skin skin.skin)
+          %spec  $(skin skin.skin)
+          %wash  :_  grub  [%1 1]
+      ==
+    ::
     ::  -gain: make a $type by restricting .ref to .skin
     ::
     ++  gain
@@ -12262,8 +12350,10 @@
       =^  fid  grub  (caching-find %read [[%& 1] q.gen])
       ~>  %mean.'mint-fragment'
       ?>  &(?=(%& -.fid) ?=(%& -.q.p.fid))
+      =^  rye  grub
+        (~(caching-fish ar `type`p.q.p.fid `skin`p.gen) (tend p.p.fid))
       :_  grub
-      [lef (~(fish ar `type`p.q.p.fid `skin`p.gen) (tend p.p.fid))]
+      [lef rye]
     ::
         [%fits *]
       =^  nic  grub  (caching-nice bool)
