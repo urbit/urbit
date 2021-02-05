@@ -137,6 +137,9 @@
       ++  edit-contact
         |=  [=contact:store edit=edit-field:store]
         ^-  contact:store
+        ::  ensure difference
+        =;  new=contact:store
+          ?<(=(contact new) new)
         ?-  -.edit
           %nickname  contact(nickname nickname.edit)
           %bio       contact(bio bio.edit)
