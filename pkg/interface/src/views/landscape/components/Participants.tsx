@@ -1,3 +1,4 @@
+/* eslint-disable max-lines-per-function */
 import React, {
   useState,
   useMemo,
@@ -51,6 +52,18 @@ const searchParticipant = (search: string) => (p: Participant) => {
   return p.patp.includes(s) || p.nickname.toLowerCase().includes(s);
 };
 
+const emptyContact = (patp: string, pending: boolean): Participant => ({
+  nickname: '',
+  email: '',
+  phone: '',
+  color: '',
+  avatar: null,
+  notes: '',
+  website: '',
+  patp,
+  pending
+});
+
 function getParticipants(cs: Contacts, group: Group) {
   const contacts: Participant[] = _.map(cs, (c, patp) => ({
     ...c,
@@ -68,24 +81,14 @@ function getParticipants(cs: Contacts, group: Group) {
         )
       : [];
 
+  const allParticipants = _.unionBy(allMembers, pending, 'patp');
+
   return [
-    _.unionBy(allMembers, pending, 'patp'),
-    pending.length,
+    allParticipants,
+    _.filter(allParticipants, { pending: true }).length,
     allMembers.length
   ] as const;
 }
-
-const emptyContact = (patp: string, pending: boolean): Participant => ({
-  nickname: '',
-  email: '',
-  phone: '',
-  color: '',
-  avatar: null,
-  notes: '',
-  website: '',
-  patp,
-  pending
-});
 
 const Tab = ({ selected, id, label, setSelected }) => (
   <Box
