@@ -83,7 +83,18 @@ export function GroupSwitcher(props: {
     : associations.groups[workspace.group].metadata;
   const navTo = (to: string) => `${props.baseUrl}${to}`;
   return (
-    <Row width="100%" alignItems="center" height='48px' backgroundColor="white" zIndex="2" position="sticky" top="0px" pl='3' borderBottom='1px solid' borderColor='washedGray'>
+    <Row
+      width="100%"
+      alignItems="center"
+      flexShrink={0}
+      height='48px'
+      backgroundColor="white"
+      zIndex="2"
+      position="sticky"
+      top="0px"
+      pl='3'
+      borderBottom='1px solid'
+      borderColor='washedGray'>
       <Col
         bg="white"
         width="100%"
@@ -167,11 +178,9 @@ export function GroupSwitcher(props: {
             }
           >
             <Row flexGrow={1} alignItems="center" width='100%' minWidth='0' flexShrink={0}>
-              { metadata && <MetadataIcon mr="2" border="1" borderColor="lightGray" borderRadius="1" metadata={metadata} height="24px" width="24px" /> }
-              <Row justifyContent="space-between" mr={1} flexShrink={0} flexGrow={1} minWidth='0'>
-                <Text lineHeight="1.1" fontSize='2' fontWeight="700" overflow='hidden' display='inline-block' flexShrink='1' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}>{title}</Text>
+              { metadata && <MetadataIcon flexShrink={0} mr="2" border="1" borderColor="lightGray" borderRadius="1" metadata={metadata} height="24px" width="24px" /> }
+              <Text flexShrink={1} lineHeight="1.1" fontSize='2' fontWeight="700" overflow='hidden' display='inline-block' flexShrink='1' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}>{title}</Text>
               </Row>
-            </Row>
           </Dropdown>
           <Row pr='3' verticalAlign="middle">
             {(workspace.type === 'group') && (

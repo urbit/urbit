@@ -55,7 +55,6 @@ const edit = (json: ContactUpdate, state: S) => {
     data &&
     (ship in state.contacts)
   ) {
-    console.log(data);
     const [field] = Object.keys(data['edit-field']);
     if (!field) {
       return;

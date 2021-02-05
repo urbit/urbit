@@ -165,14 +165,17 @@ class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
           <Icon icon="Chat" size={16} onClick={() => history.push(`/~landscape/dm/${ship}`)}/>
           )}
         </Row>
-        <Box alignSelf="center" height="72px">
+        <Box
+          alignSelf="center"
+          height="72px"
+          onClick={() => history.push(`/~profile/~${ship}`)}>
           {img}
         </Box>
-        <Col height="3rem" alignItems="end" justifyContent="flex-end">
+        <Col alignItems="end" justifyContent="flex-end" overflow="hidden">
+          <Row width="100%" >
             <Text
               fontWeight='600'
               mono={!showNickname}
-              display='block'
               textOverflow='ellipsis'
               overflow='hidden'
               whiteSpace='pre'
@@ -180,6 +183,7 @@ class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
             >
               {showNickname ? contact.nickname : cite(ship)}
             </Text>
+          </Row>
           { isOwn ? (
             <ProfileStatus
               api={this.props.api}

@@ -28,11 +28,11 @@ export function useModal(props: UseModalProps): UseModalResult {
 
   const dismiss = useCallback(() => {
     setModalShown(false);
-  }, [setModalShown]);
+  }, []);
 
   const showModal = useCallback(() => {
     setModalShown(true);
-  }, [setModalShown]);
+  }, []);
 
   const inner = useMemo(
     () =>

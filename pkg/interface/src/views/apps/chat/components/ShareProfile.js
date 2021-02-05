@@ -59,10 +59,10 @@ export const ShareProfile = (props) => {
 
     } else {
       const groupShared = await props.api.contacts.fetchIsAllowed(
+        `~${window.ship}`,
+        'personal',
         res.entity,
-        res.name,
-        res.entity,
-        false
+        true
       );
       setShowBanner(!groupShared);
     }

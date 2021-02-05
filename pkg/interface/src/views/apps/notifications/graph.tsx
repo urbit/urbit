@@ -139,10 +139,10 @@ const GraphNodeContent = ({ group, post, contacts, mod, description, index, remo
   return null;
 };
 
-function getNodeUrl(mod: string, group: boolean, groupPath: string, graph: string, index: string) {
-  if (!group && mod === 'chat') {
+function getNodeUrl(mod: string, hidden: boolean, groupPath: string, graph: string, index: string) {
+  if (hidden && mod === 'chat') {
     groupPath = '/messages';
-  } else if (!group) {
+  } else if (hidden) {
     groupPath = '/home';
   }
   const graphUrl = `/~landscape${groupPath}/resource/${mod}${graph}`;
