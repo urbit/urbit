@@ -48,7 +48,9 @@ export function Skeleton(props: SkeletonProps) {
   return (
     <Body
       display="grid"
-      gridTemplateColumns={['100%', '250px 1fr']}
+      gridTemplateColumns={
+        ['100%', 'minmax(150px, 1fr) 3fr', 'minmax(250px, 1fr) 4fr']
+      }
       gridTemplateRows="100%"
     >
       <Sidebar

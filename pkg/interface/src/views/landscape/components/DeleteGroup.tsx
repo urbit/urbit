@@ -38,14 +38,19 @@ export function DeleteGroup(props: {
 
   const icon = props.owner ? "X" : "SignOut";
   const { modal, showModal } = useModal({ modal: 
-    (dismiss: () => void) => (
+    (dismiss: () => void) => {
+      const onCancel = (e) => {
+        e.stopPropagation();
+        dismiss();
+      };
+      return (
         <Col p="4">
           <Label>{action} Group</Label>
           <Label gray mt="2">
             {description}
           </Label>
           <Row mt="2" justifyContent="flex-end">
-            <Button onClick={dismiss}>Cancel</Button>
+            <Button onClick={onCancel}>Cancel</Button>
             <StatelessAsyncButton
               name={`delete-${props.association.group}`}
               onClick={onDelete}
@@ -57,7 +62,8 @@ export function DeleteGroup(props: {
             </StatelessAsyncButton>
           </Row>
         </Col>
-      )});
+      );
+    }});
   return (
     <Row px="3" py="1" onClick={showModal} cursor="pointer">
       {modal}
