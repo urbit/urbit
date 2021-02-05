@@ -84,19 +84,18 @@ export function LinkWindow(props: LinkWindowProps) {
           ...props,
           node,
           measure,
-          key: index.toString()
         };
         if(index.eq(first ?? bigInt.zero)) {
           return (
-            <>
+            <React.Fragment key={index.toString()}>
             <Col key={index.toString()} mx="auto" mt="4" maxWidth="768px" width="100%" flexShrink={0} px={3}>
               <LinkSubmit s3={props.s3} name={name} ship={ship.slice(1)} api={api} />
             </Col>
               <LinkItem {...linkProps} />
-            </>
+            </React.Fragment>
           )
         }
-        return <LinkItem {...linkProps} />;
+        return <LinkItem key={index.toString()} {...linkProps} />;
       }}
       loadRows={fetchLinks}
     />
