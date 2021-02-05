@@ -2,6 +2,7 @@ import React, {
   useState,
   useEffect
 } from 'react';
+import _  from 'lodash';
 import { Box, Row, Text, BaseImage } from '@tlon/indigo-react';
 import { uxToHex } from '~/logic/lib/util';
 import { Sigil } from '~/logic/lib/sigil';
@@ -67,7 +68,7 @@ export const ShareProfile = (props) => {
       setShowBanner(!groupShared);
     }
     })();
-    
+
   }, [groupPath]);
 
   const image = (props?.our?.avatar)
@@ -97,7 +98,7 @@ export const ShareProfile = (props) => {
       await api.contacts.allowShips(recipients);
       await Promise.all(recipients.map(r => api.contacts.share(r)))
       setShowBanner(false);
-    } else if (!group.hidden) { 
+    } else if (!group.hidden) {
       const [,,ship,name] = groupPath.split('/');
       await api.contacts.allowGroup(ship,name);
       await api.contacts.share(ship);
