@@ -111,6 +111,12 @@
     ++  handle-add
       |=  [=ship =contact:store]
       ^-  (quip card _state)
+      ::  ensure difference
+      =/  old=(unit contact:store)  (~(get by rolodex) ship)
+      ?.  ?|  ?=(~ old)
+              !=(contact(last-updated *@da) u.old(last-updated *@da))
+          ==
+        [~ state]
       =.  last-updated.contact  now.bowl
       :-  (send-diff [%add ship contact] =(ship our.bowl))
       state(rolodex (~(put by rolodex) ship contact))
@@ -118,7 +124,8 @@
     ++  handle-remove
       |=  =ship
       ^-  (quip card _state)
-      ?>  (~(has by rolodex) ship)
+      ?.  (~(has by rolodex) ship)
+        [~ state]
       :-  (send-diff [%remove ship] =(ship our.bowl))
       ?:  =(ship our.bowl)
         state(rolodex (~(put by rolodex) our.bowl *contact:store))
@@ -128,8 +135,10 @@
       |=  [=ship =edit-field:store]
       |^
       ^-  (quip card _state)
-      =/  contact  (~(got by rolodex) ship)
-      =.  contact  (edit-contact contact edit-field)
+      =/  old  (~(got by rolodex) ship)
+      =/  contact  (edit-contact old edit-field)
+      ?:  =(old contact)
+        [~ state]
       =.  last-updated.contact  now.bowl
       :-  (send-diff [%edit ship edit-field] =(ship our.bowl))
       state(rolodex (~(put by rolodex) ship contact))
