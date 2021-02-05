@@ -165,7 +165,10 @@ class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
           <Icon icon="Chat" size={16} onClick={() => history.push(`/~landscape/dm/${ship}`)}/>
           )}
         </Row>
-        <Box alignSelf="center" height="72px">
+        <Box
+          alignSelf="center"
+          height="72px"
+          onClick={() => history.push(`/~profile/~${ship}`)}>
           {img}
         </Box>
         <Col alignItems="end" justifyContent="flex-end" overflow="hidden">

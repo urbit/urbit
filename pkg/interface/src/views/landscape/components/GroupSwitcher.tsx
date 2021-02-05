@@ -83,7 +83,18 @@ export function GroupSwitcher(props: {
     : associations.groups[workspace.group].metadata;
   const navTo = (to: string) => `${props.baseUrl}${to}`;
   return (
-    <Row width="100%" alignItems="center" height='48px' backgroundColor="white" zIndex="2" position="sticky" top="0px" pl='3' borderBottom='1px solid' borderColor='washedGray'>
+    <Row
+      width="100%"
+      alignItems="center"
+      flexShrink={0}
+      height='48px'
+      backgroundColor="white"
+      zIndex="2"
+      position="sticky"
+      top="0px"
+      pl='3'
+      borderBottom='1px solid'
+      borderColor='washedGray'>
       <Col
         bg="white"
         width="100%"
