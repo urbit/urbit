@@ -9284,7 +9284,7 @@
           [%void grub]
         ::
             %noun
-          =^  nests  grub  (~(caching-nest ut %void) | ref)
+          =^  nests  grub  (caching-nest(sut %void) | ref)
           :_  grub
           ?:  nests  %void  ref
         ::
@@ -9452,21 +9452,19 @@
         (face term.skin rig)
       ::
           %over
-        =^  val  grub  (~(caching-play ut sut) %wing wing.skin)
+        =^  val  grub  (caching-play %wing wing.skin)
         $(skin skin.skin, sut val)
       ::
           %spec
-        ::  XX WEIRD grub not used well here
-        ::
         =^  yon  grub  $(skin skin.skin)
-        =^  hit  grub  (~(caching-play ut sut) ~(example ax fab spec.skin))
-        =^  nests  grub  (~(caching-nest ut hit) & yon)
+        =^  hit  grub  (caching-play ~(example ax fab spec.skin))
+        =^  nests  grub  (caching-nest(sut hit) & yon)
         ?>  nests
         [hit grub]
       ::
           %wash
         =;  wyng=hoon
-          =^  played  grub  (~(caching-play ut ref) wyng)
+          =^  played  grub  (caching-play(sut ref) wyng)
           $(ref played)
         :-  %wing
         |-  ^-  wing
