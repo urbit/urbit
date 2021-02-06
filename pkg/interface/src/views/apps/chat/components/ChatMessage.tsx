@@ -8,7 +8,7 @@ import React, {
 } from 'react';
 import moment from 'moment';
 import _ from 'lodash';
-import { Box, Row, Text, Rule } from '@tlon/indigo-react';
+import { Box, Row, Text, Rule, BaseImage } from '@tlon/indigo-react';
 import { Sigil } from '~/logic/lib/sigil';
 import { OverlayBox } from '~/views/components/OverlaySigil';
 import {
@@ -245,6 +245,11 @@ export const MessageWithSigil = (props) => {
   const [displayName, setDisplayName] = useState(shipName);
   const [nameMono, setNameMono] = useState(showNickname ? false : true);
   const { hovering, bind } = useHovering();
+  const [showOverlay, setShowOverlay] = useState(false);
+
+  const toggleOverlay = () => {
+    setShowOverlay((value) => !value);
+  };
 
   const showCopyNotice = () => {
     setDisplayName(copyNotice);
@@ -260,17 +265,48 @@ export const MessageWithSigil = (props) => {
     return () => clearTimeout(timer);
   }, [displayName]);
 
+  const img =
+    contact && contact.avatar !== null ? (
+      <BaseImage
+        display='inline-block'
+        src={contact.avatar}
+        height={16}
+        width={16}
+      />
+    ) : (
+      <Sigil
+        ship={msg.author}
+        size={16}
+        color={color}
+        classes={sigilClass}
+        icon
+        padded
+      />
+    );
+
   return (
     <>
-      <Box mr={12} ml={12} pt={1} pb={1} height={16}>
-        <Sigil
-          ship={ship}
-          size={16}
-          color={color}
-          classes={sigilClass}
-          icon
-          padded
-        />
+      <Box
+        onClick={() => toggleOverlay()}
+        className='fl v-top pt1'
+        height={16}
+        pr={3}
+        pl={2}
+        position='relative'
+      >
+        {img}
+        {showOverlay && (
+          <OverlayBox
+            ship={msg.author}
+            contact={contact}
+            color={`#${uxToHex(contact?.color ?? '0x0')}`}
+            group={group}
+            onDismiss={() => toggleOverlay()}
+            history={history}
+            className='relative'
+            scrollWindow={scrollWindow}
+          />
+        )}
       </Box>
       <Box flexGrow={1} display='block' className='clamp-message' {...bind}>
         <Box
