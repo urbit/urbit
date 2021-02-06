@@ -15,6 +15,9 @@ import Urbit.Noun.Time
 import Urbit.Prelude
 import Urbit.Vere.Pier.Types
 
+import System.IO.Unsafe
+import Data.Serialize
+
 import Control.Concurrent (runInBoundThread, threadDelay)
 import Data.LargeWord     (LargeKey(..))
 import GHC.Natural        (Natural)
