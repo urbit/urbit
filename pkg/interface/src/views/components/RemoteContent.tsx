@@ -31,6 +31,7 @@ const VIDEO_REGEX = new RegExp(/(mov|mp4|ogv)$/i);
 
 class RemoteContent extends PureComponent<RemoteContentProps, RemoteContentState> {
   private fetchController: AbortController | undefined;
+  containerRef: HTMLDivElement | null = null;
   constructor(props) {
     super(props);
     this.state = {
@@ -187,7 +188,8 @@ class RemoteContent extends PureComponent<RemoteContentProps, RemoteContentState
           >
             {this.state.embed && this.state.embed.html && this.state.unfold
             ? <EmbedContainer markup={this.state.embed.html}>
-              <div dangerouslySetInnerHTML={{__html: this.state.embed.html}}></div>
+              <div ref={el => { this.containerRef = el; }}
+                dangerouslySetInnerHTML={{__html: this.state.embed.html}}></div>
             </EmbedContainer>
             : null}
           </Box>
