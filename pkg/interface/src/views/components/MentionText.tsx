@@ -1,11 +1,9 @@
-/* eslint-disable max-lines-per-function */
 import React, { useState, useCallback } from 'react';
 import _ from 'lodash';
 import { Text, Box } from '@tlon/indigo-react';
 import { Contact, Contacts, Content, Group } from '~/types';
 import RichText from '~/views/components/RichText';
 import { cite, useShowNickname, uxToHex } from '~/logic/lib/util';
-// import ProfileOverlay from './ProfileOverlay';
 import { OverlayBox } from '~/views/components/OverlaySigil';
 import { useHistory } from 'react-router-dom';
 

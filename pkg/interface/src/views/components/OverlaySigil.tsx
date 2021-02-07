@@ -1,4 +1,3 @@
-/* eslint-disable max-lines-per-function */
 import React, { useState, useRef, useEffect, PureComponent } from 'react';
 import { Contact, Group } from '~/types';
 import ProfileOverlay, { OVERLAY_HEIGHT } from './ProfileOverlay';
@@ -11,7 +10,6 @@ type OverlaySigilProps = ColProps & {
   contact?: Contact;
   group?: Group;
   history: any;
-
   scrollWindow?: HTMLElement;
   ship: string;
 };
@@ -34,11 +32,9 @@ export const OverlayBox = (props) => {
     scrollWindow,
     ship,
     ...rest
-  } = {
-    ...props
-  };
+  } = { ...props };
   const containerRef = useRef(null);
-
+  const [visible, setVisible] = useState(false);
   const [space, setSpace] = useState({ top: 'auto', bottom: 'auto' });
 
   const updateContainerOffset = () => {
@@ -59,13 +55,16 @@ export const OverlayBox = (props) => {
         bottom: bottomSpace
       });
     }
+    setVisible(true);
   };
 
   useEffect(() => {
     updateContainerOffset();
-    scrollWindow.addEventListener('scroll', updateContainerOffset);
+    if (scrollWindow)
+      scrollWindow.addEventListener('scroll', updateContainerOffset);
     return () => {
-      scrollWindow.removeEventListener('scroll', updateContainerOffset, true);
+      if (scrollWindow)
+        scrollWindow.removeEventListener('scroll', updateContainerOffset, true);
     };
   }, []);
 
@@ -77,6 +76,7 @@ export const OverlayBox = (props) => {
       pr={0}
       pl={0}
       ref={containerRef}
+      style={{ visibility: visible ? 'visible' : 'hidden' }}
     >
       <ProfileOverlay
         api={api}

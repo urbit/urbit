@@ -4,7 +4,14 @@ import { Contact, Group } from '~/types';
 import { cite, useShowNickname } from '~/logic/lib/util';
 import { Sigil } from '~/logic/lib/sigil';
 
-import { Box, Col, Button, Text, BaseImage, ColProps } from '@tlon/indigo-react';
+import {
+  Box,
+  Col,
+  Button,
+  Text,
+  BaseImage,
+  ColProps
+} from '@tlon/indigo-react';
 import { withLocalState } from '~/logic/state/local';
 
 export const OVERLAY_HEIGHT = 250;
@@ -21,7 +28,7 @@ type ProfileOverlayProps = ColProps & {
   hideNicknames: boolean;
   history: any;
   api: any;
-}
+};
 
 class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
   public popoverRef: React.Ref<typeof Col>;
@@ -82,15 +89,24 @@ class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
 
     const isOwn = window.ship === ship;
 
-    const img = contact?.avatar && !hideAvatars
-      ? <BaseImage display='inline-block' src={contact.avatar} height={160} width={160} className="brt2" />
-      : <Sigil
-        ship={ship}
-        size={160}
-        color={color}
-        classes="brt2"
-        svgClass="brt2"
-        />;
+    const img =
+      contact?.avatar && !hideAvatars ? (
+        <BaseImage
+          display='inline-block'
+          src={contact.avatar}
+          height={160}
+          width={160}
+          className='brt2'
+        />
+      ) : (
+        <Sigil
+          ship={ship}
+          size={160}
+          color={color}
+          classes='brt2'
+          svgClass='brt2'
+        />
+      );
     const showNickname = useShowNickname(contact, hideNicknames);
 
     //  TODO: we need to rethink this "top-level profile view" of other ships
@@ -99,12 +115,15 @@ class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
 
     const isHidden = group ? group.hidden : false;
 
-    const rootSettings = history.location.pathname.slice(0, history.location.pathname.indexOf("/resource"));
+    const rootSettings = history.location.pathname.slice(
+      0,
+      history.location.pathname.indexOf('/resource')
+    );
 
     return (
       <Col
         ref={this.popoverRef}
-        boxShadow="2px 4px 20px rgba(0, 0, 0, 0.25)"
+        boxShadow='2px 4px 20px rgba(0, 0, 0, 0.25)'
         position='absolute'
         backgroundColor='white'
         zIndex='3'
@@ -127,22 +146,36 @@ class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
               {contact.nickname}
             </Text>
           )}
-          <Text mono gray>{cite(`~${ship}`)}</Text>
+          <Text mono gray>
+            {cite(`~${ship}`)}
+          </Text>
           {!isOwn && (
-            <Button mt={2} fontSize='0' width="100%" style={{ cursor: 'pointer' }} onClick={() => history.push(`/~landscape/dm/${ship}`)}>
+            <Button
+              mt={2}
+              fontSize='0'
+              width='100%'
+              style={{ cursor: 'pointer' }}
+              onClick={() => history.push(`/~landscape/dm/${ship}`)}
+            >
               Send Message
             </Button>
           )}
-          {(isOwn) ? (
+          {isOwn ? (
             <Button
               mt='2'
               width='100%'
               style={{ cursor: 'pointer ' }}
-              onClick={() => (isHidden) ? history.push('/~profile/identity') : history.push(`${rootSettings}/popover/profile`)}
+              onClick={() =>
+                isHidden
+                  ? history.push('/~profile/identity')
+                  : history.push(`${rootSettings}/popover/profile`)
+              }
             >
               Edit Identity
             </Button>
-          ) : <div />}
+          ) : (
+            <div />
+          )}
         </Box>
       </Col>
     );

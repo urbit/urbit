@@ -1,4 +1,3 @@
-/* eslint-disable max-lines-per-function */
 import React, {
   useState,
   useEffect,

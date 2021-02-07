@@ -23,7 +23,6 @@ interface AuthorProps {
 // eslint-disable-next-line max-lines-per-function
 export default function Author(props: AuthorProps) {
   const { contacts, ship = '', date, showImage, group } = props;
-  const scrollWindow = useRef(null);
   const history = useHistory();
   let contact;
   if (contacts) {
@@ -53,7 +52,7 @@ export default function Author(props: AuthorProps) {
     );
 
   return (
-    <Row ref={scrollWindow} alignItems='center' width='auto'>
+    <Row alignItems='center' width='auto'>
       <Box
         onClick={() => toggleOverlay()}
         height={16}
@@ -70,7 +69,6 @@ export default function Author(props: AuthorProps) {
             onDismiss={() => toggleOverlay()}
             history={history}
             className='relative'
-            scrollWindow={scrollWindow.current}
           />
         )}
       </Box>
