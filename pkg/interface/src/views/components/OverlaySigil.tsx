@@ -15,7 +15,7 @@ type OverlaySigilProps = ColProps & {
 };
 
 interface OverlaySigilState {
-  visible: boolean;
+  visible: boolean | false;
   space: {
     top: number | 'auto';
     bottom: number | 'auto';
