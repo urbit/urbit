@@ -6,7 +6,7 @@ import { Contact, Contacts, Content, Group } from '~/types';
 import RichText from '~/views/components/RichText';
 import { cite, useShowNickname, uxToHex } from '~/logic/lib/util';
 // import ProfileOverlay from './ProfileOverlay';
-import OverlaySigil, { OverlayBox } from '~/views/components/OverlaySigil';
+import { OverlayBox } from '~/views/components/OverlaySigil';
 import { useHistory } from 'react-router-dom';
 
 interface MentionTextProps {
@@ -41,20 +41,16 @@ export function Mention(props: {
 }) {
   const { contacts, ship, scrollWindow } = props;
   let { contact } = props;
-
-  contact = (contact?.color) ? contact : contacts?.[ship];
-
+  contact = contact?.color ? contact : contacts?.[ship];
+  const history = useHistory();
   const showNickname = useShowNickname(contact);
-
   const name = showNickname ? contact?.nickname : cite(ship);
+  const group = props.group ?? { hidden: true };
   const [showOverlay, setShowOverlay] = useState(false);
 
-  const group = props.group ?? { hidden: true };
   const toggleOverlay = () => {
     setShowOverlay((value) => !value);
   };
-
-  const history = useHistory();
 
   return (
     <Box position='relative' display='inline-block' cursor='pointer'>
@@ -77,6 +73,7 @@ export function Mention(props: {
           onDismiss={() => toggleOverlay()}
           history={history}
           className='relative'
+          // TODO: Make sure scrollWindow gets passed in from apps that aren't just chat
           scrollWindow={scrollWindow}
         />
       )}
