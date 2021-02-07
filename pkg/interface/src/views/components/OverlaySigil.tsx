@@ -15,12 +15,14 @@ type OverlaySigilProps = ColProps & {
 };
 
 interface OverlaySigilState {
-  clicked: boolean;
-  topSpace: number | 'auto';
-  bottomSpace: number | 'auto';
+  visible: boolean;
+  space: {
+    top: number | 'auto';
+    bottom: number | 'auto';
+  };
 }
 
-export const OverlayBox = (props) => {
+export const OverlaySigil = (props: OverlaySigilProps): React.FC => {
   const {
     api,
     className,
@@ -34,8 +36,11 @@ export const OverlayBox = (props) => {
     ...rest
   } = { ...props };
   const containerRef = useRef(null);
-  const [visible, setVisible] = useState(false);
-  const [space, setSpace] = useState({ top: 'auto', bottom: 'auto' });
+  const [visible, setVisible] = useState<OverlaySigilState.visible>();
+  const [space, setSpace] = useState<OverlaySigilState.space>({
+    top: 'auto',
+    bottom: 'auto'
+  });
 
   const updateContainerOffset = () => {
     if (scrollWindow && containerRef && containerRef.current) {
@@ -51,6 +56,7 @@ export const OverlayBox = (props) => {
           scrollWindow.getBoundingClientRect().top
         : 0;
       setSpace({
+        ...space,
         top: topSpace,
         bottom: bottomSpace
       });
@@ -93,3 +99,5 @@ export const OverlayBox = (props) => {
     </Box>
   );
 };
+
+export default OverlaySigil;

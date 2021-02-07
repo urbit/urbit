@@ -3,7 +3,7 @@ import moment from 'moment';
 import { Row, Box, BaseImage } from '@tlon/indigo-react';
 import { uxToHex, cite, useShowNickname } from '~/logic/lib/util';
 import { Contacts } from '~/types/contact-update';
-import { OverlayBox } from './OverlaySigil';
+import OverlaySigil from './OverlaySigil';
 import { Sigil } from '~/logic/lib/sigil';
 import { Group } from '~/types';
 import GlobalApi from '~/logic/api/global';
@@ -61,7 +61,7 @@ export default function Author(props: AuthorProps) {
       >
         {showImage && img}
         {showOverlay && (
-          <OverlayBox
+          <OverlaySigil
             ship={ship}
             contact={contact}
             color={`#${uxToHex(contact?.color ?? '0x0')}`}

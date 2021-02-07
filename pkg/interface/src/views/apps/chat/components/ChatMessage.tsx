@@ -9,7 +9,7 @@ import moment from 'moment';
 import _ from 'lodash';
 import { Box, Row, Text, Rule, BaseImage } from '@tlon/indigo-react';
 import { Sigil } from '~/logic/lib/sigil';
-import { OverlayBox } from '~/views/components/OverlaySigil';
+import OverlaySigil from '~/views/components/OverlaySigil';
 import {
   uxToHex,
   cite,
@@ -293,9 +293,8 @@ export const MessageWithSigil = (props) => {
         pl={2}
         position='relative'
       >
-        {img}
         {showOverlay && (
-          <OverlayBox
+          <OverlaySigil
             ship={msg.author}
             contact={contact}
             color={`#${uxToHex(contact?.color ?? '0x0')}`}
@@ -306,6 +305,7 @@ export const MessageWithSigil = (props) => {
             scrollWindow={scrollWindow}
           />
         )}
+        {img}
       </Box>
       <Box flexGrow={1} display='block' className='clamp-message' {...bind}>
         <Box

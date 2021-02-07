@@ -4,7 +4,7 @@ import { Text, Box } from '@tlon/indigo-react';
 import { Contact, Contacts, Content, Group } from '~/types';
 import RichText from '~/views/components/RichText';
 import { cite, useShowNickname, uxToHex } from '~/logic/lib/util';
-import { OverlayBox } from '~/views/components/OverlaySigil';
+import OverlaySigil from '~/views/components/OverlaySigil';
 import { useHistory } from 'react-router-dom';
 
 interface MentionTextProps {
@@ -63,7 +63,7 @@ export function Mention(props: {
         {name}
       </Text>
       {showOverlay && (
-        <OverlayBox
+        <OverlaySigil
           ship={ship}
           contact={contact}
           color={`#${uxToHex(contact?.color ?? '0x0')}`}
@@ -71,7 +71,6 @@ export function Mention(props: {
           onDismiss={() => toggleOverlay()}
           history={history}
           className='relative'
-          // TODO: Make sure scrollWindow gets passed in from apps that aren't just chat
           scrollWindow={scrollWindow}
         />
       )}
