@@ -227,7 +227,7 @@ export const MessageWithSigil = (props) => {
   const datestamp = moment
     .unix(msg['time-sent'] / 1000)
     .format(DATESTAMP_FORMAT);
-  const contact = msg.author in contacts ? contacts[msg.author] : false;
+  const contact = `~${msg.author}` in contacts ? contacts[`~${msg.author}`] : false;
   const showNickname = useShowNickname(contact);
   const shipName = showNickname ? contact.nickname : cite(msg.author);
   const copyNotice = 'Copied';

@@ -15,8 +15,6 @@ import VirtualScroller from "~/views/components/VirtualScroller";
 
 import ChatMessage, { MessagePlaceholder } from './ChatMessage';
 import { UnreadNotice } from "./unread-notice";
-import { ResubscribeElement } from "./resubscribe-element";
-import { BacklogElement } from "./backlog-element";
 
 const INITIAL_LOAD = 20;
 const DEFAULT_BACKLOG_SIZE = 100;
@@ -269,8 +267,6 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
           dismissUnread={this.dismissUnread}
           onClick={this.scrollToUnread}
         />
-        <BacklogElement isChatLoading={isChatLoading} />
-        <ResubscribeElement {...{ api, host: ship, station, isChatUnsynced}} />
         <VirtualScroller
           ref={list => {this.virtualList = list}}
           origin="bottom"

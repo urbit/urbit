@@ -12,8 +12,16 @@ export class InviteItem extends Component<{invite: Invite, onAccept: (i: any) =>
       <>
       <Box width='100%' p='4'>
         <Box width='100%' verticalAlign='middle'>
-          <Text display='block' pb='2' gray><Text mono>{cite(props.invite.resource.ship)}</Text> invited you to <Text fontWeight='500'>{props.invite.resource.name}</Text></Text>
+          <Text display='block' pb='2' gray>
+            <Text mono>{cite(props.invite.resource.ship)}</Text> 
+            {" "}invited you to{" "}
+            <Text fontWeight='500'>{props.invite.resource.name}</Text></Text>
         </Box>
+        {props.invite.text && (
+          <Box pb="2">
+            <Text gray>{props.invite.text}</Text>
+          </Box>
+        )}
         <Row>
           <StatelessAsyncAction 
             name="accept"

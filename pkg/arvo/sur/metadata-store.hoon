@@ -1,28 +1,64 @@
+/-  *resource
+^?
 |%
-+$  group-path    path
+::
 +$  app-name      term
-+$  app-path      path
-+$  md-resource   [=app-name =app-path]
-+$  associations  (map [group-path md-resource] metadata)
++$  md-resource   [=app-name =resource]
++$  association   [group=resource =metadatum]
++$  associations  (map md-resource association)
++$  group-preview
+  $:  group=resource
+      channels=associations
+      members=@ud
+      channel-count=@ud
+      =metadatum
+  ==
 ::
 +$  color  @ux
-+$  metadata
++$  url    @t
+::
+::  $vip-metadata: variation in permissions
+::
+::    This will be passed to the graph-permissions mark
+::    conversion to allow for custom permissions.
+::
+::    %reader-comments: Allow readers to comment, regardless
+::      of whether they can write. (notebook, collections)
+::    %member-metadata: Allow members to add channels (groups)
+::    %$: No variation
+::
++$  vip-metadata  ?(%reader-comments %member-metadata %$)
++$  metadatum
   $:  title=cord
       description=cord
       =color
       date-created=time
       creator=ship
       module=term
+      picture=url
+      preview=?
+      vip=vip-metadata
   ==
 ::
-+$  metadata-action
-  $%  [%add =group-path resource=md-resource =metadata]
-      [%remove =group-path resource=md-resource]
++$  action
+  $%  [%add group=resource resource=md-resource =metadatum]
+      [%remove group=resource resource=md-resource]
+      [%initial-group group=resource =associations]
   ==
 ::
-+$  metadata-update
-  $%  metadata-action
++$  hook-update
+   $%  [%req-preview group=resource]
+       [%preview group-preview]
+   ==
+::
++$  update
+  $%  action
       [%associations =associations]
-      [%update-metadata =group-path resource=md-resource =metadata]
+      $:  %updated-metadata 
+          group=resource
+          resource=md-resource 
+          before=metadatum
+          =metadatum
+      ==
   ==
 --

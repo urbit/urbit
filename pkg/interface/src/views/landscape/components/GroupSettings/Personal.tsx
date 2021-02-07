@@ -10,7 +10,9 @@ import {
   Label,
   Button,
   LoadingSpinner,
-  BaseLabel
+  BaseLabel,
+  Anchor,
+  BaseAnchor
 } from "@tlon/indigo-react";
 import { Group, GroupPolicy } from "~/types/group-update";
 import { Enc } from "~/types/noun";
@@ -26,44 +28,7 @@ import { FormikOnBlur } from "~/views/components/FormikOnBlur";
 import {GroupNotificationsConfig} from "~/types";
 import {StatelessAsyncToggle} from "~/views/components/StatelessAsyncToggle";
 
-function DeleteGroup(props: {
-  owner: boolean;
-  api: GlobalApi;
-  association: Association;
-}) {
-  const history = useHistory();
-  const onDelete = async () => {
-    const name = props.association['group-path'].split('/').pop();
-    if (props.owner) {
-      const shouldDelete = (prompt(`To confirm deleting this group, type ${name}`) === name);
-      if (!shouldDelete) return;
-    }
-    const resource = resourceFromPath(props.association["group-path"])
-    await props.api.groups.removeGroup(resource);
-    history.push("/");
-  };
 
-  const action = props.owner ? "Delete" : "Leave";
-  const description = props.owner
-    ? "Permanently delete this group. (All current members will no longer see this group.)"
-    : "You can rejoin if it is an open group, or if you are reinvited";
-
-  return (
-    <Col>
-      <Label>{action} Group</Label>
-      <Label gray mt="2">
-        {description}
-      </Label>
-      <StatelessAsyncButton onClick={onDelete} mt={2} destructive={props.owner}>
-        {action} this group
-      </StatelessAsyncButton>
-    </Col>
-  );
-}
-
-interface FormSchema {
-  watching: boolean;
-}
 
 export function GroupPersonalSettings(props: {
   api: GlobalApi;
@@ -71,7 +36,7 @@ export function GroupPersonalSettings(props: {
   notificationsGroupConfig: GroupNotificationsConfig;
 }) {
 
-  const groupPath = props.association['group-path'];
+  const groupPath = props.association.group;
 
   const watching = props.notificationsGroupConfig.findIndex(g => g === groupPath) !== -1;
 
@@ -80,10 +45,9 @@ export function GroupPersonalSettings(props: {
     await props.api.hark[func](groupPath);
   };
 
-  const owner = (props.group?.tags?.role?.admin.has(window.ship) || false);
-
   return (
-    <Col gapY="4">
+    <Col px="4" pb="4" gapY="4">
+      <BaseAnchor pt="4" fontWeight="600" id="notifications" fontSize="2">Group Notifications</BaseAnchor>
       <BaseLabel 
         htmlFor="asyncToggle"
         display="flex"
@@ -95,7 +59,6 @@ export function GroupPersonalSettings(props: {
           <Label mt="2" gray>Send me notifications when this group changes</Label>
         </Col>
       </BaseLabel>
-      <DeleteGroup association={props.association} owner={owner} api={props.api} />
     </Col>
   );
 }
