@@ -1,2 +1,4 @@
 
 export type PropFunc<T extends (...args: any[]) => any> = Parameters<T>[0];
+
+export type Primitive = string | number | undefined | symbol | null | boolean;
