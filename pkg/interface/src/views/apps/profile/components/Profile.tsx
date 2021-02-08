@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useRef} from "react";
 import { Sigil } from "~/logic/lib/sigil";
 import { ViewProfile } from './ViewProfile';
 import { EditProfile } from './EditProfile';
@@ -15,6 +15,7 @@ import {
 } from "@tlon/indigo-react";
 import useLocalState from "~/logic/state/local";
 import { useHistory } from "react-router-dom";
+import {useTutorialModal} from "~/views/components/useTutorialModal";
 
 
 export function Profile(props: any) {
@@ -43,6 +44,10 @@ export function Profile(props: any) {
     ? <BaseImage src={contact.avatar} width='100%' height='100%' style={{ objectFit: 'cover' }} />
     : <Sigil ship={ship} size={96} color={hexColor} />;
 
+  const anchorRef = useRef<HTMLElement | null>(null);
+
+  useTutorialModal('profile', ship === `~${window.ship}`, anchorRef.current);
+
   return (
     <Center
       p={4}
@@ -55,7 +60,7 @@ export function Profile(props: any) {
             <SetStatus ship={ship} contact={contact} api={props.api} />
           ) : null
         }
-        <Row width="100%" height="300px">
+        <Row ref={anchorRef} width="100%" height="300px">
           {cover}
         </Row>
         <Row

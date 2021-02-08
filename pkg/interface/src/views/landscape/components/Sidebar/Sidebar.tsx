@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useRef } from 'react';
 import styled from 'styled-components';
 import {
   Col
@@ -19,6 +19,7 @@ import { getGroupFromWorkspace } from '~/logic/lib/workspace';
 import { SidebarAppConfigs } from './types';
 import { SidebarList } from './SidebarList';
 import { roleForShip } from '~/logic/lib/group';
+import {useTutorialModal} from '~/views/components/useTutorialModal';
 
 const ScrollbarLessCol = styled(Col)`
   scrollbar-width: none !important;
@@ -64,8 +65,12 @@ export function Sidebar(props: SidebarProps) {
   const role = props.groups?.[groupPath] ? roleForShip(props.groups[groupPath], window.ship) : undefined;
   const isAdmin = (role === 'admin') || (workspace?.type === 'home');
 
+  const anchorRef = useRef<HTMLElement | null>(null);
+  useTutorialModal('channels', true, anchorRef.current);
+
   return (
     <ScrollbarLessCol
+      ref={anchorRef}
       display={display}
       width="100%"
       gridRow="1/2"

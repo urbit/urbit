@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useRef} from "react";
 import { Box, Text, Col } from "@tlon/indigo-react";
 import f from "lodash/fp";
 import _ from "lodash";
@@ -7,6 +7,7 @@ import { Associations, Association, Unreads, UnreadStats } from "~/types";
 import { alphabeticalOrder } from "~/logic/lib/util";
 import { getUnreadCount, getNotificationCount } from "~/logic/lib/hark";
 import Tile from "../components/tiles/tile";
+import { useTutorialModal } from "~/views/components/useTutorialModal";
 
 interface GroupsProps {
   associations: Associations;
@@ -73,8 +74,15 @@ interface GroupProps {
 }
 function Group(props: GroupProps) {
   const { path, title, unreads, updates, first = false } = props;
+  const anchorRef = useRef<HTMLElement>(null);
+  const isTutorialGroup = path === '/ship/~hastuc-dibtux/beginner-island';
+  useTutorialModal(
+    'start',
+    isTutorialGroup,
+    anchorRef.current
+  );
   return (
-    <Tile to={`/~landscape${path}`} gridColumnStart={first ? '1' : null}>
+    <Tile ref={anchorRef} position="relative" bg={isTutorialGroup ? 'lightBlue' : undefined} to={`/~landscape${path}`} gridColumnStart={first ? '1' : null}>
       <Col height="100%" justifyContent="space-between">
         <Text>{title}</Text>
         <Col>

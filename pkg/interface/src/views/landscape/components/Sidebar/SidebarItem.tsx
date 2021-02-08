@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useRef} from "react";
 import _ from 'lodash';
 
 import { Icon, Row, Box, Text, BaseImage } from "@tlon/indigo-react";
@@ -9,6 +9,7 @@ import { Groups, Association } from "~/types";
 import { Sigil } from '~/logic/lib/sigil';
 import urbitOb from 'urbit-ob';
 import { getModuleIcon, getItemTitle, uxToHex } from "~/logic/lib/util";
+import {useTutorialModal} from "~/views/components/useTutorialModal";
 
 function SidebarItemIndicator(props: { status?: SidebarItemStatus }) {
   switch (props.status) {
@@ -41,6 +42,12 @@ export function SidebarItem(props: {
   const mod = association?.metadata?.module || appName;
   const rid = association?.resource
   const groupPath = association?.group;
+  const anchorRef = useRef<HTMLElement | null>(null)
+  useTutorialModal(
+    mod as any,
+    groupPath === '/ship/~hastuc-dibtux/beginner-island', 
+    anchorRef.current
+  );
   const app = apps[appName];
   const isUnmanaged = groups?.[groupPath]?.hidden || false;
   if (!app) {
@@ -87,6 +94,7 @@ export function SidebarItem(props: {
 
   return (
     <HoverBoxLink
+      ref={anchorRef}
       to={to}
       bg="white"
       bgActive="washedGray"

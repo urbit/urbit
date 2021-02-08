@@ -36,7 +36,6 @@ export function ChatResource(props: ChatResourceProps) {
 
   const [,, owner, name] = station.split('/');
   const ourContact = contacts?.[`~${window.ship}`];
-  console.log(contacts);
 
   const chatInput = useRef<ChatInput>();
 
