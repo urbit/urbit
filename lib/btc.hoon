@@ -79,6 +79,24 @@
   :-  20
   %-  ripemd-160
   (sha256 val)
+::  +compact-size: parse compactSize int from head of hex and return result and remainder
+::   - input "h" is little endian, output "n" is big endian
+::
+++  compact-size
+  |=  h=hexb
+  ^-  [n=hexb rest=hexb]
+  =/  s=@ux  dat:(take:byt 1 h)
+  ?:  (lth s 0xfd)  [1^s (drop:byt 1 h)]
+  ~|  "Invalid compact-size at start of {<h>}"
+  =/  len=bloq
+    ?+  s  !!
+        %0xfd  1
+        %0xfe  2
+        %0xff  3
+    ==
+  :_  (drop:byt (add 1 len) h)
+  %-  flip:byt
+  (take:byt (bex len) (drop:byt 1 h))
 ::
 ++  pubkey-to-address
   |=  [=bipt =network pubkey=hexb]
@@ -172,70 +190,69 @@
   ++  de
     |%
     ++  nversion
-      |=  b=buffer
-      ^-  [nversion=@ud rest=buffer]
-      :_  (slag 4 b)
-      =<  dat
-      %-  flip:byt
-      (to-byts:buf (scag 4 b))
+      |=  b=hexb
+      ^-  [nversion=@ud rest=hexb]
+      :-  dat:(flip:byt (take:byt 4 b))
+      (drop:byt 4 b)
     ::
     ++  segwit
-      |=  b=buffer
-      ^-  [segwit=(unit @ud) rest=buffer]
-      ?.  =(0x0 (snag 0 b))
+      |=  b=hexb
+      ^-  [segwit=(unit @ud) rest=hexb]
+      ?.  =(1^0x0 (take:byt 1 b))
         [~ b]
-      :_  (slag 2 b)
-      =<  [~ dat]
-      (to-byts:buf (scag 2 b))
+      :-  [~ dat:(take:byt 2 b)]
+      (drop:byt 2 b)
     ::  returns value as 0 since we don't know it when we decode
     ::
     ++  input
-      |=  b=buffer
+      |=  b=hexb
       ^-  input:tx
-      :*  (flip:byt (to-byts:buf (scag 32 b)))
-
-          =<(dat (flip:byt (to-byts:buf (swag [32 4] b))))
-          (flip:byt (to-byts:buf (swag [37 4] b)))
+      :*  (flip:byt (take:byt 32 b))
+          dat:(flip:byt (take:byt 4 (drop:byt 32 b)))
+          (flip:byt (take:byt 4 (drop:byt 37 b)))
           ~
           ~
           0
       ==
     ::
     ++  output
-      |=  b=buffer
+      |=  b=hexb
       ^-  output:tx
-      ::  slag 9 instead of 8 to skip the length byte
-      :-  (to-byts:buf (slag 9 b))
-      =<  dat
-      (flip:byt (to-byts:buf (scag 8 b)))
+      ::  TODO: parse length byte as compactsize?
+      ::  drop 9 instead of 8 to skip the length byte
+      ::
+      :-  (drop:byt 9 b)
+      dat:(flip:byt (take:byt 8 b))
     ::
     ++  inputs
-      |=  b=buffer
-      ^-  [is=(list input:tx) rest=buffer]
+      |=  b=hexb
+      ^-  [is=(list input:tx) rest=hexb]
       =|  acc=(list input:tx)
       =^  count  b
-        [(snag 0 b) (slag 1 b)]
+        [dat:(take:byt 1 b) (drop:byt 1 b)]
       |-
       ?:  =(0 count)  [acc b]
       %=  $
           acc  %+  snoc  acc
-               (input (scag 41 b))
-          b  (slag 41 b)
+               (input (take:byt 41 b))
+          b  (drop:byt 41 b)
           count  (dec count)
       ==
     ::
     ++  outputs
-      |=  b=buffer
-      ^-  [os=(list output:tx) rest=buffer]
+      |=  b=hexb
+      ^-  [os=(list output:tx) rest=hexb]
       =|  acc=(list output:tx)
+      ::  TODO count should be compact size
       =^  count  b
-        [(snag 0 b) (slag 1 b)]
+        [dat:(take:byt 1 b) (drop:byt 1 b)]
       |-
       ?:  =(0 count)  [acc b]
+      ::  TODO: below is wrong because output is sometimes not 31 length. It's 8 + compactsize
       %=  $
           acc  %+  snoc  acc
-               (output (scag 31 b))
-          b  (slag 31 b)
+               (output (take:byt 31 b))
+          b  (drop:byt 31 b)
           count  (dec count)
       ==
     --
@@ -263,17 +280,16 @@
   ++  decode
     |=  b=hexb
     ^-  data:tx
-    =/  bu=buffer  (from-byts:buf b)
-    =^  nversion  bu
-      (nversion:de bu)
-    =^  segwit  bu
-      (segwit:de bu)
-    =^  inputs  bu
-      (inputs:de bu)
-    =^  outputs  bu
-      (outputs:de bu)
+    =^  nversion  b
+      (nversion:de b)
+    =^  segwit  b
+      (segwit:de b)
+    =^  inputs  b
+      (inputs:de b)
+    =^  outputs  b
+      (outputs:de b)
     =/  locktime=@ud
-      dat:(to-byts:buf (scag 4 (flop bu)))
+      dat:(take:byt 4 (flip:byt b))
     [inputs outputs locktime nversion segwit]
   --
 ::  core to handle BIP174 PSBTs
@@ -393,17 +409,19 @@
   ++  parse
     |=  psbt-base64=cord
     ^-  (list map:psbt)
-    =/  todo=buffer
-      %+  slag  5  (to-buffer psbt-base64)
+    =/  todo=hexb
+      (drop:byt 5 (to-byts psbt-base64)) 
     =|  acc=(list map:psbt)
     =|  m=map:psbt
     |-
-    ?~  todo  (snoc acc m)
+    ?:  =(wid.todo 0)
+      (snoc acc m)
     ::  0x0: map separator
-    ?:  =(0x0 i.todo)
-      $(acc (snoc acc m), m *map:psbt, todo t.todo)
-    =+  [kv rest]=(next-keyval todo)
-    $(m (snoc m kv), todo rest)
+    ::
+    ?:  =(1^0x0 (take:byt 1 todo))
+      $(acc (snoc acc m), m *map:psbt, todo (drop:byt 1 todo))
+    =^  kv  todo  (next-keyval todo)
+    $(m (snoc m kv))
   ::  +get-txid: extract txid from a valid PSBT
   ::
   ++  get-txid
@@ -411,78 +429,47 @@
     ^-  hexb
     =/  tx=hexb
       %-  raw-tx
-      %+  slag  5
-      (to-buffer psbt-base64)
+      %+  drop:byt  5
+      (to-byts psbt-base64)
     %-  flip:byt
     (dsha256 tx)
   ::  +raw-tx: extract hex transaction
   ::    looks for key 0x0 in global map
-  ::    crashes if tx not in buffer
+  ::    crashes if tx not in hex
   ::
   ++  raw-tx
-    |=  b=buffer
-    |-  ^-  hexb
-    ?~  b  !!
-    ?:  =(0x0 i.b)  !!
-    =+  nk=(next-keyval b)
+    |=  b=hexb
+    ^-  hexb
+    |-
+    ?:  =(wid.b 0)  !!
+    ?:  =(1^0x0 (take:byt 1 b))  !!
+    =/  nk  (next-keyval b)
     ?:  =(0x0 dat.key.kv.nk)
       val.kv.nk
     $(b rest.nk)
   :: +next-keyval: returns next key-val in a PSBT map
-  ::   input buffer head must be a map key length
+  ::   input first byte must be a map key length
   ::
   ++  next-keyval
-    |=  b=buffer
-    ^-  [kv=keyval:psbt rest=buffer]
-    =+  klen=(snag 0 b)
-    =+  k=(swag [1 klen] b)
-    =+  vlen=(snag (add 1 klen) b)
-    =+  v=(swag [(add 2 klen) vlen] b)
-    =+  len=(add 2 (add klen vlen))
-    ?>  ?=([^ ^] [k v])
-    :_  (slag len b)
-    :-  (to-byts:buf k)
-        (to-byts:buf v)
+    |=  b=hexb
+    ^-  [kv=keyval:psbt rest=hexb]
+    =/  klen  dat:(take:byt 1 b)
+    =/  k  (take:byt klen (drop:byt 1 b))
+    =/  vlen  dat:(take:byt 1 (drop:byt (add 1 klen) b))
+    =/  v  (take:byt vlen (drop:byt (add 2 klen) b))
+    ?>  ?&((gth wid.k 0) (gth wid.v 0))
+    :-  [k v]
+    (drop:byt ;:(add 2 klen vlen) b)
   ::
-  ++  to-buffer
+  ++  to-byts
     |=  psbt-base64=cord
-    ^-  buffer
+    ^-  hexb
     ~|  "Invalid PSBT"
     =+  p=(de:base64:mimes:html psbt-base64)
     ?~  p  !!
-    (from-byts:buf (flip:byt u.p))
+    (flip:byt u.p)
   --
-::  buffer: byte buffer utilities
-::  list of @ux that is big endian for hashing purposes
-::  used to preserve 0s when concatenating byte sequences
 ::
-++  buf
-  |%
-  ++  from-byts
-    |=  =byts  ^-  buffer
-    =/  b=(list @ux)
-      (flop (rip 3 dat.byts))
-    =/  pad=@  (sub wid.byts (lent b))
-    (weld (reap pad 0x0) b)
-    ::  converts byts to a little endian buffer with wid length (trailing 0s)
-  ::  atom 1 with wid=4 becomes ~[0x1 0x0 0x0 0x0]
-  ::  0xff11 with wid=8 becomes ~[0x11 0xff 0x0 0x0 0x0 0x0 0x0 0x0]
-  ::
-  ++  from-byts-le
-    |=  =byts
-    ^-  buffer
-    =/  b=(list @ux)  (rip 3 dat.byts)
-    =/  pad=@  (sub wid.byts (lent b))
-    (weld b (reap pad 0x0))
-  ::
-  ++  to-byts
-    |=  b=buffer  ^-  byts
-    [(lent b) (rep 3 (flop b))]
-  ::
-  ++  concat-as-byts
-    |=  bs=(list buffer)  ^-  byts
-    %-  to-byts  (zing bs)
-  --
 ++  byt
   |%
   ::  +cat: concat byts, preserving MSB order
