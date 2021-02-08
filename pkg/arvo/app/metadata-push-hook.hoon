@@ -42,32 +42,13 @@
   =+  !<(=hook-update:store vase)
   ?.  ?=(%req-preview -.hook-update)
     (on-poke:def mark vase)
-  =*  rid  group.hook-update
-  |^
-  ?>  =(entity.rid our.bowl)
-  ?>  (can-join:grp rid src.bowl)
-  =/  members
-    ~(wyt in (members:grp rid))
-  =/  =metadatum:store
-    %-  need
-    %+  mate  (peek-metadatum:met %groups rid)
-    (peek-metadatum:met %graph rid)
+  ?>  =(entity.group.hook-update our.bowl)
+  =/  =group-preview:store
+    (get-preview:met group.hook-update)
   :_  this
-  =;  =cage
-    [%pass / %agent [src.bowl %metadata-pull-hook] %poke cage]~
-  :-  %metadata-hook-update
-  !>  ^-  hook-update:store
-  [%preview rid channels members channel-count metadatum]
-  ::
-  ++  channels
-    %-  ~(gas by *associations:store)
-    %+  skim  ~(tap by (app-metadata-for-group:met rid %graph))
-    |=([=md-resource:store group=resource =metadatum:store] preview.metadatum)
-  ::   
-  ++  channel-count
-    ~(wyt by (app-metadata-for-group:met rid %graph))
-  --
-
+  =-  [%pass / %agent [src.bowl %metadata-pull-hook] %poke -]~
+  metadata-hook-update+!>(`hook-update:store`[%preview group-preview])
+::
 ++  on-agent  on-agent:def
 ++  on-watch  on-watch:def
 ++  on-leave  on-leave:def
