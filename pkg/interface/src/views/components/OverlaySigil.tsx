@@ -72,7 +72,7 @@ export const OverlaySigil = (props: OverlaySigilProps): React.FC => {
       if (scrollWindow)
         scrollWindow.removeEventListener('scroll', updateContainerOffset, true);
     };
-  }, []);
+  }, [scrollWindow]);
 
   return (
     <Box
@@ -91,7 +91,7 @@ export const OverlaySigil = (props: OverlaySigilProps): React.FC => {
         contact={contact}
         group={group}
         history={history}
-        onDismiss={() => onDismiss()}
+        onDismiss={onDismiss}
         ship={ship}
         topSpace={space.top}
         {...rest}

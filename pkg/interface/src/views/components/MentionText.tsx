@@ -46,9 +46,12 @@ export function Mention(props: {
   const group = props.group ?? { hidden: true };
   const [showOverlay, setShowOverlay] = useState(false);
 
-  const toggleOverlay = () => {
-    setShowOverlay((value) => !value);
-  };
+  const toggleOverlay = useCallback(
+    () => {
+      setShowOverlay(value => !value);
+    },
+    [showOverlay]
+  );
 
   return (
     <Box position='relative' display='inline-block' cursor='pointer'>
