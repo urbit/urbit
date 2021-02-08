@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { useHistory } from 'react-router-dom';
+import f from 'lodash/fp';
 
-import { Box, Row, Icon, Text } from '@tlon/indigo-react';
+import { Col, Button, Box, Row, Icon, Text } from '@tlon/indigo-react';
 
 import './css/custom.css';
 
@@ -10,10 +12,14 @@ import Tile from './components/tiles/tile';
 import Welcome from './components/welcome';
 import Groups from './components/Groups';
 import ModalButton from './components/ModalButton';
+import { StatelessAsyncButton } from '~/views/components/StatelessAsyncButton';
 import { writeText } from '~/logic/lib/util';
+import { useModal } from "~/logic/lib/useModal";
 import { NewGroup } from "~/views/landscape/components/NewGroup";
 import { JoinGroup } from "~/views/landscape/components/JoinGroup";
 import { Helmet } from 'react-helmet';
+import useLocalState from "~/logic/state/local";
+import { useWaitForProps } from '~/logic/lib/useWaitForProps';
 
 const ScrollbarLessBox = styled(Box)`
   scrollbar-width: none !important;
@@ -23,7 +29,10 @@ const ScrollbarLessBox = styled(Box)`
   }
 `;
 
+const tutSelector = f.pick(['tutorialProgress', 'nextTutStep']);
+
 export default function LaunchApp(props) {
+  const history = useHistory();
   const [hashText, setHashText] = useState(props.baseHash);
   const hashBox = (
     <Box
@@ -51,12 +60,60 @@ export default function LaunchApp(props) {
       <Text color="gray">{hashText || props.baseHash}</Text>
     </Box>
   );
+
+  const { tutorialProgress, nextTutStep } = useLocalState(tutSelector);
+
+  const waiter = useWaitForProps(props);
+
+  const { modal, showModal } = useModal({
+    modal: (dismiss) => {
+      const onDismiss = (e) => {
+        e.stopPropagation();
+        props.api.settings.putEntry('tutorial', 'seen', true);
+        dismiss();
+      };
+      const onContinue = async (e) => {
+        e.stopPropagation();
+        if(!hasTutorialGroup(props)) {
+          await props.api.groups.join('~hastuc-dibtux', 'beginner-island');
+          await waiter(hasTutorialGroup);
+        }
+        nextTutStep();
+        dismiss();
+      }
+      return (
+      <Col gapY="2" p="3">
+        <Text lineHeight="tall" fontWeight="medium">Welcome</Text>
+        <Text lineHeight="tall">
+          You have been invited to use Landscape, an interface to chat 
+          and interact with communities
+          <br />
+          Would you like a tour of Landscape?
+        </Text>
+        <Row gapX="2" justifyContent="flex-end">
+          <Button onClick={onDismiss}>Skip</Button>
+          <StatelessAsyncButton primary onClick={onContinue}>
+            Yes
+          </StatelessAsyncButton>
+        </Row>
+      </Col>
+
+    )}
+  });
+  useEffect(() => {
+    const seenTutorial = _.get(props.settings, ['tutorial', 'seen'], true);
+    if(!seenTutorial && tutorialProgress === 'hidden') {
+      showModal();
+    }
+  }, [props.settings]);
+
   return (
     <>
       <Helmet defer={false}>
         <title>{ props.notificationsCount ? `(${String(props.notificationsCount) }) `: '' }Landscape</title>
       </Helmet>
       <ScrollbarLessBox height='100%' overflowY='scroll' display="flex" flexDirection="column">
+        {modal}
         <Welcome firstTime={props.launch.firstTime} api={props.api} />
         <Box
           mx='2'
