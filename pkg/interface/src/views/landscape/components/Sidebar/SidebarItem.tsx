@@ -10,6 +10,7 @@ import { Sigil } from '~/logic/lib/sigil';
 import urbitOb from 'urbit-ob';
 import { getModuleIcon, getItemTitle, uxToHex } from "~/logic/lib/util";
 import {useTutorialModal} from "~/views/components/useTutorialModal";
+import {TUTORIAL_HOST, TUTORIAL_GROUP} from "~/logic/lib/tutorialModal";
 
 function SidebarItemIndicator(props: { status?: SidebarItemStatus }) {
   switch (props.status) {
@@ -45,7 +46,7 @@ export function SidebarItem(props: {
   const anchorRef = useRef<HTMLElement | null>(null)
   useTutorialModal(
     mod as any,
-    groupPath === '/ship/~hastuc-dibtux/beginner-island', 
+    groupPath === `/ship/${TUTORIAL_HOST}/${TUTORIAL_GROUP}`,
     anchorRef.current
   );
   const app = apps[appName];

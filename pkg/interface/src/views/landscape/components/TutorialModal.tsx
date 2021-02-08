@@ -11,6 +11,8 @@ import {
   MODAL_WIDTH_PX,
   MODAL_WIDTH,
   MODAL_HEIGHT,
+  TUTORIAL_HOST,
+  TUTORIAL_GROUP,
 } from "~/logic/lib/tutorialModal";
 import { getRelativePosition } from "~/logic/lib/relativePosition";
 import { StatelessAsyncButton } from "~/views/components/StatelessAsyncButton";
@@ -80,7 +82,7 @@ export function TutorialModal(props: { api: GlobalApi }) {
   }, [hideTutorial, props.api]);
 
   const leaveGroup = useCallback(async () => {
-    await props.api.groups.leaveGroup("~hastuc-dibtux", "beginner-island");
+    await props.api.groups.leaveGroup(TUTORIAL_HOST, TUTORIAL_GROUP);
   }, [props.api]);
 
   const progressIdx = progress.findIndex((p) => p === tutorialProgress);

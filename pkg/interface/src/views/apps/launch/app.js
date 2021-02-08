@@ -20,6 +20,11 @@ import { JoinGroup } from "~/views/landscape/components/JoinGroup";
 import { Helmet } from 'react-helmet';
 import useLocalState from "~/logic/state/local";
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
+import { 
+  hasTutorialGroup,
+  TUTORIAL_GROUP,
+  TUTORIAL_HOST
+} from '~/logic/lib/tutorialModal';
 
 const ScrollbarLessBox = styled(Box)`
   scrollbar-width: none !important;
@@ -75,7 +80,7 @@ export default function LaunchApp(props) {
       const onContinue = async (e) => {
         e.stopPropagation();
         if(!hasTutorialGroup(props)) {
-          await props.api.groups.join('~hastuc-dibtux', 'beginner-island');
+          await props.api.groups.join(TUTORIAL_HOST, TUTORIAL_GROUP);
           await waiter(hasTutorialGroup);
         }
         nextTutStep();

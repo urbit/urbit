@@ -3,6 +3,7 @@ import { Metadata } from "~/types";
 import { Col, Row, Text } from "@tlon/indigo-react";
 import { MetadataIcon } from "./MetadataIcon";
 import { useTutorialModal } from "~/views/components/useTutorialModal";
+import {TUTORIAL_HOST, TUTORIAL_GROUP} from "~/logic/lib/tutorialModal";
 
 interface GroupSummaryProps {
   metadata: Metadata;
@@ -17,7 +18,7 @@ export function GroupSummary(props: GroupSummaryProps) {
   const anchorRef = useRef<HTMLElement | null>(null);
   useTutorialModal(
     "group-desc",
-    resource === "/ship/~hastuc-dibtux/beginner-island",
+    resource === `/ship/${TUTORIAL_HOST}/${TUTORIAL_GROUP}`,
     anchorRef.current
   );
   return (

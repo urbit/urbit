@@ -8,6 +8,7 @@ import { alphabeticalOrder } from "~/logic/lib/util";
 import { getUnreadCount, getNotificationCount } from "~/logic/lib/hark";
 import Tile from "../components/tiles/tile";
 import { useTutorialModal } from "~/views/components/useTutorialModal";
+import {TUTORIAL_HOST, TUTORIAL_GROUP} from "~/logic/lib/tutorialModal";
 
 interface GroupsProps {
   associations: Associations;
@@ -75,7 +76,7 @@ interface GroupProps {
 function Group(props: GroupProps) {
   const { path, title, unreads, updates, first = false } = props;
   const anchorRef = useRef<HTMLElement>(null);
-  const isTutorialGroup = path === '/ship/~hastuc-dibtux/beginner-island';
+  const isTutorialGroup = path === `/ship/${TUTORIAL_HOST}/${TUTORIAL_GROUP}`;
   useTutorialModal(
     'start',
     isTutorialGroup,
