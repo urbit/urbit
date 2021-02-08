@@ -269,6 +269,7 @@
       date-created  date-created.m
       creator       creator.m
       module        module.m
+      preview       %.n
     ==
   ::
   ++  rebuild-resource-indices

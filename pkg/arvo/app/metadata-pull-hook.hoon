@@ -181,6 +181,8 @@
   =/  rid=resource
     (de-path:resource t.path)
   =/  prev=(unit group-preview:metadata)
+    ?^  (peek-metadatum:met %groups rid)  
+      (some (get-preview:met rid))
     (~(get by previews) rid)
   :_  this
   ?~  prev
