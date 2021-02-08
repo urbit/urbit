@@ -4,7 +4,16 @@ import { Contact, Group } from '~/types';
 import { cite, useShowNickname } from '~/logic/lib/util';
 import { Sigil } from '~/logic/lib/sigil';
 
-import { Box, Col, Row, Text, BaseImage, ColProps, Icon } from '@tlon/indigo-react';
+import {
+  Box,
+  Row,
+  Col,
+  Button,
+  Text,
+  BaseImage,
+  ColProps,
+  Icon
+} from '@tlon/indigo-react';
 import { Dropdown } from './Dropdown';
 import { withLocalState } from '~/logic/state/local';
 import { ProfileStatus } from './ProfileStatus';
@@ -23,7 +32,7 @@ type ProfileOverlayProps = ColProps & {
   hideNicknames: boolean;
   history: any;
   api: any;
-}
+};
 
 class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
   public popoverRef: React.Ref<typeof Col>;
@@ -95,12 +104,6 @@ class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
         svgClass="brt2"
         />;
     const showNickname = useShowNickname(contact, hideNicknames);
-
-    const rootSettings =
-      history.location.pathname.slice(
-        0,
-        history.location.pathname.indexOf("/resource")
-      );
 
     return (
       <Col
@@ -181,7 +184,7 @@ class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
               whiteSpace='pre'
               lineHeight="tall"
             >
-              {showNickname ? contact.nickname : cite(ship)}
+              {showNickname ? contact?.nickname : cite(ship)}
             </Text>
           </Row>
           { isOwn ? (
