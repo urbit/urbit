@@ -13,7 +13,7 @@ interface GroupSummaryProps {
 export function GroupSummary(props: GroupSummaryProps) {
   const { channelCount, memberCount, metadata, children } = props;
   return (
-    <Col maxWidth="600px" gapY="4">
+    <Col maxWidth="500px" gapY="4">
       <Row gapX="2" width="100%">
         <MetadataIcon
           borderRadius="1"
