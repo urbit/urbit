@@ -35,8 +35,8 @@ Install files:
 
 ### On Moon1:
 ```
-=moon1 ~sarsev-dapwel-timluc-miptev
-=moon2 ~pidlun-hadwyx-timluc-miptev
+=moon1 ~massev-racsyt-timluc-miptev
+=moon2 ~raprup-hanpec-dinleb-rambep
 |commit %home
 
 |start %btc-provider
@@ -44,18 +44,18 @@ Install files:
 |start %btc-wallet-hook
 :btc-provider|command [%set-credentials api-url='http://localhost:50002' %main]
 :btc-provider|command [%whitelist-clients `(set ship)`(sy ~[moon2])]
-=xpub1 'zpub6rFR7y4Q2AijBEqTUquhVz398htDFrtymD9xYYfG1m4wAcvPhXNfE3EfH1r1ADqtfSdVCToUG868RvUUkgDKf31mGDtKsAYz2oz2AGutZYs'
+=xpubmain 'zpub6rFR7y4Q2AijBEqTUquhVz398htDFrtymD9xYYfG1m4wAcvPhXNfE3EfH1r1ADqtfSdVCToUG868RvUUkgDKf31mGDtKsAYz2oz2AGutZYs'
 :btc-wallet-hook|action [%set-provider moon1 %main]
 
 =fprint [%4 0xdead.beef]
-:btc-wallet-store|action [%add-wallet xpub1 fprint ~ [~ 8] [~ 6]]
+:btc-wallet-store|action [%add-wallet xpubmain fprint ~ [~ 8] [~ 6]]
 ```
 
 ### On Moon2:
 ```
 ::  xpub from PRIVATE.md
-=moon1 ~sarsev-dapwel-timluc-miptev
-=moon2 ~pidlun-hadwyx-timluc-miptev
+=moon1 
+=moon2 
 |commit %home
 
 |start %btc-wallet-store
@@ -69,7 +69,7 @@ Install files:
 ### Request Address
 Moon2:
 ```
-:btc-wallet-hook|action [%req-pay-address payee=~sarsev-dapwel-timluc-miptev value=10.000 [~ 37]]
+:btc-wallet-hook|action [%req-pay-address payee=~massev-racsyt-timluc-miptev value=10.000 [~ 37]]
 :btc-wallet-hook +dbug [%state 'poym']
 ```
 
@@ -77,5 +77,8 @@ Moon2:
 ```
 .^((list @t) %gx /=btc-wallet-store=/scanned/noun)
 
-.^(@ud %gx /=btc-wallet-store=/balance/[xpub2]/noun)
+.^(@ud %gx /=btc-wallet-store=/balance/[xpubmain]/noun)
 ```
+
+
+1cb10bd68e827de119d89332883f8736038bd703c30e6dbecbb829d448608e94

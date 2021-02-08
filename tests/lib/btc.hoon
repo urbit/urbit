@@ -4,6 +4,7 @@
 |%
 +$  chyg  ?(%0 %1)
 +$  bits-vector  [bitwidth=@ atoms=(list @) =bits]
++$  tx-vector  [hex-cord=@t txid=hexb]
 +$  psbt-vector
   $:  =hdkey
       hdkey-hex=hexb
@@ -17,6 +18,7 @@
   ==
 +$  script-pubkey-vector  [=address spk=hexb]
 ::
+++  fprint  4^0xdead.beef
 ++  bits-vectors
   ^-  (list bits-vector)
   :~  :*  5
@@ -25,7 +27,13 @@
       ==
   ==
 ::
-++  fprint  4^0xdead.beef
+++  tx-vectors
+  ^-  (list tx-vector)
+  :~  :*  '0200000002ab0949a08c5af7c49b8212f417e2f15ab3f5c33dcf153821a8139f877a5b7be40000000000feffffffab0949a08c5af7c49b8212f417e2f15ab3f5c33dcf153821a8139f877a5b7be40100000000feffffff02603bea0b000000001976a914768a40bbd740cbe81d988e71de2a4d5c71396b1d88ac8e240000000000001976a9146f4620b553fa095e721b9ee0efe9fa039cca459788ac00000000'
+          32^0xfed6.cd1f.de4d.b4e1.3e7e.8003.17e3.7f9c.bd75.ec36.4389.670e.eff8.0da9.93c7.e560
+      ==
+  ==
+::
 ++  psbt-vectors
   ^-  (list psbt-vector)
   :~  :*  [fprint 33^0x1 %testnet %44 %0 1]

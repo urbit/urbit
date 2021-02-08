@@ -168,22 +168,11 @@
       (to-range item f k)
     lth
   --
-::  +get-n: get N from head of block filter, little endian
-::
-++  get-n
-  |=  filter=hexb
-  ^-  hexb
-  =/  n=hexb  (take:byt 1 filter)
-  %-  flip:byt
-    ?:  =(dat.n 0xfd)  (take:byt 2 (drop:byt 1 filter))
-    ?:  =(dat.n 0xfe)  (take:byt 4 (drop:byt 1 filter))
-    ?:  =(dat.n 0xff)  (take:byt 8 (drop:byt 1 filter))
-    n
 ::
 ++  parse-filter
   |=  filter=hexb
   ^-  [n=@ux gcs-set=bits]
-  =+  n=(get-n filter)
+  =+  n=n:(compact-size filter)
   =/  lead=@  ?:(=(1 wid.n) 1 +(wid.n))
   :-  dat.n
   [(mul 8 (sub wid.filter lead)) `@ub`dat:(drop:byt lead filter)]
