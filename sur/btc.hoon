@@ -19,7 +19,6 @@
 +$  hdkey  [=fprint pubkey=hexb =network =bipt =chyg =idx]
 +$  sats  @ud
 +$  vbytes  @ud
-+$  buffer  (list @ux)
 +$  utxo  [pos=@ txid=hexb height=@ value=sats recvd=(unit @da)]
 ++  address-info
   $:  =address
