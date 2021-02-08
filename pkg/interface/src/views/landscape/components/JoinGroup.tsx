@@ -8,6 +8,7 @@ import {
   Box,
   Text,
   ManagedTextInputField as Input,
+  LoadingSpinner,
 } from "@tlon/indigo-react";
 import { Formik, Form, FormikHelpers, useFormikContext } from "formik";
 import { AsyncButton } from "~/views/components/AsyncButton";
@@ -74,8 +75,7 @@ export function JoinGroup(props: JoinGroupProps) {
 
   const waiter = useWaitForProps(props, _.isString(preview) ? 1 : 5000);
 
-  const onConfirm = useCallback(async () => {
-    const group = _.isString(preview) ? preview : preview?.group!;
+  const onConfirm = useCallback(async (group: string) => {
     const [,,ship,name] = group.split('/');
     await api.groups.join(ship, name);
     if (props.inviteUid && props.inviteApp) {
@@ -99,12 +99,17 @@ export function JoinGroup(props: JoinGroupProps) {
       //  drop them into inbox to show join request still pending
       history.push('/~notifications');
     }
-  }, [api, preview, waiter, history, associations, groups]);
+  }, [api, props.inviteApp, props.inviteUid, waiter, history, associations, groups]);
 
   const onSubmit = useCallback(
     async (values: FormSchema, actions: FormikHelpers<FormSchema>) => {
       const [ship, name] = values.group.split("/");
       const path = `/ship/${ship}/${name}`;
+      //  skip if it's unmanaged
+      if(!!autojoin && props.inviteApp !== 'groups') {
+        await onConfirm(path);
+        return;
+      }
       try {
         const prev = await api.metadata.preview(path);
         actions.setStatus({ success: null });
@@ -122,7 +127,7 @@ export function JoinGroup(props: JoinGroupProps) {
         }
       }
     },
-    [api, waiter, history]
+    [api, waiter, history, onConfirm, props.inviteApp]
   );
 
   return (
@@ -136,7 +141,11 @@ export function JoinGroup(props: JoinGroupProps) {
         {_.isString(preview) ? (
           <Col width="100%" gapY="4">
             <Text>The host appears to be offline. Join anyway?</Text>
-            <StatelessAsyncButton primary name="join" onClick={onConfirm}>
+            <StatelessAsyncButton 
+              primary 
+              name="join"
+              onClick={() => onConfirm(preview)}
+            >
               Join anyway
             </StatelessAsyncButton>
           </Col>
@@ -170,7 +179,11 @@ export function JoinGroup(props: JoinGroupProps) {
               ))}
             </Col>
             )}
-            <StatelessAsyncButton primary name="join" onClick={onConfirm}>
+            <StatelessAsyncButton 
+              primary
+              name="join"
+              onClick={() => onConfirm(preview.group)}
+            >
               Join {preview.metadata.title}
             </StatelessAsyncButton>
           </GroupSummary>
