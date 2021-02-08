@@ -107,7 +107,7 @@ export function LinkResource(props: LinkResourceProps) {
             return (
               <Col alignItems="center" overflowY="auto" width="100%">
               <Col width="100%" p={3} maxWidth="768px">
-                <Link to={resourceUrl}><Text bold>{"<- Back"}</Text></Link>
+                <Link to={resourceUrl}><Text px={3} bold>{"<- Back"}</Text></Link>
                 <LinkItem
                   contacts={contacts}
                   key={node.post.index}
@@ -134,6 +134,7 @@ export function LinkResource(props: LinkResourceProps) {
                   history={props.history}
                   baseUrl={`${resourceUrl}/${props.match.params.index}`}
                   group={group}
+                  px={3}
                 />
               </Col>
             </Col>
