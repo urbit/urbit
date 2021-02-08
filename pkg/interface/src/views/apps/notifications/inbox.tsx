@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback, useRef, useState } from "react";
 import f from "lodash/fp";
 import _ from "lodash";
-import { Icon, Col, Row, Box, Text, Anchor, Rule, Center } from "@tlon/indigo-react";
+import { Icon, Col, Row, Box, Text, Anchor, Rule, Center, LoadingSpinner } from "@tlon/indigo-react";
 import moment from "moment";
 import { Notifications, Rolodex, Timebox, IndexedNotification, Groups, GroupNotificationsConfig, NotificationGraphConfig } from "~/types";
 import { MOMENT_CALENDAR_DATE, daToUnix, resourceAsPath } from "~/logic/lib/util";
@@ -35,6 +35,7 @@ function filterNotification(associations: Associations, groups: string[]) {
 
 export default function Inbox(props: {
   notifications: Notifications;
+  notificationsSize: number;
   archive: Notifications;
   groups: Groups;
   showArchive?: boolean;
@@ -99,7 +100,12 @@ export default function Inbox(props: {
     return api.hark.getMore();
   }, [api]);
 
-  const loadedAll = useLazyScroll(scrollRef, 0.2, loadMore);
+  const { isDone, isLoading } = useLazyScroll(
+    scrollRef, 
+    0.2,
+    _.flatten(notifications).length,
+    loadMore
+  );
 
 
   return (
@@ -122,11 +128,17 @@ export default function Inbox(props: {
           />
         );
       })}
-      {loadedAll && (
+      {isDone && (
         <Center mt="2" borderTop={notifications.length !== 0 ? 1 : 0} borderTopColor="washedGray" width="100%" height="96px">
           <Text gray fontSize="1">No more notifications</Text>
         </Center>
+    )}
+      {isLoading && (
+        <Center mt="2" borderTop={notifications.length !== 0 ? 1 : 0} borderTopColor="washedGray" width="100%" height="96px">
+          <LoadingSpinner />
+        </Center>
       )}
+   
     </Col>
   );
 }
