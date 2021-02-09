@@ -28,7 +28,8 @@
 ::
 +$  command
   $%  [%set-provider provider=ship =network]
-      [%set-default-wallet ~]
+      [%set-default-wallet =xpub]
+      [%delete-wallet =xpub]
       [%clear-poym ~]
       [%force-retry ~]
       [%req-pay-address payee=ship value=sats feyb=(unit sats)]

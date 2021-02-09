@@ -90,6 +90,7 @@
 ::
 +$  action
   $%  [%add-wallet =xpub =fprint scan-to=(unit scon) max-gap=(unit @ud) confs=(unit @ud)]
+      [%delete-wallet =xpub]
       [%address-info =xpub =chyg =idx utxos=(set utxo) used=? block=@ud]
       [%tx-info =info:tx block=@ud]
       [%generate-address =xpub =chyg =pmet]

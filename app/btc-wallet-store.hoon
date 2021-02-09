@@ -111,6 +111,10 @@
     =/  w=walt  (from-xpub +.act)
     =.  walts  (~(put by walts) xpub.act w)
     (init-batches xpub.act (dec max-gap.w))
+    ::
+      %delete-wallet
+    `state(walts (~(del by walts) xpub.act))
+    ::
     ::  TODO
     :: if blank address we're watching gets a value
     :: "blank" = unused
