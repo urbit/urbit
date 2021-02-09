@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from "react";
+import _ from 'lodash';
 import { Sigil } from "~/logic/lib/sigil";
 
 import {
@@ -25,10 +26,21 @@ export function ViewProfile(props: any) {
   useEffect(() => {
     (async () => {
       setPreviews(
-        await Promise.all((contact?.groups || []).map(g => api.metadata.preview(g)))
+        _.compact(
+          await Promise.all(
+            (contact?.groups || []).map(g => api.metadata.preview(g)
+              .catch(() => null)
+            )
+          )
+        )
       );
     })();
-  }, [contact?.groups])
+
+    return () => {
+      setPreviews([]);
+    }
+  }, [ship]);
+
   return (
     <>
       <Row
@@ -63,7 +75,7 @@ export function ViewProfile(props: any) {
       { (contact?.groups || []).length > 0 && (
         <Col gapY="3" my="3" alignItems="center">
           <Text fontWeight="medium">Pinned Groups</Text>
-           {previews.length > 0 ? (
+           {previews.length === 0 ? (
             <LoadingSpinner />
             ) : (
               <Row justifyContent="center" gapX="3">

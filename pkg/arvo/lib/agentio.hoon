@@ -23,6 +23,11 @@
     ^-  card
     (poke [our.bowl app] cage)
   ::
+  ++  poke-self
+    |=  =cage
+    ^-  card
+    (poke-our dap.bowl cage)
+  ::
   ++  arvo
     |=  =note-arvo
     ^-  card
