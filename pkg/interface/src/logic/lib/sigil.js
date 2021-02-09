@@ -23,10 +23,10 @@ export const Sigil = memo(
     size,
     svgClass = '',
     icon = false,
-    padded = false
+    padding = 0
   }) => {
-    const padding = icon && padded ? '2px' : '0px';
-    const innerSize = icon && padded ? Number(size) - 4 : size;
+    const innerSize = Number(size) - 2*padding;
+    const paddingPx = `${padding}px`;
     const foregroundColor = foreground
       ? foreground
       : foregroundFromBackground(color);
@@ -45,7 +45,7 @@ export const Sigil = memo(
         borderRadius={icon ? '1' : '0'}
         flexBasis={size}
         backgroundColor={color}
-        padding={padding}
+        padding={paddingPx}
         className={classes}
       >
         {sigil({

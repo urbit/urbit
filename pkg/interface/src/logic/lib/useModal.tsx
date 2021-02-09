@@ -60,6 +60,8 @@ export function useModal(props: UseModalProps): UseModalResult {
           display="flex"
           alignItems="stretch"
           flexDirection="column"
+          spacing="2"
+          
         >
           {inner}
         </ModalOverlay>

@@ -113,7 +113,7 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
   const members = group ? Array.from(groups[group]?.members).map(s => `~${s}`) : undefined;
 
   return (
-    <Col overflowY="auto" p={3}>
+    <Col overflowY="auto" p={3} backgroundColor="white">
       <Box pb='3' display={['block', 'none']} onClick={() => history.push(props.baseUrl)}>
         <Text fontSize='0' bold>{'<- Back'}</Text>
       </Box>

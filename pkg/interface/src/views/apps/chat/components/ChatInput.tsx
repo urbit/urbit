@@ -137,7 +137,7 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
         color={`#${color}`}
         classes={sigilClass}
         icon
-        padded
+        padding={2}
         />;
 
     return (

@@ -13,3 +13,4 @@ export * from './metadata-update';
 export * from './noun';
 export * from './s3-update';
 export * from './workspace';
+export * from './util';
