@@ -11,6 +11,7 @@ import LaunchApi from './launch';
 import GraphApi from './graph';
 import S3Api from './s3';
 import {HarkApi} from './hark';
+import SettingsApi from './settings';
 
 export default class GlobalApi extends BaseApi<StoreState> {
   local = new LocalApi(this.ship, this.channel, this.store);
@@ -22,6 +23,7 @@ export default class GlobalApi extends BaseApi<StoreState> {
   s3 = new S3Api(this.ship, this.channel, this.store);
   graph = new GraphApi(this.ship, this.channel, this.store);
   hark = new HarkApi(this.ship, this.channel, this.store);
+  settings = new SettingsApi(this.ship, this.channel, this.store);
 
   constructor(
     public ship: Patp,

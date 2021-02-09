@@ -41,22 +41,16 @@ function decodePolicy(policy: Enc<GroupPolicy>): GroupPolicy {
 }
 
 function decodeTags(tags: Enc<Tags>): Tags {
+  console.log(tags);
   return _.reduce(
     tags,
-    (acc, tag, key): Tags => {
-      if (Array.isArray(tag)) {
-        acc.role[key] = new Set(tag);
+    (acc, ships, key): Tags => {
+      if (key.search(/\\/) === -1) {
+        acc.role[key] = new Set(ships);
         return acc;
       } else {
-        const app = _.reduce(
-          tag,
-          (inner, t, k) => {
-            inner[k] = new Set(t);
-            return inner;
-          },
-          {}
-        );
-        acc[key] = app;
+        const [app, tag, resource] = key.split('\\');
+        _.set(acc, [app, resource, tag], new Set(ships));
         return acc;
       }
     },
@@ -143,7 +137,7 @@ export default class GroupReducer<S extends GroupState> {
       const resourcePath = resourceAsPath(resource);
       const tags = state.groups[resourcePath].tags;
       const tagAccessors =
-        'app' in tag ? [tag.app,tag.tag] :  ['role', tag.tag];
+        'app' in tag ? [tag.app,tag.resource, tag.tag] :  ['role', tag.tag];
       const tagged = _.get(tags, tagAccessors, new Set());
       for (const ship of ships) {
         tagged.add(ship);
@@ -158,7 +152,7 @@ export default class GroupReducer<S extends GroupState> {
       const resourcePath = resourceAsPath(resource);
       const tags = state.groups[resourcePath].tags;
       const tagAccessors =
-        'app' in tag ? [tag.app,tag.tag] :  ['role', tag.tag];
+        'app' in tag ? [tag.app, tag.resource, tag.tag] :  ['role', tag.tag];
       const tagged = _.get(tags, tagAccessors, new Set());
 
       if (!tagged) {

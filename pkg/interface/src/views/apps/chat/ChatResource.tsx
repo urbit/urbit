@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useEffect } from 'react';
+import React, { useRef, useCallback, useEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { Col } from '@tlon/indigo-react';
 import _ from 'lodash';
@@ -9,10 +9,12 @@ import { useFileDrag } from '~/logic/lib/useDrag';
 import ChatWindow from './components/ChatWindow';
 import ChatInput from './components/ChatInput';
 import GlobalApi from '~/logic/api/global';
+import { ShareProfile } from '~/views/apps/chat/components/ShareProfile';
 import SubmitDragger from '~/views/components/SubmitDragger';
 import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
 import { Loading } from '~/views/components/Loading';
 import useS3 from '~/logic/lib/useS3';
+import {isWriter} from '~/logic/lib/group';
 
 type ChatResourceProps = StoreState & {
   association: Association;
@@ -21,10 +23,10 @@ type ChatResourceProps = StoreState & {
 } & RouteComponentProps;
 
 export function ChatResource(props: ChatResourceProps) {
-  const station = props.association['app-path'];
-  const groupPath = props.association['group-path'];
+  const station = props.association.resource;
+  const groupPath = props.association.group;
   const group = props.groups[groupPath];
-  const contacts = props.contacts[groupPath] || {};
+  const contacts = props.contacts;
 
   const graph = props.graphs[station.slice(7)];
 
@@ -33,9 +35,11 @@ export function ChatResource(props: ChatResourceProps) {
   const unreadCount = props.unreads.graph?.[station]?.['/']?.unreads || 0;
 
   const [,, owner, name] = station.split('/');
-  const ourContact = contacts?.[window.ship];
+  const ourContact = contacts?.[`~${window.ship}`];
 
   const chatInput = useRef<ChatInput>();
+
+  const canWrite = isWriter(group, station);
 
   useEffect(() => {
     const count = Math.min(50, unreadCount + 15);
@@ -85,6 +89,13 @@ export function ChatResource(props: ChatResourceProps) {
 
   return (
     <Col {...bind} height="100%" overflow="hidden" position="relative">
+      <ShareProfile
+        our={ourContact}
+        api={props.api}
+        recipient={owner}
+        group={group}
+        groupPath={groupPath}
+       />
       {dragging && <SubmitDragger />}
       <ChatWindow
         mailboxSize={5}
@@ -107,6 +118,7 @@ export function ChatResource(props: ChatResourceProps) {
         location={props.location}
         scrollTo={scrollTo ? parseInt(scrollTo, 10) : undefined}
       />
+      { canWrite && (
       <ChatInput
         ref={chatInput}
         api={props.api}
@@ -119,7 +131,7 @@ export function ChatResource(props: ChatResourceProps) {
         placeholder="Message..."
         message={unsent[station] || ''}
         deleteMessage={clearUnsent}
-      />
+      /> )}
     </Col>
   );
 }

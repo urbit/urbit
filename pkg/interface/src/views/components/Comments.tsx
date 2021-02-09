@@ -11,7 +11,8 @@ import { createPost, createBlankNodeWithChildPost } from '~/logic/api/graph';
 import { getLatestCommentRevision } from '~/logic/lib/publish';
 import tokenizeMessage from '~/logic/lib/tokenizeMessage';
 import { getUnreadCount } from '~/logic/lib/hark';
-import {PropFunc} from '~/types/util';
+import { PropFunc } from '~/types/util';
+import { isWriter } from '~/logic/lib/group';
 
 interface CommentsProps {
   comments: GraphNode;
@@ -26,7 +27,7 @@ interface CommentsProps {
 }
 
 export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
-  const { 
+  const {
     association,
     comments,
     ship,
@@ -102,21 +103,20 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
 
   const children = Array.from(comments.children);
 
-
   useEffect(() => {
-    console.log(`dismissing ${association?.['app-path']}`);
     return () => {
-      api.hark.markCountAsRead(association, parentIndex, 'comment')
+      api.hark.markCountAsRead(association, parentIndex, 'comment');
     };
-  }, [comments.post.index])
+  }, [comments.post.index]);
 
+  const readCount = children.length - getUnreadCount(props?.unreads, association.resource, parentIndex);
 
-  const readCount = children.length - getUnreadCount(props?.unreads, association['app-path'], parentIndex)
+  const canComment = isWriter(group, association.resource) || association.metadata.vip === 'reader-comments';
 
   return (
     <Col {...rest}>
-      {( !editCommentId ? <CommentInput onSubmit={onSubmit} /> : null )}
-      {( !!editCommentId ? (
+      {( !props.editCommentId && canComment ? <CommentInput onSubmit={onSubmit} /> : null )}
+      {( props.editCommentId ? (
         <CommentInput
           onSubmit={onEdit}
           label='Edit Comment'

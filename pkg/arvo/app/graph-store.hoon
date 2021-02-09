@@ -1,7 +1,7 @@
 ::  graph-store [landscape]
 ::
 ::
-/+  store=graph-store, sigs=signatures, res=resource, default-agent, dbug,
+/+  store=graph-store, sigs=signatures, res=resource, default-agent, dbug, verb,
     *migrate
 ~%  %graph-store-top  ..part  ~
 |%
@@ -25,6 +25,7 @@
 =*  state  -
 ::
 %-  agent:dbug
+%+  verb  |
 ^-  agent:gall
 ~%  %graph-store-agent  ..card  ~
 |_  =bowl:gall
