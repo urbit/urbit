@@ -10,7 +10,6 @@ import './css/custom.css';
 
 import Tiles from './components/tiles';
 import Tile from './components/tiles/tile';
-import Welcome from './components/welcome';
 import Groups from './components/Groups';
 import ModalButton from './components/ModalButton';
 import { StatelessAsyncButton } from '~/views/components/StatelessAsyncButton';
@@ -131,7 +130,6 @@ export default function LaunchApp(props) {
       </Helmet>
       <ScrollbarLessBox height='100%' overflowY='scroll' display="flex" flexDirection="column">
         {modal}
-        <Welcome firstTime={props.launch.firstTime} api={props.api} />
         <Box
           mx='2'
           display='grid'
