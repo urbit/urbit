@@ -1050,6 +1050,7 @@
         [%bac ~]                                        ::  true backspace
         [%ctl p=@c]                                     ::  control-key
         [%del ~]                                        ::  true delete
+        [%hit r=@ud c=@ud]                              ::  mouse click
         [%met p=@c]                                     ::  meta-key
         [%ret ~]                                        ::  return
         [%txt p=(list @c)]                              ::  utf32 text

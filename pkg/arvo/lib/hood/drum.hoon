@@ -699,6 +699,7 @@
       [%bac *]  ta-bac
       [%ctl *]  (ta-ctl p.bet)
       [%del *]  ta-del
+      [%hit *]  (ta-hit +.bet)
       [%met *]  (ta-met p.bet)
       [%ret *]  ta-ret
       [%txt *]  (ta-txt p.bet)
@@ -778,6 +779,15 @@
     ?:  =((lent buf.say.inp) pos.inp)
       ta-bel
     (ta-hom %del pos.inp)
+  ::
+  ++  ta-hit                                          ::  hear click
+    |=  [r=@ud c=@ud]
+    ^+  +>
+    ?.  =(0 r)  +>
+    =/  pol=@ud
+      (lent-char:klr (make:klr cad.pom))
+    ?:  (lth c pol)  +>.$
+    +>.$(pos.inp (min (sub c pol) (lent buf.say.inp)))
   ::
   ++  ta-erl                                          ::  hear local error
     |=  pos=@ud

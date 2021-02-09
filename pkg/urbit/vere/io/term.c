@@ -224,6 +224,9 @@ u3_term_log_init(void)
 
       uty_u->tat_u.esc.ape = c3n;
       uty_u->tat_u.esc.bra = c3n;
+      uty_u->tat_u.esc.mou = c3n;
+      uty_u->tat_u.esc.ton_y = 0;
+      uty_u->tat_u.esc.col_y = 0;
 
       uty_u->tat_u.fut.len_w = 0;
       uty_u->tat_u.fut.wid_w = 0;
@@ -723,6 +726,8 @@ _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
 {
   u3_utat* tat_u = &uty_u->tat_u;
 
+  //  escape sequences
+  //
   if ( c3y == tat_u->esc.ape ) {
     if ( c3y == tat_u->esc.bra ) {
       switch ( cay_y ) {
@@ -734,6 +739,8 @@ _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
         case 'B': _term_io_belt(uty_u, u3nc(c3__aro, 'd')); break;
         case 'C': _term_io_belt(uty_u, u3nc(c3__aro, 'r')); break;
         case 'D': _term_io_belt(uty_u, u3nc(c3__aro, 'l')); break;
+      //
+        case 'M': tat_u->esc.mou = c3y; break;
       }
       tat_u->esc.ape = tat_u->esc.bra = c3n;
     }
@@ -760,6 +767,27 @@ _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
       }
     }
   }
+  //  mouse input
+  //
+  else if ( c3y == tat_u->esc.mou ) {
+    if ( 0 == tat_u->esc.ton_y ) {
+      tat_u->esc.ton_y = cay_y - 31;
+    }
+    else if ( 0 == tat_u->esc.col_y ) {
+      tat_u->esc.col_y = cay_y - 32;
+    }
+    else {
+      c3_y row_y = cay_y - 32;
+      //  only acknowledge button 1 presses within our window
+      if ( 1 != tat_u->esc.ton_y && row_y <= tat_u->siz.row_l ) {
+        _term_io_belt(uty_u, u3nt(c3__hit, tat_u->siz.row_l - row_y, tat_u->esc.col_y - 1));
+      }
+      tat_u->esc.mou = c3n;
+      tat_u->esc.ton_y = tat_u->esc.col_y = 0;
+    }
+  }
+  //  unicode inputs
+  //
   else if ( 0 != tat_u->fut.wid_w ) {
     tat_u->fut.syb_y[tat_u->fut.len_w++] = cay_y;
 
@@ -775,6 +803,8 @@ _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
       _term_io_belt(uty_u, u3nt(c3__txt, wug, u3_nul));
     }
   }
+  //  individual characters
+  //
   else {
     if ( (cay_y >= 32) && (cay_y < 127) ) {
       _term_io_belt(uty_u, u3nt(c3__txt, cay_y, u3_nul));
@@ -1615,6 +1645,11 @@ _term_io_talk(u3_auto* car_u)
   if ( c3n == u3_Host.ops_u.tem ) {
     u3_utty* uty_u = _term_main();
 
+    //  start mouse handling
+    //
+    uv_buf_t mon_u = TERM_LIT_BUF("\033[?9h");
+    _term_it_dump_buf(uty_u, &mon_u);
+
     uv_read_start((uv_stream_t*)&(uty_u->pop_u),
                   _term_alloc,
                   _term_read_cb);
@@ -1781,6 +1816,11 @@ _term_io_exit(u3_auto* car_u)
   uv_read_stop((uv_stream_t*)&(uty_u->pop_u));
 
   if ( c3n == u3_Host.ops_u.tem ) {
+    //  stop mouse handling
+    //
+    uv_buf_t mof_u = TERM_LIT_BUF("\033[?9l");
+    _term_it_dump_buf(uty_u, &mof_u);
+
     uv_timer_t* han_u = &(uty_u->tat_u.sun_u.tim_u);
     han_u->data       = car_u;
 

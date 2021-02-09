@@ -154,6 +154,9 @@
         struct {                            //  escape code control
           c3_o    ape;                      //  escape received
           c3_o    bra;                      //  bracket or O received
+          c3_o    mou;                      //  M (for mouse event) received
+          c3_y    ton_y;                    //  mouse button
+          c3_y    col_y;                    //  column coordinate
         } esc;
 
         struct {

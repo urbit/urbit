@@ -15,6 +15,7 @@
         bac+ul
         ctl+(cu taft so)
         del+ul
+        hit+(ot 'r'^ni 'c'^ni ~)
         met+(cu taft so)
         ret+ul
         txt+(ar (cu taft so))
