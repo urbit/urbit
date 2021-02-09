@@ -30,26 +30,31 @@
 ::    - vout-n is the index of the output that has value
 ::
 +$  action
-  $%  settings
+  $%  api
       local
       peer
   ==
-+$  settings
++$  api
   $%  [%set-provider provider=ship =network]
       [%set-default-wallet ~]
       [%clear-poym ~]
       [%force-retry ~]
-  ==
-+$  local
-  $%  [%req-pay-address payee=ship value=sats feyb=(unit sats)]
+      [%req-pay-address payee=ship value=sats feyb=(unit sats)]
       [%broadcast-tx txhex=cord]
-      [%add-piym =xpub =address payer=ship value=sats]
+  ==
+::   local and peer pokes are initiated by the agent itself
+::    they exist to make the state machine explicit
+::    they are not part of the API
+::
++$  local
+  $%  [%add-piym =xpub =address payer=ship value=sats]
       [%add-poym =txbu:bws]
       [%add-poym-txi txid=hexb rawtx=hexb]
       [%close-pym ti=info:tx]
       [%fail-broadcast-tx txid=hexb]
       [%succeed-broadcast-tx txid=hexb]
   ==
+::
 +$  peer
   $%  [%gen-pay-address value=sats]
       [%ret-pay-address =address payer=ship value=sats]
