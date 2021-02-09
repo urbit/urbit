@@ -76,7 +76,7 @@ export function SidebarItem(props: {
     if (props.contacts?.[title] && props.contacts[title].avatar) {
       img = <BaseImage src={props.contacts[title].avatar} width='16px' height='16px' borderRadius={2}/>;
     } else {
-      img = <Sigil ship={title} color={`#${uxToHex(props.contacts?.[title]?.color || '0x0')}`} icon padded size={16}/>
+      img = <Sigil ship={title} color={`#${uxToHex(props.contacts?.[title]?.color || '0x0')}`} icon padding={2} size={16}/>
     }
     if (props.contacts?.[title] && props.contacts[title].nickname) {
       title = props.contacts[title].nickname;
