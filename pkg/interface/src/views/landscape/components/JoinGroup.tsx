@@ -152,7 +152,7 @@ export function JoinGroup(props: JoinGroupProps) {
         <GroupSummary
           metadata={preview.metadata}
           memberCount={preview?.members}
-          channelCount={preview?.["channel-count"]}
+          channelCount={preview?.channels?.length}
         >
           { Object.keys(preview.channels).length > 0 && (
             <Col
