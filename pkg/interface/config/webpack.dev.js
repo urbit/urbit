@@ -120,11 +120,11 @@ module.exports = {
   plugins: [
     new UrbitShipPlugin(urbitrc),
     new webpack.DefinePlugin({
-      'process.env.TUTORIAL_HOST': JSON.stringify('~hastuc-dibtux'),
+      'process.env.TUTORIAL_HOST': JSON.stringify('~haddef-sigwen'),
       'process.env.TUTORIAL_GROUP': JSON.stringify('beginner-island'),
-      'process.env.TUTORIAL_CHAT': JSON.stringify('chat-8401'),
-      'process.env.TUTORIAL_BOOK': JSON.stringify('notebook-9148'),
-      'process.env.TUTORIAL_LINKS': JSON.stringify('link-4353'),
+      'process.env.TUTORIAL_CHAT': JSON.stringify('chat-563'),
+      'process.env.TUTORIAL_BOOK': JSON.stringify('notebook-1311'),
+      'process.env.TUTORIAL_LINKS': JSON.stringify('collection-8746'),
     })
 
     // new CleanWebpackPlugin(),
