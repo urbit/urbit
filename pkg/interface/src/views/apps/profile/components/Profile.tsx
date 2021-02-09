@@ -41,7 +41,7 @@ export function Profile(props: any) {
 
   const image = (!hideAvatars && contact?.avatar)
     ? <BaseImage src={contact.avatar} width='100%' height='100%' style={{ objectFit: 'cover' }} />
-    : <Sigil ship={ship} size={96} color={hexColor} />;
+    : <Sigil padding={24} ship={ship} size={128} color={hexColor} />;
 
   return (
     <Center
@@ -64,7 +64,7 @@ export function Profile(props: any) {
           width="100%"
         >
           <Center width="100%" marginTop="-48px">
-            <Box height='96px' width='96px' borderRadius="2" overflow="hidden">
+            <Box height='128px' width='128px' borderRadius="2" overflow="hidden">
               {image}
             </Box>
           </Center>
