@@ -94,6 +94,7 @@
     ?:  (lte l 4)  (cat:byt ~[1^0xfe (flip:byt 4^a)])
     ?:  (lte l 8)  (cat:byt ~[1^0xff (flip:byt 8^a)])
     ~|("Cannot encode CompactSize longer than 8 bytes" !!)
+  ::
   ++  de
     |=  h=hexb
     ^-  [n=hexb rest=hexb]
@@ -106,9 +107,16 @@
       %0xfe  2
       %0xff  3
     ==
-  :_  (drop:byt (add 1 len) h)
-  %-  flip:byt
-  (take:byt (bex len) (drop:byt 1 h))
+    :_  (drop:byt (add 1 len) h)
+    %-  flip:byt
+    (take:byt (bex len) (drop:byt 1 h))
+  ::  +dea: return atom instead of hexb for parsed CompactSize
+  ::
+  ++  dea
+    |=  h=hexb
+    ^-  [a=@ rest=hexb]
+    =>  (de h)
+    [dat.n rest]
   --
 ::
 ++  pubkey-to-address
@@ -174,7 +182,9 @@
         1^0x87
     ==
   ==
-::  +txu: transaction utility core3
+::  +txu: transaction utility core
+::   - primarily used for calculating txids
+::   - ignores signatures in inputs
 ::
 ++  txu
   |%
@@ -186,7 +196,9 @@
       %-  cat:byt
       :~  (flip:byt txid.i)
           (flip:byt 4^pos.i)
-          1^0x0
+          ?~  script-sig.i  1^0x0
+        %-  cat:byt
+        ~[(en:csiz wid.u.script-sig.i) u.script-sig.i]
           (flip:byt sequence.i)
       ==
     ::
@@ -215,72 +227,69 @@
         [~ b]
       :-  [~ dat:(take:byt 2 b)]
       (drop:byt 2 b)
-    ::  returns value as 0 since we don't know it when we decode
     ::
-    ++  input
+    ++  script-sig
       |=  b=hexb
-      ^-  input:tx
-      :*  (flip:byt (take:byt 32 b))
-          dat:(flip:byt (take:byt 4 (drop:byt 32 b)))
-          (flip:byt (take:byt 4 (drop:byt 37 b)))
-          ~
-          ~
-          0
-      ==
+      ^-  [sig=hexb rest=hexb]
+      =^  siglen=hexb  b  (de:csiz b)
+      :-  (take:byt dat.siglen b)
+      (drop:byt dat.siglen b)
     ::
-    ++  output
+    ++  sequence
       |=  b=hexb
-      ^-  output:tx
-      ::  TODO: parse length byte as compactsize?
-      ::  drop 9 instead of 8 to skip the length byte
-      ::
-      :-  (drop:byt 9 b)
-      dat:(flip:byt (take:byt 8 b))
+      ^-  [seq=hexb rest=hexb]
+      [(flip:byt (take:byt 4 b)) (drop:byt 4 b)]
     ::
     ++  inputs
       |=  b=hexb
       ^-  [is=(list input:tx) rest=hexb]
+      |^
       =|  acc=(list input:tx)
-      =^  count  b
-        [dat:(take:byt 1 b) (drop:byt 1 b)]
+      =^  count  b  (dea:csiz b)
       |-
       ?:  =(0 count)  [acc b]
-      %=  $
-          acc  %+  snoc  acc
-               (input (take:byt 41 b))
-          b  (drop:byt 41 b)
-          count  (dec count)
-      ==
+      =^  i  b  (input b)
+      $(acc (snoc acc i), count (dec count)) 
+      ::
+      ++  input
+        |=  b=hexb
+        ^-  [i=input:tx rest=hexb]
+        =/  txid  (flip:byt (take:byt 32 b))
+        =/  pos   dat:(flip:byt (take:byt 4 (drop:byt 32 b)))
+        =^  sig=hexb  b  (script-sig (drop:byt 36 b))
+        =^  seq=hexb  b  (sequence b)
+        :_  b
+        [txid pos seq ?:((gth wid.sig 0) `sig ~) ~ 0]
+      --
     ::
     ++  outputs
       |=  b=hexb
       ^-  [os=(list output:tx) rest=hexb]
       =|  acc=(list output:tx)
-      ::  TODO count should be compact size
-      =^  count  b
-        [dat:(take:byt 1 b) (drop:byt 1 b)]
+      =^  count  b  (dea:csiz b)
       |-
       ?:  =(0 count)  [acc b]
-      ::  TODO: below is wrong because output is sometimes not 31 length. It's 8 + compactsize
+      =/  value  (flip:byt (take:byt 8 b))
+      =^  scriptlen  b  (dea:csiz (drop:byt 8 b))
       %=  $
           acc  %+  snoc  acc
-               (output (take:byt 31 b))
-          b  (drop:byt 31 b)
+               :-  (take:byt scriptlen b)
+               dat.value
+          b  (drop:byt scriptlen b)
           count  (dec count)
       ==
     --
+  ::  +basic-encode: encodes data in a format suitable for hashing
   ::
-  ++  encode
+  ++  basic-encode
     |=  =data:tx
-    ::  TODO: below is wrong because it doesn't use compact-size
     ^-  hexb
     %-  cat:byt
     %-  zing
-    :~  :~  (flip:byt 4^nversion.data)
-            1^(lent is.data)
-        ==
+    :~  ~[(flip:byt 4^nversion.data)]
+        ~[(en:csiz (lent is.data))]
         (turn is.data input:en)
-        ~[1^(lent os.data)]
+        ~[(en:csiz (lent os.data))]
         (turn os.data output:en)
         ~[(flip:byt 4^locktime.data)]
     ==
@@ -289,7 +298,7 @@
     ^-  hexb
     %-  flip:byt
     %-  dsha256
-    (encode data)
+    (basic-encode data)
   ::
   ++  decode
     |=  b=hexb
@@ -424,7 +433,7 @@
     |=  psbt-base64=cord
     ^-  (list map:psbt)
     =/  todo=hexb
-      (drop:byt 5 (to-byts psbt-base64)) 
+      (drop:byt 5 (to-byts psbt-base64))
     =|  acc=(list map:psbt)
     =|  m=map:psbt
     |-
