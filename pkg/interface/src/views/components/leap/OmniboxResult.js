@@ -51,7 +51,7 @@ export class OmniboxResult extends Component {
       graphic = <Icon display="inline-block" verticalAlign="middle" icon='SignOut' mr='2' size='18px' color={iconFill} />;
     } else if (icon === 'profile') {
       text = text.startsWith('Profile') ? window.ship : text;
-      graphic = <Sigil color={color} classes='dib flex-shrink-0 v-mid mr2' ship={text} size={18} icon padded />;
+      graphic = <Sigil color={color} classes='dib flex-shrink-0 v-mid mr2' ship={text} size={18} icon padding={2} />;
     } else if (icon === 'home') {
       graphic = <Icon display='inline-block' verticalAlign='middle' icon='Home' mr='2' size='18px' color={iconFill} />;
     } else if (icon === 'notifications') {

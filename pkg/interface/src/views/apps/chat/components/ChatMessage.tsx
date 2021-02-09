@@ -279,7 +279,7 @@ export const MessageWithSigil = (props) => {
         color={color}
         classes={sigilClass}
         icon
-        padded
+        padding={2}
       />
     );
 

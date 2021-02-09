@@ -48,7 +48,7 @@ export default function Author(props: AuthorProps) {
         width={16}
       />
     ) : (
-      <Sigil ship={ship} size={16} color={color} icon padded />
+      <Sigil ship={ship} size={16} color={color} icon padding={2} />
     );
 
   return (
