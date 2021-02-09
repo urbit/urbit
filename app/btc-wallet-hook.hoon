@@ -141,8 +141,16 @@
     ::
       %set-default-wallet
     =/  xs=(list xpub)  scry-scanned
-    ?.  (gth (lent xs) 0)  `state
-    `state(def-wallet `(snag 0 xs))
+    =/  i=(unit @)  (find ~[xpub.comm] xs)
+    ?~  i  `state
+    `state(def-wallet `(snag u.i xs))
+    ::
+      %delete-wallet
+    :-  ~[(poke-store [%delete-wallet xpub.comm])]
+    ?~  def-wallet  state
+    ?.  =(u.def-wallet xpub.comm)  state
+    state(def-wallet ~)
+    ::  TODO if wallet is xpub.comm, clear
     ::
     ::  %req-pay-address
     ::  overwrites any payment being built currently
