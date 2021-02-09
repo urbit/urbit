@@ -24,7 +24,10 @@ import { useWaitForProps } from '~/logic/lib/useWaitForProps';
 import { 
   hasTutorialGroup,
   TUTORIAL_GROUP,
-  TUTORIAL_HOST
+  TUTORIAL_HOST,
+  TUTORIAL_BOOK,
+  TUTORIAL_CHAT,
+  TUTORIAL_LINKS
 } from '~/logic/lib/tutorialModal';
 
 const ScrollbarLessBox = styled(Box)`
@@ -83,6 +86,15 @@ export default function LaunchApp(props) {
         if(!hasTutorialGroup(props)) {
           await props.api.groups.join(TUTORIAL_HOST, TUTORIAL_GROUP);
           await waiter(hasTutorialGroup);
+          await Promise.all(
+            [TUTORIAL_BOOK, TUTORIAL_CHAT, TUTORIAL_LINKS].map(graph =>
+              api.graph.join(TUTORIAL_HOST, graph)));
+
+          await waiter(p => {
+            return `/ship/${TUTORIAL_HOST}/${TUTORIAL_CHAT}` in p.associations.graph &&
+                  `/ship/${TUTORIAL_HOST}/${TUTORIAL_BOOK}` in p.associations.graph &&
+                  `/ship/${TUTORIAL_HOST}/${TUTORIAL_LINKS}` in p.associations.graph;
+          });
         }
         nextTutStep();
         dismiss();
