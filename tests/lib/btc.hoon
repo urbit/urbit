@@ -4,6 +4,7 @@
 |%
 +$  chyg  ?(%0 %1)
 +$  bits-vector  [bitwidth=@ atoms=(list @) =bits]
++$  compact-size-vector  @ux
 +$  tx-vector  [hex-cord=@t txid=hexb]
 +$  psbt-vector
   $:  =hdkey
@@ -25,6 +26,16 @@
           ~[0 31 31 0 31 0]
           [30 0b1.1111.1111.1000.0011.1110.0000]
       ==
+  ==
+::
+++  compact-size-vectors
+  ^-  (list compact-size-vector)
+  :~  0x98
+      0x302
+      0xaa.bbcc
+      0xaabb.ccdd
+      0xaa.bbcc.ddee
+      0xaabb.ccdd.eeff.1122 
   ==
 ::
 ++  tx-vectors
@@ -156,6 +167,8 @@
   |^  ;:  weld
           %+  category  "bit manipulation"
           (zing (turn bits-vectors check-bits))
+          %+  category  "compact-size en/decoding"
+          (zing (turn compact-size-vectors check-compact-size))
           %+  category  "check PSBT"
           (zing (turn psbt-vectors check-psbt))
           %+  category  "xpub parsing"
@@ -178,6 +191,12 @@
         !>(atoms.v)
         !>((to-atoms:bit bitwidth.v bits.v))
     ==
+  ::
+  ++  check-compact-size
+    |=  v=compact-size-vector
+    %+  expect-eq
+      !>(v)
+      !>(dat:n:(de:csiz (en:csiz v)))
   ::
   ++  check-psbt
     |=  v=psbt-vector

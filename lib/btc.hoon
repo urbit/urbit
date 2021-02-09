@@ -79,24 +79,37 @@
   :-  20
   %-  ripemd-160
   (sha256 val)
-::  +compact-size: parse compactSize int from head of hex and return result and remainder
-::   - input "h" is little endian, output "n" is big endian
+::  +csiz: handle compact-size integers
+::   - encode: big endian to little endian
+::   - decode: little endian to big endian
 ::
-++  compact-size
-  |=  h=hexb
-  ^-  [n=hexb rest=hexb]
-  =/  s=@ux  dat:(take:byt 1 h)
-  ?:  (lth s 0xfd)  [1^s (drop:byt 1 h)]
-  ~|  "Invalid compact-size at start of {<h>}"
-  =/  len=bloq
+++  csiz
+  |%
+  ++  en
+    |=  a=@
+    ^-  hexb
+    =/  l=@  (met 3 a)
+    ?:  =(l 1)  1^a
+    ?:  =(l 2)  (cat:byt ~[1^0xfd (flip:byt 2^a)])
+    ?:  (lte l 4)  (cat:byt ~[1^0xfe (flip:byt 4^a)])
+    ?:  (lte l 8)  (cat:byt ~[1^0xff (flip:byt 8^a)])
+    ~|("Cannot encode CompactSize longer than 8 bytes" !!)
+  ++  de
+    |=  h=hexb
+    ^-  [n=hexb rest=hexb]
+    =/  s=@ux  dat:(take:byt 1 h)
+    ?:  (lth s 0xfd)  [1^s (drop:byt 1 h)]
+    ~|  "Invalid compact-size at start of {<h>}"
+    =/  len=bloq
     ?+  s  !!
-        %0xfd  1
-        %0xfe  2
-        %0xff  3
+      %0xfd  1
+      %0xfe  2
+      %0xff  3
     ==
   :_  (drop:byt (add 1 len) h)
   %-  flip:byt
   (take:byt (bex len) (drop:byt 1 h))
+  --
 ::
 ++  pubkey-to-address
   |=  [=bipt =network pubkey=hexb]
@@ -161,7 +174,7 @@
         1^0x87
     ==
   ==
-::  +txu: tx utility functions
+::  +txu: transaction utility core3
 ::
 ++  txu
   |%
@@ -259,6 +272,7 @@
   ::
   ++  encode
     |=  =data:tx
+    ::  TODO: below is wrong because it doesn't use compact-size
     ^-  hexb
     %-  cat:byt
     %-  zing
