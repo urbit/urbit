@@ -1,6 +1,7 @@
 import React, {
   useState,
-  useEffect
+  useEffect,
+  useRef
 } from 'react';
 
 import {
@@ -18,6 +19,7 @@ import { StatusBarItem } from './StatusBarItem';
 import { Sigil } from '~/logic/lib/sigil';
 import { uxToHex } from "~/logic/lib/util";
 import { SetStatusBarModal } from './SetStatusBarModal';
+import { useTutorialModal } from './useTutorialModal';
 
 import useLocalState from '~/logic/state/local';
 
@@ -43,6 +45,10 @@ const StatusBar = (props) => {
       style={{ objectFit: 'cover' }} />
   ) : <Sigil ship={ship} size={16} color={color} icon />;
 
+  const anchorRef = useRef(null);
+
+  useTutorialModal('leap', true, anchorRef.current);
+
   return (
     <Box
       display='grid'
@@ -64,7 +70,7 @@ const StatusBar = (props) => {
            </Box>
         )}
         <Icon icon='LeapArrow'/>
-          <Text ml={2} color='black'>
+          <Text ref={anchorRef} ml={2} color='black'>
             Leap
           </Text>
           <Text display={['none', 'inline']} ml={2} color='gray'>

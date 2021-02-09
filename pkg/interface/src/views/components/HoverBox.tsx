@@ -21,12 +21,12 @@ interface HoverBoxLinkProps {
   to: string;
 }
 
-export const HoverBoxLink = ({
+export const HoverBoxLink = React.forwardRef(({
   to,
   children,
   ...rest
-}: HoverBoxLinkProps & PropFunc<typeof HoverBox>) => (
-  <Link to={to}>
+}: HoverBoxLinkProps & PropFunc<typeof HoverBox>, ref) => (
+  <Link ref={ref} to={to}>
     <HoverBox {...rest}>{children}</HoverBox>
   </Link>
-);
+));

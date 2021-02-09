@@ -199,6 +199,7 @@ export function GroupsPane(props: GroupsPaneProps) {
               memberCount={memberCount}
               channelCount={0}
               metadata={groupAssociation.metadata}
+              resource={groupAssociation.group}
             />
           } else {
             summary = (<Box p="4"><Text fontSize="0" color='gray'>
