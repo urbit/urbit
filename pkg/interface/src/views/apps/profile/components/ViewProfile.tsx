@@ -35,7 +35,11 @@ export function ViewProfile(props: any) {
         )
       );
     })();
-  }, [contact?.groups]);
+
+    return () => {
+      setPreviews([]);
+    }
+  }, [ship]);
 
   return (
     <>
