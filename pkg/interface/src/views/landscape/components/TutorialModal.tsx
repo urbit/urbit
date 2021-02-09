@@ -95,7 +95,9 @@ export function TutorialModal(props: { api: GlobalApi }) {
   }, [hideTutorial, props.api]);
 
   const leaveGroup = useCallback(async () => {
-    await props.api.groups.leaveGroup(TUTORIAL_HOST, TUTORIAL_GROUP);
+    if (TUTORIAL_HOST !== `~${window.ship}`) {
+      await props.api.groups.leaveGroup(TUTORIAL_HOST, TUTORIAL_GROUP);
+    }
   }, [props.api]);
 
   const progressIdx = progress.findIndex((p) => p === tutorialProgress);
