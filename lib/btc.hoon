@@ -110,7 +110,7 @@
     :_  (drop:byt (add 1 len) h)
     %-  flip:byt
     (take:byt (bex len) (drop:byt 1 h))
-  ::  +dea: return atom instead of hexb for parsed CompactSize
+  ::  +dea: atom instead of hexb for parsed CompactSize
   ::
   ++  dea
     |=  h=hexb
