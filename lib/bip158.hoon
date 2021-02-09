@@ -172,7 +172,7 @@
 ++  parse-filter
   |=  filter=hexb
   ^-  [n=@ux gcs-set=bits]
-  =+  n=n:(compact-size filter)
+  =+  n=n:(de:csiz filter)
   =/  lead=@  ?:(=(1 wid.n) 1 +(wid.n))
   :-  dat.n
   [(mul 8 (sub wid.filter lead)) `@ub`dat:(drop:byt lead filter)]
