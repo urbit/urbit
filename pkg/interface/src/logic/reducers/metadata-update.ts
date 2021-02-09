@@ -11,10 +11,20 @@ export default class MetadataReducer<S extends MetadataState> {
   reduce(json: Cage, state: S) {
     let data = json['metadata-update']
     if (data) {
+      console.log(data);
       this.associations(data, state);
       this.add(data, state);
       this.update(data, state);
       this.remove(data, state);
+      this.groupInitial(data, state);
+    }
+  }
+
+  groupInitial(json: MetadataUpdate, state: S) {
+    const data = _.get(json, 'initial-group', false);
+    console.log(data);
+    if(data) {
+      this.associations(data, state);
     }
   }
 
@@ -25,14 +35,14 @@ export default class MetadataReducer<S extends MetadataState> {
       Object.keys(data).forEach((key) => {
         let val = data[key];
         let appName = val['app-name'];
-        let appPath = val['app-path'];
+        let rid = val.resource;
         if (!(appName in metadata)) {
           metadata[appName] = {};
         }
-        if (!(appPath in metadata[appName])) {
-          metadata[appName][appPath] = {};
+        if (!(rid in metadata[appName])) {
+          metadata[appName][rid] = {};
         }
-        metadata[appName][appPath] = val;
+        metadata[appName][rid] = val;
       });
 
       state.associations = metadata;
@@ -44,7 +54,7 @@ export default class MetadataReducer<S extends MetadataState> {
     if (data) {
       let metadata = state.associations;
       let appName = data['app-name'];
-      let appPath = data['app-path'];
+      let appPath = data.resource;
 
       if (!(appName in metadata)) {
         metadata[appName] = {};
@@ -63,15 +73,15 @@ export default class MetadataReducer<S extends MetadataState> {
     if (data) {
       let metadata = state.associations;
       let appName = data['app-name'];
-      let appPath = data['app-path'];
+      let rid = data.resource;
 
       if (!(appName in metadata)) {
         metadata[appName] = {};
       }
-      if (!(appPath in metadata[appName])) {
-        metadata[appName][appPath] = {};
+      if (!(rid in metadata[appName])) {
+        metadata[appName][rid] = {};
       }
-      metadata[appName][appPath] = data;
+      metadata[appName][rid] = data;
 
       state.associations = metadata;
     }
@@ -82,10 +92,10 @@ export default class MetadataReducer<S extends MetadataState> {
     if (data) {
       let metadata = state.associations;
       let appName = data['app-name'];
-      let appPath = data['app-path'];
+      let rid = data.resource;
 
-      if (appName in metadata && appPath in metadata[appName]) {
-        delete metadata[appName][appPath];
+      if (appName in metadata && rid in metadata[appName]) {
+        delete metadata[appName][rid];
       }
       state.associations = metadata;
     }

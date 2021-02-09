@@ -32,22 +32,22 @@ function isJoined(path: string) {
 export function UnjoinedResource(props: UnjoinedResourceProps) {
   const { api, notebooks, graphKeys, inbox } = props;
   const history = useHistory();
-  const appPath = props.association["app-path"];
+  const rid = props.association.resource; 
   const appName = props.association["app-name"];
   const { title, description, module } = props.association.metadata;
   const waiter = useWaitForProps(props);
   const app = useMemo(() => module || appName, [props.association]);
 
   const onJoin = async () => {
-    const [, , ship, name] = appPath.split("/");
+    const [, , ship, name] = rid.split("/");
     await api.graph.joinGraph(ship, name);
-    await waiter(isJoined(appPath));
-    history.push(`${props.baseUrl}/resource/${app}${appPath}`);
+    await waiter(isJoined(rid));
+    history.push(`${props.baseUrl}/resource/${app}${rid}`);
   };
 
   useEffect(() => {
-    if (isJoined(appPath)({ graphKeys })) {
-      history.push(`${props.baseUrl}/resource/${app}${appPath}`);
+    if (isJoined(rid)({ graphKeys })) {
+      history.push(`${props.baseUrl}/resource/${app}${rid}`);
     }
   }, [props.association, inbox, graphKeys, notebooks]);
 
@@ -68,7 +68,7 @@ export function UnjoinedResource(props: UnjoinedResourceProps) {
           <RichText color="gray">{description}</RichText>
         </Box>
         <StatelessAsyncButton
-          name={appPath}
+          name={rid}
           primary
           width="fit-content"
           onClick={onJoin}

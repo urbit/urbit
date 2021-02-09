@@ -1,7 +1,7 @@
 ::  hark-graph-hook: notifications for graph-store [landscape]
 ::
-/-  post, group-store, metadata-store, hook=hark-graph-hook, store=hark-store
-/+  resource, metadata, default-agent, dbug, graph-store, graph, grouplib=group, store=hark-store
+/-  post, group-store, metadata=metadata-store, hook=hark-graph-hook, store=hark-store
+/+  resource, mdl=metadata, default-agent, dbug, graph-store, graph, grouplib=group, store=hark-store
 ::
 ::
 ~%  %hark-graph-hook-top  ..part  ~
@@ -53,7 +53,7 @@
 +*  this  .
     ha    ~(. +> bowl)
     def   ~(. (default-agent this %|) bowl)
-    met   ~(. metadata bowl)
+    met   ~(. mdl bowl)
     grp   ~(. grouplib bowl)
     gra   ~(. graph bowl)
 ::
@@ -272,14 +272,14 @@
             rid=resource
         ==
     =/  group=(unit resource)
-      (group-from-app-resource:met %graph rid)
+      (peek-group:met %graph rid)
     ?~  group  
       ~&  no-group+rid
       `state
-    =/  metadata=(unit metadata:metadata-store)
-      (peek-metadata:met %graph u.group rid)
-    ?~  metadata  `state
-    abet:check:(abed:handle-update:ha rid nodes u.group module.u.metadata)
+    =/  metadatum=(unit metadatum:metadata)
+      (peek-metadatum:met %graph rid)
+    ?~  metadatum  `state
+    abet:check:(abed:handle-update:ha rid nodes u.group module.u.metadatum)
   --
 ::
 ++  on-peek  on-peek:def
@@ -300,7 +300,7 @@
 --
 ::
 |_  =bowl:gall
-+*  met   ~(. metadata bowl)
++*  met   ~(. mdl bowl)
     grp   ~(. grouplib bowl)
     gra   ~(. graph bowl)
 ::
@@ -344,7 +344,7 @@
   |=  rid=resource
   ^-  ?
   =/  group-rid=(unit resource)
-    (group-from-app-resource:met %graph rid) 
+    (peek-group:met %graph rid) 
   ?~  group-rid  %.n
   ?|  !(is-managed:grp u.group-rid)
       &(watch-on-self =(our.bowl entity.rid))

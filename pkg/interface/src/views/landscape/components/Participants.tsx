@@ -270,26 +270,26 @@ function Participant(props: {
   );
 
   const onPromote = useCallback(async () => {
-    const resource = resourceFromPath(association['group-path']);
+    const resource = resourceFromPath(association.group);
     await api.groups.addTag(resource, { tag: 'admin' }, [`~${contact.patp}`]);
   }, [api, association]);
 
   const onDemote = useCallback(async () => {
-    const resource = resourceFromPath(association['group-path']);
+    const resource = resourceFromPath(association.group);
     await api.groups.removeTag(resource, { tag: 'admin' }, [
       `~${contact.patp}`
     ]);
   }, [api, association]);
 
   const onBan = useCallback(async () => {
-    const resource = resourceFromPath(association['group-path']);
+    const resource = resourceFromPath(association.group);
     await api.groups.changePolicy(resource, {
       open: { banShips: [`~${contact.patp}`] }
     });
   }, [api, association]);
 
   const onKick = useCallback(async () => {
-    const resource = resourceFromPath(association['group-path']);
+    const resource = resourceFromPath(association.group);
     await api.groups.remove(resource, [`~${contact.patp}`]);
   }, [api, association]);
 
@@ -338,6 +338,11 @@ function Participant(props: {
               gapY={2}
               p={2}
             >
+              <Action bg="transparent">
+                <Link to={`/~profile/~${contact.patp}`}>
+                  <Text color="black">View Profile</Text>
+                </Link>
+              </Action>
               <Action bg="transparent">
                 <Link to={`/~landscape/dm/${contact.patp}`}>
                   <Text color="green">Send Message</Text>
