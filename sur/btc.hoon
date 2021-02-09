@@ -55,7 +55,7 @@
     $:  txid=hexb
         pos=@ud
         sequence=hexb
-        redeem-script=(unit hexb)
+        script-sig=(unit hexb)
         pubkey=(unit hexb)
         value=sats
     ==
