@@ -46,6 +46,7 @@
   =/  =share  !<(share vase)
   :_  this  :_  ~
   ?:  =(our.bowl src.bowl)
+    ?<  =(ship.share our.bowl)
     ::  proxy poke
     %+  poke:pass:io  [ship.share dap.bowl]
     contact-share+!>([%share our.bowl])
