@@ -192,12 +192,15 @@ export function GroupsPane(props: GroupsPaneProps) {
         path={relativePath("")}
         render={(routeProps) => {
           const hasDescription = groupAssociation?.metadata?.description;
+          const channelCount = Object.keys(props?.associations?.graph ?? {}).filter(e => {
+            return props?.associations?.graph?.[e]?.['group'] === groupPath;
+          }).length;
           let summary: ReactNode;
           if(groupAssociation?.group) {
             const memberCount = props.groups[groupAssociation.group].members.size;
             summary = <GroupSummary
               memberCount={memberCount}
-              channelCount={0}
+              channelCount={channelCount}
               metadata={groupAssociation.metadata}
             />
           } else {
