@@ -98,7 +98,7 @@ type Value<I extends string> = {
 const shipItemSchema = Yup.string().test(
   "is-patp",
   "${value} is not a valid @p",
-  ob.isValidPatp
+  x => ob.isValidPatp(`~${x}`)
 );
 
 export const shipSearchSchema = Yup.array(shipItemSchema).compact();
