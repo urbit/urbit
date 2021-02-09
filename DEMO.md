@@ -17,7 +17,7 @@ On `~zod`. Uses "abandon abandon..." mnemonic
 |start %btc-wallet-store
 
 :btc-provider|command [%set-credentials api-url='http://localhost:50002' %main]
-:btc-wallet-hook|action [%set-provider ~zod %main]
+:btc-wallet-hook|command [%set-provider ~zod %main]
 :btc-provider|command [%whitelist-clients `(set ship)`(sy ~[~dopzod])]
 
 =fprint [%4 0xbeef.dead]
@@ -31,7 +31,7 @@ On `~dopzod`. Uses "absurd sick..." mnemonic from PRIVATE.scratch.md
 |start %btc-wallet-hook
 |start %btc-wallet-store
 
-:btc-wallet-hook|action [%set-provider ~zod %main]
+:btc-wallet-hook|command [%set-provider ~zod %main]
 
 =fprint [%4 0xdead.beef]
 =xpubmain 'zpub6r8dKyWJ31XF6n69KKeEwLjVC5ruqAbiJ4QCqLsrV36Mvx9WEjUaiPNPGFLHNCCqgCdy6iZC8ZgHsm6a1AUTVBMVbKGemNcWFcwBGSjJKbD'
@@ -59,7 +59,7 @@ On both `~zod`/`dopzod`, choose depending on whether you're on test or main
 
 `~dopzod`
 ```
-:btc-wallet-hook|action [%req-pay-address ~zod 30.000 feyb=[~ 10]]
+:btc-wallet-hook|command [%req-pay-address ~zod 30.000 feyb=[~ 10]]
 ```
 
 ### Check State on ~zod/~dopzod
@@ -76,16 +76,16 @@ On both `~zod`/`dopzod`, choose depending on whether you're on test or main
 ### Idempotent
 `~dopzod`
 ```
-:btc-wallet-hook|action [%req-pay-address ~zod 3.000 feyb=[~ 100]]
+:btc-wallet-hook|command [%req-pay-address ~zod 3.000 feyb=[~ 100]]
 ```
 Or can change amount:
 ```
-:btc-wallet-hook|action [%req-pay-address ~zod 3.000 feyb=[~ 100]]
+:btc-wallet-hook|command [%req-pay-address ~zod 3.000 feyb=[~ 100]]
 ```
 
 ### Broadcast the Signed TX
 ```
-:btc-wallet-hook|action [%broadcast-tx tx]
+:btc-wallet-hook|command [%broadcast-tx tx]
 ```
 
 

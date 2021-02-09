@@ -77,6 +77,9 @@
   ?+  mark  (on-poke:def mark vase)
       %btc-wallet-hook-action
     (handle-action:hc !<(action vase))
+    ::
+      %btc-wallet-hook-command
+    (handle-command:hc !<(command vase))
   ==
   [cards this]
 ::
@@ -123,14 +126,14 @@
 ++  on-fail   on-fail:def
 --
 |_  =bowl:gall
-++  handle-action
-  |=  act=action
+++  handle-command
+  |=  comm=command
   ^-  (quip card _state)
-  ?-  -.act
-      %set-provider
+  ?-    -.comm
+        %set-provider
     =*  sub-card
-      [%pass /set-provider %agent [provider.act %btc-provider] %watch /clients]
-    :_  state(prov [~ provider.act %.n])
+      [%pass /set-provider %agent [provider.comm %btc-provider] %watch /clients]
+    :_  state(prov [~ provider.comm %.n])
     ?~  prov  ~[sub-card]
     :~  [%pass /set-provider %agent [host.u.prov %btc-provider] %leave ~]
         sub-card
@@ -153,13 +156,13 @@
       %req-pay-address
     ?:  broadcasting  ~|("Broadcasting a transaction" !!)
     ~|  "Can't pay ourselves; no comets; can't do while tx is being signed"
-    ?<  =(src.bowl payee.act)
-    ?<  ?=(%pawn (clan:title payee.act))
+    ?<  =(src.bowl payee.comm)
+    ?<  ?=(%pawn (clan:title payee.comm))
     ?<  broadcasting
-    =+  feyb=?~(feyb.act fee.btc-state u.feyb.act)
-    =>  .(poym ~, feybs (~(put by feybs) payee.act feyb))
+    =+  feyb=?~(feyb.comm fee.btc-state u.feyb.comm)
+    =>  .(poym ~, feybs (~(put by feybs) payee.comm feyb))
     :_  state
-    ~[(poke-hook payee.act [%gen-pay-address value.act])]
+    ~[(poke-hook payee.comm [%gen-pay-address value.comm])]
     ::
     ::  %broadcast-tx
     ::   - poym txid must match incoming txid
@@ -169,7 +172,7 @@
       %broadcast-tx
     ?>  =(src.bowl our.bowl)
     ?~  prov  ~|("Provider not connected" !!)
-    =+  signed=(to-hexb txhex.act)
+    =+  signed=(to-hexb txhex.comm)
     =/  tx-match=?
       ?~  poym  %.n
       =((get-id:txu (decode:txu signed)) ~(get-txid txb:bwsl u.poym))
@@ -180,6 +183,17 @@
       ~[(send-update [%broadcast-tx-mismatch-poym signed])]
     ~[(poke-provider host.u.prov [%broadcast-tx signed])]
     ::
+      %clear-poym
+    `state(poym ~)
+    ::
+      %force-retry
+    [(retry-reqs block.btc-state) state]
+  ==
+::
+++  handle-action
+  |=  act=action
+  ^-  (quip card _state)
+  ?-  -.act
       %add-piym
     ?>  =(src.bowl our.bowl)
     :_  state(ps.piym (~(put by ps.piym) payer.act [~ +.act]))
@@ -297,12 +311,6 @@
           =(value.p value.act)
       ==
     --
-    ::
-      %clear-poym
-    `state(poym ~)
-    ::
-      %force-retry
-    [(retry-reqs block.btc-state) state]
   ==
 ::  +handle-provider-status: handle connectivity updates from provider
 ::    - retry pend-piym on any %connected event, since we're checking mempool

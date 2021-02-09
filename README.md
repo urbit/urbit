@@ -22,7 +22,7 @@ Set credentials and start agents. Use `~dopzod` and `~zod`
 |start %btc-wallet-store
 |start %btc-wallet-hook
 |start %btc-provider
-:btc-wallet-hook|action [%set-provider provider]
+:btc-wallet-hook|command [%set-provider provider]
 :btc-provider|command [%set-credentials api-url='http://localhost:50002']
 ```
 

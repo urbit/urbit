@@ -21,26 +21,28 @@
 +$  piym  [ps=(map ship payment) num-fam=(map ship @ud)]
 +$  pend-piym  (map txid payment)
 +$  poym  (unit txbu:bws)
+::
 ::  req-pay-address: request a payment address from another ship
 ::   - target of action is local ship
-::  gen-pay-address: generate a payment address from our ship to another
-::  ret-pay-address: give an address to a payer who requested it
 ::  broadcast-tx: broadcast a signed-psbt, must be current poym
-::  expect-payment: tell another ship that we're paying a previously requested address
-::    - vout-n is the index of the output that has value
 ::
-+$  action
-  $%  api
-      local
-      peer
-  ==
-+$  api
++$  command
   $%  [%set-provider provider=ship =network]
       [%set-default-wallet ~]
       [%clear-poym ~]
       [%force-retry ~]
       [%req-pay-address payee=ship value=sats feyb=(unit sats)]
       [%broadcast-tx txhex=cord]
+  ==
+::
+::  gen-pay-address: generate a payment address from our ship to another
+::  ret-pay-address: give an address to a payer who requested it
+::  expect-payment: tell another ship that we're paying a previously requested address
+::    - vout-n is the index of the output that has value
+::
++$  action
+  $%  local
+      peer
   ==
 ::   local and peer pokes are initiated by the agent itself
 ::    they exist to make the state machine explicit
