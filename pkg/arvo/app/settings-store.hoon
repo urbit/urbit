@@ -33,7 +33,7 @@
     ?-  -.old
         %0  
       :_  this(state old)
-      =-  [%pass / %agent [our dap]:bowl %poke -]~
+      =-  [%pass / %agent [our dap]:bol %poke -]~
       settings-event+!>([%put-entry %tutorial %seen b+%|])
     ==
   ::

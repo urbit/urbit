@@ -43,7 +43,7 @@
     (scot %p our.bowl)
     %group-store
     (scot %da now.bowl)
-    /groups/noun
+    /groups
   ==
 ::
 ++  members
