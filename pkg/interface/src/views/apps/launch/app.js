@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 import f from 'lodash/fp';
+import _ from 'lodash';
 
 import { Col, Button, Box, Row, Icon, Text } from '@tlon/indigo-react';
 
@@ -102,7 +103,6 @@ export default function LaunchApp(props) {
           </StatelessAsyncButton>
         </Row>
       </Col>
-
     )}
   });
   useEffect(() => {
