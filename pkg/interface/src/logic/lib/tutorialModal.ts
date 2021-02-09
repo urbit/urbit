@@ -6,11 +6,11 @@ export const MODAL_HEIGHT = 180;
 export const MODAL_WIDTH_PX = `${MODAL_WIDTH}px`;
 export const MODAL_HEIGHT_PX = `${MODAL_HEIGHT}px`;
 
-export const TUTORIAL_HOST = process.env.TUTORIAL_HOST;
-export const TUTORIAL_GROUP = process.env.TUTORIAL_GROUP;
-export const TUTORIAL_CHAT = process.env.TUTORIAL_CHAT;
-export const TUTORIAL_BOOK = process.env.TUTORIAL_BOOK;
-export const TUTORIAL_LINKS = process.env.TUTORIAL_LINKS;
+export const TUTORIAL_HOST = process.env.TUTORIAL_HOST!;
+export const TUTORIAL_GROUP = process.env.TUTORIAL_GROUP!;
+export const TUTORIAL_CHAT = process.env.TUTORIAL_CHAT!;
+export const TUTORIAL_BOOK = process.env.TUTORIAL_BOOK!;
+export const TUTORIAL_LINKS = process.env.TUTORIAL_LINKS!;
 
 interface StepDetail {
   title: string;

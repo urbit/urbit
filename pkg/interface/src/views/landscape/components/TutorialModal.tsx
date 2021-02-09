@@ -71,8 +71,21 @@ export function TutorialModal(props: { api: GlobalApi }) {
       offsetX,
       offsetY
     );
+    const withMobile: any = _.mapValues(newCoords, (value: string[], key: string) => {
+      if(key === 'bottom' || key === 'left') {
+        return ['0px', ...value];
+      }
+      return [null, ...value];
+    });
+    if(!('bottom' in withMobile)) {
+      withMobile.bottom = ['0px', null];
+    }
+    if(!('left' in withMobile)) {
+      withMobile.left = ['0px', null];
+    }
+
     if (newCoords) {
-      setCoords(newCoords);
+      setCoords(withMobile);
     }
   }, [tutorialRef]);
 
@@ -105,10 +118,10 @@ export function TutorialModal(props: { api: GlobalApi }) {
   useEffect(() => {
     if (tutorialProgress === "done") {
       const { innerWidth, innerHeight } = window;
-      const left = `${(innerWidth - MODAL_WIDTH) / 2}px`;
-      const top = `${(innerHeight - MODAL_HEIGHT) / 2}px`;
-      console.log(`resetting ${top} ${left}`);
-      setCoords({ top, left });
+      const left = ["0px", `${(innerWidth - MODAL_WIDTH) / 2}px`];
+      const top = [null, `${(innerHeight - MODAL_HEIGHT) / 2}px`];
+      const bottom = ["0px", null];
+      setCoords({ top, left, bottom });
     }
   }, [tutorialProgress]);
 
@@ -124,7 +137,7 @@ export function TutorialModal(props: { api: GlobalApi }) {
         bg="white"
         zIndex={50}
         height={MODAL_HEIGHT_PX}
-        width={MODAL_WIDTH_PX}
+        width={["100%", MODAL_WIDTH_PX]}
         borderRadius="2"
       >
         <Col
