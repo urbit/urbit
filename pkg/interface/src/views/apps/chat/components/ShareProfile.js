@@ -101,7 +101,9 @@ export const ShareProfile = (props) => {
     } else if (!group.hidden) {
       const [,,ship,name] = groupPath.split('/');
       await api.contacts.allowGroup(ship,name);
-      await api.contacts.share(ship);
+      if(ship !== `~${window.ship}`) {
+        await api.contacts.share(ship);
+      }
       setShowBanner(false);
     }
   };
