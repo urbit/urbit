@@ -98,7 +98,7 @@ type Value<I extends string> = {
 const shipItemSchema = Yup.string().test(
   "is-patp",
   "${value} is not a valid @p",
-  ob.isValidPatp
+  x => ob.isValidPatp(`~${x}`)
 );
 
 export const shipSearchSchema = Yup.array(shipItemSchema).compact();
@@ -162,7 +162,8 @@ export function ShipSearch<I extends string, V extends Value<I>>(
     <FieldArray
       name={id}
       render={(arrayHelpers) => {
-        const onAdd = () => {
+        const onAdd = (ship: string) => {
+          setFieldValue(name(), ship);
           inputIdx.current += 1;
           arrayHelpers.push("");
         };

@@ -74,6 +74,7 @@ export default class MetadataApi extends BaseApi<StoreState> {
 
       tempChannel.subscribe(window.ship, "metadata-pull-hook", `/preview${group}`,
         (err) => {
+          console.error(err);
           reject(err);
           tempChannel.delete();
         },

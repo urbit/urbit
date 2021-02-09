@@ -350,7 +350,12 @@ function archive(json: any, state: HarkState) {
     const [archived, unarchived] = _.partition(timebox, (idxNotif) =>
       notifIdxEqual(index, idxNotif.index)
     );
-    state.notifications.set(time, unarchived);
+    if(unarchived.length === 0) {
+      console.log('deleting entire timebox');
+      state.notifications.delete(time);
+    } else {
+      state.notifications.set(time, unarchived);
+    }
     const newlyRead = archived.filter(x => !x.notification.read).length;
     updateNotificationStats(state, index, 'notifications', (x) => x - newlyRead);
   }

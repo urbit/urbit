@@ -32,10 +32,14 @@
 ::
 ++  on-init
   ^-  (quip card _this)
-  :_  this  :_  ~
-  =-  [%pass /us %agent [our.bowl %contact-push-hook] %poke %push-hook-action -]
-  !>  ^-  action:push-hook
-  [%add [our.bowl %'']]
+  :_  this
+  :-  %+  poke-our:pass:io  %contact-push-hook
+      :-  %push-hook-action
+      !>(`action:push-hook`[%add [our.bowl %'']])
+  %+  murn  ~(tap in scry-groups:grp)
+  |=  rid=res
+  ?.  =(our.bowl entity.rid)  ~
+  `(poke-self:pass:io push-hook-action+!>([%add rid]))
 ::
 ++  on-save   !>(~)
 ++  on-load   on-load:def
@@ -46,6 +50,7 @@
   =/  =share  !<(share vase)
   :_  this  :_  ~
   ?:  =(our.bowl src.bowl)
+    ?<  =(ship.share our.bowl)
     ::  proxy poke
     %+  poke:pass:io  [ship.share dap.bowl]
     contact-share+!>([%share our.bowl])

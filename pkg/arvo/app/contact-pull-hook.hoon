@@ -1,5 +1,6 @@
 /-  *resource
-/+  store=contact-store, contact, default-agent, verb, dbug, pull-hook
+/+  store=contact-store, contact, default-agent, verb, dbug, pull-hook, agentio
+/+  grpl=group
 ~%  %contact-pull-hook-top  ..part  ~
 |%
 +$  card  card:agent:gall
@@ -23,11 +24,26 @@
     def   ~(. (default-agent this %|) bowl)
     dep   ~(. (default:pull-hook this config) bowl)
     con   ~(. contact bowl)
+    io    ~(. agentio bowl)
+    grp   ~(. grpl bowl)
 ::
-++  on-init   on-init:def
+++  on-init   
+  ^-  (quip card _this)
+  :_  this
+  (poke-self:pass:io noun+!>(%upgrade))^~
+  
 ++  on-save   !>(~)
 ++  on-load   on-load:def
-++  on-poke   on-poke:def
+++  on-poke   
+  |=  [=mark =vase]
+  ^-  (quip card _this)
+  ?.  ?=(%noun mark)  (on-poke:def mark vase)
+  :_  this
+  %+  murn  ~(tap in scry-groups:grp)
+  |=  rid=resource
+  ?:  =(our.bowl entity.rid)  ~
+  `(poke-self:pass:io pull-hook-action+!>([%add [entity .]:rid]))
+::
 ++  on-peek   on-peek:def
 ++  on-arvo   on-arvo:def
 ++  on-fail   on-fail:def

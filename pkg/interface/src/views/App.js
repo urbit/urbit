@@ -20,6 +20,7 @@ import { Content } from './landscape/components/Content';
 import StatusBar from './components/StatusBar';
 import Omnibox from './components/leap/Omnibox';
 import ErrorBoundary from '~/views/components/ErrorBoundary';
+import { TutorialModal } from '~/views/landscape/components/TutorialModal';
 
 import GlobalStore from '~/logic/store/store';
 import GlobalSubscription from '~/logic/subscription/global';
@@ -149,6 +150,7 @@ class App extends React.Component {
         </Helmet>
         <Root background={background}>
           <Router>
+            <TutorialModal api={this.api} />
             <ErrorBoundary>
               <StatusBarWithRouter
                 props={this.props}

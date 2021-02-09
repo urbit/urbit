@@ -31,7 +31,10 @@
     ^-  (quip card _this)
     =/  old  !<(versioned-state old-vase)
     ?-  -.old
-      %0  [~ this(state old)]
+        %0  
+      :_  this(state old)
+      =-  [%pass / %agent [our dap]:bol %poke -]~
+      settings-event+!>([%put-entry %tutorial %seen b+%|])
     ==
   ::
   ++  on-poke

@@ -1,8 +1,9 @@
-import React from "react";
+import React, {useRef} from "react";
 import { Col, Text, BaseLabel, Label } from "@tlon/indigo-react";
 import GlobalApi from "~/logic/api/global";
 import { Association, NotificationGraphConfig } from "~/types";
 import { StatelessAsyncToggle } from "~/views/components/StatelessAsyncToggle";
+import {useTutorialModal} from "~/views/components/useTutorialModal";
 
 interface ChannelNotificationsProps {
   api: GlobalApi;
@@ -24,9 +25,13 @@ export function ChannelNotifications(props: ChannelNotificationsProps) {
     await api.hark[func](rid, "/");
   };
 
+  const anchorRef = useRef<HTMLElement | null>(null)
+
+  useTutorialModal('notifications', true, anchorRef.current);
+
   return (
     <Col mb="6" gapY="4" flexShrink={0}>
-      <Text id="notifications" fontSize="2" fontWeight="bold">
+      <Text ref={anchorRef} id="notifications" fontSize="2" fontWeight="bold">
         Channel Notifications
       </Text>
       <BaseLabel display="flex" cursor="pointer">

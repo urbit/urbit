@@ -96,13 +96,12 @@ export function GraphPermissions(props: GraphPermissionsProps) {
   const initialValues = {
     writePerms,
     writers: Array.from(writers)
-      .filter((x) => x !== hostShip)
-      .map((s) => `~${s}`),
+      .filter((x) => x !== hostShip),
     readerComments: association.metadata.vip === "reader-comments",
   };
 
   const onSubmit = async (values: FormSchema, actions) => {
-    values.writers = _.compact(values.writers);
+    values.writers = _.map(_.compact(values.writers), x => `~${x}`);
     const resource = resourceFromPath(association.group);
     const tag = {
       app: "graph",
@@ -152,7 +151,7 @@ export function GraphPermissions(props: GraphPermissionsProps) {
     }
   };
 
-  const schema = formSchema(Array.from(group.members).map((m) => `~${m}`));
+  const schema = formSchema(Array.from(group.members));
 
   return (
     <Formik

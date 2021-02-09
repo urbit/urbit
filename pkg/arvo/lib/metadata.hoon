@@ -1,9 +1,33 @@
 ::  metadata: helpers for getting data from the metadata-store
 ::
 /-  store=metadata-store
-/+  resource
+/+  resource, grpl=group
 ::
 |_  =bowl:gall
++*  grp  ~(. grpl bowl)
+::
+++  get-preview
+  |=  rid=resource
+  |^  ^-  group-preview:store
+  ?>  (can-join:grp rid src.bowl)
+  =/  members
+    ~(wyt in (members:grp rid))
+  =/  =metadatum:store
+    %-  need
+    %+  mate  (peek-metadatum %groups rid)
+    (peek-metadatum %graph rid)
+  [rid channels members channel-count metadatum]
+  ::
+  ++  channels
+    %-  ~(gas by *associations:store)
+    %+  scag  5  
+    %+  skim  ~(tap by (app-metadata-for-group rid %graph))
+    |=([=md-resource:store group=resource =metadatum:store] preview.metadatum)
+  ::   
+  ++  channel-count
+    ~(wyt by (app-metadata-for-group rid %graph))
+  --
+::
 ++  resource-for-update
   |=  =vase
   ^-  (list resource)

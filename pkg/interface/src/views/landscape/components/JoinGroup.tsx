@@ -8,6 +8,7 @@ import {
   Box,
   Text,
   ManagedTextInputField as Input,
+  LoadingSpinner,
 } from "@tlon/indigo-react";
 import { Formik, Form, FormikHelpers, useFormikContext } from "formik";
 import { AsyncButton } from "~/views/components/AsyncButton";
@@ -74,8 +75,7 @@ export function JoinGroup(props: JoinGroupProps) {
 
   const waiter = useWaitForProps(props, _.isString(preview) ? 1 : 5000);
 
-  const onConfirm = useCallback(async () => {
-    const group = _.isString(preview) ? preview : preview?.group!;
+  const onConfirm = useCallback(async (group: string) => {
     const [,,ship,name] = group.split('/');
     await api.groups.join(ship, name);
     if (props.inviteUid && props.inviteApp) {
@@ -99,12 +99,17 @@ export function JoinGroup(props: JoinGroupProps) {
       //  drop them into inbox to show join request still pending
       history.push('/~notifications');
     }
-  }, [api, preview, waiter, history, associations, groups]);
+  }, [api, props.inviteApp, props.inviteUid, waiter, history, associations, groups]);
 
   const onSubmit = useCallback(
     async (values: FormSchema, actions: FormikHelpers<FormSchema>) => {
       const [ship, name] = values.group.split("/");
       const path = `/ship/${ship}/${name}`;
+      //  skip if it's unmanaged
+      if(!!autojoin && props.inviteApp !== 'groups') {
+        await onConfirm(path);
+        return;
+      }
       try {
         const prev = await api.metadata.preview(path);
         actions.setStatus({ success: null });
@@ -122,80 +127,90 @@ export function JoinGroup(props: JoinGroupProps) {
         }
       }
     },
-    [api, waiter, history]
+    [api, waiter, history, onConfirm, props.inviteApp]
   );
 
   return (
-    <>
-      <Col overflowY="auto" p="3">
-        <Box mb={3}>
-          <Text fontSize="2" fontWeight="bold">
-            Join a Group
-          </Text>
-        </Box>
-        {_.isString(preview) ? (
-          <Col width="100%" gapY="4">
-            <Text>The host appears to be offline. Join anyway?</Text>
-            <StatelessAsyncButton primary name="join" onClick={onConfirm}>
-              Join anyway
-            </StatelessAsyncButton>
-          </Col>
-        ) : preview ? (
-          <GroupSummary
-            metadata={preview.metadata}
-            memberCount={preview?.members}
-            channelCount={preview?.["channel-count"]}
+    <Col p="3">
+      <Box mb={3}>
+        <Text fontSize="2" fontWeight="bold">
+          Join a Group
+        </Text>
+      </Box>
+      {_.isString(preview) ? (
+        <Col width="100%" gapY="4">
+          <Text>The host appears to be offline. Join anyway?</Text>
+          <StatelessAsyncButton 
+            primary 
+            name="join"
+            onClick={() => onConfirm(preview)}
           >
-            { Object.keys(preview.channels).length > 0 && (
-              <Col
+            Join anyway
+          </StatelessAsyncButton>
+        </Col>
+      ) : preview ? (
+        <GroupSummary
+          metadata={preview.metadata}
+          memberCount={preview?.members}
+          channelCount={preview?.channels?.length}
+        >
+          { Object.keys(preview.channels).length > 0 && (
+            <Col
               gapY="2"
               p="2"
               borderRadius="2"
               border="1"
               borderColor="washedGray"
               bg="washedBlue"
+              maxHeight="300px"
+              overflowY="auto"
             >
               <Text gray fontSize="1">
                 Channels
               </Text>
-              {Object.values(preview.channels).map(({ metadata }: any) => (
-                <Row>
-                  <Icon
-                    mr="2"
-                    color="blue"
-                    icon={getModuleIcon(metadata.module) as any}
-                  />
-                  <Text color="blue">{metadata.title} </Text>
-                </Row>
-              ))}
+              <Box width="100%" flexShrink="0">
+                {Object.values(preview.channels).map(({ metadata }: any) => (
+                  <Row width="100%">
+                    <Icon
+                      mr="2"
+                      color="blue"
+                      icon={getModuleIcon(metadata.module) as any}
+                    />
+                    <Text color="blue">{metadata.title} </Text>
+                  </Row>
+                ))}
+                </Box>
             </Col>
-            )}
-            <StatelessAsyncButton primary name="join" onClick={onConfirm}>
-              Join {preview.metadata.title}
-            </StatelessAsyncButton>
-          </GroupSummary>
-        ) : (
-          <Col width="100%" gapY="4">
-            <Formik
-              validationSchema={formSchema}
-              initialValues={initialValues}
-              onSubmit={onSubmit}
-            >
-              <Form style={{ display: "contents" }}>
-                <Autojoin autojoin={autojoin ?? null} />
-                <Input
-                  id="group"
-                  label="Group"
-                  caption="What group are you joining?"
-                  placeholder="~sampel-palnet/test-group"
-                />
-                <AsyncButton mt="4">Join Group</AsyncButton>
-                <FormError mt="4" />
-              </Form>
-            </Formik>
-          </Col>
-        )}
-      </Col>
-    </>
+          )}
+          <StatelessAsyncButton 
+            primary
+            name="join"
+            onClick={() => onConfirm(preview.group)}
+          >
+            Join {preview.metadata.title}
+          </StatelessAsyncButton>
+        </GroupSummary>
+      ) : (
+        <Col width="100%" gapY="4">
+          <Formik
+            validationSchema={formSchema}
+            initialValues={initialValues}
+            onSubmit={onSubmit}
+          >
+            <Form style={{ display: "contents" }}>
+              <Autojoin autojoin={autojoin ?? null} />
+              <Input
+                id="group"
+                label="Group"
+                caption="What group are you joining?"
+                placeholder="~sampel-palnet/test-group"
+              />
+              <AsyncButton mt="4">Join Group</AsyncButton>
+              <FormError mt="4" />
+            </Form>
+          </Formik>
+        </Col>
+      )}
+    </Col>
   );
 }

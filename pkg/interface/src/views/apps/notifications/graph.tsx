@@ -185,7 +185,7 @@ const GraphNode = ({
       icon
       color={`#000000`}
       classes="mix-blend-diff"
-      padded
+      padding={2}
     />
     ) : <Box style={{ width: '16px' }}></Box>;
 
