@@ -23,7 +23,7 @@ export function GroupSummary(props: GroupSummaryProps) {
   );
   return (
     <Col ref={anchorRef} maxWidth="300px" gapY="4">
-      <Row gapX="2">
+      <Row gapX="2" width="100%">
         <MetadataIcon
           borderRadius="1"
           border="1"
@@ -31,9 +31,14 @@ export function GroupSummary(props: GroupSummaryProps) {
           width="40px"
           height="40px"
           metadata={metadata}
+          flexShrink="0"
         />
-        <Col justifyContent="space-between">
-          <Text fontSize="1">{metadata.title}</Text>
+        <Col justifyContent="space-between" flexGrow="1" overflow="hidden">
+          <Text
+            fontSize="1"
+            textOverflow="ellipsis"
+            whiteSpace="nowrap"
+            overflow="hidden">{metadata.title}</Text>
           <Row gapX="2" justifyContent="space-between">
             <Text fontSize="1" gray>
               {memberCount} participants
@@ -44,7 +49,17 @@ export function GroupSummary(props: GroupSummaryProps) {
           </Row>
         </Col>
       </Row>
-      {metadata.description && <Text fontSize="1">{metadata.description}</Text>}
+      <Row width="100%">
+        {metadata.description &&
+          <Text
+            width="100%"
+            fontSize="1"
+            textOverflow="ellipsis"
+            overflow="hidden">
+            {metadata.description}
+          </Text>
+        }
+      </Row>
       {children}
     </Col>
   );
