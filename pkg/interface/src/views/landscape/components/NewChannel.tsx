@@ -110,7 +110,7 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
     }
   };
 
-  const members = group ? Array.from(groups[group]?.members).map(s => `~${s}`) : undefined;
+  const members = group ? Array.from(groups[group]?.members) : undefined;
 
   return (
     <Col overflowY="auto" p={3} backgroundColor="white">
