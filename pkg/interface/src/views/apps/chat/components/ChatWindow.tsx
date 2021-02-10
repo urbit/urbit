@@ -26,11 +26,6 @@ type ChatWindowProps = RouteComponentProps<{
   station: string;
 }> & {
   unreadCount: number;
-  isChatMissing: boolean;
-  isChatLoading: boolean;
-  isChatUnsynced: boolean;
-  unreadMsg: Envelope | false;
-  stationPendingMessages: IMessage[];
   graph: Graph;
   contacts: Contacts;
   association: Association;
@@ -128,14 +123,11 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
   }
 
   componentDidUpdate(prevProps: ChatWindowProps, prevState) {
-    const { isChatMissing, history, graph, unreadCount, station } = this.props;
+    const { history, graph, unreadCount, station } = this.props;
 
-    if (isChatMissing) {
-      history.push("/~404");
-    } else if (graph.size !== prevProps.graph.size && this.state.fetchPending) {
+    if (graph.size !== prevProps.graph.size && this.state.fetchPending) {
       this.setState({ fetchPending: false });
     }
-
 
     if (unreadCount > prevProps.unreadCount && this.state.idle) {
       this.calculateUnreadIndex();
@@ -237,17 +229,13 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
 
   render() {
     const {
-      stationPendingMessages,
       unreadCount,
-      isChatLoading,
-      isChatUnsynced,
       api,
       ship,
       station,
       association,
       group,
       contacts,
-      mailboxSize,
       graph,
       history,
       groups,
