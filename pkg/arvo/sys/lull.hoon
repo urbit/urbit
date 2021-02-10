@@ -1076,10 +1076,7 @@
   +$  dill-blit                                         ::  inside blit
     $%  blit                                            ::  outside blit
         [%mor p=(list dill-blit)]                       ::  multiple blits
-        [%pom p=stub]                                   ::  styled prompt
-        [%pro p=(list @c)]                              ::  show as cursor+line
         [%qit ~]                                        ::  close console
-        [%out p=(list @c)]                              ::  send output line
     ==                                                  ::
   +$  flog                                              ::  sent to %dill
     $%  [%crop p=@ud]                                   ::  trim kernel state

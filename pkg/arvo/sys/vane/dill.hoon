@@ -186,12 +186,6 @@
           |-  ^+  +>.^$
           ?~  p.bit  +>.^$
           $(p.bit t.p.bit, +>.^$ ^$(bit i.p.bit))
-        ?:  ?=(%out -.bit)
-          (done %blit [%lin p.bit]~)
-        ?:  ?=(%pro -.bit)
-          (done %blit [%lin p.bit]~)
-        ?:  ?=(%pom -.bit)
-          (done %blit [%klr p.bit]~)
         ?:  ?=(%qit -.bit)
           (dump %logo ~)
         (done %blit [bit ~])

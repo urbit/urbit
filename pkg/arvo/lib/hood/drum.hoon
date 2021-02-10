@@ -557,7 +557,7 @@
   ?.  ((sane %t) (crip i.wol))  :: XX upstream validation
     ~&  bad-text+<`*`i.wol>
     $(wol t.wol)
-  $(wol t.wol, +>.^$ (se-blin %out (tuba i.wol)))
+  $(wol t.wol, +>.^$ (se-blin %lin (tuba i.wol)))
 ::
 ++  se-join                                           ::  confirm connection
   |=  gyl=gill:gall
@@ -596,7 +596,7 @@
   |=  lin=(pair @ud stub)
   ^+  +>
   ?:  =(mir lin)  +>
-  (se-blit(mir lin) %mor [%pom q.lin] [%hop p.lin] ~)
+  (se-blit(mir lin) %mor [%klr q.lin] [%hop p.lin] ~)
 ::
 ++  se-just                                           ::  adjusted buffer
   |=  [pom=stub lin=(pair @ud (list @c))]
@@ -634,7 +634,7 @@
   ?.  ((sane %t) (crip txt))  :: XX upstream validation
     ~&  bad-text+<`*`txt>
     +>
-  (se-blin %out (tuba txt))
+  (se-blin %lin (tuba txt))
 ::
 ++  se-poke                                           ::  send a poke
   |=  [gyl=gill:gall par=cage]
