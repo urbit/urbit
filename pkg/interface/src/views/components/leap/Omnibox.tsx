@@ -12,6 +12,7 @@ import { deSig } from '~/logic/lib/util';
 import defaultApps from '~/logic/lib/default-apps';
 import {Associations, Contacts, Groups, Tile, Invites} from '~/types';
 import {useOutsideClick} from '~/logic/lib/useOutsideClick';
+import {Portal} from '../Portal';
 
 interface OmniboxProps {
   associations: Associations;
@@ -263,7 +264,8 @@ export function Omnibox(props: OmniboxProps) {
     </Box>;
   }, [results, navigate, selected, props.contacts, props.notifications, props.invites]);
 
-    return (
+  return (
+    <Portal>
         <Box
           backgroundColor='scales.black30'
           width='100%'
@@ -271,7 +273,7 @@ export function Omnibox(props: OmniboxProps) {
           position='absolute'
           top='0'
           right='0'
-          zIndex='9'
+          zIndex={11}
           display={props.show ? 'block' : 'none'}>
           <Row justifyContent='center'>
             <Box
@@ -292,6 +294,7 @@ export function Omnibox(props: OmniboxProps) {
             </Box>
           </Row>
         </Box>
+      </Portal>
     );
   }
 

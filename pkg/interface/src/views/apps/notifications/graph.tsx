@@ -129,6 +129,8 @@ const GraphNodeContent = ({ group, post, contacts, mod, description, index, remo
         measure={() => {}}
         group={group}
         contacts={contacts}
+        groups={{}}
+        associations={{ graph: {}, groups: {}}}
         msg={post}
         fontSize='0'
         pt='2'

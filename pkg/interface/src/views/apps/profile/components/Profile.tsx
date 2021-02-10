@@ -90,6 +90,8 @@ export function Profile(props: any) {
             ship={ship}
             contact={contact}
             isPublic={isPublic} 
+            groups={props.groups}
+            associations={props.associations}
           />
         ) }
       </Box>

@@ -16,30 +16,12 @@ import RichText from "~/views/components/RichText";
 import { useHistory } from "react-router-dom";
 import {GroupSummary} from "~/views/landscape/components/GroupSummary";
 import {MetadataUpdatePreview} from "~/types";
+import {GroupLink} from "~/views/components/GroupLink";
 
 
 export function ViewProfile(props: any) {
   const history = useHistory();
-  const { api, contact, nacked, isPublic, ship } = props;
-
-  const [previews, setPreviews] = useState<MetadataUpdatePreview[]>([]);
-  useEffect(() => {
-    (async () => {
-      setPreviews(
-        _.compact(
-          await Promise.all(
-            (contact?.groups || []).map(g => api.metadata.preview(g)
-              .catch(() => null)
-            )
-          )
-        )
-      );
-    })();
-
-    return () => {
-      setPreviews([]);
-    }
-  }, [ship]);
+  const { api, contact, nacked, isPublic, ship, associations, groups } = props;
 
   return (
     <>
@@ -67,7 +49,7 @@ export function ViewProfile(props: any) {
         justifyContent="center"
         width="100%">
           <Center flexDirection="column" maxWidth='32rem'>
-          <RichText width='100%'>
+          <RichText width='100%' disableRemoteContent>
             {(contact?.bio ? contact.bio : "")}
           </RichText>
           </Center>
@@ -75,21 +57,17 @@ export function ViewProfile(props: any) {
       { (contact?.groups || []).length > 0 && (
         <Col gapY="3" my="3" alignItems="center">
           <Text fontWeight="medium">Pinned Groups</Text>
-           {previews.length === 0 ? (
-            <LoadingSpinner />
-            ) : (
-              <Row justifyContent="center" gapX="3">
-                {previews.map(p => (
-                <Box p="2" border="1" borderColor="washedGray">
-                  <GroupSummary
-                    metadata={p.metadata}
-                    memberCount={p.members}
-                    channelCount={p?.['channel-count']}
-                  />
-                </Box>
-              ))}
+          <Row flexWrap="wrap" justifyContent="center" gapX="3">
+            { contact?.groups.map(g => (
+              <GroupLink
+                api={api}
+                resource={g}
+                groups={groups}
+                associations={associations}
+                measure={() => {}}
+              />
+            ))}
           </Row>
-          )}
       </Col>
       )}
       { (ship === `~${window.ship}`) ? (
