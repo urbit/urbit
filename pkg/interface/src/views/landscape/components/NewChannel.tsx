@@ -154,7 +154,7 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
                 name="moduleType"
               />
               <IconRadio
-                icon="Links"
+                icon="Collection"
                 label="Collection"
                 id="link"
                 name="moduleType"
