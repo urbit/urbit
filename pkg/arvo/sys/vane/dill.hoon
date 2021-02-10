@@ -107,7 +107,7 @@
           %harm  +>
           %hail  (send %hey ~)
           %belt  (send `dill-belt`p.kyz)
-          %text  (from %out (tuba p.kyz))
+          %text  (fore (tuba p.kyz) ~)
           %crud  ::  (send `dill-belt`[%cru p.kyz q.kyz])
                  (crud p.kyz q.kyz)
           %blew  (send %rez p.p.kyz q.p.kyz)
@@ -134,9 +134,8 @@
                    %+  turn  (flop tac)
                    |=(a=tank (~(win re a) [0 wid]))
           ==
-        |-  ^+  +>.^$
-        ?~  wall  +>.^$
-        $(wall t.wall, +>.^$ (from %out (tuba i.wall)))
+        ?:  =(~ wall)  +>.$
+        (fore (turn wall tuba))
       ::
       ++  dump                                          ::  pass down to hey
         |=  git=gift
@@ -159,6 +158,29 @@
         |=  [=wire =note]
         +>(moz :_(moz [hen %pass wire note]))
       ::
+      ++  fore                                          ::  send dill output
+        ::NOTE  there are still implicit assumptions
+        ::      about the underlying console app's
+        ::      semantics here. specifically, trailing
+        ::      newlines are important to not getting
+        ::      overwritten by the drum prompt, and a
+        ::      bottom-of-screen cursor position gives
+        ::      nicest results. a more agnostic solution
+        ::      will need to replace this arm, someday.
+        ::      perhaps +send this to .ram instead?
+        ::
+        |=  liz=(list (list @c))
+        ^+  +>
+        =.  +>
+          =|  biz=(list blit)
+          |-  ^+  +>.^$
+          ?~  liz  (done %blit biz)
+          $(liz t.liz, biz (welp biz [%lin i.liz] [%nel ~] ~))
+        ::  since dill is acting on its own accord,
+        ::  we %hey the term app so it may clean up.
+        ::
+        (send %hey ~)
+      ::
       ++  from                                          ::  receive blit
         |=  bit=dill-blit
         ^+  +>
@@ -167,25 +189,13 @@
           ?~  p.bit  +>.^$
           $(p.bit t.p.bit, +>.^$ ^$(bit i.p.bit))
         ?:  ?=(%out -.bit)
-          %+  done  %blit
-          :~  [%lin p.bit]
-              [%nel ~]
-              see
-              [%hop pos]
-          ==
-        ?:  ?=(%klr -.bit)
-          %+  done  %blit
-          :~  [%klr p.bit]
-              [%nel ~]
-              see
-              [%hop pos]
-          ==
+          (done %blit [%lin p.bit]~)
         ?:  ?=(%pro -.bit)
           =.  see  [%lin p.bit]
-          (done %blit [see [%hop pos] ~])
+          (done %blit [%lin p.bit]~)
         ?:  ?=(%pom -.bit)
           =.  see  [%klr p.bit]
-          (done %blit [see [%hop pos] ~])
+          (done %blit [%klr p.bit]~)
         ?:  ?=(%hop -.bit)
           (done(pos p.bit) %blit [bit ~])
         ?:  ?=(%qit -.bit)
@@ -253,7 +263,7 @@
           ::  ~&  [%take-gall-onto +>.sih]
           ?-  -.+>.sih
             %|  (crud %onto p.p.+>.sih)
-            %&  (done %blit [%lin (tuba "{<p.p.sih>}")]~)
+            %&  (fore (tuba "{<p.p.sih>}") ~)
           ==
         ::
             [%gall %unto *]
@@ -268,7 +278,7 @@
           ==
         ::
             [%clay %note *]
-          (from %out (tuba p.sih ' ' ~(ram re q.sih)))
+          (fore (tuba p.sih ' ' ~(ram re q.sih)) ~)
         ::
             [?(%behn %clay) %writ *]
           init

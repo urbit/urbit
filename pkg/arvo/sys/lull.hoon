@@ -1060,7 +1060,7 @@
         [%clr ~]                                        ::  clear the screen
         [%hop p=$@(@ud [r=@ud c=@ud])]                  ::  set cursor row/pos
         [%klr p=stub]                                   ::  set styled line
-        [%lin p=(list @c)]                              ::  set current line
+        [%lin p=(list @c)]                              ::  set line at cursor
         [%nel ~]                                        ::  newline
         [%sag p=path q=*]                               ::  save to jamfile
         [%sav p=path q=@]                               ::  save to file

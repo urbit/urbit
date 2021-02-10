@@ -538,6 +538,15 @@
     leaf+(weld (scag (sub edg 3) tape) "...")
   leaf+tape
 ::
+++  se-blin                                           ::  print and newline
+  |=  lin=dill-blit:dill
+  ^+  +>
+  ::  newline means we need to redraw the prompt,
+  ::  so update the prompt mirror accordingly.
+  ::
+  =.  mir  [0 ~]
+  (se-blit %mor lin [%nel ~] ~)
+::
 ++  se-dump                                           ::  print tanks
   |=  tac=(list tank)
   ^+  +>
@@ -548,7 +557,7 @@
   ?.  ((sane %t) (crip i.wol))  :: XX upstream validation
     ~&  bad-text+<`*`i.wol>
     $(wol t.wol)
-  $(wol t.wol, +>.^$ (se-blit %out (tuba i.wol)))
+  $(wol t.wol, +>.^$ (se-blin %out (tuba i.wol)))
 ::
 ++  se-join                                           ::  confirm connection
   |=  gyl=gill:gall
@@ -587,9 +596,7 @@
   |=  lin=(pair @ud stub)
   ^+  +>
   ?:  =(mir lin)  +>
-  =.  +>  ?:(=(p.mir p.lin) +> (se-blit %hop p.lin))
-  =.  +>  ?:(=(q.mir q.lin) +> (se-blit %pom q.lin))
-  +>(mir lin)
+  (se-blit(mir lin) %mor [%pom q.lin] [%hop p.lin] ~)
 ::
 ++  se-just                                           ::  adjusted buffer
   |=  [pom=stub lin=(pair @ud (list @c))]
@@ -627,7 +634,7 @@
   ?.  ((sane %t) (crip txt))  :: XX upstream validation
     ~&  bad-text+<`*`txt>
     +>
-  (se-blit %out (tuba txt))
+  (se-blin %out (tuba txt))
 ::
 ++  se-poke                                           ::  send a poke
   |=  [gyl=gill:gall par=cage]
@@ -806,7 +813,7 @@
       [%bye *]  +>(..ta (se-klin gyl))
       [%det *]  (ta-got +.fec)
       [%err *]  (ta-err p.fec)
-      [%klr *]  +>(..ta (se-blit %klr (make:klr p.fec)))
+      [%klr *]  +>(..ta (se-blin %klr (make:klr p.fec)))
       [%mor *]  |-  ^+  +>.^$
                 ?~  p.fec  +>.^$
                 $(p.fec t.p.fec, +>.^$ ^$(fec i.p.fec))
