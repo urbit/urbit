@@ -43,13 +43,16 @@ export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {
   const handleUnsubscribe = async () => {
     const [,,ship,name] = association.resource.split('/');
     await api.graph.leaveGraph(ship, name);
+    history.push(props.baseUrl);
   };
   const handleRemove = async () => {
     await api.metadata.remove('graph', association.resource, association.group);
+    history.push(props.baseUrl);
   };
   const handleArchive = async () => {
     const [,,,name] = association.resource.split('/');
     await api.graph.deleteGraph(name);
+    history.push(props.baseUrl);
   };
 
   const canAdmin = isChannelAdmin(group, association.resource);
