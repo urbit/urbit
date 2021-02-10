@@ -6,8 +6,8 @@ import bigInt, { BigInteger } from 'big-integer';
 import GlobalApi from "~/logic/api/global";
 import { Patp, Path } from "~/types/noun";
 import { Contacts } from "~/types/contact-update";
-import { Association } from "~/types/metadata-update";
-import { Group } from "~/types/group-update";
+import { Association, Associations } from "~/types/metadata-update";
+import { Group, Groups } from "~/types/group-update";
 import { Envelope, IMessage } from "~/types/chat-update";
 import { Graph } from "~/types";
 
@@ -39,6 +39,8 @@ type ChatWindowProps = RouteComponentProps<{
   station: any;
   api: GlobalApi;
   scrollTo?: number;
+  associations: Associations;
+  groups: Groups;
 }
 
 interface ChatWindowState {
@@ -247,13 +249,15 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
       contacts,
       mailboxSize,
       graph,
-      history
+      history,
+      groups,
+      associations
     } = this.props;
 
     const unreadMarkerRef = this.unreadMarkerRef;
 
 
-    const messageProps = { association, group, contacts, unreadMarkerRef, history, api };
+    const messageProps = { association, group, contacts, unreadMarkerRef, history, api, groups, associations };
 
     const keys = graph.keys().reverse();
     const unreadIndex = graph.keys()[this.props.unreadCount];

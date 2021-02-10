@@ -11,6 +11,7 @@ import React, {
 import { Box } from "@tlon/indigo-react";
 import { useOutsideClick } from "./useOutsideClick";
 import { ModalOverlay } from "~/views/components/ModalOverlay";
+import {Portal} from "~/views/components/Portal";
 
 type ModalFunc = (dismiss: () => void) => JSX.Element;
 interface UseModalProps {
@@ -48,7 +49,8 @@ export function useModal(props: UseModalProps): UseModalResult {
 
   const modal = useMemo(
     () =>
-      !inner ? null : (
+    !inner ? null : (
+      <Portal>
         <ModalOverlay
           ref={innerRef}
           maxWidth="500px"
@@ -65,6 +67,7 @@ export function useModal(props: UseModalProps): UseModalResult {
         >
           {inner}
         </ModalOverlay>
+      </Portal>
       ),
     [inner, dismiss]
   );

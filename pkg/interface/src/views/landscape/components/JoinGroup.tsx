@@ -45,6 +45,7 @@ interface JoinGroupProps {
   groups: Groups;
   associations: Associations;
   api: GlobalApi;
+  autojoin?: string;
 }
 
 function Autojoin(props: { autojoin: string | null }) {

@@ -111,6 +111,8 @@ export function ChatResource(props: ChatResourceProps) {
         envelopes={[]}
         contacts={contacts}
         association={props.association}
+        associations={props.associations}
+        groups={props.groups}
         group={group}
         ship={owner}
         station={station}
