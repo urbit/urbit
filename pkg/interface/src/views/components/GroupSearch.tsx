@@ -21,6 +21,7 @@ import { Associations, Association } from '~/types/metadata-update';
 interface GroupSearchProps<I extends string> {
   disabled?: boolean;
   adminOnly?: boolean;
+  publicOnly?: boolean;
   groups: Groups;
   associations: Associations;
   label: string;
@@ -69,7 +70,7 @@ type FormValues<I extends string> = {
 
 export function GroupSearch<I extends string, V extends FormValues<I>>(props: GroupSearchProps<I>) {
   const { id, caption, label } = props;
-  const { 
+  const {
     values,
     touched: touchedFields,
     errors,
@@ -84,8 +85,8 @@ export function GroupSearch<I extends string, V extends FormValues<I>>(props: Gr
   const error = _.compact(errors[id] as string[]);
 
   const groups: Association[] = useMemo(() => {
-    return props.adminOnly
-      ? Object.values(
+     if (props.adminOnly) {
+       return Object.values(
           Object.keys(props.associations?.groups)
             .filter(
               e => roleForShip(props.groups[e], window.ship) === 'admin'
@@ -94,8 +95,21 @@ export function GroupSearch<I extends string, V extends FormValues<I>>(props: Gr
               obj[key] = props.associations?.groups[key];
               return obj;
             }, {}) || {}
-        )
-      : Object.values(props.associations?.groups || {});
+        );
+     } else if (props.publicOnly) {
+       return Object.values(
+         Object.keys(props.associations?.groups)
+           .filter(
+             e => props.groups?.[e]?.policy?.open
+           )
+           .reduce((obj, key) => {
+             obj[key] = props.associations?.groups[key];
+             return obj;
+           }, {}) || {}
+       );
+     } else {
+      return Object.values(props.associations?.groups || {});
+     }
   }, [props.associations?.groups]);
 
   return (
