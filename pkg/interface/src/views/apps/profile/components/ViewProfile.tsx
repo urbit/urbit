@@ -49,7 +49,7 @@ export function ViewProfile(props: any) {
         justifyContent="center"
         width="100%">
           <Center flexDirection="column" maxWidth='32rem'>
-          <RichText width='100%'>
+          <RichText width='100%' disableRemoteContent>
             {(contact?.bio ? contact.bio : "")}
           </RichText>
           </Center>
@@ -59,7 +59,7 @@ export function ViewProfile(props: any) {
           <Text fontWeight="medium">Pinned Groups</Text>
           <Row flexWrap="wrap" justifyContent="center" gapX="3">
             { contact?.groups.map(g => (
-              <GroupLink 
+              <GroupLink
                 api={api}
                 resource={g}
                 groups={groups}
