@@ -9,7 +9,6 @@ import { uxToHex } from '~/logic/lib/util';
 import { RouteComponentProps } from "react-router-dom";
 
 import { LinkItem } from "./components/LinkItem";
-import LinkSubmit from "./components/LinkSubmit";
 import { LinkPreview } from "./components/link-preview";
 import { LinkWindow } from "./LinkWindow";
 import { Comments } from "~/views/components/Comments";
@@ -50,6 +49,7 @@ export function LinkResource(props: LinkResourceProps) {
     : { metadata: {} };
   const contactDetails = contacts[resource?.group] || {};
   const group = groups[resource?.group] || {};
+
   const graph = graphs[resourcePath] || null;
 
   useEffect(() => {

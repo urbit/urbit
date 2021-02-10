@@ -63,9 +63,14 @@ export function LinkWindow(props: LinkWindowProps) {
 
   if (!first) {
     return (
-        <Col key={0} mx="auto" mt="4" maxWidth="768px" width="100%" flexShrink={0} px={3}>
+      <Col key={0} mx="auto" mt="4" maxWidth="768px" width="100%" flexShrink={0} px={3}>
+        { canWrite ? (
             <LinkSubmit s3={props.s3} name={name} ship={ship.slice(1)} api={api} />
-        </Col>
+          ) : (
+            <Text>There are no links here yet. You do not have permission to post to this collection.</Text>
+          )
+        }
+      </Col>
     );
   }
 
