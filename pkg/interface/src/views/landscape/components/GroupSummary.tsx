@@ -1,5 +1,5 @@
 import React, { ReactNode, useRef } from "react";
-import { Metadata } from "~/types";
+import { Metadata, PropFunc } from "~/types";
 import { Col, Row, Text } from "@tlon/indigo-react";
 import { MetadataIcon } from "./MetadataIcon";
 import { useTutorialModal } from "~/views/components/useTutorialModal";
@@ -11,10 +11,11 @@ interface GroupSummaryProps {
   channelCount: number;
   resource?: string;
   children?: ReactNode;
+  gray?: boolean;
 }
 
-export function GroupSummary(props: GroupSummaryProps) {
-  const { channelCount, memberCount, metadata, resource, children } = props;
+export function GroupSummary(props: GroupSummaryProps & PropFunc<typeof Col>) {
+  const { channelCount, memberCount, metadata, resource, children, ...rest } = props;
   const anchorRef = useRef<HTMLElement | null>(null);
   useTutorialModal(
     "group-desc",
@@ -22,7 +23,7 @@ export function GroupSummary(props: GroupSummaryProps) {
     anchorRef.current
   );
   return (
-    <Col ref={anchorRef} maxWidth="300px" gapY="4">
+    <Col {...rest} ref={anchorRef} gapY="4">
       <Row gapX="2" width="100%">
         <MetadataIcon
           borderRadius="1"
@@ -39,7 +40,7 @@ export function GroupSummary(props: GroupSummaryProps) {
             textOverflow="ellipsis"
             whiteSpace="nowrap"
             overflow="hidden">{metadata.title}</Text>
-          <Row gapX="2" justifyContent="space-between">
+          <Row gapX="4" >
             <Text fontSize="1" gray>
               {memberCount} participants
             </Text>
@@ -51,7 +52,8 @@ export function GroupSummary(props: GroupSummaryProps) {
       </Row>
       <Row width="100%">
         {metadata.description &&
-          <Text
+        <Text
+            gray
             width="100%"
             fontSize="1"
             textOverflow="ellipsis"

@@ -45,9 +45,6 @@ interface JoinGroupProps {
   groups: Groups;
   associations: Associations;
   api: GlobalApi;
-  autojoin?: string;
-  inviteUid?: string;
-  inviteApp?: string;
 }
 
 function Autojoin(props: { autojoin: string | null }) {
@@ -78,9 +75,6 @@ export function JoinGroup(props: JoinGroupProps) {
   const onConfirm = useCallback(async (group: string) => {
     const [,,ship,name] = group.split('/');
     await api.groups.join(ship, name);
-    if (props.inviteUid && props.inviteApp) {
-      api.invite.accept(props.inviteApp, props.inviteUid);
-    }
     try {
       await waiter((p: JoinGroupProps) => {
         return group in p.groups && 
@@ -99,17 +93,13 @@ export function JoinGroup(props: JoinGroupProps) {
       //  drop them into inbox to show join request still pending
       history.push('/~notifications');
     }
-  }, [api, props.inviteApp, props.inviteUid, waiter, history, associations, groups]);
+  }, [api, waiter, history, associations, groups]);
 
   const onSubmit = useCallback(
     async (values: FormSchema, actions: FormikHelpers<FormSchema>) => {
       const [ship, name] = values.group.split("/");
       const path = `/ship/${ship}/${name}`;
       //  skip if it's unmanaged
-      if(!!autojoin && props.inviteApp !== 'groups') {
-        await onConfirm(path);
-        return;
-      }
       try {
         const prev = await api.metadata.preview(path);
         actions.setStatus({ success: null });
@@ -127,7 +117,7 @@ export function JoinGroup(props: JoinGroupProps) {
         }
       }
     },
-    [api, waiter, history, onConfirm, props.inviteApp]
+    [api, waiter, history, onConfirm]
   );
 
   return (
@@ -152,7 +142,7 @@ export function JoinGroup(props: JoinGroupProps) {
         <GroupSummary
           metadata={preview.metadata}
           memberCount={preview?.members}
-          channelCount={preview?.channels?.length}
+          channelCount={preview?.['channel-count']}
         >
           { Object.keys(preview.channels).length > 0 && (
             <Col
