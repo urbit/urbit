@@ -8,7 +8,7 @@
 --                                                      ::
 =>  |%                                                  ::  console protocol
 +$  axle                                                ::
-  $:  %4  ::TODO  replace ducts with session ids        ::
+  $:  %5  ::TODO  replace ducts with session ids        ::
       hey=(unit duct)                                   ::  default duct
       dug=(map duct axon)                               ::  conversations
       eye=(jug duct duct)                               ::  outside listeners
@@ -21,8 +21,6 @@
   $:  ram=term                                          ::  console program
       tem=(unit (list dill-belt))                       ::  pending, reverse
       wid=_80                                           ::  terminal width
-      pos=$@(@ud [@ud @ud])                             ::  cursor position
-      see=$%([%lin (list @c)] [%klr stub])              ::  current line
   ==                                                    ::
 +$  log-level  ?(%hush %soft %loud)                     ::  none, line, full
 --  =>                                                  ::
@@ -191,13 +189,9 @@
         ?:  ?=(%out -.bit)
           (done %blit [%lin p.bit]~)
         ?:  ?=(%pro -.bit)
-          =.  see  [%lin p.bit]
           (done %blit [%lin p.bit]~)
         ?:  ?=(%pom -.bit)
-          =.  see  [%klr p.bit]
           (done %blit [%klr p.bit]~)
-        ?:  ?=(%hop -.bit)
-          (done(pos p.bit) %blit [bit ~])
         ?:  ?=(%qit -.bit)
           (dump %logo ~)
         (done %blit [bit ~])
@@ -339,8 +333,8 @@
     ::
     =*  duc  (need hey.all)
     =/  app  %hood
-    =/  see  (tuba "<awaiting {(trip app)}, this may take a minute>")
-    =/  zon=axon  [app input=[~ ~] width=80 cursor=(lent see) lin+see]
+    =/  say  (tuba "<awaiting {(trip app)}, this may take a minute>")
+    =/  zon=axon  [app input=[~ ~] width=80]
     ::
     =^  moz  all  abet:(~(into as duc zon) ~)
     [moz ..^$]
@@ -370,10 +364,12 @@
     ~|  [%no-session session.task]
     ?>  =(~ session.task)
     =/  session  (need hey.all)
-    =/  =axon    (~(got by dug.all) session)
-    ::  register the viewer and send them the prompt line
+    =/  nus      (need (ax session))
+    ::  register the viewer and send a %hey so they get the full screen
     ::
-    :-  [hen %give %blit [see.axon]~]~
+    =^  moz  all
+      abet:(send:nus %hey ~)
+    :-  moz
     ..^$(eye.all (~(put ju eye.all) session hen))
   ::
   ?:  ?=(%flee -.task)
@@ -399,8 +395,34 @@
   [moz ..^$]
 ::
 ++  load                                                ::  import old state
-  |=  old=axle
-  ..^$(all old)
+  =<  |=  old=any-axle
+      ?-  -.old
+        %5  ..^$(all old)
+        %4  $(old (axle-4-to-5 old))
+      ==
+  |%
+  +$  any-axle  $%(axle axle-4)
+  ::
+  +$  axle-4
+    $:  %4
+        hey=(unit duct)
+        dug=(map duct axon-4)
+        eye=(jug duct duct)
+        lit=?
+        veb=(map @tas log-level)
+    ==
+  ::
+  +$  axon-4
+    $:  ram=term
+        tem=(unit (list dill-belt))
+        wid=_80
+        pos=$@(@ud [@ud @ud])
+        see=$%([%lin (list @c)] [%klr stub])
+    ==
+  ::
+  ++  axle-4-to-5  |=(axle-4 [%5 +<+(dug (~(run by dug) axon-4-to-5))])
+  ++  axon-4-to-5  |=(axon-4 [ram tem wid])
+  --
 ::
 ++  scry
   ^-  roon
@@ -429,20 +451,8 @@
           =(%$ syd)
       ==
     ~
-  ::  /dx/sessions//line    blit    current line (prompt) of default session
-  ::  /dx/sessions//cursor  @ud     current cursor position of default session
-  ::TODO  support asking for specific sessions once session ids are real
-  ::
-  ?.  ?=(%x ren)  ~
-  ?+  tyl  ~
-      [%sessions %$ *]
-    ?~  hey.all                                [~ ~]
-    ?~  session=(~(get by dug.all) u.hey.all)  [~ ~]
-    ?+  t.t.tyl  ~
-      [%line ~]    ``blit+!>(`blit`see.u.session)
-      [%cursor ~]  ``blit+!>(`blit`hop+pos.u.session)
-    ==
-  ==
+  ::TODO  scry endpoints for /sessions
+  ~
 ::
 ++  stay  all
 ::
