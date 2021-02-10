@@ -22,7 +22,14 @@
       do    ~(. +> bol)
       def   ~(. (default-agent this %|) bol)
   ::
-  ++  on-init  on-init:def
+  ++  on-init
+    ^-  (quip card _this)
+    :-  ~
+    %_  this
+        settings.state
+      %-  ~(gas by *^settings)
+      [%tutorial (~(gas by *bucket) [%seen b+%|]~)]~
+    ==
   ::
   ++  on-save  !>(state)
   ::
@@ -31,10 +38,7 @@
     ^-  (quip card _this)
     =/  old  !<(versioned-state old-vase)
     ?-  -.old
-        %0  
-      :_  this(state old)
-      =-  [%pass / %agent [our dap]:bol %poke -]~
-      settings-event+!>([%put-entry %tutorial %seen b+%|])
+      %0  [~ this(state old)]
     ==
   ::
   ++  on-poke
