@@ -291,6 +291,8 @@
       ++  on-peek   
         |=  =path
         ^-  (unit (unit cage))
+        ?:  =(/x/dbug/state path)
+          ``noun+(slop !>(state(inner-state *vase)) on-save:og)
         ?.  =(/x/sharing path)
           (on-peek:og path)
         ``noun+!>(sharing)
