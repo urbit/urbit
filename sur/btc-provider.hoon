@@ -1,4 +1,4 @@
-/-  *btc
+/-  *btc, *resource
 |%
 +$  host-info
   $:  api-url=@t
@@ -7,9 +7,23 @@
       block=@ud
       clients=(set ship)
   ==
++$  whitelist
+  $:  public=?
+      kids=?
+      users=(set ship)
+      groups=(set resource)
+  ==
+::
++$  whitelist-target
+  $%  [%public ~]
+      [%kids ~]
+      [%users users=(set ship)]
+      [%groups groups=(set resource)]
+  ==
 +$  command
   $%  [%set-credentials api-url=@t =network]
-      [%whitelist-clients clients=(set ship)]
+      [%add-whitelist wt=whitelist-target]
+      [%remove-whitelist wt=whitelist-target]
   ==
 +$  action
   $%  [%address-info =address]
@@ -32,8 +46,8 @@
   ==
 +$  update  (each result error)
 +$  status
-  $%  [%connected block=@ud fee=sats]
-      [%new-block block=@ud fee=sats blockhash=hexb blockfilter=hexb]
+  $%  [%connected block=@ud fee=(unit sats)]
+      [%new-block block=@ud fee=(unit sats) blockhash=hexb blockfilter=hexb]
       [%disconnected ~]
   ==
 ::
@@ -44,7 +58,7 @@
         [%get-tx-vals txid=hexb]
         [%get-raw-tx txid=hexb]
         [%broadcast-tx rawtx=hexb]
-        [%get-block-count ~]
+        [%get-block-count ~] 
         [%get-block-info ~]
     ==
   ::
@@ -55,7 +69,7 @@
         [%create-raw-tx rawtx=hexb]
         [%broadcast-tx txid=hexb broadcast=? included=?]
         [%get-block-count block=@ud]
-        [%get-block-info block=@ud fee=sats blockhash=hexb blockfilter=hexb]
+        [%get-block-info block=@ud fee=(unit sats) blockhash=hexb blockfilter=hexb]
 
     ==
   --

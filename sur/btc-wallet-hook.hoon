@@ -14,42 +14,50 @@
 +$  txid  hexb
 +$  provider  [host=ship connected=?]
 +$  block  @ud
-+$  btc-state  [=block fee=sats t=@da]
++$  btc-state  [=block fee=(unit sats) t=@da]
 +$  reqs  (map $?(address txid) request:bws)
 ::
 +$  payment  [pend=(unit txid) =xpub =address payer=ship value=sats]
 +$  piym  [ps=(map ship payment) num-fam=(map ship @ud)]
 +$  pend-piym  (map txid payment)
 +$  poym  (unit txbu:bws)
+::
 ::  req-pay-address: request a payment address from another ship
 ::   - target of action is local ship
+::  broadcast-tx: broadcast a signed-psbt, must be current poym
+::
++$  command
+  $%  [%set-provider provider=ship =network]
+      [%set-default-wallet =xpub]
+      [%delete-wallet =xpub]
+      [%clear-poym ~]
+      [%force-retry ~]
+      [%req-pay-address payee=ship value=sats feyb=sats]
+      [%broadcast-tx txhex=cord]
+  ==
+::
 ::  gen-pay-address: generate a payment address from our ship to another
 ::  ret-pay-address: give an address to a payer who requested it
-::  broadcast-tx: broadcast a signed-psbt, must be current poym
 ::  expect-payment: tell another ship that we're paying a previously requested address
 ::    - vout-n is the index of the output that has value
 ::
 +$  action
-  $%  settings
-      local
+  $%  local
       peer
   ==
-+$  settings
-  $%  [%set-provider provider=ship =network]
-      [%set-default-wallet ~]
-      [%clear-poym ~]
-      [%force-retry ~]
-  ==
+::   local and peer pokes are initiated by the agent itself
+::    they exist to make the state machine explicit
+::    they are not part of the API
+::
 +$  local
-  $%  [%req-pay-address payee=ship value=sats feyb=(unit sats)]
-      [%broadcast-tx txhex=cord]
-      [%add-piym =xpub =address payer=ship value=sats]
+  $%  [%add-piym =xpub =address payer=ship value=sats]
       [%add-poym =txbu:bws]
       [%add-poym-txi txid=hexb rawtx=hexb]
       [%close-pym ti=info:tx]
       [%fail-broadcast-tx txid=hexb]
       [%succeed-broadcast-tx txid=hexb]
   ==
+::
 +$  peer
   $%  [%gen-pay-address value=sats]
       [%ret-pay-address =address payer=ship value=sats]

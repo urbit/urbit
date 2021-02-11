@@ -6,14 +6,17 @@
 ::    current connection state
 ::    results/errors of RPC calls
 ::
+::  Scrys
+::  x/is-whitelisted/SHIP: bool, whether ship is whitelisted
+::
 /-  btc, json-rpc
-/+  *btc-provider, dbug, default-agent
+/+  *btc-provider, dbug, default-agent, groupl=group, resource
 |%
 +$  versioned-state
     $%  state-0
     ==
 ::
-+$  state-0  [%0 =host-info whitelist=(set ship)]
++$  state-0  [%0 =host-info =whitelist]
 ::
 +$  card  card:agent:gall
 ::
@@ -30,16 +33,25 @@
 ::
 ++  on-init
   ^-  (quip card _this)
-  ~&  >  '%btc-provider initialized successfully' 
-  `this(host-info ['' connected=%.n %main block=0 clients=*(set ship)], whitelist *(set ship))
+  ~&  >  '%btc-provider initialized successfully'
+  =|  wl=^whitelist
+  :-  ~
+  %_  this
+      host-info
+    ['' connected=%.n %main block=0 clients=*(set ship)]
+      whitelist  wl(public %.n, kids %.n)
+  ==
+::
 ++  on-save
   ^-  vase
   !>(state)
+::
 ++  on-load
   |=  old-state=vase
   ^-  (quip card _this)
   ~&  >  '%btc-provider recompiled successfully '
   `this(state !<(versioned-state old-state))
+::
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
@@ -53,6 +65,7 @@
       (handle-action:hc !<(action vase))
     ==
   [cards this]
+::
 ++  on-watch
   |=  pax=path
   ^-  (quip card _this)
@@ -64,9 +77,6 @@
   :-  do-ping:hc
   this(clients.host-info (~(put in clients.host-info) src.bowl))
 ::
-++  on-leave  on-leave:def
-++  on-peek   on-peek:def
-++  on-agent  on-agent:def
 ++  on-arvo
   |=  [=wire =sign-arvo]
   ^-  (quip card _this)
@@ -81,6 +91,19 @@
   ==
   [cards this]
 ::
+++  on-peek
+  |=  pax=path
+  ^-  (unit (unit cage))
+  ?+  pax  (on-peek:def pax)
+      [%x %is-whitelisted @t ~]
+    ``noun+!>((is-whitelisted:hc (ship (slav %p +>-.pax))))
+    ::
+      [%x %is-client @t ~]
+    ``noun+!>((is-client (ship (slav %p +>-.pax))))
+==
+::
+++  on-leave  on-leave:def
+++  on-agent  on-agent:def
 ++  on-fail   on-fail:def
 --
 ::  helper core
@@ -93,9 +116,38 @@
     :-  do-ping
     state(host-info [api-url.comm connected=%.n network.comm block=0 clients=*(set ship)])
     ::
-      %whitelist-clients
-    `state(whitelist (~(uni in whitelist) clients.comm))
-==
+      %add-whitelist
+    ?-  -.wt.comm
+        %public
+      `state(public.whitelist %.y)
+      ::
+        %kids
+      `state(kids.whitelist %.y)
+      ::
+        %users
+      `state(users.whitelist (~(uni in users.whitelist) users.wt.comm))
+      ::
+        %groups
+      `state(groups.whitelist (~(uni in groups.whitelist) groups.wt.comm))
+    ==
+    ::
+      %remove-whitelist
+    =.  state
+      ?-  -.wt.comm
+          %public
+        state(public.whitelist %.n)
+        ::
+          %kids
+        state(kids.whitelist %.n)
+        ::
+          %users
+        state(users.whitelist (~(dif in users.whitelist) users.wt.comm))
+        ::
+          %groups
+        state(groups.whitelist (~(dif in groups.whitelist) groups.wt.comm))
+      ==
+    `state(clients.host-info clean-client-list)
+  ==
 ::  if not connected, only %ping action is allowed
 ::
 ++  handle-action
@@ -223,9 +275,33 @@
 ::
 ++  is-whitelisted
   |=  user=ship  ^-  ?
-  ?|  (~(has in whitelist) user)
+  |^
+  ?|  public.whitelist
       =(our.bowl user)
+      ?&(kids.whitelist is-kid)
+      (~(has in users.whitelist) user)
+      in-group
   ==
+  ++  is-kid
+    =(our.bowl (sein:title our.bowl now.bowl user))
+  ++  in-group
+    =/  gs  ~(tap in groups.whitelist)
+    |-
+    ?~  gs  %.n
+    ?:  (~(is-member groupl bowl) user (en-path:resource i.gs))
+      %.y
+    $(gs t.gs)
+    ::  .^((unit group:g) %gx ;:(weld /=group-store=/groups p /noun))
+  --
+::  +clean-client-list: remove clients who are no longer whitelisted
+::   called after a whitelist change
+::
+++  clean-client-list
+  ^-  (set ship)
+  %-  sy
+  %+  murn  ~(tap in clients.host-info)
+  |=  c=ship  ^-  (unit ship)
+  ?:((is-whitelisted c) `c ~)
 ::
 ++  is-client
   |=  user=ship  ^-  ?

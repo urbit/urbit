@@ -106,7 +106,7 @@
     (get-id:txu:btc tx-data)
   ::
   ++  get-rawtx
-    (encode:txu:btc tx-data)
+    (basic-encode:txu:btc tx-data)
   ::  +add-output: append output (usually change) to txos
   ::
   ++  add-output

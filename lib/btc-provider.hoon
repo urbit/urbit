@@ -58,6 +58,7 @@
   api-url.host-info  ract
 ::
 ++  rpc
+  =,  dejs:format
   |%
   ++  parse-result
     |=  res=response:json-rpc
@@ -78,7 +79,7 @@
       [%broadcast-tx (broadcast-tx res.res)]
       ::
         %get-block-count
-      [id.res (ni:dejs:format res.res)]
+      [id.res (ni res.res)]
       ::
         %get-block-info
       [id.res (block-info res.res)]
@@ -128,7 +129,7 @@
     ++  block-info
       %-  ot:dejs:format
       :~  [%block ni:dejs:format]
-          [%fee ni:dejs:format]
+          [%fee (mu:dejs:format ni:dejs:format)]
           [%blockhash (cu:dejs:format to-hexb so:dejs:format)]
           [%blockfilter (cu:dejs:format to-hexb so:dejs:format)]
       ==
