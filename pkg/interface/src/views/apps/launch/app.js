@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 import f from 'lodash/fp';
@@ -73,10 +73,13 @@ export default function LaunchApp(props) {
   const { query } = useQuery();
 
   useEffect(() => {
-    if(query.tutorial) {
-      props.api.settings.putEntry('tutorial', 'seen', false);
+    if(query.get('tutorial')) {
+      if(hasTutorialGroup(props)) {
+        nextTutStep();
+      } else {
+        showModal();
+      }
     }
-
   }, [query]);
 
   const { tutorialProgress, nextTutStep } = useLocalState(tutSelector);
@@ -84,6 +87,8 @@ export default function LaunchApp(props) {
   const waiter = useWaitForProps(props);
 
   const { modal, showModal } = useModal({
+    position: 'relative', 
+    maxWidth: '350px',
     modal: (dismiss) => {
       const onDismiss = (e) => {
         e.stopPropagation();
@@ -97,7 +102,7 @@ export default function LaunchApp(props) {
           await waiter(hasTutorialGroup);
           await Promise.all(
             [TUTORIAL_BOOK, TUTORIAL_CHAT, TUTORIAL_LINKS].map(graph =>
-              api.graph.join(TUTORIAL_HOST, graph)));
+              props.api.graph.join(TUTORIAL_HOST, graph)));
 
           await waiter(p => {
             return `/ship/${TUTORIAL_HOST}/${TUTORIAL_CHAT}` in p.associations.graph &&
@@ -109,7 +114,10 @@ export default function LaunchApp(props) {
         dismiss();
       }
       return (
-      <Col gapY="2" p="3">
+      <Col maxWidth="350px" gapY="2" p="3">
+        <Box position="absolute" left="-16px" top="-16px">
+          <Icon width="32px" height="32px" color="blue" display="block" icon="LargeBullet" />
+        </Box>
         <Text lineHeight="tall" fontWeight="medium">Welcome</Text>
         <Text lineHeight="tall">
           You have been invited to use Landscape, an interface to chat 
@@ -118,7 +126,7 @@ export default function LaunchApp(props) {
           Would you like a tour of Landscape?
         </Text>
         <Row gapX="2" justifyContent="flex-end">
-          <Button onClick={onDismiss}>Skip</Button>
+          <Button backgroundColor="washedGray" onClick={onDismiss}>Skip</Button>
           <StatelessAsyncButton primary onClick={onContinue}>
             Yes
           </StatelessAsyncButton>
@@ -126,12 +134,14 @@ export default function LaunchApp(props) {
       </Col>
     )}
   });
+  const hasLoaded = useMemo(() => Object.keys(props.contacts).length > 0, [props.contacts]);
+
   useEffect(() => {
     const seenTutorial = _.get(props.settings, ['tutorial', 'seen'], true);
-    if(!seenTutorial && tutorialProgress === 'hidden') {
+    if(hasLoaded && !seenTutorial && tutorialProgress === 'hidden') {
       showModal();
     }
-  }, [props.settings]);
+  }, [props.settings, hasLoaded]);
 
   return (
     <>
