@@ -37,17 +37,17 @@ export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {
   const history = useHistory();
 
   useOutsideClick(overlayRef, () => {
-    history.push(props.baseUrl);
+    history.push(props.rootUrl);
   });
 
   const handleUnsubscribe = async () => {
     const [,,ship,name] = association.resource.split('/');
     await api.graph.leaveGraph(ship, name);
-    history.push(props.baseUrl);
+    history.push(props.rootUrl);
   };
   const handleRemove = async () => {
     await api.metadata.remove('graph', association.resource, association.group);
-    history.push(props.baseUrl);
+    history.push(props.rootUrl);
   };
   const handleArchive = async () => {
     const [,,,name] = association.resource.split('/');
