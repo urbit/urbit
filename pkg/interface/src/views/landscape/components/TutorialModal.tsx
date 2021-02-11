@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import _ from 'lodash';
 import { Box, Col, Row, Button, Text, Icon, Action } from "@tlon/indigo-react";
 import { useHistory } from "react-router-dom";
 import { TutorialProgress, tutorialProgress as progress } from "~/types";
@@ -75,13 +76,13 @@ export function TutorialModal(props: { api: GlobalApi }) {
       if(key === 'bottom' || key === 'left') {
         return ['0px', ...value];
       }
-      return [null, ...value];
+      return ['unset', ...value];
     });
     if(!('bottom' in withMobile)) {
-      withMobile.bottom = ['0px', null];
+      withMobile.bottom = ['0px', 'unset'];
     }
     if(!('left' in withMobile)) {
-      withMobile.left = ['0px', null];
+      withMobile.left = ['0px', 'unset'];
     }
 
     if (newCoords) {
