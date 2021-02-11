@@ -1,4 +1,5 @@
 import { cite } from '~/logic/lib/util';
+import { isChannelAdmin } from '~/logic/lib/group';
 
   const indexes = new Map([
     ['ships', []],
@@ -27,13 +28,21 @@ const shipIndex = function(contacts) {
   return ships;
 };
 
-const commandIndex = function (currentGroup) {
+const commandIndex = function (currentGroup, groups, associations) {
   // commands are special cased for default suite
   const commands = [];
+  const group = currentGroup ? groups[currentGroup] : null;
+  const association = currentGroup ? associations?.groups?.[currentGroup] : null;
+  const canAdd = 
+    (group && association) 
+    ? (association.metadata.vip === 'member-metadata' || isChannelAdmin(group, currentGroup))
+    : !currentGroup; // home workspace or hasn't loaded
   const workspace = currentGroup || '/home';
   commands.push(result(`Groups: Create`, `/~landscape/new`, 'Groups', null));
   commands.push(result(`Groups: Join`, `/~landscape/join`, 'Groups', null));
-  commands.push(result(`Channel: Create`, `/~landscape${workspace}/new`, 'Groups', null));
+  if(canAdd) {
+    commands.push(result(`Channel: Create`, `/~landscape${workspace}/new`, 'Groups', null));
+  }
 
   return commands;
 };
@@ -127,7 +136,7 @@ export default function index(contacts, associations, apps, currentGroup, groups
       });
   });
 
-  indexes.set('commands', commandIndex(currentGroup));
+  indexes.set('commands', commandIndex(currentGroup, groups, associations));
   indexes.set('subscriptions', subscriptions);
   indexes.set('groups', landscape);
   indexes.set('apps', appIndex(apps));
