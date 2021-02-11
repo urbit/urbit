@@ -129,20 +129,18 @@
     met         ~(. mdl bowl)
     hc          ~(. +> bowl)
 ::
-++  on-init  on-init:def
+++  on-init  
+  :_  this
+  :~  watch-invites:hc
+      watch-contacts:hc
+      watch-store:hc
+  ==
+::
 ++  on-save  !>(state)
 ++  on-load  
   |=  =vase
   =+  !<(old=state-zero vase)
-  :_  this(state old)
-  %-  zing
-  :~  ?:  (~(has by wex.bowl) [/invites our.bowl %invite-store])  ~
-      ~[watch-invites:hc]
-      ?:  (~(has by wex.bowl) [/contacts our.bowl %contact-store])  ~
-      ~[watch-contacts:hc]
-      ?:  (~(has by wex.bowl) [/store our.bowl %metadata-store])  ~
-      ~[watch-store:hc]
-  ==
+  `this(state old)
 ::
 ++  on-poke  
   |=  [=mark =vase]
