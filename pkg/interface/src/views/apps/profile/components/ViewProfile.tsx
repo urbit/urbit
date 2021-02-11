@@ -81,7 +81,6 @@ export function ViewProfile(props: any) {
           <Col>
             { contact?.groups.sort(lengthOrder).map(g => (
               <GroupLink
-                mb="3"
                 api={api}
                 resource={g}
                 groups={groups}
