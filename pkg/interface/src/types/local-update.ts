@@ -1,4 +1,4 @@
-export const tutorialProgress = ['hidden', 'start', 'group-desc', 'channels', 'chat', 'link', 'publish', 'notifications', 'profile', 'leap', 'done'] as const;
+export const tutorialProgress = ['hidden', 'start', 'group-desc', 'channels', 'chat', 'link', 'publish', 'profile', 'leap', 'notifications', 'done', 'exit'] as const;
 
 export type TutorialProgress = typeof tutorialProgress[number];
 interface LocalUpdateSetDark {

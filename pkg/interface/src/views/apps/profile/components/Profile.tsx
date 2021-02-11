@@ -54,13 +54,14 @@ export function Profile(props: any) {
       height="100%"
       width="100%">
       <Box
+        ref={anchorRef}
         maxWidth="600px"
         width="100%">
         { ship === `~${window.ship}` ? (
             <SetStatus ship={ship} contact={contact} api={props.api} />
           ) : null
         }
-        <Row ref={anchorRef} width="100%" height="300px">
+        <Row  width="100%" height="300px">
           {cover}
         </Row>
         <Row
