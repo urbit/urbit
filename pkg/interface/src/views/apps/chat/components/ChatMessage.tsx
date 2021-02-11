@@ -294,7 +294,9 @@ export const MessageWithSigil = (props) => {
   return (
     <>
       <Box
-        onClick={() => toggleOverlay()}
+        onClick={() => {
+          setShowOverlay(true);
+        }}
         className='fl v-top pt1'
         height={16}
         pr={3}
@@ -311,6 +313,7 @@ export const MessageWithSigil = (props) => {
             history={history}
             className='relative'
             scrollWindow={scrollWindow}
+            api={api}
           />
         )}
         {img}
