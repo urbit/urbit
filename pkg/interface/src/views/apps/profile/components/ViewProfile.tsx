@@ -78,7 +78,7 @@ export function ViewProfile(props: any) {
       { (contact?.groups || []).length > 0 && (
         <Col gapY="3" mb="3" mt="6" alignItems="flex-start">
           <Text fontWeight="medium">Pinned Groups</Text>
-          <Row flexWrap="wrap" justifyContent="flex-start" gapX="3">
+          <Col>
             { contact?.groups.sort(lengthOrder).map(g => (
               <GroupLink
                 mb="3"
@@ -89,7 +89,7 @@ export function ViewProfile(props: any) {
                 measure={() => {}}
               />
             ))}
-          </Row>
+          </Col>
       </Col>
       )}
 

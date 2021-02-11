@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useLayoutEffect } from "react";
 
-import { Box, Text, Row, Button, Action } from "@tlon/indigo-react";
+import { Box, Text, Row, Col, Button, Action } from "@tlon/indigo-react";
 import GlobalApi from "~/logic/api/global";
 import { Associations, Groups, PropFunc } from "~/types";
 import { MetadataIcon } from "../landscape/components/MetadataIcon";
@@ -65,21 +65,20 @@ export function GroupLink(
         width="fit-content"
         flexShrink={1}
         alignItems="center"
-        border="1"
-        borderColor="lightGray"
-        borderRadius="2"
         py="2"
-        px="2"
+        pr="2"
+        onClick={showModal}
+        cursor='pointer'
       >
         {preview ? (
           <>
-            <MetadataIcon height="4" width="4" metadata={preview.metadata} />
+            <MetadataIcon height={6} width={6} metadata={preview.metadata} />
+            <Col>
             <Text ml="2" fontWeight="medium">
               {preview.metadata.title}
             </Text>
-            <Button onClick={showModal} ml="4" primary>
-              {joined ? "View" : "Join"}
-            </Button>
+            <Text pt='1' ml='2'>{preview.members} members</Text>
+            </Col>
           </>
         ) : (
           <Text mono>{name}</Text>
