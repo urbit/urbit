@@ -49,7 +49,7 @@ export function SetStatus(props: any) {
         }}
       />
       <Button
-        backgroundColor="black"
+        primary
         color="white"
         ml={2}
         width="25%"

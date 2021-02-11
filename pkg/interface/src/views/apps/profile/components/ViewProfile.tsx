@@ -66,7 +66,7 @@ export function ViewProfile(props: any) {
             width="100%">
             <Center width="100%">
               <Button
-                backgroundColor="black"
+                primary
                 color="white"
                 onClick={() => {history.push(`/~profile/${ship}/edit`)}}>
                 Edit Profile
