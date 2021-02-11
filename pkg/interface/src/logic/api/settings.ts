@@ -32,7 +32,7 @@ export default class SettingsApi extends BaseApi<StoreState> {
   }
 
   putEntry(buc: Key, key: Key, val: Value) {
-    this.storeAction({
+    return this.storeAction({
       "put-entry": {
         "bucket-key": buc,
         "entry-key": key,
