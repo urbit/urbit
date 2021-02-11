@@ -3,6 +3,8 @@ import { RouteComponentProps } from "react-router-dom";
 import _ from "lodash";
 import bigInt, { BigInteger } from 'big-integer';
 
+import { Col } from '@tlon/indigo-react';
+
 import GlobalApi from "~/logic/api/global";
 import { Patp, Path } from "~/types/noun";
 import { Contacts } from "~/types/contact-update";
@@ -252,7 +254,7 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
     const unreadMsg = unreadIndex && graph.get(unreadIndex);
 
     return (
-      <>
+      <Col height='100%' overflow='hidden' position="relative">
         <UnreadNotice
           unreadCount={unreadCount}
           unreadMsg={unreadCount === 1 && unreadMsg && unreadMsg?.post.author === window.ship ? false : unreadMsg}
@@ -299,7 +301,7 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
             this.fetchMessages(newer);
           }}
         />
-      </>
+      </Col>
     );
   }
 }

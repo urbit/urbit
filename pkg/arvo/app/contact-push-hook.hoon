@@ -111,7 +111,19 @@
   |=  =vase
   ^-  [(list card) agent]
   =/  =update:store  !<(update:store vase)
-  ?.  ?=(%disallow -.update)  [~ this]
-  :_  this
-  [%give %kick ~[resource+(en-path:res [our.bowl %''])] ~]~
+  ?+  -.update  [~ this]
+      %disallow
+    :_  this
+    [%give %kick ~[resource+(en-path:res [our.bowl %''])] ~]~
+  ::
+      %set-public
+    :_  this
+    ?.  public.update
+      [%give %kick ~[resource+(en-path:res [our.bowl %''])] ~]~
+    %+  murn  ~(tap in scry-groups:grp)
+    |=  rid=res
+    ?:  =(our.bowl entity.rid)  ~
+    ?.  (is-managed:grp rid)    ~
+    `(poke-self:pass:io contact-share+!>([%share entity.rid]))
+  ==
 --
