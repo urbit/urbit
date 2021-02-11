@@ -33,16 +33,17 @@ const commandIndex = function (currentGroup, groups, associations) {
   const commands = [];
   const group = currentGroup ? groups[currentGroup] : null;
   const association = currentGroup ? associations?.groups?.[currentGroup] : null;
-  const canAdd = 
-    (group && association) 
+  const canAdd =
+    (group && association)
     ? (association.metadata.vip === 'member-metadata' || isChannelAdmin(group, currentGroup))
     : !currentGroup; // home workspace or hasn't loaded
   const workspace = currentGroup || '/home';
   commands.push(result(`Groups: Create`, `/~landscape/new`, 'Groups', null));
-  commands.push(result(`Groups: Join`, `/~landscape/join`, 'Groups', null));
-  if(canAdd) {
+  if (canAdd) {
     commands.push(result(`Channel: Create`, `/~landscape${workspace}/new`, 'Groups', null));
   }
+  commands.push(result(`Groups: Join`, `/~landscape/join`, 'Groups', null));
+  commands.push(result(`Tutorial`, '/?tutorial=true', 'Null', null));
 
   return commands;
 };

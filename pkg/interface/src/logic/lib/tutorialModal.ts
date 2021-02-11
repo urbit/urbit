@@ -1,8 +1,9 @@
 import { TutorialProgress, Associations } from "~/types";
 import { AlignX, AlignY } from "~/logic/lib/relativePosition";
+import { Direction } from "~/views/components/Triangle";
 
 export const MODAL_WIDTH = 256;
-export const MODAL_HEIGHT = 180;
+export const MODAL_HEIGHT = 256;
 export const MODAL_WIDTH_PX = `${MODAL_WIDTH}px`;
 export const MODAL_HEIGHT_PX = `${MODAL_HEIGHT}px`;
 
@@ -20,6 +21,7 @@ interface StepDetail {
   alignY: AlignY | AlignY[];
   offsetX: number;
   offsetY: number;
+  arrow: Direction;
 }
 
 export function hasTutorialGroup(props: { associations: Associations }) {
@@ -28,8 +30,36 @@ export function hasTutorialGroup(props: { associations: Associations }) {
   );
 }
 
+export const getTrianglePosition = (dir: Direction) => {
+  const midY = `${MODAL_HEIGHT / 2 - 8}px`;
+  const midX = `${MODAL_WIDTH / 2 - 8}px`;
+  switch(dir) {
+  case 'East':
+    return {
+      top: midY,
+      right: '-32px'
+    };
+    case 'West':
+      return {
+        top: midY,
+        left: '-32px'
+      }
+    case 'North':
+      return {
+        top: '-32px',
+        left: midX
+      };
+    case 'South':
+      return {
+        bottom: '-32px',
+        left: midX
+      };
+  }
+}
+
 export const progressDetails: Record<TutorialProgress, StepDetail> = {
   hidden: {} as any,
+  exit: {} as any,
   done: {
     title: "End",
     description:
@@ -41,14 +71,15 @@ export const progressDetails: Record<TutorialProgress, StepDetail> = {
     offsetY: 0,
   },
   start: {
-    title: "New group added",
+    title: "New Group added",
     description:
       "We just added you to the Beginner island group to show you around. This group is public, but other groups can be private",
     url: "/",
     alignX: "right",
     alignY: "top",
-    offsetX: MODAL_WIDTH + 8,
-    offsetY: 0,
+    arrow: "West",
+    offsetX: MODAL_WIDTH + 24,
+    offsetY: 64,
   },
   "group-desc": {
     title: "What's a group",
@@ -57,7 +88,8 @@ export const progressDetails: Record<TutorialProgress, StepDetail> = {
     url: `/~landscape/ship/${TUTORIAL_HOST}/${TUTORIAL_GROUP}`,
     alignX: "left",
     alignY: "top",
-    offsetX: MODAL_WIDTH + 8,
+    arrow: "East",
+    offsetX: MODAL_WIDTH + 24,
     offsetY: MODAL_HEIGHT / 2 - 8,
   },
   channels: {
@@ -67,7 +99,8 @@ export const progressDetails: Record<TutorialProgress, StepDetail> = {
     url: `/~landscape/ship/${TUTORIAL_HOST}/${TUTORIAL_GROUP}`,
     alignY: "top",
     alignX: "right",
-    offsetX: MODAL_WIDTH + 8,
+    arrow: "West",
+    offsetX: MODAL_WIDTH + 24,
     offsetY: -8,
   },
   chat: {
@@ -76,9 +109,10 @@ export const progressDetails: Record<TutorialProgress, StepDetail> = {
       "Chat channels are for messaging within your group. Direct Messages are also supported, and are accessible from the “DMs” tile on the homescreen",
     url: `/~landscape/ship/${TUTORIAL_HOST}/${TUTORIAL_GROUP}/resource/chat/ship/${TUTORIAL_HOST}/${TUTORIAL_CHAT}`,
     alignY: "top",
+    arrow: "North",
     alignX: "right",
-    offsetX: 0,
-    offsetY: -32,
+    offsetY: -56,
+    offsetX: -8,
   },
   link: {
     title: "Collection",
@@ -87,8 +121,9 @@ export const progressDetails: Record<TutorialProgress, StepDetail> = {
     url: `/~landscape/ship/${TUTORIAL_HOST}/${TUTORIAL_GROUP}/resource/link/ship/${TUTORIAL_HOST}/${TUTORIAL_LINKS}`,
     alignY: "top",
     alignX: "right",
-    offsetX: 0,
-    offsetY: -32,
+    arrow: "North",
+    offsetX: -8,
+    offsetY: -56,
   },
   publish: {
     title: "Notebook",
@@ -97,18 +132,19 @@ export const progressDetails: Record<TutorialProgress, StepDetail> = {
     url: `/~landscape/ship/${TUTORIAL_HOST}/${TUTORIAL_GROUP}/resource/publish/ship/${TUTORIAL_HOST}/${TUTORIAL_BOOK}`,
     alignY: "top",
     alignX: "right",
-    offsetX: 0,
-    offsetY: -32,
+    arrow: "North",
+    offsetX: -8,
+    offsetY: -56,
   },
   notifications: {
     title: "Notifications",
-    description:
-      "Subscribing to a channel will send you notifications when there are new updates. You will also receive a notification when someone mentions your name in a channel.",
-    url: `/~landscape/ship/${TUTORIAL_HOST}/${TUTORIAL_GROUP}/resource/publish/ship/${TUTORIAL_HOST}/${TUTORIAL_BOOK}/settings#notifications`,
+    description: "You will get updates from subscribed channels and mentions here. You can access Notifications through Leap.",
+    url: '/~notifications',
     alignY: "top",
-    alignX: "right",
-    offsetX: 0,
-    offsetY: -32,
+    alignX: "left",
+    arrow: "North",
+    offsetX: (MODAL_WIDTH / 2) - 16,
+    offsetY: -48,
   },
   profile: {
     title: "Profile",
@@ -117,6 +153,7 @@ export const progressDetails: Record<TutorialProgress, StepDetail> = {
     url: `/~profile/~${window.ship}`,
     alignY: "top",
     alignX: "right",
+    arrow: "South",
     offsetX: -300 + MODAL_WIDTH / 2,
     offsetY: -120 + MODAL_HEIGHT / 2,
   },
@@ -127,7 +164,8 @@ export const progressDetails: Record<TutorialProgress, StepDetail> = {
     url: `/~profile/~${window.ship}`,
     alignY: "top",
     alignX: "left",
-    offsetX: 0,
-    offsetY: -32,
+    arrow: "North",
+    offsetX: 0.3 *MODAL_HEIGHT,
+    offsetY: -48,
   },
 };

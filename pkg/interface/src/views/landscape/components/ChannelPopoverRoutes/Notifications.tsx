@@ -3,7 +3,6 @@ import { Col, Text, BaseLabel, Label } from "@tlon/indigo-react";
 import GlobalApi from "~/logic/api/global";
 import { Association, NotificationGraphConfig } from "~/types";
 import { StatelessAsyncToggle } from "~/views/components/StatelessAsyncToggle";
-import {useTutorialModal} from "~/views/components/useTutorialModal";
 
 interface ChannelNotificationsProps {
   api: GlobalApi;
@@ -27,7 +26,6 @@ export function ChannelNotifications(props: ChannelNotificationsProps) {
 
   const anchorRef = useRef<HTMLElement | null>(null)
 
-  useTutorialModal('notifications', true, anchorRef.current);
 
   return (
     <Col mb="6" gapY="4" flexShrink={0}>

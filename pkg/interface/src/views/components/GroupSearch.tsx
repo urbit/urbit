@@ -75,7 +75,8 @@ export function GroupSearch<I extends string, V extends FormValues<I>>(props: Gr
     touched: touchedFields,
     errors,
     initialValues,
-    setFieldValue
+    setFieldValue,
+    setFieldTouched,
   } = useFormikContext<V>();
   const [inputIdx, setInputIdx] = useState(initialValues[id].length);
   const name = `${id}[${inputIdx}]`;
@@ -118,10 +119,12 @@ export function GroupSearch<I extends string, V extends FormValues<I>>(props: Gr
       render={(arrayHelpers) => {
         const onSelect = (a: Association) => {
           setFieldValue(name, a.group);
+          setFieldTouched(name, true, false);
           setInputIdx(s => s+1);
         };
 
         const onRemove = (idx: number) => {
+          setFieldTouched(name, true, false);
           setInputIdx(s => s - 1);
           arrayHelpers.remove(idx);
         };
@@ -145,6 +148,7 @@ export function GroupSearch<I extends string, V extends FormValues<I>>(props: Gr
                 }
                 getKey={(a: Association) => a.group}
                 onSelect={onSelect}
+                onBlur={() => {}}
               />
               {value?.length > 0 && (
                 value.map((e, idx: number) => {

@@ -12,6 +12,8 @@ import { Box } from "@tlon/indigo-react";
 import { useOutsideClick } from "./useOutsideClick";
 import { ModalOverlay } from "~/views/components/ModalOverlay";
 import {Portal} from "~/views/components/Portal";
+import {ModalPortal} from "~/views/components/ModalPortal";
+import {PropFunc} from "~/types";
 
 type ModalFunc = (dismiss: () => void) => JSX.Element;
 interface UseModalProps {
@@ -23,7 +25,8 @@ interface UseModalResult {
   showModal: () => void;
 }
 
-export function useModal(props: UseModalProps): UseModalResult {
+export function useModal(props: UseModalProps & PropFunc<typeof Box>): UseModalResult {
+  const { modal, ...rest } = props;
   const innerRef = useRef<HTMLElement>();
   const [modalShown, setModalShown] = useState(false);
 
@@ -39,15 +42,13 @@ export function useModal(props: UseModalProps): UseModalResult {
     () =>
       !modalShown
         ? null
-        : typeof props.modal === "function"
-        ? props.modal(dismiss)
-        : props.modal,
-    [modalShown, props.modal, dismiss]
+        : typeof modal === "function"
+        ? modal(dismiss)
+        : modal,
+    [modalShown, modal, dismiss]
   );
 
-  useOutsideClick(innerRef, dismiss);
-
-  const modal = useMemo(
+  const modalComponent = useMemo(
     () =>
     !inner ? null : (
       <Portal>
@@ -63,7 +64,8 @@ export function useModal(props: UseModalProps): UseModalResult {
           alignItems="stretch"
           flexDirection="column"
           spacing="2"
-          
+          dismiss={dismiss}
+          {...rest}
         >
           {inner}
         </ModalOverlay>
@@ -74,6 +76,6 @@ export function useModal(props: UseModalProps): UseModalResult {
 
   return {
     showModal,
-    modal,
+    modal: modalComponent,
   };
 }

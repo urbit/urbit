@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useRef } from "react";
 import _ from 'lodash';
 import { Box, Col, Text, Row } from "@tlon/indigo-react";
 import { Link, Switch, Route } from "react-router-dom";
@@ -12,11 +12,13 @@ import { Dropdown } from "~/views/components/Dropdown";
 import { Formik } from "formik";
 import { FormikOnBlur } from "~/views/components/FormikOnBlur";
 import GroupSearch from "~/views/components/GroupSearch";
+import {useTutorialModal} from "~/views/components/useTutorialModal";
 
 const baseUrl = "/~notifications";
 
-const HeaderLink = (
-  props: PropFunc<typeof Text> & { view?: string; current: string }
+const HeaderLink = React.forwardRef((
+  props: PropFunc<typeof Text> & { view?: string; current: string },
+  ref
 ) => {
   const { current, view, ...textProps } = props;
   const to = view ? `${baseUrl}/${view}` : baseUrl;
@@ -24,10 +26,10 @@ const HeaderLink = (
 
   return (
     <Link to={to}>
-      <Text px="2" {...textProps} gray={!active} />
+      <Text ref={ref} px="2" {...textProps} gray={!active} />
     </Link>
   );
-};
+});
 
 interface NotificationFilter {
   groups: string[];
@@ -37,8 +39,8 @@ export default function NotificationsScreen(props: any) {
   const relativePath = (p: string) => baseUrl + p;
 
   const [filter, setFilter] = useState<NotificationFilter>({ groups: [] });
-  const onSubmit = async (values: { groups: string }) => {
-    setFilter({ groups: values.groups ? [values.groups] : [] });
+  const onSubmit = async ({ groups } : NotificationFilter) => {
+    setFilter({ groups });
   };
   const onReadAll = useCallback(() => {
     props.api.hark.readAll()
@@ -48,7 +50,9 @@ export default function NotificationsScreen(props: any) {
       ? "All"
       : filter.groups
           .map((g) => props.associations?.groups?.[g]?.metadata?.title)
-          .join(", ");
+    .join(", ");
+  const anchorRef = useRef<HTMLElement | null>(null);
+  useTutorialModal('notifications', true, anchorRef.current);
   return (
     <Switch>
       <Route
@@ -74,7 +78,7 @@ export default function NotificationsScreen(props: any) {
                     <Text>Updates</Text>
                     <Row>
                       <Box>
-                        <HeaderLink current={view} view="">
+                        <HeaderLink ref={anchorRef} current={view} view="">
                           Inbox
                         </HeaderLink>
                       </Box>

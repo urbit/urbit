@@ -9,8 +9,7 @@ export function useOutsideClick(
       const portalRoot = document.querySelector('#portal-root')!;
       if (
         ref.current &&
-        !ref.current.contains(event.target as any) &&
-        (!portalRoot.contains(ref.current) || portalRoot.contains(event.target as any))
+        !ref.current.contains(event.target as any)
       ) {
         onClick();
       }
