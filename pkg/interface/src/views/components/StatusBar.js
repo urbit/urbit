@@ -99,7 +99,7 @@ const StatusBar = (props) => {
           >
           <Text color='#000000'>Submit <Text color='#000000' display={['none', 'inline']}>an</Text> issue</Text>
         </StatusBarItem>
-        <StatusBarItem mr={2} onClick={() => props.history.push('/~landscape/messages')}>
+        <StatusBarItem width="32px" mr={2} onClick={() => props.history.push('/~landscape/messages')}>
             <Icon icon="Users"/>
         </StatusBarItem>
         <Dropdown
