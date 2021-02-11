@@ -113,5 +113,5 @@
   =/  =update:store  !<(update:store vase)
   ?.  ?=(%disallow -.update)  [~ this]
   :_  this
-  [%give %kick ~[resource+(en-path:res [our.bowl %our])] ~]~
+  [%give %kick ~[resource+(en-path:res [our.bowl %''])] ~]~
 --
