@@ -42,6 +42,7 @@
   %+  murn  ~(tap in scry-groups:grp)
   |=  rid=resource
   ?:  =(our.bowl entity.rid)  ~
+  ?.  (is-managed:grp rid)    ~
   `(poke-self:pass:io pull-hook-action+!>([%add [entity .]:rid]))
 ::
 ++  on-peek   on-peek:def
