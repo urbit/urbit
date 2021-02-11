@@ -84,7 +84,7 @@ export function Profile(props: any) {
           ) : null}
           <Text maxWidth='18rem' overflowX='hidden' textOverflow="ellipsis"
             whiteSpace="nowrap"
-            overflow="hidden" display="inline-block" verticalAlign="middle">{contact.status}</Text>
+            overflow="hidden" display="inline-block" verticalAlign="middle">{contact?.status ?? ""}</Text>
         </Row>
         <Row  width="100%" height="300px">
           {cover}
