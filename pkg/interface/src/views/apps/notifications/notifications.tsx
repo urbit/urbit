@@ -42,6 +42,9 @@ export default function NotificationsScreen(props: any) {
   const onSubmit = async ({ groups } : NotificationFilter) => {
     setFilter({ groups });
   };
+  const onReadAll = useCallback(() => {
+    props.api.hark.readAll()
+  }, []);
   const groupFilterDesc =
     filter.groups.length === 0
       ? "All"
@@ -85,39 +88,53 @@ export default function NotificationsScreen(props: any) {
                         </HeaderLink>
                       </Box>
                     </Row>
-                    <Dropdown
-                      alignX="right"
-                      alignY="top"
-                      options={
-                        <Col
-                          p="2"
-                          backgroundColor="white"
-                          border={1}
-                          borderRadius={1}
-                          borderColor="lightGray"
-                          gapY="2"
-                        >
-                          <FormikOnBlur
-                            initialValues={filter}
-                            onSubmit={onSubmit}
-                          >
-                            <GroupSearch
-                              id="groups"
-                              label="Filter Groups"
-                              caption="Only show notifications from this group"
-                              associations={props.associations}
-                            />
-                          </FormikOnBlur>
-                        </Col>
-                      }
-                    >
-                      <Box>
-                        <Text mr="1" gray>
-                          Filter:
+                    <Row
+                      justifyContent="space-between">
+                      <Box
+                        mr="1"
+                        overflow="hidden"
+                        onClick={onReadAll}
+                        cursor="pointer"
+                      >
+                          <Text mr="1" color="blue">
+                            Mark All Read
                         </Text>
-                        <Text>{groupFilterDesc}</Text>
                       </Box>
-                    </Dropdown>
+
+                      <Dropdown
+                        alignX="right"
+                        alignY="top"
+                        options={
+                          <Col
+                            p="2"
+                            backgroundColor="white"
+                            border={1}
+                            borderRadius={1}
+                            borderColor="lightGray"
+                            gapY="2"
+                          >
+                            <FormikOnBlur
+                              initialValues={filter}
+                              onSubmit={onSubmit}
+                            >
+                              <GroupSearch
+                                id="groups"
+                                label="Filter Groups"
+                                caption="Only show notifications from this group"
+                                associations={props.associations}
+                              />
+                            </FormikOnBlur>
+                          </Col>
+                        }
+                      >
+                        <Box>
+                          <Text mr="1" gray>
+                            Filter:
+                        </Text>
+                          <Text>{groupFilterDesc}</Text>
+                        </Box>
+                      </Dropdown>
+                    </Row>
                   </Row>
                   {view === "preferences" && (
                     <NotificationPreferences

@@ -85,8 +85,6 @@ export default function TextContent(props) {
     && (urbitOb.isValidPatp(group[2]) // valid patp?
     && (group[0] === content.text))) // entire message is room name?
 
-  console.log(isGroupLink);
-
   if(isGroupLink) { 
     const resource = `/ship/${content.text}`;
     return (

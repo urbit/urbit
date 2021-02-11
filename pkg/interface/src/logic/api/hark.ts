@@ -109,6 +109,9 @@ export class HarkApi extends BaseApi<StoreState> {
   seen() {
     return this.harkAction({ seen: null });
   }
+  readAll() {
+    return this.harkAction({ 'read-all': null });
+  }
 
   mute(notif: IndexedNotification) {
     if('graph' in notif.index && 'graph' in notif.notification.contents) {

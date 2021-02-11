@@ -50,7 +50,7 @@ export function Profile(props: any) {
 
   return (
     <Center
-      p={4}
+      p={[0,4]}
       height="100%"
       width="100%">
       <Box

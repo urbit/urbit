@@ -416,7 +416,7 @@
   ::
   ++  translate
     ^+  poke-core
-    ?+  -.in  poke-core
+    ?-  -.in
     ::
       %add-note      (add-note +.in)
       %archive       (do-archive +.in)
@@ -434,6 +434,8 @@
       %remove-graph  (remove-graph +.in)
       %set-dnd      (set-dnd +.in)
       %seen         seen
+      %read-all     read-all
+    ::
     ==
   ::
   ::  +|  %note
@@ -653,6 +655,14 @@
     =>  (emit cancel-autoseen)
     =>  (emit autoseen-timer)
     poke-core(current-timebox now.bowl)
+  ::
+  ++  read-all
+    =:  unreads-count  (~(run by unreads-count) _0)
+        unreads-each    (~(run by unreads-each) _~)      
+        notifications  (~(run by notifications) _~)
+      ==
+    =>  rebuild-cache
+    seen
   ::
   ++  set-dnd
     |=  d=?
