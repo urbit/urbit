@@ -48,7 +48,7 @@ const StatusBar = (props) => {
   const anchorRef = useRef(null);
 
   const leapHighlight = useTutorialModal('leap', true, anchorRef.current);
-  
+
   const floatLeap = leapHighlight && window.matchMedia('(max-width: 550px)').matches;
 
   return (
@@ -141,6 +141,7 @@ const StatusBar = (props) => {
           }>
           <StatusBarItem
             px={xPadding}
+            width="32px"
             flexShrink='0'
             backgroundColor={bgColor}>
             {profileImage}
