@@ -59,7 +59,7 @@ On both `~zod`/`dopzod`, choose depending on whether you're on test or main
 
 `~dopzod`
 ```
-:btc-wallet-hook|command [%req-pay-address ~zod 30.000 feyb=[~ 10]]
+:btc-wallet-hook|command [%req-pay-address ~zod 30.000 feyb=10
 ```
 
 ### Check State on ~zod/~dopzod
@@ -76,11 +76,11 @@ On both `~zod`/`dopzod`, choose depending on whether you're on test or main
 ### Idempotent
 `~dopzod`
 ```
-:btc-wallet-hook|command [%req-pay-address ~zod 3.000 feyb=[~ 100]]
+:btc-wallet-hook|command [%req-pay-address ~zod 3.000 feyb=100
 ```
 Or can change amount:
 ```
-:btc-wallet-hook|command [%req-pay-address ~zod 3.000 feyb=[~ 100]]
+:btc-wallet-hook|command [%req-pay-address ~zod 3.000 feyb=100
 ```
 
 ### Broadcast the Signed TX
