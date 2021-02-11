@@ -78,7 +78,7 @@
     ::  #  constants
     ::
     ::  contract addresses
-    ++  contracts  mainnet-contracts
+    ++  contracts  ropsten-contracts
     ++  mainnet-contracts
       |%
       ::  azimuth: data contract
