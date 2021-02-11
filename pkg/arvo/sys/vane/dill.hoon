@@ -247,10 +247,9 @@
         ^+  +>
         ?-    sih
             [%gall %onto *]
-          ::  ~&  [%take-gall-onto +>.sih]
           ?-  -.+>.sih
             %|  (crud %onto p.p.+>.sih)
-            %&  (fore (tuba "{<p.p.sih>}") ~)
+            %&  (fore (tuba "{(t q)}ed %{(t p)}":[t=trip p.p.sih]) ~)
           ==
         ::
             [%gall %unto *]
