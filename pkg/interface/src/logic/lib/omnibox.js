@@ -34,6 +34,7 @@ const commandIndex = function (currentGroup) {
   commands.push(result(`Groups: Create`, `/~landscape/new`, 'Groups', null));
   commands.push(result(`Groups: Join`, `/~landscape/join`, 'Groups', null));
   commands.push(result(`Channel: Create`, `/~landscape${workspace}/new`, 'Groups', null));
+  commands.push(result(`Tutorial`, '/?tutorial=true', 'Null', null));
 
   return commands;
 };

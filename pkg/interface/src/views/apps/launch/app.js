@@ -20,6 +20,7 @@ import { JoinGroup } from "~/views/landscape/components/JoinGroup";
 import { Helmet } from 'react-helmet';
 import useLocalState from "~/logic/state/local";
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
+import { useQuery } from "~/logic/lib/useQuery";
 import { 
   hasTutorialGroup,
   TUTORIAL_GROUP,
@@ -68,6 +69,15 @@ export default function LaunchApp(props) {
       <Text color="gray">{hashText || props.baseHash}</Text>
     </Box>
   );
+
+  const { query } = useQuery();
+
+  useEffect(() => {
+    if(query.tutorial) {
+      props.api.settings.putEntry('tutorial', 'seen', false);
+    }
+
+  }, [query]);
 
   const { tutorialProgress, nextTutStep } = useLocalState(tutSelector);
 
