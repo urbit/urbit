@@ -77,7 +77,7 @@ export function ViewProfile(props: any) {
       }
       { (contact?.groups || []).length > 0 && (
         <Col gapY="3" mb="3" mt="6" alignItems="flex-start">
-          <Text fontWeight="medium">Pinned Groups</Text>
+          <Text gray>Pinned Groups</Text>
           <Col>
             { contact?.groups.sort(lengthOrder).map(g => (
               <GroupLink
