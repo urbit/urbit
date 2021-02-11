@@ -24,12 +24,7 @@
   ::
   ++  on-init
     ^-  (quip card _this)
-    :-  ~
-    %_  this
-        settings.state
-      %-  ~(gas by *^settings)
-      [%tutorial (~(gas by *bucket) [%seen b+%|]~)]~
-    ==
+    `this
   ::
   ++  on-save  !>(state)
   ::
