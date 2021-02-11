@@ -85,53 +85,53 @@
       [id.res (block-info res.res)]
     ==
     ++  address-info
-      %-  ot:dejs:format
-      :~  [%address (cu:dejs:format address-from-cord so:dejs:format)]
-          [%utxos (as:dejs:format utxo)]
-          [%used bo:dejs:format]
-          [%block ni:dejs:format]
+      %-  ot
+      :~  [%address (cu address-from-cord so)]
+          [%utxos (as utxo)]
+          [%used bo]
+          [%block ni]
       ==
     ++  utxo
-      %-  ot:dejs:format
-      :~  ['tx_pos' ni:dejs:format]
-          ['tx_hash' (cu:dejs:format to-hexb so:dejs:format)]
-          [%height ni:dejs:format]
-          [%value ni:dejs:format]
-          [%recvd (cu:dejs:format from-epoch ni:dejs:format)]
+    %-  ot
+      :~  ['tx_pos' ni]
+          ['tx_hash' (cu to-hexb so)]
+          [%height ni]
+          [%value ni]
+          [%recvd (cu from-epoch ni)]
       ==
     ++  tx-vals
-      %-  ot:dejs:format
-      :~  [%included bo:dejs:format]
-          [%txid (cu:dejs:format to-hexb so:dejs:format)]
-          [%confs ni:dejs:format]
-          [%recvd (cu:dejs:format from-epoch ni:dejs:format)]
-          [%inputs (ar:dejs:format tx-val)]
-          [%outputs (ar:dejs:format tx-val)]
+      %-  ot
+      :~  [%included bo]
+          [%txid (cu to-hexb so)]
+          [%confs ni]
+          [%recvd (cu from-epoch ni)]
+          [%inputs (ar tx-val)]
+          [%outputs (ar tx-val)]
       ==
     ++  tx-val
-      %-  ot:dejs:format
-      :~  [%txid (cu:dejs:format to-hexb so:dejs:format)]
-          [%pos ni:dejs:format]
-          [%address (cu:dejs:format address-from-cord so:dejs:format)]
-          [%value ni:dejs:format]
+      %-  ot
+      :~  [%txid (cu to-hexb so)]
+          [%pos ni]
+          [%address (cu address-from-cord so)]
+          [%value ni]
       ==
     ++  raw-tx
-      %-  ot:dejs:format
-      :~  [%txid (cu:dejs:format to-hexb so:dejs:format)]
-          [%rawtx (cu:dejs:format to-hexb so:dejs:format)]
+      %-  ot
+      :~  [%txid (cu to-hexb so)]
+          [%rawtx (cu to-hexb so)]
       ==
     ++  broadcast-tx
-      %-  ot:dejs:format
-      :~  [%txid (cu:dejs:format to-hexb so:dejs:format)]
-          [%broadcast bo:dejs:format]
-          [%included bo:dejs:format]
+      %-  ot
+      :~  [%txid (cu to-hexb so)]
+          [%broadcast bo]
+          [%included bo]
       ==
     ++  block-info
-      %-  ot:dejs:format
-      :~  [%block ni:dejs:format]
-          [%fee (mu:dejs:format ni:dejs:format)]
-          [%blockhash (cu:dejs:format to-hexb so:dejs:format)]
-          [%blockfilter (cu:dejs:format to-hexb so:dejs:format)]
+      %-  ot
+      :~  [%block ni]
+          [%fee (mu ni)]
+          [%blockhash (cu to-hexb so)]
+          [%blockfilter (cu to-hexb so)]
       ==
     --
   --
