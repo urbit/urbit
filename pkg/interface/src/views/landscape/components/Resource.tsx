@@ -33,7 +33,6 @@ export function Resource(props: ResourceProps) {
   const rid = association.resource;
   const selectedGroup = association.group;
   const relativePath = (p: string) =>
-
     `${props.baseUrl}/resource/${app}${rid}${p}`;
   const skelProps = { api, association, groups, contacts };
   let title = props.association.metadata.title;
@@ -71,6 +70,7 @@ export function Resource(props: ResourceProps) {
                 contacts={props.contacts}
                 api={props.api}
                 baseUrl={relativePath("")}
+                rootUrl={props.baseUrl}
                 notificationsGraphConfig={notificationsGraphConfig}
               />
             );
