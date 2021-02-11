@@ -8,16 +8,16 @@
 --                                                      ::
 =>  |%                                                  ::  console protocol
 +$  axle                                                ::
-  $:  %5  ::TODO  replace ducts with session ids        ::
+  $:  %5                                                ::
       hey=(unit duct)                                   ::  default duct
-      dug=(map duct axon)                               ::  conversations
-      eye=(jug duct duct)                               ::  outside listeners
+      dug=(map @tas axon)                               ::  conversations
+      eye=(jug @tas duct)                               ::  outside listeners
       lit=?                                             ::  boot in lite mode
       $=  veb                                           ::  vane verbosities
       $~  (~(put by *(map @tas log-level)) %hole %soft) ::  quiet packet crashes
       (map @tas log-level)                              ::
   ==                                                    ::
-+$  axon                                                ::  dill per duct
++$  axon                                                ::  dill session
   $:  ram=term                                          ::  console program
       tem=(unit (list dill-belt))                       ::  pending, reverse
       wid=_80                                           ::  terminal width
@@ -92,10 +92,10 @@
     |%
     ++  as                                              ::  per cause
       =|  moz=(list move)
-      |_  [hen=duct axon]
+      |_  [hen=duct ses=@tas axon]
       ++  abet                                          ::  resolve
         ^-  [(list move) axle]
-        [(flop moz) all(dug (~(put by dug.all) hen +<+))]
+        [(flop moz) all(dug (~(put by dug.all) ses +<+>))]
       ::
       ++  call                                          ::  receive input
         |=  kyz=task
@@ -140,12 +140,11 @@
         ?>  ?=(^ hey.all)
         +>(moz [[u.hey.all %give git] moz])
       ::
-      ++  done                                          ::  return gift
+      ++  done                                          ::  gift to viewers
         |=  git=gift
         =-  +>.$(moz (weld - moz))
         %+  turn
-          :-  hen
-          ~(tap in (~(get ju eye.all) hen))
+          ~(tap in (~(get ju eye.all) ses))
         |=(=duct [duct %give git])
       ::
       ++  deal                                          ::  pass to %gall
@@ -227,13 +226,13 @@
         ^+  +>
         ?^  tem
           +>(tem `[bet u.tem])
-        (deal / [%poke [%dill-belt -:!>(bet) bet]])
+        (deal /send/[ses] [%poke [%dill-belt -:!>(bet) bet]])
       ::
       ++  hood-set-boot-apps
         (deal / [%poke %drum-set-boot-apps !>(lit.all)])
       ::
       ++  peer
-        (deal / [%watch /drum])
+        (deal /peer/[ses] [%watch /drum])  ::TODO  rename subscription path
       ::
       ++  show                                          ::  permit reads on desk
         |=  des=desk
@@ -281,12 +280,20 @@
         ==
       --
     ::
-    ++  ax                                              ::  make ++as
-      |=  hen=duct
+    ++  ax                                              ::  make ++as from name
+      |=  [hen=duct ses=@tas]
       ^-  (unit _as)
-      =/  nux  (~(get by dug.all) hen)
+      =/  nux  (~(get by dug.all) ses)
       ?~  nux  ~
-      (some ~(. as hen u.nux))
+      (some ~(. as hen ses u.nux))
+    ::
+    ++  aw                                              ::  make ++as from wire
+      |=  [hen=duct wir=wire]
+      ^-  (unit _as)
+      %+  ax  hen
+      ?+  wir  %$
+        [?(%peer %send) @ *]  i.t.wir
+      ==
     --
 |%                                                      ::  poke+peek pattern
 ++  call                                                ::  handle request
@@ -297,7 +304,10 @@
   ^+  [*(list move) ..^$]
   ~|  wrapped-task
   =/  task=task  ((harden task) wrapped-task)
+  ::  unwrap session tasks, default to session %$
   ::
+  =^  ses=@tas  task
+    ?:(?=(%shot -.task) +.task [%$ task])
   ::  error notifications "downcast" to %crud
   ::
   =?  task  ?=(^ dud)
@@ -330,7 +340,9 @@
     =/  say  (tuba "<awaiting {(trip app)}, this may take a minute>")
     =/  zon=axon  [app input=[~ ~] width=80]
     ::
-    =^  moz  all  abet:(~(into as duc zon) ~)
+    =^  moz  all  abet:(~(into as duc %$ zon) ~)
+    ::REVIEW  can anything relevant happen between %boot and %init?
+    =.  eye.all   (~(put ju eye.all) %$ duc)
     [moz ..^$]
   ::  %flog tasks are unwrapped and sent back to us on our default duct
   ::
@@ -351,37 +363,33 @@
   ?:  ?=(%knob -.task)
     =.  veb.all  (~(put by veb.all) tag.task level.task)
     [~ ..^$]
+  ::  %view opens a subscription to the target session, on the current duct
   ::
   ?:  ?=(%view -.task)
-    ::  crash on viewing non-existent session
-    ::
-    ~|  [%no-session session.task]
-    ?>  =(~ session.task)
-    =/  session  (need hey.all)
-    =/  nus      (need (ax session))
+    =/  nus
+      ::  crash on viewing non-existent session
+      ::
+      ~|  [%no-session ses]
+      (need (ax hen ses))
     ::  register the viewer and send a %hey so they get the full screen
     ::
     =^  moz  all
       abet:(send:nus %hey ~)
     :-  moz
-    ..^$(eye.all (~(put ju eye.all) session hen))
+    ..^$(eye.all (~(put ju eye.all) ses hen))
+  ::  %flee closes a subscription to the target session, from the current duct
   ::
   ?:  ?=(%flee -.task)
     :-  ~
-    ~|  [%no-session session.task]
-    ?>  =(~ session.task)
-    =/  session  (need hey.all)
-    ..^$(eye.all (~(del ju eye.all) session hen))
+    ..^$(eye.all (~(del ju eye.all) ses hen))
   ::
-  =/  nus  (ax hen)
-  =?  nus  &(?=(~ nus) ?=(^ hey.all))
-    ::TODO  allow specifying target session in task
-    (ax u.hey.all)
+  =/  nus
+    (ax hen ses)
   ?~  nus
-    ::  :hen is an unrecognized duct
+    ::  session :ses does not exist
     ::  could be before %boot (or %boot failed)
     ::
-    ~&  [%dill-call-no-flow hen -.task]
+    ~&  [%dill-call-no-session ses hen -.task]
     =/  tan  ?:(?=(%crud -.task) q.task ~)
     [((slog (flop tan)) ~) ..^$]
   ::
@@ -414,8 +422,21 @@
         see=$%([%lin (list @c)] [%klr stub])
     ==
   ::
-  ++  axle-4-to-5  |=(axle-4 [%5 +<+(dug (~(run by dug) axon-4-to-5))])
-  ++  axon-4-to-5  |=(axon-4 [ram tem wid])
+  ++  axle-4-to-5
+    |=  axle-4
+    ^-  axle
+    :-  %5
+    =-  [hey nug nay lit veb]
+    %+  roll  ~(tap by dug)
+    |=  [[=duct =axon-4] nug=(map @tas axon) nay=(jug @tas duct)]
+    =/  ses=@tas
+      ~|  [%unexpected-duct duct]
+      ?>(=([//term/1]~ duct) %$)
+    :-  (~(put by nug) ses (axon-4-to-5 axon-4))
+    %+  ~(put by nay)  ses
+    (~(put in (~(get ju eye) duct)) duct)
+  ::
+  ++  axon-4-to-5  |=(axon-4 `axon`[ram tem wid])
   --
 ::
 ++  scry
@@ -456,12 +477,11 @@
   ?^  dud
     ~|(%dill-take-dud (mean tang.u.dud))
   ::
-  =/  nus  (ax hen)
+  =/  nus  (aw hen tea)
   ?~  nus
-    ::  :hen is an unrecognized duct
-    ::  could be before %boot (or %boot failed)
+    ::  :tea points to an unrecognized session
     ::
-    ~&  [%dill-take-no-flow hen -.hin +<.hin]
+    ~&  [%dill-take-no-session tea -.hin +<.hin]
     [~ ..^$]
   =^  moz  all  abet:(take:u.nus tea hin)
   [moz ..^$]

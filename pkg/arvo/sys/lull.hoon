@@ -1017,29 +1017,34 @@
     ==                                                  ::
   +$  task                                              ::  in request ->$
     $~  [%vega ~]                                       ::
-    $%  [%belt p=belt]                                  ::  terminal input
-        [%blew p=blew]                                  ::  terminal config
-        [%boot lit=? p=*]                               ::  weird %dill boot
+    $%  [%boot lit=? p=*]                               ::  weird %dill boot
         [%crop p=@ud]                                   ::  trim kernel state
         [%crud p=@tas q=(list tank)]                    ::  print error
-        [%flee session=~]                               ::  unwatch session
         [%flog p=flog]                                  ::  wrapped error
-        [%flow p=@tas q=(list gill:gall)]               ::  terminal config
-        [%hail ~]                                       ::  terminal refresh
         [%heft ~]                                       ::  memory report
-        [%hook ~]                                       ::  this term hung up
         [%harm ~]                                       ::  all terms hung up
         $>(%init vane-task)                             ::  after gall ready
         [%meld ~]                                       ::  unify memory
         [%noop ~]                                       ::  no operation
         [%pack ~]                                       ::  compact memory
+        [%shot ses=@tas task=session-task]              ::  task for session
         [%talk p=tank]                                  ::
         [%text p=tape]                                  ::
-        [%view session=~]                               ::  watch session blits
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
         [%verb ~]                                       ::  verbose mode
         [%knob tag=term level=?(%hush %soft %loud)]     ::  error verbosity
+        session-task                                    ::  for default session
+    ==                                                  ::
+  ::                                                    ::
+  +$  session-task                                      ::  session request
+    $%  [%belt p=belt]                                  ::  terminal input
+        [%blew p=blew]                                  ::  terminal config
+        [%flee ~]                                       ::  unwatch session
+        [%flow p=@tas q=(list gill:gall)]               ::  terminal config
+        [%hail ~]                                       ::  terminal refresh
+        [%hook ~]                                       ::  this term hung up
+        [%view ~]                                       ::  watch session blits
     ==                                                  ::
   ::
   ::::                                                  ::  (1d2)
