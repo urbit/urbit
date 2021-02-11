@@ -188,7 +188,7 @@ class RemoteContent extends PureComponent<RemoteContentProps, RemoteContentState
           >
             {this.state.embed && this.state.embed.html && this.state.unfold
             ? <EmbedContainer markup={this.state.embed.html}>
-              <div ref={el => { this.containerRef = el; }}
+              <div className="embed-container" ref={el => { this.containerRef = el; }}
                 dangerouslySetInnerHTML={{__html: this.state.embed.html}}></div>
             </EmbedContainer>
             : null}
@@ -197,7 +197,7 @@ class RemoteContent extends PureComponent<RemoteContentProps, RemoteContentState
       );
     } else {
       return renderUrl
-        ? this.wrapInLink(<Text {...textProps}>{text || url}</Text>) 
+        ? this.wrapInLink(<Text {...textProps}>{text || url}</Text>)
         : null;
     }
   }

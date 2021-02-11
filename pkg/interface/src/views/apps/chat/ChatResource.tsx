@@ -16,6 +16,8 @@ import { Loading } from '~/views/components/Loading';
 import useS3 from '~/logic/lib/useS3';
 import { isWriter, resourceFromPath } from '~/logic/lib/group';
 
+import './css/custom.css';
+
 type ChatResourceProps = StoreState & {
   association: Association;
   api: GlobalApi;
