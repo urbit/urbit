@@ -51,7 +51,8 @@
   =/  m  (strand ,~)
   ^-  form:m
   =/  tags=(list [=tag tagged=(set ship)])
-    %+  skim  ~(tap by tags.group) |=  [=tag tagged=(set ship)]
+    %+  skim  ~(tap by tags.group) 
+    |=  [=tag tagged=(set ship)]
     ?@  tag  %.n
     ?&  =(app.tag %graph)
         =(resource.tag graph)

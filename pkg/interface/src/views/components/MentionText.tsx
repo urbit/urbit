@@ -23,6 +23,8 @@ export function MentionText(props: MentionTextProps) {
           return accum + c.text;
         } else if ('mention' in c) {
           return accum + `[~${c.mention}]`;
+        } else if ('url' in c) {
+          return accum + `\n ${c.url}`;
         }
         return accum;
       }, '')}

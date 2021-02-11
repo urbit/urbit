@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useCallback } from "react";
 import { ModalOverlay } from "~/views/components/ModalOverlay";
 import { Col, Box, Text, Row } from "@tlon/indigo-react";
 import { ChannelPopoverRoutesSidebar } from "./Sidebar";
@@ -14,7 +14,7 @@ import {
 import GlobalApi from "~/logic/api/global";
 import { useHashLink } from "~/logic/lib/useHashLink";
 import { useOutsideClick } from "~/logic/lib/useOutsideClick";
-import { useHistory } from "react-router-dom";
+import { useHistory, Link } from "react-router-dom";
 import { ChannelNotifications } from "./Notifications";
 import { StatelessAsyncButton } from "~/views/components/StatelessAsyncButton";
 import { wait } from "~/logic/lib/util";
@@ -36,9 +36,9 @@ export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {
   const overlayRef = useRef<HTMLElement>();
   const history = useHistory();
 
-  useOutsideClick(overlayRef, () => {
-    history.push(props.rootUrl);
-  });
+  const onDismiss = useCallback(() => {
+    history.push(props.baseUrl);
+  }, [history, props.baseUrl]);
 
   const handleUnsubscribe = async () => {
     const [,,ship,name] = association.resource.split('/');
@@ -65,14 +65,21 @@ export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {
       width="100%"
       spacing={[3, 5, 7]}
       ref={overlayRef}
+      dismiss={onDismiss}
     >
       <Row
+        flexDirection={["column", "row"]}
         border="1"
         borderColor="lightGray"
         borderRadius="2"
         bg="white"
         height="100%"
       >
+        <Box pt="4" px="4" display={["block", "none"]}>
+          <Link to={props.baseUrl}>
+            <Text fontSize="1">{"<- Back"}</Text>
+          </Link>
+        </Box>
         <ChannelPopoverRoutesSidebar
           isAdmin={canAdmin}
           isOwner={isOwner}

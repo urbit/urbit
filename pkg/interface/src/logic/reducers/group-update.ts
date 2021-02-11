@@ -41,7 +41,6 @@ function decodePolicy(policy: Enc<GroupPolicy>): GroupPolicy {
 }
 
 function decodeTags(tags: Enc<Tags>): Tags {
-  console.log(tags);
   return _.reduce(
     tags,
     (acc, ships, key): Tags => {

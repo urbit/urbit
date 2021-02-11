@@ -1,7 +1,6 @@
 import React, { useRef, useCallback } from "react";
 import { Route, Switch, RouteComponentProps, Link } from "react-router-dom";
 import { Box, Row, Col, Icon, Text } from "@tlon/indigo-react";
-import { useOutsideClick } from "~/logic/lib/useOutsideClick";
 import { HoverBoxLink } from "~/views/components/HoverBox";
 import { Contacts, Contact } from "~/types/contact-update";
 import { Group } from "~/types/group-update";
@@ -33,10 +32,9 @@ export function PopoverRoutes(
   const relativeUrl = (url: string) => `${props.baseUrl}/popover${url}`;
   const innerRef = useRef(null);
 
-  const onOutsideClick = useCallback(() => {
+  const onDismiss = useCallback(() => {
     props.history.push(props.baseUrl);
   }, [props.history.push, props.baseUrl]);
-  useOutsideClick(innerRef, onOutsideClick);
 
   useHashLink();
 
@@ -62,6 +60,7 @@ export function PopoverRoutes(
               width="100%"
               height="100%"
               bg="white"
+              dismiss={onDismiss}
             >
               <Box
                 display="grid"

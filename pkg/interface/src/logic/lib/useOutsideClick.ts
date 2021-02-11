@@ -2,14 +2,14 @@ import { useEffect, RefObject } from "react";
 
 export function useOutsideClick(
   ref: RefObject<HTMLElement | null | undefined>,
-  onClick: () => void
+  onClick: () => void,
 ) {
   useEffect(() => {
     function handleClick(event: MouseEvent) {
+      const portalRoot = document.querySelector('#portal-root')!;
       if (
         ref.current &&
-        !ref.current.contains(event.target as any) &&
-        !document.querySelector("#portal-root")!.contains(event.target as any)
+        !ref.current.contains(event.target as any)
       ) {
         onClick();
       }

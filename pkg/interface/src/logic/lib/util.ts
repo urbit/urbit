@@ -230,6 +230,11 @@ export function alphabeticalOrder(a: string, b: string) {
   return a.toLowerCase().localeCompare(b.toLowerCase());
 }
 
+export function lengthOrder(a: string, b: string) {
+  return b.length - a.length;
+
+}
+
 //  TODO: deprecated
 export function alphabetiseAssociations(associations: any) {
   const result = {};

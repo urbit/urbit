@@ -47,7 +47,9 @@ const StatusBar = (props) => {
 
   const anchorRef = useRef(null);
 
-  useTutorialModal('leap', true, anchorRef.current);
+  const leapHighlight = useTutorialModal('leap', true, anchorRef.current);
+  
+  const floatLeap = leapHighlight && window.matchMedia('(max-width: 550px)').matches;
 
   return (
     <Box
@@ -63,7 +65,7 @@ const StatusBar = (props) => {
       <Button width="32px" borderColor='washedGray' mr='2' px='2' onClick={() => props.history.push('/')} {...props}>
         <Icon icon='Spaces' color='black'/>
       </Button>
-        <StatusBarItem mr={2} onClick={() => toggleOmnibox()}>
+        <StatusBarItem float={floatLeap} mr={2} onClick={() => toggleOmnibox()}>
         { !props.doNotDisturb && (props.notificationsCount > 0 || invites.length > 0) &&
           (<Box display="block" right="-8px" top="-8px" position="absolute" >
             <Icon color="blue" icon="Bullet" />

@@ -89,7 +89,6 @@ export function GroupSwitcher(props: {
       flexShrink={0}
       height='48px'
       backgroundColor="white"
-      zIndex="2"
       position="sticky"
       top="0px"
       pl='3'

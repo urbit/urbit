@@ -17,7 +17,7 @@ import {
   useShowNickname,
   useHovering
 } from '~/logic/lib/util';
-import { Group, Association, Contacts, Post } from '~/types';
+import { Group, Association, Contacts, Post, Groups, Associations } from '~/types';
 import TextContent from './content/text';
 import CodeContent from './content/code';
 import RemoteContent from '~/views/components/RemoteContent';
@@ -108,7 +108,9 @@ export default class ChatMessage extends Component<ChatMessageProps> {
       history,
       api,
       highlighted,
-      fontSize
+      fontSize,
+      groups,
+      associations
     } = this.props;
 
     const renderSigil = Boolean(
@@ -145,7 +147,9 @@ export default class ChatMessage extends Component<ChatMessageProps> {
       api,
       scrollWindow,
       highlighted,
-      fontSize
+      fontSize,
+      associations,
+      groups,
     };
 
     const unreadContainerStyle = {
@@ -206,6 +210,8 @@ interface MessageProps {
   style: any;
   measure(element): void;
   scrollWindow: HTMLDivElement;
+  associations: Associations;
+  groups: Groups;
 }
 
 export const MessageWithSigil = (props) => {
@@ -214,6 +220,8 @@ export const MessageWithSigil = (props) => {
     timestamp,
     contacts,
     association,
+    associations,
+    groups,
     group,
     measure,
     api,
@@ -355,6 +363,9 @@ export const MessageWithSigil = (props) => {
               scrollWindow={scrollWindow}
               fontSize={fontSize}
               group={group}
+              api={api}
+              associations={associations}
+              groups={groups}
             />
           ))}
         </ContentBox>
@@ -375,6 +386,9 @@ export const MessageWithoutSigil = ({
   msg,
   measure,
   group,
+  api,
+  associations,
+  groups,
   scrollWindow
 }) => {
   const { hovering, bind } = useHovering();
@@ -409,6 +423,9 @@ export const MessageWithoutSigil = ({
             group={group}
             measure={measure}
             scrollWindow={scrollWindow}
+            groups={groups}
+            associations={associations}
+            api={api}
           />
         ))}
       </ContentBox>
@@ -419,6 +436,9 @@ export const MessageWithoutSigil = ({
 export const MessageContent = ({
   content,
   contacts,
+  api,
+  associations,
+  groups,
   measure,
   scrollWindow,
   fontSize,
@@ -461,14 +481,22 @@ export const MessageContent = ({
       </Box>
     );
   } else if ('text' in content) {
-    return <TextContent fontSize={fontSize} content={content} />;
+    return (
+      <TextContent
+        associations={associations}
+        groups={groups}
+        measure={measure}
+        api={api}
+        fontSize={fontSize}
+        content={content}
+      />);
   } else if ('mention' in content) {
     return (
       <Mention
         group={group}
         scrollWindow={scrollWindow}
         ship={content.mention}
-        contact={contacts?.[content.mention]}
+        contact={contacts?.[`~${content.mention}`]}
       />
     );
   } else {

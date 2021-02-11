@@ -20,11 +20,10 @@
 ::         their hooks
 ::      - Each group has its associated metadata and contacts
 ::      - Each graph is being synced
-::      - Each chat is being synced
 ::
 /-  *metadata-store, contacts=contact-store, *group
 /+  default-agent, verb, dbug, resource, graph, mdl=metadata, group
-~%  %sane-app  ..card  ~
+~%  %sane-app  ..part  ~
 |%
 +$  card  card:agent:gall
 ::
@@ -33,7 +32,6 @@
 +$  issue  
   $%  [%lib-pull-hook-desync app=term =resource]
       [%lib-push-hook-desync app=term =resource]
-      [%contact-hook-desync =path]
       [%dangling-md =resource]
   ==
 ::
@@ -51,10 +49,10 @@
 ^-  agent:gall
 =<
 |_  =bowl:gall
-+*  this        .
++*  this       .
     sane-core  +>
-    sc          ~(. sane-core bowl)
-    def         ~(. (default-agent this %|) bowl)
+    sc         ~(. sane-core bowl)
+    def        ~(. (default-agent this %|) bowl)
 ::
 ++  on-init  
   ^-  (quip card _this)
@@ -73,7 +71,7 @@
   =/  act=action  !<(action vase)
   =^  cards  state
     ?-  act  
-      %fix  fix-sane:sc
+      %fix    fix-sane:sc
       %check  print-sane:sc
     ==
   [cards this]
@@ -85,20 +83,16 @@
 ++  on-peek   
   |=  =path
   ^-  (unit (unit cage))
-  ?.  ?=([%x %bad-path ~] path)
-    (on-peek:def path)
-  ~
+  ?:  ?=([%x %bad-path ~] path)  ~
+  (on-peek:def path)
 ::
 ++  on-arvo  on-arvo:def
 ++  on-fail   on-fail:def
 --
 ::
 |_  =bowl:gall
-::
 ++  gra  ~(. graph bowl)
-::
 ++  md   ~(. mdl bowl)
-::
 ++  grp  ~(. group bowl)
 ::
 ++  foreign-keys
@@ -125,10 +119,10 @@
     =>  (lib-hooks-desync %group scry-groups)
     =>  (lib-hooks-desync %graph get-keys:gra)
     =>  (lib-hooks-desync %metadata scry-groups)
-    =>  groups
+    =>  contacts
     metadata
   ::
-  ++  groups
+  ++  contacts
     ^+  fk-core
     =/  groups=(list resource)
        ~(tap in scry-groups)
@@ -136,8 +130,12 @@
     ?~  groups
       fk-core
     =*  group  i.groups
-    =?  fk-core  &((is-managed:grp group) !(~(has in scry-contact-syncs) group))
-      (report %contact-hook-desync (en-path:resource group))
+    =?  fk-core
+      ?&  (is-managed:grp group)
+          !=(our.bowl entity.group)
+          !(~(has in (tracking-pull-hook %contact-pull-hook)) group)
+      ==
+      (report %lib-pull-hook-desync %contact-pull-hook group)
     $(groups t.groups)
   ::
   ++  metadata
@@ -209,15 +207,6 @@
       %lib-push-hook-desync
     (poke-our app.issue push-hook-action+!>([%add resource.issue]))^~
     ::
-      %contact-hook-desync
-    =/  rid=resource
-      (de-path:resource path.issue)
-    =/  act
-      ?:  =(entity.rid our.bowl)
-        [%add-owned path.issue]
-      [%add-synced entity.rid path.issue]
-    (poke-our %contact-hook contact-hook-action+!>(act))^~
-    :: 
       %dangling-md
     =/  app-indices
       (~(get ju md-group-indices) resource.issue)
@@ -251,26 +240,6 @@
   %+  scry
     ,(set resource)
   /x/[hook]/sharing/noun
-::
-++  scry-contact-syncs
-  ^-  (set resource)
-  =-  (~(run in -) de-path:resource)
-  %+  scry
-    ,(set path)
-  /x/contact-hook/synced/noun
-::
-++  scry-chat-syncs
-  ^-  (set path)
-  %+  scry
-    ,(set path)
-  /x/chat-hook/synced/noun
-::
-++  scry-chats
-  ^-  (set path)
-  %+  scry
-    ,(set path)
-  /x/chat-store/keys/noun
-::
 ::
 ++  md-group-indices
   (scry (jug resource md-resource) /y/metadata-store/group-indices)
