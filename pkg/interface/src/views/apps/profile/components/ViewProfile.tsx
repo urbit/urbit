@@ -18,10 +18,14 @@ import {GroupSummary} from "~/views/landscape/components/GroupSummary";
 import {MetadataUpdatePreview} from "~/types";
 import {GroupLink} from "~/views/components/GroupLink";
 import {lengthOrder} from "~/logic/lib/util";
+import useLocalState from "~/logic/state/local";
 
 
 export function ViewProfile(props: any) {
   const history = useHistory();
+  const { hideNicknames } = useLocalState(({ hideNicknames }) => ({
+    hideNicknames
+  }));
   const { api, contact, nacked, isPublic, ship, associations, groups } = props;
 
   return (
@@ -32,7 +36,7 @@ export function ViewProfile(props: any) {
         width="100%">
         <Center width="100%">
           <Text>
-            {(contact?.nickname ? contact.nickname : "")}
+            {((!hideNicknames && contact?.nickname) ? contact.nickname : "")}
           </Text>
         </Center>
       </Row>
@@ -88,7 +92,7 @@ export function ViewProfile(props: any) {
           </Row>
       </Col>
       )}
-      
+
       { (nacked || (!isPublic && ship === `~${window.ship}`)) ? (
         <Box
           height="200px"
