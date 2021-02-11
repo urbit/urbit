@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useCallback } from "react";
 import { ModalOverlay } from "~/views/components/ModalOverlay";
 import { Col, Box, Text, Row } from "@tlon/indigo-react";
 import { ChannelPopoverRoutesSidebar } from "./Sidebar";
@@ -36,9 +36,9 @@ export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {
   const overlayRef = useRef<HTMLElement>();
   const history = useHistory();
 
-  useOutsideClick(overlayRef, () => {
+  const onDismiss = useCallback(() => {
     history.push(props.baseUrl);
-  });
+  }, [history, props.baseUrl]);
 
   const handleUnsubscribe = async () => {
     const [,,ship,name] = association.resource.split('/');
@@ -62,6 +62,7 @@ export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {
       width="100%"
       spacing={[3, 5, 7]}
       ref={overlayRef}
+      dismiss={onDismiss}
     >
       <Row
         border="1"
