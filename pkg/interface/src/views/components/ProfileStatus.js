@@ -60,7 +60,7 @@ export const ProfileStatus = (props) => {
           }}
         />
       </Row>
-      <Text mt={1} ml={1} whiteSpace="pre" gray>{notice}</Text>
+      <Text display={notice !== ' ' ? 'block' : 'none'} mt={1} ml={1} whiteSpace="pre" gray>{notice}</Text>
     </>
   );
 };
