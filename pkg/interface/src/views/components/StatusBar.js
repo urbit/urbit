@@ -128,6 +128,7 @@ const StatusBar = (props) => {
               <SetStatusBarModal
                 ship={`~${ship}`}
                 contact={ourContact}
+                ml='1'
                 api={api} />
               <Row
                 p={1}

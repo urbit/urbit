@@ -5,7 +5,8 @@ import React, {
 
 import {
   Row,
-  Box
+  Box,
+  Text
 } from '@tlon/indigo-react';
 
 import { SetStatus } from '~/views/apps/profile/components/SetStatus';
@@ -75,12 +76,13 @@ export const SetStatusBarModal = (props) => {
         </Box>
       )}
       <Row
-        p={1}
-        color='black'
-        cursor='pointer'
-        fontSize={1}
+        {...rest}
         onClick={() => setModalShown(true)}>
-        Set Status
+        <Text color='black'
+          cursor='pointer'
+          fontSize={1}>
+          Set Status
+        </Text>
       </Row>
     </>
   );

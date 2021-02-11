@@ -1,8 +1,8 @@
-import React, {useEffect, useRef} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Sigil } from "~/logic/lib/sigil";
 import { ViewProfile } from './ViewProfile';
 import { EditProfile } from './EditProfile';
-import { SetStatus } from './SetStatus';
+import { SetStatusBarModal } from '~/views/components/SetStatusBarModal';
 
 import { uxToHex } from "~/logic/lib/util";
 import {
@@ -11,7 +11,8 @@ import {
   Row,
   BaseImage,
   StatelessTextInput as Input,
-  Button
+  Button,
+  Text
 } from "@tlon/indigo-react";
 import useLocalState from "~/logic/state/local";
 import { useHistory } from "react-router-dom";
@@ -22,11 +23,16 @@ export function Profile(props: any) {
   const { hideAvatars } = useLocalState(({ hideAvatars }) => ({
     hideAvatars
   }));
+  const history = useHistory();
+
   if (!props.ship) {
     return null;
   }
   const { contact, nackedContacts, hasLoaded, isPublic, isEdit, ship } = props;
   const nacked = nackedContacts.has(ship);
+
+  const [statusModal, showStatusModal] = useState(false);
+
 
   useEffect(() => {
     if(hasLoaded && !contact && !nacked) {
@@ -34,7 +40,7 @@ export function Profile(props: any) {
     }
   }, [hasLoaded, contact])
 
-  
+
   const hexColor = contact?.color ? `#${uxToHex(contact.color)}` : "#000000";
   const cover = (contact?.cover)
     ? <BaseImage src={contact.cover} width='100%' height='100%' style={{ objectFit: 'cover' }} />
@@ -53,14 +59,33 @@ export function Profile(props: any) {
       p={[0,4]}
       height="100%"
       width="100%">
+
       <Box
         ref={anchorRef}
         maxWidth="600px"
         width="100%">
-        { ship === `~${window.ship}` ? (
-            <SetStatus ship={ship} contact={contact} api={props.api} />
-          ) : null
-        }
+        <Row alignItems="center" justifyContent="space-between">
+          {ship === `~${window.ship}` ? (
+            <Row>
+            <Text
+              py='2'
+              cursor='pointer'
+              onClick={() => { history.push(`/~profile/${ship}/edit`) }}>
+              Edit Profile
+            </Text>
+              <SetStatusBarModal
+                py='2'
+                ml='3'
+                api={props.api}
+                ship={`~${window.ship}`}
+                contact={contact}
+              />
+            </Row>
+          ) : null}
+          <Text maxWidth='18rem' overflowX='hidden' textOverflow="ellipsis"
+            whiteSpace="nowrap"
+            overflow="hidden" display="inline-block" verticalAlign="middle">{contact.status}</Text>
+        </Row>
         <Row  width="100%" height="300px">
           {cover}
         </Row>
@@ -85,12 +110,12 @@ export function Profile(props: any) {
             associations={props.associations}
             isPublic={isPublic}/>
         ) : (
-          <ViewProfile 
+          <ViewProfile
             api={props.api}
             nacked={nacked}
             ship={ship}
             contact={contact}
-            isPublic={isPublic} 
+            isPublic={isPublic}
             groups={props.groups}
             associations={props.associations}
           />

@@ -59,22 +59,6 @@ export function ViewProfile(props: any) {
           </RichText>
           </Center>
         </Col>
-      { (ship === `~${window.ship}`) ? (
-          <Row
-            pb={2}
-            alignItems="center"
-            width="100%">
-            <Center width="100%">
-              <Button
-                primary
-                color="white"
-                onClick={() => {history.push(`/~profile/${ship}/edit`)}}>
-                Edit Profile
-              </Button>
-            </Center>
-          </Row>
-        ) : null
-      }
       { (contact?.groups || []).length > 0 && (
         <Col gapY="3" mb="3" mt="6" alignItems="flex-start">
           <Text gray>Pinned Groups</Text>
