@@ -1,5 +1,25 @@
 # `btc-provider` tests
 
+## Add/Remove from Whitelist
+First, set up dummy groups. Then check them.
+```
+:group-store &group-action [%add-group [~zod %cool-people] [%invite *(set ship)] %.n]
+:group-push-hook &group-update [%add-members [~zod %cool-people] (sy ~[~zod ~datwet])]
+
+:: %.y, %.n
+:btc-provider|command [%add-whitelist %groups (sy ~[[~zod %cool-people]])]
+.^(? %gx /=btc-provider=/is-whitelisted/[(scot %p ~datwet)]/noun)
+:btc-provider|command [%remove-whitelist %groups (sy ~[[~zod %cool-people]])]
+.^(? %gx /=btc-provider=/is-whitelisted/[(scot %p ~datwet)]/noun)
+
+::  %.n, %.y, %.n
+.^(? %gx /=btc-provider=/is-whitelisted/[(scot %p ~dopzod)]/noun).^(? %gx /=btc-provider=/is-whitelisted/[(scot %p ~dopzod)]/noun)
+:btc-provider|command [%add-whitelist %kids ~]
+.^(? %gx /=btc-provider=/is-whitelisted/[(scot %p ~dopzod)]/noun)
+.^(? %gx /=btc-provider=/is-whitelisted/[(scot %p ~datwet)]/noun)
+```
+To test removing clients, subscribe as a client from dopzod and then remove
+
 ## Set Credentials, Ping Servers, Check Addresses and TXs
 ```
 :btc-provider|command [%set-credentials api-url='http://localhost:50002']

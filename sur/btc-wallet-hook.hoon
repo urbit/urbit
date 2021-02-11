@@ -14,7 +14,7 @@
 +$  txid  hexb
 +$  provider  [host=ship connected=?]
 +$  block  @ud
-+$  btc-state  [=block fee=sats t=@da]
++$  btc-state  [=block fee=(unit sats) t=@da]
 +$  reqs  (map $?(address txid) request:bws)
 ::
 +$  payment  [pend=(unit txid) =xpub =address payer=ship value=sats]
@@ -32,7 +32,7 @@
       [%delete-wallet =xpub]
       [%clear-poym ~]
       [%force-retry ~]
-      [%req-pay-address payee=ship value=sats feyb=(unit sats)]
+      [%req-pay-address payee=ship value=sats feyb=sats]
       [%broadcast-tx txhex=cord]
   ==
 ::

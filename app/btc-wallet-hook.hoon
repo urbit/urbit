@@ -167,8 +167,7 @@
     ?<  =(src.bowl payee.comm)
     ?<  ?=(%pawn (clan:title payee.comm))
     ?<  broadcasting
-    =+  feyb=?~(feyb.comm fee.btc-state u.feyb.comm)
-    =>  .(poym ~, feybs (~(put by feybs) payee.comm feyb))
+    =>  .(poym ~, feybs (~(put by feybs) payee.comm feyb.comm))
     :_  state
     ~[(poke-hook payee.comm [%gen-pay-address value.comm])]
     ::
@@ -291,7 +290,7 @@
     ?:  =(src.bowl our.bowl)  ~|("Can't pay ourselves" !!)
     ?:  broadcasting  ~|("Broadcasting a transaction" !!)
     ?~  def-wallet  ~|("btc-wallet-hook: no def(ault)-wallet set" !!)
-    =+  feyb=(~(gut by feybs) src.bowl fee.btc-state)
+    =+  feyb=(~(gut by feybs) src.bowl ?~(fee.btc-state 100 u.fee.btc-state))
     ?>  =(payer.act our.bowl)
     :_  state
     :~  %-  poke-store
@@ -346,7 +345,7 @@
   ++  connected
     |=  $:  p=provider
             block=@ud
-            fee=sats
+            fee=(unit sats)
             blockhash=(unit hexb)
             blockfilter=(unit hexb)
         ==
