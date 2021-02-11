@@ -14,7 +14,7 @@ import SubmitDragger from '~/views/components/SubmitDragger';
 import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
 import { Loading } from '~/views/components/Loading';
 import useS3 from '~/logic/lib/useS3';
-import {isWriter} from '~/logic/lib/group';
+import { isWriter, resourceFromPath } from '~/logic/lib/group';
 
 type ChatResourceProps = StoreState & {
   association: Association;
@@ -27,18 +27,12 @@ export function ChatResource(props: ChatResourceProps) {
   const groupPath = props.association.group;
   const group = props.groups[groupPath];
   const contacts = props.contacts;
-
   const graph = props.graphs[station.slice(7)];
-
   const isChatMissing = !props.graphKeys.has(station.slice(7));
-
   const unreadCount = props.unreads.graph?.[station]?.['/']?.unreads || 0;
-
   const [,, owner, name] = station.split('/');
   const ourContact = contacts?.[`~${window.ship}`];
-
   const chatInput = useRef<ChatInput>();
-
   const canWrite = isWriter(group, station);
 
   useEffect(() => {
@@ -83,9 +77,60 @@ export function ChatResource(props: ChatResourceProps) {
     return clear;
   }, [station]);
 
+  const [showBanner, setShowBanner] = useState(false);
+  const [recipients, setRecipients] = useState([]);
+
+  const res = resourceFromPath(groupPath);
+
+  useEffect(() => {
+    (async () => {
+    if (!res) { return; }
+    if (!group) { return; }
+    if (group.hidden) {
+      const members = _.compact(await Promise.all(
+        Array.from(group.members)
+          .map(s => {
+            const ship = `~${s}`;
+            if(s === window.ship) {
+              return Promise.resolve(null);
+            }
+            return props.api.contacts.fetchIsAllowed(
+              `~${window.ship}`,
+              'personal',
+              ship,
+              true
+            ).then(isAllowed => {
+              return isAllowed ? null : ship;
+            });
+          })
+      ));
+
+      if(members.length > 0) {
+        setShowBanner(true);
+        setRecipients(members);
+      } else {
+        setShowBanner(false);
+      }
+
+    } else {
+      const groupShared = await props.api.contacts.fetchIsAllowed(
+        `~${window.ship}`,
+        'personal',
+        res.ship,
+        true
+      );
+      setShowBanner(!groupShared);
+    }
+    })();
+
+  }, [groupPath]);
+
   if(!graph) {
     return <Loading />;
   }
+
+  var modifiedContacts = { ...contacts };
+  delete  modifiedContacts[`~${window.ship}`];
 
   return (
     <Col {...bind} height="100%" overflow="hidden" position="relative">
@@ -93,29 +138,25 @@ export function ChatResource(props: ChatResourceProps) {
         our={ourContact}
         api={props.api}
         recipient={owner}
+        recipients={recipients}
+        showBanner={showBanner}
+        setShowBanner={setShowBanner}
         group={group}
         groupPath={groupPath}
        />
       {dragging && <SubmitDragger />}
       <ChatWindow
-        mailboxSize={5}
-        match={props.match as any}
-        stationPendingMessages={[]}
         history={props.history}
-        isChatMissing={false}
-        isChatLoading={false}
-        isChatUnsynced={false}
         graph={graph}
         unreadCount={unreadCount}
-        unreadMsg={false}
-        envelopes={[]}
-        contacts={contacts}
+        contacts={!showBanner ? contacts : modifiedContacts}
         association={props.association}
+        associations={props.associations}
+        groups={props.groups}
         group={group}
         ship={owner}
         station={station}
         api={props.api}
-        location={props.location}
         scrollTo={scrollTo ? parseInt(scrollTo, 10) : undefined}
       />
       { canWrite && (
@@ -123,7 +164,7 @@ export function ChatResource(props: ChatResourceProps) {
         ref={chatInput}
         api={props.api}
         station={station}
-        ourContact={ourContact}
+        ourContact={!showBanner ? ourContact : null}
         envelopes={[]}
         contacts={contacts}
         onUnmount={appendUnsent}

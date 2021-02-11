@@ -14,7 +14,7 @@ import {
 import GlobalApi from "~/logic/api/global";
 import { useHashLink } from "~/logic/lib/useHashLink";
 import { useOutsideClick } from "~/logic/lib/useOutsideClick";
-import { useHistory } from "react-router-dom";
+import { useHistory, Link } from "react-router-dom";
 import { ChannelNotifications } from "./Notifications";
 import { StatelessAsyncButton } from "~/views/components/StatelessAsyncButton";
 import { wait } from "~/logic/lib/util";
@@ -67,12 +67,18 @@ export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {
       ref={overlayRef}
     >
       <Row
+        flexDirection={["column", "row"]}
         border="1"
         borderColor="lightGray"
         borderRadius="2"
         bg="white"
         height="100%"
       >
+        <Box pt="4" px="4" display={["block", "none"]}>
+          <Link to={props.baseUrl}>
+            <Text fontSize="1">{"<- Back"}</Text>
+          </Link>
+        </Box>
         <ChannelPopoverRoutesSidebar
           isAdmin={canAdmin}
           isOwner={isOwner}

@@ -142,10 +142,10 @@
   ::
   ++  vip
     %-  su
-    ;~  pose
-      (tag %$)
-      (tag %reader-comments)
-      (tag %member-metadata)
+    %-  perk
+    :~  %reader-comments
+        %member-metadata
+        %$
     ==
   ::
   ++  metadatum
@@ -161,8 +161,6 @@
         [%preview bo]
         [%vip vip]
     ==
-  ::
-  ++  tag   |*(a=@tas (cold a (jest a)))
   ::
   ++  md-resource
     ^-  $-(json ^md-resource)
