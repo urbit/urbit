@@ -14,6 +14,7 @@ import {
   Button,
   Text
 } from "@tlon/indigo-react";
+import RichText from '~/views/components/RichText'
 import useLocalState from "~/logic/state/local";
 import { useHistory } from "react-router-dom";
 import {useTutorialModal} from "~/views/components/useTutorialModal";
@@ -65,8 +66,9 @@ export function Profile(props: any) {
         maxWidth="600px"
         width="100%">
         <Row alignItems="center" justifyContent="space-between">
+          <Row>
           {ship === `~${window.ship}` ? (
-            <Row>
+            <>
             <Text
               py='2'
               cursor='pointer'
@@ -80,11 +82,12 @@ export function Profile(props: any) {
                 ship={`~${window.ship}`}
                 contact={contact}
               />
-            </Row>
+              </>
           ) : null}
-          <Text maxWidth='18rem' overflowX='hidden' textOverflow="ellipsis"
+          </Row>
+          <RichText mb='0' py='2' disableRemoteContent maxWidth='18rem' overflowX='hidden' textOverflow="ellipsis"
             whiteSpace="nowrap"
-            overflow="hidden" display="inline-block" verticalAlign="middle">{contact?.status ?? ""}</Text>
+            overflow="hidden" display="inline-block" verticalAlign="middle">{contact?.status ?? ""}</RichText>
         </Row>
         <Row  width="100%" height="300px">
           {cover}
