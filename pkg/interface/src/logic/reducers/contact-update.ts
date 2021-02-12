@@ -59,18 +59,16 @@ const edit = (json: ContactUpdate, state: S) => {
     if (!field) {
       return;
     }
-    const contact = state.contacts?.[ship];
+
     const value = data['edit-field'][field];
-    if(!contact) {
-      return; 
-    }
     
     if(field === 'add-group') {
-      contact.groups.push(value);
+      state.contacts[ship].groups.push(value);
     } else if (field === 'remove-group') {
-      contact.groups = contact.groups.filter(g => g !== value);
+      state.contacts[ship].groups =
+        state.contacts[ship].groups.filter(g => g !== value);
     } else {
-      contact[field] = value;
+      state.contacts[ship][field] = value;
     }
   }
 };
