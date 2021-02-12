@@ -85,7 +85,7 @@ export function Profile(props: any) {
               </>
           ) : null}
           </Row>
-          <RichText disableRemoteContent maxWidth='18rem' overflowX='hidden' textOverflow="ellipsis"
+          <RichText mb='0' py='2' disableRemoteContent maxWidth='18rem' overflowX='hidden' textOverflow="ellipsis"
             whiteSpace="nowrap"
             overflow="hidden" display="inline-block" verticalAlign="middle">{contact?.status ?? ""}</RichText>
         </Row>
