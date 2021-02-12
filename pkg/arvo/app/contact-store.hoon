@@ -135,7 +135,7 @@
       |^
       ^-  (quip card _state)
       =/  old  (~(got by rolodex) ship)
-      ?:  (lth timestamp last-updated.old)
+      ?:  (lte timestamp last-updated.old)
         [~ state]
       =/  contact  (edit-contact old edit-field)
       ?:  =(old contact)
