@@ -1,6 +1,6 @@
 ::
 ::
-/-  *btc-wallet-store
+/-  *btc-wallet
 /+  bip32, btc, bp=btc-provider
 =,  secp:crypto
 =+  ecc=secp256k1

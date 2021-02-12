@@ -13,7 +13,7 @@
 +$  command
   $%  [%set-provider provider=ship =network]
       [%set-current-wallet =xpub]
-      [%add-wallet =xpub]
+      [%add-wallet =xpub =fprint scan-to=(unit scon) max-gap=(unit @ud) confs=(unit @ud)]
       [%delete-wallet =xpub]
       [%req-pay-address payee=ship value=sats feyb=sats]
       [%broadcast-tx txhex=cord]
@@ -21,7 +21,7 @@
 +$  action
       ::  local-only actions
       ::
-  $:  [%close-pym ti=info:tx]
+  $%  [%close-pym ti=info:tx]
       [%add-poym-raw-txi =txid rawtx=hexb]
       [%fail-broadcast-tx =txid]
       [%succeed-broadcast-tx =txid]
