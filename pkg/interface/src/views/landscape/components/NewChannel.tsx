@@ -100,7 +100,7 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
         await waiter(p => Boolean(p?.groups?.[`/ship/~${window.ship}/${resId}`]));
       }
       actions.setStatus({ success: null });
-      const resourceUrl = parentPath(location.pathname);
+      const resourceUrl = (location.pathname.includes("/messages")) ? "/~landscape/messages" : parentPath(location.pathname);
       history.push(
         `${resourceUrl}/resource/${moduleType}/ship/~${window.ship}/${resId}`
       );
