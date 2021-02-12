@@ -132,10 +132,12 @@
       state(rolodex (~(del by rolodex) ship))
     ::
     ++  handle-edit
-      |=  [=ship =edit-field:store]
+      |=  [=ship =edit-field:store timestamp=date]
       |^
       ^-  (quip card _state)
       =/  old  (~(got by rolodex) ship)
+      ?:  (lth timestamp last-updated.old)
+        [~ state]
       =/  contact  (edit-contact old edit-field)
       ?:  =(old contact)
         [~ state]

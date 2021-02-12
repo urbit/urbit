@@ -42,6 +42,7 @@
       %-  pairs
       :~  [%ship (ship ship.upd)]
           [%edit-field (edit edit-field.upd)]
+          [%timestamp (time timestamp.upd)]
       ==
     ::
         %allow
@@ -140,6 +141,7 @@
       %-  ot
       :~  [%ship (su ;~(pfix sig fed:ag))]
           [%edit-field edit]
+          [%timestamp di]
       ==
     ::
     ++  beings
