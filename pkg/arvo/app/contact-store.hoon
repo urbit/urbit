@@ -117,7 +117,6 @@
               !=(contact(last-updated *@da) u.old(last-updated *@da))
           ==
         [~ state]
-      =.  last-updated.contact  now.bowl
       :-  (send-diff [%add ship contact] =(ship our.bowl))
       state(rolodex (~(put by rolodex) ship contact))
     ::
@@ -141,7 +140,7 @@
       =/  contact  (edit-contact old edit-field)
       ?:  =(old contact)
         [~ state]
-      =.  last-updated.contact  now.bowl
+      =.  last-updated.contact  timestamp
       :-  (send-diff [%edit ship edit-field] =(ship our.bowl))
       state(rolodex (~(put by rolodex) ship contact))
       ::
