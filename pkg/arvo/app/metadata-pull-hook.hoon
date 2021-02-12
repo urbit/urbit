@@ -215,8 +215,10 @@
         [%preview @ @ @ ~]
       ?.  ?=(%poke-ack -.sign)
         (on-agent:def:hc wire sign)
-      :_  state
-      ?~  p.sign  ~
+      ?~  p.sign  `state
+      =/  rid
+        (de-path:resource t.wire)
+      :_  state(pending (~(del in pending) rid))
       (fact-kick:io wire tang+!>(u.p.sign))
     ==
   [cards this]
