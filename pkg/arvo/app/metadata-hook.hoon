@@ -34,7 +34,7 @@
 ^-  agent:gall
 |_  =bowl:gall
 +*  this  .
-    def   ~(. (default-agent *agent:gall %|) bowl)
+    def   ~(. (default-agent this %|) bowl)
 ++  on-init   on-init:def
 ++  on-save   !>(state)
 ++  on-load
