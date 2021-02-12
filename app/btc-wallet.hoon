@@ -201,7 +201,7 @@
     =+  fee=~(fee txb u.poym)
     ~&  >>  "{<vb>} vbytes, {<(div fee vb)>} sats/byte, {<fee>} sats fee"
     %-  (slog [%leaf "PSBT: {<u.pb>}"]~) 
-    ~[(send-update [%sign-tx u.poym])]
+    ~
     ::
       %close-pym
     ?>  =(src.bowl our.bowl)
@@ -218,18 +218,15 @@
     ::
       %fail-broadcast-tx
     ?>  =(src.bowl our.bowl)
-    ~&  >  "%fail-broadcast-tx"
-    :_  state(poym ~)
-    ~[(send-update [%broadcast-tx-spent-utxos txid.act])]
+    ~&  >>>  "%fail-broadcast-tx"
+    `state(poym ~)
     ::
       %succeed-broadcast-tx
     ?>  =(src.bowl our.bowl)
     ~&  >  "%succeed-broadcast-tx"
-    :_  %_  state
-            reqs  (~(put by reqs) txid.act [%tx-info 0 txid.act])
-        ==
+    :_  state
     ?~  prov  ~
-    :-  (poke-provider host.u.prov [%tx-info txid.act])
+    :-  (poke-provider [%tx-info txid.act])
     ?~  poym          ~
     ?~  payee.u.poym  ~
     :_  ~
@@ -250,13 +247,11 @@
     =^  cards  state
       (reuse-address src.bowl value.act)
     ?^  cards  [cards state]
-    ::  if no reuseable address, call store to generate
-    ::
     =+  f=(fam src.bowl)
     =+  n=(~(gut by num-fam.piym) f 0)
     ?~  curr-xpub  ~|("btc-wallet-hook: no curr-xpub set" !!)
-    ?:  (gte n fam-limit)
-      ~|("More than {<fam-limit>} addresses for moons + planet" !!)
+    ?:  (gte n fam-limit.params)
+      ~|("More than {<fam-limit.params>} addresses for moons + planet" !!)
     =.  state  state(num-fam.piym (~(put by num-fam.piym) f +(n)))
     =^  addr  state
       (generate-address u.curr-xpub %0 `[src.bowl value.act])
@@ -289,7 +284,7 @@
     ?>  (piym-matches u.pay)
     :_  (update-pend-piym txid.act u.pay(pend `txid.act))
     ?~  prov  ~
-    ~[(poke-provider host.u.prov [%tx-info txid.act])]
+    ~[(poke-provider [%tx-info txid.act])]
     ::
     ++  piym-matches
       |=  p=payment
@@ -332,7 +327,7 @@
     ^-  (quip card _state)
     :_  %_  state
             prov  `[host.p %.y]
-            btc-state  [block fee now.bowl]
+            btc-state  [block fee now.bowl] 
         ==
     ?:  ?|(?!(connected.p) (lth block.btc-state block))
       ;:(weld retry-pend-piym retry-addrs retry-txs)
@@ -422,8 +417,7 @@
 ++  handle-address-info
   |=  [=address utxos=(set utxo) used=?]
   ^-  (quip card _state)
-  |^
-  =/  am  address-meta
+  =/  am  (address-meta address ~(val by walts))
   ?~  am  `state
   =/  [w=walt =chyg =idx]  u.am
   =.  walts
@@ -434,24 +428,13 @@
   ::  if the wallet+chyg is being scanned, update the scan batch
   ::  if not, just get more-info for the address if still being scanned
   ::
-  =/  b  (~(get by scans) [xpub chyg])
+  =/  b  (~(get by scans) [xpub.w chyg])
   ?~  b  `state
   =.  scans
    (del-scanned u.b(has-used ?|(used has-used.u.b)) xpub.w chyg idx)
   ?:  empty:(scan-status xpub.w chyg)
-    (run-scan xpub.w)
+    (check-scan xpub.w)
   `state
-::
-++  address-meta
-^-  (unit [walt chyg idx])
-=/  ws=(list walt)  ~(val by walts)
-|-
-?~  ws  ~
-=/  res=(unit [chyg idx])
-(address-loc i.ws address)
-?^  res  [i.ws chyg.u.res idx.u.res]
-$(ws t.ws)
---
 ::
 ++  req-scan
   |=  [b=batch =xpub =chyg]
@@ -545,13 +528,13 @@ $(ws t.ws)
   ^-  [(unit txbu) _state]
   =/  uw  (~(get by walts) xpub)
   ?~  uw
-    ~|("btc-wallet-store: non-existent xpub" !!)
+    ~|("btc-wallet: non-existent xpub" !!)
   ?.  scanned.u.uw
-    ~|("btc-wallet-store: wallet not scanned yet" !!)
+    ~|("btc-wallet: wallet not scanned yet" !!)
   =/  [tb=(unit txbu) chng=(unit sats)]
     %~  with-change  sut
     [u.uw eny.bowl block.btc-state payee feyb txos]
-  ?~  tb  ~&(>>> "btc-wallet-store: insufficient balance" `state)
+  ?~  tb  ~&(>>> "btc-wallet: insufficient balance" `state)
   ::  if no change, return txbu; else add change to txbu
   ::
   ?~  chng  [tb state]
@@ -565,9 +548,9 @@ $(ws t.ws)
   ^-  [address _state]
   =/  uw=(unit walt)  (~(get by walts) xpub)
   ?~  uw
-    ~|("btc-wallet-store: non-existent xpub" !!)
+    ~|("btc-wallet: non-existent xpub" !!)
   ?.  scanned.u.uw
-    ~|("btc-wallet-store: wallet not scanned yet" !!)
+    ~|("btc-wallet: wallet not scanned yet" !!)
   =/  [addr=address:btc =idx w=walt]
     ~(gen-address wad u.uw chyg)
   [addr state(walts (~(put by walts) xpub w))]
@@ -602,7 +585,7 @@ $(ws t.ws)
 ::   - checks whether the txid matches that signed tx
 ::     - if not, skip
 ::   - clears poym
-::   - returns card that adds hest to wallet-store history
+::   - returns card that adds hest to history
 ::
 ++  poym-to-history
   |=  ti=info:tx
@@ -634,7 +617,7 @@ $(ws t.ws)
 ::   - checks whether ti has a matching value output to piym
 ::   - if no match found, just deletes pend-piym with this tx
 ::     stops peer from spamming txids
-::   - returns card that adds hest to wallet-store history
+::   - returns card that adds hest to history
 ::
 ++  piym-to-history
   |=  ti=info:tx
