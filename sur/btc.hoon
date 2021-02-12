@@ -19,7 +19,8 @@
 +$  hdkey  [=fprint pubkey=hexb =network =bipt =chyg =idx]
 +$  sats  @ud
 +$  vbytes  @ud
-+$  utxo  [pos=@ txid=hexb height=@ value=sats recvd=(unit @da)]
++$  txid  hexb
++$  utxo  [pos=@ =txid height=@ value=sats recvd=(unit @da)]
 ++  address-info
   $:  =address
       confirmed-value=sats
@@ -36,7 +37,7 @@
         segwit=(unit @ud)
     ==
   +$  val
-    $:  txid=hexb
+    $:  =txid
         pos=@ud
         =address
         value=sats
@@ -45,14 +46,14 @@
   ::
   +$  info
     $:  included=?
-        txid=hexb
+        =txid
         confs=@ud
         recvd=(unit @da)
         inputs=(list val)
         outputs=(list val)
     ==
   +$  input
-    $:  txid=hexb
+    $:  =txid
         pos=@ud
         sequence=hexb
         script-sig=(unit hexb)

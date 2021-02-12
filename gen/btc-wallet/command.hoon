@@ -1,8 +1,4 @@
-::  Sends a command to the BTC Provider
-::
-::  Commands:
-::
-::
+::  Sends a command to btc-wallet
 ::
 /-  *btc-wallet-hook
 ::
@@ -10,4 +6,4 @@
 |=  $:  [now=@da eny=@uvJ =beak]
         [[comm=command ~] ~]
     ==
-[%btc-wallet-hook-command comm]
+[%btc-wallet-command comm]

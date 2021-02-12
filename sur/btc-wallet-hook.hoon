@@ -41,10 +41,7 @@
 ::  expect-payment: tell another ship that we're paying a previously requested address
 ::    - vout-n is the index of the output that has value
 ::
-+$  action
-  $%  local
-      peer
-  ==
+
 ::   local and peer pokes are initiated by the agent itself
 ::    they exist to make the state machine explicit
 ::    they are not part of the API
