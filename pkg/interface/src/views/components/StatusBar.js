@@ -107,6 +107,7 @@ const StatusBar = (props) => {
           width="auto"
           alignY="top"
           alignX="right"
+          flexShrink={0}
           options={
             <Col
               mt='6'
