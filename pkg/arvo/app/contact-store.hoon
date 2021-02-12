@@ -3,7 +3,7 @@
 :: data store that holds individual contact data
 ::
 /-  store=contact-store, *resource
-/+  default-agent, dbug, *migrate, contact
+/+  default-agent, dbug, *migrate, contact, verb
 |%
 +$  card  card:agent:gall
 +$  state-4
@@ -25,6 +25,7 @@
 =|  state-4
 =*  state  -
 %-  agent:dbug
+%+  verb  |
 ^-  agent:gall
 |_  =bowl:gall
 +*  this  .
