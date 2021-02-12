@@ -14,6 +14,7 @@
       update:store
       %group-update
       %group-push-hook
+      %.n
   ==
 ::
 --
@@ -28,6 +29,7 @@
 +*  this        .
     def         ~(. (default-agent this %|) bowl)
     dep         ~(. (default:pull-hook this config) bowl)
+    grp         ~(. grpl bowl)
 ::
 ++  on-init  on-init:def
 ++  on-save  !>(~)
@@ -45,8 +47,11 @@
   :_  this
   =-  [%pass / %agent [our.bowl %group-store] %poke -]~
   group-update+!>([%remove-group resource ~])
+::
 ++  on-pull-kick
   |=  =resource
   ^-  (unit path)
   `/
+::
+++  resource-for-update  resource-for-update:grp
 --

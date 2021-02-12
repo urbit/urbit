@@ -1,10 +1,9 @@
 export * from './cage';
-export * from './chat-hook-update';
-export * from './chat-update';
 export * from './connection';
 export * from './contact-update';
 export * from './global';
 export * from './group-update';
+export * from './group-view';
 export * from './graph-update';
 export * from './hark-update';
 export * from './invite-update';
@@ -14,3 +13,4 @@ export * from './metadata-update';
 export * from './noun';
 export * from './s3-update';
 export * from './workspace';
+export * from './util';

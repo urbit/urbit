@@ -1,9 +1,7 @@
-import React, { ReactNode, useState, useEffect, useCallback } from "react";
+import React, { ReactNode } from "react";
 import { useStatelessAsyncClickable } from '~/logic/lib/useStatelessAsyncClickable';
 
-import { Button, LoadingSpinner, Action } from "@tlon/indigo-react";
-
-import { useFormikContext } from "formik";
+import { LoadingSpinner, Action } from "@tlon/indigo-react";
 
 interface AsyncActionProps {
   children: ReactNode;
@@ -26,6 +24,7 @@ export function StatelessAsyncAction({
 
   return (
     <Action
+      height="18px"
       hideDisabled={!disabled}
       disabled={disabled || state === 'loading'}
       onClick={handleClick} {...rest}>

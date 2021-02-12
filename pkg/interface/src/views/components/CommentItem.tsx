@@ -64,7 +64,7 @@ export function CommentItem(props: CommentItemProps) {
                 </Text>
               </Link>
               <ClickBox display="inline-block" color="red" onClick={onDelete}>
-                Delete
+                <Text color='red'>Delete</Text>
               </ClickBox>
             </Box>
           )}

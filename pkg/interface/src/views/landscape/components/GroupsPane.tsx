@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, ReactNode } from "react";
 import {
   Switch,
   Route,
@@ -27,6 +27,7 @@ import "~/views/apps/links/css/custom.css";
 import "~/views/apps/publish/css/custom.css";
 import { Workspace } from "~/types";
 import { getGroupFromWorkspace } from "~/logic/lib/workspace";
+import {GroupSummary} from "./GroupSummary";
 
 type GroupsPaneProps = StoreState & {
   baseUrl: string;
@@ -42,7 +43,7 @@ export function GroupsPane(props: GroupsPaneProps) {
   const groupContacts = (groupPath && contacts[groupPath]) || undefined;
   const rootIdentity = contacts?.["/~/default"]?.[window.ship];
   const groupAssociation =
-    (groupPath && associations.contacts[groupPath]) || undefined;
+    (groupPath && associations.groups[groupPath]) || undefined;
   const group = (groupPath && groups[groupPath]) || undefined;
   const [recentGroups, setRecentGroups] = useLocalStorageState<string[]>(
     "recent-groups",
@@ -56,7 +57,7 @@ export function GroupsPane(props: GroupsPaneProps) {
     setRecentGroups((gs) => _.uniq([workspace.group, ...gs]));
   }, [workspace]);
 
-  if (!associations) {
+  if (!(associations && (groupPath ? groupPath in groups : true))) {
     return null;
   }
 
@@ -70,6 +71,7 @@ export function GroupsPane(props: GroupsPaneProps) {
           api={api}
           s3={props.s3}
           notificationsGroupConfig={props.notificationsGroupConfig}
+          associations={associations}
 
           {...routeProps}
           baseUrl={baseUrl}
@@ -175,7 +177,6 @@ export function GroupsPane(props: GroupsPaneProps) {
                 {...routeProps}
                 api={api}
                 baseUrl={baseUrl}
-                chatSynced={props.chatSynced}
                 associations={associations}
                 groups={groups}
                 group={groupPath}
@@ -191,8 +192,25 @@ export function GroupsPane(props: GroupsPaneProps) {
         path={relativePath("")}
         render={(routeProps) => {
           const hasDescription = groupAssociation?.metadata?.description;
-          const description = (hasDescription && hasDescription !== "")
-            ? hasDescription : "Create or select a channel to get started"
+          const channelCount = Object.keys(props?.associations?.graph ?? {}).filter(e => {
+            return props?.associations?.graph?.[e]?.['group'] === groupPath;
+          }).length;
+          let summary: ReactNode;
+          if(groupAssociation?.group) {
+            const memberCount = props.groups[groupAssociation.group].members.size;
+            summary = <GroupSummary
+              memberCount={memberCount}
+              channelCount={channelCount}
+              metadata={groupAssociation.metadata}
+              resource={groupAssociation.group}
+            />
+          } else {
+            summary = (<Box p="4"><Text fontSize="0" color='gray'>
+                        Create or select a channel to get started
+                      </Text></Box>);
+
+
+          }
           const title = groupAssociation?.metadata?.title ?? 'Landscape';
           return (
             <>
@@ -206,9 +224,7 @@ export function GroupsPane(props: GroupsPaneProps) {
                   display={["none", "flex"]}
                   p='4'
                 >
-                  <Box p="4"><Text fontSize="0" color='gray'>
-                    {description}
-                  </Text></Box>
+                {summary}
                 </Col>
                 {popovers(routeProps, baseUrl)}
               </Skeleton>

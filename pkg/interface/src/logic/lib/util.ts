@@ -16,6 +16,19 @@ export const MOMENT_CALENDAR_DATE = {
   sameElse: "~YYYY.M.D",
 };
 
+export const getModuleIcon = (mod: string) => {
+ if (mod === "link") {
+    return "Collection";
+  }
+  return _.capitalize(mod);
+}
+
+export function wait(ms: number) {
+  return new Promise((resolve, reject) => {
+    setTimeout(resolve, ms);
+  });
+}
+
 export function appIsGraph(app: string) {
   return app === 'publish' || app == 'link';
 }
@@ -217,6 +230,11 @@ export function alphabeticalOrder(a: string, b: string) {
   return a.toLowerCase().localeCompare(b.toLowerCase());
 }
 
+export function lengthOrder(a: string, b: string) {
+  return b.length - a.length;
+
+}
+
 //  TODO: deprecated
 export function alphabetiseAssociations(associations: any) {
   const result = {};
@@ -363,11 +381,32 @@ export function useShowNickname(contact: Contact | null, hide?: boolean): boolea
   return !!(contact && contact.nickname && !hideNicknames);
 }
 
-export function useHovering() {
+interface useHoveringInterface {
+  hovering: boolean;
+  bind: {
+    onMouseOver: () => void,
+    onMouseLeave: () => void
+  }
+}
+
+export const useHovering = (): useHoveringInterface => {
   const [hovering, setHovering] = useState(false);
   const bind = {
-    onMouseEnter: () => setHovering(true),
+    onMouseOver: () => setHovering(true),
     onMouseLeave: () => setHovering(false)
   };
   return { hovering, bind };
-}
+};
+
+const DM_REGEX = /ship\/~([a-z]|-)*\/dm--/;
+export function getItemTitle(association: Association) {
+  if(DM_REGEX.test(association.resource)) {
+    const [,,ship,name] = association.resource.split('/');
+    if(ship.slice(1) === window.ship) {
+      return cite(`~${name.slice(4)}`);
+    }
+    return cite(ship);
+
+  }
+  return association.metadata.title || association.resource
+};

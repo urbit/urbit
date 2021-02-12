@@ -1,16 +1,14 @@
-/+  *metadata-json
-=,  dejs:format
-|_  act=metadata-action
+/+  store=metadata-store
+|_  =action:store
 ++  grad  %noun
 ++  grow
   |%
-  ++  noun  act
+  ++  noun  action
+  ++  json  update:enjs:store
   --
 ++  grab
   |%
-  ++  noun  metadata-action
-  ++  json
-    |=  jon=^json
-    (json-to-action jon)
+  ++  noun  action:store
+  ++  json  action:dejs:store
   --
 --

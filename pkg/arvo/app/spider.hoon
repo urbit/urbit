@@ -267,6 +267,10 @@
   ^-  card
   [%pass /bind %arvo %e %connect [~ /spider] %spider]
 ::
+++  new-thread-id
+  |=  file=term
+  :((cury cat 3) file '--' (scot %uv (sham eny.bowl)))
+::
 ++  handle-http-request
   |=  [eyre-id=@ta =inbound-request:eyre]
   ^-  (quip card _state)
@@ -277,8 +281,7 @@
   =*  input-mark   i.t.site.url
   =*  thread       i.t.t.site.url
   =*  output-mark  i.t.t.t.site.url
-  =/  =tid
-    (scot %uv (sham eny.bowl))
+  =/  =tid         (new-thread-id thread)
   =.  serving.state
     (~(put by serving.state) tid [eyre-id output-mark])
   =+  .^
@@ -334,7 +337,7 @@
     ?~  parent-tid
       /
     (~(got by tid.state) u.parent-tid)
-  =/  new-tid  (fall use (scot %uv (sham eny.bowl)))
+  =/  new-tid  (fall use (new-thread-id file))
   =/  =yarn  (snoc parent-yarn new-tid)
   ::
   ?:  (has-yarn running.state yarn)

@@ -1,10 +1,11 @@
-import React, { Component } from 'react';
+import React, { Component, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import RemarkDisableTokenizers from 'remark-disable-tokenizers';
 import RemarkBreaks from 'remark-breaks';
 import urbitOb from 'urbit-ob';
 import { Text } from '@tlon/indigo-react';
+import { GroupLink } from "~/views/components/GroupLink";
 
 const DISABLED_BLOCK_TOKENS = [
   'indentedCode',
@@ -73,35 +74,37 @@ const MessageMarkdown = React.memo(props => (
     plugins={[RemarkBreaks]} />
 ));
 
+export default function TextContent(props) {
+  const content = props.content;
 
-export default class TextContent extends Component {
+  const group = content.text.match(
+    /([~][/])?(~[a-z]{3,6})(-[a-z]{6})?([/])(([a-z0-9-])+([/-])?)+/
+  );
+  const isGroupLink = ((group !== null) // matched possible chatroom
+    && (group[2].length > 2) // possible ship?
+    && (urbitOb.isValidPatp(group[2]) // valid patp?
+    && (group[0] === content.text))) // entire message is room name?
 
-  render() {
-    const { props } = this;
-    const content = props.content;
-
-    const group = content.text.match(
-      /([~][/])?(~[a-z]{3,6})(-[a-z]{6})?([/])(([a-z0-9-])+([/-])?)+/
+  if(isGroupLink) {
+    const resource = `/ship/${content.text}`;
+    return (
+      <GroupLink
+        measure={props.measure}
+        resource={resource}
+        api={props.api}
+        associations={props.associations}
+        groups={props.groups}
+        pl='2'
+        border='1'
+        borderRadius='2'
+        borderColor='washedGray'
+      />
     );
-    if ((group !== null) // matched possible chatroom
-      && (group[2].length > 2) // possible ship?
-      && (urbitOb.isValidPatp(group[2]) // valid patp?
-      && (group[0] === content.text))) { // entire message is room name?
-      return (
-        <Text mx="2px" flexShrink={0} fontSize={props.fontSize ? props.fontSize : '14px'} color='black' lineHeight="tall">
-          <Link
-            className="bb b--black b--white-d mono"
-            to={'/~landscape/join/' + group.input}>
-            {content.text}
-          </Link>
-        </Text>
-      );
-    } else {
-      return (
-        <Text mx="2px" flexShrink={0} color='black' fontSize={props.fontSize ? props.fontSize : '14px'} lineHeight="tall" style={{ overflowWrap: 'break-word' }}>
-          <MessageMarkdown source={content.text} />
-        </Text>
-      );
-    }
+  } else {
+    return (
+      <Text mx="2px" flexShrink={0} color='black' fontSize={props.fontSize ? props.fontSize : '14px'} lineHeight="tall" style={{ overflowWrap: 'break-word' }}>
+        <MessageMarkdown source={content.text} />
+      </Text>
+    );
   }
 }
