@@ -20,6 +20,17 @@
 +$  state-zero
   [%0 previews=(map resource group-preview:metadata)]
 ::
++$  state-one
+  $:  %1
+      pending=(set resource)
+      previews=(map resource group-preview:metadata)
+  ==
+::
++$  versioned-state
+  $%  state-zero
+      state-one
+  ==
+::
 --
 ::
 ::
@@ -28,7 +39,7 @@
 ^-  agent:gall
 %-  (agent:pull-hook config)
 ^-  (pull-hook:pull-hook config)
-=|  state-zero
+=|  state-one
 =*  state  -
 =>  |_  =bowl:gall
     ++  def   ~(. (default-agent state %|) bowl)
@@ -53,8 +64,9 @@
           %fact
         ?>  ?=(%invite-update p.cage.sign)
         =+  !<(=update:invite-store q.cage.sign)
-        :_  state
-        ?.  ?=(%invite -.update)  ~
+        ?.  ?=(%invite -.update)  `state
+        ?:  (~(has in pending) resource.invite.update)  `state
+        :_  state(pending (~(put in pending) resource.invite.update))
         (get-preview resource.invite.update)^~
       ::
         %kick  [watch-invites^~ state]
@@ -70,41 +82,64 @@
         %kick  [~[watch-contacts] state]
         ::
           %fact
-        :_  state
         ?>  ?=(%contact-update p.cage.sign)
         =+  !<(=update:contact q.cage.sign)
-        ?+  -.update  ~
+        ?+  -.update  `state
             %add
-          (check-contact contact.update)
+          =/  missing=(set resource)
+            (check-contact contact.update)
+          =.  pending
+            (~(uni in pending) missing)
+          :_  state
+          (get-many-previews missing)
+
         ::
             %edit
-          ?.  ?=(%add-group -.edit-field.update)  ~
-          %-  add-missing-previews 
-          (~(gas in *(set resource)) resource.edit-field.update ~)
+          ?.  ?=(%add-group -.edit-field.update)  `state
+          =/  missing=(set resource)
+            %-  add-missing-previews
+            (~(gas in *(set resource)) resource.edit-field.update ~)
+          =.  pending
+            (~(uni in pending) missing)
+          :_  state
+          (get-many-previews missing)
+        ::
         ::
             %initial
-          ^-  (list card)
-          %-  zing
-          %+  turn  ~(tap by rolodex.update)
-          |=([ship =contact:contact] (check-contact contact))
+          =/  missing=(set resource)
+            %-  add-missing-previews
+            %+  roll  ~(tap by rolodex.update)
+            |=  [[ship =contact:contact] out=(set resource)]
+            (~(uni in out) (check-contact contact))
+          =.  pending
+            (~(uni in pending) missing)
+          :_  state
+          (get-many-previews missing)
         ==
       ==
     ::
+    ++  get-many-previews
+      |=  rids=(set resource)
+      (turn ~(tap by rids) get-preview)
+    ::
     ++  check-contact
       |=  =contact:contact
-      ^-  (list card)
+      ^-  (set resource)
       (add-missing-previews groups.contact)
     ::
     ++  add-missing-previews
       |=  groups=(set resource)
-      ^-  (list card)
+      ^-  (set resource)
+      =/  have=(set resource)
+        (~(uni in ~(key by previews)) pending)
       =/  missing=(set resource)
-        (~(dif in ~(key by previews)) groups)
+        (~(dif in groups) have)
+      %-  ~(gas by *(set resource))
       %+  murn  ~(tap by missing)
       |=  group=resource
-      ^-  (unit card)
+      ^-  (unit resource)
       ?^  (peek-metadatum:met %groups group)  ~
-      `(get-preview group)
+      `group
     ::
     ++  watch-store
       (~(watch-our pass:io /store) %metadata-store /all)
@@ -139,8 +174,19 @@
 ++  on-save  !>(state)
 ++  on-load  
   |=  =vase
-  =+  !<(old=state-zero vase)
-  `this(state old)
+  =+  !<(old=versioned-state vase)
+  |-  
+  ?-  -.old
+    %1  `this(state old)
+    ::
+      %0
+    %_    $
+        old
+      %*  .  *state-one
+        previews  previews.old
+      ==
+    ==
+  ==
 ::
 ++  on-poke  
   |=  [=mark =vase]
@@ -149,7 +195,11 @@
   =+  !<(=hook-update:metadata vase)
   ?.  ?=(%preview -.hook-update)
     (on-poke:def mark vase)
-  :_  this(previews (~(put by previews) group.hook-update +.hook-update))
+  =.  previews
+    (~(put by previews) group.hook-update +.hook-update)
+  =.  pending
+    (~(del in pending) group.hook-update)
+  :_  this
   =/  =path
     preview+(en-path:resource group.hook-update)
   (fact-kick:io path mark^vase)
@@ -182,9 +232,10 @@
     ?^  (peek-metadatum:met %groups rid)  
       (some (get-preview:met rid))
     (~(get by previews) rid)
-  :_  this
   ?~  prev
+    :_  this(pending (~(put in pending) rid))
     (get-preview rid)^~
+  :_  this
   (fact-init:io metadata-hook-update+!>([%preview u.prev]))^~
 ::
 ++  on-leave  on-leave:def
