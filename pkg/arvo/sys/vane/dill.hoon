@@ -102,7 +102,6 @@
         ^+  +>
         ?+    -.kyz  ~&  [%strange-kiss -.kyz]  +>
           %flow  +>
-          %harm  +>
           %hail  (send %hey ~)
           %belt  (send `dill-belt`p.kyz)
           %text  (fore (tuba p.kyz) ~)

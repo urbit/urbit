@@ -1732,12 +1732,6 @@ _term_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
           ret_o = c3n;
         } break;
 
-        //  XX review, accepted and ignored
-        //
-        case c3__bbye: {
-          ret_o = c3y;
-        } break;
-
         case c3__blit: {
           ret_o = c3y;
 

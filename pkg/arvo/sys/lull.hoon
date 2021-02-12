@@ -1007,9 +1007,7 @@
 ++  dill  ^?
   |%
   +$  gift                                              ::  out result <-$
-    $%  [%bbye ~]                                       ::  reset prompt
-        [%blit p=(list blit)]                           ::  terminal output
-        [%burl p=@t]                                    ::  activate url
+    $%  [%blit p=(list blit)]                           ::  terminal output
         [%logo ~]                                       ::  logout
         [%meld ~]                                       ::  unify memory
         [%pack ~]                                       ::  compact memory
@@ -1022,10 +1020,8 @@
         [%crud p=@tas q=(list tank)]                    ::  print error
         [%flog p=flog]                                  ::  wrapped error
         [%heft ~]                                       ::  memory report
-        [%harm ~]                                       ::  all terms hung up
         $>(%init vane-task)                             ::  after gall ready
         [%meld ~]                                       ::  unify memory
-        [%noop ~]                                       ::  no operation
         [%pack ~]                                       ::  compact memory
         [%shot ses=@tas task=session-task]              ::  task for session
         [%talk p=tank]                                  ::
