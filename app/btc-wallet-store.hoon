@@ -7,9 +7,7 @@
 ::    - /requests: to request data about addresses
 ::    - /updates: new data about one of our addresses
 ::
-::  Scrys
-::  x/scanned: (list xpub) of all scanned wallets
-::  x/balance/xpub: balance (in sats) of wallet
+
 ::
 /-  *btc-wallet-store
 /+  dbug, default-agent, *btc-wallet-store, btc, bip32
@@ -114,11 +112,6 @@
     ::
       %delete-wallet
     `state(walts (~(del by walts) xpub.act))
-    ::
-    ::  TODO
-    :: if blank address we're watching gets a value
-    :: "blank" = unused
-    :: send a %tx-info request--txinfo handles history stuff
     ::
       %address-info
     (update-address +.act)
@@ -235,8 +228,9 @@
     ==
   :-  (req-scan ~[req-pax] newb xpub chyg)
   newb
+::  +del-scanned: delete scanned idxs
 ::
-++  iter-scan
+++  del-scanned
   |=  [b=batch =xpub =chyg to-delete=idx]
   ^-  ^scans
   %+  ~(put by scans)  [xpub chyg]
@@ -292,7 +286,7 @@
   =+  b=(~(get by scans) [xpub chyg])
   ?~  b  [(more-info u.w) state]
   =.  scans
-    (iter-scan u.b(has-used ?|(used has-used.u.b)) xpub chyg idx)
+    (del-scanned u.b(has-used ?|(used has-used.u.b)) xpub chyg idx)
   ?:  empty:(scan-status xpub chyg)
     =^  cards  state  (run-scan xpub)
     [(weld (more-info u.w) cards) state]
@@ -421,27 +415,9 @@
       ==
   ==
 ::
-++  scanned-wallets
-  ^-  (list xpub)
-  %+  murn  ~(tap by walts)
-  |=  [=xpub:btc w=walt]
-  ^-  (unit xpub:btc)
-  ?:  scanned.w  `xpub  ~
-::
-++  balance
-  |=  =xpub:btc
-  ^-  sats:btc
-  =/  w  (~(get by walts) xpub)
-  ?~  w  ~|("btc-wallet-store: non-existent xpub" !!)
-  =/  values=(list sats:btc)
-    %+  turn  ~(val by wach.u.w)
-    |=  =addi  ^-  sats:btc
-    %+  roll
-      %+  turn  ~(tap by utxos.addi)
-      |=(=utxo:btc value.utxo)
-    add
-  (roll values add)
-::
+:: REMOVED
+::  scanned-wallets
+::  balance
 ++  send-req
   |=  [pax=(list path) req=request]  ^-  card
 ::  ~&  >>   "send-req: {<chyg.req>}, {<idx.req>}"

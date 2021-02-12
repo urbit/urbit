@@ -37,6 +37,24 @@
       (fall max-gap max-gap:defaults)
       (fall confs confs:defaults)
   ==
+::  +address-meta: find wallet info for the address, if any
+::
+++  address-meta
+  |=  [a=address ws=(list walt)]
+  ^-  (unit [w=walt =chyg =idx])
+  |^
+  |-  ?~  ws  ~
+  =/  res=(unit [=chyg =idx])
+    (lookup i.ws)
+  ?^  res  `[i.ws chyg.u.res idx.u.res]
+  $(ws t.ws)
+  ::
+  ++  lookup
+    |=  w=walt
+    ^-  (unit [=chyg =idx])
+    =/  ad=(unit addi)  (~(get by wach.w) a)
+    ?~(ad ~ `[chyg.u.ad idx.u.ad])
+  --
 ::
 ++  new-txbu
   |=  $:  w=walt
@@ -225,7 +243,7 @@
       ?:(?=(%0 chyg) [idx q.nixt.w] [p.nixt.w idx])
     --
   --
-::  sut: door to select utxos
+::  sut: select utxos
 ::
 ++  sut
 |_  [w=walt eny=@uvJ last-block=@ud payee=(unit ship) =feyb txos=(list txo)]
