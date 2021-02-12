@@ -14,6 +14,7 @@ import {
   Button,
   Text
 } from "@tlon/indigo-react";
+import RichText from '~/views/components/RichText'
 import useLocalState from "~/logic/state/local";
 import { useHistory } from "react-router-dom";
 import {useTutorialModal} from "~/views/components/useTutorialModal";
@@ -84,9 +85,9 @@ export function Profile(props: any) {
               </>
           ) : null}
           </Row>
-          <Text maxWidth='18rem' overflowX='hidden' textOverflow="ellipsis"
+          <RichText disableRemoteContent maxWidth='18rem' overflowX='hidden' textOverflow="ellipsis"
             whiteSpace="nowrap"
-            overflow="hidden" display="inline-block" verticalAlign="middle">{contact?.status ?? ""}</Text>
+            overflow="hidden" display="inline-block" verticalAlign="middle">{contact?.status ?? ""}</RichText>
         </Row>
         <Row  width="100%" height="300px">
           {cover}
