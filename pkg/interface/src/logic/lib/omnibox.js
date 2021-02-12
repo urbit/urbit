@@ -75,6 +75,7 @@ const otherIndex = function() {
   other.push(result('My Channels', '/~landscape/home', 'home', null));
   other.push(result('Notifications', '/~notifications', 'inbox', null));
   other.push(result('Profile and Settings', `/~profile/~${window.ship}`, 'profile', null));
+  other.push(result('Messages', '/~landscape/messages', 'messages', null));
   other.push(result('Log Out', '/~/logout', 'logout', null));
 
   return other;

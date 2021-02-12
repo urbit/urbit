@@ -32,7 +32,7 @@
   $%  [%initial =rolodex is-public=?]
       [%add =ship =contact]
       [%remove =ship]
-      [%edit =ship =edit-field]
+      [%edit =ship =edit-field timestamp=@da]
       [%allow =beings]
       [%disallow =beings]
       [%set-public public=?]

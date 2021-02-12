@@ -6,6 +6,7 @@ import { GroupPolicy, Resource } from '~/types/group-update';
 
 export default class ContactsApi extends BaseApi<StoreState> {
   add(ship: Patp, contact: any) {
+    contact['last-updated'] = Date.now();
     return this.storeAction({ add: { ship, contact } });
   }
 
@@ -25,11 +26,11 @@ export default class ContactsApi extends BaseApi<StoreState> {
     {add-group: {ship, name}}
     {remove-group: {ship, name}}
     */
-    console.log(ship, editField);
     return this.storeAction({
       edit: {
         ship,
         'edit-field': editField,
+        timestamp: Date.now()
       },
     });
   }
