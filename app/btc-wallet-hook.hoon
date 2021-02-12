@@ -150,7 +150,6 @@
     ?~  def-wallet  state
     ?.  =(u.def-wallet xpub.comm)  state
     state(def-wallet ~)
-    ::  TODO if wallet is xpub.comm, clear
     ::
     ::  %req-pay-address
     ::  overwrites any payment being built currently
@@ -288,7 +287,7 @@
     ::
       %ret-pay-address
     ?:  =(src.bowl our.bowl)  ~|("Can't pay ourselves" !!)
-    ?:  broadcasting  ~|("Broadcasting a transaction" !!)
+    ?:  is-broadcasting  ~|("Broadcasting a transaction" !!)
     ?~  def-wallet  ~|("btc-wallet-hook: no def(ault)-wallet set" !!)
     =+  feyb=(~(gut by feybs) src.bowl ?~(fee.btc-state 100 u.fee.btc-state))
     ?>  =(payer.act our.bowl)
@@ -470,7 +469,8 @@
 ::
 ++  poym-to-history
   |=  ti=info:tx
-  |^  ^-  (quip card _state)
+  ^-  (quip card _state)
+  |^
   ?~  poym  `state
   ?~  sitx.u.poym  `state
   ?.  (poym-has-txid txid.ti)
@@ -496,7 +496,6 @@
 ::   - returns card that adds hest to wallet-store history
 ::
 ++  piym-to-history
-  :: TODO: delete prints
   |=  ti=info:tx
   |^  ^-  (quip card _state)
   =+  pay=(~(get by pend-piym) txid.ti)
@@ -602,44 +601,26 @@
 ++  retry-poym
   ^-  (list card)
   ?~  poym  ~
-  ?~  prov  ~|("prov not set" !!)
-  =*  host  host.u.prov
   %+  weld
     ?~  sitx.u.poym  ~
-    ~[(poke-provider host [%broadcast-tx u.sitx.u.poym])]
+    ~[(poke-provider [%broadcast-tx u.sitx.u.poym])]
   %+  turn  txis.u.poym
-  |=  =txi:bws
-  (get-raw-tx host txid.utxo.txi)
+  |=  =txi
+  (poke-provider [%raw-tx txid])
 ::  +retry-pend-piym: check whether txids in pend-piym are in mempool
 ::
 ++  retry-pend-piym
   ^-  (list card)
-  ?~  prov  ~|("provider not set" !!)
   %+  turn  ~(tap in ~(key by pend-piym))
-  |=(txid=hexb (poke-provider host.u.prov [%tx-info txid]))
+  |=(=txid (poke-provider [%tx-info txid]))
 ::
 ++  get-raw-tx
   |=  [host=ship txid=hexb]
   ^-  card
   (poke-provider host [%raw-tx txid])
+
 ::
-++  poke-provider
-  |=  [host=ship act=action:bp]
-  ^-  card
-  :*  %pass  /[(scot %da now.bowl)]  %agent  [host %btc-provider]
-      %poke  %btc-provider-action  !>([act])
-  ==
-::
-++  broadcasting
-  ^-  ?
-  ?~  poym  %.n
-  ?~  sitx.u.poym  %.n
-  %.y
-::
-++  provider-connected
-  ^-  ?
-  ?~  prov  %.n
-  connected.u.prov
+
 ::
 ++  poke-hook
   |=  [target=ship act=action]
