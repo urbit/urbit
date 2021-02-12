@@ -11,7 +11,9 @@ import {
   Notifications,
   NotificationGraphConfig, 
   GroupNotificationsConfig,
-  Unreads
+  Unreads,
+  JoinRequests,
+  Patp
 } from "~/types";
 
 export interface StoreState {
@@ -28,6 +30,7 @@ export interface StoreState {
   // groups state
   groups: Groups;
   groupKeys: Set<Path>;
+  nackedContacts: Set<Patp>
   s3: S3State;
   graphs: Graphs;
   graphKeys: Set<string>;
@@ -46,5 +49,5 @@ export interface StoreState {
   notificationsCount: number,
   unreads: Unreads;
   doNotDisturb: boolean;
-  unreads: Unreads;
+  pendingJoin: JoinRequests;
 }

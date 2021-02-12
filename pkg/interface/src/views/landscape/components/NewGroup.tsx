@@ -10,7 +10,7 @@ import {
 import { Formik, Form, FormikHelpers } from "formik";
 import { AsyncButton } from "~/views/components/AsyncButton";
 import * as Yup from "yup";
-import { Groups, Rolodex, GroupPolicy, Enc } from "~/types";
+import { Groups, Rolodex, GroupPolicy, Enc, Associations } from "~/types";
 import { useWaitForProps } from "~/logic/lib/useWaitForProps";
 import GlobalApi from "~/logic/api/global";
 import { stringToSymbol } from "~/logic/lib/util";
@@ -31,6 +31,7 @@ interface FormSchema {
 interface NewGroupProps {
   groups: Groups;
   contacts: Rolodex;
+  associations: Associations;
   api: GlobalApi;
 }
 
@@ -61,10 +62,10 @@ export function NewGroup(props: NewGroupProps & RouteComponentProps) {
                 banned: [],
               },
             };
-        await api.contacts.create(name, policy, title, description);
+        await api.groups.create(name, policy, title, description);
         const path = `/ship/~${window.ship}/${name}`;
-        await waiter(({ contacts, groups }) => {
-          return path in contacts && path in groups;
+        await waiter(({ groups, associations }) => {
+          return path in groups && path in associations.groups;
         });
 
         actions.setStatus({ success: null });

@@ -8,6 +8,7 @@ interface RoleTag {
 
 interface AppTag {
   app: string;
+  resource: string;
   tag: string;
 }
 

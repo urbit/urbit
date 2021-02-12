@@ -15,6 +15,7 @@ import GlobalApi from "~/logic/api/global";
 import VirtualScroller from "~/views/components/VirtualScroller";
 import { LinkItem } from "./components/LinkItem";
 import LinkSubmit from "./components/LinkSubmit";
+import {isWriter} from "~/logic/lib/group";
 
 interface LinkWindowProps {
   association: Association;
@@ -48,7 +49,8 @@ export function LinkWindow(props: LinkWindowProps) {
   }, [graph.size]);
 
   const first = graph.peekLargest()?.[0];
-  const [,,ship, name] = association['app-path'].split('/');
+  const [,,ship, name] = association.resource.split('/');
+  const canWrite = isWriter(props.group, association.resource)
 
     const style = useMemo(() =>
     ({
@@ -61,9 +63,14 @@ export function LinkWindow(props: LinkWindowProps) {
 
   if (!first) {
     return (
-        <Col key={0} mx="auto" mt="4" maxWidth="768px" width="100%" flexShrink={0} px={3}>
+      <Col key={0} mx="auto" mt="4" maxWidth="768px" width="100%" flexShrink={0} px={3}>
+        { canWrite ? (
             <LinkSubmit s3={props.s3} name={name} ship={ship.slice(1)} api={api} />
-        </Col>
+          ) : (
+            <Text>There are no links here yet. You do not have permission to post to this collection.</Text>
+          )
+        }
+      </Col>
     );
   }
 
@@ -85,7 +92,7 @@ export function LinkWindow(props: LinkWindowProps) {
           node,
           measure,
         };
-        if(index.eq(first ?? bigInt.zero)) {
+        if(canWrite && index.eq(first ?? bigInt.zero)) {
           return (
             <React.Fragment key={index.toString()}>
             <Col key={index.toString()} mx="auto" mt="4" maxWidth="768px" width="100%" flexShrink={0} px={3}>
