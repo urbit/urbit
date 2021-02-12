@@ -195,10 +195,10 @@
   =+  !<(=hook-update:metadata vase)
   ?.  ?=(%preview -.hook-update)
     (on-poke:def mark vase)
-  =.  previews
-    (~(put by previews) group.hook-update +.hook-update)
-  =.  pending
-    (~(del in pending) group.hook-update)
+  =:  pending   (~(del in pending) group.hook-update)
+        previews
+      (~(put by previews) group.hook-update +.hook-update)
+    ==
   :_  this
   =/  =path
     preview+(en-path:resource group.hook-update)
