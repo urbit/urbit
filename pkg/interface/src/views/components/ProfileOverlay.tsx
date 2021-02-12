@@ -14,6 +14,7 @@ import {
   ColProps,
   Icon
 } from '@tlon/indigo-react';
+import RichText from './RichText';
 import { withLocalState } from '~/logic/state/local';
 import { ProfileStatus } from './ProfileStatus';
 
@@ -132,7 +133,7 @@ class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
           onClick={() => history.push(`/~profile/~${ship}`)}>
           {img}
         </Box>
-        <Col alignItems="end" justifyContent="flex-end" overflow="hidden">
+        <Col alignItems="end" justifyContent="flex-end" overflow="hidden" minWidth='0'>
           <Row width="100%" >
             <Text
               fontWeight='600'
@@ -152,9 +153,12 @@ class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
               contact={contact}
             />
           ) : (
-            <Text gray>
+              <RichText display='inline-block' width='100%' minWidth='0' textOverflow='ellipsis'
+                overflow='hidden'
+                whiteSpace='pre'
+                lineHeight="tall" disableRemoteContent gray>
               {contact?.status ? contact.status : ''}
-            </Text>
+            </RichText>
           )
           }
         </Col>
