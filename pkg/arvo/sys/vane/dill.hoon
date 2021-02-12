@@ -167,6 +167,7 @@
         ::      perhaps +send this to .ram instead?
         ::
         |=  liz=(list (list @c))
+        ~?  !=(%$ ses)  [%d %foreing-in-session ses]
         ^+  +>
         =.  +>
           =|  biz=(list blit)
