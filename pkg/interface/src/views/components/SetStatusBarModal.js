@@ -77,9 +77,11 @@ export const SetStatusBarModal = (props) => {
       )}
       <Row
         {...rest}
+        flexShrink={0}
         onClick={() => setModalShown(true)}>
         <Text color='black'
           cursor='pointer'
+          flexShrink={0}
           fontSize={1}>
           Set Status
         </Text>

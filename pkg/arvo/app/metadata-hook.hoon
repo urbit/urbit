@@ -34,12 +34,15 @@
 ^-  agent:gall
 |_  =bowl:gall
 +*  this  .
-    def   ~(. (default-agent *agent:gall %|) bowl)
+    def   ~(. (default-agent this %|) bowl)
 ++  on-init   on-init:def
 ++  on-save   !>(state)
 ++  on-load
   |=  =vase
-  =+  !<(old=versioned-state vase)
+  =/  m-old=(unit versioned-state)
+     (mole |.(!<(versioned-state vase)))
+  ?~  m-old  `this
+  =*  old  u.m-old
   |^
   ?:  ?=(%2 -.old)
     `this
