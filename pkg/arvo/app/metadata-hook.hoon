@@ -39,7 +39,10 @@
 ++  on-save   !>(state)
 ++  on-load
   |=  =vase
-  =+  !<(old=versioned-state vase)
+  =/  m-old=(unit versioned-state)
+     (mole |.(!<(versioned-state vase)))
+  ?~  m-old  `this
+  =*  old  u.m-old
   |^
   ?:  ?=(%2 -.old)
     `this
