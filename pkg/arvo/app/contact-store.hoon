@@ -104,10 +104,18 @@
       |=  [rolo=rolodex:store is-public=?]
       ^-  (quip card _state)
       =/  our-contact  (~(got by rolodex) our.bowl)
-      =.  rolodex  (~(uni by rolodex) rolo)
-      =.  rolodex  (~(put by rolodex) our.bowl our-contact)
-      :_  state(rolodex rolodex)
-      (send-diff [%initial rolodex is-public] %.n)
+      =/  diff-rolo=rolodex:store
+        %-  ~(gas by *rolodex:store)
+        %+  skim  ~(tap in rolo)
+        |=  [=ship =contact:store]
+        ?~  local-con=(~(get by rolodex) ship)  %.y
+        (gth last-updated.contact last-updated.u.local-con)
+      =/  new-rolo=rolodex:store
+        (~(uni by rolodex) diff-rolo)
+      =.  new-rolo  (~(put by new-rolo) our.bowl our-contact)
+      ?:  =(new-rolo rolodex)  `state
+      :_  state(rolodex new-rolo)
+      (send-diff [%initial new-rolo is-public] %.n)
     ::
     ++  handle-add
       |=  [=ship =contact:store]
