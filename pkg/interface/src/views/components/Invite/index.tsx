@@ -124,10 +124,7 @@ export function InviteItem(props: InviteItemProps) {
       <JoinSkeleton status={status} gapY="3">
         <Row py="1" alignItems="center">
           <Icon display="block" color="blue" icon="Bullet" mr="2" />
-          <Text mr="1">You are joining a DM with</Text>
-          <Text mr="1" mono>
-            {cite(`~${invite!.ship}`)}
-          </Text>
+          <Text mr="1">Joining direct message...</Text>
         </Row>
       </JoinSkeleton>
     );
