@@ -37,9 +37,9 @@
       (fall max-gap max-gap:defaults)
       (fall confs confs:defaults)
   ==
-::  +address-meta: find wallet info for the address, if any
+::  +address-coords: find wallet info for the address, if any
 ::
-++  address-meta
+++  address-coords
   |=  [a=address ws=(list walt)]
   ^-  (unit [w=walt =chyg =idx])
   |^

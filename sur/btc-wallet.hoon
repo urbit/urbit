@@ -82,10 +82,8 @@
 ::   - txo has an hdkey if it's a change account
 ::   - by convention, first output of txo is to the payee, if one is present
 ::  txbu: tx builder -- all information needed to make a transaction for signing
-::   - sitx: signed hex transaction
 ::
 +$  insel  [=utxo =chyg =idx]
-+$  pmet  (unit [payer=ship value=sats])
 +$  feyb  sats
 +$  txi  [=utxo ur=(unit hexb) =hdkey]
 +$  txo  [=address value=sats hk=(unit hdkey)]
@@ -95,7 +93,7 @@
       =vbytes
       txis=(list txi)
       txos=(list txo)
-      sitx=(unit hexb)
+      signed-tx=(unit hexb)
   ==
 ::  hest: an entry in the history log
 ::
