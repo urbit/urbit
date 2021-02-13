@@ -14,6 +14,7 @@
         piym-limit=3
     ==
   ++  confs  6
+  ++  fee  100
   --
 ::
 +$  versioned-state
@@ -63,11 +64,11 @@
         *^history
         ~
         *^scans
-        defaults:params
+        params:defaults
         *(map ship sats)
         *^piym
         *^poym
-        *^pend
+        *^pend-piym
     ==
   ==
 ++  on-save
@@ -87,7 +88,7 @@
       %btc-wallet-action
     (handle-action:hc !<(action vase))
       %btc-wallet-command
-    (handle-command:hc !<(action vase))
+    (handle-command:hc !<(command vase))
   ==
   [cards this]
 ++  on-peek
@@ -150,6 +151,8 @@
     `state(curr-xpub `xpub.comm)
     ::
       %add-wallet
+    ?~  (~(has by walts) xpub.comm)
+    ((slog ~[leaf+"xpub already in wallet"]) `state)
     =/  w=walt  (from-xpub +.comm)
     =.  walts  (~(put by walts) xpub.comm w)
     (init-batches xpub.comm (dec max-gap.w))
@@ -182,7 +185,7 @@
         ~[(poke-provider [%broadcast-tx signed])]
     ?.  tx-match  state
       ?~  poym  state
-    state(sitx.u.poym `signed)
+    state(signed-tx.u.poym `signed)
   ==
 ::
 ++  handle-action
@@ -200,8 +203,9 @@
     =+  vb=~(vbytes txb u.poym)
     =+  fee=~(fee txb u.poym)
     ~&  >>  "{<vb>} vbytes, {<(div fee vb)>} sats/byte, {<fee>} sats fee"
-    %-  (slog [%leaf "PSBT: {<u.pb>}"]~) 
+    %-  (slog [%leaf "PSBT: {<u.pb>}"]~)
     ~
+    ::  delete an incoming/outgoing payment when we see it included in a tx
     ::
       %close-pym
     ?>  =(src.bowl our.bowl)
@@ -236,9 +240,9 @@
         txid.act
         value:(snag 0 txos.u.poym)
     ==
-    ::  can't pay yourself; comets can't pay (could spam requests)
-    ::  must have default wallet set
-    ::  reuses payment address for ship if exists in piym
+    ::  can't pay yourself; comets can't pay (could spam address requests)
+    ::  must have curr-wallet set
+    ::  reuses payment address for ship if ship in piym already
     ::
       %gen-pay-address
     ~|  "Can't pay ourselves; no comets"
@@ -253,22 +257,53 @@
     ?:  (gte n fam-limit.params)
       ~|("More than {<fam-limit.params>} addresses for moons + planet" !!)
     =.  state  state(num-fam.piym (~(put by num-fam.piym) f +(n)))
-    =^  addr  state
-      (generate-address u.curr-xpub %0 `[src.bowl value.act])
-    :-  ~[(poke-us payer.act [%recv-pay-address addr value.act])]
-    state(ps.piym (~(put by ps.piym) src.bowl [~ u.curr-xpub addr src.bowl value.act]))
+    |^
+    =^  a=address  state
+      (generate-address u.curr-xpub %0)
+    :-  ~[(poke-us src.bowl [%recv-pay-address a value.act])]
+    state(ps.piym (~(put by ps.piym) src.bowl [~ u.curr-xpub a src.bowl value.act]))
+    ::
+    ++  generate-address
+      |=  [=xpub =chyg]
+      =/  uw=(unit walt)  (~(get by walts) xpub)
+      ?:  ?|(?=(~ uw) ?!(scanned.u.uw))
+        ~|("no wallet with xpub or wallet not scanned yet" !!)
+      =/  [addr=address =idx w=walt]
+        ~(gen-address wad u.uw chyg)
+      [addr state(walts (~(put by walts) xpub w))]
+    --
     ::
       %recv-pay-address
     ?:  =(src.bowl our.bowl)  ~|("Can't pay ourselves" !!)
     ?:  is-broadcasting  ~|("Broadcasting a transaction" !!)
     ?~  curr-xpub  ~|("btc-wallet-hook: no curr-xpub set" !!)
-    =+  feyb=(~(gut by feybs) src.bowl ?~(fee.btc-state 100 u.fee.btc-state))
+    =+  feyb=(~(gut by feybs) src.bowl ?~(fee.btc-state fee:defaults u.fee.btc-state))
+    |^
     =^  tb=(unit txbu)  state
-      (generate-txbu u.curr-xpub `src.bowl feyb tx ~[[address.act value.act ~]])
-    :_  state(poym `tb)
+      (generate-txbu u.curr-xpub `src.bowl feyb ~[[address.act value.act ~]])
+    :_  state(poym tb)
     ?~  tb  ~
     %+  turn  txis.u.tb
-    |=(=txi (poke-provider txid.utxo.txi))
+    |=(=txi (poke-provider [%tx-info txid.utxo.txi]))
+    ::
+    ++  generate-txbu
+      |=  [=xpub payee=(unit ship) feyb=sats txos=(list txo)]
+      ^-  [(unit txbu) _state]
+      =/  uw  (~(get by walts) xpub)
+      ?:  ?|(?=(~ uw) ?!(scanned.u.uw))
+        ~|("no wallet with xpub or wallet not scanned yet" !!)
+      =/  [tb=(unit txbu) chng=(unit sats)]
+        %~  with-change  sut
+        [u.uw eny.bowl block.btc-state payee feyb txos]
+      ?~  tb  ((slog leaf+"insufficient balance") [tb state])
+      ::  if no change, return txbu; else add change output to txbu
+      ::
+      ?~  chng  [tb state]
+      =/  [addr=address:btc =idx w=walt]
+        ~(nixt-address wad u.uw %1)
+      :-  `(~(add-output txb u.tb) addr u.chng `(~(hdkey wad w %1) idx))
+      state(walts (~(put by walts) xpub w))
+    --
     ::
     ::  %expect-payment
     ::  - check that payment is in piym
@@ -330,7 +365,7 @@
             btc-state  [block fee now.bowl] 
         ==
     ?:  ?|(?!(connected.p) (lth block.btc-state block))
-      ;:(weld retry-pend-piym retry-addrs retry-txs)
+      ;:(weld retry-pend-piym retry-addrs retry-txs retry-scans)
     retry-pend-piym
   --
 ::
@@ -405,28 +440,37 @@
     |=  addrs=(list address)
     ^-  (unit walt)
     |-  ?~  addrs  ~
-    =/  am  (address-meta i.addrs ~(val by walts))
-    ?^  am  `w.u.am
+    =/  ac  (address-coords i.addrs ~(val by walts))
+    ?^  ac  `w.u.ac
     $(addrs t.addrs)
   --
 ::
+::
 ::  Scan Logic
+::
+::  Algorithm
+::  Initiate a batch for each chyg, with max-gap idxs in it
+::  Watch all of the addresses made from idxs
+::  Request info on all addresses from provider
+::  When an %address-info comes back:
+::    - remove that idx from todo.batch
+::    - run check-scan to check whether that chyg is done
+::    - if it isn't, refill it with max-gap idxs to scan
 ::
 ::  +handle-address-info: updates scans and wallet with address info
 ::
 ++  handle-address-info
   |=  [=address utxos=(set utxo) used=?]
   ^-  (quip card _state)
-  =/  am  (address-meta address ~(val by walts))
-  ?~  am  `state
-  =/  [w=walt =chyg =idx]  u.am
+  =/  ac  (address-coords address ~(val by walts))
+  ?~  ac  `state
+  =/  [w=walt =chyg =idx]  u.ac
   =.  walts
     %+  ~(put by walts)  xpub.w
     %+  ~(update-address wad w chyg)
       address
    [used chyg idx utxos]
   ::  if the wallet+chyg is being scanned, update the scan batch
-  ::  if not, just get more-info for the address if still being scanned
   ::
   =/  b  (~(get by scans) [xpub.w chyg])
   ?~  b  `state
@@ -435,15 +479,27 @@
   ?:  empty:(scan-status xpub.w chyg)
     (check-scan xpub.w)
   `state
+::  +req-scan
+::   - adds addresses in batch to wallet's watch map as un-used addresses
+::   - returns provider %address-info request cards
 ::
 ++  req-scan
   |=  [b=batch =xpub =chyg]
-  ^-  (list card)
+  ^-  (quip card _state)
   =/  w=walt  (~(got by walts) xpub)
-  %+  turn  ~(tap in todo.b)
-  |=  =idx
-  %-  poke-provider
-  [%address-info (~(mk-address wad w chyg) idx)]
+  =/  as=(list [address [? ^chyg idx (set utxo)]])
+    %+  turn  ~(tap in todo.b)
+    |=(=idx [(~(mk-address wad w chyg) idx) [%.n chyg idx *(set utxo)]])
+  =.  w
+    |-  ?~  as  w
+    $(as t.as, w (~(update-address wad w chyg) -.i.as +.i.as))
+  :-  (turn as |=([a=address *] (poke-provider [%address-info a])))
+  %=  state
+      scans
+    (~(put by scans) [xpub chyg] b)
+      walts
+      (~(put by walts) xpub w)
+  ==
 ::
 ++  scan-status
   |=  [=xpub =chyg]
@@ -453,40 +509,32 @@
   :-  empty
   ?&(empty ?!(has-used.b))
 ::
-++  insert-batches
-  |=  [=xpub b0=batch b1=batch]
-  ^-  ^scans
-  =.  scans  (~(put by scans) [xpub %0] b0)
-  (~(put by scans) [xpub %1] b1)
-::
 ++  init-batches
   |=  [=xpub endpoint=idx]
   ^-  (quip card _state)
   =/  b=batch
     [(sy (gulf 0 endpoint)) endpoint %.n]
-  :-  %+  weld
-        (req-scan b xpub %0)
-      (req-scan b xpub %1)
-  state(scans (insert-batches xpub b b))
+  =^  cards0  state  (req-scan b xpub %0)
+  =^  cards1  state  (req-scan b xpub %1)
+  [(weld cards0 cards1) state]
 ::  +bump-batch
 ::  if the batch is done but the wallet isn't done scanning,
 ::  returns new address requests and updated batch
 ::
 ++  bump-batch
   |=  [=xpub =chyg]
-  ^-  (quip card batch)
+  ^-  (quip card _state)
   =/  b=batch  (~(got by scans) xpub chyg)
   =/  s  (scan-status xpub chyg)
   ?.  ?&(empty.s ?!(done.s))
-    `b
+    `state
   =/  w=walt  (~(got by walts) xpub)
   =/  newb=batch
     :*  (sy (gulf +(endpoint.b) (add endpoint.b max-gap.w)))
         (add endpoint.b max-gap.w)
         %.n
     ==
-  :-  (req-scan newb xpub chyg)
-  newb
+  (req-scan newb xpub chyg)
 ::  +del-scanned: delete scanned idxs
 ::
 ++  del-scanned
@@ -502,7 +550,7 @@
   =/  w=walt  (~(got by walts) xpub)
   =.  scans  (~(del by scans) [xpub %0])
   =.  scans  (~(del by scans) [xpub %1])
-  %-  (slog leaf+"Scanned xpub {<xpub>}")
+  %-  (slog ~[leaf+"Scanned xpub {<xpub>}"])
   `state(walts (~(put by walts) xpub w(scanned %.y)))
 ::  +check-scan: initiate a scan if one hasn't started
 ::               check status of scan if one is running
@@ -514,52 +562,19 @@
   =/  s1  (scan-status xpub %1)
   ?:  ?&(empty.s0 done.s0 empty.s1 done.s1)
     (end-scan xpub)
-  =/  [cards0=(list card) batch0=batch]
+  =^  cards0=(list card)  state
     (bump-batch xpub %0)
-  =/  [cards1=(list card) batch1=batch]
+  =^  cards1=(list card)  state
     (bump-batch xpub %1)
-  :-  (weld cards0 cards1)
-  state(scans (insert-batches xpub batch0 batch1))
+  [(weld cards0 cards1) state]
 ::
-::  TX and Address Generation
 ::
-++  generate-txbu
-  |=  [=xpub payee=(unit ship) feyb=sats txos=(list txo)]
-  ^-  [(unit txbu) _state]
-  =/  uw  (~(get by walts) xpub)
-  ?~  uw
-    ~|("btc-wallet: non-existent xpub" !!)
-  ?.  scanned.u.uw
-    ~|("btc-wallet: wallet not scanned yet" !!)
-  =/  [tb=(unit txbu) chng=(unit sats)]
-    %~  with-change  sut
-    [u.uw eny.bowl block.btc-state payee feyb txos]
-  ?~  tb  ~&(>>> "btc-wallet: insufficient balance" `state)
-  ::  if no change, return txbu; else add change to txbu
-  ::
-  ?~  chng  [tb state]
-  =/  [addr=address:btc =idx w=walt]
-    ~(nixt-address wad u.uw %1)
-  :-  `(~(add-output txb u.tb) addr u.chng `(~(hdkey wad w %1) idx))
-  state(walts (~(put by walts) xpub w))
-::
-++  generate-address
-  |=  [=xpub =chyg =pmet]
-  ^-  [address _state]
-  =/  uw=(unit walt)  (~(get by walts) xpub)
-  ?~  uw
-    ~|("btc-wallet: non-existent xpub" !!)
-  ?.  scanned.u.uw
-    ~|("btc-wallet: wallet not scanned yet" !!)
-  =/  [addr=address:btc =idx w=walt]
-    ~(gen-address wad u.uw chyg)
-  [addr state(walts (~(put by walts) xpub w))]
-::
+::  piym/poym
 ::  Utilities for Incoming/Outgoing Payments
 ::
+::
 ::  +reuse-address
-::   - if piym already has address for payer,
-::     replace address and return to payer
+::   - if piym already has address for payer, replace address and return to payer
 ::   - if payment is pending, crash. Shouldn't be getting an address request
 ::
 ++  reuse-address
@@ -570,16 +585,14 @@
   ?^  pend.u.p  ~|("%gen-address: {<payer>} already has pending payment to us" !!)
   =+  newp=u.p(value value)
   :_  state(ps.piym (~(put by ps.piym) payer newp))
-  :~  %+  poke-hook  payer
-          [%ret-pay-address address.newp payer value]
-  ==
+  ~[(poke-us payer [%recv-pay-address address.newp value])]
 ::
 ++  poym-has-txid
   |=  txid=hexb
   ^-  ?
   ?~  poym  %.n
-  ?~  sitx.u.poym  %.n
-  =(txid (get-id:txu (decode:txu u.sitx.u.poym)))
+  ?~  signed-tx.u.poym  %.n
+  =(txid (get-id:txu (decode:txu u.signed-tx.u.poym)))
 ::  +poym-to-history:
 ::   - checks whether poym has a signed tx
 ::   - checks whether the txid matches that signed tx
@@ -592,7 +605,7 @@
   ^-  (quip card _state)
   |^
   ?~  poym  `state
-  ?~  sitx.u.poym  `state
+  ?~  signed-tx.u.poym  `state
   ?.  (poym-has-txid txid.ti)
     `state
   =+  vout=(get-vout txos.u.poym)
@@ -711,6 +724,13 @@
 ::
 ::  Card Builders and Pokers
 ::
+::
+++  retry-scans
+  ^-  (list card)
+  %-  zing
+  %+  turn  ~(tap by scans)
+  |=  [[=xpub =chyg] =batch]
+  -:(req-scan batch xpub chyg)
 ::  +retry-addrs: get info on addresses with unconfirmed UTXOs
 ::
 ++  retry-addrs
@@ -721,7 +741,7 @@
   ^-  (list card)
   %+  murn  ~(tap by wach.w)
   |=  [a=address ad=addi]
-  ?:  %+  levy  utxos.ad
+  ?:  %+  levy  ~(tap in utxos.ad)
       |=(u=utxo (gth height.u (sub block.btc-state confs.w)))
     ~
   `(poke-provider [%address-info a])
@@ -740,8 +760,8 @@
   ^-  (list card)
   ?~  poym  ~
   %+  weld
-    ?~  sitx.u.poym  ~
-    ~[(poke-provider [%broadcast-tx u.sitx.u.poym])]
+    ?~  signed-tx.u.poym  ~
+    ~[(poke-provider [%broadcast-tx u.signed-tx.u.poym])]
   %+  turn  txis.u.poym
   |=  =txi
   (poke-provider [%raw-tx ~(get-txid txb u.poym)])
@@ -772,7 +792,7 @@
 ++  is-broadcasting
   ^-  ?
   ?~  poym  %.n
-  ?=(^ sitx.u.poym)
+  ?=(^ signed-tx.u.poym)
 ::
 ::  Scry Helpers
 ::

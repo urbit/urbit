@@ -19,8 +19,7 @@ Do `./install.sh -w PIER_DIR` for dev work.
 Set credentials and start agents. Use `~dopzod` and `~zod`
 ```
 =provider ~zod
-|start %btc-wallet-store
-|start %btc-wallet-hook
+|start %btc-wallet
 |start %btc-provider
 :btc-wallet-hook|command [%set-provider provider]
 :btc-provider|command [%set-credentials api-url='http://localhost:50002']
@@ -42,7 +41,7 @@ The below calls will print RPC results.
 ```
 |commit %home
 -test %/tests/lib/bip158 ~
--test %/tests/lib/btc-wallet-store ~
+-test %/tests/lib/btc-wallet ~
 -test %/tests/lib/btc ~
 ```
 
