@@ -47,9 +47,9 @@ On both `~zod`/`dopzod`, choose depending on whether you're on test or main
 ## Check Balance
 `~dopzod`
 ```
-.^(@ud %gx /=btc-wallet=/balance/[xpubmain]/noun)
+.^((unit @ud) %gx /=btc-wallet=/balance/[xpubmain]/noun)
 
-.^(@ud %gx /=btc-wallet=/balance/[xpubtest]/noun)
+.^((unit @ud) %gx /=btc-wallet=/balance/[xpubtest]/noun)
 ```
 
 ## Pay a Ship
