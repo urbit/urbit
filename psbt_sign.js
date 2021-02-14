@@ -48,6 +48,7 @@ const run = async(network, mnemonics, psbtStr) => {
         const validate = await psbt.validateSignaturesOfAllInputs();
         await psbt.finalizeAllInputs();
         const hex = psbt.extractTransaction().toHex();
+        console.log(bitcoin.Transaction.fromHex(hex).getId())
         console.log({ validate, hex});
     }
     return;

@@ -1,12 +1,7 @@
 # btc-agents - Bitcoin on Urbit
 
-## Architecture
-[Written up here](ARCH.md)
-
-## Notes
-Tested to work with `urbit/urbit` commit `f37bf826848625450819e6ab0848bab1a07c1404
-
 ## BTC and ElectRS requirements
+Utilities located [here](https://github.com/timlucmiptev/urbit-bitcoin-rpc). Use the provided `mainnet.sh` and `testnet.sh` scripts.
 - BTC fully sync'd node
 - ElectRS with built index
 - Node API server to handle provider requests
@@ -19,10 +14,11 @@ Do `./install.sh -w PIER_DIR` for dev work.
 Set credentials and start agents. Use `~dopzod` and `~zod`
 ```
 =provider ~zod
+=network %main
 |start %btc-wallet
 |start %btc-provider
-:btc-wallet-hook|command [%set-provider provider]
-:btc-provider|command [%set-credentials api-url='http://localhost:50002']
+:btc-wallet|command [%set-provider provider network]
+:btc-provider|command [%set-credentials api-url='http://localhost:50002' network]
 ```
 
 ### Test `%address-info` Calls

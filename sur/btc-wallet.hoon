@@ -6,8 +6,7 @@
 +$  block  @ud
 +$  btc-state  [=block fee=(unit sats) t=@da]
 +$  payment  [pend=(unit txid) =xpub =address payer=ship value=sats]
-+$  piym  [ps=(map ship payment) num-fam=(map ship @ud)]
-+$  pend-piym  (map txid payment)
++$  piym  [ps=(map ship payment) pend=(map txid payment) num-fam=(map ship @ud)]
 +$  poym  (unit txbu)
 ::
 +$  command

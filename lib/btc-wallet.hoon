@@ -292,7 +292,7 @@
   ::
   ++  with-change
     ^-  [tb=(unit txbu) chng=(unit sats)]
-    =+  tb=select-utxos
+    =/  tb=(unit txbu)  select-utxos
     ?~  tb  [~ ~]
     =+  excess=~(fee txb u.tb)        ::  (inputs - outputs)
     =/  new-fee=sats                   ::  cost of this tx + one more output
