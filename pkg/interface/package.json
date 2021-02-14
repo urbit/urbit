@@ -86,7 +86,7 @@
     "webpack-dev-server": "^3.11.2"
   },
   "scripts": {
-    "lint": "eslint ./src/**/*.{js,ts,tsx}",
+    "lint": "eslint ./src/**/*.{ts,tsx}",
     "lint-file": "eslint",
     "tsc": "tsc",
     "tsc:watch": "tsc --watch",
