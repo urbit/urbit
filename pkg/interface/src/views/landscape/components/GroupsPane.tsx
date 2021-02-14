@@ -39,8 +39,10 @@ export function GroupsPane(props: GroupsPaneProps) {
   const relativePath = (path: string) => baseUrl + path;
   const groupPath = getGroupFromWorkspace(workspace);
 
-  const groupContacts = (groupPath && contacts[groupPath]) || undefined;
-  const rootIdentity = contacts?.['/~/default']?.[window.ship];
+  const groupContacts = Object.assign({}, ...Array.from(groups?.[groupPath]?.members ?? []).filter(e => contacts[`~${e}`]).map(e => {
+      return {[e]: contacts[`~${e}`]};
+  })) || {};
+  const rootIdentity = contacts?.["/~/default"]?.[window.ship];
   const groupAssociation =
     (groupPath && associations.groups[groupPath]) || undefined;
   const group = (groupPath && groups[groupPath]) || undefined;

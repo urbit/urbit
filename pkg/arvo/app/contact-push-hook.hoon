@@ -94,16 +94,18 @@
   ++  rolo
     ^-  rolodex:store
     =/  ugroup  (scry-group:grp resource)
+    =/  =rolodex:store
+      (scry-for:con rolodex:store /all)
     %-  ~(gas by *rolodex:store)
     ?~  ugroup
-      =/  c=(unit contact:store)  (get-contact:con our.bowl)
+      =/  c=(unit contact:store)  (~(get by rolodex) our.bowl)
       ?~  c
         [our.bowl *contact:store]~
       [our.bowl u.c]~
     %+  murn  ~(tap in (members:grp resource))
     |=  s=ship
     ^-  (unit [ship contact:store])
-    =/  c=(unit contact:store)  (get-contact:con s)
+    =/  c=(unit contact:store)  (~(get by rolodex) s)
     ?~(c ~ `[s u.c])
   --
 ::

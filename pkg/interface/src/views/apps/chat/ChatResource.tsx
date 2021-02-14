@@ -80,52 +80,52 @@ export function ChatResource(props: ChatResourceProps) {
   }, [station]);
 
   const [showBanner, setShowBanner] = useState(false);
+  const [hasLoadedAllowed, setHasLoadedAllowed] = useState(false);
   const [recipients, setRecipients] = useState([]);
 
   const res = resourceFromPath(groupPath);
 
   useEffect(() => {
     (async () => {
-    if (!res) {
- return;
-}
-    if (!group) {
- return;
-}
-    if (group.hidden) {
-      const members = _.compact(await Promise.all(
-        Array.from(group.members)
-          .map((s) => {
-            const ship = `~${s}`;
-            if(s === window.ship) {
-              return Promise.resolve(null);
-            }
-            return props.api.contacts.fetchIsAllowed(
-              `~${window.ship}`,
-              'personal',
-              ship,
-              true
-            ).then((isAllowed) => {
-              return isAllowed ? null : ship;
-            });
-          })
-      ));
+      if (!res) { return; }
+      if (!group) { return; }
+      if (group.hidden) {
+        const members = _.compact(await Promise.all(
+          Array.from(group.members)
+            .map(s => {
+              const ship = `~${s}`;
+              if(s === window.ship) {
+                return Promise.resolve(null);
+              }
+              return props.api.contacts.fetchIsAllowed(
+                `~${window.ship}`,
+                'personal',
+                ship,
+                true
+              ).then(isAllowed => {
+                return isAllowed ? null : ship;
+              });
+            })
+        ));
 
-      if(members.length > 0) {
-        setShowBanner(true);
-        setRecipients(members);
+        if(members.length > 0) {
+          setShowBanner(true);
+          setRecipients(members);
+        } else {
+          setShowBanner(false);
+        }
+
       } else {
-        setShowBanner(false);
+        const groupShared = await props.api.contacts.fetchIsAllowed(
+          `~${window.ship}`,
+          'personal',
+          res.ship,
+          true
+        );
+        setShowBanner(!groupShared);
       }
-    } else {
-      const groupShared = await props.api.contacts.fetchIsAllowed(
-        `~${window.ship}`,
-        'personal',
-        res.ship,
-        true
-      );
-      setShowBanner(!groupShared);
-    }
+
+      setHasLoadedAllowed(true);
     })();
   }, [groupPath]);
 
@@ -153,7 +153,10 @@ export function ChatResource(props: ChatResourceProps) {
         history={props.history}
         graph={graph}
         unreadCount={unreadCount}
-        contacts={!showBanner ? contacts : modifiedContacts}
+        contacts={
+          (!showBanner && hasLoadedAllowed) ?
+          contacts : modifiedContacts
+        }
         association={props.association}
         associations={props.associations}
         groups={props.groups}
@@ -168,9 +171,13 @@ export function ChatResource(props: ChatResourceProps) {
         ref={chatInput}
         api={props.api}
         station={station}
-        ourContact={!showBanner ? ourContact : null}
+        ourContact={
+          (!showBanner && hasLoadedAllowed) ? ourContact : null
+        }
         envelopes={[]}
-        contacts={contacts}
+        contacts={
+          (!showBanner && hasLoadedAllowed) ? contacts : modifiedContacts
+        }
         onUnmount={appendUnsent}
         s3={props.s3}
         placeholder="Message..."

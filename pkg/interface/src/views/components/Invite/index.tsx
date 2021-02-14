@@ -59,7 +59,7 @@ export function InviteItem(props: InviteItemProps) {
 
     if (props.groups?.[resource]?.hidden) {
       const { metadata } = associations.graph[resource];
-      if (name.startsWith('dm--')) {
+      if (metadata?.module === 'chat') {
         history.push(`/~landscape/messages/resource/${metadata.module}${resource}`);
       } else {
         history.push(`/~landscape/home/resource/${metadata.module}${resource}`);
@@ -122,10 +122,7 @@ export function InviteItem(props: InviteItemProps) {
       <JoinSkeleton status={status} gapY="3">
         <Row py="1" alignItems="center">
           <Icon display="block" color="blue" icon="Bullet" mr="2" />
-          <Text mr="1">You are joining a DM with</Text>
-          <Text mr="1" mono>
-            {cite('~hastuc-dibtux')}
-          </Text>
+          <Text mr="1">Joining direct message...</Text>
         </Row>
       </JoinSkeleton>
     );
