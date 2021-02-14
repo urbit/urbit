@@ -1,8 +1,8 @@
-import React from "react";
-import { Row, Icon, Text } from "@tlon/indigo-react";
+import React from 'react';
+import { Row, Icon, Text } from '@tlon/indigo-react';
 
-import { IconRef, PropFunc } from "~/types/util";
-import { HoverBoxLink } from "~/views/components/HoverBox";
+import { IconRef, PropFunc } from '~/types/util';
+import { HoverBoxLink } from '~/views/components/HoverBox';
 
 interface SidebarItemProps {
   selected?: boolean;
@@ -11,17 +11,17 @@ interface SidebarItemProps {
   to: string;
   color?: string;
   children?: JSX.Element;
-} 
+}
 
 export const SidebarItem = ({
   icon,
   text,
   to,
   selected = false,
-  color = "black",
+  color = 'black',
   children,
   ...rest
-}: SidebarItemProps & PropFunc<typeof HoverBoxLink>) => {
+}: SidebarItemProps & PropFunc<typeof HoverBoxLink>): ReactElement => {
   return (
     <HoverBoxLink
       to={to}

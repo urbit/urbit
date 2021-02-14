@@ -17,7 +17,7 @@ import {
   useShowNickname,
   useHovering
 } from '~/logic/lib/util';
-import { Group, Association, Contacts, Post, Groups, Associations } from '~/types';
+import { Group, Association, Contacts, Post, Groups, Associations } from '@urbit/api';
 import TextContent from './content/text';
 import CodeContent from './content/code';
 import RemoteContent from '~/views/components/RemoteContent';
@@ -66,12 +66,12 @@ interface ChatMessageProps {
   contacts: Contacts;
   className?: string;
   isPending: boolean;
-  style?: any;
+  style?: unknown;
   scrollWindow: HTMLDivElement;
   isLastMessage?: boolean;
   unreadMarkerRef: React.RefObject<HTMLDivElement>;
-  history: any;
-  api: any;
+  history: unknown;
+  api: GlobalApi;
   highlighted?: boolean;
 }
 
@@ -149,7 +149,7 @@ export default class ChatMessage extends Component<ChatMessageProps> {
       highlighted,
       fontSize,
       associations,
-      groups,
+      groups
     };
 
     const unreadContainerStyle = {
@@ -230,7 +230,7 @@ export const MessageWithSigil = (props) => {
     fontSize
   } = props;
 
-  const dark = useLocalState((state) => state.dark);
+  const dark = useLocalState(state => state.dark);
 
   const datestamp = moment
     .unix(msg['time-sent'] / 1000)
@@ -255,7 +255,7 @@ export const MessageWithSigil = (props) => {
   const [showOverlay, setShowOverlay] = useState(false);
 
   const toggleOverlay = () => {
-    setShowOverlay((value) => !value);
+    setShowOverlay(value => !value);
   };
 
   const showCopyNotice = () => {

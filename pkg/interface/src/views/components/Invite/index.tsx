@@ -1,25 +1,23 @@
-import React, { Component, useState, useEffect, useCallback, useMemo } from "react";
-import { Invite } from "~/types/invite-update";
-import { Text, Box, Button, Icon, Row, Rule, Col } from "@tlon/indigo-react";
-import { StatelessAsyncAction } from "~/views/components/StatelessAsyncAction";
-import { cite } from "~/logic/lib/util";
+import React, { useState, useEffect, useCallback } from 'react';
+import { useHistory } from 'react-router-dom';
+
 import {
   MetadataUpdatePreview,
   Contacts,
   JoinRequests,
-  JoinProgress,
   Groups,
-  Associations,
-} from "~/types";
-import GlobalApi from "~/logic/api/global";
-import { GroupSummary } from "~/views/landscape/components/GroupSummary";
-import { JoiningStatus } from "~/views/apps/notifications/joining";
-import { resourceFromPath } from "~/logic/lib/group";
-import { GroupInvite } from "./Group";
-import { InviteSkeleton } from "./InviteSkeleton";
-import { JoinSkeleton } from "./JoinSkeleton";
-import { useWaitForProps } from "~/logic/lib/useWaitForProps";
-import { useHistory } from "react-router-dom";
+  Associations
+} from '@urbit/api';
+import { Invite } from '@urbit/api/invite';
+import { Text, Icon, Row } from '@tlon/indigo-react';
+
+import { cite } from '~/logic/lib/util';
+import GlobalApi from '~/logic/api/global';
+import { resourceFromPath } from '~/logic/lib/group';
+import { GroupInvite } from './Group';
+import { InviteSkeleton } from './InviteSkeleton';
+import { JoinSkeleton } from './JoinSkeleton';
+import { useWaitForProps } from '~/logic/lib/useWaitForProps';
 
 interface InviteItemProps {
   invite?: Invite;
@@ -61,7 +59,7 @@ export function InviteItem(props: InviteItemProps) {
 
     if (props.groups?.[resource]?.hidden) {
       const { metadata } = associations.graph[resource];
-      if (name.startsWith("dm--")) {
+      if (name.startsWith('dm--')) {
         history.push(`/~landscape/messages/resource/${metadata.module}${resource}`);
       } else {
         history.push(`/~landscape/home/resource/${metadata.module}${resource}`);
@@ -78,10 +76,10 @@ export function InviteItem(props: InviteItemProps) {
     await api.invite.decline(app, uid);
   }, [app, uid]);
 
-  const handlers = { onAccept: inviteAccept, onDecline: inviteDecline }
+  const handlers = { onAccept: inviteAccept, onDecline: inviteDecline };
 
   useEffect(() => {
-    if (!app || app === "groups") {
+    if (!app || app === 'groups') {
       (async () => {
         setPreview(await api.metadata.preview(resource));
       })();
@@ -102,7 +100,7 @@ export function InviteItem(props: InviteItemProps) {
         {...handlers}
       />
     );
-  } else if (invite && name.startsWith("dm--")) {
+  } else if (invite && name.startsWith('dm--')) {
     return (
       <InviteSkeleton
         gapY="3"
@@ -119,14 +117,14 @@ export function InviteItem(props: InviteItemProps) {
         </Row>
       </InviteSkeleton>
     );
-  } else if (status && name.startsWith("dm--")) {
+  } else if (status && name.startsWith('dm--')) {
     return (
       <JoinSkeleton status={status} gapY="3">
         <Row py="1" alignItems="center">
           <Icon display="block" color="blue" icon="Bullet" mr="2" />
           <Text mr="1">You are joining a DM with</Text>
           <Text mr="1" mono>
-            {cite("~hastuc-dibtux")}
+            {cite('~hastuc-dibtux')}
           </Text>
         </Row>
       </JoinSkeleton>
@@ -151,7 +149,7 @@ export function InviteItem(props: InviteItemProps) {
       </InviteSkeleton>
     );
   } else if (status) {
-    const [, , ship, name] = resource.split("/");
+    const [, , ship, name] = resource.split('/');
     return (
       <JoinSkeleton status={status}>
         <Row py="1" alignItems="center">

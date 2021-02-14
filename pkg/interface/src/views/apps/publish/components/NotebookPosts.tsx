@@ -1,7 +1,7 @@
-import React, { Component } from "react";
-import { Col } from "@tlon/indigo-react";
-import { NotePreview } from "./NotePreview";
-import { Contacts, Graph, Unreads, Group } from "~/types";
+import React, { Component } from 'react';
+import { Col } from '@tlon/indigo-react';
+import { NotePreview } from './NotePreview';
+import { Contacts, Graph, Unreads, Group } from '@urbit/api';
 
 interface NotebookPostsProps {
   contacts: Contacts;

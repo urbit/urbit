@@ -3,7 +3,7 @@ import { RouteComponentProps } from 'react-router-dom';
 import { Col } from '@tlon/indigo-react';
 import _ from 'lodash';
 
-import { Association } from '~/types/metadata-update';
+import { Association } from '@urbit/api/metadata';
 import { StoreState } from '~/logic/store/type';
 import { useFileDrag } from '~/logic/lib/useDrag';
 import ChatWindow from './components/ChatWindow';
@@ -86,12 +86,16 @@ export function ChatResource(props: ChatResourceProps) {
 
   useEffect(() => {
     (async () => {
-    if (!res) { return; }
-    if (!group) { return; }
+    if (!res) {
+ return;
+}
+    if (!group) {
+ return;
+}
     if (group.hidden) {
       const members = _.compact(await Promise.all(
         Array.from(group.members)
-          .map(s => {
+          .map((s) => {
             const ship = `~${s}`;
             if(s === window.ship) {
               return Promise.resolve(null);
@@ -101,7 +105,7 @@ export function ChatResource(props: ChatResourceProps) {
               'personal',
               ship,
               true
-            ).then(isAllowed => {
+            ).then((isAllowed) => {
               return isAllowed ? null : ship;
             });
           })
@@ -113,7 +117,6 @@ export function ChatResource(props: ChatResourceProps) {
       } else {
         setShowBanner(false);
       }
-
     } else {
       const groupShared = await props.api.contacts.fetchIsAllowed(
         `~${window.ship}`,
@@ -124,14 +127,13 @@ export function ChatResource(props: ChatResourceProps) {
       setShowBanner(!groupShared);
     }
     })();
-
   }, [groupPath]);
 
   if(!graph) {
     return <Loading />;
   }
 
-  var modifiedContacts = { ...contacts };
+  const modifiedContacts = { ...contacts };
   delete  modifiedContacts[`~${window.ship}`];
 
   return (
@@ -145,7 +147,7 @@ export function ChatResource(props: ChatResourceProps) {
         setShowBanner={setShowBanner}
         group={group}
         groupPath={groupPath}
-       />
+      />
       {dragging && <SubmitDragger />}
       <ChatWindow
         history={props.history}

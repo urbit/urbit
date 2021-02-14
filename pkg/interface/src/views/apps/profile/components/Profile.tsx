@@ -1,25 +1,23 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Sigil } from "~/logic/lib/sigil";
-import { ViewProfile } from './ViewProfile';
-import { EditProfile } from './EditProfile';
-import { SetStatusBarModal } from '~/views/components/SetStatusBarModal';
+import React, { ReactElement, useEffect, useRef, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
-import { uxToHex } from "~/logic/lib/util";
 import {
   Center,
   Box,
   Row,
   BaseImage,
-  StatelessTextInput as Input,
-  Button,
   Text
-} from "@tlon/indigo-react";
-import useLocalState from "~/logic/state/local";
-import { useHistory } from "react-router-dom";
-import {useTutorialModal} from "~/views/components/useTutorialModal";
+} from '@tlon/indigo-react';
 
+import { Sigil } from '~/logic/lib/sigil';
+import { ViewProfile } from './ViewProfile';
+import { EditProfile } from './EditProfile';
+import { SetStatusBarModal } from '~/views/components/SetStatusBarModal';
+import { uxToHex } from '~/logic/lib/util';
+import useLocalState from '~/logic/state/local';
+import { useTutorialModal } from '~/views/components/useTutorialModal';
 
-export function Profile(props: any) {
+export function Profile(props: any): ReactElement {
   const { hideAvatars } = useLocalState(({ hideAvatars }) => ({
     hideAvatars
   }));
@@ -31,17 +29,13 @@ export function Profile(props: any) {
   const { contact, nackedContacts, hasLoaded, isPublic, isEdit, ship } = props;
   const nacked = nackedContacts.has(ship);
 
-  const [statusModal, showStatusModal] = useState(false);
-
-
   useEffect(() => {
     if(hasLoaded && !contact && !nacked) {
       props.api.contacts.retrieve(ship);
     }
-  }, [hasLoaded, contact])
+  }, [hasLoaded, contact]);
 
-
-  const hexColor = contact?.color ? `#${uxToHex(contact.color)}` : "#000000";
+  const hexColor = contact?.color ? `#${uxToHex(contact.color)}` : '#000000';
   const cover = (contact?.cover)
     ? <BaseImage src={contact.cover} width='100%' height='100%' style={{ objectFit: 'cover' }} />
     : <Box display="block" width='100%' height='100%' backgroundColor='washedGray' />;
@@ -58,19 +52,24 @@ export function Profile(props: any) {
     <Center
       p={[0,4]}
       height="100%"
-      width="100%">
+      width="100%"
+    >
 
       <Box
         ref={anchorRef}
         maxWidth="600px"
-        width="100%">
+        width="100%"
+      >
         <Row alignItems="center" justifyContent="space-between">
           {ship === `~${window.ship}` ? (
             <Row>
             <Text
               py='2'
               cursor='pointer'
-              onClick={() => { history.push(`/~profile/${ship}/edit`) }}>
+              onClick={() => {
+ history.push(`/~profile/${ship}/edit`);
+}}
+            >
               Edit Profile
             </Text>
               <SetStatusBarModal
@@ -82,9 +81,12 @@ export function Profile(props: any) {
               />
             </Row>
           ) : null}
-          <Text maxWidth='18rem' overflowX='hidden' textOverflow="ellipsis"
+          <Text maxWidth='18rem' overflowX='hidden'
+textOverflow="ellipsis"
             whiteSpace="nowrap"
-            overflow="hidden" display="inline-block" verticalAlign="middle">{contact?.status ?? ""}</Text>
+            overflow="hidden" display="inline-block"
+verticalAlign="middle"
+          >{contact?.status ?? ''}</Text>
         </Row>
         <Row  width="100%" height="300px">
           {cover}
@@ -108,7 +110,8 @@ export function Profile(props: any) {
             api={props.api}
             groups={props.groups}
             associations={props.associations}
-            isPublic={isPublic}/>
+            isPublic={isPublic}
+          />
         ) : (
           <ViewProfile
             api={props.api}

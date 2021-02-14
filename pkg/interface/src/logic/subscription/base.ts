@@ -1,6 +1,6 @@
-import BaseStore from "../store/base";
-import BaseApi from "../api/base";
-import { Path } from "~/types/noun";
+import BaseStore from '../store/base';
+import BaseApi from '../api/base';
+import { Path } from '@urbit/api';
 
 export default class BaseSubscription<S extends object> {
   private errorCount = 0;
@@ -19,24 +19,24 @@ export default class BaseSubscription<S extends object> {
 
   // Exists to allow subclasses to hook
   restart() {
-    this.handleEvent({ data: { connection: 'reconnecting' }});
+    this.handleEvent({ data: { connection: 'reconnecting' } });
     this.start();
   }
 
   onChannelOpen(e: any) {
     this.errorCount = 0;
-    this.handleEvent({ data: { connection: 'connected' }});
+    this.handleEvent({ data: { connection: 'connected' } });
   }
 
   onChannelError(err) {
     console.error('event source error: ', err);
     this.errorCount++;
     if(this.errorCount >= 5) {
-      console.error("bailing out, too many retries");
-      this.handleEvent({ data: { connection: 'disconnected' }});
+      console.error('bailing out, too many retries');
+      this.handleEvent({ data: { connection: 'disconnected' } });
       return;
     }
-    this.handleEvent({ data: { connection: 'reconnecting' }});
+    this.handleEvent({ data: { connection: 'reconnecting' } });
     setTimeout(() => {
       this.restart();
     }, Math.pow(2,this.errorCount - 1) * 750);

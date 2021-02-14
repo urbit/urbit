@@ -1,10 +1,10 @@
-import React, { PureComponent, Component } from 'react';
+import React, { Component } from 'react';
 import _ from 'lodash';
-import { BigIntOrderedMap } from "~/logic/lib/BigIntOrderedMap";
 import normalizeWheel from 'normalize-wheel';
-import { Box } from '@tlon/indigo-react';
 import bigInt, { BigInteger } from 'big-integer';
-import * as bigIntUtils from '~/logic/lib/bigInt';
+
+import { Box } from '@tlon/indigo-react';
+import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
 
 interface RendererProps {
   index: BigInteger;
@@ -90,7 +90,9 @@ export default class VirtualScroller extends Component<VirtualScrollerProps, Vir
 
   scrollToData(targetIndex: BigInteger): Promise<void> {
     if (!this.window) {
-      return new Promise((resolve, reject) => {reject()});
+      return new Promise((resolve, reject) => {
+ reject();
+});
     }
     const { offsetHeight } = this.window;
     let scrollTop = 0;
@@ -119,8 +121,9 @@ export default class VirtualScroller extends Component<VirtualScrollerProps, Vir
   }
 
   estimateIndexFromScrollTop(targetScrollTop: number): BigInteger | undefined {
-    if (!this.window) return undefined;
-    let index = bigInt(this.props.size);
+    if (!this.window)
+return undefined;
+    const index = bigInt(this.props.size);
     const { averageHeight } = this.state;
     let height = 0;
     while (height < targetScrollTop) {
@@ -136,14 +139,14 @@ export default class VirtualScroller extends Component<VirtualScrollerProps, Vir
   }
 
   calculateVisibleItems() {
-    if (!this.window) return;
+    if (!this.window)
+return;
     let startgap = 0, heightShown = 0, endgap = 0;
     let startGapFilled = false;
-    let visibleItems = new BigIntOrderedMap<any>();
+    const visibleItems = new BigIntOrderedMap<any>();
     const { scrollTop, offsetHeight: windowHeight } = this.window;
     const { averageHeight, totalHeight } = this.state;
     const { data, size: totalSize, onCalculateVisibleItems } = this.props;
-
 
     [...data].forEach(([index, datum]) => {
       const height = this.heightOf(index);
@@ -153,7 +156,7 @@ export default class VirtualScroller extends Component<VirtualScrollerProps, Vir
         startGapFilled = true;
         visibleItems.set(index, datum);
         heightShown += height;
-      } 
+      }
     });
 
     endgap = totalHeight - heightShown - startgap;
@@ -176,7 +179,7 @@ export default class VirtualScroller extends Component<VirtualScrollerProps, Vir
     this.setState({
       startgap: Number(startgap.toFixed()),
       visibleItems,
-      endgap: Number(endgap.toFixed()),
+      endgap: Number(endgap.toFixed())
     });
   }
 
@@ -215,7 +218,8 @@ export default class VirtualScroller extends Component<VirtualScrollerProps, Vir
   }
 
   setWindow(element) {
-    if (!element) return;
+    if (!element)
+return;
     if (this.window) {
       if (this.window.isSameNode(element)) {
         return;
@@ -241,11 +245,14 @@ export default class VirtualScroller extends Component<VirtualScrollerProps, Vir
   }
 
   resetScroll(): Promise<void> {
-    if (!this.window) return new Promise((resolve, reject) => {reject()});
+    if (!this.window)
+return new Promise((resolve, reject) => {
+ reject();
+});
     return this.setScrollTop(0);
   }
 
-  setScrollTop(distance: number, delay: number = 100): Promise<void> {
+  setScrollTop(distance: number, delay = 100): Promise<void> {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         if (!this.window) {
@@ -259,9 +266,10 @@ export default class VirtualScroller extends Component<VirtualScrollerProps, Vir
   }
 
   onScroll(event) {
-    if (!this.window) return;
+    if (!this.window)
+return;
     const { onStartReached, onEndReached, onScroll } = this.props;
-    const windowHeight = this.window.offsetHeight
+    const windowHeight = this.window.offsetHeight;
     const { scrollTop, scrollHeight } = this.window;
     if (scrollTop !== scrollHeight) {
       this.setState({ scrollTop });
@@ -270,9 +278,11 @@ export default class VirtualScroller extends Component<VirtualScrollerProps, Vir
     this.calculateVisibleItems();
     onScroll ? onScroll({ scrollTop, scrollHeight, windowHeight }) : null;
     if (scrollTop === 0) {
-      if (onStartReached) onStartReached();
+      if (onStartReached)
+onStartReached();
     } else if (scrollTop + windowHeight >= scrollHeight) {
-      if (onEndReached) onEndReached();
+      if (onEndReached)
+onEndReached();
     }
   }
 

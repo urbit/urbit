@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import { StoreState } from '../../store/type';
 import { Cage } from '~/types/cage';
-import { ContactUpdate } from '~/types/contact-update';
-import {resourceAsPath} from '../lib/util';
+import { ContactUpdate } from '@urbit/api/contacts';
+import { resourceAsPath } from '../lib/util';
 
 type ContactState  = Pick<StoreState, 'contacts'>;
 
@@ -62,9 +62,9 @@ const edit = (json: ContactUpdate, state: S) => {
     const contact = state.contacts?.[ship];
     const value = data['edit-field'][field];
     if(!contact) {
-      return; 
+      return;
     }
-    
+
     if(field === 'add-group') {
       contact.groups.push(value);
     } else if (field === 'remove-group') {
@@ -79,5 +79,4 @@ const setPublic = (json: ContactUpdate, state: S) => {
   const data = _.get(json, 'set-public', state.isContactPublic);
   state.isContactPublic = data;
 };
-
 

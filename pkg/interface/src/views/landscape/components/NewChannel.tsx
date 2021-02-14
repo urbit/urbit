@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import {
   Box,
   ManagedTextInputField as Input,
@@ -14,13 +14,14 @@ import { FormError } from '~/views/components/FormError';
 import { RouteComponentProps } from 'react-router-dom';
 import { stringToSymbol, parentPath, deSig } from '~/logic/lib/util';
 import { resourceFromPath } from '~/logic/lib/group';
-import { Associations } from '~/types/metadata-update';
+import { Associations } from '@urbit/api/metadata';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
-import { Groups } from '~/types/group-update';
+import { Groups } from '@urbit/api/groups';
 import { ShipSearch, shipSearchSchemaInGroup, shipSearchSchema } from '~/views/components/ShipSearch';
-import { Rolodex, Workspace } from '~/types';
+import { Rolodex } from '@urbit/api';
 import { IconRadio } from '~/views/components/IconRadio';
 import { ChannelWriteFieldSchema, ChannelWritePerms } from './ChannelWritePerms';
+import { Workspace } from '~/types/workspace';
 
 type FormSchema = {
   name: string;
@@ -47,7 +48,7 @@ interface NewChannelProps {
   workspace: Workspace;
 }
 
-export function NewChannel(props: NewChannelProps & RouteComponentProps) {
+export function NewChannel(props: NewChannelProps & RouteComponentProps): ReactElement {
   const { history, api, group, workspace, groups } = props;
 
   const waiter = useWaitForProps(props, 5000);
@@ -59,7 +60,7 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
     : '');
     try {
       let { description, moduleType, ships, writers } = values;
-      ships = ships.filter(e => e !== "");
+      ships = ships.filter(e => e !== '');
       if (workspace?.type === 'messages' && ships.length === 1) {
         return history.push(`/~landscape/dm/${deSig(ships[0])}`);
       }
@@ -138,7 +139,7 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
           maxWidth="348px"
           gapY="4"
           >
-            <Col pt={4} gapY="2" display={(workspace?.type === "messages") ? 'none' : 'flex'}>
+            <Col pt={4} gapY="2" display={(workspace?.type === 'messages') ? 'none' : 'flex'}>
               <Box fontSize="1" color="black" mb={2}>Channel Type</Box>
               <IconRadio
                 display={!(workspace?.type === 'home') ? 'flex' : 'none'}
