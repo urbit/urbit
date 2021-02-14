@@ -1,27 +1,54 @@
-::  wallets are compatible with BIPs 44, 49, and 84
-::  m / purpose' / coin_type' / account' / change / address_index
-::  change can be 0 or 1
-::
 /-  *btc, bp=btc-provider
 /+  bip32
 |%
-+$  txid  hexb
-++  max-index  (dec (pow 2 32))
-::  idx:  an address_index
++$  params  [batch-size=@ud fam-limit=@ud piym-limit=@ud]
++$  provider  [host=ship connected=?]
++$  block  @ud
++$  btc-state  [=block fee=(unit sats) t=@da]
++$  payment  [pend=(unit txid) =xpub =address payer=ship value=sats]
++$  piym  [ps=(map ship payment) pend=(map txid payment) num-fam=(map ship @ud)]
++$  poym  (unit txbu)
+::
++$  command
+  $%  [%set-provider provider=ship =network]
+      [%set-current-wallet =xpub]
+      [%add-wallet =xpub =fprint scan-to=(unit scon) max-gap=(unit @ud) confs=(unit @ud)]
+      [%delete-wallet =xpub]
+      [%req-pay-address payee=ship value=sats feyb=sats]
+      [%broadcast-tx txhex=cord]
+  ==
++$  action
+      ::  local-only actions
+      ::
+  $%  [%close-pym ti=info:tx]
+      [%add-poym-raw-txi =txid rawtx=hexb]
+      [%fail-broadcast-tx =txid]
+      [%succeed-broadcast-tx =txid]
+      ::  peer actions
+      ::
+      [%gen-pay-address value=sats]
+      [%recv-pay-address =address value=sats]
+      [%expect-payment =txid value=sats]
+  ==
+::
+::
+::  Wallet Types
+::
 ::  nixt: next indices to generate addresses from (non-change/change)
 ::  addi: HD path along with UTXOs
-::    - used: whether the address has been used
 ::  wach: map for watched addresses.
 ::        Membership implies the address is known by outside parties or had prior activity
 ::  scon: indices to initially scan to in (non-)change accounts
 ::        defaults to 2^32-1 (i.e. all the addresses, ~4B)
-::  wilt: stores xpub; copulates with thousands of indices to form addresses
+::  wilt: copulates with thousands of indices to form addresses
 ::
+++  max-index  (dec (pow 2 32))
 +$  nixt  (pair idx idx)
 +$  addi  [used=? =chyg =idx utxos=(set utxo)]
 +$  wach  (map address addi)
 +$  scon  $~([max-index max-index] (pair idx idx))
 +$  wilt  _bip32
+::
 ::  walt: wallet datastructure
 ::  scanned: whether the wallet's addresses have been checked for prior activity
 ::  scan-to
@@ -41,6 +68,12 @@
       max-gap=@ud
       confs=@ud
   ==
+::  batch: indexes to scan for a given chyg
+::  scans: all scans underway (batches)
+::
++$  batch  [todo=(set idx) endpoint=idx has-used=?]
++$  scans  (map [xpub chyg] batch)
+::
 ::  insel: a selected utxo for input to a transaction
 ::  pmet: optional payment metadata
 ::  feyb: fee per byte in sats
@@ -48,10 +81,8 @@
 ::   - txo has an hdkey if it's a change account
 ::   - by convention, first output of txo is to the payee, if one is present
 ::  txbu: tx builder -- all information needed to make a transaction for signing
-::   - sitx: signed hex transaction
 ::
 +$  insel  [=utxo =chyg =idx]
-+$  pmet  (unit [payer=ship value=sats])
 +$  feyb  sats
 +$  txi  [=utxo ur=(unit hexb) =hdkey]
 +$  txo  [=address value=sats hk=(unit hdkey)]
@@ -61,54 +92,17 @@
       =vbytes
       txis=(list txi)
       txos=(list txo)
-      sitx=(unit hexb)
+      signed-tx=(unit hexb)
   ==
 ::  hest: an entry in the history log
 ::
 +$  hest
   $:  =xpub
-      txid=hexb
+      =txid
       confs=@ud
       recvd=(unit @da)
       inputs=(list [=val:tx s=(unit ship)])
       outputs=(list [=val:tx s=(unit ship)])
   ==
-+$  history  (map hexb hest)
-::  state/watch variables:
-::  scanning addresses and monitoring generated addresses
-::  batch: indexes to scan for a given chyg
-::  scans: all scans underway (batches)
-::  piym-watch: any address we've been told has an incoming payment promised
-::
-+$  batch  [todo=(set idx) endpoint=idx has-used=?]
-+$  scans  (map [xpub chyg] batch)
-::
-::  %add-wallet: add wallet to state and initiate a scan
-::  %address-info: give new data about an address.
-::    - used:  address has been seen on the BTC blockchain?
-::    - block: the most recent block at the time of this information being retrieved
-::
-+$  action
-  $%  [%add-wallet =xpub =fprint scan-to=(unit scon) max-gap=(unit @ud) confs=(unit @ud)]
-      [%delete-wallet =xpub]
-      [%address-info =xpub =chyg =idx utxos=(set utxo) used=? block=@ud]
-      [%tx-info =info:tx block=@ud]
-      [%generate-address =xpub =chyg =pmet]
-      [%generate-txbu =xpub payee=(unit ship) feyb=sats txos=(list txo)]
-      [%add-history-entry =hest]
-      [%del-history-entry txid=hexb]
-  ==
-::
-+$  update
-  $%  [%generate-address =xpub =address =pmet]
-      [%generate-txbu =xpub =txbu]
-      [%saw-piym s=ship txid=hexb]
-      [%scan-done =xpub]
-  ==
-::  last-block: most recent block this address was checked
-::
-+$  request
-  $%  [%address-info last-block=@ud a=address =xpub =chyg =idx]
-      [%tx-info last-block=@ud txid=hexb]
-  ==
++$  history  (map txid hest)
 --

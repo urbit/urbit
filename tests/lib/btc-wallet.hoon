@@ -1,5 +1,11 @@
-/+  *test, *btc-wallet-store, btc
+/+  *test, *btc-wallet, btc
 |%
++$  wallet-vector
+  $:  =xpub:btc
+      =chyg
+      =idx:btc
+      =address:btc
+  ==
 +$  vector
   $:  =xpub:btc
       eny=@uv
@@ -20,6 +26,15 @@
   ==
 ::
 ++  fprint  4^0xdead.beef
+::
+++  wallet-vectors
+  ^-  (list wallet-vector)
+  :~  :*  'zpub6rFR7y4Q2AijBEqTUquhVz398htDFrtymD9xYYfG1m4wAcvPhXNfE3EfH1r1ADqtfSdVCToUG868RvUUkgDKf31mGDtKsAYz2oz2AGutZYs'
+          %0
+          0
+          [%bech32 'bc1qcr8te4kr609gcawutmrza0j4xv80jy8z306fyu']
+      ==
+  ==
 ::
 ++  vectors
   =|  w=walt
@@ -105,6 +120,8 @@
 ++  test-all-vectors
   ^-  tang
   |^  ;:  weld
+          %+  category  "address generation/lookup"
+          (zing (turn wallet-vectors address-gen-lookup))
           %+  category  "single-random-draw"
           (zing (turn vectors check-single-random-draw))
           ::
@@ -115,6 +132,21 @@
           (zing (turn dust-output-vectors check-dust-output))
       ==
   ::
+  ++  address-gen-lookup
+    |=  v=wallet-vector
+    =/  w=walt  (from-xpub xpub.v fprint ~ ~ ~)
+    =/  =address  (~(mk-address wad w chyg.v) idx.v)
+    =.  w  (~(update-address wad w chyg.v) address [%.n %0 0 *(set utxo:btc)]) 
+    =/  [w2=walt c=chyg i=idx]  (need (address-coords address ~[w]))
+    ;:  weld
+      %+  expect-eq
+        !>(address)
+        !>(address.v)
+      %+  expect-eq
+        !>([w2 c i])
+        !>([w chyg.v idx.v])
+    ==
+    ::
   ++  check-single-random-draw
     |=  v=vector
     =/  w=walt  (from-xpub xpub.v fprint ~ ~ ~)

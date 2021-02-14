@@ -1,4 +1,4 @@
-/-  *btc-wallet-hook
+/-  *btc-wallet
 |_  act=action
 ++  grad  %noun
 ++  grow

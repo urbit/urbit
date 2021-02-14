@@ -11,14 +11,15 @@ Runs the full node API services.
 ## Start Agents and set XPUBs
 On `~zod`. Uses "abandon abandon..." mnemonic
 ```
+=network %main
+=network %testnet
 |commit %home
 |start %btc-provider
-|start %btc-wallet-hook
-|start %btc-wallet-store
+|start %btc-wallet
 
-:btc-provider|command [%set-credentials api-url='http://localhost:50002' %main]
-:btc-wallet-hook|command [%set-provider ~zod %main]
-:btc-provider|command [%whitelist-clients `(set ship)`(sy ~[~dopzod])]
+:btc-provider|command [%set-credentials api-url='http://localhost:50002' network]
+:btc-wallet|command [%set-provider ~zod network]
+:btc-provider|command [%add-whitelist %users `(set ship)`(sy ~[~dopzod])]
 
 =fprint [%4 0xbeef.dead]
 =xpubmain 'zpub6rFR7y4Q2AijBEqTUquhVz398htDFrtymD9xYYfG1m4wAcvPhXNfE3EfH1r1ADqtfSdVCToUG868RvUUkgDKf31mGDtKsAYz2oz2AGutZYs'
@@ -27,11 +28,12 @@ On `~zod`. Uses "abandon abandon..." mnemonic
 
 On `~dopzod`. Uses "absurd sick..." mnemonic from PRIVATE.scratch.md
 ```
+=network %main
+=network %testnet
 |commit %home
-|start %btc-wallet-hook
-|start %btc-wallet-store
+|start %btc-wallet
 
-:btc-wallet-hook|command [%set-provider ~zod %main]
+:btc-wallet|command [%set-provider ~zod network]
 
 =fprint [%4 0xdead.beef]
 =xpubmain 'zpub6r8dKyWJ31XF6n69KKeEwLjVC5ruqAbiJ4QCqLsrV36Mvx9WEjUaiPNPGFLHNCCqgCdy6iZC8ZgHsm6a1AUTVBMVbKGemNcWFcwBGSjJKbD'
@@ -40,18 +42,20 @@ On `~dopzod`. Uses "absurd sick..." mnemonic from PRIVATE.scratch.md
 
 ### Add Wallets
 On both `~zod`/`dopzod`, choose depending on whether you're on test or main
-```
-:btc-wallet-store|action [%add-wallet xpubmain fprint ~ [~ 8] [~ 6]]
 
-:btc-wallet-store|action [%add-wallet xpubtest fprint ~ [~ 8] [~ 6]]
+Using 1 confirmation for testing.
+```
+:btc-wallet|command [%add-wallet xpubmain fprint ~ [~ 8] [~ 1]]
+
+:btc-wallet|command [%add-wallet xpubtest fprint ~ [~ 8] [~ 1]]
 ```
 
 ## Check Balance
 `~dopzod`
 ```
-.^(@ud %gx /=btc-wallet-store=/balance/[xpubmain]/noun)
+.^((unit @ud) %gx /=btc-wallet=/balance/[xpubmain]/noun)
 
-.^(@ud %gx /=btc-wallet-store=/balance/[xpubtest]/noun)
+.^((unit @ud) %gx /=btc-wallet=/balance/[xpubtest]/noun)
 ```
 
 ## Pay a Ship
@@ -59,33 +63,33 @@ On both `~zod`/`dopzod`, choose depending on whether you're on test or main
 
 `~dopzod`
 ```
-:btc-wallet-hook|command [%req-pay-address ~zod 30.000 feyb=10
+:btc-wallet|command [%req-pay-address ~zod 80.000 feyb=100]
 ```
 
 ### Check State on ~zod/~dopzod
 `~dopzod`: outgoing
 ```
-:btc-wallet-hook +dbug [%state 'poym']
+:btc-wallet +dbug [%state 'poym']
 ```
 
 `~zod`: incoming
 ```
-:btc-wallet-hook +dbug [%state 'piym']
+:btc-wallet +dbug [%state 'piym']
 ```
 
 ### Idempotent
 `~dopzod`
 ```
-:btc-wallet-hook|command [%req-pay-address ~zod 3.000 feyb=100
+:btc-wallet|command [%req-pay-address ~zod 3.000 feyb=100]
 ```
 Or can change amount:
 ```
-:btc-wallet-hook|command [%req-pay-address ~zod 3.000 feyb=100
+:btc-wallet|command [%req-pay-address ~zod 3.000 feyb=100]
 ```
 
 ### Broadcast the Signed TX
 ```
-:btc-wallet-hook|command [%broadcast-tx tx]
+:btc-wallet|command [%broadcast-tx tx]
 ```
 
 
@@ -93,7 +97,7 @@ Or can change amount:
 ```
 =realxpub 'zpub6qvniDfrk9sRxz7H9Cbr8fccuGNd4RGMmifPVvbQtqtsG7VwCUrNsnNt8DiCH8kxh3vsDuJkfNqZQspVq2xEbE64fgXT5hVJiD8WkRhvuJc'
 =fprint [%4 0xc93d.865c]
-:btc-wallet-store|action [%add-wallet realxpub fprint ~ [~ 6] [~ 6]]
+:btc-wallet|command [%add-wallet realxpub fprint ~ [~ 6] [~ 6]]
 
-.^(@ud %gx /=btc-wallet-store=/balance/[realxpub]/noun)
+.^(@ud %gx /=btc-wallet=/balance/[realxpub]/noun)
 ```
