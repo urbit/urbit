@@ -1,32 +1,39 @@
 import { AppName, Path, Patp } from '..';
 
-
 export type MetadataUpdate =
   MetadataUpdateInitial
 | MetadataUpdateAdd
 | MetadataUpdateUpdate
 | MetadataUpdateRemove;
 
-export interface MetadataUpdateInitial {
+interface MetadataUpdateInitial {
   associations: ResourceAssociations;
 }
 
-export type ResourceAssociations = {
+type ResourceAssociations = {
   [p in Path]: Association;
 }
 
-export type MetadataUpdateAdd = {
+type MetadataUpdateAdd = {
   add: Association;
 }
 
-export type MetadataUpdateUpdate = {
+type MetadataUpdateUpdate = {
   update: Association;
 }
 
-export type MetadataUpdateRemove = {
+type MetadataUpdateRemove = {
   remove: Resource & {
-    'group-path': Path;
+    group: Path;
   }
+}
+
+export interface MetadataUpdatePreview {
+  group: string;
+  channels: Associations;
+  "channel-count": number;
+  members: number;
+  metadata: Metadata;
 }
 
 export type Associations = Record<AppName, AppAssociations>;
@@ -35,13 +42,13 @@ export type AppAssociations = {
   [p in Path]: Association;
 }
 
-export interface Resource {
-  'app-path': Path;
+interface Resource {
+  resource: Path;
   'app-name': AppName;
 }
 
 export type Association = Resource & {
-  'group-path': Path;
+  group: Path;
   metadata: Metadata;
 };
 
@@ -52,4 +59,9 @@ export interface Metadata {
   description: string;
   title: string;
   module: string;
+  picture: string;
+  preview: boolean;
+  vip: PermVariation;
 }
+
+export type PermVariation = '' | 'reader-comments' | 'member-metadata';

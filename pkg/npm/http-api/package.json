@@ -3,7 +3,11 @@
   "version": "1.1.0",
   "license": "MIT",
   "description": "Library to interact with an Urbit ship over HTTP",
-  "repository": "github:tylershuster/urbit",
+  "repository" : {
+    "type" : "git",
+    "url": "ssh://git@github.com/urbit/urbit.git",
+    "directory": "pkg/npm/http-api"
+  },
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "browser": "dist/esm/index.js",
@@ -27,7 +31,7 @@
     "singleQuote": true,
     "trailingComma": "es5"
   },
-  "author": "Tyler Brown Cifu Shuster",
+  "author": "",
   "devDependencies": {
     "@babel/core": "^7.12.3",
     "@babel/plugin-proposal-class-properties": "^7.12.1",

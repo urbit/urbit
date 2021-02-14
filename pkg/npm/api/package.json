@@ -2,12 +2,17 @@
   "name": "@urbit/api",
   "version": "1.0.0",
   "description": "",
+  "repository" : {
+    "type" : "git",
+    "url": "ssh://git@github.com/urbit/urbit.git",
+    "directory": "pkg/npm/api"
+  },
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Tyler Brown Cifu Shuster",
+  "author": "",
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.12.5",

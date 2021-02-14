@@ -87,7 +87,7 @@ export const changePolicy = (
   }
 });
 
-const roleTags = ['janitor', 'moderator', 'admin'];
+export const roleTags = ['janitor', 'moderator', 'admin'];
 // TODO make this type better?
 
 export function roleForShip(group: Group, ship: PatpNoSig): string | undefined {
@@ -106,3 +106,6 @@ export function makeResource(ship: string, name:string) {
   return { ship, name };
 }
 
+export const joinError = ['no-perms', 'strange'] as const;
+export const joinResult = ['done', ...joinError] as const;
+export const joinProgress = ['start', 'added', ...joinResult] as const;

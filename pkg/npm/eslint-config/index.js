@@ -96,7 +96,8 @@ const rules = {
   "no-shadow-restricted-names": "error",
   "no-tabs": "error",
   "no-trailing-spaces": "error",
-  "no-unused-vars": [
+  "no-unused-vars": "off",
+  "@typescript-eslint/no-unused-vars": [
     "error",
     {
       "vars": "all",
@@ -104,7 +105,8 @@ const rules = {
       "ignoreRestSiblings": false
     }
   ],
-  "no-use-before-define": [
+  "no-use-before-define": "off",
+  "@typescript-eslint/no-use-before-define": [
     "error",
     {
       "functions": false,

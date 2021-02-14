@@ -80,24 +80,30 @@ function moduleToMark(mod: string): string | undefined {
   return undefined;
 }
 
-export const storeAction = <T>(data: T): Poke<T> => ({
+const storeAction = <T>(data: T): Poke<T> => ({
   app: 'graph-store',
   mark: 'graph-update',
   json: data
 });
 
-export const viewAction = <T>(threadName: string, action: T): Thread<T> => ({
+export { storeAction as graphStoreAction };
+
+const viewAction = <T>(threadName: string, action: T): Thread<T> => ({
   inputMark: 'graph-view-action',
   outputMark: 'json',
   threadName,
   body: action
 });
 
-export const hookAction = <T>(data: T): Poke<T> => ({
+export { viewAction as graphViewAction };
+
+const hookAction = <T>(data: T): Poke<T> => ({
   app: 'graph-push-hook',
   mark: 'graph-update',
   json: data
 });
+
+export { hookAction as graphHookAction };
 
 
 export const createManagedGraph = (

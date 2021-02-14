@@ -1,4 +1,5 @@
 import { Serial, PatpNoSig, Path } from '..';
+import { Resource } from '../groups';
 
 export type InviteUpdate =
   InviteUpdateInitial
@@ -8,23 +9,24 @@ export type InviteUpdate =
 | InviteUpdateAccepted
 | InviteUpdateDecline;
 
-export interface InviteUpdateInitial {
+
+interface InviteUpdateInitial {
   initial: Invites;
 }
 
-export interface InviteUpdateCreate {
+interface InviteUpdateCreate {
   create: {
     path: Path;
   };
 }
 
-export interface InviteUpdateDelete {
+interface InviteUpdateDelete {
   delete: {
     path: Path;
   };
 }
 
-export interface InviteUpdateInvite {
+interface InviteUpdateInvite {
   invite: {
     path: Path;
     uid: Serial;
@@ -32,38 +34,19 @@ export interface InviteUpdateInvite {
   };
 }
 
-export interface InviteUpdateAccepted {
+interface InviteUpdateAccepted {
   accepted: {
     path: Path;
     uid: Serial;
   };
 }
 
-export interface InviteUpdateDecline {
+interface InviteUpdateDecline {
   decline: {
     path: Path;
     uid: Serial;
   };
 }
-
-export type InviteAction =
-  InviteActionAccept
-| InviteActionDecline;
-
-export interface InviteActionAccept {
-  accept: {
-    term: string,
-    uid: Serial
-  }
-}
-
-export interface InviteActionDecline {
-  decline: {
-    term: string,
-    uid: Serial
-  }
-}
-
 
 // actual datastructures
 
@@ -78,8 +61,8 @@ export type AppInvites = {
 
 export interface Invite {
   app: string;
-  path: Path;
   recipient: PatpNoSig;
+  resource: Resource;
   ship: PatpNoSig;
   text: string;
 }
