@@ -1,4 +1,3 @@
-
 ::  btc-wallet
 ::
 ::  Scrys
@@ -137,13 +136,12 @@
   ?-  -.comm
       %set-provider
     =*  sub-card
-      :*  %pass  /set-provider/[(scot %da now.bowl)]
+    :*  %pass  /set-provider/[(scot %p provider.comm)]
           %agent  [provider.comm %btc-provider]  %watch  /clients
       ==
     :_  state(prov [~ provider.comm %.n])
     ?~  prov  ~[sub-card]
-    ~&  >>>  "%leave"
-    :~  [%pass /clients %agent [host.u.prov %btc-provider] %leave ~]
+    :~  [%pass /set-provider/[(scot %p host.u.prov)] %agent [host.u.prov %btc-provider] %leave ~]
         sub-card
     ==
     ::

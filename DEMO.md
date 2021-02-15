@@ -61,7 +61,7 @@ Using 1 confirmation for testing.
 
 `~dopzod`
 ```
-:btc-wallet|command [%req-pay-address ~zod 80.000 feyb=100]
+:btc-wallet|command [%req-pay-address ~zod 60.000 feyb=100]
 ```
 
 ### Check State on ~zod/~dopzod
