@@ -130,7 +130,7 @@
         %groups
       `state(groups.whitelist (~(uni in groups.whitelist) groups.wt.comm))
     ==
-    ::
+    :: 
       %remove-whitelist
     =.  state
       ?-  -.wt.comm
@@ -146,7 +146,7 @@
           %groups
         state(groups.whitelist (~(dif in groups.whitelist) groups.wt.comm))
       ==
-    `state(clients.host-info clean-client-list)
+    clean-client-list
   ==
 ::  if not connected, only %ping action is allowed
 ::
@@ -156,8 +156,11 @@
   ?.  ?|(connected.host-info =(-.act %ping))
     ~&  >>>  "Not connected to RPC"
     [~[(send-update [%| %not-connected 500])] state]
+  ?:  ?&(?=(%check-network -.act) ?!(=(network.act network.host-info)))
+    %-  (slog ~[leaf+"network mismatch with client {<src.bowl>}"])
+    (kick-client src.bowl)
   =/  ract=action:rpc-types
-    ?-  -.act
+    ?+  -.act  ~|("Invalid action" !!)
         %address-info
       [%get-address-info address.act]
       ::
@@ -186,6 +189,13 @@
 ++  rpc-wire
   |=  act=action  ^-  wire
   /[-.act]/[(scot %ux (cut 3 [0 20] eny.bowl))]
+::
+++  kick-client
+  |=  client=ship
+  ^-  (quip card _state)
+  ~&  >>>  "dropping client {<client>}"
+  :-  ~[[%give %kick ~[/clients] `client]]
+  state(clients.host-info (~(dif in clients.host-info) (sy ~[client])))
 ::
 ::  Handles HTTP responses from RPC servers. Parses for errors, then handles response. 
 ::  For actions that require collating multiple RPC calls, uses req-card to call out
@@ -252,8 +262,8 @@
     ?>  ?=([%get-block-info *] r)
     :_  state(connected.host-info %.y, block.host-info block.r)
     ?:  =(block.host-info block.r)
-      ~[(send-status [%connected block.r fee.r])]
-    ~[(send-status [%new-block block.r fee.r blockhash.r blockfilter.r])]
+      ~[(send-status [%connected network.host-info block.r fee.r])]
+    ~[(send-status [%new-block network.host-info block.r fee.r blockhash.r blockfilter.r])]
   ==
 ::
 ++  send-status
@@ -297,11 +307,15 @@
 ::   called after a whitelist change
 ::
 ++  clean-client-list
-  ^-  (set ship)
-  %-  sy
-  %+  murn  ~(tap in clients.host-info)
-  |=  c=ship  ^-  (unit ship)
-  ?:((is-whitelisted c) `c ~)
+  ^-  (quip card _state)
+  =/  to-kick=(set ship)
+    %-  sy
+    %+  murn  ~(tap in clients.host-info)
+    |=  c=ship  ^-  (unit ship)
+    ?:((is-whitelisted c) ~ `c)
+  :_  state(clients.host-info (~(dif in clients.host-info) to-kick))
+  %+  turn  ~(tap in to-kick)
+  |=(c=ship [%give %kick ~[/clients] `c]) 
 ::
 ++  is-client
   |=  user=ship  ^-  ?
