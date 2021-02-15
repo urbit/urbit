@@ -6,6 +6,14 @@ Utilities located [here](https://github.com/timlucmiptev/urbit-bitcoin-rpc). Use
 - ElectRS with built index
 - Node API server to handle provider requests
 
+## Notes
+- wallets can be on testnet or mainnet
+- if a wallet is on a different network than the provider, its addresses will not update on new provider blocks being sent.
+
+## Future Upgrades
+- Block filters
+- Better UTXO Selection
+
 ## Starting Up
 
 Do `./install.sh -w PIER_DIR` for dev work.
