@@ -18,7 +18,7 @@ On `~zod`. Uses "abandon abandon..." mnemonic
 |start %btc-wallet
 
 :btc-provider|command [%set-credentials api-url='http://localhost:50002' network]
-:btc-wallet|command [%set-provider ~zod network]
+:btc-wallet|command [%set-provider ~zod]
 :btc-provider|command [%add-whitelist %users `(set ship)`(sy ~[~dopzod])]
 
 =fprint [%4 0xbeef.dead]
@@ -28,12 +28,10 @@ On `~zod`. Uses "abandon abandon..." mnemonic
 
 On `~dopzod`. Uses "absurd sick..." mnemonic from PRIVATE.scratch.md
 ```
-=network %main
-=network %testnet
 |commit %home
 |start %btc-wallet
 
-:btc-wallet|command [%set-provider ~zod network]
+:btc-wallet|command [%set-provider ~zod]
 
 =fprint [%4 0xdead.beef]
 =xpubmain 'zpub6r8dKyWJ31XF6n69KKeEwLjVC5ruqAbiJ4QCqLsrV36Mvx9WEjUaiPNPGFLHNCCqgCdy6iZC8ZgHsm6a1AUTVBMVbKGemNcWFcwBGSjJKbD'

@@ -31,7 +31,10 @@
       [%raw-tx txid=hexb]
       [%broadcast-tx rawtx=hexb]
       [%ping ~]
+      check-network
   ==
++$  check-network  [%check-network =network]
+::
 +$  result
   $%  [%address-info =address utxos=(set utxo) used=? block=@ud]
       [%tx-info =info:tx]
@@ -46,8 +49,8 @@
   ==
 +$  update  (each result error)
 +$  status
-  $%  [%connected block=@ud fee=(unit sats)]
-      [%new-block block=@ud fee=(unit sats) blockhash=hexb blockfilter=hexb]
+  $%  [%connected =network block=@ud fee=(unit sats)]
+      [%new-block =network block=@ud fee=(unit sats) blockhash=hexb blockfilter=hexb]
       [%disconnected ~]
   ==
 ::
@@ -58,7 +61,7 @@
         [%get-tx-vals txid=hexb]
         [%get-raw-tx txid=hexb]
         [%broadcast-tx rawtx=hexb]
-        [%get-block-count ~] 
+        [%get-block-count ~]
         [%get-block-info ~]
     ==
   ::

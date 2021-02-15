@@ -2,7 +2,7 @@
 /+  bip32
 |%
 +$  params  [batch-size=@ud fam-limit=@ud piym-limit=@ud]
-+$  provider  [host=ship connected=?]
++$  provider  [host=ship connected=?] 
 +$  block  @ud
 +$  btc-state  [=block fee=(unit sats) t=@da]
 +$  payment  [pend=(unit txid) =xpub =address payer=ship value=sats]
@@ -10,7 +10,7 @@
 +$  poym  (unit txbu)
 ::
 +$  command
-  $%  [%set-provider provider=ship =network]
+  $%  [%set-provider provider=ship]
       [%set-current-wallet =xpub]
       [%add-wallet =xpub =fprint scan-to=(unit scon) max-gap=(unit @ud) confs=(unit @ud)]
       [%delete-wallet =xpub]
@@ -36,7 +36,7 @@
 ::
 ::  nixt: next indices to generate addresses from (non-change/change)
 ::  addi: HD path along with UTXOs
-::  wach: map for watched addresses.
+::  wach: map for watched addresses. 
 ::        Membership implies the address is known by outside parties or had prior activity
 ::  scon: indices to initially scan to in (non-)change accounts
 ::        defaults to 2^32-1 (i.e. all the addresses, ~4B)
