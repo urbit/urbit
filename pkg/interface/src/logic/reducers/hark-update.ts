@@ -112,6 +112,14 @@ function reduce(data: any, state: HarkState) {
   unreadEach(data, state);
   seenIndex(data, state);
   removeGraph(data, state);
+  readAll(data, state);
+}
+
+function readAll(json: any, state: HarkState) {
+  const data = _.get(json, 'read-all');
+  if(data) { 
+    clearState(state);
+  }
 }
 
 function removeGraph(json: any, state: HarkState) {
