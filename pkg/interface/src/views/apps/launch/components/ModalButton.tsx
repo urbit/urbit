@@ -22,7 +22,7 @@ const ModalButton = (props) => {
         {...rest}
       >
         <Icon icon={props.icon} mr={2} color={color}></Icon>
-        <Text color={color} className='nowrap'>
+        <Text color={color} whiteSpace='nowrap'>
           {props.text}
         </Text>
       </Button>
