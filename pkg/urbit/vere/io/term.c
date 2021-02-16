@@ -220,6 +220,7 @@ u3_term_log_init(void)
       uty_u->tat_u.mir.lin_y = 0;
       uty_u->tat_u.mir.byt_w = 0;
       uty_u->tat_u.mir.wor_w = 0;
+      uty_u->tat_u.mir.rus_w = 0;
       uty_u->tat_u.mir.cus_w = 0;
 
       uty_u->tat_u.esc.ape = c3n;
@@ -488,15 +489,25 @@ _term_it_show_blank(u3_utty* uty_u)
   _term_it_dump_buf(uty_u, &uty_u->ufo_u.out.clear_u);
 }
 
-/* _term_it_move_cursor(): move cursor to row & column
-   NOTE: row 0 is at the bottom, col 0 is to the left
-*/
+/*  _term_it_move_cursor(): move cursor to row & column
+ *
+ *    row 0 is at the bottom, col 0 is to the left.
+ *    if the given position exceeds the known window size,
+ *    it is clipped to stay within the window.
+ */
 static void
 _term_it_move_cursor(u3_utty* uty_u, c3_w row_w, c3_w col_w)
 {
-  _term_it_send_csi(uty_u, 'H', 2, uty_u->tat_u.siz.row_l - row_w, col_w + 1);
+  c3_l row_l = uty_u->tat_u.siz.row_l;
+  c3_l col_l = uty_u->tat_u.siz.col_l;
+  if ( row_w >= row_l ) { row_w = row_l - 1; }
+  if ( col_w >= col_l ) { col_w = col_l - 1; }
 
-  //TODO  should also store row
+  _term_it_send_csi(uty_u, 'H', 2, row_l - row_w, col_w + 1);
+  //TODO  send s for saving cursor position?
+
+  //TODO  how does this interact with window resizing?
+  uty_u->tat_u.mir.rus_w = row_w;
   uty_u->tat_u.mir.cus_w = col_w;
 }
 
@@ -603,6 +614,9 @@ _term_it_show_more(u3_utty* uty_u)
   }
 
   uty_u->tat_u.mir.cus_w = 0;
+  if ( uty_u->tat_u.mir.rus_w > 0 ) {
+    uty_u->tat_u.mir.rus_w--;
+  }
 }
 
 /* _term_it_path(): path for console file.

@@ -148,7 +148,8 @@
           c3_y* lin_y;                      //  current line (utf8)
           c3_w  byt_w;                      //  utf8 line-length
           c3_w  wor_w;                      //  utf32 line-length
-          c3_w  cus_w;                      //  cursor position
+          c3_w  rus_w;                      //  cursor position (row)
+          c3_w  cus_w;                      //  cursor position (column)
         } mir;
 
         struct {                            //  escape code control
