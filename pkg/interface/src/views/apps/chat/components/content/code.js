@@ -23,7 +23,7 @@ export default class CodeContent extends Component {
           style={{ whiteSpace: 'pre' }}
           backgroundColor='washedGray'
         >
-          {content.code.output[0].join('\n')}
+          {content.code.output.join('\n')}
         </Text>
       ) : null;
 
