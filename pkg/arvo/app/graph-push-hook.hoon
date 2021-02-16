@@ -221,7 +221,6 @@
     (node-to-indexed-post node)
   =/  =permission-level:store
     (get-permission permissions is-admin writers)
-  ~&  permission-level
   ?-  permission-level
       %yes  %.y
       %no   %.n
@@ -238,7 +237,7 @@
   |=  [=resource:res indices=(set index:store)]
   ^-  ?
   %-  (bond |.(%.n))
-  %+  biff  (get-roles-writers-variation)
+  %+  biff  (get-roles-writers-variation resource)
   |=  [is-admin=? writers=(set ship) vip=vip-metadata:metadata]
   %-  some  
   %+  levy  ~(tap by indices)
