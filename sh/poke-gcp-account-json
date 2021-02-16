@@ -1,0 +1,53 @@
+#!/usr/bin/env python3
+
+import json
+import re
+import subprocess
+import sys
+
+
+def herb_poke_gcp_setting(pier, key, val):
+    """
+    Poke a value into settings-store under the %gcp-store bucket.
+
+    This does not sanitize or check its inputs. Please make sure they are
+    correct before calling this function.
+
+    :pier: Pier of the ship to poke.
+    :key: Key to poke. Must be a @tas (i.e. include the '%').
+    :val: Value to poke. Must be a @t. (will be passed through crude_t.)
+    """
+    print('herb_poke ' + key)
+    # XXX use +same because herb's cell parser is cursed.
+    poke_arg = "(same %put-entry %gcp-store {} %s {})".format(
+        key, crude_t(val))
+    return subprocess.run(['herb', pier, '-p', 'settings-store', '-d',
+                           poke_arg, '-m', 'settings-event'],
+                          check=True)
+
+def crude_t(pin):
+    """
+    Very crude, bad, dangerous, and evil @t transform.
+
+    Puts single quotes around the string. Escapes instances of single quote and
+    backslash within the string, and turns newlines into \0a.
+    """
+    replaces = [(r'\\', r'\\\\'), ("'", r"\\'"), ("\n", r'\\0a')]
+    for pattern, replace in replaces:
+        pin = re.sub(pattern, replace, pin, flags=re.MULTILINE)
+    return "'{}'".format(pin)
+
+def read_gcp_json(keyfile):
+    with open(keyfile, 'r') as f:
+        return json.loads(f.read())
+
+def main():
+    pier, keyfile = sys.argv[1:]
+    obj = read_gcp_json(keyfile)
+    herb_poke_gcp_setting(pier, '%token-uri', obj['token_uri'])
+    herb_poke_gcp_setting(pier, '%client-email', obj['client_email'])
+    herb_poke_gcp_setting(pier, '%private-key-id', obj['private_key_id'])
+    herb_poke_gcp_setting(pier, '%private-key', obj['private_key'])
+
+if __name__ == '__main__':
+    main()
