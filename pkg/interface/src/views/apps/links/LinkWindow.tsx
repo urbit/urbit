@@ -1,5 +1,5 @@
 import React, { useRef, useCallback, useEffect, useMemo } from "react";
-import { Col } from "@tlon/indigo-react";
+import { Col, Text } from "@tlon/indigo-react";
 import bigInt from 'big-integer';
 import {
   Association,
