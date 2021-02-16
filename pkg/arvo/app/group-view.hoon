@@ -3,13 +3,24 @@
     resource, dbug, grpl=group, conl=contact, verb
 |%
 ++  card  card:agent:gall
+::
++$   base-state
+  joining=(map rid=resource [=ship =progress:view])
+::
 +$  state-zero
-  $:  %0
-      joining=(map rid=resource [=ship =progress:view])
+  [%0 base-state]
+::
++$  state-one
+  [%1 base-state]
+::
++$  versioned-state
+  $%  state-zero
+      state-one
   ==
+::
 ++  view  view-sur
 --
-=|  state-zero
+=|  state-one
 =*  state  -
 ::
 %-  agent:dbug
@@ -28,13 +39,21 @@
 ::
 ++  on-load
   |=  =vase
-  =+  !<(old=state-zero vase)
-  `this(state old)
+  =+  !<(old=versioned-state vase)
+  =|  cards=(list card)
+  |-
+  ?:  ?=(%1 -.old)
+    `this(state old)
+  $(-.old %1, cards :_(cards (poke-self:pass:io noun+!>(%cleanup))))
 ::
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
-  ?.  ?=(?(%group-view-action %noun) mark)
+  ?:  ?=(%noun mark)
+    =^  cards  state
+      poke-noun:gc
+    [cards this]
+  ?.  ?=(%group-view-action mark)
     (on-poke:def mark vase)
   =+  !<(=action:view vase)
   ?>  ?=(%join -.action)
@@ -79,6 +98,21 @@
 ++  io   ~(. agentio bowl)
 ++  con  ~(. conl bowl)
 ::
+++  has-joined
+  |=  rid=resource
+  =-  ?=(^ -)
+  ?~  grp=(peek-group:met %groups rid)
+    (peek-group:met %graph rid)
+  grp
+::
+++  poke-noun
+  ^-  (quip card _state)
+  =;  new-joining=(map resource [ship progress:view])
+    `state(joining new-joining)
+  %+  roll  ~(tap by joining)
+  |=  [[rid=resource =ship =progress:view] out=_joining]
+  ?.  (has-joined rid)  out
+  (~(del by out) rid)
 ::
 ++  join
   |_  [rid=resource =ship cards=(list card)]
@@ -127,10 +161,7 @@
       (~(put by joining) rid [ship %start])
     =.  jn-core
       (jn-abed rid)
-    =/  maybe-group
-       (peek-group:met %groups rid)
-    ?^  maybe-group
-      ~|("already joined group {<rid>}" !!)
+    ?<  ~|("already joined {<rid>}" (has-joined rid)) 
     =.  jn-core
       %-  emit
       %+  poke:(jn-pass-io /add)
