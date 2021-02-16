@@ -48,21 +48,19 @@ export function Mention(props: {
   const group = props.group ?? { hidden: true };
   const [showOverlay, setShowOverlay] = useState(false);
 
-  const toggleOverlay = useCallback(
-    () => {
-      setShowOverlay(value => !value);
-    },
-    [showOverlay]
-  );
+  const toggleOverlay = useCallback(() => {
+    setShowOverlay((value) => !value);
+  }, [showOverlay]);
 
   return (
     <Box position='relative' display='inline-block' cursor='pointer'>
       <Text
         onClick={() => toggleOverlay()}
-        mx='2px'
-        px='2px'
+        mx={1}
+        px={1}
         bg='washedBlue'
         color='blue'
+        fontSize={showNickname ? 1 : 0}
         mono={!showNickname}
       >
         {name}
