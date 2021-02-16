@@ -1,21 +1,21 @@
 import React, { useRef, useCallback, useEffect, useMemo } from 'react';
-import { Col } from '@tlon/indigo-react';
+
+import { Col, Text } from '@tlon/indigo-react';
 import bigInt from 'big-integer';
 import {
   Association,
   Graph,
-  Contacts,
   Unreads,
-  LocalUpdateRemoteContentPolicy,
   Group,
   Rolodex,
-  S3State
 } from '@urbit/api';
+
 import GlobalApi from '~/logic/api/global';
 import VirtualScroller from '~/views/components/VirtualScroller';
 import { LinkItem } from './components/LinkItem';
 import LinkSubmit from './components/LinkSubmit';
 import { isWriter } from '~/logic/lib/group';
+import { S3State } from '~/types/s3-update';
 
 interface LinkWindowProps {
   association: Association;
@@ -33,8 +33,6 @@ interface LinkWindowProps {
 }
 export function LinkWindow(props: LinkWindowProps) {
   const { graph, api, association } = props;
-  const loadedNewest = useRef(true);
-  const loadedOldest = useRef(false);
   const virtualList = useRef<VirtualScroller>();
   const fetchLinks = useCallback(
     async (newer: boolean) => {
