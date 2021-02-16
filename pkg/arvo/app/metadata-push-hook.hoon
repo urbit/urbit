@@ -64,7 +64,7 @@
   =/  role=(unit (unit role-tag))
     (role-for-ship:grp group.update src.bowl)
   =/  =metadatum:store
-    (need (peek-metadatum:met %contacts group.update))
+    (need (peek-metadatum:met %groups group.update))
   ?~  role  %.n
   ?^  u.role  
     ?=(?(%admin %moderator) u.u.role)
