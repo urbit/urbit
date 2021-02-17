@@ -680,12 +680,9 @@
       ::  note this should only happen on reverse bones, so only facts
       ::  and kicks
       ::
-      =/  sys-wire  [%sys wire]
       ::  TODO: %drip %kick so app crash can't kill the remote %pull
       ::
-      =/  =ames-request-all  [%0 %u ~]
-      =.  mo-core
-        (mo-pass sys-wire %a %plea ship %g /ge/[foreign-agent] ames-request-all)
+      =.  mo-core  (mo-send-foreign-request ship foreign-agent %leave ~)
       =.  mo-core  (mo-give %unto %kick ~)
       mo-core
     ==
