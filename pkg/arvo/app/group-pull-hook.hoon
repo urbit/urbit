@@ -1,9 +1,10 @@
-::  group-hook: allow syncing group data from foreign paths to local paths
+::  group-hook [landscape]:
 ::
+::  allow syncing group data from foreign paths to local paths
 ::
-/-  *group, hook=group-hook, *invite-store, *resource
+/-  *group, *invite-store, *resource
 /+  default-agent, verb, dbug, store=group-store, grpl=group, pull-hook
-~%  %group-hook-top  ..is  ~
+~%  %group-hook-top  ..part  ~
 |%
 +$  card  card:agent:gall
 ::
@@ -13,6 +14,7 @@
       update:store
       %group-update
       %group-push-hook
+      %.n
   ==
 ::
 --
@@ -27,6 +29,7 @@
 +*  this        .
     def         ~(. (default-agent this %|) bowl)
     dep         ~(. (default:pull-hook this config) bowl)
+    grp         ~(. grpl bowl)
 ::
 ++  on-init  on-init:def
 ++  on-save  !>(~)
@@ -41,9 +44,14 @@
 ++  on-pull-nack
   |=   [=resource =tang]
   ^-  (quip card _this)
-  [~ this]
+  :_  this
+  =-  [%pass / %agent [our.bowl %group-store] %poke -]~
+  group-update+!>([%remove-group resource ~])
+::
 ++  on-pull-kick
   |=  =resource
   ^-  (unit path)
   `/
+::
+++  resource-for-update  resource-for-update:grp
 --

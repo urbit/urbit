@@ -1,68 +1,83 @@
-import React from 'react';
+import React, {
+  useState,
+  useEffect,
+  useRef
+} from 'react';
 
-import { useLocation } from 'react-router-dom';
-import { Row, Box, Text, Icon } from '@tlon/indigo-react';
+import {
+  Col,
+  Row,
+  Box,
+  Text,
+  Icon,
+  Button,
+  BaseImage
+} from '@tlon/indigo-react';
 import ReconnectButton from './ReconnectButton';
+import { Dropdown } from './Dropdown';
 import { StatusBarItem } from './StatusBarItem';
 import { Sigil } from '~/logic/lib/sigil';
+import { uxToHex } from "~/logic/lib/util";
+import { SetStatusBarModal } from './SetStatusBarModal';
+import { useTutorialModal } from './useTutorialModal';
+
+import useLocalState from '~/logic/state/local';
 
 
 const StatusBar = (props) => {
-
-  const location = useLocation();
-  const atHome = Boolean(location.pathname === '/');
-
-  const display = (!window.location.href.includes('popout/'))
-      ? 'grid' : 'none';
-
-  const invites = (props.invites && props.invites['/contacts'])
-    ? props.invites['/contacts']
-    : {};
-
-
+  const { ourContact, api, ship } = props;
+  const invites = [].concat(...Object.values(props.invites).map(obj => Object.values(obj)));
   const metaKey = (window.navigator.platform.includes('Mac')) ? '⌘' : 'Ctrl+';
+  const { toggleOmnibox, hideAvatars } =
+    useLocalState(({ toggleOmnibox, hideAvatars }) =>
+      ({ toggleOmnibox, hideAvatars })
+    );
+
+  const color = !!ourContact ? `#${uxToHex(props.ourContact.color)}` : '#000';
+  const xPadding = (!hideAvatars && ourContact?.avatar) ? '0' : '2';
+  const bgColor = (!hideAvatars && ourContact?.avatar) ? '' : color;
+  const profileImage = (!hideAvatars && ourContact?.avatar) ? (
+    <BaseImage
+      src={ourContact.avatar}
+      borderRadius={2}
+      width='32px'
+      height='32px'
+      style={{ objectFit: 'cover' }} />
+  ) : <Sigil ship={ship} size={16} color={color} icon />;
+
+  const anchorRef = useRef(null);
+
+  const leapHighlight = useTutorialModal('leap', true, anchorRef.current);
+
+  const floatLeap = leapHighlight && window.matchMedia('(max-width: 550px)').matches;
 
   return (
     <Box
-      display={display}
+      display='grid'
       width="100%"
       gridTemplateRows="30px"
       gridTemplateColumns="3fr 1fr"
-      py={2}
-      px={3}
+      py='3'
+      px='3'
+      pb='3'
       >
       <Row collapse>
-        {atHome ? null : (
-          <StatusBarItem mr={2} onClick={() => props.history.push('/')}>
-            <img
-              className='invert-d'
-              src='/~landscape/img/icon-home.png'
-              height='11'
-              width='11'
-            />
-          </StatusBarItem>
+      <Button width="32px" borderColor='washedGray' mr='2' px='2' onClick={() => props.history.push('/')} {...props}>
+        <Icon icon='Spaces' color='black'/>
+      </Button>
+        <StatusBarItem float={floatLeap} mr={2} onClick={() => toggleOmnibox()}>
+        { !props.doNotDisturb && (props.notificationsCount > 0 || invites.length > 0) &&
+          (<Box display="block" right="-8px" top="-8px" position="absolute" >
+            <Icon color="blue" icon="Bullet" />
+           </Box>
         )}
-        <StatusBarItem mr={2} onClick={() => props.api.local.setOmnibox()}>
-          <Text display='inline-block' style={{ transform: 'rotate(180deg)' }}>
-            ↩
-          </Text>
-          <Text ml={2} color='black'>
+        <Icon icon='LeapArrow'/>
+          <Text ref={anchorRef} ml={2} color='black'>
             Leap
           </Text>
-          <Text display={['none', 'inline']} ml={4} color='gray'>
+          <Text display={['none', 'inline']} ml={2} color='gray'>
             {metaKey}/
           </Text>
-        </StatusBarItem>
-        <StatusBarItem 
-          onClick={() => props.history.push('/~groups')}
-          badge={Object.keys(invites).length > 0}>
-          <img
-            className='invert-d v-mid'
-            src='/~landscape/img/groups.png'
-            height='15'
-            width='15'
-          />
-          <Text display={["none", "inline"]} ml={2}>Groups</Text>
         </StatusBarItem>
         <ReconnectButton
           connection={props.connection}
@@ -70,10 +85,70 @@ const StatusBar = (props) => {
         />
       </Row>
       <Row justifyContent="flex-end" collapse>
-        <StatusBarItem onClick={() => props.history.push('/~profile')}>
-          <Sigil ship={props.ship} size={24} color={"#000000"} classes="dib mix-blend-diff" />
-          <Text ml={2} display={["none", "inline"]} fontFamily="mono">{props.ship}</Text>
+        <StatusBarItem
+          mr='2'
+          backgroundColor='yellow'
+          display={process.env.LANDSCAPE_STREAM === 'development' ? 'flex' : 'none'}
+          justifyContent="flex-end"
+          flexShrink='0'
+          onClick={() => window.open(
+            'https://github.com/urbit/landscape/issues/new' +
+            '?assignees=&labels=development-stream&title=&' +
+            `body=commit:%20urbit/urbit@${process.env.LANDSCAPE_SHORTHASH}`
+            )}
+          >
+          <Text color='#000000'>Submit <Text color='#000000' display={['none', 'inline']}>an</Text> issue</Text>
         </StatusBarItem>
+        <StatusBarItem width="32px" mr={2} onClick={() => props.history.push('/~landscape/messages')}>
+            <Icon icon="Users"/>
+        </StatusBarItem>
+        <Dropdown
+          dropWidth="150px"
+          width="auto"
+          alignY="top"
+          alignX="right"
+          flexShrink={'0'}
+          options={
+            <Col
+              mt='6'
+              p='1'
+              backgroundColor="white"
+              color="washedGray"
+              border={1}
+              borderRadius={2}
+              borderColor="lightGray"
+              boxShadow="0px 0px 0px 3px">
+              <Row
+                p={1}
+                color='black'
+                cursor='pointer'
+                fontSize={1}
+                onClick={() => props.history.push(`/~profile/~${ship}`)}>
+                View Profile
+              </Row>
+              <SetStatusBarModal
+                ship={`~${ship}`}
+                contact={ourContact}
+                ml='1'
+                api={api} />
+              <Row
+                p={1}
+                color='black'
+                cursor='pointer'
+                fontSize={1}
+                onClick={() => props.history.push('/~settings')}>
+                System Settings
+              </Row>
+            </Col>
+          }>
+          <StatusBarItem
+            px={xPadding}
+            width="32px"
+            flexShrink='0'
+            backgroundColor={bgColor}>
+            {profileImage}
+          </StatusBarItem>
+        </Dropdown>
       </Row>
     </Box>
   );

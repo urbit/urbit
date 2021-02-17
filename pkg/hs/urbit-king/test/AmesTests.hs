@@ -12,142 +12,30 @@ import Urbit.EventLog.LMDB
 import Urbit.King.Config
 import Urbit.Noun
 import Urbit.Noun.Time
-import Urbit.Prelude
+import Urbit.Prelude         hiding (elements)
 import Urbit.Vere.Ames
+import Urbit.Vere.Ames.Packet
 import Urbit.Vere.Pier.Types
+import Urbit.Vere.Ports
 
 import Control.Concurrent (runInBoundThread)
+import Data.Serialize     (decode, encode)
 import Data.LargeWord     (LargeKey(..))
 import GHC.Natural        (Natural)
 import Network.Socket     (tupleToHostAddress)
 import Urbit.King.App     (HasKingId(..))
 
 import qualified Urbit.EventLog.LMDB as Log
+import qualified Urbit.Noun.Time     as Time
 
-
---------------------------------------------------------------------------------
-
-type HasAmes e = (HasLogFunc e, HasNetworkConfig e, HasKingId e)
-
--- Utils -----------------------------------------------------------------------
-
-pid :: KingId
-pid = KingId 0
-
-turfEf :: NewtEf
-turfEf = NewtEfTurf (0, ()) []
-
-sendEf :: Galaxy -> Wen -> Bytes -> NewtEf
-sendEf g w bs = NewtEfSend (0, ()) (EachYes g) bs
-
-data NetworkTestApp = NetworkTestApp
-    { _ntaLogFunc       :: !LogFunc
-    , _ntaNetworkConfig :: !NetworkConfig
-    , _ntaKingId        :: !Word16
-    }
-
-makeLenses ''NetworkTestApp
-
-instance HasLogFunc NetworkTestApp where
-  logFuncL = ntaLogFunc
-
-instance HasNetworkConfig NetworkTestApp where
-  networkConfigL = ntaNetworkConfig
-
-instance HasKingId NetworkTestApp where
-  kingIdL = ntaKingId
-
-runNetworkApp :: RIO NetworkTestApp a -> IO a
-runNetworkApp = runRIO NetworkTestApp
-  { _ntaLogFunc       = mkLogFunc (\_ _ _ _ -> pure ())
-  , _ntaKingId        = 34
-  , _ntaNetworkConfig = NetworkConfig { _ncNetMode   = NMNormal
-                                      , _ncAmesPort  = Nothing
-                                      , _ncNoAmes    = False
-                                      , _ncNoHttp    = False
-                                      , _ncNoHttps   = False
-                                      , _ncHttpPort  = Nothing
-                                      , _ncHttpsPort = Nothing
-                                      , _ncLocalPort = Nothing
-                                      }
-  }
-
-runGala
-  :: forall e
-   . HasAmes e
-  => Word8
-  -> RAcquire e (TQueue EvErr, NewtEf -> IO ())
-runGala point = do
-    env <- ask
-    que <- newTQueueIO
-    let enqueue = \p -> writeTQueue que p $> Intake
-    let (_, runAmes) = ames env (fromIntegral point) True enqueue noStderr
-    cb <- runAmes
-    io (cb turfEf)
-    pure (que, cb)
-  where
-    noStderr _ = pure ()
-
-waitForPacket :: TQueue EvErr -> Bytes -> IO Bool
-waitForPacket q val = go
- where
-  go = atomically (readTQueue q) >>= \case
-    EvErr (EvBlip (BlipEvNewt (NewtEvBorn (_, ()) ()))) _ -> go
-    EvErr (EvBlip (BlipEvAmes (AmesEvHear () _ bs))) _ -> pure (bs == val)
-    _ -> pure False
-
-runRAcquire :: RAcquire e a -> RIO e a
-runRAcquire acq = rwith acq pure
-
-sendThread :: (NewtEf -> IO ()) -> (Galaxy, Bytes) -> RAcquire e ()
-sendThread cb (to, val) = void $ mkRAcquire start cancel
-  where
-    start = async $ forever $ do threadDelay 1_000
-                                 wen <- io $ now
-                                 io $ cb (sendEf to wen val)
-                                 threadDelay 10_000
-
-zodSelfMsg :: Property
-zodSelfMsg = forAll arbitrary (ioProperty . runNetworkApp . runTest)
- where
-  runTest
-    :: (HasLogFunc e, HasNetworkConfig e, HasKingId e) => Bytes -> RIO e Bool
-  runTest val = runRAcquire $ do
-    env         <- ask
-    (zodQ, zod) <- runGala 0
-    ()          <- sendThread zod (0, val)
-    liftIO (waitForPacket zodQ val)
-
-twoTalk :: Property
-twoTalk = forAll arbitrary (ioProperty . runNetworkApp . runTest)
-  where
-    runTest :: (HasLogFunc e, HasNetworkConfig e, HasKingId e)
-            => (Word8, Word8, Bytes) -> RIO e Bool
-    runTest (aliceShip, bobShip, val) =
-      if aliceShip == bobShip
-        then pure True
-        else go aliceShip bobShip val
-
-    go :: (HasLogFunc e, HasNetworkConfig e, HasKingId e)
-       => Word8 -> Word8 -> Bytes -> RIO e Bool
-    go aliceShip bobShip val = runRAcquire $ do
-        (aliceQ, alice) <- runGala aliceShip
-        (bobQ,   bob)   <- runGala bobShip
-        sendThread alice (Patp bobShip,   val)
-        sendThread bob   (Patp aliceShip, val)
-        liftIO (waitForPacket aliceQ val >> waitForPacket bobQ val)
+packetSplitMorphism :: Packet -> Bool
+packetSplitMorphism p = (decode . encode) p == Right p
 
 tests :: TestTree
 tests =
   testGroup "Ames"
-    [ localOption (QuickCheckTests 10) $
-          testProperty "Zod can send a message to itself" $
-              zodSelfMsg
-
-    -- TODO Why doesn't this work in CI?
-    -- , localOption (QuickCheckTests 10) $
-    --       testProperty "Two galaxies can talk" $
-    --           twoTalk
+    [ testProperty "Packet coding looks good" $
+          packetSplitMorphism
     ]
 
 
@@ -203,7 +91,27 @@ instance Arbitrary AmesAddress where
   arbitrary = AAIpv4 <$> arb <*> arb
 
 instance Arbitrary Ship where
-  arbitrary = Ship <$> arb
+  arbitrary = Ship <$> elements
+    [ 0
+    , 42
+    , 256
+    , 24_530
+    , 2_071_856_128
+    , 2_824_325_100
+    , 430_648_908_188_615_680
+    , 2^60 + 1337
+    ]
 
 instance Arbitrary LogIdentity where
   arbitrary = LogIdentity <$> arb <*> arb <*> arb
+
+instance Arbitrary Packet where
+  arbitrary = do
+    pktVersion   <- suchThat arb (< 8)
+    pktSndr      <- arb
+    pktRcvr      <- arb
+    pktSndrTick  <- suchThat arb (< 16)
+    pktRcvrTick  <- suchThat arb (< 16)
+    pktOrigin    <- arb
+    pktContent   <- arb
+    pure Packet {..}

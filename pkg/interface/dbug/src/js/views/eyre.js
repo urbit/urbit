@@ -110,6 +110,10 @@ export class Eyre extends Component {
             <td>{c['next-id']}</td>
           </tr>
           <tr>
+            <td class="inter">last-ack</td>
+            <td>{msToDa(c['last-ack'])}</td>
+          </tr>
+          <tr>
             <td class="inter">unacked</td>
             <td>{c.unacked.reduce((a, b) => a + b + ', ', '')}</td>
           </tr>
@@ -117,19 +121,22 @@ export class Eyre extends Component {
       </>);
       const subscriptionItems = c.subscriptions.map(s => {
         //NOTE jsx sorta copied from /components/subscriptions
-        return {key: `${s.wire} ${s.app} ${s.ship} ${s.path}`, jsx: (
+        return {key: `${s.id} ${s.ship} ${s.app} ${s.path}`, jsx: (
           <div class="flex">
-            <div class="flex-auto" style={{maxWidth: '35%'}}>
-              {s.wire}
+            <div class="flex-auto" style={{maxWidth: '15%'}}>
+              {s.id}
             </div>
             <div class="flex-auto" style={{maxWidth: '15%'}}>
               ~{s.ship}
             </div>
-            <div class="flex-auto" style={{maxWidth: '15%'}}>
+            <div class="flex-auto" style={{maxWidth: '20%'}}>
               {s.app}
             </div>
             <div class="flex-auto" style={{maxWidth: '35%'}}>
               {s.path}
+            </div>
+            <div class="flex-auto" style={{maxWidth: '15%'}}>
+              {s.unacked}
             </div>
           </div>
         )};
@@ -137,7 +144,7 @@ export class Eyre extends Component {
       return {key: c.session, jsx: (
         <Summary summary={summary} details={(
           <SearchableList
-            placeholder="wire, app, ship, path"
+            placeholder="id, ship, app, path"
             items={subscriptionItems}
           />
         )} />

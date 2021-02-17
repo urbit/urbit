@@ -10,7 +10,9 @@ export default class Tiles extends React.PureComponent {
     const { props } = this;
 
     const tiles = props.tileOrdering.filter((key) => {
-      return props.tiles[key].isShown;
+      const tile = props.tiles[key];
+
+      return tile.isShown;
     }).map((key) => {
       const tile = props.tiles[key];
       if ('basic' in tile.type) {
@@ -34,8 +36,9 @@ export default class Tiles extends React.PureComponent {
             />
           );
         } else if (key === 'clock') {
+          const location = 'nearest-area' in props.weather ? props.weather['nearest-area'][0] : '';
           return (
-            <ClockTile key={key} location={props.location} />
+            <ClockTile key={key} location={location} />
           );
         }
       } else {

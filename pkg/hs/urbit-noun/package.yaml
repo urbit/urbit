@@ -6,10 +6,12 @@ license-file: LICENSE
 library:
   source-dirs: lib
   ghc-options:
-    - -fwarn-incomplete-patterns
-    - -fwarn-unused-binds
-    - -fwarn-unused-imports
+    - -Wall
     - -Werror
+    - -Wno-type-defaults
+    - -Wno-unused-matches
+    - -Wno-name-shadowing
+    - -Wno-orphans
     - -O2
 
 dependencies:
@@ -20,11 +22,11 @@ dependencies:
   - lens
   - murmur3
   - regex-tdfa
-  - regex-tdfa-text
   - rio
   - text
   - time
   - urbit-atom
+  - urbit-hob
   - urbit-noun-core
 
 default-extensions:

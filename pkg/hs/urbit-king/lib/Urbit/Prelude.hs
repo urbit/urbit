@@ -15,15 +15,16 @@ module Urbit.Prelude
     , module RIO
     , io, rio
     , logTrace
+    , acquireWorker, acquireWorkerBound
+    , hark
     ) where
 
 import ClassyPrelude
 import Urbit.Noun
 
-import Control.Lens hiding (Each, Index, cons, index, snoc, uncons, unsnoc,
-                     (<.>), (<|))
-
 import Control.Arrow    ((<<<), (>>>))
+import Control.Lens hiding (Each, Index, cons, index, snoc, uncons, unsnoc,
+                            (<.>), (<|))
 import Data.Acquire     (Acquire, mkAcquire, with)
 import Data.RAcquire    (RAcquire, mkRAcquire, rwith)
 import Data.RAcquire    (MonadAcquire(..), MonadRIO(..))
@@ -34,10 +35,11 @@ import Text.Show.Pretty (pPrint, ppShow)
 import RIO (RIO, runRIO)
 import RIO (Utf8Builder, display, displayShow)
 import RIO (threadDelay)
+import RIO (HasLogFunc, LogFunc, LogLevel(..), logDebug, logError, logFuncL,
+            logInfo, logOptionsHandle, logOther, logWarn, mkLogFunc,
+            setLogMinLevel, setLogUseLoc, setLogUseTime, withLogFunc)
 
-import RIO (HasLogFunc, LogFunc, logDebug, logError, logFuncL, logInfo,
-            logOptionsHandle, logOther, logWarn, mkLogFunc, setLogUseLoc,
-            setLogUseTime, withLogFunc)
+import qualified RIO
 
 io :: MonadIO m => IO a -> m a
 io = liftIO
@@ -47,3 +49,24 @@ rio = liftRIO
 
 logTrace :: HasLogFunc e => Utf8Builder -> RIO e ()
 logTrace = logOther "trace"
+
+-- | Composes a log message out of textual components.
+hark :: [Text] -> Utf8Builder
+hark = RIO.displayBytesUtf8 . foldMap encodeUtf8
+
+-- Utils for Spawning Worker Threads -------------------------------------------
+
+acquireWorker :: HasLogFunc e => Text -> RIO e () -> RAcquire e (Async ())
+acquireWorker nam act = mkRAcquire (async act) kill
+ where
+  kill tid = do
+    logInfo ("Killing worker thread: " <> display nam)
+    cancel tid
+
+acquireWorkerBound :: HasLogFunc e => Text -> RIO e () -> RAcquire e (Async ())
+acquireWorkerBound nam act = mkRAcquire (asyncBound act) kill
+ where
+  kill tid = do
+    logInfo ("Killing worker thread: " <> display nam)
+    cancel tid
+

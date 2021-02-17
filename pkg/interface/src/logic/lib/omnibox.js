@@ -1,10 +1,13 @@
-import defaultApps from './default-apps';
+import { cite } from '~/logic/lib/util';
+import { isChannelAdmin } from '~/logic/lib/group';
 
   const indexes = new Map([
+    ['ships', []],
     ['commands', []],
     ['subscriptions', []],
     ['groups', []],
-    ['apps', []]
+    ['apps', []],
+    ['other', []]
   ]);
 
 // result schematic
@@ -17,31 +20,29 @@ const result = function(title, link, app, host) {
   };
 };
 
-const commandIndex = function () {
+const shipIndex = function(contacts) {
+  const ships = [];
+  Object.keys(contacts).map((e) => {
+    return ships.push(result(e, `/~profile/${e}`, 'profile', contacts[e]?.status || ""));
+  });
+  return ships;
+};
+
+const commandIndex = function (currentGroup, groups, associations) {
   // commands are special cased for default suite
   const commands = [];
-  defaultApps
-    .filter((e) => {
-      return e !== 'dojo';
-    })
-    .map((e) => {
-      let title = e;
-      if (e === 'link') {
-        title = 'Links';
-      }
-
-      title = title.charAt(0).toUpperCase() + title.slice(1);
-
-      let obj = result(`${title}: Create`, `/~${e}/new`, e, null);
-      commands.push(obj);
-
-      if (title === 'Groups') {
-        obj = result(`${title}: Join Group`, `/~${e}/join`, title, null);
-        commands.push(obj);
-      }
-    });
-
-  commands.push(result('Profile', '/~profile', 'profile', null));
+  const group = currentGroup ? groups[currentGroup] : null;
+  const association = currentGroup ? associations?.groups?.[currentGroup] : null;
+  const canAdd =
+    (group && association)
+    ? (association.metadata.vip === 'member-metadata' || isChannelAdmin(group, currentGroup))
+    : !currentGroup; // home workspace or hasn't loaded
+  const workspace = currentGroup || '/home';
+  commands.push(result(`Groups: Create`, `/~landscape/new`, 'Groups', null));
+  if (canAdd) {
+    commands.push(result(`Channel: Create`, `/~landscape${workspace}/new`, 'Groups', null));
+  }
+  commands.push(result(`Groups: Join`, `/~landscape/join`, 'Groups', null));
 
   return commands;
 };
@@ -54,6 +55,9 @@ const appIndex = function (apps) {
     .filter((e) => {
       return apps[e]?.type?.basic;
     })
+    .sort((a, b) => {
+      return a.localeCompare(b);
+    })
     .map((e) => {
       const obj = result(
         apps[e].type.basic.title,
@@ -63,18 +67,26 @@ const appIndex = function (apps) {
       );
       applications.push(obj);
     });
-  // add groups separately
-  applications.push(
-    result('Groups', '/~groups', 'groups', null)
-  );
   return applications;
 };
 
-export default function index(associations, apps) {
+const otherIndex = function() {
+  const other = [];
+  other.push(result('My Channels', '/~landscape/home', 'home', null));
+  other.push(result('Notifications', '/~notifications', 'inbox', null));
+  other.push(result('Profile and Settings', `/~profile/~${window.ship}`, 'profile', null));
+  other.push(result('Messages', '/~landscape/messages', 'messages', null));
+  other.push(result('Log Out', '/~/logout', 'logout', null));
+
+  return other;
+};
+
+export default function index(contacts, associations, apps, currentGroup, groups) {
+  indexes.set('ships', shipIndex(contacts));
   // all metadata from all apps is indexed
-  // into subscriptions and groups
+  // into subscriptions and landscape
   const subscriptions = [];
-  const groups = [];
+  const landscape = [];
   Object.keys(associations).filter((e) => {
     // skip apps with no metadata
     return Object.keys(associations[e]).length > 0;
@@ -82,7 +94,7 @@ export default function index(associations, apps) {
       // iterate through each app's metadata object
       Object.keys(associations[e]).map((association) => {
         const each = associations[e][association];
-        let title = each['app-path'];
+        let title = each.resource;
         if (each.metadata.title !== '') {
           title = each.metadata.title;
         }
@@ -92,32 +104,44 @@ export default function index(associations, apps) {
           app = 'groups';
         };
 
-        const shipStart = each['app-path'].substr(each['app-path'].indexOf('~'));
+        if (each['app-name'] === 'graph') {
+          app = each.metadata.module;
+        }
+
+        const shipStart = each.resource.substr(each.resource.indexOf('~'));
 
         if (app === 'groups') {
           const obj = result(
             title,
-            `/~${app}${each['app-path']}`,
+            `/~landscape${each.resource}`,
             app.charAt(0).toUpperCase() + app.slice(1),
-            shipStart.slice(0, shipStart.indexOf('/'))
+            cite(shipStart.slice(0, shipStart.indexOf('/')))
           );
-          groups.push(obj);
+          landscape.push(obj);
         } else {
+          const app = each.metadata.module || each['app-name'];
+          let group = each.group;
+          if (groups[each.group]?.hidden && app === 'chat') {
+            group = '/messages';
+          } else if (groups[each.group]?.hidden) {
+            group = '/home';
+          }
           const obj = result(
             title,
-            `/~${each['app-name']}/join${each['app-path']}`,
+            `/~landscape${group}/join/${app}${each.resource}`,
             app.charAt(0).toUpperCase() + app.slice(1),
-            shipStart.slice(0, shipStart.indexOf('/'))
+            (associations?.groups?.[each.group]?.metadata?.title || null)
           );
           subscriptions.push(obj);
         }
       });
   });
 
-  indexes.set('commands', commandIndex());
+  indexes.set('commands', commandIndex(currentGroup, groups, associations));
   indexes.set('subscriptions', subscriptions);
-  indexes.set('groups', groups);
+  indexes.set('groups', landscape);
   indexes.set('apps', appIndex(apps));
+  indexes.set('other', otherIndex());
 
   return indexes;
 };

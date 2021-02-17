@@ -1,11 +1,13 @@
-::  pool-group-hook: maintain groups based on invite pool
+::  pool-group-hook [landscape]:
+::
+::  maintain groups based on invite pool
 ::
 ::    looks at our invite tree, adds our siblings to group at +group-path
 ::
 /-  group-store, spider
-/+  default-agent, verb
+/+  ethereum, azimuth, default-agent, verb
 =,  ethereum-types
-=,  able:jael
+=,  jael
 ::
 =>  |%
     ++  group-path    /invite-peers

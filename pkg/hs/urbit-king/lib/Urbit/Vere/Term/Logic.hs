@@ -37,6 +37,7 @@ type SpinnerState = Maybe SpinnerCause
 -}
 data Ev
     = EvLine Text
+    | EvSlog (Atom, Tank)
     | EvSpin SpinnerState
     | EvMove Word
     | EvBell
@@ -53,11 +54,16 @@ data Ef
     | EfSpin SpinnerState
   deriving (Show)
 
+data History
+    = HistoryText !Text
+    | HistorySlog !(Atom, Tank)
+  deriving (Show)
+
 data St = St
-    { sHistory :: Seq Text
-    , sLine    :: Text
-    , sCurPos  :: Word
-    , sSpinner :: SpinnerState
+    { sHistory :: !(Seq History)
+    , sLine    :: !Text
+    , sCurPos  :: !Word
+    , sSpinner :: !SpinnerState
     }
   deriving (Show)
 
@@ -74,19 +80,27 @@ init = St mempty "" 0 Nothing
 -}
 step :: St -> Ev -> St
 step st@St{..} = \case
-    EvLine t -> st & record t
+    EvLine t -> st & recordText t
+    EvSlog s -> st & recordSlog s
     EvSpin s -> st { sSpinner = s }
     EvMove w -> st { sCurPos = min w (word $ length sLine) }
     EvEdit t -> st { sLine = t, sCurPos = word (length t) }
-    EvMore   -> st { sLine = "", sCurPos = 0 } & record (sLine <> "\n")
+    EvMore   -> st { sLine = "", sCurPos = 0 } & recordText (sLine <> "\n")
     EvBell   -> st
     EvDraw   -> st
   where
     word :: Integral i => i -> Word
     word = fromIntegral
 
-    record :: Text -> St -> St
-    record t st@St{..} = st { sHistory = trim (sHistory |> t) }
+    recordText :: Text -> St -> St
+    recordText !t st@St{..} = st {
+      sHistory = trim (sHistory |> (HistoryText t))
+      }
+
+    recordSlog :: (Atom, Tank) -> St -> St
+    recordSlog !t st@St{..} = st {
+      sHistory = trim (sHistory |> (HistorySlog t))
+      }
 
     trim :: Seq a -> Seq a
     trim s | length s < 20 = s
@@ -96,10 +110,13 @@ step st@St{..} = \case
 drawState :: St -> [Ev]
 drawState St{..} = hist <> out <> cur <> spin
   where
-    hist = EvLine <$> toList sHistory
+    hist = drawHistory <$> toList sHistory
     out  = if null sLine   then [] else [EvEdit sLine]
     cur  = if 0 == sCurPos then [] else [EvMove $ fromIntegral $ sCurPos]
     spin = maybe [] (singleton . EvSpin . Just) sSpinner
+
+    drawHistory (HistoryText t) = EvLine t
+    drawHistory (HistorySlog s) = EvSlog s
 
 
 -- Conversion ------------------------------------------------------------------
@@ -127,11 +144,13 @@ fromTermEv = \case
     Term.Trace t  -> [EvLine $ unCord t]
     Term.Blank    -> [EvLine ""]
     Term.Spinr s  -> [EvSpin $ toCause <$> s]
+    Term.Slog s   -> [EvSlog s]
 
 toTermEv :: Ev -> Term.Ev
 toTermEv = \case
     EvLine "" -> Term.Blank
     EvLine t  -> Term.Trace (Cord t)
+    EvSlog s  -> Term.Slog s
     EvSpin s  -> Term.Spinr (fromCause <$> s)
     EvMove w  -> Term.Blits [Arvo.Hop $ fromIntegral w]
     EvBell    -> Term.Blits [Arvo.Bel ()]

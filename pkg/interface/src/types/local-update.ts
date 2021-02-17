@@ -1,16 +1,6 @@
-export type LocalUpdate =
-  LocalUpdateSidebarToggle
-| LocalUpdateSetDark
-| LocalUpdateBaseHash
-| LocalUpdateBackgroundConfig
-| LocalUpdateHideAvatars
-| LocalUpdateHideNicknames
-| LocalUpdateSetOmniboxShown;
+export const tutorialProgress = ['hidden', 'start', 'group-desc', 'channels', 'chat', 'link', 'publish', 'profile', 'leap', 'notifications', 'done', 'exit'] as const;
 
-interface LocalUpdateSidebarToggle {
-  sidebarToggle: boolean;
-}
-
+export type TutorialProgress = typeof tutorialProgress[number];
 interface LocalUpdateSetDark {
   setDark: boolean;
 }
@@ -31,7 +21,16 @@ interface LocalUpdateHideNicknames {
   hideNicknames: boolean;
 }
 
-export type BackgroundConfig = BackgroundConfigUrl | BackgroundConfigColor | undefined;
+interface LocalUpdateSetOmniboxShown {
+  omniboxShown: boolean;
+}
+
+export interface RemoteContentPolicy {
+  imageShown: boolean;
+  audioShown: boolean;
+  videoShown: boolean;
+  oembedShown: boolean;
+}
 
 interface BackgroundConfigUrl {
   type: 'url';
@@ -43,6 +42,13 @@ interface BackgroundConfigColor {
   color: string;
 }
 
-interface LocalUpdateSetOmniboxShown {
-  omniboxShown: boolean;
-}
+export type BackgroundConfig = BackgroundConfigUrl | BackgroundConfigColor | undefined;
+
+export type LocalUpdate =
+| LocalUpdateSetDark
+| LocalUpdateBaseHash
+| LocalUpdateBackgroundConfig
+| LocalUpdateHideAvatars
+| LocalUpdateHideNicknames
+| LocalUpdateSetOmniboxShown
+| RemoteContentPolicy;

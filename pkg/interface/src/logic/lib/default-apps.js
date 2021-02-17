@@ -1,3 +1,3 @@
-const defaultApps = ['chat', 'dojo', 'groups', 'link', 'publish'];
+const defaultApps = ['chat', 'term', 'groups', 'link', 'publish'];
 
 export default defaultApps;

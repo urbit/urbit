@@ -43,20 +43,13 @@ function decodePolicy(policy: Enc<GroupPolicy>): GroupPolicy {
 function decodeTags(tags: Enc<Tags>): Tags {
   return _.reduce(
     tags,
-    (acc, tag, key): Tags => {
-      if (Array.isArray(tag)) {
-        acc.role[key] = new Set(tag);
+    (acc, ships, key): Tags => {
+      if (key.search(/\\/) === -1) {
+        acc.role[key] = new Set(ships);
         return acc;
       } else {
-        const app = _.reduce(
-          tag,
-          (inner, t, k) => {
-            inner[k] = new Set(t);
-            return inner;
-          },
-          {}
-        );
-        acc[key] = app;
+        const [app, tag, resource] = key.split('\\');
+        _.set(acc, [app, resource, tag], new Set(ships));
         return acc;
       }
     },
@@ -78,6 +71,7 @@ export default class GroupReducer<S extends GroupState> {
       this.addGroup(data, state);
       this.removeGroup(data, state);
       this.changePolicy(data, state);
+      this.expose(data, state);
     }
   }
 
@@ -102,7 +96,7 @@ export default class GroupReducer<S extends GroupState> {
       const resourcePath = resourceAsPath(resource);
       state.groups[resourcePath] = {
         members: new Set(),
-        tags: { role: {} },
+        tags: { role: { admin: new Set([window.ship]) } },
         policy: decodePolicy(policy),
         hidden,
       };
@@ -142,7 +136,7 @@ export default class GroupReducer<S extends GroupState> {
       const resourcePath = resourceAsPath(resource);
       const tags = state.groups[resourcePath].tags;
       const tagAccessors =
-        'app' in tag ? [tag.app,tag.tag] :  ['role', tag.tag];
+        'app' in tag ? [tag.app,tag.resource, tag.tag] :  ['role', tag.tag];
       const tagged = _.get(tags, tagAccessors, new Set());
       for (const ship of ships) {
         tagged.add(ship);
@@ -157,7 +151,7 @@ export default class GroupReducer<S extends GroupState> {
       const resourcePath = resourceAsPath(resource);
       const tags = state.groups[resourcePath].tags;
       const tagAccessors =
-        'app' in tag ? [tag.app,tag.tag] :  ['role', tag.tag];
+        'app' in tag ? [tag.app, tag.resource, tag.tag] :  ['role', tag.tag];
       const tagged = _.get(tags, tagAccessors, new Set());
 
       if (!tagged) {
@@ -186,6 +180,15 @@ export default class GroupReducer<S extends GroupState> {
       }
     }
   }
+
+  expose(json: GroupUpdate, state: S) {
+    if( 'expose' in json && state) {
+      const { resource } = json.expose;
+      const resourcePath = resourceAsPath(resource);
+      state.groups[resourcePath].hidden = false;
+    }
+  }
+
 
   private inviteChangePolicy(diff: InvitePolicyDiff, policy: InvitePolicy) {
     if ('addInvites' in diff) {

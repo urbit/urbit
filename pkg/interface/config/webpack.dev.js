@@ -1,9 +1,11 @@
 const path = require('path');
+const webpack = require('webpack');
 // const HtmlWebpackPlugin = require('html-webpack-plugin');
 // const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const urbitrc = require('./urbitrc');
 const fs = require('fs');
 const util = require('util');
+const _ = require('lodash');
 const exec = util.promisify(require('child_process').exec);
 
 function copyFile(src,dest) {
@@ -44,8 +46,12 @@ let devServer = {
   contentBase: path.join(__dirname, '../dist'),
   hot: true,
   port: 9000,
+  host: '0.0.0.0',
+  disableHostCheck: true,
   historyApiFallback: true
 };
+
+const router =  _.mapKeys(urbitrc.FLEET || {}, (value, key) => `${key}.localhost:9000`);
 
 if(urbitrc.URL) {
   devServer = {
@@ -54,13 +60,17 @@ if(urbitrc.URL) {
     proxy: {
       '/~landscape/js/bundle/index.*.js': {
         target: 'http://localhost:9000',
-        pathRewrite: (req, path) => '/index.js'
+        pathRewrite: (req, path) => {
+          return '/index.js'
+        }
       },
       '**': {
+        changeOrigin: true,
         target: urbitrc.URL,
+        router,
         // ensure proxy doesn't timeout channels
-        proxyTimeout: 0
-      }
+        proxyTimeout: 0,
+     }
     }
   };
 }
@@ -87,7 +97,7 @@ module.exports = {
             ]
           }
         },
-        exclude: /node_modules/
+        exclude: /node_modules\/(?!(@tlon\/indigo-dark|@tlon\/indigo-light)\/).*/
       },
       {
         test: /\.css$/i,
@@ -108,7 +118,15 @@ module.exports = {
   devtool: 'inline-source-map',
   devServer: devServer,
   plugins: [
-    new UrbitShipPlugin(urbitrc)
+    new UrbitShipPlugin(urbitrc),
+    new webpack.DefinePlugin({
+      'process.env.TUTORIAL_HOST': JSON.stringify('~hastuc-dibtux'),
+      'process.env.TUTORIAL_GROUP': JSON.stringify('beginner-island'),
+      'process.env.TUTORIAL_CHAT': JSON.stringify('chat-1704'),
+      'process.env.TUTORIAL_BOOK': JSON.stringify('book-9695'),
+      'process.env.TUTORIAL_LINKS': JSON.stringify('link-2827'),
+    })
+
     // new CleanWebpackPlugin(),
     // new HtmlWebpackPlugin({
     //   title: 'Hot Module Replacement',

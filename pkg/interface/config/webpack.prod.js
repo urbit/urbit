@@ -1,6 +1,8 @@
 const path = require('path');
 // const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
+const webpack = require('webpack');
 
 module.exports = {
   mode: 'production',
@@ -16,6 +18,7 @@ module.exports = {
           options: {
             presets: ['@babel/preset-env', '@babel/typescript', '@babel/preset-react'],
             plugins: [
+              'lodash',
               '@babel/transform-runtime',
               '@babel/plugin-proposal-object-rest-spread',
               '@babel/plugin-proposal-optional-chaining',
@@ -23,7 +26,7 @@ module.exports = {
             ]
           }
         },
-        exclude: /node_modules/
+        exclude: /node_modules\/(?!(@tlon\/indigo-dark|@tlon\/indigo-light)\/).*/
       },
       {
          test: /\.css$/i,
@@ -41,7 +44,7 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.ts', '.tsx']
   },
-  devtool: 'inline-source-map',
+  devtool: 'source-map',
   // devServer: {
   //   contentBase: path.join(__dirname, './'),
   //   hot: true,
@@ -49,7 +52,17 @@ module.exports = {
   //   historyApiFallback: true
   // },
   plugins: [
+    new MomentLocalesPlugin(),
     new CleanWebpackPlugin(),
+    new webpack.DefinePlugin({
+      'process.env.LANDSCAPE_STREAM': JSON.stringify(process.env.LANDSCAPE_STREAM),
+      'process.env.LANDSCAPE_SHORTHASH': JSON.stringify(process.env.LANDSCAPE_SHORTHASH),
+      'process.env.TUTORIAL_HOST': JSON.stringify('~hastuc-dibtux'),
+      'process.env.TUTORIAL_GROUP': JSON.stringify('beginner-island'),
+      'process.env.TUTORIAL_CHAT': JSON.stringify('chat-8401'),
+      'process.env.TUTORIAL_BOOK': JSON.stringify('notebook-9148'),
+      'process.env.TUTORIAL_LINKS': JSON.stringify('links-4353'),
+    }),
     // new HtmlWebpackPlugin({
     //   title: 'Hot Module Replacement',
     //   template: './public/index.html',
@@ -58,7 +71,7 @@ module.exports = {
   output: {
     filename: 'index.[contenthash].js',
     path: path.resolve(__dirname, '../../arvo/app/landscape/js/bundle'),
-    publicPath: '/',
+    publicPath: '/'
   },
   optimization: {
     minimize: true,

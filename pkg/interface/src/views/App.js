@@ -1,9 +1,9 @@
 import { hot } from 'react-hot-loader/root';
 import 'react-hot-loader';
 import * as React from 'react';
-import { BrowserRouter as Router, Route, withRouter, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, withRouter } from 'react-router-dom';
 import styled, { ThemeProvider, createGlobalStyle } from 'styled-components';
-import { sigil as sigiljs, stringRenderer } from 'urbit-sigil-js';
+import { sigil as sigiljs, stringRenderer } from '@tlon/sigil-js';
 import Helmet from 'react-helmet';
 
 import Mousetrap from 'mousetrap';
@@ -11,19 +11,24 @@ import 'mousetrap-global-bind';
 
 import './css/indigo-static.css';
 import './css/fonts.css';
-import light from './themes/light';
-import dark from './themes/old-dark';
+import light from '@tlon/indigo-light';
+import dark from '@tlon/indigo-dark';
 
-import { Content } from './components/Content';
+import { Text, Anchor, Row } from '@tlon/indigo-react';
+
+import { Content } from './landscape/components/Content';
 import StatusBar from './components/StatusBar';
-import Omnibox from './components/Omnibox';
-import ErrorComponent from './components/Error';
+import Omnibox from './components/leap/Omnibox';
+import ErrorBoundary from '~/views/components/ErrorBoundary';
+import { TutorialModal } from '~/views/landscape/components/TutorialModal';
 
 import GlobalStore from '~/logic/store/store';
 import GlobalSubscription from '~/logic/subscription/global';
 import GlobalApi from '~/logic/api/global';
 import { uxToHex } from '~/logic/lib/util';
 import { foregroundFromBackground } from '~/logic/lib/sigil';
+import { withLocalState } from '~/logic/state/local';
+
 
 const Root = styled.div`
   font-family: ${p => p.theme.fonts.sans};
@@ -36,10 +41,29 @@ const Root = styled.div`
     background-size: cover;
     ` : p.background?.type === 'color' ? `
     background-color: ${p.background.color};
-    ` : ``
+    ` : `background-color: ${p.theme.colors.white};`
   }
   display: flex;
   flex-flow: column nowrap;
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: ${ p => p.theme.colors.gray } transparent;
+  }
+
+  /* Works on Chrome/Edge/Safari */
+  *::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  *::-webkit-scrollbar-thumb {
+    background-color: ${ p => p.theme.colors.gray };
+    border-radius: 1rem;
+    border: 0px solid transparent;
+  }
 `;
 
 const StatusBarWithRouter = withRouter(StatusBar);
@@ -64,23 +88,30 @@ class App extends React.Component {
   componentDidMount() {
     this.subscription.start();
     this.themeWatcher = window.matchMedia('(prefers-color-scheme: dark)');
-    this.api.local.setDark(this.themeWatcher.matches);
-    this.themeWatcher.addListener(this.updateTheme);
+    this.themeWatcher.onchange = this.updateTheme;
+    setTimeout(() => {
+      // Something about how the store works doesn't like changing it
+      // before the app has actually rendered, hence the timeout.
+      this.updateTheme(this.themeWatcher);
+    }, 500);
     this.api.local.getBaseHash();
+    this.api.settings.getAll();
     this.store.rehydrate();
     Mousetrap.bindGlobal(['command+/', 'ctrl+/'], (e) => {
       e.preventDefault();
       e.stopImmediatePropagation();
-      this.api.local.setOmnibox();
+      this.props.toggleOmnibox();
     });
   }
 
   componentWillUnmount() {
-    this.themeWatcher.removeListener(this.updateTheme);
+    this.themeWatcher.onchange = undefined;
   }
 
   updateTheme(e) {
-    this.api.local.setDark(e.matches);
+    this.props.set(state => {
+      state.dark = e.matches;
+    });
   }
 
   faviconString() {
@@ -100,11 +131,15 @@ class App extends React.Component {
   }
 
   render() {
-    const { state } = this;
+    const { state, props } = this;
     const associations = state.associations ?
       state.associations : { contacts: {} };
-    const theme = state.dark ? dark : light;
-    const { background } = state;
+    const theme = props.dark ? dark : light;
+    const background = this.props.background;
+
+    const notificationsCount = state.notificationsCount || 0;
+    const doNotDisturb = state.doNotDisturb || false;
+    const ourContact = this.state.contacts[`~${this.ship}`] || null;
 
     return (
       <ThemeProvider theme={theme}>
@@ -113,36 +148,52 @@ class App extends React.Component {
             ? <link rel="icon" type="image/svg+xml" href={this.faviconString()} />
             : null}
         </Helmet>
-        <Root background={background} >
+        <Root background={background}>
           <Router>
-            <StatusBarWithRouter
-              props={this.props}
-              associations={associations}
-              invites={this.state.invites}
-              api={this.api}
-              connection={this.state.connection}
-              subscription={this.subscription}
-              ship={this.ship}
-            />
-            <Omnibox
-              associations={state.associations}
-              apps={state.launch}
-              api={this.api}
-              dark={state.dark}
-              show={state.omniboxShown}
-            />
-          <Content
-            ship={this.ship}
-            api={this.api}
-            subscription={this.subscription}
-            {...state} />
+            <TutorialModal api={this.api} />
+            <ErrorBoundary>
+              <StatusBarWithRouter
+                props={this.props}
+                associations={associations}
+                invites={this.state.invites}
+                ourContact={ourContact}
+                api={this.api}
+                connection={this.state.connection}
+                subscription={this.subscription}
+                ship={this.ship}
+                doNotDisturb={doNotDisturb}
+                notificationsCount={notificationsCount}
+              />
+            </ErrorBoundary>
+            <ErrorBoundary>
+              <Omnibox
+                associations={state.associations}
+                apps={state.launch}
+                tiles={state.launch.tiles}
+                api={this.api}
+                contacts={state.contacts}
+                notifications={state.notificationsCount}
+                invites={state.invites}
+                groups={state.groups}
+                show={this.props.omniboxShown}
+                toggle={this.props.toggleOmnibox}
+              />
+            </ErrorBoundary>
+            <ErrorBoundary>
+              <Content
+                ship={this.ship}
+                api={this.api}
+                subscription={this.subscription}
+                {...state}
+              />
+            </ErrorBoundary>
           </Router>
         </Root>
+        <div id="portal-root" />
       </ThemeProvider>
     );
   }
 }
 
-
-export default process.env.NODE_ENV === 'production' ? App : hot(App);
+export default withLocalState(process.env.NODE_ENV === 'production' ? App : hot(App));
 

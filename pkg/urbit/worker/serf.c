@@ -34,9 +34,10 @@
           $%  [%cram eve=@]
               [%exit cod=@]
               [%save eve=@]
+              [%meld ~]
               [%pack ~]
       ==  ==
-      [%peek mil=@ now=@da lyc=gang pat=path]
+      [%peek mil=@ sam=*]  :: gang (each path $%([%once @tas @tas path] [beam @tas beam]))
       [%play eve=@ lit=(list ?((pair @da ovum) *))]
       [%work mil=@ job=(pair @da ovum)]
   ==
@@ -45,7 +46,8 @@
 +$  plea
   $%  [%live ~]
       [%ripe [pro=%1 hon=@ nok=@] eve=@ mug=@]
-      [%slog pri=@ ?(cord tank)]
+      [%slog pri=@ tank]
+      [%flog cord]
       $:  %peek
           $%  [%done dat=(unit (cask))]
               [%bail dud=goof]
@@ -277,27 +279,6 @@ u3_serf_grab(void)
   fflush(stderr);
 }
 
-/* _serf_cram(): deduplicate and compact memory. ORPHANED
-*/
-static void
-_serf_cram(u3_serf* sef_u)
-{
-  u3_serf_grab();
-
-  u3l_log("serf (%" PRIu64 "): compacting loom\r\n", sef_u->dun_d);
-
-  if ( c3n == u3m_rock_stay(sef_u->dir_c, sef_u->dun_d) ) {
-    u3l_log("serf: unable to jam state\r\n");
-    return;
-  }
-
-  u3_serf_uncram(sef_u, sef_u->dun_d);
-
-  u3l_log("serf (%" PRIu64 "): compacted loom\r\n", sef_u->dun_d);
-
-  u3_serf_grab();
-}
-
 /* u3_serf_post(): update serf state post-writ.
 */
 void
@@ -363,12 +344,6 @@ _serf_sure_feck(u3_serf* sef_u, c3_w pre_w, u3_noun vir)
         rec_o = c3y;
       }
 
-      //  pack memory on |pack
-      //
-      if ( c3__pack == u3h(fec) ) {
-        pac_o = c3y;
-      }
-
       riv = u3t(riv);
       i_w++;
     }
@@ -386,6 +361,9 @@ _serf_sure_feck(u3_serf* sef_u, c3_w pre_w, u3_noun vir)
   //    high-priority: 2^22 contiguous words remaining (~8 MB)
   //    low-priority:  2^27 contiguous words remaining (~536 MB)
   //    XX maybe use 2^23 (~16 MB) and 2^26 (~268 MB?
+  //
+  //    XX these thresholds should trigger notifications sent to the king
+  //    instead of directly triggering these remedial actions.
   //
   {
     u3_noun pri = u3_none;
@@ -439,7 +417,7 @@ _serf_sure_core(u3_serf* sef_u, u3_noun cor)
 
   u3z(u3A->roc);
   u3A->roc     = cor;
-  u3A->ent_d   = sef_u->dun_d;
+  u3A->eve_d   = sef_u->dun_d;
   sef_u->mug_l = u3r_mug(u3A->roc);
   sef_u->mut_o = c3y;
 }
@@ -467,11 +445,13 @@ _serf_sure(u3_serf* sef_u, c3_w pre_w, u3_noun par)
 static u3_noun
 _serf_make_crud(u3_noun job, u3_noun dud)
 {
-  u3_noun now, ovo, wir, cad, new;
+  u3_noun now, ovo, new;
   u3x_cell(job, &now, &ovo);
-  u3x_cell(ovo, &wir, &cad);
 
-  new = u3nt(u3i_vint(u3k(now)), u3k(wir), u3nt(c3__crud, dud, u3k(cad)));
+  new = u3nt(u3i_vint(u3k(now)),
+             u3nt(u3_blip, c3__arvo, u3_nul),
+             u3nt(c3__crud, dud, u3k(ovo)));
+
   u3z(job);
   return new;
 }
@@ -608,7 +588,7 @@ _serf_work(u3_serf* sef_u, c3_w mil_w, u3_noun job)
 u3_noun
 u3_serf_work(u3_serf* sef_u, c3_w mil_w, u3_noun job)
 {
-  c3_t  tac_t = ( 0 != u3_Host.tra_u.fil_u );
+  c3_t  tac_t = ( u3C.wag_w & u3o_trace );
   c3_c  lab_c[2056];
   u3_noun pro;
 
@@ -797,43 +777,17 @@ u3_serf_play(u3_serf* sef_u, c3_d eve_d, u3_noun lit)
 u3_noun
 u3_serf_peek(u3_serf* sef_u, c3_w mil_w, u3_noun sam)
 {
-  u3_noun wen, pat, pro;
-
-  //  stash the previous date and set current
-  //
-  //    XX incomplete interface, arvo should track the date
-  //
-  wen = u3A->now;
-
-  {
-    u3_noun now, lyc;
-    u3x_trel(sam, &now, &lyc, &pat);
-    u3A->now = u3k(now);
-  }
-
+  u3_noun gon = u3m_soft(mil_w, u3v_peek, sam);
+  u3_noun pro;
 
   {
     u3_noun tag, dat;
-
-    //  XX incomplete interface, should pass [lyc] as well
-    //
-    u3_noun gon = u3m_soft(mil_w, u3v_peek, u3k(pat));
     u3x_cell(gon, &tag, &dat);
 
     //  read succeeded, produce result
     //
     if ( u3_blip == tag ) {
-      if ( u3_nul == dat ) {
-        pro = u3nc(c3__done, u3_nul);
-      }
-      else {
-        //  prepend the %noun mark
-        //
-        //    XX incomplete interface, should recv mark from arvo
-        //
-        pro = u3nq(c3__done, u3_nul, c3__noun, u3k(u3t(dat)));
-      }
-
+      pro = u3nc(c3__done, u3k(dat));
       u3z(gon);
     }
     //  read failed, produce trace
@@ -845,21 +799,13 @@ u3_serf_peek(u3_serf* sef_u, c3_w mil_w, u3_noun sam)
     }
   }
 
-  //  restore the previous date
-  //
-  //    XX incomplete interface, arvo should track the date
-  //
-  u3z(u3A->now);
-  u3A->now = wen;
-
-  u3z(sam);
   return u3nc(c3__peek, pro);
 }
 
 /* _serf_writ_live_exit(): exit on command.
 */
 static void
-_serf_writ_live_exit(c3_w cod_w)
+_serf_writ_live_exit(u3_serf* sef_u, c3_w cod_w)
 {
   if ( u3C.wag_w & u3o_debug_cpu ) {
     FILE* fil_u;
@@ -895,6 +841,8 @@ _serf_writ_live_exit(c3_w cod_w)
   //  XX move to jets.c
   //
   c3_free(u3D.ray_u);
+
+  sef_u->xit_f();
 
   exit(cod_w);
 }
@@ -945,7 +893,7 @@ u3_serf_live(u3_serf* sef_u, u3_noun com, u3_noun* ret)
       u3z(com);
       //  NB, doesn't return
       //
-      _serf_writ_live_exit(cod_y);
+      _serf_writ_live_exit(sef_u, cod_y);
       *ret = u3nc(c3__live, u3_nul);
       return c3y;
     }
@@ -971,11 +919,18 @@ u3_serf_live(u3_serf* sef_u, u3_noun com, u3_noun* ret)
 
       u3l_log("serf (%" PRIu64 "): saving rock\r\n", sef_u->dun_d);
 
-      if ( c3n == u3m_rock_stay(sef_u->dir_c, eve_d) ) {
+      if ( c3n == u3u_cram(sef_u->dir_c, eve_d) ) {
         fprintf(stderr, "serf (%" PRIu64 "): unable to jam state\r\n", eve_d);
         return c3n;
       }
 
+      if ( u3r_mug(u3A->roc) != sef_u->mug_l ) {
+        fprintf(stderr, "serf (%" PRIu64 "): mug mismatch 0x%08x 0x%08x\r\n",
+                        eve_d, sef_u->mug_l, u3r_mug(u3A->roc));
+        return c3n;
+      }
+
+      u3e_save();
       u3_serf_grab();
 
       *ret = u3nc(c3__live, u3_nul);
@@ -990,6 +945,19 @@ u3_serf_live(u3_serf* sef_u, u3_noun com, u3_noun* ret)
       else {
         u3z(com);
         u3a_print_memory(stderr, "serf: pack: gained", u3m_pack());
+        *ret = u3nc(c3__live, u3_nul);
+        return c3y;
+      }
+    }
+
+    case c3__meld: {
+      if ( u3_nul != dat ) {
+        u3z(com);
+        return c3n;
+      }
+      else {
+        u3z(com);
+        u3u_meld();
         *ret = u3nc(c3__live, u3_nul);
         return c3y;
       }
@@ -1011,22 +979,6 @@ u3_serf_live(u3_serf* sef_u, u3_noun com, u3_noun* ret)
   }
 }
 
-/* _serf_step_trace(): initialize or rotate trace file.
-*/
-static void
-_serf_step_trace(u3_serf* sef_u)
-{
-  if ( u3C.wag_w & u3o_trace ) {
-    if ( u3_Host.tra_u.con_w == 0  && u3_Host.tra_u.fun_w == 0 ) {
-      u3t_trace_open(sef_u->dir_c);
-    }
-    else if ( u3_Host.tra_u.con_w >= 100000 ) {
-      u3t_trace_close();
-      u3t_trace_open(sef_u->dir_c);
-    }
-  }
-}
-
 /* u3_serf_writ(): apply writ [wit], producing plea [*pel] on c3y.
 */
 c3_o
@@ -1039,8 +991,6 @@ u3_serf_writ(u3_serf* sef_u, u3_noun wit, u3_noun* pel)
     ret_o = c3n;
   }
   else {
-    _serf_step_trace(sef_u);
-
     switch ( tag ) {
       default: {
         ret_o = c3n;
@@ -1118,67 +1068,6 @@ _serf_ripe(u3_serf* sef_u)
                  : u3r_mug(u3A->roc);
 
   return u3nc(u3i_chubs(1, &sef_u->dun_d), sef_u->mug_l);
-}
-
-/* u3_serf_uncram(): initialize from rock at [eve_d].
-*/
-void
-u3_serf_uncram(u3_serf* sef_u, c3_d eve_d)
-{
-  c3_o roc_o;
-  c3_c nam_c[8193];
-  snprintf(nam_c, 8192, "%s/.urb/roc/%" PRIu64 ".jam", sef_u->dir_c, eve_d);
-
-  struct stat buf_b;
-  c3_i        fid_i = open(nam_c, O_RDONLY, 0644);
-
-  if ( (fid_i < 0) || (fstat(fid_i, &buf_b) < 0) ) {
-    fprintf(stderr, "serf: rock: %s not found\r\n", nam_c);
-    roc_o = c3n;
-  }
-  else {
-    fprintf(stderr, "serf: rock: %s found\r\n", nam_c);
-    roc_o = c3y;
-  }
-
-  close(fid_i);
-
-
-  if ( c3y == roc_o ) {
-    if ( c3n == u3e_hold() ) {
-      fprintf(stderr, "serf: unable to backup checkpoint\r\n");
-    }
-    else {
-      u3m_wipe();
-
-      if ( c3n == u3m_rock_load(sef_u->dir_c, eve_d) ) {
-        fprintf(stderr, "serf: compaction failed, restoring checkpoint\r\n");
-
-        if ( c3n == u3e_fall() ) {
-          fprintf(stderr, "serf: unable to restore checkpoint\r\n");
-          c3_assert(0);
-        }
-      }
-
-      if ( c3n == u3e_drop() ) {
-        fprintf(stderr, "serf: warning: orphaned backup checkpoint file\r\n");
-      }
-
-      //  leave rocks on disk
-      //
-      // if ( c3n == u3m_rock_drop(sef_u->dir_c, sef_u->dun_d) ) {
-      //   u3l_log("serf: warning: orphaned state file\r\n");
-      // }
-
-      fprintf(stderr, "serf (%" PRIu64 "): compacted loom\r\n", eve_d);
-
-      sef_u->sen_d = sef_u->dun_d = eve_d;
-
-      //  save now for flexibility
-      //
-      u3e_save();
-    }
-  }
 }
 
 /* u3_serf_init(): init or restore, producing status.

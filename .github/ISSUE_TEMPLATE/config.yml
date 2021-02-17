@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Submit a Landscape issue
+    url: https://github.com/urbit/landscape/issues/new/choose
+    about: Issues with Landscape (Tlon's flagship client) should be filed at urbit/landscape. This includes groups, chats, collections, notebooks, and more.
+  - name: urbit-dev mailing list
+    url: https://groups.google.com/a/urbit.org/g/dev
+    about: Developer questions and discussions also take place on the urbit-dev mailing list.

@@ -67,7 +67,7 @@
     |-  ^+  [fex this]
     ?~  daz  [fex this]
     =/  dap-pax=path  /app/[i.daz]/hoon
-    =/  dap-arch  .^(arch cy+(en-beam now-beak (flop dap-pax)))
+    =/  dap-arch  .^(arch cy+(en-beam now-beak dap-pax))
     ?~  fil.dap-arch
       $(daz t.daz)
     =/  sing=card

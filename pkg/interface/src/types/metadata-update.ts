@@ -25,30 +25,44 @@ type MetadataUpdateUpdate = {
 
 type MetadataUpdateRemove = {
   remove: Resource & {
-    'group-path': Path;
+    group: Path;
   }
+}
+
+export interface MetadataUpdatePreview {
+  group: string;
+  channels: Associations;
+  "channel-count": number;
+  members: number;
+  metadata: Metadata;
 }
 
 export type Associations = Record<AppName, AppAssociations>;
 
-type AppAssociations = {
+export type AppAssociations = {
   [p in Path]: Association;
 }
 
 interface Resource {
-  'app-path': Path;
+  resource: Path;
   'app-name': AppName;
 }
 
 export type Association = Resource & {
-  'group-path': Path;
+  group: Path;
   metadata: Metadata;
 };
 
-interface Metadata {
+export interface Metadata {
   color: string;
   creator: Patp;
   'date-created': string;
   description: string;
   title: string;
+  module: string;
+  picture: string;
+  preview: boolean;
+  vip: PermVariation;
 }
+
+export type PermVariation = '' | 'reader-comments' | 'member-metadata';
