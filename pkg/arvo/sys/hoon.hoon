@@ -11577,6 +11577,14 @@
     %-  ~(play ut p.vax)
     [%wtgr [%wtts [%leaf %tas -.q.vax] [%& 2]~] [%$ 1]]
   (~(fuse ut p.vax) [%cell %noun %noun])
+:: +swab: convert vase of unit to unit of vase
+::
+++  swab
+  |=  vax=vase
+  ^-  (unit vase)
+  ?>  (~(nest ut -:!>(*(unit *))) | p.vax)
+  ?:  =(0 q.vax)  ~
+  `(slam !>(need) vax)
 ::  +swat: deferred +slap
 ::
 ++  swat
