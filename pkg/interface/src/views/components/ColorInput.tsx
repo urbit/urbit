@@ -13,12 +13,13 @@ import { uxToHex, hexToUx } from "~/logic/lib/util";
 
 type ColorInputProps = Parameters<typeof Col>[0] & {
   id: string;
-  label: string;
+  label?: string;
+  placeholder?: string;
   disabled?: boolean;
 };
 
 export function ColorInput(props: ColorInputProps) {
-  const { id, label, caption, disabled, ...rest } = props;
+  const { id, placeholder, label, caption, disabled, ...rest } = props;
   const [{ value, onBlur }, meta, { setValue }] = useField(id);
 
   const hex = value.replace('#', '').replace("0x","").replace(".", "");
@@ -54,6 +55,7 @@ export function ColorInput(props: ColorInputProps) {
           value={hex}
           disabled={disabled || false}
           borderRight={0}
+          placeholder={placeholder}
         />
         <Box
           borderBottomRightRadius={1}

@@ -1,48 +1,94 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import { Route, Link, Switch } from "react-router-dom";
-import Helmet from 'react-helmet';
+import Helmet from "react-helmet";
 
 import { Box, Text, Row, Col, Icon, BaseImage } from "@tlon/indigo-react";
 
 import Settings from "./components/settings";
+import { NotificationPreferences } from "./components/lib/NotificationPref";
+import DisplayForm from './components/lib/DisplayForm';
+import S3Form from "./components/lib/S3Form";
 import useLocalState from "~/logic/state/local";
+import {CalmPrefs} from "./components/lib/CalmPref";
+import SecuritySettings from "./components/lib/Security";
+
+export const Skeleton = (props: { children: ReactNode }) => (
+  <Box height="100%" width="100%" px={[0, 3]} pb={[0, 3]} borderRadius={1}>
+    <Box
+      height="100%"
+      width="100%"
+      borderRadius={1}
+      bg="white"
+      border={1}
+      borderColor="washedGray"
+      overflowY="auto"
+    >
+      {props.children}
+    </Box>
+  </Box>
+);
 
 export default function SettingsScreen(props: any) {
   const { ship, dark } = props;
-  const hideAvatars = useLocalState(state => state.hideAvatars);
+  const hideAvatars = useLocalState((state) => state.hideAvatars);
   return (
     <>
       <Helmet defer={false}>
         <title>Landscape - Settings</title>
       </Helmet>
-      <Route
-        path={["/~settings"]}
-        render={({ match, history }) => {
-          return (
-            <Box height="100%"
-                width="100%"
-                px={[0, 3]}
-                pb={[0, 3]}
-                borderRadius={1}>
-              <Box
-                height="100%"
-                width="100%"
-                display="grid"
-                gridTemplateColumns={["100%", "400px 1fr"]}
-                gridTemplateRows={["48px 1fr", "1fr"]}
-                borderRadius={1}
-                bg="white"
-                border={1}
-                borderColor="washedGray"
-                overflowY="auto"
-                flexGrow
-              >
-                <Settings {...props} />
-              </Box>
-            </Box>
-          );
-        }}
-      />
+      <Skeleton>
+        <Switch>
+          <Route
+            path={["/~settings/notifications"]}
+            render={() => {
+              return (
+                <NotificationPreferences
+                  {...props}
+                  graphConfig={props.notificationsGraphConfig}
+                />
+              );
+            }}
+          />
+          <Route
+            path={["/~settings/display"]}
+            render={() => {
+              return (
+                <DisplayForm s3={props.s3} api={props.api} />
+              );
+            }}
+          />
+          <Route
+            path="/~settings/modules"
+            render={() => {
+              return (
+                <S3Form s3={props.s3} api={props.api} />
+              );
+            }}
+          />
+          <Route
+            path="/~settings/calm"
+            render={() => {
+              return (
+                <CalmPrefs />
+              );
+            }}
+          />
+          <Route
+            path="/~settings/security"
+            render={() => {
+              return (
+                <SecuritySettings api={props.api} />
+              );
+            }}
+          />         
+          <Route
+            path={["/~settings"]}
+            render={() => {
+              return <Settings />;
+            }}
+          />
+        </Switch>
+      </Skeleton>
     </>
   );
 }

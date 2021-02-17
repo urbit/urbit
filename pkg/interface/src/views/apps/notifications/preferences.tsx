@@ -31,12 +31,10 @@ export default function NotificationPreferences(
     mentions: graphConfig.mentions,
     watchOnSelf: graphConfig.watchOnSelf,
     dnd,
-    watching: graphConfig.watching,
   };
 
   const onSubmit = useCallback(
     async (values: FormSchema, actions: FormikHelpers<FormSchema>) => {
-      console.log(values);
       try {
         let promises: Promise<any>[] = [];
         if (values.mentions !== graphConfig.mentions) {

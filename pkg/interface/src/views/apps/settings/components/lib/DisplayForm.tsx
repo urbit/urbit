@@ -3,7 +3,9 @@ import React from 'react';
 import {
   Box,
   ManagedCheckboxField as Checkbox,
-  Button
+  Button,
+  Col,
+  Text
 } from '@tlon/indigo-react';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
@@ -12,6 +14,7 @@ import GlobalApi from '~/logic/api/global';
 import { uxToHex } from '~/logic/lib/util';
 import { S3State, BackgroundConfig } from '~/types';
 import { BackgroundPicker, BgType } from './BackgroundPicker';
+import { BackButton } from "./BackButton";
 import useLocalState, { LocalState } from '~/logic/state/local';
 
 const formSchema = Yup.object().shape({
@@ -81,35 +84,26 @@ export default function DisplayForm(props: DisplayFormProps) {
     >
       {props => (
         <Form>
-          <Box
-            display="grid"
-            gridTemplateColumns="100%"
-            gridTemplateRows="auto"
-            gridRowGap={5}
-          >
-            <Box color="black" fontSize={1} mb={3} fontWeight={900}>
-              Display Preferences
-            </Box>
+          <Col p="5" gapY="5">
+            <BackButton />
+            <Col gapY="1">
+              <Text color="black" fontSize={2} fontWeight="medium">
+                Display Preferences
+              </Text>
+              <Text gray>
+                Customize visual interfaces across your Landscape
+              </Text>
+            </Col>
             <BackgroundPicker
               bgType={props.values.bgType}
               bgUrl={props.values.bgUrl}
               api={api}
               s3={s3}
             />
-            <Checkbox
-              label="Disable avatars"
-              id="avatars"
-              caption="Do not show user-set avatars"
-            />
-            <Checkbox
-              label="Disable nicknames"
-              id="nicknames"
-              caption="Do not show user-set nicknames"
-            />
-            <Button border={1} style={{ cursor: 'pointer' }} borderColor="washedGray" type="submit">
+            <Button primary width="fit-content" type="submit">
               Save
             </Button>
-          </Box>
+          </Col>
         </Form>
       )}
     </Formik>

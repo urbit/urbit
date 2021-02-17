@@ -6,7 +6,7 @@ import produce from 'immer';
 import { BackgroundConfig, RemoteContentPolicy, TutorialProgress, tutorialProgress } from "~/types/local-update";
 
 
-export interface LocalState extends State {
+export interface LocalState {
   hideAvatars: boolean;
   hideNicknames: boolean;
   remoteContentPolicy: RemoteContentPolicy;
@@ -23,10 +23,13 @@ export interface LocalState extends State {
   toggleOmnibox: () => void;
   set: (fn: (state: LocalState) => void) => void
 };
+
+type LocalStateZus = LocalState & State;
+
 export const selectLocalState = 
   <K extends keyof LocalState>(keys: K[]) => f.pick<LocalState, K>(keys);
 
-const useLocalState = create<LocalState>(persist((set, get) => ({
+const useLocalState = create<LocalStateZus>(persist((set, get) => ({
   dark: false,
   background: undefined,
   hideAvatars: false,
