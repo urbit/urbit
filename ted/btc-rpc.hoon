@@ -1,3 +1,5 @@
+::  Note: these are for BTC testnet
+::
 /-  spider, rpc=json-rpc
 /+  strandio, btc
 =,  strand=strand:spider
