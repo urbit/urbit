@@ -26,9 +26,9 @@ export default class BigIntOrderedMap<V> implements Iterable<[BigInteger, V]> {
    *  Retrieve an value for a key
    */
   get(key: BigInteger): V | null {
-    const inner = (node: MapNode<V>) => {
+    const inner = (node: MapNode<V>): V | null => {
       if (!node) {
-        return node;
+        return null;
       }
       const [k, v] = node.n;
       if (key.eq(k)) {
@@ -48,8 +48,8 @@ export default class BigIntOrderedMap<V> implements Iterable<[BigInteger, V]> {
    *  Put an item by a key
    */
   set(key: BigInteger, value: V): void {
-    
-    const inner = (node: MapNode<V>) => {
+
+    const inner = (node: MapNode<V>): MapNode<V> => {
       if (!node) {
         return {
           n: [key, value],
@@ -97,7 +97,7 @@ export default class BigIntOrderedMap<V> implements Iterable<[BigInteger, V]> {
    *  Predicate testing if map contains key
    */
   has(key: BigInteger): boolean {
-    const inner = (node: MapNode<V>) => {
+    const inner = (node: MapNode<V>): boolean => {
       if (!node) {
         return false;
       }
@@ -156,7 +156,7 @@ export default class BigIntOrderedMap<V> implements Iterable<[BigInteger, V]> {
   }
 
   private nip(nod: NonemptyNode<V>): MapNode<V> {
-    const inner = (node: NonemptyNode<V>) => {
+    const inner = (node: NonemptyNode<V>): MapNode<V> => {
       if (!node.l) {
         return node.r;
       }
@@ -170,9 +170,9 @@ export default class BigIntOrderedMap<V> implements Iterable<[BigInteger, V]> {
     };
     return inner(nod);
   }
-  
+
   peekLargest(): [BigInteger, V] | undefined {
-    const inner = (node: MapNode<V>) => {
+    const inner = (node: MapNode<V>): [BigInteger, V] | undefined => {
       if(!node) {
         return undefined;
       }
@@ -185,7 +185,7 @@ export default class BigIntOrderedMap<V> implements Iterable<[BigInteger, V]> {
   }
 
   peekSmallest(): [BigInteger, V] | undefined {
-    const inner = (node: MapNode<V>) => {
+    const inner = (node: MapNode<V>): [BigInteger, V] | undefined => {
       if(!node) {
         return undefined;
       }

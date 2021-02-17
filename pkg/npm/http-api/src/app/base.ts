@@ -34,6 +34,7 @@ export default class UrbitApp implements UrbitAppInterface {
   subscribe(path: string) {
     const ship = this.ship;
     const app = this.app;
+    //  @ts-ignore
     return this.airlock.subscribe(app, path);
   }
   // TODO handle methods that don't exist

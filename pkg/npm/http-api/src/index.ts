@@ -1,7 +1,7 @@
 import { isBrowser, isNode } from 'browser-or-node';
 import { Action, Thread } from '../../api';
 
-import { AuthenticationInterface, SubscriptionInterface, CustomEventHandler, PokeInterface, SubscriptionRequestInterface, headers, UrbitInterface, SSEOptions, ThreadInterface } from './types';
+import { AuthenticationInterface, SubscriptionInterface, CustomEventHandler, PokeInterface, SubscriptionRequestInterface, headers, UrbitInterface, SSEOptions, PokeHandlers } from './types';
 import UrbitApp from './app/base';
 import { uncamelize, hexString } from './utils';
 
@@ -40,7 +40,7 @@ export class Urbit implements UrbitInterface {
    * removed after calling the success or failure function.
    */
 
-  outstandingPokes: Map<number, object> = new Map();
+  outstandingPokes: Map<number, PokeHandlers> = new Map();
 
   /**
    * A registry of requestId to subscription functions.
@@ -99,6 +99,7 @@ export class Urbit implements UrbitInterface {
   ) {
     return this;
     // We return a proxy so we can set dynamic properties like `Urbit.onChatHook`
+    // @ts-ignore
     return new Proxy(this, {
       get(target: Urbit, property: string) {
         // First check if this is a regular property
@@ -211,9 +212,9 @@ export class Urbit implements UrbitInterface {
           if (data.response === 'poke' && this.outstandingPokes.has(data.id)) {
             const funcs = this.outstandingPokes.get(data.id);
             if (data.hasOwnProperty('ok')) {
-              funcs.success();
+              funcs.onSuccess();
             } else if (data.hasOwnProperty('err')) {
-              funcs.fail(data.err);
+              funcs.onError(data.err);
             } else {
               console.error('Invalid poke response', data);
             }
@@ -335,7 +336,7 @@ export class Urbit implements UrbitInterface {
    * @param mark The mark of the data being sent
    * @param json The data to send
    */
-  poke(params: PokeInterface): Promise<void | number> {
+  poke<T>(params: PokeInterface<T>): Promise<void | number> {
     const { app, mark, json, onSuccess, onError } = {onSuccess: () => {}, onError: () => {}, ...params};
     return new Promise((resolve, reject) => {
       this
@@ -346,12 +347,12 @@ export class Urbit implements UrbitInterface {
           }
           if (!this.sseClient) resolve(pokeId); // A poke may occur before a listener has been opened
           this.outstandingPokes.set(pokeId, {
-            success: () => {
+            onSuccess: () => {
               onSuccess();
               resolve(pokeId);
             },
-            fail: (event) => {
-              onError();
+            onError: (event) => {
+              onError(event);
               reject(event.err);
             }
           });

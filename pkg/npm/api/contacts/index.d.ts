@@ -1,5 +1,5 @@
 import { Path, Patp } from "..";
-import {Resource} from "groups/update";
+import {Resource} from "../groups/update.d";
 
 export type ContactUpdate =
   | ContactUpdateAdd

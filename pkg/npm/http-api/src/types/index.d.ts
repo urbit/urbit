@@ -1,9 +1,11 @@
 import { Action, Mark, Poke } from '../../../api/index';
 
-export interface PokeInterface extends Poke<Mark, any> {
+export interface PokeHandlers {
   onSuccess?: () => void;
-  onError?: () => void;
+  onError?: (e: any) => void;
 }
+
+export type PokeInterface<T> = PokeHandlers & Poke<T>;
 
 
 export interface AuthenticationInterface {
