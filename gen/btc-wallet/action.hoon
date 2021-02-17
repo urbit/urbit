@@ -4,6 +4,6 @@
 ::
 :-  %say
 |=  $:  [now=@da eny=@uvJ =beak]
-        [[act=action ~] ~]
+[[act=action ~] ~]
 ==
 [%btc-wallet-action act]
