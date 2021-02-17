@@ -467,10 +467,10 @@ _term_it_send_cord(u3_utty*    uty_u,
   u3z(txt);
 }
 
-/* _term_it_show_clear(): clear to the beginning of the current line.
+/* _term_it_clear_line(): clear line of cursor
 */
 static void
-_term_it_show_clear(u3_utty* uty_u)
+_term_it_clear_line(u3_utty* uty_u)
 {
   if ( uty_u->tat_u.siz.col_l ) {
     _term_it_dump(uty_u, TERM_LIT("\r"));
@@ -545,7 +545,7 @@ _term_it_refresh_line(u3_utty* uty_u)
   c3_w     wor_w = tat_u->mir.wor_w;
   c3_w     cus_w = tat_u->mir.cus_w;
 
-  _term_it_show_clear(uty_u);
+  _term_it_clear_line(uty_u);
   _term_it_show_line(uty_u, wor_w);
   _term_it_move_cursor(uty_u, 0, cus_w);
 }
@@ -1437,14 +1437,14 @@ _term_ef_blit(u3_utty* uty_u,
 
     case c3__klr: {
       if ( c3n == u3_Host.ops_u.tem ) {
-        _term_it_show_clear(uty_u);
+        _term_it_clear_line(uty_u);
       }
       _term_it_show_stub(uty_u, u3k(u3t(blt)));
     } break;
 
     case c3__lin: {
       if ( c3n == u3_Host.ops_u.tem ) {
-        _term_it_show_clear(uty_u);
+        _term_it_clear_line(uty_u);
       }
       _term_it_show_tour(uty_u, u3k(u3t(blt)));
     } break;
@@ -1472,10 +1472,10 @@ _term_ef_blit(u3_utty* uty_u,
 
       //  XX check u3_Host.ops_u.tem ?
       //  XX this looks to be broken,
-      //      multiple calls to _show_clear will discard the mirror state
+      //      multiple calls to _clear_line will discard the mirror state
       //
       if ( c3y == u3a_is_atom(txt) ) {
-        _term_it_show_clear(uty_u);
+        _term_it_clear_line(uty_u);
 
         _term_it_send_cord(uty_u, u3k(txt));
 
