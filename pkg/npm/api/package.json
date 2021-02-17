@@ -2,8 +2,8 @@
   "name": "@urbit/api",
   "version": "1.0.0",
   "description": "",
-  "repository" : {
-    "type" : "git",
+  "repository": {
+    "type": "git",
     "url": "ssh://git@github.com/urbit/urbit.git",
     "directory": "pkg/npm/api"
   },
