@@ -1,20 +1,20 @@
 import _ from 'lodash';
 import { PatpNoSig, Patp, Poke, Thread, Path, Enc } from '..';
-import { Content, GraphNode, Post } from './index.d';
+import { Content, GraphNode, Post, GraphNodePoke, GraphChildrenPoke } from './index.d';
 import { deSig, unixToDa } from '../lib/util';
 import { makeResource, resourceFromPath } from '../groups/index';
-import { GroupPolicy } from '../groups';
+import { GroupPolicy } from '../groups/update.d';
 
 export const createBlankNodeWithChildPost = (
   ship: PatpNoSig,
   parentIndex: string = '',
   childIndex: string = '',
   contents: Content[]
-): GraphNode => {
+): GraphNodePoke => {
   const date = unixToDa(Date.now()).toString();
   const nodeIndex = parentIndex + '/' + date;
 
-  const childGraph = {};
+  const childGraph: GraphChildrenPoke = {};
   childGraph[childIndex] = {
     post: {
       author: `~${ship}`,
@@ -253,7 +253,7 @@ export const addNode = (
   let nodes = {};
   nodes[node.post.index] = node;
 
-  return this.addNodes(ship, name, nodes);
+  return addNodes(ship, name, nodes);
 }
 
 export const addNodes = (

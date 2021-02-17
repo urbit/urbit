@@ -15,15 +15,15 @@ type ResourceAssociations = {
 }
 
 type MetadataUpdateAdd = {
-  add: Association;
+  add: AssociationPoke;
 }
 
 type MetadataUpdateUpdate = {
-  update: Association;
+  update: AssociationPoke;
 }
 
 type MetadataUpdateRemove = {
-  remove: Resource & {
+  remove: MdResource & {
     group: Path;
   }
 }
@@ -42,15 +42,21 @@ export type AppAssociations = {
   [p in Path]: Association;
 }
 
-interface Resource {
+interface MdResource {
   resource: Path;
   'app-name': AppName;
 }
 
-export type Association = Resource & {
+export type Association = MdResource & {
   group: Path;
   metadata: Metadata;
 };
+
+export interface AssociationPoke {
+  group: Path;
+  resource: MdResource;
+  metadata: Metadata;
+}
 
 export interface Metadata {
   color: string;

@@ -8,32 +8,19 @@ export const action = <T>(data: T): Poke<T> => ({
 });
 
 export const add = (
-  ship: PatpNoSig,
   appName: AppName,
-  appPath: Path,
-  groupPath: Path,
-  title: string,
-  description: string,
-  dateCreated: string,
-  color: string,
-  moduleName: string
+  resource: string,
+  group: string,
+  metadata: Metadata,
 ): Poke<MetadataUpdateAdd> => {
-  const creator = `~${ship}`;
   return action({
     add: {
-      'group-path': groupPath,
+      group,
       resource: {
-        'app-path': appPath,
+        resource,
         'app-name': appName
       },
-      metadata: {
-        title,
-        description,
-        color,
-        'date-created': dateCreated,
-        creator,
-        'module': moduleName
-      }
+      metadata
     }
   });
 }
@@ -41,15 +28,16 @@ export const add = (
 export const update = (
   association: Association,
   newMetadata: Partial<Metadata>
-): Poke<MetadataUpdateUpdate> => {
+): Poke<MetadataUpdateAdd> => {
+  const { resource, metadata, group } = association;
   return action({ 
     add: {
-      'group-path': association['group-path'], 
+      group,
       resource: {
-        'app-path': association['app-path'],
+        resource,
         'app-name': association['app-name'],
       },
-      metadata: {...association.metadata, ...newMetadata }
+      metadata: {...metadata, ...newMetadata }
     }
   });
 }

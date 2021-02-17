@@ -140,7 +140,7 @@ export function cite(ship: string): string {
   let patp = ship,
     shortened = "";
   if (patp === null || patp === "") {
-    return null;
+    return "";
   }
   if (patp.startsWith("~")) {
     patp = patp.substr(1);

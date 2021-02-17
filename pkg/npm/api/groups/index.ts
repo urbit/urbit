@@ -12,6 +12,7 @@ import {
   Resource,
   Tag
 } from "./index.d";
+import { GroupPolicy } from "./update";
 
 export const proxyAction = <T>(data: T): Poke<T> => ({
   app: 'group-push-hook',
@@ -105,6 +106,11 @@ export function resourceFromPath(path: Path): Resource {
 export function makeResource(ship: string, name:string) {
   return { ship, name };
 }
+
+export const groupBunts = {
+  group: (): Group => ({ members: new Set(), tags: { role: {} }, hidden: false, policy: groupBunts.policy() }),
+  policy: (): GroupPolicy => ({ open: { banned: new Set(), banRanks: new Set() } })
+};
 
 export const joinError = ['no-perms', 'strange'] as const;
 export const joinResult = ['done', ...joinError] as const;

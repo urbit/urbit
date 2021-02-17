@@ -37,6 +37,15 @@ export interface Post {
   "time-sent": number;
 }
 
+export interface GraphNodePoke {
+  post: Post;
+  children: GraphChildrenPoke | null;
+}
+
+export interface GraphChildrenPoke {
+  [k: string]: GraphNodePoke;
+}
+
 export interface GraphNode {
   children: Graph;
   post: Post;

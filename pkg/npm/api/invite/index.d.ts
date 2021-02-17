@@ -1,14 +1,21 @@
 import { Serial, PatpNoSig, Path } from '..';
-import { Resource } from '../groups';
+import { Resource } from "../groups/update.d";
 
 export type InviteUpdate =
   InviteUpdateInitial
 | InviteUpdateCreate
 | InviteUpdateDelete
 | InviteUpdateInvite
+| InviteUpdateAccept
 | InviteUpdateAccepted
 | InviteUpdateDecline;
 
+interface InviteUpdateAccept {
+  accept: {
+    term: string;
+    uid: Serial;
+  }
+}
 
 interface InviteUpdateInitial {
   initial: Invites;
@@ -16,19 +23,19 @@ interface InviteUpdateInitial {
 
 interface InviteUpdateCreate {
   create: {
-    path: Path;
+    term: string;
   };
 }
 
 interface InviteUpdateDelete {
   delete: {
-    path: Path;
+    term: string;
   };
 }
 
 interface InviteUpdateInvite {
   invite: {
-    path: Path;
+    term: string;
     uid: Serial;
     invite: Invite;
   };
@@ -36,14 +43,14 @@ interface InviteUpdateInvite {
 
 interface InviteUpdateAccepted {
   accepted: {
-    path: Path;
+    term: string;
     uid: Serial;
   };
 }
 
 interface InviteUpdateDecline {
   decline: {
-    path: Path;
+    term: string;
     uid: Serial;
   };
 }

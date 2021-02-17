@@ -1,25 +1,14 @@
 import { Path, Patp } from "..";
+import {Resource} from "groups/update";
 
 export type ContactUpdate =
-  | ContactUpdateCreate
-  | ContactUpdateDelete
   | ContactUpdateAdd
   | ContactUpdateRemove
   | ContactUpdateEdit
   | ContactUpdateInitial
-  | ContactUpdateContacts;
-
-interface ContactUpdateCreate {
-  create: Path;
-}
-
-interface ContactUpdateDelete {
-  delete: Path;
-}
 
 interface ContactUpdateAdd {
   add: {
-    path: Path;
     ship: Patp;
     contact: Contact;
   };
@@ -27,7 +16,6 @@ interface ContactUpdateAdd {
 
 interface ContactUpdateRemove {
   remove: {
-    path: Path;
     ship: Patp;
   };
 }
@@ -36,50 +24,55 @@ interface ContactUpdateEdit {
   edit: {
     path: Path;
     ship: Patp;
-    "edit-field": ContactEdit;
+    "edit-field": ContactEditField;
+    timestamp: number;
   };
+}
+
+interface ContactUpdateAllowShips {
+  allow: {
+    ships: Patp[];
+  }
+}
+
+interface ContactUpdateAllowGroup {
+  allow: {
+    group: Path;
+  }
+}
+
+interface ContactUpdateSetPublic {
+  'set-public': boolean;
+}
+
+export interface ContactShare {
+  share: Patp;
 }
 
 interface ContactUpdateInitial {
   initial: Rolodex;
 }
 
-interface ContactUpdateContacts {
-  contacts: {
-    path: Path;
-    contacts: Contacts;
-  };
-}
-
-//
-
-type ContactAvatar = ContactAvatarUrl | ContactAvatarOcts;
-
 export type Rolodex = {
-  [p in Path]: Contacts;
-};
-
-export type Contacts = {
   [p in Patp]: Contact;
 };
 
-interface ContactAvatarUrl {
-  url: string;
-}
-
-interface ContactAvatarOcts {
-  octs: string;
-}
 export interface Contact {
   nickname: string;
-  email: string;
-  phone: string;
-  website: string;
-  notes: string;
+  bio: string;
+  status: string;
   color: string;
   avatar: string | null;
+  cover: string | null;
+  groups: Path[];
+  'last-updated': number;
 }
 
-export type ContactEdit = {
-  [k in keyof Contact]: Contact[k];
+type ContactKeys = keyof Contact;
+
+export type ContactEditFieldPrim = Exclude<ContactKeys, "groups" | "last-updated">;
+
+export type ContactEditField = Partial<Pick<Contact, ContactEditFieldPrim>> & {
+  'add-group'?: Resource;
+  'remove-group'?: Resource;
 };

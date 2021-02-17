@@ -1,6 +1,6 @@
 import { Post } from "../graph/index.d";
 import { GroupUpdate } from "../groups/index.d";
-import { BigIntOrderedMap } from "~/logic/lib/BigIntOrderedMap";
+import BigIntOrderedMap from "../lib/BigIntOrderedMap";
 
 export type GraphNotifDescription = "link" | "comment" | "note" | "mention";
 

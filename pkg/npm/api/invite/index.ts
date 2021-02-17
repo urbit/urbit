@@ -1,7 +1,7 @@
-import { InviteAction, InviteActionAccept, InviteActionDecline } from "./index.d";
+import { InviteUpdate, InviteUpdateAccept, InviteUpdateDecline } from "./index.d";
 import { Poke, Serial } from "..";
 
-export const action = <T>(data: T): Poke<T> => ({
+export const action = <T extends InviteUpdate>(data: T): Poke<T> => ({
   app: 'invite-store',
   mark: 'invite-action',
   json: data
@@ -10,7 +10,7 @@ export const action = <T>(data: T): Poke<T> => ({
 export const accept = (
   app: string,
   uid: Serial
-): Poke<InviteActionAccept> => action({
+): Poke<InviteUpdateAccept> => action({
   accept: {
     term: app,
     uid
@@ -20,7 +20,7 @@ export const accept = (
 export const decline = (
   app: string,
   uid: Serial
-): Poke<InviteActionDecline> => action({
+): Poke<InviteUpdateDecline> => action({
   decline: {
     term: app,
     uid
