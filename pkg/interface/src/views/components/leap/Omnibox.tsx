@@ -6,7 +6,7 @@ import makeIndex from '~/logic/lib/omnibox';
 import Mousetrap from 'mousetrap';
 import OmniboxInput from './OmniboxInput';
 import OmniboxResult from './OmniboxResult';
-import { withLocalState } from '~/logic/state/local';
+import useLocalState, { withLocalState, selectLocalState } from '~/logic/state/local';
 import { deSig } from '~/logic/lib/util';
 
 import defaultApps from '~/logic/lib/default-apps';
@@ -28,10 +28,12 @@ interface OmniboxProps {
 }
 
 const SEARCHED_CATEGORIES = ['ships', 'other', 'commands', 'groups', 'subscriptions', 'apps'];
+const localSelector = selectLocalState(["hideLeapCats"]);
 
 export function Omnibox(props: OmniboxProps) {
   const location = useLocation();
   const history = useHistory();
+  const { hideLeapCats } = useLocalState(localSelector);
   const omniboxRef = useRef<HTMLDivElement | null>(null)
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -45,18 +47,30 @@ export function Omnibox(props: OmniboxProps) {
       : props.contacts;
   }, [props.contacts, query]);
 
-  const index = useMemo(() => {
-    const selectedGroup = location.pathname.startsWith('/~landscape/ship/') 
+  const selectedGroup =  useMemo(
+    () => location.pathname.startsWith('/~landscape/ship/') 
       ? '/' + location.pathname.split('/').slice(2,5).join('/') 
-      : null;
+      : null,
+    [location.pathname]
+  );
+
+  const index = useMemo(() => {
     return makeIndex(
       contacts,
       props.associations,
       props.tiles,
       selectedGroup,
-      props.groups
+      props.groups,
+      hideLeapCats,
     );
-  }, [location.pathname, contacts, props.associations, props.groups, props.tiles]);
+  }, [
+    selectedGroup,
+    hideLeapCats,
+    contacts,
+    props.associations,
+    props.groups,
+    props.tiles
+  ]);
 
   const onOutsideClick = useCallback(() => {
     props.show && props.toggle() 

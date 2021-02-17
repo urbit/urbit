@@ -38,7 +38,7 @@ const ScrollbarLessBox = styled(Box)`
   }
 `;
 
-const tutSelector = f.pick(['tutorialProgress', 'nextTutStep']);
+const tutSelector = f.pick(['tutorialProgress', 'nextTutStep', 'hideGroups']);
 
 export default function LaunchApp(props) {
   const history = useHistory();
@@ -82,7 +82,7 @@ export default function LaunchApp(props) {
     }
   }, [query]);
 
-  const { tutorialProgress, nextTutStep } = useLocalState(tutSelector);
+  const { tutorialProgress, nextTutStep, hideGroups } = useLocalState(tutSelector);
 
   const waiter = useWaitForProps(props);
 
@@ -198,7 +198,9 @@ export default function LaunchApp(props) {
           >
             <NewGroup {...props} />
           </ModalButton>
-          <Groups unreads={props.unreads} groups={props.groups} associations={props.associations} />
+          {!hideGroups && 
+            (<Groups unreads={props.unreads} groups={props.groups} associations={props.associations} />)
+          }
         </Box>
         <Box alignSelf="flex-start" display={["block", "none"]}>{hashBox}</Box>
       </ScrollbarLessBox>

@@ -3,7 +3,7 @@ import f from 'lodash/fp';
 import create, { State }  from 'zustand';
 import { persist } from 'zustand/middleware';
 import produce from 'immer';
-import { BackgroundConfig, RemoteContentPolicy, TutorialProgress, tutorialProgress } from "~/types/local-update";
+import { BackgroundConfig, RemoteContentPolicy, TutorialProgress, tutorialProgress, LeapCategories } from "~/types/local-update";
 
 
 export interface LocalState {
@@ -11,10 +11,12 @@ export interface LocalState {
   hideNicknames: boolean;
   remoteContentPolicy: RemoteContentPolicy;
   tutorialProgress: TutorialProgress;
+  hideGroups: boolean;
   tutorialRef: HTMLElement | null,
   hideTutorial: () => void;
   nextTutStep: () => void;
   prevTutStep: () => void;
+  hideLeapCats: LeapCategories[];
   setTutorialRef: (el: HTMLElement | null) => void;
   dark: boolean;
   background: BackgroundConfig;
@@ -34,6 +36,8 @@ const useLocalState = create<LocalStateZus>(persist((set, get) => ({
   background: undefined,
   hideAvatars: false,
   hideNicknames: false,
+  hideLeapCats: [],
+  hideGroups: false,
   tutorialProgress: 'hidden',
   tutorialRef: null,
   setTutorialRef: (el: HTMLElement | null) => set(produce(state => {

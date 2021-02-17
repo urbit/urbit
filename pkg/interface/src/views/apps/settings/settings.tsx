@@ -11,6 +11,7 @@ import S3Form from "./components/lib/S3Form";
 import useLocalState from "~/logic/state/local";
 import {CalmPrefs} from "./components/lib/CalmPref";
 import SecuritySettings from "./components/lib/Security";
+import {LeapSettings} from "./components/lib/LeapSettings";
 
 export const Skeleton = (props: { children: ReactNode }) => (
   <Box height="100%" width="100%" px={[0, 3]} pb={[0, 3]} borderRadius={1}>
@@ -38,6 +39,14 @@ export default function SettingsScreen(props: any) {
       </Helmet>
       <Skeleton>
         <Switch>
+          <Route
+            path={["/~settings/leap"]}
+            render={() => {
+              return (
+                <LeapSettings />
+              );
+            }}
+          />
           <Route
             path={["/~settings/notifications"]}
             render={() => {

@@ -1,30 +1,32 @@
-import React from 'react';
+import React from "react";
 
 import {
   Box,
   ManagedCheckboxField as Checkbox,
   Button,
   Col,
-  Text
-} from '@tlon/indigo-react';
-import { Formik, Form } from 'formik';
-import * as Yup from 'yup';
+  Text,
+  ManagedToggleSwitchField as Toggle,
+} from "@tlon/indigo-react";
+import { Formik, Form } from "formik";
+import * as Yup from "yup";
 
-import GlobalApi from '~/logic/api/global';
-import { uxToHex } from '~/logic/lib/util';
-import { S3State, BackgroundConfig } from '~/types';
-import { BackgroundPicker, BgType } from './BackgroundPicker';
+import GlobalApi from "~/logic/api/global";
+import { uxToHex } from "~/logic/lib/util";
+import { S3State, BackgroundConfig } from "~/types";
+import { BackgroundPicker, BgType } from "./BackgroundPicker";
 import { BackButton } from "./BackButton";
-import useLocalState, { LocalState } from '~/logic/state/local';
+import useLocalState, { LocalState } from "~/logic/state/local";
 
 const formSchema = Yup.object().shape({
   bgType: Yup.string()
-    .oneOf(['none', 'color', 'url'], 'invalid')
-    .required('Required'),
+    .oneOf(["none", "color", "url"], "invalid")
+    .required("Required"),
   bgUrl: Yup.string().url(),
   bgColor: Yup.string(),
   avatars: Yup.boolean(),
-  nicknames: Yup.boolean()
+  nicknames: Yup.boolean(),
+  hideGroups: Yup.boolean(),
 });
 
 interface FormSchema {
@@ -33,6 +35,7 @@ interface FormSchema {
   bgUrl: string | undefined;
   avatars: boolean;
   nicknames: boolean;
+  hideGroups: boolean;
 }
 
 interface DisplayFormProps {
@@ -43,16 +46,22 @@ interface DisplayFormProps {
 export default function DisplayForm(props: DisplayFormProps) {
   const { api, s3 } = props;
 
-  const { hideAvatars, hideNicknames, background, set: setLocalState } = useLocalState();
+  const {
+    hideAvatars,
+    hideNicknames,
+    background,
+    hideGroups,
+    set: setLocalState,
+  } = useLocalState();
 
   let bgColor, bgUrl;
-  if (background?.type === 'url') {
+  if (background?.type === "url") {
     bgUrl = background.url;
   }
-  if (background?.type === 'color') {
+  if (background?.type === "color") {
     bgColor = background.color;
   }
-  const bgType = background?.type || 'none';
+  const bgType = background?.type || "none";
 
   return (
     <Formik
@@ -60,37 +69,40 @@ export default function DisplayForm(props: DisplayFormProps) {
       initialValues={
         {
           bgType,
-          bgColor: bgColor || '',
+          bgColor: bgColor || "",
           bgUrl,
           avatars: hideAvatars,
-          nicknames: hideNicknames
+          nicknames: hideNicknames,
+          hideGroups
         } as FormSchema
       }
       onSubmit={(values, actions) => {
         const bgConfig: BackgroundConfig =
-          values.bgType === 'color'
-            ? { type: 'color', color: `#${uxToHex(values.bgColor || '0x0')}` }
-            : values.bgType === 'url'
-            ? { type: 'url', url: values.bgUrl || '' }
+          values.bgType === "color"
+            ? { type: "color", color: `#${uxToHex(values.bgColor || "0x0")}` }
+            : values.bgType === "url"
+            ? { type: "url", url: values.bgUrl || "" }
             : undefined;
 
         setLocalState((state: LocalState) => {
           state.background = bgConfig;
           state.hideAvatars = values.avatars;
           state.hideNicknames = values.nicknames;
+          state.hideGroups = values.hideGroups;
+
         });
         actions.setSubmitting(false);
       }}
     >
-      {props => (
+      {(props) => (
         <Form>
           <Col p="5" gapY="5">
             <BackButton />
-            <Col gapY="1">
+            <Col gapY="2">
               <Text color="black" fontSize={2} fontWeight="medium">
                 Display Preferences
               </Text>
-              <Text gray>
+              <Text gray fontSize="0">
                 Customize visual interfaces across your Landscape
               </Text>
             </Col>
@@ -99,6 +111,11 @@ export default function DisplayForm(props: DisplayFormProps) {
               bgUrl={props.values.bgUrl}
               api={api}
               s3={s3}
+            />
+            <Toggle
+              id="hideGroups"
+              label="Empty Launch"
+              caption="Do not show groups on the homescreen"
             />
             <Button primary width="fit-content" type="submit">
               Save
