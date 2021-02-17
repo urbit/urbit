@@ -755,7 +755,7 @@
             ?:  =(pos.inp len)
               ta-bel
             (ta-kil %r [pos.inp (sub len pos.inp)])
-        %l  +>(..ta (se-blit %clr ~))
+        %l  +>(..ta (se-blit(q.mir ~) %clr ~))
         %n  (ta-aro %d)
         %p  (ta-aro %u)
         %r  ?~  ris

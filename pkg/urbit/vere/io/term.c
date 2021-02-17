@@ -1420,7 +1420,6 @@ _term_ef_blit(u3_utty* uty_u,
     case c3__clr: {
       if ( c3n == u3_Host.ops_u.tem ) {
         _term_it_show_blank(uty_u);
-        _term_it_refresh_line(uty_u);
       }
     } break;
 
