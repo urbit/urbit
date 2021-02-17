@@ -85,7 +85,7 @@
 --
 ^-  thread:spider
 |=  arg=vase
-=+  !<([~ a=@ud] arg)
+::  =+  !<([~ a=@ud] arg)
 =/  m  (strand ,vase)
 ^-  form:m
 ;<  ~  bind:m  (attempt-request electrs-req)
