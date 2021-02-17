@@ -42,7 +42,7 @@
   |^
   ?.  =(mark %sane)
     (on-poke:def mark vase)
-  [sane this]
+  [(sane !<(?(%check %fix) vase)) this]
   ::
   ++  scry-sharing
     .^  (set resource)
@@ -54,7 +54,12 @@
     ==
   ::
   ++  sane
+    |=  input=?(%check %fix)
     ^-  (list card)
+    =;  cards=(list card)
+      ?:  =(%check input)
+        ~&(cards ~)
+      cards
     %+  murn
       ~(tap in scry-sharing)
     |=  rid=resource
@@ -67,7 +72,7 @@
     =/  subs=(set ship)
       (get-subscribers-for-group rid)
     =/  to-remove=(set ship)
-      (~(dif in members.group) subs)
+      (~(dif in members.group) (~(gas in subs) our.bowl ~))
     ?~  to-remove  ~
     `(poke-store %remove-members rid to-remove)
   ::

@@ -117,6 +117,7 @@ export default class Landscape extends Component<LandscapeProps, {}> {
                 <Body>
                   <Box maxWidth="300px">
                     <NewGroup
+                      associations={props.associations}
                       groups={props.groups}
                       contacts={props.contacts}
                       api={props.api}
