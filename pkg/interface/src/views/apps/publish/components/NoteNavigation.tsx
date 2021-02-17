@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { Graph, GraphNode } from "~/types";
 import { getLatestRevision } from "~/logic/lib/publish";
 import { BigInteger } from "big-integer";
+import Timestamp from "~/views/components/Timestamp";
 
 function NavigationItem(props: {
   url: string;
@@ -12,7 +13,6 @@ function NavigationItem(props: {
   date: number;
   prev?: boolean;
 }) {
-  const date = moment(props.date).fromNow();
   return (
     <Box
       justifySelf={props.prev ? "start" : "end"}
@@ -26,7 +26,11 @@ function NavigationItem(props: {
           {props.prev ? "Previous" : "Next"}
         </Box>
         <Box mb={1}>{props.title}</Box>
-        <Box color="gray">{date}</Box>
+        <Timestamp
+          stamp={moment(props.date)}
+          time={false}
+          justifyContent={props.prev ? 'flex-start' : 'flex-end'}
+        />
       </Link>
     </Box>
   );

@@ -24,6 +24,7 @@ import RemoteContent from '~/views/components/RemoteContent';
 import { Mention } from '~/views/components/MentionText';
 import styled from 'styled-components';
 import useLocalState from '~/logic/state/local';
+import Timestamp from '~/views/components/Timestamp';
 
 export const DATESTAMP_FORMAT = '[~]YYYY.M.D';
 
@@ -125,9 +126,7 @@ export default class ChatMessage extends Component<ChatMessageProps> {
       renderSigil ? 'cf pl2 lh-copy' : 'items-top cf hide-child'
     } ${isPending ? 'o-40' : ''} ${className}`;
 
-    const timestamp = moment
-      .unix(msg['time-sent'] / 1000)
-      .format(renderSigil ? 'hh:mm a' : 'hh:mm');
+    const timestamp = moment.unix(msg['time-sent'] / 1000);
 
     const reboundMeasure = (event) => {
       return measure(this.divRef.current);
@@ -217,7 +216,6 @@ interface MessageProps {
 export const MessageWithSigil = (props) => {
   const {
     msg,
-    timestamp,
     contacts,
     association,
     associations,
@@ -232,9 +230,7 @@ export const MessageWithSigil = (props) => {
 
   const dark = useLocalState((state) => state.dark);
 
-  const datestamp = moment
-    .unix(msg['time-sent'] / 1000)
-    .format(DATESTAMP_FORMAT);
+  const stamp = moment.unix(msg['time-sent'] / 1000);
   const contact = `~${msg.author}` in contacts ? contacts[`~${msg.author}`] : false;
   const showNickname = useShowNickname(contact);
   const shipName = showNickname ? contact.nickname : cite(msg.author);
@@ -342,19 +338,7 @@ export const MessageWithSigil = (props) => {
           >
             {displayName}
           </Text>
-          <Text flexShrink={0} fontSize={0} gray mono>
-            {timestamp}
-          </Text>
-          <Text
-            flexShrink={0}
-            fontSize={0}
-            gray
-            mono
-            ml={2}
-            display={['none', hovering ? 'block' : 'none']}
-          >
-            {datestamp}
-          </Text>
+          <Timestamp stamp={stamp} fontSize={0}/>
         </Box>
         <ContentBox flexShrink={0} fontSize={fontSize ? fontSize : '14px'}>
           {msg.contents.map((c, i) => (
@@ -397,19 +381,15 @@ export const MessageWithoutSigil = ({
   const { hovering, bind } = useHovering();
   return (
     <>
-      <Text
-        flexShrink={0}
-        mono
-        gray
+      <Timestamp
+        stamp={timestamp}
+        date={false}
         display={hovering ? 'block' : 'none'}
         pt='2px'
         lineHeight='tall'
-        fontSize={0}
         position='absolute'
         left={1}
-      >
-        {timestamp}
-      </Text>
+      />
       <ContentBox
         flexShrink={0}
         fontSize='14px'
