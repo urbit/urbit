@@ -828,6 +828,8 @@
       =^  sut=vase  nub  (run-tauts bud %sur sur.pile)
       =^  sut=vase  nub  (run-tauts sut %lib lib.pile)
       =^  sut=vase  nub  (run-raw sut raw.pile)
+      =^  sut=vase  nub  (run-maz sut maz.pile)
+      =^  sut=vase  nub  (run-caz sut caz.pile)
       =^  sut=vase  nub  (run-bar sut bar.pile)
       =/  res=vase  (road |.((slap sut hoon.pile)))
       [res nub]
@@ -865,6 +867,16 @@
       ::
         %+  rune  tis
         ;~(plug sym ;~(pfix gap fas (more fas urs:ab)))
+      ::
+        %+  rune  cen
+        ;~(plug sym ;~(pfix cen sym))
+      ::
+        %+  rune  buc
+        ;~  (glue gap)
+          sym
+          ;~(pfix cen sym)
+          ;~(pfix cen sym)
+        ==
       ::
         %+  rune  tar
         ;~  (glue gap)
@@ -915,6 +927,22 @@
       =^  pin=vase  nub  (build-file (snoc path.i.raw %hoon))
       =.  p.pin  [%face face.i.raw p.pin]
       $(sut (slop pin sut), raw t.raw)
+    ::
+    ++  run-maz
+      |=  [sut=vase maz=(list [face=term =mark])]
+      ^-  [vase state]
+      ?~  maz  [sut nub]
+      =^  pin=vase  nub  (get-nave mark.i.maz)
+      =.  p.pin  [%face face.i.maz p.pin]
+      $(sut (slop pin sut), maz t.maz)
+    ::
+    ++  run-caz
+      |=  [sut=vase caz=(list [face=term =mars])]
+      ^-  [vase state]
+      ?~  caz  [sut nub]
+      =^  pin=vase  nub  (get-cast mars.i.caz)
+      =.  p.pin  [%face face.i.caz p.pin]
+      $(sut (slop pin sut), caz t.caz)
     ::
     ++  run-bar
       |=  [sut=vase bar=(list [face=term =mark =path])]

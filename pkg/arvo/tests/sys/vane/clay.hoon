@@ -18,7 +18,7 @@
 ++  test-parse-pile  ^-  tang
   %+  expect-eq
     !>  ^-  pile:fusion
-        :*  ~  ~  ~  ~
+        :*  ~  ~  ~  ~  ~  ~
             tssg+[%dbug [/sur/foo/hoon [[1 1] [1 2]]] [%cnts ~[[%.y 1]] ~]]~
         ==
     !>  (parse-pile:(ford):fusion /sur/foo/hoon ".")
@@ -54,7 +54,7 @@
                 [`%hood-drum %hood-drum]
                 [`%hood-write %hood-write]
             ==
-            raw=~  bar=~
+            raw=~  bar=~  maz=~  caz=~
             hoon=tssg+[p:(need q:(tall:(vang & /app/hood/hoon) [17 1] "."))]~
         ==
     !>  (parse-pile:(ford):fusion /app/hood/hoon src)
