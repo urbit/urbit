@@ -9,12 +9,12 @@
 ::  and looking for the entry with an app-path that is similar to the
 ::  title of the channel
 ::  
-/-  *metadata-store
+/-  metadata=metadata-store
 /+  resource
 :-  %say
 |=  $:  [now=@da eny=@uvJ =beak]
-        [[group=term app=term =path ~] ~]
+        [[group=term app=term rid=resource ~] ~]
     ==
 :-  %metadata-action
-^-  metadata-action
-[%remove (en-path:resource [p.beak group]) app path]
+^-  action:metadata
+[%remove [p.beak group] app rid]

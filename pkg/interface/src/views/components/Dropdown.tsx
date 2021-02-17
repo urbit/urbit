@@ -66,13 +66,19 @@ export function Dropdown(props: DropdownProps) {
     [setOpen, updatePos]
   );
 
-  useEffect(() => {
+  const close = useCallback(() => {
     setOpen(false);
+  },[]);
+
+  useEffect(() => {
+    close();
   }, [pathname]);
 
-  useOutsideClick(dropdownRef, () => {
-    setOpen(false);
-  });
+  useOutsideClick(dropdownRef, close);
+
+  const onOptionsClick = useCallback((e: any) => {
+    e.stopPropagation();
+  }, []);
 
   return (
     <Box flexShrink={props?.flexShrink ? props.flexShrink : 1} position={open ? "relative" : "static"} minWidth='0' width={props?.width ? props.width : 'auto'}>
@@ -85,6 +91,7 @@ export function Dropdown(props: DropdownProps) {
             width={props?.dropWidth || "max-content"}
             {...coords}
             ref={dropdownRef}
+            onClick={onOptionsClick}
           >
             {options}
           </DropdownOptions>
