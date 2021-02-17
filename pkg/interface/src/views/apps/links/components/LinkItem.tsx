@@ -119,8 +119,10 @@ export const LinkItem = (props: LinkItemProps) => {
         overflow="hidden"
         onClick={markRead}
       >
+        <Text p={2}>{contents[0].text}</Text>
         <RemoteContent
-          ref={r => { remoteRef.current = r}}
+          ref={r => { remoteRef.current = r }}
+          renderUrl={false}
           url={contents[1].url}
           text={contents[0].text}
           unfold={true}
