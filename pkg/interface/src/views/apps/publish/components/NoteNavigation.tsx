@@ -7,6 +7,7 @@ import { Box } from '@tlon/indigo-react';
 import { Graph } from '@urbit/api';
 
 import { getLatestRevision } from '~/logic/lib/publish';
+import Timestamp from '~/views/components/Timestamp';
 
 function NavigationItem(props: {
   url: string;
@@ -14,7 +15,6 @@ function NavigationItem(props: {
   date: number;
   prev?: boolean;
 }): ReactElement {
-  const date = moment(props.date).fromNow();
   return (
     <Box
       justifySelf={props.prev ? 'start' : 'end'}
@@ -28,7 +28,11 @@ function NavigationItem(props: {
           {props.prev ? 'Previous' : 'Next'}
         </Box>
         <Box mb={1}>{props.title}</Box>
-        <Box color="gray">{date}</Box>
+        <Timestamp
+          stamp={moment(props.date)}
+          time={false}
+          justifyContent={props.prev ? 'flex-start' : 'flex-end'}
+        />
       </Link>
     </Box>
   );

@@ -10,6 +10,7 @@ import { uxToHex, cite, useShowNickname } from '~/logic/lib/util';
 import OverlaySigil from './OverlaySigil';
 import { Sigil } from '~/logic/lib/sigil';
 import GlobalApi from '~/logic/api/global';
+import Timestamp from './Timestamp';
 
 interface AuthorProps {
   contacts: Contacts;
@@ -33,7 +34,7 @@ export default function Author(props: AuthorProps): ReactElement {
   const color = contact?.color ? `#${uxToHex(contact?.color)}` : '#000000';
   const showNickname = useShowNickname(contact);
   const name = showNickname ? contact.nickname : cite(ship);
-  const dateFmt = moment(date).fromNow();
+  const stamp = moment(date);
 
   const [showOverlay, setShowOverlay] = useState(false);
 
@@ -84,9 +85,7 @@ export default function Author(props: AuthorProps): ReactElement {
       >
         {name}
       </Box>
-      <Box fontSize='1' ml={2} color={props.unread ? 'blue' : 'gray'}>
-        {dateFmt}
-      </Box>
+      <Timestamp stamp={stamp} fontSize={1} time={false} ml={2} color={props.unread ? 'blue' : 'gray'} />
       {props.children}
     </Row>
   );

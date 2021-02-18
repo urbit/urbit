@@ -20,6 +20,7 @@ import GlobalApi from '~/logic/api/global';
 import { getSnippet } from '~/logic/lib/publish';
 import { MentionText } from '~/views/components/MentionText';
 import { MessageWithoutSigil } from '../chat/components/ChatMessage';
+import Timestamp from '~/views/components/Timestamp';
 
 function getGraphModuleIcon(module: string): string {
   if (module === 'link') {
@@ -211,9 +212,7 @@ const GraphNode = ({
           <Text mono title={author}>
             {cite(author)}
           </Text>
-          <Text ml="2" gray>
-            {moment(time).format('HH:mm')}
-          </Text>
+          <Timestamp stamp={moment(time)} date={false} ml={2} />
         </Row>}
         <Row width="100%" p="1" flexDirection="column">
           <GraphNodeContent
