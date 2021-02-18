@@ -167,6 +167,8 @@ u3_term_log_init(void)
       uty_u->ufo_u.out.el_u    = TERM_LIT_BUF("\033[K");
       // uty_u->ufo_u.out.el1_u   = TERM_LIT_BUF("\033[1K");
       uty_u->ufo_u.out.ed_u    = TERM_LIT_BUF("\033[J");
+      uty_u->ufo_u.out.sc_u    = TERM_LIT_BUF("\033[s");
+      uty_u->ufo_u.out.rc_u    = TERM_LIT_BUF("\033[u");
       uty_u->ufo_u.out.bel_u   = TERM_LIT_BUF("\x7");
       uty_u->ufo_u.out.cub1_u  = TERM_LIT_BUF("\x8");
       uty_u->ufo_u.out.cuf1_u  = TERM_LIT_BUF("\033[C");
@@ -475,9 +477,9 @@ _term_it_clear_line(u3_utty* uty_u)
   if ( uty_u->tat_u.siz.col_l ) {
     _term_it_dump(uty_u, TERM_LIT("\r"));
     _term_it_dump_buf(uty_u, &uty_u->ufo_u.out.el_u);
+    _term_it_dump_buf(uty_u, &uty_u->ufo_u.out.rc_u);
 
     uty_u->tat_u.mir.wor_w = 0;
-    uty_u->tat_u.mir.cus_w = 0;
   }
 }
 
@@ -487,6 +489,7 @@ static void
 _term_it_show_blank(u3_utty* uty_u)
 {
   _term_it_dump_buf(uty_u, &uty_u->ufo_u.out.clear_u);
+  _term_it_dump_buf(uty_u, &uty_u->ufo_u.out.rc_u);
 }
 
 /*  _term_it_move_cursor(): move cursor to row & column
@@ -504,9 +507,8 @@ _term_it_move_cursor(u3_utty* uty_u, c3_w row_w, c3_w col_w)
   if ( col_w >= col_l ) { col_w = col_l - 1; }
 
   _term_it_send_csi(uty_u, 'H', 2, row_l - row_w, col_w + 1);
-  //TODO  send s for saving cursor position?
+  _term_it_dump_buf(uty_u, &uty_u->ufo_u.out.sc_u);
 
-  //TODO  how does this interact with window resizing?
   uty_u->tat_u.mir.rus_w = row_w;
   uty_u->tat_u.mir.cus_w = col_w;
 }
@@ -528,11 +530,11 @@ _term_it_show_line(u3_utty* uty_u, c3_w wor_w)
     memcpy(hun_y, tat_u->mir.lin_y, len_w);
 
     _term_it_send(uty_u, len_w, hun_y);
+    _term_it_dump_buf(uty_u, &uty_u->ufo_u.out.rc_u);
   }
 
   //  XX refactor to avoid updating state
   //
-  tat_u->mir.cus_w += wor_w;
   tat_u->mir.wor_w = wor_w;
 }
 
@@ -543,11 +545,11 @@ _term_it_refresh_line(u3_utty* uty_u)
 {
   u3_utat* tat_u = &uty_u->tat_u;
   c3_w     wor_w = tat_u->mir.wor_w;
-  c3_w     cus_w = tat_u->mir.cus_w;
 
+  _term_it_move_cursor(uty_u, 0, 0);
   _term_it_clear_line(uty_u);
   _term_it_show_line(uty_u, wor_w);
-  _term_it_move_cursor(uty_u, 0, cus_w);
+  _term_it_dump_buf(uty_u, &uty_u->ufo_u.out.rc_u);
 }
 
 /* _term_it_set_line(): set current line.
@@ -617,6 +619,7 @@ _term_it_show_more(u3_utty* uty_u)
   if ( uty_u->tat_u.mir.rus_w > 0 ) {
     uty_u->tat_u.mir.rus_w--;
   }
+  _term_it_dump_buf(uty_u, &uty_u->ufo_u.out.sc_u);
 }
 
 /* _term_it_path(): path for console file.

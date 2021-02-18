@@ -199,6 +199,8 @@
           uv_buf_t el_u;                 //  clr_bol clear to beginning
           // uv_buf_t el1_u;             //  clr_eol clear to end
           uv_buf_t ed_u;                 //  clear to end of screen
+          uv_buf_t sc_u;                 //  save cursor position
+          uv_buf_t rc_u;                 //  restore cursor position
           uv_buf_t bel_u;                //  bel sound bell
           uv_buf_t cub1_u;               //  parm_left
           uv_buf_t cuf1_u;               //  parm_right
