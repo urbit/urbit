@@ -40,17 +40,21 @@
     |=  [mar=mark vas=vase]
     ^-  (quip card _this)
     ?>  (team:title our.bol src.bol)
-    ?.  ?=(%settings-event mar)
-      (on-poke:def mar vas)
-    =/  evt=event  !<(event vas)
-    =^  cards  state
-      ?-  -.evt
-        %put-bucket  (put-bucket:do key.evt bucket.evt)
-        %del-bucket  (del-bucket:do key.evt)
-        %put-entry   (put-entry:do buc.evt key.evt val.evt)
-        %del-entry   (del-entry:do buc.evt key.evt)
-      ==
-    [cards this]
+    ?+  mar  (on-poke:def mar vas)
+        %import
+      (on-load !>(;;(versioned-state q.vas)))
+    ::
+        %settings-event
+      =/  evt=event  !<(event vas)
+      =^  cards  state
+        ?-  -.evt
+          %put-bucket  (put-bucket:do key.evt bucket.evt)
+          %del-bucket  (del-bucket:do key.evt)
+          %put-entry   (put-entry:do buc.evt key.evt val.evt)
+          %del-entry   (del-entry:do buc.evt key.evt)
+        ==
+      [cards this]
+    ==
   ::
   ++  on-watch
     |=  pax=path
@@ -93,6 +97,9 @@
       =/  entry=(unit val)  (~(get by bucket) key)
       ?~  entry  [~ ~]
       ``settings-data+!>(entry+u.entry)
+    ::
+        [%x %export ~]
+      ``noun+!>(state)
     ==
   ::
   ++  on-agent  on-agent:def
