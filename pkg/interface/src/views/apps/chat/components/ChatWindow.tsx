@@ -4,16 +4,17 @@ import _ from 'lodash';
 import bigInt, { BigInteger } from 'big-integer';
 
 import { Col } from '@tlon/indigo-react';
-import { Patp, Contacts, Association, Associations, Group, Groups, Graph } from '@urbit/api';
+import {
+  Patp,
+  Contacts,
+  Association,
+  Associations,
+  Group,
+  Groups,
+  Graph
+} from '@urbit/api';
 
 import GlobalApi from '~/logic/api/global';
-import { Patp, Path } from '~/types/noun';
-import { Contacts } from '~/types/contact-update';
-import { Association, Associations } from '~/types/metadata-update';
-import { Group, Groups } from '~/types/group-update';
-import { Envelope, IMessage } from '~/types/chat-update';
-import { Graph } from '~/types';
-
 
 import VirtualScroller from '~/views/components/VirtualScroller';
 
@@ -172,10 +173,8 @@ export default class ChatWindow extends Component<
 
   dismissUnread() {
     const { association } = this.props;
-    if (this.state.fetchPending)
-return;
-    if (this.props.unreadCount === 0)
-return;
+    if (this.state.fetchPending) return;
+    if (this.props.unreadCount === 0) return;
     this.props.api.hark.markCountAsRead(association, '/', 'message');
     this.props.api.hark.markCountAsRead(association, '/', 'mention');
   }
@@ -224,13 +223,10 @@ return;
   }
 
   dismissIfLineVisible() {
-    if (this.props.unreadCount === 0)
-return;
-    if (!this.unreadMarkerRef.current || !this.virtualList?.window)
-return;
+    if (this.props.unreadCount === 0) return;
+    if (!this.unreadMarkerRef.current || !this.virtualList?.window) return;
     const parent = this.unreadMarkerRef.current.parentElement?.parentElement;
-    if (!parent)
-return;
+    if (!parent) return;
     const { scrollTop, scrollHeight, offsetHeight } = this.virtualList.window;
     if (
       scrollHeight - parent.offsetTop > scrollTop &&
@@ -299,8 +295,7 @@ return;
           size={graph.size}
           renderer={({ index, measure, scrollWindow }) => {
             const msg = graph.get(index)?.post;
-            if (!msg)
-return null;
+            if (!msg) return null;
             if (!this.state.initialized) {
               return (
                 <MessagePlaceholder
