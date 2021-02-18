@@ -255,7 +255,7 @@ export const MessageAuthor = ({
   const [showOverlay, setShowOverlay] = useState(false);
 
   const toggleOverlay = () => {
-    setShowOverlay(value => !value);
+    setShowOverlay((value) => !value);
   };
 
   const showCopyNotice = () => {
@@ -411,7 +411,6 @@ export const Message = ({
                 <Box
                   flexShrink={0}
                   fontSize={1}
-                  mt={2}
                   lineHeight='20px'
                   color='black'
                 >
@@ -421,13 +420,15 @@ export const Message = ({
                     imageProps={{
                       style: {
                         maxWidth: 'min(100%,18rem)',
-                        display: 'inline-block'
+                        display: 'inline-block',
+                        marginTop: '0.5rem'
                       }
                     }}
                     videoProps={{
                       style: {
                         maxWidth: '18rem',
-                        display: 'block'
+                        display: 'block',
+                        marginTop: '0.5rem'
                       }
                     }}
                     textProps={{
