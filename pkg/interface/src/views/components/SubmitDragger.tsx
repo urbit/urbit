@@ -1,9 +1,8 @@
-import { BaseInput, Box, Icon, LoadingSpinner, Text } from "@tlon/indigo-react";
-import React, { useCallback } from "react";
-import useS3 from "~/logic/lib/useS3";
-import { S3State } from "~/types";
+import React, { ReactElement } from 'react';
 
-const SubmitDragger = () => (
+import { Box, Text } from '@tlon/indigo-react';
+
+const SubmitDragger = (): ReactElement => (
   <Box
     top='0'
     bottom='0'

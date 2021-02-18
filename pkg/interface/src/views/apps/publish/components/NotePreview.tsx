@@ -4,14 +4,14 @@ import styled from 'styled-components';
 import { Col, Row, Box, Text, Icon, Image } from '@tlon/indigo-react';
 
 import Author from '~/views/components/Author';
-import { GraphNode } from '~/types/graph-update';
-import { Contacts, Group } from '~/types';
+import { GraphNode } from '@urbit/api/graph';
+import { Contacts, Group } from '@urbit/api';
 import {
   getComments,
   getLatestRevision,
-  getSnippet,
-} from "~/logic/lib/publish";
-import {Unreads} from "~/types";
+  getSnippet
+} from '~/logic/lib/publish';
+import { Unreads } from '@urbit/api';
 import GlobalApi from '~/logic/api/global';
 import ReactMarkdown from 'react-markdown';
 

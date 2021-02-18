@@ -7,7 +7,7 @@ import { createPost } from '~/logic/api/graph';
 import tokenizeMessage, { isUrl } from '~/logic/lib/tokenizeMessage';
 import GlobalApi from '~/logic/api/global';
 import { Envelope } from '~/types/chat-update';
-import { Contacts, Content } from '~/types';
+import { Contacts, Content } from '@urbit/api';
 import { Row, BaseImage, Box, Icon, LoadingSpinner } from '@tlon/indigo-react';
 import withS3 from '~/views/components/withS3';
 import { withLocalState } from '~/logic/state/local';
@@ -15,12 +15,12 @@ import { withLocalState } from '~/logic/state/local';
 type ChatInputProps = IuseS3 & {
   api: GlobalApi;
   numMsgs: number;
-  station: any;
-  ourContact: any;
+  station: unknown;
+  ourContact: unknown;
   envelopes: Envelope[];
   contacts: Contacts;
   onUnmount(msg: string): void;
-  s3: any;
+  s3: unknown;
   placeholder: string;
   message: string;
   deleteMessage(): void;
@@ -67,14 +67,14 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
         inCodeMode: false
       }, async () => {
         const output = await props.api.graph.eval(text);
-        const contents: Content[] = [{ code: { output, expression: text }}];
+        const contents: Content[] = [{ code: { output, expression: text } }];
         const post = createPost(contents);
         props.api.graph.addPost(ship, name, post);
       });
       return;
     }
 
-    const post = createPost(tokenizeMessage((text)))
+    const post = createPost(tokenizeMessage((text)));
 
     props.deleteMessage();
 
@@ -110,7 +110,7 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
     if (!this.props.canUpload) {
       return;
     }
-    Array.from(files).forEach(file => {
+    Array.from(files).forEach((file) => {
       this.props.uploadDefault(file)
         .then(this.uploadSuccess)
         .catch(this.uploadError);
@@ -178,7 +178,7 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
                 width="16"
                 height="16"
                 onClick={() => this.props.promptUpload().then(this.uploadSuccess)}
-              />
+                />
             : null
           }
         </Box>
@@ -200,4 +200,4 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
   }
 }
 
-export default withLocalState(withS3(ChatInput, {accept: 'image/*'}), ['hideAvatars']);
+export default withLocalState(withS3(ChatInput, { accept: 'image/*' }), ['hideAvatars']);

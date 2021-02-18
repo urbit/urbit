@@ -1,6 +1,4 @@
-
-
- export interface S3Credentials {
+export interface S3Credentials {
    endpoint: string;
    accessKeyId: string;
    secretAccessKey: string;
@@ -50,7 +48,6 @@ interface S3UpdateAccessKeyId {
 interface S3UpdateSecretAccessKey {
   setSecretAccessKey: string;
 }
-
 
 export type S3Update =
   S3UpdateCredentials

@@ -1,7 +1,6 @@
-import _ from "lodash";
-import { Post } from "./graph-update";
-import { GroupUpdate } from "./group-update";
-import { BigIntOrderedMap } from "~/logic/lib/BigIntOrderedMap";
+import { Post } from "../graph/index.d";
+import { GroupUpdate } from "../groups/index.d";
+import BigIntOrderedMap from "../lib/BigIntOrderedMap";
 
 export type GraphNotifDescription = "link" | "comment" | "note" | "mention";
 

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback } from 'react';
 
 export function useDropdown<C>(
   candidates: C[],
@@ -12,10 +12,10 @@ export function useDropdown<C>(
     (s: string) => {
       const exactMatch = isExact(s);
       const exact = exactMatch ? [exactMatch] : [];
-      const opts = [...new Set([...exact, ...candidates.filter((c) => searchPred(s, c))])];
+      const opts = [...new Set([...exact, ...candidates.filter(c => searchPred(s, c))])];
       setOptions(opts);
       if (selected) {
-        const idx = opts.findIndex((c) => key(c) === key(selected));
+        const idx = opts.findIndex(c => key(c) === key(selected));
         if (idx < 0) {
           setSelected(undefined);
         }
@@ -29,9 +29,11 @@ export function useDropdown<C>(
       const select = (idx: number) => {
         setSelected(options[idx]);
       };
-      if(!selected) { select(0); return false; }
+      if(!selected) {
+ select(0); return false;
+}
 
-      const idx = options.findIndex((c) => key(c) === key(selected));
+      const idx = options.findIndex(c => key(c) === key(selected));
       if (
         idx === -1 ||
         (options.length - 1 <= idx && !backward)
@@ -55,6 +57,6 @@ export function useDropdown<C>(
     back,
     search,
     selected,
-    options,
+    options
   };
 }

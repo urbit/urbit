@@ -1,31 +1,29 @@
-import React, { ReactNode, useCallback } from "react";
-import moment from "moment";
-import { Row, Box, Col, Text, Anchor, Icon, Action } from "@tlon/indigo-react";
-import { Link, useHistory } from "react-router-dom";
-import _ from "lodash";
+import React, { ReactElement, useCallback } from 'react';
+import moment from 'moment';
+import _ from 'lodash';
+import { useHistory } from 'react-router-dom';
+import styled from 'styled-components';
+
+import { Row, Box, Col, Text, Anchor, Icon, Action } from '@tlon/indigo-react';
 import {
-  Post,
   GraphNotifIndex,
   GraphNotificationContents,
   Associations,
-  Content,
   Rolodex,
-  Groups,
-} from "~/types";
-import { Header } from "./header";
-import { cite, deSig, pluralize } from "~/logic/lib/util";
-import { Sigil } from "~/logic/lib/sigil";
-import RichText from "~/views/components/RichText";
-import GlobalApi from "~/logic/api/global";
-import ReactMarkdown from "react-markdown";
-import { getSnippet } from "~/logic/lib/publish";
-import styled from "styled-components";
-import {MentionText} from "~/views/components/MentionText";
-import ChatMessage, {MessageWithoutSigil} from "../chat/components/ChatMessage";
+  Groups
+} from '@urbit/api';
 
-function getGraphModuleIcon(module: string) {
-  if (module === "link") {
-    return "Collection";
+import { Header } from './header';
+import { cite, deSig, pluralize } from '~/logic/lib/util';
+import { Sigil } from '~/logic/lib/sigil';
+import GlobalApi from '~/logic/api/global';
+import { getSnippet } from '~/logic/lib/publish';
+import { MentionText } from '~/views/components/MentionText';
+import { MessageWithoutSigil } from '../chat/components/ChatMessage';
+
+function getGraphModuleIcon(module: string): string {
+  if (module === 'link') {
+    return 'Collection';
   }
   return _.capitalize(module);
 }
@@ -34,32 +32,32 @@ const FilterBox = styled(Box)`
   background: linear-gradient(
     to bottom,
     transparent,
-    ${(p) => p.theme.colors.white}
+    ${p => p.theme.colors.white}
   );
 `;
 
-function describeNotification(description: string, plural: boolean) {
+function describeNotification(description: string, plural: boolean): string {
   switch (description) {
-    case "link":
-      return `added ${pluralize("new link", plural)} to`;
-    case "comment":
-      return `left ${pluralize("comment", plural)} on`;
-    case "edit-comment":
-      return `updated ${pluralize("comment", plural)} on`;
-    case "note":
-      return `posted ${pluralize("note", plural)} to`;
-    case "edit-note":
-      return `updated ${pluralize("note", plural)} in`;
-    case "mention":
-      return "mentioned you on";
-    case "message":
-      return `sent ${pluralize("message", plural)} to`;
+    case 'link':
+      return `added ${pluralize('new link', plural)} to`;
+    case 'comment':
+      return `left ${pluralize('comment', plural)} on`;
+    case 'edit-comment':
+      return `updated ${pluralize('comment', plural)} on`;
+    case 'note':
+      return `posted ${pluralize('note', plural)} to`;
+    case 'edit-note':
+      return `updated ${pluralize('note', plural)} in`;
+    case 'mention':
+      return 'mentioned you on';
+    case 'message':
+      return `sent ${pluralize('message', plural)} to`;
     default:
       return description;
   }
 }
 
-const GraphUrl = ({ url, title }) => (
+const GraphUrl = ({ url, title }): ReactElement => (
   <Box borderRadius="2" p="2" bg="scales.black05">
     <Anchor underline={false} target="_blank" color="black" href={url}>
       <Icon verticalAlign="bottom" mr="2" icon="ArrowExternal" />
@@ -68,10 +66,10 @@ const GraphUrl = ({ url, title }) => (
   </Box>
 );
 
-const GraphNodeContent = ({ group, post, contacts, mod, description, index, remoteContentPolicy }) => {
+const GraphNodeContent = ({ group, post, contacts, mod, index }): ReactElement => {
   const { contents } = post;
-  const idx = index.slice(1).split("/");
-  if (mod === "link") {
+  const idx = index.slice(1).split('/');
+  if (mod === 'link') {
     if (idx.length === 1) {
       const [{ text }, { url }] = contents;
       return <GraphUrl title={text} url={url} />;
@@ -80,20 +78,20 @@ const GraphNodeContent = ({ group, post, contacts, mod, description, index, remo
         content={contents}
         contacts={contacts}
         group={group}
-      />
+             />;
     }
     return null;
   }
-  if (mod === "publish") {
-    if (idx[1] === "2") {
+  if (mod === 'publish') {
+    if (idx[1] === '2') {
       return <MentionText
         content={contents}
         group={group}
         contacts={contacts}
         fontSize='14px'
         lineHeight="tall"
-      />
-    } else if (idx[1] === "1") {
+             />;
+    } else if (idx[1] === '1') {
       const [{ text: header }, { text: body }] = contents;
       const snippet = getSnippet(body);
       return (
@@ -123,42 +121,41 @@ const GraphNodeContent = ({ group, post, contacts, mod, description, index, remo
       flexShrink={0}
       flexGrow={1}
       flexWrap="wrap"
-    >
+      >
       <MessageWithoutSigil
         containerClass="items-top cf hide-child"
         measure={() => {}}
         group={group}
         contacts={contacts}
         groups={{}}
-        associations={{ graph: {}, groups: {}}}
+        associations={{ graph: {}, groups: {} }}
         msg={post}
         fontSize='0'
         pt='2'
       />
     </Row>);
-
   }
   return null;
 };
 
-function getNodeUrl(mod: string, hidden: boolean, groupPath: string, graph: string, index: string) {
+function getNodeUrl(mod: string, hidden: boolean, groupPath: string, graph: string, index: string): string {
   if (hidden && mod === 'chat') {
     groupPath = '/messages';
   } else if (hidden) {
     groupPath = '/home';
   }
   const graphUrl = `/~landscape${groupPath}/resource/${mod}${graph}`;
-  const idx = index.slice(1).split("/");
-  if (mod === "publish") {
+  const idx = index.slice(1).split('/');
+  if (mod === 'publish') {
     const [noteId] = idx;
     return `${graphUrl}/note/${noteId}`;
-  } else if (mod === "link") {
+  } else if (mod === 'link') {
     const [linkId] = idx;
     return `${graphUrl}/${linkId}`;
   } else if (mod === 'chat') {
     return graphUrl;
   }
-  return "";
+  return '';
 }
 const GraphNode = ({
   post,
@@ -174,9 +171,7 @@ const GraphNode = ({
   read,
   onRead,
   showContact = false,
-  remoteContentPolicy
-}) => {
-  const { contents } = post;
+}): ReactElement => {
   author = deSig(author);
   const history = useHistory();
 
@@ -185,7 +180,7 @@ const GraphNode = ({
       ship={`~${author}`}
       size={16}
       icon
-      color={`#000000`}
+      color={'#000000'}
       classes="mix-blend-diff"
       padding={2}
     />
@@ -212,12 +207,12 @@ const GraphNode = ({
           alignItems="center"
           p="1"
           backgroundColor="white"
-        >
+                        >
           <Text mono title={author}>
             {cite(author)}
           </Text>
           <Text ml="2" gray>
-            {moment(time).format("HH:mm")}
+            {moment(time).format('HH:mm')}
           </Text>
         </Row>}
         <Row width="100%" p="1" flexDirection="column">
@@ -249,7 +244,7 @@ export function GraphNotification(props: {
 }) {
   const { contents, index, read, time, api, timebox, groups } = props;
 
-  const authors = _.map(contents, "author");
+  const authors = _.map(contents, 'author');
   const { graph, group } = index;
   const icon = getGraphModuleIcon(index.module);
   const desc = describeNotification(index.description, contents.length !== 1);
@@ -259,7 +254,7 @@ export function GraphNotification(props: {
       return;
     }
 
-    return api.hark["read"](timebox, { graph: index });
+    return api.hark['read'](timebox, { graph: index });
   }, [api, timebox, index, read]);
 
 return (
@@ -284,7 +279,7 @@ return (
             author={content.author}
             contacts={props.contacts}
             mod={index.module}
-            time={content?.["time-sent"]}
+            time={content?.['time-sent']}
             description={index.description}
             index={content.index}
             graph={graph}

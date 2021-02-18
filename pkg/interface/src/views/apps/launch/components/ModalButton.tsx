@@ -1,6 +1,6 @@
-import React  from "react"
-import { Box, Button, Icon, Text } from "@tlon/indigo-react"
-import {useModal} from "~/logic/lib/useModal";
+import React  from 'react';
+import { Box, Button, Icon, Text } from '@tlon/indigo-react';
+import { useModal } from '~/logic/lib/useModal';
 
 const ModalButton = (props) => {
   const {
@@ -12,7 +12,6 @@ const ModalButton = (props) => {
     ...rest
   } = props;
   const { modal, showModal } = useModal({ modal: props.children });
-
 
   return (
     <>
@@ -33,6 +32,6 @@ const ModalButton = (props) => {
       </Button>
     </>
   );
-}
+};
 
 export default ModalButton;

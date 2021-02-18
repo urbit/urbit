@@ -1,16 +1,16 @@
-import _ from "lodash";
+import _ from 'lodash';
 
-export const alignY = ["top", "bottom"] as const;
+export const alignY = ['top', 'bottom'] as const;
 export type AlignY = typeof alignY[number];
-export const alignX = ["left", "right"] as const;
+export const alignX = ['left', 'right'] as const;
 export type AlignX = typeof alignX[number];
 
 export function getRelativePosition(
   relativeTo: HTMLElement | null,
   alignX: AlignX | AlignX[],
   alignY: AlignY | AlignY[],
-  offsetX: number = 0,
-  offsetY: number = 0
+  offsetX = 0,
+  offsetY = 0
 ) {
   const rect = relativeTo?.getBoundingClientRect();
   if (!rect) {
@@ -20,7 +20,7 @@ export function getRelativePosition(
     top: rect.top - offsetY,
     left: rect.left - offsetX,
     bottom: document.documentElement.clientHeight - rect.bottom - offsetY,
-    right: document.documentElement.clientWidth - rect.right - offsetX,
+    right: document.documentElement.clientWidth - rect.right - offsetX
   };
   const alignXArr = _.isArray(alignX) ? alignX : [alignX];
   const alignYArr = _.isArray(alignY) ? alignY : [alignY];
@@ -34,7 +34,7 @@ export function getRelativePosition(
           [...Array(idx), `${bounds[a]}px`],
           acc[a] || [],
           (a, b) => a || b || null
-        ),
+        )
       }),
       {}
     ),
@@ -46,10 +46,10 @@ export function getRelativePosition(
           [...Array(idx), `${bounds[a]}px`],
           acc[a] || [],
           (a, b) => a || b || null
-        ),
+        )
       }),
       {}
-    ),
+    )
   } as Record<AlignY | AlignX, string[]>;
 }
 

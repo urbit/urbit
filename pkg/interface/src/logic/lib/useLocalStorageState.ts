@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect } from 'react';
 
 function retrieve<T>(key: string, initial: T): T {
   const s = localStorage.getItem(key);
@@ -25,7 +25,7 @@ export function useLocalStorageState<T>(key: string, initial: T) {
 
   const setState = useCallback(
     (s: SetState<T>) => {
-      const updated = typeof s === "function" ? s(state) : s;
+      const updated = typeof s === 'function' ? s(state) : s;
       _setState(updated);
       localStorage.setItem(key, JSON.stringify(updated));
     },
