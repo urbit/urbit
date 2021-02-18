@@ -101,7 +101,7 @@
     ==
     ::
     ++  handle-initial
-      |=  [rolo=rolodex:store is-public=?]
+      |=  [rolo=rolodex:store *]
       ^-  (quip card _state)
       =/  our-contact  (~(got by rolodex) our.bowl)
       =/  diff-rolo=rolodex:store
