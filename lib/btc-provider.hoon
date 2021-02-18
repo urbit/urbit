@@ -11,7 +11,8 @@
   +.address
 ::
 ++  address-from-cord
-  |=  addrc=@t  ^-  address
+  |=  addrc=@t
+  ^-  address
   ?.  ?|  =("bc1" (scag 3 (trip addrc)))
           =("tb1" (scag 3 (trip addrc)))
       ==
@@ -21,11 +22,6 @@
 ++  hexb-to-cord
   |=  =hexb  ^-  cord
   (en:base16:mimes:html hexb)
-::
-++  txid-to-cord
-  |=  txid=hexb
-  ^-  cord
-  (en:base16:mimes:html txid)
 ::  +from-epoch: time since Jan 1, 1970 in seconds.
 ::
 ++  from-epoch
@@ -148,12 +144,12 @@
       %get-tx-vals
     %-  get-request
     %+  mk-url  '/gettxvals/'
-    (txid-to-cord txid.ract)
+    (hexb-to-cord txid.ract)
     ::
       %get-raw-tx
     %-  get-request
     %+  mk-url  '/getrawtx/'
-    (txid-to-cord txid.ract)
+    (hexb-to-cord txid.ract)
     ::
       %broadcast-tx
     %-  get-request

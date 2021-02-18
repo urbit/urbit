@@ -1,4 +1,3 @@
-
 ::  btc-wallet
 ::
 ::  Scrys
@@ -138,7 +137,7 @@
 --
 |_  =bowl:gall
 ++  handle-command
-  |=  comm=commandl
+  |=  comm=command
   ^-  (quip card _state)
   ?-  -.comm
       %set-provider
