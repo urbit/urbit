@@ -1,13 +1,12 @@
-import React, { useCallback } from "react";
+import React, { ReactElement, useCallback } from 'react';
+import { Form, FormikHelpers } from 'formik';
+import _ from 'lodash';
 
-import { Box, Col, ManagedCheckboxField as Checkbox } from "@tlon/indigo-react";
-import { Formik, Form, FormikHelpers } from "formik";
-import * as Yup from "yup";
-import _ from "lodash";
-import { AsyncButton } from "~/views/components/AsyncButton";
-import { FormikOnBlur } from "~/views/components/FormikOnBlur";
-import { NotificationGraphConfig } from "~/types";
-import GlobalApi from "~/logic/api/global";
+import { Col, ManagedCheckboxField as Checkbox } from '@tlon/indigo-react';
+import { NotificationGraphConfig } from '@urbit/api';
+
+import { FormikOnBlur } from '~/views/components/FormikOnBlur';
+import GlobalApi from '~/logic/api/global';
 
 interface FormSchema {
   mentions: boolean;
@@ -24,21 +23,21 @@ interface NotificationPreferencesProps {
 
 export default function NotificationPreferences(
   props: NotificationPreferencesProps
-) {
+): ReactElement {
   const { graphConfig, api, dnd } = props;
 
   const initialValues: FormSchema = {
     mentions: graphConfig.mentions,
     watchOnSelf: graphConfig.watchOnSelf,
     dnd,
-    watching: graphConfig.watching,
+    watching: graphConfig.watching
   };
 
   const onSubmit = useCallback(
     async (values: FormSchema, actions: FormikHelpers<FormSchema>) => {
       console.log(values);
       try {
-        let promises: Promise<any>[] = [];
+        const promises: Promise<any>[] = [];
         if (values.mentions !== graphConfig.mentions) {
           promises.push(api.hark.setMentions(values.mentions));
         }
@@ -46,7 +45,7 @@ export default function NotificationPreferences(
           promises.push(api.hark.setWatchOnSelf(values.watchOnSelf));
         }
         if (values.dnd !== dnd && !_.isUndefined(values.dnd)) {
-          promises.push(api.hark.setDoNotDisturb(values.dnd))
+          promises.push(api.hark.setDoNotDisturb(values.dnd));
         }
 
         await Promise.all(promises);

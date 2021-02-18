@@ -1,5 +1,5 @@
-import { Patp } from "./noun";
-import { BigIntOrderedMap } from "~/logic/lib/BigIntOrderedMap";
+import { Patp } from "..";
+import BigIntOrderedMap from "../lib/BigIntOrderedMap";
 
 export interface TextContent {
   text: string;
@@ -35,6 +35,15 @@ export interface Post {
   pending?: boolean;
   signatures: string[];
   "time-sent": number;
+}
+
+export interface GraphNodePoke {
+  post: Post;
+  children: GraphChildrenPoke | null;
+}
+
+export interface GraphChildrenPoke {
+  [k: string]: GraphNodePoke;
 }
 
 export interface GraphNode {

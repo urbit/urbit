@@ -9,11 +9,11 @@ import {
 import { uxToHex } from '~/logic/lib/util';
 import { Link } from 'react-router-dom';
 
-import { Associations } from '~/types/metadata-update';
+import { Associations } from '@urbit/api/metadata';
 import { Dropdown } from '~/views/components/Dropdown';
-import { Workspace } from '~/types';
 import { getTitleFromWorkspace } from '~/logic/lib/workspace';
-import {MetadataIcon} from './MetadataIcon';
+import { MetadataIcon } from './MetadataIcon';
+import { Workspace } from '~/types/workspace';
 
 const GroupSwitcherItem = ({ to, children, bottom = false, ...rest }) => (
   <Link to={to}>
@@ -93,7 +93,8 @@ export function GroupSwitcher(props: {
       top="0px"
       pl='3'
       borderBottom='1px solid'
-      borderColor='washedGray'>
+      borderColor='washedGray'
+    >
       <Col
         bg="white"
         width="100%"
