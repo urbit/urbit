@@ -1,7 +1,7 @@
 ::
 ::
 /-  *btc-wallet
-/+  bip32, btc, bp=btc-provider
+/+  bip32, bc=bitcoin, bp=btc-provider
 =,  secp:crypto
 =+  ecc=secp256k1
 |%
@@ -10,21 +10,28 @@
   ++  max-gap  20
   ++  confs    6
   --
+  ::  +fam: planet parent if s is a moon
+::
+++  fam
+  |=  [our=ship now=@da s=ship]
+  ^-  ship
+  ?.  =(%earl (clan:title s))  s
+  (sein:title our now s)
 ::
 ++  num-confs
-  |=  [last-block=@ud =utxo:btc]
+  |=  [last-block=@ud =utxo:bc]
   ?:  =(0 height.utxo)  0
   (add 1 (sub last-block height.utxo))
 ::
 ++  from-xpub
-  |=  $:  =xpub:btc
-          =fprint:btc
+  |=  $:  =xpub:bc
+          =fprint:bc
           scan-to=(unit scon)
           max-gap=(unit @ud)
           confs=(unit @ud)
       ==
   ^-  walt
-  =/  [=bipt =network]  (xpub-type:btc xpub)
+  =/  [=bipt =network]  (xpub-type:bc xpub)
   :*  xpub
       network
       fprint
@@ -59,7 +66,7 @@
 ++  new-txbu
   |=  $:  w=walt
           payee=(unit ship)
-          =vbytes:btc
+          =vbytes:bc
           is=(list insel)
           txos=(list txo)
       ==
@@ -86,23 +93,23 @@
     (roll (turn txos.t |=(=txo value.txo)) add)
   ::
   ++  fee
-    ^-  sats:btc
+    ^-  sats:bc
     =/  [in=sats out=sats]  value
     (sub in out)
   ::
   ++  vbytes
-    ^-  vbytes:btc
-    %+  add  overhead-weight:btc
+    ^-  vbytes:bc
+    %+  add  overhead-weight:bc
     %+  add
       %+  roll
-      (turn txis.t |=(t=txi (input-weight:btc bipt.hdkey.t)))
+      (turn txis.t |=(t=txi (input-weight:bc bipt.hdkey.t)))
       add
     %+  roll
-      (turn txos.t |=(t=txo (output-weight:btc (address-bipt:btc address.t))))
+      (turn txos.t |=(t=txo (output-weight:bc (address-bipt:bc address.t))))
     add
   ++  tx-data
     |^
-    ^-  data:tx:btc
+    ^-  data:tx:bc
     :*  (turn txis.t txi-data)
         (turn txos.t txo-data)
         0  1  `1
@@ -115,16 +122,16 @@
       ==
     ++  txo-data
       |=  =txo
-      :-  (script-pubkey:btc address.txo)
+      :-  (script-pubkey:bc address.txo)
       value.txo
     --
   ::
   ++  get-txid
     ^-  txid
-    (get-id:txu:btc tx-data)
+    (get-id:txu:bc tx-data)
   ::
   ++  get-rawtx
-    (basic-encode:txu:btc tx-data)
+    (basic-encode:txu:bc tx-data)
   ::  +add-output: append output (usually change) to txos
   ::
   ++  add-output
@@ -136,18 +143,18 @@
   ::   - all inputs have an associated rawtx
   ::
   ++  to-psbt
-    ^-  (unit base64:psbt:btc)
-    =/  ins=(list in:psbt:btc)
+    ^-  (unit base64:psbt:bc)
+    =/  ins=(list in:psbt:bc)
       %+  murn  txis.t
       |=  =txi
       ?~  ur.txi  ~
       `[utxo.txi u.ur.txi hdkey.txi]
     ?:  (lth (lent ins) (lent txis.t))
       ~
-    =/  outs=(list out:psbt:btc)
+    =/  outs=(list out:psbt:bc)
       %+  turn  txos.t
       |=(=txo [address.txo hk.txo])
-    `(encode:pbt:btc %.y get-rawtx get-txid ins outs)
+    `(encode:pbt:bc %.y get-rawtx get-txid ins outs)
   --
 ::  wad: door for processing walts (wallets)
 ::        parameterized on a walt and it's chyg account 
@@ -155,29 +162,29 @@
 ++  wad
   |_  [w=walt =chyg]
   ++  pubkey
-    |=  =idx:btc
-    ^-  hexb:btc
+    |=  =idx:bc
+    ^-  hexb:bc
     =/  pk=@ux
       %-  compress-point:ecc
       pub:(derive-public:(derive-public:wilt.w (@ chyg)) idx)
     [(met 3 pk) pk]
   ::
   ++  hdkey
-    |=  =idx:btc
-    ^-  hdkey:btc
+    |=  =idx:bc
+    ^-  hdkey:bc
     [fprint.w (~(pubkey wad w chyg) idx) network.w bipt.w chyg idx]
   ::
   ++  mk-address
-    |=  =idx:btc
-    ^-  address:btc
-    (pubkey-to-address:btc bipt.w network.w (pubkey idx))
+    |=  =idx:bc
+    ^-  address:bc
+    (pubkey-to-address:bc bipt.w network.w (pubkey idx))
   ::  +nixt-address: used to get change addresses
   ::   - gets the current next available address
   ::   - doesn't bump nixt-address if it's unused
   ::   - if used, fall back to gen-address and make a new one
   ::
   ++  nixt-address
-    ^-  (trel address:btc idx:btc walt)
+    ^-  (trel address:bc idx:bc walt)
     =/  addr  (mk-address nixt-idx)
     ~|  "lib/btc-wallet-store: get-next-address: nixt shouldn't be blank"
     =/  =addi  (~(got by wach.w) addr)
@@ -190,12 +197,12 @@
   ::   - watches it (using update address)
   ::
   ++  gen-address
-    ^-  (trel address:btc idx:btc walt)
+    ^-  (trel address:bc idx:bc walt)
     =/  addr  (mk-address nixt-idx)
     :*  addr
         nixt-idx
         %+  update-address  addr
-          [%.n chyg nixt-idx *(set utxo:btc)]
+          [%.n chyg nixt-idx *(set utxo:bc)]
     ==
   ::  +update-address
   ::   - insert a new address
@@ -203,7 +210,7 @@
   ::   - watch address
   ::
   ++  update-address
-    |=  [a=address:btc =addi]
+    |=  [a=address:bc =addi]
     ^-  walt
     ?>  =(chyg chyg.addi)
     ?>  =(a (mk-address idx.addi))
@@ -225,12 +232,12 @@
   ::
   ++  bump-nixt
     |^  ^-  walt
-    =/  new-idx=idx:btc  +(nixt-idx)
+    =/  new-idx=idx:bc  +(nixt-idx)
     |-  ?>  (lte new-idx max-index)
     =+  addr=(mk-address new-idx)
     =/  =addi
       %+  ~(gut by wach.w)  addr
-      [%.n chyg new-idx *(set utxo:btc)]
+      [%.n chyg new-idx *(set utxo:bc)]
     ?.  used.addi
       %=  w
           nixt  (set-nixt new-idx)
@@ -239,7 +246,7 @@
     $(new-idx +(new-idx))
     ::
     ++  set-nixt
-      |=  =idx:btc  ^-  nixt
+      |=  =idx:bc  ^-  nixt
       ?:(?=(%0 chyg) [idx q.nixt.w] [p.nixt.w idx])
     --
   --
@@ -249,9 +256,9 @@
 |_  [w=walt eny=@uvJ last-block=@ud payee=(unit ship) =feyb txos=(list txo)]
   ++  dust-sats  3
   ++  dust-threshold
-    |=  output-bipt=bipt:btc
+    |=  output-bipt=bipt:bc
     ^-  vbytes
-    (mul dust-sats (input-weight:btc output-bipt))
+    (mul dust-sats (input-weight:bc output-bipt))
   ::
   ++  target-value
     ^-  sats
@@ -260,31 +267,31 @@
   ::
   ++  base-weight
     ^-  vbytes
-    %+  add  overhead-weight:btc
+    %+  add  overhead-weight:bc
     %+  roll
       %+  turn  txos
-      |=(=txo (output-weight:btc (address-bipt:btc address.txo)))
+      |=(=txo (output-weight:bc (address-bipt:bc address.txo)))
     add
   ::
   ++  total-vbytes
     |=  selected=(list insel)
     ^-  vbytes
     %+  add  base-weight
-    (mul (input-weight:btc bipt.w) (lent selected))
+    (mul (input-weight:bc bipt.w) (lent selected))
   ::  value of an input after fee
   ::  0 if net is <= 0
   ::
   ++  net-value
     |=  val=sats
     ^-  sats
-    =/  cost  (mul (input-weight:btc bipt.w) feyb)
+    =/  cost  (mul (input-weight:bc bipt.w) feyb)
     ?:  (lte val cost)  0
     (sub val cost)
   ::
   ::  +spendable: whether utxo has enough confs to spend
   ::
   ++  spendable
-    |=  =utxo:btc  ^-  ?
+    |=  =utxo:bc  ^-  ?
     (gte (num-confs last-block utxo) confs.w)
   ::  +with-change:
   ::    - choose UTXOs, if there are enough
@@ -296,7 +303,7 @@
     ?~  tb  [~ ~]
     =+  excess=~(fee txb u.tb)        ::  (inputs - outputs)
     =/  new-fee=sats                   ::  cost of this tx + one more output
-      (mul feyb (add (output-weight:btc bipt.w) vbytes.u.tb))
+      (mul feyb (add (output-weight:bc bipt.w) vbytes.u.tb))
     ?.  (gth excess new-fee)
       [tb ~]
     ?.  (gth (sub excess new-fee) (dust-threshold bipt.w))
@@ -310,7 +317,7 @@
     ?.  %+  levy  txos
         |=  =txo
         %+  gth  value.txo
-        (dust-threshold (address-bipt:btc address.txo))
+        (dust-threshold (address-bipt:bc address.txo))
       ~|("One or more suggested outputs is dust." !!)
     =/  is=(unit (list insel))
       %-  single-random-draw
@@ -323,7 +330,7 @@
       |=  =addi
       ^-  (list insel)
       %+  turn  ~(tap in utxos.addi)
-      |=(=utxo:btc [utxo chyg.addi idx.addi])
+      |=(=utxo:bc [utxo chyg.addi idx.addi])
     --
   ::  single-random-draw
   ::    randomly choose utxos until target is hit
@@ -334,7 +341,7 @@
     ^-  (unit (list insel))
     =/  rng  ~(. og eny)
     =/  target  (add target-value (mul feyb base-weight))   ::  add base fees to target
-    =|  [select=(list insel) total=sats:btc]
+    =|  [select=(list insel) total=sats:bc]
     |-
     ?:  =(~ is)  ~
     =^  n  rng  (rads:rng (lent is))

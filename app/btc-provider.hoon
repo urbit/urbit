@@ -9,7 +9,7 @@
 ::  Scrys
 ::  x/is-whitelisted/SHIP: bool, whether ship is whitelisted
 ::
-/-  btc, json-rpc
+/-  *bitcoin, json-rpc
 /+  *btc-provider, dbug, default-agent, groupl=group, resource
 |%
 +$  versioned-state
@@ -195,7 +195,7 @@
   ^-  (quip card _state)
   ~&  >>>  "dropping client {<client>}"
   :-  ~[[%give %kick ~[/clients] `client]]
-  state(clients.host-info (~(dif in clients.host-info) (sy ~[client])))
+  state(clients.host-info (~(dif in clients.host-info) (silt ~[client])))
 ::
 ::  Handles HTTP responses from RPC servers. Parses for errors, then handles response. 
 ::  For actions that require collating multiple RPC calls, uses req-card to call out
@@ -309,7 +309,7 @@
 ++  clean-client-list
   ^-  (quip card _state)
   =/  to-kick=(set ship)
-    %-  sy
+    %-  silt
     %+  murn  ~(tap in clients.host-info)
     |=  c=ship  ^-  (unit ship)
     ?:((is-whitelisted c) ~ `c)

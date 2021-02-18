@@ -1,5 +1,5 @@
 /-  sur=btc-provider, json-rpc
-/+  *btc
+/+  *bitcoin
 ^?
 =<  [sur .]
 =,  sur
