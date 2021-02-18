@@ -171,7 +171,7 @@
         =.  +>
           =|  biz=(list blit)
           |-  ^+  +>.^$
-          ?~  liz  (done %blit biz)
+          ?~  liz  (done %blit [%hop 0] [%wyp ~] biz)
           $(liz t.liz, biz (welp biz [%lin i.liz] [%nel ~] ~))
         ::  since dill is acting on its own accord,
         ::  we %hey the term app so it may clean up.

@@ -601,7 +601,7 @@ _term_it_set_line(u3_utty* uty_u,
   _term_it_show_line(uty_u, wor_w);
 }
 
-/* _term_it_show_more(): new current line.
+/* _term_it_show_more(): render newline, moving cursor down
 */
 static void
 _term_it_show_more(u3_utty* uty_u)
@@ -1436,16 +1436,10 @@ _term_ef_blit(u3_utty* uty_u,
     } break;
 
     case c3__klr: {
-      if ( c3n == u3_Host.ops_u.tem ) {
-        _term_it_clear_line(uty_u);
-      }
       _term_it_show_stub(uty_u, u3k(u3t(blt)));
     } break;
 
     case c3__lin: {
-      if ( c3n == u3_Host.ops_u.tem ) {
-        _term_it_clear_line(uty_u);
-      }
       _term_it_show_tour(uty_u, u3k(u3t(blt)));
     } break;
 
@@ -1481,6 +1475,12 @@ _term_ef_blit(u3_utty* uty_u,
 
         _term_it_show_more(uty_u);
         _term_it_refresh_line(uty_u);
+      }
+    } break;
+
+    case c3__wyp: {
+      if ( c3n == u3_Host.ops_u.tem ) {
+        _term_it_clear_line(uty_u);
       }
     } break;
   }

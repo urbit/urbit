@@ -1059,13 +1059,14 @@
   +$  blit                                              ::  outside blit
     $%  [%bel ~]                                        ::  make a noise
         [%clr ~]                                        ::  clear the screen
-        [%hop p=$@(@ud [r=@ud c=@ud])]                  ::  set cursor row/pos
-        [%klr p=stub]                                   ::  set styled line
-        [%lin p=(list @c)]                              ::  set line at cursor
+        [%hop p=$@(@ud [r=@ud c=@ud])]                  ::  set cursor col/pos
+        [%klr p=stub]                                   ::  put styled
+        [%lin p=(list @c)]                              ::  put text at cursor
         [%nel ~]                                        ::  newline
         [%sag p=path q=*]                               ::  save to jamfile
         [%sav p=path q=@]                               ::  save to file
         [%url p=@t]                                     ::  activate url
+        [%wyp ~]                                        ::  wipe cursor line
     ==                                                  ::
   +$  dill-belt                                         ::  inside belt
     $%  belt                                            ::  outside belt

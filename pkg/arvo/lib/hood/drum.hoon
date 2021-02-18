@@ -546,7 +546,11 @@
   ::  so update the prompt mirror accordingly.
   ::
   =.  mir  [0 ~]
-  (se-blit %mor lin [%nel ~] ~)
+  ::TODO  doing hops and wyps conditionally based on the mirror state seems
+  ::      better, but doesn't cover edge cases. results in dojo's ">=" being
+  ::      rendered alongside the prompt in scrollback, for example.
+  ::      figure out a way to make that work!
+  (se-blit %mor [%hop 0] [%wyp ~] lin [%nel ~] ~)
 ::
 ++  se-dump                                           ::  print tanks
   |=  tac=(list tank)
@@ -597,7 +601,7 @@
   |=  lin=(pair @ud stub)
   ^+  +>
   ?:  =(mir lin)  +>
-  (se-blit(mir lin) %mor [%klr q.lin] [%hop p.lin] ~)
+  (se-blit(mir lin) %mor [%hop 0] [%wyp ~] [%klr q.lin] [%hop p.lin] ~)
 ::
 ++  se-just                                           ::  adjusted buffer
   |=  [pom=stub lin=(pair @ud (list @c))]
