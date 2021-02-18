@@ -2,7 +2,6 @@ import React, { Component, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import RemarkDisableTokenizers from 'remark-disable-tokenizers';
-import RemarkBreaks from 'remark-breaks';
 import urbitOb from 'urbit-ob';
 import { Text } from '@tlon/indigo-react';
 import { GroupLink } from '~/views/components/GroupLink';

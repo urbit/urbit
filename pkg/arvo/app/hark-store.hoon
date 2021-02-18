@@ -661,8 +661,7 @@
         unreads-each    (~(run by unreads-each) _~)      
         notifications  (~(run by notifications) _~)
       ==
-    =>  rebuild-cache
-    seen
+    (give:seen:rebuild-cache %read-all ~)
   ::
   ++  set-dnd
     |=  d=?

@@ -1,22 +1,19 @@
-import React from "react";
+import React from 'react';
+import { Formik, Form } from 'formik';
+
 import {
-  Box,
   ManagedTextInputField as Input,
-  ManagedCheckboxField as Checkbox,
   Col,
   Label,
-  Text,
-  Row,
-} from "@tlon/indigo-react";
-import { Formik, Form } from "formik";
+  Text
+} from '@tlon/indigo-react';
+import { Association } from '@urbit/api';
 
-import { FormError } from "~/views/components/FormError";
-import { ColorInput } from "~/views/components/ColorInput";
-import { AsyncButton } from "~/views/components/AsyncButton";
-import { uxToHex, wait } from "~/logic/lib/util";
-import GlobalApi from "~/logic/api/global";
-import { Association } from "~/types";
-import { FormSubmit } from "~/views/components/FormSubmit";
+import { FormError } from '~/views/components/FormError';
+import { ColorInput } from '~/views/components/ColorInput';
+import { uxToHex } from '~/logic/lib/util';
+import GlobalApi from '~/logic/api/global';
+import { FormSubmit } from '~/views/components/FormSubmit';
 
 interface FormSchema {
   title: string;
@@ -33,9 +30,9 @@ export function ChannelDetails(props: ChannelDetailsProps) {
   const { association, api } = props;
   const { metadata } = association;
   const initialValues: FormSchema = {
-    title: metadata?.title || "",
-    description: metadata?.description || "",
-    color: metadata?.color || "0x0",
+    title: metadata?.title || '',
+    description: metadata?.description || '',
+    color: metadata?.color || '0x0'
   };
 
   const onSubmit = async (values: FormSchema, actions) => {
@@ -47,7 +44,7 @@ export function ChannelDetails(props: ChannelDetailsProps) {
 
   return (
     <Formik initialValues={initialValues} onSubmit={onSubmit}>
-      <Form style={{ display: "contents" }}>
+      <Form style={{ display: 'contents' }}>
         <Col mb="4" flexShrink={0} gapY="4">
           <Col mb={3}>
             <Text id="details" fontSize="2" fontWeight="bold">

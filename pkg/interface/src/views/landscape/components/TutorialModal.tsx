@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from 'react';
 import _ from 'lodash';
-import { Box, Col, Row, Button, Text, Icon, Action } from "@tlon/indigo-react";
-import { useHistory } from "react-router-dom";
-import { TutorialProgress, tutorialProgress as progress } from "~/types";
+import { Box, Col, Row, Button, Text, Icon } from '@tlon/indigo-react';
+import { useHistory } from 'react-router-dom';
+import { TutorialProgress, tutorialProgress as progress } from '~/types';
 
-import { Portal } from "~/views/components/Portal";
-import useLocalState, { selectLocalState } from "~/logic/state/local";
+import { Portal } from '~/views/components/Portal';
+import useLocalState, { selectLocalState } from '~/logic/state/local';
 import {
   progressDetails,
   MODAL_HEIGHT_PX,
@@ -14,21 +14,21 @@ import {
   MODAL_HEIGHT,
   TUTORIAL_HOST,
   TUTORIAL_GROUP,
-  getTrianglePosition,
-} from "~/logic/lib/tutorialModal";
-import { getRelativePosition } from "~/logic/lib/relativePosition";
-import { StatelessAsyncButton } from "~/views/components/StatelessAsyncButton";
-import GlobalApi from "~/logic/api/global";
-import {Triangle} from "~/views/components/Triangle";
-import {ModalOverlay} from "~/views/components/ModalOverlay";
+  getTrianglePosition
+} from '~/logic/lib/tutorialModal';
+import { getRelativePosition } from '~/logic/lib/relativePosition';
+import { StatelessAsyncButton } from '~/views/components/StatelessAsyncButton';
+import GlobalApi from '~/logic/api/global';
+import { Triangle } from '~/views/components/Triangle';
+import { ModalOverlay } from '~/views/components/ModalOverlay';
 
 const localSelector = selectLocalState([
-  "tutorialProgress",
-  "nextTutStep",
-  "prevTutStep",
-  "tutorialRef",
-  "hideTutorial",
-  "set"
+  'tutorialProgress',
+  'nextTutStep',
+  'prevTutStep',
+  'tutorialRef',
+  'hideTutorial',
+  'set'
 ]);
 
 export function TutorialModal(props: { api: GlobalApi }) {
@@ -47,7 +47,7 @@ export function TutorialModal(props: { api: GlobalApi }) {
     alignX,
     alignY,
     offsetX,
-    offsetY,
+    offsetY
   } = progressDetails[tutorialProgress];
 
   const [coords, setCoords] = useState({});
@@ -56,7 +56,7 @@ export function TutorialModal(props: { api: GlobalApi }) {
   const history = useHistory();
 
   const next = useCallback( () => {
-      const idx = progress.findIndex((p) => p === tutorialProgress);
+      const idx = progress.findIndex(p => p === tutorialProgress);
       const { url } = progressDetails[progress[idx + 1]];
       nextTutStep();
       history.push(url);
@@ -64,7 +64,7 @@ export function TutorialModal(props: { api: GlobalApi }) {
     [nextTutStep, history, tutorialProgress, setCoords]
   );
   const prev = useCallback(() => {
-    const idx = progress.findIndex((p) => p === tutorialProgress);
+    const idx = progress.findIndex(p => p === tutorialProgress);
     prevTutStep();
     history.push(progressDetails[progress[idx - 1]].url);
   }, [prevTutStep, history, tutorialProgress]);
@@ -94,7 +94,6 @@ export function TutorialModal(props: { api: GlobalApi }) {
       setCoords(withMobile);
     } else {
       setCoords({});
-
     }
   }, [tutorialRef]);
 
@@ -115,12 +114,12 @@ export function TutorialModal(props: { api: GlobalApi }) {
     await props.api.groups.leaveGroup(TUTORIAL_HOST, TUTORIAL_GROUP);
   }, [props.api]);
 
-  const progressIdx = progress.findIndex((p) => p === tutorialProgress);
+  const progressIdx = progress.findIndex(p => p === tutorialProgress);
 
   useEffect(() => {
     if (
-      tutorialProgress !== "hidden" &&
-      tutorialProgress !== "done" &&
+      tutorialProgress !== 'hidden' &&
+      tutorialProgress !== 'done' &&
       tutorialRef
     ) {
       const interval = setInterval(updatePos, 100);
@@ -164,7 +163,7 @@ export function TutorialModal(props: { api: GlobalApi }) {
     );
   }
 
-  if (tutorialProgress === "hidden") {
+  if (tutorialProgress === 'hidden') {
     return null;
   }
 
@@ -191,10 +190,8 @@ export function TutorialModal(props: { api: GlobalApi }) {
         </Col>
       </ModalOverlay>
 
-    )
-
+    );
   }
-
 
   if(Object.keys(coords).length === 0) {
     return null;
@@ -208,7 +205,7 @@ export function TutorialModal(props: { api: GlobalApi }) {
         bg="white"
         zIndex={50}
         height={MODAL_HEIGHT_PX}
-        width={["100%", MODAL_WIDTH_PX]}
+        width={['100%', MODAL_WIDTH_PX]}
         borderRadius="2"
       >
         <Col
@@ -219,9 +216,9 @@ export function TutorialModal(props: { api: GlobalApi }) {
           borderRadius="2"
           p="2"
           bg="lightBlue"
-          
+
         >
-          <Triangle 
+          <Triangle
             {...triPos}
             position="absolute"
             size={16}
@@ -230,7 +227,7 @@ export function TutorialModal(props: { api: GlobalApi }) {
             height="0px"
             width="0px"
           />
-            
+
           <Box
             right="8px"
             top="8px"
@@ -248,7 +245,7 @@ export function TutorialModal(props: { api: GlobalApi }) {
               {progressIdx} of {progress.length - 2}
             </Text>
           </Col>
-          
+
           <Text lineHeight="tall">{description}</Text>
           <Row gapX="2" mt="2" justifyContent="flex-end">
             { progressIdx > 1 && (

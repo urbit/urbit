@@ -32,6 +32,7 @@ import RemoteContent from '~/views/components/RemoteContent';
 import { Mention } from '~/views/components/MentionText';
 import styled from 'styled-components';
 import useLocalState from '~/logic/state/local';
+import Timestamp from '~/views/components/Timestamp';
 
 export const DATESTAMP_FORMAT = '[~]YYYY.M.D';
 
@@ -87,12 +88,12 @@ interface ChatMessageProps {
   contacts: Contacts;
   className?: string;
   isPending: boolean;
-  style?: any;
+  style?: unknown;
   scrollWindow: HTMLDivElement;
   isLastMessage?: boolean;
   unreadMarkerRef: React.RefObject<HTMLDivElement>;
-  history: any;
-  api: any;
+  history: unknown;
+  api: GlobalApi;
   highlighted?: boolean;
   renderSigil?: boolean;
 }
@@ -254,7 +255,7 @@ export const MessageAuthor = ({
   const [showOverlay, setShowOverlay] = useState(false);
 
   const toggleOverlay = () => {
-    setShowOverlay((value) => !value);
+    setShowOverlay(value => !value);
   };
 
   const showCopyNotice = () => {

@@ -1,7 +1,7 @@
-import React from "react";
-import { Box, Button } from "@tlon/indigo-react";
+import React from 'react';
+import { Box, Button } from '@tlon/indigo-react';
 
-import GlobalApi from "../../../../api/global";
+import GlobalApi from '../../../../api/global';
 
 interface SecuritySettingsProps {
   api: GlobalApi;

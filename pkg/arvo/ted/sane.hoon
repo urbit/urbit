@@ -3,15 +3,16 @@
 =>  
 |%
 ++  strand  strand:spider
++$  input  ?(%fix %check)
 ::
 ++  supported-apps
   ^-  (list term)
-  :~  %graph-pull-hook
-      %group-pull-hook
-      %group-push-hook
+  :~  %group-push-hook
+      %group-store
   ==
 ::
 ++  poke-all-sane
+  |=  =input
   =/  m  (strand ,~)
   ^-  form:m
   =/  apps  supported-apps
@@ -19,13 +20,14 @@
   ?~  apps
     (pure:m ~)
   =*  app  i.apps
-  ;<  ~   bind:m  (poke-our app sane+!>(%sane))
+  ;<  ~   bind:m  (poke-our app sane+!>(input))
   loop(apps t.apps)
 --
 ::
 ^-  thread:spider
-|=  vase
+|=  vas=vase
 =/  m  (strand ,vase)
-;<  ~  bind:m  poke-all-sane 
-;<  ~  bind:m  (poke-our %sane noun+!>(%fix))
+=+  !<([~ in=input] vas)
+;<  ~  bind:m  (poke-all-sane in)
+;<  ~  bind:m  (poke-our %sane noun+!>(in))
 (pure:m !>("Done"))

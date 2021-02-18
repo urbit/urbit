@@ -4,11 +4,9 @@ import { Row, Box, Col, Text, Anchor, Icon, Action } from '@tlon/indigo-react';
 import { Link, useHistory } from 'react-router-dom';
 import _ from 'lodash';
 import {
-  Post,
   GraphNotifIndex,
   GraphNotificationContents,
   Associations,
-  Content,
   Rolodex,
   Groups
 } from '~/types';
@@ -34,11 +32,11 @@ const FilterBox = styled(Box)`
   background: linear-gradient(
     to bottom,
     transparent,
-    ${(p) => p.theme.colors.white}
+    ${p => p.theme.colors.white}
   );
 `;
 
-function describeNotification(description: string, plural: boolean) {
+function describeNotification(description: string, plural: boolean): string {
   switch (description) {
     case 'link':
       return `added ${pluralize('new link', plural)} to`;
@@ -190,9 +188,7 @@ const GraphNode = ({
   read,
   onRead,
   showContact = false,
-  remoteContentPolicy
-}) => {
-  const { contents } = post;
+}): ReactElement => {
   author = deSig(author);
   const history = useHistory();
 

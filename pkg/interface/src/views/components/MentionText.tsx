@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import _ from 'lodash';
 import { Text, Box } from '@tlon/indigo-react';
-import { Contact, Contacts, Content, Group } from '~/types';
+import { Contact, Contacts, Content, Group } from '@urbit/api';
 import RichText from '~/views/components/RichText';
 import { cite, useShowNickname, uxToHex } from '~/logic/lib/util';
 import OverlaySigil from '~/views/components/OverlaySigil';
