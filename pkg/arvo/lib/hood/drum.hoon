@@ -827,6 +827,7 @@
       [%tab *]  +>(..ta (se-tab p.fec))
       [%tan *]  +>(..ta (se-dump p.fec))
       [%txt *]  +>(..ta (se-text p.fec))
+      [%url *]  +>(..ta (se-text:(se-blit fec) (trip p.fec)))
     ==
   ::
   ++  ta-dog                                          ::  change cursor

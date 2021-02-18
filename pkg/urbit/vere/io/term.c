@@ -1462,20 +1462,8 @@ _term_ef_blit(u3_utty* uty_u,
     } break;
 
     case c3__url: {
-      u3_noun txt = u3t(blt);
-
-      //  XX check u3_Host.ops_u.tem ?
-      //  XX this looks to be broken,
-      //      multiple calls to _clear_line will discard the mirror state
-      //
-      if ( c3y == u3a_is_atom(txt) ) {
-        _term_it_clear_line(uty_u);
-
-        _term_it_send_cord(uty_u, u3k(txt));
-
-        _term_it_show_more(uty_u);
-        _term_it_refresh_line(uty_u);
-      }
+      //  platform-agnostically opening the default web browser from within a
+      //  c program is an unsolved problem.
     } break;
 
     case c3__wyp: {
