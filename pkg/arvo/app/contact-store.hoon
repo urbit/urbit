@@ -79,12 +79,15 @@
   ^-  (quip card _this)
   ?>  (team:title our.bowl src.bowl)
   |^
-  =^  cards  state
-    ?+  mark  (on-poke:def mark vase)
-      %contact-update  (update !<(update:store vase))
-      %import          (import q.vase)
-    ==
-  [cards this]
+  ?+  mark  (on-poke:def mark vase)
+      %contact-update
+    =^  cards  state
+      (update !<(update:store vase))
+    [cards this]
+  ::
+      %import
+    (on-load !>(;;(versioned-state q.vase)))
+  ==
   ::
   ++  update
     |=  =update:store
@@ -205,12 +208,6 @@
         [/updates /all ~]
       [%give %fact paths %contact-update !>(update)]~
     --
-  ::
-  ++  import
-    |=  arc=*
-    ^-  (quip card _state)
-    ::  note: we are purposefully wiping all state before state-4
-    [~ *state-4]
   --
 ::
 ++  on-peek
@@ -246,6 +243,9 @@
       [(slav %p i.t.t.path) i.t.t.t.path]
     =/  =ship  (slav %p i.t.t.t.t.path)
     ``json+!>(`json`b+(is-allowed:con resource ship))
+  ::
+      [%x %export ~]
+    ``noun+!>(state)
   ==
 ::
 ++  on-leave  on-leave:def
