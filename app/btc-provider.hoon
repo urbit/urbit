@@ -298,7 +298,7 @@
     =/  gs  ~(tap in groups.whitelist)
     |-
     ?~  gs  %.n
-    ?:  (~(is-member groupl bowl) user (en-path:resource i.gs))
+    ?:  (~(is-member groupl bowl) user i.gs)
       %.y
     $(gs t.gs)
     ::  .^((unit group:g) %gx ;:(weld /=group-store=/groups p /noun))
