@@ -1,6 +1,6 @@
-import React, { ReactNode, useCallback, useMemo, useState } from "react";
-import { Row, Box } from "@tlon/indigo-react";
-import _ from "lodash";
+import React, { ReactNode, useCallback, useMemo, useState } from 'react';
+import { Row, Box } from '@tlon/indigo-react';
+import _ from 'lodash';
 import {
   GraphNotificationContents,
   IndexedNotification,
@@ -9,15 +9,15 @@ import {
   GroupNotificationsConfig,
   Groups,
   Associations,
-  Contacts,
-} from "~/types";
-import GlobalApi from "~/logic/api/global";
-import { getParentIndex } from "~/logic/lib/notification";
-import { StatelessAsyncAction } from "~/views/components/StatelessAsyncAction";
-import { GroupNotification } from "./group";
-import { GraphNotification } from "./graph";
-import { BigInteger } from "big-integer";
-import { useHovering } from "~/logic/lib/util";
+  Contacts
+} from '@urbit/api';
+import GlobalApi from '~/logic/api/global';
+import { getParentIndex } from '~/logic/lib/notification';
+import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
+import { GroupNotification } from './group';
+import { GraphNotification } from './graph';
+import { BigInteger } from 'big-integer';
+import { useHovering } from '~/logic/lib/util';
 
 interface NotificationProps {
   notification: IndexedNotification;
@@ -37,7 +37,7 @@ function getMuted(
   graphs: NotificationGraphConfig
 ) {
   const { index, notification } = idxNotif;
-  if ("graph" in idxNotif.index) {
+  if ('graph' in idxNotif.index) {
     const { graph } = idxNotif.index.graph;
     if(!('graph' in notification.contents)) {
       throw new Error();
@@ -46,11 +46,11 @@ function getMuted(
 
     return _.findIndex(
       graphs?.watching || [],
-      (g) => g.graph === graph && g.index === parent
+      g => g.graph === graph && g.index === parent
     ) === -1;
   }
-  if ("group" in index) {
-    return _.findIndex(groups || [], (g) => g === index.group.group) === -1;
+  if ('group' in index) {
+    return _.findIndex(groups || [], g => g === index.group.group) === -1;
   }
   return false;
 }
@@ -77,13 +77,13 @@ function NotificationWrapper(props: {
   );
 
   const onChangeMute = useCallback(async () => {
-    const func = isMuted ? "unmute" : "mute";
+    const func = isMuted ? 'unmute' : 'mute';
     return api.hark[func](notif);
   }, [notif, api, isMuted]);
 
   const { hovering, bind } = useHovering();
 
-  const changeMuteDesc = isMuted ? "Unmute" : "Mute";
+  const changeMuteDesc = isMuted ? 'Unmute' : 'Mute';
   return (
     <Box
       width="100%"
@@ -126,7 +126,7 @@ export function Notification(props: NotificationProps) {
     </NotificationWrapper>
   );
 
-  if ("graph" in notification.index) {
+  if ('graph' in notification.index) {
     const index = notification.index.graph;
     const c: GraphNotificationContents = (contents as any).graph;
 
@@ -147,7 +147,7 @@ export function Notification(props: NotificationProps) {
       </Wrapper>
     );
   }
-  if ("group" in notification.index) {
+  if ('group' in notification.index) {
     const index = notification.index.group;
     const c: GroupNotificationContents = (contents as any).group;
     return (

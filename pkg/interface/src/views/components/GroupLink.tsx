@@ -1,12 +1,14 @@
-import React, { useEffect, useState, useLayoutEffect } from "react";
+import React, { useEffect, useState, useLayoutEffect, ReactElement } from 'react';
 
-import { Box, Text, Row, Col, Button, Action } from "@tlon/indigo-react";
-import GlobalApi from "~/logic/api/global";
-import { Associations, Groups, PropFunc } from "~/types";
-import { MetadataIcon } from "../landscape/components/MetadataIcon";
-import { JoinGroup } from "../landscape/components/JoinGroup";
-import { useModal } from "~/logic/lib/useModal";
-import { GroupSummary } from "../landscape/components/GroupSummary";
+import { Box, Text, Row, Col } from '@tlon/indigo-react';
+import { Associations, Groups } from '@urbit/api';
+
+import GlobalApi from '~/logic/api/global';
+import { MetadataIcon } from '../landscape/components/MetadataIcon';
+import { JoinGroup } from '../landscape/components/JoinGroup';
+import { useModal } from '~/logic/lib/useModal';
+import { GroupSummary } from '../landscape/components/GroupSummary';
+import { PropFunc } from '~/types';
 
 export function GroupLink(
   props: {
@@ -17,7 +19,7 @@ export function GroupLink(
     measure: () => void;
     detailed?: boolean;
   } & PropFunc<typeof Row>
-) {
+): ReactElement {
   const { resource, api, associations, groups, measure, ...rest } = props;
   const name = resource.slice(6);
   const [preview, setPreview] = useState<MetadataUpdatePreview | null>(null);
@@ -31,7 +33,7 @@ export function GroupLink(
           <GroupSummary
             metadata={preview.metadata}
             memberCount={preview.members}
-            channelCount={preview?.["channel-count"]}
+            channelCount={preview?.['channel-count']}
           />
         </Box>
       ) : (
@@ -41,7 +43,7 @@ export function GroupLink(
           api={api}
           autojoin={name}
         />
-      ),
+      )
   });
 
   useEffect(() => {

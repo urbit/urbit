@@ -1,15 +1,16 @@
-import React from "react";
-import { useField } from "formik";
+import React, { FormEvent, ReactElement } from 'react';
+import { useField } from 'formik';
+
 import {
   Col,
   Label,
   Row,
   Box,
   ErrorLabel,
-  StatelessTextInput as Input,
-} from "@tlon/indigo-react";
+  StatelessTextInput as Input
+} from '@tlon/indigo-react';
 
-import { uxToHex, hexToUx } from "~/logic/lib/util";
+import { hexToUx } from '~/logic/lib/util';
 
 type ColorInputProps = Parameters<typeof Col>[0] & {
   id: string;
@@ -17,14 +18,14 @@ type ColorInputProps = Parameters<typeof Col>[0] & {
   disabled?: boolean;
 };
 
-export function ColorInput(props: ColorInputProps) {
+export function ColorInput(props: ColorInputProps): ReactElement {
   const { id, label, caption, disabled, ...rest } = props;
   const [{ value, onBlur }, meta, { setValue }] = useField(id);
 
-  const hex = value.replace('#', '').replace("0x","").replace(".", "");
-  const padded = hex.padStart(6, "0");
+  const hex = value.replace('#', '').replace('0x','').replace('.', '');
+  const padded = hex.padStart(6, '0');
 
-  const onChange = (e: any) => {
+  const onChange = (e: FormEvent<HTMLInputElement>) => {
     let { value: newValue } = e.target as HTMLInputElement;
     newValue = newValue.replace('#', '');
     const valid = newValue.match(/^(\d|[a-f]|[A-F]){0,6}$/);
@@ -35,7 +36,6 @@ export function ColorInput(props: ColorInputProps) {
     const result = hexToUx(newValue);
     setValue(result);
   };
-
 
   return (
     <Box display="flex" flexDirection="column" {...rest}>
@@ -78,7 +78,7 @@ export function ColorInput(props: ColorInputProps) {
           />
         </Box>
       </Row>
-      <ErrorLabel mt="2" hasError={!!(meta.touched && meta.error)}>
+      <ErrorLabel mt="2" hasError={Boolean(meta.touched && meta.error)}>
         {meta.error}
       </ErrorLabel>
     </Box>

@@ -2,23 +2,23 @@ import React, {
   useCallback,
   useState,
   ReactNode,
-  SyntheticEvent,
   useEffect,
   useRef,
-} from "react";
+  ReactElement
+} from 'react';
+import { useField } from 'formik';
+import Mousetrap from 'mousetrap';
+
 import {
-  Box,
   Label,
   Row,
   Col,
   StatelessTextInput as Input,
   ErrorLabel
-} from "@tlon/indigo-react";
-import { useField } from "formik";
-import Mousetrap from "mousetrap";
-import * as Yup from "yup";
+} from '@tlon/indigo-react';
 
-function Chip(props: { children: ReactNode }) {
+
+function Chip(props: { children: ReactNode }): ReactElement {
   return (
     <Row
       alignItems="center"
@@ -42,12 +42,12 @@ interface ChipInputProps {
   breakOnSpace?: boolean;
 }
 
-export function ChipInput(props: ChipInputProps) {
+export function ChipInput(props: ChipInputProps): ReactElement {
   const { id, label, caption, placeholder } = props;
-  const [{ onBlur, value }, meta, { setError, setValue }] = useField<string[]>(
+  const [{ onBlur, value }, meta, { setValue }] = useField<string[]>(
     id
   );
-  const [newChip, setNextChip] = useState("");
+  const [newChip, setNextChip] = useState('');
   const onChange = useCallback(
     (e: any) => {
       setNextChip(e.target.value);
@@ -57,7 +57,7 @@ export function ChipInput(props: ChipInputProps) {
 
   const addNewChip = useCallback(() => {
     setValue([...value, newChip]);
-    setNextChip("");
+    setNextChip('');
   }, [setValue, value, newChip, setNextChip]);
 
   const removeLastChip = useCallback(() => {
@@ -70,18 +70,18 @@ export function ChipInput(props: ChipInputProps) {
       return () => {};
     }
     const mousetrap = Mousetrap(inputRef.current);
-    mousetrap.bind("backspace", (e) => {
+    mousetrap.bind('backspace', (e) => {
       if (newChip.length === 0) {
         removeLastChip();
         return false;
       }
       return true;
     });
-    mousetrap.bind("tab", (e) => {
+    mousetrap.bind('tab', (e) => {
       addNewChip();
       return false;
     });
-    mousetrap.bind("space", (e) => {
+    mousetrap.bind('space', (e) => {
       if (props.breakOnSpace) {
         addNewChip();
         return false;
@@ -89,9 +89,9 @@ export function ChipInput(props: ChipInputProps) {
       return true;
     });
     return () => {
-      mousetrap.unbind("tab");
-      mousetrap.unbind("backspace");
-      mousetrap.unbind("space");
+      mousetrap.unbind('tab');
+      mousetrap.unbind('backspace');
+      mousetrap.unbind('space');
     };
   }, [inputRef.current, addNewChip, newChip]);
 
@@ -128,7 +128,7 @@ export function ChipInput(props: ChipInputProps) {
           py="1"
         />
       </Row>
-      <ErrorLabel mt="2" hasError={!!(meta.touched && meta.error)}>
+      <ErrorLabel mt="2" hasError={Boolean(meta.touched && meta.error)}>
         {meta.error}
       </ErrorLabel>
 

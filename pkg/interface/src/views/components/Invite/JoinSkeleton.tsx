@@ -1,14 +1,15 @@
-import React, { ReactNode } from "react";
-import { Col, Row, SegmentedProgressBar, Text, Rule } from "@tlon/indigo-react";
-import { JoiningStatus } from "~/views/apps/notifications/joining";
-import { JoinProgress, PropFunc } from "~/types";
+import React, { ReactElement, ReactNode } from 'react';
+import { Col, Rule } from '@tlon/indigo-react';
+import { JoiningStatus } from '~/views/apps/notifications/joining';
+import { JoinProgress } from '@urbit/api';
+import { PropFunc } from '~/types/util';
 
 type JoinSkeletonProps = {
   children: ReactNode;
   status: JoinProgress;
 } & PropFunc<typeof Col>;
 
-export function JoinSkeleton(props: JoinSkeletonProps) {
+export function JoinSkeleton(props: JoinSkeletonProps): ReactElement {
   const { children, status, ...rest } = props;
   return (
     <>

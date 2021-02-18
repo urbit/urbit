@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo</title>
+    <script src="browser.js"></script>
+    <style>
+        @import url("https://rsms.me/inter/inter.css");
+        @font-face {
+            font-family: "Source Code Pro";
+            src: url("https://storage.googleapis.com/media.urbit.org/fonts/scp-regular.woff");
+            font-weight: 400;
+        }
+        body {
+            margin: 0 auto;
+            max-width: 70ch;
+            padding: 2ch;
+            font-family: 'Inter', sans-serif;
+        }
+        #mylog {
+            white-space: pre-wrap;
+            padding: 2ch;
+            background: black;
+            color: white;
+            font-family: 'Source Code Pro', monospace;
+        }
+        #mylog div {
+            margin-bottom: 1rem;
+        }
+        .chunk {
+            border-bottom: 1px dashed currentColor;
+        }
+    </style>
+</head>
+<body>
+    <details>
+        <summary>Show instructions</summary>
+    <p>Assuming you are running a fakezod on port 8080, run</p>
+    <code id="instructions">|cors-approve '{window.location.origin}'</code>
+    <p>in its dojo.</p>
+    <p>Press the button to run the code below. Output will be logged. You should see <code>&lt; ~zod: opening airlock</code> in your dojo.</code> Create a chat and send a message to see the events logged.</p>
+    <pre>window.airlock = await Urbit.authenticate({
+    ship: 'zod',
+    url: 'localhost:8080',
+    code: 'lidlut-tabwed-pillex-ridrup',
+    verbose: true
+});
+window.airlock.subscribe('chat-view', '/primary', { event: console.log });</pre>
+    </details>
+
+    <button id="blastoff" onclick="blastOff()">Blast Off</button>
+    <pre id="mylog">
+
+    </pre>
+</body>
+<script>
+    var baseLogFunction = console.log;
+    console.log = function(){
+        baseLogFunction.apply(console, arguments);
+        var chunk = document.createElement('div');
+        chunk.className = 'chunk';
+
+        var args = Array.prototype.slice.call(arguments);
+        for(var i=0;i<args.length;i++){
+            const val = typeof args[i] === 'string' ? args[i] : JSON.stringify(args[i]);
+            var node = createLogNode(val);
+            chunk.appendChild(node);
+        }
+        document.querySelector("#mylog").insertBefore(chunk, document.querySelector("#mylog").firstChild);
+    }
+
+    function createLogNode(message){
+        var node = document.createElement("div");
+        node.className = 'message';
+        var textNode = document.createTextNode(message);
+        node.appendChild(textNode);
+        return node;
+    }
+
+    window.onerror = function(message, url, linenumber) {
+        console.log("JavaScript error: " + message + " on line " +
+            linenumber + " for " + url);
+    }
+    const instructions = document.getElementById('instructions');
+    instructions.innerText = instructions.innerText.replace('{window.location.origin}', window.location.origin);
+    async function blastOff() {
+        window.airlock = await Urbit.authenticate({
+            ship: 'zod',
+            url: 'localhost:8080',
+            code: 'lidlut-tabwed-pillex-ridrup',
+            verbose: true
+        });
+        window.airlock.subscribe('chat-view', '/primary', { event: console.log });
+        document.body.removeChild(document.getElementById('blastoff'))
+    }
+</script>
+</html>

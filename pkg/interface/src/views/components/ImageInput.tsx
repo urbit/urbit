@@ -1,4 +1,5 @@
-import React, { useRef, useCallback, useState } from "react";
+import React, { useRef, useCallback, ReactElement } from 'react';
+import { useField } from 'formik';
 
 import {
   Box,
@@ -8,10 +9,10 @@ import {
   Label,
   ErrorLabel,
   BaseInput
-} from "@tlon/indigo-react";
-import { useField } from "formik";
-import { S3State } from "~/types/s3-update";
-import useS3 from "~/logic/lib/useS3";
+} from '@tlon/indigo-react';
+
+import { S3State } from '~/types/s3-update';
+import useS3 from '~/logic/lib/useS3';
 
 type ImageInputProps = Parameters<typeof Box>[0] & {
   id: string;
@@ -20,8 +21,8 @@ type ImageInputProps = Parameters<typeof Box>[0] & {
   placeholder?: string;
 };
 
-export function ImageInput(props: ImageInputProps) {
-  const { id, label, s3, caption, placeholder, ...rest } = props;
+export function ImageInput(props: ImageInputProps): ReactElement {
+  const { id, label, s3, caption, placeholder } = props;
 
   const { uploadDefault, canUpload, uploading } = useS3(s3);
 
@@ -57,7 +58,7 @@ export function ImageInput(props: ImageInputProps) {
       ) : null}
       <Row mt="2" alignItems="flex-end">
         <Input
-          type={"text"}
+          type={'text'}
           hasError={meta.touched && meta.error !== undefined}
           placeholder={placeholder}
           {...field}
@@ -72,10 +73,10 @@ export function ImageInput(props: ImageInputProps) {
               onClick={onClick}
               flexShrink={0}
             >
-              {uploading ? "Uploading" : "Upload"}
+              {uploading ? 'Uploading' : 'Upload'}
             </Button>
             <BaseInput
-              style={{ display: "none" }}
+              style={{ display: 'none' }}
               type="file"
               id="fileElement"
               ref={ref}
@@ -85,7 +86,7 @@ export function ImageInput(props: ImageInputProps) {
           </>
         )}
       </Row>
-      <ErrorLabel mt="2" hasError={!!(meta.touched && meta.error)}>
+      <ErrorLabel mt="2" hasError={Boolean(meta.touched && meta.error)}>
         {meta.error}
       </ErrorLabel>
     </Box>

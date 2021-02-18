@@ -1,0 +1,18 @@
+{
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist", "@types"],
+  "compilerOptions": {
+	  "outDir": "./dist/esm",
+    "module": "ES2020",
+    "noImplicitAny": true,
+    "target": "ES2020",
+    "pretty": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "declaration": true,
+    "sourceMap": true,
+    "strict": false
+    // "lib": ["ES2020"],
+  }
+}

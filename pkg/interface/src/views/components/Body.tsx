@@ -1,6 +1,6 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode } from 'react';
 
-import { Box } from "@tlon/indigo-react";
+import { Box } from '@tlon/indigo-react';
 
 export function Body(
   props: { children: ReactNode } & Parameters<typeof Box>[0]
@@ -14,7 +14,7 @@ export function Body(
         width="100%"
         borderRadius={2}
         border={[0, 1]}
-        borderColor={["washedGray", "washedGray"]}
+        borderColor={['washedGray', 'washedGray']}
         {...boxProps}
       >
         {props.children}
