@@ -46,6 +46,6 @@ The below calls will print RPC results.
 |commit %home
 -test %/tests/lib/bip158 ~
 -test %/tests/lib/btc-wallet ~
--test %/tests/lib/btc ~
+-test %/tests/lib/bitcoin ~
 ```
 

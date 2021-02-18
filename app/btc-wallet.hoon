@@ -1,10 +1,11 @@
+
 ::  btc-wallet
 ::
 ::  Scrys
 ::  x/scanned: (list xpub) of all scanned wallets
 ::  x/balance/xpub: balance (in sats) of wallet
 /-  *btc-wallet
-/+  dbug, default-agent, *btc-wallet, bp=btc-provider, *btc, bip32
+/+  dbug, default-agent, *btc-wallet, bp=btc-provider, *bitcoin, bip32
 |%
 ++  defaults
   |%
@@ -26,7 +27,7 @@
 +$  state-0
   $:  %0
       prov=(unit provider)
-      walts=(map xpub:btc walt)
+      walts=(map xpub walt)
       =btc-state
       =history
       curr-xpub=(unit xpub)
@@ -58,7 +59,7 @@
       state
     :*  %0
         ~
-        *(map xpub:btc walt)
+        *(map xpub walt)
         *^btc-state
         *^history
         ~
@@ -82,10 +83,17 @@
   ^-  (quip card _this)
   =^  cards  state
   ?+  mark  (on-poke:def mark vase)
-      %btc-wallet-action
-    (handle-action:hc !<(action vase))
       %btc-wallet-command
+    ?>  =(our.bowl src.bowl)
     (handle-command:hc !<(command vase))
+    ::
+      %btc-wallet-action
+    ?<  =(our.bowl src.bowl)
+    (handle-action:hc !<(action vase))
+    ::
+      %btc-wallet-internal
+    ?>  =(our.bowl src.bowl)
+    (handle-internal:hc !<(internal vase))
   ==
   [cards this]
 ++  on-peek
@@ -96,7 +104,7 @@
     ``noun+!>(scanned-wallets)
   ::
       [%x %balance @ ~]
-    ``noun+!>((balance:hc (xpub:btc +>-.pax)))
+    ``noun+!>((balance:hc (xpub +>-.pax)))
   ==
 ++  on-agent
   |=  [=wire =sign:agent:gall]
@@ -132,7 +140,6 @@
 ++  handle-command
   |=  comm=command
   ^-  (quip card _state)
-  ?>  =(our.bowl src.bowl)
   ?-  -.comm
       %set-provider
     =*  sub-card
@@ -173,10 +180,9 @@
     ?<  ?=(%pawn (clan:title payee.comm))
     ?<  is-broadcasting
     :_  state(poym ~, feybs (~(put by feybs) payee.comm feyb.comm))
-     ~[(poke-us payee.comm [%gen-pay-address value.comm])]
+     ~[(poke-peer payee.comm [%gen-pay-address value.comm])]
     ::
       %broadcast-tx
-    ?>  =(src.bowl our.bowl)
     ?~  prov  ~|("Provider not connected" !!)
     =+  signed=(to-hexb txhex.comm)
     =/  tx-match=?
@@ -194,75 +200,25 @@
   |=  act=action
   ^-  (quip card _state)
   ?-  -.act
-      %add-poym-raw-txi
-    ?>  =(src.bowl our.bowl)
-    ?~  poym  `state
-    =.  txis.u.poym
-      (update-poym-txis txis.u.poym +.act)
-    :_  state
-    =+  pb=~(to-psbt txb u.poym)
-    ?~  pb  ~
-    =+  vb=~(vbytes txb u.poym)
-    =+  fee=~(fee txb u.poym)
-    ~&  >>  "{<vb>} vbytes, {<(div fee vb)>} sats/byte, {<fee>} sats fee"
-    %-  (slog [%leaf "PSBT: {<u.pb>}"]~)
-    ~
-    ::  delete an incoming/outgoing payment when we see it included in a tx
-    ::
-      %close-pym
-    ?>  =(src.bowl our.bowl)
-    =^  cards  state
-      ?.  included.ti.act
-        `state
-      ?:  (~(has by pend.piym) txid.ti.act)
-        (piym-to-history ti.act)
-      ?:  (poym-has-txid txid.ti.act)
-        (poym-to-history ti.act)
-      `state
-    :-  cards
-    (handle-tx-info ti.act)
-    ::
-      %fail-broadcast-tx
-    ?>  =(src.bowl our.bowl)
-    ~&  >>>  "%fail-broadcast-tx"
-    `state(poym ~)
-    ::
-      %succeed-broadcast-tx
-    ?>  =(src.bowl our.bowl)
-    ~&  >  "%succeed-broadcast-tx"
-    :_  state
-    ?~  prov  ~
-    :-  (poke-provider [%tx-info txid.act])
-    ?~  poym          ~
-    ?~  payee.u.poym  ~
-    :_  ~
-    %-  poke-us
-    :*  u.payee.u.poym
-        %expect-payment
-        txid.act
-        value:(snag 0 txos.u.poym)
-    ==
-    ::  can't pay yourself; comets can't pay (could spam address requests)
-    ::  must have curr-wallet set
+    ::  comets can't pay (could spam address requests)
     ::  reuses payment address for ship if ship in piym already
     ::
       %gen-pay-address
-    ~|  "Can't pay ourselves; no comets"
-    ?<  =(src.bowl our.bowl)
+    ~|  "no comets"
     ?<  ?=(%pawn (clan:title src.bowl))
-    =^  cards  state
-      (reuse-address src.bowl value.act)
-    ?^  cards  [cards state]
-    =+  f=(fam src.bowl)
+    ?~  curr-xpub  ~|("btc-wallet: no curr-xpub set" !!)
+    |^
+    =^  cards  state  reuse-address
+    ?^  cards  [cards state]             ::  if cards returned, means we already have an address
+    =+  f=(fam our.bowl now.bowl src.bowl)
     =+  n=(~(gut by num-fam.piym) f 0)
-    ?~  curr-xpub  ~|("btc-walle: no curr-xpub set" !!)
     ?:  (gte n fam-limit.params)
       ~|("More than {<fam-limit.params>} addresses for moons + planet" !!)
+
     =.  state  state(num-fam.piym (~(put by num-fam.piym) f +(n)))
-    |^
     =^  a=address  state
       (generate-address u.curr-xpub %0)
-    :-  ~[(poke-us src.bowl [%recv-pay-address a value.act])]
+    :-  ~[(poke-peer src.bowl [%recv-pay-address a value.act])]
     state(ps.piym (~(put by ps.piym) src.bowl [~ u.curr-xpub a src.bowl value.act]))
     ::
     ++  generate-address
@@ -273,6 +229,16 @@
       =/  [addr=address =idx w=walt]
         ~(gen-address wad u.uw chyg)
       [addr state(walts (~(put by walts) xpub w))]
+    ::
+    ++  reuse-address
+      ^-  (quip card _state)
+      =*  payer  src.bowl
+      =+  p=(~(get by ps.piym) payer)
+      ?~  p  `state
+      ?^  pend.u.p  ~|("%gen-address: {<payer>} already has pending payment to us" !!)
+      =+  newp=u.p(value value.act)
+      :_  state(ps.piym (~(put by ps.piym) payer newp))
+      ~[(poke-peer payer [%recv-pay-address address.newp value.act])]
     --
     ::
       %recv-pay-address
@@ -301,7 +267,7 @@
       ::  if no change, return txbu; else add change output to txbu
       ::
       ?~  chng  [tb state]
-      =/  [addr=address:btc =idx w=walt]
+      =/  [addr=address =idx w=walt]
         ~(nixt-address wad u.uw %1)
       :-  `(~(add-output txb u.tb) addr u.chng `(~(hdkey wad w %1) idx))
       state(walts (~(put by walts) xpub w))
@@ -329,6 +295,60 @@
           =(value.p value.act)
       ==
     --
+  ==
+::
+++  handle-internal
+  |=  intr=internal
+  ^-  (quip card _state)
+  ?-    -.intr
+        %add-poym-raw-txi
+    ?>  =(src.bowl our.bowl)
+    ?~  poym  `state
+    =.  txis.u.poym
+      (update-poym-txis txis.u.poym +.intr)
+    :_  state
+    =+  pb=~(to-psbt txb u.poym)
+    ?~  pb  ~
+    =+  vb=~(vbytes txb u.poym)
+    =+  fee=~(fee txb u.poym)
+    ~&  >>  "{<vb>} vbytes, {<(div fee vb)>} sats/byte, {<fee>} sats fee"
+    %-  (slog [%leaf "PSBT: {<u.pb>}"]~)
+    ~
+    ::  delete an incoming/outgoing payment when we see it included in a tx
+    ::
+      %close-pym
+    ?>  =(src.bowl our.bowl)
+    =^  cards  state
+      ?.  included.ti.intr
+        `state
+      ?:  (~(has by pend.piym) txid.ti.intr)
+        (piym-to-history ti.intr)
+      ?:  (poym-has-txid txid.ti.intr)
+        (poym-to-history ti.intr)
+      `state
+    :-  cards
+    (handle-tx-info ti.intr)
+    ::
+      %fail-broadcast-tx
+    ?>  =(src.bowl our.bowl)
+    ~&  >>>  "%fail-broadcast-tx"
+    `state(poym ~)
+    ::
+      %succeed-broadcast-tx
+    ?>  =(src.bowl our.bowl)
+    ~&  >  "%succeed-broadcast-tx"
+    :_  state
+    ?~  prov  ~
+    :-  (poke-provider [%tx-info txid.intr])
+    ?~  poym          ~
+    ?~  payee.u.poym  ~
+    :_  ~
+    %-  poke-peer
+    :*  u.payee.u.poym
+        %expect-payment
+        txid.intr
+        value:(snag 0 txos.u.poym)
+    ==
   ==
 ::
 ::  +handle-provider-status: handle connectivity updates from provider
@@ -375,8 +395,71 @@
           (retry-txs network)
           (retry-scans network)
       ==
-      (retry-pend-piym network)
-  --
+    (retry-pend-piym network)
+  ::
+  ++  retry-scans
+    |=  =network
+    ^-  (list card)
+    %-  zing
+    %+  murn  ~(tap by scans)
+    |=  [[=xpub =chyg] =batch]
+    ?.  =(network network:(~(got by walts) xpub))  ~
+    `-:(req-scan batch xpub chyg)
+  ::  +retry-addrs: get info on addresses with unconfirmed UTXOs
+  ::
+  ++  retry-addrs
+    |=  =network
+    ^-  (list card)
+    %-  zing
+    %+  murn  ~(val by walts)
+    |=  w=walt
+    ?.  =(network network.w)  ~
+    ^-  (unit (list card))
+    :-  ~
+    %+  murn  ~(tap by wach.w)
+    |=  [a=address ad=addi]
+    ?:  %+  levy  ~(tap in utxos.ad)
+        |=(u=utxo (gth height.u (sub block.btc-state confs.w)))
+      ~
+    `(poke-provider [%address-info a])
+  ::  +retry-txs: get info on txs without enough confirmations
+  ::
+  ++  retry-txs
+    |=  =network
+    ^-  (list card)
+    %+  murn  ~(tap by history)
+    |=  [=txid =hest]
+    =/  w  (~(get by walts) xpub.hest)
+    ?~  w  ~
+    ?.  =(network network.u.w)  ~
+    ?:  (gte confs.hest confs.u.w)  ~
+    `(poke-provider [%tx-info txid])
+  ::
+  ++  retry-poym
+    |=  =network
+    ^-  (list card)
+    ?~  poym  ~
+    =/  w  (~(get by walts) xpub.u.poym)
+    ?~  w  ~
+    ?.  =(network network.u.w)  ~
+    %+  weld
+      ?~  signed-tx.u.poym  ~
+      ~[(poke-provider [%broadcast-tx u.signed-tx.u.poym])]
+    %+  turn  txis.u.poym
+    |=  =txi
+    (poke-provider [%raw-tx ~(get-txid txb u.poym)])
+  ::  +retry-pend-piym: check whether txids in pend-piym are in mempool
+  ::
+  ++  retry-pend-piym
+    |=  =network
+    ^-  (list card)
+    %+  murn  ~(tap by pend.piym)
+    |=  [=txid p=payment]
+    =/  w  (~(get by walts) xpub.p)
+    ?~  w  ~
+    ?.  =(network network.u.w)  ~
+    `(poke-provider [%tx-info txid])
+  -- 
 ::
 ++  handle-provider-update
   |=  upd=update:bp
@@ -389,12 +472,12 @@
     (handle-address-info address.p.upd utxos.p.upd used.p.upd)
     ::
       %tx-info
-    :-  ~[(poke-us our.bowl [%close-pym info.p.upd])]
+    :-  ~[(poke-internal [%close-pym info.p.upd])]
     (handle-tx-info info.p.upd)
     ::
       %raw-tx
     :_  state
-    ~[(poke-us our.bowl [%add-poym-raw-txi +.p.upd])]
+    ~[(poke-internal [%add-poym-raw-txi +.p.upd])]
     ::
       %broadcast-tx
     ?~  poym  `state
@@ -402,8 +485,8 @@
       `state
     :_  state
     ?:  ?|(broadcast.p.upd included.p.upd)
-      ~[(poke-us our.bowl [%succeed-broadcast-tx txid.p.upd])]
-    ~[(poke-us our.bowl [%fail-broadcast-tx txid.p.upd])]
+      ~[(poke-internal [%succeed-broadcast-tx txid.p.upd])]
+    ~[(poke-internal [%fail-broadcast-tx txid.p.upd])]
   ==
 ::
 ++  handle-tx-info
@@ -412,7 +495,7 @@
   |^
   =/  h  (~(get by history) txid.ti)
   =/  our-addrs=(set address)             ::  all our addresses in inputs/outputs of tx
-    %-  sy
+    %-  silt
     %+  skim
       %+  turn  (weld inputs.ti outputs.ti)
       |=(=val:tx address.val)
@@ -446,7 +529,7 @@
       ==
   ::
   ++  is-our-ship
-    |=  [as=(set address:btc) v=val:tx:btc]
+    |=  [as=(set address) v=val:tx]
     ^-  [=val:tx s=(unit ship)]
     [v ?:((~(has in as) address.v) `our.bowl ~)]
   ::
@@ -527,7 +610,7 @@
   |=  [=xpub endpoint=idx]
   ^-  (quip card _state)
   =/  b=batch
-    [(sy (gulf 0 endpoint)) endpoint %.n]
+    [(silt (gulf 0 endpoint)) endpoint %.n]
   =^  cards0  state  (req-scan b xpub %0)
   =^  cards1  state  (req-scan b xpub %1)
   [(weld cards0 cards1) state]
@@ -544,7 +627,7 @@
     `state
   =/  w=walt  (~(got by walts) xpub)
   =/  newb=batch
-    :*  (sy (gulf +(endpoint.b) (add endpoint.b max-gap.w)))
+    :*  (silt (gulf +(endpoint.b) (add endpoint.b max-gap.w)))
         (add endpoint.b max-gap.w)
         %.n
     ==
@@ -587,20 +670,6 @@
 ::  piym/poym
 ::  Utilities for Incoming/Outgoing Payments
 ::
-::
-::  +reuse-address
-::   - if piym already has address for payer, replace address and return to payer
-::   - if payment is pending, crash. Shouldn't be getting an address request
-::
-++  reuse-address
-  |=  [payer=ship value=sats]
-  ^-  (quip card _state)
-  =+  p=(~(get by ps.piym) payer)
-  ?~  p  `state
-  ?^  pend.u.p  ~|("%gen-address: {<payer>} already has pending payment to us" !!)
-  =+  newp=u.p(value value)
-  :_  state(ps.piym (~(put by ps.piym) payer newp))
-  ~[(poke-us payer [%recv-pay-address address.newp value])]
 ::
 ++  poym-has-txid
   |=  txid=hexb
@@ -703,13 +772,6 @@
           [o `payer]
      ==
   (~(put by history) txid.hest hest)
-::  +fam: planet parent if s is a moon
-::
-++  fam
-  |=  s=ship
-  ^-  ship
-  ?.  =(%earl (clan:title s))  s
-  (sein:title our.bowl now.bowl s)
 ::  +update-pend.piym
 ::   - set pend.payment to txid (lock)
 ::   - add txid to pend.piym
@@ -740,69 +802,6 @@
 ::  Card Builders and Pokers
 ::
 ::
-++  retry-scans
-  |=  =network
-  ^-  (list card)
-  %-  zing
-  %+  murn  ~(tap by scans)
-  |=  [[=xpub =chyg] =batch]
-  ?.  =(network network:(~(got by walts) xpub))  ~
-  `-:(req-scan batch xpub chyg)
-::  +retry-addrs: get info on addresses with unconfirmed UTXOs
-::
-++  retry-addrs
-  |=  =network
-  ^-  (list card)
-  %-  zing
-  %+  murn  ~(val by walts)
-  |=  w=walt
-  ?.  =(network network.w)  ~
-  ^-  (unit (list card))
-  :-  ~
-  %+  murn  ~(tap by wach.w)
-  |=  [a=address ad=addi]
-  ?:  %+  levy  ~(tap in utxos.ad)
-      |=(u=utxo (gth height.u (sub block.btc-state confs.w)))
-    ~
-  `(poke-provider [%address-info a])
-::  +retry-txs: get info on txs without enough confirmations
-::
-++  retry-txs
-  |=  =network
-  ^-  (list card)
-  %+  murn  ~(tap by history)
-  |=  [=txid =hest]
-  =/  w  (~(get by walts) xpub.hest)
-  ?~  w  ~
-  ?.  =(network network.u.w)  ~
-  ?:  (gte confs.hest confs.u.w)  ~
-  `(poke-provider [%tx-info txid])
-::
-++  retry-poym
-  |=  =network
-  ^-  (list card)
-  ?~  poym  ~
-  =/  w  (~(get by walts) xpub.u.poym)
-  ?~  w  ~
-  ?.  =(network network.u.w)  ~
-  %+  weld
-    ?~  signed-tx.u.poym  ~
-    ~[(poke-provider [%broadcast-tx u.signed-tx.u.poym])]
-  %+  turn  txis.u.poym
-  |=  =txi
-  (poke-provider [%raw-tx ~(get-txid txb u.poym)])
-::  +retry-pend-piym: check whether txids in pend-piym are in mempool
-::
-++  retry-pend-piym
-  |=  =network
-  ^-  (list card)
-  %+  murn  ~(tap by pend.piym)
-  |=  [=txid p=payment]
-  =/  w  (~(get by walts) xpub.p)
-  ?~  w  ~
-  ?.  =(network network.u.w)  ~
-  `(poke-provider [%tx-info txid])
-::
 ++  poke-provider
   |=  [act=action:bp]
   ^-  card
@@ -812,13 +811,20 @@
       %poke   %btc-provider-action  !>([act])
   ==
 ::
-++  poke-us
+++  poke-peer
   |=  [target=ship act=action]
   ^-  card
   :*  %pass  /[(scot %da now.bowl)]  %agent
       [target %btc-wallet]  %poke
       %btc-wallet-action  !>(act)
   ==
+++  poke-internal
+  |=  [intr=internal]
+  ^-  card
+  :*  %pass  /[(scot %da now.bowl)]  %agent
+      [our.bowl %btc-wallet]  %poke
+      %btc-wallet-internal  !>(intr)
+  == 
 ::
 ++  is-broadcasting
   ^-  ?
