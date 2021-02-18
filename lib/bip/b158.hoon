@@ -1,4 +1,4 @@
-/+  *btc
+/+  *bitcoin
 |%
 ++  params
   |%
