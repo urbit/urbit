@@ -35,8 +35,20 @@ import useLocalState from '~/logic/state/local';
 
 export const DATESTAMP_FORMAT = '[~]YYYY.M.D';
 
-export const DayBreak = ({ when }) => (
-  <Row px={2} mt='-16px' height={5} justifyContent='center' alignItems='center'>
+interface DayBreakProps {
+  when: string;
+  shimTop?: boolean;
+}
+
+export const DayBreak = ({ when, shimTop = false }: DayBreakProps) => (
+  <Row
+    px={2}
+    height={5}
+    mb={2}
+    justifyContent='center'
+    alignItems='center'
+    mt={shimTop ? '-8px' : '0'}
+  >
     <Rule borderColor='lightGray' />
     <Text gray flexShrink='0' fontSize={0} px={2}>
       {moment(when).calendar(null, { sameElse: DATESTAMP_FORMAT })}
@@ -50,6 +62,7 @@ export const UnreadMarker = React.forwardRef(({ dayBreak, when }, ref) => (
     position='absolute'
     ref={ref}
     px={2}
+    mt={2}
     height={5}
     justifyContent='center'
     alignItems='center'
@@ -178,7 +191,9 @@ export default class ChatMessage extends Component<ChatMessageProps> {
         className={containerClass}
         style={style}
       >
-        {dayBreak && !isLastRead ? <DayBreak when={msg['time-sent']} /> : null}
+        {dayBreak && !isLastRead ? (
+          <DayBreak when={msg['time-sent']} shimTop={renderSigil} />
+        ) : null}
         {renderSigil ? (
           <>
             <MessageAuthor pb={'2px'} {...messageProps} />
@@ -395,7 +410,7 @@ export const Message = ({
                 <Box
                   flexShrink={0}
                   fontSize={1}
-                  my={2}
+                  mt={2}
                   lineHeight='20px'
                   color='black'
                 >
