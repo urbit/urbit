@@ -20,6 +20,7 @@ import GlobalApi from '~/logic/api/global';
 import { getSnippet } from '~/logic/lib/publish';
 import { MentionText } from '~/views/components/MentionText';
 import { MessageWithoutSigil } from '../chat/components/ChatMessage';
+import Timestamp from '~/views/components/Timestamp';
 
 function getGraphModuleIcon(module: string): string {
   if (module === 'link') {
