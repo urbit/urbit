@@ -1,6 +1,6 @@
-import { useEffect, RefObject, useRef, useState } from "react";
-import _ from "lodash";
-import usePreviousValue from "./usePreviousValue";
+import { useEffect, RefObject, useRef, useState } from 'react';
+import _ from 'lodash';
+import usePreviousValue from './usePreviousValue';
 
 export function distanceToBottom(el: HTMLElement) {
   const { scrollTop, scrollHeight, clientHeight } = el;
@@ -40,7 +40,6 @@ export function useLazyScroll(
     }
   }, [count]);
 
-
   useEffect(() => {
     if (!ref.current) {
       return;
@@ -54,13 +53,12 @@ export function useLazyScroll(
       loadUntil(el);
     };
 
-    ref.current.addEventListener("scroll", onScroll, { passive: true });
+    ref.current.addEventListener('scroll', onScroll, { passive: true });
 
     return () => {
-      ref.current?.removeEventListener("scroll", onScroll);
+      ref.current?.removeEventListener('scroll', onScroll);
     };
   }, [ref?.current, count]);
-  
 
   return { isDone, isLoading };
 }

@@ -1,30 +1,25 @@
-import React from "react";
-import * as Yup from "yup";
+import React, { ReactElement } from 'react';
+import * as Yup from 'yup';
 import _ from 'lodash';
+import { Formik } from 'formik';
+import { useHistory } from 'react-router-dom';
 
 import {
   ManagedForm as Form,
   ManagedTextInputField as Input,
   ManagedCheckboxField as Checkbox,
-  Center,
   Col,
-  Box,
   Text,
   Row,
-  Button,
-} from "@tlon/indigo-react";
-import { Formik, FormikHelpers } from "formik";
-import { useHistory } from "react-router-dom";
+} from '@tlon/indigo-react';
 
-import { uxToHex } from "~/logic/lib/util";
-import { Sigil } from "~/logic/lib/sigil";
-import { AsyncButton } from "~/views/components/AsyncButton";
-import { ColorInput } from "~/views/components/ColorInput";
-import { ImageInput } from "~/views/components/ImageInput";
-import { MarkdownField } from "~/views/apps/publish/components/MarkdownField";
-import { resourceFromPath } from "~/logic/lib/group";
-import GroupSearch from "~/views/components/GroupSearch";
-
+import { uxToHex } from '~/logic/lib/util';
+import { AsyncButton } from '~/views/components/AsyncButton';
+import { ColorInput } from '~/views/components/ColorInput';
+import { ImageInput } from '~/views/components/ImageInput';
+import { MarkdownField } from '~/views/apps/publish/components/MarkdownField';
+import { resourceFromPath } from '~/logic/lib/group';
+import GroupSearch from '~/views/components/GroupSearch';
 
 const formSchema = Yup.object({
   nickname: Yup.string(),
@@ -45,8 +40,7 @@ const emptyContact = {
   isPublic: false
 };
 
-
-export function EditProfile(props: any) {
+export function EditProfile(props: any): ReactElement {
   const { contact, ship, api, isPublic } = props;
   const history = useHistory();
   if (contact) {
@@ -58,10 +52,10 @@ export function EditProfile(props: any) {
     try {
       await Object.keys(values).reduce((acc, key) => {
         console.log(key);
-        const newValue = key !== "color" ? values[key] : uxToHex(values[key]);
+        const newValue = key !== 'color' ? values[key] : uxToHex(values[key]);
 
         if (newValue !== contact[key]) {
-          if (key === "isPublic") {
+          if (key === 'isPublic') {
             return acc.then(() =>
               api.contacts.setPublic(newValue)
             );
@@ -70,23 +64,22 @@ export function EditProfile(props: any) {
             console.log(toRemove);
             const toAdd: string[] = _.difference(newValue, contact?.groups || []);
             console.log(toAdd);
-            let promises: Promise<any>[] = [];
+            const promises: Promise<any>[] = [];
 
             promises.concat(
               toRemove.map(e =>
-                api.contacts.edit(ship, {'remove-group': resourceFromPath(e) })
+                api.contacts.edit(ship, { 'remove-group': resourceFromPath(e) })
               )
             );
             promises.concat(
               toAdd.map(e =>
-                api.contacts.edit(ship, {'add-group': resourceFromPath(e) })
+                api.contacts.edit(ship, { 'add-group': resourceFromPath(e) })
               )
             );
             return acc.then(() => Promise.all(promises));
-
           } else if (
-            key !== "last-updated" &&
-            key !== "isPublic"
+            key !== 'last-updated' &&
+            key !== 'isPublic'
           ) {
             return acc.then(() =>
               api.contacts.edit(ship, { [key]: newValue })
@@ -95,7 +88,7 @@ export function EditProfile(props: any) {
         }
         return acc;
       }, Promise.resolve());
-      //actions.setStatus({ success: null });
+      // actions.setStatus({ success: null });
       history.push(`/~profile/${ship}`);
     } catch (e) {
       console.error(e);

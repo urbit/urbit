@@ -1,24 +1,24 @@
-import React, { useRef, useCallback } from "react";
-import { ModalOverlay } from "~/views/components/ModalOverlay";
-import { Col, Box, Text, Row } from "@tlon/indigo-react";
-import { ChannelPopoverRoutesSidebar } from "./Sidebar";
-import { ChannelDetails } from "./Details";
-import { GraphPermissions } from "./ChannelPermissions";
+import React, { useRef, useCallback } from 'react';
+
+import { Col, Box, Text, Row } from '@tlon/indigo-react';
 import {
   Association,
   Groups,
   Group,
   Rolodex,
-  NotificationGraphConfig,
-} from "~/types";
-import GlobalApi from "~/logic/api/global";
-import { useHashLink } from "~/logic/lib/useHashLink";
-import { useOutsideClick } from "~/logic/lib/useOutsideClick";
-import { useHistory, Link } from "react-router-dom";
-import { ChannelNotifications } from "./Notifications";
-import { StatelessAsyncButton } from "~/views/components/StatelessAsyncButton";
-import { wait } from "~/logic/lib/util";
-import { isChannelAdmin, isHost } from "~/logic/lib/group";
+  NotificationGraphConfig
+} from '@urbit/api';
+
+import { ModalOverlay } from '~/views/components/ModalOverlay';
+import { GraphPermissions } from './ChannelPermissions';
+import { ChannelPopoverRoutesSidebar } from './Sidebar';
+import { ChannelDetails } from './Details';
+import GlobalApi from '~/logic/api/global';
+import { useHashLink } from '~/logic/lib/useHashLink';
+import { useHistory, Link } from 'react-router-dom';
+import { ChannelNotifications } from './Notifications';
+import { StatelessAsyncButton } from '~/views/components/StatelessAsyncButton';
+import { isChannelAdmin, isHost } from '~/logic/lib/group';
 
 interface ChannelPopoverRoutesProps {
   baseUrl: string;
@@ -68,16 +68,16 @@ export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {
       dismiss={onDismiss}
     >
       <Row
-        flexDirection={["column", "row"]}
+        flexDirection={['column', 'row']}
         border="1"
         borderColor="lightGray"
         borderRadius="2"
         bg="white"
         height="100%"
       >
-        <Box pt="4" px="4" display={["block", "none"]}>
+        <Box pt="4" px="4" display={['block', 'none']}>
           <Link to={props.baseUrl}>
-            <Text fontSize="1">{"<- Back"}</Text>
+            <Text fontSize="1">{'<- Back'}</Text>
           </Link>
         </Box>
         <ChannelPopoverRoutesSidebar
@@ -123,7 +123,7 @@ export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {
                     Archive {props.association.metadata.title}
                   </StatelessAsyncButton>
                 </Row>
-              </Col> 
+              </Col>
 
               ) : (
               <Col mt="5" mb="6">
@@ -140,7 +140,7 @@ export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {
                   Remove {props.association.metadata.title}
                 </StatelessAsyncButton>
               </Row>
-            </Col> 
+            </Col>
 
               )}
             </>

@@ -2,7 +2,6 @@ import React, {
   useState,
   useMemo,
   useCallback,
-  SyntheticEvent,
   ChangeEvent
 } from 'react';
 import {
@@ -11,26 +10,25 @@ import {
   Row,
   Text,
   Icon,
-  Center,
-  Button,
   Action,
   StatelessTextInput as Input
 } from '@tlon/indigo-react';
 import _ from 'lodash';
 import f from 'lodash/fp';
 import VisibilitySensor from 'react-visibility-sensor';
+import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 
-import { Contact, Contacts } from '~/types/contact-update';
+import { Contact, Contacts } from '@urbit/api/contacts';
+import { Group, RoleTags } from '@urbit/api/groups';
+import { Association } from '@urbit/api/metadata';
+
 import { Sigil } from '~/logic/lib/sigil';
 import { cite, uxToHex } from '~/logic/lib/util';
-import { Group, RoleTags } from '~/types/group-update';
 import { roleForShip, resourceFromPath } from '~/logic/lib/group';
-import { Association } from '~/types/metadata-update';
-import { useHistory, Link } from 'react-router-dom';
 import { Dropdown } from '~/views/components/Dropdown';
 import GlobalApi from '~/logic/api/global';
 import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
-import styled from 'styled-components';
 import useLocalState from '~/logic/state/local';
 
 const TruncText = styled(Text)`
@@ -109,7 +107,7 @@ export function Participants(props: {
   group: Group;
   association: Association;
   api: GlobalApi;
-}) {
+}): ReactElement {
   const { api } = props;
   const tabFilters: Record<
     ParticipantsTabId,

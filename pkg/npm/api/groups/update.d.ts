@@ -1,6 +1,6 @@
-import { PatpNoSig, Path, Jug, ShipRank, Enc } from './noun';
+import { PatpNoSig, Path, Jug, ShipRank, Enc } from '..';
+import { roleTags } from './index';
 
-export const roleTags = ['janitor', 'moderator', 'admin'] as const;
 export type RoleTags = typeof roleTags[number];
 interface RoleTag {
   tag: 'admin' | 'moderator' | 'janitor';
@@ -133,7 +133,7 @@ interface GroupUpdateRemoveTag {
   removeTag: {
     tag: Tag;
     resource: Resource;
-    ships: PatpNoSig;
+    ships: PatpNoSig[];
   };
 }
 
@@ -174,7 +174,4 @@ export type GroupUpdate =
 
 export type GroupAction = Omit<GroupUpdate, 'initialGroup' | 'initial'>;
 
-export const groupBunts = {
-  group: (): Group => ({ members: new Set(), tags: { role: {} }, hidden: false, policy: groupBunts.policy() }),
-  policy: (): GroupPolicy => ({ open: { banned: new Set(), banRanks: new Set() } })
-};
+
