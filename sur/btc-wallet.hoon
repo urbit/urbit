@@ -1,4 +1,4 @@
-/-  *btc, bp=btc-provider
+/-  *bitcoin, bp=btc-provider
 /+  bip32
 |%
 +$  params  [batch-size=@ud fam-limit=@ud piym-limit=@ud]
@@ -9,6 +9,8 @@
 +$  piym  [ps=(map ship payment) pend=(map txid payment) num-fam=(map ship @ud)]
 +$  poym  (unit txbu)
 ::
+::  command: run from the CLI or as API calls by our ship
+::
 +$  command
   $%  [%set-provider provider=ship]
       [%set-current-wallet =xpub]
@@ -17,18 +19,20 @@
       [%req-pay-address payee=ship value=sats feyb=sats]
       [%broadcast-tx txhex=cord]
   ==
+::  action: how peers poke us
+::
 +$  action
-      ::  local-only actions
-      ::
-  $%  [%close-pym ti=info:tx]
-      [%add-poym-raw-txi =txid rawtx=hexb]
-      [%fail-broadcast-tx =txid]
-      [%succeed-broadcast-tx =txid]
-      ::  peer actions
-      ::
-      [%gen-pay-address value=sats]
+  $%  [%gen-pay-address value=sats]
       [%recv-pay-address =address value=sats]
       [%expect-payment =txid value=sats]
+  ==
+::  internal: actions that simply make the state machine more explicit
+::
++$  internal
+  $%  [%add-poym-raw-txi =txid rawtx=hexb]
+      [%close-pym ti=info:tx]
+      [%fail-broadcast-tx =txid]
+      [%succeed-broadcast-tx =txid]
   ==
 ::
 ::

@@ -1,7 +1,7 @@
 ::  lib/btc.hoon
 ::  Utilities for working with BTC data types and transactions
 ::
-/-  sur=btc
+/-  sur=bitcoin
 ^?
 =<  [sur .]
 =,  sur
@@ -503,7 +503,6 @@
     ^-  byts
     :-  (roll (turn bs |=(b=byts -.b)) add)
     (can 3 (flop bs))
-  --
   ::  +flip:byt: flip endianness while preserving lead/trail zeroes
   ::
   ++  flip
@@ -529,6 +528,7 @@
       0^0x0
     =+  n-take=(sub wid.b n)
     [n-take (end [3 n-take] dat.b)]
+  --
 ::
 ++  bit
   |%
