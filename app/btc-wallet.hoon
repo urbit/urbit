@@ -138,7 +138,7 @@
 --
 |_  =bowl:gall
 ++  handle-command
-  |=  comm=command
+  |=  comm=commandl
   ^-  (quip card _state)
   ?-  -.comm
       %set-provider
@@ -318,6 +318,7 @@
     ::
       %close-pym
     ?>  =(src.bowl our.bowl)
+    |^
     =^  cards  state
       ?.  included.ti.intr
         `state
@@ -328,6 +329,106 @@
       `state
     :-  cards
     (handle-tx-info ti.intr)
+    ::
+    ++  poym-has-txid
+      |=  txid=hexb
+      ^-  ?
+      ?~  poym  %.n
+      ?~  signed-tx.u.poym  %.n
+      =(txid (get-id:txu (decode:txu u.signed-tx.u.poym)))
+    ::   - checks whether poym has a signed tx
+    ::   - checks whether the txid matches that signed tx, if not, skip
+    ::   - clears poym
+    ::   - returns card that adds hest to history
+    ::
+    ++  poym-to-history
+      |=  ti=info:tx
+      ^-  (quip card _state)
+      |^
+      ?~  poym  `state
+      ?~  signed-tx.u.poym  `state
+      ?.  (poym-has-txid txid.ti)
+        `state
+      =+  vout=(get-vout txos.u.poym)
+      ?~  vout  ~|("poym-to-history: poym should always have an output" !!)
+      :-  ~
+      %=  state
+          poym  ~
+          history
+        (add-history-entry ti xpub.u.poym our.bowl payee.u.poym u.vout)
+      ==
+      ::
+      ++  get-vout
+        |=  txos=(list txo)
+        ^-  (unit @ud)
+        =|  idx=@ud
+        |-  ?~  txos  ~
+        ?~  hk.i.txos  `idx
+        $(idx +(idx), txos t.txos)
+      --
+    ::   - checks whether txid in pend.piym
+    ::   - checks whether ti has a matching value output to piym
+    ::   - if no match found, just deletes pend.piym with this tx
+    ::     stops peer from spamming txids
+    ::   - returns card that adds hest to history
+    ::
+    ++  piym-to-history
+      |=  ti=info:tx
+      |^  ^-  (quip card _state)
+      =+  pay=(~(get by pend.piym) txid.ti)
+      ?~  pay  `state
+      ::  if no matching output in piym, delete from pend.piym to stop DDOS of txids
+      ::
+      =+  vout=(get-vout value.u.pay)
+      ?~  vout
+        `(del-pend-piym txid.ti)
+      =.  state  (del-all-piym txid.ti payer.u.pay)
+      `state(history (add-history-entry [ti xpub.u.pay payer.u.pay `our.bowl u.vout]))
+      ::
+      ++  get-vout
+        |=  value=sats
+        ^-  (unit @ud)
+        =|  idx=@ud
+        =+  os=outputs.ti
+        |-  ?~  os  ~
+        ?:  =(value.i.os value)
+          `idx
+        $(os t.os, idx +(idx))
+      ::
+      ::
+      ++  del-pend-piym
+        |=  txid=hexb
+        ^-  _state
+        state(pend.piym (~(del by pend.piym) txid.ti))
+      ::
+      ++  del-all-piym
+        |=  [txid=hexb payer=ship]
+        ^-  _state
+        =+  nf=(~(gut by num-fam.piym) payer 1)
+        %=  state
+            pend.piym  (~(del by pend.piym) txid)
+            ps.piym    (~(del by ps.piym) payer)
+            num-fam.piym  (~(put by num-fam.piym) payer (dec nf))
+        ==
+      --
+    ::
+    ++  add-history-entry
+      |=  [ti=info:tx =xpub payer=ship payee=(unit ship) vout=@ud]
+      ^-  ^history
+      =/  =hest
+        :*  xpub
+            txid.ti
+            confs.ti
+            recvd.ti
+            (turn inputs.ti |=(i=val:tx [i `payer]))
+            %+  turn  outputs.ti
+              |=  o=val:tx
+              ?:  =(pos.o vout)   ::  check whether this is the output that went to payee
+              [o payee]
+              [o `payer]
+         ==
+      (~(put by history) txid.hest hest)
+    --
     ::
       %fail-broadcast-tx
     ?>  =(src.bowl our.bowl)
@@ -459,7 +560,7 @@
     ?~  w  ~
     ?.  =(network network.u.w)  ~
     `(poke-provider [%tx-info txid])
-  -- 
+  --
 ::
 ++  handle-provider-update
   |=  upd=update:bp
@@ -469,6 +570,8 @@
   ?.  ?=(%.y -.upd)  `state
   ?-  -.p.upd
       %address-info
+    ::  located in the helper in Scan Logic to keep all of that unified
+    ::
     (handle-address-info address.p.upd utxos.p.upd used.p.upd)
     ::
       %tx-info
@@ -667,111 +770,7 @@
   [(weld cards0 cards1) state]
 ::
 ::
-::  piym/poym
-::  Utilities for Incoming/Outgoing Payments
-::
-::
-++  poym-has-txid
-  |=  txid=hexb
-  ^-  ?
-  ?~  poym  %.n
-  ?~  signed-tx.u.poym  %.n
-  =(txid (get-id:txu (decode:txu u.signed-tx.u.poym)))
-::  +poym-to-history:
-::   - checks whether poym has a signed tx
-::   - checks whether the txid matches that signed tx
-::     - if not, skip
-::   - clears poym
-::   - returns card that adds hest to history
-::
-++  poym-to-history
-  |=  ti=info:tx
-  ^-  (quip card _state)
-  |^
-  ?~  poym  `state
-  ?~  signed-tx.u.poym  `state
-  ?.  (poym-has-txid txid.ti)
-    `state
-  =+  vout=(get-vout txos.u.poym)
-  ?~  vout  ~|("poym-to-history: poym should always have an output" !!)
-  :-  ~
-  %=  state
-      poym  ~
-      history
-    (add-history-entry ti xpub.u.poym our.bowl payee.u.poym u.vout)
-  ==
-  ::
-  ++  get-vout
-    |=  txos=(list txo)
-    ^-  (unit @ud)
-    =|  idx=@ud
-    |-  ?~  txos  ~
-    ?~  hk.i.txos  `idx
-    $(idx +(idx), txos t.txos)
-  --
-::  +piym-to-history
-::   - checks whether txid in pend.piym
-::   - checks whether ti has a matching value output to piym
-::   - if no match found, just deletes pend.piym with this tx
-::     stops peer from spamming txids
-::   - returns card that adds hest to history
-::
-++  piym-to-history
-  |=  ti=info:tx
-  |^  ^-  (quip card _state)
-  =+  pay=(~(get by pend.piym) txid.ti)
-  ?~  pay  `state
-  ::  if no matching output in piym, delete from pend.piym to stop DDOS of txids
-  ::
-  =+  vout=(get-vout value.u.pay)
-  ?~  vout
-    `(del-pend-piym txid.ti)
-  =.  state  (del-all-piym txid.ti payer.u.pay)
-  `state(history (add-history-entry [ti xpub.u.pay payer.u.pay `our.bowl u.vout]))
-  ::
-  ++  get-vout
-    |=  value=sats
-    ^-  (unit @ud)
-    =|  idx=@ud
-    =+  os=outputs.ti
-    |-  ?~  os  ~
-    ?:  =(value.i.os value)
-      `idx
-    $(os t.os, idx +(idx))
-  ::
-  ::
-  ++  del-pend-piym
-    |=  txid=hexb
-    ^-  _state
-    state(pend.piym (~(del by pend.piym) txid.ti))
-  ::
-  ++  del-all-piym
-    |=  [txid=hexb payer=ship]
-    ^-  _state
-    =+  nf=(~(gut by num-fam.piym) payer 1)
-    %=  state
-        pend.piym  (~(del by pend.piym) txid)
-        ps.piym    (~(del by ps.piym) payer)
-        num-fam.piym  (~(put by num-fam.piym) payer (dec nf))
-    ==
-  --
-::
-++  add-history-entry
-  |=  [ti=info:tx =xpub payer=ship payee=(unit ship) vout=@ud]
-  ^-  ^history
-  =/  =hest
-    :*  xpub
-        txid.ti
-        confs.ti
-        recvd.ti
-        (turn inputs.ti |=(i=val:tx [i `payer]))
-        %+  turn  outputs.ti
-          |=  o=val:tx
-          ?:  =(pos.o vout)   ::  check whether this is the output that went to payee
-          [o payee]
-          [o `payer]
-     ==
-  (~(put by history) txid.hest hest)
+
 ::  +update-pend.piym
 ::   - set pend.payment to txid (lock)
 ::   - add txid to pend.piym
@@ -799,8 +798,6 @@
   $(i +(i))
 ::
 ::
-::  Card Builders and Pokers
-::
 ::
 ++  poke-provider
   |=  [act=action:bp]
@@ -824,7 +821,7 @@
   :*  %pass  /[(scot %da now.bowl)]  %agent
       [our.bowl %btc-wallet]  %poke
       %btc-wallet-internal  !>(intr)
-  == 
+  ==
 ::
 ++  is-broadcasting
   ^-  ?

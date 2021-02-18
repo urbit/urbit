@@ -1,4 +1,4 @@
-/+  *test, *bip158, *btc
+/+  *test, *bip-b158, *bitcoin
 |%
 +$  filter-vector
   $:  filter=hexb
