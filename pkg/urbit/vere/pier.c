@@ -2212,6 +2212,7 @@ u3_pier_tank(c3_l tab_l, c3_w pri_w, u3_noun tac)
         case 3: fprintf(fil_u, "\033[31m>>> "); break;
         case 2: fprintf(fil_u, "\033[33m>>  "); break;
         case 1: fprintf(fil_u, "\033[32m>   "); break;
+        case 0: fprintf(fil_u, "\033[90m"    ); break;
     }
   }
   else {
