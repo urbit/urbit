@@ -196,7 +196,7 @@
     |=  [u=@lvs v=@lvs]  ^-  @rs
     ~_  leaf+"lagoon-fail"
     (sum (mulv u v))
-  ++  outer  !!
+  ++  outer  !!  :: unimplemented pending @lm type
   ++  catenate
     |=  [u=@lvs v=@lvs]
     ~_  leaf+"lagoon-fail"
@@ -218,7 +218,7 @@
     ::~/  %zeros
     |=  n=@ud  ^-  @lvd
     ~_  leaf+"lagoon-fail"
-    `@lvd`(lsh [6 n] n)
+    `@lvd`(lsh [6 n] 1)
   ::
   ::    Fill value
   ++  fill
@@ -237,7 +237,7 @@
   ++  length
     |=  u=@lvd  ^-  @ud
     ~_  leaf+"lagoon-fail"
-    (end [6 1] (swp 6 u))
+    (dec (met 6 u))
   ::
   ::    Produce a vector from `(list @u)` (of natural numbers)
   ++  make-nat
@@ -393,7 +393,7 @@
     |=  [u=@lvd v=@lvd]  ^-  @rd
     ~_  leaf+"lagoon-fail"
     (sum (mulv u v))
-  ++  outer  !!
+  ++  outer  !!  :: unimplemented pending @lm type
   ++  catenate
     |=  [u=@lvd v=@lvd]
     ~_  leaf+"lagoon-fail"
