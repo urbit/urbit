@@ -190,6 +190,7 @@
   ++  check-bits
     |=  v=bits-vector
     ;:  weld
+      ::  TODO: from-atoms works, but to-atoms doesn't
       %+  expect-eq
         !>(bits.v)
         !>((from-atoms:bit bitwidth.v atoms.v))
