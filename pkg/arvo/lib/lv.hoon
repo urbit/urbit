@@ -21,7 +21,7 @@
     ::~/  %zeros
     |=  n=@ud  ^-  @lvs
     ~_  leaf+"lagoon-fail"
-    `@lvs`(lsh [5 n] n)
+    `@lvs`(lsh [5 n] 1)   :: pin at head for leading zeros
   ::
   ::    Fill value
   ++  fill
