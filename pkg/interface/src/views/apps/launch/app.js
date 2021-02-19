@@ -13,6 +13,7 @@ import Tile from './components/tiles/tile';
 import Groups from './components/Groups';
 import ModalButton from './components/ModalButton';
 import { StatelessAsyncButton } from '~/views/components/StatelessAsyncButton';
+import { StarIcon } from '~/views/components/StarIcon';
 import { writeText } from '~/logic/lib/util';
 import { useModal } from "~/logic/lib/useModal";
 import { NewGroup } from "~/views/landscape/components/NewGroup";
@@ -116,7 +117,7 @@ export default function LaunchApp(props) {
       return (
       <Col maxWidth="350px" gapY="2" p="3">
         <Box position="absolute" left="-16px" top="-16px">
-          <Icon width="32px" height="32px" color="blue" display="block" icon="LargeBullet" />
+          <StarIcon width="32px" height="32px" color="blue" display="block" />
         </Box>
         <Text lineHeight="tall" fontWeight="medium">Welcome</Text>
         <Text lineHeight="tall">
