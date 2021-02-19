@@ -11,27 +11,23 @@
 |%
 ++  lvs
   ^|
-  ::~%  %lvs  +>  ~
   |_  r=$?(%n %u %d %z)   :: round nearest, round up, round down, round to zero
   ::
   ::  Manipulators
   ::
   ::    Zeroes
   ++  zeros
-    ::~/  %zeros
     |=  n=@ud  ^-  @lvs
     ~_  leaf+"lagoon-fail"
     `@lvs`(lsh [5 n] 1)   :: pin at head for leading zeros
   ::
   ::    Fill value
   ++  fill
-    ::~/  %fill
     |=  [n=@ud s=@rs]  ^-  @lvs
     `@lvs`(mix (zeros n) (fil 5 n s))
   ::
   ::    Ones
   ++  ones
-    ::~/  %ones
     |=  n=@ud  ^-  @lvs
     ~_  leaf+"lagoon-fail"
     (fill n .1)
@@ -64,6 +60,11 @@
     (make (snoc (unmake u) s))
     ::  XX could be done faster with a mix/lsh
   ::
+  ::  Yield the substring [lhs:rhs] inclusive
+  ++  subvector
+    |=  [u=@lvs lhs=@ud rhs=@ud]
+    (mix (zeros +((sub rhs lhs))) (cut 5 [(dec lhs) +((sub rhs lhs))] u))
+  ::
   ::  |x|
   ++  abs
     |=  [s=@rs]
@@ -79,7 +80,6 @@
   ::
   ::    Get the value at an index, using mathematical indices 1..n.
   ++  get
-    ::~/  %get
     |=  [u=@lvs i=@ud]  ^-  @rs
     ~_  leaf+"lagoon-fail"
     (cut 5 [(dec i) 1] u)
@@ -91,7 +91,6 @@
   ::
   ::    Set the value of an element within a vector, using math indices 1..n.
   ++  set
-    ::~/  %set
     |=  [u=@lvs i=@ud s=@rs]  ^-  @lvs
     ~_  leaf+"lagoon-fail"
     ?:  (gth i (length u))  !!
@@ -157,7 +156,6 @@
   ::
   ::    Apply a two-variable function across a vector input.
   ++  funv
-    ::~/  %funv
     |=  f=$-([@rs @rs] @rs)
     |=  [u=@lvs v=@lvs]  ^-  @lvs
     ~_  leaf+"lagoon-fail"
@@ -181,7 +179,15 @@
     (roll (unmake u) add:rs)
   ::
   ::    Cumulative sum of elements
-  ++  cumsum  !!
+  ++  cumsum
+    |=  [u=@lvs]  ^-  @lvs
+    =/  n  (length u)
+    =/  uu  (unmake u)
+    =/  v  (zeros n)
+    =/  index  1
+    |-  ^-  @lvs
+      ?:  (gth index n)  (make v)
+    $(index +(index), v (set v index (sum (subvector u 1 index))))
   ::
   ::    Product of elements
   ++  product
@@ -192,7 +198,6 @@
   ::
   ::    Inner or Euclidean dot product, a · b
   ++  inner
-    ::~/  %inner
     |=  [u=@lvs v=@lvs]  ^-  @rs
     ~_  leaf+"lagoon-fail"
     (sum (mulv u v))
@@ -208,27 +213,23 @@
   ::
 ++  lvd
   ^|
-  ::~%  %lvd  +>  ~
   |_  r=$?(%n %u %d %z)   :: round nearest, round up, round down, round to zero
   ::
   ::  Manipulators
   ::
   ::    Zeroes
   ++  zeros
-    ::~/  %zeros
     |=  n=@ud  ^-  @lvd
     ~_  leaf+"lagoon-fail"
     `@lvd`(lsh [6 n] 1)
   ::
   ::    Fill value
   ++  fill
-    ::~/  %fill
     |=  [n=@ud s=@rd]  ^-  @lvd
     `@lvd`(mix (zeros n) (fil 6 n s))
   ::
   ::    Ones
   ++  ones
-    ::~/  %ones
     |=  n=@ud  ^-  @lvd
     ~_  leaf+"lagoon-fail"
     (fill n .~1)
@@ -261,6 +262,11 @@
     (make (snoc (unmake u) s))
     ::  XX could be done faster with a mix/lsh
   ::
+  ::  Yield the substring [lhs:rhs] inclusive
+  ++  subvector
+    |=  [u=@lvs lhs=@ud rhs=@ud]
+    (mix (zeros +((sub rhs lhs))) (cut 6 [(dec lhs) +((sub rhs lhs))] u))
+  ::
   ::  |x|
   ++  abs
     |=  [s=@rd]
@@ -276,7 +282,6 @@
   ::
   ::    Get the value at an index, using mathematical indices 1..n.
   ++  get
-    ::~/  %get
     |=  [u=@lvd i=@ud]  ^-  @rd
     ~_  leaf+"lagoon-fail"
     (con (zeros (length u)) (cut 6 [(dec i) 1] u))
@@ -288,7 +293,6 @@
   ::
   ::    Set the value of an element within a vector, using math indices 1..n.
   ++  set
-    ::~/  %set
     |=  [u=@lvd i=@ud s=@rd]  ^-  @lvd
     ~_  leaf+"lagoon-fail"
     ?:  (gth i (length u))  !!
@@ -354,7 +358,6 @@
   ::
   ::    Apply a two-variable function across a vector input.
   ++  funv
-    ::~/  %funv
     |=  f=$-([@rd @rd] @rd)
     |=  [u=@lvd v=@lvd]  ^-  @lvd
     ~_  leaf+"lagoon-fail"
@@ -378,7 +381,15 @@
     (roll (unmake u) add:rd)
   ::
   ::    Cumulative sum of elements
-  ++  cumsum  !!
+  ++  cumsum
+    |=  [u=@lvs]  ^-  @lvs
+    =/  n  (length u)
+    =/  uu  (unmake u)
+    =/  v  (zeros n)
+    =/  index  1
+    |-  ^-  @lvs
+      ?:  (gth index n)  (make v)
+    $(index +(index), v (set v index (sum (subvector u 1 index))))
   ::
   ::    Product of elements
   ++  product
@@ -389,7 +400,6 @@
   ::
   ::    Inner or Euclidean dot product, a · b
   ++  inner
-    ::~/  %inner
     |=  [u=@lvd v=@lvd]  ^-  @rd
     ~_  leaf+"lagoon-fail"
     (sum (mulv u v))
