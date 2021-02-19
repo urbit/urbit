@@ -13624,10 +13624,9 @@
       [%void grub]
     ::
         [%cell *]
-      =^  lef  grub  ^$(sut p.sut, axe lat)
-      =^  rig  grub  ^$(sut q.sut, axe lat)
-      :_  grub
-      ?:(=(2 now) lef rig)
+      ?:  =(2 now)
+        ^$(sut p.sut, axe lat)
+      ^$(sut q.sut, axe lat)
     ::
         [%core *]
       ::  XX WEIRD worth going over again due to complexity
@@ -13644,13 +13643,17 @@
             ==
           [p.sut grub]
         ~_  leaf+"payload-block"
-        ?.  =(way %read)  !!
-        =^  lef  grub  ^$(sut p.sut, axe 2)
-        =^  rig  grub  ^$(sut p.sut, axe 3)
+        ?>  =(way %read)
+        =^  lef  grub
+          ?.  sam.pec
+            [%noun grub]
+          ^$(sut p.sut, axe 2)
+        =^  rig  grub
+          ?.  con.pec
+            [%noun grub]
+          ^$(sut p.sut, axe 3)
         :_  grub
-        %+  cell
-          ?.(sam.pec %noun lef)
-        ?.(con.pec %noun rig)
+        (cell lef rig)
       %=  ^$
         axe   lat
         sut   nut
