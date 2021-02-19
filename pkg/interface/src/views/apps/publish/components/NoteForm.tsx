@@ -5,11 +5,11 @@ import {
   Row,
   Col,
   Button
-} from "@tlon/indigo-react";
-import { AsyncButton } from "../../../components/AsyncButton";
-import { Formik, Form, FormikHelpers } from "formik";
-import { MarkdownField } from "./MarkdownField";
-import { S3State } from "~/types";
+} from '@tlon/indigo-react';
+import { AsyncButton } from '../../../components/AsyncButton';
+import { Formik, Form, FormikHelpers } from 'formik';
+import { MarkdownField } from './MarkdownField';
+import { S3State } from '@urbit/api';
 
 interface PostFormProps {
   initial: PostFormSchema;
@@ -63,7 +63,8 @@ export function PostForm(props: PostFormProps) {
               onClick={() => {
                 history.goBack();
               }}
-              type="button">Cancel</Button>}
+              type="button"
+                         >Cancel</Button>}
             </Row>
           </Row>
           <MarkdownField flexGrow={1} id="body" s3={s3} />

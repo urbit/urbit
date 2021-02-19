@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 
-import { Contact, Group } from '~/types';
+import { Contact, Group } from '@urbit/api';
 import { cite, useShowNickname } from '~/logic/lib/util';
 import { Sigil } from '~/logic/lib/sigil';
 
@@ -34,7 +34,7 @@ type ProfileOverlayProps = ColProps & {
   api: any;
 };
 
-class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
+class ProfileOverlay extends PureComponent<ProfileOverlayProps, Record<string, never>> {
   public popoverRef: React.Ref<typeof Col>;
 
   constructor(props) {
@@ -124,13 +124,14 @@ class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
       >
         <Row color='black' width='100%' height="3rem">
           {(!isOwn) && (
-          <Icon icon="Chat" size={16} onClick={() => history.push(`/~landscape/dm/${ship}`)}/>
+          <Icon icon="Chat" size={16} onClick={() => history.push(`/~landscape/dm/${ship}`)} />
           )}
         </Row>
         <Box
           alignSelf="center"
           height="72px"
-          onClick={() => history.push(`/~profile/~${ship}`)}>
+          onClick={() => history.push(`/~profile/~${ship}`)}
+        >
           {img}
         </Box>
         <Col alignItems="end" justifyContent="flex-end" overflow="hidden" minWidth='0'>

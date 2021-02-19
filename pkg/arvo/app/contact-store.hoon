@@ -101,7 +101,7 @@
     ==
     ::
     ++  handle-initial
-      |=  [rolo=rolodex:store is-public=?]
+      |=  [rolo=rolodex:store *]
       ^-  (quip card _state)
       =/  our-contact  (~(got by rolodex) our.bowl)
       =/  diff-rolo=rolodex:store
@@ -143,7 +143,7 @@
       |=  [=ship =edit-field:store timestamp=@da]
       |^
       ^-  (quip card _state)
-      =/  old  (~(got by rolodex) ship)
+      =/  old  (fall (~(get by rolodex) ship) *contact:store)
       ?:  (lte timestamp last-updated.old)
         [~ state]
       =/  contact  (edit-contact old edit-field)

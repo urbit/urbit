@@ -1,8 +1,8 @@
 import { useEffect, MutableRefObject } from "react";
-import { TutorialProgress } from "~/types";
+import { TutorialProgress } from "@urbit/api";
 import useLocalState, { selectLocalState } from "~/logic/state/local";
 
-const localSelector = selectLocalState(["tutorialProgress", "setTutorialRef"]);
+const localSelector = selectLocalState(['tutorialProgress', 'setTutorialRef']);
 
 export function useTutorialModal(
   onProgress: TutorialProgress,

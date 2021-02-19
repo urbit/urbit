@@ -115,6 +115,18 @@
       =/  entry=(unit val)  (~(get by bucket) key)
       ?~  entry  [~ ~]
       ``settings-data+!>(entry+u.entry)
+    ::
+        [%x %has-bucket @ ~]
+      =*  buc  i.t.t.pax
+      =/  has-bucket=?  (~(has by settings) buc)
+      ``noun+!>(has-bucket)
+    ::
+        [%x %has-entry @ @ ~]
+      =*  buc  i.t.t.pax
+      =*  key  i.t.t.t.pax
+      =/  =bucket  (fall (~(get by settings) buc) ~)
+      =/  has-entry=?  (~(has by bucket) key)
+      ``noun+!>(has-entry)
     ==
   ::
   ++  on-agent  on-agent:def

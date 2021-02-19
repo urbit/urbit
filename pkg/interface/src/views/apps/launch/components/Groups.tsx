@@ -1,9 +1,9 @@
-import React, {useRef} from "react";
-import { Box, Text, Col } from "@tlon/indigo-react";
-import f from "lodash/fp";
-import _ from "lodash";
+import React, { useRef } from 'react';
+import { Box, Text, Col } from '@tlon/indigo-react';
+import f from 'lodash/fp';
+import _ from 'lodash';
 
-import { Associations, Association, Unreads, UnreadStats } from "~/types";
+import { Associations, Association, Unreads, UnreadStats } from "@urbit/api";
 import { alphabeticalOrder } from "~/logic/lib/util";
 import { getUnreadCount, getNotificationCount } from "~/logic/lib/hark";
 import Tile from "../components/tiles/tile";
@@ -15,12 +15,11 @@ interface GroupsProps {
 }
 
 const sortGroupsAlph = (a: Association, b: Association) =>
-  a.group === TUTORIAL_GROUP_RESOURCE 
-    ? -1 
-    : b.group === TUTORIAL_GROUP_RESOURCE 
+  a.group === TUTORIAL_GROUP_RESOURCE
+    ? -1
+    : b.group === TUTORIAL_GROUP_RESOURCE
     ? 1
     : alphabeticalOrder(a.metadata.title, b.metadata.title);
-
 
 const getGraphUnreads = (associations: Associations, unreads: Unreads) => (path: string) =>
   f.flow(
@@ -38,12 +37,11 @@ const getGraphNotifications = (associations: Associations, unreads: Unreads) => 
     f.reduce(f.add, 0)
   )(associations.graph);
 
-
 export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
   const { associations, unreads, inbox, ...boxProps } = props;
 
   const groups = Object.values(associations?.groups || {})
-    .filter((e) => e?.group in props.groups)
+    .filter(e => e?.group in props.groups)
     .sort(sortGroupsAlph);
   const graphUnreads = getGraphUnreads(associations || {}, unreads);
   const graphNotifications = getGraphNotifications(associations || {}, unreads);
@@ -52,7 +50,7 @@ export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
     <>
       {groups.map((group, index) => {
         const path = group?.group;
-        const unreadCount = graphUnreads(path)
+        const unreadCount = graphUnreads(path);
         const notCount = graphNotifications(path);
 
         return (

@@ -1,19 +1,17 @@
-import React, { useCallback } from "react";
+import React, { ReactElement, useCallback } from 'react';
+import { Formik } from 'formik';
 
 import {
   ManagedTextInputField as Input,
   ManagedForm as Form,
   Box,
   Button,
-  Col,
-  Text,
-  Menu,
-} from "@tlon/indigo-react";
+  Col
+} from '@tlon/indigo-react';
 
-import { Formik } from "formik";
-import GlobalApi from "../../../../api/global";
-import { BucketList } from "./BucketList";
-import { S3State } from "../../../../types";
+import { BucketList } from './BucketList';
+import GlobalApi from '~/logic/api/global';
+import { S3State } from '~/types/s3-update';
 
 interface FormSchema {
   s3bucket: string;
@@ -28,7 +26,7 @@ interface S3FormProps {
   s3: S3State;
 }
 
-export default function S3Form(props: S3FormProps) {
+export default function S3Form(props: S3FormProps): ReactElement {
   const { api, s3 } = props;
 
   const onSubmit = useCallback(
@@ -57,7 +55,7 @@ export default function S3Form(props: S3FormProps) {
               s3buckets: Array.from(s3.configuration.buckets),
               s3endpoint: s3.credentials?.endpoint,
               s3accessKeyId: s3.credentials?.accessKeyId,
-              s3secretAccessKey: s3.credentials?.secretAccessKey,
+              s3secretAccessKey: s3.credentials?.secretAccessKey
             } as FormSchema
           }
           onSubmit={onSubmit}
