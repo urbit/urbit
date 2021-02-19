@@ -8,6 +8,7 @@ import { HoverBoxLink } from '~/views/components/HoverBox';
 import { Sigil } from '~/logic/lib/sigil';
 import { getModuleIcon, getItemTitle, uxToHex } from '~/logic/lib/util';
 import { useTutorialModal } from '~/views/components/useTutorialModal';
+import useLocalState from '~/logic/state/local';
 import { TUTORIAL_HOST, TUTORIAL_GROUP } from '~/logic/lib/tutorialModal';
 import { SidebarAppConfigs, SidebarItemStatus } from './types';
 import { Workspace } from '~/types/workspace';
@@ -55,6 +56,9 @@ export function SidebarItem(props: {
     return null;
   }
   const DM = (isUnmanaged && props.workspace?.type === 'messages');
+  const { hideAvatars, hideNicknames } = useLocalState(({ hideAvatars, hideNicknames }) => ({
+    hideAvatars, hideNicknames
+  }));
   const itemStatus = app.getStatus(path);
   const hasUnread = itemStatus === 'unread' || itemStatus === 'mention';
 
@@ -81,12 +85,12 @@ export function SidebarItem(props: {
   let img = null;
 
   if (urbitOb.isValidPatp(title)) {
-    if (props.contacts?.[title] && props.contacts[title].avatar) {
+    if (props.contacts?.[title]?.avatar && !hideAvatars) {
       img = <BaseImage src={props.contacts[title].avatar} width='16px' height='16px' borderRadius={2} />;
     } else {
       img = <Sigil ship={title} color={`#${uxToHex(props.contacts?.[title]?.color || '0x0')}`} icon padding={2} size={16} />;
     }
-    if (props.contacts?.[title] && props.contacts[title].nickname) {
+    if (props.contacts?.[title]?.nickname && !hideNicknames) {
       title = props.contacts[title].nickname;
     }
   } else {

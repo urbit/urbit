@@ -233,6 +233,10 @@ export const MessageWithSigil = (props) => {
   const stamp = moment.unix(msg['time-sent'] / 1000);
   const contact = `~${msg.author}` in contacts ? contacts[`~${msg.author}`] : false;
   const showNickname = useShowNickname(contact);
+  const { hideAvatars } =
+    useLocalState(({ hideAvatars }) =>
+      ({ hideAvatars })
+    );
   const shipName = showNickname ? contact.nickname : cite(msg.author);
   const copyNotice = 'Copied';
   const color = contact
@@ -268,8 +272,7 @@ export const MessageWithSigil = (props) => {
     return () => clearTimeout(timer);
   }, [displayName]);
 
-  const img =
-    contact && contact.avatar !== null ? (
+  const img = contact?.avatar && !hideAvatars ? (
       <BaseImage
         display='inline-block'
         src={contact.avatar}
