@@ -75,7 +75,7 @@ export default function NotificationsScreen(props: any) {
                     borderBottom="1"
                     borderBottomColor="washedGray"
                   >
-                    <Text>Updates</Text>
+                    <Text>Notifications</Text>
                     <Row>
                       <Box>
                         <HeaderLink ref={anchorRef} current={view} view="">
