@@ -12,6 +12,7 @@ export default class CodeContent extends Component {
       (
         <Text
           display='block'
+          fontSize='0'
           mono
           p='1'
           my='0'
@@ -22,7 +23,7 @@ export default class CodeContent extends Component {
           style={{ whiteSpace: 'pre' }}
           backgroundColor='washedGray'
         >
-          {content.code.output[0].join('\n')}
+          {content.code.output.join('\n')}
         </Text>
       ) : null;
 
@@ -37,6 +38,7 @@ export default class CodeContent extends Component {
           overflow='auto'
           maxHeight='10em'
           maxWidth='100%'
+          fontSize='0'
           style={{ whiteSpace: 'pre' }}
         >
           {content.code.expression}

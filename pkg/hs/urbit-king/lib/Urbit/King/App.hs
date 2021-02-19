@@ -4,6 +4,7 @@
 module Urbit.King.App
   ( KingEnv
   , runKingEnvStderr
+  , runKingEnvStderrRaw
   , runKingEnvLogFile
   , runKingEnvNoLog
   , kingEnvKillSignal
@@ -29,6 +30,7 @@ where
 import Urbit.King.Config
 import Urbit.Prelude
 
+import RIO                    (logGeneric)
 import System.Directory       ( createDirectoryIfMissing
                               , getXdgDirectory
                               , XdgDirectory(XdgCache)
@@ -90,6 +92,22 @@ runKingEnvStderr verb lvl inner = do
       <&> setLogMinLevel lvl
   withLogFunc logOptions $ \logFunc -> runKingEnv logFunc logFunc inner
 
+runKingEnvStderrRaw :: Bool -> LogLevel -> RIO KingEnv a -> IO a
+runKingEnvStderrRaw verb lvl inner = do
+  logOptions <-
+    logOptionsHandle stderr verb
+      <&> setLogUseTime True
+      <&> setLogUseLoc False
+      <&> setLogMinLevel lvl
+  withLogFunc logOptions $ \logFunc ->
+    let lf = wrapCarriage logFunc
+    in runKingEnv lf lf inner
+
+-- XX loses callstack
+wrapCarriage :: LogFunc -> LogFunc
+wrapCarriage lf = mkLogFunc $ \_ ls ll bldr ->
+  runRIO lf $ logGeneric ls ll (bldr <> "\r")
+
 runKingEnvLogFile :: Bool -> LogLevel -> Maybe FilePath -> RIO KingEnv a -> IO a
 runKingEnvLogFile verb lvl fileM inner = do
   logFile <- case fileM of
@@ -119,7 +137,8 @@ defaultLogFile :: IO FilePath
 defaultLogFile = do
   logDir <- getXdgDirectory XdgCache "urbit"
   createDirectoryIfMissing True logDir
-  pure (logDir </> "king.log")
+  logId :: Word32 <- randomIO
+  pure (logDir </> "king-" <> show logId <> ".log")
 
 runKingEnvNoLog :: RIO KingEnv a -> IO a
 runKingEnvNoLog act = runKingEnv mempty mempty act

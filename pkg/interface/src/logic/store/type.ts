@@ -11,23 +11,15 @@ import {
   Notifications,
   NotificationGraphConfig, 
   GroupNotificationsConfig,
-  LocalUpdateRemoteContentPolicy,
-  BackgroundConfig,
-  Unreads
+  Unreads,
+  JoinRequests,
+  Patp
 } from "~/types";
 
 export interface StoreState {
   // local state
-  sidebarShown: boolean;
-  omniboxShown: boolean;
-  suspendedFocus: HTMLInputElement | null;
-  dark: boolean;
   connection: ConnectionStatus;
   baseHash: string | null;
-  background: BackgroundConfig;
-  remoteContentPolicy: LocalUpdateRemoteContentPolicy;
-  hideAvatars: boolean;
-  hideNicknames: boolean;
 
   // invite state
   invites: Invites;
@@ -38,6 +30,7 @@ export interface StoreState {
   // groups state
   groups: Groups;
   groupKeys: Set<Path>;
+  nackedContacts: Set<Patp>
   s3: S3State;
   graphs: Graphs;
   graphKeys: Set<string>;
@@ -56,5 +49,5 @@ export interface StoreState {
   notificationsCount: number,
   unreads: Unreads;
   doNotDisturb: boolean;
-  unreads: Unreads;
+  pendingJoin: JoinRequests;
 }

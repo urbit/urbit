@@ -8,13 +8,11 @@ import {
   Groups,
   Contacts,
   Rolodex,
-  LocalUpdateRemoteContentPolicy,
   Unreads,
   S3State
 } from "~/types";
 import { Center, LoadingSpinner } from "@tlon/indigo-react";
-import { Notebook as INotebook } from "~/types/publish-update";
-import bigInt, { BigInteger } from 'big-integer';
+import bigInt from 'big-integer';
 
 import Notebook from "./Notebook";
 import NewPost from "./new-post";
@@ -33,10 +31,7 @@ interface NotebookRoutesProps {
   groups: Groups;
   baseUrl: string;
   rootUrl: string;
-  hideAvatars: boolean;
-  hideNicknames: boolean;
   association: Association;
-  remoteContentPolicy: LocalUpdateRemoteContentPolicy;
   associations: Associations;
   s3: S3State;
 }
@@ -52,7 +47,7 @@ export function NotebookRoutes(
 
   const graph = props.graphs[`${ship.slice(1)}/${book}`];
 
-  const group = groups?.[props.association?.['group-path']];
+  const group = groups?.[props.association?.group];
 
 
   const relativePath = (path: string) => `${baseUrl}${path}`;
@@ -116,9 +111,6 @@ export function NotebookRoutes(
               noteId={noteIdNum}
               contacts={notebookContacts}
               association={props.association}
-              hideAvatars={props.hideAvatars}
-              hideNicknames={props.hideNicknames}
-              remoteContentPolicy={props.remoteContentPolicy}
               group={group}
               s3={props.s3}
               {...routeProps}

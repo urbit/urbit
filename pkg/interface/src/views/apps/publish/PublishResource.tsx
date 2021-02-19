@@ -15,9 +15,9 @@ type PublishResourceProps = StoreState & {
 
 export function PublishResource(props: PublishResourceProps) {
   const { association, api, baseUrl, notebooks } = props;
-  const appPath = association["app-path"];
-  const [, , ship, book] = appPath.split("/");
-  const notebookContacts = props.contacts[association["group-path"]];
+  const rid = association.resource;
+  const [, , ship, book] = rid.split("/");
+  const notebookContacts = props.contacts[association.group];
 
   return (
     <Box height="100%" width="100%" overflowY="auto">
@@ -35,10 +35,7 @@ export function PublishResource(props: PublishResourceProps) {
         history={props.history}
         match={props.match}
         location={props.location}
-        hideAvatars={props.hideAvatars}
         unreads={props.unreads}
-        hideNicknames={props.hideNicknames}
-        remoteContentPolicy={props.remoteContentPolicy}
         graphs={props.graphs}
         s3={props.s3}
       />

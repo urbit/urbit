@@ -1,7 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import _ from "lodash";
-import f from "lodash/fp";
+import f, { memoize } from "lodash/fp";
 import bigInt, { BigInteger } from "big-integer";
+import { Contact } from '~/types';
+import useLocalState from '../state/local';
 
 export const MOBILE_BROWSER_REGEX = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i;
 
@@ -11,8 +13,21 @@ export const MOMENT_CALENDAR_DATE = {
   nextWeek: "dddd",
   lastDay: "[Yesterday]",
   lastWeek: "[Last] dddd",
-  sameElse: "DD/MM/YYYY",
+  sameElse: "~YYYY.M.D",
 };
+
+export const getModuleIcon = (mod: string) => {
+ if (mod === "link") {
+    return "Collection";
+  }
+  return _.capitalize(mod);
+}
+
+export function wait(ms: number) {
+  return new Promise((resolve, reject) => {
+    setTimeout(resolve, ms);
+  });
+}
 
 export function appIsGraph(app: string) {
   return app === 'publish' || app == 'link';
@@ -215,6 +230,11 @@ export function alphabeticalOrder(a: string, b: string) {
   return a.toLowerCase().localeCompare(b.toLowerCase());
 }
 
+export function lengthOrder(a: string, b: string) {
+  return b.length - a.length;
+
+}
+
 //  TODO: deprecated
 export function alphabetiseAssociations(associations: any) {
   const result = {};
@@ -354,3 +374,39 @@ export function usePreventWindowUnload(shouldPreventDefault: boolean, message = 
 export function pluralize(text: string, isPlural = false, vowel = false) {
   return isPlural ? `${text}s`: `${vowel ? 'an' : 'a'} ${text}`;
 }
+
+// Hide is an optional second parameter for when this function is used in class components
+export function useShowNickname(contact: Contact | null, hide?: boolean): boolean {
+  const hideNicknames = typeof hide !== 'undefined' ? hide : useLocalState(state => state.hideNicknames);
+  return !!(contact && contact.nickname && !hideNicknames);
+}
+
+interface useHoveringInterface {
+  hovering: boolean;
+  bind: {
+    onMouseOver: () => void,
+    onMouseLeave: () => void
+  }
+}
+
+export const useHovering = (): useHoveringInterface => {
+  const [hovering, setHovering] = useState(false);
+  const bind = {
+    onMouseOver: () => setHovering(true),
+    onMouseLeave: () => setHovering(false)
+  };
+  return { hovering, bind };
+};
+
+const DM_REGEX = /ship\/~([a-z]|-)*\/dm--/;
+export function getItemTitle(association: Association) {
+  if(DM_REGEX.test(association.resource)) {
+    const [,,ship,name] = association.resource.split('/');
+    if(ship.slice(1) === window.ship) {
+      return cite(`~${name.slice(4)}`);
+    }
+    return cite(ship);
+
+  }
+  return association.metadata.title || association.resource
+};

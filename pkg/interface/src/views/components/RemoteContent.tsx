@@ -1,16 +1,16 @@
 import React, { PureComponent, Fragment } from 'react';
-import { LocalUpdateRemoteContentPolicy } from "~/types/local-update";
 import { BaseAnchor, BaseImage, Box, Button, Text } from '@tlon/indigo-react';
 import { hasProvider } from 'oembed-parser';
 import EmbedContainer from 'react-oembed-container';
-import { memoize } from 'lodash';
+import { withLocalState } from '~/logic/state/local';
+import { RemoteContentPolicy } from '~/types/local-update';
 
 interface RemoteContentProps {
   url: string;
   text?: string;
-  remoteContentPolicy: LocalUpdateRemoteContentPolicy;
   unfold?: boolean;
   renderUrl?: boolean;
+  remoteContentPolicy: RemoteContentPolicy;
   imageProps?: any;
   audioProps?: any;
   videoProps?: any;
@@ -29,8 +29,9 @@ const IMAGE_REGEX = new RegExp(/(jpg|img|png|gif|tiff|jpeg|webp|webm|svg)$/i);
 const AUDIO_REGEX = new RegExp(/(mp3|wav|ogg)$/i);
 const VIDEO_REGEX = new RegExp(/(mov|mp4|ogv)$/i);
 
-export default class RemoteContent extends PureComponent<RemoteContentProps, RemoteContentState> {
+class RemoteContent extends PureComponent<RemoteContentProps, RemoteContentState> {
   private fetchController: AbortController | undefined;
+  containerRef: HTMLDivElement | null = null;
   constructor(props) {
     super(props);
     this.state = {
@@ -187,7 +188,8 @@ export default class RemoteContent extends PureComponent<RemoteContentProps, Rem
           >
             {this.state.embed && this.state.embed.html && this.state.unfold
             ? <EmbedContainer markup={this.state.embed.html}>
-              <div dangerouslySetInnerHTML={{__html: this.state.embed.html}}></div>
+              <div className="embed-container" ref={el => { this.containerRef = el; }}
+                dangerouslySetInnerHTML={{__html: this.state.embed.html}}></div>
             </EmbedContainer>
             : null}
           </Box>
@@ -195,8 +197,10 @@ export default class RemoteContent extends PureComponent<RemoteContentProps, Rem
       );
     } else {
       return renderUrl
-        ? this.wrapInLink(<Text {...textProps}>{text || url}</Text>) 
+        ? this.wrapInLink(<Text {...textProps}>{text || url}</Text>)
         : null;
     }
   }
 }
+
+export default withLocalState(RemoteContent, ['remoteContentPolicy']);

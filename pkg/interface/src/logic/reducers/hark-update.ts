@@ -8,8 +8,9 @@ import {
 import { makePatDa } from "~/logic/lib/util";
 import _ from "lodash";
 import {StoreState} from "../store/type";
+import { BigIntOrderedMap } from '../lib/BigIntOrderedMap';
 
-type HarkState = Pick<StoreState, "notifications" | "notificationsGraphConfig" | "notificationsGroupConfig" | "unreads" | "notificationsChatConfig">;
+type HarkState = Pick<StoreState, "notifications" | "notificationsGraphConfig" | "notificationsGroupConfig" | "unreads" >;
 
 
 export const HarkReducer = (json: any, state: HarkState) => {
@@ -31,38 +32,7 @@ export const HarkReducer = (json: any, state: HarkState) => {
     groupListen(groupHookData, state);
     groupIgnore(groupHookData, state);
   }
-
-  const chatHookData = _.get(json, "hark-chat-hook-update", false);
-  if(chatHookData) {
-
-    chatInitial(chatHookData, state);
-    chatListen(chatHookData, state);
-    chatIgnore(chatHookData, state);
-
-  }
 };
-
-function chatInitial(json: any, state: HarkState) {
-  const data = _.get(json, "initial", false);
-  if (data) {
-    state.notificationsChatConfig = data;
-  }
-}
-
-
-function chatListen(json: any, state: HarkState) {
-  const data = _.get(json, "listen", false);
-  if (data) {
-    state.notificationsChatConfig = [...state.notificationsChatConfig, data];
-  }
-}
-
-function chatIgnore(json: any, state: HarkState) {
-  const data = _.get(json, "ignore", false);
-  if (data) {
-    state.notificationsChatConfig = state.notificationsChatConfig.filter(x => x !== data);
-  }
-}
 
 function groupInitial(json: any, state: HarkState) {
   const data = _.get(json, "initial", false);
@@ -128,7 +98,6 @@ function graphWatchSelf(json: any, state: HarkState) {
 }
 
 function reduce(data: any, state: HarkState) {
-  console.log(data);
   unread(data, state);
   read(data, state);
   archive(data, state);
@@ -143,6 +112,14 @@ function reduce(data: any, state: HarkState) {
   unreadEach(data, state);
   seenIndex(data, state);
   removeGraph(data, state);
+  readAll(data, state);
+}
+
+function readAll(json: any, state: HarkState) {
+  const data = _.get(json, 'read-all');
+  if(data) { 
+    clearState(state);
+  }
 }
 
 function removeGraph(json: any, state: HarkState) {
@@ -190,7 +167,7 @@ function unreadEach(json: any, state: HarkState) {
 function unreads(json: any, state: HarkState) {
   const data = _.get(json, 'unreads');
   if(data) {
-    console.log(data);
+    clearState(state);
     data.forEach(({ index, stats }) => {
       const { unreads, notifications, last } = stats;
       updateNotificationStats(state, index, 'notifications', x => x + notifications);
@@ -206,9 +183,31 @@ function unreads(json: any, state: HarkState) {
   }
 }
 
+function clearState(state){
+  let initialState = {
+    notifications: new BigIntOrderedMap<Timebox>(),
+    archivedNotifications: new BigIntOrderedMap<Timebox>(),
+    notificationsGroupConfig: [],
+    notificationsGraphConfig: {
+      watchOnSelf: false,
+      mentions: false,
+      watching: [],
+    },
+    unreads: {
+      graph: {},
+      group: {}
+    },
+    notificationsCount: 0
+  };
+
+  Object.keys(initialState).forEach(key => {
+    state[key] = initialState[key];
+  });
+}
+
 function updateUnreadCount(state: HarkState, index: NotifIndex, count: (c: number) => number) {
   if(!('graph' in index)) {
-    return; 
+    return;
   }
   const property = [index.graph.graph, index.graph.index, 'unreads'];
   const curr = _.get(state.unreads.graph, property, 0);
@@ -218,7 +217,7 @@ function updateUnreadCount(state: HarkState, index: NotifIndex, count: (c: numbe
 
 function updateUnreads(state: HarkState, index: NotifIndex, f: (us: Set<string>) => void) {
   if(!('graph' in index)) {
-    return; 
+    return;
   }
   const unreads = _.get(state.unreads.graph, [index.graph.graph, index.graph.index, 'unreads'], new Set<string>());
   const oldSize = unreads.size;
@@ -238,7 +237,7 @@ function updateNotificationStats(state: HarkState, index: NotifIndex, statField:
     } else if('group' in index) {
       const curr = _.get(state.unreads.group, [index.group.group, statField], 0);
       _.set(state.unreads.group, [index.group.group, statField], f(curr));
-    } 
+    }
 }
 
 function added(json: any, state: HarkState) {
@@ -301,9 +300,6 @@ function notifIdxEqual(a: NotifIndex, b: NotifIndex) {
       a.group.group === b.group.group &&
       a.group.description === b.group.description
     );
-  } else if ("chat" in a && "chat" in b) {
-    return a.chat.chat === b.chat.chat &&
-      a.chat.mention === b.chat.mention;
   }
   return false;
 }
@@ -362,6 +358,13 @@ function archive(json: any, state: HarkState) {
     const [archived, unarchived] = _.partition(timebox, (idxNotif) =>
       notifIdxEqual(index, idxNotif.index)
     );
-    state.notifications.set(time, unarchived);
+    if(unarchived.length === 0) {
+      console.log('deleting entire timebox');
+      state.notifications.delete(time);
+    } else {
+      state.notifications.set(time, unarchived);
+    }
+    const newlyRead = archived.filter(x => !x.notification.read).length;
+    updateNotificationStats(state, index, 'notifications', (x) => x - newlyRead);
   }
 }

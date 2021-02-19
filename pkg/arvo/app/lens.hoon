@@ -25,12 +25,9 @@
     ^-  (list @tas)
     :~  %group-store
         %metadata-store
-        %metadata-hook
         %contact-store
         %contact-hook
         %invite-store
-        %chat-store
-        %chat-hook
         %graph-store
     ==
   |=  app=@tas

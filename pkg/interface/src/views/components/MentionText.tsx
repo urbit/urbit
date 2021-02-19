@@ -1,109 +1,84 @@
-import React, { useState, useCallback } from "react";
-import _ from "lodash";
-import { Text, Box } from "@tlon/indigo-react";
-import {
-  Contact,
-  Contacts,
-  Content,
-  LocalUpdateRemoteContentPolicy,
-  Group,
-} from "~/types";
-import RichText from "~/views/components/RichText";
-import { cite, uxToHex } from "~/logic/lib/util";
-import { ProfileOverlay } from "./ProfileOverlay";
-import {useHistory} from "react-router-dom";
+import React, { useState, useCallback } from 'react';
+import _ from 'lodash';
+import { Text, Box } from '@tlon/indigo-react';
+import { Contact, Contacts, Content, Group } from '~/types';
+import RichText from '~/views/components/RichText';
+import { cite, useShowNickname, uxToHex } from '~/logic/lib/util';
+import OverlaySigil from '~/views/components/OverlaySigil';
+import { useHistory } from 'react-router-dom';
 
 interface MentionTextProps {
   contact?: Contact;
   contacts?: Contacts;
   content: Content[];
   group: Group;
-  remoteContentPolicy: LocalUpdateRemoteContentPolicy;
-  hideNicknames: boolean;
-  hideAvatars: boolean;
 }
 export function MentionText(props: MentionTextProps) {
-  const { content, contacts, contact, group, hideNicknames, hideAvatars } = props;
+  const { content, contacts, contact, group, ...rest } = props;
 
   return (
-    <>
-      {_.map(content, (c, idx) => {
-        if ("text" in c) {
-          return (
-            <RichText
-              inline
-              key={idx}
-              remoteContentPolicy={props.remoteContentPolicy}
-            >
-              {c.text}
-            </RichText>
-          );
-        } else if ("mention" in c) {
-          return (
-            <Mention key={idx} contacts={contacts || {}} contact={contact || {}} group={group} ship={c.mention} hideNicknames={hideNicknames} hideAvatars={hideAvatars} />
-          );
+    <RichText contacts={contacts} contact={contact} group={group} {...rest}>
+      {content.reduce((accum, c) => {
+        if ('text' in c) {
+          return accum + c.text;
+        } else if ('mention' in c) {
+          return accum + `[~${c.mention}]`;
+        } else if ('url' in c) {
+          return accum + `\n ${c.url}`;
         }
-        return null;
-      })}
-    </>
+        return accum;
+      }, '')}
+    </RichText>
   );
 }
 
 export function Mention(props: {
-  ship: string;
   contact: Contact;
   contacts?: Contacts;
   group: Group;
-  hideNicknames: boolean;
-  hideAvatars: boolean;
+  scrollWindow?: HTMLElement;
+  ship: string;
 }) {
-  const { contacts, ship, hideNicknames, hideAvatars } = props;
+  const { contacts, ship, scrollWindow } = props;
   let { contact } = props;
-
-  contact = (contact?.nickname) ? contact : contacts?.[ship];
-
-  const showNickname = (Boolean(contact?.nickname) && !hideNicknames);
-  const name = showNickname ? contact?.nickname : cite(ship);
-  const [showOverlay, setShowOverlay] = useState(false);
-  const onDismiss = useCallback(() => {
-    setShowOverlay(false);
-  }, [setShowOverlay]);
-  const onClick = useCallback(() => {
-    setShowOverlay(true);
-  }, [setShowOverlay]);
-
-  const group = props.group ?? { hidden: true };
-
+  contact = contact?.color ? contact : contacts?.[ship];
   const history = useHistory();
+  const showNickname = useShowNickname(contact);
+  const name = showNickname ? contact?.nickname : cite(ship);
+  const group = props.group ?? { hidden: true };
+  const [showOverlay, setShowOverlay] = useState(false);
+
+  const toggleOverlay = useCallback(
+    () => {
+      setShowOverlay(value => !value);
+    },
+    [showOverlay]
+  );
 
   return (
-      <Box
-        position="relative"
-        display="inline-block"
-        cursor="pointer"
-      >
-      {showOverlay && (
-        <ProfileOverlay
-          ship={ship}
-          contact={contact}
-          color={`#${uxToHex(contact?.color ?? '0x0')}`}
-          group={group}
-          onDismiss={onDismiss}
-          hideAvatars={hideAvatars || false}
-          hideNicknames={hideNicknames}
-          history={history}
-        />
-      )}
+    <Box position='relative' display='inline-block' cursor='pointer'>
       <Text
-        onClick={onClick}
-        mx="2px"
-        px="2px"
-        bg="washedBlue"
-        color="blue"
+        onClick={() => toggleOverlay()}
+        mx='2px'
+        px='2px'
+        bg='washedBlue'
+        color='blue'
         mono={!showNickname}
       >
         {name}
       </Text>
+      {showOverlay && (
+        <OverlaySigil
+          ship={ship}
+          contact={contact}
+          color={`#${uxToHex(contact?.color ?? '0x0')}`}
+          group={group}
+          onDismiss={() => toggleOverlay()}
+          history={history}
+          className='relative'
+          scrollWindow={scrollWindow}
+        />
+      )}
     </Box>
   );
 }

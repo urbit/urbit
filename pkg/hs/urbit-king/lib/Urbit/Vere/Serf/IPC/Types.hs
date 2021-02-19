@@ -35,7 +35,7 @@ data Work
 
 data Writ
   = WLive Live
-  | WPeek Atom Wen Gang Path
+  | WPeek Atom Gang ScryReq
   | WPlay EventId [Noun]
   | WWork Atom Wen Ev
  deriving (Show)
@@ -44,6 +44,7 @@ data Plea
   = PLive ()
   | PRipe SerfInfo
   | PSlog Slog
+  | PFlog Cord
   | PPeek Scry
   | PPlay Play
   | PWork Work

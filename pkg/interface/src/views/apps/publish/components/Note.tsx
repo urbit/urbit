@@ -10,7 +10,7 @@ import { NoteNavigation } from "./NoteNavigation";
 import GlobalApi from "~/logic/api/global";
 import { getLatestRevision, getComments } from '~/logic/lib/publish';
 import Author from "~/views/components/Author";
-import { Contacts, GraphNode, Graph, LocalUpdateRemoteContentPolicy, Association, Unreads, Group } from "~/types";
+import { Contacts, GraphNode, Graph, Association, Unreads, Group } from "~/types";
 
 interface NoteProps {
   ship: string;
@@ -21,9 +21,6 @@ interface NoteProps {
   notebook: Graph;
   contacts: Contacts;
   api: GlobalApi;
-  hideAvatars: boolean;
-  hideNicknames: boolean;
-  remoteContentPolicy: LocalUpdateRemoteContentPolicy;
   rootUrl: string;
   baseUrl: string;
   group: Group;
@@ -50,7 +47,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
   const noteId = bigInt(index[1]);
   useEffect(() => {
     api.hark.markEachAsRead(props.association, '/',`/${index[1]}/1/1`, 'note', 'publish');
-  }, [props.association]);
+  }, [props.association, props.note]);
 
 
 
@@ -70,13 +67,20 @@ export function Note(props: NoteProps & RouteComponentProps) {
           color="red"
           ml={2}
           onClick={deletePost}
-          css={{ cursor: "pointer" }}
+          style={{ cursor: "pointer" }}
         >
           Delete
         </Text>
       </Box>
     );
   }
+
+  const windowRef = React.useRef(null);
+  useEffect(() => {
+    if (windowRef.current) {
+      windowRef.current.parentElement.scrollTop = 0;
+    }
+  }, [windowRef, note]);
 
   return (
     <Box
@@ -89,6 +93,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
       width="100%"
       gridRowGap={4}
       mx="auto"
+      ref={windowRef}
     >
       <Link to={rootUrl}>
         <Text>{"<- Notebook Index"}</Text>
@@ -97,8 +102,6 @@ export function Note(props: NoteProps & RouteComponentProps) {
         <Text display="block" mb={2}>{title || ""}</Text>
         <Box display="flex">
           <Author
-            hideNicknames={props?.hideNicknames}
-            hideAvatars={props?.hideAvatars}
             ship={post?.author}
             contacts={contacts}
             date={post?.["time-sent"]}
@@ -106,7 +109,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
           <Text ml={2}>{adminLinks}</Text>
         </Box>
       </Col>
-      <Box color="black" className="md" style={{ overflowWrap: "break-word" }}>
+      <Box color="black" className="md" style={{ overflowWrap: "break-word", overflow: "hidden" }}>
         <ReactMarkdown source={body} linkTarget={"_blank"} />
       </Box>
       <NoteNavigation
@@ -123,9 +126,6 @@ export function Note(props: NoteProps & RouteComponentProps) {
         contacts={props.contacts}
         association={props.association}
         api={props.api}
-        hideNicknames={props.hideNicknames}
-        hideAvatars={props.hideAvatars}
-        remoteContentPolicy={props.remoteContentPolicy}
         baseUrl={baseUrl}
         editCommentId={editCommentId}
         history={props.history}

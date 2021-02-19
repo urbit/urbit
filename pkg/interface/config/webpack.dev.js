@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 // const HtmlWebpackPlugin = require('html-webpack-plugin');
 // const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const urbitrc = require('./urbitrc');
@@ -96,7 +97,7 @@ module.exports = {
             ]
           }
         },
-        exclude: /node_modules/
+        exclude: /node_modules\/(?!(@tlon\/indigo-dark|@tlon\/indigo-light)\/).*/
       },
       {
         test: /\.css$/i,
@@ -117,7 +118,15 @@ module.exports = {
   devtool: 'inline-source-map',
   devServer: devServer,
   plugins: [
-    new UrbitShipPlugin(urbitrc)
+    new UrbitShipPlugin(urbitrc),
+    new webpack.DefinePlugin({
+      'process.env.TUTORIAL_HOST': JSON.stringify('~hastuc-dibtux'),
+      'process.env.TUTORIAL_GROUP': JSON.stringify('beginner-island'),
+      'process.env.TUTORIAL_CHAT': JSON.stringify('chat-1704'),
+      'process.env.TUTORIAL_BOOK': JSON.stringify('book-9695'),
+      'process.env.TUTORIAL_LINKS': JSON.stringify('link-2827'),
+    })
+
     // new CleanWebpackPlugin(),
     // new HtmlWebpackPlugin({
     //   title: 'Hot Module Replacement',

@@ -10,6 +10,7 @@ import { Envelope } from '~/types/chat-update';
 import { Contacts, Content } from '~/types';
 import { Row, BaseImage, Box, Icon, LoadingSpinner } from '@tlon/indigo-react';
 import withS3 from '~/views/components/withS3';
+import { withLocalState } from '~/logic/state/local';
 
 type ChatInputProps = IuseS3 & {
   api: GlobalApi;
@@ -66,7 +67,7 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
         inCodeMode: false
       }, async () => {
         const output = await props.api.graph.eval(text);
-        const contents: Content[] = [{ code: {  output, expression: text }}];
+        const contents: Content[] = [{ code: { output, expression: text }}];
         const post = createPost(contents);
         props.api.graph.addPost(ship, name, post);
       });
@@ -136,7 +137,7 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
         color={`#${color}`}
         classes={sigilClass}
         icon
-        padded
+        padding={2}
         />;
 
     return (
@@ -199,4 +200,4 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
   }
 }
 
-export default withS3(ChatInput, {accept: 'image/*'});
+export default withLocalState(withS3(ChatInput, {accept: 'image/*'}), ['hideAvatars']);
