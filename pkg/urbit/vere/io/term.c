@@ -1623,7 +1623,7 @@ u3_term_io_loja(int x)
     }
   }
   else {
-    fprintf(stdout, "\n");
+    fprintf(stdout, "\r\n");
   }
 }
 
