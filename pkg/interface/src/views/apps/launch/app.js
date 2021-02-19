@@ -102,7 +102,7 @@ export default function LaunchApp(props) {
           await waiter(hasTutorialGroup);
           await Promise.all(
             [TUTORIAL_BOOK, TUTORIAL_CHAT, TUTORIAL_LINKS].map(graph =>
-              props.api.graph.join(TUTORIAL_HOST, graph)));
+              props.api.graph.joinGraph(TUTORIAL_HOST, graph)));
 
           await waiter(p => {
             return `/ship/${TUTORIAL_HOST}/${TUTORIAL_CHAT}` in p.associations.graph &&

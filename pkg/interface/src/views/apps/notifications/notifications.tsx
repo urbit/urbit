@@ -52,7 +52,7 @@ export default function NotificationsScreen(props: any) {
           .map((g) => props.associations?.groups?.[g]?.metadata?.title)
     .join(", ");
   const anchorRef = useRef<HTMLElement | null>(null);
-  useTutorialModal('notifications', true, anchorRef.current);
+  useTutorialModal('notifications', true, anchorRef);
   return (
     <Switch>
       <Route

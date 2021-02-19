@@ -80,7 +80,7 @@ function Group(props: GroupProps) {
   useTutorialModal(
     'start',
     isTutorialGroup,
-    anchorRef.current
+    anchorRef
   );
   return (
     <Tile ref={anchorRef} position="relative" bg={isTutorialGroup ? 'lightBlue' : undefined} to={`/~landscape${path}`} gridColumnStart={first ? '1' : null}>
