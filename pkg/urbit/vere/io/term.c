@@ -1037,8 +1037,14 @@ _term_spin_step(u3_utty* uty_u)
     //  One-time cursor backoff.
     //
     if ( c3n == tat_u->sun_u.diz_o ) {
-      c3_w i_w;
+      //  if we know where the bottom line is, and the cursor is not on it,
+      //  move it to the bottom left
+      //
+      if ( tat_u->siz.row_l && tat_u->mir.rus_w > 0 ) {
+        _term_it_send_csi(uty_u, 'H', 2, tat_u->siz.row_l, 0);
+      }
 
+      c3_w i_w;
       for ( i_w = bac_w; i_w < sol_w; i_w++ ) {
         if ( lef_u.len != write(fid_i, lef_u.base, lef_u.len) ) {
           return;
