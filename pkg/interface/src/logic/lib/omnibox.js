@@ -73,6 +73,7 @@ const appIndex = function (apps) {
 const otherIndex = function() {
   const other = [];
   other.push(result('My Channels', '/~landscape/home', 'home', null));
+  other.push(result('Tutorial', '/?tutorial=true', 'tutorial', null));
   other.push(result('Notifications', '/~notifications', 'inbox', null));
   other.push(result('Profile and Settings', `/~profile/~${window.ship}`, 'profile', null));
   other.push(result('Messages', '/~landscape/messages', 'messages', null));
