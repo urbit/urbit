@@ -90,7 +90,7 @@ export const progressDetails: Record<TutorialProgress, StepDetail> = {
     alignY: "top",
     arrow: "East",
     offsetX: MODAL_WIDTH + 24,
-    offsetY: MODAL_HEIGHT / 2 - 8,
+    offsetY: 80,
   },
   channels: {
     title: "Channels",
@@ -155,7 +155,7 @@ export const progressDetails: Record<TutorialProgress, StepDetail> = {
     alignX: "right",
     arrow: "South",
     offsetX: -300 + MODAL_WIDTH / 2,
-    offsetY: -120 + MODAL_HEIGHT / 2,
+    offsetY: -60,
   },
   leap: {
     title: "Leap",
@@ -165,7 +165,7 @@ export const progressDetails: Record<TutorialProgress, StepDetail> = {
     alignY: "top",
     alignX: "left",
     arrow: "North",
-    offsetX: 0.3 *MODAL_HEIGHT,
+    offsetX: 76,
     offsetY: -48,
   },
 };

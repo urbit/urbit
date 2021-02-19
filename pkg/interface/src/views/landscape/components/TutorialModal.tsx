@@ -207,7 +207,8 @@ export function TutorialModal(props: { api: GlobalApi }) {
         {...coords}
         bg="white"
         zIndex={50}
-        height={MODAL_HEIGHT_PX}
+        display="flex"
+        flexDirection="column"
         width={["100%", MODAL_WIDTH_PX]}
         borderRadius="2"
       >
@@ -250,7 +251,7 @@ export function TutorialModal(props: { api: GlobalApi }) {
           </Col>
           
           <Text lineHeight="tall">{description}</Text>
-          <Row gapX="2" mt="2" justifyContent="flex-end">
+          <Row gapX="2" mt="3" justifyContent="flex-end">
             { progressIdx > 1 && (
               <Button bg="washedGray" onClick={prev}>
                 Back
