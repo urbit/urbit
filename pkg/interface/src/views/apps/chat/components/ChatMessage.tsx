@@ -270,7 +270,7 @@ export const MessageWithSigil = (props) => {
     };
     const timer = setTimeout(() => resetDisplay(), 800);
     return () => clearTimeout(timer);
-  }, [displayName]);
+  }, [shipName, displayName]);
 
   const img = contact?.avatar && !hideAvatars ? (
       <BaseImage
