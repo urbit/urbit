@@ -40,7 +40,7 @@
   ++  length
     |=  u=@lvs  ^-  @ud
     ~_  leaf+"lagoon-fail"
-    (end [5 1] (swp 5 u))
+    (dec (met 5 u))
   ::
   ::    Produce a vector from `(list @u)` (of natural numbers)
   ++  make-nat
