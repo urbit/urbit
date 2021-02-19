@@ -1,28 +1,27 @@
-import React, { ReactElement, useCallback } from 'react';
+import React, { ReactNode, useCallback } from 'react';
 import moment from 'moment';
-import _ from 'lodash';
-import { useHistory } from 'react-router-dom';
-import styled from 'styled-components';
-
 import { Row, Box, Col, Text, Anchor, Icon, Action } from '@tlon/indigo-react';
+import { Link, useHistory } from 'react-router-dom';
+import _ from 'lodash';
 import {
   GraphNotifIndex,
   GraphNotificationContents,
   Associations,
   Rolodex,
   Groups
-} from '@urbit/api';
-
+} from '~/types';
 import { Header } from './header';
 import { cite, deSig, pluralize } from '~/logic/lib/util';
 import { Sigil } from '~/logic/lib/sigil';
+import RichText from '~/views/components/RichText';
 import GlobalApi from '~/logic/api/global';
+import ReactMarkdown from 'react-markdown';
 import { getSnippet } from '~/logic/lib/publish';
+import styled from 'styled-components';
 import { MentionText } from '~/views/components/MentionText';
-import { MessageWithoutSigil } from '../chat/components/ChatMessage';
-import Timestamp from '~/views/components/Timestamp';
+import ChatMessage from '../chat/components/ChatMessage';
 
-function getGraphModuleIcon(module: string): string {
+function getGraphModuleIcon(module: string) {
   if (module === 'link') {
     return 'Collection';
   }
@@ -58,16 +57,24 @@ function describeNotification(description: string, plural: boolean): string {
   }
 }
 
-const GraphUrl = ({ url, title }): ReactElement => (
-  <Box borderRadius="2" p="2" bg="scales.black05">
-    <Anchor underline={false} target="_blank" color="black" href={url}>
-      <Icon verticalAlign="bottom" mr="2" icon="ArrowExternal" />
+const GraphUrl = ({ url, title }) => (
+  <Box borderRadius='2' p='2' bg='scales.black05'>
+    <Anchor underline={false} target='_blank' color='black' href={url}>
+      <Icon verticalAlign='bottom' mr='2' icon='ArrowExternal' />
       {title}
     </Anchor>
   </Box>
 );
 
-const GraphNodeContent = ({ group, post, contacts, mod, index }): ReactElement => {
+const GraphNodeContent = ({
+  group,
+  post,
+  contacts,
+  mod,
+  description,
+  index,
+  remoteContentPolicy
+}) => {
   const { contents } = post;
   const idx = index.slice(1).split('/');
   if (mod === 'link') {
@@ -75,39 +82,39 @@ const GraphNodeContent = ({ group, post, contacts, mod, index }): ReactElement =
       const [{ text }, { url }] = contents;
       return <GraphUrl title={text} url={url} />;
     } else if (idx.length === 3) {
-      return <MentionText
-        content={contents}
-        contacts={contacts}
-        group={group}
-             />;
+      return (
+        <MentionText content={contents} contacts={contacts} group={group} />
+      );
     }
     return null;
   }
   if (mod === 'publish') {
     if (idx[1] === '2') {
-      return <MentionText
-        content={contents}
-        group={group}
-        contacts={contacts}
-        fontSize='14px'
-        lineHeight="tall"
-             />;
+      return (
+        <MentionText
+          content={contents}
+          group={group}
+          contacts={contacts}
+          fontSize='14px'
+          lineHeight='tall'
+        />
+      );
     } else if (idx[1] === '1') {
       const [{ text: header }, { text: body }] = contents;
       const snippet = getSnippet(body);
       return (
         <Col>
-          <Box mb="2" fontWeight="500">
+          <Box mb='2' fontWeight='500'>
             <Text>{header}</Text>
           </Box>
-          <Box overflow="hidden" maxHeight="400px" position="relative">
-            <Text lineHeight="tall">{snippet}</Text>
+          <Box overflow='hidden' maxHeight='400px' position='relative'>
+            <Text lineHeight='tall'>{snippet}</Text>
             <FilterBox
-              width="100%"
-              zIndex="1"
-              height="calc(100% - 2em)"
-              bottom="-4px"
-              position="absolute"
+              width='100%'
+              zIndex='1'
+              height='calc(100% - 2em)'
+              bottom='-4px'
+              position='absolute'
             />
           </Box>
         </Col>
@@ -115,31 +122,40 @@ const GraphNodeContent = ({ group, post, contacts, mod, index }): ReactElement =
     }
   }
 
-  if(mod === 'chat') {
+  if (mod === 'chat') {
     return (
       <Row
-        width="100%"
-      flexShrink={0}
-      flexGrow={1}
-      flexWrap="wrap"
+        width='100%'
+        flexShrink={0}
+        flexGrow={1}
+        flexWrap='wrap'
+        marginLeft='-32px'
       >
-      <MessageWithoutSigil
-        containerClass="items-top cf hide-child"
-        measure={() => {}}
-        group={group}
-        contacts={contacts}
-        groups={{}}
-        associations={{ graph: {}, groups: {} }}
-        msg={post}
-        fontSize='0'
-        pt='2'
-      />
-    </Row>);
+        <ChatMessage
+          renderSigil={false}
+          containerClass='items-top cf hide-child'
+          measure={() => {}}
+          group={group}
+          contacts={contacts}
+          groups={{}}
+          associations={{ graph: {}, groups: {} }}
+          msg={post}
+          fontSize='0'
+          pt='2'
+        />
+      </Row>
+    );
   }
   return null;
 };
 
-function getNodeUrl(mod: string, hidden: boolean, groupPath: string, graph: string, index: string): string {
+function getNodeUrl(
+  mod: string,
+  hidden: boolean,
+  groupPath: string,
+  graph: string,
+  index: string
+) {
   if (hidden && mod === 'chat') {
     groupPath = '/messages';
   } else if (hidden) {
@@ -181,40 +197,46 @@ const GraphNode = ({
       ship={`~${author}`}
       size={16}
       icon
-      color={'#000000'}
-      classes="mix-blend-diff"
+      color={`#000000`}
+      classes='mix-blend-diff'
       padding={2}
     />
-    ) : <Box style={{ width: '16px' }}></Box>;
+  ) : (
+    <Box style={{ width: '16px' }}></Box>
+  );
 
   const groupContacts = contacts[groupPath] ?? {};
 
   const nodeUrl = getNodeUrl(mod, group?.hidden, groupPath, graph, index);
 
   const onClick = useCallback(() => {
-    if(!read) {
+    if (!read) {
       onRead();
     }
     history.push(nodeUrl);
   }, [read, onRead]);
 
   return (
-    <Row onClick={onClick} gapX="2" pt={showContact ? 2 : 0}>
+    <Row onClick={onClick} gapX='2' pt={showContact ? 2 : 0}>
       <Col>{img}</Col>
-      <Col flexGrow={1} alignItems="flex-start">
-        {showContact && <Row
-          mb="2"
-          height="16px"
-          alignItems="center"
-          p="1"
-          backgroundColor="white"
-                        >
-          <Text mono title={author}>
-            {cite(author)}
-          </Text>
-          <Timestamp stamp={moment(time)} date={false} ml={2} />
-        </Row>}
-        <Row width="100%" p="1" flexDirection="column">
+      <Col flexGrow={1} alignItems='flex-start'>
+        {showContact && (
+          <Row
+            mb='2'
+            height='16px'
+            alignItems='center'
+            p='1'
+            backgroundColor='white'
+          >
+            <Text mono title={author}>
+              {cite(author)}
+            </Text>
+            <Text ml='2' gray>
+              {moment(time).format('HH:mm')}
+            </Text>
+          </Row>
+        )}
+        <Row width='100%' p='1' flexDirection='column'>
           <GraphNodeContent
             contacts={groupContacts}
             post={post}
@@ -256,7 +278,7 @@ export function GraphNotification(props: {
     return api.hark['read'](timebox, { graph: index });
   }, [api, timebox, index, read]);
 
-return (
+  return (
     <>
       <Header
         onClick={onClick}
@@ -271,7 +293,7 @@ return (
         description={desc}
         associations={props.associations}
       />
-      <Box flexGrow={1} width="100%" pl={5} gridArea="main">
+      <Box flexGrow={1} width='100%' pl={5} gridArea='main'>
         {_.map(contents, (content, idx) => (
           <GraphNode
             post={content}
