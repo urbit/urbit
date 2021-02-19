@@ -301,7 +301,7 @@ _pier_on_lord_work_spin(void* ptr_v, u3_atom pin, c3_o del_o)
   u3_term_start_spinner(pin, del_o);
 }
 
-/* _pier_on_lord_work_spin(): stop spinner
+/* _pier_on_lord_work_spun(): stop spinner
 */
 static void
 _pier_on_lord_work_spun(void* ptr_v)

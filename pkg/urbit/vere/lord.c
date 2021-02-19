@@ -373,8 +373,7 @@ _lord_plea_flog(u3_lord* god_u, u3_noun dat)
   }
 
   c3_c* tan_c = u3r_string(dat);
-  // u3C.stderr_log_f(tan_c);
-  u3l_log("y%sy", tan_c);
+  u3C.stderr_log_f(tan_c);
   c3_free(tan_c);
 
   if ( 0 != pir_u->sog_f ) {

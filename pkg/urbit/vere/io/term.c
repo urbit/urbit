@@ -453,21 +453,6 @@ _term_it_send_csi(u3_utty *uty_u, c3_c cmd_c, c3_w num_w, ...)
   _term_it_dump_buf(uty_u, &cmd_u);
 }
 
-/* _term_it_send_cord(): write a cord.
-*/
-static void
-_term_it_send_cord(u3_utty*    uty_u,
-                   u3_atom       txt)
-{
-  c3_w  len_w = u3r_met(3, txt);
-  c3_y* hun_y = c3_malloc(len_w);
-  u3r_bytes(0, len_w, hun_y, txt);
-
-  _term_it_send(uty_u, len_w, hun_y);
-
-  u3z(txt);
-}
-
 /* _term_it_free_line(): wipe line stored by _term_it_save_line
 */
 static void
@@ -573,10 +558,10 @@ _term_it_show_line(u3_utty* uty_u, c3_w* lin_w, c3_w wor_w)
   _term_it_dump_buf(uty_u, &uty_u->ufo_u.out.rc_u);
 }
 
-/* _term_it_refresh_line(): refresh current line.
+/* _term_it_restore_line(): refresh current line.
 */
 static void
-_term_it_refresh_line(u3_utty* uty_u)  //TODO  rename restore
+_term_it_restore_line(u3_utty* uty_u)
 {
   u3_utat* tat_u = &uty_u->tat_u;
   c3_w*    lin_w = tat_u->mir.lin_w;
@@ -648,10 +633,10 @@ _term_it_save_line(u3_utty* uty_u, c3_w* lin_w, c3_w wor_w)
   }
 }
 
-/* _term_it_show_more(): render newline, moving cursor down
+/* _term_it_show_nel(): render newline, moving cursor down
 */
 static void
-_term_it_show_more(u3_utty* uty_u)
+_term_it_show_nel(u3_utty* uty_u)
 {
   if ( c3y == u3_Host.ops_u.tem ) {
     _term_it_dump(uty_u, TERM_LIT("\n"));
@@ -778,6 +763,7 @@ _term_io_belt(u3_utty* uty_u, u3_noun blb)
   {
     u3_ovum* egg_u = _term_ovum_plan(uty_u->car_u, wir, cad);
 
+    //REVIEW  do we not want even a small delay here?
     //  no spinner delay on %ret
     //
     if ( c3__ret == u3h(blb) ) {
@@ -1129,7 +1115,7 @@ u3_term_stop_spinner(void)
     uv_timer_stop(&tat_u->sun_u.tim_u);
 
     if ( c3y == tat_u->sun_u.diz_o ) {
-      _term_it_refresh_line(uty_u);
+      _term_it_restore_line(uty_u);
       tat_u->sun_u.end_d = _term_msc_out_host();
       tat_u->sun_u.diz_o = c3n;
     }
@@ -1503,7 +1489,7 @@ _term_ef_blit(u3_utty* uty_u,
     } break;
 
     case c3__nel: {
-      _term_it_show_more(uty_u);
+      _term_it_show_nel(uty_u);
     } break;
 
     case c3__sav: {
@@ -1526,9 +1512,7 @@ _term_ef_blit(u3_utty* uty_u,
     } break;
 
     case c3__wyp: {
-      if ( c3n == u3_Host.ops_u.tem ) {
-        _term_it_clear_line(uty_u);
-      }
+      _term_it_clear_line(uty_u);
     } break;
   }
 
@@ -1600,6 +1584,7 @@ u3_term_io_loja(int x)
     }
     else {
       if ( c3y == u3_Host.ops_u.tem ) {
+        fprintf(stdout, "\n");
         fflush(stdout);
       }
       else {

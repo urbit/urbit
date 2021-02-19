@@ -195,8 +195,8 @@
         // } inn;
         struct {
           uv_buf_t clear_u;              //  clear_screen
-          uv_buf_t el_u;                 //  clr_bol clear to beginning
-          // uv_buf_t el1_u;             //  clr_eol clear to end
+          uv_buf_t el_u;                 //  clr_bol clear to end of line
+          // uv_buf_t el1_u;             //  clr_eol clear to beginning of line
           uv_buf_t ed_u;                 //  clear to end of screen
           uv_buf_t sc_u;                 //  save cursor position
           uv_buf_t rc_u;                 //  restore cursor position
