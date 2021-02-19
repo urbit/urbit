@@ -1,18 +1,18 @@
-/-  sur=btc-provider, json-rpc
-/+  *bitcoin
+/-  bp=btc-provider, json-rpc, bc=bitcoin
+/+  bcu=bitcoin-utils
 ^?
-=<  [sur .]
-=,  sur
+::=<  [sur .]
+::=,  sur
 |%
 ++  address-to-cord
-  |=  =address  ^-  cord
+  |=  =address:bc  ^-  cord
   ?:  ?=([%base58 *] address)
     (scot %uc +.address)
   +.address
 ::
 ++  address-from-cord
   |=  addrc=@t
-  ^-  address
+  ^-  address:bc
   ?.  ?|  =("bc1" (scag 3 (trip addrc)))
           =("tb1" (scag 3 (trip addrc)))
       ==
@@ -20,7 +20,7 @@
   [%bech32 addrc]
 ::
 ++  hexb-to-cord
-  |=  =hexb  ^-  cord
+  |=  =hexb:bc  ^-  cord
   (en:base16:mimes:html hexb)
 ::  +from-epoch: time since Jan 1, 1970 in seconds.
 ::
@@ -48,7 +48,7 @@
   ==
 ::
 ++  gen-request
- |=  [=host-info ract=action:rpc-types]
+ |=  [=host-info:bp ract=action:rpc-types:bp]
   ^-  request:http
   %+  rpc-action-to-http
   api-url.host-info  ract
@@ -58,7 +58,7 @@
   |%
   ++  parse-result
     |=  res=response:json-rpc
-    |^  ^-  result:rpc-types
+    |^  ^-  result:rpc-types:bp
     ~|  -.res
     ?>  ?=(%result -.res)
     ?+  id.res  ~|([%unsupported-result id.res] !!)
@@ -90,7 +90,7 @@
     ++  utxo
     %-  ot
       :~  ['tx_pos' ni]
-          ['tx_hash' (cu to-hexb so)]
+          ['tx_hash' (cu to-hexb:bcu so)]
           [%height ni]
           [%value ni]
           [%recvd (cu from-epoch ni)]
@@ -98,7 +98,7 @@
     ++  tx-vals
       %-  ot
       :~  [%included bo]
-          [%txid (cu to-hexb so)]
+          [%txid (cu to-hexb:bcu so)]
           [%confs ni]
           [%recvd (cu from-epoch ni)]
           [%inputs (ar tx-val)]
@@ -106,19 +106,19 @@
       ==
     ++  tx-val
       %-  ot
-      :~  [%txid (cu to-hexb so)]
+      :~  [%txid (cu to-hexb:bcu so)]
           [%pos ni]
           [%address (cu address-from-cord so)]
           [%value ni]
       ==
     ++  raw-tx
       %-  ot
-      :~  [%txid (cu to-hexb so)]
-          [%rawtx (cu to-hexb so)]
+      :~  [%txid (cu to-hexb:bcu so)]
+          [%rawtx (cu to-hexb:bcu so)]
       ==
     ++  broadcast-tx
       %-  ot
-      :~  [%txid (cu to-hexb so)]
+      :~  [%txid (cu to-hexb:bcu so)]
           [%broadcast bo]
           [%included bo]
       ==
@@ -126,14 +126,14 @@
       %-  ot
       :~  [%block ni]
           [%fee (mu ni)]
-          [%blockhash (cu to-hexb so)]
-          [%blockfilter (cu to-hexb so)]
+          [%blockhash (cu to-hexb:bcu so)]
+          [%blockfilter (cu to-hexb:bcu so)]
       ==
     --
   --
 ::
 ++  rpc-action-to-http
-  |=  [endpoint=@t ract=action:rpc-types]
+  |=  [endpoint=@t ract=action:rpc-types:bp]
   |^  ^-  request:http
   ?-  -.ract
       %get-address-info

@@ -1,23 +1,24 @@
-/+  *test, *btc-wallet, btc
+/-  bc=bitcoin
+/+  *test, *btc-wallet
 |%
 +$  wallet-vector
-  $:  =xpub:btc
+  $:  =xpub:bc
       =chyg
-      =idx:btc
-      =address:btc
+      =idx:bc
+      =address:bc
   ==
 +$  vector
-  $:  =xpub:btc
+  $:  =xpub:bc
       eny=@uv
       block=@ud
       feyb=sats
       ins=(list insel)
       outs=(list txo)
-      expect=[selected=(unit (list insel)) chng=(unit sats:btc)]
+      expect=[selected=(unit (list insel)) chng=(unit sats:bc)]
   ==
 ++  mk-utxo
-  |=  value=sats:btc
-  ^-  utxo:btc
+  |=  value=sats:bc
+  ^-  utxo:bc
   :*  pos=0
       [wid=32 dat=0xc493.f6f1.4668.5f76.b44f.0c77.ca88.120c.b8bc.89f5.34fe.69b6.8288.27b9.74e6.8849]
       height=3
@@ -82,7 +83,7 @@
               [[%bech32 'bc1qlwd7mw33uea5m8r2lsnsrkc7gp2qynrxsfxpfm'] 200.000 ~]
           ==
           :*  *(unit (list insel))
-              *(unit sats:btc)
+              *(unit sats:bc)
           ==
       ==
       :*  'zpub6rFR7y4Q2AijBEqTUquhVz398htDFrtymD9xYYfG1m4wAcvPhXNfE3EfH1r1ADqtfSdVCToUG868RvUUkgDKf31mGDtKsAYz2oz2AGutZYs'
@@ -94,7 +95,7 @@
               [[%bech32 'bc1qlwd7mw33uea5m8r2lsnsrkc7gp2qynrxsfxpfm'] 200.000 ~]
           ==
           :*  `~[[(mk-utxo 500.000) %0 2]]
-              *(unit sats:btc)
+              *(unit sats:bc)
           ==
       ==
   ==
@@ -112,7 +113,7 @@
               [[%bech32 'bc1qlwd7mw33uea5m8r2lsnsrkc7gp2qynrxsfxpfm'] 204 ~]
           ==
           :*  `~[[(mk-utxo 500.000) %0 2]]
-              *(unit sats:btc)
+              *(unit sats:bc)
           ==
       ==
   ==
@@ -136,7 +137,7 @@
     |=  v=wallet-vector
     =/  w=walt  (from-xpub xpub.v fprint ~ ~ ~)
     =/  =address  (~(mk-address wad w chyg.v) idx.v)
-    =.  w  (~(update-address wad w chyg.v) address [%.n %0 0 *(set utxo:btc)]) 
+    =.  w  (~(update-address wad w chyg.v) address [%.n %0 0 *(set utxo:bc)]) 
     =/  [w2=walt c=chyg i=idx]  (need (address-coords address ~[w]))
     ;:  weld
       %+  expect-eq
@@ -158,7 +159,7 @@
     |=  v=vector
     =/  w=walt  (from-xpub xpub.v fprint ~ ~ ~)
     =.  wach.w
-      %-  ~(gas by *(map address:btc addi))
+      %-  ~(gas by *(map address:bc addi))
       %+  turn  ins.v
       |=  i=insel
       :-  (~(mk-address wad w chyg.i) idx.i)
@@ -177,7 +178,7 @@
   ++  insels-to-wach
     |=  [w=walt is=(list insel)]
     ^-  wach
-    %-  ~(gas by *(map address:btc addi))
+    %-  ~(gas by *(map address:bc addi))
     %+  turn  is
     |=  i=insel
     :-  (~(mk-address wad w chyg.i) idx.i)
