@@ -14621,9 +14621,9 @@
   ++  caching-toss
     |=  [hyp=wing mur=type men=(list [p=type q=foot])]
     ^-  [[p=axis q=(list [p=type q=foot])] _grub]
-    =;  wib=[p=[p=(unit axis) q=(list [p=type q=foot])] =_grub]
-      :_  grub.wib
-      [(need p.p.wib) q.p.wib]
+    =;  [wib=[p=(unit axis) q=(list [p=type q=foot])] =_grub]
+      :_  grub
+      [(need p.wib) q.wib]
     |-  ^-  [[p=(unit axis) q=(list [p=type q=foot])] =_grub]
     ?~  men
       :_  grub
