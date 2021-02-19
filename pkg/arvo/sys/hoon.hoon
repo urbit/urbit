@@ -6597,7 +6597,7 @@
 +$  garb  (trel (unit term) poly vair)                  ::  core
 +$  grub                                                     ::  ut cache
   $:  nes=(map (pair type type) ?)                           ::  +nest
-      res=(map (trel type type hoon) type)                   ::  +rest
+      res=(map (pair type hoon) type)                        ::  +rest
       pay=(map (pair type hoon) type)                        ::  +play
       mit=(map (trel type type hoon) (pair type nock))       ::  +mint
       mul=(map (qual type type type hoon) (pair type type))  ::  +mull
@@ -14458,11 +14458,11 @@
   ++  caching-rest
     |=  leg=[p=type q=hoon]
     ^-  [type _grub]
-    =/  cached  (~(get by res.grub) [sut leg])
+    =/  cached  (~(get by res.grub) leg)
     ?^  cached
       [u.cached grub]
     =;  [rested=type =_grub]
-      :_  grub(res (~(put by res.grub) [sut leg] rested))
+      :_  grub(res (~(put by res.grub) leg rested))
       rested
     ?:  (~(has in fan) leg)
       ~>(%mean.'rest-loop' !!)
