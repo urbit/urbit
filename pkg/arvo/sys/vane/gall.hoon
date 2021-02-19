@@ -939,15 +939,13 @@
       =/  sky  (rof ~ %cb [our %home case] /[mark.ames-response])
       ?-    sky
           ?(~ [~ ~])
-        =/  ror  "gall: ames mark fail {<mark.ames-response>}"
-        (mo-give %done `vale+[leaf+ror]~)
+        (mean leaf+"gall: ames mark fail {<mark.ames-response>}" ~)
       ::
           [~ ~ *]
         =+  !<(=dais:clay q.u.u.sky)
         =/  res  (mule |.((vale:dais noun.ames-response)))
         ?:  ?=(%| -.res)
-          =/  ror  "gall: ames vale fail {<mark.deal>}"
-          (mo-give %done `vale+[leaf+ror p.res])
+          (mean leaf+"gall: ames vale fail {<mark.ames-response>}" p.res)
         =.  mo-core
           %+  mo-pass  /nowhere
           [%c %warp our %home ~ %sing %b case /[mark.ames-response]]
