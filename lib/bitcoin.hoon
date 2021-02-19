@@ -6,6 +6,85 @@
 =<  [sur .]
 =,  sur
 |%
+::
+::  TODO: move this to zuse
+::  bit/byte utilities
+::
+::
+::  +blop: munge bit and byt sequences (cat, flip, take, drop)
+::
+++  blop
+  |_  =bloq
+  +$  biyts  [wid=@ud dat=@]
+  ++  cat
+    |=  bs=(list biyts)
+    ^-  biyts
+    :-  (roll (turn bs |=(b=biyts -.b)) add)
+    (can bloq (flop bs))
+  ::  +flip: flip endianness while preserving lead/trail zeroes
+  ::
+  ++  flip
+    |=  b=biyts
+    ^-  biyts
+    [wid.b (rev bloq b)]
+  ::  +take: take n bloqs from front
+  ::  pads front with extra zeroes if n is longer than input
+  ::
+  ++  take
+    |=  [n=@ b=biyts]
+    ^-  biyts
+    ?:  (gth n wid.b)
+      [n dat.b]
+    [n (rsh [bloq (sub wid.b n)] dat.b)]
+  ::  +drop: drop n bloqs from front
+  ::  returns 0^0 if n >= width
+  ::
+  ++  drop
+    |=  [n=@ b=biyts]
+    ^-  biyts
+    ?:  (gte n wid.b)
+      0^0x0
+    =+  n-take=(sub wid.b n)
+    [n-take (end [bloq n-take] dat.b)]
+  --
+++  byt
+  |%
+  ++  bl    ~(. blop 3)
+  ++  cat   cat:bl:byt
+  ++  flip  flip:bl:byt
+  ++  take  take:bl:byt
+  ++  drop  drop:bl:byt
+  --
+::
+++  bit
+  |%
+  ++  bl    ~(. blop 0)
+  ++  cat   cat:bl:bit
+  ++  flip  flip:bl:bit
+  ++  take  take:bl:bit
+  ++  drop  drop:bl:bit
+  ++  from-atoms
+    |=  [bitwidth=@ digits=(list @)]
+    ^-  bits
+    %-  cat:bit
+    %+  turn  digits
+    |=  a=@
+    ?>  (lte (met 0 a) bitwidth)
+    [bitwidth `@ub`a]
+  ::  +to-atoms: convert bits to atoms of bitwidth
+  ::
+   ++  to-atoms
+    |=  [bitwidth=@ bs=bits]
+    ^-  (list @)
+    =|  res=(list @)
+    ?>  =(0 (mod wid.bs bitwidth))
+    |-
+    ?:  =(0 wid.bs)  res
+    %=  $
+        res  (snoc res dat:(take:bit bitwidth bs))
+        bs   (drop:bit bitwidth bs)
+    ==
+  --
 ++  to-hexb
   |=  h=@t
   ^-  hexb
@@ -425,6 +504,7 @@
         ==
       map-byts:en
     %-  base64:en
+    ^-  byts
     %-  cat:byt
     %+  weld  ~[[5 0x70.7362.74ff]]
     (murn (snoc final sep) same)
@@ -491,90 +571,6 @@
     =+  p=(de:base64:mimes:html psbt-base64)
     ?~  p  !!
     (flip:byt u.p)
-  --
-::
-++  byt
-  |%
-  ::  +cat: concat byts, preserving MSB order
-  ::  (cat:byt ~[4^0xaa00 4^0xbb00]) => [8 0xaa00.00bb.0000]
-  ::
-  ++  cat
-    |=  bs=(list byts)
-    ^-  byts
-    :-  (roll (turn bs |=(b=byts -.b)) add)
-    (can 3 (flop bs))
-  ::  +flip:byt: flip endianness while preserving lead/trail zeroes
-  ::
-  ++  flip
-    |=  b=byts
-    ^-  byts
-    [wid.b (rev 3 b)]
-  ::  +take: take n bytes from front of byts
-  ::  pads front with extra zeroes if n is longer than byts
-  ::
-  ++  take
-    |=  [n=@ b=byts]
-    ^-  byts
-    ?:  (gth n wid.b)
-      [n dat.b]
-    [n (rsh [3 (sub wid.b n)] dat.b)]
-  ::  +drop: drop n bytes from the front of byts
-  ::  returns 0^0x0 if n >= wid.byts
-  ::
-  ++  drop
-    |=  [n=@ b=byts]
-    ^-  byts
-    ?:  (gte n wid.b)
-      0^0x0
-    =+  n-take=(sub wid.b n)
-    [n-take (end [3 n-take] dat.b)]
-  --
-::
-++  bit
-  |%
-  ++  cat
-    |=  bs=(list bits)
-    ^-  bits
-    :-  (roll (turn bs |=(b=bits wid.b)) add)
-    (can 0 (flop bs))
-  ::
-  ++  take
-    |=  [n=@ b=bits]
-    ^-  bits
-    ?:  (gth n wid.b)
-    [n dat.b]
-    [n (rsh [0 (sub wid.b n)] dat.b)]
-  ::
-  ++  drop
-    |=  [n=@ b=byts]
-    ^-  bits
-    ?:  (gte n wid.b)
-      0^0b0
-    =+  n-take=(sub wid.b n)
-    [n-take (end [0 n-take] dat.b)]
-  ::  +from-atoms: convert atoms of bitwidth to bits
-  ::
-  ++  from-atoms
-    |=  [bitwidth=@ digits=(list @)]
-    ^-  bits
-    %-  cat:bit
-    %+  turn  digits
-    |=  a=@
-    ?>  (lte (met 0 a) bitwidth)
-    [bitwidth `@ub`a]
-  ::  +to-atoms: convert bits to atoms of bitwidth
-  ::
-   ++  to-atoms
-    |=  [bitwidth=@ bs=bits]
-    ^-  (list @)
-    =|  res=(list @)
-    ?>  =(0 (mod wid.bs bitwidth))
-    |-
-    ?:  =(0 wid.bs)  res
-    %=  $
-        res  (snoc res dat:(take bitwidth bs))
-        bs   (drop bitwidth bs)
-    ==
   --
 ::
 ++  bech32
