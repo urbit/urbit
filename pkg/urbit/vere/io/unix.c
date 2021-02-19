@@ -79,7 +79,7 @@ struct _u3_ufil;
   } u3_unix;
 
 void
-u3_unix_ef_look(u3_unix* unx_u, u3_noun all);
+u3_unix_ef_look(u3_unix* unx_u, u3_noun mon, u3_noun all);
 
 /* u3_readdir_r():
 */
@@ -609,8 +609,7 @@ static void
 _unix_commit_mount_point(u3_unix* unx_u, u3_noun mon)
 {
   unx_u->dyr = c3y;
-  u3z(mon);
-  u3_unix_ef_look(unx_u, c3n);
+  u3_unix_ef_look(unx_u, mon, c3n);
   return;
 }
 
@@ -1355,19 +1354,25 @@ u3_unix_release(c3_c* pax_c)
   c3_free(paf_c);
 }
 
-/* u3_unix_ef_look(): update the root.
+/* u3_unix_ef_look(): update the root of a specific mount point.
 */
 void
-u3_unix_ef_look(u3_unix* unx_u, u3_noun all)
+u3_unix_ef_look(u3_unix* unx_u, u3_noun mon, u3_noun all)
 {
   if ( c3y == unx_u->dyr ) {
     unx_u->dyr = c3n;
-    u3_umon* mon_u;
+    u3_umon* mon_u = unx_u->mon_u;
 
-    for ( mon_u = unx_u->mon_u; mon_u; mon_u = mon_u->nex_u ) {
+    while ( mon_u && ( c3n == u3r_sing_c(mon_u->nam_c, mon) ) ) {
+      mon_u = mon_u->nex_u;
+    }
+
+    if ( mon_u ) {
       _unix_update_mount(unx_u, mon_u, all);
     }
   }
+
+  u3z(mon);
 }
 
 /* _unix_io_talk(): start listening for fs events.

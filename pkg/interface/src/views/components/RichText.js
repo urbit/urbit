@@ -33,10 +33,10 @@ const RichText = React.memo(({ disableRemoteContent, ...props }) => (
           videoShown: false,
           oembedShown: false
         } : null;
-        if (hasProvider(linkProps.href)) {
+        if (!disableRemoteContent && hasProvider(linkProps.href)) {
           return <RemoteContent className="mw-100" url={linkProps.href} />;
         }
-        
+
         return <BaseAnchor target='_blank' rel='noreferrer noopener' borderBottom='1px solid' remoteContentPolicy={remoteContentPolicy} {...linkProps}>{linkProps.children}</BaseAnchor>;
       },
       linkReference: (linkProps) => {

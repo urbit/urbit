@@ -238,6 +238,13 @@
     `[%done ~]
   ==
 ::
+++  raw-poke-our
+  |=  [app=term =cage]
+  =/  m  (strand ,~)
+  ^-  form:m
+  ;<  =bowl:spider  bind:m  get-bowl
+  (raw-poke [our.bowl app] cage)
+::
 ++  poke-our
   |=  [=term =cage]
   =/  m  (strand ,~)

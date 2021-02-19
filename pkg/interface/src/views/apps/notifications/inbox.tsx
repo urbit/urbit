@@ -1,18 +1,22 @@
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect, useCallback, useRef, useState } from "react";
 import f from "lodash/fp";
 import _ from "lodash";
-import { Icon, Col, Row, Box, Text, Anchor, Rule } from "@tlon/indigo-react";
+import { Icon, Col, Center, Row, Box, Text, Anchor, Rule, LoadingSpinner } from "@tlon/indigo-react";
 import moment from "moment";
-import { Notifications, Rolodex, Timebox, IndexedNotification, Groups } from "~/types";
+import { Notifications, Rolodex, Timebox, IndexedNotification, Groups, joinProgress, JoinRequests, GroupNotificationsConfig, NotificationGraphConfig } from "~/types";
 import { MOMENT_CALENDAR_DATE, daToUnix, resourceAsPath } from "~/logic/lib/util";
 import { BigInteger } from "big-integer";
 import GlobalApi from "~/logic/api/global";
 import { Notification } from "./notification";
 import { Associations } from "~/types";
-import { cite } from '~/logic/lib/util';
 import { InviteItem } from '~/views/components/Invite';
 import { useWaitForProps } from "~/logic/lib/useWaitForProps";
 import { useHistory } from "react-router-dom";
+import {useModal} from "~/logic/lib/useModal";
+import {JoinGroup} from "~/views/landscape/components/JoinGroup";
+import {JoiningStatus} from "./joining";
+import {Invites} from "./invites";
+import {useLazyScroll} from "~/logic/lib/useLazyScroll";
 
 type DatedTimebox = [BigInteger, Timebox];
 
@@ -27,9 +31,6 @@ function filterNotification(associations: Associations, groups: string[]) {
     } else if ("group" in n.index) {
       const { group } = n.index.group;
       return groups.findIndex((g) => group === g) !== -1;
-    } else if ("chat" in n.index) {
-      const group = associations.chat[n.index.chat.chat]?.["group-path"];
-      return groups.findIndex((g) => group === g) !== -1;
     }
     return true;
   };
@@ -37,6 +38,7 @@ function filterNotification(associations: Associations, groups: string[]) {
 
 export default function Inbox(props: {
   notifications: Notifications;
+  notificationsSize: number;
   archive: Notifications;
   groups: Groups;
   showArchive?: boolean;
@@ -45,10 +47,11 @@ export default function Inbox(props: {
   contacts: Rolodex;
   filter: string[];
   invites: any;
+  pendingJoin: JoinRequests;
+  notificationsGroupConfig: GroupNotificationsConfig;
+  notificationsGraphConfig: NotificationGraphConfig;
 }) {
   const { api, associations, invites } = props;
-  const waiter = useWaitForProps(props)
-  const history = useHistory();
   useEffect(() => {
     let seen = false;
     setTimeout(() => {
@@ -63,7 +66,7 @@ export default function Inbox(props: {
 
   const notifications =
     Array.from(props.showArchive ? props.archive : props.notifications) || [];
-  
+
   const calendar = {
     ...MOMENT_CALENDAR_DATE, sameDay: function (now) {
       if (this.subtract(6, 'hours').isBefore(now)) {
@@ -75,12 +78,12 @@ export default function Inbox(props: {
   };
 
   let notificationsByDay = f.flow(
-    f.map<DatedTimebox>(([date, nots]) => [
+    f.map<DatedTimebox, DatedTimebox>(([date, nots]) => [
       date,
       nots.filter(filterNotification(associations, props.filter)),
     ]),
-    f.groupBy<DatedTimebox>(([date]) => {
-      date = moment(daToUnix(date));
+    f.groupBy<DatedTimebox>(([d]) => {
+      const date = moment(daToUnix(d));
       if (moment().subtract(6, 'hours').isBefore(date)) {
         return 'latest';
       } else {
@@ -88,69 +91,32 @@ export default function Inbox(props: {
       }
     }),
   )(notifications);
-  notificationsByDay = new Map(Object.keys(notificationsByDay).sort().reverse().map(timebox => {
-    return [timebox, notificationsByDay[timebox]];
-  }));
 
-  useEffect(() => {
-    api.hark.getMore(props.showArchive);
-  }, [props.showArchive]);
+  const notificationsByDayMap = new Map<string, DatedTimebox[]>(
+    Object.keys(notificationsByDay).map(timebox => {
+      return [timebox, notificationsByDay[timebox]];
+    })
+  );
 
-  const onScroll = useCallback((e) => {
-    let container = e.target;
-    const { scrollHeight, scrollTop, clientHeight } = container;
-    if((scrollHeight - scrollTop) < 1.5 * clientHeight) {
-      api.hark.getMore(props.showArchive);
-    }
-  }, [props.showArchive]);
+  const scrollRef = useRef(null);
 
-  const acceptInvite = (app: string, uid: string) => async (invite) => {
-    const resource = {
-      ship: `~${invite.resource.ship}`,
-      name: invite.resource.name
-    };
+  const loadMore = useCallback(async () => {
+    return api.hark.getMore();
+  }, [api]);
 
-    const resourcePath = resourceAsPath(invite.resource);
-    if(app === 'contacts') {
-      await api.contacts.join(resource);
-      await waiter(p => resourcePath in p.associations?.contacts);
-      await api.invite.accept(app, uid);
-      history.push(`/~landscape${resourcePath}`);
-    } else if ( app === 'chat') {
-      await api.invite.accept(app, uid);
-      history.push(`/~landscape/home/resource/chat${resourcePath.slice(5)}`);
-    } else if ( app === 'graph') {
-      await api.invite.accept(app, uid);
-      history.push(`/~graph/join${resourcePath}`);
-    }
-  };
+  const { isDone, isLoading } = useLazyScroll(
+    scrollRef, 
+    0.2,
+    _.flatten(notifications).length,
+    loadMore
+  );
 
-  const inviteItems = (invites, api) => {
-    const returned = [];
-    Object.keys(invites).map((appKey) => {
-      const app = invites[appKey];
-      Object.keys(app).map((uid) => {
-        const invite = app[uid];
-        const inviteItem =
-          <InviteItem
-            key={uid}
-            invite={invite}
-            onAccept={acceptInvite(appKey, uid)}
-            onDecline={() => api.invite.decline(appKey, uid)}
-          />;
-        returned.push(inviteItem);
-      });
-    });
-    return returned;
-  };
 
   return (
-    <Col position="relative" height="100%" overflowY="auto" onScroll={onScroll} >
-      <Col zIndex={4} gapY={2} bg="white" top="0px" position="sticky" flexShrink={0}>
-        {inviteItems(invites, api)}
-      </Col>
-      {[...notificationsByDay.keys()].map((day, index) => {
-        const timeboxes = notificationsByDay.get(day);
+    <Col ref={scrollRef} position="relative" height="100%" overflowY="auto">
+      <Invites groups={props.groups} pendingJoin={props.pendingJoin} invites={invites} api={api} associations={associations} />
+      {[...notificationsByDayMap.keys()].sort().reverse().map((day, index) => {
+        const timeboxes = notificationsByDayMap.get(day)!;
         return timeboxes.length > 0 && (
           <DaySection
             key={day}
@@ -163,10 +129,20 @@ export default function Inbox(props: {
             groups={props.groups}
             graphConfig={props.notificationsGraphConfig}
             groupConfig={props.notificationsGroupConfig}
-            chatConfig={props.notificationsChatConfig}
           />
         );
       })}
+      {isDone && (
+        <Center mt="2" borderTop={notifications.length !== 0 ? 1 : 0} borderTopColor="washedGray" width="100%" height="96px">
+          <Text gray fontSize="1">No more notifications</Text>
+        </Center>
+    )}
+      {isLoading && (
+        <Center mt="2" borderTop={notifications.length !== 0 ? 1 : 0} borderTopColor="washedGray" width="100%" height="96px">
+          <LoadingSpinner />
+        </Center>
+      )}
+   
     </Col>
   );
 }
@@ -192,9 +168,8 @@ function DaySection({
   api,
   groupConfig,
   graphConfig,
-  chatConfig,
 }) {
-  
+
   const lent = timeboxes.map(([,nots]) => nots.length).reduce(f.add, 0);
   if (lent === 0 || timeboxes.length === 0) {
     return null;
@@ -202,23 +177,22 @@ function DaySection({
 
   return (
     <>
-      <Box position="sticky" zIndex="3" top="-1px" bg="white">
+      <Box position="sticky" zIndex={3} top="-1px" bg="white">
         <Box p="2" bg="scales.black05">
           <Text>
             {label}
           </Text>
         </Box>
       </Box>
-      {_.map(timeboxes.sort(sortTimeboxes), ([date, nots], i) =>
+      {_.map(timeboxes.sort(sortTimeboxes), ([date, nots], i: number) =>
         _.map(nots.sort(sortIndexedNotification), (not, j: number) => (
           <React.Fragment key={j}>
             {(i !== 0 || j !== 0) && (
-              <Box flexShrink="0" height="4px" bg="scales.black05" />
+              <Box flexShrink={0} height="4px" bg="scales.black05" />
             )}
             <Notification
               graphConfig={graphConfig}
               groupConfig={groupConfig}
-              chatConfig={chatConfig}
               api={api}
               associations={associations}
               notification={not}

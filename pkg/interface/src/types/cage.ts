@@ -5,6 +5,7 @@ import { MetadataUpdate } from "./metadata-update";
 import { GroupUpdate } from "./group-update";
 import { LaunchUpdate, WeatherState } from "./launch-update";
 import { ConnectionStatus } from "./connection";
+import { SettingsUpdate } from "./settings";
 
 interface MarksToTypes {
   readonly json: any;
@@ -14,6 +15,7 @@ interface MarksToTypes {
   readonly groupUpdate: GroupUpdate;
   readonly "launch-update": LaunchUpdate;
   readonly "link-listen-update": LinkListenUpdate;
+  readonly "settings-event": SettingsUpdate;
   // not really marks but w/e
   readonly 'local': LocalUpdate;
   readonly 'weather': WeatherState | {};

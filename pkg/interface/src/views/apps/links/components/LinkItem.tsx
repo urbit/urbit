@@ -35,6 +35,29 @@ export const LinkItem = (props: LinkItemProps) => {
   } = props;
 
   const ref = useRef<HTMLDivElement | null>(null);
+  const remoteRef = useRef<typeof RemoteContent | null>(null);
+
+  const markRead = useCallback(() => {
+    api.hark.markEachAsRead(props.association, '/', `/${index}`, 'link', 'link');
+  }, [props.association, index]);
+
+  useEffect(() => {
+    function onBlur() {
+      // FF will only update on next tick
+      setTimeout(() => {
+        console.log(remoteRef.current);
+        if(document.activeElement instanceof HTMLIFrameElement 
+          && remoteRef?.current?.containerRef?.contains(document.activeElement)) {
+          markRead();
+        }
+      });
+    }
+    window.addEventListener('blur', onBlur);
+    return () => {
+      window.removeEventListener('blur', onBlur);
+    }
+
+  }, [markRead]);
 
   const URLparser = new RegExp(
     /((?:([\w\d\.-]+)\:\/\/?){1}(?:(www)\.?){0,1}(((?:[\w\d-]+\.)*)([\w\d-]+\.[\w\d]+))){1}(?:\:(\d+)){0,1}((\/(?:(?:[^\/\s\?]+\/)*))(?:([^\?\/\s#]+?(?:.[^\?\s]+){0,1}){0,1}(?:\?([^\s#]+)){0,1})){0,1}(?:#([^#\s]+)){0,1}/
@@ -71,9 +94,6 @@ export const LinkItem = (props: LinkItemProps) => {
   const commColor = (props.unreads.graph?.[appPath]?.[`/${index}`]?.unreads ?? 0) > 0 ? 'blue' : 'gray';
   const isUnread = props.unreads.graph?.[appPath]?.['/']?.unreads?.has(node.post.index);
 
-  const markRead = () => {
-    api.hark.markEachAsRead(props.association, '/', `/${index}`, 'link', 'link');
-  }
 
 
   const onMeasure = useCallback(() => {
@@ -100,6 +120,7 @@ export const LinkItem = (props: LinkItemProps) => {
         onClick={markRead}
       >
         <RemoteContent
+          ref={r => { remoteRef.current = r}}
           url={contents[1].url}
           text={contents[0].text}
           unfold={true}
@@ -108,6 +129,7 @@ export const LinkItem = (props: LinkItemProps) => {
           oembedProps={{
             p: 2,
             className: 'links embed-container',
+            onClick: markRead
           }}
           imageProps={{
             marginLeft: 'auto',

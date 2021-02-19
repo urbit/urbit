@@ -1,5 +1,17 @@
 /-  *post
 |%
+::
++$  permissions  
+  [admin=permission-level writer=permission-level reader=permission-level]
+::
+::  $permission-level:  levels of permissions in increasing order
+::  
+::    %no: May not add/remove node
+::    %self: May only nodes beneath nodes that were added by
+::      the same pilot, may remove nodes that the pilot 'owns'
+::    %yes: May add a node or remove node
++$  permission-level
+  ?(%no %self %yes)
 +$  graph         ((mop atom node) gth)
 +$  marked-graph  [p=graph q=(unit mark)]
 ::
@@ -10,6 +22,7 @@
 ::
 +$  update-log    ((mop time logged-update) gth)
 +$  update-logs   (map resource update-log)
+::
 ::
 +$  internal-graph
   $~  [%empty ~]

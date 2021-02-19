@@ -1796,13 +1796,13 @@ _cj_minx(u3_noun cey, u3_noun cor)
 }
 
 static void
-_cj_print_tas(FILE* fh, u3_noun tas)
+_cj_print_tas(u3_noun tas)
 {
   c3_w  met_w = u3r_met(3, tas);
   c3_c* str_c = alloca(met_w + 1);
   u3r_bytes(0, met_w, (c3_y*)str_c, tas);
   str_c[met_w] = 0;
-  fprintf(fh, "/%s", str_c);
+  u3l_log("/%s", str_c);
 }
 
 /* _cj_mine(): declare a core and produce location. RETAIN.
@@ -1851,7 +1851,7 @@ _cj_mine(u3_noun cey, u3_noun cor, u3_noun bas)
         u3_noun i = bal;
         u3l_log("hot jet: ");
         while ( i != u3_nul ) {
-          _cj_print_tas(stderr, u3h(i));
+          _cj_print_tas(u3h(i));
           i = u3t(i);
         }
         u3l_log("\r\n  axe %d, jax %d,\r\n  bash ", axe, jax_l);

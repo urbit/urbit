@@ -47,7 +47,7 @@ export function NotebookRoutes(
 
   const graph = props.graphs[`${ship.slice(1)}/${book}`];
 
-  const group = groups?.[props.association?.['group-path']];
+  const group = groups?.[props.association?.group];
 
 
   const relativePath = (path: string) => `${baseUrl}${path}`;

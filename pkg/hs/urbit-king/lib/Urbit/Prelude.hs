@@ -16,6 +16,7 @@ module Urbit.Prelude
     , io, rio
     , logTrace
     , acquireWorker, acquireWorkerBound
+    , hark
     ) where
 
 import ClassyPrelude
@@ -38,6 +39,8 @@ import RIO (HasLogFunc, LogFunc, LogLevel(..), logDebug, logError, logFuncL,
             logInfo, logOptionsHandle, logOther, logWarn, mkLogFunc,
             setLogMinLevel, setLogUseLoc, setLogUseTime, withLogFunc)
 
+import qualified RIO
+
 io :: MonadIO m => IO a -> m a
 io = liftIO
 
@@ -47,6 +50,9 @@ rio = liftRIO
 logTrace :: HasLogFunc e => Utf8Builder -> RIO e ()
 logTrace = logOther "trace"
 
+-- | Composes a log message out of textual components.
+hark :: [Text] -> Utf8Builder
+hark = RIO.displayBytesUtf8 . foldMap encodeUtf8
 
 -- Utils for Spawning Worker Threads -------------------------------------------
 

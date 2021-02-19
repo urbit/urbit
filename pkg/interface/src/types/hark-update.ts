@@ -2,7 +2,6 @@ import _ from "lodash";
 import { Post } from "./graph-update";
 import { GroupUpdate } from "./group-update";
 import { BigIntOrderedMap } from "~/logic/lib/BigIntOrderedMap";
-import { Envelope } from './chat-update';
 
 export type GraphNotifDescription = "link" | "comment" | "note" | "mention";
 
@@ -25,27 +24,17 @@ export interface GroupNotifIndex {
   description: string;
 }
 
-export interface ChatNotifIndex {
-  chat: string;
-  mention: boolean;
-}
-
 export type NotifIndex =
   | { graph: GraphNotifIndex }
-  | { group: GroupNotifIndex }
-  | { chat: ChatNotifIndex };
+  | { group: GroupNotifIndex };
 
 export type GraphNotificationContents = Post[];
 
 export type GroupNotificationContents = GroupUpdate[];
 
-export type ChatNotificationContents = Envelope[];
-
 export type NotificationContents =
   | { graph: GraphNotificationContents }
-  | { group: GroupNotificationContents }
-  | { chat: ChatNotificationContents };
-
+  | { group: GroupNotificationContents };
 export interface Notification {
   read: boolean;
   time: number;
@@ -68,7 +57,6 @@ export interface NotificationGraphConfig {
 }
 
 export interface Unreads {
-  chat: Record<string, UnreadStats>;
   graph: Record<string, Record<string, UnreadStats>>;
   group: Record<string, UnreadStats>;
 }

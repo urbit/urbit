@@ -1,7 +1,7 @@
 ::  graph-store [landscape]
 ::
 ::
-/+  store=graph-store, sigs=signatures, res=resource, default-agent, dbug,
+/+  store=graph-store, sigs=signatures, res=resource, default-agent, dbug, verb,
     *migrate
 ~%  %graph-store-top  ..part  ~
 |%
@@ -25,6 +25,7 @@
 =*  state  -
 ::
 %-  agent:dbug
+%+  verb  |
 ^-  agent:gall
 ~%  %graph-store-agent  ..card  ~
 |_  =bowl:gall
@@ -726,7 +727,8 @@
       $:  %0
           p=time
           $=  q
-          $%  [%add-nodes =resource:store nodes=(tree [index:store tree-node])]
+          $%  [%add-graph =resource:store =tree-graph mark=(unit ^mark) ow=?]
+              [%add-nodes =resource:store nodes=(tree [index:store tree-node])]
               [%remove-nodes =resource:store indices=(tree index:store)]
               [%add-signatures =uid:store signatures=tree-signatures]
               [%remove-signatures =uid:store signatures=tree-signatures]
@@ -806,6 +808,14 @@
       ^-  logged-update:store
       :+  %0  p.t
       ?-  -.q.t
+          %add-graph
+        :*  %add-graph
+            resource.q.t
+            (remake-graph tree-graph.q.t)
+            mark.q.t
+            ow.q.t
+        ==
+      ::
           %add-nodes
         :-  %add-nodes
         :-  resource.q.t

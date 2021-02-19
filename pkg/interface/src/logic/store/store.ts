@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 import BaseStore from './base';
 import InviteReducer from '../reducers/invite-update';
 import MetadataReducer from '../reducers/metadata-update';
@@ -6,39 +8,40 @@ import LocalReducer from '../reducers/local';
 import { StoreState } from './type';
 import { Timebox } from '~/types';
 import { Cage } from '~/types/cage';
-import ContactReducer from '../reducers/contact-update';
 import S3Reducer from '../reducers/s3-update';
 import { GraphReducer } from '../reducers/graph-update';
 import { HarkReducer } from '../reducers/hark-update';
+import { ContactReducer } from '../reducers/contact-update';
 import GroupReducer from '../reducers/group-update';
 import LaunchReducer from '../reducers/launch-update';
 import ConnectionReducer from '../reducers/connection';
+import SettingsReducer from '../reducers/settings-update';
 import {OrderedMap} from '../lib/OrderedMap';
 import { BigIntOrderedMap } from '../lib/BigIntOrderedMap';
-
-export const homeAssociation = {
-  "app-path": "/home",
-  "app-name": "contact",
-  "group-path": "/home",
-  metadata: {
-    color: "0x0",
-    title: "DMs + Drafts",
-    description: "",
-    "date-created": "",
-    module: "",
-  },
-};
+import {GroupViewReducer} from '../reducers/group-view';
 
 
 export default class GlobalStore extends BaseStore<StoreState> {
   inviteReducer = new InviteReducer();
   metadataReducer = new MetadataReducer();
   localReducer = new LocalReducer();
-  contactReducer = new ContactReducer();
   s3Reducer = new S3Reducer();
   groupReducer = new GroupReducer();
   launchReducer = new LaunchReducer();
   connReducer = new ConnectionReducer();
+  settingsReducer = new SettingsReducer();
+
+  pastActions: Record<string, any> = {}
+
+  constructor() {
+    super();
+    (window as any).debugStore = this.debugStore.bind(this);
+  }
+
+  debugStore(tag: string, ...stateKeys: string[]) {
+    console.log(this.pastActions[tag]);
+    console.log(_.pick(this.state, stateKeys));
+  }
 
   rehydrate() {
     this.localReducer.rehydrate(this.state);
@@ -54,7 +57,7 @@ export default class GlobalStore extends BaseStore<StoreState> {
       baseHash: null,
       invites: {},
       associations: {
-        contacts: {},
+        groups: {},
         graph: {},
       },
       groups: {},
@@ -75,11 +78,12 @@ export default class GlobalStore extends BaseStore<StoreState> {
         },
         credentials: null
       },
+      isContactPublic: false,
       contacts: {},
+      nackedContacts: new Set(),
       notifications: new BigIntOrderedMap<Timebox>(),
       archivedNotifications: new BigIntOrderedMap<Timebox>(),
       notificationsGroupConfig: [],
-      notificationsChatConfig: [],
       notificationsGraphConfig: {
         watchOnSelf: false,
         mentions: false,
@@ -89,20 +93,29 @@ export default class GlobalStore extends BaseStore<StoreState> {
         graph: {},
         group: {}
       },
-      notificationsCount: 0
+      notificationsCount: 0,
+      settings: {},
+      pendingJoin: {},
     };
   }
 
   reduce(data: Cage, state: StoreState) {
+    //  debug shim
+    const tag = Object.keys(data)[0];
+    const oldActions = this.pastActions[tag] || [];
+    this.pastActions[tag] = [data[tag], ...oldActions.slice(0,14)];
+
     this.inviteReducer.reduce(data, this.state);
     this.metadataReducer.reduce(data, this.state);
     this.localReducer.reduce(data, this.state);
-    this.contactReducer.reduce(data, this.state);
     this.s3Reducer.reduce(data, this.state);
     this.groupReducer.reduce(data, this.state);
     this.launchReducer.reduce(data, this.state);
     this.connReducer.reduce(data, this.state);
     GraphReducer(data, this.state);
     HarkReducer(data, this.state);
+    ContactReducer(data, this.state);
+    this.settingsReducer.reduce(data, this.state);
+    GroupViewReducer(data, this.state);
   }
 }

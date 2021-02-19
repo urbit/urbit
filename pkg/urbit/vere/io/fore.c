@@ -121,14 +121,10 @@ _fore_io_talk(u3_auto* car_u)
 
   //  set verbose as per -v
   //
-  //    XX should be explicit, not a toggle
-  //
-  if ( c3y == u3_Host.ops_u.veb ) {
-    //  XX this path shouldn't be necessary
-    //
-    wir = u3nt(c3__term, '1', u3_nul);
-    cad = u3nc(c3__verb, u3_nul);
-
+  {
+    c3_o lac_o = ( c3y == u3_Host.ops_u.veb ) ? c3n : c3y;
+    wir = u3nc(c3__arvo, u3_nul);
+    cad = u3nt(c3__verb, u3_nul, lac_o);
     u3_auto_plan(car_u, u3_ovum_init(0, u3_blip, wir, cad));
   }
 

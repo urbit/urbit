@@ -35,7 +35,7 @@ instance KnownSymbol name => Options.IsOption (Pill name) where
          )
   
   defaultValue =
-    Pill ( "../../../bin"
+    Pill ( "../../../bin/"
         ++ TypeLits.symbolVal (Proxy @name)
         ++ ".pill"
          )

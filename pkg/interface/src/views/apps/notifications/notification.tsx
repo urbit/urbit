@@ -29,14 +29,12 @@ interface NotificationProps {
   contacts: Contacts;
   graphConfig: NotificationGraphConfig;
   groupConfig: GroupNotificationsConfig;
-  chatConfig: string[];
 }
 
 function getMuted(
   idxNotif: IndexedNotification,
   groups: GroupNotificationsConfig,
-  graphs: NotificationGraphConfig,
-  chat: string[]
+  graphs: NotificationGraphConfig
 ) {
   const { index, notification } = idxNotif;
   if ("graph" in idxNotif.index) {
@@ -65,7 +63,6 @@ function NotificationWrapper(props: {
   archived: boolean;
   graphConfig: NotificationGraphConfig;
   groupConfig: GroupNotificationsConfig;
-  chatConfig: string[];
 }) {
   const { api, time, notif, children } = props;
 
@@ -76,8 +73,7 @@ function NotificationWrapper(props: {
   const isMuted = getMuted(
     notif,
     props.groupConfig,
-    props.graphConfig,
-    props.chatConfig
+    props.graphConfig
   );
 
   const onChangeMute = useCallback(async () => {
@@ -125,7 +121,6 @@ export function Notification(props: NotificationProps) {
       api={props.api}
       graphConfig={props.graphConfig}
       groupConfig={props.groupConfig}
-      chatConfig={props.chatConfig}
     >
       {children}
     </NotificationWrapper>

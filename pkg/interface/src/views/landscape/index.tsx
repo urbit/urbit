@@ -27,7 +27,7 @@ type LandscapeProps = StoreState & {
 export function DMRedirect(props: LandscapeProps & RouteComponentProps & { ship: string; }) {
   const { ship, api, history, graphKeys } = props;
   const goToGraph = useCallback((graph: string) => {
-    history.push(`/~landscape/home/resource/chat/ship/~${graph}`);
+    history.push(`/~landscape/messages/resource/chat/ship/~${graph}`);
   }, [history]);
 
   useEffect(() => {
@@ -74,7 +74,6 @@ export default class Landscape extends Component<LandscapeProps, {}> {
 
   render() {
     const { props } = this;
-    const { api } = props;
 
     return (
       <>
@@ -104,12 +103,21 @@ export default class Landscape extends Component<LandscapeProps, {}> {
               );
             }}
           />
+          <Route path="/~landscape/messages"
+            render={routeProps => {
+              const ws: Workspace = { type: 'messages' };
+              return (
+                <GroupsPane workspace={ws} baseUrl="/~landscape/messages" {...props} />
+              );
+            }}
+          />
           <Route path="/~landscape/new"
             render={routeProps=> {
               return (
                 <Body>
                   <Box maxWidth="300px">
                     <NewGroup
+                      associations={props.associations}
                       groups={props.groups}
                       contacts={props.contacts}
                       api={props.api}
