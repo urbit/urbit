@@ -1911,7 +1911,9 @@
       ?:  ?=(%& -.meat.shut-packet)
         =+  ?~  dud  ~
             %.  ~
-            (slog leaf+"ames: crashed on fragment" >mote.u.dud< tang.u.dud)
+            %+  slog
+              leaf+"ames: {<her.channel>} fragment crashed {<mote.u.dud>}"
+            ?.(msg.veb ~ tang.u.dud)
         (run-message-sink bone %hear lane shut-packet ?=(~ dud))
       ::  Just try again on error, printing trace
       ::
@@ -1920,7 +1922,8 @@
       ::
       =+  ?~  dud  ~
           %.  ~
-          (slog leaf+"ames: crashed on ack" >mote.u.dud< tang.u.dud)
+          %+  slog  leaf+"ames: {<her.channel>} ack crashed {<mote.u.dud>}"
+          ?.(msg.veb ~ tang.u.dud)
       (run-message-pump bone %hear [message-num +.meat]:shut-packet)
     ::  +on-memo: handle request to send message
     ::
