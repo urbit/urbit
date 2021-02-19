@@ -382,12 +382,12 @@
   ::
   ::    Cumulative sum of elements
   ++  cumsum
-    |=  [u=@lvs]  ^-  @lvs
+    |=  [u=@lvd]  ^-  @lvd
     =/  n  (length u)
     =/  uu  (unmake u)
     =/  v  (zeros n)
     =/  index  1
-    |-  ^-  @lvs
+    |-  ^-  @lvd
       ?:  (gth index n)  (make v)
     $(index +(index), v (set v index (sum (subvector u 1 index))))
   ::
