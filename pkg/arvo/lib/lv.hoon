@@ -186,7 +186,7 @@
     =/  v  (zeros n)
     =/  index  1
     |-  ^-  @lvs
-      ?:  (gth index n)  (make v)
+      ?:  (gth index n)  v
     $(index +(index), v (set v index (sum (subvector u 1 index))))
   ::
   ::    Product of elements
@@ -388,7 +388,7 @@
     =/  v  (zeros n)
     =/  index  1
     |-  ^-  @lvd
-      ?:  (gth index n)  (make v)
+      ?:  (gth index n)  v
     $(index +(index), v (set v index (sum (subvector u 1 index))))
   ::
   ::    Product of elements
