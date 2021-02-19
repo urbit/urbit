@@ -227,6 +227,7 @@ export const MessageAuthor = ({
   associations,
   groups,
   scrollWindow,
+  history,
   ...rest
 }) => {
   const dark = useLocalState((state) => state.dark);
