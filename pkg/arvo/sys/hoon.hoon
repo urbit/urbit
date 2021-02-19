@@ -9995,7 +9995,6 @@
       ::
           [%fork *]
         =/  yed  ~(tap in p.sut)
-        ::  XX WEIRD benign change
         =^  wiz  grub
           (spin yed grub |=([=type =_grub] dext(sut type)))
         :_  grub
@@ -10109,7 +10108,6 @@
         %|
       [sut grub]
     ::
-    ::  XX WEIRD confusing use of 'q' in original
         %&
       =;  [val=(pair axis type) =_grub]
         [q.val grub]
@@ -11497,7 +11495,7 @@
     ::  produce lazy core generator for static execution
     ::
     |=  [nym=(unit term) hud=poly dom=(map term tome)]
-    ::  XX WEIRD removed ~+, consider re-adding
+    ~+
     ^-  [seminoun _grub]
     =+  %hemp-141
     ::  tal: map from battery axis to foot
@@ -11954,15 +11952,7 @@
           [%cell *]  (nice log &)
           [%core *]  ~_  leaf+"core-number-of-chapters"
                      (nice log =(~(wyt by dom) ~(wyt by q.r.q.log)))
-          [%fork *]
-        =/  tys  ~(tap in p.log)
-        |-  ^-  gol-type
-        ?~  tys
-          log
-        ::  XX WEIRD ignored?
-        =/  a  ^$(log i.tys)
-        =/  b  $(tys t.tys)
-        log
+          [%fork *]  log
       ==
     ::  get map of tomes if exists
     ::
@@ -12006,7 +11996,6 @@
       a
     ::  get expected type of this arm
     ::
-    ::  XX WEIRD may be worth another look due to complexity
     ++  get-arm-type
       |=  [log=gol-type dag=(unit (map term hoon)) nam=term]
       ^-  [type _grub]
@@ -12247,8 +12236,6 @@
       =^  lef  grub  (caching-nice bool)
       =^  mid  grub  $(gen p.gen, gol %noun)
       =^  rig  grub  $(gen q.gen, gol %noun)
-      :: XX WEIRD ignored
-      =+  [one two]=[mid rig]
       :_  grub
       [lef [%5 q.mid q.rig]]
     ::
@@ -12461,7 +12448,7 @@
     ++  caching-grow
       |=  [mel=vair nym=(unit term) hud=poly ruf=hoon dom=(map term tome)]
       ^-  [[p=type q=nock] _grub]
-      =^  dan  grub  ^$(gen ruf, gol %noun) :: XX WEIRD suspicious
+      =^  dan  grub  ^$(gen ruf, gol %noun)
       =^  pul  grub  (caching-mine gol mel nym hud dom)
       =^  lef  grub  (caching-nice p.pul)
       :_  grub
@@ -12727,13 +12714,9 @@
       (~(mull caching-et p.gen q.gen) gol dox)
     ::
         [%dtkt *]
-      =^  lef  grub  $(gen q.gen, gol %noun)
-      =+  lef :: XX WEIRD why?
       $(gen [%kttr p.gen])
     ::
         [%dtls *]
-      =^  lef  grub  $(gen p.gen, gol [%atom %$ ~])
-      =+  lef :: XX WEIRD why?
       (caching-beth [%atom %$ ~])
     ::
         [%sand *]
@@ -12745,20 +12728,12 @@
       (caching-beth rig)
     ::
         [%dttr *]
-      =^  lef  grub  $(gen p.gen, gol %noun)
-      =^  rig  grub  $(gen q.gen, gol %noun)
-      =+  [lef rig]  :: XX WEIRD why?
       (caching-beth %noun)
     ::
         [%dtts *]
-      =^  lef  grub  $(gen p.gen, gol %noun)
-      =^  rig  grub  $(gen q.gen, gol %noun)
-      =+  [lef rig]  :: XX WEIRD why?
       (caching-beth bool)
     ::
         [%dtwt *]
-      =^  lef  grub  $(gen p.gen, gol %noun)
-      =+  lef  :: XX WEIRD why?
       (caching-beth bool) ::  XX  =|
     ::
         [%hand *]
@@ -12776,10 +12751,8 @@
       =^  wor  grub  (caching-play p.gen)
       =^  lef  grub  (caching-nice wor)
       =^  rig  grub  (caching-play(sut dox) p.gen)
-      =/  hif  [p=lef q=rig]
-      =^  val  grub  $(gen q.gen, gol p.hif)
-      =+  val :: XX WEIRD why?
-      [hif grub]
+      :_  grub
+      [p=lef q=rig]
     ::
         [%ktpd *]
       =^  vat  grub  $(gen p.gen)
@@ -12960,7 +12933,7 @@
       |=  [mel=vair nym=(unit term) hud=poly ruf=hoon dom=(map term tome)]
       ~_  leaf+"caching-mull-grow"
       ^-  [[p=type q=type] _grub]
-      =^  dan  grub  ^$(gen ruf, gol %noun) :: XX WEIRD suspicious
+      =^  dan  grub  ^$(gen ruf, gol %noun)
       =^  yaz  grub  (caching-mile(sut p.dan) q.dan mel nym hud dom)
       =^  lef  grub  (caching-nice p.yaz)
       :_  grub
@@ -13629,7 +13602,6 @@
       ^$(sut q.sut, axe lat)
     ::
         [%core *]
-      ::  XX WEIRD worth going over again due to complexity
       ?.  =(3 now)
         [%noun grub]
       =/  pec  (peel way r.p.q.sut)
@@ -14459,7 +14431,7 @@
     (play(sut p.leg) q.leg)
   ::
   ++  caching-rest
-    |=  leg=[p=type q=hoon]
+    |=  leg=(pair type hoon)
     ^-  [type _grub]
     =/  cached  (~(get by res.grub) leg)
     ?^  cached
