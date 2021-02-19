@@ -1,4 +1,5 @@
-/+  *bitcoin
+/-  bc=bitcoin
+/+  bcu=bitcoin-utils
 |%
 ++  params
   |%
@@ -87,25 +88,25 @@
 ++  str
   |%
   ++  read-bit
-    |=  s=bits
-    ^-  [bit=@ub rest=bits]
+    |=  s=bits:bc
+    ^-  [bit=@ub rest=bits:bc]
     ?>  (gth wid.s 0)
     :*  ?:((gth wid.s (met 0 dat.s)) 0b0 0b1)
         [(dec wid.s) (end [0 (dec wid.s)] dat.s)]
     ==
   ::
   ++  read-bits
-    |=  [n=@ s=bits]
-    ^-  [bits rest=bits]
-    =|  bs=bits
+    |=  [n=@ s=bits:bc]
+    ^-  [bits:bc rest=bits:bc]
+    =|  bs=bits:bc
     |-
     ?:  =(n 0)  [bs s]
     =^  b  s  (read-bit s)
     $(n (dec n), bs (write-bits bs [1 b]))
   ::
   ++  write-bits
-    |=  [s1=bits s2=bits]
-    ^-  bits
+    |=  [s1=bits:bc s2=bits:bc]
+    ^-  bits:bc
     [(add wid.s1 wid.s2) (can 0 ~[s2 s1])]
   --
 ::  +gol: Golomb-Rice encoding/decoding
@@ -118,8 +119,8 @@
   ::   - p: golomb-rice p param
   ::
   ++  en
-    |=  [s=bits x=@ p=@]
-    ^-  bits
+    |=  [s=bits:bc x=@ p=@]
+    ^-  bits:bc
     =+  q=(rsh [0 p] x)
     =+  unary=[+(q) (lsh [0 1] (dec (bex q)))]
     =+  r=[p (end [0 p] x)]
@@ -127,15 +128,15 @@
     (write-bits:str unary r)
   ::
   ++  de
-    |=  [s=bits p=@]
-    ^-  [delta=@ rest=bits]
+    |=  [s=bits:bc p=@]
+    ^-  [delta=@ rest=bits:bc]
     |^  ?>  (gth wid.s 0)
     =^  q  s  (get-q s)
     =^  r  s  (read-bits:str p s)
     [(add dat.r (lsh [0 p] q)) s]
     ::
     ++  get-q
-      |=  s=bits
+      |=  s=bits:bc
       =|  q=@
       =^  first-bit  s  (read-bit:str s)
       |-
@@ -170,30 +171,30 @@
   --
 ::
 ++  parse-filter
-  |=  filter=hexb
-  ^-  [n=@ux gcs-set=bits]
-  =/  n  n:(de:csiz filter)
+  |=  filter=hexb:bc
+  ^-  [n=@ux gcs-set=bits:bc]
+  =/  n  n:(de:csiz:bcu filter)
   =/  lead=@  ?:(=(1 wid.n) 1 +(wid.n))
   :-  dat.n
-  [(mul 8 (sub wid.filter lead)) `@ub`dat:(drop:byt lead filter)]
+  [(mul 8 (sub wid.filter lead)) `@ub`dat:(drop:byt:bcu lead filter)]
 ::  +to-key: blockhash (little endian) to key for siphash
 ::
 ++  to-key
   |=  blockhash=tape
   ^-  byts
-  %+  take:byt  16
-  %-  flip:byt
-  (to-hexb (crip blockhash))
+  %+  take:byt:bcu  16
+  %-  flip:byt:bcu
+  (to-hexb:bcu (crip blockhash))
 ::  +match: whether block filter matches *any* target scriptpubkeys
 ::   - filter: full block filter, with leading N
 ::   - k: key for siphash (end of blockhash, reversed)
 ::   - targets: scriptpubkeys to match
 ::
 ++  match
-  |=  [filter=hexb k=byts targets=(list byts)]
+  |=  [filter=hexb:bc k=byts targets=(list byts)]
   ^-  ?
   =/  [p=@ m=@]  [p:params m:params]
-  =/  [n=@ux gcs-set=bits]  (parse-filter filter)
+  =/  [n=@ux gcs-set=bits:bc]  (parse-filter filter)
   =+  target-hs=(set-construct:hsh targets k (mul n m))
   =+  last-val=0
   |-
@@ -214,15 +215,15 @@
 ::   - targets: scriptpubkeys to match
 ::
 ++  all-match
-  |=  [filter=hexb k=byts targets=(list byts)]
-  ^-  (set hexb)
-  %-  ~(gas in *(set hexb))
+  |=  [filter=hexb:bc k=byts targets=(list byts)]
+  ^-  (set hexb:bc)
+  %-  ~(gas in *(set hexb:bc))
   =/  [p=@ m=@]  [p:params m:params]
-  =/  [n=@ux gcs-set=bits]  (parse-filter filter)
-  =/  target-map=(map @ hexb)
-    %-  ~(gas by *(map @ hexb))
+  =/  [n=@ux gcs-set=bits:bc]  (parse-filter filter)
+  =/  target-map=(map @ hexb:bc)
+    %-  ~(gas by *(map @ hexb:bc))
     %+  turn  targets
-    |=(t=hexb [(to-range:hsh t (mul n m) k) t])
+    |=(t=hexb:bc [(to-range:hsh t (mul n m) k) t])
   =+  target-hs=(sort ~(tap in ~(key by target-map)) lth)
   =+  last-val=0
   =|  matches=(list @)
