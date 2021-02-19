@@ -264,7 +264,7 @@
   ::
   ::  Yield the substring [lhs:rhs] inclusive
   ++  subvector
-    |=  [u=@lvs lhs=@ud rhs=@ud]
+    |=  [u=@lvd lhs=@ud rhs=@ud]
     (mix (zeros +((sub rhs lhs))) (cut 6 [(dec lhs) +((sub rhs lhs))] u))
   ::
   ::  |x|
