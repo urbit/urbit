@@ -3784,7 +3784,8 @@
       ::  virtualize to catch and produce deterministic failures
       ::
       !.
-      =-  ?:(?=(%& -<) p.- ((slog p.-) [[~ ~] fod]))
+      =-  ?:  ?=(%& -<)  p.-
+          ((slog leaf+"gall: read-at-aeon fail {<mun>}" p.-) [[~ ~] fod])
       %-  mule  |.
       ?-  care.mun
           %d

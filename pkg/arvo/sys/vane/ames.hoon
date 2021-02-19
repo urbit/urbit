@@ -1909,6 +1909,11 @@
       =/  =bone  bone.shut-packet
       ::
       ?:  ?=(%& -.meat.shut-packet)
+        =+  ?~  dud  ~
+            %.  ~
+            %+  slog
+              leaf+"ames: {<her.channel>} fragment crashed {<mote.u.dud>}"
+            ?.(msg.veb ~ tang.u.dud)
         (run-message-sink bone %hear lane shut-packet ?=(~ dud))
       ::  Just try again on error, printing trace
       ::
@@ -1917,7 +1922,8 @@
       ::
       =+  ?~  dud  ~
           %.  ~
-          (slog leaf+"ames: crashed on message ack" >mote.u.dud< tang.u.dud)
+          %+  slog  leaf+"ames: {<her.channel>} ack crashed {<mote.u.dud>}"
+          ?.(msg.veb ~ tang.u.dud)
       (run-message-pump bone %hear [message-num +.meat]:shut-packet)
     ::  +on-memo: handle request to send message
     ::
@@ -2203,12 +2209,15 @@
         ?.  ?=([%hear * * ok=%.n] task)
           ::  fresh boon; give message to client vane
           ::
-          %-  (trace msg.veb |.("boon {<her.channel^bone=bone -.task>}"))
+          %-  %+  trace  msg.veb
+              =/  dat  [her.channel bone=bone message-num=message-num -.task]
+              |.("sink boon {<dat>}")
           peer-core
         ::  we previously crashed on this message; notify client vane
         ::
         %-  %+  trace  msg.veb
-            |.("crashed on boon {<her.channel^bone=bone -.task>}")
+            =/  dat  [her.channel bone=bone message-num=message-num -.task]
+            |.("crashed on sink boon {<dat>}")
         boon-to-lost
       ::  +boon-to-lost: convert all boons to losts
       ::
@@ -2226,7 +2235,9 @@
       ++  on-sink-nack-trace
         |=  [=message-num message=*]
         ^+  peer-core
-        %-  (trace msg.veb |.("nack trace {<her.channel^bone=bone>}"))
+        %-  %+  trace  msg.veb
+            =/  dat  [her.channel bone=bone message-num=message-num]
+            |.("sink naxplanation {<dat>}")
         ::
         =+  ;;  =naxplanation  message
         ::  ack nack-trace message (only applied if we don't later crash)
@@ -2243,7 +2254,9 @@
       ++  on-sink-plea
         |=  [=message-num message=*]
         ^+  peer-core
-        %-  (trace msg.veb |.("plea {<her.channel^bone=bone>}"))
+        %-  %+  trace  msg.veb
+            =/  dat  [her.channel bone=bone message-num=message-num]
+            |.("sink plea {<dat>}")
         ::  is this the first time we're trying to process this message?
         ::
         ?.  ?=([%hear * * ok=%.n] task)
