@@ -12,6 +12,7 @@ export const TUTORIAL_GROUP = process.env.TUTORIAL_GROUP!;
 export const TUTORIAL_CHAT = process.env.TUTORIAL_CHAT!;
 export const TUTORIAL_BOOK = process.env.TUTORIAL_BOOK!;
 export const TUTORIAL_LINKS = process.env.TUTORIAL_LINKS!;
+export const TUTORIAL_GROUP_RESOURCE = `/ship/${TUTORIAL_HOST}/${TUTORIAL_GROUP}` ;
 
 interface StepDetail {
   title: string;
@@ -26,7 +27,7 @@ interface StepDetail {
 
 export function hasTutorialGroup(props: { associations: Associations }) {
   return (
-    `/ship/${TUTORIAL_HOST}/${TUTORIAL_GROUP}` in props.associations.groups
+    TUTORIAL_GROUP_RESOURCE in props.associations.groups
   );
 }
 
