@@ -442,19 +442,19 @@
   ;<  ~  bind:m  (send-request (hiss-to-request:html hiss))
   take-maybe-sigh
 ::
-::  +build-fail: build the source file at the specified $beam
+::  +build-file: build the source file at the specified $beam
 ::
 ++  build-file
   |=  [[=ship =desk =case] =spur]
   =*  arg  +<
-  =/  m  (strand ,vase)
+  =/  m  (strand ,(unit vase))
   ^-  form:m
   ;<  =riot:clay  bind:m
     (warp ship desk ~ %sing %a case spur)
   ?~  riot
-    (strand-fail %build-file >arg< ~)
+    (pure:m ~)
   ?>  =(%vase p.r.u.riot)
-  (pure:m !<(vase q.r.u.riot))
+  (pure:m (some !<(vase q.r.u.riot)))
 ::  +build-mark: build a mark definition to a $dais
 ::
 ++  build-mark
