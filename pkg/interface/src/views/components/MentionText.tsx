@@ -39,7 +39,7 @@ export function Mention(props: {
   scrollWindow?: HTMLElement;
   ship: string;
 }) {
-  const { contacts, ship, scrollWindow } = props;
+  const { contacts, ship, scrollWindow, ...rest } = props;
   let { contact } = props;
   contact = contact?.color ? contact : contacts?.[ship];
   const history = useHistory();
@@ -53,7 +53,7 @@ export function Mention(props: {
   }, [showOverlay]);
 
   return (
-    <Box position='relative' display='inline-block' cursor='pointer'>
+    <Box position='relative' display='inline-block' cursor='pointer' {...rest}>
       <Text
         onClick={() => toggleOverlay()}
         mx={1}

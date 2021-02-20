@@ -445,8 +445,10 @@ export const Message = ({
                 </Box>
               );
             case 'mention':
+              const first = (i) => (i === 0);
               return (
                 <Mention
+                  marginLeft={first(i) ? "-4px" : "0"}
                   group={group}
                   scrollWindow={scrollWindow}
                   ship={content.mention}
