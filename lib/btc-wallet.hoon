@@ -1,7 +1,7 @@
 ::
 ::
 /-  *btc-wallet, bc=bitcoin
-/+  bip32, bcu=bitcoin-utils, bp=btc-provider
+/+  bip32, bcu=bitcoin-utils, bp=btc-provider, pbt=bip-b174
 =,  secp:crypto
 =+  ecc=secp256k1
 |%
@@ -154,7 +154,7 @@
     =/  outs=(list out:psbt:bc)
       %+  turn  txos.t
       |=(=txo [address.txo hk.txo])
-    `(encode:pbt:bcu %.y get-rawtx get-txid ins outs)
+    `(encode:pbt %.y get-rawtx get-txid ins outs)
   --
 ::  wad: door for processing walts (wallets)
 ::        parameterized on a walt and it's chyg account 
