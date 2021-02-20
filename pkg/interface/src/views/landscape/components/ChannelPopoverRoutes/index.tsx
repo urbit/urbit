@@ -88,7 +88,7 @@ export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {
         <Col height="100%" overflowY="auto" p="5" flexGrow={1}>
           <ChannelNotifications {...props} />
           {!isOwner && (
-            <Col mb="6">
+            <Col mb="6" flexShrink={0}>
               <Text id="unsubscribe" fontSize="2" fontWeight="bold">
                 Unsubscribe from Channel
               </Text>
@@ -126,7 +126,7 @@ export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {
               </Col>
 
               ) : (
-              <Col mt="5" mb="6">
+              <Col mt="5" mb="6" flexShrink={0}>
               <Text id="remove" fontSize="2" fontWeight="bold">
                 Remove channel from group
               </Text>
