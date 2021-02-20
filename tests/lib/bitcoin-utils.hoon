@@ -209,7 +209,7 @@
     |=  v=tx-vector
     %+  expect-eq
       !>(txid.v)
-      !>((get-id:txu (decode:txu (to-hexb hex-cord.v))))
+      !>((get-id:txu (decode:txu (from-cord:hxb hex-cord.v))))
   ::
   ++  check-psbt
     |=  v=psbt-vector
@@ -237,13 +237,13 @@
     =/  [b=bipt n=network]  (xpub-type xpub.v)
     %+  expect-eq
       !>(address.v)
-      !>((pubkey-to-address b n pubkey.v))
+      !>((from-pubkey:adr b n pubkey.v))
   ::
   ++  check-script-pubkey-derivation
     |=  v=script-pubkey-vector
     %+  expect-eq
       !>(spk.v)
-      !>((script-pubkey address.v))
+      !>((to-script-pubkey:adr address.v))
   --
 ::
 --
