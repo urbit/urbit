@@ -38,8 +38,9 @@ export function Mention(props: {
   group: Group;
   scrollWindow?: HTMLElement;
   ship: string;
+  first?: Boolean;
 }) {
-  const { contacts, ship, scrollWindow, ...rest } = props;
+  const { contacts, ship, scrollWindow, first, ...rest } = props;
   let { contact } = props;
   contact = contact?.color ? contact : contacts?.[ship];
   const history = useHistory();
@@ -56,7 +57,8 @@ export function Mention(props: {
     <Box position='relative' display='inline-block' cursor='pointer' {...rest}>
       <Text
         onClick={() => toggleOverlay()}
-        mx={1}
+        marginLeft={first? 0 : 1}
+        marginRight={1}
         px={1}
         bg='washedBlue'
         color='blue'
