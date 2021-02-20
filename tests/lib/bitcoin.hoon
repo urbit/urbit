@@ -1,4 +1,4 @@
-/+  *test, *bitcoin-utils, bip32
+/+  *test, *bitcoin, bip32
 =,  secp:crypto
 =+  ecc=secp256k1
 |%
@@ -6,10 +6,6 @@
 +$  bits-vector  [bitwidth=@ atoms=(list @) =bits]
 +$  compact-size-vector  @ux
 +$  tx-vector  [hex-cord=@t txid=hexb]
-+$  psbt-vector
-  $:  =hdkey
-      hdkey-hex=hexb
-  ==
 +$  xpub-vector
   $:  =xpub
       =network
@@ -19,7 +15,6 @@
   ==
 +$  script-pubkey-vector  [=address spk=hexb]
 ::
-++  fprint  4^0xdead.beef
 ++  bits-vectors
   ^-  (list bits-vector)
   :~  :*  5
@@ -46,33 +41,6 @@
       ::
       :*  '01000000000102267b34b058a44e678ca0609825fe37c5bb893462337334ad5a2e887b8ebef65c000000002322002049f80613b30fe3063d4e6ce75c53a7bc573ea17fe49dcb805aca416a8af5d991ffffffff666f99bf914bb18e28ec39af93d99a1938767fbec892408acced7c80663f0df40000000023220020096def7756afb4dba661ec58602cf6af1f7881e48e4b8a8c12be9985073f5adeffffffff06602d59010000000017a914572290324c72e6842e8a77c2cbb9882a3b9c2a9f87195c0e00000000001976a914abfdf3698ceef95986b31b763e6764cfe3ce584e88ac68642400000000001976a91456cf5fcc3654c5646b930e8773a95dce98c49e0588acfbb34b00000000001976a914518ee0d1b48f3d99f76e6e8283006610e39aeeba88acf492560000000000160014d1930fff9862af879ee14ecd3e1b9dc1099524ce0374c802000000001976a9148a6727bc345abeae523b6af7828053f95332918688ac03483045022100fcc8336b7c81e67cc7b53587fb06c3f950a6d3349e658594a444618c75988e45022065b3b957e0f7d2def98565a34c1ee7843d60525c4337730fa5d6ac8ff7aacb89012102ac604909ed86488338ec6255b0bdc0162562b299e66b860480a8bd2b99c7f3291976a9140e60a2ad39efd10ad61e2a3e6e5c1baa73190ee088ac0347304402202ec01f623cd48ba990caea70463de86b37ffb2363640b510ce9d80c750a54eec02204915d11649d636e5e8503b226d7a6a45da0163f3f0ca4b07bdaaa9af4d6f850f012102a52b3f9958c0f4b57b99f287832ea75775ddf7c83fa0648b6b1545ec4881ef2d1976a91401121fe150c9b05f9146bac57ad9947ea5c1478e88ac00000000'
           32^0x2b9c.60c4.dfcd.0aa2.b1b8.83a5.0a4a.2a96.197b.07d8.cdd1.e749.f0a1.f296.0f43.b339
-      ==
-  ==
-::
-++  psbt-vectors
-  ^-  (list psbt-vector)
-  :~  :*  [fprint 33^0x1 %testnet %44 %0 1]
-          20^0x2c00.0080.0100.0080.0000.0080.0000.0000.0100.0000
-  ==
-      ::
-      :*  [fprint 33^0x1 %testnet %49 %0 1]
-          20^0x3100.0080.0100.0080.0000.0080.0000.0000.0100.0000
-      ==
-      ::
-      :*  [fprint 33^0x1 %testnet %84 %0 1]
-          20^0x5400.0080.0100.0080.0000.0080.0000.0000.0100.0000
-      ==
-      ::
-      :*  [fprint 33^0x1 %main %44 %0 1]
-          20^0x2c00.0080.0000.0080.0000.0080.0000.0000.0100.0000
-      ==
-      ::
-      :*  [fprint 33^0x1 %main %49 %0 1]
-          20^0x3100.0080.0000.0080.0000.0080.0000.0000.0100.0000
-      ==
-      ::
-      :*  [fprint 33^0x1 %main %84 %0 1]
-          20^0x5400.0080.0000.0080.0000.0080.0000.0000.0100.0000
       ==
   ==
 ::  below use mnemonic:
@@ -175,8 +143,6 @@
           (zing (turn compact-size-vectors check-compact-size))
           %+   category  "check TX en/decoding"
           (zing (turn tx-vectors check-tx))
-          %+  category  "check PSBT"
-          (zing (turn psbt-vectors check-psbt))
           %+  category  "xpub parsing"
           (zing (turn xpub-vectors check-xpub-parsing))
           %+  category  "pubkey derivation"
@@ -210,14 +176,6 @@
     %+  expect-eq
       !>(txid.v)
       !>((get-id:txu (decode:txu (from-cord:hxb hex-cord.v))))
-  ::
-  ++  check-psbt
-    |=  v=psbt-vector
-    =/  key=hexb
-      (cat:byt ~[1^0x6 pubkey.hdkey.v])          ::  %input target
-    %+  expect-eq
-      !>([key (cat:byt ~[fprint.hdkey.v hdkey-hex.v])])
-      !>((hdkey:en:pbt %input hdkey.v))
   ::
   ++  check-xpub-parsing
     |=  v=xpub-vector
