@@ -40,7 +40,7 @@
     =.  mar-ok.state  %.y
     =+  .^(paz=(list path) ct+(en-beam now-beak /mar))
     |-  ^+  [fex this]
-    ?~  paz  [fex this]
+    ?~  paz  [(flop fex) this]
     =/  xap=path  (flop i.paz)
     ?.  ?=([%hoon *] xap)
       $(paz t.paz)
@@ -63,7 +63,7 @@
     ?>  =(~ app.state)
     =.  app-ok.state  %.y
     =+  .^(app-arch=arch cy+(en-beam now-beak /app))
-    =/  daz  ~(tap in ~(key by dir.app-arch))
+    =/  daz  (sort ~(tap in ~(key by dir.app-arch)) |=((pair) !(aor p q)))
     |-  ^+  [fex this]
     ?~  daz  [fex this]
     =/  dap-pax=path  /app/[i.daz]/hoon
@@ -86,7 +86,7 @@
     =.  gen-ok.state  %.y
     =+  .^(paz=(list path) ct+(en-beam now-beak /gen))
     |-  ^+  [fex this]
-    ?~  paz  [fex this]
+    ?~  paz  [(flop fex) this]
     =/  xap=path  (flop i.paz)
     ?.  ?=([%hoon *] xap)
       $(paz t.paz)
