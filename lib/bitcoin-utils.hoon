@@ -7,7 +7,7 @@
 =,  sur
 |%
 ::
-::  TODO: move this to zuse
+::  TODO: move this bit/byt stuff to zuse
 ::  bit/byte utilities
 ::
 ::
@@ -85,20 +85,31 @@
         bs   (drop:bit bitwidth bs)
     ==
   --
-++  to-hexb
-  |=  h=@t
-  ^-  hexb
-  ?:  =('' h)  1^0x0
-  ::  Add leading 00
+::
+::  hxb: hex parsing utilities
+::
+++  hxb
+  |%
+  ++  from-cord
+    |=  h=@t
+    ^-  hexb
+    ?:  =('' h)  1^0x0
+    ::  Add leading 00
+    ::
+    =+  (lsh [3 2] h)
+    ::  Group by 4-size block
+    ::
+    =+  (rsh [3 2] -)
+    ::  Parse hex to atom
+    ::
+    :-  (div (lent (trip h)) 2)
+    `@ux`(rash - hex)
   ::
-  =+  (lsh [3 2] h)
-  ::  Group by 4-size block
-  ::
-  =+  (rsh [3 2] -)
-  ::  Parse hex to atom
-  ::
-  :-  (div (lent (trip h)) 2)
-  `@ux`(rash - hex)
+  ++  to-cord
+    |=  =hexb
+    ^-  cord
+    (en:base16:mimes:html hexb)
+  --
 ::
 ++  overhead-weight  ^-(vbytes 11)
 ++  input-weight
@@ -130,15 +141,118 @@
   ?:  =("zpub" prefix)  [%84 %main]
   ~|("invalid xpub: {<xpub>}" !!)
 ::
-++  address-bipt
-  |=  a=address
-  ^-  bipt
-  =/  spk=hexb  (script-pubkey a)
-  ?:  =(25 wid.spk)  %44
-  ?:  =(23 wid.spk)  %49
-  ?:  =(22 wid.spk)  %84
-  ?:  =(34 wid.spk)  %84
-  ~|("Invalid address" !!)
+::  adr: address manipulation
+::
+++  adr
+  |%
+  ++  get-bipt
+    |=  a=address
+    ^-  bipt
+    =/  spk=hexb  (to-script-pubkey:adr a)
+    ?:  =(25 wid.spk)  %44
+    ?:  =(23 wid.spk)  %49
+    ?:  =(22 wid.spk)  %84
+    ?:  =(34 wid.spk)  %84
+    ~|("Invalid address" !!)
+  ::
+  ++  to-cord
+    |=  a=address  ^-  cord
+    ?:  ?=([%base58 *] a)
+      (scot %uc +.a)
+    +.a
+  ::
+  ++  from-pubkey
+    |=  [=bipt =network pubkey=hexb]
+    ^-  address
+    ?-  bipt
+        %44
+      :-  %base58
+      =<  ^-(@uc dat)
+      %-  cat:byt
+      :-  ?-  network
+              %main     1^0x0
+              %testnet  1^0x6f
+          ==
+      ~[(hash-160 pubkey)]
+      ::
+        %49
+      :-  %base58
+      =<  ^-(@uc dat)
+      %-  cat:byt
+      :~  ?-  network
+            %main     1^0x5
+            %testnet  1^0xc4
+          ==
+          %-  hash-160
+          (cat:byt ~[2^0x14 (hash-160 pubkey)])
+      ==
+      ::
+        %84
+      :-  %bech32
+      (need (encode-pubkey:bech32 network pubkey))
+    ==
+  ::
+  ++  from-cord
+    |=  addrc=@t
+    |^
+    =/  addrt=tape  (trip addrc)
+    ^-  address
+    ?:  (is-base58 addrt)
+      [%base58 `@uc`(scan addrt fim:ag)]
+    ?:  (is-bech32 addrt)
+      [%bech32 addrc]
+    ~|("Invalid address: {<addrc>}" !!)
+    ::
+    ++  is-base58
+      |=  at=tape
+      ^-  ?
+      ?|  =("m" (scag 1 at))
+          =("1" (scag 1 at))
+          =("3" (scag 1 at))
+          =("2" (scag 1 at))
+      ==
+    ::
+    ++  is-bech32
+      |=  at=tape
+      ^-  ?
+      ?|  =("bc1" (scag 3 at))
+          =("tb1" (scag 3 at))
+      ==
+    --
+  ::
+  ++  to-script-pubkey
+    |=  =address
+    ^-  hexb
+    ?-  -.address
+        %bech32
+      =+  h=(from-address:bech32 +.address)
+      %-  cat:byt
+      :~  1^0x0
+          1^wid.h
+          h
+      ==
+      ::
+        %base58
+      =/  h=hexb  [21 `@ux`+.address]
+      =+  lead-byt=dat:(take:byt 1 h)
+      =/  version-network=[bipt network]
+        ?:  =(0x0 lead-byt)   [%44 %main]
+        ?:  =(0x6f lead-byt)  [%44 %testnet]
+        ?:  =(0x5 lead-byt)   [%49 %main]
+        ?:  =(0xc4 lead-byt)  [%49 %testnet]
+        ~|("Invalid base58 address: {<+.address>}" !!)
+      %-  cat:byt
+      ?:  ?=(%44 -.version-network)
+        :~  3^0x76.a914
+            (drop:byt 1 h)
+            2^0x88ac
+        ==
+      :~  2^0xa914
+          (drop:byt 1 h)
+          1^0x87
+      ==
+    ==
+  --
 ::  big endian sha256: input and output are both MSB first (big endian)
 ::
 ++  sha256
@@ -158,7 +272,9 @@
   :-  20
   %-  ripemd-160
   (sha256 val)
-::  +csiz: handle compact-size integers
+::
+::  +csiz: CompactSize integers (a Bitcoin-specific datatype)
+::  https://btcinformation.org/en/developer-reference#compactsize-unsigned-integers
 ::   - encode: big endian to little endian
 ::   - decode: little endian to big endian
 ::
@@ -198,69 +314,6 @@
     [dat.n rest]
   --
 ::
-++  pubkey-to-address
-  |=  [=bipt =network pubkey=hexb]
-  ^-  address
-  ?-  bipt
-      %44
-    :-  %base58
-    =<  ^-(@uc dat)
-    %-  cat:byt
-    :-  ?-  network
-            %main     1^0x0
-            %testnet  1^0x6f
-        ==
-    ~[(hash-160 pubkey)]
-    ::
-      %49
-    :-  %base58
-    =<  ^-(@uc dat)
-    %-  cat:byt
-    :~  ?-  network
-          %main     1^0x5
-          %testnet  1^0xc4
-        ==
-        %-  hash-160
-        (cat:byt ~[2^0x14 (hash-160 pubkey)])
-    ==
-    ::
-      %84
-    :-  %bech32
-    (need (encode-pubkey:bech32 network pubkey))
-  ==
-::
-++  script-pubkey
-  |=  =address
-  ^-  hexb
-  ?-  -.address
-      %bech32
-    =+  h=(from-address:bech32 +.address)
-    %-  cat:byt
-    :~  1^0x0
-        1^wid.h
-        h
-    ==
-    ::
-      %base58
-    =/  h=hexb  [21 `@ux`+.address]
-    =+  lead-byt=dat:(take:byt 1 h)
-    =/  version-network=[bipt network]
-      ?:  =(0x0 lead-byt)   [%44 %main]
-      ?:  =(0x6f lead-byt)  [%44 %testnet]
-      ?:  =(0x5 lead-byt)   [%49 %main]
-      ?:  =(0xc4 lead-byt)  [%49 %testnet]
-      ~|("Invalid base58 address: {<+.address>}" !!)
-    %-  cat:byt
-    ?:  ?=(%44 -.version-network)
-      :~  3^0x76.a914
-          (drop:byt 1 h)
-          2^0x88ac
-      ==
-    :~  2^0xa914
-        (drop:byt 1 h)
-        1^0x87
-    ==
-  ==
 ::  +txu: transaction utility core
 ::   - primarily used for calculating txids
 ::   - ignores signatures in inputs

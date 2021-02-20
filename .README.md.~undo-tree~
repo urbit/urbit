@@ -1,0 +1,10 @@
+(undo-tree-save-format-version . 1)
+"d879f99ea831bde5c1b526d30e9dbad055578a0f"
+[nil nil nil nil (24624 58013 257440 0) 0 nil]
+([nil nil ((#("-test %/tests/lib/bip/b158 ~" 0 28 (markdown-gfm-code (1371 1479) fontified t face (markdown-pre-face markdown-code-face) font-lock-multiline t)) . 1385) (t 24623 50711 138219 760000)) nil (24624 58013 257439 0) 0 nil])
+([nil nil ((nil rear-nonsticky nil 1412 . 1413) (nil fontified nil 1385 . 1413) (1385 . 1413)) nil (24624 58013 257438 0) 0 nil])
+([nil nil ((#("-test %/tests/lib/bitcoin-utils ~" 0 9 (fontified t markdown-gfm-code (1371 1479) face (markdown-pre-face markdown-code-face) font-lock-multiline t) 9 33 (fontified t markdown-gfm-code (1371 1479) face (markdown-pre-face markdown-code-face) font-lock-multiline t)) . 1445) (undo-tree-id0 . -9) (undo-tree-id1 . -9) (undo-tree-id2 . -9) (undo-tree-id3 . -9) (undo-tree-id4 . -9) (undo-tree-id5 . -9) (undo-tree-id6 . -9) (undo-tree-id7 . -9) (undo-tree-id8 . -33)) nil (24624 58013 257436 0) 0 nil])
+([nil nil ((nil rear-nonsticky nil 1477 . 1478) (nil fontified nil 1454 . 1478) (nil fontified nil 1445 . 1454) (1445 . 1478)) nil (24624 58013 257407 0) 0 nil])
+([nil nil ((#("-test %/tests/lib/btc-wallet ~" 0 30 (fontified t markdown-gfm-code (1371 1479) face (markdown-pre-face markdown-code-face) font-lock-multiline t)) . 1414) (undo-tree-id9 . -30) (undo-tree-id10 . -30) (undo-tree-id11 . -30) (undo-tree-id12 . -30) (undo-tree-id13 . -30) (undo-tree-id14 . -30) (undo-tree-id15 . -30) (undo-tree-id16 . -30) (undo-tree-id17 . -30) (undo-tree-id18 . -30) (t 24624 58013 261118 727000)) nil (24624 58112 573210 0) 0 nil])
+([nil current ((nil rear-nonsticky nil 1443 . 1444) (nil fontified nil 1414 . 1444) (1414 . 1444)) nil (24624 58112 573188 0) 0 nil])
+nil

@@ -184,7 +184,7 @@
   ^-  byts
   %+  take:byt:bcu  16
   %-  flip:byt:bcu
-  (to-hexb:bcu (crip blockhash))
+  (from-cord:hxb:bcu (crip blockhash))
 ::  +match: whether block filter matches *any* target scriptpubkeys
 ::   - filter: full block filter, with leading N
 ::   - k: key for siphash (end of blockhash, reversed)

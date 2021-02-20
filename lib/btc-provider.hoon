@@ -4,24 +4,6 @@
 ::=<  [sur .]
 ::=,  sur
 |%
-++  address-to-cord
-  |=  =address:bc  ^-  cord
-  ?:  ?=([%base58 *] address)
-    (scot %uc +.address)
-  +.address
-::
-++  address-from-cord
-  |=  addrc=@t
-  ^-  address:bc
-  ?.  ?|  =("bc1" (scag 3 (trip addrc)))
-          =("tb1" (scag 3 (trip addrc)))
-      ==
-    ~|("base58 addresses not yet supported" !!)
-  [%bech32 addrc]
-::
-++  hexb-to-cord
-  |=  =hexb:bc  ^-  cord
-  (en:base16:mimes:html hexb)
 ::  +from-epoch: time since Jan 1, 1970 in seconds.
 ::
 ++  from-epoch
@@ -82,7 +64,7 @@
     ==
     ++  address-info
       %-  ot
-      :~  [%address (cu address-from-cord so)]
+      :~  [%address (cu from-cord:adr:bcu so)]
           [%utxos (as utxo)]
           [%used bo]
           [%block ni]
@@ -90,7 +72,7 @@
     ++  utxo
     %-  ot
       :~  ['tx_pos' ni]
-          ['tx_hash' (cu to-hexb:bcu so)]
+          ['tx_hash' (cu from-cord:hxb:bcu so)]
           [%height ni]
           [%value ni]
           [%recvd (cu from-epoch ni)]
@@ -98,7 +80,7 @@
     ++  tx-vals
       %-  ot
       :~  [%included bo]
-          [%txid (cu to-hexb:bcu so)]
+          [%txid (cu from-cord:hxb:bcu so)]
           [%confs ni]
           [%recvd (cu from-epoch ni)]
           [%inputs (ar tx-val)]
@@ -106,19 +88,19 @@
       ==
     ++  tx-val
       %-  ot
-      :~  [%txid (cu to-hexb:bcu so)]
+      :~  [%txid (cu from-cord:hxb:bcu so)]
           [%pos ni]
-          [%address (cu address-from-cord so)]
+          [%address (cu from-cord:adr:bcu so)]
           [%value ni]
       ==
     ++  raw-tx
       %-  ot
-      :~  [%txid (cu to-hexb:bcu so)]
-          [%rawtx (cu to-hexb:bcu so)]
+      :~  [%txid (cu from-cord:hxb:bcu so)]
+          [%rawtx (cu from-cord:hxb:bcu so)]
       ==
     ++  broadcast-tx
       %-  ot
-      :~  [%txid (cu to-hexb:bcu so)]
+      :~  [%txid (cu from-cord:hxb:bcu so)]
           [%broadcast bo]
           [%included bo]
       ==
@@ -126,8 +108,8 @@
       %-  ot
       :~  [%block ni]
           [%fee (mu ni)]
-          [%blockhash (cu to-hexb:bcu so)]
-          [%blockfilter (cu to-hexb:bcu so)]
+          [%blockhash (cu from-cord:hxb:bcu so)]
+          [%blockfilter (cu from-cord:hxb:bcu so)]
       ==
     --
   --
@@ -139,22 +121,22 @@
       %get-address-info
     %-  get-request
     %+  mk-url  '/addresses/info/'
-    (address-to-cord address.ract)
+    (to-cord:adr:bcu address.ract)
     ::
       %get-tx-vals
     %-  get-request
     %+  mk-url  '/gettxvals/'
-    (hexb-to-cord txid.ract)
+    (to-cord:hxb:bcu txid.ract)
     ::
       %get-raw-tx
     %-  get-request
     %+  mk-url  '/getrawtx/'
-    (hexb-to-cord txid.ract)
+    (to-cord:hxb:bcu txid.ract)
     ::
       %broadcast-tx
     %-  get-request
     %+  mk-url  '/broadcasttx/'
-    (hexb-to-cord rawtx.ract)
+    (to-cord:hxb:bcu rawtx.ract)
     ::
       %get-block-count
     %-  get-request

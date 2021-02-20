@@ -1,7 +1,7 @@
 ::
 ::
-/-  *btc-wallet
-/+  bip32, bc=bitcoin, bp=btc-provider
+/-  *btc-wallet, bc=bitcoin
+/+  bip32, bcu=bitcoin-utils, bp=btc-provider
 =,  secp:crypto
 =+  ecc=secp256k1
 |%
@@ -31,7 +31,7 @@
           confs=(unit @ud)
       ==
   ^-  walt
-  =/  [=bipt =network]  (xpub-type:bc xpub)
+  =/  [=bipt =network]  (xpub-type:bcu xpub)
   :*  xpub
       network
       fprint
@@ -99,13 +99,13 @@
   ::
   ++  vbytes
     ^-  vbytes:bc
-    %+  add  overhead-weight:bc
+    %+  add  overhead-weight:bcu
     %+  add
       %+  roll
-      (turn txis.t |=(t=txi (input-weight:bc bipt.hdkey.t)))
+      (turn txis.t |=(t=txi (input-weight:bcu bipt.hdkey.t)))
       add
     %+  roll
-      (turn txos.t |=(t=txo (output-weight:bc (address-bipt:bc address.t))))
+      (turn txos.t |=(t=txo (output-weight:bcu (get-bipt:adr:bcu address.t))))
     add
   ++  tx-data
     |^
@@ -122,16 +122,16 @@
       ==
     ++  txo-data
       |=  =txo
-      :-  (script-pubkey:bc address.txo)
+      :-  (to-script-pubkey:adr:bcu address.txo)
       value.txo
     --
   ::
   ++  get-txid
     ^-  txid
-    (get-id:txu:bc tx-data)
+    (get-id:txu:bcu tx-data)
   ::
   ++  get-rawtx
-    (basic-encode:txu:bc tx-data)
+    (basic-encode:txu:bcu tx-data)
   ::  +add-output: append output (usually change) to txos
   ::
   ++  add-output
@@ -154,7 +154,7 @@
     =/  outs=(list out:psbt:bc)
       %+  turn  txos.t
       |=(=txo [address.txo hk.txo])
-    `(encode:pbt:bc %.y get-rawtx get-txid ins outs)
+    `(encode:pbt:bcu %.y get-rawtx get-txid ins outs)
   --
 ::  wad: door for processing walts (wallets)
 ::        parameterized on a walt and it's chyg account 
@@ -177,7 +177,7 @@
   ++  mk-address
     |=  =idx:bc
     ^-  address:bc
-    (pubkey-to-address:bc bipt.w network.w (pubkey idx))
+    (from-pubkey:adr:bcu bipt.w network.w (pubkey idx))
   ::  +nixt-address: used to get change addresses
   ::   - gets the current next available address
   ::   - doesn't bump nixt-address if it's unused
@@ -258,7 +258,7 @@
   ++  dust-threshold
     |=  output-bipt=bipt:bc
     ^-  vbytes
-    (mul dust-sats (input-weight:bc output-bipt))
+    (mul dust-sats (input-weight:bcu output-bipt))
   ::
   ++  target-value
     ^-  sats
@@ -267,24 +267,24 @@
   ::
   ++  base-weight
     ^-  vbytes
-    %+  add  overhead-weight:bc
+    %+  add  overhead-weight:bcu
     %+  roll
       %+  turn  txos
-      |=(=txo (output-weight:bc (address-bipt:bc address.txo)))
+      |=(=txo (output-weight:bcu (get-bipt:adr:bcu address.txo)))
     add
   ::
   ++  total-vbytes
     |=  selected=(list insel)
     ^-  vbytes
     %+  add  base-weight
-    (mul (input-weight:bc bipt.w) (lent selected))
+    (mul (input-weight:bcu bipt.w) (lent selected))
   ::  value of an input after fee
   ::  0 if net is <= 0
   ::
   ++  net-value
     |=  val=sats
     ^-  sats
-    =/  cost  (mul (input-weight:bc bipt.w) feyb)
+    =/  cost  (mul (input-weight:bcu bipt.w) feyb)
     ?:  (lte val cost)  0
     (sub val cost)
   ::
@@ -303,7 +303,7 @@
     ?~  tb  [~ ~]
     =+  excess=~(fee txb u.tb)        ::  (inputs - outputs)
     =/  new-fee=sats                   ::  cost of this tx + one more output
-      (mul feyb (add (output-weight:bc bipt.w) vbytes.u.tb))
+      (mul feyb (add (output-weight:bcu bipt.w) vbytes.u.tb))
     ?.  (gth excess new-fee)
       [tb ~]
     ?.  (gth (sub excess new-fee) (dust-threshold bipt.w))
@@ -317,7 +317,7 @@
     ?.  %+  levy  txos
         |=  =txo
         %+  gth  value.txo
-        (dust-threshold (address-bipt:bc address.txo))
+        (dust-threshold (get-bipt:adr:bcu address.txo))
       ~|("One or more suggested outputs is dust." !!)
     =/  is=(unit (list insel))
       %-  single-random-draw
