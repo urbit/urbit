@@ -46,8 +46,8 @@
     [n-take (end [bloq n-take] dat.b)]
   --
 ++  byt
+  =/  bl    ~(. blop 3)
   |%
-  ++  bl    ~(. blop 3)
   ++  cat   cat:bl:byt
   ++  flip  flip:bl:byt
   ++  take  take:bl:byt
@@ -55,8 +55,8 @@
   --
 ::
 ++  bit
+  =/  bl    ~(. blop 0)
   |%
-  ++  bl    ~(. blop 0)
   ++  cat   cat:bl:bit
   ++  flip  flip:bl:bit
   ++  take  take:bl:bit
