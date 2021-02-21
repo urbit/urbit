@@ -9,8 +9,8 @@
 ::  Scrys
 ::  x/is-whitelisted/SHIP: bool, whether ship is whitelisted
 ::
-/-  *bitcoin, json-rpc
-/+  *btc-provider, dbug, default-agent, groupl=group, resource
+/-  *bitcoin, json-rpc, *btc-provider
+/+  dbug, default-agent, bl=btc, groupl=group, resource
 |%
 +$  versioned-state
     $%  state-0
@@ -182,7 +182,7 @@
   |=  [act=action ract=action:rpc-types]
   =|  out=outbound-config:iris
   =/  req=request:http
-    (gen-request host-info ract)
+    (gen-request:bl host-info ract)
   [%pass (rpc-wire act) %arvo %i %request req out]
 ::  wire structure: /action-tas/now
 ::
@@ -215,8 +215,8 @@
     ~[(send-status [%disconnected ~]) (send-update [%| u.conn-err])]
   ::
   %+  handle-rpc-result  wire
-  %-  parse-result:rpc
-  (get-rpc-response response)
+  %-  parse-result:rpc:bl
+  (get-rpc-response:bl response)
 ::
 ++  connection-error
   |=  status=@ud

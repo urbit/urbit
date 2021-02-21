@@ -1,5 +1,5 @@
 /-  bc=bitcoin
-/+  *test, *btc-wallet
+/+  *test, *btc
 |%
 +$  wallet-vector
   $:  =xpub:bc
