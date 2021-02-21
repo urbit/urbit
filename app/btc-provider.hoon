@@ -9,8 +9,8 @@
 ::  Scrys
 ::  x/is-whitelisted/SHIP: bool, whether ship is whitelisted
 ::
-/-  btc, json-rpc
-/+  *btc-provider, dbug, default-agent, groupl=group, resource
+/-  *bitcoin, json-rpc, *btc-provider
+/+  dbug, default-agent, bl=btc, groupl=group, resource
 |%
 +$  versioned-state
     $%  state-0
@@ -159,6 +159,13 @@
   ?:  ?&(?=(%check-network -.act) ?!(=(network.act network.host-info)))
     %-  (slog ~[leaf+"network mismatch with client {<src.bowl>}"])
     (kick-client src.bowl)
+  ::  TODO: turn each of these into a gate call in rpc that creates a thread.
+  ::  poke spider example:
+  ::  https://github.com/urbit/urbit/blob/fab9a47a925f73f026c39f124e543e009d211978/pkg/arvo/app/eth-watcher.hoon#L461
+  ::  +$ start-args: [parent-tid=(unit tid) use=(unit tid) file=term =vase]
+  ::
+  ::  You may receive the return value or be notified of failure by subscribing to Spider at /thread-result/[tid]
+  ::
   =/  ract=action:rpc-types
     ?+  -.act  ~|("Invalid action" !!)
         %address-info
@@ -182,7 +189,7 @@
   |=  [act=action ract=action:rpc-types]
   =|  out=outbound-config:iris
   =/  req=request:http
-    (gen-request host-info ract)
+    (gen-request:bl host-info ract)
   [%pass (rpc-wire act) %arvo %i %request req out]
 ::  wire structure: /action-tas/now
 ::
@@ -195,7 +202,7 @@
   ^-  (quip card _state)
   ~&  >>>  "dropping client {<client>}"
   :-  ~[[%give %kick ~[/clients] `client]]
-  state(clients.host-info (~(dif in clients.host-info) (sy ~[client])))
+  state(clients.host-info (~(dif in clients.host-info) (silt ~[client])))
 ::
 ::  Handles HTTP responses from RPC servers. Parses for errors, then handles response. 
 ::  For actions that require collating multiple RPC calls, uses req-card to call out
@@ -215,8 +222,8 @@
     ~[(send-status [%disconnected ~]) (send-update [%| u.conn-err])]
   ::
   %+  handle-rpc-result  wire
-  %-  parse-result:rpc
-  (get-rpc-response response)
+  %-  parse-result:rpc:bl
+  (get-rpc-response:bl response)
 ::
 ++  connection-error
   |=  status=@ud
@@ -235,6 +242,7 @@
   ==
 ::
 ++  handle-rpc-result
+  ::  TODO: move this to spider
   |=  [=wire r=result:rpc-types]
   ^-  (quip card _state)
   ?+  -.wire  ~|("Unexpected HTTP response" !!)
@@ -298,7 +306,7 @@
     =/  gs  ~(tap in groups.whitelist)
     |-
     ?~  gs  %.n
-    ?:  (~(is-member groupl bowl) user (en-path:resource i.gs))
+    ?:  (~(is-member groupl bowl) user i.gs)
       %.y
     $(gs t.gs)
     ::  .^((unit group:g) %gx ;:(weld /=group-store=/groups p /noun))
@@ -309,7 +317,7 @@
 ++  clean-client-list
   ^-  (quip card _state)
   =/  to-kick=(set ship)
-    %-  sy
+    %-  silt
     %+  murn  ~(tap in clients.host-info)
     |=  c=ship  ^-  (unit ship)
     ?:((is-whitelisted c) ~ `c)
