@@ -1,12 +1,12 @@
 ::  Note: these are for BTC testnet
 ::
 /-  spider, rpc=json-rpc
-/+  strandio, btc
+/+  strandio, bc=bitcoin
 =,  strand=strand:spider
 =>
 |%
 ++  url1  "http://localhost:50002"
-++  addr  ^-(address:btc [%bech32 'bc1q39wus23jwe7m2j7xmrfr2svhrtejmsn262x3j2'])
+++  addr  ^-(address:bc [%bech32 'bc1q39wus23jwe7m2j7xmrfr2svhrtejmsn262x3j2'])
 ++  btc-req
   ^-  request:http
   =,  enjs:format
@@ -45,11 +45,11 @@
 ::   big-endian sha256 of the output script
 ::
 ++  electrs-script-hash
-  |=  a=address:btc
-  ^-  hexb:btc
-  %-  flip:byt:btc
-  %-  sha256:btc
-  (script-pubkey:btc a)
+  |=  a=address:bc
+  ^-  hexb:bc
+  %-  flip:byt:bc
+  %-  sha256:bc
+  (script-pubkey:bc a)
 ::
 ++  parse-json-rpc
   |=  =json

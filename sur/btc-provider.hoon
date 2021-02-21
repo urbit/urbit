@@ -1,4 +1,4 @@
-/-  *btc, *resource
+/-  *bitcoin, *resource
 |%
 +$  host-info
   $:  api-url=@t
