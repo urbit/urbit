@@ -261,8 +261,8 @@
     %+  expect-eq
       !>  .4
       !>  (get:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4]) 4)
-    %+  expect-fail
-      (get:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4]) 0)
+    %-  expect-fail
+      |.  (get:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4]) 0)
   ==
 ++  test-max  ^-  tang
   ;:  weld
