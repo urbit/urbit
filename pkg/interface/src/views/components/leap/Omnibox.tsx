@@ -13,6 +13,7 @@ import defaultApps from '~/logic/lib/default-apps';
 import {Associations, Contacts, Groups, Tile, Invites} from '~/types';
 import {useOutsideClick} from '~/logic/lib/useOutsideClick';
 import {Portal} from '../Portal';
+import useSettingsState, {SettingsState} from '~/logic/state/settings';
 
 interface OmniboxProps {
   associations: Associations;
@@ -28,12 +29,13 @@ interface OmniboxProps {
 }
 
 const SEARCHED_CATEGORIES = ['ships', 'other', 'commands', 'groups', 'subscriptions', 'apps'];
-const localSelector = selectLocalState(["hideLeapCats"]);
+const settingsSel = (s: SettingsState) => s.leap;
 
 export function Omnibox(props: OmniboxProps) {
   const location = useLocation();
   const history = useHistory();
-  const { hideLeapCats } = useLocalState(localSelector);
+  //const { hideLeapCats } = useLocalState(localSelector);
+  const leapConfig = useSettingsState(settingsSel);
   const omniboxRef = useRef<HTMLDivElement | null>(null)
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -61,11 +63,11 @@ export function Omnibox(props: OmniboxProps) {
       props.tiles,
       selectedGroup,
       props.groups,
-      hideLeapCats,
+      leapConfig,
     );
   }, [
     selectedGroup,
-    hideLeapCats,
+    leapConfig,
     contacts,
     props.associations,
     props.groups,

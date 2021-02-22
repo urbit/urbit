@@ -43,7 +43,7 @@ export default function SettingsScreen(props: any) {
             path={["/~settings/leap"]}
             render={() => {
               return (
-                <LeapSettings />
+                <LeapSettings api={props.api} />
               );
             }}
           />
@@ -67,7 +67,7 @@ export default function SettingsScreen(props: any) {
             }}
           />
           <Route
-            path="/~settings/modules"
+            path="/~settings/s3"
             render={() => {
               return (
                 <S3Form s3={props.s3} api={props.api} />

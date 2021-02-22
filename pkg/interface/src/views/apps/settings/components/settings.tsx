@@ -85,12 +85,12 @@ export default function Settings(props: {}) {
           to="hosting"
           title="Hosting Services"
           description="Hosting-specific service configuration"
-        />
+        />*/}
         <SettingsItem
           to="leap"
           title="Leap"
           description="Customize Leap ordering, omit modules or results"
-        />*/}
+        />
       </Box>
     </Col>
   );

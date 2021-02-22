@@ -70,24 +70,24 @@ const appIndex = function (apps) {
   return applications;
 };
 
-const otherIndex = function(hide) {
+const otherIndex = function(config) {
   const other = [];
-  console.log(hide);
-  const notBanned = (cat) => hide.findIndex(c => c === cat) ===  -1;
-  if(notBanned('mychannel')) {
-    other.push(result('My Channels', '/~landscape/home', 'home', null));
+  const idx = {
+    mychannel: result('My Channels', '/~landscape/home', 'home', null),
+    updates: result('Notifications', '/~notifications', 'inbox', null),
+    profile: result('Profile and Settings', `/~profile/~${window.ship}`, 'profile', null),
+    messages: result('Messages', '/~landscape/messages', 'messages', null),
+    logout: result('Log Out', '/~/logout', 'logout', null)
+  };
+
+  console.log(config);
+
+  for(let cat of JSON.parse(config.categories)) {
+    if(idx[cat]) {
+      other.push(idx[cat]);
+    }
   }
-  if(notBanned('updates')) {
-    other.push(result('Notifications', '/~notifications', 'inbox', null));
-  }
-  if(notBanned('profile')) {
-    other.push(result('Profile and Settings', `/~profile/~${window.ship}`, 'profile', null));
-  }
-  
-  other.push(result('Messages', '/~landscape/messages', 'messages', null));
-  if(notBanned('logout')) {
-    other.push(result('Log Out', '/~/logout', 'logout', null));
-  }
+
 
   return other;
 };

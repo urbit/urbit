@@ -1,6 +1,6 @@
 export const tutorialProgress = ['hidden', 'start', 'group-desc', 'channels', 'chat', 'link', 'publish', 'profile', 'leap', 'notifications', 'done', 'exit'] as const;
 
-export const leapCategories = ["commands", "mychannel", "messages", "updates", "profile", "logout"] as const;
+export const leapCategories = ["mychannel", "messages", "updates", "profile", "logout"] as const;
 
 export type LeapCategories = typeof leapCategories[number];
 

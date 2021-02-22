@@ -3,7 +3,7 @@ import f from 'lodash/fp';
 import create, { State }  from 'zustand';
 import { persist } from 'zustand/middleware';
 import produce from 'immer';
-import { BackgroundConfig, RemoteContentPolicy, TutorialProgress, tutorialProgress, LeapCategories } from "~/types/local-update";
+import { BackgroundConfig, RemoteContentPolicy, TutorialProgress, tutorialProgress, LeapCategories, leapCategories } from "~/types/local-update";
 
 
 export interface SettingsState {
@@ -17,6 +17,9 @@ export interface SettingsState {
     hideAvatars: boolean;
   };
   remoteContentPolicy: RemoteContentPolicy;
+  leap: {
+    categories: string;
+  }
   set: (fn: (state: SettingsState) => void) => void
 };
 
@@ -42,6 +45,9 @@ const useSettingsState = create<SettingsStateZus>((set) => ({
     oembedShown: true,
     audioShown: true,
     videoShown: true
+  },
+  leap: {
+    categories: JSON.stringify(leapCategories),
   },
   set: (fn: (state: SettingsState) => void) => set(produce(fn))
 })); 
