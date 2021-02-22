@@ -226,6 +226,7 @@ export const MessageAuthor = ({
   api,
   associations,
   groups,
+  history,
   scrollWindow,
   ...rest
 }) => {
@@ -237,10 +238,7 @@ export const MessageAuthor = ({
   const contact =
     `~${msg.author}` in contacts ? contacts[`~${msg.author}`] : false;
   const showNickname = useShowNickname(contact);
-  const { hideAvatars } =
-    useLocalState(({ hideAvatars }) =>
-      ({ hideAvatars })
-    );
+  const { hideAvatars } = useLocalState(({ hideAvatars }) => ({ hideAvatars }));
   const shipName = showNickname ? contact.nickname : cite(msg.author);
   const copyNotice = 'Copied';
   const color = contact
@@ -276,7 +274,8 @@ export const MessageAuthor = ({
     return () => clearTimeout(timer);
   }, [shipName, displayName]);
 
-  const img = contact?.avatar && !hideAvatars ? (
+  const img =
+    contact?.avatar && !hideAvatars ? (
       <BaseImage
         display='inline-block'
         src={contact.avatar}
@@ -307,6 +306,7 @@ export const MessageAuthor = ({
       >
         {showOverlay && (
           <OverlaySigil
+            cursor='auto'
             ship={msg.author}
             contact={contact}
             color={`#${uxToHex(contact?.color ?? '0x0')}`}
@@ -335,7 +335,7 @@ export const MessageAuthor = ({
             flexShrink={0}
             mono={nameMono}
             fontWeight={nameMono ? '400' : '500'}
-            className={'pointer'}
+            cursor='pointer'
             onClick={() => {
               writeText(`~${msg.author}`);
               showCopyNotice();
