@@ -188,7 +188,8 @@ export default class ChatMessage extends Component<ChatMessageProps> {
       <Box
         ref={this.divRef}
         pt={renderSigil ? 2 : 0}
-        pb={2}
+        pb={isLastMessage ? 4 : 2}
+        pr={5}
         className={containerClass}
         style={style}
       >
