@@ -31,6 +31,7 @@ const VIDEO_REGEX = new RegExp(/(mov|mp4|ogv)$/i);
 
 class RemoteContent extends PureComponent<RemoteContentProps, RemoteContentState> {
   private fetchController: AbortController | undefined;
+  containerRef: HTMLDivElement | null = null;
   constructor(props) {
     super(props);
     this.state = {
@@ -65,7 +66,8 @@ class RemoteContent extends PureComponent<RemoteContentProps, RemoteContentState
     .then((result) => {
       this.setState({ embed: result });
     }).catch((error) => {
-      if (error.name === 'AbortError') return;
+      if (error.name === 'AbortError')
+return;
       this.setState({ embed: 'error' });
     });
   }
@@ -80,7 +82,7 @@ class RemoteContent extends PureComponent<RemoteContentProps, RemoteContentState
       target="_blank"
       width="100%"
       rel="noopener noreferrer"
-    >
+            >
       {contents}
     </BaseAnchor>);
   }
@@ -171,7 +173,7 @@ class RemoteContent extends PureComponent<RemoteContentProps, RemoteContentState
             onClick={this.unfoldEmbed}
             flexShrink={0}
             style={{ cursor: 'pointer' }}
-          >
+                                                                               >
             {this.state.unfold ? 'collapse' : 'expand'}
           </Button> : null}
           <Box
@@ -188,7 +190,11 @@ class RemoteContent extends PureComponent<RemoteContentProps, RemoteContentState
           >
             {this.state.embed && this.state.embed.html && this.state.unfold
             ? <EmbedContainer markup={this.state.embed.html}>
-              <div dangerouslySetInnerHTML={{__html: this.state.embed.html}}></div>
+              <div className="embed-container" ref={(el) => {
+ this.containerRef = el;
+}}
+                dangerouslySetInnerHTML={{ __html: this.state.embed.html }}
+              ></div>
             </EmbedContainer>
             : null}
           </Box>
@@ -196,7 +202,7 @@ class RemoteContent extends PureComponent<RemoteContentProps, RemoteContentState
       );
     } else {
       return renderUrl
-        ? this.wrapInLink(<Text {...textProps}>{text || url}</Text>) 
+        ? this.wrapInLink(<Text {...textProps}>{text || url}</Text>)
         : null;
     }
   }

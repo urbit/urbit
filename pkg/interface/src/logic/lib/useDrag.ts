@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useEffect } from "react";
+import { useState, useCallback, useMemo, useEffect } from 'react';
 
 function validateDragEvent(e: DragEvent): FileList | File[] | true | null {
   const files: File[] = [];
@@ -8,8 +8,8 @@ function validateDragEvent(e: DragEvent): FileList | File[] | true | null {
   }
   if (e.dataTransfer?.items) {
     Array.from(e.dataTransfer.items || [])
-      .filter((i) => i.kind === 'file')
-      .forEach(f => {
+      .filter(i => i.kind === 'file')
+      .forEach((f) => {
         valid = true; // Valid if file exists, but on DragOver, won't reveal its contents for security
         const data = f.getAsFile();
         if (data) {
@@ -89,14 +89,14 @@ export function useFileDrag(dragged: (f: FileList | File[], e: DragEvent) => voi
     document.body.addEventListener('mouseout', mouseleave);
     return () => {
       document.body.removeEventListener('mouseout', mouseleave);
-    }
+    };
   }, []);
 
   const bind = {
     onDragLeave,
     onDragOver,
     onDrop,
-    onDragEnter,
+    onDragEnter
   };
 
   return { bind, dragging };

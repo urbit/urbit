@@ -147,7 +147,9 @@ enumFromAtom :: [(String, Name)] -> Exp
 enumFromAtom cons = LamE [VarP x] body
   where
     (x, c)    = (mkName "x", mkName "c")
-    getTag    = BindS (VarP c) $ AppE (VarE 'parseNounUtf8Atom) (VarE x)
+    getTag    = BindS (VarP c)
+              $ AppE (AppE (VarE 'named) matchFail)
+              $ AppE (VarE 'parseNounUtf8Atom) (VarE x)
     examine   = NoBindS $ CaseE (VarE c) (matches ++ [fallback])
     matches   = mkMatch <$> cons
     fallback  = Match WildP (NormalB $ AppE (VarE 'fail) matchFail) []
@@ -194,6 +196,7 @@ taggedFromNoun cons = LamE [VarP n] (DoE [getHead, getTag, examine])
             $ AppE (VarE 'parseNoun) (VarE n)
 
     getTag = BindS (SigP (VarP c) (ConT ''Text))
+           $ AppE (AppE (VarE 'named) tagFail)
            $ AppE (VarE 'parseNounUtf8Atom) (VarE h)
 
     examine = NoBindS
@@ -207,6 +210,8 @@ taggedFromNoun cons = LamE [VarP n] (DoE [getHead, getTag, examine])
 
     fallback  = Match WildP (NormalB $ AppE (VarE 'fail) matchFail) []
     matchFail = unexpectedTag (fst <$> cons) (VarE c)
+
+    tagFail = LitE $ StringL (intercalate " " (('%':) <$> (fst <$> cons)))
 
 --------------------------------------------------------------------------------
 

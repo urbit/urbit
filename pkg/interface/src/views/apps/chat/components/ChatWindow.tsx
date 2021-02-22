@@ -1,22 +1,17 @@
-import React, { Component } from "react";
-import { RouteComponentProps } from "react-router-dom";
-import _ from "lodash";
+import React, { Component } from 'react';
+import { RouteComponentProps } from 'react-router-dom';
+import _ from 'lodash';
 import bigInt, { BigInteger } from 'big-integer';
 
-import GlobalApi from "~/logic/api/global";
-import { Patp, Path } from "~/types/noun";
-import { Contacts } from "~/types/contact-update";
-import { Association } from "~/types/metadata-update";
-import { Group } from "~/types/group-update";
-import { Envelope, IMessage } from "~/types/chat-update";
-import { Graph } from "~/types";
+import { Col } from '@tlon/indigo-react';
+import { Patp, Contacts, Association, Associations, Group, Groups, Graph } from '@urbit/api';
 
-import VirtualScroller from "~/views/components/VirtualScroller";
+import GlobalApi from '~/logic/api/global';
+
+import VirtualScroller from '~/views/components/VirtualScroller';
 
 import ChatMessage, { MessagePlaceholder } from './ChatMessage';
-import { UnreadNotice } from "./unread-notice";
-import { ResubscribeElement } from "./resubscribe-element";
-import { BacklogElement } from "./backlog-element";
+import { UnreadNotice } from './unread-notice';
 
 const INITIAL_LOAD = 20;
 const DEFAULT_BACKLOG_SIZE = 100;
@@ -28,11 +23,6 @@ type ChatWindowProps = RouteComponentProps<{
   station: string;
 }> & {
   unreadCount: number;
-  isChatMissing: boolean;
-  isChatLoading: boolean;
-  isChatUnsynced: boolean;
-  unreadMsg: Envelope | false;
-  stationPendingMessages: IMessage[];
   graph: Graph;
   contacts: Contacts;
   association: Association;
@@ -41,6 +31,8 @@ type ChatWindowProps = RouteComponentProps<{
   station: any;
   api: GlobalApi;
   scrollTo?: number;
+  associations: Associations;
+  groups: Groups;
 }
 
 interface ChatWindowState {
@@ -57,7 +49,7 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
   private loadedNewest = false;
   private loadedOldest = false;
 
-  INITIALIZATION_MAX_TIME = 1500;
+  INITIALIZATION_MAX_TIME = 100;
 
   constructor(props: ChatWindowProps) {
     super(props);
@@ -68,8 +60,6 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
       initialized: false,
       unreadIndex: bigInt.zero
     };
-
-
 
     this.dismissUnread = this.dismissUnread.bind(this);
     this.scrollToUnread = this.scrollToUnread.bind(this);
@@ -113,7 +103,7 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
     }
     this.setState({
       unreadIndex
-    })
+    });
   }
 
   handleWindowBlur() {
@@ -128,19 +118,15 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
   }
 
   componentDidUpdate(prevProps: ChatWindowProps, prevState) {
-    const { isChatMissing, history, graph, unreadCount, station } = this.props;
+    const { history, graph, unreadCount, station } = this.props;
 
-    if (isChatMissing) {
-      history.push("/~404");
-    } else if (graph.size !== prevProps.graph.size && this.state.fetchPending) {
+    if (graph.size !== prevProps.graph.size && this.state.fetchPending) {
       this.setState({ fetchPending: false });
     }
-
 
     if (unreadCount > prevProps.unreadCount && this.state.idle) {
       this.calculateUnreadIndex();
     }
-
 
     if(this.prevSize !== graph.size) {
       if(this.state.unreadIndex.eq(bigInt.zero)) {
@@ -176,8 +162,10 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
 
   dismissUnread() {
     const { association } = this.props;
-    if (this.state.fetchPending) return;
-    if (this.props.unreadCount === 0) return;
+    if (this.state.fetchPending)
+return;
+    if (this.props.unreadCount === 0)
+return;
     this.props.api.hark.markCountAsRead(association, '/', 'message');
     this.props.api.hark.markCountAsRead(association, '/', 'mention');
   }
@@ -195,14 +183,14 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
     const currSize = graph.size;
     if(newer && !this.loadedNewest) {
       const [index] = graph.peekLargest()!;
-      await api.graph.getYoungerSiblings(ship,name, 20, `/${index.toString()}`)
+      await api.graph.getYoungerSiblings(ship,name, 20, `/${index.toString()}`);
       if(currSize === graph.size) {
         console.log('loaded all newest');
         this.loadedNewest = true;
       }
     } else if(!newer && !this.loadedOldest) {
       const [index] = graph.peekSmallest()!;
-      await api.graph.getOlderSiblings(ship,name, 20, `/${index.toString()}`)
+      await api.graph.getOlderSiblings(ship,name, 20, `/${index.toString()}`);
       this.calculateUnreadIndex();
       if(currSize === graph.size) {
         console.log('loaded all oldest');
@@ -210,7 +198,6 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
       }
     }
     this.setState({ fetchPending: false });
-
   }
 
   onScroll({ scrollTop, scrollHeight, windowHeight }) {
@@ -222,10 +209,13 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
   }
 
   dismissIfLineVisible() {
-    if (this.props.unreadCount === 0) return;
-    if (!this.unreadMarkerRef.current || !this.virtualList?.window) return;
+    if (this.props.unreadCount === 0)
+return;
+    if (!this.unreadMarkerRef.current || !this.virtualList?.window)
+return;
     const parent = this.unreadMarkerRef.current.parentElement?.parentElement;
-    if (!parent) return;
+    if (!parent)
+return;
     const { scrollTop, scrollHeight, offsetHeight } = this.virtualList.window;
     if (
       (scrollHeight - parent.offsetTop > scrollTop)
@@ -237,42 +227,39 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
 
   render() {
     const {
-      stationPendingMessages,
       unreadCount,
-      isChatLoading,
-      isChatUnsynced,
       api,
       ship,
       station,
       association,
       group,
       contacts,
-      mailboxSize,
       graph,
-      history
+      history,
+      groups,
+      associations
     } = this.props;
 
     const unreadMarkerRef = this.unreadMarkerRef;
 
-
-    const messageProps = { association, group, contacts, unreadMarkerRef, history, api };
+    const messageProps = { association, group, contacts, unreadMarkerRef, history, api, groups, associations };
 
     const keys = graph.keys().reverse();
     const unreadIndex = graph.keys()[this.props.unreadCount];
     const unreadMsg = unreadIndex && graph.get(unreadIndex);
 
     return (
-      <>
+      <Col height='100%' overflow='hidden' position="relative">
         <UnreadNotice
           unreadCount={unreadCount}
           unreadMsg={unreadCount === 1 && unreadMsg && unreadMsg?.post.author === window.ship ? false : unreadMsg}
           dismissUnread={this.dismissUnread}
           onClick={this.scrollToUnread}
         />
-        <BacklogElement isChatLoading={isChatLoading} />
-        <ResubscribeElement {...{ api, host: ship, station, isChatUnsynced}} />
         <VirtualScroller
-          ref={list => {this.virtualList = list}}
+          ref={(list) => {
+ this.virtualList = list;
+}}
           origin="bottom"
           style={{ height: '100%' }}
           onStartReached={() => {
@@ -284,7 +271,8 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
           size={graph.size}
           renderer={({ index, measure, scrollWindow }) => {
             const msg = graph.get(index)?.post;
-            if (!msg) return null;
+            if (!msg)
+return null;
             if (!this.state.initialized) {
               return <MessagePlaceholder key={index.toString()} height="64px" index={index} />;
             }
@@ -294,7 +282,6 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
             const graphIdx = keys.findIndex(idx => idx.eq(index));
             const prevIdx = keys[graphIdx+1];
             const nextIdx = keys[graphIdx-1];
-
 
             const isLastRead: boolean = this.state.unreadIndex.eq(index);
             const props = { measure, highlighted, scrollWindow, isPending, isLastRead, isLastMessage, msg, ...messageProps };
@@ -311,7 +298,7 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
             this.fetchMessages(newer);
           }}
         />
-      </>
+      </Col>
     );
   }
 }

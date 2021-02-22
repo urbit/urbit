@@ -25,7 +25,6 @@
     ^-  (list @tas)
     :~  %group-store
         %metadata-store
-        %metadata-hook
         %contact-store
         %contact-hook
         %invite-store

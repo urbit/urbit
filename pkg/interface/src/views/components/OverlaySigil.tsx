@@ -1,141 +1,103 @@
-import React, { PureComponent } from 'react';
-
-import { Sigil } from '~/logic/lib/sigil';
-import { Contact, Group } from '~/types';
-
+import React, { useState, useRef, useEffect } from 'react';
+import { Contact, Group } from '@urbit/api';
 import ProfileOverlay, { OVERLAY_HEIGHT } from './ProfileOverlay';
-
-import { Box, BaseImage, ColProps } from '@tlon/indigo-react';
-import { withLocalState } from '~/logic/state/local';
+import { Box, ColProps } from '@tlon/indigo-react';
 
 type OverlaySigilProps = ColProps & {
-  ship: string;
-  contact?: Contact;
-  color: string;
-  sigilClass: string;
-  group?: Group;
-  scrollWindow?: HTMLElement;
-  history: any;
   api: any;
   className: string;
-  hideAvatars: boolean;
-}
+  color: string;
+  contact?: Contact;
+  group?: Group;
+  history: any;
+  scrollWindow?: HTMLElement;
+  ship: string;
+};
 
 interface OverlaySigilState {
-  clicked: boolean;
-  topSpace: number | 'auto';
-  bottomSpace: number | 'auto';
+  visible: boolean | false;
+  space: {
+    top: number | 'auto';
+    bottom: number | 'auto';
+  };
 }
 
-class OverlaySigil extends PureComponent<OverlaySigilProps, OverlaySigilState> {
-  public containerRef: React.Ref<HTMLDivElement>;
+export const OverlaySigil = (props: OverlaySigilProps): React.FC => {
+  const {
+    api,
+    className,
+    color,
+    contact,
+    group,
+    history,
+    onDismiss,
+    scrollWindow,
+    ship,
+    ...rest
+  } = { ...props };
+  const containerRef = useRef(null);
+  const [visible, setVisible] = useState<OverlaySigilState.visible>();
+  const [space, setSpace] = useState<OverlaySigilState.space>({
+    top: 'auto',
+    bottom: 'auto'
+  });
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      clicked: false,
-      topSpace: 0,
-      bottomSpace: 0
-    };
-
-    this.containerRef = React.createRef();
-
-    this.profileShow = this.profileShow.bind(this);
-    this.profileHide = this.profileHide.bind(this);
-    this.updateContainerOffset = this.updateContainerOffset.bind(this);
-  }
-
-  profileShow() {
-    this.updateContainerOffset();
-    this.setState({ clicked: true });
-    this.props.scrollWindow?.addEventListener('scroll', this.updateContainerOffset);
-  }
-
-  profileHide() {
-    this.setState({ clicked: false });
-    this.props.scrollWindow?.removeEventListener('scroll', this.updateContainerOffset, true);
-  }
-
-  updateContainerOffset() {
-    if (this.containerRef && this.containerRef.current) {
-      const container = this.containerRef.current;
-      const scrollWindow = this.props.scrollWindow;
-
+  const updateContainerOffset = () => {
+    if (scrollWindow && containerRef && containerRef.current) {
+      const container = containerRef.current;
       const bottomSpace = scrollWindow
-        ? scrollWindow.scrollHeight - container.offsetTop - scrollWindow.scrollTop
+        ? scrollWindow.clientHeight -
+          (container.getBoundingClientRect().top +
+            OVERLAY_HEIGHT -
+            scrollWindow.getBoundingClientRect().top)
         : 'auto';
       const topSpace = scrollWindow
-        ? scrollWindow.offsetHeight - bottomSpace - OVERLAY_HEIGHT
+        ? container.getBoundingClientRect().top -
+          scrollWindow.getBoundingClientRect().top
         : 0;
-
-      this.setState({
-        topSpace,
-        bottomSpace
+      setSpace({
+        ...space,
+        top: topSpace,
+        bottom: bottomSpace
       });
     }
-  }
+    setVisible(true);
+  };
 
-  componentWillUnmount() {
-    this.props.scrollWindow?.removeEventListener('scroll', this.updateContainerOffset, true);
-  }
+  useEffect(() => {
+    updateContainerOffset();
+    if (scrollWindow)
+      scrollWindow.addEventListener('scroll', updateContainerOffset);
+    return () => {
+      if (scrollWindow)
+        scrollWindow.removeEventListener('scroll', updateContainerOffset, true);
+    };
+  }, [scrollWindow]);
 
-  render() {
-    const {
-      className,
-      ship,
-      contact,
-      color,
-      group,
-      history,
-      api,
-      sigilClass,
-      hideAvatars,
-      pr = 0,
-      pl = 0,
-      ...rest
-    } = this.props;
-
-    const { state } = this;
-
-    const img = (contact && (contact.avatar !== null) && !hideAvatars)
-      ? <BaseImage display='inline-block' src={contact.avatar} height={16} width={16} />
-      : <Sigil
-        ship={ship}
-        size={16}
+  return (
+    <Box
+      cursor='pointer'
+      position='relative'
+      className={className}
+      pr={0}
+      pl={0}
+      ref={containerRef}
+      style={{ visibility: visible ? 'visible' : 'hidden' }}
+    >
+      <ProfileOverlay
+        api={api}
+        bottomSpace={space.bottom}
         color={color}
-        classes={sigilClass}
-        icon
-        padded
-        />;
+        contact={contact}
+        group={group}
+        history={history}
+        onDismiss={onDismiss}
+        ship={ship}
+        topSpace={space.top}
+        {...rest}
+      />
+    </Box>
+  );
+};
 
-     return (
-      <Box
-        cursor='pointer'
-        position='relative'
-        onClick={this.profileShow}
-         ref={this.containerRef}
-         className={className}
-         pr={pr}
-         pl={pl}
-      >
-        {state.clicked && (
-          <ProfileOverlay
-            ship={ship}
-            contact={contact}
-            color={color}
-            topSpace={state.topSpace}
-            bottomSpace={state.bottomSpace}
-            group={group}
-            onDismiss={this.profileHide}
-            history={history}
-             api={api}
-             {...rest}
-          />
-        )}
-        {img}
-      </Box>
-    );
-  }
-}
-
-export default withLocalState(OverlaySigil, ['hideAvatars']);
+export default OverlaySigil;

@@ -1,16 +1,28 @@
-import React, { useEffect, useCallback, useRef, useState } from "react";
-import f from "lodash/fp";
-import _ from "lodash";
-import { Icon, Col, Row, Box, Text, Anchor, Rule, Center } from "@tlon/indigo-react";
-import moment from "moment";
-import { Notifications, Rolodex, Timebox, IndexedNotification, Groups, GroupNotificationsConfig, NotificationGraphConfig } from "~/types";
-import { MOMENT_CALENDAR_DATE, daToUnix, resourceAsPath } from "~/logic/lib/util";
-import { BigInteger } from "big-integer";
-import GlobalApi from "~/logic/api/global";
-import { Notification } from "./notification";
-import { Associations } from "~/types";
-import {Invites} from "./invites";
-import {useLazyScroll} from "~/logic/lib/useLazyScroll";
+import React, { useEffect, useCallback, useRef } from 'react';
+import f from 'lodash/fp';
+import _ from 'lodash';
+import moment from 'moment';
+import { BigInteger } from 'big-integer';
+
+import { Col, Center, Box, Text, LoadingSpinner } from '@tlon/indigo-react';
+import {
+  Associations,
+  Notifications,
+  Rolodex,
+  Timebox,
+  IndexedNotification,
+  Groups,
+  JoinRequests,
+  GroupNotificationsConfig,
+  NotificationGraphConfig,
+  Invites as InviteType
+} from '@urbit/api';
+
+import { MOMENT_CALENDAR_DATE, daToUnix } from '~/logic/lib/util';
+import GlobalApi from '~/logic/api/global';
+import { Notification } from './notification';
+import { Invites } from './invites';
+import { useLazyScroll } from '~/logic/lib/useLazyScroll';
 
 type DatedTimebox = [BigInteger, Timebox];
 
@@ -19,15 +31,12 @@ function filterNotification(associations: Associations, groups: string[]) {
     return () => true;
   }
   return (n: IndexedNotification) => {
-    if ("graph" in n.index) {
+    if ('graph' in n.index) {
       const { group } = n.index.graph;
-      return groups.findIndex((g) => group === g) !== -1;
-    } else if ("group" in n.index) {
+      return groups.findIndex(g => group === g) !== -1;
+    } else if ('group' in n.index) {
       const { group } = n.index.group;
-      return groups.findIndex((g) => group === g) !== -1;
-    } else if ("chat" in n.index) {
-      const group = associations.chat[n.index.chat.chat]?.["group-path"];
-      return groups.findIndex((g) => group === g) !== -1;
+      return groups.findIndex(g => group === g) !== -1;
     }
     return true;
   };
@@ -35,6 +44,7 @@ function filterNotification(associations: Associations, groups: string[]) {
 
 export default function Inbox(props: {
   notifications: Notifications;
+  notificationsSize: number;
   archive: Notifications;
   groups: Groups;
   showArchive?: boolean;
@@ -42,7 +52,8 @@ export default function Inbox(props: {
   associations: Associations;
   contacts: Rolodex;
   filter: string[];
-  invites: any;
+  invites: InviteType;
+  pendingJoin: JoinRequests;
   notificationsGroupConfig: GroupNotificationsConfig;
   notificationsGraphConfig: NotificationGraphConfig;
 }) {
@@ -61,34 +72,34 @@ export default function Inbox(props: {
 
   const notifications =
     Array.from(props.showArchive ? props.archive : props.notifications) || [];
-  
+
   const calendar = {
     ...MOMENT_CALENDAR_DATE, sameDay: function (now) {
       if (this.subtract(6, 'hours').isBefore(now)) {
-        return "[Earlier Today]";
+        return '[Earlier Today]';
       } else {
         return MOMENT_CALENDAR_DATE.sameDay;
       }
     }
   };
 
-  let notificationsByDay = f.flow(
+  const notificationsByDay = f.flow(
     f.map<DatedTimebox, DatedTimebox>(([date, nots]) => [
       date,
-      nots.filter(filterNotification(associations, props.filter)),
+      nots.filter(filterNotification(associations, props.filter))
     ]),
     f.groupBy<DatedTimebox>(([d]) => {
       const date = moment(daToUnix(d));
       if (moment().subtract(6, 'hours').isBefore(date)) {
         return 'latest';
       } else {
-        return date.format("YYYYMMDD");
+        return date.format('YYYYMMDD');
       }
-    }),
+    })
   )(notifications);
 
   const notificationsByDayMap = new Map<string, DatedTimebox[]>(
-    Object.keys(notificationsByDay).map(timebox => {
+    Object.keys(notificationsByDay).map((timebox) => {
       return [timebox, notificationsByDay[timebox]];
     })
   );
@@ -99,12 +110,16 @@ export default function Inbox(props: {
     return api.hark.getMore();
   }, [api]);
 
-  const loadedAll = useLazyScroll(scrollRef, 0.2, loadMore);
-
+  const { isDone, isLoading } = useLazyScroll(
+    scrollRef,
+    0.2,
+    _.flatten(notifications).length,
+    loadMore
+  );
 
   return (
     <Col ref={scrollRef} position="relative" height="100%" overflowY="auto">
-      <Invites invites={invites} api={api} associations={associations} />
+      <Invites groups={props.groups} pendingJoin={props.pendingJoin} invites={invites} api={api} associations={associations} />
       {[...notificationsByDayMap.keys()].sort().reverse().map((day, index) => {
         const timeboxes = notificationsByDayMap.get(day)!;
         return timeboxes.length > 0 && (
@@ -113,7 +128,7 @@ export default function Inbox(props: {
             label={day === 'latest' ? 'Today' : moment(day).calendar(null, calendar)}
             timeboxes={timeboxes}
             contacts={props.contacts}
-            archive={!!props.showArchive}
+            archive={Boolean(props.showArchive)}
             associations={props.associations}
             api={api}
             groups={props.groups}
@@ -122,11 +137,17 @@ export default function Inbox(props: {
           />
         );
       })}
-      {loadedAll && (
+      {isDone && (
         <Center mt="2" borderTop={notifications.length !== 0 ? 1 : 0} borderTopColor="washedGray" width="100%" height="96px">
           <Text gray fontSize="1">No more notifications</Text>
         </Center>
+    )}
+      {isLoading && (
+        <Center mt="2" borderTop={notifications.length !== 0 ? 1 : 0} borderTopColor="washedGray" width="100%" height="96px">
+          <LoadingSpinner />
+        </Center>
       )}
+
     </Col>
   );
 }
@@ -151,9 +172,8 @@ function DaySection({
   associations,
   api,
   groupConfig,
-  graphConfig,
+  graphConfig
 }) {
-  
   const lent = timeboxes.map(([,nots]) => nots.length).reduce(f.add, 0);
   if (lent === 0 || timeboxes.length === 0) {
     return null;

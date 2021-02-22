@@ -2,37 +2,47 @@ import _ from 'lodash';
 
 import { StoreState } from '../../store/type';
 
-import { MetadataUpdate } from '~/types/metadata-update';
+import { MetadataUpdate } from '@urbit/api/metadata';
 import { Cage } from '~/types/cage';
 
 type MetadataState = Pick<StoreState, 'associations'>;
 
 export default class MetadataReducer<S extends MetadataState> {
   reduce(json: Cage, state: S) {
-    let data = json['metadata-update']
+    const data = json['metadata-update'];
     if (data) {
+      console.log(data);
       this.associations(data, state);
       this.add(data, state);
       this.update(data, state);
       this.remove(data, state);
+      this.groupInitial(data, state);
+    }
+  }
+
+  groupInitial(json: MetadataUpdate, state: S) {
+    const data = _.get(json, 'initial-group', false);
+    console.log(data);
+    if(data) {
+      this.associations(data, state);
     }
   }
 
   associations(json: MetadataUpdate, state: S) {
-    let data = _.get(json, 'associations', false);
+    const data = _.get(json, 'associations', false);
     if (data) {
-      let metadata = state.associations;
+      const metadata = state.associations;
       Object.keys(data).forEach((key) => {
-        let val = data[key];
-        let appName = val['app-name'];
-        let appPath = val['app-path'];
+        const val = data[key];
+        const appName = val['app-name'];
+        const rid = val.resource;
         if (!(appName in metadata)) {
           metadata[appName] = {};
         }
-        if (!(appPath in metadata[appName])) {
-          metadata[appName][appPath] = {};
+        if (!(rid in metadata[appName])) {
+          metadata[appName][rid] = {};
         }
-        metadata[appName][appPath] = val;
+        metadata[appName][rid] = val;
       });
 
       state.associations = metadata;
@@ -40,11 +50,11 @@ export default class MetadataReducer<S extends MetadataState> {
   }
 
   add(json: MetadataUpdate, state: S) {
-    let data = _.get(json, 'add', false);
+    const data = _.get(json, 'add', false);
     if (data) {
-      let metadata = state.associations;
-      let appName = data['app-name'];
-      let appPath = data['app-path'];
+      const metadata = state.associations;
+      const appName = data['app-name'];
+      const appPath = data.resource;
 
       if (!(appName in metadata)) {
         metadata[appName] = {};
@@ -59,33 +69,33 @@ export default class MetadataReducer<S extends MetadataState> {
   }
 
   update(json: MetadataUpdate, state: S) {
-    let data = _.get(json, 'update-metadata', false);
+    const data = _.get(json, 'update-metadata', false);
     if (data) {
-      let metadata = state.associations;
-      let appName = data['app-name'];
-      let appPath = data['app-path'];
+      const metadata = state.associations;
+      const appName = data['app-name'];
+      const rid = data.resource;
 
       if (!(appName in metadata)) {
         metadata[appName] = {};
       }
-      if (!(appPath in metadata[appName])) {
-        metadata[appName][appPath] = {};
+      if (!(rid in metadata[appName])) {
+        metadata[appName][rid] = {};
       }
-      metadata[appName][appPath] = data;
+      metadata[appName][rid] = data;
 
       state.associations = metadata;
     }
   }
 
   remove(json: MetadataUpdate, state: S) {
-    let data = _.get(json, 'remove', false);
+    const data = _.get(json, 'remove', false);
     if (data) {
-      let metadata = state.associations;
-      let appName = data['app-name'];
-      let appPath = data['app-path'];
+      const metadata = state.associations;
+      const appName = data['app-name'];
+      const rid = data.resource;
 
-      if (appName in metadata && appPath in metadata[appName]) {
-        delete metadata[appName][appPath];
+      if (appName in metadata && rid in metadata[appName]) {
+        delete metadata[appName][rid];
       }
       state.associations = metadata;
     }

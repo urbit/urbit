@@ -1,18 +1,20 @@
-import { Path } from '~/types/noun';
-import { Invites } from '~/types/invite-update';
-import { Associations } from '~/types/metadata-update';
-import { Rolodex } from '~/types/contact-update';
-import { Groups } from '~/types/group-update';
+import { Path } from '@urbit/api';
+import { Invites } from '@urbit/api/invite';
+import { Associations } from '@urbit/api/metadata';
+import { Rolodex } from '@urbit/api/contacts';
+import { Groups } from '@urbit/api/groups';
 import { S3State } from '~/types/s3-update';
 import { LaunchState, WeatherState } from '~/types/launch-update';
 import { ConnectionStatus } from '~/types/connection';
-import {Graphs} from '~/types/graph-update';
+import { Graphs } from '@urbit/api/graph';
 import {
   Notifications,
-  NotificationGraphConfig, 
+  NotificationGraphConfig,
   GroupNotificationsConfig,
-  Unreads
-} from "~/types";
+  Unreads,
+  JoinRequests,
+  Patp
+} from '@urbit/api';
 
 export interface StoreState {
   // local state
@@ -28,10 +30,10 @@ export interface StoreState {
   // groups state
   groups: Groups;
   groupKeys: Set<Path>;
+  nackedContacts: Set<Patp>
   s3: S3State;
   graphs: Graphs;
   graphKeys: Set<string>;
-
 
   // App specific states
   //  launch state
@@ -46,5 +48,5 @@ export interface StoreState {
   notificationsCount: number,
   unreads: Unreads;
   doNotDisturb: boolean;
-  unreads: Unreads;
+  pendingJoin: JoinRequests;
 }

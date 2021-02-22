@@ -1,11 +1,22 @@
 import React, { PureComponent } from 'react';
 
-import { Contact, Group } from '~/types';
+import { Contact, Group } from '@urbit/api';
 import { cite, useShowNickname } from '~/logic/lib/util';
 import { Sigil } from '~/logic/lib/sigil';
 
-import { Box, Col, Button, Text, BaseImage, ColProps } from '@tlon/indigo-react';
+import {
+  Box,
+  Row,
+  Col,
+  Button,
+  Text,
+  BaseImage,
+  ColProps,
+  Icon
+} from '@tlon/indigo-react';
+import RichText from './RichText';
 import { withLocalState } from '~/logic/state/local';
+import { ProfileStatus } from './ProfileStatus';
 
 export const OVERLAY_HEIGHT = 250;
 
@@ -21,9 +32,9 @@ type ProfileOverlayProps = ColProps & {
   hideNicknames: boolean;
   history: any;
   api: any;
-}
+};
 
-class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
+class ProfileOverlay extends PureComponent<ProfileOverlayProps, Record<string, never>> {
   public popoverRef: React.Ref<typeof Col>;
 
   constructor(props) {
@@ -46,7 +57,7 @@ class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
   onDocumentClick(event) {
     const { popoverRef } = this;
     // Do nothing if clicking ref's element or descendent elements
-    if (!popoverRef.current || popoverRef.current.contains(event.target)) {
+    if (!popoverRef.current || popoverRef?.current?.contains(event.target)) {
       return;
     }
 
@@ -60,7 +71,6 @@ class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
       color,
       topSpace,
       bottomSpace,
-      group = false,
       hideAvatars,
       hideNicknames,
       history,
@@ -78,72 +88,81 @@ class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
     if (!(top || bottom)) {
       bottom = `-${Math.round(OVERLAY_HEIGHT / 2)}px`;
     }
-    const containerStyle = { top, bottom, left: '100%', maxWidth: '160px' };
+    const containerStyle = { top, bottom, left: '100%' };
 
     const isOwn = window.ship === ship;
 
     const img = contact?.avatar && !hideAvatars
-      ? <BaseImage display='inline-block' src={contact.avatar} height={160} width={160} className="brt2" />
+      ? <BaseImage display='inline-block' src={contact.avatar} height={72} width={72} className="brt2" />
       : <Sigil
         ship={ship}
-        size={160}
+        size={72}
         color={color}
         classes="brt2"
         svgClass="brt2"
         />;
     const showNickname = useShowNickname(contact, hideNicknames);
 
-    //  TODO: we need to rethink this "top-level profile view" of other ships
-    /* if (!group.hidden) {
-    }*/
-
-    const isHidden = group ? group.hidden : false;
-
-    const rootSettings = history.location.pathname.slice(0, history.location.pathname.indexOf("/resource"));
-
     return (
       <Col
         ref={this.popoverRef}
-        boxShadow="2px 4px 20px rgba(0, 0, 0, 0.25)"
+        backgroundColor="white"
+        color="washedGray"
+        border={1}
+        borderRadius={2}
+        borderColor="lightGray"
+        boxShadow="0px 0px 0px 3px"
         position='absolute'
-        backgroundColor='white'
         zIndex='3'
         fontSize='0'
+        height="250px"
+        width="250px"
+        padding={3}
+        justifyContent="space-between"
         style={containerStyle}
         {...rest}
       >
-        <Box height='160px' width='160px'>
+        <Row color='black' width='100%' height="3rem">
+          {(!isOwn) && (
+          <Icon icon="Chat" size={16} onClick={() => history.push(`/~landscape/dm/${ship}`)} />
+          )}
+        </Row>
+        <Box
+          alignSelf="center"
+          height="72px"
+          onClick={() => history.push(`/~profile/~${ship}`)}
+        >
           {img}
         </Box>
-        <Box p='3'>
-          {showNickname && (
+        <Col alignItems="end" justifyContent="flex-end" overflow="hidden" minWidth='0'>
+          <Row width="100%" >
             <Text
               fontWeight='600'
-              display='block'
+              mono={!showNickname}
               textOverflow='ellipsis'
               overflow='hidden'
               whiteSpace='pre'
+              lineHeight="tall"
             >
-              {contact.nickname}
+              {showNickname ? contact?.nickname : cite(ship)}
             </Text>
-          )}
-          <Text mono gray>{cite(`~${ship}`)}</Text>
-          {!isOwn && (
-            <Button mt={2} fontSize='0' width="100%" style={{ cursor: 'pointer' }} onClick={() => history.push(`/~landscape/dm/${ship}`)}>
-              Send Message
-            </Button>
-          )}
-          {(isOwn) ? (
-            <Button
-              mt='2'
-              width='100%'
-              style={{ cursor: 'pointer ' }}
-              onClick={() => (isHidden) ? history.push('/~profile/identity') : history.push(`${rootSettings}/popover/profile`)}
-            >
-              Edit Identity
-            </Button>
-          ) : <div />}
-        </Box>
+          </Row>
+          { isOwn ? (
+            <ProfileStatus
+              api={this.props.api}
+              ship={`~${ship}`}
+              contact={contact}
+            />
+          ) : (
+              <RichText display='inline-block' width='100%' minWidth='0' textOverflow='ellipsis'
+                overflow='hidden'
+                whiteSpace='pre'
+                lineHeight="tall" disableRemoteContent gray>
+              {contact?.status ? contact.status : ''}
+            </RichText>
+          )
+          }
+        </Col>
       </Col>
     );
   }

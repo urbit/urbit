@@ -10,9 +10,9 @@ import {
   OpenPolicyDiff,
   OpenPolicy,
   InvitePolicyDiff,
-  InvitePolicy,
-} from '~/types/group-update';
-import { Enc, PatpNoSig } from '~/types/noun';
+  InvitePolicy
+} from '@urbit/api/groups';
+import { Enc, PatpNoSig } from '@urbit/api';
 import { resourceAsPath } from '../lib/util';
 
 type GroupState = Pick<StoreState, 'groups' | 'groupKeys'>;
@@ -23,7 +23,7 @@ function decodeGroup(group: Enc<Group>): Group {
     ...group,
     members,
     tags: decodeTags(group.tags),
-    policy: decodePolicy(group.policy),
+    policy: decodePolicy(group.policy)
   };
   return res;
 }
@@ -35,7 +35,7 @@ function decodePolicy(policy: Enc<GroupPolicy>): GroupPolicy {
   } else {
     const { open } = policy;
     return {
-      open: { banned: new Set(open.banned), banRanks: new Set(open.banRanks) },
+      open: { banned: new Set(open.banned), banRanks: new Set(open.banRanks) }
     };
   }
 }
@@ -43,20 +43,13 @@ function decodePolicy(policy: Enc<GroupPolicy>): GroupPolicy {
 function decodeTags(tags: Enc<Tags>): Tags {
   return _.reduce(
     tags,
-    (acc, tag, key): Tags => {
-      if (Array.isArray(tag)) {
-        acc.role[key] = new Set(tag);
+    (acc, ships, key): Tags => {
+      if (key.search(/\\/) === -1) {
+        acc.role[key] = new Set(ships);
         return acc;
       } else {
-        const app = _.reduce(
-          tag,
-          (inner, t, k) => {
-            inner[k] = new Set(t);
-            return inner;
-          },
-          {}
-        );
-        acc[key] = app;
+        const [app, tag, resource] = key.split('\\');
+        _.set(acc, [app, resource, tag], new Set(ships));
         return acc;
       }
     },
@@ -105,7 +98,7 @@ export default class GroupReducer<S extends GroupState> {
         members: new Set(),
         tags: { role: { admin: new Set([window.ship]) } },
         policy: decodePolicy(policy),
-        hidden,
+        hidden
       };
     }
   }
@@ -143,7 +136,7 @@ export default class GroupReducer<S extends GroupState> {
       const resourcePath = resourceAsPath(resource);
       const tags = state.groups[resourcePath].tags;
       const tagAccessors =
-        'app' in tag ? [tag.app,tag.tag] :  ['role', tag.tag];
+        'app' in tag ? [tag.app,tag.resource, tag.tag] :  ['role', tag.tag];
       const tagged = _.get(tags, tagAccessors, new Set());
       for (const ship of ships) {
         tagged.add(ship);
@@ -158,7 +151,7 @@ export default class GroupReducer<S extends GroupState> {
       const resourcePath = resourceAsPath(resource);
       const tags = state.groups[resourcePath].tags;
       const tagAccessors =
-        'app' in tag ? [tag.app,tag.tag] :  ['role', tag.tag];
+        'app' in tag ? [tag.app, tag.resource, tag.tag] :  ['role', tag.tag];
       const tagged = _.get(tags, tagAccessors, new Set());
 
       if (!tagged) {
@@ -195,7 +188,6 @@ export default class GroupReducer<S extends GroupState> {
       state.groups[resourcePath].hidden = false;
     }
   }
-
 
   private inviteChangePolicy(diff: InvitePolicyDiff, policy: InvitePolicy) {
     if ('addInvites' in diff) {

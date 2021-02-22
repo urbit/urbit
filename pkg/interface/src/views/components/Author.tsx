@@ -1,13 +1,16 @@
-import React, {ReactNode} from "react";
-import moment from "moment";
-import { Row, Box } from "@tlon/indigo-react";
+import React, { ReactElement, ReactNode, useState } from 'react';
+import moment from 'moment';
+import { useHistory } from 'react-router-dom';
 
-import { uxToHex, cite, useShowNickname } from "~/logic/lib/util";
-import { Contacts, Rolodex } from "~/types/contact-update";
-import OverlaySigil from "./OverlaySigil";
-import { Group, Association } from "~/types";
-import GlobalApi from "~/logic/api/global";
-import { useHistory } from "react-router-dom";
+import { Row, Box, BaseImage } from '@tlon/indigo-react';
+import { Contacts } from '@urbit/api/contacts';
+import { Group } from '@urbit/api';
+
+import { uxToHex, cite, useShowNickname } from '~/logic/lib/util';
+import OverlaySigil from './OverlaySigil';
+import { Sigil } from '~/logic/lib/sigil';
+import GlobalApi from '~/logic/api/global';
+import Timestamp from './Timestamp';
 
 interface AuthorProps {
   contacts: Contacts;
@@ -20,48 +23,69 @@ interface AuthorProps {
   api: GlobalApi;
 }
 
-export default function Author(props: AuthorProps) {
-  const { contacts, ship = '', date, showImage, group, api } = props;
+// eslint-disable-next-line max-lines-per-function
+export default function Author(props: AuthorProps): ReactElement {
+  const { contacts, ship = '', date, showImage, group } = props;
   const history = useHistory();
   let contact;
   if (contacts) {
     contact = ship in contacts ? contacts[ship] : null;
   }
-  const color = contact?.color ? `#${uxToHex(contact?.color)}` : "#000000";
+  const color = contact?.color ? `#${uxToHex(contact?.color)}` : '#000000';
   const showNickname = useShowNickname(contact);
-
   const name = showNickname ? contact.nickname : cite(ship);
-  const dateFmt = moment(date).fromNow();
+  const stamp = moment(date);
+
+  const [showOverlay, setShowOverlay] = useState(false);
+
+  const toggleOverlay = () => {
+    setShowOverlay(value => !value);
+  };
+
+  const img =
+    contact && contact.avatar !== null ? (
+      <BaseImage
+        display='inline-block'
+        src={contact.avatar}
+        height={16}
+        width={16}
+      />
+    ) : (
+      <Sigil ship={ship} size={16} color={color} icon padding={2} />
+    );
+
   return (
-    <Row alignItems="center" width="auto">
-      {showImage && (
-        <Box>
+    <Row alignItems='center' width='auto'>
+      <Box
+        onClick={() => toggleOverlay()}
+        height={16}
+        position='relative'
+        cursor='pointer'
+      >
+        {showImage && img}
+        {showOverlay && (
           <OverlaySigil
-          ship={ship}
-          contact={contact}
-          color={color}
-          sigilClass={''}
-          group={group}
-          history={history}
-          api={api}
-          bg="white"
-          className="fl v-top pt1"
-        />
-        </Box>
-      )}
+            ship={ship}
+            contact={contact}
+            color={`#${uxToHex(contact?.color ?? '0x0')}`}
+            group={group}
+            onDismiss={() => toggleOverlay()}
+            history={history}
+            className='relative'
+          />
+        )}
+      </Box>
       <Box
         ml={showImage ? 2 : 0}
-        color="black"
+        color='black'
         fontSize='1'
         lineHeight='tall'
-        fontFamily={showNickname ? "sans" : "mono"}
+        fontFamily={showNickname ? 'sans' : 'mono'}
         fontWeight={showNickname ? '500' : '400'}
       >
         {name}
       </Box>
-      <Box fontSize='1' ml={2} color={props.unread ? "blue" : "gray"}>
-        {dateFmt}
-      </Box>
+      <Timestamp stamp={stamp} fontSize={1} time={false} ml={2} color={props.unread ? 'blue' : 'gray'} />
       {props.children}
     </Row>
   );

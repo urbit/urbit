@@ -9,10 +9,12 @@
       update:store
       %graph-update
       %graph-push-hook
+      %.n
   ==
 --
 ::
 %-  agent:dbug
+%+  verb  |
 ^-  agent:gall
 %-  (agent:pull-hook config)
 ^-  (pull-hook:pull-hook config)
@@ -35,6 +37,7 @@
 ++  on-pull-nack
   |=  [=resource =tang]
   ^-  (quip card _this)
+  %-  (slog leaf+"nacked {<resource>}" tang)
   :_  this
   ?.  (~(has in get-keys:gra) resource)  ~
   =-  [%pass /pull-nack %agent [our.bowl %graph-store] %poke %graph-update -]~
@@ -47,4 +50,6 @@
   =/  maybe-time  (peek-update-log:gra resource)
   ?~  maybe-time  `/
   `/(scot %da u.maybe-time)
+::
+++  resource-for-update  resource-for-update:gra
 --

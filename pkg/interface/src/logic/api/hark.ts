@@ -1,25 +1,21 @@
-import BaseApi from "./base";
-import { StoreState } from "../store/type";
-import { dateToDa, decToUd } from "../lib/util";
-import {NotifIndex, IndexedNotification, Association, GraphNotifDescription} from "~/types";
+import BaseApi from './base';
+import { StoreState } from '../store/type';
+import { dateToDa, decToUd } from '../lib/util';
+import { NotifIndex, IndexedNotification, Association, GraphNotifDescription } from '@urbit/api';
 import { BigInteger } from 'big-integer';
-import {getParentIndex} from "../lib/notification";
+import { getParentIndex } from '../lib/notification';
 
 export class HarkApi extends BaseApi<StoreState> {
   private harkAction(action: any): Promise<any> {
-    return this.action("hark-store", "hark-action", action);
+    return this.action('hark-store', 'hark-action', action);
   }
 
   private graphHookAction(action: any) {
-    return this.action("hark-graph-hook", "hark-graph-hook-action", action);
+    return this.action('hark-graph-hook', 'hark-graph-hook-action', action);
   }
 
   private groupHookAction(action: any) {
-    return this.action("hark-group-hook", "hark-group-hook-action", action);
-  }
-  
-  private chatHookAction(action: any) {
-    return this.action("hark-chat-hook", "hark-chat-hook-action", action);
+    return this.action('hark-group-hook', 'hark-group-hook-action', action);
   }
 
   private actOnNotification(frond: string, intTime: BigInteger, index: NotifIndex) {
@@ -34,9 +30,6 @@ export class HarkApi extends BaseApi<StoreState> {
 
   async setMentions(mentions: boolean) {
     await this.graphHookAction({
-      'set-mentions': mentions
-    });
-    return this.chatHookAction({
       'set-mentions': mentions
     });
   }
@@ -75,29 +68,27 @@ export class HarkApi extends BaseApi<StoreState> {
     return this.harkAction(
       {  'read-count': {
          graph: {
-        graph: association['app-path'],
-        group: association['group-path'],
+        graph: association.resource,
+        group: association.group,
         module: association.metadata.module,
         description,
         index: parent
-      } },
+      } }
     });
   }
-
-
 
   markEachAsRead(association: Association, parent: string, child: string, description: GraphNotifDescription, mod: string) {
     return this.harkAction({
       'read-each': {
-        index: 
+        index:
           { graph:
-            { graph: association['app-path'], 
-              group: association['group-path'],
-              description, 
+            { graph: association.resource,
+              group: association.group,
+              description,
               module: mod,
-              index: parent 
+              index: parent
             }
-          }, 
+          },
         target: child
       }
     });
@@ -115,11 +106,14 @@ export class HarkApi extends BaseApi<StoreState> {
   seen() {
     return this.harkAction({ seen: null });
   }
+  readAll() {
+    return this.harkAction({ 'read-all': null });
+  }
 
   mute(notif: IndexedNotification) {
     if('graph' in notif.index && 'graph' in notif.notification.contents) {
       const { index } = notif;
-      const parentIndex = getParentIndex(index.graph, notif.notification.contents.graph)
+      const parentIndex = getParentIndex(index.graph, notif.notification.contents.graph);
       if(!parentIndex) {
         return Promise.resolve();
       }
@@ -129,16 +123,13 @@ export class HarkApi extends BaseApi<StoreState> {
       const { group } = notif.index.group;
       return this.ignoreGroup(group);
     }
-    if('chat' in notif.index) {
-      return this.ignoreChat(notif.index.chat.chat);
-    }
     return Promise.resolve();
   }
 
   unmute(notif: IndexedNotification) {
     if('graph' in notif.index && 'graph' in notif.notification.contents) {
       const { index } = notif;
-      const parentIndex = getParentIndex(index.graph, notif.notification.contents.graph)
+      const parentIndex = getParentIndex(index.graph, notif.notification.contents.graph);
       if(!parentIndex) {
         return Promise.resolve();
       }
@@ -147,16 +138,13 @@ export class HarkApi extends BaseApi<StoreState> {
     if('group' in notif.index) {
       return this.listenGroup(notif.index.group.group);
     }
-    if('chat' in notif.index) {
-      return this.listenChat(notif.index.chat.chat);
-    }
     return Promise.resolve();
   }
 
   ignoreGroup(group: string) {
     return this.groupHookAction({
       ignore: group
-    })
+    });
   }
 
   ignoreGraph(graph: string, index: string) {
@@ -165,20 +153,13 @@ export class HarkApi extends BaseApi<StoreState> {
         graph,
         index
       }
-    })
-  }
-
-  ignoreChat(chat: string) {
-    return this.chatHookAction({
-      ignore: chat
     });
   }
-
 
   listenGroup(group: string) {
     return this.groupHookAction({
       listen: group
-    })
+    });
   }
 
   listenGraph(graph: string, index: string) {
@@ -187,12 +168,6 @@ export class HarkApi extends BaseApi<StoreState> {
         graph,
         index
       }
-    })
-  }
-
-  listenChat(chat: string) {
-    return this.chatHookAction({
-      listen: chat
     });
   }
 
@@ -205,16 +180,16 @@ export class HarkApi extends BaseApi<StoreState> {
 
   async getSubset(offset:number, count:number, isArchive: boolean) {
     const where = isArchive ? 'archive' : 'inbox';
-    const data = await this.scry("hark-store", `/recent/${where}/${offset}/${count}`);
+    const data = await this.scry('hark-store', `/recent/${where}/${offset}/${count}`);
     this.store.handleEvent({ data });
   }
 
   async getTimeSubset(start?: Date, end?: Date) {
-    const s = start ? dateToDa(start) : "-";
-    const e = end ? dateToDa(end) : "-";
-    const result = await this.scry("hark-hook", `/recent/${s}/${e}`);
+    const s = start ? dateToDa(start) : '-';
+    const e = end ? dateToDa(end) : '-';
+    const result = await this.scry('hark-hook', `/recent/${s}/${e}`);
     this.store.handleEvent({
-      data: result,
+      data: result
     });
   }
 }

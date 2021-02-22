@@ -10,7 +10,7 @@ module Urbit.Vere.Behn (behn, DriverApi(..), behn') where
 
 import Data.Time.Clock.System (SystemTime)
 
-import Urbit.Arvo            hiding (Behn)
+import Urbit.Arvo
 import Urbit.Prelude
 import Urbit.Vere.Pier.Types
 

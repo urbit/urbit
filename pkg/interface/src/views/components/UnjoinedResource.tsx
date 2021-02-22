@@ -1,15 +1,15 @@
-import React, { useEffect, useMemo } from "react";
-import { Association } from "~/types/metadata-update";
-import { Box, Text, Button, Col, Center } from "@tlon/indigo-react";
-import RichText from "~/views/components/RichText";
-import { Link, useHistory } from "react-router-dom";
-import GlobalApi from "~/logic/api/global";
-import { useWaitForProps } from "~/logic/lib/useWaitForProps";
+import React, { useEffect, useMemo } from 'react';
+import { Association } from '@urbit/api/metadata';
+import { Box, Text, Button, Col, Center } from '@tlon/indigo-react';
+import RichText from '~/views/components/RichText';
+import { Link, useHistory } from 'react-router-dom';
+import GlobalApi from '~/logic/api/global';
+import { useWaitForProps } from '~/logic/lib/useWaitForProps';
 import {
   StatelessAsyncButton as AsyncButton,
-  StatelessAsyncButton,
-} from "./StatelessAsyncButton";
-import { Notebooks, Graphs, Inbox } from "~/types";
+  StatelessAsyncButton
+} from './StatelessAsyncButton';
+import { Notebooks, Graphs, Inbox } from '@urbit/api';
 
 interface UnjoinedResourceProps {
   association: Association;
@@ -22,32 +22,32 @@ interface UnjoinedResourceProps {
 
 function isJoined(path: string) {
   return function (
-    props: Pick<UnjoinedResourceProps, "graphKeys">
+    props: Pick<UnjoinedResourceProps, 'graphKeys'>
   ) {
     const graphKey = path.substr(7);
     return props.graphKeys.has(graphKey);
-  }
+  };
 }
 
 export function UnjoinedResource(props: UnjoinedResourceProps) {
   const { api, notebooks, graphKeys, inbox } = props;
   const history = useHistory();
-  const appPath = props.association["app-path"];
-  const appName = props.association["app-name"];
+  const rid = props.association.resource;
+  const appName = props.association['app-name'];
   const { title, description, module } = props.association.metadata;
   const waiter = useWaitForProps(props);
   const app = useMemo(() => module || appName, [props.association]);
 
   const onJoin = async () => {
-    const [, , ship, name] = appPath.split("/");
+    const [, , ship, name] = rid.split('/');
     await api.graph.joinGraph(ship, name);
-    await waiter(isJoined(appPath));
-    history.push(`${props.baseUrl}/resource/${app}${appPath}`);
+    await waiter(isJoined(rid));
+    history.push(`${props.baseUrl}/resource/${app}${rid}`);
   };
 
   useEffect(() => {
-    if (isJoined(appPath)({ graphKeys })) {
-      history.push(`${props.baseUrl}/resource/${app}${appPath}`);
+    if (isJoined(rid)({ graphKeys })) {
+      history.push(`${props.baseUrl}/resource/${app}${rid}`);
     }
   }, [props.association, inbox, graphKeys, notebooks]);
 
@@ -68,7 +68,7 @@ export function UnjoinedResource(props: UnjoinedResourceProps) {
           <RichText color="gray">{description}</RichText>
         </Box>
         <StatelessAsyncButton
-          name={appPath}
+          name={rid}
           primary
           width="fit-content"
           onClick={onJoin}

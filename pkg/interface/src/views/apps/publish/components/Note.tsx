@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from "react";
-import { Box, Text, Col } from "@tlon/indigo-react";
-import ReactMarkdown from "react-markdown";
+import React, { useState, useEffect } from 'react';
+import { Box, Text, Col } from '@tlon/indigo-react';
+import ReactMarkdown from 'react-markdown';
 import bigInt from 'big-integer';
 
-import { Link, RouteComponentProps } from "react-router-dom";
-import { Spinner } from "~/views/components/Spinner";
-import { Comments } from "~/views/components/Comments";
-import { NoteNavigation } from "./NoteNavigation";
-import GlobalApi from "~/logic/api/global";
+import { Link, RouteComponentProps } from 'react-router-dom';
+import { Spinner } from '~/views/components/Spinner';
+import { Comments } from '~/views/components/Comments';
+import { NoteNavigation } from './NoteNavigation';
+import GlobalApi from '~/logic/api/global';
 import { getLatestRevision, getComments } from '~/logic/lib/publish';
-import Author from "~/views/components/Author";
-import { Contacts, GraphNode, Graph, Association, Unreads, Group } from "~/types";
+import Author from '~/views/components/Author';
+import { Contacts, GraphNode, Graph, Association, Unreads, Group } from '@urbit/api';
 
 interface NoteProps {
   ship: string;
@@ -34,11 +34,10 @@ export function Note(props: NoteProps & RouteComponentProps) {
 
   const deletePost = async () => {
     setDeleting(true);
-    const indices = [note.post.index]
+    const indices = [note.post.index];
     await api.graph.removeNodes(ship, book, indices);
     props.history.push(rootUrl);
   };
-
 
   const comments = getComments(note);
   const [revNum, title, body, post] = getLatestRevision(note);
@@ -48,8 +47,6 @@ export function Note(props: NoteProps & RouteComponentProps) {
   useEffect(() => {
     api.hark.markEachAsRead(props.association, '/',`/${index[1]}/1/1`, 'note', 'publish');
   }, [props.association, props.note]);
-
-
 
   let adminLinks: JSX.Element | null = null;
   if (window.ship === note?.post?.author) {
@@ -67,7 +64,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
           color="red"
           ml={2}
           onClick={deletePost}
-          style={{ cursor: "pointer" }}
+          style={{ cursor: 'pointer' }}
         >
           Delete
         </Text>
@@ -96,21 +93,21 @@ export function Note(props: NoteProps & RouteComponentProps) {
       ref={windowRef}
     >
       <Link to={rootUrl}>
-        <Text>{"<- Notebook Index"}</Text>
+        <Text>{'<- Notebook Index'}</Text>
       </Link>
       <Col>
-        <Text display="block" mb={2}>{title || ""}</Text>
+        <Text display="block" mb={2}>{title || ''}</Text>
         <Box display="flex">
           <Author
             ship={post?.author}
             contacts={contacts}
-            date={post?.["time-sent"]}
+            date={post?.['time-sent']}
           />
           <Text ml={2}>{adminLinks}</Text>
         </Box>
       </Col>
-      <Box color="black" className="md" style={{ overflowWrap: "break-word" }}>
-        <ReactMarkdown source={body} linkTarget={"_blank"} />
+      <Box color="black" className="md" style={{ overflowWrap: 'break-word', overflow: 'hidden' }}>
+        <ReactMarkdown source={body} linkTarget={'_blank'} />
       </Box>
       <NoteNavigation
         notebook={notebook}

@@ -1,5 +1,6 @@
-import { useEffect, RefObject, useRef, useState } from "react";
-import _ from "lodash";
+import { useEffect, RefObject, useRef, useState } from 'react';
+import _ from 'lodash';
+import usePreviousValue from './usePreviousValue';
 
 export function distanceToBottom(el: HTMLElement) {
   const { scrollTop, scrollHeight, clientHeight } = el;
@@ -11,28 +12,40 @@ export function distanceToBottom(el: HTMLElement) {
 export function useLazyScroll(
   ref: RefObject<HTMLElement>,
   margin: number,
+  count: number,
   loadMore: () => Promise<boolean>
 ) {
   const [isDone, setIsDone] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const oldCount = usePreviousValue(count);
+  const loadUntil = (el: HTMLElement) => {
+    if (!isDone && distanceToBottom(el) < margin) {
+      setIsLoading(true);
+      return loadMore().then((done) => {
+        setIsLoading(false);
+        if (done) {
+          setIsDone(true);
+          return Promise.resolve();
+        }
+        return loadUntil(el);
+      });
+    }
+    setIsLoading(false);
+    return Promise.resolve();
+  };
+
+  useEffect(() => {
+    if((oldCount > count) && ref.current) {
+      loadUntil(ref.current);
+    }
+  }, [count]);
+
   useEffect(() => {
     if (!ref.current) {
       return;
     }
     setIsDone(false);
     const scroll = ref.current;
-    const loadUntil = (el: HTMLElement) => {
-      if (!isDone && distanceToBottom(el) < margin) {
-        return loadMore().then((done) => {
-          if (done) {
-            setIsDone(true);
-            return Promise.resolve();
-          }
-          return loadUntil(el);
-        });
-      }
-      return Promise.resolve();
-    };
-
     loadUntil(scroll);
 
     const onScroll = (e: Event) => {
@@ -40,12 +53,12 @@ export function useLazyScroll(
       loadUntil(el);
     };
 
-    ref.current.addEventListener("scroll", onScroll);
+    ref.current.addEventListener('scroll', onScroll, { passive: true });
 
     return () => {
-      ref.current?.removeEventListener("scroll", onScroll);
+      ref.current?.removeEventListener('scroll', onScroll);
     };
-  }, [ref?.current]);
+  }, [ref?.current, count]);
 
-  return isDone;
+  return { isDone, isLoading };
 }

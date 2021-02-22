@@ -1,9 +1,12 @@
-import React from "react";
-import { RouteComponentProps } from "react-router-dom";
-import { NotebookPosts } from "./NotebookPosts";
-import { Col } from "@tlon/indigo-react";
-import GlobalApi from "~/logic/api/global";
-import { Contacts, Rolodex, Groups, Associations, Graph, Association, Unreads } from "~/types";
+import React, { ReactElement } from 'react';
+import { RouteComponentProps } from 'react-router-dom';
+
+import { Col, Box, Text, Row } from '@tlon/indigo-react';
+import { Contacts, Rolodex, Groups, Associations, Graph, Association, Unreads } from '@urbit/api';
+
+import { NotebookPosts } from './NotebookPosts';
+import GlobalApi from '~/logic/api/global';
+import { useShowNickname } from '~/logic/lib/util';
 
 interface NotebookProps {
   api: GlobalApi;
@@ -20,7 +23,7 @@ interface NotebookProps {
   unreads: Unreads;
 }
 
-export function Notebook(props: NotebookProps & RouteComponentProps) {
+export function Notebook(props: NotebookProps & RouteComponentProps): ReactElement {
   const {
     ship,
     book,
@@ -30,13 +33,31 @@ export function Notebook(props: NotebookProps & RouteComponentProps) {
     graph
   } = props;
 
-  const group = groups[association?.['group-path']];
+  const group = groups[association?.group];
   if (!group) {
     return null; // Waiting on groups to populate
   }
 
+  const relativePath = (p: string) => props.baseUrl + p;
+
+  const contact = notebookContacts?.[ship];
+  const isOwn = `~${window.ship}` === ship;
+  console.log(association.resource);
+
+  const showNickname = useShowNickname(contact);
+
   return (
     <Col gapY="4" pt={4} mx="auto" px={3} maxWidth="768px">
+      <Row justifyContent="space-between">
+        <Box>
+          <Text display='block'>{association.metadata?.title}</Text>
+          <Text color="lightGray">by </Text>
+          <Text fontFamily={showNickname ? 'sans' : 'mono'}>
+            {showNickname ? contact?.nickname : ship}
+          </Text>
+        </Box>
+      </Row>
+      <Box borderBottom="1" borderBottomColor="washedGray" />
       <NotebookPosts
         graph={graph}
         host={ship}

@@ -57,8 +57,13 @@ module.exports = {
     new CleanWebpackPlugin(),
     new webpack.DefinePlugin({
       'process.env.LANDSCAPE_STREAM': JSON.stringify(process.env.LANDSCAPE_STREAM),
-      'process.env.LANDSCAPE_SHORTHASH': JSON.stringify(process.env.LANDSCAPE_SHORTHASH)
-    })
+      'process.env.LANDSCAPE_SHORTHASH': JSON.stringify(process.env.LANDSCAPE_SHORTHASH),
+      'process.env.TUTORIAL_HOST': JSON.stringify('~hastuc-dibtux'),
+      'process.env.TUTORIAL_GROUP': JSON.stringify('beginner-island'),
+      'process.env.TUTORIAL_CHAT': JSON.stringify('chat-8401'),
+      'process.env.TUTORIAL_BOOK': JSON.stringify('notebook-9148'),
+      'process.env.TUTORIAL_LINKS': JSON.stringify('links-4353'),
+    }),
     // new HtmlWebpackPlugin({
     //   title: 'Hot Module Replacement',
     //   template: './public/index.html',

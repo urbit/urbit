@@ -1,14 +1,13 @@
-import React, { Component, useEffect, useCallback } from 'react';
+import React, { Component, useEffect, useCallback, ReactElement } from 'react';
 import { Route, Switch, RouteComponentProps } from 'react-router-dom';
 import Helmet from 'react-helmet';
 
 import './css/custom.css';
 
-import { PatpNoSig } from '~/types/noun';
+import { PatpNoSig } from '@urbit/api';
 import GlobalApi from '~/logic/api/global';
 import { StoreState } from '~/logic/store/type';
 import { GroupsPane } from './components/GroupsPane';
-import { Workspace } from '~/types';
 import { NewGroup } from './components/NewGroup';
 import { JoinGroup } from './components/JoinGroup';
 
@@ -16,7 +15,8 @@ import { cite } from '~/logic/lib/util';
 import { Body } from '../components/Body';
 import { Box } from '@tlon/indigo-react';
 import { Loading } from '../components/Loading';
-
+import { Workspace } from '~/types/workspace';
+import GlobalSubscription from '~/logic/subscription/global';
 
 type LandscapeProps = StoreState & {
   ship: PatpNoSig;
@@ -24,10 +24,10 @@ type LandscapeProps = StoreState & {
   subscription: GlobalSubscription;
 }
 
-export function DMRedirect(props: LandscapeProps & RouteComponentProps & { ship: string; }) {
+export function DMRedirect(props: LandscapeProps & RouteComponentProps & { ship: string; }): ReactElement {
   const { ship, api, history, graphKeys } = props;
   const goToGraph = useCallback((graph: string) => {
-    history.push(`/~landscape/home/resource/chat/ship/~${graph}`);
+    history.push(`/~landscape/messages/resource/chat/ship/~${graph}`);
   }, [history]);
 
   useEffect(() => {
@@ -47,7 +47,6 @@ export function DMRedirect(props: LandscapeProps & RouteComponentProps & { ship:
     const aud = ship !== window.ship ? [`~${ship}`] : [];
     const title = `${cite(window.ship)} <-> ${cite(ship)}`;
 
-
     api.graph.createUnmanagedGraph(
       `dm--${ship}`,
       title,
@@ -57,24 +56,21 @@ export function DMRedirect(props: LandscapeProps & RouteComponentProps & { ship:
     ).then(() => {
       goToGraph(station);
     });
-
   }, []);
 
   return (
     <Loading text="Creating DM" />
   );
-
 }
 
-export default class Landscape extends Component<LandscapeProps, {}> {
-  componentDidMount() {
+export default class Landscape extends Component<LandscapeProps, Record<string, never>> {
+  componentDidMount(): void {
     this.props.subscription.startApp('groups');
     this.props.subscription.startApp('graph');
   }
 
-  render() {
+  render(): ReactElement {
     const { props } = this;
-    const { api } = props;
 
     return (
       <>
@@ -83,7 +79,7 @@ export default class Landscape extends Component<LandscapeProps, {}> {
         </Helmet>
         <Switch>
           <Route path="/~landscape/ship/:host/:name"
-            render={routeProps => {
+            render={(routeProps) => {
               const {
                 host,
                 name
@@ -94,22 +90,32 @@ export default class Landscape extends Component<LandscapeProps, {}> {
 
               return (
                 <GroupsPane workspace={ws} baseUrl={baseUrl} {...props} />
-              )
-            }}/>
+              );
+            }}
+          />
           <Route path="/~landscape/home"
-            render={routeProps => {
+            render={() => {
               const ws: Workspace = { type: 'home' };
               return (
                 <GroupsPane workspace={ws} baseUrl="/~landscape/home" {...props} />
               );
             }}
           />
+          <Route path="/~landscape/messages"
+            render={() => {
+              const ws: Workspace = { type: 'messages' };
+              return (
+                <GroupsPane workspace={ws} baseUrl="/~landscape/messages" {...props} />
+              );
+            }}
+          />
           <Route path="/~landscape/new"
-            render={routeProps=> {
+            render={(routeProps) => {
               return (
                 <Body>
                   <Box maxWidth="300px">
                     <NewGroup
+                      associations={props.associations}
                       groups={props.groups}
                       contacts={props.contacts}
                       api={props.api}
@@ -121,13 +127,13 @@ export default class Landscape extends Component<LandscapeProps, {}> {
             }}
           />
           <Route path='/~landscape/dm/:ship?'
-          render={routeProps => {
+          render={(routeProps) => {
             const { ship } = routeProps.match.params;
-            return <DMRedirect {...routeProps} {...props} ship={ship} />
+            return <DMRedirect {...routeProps} {...props} ship={ship} />;
           }}
           />
           <Route path="/~landscape/join/:ship?/:name?"
-            render={routeProps=> {
+            render={(routeProps) => {
               const { ship, name } = routeProps.match.params;
               const autojoin = ship && name ? `${ship}/${name}` : null;
               return (

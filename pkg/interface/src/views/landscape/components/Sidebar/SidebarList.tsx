@@ -1,8 +1,10 @@
-import React, { useMemo } from "react";
-import { alphabeticalOrder } from "~/logic/lib/util";
-import { Associations, AppAssociations, Workspace, Groups } from "~/types";
-import { SidebarAppConfigs, SidebarListConfig, SidebarSort } from "./types";
-import { SidebarItem } from "./SidebarItem";
+import React, { ReactElement } from 'react';
+import { Associations, AppAssociations, Groups, Rolodex } from '@urbit/api';
+
+import { alphabeticalOrder } from '~/logic/lib/util';
+import { SidebarAppConfigs, SidebarListConfig, SidebarSort } from './types';
+import { SidebarItem } from './SidebarItem';
+import { Workspace } from '~/types/workspace';
 
 function sidebarSort(
   associations: AppAssociations,
@@ -20,8 +22,8 @@ function sidebarSort(
   const lastUpdated = (a: string, b: string) => {
     const aAssoc = associations[a];
     const bAssoc = associations[b];
-    const aAppName = aAssoc?.["app-name"];
-    const bAppName = bAssoc?.["app-name"];
+    const aAppName = aAssoc?.['app-name'];
+    const bAppName = bAssoc?.['app-name'];
 
     const aUpdated = apps[aAppName]?.lastUpdated(a) || 0;
     const bUpdated = apps[bAppName]?.lastUpdated(b) || 0;
@@ -37,27 +39,28 @@ function sidebarSort(
 
 export function SidebarList(props: {
   apps: SidebarAppConfigs;
+  contacts: Rolodex;
   config: SidebarListConfig;
   associations: Associations;
   groups: Groups;
   baseUrl: string;
   group?: string;
   selected?: string;
-}) {
-  const { selected, group, config } = props;
-  const associations = {
-      ...props.associations.chat,
-      ...props.associations.publish,
-      ...props.associations.link,
-      ...props.associations.graph,
-  };
+  workspace: Workspace;
+}): ReactElement {
+  const { selected, group, config, workspace } = props;
+  const associations = { ...props.associations.graph };
 
   const ordered = Object.keys(associations)
     .filter((a) => {
       const assoc = associations[a];
-      return group
-        ? assoc["group-path"] === group
-        : !(assoc["group-path"] in props.associations.contacts);
+      if (workspace?.type === 'messages') {
+        return (!(assoc.group in props.associations.groups) && assoc.metadata.module === 'chat');
+      } else {
+        return group
+          ? assoc.group === group
+          : (!(assoc.group in props.associations.groups) && assoc.metadata.module !== 'chat');
+      }
     })
     .sort(sidebarSort(associations, props.apps)[config.sortBy]);
 
@@ -74,6 +77,8 @@ export function SidebarList(props: {
             apps={props.apps}
             hideUnjoined={config.hideUnjoined}
             groups={props.groups}
+            contacts={props.contacts}
+            workspace={workspace}
           />
         );
       })}

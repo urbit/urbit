@@ -3,14 +3,16 @@ import bigInt from 'big-integer';
 import { Col } from '@tlon/indigo-react';
 import { CommentItem } from './CommentItem';
 import CommentInput from './CommentInput';
-import { Contacts } from '~/types/contact-update';
+import { Contacts } from '@urbit/api/contacts';
 import GlobalApi from '~/logic/api/global';
 import { FormikHelpers } from 'formik';
-import { Group, GraphNode, Association } from '~/types';
+import { Group, GraphNode, Association } from '@urbit/api';
 import { createPost, createBlankNodeWithChildPost } from '~/logic/api/graph';
 import { getLatestCommentRevision } from '~/logic/lib/publish';
-import { scanForMentions } from '~/logic/lib/graph';
+import tokenizeMessage from '~/logic/lib/tokenizeMessage';
 import { getUnreadCount } from '~/logic/lib/hark';
+import { PropFunc } from '~/types/util';
+import { isWriter } from '~/logic/lib/group';
 
 interface CommentsProps {
   comments: GraphNode;
@@ -24,15 +26,26 @@ interface CommentsProps {
   group: Group;
 }
 
-export function Comments(props: CommentsProps) {
-  const { association, comments, ship, name, api, history, baseUrl, group } = props;
+export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
+  const {
+    association,
+    comments,
+    ship,
+    name,
+    editCommentId,
+    api,
+    history,
+    baseUrl,
+    group,
+    ...rest
+  } = props;
 
   const onSubmit = async (
     { comment },
     actions: FormikHelpers<{ comment: string }>
   ) => {
     try {
-      const content = scanForMentions(comment);
+      const content = tokenizeMessage(comment);
       const node = createBlankNodeWithChildPost(
         comments?.post?.index,
         '1',
@@ -52,10 +65,10 @@ export function Comments(props: CommentsProps) {
     actions: FormikHelpers<{ comment: string }>
   ) => {
     try {
-      const commentNode = comments.children.get(bigInt(props.editCommentId))!;
+      const commentNode = comments.children.get(bigInt(editCommentId))!;
       const [idx, _] = getLatestCommentRevision(commentNode);
 
-      const content = scanForMentions(comment);
+      const content = tokenizeMessage(comment);
       const post = createPost(
         content,
         commentNode.post.index,
@@ -70,8 +83,8 @@ export function Comments(props: CommentsProps) {
   };
 
   let commentContent = null;
-  if (props.editCommentId) {
-    const commentNode = comments.children.get(bigInt(props.editCommentId));
+  if (editCommentId) {
+    const commentNode = comments.children.get(bigInt(editCommentId));
     const [_, post] = getLatestCommentRevision(commentNode);
     commentContent = post.contents.reduce((val, curr) => {
       if ('text' in curr) {
@@ -90,21 +103,20 @@ export function Comments(props: CommentsProps) {
 
   const children = Array.from(comments.children);
 
-
   useEffect(() => {
-    console.log(`dismissing ${association?.['app-path']}`);
     return () => {
-      api.hark.markCountAsRead(association, parentIndex, 'comment')
+      api.hark.markCountAsRead(association, parentIndex, 'comment');
     };
-  }, [comments.post.index])
+  }, [comments.post.index]);
 
+  const readCount = children.length - getUnreadCount(props?.unreads, association.resource, parentIndex);
 
-  const readCount = children.length - getUnreadCount(props?.unreads, association['app-path'], parentIndex)
+  const canComment = isWriter(group, association.resource) || association.metadata.vip === 'reader-comments';
 
   return (
-    <Col>
-      {( !props.editCommentId ? <CommentInput onSubmit={onSubmit} /> : null )}
-      {( !!props.editCommentId ? (
+    <Col {...rest}>
+      {( !props.editCommentId && canComment ? <CommentInput onSubmit={onSubmit} /> : null )}
+      {( props.editCommentId ? (
         <CommentInput
           onSubmit={onEdit}
           label='Edit Comment'
@@ -125,7 +137,7 @@ export function Comments(props: CommentsProps) {
               unread={i >= readCount}
               baseUrl={props.baseUrl}
               group={group}
-              pending={idx.toString() === props.editCommentId}
+              pending={idx.toString() === editCommentId}
             />
           );
       })}
