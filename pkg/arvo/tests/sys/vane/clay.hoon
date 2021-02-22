@@ -1,11 +1,15 @@
 /+  *test
 /=  clay-raw  /sys/vane/clay
 /*  gen-hello     %hoon  /gen/hello/hoon
+/*  lib-cram      %hoon  /lib/cram/hoon
 /*  lib-strandio  %hoon  /lib/strandio/hoon
 /*  lib-strand    %hoon  /lib/strand/hoon
 /*  sur-spider    %hoon  /sur/spider/hoon
-/*  mar-mime      %hoon  /mar/mime/hoon
 /*  mar-html      %hoon  /mar/html/hoon
+/*  mar-mime      %hoon  /mar/mime/hoon
+/*  mar-udon      %hoon  /mar/udon/hoon
+/*  mar-txt       %hoon  /mar/txt/hoon
+/*  mar-txt-diff  %hoon  /mar/txt-diff/hoon
 ::
 !:
 =,  format
@@ -110,6 +114,33 @@
       %+  expect-eq
         !>  (~(gas in *(set path)) /mar/mime/hoon ~)
         !>  dez:(~(got by vases.cache.nub) /mar/mime/hoon)
+    ==
+::
+++  test-mar-udon  ^-  tang
+  =/  ford
+    %:  ford:fusion
+      bud
+      *ankh:clay
+      deletes=~
+      ^=  changes
+      %-  my
+      :~  [/mar/udon/hoon &+hoon+mar-udon]
+          [/lib/cram/hoon &+hoon+lib-cram]
+          [/mar/txt/hoon &+hoon+mar-txt]
+          [/mar/txt-diff/hoon &+hoon+mar-txt-diff]
+      ==
+      file-store=~
+      *ford-cache:fusion
+    ==
+    =/  [res=vase nub=state:ford:fusion]  (get-nave:ford %udon)
+    ;:  weld
+      %+  expect-eq
+        !>(*@t)
+        (slap res limb/%bunt)
+    ::
+      %+  expect-eq
+        !>  (~(gas in *(set path)) /mar/udon/hoon /lib/cram/hoon ~)
+        !>  dez:(~(got by vases.cache.nub) /mar/udon/hoon)
     ==
 ::
 ++  test-cast-html-mime  ^-  tang

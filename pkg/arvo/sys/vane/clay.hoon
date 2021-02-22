@@ -555,7 +555,7 @@
           (with-faces deg+deg tub+tub but+but cor+cor nave+!>(nave) ~)
         !,  *hoon
         =/  typ  _+<.cor
-        =/  dif  vale:deg
+        =/  dif  diff:deg
         ^-  (nave typ dif)
         |%
         ++  bunt  +<.cor
@@ -3916,7 +3916,7 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =|                                                    ::  instrument state
-    $:  ver=%6                                        ::  vane version
+    $:  ver=%7                                        ::  vane version
         ruf=raft                                      ::  revision tree
     ==                                                ::
 |=  [now=@da eny=@uvJ rof=roof]                       ::  current invocation
@@ -4158,8 +4158,59 @@
   ==
 ::
 ++  load
-  |=  old=[%6 raft]
+  =>  |%
+      +$  raft-any
+        $%  [%7 raft-7]
+            [%6 raft-6]
+        ==
+      +$  raft-7  raft
+      +$  dojo-7  dojo
+      +$  ford-cache-7  ford-cache
+      +$  raft-6
+        $:  rom=room-6                                  ::  domestic
+            hoy=(map ship rung)                         ::  foreign
+            ran=rang                                    ::  hashes
+            mon=(map term beam)                         ::  mount points
+            hez=(unit duct)                             ::  sync duct
+            cez=(map @ta crew)                          ::  permission groups
+            pud=(unit [=desk =yoki])                    ::  pending update
+        ==                                              ::
+      +$  room-6  [hun=duct dos=(map desk dojo-6)]
+      +$  dojo-6
+        $:  qyx=cult                                    ::  subscribers
+            dom=dome-6                                  ::  desk state
+            per=regs                                    ::  read perms per path
+            pew=regs                                    ::  write perms per path
+        ==
+      +$  dome-6
+        $:  ank=ankh                                    ::  state
+            let=aeon                                    ::  top id
+            hit=(map aeon tako)                         ::  versions by id
+            lab=(map @tas aeon)                         ::  labels
+            mim=(map path mime)                         ::  mime cache
+            fod=ford-cache-6                            ::  ford cache
+            fer=(unit reef-cache)                       ::  reef cache
+        ==
+      +$  ford-cache-6  *                               ::  discard old cache
+      --
+  |=  old=raft-any
+  |^
+  =?  old  ?=(%6 -.old)  7+(raft-6-to-7 +.old)
+  ?>  ?=(%7 -.old)
   ..^$(ruf +.old)
+  ::  +raft-6-to-7: delete stale ford caches (they could all be invalid)
+  ::
+  ++  raft-6-to-7
+    |=  raf=raft-6
+    ^-  raft-7
+    %=    raf
+        dos.rom
+      %-  ~(run by dos.rom.raf)
+      |=  doj=dojo-6
+      ^-  dojo-7
+      doj(fod.dom *ford-cache-7)
+    ==
+  --
 ::
 ++  scry                                              ::  inspect
   ^-  roon
