@@ -9,7 +9,8 @@ import {
 import { Formik, Form, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import { BackButton } from "./BackButton";
-import useLocalState, { selectLocalState } from "~/logic/state/local";
+import useSettingsState, {selectSettingsState} from "~/logic/state/settings";
+import GlobalApi from "~/logic/api/global";
 
 interface FormSchema {
   hideAvatars: boolean;
@@ -17,28 +18,28 @@ interface FormSchema {
   imageShown: boolean;
   audioShown: boolean;
   oembedShown: boolean;
+  videoShown: boolean;
 }
 
-const localSelector = selectLocalState([
-  "hideAvatars",
-  "hideNicknames",
-  "remoteContentPolicy",
-  "set",
-]);
+const settingsSel = selectSettingsState(["calm", "remoteContentPolicy"]);
 
-export function CalmPrefs(props: {}) {
+export function CalmPrefs(props: {
+  api: GlobalApi;
+}) {
+  const { api } = props;
   const {
-    hideAvatars,
-    hideNicknames,
-    remoteContentPolicy,
-    set: setLocalState,
-  } = useLocalState(localSelector);
-  const {
-    imageShown,
-    videoShown,
-    oembedShown,
-    audioShown,
-  } = remoteContentPolicy;
+    calm: {
+      hideAvatars,
+      hideNicknames,
+    },
+    remoteContentPolicy: {
+      imageShown,
+      videoShown,
+      oembedShown,
+      audioShown,
+    }
+  } = useSettingsState(settingsSel);
+
 
   const initialValues: FormSchema = {
     hideAvatars,
@@ -49,15 +50,16 @@ export function CalmPrefs(props: {}) {
     audioShown,
   };
 
-  const onSubmit = useCallback(async (values: FormSchema, actions: FormikHelpers<FormSchema>) => {
-    setLocalState(state => {
-      const { hideAvatars, hideNicknames, ...remote } = values;
-      Object.assign(state.remoteContentPolicy, remote);
-      state.hideNicknames = hideNicknames;
-      state.hideAvatars = hideAvatars;
-    });
-
-  }, [setLocalState]);
+  const onSubmit = useCallback(async (v: FormSchema, actions: FormikHelpers<FormSchema>) => {
+    return Promise.all([
+      api.settings.putEntry('calm', 'hideAvatars', v.hideAvatars),
+      api.settings.putEntry('calm', 'hideNicknames', v.hideNicknames),
+      api.settings.putEntry('remoteContentPolicy', 'imageShown', v.imageShown),
+      api.settings.putEntry('remoteContentPolicy', 'videoShown', v.videoShown),
+      api.settings.putEntry('remoteContentPolicy', 'audioShown', v.audioShown),
+      api.settings.putEntry('remoteContentPolicy', 'oembedShown', v.oembedShown),
+    ]);
+  }, [api]);
 
   return (
     <Formik initialValues={initialValues} onSubmit={onSubmit}>

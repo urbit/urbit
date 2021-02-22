@@ -7,11 +7,13 @@ import { Box, Text, Row, Col, Icon, BaseImage } from "@tlon/indigo-react";
 import { uxToHex } from "~/logic/lib/util";
 
 import { Profile } from "./components/Profile";
-import useLocalState from "~/logic/state/local";
+import useSettingsState, {SettingsState} from "~/logic/state/settings";
+
+const settingsSel = (s: SettingsState) => s.calm.hideAvatars;
 
 export default function ProfileScreen(props: any) {
   const { dark } = props;
-  const hideAvatars = useLocalState(state => state.hideAvatars);
+  const hideAvatars = useSettingsState(settingsSel);
   return (
     <>
     <Helmet defer={false}>

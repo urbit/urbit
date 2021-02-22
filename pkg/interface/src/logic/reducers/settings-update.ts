@@ -2,7 +2,6 @@ import _ from 'lodash';
 import { SettingsUpdate } from '~/types/settings';
 import useSettingsState, { SettingsStateZus } from "~/logic/state/settings";
 import produce from 'immer';
-import { unstable_batchedUpdates } from 'react-dom';
 
 export default class SettingsStateZusettingsReducer{
   reduce(json: any) {
@@ -63,7 +62,7 @@ export default class SettingsStateZusettingsReducer{
   getAll(json: any, state: SettingsStateZus) {
     const data = _.get(json, 'all');
     if(data) {
-      Object.assign(state, json);
+      _.merge(state, data);
     }
   }
 

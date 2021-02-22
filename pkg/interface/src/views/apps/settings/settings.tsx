@@ -78,7 +78,7 @@ export default function SettingsScreen(props: any) {
             path="/~settings/calm"
             render={() => {
               return (
-                <CalmPrefs />
+                <CalmPrefs api={props.api} />
               );
             }}
           />

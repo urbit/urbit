@@ -18,12 +18,11 @@ import RichText from '~/views/components/RichText'
 import useLocalState from "~/logic/state/local";
 import { useHistory } from "react-router-dom";
 import {useTutorialModal} from "~/views/components/useTutorialModal";
+import useSettingsState, {selectCalmState} from "~/logic/state/settings";
 
 
 export function Profile(props: any) {
-  const { hideAvatars } = useLocalState(({ hideAvatars }) => ({
-    hideAvatars
-  }));
+  const { hideAvatars } = useSettingsState(selectCalmState);
   const history = useHistory();
 
   if (!props.ship) {

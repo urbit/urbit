@@ -56,11 +56,6 @@ export default function Settings(props: {}) {
           description="Set notification visibility and default behaviours for groups and messaging"
         />
         <SettingsItem
-          to="keyboard"
-          title="Keyboard"
-          description="Shortcuts, Keyboard Settings, Meta Key Assignments, etc."
-        />
-        <SettingsItem
           to="display"
           title="Display"
           description="Customize visual interfaces across your Landscape"
@@ -76,6 +71,17 @@ export default function Settings(props: {}) {
           description="Configure per-module behaviour and content handling"
         />
         <SettingsItem
+          to="security"
+          title="Security"
+          description="Manage sessions, login credentials, and Landscape access"
+        />
+        {/*
+        <SettingsItem
+          to="keyboard"
+          title="Keyboard"
+          description="Shortcuts, Keyboard Settings, Meta Key Assignments, etc."
+        />
+        <SettingsItem
           to="hosting"
           title="Hosting Services"
           description="Hosting-specific service configuration"
@@ -84,12 +90,7 @@ export default function Settings(props: {}) {
           to="leap"
           title="Leap"
           description="Customize Leap ordering, omit modules or results"
-        />
-        <SettingsItem
-          to="security"
-          title="Security"
-          description="Manage sessions, login credentials, and Landscape access"
-        />
+        />*/}
       </Box>
     </Col>
   );

@@ -15,15 +15,17 @@ export interface SettingsState {
   calm: {
     hideNicknames: boolean;
     hideAvatars: boolean;
-    remoteContentPolicy: RemoteContentPolicy;
-  }
+  };
+  remoteContentPolicy: RemoteContentPolicy;
   set: (fn: (state: SettingsState) => void) => void
 };
 
 export type SettingsStateZus = SettingsState & State;
 
 export const selectSettingsState = 
-  <K extends keyof SettingsState>(keys: K[]) => f.pick<SettingsState, K>(keys);
+<K extends keyof SettingsState>(keys: K[]) => f.pick<SettingsState, K>(keys);
+
+export const selectCalmState = (s: SettingsState) => s.calm;
 
 const useSettingsState = create<SettingsStateZus>((set) => ({
   display: {
@@ -34,12 +36,12 @@ const useSettingsState = create<SettingsStateZus>((set) => ({
   calm: {
     hideNicknames: false,
     hideAvatars: false,
-    remoteContentPolicy: {
-      imageShown: true,
-      oembedShown: true,
-      audioShown: true,
-      videoShown: true
-    }
+  },
+  remoteContentPolicy: {
+    imageShown: true,
+    oembedShown: true,
+    audioShown: true,
+    videoShown: true
   },
   set: (fn: (state: SettingsState) => void) => set(produce(fn))
 })); 

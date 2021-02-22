@@ -13,26 +13,13 @@ import GlobalApi from "~/logic/api/global";
 import { NotificationGraphConfig, LeapCategories, leapCategories } from "~/types";
 import useLocalState, {selectLocalState} from "~/logic/state/local";
 
-type FormSchema = {
-  [c in LeapCategories]: boolean;
-}
-
-const localSelector = selectLocalState(["hideLeapCats", "set"]);
 
 export function LeapSettings(props: {}) {
 
-  const { hideLeapCats, set: setLocalState } = useLocalState(localSelector);
+  //TODO: arrays in settings-store?
 
-  const initialValues: FormSchema = leapCategories.reduce((acc, val, key) => {
-    return {...acc, [val]: hideLeapCats.findIndex(c => c === val) !== -1 };
-  }, {} as FormSchema);
+  return null;
 
-  const onSubmit = useCallback((values: FormSchema) => {
-    setLocalState(state => {
-      state.hideLeapCats = _.keys(_.pickBy(values, v => v)) as any;
-    });
-
-  }, [setLocalState]);
   
   return (
     <Col p="5" gapY="5">

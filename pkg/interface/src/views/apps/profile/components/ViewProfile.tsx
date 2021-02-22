@@ -18,14 +18,14 @@ import {GroupSummary} from "~/views/landscape/components/GroupSummary";
 import {MetadataUpdatePreview} from "~/types";
 import {GroupLink} from "~/views/components/GroupLink";
 import {lengthOrder} from "~/logic/lib/util";
-import useLocalState from "~/logic/state/local";
+import useSettingsState, {selectSettingsState} from "~/logic/state/settings";
 
+
+const settingsSel = selectSettingsState(["calm"]);
 
 export function ViewProfile(props: any) {
   const history = useHistory();
-  const { hideNicknames } = useLocalState(({ hideNicknames }) => ({
-    hideNicknames
-  }));
+  const { calm: { hideNicknames } } = useSettingsState(settingsSel);
   const { api, contact, nacked, isPublic, ship, associations, groups } = props;
 
   return (
