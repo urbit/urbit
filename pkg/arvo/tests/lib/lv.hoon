@@ -219,7 +219,7 @@
       !>  (length:lvs 0x0)
     %+  expect-eq
       !>  1
-      !>  (length:lvs 0x13ff0000)
+      !>  (length:lvs 0x13ff.0000)
     %+  expect-eq
       !>  5
       !>  (length:lvs 0x5.40a0.0000.4080.0000.4040.0000.4000.0000.3f80.0000)
@@ -241,7 +241,7 @@
     %+  expect
       !>  (isclose:lvs .1  .1.00001)
     %+  expect
-      !>  !(isclose:lvs .1 .1.001)
+      !>  !(isclose:lvs .1 .1001)
     ::  XX should probably test some pathological cases too
     %+  expect-eq
       !>  (isclose:lvs .1e-6 .0)
