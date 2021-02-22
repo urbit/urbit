@@ -14,6 +14,7 @@ import { Formik } from "formik";
 import GlobalApi from "../../../../api/global";
 import { BucketList } from "./BucketList";
 import { S3State } from "../../../../types";
+import {BackButton} from "./BackButton";
 
 interface FormSchema {
   s3bucket: string;
@@ -50,6 +51,7 @@ export default function S3Form(props: S3FormProps) {
   return (
     <>
       <Col p="5" borderBottom="1" borderBottomColor="washedGray">
+        <BackButton />
         <Formik
           initialValues={
             {
@@ -63,7 +65,7 @@ export default function S3Form(props: S3FormProps) {
           onSubmit={onSubmit}
         >
           <Form>
-            <Col maxWidth="600px" gapY="5">
+            <Col mt="5" maxWidth="600px" gapY="5">
               <Col gapY="1">
                 <Text color="black" fontSize={2} fontWeight="medium">
                   S3 Storage Setup

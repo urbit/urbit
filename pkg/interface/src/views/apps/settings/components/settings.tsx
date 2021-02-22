@@ -66,9 +66,9 @@ export default function Settings(props: {}) {
           description="Modulate vearious elements across Landscape to maximize calmness"
         />
         <SettingsItem
-          to="modules"
-          title="Modules"
-          description="Configure per-module behaviour and content handling"
+          to="s3"
+          title="Remote Storage"
+          description="Configure S3-compatible storage solutions"
         />
         <SettingsItem
           to="security"
