@@ -11,12 +11,14 @@
 |%
 ++  lvs
   ^|
+  ::~%  %lvs  +>  ~
   |_  r=$?(%n %u %d %z)   :: round nearest, round up, round down, round to zero
   ::
   ::  Manipulators
   ::
   ::    Zeroes
   ++  zeros
+    ::~/  %zeros
     |=  n=@ud  ^-  @lvs
     ~_  leaf+"lagoon-fail"
     `@lvs`(lsh [5 n] 1)   :: pin at head for leading zeros
@@ -80,6 +82,7 @@
   ::
   ::    Get the value at an index, using mathematical indices 1..n.
   ++  get
+    ::~/  %get
     |=  [u=@lvs i=@ud]  ^-  @rs
     ~_  leaf+"lagoon-fail"
     (cut 5 [(dec i) 1] u)
@@ -91,6 +94,7 @@
   ::
   ::    Set the value of an element within a vector, using math indices 1..n.
   ++  set
+    ::~/  %set
     |=  [u=@lvs i=@ud s=@rs]  ^-  @lvs
     ~_  leaf+"lagoon-fail"
     ?:  (gth i (length u))  !!
@@ -124,24 +128,28 @@
   ::    Scalar addition
   ++  adds
     |=  [u=@lvs s=@rs]  ^-  @lvs
+    ::~/  %adds
     =/  ss  (fill (length u) s)
     (addv u ss)
   ::
   ::    Scalar subtraction
   ++  subs
     |=  [u=@lvs s=@rs]  ^-  @lvs
+    ::~/  %subs
     =/  ss  (fill (length u) s)
     (subv u ss)
   ::
   ::    Scalar multiplication
   ++  muls
     |=  [u=@lvs s=@rs]  ^-  @lvs
+    ::~/  %muls
     =/  ss  (fill (length u) s)
     (mulv u ss)
   ::
   ::    Scalar division
   ++  divs
     |=  [u=@lvs s=@rs]  ^-  @lvs
+    ::~/  %divs
     =/  ss  (fill (length u) s)
     (divv u ss)
   ::
@@ -156,6 +164,7 @@
   ::
   ::    Apply a two-variable function across a vector input.
   ++  funv
+    ::~/  %funv
     |=  f=$-([@rs @rs] @rs)
     |=  [u=@lvs v=@lvs]  ^-  @lvs
     ~_  leaf+"lagoon-fail"
@@ -198,6 +207,7 @@
   ::
   ::    Inner or Euclidean dot product, a · b
   ++  inner
+    ::~/  %inner
     |=  [u=@lvs v=@lvs]  ^-  @rs
     ~_  leaf+"lagoon-fail"
     (sum (mulv u v))
@@ -213,15 +223,17 @@
   ::
 ++  lvd
   ^|
+  ::~%  %lvd  +>  ~
   |_  r=$?(%n %u %d %z)   :: round nearest, round up, round down, round to zero
   ::
   ::  Manipulators
   ::
   ::    Zeroes
   ++  zeros
+    ::~/  %zeros
     |=  n=@ud  ^-  @lvd
     ~_  leaf+"lagoon-fail"
-    `@lvd`(lsh [6 n] 1)
+    `@lvd`(lsh [6 n] 1)   :: pin at head for leading zeros
   ::
   ::    Fill value
   ++  fill
@@ -232,7 +244,7 @@
   ++  ones
     |=  n=@ud  ^-  @lvd
     ~_  leaf+"lagoon-fail"
-    (fill n .~1)
+    (fill n .1)
   ::
   ::    Length of vector
   ++  length
@@ -243,7 +255,7 @@
   ::    Produce a vector from `(list @u)` (of natural numbers)
   ++  make-nat
     |=  a=(list @u)  ^-  @lvd
-    (make (turn a sun:rd))
+    (make (turn a sun:rs))
   ::
   ::    APL-style index list
   ++  iota
@@ -270,21 +282,22 @@
   ::  |x|
   ++  abs
     |=  [s=@rd]
-    ?:  (gth s .~0)  s  (sub:rd .~0 s)
+    ?:  (gth s .0)  s  (sub:rs .0 s)
   ::
   ::  |x-y| <= tol
   ++  isclose
     |=  [s=@rd t=@rd tol=@rd]
-    (lth:rd (abs (sub:rd s t)) tol)
+    (lth:rs (abs (sub:rs s t)) tol)
   ++  near0
     |=  s=@rd
-    (isclose s .~0 .~1e-6)
+    (isclose s .0 .1e-6)
   ::
   ::    Get the value at an index, using mathematical indices 1..n.
   ++  get
+    ::~/  %get
     |=  [u=@lvd i=@ud]  ^-  @rd
     ~_  leaf+"lagoon-fail"
-    (con (zeros (length u)) (cut 6 [(dec i) 1] u))
+    (cut 6 [(dec i) 1] u)
   ::
   ::    Pretty-print the contents of the vector.
   ++  pprint
@@ -293,26 +306,27 @@
   ::
   ::    Set the value of an element within a vector, using math indices 1..n.
   ++  set
+    ::~/  %set
     |=  [u=@lvd i=@ud s=@rd]  ^-  @lvd
     ~_  leaf+"lagoon-fail"
     ?:  (gth i (length u))  !!
-    =/  full  0xffff.ffff.ffff.ffff
+    =/  full  0xffff.ffff
     =/  n  (length u)
     =/  mask  (mix (fil 6 +(n) full) (lsh [6 (dec i)] full))
     =/  cleared  (dis mask u)
     =/  value  (lsh [6 (dec i)] s)
     (con cleared value)
   ::
-  ::    Return larger of two double-precision floats.
-  ++  max-rd
+  ::    Return larger of two single-precision floats.
+  ++  max-rs
     |=  [s=@rd t=@rd]  ^-  @rd
-    ?:  (gth:rd s t)  s  t
+    ?:  (gth:rs s t)  s  t
   ::
   ::    Find maximum value in array.
   ++  max
     |=  [u=@lvd]  ^-  @rd
     ~_  leaf+"lagoon-fail"
-    `@rd`(reel (unmake u) max-rd)
+    `@rd`(reel (unmake u) max-rs)
   ::
   ::    Return index of maximum value in array, 1-indexed
   ::    DOES NOT handle repeated values, returns first match
@@ -326,24 +340,28 @@
   ::    Scalar addition
   ++  adds
     |=  [u=@lvd s=@rd]  ^-  @lvd
+    ::~/  %adds
     =/  ss  (fill (length u) s)
     (addv u ss)
   ::
   ::    Scalar subtraction
   ++  subs
     |=  [u=@lvd s=@rd]  ^-  @lvd
+    ::~/  %subs
     =/  ss  (fill (length u) s)
     (subv u ss)
   ::
   ::    Scalar multiplication
   ++  muls
     |=  [u=@lvd s=@rd]  ^-  @lvd
+    ::~/  %muls
     =/  ss  (fill (length u) s)
     (mulv u ss)
   ::
   ::    Scalar division
   ++  divs
     |=  [u=@lvd s=@rd]  ^-  @lvd
+    ::~/  %divs
     =/  ss  (fill (length u) s)
     (divv u ss)
   ::
@@ -358,27 +376,28 @@
   ::
   ::    Apply a two-variable function across a vector input.
   ++  funv
+    ::~/  %funv
     |=  f=$-([@rd @rd] @rd)
     |=  [u=@lvd v=@lvd]  ^-  @lvd
     ~_  leaf+"lagoon-fail"
     (make (turn2 [(unmake u) (unmake v)] f))
   ::
   ::    Vector addition
-  ++  addv  (funv add:rd)
+  ++  addv  (funv add:rs)
   ::
   ::    Vector subtraction
-  ++  subv  (funv sub:rd)
+  ++  subv  (funv sub:rs)
   ::
   ::    Vector multiplication
-  ++  mulv  (funv mul:rd)
+  ++  mulv  (funv mul:rs)
   ::
   ::    Vector division
-  ++  divv  (funv div:rd)
+  ++  divv  (funv div:rs)
   ::
   ::    Sum of elements
   ++  sum
     |=  [u=@lvd]  ^-  @rd
-    (roll (unmake u) add:rd)
+    (roll (unmake u) add:rs)
   ::
   ::    Cumulative sum of elements
   ++  cumsum
@@ -394,12 +413,13 @@
   ::    Product of elements
   ++  product
     |=  [u=@lvd]  ^-  @rd
-    (roll (unmake u) mul:rd)
+    (roll (unmake u) mul:rs)
   ::
   ::  Linear algebraic operators
   ::
   ::    Inner or Euclidean dot product, a · b
   ++  inner
+    ::~/  %inner
     |=  [u=@lvd v=@lvd]  ^-  @rd
     ~_  leaf+"lagoon-fail"
     (sum (mulv u v))
