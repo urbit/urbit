@@ -6601,6 +6601,9 @@
       pay=(map (pair type hoon) type)                        ::  +play
       mit=(map (trel type type hoon) (pair type nock))       ::  +mint
       mul=(map (qual type type type hoon) (pair type type))  ::  +mull
+      fis=(map (pair type axis) nock)                        ::  +fish
+      cro=(map (pair type type) type)                        ::  +crop
+      fus=(map (pair type type) type)                        ::  +fuse
   ==                                                    ::
 +$  poly  ?(%wet %dry)                                  ::  polarity
 +$  foot  $%  {$dry p/hoon}                             ::  dry arm, geometric
@@ -9948,8 +9951,13 @@
     [%face [[[cog ~ gen] ~ ~] ~] sut]
   ::
   ++  caching-crop
-    ~/  %crop
     |=  ref=type
+    =/  cached  (~(get by cro.grub) [sut ref])
+    ?^  cached
+      [u.cached grub]
+    =;  [cropped=type =_grub]
+      :_  grub(cro (~(put by cro.grub) [sut ref] cropped))
+      cropped
     =|  bix=(set [type type])
     =<  dext
     |%
@@ -11288,6 +11296,12 @@
   ::
   ++  caching-fish
     |=  axe=axis
+    =/  cached  (~(get by fis.grub) [sut axe])
+    ?^  cached
+      [u.cached grub]
+    =;  [fished=nock =_grub]
+      :_  grub(fis (~(put by fis.grub) [sut axe] fished))
+      fished
     =|  vot=(set type)
     |-  ^-  [nock _grub]
     ?-  sut
@@ -11381,6 +11395,12 @@
   ::
   ++  caching-fuse
     |=  ref=type
+    =/  cached  (~(get by fus.grub) [sut ref])
+    ?^  cached
+      [u.cached grub]
+    =;  [fused=type =_grub]
+      :_  grub(fus (~(put by fus.grub) [sut ref] fused))
+      fused
     =|  bix=(set [type type])
     |-  ^-  [type _grub]
     ?:  ?|(=(sut ref) =(%noun ref))
