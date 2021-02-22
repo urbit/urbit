@@ -16,26 +16,20 @@ import { uxToHex } from "~/logic/lib/util";
 import { S3State, BackgroundConfig } from "~/types";
 import { BackgroundPicker, BgType } from "./BackgroundPicker";
 import { BackButton } from "./BackButton";
-import useLocalState, { LocalState } from "~/logic/state/local";
+import useSettingsState, { SettingsState, selectSettingsState } from "~/logic/state/settings";
 
 const formSchema = Yup.object().shape({
   bgType: Yup.string()
     .oneOf(["none", "color", "url"], "invalid")
     .required("Required"),
-  bgUrl: Yup.string().url(),
-  bgColor: Yup.string(),
-  avatars: Yup.boolean(),
-  nicknames: Yup.boolean(),
-  hideGroups: Yup.boolean(),
+  background: Yup.string(),
+
 });
 
 interface FormSchema {
   bgType: BgType;
   bgColor: string | undefined;
   bgUrl: string | undefined;
-  avatars: boolean;
-  nicknames: boolean;
-  hideGroups: boolean;
 }
 
 interface DisplayFormProps {
@@ -43,55 +37,54 @@ interface DisplayFormProps {
   s3: S3State;
 }
 
+const settingsSel = selectSettingsState(["display"]);
+
 export default function DisplayForm(props: DisplayFormProps) {
   const { api, s3 } = props;
 
   const {
-    hideAvatars,
-    hideNicknames,
-    background,
-    hideGroups,
-    set: setLocalState,
-  } = useLocalState();
+    display: {
+      background,
+      backgroundType,
+    }
+  } = useSettingsState(settingsSel);
+
+  console.log(backgroundType);
 
   let bgColor, bgUrl;
-  if (background?.type === "url") {
-    bgUrl = background.url;
+  if (backgroundType === "url") {
+    bgUrl = background; 
   }
-  if (background?.type === "color") {
-    bgColor = background.color;
+  if (backgroundType === "color") {
+    bgColor = background;
   }
-  const bgType = background?.type || "none";
+  const bgType = backgroundType || "none";
 
   return (
     <Formik
       validationSchema={formSchema}
       initialValues={
         {
-          bgType,
+          bgType: backgroundType,
           bgColor: bgColor || "",
-          bgUrl,
-          avatars: hideAvatars,
-          nicknames: hideNicknames,
-          hideGroups
+          bgUrl
         } as FormSchema
       }
-      onSubmit={(values, actions) => {
-        const bgConfig: BackgroundConfig =
-          values.bgType === "color"
-            ? { type: "color", color: `#${uxToHex(values.bgColor || "0x0")}` }
+      onSubmit={async (values, actions) => {
+        let promises = [] as Promise<any>[];
+        promises.push(api.settings.putEntry('display', 'backgroundType', values.bgType));
+
+        promises.push(
+          api.settings.putEntry('display', 'background', 
+            values.bgType === "color"
+            ? `#${uxToHex(values.bgColor || "0x0")}`
             : values.bgType === "url"
-            ? { type: "url", url: values.bgUrl || "" }
-            : undefined;
+            ? values.bgUrl || "" 
+            : false
+          ));
 
-        setLocalState((state: LocalState) => {
-          state.background = bgConfig;
-          state.hideAvatars = values.avatars;
-          state.hideNicknames = values.nicknames;
-          state.hideGroups = values.hideGroups;
+        await Promise.all(promises);
 
-        });
-        actions.setSubmitting(false);
       }}
     >
       {(props) => (
@@ -111,11 +104,6 @@ export default function DisplayForm(props: DisplayFormProps) {
               bgUrl={props.values.bgUrl}
               api={api}
               s3={s3}
-            />
-            <Toggle
-              id="hideGroups"
-              label="Empty Launch"
-              caption="Do not show groups on the homescreen"
             />
             <Button primary width="fit-content" type="submit">
               Save

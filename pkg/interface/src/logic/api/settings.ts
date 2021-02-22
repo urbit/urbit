@@ -51,8 +51,10 @@ export default class SettingsApi extends BaseApi<StoreState> {
   }
 
   async getAll() {
-    const data = await this.scry("settings-store", "/all");
-    this.store.handleEvent({data: {"settings-data": data.all}});
+    const { all } = await this.scry("settings-store", "/all");
+    this.store.handleEvent({data: 
+      {"settings-data": { all } }
+    });
   }
 
   async getBucket(bucket: Key) {
