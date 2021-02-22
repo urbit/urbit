@@ -23,6 +23,7 @@ interface RemoteContentProps {
 interface RemoteContentState {
   unfold: boolean;
   embed: any | undefined;
+  noCors: boolean;
 }
 
 const IMAGE_REGEX = new RegExp(/(jpg|img|png|gif|tiff|jpeg|webp|webm|svg)$/i);
@@ -36,11 +37,13 @@ class RemoteContent extends PureComponent<RemoteContentProps, RemoteContentState
     super(props);
     this.state = {
       unfold: props.unfold || false,
-      embed: undefined
+      embed: undefined,
+      noCors: false
     };
     this.unfoldEmbed = this.unfoldEmbed.bind(this);
     this.loadOembed = this.loadOembed.bind(this);
     this.wrapInLink = this.wrapInLink.bind(this);
+    this.onError = this.onError.bind(this);
   }
 
   componentWillUnmount() {
@@ -87,6 +90,10 @@ return;
     </BaseAnchor>);
   }
 
+  onError(e: Event) {
+    this.setState({ noCors: true });
+  }
+
   render() {
     const {
       remoteContentPolicy,
@@ -103,6 +110,7 @@ return;
       onLoad = () => {},
       ...props
     } = this.props;
+    const { noCors } = this.state;
     const isImage = IMAGE_REGEX.test(url);
     const isAudio = AUDIO_REGEX.test(url);
     const isVideo = VIDEO_REGEX.test(url);
@@ -111,11 +119,12 @@ return;
     if (isImage && remoteContentPolicy.imageShown) {
       return this.wrapInLink(
         <BaseImage
-          crossOrigin="anonymous"
+          {...(noCors ? {} : { crossOrigin: "anonymous" })}
           flexShrink={0}
           src={url}
           style={style}
           onLoad={onLoad}
+          onError={this.onError}
           {...imageProps}
           {...props}
         />
