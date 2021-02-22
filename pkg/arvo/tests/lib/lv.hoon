@@ -239,7 +239,7 @@
 ++  test-isclose  ^-  tang
   ;:  weld
     %+  expect
-      !>  (isclose:lvs .1  .1.00001)
+      !>  (isclose:lvs .1 .1.00001)
     %+  expect
       !>  !(isclose:lvs .1 .1001)
     ::  XX should probably test some pathological cases too
