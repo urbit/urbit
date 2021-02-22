@@ -10,6 +10,18 @@ import { CacheableResponsePlugin } from 'workbox-cacheable-response';
 // Used to limit entries in cache, remove entries after a certain period of time
 import { ExpirationPlugin } from 'workbox-expiration';
 
+
+//  generate a different sw for every build, to bust cache properly
+const hash = process.env.LANDSCAPE_SHORTHASH;
+
+self.addEventListener("install", ev => {
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', ev => {
+  ev.waitUntil(clients.claim());
+});
+
 // Cache page navigations (html) with a Network First strategy
 registerRoute(
   // Check to see if the request is a navigation to a new page
