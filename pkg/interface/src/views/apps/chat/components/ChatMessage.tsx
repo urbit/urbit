@@ -188,7 +188,8 @@ export default class ChatMessage extends Component<ChatMessageProps> {
       <Box
         ref={this.divRef}
         pt={renderSigil ? 2 : 0}
-        pb={2}
+        pb={isLastMessage ? 5 : 2}
+        pr={5}
         className={containerClass}
         style={style}
       >
@@ -237,10 +238,7 @@ export const MessageAuthor = ({
   const contact =
     `~${msg.author}` in contacts ? contacts[`~${msg.author}`] : false;
   const showNickname = useShowNickname(contact);
-  const { hideAvatars } =
-    useLocalState(({ hideAvatars }) =>
-      ({ hideAvatars })
-    );
+  const { hideAvatars } = useLocalState(({ hideAvatars }) => ({ hideAvatars }));
   const shipName = showNickname ? contact.nickname : cite(msg.author);
   const copyNotice = 'Copied';
   const color = contact
@@ -276,7 +274,8 @@ export const MessageAuthor = ({
     return () => clearTimeout(timer);
   }, [shipName, displayName]);
 
-  const img = contact?.avatar && !hideAvatars ? (
+  const img =
+    contact?.avatar && !hideAvatars ? (
       <BaseImage
         display='inline-block'
         src={contact.avatar}

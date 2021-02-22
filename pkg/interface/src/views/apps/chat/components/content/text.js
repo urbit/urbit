@@ -5,6 +5,7 @@ import RemarkDisableTokenizers from 'remark-disable-tokenizers';
 import urbitOb from 'urbit-ob';
 import { Text } from '@tlon/indigo-react';
 import { GroupLink } from '~/views/components/GroupLink';
+import { Row } from '@tlon/indigo-react';
 
 const DISABLED_BLOCK_TOKENS = [
   'indentedCode',
@@ -79,7 +80,7 @@ const MessageMarkdown = React.memo((props) => {
 
   return lines.map((line, i) => (
     <>
-      {i !== 0 && <br />}
+      {i !== 0 && <Row height={2} />}
       <ReactMarkdown
         {...rest}
         source={line}

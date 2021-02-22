@@ -191,13 +191,8 @@ h2 {
 }
 
 blockquote {
-  padding-left: 24px;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  margin-left: 0;
-  margin-right: 0;
-  margin-top: 8px;
-  margin-bottom: 8px;
+  padding: 0 0 0 16px;
+  margin: 0;
   border-left: 1px solid black;
 }
 
