@@ -30,6 +30,11 @@
       [@ %2 @ %1 ~]  `[%comment 1 %count %.n]
       [@ %2 @ @ ~]   `[%edit-comment 1 %none %.n]
     ==
+  ::
+  ++  transform-add-nodes
+    |=  [=index =post]
+    ^-  [^index ^post]
+    [index post]
   --
 ++  grab
   |%

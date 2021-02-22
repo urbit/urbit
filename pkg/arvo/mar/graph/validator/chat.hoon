@@ -20,6 +20,11 @@
     ?+  index.p.i  ~
       [@ ~]  `[%message 0 %count %.n]
     ==
+  ::
+  ++  transform-add-nodes
+    |=  [=index =post]
+    ^-  [^index ^post]
+    [index post]
   --
 ++  grab
   |%

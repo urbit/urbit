@@ -74,10 +74,37 @@
   =.  p.update  now.bowl
   ?-  -.q.update
       %add-nodes
-    ?.  (is-allowed-add:hc resource.q.update nodes.q.update)
+    ?.  (is-allowed-add:hc rid nodes.q.update)
       ~
     ::  TODO: use marks to transform based on graph-type
-    `vas
+    =/  mark  (get-mark:gra rid)
+    ?~  mark  `vas
+    |^
+    =/  transform=$-([index:store post:store] [index:store post:store])
+      !<  $-([index:store post:store] [index:store post:store])
+      %.  !>(*indexed-post:store)
+      .^(tube:clay (scry:hc %cc %home /[u.mark]/transform-add-nodes))
+    =.  nodes.q.update
+      %-  ~(gas by *(map index:store node:store))
+      %-  zing
+      %+  turn
+        ~(tap by nodes.q.update)
+      (transform-list transform)
+    [~ !>(update)]
+    ::
+    ++  transform-list
+      |=  transform=$-([index:store post:store] [index:store post:store])
+      |=  [=index:store =node:store]
+      ^-  (list [index:store node:store])
+      =/  [ind=index:store =post:store]  (transform index post.node)
+      :-  [ind [post [%empty ~]]]
+      ?:  ?=(%empty -.children.node)
+        ~
+      %-  zing
+      %+  turn
+        (tap-deep:gra p.children.node)
+      (transform-list transform)
+    --
   ::
       %remove-nodes
     ?.  (is-allowed-remove:hc resource.q.update indices.q.update)
@@ -121,7 +148,7 @@
   |=  =vase
   ^-  [(list card) agent]
   =/  =update:store  !<(update:store vase)
-  ?+  -.q.update       [~ this]
+  ?+    -.q.update   [~ this]
       %add-graph
     ?~  mark.q.update  `this
     =*  mark  u.mark.q.update
@@ -143,18 +170,13 @@
 |_  =bowl:gall
 +*  grp  ~(. group bowl)
     met  ~(. mdl bowl)
-    gra   ~(. graph bowl)
+    gra  ~(. graph bowl)
+::
 ++  scry
   |=  [care=@t desk=@t =path]
   %+  weld
     /[care]/(scot %p our.bowl)/[desk]/(scot %da now.bowl)
   path
-::
-++  scry-mark
-  |=  =resource:res
-  .^  (unit mark)  
-    (scry %gx %graph-store /graph-mark/(scot %p entity.resource)/[name.resource]/noun)
-  ==
 ::
 ++  perm-mark-name
   |=  perm=@t
