@@ -40,7 +40,7 @@
     =.  mar-ok.state  %.y
     =+  .^(paz=(list path) ct+(en-beam now-beak /mar))
     |-  ^+  [fex this]
-    ?~  paz  [fex this]
+    ?~  paz  [(flop fex) this]
     =/  xap=path  (flop i.paz)
     ?.  ?=([%hoon *] xap)
       $(paz t.paz)
@@ -63,7 +63,7 @@
     ?>  =(~ app.state)
     =.  app-ok.state  %.y
     =+  .^(app-arch=arch cy+(en-beam now-beak /app))
-    =/  daz  ~(tap in ~(key by dir.app-arch))
+    =/  daz  (sort ~(tap in ~(key by dir.app-arch)) |=((pair) !(aor p q)))
     |-  ^+  [fex this]
     ?~  daz  [fex this]
     =/  dap-pax=path  /app/[i.daz]/hoon
@@ -86,7 +86,7 @@
     =.  gen-ok.state  %.y
     =+  .^(paz=(list path) ct+(en-beam now-beak /gen))
     |-  ^+  [fex this]
-    ?~  paz  [fex this]
+    ?~  paz  [(flop fex) this]
     =/  xap=path  (flop i.paz)
     ?.  ?=([%hoon *] xap)
       $(paz t.paz)
@@ -106,11 +106,18 @@
 ++  on-peek   on-peek:def
 ++  on-agent  on-agent:def
 ++  on-arvo
+  =>  |%
+      ++  report
+        |*  [=path ok=?]
+        =/  =tank  leaf+"{?:(ok "built " "FAILED")}  {(spud path)}"
+        ~>(%slog.[0 tank] same)
+      --
+  ::
   |=  [=wire =sign-arvo]
   ^-  [(list card) _this]
-  ?.  ?=([%build *] wire)
-    (on-arvo:def wire sign-arvo)
-  ?.  ?=(%writ +<.sign-arvo)
+  ?.  ?&  ?=([%build *] wire)
+          ?=([%clay %writ *] sign-arvo)
+      ==
     (on-arvo:def wire sign-arvo)
   =/  =path  t.wire
   ?+    path  ~|(path+path !!)
@@ -118,41 +125,29 @@
     =/  ok
       ?~  p.sign-arvo  |
       (~(nest ut -:!>(*agent:gall)) | -:!<(vase q.r.u.p.sign-arvo))
-    ~&  ?:  ok
-          agent-built+path
-        agent-failed+path
+    %-  (report path ok)
     =?  app-ok.state  !ok  %.n
     =.  app.state  (~(del in app.state) path)
     ~?  =(~ app.state)
-      ?:  app-ok.state
-        %all-agents-built
-      %some-agents-failed
+      ?:(app-ok.state %all-agents-built %some-agents-failed)
     [~ this]
   ::
       [%mar *]
     =/  ok  ?=(^ p.sign-arvo)
-    ~&  ?:  ok
-          mark-built+path
-        mark-failed+path
+    %-  (report path ok)
     =?  mar-ok.state  !ok  %.n
     =.  mar.state  (~(del in mar.state) path)
     ~?  =(~ mar.state)
-      ?:  mar-ok.state
-        %all-marks-built
-      %some-marks-failed
+      ?:(mar-ok.state %all-marks-built %some-marks-failed)
     [~ this]
   ::
       [%gen *]
     =/  ok  ?=(^ p.sign-arvo)
-    ~&  ?:  ok
-          generator-built+path
-        generator-failed+path
+    %-  (report path ok)
     =?  gen-ok.state  !ok  %.n
     =.  gen.state  (~(del in gen.state) path)
     ~?  =(~ gen.state)
-      ?:  gen-ok.state
-        %all-generators-built
-      %some-generators-failed
+      ?:(gen-ok.state %all-generators-built %some-generators-failed)
     [~ this]
   ==
 ++  on-fail   on-fail:def
