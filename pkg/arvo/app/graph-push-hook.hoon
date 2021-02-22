@@ -66,28 +66,38 @@
   ==
 ::
 ++  on-fail   on-fail:def
-::
-++  should-proxy-update
-  |=  =vase
-  ^-  ?
-  =/  =update:store  !<(update:store vase)
+++  transform-proxy-update
+  |=  vas=vase
+  ^-  (unit vase)
+  =/  =update:store  !<(update:store vas)
   =*  rid  resource.q.update
+  =.  p.update  now.bowl
   ?-  -.q.update
-      %add-graph          %.n
-      %remove-graph       %.n
-      %add-nodes          (is-allowed-add:hc resource.q.update nodes.q.update)
-      %remove-nodes       (is-allowed-remove:hc resource.q.update indices.q.update)
-      %add-signatures     %.n
-      %remove-signatures  %.n
-      %archive-graph      %.n
-      %unarchive-graph    %.n
-      %add-tag            %.n
-      %remove-tag         %.n
-      %keys               %.n
-      %tags               %.n
-      %tag-queries        %.n
-      %run-updates        %.n
+      %add-nodes
+    ?.  (is-allowed-add:hc resource.q.update nodes.q.update)
+      ~
+    ::  TODO: use marks to transform based on graph-type
+    `vas
+  ::
+      %remove-nodes
+    ?.  (is-allowed-remove:hc resource.q.update indices.q.update)
+      ~
+    `vas
+  ::
+    %add-graph          ~
+    %remove-graph       ~
+    %add-signatures     ~
+    %remove-signatures  ~
+    %archive-graph      ~
+    %unarchive-graph    ~
+    %add-tag            ~
+    %remove-tag         ~
+    %keys               ~
+    %tags               ~
+    %tag-queries        ~
+    %run-updates        ~
   ==
+::
 ++  resource-for-update  resource-for-update:gra
 ::
 ++  initial-watch
