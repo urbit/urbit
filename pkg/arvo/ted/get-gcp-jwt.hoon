@@ -33,11 +33,11 @@
 =/  sot=@t
   %:  self-jwt
     key  kid  iss
-    'https://www.googleapis.com/auth/devstorage.editor'
+    'https://www.googleapis.com/auth/cloud-platform'
     aud  now.bowl
   ==
-;<  jot=@t  bind:m  (sign-jwt sot aud)
-(pure:m !>(jot))
+;<  p=[tok=@t exp=@da]  bind:m  (sign-jwt sot aud)
+(pure:m !>(p))
 ::
 ++  read-setting
   |=  key=term
@@ -99,7 +99,7 @@
 ::
 ++  sign-jwt
   |=  [jot=@t url=@t]
-  =/  m  (strand @t)  ^-  form:m
+  =/  m  (strand ,[@t @da])  ^-  form:m
   ;<  ~  bind:m
     %:  send-request:strandio
       method=%'POST'
@@ -124,8 +124,11 @@
   ?~  jon
     (strand-fail:strandio %bad-body ~[body])
   =*  job  u.jon
-  %-  pure:m
+  ~|  job
   =,  dejs:format
-  %-  (ot 'id_token'^so ~)
-  job
+  =/  [typ=@t exp=@da tok=@t]
+    ((ot 'token_type'^so 'expires_in'^du 'access_token'^so ~) job)
+  ?>  =('Bearer' typ)
+  %-  pure:m
+  [tok exp]
 --
