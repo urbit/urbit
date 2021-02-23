@@ -1,19 +1,20 @@
-::  Thread that gets a JWT for use with Google Storage.
+::  Gets a Google Storage access token.
 ::
-::  This thread expects settings-store to contain relevant fields from a GCP
-::  service account JSON file, e.g. as poked by urbit/sh/poke-gcp-account-json.
+::  This thread produces a pair of [access-token expires-at], where
+::  access-token is a @t that can be used as a bearer token to talk to the
+::  GCP Storage API on behalf of some service account, and expires-at is
+::  a @da after which the token will stop working and need to be refreshed.
+::
+::  It expects settings-store to contain relevant fields from a GCP service
+::  account JSON file, generally as poked by sh/poke-gcp-account-json.
 ::  Specifically, it depends on the `token_uri`, `client_email`,
-::  `private_key_id`, and `private_key` fields. If these fields are not in
-::  settings-store at the time the thread is run, it will fail.
+::  `private_key_id`, and `private_key` fields. If these fields are not
+::  in settings-store at the time the thread is run, it will fail.
 ::
-::  The thread works by first constructing a self-signed JWT using the fields
-::  in settings-store. Then, it sends this JWT to the specified token URI
-::  (usually https://oauth2.googleapis.com/token), which gives us a JWT signed
-::  by Google. This token can then be used as a bearer token for requests to
-::  Google Storage.
-::
-::  The returned token has an expiration time of 60 minutes after the time at
-::  which the thread was called.
+::  The thread works by first constructing a self-signed JWT using the
+::  fields in settings-store. Then, it sends this JWT to the specified
+::  token URI (usually https://oauth2.googleapis.com/token), which responds
+::  with a bearer token and expiry.
 ::
 ::
 /-  spider, settings
@@ -36,7 +37,7 @@
     'https://www.googleapis.com/auth/cloud-platform'
     aud  now.bowl
   ==
-;<  p=[tok=@t exp=@da]  bind:m
+;<  p=[access-token=@t expires-at=@da]  bind:m
   (get-access-token sot aud now.bowl)
 (pure:m !>(p))
 ::
