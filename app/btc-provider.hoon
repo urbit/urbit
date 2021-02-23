@@ -159,6 +159,13 @@
   ?:  ?&(?=(%check-network -.act) ?!(=(network.act network.host-info)))
     %-  (slog ~[leaf+"network mismatch with client {<src.bowl>}"])
     (kick-client src.bowl)
+  ::  TODO: turn each of these into a gate call in rpc that creates a thread.
+  ::  poke spider example:
+  ::  https://github.com/urbit/urbit/blob/fab9a47a925f73f026c39f124e543e009d211978/pkg/arvo/app/eth-watcher.hoon#L461
+  ::  +$ start-args: [parent-tid=(unit tid) use=(unit tid) file=term =vase]
+  ::
+  ::  You may receive the return value or be notified of failure by subscribing to Spider at /thread-result/[tid]
+  ::
   =/  ract=action:rpc-types
     ?+  -.act  ~|("Invalid action" !!)
         %address-info
@@ -235,6 +242,7 @@
   ==
 ::
 ++  handle-rpc-result
+  ::  TODO: move this to spider
   |=  [=wire r=result:rpc-types]
   ^-  (quip card _state)
   ?+  -.wire  ~|("Unexpected HTTP response" !!)
