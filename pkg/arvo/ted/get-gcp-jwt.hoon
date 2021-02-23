@@ -36,7 +36,8 @@
     'https://www.googleapis.com/auth/cloud-platform'
     aud  now.bowl
   ==
-;<  p=[tok=@t exp=@dr]  bind:m  (get-access-token sot aud)
+;<  p=[tok=@t exp=@da]  bind:m
+  (get-access-token sot aud now.bowl)
 (pure:m !>(p))
 ::
 ++  read-setting
@@ -98,8 +99,8 @@
 ::  https://developers.google.com/identity/protocols/oauth2/service-account
 ::
 ++  get-access-token
-  |=  [jot=@t url=@t]
-  =/  m  (strand ,[@t @dr])  ^-  form:m
+  |=  [jot=@t url=@t now=@da]
+  =/  m  (strand ,[@t @da])  ^-  form:m
   ;<  ~  bind:m
     %:  send-request:strandio
       method=%'POST'
@@ -137,5 +138,5 @@
     ==
   ?>  =('Bearer' typ)
   %-  pure:m
-  [tok exp]
+  [tok (add exp now)]
 --
