@@ -34,10 +34,8 @@
 =/  groups=(list [local=? resource:re members=@ud])
   %+  murn
     %~  tap  in
-    %~  key  by
-    dir:(scry arch %y %group-store /groups)
-  |=  i=@ta
-  =/  r=resource:re  (de-path:re (stab i))
+    (scry (set resource:re) %y %group-store /groups)
+  |=  r=resource:re
   =/  g=(unit group:gr)
     %+  scry  (unit group:gr)
     [%x %group-store [%groups (snoc (en-path:re r) %noun)]]
