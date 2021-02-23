@@ -78,7 +78,7 @@ export function GroupLink(
           <Text ml="2" fontWeight="medium" mono={!preview}>
             {preview ? preview.metadata.title : name}
           </Text>
-          <Text pt='1' ml='2'>{preview ? preview.members : "Unknown"} members</Text>
+          <Text pt='1' ml='2'>{preview ? `${preview.members} members` : "Fetching member count"}</Text>
         </Col>
       </Row>
     </Box>
