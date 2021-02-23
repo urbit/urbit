@@ -1,4 +1,5 @@
-import React from "react";
+import React, { ReactElement } from 'react';
+
 import {
   Box,
   Text,
@@ -6,28 +7,26 @@ import {
   Label,
   Col,
   ManagedRadioButtonField as Radio,
-  ManagedTextInputField as Input,
-} from "@tlon/indigo-react";
+} from '@tlon/indigo-react';
 
-import GlobalApi from "~/logic/api/global";
-import { S3State } from "~/types";
-import { ImageInput } from "~/views/components/ImageInput";
-import {ColorInput} from "~/views/components/ColorInput";
+import GlobalApi from '~/logic/api/global';
+import { ImageInput } from '~/views/components/ImageInput';
+import { ColorInput } from '~/views/components/ColorInput';
+import { S3State } from '~/types/s3-update';
 
-export type BgType = "none" | "url" | "color";
+export type BgType = 'none' | 'url' | 'color';
 
 export function BackgroundPicker({
   bgType,
   bgUrl,
   api,
-  s3,
+  s3
 }: {
   bgType: BgType;
   bgUrl?: string;
   api: GlobalApi;
   s3: S3State;
-}) {
-
+}): ReactElement {
   const rowSpace = { my: 0, alignItems: 'center' };
   const colProps = { my: 3, mr: 4, gapY: 1 };
   return (

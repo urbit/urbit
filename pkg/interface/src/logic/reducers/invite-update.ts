@@ -1,10 +1,9 @@
 import _ from 'lodash';
 import { StoreState } from '../../store/type';
 import { Cage } from '~/types/cage';
-import { InviteUpdate } from '~/types/invite-update';
+import { InviteUpdate } from '@urbit/api/invite';
 
-type InviteState = Pick<StoreState, "invites">;
-
+type InviteState = Pick<StoreState, 'invites'>;
 
 export default class InviteReducer<S extends InviteState> {
   reduce(json: Cage, state: S) {

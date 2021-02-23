@@ -1,19 +1,21 @@
 import React, { useMemo, useRef, useCallback, useEffect, useState } from 'react';
-import { withRouter, useLocation, useHistory } from 'react-router-dom';
-import { Box, Row, Rule, Text } from '@tlon/indigo-react';
+import { useLocation, useHistory } from 'react-router-dom';
 import * as ob from 'urbit-ob';
-import makeIndex from '~/logic/lib/omnibox';
 import Mousetrap from 'mousetrap';
+
+import { Box, Row, Text } from '@tlon/indigo-react';
+import { Associations, Contacts, Groups, Invites } from '@urbit/api';
+
+import makeIndex from '~/logic/lib/omnibox';
 import OmniboxInput from './OmniboxInput';
 import OmniboxResult from './OmniboxResult';
-import useLocalState, { withLocalState, selectLocalState } from '~/logic/state/local';
 import { deSig } from '~/logic/lib/util';
 
 import defaultApps from '~/logic/lib/default-apps';
-import {Associations, Contacts, Groups, Tile, Invites} from '~/types';
 import {useOutsideClick} from '~/logic/lib/useOutsideClick';
 import {Portal} from '../Portal';
 import useSettingsState, {SettingsState} from '~/logic/state/settings';
+import { Tile } from '~/types';
 
 interface OmniboxProps {
   associations: Associations;
@@ -34,18 +36,17 @@ const settingsSel = (s: SettingsState) => s.leap;
 export function Omnibox(props: OmniboxProps) {
   const location = useLocation();
   const history = useHistory();
-  //const { hideLeapCats } = useLocalState(localSelector);
   const leapConfig = useSettingsState(settingsSel);
   const omniboxRef = useRef<HTMLDivElement | null>(null)
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const [query, setQuery] = useState('');
-  const [selected, setSelected] = useState<[] | [string, string]>([])
+  const [selected, setSelected] = useState<[] | [string, string]>([]);
 
   const contacts = useMemo(() => {
     const maybeShip = `~${deSig(query)}`;
-    return ob.isValidPatp(maybeShip) 
-      ? {...props.contacts, [maybeShip]: {} }
+    return ob.isValidPatp(maybeShip)
+      ? { ...props.contacts, [maybeShip]: {} }
       : props.contacts;
   }, [props.contacts, query]);
 
@@ -75,10 +76,10 @@ export function Omnibox(props: OmniboxProps) {
   ]);
 
   const onOutsideClick = useCallback(() => {
-    props.show && props.toggle() 
+    props.show && props.toggle();
   }, [props.show, props.toggle]);
 
-  useOutsideClick(omniboxRef, onOutsideClick)
+  useOutsideClick(omniboxRef, onOutsideClick);
 
   //  handle omnibox show
   useEffect(() => {
@@ -109,7 +110,7 @@ export function Omnibox(props: OmniboxProps) {
       return initialResults;
     }
     const q = query.toLowerCase();
-    let resultsMap = new Map();
+    const resultsMap = new Map();
     SEARCHED_CATEGORIES.map((category) => {
       const categoryIndex = index.get(category);
       resultsMap.set(category,
@@ -130,11 +131,11 @@ export function Omnibox(props: OmniboxProps) {
     props.toggle();
     if (defaultApps.includes(app.toLowerCase())
         || app === 'profile'
+        || app === 'messages'
         || app === 'Links'
         || app === 'Terminal'
         || app === 'home'
-        || app === 'inbox')
-    {
+        || app === 'inbox') {
       history.push(link);
     } else {
       window.location.href = link;
@@ -165,7 +166,7 @@ export function Omnibox(props: OmniboxProps) {
 
   const setNextSelected = useCallback(() => {
     const flattenedResults = Array.from(results.values()).flat();
-    if (selected.length){
+    if (selected.length) {
       const currentIndex = flattenedResults.indexOf(
         ...flattenedResults.filter((e) => {
           return e.link === selected[1];
@@ -193,7 +194,7 @@ export function Omnibox(props: OmniboxProps) {
         props.toggle();
         return;
       }
-    };
+    }
     if (
       evt.key === 'ArrowUp' ||
       (evt.shiftKey && evt.key === 'Tab')) {
@@ -244,7 +245,7 @@ export function Omnibox(props: OmniboxProps) {
 
   const renderResults = useCallback(() => {
     return <Box
-            maxHeight={['200px', "400px"]}
+            maxHeight={['200px', '400px']}
             overflowY="auto"
             overflowX="hidden"
             borderBottomLeftRadius='2'
@@ -290,7 +291,8 @@ export function Omnibox(props: OmniboxProps) {
           top='0'
           right='0'
           zIndex={11}
-          display={props.show ? 'block' : 'none'}>
+          display={props.show ? 'block' : 'none'}
+        >
           <Row justifyContent='center'>
             <Box
               mt={['10vh', '20vh']}
@@ -298,10 +300,14 @@ export function Omnibox(props: OmniboxProps) {
               maxWidth='600px'
               borderRadius='2'
               backgroundColor='white'
-              ref={(el) => { omniboxRef.current = el; }}
+              ref={(el) => {
+ omniboxRef.current = el;
+}}
             >
               <OmniboxInput
-                ref={(el) => { inputRef.current = el; }}
+                ref={(el) => {
+ inputRef.current = el;
+}}
                 control={e => control(e)}
                 search={search}
                 query={query}

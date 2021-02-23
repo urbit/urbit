@@ -30,7 +30,7 @@
 ::
 ::
 /-  *group
-/+  store=group-store, default-agent, verb, dbug, resource, *migrate
+/+  store=group-store, default-agent, verb, dbug, resource, *migrate, agentio
 |%
 +$  card  card:agent:gall
 ::
@@ -111,6 +111,8 @@
     ?>  (team:title our.bowl src.bowl)
     =^  cards  state
       ?+    mark  (on-poke:def mark vase)
+        %sane  (poke-sane:gc !<(?(%check %fix) vase))
+      ::
           ?(%group-update %group-action)
         (poke-group-update:gc !<(update:store vase))
       ::
@@ -189,6 +191,7 @@
   --
 ::
 |_  bol=bowl:gall
++*  io  ~(. agentio bol)
 ++  peek-group
   |=  rid=resource
   ^-  (unit group)
@@ -212,6 +215,27 @@
       (~(has in banned.policy) ship)
       (~(has in ban-ranks.policy) (clan:title ship))
     ==
+  ==
+++  poke-sane
+  |=  input=?(%check %fix)
+  ^-  (quip card _state)
+  =;  cards=(list card)
+    ?:  =(%check input)
+      ~&  cards
+      `state
+    [cards state]
+  %+  roll  ~(tap in ~(key by groups))
+  |=  [rid=resource out=(list card)]
+  ?.  ?&  =(entity.rid our.bol)
+          !(~(has in members:(~(got by groups) rid)) our.bol)
+      ==
+    out
+  =/  =wire
+    sane+(en-path:resource rid)
+  =*  poke-self  ~(poke-self pass:io wire)
+  %+  weld  out
+  :~  (poke-self group-update+!>([%add-members rid (silt our.bol ~)]))
+      (poke-self group-update+!>([%add-tag rid %admin (silt our.bol ~)]))
   ==
 ::
 ++  poke-import

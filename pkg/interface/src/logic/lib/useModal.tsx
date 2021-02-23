@@ -5,15 +5,15 @@ import React, {
   SyntheticEvent,
   useMemo,
   useEffect,
-  useRef,
-} from "react";
+  useRef
+} from 'react';
 
-import { Box } from "@tlon/indigo-react";
-import { useOutsideClick } from "./useOutsideClick";
-import { ModalOverlay } from "~/views/components/ModalOverlay";
-import {Portal} from "~/views/components/Portal";
-import {ModalPortal} from "~/views/components/ModalPortal";
-import {PropFunc} from "~/types";
+import { Box } from '@tlon/indigo-react';
+import { useOutsideClick } from './useOutsideClick';
+import { ModalOverlay } from '~/views/components/ModalOverlay';
+import { Portal } from '~/views/components/Portal';
+import { ModalPortal } from '~/views/components/ModalPortal';
+import { PropFunc } from '@urbit/api';
 
 type ModalFunc = (dismiss: () => void) => JSX.Element;
 interface UseModalProps {
@@ -42,7 +42,7 @@ export function useModal(props: UseModalProps & PropFunc<typeof Box>): UseModalR
     () =>
       !modalShown
         ? null
-        : typeof modal === "function"
+        : typeof modal === 'function'
         ? modal(dismiss)
         : modal,
     [modalShown, modal, dismiss]
@@ -59,7 +59,7 @@ export function useModal(props: UseModalProps & PropFunc<typeof Box>): UseModalR
           bg="white"
           borderRadius={2}
           border={[0, 1]}
-          borderColor={["washedGray", "washedGray"]}
+          borderColor={['washedGray', 'washedGray']}
           display="flex"
           alignItems="stretch"
           flexDirection="column"
@@ -76,6 +76,6 @@ export function useModal(props: UseModalProps & PropFunc<typeof Box>): UseModalR
 
   return {
     showModal,
-    modal: modalComponent,
+    modal: modalComponent
   };
 }

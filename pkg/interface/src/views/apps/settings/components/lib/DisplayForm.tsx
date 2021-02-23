@@ -1,12 +1,8 @@
 import React from "react";
 
 import {
-  Box,
-  ManagedCheckboxField as Checkbox,
-  Button,
   Col,
   Text,
-  ManagedToggleSwitchField as Toggle,
 } from "@tlon/indigo-react";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
@@ -15,7 +11,6 @@ import GlobalApi from "~/logic/api/global";
 import { uxToHex } from "~/logic/lib/util";
 import { S3State, BackgroundConfig } from "~/types";
 import { BackgroundPicker, BgType } from "./BackgroundPicker";
-import { BackButton } from "./BackButton";
 import useSettingsState, { SettingsState, selectSettingsState } from "~/logic/state/settings";
 import {AsyncButton} from "~/views/components/AsyncButton";
 

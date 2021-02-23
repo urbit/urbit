@@ -1,4 +1,4 @@
-import { Post, GraphNode } from "~/types";
+import { Post, GraphNode } from '@urbit/api';
 
 export const buntPost = (): Post => ({
   author: '',
@@ -10,7 +10,7 @@ export const buntPost = (): Post => ({
 });
 
 export function makeNodeMap(posts: Post[]): Record<string, GraphNode> {
-  let nodes = {};
+  const nodes = {};
   posts.forEach((p) => {
     nodes[p.index] = { children: { empty: null }, post: p };
   });

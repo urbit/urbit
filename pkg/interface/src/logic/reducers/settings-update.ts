@@ -5,7 +5,6 @@ import produce from 'immer';
 
 export default class SettingsStateZusettingsReducer{
   reduce(json: any) {
-
     const old = useSettingsState.getState();
     const newState = produce(old, state => {
       let data = json["settings-event"];
@@ -24,7 +23,6 @@ export default class SettingsStateZusettingsReducer{
         this.getEntry(data, state);
       }
     });
-    console.log(newState);
     useSettingsState.setState(newState);
   }
 
@@ -38,7 +36,7 @@ export default class SettingsStateZusettingsReducer{
   delBucket(json: SettingsUpdate, state: SettingsStateZus) {
     const data = _.get(json, 'del-bucket', false);
     if (data) {
-      delete state.settings[data["bucket-key"]];
+      delete settings[data['bucket-key']];
     }
   }
 

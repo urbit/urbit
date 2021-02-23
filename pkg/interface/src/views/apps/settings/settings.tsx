@@ -1,14 +1,12 @@
 import React, { ReactNode } from "react";
-import { Route, Link, Switch, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import Helmet from "react-helmet";
 
-import { Box, Text, Row, Col, Icon, BaseImage } from "@tlon/indigo-react";
+import { Text, Box, Col, Row } from '@tlon/indigo-react';
 
-import Settings from "./components/settings";
 import { NotificationPreferences } from "./components/lib/NotificationPref";
 import DisplayForm from "./components/lib/DisplayForm";
 import S3Form from "./components/lib/S3Form";
-import useLocalState from "~/logic/state/local";
 import { CalmPrefs } from "./components/lib/CalmPref";
 import SecuritySettings from "./components/lib/Security";
 import { LeapSettings } from "./components/lib/LeapSettings";
@@ -63,7 +61,6 @@ function SettingsItem(props: { hash: string; children: ReactNode }) {
 }
 
 export default function SettingsScreen(props: any) {
-  const { ship, dark } = props;
 
   useHashLink();
 

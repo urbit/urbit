@@ -1,11 +1,11 @@
-import React, { useCallback, useState } from "react";
+import React, { ReactElement, useCallback, useState } from "react";
+import { Formik, FormikHelpers } from 'formik';
 
 import {
   ManagedTextInputField as Input,
   ManagedForm as Form,
   Box,
   Button,
-  Col,
   Text,
   Menu,
   MenuButton,
@@ -13,19 +13,18 @@ import {
   MenuItem,
   Row,
 } from "@tlon/indigo-react";
-import { Formik, FormikHelpers } from "formik";
 
-import GlobalApi from "~/logic/api/global";
+import GlobalApi from '~/logic/api/global';
 
 export function BucketList({
   buckets,
   selected,
-  api,
+  api
 }: {
   buckets: Set<string>;
   selected: string;
   api: GlobalApi;
-}) {
+}): ReactElement {
   const _buckets = Array.from(buckets);
 
   const [adding, setAdding] = useState(false);
@@ -57,14 +56,14 @@ export function BucketList({
   );
 
   return (
-    <Formik initialValues={{ newBucket: "" }} onSubmit={onSubmit}>
+    <Formik initialValues={{ newBucket: '' }} onSubmit={onSubmit}>
       <Form
         display="grid"
         gridTemplateColumns="100%"
         gridAutoRows="auto"
         gridRowGap={2}
       >
-        {_buckets.map((bucket) => (
+        {_buckets.map(bucket => (
           <Box
             key={bucket}
             display="flex"

@@ -7,7 +7,7 @@ import {
   StatelessCheckboxField,
 } from "@tlon/indigo-react";
 
-import GlobalApi from "../../../../api/global";
+import GlobalApi from "~/logic/api/global";
 
 interface SecuritySettingsProps {
   api: GlobalApi;

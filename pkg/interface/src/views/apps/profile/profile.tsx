@@ -1,36 +1,25 @@
-import React from "react";
-import { Route, Link } from "react-router-dom";
+import React from 'react';
+import { Route, Link } from 'react-router-dom';
 import Helmet from 'react-helmet';
 
-import { Box, Text, Row, Col, Icon, BaseImage } from "@tlon/indigo-react";
-
-import { uxToHex } from "~/logic/lib/util";
+import { Box } from '@tlon/indigo-react';
 
 import { Profile } from "./components/Profile";
-import useSettingsState, {SettingsState} from "~/logic/state/settings";
-
-const settingsSel = (s: SettingsState) => s.calm.hideAvatars;
 
 export default function ProfileScreen(props: any) {
   const { dark } = props;
-  const hideAvatars = useSettingsState(settingsSel);
   return (
     <>
     <Helmet defer={false}>
       <title>{ props.notificationsCount ? `(${String(props.notificationsCount) }) `: '' }Landscape - Profile</title>
     </Helmet>
     <Route
-      path={"/~profile/:ship/:edit?"}
-      render={({ match, history }) => {
+      path={'/~profile/:ship/:edit?'}
+      render={({ match }) => {
         const ship = match.params.ship;
         const isEdit = match.url.includes('edit');
         const isPublic = props.isContactPublic;
         const contact = props.contacts?.[ship];
-        const sigilColor = contact?.color
-          ? `#${uxToHex(contact.color)}`
-          : dark
-          ? "#FFFFFF"
-          : "#000000";
 
         return (
           <Box height="100%" px={[0, 3]} pb={[0, 3]} borderRadius={1}>
