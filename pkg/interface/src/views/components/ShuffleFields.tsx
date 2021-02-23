@@ -6,7 +6,7 @@ import {
   Field,
   useFormikContext,
 } from "formik";
-import { Icon, Col, Row } from "@tlon/indigo-react";
+import { Icon, Col, Row, Box } from "@tlon/indigo-react";
 
 interface ShuffleFieldsProps<N extends string> {
   name: N;
@@ -40,15 +40,15 @@ export function ShuffleFields<N extends string, T, F extends Value<N, T>>(
           }
         };
         return (
-          <Col gapY="3">
+          <Box gridColumnGap="2" gridRowGap="3" display="grid" gridAutoRows="auto" gridTemplateColumns="32px 32px 1fr">
             {fields.map((field, i) => (
-              <Row gapX="2" key={i}>
+              <React.Fragment key={i}>
+                <Icon width="3" height="3" icon="ChevronNorth" onClick={goUp(i)} />
+                <Icon width="3" height="3" icon="ChevronSouth" onClick={goDown(i)} />
                 {children(i, arrayHelpers)}
-                <Icon icon="ChevronNorth" onClick={goUp(i)} />
-                <Icon icon="ChevronSouth" onClick={goDown(i)} />
-              </Row>
+              </React.Fragment>
             ))}
-          </Col>
+          </Box>
         );
       }}
     />

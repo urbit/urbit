@@ -52,7 +52,6 @@ export function NotificationPreferences(props: {
 
   return (
     <Col p="5" gapY="5">
-      <BackButton />
       <Col gapY="1">
         <Text fontSize="2" fontWeight="medium">
           Notification Preferences

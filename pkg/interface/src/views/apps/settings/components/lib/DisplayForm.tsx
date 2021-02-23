@@ -17,6 +17,7 @@ import { S3State, BackgroundConfig } from "~/types";
 import { BackgroundPicker, BgType } from "./BackgroundPicker";
 import { BackButton } from "./BackButton";
 import useSettingsState, { SettingsState, selectSettingsState } from "~/logic/state/settings";
+import {AsyncButton} from "~/views/components/AsyncButton";
 
 const formSchema = Yup.object().shape({
   bgType: Yup.string()
@@ -49,7 +50,6 @@ export default function DisplayForm(props: DisplayFormProps) {
     }
   } = useSettingsState(settingsSel);
 
-  console.log(backgroundType);
 
   let bgColor, bgUrl;
   if (backgroundType === "url") {
@@ -85,12 +85,13 @@ export default function DisplayForm(props: DisplayFormProps) {
 
         await Promise.all(promises);
 
+        actions.setStatus({ success: null });
+
       }}
     >
       {(props) => (
         <Form>
           <Col p="5" gapY="5">
-            <BackButton />
             <Col gapY="2">
               <Text color="black" fontSize={2} fontWeight="medium">
                 Display Preferences
@@ -105,9 +106,9 @@ export default function DisplayForm(props: DisplayFormProps) {
               api={api}
               s3={s3}
             />
-            <Button primary width="fit-content" type="submit">
+            <AsyncButton primary width="fit-content" type="submit">
               Save
-            </Button>
+            </AsyncButton>
           </Col>
         </Form>
       )}

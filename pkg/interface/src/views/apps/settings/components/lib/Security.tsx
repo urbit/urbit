@@ -8,7 +8,6 @@ import {
 } from "@tlon/indigo-react";
 
 import GlobalApi from "../../../../api/global";
-import {BackButton} from "./BackButton";
 
 interface SecuritySettingsProps {
   api: GlobalApi;
@@ -18,7 +17,6 @@ export default function SecuritySettings({ api }: SecuritySettingsProps) {
   const [allSessions, setAllSessions] = useState(false);
   return (
     <Col gapY="5" p="5">
-      <BackButton />
       <Col>
         <Text fontSize={2} fontWeight="medium">
           Security Preferences

@@ -51,7 +51,6 @@ export default function S3Form(props: S3FormProps) {
   return (
     <>
       <Col p="5" borderBottom="1" borderBottomColor="washedGray">
-        <BackButton />
         <Formik
           initialValues={
             {

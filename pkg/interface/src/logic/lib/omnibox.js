@@ -80,14 +80,11 @@ const otherIndex = function(config) {
     logout: result('Log Out', '/~/logout', 'logout', null)
   };
 
-  console.log(config);
-
   for(let cat of JSON.parse(config.categories)) {
     if(idx[cat]) {
       other.push(idx[cat]);
     }
   }
-
 
   return other;
 };

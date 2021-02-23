@@ -11,6 +11,7 @@ import * as Yup from "yup";
 import { BackButton } from "./BackButton";
 import useSettingsState, {selectSettingsState} from "~/logic/state/settings";
 import GlobalApi from "~/logic/api/global";
+import {AsyncButton} from "~/views/components/AsyncButton";
 
 interface FormSchema {
   hideAvatars: boolean;
@@ -51,7 +52,7 @@ export function CalmPrefs(props: {
   };
 
   const onSubmit = useCallback(async (v: FormSchema, actions: FormikHelpers<FormSchema>) => {
-    return Promise.all([
+    await Promise.all([
       api.settings.putEntry('calm', 'hideAvatars', v.hideAvatars),
       api.settings.putEntry('calm', 'hideNicknames', v.hideNicknames),
       api.settings.putEntry('remoteContentPolicy', 'imageShown', v.imageShown),
@@ -59,13 +60,13 @@ export function CalmPrefs(props: {
       api.settings.putEntry('remoteContentPolicy', 'audioShown', v.audioShown),
       api.settings.putEntry('remoteContentPolicy', 'oembedShown', v.oembedShown),
     ]);
+    actions.setStatus({ success: null });
   }, [api]);
 
   return (
     <Formik initialValues={initialValues} onSubmit={onSubmit}>
       <Form>
         <Col borderBottom="1" borderBottomColor="washedGray" p="5" gapY="5">
-          <BackButton />
           <Col gapY="1">
             <Text color="black" fontSize={2} fontWeight="medium">
               CalmEngine
@@ -107,9 +108,9 @@ export function CalmPrefs(props: {
             caption="Embedded content may contain scripts that can track you"
           />
 
-          <Button primary width="fit-content" type="submit">
+          <AsyncButton primary width="fit-content" type="submit">
             Save
-          </Button>
+          </AsyncButton>
         </Col>
       </Form>
     </Formik>
