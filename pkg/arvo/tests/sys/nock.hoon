@@ -29,4 +29,10 @@
     %-  expect-fail
       |.  .*(~ [%6 [%1 2] [%1 42] %1 43])
   ==
+::  nock 9 should support axis 1
+::
+++  test-call-one
+  %+  expect-eq
+    !>  0
+    !>  .*([3 0 1] [9 1 [0 1]])
 --
