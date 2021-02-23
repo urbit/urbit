@@ -6,7 +6,7 @@ import { Row, Box, BaseImage } from '@tlon/indigo-react';
 import { Contacts } from '@urbit/api/contacts';
 import { Group } from '@urbit/api';
 
-import { uxToHex, cite, useShowNickname } from '~/logic/lib/util';
+import { uxToHex, cite, useShowNickname, deSig } from '~/logic/lib/util';
 import OverlaySigil from './OverlaySigil';
 import { Sigil } from '~/logic/lib/sigil';
 import GlobalApi from '~/logic/api/global';
@@ -29,7 +29,7 @@ export default function Author(props: AuthorProps): ReactElement {
   const history = useHistory();
   let contact;
   if (contacts) {
-    contact = ship in contacts ? contacts[ship] : null;
+    contact = `~${deSig(ship)}` in contacts ? contacts[`~${deSig(ship)}`] : null;
   }
   const color = contact?.color ? `#${uxToHex(contact?.color)}` : '#000000';
   const showNickname = useShowNickname(contact);

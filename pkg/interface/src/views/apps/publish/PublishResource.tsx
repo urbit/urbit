@@ -17,7 +17,6 @@ export function PublishResource(props: PublishResourceProps) {
   const { association, api, baseUrl, notebooks } = props;
   const rid = association.resource;
   const [, , ship, book] = rid.split('/');
-  const notebookContacts = props.contacts[association.group];
 
   return (
     <Box height="100%" width="100%" overflowY="auto">
@@ -29,7 +28,6 @@ export function PublishResource(props: PublishResourceProps) {
         groups={props.groups}
         associations={props.associations}
         association={association}
-        notebookContacts={notebookContacts}
         rootUrl={baseUrl}
         baseUrl={`${baseUrl}/resource/publish/ship/${ship}/${book}`}
         history={props.history}
