@@ -31,7 +31,8 @@
 ;<  =key:rsa      bind:m  read-private-key
 ;<  kid=@t        bind:m  (read-setting %private-key-id)
 ;<  aud=@t        bind:m  (read-setting %token-uri)
-=*  scope  'https://www.googleapis.com/auth/devstorage.read_write'
+=*  scope
+  'https://www.googleapis.com/auth/devstorage.read_write'
 =/  jot=@t
   (make-jwt key kid iss scope aud now.bowl)
 ;<  p=[access-token=@t expires-at=@da]  bind:m
