@@ -31,12 +31,12 @@
 ;<  kid=@t        bind:m  (read-setting %private-key-id)
 ;<  aud=@t        bind:m  (read-setting %token-uri)
 =/  sot=@t
-  %:  self-jwt
+  %:  make-jwt
     key  kid  iss
     'https://www.googleapis.com/auth/cloud-platform'
     aud  now.bowl
   ==
-;<  p=[tok=@t exp=@da]  bind:m  (sign-jwt sot aud)
+;<  p=[tok=@t exp=@dr]  bind:m  (get-access-token sot aud)
 (pure:m !>(p))
 ::
 ++  read-setting
@@ -66,7 +66,7 @@
 ::  construct and return a self-signed JWT issued now, expiring in ~h1.
 ::  TODO: maybe move this into lib/jose/hoon
 ::
-++  self-jwt
+++  make-jwt
   |=  [=key:rsa kid=@t iss=@t scope=@t aud=@t iat=@da]
   ^-  @t
   =/  job=json
@@ -93,13 +93,13 @@
     =,  dejs:format
     ((ot 'protected'^so 'payload'^so 'signature'^so ~) job)
   (rap 3 (join '.' `(list @t)`~[pod pad sig]))
-::  RPC to get a signed JWT. Probably only works with Google.
+::  RPC to get an access token. Probably only works with Google.
 ::  Described at:
 ::  https://developers.google.com/identity/protocols/oauth2/service-account
 ::
-++  sign-jwt
+++  get-access-token
   |=  [jot=@t url=@t]
-  =/  m  (strand ,[@t @da])  ^-  form:m
+  =/  m  (strand ,[@t @dr])  ^-  form:m
   ;<  ~  bind:m
     %:  send-request:strandio
       method=%'POST'
@@ -109,7 +109,8 @@
       %-  some  %-  as-octt:mimes:html
       %-  en-json:html
       %:  pairs:enjs:format
-        ['grant_type' s+'urn:ietf:params:oauth:grant-type:jwt-bearer']
+        :-  'grant_type'
+        s+'urn:ietf:params:oauth:grant-type:jwt-bearer'
         assertion+s+jot
         ~
       ==
@@ -126,8 +127,14 @@
   =*  job  u.jon
   ~|  job
   =,  dejs:format
-  =/  [typ=@t exp=@da tok=@t]
-    ((ot 'token_type'^so 'expires_in'^du 'access_token'^so ~) job)
+  =/  [typ=@t exp=@dr tok=@t]
+    %.  job
+    %:  ot
+      'token_type'^so
+      'expires_in'^(cu |=(a=@ (mul a ~s1)) ni)
+      'access_token'^so
+      ~
+    ==
   ?>  =('Bearer' typ)
   %-  pure:m
   [tok exp]
