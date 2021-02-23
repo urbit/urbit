@@ -1,17 +1,18 @@
 import React, { useState, useRef, useEffect } from 'react';
+
 import { Contact, Group } from '@urbit/api';
-import ProfileOverlay, { OVERLAY_HEIGHT } from './ProfileOverlay';
 import { Box, ColProps } from '@tlon/indigo-react';
 
+import ProfileOverlay, { OVERLAY_HEIGHT } from './ProfileOverlay';
+
 type OverlaySigilProps = ColProps & {
-  api: any;
   className: string;
   color: string;
   contact?: Contact;
   group?: Group;
-  history: any;
   scrollWindow?: HTMLElement;
   ship: string;
+  onDismiss: () => void;
 };
 
 interface OverlaySigilState {
@@ -24,20 +25,18 @@ interface OverlaySigilState {
 
 export const OverlaySigil = (props: OverlaySigilProps): React.FC => {
   const {
-    api,
     className,
     color,
     contact,
     group,
-    history,
     onDismiss,
     scrollWindow,
     ship,
     ...rest
   } = { ...props };
   const containerRef = useRef(null);
-  const [visible, setVisible] = useState<OverlaySigilState.visible>();
-  const [space, setSpace] = useState<OverlaySigilState.space>({
+  const [visible, setVisible] = useState<OverlaySigilState['visible']>(false);
+  const [space, setSpace] = useState<OverlaySigilState['space']>({
     top: 'auto',
     bottom: 'auto'
   });
@@ -85,12 +84,10 @@ export const OverlaySigil = (props: OverlaySigilProps): React.FC => {
       style={{ visibility: visible ? 'visible' : 'hidden' }}
     >
       <ProfileOverlay
-        api={api}
         bottomSpace={space.bottom}
         color={color}
         contact={contact}
         group={group}
-        history={history}
         onDismiss={onDismiss}
         ship={ship}
         topSpace={space.top}

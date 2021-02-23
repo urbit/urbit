@@ -4,19 +4,16 @@ import _ from 'lodash';
 import bigInt, { BigInteger } from 'big-integer';
 
 import { Col } from '@tlon/indigo-react';
-import { Patp, Contacts, Association, Associations, Group, Groups, Graph } from '@urbit/api';
+import { Patp, Association, Group, Graph, markCountAsRead } from '@urbit/api';
 
-import GlobalApi from '~/logic/api/global';
 
 import VirtualScroller from '~/views/components/VirtualScroller';
-
 import ChatMessage, { MessagePlaceholder } from './ChatMessage';
-import { UnreadNotice } from './unread-notice';
+import { UnreadNotice } from './UnreadNotice';
+import useApi from '~/logic/lib/useApi';
+import useGraphState from '~/logic/state/graph';
 
-const INITIAL_LOAD = 20;
-const DEFAULT_BACKLOG_SIZE = 100;
 const IDLE_THRESHOLD = 64;
-const MAX_BACKLOG_SIZE = 1000;
 
 type ChatWindowProps = RouteComponentProps<{
   ship: Patp;
@@ -24,15 +21,11 @@ type ChatWindowProps = RouteComponentProps<{
 }> & {
   unreadCount: number;
   graph: Graph;
-  contacts: Contacts;
   association: Association;
   group: Group;
   ship: Patp;
   station: any;
-  api: GlobalApi;
   scrollTo?: number;
-  associations: Associations;
-  groups: Groups;
 }
 
 interface ChatWindowState {
@@ -118,7 +111,7 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
   }
 
   componentDidUpdate(prevProps: ChatWindowProps, prevState) {
-    const { history, graph, unreadCount, station } = this.props;
+    const { graph, unreadCount, station } = this.props;
 
     if (graph.size !== prevProps.graph.size && this.state.fetchPending) {
       this.setState({ fetchPending: false });
@@ -165,13 +158,14 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
     if (this.state.fetchPending)
 return;
     if (this.props.unreadCount === 0)
-return;
-    this.props.api.hark.markCountAsRead(association, '/', 'message');
-    this.props.api.hark.markCountAsRead(association, '/', 'mention');
+      return;
+    const api = useApi();
+    api.poke(markCountAsRead(association, '/', 'message'));
+    api.poke(markCountAsRead(association, '/', 'mention'));
   }
 
   async fetchMessages(newer: boolean, force = false): Promise<void> {
-    const { api, station, graph } = this.props;
+    const { station, graph } = this.props;
 
     if ( this.state.fetchPending && !force) {
      return new Promise((resolve, reject) => {});
@@ -183,17 +177,15 @@ return;
     const currSize = graph.size;
     if(newer && !this.loadedNewest) {
       const [index] = graph.peekLargest()!;
-      await api.graph.getYoungerSiblings(ship,name, 20, `/${index.toString()}`);
+      await useGraphState.getState().getYoungerSiblings(ship, name, 20, `/${index.toString()}`);
       if(currSize === graph.size) {
-        console.log('loaded all newest');
         this.loadedNewest = true;
       }
     } else if(!newer && !this.loadedOldest) {
       const [index] = graph.peekSmallest()!;
-      await api.graph.getOlderSiblings(ship,name, 20, `/${index.toString()}`);
+      await useGraphState.getState().getOlderSiblings(ship, name, 20, `/${index.toString()}`);
       this.calculateUnreadIndex();
       if(currSize === graph.size) {
-        console.log('loaded all oldest');
         this.loadedOldest = true;
       }
     }
@@ -228,21 +220,14 @@ return;
   render() {
     const {
       unreadCount,
-      api,
-      ship,
-      station,
       association,
       group,
-      contacts,
-      graph,
-      history,
-      groups,
-      associations
+      graph
     } = this.props;
 
     const unreadMarkerRef = this.unreadMarkerRef;
 
-    const messageProps = { association, group, contacts, unreadMarkerRef, history, api, groups, associations };
+    const messageProps = { association, group, unreadMarkerRef };
 
     const keys = graph.keys().reverse();
     const unreadIndex = graph.keys()[this.props.unreadCount];

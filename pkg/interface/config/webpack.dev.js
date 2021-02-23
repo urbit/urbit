@@ -45,13 +45,13 @@ class UrbitShipPlugin {
 let devServer = {
   contentBase: path.join(__dirname, '../dist'),
   hot: true,
-  port: 9000,
+  port: 9001,
   host: '0.0.0.0',
   disableHostCheck: true,
   historyApiFallback: true
 };
 
-const router =  _.mapKeys(urbitrc.FLEET || {}, (value, key) => `${key}.localhost:9000`);
+const router =  _.mapKeys(urbitrc.FLEET || {}, (value, key) => `${key}.localhost:9001`);
 
 if(urbitrc.URL) {
   devServer = {
@@ -59,7 +59,7 @@ if(urbitrc.URL) {
     index: '',
     proxy: {
       '/~landscape/js/bundle/index.*.js': {
-        target: 'http://localhost:9000',
+        target: 'http://localhost:9001',
         pathRewrite: (req, path) => {
           return '/index.js'
         }

@@ -1,49 +1,47 @@
 import React, { useEffect } from 'react';
 import { RouteComponentProps, Route, Switch } from 'react-router-dom';
-import GlobalApi from '~/logic/api/global';
+import bigInt from 'big-integer';
+
 import {
   Association,
-  Associations,
-  Graphs,
-  Groups,
   Contacts,
-  Rolodex,
-  Unreads,
-  S3State
+  Unreads
 } from '@urbit/api';
 import { Center, LoadingSpinner } from '@tlon/indigo-react';
-import bigInt from 'big-integer';
 
 import Notebook from './Notebook';
 import NewPost from './new-post';
 import { NoteRoutes } from './NoteRoutes';
+import { S3State } from '~/types';
+import useApi from '~/logic/lib/useApi';
+import useGraphState from '~/logic/state/graph';
+import useGroupState from '~/logic/state/groups';
 
 interface NotebookRoutesProps {
-  api: GlobalApi;
   ship: string;
   book: string;
-  graphs: Graphs;
   notebookContacts: Contacts;
   unreads: Unreads;
-  contacts: Rolodex;
-  groups: Groups;
   baseUrl: string;
   rootUrl: string;
   association: Association;
-  associations: Associations;
   s3: S3State;
 }
 
 export function NotebookRoutes(
   props: NotebookRoutesProps & RouteComponentProps
 ) {
-  const { ship, book, api, notebookContacts, baseUrl, rootUrl, groups } = props;
+  const { ship, book, notebookContacts, baseUrl, rootUrl } = props;
+  const api = useApi();
+  const getGraph = useGraphState(state => state.getGraph);
+  const groups = useGroupState(state => state.groups);
+  const graphs = useGraphState(state => state.graphs);
 
   useEffect(() => {
-    ship && book && api.graph.getGraph(ship, book);
+    ship && book && getGraph(ship, book);
   }, [ship, book]);
 
-  const graph = props.graphs[`${ship.slice(1)}/${book}`];
+  const graph = graphs[`${ship.slice(1)}/${book}`];
 
   const group = groups?.[props.association?.group];
 
@@ -60,7 +58,6 @@ export function NotebookRoutes(
           return <Notebook
             {...props}
             graph={graph}
-            contacts={notebookContacts}
             association={props.association}
             rootUrl={rootUrl}
             baseUrl={baseUrl}
@@ -72,7 +69,6 @@ export function NotebookRoutes(
         render={routeProps => (
           <NewPost
             {...routeProps}
-            api={api}
             book={book}
             ship={ship}
             association={props.association}
@@ -100,7 +96,6 @@ export function NotebookRoutes(
             <NoteRoutes
               rootUrl={baseUrl}
               baseUrl={noteUrl}
-              api={api}
               book={book}
               ship={ship}
               note={note}

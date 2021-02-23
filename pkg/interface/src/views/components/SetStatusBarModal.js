@@ -11,12 +11,10 @@ import {
 
 import { SetStatus } from '~/views/apps/profile/components/SetStatus';
 
-
 export const SetStatusBarModal = (props) => {
   const {
     ship,
     contact,
-    api,
     ...rest
   } = props;
   const [modalShown, setModalShown] = useState(false);
@@ -67,7 +65,6 @@ export const SetStatusBarModal = (props) => {
               <SetStatus
                 ship={ship}
                 contact={contact}
-                api={api}
                 callback={() => {
                   setModalShown(false);
                 }} />

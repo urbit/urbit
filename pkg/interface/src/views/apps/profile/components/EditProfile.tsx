@@ -12,14 +12,15 @@ import {
   Text,
   Row,
 } from '@tlon/indigo-react';
+import { uxToHex, resourceFromPath, setPublic } from '@urbit/api';
 
-import { uxToHex } from '~/logic/lib/util';
 import { AsyncButton } from '~/views/components/AsyncButton';
 import { ColorInput } from '~/views/components/ColorInput';
 import { ImageInput } from '~/views/components/ImageInput';
 import { MarkdownField } from '~/views/apps/publish/components/MarkdownField';
-import { resourceFromPath } from '~/logic/lib/group';
 import GroupSearch from '~/views/components/GroupSearch';
+import useApi from '~/logic/lib/useApi';
+import { editContact } from '@urbit/api/contacts';
 
 const formSchema = Yup.object({
   nickname: Yup.string(),
@@ -41,14 +42,14 @@ const emptyContact = {
 };
 
 export function EditProfile(props: any): ReactElement {
-  const { contact, ship, api, isPublic } = props;
+  const { contact, ship, isPublic } = props;
+  const api = useApi();
   const history = useHistory();
   if (contact) {
     contact.isPublic = isPublic;
   }
 
   const onSubmit = async (values: any, actions: any) => {
-    console.log(values);
     try {
       await Object.keys(values).reduce((acc, key) => {
         console.log(key);
@@ -57,7 +58,7 @@ export function EditProfile(props: any): ReactElement {
         if (newValue !== contact[key]) {
           if (key === 'isPublic') {
             return acc.then(() =>
-              api.contacts.setPublic(newValue)
+              api.poke(setPublic(newValue))
             );
           } else if (key === 'groups') {
             const toRemove: string[] = _.difference(contact?.groups || [], newValue);
@@ -68,12 +69,12 @@ export function EditProfile(props: any): ReactElement {
 
             promises.concat(
               toRemove.map(e =>
-                api.contacts.edit(ship, { 'remove-group': resourceFromPath(e) })
+                api.poke(editContact(ship, { 'remove-group': resourceFromPath(e) }))
               )
             );
             promises.concat(
               toAdd.map(e =>
-                api.contacts.edit(ship, { 'add-group': resourceFromPath(e) })
+                api.poke(editContact(ship, { 'add-group': resourceFromPath(e) }))
               )
             );
             return acc.then(() => Promise.all(promises));
@@ -82,7 +83,7 @@ export function EditProfile(props: any): ReactElement {
             key !== 'isPublic'
           ) {
             return acc.then(() =>
-              api.contacts.edit(ship, { [key]: newValue })
+              api.poke(editContact(ship, { [key]: newValue }))
             );
           }
         }

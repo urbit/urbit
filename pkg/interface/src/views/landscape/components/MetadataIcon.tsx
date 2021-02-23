@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Image } from '@tlon/indigo-react';
 
-import { uxToHex } from '~/logic/lib/util';
+import { uxToHex } from '@urbit/api';
 import { Metadata } from '@urbit/api';
 import { PropFunc } from '~/types/util';
 

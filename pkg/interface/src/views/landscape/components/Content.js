@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { Box } from '@tlon/indigo-react';
 import { Route, Switch } from 'react-router-dom';
 import styled from 'styled-components';
+
+import { Box } from '@tlon/indigo-react';
 
 import LaunchApp from '~/views/apps/launch/app';
 import TermApp from '~/views/apps/term/app';
@@ -10,8 +11,7 @@ import Profile from '~/views/apps/profile/profile';
 import Settings from '~/views/apps/settings/settings';
 import ErrorComponent from '~/views/components/Error';
 import Notifications from '~/views/apps/notifications/notifications';
-import GraphApp from '../../apps/graph/app';
-
+import GraphApp from '~/views/apps/graph/app';
 
 export const Container = styled(Box)`
    flex-grow: 1;
@@ -19,7 +19,6 @@ export const Container = styled(Box)`
    width: 100%;
    height: calc(100% - 62px);
 `;
-
 
 export const Content = (props) => {
   return (

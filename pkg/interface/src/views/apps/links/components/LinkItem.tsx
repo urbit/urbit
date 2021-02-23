@@ -2,43 +2,58 @@ import React, { useState, useEffect, useRef, useCallback, ReactElement }  from '
 import { Link } from 'react-router-dom';
 
 import { Row, Col, Anchor, Box, Text, Icon, Action } from '@tlon/indigo-react';
-import { GraphNode, Group, Rolodex, Unreads } from '@urbit/api';
+import { Content, GraphNode, Group, removeNodes, roleForShip, markEachAsRead, Association } from '@urbit/api';
 
 import { writeText } from '~/logic/lib/util';
 import Author from '~/views/components/Author';
-import { roleForShip } from '~/logic/lib/group';
-import GlobalApi from '~/logic/api/global';
 import { Dropdown } from '~/views/components/Dropdown';
 import RemoteContent from '~/views/components/RemoteContent';
+import useApi from '~/logic/lib/useApi';
+import useHarkState from '~/logic/state/hark';
 
 interface LinkItemProps {
   node: GraphNode;
   resource: string;
-  api: GlobalApi;
   group: Group;
   path: string;
-  contacts: Rolodex;
-  unreads: Unreads;
   measure: (el: any) => void;
+  association: Association;
 }
 
 export const LinkItem = (props: LinkItemProps): ReactElement => {
   const {
     node,
     resource,
-    api,
     group,
     path,
-    contacts,
     measure,
     ...rest
   } = props;
 
   const ref = useRef<HTMLDivElement | null>(null);
   const remoteRef = useRef<typeof RemoteContent | null>(null);
+  const api = useApi();
+  const unreads = useHarkState(state => state.unreads);
+
+  const URLparser = new RegExp(
+    /((?:([\w\d\.-]+)\:\/\/?){1}(?:(www)\.?){0,1}(((?:[\w\d-]+\.)*)([\w\d-]+\.[\w\d]+))){1}(?:\:(\d+)){0,1}((\/(?:(?:[^\/\s\?]+\/)*))(?:([^\?\/\s#]+?(?:.[^\?\s]+){0,1}){0,1}(?:\?([^\s#]+)){0,1})){0,1}(?:#([^#\s]+)){0,1}/
+  );
+
+  const author = node.post.author;
+  const index = node.post.index.split('/')[1];
+  const size = node.children ? node.children.size : 0;
+  const contents: Content[] = node.post.contents;
+  const hostname = URLparser.exec(contents[1].url) ? URLparser.exec(contents[1].url)[4] : null;
+
+  const baseUrl = props.baseUrl || `/~404/${resource}`;
+
+  const ourRole = group ? roleForShip(group, window.ship) : undefined;
+  const [ship, name] = resource.split('/');
+
+  const [locationText, setLocationText] = useState('Copy Link Location');
 
   const markRead = useCallback(() => {
-    api.hark.markEachAsRead(props.association, '/', `/${index}`, 'link', 'link');
+    api.poke(markEachAsRead(props.association, '/', `/${index}`, 'link', 'link'));
   }, [props.association, index]);
 
   useEffect(() => {
@@ -58,23 +73,6 @@ export const LinkItem = (props: LinkItemProps): ReactElement => {
     };
   }, [markRead]);
 
-  const URLparser = new RegExp(
-    /((?:([\w\d\.-]+)\:\/\/?){1}(?:(www)\.?){0,1}(((?:[\w\d-]+\.)*)([\w\d-]+\.[\w\d]+))){1}(?:\:(\d+)){0,1}((\/(?:(?:[^\/\s\?]+\/)*))(?:([^\?\/\s#]+?(?:.[^\?\s]+){0,1}){0,1}(?:\?([^\s#]+)){0,1})){0,1}(?:#([^#\s]+)){0,1}/
-  );
-
-  const author = node.post.author;
-  const index = node.post.index.split('/')[1];
-  const size = node.children ? node.children.size : 0;
-  const contents = node.post.contents;
-  const hostname = URLparser.exec(contents[1].url) ? URLparser.exec(contents[1].url)[4] : null;
-
-  const baseUrl = props.baseUrl || `/~404/${resource}`;
-
-  const ourRole = group ? roleForShip(group, window.ship) : undefined;
-  const [ship, name] = resource.split('/');
-
-  const [locationText, setLocationText] = useState('Copy Link Location');
-
   const copyLocation = () => {
     setLocationText('Copied');
     writeText(contents[1].url);
@@ -85,13 +83,13 @@ export const LinkItem = (props: LinkItemProps): ReactElement => {
 
   const deleteLink = () => {
     if (confirm('Are you sure you want to delete this link?')) {
-      api.graph.removeNodes(`~${ship}`, name, [node.post.index]);
+      api.poke(removeNodes(`~${ship}`, name, [node.post.index]));
     }
   };
 
   const appPath = `/ship/~${resource}`;
-  const commColor = (props.unreads.graph?.[appPath]?.[`/${index}`]?.unreads ?? 0) > 0 ? 'blue' : 'gray';
-  const isUnread = props.unreads.graph?.[appPath]?.['/']?.unreads?.has(node.post.index);
+  const commColor = (unreads.graph?.[appPath]?.[`/${index}`]?.unreads ?? 0) > 0 ? 'blue' : 'gray';
+  const isUnread = unreads.graph?.[appPath]?.['/']?.unreads?.has(node.post.index);
 
   const onMeasure = useCallback(() => {
     ref.current && measure(ref.current);
@@ -157,11 +155,9 @@ export const LinkItem = (props: LinkItemProps): ReactElement => {
 
       <Author
         showImage
-        contacts={contacts}
         ship={author}
         date={node.post['time-sent']}
         group={group}
-        api={api}
       ></Author>
 
       <Box ml="auto">

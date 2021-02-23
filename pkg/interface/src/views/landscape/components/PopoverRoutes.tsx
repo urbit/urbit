@@ -1,18 +1,22 @@
 import React, { useRef, useCallback, ReactElement } from 'react';
-import { Route, Switch, RouteComponentProps, Link } from 'react-router-dom';
-import { Box,  Col, Text } from '@tlon/indigo-react';
+import { Route, Switch, RouteComponentProps, Link, useHistory } from 'react-router-dom';
 
-import { GroupNotificationsConfig, Associations } from '@urbit/api';
-import { Contacts, Contact } from '@urbit/api/contacts';
-import { Group } from '@urbit/api/groups';
-import { Association } from '@urbit/api/metadata';
+import { Box,  Col, Text } from '@tlon/indigo-react';
+import {
+  GroupNotificationsConfig,
+  Associations,
+  Contacts,
+  Contact,
+  Group,
+  Association,
+  resourceFromPath
+} from '@urbit/api';
 
 import GlobalApi from '~/logic/api/global';
 import { GroupSettings } from './GroupSettings/GroupSettings';
 import { Participants } from './Participants';
 import { useHashLink } from '~/logic/lib/useHashLink';
 import { DeleteGroup } from './DeleteGroup';
-import { resourceFromPath } from '~/logic/lib/group';
 import { ModalOverlay } from '~/views/components/ModalOverlay';
 import { SidebarItem } from '~/views/landscape/components/SidebarItem';
 import { S3State } from '~/types';
@@ -20,22 +24,20 @@ import { S3State } from '~/types';
 export function PopoverRoutes(
   props: {
     baseUrl: string;
-    contacts: Contacts;
     group: Group;
     association: Association;
-    associations: Associations;
     s3: S3State;
-    api: GlobalApi;
     notificationsGroupConfig: GroupNotificationsConfig;
     rootIdentity: Contact;
   } & RouteComponentProps
 ): ReactElement {
   const relativeUrl = (url: string) => `${props.baseUrl}/popover${url}`;
   const innerRef = useRef(null);
+  const history = useHistory();
 
   const onDismiss = useCallback(() => {
-    props.history.push(props.baseUrl);
-  }, [props.history.push, props.baseUrl]);
+    history.push(props.baseUrl);
+  }, [history.push, props.baseUrl]);
 
   useHashLink();
 
@@ -107,7 +109,7 @@ export function PopoverRoutes(
                         />
                       </>
                     )}
-                    <DeleteGroup owner={owner} api={props.api} association={props.association} />
+                    <DeleteGroup owner={owner} association={props.association} />
                   </Col>
                 </Col>
                 <Box
@@ -125,18 +127,14 @@ export function PopoverRoutes(
                       baseUrl={`${props.baseUrl}/popover`}
                       group={props.group}
                       association={props.association}
-                      api={props.api}
                       notificationsGroupConfig={props.notificationsGroupConfig}
-                      associations={props.associations}
                       s3={props.s3}
                     />
                   )}
                   {view === 'participants' && (
                     <Participants
                       group={props.group}
-                      contacts={props.contacts}
                       association={props.association}
-                      api={props.api}
                     />
                   )}
                 </Box>

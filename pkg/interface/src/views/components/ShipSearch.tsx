@@ -18,12 +18,12 @@ import {
   Col,
   ErrorLabel
 } from '@tlon/indigo-react';
-import { Rolodex, Groups } from '@urbit/api';
-
+import { Rolodex, Groups, cite, deSig  } from '@urbit/api';
 
 import { DropdownSearch } from './DropdownSearch';
-import { cite, deSig } from '~/logic/lib/util';
 import { HoverBox } from './HoverBox';
+import useGroupState from '~/logic/state/groups';
+import useContactState from '~/logic/state/contacts';
 
 interface InviteSearchProps<I extends string> {
   autoFocus?: boolean;
@@ -31,8 +31,6 @@ interface InviteSearchProps<I extends string> {
   label?: string;
   caption?: string;
   id: I;
-  contacts: Rolodex;
-  groups: Groups;
   hideSelection?: boolean;
   maxLength?: number;
 }
@@ -121,9 +119,12 @@ export function ShipSearch<I extends string, V extends Value<I>>(
 
   const pills = selected.slice(0, inputIdx.current);
 
+  const groups = useGroupState(state => state.groups);
+  const contacts = useContactState(state => state.contacts);
+
   const [peers, nicknames] = useMemo(
-    () => getNicknameForShips(props.groups, props.contacts),
-    [props.contacts, props.groups]
+    () => getNicknameForShips(groups, contacts),
+    [contacts, groups]
   );
 
   const renderCandidate = useCallback(

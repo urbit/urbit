@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { Text, Center, LoadingSpinner } from '@tlon/indigo-react';
 
 import { Body } from './Body';

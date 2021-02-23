@@ -1,5 +1,6 @@
-import { TutorialProgress, Associations } from '@urbit/api';
+import { Associations } from '@urbit/api';
 import { AlignX, AlignY } from '~/logic/lib/relativePosition';
+import { TutorialProgress } from '~/types';
 import { Direction } from '~/views/components/Triangle';
 
 export const MODAL_WIDTH = 256;

@@ -82,8 +82,8 @@ export class Input extends Component {
       }
     }
     return (
-      <Row flexGrow='1' position='relative'>
-        <Box flexShrink='0' width='100%' color='black' fontSize='0'>
+      <Row flexShrink={1} position='relative'>
+        <Box flexShrink={0} width='100%' color='black' fontSize='0'>
           <BaseInput
             autoFocus
             autoCorrect="off"

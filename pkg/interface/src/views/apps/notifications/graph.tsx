@@ -4,22 +4,27 @@ import _ from 'lodash';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { Row, Box, Col, Text, Anchor, Icon, Action } from '@tlon/indigo-react';
+import { Row, Box, Col, Text, Anchor, Icon } from '@tlon/indigo-react';
 import {
   GraphNotifIndex,
   GraphNotificationContents,
-  Associations,
-  Rolodex,
-  Groups
+  cite,
+  deSig,
+  Group,
+  AppName,
+  Post,
+  read as markRead
 } from '@urbit/api';
 
 import { Header } from './header';
-import { cite, deSig, pluralize } from '~/logic/lib/util';
-import { Sigil } from '~/logic/lib/sigil';
-import GlobalApi from '~/logic/api/global';
+import { pluralize } from '~/logic/lib/util';
+import { Sigil } from '~/logic/lib/Sigil';
 import { getSnippet } from '~/logic/lib/publish';
 import { MentionText } from '~/views/components/MentionText';
 import { MessageWithoutSigil } from '../chat/components/ChatMessage';
+import useContactState from '~/logic/state/contacts';
+import useApi from '~/logic/lib/useApi';
+import useGroupState from '~/logic/state/groups';
 
 function getGraphModuleIcon(module: string): string {
   if (module === 'link') {
@@ -66,7 +71,14 @@ const GraphUrl = ({ url, title }): ReactElement => (
   </Box>
 );
 
-const GraphNodeContent = ({ group, post, contacts, mod, index }): ReactElement => {
+interface GraphNodeContentProps {
+  group: Group;
+  post: Post;
+  mod: AppName;
+  index: string;
+}
+
+const GraphNodeContent = ({ group, post, mod, index }: GraphNodeContentProps): ReactElement | null => {
   const { contents } = post;
   const idx = index.slice(1).split('/');
   if (mod === 'link') {
@@ -76,7 +88,6 @@ const GraphNodeContent = ({ group, post, contacts, mod, index }): ReactElement =
     } else if (idx.length === 3) {
       return <MentionText
         content={contents}
-        contacts={contacts}
         group={group}
              />;
     }
@@ -87,7 +98,6 @@ const GraphNodeContent = ({ group, post, contacts, mod, index }): ReactElement =
       return <MentionText
         content={contents}
         group={group}
-        contacts={contacts}
         fontSize='14px'
         lineHeight="tall"
              />;
@@ -103,7 +113,7 @@ const GraphNodeContent = ({ group, post, contacts, mod, index }): ReactElement =
             <Text lineHeight="tall">{snippet}</Text>
             <FilterBox
               width="100%"
-              zIndex="1"
+              zIndex={1}
               height="calc(100% - 2em)"
               bottom="-4px"
               position="absolute"
@@ -118,17 +128,14 @@ const GraphNodeContent = ({ group, post, contacts, mod, index }): ReactElement =
     return (
       <Row
         width="100%"
-      flexShrink={0}
-      flexGrow={1}
-      flexWrap="wrap"
+        flexShrink={0}
+        flexGrow={1}
+        flexWrap="wrap"
       >
       <MessageWithoutSigil
         containerClass="items-top cf hide-child"
         measure={() => {}}
         group={group}
-        contacts={contacts}
-        groups={{}}
-        associations={{ graph: {}, groups: {} }}
         msg={post}
         fontSize='0'
         pt='2'
@@ -159,7 +166,6 @@ function getNodeUrl(mod: string, hidden: boolean, groupPath: string, graph: stri
 }
 const GraphNode = ({
   post,
-  contacts,
   author,
   mod,
   description,
@@ -174,6 +180,7 @@ const GraphNode = ({
 }): ReactElement => {
   author = deSig(author);
   const history = useHistory();
+  const contacts = useContactState(state => state.contacts);
 
   const img = showContact ? (
     <Sigil
@@ -217,7 +224,6 @@ const GraphNode = ({
         </Row>}
         <Row width="100%" p="1" flexDirection="column">
           <GraphNodeContent
-            contacts={groupContacts}
             post={post}
             mod={mod}
             description={description}
@@ -237,12 +243,10 @@ export function GraphNotification(props: {
   read: boolean;
   time: number;
   timebox: BigInteger;
-  associations: Associations;
-  groups: Groups;
-  contacts: Rolodex;
-  api: GlobalApi;
 }) {
-  const { contents, index, read, time, api, timebox, groups } = props;
+  const { contents, index, read, time, timebox } = props;
+  const api = useApi();
+  const groups = useGroupState(state => state.groups);
 
   const authors = _.map(contents, 'author');
   const { graph, group } = index;
@@ -253,9 +257,8 @@ export function GraphNotification(props: {
     if (props.archived || read) {
       return;
     }
-
-    return api.hark['read'](timebox, { graph: index });
-  }, [api, timebox, index, read]);
+    return api.poke(markRead(timebox, { graph: index }));
+  }, [timebox, index, read]);
 
 return (
     <>
@@ -267,17 +270,14 @@ return (
         authors={authors}
         moduleIcon={icon}
         channel={graph}
-        contacts={props.contacts}
         group={group}
         description={desc}
-        associations={props.associations}
       />
       <Box flexGrow={1} width="100%" pl={5} gridArea="main">
         {_.map(contents, (content, idx) => (
           <GraphNode
             post={content}
             author={content.author}
-            contacts={props.contacts}
             mod={index.module}
             time={content?.['time-sent']}
             description={index.description}

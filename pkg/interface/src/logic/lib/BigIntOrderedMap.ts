@@ -1,6 +1,6 @@
-import bigInt, { BigInteger } from 'big-integer';
+import { BigInteger } from 'big-integer';
 
-interface NonemptyNode<V> {
+export interface NonemptyNode<V> {
   n: [BigInteger, V];
   l: MapNode<V>;
   r: MapNode<V>;

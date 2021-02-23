@@ -17,17 +17,16 @@ import GlobalApi from '~/logic/api/global';
 
 export function BucketList({
   buckets,
-  selected,
-  api
+  selected
 }: {
   buckets: Set<string>;
   selected: string;
-  api: GlobalApi;
 }): ReactElement {
   const _buckets = Array.from(buckets);
 
   const onSubmit = useCallback(
     (values: { newBucket: string }) => {
+      // TODO S3 API
       api.s3.addBucket(values.newBucket);
     },
     [api]

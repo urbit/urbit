@@ -1,18 +1,17 @@
 import React from 'react';
+import { Formik, Form } from 'formik';
+import * as Yup from 'yup';
 
 import {
   Box,
   ManagedCheckboxField as Checkbox,
   Button
 } from '@tlon/indigo-react';
-import { Formik, Form } from 'formik';
-import * as Yup from 'yup';
+import { uxToHex } from '@urbit/api';
 
-import GlobalApi from '~/logic/api/global';
-import { uxToHex } from '~/logic/lib/util';
-import { S3State, BackgroundConfig } from '@urbit/api';
 import { BackgroundPicker, BgType } from './BackgroundPicker';
 import useLocalState, { LocalState } from '~/logic/state/local';
+import { BackgroundConfig, S3State } from '~/types';
 
 const formSchema = Yup.object().shape({
   bgType: Yup.string()
@@ -33,12 +32,11 @@ interface FormSchema {
 }
 
 interface DisplayFormProps {
-  api: GlobalApi;
   s3: S3State;
 }
 
 export default function DisplayForm(props: DisplayFormProps) {
-  const { api, s3 } = props;
+  const { s3 } = props;
 
   const { hideAvatars, hideNicknames, background, set: setLocalState } = useLocalState();
 
@@ -93,7 +91,6 @@ export default function DisplayForm(props: DisplayFormProps) {
             <BackgroundPicker
               bgType={props.values.bgType}
               bgUrl={props.values.bgUrl}
-              api={api}
               s3={s3}
             />
             <Checkbox

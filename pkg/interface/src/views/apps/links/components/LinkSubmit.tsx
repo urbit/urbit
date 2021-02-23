@@ -1,15 +1,17 @@
-import { BaseInput, Box, Button, LoadingSpinner, Text } from '@tlon/indigo-react';
 import React, { useCallback, useState } from 'react';
+import { hasProvider } from 'oembed-parser';
+
+import { BaseInput, Box, Button, LoadingSpinner, Text } from '@tlon/indigo-react';
+import { createPost, addPost } from '@urbit/api';
+
 import GlobalApi from '~/logic/api/global';
 import { useFileDrag } from '~/logic/lib/useDrag';
 import useS3 from '~/logic/lib/useS3';
-import { S3State } from '@urbit/api';
 import SubmitDragger from '~/views/components/SubmitDragger';
-import { createPost } from '~/logic/api/graph';
-import { hasProvider } from 'oembed-parser';
+import { S3State } from '~/types/s3-update';
+import useApi from '~/logic/lib/useApi';
 
 interface LinkSubmitProps {
-  api: GlobalApi;
   s3: S3State;
   name: string;
   ship: string;
@@ -24,22 +26,23 @@ const LinkSubmit = (props: LinkSubmitProps) => {
   const [linkTitle, setLinkTitle] = useState('');
   const [disabled, setDisabled] = useState(false);
   const [linkValid, setLinkValid] = useState(false);
+  const api = useApi();
 
   const doPost = () => {
     const url = linkValue;
     const text = linkTitle ? linkTitle : linkValue;
     setDisabled(true);
     const parentIndex = props.parentIndex || '';
-    const post = createPost([
+    const post = createPost(window.ship, [
       { text },
       { url }
     ], parentIndex);
 
-    props.api.graph.addPost(
+    api.poke(addPost(
       `~${props.ship}`,
       props.name,
       post
-    ).then(() => {
+    )).then(() => {
       setDisabled(false);
       setLinkValue('');
       setLinkTitle('');

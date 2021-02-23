@@ -1,9 +1,10 @@
 import React from "react";
 import { Text, LoadingSpinner, Button } from "@tlon/indigo-react";
 
-const ReconnectButton = ({ connection, subscription }) => {
+const ReconnectButton = ({ connection }) => {
   const connectedStatus = connection || "connected";
-  const reconnect = subscription.restart.bind(subscription);
+  const reconnect = () => {}; // TODO how to restart subscriptions?
+  // const reconnect = subscription.restart.bind(subscription);
 
   if (connectedStatus === "disconnected") {
     return (

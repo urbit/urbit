@@ -1,13 +1,8 @@
 import React from 'react';
+
 import { Box, Button } from '@tlon/indigo-react';
 
-import GlobalApi from '../../../../api/global';
-
-interface SecuritySettingsProps {
-  api: GlobalApi;
-}
-
-export default function SecuritySettings({ api }: SecuritySettingsProps) {
+const SecuritySettings = () => {
   return (
     <Box display="grid" gridTemplateRows="auto" gridTemplateColumns="1fr" gridRowGap={2}>
       <Box color="black" fontSize={1} mb={4} fontWeight={900}>
@@ -39,3 +34,5 @@ export default function SecuritySettings({ api }: SecuritySettingsProps) {
     </Box>
   );
 }
+
+export default SecuritySettings;

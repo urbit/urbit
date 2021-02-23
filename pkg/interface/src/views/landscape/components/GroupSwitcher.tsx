@@ -1,4 +1,6 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+
 import {
   Box,
   Col,
@@ -6,14 +8,13 @@ import {
   Text,
   Icon
 } from '@tlon/indigo-react';
-import { uxToHex } from '~/logic/lib/util';
-import { Link } from 'react-router-dom';
+import { uxToHex, Associations } from '@urbit/api';
 
-import { Associations } from '@urbit/api/metadata';
 import { Dropdown } from '~/views/components/Dropdown';
 import { getTitleFromWorkspace } from '~/logic/lib/workspace';
 import { MetadataIcon } from './MetadataIcon';
 import { Workspace } from '~/types/workspace';
+import useMetadataState from '~/logic/state/metadata';
 
 const GroupSwitcherItem = ({ to, children, bottom = false, ...rest }) => (
   <Link to={to}>
@@ -30,8 +31,9 @@ const GroupSwitcherItem = ({ to, children, bottom = false, ...rest }) => (
   </Link>
 );
 
-function RecentGroups(props: { recent: string[]; associations: Associations }) {
-  const { associations, recent } = props;
+function RecentGroups(props: { recent: string[]; }) {
+  const { recent } = props;
+  const associations = useMetadataState(state => state.associations);
   if (recent.length < 2) {
     return null;
   }
@@ -70,13 +72,13 @@ function RecentGroups(props: { recent: string[]; associations: Associations }) {
 }
 
 export function GroupSwitcher(props: {
-  associations: Associations;
   workspace: Workspace;
   baseUrl: string;
   recentGroups: string[];
   isAdmin: any;
 }) {
-  const { associations, workspace, isAdmin } = props;
+  const { workspace, isAdmin } = props;
+  const associations = useMetadataState(state => state.associations);
   const title = getTitleFromWorkspace(associations, workspace);
   const metadata = (workspace.type === 'home' || workspace.type  === 'messages')
     ? undefined
@@ -136,7 +138,6 @@ export function GroupSwitcher(props: {
                 </GroupSwitcherItem>}
                 <RecentGroups
                   recent={props.recentGroups}
-                  associations={props.associations}
                 />
                 <GroupSwitcherItem to="/~landscape/new">
                   <Icon mr="2" color="gray" icon="CreateGroup" />
@@ -179,7 +180,7 @@ export function GroupSwitcher(props: {
           >
             <Row flexGrow={1} alignItems="center" width='100%' minWidth='0' flexShrink={0}>
               { metadata && <MetadataIcon flexShrink={0} mr="2" border="1" borderColor="lightGray" borderRadius="1" metadata={metadata} height="24px" width="24px" /> }
-              <Text flexShrink={1} lineHeight="1.1" fontSize='2' fontWeight="700" overflow='hidden' display='inline-block' flexShrink='1' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}>{title}</Text>
+              <Text lineHeight="1.1" fontSize='2' fontWeight="700" overflow='hidden' display='inline-block' flexShrink={1} style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}>{title}</Text>
               </Row>
           </Dropdown>
           <Row pr='3' verticalAlign="middle">

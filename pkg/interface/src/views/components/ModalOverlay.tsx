@@ -1,5 +1,7 @@
-import React, { useCallback, UIEvent, MouseEvent, useRef } from 'react';
+import React, { useCallback, useRef } from 'react';
+
 import { Box } from '@tlon/indigo-react';
+
 import { PropFunc } from '~/types/util';
 
 interface ModalOverlayProps {

@@ -1,24 +1,21 @@
 import React, { Component } from 'react';
-import ChatEditor from './chat-editor';
-import { IuseS3 } from '~/logic/lib/useS3';
-import { uxToHex } from '~/logic/lib/util';
-import { Sigil } from '~/logic/lib/sigil';
-import { createPost } from '~/logic/api/graph';
-import tokenizeMessage, { isUrl } from '~/logic/lib/tokenizeMessage';
-import GlobalApi from '~/logic/api/global';
-import { Envelope } from '~/types/chat-update';
-import { Contacts, Content } from '@urbit/api';
+
+import { createPost, Content, uxToHex, addPost } from '@urbit/api';
 import { Row, BaseImage, Box, Icon, LoadingSpinner } from '@tlon/indigo-react';
+
+import ChatEditor from './ChatEditor';
+import { IuseS3 } from '~/logic/lib/useS3';
+import { Sigil } from '~/logic/lib/Sigil';
+import tokenizeMessage from '~/logic/lib/tokenizeMessage';
 import withS3 from '~/views/components/withS3';
 import { withLocalState } from '~/logic/state/local';
+import { evalCord } from '@urbit/api';
+import useApi from '~/logic/lib/useApi';
 
 type ChatInputProps = IuseS3 & {
-  api: GlobalApi;
   numMsgs: number;
-  station: unknown;
+  station: string;
   ourContact: unknown;
-  envelopes: Envelope[];
-  contacts: Contacts;
   onUnmount(msg: string): void;
   s3: unknown;
   placeholder: string;
@@ -60,25 +57,26 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
   }
 
   submit(text) {
+    const api = useApi();
     const { props, state } = this;
     const [,,ship,name] = props.station.split('/');
     if (state.inCodeMode) {
       this.setState({
         inCodeMode: false
       }, async () => {
-        const output = await props.api.graph.eval(text);
-        const contents: Content[] = [{ code: { output, expression: text } }];
-        const post = createPost(contents);
-        props.api.graph.addPost(ship, name, post);
+          const output = await api.thread(evalCord(text));
+          const contents: Content[] = [{ code: { output, expression: text } }];
+          const post = createPost(window.ship, contents);
+          api.poke(addPost(ship, name, post));
       });
       return;
     }
 
-    const post = createPost(tokenizeMessage((text)));
+    const post = createPost(window.ship, tokenizeMessage((text)));
 
     props.deleteMessage();
 
-    props.api.graph.addPost(ship,name, post);
+    api.poke(addPost(ship, name, post));
   }
 
   uploadSuccess(url) {
@@ -87,8 +85,9 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
       this.chatEditor.current.editor.setValue(url);
       this.setState({ uploadingPaste: false });
     } else {
-      const [,,ship,name] = props.station.split('/');
-      props.api.graph.addPost(ship,name, createPost([{ url }]));
+      const api = useApi();
+      const [, , ship, name] = props.station.split('/');
+      api.poke(addPost(ship, name, createPost(window.ship, [{ url }])));
     }
   }
 

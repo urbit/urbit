@@ -2,8 +2,15 @@ import React, {
   useState,
   useMemo,
   useCallback,
-  ChangeEvent
+  ChangeEvent,
+  ReactElement
 } from 'react';
+import _ from 'lodash';
+import f from 'lodash/fp';
+import VisibilitySensor from 'react-visibility-sensor';
+import styled from 'styled-components';
+import { Link } from 'react-router-dom';
+
 import {
   Col,
   Box,
@@ -13,23 +20,32 @@ import {
   Action,
   StatelessTextInput as Input
 } from '@tlon/indigo-react';
-import _ from 'lodash';
-import f from 'lodash/fp';
-import VisibilitySensor from 'react-visibility-sensor';
-import styled from 'styled-components';
-import { Link } from 'react-router-dom';
 
-import { Contact, Contacts } from '@urbit/api/contacts';
-import { Group, RoleTags } from '@urbit/api/groups';
-import { Association } from '@urbit/api/metadata';
 
-import { Sigil } from '~/logic/lib/sigil';
-import { cite, uxToHex } from '~/logic/lib/util';
-import { roleForShip, resourceFromPath } from '~/logic/lib/group';
+import {
+  cite,
+  uxToHex,
+  roleForShip,
+  resourceFromPath,
+  Contact,
+  Contacts,
+  Group,
+  RoleTags,
+  Association,
+  removeTag,
+  changePolicy,
+  removeGroup
+} from '@urbit/api';
+
+import { Sigil } from '~/logic/lib/Sigil';
 import { Dropdown } from '~/views/components/Dropdown';
 import GlobalApi from '~/logic/api/global';
 import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
 import useLocalState from '~/logic/state/local';
+import useGroupState from '~/logic/state/groups';
+import useApi from '~/logic/lib/useApi';
+import useContactState from '~/logic/state/contacts';
+import { addTag } from '@urbit/api/groups';
 
 const TruncText = styled(Text)`
   white-space: nowrap;
@@ -103,12 +119,11 @@ const Tab = ({ selected, id, label, setSelected }) => (
 );
 
 export function Participants(props: {
-  contacts: Contacts;
   group: Group;
   association: Association;
-  api: GlobalApi;
 }): ReactElement {
-  const { api } = props;
+  const api = useApi();
+  const contacts = useContactState(state => state.contacts);
   const tabFilters: Record<
     ParticipantsTabId,
     (p: Participant) => boolean
@@ -138,7 +153,7 @@ export function Participants(props: {
   const isInvite = 'invite' in props.group.policy;
 
   const [participants, pendingCount, memberCount] = getParticipants(
-    props.contacts,
+    contacts,
     props.group
   );
 
@@ -172,9 +187,9 @@ export function Participants(props: {
         mb={2}
         px={2}
         zIndex={1}
-        flexShrink="0"
+        flexShrink={0}
       >
-        <Row mr="4" flexShrink="0">
+        <Row mr="4" flexShrink={0}>
           <Tab
             selected={filter}
             setSelected={setFilter}
@@ -197,7 +212,7 @@ export function Participants(props: {
           />
         </Row>
       </Row>
-      <Col flexShrink="0" width="100%" height="fit-content">
+      <Col flexShrink={0} width="100%" height="fit-content">
         <Row alignItems="center" bg="washedGray" borderRadius="1" px="2" my="2">
           <Icon color="gray" icon="MagnifyingGlass" />
           <Input
@@ -227,7 +242,6 @@ export function Participants(props: {
                 isVisible ? (
                   cs.map(c => (
                     <Participant
-                      api={api}
                       key={c.patp}
                       role={ourRole}
                       group={props.group}
@@ -252,9 +266,9 @@ function Participant(props: {
   association: Association;
   group: Group;
   role?: RoleTags;
-  api: GlobalApi;
 }) {
-  const { contact, association, group, api } = props;
+  const { contact, association, group } = props;
+  const api = useApi();
   const { title } = association.metadata;
   const { hideAvatars, hideNicknames } = useLocalState(
     ({ hideAvatars, hideNicknames }) => ({ hideAvatars, hideNicknames })
@@ -273,26 +287,22 @@ function Participant(props: {
 
   const onPromote = useCallback(async () => {
     const resource = resourceFromPath(association.group);
-    await api.groups.addTag(resource, { tag: 'admin' }, [`~${contact.patp}`]);
+    await api.poke(addTag(resource, { tag: 'admin' }, [`~${contact.patp}`]));
   }, [api, association]);
 
   const onDemote = useCallback(async () => {
     const resource = resourceFromPath(association.group);
-    await api.groups.removeTag(resource, { tag: 'admin' }, [
-      `~${contact.patp}`
-    ]);
+    await api.poke(removeTag({ tag: 'admin' }, resource, [`~${contact.patp}`]));
   }, [api, association]);
 
   const onBan = useCallback(async () => {
     const resource = resourceFromPath(association.group);
-    await api.groups.changePolicy(resource, {
-      open: { banShips: [`~${contact.patp}`] }
-    });
+    await api.poke(changePolicy(resource, { open: { banShips: [`~${contact.patp}`] } }));
   }, [api, association]);
 
   const onKick = useCallback(async () => {
     const resource = resourceFromPath(association.group);
-    await api.groups.remove(resource, [`~${contact.patp}`]);
+    await api.poke(removeGroup(resource, [`~${contact.patp}`]));
   }, [api, association]);
 
   const avatar =
@@ -309,7 +319,7 @@ function Participant(props: {
       <Box>{avatar}</Box>
       <Col justifyContent="center" gapY="1" height="100%" minWidth='0'>
         {hasNickname && (
-          <Row minWidth='0' flexShrink='1'>
+          <Row minWidth='0' flexShrink={1}>
           <TruncText title={contact.nickname} color="black">
             {contact.nickname}
           </TruncText>

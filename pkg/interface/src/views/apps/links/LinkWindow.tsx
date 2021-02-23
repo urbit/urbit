@@ -1,38 +1,32 @@
 import React, { useRef, useCallback, useEffect, useMemo } from 'react';
+import bigInt from 'big-integer';
 
 import { Col, Text } from '@tlon/indigo-react';
-import bigInt from 'big-integer';
 import {
   Association,
   Graph,
-  Unreads,
   Group,
-  Rolodex,
+  isWriter
 } from '@urbit/api';
 
-import GlobalApi from '~/logic/api/global';
 import VirtualScroller from '~/views/components/VirtualScroller';
 import { LinkItem } from './components/LinkItem';
 import LinkSubmit from './components/LinkSubmit';
-import { isWriter } from '~/logic/lib/group';
 import { S3State } from '~/types/s3-update';
 
 interface LinkWindowProps {
   association: Association;
-  contacts: Rolodex;
   resource: string;
   graph: Graph;
-  unreads: Unreads;
   hideNicknames: boolean;
   hideAvatars: boolean;
   baseUrl: string;
   group: Group;
   path: string;
-  api: GlobalApi;
   s3: S3State;
 }
 export function LinkWindow(props: LinkWindowProps) {
-  const { graph, api, association } = props;
+  const { graph, association } = props;
   const virtualList = useRef<VirtualScroller>();
   const fetchLinks = useCallback(
     async (newer: boolean) => {
@@ -49,7 +43,7 @@ return;
 
   const first = graph.peekLargest()?.[0];
   const [,,ship, name] = association.resource.split('/');
-  const canWrite = isWriter(props.group, association.resource);
+  const canWrite = isWriter(props.group, association.resource, window.ship);
 
     const style = useMemo(() =>
     ({
@@ -64,7 +58,7 @@ return;
     return (
       <Col key={0} mx="auto" mt="4" maxWidth="768px" width="100%" flexShrink={0} px={3}>
         { canWrite ? (
-            <LinkSubmit s3={props.s3} name={name} ship={ship.slice(1)} api={api} />
+            <LinkSubmit s3={props.s3} name={name} ship={ship.slice(1)} />
           ) : (
             <Text>There are no links here yet. You do not have permission to post to this collection.</Text>
           )
@@ -96,7 +90,7 @@ return null;
           return (
             <React.Fragment key={index.toString()}>
             <Col key={index.toString()} mx="auto" mt="4" maxWidth="768px" width="100%" flexShrink={0} px={3}>
-              <LinkSubmit s3={props.s3} name={name} ship={ship.slice(1)} api={api} />
+              <LinkSubmit s3={props.s3} name={name} ship={ship.slice(1)} />
             </Col>
               <LinkItem {...linkProps} />
             </React.Fragment>

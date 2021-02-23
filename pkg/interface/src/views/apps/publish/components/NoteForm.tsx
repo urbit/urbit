@@ -1,20 +1,22 @@
 import React from 'react';
 import * as Yup from 'yup';
+import { Formik, Form, FormikHelpers } from 'formik';
+
 import {
   ManagedTextInputField as Input,
   Row,
   Col,
   Button
 } from '@tlon/indigo-react';
+
 import { AsyncButton } from '../../../components/AsyncButton';
-import { Formik, Form, FormikHelpers } from 'formik';
 import { MarkdownField } from './MarkdownField';
-import { S3State } from '@urbit/api';
+import { S3State } from '~/types';
+import { useHistory } from 'react-router-dom';
 
 interface PostFormProps {
   initial: PostFormSchema;
   cancel?: boolean;
-  history?: any;
   onSubmit: (
     values: PostFormSchema,
     actions: FormikHelpers<PostFormSchema>
@@ -35,7 +37,8 @@ export interface PostFormSchema {
 }
 
 export function PostForm(props: PostFormProps) {
-  const { initial, onSubmit, submitLabel, loadingText, s3, cancel, history } = props;
+  const { initial, onSubmit, submitLabel, loadingText, s3, cancel } = props;
+  const history = useHistory();
 
   return (
     <Col width="100%" height="100%" p={[2, 4]}>
@@ -46,7 +49,7 @@ export function PostForm(props: PostFormProps) {
         validateOnBlur
       >
         <Form style={{ display: 'contents' }}>
-          <Row flexShrink='0' flexDirection={['column-reverse', 'row']} mb={4} gapX={4} justifyContent='space-between'>
+          <Row flexShrink={0} flexDirection={['column-reverse', 'row']} mb={4} gapX={4} justifyContent='space-between'>
             <Input maxWidth='40rem' width='100%' flexShrink={[0, 1]} placeholder="Post Title" id="title" />
               <Row flexDirection={['column', 'row']} mb={[4,0]}>
               <AsyncButton

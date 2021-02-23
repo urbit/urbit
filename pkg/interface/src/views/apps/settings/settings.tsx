@@ -5,7 +5,6 @@ import Helmet from 'react-helmet';
 import { Box } from '@tlon/indigo-react';
 
 import Settings from './components/settings';
-import useLocalState from '~/logic/state/local';
 
 export default function SettingsScreen(props: any): ReactElement {
   return (

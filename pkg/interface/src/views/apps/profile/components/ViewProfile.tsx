@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import _ from 'lodash';
-import { useHistory } from 'react-router-dom';
 
 import {
   Center,
@@ -19,7 +18,7 @@ export function ViewProfile(props: any): ReactElement {
   const { hideNicknames } = useLocalState(({ hideNicknames }) => ({
     hideNicknames
   }));
-  const { api, contact, nacked, isPublic, ship, associations, groups } = props;
+  const { contact, nacked, isPublic, ship } = props;
 
   return (
     <>
@@ -61,10 +60,7 @@ export function ViewProfile(props: any): ReactElement {
           <Col>
             { contact?.groups.sort(lengthOrder).map(g => (
               <GroupLink
-                api={api}
                 resource={g}
-                groups={groups}
-                associations={associations}
                 measure={() => {}}
               />
             ))}

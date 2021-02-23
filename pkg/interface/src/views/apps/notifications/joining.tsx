@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { Row, Text, SegmentedProgressBar, Box } from '@tlon/indigo-react';
 import {
   JoinProgress,

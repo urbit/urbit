@@ -1,18 +1,16 @@
 import React, { useRef } from 'react';
-import { Box, Text, Col } from '@tlon/indigo-react';
 import f from 'lodash/fp';
 import _ from 'lodash';
 
-import { Associations, Association, Unreads, UnreadStats } from '@urbit/api';
+import { Box, Text, Col } from '@tlon/indigo-react';
+import { Associations, Association, Unreads, getUnreadCount, getNotificationCount } from '@urbit/api';
+
 import { alphabeticalOrder } from '~/logic/lib/util';
-import { getUnreadCount, getNotificationCount } from '~/logic/lib/hark';
 import Tile from '../components/tiles/tile';
 import { useTutorialModal } from '~/views/components/useTutorialModal';
 import { TUTORIAL_HOST, TUTORIAL_GROUP } from '~/logic/lib/tutorialModal';
-
-interface GroupsProps {
-  associations: Associations;
-}
+import useMetadataState from '~/logic/state/metadata';
+import useHarkState from '~/logic/state/hark';
 
 const sortGroupsAlph = (a: Association, b: Association) =>
   alphabeticalOrder(a.metadata.title, b.metadata.title);
@@ -33,8 +31,10 @@ const getGraphNotifications = (associations: Associations, unreads: Unreads) => 
     f.reduce(f.add, 0)
   )(associations.graph);
 
-export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
-  const { associations, unreads, inbox, ...boxProps } = props;
+export default function Groups(props: Parameters<typeof Box>[0]) {
+  const associations = useMetadataState(state => state.associations);
+  const unreads = useHarkState(state => state.unreads);
+  const { inbox, ...boxProps } = props;
 
   const groups = Object.values(associations?.groups || {})
     .filter(e => e?.group in props.groups)

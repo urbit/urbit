@@ -9,8 +9,8 @@ import {
   ErrorLabel,
   StatelessTextInput as Input
 } from '@tlon/indigo-react';
+import { hexToUx } from '@urbit/api';
 
-import { hexToUx } from '~/logic/lib/util';
 
 type ColorInputProps = Parameters<typeof Col>[0] & {
   id: string;

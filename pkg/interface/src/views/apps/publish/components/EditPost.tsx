@@ -1,15 +1,16 @@
 import React, { ReactElement } from 'react';
 import _ from 'lodash';
 import { FormikHelpers } from 'formik';
-import { RouteComponentProps, useLocation } from 'react-router-dom';
+import { RouteComponentProps, useHistory, useLocation } from 'react-router-dom';
 
-import { GraphNode } from '@urbit/api';
+import { GraphNode, addNodes } from '@urbit/api';
 
 import { PostFormSchema, PostForm } from './NoteForm';
 import GlobalApi from '~/logic/api/global';
 import { getLatestRevision, editPost } from '~/logic/lib/publish';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
 import { S3State } from '~/types';
+import useApi from '~/logic/lib/useApi';
 
 interface EditPostProps {
   ship: string;
@@ -21,7 +22,8 @@ interface EditPostProps {
 }
 
 export function EditPost(props: EditPostProps & RouteComponentProps): ReactElement {
-  const { note, book, noteId, api, ship, history, s3 } = props;
+  const { note, book, noteId, ship, s3 } = props;
+  const history = useHistory();
   const [revNum, title, body] = getLatestRevision(note);
   const location = useLocation();
 
@@ -31,6 +33,8 @@ export function EditPost(props: EditPostProps & RouteComponentProps): ReactEleme
     body
   };
 
+  const api = useApi();
+
   const onSubmit = async (
     values: PostFormSchema,
     actions: FormikHelpers<PostFormSchema>
@@ -39,7 +43,7 @@ export function EditPost(props: EditPostProps & RouteComponentProps): ReactEleme
     try {
       const newRev = revNum + 1;
       const nodes = editPost(newRev, noteId, title, body);
-      await api.graph.addNodes(ship, book, nodes);
+      await api.poke(addNodes(ship, book, nodes));
       await waiter((p) => {
         const [rev] = getLatestRevision(p.note);
         return rev === newRev;
@@ -56,7 +60,6 @@ export function EditPost(props: EditPostProps & RouteComponentProps): ReactEleme
     <PostForm
       initial={initial}
       cancel
-      history={history}
       onSubmit={onSubmit}
       s3={s3}
       submitLabel="Update"

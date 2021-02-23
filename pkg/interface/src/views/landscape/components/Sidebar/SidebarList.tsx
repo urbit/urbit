@@ -1,10 +1,13 @@
 import React, { ReactElement } from 'react';
-import { Associations, AppAssociations, Groups, Rolodex } from '@urbit/api';
+
+import { AppAssociations } from '@urbit/api';
 
 import { alphabeticalOrder } from '~/logic/lib/util';
 import { SidebarAppConfigs, SidebarListConfig, SidebarSort } from './types';
 import { SidebarItem } from './SidebarItem';
 import { Workspace } from '~/types/workspace';
+import useMetadataState from '~/logic/state/metadata';
+import useGroupState from '~/logic/state/groups';
 
 function sidebarSort(
   associations: AppAssociations,
@@ -39,35 +42,34 @@ function sidebarSort(
 
 export function SidebarList(props: {
   apps: SidebarAppConfigs;
-  contacts: Rolodex;
   config: SidebarListConfig;
-  associations: Associations;
-  groups: Groups;
   baseUrl: string;
   group?: string;
   selected?: string;
   workspace: Workspace;
 }): ReactElement {
   const { selected, group, config, workspace } = props;
-  const associations = { ...props.associations.graph };
+  const associations = useMetadataState(state => state.associations);
+  const groups = useGroupState(state => state.groups);
+  const graphAssociations = { ...associations.graph };
 
-  const ordered = Object.keys(associations)
+  const ordered = Object.keys(graphAssociations)
     .filter((a) => {
-      const assoc = associations[a];
+      const assoc = graphAssociations[a];
       if (workspace?.type === 'messages') {
-        return (!(assoc.group in props.associations.groups) && assoc.metadata.module === 'chat');
+        return (!(assoc.group in groups) && assoc.metadata.module === 'chat');
       } else {
         return group
           ? assoc.group === group
-          : (!(assoc.group in props.associations.groups) && assoc.metadata.module !== 'chat');
+          : (!(assoc.group in groups) && assoc.metadata.module !== 'chat');
       }
     })
-    .sort(sidebarSort(associations, props.apps)[config.sortBy]);
+    .sort(sidebarSort(graphAssociations, props.apps)[config.sortBy]);
 
   return (
     <>
       {ordered.map((path) => {
-        const assoc = associations[path];
+        const assoc = graphAssociations[path];
         return (
           <SidebarItem
             key={path}
@@ -76,8 +78,6 @@ export function SidebarList(props: {
             association={assoc}
             apps={props.apps}
             hideUnjoined={config.hideUnjoined}
-            groups={props.groups}
-            contacts={props.contacts}
             workspace={workspace}
           />
         );

@@ -4,20 +4,19 @@ import { useFormikContext } from 'formik';
 import { Prompt } from 'react-router-dom';
 import { Editor } from 'codemirror';
 
+import { Box } from '@tlon/indigo-react';
+
 import { MOBILE_BROWSER_REGEX, usePreventWindowUnload } from '~/logic/lib/util';
 import { PropFunc } from '~/types/util';
 import CodeMirror from 'codemirror';
-
-import 'codemirror/mode/markdown/markdown';
-import 'codemirror/addon/display/placeholder';
-import 'codemirror/addon/edit/continuelist';
-
-import 'codemirror/lib/codemirror.css';
-import { Box } from '@tlon/indigo-react';
 import { useFileDrag } from '~/logic/lib/useDrag';
 import SubmitDragger from '~/views/components/SubmitDragger';
 import useS3 from '~/logic/lib/useS3';
-import { S3State } from '@urbit/api';
+import { S3State } from '~/types';
+import 'codemirror/mode/markdown/markdown';
+import 'codemirror/addon/display/placeholder';
+import 'codemirror/addon/edit/continuelist';
+import 'codemirror/lib/codemirror.css';
 
 const MARKDOWN_CONFIG = {
   name: 'markdown'

@@ -1,14 +1,10 @@
 import React from 'react';
+
 import { Box } from '@tlon/indigo-react';
 
-import { MetadataBody, NotificationProps } from './types';
 import { Header } from './header';
 
-function getInvolvedUsers(body: MetadataBody) {
-  return [];
-}
-
-function getDescription(body: MetadataBody) {
+function getDescription(body: any) {
   const b = body.metadata;
   if ('new' in b) {
     return 'created';
@@ -25,7 +21,7 @@ function getDescription(body: MetadataBody) {
   }
 }
 
-export function MetadataNotification(props: NotificationProps<'metadata'>) {
+export function MetadataNotification(props) {
   const { unread } = props;
   const description = getDescription(unread.unreads[0].body);
 

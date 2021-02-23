@@ -1,29 +1,21 @@
 import React, { useEffect } from "react";
-import { AsyncButton } from "../../../components/AsyncButton";
 import * as Yup from "yup";
+
 import {
-  Box,
   ManagedTextInputField as Input,
-  ManagedCheckboxField as Checkbox,
-  Col,
-  Button,
-  Center,
 } from "@tlon/indigo-react";
+import {Association, uxToHex, Contacts, metadataAdd } from "@urbit/api";
+
 import { Formik, Form, useFormikContext, FormikHelpers } from "formik";
 import GlobalApi from "~/logic/api/global";
-import { Notebook } from "~/types/publish-update";
-import { Contacts } from "@urbit/api/contacts";
 import { FormError } from "~/views/components/FormError";
-import { RouteComponentProps, useHistory } from "react-router-dom";
-import {Association} from "@urbit/api";
-import { uxToHex } from "~/logic/lib/util";
+import { AsyncButton } from "~/views/components/AsyncButton";
+import useApi from "~/logic/lib/useApi";
 
 interface MetadataFormProps {
   host: string;
   book: string;
   association: Association;
-  contacts: Contacts;
-  api: GlobalApi;
 }
 
 interface FormSchema {
@@ -47,14 +39,14 @@ const ResetOnPropsChange = (props: { init: FormSchema; book: string }) => {
 
 
 export function MetadataForm(props: MetadataFormProps) {
-  const { api, book } = props;
+  const { book } = props;
   const { metadata } = props.association || {};
+  const api = useApi();
 
   const initialValues: FormSchema = {
     name: metadata?.title,
     description: metadata?.description,
   };
-
 
   const onSubmit = async (
     values: FormSchema,
@@ -62,15 +54,17 @@ export function MetadataForm(props: MetadataFormProps) {
   ) => {
     try {
       const { name, description } = values;
-      await api.metadata.metadataAdd(
+      await api.poke(metadataAdd(
+        window.ship,
         "publish",
         props.association.resource,
+        // TODO there should be a path here
         props.association.group,
         name,
         description,
         props.association.metadata["date-created"],,
         uxToHex(props.association.metadata.color)
-      );
+      ));
       actions.setStatus({ success: null });
     } catch (e) {
       console.log(e);

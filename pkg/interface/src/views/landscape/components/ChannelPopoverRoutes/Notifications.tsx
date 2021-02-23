@@ -1,18 +1,20 @@
 import React, { useRef } from 'react';
+
 import { Col, Text, BaseLabel, Label } from '@tlon/indigo-react';
-import GlobalApi from '~/logic/api/global';
-import { Association, NotificationGraphConfig } from '@urbit/api';
+import { Association, ignoreGraph, listenGraph, NotificationGraphConfig } from '@urbit/api';
+
 import { StatelessAsyncToggle } from '~/views/components/StatelessAsyncToggle';
+import useApi from '~/logic/lib/useApi';
 
 interface ChannelNotificationsProps {
-  api: GlobalApi;
   association: Association;
   notificationsGraphConfig: NotificationGraphConfig;
 }
 
 export function ChannelNotifications(props: ChannelNotificationsProps) {
-  const { api, association } = props;
+  const { association } = props;
   const rid = association.resource;
+  const api = useApi();
 
   const isMuted =
     props.notificationsGraphConfig.watching.findIndex(
@@ -20,8 +22,11 @@ export function ChannelNotifications(props: ChannelNotificationsProps) {
     ) === -1;
 
   const onChangeMute = async () => {
-    const func = isMuted ? 'listenGraph' : 'ignoreGraph';
-    await api.hark[func](rid, '/');
+    if (isMuted) {
+      await api.poke(listenGraph(rid, '/'));
+    } else {
+      await api.poke(ignoreGraph(rid, '/'));
+    }
   };
 
   const anchorRef = useRef<HTMLElement | null>(null);

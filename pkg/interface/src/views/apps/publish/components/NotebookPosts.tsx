@@ -1,10 +1,12 @@
-import React, { Component } from 'react';
+import React from 'react';
+
 import { Col } from '@tlon/indigo-react';
+import { Graph, Unreads, Group } from '@urbit/api';
+
 import { NotePreview } from './NotePreview';
-import { Contacts, Graph, Unreads, Group } from '@urbit/api';
+import useContactState from '~/logic/state/contacts';
 
 interface NotebookPostsProps {
-  contacts: Contacts;
   graph: Graph;
   host: string;
   book: string;
@@ -12,11 +14,11 @@ interface NotebookPostsProps {
   unreads: Unreads;
   hideAvatars?: boolean;
   hideNicknames?: boolean;
-  api: GlobalApi;
   group: Group;
 }
 
 export function NotebookPosts(props: NotebookPostsProps) {
+  const contacts = useContactState(state => state.contacts);
   return (
     <Col>
       {Array.from(props.graph || []).map(
@@ -27,8 +29,7 @@ export function NotebookPosts(props: NotebookPostsProps) {
               host={props.host}
               book={props.book}
               unreads={props.unreads}
-              contact={props.contacts[node.post.author]}
-              contacts={props.contacts}
+              contact={contacts[node.post.author]}
               node={node}
               baseUrl={props.baseUrl}
               api={props.api}

@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
-import { TutorialProgress } from '@urbit/api';
+
 import useLocalState, { selectLocalState } from '~/logic/state/local';
+import { TutorialProgress } from '~/types/local-update';
 
 const localSelector = selectLocalState(['tutorialProgress', 'setTutorialRef']);
 

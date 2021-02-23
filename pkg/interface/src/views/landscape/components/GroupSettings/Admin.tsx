@@ -1,6 +1,7 @@
 import React from 'react';
 import { Formik, Form, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
+import { useHistory } from 'react-router-dom';
 
 import {
   Box,
@@ -8,19 +9,16 @@ import {
   ManagedToggleSwitchField as Checkbox,
   Col
 } from '@tlon/indigo-react';
-import { Enc } from '@urbit/api';
-import { Group, GroupPolicy } from '@urbit/api/groups';
-import { Association } from '@urbit/api/metadata';
+import { Enc, Group, GroupPolicy, Association, uxToHex, resourceFromPath, roleForShip, changePolicy } from '@urbit/api';
 
 import { AsyncButton } from '~/views/components/AsyncButton';
 import { FormError } from '~/views/components/FormError';
 import GlobalApi from '~/logic/api/global';
-import { resourceFromPath, roleForShip } from '~/logic/lib/group';
 import { ColorInput } from '~/views/components/ColorInput';
-import { useHistory } from 'react-router-dom';
-import { uxToHex } from '~/logic/lib/util';
 import { ImageInput } from '~/views/components/ImageInput';
 import { S3State } from '~/types/s3-update';
+import useApi from '~/logic/lib/useApi';
+import { metadataUpdate } from '@urbit/api/metadata';
 
 interface FormSchema {
   title: string;
@@ -42,15 +40,14 @@ const formSchema = Yup.object({
 interface GroupAdminSettingsProps {
   group: Group;
   association: Association;
-  api: GlobalApi;
   s3: S3State;
 }
 
 export function GroupAdminSettings(props: GroupAdminSettingsProps) {
   const { group, association, s3 } = props;
   const { metadata } = association;
-  const history = useHistory();
   const currentPrivate = 'invite' in props.group.policy;
+  const api = useApi();
   const initialValues: FormSchema = {
     title: metadata?.title,
     description: metadata?.description,
@@ -68,20 +65,20 @@ export function GroupAdminSettings(props: GroupAdminSettingsProps) {
       const { title, description, picture, color, isPrivate, adminMetadata } = values;
       const uxColor = uxToHex(color);
       const vip = adminMetadata ? '' : 'member-metadata';
-      await props.api.metadata.update(props.association, {
+      await api.poke(metadataUpdate(props.association, {
         title,
         description,
         picture,
         color: uxColor,
         vip
-      });
+      }));
       if (isPrivate !== currentPrivate) {
         const resource = resourceFromPath(props.association.group);
         const newPolicy: Enc<GroupPolicy> = isPrivate
           ? { invite: { pending: [] } }
           : { open: { banRanks: [], banned: [] } };
         const diff = { replace: newPolicy };
-        await props.api.groups.changePolicy(resource, diff);
+        await api.poke(changePolicy(resource, diff)); // TODO this diff thows an error
       }
 
       actions.setStatus({ success: null });

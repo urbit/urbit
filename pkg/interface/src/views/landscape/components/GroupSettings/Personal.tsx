@@ -6,24 +6,27 @@ import {
   BaseLabel,
   BaseAnchor
 } from '@tlon/indigo-react';
-import { GroupNotificationsConfig } from '@urbit/api';
-import { Association } from '@urbit/api/metadata';
+import { GroupNotificationsConfig, Association, listenGroup, ignoreGroup } from '@urbit/api';
 
 import GlobalApi from '~/logic/api/global';
 import { StatelessAsyncToggle } from '~/views/components/StatelessAsyncToggle';
+import useApi from '~/logic/lib/useApi';
 
 export function GroupPersonalSettings(props: {
-  api: GlobalApi;
   association: Association;
   notificationsGroupConfig: GroupNotificationsConfig;
 }) {
   const groupPath = props.association.group;
+  const api = useApi();
 
   const watching = props.notificationsGroupConfig.findIndex(g => g === groupPath) !== -1;
 
   const onClick = async () => {
-    const func = !watching ? 'listenGroup' : 'ignoreGroup';
-    await props.api.hark[func](groupPath);
+    if (!watching) {
+      await api.poke(listenGroup(groupPath));
+    } else {
+      await api.poke(ignoreGroup(groupPath));
+    }
   };
 
   return (

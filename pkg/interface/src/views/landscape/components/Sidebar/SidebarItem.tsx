@@ -2,15 +2,17 @@ import React, { ReactElement, useRef } from 'react';
 import urbitOb from 'urbit-ob';
 
 import { Icon, Row, Box, Text, BaseImage } from '@tlon/indigo-react';
-import { Groups, Association, Rolodex } from '@urbit/api';
+import { Groups, Association, Rolodex, uxToHex } from '@urbit/api';
 
 import { HoverBoxLink } from '~/views/components/HoverBox';
-import { Sigil } from '~/logic/lib/sigil';
-import { getModuleIcon, getItemTitle, uxToHex } from '~/logic/lib/util';
+import { Sigil } from '~/logic/lib/Sigil';
+import { getModuleIcon, getItemTitle } from '~/logic/lib/util';
 import { useTutorialModal } from '~/views/components/useTutorialModal';
 import { TUTORIAL_HOST, TUTORIAL_GROUP } from '~/logic/lib/tutorialModal';
 import { SidebarAppConfigs, SidebarItemStatus } from './types';
 import { Workspace } from '~/types/workspace';
+import useGroupState from '~/logic/state/groups';
+import useContactState from '~/logic/state/contacts';
 
 function SidebarItemIndicator(props: { status?: SidebarItemStatus }) {
   switch (props.status) {
@@ -30,14 +32,12 @@ function SidebarItemIndicator(props: { status?: SidebarItemStatus }) {
 export function SidebarItem(props: {
   hideUnjoined: boolean;
   association: Association;
-  contacts: Rolodex;
-  groups: Groups;
   path: string;
   selected: boolean;
   apps: SidebarAppConfigs;
   workspace: Workspace;
-}): ReactElement {
-  const { association, path, selected, apps, groups } = props;
+}): ReactElement | null {
+  const { association, path, selected, apps } = props;
   let title = getItemTitle(association);
   const appName = association?.['app-name'];
   const mod = association?.metadata?.module || appName;
@@ -50,6 +50,8 @@ export function SidebarItem(props: {
     anchorRef.current
   );
   const app = apps[appName];
+  const contacts = useContactState(state => state.contacts);
+  const groups = useGroupState(state => state.groups);
   const isUnmanaged = groups?.[groupPath]?.hidden || false;
   if (!app) {
     return null;
@@ -78,16 +80,16 @@ export function SidebarItem(props: {
     return null;
   }
 
-  let img = null;
+  let img: ReactElement | null = null;
 
   if (urbitOb.isValidPatp(title)) {
-    if (props.contacts?.[title] && props.contacts[title].avatar) {
-      img = <BaseImage src={props.contacts[title].avatar} width='16px' height='16px' borderRadius={2} />;
+    if (contacts[title] && contacts[title].avatar) {
+      img = <BaseImage src={contacts[title].avatar} width='16px' height='16px' borderRadius={2} />;
     } else {
-      img = <Sigil ship={title} color={`#${uxToHex(props.contacts?.[title]?.color || '0x0')}`} icon padding={2} size={16} />;
+      img = <Sigil ship={title} color={`#${uxToHex(contacts.[title]?.color || '0x0')}`} icon padding={2} size={16} />;
     }
-    if (props.contacts?.[title] && props.contacts[title].nickname) {
-      title = props.contacts[title].nickname;
+    if (contacts.[title] && contacts[title].nickname) {
+      title = contacts[title].nickname;
     }
   } else {
     img = <Box flexShrink={0} height={16} width={16} borderRadius={2} backgroundColor={`#${uxToHex(props?.association?.metadata?.color)}` || '#000000'} />;

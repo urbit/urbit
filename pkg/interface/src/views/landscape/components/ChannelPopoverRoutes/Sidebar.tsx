@@ -1,5 +1,7 @@
 import React from 'react';
+
 import { Text, Col } from '@tlon/indigo-react';
+
 import { SidebarItem } from '../SidebarItem';
 
 export function ChannelPopoverRoutesSidebar(props: {

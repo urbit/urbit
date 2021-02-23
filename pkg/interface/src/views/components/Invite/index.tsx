@@ -3,61 +3,64 @@ import { useHistory } from 'react-router-dom';
 
 import {
   MetadataUpdatePreview,
-  Contacts,
   JoinRequests,
-  Groups,
-  Associations
+  cite,
+  Invite,
+  resourceFromPath,
+  join,
+  accept,
+  decline
 } from '@urbit/api';
-import { Invite } from '@urbit/api/invite';
 import { Text, Icon, Row } from '@tlon/indigo-react';
 
-import { cite } from '~/logic/lib/util';
-import GlobalApi from '~/logic/api/global';
-import { resourceFromPath } from '~/logic/lib/group';
 import { GroupInvite } from './Group';
 import { InviteSkeleton } from './InviteSkeleton';
 import { JoinSkeleton } from './JoinSkeleton';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
+import useApi from '~/logic/lib/useApi';
+import useMetadataState from '~/logic/state/metadata';
+import useGroupState from '~/logic/state/groups';
 
 interface InviteItemProps {
   invite?: Invite;
   resource: string;
-  groups: Groups;
-  associations: Associations;
-
   pendingJoin: JoinRequests;
   app?: string;
   uid?: string;
-  api: GlobalApi;
-  contacts: Contacts;
 }
 
 export function InviteItem(props: InviteItemProps) {
   const [preview, setPreview] = useState<MetadataUpdatePreview | null>(null);
-  const { associations, pendingJoin, invite, resource, uid, app, api } = props;
+  const { pendingJoin, invite, resource, uid, app } = props;
   const { ship, name } = resourceFromPath(resource);
   const waiter = useWaitForProps(props, 50000);
   const status = pendingJoin[resource];
+  const api = useApi();
 
   const history = useHistory();
+  const associations = useMetadataState(state => state.associations);
+  const groups = useGroupState(state => state.groups);
+
   const inviteAccept = useCallback(async () => {
     if (!(app && invite && uid)) {
       return;
     }
 
-    api.groups.join(ship, name);
+
+    api.poke(join(ship, name));
     await waiter(p => resource in p.pendingJoin);
 
-    api.invite.accept(app, uid);
-    await waiter((p) => {
+    api.poke(accept(app, uid));
+
+    await waiter(() => {
       return (
-        resource in p.groups &&
-        (resource in (p.associations?.graph ?? {}) ||
-          resource in (p.associations?.groups ?? {}))
+        resource in groups &&
+        (resource in (associations?.graph ?? {}) ||
+          resource in (associations?.groups ?? {}))
       );
     });
 
-    if (props.groups?.[resource]?.hidden) {
+    if (groups?.[resource]?.hidden) {
       const { metadata } = associations.graph[resource];
       if (metadata?.module === 'chat') {
         history.push(`/~landscape/messages/resource/${metadata.module}${resource}`);
@@ -67,21 +70,22 @@ export function InviteItem(props: InviteItemProps) {
     } else {
       history.push(`/~landscape${resource}`);
     }
-  }, [app, invite, uid, resource, props.groups, associations]);
+  }, [app, invite, uid, resource, groups, associations]);
 
   const inviteDecline = useCallback(async () => {
     if(!(app && uid)) {
       return;
     }
-    await api.invite.decline(app, uid);
+    await api.poke(decline(app, uid));
   }, [app, uid]);
 
   const handlers = { onAccept: inviteAccept, onDecline: inviteDecline };
+  const getPreview = useMetadataState(state => state.preview);
 
   useEffect(() => {
     if (!app || app === 'groups') {
       (async () => {
-        setPreview(await api.metadata.preview(resource));
+        setPreview(await getPreview(resource));
       })();
       return () => {
         setPreview(null);

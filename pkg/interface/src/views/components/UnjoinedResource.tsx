@@ -1,19 +1,17 @@
 import React, { useEffect, useMemo } from 'react';
-import { Association } from '@urbit/api/metadata';
-import { Box, Text, Button, Col, Center } from '@tlon/indigo-react';
+import { useHistory } from 'react-router-dom';
+
+import { Notebooks, Inbox, Association } from '@urbit/api';
+import { Box, Text, Col, Center } from '@tlon/indigo-react';
+
 import RichText from '~/views/components/RichText';
-import { Link, useHistory } from 'react-router-dom';
-import GlobalApi from '~/logic/api/global';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
-import {
-  StatelessAsyncButton as AsyncButton,
-  StatelessAsyncButton
-} from './StatelessAsyncButton';
-import { Notebooks, Graphs, Inbox } from '@urbit/api';
+import { StatelessAsyncButton } from './StatelessAsyncButton';
+import useApi from '~/logic/lib/useApi';
+import { joinGraph } from '@urbit/api';
 
 interface UnjoinedResourceProps {
   association: Association;
-  api: GlobalApi;
   baseUrl: string;
   notebooks: Notebooks;
   graphKeys: Set<string>;
@@ -30,17 +28,18 @@ function isJoined(path: string) {
 }
 
 export function UnjoinedResource(props: UnjoinedResourceProps) {
-  const { api, notebooks, graphKeys, inbox } = props;
+  const { notebooks, graphKeys, inbox } = props;
   const history = useHistory();
   const rid = props.association.resource;
   const appName = props.association['app-name'];
   const { title, description, module } = props.association.metadata;
   const waiter = useWaitForProps(props);
   const app = useMemo(() => module || appName, [props.association]);
+  const api = useApi();
 
   const onJoin = async () => {
     const [, , ship, name] = rid.split('/');
-    await api.graph.joinGraph(ship, name);
+    await api.thread(joinGraph(ship, name));
     await waiter(isJoined(rid));
     history.push(`${props.baseUrl}/resource/${app}${rid}`);
   };

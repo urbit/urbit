@@ -1,18 +1,27 @@
 import React, { useEffect } from 'react';
 import bigInt from 'big-integer';
+import { FormikHelpers } from 'formik';
+
 import { Col } from '@tlon/indigo-react';
+import {
+  Group,
+  GraphNode,
+  Association,
+  createBlankNodeWithChildPost,
+  getUnreadCount,
+  isWriter,
+  markCountAsRead,
+  addNode,
+  addPost,
+  createPost
+} from '@urbit/api';
+
 import { CommentItem } from './CommentItem';
 import CommentInput from './CommentInput';
-import { Contacts } from '@urbit/api/contacts';
-import GlobalApi from '~/logic/api/global';
-import { FormikHelpers } from 'formik';
-import { Group, GraphNode, Association } from '@urbit/api';
-import { createPost, createBlankNodeWithChildPost } from '~/logic/api/graph';
 import { getLatestCommentRevision } from '~/logic/lib/publish';
 import tokenizeMessage from '~/logic/lib/tokenizeMessage';
-import { getUnreadCount } from '~/logic/lib/hark';
 import { PropFunc } from '~/types/util';
-import { isWriter } from '~/logic/lib/group';
+import useApi from '~/logic/lib/useApi';
 
 interface CommentsProps {
   comments: GraphNode;
@@ -21,8 +30,6 @@ interface CommentsProps {
   ship: string;
   editCommentId: string;
   baseUrl: string;
-  contacts: Contacts;
-  api: GlobalApi;
   group: Group;
 }
 
@@ -33,12 +40,13 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
     ship,
     name,
     editCommentId,
-    api,
     history,
     baseUrl,
     group,
     ...rest
   } = props;
+
+  const api = useApi();
 
   const onSubmit = async (
     { comment },
@@ -47,11 +55,12 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
     try {
       const content = tokenizeMessage(comment);
       const node = createBlankNodeWithChildPost(
+        window.ship,
         comments?.post?.index,
         '1',
         content
       );
-      await api.graph.addNode(ship, name, node);
+      await api.poke(addNode(ship, name, node));
       actions.resetForm();
       actions.setStatus({ success: null });
     } catch (e) {
@@ -70,11 +79,12 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
 
       const content = tokenizeMessage(comment);
       const post = createPost(
+        window.ship,
         content,
         commentNode.post.index,
-        parseInt(idx + 1, 10)
+        String(parseInt(idx + 1, 10))
       );
-      await api.graph.addPost(ship, name, post);
+      await api.poke(addPost(ship, name, post));
       history.push(baseUrl);
     } catch (e) {
       console.error(e);
@@ -105,13 +115,13 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
 
   useEffect(() => {
     return () => {
-      api.hark.markCountAsRead(association, parentIndex, 'comment');
+      api.poke(markCountAsRead(association, parentIndex, 'comment'));
     };
   }, [comments.post.index]);
 
   const readCount = children.length - getUnreadCount(props?.unreads, association.resource, parentIndex);
 
-  const canComment = isWriter(group, association.resource) || association.metadata.vip === 'reader-comments';
+  const canComment = isWriter(group, association.resource, window.ship) || association.metadata.vip === 'reader-comments';
 
   return (
     <Col {...rest}>
@@ -130,8 +140,6 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
             <CommentItem
               comment={comment}
               key={idx.toString()}
-              contacts={props.contacts}
-              api={api}
               name={name}
               ship={ship}
               unread={i >= readCount}

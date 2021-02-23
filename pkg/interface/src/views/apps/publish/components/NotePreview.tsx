@@ -1,19 +1,18 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import ReactMarkdown from 'react-markdown';
+
 import { Col, Row, Box, Text, Icon, Image } from '@tlon/indigo-react';
+import { Group, Unreads, GraphNode } from '@urbit/api';
 
 import Author from '~/views/components/Author';
-import { GraphNode } from '@urbit/api/graph';
-import { Contacts, Group } from '@urbit/api';
 import {
   getComments,
   getLatestRevision,
   getSnippet
 } from '~/logic/lib/publish';
-import { Unreads } from '@urbit/api';
-import GlobalApi from '~/logic/api/global';
-import ReactMarkdown from 'react-markdown';
+import useContactState from '~/logic/state/contacts';
 
 interface NotePreviewProps {
   host: string;
@@ -21,8 +20,6 @@ interface NotePreviewProps {
   node: GraphNode;
   baseUrl: string;
   unreads: Unreads;
-  contacts: Contacts;
-  api: GlobalApi;
   group: Group;
 }
 
@@ -31,7 +28,8 @@ const WrappedBox = styled(Box)`
 `;
 
 export function NotePreview(props: NotePreviewProps) {
-  const { node, contacts, group } = props;
+  const { node, group } = props;
+  const contacts = useContactState(state => state.contacts);
   const { post } = node;
   if (!post) {
     return null;
@@ -79,12 +77,10 @@ export function NotePreview(props: NotePreviewProps) {
       <Row minWidth='0' flexShrink={0} width="100%" justifyContent="space-between" py={3} bg="white">
         <Author
           showImage
-          contacts={contacts}
           ship={post?.author}
           date={post?.['time-sent']}
           group={group}
           unread={isUnread}
-          api={props.api}
         />
         <Box ml="auto" mr={1}>
           <Link to={url}>

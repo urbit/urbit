@@ -1,7 +1,9 @@
 import React, { ReactElement, ReactNode } from 'react';
+
 import { Col, Rule } from '@tlon/indigo-react';
-import { JoiningStatus } from '~/views/apps/notifications/joining';
 import { JoinProgress } from '@urbit/api';
+
+import { JoiningStatus } from '~/views/apps/notifications/joining';
 import { PropFunc } from '~/types/util';
 
 type JoinSkeletonProps = {

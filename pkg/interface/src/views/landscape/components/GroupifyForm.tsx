@@ -1,14 +1,16 @@
 import React from 'react';
-import { Box, Col, Text } from '@tlon/indigo-react';
 import * as Yup from 'yup';
 import { Formik, FormikHelpers, Form } from 'formik';
 import { useHistory } from 'react-router-dom';
 
-import { Groups, Associations, Association } from '@urbit/api';
+import { Box, Col, Text } from '@tlon/indigo-react';
+import { Groups, Associations, Association, groupifyGraph } from '@urbit/api';
 
 import GlobalApi from '~/logic/api/global';
 import GroupSearch from '~/views/components/GroupSearch';
 import { AsyncButton } from '~/views/components/AsyncButton';
+import useApi from '~/logic/lib/useApi';
+import useGroupState from '~/logic/state/groups';
 
 const formSchema = Yup.object({
   group: Yup.string().nullable()
@@ -19,15 +21,13 @@ interface FormSchema {
 }
 
 interface GroupifyFormProps {
-  groups: Groups;
-  api: GlobalApi;
-  associations: Associations;
   association: Association;
 }
 
 export function GroupifyForm(props: GroupifyFormProps) {
   const history = useHistory();
   const { association } = props;
+  const api = useApi();
   const onGroupify = async (
     values: FormSchema,
     actions: FormikHelpers<FormSchema>
@@ -35,11 +35,11 @@ export function GroupifyForm(props: GroupifyFormProps) {
     try {
       const rid = association.resource;
       const [, , ship, name] = rid;
-      await props.api.graph.groupifyGraph(
+      await api.thread(groupifyGraph(
         ship,
         name,
         values.group?.toString() || undefined
-      );
+      ));
       const mod = association.metadata.module || association['app-name'];
       const newGroup = values.group || association.group;
       history.push(`/~landscape${newGroup}/resource/${mod}${rid}`);
@@ -52,7 +52,9 @@ export function GroupifyForm(props: GroupifyFormProps) {
 
   const groupPath = props.association?.group;
 
-  const isUnmanaged = props.groups?.[groupPath]?.hidden || false;
+  const groups = useGroupState(state => state.groups);
+
+  const isUnmanaged = groups?.[groupPath]?.hidden || false;
 
   if (!isUnmanaged) {
     return null;
@@ -69,7 +71,7 @@ export function GroupifyForm(props: GroupifyFormProps) {
       onSubmit={onGroupify}
     >
       <Form>
-        <Col flexShrink="0" gapY="4" maxWidth="512px">
+        <Col flexShrink={0} gapY="4" maxWidth="512px">
           <Box>
             <Text fontWeight="500">Groupify this channel</Text>
           </Box>
@@ -77,8 +79,6 @@ export function GroupifyForm(props: GroupifyFormProps) {
             id="group"
             label="Group"
             caption="Optionally, if you have admin privileges, you can add this channel to a group, or leave this blank to place the channel in its own group"
-            groups={props.groups}
-            associations={props.associations}
             adminOnly
             maxLength={1}
           />

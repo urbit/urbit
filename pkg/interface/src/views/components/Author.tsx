@@ -4,28 +4,28 @@ import { useHistory } from 'react-router-dom';
 
 import { Row, Box, BaseImage } from '@tlon/indigo-react';
 import { Contacts } from '@urbit/api/contacts';
-import { Group } from '@urbit/api';
+import { Group, uxToHex, cite } from '@urbit/api';
 
-import { uxToHex, cite, useShowNickname } from '~/logic/lib/util';
+import { useShowNickname } from '~/logic/lib/util';
 import OverlaySigil from './OverlaySigil';
-import { Sigil } from '~/logic/lib/sigil';
+import { Sigil } from '~/logic/lib/Sigil';
 import GlobalApi from '~/logic/api/global';
+import useContactState from '~/logic/state/contacts';
 
 interface AuthorProps {
-  contacts: Contacts;
   ship: string;
   date: number;
   showImage?: boolean;
   children?: ReactNode;
   unread?: boolean;
   group: Group;
-  api: GlobalApi;
 }
 
 // eslint-disable-next-line max-lines-per-function
 export default function Author(props: AuthorProps): ReactElement {
-  const { contacts, ship = '', date, showImage, group } = props;
+  const { ship = '', date, showImage, group } = props;
   const history = useHistory();
+  const contacts = useContactState(state => state.contacts);
   let contact;
   if (contacts) {
     contact = ship in contacts ? contacts[ship] : null;

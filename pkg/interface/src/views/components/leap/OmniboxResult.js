@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { Box, Row, Icon, Text } from '@tlon/indigo-react';
 import defaultApps from '~/logic/lib/default-apps';
-import Sigil from '~/logic/lib/sigil';
-import { uxToHex } from '~/logic/lib/util';
+import Sigil from '~/logic/lib/Sigil';
+import { uxToHex } from '@urbit/api';
+import { withInviteState } from '~/logic/state/invite';
+import { withHarkState } from '~/logic/state/hark';
 
 export class OmniboxResult extends Component {
   constructor(props) {
@@ -115,4 +117,4 @@ export class OmniboxResult extends Component {
   }
 }
 
-export default OmniboxResult;
+export default withInviteState(withHarkState(OmniboxResult, ['notifications']), ['invites']);

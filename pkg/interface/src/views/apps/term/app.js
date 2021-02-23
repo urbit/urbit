@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Route } from 'react-router-dom';
 import Helmet from 'react-helmet';
 
-import { History } from './components/history';
+import History from './components/history';
 import { Input } from './components/input';
 
 import { Box, Col } from '@tlon/indigo-react';

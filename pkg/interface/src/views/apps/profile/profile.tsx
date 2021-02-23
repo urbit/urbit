@@ -1,16 +1,20 @@
 import React from 'react';
-import { Route, Link } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 import Helmet from 'react-helmet';
 
 import { Box } from '@tlon/indigo-react';
 
 import { Profile } from './components/Profile';
+import useHarkState from '~/logic/state/hark';
+import useContactState from '~/logic/state/contacts';
 
 export default function ProfileScreen(props: any) {
+  const notificationsCount = useHarkState(state => state.notificationsCount);
+  const contacts = useContactState(state => state.contacts);
   return (
     <>
     <Helmet defer={false}>
-      <title>{ props.notificationsCount ? `(${String(props.notificationsCount) }) `: '' }Landscape - Profile</title>
+      <title>{ notificationsCount ? `(${String(notificationsCount) }) `: '' }Landscape - Profile</title>
     </Helmet>
     <Route
       path={'/~profile/:ship/:edit?'}
@@ -18,7 +22,7 @@ export default function ProfileScreen(props: any) {
         const ship = match.params.ship;
         const isEdit = match.url.includes('edit');
         const isPublic = props.isContactPublic;
-        const contact = props.contacts?.[ship];
+        const contact = contacts?.[ship];
 
         return (
           <Box height="100%" px={[0, 3]} pb={[0, 3]} borderRadius={1}>
@@ -35,11 +39,8 @@ export default function ProfileScreen(props: any) {
               <Box>
                 <Profile
                   ship={ship}
-                  hasLoaded={Object.keys(props.contacts).length !== 0}
-                  associations={props.associations}
-                  groups={props.groups}
+                  hasLoaded={Object.keys(contacts).length !== 0}
                   contact={contact}
-                  api={props.api}
                   s3={props.s3}
                   isEdit={isEdit}
                   isPublic={isPublic}

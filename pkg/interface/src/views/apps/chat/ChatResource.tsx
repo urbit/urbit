@@ -1,9 +1,10 @@
 import React, { useRef, useCallback, useEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
-import { Col } from '@tlon/indigo-react';
 import _ from 'lodash';
 
-import { Association } from '@urbit/api/metadata';
+import { Col } from '@tlon/indigo-react';
+import { Association, isWriter, resourceFromPath } from '@urbit/api';
+
 import { StoreState } from '~/logic/store/type';
 import { useFileDrag } from '~/logic/lib/useDrag';
 import ChatWindow from './components/ChatWindow';
@@ -13,9 +14,11 @@ import { ShareProfile } from '~/views/apps/chat/components/ShareProfile';
 import SubmitDragger from '~/views/components/SubmitDragger';
 import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
 import { Loading } from '~/views/components/Loading';
-import useS3 from '~/logic/lib/useS3';
-import { isWriter, resourceFromPath } from '~/logic/lib/group';
-
+import useGroupState from '~/logic/state/groups';
+import useContactState from '~/logic/state/contacts';
+import useGraphState from '~/logic/state/graph';
+import useHarkState from '~/logic/state/hark';
+import useApi from '~/logic/lib/useApi';
 import './css/custom.css';
 
 type ChatResourceProps = StoreState & {
@@ -25,21 +28,26 @@ type ChatResourceProps = StoreState & {
 } & RouteComponentProps;
 
 export function ChatResource(props: ChatResourceProps) {
+  const groups = useGroupState(state => state.groups);
   const station = props.association.resource;
   const groupPath = props.association.group;
-  const group = props.groups[groupPath];
-  const contacts = props.contacts;
-  const graph = props.graphs[station.slice(7)];
-  const isChatMissing = !props.graphKeys.has(station.slice(7));
-  const unreadCount = props.unreads.graph?.[station]?.['/']?.unreads || 0;
+  const group = groups[groupPath];
+  const contacts = useContactState(state => state.contacts);
+  const graphs = useGraphState(state => state.graphs);
+  const graph = graphs[station.slice(7)];
+  const unreads = useHarkState(state => state.unreads);
+  const unreadCount = unreads.graph?.[station]?.['/']?.unreads || 0;
   const [,, owner, name] = station.split('/');
   const ourContact = contacts?.[`~${window.ship}`];
   const chatInput = useRef<ChatInput>();
-  const canWrite = isWriter(group, station);
+  const canWrite = isWriter(group, station, window.ship);
+  const api = useApi();
+  const getNewest = useGraphState(state => state.getNewest);
+  const fetchIsAllowed = useContactState(state => state.fetchIsAllowed);
 
   useEffect(() => {
     const count = Math.min(50, unreadCount + 15);
-    props.api.graph.getNewest(owner, name, count);
+    getNewest(owner, name, count);
   }, [station]);
 
   const onFileDrag = useCallback(
@@ -97,7 +105,7 @@ export function ChatResource(props: ChatResourceProps) {
               if(s === window.ship) {
                 return Promise.resolve(null);
               }
-              return props.api.contacts.fetchIsAllowed(
+              return fetchIsAllowed(
                 `~${window.ship}`,
                 'personal',
                 ship,
@@ -116,7 +124,7 @@ export function ChatResource(props: ChatResourceProps) {
         }
 
       } else {
-        const groupShared = await props.api.contacts.fetchIsAllowed(
+        const groupShared = await fetchIsAllowed(
           `~${window.ship}`,
           'personal',
           res.ship,
@@ -140,7 +148,6 @@ export function ChatResource(props: ChatResourceProps) {
     <Col {...bind} height="100%" overflow="hidden" position="relative">
       <ShareProfile
         our={ourContact}
-        api={props.api}
         recipient={owner}
         recipients={recipients}
         showBanner={showBanner}
@@ -158,18 +165,14 @@ export function ChatResource(props: ChatResourceProps) {
           contacts : modifiedContacts
         }
         association={props.association}
-        associations={props.associations}
-        groups={props.groups}
         group={group}
         ship={owner}
         station={station}
-        api={props.api}
         scrollTo={scrollTo ? parseInt(scrollTo, 10) : undefined}
       />
       { canWrite && (
       <ChatInput
         ref={chatInput}
-        api={props.api}
         station={station}
         ourContact={
           (!showBanner && hasLoadedAllowed) ? ourContact : null

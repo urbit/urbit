@@ -3,15 +3,15 @@ import _ from 'lodash';
 
 import { Col } from '@tlon/indigo-react';
 import {
-  Associations,
   GroupNotificationContents,
   GroupNotifIndex,
   GroupUpdate,
-  Rolodex
+  read as markRead,
+  unread as markUnread
 } from '@urbit/api';
 
 import { Header } from './header';
-import GlobalApi from '~/logic/api/global';
+import useApi from '~/logic/lib/useApi';
 
 function describeNotification(description: string, plural: boolean) {
   switch (description) {
@@ -41,16 +41,13 @@ interface GroupNotificationProps {
   read: boolean;
   time: number;
   timebox: BigInteger;
-  associations: Associations;
-  contacts: Rolodex;
-  api: GlobalApi;
 }
 
 export function GroupNotification(props: GroupNotificationProps): ReactElement {
-  const { contents, index, read, time, api, timebox, associations } = props;
+  const { contents, index, read, time, timebox } = props;
 
   const authors = _.flatten(_.map(contents, getGroupUpdateParticipants));
-
+  const api = useApi();
   const { group } = index;
   const desc = describeNotification(index.description, contents.length !== 1);
 
@@ -58,9 +55,12 @@ export function GroupNotification(props: GroupNotificationProps): ReactElement {
     if (props.archived) {
       return;
     }
-    const func = read ? 'unread' : 'read';
-    return api.hark[func](timebox, { group: index });
-  }, [api, timebox, index, read]);
+    if (read) {
+      return api.poke(markRead(timebox, { group: index }));
+    } else {
+      return api.poke(markUnread(timebox, { group: index }));
+    }
+  }, [timebox, index, read]);
 
   return (
     <Col onClick={onClick} p="2">
@@ -69,10 +69,8 @@ export function GroupNotification(props: GroupNotificationProps): ReactElement {
         time={time}
         read={read}
         group={group}
-        contacts={props.contacts}
         authors={authors}
         description={desc}
-        associations={associations}
       />
     </Col>
   );

@@ -1,32 +1,30 @@
-import React, { ReactNode, useCallback, useMemo, useState } from 'react';
-import { Row, Box } from '@tlon/indigo-react';
+import React, { ReactNode, useCallback } from 'react';
 import _ from 'lodash';
+import { BigInteger } from 'big-integer';
+
+import { Row, Box } from '@tlon/indigo-react';
 import {
   GraphNotificationContents,
   IndexedNotification,
   GroupNotificationContents,
   NotificationGraphConfig,
   GroupNotificationsConfig,
-  Groups,
-  Associations,
-  Contacts
+  getParentIndex,
+  archive,
+  unmute,
+  mute
 } from '@urbit/api';
-import GlobalApi from '~/logic/api/global';
-import { getParentIndex } from '~/logic/lib/notification';
+
 import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
 import { GroupNotification } from './group';
 import { GraphNotification } from './graph';
-import { BigInteger } from 'big-integer';
 import { useHovering } from '~/logic/lib/util';
+import useApi from '~/logic/lib/useApi';
 
 interface NotificationProps {
   notification: IndexedNotification;
   time: BigInteger;
-  associations: Associations;
-  api: GlobalApi;
   archived: boolean;
-  groups: Groups;
-  contacts: Contacts;
   graphConfig: NotificationGraphConfig;
   groupConfig: GroupNotificationsConfig;
 }
@@ -56,7 +54,6 @@ function getMuted(
 }
 
 function NotificationWrapper(props: {
-  api: GlobalApi;
   time: BigInteger;
   notif: IndexedNotification;
   children: ReactNode;
@@ -64,10 +61,11 @@ function NotificationWrapper(props: {
   graphConfig: NotificationGraphConfig;
   groupConfig: GroupNotificationsConfig;
 }) {
-  const { api, time, notif, children } = props;
+  const { time, notif, children } = props;
+  const api = useApi();
 
   const onArchive = useCallback(async () => {
-    return api.hark.archive(time, notif.index);
+    api.poke(archive(time, notif.index));
   }, [time, notif]);
 
   const isMuted = getMuted(
@@ -77,9 +75,12 @@ function NotificationWrapper(props: {
   );
 
   const onChangeMute = useCallback(async () => {
-    const func = isMuted ? 'unmute' : 'mute';
-    return api.hark[func](notif);
-  }, [notif, api, isMuted]);
+    if (isMuted) {
+      api.poke(unmute(notif));
+    } else {
+      api.poke(mute(notif));
+    }
+  }, [notif, isMuted]);
 
   const { hovering, bind } = useHovering();
 
@@ -110,7 +111,7 @@ function NotificationWrapper(props: {
 }
 
 export function Notification(props: NotificationProps) {
-  const { notification, associations, archived } = props;
+  const { notification, archived } = props;
   const { read, contents, time } = notification.notification;
 
   const Wrapper = ({ children }) => (
@@ -118,7 +119,6 @@ export function Notification(props: NotificationProps) {
       archived={archived}
       notif={notification}
       time={props.time}
-      api={props.api}
       graphConfig={props.graphConfig}
       groupConfig={props.groupConfig}
     >
@@ -133,16 +133,12 @@ export function Notification(props: NotificationProps) {
     return (
       <Wrapper>
         <GraphNotification
-          api={props.api}
           index={index}
           contents={c}
-          contacts={props.contacts}
-          groups={props.groups}
           read={read}
           archived={archived}
           timebox={props.time}
           time={time}
-          associations={associations}
         />
       </Wrapper>
     );
@@ -153,16 +149,12 @@ export function Notification(props: NotificationProps) {
     return (
       <Wrapper>
         <GroupNotification
-          api={props.api}
           index={index}
           contents={c}
-          contacts={props.contacts}
-          groups={props.groups}
           read={read}
           timebox={props.time}
           archived={archived}
           time={time}
-          associations={associations}
         />
       </Wrapper>
     );

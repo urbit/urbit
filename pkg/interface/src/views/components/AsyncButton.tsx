@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useFormikContext } from 'formik';
 
 import { Button, LoadingSpinner } from '@tlon/indigo-react';
-
-import { useFormikContext } from 'formik';
 
 export function AsyncButton<T = any>({
   children,

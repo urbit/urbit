@@ -7,22 +7,22 @@ import React, {
 } from 'react';
 import moment from 'moment';
 import _ from 'lodash';
+import styled from 'styled-components';
+
 import { Box, Row, Text, Rule, BaseImage } from '@tlon/indigo-react';
-import { Sigil } from '~/logic/lib/sigil';
+import { Group, Post, uxToHex, cite } from '@urbit/api';
+
+import { Sigil } from '~/logic/lib/Sigil';
 import OverlaySigil from '~/views/components/OverlaySigil';
 import {
-  uxToHex,
-  cite,
   writeText,
   useShowNickname,
   useHovering
 } from '~/logic/lib/util';
-import { Group, Association, Contacts, Post, Groups, Associations } from '@urbit/api';
 import TextContent from './content/text';
 import CodeContent from './content/code';
 import RemoteContent from '~/views/components/RemoteContent';
 import { Mention } from '~/views/components/MentionText';
-import styled from 'styled-components';
 import useLocalState from '~/logic/state/local';
 
 export const DATESTAMP_FORMAT = '[~]YYYY.M.D';
@@ -38,12 +38,12 @@ export const UnreadMarker = React.forwardRef(({ dayBreak, when }, ref) => (
     width='100%'
     py='2'
   >
-    <Rule borderColor='blue' display={['none', 'block']} m='0' width='2rem' />
-    <Text flexShrink='0' display='block' zIndex='2' mx='4' color='blue'>
+    <Rule borderColor='blue' display={['none', 'block']} m={0} width='2rem' />
+    <Text flexShrink={0} display='block' zIndex={2} mx={4} color='blue'>
       New messages below
     </Text>
-    <Rule borderColor='blue' flexGrow='1' m='0' />
-    <Rule style={{ width: 'calc(50% - 48px)' }} borderColor='blue' m='0' />
+    <Rule borderColor='blue' flexGrow={1} m={0} />
+    <Rule style={{ width: 'calc(50% - 48px)' }} borderColor='blue' m={0} />
   </Row>
 ));
 
@@ -62,17 +62,14 @@ interface ChatMessageProps {
   nextMsg?: Post;
   isLastRead: boolean;
   group: Group;
-  association: Association;
-  contacts: Contacts;
   className?: string;
   isPending: boolean;
   style?: unknown;
   scrollWindow: HTMLDivElement;
   isLastMessage?: boolean;
   unreadMarkerRef: React.RefObject<HTMLDivElement>;
-  history: unknown;
-  api: GlobalApi;
   highlighted?: boolean;
+  fontSize: number;
 }
 
 export default class ChatMessage extends Component<ChatMessageProps> {
@@ -96,8 +93,6 @@ export default class ChatMessage extends Component<ChatMessageProps> {
       nextMsg,
       isLastRead,
       group,
-      association,
-      contacts,
       className = '',
       isPending,
       style,
@@ -105,12 +100,8 @@ export default class ChatMessage extends Component<ChatMessageProps> {
       scrollWindow,
       isLastMessage,
       unreadMarkerRef,
-      history,
-      api,
       highlighted,
       fontSize,
-      groups,
-      associations
     } = this.props;
 
     const renderSigil = Boolean(
@@ -136,20 +127,14 @@ export default class ChatMessage extends Component<ChatMessageProps> {
     const messageProps = {
       msg,
       timestamp,
-      contacts,
-      association,
       group,
       measure: reboundMeasure.bind(this),
       style,
       containerClass,
       isPending,
-      history,
-      api,
       scrollWindow,
       highlighted,
       fontSize,
-      associations,
-      groups
     };
 
     const unreadContainerStyle = {
@@ -203,29 +188,19 @@ interface MessageProps {
   msg: Post;
   timestamp: string;
   group: Group;
-  association: Association;
-  contacts: Contacts;
   containerClass: string;
   isPending: boolean;
   style: any;
   measure(element): void;
   scrollWindow: HTMLDivElement;
-  associations: Associations;
-  groups: Groups;
 }
 
 export const MessageWithSigil = (props) => {
   const {
     msg,
     timestamp,
-    contacts,
-    association,
-    associations,
-    groups,
     group,
     measure,
-    api,
-    history,
     scrollWindow,
     fontSize
   } = props;
@@ -310,10 +285,8 @@ export const MessageWithSigil = (props) => {
             color={`#${uxToHex(contact?.color ?? '0x0')}`}
             group={group}
             onDismiss={() => toggleOverlay()}
-            history={history}
             className='relative'
             scrollWindow={scrollWindow}
-            api={api}
           />
         )}
         {img}
@@ -360,15 +333,11 @@ export const MessageWithSigil = (props) => {
           {msg.contents.map((c, i) => (
             <MessageContent
               key={i}
-              contacts={contacts}
               content={c}
               measure={measure}
               scrollWindow={scrollWindow}
               fontSize={fontSize}
               group={group}
-              api={api}
-              associations={associations}
-              groups={groups}
             />
           ))}
         </ContentBox>
@@ -389,8 +358,6 @@ export const MessageWithoutSigil = ({
   msg,
   measure,
   group,
-  api,
-  associations,
   groups,
   scrollWindow
 }) => {
@@ -426,8 +393,6 @@ export const MessageWithoutSigil = ({
             group={group}
             measure={measure}
             scrollWindow={scrollWindow}
-            groups={groups}
-            associations={associations}
             api={api}
           />
         ))}
@@ -438,10 +403,6 @@ export const MessageWithoutSigil = ({
 
 export const MessageContent = ({
   content,
-  contacts,
-  api,
-  associations,
-  groups,
   measure,
   scrollWindow,
   fontSize,
@@ -486,10 +447,7 @@ export const MessageContent = ({
   } else if ('text' in content) {
     return (
       <TextContent
-        associations={associations}
-        groups={groups}
         measure={measure}
-        api={api}
         fontSize={fontSize}
         content={content}
       />);

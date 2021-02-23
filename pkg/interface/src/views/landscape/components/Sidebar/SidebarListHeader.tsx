@@ -11,23 +11,19 @@ import {
   Col,
   Text
 } from '@tlon/indigo-react';
-import { Groups, Rolodex, Associations } from '@urbit/api';
+import { roleForShip } from '@urbit/api';
 
 import { FormikOnBlur } from '~/views/components/FormikOnBlur';
 import { Dropdown } from '~/views/components/Dropdown';
 import { SidebarListConfig  } from './types';
 import { getGroupFromWorkspace } from '~/logic/lib/workspace';
-import { roleForShip } from '~/logic/lib/group';
 import { NewChannel } from '~/views/landscape/components/NewChannel';
-import GlobalApi from '~/logic/api/global';
 import { Workspace } from '~/types/workspace';
+import useGroupState from '~/logic/state/groups';
+import useMetadataState from '~/logic/state/metadata';
 
 export function SidebarListHeader(props: {
-  api: GlobalApi;
   initialValues: SidebarListConfig;
-  associations: Associations;
-  groups: Groups;
-  contacts: Rolodex;
   baseUrl: string;
   selected: string;
   workspace: Workspace;
@@ -41,10 +37,13 @@ export function SidebarListHeader(props: {
     [props.handleSubmit]
   );
 
+  const groups = useGroupState(state => state.groups);
+  const associations = useMetadataState(state => state.associations);
+
   const groupPath = getGroupFromWorkspace(props.workspace);
-  const role = groupPath && props.groups?.[groupPath] ? roleForShip(props.groups[groupPath], window.ship) : undefined;
+  const role = groupPath && groups[groupPath] ? roleForShip(groups[groupPath], window.ship) : undefined;
   const memberMetadata =
-    groupPath ? props.associations.groups?.[groupPath].metadata.vip === 'member-metadata' : false;
+    groupPath ? associations.groups[groupPath].metadata.vip === 'member-metadata' : false;
 
   const isAdmin = memberMetadata || (role === 'admin') || (props.workspace?.type === 'home') || (props.workspace?.type === 'messages');
 
@@ -52,14 +51,14 @@ export function SidebarListHeader(props: {
 
   return (
     <Row
-      flexShrink="0"
+      flexShrink={0}
       alignItems="center"
       justifyContent="space-between"
       py={2}
       px={3}
       height='48px'
     >
-      <Box flexShrink='0'>
+      <Box flexShrink={0}>
         <Text>
           {props.initialValues.hideUnjoined ? `Joined ${noun}` : `All ${noun}`}
         </Text>
@@ -84,11 +83,6 @@ export function SidebarListHeader(props: {
                 borderColor="washedGray"
               >
               <NewChannel
-                api={props.api}
-                history={props.history}
-                associations={props.associations}
-                contacts={props.contacts}
-                groups={props.groups}
                 workspace={props.workspace}
               />
               </Col>
@@ -109,7 +103,7 @@ export function SidebarListHeader(props: {
           )
         }
       <Dropdown
-        flexShrink='0'
+        flexShrink={0}
         width="auto"
         alignY="top"
         alignX={['right', 'left']}

@@ -8,10 +8,6 @@ import { LaunchState, WeatherState } from '~/types/launch-update';
 import { ConnectionStatus } from '~/types/connection';
 import { Graphs } from '@urbit/api/graph';
 import {
-  Notifications,
-  NotificationGraphConfig,
-  GroupNotificationsConfig,
-  Unreads,
   JoinRequests,
   Patp
 } from '@urbit/api';
@@ -21,19 +17,7 @@ export interface StoreState {
   connection: ConnectionStatus;
   baseHash: string | null;
 
-  // invite state
-  invites: Invites;
-  // metadata state
-  associations: Associations;
-  // contact state
-  contacts: Rolodex;
-  // groups state
-  groups: Groups;
-  groupKeys: Set<Path>;
-  nackedContacts: Set<Patp>
   s3: S3State;
-  graphs: Graphs;
-  graphKeys: Set<string>;
 
   // App specific states
   //  launch state
@@ -41,12 +25,4 @@ export interface StoreState {
   weather: WeatherState | {} | null;
   userLocation: string | null;
 
-  archivedNotifications: Notifications;
-  notifications: Notifications;
-  notificationsGraphConfig: NotificationGraphConfig;
-  notificationsGroupConfig: GroupNotificationsConfig;
-  notificationsCount: number,
-  unreads: Unreads;
-  doNotDisturb: boolean;
-  pendingJoin: JoinRequests;
 }

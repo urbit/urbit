@@ -1,9 +1,11 @@
-import React, { ReactNode } from 'react';
+import React from 'react';
 import f from 'lodash/fp';
 import create, { State }  from 'zustand';
 import { persist } from 'zustand/middleware';
 import produce from 'immer';
+
 import { BackgroundConfig, RemoteContentPolicy, TutorialProgress, tutorialProgress } from '~/types/local-update';
+import { stateSetter } from '~/logic/lib/util';
 
 export interface LocalState extends State {
   hideAvatars: boolean;
@@ -69,7 +71,7 @@ const useLocalState = create<LocalState>(persist((set, get) => ({
       state.suspendedFocus.blur();
     }
   })),
-  set: fn => set(produce(fn))
+  set: fn => stateSetter(fn, set),
   }), {
     blacklist: [
       'suspendedFocus', 'toggleOmnibox', 'omniboxShown', 'tutorialProgress',

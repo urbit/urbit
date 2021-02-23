@@ -1,4 +1,3 @@
-
 export class OrderedMap<V> extends Map<number, V>
   implements Iterable<[number, V]> {
   [Symbol.iterator](): IterableIterator<[number, V]> {

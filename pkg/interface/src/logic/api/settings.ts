@@ -6,45 +6,6 @@ import { Key,
 } from '@urbit/api/settings';
 
 export default class SettingsApi extends BaseApi<StoreState> {
-  private storeAction(action: SettingsEvent): Promise<any> {
-    return this.action('settings-store', 'settings-event', action);
-  }
-
-  putBucket(key: Key, bucket: Bucket) {
-    this.storeAction({
-      'put-bucket': {
-        'bucket-key': key,
-        'bucket': bucket
-      }
-    });
-  }
-
-  delBucket(key: Key) {
-    this.storeAction({
-      'del-bucket': {
-        'bucket-key': key
-      }
-    });
-  }
-
-  putEntry(buc: Key, key: Key, val: Value) {
-    return this.storeAction({
-      'put-entry': {
-        'bucket-key': buc,
-        'entry-key': key,
-        'value': val
-      }
-    });
-  }
-
-  delEntry(buc: Key, key: Key) {
-    this.storeAction({
-      'put-entry': {
-        'bucket-key': buc,
-        'entry-key': key
-      }
-    });
-  }
 
   async getAll() {
     const data = await this.scry('settings-store', '/all');

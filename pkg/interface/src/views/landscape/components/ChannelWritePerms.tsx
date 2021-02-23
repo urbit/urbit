@@ -1,28 +1,25 @@
 import React from 'react';
+import { useFormikContext } from 'formik';
+
 import {
   Label,
-  Box,
   ManagedRadioButtonField as Radio,
   Col
 } from '@tlon/indigo-react';
-import { useFormikContext } from 'formik';
 import { Groups, Rolodex } from '@urbit/api';
+
 import { ShipSearch } from '~/views/components/ShipSearch';
 
 export type WritePerms = 'everyone' | 'subset' | 'self';
+
 export interface ChannelWriteFieldSchema {
   writePerms: WritePerms;
   writers: string[];
 }
 
-interface ChannelWritePermsProps {
-  groups: Groups;
-  contacts: Rolodex;
-}
-
 export function ChannelWritePerms<
   T extends ChannelWriteFieldSchema = ChannelWriteFieldSchema
->(props: ChannelWritePermsProps) {
+>() {
   const { values, errors } = useFormikContext<T>();
 
   return (
@@ -33,8 +30,6 @@ export function ChannelWritePerms<
       <Radio name="writePerms" id="subset" label="Host and selected ships" />
       {values.writePerms === 'subset' && (
         <ShipSearch
-          groups={props.groups}
-          contacts={props.contacts}
           id="writers"
           label=""
           maxLength={undefined}

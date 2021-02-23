@@ -12,7 +12,7 @@ const Spinner = ({
       background='gray'
       style={{ flexShrink: 0 }}
     />
-    <Text display='inline-block' ml='2' verticalAlign='middle' flexShrink='0'>{text}</Text>
+    <Text display='inline-block' ml='2' verticalAlign='middle' flexShrink={0}>{text}</Text>
   </Text>
 ) : null;
 

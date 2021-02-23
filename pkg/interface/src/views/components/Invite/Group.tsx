@@ -1,8 +1,8 @@
 import React, { ReactElement, ReactNode } from 'react';
-import { Text, Box, Icon, Row } from '@tlon/indigo-react';
 
-import { cite } from '~/logic/lib/util';
-import { MetadataUpdatePreview, JoinProgress, Invite } from '@urbit/api';
+import { Text, Box, Icon, Row } from '@tlon/indigo-react';
+import { MetadataUpdatePreview, JoinProgress, Invite, cite } from '@urbit/api';
+
 import { GroupSummary } from '~/views/landscape/components/GroupSummary';
 import { InviteSkeleton } from './InviteSkeleton';
 import { JoinSkeleton } from './JoinSkeleton';

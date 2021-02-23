@@ -22,16 +22,16 @@ interface FormSchema {
 }
 
 interface S3FormProps {
-  api: GlobalApi;
   s3: S3State;
 }
 
 export default function S3Form(props: S3FormProps): ReactElement {
-  const { api, s3 } = props;
+  const { s3 } = props;
 
   const onSubmit = useCallback(
     (values: FormSchema) => {
       if (values.s3secretAccessKey !== s3.credentials?.secretAccessKey) {
+        // TODO S3 API
         api.s3.setSecretAccessKey(values.s3secretAccessKey);
       }
 
@@ -87,7 +87,6 @@ export default function S3Form(props: S3FormProps): ReactElement {
         <BucketList
           buckets={s3.configuration.buckets}
           selected={s3.configuration.currentBucket}
-          api={api}
         />
       </Col>
     </>

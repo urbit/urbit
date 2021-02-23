@@ -1,43 +1,41 @@
 import React, { useEffect } from 'react';
-import { Box, Col, Center, LoadingSpinner, Text } from '@tlon/indigo-react';
 import { Switch, Route, Link } from 'react-router-dom';
 import bigInt from 'big-integer';
-
-import GlobalApi from '~/logic/api/global';
-import { StoreState } from '~/logic/store/type';
 import { RouteComponentProps } from 'react-router-dom';
 
+import { Box, Col, Center, LoadingSpinner, Text } from '@tlon/indigo-react';
+import { Association } from '@urbit/api/metadata';
+
+import { StoreState } from '~/logic/store/type';
 import { LinkItem } from './components/LinkItem';
 import { LinkWindow } from './LinkWindow';
 import { Comments } from '~/views/components/Comments';
-
 import './css/custom.css';
-import { Association } from '@urbit/api/metadata';
+import useMetadataState from '~/logic/state/metadata';
+import useContactState from '~/logic/state/contacts';
+import useGroupState from '~/logic/state/groups';
+import useGraphState from '~/logic/state/graph';
 
 const emptyMeasure = () => {};
 
 type LinkResourceProps = StoreState & {
   association: Association;
-  api: GlobalApi;
   baseUrl: string;
 } & RouteComponentProps;
 
 export function LinkResource(props: LinkResourceProps) {
   const {
     association,
-    api,
     baseUrl,
-    graphs,
-    contacts,
-    groups,
-    associations,
-    graphKeys,
-    unreads,
     s3,
-    history
   } = props;
 
   const rid = association.resource;
+  const associations = useMetadataState(state => state.associations);
+  const contacts = useContactState(state => state.contacts);
+  const groups = useGroupState(state => state.groups);
+  const graphs = useGraphState(state => state.graphs);
+  const getGraph = useGraphState(state => state.getGraph);
 
   const relativePath = (p: string) => `${baseUrl}/resource/link${rid}${p}`;
 
@@ -52,7 +50,7 @@ export function LinkResource(props: LinkResourceProps) {
   const graph = graphs[resourcePath] || null;
 
   useEffect(() => {
-    api.graph.getGraph(ship, name);
+    getGraph(ship, name);
   }, [association]);
 
   const resourceUrl = `${baseUrl}/resource/link${rid}`;
@@ -71,14 +69,11 @@ export function LinkResource(props: LinkResourceProps) {
               <LinkWindow
                 s3={s3}
                 association={resource}
-                contacts={contacts}
                 resource={resourcePath}
                 graph={graph}
-                unreads={unreads}
                 baseUrl={resourceUrl}
                 group={group}
                 path={resource.group}
-                api={api}
                 mb={3}
               />
             );
@@ -100,22 +95,19 @@ export function LinkResource(props: LinkResourceProps) {
               return <Box>Not found</Box>;
             }
 
-            const contact = contactDetails[node.post.author];
+            const contact = contactDetails[node.post.author]; // TODO ???
 
             return (
               <Col alignItems="center" overflowY="auto" width="100%">
               <Col width="100%" p={3} maxWidth="768px">
                 <Link to={resourceUrl}><Text px={3} bold>{'<- Back'}</Text></Link>
                 <LinkItem
-                  contacts={contacts}
                   key={node.post.index}
                   resource={resourcePath}
                   node={node}
                   baseUrl={resourceUrl}
-                  unreads={unreads}
                   group={group}
                   path={resource?.group}
-                  api={api}
                   mt={3}
                   measure={emptyMeasure}
                 />
@@ -125,11 +117,7 @@ export function LinkResource(props: LinkResourceProps) {
                   comments={node}
                   resource={resourcePath}
                   association={association}
-                  unreads={unreads}
-                  contacts={contactDetails}
-                  api={api}
                   editCommentId={editCommentId}
-                  history={props.history}
                   baseUrl={`${resourceUrl}/${props.match.params.index}`}
                   group={group}
                   px={3}

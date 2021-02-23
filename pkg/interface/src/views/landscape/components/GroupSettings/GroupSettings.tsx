@@ -10,7 +10,7 @@ import { GroupAdminSettings } from './Admin';
 import { GroupPersonalSettings } from './Personal';
 import { GroupChannelSettings } from './Channels';
 import { useHistory } from 'react-router-dom';
-import { resourceFromPath, roleForShip } from '~/logic/lib/group';
+import { resourceFromPath, roleForShip } from '@urbit/api';
 import { S3State } from '~/types';
 
 const Section = ({ children }) => (
@@ -20,12 +20,11 @@ const Section = ({ children }) => (
 interface GroupSettingsProps {
   group: Group;
   association: Association;
-  associations: Associations;
-  api: GlobalApi;
   notificationsGroupConfig: GroupNotificationsConfig;
   s3: S3State;
   baseUrl: string;
 }
+
 export function GroupSettings(props: GroupSettingsProps) {
   const history = useHistory();
 

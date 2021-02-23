@@ -4,10 +4,10 @@ import {
   Route,
   RouteComponentProps
 } from 'react-router-dom';
-import { Col, Box, Text } from '@tlon/indigo-react';
 import _ from 'lodash';
 import Helmet from 'react-helmet';
 
+import { Col, Box, Text } from '@tlon/indigo-react';
 import { AppName } from '@urbit/api';
 
 import { Resource } from './Resource';
@@ -16,7 +16,6 @@ import { Skeleton } from './Skeleton';
 import { InvitePopover } from './InvitePopover';
 import { NewChannel } from './NewChannel';
 
-import GlobalApi from '~/logic/api/global';
 import { StoreState } from '~/logic/store/type';
 import { UnjoinedResource } from '~/views/components/UnjoinedResource';
 import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
@@ -27,15 +26,22 @@ import '~/views/apps/publish/css/custom.css';
 import { getGroupFromWorkspace } from '~/logic/lib/workspace';
 import { GroupSummary } from './GroupSummary';
 import { Workspace } from '~/types/workspace';
+import useMetadataState from '~/logic/state/metadata';
+import useGroupState from '~/logic/state/groups';
+import useContactState from '~/logic/state/contacts';
+import useHarkState from '~/logic/state/hark';
 
 type GroupsPaneProps = StoreState & {
   baseUrl: string;
   workspace: Workspace;
-  api: GlobalApi;
 };
 
 export function GroupsPane(props: GroupsPaneProps) {
-  const { baseUrl, associations, groups, contacts, api, workspace } = props;
+  const { baseUrl, workspace } = props;
+  const associations = useMetadataState(state => state.associations);
+  const groups = useGroupState(state => state.groups);
+  const contacts = useContactState(state => state.contacts);
+  const notificationsCount = useHarkState(state => state.notifications);
   const relativePath = (path: string) => baseUrl + path;
   const groupPath = getGroupFromWorkspace(workspace);
 
@@ -69,7 +75,6 @@ export function GroupsPane(props: GroupsPaneProps) {
           rootIdentity={rootIdentity}
           association={groupAssociation!}
           group={group!}
-          api={api}
           s3={props.s3}
           notificationsGroupConfig={props.notificationsGroupConfig}
           associations={associations}
@@ -78,11 +83,8 @@ export function GroupsPane(props: GroupsPaneProps) {
           baseUrl={baseUrl}
                         />)}
         <InvitePopover
-          api={api}
           association={groupAssociation!}
           baseUrl={baseUrl}
-          groups={props.groups}
-          contacts={props.contacts}
           workspace={workspace}
         />
       </>
@@ -145,7 +147,7 @@ export function GroupsPane(props: GroupsPaneProps) {
           return (
             <>
               <Helmet defer={false}>
-                <title>{props.notificationsCount ? `(${String(props.notificationsCount)}) ` : ''}{ title }</title>
+                <title>{notificationsCount ? `(${String(notificationsCount)}) ` : ''}{ title }</title>
               </Helmet>
               <Skeleton
                 recentGroups={recentGroups}
@@ -159,7 +161,6 @@ export function GroupsPane(props: GroupsPaneProps) {
                   notebooks={props.notebooks}
                   inbox={props.inbox}
                   baseUrl={baseUrl}
-                  api={api}
                   association={association}
                 />
                 {popovers(routeProps, resourceUrl)}
@@ -176,12 +177,8 @@ export function GroupsPane(props: GroupsPaneProps) {
             <Skeleton mobileHide recentGroups={recentGroups} {...props} baseUrl={baseUrl}>
               <NewChannel
                 {...routeProps}
-                api={api}
                 baseUrl={baseUrl}
-                associations={associations}
-                groups={groups}
                 group={groupPath}
-                contacts={props.contacts}
                 workspace={workspace}
               />
               {popovers(routeProps, baseUrl)}
@@ -193,12 +190,12 @@ export function GroupsPane(props: GroupsPaneProps) {
         path={relativePath('')}
         render={(routeProps) => {
           const hasDescription = groupAssociation?.metadata?.description;
-          const channelCount = Object.keys(props?.associations?.graph ?? {}).filter((e) => {
-            return props?.associations?.graph?.[e]?.['group'] === groupPath;
+          const channelCount = Object.keys(associations?.graph ?? {}).filter((e) => {
+            return associations?.graph?.[e]?.['group'] === groupPath;
           }).length;
           let summary: ReactNode;
           if(groupAssociation?.group) {
-            const memberCount = props.groups[groupAssociation.group].members.size;
+            const memberCount = groups[groupAssociation.group].members.size;
             summary = <GroupSummary
               memberCount={memberCount}
               channelCount={channelCount}
@@ -214,7 +211,7 @@ export function GroupsPane(props: GroupsPaneProps) {
           return (
             <>
               <Helmet defer={false}>
-                <title>{props.notificationsCount ? `(${String(props.notificationsCount)}) ` : ''}{ title }</title>
+                <title>{notificationsCount ? `(${String(notificationsCount)}) ` : ''}{ title }</title>
               </Helmet>
               <Skeleton recentGroups={recentGroups} {...props} baseUrl={baseUrl}>
                 <Col

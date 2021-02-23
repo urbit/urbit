@@ -9,8 +9,10 @@ import { Groups, Rolodex } from '@urbit/api';
 
 import RichText from '~/views/components/RichText';
 import GlobalApi from '~/logic/api/global';
-import { isWriter } from '~/logic/lib/group';
 import { getItemTitle } from '~/logic/lib/util';
+import { isWriter } from '@urbit/api/groups';
+import useGroupState from '~/logic/state/groups';
+import useContactState from '~/logic/state/contacts';
 
 const TruncatedBox = styled(Box)`
   white-space: pre;
@@ -19,10 +21,7 @@ const TruncatedBox = styled(Box)`
 `;
 
 type ResourceSkeletonProps = {
-  groups: Groups;
-  contacts: Rolodex;
   association: Association;
-  api: GlobalApi;
   baseUrl: string;
   children: ReactNode;
   title?: string;
@@ -30,7 +29,9 @@ type ResourceSkeletonProps = {
 };
 
 export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
-  const { association, baseUrl, children, groups } = props;
+  const { association, baseUrl, children } = props;
+  const groups = useGroupState(state => state.groups);
+  const contacts = useContactState(state => state.contacts);
   const app = association?.metadata?.module || association['app-name'];
   const rid = association.resource;
   const group = groups[association.group];
@@ -46,11 +47,11 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
     ? getItemTitle(association)
     : association?.metadata?.title;
 
-  let recipient = false;
+  let recipient: string | false = false;
 
   if (urbitOb.isValidPatp(title)) {
     recipient = title;
-    title = (props.contacts?.[title]?.nickname) ? props.contacts[title].nickname : title;
+    title = (contacts?.[title]?.nickname) ? contacts[title].nickname : title;
   }
 
   const [, , ship, resource] = rid.split('/');
@@ -60,14 +61,14 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
   const isOwn = `~${window.ship}` === ship;
   let canWrite = (app === 'publish') ? true : false;
 
-  if (!isWriter(group, association.resource)) {
+  if (!isWriter(group, association.resource, window.ship)) {
     canWrite = isOwn;
   }
 
   return (
     <Col width="100%" height="100%" overflowY="hidden">
       <Box
-        flexShrink="0"
+        flexShrink={0}
         height='48px'
         py="2"
         px="2"

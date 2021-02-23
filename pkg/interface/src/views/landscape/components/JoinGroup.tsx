@@ -22,6 +22,10 @@ import { StatelessAsyncButton } from '~/views/components/StatelessAsyncButton';
 import { getModuleIcon } from '~/logic/lib/util';
 import { FormError } from '~/views/components/FormError';
 import { GroupSummary } from './GroupSummary';
+import useApi from '~/logic/lib/useApi';
+import useMetadataState from '~/logic/state/metadata';
+import useGroupState from '~/logic/state/groups';
+import { join } from '@urbit/api/groups';
 
 const formSchema = Yup.object({
   group: Yup.string()
@@ -41,8 +45,6 @@ interface FormSchema {
 
 interface JoinGroupProps {
   groups: Groups;
-  associations: Associations;
-  api: GlobalApi;
   autojoin?: string;
 }
 
@@ -59,28 +61,32 @@ function Autojoin(props: { autojoin: string | null }) {
 }
 
 export function JoinGroup(props: JoinGroupProps): ReactElement {
-  const { api, autojoin, associations, groups } = props;
+  const { autojoin } = props;
+  const api = useApi();
+  const associations = useMetadataState(state => state.associations);
+  const groups = useGroupState(state => state.groups);
   const history = useHistory();
   const initialValues: FormSchema = {
     group: autojoin || ''
   };
   const [preview, setPreview] = useState<
-    MetadataUpdatePreview | string | null
+  MetadataUpdatePreview | string | null
   >(null);
+  const getPreview = useMetadataState(state => state.preview);
 
   const waiter = useWaitForProps(props, _.isString(preview) ? 1 : 5000);
 
   const onConfirm = useCallback(async (group: string) => {
-    const [,,ship,name] = group.split('/');
-    await api.groups.join(ship, name);
+    const [, , ship, name] = group.split('/');
+    await api.poke(join(ship, name));
     try {
       await waiter((p: JoinGroupProps) => {
         return group in p.groups &&
-          (group in (p.associations?.graph ?? {})
-            || group in (p.associations?.groups ?? {}));
+          (group in (associations?.graph ?? {})
+            || group in (associations?.groups ?? {}));
       });
 
-      if(props.groups?.[group]?.hidden) {
+      if(groups[group]?.hidden) {
         const { metadata } = associations.graph[group];
         history.push(`/~landscape/home/resource/${metadata.module}${group}`);
         return;
@@ -99,7 +105,7 @@ export function JoinGroup(props: JoinGroupProps): ReactElement {
       const path = `/ship/${ship}/${name}`;
       //  skip if it's unmanaged
       try {
-        const prev = await api.metadata.preview(path);
+        const prev = await getPreview(path);
         actions.setStatus({ success: null });
         setPreview(prev);
       } catch (e) {
@@ -156,7 +162,7 @@ export function JoinGroup(props: JoinGroupProps): ReactElement {
               <Text gray fontSize="1">
                 Channels
               </Text>
-              <Box width="100%" flexShrink="0">
+              <Box width="100%" flexShrink={0}>
                 {Object.values(preview.channels).map(({ metadata }: any) => (
                   <Row width="100%">
                     <Icon

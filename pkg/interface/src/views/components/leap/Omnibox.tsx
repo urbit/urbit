@@ -4,30 +4,27 @@ import * as ob from 'urbit-ob';
 import Mousetrap from 'mousetrap';
 
 import { Box, Row, Text } from '@tlon/indigo-react';
-import { Associations, Contacts, Groups, Invites } from '@urbit/api';
+import { deSig, Rolodex } from '@urbit/api';
 
 import makeIndex from '~/logic/lib/omnibox';
 import OmniboxInput from './OmniboxInput';
 import OmniboxResult from './OmniboxResult';
 import { withLocalState } from '~/logic/state/local';
-import { deSig } from '~/logic/lib/util';
-
 import defaultApps from '~/logic/lib/default-apps';
 import { useOutsideClick } from '~/logic/lib/useOutsideClick';
 import { Portal } from '../Portal';
 import { Tile } from '~/types';
+import useContactState from '~/logic/state/contacts';
+import useMetadataState from '~/logic/state/metadata';
+import useGroupState from '~/logic/state/groups';
 
 interface OmniboxProps {
-  associations: Associations;
-  contacts: Contacts;
-  groups: Groups;
   tiles: {
     [app: string]: Tile;
   };
   show: boolean;
   toggle: () => void;
   notifications: number;
-  invites: Invites;
 }
 
 const SEARCHED_CATEGORIES = ['ships', 'other', 'commands', 'groups', 'subscriptions', 'apps'];
@@ -40,13 +37,16 @@ export function Omnibox(props: OmniboxProps) {
 
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState<[] | [string, string]>([]);
+  const contactState = useContactState(state => state.contacts);
+  const associations = useMetadataState(state => state.associations); 
+  const groups = useGroupState(state => state.groups);
 
-  const contacts = useMemo(() => {
+  const contacts = useMemo((): Rolodex => {
     const maybeShip = `~${deSig(query)}`;
     return ob.isValidPatp(maybeShip)
-      ? { ...props.contacts, [maybeShip]: {} }
-      : props.contacts;
-  }, [props.contacts, query]);
+      ? { ...contactState, [maybeShip]: {} }
+      : contactState;
+  }, [contactState, query]);
 
   const index = useMemo(() => {
     const selectedGroup = location.pathname.startsWith('/~landscape/ship/')
@@ -54,12 +54,12 @@ export function Omnibox(props: OmniboxProps) {
       : null;
     return makeIndex(
       contacts,
-      props.associations,
+      associations,
       props.tiles,
       selectedGroup,
-      props.groups
+      groups
     );
-  }, [location.pathname, contacts, props.associations, props.groups, props.tiles]);
+  }, [location.pathname, contacts, associations, groups, props.tiles]);
 
   const onOutsideClick = useCallback(() => {
     props.show && props.toggle();
@@ -254,9 +254,6 @@ export function Omnibox(props: OmniboxProps) {
                 link={result.link}
                 navigate={() => navigate(result.app, result.link)}
                 selected={sel}
-                invites={props.invites}
-                notifications={props.notifications}
-                contacts={props.contacts}
               />
             ))}
           </Box>

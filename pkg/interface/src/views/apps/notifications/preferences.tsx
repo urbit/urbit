@@ -3,10 +3,11 @@ import { Form, FormikHelpers } from 'formik';
 import _ from 'lodash';
 
 import { Col, ManagedCheckboxField as Checkbox } from '@tlon/indigo-react';
-import { NotificationGraphConfig } from '@urbit/api';
+import { NotificationGraphConfig, setDoNotDisturb, setMentions, setWatchOnSelf } from '@urbit/api';
 
 import { FormikOnBlur } from '~/views/components/FormikOnBlur';
-import GlobalApi from '~/logic/api/global';
+import useHarkState from '~/logic/state/hark';
+import useApi from '~/logic/lib/useApi';
 
 interface FormSchema {
   mentions: boolean;
@@ -17,14 +18,14 @@ interface FormSchema {
 
 interface NotificationPreferencesProps {
   graphConfig: NotificationGraphConfig;
-  dnd: boolean;
-  api: GlobalApi;
 }
 
 export default function NotificationPreferences(
   props: NotificationPreferencesProps
 ): ReactElement {
-  const { graphConfig, api, dnd } = props;
+  const { graphConfig } = props;
+  const dnd = useHarkState(state => state.doNotDisturb);
+  const api = useApi();
 
   const initialValues: FormSchema = {
     mentions: graphConfig.mentions,
@@ -39,13 +40,13 @@ export default function NotificationPreferences(
       try {
         const promises: Promise<any>[] = [];
         if (values.mentions !== graphConfig.mentions) {
-          promises.push(api.hark.setMentions(values.mentions));
+          promises.push(api.poke(setMentions(values.mentions)));
         }
         if (values.watchOnSelf !== graphConfig.watchOnSelf) {
-          promises.push(api.hark.setWatchOnSelf(values.watchOnSelf));
+          promises.push(api.poke(setWatchOnSelf(values.watchOnSelf)));
         }
         if (values.dnd !== dnd && !_.isUndefined(values.dnd)) {
-          promises.push(api.hark.setDoNotDisturb(values.dnd));
+          promises.push(api.poke(setDoNotDisturb(values.dnd)));
         }
 
         await Promise.all(promises);
@@ -56,7 +57,7 @@ export default function NotificationPreferences(
         actions.setStatus({ error: e.message });
       }
     },
-    [api, graphConfig]
+    [graphConfig]
   );
 
   return (

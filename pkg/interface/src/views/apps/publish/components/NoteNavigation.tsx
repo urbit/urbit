@@ -55,7 +55,7 @@ interface NoteNavigationProps {
   baseUrl: string;
 }
 
-export function NoteNavigation(props: NoteNavigationProps): ReactElement {
+export function NoteNavigation(props: NoteNavigationProps): ReactElement | null{
   let nextComponent = <Box />;
   let prevComponent = <Box />;
   const { noteId, notebook } = props;

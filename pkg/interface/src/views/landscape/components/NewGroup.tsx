@@ -1,7 +1,7 @@
 import React, { ReactElement, useCallback } from 'react';
 import { Formik, Form, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
-import { RouteComponentProps } from 'react-router-dom';
+import { RouteComponentProps, useHistory } from 'react-router-dom';
 
 import {
   Col,
@@ -16,6 +16,10 @@ import { AsyncButton } from '~/views/components/AsyncButton';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
 import GlobalApi from '~/logic/api/global';
 import { stringToSymbol } from '~/logic/lib/util';
+import useApi from '~/logic/lib/useApi';
+import { createGroup } from '@urbit/api/groups';
+import useGroupState from '~/logic/state/groups';
+import useMetadataState from '~/logic/state/metadata';
 
 const formSchema = Yup.object({
   title: Yup.string().required('Group must have a name'),
@@ -29,15 +33,13 @@ interface FormSchema {
   isPrivate: boolean;
 }
 
-interface NewGroupProps {
-  groups: Groups;
-  contacts: Rolodex;
-  associations: Associations;
-  api: GlobalApi;
-}
+interface NewGroupProps {}
 
 export function NewGroup(props: NewGroupProps & RouteComponentProps): ReactElement {
-  const { api, history } = props;
+  const api = useApi();
+  const history = useHistory();
+  const groups = useGroupState(state => state.groups);
+  const associations = useMetadataState(state => state.associations);
   const initialValues: FormSchema = {
     title: '',
     description: '',
@@ -62,10 +64,10 @@ export function NewGroup(props: NewGroupProps & RouteComponentProps): ReactEleme
                 banRanks: [],
                 banned: []
               }
-            };
-        await api.groups.create(name, policy, title, description);
+          };
+        await api.thread(createGroup(name, policy, title, description))
         const path = `/ship/~${window.ship}/${name}`;
-        await waiter(({ groups, associations }) => {
+        await waiter(() => {
           return path in groups && path in associations.groups;
         });
 

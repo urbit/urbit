@@ -1,7 +1,9 @@
 import { useCallback, useMemo, useEffect, useRef, useState } from 'react';
-import { S3State } from '../../types/s3-update';
 import S3 from 'aws-sdk/clients/s3';
-import { dateToDa, deSig } from './util';
+
+import { dateToDa, deSig } from '@urbit/api';
+
+import { S3State } from '~/types/s3-update';
 
 export interface IuseS3 {
   canUpload: boolean;

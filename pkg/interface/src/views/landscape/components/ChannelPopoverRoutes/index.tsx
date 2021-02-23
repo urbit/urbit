@@ -1,37 +1,37 @@
 import React, { useRef, useCallback } from 'react';
+import { useHistory, Link } from 'react-router-dom';
 
 import { Col, Box, Text, Row } from '@tlon/indigo-react';
 import {
   Association,
-  Groups,
   Group,
-  Rolodex,
-  NotificationGraphConfig
+  NotificationGraphConfig,
+  isChannelAdmin,
+  isHost,
+  deleteGraph,
+  leaveGraph,
+  metadataRemove
 } from '@urbit/api';
 
 import { ModalOverlay } from '~/views/components/ModalOverlay';
 import { GraphPermissions } from './ChannelPermissions';
 import { ChannelPopoverRoutesSidebar } from './Sidebar';
 import { ChannelDetails } from './Details';
-import GlobalApi from '~/logic/api/global';
 import { useHashLink } from '~/logic/lib/useHashLink';
-import { useHistory, Link } from 'react-router-dom';
 import { ChannelNotifications } from './Notifications';
 import { StatelessAsyncButton } from '~/views/components/StatelessAsyncButton';
-import { isChannelAdmin, isHost } from '~/logic/lib/group';
+import useApi from '~/logic/lib/useApi';
 
 interface ChannelPopoverRoutesProps {
   baseUrl: string;
   association: Association;
   group: Group;
-  groups: Groups;
-  contacts: Rolodex;
-  api: GlobalApi;
   notificationsGraphConfig: NotificationGraphConfig;
 }
 
 export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {
-  const { association, group, api } = props;
+  const { association, group } = props;
+  const api = useApi();
   useHashLink();
   const overlayRef = useRef<HTMLElement>();
   const history = useHistory();
@@ -41,22 +41,22 @@ export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {
   }, [history, props.baseUrl]);
 
   const handleUnsubscribe = async () => {
-    const [,,ship,name] = association.resource.split('/');
-    await api.graph.leaveGraph(ship, name);
-    history.push(props.rootUrl);
+    const [, , ship, name] = association.resource.split('/');
+    await api.thread(leaveGraph(ship, name));
+    history.push(props.baseUrl);
   };
   const handleRemove = async () => {
-    await api.metadata.remove('graph', association.resource, association.group);
-    history.push(props.rootUrl);
+    await api.poke(metadataRemove('graph', association.resource, association.group));
+    history.push(props.baseUrl);
   };
   const handleArchive = async () => {
-    const [,,,name] = association.resource.split('/');
-    await api.graph.deleteGraph(name);
+    const [, , , name] = association.resource.split('/');
+    await api.thread(deleteGraph(window.ship, name));
     history.push(props.baseUrl);
   };
 
-  const canAdmin = isChannelAdmin(group, association.resource);
-  const isOwner = isHost(association.resource);
+  const canAdmin = isChannelAdmin(group, association.resource, window.ship);
+  const isOwner = isHost(window.ship, association.resource);
 
   return (
     <ModalOverlay

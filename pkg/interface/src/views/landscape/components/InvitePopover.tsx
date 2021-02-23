@@ -3,6 +3,7 @@ import _ from 'lodash';
 import { Switch, Route, useHistory } from 'react-router-dom';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
+
 import {
   ManagedTextInputField as Input,
   Box,
@@ -10,24 +11,19 @@ import {
   Col,
   Row
 } from '@tlon/indigo-react';
+import { Groups, Rolodex, deSig, Association, resourceFromPath, invite } from '@urbit/api';
 
 import { ShipSearch } from '~/views/components/ShipSearch';
-import { Association } from '@urbit/api/metadata';
 import { AsyncButton } from '~/views/components/AsyncButton';
 import { useOutsideClick } from '~/logic/lib/useOutsideClick';
 import { FormError } from '~/views/components/FormError';
-import { resourceFromPath } from '~/logic/lib/group';
 import GlobalApi from '~/logic/api/global';
-import { Groups, Rolodex } from '@urbit/api';
-import { deSig } from '~/logic/lib/util';
 import { Workspace } from '~/types/workspace';
+import useApi from '~/logic/lib/useApi';
 
 interface InvitePopoverProps {
   baseUrl: string;
   association: Association;
-  groups: Groups;
-  contacts: Rolodex;
-  api: GlobalApi;
   workspace: Workspace;
 }
 
@@ -43,7 +39,8 @@ const formSchema = Yup.object({
 });
 
 export function InvitePopover(props: InvitePopoverProps) {
-  const { baseUrl, api, association } = props;
+  const { baseUrl, association } = props;
+  const api = useApi();
 
   const relativePath = (p: string) => baseUrl + p;
   const { title } = association?.metadata || '';
@@ -59,11 +56,11 @@ export function InvitePopover(props: InvitePopoverProps) {
     //  TODO: how to invite via email?
     try {
       const { ship, name }  = resourceFromPath(association.group);
-      await api.groups.invite(
+      await api.thread(invite(
         ship, name,
         _.compact(ships).map(s => `~${deSig(s)}`),
         description
-      );
+      ));
 
       actions.setStatus({ success: null });
       onOutsideClick();
@@ -114,8 +111,6 @@ export function InvitePopover(props: InvitePopoverProps) {
                     <Text fontWeight="800">{title}</Text>
                   </Box>
                   <ShipSearch
-                    groups={props.groups}
-                    contacts={props.contacts}
                     id="ships"
                     label=""
                     autoFocus

@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useRef, useState } from 'react';
+import React, { ReactElement, useEffect, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import {
@@ -8,17 +8,18 @@ import {
   BaseImage,
   Text
 } from "@tlon/indigo-react";
+import { uxToHex, retrieve } from '@urbit/api';
 
 import RichText from '~/views/components/RichText'
 import useLocalState from "~/logic/state/local";
-import { Sigil } from '~/logic/lib/sigil';
+import { Sigil } from '~/logic/lib/Sigil';
 import { ViewProfile } from './ViewProfile';
 import { EditProfile } from './EditProfile';
 import { SetStatusBarModal } from '~/views/components/SetStatusBarModal';
-import { uxToHex } from '~/logic/lib/util';
 import { useTutorialModal } from '~/views/components/useTutorialModal';
+import useApi from '~/logic/lib/useApi';
 
-export function Profile(props: any): ReactElement {
+export function Profile(props: any): ReactElement | null {
   const { hideAvatars } = useLocalState(({ hideAvatars }) => ({
     hideAvatars
   }));
@@ -29,10 +30,11 @@ export function Profile(props: any): ReactElement {
   }
   const { contact, nackedContacts, hasLoaded, isPublic, isEdit, ship } = props;
   const nacked = nackedContacts.has(ship);
+  const api = useApi();
 
   useEffect(() => {
-    if(hasLoaded && !contact && !nacked) {
-      props.api.contacts.retrieve(ship);
+    if (hasLoaded && !contact && !nacked) {
+      api.poke(retrieve(ship));
     }
   }, [hasLoaded, contact]);
 
@@ -77,7 +79,6 @@ export function Profile(props: any): ReactElement {
               <SetStatusBarModal
                 py='2'
                 ml='3'
-                api={props.api}
                 ship={`~${window.ship}`}
                 contact={contact}
               />
@@ -107,20 +108,14 @@ export function Profile(props: any): ReactElement {
             ship={ship}
             contact={contact}
             s3={props.s3}
-            api={props.api}
-            groups={props.groups}
-            associations={props.associations}
             isPublic={isPublic}
           />
         ) : (
           <ViewProfile
-            api={props.api}
             nacked={nacked}
             ship={ship}
             contact={contact}
             isPublic={isPublic}
-            groups={props.groups}
-            associations={props.associations}
           />
         ) }
       </Box>

@@ -7,42 +7,36 @@ import { Contacts, Rolodex, Groups, Associations, Graph, Association, Unreads } 
 import { NotebookPosts } from './NotebookPosts';
 import GlobalApi from '~/logic/api/global';
 import { useShowNickname } from '~/logic/lib/util';
+import useGroupState from '~/logic/state/groups';
 
 interface NotebookProps {
-  api: GlobalApi;
   ship: string;
   book: string;
   graph: Graph;
   notebookContacts: Contacts;
   association: Association;
-  associations: Associations;
-  contacts: Rolodex;
-  groups: Groups;
   baseUrl: string;
   rootUrl: string;
   unreads: Unreads;
 }
 
-export function Notebook(props: NotebookProps & RouteComponentProps): ReactElement {
+export function Notebook(props: NotebookProps & RouteComponentProps): ReactElement | null {
   const {
     ship,
     book,
     notebookContacts,
-    groups,
     association,
     graph
   } = props;
+
+  const groups = useGroupState(state => state.groups);
 
   const group = groups[association?.group];
   if (!group) {
     return null; // Waiting on groups to populate
   }
 
-  const relativePath = (p: string) => props.baseUrl + p;
-
   const contact = notebookContacts?.[ship];
-  const isOwn = `~${window.ship}` === ship;
-  console.log(association.resource);
 
   const showNickname = useShowNickname(contact);
 
@@ -62,10 +56,8 @@ export function Notebook(props: NotebookProps & RouteComponentProps): ReactEleme
         graph={graph}
         host={ship}
         book={book}
-        contacts={notebookContacts ? notebookContacts : {}}
         unreads={props.unreads}
         baseUrl={props.baseUrl}
-        api={props.api}
         group={group}
       />
     </Col>

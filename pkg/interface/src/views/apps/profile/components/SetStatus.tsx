@@ -10,9 +10,12 @@ import {
   Button,
   StatelessTextInput as Input
 } from '@tlon/indigo-react';
+import useApi from '~/logic/lib/useApi';
+import { editContact } from '@urbit/api/contacts';
 
 export function SetStatus(props: any) {
-  const { contact, ship, api, callback } = props;
+  const { contact, ship, callback } = props;
+  const api = useApi();
   const [_status, setStatus] = useState('');
   const onStatusChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
@@ -26,8 +29,8 @@ export function SetStatus(props: any) {
   }, [contact]);
 
   const editStatus = () => {
-    api.contacts.edit(ship, { status: _status });
-
+    api.poke(editContact(ship, { status: _status }));
+    // TODO should await promise?
     if (callback) {
       callback();
     }

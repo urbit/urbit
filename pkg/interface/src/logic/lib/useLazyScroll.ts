@@ -1,5 +1,6 @@
-import { useEffect, RefObject, useRef, useState } from 'react';
+import { useEffect, RefObject, useState } from 'react';
 import _ from 'lodash';
+
 import usePreviousValue from './usePreviousValue';
 
 export function distanceToBottom(el: HTMLElement) {

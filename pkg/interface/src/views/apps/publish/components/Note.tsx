@@ -10,7 +10,9 @@ import { NoteNavigation } from './NoteNavigation';
 import GlobalApi from '~/logic/api/global';
 import { getLatestRevision, getComments } from '~/logic/lib/publish';
 import Author from '~/views/components/Author';
-import { Contacts, GraphNode, Graph, Association, Unreads, Group } from '@urbit/api';
+import { Contacts, GraphNode, Graph, Association, Unreads, Group, markEachAsRead } from '@urbit/api';
+import useApi from '~/logic/lib/useApi';
+import { removeNodes } from '@urbit/api/graph';
 
 interface NoteProps {
   ship: string;
@@ -19,8 +21,6 @@ interface NoteProps {
   unreads: Unreads;
   association: Association;
   notebook: Graph;
-  contacts: Contacts;
-  api: GlobalApi;
   rootUrl: string;
   baseUrl: string;
   group: Group;
@@ -29,13 +29,14 @@ interface NoteProps {
 export function Note(props: NoteProps & RouteComponentProps) {
   const [deleting, setDeleting] = useState(false);
 
-  const { notebook, note, contacts, ship, book, api, rootUrl, baseUrl, group } = props;
+  const { notebook, note, ship, book, rootUrl, baseUrl, group } = props;
   const editCommentId = props.match.params.commentId;
+  const api = useApi();
 
   const deletePost = async () => {
     setDeleting(true);
     const indices = [note.post.index];
-    await api.graph.removeNodes(ship, book, indices);
+    await api.poke(removeNodes(ship, book, indices));
     props.history.push(rootUrl);
   };
 
@@ -45,7 +46,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
 
   const noteId = bigInt(index[1]);
   useEffect(() => {
-    api.hark.markEachAsRead(props.association, '/',`/${index[1]}/1/1`, 'note', 'publish');
+    api.poke(markEachAsRead(props.association, '/', `/${index[1]}/1/1`, 'note', 'publish'));
   }, [props.association, props.note]);
 
   let adminLinks: JSX.Element | null = null;
@@ -100,7 +101,6 @@ export function Note(props: NoteProps & RouteComponentProps) {
         <Box display="flex">
           <Author
             ship={post?.author}
-            contacts={contacts}
             date={post?.['time-sent']}
           />
           <Text ml={2}>{adminLinks}</Text>
@@ -120,12 +120,9 @@ export function Note(props: NoteProps & RouteComponentProps) {
         name={props.book}
         unreads={props.unreads}
         comments={comments}
-        contacts={props.contacts}
         association={props.association}
-        api={props.api}
         baseUrl={baseUrl}
         editCommentId={editCommentId}
-        history={props.history}
         group={group}
       />
       <Spinner
