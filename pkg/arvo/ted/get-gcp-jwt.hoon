@@ -17,11 +17,9 @@
 ::
 ::
 /-  spider, settings
-/+  jose, pkcs, strandio
+/+  jose, pkcs, primitive-rsa, strandio
 =,  strand=strand:spider
-=,  format
-=,  jose
-=,  pkcs
+=,  rsa=primitive-rsa
 ^-  thread:spider
 |^
 |=  *
@@ -62,7 +60,7 @@
   %.  dat
   ;:  cork
     to-wain:format
-    ring:de:pem:pkcs8
+    ring:de:pem:pkcs8:pkcs
     need
   ==
 ::  construct and return a self-signed JWT issued now, expiring in ~h1.
@@ -72,32 +70,29 @@
   |=  [=key:rsa kid=@t iss=@t scope=@t aud=@t iat=@da]
   ^-  @t
   =/  job=json
-    %^  sign:jws  key
+    =,  enjs:format
+    %^  sign:jws:jose  key
       ::  the JWT's "header"
-      %:  pairs:enjs
+      %:  pairs
         alg+s+'RS256'
         typ+s+'JWT'
         kid+s+kid
         ~
       ==
     ::  the JWT's "payload"
-    %:  pairs:enjs
+    %:  pairs
       iss+s+iss
       sub+s+iss                                 ::  per g.co, use iss for sub
       scope+s+scope
       aud+s+aud
-      iat+(sect:enjs iat)
-      exp+(sect:enjs (add iat ~h1))
+      iat+(sect iat)
+      exp+(sect (add iat ~h1))
       ~
     ==
-  ?>  ?=([%o *] job)
-  =*  mep  p.job
-  =+  :~  pod=(sa:dejs (~(got by mep) 'protected'))
-          pad=(sa:dejs (~(got by mep) 'payload'))
-          sig=(sa:dejs (~(got by mep) 'signature'))
-      ==
-  %-  crip                                      ::  XX
-  :(weld pod "." pad "." sig)
+  =/  [pod=@t pad=@t sig=@t]
+    =,  dejs:format
+    ((ot 'protected'^so 'payload'^so 'signature'^so ~) job)
+  (rap 3 (join '.' `(list @t)`~[pod pad sig]))
 ::  RPC to get a signed JWT. Probably only works with Google.
 ::  Described at:
 ::  https://developers.google.com/identity/protocols/oauth2/service-account
@@ -113,7 +108,7 @@
       ^=  body
       %-  some  %-  as-octt:mimes:html
       %-  en-json:html
-      %:  pairs:enjs
+      %:  pairs:enjs:format
         ['grant_type' s+'urn:ietf:params:oauth:grant-type:jwt-bearer']
         assertion+s+jot
         ~
@@ -128,7 +123,9 @@
   =/  jon=(unit json)  (de-json:html body)
   ?~  jon
     (strand-fail:strandio %bad-body ~[body])
-  ?.  ?=([%o [[%'id_token' %s @] ~ ~]] +.jon)
-    (strand-fail:strandio %bad-json ~[body])
-  (pure:m p.q.n.p.u.jon)
+  =*  job  u.jon
+  %-  pure:m
+  =,  dejs:format
+  %-  (ot 'id_token'^so ~)
+  job
 --
