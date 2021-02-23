@@ -18,27 +18,24 @@ Utilities located [here](https://github.com/timlucmiptev/urbit-bitcoin-rpc). Use
 
 Do `./install.sh -w PIER_DIR` for dev work.
 
-### Startup'
+### Startup
 Set credentials and start agents. Use `~dopzod` and `~zod`
 ```
 =provider ~zod
 =network %main
 |start %btc-wallet
 |start %btc-provider
-:btc-wallet|command [%set-provider provider network]
+:btc-wallet|command [%set-provider provider]
 :btc-provider|command [%set-credentials api-url='http://localhost:50002' network]
 ```
 
-### Test `%address-info` Calls
-The below calls will print RPC results.
-```
-:btc-provider|action ['addr0' %address-info [%bech32 'bc1qm7cegwfd0pvv9ypvz5nhstage00xkxevtrpshc']]
-:btc-provider|action ['addr1' %address-info [%bech32 'bc1qlwd7mw33uea5m8r2lsnsrkc7gp2qynrxsfxpfm']]
-:btc-provider|action ['addr2' %address-info [%bech32 'bc1qglkc9zfcn04vcc88nn0ljtxcpu5uxfznc3829k']]
-::  first is an address w balance
-::  second has no balance but is used
-::  third is unused
+### Adding a wallet
+Uses a dummy fingerprint
 
+```
+=fprint [%4 0xbeef.dead]
+=xpubmain 'zpub6rFR7y4Q2AijBEqTUquhVz398htDFrtymD9xYYfG1m4wAcvPhXNfE3EfH1r1ADqtfSdVCToUG868RvUUkgDKf31mGDtKsAYz2oz2AGutZYs'
+:btc-wallet|command [%add-wallet xpubmain fprint ~ [~ 8] [~ 1]]
 ```
 
 ## Running Tests
