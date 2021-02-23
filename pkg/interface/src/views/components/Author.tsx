@@ -20,7 +20,7 @@ interface AuthorProps {
   children?: ReactNode;
   unread?: boolean;
   group: Group;
-  api: GlobalApi;
+  api?: GlobalApi;
 }
 
 // eslint-disable-next-line max-lines-per-function
