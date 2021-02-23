@@ -86,7 +86,6 @@ export default class ChatWindow extends Component<
 
   componentDidMount() {
     this.calculateUnreadIndex();
-    this.virtualList?.calculateVisibleItems();
     window.addEventListener('blur', this.handleWindowBlur);
     window.addEventListener('focus', this.handleWindowFocus);
     setTimeout(() => {
@@ -145,7 +144,7 @@ export default class ChatWindow extends Component<
         this.scrollToUnread();
       }
       this.prevSize = graph.size;
-      this.virtualList?.calculateVisibleItems();
+      //this.virtualList?.calculateVisibleItems();
       this.stayLockedIfActive();
     }
 
@@ -168,7 +167,7 @@ export default class ChatWindow extends Component<
       return;
     }
 
-    this.virtualList?.scrollToData(unreadIndex);
+    //this.virtualList?.scrollToData(unreadIndex);
   }
 
   dismissUnread() {
@@ -179,18 +178,18 @@ export default class ChatWindow extends Component<
     this.props.api.hark.markCountAsRead(association, '/', 'mention');
   }
 
-  async fetchMessages(newer: boolean, force = false): Promise<void> {
+  async fetchMessages(newer: boolean): Promise<boolean> {
     const { api, station, graph } = this.props;
-
-    if (this.state.fetchPending && !force) {
-      return new Promise((resolve, reject) => {});
+    if(this.state.fetchPending) {
+      return false;
     }
+    
 
     this.setState({ fetchPending: true });
 
     const [, , ship, name] = station.split('/');
     const currSize = graph.size;
-    if (newer && !this.loadedNewest) {
+    if (newer) {
       const [index] = graph.peekLargest()!;
       await api.graph.getYoungerSiblings(
         ship,
@@ -198,20 +197,14 @@ export default class ChatWindow extends Component<
         20,
         `/${index.toString()}`
       );
-      if (currSize === graph.size) {
-        console.log('loaded all newest');
-        this.loadedNewest = true;
-      }
-    } else if (!newer && !this.loadedOldest) {
+    } else {
       const [index] = graph.peekSmallest()!;
       await api.graph.getOlderSiblings(ship, name, 20, `/${index.toString()}`);
       this.calculateUnreadIndex();
-      if (currSize === graph.size) {
-        console.log('loaded all oldest');
-        this.loadedOldest = true;
-      }
     }
     this.setState({ fetchPending: false });
+    console.log(currSize, graph.size);
+    return currSize === graph.size;
   }
 
   onScroll({ scrollTop, scrollHeight, windowHeight }) {
@@ -293,7 +286,8 @@ export default class ChatWindow extends Component<
           onScroll={this.onScroll.bind(this)}
           data={graph}
           size={graph.size}
-          renderer={({ index, measure, scrollWindow }) => {
+          id={association.resource}
+          renderer={({ index, shiftLayout, measure, scrollWindow, ref }) => {
             const msg = graph.get(index)?.post;
             if (!msg) return null;
             if (!this.state.initialized) {
@@ -316,12 +310,14 @@ export default class ChatWindow extends Component<
             const isLastRead: boolean = this.state.unreadIndex.eq(index);
             const props = {
               measure,
+              ref,
               highlighted,
               scrollWindow,
               isPending,
               isLastRead,
               isLastMessage,
               msg,
+              shiftLayout,
               ...messageProps
             };
             return (
@@ -333,9 +329,7 @@ export default class ChatWindow extends Component<
               />
             );
           }}
-          loadRows={(newer) => {
-            this.fetchMessages(newer);
-          }}
+          loadRows={this.fetchMessages.bind(this)}
         />
       </Col>
     );

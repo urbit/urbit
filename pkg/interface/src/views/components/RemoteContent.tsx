@@ -1,4 +1,4 @@
-import React, { PureComponent, Fragment } from 'react';
+import React, { Component, Fragment } from 'react';
 import { BaseAnchor, BaseImage, Box, Button, Text } from '@tlon/indigo-react';
 import { hasProvider } from 'oembed-parser';
 import EmbedContainer from 'react-oembed-container';
@@ -18,6 +18,10 @@ interface RemoteContentProps {
   textProps?: any;
   style?: any;
   onLoad?(): void;
+  shiftLayout: {
+    save: () => void;
+    restore: () => void;
+  }
 }
 
 interface RemoteContentState {
@@ -30,9 +34,10 @@ const IMAGE_REGEX = new RegExp(/(jpg|img|png|gif|tiff|jpeg|webp|webm|svg)$/i);
 const AUDIO_REGEX = new RegExp(/(mp3|wav|ogg)$/i);
 const VIDEO_REGEX = new RegExp(/(mov|mp4|ogv)$/i);
 
-class RemoteContent extends PureComponent<RemoteContentProps, RemoteContentState> {
+class RemoteContent extends Component<RemoteContentProps, RemoteContentState> {
   private fetchController: AbortController | undefined;
   containerRef: HTMLDivElement | null = null;
+  private saving = true;
   constructor(props) {
     super(props);
     this.state = {
@@ -56,8 +61,23 @@ class RemoteContent extends PureComponent<RemoteContentProps, RemoteContentState
     event.stopPropagation();
     let unfoldState = this.state.unfold;
     unfoldState = !unfoldState;
+    this.props.shiftLayout.save();
     this.setState({ unfold: unfoldState });
-    setTimeout(this.props.onLoad, 500);
+  }
+
+
+  componentDidUpdate(prevProps, prevState) {
+    if(prevState.embed !== this.state.embed) {
+      console.log('remotecontent: restoring');
+      prevProps.shiftLayout.restore();
+    }
+  }
+
+  onLoad = () => {
+    window.requestAnimationFrame(() => {
+      this.props.shiftLayout.restore();
+    });
+
   }
 
   loadOembed() {
@@ -107,9 +127,9 @@ return;
       oembedProps = {},
       textProps = {},
       style = {},
-      onLoad = () => {},
       ...props
     } = this.props;
+    const { onLoad } = this;
     const { noCors } = this.state;
     const isImage = IMAGE_REGEX.test(url);
     const isAudio = AUDIO_REGEX.test(url);
@@ -193,13 +213,14 @@ return;
             className='embed-container'
             style={style}
             flexShrink={0}
-            onLoad={onLoad}
+            onLoad={this.onLoad}
             {...oembedProps}
             {...props}
           >
             {this.state.embed && this.state.embed.html && this.state.unfold
             ? <EmbedContainer markup={this.state.embed.html}>
               <div className="embed-container" ref={(el) => {
+                this.onLoad();
  this.containerRef = el;
 }}
                 dangerouslySetInnerHTML={{ __html: this.state.embed.html }}

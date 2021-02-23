@@ -78,7 +78,6 @@ export const UnreadMarker = React.forwardRef(({ dayBreak, when }, ref) => (
 ));
 
 interface ChatMessageProps {
-  measure(element): void;
   msg: Post;
   previousMsg?: Post;
   nextMsg?: Post;
@@ -96,9 +95,14 @@ interface ChatMessageProps {
   api: GlobalApi;
   highlighted?: boolean;
   renderSigil?: boolean;
+  innerRef: (el: HTMLDivElement | null) => void;
+  shiftLayout: {
+    save: () => void;
+    restore: () => void;
+  }
 }
 
-export default class ChatMessage extends Component<ChatMessageProps> {
+class ChatMessage extends Component<ChatMessageProps> {
   private divRef: React.RefObject<HTMLDivElement>;
 
   constructor(props) {
@@ -107,9 +111,6 @@ export default class ChatMessage extends Component<ChatMessageProps> {
   }
 
   componentDidMount() {
-    if (this.divRef.current) {
-      this.props.measure(this.divRef.current);
-    }
   }
 
   render() {
@@ -124,7 +125,6 @@ export default class ChatMessage extends Component<ChatMessageProps> {
       className = '',
       isPending,
       style,
-      measure,
       scrollWindow,
       isLastMessage,
       unreadMarkerRef,
@@ -132,6 +132,7 @@ export default class ChatMessage extends Component<ChatMessageProps> {
       api,
       highlighted,
       fontSize,
+      shiftLayout,
       groups,
       associations
     } = this.props;
@@ -157,9 +158,6 @@ export default class ChatMessage extends Component<ChatMessageProps> {
       .unix(msg['time-sent'] / 1000)
       .format(renderSigil ? 'h:mm A' : 'h:mm');
 
-    const reboundMeasure = (event) => {
-      return measure(this.divRef.current);
-    };
 
     const messageProps = {
       msg,
@@ -167,7 +165,6 @@ export default class ChatMessage extends Component<ChatMessageProps> {
       contacts,
       association,
       group,
-      measure: reboundMeasure.bind(this),
       style,
       containerClass,
       isPending,
@@ -177,7 +174,8 @@ export default class ChatMessage extends Component<ChatMessageProps> {
       highlighted,
       fontSize,
       associations,
-      groups
+      groups,
+      shiftLayout
     };
 
     const unreadContainerStyle = {
@@ -186,7 +184,7 @@ export default class ChatMessage extends Component<ChatMessageProps> {
 
     return (
       <Box
-        ref={this.divRef}
+        ref={this.props.innerRef}
         pt={renderSigil ? 2 : 0}
         pb={isLastMessage ? 4 : 2}
         pr={5}
@@ -218,11 +216,12 @@ export default class ChatMessage extends Component<ChatMessageProps> {
   }
 }
 
+export default React.forwardRef((props, ref) => <ChatMessage {...props} innerRef={ref} />);
+
 export const MessageAuthor = ({
   timestamp,
   contacts,
   msg,
-  measure,
   group,
   api,
   associations,
@@ -367,8 +366,8 @@ export const Message = ({
   timestamp,
   contacts,
   msg,
-  measure,
   group,
+  shiftLayout,
   api,
   associations,
   groups,
@@ -401,7 +400,7 @@ export const Message = ({
                 <TextContent
                   associations={associations}
                   groups={groups}
-                  measure={measure}
+                  shiftLayout={shiftLayout}
                   api={api}
                   fontSize={1}
                   lineHeight={'20px'}
@@ -420,7 +419,7 @@ export const Message = ({
                 >
                   <RemoteContent
                     url={content.url}
-                    onLoad={measure}
+                    shiftLayout={shiftLayout}
                     imageProps={{
                       style: {
                         maxWidth: 'min(100%,18rem)',

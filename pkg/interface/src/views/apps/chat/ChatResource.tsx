@@ -38,7 +38,7 @@ export function ChatResource(props: ChatResourceProps) {
   const canWrite = isWriter(group, station);
 
   useEffect(() => {
-    const count = Math.min(50, unreadCount + 15);
+    const count = 100;
     props.api.graph.getNewest(owner, name, count);
   }, [station]);
 
