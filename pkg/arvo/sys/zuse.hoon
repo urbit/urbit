@@ -3368,16 +3368,10 @@
       (poq (wit jon))
     ::                                                  ::  ++di:dejs:format
     ++  di                                              ::  millisecond date
-      %+  cu
-        |=  a=@u  ^-  @da
-        (from-unix-ms:chrono:userlib a)
-      ni
+      (cu from-unix-ms:chrono:userlib ni)
     ::                                                  ::  ++du:dejs:format
     ++  du                                              ::  second date
-      %+  cu
-        |=  a=@u  ^-  @da
-        (from-unix:chrono:userlib a)
-      ni
+      (cu from-unix:chrono:userlib ni)
     ::                                                  ::  ++mu:dejs:format
     ++  mu                                              ::  true unit
       |*  wit=fist
@@ -3587,10 +3581,7 @@
       (bind (stud:chrono:userlib p.jon) |=(a=date (year a)))
     ::
     ++  di                                              ::  millisecond date
-      %+  cu
-        |=  a=@u  ^-  @da
-        (from-unix-ms:chrono:userlib a)
-      ni
+      (cu from-unix-ms:chrono:userlib ni)
     ::
     ++  mu                                              ::  true unit
       |*  wit=fist
