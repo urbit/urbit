@@ -64,6 +64,12 @@ if(urbitrc.URL) {
           return '/index.js'
         }
       },
+      '/~landscape/js/serviceworker.js': {
+        target: 'http://localhost:9000',
+        pathRewrite: (req, path) => {
+          return '/serviceworker.js'
+        }
+      },
       '**': {
         changeOrigin: true,
         target: urbitrc.URL,
@@ -78,7 +84,8 @@ if(urbitrc.URL) {
 module.exports = {
   mode: 'development',
   entry: {
-    app: './src/index.js'
+    app: './src/index.js',
+    serviceworker: './src/serviceworker.js'
   },
   module: {
     rules: [
@@ -135,10 +142,13 @@ module.exports = {
   ],
   watch: true,
   output: {
-    filename: 'index.js',
-    chunkFilename: 'index.js',
+    filename: (pathData) => {
+      return pathData.chunk.name === 'app' ? 'index.js' : '[name].js';
+    },
+    chunkFilename: '[name].js',
     path: path.resolve(__dirname, '../dist'),
-    publicPath: '/'
+    publicPath: '/',
+    globalObject: 'this'
   },
   optimization: {
     minimize: false,

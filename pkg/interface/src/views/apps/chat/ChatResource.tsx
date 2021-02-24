@@ -122,7 +122,6 @@ export function ChatResource(props: ChatResourceProps) {
         } else {
           setShowBanner(false);
         }
-
       } else {
         const groupShared = await fetchIsAllowed(
           `~${window.ship}`,
@@ -135,7 +134,7 @@ export function ChatResource(props: ChatResourceProps) {
 
       setHasLoadedAllowed(true);
     })();
-  }, [groupPath]);
+  }, [groupPath, group]);
 
   if(!graph) {
     return <Loading />;

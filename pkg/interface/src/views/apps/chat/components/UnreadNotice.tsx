@@ -3,19 +3,16 @@ import moment from 'moment';
 
 import { Box, Text } from '@tlon/indigo-react';
 
+import Timestamp from '~/views/components/Timestamp';
+
 export const UnreadNotice = (props) => {
   const { unreadCount, unreadMsg, dismissUnread, onClick } = props;
 
   if (!unreadMsg || (unreadCount === 0)) {
     return null;
   }
-
-  let datestamp: string | null = moment.unix(unreadMsg.post['time-sent'] / 1000).format('YYYY.M.D');
-  const timestamp = moment.unix(unreadMsg.post['time-sent'] / 1000).format('HH:mm');
-
-  if (datestamp === moment().format('YYYY.M.D')) {
-    datestamp = null;
-  }
+  
+  const stamp = moment.unix(unreadMsg.post['time-sent'] / 1000);
 
   return (
     <Box style={{ left: '0px', top: '0px' }}
@@ -37,12 +34,7 @@ export const UnreadNotice = (props) => {
         borderColor='blue'>
         <Text flexShrink={1} textOverflow='ellipsis' whiteSpace='pre' overflow='hidden' display='block' cursor='pointer' onClick={onClick}>
           {unreadCount} new message{unreadCount > 1 ? 's' : ''} since{' '}
-          {datestamp && (
-            <>
-              <Text color='blue'>~{datestamp}</Text> at{' '}
-            </>
-          )}
-          <Text color='blue'>{timestamp}</Text>
+          <Timestamp stamp={stamp} color='blue' date={true} fontSize={1} />
         </Text>
         <Text
           ml='4'

@@ -117,6 +117,7 @@ export function Omnibox(props: OmniboxProps) {
     props.toggle();
     if (defaultApps.includes(app.toLowerCase())
         || app === 'profile'
+        || app === 'messages'
         || app === 'Links'
         || app === 'Terminal'
         || app === 'home'

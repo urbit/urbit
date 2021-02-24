@@ -1,8 +1,4 @@
-import React, {
-  useState,
-  useCallback,
-  useEffect
-} from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 
 import {
   Row,
@@ -45,13 +41,13 @@ export const ProfileStatus = (props) => {
 
   return (
     <>
-      <Row width="100%" mt={3} mr={3} display="block">
+      <Row width='100%' mt={1}>
         <Input
           onChange={onStatusChange}
           value={_status}
-          autocomplete="off"
-          width="100%"
-          placeholder="Set Status"
+          autocomplete='off'
+          width='100%'
+          placeholder='Set Status'
           onKeyPress={(evt) => {
             if (evt.key === 'Enter') {
               editStatus();
@@ -62,7 +58,15 @@ export const ProfileStatus = (props) => {
           }}
         />
       </Row>
-      <Text display={notice !== ' ' ? 'block' : 'none'} mt={1} ml={1} whiteSpace="pre" gray>{notice}</Text>
+      <Text
+        display={notice !== ' ' ? 'block' : 'none'}
+        mt={1}
+        ml={1}
+        whiteSpace='pre'
+        gray
+      >
+        {notice}
+      </Text>
     </>
   );
 };

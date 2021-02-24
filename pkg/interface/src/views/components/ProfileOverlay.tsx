@@ -1,21 +1,20 @@
-import React, { createRef, PureComponent, useCallback, useEffect } from 'react';
+import React, { createRef, useCallback, useEffect } from 'react';
 
 import { Contact, Group, cite } from '@urbit/api';
-import { useShowNickname } from '~/logic/lib/util';
-import { Sigil } from '~/logic/lib/Sigil';
-
 import {
   Box,
   Row,
   Col,
-  Button,
   Text,
   BaseImage,
   ColProps,
   Icon
 } from '@tlon/indigo-react';
+
+import { useShowNickname } from '~/logic/lib/util';
+import { Sigil } from '~/logic/lib/Sigil';
 import RichText from './RichText';
-import useLocalState, { withLocalState } from '~/logic/state/local';
+import useLocalState from '~/logic/state/local';
 import { ProfileStatus } from './ProfileStatus';
 import { useHistory } from 'react-router-dom';
 
@@ -77,81 +76,107 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
   if (!(top || bottom)) {
     bottom = `-${Math.round(OVERLAY_HEIGHT / 2)}px`;
   }
+ 
   const containerStyle = { top, bottom, left: '100%' };
 
   const isOwn = window.ship === ship;
 
-  const img = contact?.avatar && !hideAvatars
-    ? <BaseImage display='inline-block' src={contact.avatar} height={72} width={72} className="brt2" />
-    : <Sigil
-      ship={ship}
-      size={72}
-      color={color}
-      classes="brt2"
-      svgClass="brt2"
-      />;
-  const showNickname = useShowNickname(contact, hideNicknames);
+  const img =
+    contact?.avatar && !hideAvatars ? (
+      <BaseImage
+        display='inline-block'
+        src={contact.avatar}
+        height={72}
+        width={72}
+        borderRadius={2}
+      />
+    ) : (
+      <Sigil ship={ship} size={72} color={color} />
+    );
+    const showNickname = useShowNickname(contact, hideNicknames);
 
-  return (
-    <Col
-      ref={popoverRef}
-      backgroundColor="white"
-      color="washedGray"
-      border={1}
-      borderRadius={2}
-      borderColor="lightGray"
-      boxShadow="0px 0px 0px 3px"
-      position='absolute'
-      zIndex={3}
-      fontSize='0'
-      height="250px"
-      width="250px"
-      padding={3}
-      justifyContent="space-between"
-      style={containerStyle}
-      {...rest}
-    >
-      <Row color='black' width='100%' height="3rem">
-        {(!isOwn) && (
-        <Icon icon="Chat" size={16} onClick={() => history.push(`/~landscape/dm/${ship}`)} />
-        )}
-      </Row>
-      <Box
-        alignSelf="center"
-        height="72px"
-        onClick={() => history.push(`/~profile/~${ship}`)}
+    return (
+      <Col
+        ref={this.popoverRef}
+        backgroundColor='white'
+        color='washedGray'
+        border={1}
+        borderRadius={2}
+        borderColor='lightGray'
+        boxShadow='0px 0px 0px 3px'
+        position='absolute'
+        zIndex='3'
+        fontSize='0'
+        height='250px'
+        width='250px'
+        padding={3}
+        justifyContent='center'
+        style={containerStyle}
+        {...rest}
       >
-        {img}
-      </Box>
-      <Col alignItems="end" justifyContent="flex-end" overflow="hidden" minWidth='0'>
-        <Row width="100%" >
-          <Text
-            fontWeight='600'
-            mono={!showNickname}
-            textOverflow='ellipsis'
-            overflow='hidden'
-            whiteSpace='pre'
-            lineHeight="tall"
-          >
-            {showNickname ? contact?.nickname : cite(ship)}
-          </Text>
+        <Row color='black' padding={3} position='absolute' top={0} left={0}>
+          {!isOwn && (
+            <Icon
+              icon='Chat'
+              size={16}
+              cursor='pointer'
+              onClick={() => history.push(`/~landscape/dm/${ship}`)}
+            />
+          )}
         </Row>
-        { isOwn ? (
-          <ProfileStatus
-            ship={`~${ship}`}
-            contact={contact}
-          />
-        ) : (
-            <RichText display='inline-block' width='100%' minWidth='0' textOverflow='ellipsis'
+        <Box
+          alignSelf='center'
+          height='72px'
+          cursor='pointer'
+          onClick={() => history.push(`/~profile/~${ship}`)}
+          overflow='hidden'
+          borderRadius={2}
+        >
+          {img}
+        </Box>
+        <Col
+          position='absolute'
+          overflow='hidden'
+          minWidth='0'
+          width='100%'
+          padding={3}
+          bottom={0}
+          left={0}
+        >
+          <Row width='100%'>
+            <Text
+              fontWeight='600'
+              mono={!showNickname}
+              textOverflow='ellipsis'
               overflow='hidden'
               whiteSpace='pre'
-              lineHeight="tall" disableRemoteContent gray>
-            {contact?.status ? contact.status : ''}
-          </RichText>
-        )
-        }
+              marginBottom='0'
+            >
+              {showNickname ? contact?.nickname : cite(ship)}
+            </Text>
+          </Row>
+          {isOwn ? (
+            <ProfileStatus
+              ship={`~${ship}`}
+              contact={contact}
+            />
+          ) : (
+            <RichText
+              display='inline-block'
+              width='100%'
+              minWidth='0'
+              textOverflow='ellipsis'
+              overflow='hidden'
+              whiteSpace='pre'
+              marginBottom='0'
+              disableRemoteContent
+              gray
+            >
+              {contact?.status ? contact.status : ''}
+            </RichText>
+          )}
+        </Col>
       </Col>
-    </Col>
   );
 };
 

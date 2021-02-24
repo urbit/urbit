@@ -8,6 +8,7 @@ import { HoverBoxLink } from '~/views/components/HoverBox';
 import { Sigil } from '~/logic/lib/Sigil';
 import { getModuleIcon, getItemTitle } from '~/logic/lib/util';
 import { useTutorialModal } from '~/views/components/useTutorialModal';
+import useLocalState from '~/logic/state/local';
 import { TUTORIAL_HOST, TUTORIAL_GROUP } from '~/logic/lib/tutorialModal';
 import { SidebarAppConfigs, SidebarItemStatus } from './types';
 import { Workspace } from '~/types/workspace';
@@ -57,6 +58,9 @@ export function SidebarItem(props: {
     return null;
   }
   const DM = (isUnmanaged && props.workspace?.type === 'messages');
+  const { hideAvatars, hideNicknames } = useLocalState(({ hideAvatars, hideNicknames }) => ({
+    hideAvatars, hideNicknames
+  }));
   const itemStatus = app.getStatus(path);
   const hasUnread = itemStatus === 'unread' || itemStatus === 'mention';
 

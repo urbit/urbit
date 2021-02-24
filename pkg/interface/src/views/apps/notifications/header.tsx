@@ -9,6 +9,7 @@ import { Contact, Contacts } from '@urbit/api';
 import { PropFunc } from '~/types/util';
 import { useShowNickname } from '~/logic/lib/util';
 import useMetadataState from '~/logic/state/metadata';
+import Timestamp from '~/views/components/Timestamp';
 
 const Text = (props: PropFunc<typeof Text>) => (
   <NormalText fontWeight="500" {...props} />
@@ -94,9 +95,7 @@ export function Header(props: {
           <Rule vertical height="12px" mr={1} />
         </>
       }
-      <Text fontWeight="regular" color="lightGray">
-        {time}
-      </Text>
+      <Timestamp stamp={moment(props.time)} color="lightGray" date={false} />
     </Row>
   );
 }

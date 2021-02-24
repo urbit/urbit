@@ -1,4 +1,4 @@
-import React, { ReactElement, useCallback } from 'react';
+import React, { ReactElement, ReactNode, useCallback } from 'react';
 import moment from 'moment';
 import _ from 'lodash';
 import { useHistory } from 'react-router-dom';
@@ -21,12 +21,12 @@ import { pluralize } from '~/logic/lib/util';
 import { Sigil } from '~/logic/lib/Sigil';
 import { getSnippet } from '~/logic/lib/publish';
 import { MentionText } from '~/views/components/MentionText';
-import { MessageWithoutSigil } from '../chat/components/ChatMessage';
 import useContactState from '~/logic/state/contacts';
 import useApi from '~/logic/lib/useApi';
 import useGroupState from '~/logic/state/groups';
+import ChatMessage from '../chat/components/ChatMessage';
 
-function getGraphModuleIcon(module: string): string {
+function getGraphModuleIcon(module: string) {
   if (module === 'link') {
     return 'Collection';
   }
@@ -62,10 +62,10 @@ function describeNotification(description: string, plural: boolean): string {
   }
 }
 
-const GraphUrl = ({ url, title }): ReactElement => (
-  <Box borderRadius="2" p="2" bg="scales.black05">
-    <Anchor underline={false} target="_blank" color="black" href={url}>
-      <Icon verticalAlign="bottom" mr="2" icon="ArrowExternal" />
+const GraphUrl = ({ url, title }) => (
+  <Box borderRadius='2' p='2' bg='scales.black05'>
+    <Anchor underline={false} target='_blank' color='black' href={url}>
+      <Icon verticalAlign='bottom' mr='2' icon='ArrowExternal' />
       {title}
     </Anchor>
   </Box>
@@ -106,11 +106,11 @@ const GraphNodeContent = ({ group, post, mod, index }: GraphNodeContentProps): R
       const snippet = getSnippet(body);
       return (
         <Col>
-          <Box mb="2" fontWeight="500">
+          <Box mb='2' fontWeight='500'>
             <Text>{header}</Text>
           </Box>
-          <Box overflow="hidden" maxHeight="400px" position="relative">
-            <Text lineHeight="tall">{snippet}</Text>
+          <Box overflow='hidden' maxHeight='400px' position='relative'>
+            <Text lineHeight='tall'>{snippet}</Text>
             <FilterBox
               width="100%"
               zIndex={1}
@@ -124,28 +124,38 @@ const GraphNodeContent = ({ group, post, mod, index }: GraphNodeContentProps): R
     }
   }
 
-  if(mod === 'chat') {
+  if (mod === 'chat') {
     return (
       <Row
-        width="100%"
+        width='100%'
         flexShrink={0}
         flexGrow={1}
-        flexWrap="wrap"
+        flexWrap='wrap'
+        marginLeft='-32px'
       >
-      <MessageWithoutSigil
-        containerClass="items-top cf hide-child"
-        measure={() => {}}
-        group={group}
-        msg={post}
-        fontSize='0'
-        pt='2'
-      />
-    </Row>);
+        <ChatMessage
+          renderSigil={false}
+          containerClass='items-top cf hide-child'
+          measure={() => {}}
+          group={group}
+          groups={{}}
+          msg={post}
+          fontSize='0'
+          pt='2'
+        />
+      </Row>
+    );
   }
   return null;
 };
 
-function getNodeUrl(mod: string, hidden: boolean, groupPath: string, graph: string, index: string): string {
+function getNodeUrl(
+  mod: string,
+  hidden: boolean,
+  groupPath: string,
+  graph: string,
+  index: string
+) {
   if (hidden && mod === 'chat') {
     groupPath = '/messages';
   } else if (hidden) {
@@ -187,42 +197,46 @@ const GraphNode = ({
       ship={`~${author}`}
       size={16}
       icon
-      color={'#000000'}
-      classes="mix-blend-diff"
+      color={`#000000`}
+      classes='mix-blend-diff'
       padding={2}
     />
-    ) : <Box style={{ width: '16px' }}></Box>;
+  ) : (
+    <Box style={{ width: '16px' }}></Box>
+  );
 
   const groupContacts = contacts[groupPath] ?? {};
 
   const nodeUrl = getNodeUrl(mod, group?.hidden, groupPath, graph, index);
 
   const onClick = useCallback(() => {
-    if(!read) {
+    if (!read) {
       onRead();
     }
     history.push(nodeUrl);
   }, [read, onRead]);
 
   return (
-    <Row onClick={onClick} gapX="2" pt={showContact ? 2 : 0}>
+    <Row onClick={onClick} gapX='2' pt={showContact ? 2 : 0}>
       <Col>{img}</Col>
-      <Col flexGrow={1} alignItems="flex-start">
-        {showContact && <Row
-          mb="2"
-          height="16px"
-          alignItems="center"
-          p="1"
-          backgroundColor="white"
-                        >
-          <Text mono title={author}>
-            {cite(author)}
-          </Text>
-          <Text ml="2" gray>
-            {moment(time).format('HH:mm')}
-          </Text>
-        </Row>}
-        <Row width="100%" p="1" flexDirection="column">
+      <Col flexGrow={1} alignItems='flex-start'>
+        {showContact && (
+          <Row
+            mb='2'
+            height='16px'
+            alignItems='center'
+            p='1'
+            backgroundColor='white'
+          >
+            <Text mono title={author}>
+              {cite(author)}
+            </Text>
+            <Text ml='2' gray>
+              {moment(time).format('HH:mm')}
+            </Text>
+          </Row>
+        )}
+        <Row width='100%' p='1' flexDirection='column'>
           <GraphNodeContent
             post={post}
             mod={mod}
@@ -260,7 +274,7 @@ export function GraphNotification(props: {
     return api.poke(markRead(timebox, { graph: index }));
   }, [timebox, index, read]);
 
-return (
+  return (
     <>
       <Header
         onClick={onClick}
@@ -273,7 +287,7 @@ return (
         group={group}
         description={desc}
       />
-      <Box flexGrow={1} width="100%" pl={5} gridArea="main">
+      <Box flexGrow={1} width='100%' pl={5} gridArea='main'>
         {_.map(contents, (content, idx) => (
           <GraphNode
             post={content}

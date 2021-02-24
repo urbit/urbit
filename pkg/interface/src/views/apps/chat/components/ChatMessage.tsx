@@ -1,3 +1,4 @@
+/* eslint-disable max-lines-per-function */
 import React, {
   useState,
   useEffect,
@@ -7,7 +8,6 @@ import React, {
 } from 'react';
 import moment from 'moment';
 import _ from 'lodash';
-import styled from 'styled-components';
 
 import { Box, Row, Text, Rule, BaseImage } from '@tlon/indigo-react';
 import { Group, Post, uxToHex, cite } from '@urbit/api';
@@ -24,36 +24,51 @@ import CodeContent from './content/code';
 import RemoteContent from '~/views/components/RemoteContent';
 import { Mention } from '~/views/components/MentionText';
 import useLocalState from '~/logic/state/local';
+import { useHistory } from 'react-router-dom';
+import useContactState from '~/logic/state/contacts';
 
 export const DATESTAMP_FORMAT = '[~]YYYY.M.D';
 
-export const UnreadMarker = React.forwardRef(({ dayBreak, when }, ref) => (
-  <Row
-    flexShrink={0}
-    ref={ref}
-    color='blue'
-    alignItems='center'
-    fontSize='0'
-    position='absolute'
-    width='100%'
-    py='2'
-  >
-    <Rule borderColor='blue' display={['none', 'block']} m={0} width='2rem' />
-    <Text flexShrink={0} display='block' zIndex={2} mx={4} color='blue'>
-      New messages below
-    </Text>
-    <Rule borderColor='blue' flexGrow={1} m={0} />
-    <Rule style={{ width: 'calc(50% - 48px)' }} borderColor='blue' m={0} />
-  </Row>
-));
+interface DayBreakProps {
+  when: string;
+  shimTop?: boolean;
+}
 
-export const DayBreak = ({ when }) => (
-  <Row pb='3' alignItems='center' justifyContent='center' width='100%'>
-    <Text gray>
+export const DayBreak = ({ when, shimTop = false }: DayBreakProps) => (
+  <Row
+    px={2}
+    height={5}
+    mb={2}
+    justifyContent='center'
+    alignItems='center'
+    mt={shimTop ? '-8px' : '0'}
+  >
+    <Rule borderColor='lightGray' />
+    <Text gray flexShrink='0' fontSize={0} px={2}>
       {moment(when).calendar(null, { sameElse: DATESTAMP_FORMAT })}
     </Text>
+    <Rule borderColor='lightGray' />
   </Row>
 );
+
+export const UnreadMarker = React.forwardRef(({ dayBreak, when }, ref) => (
+  <Row
+    position='absolute'
+    ref={ref}
+    px={2}
+    mt={2}
+    height={5}
+    justifyContent='center'
+    alignItems='center'
+    width='100%'
+  >
+    <Rule borderColor='lightBlue' />
+    <Text color='blue' fontSize={0} flexShrink={0} px={2}>
+      New messages below
+    </Text>
+    <Rule borderColor='lightBlue' />
+  </Row>
+));
 
 interface ChatMessageProps {
   measure(element): void;
@@ -70,6 +85,7 @@ interface ChatMessageProps {
   unreadMarkerRef: React.RefObject<HTMLDivElement>;
   highlighted?: boolean;
   fontSize: number;
+  renderSigil?: boolean;
 }
 
 export default class ChatMessage extends Component<ChatMessageProps> {
@@ -104,21 +120,26 @@ export default class ChatMessage extends Component<ChatMessageProps> {
       fontSize,
     } = this.props;
 
-    const renderSigil = Boolean(
-      (nextMsg && msg.author !== nextMsg.author) || !nextMsg || msg.number === 1
-    );
+    let { renderSigil } = this.props;
+
+    if (renderSigil === undefined) {
+      renderSigil = Boolean(
+        (nextMsg && msg.author !== nextMsg.author) ||
+          !nextMsg ||
+          msg.number === 1
+      );
+    }
+
     const dayBreak =
       nextMsg &&
       new Date(msg['time-sent']).getDate() !==
         new Date(nextMsg['time-sent']).getDate();
 
-    const containerClass = `${
-      renderSigil ? 'cf pl2 lh-copy' : 'items-top cf hide-child'
-    } ${isPending ? 'o-40' : ''} ${className}`;
+    const containerClass = `${isPending ? 'o-40' : ''} ${className}`;
 
     const timestamp = moment
       .unix(msg['time-sent'] / 1000)
-      .format(renderSigil ? 'hh:mm a' : 'hh:mm');
+      .format(renderSigil ? 'h:mm A' : 'h:mm');
 
     const reboundMeasure = (event) => {
       return measure(this.divRef.current);
@@ -143,34 +164,24 @@ export default class ChatMessage extends Component<ChatMessageProps> {
 
     return (
       <Box
-        bg={highlighted ? 'washedBlue' : 'white'}
-        flexShrink={0}
-        width='100%'
-        display='flex'
-        flexWrap='wrap'
-        pt={this.props.pt ? this.props.pt : renderSigil ? 3 : 0}
-        pr={3}
-        pb={isLastMessage ? 3 : 0}
         ref={this.divRef}
+        pt={renderSigil ? 2 : 0}
+        pb={isLastMessage ? 4 : 2}
         className={containerClass}
         style={style}
-        mb={1}
-        position='relative'
       >
-        {dayBreak && !isLastRead ? <DayBreak when={msg['time-sent']} /> : null}
+        {dayBreak && !isLastRead ? (
+          <DayBreak when={msg['time-sent']} shimTop={renderSigil} />
+        ) : null}
         {renderSigil ? (
-          <MessageWithSigil {...messageProps} />
+          <>
+            <MessageAuthor pb={'2px'} {...messageProps} />
+            <Message pl={5} pr={4} {...messageProps} />
+          </>
         ) : (
-          <MessageWithoutSigil {...messageProps} />
+          <Message pl={5} pr={4} timestampHover {...messageProps} />
         )}
-        <Box
-          flexShrink={0}
-          fontSize={0}
-          position='relative'
-          width='100%'
-          overflow='visible'
-          style={unreadContainerStyle}
-        >
+        <Box style={unreadContainerStyle}>
           {isLastRead ? (
             <UnreadMarker
               dayBreak={dayBreak}
@@ -184,34 +195,24 @@ export default class ChatMessage extends Component<ChatMessageProps> {
   }
 }
 
-interface MessageProps {
-  msg: Post;
-  timestamp: string;
-  group: Group;
-  containerClass: string;
-  isPending: boolean;
-  style: any;
-  measure(element): void;
-  scrollWindow: HTMLDivElement;
-}
-
-export const MessageWithSigil = (props) => {
-  const {
-    msg,
-    timestamp,
-    group,
-    measure,
-    scrollWindow,
-    fontSize
-  } = props;
-
-  const dark = useLocalState(state => state.dark);
+export const MessageAuthor = ({
+  timestamp,
+  msg,
+  measure,
+  group,
+  scrollWindow,
+  ...rest
+}) => {
+  const dark = useLocalState((state) => state.dark);
+  const contacts = useContactState(state => state.contacts);
 
   const datestamp = moment
     .unix(msg['time-sent'] / 1000)
     .format(DATESTAMP_FORMAT);
-  const contact = `~${msg.author}` in contacts ? contacts[`~${msg.author}`] : false;
+  const contact =
+    `~${msg.author}` in contacts ? contacts[`~${msg.author}`] : false;
   const showNickname = useShowNickname(contact);
+  const { hideAvatars } = useLocalState(({ hideAvatars }) => ({ hideAvatars }));
   const shipName = showNickname ? contact.nickname : cite(msg.author);
   const copyNotice = 'Copied';
   const color = contact
@@ -230,7 +231,7 @@ export const MessageWithSigil = (props) => {
   const [showOverlay, setShowOverlay] = useState(false);
 
   const toggleOverlay = () => {
-    setShowOverlay(value => !value);
+    setShowOverlay((value) => !value);
   };
 
   const showCopyNotice = () => {
@@ -245,10 +246,10 @@ export const MessageWithSigil = (props) => {
     };
     const timer = setTimeout(() => resetDisplay(), 800);
     return () => clearTimeout(timer);
-  }, [displayName]);
+  }, [shipName, displayName]);
 
   const img =
-    contact && contact.avatar !== null ? (
+    contact?.avatar && !hideAvatars ? (
       <BaseImage
         display='inline-block'
         src={contact.avatar}
@@ -265,21 +266,21 @@ export const MessageWithSigil = (props) => {
         padding={2}
       />
     );
-
   return (
-    <>
+    <Box display='flex' alignItems='center' {...rest}>
       <Box
         onClick={() => {
           setShowOverlay(true);
         }}
-        className='fl v-top pt1'
         height={16}
-        pr={3}
+        pr={2}
         pl={2}
+        cursor='pointer'
         position='relative'
       >
         {showOverlay && (
           <OverlaySigil
+            cursor='auto'
             ship={msg.author}
             contact={contact}
             color={`#${uxToHex(contact?.color ?? '0x0')}`}
@@ -302,11 +303,11 @@ export const MessageWithSigil = (props) => {
         >
           <Text
             fontSize={0}
-            mr={3}
+            mr={2}
             flexShrink={0}
             mono={nameMono}
             fontWeight={nameMono ? '400' : '500'}
-            className={'mw5 db truncate pointer'}
+            cursor='pointer'
             onClick={() => {
               writeText(`~${msg.author}`);
               showCopyNotice();
@@ -315,154 +316,119 @@ export const MessageWithSigil = (props) => {
           >
             {displayName}
           </Text>
-          <Text flexShrink={0} fontSize={0} gray mono>
+          <Text flexShrink={0} fontSize={0} gray>
             {timestamp}
           </Text>
           <Text
             flexShrink={0}
             fontSize={0}
             gray
-            mono
             ml={2}
             display={['none', hovering ? 'block' : 'none']}
           >
             {datestamp}
           </Text>
         </Box>
-        <ContentBox flexShrink={0} fontSize={fontSize ? fontSize : '14px'}>
-          {msg.contents.map((c, i) => (
-            <MessageContent
-              key={i}
-              content={c}
-              measure={measure}
-              scrollWindow={scrollWindow}
-              fontSize={fontSize}
-              group={group}
-            />
-          ))}
-        </ContentBox>
       </Box>
-    </>
+    </Box>
   );
 };
 
-const ContentBox = styled(Box)`
-  & > :first-child {
-    margin-left: 0px;
-  }
-`;
-
-export const MessageWithoutSigil = ({
+export const Message = ({
   timestamp,
   contacts,
   msg,
   measure,
   group,
   groups,
-  scrollWindow
+  scrollWindow,
+  timestampHover,
+  ...rest
 }) => {
   const { hovering, bind } = useHovering();
   return (
-    <>
-      <Text
-        flexShrink={0}
-        mono
-        gray
-        display={hovering ? 'block' : 'none'}
-        pt='2px'
-        lineHeight='tall'
-        fontSize={0}
-        position='absolute'
-        left={1}
-      >
-        {timestamp}
-      </Text>
-      <ContentBox
-        flexShrink={0}
-        fontSize='14px'
-        className='clamp-message'
-        style={{ flexGrow: 1 }}
-        {...bind}
-        pl={6}
-      >
-        {msg.contents.map((c, i) => (
-          <MessageContent
-            key={i}
-            contacts={contacts}
-            content={c}
-            group={group}
-            measure={measure}
-            scrollWindow={scrollWindow}
-            api={api}
-          />
-        ))}
-      </ContentBox>
-    </>
-  );
-};
-
-export const MessageContent = ({
-  content,
-  measure,
-  scrollWindow,
-  fontSize,
-  group
-}) => {
-  if ('code' in content) {
-    return <CodeContent content={content} />;
-  } else if ('url' in content) {
-    return (
-      <Box
-        mx='2px'
-        flexShrink={0}
-        fontSize={fontSize ? fontSize : '14px'}
-        lineHeight='tall'
-        color='black'
-      >
-        <RemoteContent
-          url={content.url}
-          onLoad={measure}
-          imageProps={{
-            style: {
-              maxWidth: 'min(100%,18rem)',
-              display: 'block'
-            }
-          }}
-          videoProps={{
-            style: {
-              maxWidth: '18rem',
-              display: 'block'
-            }
-          }}
-          textProps={{
-            style: {
-              fontSize: 'inherit',
-              borderBottom: '1px solid',
-              textDecoration: 'none'
-            }
-          }}
-        />
+    <Box position='relative' {...rest}>
+      {timestampHover ? (
+        <Text
+          display={hovering ? 'block' : 'none'}
+          position='absolute'
+          left='0'
+          top='3px'
+          fontSize={0}
+          gray
+        >
+          {timestamp}
+        </Text>
+      ) : (
+        <></>
+      )}
+      <Box {...bind}>
+        {msg.contents.map((content, i) => {
+          switch (Object.keys(content)[0]) {
+            case 'text':
+              return (
+                <TextContent
+                  measure={measure}
+                  fontSize={1}
+                  lineHeight={'20px'}
+                  content={content}
+                />
+              );
+            case 'code':
+              return <CodeContent content={content} />;
+            case 'url':
+              return (
+                <Box
+                  flexShrink={0}
+                  fontSize={1}
+                  lineHeight='20px'
+                  color='black'
+                >
+                  <RemoteContent
+                    url={content.url}
+                    onLoad={measure}
+                    imageProps={{
+                      style: {
+                        maxWidth: 'min(100%,18rem)',
+                        display: 'inline-block',
+                        marginTop: '0.5rem'
+                      }
+                    }}
+                    videoProps={{
+                      style: {
+                        maxWidth: '18rem',
+                        display: 'block',
+                        marginTop: '0.5rem'
+                      }
+                    }}
+                    textProps={{
+                      style: {
+                        fontSize: 'inherit',
+                        borderBottom: '1px solid',
+                        textDecoration: 'none'
+                      }
+                    }}
+                  />
+                </Box>
+              );
+            case 'mention':
+              const first = (i) => (i === 0);
+              return (
+                <Mention
+                  first={first(i)}
+                  group={group}
+                  scrollWindow={scrollWindow}
+                  ship={content.mention}
+                  contact={contacts?.[`~${content.mention}`]}
+                />
+              );
+            default:
+              return null;
+          }
+        })}
       </Box>
-    );
-  } else if ('text' in content) {
-    return (
-      <TextContent
-        measure={measure}
-        fontSize={fontSize}
-        content={content}
-      />);
-  } else if ('mention' in content) {
-    return (
-      <Mention
-        group={group}
-        scrollWindow={scrollWindow}
-        ship={content.mention}
-        contact={contacts?.[`~${content.mention}`]}
-      />
-    );
-  } else {
-    return null;
-  }
+    </Box>
+  );
 };
 
 export const MessagePlaceholder = ({

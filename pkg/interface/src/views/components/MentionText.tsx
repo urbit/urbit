@@ -39,8 +39,9 @@ export function Mention(props: {
   group: Group;
   scrollWindow?: HTMLElement;
   ship: string;
+  first?: Boolean;
 }) {
-  const { ship, scrollWindow } = props;
+  const { ship, scrollWindow, first, ...rest } = props;
   const contacts = useContactState(state => state.contacts);
   let { contact } = props;
   contact = contact?.color ? contact : contacts?.[ship];
@@ -49,21 +50,20 @@ export function Mention(props: {
   const group = props.group ?? { hidden: true };
   const [showOverlay, setShowOverlay] = useState(false);
 
-  const toggleOverlay = useCallback(
-    () => {
-      setShowOverlay(value => !value);
-    },
-    [showOverlay]
-  );
+  const toggleOverlay = useCallback(() => {
+    setShowOverlay((value) => !value);
+  }, [showOverlay]);
 
   return (
-    <Box position='relative' display='inline-block' cursor='pointer'>
+    <Box position='relative' display='inline-block' cursor='pointer' {...rest}>
       <Text
         onClick={() => toggleOverlay()}
-        mx='2px'
-        px='2px'
+        marginLeft={first? 0 : 1}
+        marginRight={1}
+        px={1}
         bg='washedBlue'
         color='blue'
+        fontSize={showNickname ? 1 : 0}
         mono={!showNickname}
       >
         {name}
