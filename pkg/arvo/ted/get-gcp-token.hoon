@@ -1,20 +1,22 @@
 ::  Gets a Google Storage access token.
 ::
-::  This thread produces a pair of [access-token expires-at], where
-::  access-token is a @t that can be used as a bearer token to talk to the
-::  GCP Storage API on behalf of some service account, and expires-at is
-::  a @da after which the token will stop working and need to be refreshed.
+::  This thread produces a pair of [access-key expires-in], where
+::  access-key is a @t that can be used as a bearer token to talk
+::  to the GCP Storage API on behalf of some service account, and
+::  expires-in is a @dr after which the token will stop working and
+::  need to be refreshed.
 ::
-::  It expects settings-store to contain relevant fields from a GCP service
-::  account JSON file, generally as poked by sh/poke-gcp-account-json.
-::  Specifically, it depends on the `token_uri`, `client_email`,
-::  `private_key_id`, and `private_key` fields. If these fields are not
-::  in settings-store at the time the thread is run, it will fail.
+::  It expects settings-store to contain relevant fields from
+::  a GCP service account JSON file, generally as poked by
+::  sh/poke-gcp-account-json.  Specifically, it depends on the
+::  `token_uri`, `client_email`, `private_key_id`, and `private_key`
+::  fields. If these fields are not in settings-store at the time
+::  the thread is run, it will fail.
 ::
-::  The thread works by first constructing a self-signed JWT using the
-::  fields in settings-store. Then, it sends this JWT to the specified
-::  token URI (usually https://oauth2.googleapis.com/token), which responds
-::  with a bearer token and expiry.
+::  The thread works by first constructing a self-signed JWT using
+::  the fields in settings-store. Then, it sends this JWT to the
+::  specified token URI (usually https://oauth2.googleapis.com/token),
+::  which responds with a bearer token and expiry.
 ::
 ::
 /-  gcp, spider, settings
