@@ -13,7 +13,6 @@ interface NotebookProps {
   ship: string;
   book: string;
   graph: Graph;
-  notebookContacts: Contacts;
   association: Association;
   associations: Associations;
   contacts: Rolodex;
@@ -27,7 +26,7 @@ export function Notebook(props: NotebookProps & RouteComponentProps): ReactEleme
   const {
     ship,
     book,
-    notebookContacts,
+    contacts,
     groups,
     association,
     graph
@@ -40,8 +39,7 @@ export function Notebook(props: NotebookProps & RouteComponentProps): ReactEleme
 
   const relativePath = (p: string) => props.baseUrl + p;
 
-  const contact = notebookContacts?.[ship];
-  const isOwn = `~${window.ship}` === ship;
+  const contact = contacts?.[`~${ship}`];
   console.log(association.resource);
 
   const showNickname = useShowNickname(contact);
@@ -62,7 +60,7 @@ export function Notebook(props: NotebookProps & RouteComponentProps): ReactEleme
         graph={graph}
         host={ship}
         book={book}
-        contacts={notebookContacts ? notebookContacts : {}}
+        contacts={contacts}
         unreads={props.unreads}
         baseUrl={props.baseUrl}
         api={props.api}
