@@ -27,19 +27,17 @@ const RichText = React.memo(({ disableRemoteContent, ...props }) => (
     {...props}
     renderers={{
       link: (linkProps) => {
-        if (disableRemoteContent) {
-          linkProps.remoteContentPolicy = {
-            imageShown: false,
-            audioShown: false,
-            videoShown: false,
-            oembedShown: false
-          };
-        }
-        if (hasProvider(linkProps.href)) {
+        const remoteContentPolicy = disableRemoteContent ? {
+          imageShown: false,
+          audioShown: false,
+          videoShown: false,
+          oembedShown: false
+        } : null;
+        if (!disableRemoteContent && hasProvider(linkProps.href)) {
           return <RemoteContent className="mw-100" url={linkProps.href} />;
         }
-        
-        return <BaseAnchor target='_blank' rel='noreferrer noopener' borderBottom='1px solid' {...linkProps}>{linkProps.children}</BaseAnchor>;
+
+        return <BaseAnchor target='_blank' rel='noreferrer noopener' borderBottom='1px solid' remoteContentPolicy={remoteContentPolicy} {...linkProps}>{linkProps.children}</BaseAnchor>;
       },
       linkReference: (linkProps) => {
         const linkText = String(linkProps.children[0].props.children);

@@ -68,14 +68,14 @@
   $_  ^|
   |_  bowl:gall
   ::
-  ::  +resource-for-update: get affected resource from an update
+  ::  +resource-for-update: get affected resources from an update
   ::  
   ::    Given a vase of the update, the mark of which is
-  ::    update-mark.config, produce the affected resource, if any.
+  ::    update-mark.config, produce the affected resources, if any.
   ::
   ++  resource-for-update
     |~  vase
-    *(unit resource)
+    *(list resource)
   ::
   ::  +take-update: handle update from store
   ::
@@ -155,12 +155,12 @@
   =*  state  -
   ^-  agent:gall
   =<
-
     |_  =bowl:gall
     +*  this  .
         og   ~(. push-hook bowl)
         hc   ~(. +> bowl)
         def  ~(. (default-agent this %|) bowl)
+    ::
     ++  on-init
       =^  cards  push-hook
         on-init:og
@@ -269,22 +269,33 @@
           (push-updates:hc q.cage.sign)
         cards
       ==
+      ::
       ++  on-leave
         |=  =path
         =^  cards  push-hook
           (on-leave:og path)
         [cards this]
+      ::
       ++  on-arvo
         |=  [=wire =sign-arvo]
         =^  cards  push-hook
           (on-arvo:og wire sign-arvo)
         [cards this]
+      ::
       ++  on-fail
         |=  [=term =tang]
         =^  cards  push-hook
           (on-fail:og term tang)
         [cards this]
-      ++  on-peek   on-peek:og
+      ::
+      ++  on-peek   
+        |=  =path
+        ^-  (unit (unit cage))
+        ?:  =(/x/dbug/state path)
+          ``noun+(slop !>(state(inner-state *vase)) on-save:og)
+        ?.  =(/x/sharing path)
+          (on-peek:og path)
+        ``noun+!>(sharing)
     --
   |_  =bowl:gall
   +*  og   ~(. push-hook bowl)
@@ -307,6 +318,7 @@
       %remove  (remove +.action)
       %revoke  (revoke +.action)
     ==
+    ::
     ++  add
       |=  rid=resource
       =.  sharing
@@ -318,7 +330,7 @@
       =/  pax=path
         [%resource (en-path:resource rid)]
       =/  paths=(set path)
-        %-  sy
+        %-  silt
         %+  turn
           (incoming-subscriptions pax)
         |=([ship pox=path] pox)
@@ -340,6 +352,7 @@
         ~
       `[%give %kick ~[path] `her]
     --
+  ::
   ++  incoming-subscriptions
     |=  prefix=path
     ^-  (list (pair ship path))
@@ -367,32 +380,50 @@
   ++  push-updates
     |=  =vase
     ^-  (list card:agent:gall)
-    =/  rid=(unit resource)
-      (resource-for-update:og vase)
-    ?~  rid  ~
+    =/  rids=(list resource)  (resource-for-update vase)
+    =|  cards=(list card:agent:gall)
+    |-
+    ?~  rids  cards
     =/  prefix=path
-      resource+(en-path:resource u.rid)
+      resource+(en-path:resource i.rids)
     =/  paths=(list path)
       %~  tap  in
       %-  silt
       %+  turn
         (incoming-subscriptions prefix)
       |=([ship pax=path] pax)
-    ?~  paths  ~
-    [%give %fact paths update-mark.config vase]~
+    ?~  paths  $(rids t.rids)
+    %_  $
+      rids   t.rids
+      cards  (snoc cards [%give %fact paths update-mark.config vase])
+    ==
   ::
   ++  forward-update
     |=  =vase
     ^-  (list card:agent:gall)
-    =/  rid=(unit resource)
-      (resource-for-update:og vase)
-    ?~  rid  ~
+    =/  rids=(list resource)  (resource-for-update vase)
+    =|  cards=(list card:agent:gall)
+    |-
+    ?~  rids  cards
     =/  =path
-      resource+(en-path:resource u.rid)
+      resource+(en-path:resource i.rids)
     =/  =wire
-      (make-wire resource+(en-path:resource u.rid))
+      (make-wire resource+(en-path:resource i.rids))
     =/  dap=term
-      ?:(=(our.bowl entity.u.rid) store-name.config dap.bowl)
-    [%pass wire %agent [entity.u.rid dap] %poke update-mark.config vase]~
+      ?:(=(our.bowl entity.i.rids) store-name.config dap.bowl)
+    %_  $
+      rids  t.rids
+    ::
+        cards
+      %+  snoc  cards
+      [%pass wire %agent [entity.i.rids dap] %poke update-mark.config vase]
+    ==
+  ::
+  ++  resource-for-update
+    |=  =vase
+    ^-  (list resource)
+    %~  tap  in
+    %-  silt
+    (resource-for-update:og vase)
   --
 --

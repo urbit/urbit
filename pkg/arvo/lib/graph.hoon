@@ -11,6 +11,27 @@
     (snoc `^path`path %noun)
   ==
 ::
+++  resource-for-update
+  |=  =vase
+  ^-  (list resource)
+  =/  =update:store  !<(update:store vase)
+  ?-  -.q.update
+      %add-graph          ~[resource.q.update]
+      %remove-graph       ~[resource.q.update]
+      %add-nodes          ~[resource.q.update]
+      %remove-nodes       ~[resource.q.update]
+      %add-signatures     ~[resource.uid.q.update]
+      %remove-signatures  ~[resource.uid.q.update]
+      %archive-graph      ~[resource.q.update]
+      %unarchive-graph    ~
+      %add-tag            ~
+      %remove-tag         ~
+      %keys               ~
+      %tags               ~
+      %tag-queries        ~
+      %run-updates        ~[resource.q.update]
+  ==
+::
 ++  get-graph
   |=  res=resource
   ^-  update:store
@@ -104,4 +125,8 @@
     index  (snoc index atom)
     nodes  (tap:orm:store p.children.node)
   ==
+::
+++  get-mark
+  |=  res=resource
+  (scry-for ,(unit mark) /graph-mark/(scot %p entity.res)/[name.res])
 --

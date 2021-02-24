@@ -17,10 +17,7 @@ export class HarkApi extends BaseApi<StoreState> {
   private groupHookAction(action: any) {
     return this.action("hark-group-hook", "hark-group-hook-action", action);
   }
-  
-  private chatHookAction(action: any) {
-    return this.action("hark-chat-hook", "hark-chat-hook-action", action);
-  }
+
 
   private actOnNotification(frond: string, intTime: BigInteger, index: NotifIndex) {
     const time = decToUd(intTime.toString());
@@ -34,9 +31,6 @@ export class HarkApi extends BaseApi<StoreState> {
 
   async setMentions(mentions: boolean) {
     await this.graphHookAction({
-      'set-mentions': mentions
-    });
-    return this.chatHookAction({
       'set-mentions': mentions
     });
   }
@@ -75,8 +69,8 @@ export class HarkApi extends BaseApi<StoreState> {
     return this.harkAction(
       {  'read-count': {
          graph: {
-        graph: association['app-path'],
-        group: association['group-path'],
+        graph: association.resource,
+        group: association.group,
         module: association.metadata.module,
         description,
         index: parent
@@ -89,15 +83,15 @@ export class HarkApi extends BaseApi<StoreState> {
   markEachAsRead(association: Association, parent: string, child: string, description: GraphNotifDescription, mod: string) {
     return this.harkAction({
       'read-each': {
-        index: 
+        index:
           { graph:
-            { graph: association['app-path'], 
-              group: association['group-path'],
-              description, 
+            { graph: association.resource,
+              group: association.group,
+              description,
               module: mod,
-              index: parent 
+              index: parent
             }
-          }, 
+          },
         target: child
       }
     });
@@ -115,6 +109,9 @@ export class HarkApi extends BaseApi<StoreState> {
   seen() {
     return this.harkAction({ seen: null });
   }
+  readAll() {
+    return this.harkAction({ 'read-all': null });
+  }
 
   mute(notif: IndexedNotification) {
     if('graph' in notif.index && 'graph' in notif.notification.contents) {
@@ -128,9 +125,6 @@ export class HarkApi extends BaseApi<StoreState> {
     if('group' in notif.index) {
       const { group } = notif.index.group;
       return this.ignoreGroup(group);
-    }
-    if('chat' in notif.index) {
-      return this.ignoreChat(notif.index.chat.chat);
     }
     return Promise.resolve();
   }
@@ -146,9 +140,6 @@ export class HarkApi extends BaseApi<StoreState> {
     }
     if('group' in notif.index) {
       return this.listenGroup(notif.index.group.group);
-    }
-    if('chat' in notif.index) {
-      return this.listenChat(notif.index.chat.chat);
     }
     return Promise.resolve();
   }
@@ -168,13 +159,6 @@ export class HarkApi extends BaseApi<StoreState> {
     })
   }
 
-  ignoreChat(chat: string) {
-    return this.chatHookAction({
-      ignore: chat
-    });
-  }
-
-
   listenGroup(group: string) {
     return this.groupHookAction({
       listen: group
@@ -190,16 +174,11 @@ export class HarkApi extends BaseApi<StoreState> {
     })
   }
 
-  listenChat(chat: string) {
-    return this.chatHookAction({
-      listen: chat
-    });
-  }
-
-  getMore() {
+  async getMore(): Promise<boolean> {
     const offset = this.store.state['notifications']?.size || 0;
     const count = 3;
-    return this.getSubset(offset, count, false);
+    await this.getSubset(offset, count, false);
+    return offset === (this.store.state.notifications?.size || 0);
   }
 
   async getSubset(offset:number, count:number, isArchive: boolean) {

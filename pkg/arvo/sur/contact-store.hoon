@@ -1,43 +1,40 @@
-/-  *identity
+/-  *resource
 |%
-+$  rolodex    (map path contacts)
-+$  contacts    (map ship contact)
-+$  avatar
-  $%  [%octt content-type=@t octs=[p=@ud q=@t]]
-      [%url url=@t]
-  ==
-::
++$  rolodex  (map ship contact)
 +$  contact
   $:  nickname=@t
-      email=@t
-      phone=@t
-      website=@t
-      notes=@t
+      bio=@t
+      status=@t
       color=@ux
-      avatar=(unit avatar)
+      avatar=(unit @t)
+      cover=(unit @t)
+      groups=(set resource)
+      last-updated=@da
   ==
 ::
 +$  edit-field
   $%  [%nickname nickname=@t]
-      [%email email=@t]
-      [%phone phone=@t]
-      [%website website=@t]
-      [%notes notes=@t]
+      [%bio bio=@t]
+      [%status status=@t]
       [%color color=@ux]
-      [%avatar avatar=(unit avatar)]
+      [%avatar avatar=(unit @t)]
+      [%add-group =resource]
+      [%remove-group =resource]
+      [%cover cover=(unit @t)]
   ==
 ::
-+$  contact-action
-  $%  [%create =path]
-      [%delete =path]
-      [%add =path =ship =contact]
-      [%remove =path =ship]
-      [%edit =path =ship =edit-field]
++$  beings
+  $%  [%ships ships=(set ship)]
+      [%group =resource]
   ==
 ::
-+$  contact-update
-  $%  [%initial =rolodex]
-      [%contacts =path =contacts]
-      contact-action
++$  update
+  $%  [%initial =rolodex is-public=?]
+      [%add =ship =contact]
+      [%remove =ship]
+      [%edit =ship =edit-field timestamp=@da]
+      [%allow =beings]
+      [%disallow =beings]
+      [%set-public public=?]
   ==
 --

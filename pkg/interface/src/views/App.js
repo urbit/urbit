@@ -11,8 +11,8 @@ import 'mousetrap-global-bind';
 
 import './css/indigo-static.css';
 import './css/fonts.css';
-import light from './themes/light';
-import dark from './themes/old-dark';
+import light from '@tlon/indigo-light';
+import dark from '@tlon/indigo-dark';
 
 import { Text, Anchor, Row } from '@tlon/indigo-react';
 
@@ -20,6 +20,7 @@ import { Content } from './landscape/components/Content';
 import StatusBar from './components/StatusBar';
 import Omnibox from './components/leap/Omnibox';
 import ErrorBoundary from '~/views/components/ErrorBoundary';
+import { TutorialModal } from '~/views/landscape/components/TutorialModal';
 
 import GlobalStore from '~/logic/store/store';
 import GlobalSubscription from '~/logic/subscription/global';
@@ -40,7 +41,7 @@ const Root = styled.div`
     background-size: cover;
     ` : p.background?.type === 'color' ? `
     background-color: ${p.background.color};
-    ` : ''
+    ` : `background-color: ${p.theme.colors.white};`
   }
   display: flex;
   flex-flow: column nowrap;
@@ -90,10 +91,11 @@ class App extends React.Component {
     this.themeWatcher.onchange = this.updateTheme;
     setTimeout(() => {
       // Something about how the store works doesn't like changing it
-      // before the app has actually rendered, hence the timeout
+      // before the app has actually rendered, hence the timeout.
       this.updateTheme(this.themeWatcher);
     }, 500);
     this.api.local.getBaseHash();
+    this.api.settings.getAll();
     this.store.rehydrate();
     Mousetrap.bindGlobal(['command+/', 'ctrl+/'], (e) => {
       e.preventDefault();
@@ -137,9 +139,7 @@ class App extends React.Component {
 
     const notificationsCount = state.notificationsCount || 0;
     const doNotDisturb = state.doNotDisturb || false;
-
-    const showBanner = localStorage.getItem("2020BreachBanner") || "flex";
-    let banner = null;
+    const ourContact = this.state.contacts[`~${this.ship}`] || null;
 
     return (
       <ThemeProvider theme={theme}>
@@ -150,11 +150,13 @@ class App extends React.Component {
         </Helmet>
         <Root background={background}>
           <Router>
+            <TutorialModal api={this.api} />
             <ErrorBoundary>
               <StatusBarWithRouter
                 props={this.props}
                 associations={associations}
                 invites={this.state.invites}
+                ourContact={ourContact}
                 api={this.api}
                 connection={this.state.connection}
                 subscription={this.subscription}
@@ -167,11 +169,14 @@ class App extends React.Component {
               <Omnibox
                 associations={state.associations}
                 apps={state.launch}
+                tiles={state.launch.tiles}
                 api={this.api}
+                contacts={state.contacts}
                 notifications={state.notificationsCount}
                 invites={state.invites}
                 groups={state.groups}
                 show={this.props.omniboxShown}
+                toggle={this.props.toggleOmnibox}
               />
             </ErrorBoundary>
             <ErrorBoundary>

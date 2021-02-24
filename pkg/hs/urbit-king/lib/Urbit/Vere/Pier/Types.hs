@@ -14,10 +14,11 @@ module Urbit.Vere.Pier.Types
   , jobId
   , jobMug
   , DriverApi(..)
+  , ScryFunc
   )
 where
 
-import Urbit.Prelude hiding (Term)
+import Urbit.Prelude
 
 import Urbit.Arvo
 import Urbit.Noun.Time
@@ -44,11 +45,14 @@ instance Show Nock where
 
 --------------------------------------------------------------------------------
 
-data Pill = Pill
-  { pBootFormulas   :: ![Nock]
-  , pKernelOvums    :: ![Ev]
-  , pUserspaceOvums :: ![Ev]
-  }
+data Pill
+  = PillIvory [Noun]
+  | PillPill
+    { pName         :: Noun
+    , pBootFormulae :: ![Nock]  -- XX not actually nock, semantically
+    , pKernelOva    :: ![Ev]
+    , pUserspaceOva :: ![Ev]
+    }
  deriving (Eq, Show)
 
 data BootSeq = BootSeq !LogIdentity ![Nock] ![Ev]
@@ -86,6 +90,10 @@ data DriverApi ef = DriverApi
   , diOnEffect       :: ef -> IO ()
   }
 
+
+-- Scrying  --------------------------------------------------------------------
+
+type ScryFunc = Gang -> ScryReq -> IO (Maybe (Term, Noun))
 
 -- Instances -------------------------------------------------------------------
 

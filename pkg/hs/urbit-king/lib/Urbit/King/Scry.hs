@@ -2,30 +2,32 @@
   Scry helpers
 -}
 
-module Urbit.King.Scry (scryNow) where
+module Urbit.King.Scry
+  ( scryNow
+  , module Urbit.Vere.Pier.Types
+  )
+where
 
 import Urbit.Prelude
 import Urbit.Vere.Serf.Types
 
-import qualified Urbit.Noun.Time as Time
+import Urbit.Arvo.Common (Desk)
+import Urbit.Vere.Pier.Types (ScryFunc)
 
 scryNow :: forall e n
         . (HasLogFunc e, FromNoun n)
-       => (Time.Wen -> Gang -> Path -> IO (Maybe (Term, Noun)))
-       -> Text    -- ^ vane + care as two-letter string
-       -> Ship    -- ^ ship in scry path, usually the local ship
-       -> Text    -- ^ desk in scry path
+       => ScryFunc
+       -> Term    -- ^ vane + care as two-letter string
+       -> Desk    -- ^ desk in scry path
        -> [Text]  -- ^ resource path to scry for
        -> RIO e (Maybe n)
-scryNow scry vare ship desk path = do
-  env <- ask
-  wen <- io Time.now
-  let wan = tshow $ Time.MkDate wen
-  let pax = Path $ fmap MkKnot $ vare : (tshow ship) : desk : wan : path
-  io (scry wen Nothing pax) >>= \case
-    Just (_, fromNoun @n -> Just v) -> pure $ Just v
-    Just (_, n) -> do
-      logError $ displayShow ("uncanny scry result", vare, pax, n)
-      pure Nothing
-    Nothing -> pure Nothing
+scryNow scry vare desk path =
+  io (scry Nothing (EachNo $ DemiOnce vare desk (Path $ MkKnot <$> path)))
+    >>= \case
+      Just ("omen", fromNoun @(Path, Term, n) -> Just (_,_,v)) -> pure $ Just v
+      Just (_, fromNoun @n -> Just v) -> pure $ Just v
+      Just (_, n) -> do
+        logError $ displayShow ("uncanny scry result", vare, path, n)
+        pure Nothing
+      Nothing -> pure Nothing
 

@@ -192,6 +192,7 @@
 }
 .md code, .md pre {
   font-family: "Source Code Pro", mono;
+  white-space: pre-wrap;
 }
 .md ul>li, .md ol>li {
   line-height: 1.5;
@@ -206,9 +207,6 @@
 }
 
 @media all and (prefers-color-scheme: dark) {
-  body {
-    background-color: #333;
-  }
   .bg-black-d {
     background-color: black;
   }
@@ -267,7 +265,7 @@
     background-color: #333;
   }
   .publish .cm-s-tlon.CodeMirror {
-    background: #333;
+    background: unset;
     color: #fff;
   }
 

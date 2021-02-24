@@ -1,13 +1,16 @@
-import React from "react";
+import React, {useRef} from "react";
 import _ from 'lodash';
 
-import { Icon, Row, Box, Text } from "@tlon/indigo-react";
+import { Icon, Row, Box, Text, BaseImage } from "@tlon/indigo-react";
 
 import { SidebarAppConfigs, SidebarItemStatus } from "./Sidebar";
 import { HoverBoxLink } from "~/views/components/HoverBox";
 import { Groups, Association } from "~/types";
-
-import { cite } from "~/logic/lib/util";
+import { Sigil } from '~/logic/lib/sigil';
+import urbitOb from 'urbit-ob';
+import { getModuleIcon, getItemTitle, uxToHex } from "~/logic/lib/util";
+import {useTutorialModal} from "~/views/components/useTutorialModal";
+import {TUTORIAL_HOST, TUTORIAL_GROUP} from "~/logic/lib/tutorialModal";
 
 function SidebarItemIndicator(props: { status?: SidebarItemStatus }) {
   switch (props.status) {
@@ -24,58 +27,50 @@ function SidebarItemIndicator(props: { status?: SidebarItemStatus }) {
   }
 }
 
-const getAppIcon = (app: string, mod: string) => {
-  if (app === "graph") {
-    if (mod === "link") {
-      return "Collection";
-    }
-    return _.capitalize(mod);
-  }
-  return _.capitalize(app);
-};
-
-const DM_REGEX = /ship\/~([a-z]|-)*\/dm--/;
-function getItemTitle(association: Association) {
-  if(DM_REGEX.test(association['app-path'])) {
-    const [,,ship,name] = association['app-path'].split('/');
-    if(ship.slice(1) === window.ship) {
-      return cite(`~${name.slice(4)}`);
-    }
-    return cite(ship);
-
-  }
-  return association.metadata.title || association['app-path'];
-}
-
 export function SidebarItem(props: {
   hideUnjoined: boolean;
   association: Association;
+  contacts: any;
   groups: Groups;
   path: string;
   selected: boolean;
   apps: SidebarAppConfigs;
+  workspace: Workspace;
 }) {
   const { association, path, selected, apps, groups } = props;
-  const title = getItemTitle(association);
+  let title = getItemTitle(association);
   const appName = association?.["app-name"];
   const mod = association?.metadata?.module || appName;
-  const appPath = association?.["app-path"];
-  const groupPath = association?.["group-path"];
+  const rid = association?.resource
+  const groupPath = association?.group;
+  const anchorRef = useRef<HTMLElement | null>(null)
+  useTutorialModal(
+    mod as any,
+    groupPath === `/ship/${TUTORIAL_HOST}/${TUTORIAL_GROUP}`,
+    anchorRef.current
+  );
   const app = apps[appName];
   const isUnmanaged = groups?.[groupPath]?.hidden || false;
   if (!app) {
     return null;
   }
+  const DM = (isUnmanaged && props.workspace?.type === "messages");
   const itemStatus = app.getStatus(path);
   const hasUnread = itemStatus === "unread" || itemStatus === "mention";
 
   const isSynced = itemStatus !== "unsubscribed";
 
-  const baseUrl = isUnmanaged ? `/~landscape/home` : `/~landscape${groupPath}`;
+  let baseUrl = `/~landscape${groupPath}`;
+
+  if (DM) {
+    baseUrl = '/~landscape/messages';
+  } else if (isUnmanaged) {
+    baseUrl = '/~landscape/home';
+  }
 
   const to = isSynced
-    ? `${baseUrl}/resource/${mod}${appPath}`
-    : `${baseUrl}/join/${mod}${appPath}`;
+    ? `${baseUrl}/resource/${mod}${rid}`
+    : `${baseUrl}/join/${mod}${rid}`;
 
   const color = selected ? "black" : isSynced ? "gray" : "lightGray";
 
@@ -83,8 +78,24 @@ export function SidebarItem(props: {
     return null;
   }
 
+  let img = null;
+
+  if (urbitOb.isValidPatp(title)) {
+    if (props.contacts?.[title] && props.contacts[title].avatar) {
+      img = <BaseImage src={props.contacts[title].avatar} width='16px' height='16px' borderRadius={2}/>;
+    } else {
+      img = <Sigil ship={title} color={`#${uxToHex(props.contacts?.[title]?.color || '0x0')}`} icon padding={2} size={16}/>
+    }
+    if (props.contacts?.[title] && props.contacts[title].nickname) {
+      title = props.contacts[title].nickname;
+    }
+  } else {
+    img = <Box flexShrink={0} height={16} width={16} borderRadius={2} backgroundColor={`#${uxToHex(props?.association?.metadata?.color)}` || "#000000"}/>
+  }
+
   return (
     <HoverBoxLink
+      ref={anchorRef}
       to={to}
       bg="white"
       bgActive="washedGray"
@@ -93,23 +104,27 @@ export function SidebarItem(props: {
       justifyContent="space-between"
       alignItems="center"
       py={1}
-      pl={2}
-      pr={2}
+      pl={3}
+      pr={3}
       selected={selected}
     >
       <Row width='100%' alignItems="center" flex='1 auto' minWidth='0'>
-        <Icon
-          display="block"
-          color={color}
-          icon={getAppIcon(appName, mod) as any}
-        />
+        {DM ? img : (
+              <Icon
+                display="block"
+                color={color}
+                icon={getModuleIcon(mod) as any}
+              />
+            )
+        }
         <Box width='100%' flexShrink={2} ml={2} display='flex' overflow='hidden'>
           <Text
-            lineHeight="short"
+            lineHeight="tall"
             display='inline-block'
             flex='1'
             overflow='hidden'
             width='100%'
+            mono={urbitOb.isValidPatp(title)}
             fontWeight={hasUnread ? "bold" : "regular"}
             color={selected || isSynced ? "black" : "lightGray"}
             style={{ textOverflow: 'ellipsis', whiteSpace: 'pre'}}

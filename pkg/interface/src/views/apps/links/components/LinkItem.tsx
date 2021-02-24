@@ -1,4 +1,4 @@
-import React, { useState }  from 'react';
+import React, { useState, useEffect, useRef, useCallback }  from 'react';
 import { Link } from 'react-router-dom';
 import { Row, Col, Anchor, Box, Text, Icon, Action } from '@tlon/indigo-react';
 
@@ -17,8 +17,9 @@ interface LinkItemProps {
   api: GlobalApi;
   group: Group;
   path: string;
-  contacts: Rolodex[];
+  contacts: Rolodex;
   unreads: Unreads;
+  measure: (el: any) => void;
 }
 
 export const LinkItem = (props: LinkItemProps) => {
@@ -29,8 +30,34 @@ export const LinkItem = (props: LinkItemProps) => {
     group,
     path,
     contacts,
+    measure,
     ...rest
   } = props;
+
+  const ref = useRef<HTMLDivElement | null>(null);
+  const remoteRef = useRef<typeof RemoteContent | null>(null);
+
+  const markRead = useCallback(() => {
+    api.hark.markEachAsRead(props.association, '/', `/${index}`, 'link', 'link');
+  }, [props.association, index]);
+
+  useEffect(() => {
+    function onBlur() {
+      // FF will only update on next tick
+      setTimeout(() => {
+        console.log(remoteRef.current);
+        if(document.activeElement instanceof HTMLIFrameElement 
+          && remoteRef?.current?.containerRef?.contains(document.activeElement)) {
+          markRead();
+        }
+      });
+    }
+    window.addEventListener('blur', onBlur);
+    return () => {
+      window.removeEventListener('blur', onBlur);
+    }
+
+  }, [markRead]);
 
   const URLparser = new RegExp(
     /((?:([\w\d\.-]+)\:\/\/?){1}(?:(www)\.?){0,1}(((?:[\w\d-]+\.)*)([\w\d-]+\.[\w\d]+))){1}(?:\:(\d+)){0,1}((\/(?:(?:[^\/\s\?]+\/)*))(?:([^\?\/\s#]+?(?:.[^\?\s]+){0,1}){0,1}(?:\?([^\s#]+)){0,1})){0,1}(?:#([^#\s]+)){0,1}/
@@ -67,12 +94,18 @@ export const LinkItem = (props: LinkItemProps) => {
   const commColor = (props.unreads.graph?.[appPath]?.[`/${index}`]?.unreads ?? 0) > 0 ? 'blue' : 'gray';
   const isUnread = props.unreads.graph?.[appPath]?.['/']?.unreads?.has(node.post.index);
 
-  const markRead = () => {
-    api.hark.markEachAsRead(props.association, '/', `/${index}`, 'link', 'link');
-  }
+
+
+  const onMeasure = useCallback(() => {
+    ref.current && measure(ref.current);
+  }, [ref.current, measure])
+
+  useEffect(() => {
+    onMeasure();
+  }, [onMeasure]);
+
   return (
-    <Box width="100%" {...rest}>
-    
+    <Box mx="auto" px={3} maxWidth="768px" ref={ref} width="100%" {...rest}>
       <Box
         lineHeight="tall"
         display='flex'
@@ -87,13 +120,16 @@ export const LinkItem = (props: LinkItemProps) => {
         onClick={markRead}
       >
         <RemoteContent
+          ref={r => { remoteRef.current = r}}
           url={contents[1].url}
           text={contents[0].text}
           unfold={true}
+          onLoad={onMeasure}
           style={{ alignSelf: 'center' }}
           oembedProps={{
             p: 2,
             className: 'links embed-container',
+            onClick: markRead
           }}
           imageProps={{
             marginLeft: 'auto',
@@ -116,9 +152,9 @@ export const LinkItem = (props: LinkItemProps) => {
           </Anchor>
         </Text>
       </Box>
-      
+
       <Row minWidth='0' flexShrink={0} width="100%" justifyContent="space-between" py={3} bg="white">
-      
+
       <Author
         showImage
         contacts={contacts}
@@ -136,9 +172,9 @@ export const LinkItem = (props: LinkItemProps) => {
         </Box>
       </Link>
         </Box>
-        
+
       <Dropdown
-        width="200px"
+        dropWidth="200px"
         alignX="right"
         alignY="top"
         options={
@@ -156,7 +192,7 @@ export const LinkItem = (props: LinkItemProps) => {
         >
         <Icon ml="2" display="block" icon="Ellipsis" color="gray" />
       </Dropdown>
-      
+
     </Row>
   </Box>);
 };

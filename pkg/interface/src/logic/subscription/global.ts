@@ -10,7 +10,6 @@ import _ from 'lodash';
 type AppSubscription = [Path, string];
 
 const groupSubscriptions: AppSubscription[] = [
-  ['/synced', 'contact-hook']
 ];
 
 const graphSubscriptions: AppSubscription[] = [
@@ -37,13 +36,16 @@ export default class GlobalSubscription extends BaseSubscription<StoreState> {
     this.subscribe('/groups', 'group-store');
     this.clearQueue();
 
-
-    this.subscribe('/primary', 'contact-view');
+    //  TODO: update to get /updates
+    this.subscribe('/all', 'contact-store');
     this.subscribe('/all', 's3-store');
     this.subscribe('/keys', 'graph-store');
     this.subscribe('/updates', 'hark-store');
     this.subscribe('/updates', 'hark-graph-hook');
     this.subscribe('/updates', 'hark-group-hook');
+    this.subscribe('/all', 'settings-store');
+    this.subscribe('/all', 'group-view');
+    this.subscribe('/nacks', 'contact-pull-hook');
   }
 
   restart() {

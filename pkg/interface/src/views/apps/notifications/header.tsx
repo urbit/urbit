@@ -1,5 +1,5 @@
 import React from "react";
-import { Text as NormalText, Row, Icon, Rule } from "@tlon/indigo-react";
+import { Text as NormalText, Row, Icon, Rule, Box } from "@tlon/indigo-react";
 import f from "lodash/fp";
 import _ from "lodash";
 import moment from "moment";
@@ -36,7 +36,6 @@ export function Header(props: {
   time: number;
   read: boolean;
   associations: Associations;
-  chat?: boolean;
 } & PropFunc<typeof Row> ) {
   const { description, channel, group, moduleIcon, read } = props;
   const contacts = props.contacts[group] || {};
@@ -63,20 +62,21 @@ export function Header(props: {
 
   const time = moment(props.time).format("HH:mm");
   const groupTitle =
-    props.associations.contacts?.[props.group]?.metadata?.title;
+    props.associations.groups?.[props.group]?.metadata?.title;
 
-  const app = props.chat ? 'chat' : 'graph';
+  const app = 'graph';
   const channelTitle =
     (channel && props.associations?.[app]?.[channel]?.metadata?.title) ||
     channel;
 
   return (
-    <Row onClick={props.onClick} p="2" flexWrap="wrap" gapX="1" alignItems="center">
+    <Row onClick={props.onClick} p="2" flexWrap="wrap" alignItems="center" gridArea="header">
       {!props.archived && (
         <Icon
           display="block"
-          mr="1"
-          icon={read ? "Circle" : "Bullet"}
+          opacity={read ? 0 : 1}
+          mr={2}
+          icon="Bullet"
           color="blue"
         />
       )}
@@ -84,13 +84,13 @@ export function Header(props: {
         {authorDesc}
       </Text>
       <Text mr="1">{description}</Text>
-      {!!moduleIcon && <Icon icon={moduleIcon as any} />}
-      {!!channel && <Text fontWeight="500">{channelTitle}</Text>}
-      <Rule vertical height="12px" />
+      {!!moduleIcon && <Icon icon={moduleIcon as any} mr={1} />}
+      {!!channel && <Text fontWeight="500" mr={1}>{channelTitle}</Text>}
+      <Rule vertical height="12px" mr={1} />
       {groupTitle &&
          <>
-          <Text fontWeight="500">{groupTitle}</Text>
-          <Rule vertical height="12px"/>
+          <Text fontWeight="500" mr={1}>{groupTitle}</Text>
+          <Rule vertical height="12px" mr={1} />
         </>
       }
       <Text fontWeight="regular" color="lightGray">

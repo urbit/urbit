@@ -1,0 +1,51 @@
+name: release-docker
+
+on:
+  release: null
+  push:
+    tags: ['urbit-v*']
+
+jobs:
+  upload:
+    strategy:
+      matrix:
+        include:
+          - { os: ubuntu-latest, system: x86_64-linux }
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: cachix/install-nix-action@v12
+        with:
+          extra_nix_config: |
+            system-features = nixos-test benchmark big-parallel kvm
+      - uses: cachix/cachix-action@v8
+        with:
+          name: ares
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+      - uses: docker/docker-login-action@v1.8.0
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - uses: christian-korneck/update-container-description-action@v1
+        env:
+          DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKER_PASS: ${{ secrets.DOCKERHUB_TOKEN }}
+        with:
+          destination_container_repo: ${{ secrets.DOCKERHUB_USERNAME }}/urbit
+          provider: dockerhub
+          short_description: 'Urbit: a clean-slate OS and network for the 21st century'
+          readme_file: 'pkg/docker-image/README.md'
+
+      - run: |
+          version="$(cat ./pkg/urbit/version)"
+          image="$(nix-build -A docker-image)"
+          imageName="$(nix-instantiate --eval -A docker-image.imageName | cut -d'"' -f2)"
+          imageTag="$(nix-instantiate --eval -A docker-image.imageTag | cut -d'"' -f2)"
+          # Load the image from the nix-built tarball
+          docker load -i $image
+          docker tag "$imageName:$imageTag" ${{secrets.DOCKERHUB_USERNAME }}/urbit:v$version
+          docker tag "$imageName:$imageTag" ${{secrets.DOCKERHUB_USERNAME }}/urbit:latest
+          docker push ${{secrets.DOCKERHUB_USERNAME }}/urbit:v$version
+          docker push ${{secrets.DOCKERHUB_USERNAME }}/urbit:latest

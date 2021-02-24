@@ -33,10 +33,12 @@ import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
 import styled from 'styled-components';
 import useLocalState from '~/logic/state/local';
 
-const TruncText = styled(Box)`
+const TruncText = styled(Text)`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  display: inline-block;
+  min-width: 0;
 `;
 
 type Participant = Contact & { patp: string; pending: boolean };
@@ -57,8 +59,10 @@ function getParticipants(cs: Contacts, group: Group) {
     patp,
     pending: false
   }));
-  const members: Participant[] = _.map(Array.from(group.members), m =>
-    emptyContact(m, false)
+  const members: Participant[] = _.map(
+    Array.from(group.members)
+    .filter(e => group?.policy?.invite?.pending ? !group.policy.invite.pending.has(e) : true), m =>
+      emptyContact(m, false)
   );
   const allMembers = _.unionBy(contacts, members, 'patp');
   const pending: Participant[] =
@@ -270,26 +274,26 @@ function Participant(props: {
   );
 
   const onPromote = useCallback(async () => {
-    const resource = resourceFromPath(association['group-path']);
+    const resource = resourceFromPath(association.group);
     await api.groups.addTag(resource, { tag: 'admin' }, [`~${contact.patp}`]);
   }, [api, association]);
 
   const onDemote = useCallback(async () => {
-    const resource = resourceFromPath(association['group-path']);
+    const resource = resourceFromPath(association.group);
     await api.groups.removeTag(resource, { tag: 'admin' }, [
       `~${contact.patp}`
     ]);
   }, [api, association]);
 
   const onBan = useCallback(async () => {
-    const resource = resourceFromPath(association['group-path']);
+    const resource = resourceFromPath(association.group);
     await api.groups.changePolicy(resource, {
       open: { banShips: [`~${contact.patp}`] }
     });
   }, [api, association]);
 
   const onKick = useCallback(async () => {
-    const resource = resourceFromPath(association['group-path']);
+    const resource = resourceFromPath(association.group);
     await api.groups.remove(resource, [`~${contact.patp}`]);
   }, [api, association]);
 
@@ -305,11 +309,13 @@ function Participant(props: {
   return (
     <>
       <Box>{avatar}</Box>
-      <Col justifyContent="center" gapY="1" height="100%">
+      <Col justifyContent="center" gapY="1" height="100%" minWidth='0'>
         {hasNickname && (
-          <TruncText title={contact.nickname} maxWidth="85%" color="black">
+          <Row minWidth='0' flexShrink='1'>
+          <TruncText title={contact.nickname} color="black">
             {contact.nickname}
           </TruncText>
+          </Row>
         )}
         <Text title={contact.patp} color="gray" fontFamily="mono">
           {cite(contact.patp)}
@@ -338,6 +344,11 @@ function Participant(props: {
               gapY={2}
               p={2}
             >
+              <Action bg="transparent">
+                <Link to={`/~profile/~${contact.patp}`}>
+                  <Text color="black">View Profile</Text>
+                </Link>
+              </Action>
               <Action bg="transparent">
                 <Link to={`/~landscape/dm/${contact.patp}`}>
                   <Text color="green">Send Message</Text>

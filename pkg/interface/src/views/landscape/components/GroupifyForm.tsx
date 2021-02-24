@@ -14,7 +14,7 @@ const formSchema = Yup.object({
 });
 
 interface FormSchema {
-  group: string | null;
+  group: string[] | null;
 }
 
 interface GroupifyFormProps {
@@ -32,23 +32,16 @@ export function GroupifyForm(props: GroupifyFormProps) {
     actions: FormikHelpers<FormSchema>
   ) => {
     try {
-      if (association["app-name"] === "chat") {
-        await props.api.chat.groupify(
-          association["app-path"],
-          values.group,
-          true
-        );
-      } else {
-        const [, , ship, name] = association["app-path"].split("/");
-        await props.api.graph.groupifyGraph(
-          ship,
-          name,
-          values.group || undefined
-        );
-      }
+      const rid = association.resource;
+      const [, , ship, name] = rid;
+      await props.api.graph.groupifyGraph(
+        ship,
+        name,
+        values.group?.toString() || undefined
+      );
       const mod = association.metadata.module || association['app-name'];
-      const newGroup = values.group || association['group-path'];
-      history.push(`/~landscape${newGroup}/resource/${mod}${association['app-path']}`);
+      const newGroup = values.group || association.group;
+      history.push(`/~landscape${newGroup}/resource/${mod}${rid}`);
       actions.setStatus({ success: null });
     } catch (e) {
       console.error(e);
@@ -56,7 +49,7 @@ export function GroupifyForm(props: GroupifyFormProps) {
     }
   };
 
-  const groupPath = props.association?.["group-path"];
+  const groupPath = props.association?.group;
 
   const isUnmanaged = props.groups?.[groupPath]?.hidden || false;
 
@@ -86,6 +79,7 @@ export function GroupifyForm(props: GroupifyFormProps) {
             groups={props.groups}
             associations={props.associations}
             adminOnly
+            maxLength={1}
           />
           <AsyncButton primary loadingText="Groupifying..." border>
             Groupify

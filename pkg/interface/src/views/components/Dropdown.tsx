@@ -11,9 +11,7 @@ import { Box, Col } from "@tlon/indigo-react";
 import { useOutsideClick } from "~/logic/lib/useOutsideClick";
 import { useLocation } from "react-router-dom";
 import { Portal } from "./Portal";
-
-type AlignY = "top" | "bottom";
-type AlignX = "left" | "right";
+import { getRelativePosition, AlignY, AlignX } from "~/logic/lib/relativePosition";
 
 interface DropdownProps {
   children: ReactNode;
@@ -21,6 +19,7 @@ interface DropdownProps {
   alignY: AlignY | AlignY[];
   alignX: AlignX | AlignX[];
   width?: string;
+  dropWidth?: string;
 }
 
 const ClickBox = styled(Box)`
@@ -43,46 +42,11 @@ export function Dropdown(props: DropdownProps) {
   const [coords, setCoords] = useState({});
 
   const updatePos = useCallback(() => {
-    const rect = anchorRef.current?.getBoundingClientRect();
-    if (rect) {
-      const bounds = {
-        top: rect.top,
-        left: rect.left,
-        bottom: document.documentElement.clientHeight - rect.bottom,
-        right: document.documentElement.clientWidth - rect.right,
-      };
-      const alignX = _.isArray(props.alignX) ? props.alignX : [props.alignX];
-      const alignY = _.isArray(props.alignY) ? props.alignY : [props.alignY];
-
-      let newCoords = {
-        ..._.reduce(
-          alignX,
-          (acc, a, idx) => ({
-            ...acc,
-            [a]: _.zipWith(
-              [...Array(idx), `${bounds[a]}px`],
-              acc[a] || [],
-              (a, b) => a || b || null
-            ),
-          }),
-          {}
-        ),
-        ..._.reduce(
-          alignY,
-          (acc, a, idx) => ({
-            ...acc,
-            [a]: _.zipWith(
-              [...Array(idx), `${bounds[a]}px`],
-              acc[a] || [],
-              (a, b) => a || b || null
-            ),
-          }),
-          {}
-        ),
-      };
+    const newCoords = getRelativePosition(anchorRef.current, props.alignX, props.alignY);
+    if(newCoords) {
       setCoords(newCoords);
     }
-  }, [setCoords, anchorRef.current]);
+  }, [setCoords, anchorRef.current, props.alignY, props.alignX]);
 
   useEffect(() => {
     if (!open) {
@@ -102,25 +66,32 @@ export function Dropdown(props: DropdownProps) {
     [setOpen, updatePos]
   );
 
-  useEffect(() => {
+  const close = useCallback(() => {
     setOpen(false);
+  },[]);
+
+  useEffect(() => {
+    close();
   }, [pathname]);
 
-  useOutsideClick(dropdownRef, () => {
-    setOpen(false);
-  });
+  useOutsideClick(dropdownRef, close);
+
+  const onOptionsClick = useCallback((e: any) => {
+    e.stopPropagation();
+  }, []);
 
   return (
-    <Box flexShrink={1} position={open ? "relative" : "static"} minWidth='0'>
+    <Box flexShrink={props?.flexShrink ? props.flexShrink : 1} position={open ? "relative" : "static"} minWidth='0' width={props?.width ? props.width : 'auto'}>
       <ClickBox width='100%' ref={anchorRef} onClick={onOpen}>
         {children}
       </ClickBox>
       {open && (
         <Portal>
           <DropdownOptions
-            width={props.width || "max-content"}
+            width={props?.dropWidth || "max-content"}
             {...coords}
             ref={dropdownRef}
+            onClick={onOptionsClick}
           >
             {options}
           </DropdownOptions>

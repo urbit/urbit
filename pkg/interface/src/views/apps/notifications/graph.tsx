@@ -90,6 +90,8 @@ const GraphNodeContent = ({ group, post, contacts, mod, description, index, remo
         content={contents}
         group={group}
         contacts={contacts}
+        fontSize='14px'
+        lineHeight="tall"
       />
     } else if (idx[1] === "1") {
       const [{ text: header }, { text: body }] = contents;
@@ -127,6 +129,8 @@ const GraphNodeContent = ({ group, post, contacts, mod, description, index, remo
         measure={() => {}}
         group={group}
         contacts={contacts}
+        groups={{}}
+        associations={{ graph: {}, groups: {}}}
         msg={post}
         fontSize='0'
         pt='2'
@@ -137,8 +141,13 @@ const GraphNodeContent = ({ group, post, contacts, mod, description, index, remo
   return null;
 };
 
-function getNodeUrl(mod: string, group: string, graph: string, index: string) {
-  const graphUrl = `/~landscape${group}/resource/${mod}${graph}`;
+function getNodeUrl(mod: string, hidden: boolean, groupPath: string, graph: string, index: string) {
+  if (hidden && mod === 'chat') {
+    groupPath = '/messages';
+  } else if (hidden) {
+    groupPath = '/home';
+  }
+  const graphUrl = `/~landscape${groupPath}/resource/${mod}${graph}`;
   const idx = index.slice(1).split("/");
   if (mod === "publish") {
     const [noteId] = idx;
@@ -164,25 +173,27 @@ const GraphNode = ({
   group,
   read,
   onRead,
+  showContact = false,
   remoteContentPolicy
 }) => {
   const { contents } = post;
   author = deSig(author);
   const history = useHistory();
 
-  const img = (
+  const img = showContact ? (
     <Sigil
       ship={`~${author}`}
       size={16}
       icon
       color={`#000000`}
       classes="mix-blend-diff"
+      padding={2}
     />
-    );
+    ) : <Box style={{ width: '16px' }}></Box>;
 
   const groupContacts = contacts[groupPath] ?? {};
 
-  const nodeUrl = getNodeUrl(mod, group?.hidden ? '/home' : groupPath, graph, index);
+  const nodeUrl = getNodeUrl(mod, group?.hidden, groupPath, graph, index);
 
   const onClick = useCallback(() => {
     if(!read) {
@@ -192,10 +203,10 @@ const GraphNode = ({
   }, [read, onRead]);
 
   return (
-    <Row onClick={onClick} gapX="2" pt="2">
+    <Row onClick={onClick} gapX="2" pt={showContact ? 2 : 0}>
       <Col>{img}</Col>
       <Col flexGrow={1} alignItems="flex-start">
-        <Row
+        {showContact && <Row
           mb="2"
           height="16px"
           alignItems="center"
@@ -208,8 +219,8 @@ const GraphNode = ({
           <Text ml="2" gray>
             {moment(time).format("HH:mm")}
           </Text>
-        </Row>
-        <Row width="100%" p="1">
+        </Row>}
+        <Row width="100%" p="1" flexDirection="column">
           <GraphNodeContent
             contacts={groupContacts}
             post={post}
@@ -244,16 +255,15 @@ export function GraphNotification(props: {
   const desc = describeNotification(index.description, contents.length !== 1);
 
   const onClick = useCallback(() => {
-    if (props.archived) {
+    if (props.archived || read) {
       return;
     }
 
-    const func = read ? "unread" : "read";
-    return api.hark[func](timebox, { graph: index });
+    return api.hark["read"](timebox, { graph: index });
   }, [api, timebox, index, read]);
 
 return (
-    <Col flexGrow={1} width="100%" p="2">
+    <>
       <Header
         onClick={onClick}
         archived={props.archived}
@@ -267,7 +277,7 @@ return (
         description={desc}
         associations={props.associations}
       />
-      <Col flexGrow={1} width="100%" pl="5">
+      <Box flexGrow={1} width="100%" pl={5} gridArea="main">
         {_.map(contents, (content, idx) => (
           <GraphNode
             post={content}
@@ -282,9 +292,10 @@ return (
             groupPath={group}
             read={read}
             onRead={onClick}
+            showContact={idx === 0}
           />
         ))}
-      </Col>
-    </Col>
+      </Box>
+    </>
   );
 }

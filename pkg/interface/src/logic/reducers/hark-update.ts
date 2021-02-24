@@ -10,7 +10,7 @@ import _ from "lodash";
 import {StoreState} from "../store/type";
 import { BigIntOrderedMap } from '../lib/BigIntOrderedMap';
 
-type HarkState = Pick<StoreState, "notifications" | "notificationsGraphConfig" | "notificationsGroupConfig" | "unreads" | "notificationsChatConfig">;
+type HarkState = Pick<StoreState, "notifications" | "notificationsGraphConfig" | "notificationsGroupConfig" | "unreads" >;
 
 
 export const HarkReducer = (json: any, state: HarkState) => {
@@ -32,38 +32,7 @@ export const HarkReducer = (json: any, state: HarkState) => {
     groupListen(groupHookData, state);
     groupIgnore(groupHookData, state);
   }
-
-  const chatHookData = _.get(json, "hark-chat-hook-update", false);
-  if(chatHookData) {
-
-    chatInitial(chatHookData, state);
-    chatListen(chatHookData, state);
-    chatIgnore(chatHookData, state);
-
-  }
 };
-
-function chatInitial(json: any, state: HarkState) {
-  const data = _.get(json, "initial", false);
-  if (data) {
-    state.notificationsChatConfig = data;
-  }
-}
-
-
-function chatListen(json: any, state: HarkState) {
-  const data = _.get(json, "listen", false);
-  if (data) {
-    state.notificationsChatConfig = [...state.notificationsChatConfig, data];
-  }
-}
-
-function chatIgnore(json: any, state: HarkState) {
-  const data = _.get(json, "ignore", false);
-  if (data) {
-    state.notificationsChatConfig = state.notificationsChatConfig.filter(x => x !== data);
-  }
-}
 
 function groupInitial(json: any, state: HarkState) {
   const data = _.get(json, "initial", false);
@@ -143,6 +112,14 @@ function reduce(data: any, state: HarkState) {
   unreadEach(data, state);
   seenIndex(data, state);
   removeGraph(data, state);
+  readAll(data, state);
+}
+
+function readAll(json: any, state: HarkState) {
+  const data = _.get(json, 'read-all');
+  if(data) { 
+    clearState(state);
+  }
 }
 
 function removeGraph(json: any, state: HarkState) {
@@ -211,7 +188,6 @@ function clearState(state){
     notifications: new BigIntOrderedMap<Timebox>(),
     archivedNotifications: new BigIntOrderedMap<Timebox>(),
     notificationsGroupConfig: [],
-    notificationsChatConfig: [],
     notificationsGraphConfig: {
       watchOnSelf: false,
       mentions: false,
@@ -324,9 +300,6 @@ function notifIdxEqual(a: NotifIndex, b: NotifIndex) {
       a.group.group === b.group.group &&
       a.group.description === b.group.description
     );
-  } else if ("chat" in a && "chat" in b) {
-    return a.chat.chat === b.chat.chat &&
-      a.chat.mention === b.chat.mention;
   }
   return false;
 }
@@ -385,6 +358,13 @@ function archive(json: any, state: HarkState) {
     const [archived, unarchived] = _.partition(timebox, (idxNotif) =>
       notifIdxEqual(index, idxNotif.index)
     );
-    state.notifications.set(time, unarchived);
+    if(unarchived.length === 0) {
+      console.log('deleting entire timebox');
+      state.notifications.delete(time);
+    } else {
+      state.notifications.set(time, unarchived);
+    }
+    const newlyRead = archived.filter(x => !x.notification.read).length;
+    updateNotificationStats(state, index, 'notifications', (x) => x - newlyRead);
   }
 }

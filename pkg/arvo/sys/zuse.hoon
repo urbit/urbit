@@ -3297,11 +3297,14 @@
       %-  flop
       |-  ^-  ^tape
       ?:(=(0 a) ~ [(add '0' (mod a 10)) $(a (div a 10))])
+    ::                                                  ::  ++sect:enjs:format
+    ++  sect                                            ::  s timestamp
+      |=  a=^time
+      (numb (unt:chrono:userlib a))
     ::                                                  ::  ++time:enjs:format
     ++  time                                            ::  ms timestamp
       |=  a=^time
-      =-  (numb (div (mul - 1.000) ~s1))
-      (add (div ~s1 2.000) (sub a ~1970.1.1))
+      (numb (unm:chrono:userlib a))
     ::                                                  ::  ++path:enjs:format
     ++  path                                            ::  string from path
       |=  a=^path
@@ -3365,10 +3368,10 @@
       (poq (wit jon))
     ::                                                  ::  ++di:dejs:format
     ++  di                                              ::  millisecond date
-      %+  cu
-        |=  a=@u  ^-  @da
-        (add ~1970.1.1 (div (mul ~s1 a) 1.000))
-      ni
+      (cu from-unix-ms:chrono:userlib ni)
+    ::                                                  ::  ++du:dejs:format
+    ++  du                                              ::  second date
+      (cu from-unix:chrono:userlib ni)
     ::                                                  ::  ++mu:dejs:format
     ++  mu                                              ::  true unit
       |*  wit=fist
@@ -3578,10 +3581,7 @@
       (bind (stud:chrono:userlib p.jon) |=(a=date (year a)))
     ::
     ++  di                                              ::  millisecond date
-      %+  cu
-        |=  a=@u  ^-  @da
-        (add ~1970.1.1 (div (mul ~s1 a) 1.000))
-      ni
+      (cu from-unix-ms:chrono:userlib ni)
     ::
     ++  mu                                              ::  true unit
       |*  wit=fist
@@ -5408,13 +5408,20 @@
     ::                                                  ::::
   ++  chrono  ^?
     |%
-    ::  +from-unix: unix timestamp to @da
+    ::  +from-unix: unix seconds to @da
     ::
     ++  from-unix
       |=  timestamp=@ud
       ^-  @da
       %+  add  ~1970.1.1
       (mul timestamp ~s1)
+    ::  +from-unix-ms: unix milliseconds to @da
+    ::
+    ++  from-unix-ms
+      |=  timestamp=@ud
+      ^-  @da
+      %+  add  ~1970.1.1
+      (div (mul ~s1 timestamp) 1.000)
     ::                                                  ::  ++dawn:chrono:
     ++  dawn                                            ::  Jan 1 weekday
       |=  yer=@ud
@@ -5533,9 +5540,13 @@
       ++  dd                                            ::  two digits
         (bass 10 (stun 2^2 dit))
       --  ::
+    ::                                                  ::  ++unm:chrono:userlib
+    ++  unm                                             ::  Urbit to Unix ms
+      |=  a=@da
+      (div (mul (sub a ~1970.1.1) 1.000) ~s1)
     ::                                                  ::  ++unt:chrono:userlib
     ++  unt                                             ::  Urbit to Unix time
-      |=  a=@
+      |=  a=@da
       (div (sub a ~1970.1.1) ~s1)
     ::                                                  ::  ++yu:chrono:userlib
     ++  yu                                              ::  UTC format constants
