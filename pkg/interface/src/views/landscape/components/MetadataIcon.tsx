@@ -15,7 +15,7 @@ export function MetadataIcon(props: MetadataIconProps) {
   const bgColor = metadata.picture ? {} : { bg: `#${uxToHex(metadata.color)}` };
 
   return (
-    <Box {...bgColor} {...rest} borderRadius={2}>
+    <Box {...bgColor} {...rest} borderRadius={2} overflow="hidden">
       {metadata.picture && <Image height="100%" src={metadata.picture} />}
     </Box>
   );
