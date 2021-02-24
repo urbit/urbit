@@ -46,7 +46,7 @@
     %+  scry:strandio  ?
     /gx/settings-store/has-entry/gcp-store/[key]/noun
   ?.  has
-    (strand-fail:strandio %no-setting key ~)
+    (strand-fail:strandio (rap 3 %gcp-missing- key ~) ~)
   ;<  =data:settings  bind:m
     %+  scry:strandio
       data:settings
@@ -120,11 +120,12 @@
     take-client-response:strandio
   ?>  ?=(%finished -.rep)
   ?~  full-file.rep
-    (strand-fail:strandio %no-response ~)
+    (strand-fail:strandio %gcp-no-response ~)
   =/  body=@t  q.data.u.full-file.rep
   =/  jon=(unit json)  (de-json:html body)
   ?~  jon
-    (strand-fail:strandio %bad-body ~[body])
+    ~|  body
+    (strand-fail:strandio %gcp-bad-body ~)
   =*  job  u.jon
   ~|  job
   =,  dejs:format
