@@ -4,5 +4,5 @@ export interface GcpToken {
 };
 
 export interface GcpState {
-  token: GcpToken;
+  accessKey: string;
 };

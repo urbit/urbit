@@ -4,19 +4,36 @@ import {GcpToken} from '../types/gcp-state';
 
 
 export default class GcpApi extends BaseApi<StoreState> {
+  #running = false;
+
   startRefreshLoop() {
-    // TODO: don't allow more than one
-    this.refreshLoop();
+    if (this.#running) {
+      console.error('GcpApi startRefreshLoop: already running');
+    } else {
+      this.#running = true;
+      this.refreshLoop();
+    }
   }
 
   private refreshLoop() {
-    console.log("refreshing GCP token");
+    console.log("GcpApi refreshLoop");
     this.refreshToken().then(({accessKey, expiresIn}: GcpToken) => {
-      console.log("new token: ", accessKey);
+      console.log("GcpApi new token");
+      // XX maybe bad?
+      this.store.state.gcp.accessKey = accessKey;
+      const timeout = this.refreshInterval(expiresIn);
+      console.log("GcpApi refreshing in", timeout);
       setTimeout(() => {
         this.refreshLoop();
-      }, expiresIn);
+      }, timeout);
     });
+  }
+
+  private refreshInterval(expiresIn: number) {
+    // Give ourselves 30 seconds for processing delays, but never refresh
+    // sooner than 10 minute from now. (The expiry window should be about an
+    // hour.)
+    return Math.max(600_000, expiresIn - 30_000);
   }
 
   private async refreshToken() {

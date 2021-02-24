@@ -71,7 +71,9 @@ export default class GlobalStore extends BaseStore<StoreState> {
       },
       weather: {},
       userLocation: null,
-      gcp: {},
+      gcp: {
+        accessKey: null
+      },
       s3: {
         configuration: {
           buckets: new Set(),
