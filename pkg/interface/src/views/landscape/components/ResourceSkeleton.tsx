@@ -65,7 +65,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
   }
 
   return (
-    <Col width="100%" height="100%" overflowY="hidden">
+    <Col height="100%" overflow="hidden">
       <Box
         flexShrink="0"
         height='48px'
