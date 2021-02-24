@@ -83,12 +83,13 @@
       !<  $-([index:store post:store atom ?] [index:store post:store])
       %.  !>(*indexed-post:store)
       .^(tube:clay (scry:hc %cc %home /[u.mark]/transform-add-nodes))
-    =/  [* lis=(list [index:store node:store])]
+    =/  [* result=(list [index:store node:store])]
       %+  roll
         (flatten-node-map ~(tap by nodes.q.update))
       (transform-list transform)
     =.  nodes.q.update
-      (~(gas by *(map index:store node:store)) lis)
+      %-  ~(gas by *(map index:store node:store))
+      result
     [~ !>(update)]
     ::
     ++  flatten-node-map
@@ -96,7 +97,7 @@
       ^-  (list [index:store node:store])
       |^
       %-  sort-nodes
-      %+  weld
+      %+  welp
         (turn lis empty-children)
       %-  zing
       %+  turn  lis
@@ -112,9 +113,9 @@
         [index node(children [%empty ~])]
       ::
       ++  sort-nodes
-        |=  lis=(list [index:store node:store])
+        |=  unsorted=(list [index:store node:store])
         ^-  (list [index:store node:store])
-        %+  sort  lis
+        %+  sort  unsorted
         |=  [p=[=index:store *] q=[=index:store *]]
         ^-  ?
         (lth (lent index.p) (lent index.q))
