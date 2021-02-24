@@ -1,3 +1,8 @@
+export interface GcpToken {
+  accessKey: string;
+  expiresIn: number;
+};
+
 export interface GcpState {
-  accessToken: string;
+  token: GcpToken;
 };
