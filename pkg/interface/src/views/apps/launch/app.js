@@ -180,7 +180,7 @@ export default function LaunchApp(props) {
           />
           <ModalButton
             icon="Plus"
-            bg="washedGray"
+            bg="#f2f2f2"
             color="#000"
             text="New Group"
             style={{ gridColumnStart: 1 }}
@@ -189,7 +189,7 @@ export default function LaunchApp(props) {
           </ModalButton>
           <ModalButton
             icon="Boot"
-            bg="washedGray"
+            bg="#f2f2f2"
             color="#000"
             text="Join Group"
           >
