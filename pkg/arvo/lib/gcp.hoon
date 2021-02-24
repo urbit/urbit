@@ -8,8 +8,8 @@
   %:  pairs
     access-key+s+access-key.token
     :-  %expires-in
-      %-  numb
-      (div (mul 1.000 expires-in.token) ~s1)
+    %-  numb
+    (div (mul 1.000 expires-in.token) ~s1)
     ~
   ==
 --
