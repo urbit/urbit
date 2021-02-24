@@ -76,34 +76,67 @@
       %add-nodes
     ?.  (is-allowed-add:hc rid nodes.q.update)
       ~
-    ::  TODO: use marks to transform based on graph-type
     =/  mark  (get-mark:gra rid)
     ?~  mark  `vas
     |^
-    =/  transform=$-([index:store post:store] [index:store post:store])
-      !<  $-([index:store post:store] [index:store post:store])
+    =/  transform=$-([index:store post:store atom ?] [index:store post:store])
+      !<  $-([index:store post:store atom ?] [index:store post:store])
       %.  !>(*indexed-post:store)
       .^(tube:clay (scry:hc %cc %home /[u.mark]/transform-add-nodes))
-    =.  nodes.q.update
-      %-  ~(gas by *(map index:store node:store))
-      %-  zing
-      %+  turn
-        ~(tap by nodes.q.update)
+    =/  [* lis=(list [index:store node:store])]
+      %+  roll
+        (flatten-node-map ~(tap by nodes.q.update))
       (transform-list transform)
+    =.  nodes.q.update
+      (~(gas by *(map index:store node:store)) lis)
     [~ !>(update)]
     ::
-    ++  transform-list
-      |=  transform=$-([index:store post:store] [index:store post:store])
+    ++  flatten-node-map
+      |=  lis=(list [index:store node:store])
+      ^-  (list [index:store node:store])
+      |^
+      %-  sort-nodes
+      %+  weld
+        (turn lis empty-children)
+      %-  zing
+      %+  turn  lis
       |=  [=index:store =node:store]
       ^-  (list [index:store node:store])
-      =/  [ind=index:store =post:store]  (transform index post.node)
-      :-  [ind [post [%empty ~]]]
       ?:  ?=(%empty -.children.node)
         ~
-      %-  zing
-      %+  turn
-        (tap-deep:gra p.children.node)
-      (transform-list transform)
+      (turn (tap-deep:gra p.children.node) empty-children)
+      ::
+      ++  empty-children
+        |=  [=index:store =node:store]
+        ^-  [index:store node:store]
+        [index node(children [%empty ~])]
+      ::
+      ++  sort-nodes
+        |=  lis=(list [index:store node:store])
+        ^-  (list [index:store node:store])
+        %+  sort  lis
+        |=  [p=[=index:store *] q=[=index:store *]]
+        ^-  ?
+        (lth (lent index.p) (lent index.q))
+      --
+    ::
+    ++  transform-list
+      |=  transform=$-([index:store post:store atom ?] [index:store post:store])
+      |=  $:  [=index:store =node:store]
+              [indices=(set index:store) lis=(list [index:store node:store])]
+          ==
+      =/  l  (lent index)
+      =/  parent-modified=?
+        %-  ~(rep in indices)
+        |=  [i=index:store out=?]
+        ?:  out  out
+        ?:  (lte l (lent i))
+          %.n
+        =((swag [0 l] i) index)
+      =/  [ind=index:store =post:store]
+        (transform index post.node now.bowl parent-modified)
+      :-  (~(put in indices) index)
+      (snoc lis [ind node(post post)])
     --
   ::
       %remove-nodes

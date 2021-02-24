@@ -32,9 +32,25 @@
     ==
   ::
   ++  transform-add-nodes
-    |=  [=index =post]
+    |=  [=index =post =atom was-parent-modified=?]
     ^-  [^index ^post]
-    [index post]
+    =-  [- post(index -)]
+    ?+    index  ~|(transform+[index post] !!)
+        [@ ~]         [atom ~]
+        [@ %1 ~]      [atom %1 ~]
+    ::
+        [@ %1 @ ~]
+      ?:  was-parent-modified
+        [atom %1 atom ~]
+      [i.index %1 atom ~]
+    ::
+        [@ %2 ~]      [atom %2 ~]
+        [@ %2 @ ~]    [i.index %2 atom ~]
+        [@ %2 @ @ ~]
+      ?:  was-parent-modified
+        [i.index %2 atom atom ~]
+      [i.index %2 i.t.t.index atom ~]
+    ==
   --
 ++  grab
   |%

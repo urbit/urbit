@@ -22,9 +22,10 @@
     ==
   ::
   ++  transform-add-nodes
-    |=  [=index =post]
+    |=  [=index =post =atom was-parent-modified=?]
     ^-  [^index ^post]
-    [index post]
+    =-  [- post(index -)]
+    [atom ~]
   --
 ++  grab
   |%
