@@ -459,7 +459,7 @@
     [+<- +<+>-]  ::  cache.state
   ::
   ++  ford
-    ::!.  ::  TODO: reinstate
+    !.
     =>  |%
         +$  build
           $%  [%file =path]
@@ -3458,7 +3458,7 @@
     ::  ford
     ::
     ++  read-a
-      ::!.  TODO reinstate
+      !.
       |=  [=aeon =path]
       ^-  [(unit (unit (each cage lobe))) ford-cache]
       ?.  =(aeon let.dom)
@@ -3480,7 +3480,7 @@
       :_(fod.dom [~ ~ %& %vase !>(vase)])
     ::
     ++  read-b
-      ::!.  TODO reinstate
+      !.
       |=  [=aeon =path]
       ^-  [(unit (unit (each cage lobe))) ford-cache]
       ?.  =(aeon let.dom)
@@ -3496,7 +3496,7 @@
       :_(fod.dom [~ ~ %& %dais !>(dais)])
     ::
     ++  read-c
-      ::!.  TODO reinstate
+      !.
       |=  [=aeon =path]
       ^-  [(unit (unit (each cage lobe))) ford-cache]
       ?.  =(aeon let.dom)
@@ -3854,7 +3854,7 @@
         [~ fod]
       ::  virtualize to catch and produce deterministic failures
       ::
-      ::!.  TODO reinstate
+      !.
       =-  ?:(?=(%& -<) p.- ((slog p.-) [[~ ~] fod]))
       %-  mule  |.
       ?-  care.mun
