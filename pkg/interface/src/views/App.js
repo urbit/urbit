@@ -94,6 +94,7 @@ class App extends React.Component {
       // before the app has actually rendered, hence the timeout.
       this.updateTheme(this.themeWatcher);
     }, 500);
+    this.api.gcp.startRefreshLoop();
     this.api.local.getBaseHash();
     this.api.settings.getAll();
     this.store.rehydrate();
