@@ -1686,24 +1686,26 @@
     ::
     ++  checkout-changes
       |=  [=ford=args:ford:fusion changes=(map path (each page lobe))]
-      =/  cans=(list [=path change=(each page lobe)])  ~(tap by changes)
-      |-  ^-  [(map path [=lobe =cage]) ford-cache]
-      ?~  cans
-        [~ ford-cache.ford-args]
+      ^-  [(map path [=lobe =cage]) ford-cache]
+      %+  roll  `(list [path (each page lobe)])`~(tap by changes)
+      |=  $:  [=path change=(each page lobe)]
+              [built=(map path [lobe cage]) cache=_ford-cache.ford-args]
+          ==
+      ^+  [built cache]
+      =.  ford-cache.ford-args  cache
       =^  cage  ford-cache.ford-args
-        ::  ~>  %slog.[0 leaf+"clay: validating {(spud path.i.cans)}"]
+        ::  ~>  %slog.[0 leaf/"clay: validating {(spud path)}"]
         %-  wrap:fusion
-        (read-file:(ford:fusion ford-args) path.i.cans)
+        (read-file:(ford:fusion ford-args) path)
       =/  =lobe
-        ?-  -.change.i.cans
-          %|  p.change.i.cans
+        ?-  -.change
+          %|  p.change
           ::  Don't use p.change.i.cans because that's before casting to
           ::  the correct mark.
           ::
           %&  (page-to-lobe [p q.q]:cage)
         ==
-      =^  so-far  ford-cache.ford-args  $(cans t.cans)
-      [(~(put by so-far) path.i.cans lobe cage) ford-cache.ford-args]
+      [(~(put by built) path [lobe cage]) ford-cache.ford-args]
     ::
     ::  Update ankh
     ::
