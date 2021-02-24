@@ -6,7 +6,10 @@
   =,  enjs:format
   %+  frond  %gcp-token
   %:  pairs
-    access+s+access.token
-    expiry+(time expiry.token)
+    access-key+s+access-key.token
+    :-  %expires-in
+      %-  numb
+      (div (mul 1.000 expires-in.token) ~s1)
+    ~
   ==
 --

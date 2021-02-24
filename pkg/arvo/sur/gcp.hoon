@@ -1,6 +1,6 @@
 |%
 +$  token
-  $:  access=@t
-      expiry=@da
+  $:  access-key=@t
+      expires-in=@dr
   ==
 --

@@ -36,7 +36,7 @@
 =/  jot=@t
   (make-jwt key kid iss scope aud now.bowl)
 ;<  =token:gcp  bind:m
-  (get-access-token jot aud now.bowl)
+  (get-access-token jot aud)
 (pure:m !>(token))
 ::
 ++  read-setting
@@ -99,7 +99,7 @@
 ::  https://developers.google.com/identity/protocols/oauth2/service-account
 ::
 ++  get-access-token
-  |=  [jot=@t url=@t now=@da]
+  |=  [jot=@t url=@t]
   =/  m  (strand ,token:gcp)  ^-  form:m
   ;<  ~  bind:m
     %:  send-request:strandio
@@ -128,15 +128,14 @@
   =*  job  u.jon
   ~|  job
   =,  dejs:format
-  =/  [typ=@t exp=@dr tok=@t]
+  =/  [typ=@t =token:gcp]
     %.  job
     %:  ot
       'token_type'^so
-      'expires_in'^(cu |=(a=@ (mul a ~s1)) ni)
       'access_token'^so
+      'expires_in'^(cu |=(a=@ (mul a ~s1)) ni)
       ~
     ==
   ?>  =('Bearer' typ)
-  %-  pure:m
-  [tok (add exp now)]
+  (pure:m token)
 --
