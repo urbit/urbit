@@ -8,12 +8,12 @@ import { NotebookPosts } from './NotebookPosts';
 import GlobalApi from '~/logic/api/global';
 import { useShowNickname } from '~/logic/lib/util';
 import useGroupState from '~/logic/state/groups';
+import useContactState from '~/logic/state/contacts';
 
 interface NotebookProps {
   ship: string;
   book: string;
   graph: Graph;
-  notebookContacts: Contacts;
   association: Association;
   baseUrl: string;
   rootUrl: string;
@@ -24,19 +24,20 @@ export function Notebook(props: NotebookProps & RouteComponentProps): ReactEleme
   const {
     ship,
     book,
-    notebookContacts,
     association,
     graph
   } = props;
 
   const groups = useGroupState(state => state.groups);
+  const contacts = useContactState(state => state.contacts);
 
   const group = groups[association?.group];
   if (!group) {
     return null; // Waiting on groups to populate
   }
 
-  const contact = notebookContacts?.[ship];
+  const contact = contacts?.[`~${ship}`];
+  console.log(association.resource);
 
   const showNickname = useShowNickname(contact);
 

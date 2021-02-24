@@ -3,13 +3,11 @@ import moment from 'moment';
 import { useHistory } from 'react-router-dom';
 
 import { Row, Box, BaseImage } from '@tlon/indigo-react';
-import { Contacts } from '@urbit/api/contacts';
-import { Group, uxToHex, cite } from '@urbit/api';
+import { Group, uxToHex, cite, deSig } from '@urbit/api';
 
 import { useShowNickname } from '~/logic/lib/util';
 import OverlaySigil from './OverlaySigil';
 import { Sigil } from '~/logic/lib/Sigil';
-import GlobalApi from '~/logic/api/global';
 import useContactState from '~/logic/state/contacts';
 import Timestamp from './Timestamp';
 
@@ -29,7 +27,7 @@ export default function Author(props: AuthorProps): ReactElement {
   const contacts = useContactState(state => state.contacts);
   let contact;
   if (contacts) {
-    contact = ship in contacts ? contacts[ship] : null;
+    contact = `~${deSig(ship)}` in contacts ? contacts[`~${deSig(ship)}`] : null;
   }
   const color = contact?.color ? `#${uxToHex(contact?.color)}` : '#000000';
   const showNickname = useShowNickname(contact);
@@ -70,7 +68,6 @@ export default function Author(props: AuthorProps): ReactElement {
             color={`#${uxToHex(contact?.color ?? '0x0')}`}
             group={group}
             onDismiss={() => toggleOverlay()}
-            history={history}
             className='relative'
           />
         )}

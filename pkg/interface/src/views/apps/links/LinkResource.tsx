@@ -44,7 +44,6 @@ export function LinkResource(props: LinkResourceProps) {
   const resource = associations.graph[rid]
     ? associations.graph[rid]
     : { metadata: {} };
-  const contactDetails = contacts[resource?.group] || {};
   const group = groups[resource?.group] || {};
 
   const graph = graphs[resourcePath] || null;
@@ -94,9 +93,6 @@ export function LinkResource(props: LinkResourceProps) {
             if (!node) {
               return <Box>Not found</Box>;
             }
-
-            const contact = contactDetails[node.post.author]; // TODO ???
-
             return (
               <Col alignItems="center" overflowY="auto" width="100%">
               <Col width="100%" p={3} maxWidth="768px">

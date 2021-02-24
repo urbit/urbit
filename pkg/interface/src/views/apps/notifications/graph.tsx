@@ -1,5 +1,4 @@
-import React, { ReactElement, ReactNode, useCallback } from 'react';
-import moment from 'moment';
+import React, { ReactElement, useCallback } from 'react';
 import _ from 'lodash';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
@@ -17,8 +16,8 @@ import {
 } from '@urbit/api';
 
 import { Header } from './header';
-import { pluralize } from '~/logic/lib/util';
-import { Sigil } from '~/logic/lib/Sigil';
+import { pluralize, useShowNickname } from '~/logic/lib/util';
+import Author from '~/views/components/Author';
 import { getSnippet } from '~/logic/lib/publish';
 import { MentionText } from '~/views/components/MentionText';
 import useContactState from '~/logic/state/contacts';
@@ -187,25 +186,10 @@ const GraphNode = ({
   read,
   onRead,
   showContact = false,
-}): ReactElement => {
+}) => {
   author = deSig(author);
   const history = useHistory();
   const contacts = useContactState(state => state.contacts);
-
-  const img = showContact ? (
-    <Sigil
-      ship={`~${author}`}
-      size={16}
-      icon
-      color={`#000000`}
-      classes='mix-blend-diff'
-      padding={2}
-    />
-  ) : (
-    <Box style={{ width: '16px' }}></Box>
-  );
-
-  const groupContacts = contacts[groupPath] ?? {};
 
   const nodeUrl = getNodeUrl(mod, group?.hidden, groupPath, graph, index);
 
@@ -216,25 +200,19 @@ const GraphNode = ({
     history.push(nodeUrl);
   }, [read, onRead]);
 
+  const showNickname = useShowNickname(contacts?.[`~${author}`]);
+  const nickname = (contacts?.[`~${author}`]?.nickname && showNickname) ? contacts[`~${author}`].nickname : cite(author);
   return (
     <Row onClick={onClick} gapX='2' pt={showContact ? 2 : 0}>
-      <Col>{img}</Col>
       <Col flexGrow={1} alignItems='flex-start'>
         {showContact && (
-          <Row
-            mb='2'
-            height='16px'
-            alignItems='center'
-            p='1'
-            backgroundColor='white'
-          >
-            <Text mono title={author}>
-              {cite(author)}
-            </Text>
-            <Text ml='2' gray>
-              {moment(time).format('HH:mm')}
-            </Text>
-          </Row>
+          <Author
+            showImage
+            contacts={contacts}
+            ship={author}
+            date={time}
+            group={group}
+          />
         )}
         <Row width='100%' p='1' flexDirection='column'>
           <GraphNodeContent
@@ -243,6 +221,7 @@ const GraphNode = ({
             description={description}
             index={index}
             group={group}
+            remoteContentPolicy={{}}
           />
         </Row>
       </Col>

@@ -20,7 +20,6 @@ import useGroupState from '~/logic/state/groups';
 interface NotebookRoutesProps {
   ship: string;
   book: string;
-  notebookContacts: Contacts;
   unreads: Unreads;
   baseUrl: string;
   rootUrl: string;
@@ -31,8 +30,7 @@ interface NotebookRoutesProps {
 export function NotebookRoutes(
   props: NotebookRoutesProps & RouteComponentProps
 ) {
-  const { ship, book, notebookContacts, baseUrl, rootUrl } = props;
-  const api = useApi();
+  const { ship, book, baseUrl, rootUrl } = props;
   const getGraph = useGraphState(state => state.getGraph);
   const groups = useGroupState(state => state.groups);
   const graphs = useGraphState(state => state.graphs);
@@ -102,7 +100,6 @@ export function NotebookRoutes(
               notebook={graph}
               unreads={props.unreads}
               noteId={noteIdNum}
-              contacts={notebookContacts}
               association={props.association}
               group={group}
               s3={props.s3}

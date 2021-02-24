@@ -16,7 +16,7 @@ const Text = (props: PropFunc<typeof Text>) => (
 );
 
 function Author(props: { patp: string; contacts: Contacts; last?: boolean }): ReactElement {
-  const contact: Contact | undefined = props.contacts?.[props.patp];
+  const contact: Contact | undefined = props.contacts?.[`~${props.patp}`];
 
   const showNickname = useShowNickname(contact);
   const name = contact?.nickname || `~${props.patp}`;
