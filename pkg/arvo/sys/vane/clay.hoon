@@ -869,7 +869,7 @@
         ;~(plug sym ;~(pfix gap fas (more fas urs:ab)))
       ::
         %+  rune  cen
-        ;~(plug sym ;~(pfix cen sym))
+        ;~(plug sym ;~(pfix gap ;~(pfix cen sym)))
       ::
         %+  rune  buc
         ;~  (glue gap)
