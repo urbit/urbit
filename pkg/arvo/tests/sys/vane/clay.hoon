@@ -108,7 +108,7 @@
       file-store=~
       *ford-cache:fusion
     ==
-    =/  [res=vase nub=state:ford:fusion]  (get-nave:ford %mime)
+    =/  [res=vase nub=state:ford:fusion]  (build-nave:ford %mime)
     ;:  weld
       %+  expect-eq
         !>(*mime)
@@ -116,7 +116,7 @@
     ::
       %+  expect-eq
         !>  (~(gas in *(set path)) /mar/mime/hoon ~)
-        !>  dez:(~(got by vases.cache.nub) /mar/mime/hoon)
+        !>  dez:(~(got by files.cache.nub) /mar/mime/hoon)
     ==
 ::
 ++  test-mar-udon  ^-  tang
@@ -135,7 +135,7 @@
       file-store=~
       *ford-cache:fusion
     ==
-    =/  [res=vase nub=state:ford:fusion]  (get-nave:ford %udon)
+    =/  [res=vase nub=state:ford:fusion]  (build-nave:ford %udon)
     ;:  weld
       %+  expect-eq
         !>(*@t)
@@ -143,7 +143,7 @@
     ::
       %+  expect-eq
         !>  (~(gas in *(set path)) /mar/udon/hoon /lib/cram/hoon ~)
-        !>  dez:(~(got by vases.cache.nub) /mar/udon/hoon)
+        !>  dez:(~(got by files.cache.nub) /mar/udon/hoon)
     ==
 ::
 ++  test-cast-html-mime  ^-  tang
@@ -161,7 +161,7 @@
       file-store=~
       *ford-cache:fusion
     ==
-  =/  [res=vase nub=state:ford:fusion]  (get-cast:ford %html %mime)
+  =/  [res=vase nub=state:ford:fusion]  (build-cast:ford %html %mime)
   %+  expect-eq
     (slam res !>('<html></html>'))
     !>  `mime`[/text/html 13 '<html></html>']
@@ -225,7 +225,7 @@
   ::
     %+  expect-eq
       !>  (~(gas in *(set path)) /gen/hello/hoon ~)
-      !>  dez:(~(got by vases.cache.nub) /gen/hello/hoon)
+      !>  dez:(~(got by files.cache.nub) /gen/hello/hoon)
   ==
 ::
 ++  test-lib-strandio  ^-  tang
@@ -254,7 +254,7 @@
               /lib/strand/hoon
               /sur/spider/hoon
           ==
-      !>  dez:(~(got by vases.cache.nub) /lib/strandio/hoon)
+      !>  dez:(~(got by files.cache.nub) /lib/strandio/hoon)
   ==
 ::
 ::  |utilities: helper functions for testing
