@@ -63,7 +63,7 @@ export default function LaunchApp(props) {
         }, 2000);
       }}
     >
-      <Text mono bold>{hashText || props.baseHash}</Text>
+      <Text mono bold color="#000000">{hashText || props.baseHash}</Text>
     </Box>
   );
 
