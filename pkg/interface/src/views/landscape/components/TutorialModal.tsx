@@ -137,8 +137,8 @@ export function TutorialModal(props: { api: GlobalApi }) {
     return (
       <Portal>
         <ModalOverlay dismiss={dismiss} borderRadius="2" maxWidth="270px" backgroundColor="white">
-          <Col p="4" bg="lightBlue">
-            <Col mb="4">
+          <Col p="3" bg="lightBlue">
+            <Col mb="3">
               <Text lineHeight="tall" fontWeight="bold">
                 Tutorial Finished
               </Text>
@@ -149,7 +149,7 @@ export function TutorialModal(props: { api: GlobalApi }) {
             <Text lineHeight="tall">
               This tutorial is finished. Would you like to leave Beginner Island?
             </Text>
-            <Row mt="4" gapX="2" justifyContent="flex-end">
+            <Row mt="3" gapX="2" justifyContent="flex-end">
               <Button backgroundColor="washedGray" onClick={dismiss}>
                 Later
               </Button>
@@ -170,8 +170,8 @@ export function TutorialModal(props: { api: GlobalApi }) {
   if(paused) {
     return (
       <ModalOverlay dismiss={bailExit} borderRadius="2" maxWidth="270px" backgroundColor="white">
-        <Col p="2">
-          <Col mb="1">
+        <Col p="3">
+          <Col mb="3">
             <Text lineHeight="tall" fontWeight="bold">
               End Tutorial Now?
             </Text>
@@ -179,7 +179,7 @@ export function TutorialModal(props: { api: GlobalApi }) {
           <Text lineHeight="tall">
             You can always restart the tutorial by typing "tutorial" in Leap.
           </Text>
-          <Row mt="4" gapX="2" justifyContent="flex-end">
+          <Row mt="3" gapX="2" justifyContent="flex-end">
             <Button backgroundColor="washedGray" onClick={bailExit}>
               Cancel
             </Button>
@@ -215,7 +215,7 @@ export function TutorialModal(props: { api: GlobalApi }) {
           height="100%"
           width="100%"
           borderRadius="2"
-          p="4"
+          p="3"
           bg="lightBlue"
 
         >
@@ -238,7 +238,7 @@ export function TutorialModal(props: { api: GlobalApi }) {
           >
             <Icon icon="X" />
           </Box>
-          <Col mb="4">
+          <Col mb="3">
             <Text lineHeight="tall" fontWeight="bold">
               {title}
             </Text>
@@ -248,7 +248,7 @@ export function TutorialModal(props: { api: GlobalApi }) {
           </Col>
 
           <Text lineHeight="tall">{description}</Text>
-          <Row gapX="2" mt="4" justifyContent="flex-end">
+          <Row gapX="2" mt="3" justifyContent="flex-end">
             { progressIdx > 1 && (
               <Button bg="washedGray" onClick={prev}>
                 Back

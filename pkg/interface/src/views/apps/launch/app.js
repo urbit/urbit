@@ -115,12 +115,12 @@ export default function LaunchApp(props) {
         dismiss();
       }
       return (
-      <Col maxWidth="350px" gapY="2" p="3">
+      <Col maxWidth="350px" p="3">
         <Box position="absolute" left="-16px" top="-16px">
           <StarIcon width="32px" height="32px" color="blue" display="block" />
         </Box>
-        <Text lineHeight="tall" fontWeight="medium">Welcome</Text>
-        <Text lineHeight="tall">
+        <Text mb="3" lineHeight="tall" fontWeight="medium">Welcome</Text>
+        <Text mb="3" lineHeight="tall">
           You have been invited to use Landscape, an interface to chat 
           and interact with communities
           <br />
