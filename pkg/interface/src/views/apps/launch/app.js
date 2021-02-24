@@ -48,12 +48,12 @@ export default function LaunchApp(props) {
       position={["relative", "absolute"]}
       left="0"
       bottom="0"
-      bg="#f2f2f2"
+      backgroundColor="white"
       ml={3}
       mb={3}
       borderRadius={2}
+      overflow='hidden'
       fontSize={0}
-      p={2}
       cursor="pointer"
       onClick={() => {
         writeText(props.baseHash);
@@ -63,7 +63,9 @@ export default function LaunchApp(props) {
         }, 2000);
       }}
     >
-      <Text mono bold color="#000000">{hashText || props.baseHash}</Text>
+      <Box backgroundColor="washedGray" p={2}>
+        <Text mono bold>{hashText || props.baseHash}</Text>
+      </Box>
     </Box>
   );
 
@@ -180,8 +182,8 @@ export default function LaunchApp(props) {
           />
           <ModalButton
             icon="Plus"
-            bg="#f2f2f2"
-            color="#000"
+            bg="washedGray"
+            color="black"
             text="New Group"
             style={{ gridColumnStart: 1 }}
           >
@@ -189,8 +191,8 @@ export default function LaunchApp(props) {
           </ModalButton>
           <ModalButton
             icon="Boot"
-            bg="#f2f2f2"
-            color="#000"
+            bg="washedGray"
+            color="black"
             text="Join Group"
           >
             <JoinGroup {...props} />
