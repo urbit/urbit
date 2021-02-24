@@ -17,7 +17,7 @@
 ::  with a bearer token and expiry.
 ::
 ::
-/-  spider, settings
+/-  gcp, spider, settings
 /+  jose, pkcs, primitive-rsa, strandio
 =,  strand=strand:spider
 =,  rsa=primitive-rsa
@@ -35,9 +35,9 @@
   'https://www.googleapis.com/auth/devstorage.read_write'
 =/  jot=@t
   (make-jwt key kid iss scope aud now.bowl)
-;<  p=[access-token=@t expires-at=@da]  bind:m
+;<  =token:gcp  bind:m
   (get-access-token jot aud now.bowl)
-(pure:m !>(p))
+(pure:m !>(token))
 ::
 ++  read-setting
   |=  key=term
@@ -100,7 +100,7 @@
 ::
 ++  get-access-token
   |=  [jot=@t url=@t now=@da]
-  =/  m  (strand ,[@t @da])  ^-  form:m
+  =/  m  (strand ,token:gcp)  ^-  form:m
   ;<  ~  bind:m
     %:  send-request:strandio
       method=%'POST'
