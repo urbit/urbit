@@ -85,11 +85,11 @@ function Group(props: GroupProps) {
       <Col height="100%" justifyContent="space-between">
         <Text>{title}</Text>
         <Col>
-          {unreads > 0 &&
-            (<Text gray>{unreads} unread{unreads !== 1 && 's'} </Text>)
-          }
           {updates > 0 &&
             (<Text mt="1" color="blue">{updates} update{updates !== 1 && 's'} </Text>)
+          }
+          {unreads > 0 &&
+            (<Text color="lightGray">{unreads}</Text>)
           }
         </Col>
 

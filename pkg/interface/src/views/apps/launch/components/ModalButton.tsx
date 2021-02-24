@@ -12,17 +12,16 @@ const ModalButton = (props) => {
       <Button
         onClick={showModal}
         display='flex'
-        alignItems='center'
         cursor='pointer'
+        justifyContent="start"
         bg={bg}
         p={2}
+        border={0}
         borderRadius={2}
-        boxShadow='0 0 0px 1px inset'
-        color='scales.black20'
         {...rest}
       >
         <Icon icon={props.icon} mr={2} color={color}></Icon>
-        <Text color={color} whiteSpace='nowrap'>
+        <Text color={color} fontWeight="medium" whiteSpace='nowrap'>
           {props.text}
         </Text>
       </Button>
