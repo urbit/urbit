@@ -13,9 +13,7 @@
   =/  members
     ~(wyt in (members:grp rid))
   =/  =metadatum:store
-    %-  need
-    %+  mate  (peek-metadatum %groups rid)
-    (peek-metadatum %graph rid)
+    (need (peek-metadatum %groups rid))
   [rid channels members channel-count metadatum]
   ::
   ++  channels
