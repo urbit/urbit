@@ -118,7 +118,7 @@
 ::  Ford cache
 ::
 +$  ford-cache
-  $:  vases=(map path [res=vase dez=(set path)])
+  $:  files=(map path [res=vase dez=(set path)])
       naves=(map mark [res=vase dez=(set path)])
       marks=(map mark [res=dais dez=(set path)])
       casts=(map mars [res=vase dez=(set path)])
@@ -498,8 +498,9 @@
       =?  stack.nub  ?=(^ stack.nub)
         stack.nub(i (~(uni in i.stack.nub) top))
       [top stack.nub]
+    ::  +read-file: retrieve marked, validated file contents at path
     ::
-    ++  get-value
+    ++  read-file
       |=  =path
       ^-  [cage state]
       ~|  %error-validating^path
@@ -523,9 +524,9 @@
       ?<  (~(has in deletes) path)
       ~|  %file-not-found^path
       :_(nub (need (~(get an ankh) path)))
-    ::  +get-nave: build a statically typed mark core
+    ::  +build-nave: build a statically typed mark core
     ::
-    ++  get-nave
+    ++  build-nave
       |=  mak=mark
       ^-  [vase state]
       ~|  %error-building-mark^mak
@@ -547,8 +548,8 @@
       ?@  q.gad
         =+  !<(mok=mark gad)
         =^  deg=vase  nub  $(mak mok)
-        =^  tub=vase  nub  (get-cast mak mok)
-        =^  but=vase  nub  (get-cast mok mak)
+        =^  tub=vase  nub  (build-cast mak mok)
+        =^  but=vase  nub  (build-cast mok mak)
         :_  nub
         ^-  vase  ::  vase of nave
         %+  slap
@@ -598,9 +599,9 @@
       ++  pact  |=([v=typ d=dif] (pact:~(grad cor v) d))
       ++  vale  noun:grab:cor
       --
-    ::  +get-mark: build a dynamically typed mark definition
+    ::  +build-dais: build a dynamically typed mark definition
     ::
-    ++  get-mark
+    ++  build-dais
       |=  mak=mark
       ^-  [dais state]
       ~|  %error-building-dais^mak
@@ -617,7 +618,7 @@
         =^  top  stack.nub  pop-stack
         =.  marks.cache.nub  (~(put by marks.cache.nub) mak [dais.res top])
         [dais.res nub]
-      =^  nav=vase  nub  (get-nave mak)
+      =^  nav=vase  nub  (build-nave mak)
       :_  nub
       ^-  dais
       |_  sam=vase
@@ -651,9 +652,9 @@
         |=  =noun
         (slam (slap nav limb/%vale) noun/noun)
       --
-    ::  +get-cast: produce gate to convert mark .a to, statically typed
+    ::  +build-cast: produce gate to convert mark .a to, statically typed
     ::
-    ++  get-cast
+    ++  build-cast
       |=  [a=mark b=mark]
       ^-  [vase state]
       ~|  error-building-cast+[a b]
@@ -705,15 +706,15 @@
     ++  compose-casts
       |=  [x=mark y=mark z=mark]
       ^-  [vase state]
-      =^  uno=vase  nub  (get-cast x y)
-      =^  dos=vase  nub  (get-cast y z)
+      =^  uno=vase  nub  (build-cast x y)
+      =^  dos=vase  nub  (build-cast y z)
       :_  nub
       %+  slap
         (with-faces uno+uno dos+dos cork+!>(cork) ~)
       !,(*hoon (cork uno dos))
-    ::  +get-tube: produce a $tube mark conversion gate from .a to .b
+    ::  +build-tube: produce a $tube mark conversion gate from .a to .b
     ::
-    ++  get-tube
+    ++  build-tube
       |=  [a=mark b=mark]
       ^-  [tube state]
       ~|  error-building-tube+[a b]
@@ -729,7 +730,7 @@
         =^  top  stack.nub  pop-stack
         =.  tubes.cache.nub  (~(put by tubes.cache.nub) [a b] [tube.res top])
         [tube.res nub]
-      =^  gat=vase  nub  (get-cast a b)
+      =^  gat=vase  nub  (build-cast a b)
       :_(nub |=(v=vase (slam gat v)))
     ::
     ++  lobe-to-page
@@ -754,7 +755,7 @@
       ?:  =(mak p.page)
         (page-to-cage page)
       =^  [mark vax=vase]  nub  (page-to-cage page)
-      =^  =tube  nub  (get-tube p.page mak)
+      =^  =tube  nub  (build-tube p.page mak)
       :_(nub [mak (tube vax)])
     ::
     ++  page-to-cage
@@ -764,7 +765,7 @@
         :_(nub [%hoon -:!>(*@t) q.page])
       ?:  =(%mime p.page)
         :_(nub [%mime !>(;;(mime q.page))])
-      =^  =dais  nub  (get-mark p.page)
+      =^  =dais  nub  (build-dais p.page)
       :_(nub [p.page (vale:dais q.page)])
     ::
     ++  cast-path
@@ -772,10 +773,10 @@
       ^-  [cage state]
       =/  mok  (head (flop path))
       ~|  error-casting-path+[path mok mak]
-      =^  cag=cage  nub  (get-value path)
+      =^  cag=cage  nub  (read-file path)
       ?:  =(mok mak)
         [cag nub]
-      =^  =tube  nub  (get-tube mok mak)
+      =^  =tube  nub  (build-tube mok mak)
       ~|  error-running-cast+[path mok mak]
       :_(nub [mak (tube q.cag)])
     ::
@@ -787,14 +788,14 @@
         =+  ;;(dif=(urge cord) q.diff)
         =/  new=@t  (of-wain:format (lurk:differ txt dif))
         :_(nub [%hoon !>(new)])
-      =^  dys=dais  nub  (get-mark p.old)
-      =^  syd=dais  nub  (get-mark p.diff)
+      =^  dys=dais  nub  (build-dais p.old)
+      =^  syd=dais  nub  (build-dais p.diff)
       :_(nub [p.old (~(pact dys (vale:dys q.old)) (vale:syd q.diff))])
     ::
     ++  prelude
       |=  =path
       ^-  vase
-      =^  cag=cage  nub  (get-value path)
+      =^  cag=cage  nub  (read-file path)
       ?>  =(%hoon p.cag)
       =/  tex=tape  (trip !<(@t q.cag))
       =/  =pile  (parse-pile path tex)
@@ -806,7 +807,7 @@
       |=  =path
       ^-  [vase state]
       ~|  %error-building^path
-      ?^  got=(~(get by vases.cache.nub) path)
+      ?^  got=(~(get by files.cache.nub) path)
         =?  stack.nub  ?=(^ stack.nub)
           stack.nub(i (~(uni in i.stack.nub) dez.u.got))
         [res.u.got nub]
@@ -814,13 +815,13 @@
         ~|(cycle+file+path^stack.nub !!)
       =.  cycle.nub  (~(put in cycle.nub) file+path)
       =.  stack.nub  [(sy path ~) stack.nub]
-      =^  cag=cage  nub  (get-value path)
+      =^  cag=cage  nub  (read-file path)
       ?>  =(%hoon p.cag)
       =/  tex=tape  (trip !<(@t q.cag))
       =/  =pile  (parse-pile path tex)
       =^  res=vase  nub  (run-pile pile)
       =^  top  stack.nub  pop-stack
-      =.  vases.cache.nub  (~(put by vases.cache.nub) path [res top])
+      =.  files.cache.nub  (~(put by files.cache.nub) path [res top])
       [res nub]
     ::
     ++  run-pile
@@ -932,7 +933,7 @@
       |=  [sut=vase maz=(list [face=term =mark])]
       ^-  [vase state]
       ?~  maz  [sut nub]
-      =^  pin=vase  nub  (get-nave mark.i.maz)
+      =^  pin=vase  nub  (build-nave mark.i.maz)
       =.  p.pin  [%face face.i.maz p.pin]
       $(sut (slop pin sut), maz t.maz)
     ::
@@ -940,7 +941,7 @@
       |=  [sut=vase caz=(list [face=term =mars])]
       ^-  [vase state]
       ?~  caz  [sut nub]
-      =^  pin=vase  nub  (get-cast mars.i.caz)
+      =^  pin=vase  nub  (build-cast mars.i.caz)
       =.  p.pin  [%face face.i.caz p.pin]
       $(sut (slop pin sut), caz t.caz)
     ::
@@ -1570,7 +1571,7 @@
         %+  turn  (tail (spud pux))        ::  lose leading '/'
         |=(c=@tD `@tD`?:(=('/' c) '-' c))  ::  convert '/' to '-'
       ::
-      :*  ((invalidate path vase) vases.ford-cache invalid)
+      :*  ((invalidate path vase) files.ford-cache invalid)
           ((invalidate mark vase) naves.ford-cache invalid)
           ((invalidate mark dais) marks.ford-cache invalid)
           ((invalidate mars vase) casts.ford-cache invalid)
@@ -1692,7 +1693,7 @@
       =^  cage  ford-cache.ford-args
         ::  ~>  %slog.[0 leaf+"clay: validating {(spud path.i.cans)}"]
         %-  wrap:fusion
-        (get-value:(ford:fusion ford-args) path.i.cans)
+        (read-file:(ford:fusion ford-args) path.i.cans)
       =/  =lobe
         ?-  -.change.i.cans
           %|  p.change.i.cans
@@ -2280,7 +2281,7 @@
         ^-  dais
         =^  =dais  fod.dom
           %-  wrap:fusion
-          (get-mark:(ford:fusion static-ford-args) mark)
+          (build-dais:(ford:fusion static-ford-args) mark)
         dais
       ::
       ::  Diff two files on bob-desk
@@ -3463,7 +3464,7 @@
       ^-  [(unit (unit (each cage lobe))) ford-cache]
       ?.  =(aeon let.dom)
         [~ fod.dom]
-      =/  cached=(unit [=vase *])  (~(get by vases.fod.dom) path)
+      =/  cached=(unit [=vase *])  (~(get by files.fod.dom) path)
       ?^  cached
         :_(fod.dom [~ ~ %& %vase !>(vase.u.cached)])
       =/  x  (read-x aeon path)
@@ -3492,7 +3493,7 @@
         :_(fod.dom [~ ~ %& %dais !>(dais.u.cached)])
       =^  =dais  fod.dom
         %-  wrap:fusion
-        (get-mark:(ford:fusion static-ford-args) i.path)
+        (build-dais:(ford:fusion static-ford-args) i.path)
       :_(fod.dom [~ ~ %& %dais !>(dais)])
     ::
     ++  read-c
@@ -3508,7 +3509,7 @@
         :_(fod.dom [~ ~ %& %tube !>(tube.u.cached)])
       =^  =tube  fod.dom
         %-  wrap:fusion
-        (get-tube:(ford:fusion static-ford-args) [i i.t]:path)
+        (build-tube:(ford:fusion static-ford-args) [i i.t]:path)
       :_(fod.dom [~ ~ %& %tube !>(tube)])
     ::
     ::  Gets the permissions that apply to a particular node.
@@ -4444,9 +4445,11 @@
     :+  desk  %|
     :~  ankh+&+ank.dom.dojo
         mime+&+mim.dom.dojo
-        ford-vases+&+vases.fod.dom.dojo
+        ford-files+&+files.fod.dom.dojo
+        ford-naves+&+naves.fod.dom.dojo
         ford-marks+&+marks.fod.dom.dojo
         ford-casts+&+casts.fod.dom.dojo
+        ford-tubes+&+tubes.fod.dom.dojo
     ==
   :~  domestic+|+domestic
       foreign+&+hoy.ruf
