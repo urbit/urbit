@@ -20,12 +20,12 @@ done
 
 if [ -z "$WATCH_MODE" ]; then
     echo "Installed btc-agents"
-    rsync -r --exclude-from=$EXCLUDE_FILE * $PIER/
+    rsync -r --exclude-from=$EXCLUDE_FILE * $PIER/home/
 else
    echo "Watching for changes to copy to ${PIER}..."
    while [ 0 ]
    do
     sleep 0.8
-    rsync -r --exclude-from=$EXCLUDE_FILE * $PIER/
+    rsync -r --exclude-from=$EXCLUDE_FILE * $PIER/home/
    done
 fi

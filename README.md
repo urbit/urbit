@@ -16,7 +16,11 @@ Utilities located [here](https://github.com/timlucmiptev/urbit-bitcoin-rpc). Use
 
 ## Starting Up
 
-Do `./install.sh -w PIER_DIR` for dev work.
+Do `./install.sh -w PIER_DIR` for dev work.  `PIER_DIR` is just where your ship is located (**without** `/home`).  E.g. 
+
+```
+./install.sh -w ~/urbit/ships/timluc-miptev
+```
 
 ### Startup
 Set credentials and start agents. Use `~dopzod` and `~zod`
