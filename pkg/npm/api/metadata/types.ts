@@ -31,7 +31,7 @@ export type MetadataUpdateRemove = {
 
 export interface MdResource {
   resource: string;
-  'app-name': AppName;
+  app: AppName;
 }
 
 export interface MetadataUpdatePreview {

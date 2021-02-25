@@ -22,7 +22,7 @@ export const add = (
     group,
     resource: {
       resource,
-      'app-name': appName
+      app: appName
     },
     metadata: {
       title,
@@ -49,7 +49,7 @@ export const remove = (
     group,
     resource: {
       resource,
-      'app-name': appName
+      app: appName
     }
   }
 });
@@ -67,7 +67,7 @@ export const update = (
         group: association.group,
         resource: {
           resource: association.resource,
-          'app-name': association['app-name']
+          app: association.app
         },
         metadata
       }
