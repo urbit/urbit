@@ -303,8 +303,10 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     const ref = this.childRefs.get(this.savedIndex)!;
     //ref.scrollIntoView();
     const newScrollTop = this.window.scrollHeight - ref.offsetTop - this.savedDistance;
-    
+
+    this.window.style['-webkit-overflow-scrolling'] = 'auto';
     this.window.scrollTop = newScrollTop;
+    this.window.style['-webkit-overflow-scrolling'] = 'touch';
     requestAnimationFrame(() => {
       this.savedIndex = null;
       this.savedDistance = 0;
