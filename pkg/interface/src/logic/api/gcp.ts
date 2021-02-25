@@ -4,40 +4,20 @@ import {GcpToken} from '../types/gcp-state';
 
 
 export default class GcpApi extends BaseApi<StoreState> {
-  #running = false;
+  // Return value resolves to the token's expiry time if successful.
+  refreshToken() {
+    return this.spider('noun', 'gcp-token', 'get-gcp-token', {})
+      .then((token) => {
+        this.store.handleEvent({
+          data: token
+        });
 
-  startRefreshLoop() {
-    if (this.#running) {
-      console.error('GcpApi startRefreshLoop: already running');
-    } else {
-      this.#running = true;
-      this.refreshLoop();
-    }
-  }
-
-  private refreshLoop() {
-    console.log("GcpApi refreshLoop");
-    this.refreshToken().then(({accessKey, expiresIn}: GcpToken) => {
-      console.log("GcpApi new token");
-      // XX maybe bad?
-      this.store.state.gcp.accessKey = accessKey;
-      const timeout = this.refreshInterval(expiresIn);
-      console.log("GcpApi refreshing in", timeout);
-      setTimeout(() => {
-        this.refreshLoop();
-      }, timeout);
-    });
-  }
-
-  private refreshInterval(expiresIn: number) {
-    // Give ourselves 30 seconds for processing delays, but never refresh
-    // sooner than 10 minute from now. (The expiry window should be about an
-    // hour.)
-    return Math.max(600_000, expiresIn - 30_000);
-  }
-
-  private async refreshToken() {
-    const token = await this.spider('noun', 'gcp-token', 'get-gcp-token', {});
-    return token['gcp-token'];
+        if (token['gcp-token'] !== undefined &&
+            token['gcp-token']['expiresIn'] !== undefined &&
+            typeof(token['gcp-token']['expiresIn']) === 'number') {
+          return Promise.resolve(token['gcp-token']['expiresIn']);
+        }
+        return Promise.reject({reason: 'invalid token'});
+      });
   }
 };
