@@ -27,7 +27,7 @@ export function NotebookPosts(props: NotebookPostsProps) {
               host={props.host}
               book={props.book}
               unreads={props.unreads}
-              contact={props.contacts[node.post.author]}
+              contact={props.contacts[`~${node.post.author}`]}
               contacts={props.contacts}
               node={node}
               baseUrl={props.baseUrl}

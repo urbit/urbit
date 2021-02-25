@@ -76,20 +76,15 @@ export function GroupLink(
         pr="2"
         onClick={showModal}
         cursor='pointer'
+        opacity={preview ? '1' : '0.6'}
       >
-        {preview ? (
-          <>
-            <MetadataIcon height={6} width={6} metadata={preview.metadata} />
-            <Col>
-            <Text ml="2" fontWeight="medium">
-              {preview.metadata.title}
-            </Text>
-            <Text pt='1' ml='2'>{preview.members} members</Text>
-            </Col>
-          </>
-        ) : (
-          <Text mono>{name}</Text>
-        )}
+        <MetadataIcon height={6} width={6} metadata={preview ? preview.metadata : {"color": "0x0"}} />
+          <Col>
+          <Text ml="2" fontWeight="medium" mono={!preview}>
+            {preview ? preview.metadata.title : name}
+          </Text>
+          <Text pt='1' ml='2'>{preview ? `${preview.members} members` : "Fetching member count"}</Text>
+        </Col>
       </Row>
     </Box>
   );
