@@ -79,7 +79,7 @@
     =/  mark  (get-mark:gra rid)
     ?~  mark  `vas
     |^
-    =/  transform=$-([index:store post:store atom ?] [index:store post:store])
+    =/  transform
       !<  $-([index:store post:store atom ?] [index:store post:store])
       %.  !>(*indexed-post:store)
       .^(tube:clay (scry:hc %cc %home /[u.mark]/transform-add-nodes))
@@ -131,11 +131,12 @@
       =/  l  (lent index)
       =/  parent-modified=?
         %-  ~(rep in indices)
-        |=  [i=index:store out=?]
+        |=  [i=index:store out=_|]
         ?:  out  out
-        ?:  (lte l (lent i))
+        =/  k  (lent i)
+        ?:  (lte l k)
           %.n
-        =((swag [0 l] i) index)
+        =((swag [0 k] index) i)
       =/  [ind=index:store =post:store]
         (transform index post.node now.bowl parent-modified)
       :-  (~(put in indices) index)

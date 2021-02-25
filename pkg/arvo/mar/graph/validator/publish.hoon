@@ -41,15 +41,15 @@
     ::
         [@ %1 @ ~]
       ?:  was-parent-modified
-        [atom %1 atom ~]
-      [i.index %1 atom ~]
+        [atom %1 i.t.t.index ~]
+      index
     ::
         [@ %2 ~]      [atom %2 ~]
         [@ %2 @ ~]    [i.index %2 atom ~]
         [@ %2 @ @ ~]
       ?:  was-parent-modified
-        [i.index %2 atom atom ~]
-      [i.index %2 i.t.t.index atom ~]
+        [i.index %2 atom i.t.t.t.index ~]
+      index
     ==
   --
 ++  grab

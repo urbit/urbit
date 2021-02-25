@@ -40,8 +40,8 @@
         [@ @ ~]  [i.index atom ~]
         [@ @ @ ~]
       ?:  was-parent-modified
-        [i.index atom atom ~]
-      [i.index i.t.index atom ~]
+        [i.index atom i.t.t.index ~]
+      index
     ==
   --
 ++  grab
