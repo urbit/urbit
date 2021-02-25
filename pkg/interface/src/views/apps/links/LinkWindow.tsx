@@ -9,6 +9,7 @@ import {
   LocalUpdateRemoteContentPolicy,
   Group,
   Rolodex,
+  GcpState,
   S3State,
 } from "~/types";
 import GlobalApi from "~/logic/api/global";
@@ -29,6 +30,7 @@ interface LinkWindowProps {
   group: Group;
   path: string;
   api: GlobalApi;
+  gcp: GcpState;
   s3: S3State;
 }
 export function LinkWindow(props: LinkWindowProps) {
@@ -65,7 +67,7 @@ export function LinkWindow(props: LinkWindowProps) {
     return (
       <Col key={0} mx="auto" mt="4" maxWidth="768px" width="100%" flexShrink={0} px={3}>
         { canWrite ? (
-            <LinkSubmit s3={props.s3} name={name} ship={ship.slice(1)} api={api} />
+            <LinkSubmit gcp={props.gcp} s3={props.s3} name={name} ship={ship.slice(1)} api={api} />
           ) : (
             <Text>There are no links here yet. You do not have permission to post to this collection.</Text>
           )
@@ -96,7 +98,7 @@ export function LinkWindow(props: LinkWindowProps) {
           return (
             <React.Fragment key={index.toString()}>
             <Col key={index.toString()} mx="auto" mt="4" maxWidth="768px" width="100%" flexShrink={0} px={3}>
-              <LinkSubmit s3={props.s3} name={name} ship={ship.slice(1)} api={api} />
+              <LinkSubmit gcp={props.gcp} s3={props.s3} name={name} ship={ship.slice(1)} api={api} />
             </Col>
               <LinkItem {...linkProps} />
             </React.Fragment>
