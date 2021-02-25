@@ -138,16 +138,6 @@ export default class ChatWindow extends Component<
       this.calculateUnreadIndex();
     }
 
-    if (this.prevSize !== graph.size) {
-      if (this.state.unreadIndex.eq(bigInt.zero)) {
-        this.calculateUnreadIndex();
-        this.scrollToUnread();
-      }
-      this.prevSize = graph.size;
-      //this.virtualList?.calculateVisibleItems();
-      this.stayLockedIfActive();
-    }
-
     if (station !== prevProps.station) {
       this.virtualList?.resetScroll();
       this.calculateUnreadIndex();
@@ -229,6 +219,71 @@ export default class ChatWindow extends Component<
     }
   }
 
+  renderer = React.forwardRef(({ index, shiftLayout, scrollWindow }, ref) => {
+    const {
+      api,
+      association,
+      group,
+      contacts,
+      graph,
+      history,
+      groups,
+      associations
+    } = this.props;
+    const { unreadMarkerRef } = this;
+    const messageProps = {
+      association,
+      group,
+      contacts,
+      unreadMarkerRef,
+      history,
+      api,
+      groups,
+      associations
+    };
+    const msg = graph.get(index)?.post;
+    if (!msg) return null;
+    if (!this.state.initialized) {
+      return (
+        <MessagePlaceholder
+          key={index.toString()}
+          height='64px'
+          index={index}
+        />
+      );
+    }
+    const isPending: boolean = 'pending' in msg && Boolean(msg.pending);
+    const isLastMessage = index.eq(
+      graph.peekLargest()?.[0] ?? bigInt.zero
+    );
+    const highlighted = bigInt(this.props.scrollTo || -1).eq(index);
+
+    const keys = graph.keys().reverse();
+    const graphIdx = keys.findIndex((idx) => idx.eq(index));
+    const prevIdx = keys[graphIdx + 1];
+    const nextIdx = keys[graphIdx - 1];
+    const isLastRead: boolean = this.state.unreadIndex.eq(index);
+    const props = {
+      highlighted,
+      scrollWindow,
+      isPending,
+      isLastRead,
+      isLastMessage,
+      msg,
+      shiftLayout,
+      ...messageProps
+    };
+    return (
+      <ChatMessage
+        key={index.toString()}
+        ref={ref}
+        previousMsg={prevIdx && graph.get(prevIdx)?.post}
+        nextMsg={nextIdx && graph.get(nextIdx)?.post}
+        {...props}
+      />
+    );
+  });
+
   render() {
     const {
       unreadCount,
@@ -255,7 +310,6 @@ export default class ChatWindow extends Component<
       groups,
       associations
     };
-    const keys = graph.keys().reverse();
     const unreadIndex = graph.keys()[this.props.unreadCount];
     const unreadMsg = unreadIndex && graph.get(unreadIndex);
 
@@ -287,48 +341,7 @@ export default class ChatWindow extends Component<
           data={graph}
           size={graph.size}
           id={association.resource}
-          renderer={({ index, shiftLayout, measure, scrollWindow, ref }) => {
-            const msg = graph.get(index)?.post;
-            if (!msg) return null;
-            if (!this.state.initialized) {
-              return (
-                <MessagePlaceholder
-                  key={index.toString()}
-                  height='64px'
-                  index={index}
-                />
-              );
-            }
-            const isPending: boolean = 'pending' in msg && Boolean(msg.pending);
-            const isLastMessage = index.eq(
-              graph.peekLargest()?.[0] ?? bigInt.zero
-            );
-            const highlighted = bigInt(this.props.scrollTo || -1).eq(index);
-            const graphIdx = keys.findIndex((idx) => idx.eq(index));
-            const prevIdx = keys[graphIdx + 1];
-            const nextIdx = keys[graphIdx - 1];
-            const isLastRead: boolean = this.state.unreadIndex.eq(index);
-            const props = {
-              measure,
-              ref,
-              highlighted,
-              scrollWindow,
-              isPending,
-              isLastRead,
-              isLastMessage,
-              msg,
-              shiftLayout,
-              ...messageProps
-            };
-            return (
-              <ChatMessage
-                key={index.toString()}
-                previousMsg={prevIdx && graph.get(prevIdx)?.post}
-                nextMsg={nextIdx && graph.get(nextIdx)?.post}
-                {...props}
-              />
-            );
-          }}
+          renderer={this.renderer}
           loadRows={this.fetchMessages.bind(this)}
         />
       </Col>

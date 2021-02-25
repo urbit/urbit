@@ -63,19 +63,23 @@ class RemoteContent extends Component<RemoteContentProps, RemoteContentState> {
     unfoldState = !unfoldState;
     this.props.shiftLayout.save();
     this.setState({ unfold: unfoldState });
+    requestAnimationFrame(() => {
+      this.props.shiftLayout.restore();
+
+    });
   }
 
 
   componentDidUpdate(prevProps, prevState) {
     if(prevState.embed !== this.state.embed) {
-      console.log('remotecontent: restoring');
-      prevProps.shiftLayout.restore();
+      //console.log('remotecontent: restoring');
+      //prevProps.shiftLayout.restore();
     }
   }
 
   onLoad = () => {
     window.requestAnimationFrame(() => {
-      this.props.shiftLayout.restore();
+      //this.props.shiftLayout.restore();
     });
 
   }
