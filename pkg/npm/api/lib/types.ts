@@ -20,7 +20,7 @@ export type Serial = string;
 export type Jug<K,V> = Map<K,Set<V>>;
 
 // name of app
-export type AppName = 'chat' | 'link' | 'contacts' | 'publish' | 'graph';
+export type AppName = 'chat' | 'link' | 'contacts' | 'publish' | 'graph' | 'groups';
 
 export type ShipRank = 'czar' | 'king' | 'duke' | 'earl' | 'pawn';
 
@@ -52,6 +52,11 @@ export interface Poke<Action> {
   app: string;
   mark: Mark;
   json: Action;
+}
+
+export interface Scry {
+  app: string;
+  path: string;
 }
 
 export interface Thread<Action> {
