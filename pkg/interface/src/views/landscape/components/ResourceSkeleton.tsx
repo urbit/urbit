@@ -46,11 +46,13 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
     ? getItemTitle(association)
     : association?.metadata?.title;
 
-  let recipient = false;
+  let recipient = "";
 
   if (urbitOb.isValidPatp(title)) {
     recipient = title;
     title = (props.contacts?.[title]?.nickname) ? props.contacts[title].nickname : title;
+  } else {
+    recipient = Array.from(group.members).map(e => `~${e}`).join(", ")
   }
 
   const [, , ship, resource] = rid.split('/');
