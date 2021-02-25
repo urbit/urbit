@@ -56,8 +56,7 @@ class GcpManager {
     this.#api.gcp.refreshToken()
       .then(
         (expiresIn: number) => {
-          const interval = this.refreshInterval(expiresIn);
-          this.refreshAfter(interval);
+          this.refreshAfter(this.refreshInterval(expiresIn));
         })
       .catch(
         ({reason}) => {
