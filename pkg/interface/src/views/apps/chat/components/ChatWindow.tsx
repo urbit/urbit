@@ -219,7 +219,7 @@ export default class ChatWindow extends Component<
     }
   }
 
-  renderer = React.forwardRef(({ index, shiftLayout, scrollWindow }, ref) => {
+  renderer = React.forwardRef(({ index, scrollWindow }, ref) => {
     const {
       api,
       association,
@@ -270,7 +270,6 @@ export default class ChatWindow extends Component<
       isLastRead,
       isLastMessage,
       msg,
-      shiftLayout,
       ...messageProps
     };
     return (

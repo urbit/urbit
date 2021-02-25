@@ -4,8 +4,9 @@ import { hasProvider } from 'oembed-parser';
 import EmbedContainer from 'react-oembed-container';
 import { withLocalState } from '~/logic/state/local';
 import { RemoteContentPolicy } from '~/types/local-update';
+import { VirtualContextProps, withVirtual } from "~/logic/lib/virtualContext";
 
-interface RemoteContentProps {
+type RemoteContentProps = VirtualContextProps & {
   url: string;
   text?: string;
   unfold?: boolean;
@@ -17,11 +18,6 @@ interface RemoteContentProps {
   oembedProps?: any;
   textProps?: any;
   style?: any;
-  onLoad?(): void;
-  shiftLayout: {
-    save: () => void;
-    restore: () => void;
-  }
 }
 
 interface RemoteContentState {
@@ -61,11 +57,10 @@ class RemoteContent extends Component<RemoteContentProps, RemoteContentState> {
     event.stopPropagation();
     let unfoldState = this.state.unfold;
     unfoldState = !unfoldState;
-    this.props.shiftLayout.save();
+    this.props.save();
     this.setState({ unfold: unfoldState });
     requestAnimationFrame(() => {
-      this.props.shiftLayout.restore();
-
+      this.props.restore();
     });
   }
 
@@ -79,7 +74,6 @@ class RemoteContent extends Component<RemoteContentProps, RemoteContentState> {
 
   onLoad = () => {
     window.requestAnimationFrame(() => {
-      //this.props.shiftLayout.restore();
     });
 
   }
@@ -242,4 +236,4 @@ return;
   }
 }
 
-export default withLocalState(RemoteContent, ['remoteContentPolicy']);
+export default withLocalState(withVirtual(RemoteContent), ['remoteContentPolicy']);

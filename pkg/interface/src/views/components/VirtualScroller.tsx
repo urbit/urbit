@@ -5,13 +5,10 @@ import bigInt, { BigInteger } from 'big-integer';
 
 import { Box } from '@tlon/indigo-react';
 import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
+import {VirtualContext} from '~/logic/lib/virtualContext';
 
 interface RendererProps {
   index: BigInteger;
-  shiftLayout: {
-    save: () => void;
-    restore: () => void;
-  }
   scrollWindow: any;
   ref: (el: HTMLElement | null) => void;
 }
@@ -241,7 +238,6 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     }
     const done = await this.props.loadRows(newer);
     if(done) {
-      this.dirtied = dir;
       this.loaded[dir] = true;
     }
   }
@@ -249,10 +245,6 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
   onScroll(event: UIEvent) {
     if(!this.window) {
       // bail if we're going to adjust scroll anyway
-      return;
-    }
-    if(!this.scrollAck) {
-      this.scrollAck = true;
       return;
     }
     if(this.saveDepth > 0) {
@@ -263,7 +255,7 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     const { scrollTop, scrollHeight } = this.window;
 
     const startOffset = this.startOffset();
-    if (scrollTop !== 0 && scrollTop < 30) {
+    if (scrollTop < 30) {
       console.log(scrollTop);
       console.log('start');
       if (onStartReached) {
@@ -306,13 +298,13 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     if(this.saveDepth !== 1) {
       return;
     }
+    console.log(this.childRefs.size);
   
     const ref = this.childRefs.get(this.savedIndex)!;
-    ref.scrollIntoView();
-    //const newScrollTop = this.window.scrollHeight - offsetTop - this.savedDistance;
+    //ref.scrollIntoView();
+    const newScrollTop = this.window.scrollHeight - ref.offsetTop - this.savedDistance;
     
-    this.scrollAck = false;
-    //this.window.scrollTop = newScrollTop;
+    this.window.scrollTop = newScrollTop;
     requestAnimationFrame(() => {
       this.savedIndex = null;
       this.savedDistance = 0;
@@ -387,16 +379,17 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
       <Box overflowY='scroll' ref={this.setWindow} onScroll={this.onScroll} style={{ ...style, ...{ transform } }}>
         <Box style={{ transform, width: '100%' }}>
           <Box style={{ height: `${origin === 'top' ? startgap : endgap}px` }}></Box>
-      {indexesToRender.map(index => (
-        <VirtualChild
-          key={index.toString()}
-          shiftLayout={this.shiftLayout}
-          setRef={this.setRef}
-          index={index}
-          scrollWindow={this.window}
-          renderer={renderer} 
-        />
-      ))}
+          <VirtualContext.Provider value={this.shiftLayout}>
+            {indexesToRender.map(index => (
+              <VirtualChild
+                key={index.toString()}
+                setRef={this.setRef}
+                index={index}
+                scrollWindow={this.window}
+                renderer={renderer} 
+              />
+            ))}
+          </VirtualContext.Provider>
           <Box style={{ height: `${origin === 'top' ? endgap : startgap}px` }}></Box>
         </Box>
       </Box>
@@ -406,10 +399,6 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
 
 interface VirtualChildProps {
   index: BigInteger;
-  shiftLayout: {
-    save: () => void;
-    restore: () => void;
-  }
   scrollWindow: any;
   setRef: (el: HTMLElement | null, index: BigInteger) => void;
   renderer: (p: RendererProps) => JSX.Element | null;

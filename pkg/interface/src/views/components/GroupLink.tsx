@@ -9,6 +9,7 @@ import { JoinGroup } from '../landscape/components/JoinGroup';
 import { useModal } from '~/logic/lib/useModal';
 import { GroupSummary } from '../landscape/components/GroupSummary';
 import { PropFunc } from '~/types';
+import {useVirtual} from '~/logic/lib/virtualContext';
 
 export function GroupLink(
   props: {
@@ -16,15 +17,16 @@ export function GroupLink(
     resource: string;
     associations: Associations;
     groups: Groups;
-    measure: () => void;
     detailed?: boolean;
   } & PropFunc<typeof Row>
 ): ReactElement {
-  const { resource, api, associations, groups, measure, ...rest } = props;
+  const { resource, api, associations, groups, ...rest } = props;
   const name = resource.slice(6);
   const [preview, setPreview] = useState<MetadataUpdatePreview | null>(null);
 
   const joined = resource in props.associations.groups;
+
+  const { save, restore } = useVirtual();
 
   const { modal, showModal } = useModal({
     modal:
@@ -48,16 +50,19 @@ export function GroupLink(
 
   useEffect(() => {
     (async () => {
-      setPreview(await api.metadata.preview(resource));
+      const prev = await api.metadata.preview(resource);
+      save();
+      setPreview(prev);
     })();
 
     return () => {
+      save();
       setPreview(null);
     };
   }, [resource]);
 
   useLayoutEffect(() => {
-    measure();
+    restore();
   }, [preview]);
 
   return (

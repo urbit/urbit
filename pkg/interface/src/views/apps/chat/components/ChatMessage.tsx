@@ -96,10 +96,6 @@ interface ChatMessageProps {
   highlighted?: boolean;
   renderSigil?: boolean;
   innerRef: (el: HTMLDivElement | null) => void;
-  shiftLayout: {
-    save: () => void;
-    restore: () => void;
-  }
 }
 
 class ChatMessage extends Component<ChatMessageProps> {
@@ -132,7 +128,6 @@ class ChatMessage extends Component<ChatMessageProps> {
       api,
       highlighted,
       fontSize,
-      shiftLayout,
       groups,
       associations
     } = this.props;
@@ -175,7 +170,6 @@ class ChatMessage extends Component<ChatMessageProps> {
       fontSize,
       associations,
       groups,
-      shiftLayout
     };
 
     const unreadContainerStyle = {
@@ -367,7 +361,6 @@ export const Message = ({
   contacts,
   msg,
   group,
-  shiftLayout,
   api,
   associations,
   groups,
@@ -400,7 +393,6 @@ export const Message = ({
                 <TextContent
                   associations={associations}
                   groups={groups}
-                  shiftLayout={shiftLayout}
                   api={api}
                   fontSize={1}
                   lineHeight={'20px'}
@@ -419,7 +411,6 @@ export const Message = ({
                 >
                   <RemoteContent
                     url={content.url}
-                    shiftLayout={shiftLayout}
                     imageProps={{
                       style: {
                         maxWidth: 'min(100%,18rem)',
