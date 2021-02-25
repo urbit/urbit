@@ -104,27 +104,19 @@
   resources.q.update
 ::
 ++  tap-deep
-  |=  =graph:store
+  |=  [=index:store =graph:store]
   ^-  (list [index:store node:store])
-  =|  =index:store
-  =/  nodes=(list [atom node:store])
-    (tap:orm:store graph)
-  |-  =*  tap-nodes  $
-  ^-  (list [index:store node:store])
-  %-  zing
-  %+  turn
-    nodes
-  |=  [=atom =node:store]
-  ^-  (list [index:store node:store])
-  %+  welp
-    ^-  (list [index:store node:store])
-    [(snoc index atom) node]~
-  ?.  ?=(%graph -.children.node)
-    ~
-  %_  tap-nodes
-    index  (snoc index atom)
-    nodes  (tap:orm:store p.children.node)
-  ==
+  %+  roll  (tap:orm:store graph)
+  |=  $:  [=atom =node:store]
+          lis=(list [index:store node:store])
+      ==
+  =/  child-index     (snoc index atom)
+  =/  childless-node  node(children [%empty ~])
+  ?:  ?=(%empty -.children.node)
+    (snoc lis [child-index childless-node])
+  %+  weld
+    (snoc lis [child-index childless-node])
+  (tap-deep child-index p.children.node)
 ::
 ++  get-mark
   |=  res=resource

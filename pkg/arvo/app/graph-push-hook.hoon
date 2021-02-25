@@ -105,7 +105,9 @@
       ^-  (list [index:store node:store])
       ?:  ?=(%empty -.children.node)
         ~
-      (turn (tap-deep:gra p.children.node) empty-children)
+      %+  turn
+        (tap-deep:gra index p.children.node)
+      empty-children
       ::
       ++  empty-children
         |=  [=index:store =node:store]
