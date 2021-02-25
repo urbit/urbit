@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Box, Row, Icon, Text } from '@tlon/indigo-react';
 import defaultApps from '~/logic/lib/default-apps';
 import Sigil from '~/logic/lib/sigil';
-import { uxToHex } from '~/logic/lib/util';
+import { uxToHex, cite } from '~/logic/lib/util';
 
 export class OmniboxResult extends Component {
   constructor(props) {
@@ -99,7 +99,7 @@ export class OmniboxResult extends Component {
         style={{ flexShrink: 0 }}
         mr='1'
         >
-          {text}
+          {text.startsWith("~") ? cite(text) : text}
         </Text>
         <Text pr='2'
         display="inline-block"
