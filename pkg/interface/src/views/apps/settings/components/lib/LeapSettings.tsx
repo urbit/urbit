@@ -22,7 +22,7 @@ import { ShuffleFields } from "~/views/components/ShuffleFields";
 const labels: Record<LeapCategories, string> = {
   mychannel: "My Channel",
   updates: "Notifications",
-  profile: "Profile and Settings",
+  profile: "Profile",
   messages: "Messages",
   logout: "Log Out",
 };

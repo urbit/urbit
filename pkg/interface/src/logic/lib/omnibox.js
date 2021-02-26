@@ -75,7 +75,7 @@ const otherIndex = function(config) {
   const idx = {
     mychannel: result('My Channels', '/~landscape/home', 'home', null),
     updates: result('Notifications', '/~notifications', 'inbox', null),
-    profile: result('Profile and Settings', `/~profile/~${window.ship}`, 'profile', null),
+    profile: result('Profile', `/~profile/~${window.ship}`, 'profile', null),
     messages: result('Messages', '/~landscape/messages', 'messages', null),
     logout: result('Log Out', '/~/logout', 'logout', null)
   };
