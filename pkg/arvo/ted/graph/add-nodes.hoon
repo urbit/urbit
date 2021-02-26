@@ -108,11 +108,11 @@
 ::
 ++  nodes-to-pending-indices
   |=  nodes=(map index:store node:store)
-  ^-  (map index:store hash:store)
-  %-  ~(gas by *(map index:store hash:store))
+  ^-  (map hash:store index:store)
+  %-  ~(gas by *(map hash:store index:store))
   %+  turn  ~(tap by nodes)
   |=  [=index:store =node:store]
-  ^-  [index:store hash:store]
+  ^-  [hash:store index:store]
   ?>  ?=(^ hash.post.node)
-  [index u.hash.post.node]
+  [u.hash.post.node index]
 --

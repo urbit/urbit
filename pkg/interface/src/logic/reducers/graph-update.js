@@ -123,6 +123,10 @@ const addNodes = (json, state) => {
     }
     state.graphKeys.add(resource);
 
+    //  TODO: 
+    //  check if any of these hashes already exist. if they do, delete the 
+    //  old index before adding
+
     for (let index in data.nodes) {
       let node = data.nodes[index];
       if (index.split('/').length === 0) { return; }

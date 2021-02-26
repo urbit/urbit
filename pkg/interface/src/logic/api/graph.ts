@@ -192,6 +192,15 @@ export default class GraphApi extends BaseApi<StoreState> {
     });
   }
 
+  addHashedNodes(action: Object) {
+    return this.spider(
+      'graph-update',
+      'graph-view-action',
+      'graph-add-nodes',
+      action
+    );
+  }
+
   addGraph(ship: Patp, name: string, graph: any, mark: any) {
     return this.storeAction({
       'add-graph': {
@@ -226,7 +235,12 @@ export default class GraphApi extends BaseApi<StoreState> {
       }
     };
 
-    const promise = this.hookAction(ship, action);
+    //  TODO: send a request to the -graph-add-nodes thread and wait for its return
+    //  once it returns, it should give us a { pending: {'/1': '0x.239823'} } 
+    //  then, mark those pending nodes with their corresponding hash
+    //  and store the pending map we were given
+    //const promise = this.hookAction(ship, action);
+    const promise = this.addHashedNodes(action);
     markPending(action['add-nodes'].nodes);
     action['add-nodes'].resource.ship = action['add-nodes'].resource.ship.slice(1);
     console.log(action);

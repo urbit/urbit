@@ -53,7 +53,7 @@
           to+(uf ~ (mu dejs:resource))
       ==
     ::
-    ++  pending-indices  (op ;~(pfix fas (more fas dem)) nu)
+    ++  pending-indices  (op nu ;~(pfix fas (more fas dem)))
     ::  NOTE: move these functions to zuse
     ++  nu                                              ::  parse number as hex
       |=  jon=json
@@ -79,7 +79,7 @@
     %+  frond  %pending-indices
     :-  %a
     %+  turn  ~(tap by pending.act)
-    |=  [i=index:store h=hash:store]
+    |=  [h=hash:store i=index:store]
     %-  pairs
     :~  [%index (index i)]
         [%hash s+(scot %ux h)]
