@@ -8,10 +8,10 @@ interface LoadingProps {
 }
 export function Loading({ text }: LoadingProps) {
   return (
-    <Body>
+    <Body border="0">
       <Center height="100%">
         <LoadingSpinner />
-        {Boolean(text) && <Text>{text}</Text>}
+        {Boolean(text) && <Text ml={4}>{text}</Text>}
       </Center>
     </Body>
   );
