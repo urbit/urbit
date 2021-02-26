@@ -48,16 +48,16 @@ const getNicknameForShips = (groups: Groups, contacts: Rolodex): readonly [strin
       }
     }
 
-    const groupContacts = contacts[path];
+    const groupContacts = contacts;
 
     if (groupContacts) {
       const groupEntries = group.members.values();
       for (const member of groupEntries) {
-        if (groupContacts[member]) {
+        if (groupContacts[`~${member}`]) {
           if (nicknames.has(member)) {
-            nicknames.get(member)?.push(groupContacts[member].nickname);
+            nicknames.get(member)?.push(groupContacts[`~${member}`].nickname);
           } else {
-            nicknames.set(member, [groupContacts[member].nickname]);
+            nicknames.set(member, [groupContacts[`~${member}`].nickname]);
           }
         }
       }
@@ -78,6 +78,7 @@ const Candidate = ({ title, detail, selected, onClick }): ReactElement => (
     bg="white"
     color="black"
     fontSize={0}
+    cursor="pointer"
     p={1}
     width="100%"
   >

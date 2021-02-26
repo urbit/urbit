@@ -1,8 +1,8 @@
-import { Post } from "../graph/index.d";
-import { GroupUpdate } from "../groups/index.d";
+import { Post } from "../graph/types";
+import { GroupUpdate } from "../groups/types";
 import BigIntOrderedMap from "../lib/BigIntOrderedMap";
 
-export type GraphNotifDescription = "link" | "comment" | "note" | "mention";
+export type GraphNotifDescription = "link" | "comment" | "note" | "mention" | "message";
 
 export interface UnreadStats {
   unreads: Set<string> | number;

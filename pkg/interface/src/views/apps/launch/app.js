@@ -21,7 +21,7 @@ import { Helmet } from 'react-helmet';
 import useLocalState from "~/logic/state/local";
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
 import { useQuery } from "~/logic/lib/useQuery";
-import { 
+import {
   hasTutorialGroup,
   TUTORIAL_GROUP,
   TUTORIAL_HOST,
@@ -46,17 +46,14 @@ export default function LaunchApp(props) {
   const hashBox = (
     <Box
       position={["relative", "absolute"]}
-      fontFamily="mono"
       left="0"
       bottom="0"
-      color="washedGray"
-      bg="white"
+      backgroundColor="white"
       ml={3}
       mb={3}
       borderRadius={2}
+      overflow='hidden'
       fontSize={0}
-      p={2}
-      boxShadow="0 0 0px 1px inset"
       cursor="pointer"
       onClick={() => {
         writeText(props.baseHash);
@@ -66,7 +63,9 @@ export default function LaunchApp(props) {
         }, 2000);
       }}
     >
-      <Text color="gray">{hashText || props.baseHash}</Text>
+      <Box backgroundColor="washedGray" p={2}>
+        <Text mono bold>{hashText || props.baseHash}</Text>
+      </Box>
     </Box>
   );
 
@@ -87,7 +86,7 @@ export default function LaunchApp(props) {
   const waiter = useWaitForProps(props);
 
   const { modal, showModal } = useModal({
-    position: 'relative', 
+    position: 'relative',
     maxWidth: '350px',
     modal: (dismiss) => {
       const onDismiss = (e) => {
@@ -120,7 +119,7 @@ export default function LaunchApp(props) {
         </Box>
         <Text lineHeight="tall" fontWeight="medium">Welcome</Text>
         <Text lineHeight="tall">
-          You have been invited to use Landscape, an interface to chat 
+          You have been invited to use Landscape, an interface to chat
           and interact with communities
           <br />
           Would you like a tour of Landscape?
@@ -183,22 +182,22 @@ export default function LaunchApp(props) {
           />
           <ModalButton
             icon="Plus"
-            bg="blue"
-            color="#fff"
-            text="Join a Group"
+            bg="washedGray"
+            color="black"
+            text="New Group"
             style={{ gridColumnStart: 1 }}
-          >
-            <JoinGroup {...props} />
-          </ModalButton>
-          <ModalButton
-            icon="CreateGroup"
-            bg="green"
-            color="#fff"
-            text="Create Group"
           >
             <NewGroup {...props} />
           </ModalButton>
-          {!hideGroups && 
+          <ModalButton
+            icon="Boot"
+            bg="washedGray"
+            color="black"
+            text="Join Group"
+          >
+            <JoinGroup {...props} />
+          </ModalButton>
+          {!hideGroups &&
             (<Groups unreads={props.unreads} groups={props.groups} associations={props.associations} />)
           }
         </Box>

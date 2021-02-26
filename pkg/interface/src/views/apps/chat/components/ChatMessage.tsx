@@ -191,7 +191,6 @@ export default class ChatMessage extends Component<ChatMessageProps> {
         ref={this.divRef}
         pt={renderSigil ? 2 : 0}
         pb={isLastMessage ? 4 : 2}
-        pr={5}
         className={containerClass}
         style={style}
       >
@@ -201,10 +200,10 @@ export default class ChatMessage extends Component<ChatMessageProps> {
         {renderSigil ? (
           <>
             <MessageAuthor pb={'2px'} {...messageProps} />
-            <Message pl={5} pr={3} {...messageProps} />
+            <Message pl={5} pr={4} {...messageProps} />
           </>
         ) : (
-          <Message pl={5} pr={3} timestampHover {...messageProps} />
+          <Message pl={5} pr={4} timestampHover {...messageProps} />
         )}
         <Box style={unreadContainerStyle}>
           {isLastRead ? (

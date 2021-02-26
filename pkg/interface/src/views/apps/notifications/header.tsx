@@ -15,7 +15,7 @@ const Text = (props: PropFunc<typeof Text>) => (
 );
 
 function Author(props: { patp: string; contacts: Contacts; last?: boolean }): ReactElement {
-  const contact: Contact | undefined = props.contacts?.[props.patp];
+  const contact: Contact | undefined = props.contacts?.[`~${props.patp}`];
 
   const showNickname = useShowNickname(contact);
   const name = contact?.nickname || `~${props.patp}`;
@@ -40,8 +40,7 @@ export function Header(props: {
   read: boolean;
   associations: Associations;
 } & PropFunc<typeof Row> ): ReactElement {
-  const { description, channel, group, moduleIcon, read } = props;
-  const contacts = props.contacts[group] || {};
+  const { description, channel, contacts, moduleIcon, read } = props;
 
   const authors = _.uniq(props.authors);
 

@@ -41,6 +41,7 @@ const Candidate = ({ title, selected, onClick }): ReactElement => (
   <CandidateBox
     onClick={onClick}
     selected={selected}
+    cursor="pointer"
     borderColor="washedGray"
     color="black"
     fontSize={0}
@@ -145,7 +146,7 @@ export function GroupSearch<I extends string, V extends FormValues<I>>(props: Gr
                 disabled={props.maxLength ? value.length >= props.maxLength : false}
                 renderCandidate={renderCandidate}
                 search={(s: string, a: Association) =>
-                  a.metadata.title.toLowerCase().startsWith(s.toLowerCase())
+                  a.metadata.title.toLowerCase().includes(s.toLowerCase())
                 }
                 getKey={(a: Association) => a.group}
                 onSelect={onSelect}
