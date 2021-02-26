@@ -139,8 +139,6 @@ class App extends React.Component {
     const theme = props.dark ? dark : light;
     const background = this.props.background;
 
-    const notificationsCount = state.notificationsCount || 0;
-    const doNotDisturb = state.doNotDisturb || false;
     const ourContact = this.props.contacts[`~${this.ship}`] || null;
 
     return (
@@ -163,8 +161,6 @@ class App extends React.Component {
                 connection={this.state.connection}
                 subscription={this.subscription}
                 ship={this.ship}
-                doNotDisturb={doNotDisturb}
-                notificationsCount={notificationsCount}
               />
             </ErrorBoundary>
             <ErrorBoundary>
@@ -173,7 +169,6 @@ class App extends React.Component {
                 apps={state.launch}
                 tiles={state.launch.tiles}
                 api={this.api}
-                notifications={state.notificationsCount}
                 invites={state.invites}
                 show={this.props.omniboxShown}
                 toggle={this.props.toggleOmnibox}

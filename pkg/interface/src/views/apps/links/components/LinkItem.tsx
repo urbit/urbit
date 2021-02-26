@@ -10,6 +10,7 @@ import { roleForShip } from '~/logic/lib/group';
 import GlobalApi from '~/logic/api/global';
 import { Dropdown } from '~/views/components/Dropdown';
 import RemoteContent from '~/views/components/RemoteContent';
+import useHarkState from '~/logic/state/hark';
 
 interface LinkItemProps {
   node: GraphNode;
@@ -17,7 +18,6 @@ interface LinkItemProps {
   api: GlobalApi;
   group: Group;
   path: string;
-  unreads: Unreads;
   measure: (el: any) => void;
 }
 
@@ -89,8 +89,9 @@ export const LinkItem = (props: LinkItemProps): ReactElement => {
   };
 
   const appPath = `/ship/~${resource}`;
-  const commColor = (props.unreads.graph?.[appPath]?.[`/${index}`]?.unreads ?? 0) > 0 ? 'blue' : 'gray';
-  const isUnread = props.unreads.graph?.[appPath]?.['/']?.unreads?.has(node.post.index);
+  const unreads = useHarkState(state => state.unreads);
+  const commColor = (unreads.graph?.[appPath]?.[`/${index}`]?.unreads ?? 0) > 0 ? 'blue' : 'gray';
+  const isUnread = unreads.graph?.[appPath]?.['/']?.unreads?.has(node.post.index);
 
   const onMeasure = useCallback(() => {
     ref.current && measure(ref.current);

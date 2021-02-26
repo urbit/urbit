@@ -10,6 +10,7 @@ import { useGraphModule } from './Sidebar/Apps';
 import { Body } from '~/views/components/Body';
 import { Workspace } from '~/types/workspace';
 import useGraphState from '~/logic/state/graph';
+import useHarkState from '~/logic/state/hark';
 
 interface SkeletonProps {
   contacts: Rolodex;
@@ -26,13 +27,13 @@ interface SkeletonProps {
   subscription: GlobalSubscription;
   includeUnmanaged: boolean;
   workspace: Workspace;
-  unreads: unknown;
 }
 
 export function Skeleton(props: SkeletonProps): ReactElement {
   const graphs = useGraphState(state => state.graphs);
   const graphKeys = useGraphState(state => state.graphKeys);
-  const graphConfig = useGraphModule(graphKeys, graphs, props.unreads.graph);
+  const unreads = useHarkState(state => state.unreads);
+  const graphConfig = useGraphModule(graphKeys, graphs, unreads.graph);
   const config = useMemo(
     () => ({
       graph: graphConfig

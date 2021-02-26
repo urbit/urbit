@@ -30,9 +30,7 @@ export function LinkResource(props: LinkResourceProps) {
     baseUrl,
     groups,
     associations,
-    unreads,
     s3,
-    history
   } = props;
 
   const rid = association.resource;
@@ -71,7 +69,6 @@ export function LinkResource(props: LinkResourceProps) {
                 association={resource}
                 resource={resourcePath}
                 graph={graph}
-                unreads={unreads}
                 baseUrl={resourceUrl}
                 group={group}
                 path={resource.group}
@@ -105,7 +102,6 @@ export function LinkResource(props: LinkResourceProps) {
                   resource={resourcePath}
                   node={node}
                   baseUrl={resourceUrl}
-                  unreads={unreads}
                   group={group}
                   path={resource?.group}
                   api={api}
@@ -118,7 +114,6 @@ export function LinkResource(props: LinkResourceProps) {
                   comments={node}
                   resource={resourcePath}
                   association={association}
-                  unreads={unreads}
                   api={api}
                   editCommentId={editCommentId}
                   history={props.history}

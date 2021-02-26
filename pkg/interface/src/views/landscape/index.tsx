@@ -18,6 +18,7 @@ import { Loading } from '../components/Loading';
 import { Workspace } from '~/types/workspace';
 import GlobalSubscription from '~/logic/subscription/global';
 import useGraphState from '~/logic/state/graph';
+import { withHarkState } from '~/logic/state/hark';
 
 type LandscapeProps = StoreState & {
   ship: PatpNoSig;
@@ -65,7 +66,7 @@ export function DMRedirect(props: LandscapeProps & RouteComponentProps & { ship:
   );
 }
 
-export default class Landscape extends Component<LandscapeProps, Record<string, never>> {
+class Landscape extends Component<LandscapeProps, Record<string, never>> {
   componentDidMount(): void {
     this.props.subscription.startApp('groups');
     this.props.subscription.startApp('graph');
@@ -155,3 +156,4 @@ export default class Landscape extends Component<LandscapeProps, Record<string, 
   }
 }
 
+export default withHarkState(Landscape);

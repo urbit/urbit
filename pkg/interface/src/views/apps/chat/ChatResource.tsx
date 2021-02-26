@@ -20,6 +20,7 @@ import './css/custom.css';
 import useContactState from '~/logic/state/contacts';
 import useGraphState from '~/logic/state/graph';
 import useGroupState from '~/logic/state/groups';
+import useHarkState from '~/logic/state/hark';
 
 type ChatResourceProps = StoreState & {
   association: Association;
@@ -37,7 +38,8 @@ export function ChatResource(props: ChatResourceProps) {
   const graph = graphs[station.slice(7)];
   const graphKeys = useGraphState(state => state.graphKeys);
   const isChatMissing = !graphKeys.has(station.slice(7));
-  const unreadCount = props.unreads.graph?.[station]?.['/']?.unreads || 0;
+  const unreads = useHarkState(state => state.unreads);
+  const unreadCount = unreads.graph?.[station]?.['/']?.unreads || 0;
   const [,, owner, name] = station.split('/');
   const ourContact = contacts?.[`~${window.ship}`];
   const chatInput = useRef<ChatInput>();

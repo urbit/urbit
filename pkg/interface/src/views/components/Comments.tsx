@@ -13,6 +13,7 @@ import tokenizeMessage from '~/logic/lib/tokenizeMessage';
 import { getUnreadCount } from '~/logic/lib/hark';
 import { PropFunc } from '~/types/util';
 import { isWriter } from '~/logic/lib/group';
+import useHarkState from '~/logic/state/hark';
 
 interface CommentsProps {
   comments: GraphNode;
@@ -108,7 +109,8 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
     };
   }, [comments.post.index]);
 
-  const readCount = children.length - getUnreadCount(props?.unreads, association.resource, parentIndex);
+  const unreads = useHarkState(state => state.unreads);
+  const readCount = children.length - getUnreadCount(unreads, association.resource, parentIndex);
 
   const canComment = isWriter(group, association.resource) || association.metadata.vip === 'reader-comments';
 

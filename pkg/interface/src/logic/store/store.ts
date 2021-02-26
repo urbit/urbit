@@ -109,7 +109,7 @@ export default class GlobalStore extends BaseStore<StoreState> {
     this.launchReducer.reduce(data, this.state);
     this.connReducer.reduce(data, this.state);
     GraphReducer(data);
-    HarkReducer(data, this.state);
+    HarkReducer(data);
     ContactReducer(data);
     this.settingsReducer.reduce(data, this.state);
     GroupViewReducer(data, this.state);

@@ -29,6 +29,7 @@ import { GroupSummary } from './GroupSummary';
 import { Workspace } from '~/types/workspace';
 import useContactState from '~/logic/state/contacts';
 import useGroupState from '~/logic/state/groups';
+import useHarkState from '~/logic/state/hark';
 
 type GroupsPaneProps = StoreState & {
   baseUrl: string;
@@ -39,6 +40,7 @@ type GroupsPaneProps = StoreState & {
 export function GroupsPane(props: GroupsPaneProps) {
   const { baseUrl, associations, api, workspace } = props;
   const contacts = useContactState(state => state.contacts);
+  const notificationsCount = useHarkState(state => state.notificationsCount);
   const relativePath = (path: string) => baseUrl + path;
   const groupPath = getGroupFromWorkspace(workspace);
   const groups = useGroupState(state => state.groups);
@@ -75,7 +77,6 @@ export function GroupsPane(props: GroupsPaneProps) {
           group={group!}
           api={api}
           s3={props.s3}
-          notificationsGroupConfig={props.notificationsGroupConfig}
           associations={associations}
 
           {...routeProps}
@@ -147,7 +148,7 @@ export function GroupsPane(props: GroupsPaneProps) {
           return (
             <>
               <Helmet defer={false}>
-                <title>{props.notificationsCount ? `(${String(props.notificationsCount)}) ` : ''}{ title }</title>
+                <title>{notificationsCount ? `(${String(notificationsCount)}) ` : ''}{ title }</title>
               </Helmet>
               <Skeleton
                 recentGroups={recentGroups}
@@ -213,7 +214,7 @@ export function GroupsPane(props: GroupsPaneProps) {
           return (
             <>
               <Helmet defer={false}>
-                <title>{props.notificationsCount ? `(${String(props.notificationsCount)}) ` : ''}{ title }</title>
+                <title>{notificationsCount ? `(${String(notificationsCount)}) ` : ''}{ title }</title>
               </Helmet>
               <Skeleton recentGroups={recentGroups} {...props} baseUrl={baseUrl}>
                 <Col

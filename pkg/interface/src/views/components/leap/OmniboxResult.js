@@ -3,6 +3,8 @@ import { Box, Row, Icon, Text } from '@tlon/indigo-react';
 import defaultApps from '~/logic/lib/default-apps';
 import Sigil from '~/logic/lib/sigil';
 import { uxToHex, cite } from '~/logic/lib/util';
+import { withHarkState } from '~/logic/state/hark';
+import { withContactState } from '~/logic/state/contacts';
 
 export class OmniboxResult extends Component {
   constructor(props) {
@@ -70,10 +72,10 @@ export class OmniboxResult extends Component {
   }
 
   render() {
-    const { icon, text, subtext, link, navigate, selected, invites, notifications, contacts } = this.props;
+    const { icon, text, subtext, link, navigate, selected, invites, notificationsCount, contacts } = this.props;
 
     const color = contacts?.[text] ? `#${uxToHex(contacts[text].color)}` : "#000000";
-    const graphic = this.getIcon(icon, selected, link, invites, notifications, text, color);
+    const graphic = this.getIcon(icon, selected, link, invites, notificationsCount, text, color);
 
     return (
       <Row
@@ -119,4 +121,4 @@ export class OmniboxResult extends Component {
   }
 }
 
-export default OmniboxResult;
+export default withHarkState(withContactState(OmniboxResult), ['notificationsCount']);

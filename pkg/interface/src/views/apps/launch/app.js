@@ -19,6 +19,7 @@ import { NewGroup } from "~/views/landscape/components/NewGroup";
 import { JoinGroup } from "~/views/landscape/components/JoinGroup";
 import { Helmet } from 'react-helmet';
 import useLocalState from "~/logic/state/local";
+import useHarkState from '~/logic/state/hark';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
 import { useQuery } from "~/logic/lib/useQuery";
 import {
@@ -135,6 +136,8 @@ export default function LaunchApp(props) {
   const contacts = useContactState(state => state.contacts);
   const hasLoaded = useMemo(() => Object.keys(contacts).length > 0, [contacts]);
 
+  const notificationsCount = useHarkState(state => state.notificationsCount);
+
   useEffect(() => {
     const seenTutorial = _.get(props.settings, ['tutorial', 'seen'], true);
     if(hasLoaded && !seenTutorial && tutorialProgress === 'hidden') {
@@ -145,7 +148,7 @@ export default function LaunchApp(props) {
   return (
     <>
       <Helmet defer={false}>
-        <title>{ props.notificationsCount ? `(${String(props.notificationsCount) }) `: '' }Landscape</title>
+        <title>{ notificationsCount ? `(${String(notificationsCount) }) `: '' }Landscape</title>
       </Helmet>
       <ScrollbarLessBox height='100%' overflowY='scroll' display="flex" flexDirection="column">
         {modal}
@@ -198,7 +201,7 @@ export default function LaunchApp(props) {
             <JoinGroup {...props} />
           </ModalButton>
 
-          <Groups unreads={props.unreads} associations={props.associations} />
+          <Groups associations={props.associations} />
         </Box>
         <Box alignSelf="flex-start" display={["block", "none"]}>{hashBox}</Box>
       </ScrollbarLessBox>

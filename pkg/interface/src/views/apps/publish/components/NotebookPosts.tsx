@@ -9,7 +9,6 @@ interface NotebookPostsProps {
   host: string;
   book: string;
   baseUrl: string;
-  unreads: Unreads;
   hideAvatars?: boolean;
   hideNicknames?: boolean;
   api: GlobalApi;
@@ -27,7 +26,6 @@ export function NotebookPosts(props: NotebookPostsProps) {
               key={date.toString()}
               host={props.host}
               book={props.book}
-              unreads={props.unreads}
               contact={contacts[`~${node.post.author}`]}
               node={node}
               baseUrl={props.baseUrl}

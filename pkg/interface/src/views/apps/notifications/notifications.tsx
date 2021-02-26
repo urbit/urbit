@@ -13,6 +13,7 @@ import { Dropdown } from '~/views/components/Dropdown';
 import { FormikOnBlur } from '~/views/components/FormikOnBlur';
 import GroupSearch from '~/views/components/GroupSearch';
 import { useTutorialModal } from '~/views/components/useTutorialModal';
+import useHarkState from '~/logic/state/hark';
 
 const baseUrl = '/~notifications';
 
@@ -53,6 +54,7 @@ export default function NotificationsScreen(props: any): ReactElement {
     .join(', ');
   const anchorRef = useRef<HTMLElement | null>(null);
   useTutorialModal('notifications', true, anchorRef.current);
+  const notificationsCount = useHarkState(state => state.notificationsCount);
   return (
     <Switch>
       <Route
@@ -62,7 +64,7 @@ export default function NotificationsScreen(props: any): ReactElement {
           return (
             <>
               <Helmet defer={false}>
-                <title>{ props.notificationsCount ? `(${String(props.notificationsCount) }) `: '' }Landscape - Notifications</title>
+                <title>{ notificationsCount ? `(${String(notificationsCount) }) `: '' }Landscape - Notifications</title>
               </Helmet>
               <Body>
                 <Col overflowY="hidden" height="100%">
@@ -139,9 +141,7 @@ export default function NotificationsScreen(props: any): ReactElement {
                   </Row>
                   {view === 'preferences' && (
                     <NotificationPreferences
-                      graphConfig={props.notificationsGraphConfig}
                       api={props.api}
-                      dnd={props.doNotDisturb}
                     />
                   )}
                   {!view && <Inbox {...props} filter={filter.groups} />}

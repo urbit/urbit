@@ -18,6 +18,7 @@ import { Portal } from '../Portal';
 import { Tile } from '~/types';
 import useContactState from '~/logic/state/contacts';
 import useGroupState from '~/logic/state/groups';
+import useHarkState from '~/logic/state/hark';
 
 interface OmniboxProps {
   associations: Associations;
@@ -41,6 +42,7 @@ export function Omnibox(props: OmniboxProps) {
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState<[] | [string, string]>([]);
   const contactState = useContactState(state => state.contacts);
+  const notifications = useHarkState(state => state.notifications);
 
   const contacts = useMemo(() => {
     const maybeShip = `~${deSig(query)}`;
@@ -259,7 +261,6 @@ export function Omnibox(props: OmniboxProps) {
                 navigate={() => navigate(result.app, result.link)}
                 selected={sel}
                 invites={props.invites}
-                notifications={props.notifications}
               />
             ))}
           </Box>
@@ -267,7 +268,7 @@ export function Omnibox(props: OmniboxProps) {
       })
       }
     </Box>;
-  }, [results, navigate, selected, contactState, props.notifications, props.invites]);
+  }, [results, navigate, selected, contactState, notifications, props.invites]);
 
   return (
     <Portal>

@@ -26,7 +26,6 @@ interface ChannelPopoverRoutesProps {
   association: Association;
   group: Group;
   api: GlobalApi;
-  notificationsGraphConfig: NotificationGraphConfig;
 }
 
 export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {

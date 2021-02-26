@@ -16,7 +16,6 @@ interface NoteProps {
   ship: string;
   book: string;
   note: GraphNode;
-  unreads: Unreads;
   association: Association;
   notebook: Graph;
   api: GlobalApi;
@@ -116,7 +115,6 @@ export function Note(props: NoteProps & RouteComponentProps) {
       <Comments
         ship={ship}
         name={props.book}
-        unreads={props.unreads}
         comments={comments}
         association={props.association}
         api={props.api}

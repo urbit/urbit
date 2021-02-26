@@ -22,10 +22,15 @@ import { SetStatusBarModal } from './SetStatusBarModal';
 import { useTutorialModal } from './useTutorialModal';
 
 import useLocalState from '~/logic/state/local';
+import useHarkState from '~/logic/state/hark';
+import { useHistory } from 'react-router-dom';
 
 
 const StatusBar = (props) => {
   const { ourContact, api, ship } = props;
+  const history = useHistory();
+  const notificationsCount = useHarkState(state => state.notificationsCount);
+  const doNotDisturb = useHarkState(state => state.doNotDisturb);
   const invites = [].concat(...Object.values(props.invites).map(obj => Object.values(obj)));
   const metaKey = (window.navigator.platform.includes('Mac')) ? '⌘' : 'Ctrl+';
   const { toggleOmnibox, hideAvatars } =
@@ -62,11 +67,11 @@ const StatusBar = (props) => {
       pb='3'
       >
       <Row collapse>
-      <Button width="32px" borderColor='washedGray' mr='2' px='2' onClick={() => props.history.push('/')} {...props}>
+      <Button width="32px" borderColor='washedGray' mr='2' px='2' onClick={() => history.push('/')} {...props}>
         <Icon icon='Spaces' color='black'/>
       </Button>
         <StatusBarItem float={floatLeap} mr={2} onClick={() => toggleOmnibox()}>
-        { !props.doNotDisturb && (props.notificationsCount > 0 || invites.length > 0) &&
+        { !doNotDisturb && (notificationsCount > 0 || invites.length > 0) &&
           (<Box display="block" right="-8px" top="-8px" position="absolute" >
             <Icon color="blue" icon="Bullet" />
            </Box>
@@ -99,7 +104,7 @@ const StatusBar = (props) => {
           >
           <Text color='#000000'>Submit <Text color='#000000' display={['none', 'inline']}>an</Text> issue</Text>
         </StatusBarItem>
-        <StatusBarItem width="32px" mr={2} onClick={() => props.history.push('/~landscape/messages')}>
+        <StatusBarItem width="32px" mr={2} onClick={() => history.push('/~landscape/messages')}>
             <Icon icon="Users"/>
         </StatusBarItem>
         <Dropdown
@@ -123,7 +128,7 @@ const StatusBar = (props) => {
                 color='black'
                 cursor='pointer'
                 fontSize={1}
-                onClick={() => props.history.push(`/~profile/~${ship}`)}>
+                onClick={() => history.push(`/~profile/~${ship}`)}>
                 View Profile
               </Row>
               <SetStatusBarModal
@@ -136,7 +141,7 @@ const StatusBar = (props) => {
                 color='black'
                 cursor='pointer'
                 fontSize={1}
-                onClick={() => props.history.push('/~settings')}>
+                onClick={() => history.push('/~settings')}>
                 System Settings
               </Row>
             </Col>

@@ -31,7 +31,6 @@ export function PublishResource(props: PublishResourceProps) {
         history={props.history}
         match={props.match}
         location={props.location}
-        unreads={props.unreads}
         s3={props.s3}
       />
     </Box>

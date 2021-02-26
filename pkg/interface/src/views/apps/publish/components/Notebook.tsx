@@ -61,7 +61,6 @@ export function Notebook(props: NotebookProps & RouteComponentProps): ReactEleme
         graph={graph}
         host={ship}
         book={book}
-        unreads={props.unreads}
         baseUrl={props.baseUrl}
         api={props.api}
         group={group}

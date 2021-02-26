@@ -23,6 +23,7 @@ import GlobalApi from '~/logic/api/global';
 import { Notification } from './notification';
 import { Invites } from './invites';
 import { useLazyScroll } from '~/logic/lib/useLazyScroll';
+import useHarkState from '~/logic/state/hark';
 
 type DatedTimebox = [BigInteger, Timebox];
 
@@ -43,8 +44,6 @@ function filterNotification(groups: string[]) {
 }
 
 export default function Inbox(props: {
-  notifications: Notifications;
-  notificationsSize: number;
   archive: Notifications;
   showArchive?: boolean;
   api: GlobalApi;
@@ -52,8 +51,6 @@ export default function Inbox(props: {
   filter: string[];
   invites: InviteType;
   pendingJoin: JoinRequests;
-  notificationsGroupConfig: GroupNotificationsConfig;
-  notificationsGraphConfig: NotificationGraphConfig;
 }) {
   const { api, associations, invites } = props;
   useEffect(() => {
@@ -68,8 +65,11 @@ export default function Inbox(props: {
     };
   }, []);
 
+  const notificationState = useHarkState(state => state.notifications);
+  const archivedNotifications = useHarkState(state => state.archivedNotifications);
+
   const notifications =
-    Array.from(props.showArchive ? props.archive : props.notifications) || [];
+    Array.from(props.showArchive ? archivedNotifications : notificationState) || [];
 
   const calendar = {
     ...MOMENT_CALENDAR_DATE, sameDay: function (now) {
@@ -128,8 +128,6 @@ export default function Inbox(props: {
             archive={Boolean(props.showArchive)}
             associations={props.associations}
             api={api}
-            graphConfig={props.notificationsGraphConfig}
-            groupConfig={props.notificationsGroupConfig}
           />
         );
       })}
@@ -165,8 +163,6 @@ function DaySection({
   timeboxes,
   associations,
   api,
-  groupConfig,
-  graphConfig
 }) {
   const lent = timeboxes.map(([,nots]) => nots.length).reduce(f.add, 0);
   if (lent === 0 || timeboxes.length === 0) {
@@ -189,8 +185,6 @@ function DaySection({
               <Box flexShrink={0} height="4px" bg="scales.black05" />
             )}
             <Notification
-              graphConfig={graphConfig}
-              groupConfig={groupConfig}
               api={api}
               associations={associations}
               notification={not}

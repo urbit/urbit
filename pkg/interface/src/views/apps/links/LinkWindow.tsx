@@ -22,7 +22,6 @@ interface LinkWindowProps {
   contacts: Rolodex;
   resource: string;
   graph: Graph;
-  unreads: Unreads;
   hideNicknames: boolean;
   hideAvatars: boolean;
   baseUrl: string;

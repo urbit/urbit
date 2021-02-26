@@ -14,13 +14,13 @@ import {
 import { Unreads } from '@urbit/api';
 import GlobalApi from '~/logic/api/global';
 import ReactMarkdown from 'react-markdown';
+import useHarkState from '~/logic/state/hark';
 
 interface NotePreviewProps {
   host: string;
   book: string;
   node: GraphNode;
   baseUrl: string;
-  unreads: Unreads;
   api: GlobalApi;
   group: Group;
 }
@@ -42,11 +42,12 @@ export function NotePreview(props: NotePreviewProps) {
 
   const [rev, title, body, content] = getLatestRevision(node);
   const appPath = `/ship/${props.host}/${props.book}`;
-  const isUnread = props.unreads.graph?.[appPath]?.['/']?.unreads?.has(`/${noteId}/1/1`);
+  const unreads = useHarkState(state => state.unreads);
+  const isUnread = unreads.graph?.[appPath]?.['/']?.unreads?.has(`/${noteId}/1/1`);
 
   const snippet = getSnippet(body);
 
-  const commColor = (props.unreads.graph?.[appPath]?.[`/${noteId}`]?.unreads ?? 0) > 0 ? 'blue' : 'gray';
+  const commColor = (unreads.graph?.[appPath]?.[`/${noteId}`]?.unreads ?? 0) > 0 ? 'blue' : 'gray';
   return (
     <Box width='100%'>
       <Link to={url}>

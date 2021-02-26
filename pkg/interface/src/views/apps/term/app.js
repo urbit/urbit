@@ -10,10 +10,11 @@ import { Box, Col } from '@tlon/indigo-react';
 import Api from './api';
 import Store from './store';
 import Subscription from './subscription';
+import { withHarkState } from '~/logic/state/hark';
 
 import './css/custom.css';
 
-export default class TermApp extends Component {
+class TermApp extends Component {
   constructor(props) {
     super(props);
     this.store = new Store();
@@ -92,3 +93,5 @@ export default class TermApp extends Component {
     );
   }
 }
+
+export default withHarkState(TermApp);

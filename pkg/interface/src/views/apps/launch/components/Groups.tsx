@@ -10,6 +10,7 @@ import Tile from '../components/tiles/tile';
 import { useTutorialModal } from '~/views/components/useTutorialModal';
 import { TUTORIAL_HOST, TUTORIAL_GROUP } from '~/logic/lib/tutorialModal';
 import useGroupState from '~/logic/state/groups';
+import useHarkState from '~/logic/state/hark';
 
 interface GroupsProps {
   associations: Associations;
@@ -35,7 +36,8 @@ const getGraphNotifications = (associations: Associations, unreads: Unreads) => 
   )(associations.graph);
 
 export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
-  const { associations, unreads, inbox, ...boxProps } = props;
+  const { associations, inbox, ...boxProps } = props;
+  const unreads = useHarkState(state => state.unreads);
   const groupState = useGroupState(state => state.groups);
 
   const groups = Object.values(associations?.groups || {})

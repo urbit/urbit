@@ -7,6 +7,7 @@ import { NotificationGraphConfig } from '@urbit/api';
 
 import { FormikOnBlur } from '~/views/components/FormikOnBlur';
 import GlobalApi from '~/logic/api/global';
+import useHarkState from '~/logic/state/hark';
 
 interface FormSchema {
   mentions: boolean;
@@ -16,7 +17,6 @@ interface FormSchema {
 }
 
 interface NotificationPreferencesProps {
-  graphConfig: NotificationGraphConfig;
   dnd: boolean;
   api: GlobalApi;
 }
@@ -24,7 +24,9 @@ interface NotificationPreferencesProps {
 export default function NotificationPreferences(
   props: NotificationPreferencesProps
 ): ReactElement {
-  const { graphConfig, api, dnd } = props;
+  const { api, dnd } = props;
+
+  const graphConfig = useHarkState(state => state.notificationsGraphConfig);
 
   const initialValues: FormSchema = {
     mentions: graphConfig.mentions,

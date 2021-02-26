@@ -24,7 +24,6 @@ interface NotebookRoutesProps {
   api: GlobalApi;
   ship: string;
   book: string;
-  unreads: Unreads;
   baseUrl: string;
   rootUrl: string;
   association: Association;
@@ -106,7 +105,6 @@ export function NotebookRoutes(
               ship={ship}
               note={note}
               notebook={graph}
-              unreads={props.unreads}
               noteId={noteIdNum}
               association={props.association}
               group={group}

@@ -6,13 +6,15 @@ import { Box } from '@tlon/indigo-react';
 
 import { Profile } from './components/Profile';
 import useContactState from '~/logic/state/contacts';
+import useHarkState from '~/logic/state/hark';
 
 export default function ProfileScreen(props: any) {
   const contacts = useContactState(state => state.contacts);
+  const notificationsCount = useHarkState(state => state.notificationsCount);
   return (
     <>
     <Helmet defer={false}>
-      <title>{ props.notificationsCount ? `(${String(props.notificationsCount) }) `: '' }Landscape - Profile</title>
+      <title>{ notificationsCount ? `(${String(notificationsCount) }) `: '' }Landscape - Profile</title>
     </Helmet>
     <Route
       path={'/~profile/:ship/:edit?'}
@@ -44,7 +46,6 @@ export default function ProfileScreen(props: any) {
                   s3={props.s3}
                   isEdit={isEdit}
                   isPublic={isPublic}
-                  nackedContacts={props.nackedContacts}
                 />
               </Box>
             </Box>
