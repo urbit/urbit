@@ -10,7 +10,6 @@ import {
 
 
 const ENDPOINT = 'storage.googleapis.com';
-const BASE_URL = 'https://storage.googleapis.com/upload/storage/v1/b';
 
 export default class GcpClient implements StorageClient {
   #accessKey: string;
