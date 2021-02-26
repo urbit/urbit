@@ -16,6 +16,8 @@ import {AsyncButton} from "~/views/components/AsyncButton";
 interface FormSchema {
   hideAvatars: boolean;
   hideNicknames: boolean;
+  hideUnreads: boolean;
+  hideGroups: boolean;
   imageShown: boolean;
   audioShown: boolean;
   oembedShown: boolean;
@@ -32,6 +34,8 @@ export function CalmPrefs(props: {
     calm: {
       hideAvatars,
       hideNicknames,
+      hideUnreads,
+      hideGroups
     },
     remoteContentPolicy: {
       imageShown,
@@ -45,6 +49,8 @@ export function CalmPrefs(props: {
   const initialValues: FormSchema = {
     hideAvatars,
     hideNicknames,
+    hideUnreads,
+    hideGroups,
     imageShown,
     videoShown,
     oembedShown,
@@ -55,6 +61,8 @@ export function CalmPrefs(props: {
     await Promise.all([
       api.settings.putEntry('calm', 'hideAvatars', v.hideAvatars),
       api.settings.putEntry('calm', 'hideNicknames', v.hideNicknames),
+      api.settings.putEntry('calm', 'hideUnreads', v.hideUnreads),
+      api.settings.putEntry('calm', 'hideGroups', v.hideGroups),
       api.settings.putEntry('remoteContentPolicy', 'imageShown', v.imageShown),
       api.settings.putEntry('remoteContentPolicy', 'videoShown', v.videoShown),
       api.settings.putEntry('remoteContentPolicy', 'audioShown', v.audioShown),
@@ -75,6 +83,17 @@ export function CalmPrefs(props: {
               Modulate various elemednts across Landscape to maximize calmness
             </Text>
           </Col>
+          <Text fontWeight="medium">Home screen</Text>
+          <Toggle
+            label="Hide unread counts"
+            id="hideUnreads"
+            caption="Do not show unread counts on group tiles"
+          />
+          <Toggle
+            label="Hide group tiles"
+            id="hideGroups"
+            caption="Do not show group tiles"
+          />
           <Text fontWeight="medium">User-set identity</Text>
           <Toggle
             label="Disable avatars"

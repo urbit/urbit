@@ -15,6 +15,8 @@ export interface SettingsState {
   calm: {
     hideNicknames: boolean;
     hideAvatars: boolean;
+    hideUnreads: boolean;
+    hideGroups: boolean;
   };
   remoteContentPolicy: RemoteContentPolicy;
   leap: {
@@ -39,6 +41,8 @@ const useSettingsState = create<SettingsStateZus>((set) => ({
   calm: {
     hideNicknames: false,
     hideAvatars: false,
+    hideUnreads: false,
+    hideGroups: false
   },
   remoteContentPolicy: {
     imageShown: true,

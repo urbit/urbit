@@ -29,6 +29,8 @@ import {
   TUTORIAL_CHAT,
   TUTORIAL_LINKS
 } from '~/logic/lib/tutorialModal';
+import useSettingsState, { selectCalmState } from '~/logic/state/settings';
+
 
 const ScrollbarLessBox = styled(Box)`
   scrollbar-width: none !important;
@@ -81,7 +83,9 @@ export default function LaunchApp(props) {
     }
   }, [query]);
 
-  const { tutorialProgress, nextTutStep, hideGroups } = useLocalState(tutSelector);
+  const { tutorialProgress, nextTutStep } = useLocalState(tutSelector);
+  let { hideGroups } = useLocalState(tutSelector);
+  !hideGroups ? { hideGroups } = useSettingsState(selectCalmState) : null;
 
   const waiter = useWaitForProps(props);
 
