@@ -9,7 +9,7 @@ import {
 import { AsyncButton } from "../../../components/AsyncButton";
 import { Formik, Form, FormikHelpers } from "formik";
 import { MarkdownField } from "./MarkdownField";
-import { S3State } from "~/types";
+import { GcpState, S3State } from "~/types";
 
 interface PostFormProps {
   initial: PostFormSchema;
@@ -21,6 +21,7 @@ interface PostFormProps {
   ) => Promise<any>;
   submitLabel: string;
   loadingText: string;
+  gcp: GcpState;
   s3: S3State;
 }
 
@@ -35,7 +36,7 @@ export interface PostFormSchema {
 }
 
 export function PostForm(props: PostFormProps) {
-  const { initial, onSubmit, submitLabel, loadingText, s3, cancel, history } = props;
+  const { initial, onSubmit, submitLabel, loadingText, gcp, s3, cancel, history } = props;
 
   return (
     <Col width="100%" height="100%" p={[2, 4]}>
@@ -66,7 +67,7 @@ export function PostForm(props: PostFormProps) {
               type="button">Cancel</Button>}
             </Row>
           </Row>
-          <MarkdownField flexGrow={1} id="body" s3={s3} />
+          <MarkdownField flexGrow={1} id="body" gcp={gcp} s3={s3} />
         </Form>
       </Formik>
     </Col>

@@ -6,7 +6,12 @@ import { Contacts, Contact } from "~/types/contact-update";
 import { Group } from "~/types/group-update";
 import { Association } from "~/types/metadata-update";
 import GlobalApi from "~/logic/api/global";
-import { GroupNotificationsConfig, S3State, Associations } from "~/types";
+import {
+  GroupNotificationsConfig,
+  GcpState,
+  S3State,
+  Associations
+} from "~/types";
 
 import { GroupSettings } from "./GroupSettings/GroupSettings";
 import { Participants } from "./Participants";
@@ -23,6 +28,7 @@ export function PopoverRoutes(
     group: Group;
     association: Association;
     associations: Associations;
+    gcp: GcpState;
     s3: S3State;
     api: GlobalApi;
     notificationsGroupConfig: GroupNotificationsConfig;
@@ -127,6 +133,7 @@ export function PopoverRoutes(
                       api={props.api}
                       notificationsGroupConfig={props.notificationsGroupConfig}
                       associations={props.associations}
+                      gcp={props.gcp}
                       s3={props.s3}
                     />
                   )}

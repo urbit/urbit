@@ -50,6 +50,7 @@ export default function ProfileScreen(props: any) {
                   groups={props.groups}
                   contact={contact}
                   api={props.api}
+                  gcp={props.gcp}
                   s3={props.s3}
                   isEdit={isEdit}
                   isPublic={isPublic}

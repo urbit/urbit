@@ -6,7 +6,7 @@ import { RouteComponentProps } from "react-router-dom";
 import { PostForm, PostFormSchema } from "./NoteForm";
 import {createPost} from "~/logic/api/graph";
 import {Graph} from "~/types/graph-update";
-import {Association, S3State} from "~/types";
+import {Association, GcpState, S3State} from "~/types";
 import {newPost} from "~/logic/lib/publish";
 
 interface NewPostProps {
@@ -16,6 +16,7 @@ interface NewPostProps {
   graph: Graph;
   association: Association;
   baseUrl: string;
+  gcp: GcpState;
   s3: S3State;
 }
 
@@ -53,6 +54,7 @@ export default function NewPost(props: NewPostProps & RouteComponentProps) {
       onSubmit={onSubmit}
       submitLabel="Publish"
       loadingText="Posting..."
+      gcp={props.gcp}
       s3={props.s3}
     />
   );

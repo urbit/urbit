@@ -9,7 +9,7 @@ import {
 } from "@tlon/indigo-react";
 
 import GlobalApi from "~/logic/api/global";
-import { S3State } from "~/types";
+import { GcpState, S3State } from "~/types";
 import { ImageInput } from "~/views/components/ImageInput";
 import {ColorInput} from "~/views/components/ColorInput";
 
@@ -19,11 +19,13 @@ export function BackgroundPicker({
   bgType,
   bgUrl,
   api,
+  gcp,
   s3,
 }: {
   bgType: BgType;
   bgUrl?: string;
   api: GlobalApi;
+  gcp: GcpState;
   s3: S3State;
 }) {
 
@@ -38,6 +40,7 @@ export function BackgroundPicker({
           <ImageInput
             ml="3"
             api={api}
+            gcp={gcp}
             s3={s3}
             id="bgUrl"
             name="bgUrl"

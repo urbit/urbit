@@ -10,7 +10,7 @@ import * as Yup from 'yup';
 
 import GlobalApi from '~/logic/api/global';
 import { uxToHex } from '~/logic/lib/util';
-import { S3State, BackgroundConfig } from '~/types';
+import { GcpState, S3State, BackgroundConfig } from '~/types';
 import { BackgroundPicker, BgType } from './BackgroundPicker';
 import useLocalState, { LocalState } from '~/logic/state/local';
 
@@ -34,11 +34,12 @@ interface FormSchema {
 
 interface DisplayFormProps {
   api: GlobalApi;
+  gcp: GcpState;
   s3: S3State;
 }
 
 export default function DisplayForm(props: DisplayFormProps) {
-  const { api, s3 } = props;
+  const { api, gcp, s3 } = props;
 
   const { hideAvatars, hideNicknames, background, set: setLocalState } = useLocalState();
 
@@ -94,6 +95,7 @@ export default function DisplayForm(props: DisplayFormProps) {
               bgType={props.values.bgType}
               bgUrl={props.values.bgUrl}
               api={api}
+              gcp={gcp}
               s3={s3}
             />
             <Checkbox

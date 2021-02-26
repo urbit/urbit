@@ -34,8 +34,8 @@ export function LinkResource(props: LinkResourceProps) {
     associations,
     graphKeys,
     unreads,
-    s3,
     gcp,
+    s3,
     history
   } = props;
 

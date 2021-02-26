@@ -9,6 +9,7 @@ import {
   Contacts,
   Rolodex,
   Unreads,
+  GcpState,
   S3State
 } from "~/types";
 import { Center, LoadingSpinner } from "@tlon/indigo-react";
@@ -33,6 +34,7 @@ interface NotebookRoutesProps {
   rootUrl: string;
   association: Association;
   associations: Associations;
+  gcp: GcpState;
   s3: S3State;
 }
 
@@ -80,6 +82,7 @@ export function NotebookRoutes(
             association={props.association}
             graph={graph}
             baseUrl={baseUrl}
+            gcp={props.gcp}
             s3={props.s3}
           />
         )}
@@ -112,6 +115,7 @@ export function NotebookRoutes(
               contacts={notebookContacts}
               association={props.association}
               group={group}
+              gcp={props.gcp}
               s3={props.s3}
               {...routeProps}
             />
