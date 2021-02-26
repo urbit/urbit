@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Button, Icon, Text } from '@tlon/indigo-react';
+import { Row, Button, Icon, Text } from '@tlon/indigo-react';
 import { useModal } from '~/logic/lib/useModal';
 
 const ModalButton = (props) => {
@@ -12,19 +12,19 @@ const ModalButton = (props) => {
       <Button
         onClick={showModal}
         display='flex'
-        alignItems='center'
         cursor='pointer'
-        bg={bg}
-        p={2}
+        bg="white"
+        overflow='hidden'
+        border={0}
+        p={0}
         borderRadius={2}
-        boxShadow='0 0 0px 1px inset'
-        color='scales.black20'
         {...rest}
       >
+        <Row bg={bg} p={2} width='100%' justifyContent="start" alignItems="center">
         <Icon icon={props.icon} mr={2} color={color}></Icon>
-        <Text color={color} whiteSpace='nowrap'>
+        <Text color={color} fontWeight="medium" whiteSpace='nowrap'>
           {props.text}
-        </Text>
+        </Text></Row>
       </Button>
     </>
   );

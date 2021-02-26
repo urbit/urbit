@@ -1,5 +1,5 @@
 import React, { ReactElement, ReactNode } from 'react';
-import { Icon, Box, Col, Text } from '@tlon/indigo-react';
+import { Icon, Box, Col, Row, Text } from '@tlon/indigo-react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import urbitOb from 'urbit-ob';
@@ -12,7 +12,7 @@ import GlobalApi from '~/logic/api/global';
 import { isWriter } from '~/logic/lib/group';
 import { getItemTitle } from '~/logic/lib/util';
 
-const TruncatedBox = styled(Box)`
+const TruncatedText = styled(RichText)`
   white-space: pre;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -46,11 +46,13 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
     ? getItemTitle(association)
     : association?.metadata?.title;
 
-  let recipient = false;
+  let recipient = "";
 
   if (urbitOb.isValidPatp(title)) {
     recipient = title;
     title = (props.contacts?.[title]?.nickname) ? props.contacts[title].nickname : title;
+  } else {
+    recipient = Array.from(group.members).map(e => `~${e}`).join(", ")
   }
 
   const [, , ship, resource] = rid.split('/');
@@ -88,7 +90,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
         >
           <Link to={`/~landscape${workspace}`}> {'<- Back'}</Link>
         </Box>
-        <Box px={1} mr={2} minWidth={0} display="flex">
+        <Box px={1} mr={2} minWidth={0} display="flex" flexShrink={0}>
           <Text
             mono={urbitOb.isValidPatp(title)}
             fontSize='2'
@@ -99,28 +101,30 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
             overflow="hidden"
             whiteSpace="pre"
             minWidth={0}
+            flexShrink={0}
           >
             {title}
           </Text>
         </Box>
-        <TruncatedBox
-          display={['none', 'block']}
+        <Row
+          display={['none', 'flex']}
           verticalAlign="middle"
-          maxWidth='60%'
           flexShrink={1}
+          minWidth={0}
           title={association?.metadata?.description}
-          color="gray"
         >
-          <RichText
+          <TruncatedText
             display={(workspace === '/messages' && (urbitOb.isValidPatp(title))) ? 'none' : 'inline-block'}
             mono={(workspace === '/messages' && !(urbitOb.isValidPatp(title)))}
             color="gray"
+            minWidth={0}
+            width="100%"
             mb="0"
             disableRemoteContent
           >
             {(workspace === '/messages') ? recipient : association?.metadata?.description}
-          </RichText>
-        </TruncatedBox>
+          </TruncatedText>
+        </Row>
         <Box flexGrow={1} />
         {canWrite && (
           <Link to={resourcePath('/new')} style={{ flexShrink: '0' }}>

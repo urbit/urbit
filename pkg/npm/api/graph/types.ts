@@ -9,8 +9,8 @@ export interface UrlContent {
 }
 export interface CodeContent {
   code: {
-    expresssion: string;
-    output: string | undefined;
+    expression: string;
+    output: string[] | undefined;
   }
 }
 
@@ -47,7 +47,7 @@ export interface GraphChildrenPoke {
 }
 
 export interface GraphNode {
-  children: Graph;
+  children: Graph | null;
   post: Post;
 }
 

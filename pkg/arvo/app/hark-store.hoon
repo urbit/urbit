@@ -767,6 +767,8 @@
 ++  inflate-cache
   |=  state-4
   ^+  +.state
+  =.  +.state
+    *cache
   =/  nots=(list [p=@da =timebox:store])
     (tap:orm notifications)
   |-  =*  outer  $
