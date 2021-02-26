@@ -30,19 +30,20 @@ import { foregroundFromBackground } from '~/logic/lib/sigil';
 import { withLocalState } from '~/logic/state/local';
 import { withContactState } from '~/logic/state/contacts';
 import { withGroupState } from '~/logic/state/groups';
+import { withSettingsState } from '~/logic/state/settings';
 
 
-const Root = styled.div`
+const Root = withSettingsState(styled.div`
   font-family: ${p => p.theme.fonts.sans};
   height: 100%;
   width: 100%;
   padding: 0;
   margin: 0;
-  ${p => p.background?.type === 'url' ? `
-    background-image: url('${p.background?.url}');
+  ${p => p.display.backgroundType === 'url' ? `
+    background-image: url('${p.display.background}');
     background-size: cover;
-    ` : p.background?.type === 'color' ? `
-    background-color: ${p.background.color};
+    ` : p.display.backgroundType === 'color' ? `
+    background-color: ${p.display.background};
     ` : `background-color: ${p.theme.colors.white};`
   }
   display: flex;
@@ -66,7 +67,7 @@ const Root = styled.div`
     border-radius: 1rem;
     border: 0px solid transparent;
   }
-`;
+`, ['display']);
 
 const StatusBarWithRouter = withRouter(StatusBar);
 
@@ -148,7 +149,7 @@ class App extends React.Component {
             ? <link rel="icon" type="image/svg+xml" href={this.faviconString()} />
             : null}
         </Helmet>
-        <Root background={background}>
+        <Root>
           <Router>
             <TutorialModal api={this.api} />
             <ErrorBoundary>

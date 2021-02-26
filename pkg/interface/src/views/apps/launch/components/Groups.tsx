@@ -12,6 +12,7 @@ import { TUTORIAL_HOST, TUTORIAL_GROUP } from '~/logic/lib/tutorialModal';
 import useGroupState from '~/logic/state/groups';
 import useHarkState from '~/logic/state/hark';
 import useMetadataState from '~/logic/state/metadata';
+import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 
 interface GroupsProps {}
 
@@ -84,11 +85,12 @@ function Group(props: GroupProps) {
     isTutorialGroup,
     anchorRef.current
   );
+  const { hideUnreads } = useSettingsState(selectCalmState)
   return (
     <Tile ref={anchorRef} position="relative" bg={isTutorialGroup ? 'lightBlue' : undefined} to={`/~landscape${path}`} gridColumnStart={first ? '1' : null}>
       <Col height="100%" justifyContent="space-between">
         <Text>{title}</Text>
-        <Col>
+        {!hideUnreads && (<Col>
           {updates > 0 &&
             (<Text mt="1" color="blue">{updates} update{updates !== 1 && 's'} </Text>)
           }
@@ -96,7 +98,7 @@ function Group(props: GroupProps) {
             (<Text color="lightGray">{unreads}</Text>)
           }
         </Col>
-
+        )}
       </Col>
     </Tile>
   );

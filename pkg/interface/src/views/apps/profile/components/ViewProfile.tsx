@@ -8,7 +8,8 @@ import {
   Text,
   Row,
   Col,
-} from '@tlon/indigo-react';
+} from "@tlon/indigo-react";
+import useSettingsState, {selectCalmState} from "~/logic/state/settings";
 
 import RichText from '~/views/components/RichText';
 import { GroupLink } from '~/views/components/GroupLink';
@@ -17,9 +18,7 @@ import useLocalState from '~/logic/state/local';
 import useContactState from '~/logic/state/contacts';
 
 export function ViewProfile(props: any): ReactElement {
-  const { hideNicknames } = useLocalState(({ hideNicknames }) => ({
-    hideNicknames
-  }));
+  const { hideNicknames } = useSettingsState(selectCalmState);
   const { api, contact, nacked, ship } = props;
 
   const isPublic = useContactState(state => state.isContactPublic);

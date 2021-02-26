@@ -31,6 +31,7 @@ import GlobalApi from '~/logic/api/global';
 import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
 import useLocalState from '~/logic/state/local';
 import useContactState from '~/logic/state/contacts';
+import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 
 const TruncText = styled(Text)`
   white-space: nowrap;
@@ -80,13 +81,14 @@ function getParticipants(cs: Contacts, group: Group) {
 
 const emptyContact = (patp: string, pending: boolean): Participant => ({
   nickname: '',
-  email: '',
-  phone: '',
+  bio: '',
+  status: '',
   color: '',
   avatar: null,
-  notes: '',
-  website: '',
+  cover: null,
+  groups: [],
   patp,
+  'last-updated': 0,
   pending
 });
 
@@ -257,9 +259,7 @@ function Participant(props: {
 }) {
   const { contact, association, group, api } = props;
   const { title } = association.metadata;
-  const { hideAvatars, hideNicknames } = useLocalState(
-    ({ hideAvatars, hideNicknames }) => ({ hideAvatars, hideNicknames })
-  );
+  const { hideAvatars, hideNicknames } = useSettingsState(selectCalmState);
 
   const color = uxToHex(contact.color);
   const isInvite = 'invite' in group.policy;

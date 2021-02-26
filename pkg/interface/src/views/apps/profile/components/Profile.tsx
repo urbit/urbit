@@ -10,7 +10,7 @@ import {
 } from "@tlon/indigo-react";
 
 import RichText from '~/views/components/RichText'
-import useLocalState from "~/logic/state/local";
+import useSettingsState, {selectCalmState} from "~/logic/state/settings";
 import { Sigil } from '~/logic/lib/sigil';
 import { ViewProfile } from './ViewProfile';
 import { EditProfile } from './EditProfile';
@@ -19,10 +19,10 @@ import { uxToHex } from '~/logic/lib/util';
 import { useTutorialModal } from '~/views/components/useTutorialModal';
 import useContactState from '~/logic/state/contacts';
 
+
+
 export function Profile(props: any): ReactElement {
-  const { hideAvatars } = useLocalState(({ hideAvatars }) => ({
-    hideAvatars
-  }));
+  const { hideAvatars } = useSettingsState(selectCalmState);
   const history = useHistory();
   const nackedContacts = useContactState(state => state.nackedContacts);
 

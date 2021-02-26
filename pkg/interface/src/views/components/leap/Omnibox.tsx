@@ -9,12 +9,13 @@ import { Associations, Contacts, Groups, Invites } from '@urbit/api';
 import makeIndex from '~/logic/lib/omnibox';
 import OmniboxInput from './OmniboxInput';
 import OmniboxResult from './OmniboxResult';
-import { withLocalState } from '~/logic/state/local';
 import { deSig } from '~/logic/lib/util';
+import { withLocalState } from '~/logic/state/local';
 
 import defaultApps from '~/logic/lib/default-apps';
-import { useOutsideClick } from '~/logic/lib/useOutsideClick';
-import { Portal } from '../Portal';
+import {useOutsideClick} from '~/logic/lib/useOutsideClick';
+import {Portal} from '../Portal';
+import useSettingsState, {SettingsState} from '~/logic/state/settings';
 import { Tile } from '~/types';
 import useContactState from '~/logic/state/contacts';
 import useGroupState from '~/logic/state/groups';
@@ -24,20 +25,19 @@ import useLaunchState from '~/logic/state/launch';
 import useMetadataState from '~/logic/state/metadata';
 
 interface OmniboxProps {
-  tiles: {
-    [app: string]: Tile;
-  };
   show: boolean;
   toggle: () => void;
   notifications: number;
 }
 
 const SEARCHED_CATEGORIES = ['ships', 'other', 'commands', 'groups', 'subscriptions', 'apps'];
+const settingsSel = (s: SettingsState) => s.leap;
 
 export function Omnibox(props: OmniboxProps) {
   const location = useLocation();
   const history = useHistory();
-  const omniboxRef = useRef<HTMLDivElement | null>(null);
+  const leapConfig = useSettingsState(settingsSel);
+  const omniboxRef = useRef<HTMLDivElement | null>(null)
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const [query, setQuery] = useState('');
@@ -57,18 +57,30 @@ export function Omnibox(props: OmniboxProps) {
   const groups = useGroupState(state => state.groups);
   const associations = useMetadataState(state => state.associations);
 
-  const index = useMemo(() => {
-    const selectedGroup = location.pathname.startsWith('/~landscape/ship/')
+  const selectedGroup =  useMemo(
+    () => location.pathname.startsWith('/~landscape/ship/')
       ? '/' + location.pathname.split('/').slice(2,5).join('/')
-      : null;
+      : null,
+    [location.pathname]
+  );
+
+  const index = useMemo(() => {
     return makeIndex(
       contacts,
       associations,
       tiles,
       selectedGroup,
-      groups
+      groups,
+      leapConfig,
     );
-  }, [location.pathname, contacts, associations, groups, tiles]);
+  }, [
+    selectedGroup,
+    leapConfig,
+    contacts,
+    associations,
+    groups,
+    tiles
+  ]);
 
   const onOutsideClick = useCallback(() => {
     props.show && props.toggle();
