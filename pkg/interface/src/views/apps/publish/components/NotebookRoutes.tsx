@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
-import { RouteComponentProps, Route, Switch } from "react-router-dom";
-import GlobalApi from "~/logic/api/global";
+import React, { useEffect } from 'react';
+import { RouteComponentProps, Route, Switch } from 'react-router-dom';
+import GlobalApi from '~/logic/api/global';
 import {
   Association,
   Associations,
@@ -10,22 +10,19 @@ import {
   Rolodex,
   Unreads,
   S3State
-} from "~/types";
-import { Center, LoadingSpinner } from "@tlon/indigo-react";
+} from '@urbit/api';
+import { Center, LoadingSpinner } from '@tlon/indigo-react';
 import bigInt from 'big-integer';
 
-import Notebook from "./Notebook";
-import NewPost from "./new-post";
+import Notebook from './Notebook';
+import NewPost from './new-post';
 import { NoteRoutes } from './NoteRoutes';
-
-
 
 interface NotebookRoutesProps {
   api: GlobalApi;
   ship: string;
   book: string;
   graphs: Graphs;
-  notebookContacts: Contacts;
   unreads: Unreads;
   contacts: Rolodex;
   groups: Groups;
@@ -39,7 +36,7 @@ interface NotebookRoutesProps {
 export function NotebookRoutes(
   props: NotebookRoutesProps & RouteComponentProps
 ) {
-  const { ship, book, api, notebookContacts, baseUrl, rootUrl, groups } = props;
+  const { ship, book, api, contacts, baseUrl, rootUrl, groups } = props;
 
   useEffect(() => {
     ship && book && api.graph.getGraph(ship, book);
@@ -48,7 +45,6 @@ export function NotebookRoutes(
   const graph = props.graphs[`${ship.slice(1)}/${book}`];
 
   const group = groups?.[props.association?.group];
-
 
   const relativePath = (path: string) => `${baseUrl}${path}`;
   return (
@@ -63,15 +59,16 @@ export function NotebookRoutes(
           return <Notebook
             {...props}
             graph={graph}
-            contacts={notebookContacts}
+            contacts={contacts}
             association={props.association}
             rootUrl={rootUrl}
-            baseUrl={baseUrl} />;
+            baseUrl={baseUrl}
+                 />;
       }}
       />
       <Route
-        path={relativePath("/new")}
-        render={(routeProps) => (
+        path={relativePath('/new')}
+        render={routeProps => (
           <NewPost
             {...routeProps}
             api={api}
@@ -85,7 +82,7 @@ export function NotebookRoutes(
         )}
       />
       <Route
-        path={relativePath("/note/:noteId")}
+        path={relativePath('/note/:noteId')}
         render={(routeProps) => {
           const { noteId } = routeProps.match.params;
           const noteIdNum = bigInt(noteId);
@@ -109,7 +106,7 @@ export function NotebookRoutes(
               notebook={graph}
               unreads={props.unreads}
               noteId={noteIdNum}
-              contacts={notebookContacts}
+              contacts={contacts}
               association={props.association}
               group={group}
               s3={props.s3}

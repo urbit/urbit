@@ -1,7 +1,7 @@
-import React, { Component } from "react";
-import { Col } from "@tlon/indigo-react";
-import { NotePreview } from "./NotePreview";
-import { Contacts, Graph, Unreads, Group } from "~/types";
+import React, { Component } from 'react';
+import { Col } from '@tlon/indigo-react';
+import { NotePreview } from './NotePreview';
+import { Contacts, Graph, Unreads, Group } from '@urbit/api';
 
 interface NotebookPostsProps {
   contacts: Contacts;
@@ -27,7 +27,7 @@ export function NotebookPosts(props: NotebookPostsProps) {
               host={props.host}
               book={props.book}
               unreads={props.unreads}
-              contact={props.contacts[node.post.author]}
+              contact={props.contacts[`~${node.post.author}`]}
               contacts={props.contacts}
               node={node}
               baseUrl={props.baseUrl}

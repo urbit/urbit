@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
-import { Link } from "react-router-dom";
-import { Contacts } from '~/types/contact-update';
-import GlobalApi from '~/logic/api/global';
-import { Box, Row, Text } from '@tlon/indigo-react';
+import React from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+
+import { Box, Row, Text } from '@tlon/indigo-react';
+import { Contacts } from '@urbit/api/contacts';
+import { GraphNode } from '@urbit/api/graph';
+import { Group } from '@urbit/api';
+
+import GlobalApi from '~/logic/api/global';
 import Author from '~/views/components/Author';
-import { GraphNode, TextContent } from '~/types/graph-update';
-import tokenizeMessage from '~/logic/lib/tokenizeMessage';
-import { Group } from '~/types';
 import { MentionText } from '~/views/components/MentionText';
 import { getLatestCommentRevision } from '~/logic/lib/publish';
 
@@ -28,9 +29,9 @@ interface CommentItemProps {
   group: Group;
 }
 
-export function CommentItem(props: CommentItemProps) {
+export function CommentItem(props: CommentItemProps): ReactElement {
   const { ship, contacts, name, api, comment, group } = props;
-  const [revNum, post] = getLatestCommentRevision(comment);
+  const [, post] = getLatestCommentRevision(comment);
   const disabled = props.pending || window.ship !== post?.author;
 
   const onDelete = async () => {
@@ -39,7 +40,7 @@ export function CommentItem(props: CommentItemProps) {
 
   const commentIndexArray = (comment.post?.index || '/').split('/');
   const commentIndex = commentIndexArray[commentIndexArray.length - 1];
-  const updateUrl = `${props.baseUrl}/${commentIndex}`
+  const updateUrl = `${props.baseUrl}/${commentIndex}`;
 
   return (
     <Box mb={4} opacity={post?.pending ? '60%' : '100%'}>

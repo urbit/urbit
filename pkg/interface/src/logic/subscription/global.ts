@@ -1,8 +1,7 @@
 import BaseSubscription from './base';
 import { StoreState } from '../store/type';
-import { Path } from '~/types/noun';
+import { Path } from '@urbit/api';
 import _ from 'lodash';
-
 
 /**
  * Path to subscribe on and app to subscribe to
@@ -68,7 +67,7 @@ export default class GlobalSubscription extends BaseSubscription<StoreState> {
   }
 
   stopApp(app: AppName) {
-    this.openSubscriptions[app].map(id => this.unsubscribe(id))
+    this.openSubscriptions[app].map(id => this.unsubscribe(id));
     this.openSubscriptions[app] = [];
   }
 }

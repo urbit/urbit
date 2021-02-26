@@ -1,5 +1,5 @@
-import React from "react";
-import useS3 from "~/logic/lib/useS3";
+import React from 'react';
+import useS3 from '~/logic/lib/useS3';
 
 const withS3 = (Component, params = {}) => {
   return React.forwardRef((props: any, ref) => {
