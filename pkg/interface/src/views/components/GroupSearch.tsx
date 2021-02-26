@@ -41,6 +41,7 @@ const Candidate = ({ title, selected, onClick }): ReactElement => (
   <CandidateBox
     onClick={onClick}
     selected={selected}
+    cursor="pointer"
     borderColor="washedGray"
     color="black"
     fontSize={0}

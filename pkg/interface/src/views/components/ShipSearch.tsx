@@ -79,6 +79,7 @@ const Candidate = ({ title, detail, selected, onClick }): ReactElement => (
     bg="white"
     color="black"
     fontSize={0}
+    cursor="pointer"
     p={1}
     width="100%"
   >

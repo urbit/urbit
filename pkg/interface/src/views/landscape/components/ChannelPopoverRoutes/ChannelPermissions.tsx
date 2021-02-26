@@ -151,7 +151,7 @@ export function GraphPermissions(props: GraphPermissionsProps) {
     }
   };
 
-  const schema = formSchema(Array.from(group.members));
+  const schema = formSchema(Array.from(group?.members ?? []));
 
   return (
     <Formik
