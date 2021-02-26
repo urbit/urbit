@@ -12,6 +12,7 @@ import GlobalApi from '~/logic/api/global';
 import { isWriter } from '~/logic/lib/group';
 import { getItemTitle } from '~/logic/lib/util';
 import useContactState from '~/logic/state/contacts';
+import useGroupState from '~/logic/state/groups';
 
 const TruncatedText = styled(RichText)`
   white-space: pre;
@@ -20,7 +21,6 @@ const TruncatedText = styled(RichText)`
 `;
 
 type ResourceSkeletonProps = {
-  groups: Groups;
   contacts: Rolodex;
   association: Association;
   api: GlobalApi;
@@ -31,9 +31,10 @@ type ResourceSkeletonProps = {
 };
 
 export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
-  const { association, baseUrl, children, groups } = props;
+  const { association, baseUrl, children } = props;
   const app = association?.metadata?.module || association['app-name'];
   const rid = association.resource;
+  const groups = useGroupState(state => state.groups);
   const group = groups[association.group];
   let workspace = association.group;
 

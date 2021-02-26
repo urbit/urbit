@@ -8,6 +8,7 @@ import { NotebookPosts } from './NotebookPosts';
 import GlobalApi from '~/logic/api/global';
 import { useShowNickname } from '~/logic/lib/util';
 import useContactState from '~/logic/state/contacts';
+import useGroupState from '~/logic/state/groups';
 
 interface NotebookProps {
   api: GlobalApi;
@@ -16,7 +17,6 @@ interface NotebookProps {
   graph: Graph;
   association: Association;
   associations: Associations;
-  groups: Groups;
   baseUrl: string;
   rootUrl: string;
   unreads: Unreads;
@@ -26,10 +26,11 @@ export function Notebook(props: NotebookProps & RouteComponentProps): ReactEleme
   const {
     ship,
     book,
-    groups,
     association,
     graph
   } = props;
+
+  const groups = useGroupState(state => state.groups);
 
   const group = groups[association?.group];
   if (!group) {

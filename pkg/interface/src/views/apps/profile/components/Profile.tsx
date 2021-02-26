@@ -108,7 +108,6 @@ export function Profile(props: any): ReactElement {
             contact={contact}
             s3={props.s3}
             api={props.api}
-            groups={props.groups}
             associations={props.associations}
             isPublic={isPublic}
           />
@@ -119,7 +118,6 @@ export function Profile(props: any): ReactElement {
             ship={ship}
             contact={contact}
             isPublic={isPublic}
-            groups={props.groups}
             associations={props.associations}
           />
         ) }

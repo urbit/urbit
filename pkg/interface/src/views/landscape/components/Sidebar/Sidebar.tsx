@@ -20,6 +20,7 @@ import { SidebarAppConfigs } from './types';
 import { SidebarList } from './SidebarList';
 import { roleForShip } from '~/logic/lib/group';
 import { useTutorialModal } from '~/views/components/useTutorialModal';
+import useGroupState from '~/logic/state/groups';
 
 const ScrollbarLessCol = styled(Col)`
   scrollbar-width: none !important;
@@ -39,7 +40,6 @@ interface SidebarProps {
   selected?: string;
   selectedGroup?: string;
   includeUnmanaged?: boolean;
-  groups: Groups;
   apps: SidebarAppConfigs;
   baseUrl: string;
   mobileHide?: boolean;
@@ -62,7 +62,9 @@ export function Sidebar(props: SidebarProps): ReactElement {
     }
   );
 
-  const role = props.groups?.[groupPath] ? roleForShip(props.groups[groupPath], window.ship) : undefined;
+  const groups = useGroupState(state => state.groups);
+
+  const role = groups?.[groupPath] ? roleForShip(groups[groupPath], window.ship) : undefined;
   const isAdmin = (role === 'admin') || (workspace?.type === 'home');
 
   const anchorRef = useRef<HTMLElement | null>(null);
@@ -92,7 +94,6 @@ export function Sidebar(props: SidebarProps): ReactElement {
       <SidebarListHeader
         associations={associations}
         baseUrl={props.baseUrl}
-        groups={props.groups}
         initialValues={config}
         handleSubmit={setConfig}
         selected={selected || ''}
@@ -105,7 +106,6 @@ export function Sidebar(props: SidebarProps): ReactElement {
         associations={associations}
         selected={selected}
         group={groupPath}
-        groups={props.groups}
         apps={props.apps}
         baseUrl={props.baseUrl}
         workspace={workspace}

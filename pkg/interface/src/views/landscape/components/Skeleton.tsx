@@ -15,7 +15,6 @@ interface SkeletonProps {
   contacts: Rolodex;
   children: ReactNode;
   recentGroups: string[];
-  groups: Groups;
   associations: Associations;
   linkListening: Set<Path>;
   invites: Invites;
@@ -57,7 +56,6 @@ export function Skeleton(props: SkeletonProps): ReactElement {
         invites={props.invites}
         apps={config}
         baseUrl={props.baseUrl}
-        groups={props.groups}
         mobileHide={props.mobileHide}
         workspace={props.workspace}
         history={props.history}

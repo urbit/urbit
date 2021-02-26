@@ -11,7 +11,6 @@ import InviteItem from '~/views/components/Invite';
 interface InvitesProps {
   api: GlobalApi;
   invites: IInvites;
-  groups: Groups;
   associations: Associations;
   pendingJoin: JoinRequests;
 }
@@ -53,7 +52,6 @@ export function Invites(props: InvitesProps): ReactElement {
            return (
              <InviteItem
                key={resource}
-               groups={props.groups}
                associations={props.associations}
                resource={resource}
                pendingJoin={pendingJoin}
@@ -72,7 +70,6 @@ export function Invites(props: InvitesProps): ReactElement {
               uid={uid}
               pendingJoin={pendingJoin}
               resource={resource}
-              groups={props.groups}
               associations={props.associations}
             />
             );

@@ -397,7 +397,6 @@ export const Message = ({
               return (
                 <TextContent
                   associations={associations}
-                  groups={groups}
                   measure={measure}
                   api={api}
                   fontSize={1}

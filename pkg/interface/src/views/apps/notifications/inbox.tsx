@@ -26,7 +26,7 @@ import { useLazyScroll } from '~/logic/lib/useLazyScroll';
 
 type DatedTimebox = [BigInteger, Timebox];
 
-function filterNotification(associations: Associations, groups: string[]) {
+function filterNotification(groups: string[]) {
   if (groups.length === 0) {
     return () => true;
   }
@@ -46,7 +46,6 @@ export default function Inbox(props: {
   notifications: Notifications;
   notificationsSize: number;
   archive: Notifications;
-  groups: Groups;
   showArchive?: boolean;
   api: GlobalApi;
   associations: Associations;
@@ -85,7 +84,7 @@ export default function Inbox(props: {
   const notificationsByDay = f.flow(
     f.map<DatedTimebox, DatedTimebox>(([date, nots]) => [
       date,
-      nots.filter(filterNotification(associations, props.filter))
+      nots.filter(filterNotification(props.filter))
     ]),
     f.groupBy<DatedTimebox>(([d]) => {
       const date = moment(daToUnix(d));
@@ -118,7 +117,7 @@ export default function Inbox(props: {
 
   return (
     <Col ref={scrollRef} position="relative" height="100%" overflowY="auto">
-      <Invites groups={props.groups} pendingJoin={props.pendingJoin} invites={invites} api={api} associations={associations} />
+      <Invites pendingJoin={props.pendingJoin} invites={invites} api={api} associations={associations} />
       {[...notificationsByDayMap.keys()].sort().reverse().map((day, index) => {
         const timeboxes = notificationsByDayMap.get(day)!;
         return timeboxes.length > 0 && (
@@ -129,7 +128,6 @@ export default function Inbox(props: {
             archive={Boolean(props.showArchive)}
             associations={props.associations}
             api={api}
-            groups={props.groups}
             graphConfig={props.notificationsGraphConfig}
             groupConfig={props.notificationsGroupConfig}
           />
@@ -163,7 +161,6 @@ function sortIndexedNotification(
 
 function DaySection({
   label,
-  groups,
   archive,
   timeboxes,
   associations,
@@ -198,7 +195,6 @@ function DaySection({
               associations={associations}
               notification={not}
               archived={archive}
-              groups={groups}
               time={date}
             />
           </React.Fragment>

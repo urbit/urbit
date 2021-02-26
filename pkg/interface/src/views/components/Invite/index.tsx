@@ -18,11 +18,11 @@ import { GroupInvite } from './Group';
 import { InviteSkeleton } from './InviteSkeleton';
 import { JoinSkeleton } from './JoinSkeleton';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
+import useGroupState from '~/logic/state/groups';
 
 interface InviteItemProps {
   invite?: Invite;
   resource: string;
-  groups: Groups;
   associations: Associations;
 
   pendingJoin: JoinRequests;
@@ -37,6 +37,7 @@ export function InviteItem(props: InviteItemProps) {
   const { ship, name } = resourceFromPath(resource);
   const waiter = useWaitForProps(props, 50000);
   const status = pendingJoin[resource];
+  const groups = useGroupState(state => state.groups);
 
   const history = useHistory();
   const inviteAccept = useCallback(async () => {
@@ -50,13 +51,13 @@ export function InviteItem(props: InviteItemProps) {
     api.invite.accept(app, uid);
     await waiter((p) => {
       return (
-        resource in p.groups &&
+        resource in groups &&
         (resource in (p.associations?.graph ?? {}) ||
           resource in (p.associations?.groups ?? {}))
       );
     });
 
-    if (props.groups?.[resource]?.hidden) {
+    if (groups?.[resource]?.hidden) {
       const { metadata } = associations.graph[resource];
       if (metadata?.module === 'chat') {
         history.push(`/~landscape/messages/resource/${metadata.module}${resource}`);
@@ -66,7 +67,7 @@ export function InviteItem(props: InviteItemProps) {
     } else {
       history.push(`/~landscape${resource}`);
     }
-  }, [app, invite, uid, resource, props.groups, associations]);
+  }, [app, invite, uid, resource, groups, associations]);
 
   const inviteDecline = useCallback(async () => {
     if(!(app && uid)) {

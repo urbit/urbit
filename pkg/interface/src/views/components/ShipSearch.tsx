@@ -25,6 +25,7 @@ import { DropdownSearch } from './DropdownSearch';
 import { cite, deSig } from '~/logic/lib/util';
 import { HoverBox } from './HoverBox';
 import useContactState from '~/logic/state/contacts';
+import useGroupState from '~/logic/state/groups';
 
 interface InviteSearchProps<I extends string> {
   autoFocus?: boolean;
@@ -33,7 +34,6 @@ interface InviteSearchProps<I extends string> {
   caption?: string;
   id: I;
   contacts: Rolodex;
-  groups: Groups;
   hideSelection?: boolean;
   maxLength?: number;
 }
@@ -124,10 +124,11 @@ export function ShipSearch<I extends string, V extends Value<I>>(
   const pills = selected.slice(0, inputIdx.current);
 
   const contacts = useContactState(state => state.contacts);
+  const groups = useGroupState(state => state.groups);
 
   const [peers, nicknames] = useMemo(
-    () => getNicknameForShips(props.groups, contacts),
-    [contacts, props.groups]
+    () => getNicknameForShips(groups, contacts),
+    [contacts, groups]
   );
 
   const renderCandidate = useCallback(

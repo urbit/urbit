@@ -19,6 +19,7 @@ import styled from 'styled-components';
 import { MentionText } from '~/views/components/MentionText';
 import ChatMessage from '../chat/components/ChatMessage';
 import useContactState from '~/logic/state/contacts';
+import useGroupState from '~/logic/state/groups';
 
 function getGraphModuleIcon(module: string) {
   if (module === 'link') {
@@ -233,10 +234,9 @@ export function GraphNotification(props: {
   time: number;
   timebox: BigInteger;
   associations: Associations;
-  groups: Groups;
   api: GlobalApi;
 }) {
-  const { contents, index, read, time, api, timebox, groups } = props;
+  const { contents, index, read, time, api, timebox } = props;
 
   const authors = _.map(contents, 'author');
   const { graph, group } = index;
@@ -250,6 +250,8 @@ export function GraphNotification(props: {
 
     return api.hark['read'](timebox, { graph: index });
   }, [api, timebox, index, read]);
+
+  const groups = useGroupState(state => state.groups);
 
   return (
     <>

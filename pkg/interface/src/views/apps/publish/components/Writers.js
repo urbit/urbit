@@ -39,7 +39,6 @@ export class Writers extends Component {
         >
           <Form>
             <ShipSearch
-              groups={groups}
               id="ships"
               label=""
               maxLength={undefined}

@@ -24,7 +24,6 @@ export function PublishResource(props: PublishResourceProps) {
         api={api}
         ship={ship}
         book={book}
-        groups={props.groups}
         associations={props.associations}
         association={association}
         rootUrl={baseUrl}

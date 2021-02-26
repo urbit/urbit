@@ -28,6 +28,7 @@ import { getGroupFromWorkspace } from '~/logic/lib/workspace';
 import { GroupSummary } from './GroupSummary';
 import { Workspace } from '~/types/workspace';
 import useContactState from '~/logic/state/contacts';
+import useGroupState from '~/logic/state/groups';
 
 type GroupsPaneProps = StoreState & {
   baseUrl: string;
@@ -36,10 +37,11 @@ type GroupsPaneProps = StoreState & {
 };
 
 export function GroupsPane(props: GroupsPaneProps) {
-  const { baseUrl, associations, groups, api, workspace } = props;
+  const { baseUrl, associations, api, workspace } = props;
   const contacts = useContactState(state => state.contacts);
   const relativePath = (path: string) => baseUrl + path;
   const groupPath = getGroupFromWorkspace(workspace);
+  const groups = useGroupState(state => state.groups);
 
   const groupContacts = Object.assign({}, ...Array.from(groups?.[groupPath]?.members ?? []).filter(e => contacts[`~${e}`]).map(e => {
       return {[e]: contacts[`~${e}`]};
@@ -83,7 +85,6 @@ export function GroupsPane(props: GroupsPaneProps) {
           api={api}
           association={groupAssociation!}
           baseUrl={baseUrl}
-          groups={props.groups}
           workspace={workspace}
         />
       </>
@@ -179,7 +180,6 @@ export function GroupsPane(props: GroupsPaneProps) {
                 api={api}
                 baseUrl={baseUrl}
                 associations={associations}
-                groups={groups}
                 group={groupPath}
                 workspace={workspace}
               />
@@ -197,7 +197,7 @@ export function GroupsPane(props: GroupsPaneProps) {
           }).length;
           let summary: ReactNode;
           if(groupAssociation?.group) {
-            const memberCount = props.groups[groupAssociation.group].members.size;
+            const memberCount = groups[groupAssociation.group].members.size;
             summary = <GroupSummary
               memberCount={memberCount}
               channelCount={channelCount}

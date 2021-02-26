@@ -39,7 +39,6 @@ type ChatWindowProps = RouteComponentProps<{
   api: GlobalApi;
   scrollTo?: number;
   associations: Associations;
-  groups: Groups;
 };
 
 interface ChatWindowState {
@@ -243,7 +242,6 @@ export default class ChatWindow extends Component<
       group,
       graph,
       history,
-      groups,
       associations
     } = this.props;
 
@@ -254,7 +252,6 @@ export default class ChatWindow extends Component<
       unreadMarkerRef,
       history,
       api,
-      groups,
       associations
     };
     const keys = graph.keys().reverse();

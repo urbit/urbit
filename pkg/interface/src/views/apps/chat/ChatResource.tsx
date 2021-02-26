@@ -19,6 +19,7 @@ import { isWriter, resourceFromPath } from '~/logic/lib/group';
 import './css/custom.css';
 import useContactState from '~/logic/state/contacts';
 import useGraphState from '~/logic/state/graph';
+import useGroupState from '~/logic/state/groups';
 
 type ChatResourceProps = StoreState & {
   association: Association;
@@ -29,7 +30,8 @@ type ChatResourceProps = StoreState & {
 export function ChatResource(props: ChatResourceProps) {
   const station = props.association.resource;
   const groupPath = props.association.group;
-  const group = props.groups[groupPath];
+  const groups = useGroupState(state => state.groups);
+  const group = groups[groupPath];
   const contacts = useContactState(state => state.contacts);
   const graphs = useGraphState(state => state.graphs);
   const graph = graphs[station.slice(7)];
@@ -162,7 +164,6 @@ export function ChatResource(props: ChatResourceProps) {
         }
         association={props.association}
         associations={props.associations}
-        groups={props.groups}
         group={group}
         ship={owner}
         station={station}

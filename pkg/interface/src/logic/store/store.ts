@@ -105,7 +105,7 @@ export default class GlobalStore extends BaseStore<StoreState> {
     this.metadataReducer.reduce(data, this.state);
     this.localReducer.reduce(data, this.state);
     this.s3Reducer.reduce(data, this.state);
-    this.groupReducer.reduce(data, this.state);
+    this.groupReducer.reduce(data);
     this.launchReducer.reduce(data, this.state);
     this.connReducer.reduce(data, this.state);
     GraphReducer(data);

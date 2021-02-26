@@ -39,7 +39,6 @@ export default function ProfileScreen(props: any) {
                   ship={ship}
                   hasLoaded={Object.keys(contacts).length !== 0}
                   associations={props.associations}
-                  groups={props.groups}
                   contact={contact}
                   api={props.api}
                   s3={props.s3}

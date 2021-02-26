@@ -42,7 +42,6 @@ export function SidebarList(props: {
   contacts: Rolodex;
   config: SidebarListConfig;
   associations: Associations;
-  groups: Groups;
   baseUrl: string;
   group?: string;
   selected?: string;
@@ -76,7 +75,6 @@ export function SidebarList(props: {
             association={assoc}
             apps={props.apps}
             hideUnjoined={config.hideUnjoined}
-            groups={props.groups}
             workspace={workspace}
           />
         );

@@ -9,6 +9,7 @@ import { Groups, Associations, Association } from '@urbit/api';
 import GlobalApi from '~/logic/api/global';
 import GroupSearch from '~/views/components/GroupSearch';
 import { AsyncButton } from '~/views/components/AsyncButton';
+import useGroupState from '~/logic/state/groups';
 
 const formSchema = Yup.object({
   group: Yup.string().nullable()
@@ -19,7 +20,6 @@ interface FormSchema {
 }
 
 interface GroupifyFormProps {
-  groups: Groups;
   api: GlobalApi;
   associations: Associations;
   association: Association;
@@ -51,8 +51,9 @@ export function GroupifyForm(props: GroupifyFormProps) {
   };
 
   const groupPath = props.association?.group;
+  const groups = useGroupState(state => state.groups);
 
-  const isUnmanaged = props.groups?.[groupPath]?.hidden || false;
+  const isUnmanaged = groups?.[groupPath]?.hidden || false;
 
   if (!isUnmanaged) {
     return null;
@@ -77,7 +78,6 @@ export function GroupifyForm(props: GroupifyFormProps) {
             id="group"
             label="Group"
             caption="Optionally, if you have admin privileges, you can add this channel to a group, or leave this blank to place the channel in its own group"
-            groups={props.groups}
             associations={props.associations}
             adminOnly
             maxLength={1}

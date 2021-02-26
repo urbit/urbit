@@ -13,6 +13,7 @@ import { TUTORIAL_HOST, TUTORIAL_GROUP } from '~/logic/lib/tutorialModal';
 import { SidebarAppConfigs, SidebarItemStatus } from './types';
 import { Workspace } from '~/types/workspace';
 import useContactState from '~/logic/state/contacts';
+import useGroupState from '~/logic/state/groups';
 
 function SidebarItemIndicator(props: { status?: SidebarItemStatus }) {
   switch (props.status) {
@@ -32,19 +33,18 @@ function SidebarItemIndicator(props: { status?: SidebarItemStatus }) {
 export function SidebarItem(props: {
   hideUnjoined: boolean;
   association: Association;
-  contacts: Rolodex;
-  groups: Groups;
   path: string;
   selected: boolean;
   apps: SidebarAppConfigs;
   workspace: Workspace;
 }): ReactElement {
-  const { association, path, selected, apps, groups } = props;
+  const { association, path, selected, apps } = props;
   let title = getItemTitle(association);
   const appName = association?.['app-name'];
   const mod = association?.metadata?.module || appName;
   const rid = association?.resource;
   const groupPath = association?.group;
+  const groups = useGroupState(state => state.groups);
   const anchorRef = useRef<HTMLElement | null>(null);
   useTutorialModal(
     mod as any,

@@ -18,13 +18,13 @@ import Notebook from './Notebook';
 import NewPost from './new-post';
 import { NoteRoutes } from './NoteRoutes';
 import useGraphState from '~/logic/state/graph';
+import useGroupState from '~/logic/state/groups';
 
 interface NotebookRoutesProps {
   api: GlobalApi;
   ship: string;
   book: string;
   unreads: Unreads;
-  groups: Groups;
   baseUrl: string;
   rootUrl: string;
   association: Association;
@@ -35,7 +35,7 @@ interface NotebookRoutesProps {
 export function NotebookRoutes(
   props: NotebookRoutesProps & RouteComponentProps
 ) {
-  const { ship, book, api, baseUrl, rootUrl, groups } = props;
+  const { ship, book, api, baseUrl, rootUrl } = props;
 
   useEffect(() => {
     ship && book && api.graph.getGraph(ship, book);
@@ -44,6 +44,8 @@ export function NotebookRoutes(
   const graphs = useGraphState(state => state.graphs);
 
   const graph = graphs[`${ship.slice(1)}/${book}`];
+
+  const groups = useGroupState(state => state.groups);
 
   const group = groups?.[props.association?.group];
 

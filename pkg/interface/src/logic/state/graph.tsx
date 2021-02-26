@@ -126,7 +126,7 @@ const useGraphState = create<GraphState>(persist((set, get) => ({
   // },
   set: fn => stateSetter(fn, set)
 }), {
-  blacklist: ['graphKeys'],
+  blacklist: ['graphKeys', 'graphs'],
   name: 'LandscapeGraphState'
 }));
 

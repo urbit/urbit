@@ -17,10 +17,10 @@ import { useOutsideClick } from '~/logic/lib/useOutsideClick';
 import { Portal } from '../Portal';
 import { Tile } from '~/types';
 import useContactState from '~/logic/state/contacts';
+import useGroupState from '~/logic/state/groups';
 
 interface OmniboxProps {
   associations: Associations;
-  groups: Groups;
   tiles: {
     [app: string]: Tile;
   };
@@ -49,6 +49,8 @@ export function Omnibox(props: OmniboxProps) {
       : contactState;
   }, [contactState, query]);
 
+  const groups = useGroupState(state => state.groups);
+
   const index = useMemo(() => {
     const selectedGroup = location.pathname.startsWith('/~landscape/ship/')
       ? '/' + location.pathname.split('/').slice(2,5).join('/')
@@ -58,9 +60,9 @@ export function Omnibox(props: OmniboxProps) {
       props.associations,
       props.tiles,
       selectedGroup,
-      props.groups
+      groups
     );
-  }, [location.pathname, contacts, props.associations, props.groups, props.tiles]);
+  }, [location.pathname, contacts, props.associations, groups, props.tiles]);
 
   const onOutsideClick = useCallback(() => {
     props.show && props.toggle();

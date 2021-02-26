@@ -63,7 +63,6 @@ export function ViewProfile(props: any): ReactElement {
               <GroupLink
                 api={api}
                 resource={g}
-                groups={groups}
                 associations={associations}
                 measure={() => {}}
               />

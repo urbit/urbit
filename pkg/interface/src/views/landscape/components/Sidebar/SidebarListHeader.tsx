@@ -21,13 +21,12 @@ import { roleForShip } from '~/logic/lib/group';
 import { NewChannel } from '~/views/landscape/components/NewChannel';
 import GlobalApi from '~/logic/api/global';
 import { Workspace } from '~/types/workspace';
+import useGroupState from '~/logic/state/groups';
 
 export function SidebarListHeader(props: {
   api: GlobalApi;
   initialValues: SidebarListConfig;
   associations: Associations;
-  groups: Groups;
-  contacts: Rolodex;
   baseUrl: string;
   selected: string;
   workspace: Workspace;
@@ -40,9 +39,10 @@ export function SidebarListHeader(props: {
     },
     [props.handleSubmit]
   );
+  const groups = useGroupState(state => state.groups);
 
   const groupPath = getGroupFromWorkspace(props.workspace);
-  const role = groupPath && props.groups?.[groupPath] ? roleForShip(props.groups[groupPath], window.ship) : undefined;
+  const role = groupPath && groups?.[groupPath] ? roleForShip(groups[groupPath], window.ship) : undefined;
   const memberMetadata =
     groupPath ? props.associations.groups?.[groupPath].metadata.vip === 'member-metadata' : false;
 
@@ -87,7 +87,6 @@ export function SidebarListHeader(props: {
                 api={props.api}
                 history={props.history}
                 associations={props.associations}
-                groups={props.groups}
                 workspace={props.workspace}
               />
               </Col>

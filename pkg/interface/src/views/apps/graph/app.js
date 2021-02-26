@@ -8,11 +8,9 @@ import useGraphState from '~/logic/state/graph';
 export default class GraphApp extends PureComponent {
   render() {
     const { props } = this;
-    const groups = props.groups ? props.groups : {};
     const associations =
       props.associations ? props.associations : { graph: {}, contacts: {} };
     const graphKeys = useGraphState(state => state.graphKeys);
-    const graphs = useGraphState(state => state.graphs);
 
     const { api } = this.props;
 

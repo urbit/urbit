@@ -11,6 +11,8 @@ import { StoreState } from '~/logic/store/type';
 import GlobalApi from '~/logic/api/global';
 import { ResourceSkeleton } from './ResourceSkeleton';
 import { ChannelPopoverRoutes } from './ChannelPopoverRoutes';
+import useGroupState from '~/logic/state/groups';
+import useContactState from '~/logic/state/contacts';
 
 type ResourceProps = StoreState & {
   association: Association;
@@ -19,7 +21,9 @@ type ResourceProps = StoreState & {
 } & RouteComponentProps;
 
 export function Resource(props: ResourceProps): ReactElement {
-  const { association, api, notificationsGraphConfig, groups, contacts } = props;
+  const { association, api, notificationsGraphConfig } = props;
+  const groups = useGroupState(state => state.groups);
+  const contacts = useContactState(state => state.contacts);
   const app = association.metadata.module || association['app-name'];
   const rid = association.resource;
   const selectedGroup = association.group;
@@ -56,8 +60,7 @@ export function Resource(props: ResourceProps): ReactElement {
             return (
               <ChannelPopoverRoutes
                 association={association}
-                group={props.groups?.[selectedGroup]}
-                groups={props.groups}
+                group={groups?.[selectedGroup]}
                 api={props.api}
                 baseUrl={relativePath('')}
                 rootUrl={props.baseUrl}

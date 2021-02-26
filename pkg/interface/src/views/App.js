@@ -29,6 +29,7 @@ import { uxToHex } from '~/logic/lib/util';
 import { foregroundFromBackground } from '~/logic/lib/sigil';
 import { withLocalState } from '~/logic/state/local';
 import { withContactState } from '~/logic/state/contacts';
+import { withGroupState } from '~/logic/state/groups';
 
 
 const Root = styled.div`
@@ -174,7 +175,6 @@ class App extends React.Component {
                 api={this.api}
                 notifications={state.notificationsCount}
                 invites={state.invites}
-                groups={state.groups}
                 show={this.props.omniboxShown}
                 toggle={this.props.toggleOmnibox}
               />
@@ -195,5 +195,5 @@ class App extends React.Component {
   }
 }
 
-export default withContactState(withLocalState(process.env.NODE_ENV === 'production' ? App : hot(App)));
+export default withGroupState(withContactState(withLocalState(process.env.NODE_ENV === 'production' ? App : hot(App))));
 

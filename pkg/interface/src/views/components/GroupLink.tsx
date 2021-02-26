@@ -15,12 +15,11 @@ export function GroupLink(
     api: GlobalApi;
     resource: string;
     associations: Associations;
-    groups: Groups;
     measure: () => void;
     detailed?: boolean;
   } & PropFunc<typeof Row>
 ): ReactElement {
-  const { resource, api, associations, groups, measure, ...rest } = props;
+  const { resource, api, associations, measure, ...rest } = props;
   const name = resource.slice(6);
   const [preview, setPreview] = useState<MetadataUpdatePreview | null>(null);
 
@@ -38,7 +37,6 @@ export function GroupLink(
         </Box>
       ) : (
         <JoinGroup
-          groups={groups}
           associations={associations}
           api={api}
           autojoin={name}

@@ -9,6 +9,7 @@ import { getUnreadCount, getNotificationCount } from '~/logic/lib/hark';
 import Tile from '../components/tiles/tile';
 import { useTutorialModal } from '~/views/components/useTutorialModal';
 import { TUTORIAL_HOST, TUTORIAL_GROUP } from '~/logic/lib/tutorialModal';
+import useGroupState from '~/logic/state/groups';
 
 interface GroupsProps {
   associations: Associations;
@@ -35,9 +36,10 @@ const getGraphNotifications = (associations: Associations, unreads: Unreads) => 
 
 export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
   const { associations, unreads, inbox, ...boxProps } = props;
+  const groupState = useGroupState(state => state.groups);
 
   const groups = Object.values(associations?.groups || {})
-    .filter(e => e?.group in props.groups)
+    .filter(e => e?.group in groupState)
     .sort(sortGroupsAlph);
   const graphUnreads = getGraphUnreads(associations || {}, unreads);
   const graphNotifications = getGraphNotifications(associations || {}, unreads);

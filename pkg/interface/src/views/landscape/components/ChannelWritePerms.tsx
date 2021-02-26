@@ -16,7 +16,6 @@ export interface ChannelWriteFieldSchema {
 }
 
 interface ChannelWritePermsProps {
-  groups: Groups;
   contacts: Rolodex;
 }
 
@@ -33,7 +32,6 @@ export function ChannelWritePerms<
       <Radio name="writePerms" id="subset" label="Host and selected ships" />
       {values.writePerms === 'subset' && (
         <ShipSearch
-          groups={props.groups}
           id="writers"
           label=""
           maxLength={undefined}
