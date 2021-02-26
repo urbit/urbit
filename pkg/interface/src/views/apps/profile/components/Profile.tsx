@@ -108,7 +108,6 @@ export function Profile(props: any): ReactElement {
           <EditProfile
             ship={ship}
             contact={contact}
-            s3={props.s3}
             api={props.api}
           />
         ) : (

@@ -7,16 +7,16 @@ import { S3State } from '@urbit/api';
 import SubmitDragger from '~/views/components/SubmitDragger';
 import { createPost } from '~/logic/api/graph';
 import { hasProvider } from 'oembed-parser';
+import useS3State from '~/logic/state/s3';
 
 interface LinkSubmitProps {
   api: GlobalApi;
-  s3: S3State;
   name: string;
   ship: string;
 }
 
 const LinkSubmit = (props: LinkSubmitProps) => {
-  const { canUpload, uploadDefault, uploading, promptUpload } = useS3(props.s3);
+  const { canUpload, uploadDefault, uploading, promptUpload } = useS3();
 
   const [submitFocused, setSubmitFocused] = useState(false);
   const [urlFocused, setUrlFocused] = useState(false);

@@ -21,8 +21,6 @@ interface GroupSettingsProps {
   group: Group;
   association: Association;
   api: GlobalApi;
-  notificationsGroupConfig: GroupNotificationsConfig;
-  s3: S3State;
   baseUrl: string;
 }
 export function GroupSettings(props: GroupSettingsProps) {

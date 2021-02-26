@@ -27,7 +27,6 @@ interface NotebookRoutesProps {
   baseUrl: string;
   rootUrl: string;
   association: Association;
-  s3: S3State;
 }
 
 export function NotebookRoutes(
@@ -77,7 +76,6 @@ export function NotebookRoutes(
             association={props.association}
             graph={graph}
             baseUrl={baseUrl}
-            s3={props.s3}
           />
         )}
       />
@@ -107,7 +105,6 @@ export function NotebookRoutes(
               noteId={noteIdNum}
               association={props.association}
               group={group}
-              s3={props.s3}
               {...routeProps}
             />
           );

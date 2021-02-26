@@ -30,7 +30,6 @@ export function LinkResource(props: LinkResourceProps) {
     api,
     baseUrl,
     groups,
-    s3,
   } = props;
 
   const rid = association.resource;
@@ -66,7 +65,6 @@ export function LinkResource(props: LinkResourceProps) {
           render={(props) => {
             return (
               <LinkWindow
-                s3={s3}
                 association={resource}
                 resource={resourcePath}
                 graph={graph}

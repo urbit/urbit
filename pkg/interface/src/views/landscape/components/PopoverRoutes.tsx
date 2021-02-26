@@ -22,7 +22,6 @@ export function PopoverRoutes(
     baseUrl: string;
     group: Group;
     association: Association;
-    s3: S3State;
     api: GlobalApi;
     notificationsGroupConfig: GroupNotificationsConfig;
     rootIdentity: Contact;
@@ -124,7 +123,6 @@ export function PopoverRoutes(
                       group={props.group}
                       association={props.association}
                       api={props.api}
-                      s3={props.s3}
                     />
                   )}
                   {view === 'participants' && (

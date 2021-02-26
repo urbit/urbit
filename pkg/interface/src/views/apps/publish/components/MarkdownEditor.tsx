@@ -28,7 +28,6 @@ interface MarkdownEditorProps {
   value: string;
   onChange: (s: string) => void;
   onBlur?: (e: any) => void;
-  s3: S3State;
 }
 
 const PromptIfDirty = () => {
@@ -74,7 +73,7 @@ export function MarkdownEditor(
     [onBlur]
   );
 
-  const { uploadDefault, canUpload } = useS3(props.s3);
+  const { uploadDefault, canUpload } = useS3();
 
   const onFileDrag = useCallback(
     async (files: FileList | File[], e: DragEvent) => {

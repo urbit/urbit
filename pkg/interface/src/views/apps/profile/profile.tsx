@@ -41,7 +41,6 @@ export default function ProfileScreen(props: any) {
                   hasLoaded={Object.keys(contacts).length !== 0}
                   contact={contact}
                   api={props.api}
-                  s3={props.s3}
                   isEdit={isEdit}
                 />
               </Box>

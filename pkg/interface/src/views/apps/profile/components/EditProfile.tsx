@@ -109,15 +109,15 @@ export function EditProfile(props: any): ReactElement {
         <Input id="nickname" label="Name" mb={3} />
         <Col width="100%">
           <Text mb={2}>Description</Text>
-          <MarkdownField id="bio" mb={3} s3={props.s3} />
+          <MarkdownField id="bio" mb={3} />
         </Col>
         <ColorInput id="color" label="Sigil Color" mb={3} />
         <Row mb={3} width="100%">
           <Col pr={2} width="50%">
-            <ImageInput id="cover" label="Cover Image" s3={props.s3} />
+            <ImageInput id="cover" label="Cover Image" />
           </Col>
           <Col pl={2} width="50%">
-            <ImageInput id="avatar" label="Profile Image" s3={props.s3} />
+            <ImageInput id="avatar" label="Profile Image" />
           </Col>
         </Row>
         <Checkbox mb={3} id="isPublic" label="Public Profile" />

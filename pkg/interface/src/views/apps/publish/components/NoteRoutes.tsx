@@ -18,8 +18,7 @@ interface NoteRoutesProps {
   association: Association;
   baseUrl?: string;
   rootUrl?: string;
-  group: Group;
-  s3: S3State;
+  group: Group
 }
 
 export function NoteRoutes(props: NoteRoutesProps & RouteComponentProps) {

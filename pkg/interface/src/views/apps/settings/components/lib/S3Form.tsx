@@ -12,6 +12,7 @@ import {
 import { BucketList } from './BucketList';
 import GlobalApi from '~/logic/api/global';
 import { S3State } from '~/types/s3-update';
+import useS3State from '~/logic/state/s3';
 
 interface FormSchema {
   s3bucket: string;
@@ -23,11 +24,11 @@ interface FormSchema {
 
 interface S3FormProps {
   api: GlobalApi;
-  s3: S3State;
 }
 
 export default function S3Form(props: S3FormProps): ReactElement {
-  const { api, s3 } = props;
+  const { api } = props;
+  const s3 = useS3State();
 
   const onSubmit = useCallback(
     (values: FormSchema) => {

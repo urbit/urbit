@@ -18,12 +18,10 @@ export function BackgroundPicker({
   bgType,
   bgUrl,
   api,
-  s3
 }: {
   bgType: BgType;
   bgUrl?: string;
   api: GlobalApi;
-  s3: S3State;
 }): ReactElement {
   const rowSpace = { my: 0, alignItems: 'center' };
   const radioProps = { my: 4, mr: 4, name: 'bgType' };
@@ -36,7 +34,6 @@ export function BackgroundPicker({
           <ImageInput
             ml="3"
             api={api}
-            s3={s3}
             id="bgUrl"
             name="bgUrl"
             label="URL"

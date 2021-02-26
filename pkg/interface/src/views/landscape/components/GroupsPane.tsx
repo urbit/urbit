@@ -78,7 +78,6 @@ export function GroupsPane(props: GroupsPaneProps) {
           association={groupAssociation!}
           group={group!}
           api={api}
-          s3={props.s3}
 
           {...routeProps}
           baseUrl={baseUrl}

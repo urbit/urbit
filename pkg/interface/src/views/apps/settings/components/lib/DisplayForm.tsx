@@ -34,11 +34,10 @@ interface FormSchema {
 
 interface DisplayFormProps {
   api: GlobalApi;
-  s3: S3State;
 }
 
 export default function DisplayForm(props: DisplayFormProps) {
-  const { api, s3 } = props;
+  const { api } = props;
 
   const { hideAvatars, hideNicknames, background, set: setLocalState } = useLocalState();
 
@@ -94,7 +93,6 @@ export default function DisplayForm(props: DisplayFormProps) {
               bgType={props.values.bgType}
               bgUrl={props.values.bgUrl}
               api={api}
-              s3={s3}
             />
             <Checkbox
               label="Disable avatars"

@@ -16,7 +16,6 @@ interface NewPostProps {
   graph: Graph;
   association: Association;
   baseUrl: string;
-  s3: S3State;
 }
 
 export default function NewPost(props: NewPostProps & RouteComponentProps) {
@@ -53,7 +52,6 @@ export default function NewPost(props: NewPostProps & RouteComponentProps) {
       onSubmit={onSubmit}
       submitLabel="Publish"
       loadingText="Posting..."
-      s3={props.s3}
     />
   );
 }

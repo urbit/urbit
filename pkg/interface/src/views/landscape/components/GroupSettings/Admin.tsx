@@ -43,11 +43,10 @@ interface GroupAdminSettingsProps {
   group: Group;
   association: Association;
   api: GlobalApi;
-  s3: S3State;
 }
 
 export function GroupAdminSettings(props: GroupAdminSettingsProps) {
-  const { group, association, s3 } = props;
+  const { group, association } = props;
   const { metadata } = association;
   const history = useHistory();
   const currentPrivate = 'invite' in props.group.policy;
@@ -130,7 +129,6 @@ return null;
             caption="A picture for your group"
             placeholder="Enter URL"
             disabled={disabled}
-            s3={s3}
           />
           <Checkbox
             id="isPrivate"
