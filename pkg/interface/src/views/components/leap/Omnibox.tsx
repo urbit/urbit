@@ -10,6 +10,7 @@ import makeIndex from '~/logic/lib/omnibox';
 import OmniboxInput from './OmniboxInput';
 import OmniboxResult from './OmniboxResult';
 import { deSig } from '~/logic/lib/util';
+import { withLocalState } from '~/logic/state/local';
 
 import defaultApps from '~/logic/lib/default-apps';
 import {useOutsideClick} from '~/logic/lib/useOutsideClick';
@@ -51,8 +52,8 @@ export function Omnibox(props: OmniboxProps) {
   }, [props.contacts, query]);
 
   const selectedGroup =  useMemo(
-    () => location.pathname.startsWith('/~landscape/ship/') 
-      ? '/' + location.pathname.split('/').slice(2,5).join('/') 
+    () => location.pathname.startsWith('/~landscape/ship/')
+      ? '/' + location.pathname.split('/').slice(2,5).join('/')
       : null,
     [location.pathname]
   );
