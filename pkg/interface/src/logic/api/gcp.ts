@@ -12,12 +12,12 @@ export default class GcpApi extends BaseApi<StoreState> {
           data: token
         });
 
-        if (token['gcp-token'] !== undefined &&
-            token['gcp-token']['expiresIn'] !== undefined &&
+        if (typeof(token) === 'object' &&
+            typeof(token['gcp-token']) === 'object' &&
             typeof(token['gcp-token']['expiresIn']) === 'number') {
           return Promise.resolve(token['gcp-token']['expiresIn']);
         }
-        return Promise.reject({reason: 'invalid token'});
+        return Promise.reject(new Error("invalid token"));
       });
   }
 };

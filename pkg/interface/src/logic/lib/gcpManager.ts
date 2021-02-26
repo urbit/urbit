@@ -52,16 +52,15 @@ class GcpManager {
   }
 
   private refreshLoop() {
-    console.log('GcpManager refreshing token');
     this.#api.gcp.refreshToken()
       .then(
         (expiresIn: number) => {
           this.refreshAfter(this.refreshInterval(expiresIn));
         })
       .catch(
-        ({reason}) => {
+        (reason) => {
           console.error('GcpManager token refresh failed', reason);
-          this.refreshAfter(10_000);  // XX backoff?
+          this.refreshAfter(30_000);  // XX backoff?
         });
   }
 
