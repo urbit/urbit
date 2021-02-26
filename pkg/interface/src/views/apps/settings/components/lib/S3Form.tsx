@@ -7,7 +7,8 @@ import {
   Box,
   Text,
   Button,
-  Col
+  Col,
+  Anchor
 } from '@tlon/indigo-react';
 
 import GlobalApi from "~/logic/api/global";
@@ -69,8 +70,15 @@ export default function S3Form(props: S3FormProps): ReactElement {
                 </Text>
                 <Text gray>
                   Store credentials for your S3 object storage buckets on your
-                  Urbit ship, and upload media freely to various modules. Learn
-                  more
+                  Urbit ship, and upload media freely to various modules.
+                  <Anchor
+                    target="_blank"
+                    style={{ textDecoration: 'none' }}
+                    borderBottom="1"
+                    ml="1"
+                    href="https://urbit.org/using/operations/using-your-ship/#bucket-setup">
+                    Learn more
+                  </Anchor>
                 </Text>
               </Col>
               <Input label="Endpoint" id="s3endpoint" />

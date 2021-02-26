@@ -91,7 +91,7 @@ export default function DisplayForm(props: DisplayFormProps) {
               <Text color="black" fontSize={2} fontWeight="medium">
                 Display Preferences
               </Text>
-              <Text gray fontSize="0">
+              <Text gray>
                 Customize visual interfaces across your Landscape
               </Text>
             </Col>

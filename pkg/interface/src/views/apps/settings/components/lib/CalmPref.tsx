@@ -80,7 +80,7 @@ export function CalmPrefs(props: {
               CalmEngine
             </Text>
             <Text gray>
-              Modulate various elemednts across Landscape to maximize calmness
+              Modulate various elements across Landscape to maximize calmness
             </Text>
           </Col>
           <Text fontWeight="medium">Home screen</Text>
