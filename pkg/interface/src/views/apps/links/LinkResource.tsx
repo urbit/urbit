@@ -13,6 +13,7 @@ import { Comments } from '~/views/components/Comments';
 
 import './css/custom.css';
 import { Association } from '@urbit/api/metadata';
+import useGraphState from '~/logic/state/graph';
 
 const emptyMeasure = () => {};
 
@@ -27,10 +28,8 @@ export function LinkResource(props: LinkResourceProps) {
     association,
     api,
     baseUrl,
-    graphs,
     groups,
     associations,
-    graphKeys,
     unreads,
     s3,
     history
@@ -47,6 +46,7 @@ export function LinkResource(props: LinkResourceProps) {
     : { metadata: {} };
   const group = groups[resource?.group] || {};
 
+  const graphs = useGraphState(state => state.graphs);
   const graph = graphs[resourcePath] || null;
 
   useEffect(() => {

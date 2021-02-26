@@ -9,6 +9,7 @@ import GlobalSubscription from '~/logic/subscription/global';
 import { useGraphModule } from './Sidebar/Apps';
 import { Body } from '~/views/components/Body';
 import { Workspace } from '~/types/workspace';
+import useGraphState from '~/logic/state/graph';
 
 interface SkeletonProps {
   contacts: Rolodex;
@@ -16,8 +17,6 @@ interface SkeletonProps {
   recentGroups: string[];
   groups: Groups;
   associations: Associations;
-  graphKeys: Set<string>;
-  graphs: Graphs;
   linkListening: Set<Path>;
   invites: Invites;
   selected?: string;
@@ -32,7 +31,9 @@ interface SkeletonProps {
 }
 
 export function Skeleton(props: SkeletonProps): ReactElement {
-  const graphConfig = useGraphModule(props.graphKeys, props.graphs, props.unreads.graph);
+  const graphs = useGraphState(state => state.graphs);
+  const graphKeys = useGraphState(state => state.graphKeys);
+  const graphConfig = useGraphModule(graphKeys, graphs, props.unreads.graph);
   const config = useMemo(
     () => ({
       graph: graphConfig

@@ -17,6 +17,7 @@ import { Box } from '@tlon/indigo-react';
 import { Loading } from '../components/Loading';
 import { Workspace } from '~/types/workspace';
 import GlobalSubscription from '~/logic/subscription/global';
+import useGraphState from '~/logic/state/graph';
 
 type LandscapeProps = StoreState & {
   ship: PatpNoSig;
@@ -25,10 +26,11 @@ type LandscapeProps = StoreState & {
 }
 
 export function DMRedirect(props: LandscapeProps & RouteComponentProps & { ship: string; }): ReactElement {
-  const { ship, api, history, graphKeys } = props;
+  const { ship, api, history } = props;
   const goToGraph = useCallback((graph: string) => {
     history.push(`/~landscape/messages/resource/chat/ship/~${graph}`);
   }, [history]);
+  const graphKeys = useGraphState(state => state.graphKeys);
 
   useEffect(() => {
     const station = `${window.ship}/dm--${ship}`;

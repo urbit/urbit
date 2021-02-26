@@ -1,19 +1,26 @@
 import _ from 'lodash';
 import { BigIntOrderedMap } from "~/logic/lib/BigIntOrderedMap";
 import bigInt, { BigInteger } from "big-integer";
+import useGraphState, { GraphState } from '../state/graph';
+import { compose } from 'lodash/fp';
 
-export const GraphReducer = (json, state) => {
+export const GraphReducer = (json) => {
   const data = _.get(json, 'graph-update', false);
   if (data) {
-    keys(data, state);
-    addGraph(data, state);
-    removeGraph(data, state);
-    addNodes(data, state);
-    removeNodes(data, state);
+    useGraphState.setState(
+      compose([
+        keys,
+        addGraph,
+        removeGraph,
+        addNodes,
+        removeNodes
+      ].map(reducer => reducer.bind(reducer, data))
+      )(useGraphState.getState())
+    );
   }
 };
 
-const keys = (json, state) => {
+const keys = (json, state: GraphState): GraphState => {
   const data = _.get(json, 'keys', false);
   if (data) {
     state.graphKeys = new Set(data.map((res) => {
@@ -21,9 +28,10 @@ const keys = (json, state) => {
       return resource;
     }));
   }
+  return state;
 };
 
-const addGraph = (json, state) => {
+const addGraph = (json, state: GraphState): GraphState => {
 
   const _processNode = (node) => {
     //  is empty
@@ -69,10 +77,10 @@ const addGraph = (json, state) => {
     }
     state.graphKeys.add(resource);
   }
-
+  return state;
 };
 
-const removeGraph = (json, state) => {
+const removeGraph = (json, state: GraphState): GraphState => {
   const data = _.get(json, 'remove-graph', false);
   if (data) {
 
@@ -83,6 +91,7 @@ const removeGraph = (json, state) => {
     state.graphKeys.delete(resource);
     delete state.graphs[resource];
   }
+  return state;
 };
 
 const mapifyChildren = (children) => {
@@ -94,7 +103,7 @@ const mapifyChildren = (children) => {
     }));
 };
 
-const addNodes = (json, state) => {
+const addNodes = (json, state: GraphState): GraphState => {
   const _addNode = (graph, index, node) => {
     //  set child of graph
     if (index.length === 1) {
@@ -115,7 +124,7 @@ const addNodes = (json, state) => {
 
   const data = _.get(json, 'add-nodes', false);
   if (data) {
-    if (!('graphs' in state)) { return; }
+    if (!('graphs' in state)) { return state; }
 
     let resource = data.resource.ship + '/' + data.resource.name;
     if (!(resource in state.graphs)) { 
@@ -125,13 +134,13 @@ const addNodes = (json, state) => {
 
     for (let index in data.nodes) {
       let node = data.nodes[index];
-      if (index.split('/').length === 0) { return; }
+      if (index.split('/').length === 0) { return state; }
 
       index = index.split('/').slice(1).map((ind) => {
         return bigInt(ind);
       });
 
-      if (index.length === 0) { return; }
+      if (index.length === 0) { return state; }
 
       node.children = mapifyChildren(node?.children || {});
 
@@ -143,9 +152,10 @@ const addNodes = (json, state) => {
       );
     }
   }
+  return state;
 };
 
-const removeNodes = (json, state) => {
+const removeNodes = (json, state: GraphState): GraphState => {
   const _remove = (graph, index) => {
     if (index.length === 1) {
         graph.delete(index[0]);
@@ -159,7 +169,7 @@ const removeNodes = (json, state) => {
   if (data) {
     const { ship, name } = data.resource;
     const res = `${ship}/${name}`;
-    if (!(res in state.graphs)) { return; }
+    if (!(res in state.graphs)) { return state; }
 
     data.indices.forEach((index) => {
       if (index.split('/').length === 0) { return; }
@@ -169,4 +179,5 @@ const removeNodes = (json, state) => {
       _remove(state.graphs[res], indexArr);
     });
   }
+  return state;
 };

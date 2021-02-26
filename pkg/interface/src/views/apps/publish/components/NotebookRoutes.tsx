@@ -17,12 +17,12 @@ import bigInt from 'big-integer';
 import Notebook from './Notebook';
 import NewPost from './new-post';
 import { NoteRoutes } from './NoteRoutes';
+import useGraphState from '~/logic/state/graph';
 
 interface NotebookRoutesProps {
   api: GlobalApi;
   ship: string;
   book: string;
-  graphs: Graphs;
   unreads: Unreads;
   groups: Groups;
   baseUrl: string;
@@ -41,7 +41,9 @@ export function NotebookRoutes(
     ship && book && api.graph.getGraph(ship, book);
   }, [ship, book]);
 
-  const graph = props.graphs[`${ship.slice(1)}/${book}`];
+  const graphs = useGraphState(state => state.graphs);
+
+  const graph = graphs[`${ship.slice(1)}/${book}`];
 
   const group = groups?.[props.association?.group];
 

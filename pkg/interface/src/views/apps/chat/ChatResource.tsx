@@ -18,6 +18,7 @@ import { isWriter, resourceFromPath } from '~/logic/lib/group';
 
 import './css/custom.css';
 import useContactState from '~/logic/state/contacts';
+import useGraphState from '~/logic/state/graph';
 
 type ChatResourceProps = StoreState & {
   association: Association;
@@ -30,8 +31,10 @@ export function ChatResource(props: ChatResourceProps) {
   const groupPath = props.association.group;
   const group = props.groups[groupPath];
   const contacts = useContactState(state => state.contacts);
-  const graph = props.graphs[station.slice(7)];
-  const isChatMissing = !props.graphKeys.has(station.slice(7));
+  const graphs = useGraphState(state => state.graphs);
+  const graph = graphs[station.slice(7)];
+  const graphKeys = useGraphState(state => state.graphKeys);
+  const isChatMissing = !graphKeys.has(station.slice(7));
   const unreadCount = props.unreads.graph?.[station]?.['/']?.unreads || 0;
   const [,, owner, name] = station.split('/');
   const ourContact = contacts?.[`~${window.ship}`];

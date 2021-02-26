@@ -33,7 +33,6 @@ export function PublishResource(props: PublishResourceProps) {
         match={props.match}
         location={props.location}
         unreads={props.unreads}
-        graphs={props.graphs}
         s3={props.s3}
       />
     </Box>

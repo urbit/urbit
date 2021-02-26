@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import { Center, Text } from "@tlon/indigo-react";
 import { deSig } from '~/logic/lib/util';
+import useGraphState from '~/logic/state/graph';
 
 
 export default class GraphApp extends PureComponent {
@@ -10,8 +11,8 @@ export default class GraphApp extends PureComponent {
     const groups = props.groups ? props.groups : {};
     const associations =
       props.associations ? props.associations : { graph: {}, contacts: {} };
-    const graphKeys = props.graphKeys || new Set([]);
-    const graphs = props.graphs || {};
+    const graphKeys = useGraphState(state => state.graphKeys);
+    const graphs = useGraphState(state => state.graphs);
 
     const { api } = this.props;
 

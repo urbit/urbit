@@ -156,7 +156,6 @@ export function GroupsPane(props: GroupsPaneProps) {
                 baseUrl={baseUrl}
               >
                 <UnjoinedResource
-                  graphKeys={props.graphKeys}
                   notebooks={props.notebooks}
                   inbox={props.inbox}
                   baseUrl={baseUrl}
