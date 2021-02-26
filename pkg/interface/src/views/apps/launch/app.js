@@ -44,6 +44,7 @@ const tutSelector = f.pick(['tutorialProgress', 'nextTutStep']);
 export default function LaunchApp(props) {
   const history = useHistory();
   const [hashText, setHashText] = useState(props.baseHash);
+  const [exitingTut, setExitingTut] = useState(false);
   const hashBox = (
     <Box
       position={["relative", "absolute"]}
@@ -114,26 +115,38 @@ export default function LaunchApp(props) {
         nextTutStep();
         dismiss();
       }
-      return (
-      <Col maxWidth="350px" p="3">
-        <Box position="absolute" left="-16px" top="-16px">
-          <StarIcon width="32px" height="32px" color="blue" display="block" />
-        </Box>
-        <Text mb="3" lineHeight="tall" fontWeight="medium">Welcome</Text>
-        <Text mb="3" lineHeight="tall">
-          You have been invited to use Landscape, an interface to chat 
-          and interact with communities
-          <br />
-          Would you like a tour of Landscape?
-        </Text>
-        <Row gapX="2" justifyContent="flex-end">
-          <Button backgroundColor="washedGray" onClick={onDismiss}>Skip</Button>
-          <StatelessAsyncButton primary onClick={onContinue}>
-            Yes
-          </StatelessAsyncButton>
-        </Row>
-      </Col>
-    )}
+      return exitingTut ?  (
+        <Col maxWidth="350px" p="3">
+          <Text>
+            You can always restart the tutorial by typing 'tutorial' in leap
+          </Text>
+          <Row gapX="2" justifyContent="flex-end">
+             <Button primary onClick={onDismiss}>OK</Button>
+          </Row>
+        </Col>
+      ) : (
+        <Col maxWidth="350px" p="3">
+          <Box position="absolute" left="-16px" top="-16px">
+            <StarIcon width="32px" height="32px" color="blue" display="block" />
+          </Box>
+          <Text mb="3" lineHeight="tall" fontWeight="medium">Welcome</Text>
+          <Text mb="3" lineHeight="tall">
+            You have been invited to use Landscape, an interface to chat 
+            and interact with communities
+            <br />
+            Would you like a tour of Landscape?
+          </Text>
+          <Row gapX="2" justifyContent="flex-end">
+            <Button
+              backgroundColor="washedGray" 
+              onClick={() => setExitingTut(true)}
+            >Skip</Button>
+            <StatelessAsyncButton primary onClick={onContinue}>
+              Yes
+            </StatelessAsyncButton>
+          </Row>
+        </Col>
+      )}
   });
   const hasLoaded = useMemo(() => Object.keys(props.contacts).length > 0, [props.contacts]);
 

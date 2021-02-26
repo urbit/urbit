@@ -112,7 +112,8 @@ export function TutorialModal(props: { api: GlobalApi }) {
 
   const leaveGroup = useCallback(async () => {
     await props.api.groups.leaveGroup(TUTORIAL_HOST, TUTORIAL_GROUP);
-  }, [props.api]);
+    await dismiss();
+  }, [props.api, dismiss]);
 
   const progressIdx = progress.findIndex(p => p === tutorialProgress);
 
@@ -143,7 +144,7 @@ export function TutorialModal(props: { api: GlobalApi }) {
                 Tutorial Finished
               </Text>
               <Text fontSize="0" gray>
-                {progressIdx} of {progress.length - 1}
+                {progressIdx} of {progress.length - 2}
               </Text>
             </Col>
             <Text lineHeight="tall">
