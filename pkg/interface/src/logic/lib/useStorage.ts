@@ -19,37 +19,32 @@ const useStorage = (s3: S3State, gcp: GcpState,
                     { accept = '*' } = { accept: '*' }): IuseStorage => {
   const [uploading, setUploading] = useState(false);
 
-  const gcpClient = useRef<GcpClient | null>(null);
-  const s3Client = useRef<S3Client | null>(null);
+  const client = useRef<StorageClient | null>(null);
 
   useEffect(() => {
     // prefer GCP if available, else use S3.
     if (gcp.accessKey) {
-      gcpClient.current = new GcpClient(gcp.accessKey);
-      s3Client.current = null;
+      client.current = new GcpClient(gcp.accessKey);
     } else {
       if (!s3.credentials) {
         return;
       }
-      s3Client.current = new S3({
+      client.current = new S3({
         credentials: s3.credentials,
         endpoint: s3.credentials.endpoint
       });
-      gcpClient.current = null;
     }
   }, [gcp.accessKey, s3.credentials]);
 
   const canUpload = useMemo(
     () =>
-      ((gcpClient || s3Client) && s3.configuration.currentBucket !== "") || false,
-    [gcpClient, s3Client, s3.configuration.currentBucket]
+      (client && s3.configuration.currentBucket !== "") || false,
+    [client, s3.configuration.currentBucket]
   );
 
   const upload = useCallback(
     async (file: File, bucket: string) => {
-      const client: StorageClient | null =
-        gcpClient.current || s3Client.current;
-      if (!client) {
+      if (client.current === null) {
         throw new Error("Storage not ready");
       }
 
@@ -68,21 +63,21 @@ const useStorage = (s3: S3State, gcp: GcpState,
 
       setUploading(true);
 
-      const { Location } = await client.upload(params);
+      const { Location } = await client.current.upload(params).promise();
 
       setUploading(false);
 
       return Location;
     },
-    [gcpClient, s3Client, setUploading]
+    [client, setUploading]
   );
 
   const uploadDefault = useCallback(async (file: File) => {
-    if (s3.configuration.currentBucket == '') {
-      throw new Error('current bucket not set');
+    if (s3.configuration.currentBucket === '') {
+      throw new Error("current bucket not set");
     }
     return upload(file, s3.configuration.currentBucket);
-  }, [s3.configuration, upload]);
+  }, [s3, upload]);
 
   const promptUpload = useCallback(
     () => {

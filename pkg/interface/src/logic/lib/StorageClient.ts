@@ -22,6 +22,11 @@ export interface UploadResult {
   Location: string;
 };
 
+// Extra layer of indirection used by S3 client.
+export interface StorageUpload {
+  promise(): Promise<UploadResult>;
+};
+
 export interface StorageClient {
-  upload(params: UploadParams): Promise<UploadResult>;
+  upload(params: UploadParams): StorageUpload;
 };

@@ -1,9 +1,15 @@
 // Very simple GCP Storage client.
 //
+// It's designed to match a subset of the S3 client upload API. The upload
+// function on S3 returns a ManagedUpload, which has a promise() method on
+// it. We don't care about any of the other methods on ManagedUpload, so we
+// just do the work in its promise() method.
+//
 import querystring from 'querystring';
 import {
   StorageAcl,
   StorageClient,
+  StorageUpload,
   UploadParams,
   UploadResult
 } from './StorageClient';
@@ -11,14 +17,17 @@ import {
 
 const ENDPOINT = 'storage.googleapis.com';
 
-export default class GcpClient implements StorageClient {
+class GcpUpload implements StorageUpload {
+  #params: UploadParams;
   #accessKey: string;
 
-  constructor(accessKey: string) {
+  constructor(params: UploadParams, accessKey: string) {
+    this.#params = params;
     this.#accessKey = accessKey;
   }
 
-  async upload({Bucket, Key, ContentType, Body}: UploadParams): UploadResult {
+  async promise(): UploadResult {
+    const {Bucket, Key, ContentType, Body} = this.#params;
     const urlParams = {
       uploadType: 'media',
       name: Key,
@@ -40,5 +49,17 @@ export default class GcpClient implements StorageClient {
     // TODO: response errors.
     // If we get a 400, perhaps we need fine-grained permissions on the bucket.
     return {Location: `https://${ENDPOINT}/${Bucket}/${Key}`};
+  }
+}
+
+export default class GcpClient implements StorageClient {
+  #accessKey: string;
+
+  constructor(accessKey: string) {
+    this.#accessKey = accessKey;
+  }
+
+  upload(params: UploadParams): StorageUpload {
+    return new GcpUpload(params, this.#accessKey);
   }
 }
