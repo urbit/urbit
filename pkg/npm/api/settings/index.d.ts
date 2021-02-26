@@ -1,5 +1,5 @@
 export type Key = string;
-export type Value = string | boolean | number;
+export type Value = string | string[] | boolean | number;
 export type Bucket = Map<string, Value>;
 export type Settings = Map<string, Bucket>;
 
