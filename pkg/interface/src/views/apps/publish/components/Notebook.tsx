@@ -16,13 +16,12 @@ interface NotebookProps {
   book: string;
   graph: Graph;
   association: Association;
-  associations: Associations;
   baseUrl: string;
   rootUrl: string;
   unreads: Unreads;
 }
 
-export function Notebook(props: NotebookProps & RouteComponentProps): ReactElement {
+export function Notebook(props: NotebookProps & RouteComponentProps): ReactElement | null {
   const {
     ship,
     book,

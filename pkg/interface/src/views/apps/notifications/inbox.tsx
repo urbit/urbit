@@ -48,11 +48,10 @@ export default function Inbox(props: {
   archive: Notifications;
   showArchive?: boolean;
   api: GlobalApi;
-  associations: Associations;
   filter: string[];
   pendingJoin: JoinRequests;
 }) {
-  const { api, associations } = props;
+  const { api } = props;
   useEffect(() => {
     let seen = false;
     setTimeout(() => {
@@ -117,7 +116,7 @@ export default function Inbox(props: {
 
   return (
     <Col ref={scrollRef} position="relative" height="100%" overflowY="auto">
-      <Invites pendingJoin={props.pendingJoin} api={api} associations={associations} />
+      <Invites pendingJoin={props.pendingJoin} api={api} />
       {[...notificationsByDayMap.keys()].sort().reverse().map((day, index) => {
         const timeboxes = notificationsByDayMap.get(day)!;
         return timeboxes.length > 0 && (
@@ -126,7 +125,6 @@ export default function Inbox(props: {
             label={day === 'latest' ? 'Today' : moment(day).calendar(null, calendar)}
             timeboxes={timeboxes}
             archive={Boolean(props.showArchive)}
-            associations={props.associations}
             api={api}
           />
         );
@@ -161,7 +159,6 @@ function DaySection({
   label,
   archive,
   timeboxes,
-  associations,
   api,
 }) {
   const lent = timeboxes.map(([,nots]) => nots.length).reduce(f.add, 0);
@@ -186,7 +183,6 @@ function DaySection({
             )}
             <Notification
               api={api}
-              associations={associations}
               notification={not}
               archived={archive}
               time={date}

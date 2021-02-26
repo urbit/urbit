@@ -131,8 +131,6 @@ export default class ChatMessage extends Component<ChatMessageProps> {
       api,
       highlighted,
       fontSize,
-      groups,
-      associations
     } = this.props;
 
     let { renderSigil } = this.props;
@@ -174,8 +172,6 @@ export default class ChatMessage extends Component<ChatMessageProps> {
       scrollWindow,
       highlighted,
       fontSize,
-      associations,
-      groups
     };
 
     const unreadContainerStyle = {
@@ -221,8 +217,6 @@ export const MessageAuthor = ({
   measure,
   group,
   api,
-  associations,
-  groups,
   history,
   scrollWindow,
   ...rest
@@ -366,8 +360,6 @@ export const Message = ({
   measure,
   group,
   api,
-  associations,
-  groups,
   scrollWindow,
   timestampHover,
   ...rest
@@ -396,7 +388,6 @@ export const Message = ({
             case 'text':
               return (
                 <TextContent
-                  associations={associations}
                   measure={measure}
                   api={api}
                   fontSize={1}

@@ -21,7 +21,6 @@ interface FormSchema {
 
 interface GroupifyFormProps {
   api: GlobalApi;
-  associations: Associations;
   association: Association;
 }
 
@@ -78,7 +77,6 @@ export function GroupifyForm(props: GroupifyFormProps) {
             id="group"
             label="Group"
             caption="Optionally, if you have admin privileges, you can add this channel to a group, or leave this blank to place the channel in its own group"
-            associations={props.associations}
             adminOnly
             maxLength={1}
           />

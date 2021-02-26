@@ -118,7 +118,6 @@ class Landscape extends Component<LandscapeProps, Record<string, never>> {
                 <Body>
                   <Box maxWidth="300px">
                     <NewGroup
-                      associations={props.associations}
                       api={props.api}
                       {...routeProps}
                     />

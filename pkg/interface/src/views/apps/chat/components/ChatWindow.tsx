@@ -38,7 +38,6 @@ type ChatWindowProps = RouteComponentProps<{
   station: any;
   api: GlobalApi;
   scrollTo?: number;
-  associations: Associations;
 };
 
 interface ChatWindowState {

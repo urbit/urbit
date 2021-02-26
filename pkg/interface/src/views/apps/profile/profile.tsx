@@ -39,7 +39,6 @@ export default function ProfileScreen(props: any) {
                 <Profile
                   ship={ship}
                   hasLoaded={Object.keys(contacts).length !== 0}
-                  associations={props.associations}
                   contact={contact}
                   api={props.api}
                   s3={props.s3}

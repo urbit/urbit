@@ -5,6 +5,7 @@ import { alphabeticalOrder } from '~/logic/lib/util';
 import { SidebarAppConfigs, SidebarListConfig, SidebarSort } from './types';
 import { SidebarItem } from './SidebarItem';
 import { Workspace } from '~/types/workspace';
+import useMetadataState from '~/logic/state/metadata';
 
 function sidebarSort(
   associations: AppAssociations,
@@ -40,24 +41,24 @@ function sidebarSort(
 export function SidebarList(props: {
   apps: SidebarAppConfigs;
   config: SidebarListConfig;
-  associations: Associations;
   baseUrl: string;
   group?: string;
   selected?: string;
   workspace: Workspace;
 }): ReactElement {
   const { selected, group, config, workspace } = props;
-  const associations = { ...props.associations.graph };
+  const associationState = useMetadataState(state => state.associations);
+  const associations = { ...associationState.graph };
 
   const ordered = Object.keys(associations)
     .filter((a) => {
       const assoc = associations[a];
       if (workspace?.type === 'messages') {
-        return (!(assoc.group in props.associations.groups) && assoc.metadata.module === 'chat');
+        return (!(assoc.group in associationState.groups) && assoc.metadata.module === 'chat');
       } else {
         return group
           ? assoc.group === group
-          : (!(assoc.group in props.associations.groups) && assoc.metadata.module !== 'chat');
+          : (!(assoc.group in associationState.groups) && assoc.metadata.module !== 'chat');
       }
     })
     .sort(sidebarSort(associations, props.apps)[config.sortBy]);

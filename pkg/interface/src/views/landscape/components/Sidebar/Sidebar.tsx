@@ -21,6 +21,7 @@ import { SidebarList } from './SidebarList';
 import { roleForShip } from '~/logic/lib/group';
 import { useTutorialModal } from '~/views/components/useTutorialModal';
 import useGroupState from '~/logic/state/groups';
+import useMetadataState from '~/logic/state/metadata';
 
 const ScrollbarLessCol = styled(Col)`
   scrollbar-width: none !important;
@@ -34,7 +35,6 @@ interface SidebarProps {
   children: ReactNode;
   recentGroups: string[];
   api: GlobalApi;
-  associations: Associations;
   selected?: string;
   selectedGroup?: string;
   includeUnmanaged?: boolean;
@@ -44,8 +44,9 @@ interface SidebarProps {
   workspace: Workspace;
 }
 
-export function Sidebar(props: SidebarProps): ReactElement {
-  const { associations, selected, workspace } = props;
+export function Sidebar(props: SidebarProps): ReactElement | null {
+  const { selected, workspace } = props;
+  const associations = useMetadataState(state => state.associations);
   const groupPath = getGroupFromWorkspace(workspace);
   const display = props.mobileHide ? ['none', 'flex'] : 'flex';
   if (!associations) {
@@ -83,14 +84,12 @@ export function Sidebar(props: SidebarProps): ReactElement {
       position="relative"
     >
       <GroupSwitcher
-        associations={associations}
         recentGroups={props.recentGroups}
         baseUrl={props.baseUrl}
         isAdmin={isAdmin}
         workspace={props.workspace}
       />
       <SidebarListHeader
-        associations={associations}
         baseUrl={props.baseUrl}
         initialValues={config}
         handleSubmit={setConfig}
@@ -101,7 +100,6 @@ export function Sidebar(props: SidebarProps): ReactElement {
       />
       <SidebarList
         config={config}
-        associations={associations}
         selected={selected}
         group={groupPath}
         apps={props.apps}

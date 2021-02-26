@@ -14,6 +14,7 @@ import { Dropdown } from '~/views/components/Dropdown';
 import { getTitleFromWorkspace } from '~/logic/lib/workspace';
 import { MetadataIcon } from './MetadataIcon';
 import { Workspace } from '~/types/workspace';
+import useMetadataState from '~/logic/state/metadata';
 
 const GroupSwitcherItem = ({ to, children, bottom = false, ...rest }) => (
   <Link to={to}>
@@ -31,10 +32,11 @@ const GroupSwitcherItem = ({ to, children, bottom = false, ...rest }) => (
 );
 
 function RecentGroups(props: { recent: string[]; associations: Associations }) {
-  const { associations, recent } = props;
+  const { recent } = props;
   if (recent.length < 2) {
     return null;
   }
+  const associations = useMetadataState(state => state.associations);
 
   return (
     <Col borderBottom={1} borderBottomColor="lightGray" p={1}>
@@ -70,13 +72,13 @@ function RecentGroups(props: { recent: string[]; associations: Associations }) {
 }
 
 export function GroupSwitcher(props: {
-  associations: Associations;
   workspace: Workspace;
   baseUrl: string;
   recentGroups: string[];
   isAdmin: any;
 }) {
-  const { associations, workspace, isAdmin } = props;
+  const { workspace, isAdmin } = props;
+  const associations = useMetadataState(state => state.associations);
   const title = getTitleFromWorkspace(associations, workspace);
   const metadata = (workspace.type === 'home' || workspace.type  === 'messages')
     ? undefined
@@ -136,7 +138,6 @@ export function GroupSwitcher(props: {
                 </GroupSwitcherItem>}
                 <RecentGroups
                   recent={props.recentGroups}
-                  associations={props.associations}
                 />
                 <GroupSwitcherItem to="/~landscape/new">
                   <Icon mr="2" color="gray" icon="CreateGroup" />

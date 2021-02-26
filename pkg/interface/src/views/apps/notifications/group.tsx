@@ -41,12 +41,11 @@ interface GroupNotificationProps {
   read: boolean;
   time: number;
   timebox: BigInteger;
-  associations: Associations;
   api: GlobalApi;
 }
 
 export function GroupNotification(props: GroupNotificationProps): ReactElement {
-  const { contents, index, read, time, api, timebox, associations } = props;
+  const { contents, index, read, time, api, timebox } = props;
 
   const authors = _.flatten(_.map(contents, getGroupUpdateParticipants));
 
@@ -70,7 +69,6 @@ export function GroupNotification(props: GroupNotificationProps): ReactElement {
         group={group}
         authors={authors}
         description={desc}
-        associations={associations}
       />
     </Col>
   );

@@ -110,7 +110,6 @@ export function Profile(props: any): ReactElement {
             contact={contact}
             s3={props.s3}
             api={props.api}
-            associations={props.associations}
           />
         ) : (
           <ViewProfile
@@ -118,7 +117,6 @@ export function Profile(props: any): ReactElement {
             nacked={nacked}
             ship={ship}
             contact={contact}
-            associations={props.associations}
           />
         ) }
       </Box>

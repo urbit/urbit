@@ -21,9 +21,9 @@ import useGroupState from '~/logic/state/groups';
 import useHarkState from '~/logic/state/hark';
 import useInviteState from '~/logic/state/invite';
 import useLaunchState from '~/logic/state/launch';
+import useMetadataState from '~/logic/state/metadata';
 
 interface OmniboxProps {
-  associations: Associations;
   tiles: {
     [app: string]: Tile;
   };
@@ -55,6 +55,7 @@ export function Omnibox(props: OmniboxProps) {
   }, [contactState, query]);
 
   const groups = useGroupState(state => state.groups);
+  const associations = useMetadataState(state => state.associations);
 
   const index = useMemo(() => {
     const selectedGroup = location.pathname.startsWith('/~landscape/ship/')
@@ -62,12 +63,12 @@ export function Omnibox(props: OmniboxProps) {
       : null;
     return makeIndex(
       contacts,
-      props.associations,
+      associations,
       tiles,
       selectedGroup,
       groups
     );
-  }, [location.pathname, contacts, props.associations, groups, tiles]);
+  }, [location.pathname, contacts, associations, groups, tiles]);
 
   const onOutsideClick = useCallback(() => {
     props.show && props.toggle();

@@ -14,6 +14,7 @@ import { ChannelPopoverRoutes } from './ChannelPopoverRoutes';
 import useGroupState from '~/logic/state/groups';
 import useContactState from '~/logic/state/contacts';
 import useHarkState from '~/logic/state/hark';
+import useMetadataState from '~/logic/state/metadata';
 
 type ResourceProps = StoreState & {
   association: Association;
@@ -25,6 +26,7 @@ export function Resource(props: ResourceProps): ReactElement {
   const { association, api, notificationsGraphConfig } = props;
   const groups = useGroupState(state => state.groups);
   const notificationsCount = useHarkState(state => state.notificationsCount);
+  const associations = useMetadataState(state => state.associations);
   const contacts = useContactState(state => state.contacts);
   const app = association.metadata.module || association['app-name'];
   const rid = association.resource;
@@ -34,8 +36,8 @@ export function Resource(props: ResourceProps): ReactElement {
   const skelProps = { api, association, groups, contacts };
   let title = props.association.metadata.title;
   if ('workspace' in props) {
-    if ('group' in props.workspace && props.workspace.group in props.associations.groups) {
-      title = `${props.associations.groups[props.workspace.group].metadata.title} - ${props.association.metadata.title}`;
+    if ('group' in props.workspace && props.workspace.group in associations.groups) {
+      title = `${associations.groups[props.workspace.group].metadata.title} - ${props.association.metadata.title}`;
     }
   }
   return (
@@ -66,7 +68,6 @@ export function Resource(props: ResourceProps): ReactElement {
                 api={props.api}
                 baseUrl={relativePath('')}
                 rootUrl={props.baseUrl}
-                notificationsGraphConfig={notificationsGraphConfig}
               />
             );
           }}

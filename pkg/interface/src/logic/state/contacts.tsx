@@ -34,6 +34,7 @@ const useContactState = create<ContactState>(persist((set, get) => ({
   // },
   set: fn => stateSetter(fn, set)
 }), {
+  blacklist: ['nackedContacts'],
   name: 'LandscapeContactState'
 }));
 

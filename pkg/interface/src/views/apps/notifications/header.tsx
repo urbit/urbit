@@ -10,6 +10,7 @@ import { PropFunc } from '~/types/util';
 import { useShowNickname } from '~/logic/lib/util';
 import Timestamp from '~/views/components/Timestamp';
 import useContactState from '~/logic/state/contacts';
+import useMetadataState from '~/logic/state/metadata';
 
 const Text = (props: PropFunc<typeof Text>) => (
   <NormalText fontWeight="500" {...props} />
@@ -39,9 +40,9 @@ export function Header(props: {
   moduleIcon?: string;
   time: number;
   read: boolean;
-  associations: Associations;
 } & PropFunc<typeof Row> ): ReactElement {
   const { description, channel, moduleIcon, read } = props;
+  const associations = useMetadataState(state => state.associations);
 
   const authors = _.uniq(props.authors);
 
@@ -65,11 +66,11 @@ export function Header(props: {
 
   const time = moment(props.time).format('HH:mm');
   const groupTitle =
-    props.associations.groups?.[props.group]?.metadata?.title;
+    associations.groups?.[props.group]?.metadata?.title;
 
   const app = 'graph';
   const channelTitle =
-    (channel && props.associations?.[app]?.[channel]?.metadata?.title) ||
+    (channel && associations?.[app]?.[channel]?.metadata?.title) ||
     channel;
 
   return (

@@ -30,6 +30,7 @@ import { Workspace } from '~/types/workspace';
 import useContactState from '~/logic/state/contacts';
 import useGroupState from '~/logic/state/groups';
 import useHarkState from '~/logic/state/hark';
+import useMetadataState from '~/logic/state/metadata';
 
 type GroupsPaneProps = StoreState & {
   baseUrl: string;
@@ -38,7 +39,8 @@ type GroupsPaneProps = StoreState & {
 };
 
 export function GroupsPane(props: GroupsPaneProps) {
-  const { baseUrl, associations, api, workspace } = props;
+  const { baseUrl, api, workspace } = props;
+  const associations = useMetadataState(state => state.associations);
   const contacts = useContactState(state => state.contacts);
   const notificationsCount = useHarkState(state => state.notificationsCount);
   const relativePath = (path: string) => baseUrl + path;
@@ -77,7 +79,6 @@ export function GroupsPane(props: GroupsPaneProps) {
           group={group!}
           api={api}
           s3={props.s3}
-          associations={associations}
 
           {...routeProps}
           baseUrl={baseUrl}
@@ -180,7 +181,6 @@ export function GroupsPane(props: GroupsPaneProps) {
                 {...routeProps}
                 api={api}
                 baseUrl={baseUrl}
-                associations={associations}
                 group={groupPath}
                 workspace={workspace}
               />

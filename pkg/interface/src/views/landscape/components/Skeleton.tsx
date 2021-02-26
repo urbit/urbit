@@ -15,7 +15,6 @@ import useHarkState from '~/logic/state/hark';
 interface SkeletonProps {
   children: ReactNode;
   recentGroups: string[];
-  associations: Associations;
   linkListening: Set<Path>;
   selected?: string;
   selectedApp?: AppName;
@@ -51,7 +50,6 @@ export function Skeleton(props: SkeletonProps): ReactElement {
         api={props.api}
         recentGroups={props.recentGroups}
         selected={props.selected}
-        associations={props.associations}
         apps={config}
         baseUrl={props.baseUrl}
         mobileHide={props.mobileHide}

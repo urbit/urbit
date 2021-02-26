@@ -11,10 +11,9 @@ import { useTutorialModal } from '~/views/components/useTutorialModal';
 import { TUTORIAL_HOST, TUTORIAL_GROUP } from '~/logic/lib/tutorialModal';
 import useGroupState from '~/logic/state/groups';
 import useHarkState from '~/logic/state/hark';
+import useMetadataState from '~/logic/state/metadata';
 
-interface GroupsProps {
-  associations: Associations;
-}
+interface GroupsProps {}
 
 const sortGroupsAlph = (a: Association, b: Association) =>
   alphabeticalOrder(a.metadata.title, b.metadata.title);
@@ -36,9 +35,10 @@ const getGraphNotifications = (associations: Associations, unreads: Unreads) => 
   )(associations.graph);
 
 export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
-  const { associations, inbox, ...boxProps } = props;
+  const { inbox, ...boxProps } = props;
   const unreads = useHarkState(state => state.unreads);
   const groupState = useGroupState(state => state.groups);
+  const associations = useMetadataState(state => state.associations);
 
   const groups = Object.values(associations?.groups || {})
     .filter(e => e?.group in groupState)

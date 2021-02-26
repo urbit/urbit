@@ -11,7 +11,6 @@ import useInviteState from '~/logic/state/invite';
 
 interface InvitesProps {
   api: GlobalApi;
-  associations: Associations;
   pendingJoin: JoinRequests;
 }
 
@@ -53,7 +52,6 @@ export function Invites(props: InvitesProps): ReactElement {
            return (
              <InviteItem
                key={resource}
-               associations={props.associations}
                resource={resource}
                pendingJoin={pendingJoin}
                api={api}
@@ -71,7 +69,6 @@ export function Invites(props: InvitesProps): ReactElement {
               uid={uid}
               pendingJoin={pendingJoin}
               resource={resource}
-              associations={props.associations}
             />
             );
         }

@@ -9,21 +9,22 @@ import { JoinGroup } from '../landscape/components/JoinGroup';
 import { useModal } from '~/logic/lib/useModal';
 import { GroupSummary } from '../landscape/components/GroupSummary';
 import { PropFunc } from '~/types';
+import useMetadataState from '~/logic/state/metadata';
 
 export function GroupLink(
   props: {
     api: GlobalApi;
     resource: string;
-    associations: Associations;
     measure: () => void;
     detailed?: boolean;
   } & PropFunc<typeof Row>
 ): ReactElement {
-  const { resource, api, associations, measure, ...rest } = props;
+  const { resource, api, measure, ...rest } = props;
   const name = resource.slice(6);
   const [preview, setPreview] = useState<MetadataUpdatePreview | null>(null);
+  const associations = useMetadataState(state => state.associations);
 
-  const joined = resource in props.associations.groups;
+  const joined = resource in associations.groups;
 
   const { modal, showModal } = useModal({
     modal:
@@ -37,7 +38,6 @@ export function GroupLink(
         </Box>
       ) : (
         <JoinGroup
-          associations={associations}
           api={api}
           autojoin={name}
         />

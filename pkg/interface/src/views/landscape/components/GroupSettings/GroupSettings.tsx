@@ -20,7 +20,6 @@ const Section = ({ children }) => (
 interface GroupSettingsProps {
   group: Group;
   association: Association;
-  associations: Associations;
   api: GlobalApi;
   notificationsGroupConfig: GroupNotificationsConfig;
   s3: S3State;

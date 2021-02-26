@@ -23,6 +23,7 @@ import { getModuleIcon } from '~/logic/lib/util';
 import { FormError } from '~/views/components/FormError';
 import { GroupSummary } from './GroupSummary';
 import useGroupState from '~/logic/state/groups';
+import useMetadataState from '~/logic/state/metadata';
 
 const formSchema = Yup.object({
   group: Yup.string()
@@ -41,7 +42,6 @@ interface FormSchema {
 }
 
 interface JoinGroupProps {
-  associations: Associations;
   api: GlobalApi;
   autojoin?: string;
 }
@@ -59,7 +59,8 @@ function Autojoin(props: { autojoin: string | null }) {
 }
 
 export function JoinGroup(props: JoinGroupProps): ReactElement {
-  const { api, autojoin, associations } = props;
+  const { api, autojoin } = props;
+  const associations = useMetadataState(state => state.associations);
   const groups = useGroupState(state => state.groups);
   const history = useHistory();
   const initialValues: FormSchema = {

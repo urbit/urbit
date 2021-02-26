@@ -134,7 +134,6 @@ export default function TextContent(props) {
         measure={props.measure}
         resource={resource}
         api={props.api}
-        associations={props.associations}
         pl='2'
         border='1'
         borderRadius='2'

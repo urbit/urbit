@@ -121,7 +121,7 @@ export function EditProfile(props: any): ReactElement {
           </Col>
         </Row>
         <Checkbox mb={3} id="isPublic" label="Public Profile" />
-        <GroupSearch label="Pinned Groups" id="groups" associations={props.associations} publicOnly />
+        <GroupSearch label="Pinned Groups" id="groups" publicOnly />
         <AsyncButton primary loadingText="Updating..." border mt={3}>
           Submit
         </AsyncButton>

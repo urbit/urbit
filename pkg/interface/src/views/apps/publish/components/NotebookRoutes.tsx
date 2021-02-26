@@ -27,7 +27,6 @@ interface NotebookRoutesProps {
   baseUrl: string;
   rootUrl: string;
   association: Association;
-  associations: Associations;
   s3: S3State;
 }
 

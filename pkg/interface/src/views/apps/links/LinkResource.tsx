@@ -14,6 +14,7 @@ import { Comments } from '~/views/components/Comments';
 import './css/custom.css';
 import { Association } from '@urbit/api/metadata';
 import useGraphState from '~/logic/state/graph';
+import useMetadataState from '~/logic/state/metadata';
 
 const emptyMeasure = () => {};
 
@@ -29,13 +30,13 @@ export function LinkResource(props: LinkResourceProps) {
     api,
     baseUrl,
     groups,
-    associations,
     s3,
   } = props;
 
   const rid = association.resource;
 
   const relativePath = (p: string) => `${baseUrl}/resource/link${rid}${p}`;
+  const associations = useMetadataState(state => state.associations);
 
   const [, , ship, name] = rid.split('/');
   const resourcePath = `${ship.slice(1)}/${name}`;

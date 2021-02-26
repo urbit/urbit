@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import _ from 'lodash';
 import { useHistory } from 'react-router-dom';
 
@@ -20,7 +20,7 @@ export function ViewProfile(props: any): ReactElement {
   const { hideNicknames } = useLocalState(({ hideNicknames }) => ({
     hideNicknames
   }));
-  const { api, contact, nacked, ship, associations, groups } = props;
+  const { api, contact, nacked, ship } = props;
 
   const isPublic = useContactState(state => state.isContactPublic);
 
@@ -66,7 +66,6 @@ export function ViewProfile(props: any): ReactElement {
               <GroupLink
                 api={api}
                 resource={g}
-                associations={associations}
                 measure={() => {}}
               />
             ))}

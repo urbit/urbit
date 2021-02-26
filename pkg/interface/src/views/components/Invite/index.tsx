@@ -19,12 +19,11 @@ import { InviteSkeleton } from './InviteSkeleton';
 import { JoinSkeleton } from './JoinSkeleton';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
 import useGroupState from '~/logic/state/groups';
+import useMetadataState from '~/logic/state/metadata';
 
 interface InviteItemProps {
   invite?: Invite;
   resource: string;
-  associations: Associations;
-
   pendingJoin: JoinRequests;
   app?: string;
   uid?: string;
@@ -33,11 +32,12 @@ interface InviteItemProps {
 
 export function InviteItem(props: InviteItemProps) {
   const [preview, setPreview] = useState<MetadataUpdatePreview | null>(null);
-  const { associations, pendingJoin, invite, resource, uid, app, api } = props;
+  const { pendingJoin, invite, resource, uid, app, api } = props;
   const { ship, name } = resourceFromPath(resource);
   const waiter = useWaitForProps(props, 50000);
   const status = pendingJoin[resource];
   const groups = useGroupState(state => state.groups);
+  const associations = useMetadataState(state => state.associations);
 
   const history = useHistory();
   const inviteAccept = useCallback(async () => {

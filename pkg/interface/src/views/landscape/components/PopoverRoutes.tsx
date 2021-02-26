@@ -22,7 +22,6 @@ export function PopoverRoutes(
     baseUrl: string;
     group: Group;
     association: Association;
-    associations: Associations;
     s3: S3State;
     api: GlobalApi;
     notificationsGroupConfig: GroupNotificationsConfig;
@@ -125,8 +124,6 @@ export function PopoverRoutes(
                       group={props.group}
                       association={props.association}
                       api={props.api}
-                      notificationsGroupConfig={props.notificationsGroupConfig}
-                      associations={props.associations}
                       s3={props.s3}
                     />
                   )}

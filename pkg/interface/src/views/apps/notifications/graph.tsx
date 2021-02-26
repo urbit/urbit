@@ -233,7 +233,6 @@ export function GraphNotification(props: {
   read: boolean;
   time: number;
   timebox: BigInteger;
-  associations: Associations;
   api: GlobalApi;
 }) {
   const { contents, index, read, time, api, timebox } = props;
@@ -265,7 +264,6 @@ export function GraphNotification(props: {
         channel={graph}
         group={group}
         description={desc}
-        associations={props.associations}
       />
       <Box flexGrow={1} width='100%' pl={5} gridArea='main'>
         {_.map(contents, (content, idx) => (

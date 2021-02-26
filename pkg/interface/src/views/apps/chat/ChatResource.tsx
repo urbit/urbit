@@ -165,7 +165,6 @@ export function ChatResource(props: ChatResourceProps) {
           contacts : modifiedContacts
         }
         association={props.association}
-        associations={props.associations}
         group={group}
         ship={owner}
         station={station}

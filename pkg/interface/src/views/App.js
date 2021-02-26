@@ -154,7 +154,6 @@ class App extends React.Component {
             <ErrorBoundary>
               <StatusBarWithRouter
                 props={this.props}
-                associations={associations}
                 ourContact={ourContact}
                 api={this.api}
                 connection={this.state.connection}

@@ -197,7 +197,7 @@ export default function LaunchApp(props) {
             <JoinGroup {...props} />
           </ModalButton>
 
-          <Groups associations={props.associations} />
+          <Groups />
         </Box>
         <Box alignSelf="flex-start" display={["block", "none"]}>{hashBox}</Box>
       </ScrollbarLessBox>

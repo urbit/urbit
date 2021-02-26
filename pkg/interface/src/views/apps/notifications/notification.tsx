@@ -23,7 +23,6 @@ import useHarkState from '~/logic/state/hark';
 interface NotificationProps {
   notification: IndexedNotification;
   time: BigInteger;
-  associations: Associations;
   api: GlobalApi;
   archived: boolean;
 }
@@ -136,7 +135,6 @@ export function Notification(props: NotificationProps) {
           archived={archived}
           timebox={props.time}
           time={time}
-          associations={associations}
         />
       </Wrapper>
     );
@@ -154,7 +152,6 @@ export function Notification(props: NotificationProps) {
           timebox={props.time}
           archived={archived}
           time={time}
-          associations={associations}
         />
       </Wrapper>
     );
