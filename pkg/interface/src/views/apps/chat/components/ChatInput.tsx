@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import ChatEditor from './chat-editor';
-import { IuseS3 } from '~/logic/lib/useS3';
+import { IuseStorage } from '~/logic/lib/useStorage';
 import { uxToHex } from '~/logic/lib/util';
 import { Sigil } from '~/logic/lib/sigil';
 import { createPost } from '~/logic/api/graph';
@@ -9,10 +9,10 @@ import GlobalApi from '~/logic/api/global';
 import { Envelope } from '~/types/chat-update';
 import { Contacts, Content } from '~/types';
 import { Row, BaseImage, Box, Icon, LoadingSpinner } from '@tlon/indigo-react';
-import withS3 from '~/views/components/withS3';
+import withStorage from '~/views/components/withStorage';
 import { withLocalState } from '~/logic/state/local';
 
-type ChatInputProps = IuseS3 & {
+type ChatInputProps = IuseStorage & {
   api: GlobalApi;
   numMsgs: number;
   station: any;
@@ -20,6 +20,7 @@ type ChatInputProps = IuseS3 & {
   envelopes: Envelope[];
   contacts: Contacts;
   onUnmount(msg: string): void;
+  gcp: any;
   s3: any;
   placeholder: string;
   message: string;
@@ -200,4 +201,4 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
   }
 }
 
-export default withLocalState(withS3(ChatInput, {accept: 'image/*'}), ['hideAvatars']);
+export default withLocalState(withStorage(ChatInput, {accept: 'image/*'}), ['hideAvatars']);

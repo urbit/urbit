@@ -1,7 +1,5 @@
 import { BaseInput, Box, Icon, LoadingSpinner, Text } from "@tlon/indigo-react";
 import React, { useCallback } from "react";
-import useS3 from "~/logic/lib/useS3";
-import { S3State } from "~/types";
 
 const SubmitDragger = () => (
   <Box

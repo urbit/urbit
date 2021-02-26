@@ -13,7 +13,6 @@ import { ShareProfile } from '~/views/apps/chat/components/ShareProfile';
 import SubmitDragger from '~/views/components/SubmitDragger';
 import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
 import { Loading } from '~/views/components/Loading';
-import useS3 from '~/logic/lib/useS3';
 import { isWriter, resourceFromPath } from '~/logic/lib/group';
 
 import './css/custom.css';
@@ -180,6 +179,7 @@ export function ChatResource(props: ChatResourceProps) {
           (!showBanner && hasLoadedAllowed) ? contacts : modifiedContacts
         }
         onUnmount={appendUnsent}
+        gcp={props.gcp}
         s3={props.s3}
         placeholder="Message..."
         message={unsent[station] || ''}

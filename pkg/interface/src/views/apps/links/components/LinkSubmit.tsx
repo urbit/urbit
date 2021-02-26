@@ -2,7 +2,7 @@ import { BaseInput, Box, Button, LoadingSpinner, Text } from "@tlon/indigo-react
 import React, { useCallback, useState } from "react";
 import GlobalApi from "~/logic/api/global";
 import { useFileDrag } from "~/logic/lib/useDrag";
-import useGcp from "~/logic/lib/useGcp";
+import useStorage from "~/logic/lib/useStorage";
 import { GcpState, S3State } from "~/types";
 import SubmitDragger from "~/views/components/SubmitDragger";
 import { createPost } from "~/logic/api/graph";
@@ -17,7 +17,8 @@ interface LinkSubmitProps {
 };
 
 const LinkSubmit = (props: LinkSubmitProps) => {
-  let { canUpload, uploadDefault, uploading, promptUpload } = useGcp(props.s3, props.gcp);
+  let { canUpload, uploadDefault, uploading, promptUpload } =
+    useStorage(props.s3, props.gcp);
 
   const [submitFocused, setSubmitFocused] = useState(false);
   const [urlFocused, setUrlFocused] = useState(false);

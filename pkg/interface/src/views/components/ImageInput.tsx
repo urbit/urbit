@@ -11,19 +11,21 @@ import {
 } from "@tlon/indigo-react";
 import { useField } from "formik";
 import { S3State } from "~/types/s3-update";
-import useS3 from "~/logic/lib/useS3";
+import { GcpState } from "~/types/gcp-state";
+import useStorage from "~/logic/lib/useStorage";
 
 type ImageInputProps = Parameters<typeof Box>[0] & {
   id: string;
   label: string;
   s3: S3State;
+  gcp: GcpState;
   placeholder?: string;
 };
 
 export function ImageInput(props: ImageInputProps) {
-  const { id, label, s3, caption, placeholder, ...rest } = props;
+  const { id, label, s3, gcp, caption, placeholder, ...rest } = props;
 
-  const { uploadDefault, canUpload, uploading } = useS3(s3);
+  const { uploadDefault, canUpload, uploading } = useStorage(s3, gcp);
 
   const [field, meta, { setValue, setError }] = useField(id);
 
