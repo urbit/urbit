@@ -23,6 +23,7 @@ export function Profile(props: any): ReactElement {
   }
   const { contact, nackedContacts, hasLoaded, isPublic, isEdit, ship } = props;
   const nacked = nackedContacts.has(ship);
+  const formRef = useRef(null);
 
   useEffect(() => {
     if (hasLoaded && !contact && !nacked) {
@@ -68,30 +69,57 @@ export function Profile(props: any): ReactElement {
       <Box ref={anchorRef} maxWidth='600px' width='100%'>
         <Box border='1px solid' borderColor='lightGray' borderRadius='2'>
           <Row alignItems='center' justifyContent='space-between' px='3'>
-            <Row>
-              {ship === `~${window.ship}` ? (
-                <>
-                  <Text
-                    py='2'
-                    cursor='pointer'
-                    fontWeight='500'
-                    onClick={() => {
-                      history.push(`/~profile/${ship}/edit`);
-                    }}
-                  >
-                    Edit {isPublic ? 'Public' : 'Private'} Profile
-                  </Text>
-                  <SetStatusBarModal
-                    isControl
-                    py='2'
-                    ml='3'
-                    api={props.api}
-                    ship={`~${window.ship}`}
-                    contact={contact}
-                  />
-                </>
-              ) : null}
-            </Row>
+            {isEdit ? (
+              <Row>
+                <Text
+                  py='2'
+                  cursor='pointer'
+                  fontWeight='500'
+                  color='blue'
+                  onClick={() => {
+                    formRef.current.submitForm();
+                  }}
+                >
+                  Save Edits
+                </Text>
+                <Text
+                  py='2'
+                  ml='3'
+                  fontWeight='500'
+                  cursor='pointer'
+                  onClick={() => {
+                    history.push(`/~profile/${ship}`);
+                  }}
+                >
+                  Cancel
+                </Text>
+              </Row>
+            ) : (
+              <Row>
+                {ship === `~${window.ship}` ? (
+                  <>
+                    <Text
+                      py='2'
+                      cursor='pointer'
+                      fontWeight='500'
+                      onClick={() => {
+                        history.push(`/~profile/${ship}/edit`);
+                      }}
+                    >
+                      Edit {isPublic ? 'Public' : 'Private'} Profile
+                    </Text>
+                    <SetStatusBarModal
+                      isControl
+                      py='2'
+                      ml='3'
+                      api={props.api}
+                      ship={`~${window.ship}`}
+                      contact={contact}
+                    />
+                  </>
+                ) : null}
+              </Row>
+            )}
             <RichText
               mb='0'
               py='2'
@@ -126,6 +154,7 @@ export function Profile(props: any): ReactElement {
         </Row>
         {isEdit ? (
           <EditProfile
+            ref={formRef}
             ship={ship}
             contact={contact}
             s3={props.s3}
