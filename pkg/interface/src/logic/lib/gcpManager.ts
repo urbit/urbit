@@ -62,19 +62,30 @@ class GcpManager {
 
   #consecutiveFailures: number = 0;
 
+  private isConfigured() {
+    return this.#store.state.gcp.configured;
+  }
+
   private refreshLoop() {
-    const s3 = this.#store.state.s3;
-    // XX ships currently always have S3 credentials, but the fields are all
-    // set to '' if they are not configured.
-    if (s3 &&
-        s3.credentials &&
-        s3.credentials.accessKeyId &&
-        s3.credentials.secretAccessKey) {
-      // do nothing, and check again in 5s.
-      this.refreshAfter(5_000);
+    if (!this.isConfigured()) {
+      this.#api.gcp.isConfigured()
+        .then(() => {
+          if (this.isConfigured() === undefined) {
+            throw new Error("can't check whether GCP is configured?");
+          }
+          if (this.isConfigured()) {
+            this.refreshLoop();
+          } else {
+            this.refreshAfter(10_000);
+          }
+        })
+        .catch((reason) => {
+          console.error('GcpManager failure; stopping.', reason);
+          this.stop();
+        });
       return;
     }
-    this.#api.gcp.refreshToken()
+    this.#api.gcp.getToken()
       .then(() => {
         const token = this.#store.state.gcp?.token;
         if (token) {
@@ -88,7 +99,7 @@ class GcpManager {
       })
       .catch((reason) => {
         this.#consecutiveFailures++;
-        console.warn('GcpManager refresh failed; retrying with backoff');
+        console.warn('GcpManager token refresh failed; retrying with backoff');
         this.refreshAfter(this.backoffInterval());
       });
   }

@@ -16,7 +16,7 @@ import GroupReducer from '../reducers/group-update';
 import LaunchReducer from '../reducers/launch-update';
 import ConnectionReducer from '../reducers/connection';
 import SettingsReducer from '../reducers/settings-update';
-import GcpReducer from '../reducers/gcp-token';
+import GcpReducer from '../reducers/gcp-reducer';
 import {OrderedMap} from '../lib/OrderedMap';
 import { BigIntOrderedMap } from '../lib/BigIntOrderedMap';
 import {GroupViewReducer} from '../reducers/group-view';
