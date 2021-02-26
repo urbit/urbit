@@ -51,7 +51,7 @@ const settingsSel = selectSettingsState(["leap", "set"]);
 export function LeapSettings(props: { api: GlobalApi; }) {
   const { api } = props;
   const { leap, set: setSettingsState } = useSettingsState(settingsSel);
-  const categories = JSON.parse(leap.categories) as LeapCategories[];
+  const categories = leap.categories as LeapCategories[];
   const missing = _.difference(leapCategories, categories);
   console.log(categories);
 
@@ -70,7 +70,7 @@ export function LeapSettings(props: { api: GlobalApi; }) {
       (acc, { display, category }) => (display ? [...acc, category] : acc),
       [] as LeapCategories[]
     );
-    await api.settings.putEntry('leap', 'categories', JSON.stringify(result));
+    await api.settings.putEntry('leap', 'categories', result);
   };
 
   return (

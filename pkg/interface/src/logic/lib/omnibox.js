@@ -80,7 +80,7 @@ const otherIndex = function(config) {
     logout: result('Log Out', '/~/logout', 'logout', null)
   };
 
-  for(let cat of JSON.parse(config.categories)) {
+  for(let cat of config.categories) {
     if(idx[cat]) {
       other.push(idx[cat]);
     }

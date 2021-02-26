@@ -18,7 +18,7 @@ export function useMigrateSettings(api: GlobalApi) {
   const { display, remoteContentPolicy, calm } = useSettingsState();
 
   return async () => {
-    if (!localStorage.has("localReducer")) {
+    if (!localStorage?.has("localReducer")) {
       return;
     }
 

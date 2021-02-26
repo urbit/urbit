@@ -18,14 +18,14 @@ export interface SettingsState {
   };
   remoteContentPolicy: RemoteContentPolicy;
   leap: {
-    categories: string;
+    categories: LeapCategories[];
   }
   set: (fn: (state: SettingsState) => void) => void
 };
 
 export type SettingsStateZus = SettingsState & State;
 
-export const selectSettingsState = 
+export const selectSettingsState =
 <K extends keyof SettingsState>(keys: K[]) => f.pick<SettingsState, K>(keys);
 
 export const selectCalmState = (s: SettingsState) => s.calm;
@@ -47,14 +47,14 @@ const useSettingsState = create<SettingsStateZus>((set) => ({
     videoShown: true
   },
   leap: {
-    categories: JSON.stringify(leapCategories),
+    categories: leapCategories,
   },
   set: (fn: (state: SettingsState) => void) => set(produce(fn))
-})); 
+}));
 
 function withSettingsState<P, S extends keyof SettingsState>(Component: any, stateMemberKeys?: S[]) {
   return React.forwardRef((props: Omit<P, S>, ref) => {
-    const localState = stateMemberKeys 
+    const localState = stateMemberKeys
       ? useSettingsState(selectSettingsState(stateMemberKeys))
       : useSettingsState();
     return <Component ref={ref} {...localState} {...props} />
