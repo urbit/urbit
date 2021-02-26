@@ -22,6 +22,7 @@ import { isChannelAdmin, isHost } from '~/logic/lib/group';
 
 interface ChannelPopoverRoutesProps {
   baseUrl: string;
+  rootUrl: string;
   association: Association;
   group: Group;
   groups: Groups;
