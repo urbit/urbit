@@ -1217,7 +1217,7 @@
       on-hear-forward
     ::
     ?:  ?&  ?=(%pawn (clan:title sndr.packet))
-            !(~(has by peers.ames-state) sndr.packet)
+            !?=([~ %known *] (~(get by peers.ames-state) sndr.packet))
         ==
       on-hear-open
     on-hear-shut
