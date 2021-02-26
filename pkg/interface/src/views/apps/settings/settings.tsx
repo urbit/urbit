@@ -98,7 +98,7 @@ export default function SettingsScreen(props: any) {
               <SidebarItem icon="Image" text="Display" hash="display" />
               <SidebarItem icon="Upload" text="Remote Storage" hash="s3" />
               <SidebarItem icon="LeapArrow" text="Leap" hash="leap" />
-              <SidebarItem icon="NullIcon" text="CalmEngine" hash="calm" />
+              <SidebarItem icon="Node" text="CalmEngine" hash="calm" />
               <SidebarItem
                 icon="Locked"
                 text="Devices + Security"
