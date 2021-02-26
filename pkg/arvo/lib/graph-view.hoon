@@ -17,6 +17,7 @@
         leave+leave
         groupify+groupify
         eval+so
+        pending-indices+pending-indices
         ::invite+invite
     ==
     ::
@@ -51,6 +52,14 @@
       :~  resource+(un dejs:resource)
           to+(uf ~ (mu dejs:resource))
       ==
+    ::
+    ++  pending-indices  (op ;~(pfix fas (more fas dem)) nu)
+    ::  NOTE: move these functions to zuse
+    ++  nu                                              ::  parse number as hex
+      |=  jon=json
+      ?>  ?=([%s *] jon)
+      (rash p.jon hex)
+    ::
     ++  invite    !!
     ::
     ++  associated
@@ -59,5 +68,35 @@
           policy+policy:dejs:group-store
       ==
     --
+  --
+++  enjs
+  =,  enjs:format
+  |%
+  ++  action
+    |=  act=action
+    ^-  json
+    ?>  ?=(%pending-indices -.act)
+    %+  frond  %pending-indices
+    :-  %a
+    %+  turn  ~(tap by pending.act)
+    |=  [i=index:store h=hash:store]
+    %-  pairs
+    :~  [%index (index i)]
+        [%hash s+(scot %ux h)]
+    ==
+  ::
+  ++  index
+    |=  i=^index
+    ^-  json
+    ?:  =(~ i)  s+'/'
+    =/  j=^tape  ""
+    |-
+    ?~  i  [%s (crip j)]
+    =/  k=json  (numb i.i)
+    ?>  ?=(%n -.k)
+    %_  $
+        i  t.i
+        j  (weld j (weld "/" (trip +.k)))
+    ==
   --
 --

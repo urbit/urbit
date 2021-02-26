@@ -42,6 +42,7 @@
     [%groupify rid=resource to=(unit resource)]
     [%forward rid=resource =update:store]
     [%eval =cord]
+    [%pending-indices pending=(map index:store hash:store)]
   ==
 --
 

@@ -1,5 +1,5 @@
 /-  spider
-/+  strandio, store=graph-store, graph
+/+  strandio, store=graph-store, graph, graph-view
 =,  strand=strand:spider
 ^-  thread:spider
 |=  arg=vase
@@ -14,12 +14,12 @@
   %+  turn
     (concat-by-parent (sort-nodes nodes.q.update))
   add-hash-to-node
+=/  hashes  (nodes-to-pending-indices nodes.q.update)
 ;<  ~  bind:m
   %^  poke-our  %graph-push-hook
     %graph-update
   !>(update)
-::  TODO: send back a JSON response with a (map index:store hash:store)
-(pure:m !>(~))
+(pure:m !>(`action:graph-view`[%pending-indices hashes]))
 ::
 ++  sort-nodes
   |=  nodes=(map index:store node:store)
@@ -105,4 +105,14 @@
       resource.q.update
     (snip `(list atom)`index)
   hash.post.node
+::
+++  nodes-to-pending-indices
+  |=  nodes=(map index:store node:store)
+  ^-  (map index:store hash:store)
+  %-  ~(gas by *(map index:store hash:store))
+  %+  turn  ~(tap by nodes)
+  |=  [=index:store =node:store]
+  ^-  [index:store hash:store]
+  ?>  ?=(^ hash.post.node)
+  [index u.hash.post.node]
 --
