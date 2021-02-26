@@ -8,14 +8,18 @@ export default class GcpReducer<S extends GcpState>{
   reduce(json: Cage, state: S) {
     let data = json['gcp-token'];
     if (data) {
-      this.setAccessKey(data, state);
+      this.setToken(data, state);
     }
   }
 
-  setAccessKey(json: GcpToken, state: S) {
-    const data = _.get(json, 'accessKey');
-    if (data) {
-      state.gcp.accessKey = data;
+  setToken(data: any, state: S) {
+    if (this.isToken(data)) {
+      state.gcp.token = data;
     }
+  }
+
+  isToken(token: any): token is GcpToken {
+    return (typeof(token.accessKey) === 'string' &&
+            typeof(token.expiresIn) === 'number');
   }
 }

@@ -79,7 +79,7 @@ class App extends React.Component {
 
     this.appChannel = new window.channel();
     this.api = new GlobalApi(this.ship, this.appChannel, this.store);
-    gcpManager.setApi(this.api);
+    gcpManager.configure(this.api, this.store);
     this.subscription =
       new GlobalSubscription(this.store, this.api, this.appChannel);
 
