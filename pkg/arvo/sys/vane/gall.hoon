@@ -1112,14 +1112,14 @@
         ?-    sky
             ?(~ [~ ~])
           %-  (slog leaf+"watch-as fact conversion find-fail" >sky< ~)
-          (ap-kill-up-slip duct)
+          (ap-kill-up-slip duct `%mark)
         ::
             [~ ~ *]
           =+  !<(=tube:clay q.u.u.sky)
           =/  res  (mule |.((tube q.cage)))
           ?:  ?=(%| -.res)
             %-  (slog leaf+"watch-as fact conversion failure" p.res)
-            (ap-kill-up-slip duct)
+            (ap-kill-up-slip duct `%mark)
           :~  [duct %pass /nowhere %c %warp our %home ~ %sing %c case mars-path]
               [duct %give %unto %fact b.mars p.res]
           ==
@@ -1167,7 +1167,7 @@
         =/  core
           =.  agent-duct  system-duct.state
           =/  way  [%out (scot %p ship) term.i.out wire.i.out]
-          (ap-specific-take way %kick ~)
+          (ap-specific-take way %kick `%gone)
         core(agent-duct agent-duct)
       $(out t.out)
     ::  +ap-clog: handle %clog notification from ames
@@ -1518,11 +1518,11 @@
     ::  Should probably call +ap-error with error message
     ::
     ++  ap-kill-up-slip
-      |=  =duct
+      |=  [=duct fot=(unit foot)]
       ^-  (list move)
       ::
       :~  [duct %slip %g %deal [our our] agent-name %leave ~]
-          [duct %give %unto %kick ~]
+          [duct %give %unto %kick fot]
       ==
     ::  +ap-kill-down: 2-sided kill from subscriber side
     ::
@@ -1534,7 +1534,7 @@
       ::
       =.  ap-core
         (ap-pass wire %agent dock %leave ~)
-      (ap-pass wire %huck dock %b %huck `sign-arvo`[%gall %unto %kick ~])
+      (ap-pass wire %huck dock %b %huck `sign-arvo`[%gall %unto %kick `%fail])
     ::  +ap-mule: run virtualized with intercepted scry, preserving type
     ::
     ::    Compare +mute and +mule.  Those pass through scry, which

@@ -1653,6 +1653,7 @@
                   byk=beak                              ::  load source
           ==  ==                                        ::
   +$  dude  term                                        ::  server identity
+  +$  foot  ?(%mark %gone %fail)                        ::  reason for kick  
   +$  gill  (pair ship term)                            ::  general contact
   +$  scar                                              ::  opaque duct
     $:  p=@ud                                           ::  bone sequence
@@ -1698,7 +1699,7 @@
       $%  [%poke-ack p=(unit tang)]
           [%watch-ack p=(unit tang)]
           [%fact =cage]
-          [%kick ~]
+          [%kick p=(unit foot)]
       ==
     ++  form
       $_  ^|
