@@ -16,8 +16,8 @@ interface SecuritySettingsProps {
 export default function SecuritySettings({ api }: SecuritySettingsProps) {
   const [allSessions, setAllSessions] = useState(false);
   return (
-    <Col gapY="5" p="5">
-      <Col>
+    <Col gapY="5" p="5" pt="4">
+      <Col gapY="1">
         <Text fontSize={2} fontWeight="medium">
           Security Preferences
         </Text>
@@ -26,10 +26,10 @@ export default function SecuritySettings({ api }: SecuritySettingsProps) {
         </Text>
       </Col>
       <Col gapY="1">
-        <Text color="black" fontSize={0}>
+        <Text color="black">
           Log out of this session
         </Text>
-        <Text mb="3" fontSize={0} gray>
+        <Text mb="3" gray>
           {allSessions
             ? "You will be logged out of all browsers that have currently logged into your Urbit."
             : "You will be logged out of your Urbit on this browser."}
@@ -39,7 +39,7 @@ export default function SecuritySettings({ api }: SecuritySettingsProps) {
           selected={allSessions}
           onChange={() => setAllSessions((s) => !s)}
         >
-          <Text fontSize="0">Log out of all sessions</Text>
+          <Text>Log out of all sessions</Text>
         </StatelessCheckboxField>
         <form method="post" action="/~/logout">
           {allSessions && <input type="hidden" name="all" />}

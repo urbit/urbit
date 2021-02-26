@@ -48,7 +48,7 @@ export default function DisplayForm(props: DisplayFormProps) {
 
   let bgColor, bgUrl;
   if (backgroundType === "url") {
-    bgUrl = background; 
+    bgUrl = background;
   }
   if (backgroundType === "color") {
     bgColor = background;
@@ -70,11 +70,11 @@ export default function DisplayForm(props: DisplayFormProps) {
         promises.push(api.settings.putEntry('display', 'backgroundType', values.bgType));
 
         promises.push(
-          api.settings.putEntry('display', 'background', 
+          api.settings.putEntry('display', 'background',
             values.bgType === "color"
             ? `#${uxToHex(values.bgColor || "0x0")}`
             : values.bgType === "url"
-            ? values.bgUrl || "" 
+            ? values.bgUrl || ""
             : false
           ));
 
@@ -86,7 +86,7 @@ export default function DisplayForm(props: DisplayFormProps) {
     >
       {(props) => (
         <Form>
-          <Col p="5" gapY="5">
+          <Col p="5" pt="4" gapY="5">
             <Col gapY="2">
               <Text color="black" fontSize={2} fontWeight="medium">
                 Display Preferences

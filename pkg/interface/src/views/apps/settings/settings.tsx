@@ -50,11 +50,11 @@ function SidebarItem(props: { hash: string } & Omit<BaseProps, ProvSideProps>) {
   );
 }
 
-function SettingsItem(props: { hash: string; children: ReactNode }) {
-  const { hash, children } = props;
+function SettingsItem(props: { children: ReactNode }) {
+  const { children } = props;
 
   return (
-    <Box borderBottom="1" borderBottomColor="washedGray" id={hash}>
+    <Box borderBottom="1" borderBottomColor="washedGray">
       {children}
     </Box>
   );
@@ -62,7 +62,8 @@ function SettingsItem(props: { hash: string; children: ReactNode }) {
 
 export default function SettingsScreen(props: any) {
 
-  useHashLink();
+  const location = useLocation();
+  const hash = location.hash.slice(1)
 
   return (
     <>
@@ -106,26 +107,28 @@ export default function SettingsScreen(props: any) {
             </Col>
           </Col>
           <Col flexGrow={1} overflowY="auto">
-            <SettingsItem hash="notifications">
-              <NotificationPreferences
-                {...props}
-                graphConfig={props.notificationsGraphConfig}
-              />
-            </SettingsItem>
-            <SettingsItem hash="display">
-              <DisplayForm s3={props.s3} api={props.api} />
-            </SettingsItem>
-            <SettingsItem hash="s3">
-              <S3Form s3={props.s3} api={props.api} />
-            </SettingsItem>
-            <SettingsItem hash="leap">
-              <LeapSettings api={props.api} />
-            </SettingsItem>
-            <SettingsItem hash="calm">
-              <CalmPrefs api={props.api} />
-            </SettingsItem>
-            <SettingsItem hash="security">
-              <SecuritySettings api={props.api} />
+            <SettingsItem>
+              {hash === "notifications" && (
+                <NotificationPreferences
+                  {...props}
+                  graphConfig={props.notificationsGraphConfig}
+                />
+              )}
+              {hash === "display" && (
+                <DisplayForm s3={props.s3} api={props.api} />
+              )}
+              {hash === "s3" && (
+                <S3Form s3={props.s3} api={props.api} />
+              )}
+              {hash === "leap" && (
+                <LeapSettings api={props.api} />
+              )}
+              {hash === "calm" && (
+                <CalmPrefs api={props.api} />
+              )}
+              {hash === "security" && (
+                <SecuritySettings api={props.api} />
+              )}
             </SettingsItem>
           </Col>
         </Row>

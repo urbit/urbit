@@ -74,19 +74,19 @@ export function LeapSettings(props: { api: GlobalApi; }) {
   };
 
   return (
-    <Col p="5" gapY="5">
-      <Col gapY="2">
+    <Col p="5" pt="4" gapY="5">
+      <Col gapY="1">
         <Text fontSize="2" fontWeight="medium">
           Leap
         </Text>
-        <Text fontSize="0" gray>
+        <Text gray>
           Customize Leap ordering, omit modules or results
         </Text>
       </Col>
       <FormikOnBlur initialValues={initialValues} onSubmit={onSubmit}>
         <Form>
           <Col gapY="4">
-            <Text fontWeight="medium" fontSize="0">
+            <Text fontWeight="medium">
               Customize default Leap sections
             </Text>
             <ShuffleFields name="categories">

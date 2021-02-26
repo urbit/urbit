@@ -51,7 +51,7 @@ export function NotificationPreferences(props: {
   }, [api]);
 
   return (
-    <Col p="5" gapY="5">
+    <Col p="5" pt="4" gapY="5">
       <Col gapY="1">
         <Text fontSize="2" fontWeight="medium">
           Notification Preferences

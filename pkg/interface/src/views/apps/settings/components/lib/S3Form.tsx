@@ -48,7 +48,7 @@ export default function S3Form(props: S3FormProps): ReactElement {
   );
   return (
     <>
-      <Col p="5" borderBottom="1" borderBottomColor="washedGray">
+      <Col p="5" pt="4" borderBottom="1" borderBottomColor="washedGray">
         <Formik
           initialValues={
             {
@@ -62,7 +62,7 @@ export default function S3Form(props: S3FormProps): ReactElement {
           onSubmit={onSubmit}
         >
           <Form>
-            <Col mt="5" maxWidth="600px" gapY="5">
+            <Col maxWidth="600px" gapY="5">
               <Col gapY="1">
                 <Text color="black" fontSize={2} fontWeight="medium">
                   S3 Storage Setup
