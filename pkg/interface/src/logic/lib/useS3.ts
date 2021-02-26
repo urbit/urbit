@@ -2,6 +2,7 @@ import { useCallback, useMemo, useEffect, useRef, useState } from 'react';
 import { S3State } from '../../types/s3-update';
 import S3 from 'aws-sdk/clients/s3';
 import { dateToDa, deSig } from './util';
+import useS3State from '../state/s3';
 
 export interface IuseS3 {
   canUpload: boolean;
@@ -11,8 +12,9 @@ export interface IuseS3 {
   promptUpload: () => Promise<string | undefined>;
 }
 
-const useS3 = (s3: S3State, { accept = '*' } = { accept: '*' }): IuseS3 => {
+const useS3 = ({ accept = '*' } = { accept: '*' }): IuseS3 => {
   const [uploading, setUploading] = useState(false);
+  const s3 = useS3State();
 
   const client = useRef<S3 | null>(null);
 
