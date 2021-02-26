@@ -18,7 +18,7 @@
   ::
   ++  notification-kind
     ?+  index.p.i  ~
-      [@ ~]  `[%message 0 %count %.n]
+      [@ ~]  `[%message [0 1] %count %none]
     ==
   --
 ++  grab
