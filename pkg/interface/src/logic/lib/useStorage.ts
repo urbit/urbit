@@ -23,7 +23,7 @@ const useStorage = (s3: S3State, gcp: GcpState,
 
   useEffect(() => {
     // prefer GCP if available, else use S3.
-    if (gcp.accessKey) {
+    if (gcp.accessKey !== undefined) {
       client.current = new GcpClient(gcp.accessKey);
     } else {
       if (!s3.credentials) {
