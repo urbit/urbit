@@ -3,20 +3,20 @@ export type Value = string | boolean | number;
 export type Bucket = Map<string, Value>;
 export type Settings = Map<string, Bucket>;
 
-interface PutBucket {
+export interface PutBucket {
   "put-bucket": {
     "bucket-key": Key;
     "bucket": Bucket;
   };
 }
 
-interface DelBucket {
+export interface DelBucket {
   "del-bucket": {
     "bucket-key": Key;
   };
 }
 
-interface PutEntry {
+export interface PutEntry {
   "put-entry": {
     "bucket-key": Key;
     "entry-key": Key;
@@ -24,22 +24,22 @@ interface PutEntry {
   };
 }
 
-interface DelEntry {
+export interface DelEntry {
   "del-entry": {
     "bucket-key": Key;
     "entry-key": Key;
   };
 }
 
-interface AllData {
+export interface AllData {
   "all": Settings;
 }
 
-interface BucketData {
+export interface BucketData {
   "bucket": Bucket;
 }
 
-interface EntryData {
+export interface EntryData {
   "entry": Value;
 }
 

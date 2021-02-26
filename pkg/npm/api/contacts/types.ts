@@ -1,47 +1,49 @@
 import { Path, Patp } from "..";
-import {Resource} from "../groups/update.d";
+import { Resource } from "../groups";
 
 export type ContactUpdate =
   | ContactUpdateAdd
   | ContactUpdateRemove
   | ContactUpdateEdit
   | ContactUpdateInitial
+  | ContactUpdateAllowGroup
+  | ContactUpdateAllowShips
+  | ContactUpdateSetPublic;
 
-interface ContactUpdateAdd {
+  export interface ContactUpdateAdd {
   add: {
     ship: Patp;
     contact: Contact;
   };
 }
 
-interface ContactUpdateRemove {
+export interface ContactUpdateRemove {
   remove: {
     ship: Patp;
   };
 }
 
-interface ContactUpdateEdit {
+export interface ContactUpdateEdit {
   edit: {
-    path: Path;
     ship: Patp;
     "edit-field": ContactEditField;
     timestamp: number;
   };
 }
 
-interface ContactUpdateAllowShips {
+export interface ContactUpdateAllowShips {
   allow: {
     ships: Patp[];
   }
 }
 
-interface ContactUpdateAllowGroup {
+export interface ContactUpdateAllowGroup {
   allow: {
     group: Path;
   }
 }
 
-interface ContactUpdateSetPublic {
+export interface ContactUpdateSetPublic {
   'set-public': boolean;
 }
 
@@ -49,13 +51,15 @@ export interface ContactShare {
   share: Patp;
 }
 
-interface ContactUpdateInitial {
+export interface ContactUpdateInitial {
   initial: Rolodex;
 }
 
 export type Rolodex = {
   [p in Patp]: Contact;
 };
+
+export type Contacts = Rolodex;
 
 export interface Contact {
   nickname: string;
