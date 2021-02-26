@@ -2,6 +2,7 @@ import React from 'react';
 import moment from 'moment';
 import { Box, Icon, Text, BaseAnchor, BaseInput } from '@tlon/indigo-react';
 import ErrorBoundary from '~/views/components/ErrorBoundary';
+import { withLaunchState } from '~/logic/state/launch';
 
 import Tile from './tile';
 
@@ -34,7 +35,7 @@ const imperialCountries = [
   'Liberia',
 ];
 
-export default class WeatherTile extends React.Component {
+class WeatherTile extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -289,3 +290,4 @@ export default class WeatherTile extends React.Component {
   }
 }
 
+export default withLaunchState(WeatherTile);

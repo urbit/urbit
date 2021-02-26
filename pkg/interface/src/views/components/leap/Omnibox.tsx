@@ -20,6 +20,7 @@ import useContactState from '~/logic/state/contacts';
 import useGroupState from '~/logic/state/groups';
 import useHarkState from '~/logic/state/hark';
 import useInviteState from '~/logic/state/invite';
+import useLaunchState from '~/logic/state/launch';
 
 interface OmniboxProps {
   associations: Associations;
@@ -44,6 +45,7 @@ export function Omnibox(props: OmniboxProps) {
   const contactState = useContactState(state => state.contacts);
   const notifications = useHarkState(state => state.notifications);
   const invites = useInviteState(state => state.invites);
+  const tiles = useLaunchState(state => state.tiles);
 
   const contacts = useMemo(() => {
     const maybeShip = `~${deSig(query)}`;
@@ -61,11 +63,11 @@ export function Omnibox(props: OmniboxProps) {
     return makeIndex(
       contacts,
       props.associations,
-      props.tiles,
+      tiles,
       selectedGroup,
       groups
     );
-  }, [location.pathname, contacts, props.associations, groups, props.tiles]);
+  }, [location.pathname, contacts, props.associations, groups, tiles]);
 
   const onOutsideClick = useCallback(() => {
     props.show && props.toggle();

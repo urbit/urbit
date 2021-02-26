@@ -20,6 +20,7 @@ import { ImageInput } from '~/views/components/ImageInput';
 import { MarkdownField } from '~/views/apps/publish/components/MarkdownField';
 import { resourceFromPath } from '~/logic/lib/group';
 import GroupSearch from '~/views/components/GroupSearch';
+import useContactState from '~/logic/state/contacts';
 
 const formSchema = Yup.object({
   nickname: Yup.string(),
@@ -41,7 +42,8 @@ const emptyContact = {
 };
 
 export function EditProfile(props: any): ReactElement {
-  const { contact, ship, api, isPublic } = props;
+  const { contact, ship, api } = props;
+  const isPublic = useContactState(state => state.isContactPublic);
   const history = useHistory();
   if (contact) {
     contact.isPublic = isPublic;

@@ -165,8 +165,6 @@ class App extends React.Component {
             <ErrorBoundary>
               <Omnibox
                 associations={state.associations}
-                apps={state.launch}
-                tiles={state.launch.tiles}
                 api={this.api}
                 show={this.props.omniboxShown}
                 toggle={this.props.toggleOmnibox}

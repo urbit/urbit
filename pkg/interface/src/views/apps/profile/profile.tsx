@@ -21,7 +21,6 @@ export default function ProfileScreen(props: any) {
       render={({ match }) => {
         const ship = match.params.ship;
         const isEdit = match.url.includes('edit');
-        const isPublic = props.isContactPublic;
         const contact = contacts?.[ship];
 
         return (
@@ -45,7 +44,6 @@ export default function ProfileScreen(props: any) {
                   api={props.api}
                   s3={props.s3}
                   isEdit={isEdit}
-                  isPublic={isPublic}
                 />
               </Box>
             </Box>

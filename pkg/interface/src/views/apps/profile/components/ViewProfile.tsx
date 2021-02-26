@@ -14,12 +14,15 @@ import RichText from '~/views/components/RichText';
 import { GroupLink } from '~/views/components/GroupLink';
 import { lengthOrder } from '~/logic/lib/util';
 import useLocalState from '~/logic/state/local';
+import useContactState from '~/logic/state/contacts';
 
 export function ViewProfile(props: any): ReactElement {
   const { hideNicknames } = useLocalState(({ hideNicknames }) => ({
     hideNicknames
   }));
-  const { api, contact, nacked, isPublic, ship, associations, groups } = props;
+  const { api, contact, nacked, ship, associations, groups } = props;
+
+  const isPublic = useContactState(state => state.isContactPublic);
 
   return (
     <>

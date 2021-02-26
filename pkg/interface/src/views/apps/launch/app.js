@@ -177,11 +177,7 @@ export default function LaunchApp(props) {
             </Box>
           </Tile>
           <Tiles
-            tiles={props.launch.tiles}
-            tileOrdering={props.launch.tileOrdering}
             api={props.api}
-            location={props.userLocation}
-            weather={props.weather}
           />
           <ModalButton
             icon="Plus"

@@ -17,17 +17,19 @@ import { EditProfile } from './EditProfile';
 import { SetStatusBarModal } from '~/views/components/SetStatusBarModal';
 import { uxToHex } from '~/logic/lib/util';
 import { useTutorialModal } from '~/views/components/useTutorialModal';
+import useContactState from '~/logic/state/contacts';
 
 export function Profile(props: any): ReactElement {
   const { hideAvatars } = useLocalState(({ hideAvatars }) => ({
     hideAvatars
   }));
   const history = useHistory();
+  const nackedContacts = useContactState(state => state.nackedContacts);
 
   if (!props.ship) {
     return null;
   }
-  const { contact, nackedContacts, hasLoaded, isPublic, isEdit, ship } = props;
+  const { contact, hasLoaded, isPublic, isEdit, ship } = props;
   const nacked = nackedContacts.has(ship);
 
   useEffect(() => {
@@ -109,7 +111,6 @@ export function Profile(props: any): ReactElement {
             s3={props.s3}
             api={props.api}
             associations={props.associations}
-            isPublic={isPublic}
           />
         ) : (
           <ViewProfile
@@ -117,7 +118,6 @@ export function Profile(props: any): ReactElement {
             nacked={nacked}
             ship={ship}
             contact={contact}
-            isPublic={isPublic}
             associations={props.associations}
           />
         ) }
