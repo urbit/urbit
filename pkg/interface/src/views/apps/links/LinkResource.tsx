@@ -28,7 +28,6 @@ export function LinkResource(props: LinkResourceProps) {
     api,
     baseUrl,
     graphs,
-    contacts,
     groups,
     associations,
     graphKeys,
@@ -70,7 +69,6 @@ export function LinkResource(props: LinkResourceProps) {
               <LinkWindow
                 s3={s3}
                 association={resource}
-                contacts={contacts}
                 resource={resourcePath}
                 graph={graph}
                 unreads={unreads}
@@ -103,7 +101,6 @@ export function LinkResource(props: LinkResourceProps) {
               <Col width="100%" p={3} maxWidth="768px">
                 <Link to={resourceUrl}><Text px={3} bold>{'<- Back'}</Text></Link>
                 <LinkItem
-                  contacts={contacts}
                   key={node.post.index}
                   resource={resourcePath}
                   node={node}
@@ -122,7 +119,6 @@ export function LinkResource(props: LinkResourceProps) {
                   resource={resourcePath}
                   association={association}
                   unreads={unreads}
-                  contacts={contacts}
                   api={api}
                   editCommentId={editCommentId}
                   history={props.history}

@@ -7,7 +7,7 @@ import _ from 'lodash';
 import { Col, Button, Box, Row, Icon, Text } from '@tlon/indigo-react';
 
 import './css/custom.css';
-
+import useContactState from '~/logic/state/contacts';
 import Tiles from './components/tiles';
 import Tile from './components/tiles/tile';
 import Groups from './components/Groups';
@@ -41,7 +41,6 @@ const ScrollbarLessBox = styled(Box)`
 const tutSelector = f.pick(['tutorialProgress', 'nextTutStep']);
 
 export default function LaunchApp(props) {
-  const history = useHistory();
   const [hashText, setHashText] = useState(props.baseHash);
   const hashBox = (
     <Box
@@ -133,7 +132,8 @@ export default function LaunchApp(props) {
       </Col>
     )}
   });
-  const hasLoaded = useMemo(() => Object.keys(props.contacts).length > 0, [props.contacts]);
+  const contacts = useContactState(state => state.contacts);
+  const hasLoaded = useMemo(() => Object.keys(contacts).length > 0, [contacts]);
 
   useEffect(() => {
     const seenTutorial = _.get(props.settings, ['tutorial', 'seen'], true);

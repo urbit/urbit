@@ -26,7 +26,6 @@ interface NotificationProps {
   api: GlobalApi;
   archived: boolean;
   groups: Groups;
-  contacts: Contacts;
   graphConfig: NotificationGraphConfig;
   groupConfig: GroupNotificationsConfig;
 }
@@ -136,7 +135,6 @@ export function Notification(props: NotificationProps) {
           api={props.api}
           index={index}
           contents={c}
-          contacts={props.contacts}
           groups={props.groups}
           read={read}
           archived={archived}
@@ -156,7 +154,6 @@ export function Notification(props: NotificationProps) {
           api={props.api}
           index={index}
           contents={c}
-          contacts={props.contacts}
           groups={props.groups}
           read={read}
           timebox={props.time}

@@ -77,7 +77,6 @@ export function SidebarList(props: {
             apps={props.apps}
             hideUnjoined={config.hideUnjoined}
             groups={props.groups}
-            contacts={props.contacts}
             workspace={workspace}
           />
         );

@@ -5,8 +5,10 @@ import Helmet from 'react-helmet';
 import { Box } from '@tlon/indigo-react';
 
 import { Profile } from './components/Profile';
+import useContactState from '~/logic/state/contacts';
 
 export default function ProfileScreen(props: any) {
+  const contacts = useContactState(state => state.contacts);
   return (
     <>
     <Helmet defer={false}>
@@ -18,7 +20,7 @@ export default function ProfileScreen(props: any) {
         const ship = match.params.ship;
         const isEdit = match.url.includes('edit');
         const isPublic = props.isContactPublic;
-        const contact = props.contacts?.[ship];
+        const contact = contacts?.[ship];
 
         return (
           <Box height="100%" px={[0, 3]} pb={[0, 3]} borderRadius={1}>
@@ -35,7 +37,7 @@ export default function ProfileScreen(props: any) {
               <Box>
                 <Profile
                   ship={ship}
-                  hasLoaded={Object.keys(props.contacts).length !== 0}
+                  hasLoaded={Object.keys(contacts).length !== 0}
                   associations={props.associations}
                   groups={props.groups}
                   contact={contact}

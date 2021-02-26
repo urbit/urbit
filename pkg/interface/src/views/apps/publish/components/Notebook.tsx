@@ -7,6 +7,7 @@ import { Contacts, Rolodex, Groups, Associations, Graph, Association, Unreads } 
 import { NotebookPosts } from './NotebookPosts';
 import GlobalApi from '~/logic/api/global';
 import { useShowNickname } from '~/logic/lib/util';
+import useContactState from '~/logic/state/contacts';
 
 interface NotebookProps {
   api: GlobalApi;
@@ -15,7 +16,6 @@ interface NotebookProps {
   graph: Graph;
   association: Association;
   associations: Associations;
-  contacts: Rolodex;
   groups: Groups;
   baseUrl: string;
   rootUrl: string;
@@ -26,7 +26,6 @@ export function Notebook(props: NotebookProps & RouteComponentProps): ReactEleme
   const {
     ship,
     book,
-    contacts,
     groups,
     association,
     graph
@@ -38,6 +37,7 @@ export function Notebook(props: NotebookProps & RouteComponentProps): ReactEleme
   }
 
   const relativePath = (p: string) => props.baseUrl + p;
+  const contacts = useContactState(state => state.contacts);
 
   const contact = contacts?.[`~${ship}`];
   console.log(association.resource);
@@ -60,7 +60,6 @@ export function Notebook(props: NotebookProps & RouteComponentProps): ReactEleme
         graph={graph}
         host={ship}
         book={book}
-        contacts={contacts}
         unreads={props.unreads}
         baseUrl={props.baseUrl}
         api={props.api}

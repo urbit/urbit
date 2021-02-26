@@ -58,7 +58,6 @@ export function Resource(props: ResourceProps): ReactElement {
                 association={association}
                 group={props.groups?.[selectedGroup]}
                 groups={props.groups}
-                contacts={props.contacts}
                 api={props.api}
                 baseUrl={relativePath('')}
                 rootUrl={props.baseUrl}

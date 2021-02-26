@@ -17,6 +17,7 @@ import useS3 from '~/logic/lib/useS3';
 import { isWriter, resourceFromPath } from '~/logic/lib/group';
 
 import './css/custom.css';
+import useContactState from '~/logic/state/contacts';
 
 type ChatResourceProps = StoreState & {
   association: Association;
@@ -28,7 +29,7 @@ export function ChatResource(props: ChatResourceProps) {
   const station = props.association.resource;
   const groupPath = props.association.group;
   const group = props.groups[groupPath];
-  const contacts = props.contacts;
+  const contacts = useContactState(state => state.contacts);
   const graph = props.graphs[station.slice(7)];
   const isChatMissing = !props.graphKeys.has(station.slice(7));
   const unreadCount = props.unreads.graph?.[station]?.['/']?.unreads || 0;

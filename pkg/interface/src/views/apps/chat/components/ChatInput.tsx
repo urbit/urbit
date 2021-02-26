@@ -18,7 +18,6 @@ type ChatInputProps = IuseS3 & {
   station: unknown;
   ourContact: unknown;
   envelopes: Envelope[];
-  contacts: Contacts;
   onUnmount(msg: string): void;
   s3: unknown;
   placeholder: string;

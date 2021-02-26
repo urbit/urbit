@@ -29,7 +29,6 @@ interface InviteItemProps {
   app?: string;
   uid?: string;
   api: GlobalApi;
-  contacts: Contacts;
 }
 
 export function InviteItem(props: InviteItemProps) {

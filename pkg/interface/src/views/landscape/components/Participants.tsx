@@ -30,6 +30,7 @@ import { Dropdown } from '~/views/components/Dropdown';
 import GlobalApi from '~/logic/api/global';
 import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
 import useLocalState from '~/logic/state/local';
+import useContactState from '~/logic/state/contacts';
 
 const TruncText = styled(Text)`
   white-space: nowrap;
@@ -103,7 +104,6 @@ const Tab = ({ selected, id, label, setSelected }) => (
 );
 
 export function Participants(props: {
-  contacts: Contacts;
   group: Group;
   association: Association;
   api: GlobalApi;
@@ -136,9 +136,10 @@ export function Participants(props: {
 
   const adminCount = props.group.tags?.role?.admin?.size || 0;
   const isInvite = 'invite' in props.group.policy;
+  const contacts = useContactState(state => state.contacts);
 
   const [participants, pendingCount, memberCount] = getParticipants(
-    props.contacts,
+    contacts,
     props.group
   );
 

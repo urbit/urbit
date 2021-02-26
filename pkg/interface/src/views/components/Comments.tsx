@@ -21,7 +21,6 @@ interface CommentsProps {
   ship: string;
   editCommentId: string;
   baseUrl: string;
-  contacts: Contacts;
   api: GlobalApi;
   group: Group;
 }
@@ -130,7 +129,6 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
             <CommentItem
               comment={comment}
               key={idx.toString()}
-              contacts={props.contacts}
               api={api}
               name={name}
               ship={ship}

@@ -12,6 +12,7 @@ import useLocalState from '~/logic/state/local';
 import { TUTORIAL_HOST, TUTORIAL_GROUP } from '~/logic/lib/tutorialModal';
 import { SidebarAppConfigs, SidebarItemStatus } from './types';
 import { Workspace } from '~/types/workspace';
+import useContactState from '~/logic/state/contacts';
 
 function SidebarItemIndicator(props: { status?: SidebarItemStatus }) {
   switch (props.status) {
@@ -84,14 +85,16 @@ export function SidebarItem(props: {
 
   let img = null;
 
+  const contacts = useContactState(state => state.contacts);
+
   if (urbitOb.isValidPatp(title)) {
-    if (props.contacts?.[title]?.avatar && !hideAvatars) {
-      img = <BaseImage src={props.contacts[title].avatar} width='16px' height='16px' borderRadius={2} />;
+    if (contacts?.[title]?.avatar && !hideAvatars) {
+      img = <BaseImage src={contacts[title].avatar} width='16px' height='16px' borderRadius={2} />;
     } else {
-      img = <Sigil ship={title} color={`#${uxToHex(props.contacts?.[title]?.color || '0x0')}`} icon padding={2} size={16} />;
+      img = <Sigil ship={title} color={`#${uxToHex(contacts?.[title]?.color || '0x0')}`} icon padding={2} size={16} />;
     }
-    if (props.contacts?.[title]?.nickname && !hideNicknames) {
-      title = props.contacts[title].nickname;
+    if (contacts?.[title]?.nickname && !hideNicknames) {
+      title = contacts[title].nickname;
     }
   } else {
     img = <Box flexShrink={0} height={16} width={16} borderRadius={2} backgroundColor={`#${uxToHex(props?.association?.metadata?.color)}` || '#000000'} />;

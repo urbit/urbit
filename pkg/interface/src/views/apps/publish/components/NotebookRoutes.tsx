@@ -24,7 +24,6 @@ interface NotebookRoutesProps {
   book: string;
   graphs: Graphs;
   unreads: Unreads;
-  contacts: Rolodex;
   groups: Groups;
   baseUrl: string;
   rootUrl: string;
@@ -36,7 +35,7 @@ interface NotebookRoutesProps {
 export function NotebookRoutes(
   props: NotebookRoutesProps & RouteComponentProps
 ) {
-  const { ship, book, api, contacts, baseUrl, rootUrl, groups } = props;
+  const { ship, book, api, baseUrl, rootUrl, groups } = props;
 
   useEffect(() => {
     ship && book && api.graph.getGraph(ship, book);
@@ -59,7 +58,6 @@ export function NotebookRoutes(
           return <Notebook
             {...props}
             graph={graph}
-            contacts={contacts}
             association={props.association}
             rootUrl={rootUrl}
             baseUrl={baseUrl}
@@ -106,7 +104,6 @@ export function NotebookRoutes(
               notebook={graph}
               unreads={props.unreads}
               noteId={noteIdNum}
-              contacts={contacts}
               association={props.association}
               group={group}
               s3={props.s3}

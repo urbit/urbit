@@ -17,7 +17,6 @@ interface LinkItemProps {
   api: GlobalApi;
   group: Group;
   path: string;
-  contacts: Rolodex;
   unreads: Unreads;
   measure: (el: any) => void;
 }
@@ -29,7 +28,6 @@ export const LinkItem = (props: LinkItemProps): ReactElement => {
     api,
     group,
     path,
-    contacts,
     measure,
     ...rest
   } = props;
@@ -157,7 +155,6 @@ export const LinkItem = (props: LinkItemProps): ReactElement => {
 
       <Author
         showImage
-        contacts={contacts}
         ship={author}
         date={node.post['time-sent']}
         group={group}

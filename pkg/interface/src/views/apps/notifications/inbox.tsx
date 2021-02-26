@@ -50,7 +50,6 @@ export default function Inbox(props: {
   showArchive?: boolean;
   api: GlobalApi;
   associations: Associations;
-  contacts: Rolodex;
   filter: string[];
   invites: InviteType;
   pendingJoin: JoinRequests;
@@ -127,7 +126,6 @@ export default function Inbox(props: {
             key={day}
             label={day === 'latest' ? 'Today' : moment(day).calendar(null, calendar)}
             timeboxes={timeboxes}
-            contacts={props.contacts}
             archive={Boolean(props.showArchive)}
             associations={props.associations}
             api={api}
@@ -165,7 +163,6 @@ function sortIndexedNotification(
 
 function DaySection({
   label,
-  contacts,
   groups,
   archive,
   timeboxes,
@@ -201,7 +198,6 @@ function DaySection({
               associations={associations}
               notification={not}
               archived={archive}
-              contacts={contacts}
               groups={groups}
               time={date}
             />

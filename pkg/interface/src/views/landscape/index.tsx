@@ -117,7 +117,6 @@ export default class Landscape extends Component<LandscapeProps, Record<string, 
                     <NewGroup
                       associations={props.associations}
                       groups={props.groups}
-                      contacts={props.contacts}
                       api={props.api}
                       {...routeProps}
                     />
@@ -141,7 +140,6 @@ export default class Landscape extends Component<LandscapeProps, Record<string, 
                   <Box maxWidth="300px">
                     <JoinGroup
                       groups={props.groups}
-                      contacts={props.contacts}
                       api={props.api}
                       autojoin={autojoin}
                       {...routeProps}

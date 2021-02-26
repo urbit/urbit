@@ -77,9 +77,6 @@ export default class GlobalStore extends BaseStore<StoreState> {
         },
         credentials: null
       },
-      isContactPublic: false,
-      contacts: {},
-      nackedContacts: new Set(),
       notifications: new BigIntOrderedMap<Timebox>(),
       archivedNotifications: new BigIntOrderedMap<Timebox>(),
       notificationsGroupConfig: [],
@@ -113,7 +110,7 @@ export default class GlobalStore extends BaseStore<StoreState> {
     this.connReducer.reduce(data, this.state);
     GraphReducer(data, this.state);
     HarkReducer(data, this.state);
-    ContactReducer(data, this.state);
+    ContactReducer(data);
     this.settingsReducer.reduce(data, this.state);
     GroupViewReducer(data, this.state);
   }

@@ -14,7 +14,6 @@ interface NoteRoutesProps {
   note: GraphNode;
   noteId: number;
   notebook: Graph;
-  contacts: Contacts;
   api: GlobalApi;
   association: Association;
   baseUrl?: string;

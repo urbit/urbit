@@ -34,7 +34,6 @@ export function ChannelWritePerms<
       {values.writePerms === 'subset' && (
         <ShipSearch
           groups={props.groups}
-          contacts={props.contacts}
           id="writers"
           label=""
           maxLength={undefined}

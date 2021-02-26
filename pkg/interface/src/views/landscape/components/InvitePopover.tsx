@@ -115,7 +115,6 @@ export function InvitePopover(props: InvitePopoverProps) {
                   </Box>
                   <ShipSearch
                     groups={props.groups}
-                    contacts={props.contacts}
                     id="ships"
                     label=""
                     autoFocus

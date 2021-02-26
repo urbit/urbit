@@ -33,6 +33,7 @@ import { Mention } from '~/views/components/MentionText';
 import styled from 'styled-components';
 import useLocalState from '~/logic/state/local';
 import Timestamp from '~/views/components/Timestamp';
+import useContactState from '~/logic/state/contacts';
 
 export const DATESTAMP_FORMAT = '[~]YYYY.M.D';
 
@@ -85,7 +86,6 @@ interface ChatMessageProps {
   isLastRead: boolean;
   group: Group;
   association: Association;
-  contacts: Contacts;
   className?: string;
   isPending: boolean;
   style?: unknown;
@@ -120,7 +120,6 @@ export default class ChatMessage extends Component<ChatMessageProps> {
       isLastRead,
       group,
       association,
-      contacts,
       className = '',
       isPending,
       style,
@@ -164,7 +163,6 @@ export default class ChatMessage extends Component<ChatMessageProps> {
     const messageProps = {
       msg,
       timestamp,
-      contacts,
       association,
       group,
       measure: reboundMeasure.bind(this),
@@ -219,7 +217,6 @@ export default class ChatMessage extends Component<ChatMessageProps> {
 
 export const MessageAuthor = ({
   timestamp,
-  contacts,
   msg,
   measure,
   group,
@@ -231,6 +228,7 @@ export const MessageAuthor = ({
   ...rest
 }) => {
   const dark = useLocalState((state) => state.dark);
+  const contacts = useContactState(state => state.contacts);
 
   const datestamp = moment
     .unix(msg['time-sent'] / 1000)
@@ -364,7 +362,6 @@ export const MessageAuthor = ({
 
 export const Message = ({
   timestamp,
-  contacts,
   msg,
   measure,
   group,
@@ -376,6 +373,7 @@ export const Message = ({
   ...rest
 }) => {
   const { hovering, bind } = useHovering();
+  const contacts = useContactState(state => state.contacts);
   return (
     <Box position='relative' {...rest}>
       {timestampHover ? (

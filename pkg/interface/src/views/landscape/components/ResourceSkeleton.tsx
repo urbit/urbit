@@ -11,6 +11,7 @@ import RichText from '~/views/components/RichText';
 import GlobalApi from '~/logic/api/global';
 import { isWriter } from '~/logic/lib/group';
 import { getItemTitle } from '~/logic/lib/util';
+import useContactState from '~/logic/state/contacts';
 
 const TruncatedBox = styled(Box)`
   white-space: pre;
@@ -48,9 +49,11 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
 
   let recipient = false;
 
+  const contacts = useContactState(state => state.contacts);
+
   if (urbitOb.isValidPatp(title)) {
     recipient = title;
-    title = (props.contacts?.[title]?.nickname) ? props.contacts[title].nickname : title;
+    title = (contacts?.[title]?.nickname) ? contacts[title].nickname : title;
   }
 
   const [, , ship, resource] = rid.split('/');

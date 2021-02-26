@@ -18,6 +18,7 @@ import { getSnippet } from '~/logic/lib/publish';
 import styled from 'styled-components';
 import { MentionText } from '~/views/components/MentionText';
 import ChatMessage from '../chat/components/ChatMessage';
+import useContactState from '~/logic/state/contacts';
 
 function getGraphModuleIcon(module: string) {
   if (module === 'link') {
@@ -67,7 +68,6 @@ const GraphUrl = ({ url, title }) => (
 const GraphNodeContent = ({
   group,
   post,
-  contacts,
   mod,
   description,
   index,
@@ -81,7 +81,7 @@ const GraphNodeContent = ({
       return <GraphUrl title={text} url={url} />;
     } else if (idx.length === 3) {
       return (
-        <MentionText content={contents} contacts={contacts} group={group} />
+        <MentionText content={contents} group={group} />
       );
     }
     return null;
@@ -92,7 +92,6 @@ const GraphNodeContent = ({
         <MentionText
           content={contents}
           group={group}
-          contacts={contacts}
           fontSize='14px'
           lineHeight='tall'
         />
@@ -134,7 +133,6 @@ const GraphNodeContent = ({
           containerClass='items-top cf hide-child'
           measure={() => {}}
           group={group}
-          contacts={contacts}
           groups={{}}
           associations={{ graph: {}, groups: {} }}
           msg={post}
@@ -174,7 +172,6 @@ function getNodeUrl(
 }
 const GraphNode = ({
   post,
-  contacts,
   author,
   mod,
   description,
@@ -189,6 +186,7 @@ const GraphNode = ({
 }) => {
   author = deSig(author);
   const history = useHistory();
+  const contacts = useContactState(state => state.contacts);
 
   const nodeUrl = getNodeUrl(mod, group?.hidden, groupPath, graph, index);
 
@@ -207,7 +205,6 @@ const GraphNode = ({
         {showContact && (
           <Author
             showImage
-            contacts={contacts}
             ship={author}
             date={time}
             group={group}
@@ -215,7 +212,6 @@ const GraphNode = ({
         )}
         <Row width='100%' p='1' flexDirection='column'>
           <GraphNodeContent
-            contacts={contacts}
             post={post}
             mod={mod}
             description={description}
@@ -238,7 +234,6 @@ export function GraphNotification(props: {
   timebox: BigInteger;
   associations: Associations;
   groups: Groups;
-  contacts: Rolodex;
   api: GlobalApi;
 }) {
   const { contents, index, read, time, api, timebox, groups } = props;
@@ -266,7 +261,6 @@ export function GraphNotification(props: {
         authors={authors}
         moduleIcon={icon}
         channel={graph}
-        contacts={props.contacts}
         group={group}
         description={desc}
         associations={props.associations}
@@ -276,7 +270,6 @@ export function GraphNotification(props: {
           <GraphNode
             post={content}
             author={content.author}
-            contacts={props.contacts}
             mod={index.module}
             time={content?.['time-sent']}
             description={index.description}

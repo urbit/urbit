@@ -177,7 +177,7 @@ export function GraphPermissions(props: GraphPermissionsProps) {
               vip={association.metadata.vip}
             />
           </Col>
-          <ChannelWritePerms contacts={props.contacts} groups={props.groups} />
+          <ChannelWritePerms groups={props.groups} />
           {association.metadata.module !== 'chat' && (
             <Checkbox
               id="readerComments"

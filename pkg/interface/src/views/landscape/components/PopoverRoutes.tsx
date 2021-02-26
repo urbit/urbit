@@ -20,7 +20,6 @@ import { S3State } from '~/types';
 export function PopoverRoutes(
   props: {
     baseUrl: string;
-    contacts: Contacts;
     group: Group;
     association: Association;
     associations: Associations;
@@ -134,7 +133,6 @@ export function PopoverRoutes(
                   {view === 'participants' && (
                     <Participants
                       group={props.group}
-                      contacts={props.contacts}
                       association={props.association}
                       api={props.api}
                     />

@@ -19,7 +19,6 @@ interface NoteProps {
   unreads: Unreads;
   association: Association;
   notebook: Graph;
-  contacts: Contacts;
   api: GlobalApi;
   rootUrl: string;
   baseUrl: string;
@@ -29,7 +28,7 @@ interface NoteProps {
 export function Note(props: NoteProps & RouteComponentProps) {
   const [deleting, setDeleting] = useState(false);
 
-  const { notebook, note, contacts, ship, book, api, rootUrl, baseUrl, group } = props;
+  const { notebook, note, ship, book, api, rootUrl, baseUrl, group } = props;
   const editCommentId = props.match.params.commentId;
 
   const deletePost = async () => {
@@ -100,7 +99,6 @@ export function Note(props: NoteProps & RouteComponentProps) {
         <Box display="flex">
           <Author
             ship={post?.author}
-            contacts={contacts}
             date={post?.['time-sent']}
           />
           <Text ml={2}>{adminLinks}</Text>
@@ -120,7 +118,6 @@ export function Note(props: NoteProps & RouteComponentProps) {
         name={props.book}
         unreads={props.unreads}
         comments={comments}
-        contacts={props.contacts}
         association={props.association}
         api={props.api}
         baseUrl={baseUrl}

@@ -21,7 +21,6 @@ interface NotePreviewProps {
   node: GraphNode;
   baseUrl: string;
   unreads: Unreads;
-  contacts: Contacts;
   api: GlobalApi;
   group: Group;
 }
@@ -31,7 +30,7 @@ const WrappedBox = styled(Box)`
 `;
 
 export function NotePreview(props: NotePreviewProps) {
-  const { node, contacts, group } = props;
+  const { node, group } = props;
   const { post } = node;
   if (!post) {
     return null;
@@ -79,7 +78,6 @@ export function NotePreview(props: NotePreviewProps) {
       <Row minWidth='0' flexShrink={0} width="100%" justifyContent="space-between" py={3} bg="white">
         <Author
           showImage
-          contacts={contacts}
           ship={post?.author}
           date={post?.['time-sent']}
           group={group}

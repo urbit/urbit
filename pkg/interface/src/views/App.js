@@ -28,6 +28,7 @@ import GlobalApi from '~/logic/api/global';
 import { uxToHex } from '~/logic/lib/util';
 import { foregroundFromBackground } from '~/logic/lib/sigil';
 import { withLocalState } from '~/logic/state/local';
+import { withContactState } from '~/logic/state/contacts';
 
 
 const Root = styled.div`
@@ -116,8 +117,8 @@ class App extends React.Component {
 
   faviconString() {
     let background = '#ffffff';
-    if (this.state.contacts.hasOwnProperty('/~/default')) {
-      background = `#${uxToHex(this.state.contacts['/~/default'][window.ship].color)}`;
+    if (this.props.contacts.hasOwnProperty('/~/default')) {
+      background = `#${uxToHex(this.props.contacts['/~/default'][window.ship].color)}`;
     }
     const foreground = foregroundFromBackground(background);
     const svg = sigiljs({
@@ -139,7 +140,7 @@ class App extends React.Component {
 
     const notificationsCount = state.notificationsCount || 0;
     const doNotDisturb = state.doNotDisturb || false;
-    const ourContact = this.state.contacts[`~${this.ship}`] || null;
+    const ourContact = this.props.contacts[`~${this.ship}`] || null;
 
     return (
       <ThemeProvider theme={theme}>
@@ -171,7 +172,6 @@ class App extends React.Component {
                 apps={state.launch}
                 tiles={state.launch.tiles}
                 api={this.api}
-                contacts={state.contacts}
                 notifications={state.notificationsCount}
                 invites={state.invites}
                 groups={state.groups}
@@ -195,5 +195,5 @@ class App extends React.Component {
   }
 }
 
-export default withLocalState(process.env.NODE_ENV === 'production' ? App : hot(App));
+export default withContactState(withLocalState(process.env.NODE_ENV === 'production' ? App : hot(App)));
 

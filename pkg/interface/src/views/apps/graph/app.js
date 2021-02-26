@@ -7,7 +7,6 @@ import { deSig } from '~/logic/lib/util';
 export default class GraphApp extends PureComponent {
   render() {
     const { props } = this;
-    const contacts = props.contacts ? props.contacts : {};
     const groups = props.groups ? props.groups : {};
     const associations =
       props.associations ? props.associations : { graph: {}, contacts: {} };

@@ -91,7 +91,6 @@ export function Sidebar(props: SidebarProps): ReactElement {
       />
       <SidebarListHeader
         associations={associations}
-        contacts={props.contacts}
         baseUrl={props.baseUrl}
         groups={props.groups}
         initialValues={config}
@@ -110,7 +109,6 @@ export function Sidebar(props: SidebarProps): ReactElement {
         apps={props.apps}
         baseUrl={props.baseUrl}
         workspace={workspace}
-        contacts={props.contacts}
       />
     </ScrollbarLessCol>
   );

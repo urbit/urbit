@@ -22,7 +22,6 @@ interface MetadataFormProps {
   host: string;
   book: string;
   association: Association;
-  contacts: Contacts;
   api: GlobalApi;
 }
 

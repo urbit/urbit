@@ -87,7 +87,6 @@ export function SidebarListHeader(props: {
                 api={props.api}
                 history={props.history}
                 associations={props.associations}
-                contacts={props.contacts}
                 groups={props.groups}
                 workspace={props.workspace}
               />

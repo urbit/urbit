@@ -27,6 +27,7 @@ import '~/views/apps/publish/css/custom.css';
 import { getGroupFromWorkspace } from '~/logic/lib/workspace';
 import { GroupSummary } from './GroupSummary';
 import { Workspace } from '~/types/workspace';
+import useContactState from '~/logic/state/contacts';
 
 type GroupsPaneProps = StoreState & {
   baseUrl: string;
@@ -35,7 +36,8 @@ type GroupsPaneProps = StoreState & {
 };
 
 export function GroupsPane(props: GroupsPaneProps) {
-  const { baseUrl, associations, groups, contacts, api, workspace } = props;
+  const { baseUrl, associations, groups, api, workspace } = props;
+  const contacts = useContactState(state => state.contacts);
   const relativePath = (path: string) => baseUrl + path;
   const groupPath = getGroupFromWorkspace(workspace);
 
@@ -82,7 +84,6 @@ export function GroupsPane(props: GroupsPaneProps) {
           association={groupAssociation!}
           baseUrl={baseUrl}
           groups={props.groups}
-          contacts={props.contacts}
           workspace={workspace}
         />
       </>
@@ -181,7 +182,6 @@ export function GroupsPane(props: GroupsPaneProps) {
                 associations={associations}
                 groups={groups}
                 group={groupPath}
-                contacts={props.contacts}
                 workspace={workspace}
               />
               {popovers(routeProps, baseUrl)}

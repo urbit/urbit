@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react';
 import _ from 'lodash';
 import f, { memoize } from 'lodash/fp';
 import bigInt, { BigInteger } from 'big-integer';
-import { Contact } from '@urbit/api';
+import { Association, Contact } from '@urbit/api';
 import useLocalState from '../state/local';
+import produce from 'immer';
 
 export const MOBILE_BROWSER_REGEX = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i;
 
@@ -408,3 +409,8 @@ export function getItemTitle(association: Association) {
   }
   return association.metadata.title || association.resource;
 }
+
+export const stateSetter = <StateType>(fn: (state: StateType) => void, set): void => {
+  // TODO this is a stub for the store debugging
+  return set(produce(fn));
+};

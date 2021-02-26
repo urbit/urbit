@@ -49,7 +49,6 @@ export function Skeleton(props: SkeletonProps): ReactElement {
       gridTemplateRows="100%"
     >
       <Sidebar
-        contacts={props.contacts}
         api={props.api}
         recentGroups={props.recentGroups}
         selected={props.selected}

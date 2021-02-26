@@ -32,7 +32,6 @@ type ChatWindowProps = RouteComponentProps<{
 }> & {
   unreadCount: number;
   graph: Graph;
-  contacts: Contacts;
   association: Association;
   group: Group;
   ship: Patp;
@@ -240,11 +239,8 @@ export default class ChatWindow extends Component<
     const {
       unreadCount,
       api,
-      ship,
-      station,
       association,
       group,
-      contacts,
       graph,
       history,
       groups,
@@ -255,7 +251,6 @@ export default class ChatWindow extends Component<
     const messageProps = {
       association,
       group,
-      contacts,
       unreadMarkerRef,
       history,
       api,

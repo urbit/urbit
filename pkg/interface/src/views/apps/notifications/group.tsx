@@ -69,7 +69,6 @@ export function GroupNotification(props: GroupNotificationProps): ReactElement {
         time={time}
         read={read}
         group={group}
-        contacts={props.contacts}
         authors={authors}
         description={desc}
         associations={associations}

@@ -11,9 +11,9 @@ import OverlaySigil from './OverlaySigil';
 import { Sigil } from '~/logic/lib/sigil';
 import GlobalApi from '~/logic/api/global';
 import Timestamp from './Timestamp';
+import useContactState from '~/logic/state/contacts';
 
 interface AuthorProps {
-  contacts: Contacts;
   ship: string;
   date: number;
   showImage?: boolean;
@@ -25,9 +25,10 @@ interface AuthorProps {
 
 // eslint-disable-next-line max-lines-per-function
 export default function Author(props: AuthorProps): ReactElement {
-  const { contacts, ship = '', date, showImage, group } = props;
+  const { ship = '', date, showImage, group } = props;
   const history = useHistory();
   let contact;
+  const contacts = useContactState(state => state.contacts);
   if (contacts) {
     contact = `~${deSig(ship)}` in contacts ? contacts[`~${deSig(ship)}`] : null;
   }

@@ -7,7 +7,7 @@ import { AsyncButton } from '~/views/components/AsyncButton';
 
 export class Writers extends Component {
   render() {
-    const { association, groups, contacts, api } = this.props;
+    const { association, groups, api } = this.props;
 
     const resource = resourceFromPath(association?.group);
 
@@ -40,7 +40,6 @@ export class Writers extends Component {
           <Form>
             <ShipSearch
               groups={groups}
-              contacts={contacts}
               id="ships"
               label=""
               maxLength={undefined}

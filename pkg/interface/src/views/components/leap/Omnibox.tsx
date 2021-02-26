@@ -16,10 +16,10 @@ import defaultApps from '~/logic/lib/default-apps';
 import { useOutsideClick } from '~/logic/lib/useOutsideClick';
 import { Portal } from '../Portal';
 import { Tile } from '~/types';
+import useContactState from '~/logic/state/contacts';
 
 interface OmniboxProps {
   associations: Associations;
-  contacts: Contacts;
   groups: Groups;
   tiles: {
     [app: string]: Tile;
@@ -40,13 +40,14 @@ export function Omnibox(props: OmniboxProps) {
 
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState<[] | [string, string]>([]);
+  const contactState = useContactState(state => state.contacts);
 
   const contacts = useMemo(() => {
     const maybeShip = `~${deSig(query)}`;
     return ob.isValidPatp(maybeShip)
-      ? { ...props.contacts, [maybeShip]: {} }
-      : props.contacts;
-  }, [props.contacts, query]);
+      ? { ...contactState, [maybeShip]: {} }
+      : contactState;
+  }, [contactState, query]);
 
   const index = useMemo(() => {
     const selectedGroup = location.pathname.startsWith('/~landscape/ship/')
@@ -257,7 +258,6 @@ export function Omnibox(props: OmniboxProps) {
                 selected={sel}
                 invites={props.invites}
                 notifications={props.notifications}
-                contacts={props.contacts}
               />
             ))}
           </Box>
@@ -265,7 +265,7 @@ export function Omnibox(props: OmniboxProps) {
       })
       }
     </Box>;
-  }, [results, navigate, selected, props.contacts, props.notifications, props.invites]);
+  }, [results, navigate, selected, contactState, props.notifications, props.invites]);
 
   return (
     <Portal>

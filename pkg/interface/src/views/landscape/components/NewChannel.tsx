@@ -178,13 +178,11 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps): ReactE
             {(workspace?.type === 'home' || workspace?.type === 'messages') ? (
             <ShipSearch
             groups={props.groups}
-            contacts={props.contacts}
             id="ships"
             label="Invitees"
             />) : (
             <ChannelWritePerms
               groups={props.groups}
-              contacts={props.contacts}
             />
           )}
             <Box justifySelf="start">

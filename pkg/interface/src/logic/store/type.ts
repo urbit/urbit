@@ -25,12 +25,9 @@ export interface StoreState {
   invites: Invites;
   // metadata state
   associations: Associations;
-  // contact state
-  contacts: Rolodex;
   // groups state
   groups: Groups;
   groupKeys: Set<Path>;
-  nackedContacts: Set<Patp>
   s3: S3State;
   graphs: Graphs;
   graphKeys: Set<string>;
