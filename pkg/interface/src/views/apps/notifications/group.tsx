@@ -42,7 +42,6 @@ interface GroupNotificationProps {
   time: number;
   timebox: BigInteger;
   associations: Associations;
-  contacts: Rolodex;
   api: GlobalApi;
 }
 

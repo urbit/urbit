@@ -16,7 +16,6 @@ export interface ChannelWriteFieldSchema {
 }
 
 interface ChannelWritePermsProps {
-  contacts: Rolodex;
 }
 
 export function ChannelWritePerms<

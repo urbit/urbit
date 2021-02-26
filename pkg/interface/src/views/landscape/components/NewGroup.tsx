@@ -31,7 +31,6 @@ interface FormSchema {
 }
 
 interface NewGroupProps {
-  contacts: Rolodex;
   associations: Associations;
   api: GlobalApi;
 }

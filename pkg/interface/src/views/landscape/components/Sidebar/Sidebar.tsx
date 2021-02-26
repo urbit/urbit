@@ -31,10 +31,8 @@ const ScrollbarLessCol = styled(Col)`
 `;
 
 interface SidebarProps {
-  contacts: Rolodex;
   children: ReactNode;
   recentGroups: string[];
-  invites: Invites ;
   api: GlobalApi;
   associations: Associations;
   selected?: string;

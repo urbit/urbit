@@ -13,12 +13,10 @@ import useGraphState from '~/logic/state/graph';
 import useHarkState from '~/logic/state/hark';
 
 interface SkeletonProps {
-  contacts: Rolodex;
   children: ReactNode;
   recentGroups: string[];
   associations: Associations;
   linkListening: Set<Path>;
-  invites: Invites;
   selected?: string;
   selectedApp?: AppName;
   baseUrl: string;
@@ -54,7 +52,6 @@ export function Skeleton(props: SkeletonProps): ReactElement {
         recentGroups={props.recentGroups}
         selected={props.selected}
         associations={props.associations}
-        invites={props.invites}
         apps={config}
         baseUrl={props.baseUrl}
         mobileHide={props.mobileHide}

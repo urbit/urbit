@@ -33,7 +33,6 @@ interface InviteSearchProps<I extends string> {
   label?: string;
   caption?: string;
   id: I;
-  contacts: Rolodex;
   hideSelection?: boolean;
   maxLength?: number;
 }

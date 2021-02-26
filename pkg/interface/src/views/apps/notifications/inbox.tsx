@@ -24,6 +24,7 @@ import { Notification } from './notification';
 import { Invites } from './invites';
 import { useLazyScroll } from '~/logic/lib/useLazyScroll';
 import useHarkState from '~/logic/state/hark';
+import useInviteState from '~/logic/state/invite';
 
 type DatedTimebox = [BigInteger, Timebox];
 
@@ -49,10 +50,9 @@ export default function Inbox(props: {
   api: GlobalApi;
   associations: Associations;
   filter: string[];
-  invites: InviteType;
   pendingJoin: JoinRequests;
 }) {
-  const { api, associations, invites } = props;
+  const { api, associations } = props;
   useEffect(() => {
     let seen = false;
     setTimeout(() => {
@@ -117,7 +117,7 @@ export default function Inbox(props: {
 
   return (
     <Col ref={scrollRef} position="relative" height="100%" overflowY="auto">
-      <Invites pendingJoin={props.pendingJoin} invites={invites} api={api} associations={associations} />
+      <Invites pendingJoin={props.pendingJoin} api={api} associations={associations} />
       {[...notificationsByDayMap.keys()].sort().reverse().map((day, index) => {
         const timeboxes = notificationsByDayMap.get(day)!;
         return timeboxes.length > 0 && (

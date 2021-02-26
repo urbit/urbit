@@ -27,3 +27,4 @@ export const GroupViewReducer = (json: any, state: any) => {
     initial(data, state);
   }
 };
+// TODO zustand this file

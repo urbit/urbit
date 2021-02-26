@@ -25,7 +25,6 @@ import { Workspace } from '~/types/workspace';
 interface InvitePopoverProps {
   baseUrl: string;
   association: Association;
-  contacts: Rolodex;
   api: GlobalApi;
   workspace: Workspace;
 }

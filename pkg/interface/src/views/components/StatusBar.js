@@ -23,6 +23,7 @@ import { useTutorialModal } from './useTutorialModal';
 
 import useLocalState from '~/logic/state/local';
 import useHarkState from '~/logic/state/hark';
+import useInviteState from '~/logic/state/invite';
 import { useHistory } from 'react-router-dom';
 
 
@@ -31,7 +32,8 @@ const StatusBar = (props) => {
   const history = useHistory();
   const notificationsCount = useHarkState(state => state.notificationsCount);
   const doNotDisturb = useHarkState(state => state.doNotDisturb);
-  const invites = [].concat(...Object.values(props.invites).map(obj => Object.values(obj)));
+  const inviteState = useInviteState(state => state.invites);
+  const invites = [].concat(...Object.values(inviteState).map(obj => Object.values(obj)));
   const metaKey = (window.navigator.platform.includes('Mac')) ? '⌘' : 'Ctrl+';
   const { toggleOmnibox, hideAvatars } =
     useLocalState(({ toggleOmnibox, hideAvatars }) =>

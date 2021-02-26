@@ -39,7 +39,6 @@ function sidebarSort(
 
 export function SidebarList(props: {
   apps: SidebarAppConfigs;
-  contacts: Rolodex;
   config: SidebarListConfig;
   associations: Associations;
   baseUrl: string;

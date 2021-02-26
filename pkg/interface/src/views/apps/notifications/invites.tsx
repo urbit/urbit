@@ -7,10 +7,10 @@ import { Invites as IInvites, Associations, Invite, JoinRequests, Groups, Contac
 import GlobalApi from '~/logic/api/global';
 import { resourceAsPath, alphabeticalOrder } from '~/logic/lib/util';
 import InviteItem from '~/views/components/Invite';
+import useInviteState from '~/logic/state/invite';
 
 interface InvitesProps {
   api: GlobalApi;
-  invites: IInvites;
   associations: Associations;
   pendingJoin: JoinRequests;
 }
@@ -22,7 +22,8 @@ interface InviteRef {
 }
 
 export function Invites(props: InvitesProps): ReactElement {
-  const { api, invites, pendingJoin } = props;
+  const { api, pendingJoin } = props;
+  const invites = useInviteState(state => state.invites);
 
   const inviteArr: InviteRef[] = _.reduce(invites, (acc: InviteRef[], val: AppInvites, app: string) => {
     const appInvites = _.reduce(val, (invs: InviteRef[], invite: Invite, uid: string) => {

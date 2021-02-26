@@ -101,7 +101,7 @@ export default class GlobalStore extends BaseStore<StoreState> {
     const oldActions = this.pastActions[tag] || [];
     this.pastActions[tag] = [data[tag], ...oldActions.slice(0,14)];
 
-    this.inviteReducer.reduce(data, this.state);
+    this.inviteReducer.reduce(data);
     this.metadataReducer.reduce(data, this.state);
     this.localReducer.reduce(data, this.state);
     this.s3Reducer.reduce(data, this.state);

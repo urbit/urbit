@@ -43,7 +43,6 @@ const formSchema = (members?: string[]) => Yup.object({
 interface NewChannelProps {
   api: GlobalApi;
   associations: Associations;
-  contacts: Rolodex;
   group?: string;
   workspace: Workspace;
 }

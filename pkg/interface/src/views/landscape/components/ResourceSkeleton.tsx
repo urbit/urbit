@@ -21,7 +21,6 @@ const TruncatedText = styled(RichText)`
 `;
 
 type ResourceSkeletonProps = {
-  contacts: Rolodex;
   association: Association;
   api: GlobalApi;
   baseUrl: string;

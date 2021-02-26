@@ -19,7 +19,6 @@ import { S3State } from '~/types/s3-update';
 
 interface LinkWindowProps {
   association: Association;
-  contacts: Rolodex;
   resource: string;
   graph: Graph;
   hideNicknames: boolean;

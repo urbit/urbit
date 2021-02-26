@@ -155,7 +155,6 @@ class App extends React.Component {
               <StatusBarWithRouter
                 props={this.props}
                 associations={associations}
-                invites={this.state.invites}
                 ourContact={ourContact}
                 api={this.api}
                 connection={this.state.connection}
@@ -169,7 +168,6 @@ class App extends React.Component {
                 apps={state.launch}
                 tiles={state.launch.tiles}
                 api={this.api}
-                invites={state.invites}
                 show={this.props.omniboxShown}
                 toggle={this.props.toggleOmnibox}
               />

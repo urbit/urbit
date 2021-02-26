@@ -5,6 +5,7 @@ import Sigil from '~/logic/lib/sigil';
 import { uxToHex, cite } from '~/logic/lib/util';
 import { withHarkState } from '~/logic/state/hark';
 import { withContactState } from '~/logic/state/contacts';
+import { withInviteState } from '~/logic/state/invite';
 
 export class OmniboxResult extends Component {
   constructor(props) {
@@ -121,4 +122,4 @@ export class OmniboxResult extends Component {
   }
 }
 
-export default withHarkState(withContactState(OmniboxResult), ['notificationsCount']);
+export default withInviteState(withHarkState(withContactState(OmniboxResult), ['notificationsCount']));
