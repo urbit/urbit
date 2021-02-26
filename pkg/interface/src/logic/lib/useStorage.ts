@@ -23,10 +23,14 @@ const useStorage = (s3: S3State, gcp: GcpState,
 
   useEffect(() => {
     // prefer GCP if available, else use S3.
-    if (gcp.accessKey !== undefined) {
-      client.current = new GcpClient(gcp.accessKey);
+    if (gcp.current !== undefined) {
+      client.current = new GcpClient(gcp.current.accessKey);
     } else {
-      if (!s3.credentials) {
+      // XX ships currently always have S3 credentials, but the fields are all
+      // set to '' if they are not configured.
+      if (!s3.credentials ||
+          !s3.credentials.accessKeyId ||
+          !s3.credentials.secretAccessKey) {
         return;
       }
       client.current = new S3({
@@ -38,8 +42,8 @@ const useStorage = (s3: S3State, gcp: GcpState,
 
   const canUpload = useMemo(
     () =>
-      (client && s3.configuration.currentBucket !== "") || false,
-    [client, s3.configuration.currentBucket]
+      (client.current && s3.configuration.currentBucket !== "") || false,
+    [client.current, s3.configuration.currentBucket]
   );
 
   const upload = useCallback(
