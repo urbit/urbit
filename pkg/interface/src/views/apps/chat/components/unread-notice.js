@@ -10,7 +10,7 @@ export const UnreadNotice = (props) => {
   if (!unreadMsg || (unreadCount === 0)) {
     return null;
   }
-  
+
   const stamp = moment.unix(unreadMsg.post['time-sent'] / 1000);
 
   let datestamp = moment.unix(unreadMsg.post['time-sent'] / 1000).format('YYYY.M.D');
@@ -40,7 +40,7 @@ export const UnreadNotice = (props) => {
         borderColor='blue'>
         <Text flexShrink='1' textOverflow='ellipsis' whiteSpace='pre' overflow='hidden' display='flex' cursor='pointer' onClick={onClick}>
           {unreadCount} new message{unreadCount > 1 ? 's' : ''} since{' '}
-          <Timestamp stamp={stamp} color='blue' date={true} />
+          <Timestamp stamp={stamp} color='blue' date={true} fontSize={1} />
         </Text>
         <Text
           ml='4'

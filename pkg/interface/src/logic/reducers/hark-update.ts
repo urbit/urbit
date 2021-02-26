@@ -233,8 +233,8 @@ function updateNotificationStats(state: HarkState, index: NotifIndex, statField:
       const curr = _.get(state.unreads.graph, [index.graph.graph, index.graph.index, statField], 0);
       _.set(state.unreads.graph, [index.graph.graph, index.graph.index, statField], f(curr));
     } else if('group' in index) {
-      const curr = _.get(state.unreads.group, [index.group.group, statField], 0);
-      _.set(state.unreads.group, [index.group.group, statField], f(curr));
+      const curr = _.get(state.unreads.group, [index.group, statField], 0);
+      _.set(state.unreads.group, [index.group, statField], f(curr));
     }
 }
 

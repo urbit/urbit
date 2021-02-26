@@ -34,10 +34,8 @@
 =/  groups=(list [local=? resource:re members=@ud])
   %+  murn
     %~  tap  in
-    %~  key  by
-    dir:(scry arch %y %group-store /groups)
-  |=  i=@ta
-  =/  r=resource:re  (de-path:re (stab i))
+    (scry (set resource:re) %y %group-store /groups)
+  |=  r=resource:re
   =/  g=(unit group:gr)
     %+  scry  (unit group:gr)
     [%x %group-store [%groups (snoc (en-path:re r) %noun)]]
@@ -59,10 +57,10 @@
     %~  tap   by
     %+  scry  associations:md
     [%x %metadata-store [%group (snoc (en-path:re r) %noun)]]
-  |=  [[* m=md-resource:md] metadata:md]
+  |=  [m=md-resource:md association:md]
   ::NOTE  we only count graphs for now
-  ?.  &(=(%graph app-name.m) =(our creator))  ~
-  `[module (de-path:re app-path.m)]
+  ?.  &(=(%graph app-name.m) =(our creator.metadatum))  ~
+  `[module.metadatum resource.m]
 ::  count activity per channel
 ::
 =/  activity=(list [resource:re members=@ud (list [resource:re mod=term week=@ud authors=@ud])])

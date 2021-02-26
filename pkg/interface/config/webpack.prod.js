@@ -3,11 +3,15 @@ const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
 const webpack = require('webpack');
+const { execSync } = require('child_process');
+
+const GIT_DESC = execSync('git describe --always', { encoding: 'utf8' }).trim();
 
 module.exports = {
   mode: 'production',
   entry: {
-     app: './src/index.js'
+     app: './src/index.js',
+     serviceworker: './src/serviceworker.js'
   },
   module: {
     rules: [
@@ -56,7 +60,7 @@ module.exports = {
     new CleanWebpackPlugin(),
     new webpack.DefinePlugin({
       'process.env.LANDSCAPE_STREAM': JSON.stringify(process.env.LANDSCAPE_STREAM),
-      'process.env.LANDSCAPE_SHORTHASH': JSON.stringify(process.env.LANDSCAPE_SHORTHASH),
+      'process.env.LANDSCAPE_SHORTHASH': JSON.stringify(GIT_DESC),
       'process.env.TUTORIAL_HOST': JSON.stringify('~difmex-passed'),
       'process.env.TUTORIAL_GROUP': JSON.stringify('beginner-island'),
       'process.env.TUTORIAL_CHAT': JSON.stringify('introduce-yourself-7010'),
@@ -69,7 +73,9 @@ module.exports = {
     // }),
   ],
   output: {
-    filename: 'index.[contenthash].js',
+    filename: (pathData) => {
+      return pathData.chunk.name === 'app' ? 'index.[contenthash].js' : '[name].js';
+    },
     path: path.resolve(__dirname, '../../arvo/app/landscape/js/bundle'),
     publicPath: '/'
   },

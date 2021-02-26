@@ -188,7 +188,7 @@ export default class ChatMessage extends Component<ChatMessageProps> {
       <Box
         ref={this.divRef}
         pt={renderSigil ? 2 : 0}
-        pb={2}
+        pb={isLastMessage ? 4 : 2}
         className={containerClass}
         style={style}
       >
@@ -198,10 +198,10 @@ export default class ChatMessage extends Component<ChatMessageProps> {
         {renderSigil ? (
           <>
             <MessageAuthor pb={'2px'} {...messageProps} />
-            <Message pl={5} pr={3} {...messageProps} />
+            <Message pl={5} pr={4} {...messageProps} />
           </>
         ) : (
-          <Message pl={5} pr={3} timestampHover {...messageProps} />
+          <Message pl={5} pr={4} timestampHover {...messageProps} />
         )}
         <Box style={unreadContainerStyle}>
           {isLastRead ? (
@@ -226,6 +226,7 @@ export const MessageAuthor = ({
   api,
   associations,
   groups,
+  history,
   scrollWindow,
   ...rest
 }) => {
@@ -237,10 +238,7 @@ export const MessageAuthor = ({
   const contact =
     `~${msg.author}` in contacts ? contacts[`~${msg.author}`] : false;
   const showNickname = useShowNickname(contact);
-  const { hideAvatars } =
-    useLocalState(({ hideAvatars }) =>
-      ({ hideAvatars })
-    );
+  const { hideAvatars } = useLocalState(({ hideAvatars }) => ({ hideAvatars }));
   const shipName = showNickname ? contact.nickname : cite(msg.author);
   const copyNotice = 'Copied';
   const color = contact
@@ -276,7 +274,8 @@ export const MessageAuthor = ({
     return () => clearTimeout(timer);
   }, [shipName, displayName]);
 
-  const img = contact?.avatar && !hideAvatars ? (
+  const img =
+    contact?.avatar && !hideAvatars ? (
       <BaseImage
         display='inline-block'
         src={contact.avatar}
@@ -307,6 +306,7 @@ export const MessageAuthor = ({
       >
         {showOverlay && (
           <OverlaySigil
+            cursor='auto'
             ship={msg.author}
             contact={contact}
             color={`#${uxToHex(contact?.color ?? '0x0')}`}
@@ -335,7 +335,7 @@ export const MessageAuthor = ({
             flexShrink={0}
             mono={nameMono}
             fontWeight={nameMono ? '400' : '500'}
-            className={'pointer'}
+            cursor='pointer'
             onClick={() => {
               writeText(`~${msg.author}`);
               showCopyNotice();
@@ -445,8 +445,10 @@ export const Message = ({
                 </Box>
               );
             case 'mention':
+              const first = (i) => (i === 0);
               return (
                 <Mention
+                  first={first(i)}
                   group={group}
                   scrollWindow={scrollWindow}
                   ship={content.mention}

@@ -240,7 +240,12 @@
         =/  mime-type=@t  (rsh 3 (crip <p.u.data>))
         ::  Should maybe inspect to see how long cache should hold
         ::
-        [[200 ['content-type' mime-type] max-1-da:gen ~] `q.u.data]
+        =/  headers
+          :~  content-type+mime-type 
+              max-1-da:gen 
+              'Service-Worker-Allowed'^'/'
+          ==
+        [[200 headers] `q.u.data]
       ==
     ::
     ++  lowercase

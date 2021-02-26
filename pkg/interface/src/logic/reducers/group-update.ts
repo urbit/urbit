@@ -61,6 +61,7 @@ export default class GroupReducer<S extends GroupState> {
   reduce(json: Cage, state: S) {
     const data = json.groupUpdate;
     if (data) {
+      console.log(data);
       this.initial(data, state);
       this.addMembers(data, state);
       this.addTag(data, state);
@@ -116,6 +117,12 @@ export default class GroupReducer<S extends GroupState> {
       const resourcePath = resourceAsPath(resource);
       for (const member of ships) {
         state.groups[resourcePath].members.add(member);
+        if (
+            'invite' in state.groups[resourcePath].policy &&
+            state.groups[resourcePath].policy.invite.pending.has(member)
+           ) {
+             state.groups[resourcePath].policy.invite.pending.delete(member)
+           }
       }
     }
   }
