@@ -829,10 +829,17 @@
     ::  lifecycle arms; mostly pass-throughs to the contained adult ames
     ::
     ++  scry  scry:adult-core
-    ++  stay  [%4 %larva queued-events ames-state.adult-gate]
+    ++  stay  [%5 %larva queued-events ames-state.adult-gate]
     ++  load
       |=  $=  old
           $%  $:  %4
+              $%  $:  %larva
+                      events=(qeu queued-event)
+                      state=_ames-state.adult-gate
+                  ==
+                  [%adult state=_ames-state.adult-gate]
+              ==  ==
+              $:  %5
               $%  $:  %larva
                       events=(qeu queued-event)
                       state=_ames-state.adult-gate
@@ -847,6 +854,14 @@
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  queued-events  events.old
         =.  adult-gate     (load:adult-core %4 state.old)
+        larval-gate
+      ::
+          [%5 %adult *]  (load:adult-core %5 state.old)
+      ::
+          [%5 %larva *]
+        ~>  %slog.1^leaf/"ames: larva: load"
+        =.  queued-events  events.old
+        =.  adult-gate     (load:adult-core %5 state.old)
         larval-gate
       ==
     --
@@ -919,13 +934,39 @@
   [moves ames-gate]
 ::  +stay: extract state before reload
 ::
-++  stay  [%4 %adult ames-state]
+++  stay  [%5 %adult ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load
-  |=  old-state=[%4 ^ames-state]
+  |=  $=  old-state
+      $%  [%4 ^ames-state]
+          [%5 ^ames-state]
+      ==
+  |^
   ^+  ames-gate
+  =?  old-state  ?=(%4 -.old-state)  %5^(state-4-to-5 +.old-state)
+  ::
+  ?>  ?=(%5 -.old-state)
   ames-gate(ames-state +.old-state)
+  ::
+  ++  state-4-to-5
+    |=  =^ames-state
+    ^-  ^^ames-state
+    =.  peers.ames-state
+      %-  ~(run by peers.ames-state)
+      |=  =ship-state
+      ?.  ?=(%known -.ship-state)
+        ship-state
+      =.  snd.ship-state
+        %-  ~(run by snd.ship-state)
+        |=  =message-pump-state
+        =*  p  packet-pump-state.message-pump-state
+        =.  num-live.metrics.packet-pump-state.message-pump-state
+          ~(wyt in live.packet-pump-state.message-pump-state)
+        message-pump-state
+      ship-state
+    ames-state
+  --
 ::  +scry: dereference namespace
 ::
 ++  scry
@@ -1923,7 +1964,9 @@
       =+  ?~  dud  ~
           %.  ~
           %+  slog  leaf+"ames: {<her.channel>} ack crashed {<mote.u.dud>}"
-          ?.(msg.veb ~ tang.u.dud)
+          ?.  msg.veb  ~
+          :-  >[bone=bone message-num=message-num meat=meat]:shut-packet<
+          tang.u.dud
       (run-message-pump bone %hear [message-num +.meat]:shut-packet)
     ::  +on-memo: handle request to send message
     ::
