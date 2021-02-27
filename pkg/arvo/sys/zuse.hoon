@@ -5244,59 +5244,48 @@
     =/  acc  [stop=`?`%.n state=state]
     =<  abet  =<  main
     |%
+    ++  this  .
     ++  abet  [state.acc a]
     ::  +main: main recursive loop; performs a partial inorder traversal
     ::
     ++  main
-      ^+  .
+      ^+  this
       ::  stop if empty or we've been told to stop
       ::
-      ?~  a  .
-      ?:  stop.acc  .
+      ?:  =(~ a)  this
+      ?:  stop.acc  this
       ::  inorder traversal: left -> node -> right, until .f sets .stop
       ::
-      =>  left
-      ?:  stop.acc  .
-      =>  node
-      ?:  stop.acc  .
-      right
+      =.  this  left
+      ?:  stop.acc  this
+      =^  del  this  node
+      ?:  stop.acc  this
+      =.  this  right
+      =?  a  del  (nip a)
+      this
     ::  +node: run .f on .n.a, updating .a, .state, and .stop
     ::
     ++  node
-      ^+  .
+      ^+  [del=*? this]
       ::  run .f on node, updating .stop.acc and .state.acc
       ::
-      =^  res  acc
-        ?>  ?=(^ a)
-        (f state.acc n.a)
-      ::  if we kept the node, replace its .val; order is unchanged
-      ::
-      ?^  res
-        ?>  ?=(^ a)
-        ..node(val.n.a u.res)
-      ::  .f requested node deletion; delete root, then maybe recurse
-      ::
-      ::    If +nup promoted the left side, we're done; don't process
-      ::    the left-hand side twice.  If +nup promoted a non-null right
-      ::    side, recurse on the new root.
-      ::
-      =^  pro  a  (nup a)
-      ?-  pro
-        %l  ..node
-        %r  ?~(a ..node node)
-      ==
+      ?>  ?=(^ a)
+      =^  res  acc  (f state.acc n.a)
+      ?~  res
+        [del=& ..node]
+      [del=| ..node(val.n.a u.res)]
     ::  +left: recurse on left subtree, copying mutant back into .l.a
     ::
     ++  left
-      ^+  .
-      ?~  a  .
+      ^+  this
+      ?~  a  this
       =/  lef  main(a l.a)
       lef(a a(l a.lef))
     ::  +right: recurse on right subtree, copying mutant back into .r.a
     ::
     ++  right
-      ^+  .
-      ?~  a  .
+      ^+  this
+      ?~  a  this
       =/  rig  main(a r.a)
       rig(a a(r a.rig))
     --
