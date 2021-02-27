@@ -960,7 +960,6 @@
       =.  snd.ship-state
         %-  ~(run by snd.ship-state)
         |=  =message-pump-state
-        =*  p  packet-pump-state.message-pump-state
         =.  num-live.metrics.packet-pump-state.message-pump-state
           ~(wyt in live.packet-pump-state.message-pump-state)
         message-pump-state

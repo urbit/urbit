@@ -5245,8 +5245,7 @@
       =.  this  left
       ?:  stop.acc  this
       =^  del  this  node
-      ?:  stop.acc  this
-      =.  this  right
+      =?  this  !stop.acc  right
       =?  a  del  (nip a)
       this
     ::  +node: run .f on .n.a, updating .a, .state, and .stop
