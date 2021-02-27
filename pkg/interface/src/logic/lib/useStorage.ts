@@ -23,8 +23,8 @@ const useStorage = (s3: S3State, gcp: GcpState,
 
   useEffect(() => {
     // prefer GCP if available, else use S3.
-    if (gcp.current !== undefined) {
-      client.current = new GcpClient(gcp.current.accessKey);
+    if (gcp.token !== undefined) {
+      client.current = new GcpClient(gcp.token.accessKey);
     } else {
       // XX ships currently always have S3 credentials, but the fields are all
       // set to '' if they are not configured.
