@@ -42,8 +42,10 @@ const useStorage = (s3: S3State, gcp: GcpState,
 
   const canUpload = useMemo(
     () =>
-      (client.current && s3.configuration.currentBucket !== "") || false,
-    [client.current, s3.configuration.currentBucket]
+      ((gcp.token || (s3.credentials && s3.credentials.accessKeyId &&
+                      s3.credentials.secretAccessKey)) &&
+       s3.configuration.currentBucket !== "") || false,
+    [s3.credentials, gcp.token, s3.configuration.currentBucket]
   );
 
   const upload = useCallback(
