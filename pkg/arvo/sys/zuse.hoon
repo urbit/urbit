@@ -5258,8 +5258,8 @@
       ?>  ?=(^ a)
       =^  res  acc  (f state.acc n.a)
       ?~  res
-        [del=& ..node]
-      [del=| ..node(val.n.a u.res)]
+        [del=& this]
+      [del=| this(val.n.a u.res)]
     ::  +left: recurse on left subtree, copying mutant back into .l.a
     ::
     ++  left
