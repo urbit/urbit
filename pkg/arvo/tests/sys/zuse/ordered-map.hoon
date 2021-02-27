@@ -129,6 +129,14 @@
       !>  -.b
   ==
 ::
+++  test-ordered-map-traverse-delete-all  ^-  tang
+  =/  q  ((ordered-map ,@ ,~) lte)
+  =/  o  (gas:q ~ ~[1/~ 2/~ 3/~])
+  =/  b  ((traverse:q ,~) o ~ |=([~ key=@ ~] [~ %| ~]))
+  %+  expect-eq
+    !>  [~ ~]
+    !>  b
+::
 ++  test-ordered-map-uni  ^-  tang
   ::
   =/  a=(tree [@ud @tas])  (gas:atom-map ~ (scag 4 test-items))

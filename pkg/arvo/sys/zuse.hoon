@@ -5207,6 +5207,20 @@
     ?:  (mor key.n.l.a key.n.r.a)
       l.a(r $(l.a r.l.a))
     r.a(l $(r.a l.r.a))
+  ::  +nup: delete root, reporting which side was promoted
+  ::
+  ++  nup
+    |=  a=(tree item)
+    ^-  [pro=?(%l %r) res=(tree item)]
+    ::
+    ?>  ?=(^ a)
+    ::  delete .n.a; merge and balance .l.a and .r.a
+    ::
+    ?~  l.a  r/r.a
+    ?~  r.a  l/l.a
+    ?:  (mor key.n.l.a key.n.r.a)
+      l/l.a(r (nip a(l r.l.a)))
+    r/r.a(l (nip a(r l.r.a)))
   ::  +traverse: stateful partial inorder traversal
   ::
   ::    Mutates .state on each run of .f.  Starts at .start key, or if
@@ -5255,18 +5269,22 @@
       =^  res  acc
         ?>  ?=(^ a)
         (f state.acc n.a)
-      ::  apply update to .a from .f's product
+      ::  if we kept the node, replace its .val; order is unchanged
       ::
-      =.  a
-        ::  if .f requested node deletion, merge and balance .l.a and .r.a
-        ::
-        ?~  res  (nip a)
-        ::  we kept the node; replace its .val; order is unchanged
-        ::
+      ?^  res
         ?>  ?=(^ a)
-        a(val.n u.res)
+        ..node(val.n.a u.res)
+      ::  .f requested node deletion; delete root, then maybe recurse
       ::
-      ..node
+      ::    If +nup promoted the left side, we're done; don't process
+      ::    the left-hand side twice.  If +nup promoted a non-null right
+      ::    side, recurse on the new root.
+      ::
+      =^  pro  a  (nup a)
+      ?-  pro
+        %l  ..node
+        %r  ?~(a ..node node)
+      ==
     ::  +left: recurse on left subtree, copying mutant back into .l.a
     ::
     ++  left
