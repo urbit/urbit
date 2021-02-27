@@ -5207,20 +5207,6 @@
     ?:  (mor key.n.l.a key.n.r.a)
       l.a(r $(l.a r.l.a))
     r.a(l $(r.a l.r.a))
-  ::  +nup: delete root, reporting which side was promoted
-  ::
-  ++  nup
-    |=  a=(tree item)
-    ^-  [pro=?(%l %r) res=(tree item)]
-    ::
-    ?>  ?=(^ a)
-    ::  delete .n.a; merge and balance .l.a and .r.a
-    ::
-    ?~  l.a  r/r.a
-    ?~  r.a  l/l.a
-    ?:  (mor key.n.l.a key.n.r.a)
-      l/l.a(r (nip a(l r.l.a)))
-    r/r.a(l (nip a(r l.r.a)))
   ::  +traverse: stateful partial inorder traversal
   ::
   ::    Mutates .state on each run of .f.  Starts at .start key, or if
