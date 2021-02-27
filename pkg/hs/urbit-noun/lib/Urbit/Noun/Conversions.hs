@@ -562,7 +562,7 @@ textAsTa = ("~~" <>) . concatMap \case
   '.' -> "~."
   '~' -> "~~"
   c   ->
-    if C.isAlphaNum c || (c == '-') then
+    if (C.isAlphaNum c && not (C.isUpper c)) || (c == '-') then
       T.singleton c
     else
       if C.ord c < 0x10 then "~0" else "~"
