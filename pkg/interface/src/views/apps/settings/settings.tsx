@@ -76,9 +76,10 @@ export default function SettingsScreen(props: any) {
             height="100%"
             borderRight="1"
             borderRightColor="washedGray"
-            display={["none", "flex"]}
+            display={hash === "" ? "flex" : ["none", "flex"]}
             minWidth="250px"
-            maxWidth="350px"
+            width="100%"
+            maxWidth={["100vw", "350px"]}
           >
             <Text
               display="block"
