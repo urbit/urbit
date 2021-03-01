@@ -2,11 +2,20 @@ import React, { Component, useCallback } from 'react';
 import _ from 'lodash';
 import normalizeWheel from 'normalize-wheel';
 import bigInt, { BigInteger } from 'big-integer';
+import styled from 'styled-components';
 
 import { Box, LoadingSpinner, Row, Center } from '@tlon/indigo-react';
 import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
 import {VirtualContext} from '~/logic/lib/virtualContext';
 import { IS_IOS } from '~/logic/lib/platform';
+const ScrollbarLessBox = styled(Box)`
+  scrollbar-width: none !important;
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
+`;
+
 
 interface RendererProps {
   index: BigInteger;
@@ -33,6 +42,7 @@ interface VirtualScrollerProps<T> {
 
 interface VirtualScrollerState<T> {
   visibleItems: BigIntOrderedMap<T>;
+  scrollbar: number;
 }
 
 type LogLevel = 'scroll' | 'network' | 'bail' | 'reflow';
@@ -83,7 +93,7 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
 
   private pageDelta = 15;
 
-  private scrollAck = true;
+  private scrollRef: HTMLElement | null = null;
 
 
   private loaded = {
@@ -95,6 +105,7 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     super(props);
     this.state = {
       visibleItems: new BigIntOrderedMap(),
+      scrollbar: 0
     };
 
     this.updateVisible = IS_IOS 
@@ -114,6 +125,24 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
       return;
     }
   }
+
+  // manipulate scrollbar manually, to dodge change detection
+  updateScroll = IS_IOS ? () => {} : _.throttle(() => {
+    if(!this.window || !this.scrollRef) {
+      return;
+    }
+    const { scrollTop, scrollHeight, offsetHeight } = this.window;
+    console.log(this.props.size);
+    console.log(this.pageSize);
+
+    const unloaded = (this.startOffset() / this.props.size);
+
+    const loadedCen = (scrollTop / scrollHeight);
+    const loaded = (loadedCen / (this.pageSize / this.props.averageHeight));
+    const result = (unloaded + loaded)*this.window.offsetHeight;
+    this.scrollRef.style.bottom = `${result}px`;
+  }, 50);
+
 
 
   componentDidUpdate(prevProps: VirtualScrollerProps<T>, _prevState: VirtualScrollerState<T>) {
@@ -262,6 +291,7 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
   }
 
   onScroll(event: UIEvent) {
+    this.updateScroll();
     if(!this.window) {
       // bail if we're going to adjust scroll anyway
       return;
@@ -324,10 +354,8 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     console.log(this.childRefs.size);
   
     const ref = this.childRefs.get(this.savedIndex)!;
-    //ref.scrollIntoView();
     const newScrollTop = this.window.scrollHeight - ref.offsetTop - this.savedDistance;
 
-    //this.window.scrollTop = newScrollTop;
     this.window.scrollTo(0, newScrollTop);
     requestAnimationFrame(() => {
       this.savedIndex = null;
@@ -435,8 +463,11 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     const atEnd = false; 
     
     return (
-      <Box overflowY='scroll' ref={this.setWindow} onScroll={this.onScroll} style={{ ...style, ...{ transform }, "-webkit-overflow-scrolling": "auto" }}>
-        <Box style={{ transform, width: '100%' }}>
+      <>
+        {!IS_IOS && (<Box borderRadius="3" bottom="0" ref={el => { this.scrollRef = el; }} right="0" height="50px" position="absolute" width="4px" backgroundColor="lightGray" />)}
+
+      <ScrollbarLessBox overflowY='scroll' ref={this.setWindow} onScroll={this.onScroll} style={{ ...style, ...{ transform }, "-webkit-overflow-scrolling": "auto" }}>
+        <Box style={{ transform, width: 'calc(100% - 4px)' }}>
           {(isTop ? !atStart : !atEnd) && (<Center height="5">
             <LoadingSpinner />
           </Center>)}
@@ -456,7 +487,8 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
               <LoadingSpinner />
             </Center>)}
         </Box>
-      </Box>
+      </ScrollbarLessBox>
+    </>
     );
   }
 }
