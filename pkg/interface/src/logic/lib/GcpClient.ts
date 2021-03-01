@@ -46,8 +46,10 @@ class GcpUpload implements StorageUpload {
       referrerPolicy: 'no-referrer',
       body: Body
     });
-    // TODO: response errors.
-    // If we get a 400, perhaps we need fine-grained permissions on the bucket.
+    if (!response.ok) {
+      console.error('GcpClient server error', await response.json());
+      throw new Error(`GcpClient: response ${response.status}`);
+    }
     return {Location: `https://${ENDPOINT}/${Bucket}/${Key}`};
   }
 }
