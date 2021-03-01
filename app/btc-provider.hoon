@@ -172,9 +172,6 @@
       ::
         %broadcast-tx
       [%broadcast-tx rawtx.act]
-      ::
-        %ping
-      [%get-block-info ~]
     ==
   [~[(req-card act ract)] state]
 ::
