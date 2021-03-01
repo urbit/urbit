@@ -9,7 +9,7 @@ import {
 } from "@tlon/indigo-react";
 
 import GlobalApi from "~/logic/api/global";
-import { StorageState, } from "~/types";
+import { StorageState } from "~/types";
 import { ImageInput } from "~/views/components/ImageInput";
 import {ColorInput} from "~/views/components/ColorInput";
 

@@ -9,7 +9,7 @@ import {
 import { AsyncButton } from "../../../components/AsyncButton";
 import { Formik, Form, FormikHelpers } from "formik";
 import { MarkdownField } from "./MarkdownField";
-import { GcpState, S3State } from "~/types";
+import { StorageState } from "~/types";
 
 interface PostFormProps {
   initial: PostFormSchema;
