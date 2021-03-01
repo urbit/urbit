@@ -9,29 +9,30 @@ import { Sigil } from '~/logic/lib/sigil';
 import { ViewProfile } from './ViewProfile';
 import { EditProfile } from './EditProfile';
 import { SetStatusBarModal } from '~/views/components/SetStatusBarModal';
-import { uxToHex } from '~/logic/lib/util';
+import { uxToHex, useHovering } from '~/logic/lib/util';
 import { useTutorialModal } from '~/views/components/useTutorialModal';
 
-export function Profile(props: any): ReactElement {
+export function ProfileHeader(props: any): ReactElement {
+  return (
+    <Box
+      border='1px solid'
+      borderColor='lightGray'
+      borderRadius='2'
+      marginBottom='calc(64px + 0.5rem)'
+    >
+      {props.children}
+    </Box>
+  );
+}
+
+export function ProfileImages(props: any): ReactElement {
+  const { hovering, bind } = useHovering();
   const { hideAvatars } = useLocalState(({ hideAvatars }) => ({
     hideAvatars
   }));
-  const history = useHistory();
-
-  if (!props.ship) {
-    return null;
-  }
-  const { contact, nackedContacts, hasLoaded, isPublic, isEdit, ship } = props;
-  const nacked = nackedContacts.has(ship);
-  const formRef = useRef(null);
-
-  useEffect(() => {
-    if (hasLoaded && !contact && !nacked) {
-      props.api.contacts.retrieve(ship);
-    }
-  }, [hasLoaded, contact]);
-
+  const { contact } = { ...props };
   const hexColor = contact?.color ? `#${uxToHex(contact.color)}` : '#000000';
+
   const cover = contact?.cover ? (
     <BaseImage
       src={contact.cover}
@@ -60,110 +61,119 @@ export function Profile(props: any): ReactElement {
       <Sigil padding={24} ship={ship} size={128} color={hexColor} />
     );
 
+  return (
+    <Row width='100%' height='300px' position='relative' {...bind}>
+      {cover}
+
+      <Center
+        position='absolute'
+        width='100%'
+        height='100%'
+        display={hovering ? 'flex' : 'none'}
+      >
+        {props.children}
+      </Center>
+
+      <Box
+        height='128px'
+        width='128px'
+        borderRadius='2'
+        overflow='hidden'
+        position='absolute'
+        left='50%'
+        bottom='-64px'
+        marginLeft='-64px'
+      >
+        {image}
+      </Box>
+    </Row>
+  );
+}
+
+export function ProfileControls(props: any): ReactElement {
+  return (
+    <Row alignItems='center' justifyContent='space-between' px='3'>
+      {props.children}
+    </Row>
+  );
+}
+
+export function ProfileStatus(props: any): ReactElement {
+  const { contact } = { ...props };
+  return (
+    <RichText
+      mb='0'
+      py='2'
+      disableRemoteContent
+      maxWidth='18rem'
+      overflowX='hidden'
+      textOverflow='ellipsis'
+      whiteSpace='nowrap'
+      overflow='hidden'
+      display='inline-block'
+      verticalAlign='middle'
+      color='gray'
+    >
+      {contact?.status ?? ''}
+    </RichText>
+  );
+}
+
+export function ProfileOwnControls(props: any): ReactElement {
+  const { ship, isPublic, contact, api } = { ...props };
+  const history = useHistory();
+  return (
+    <Row>
+      {ship === `~${window.ship}` ? (
+        <>
+          <Text
+            py='2'
+            cursor='pointer'
+            fontWeight='500'
+            onClick={() => {
+              history.push(`/~profile/${ship}/edit`);
+            }}
+          >
+            Edit {isPublic ? 'Public' : 'Private'} Profile
+          </Text>
+          <SetStatusBarModal
+            isControl
+            py='2'
+            ml='3'
+            api={api}
+            ship={`~${window.ship}`}
+            contact={contact}
+          />
+        </>
+      ) : null}
+    </Row>
+  );
+}
+
+export function Profile(props: any): ReactElement {
+  const history = useHistory();
+
+  if (!props.ship) {
+    return null;
+  }
+  const { contact, nackedContacts, hasLoaded, isPublic, isEdit, ship } = props;
+  const nacked = nackedContacts.has(ship);
+  const formRef = useRef(null);
+
+  useEffect(() => {
+    if (hasLoaded && !contact && !nacked) {
+      props.api.contacts.retrieve(ship);
+    }
+  }, [hasLoaded, contact]);
+
   const anchorRef = useRef<HTMLElement | null>(null);
 
   useTutorialModal('profile', ship === `~${window.ship}`, anchorRef.current);
 
-  return (
-    <Center p={[0, 4]} height='100%' width='100%'>
-      <Box ref={anchorRef} maxWidth='600px' width='100%'>
-        <Box border='1px solid' borderColor='lightGray' borderRadius='2'>
-          <Row alignItems='center' justifyContent='space-between' px='3'>
-            {isEdit ? (
-              <Row>
-                <Text
-                  py='2'
-                  cursor='pointer'
-                  fontWeight='500'
-                  color='blue'
-                  onClick={() => {
-                    formRef.current.submitForm();
-                  }}
-                >
-                  Save Edits
-                </Text>
-                <Text
-                  py='2'
-                  ml='3'
-                  fontWeight='500'
-                  cursor='pointer'
-                  onClick={() => {
-                    history.push(`/~profile/${ship}`);
-                  }}
-                >
-                  Cancel
-                </Text>
-              </Row>
-            ) : (
-              <Row>
-                {ship === `~${window.ship}` ? (
-                  <>
-                    <Text
-                      py='2'
-                      cursor='pointer'
-                      fontWeight='500'
-                      onClick={() => {
-                        history.push(`/~profile/${ship}/edit`);
-                      }}
-                    >
-                      Edit {isPublic ? 'Public' : 'Private'} Profile
-                    </Text>
-                    <SetStatusBarModal
-                      isControl
-                      py='2'
-                      ml='3'
-                      api={props.api}
-                      ship={`~${window.ship}`}
-                      contact={contact}
-                    />
-                  </>
-                ) : null}
-              </Row>
-            )}
-            <RichText
-              mb='0'
-              py='2'
-              disableRemoteContent
-              maxWidth='18rem'
-              overflowX='hidden'
-              textOverflow='ellipsis'
-              whiteSpace='nowrap'
-              overflow='hidden'
-              display='inline-block'
-              verticalAlign='middle'
-              color='gray'
-            >
-              {contact?.status ?? ''}
-            </RichText>
-          </Row>
-          <Row width='100%' height='300px'>
-            {cover}
-          </Row>
-        </Box>
-        <Row pb={2} alignItems='center' width='100%'>
-          <Center width='100%' marginTop='-64px'>
-            <Box
-              height='128px'
-              width='128px'
-              borderRadius='2'
-              overflow='hidden'
-            >
-              {image}
-            </Box>
-          </Center>
-        </Row>
-        {isEdit ? (
-          <EditProfile
-            ref={formRef}
-            ship={ship}
-            contact={contact}
-            s3={props.s3}
-            api={props.api}
-            groups={props.groups}
-            associations={props.associations}
-            isPublic={isPublic}
-          />
-        ) : (
+  const ViewInterface = () => {
+    return (
+      <Center p={[0, 4]} height='100%' width='100%'>
+        <Box ref={anchorRef} maxWidth='600px' width='100%'>
           <ViewProfile
             api={props.api}
             nacked={nacked}
@@ -173,8 +183,28 @@ export function Profile(props: any): ReactElement {
             groups={props.groups}
             associations={props.associations}
           />
-        )}
-      </Box>
-    </Center>
-  );
+        </Box>
+      </Center>
+    );
+  };
+
+  const EditInterface = () => {
+    return (
+      <Center p={[0, 4]} height='100%' width='100%'>
+        <Box ref={anchorRef} maxWidth='600px' width='100%'>
+          <EditProfile
+            ship={ship}
+            contact={contact}
+            s3={props.s3}
+            api={props.api}
+            groups={props.groups}
+            associations={props.associations}
+            isPublic={isPublic}
+          />
+        </Box>
+      </Center>
+    );
+  };
+
+  return isEdit ? <EditInterface /> : <ViewInterface />;
 }

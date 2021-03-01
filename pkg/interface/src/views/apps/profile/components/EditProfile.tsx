@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useRef } from 'react';
 import * as Yup from 'yup';
 import _ from 'lodash';
 import { Formik } from 'formik';
@@ -20,6 +20,12 @@ import { ImageInput } from '~/views/components/ImageInput';
 import { MarkdownField } from '~/views/apps/publish/components/MarkdownField';
 import { resourceFromPath } from '~/logic/lib/group';
 import GroupSearch from '~/views/components/GroupSearch';
+import {
+  ProfileHeader,
+  ProfileControls,
+  ProfileStatus,
+  ProfileImages
+} from './Profile';
 
 const formSchema = Yup.object({
   nickname: Yup.string(),
@@ -40,7 +46,7 @@ const emptyContact = {
   isPublic: false
 };
 
-export const EditProfile = React.forwardRef<ReactElement>((props: any, ref) => {
+export function EditProfile(props: any): ReactElement {
   const { contact, ship, api, isPublic } = props;
   const history = useHistory();
   if (contact) {
@@ -98,12 +104,35 @@ export const EditProfile = React.forwardRef<ReactElement>((props: any, ref) => {
   return (
     <>
       <Formik
-        innerRef={ref}
         validationSchema={formSchema}
         initialValues={contact || emptyContact}
         onSubmit={onSubmit}
       >
-        <Form width='100%' height='100%' p={2}>
+        <Form width='100%' height='100%'>
+          <ProfileHeader>
+            <ProfileControls>
+              <Row>
+                <button type='submit' style={{ appearance: 'none' }}>
+                  <Text py='2' cursor='pointer' fontWeight='500' color='blue'>
+                    Save Edits
+                  </Text>
+                </button>
+                <Text
+                  py='2'
+                  ml='3'
+                  fontWeight='500'
+                  cursor='pointer'
+                  onClick={() => {
+                    history.push(`/~profile/${ship}`);
+                  }}
+                >
+                  Cancel
+                </Text>
+              </Row>
+              <ProfileStatus contact={contact} />
+            </ProfileControls>
+            <ProfileImages contact={contact} />
+          </ProfileHeader>
           <Input id='nickname' label='Name' mb={3} />
           <Col width='100%'>
             <Text mb={2}>Description</Text>
@@ -133,4 +162,4 @@ export const EditProfile = React.forwardRef<ReactElement>((props: any, ref) => {
       </Formik>
     </>
   );
-});
+}
