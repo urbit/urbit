@@ -16,14 +16,14 @@
       [%set-current-wallet =xpub]
       [%add-wallet =xpub =fprint scan-to=(unit scon) max-gap=(unit @ud) confs=(unit @ud)]
       [%delete-wallet =xpub]
-      [%req-pay-address payee=ship value=sats feyb=sats]
+      [%init-payment payee=ship value=sats feyb=sats]
       [%broadcast-tx txhex=cord]
   ==
 ::  action: how peers poke us
 ::
 +$  action
   $%  [%gen-pay-address value=sats]
-      [%recv-pay-address =address value=sats]
+      [%give-pay-address =address value=sats]
       [%expect-payment =txid value=sats]
   ==
 ::  internal: actions that simply make the state machine more explicit
@@ -88,7 +88,7 @@
 ::
 +$  insel  [=utxo =chyg =idx]
 +$  feyb  sats
-+$  txi  [=utxo ur=(unit hexb) =hdkey]
++$  txi  [=utxo rawtx=(unit hexb) =hdkey]
 +$  txo  [=address value=sats hk=(unit hdkey)]
 +$  txbu
   $:  =xpub
