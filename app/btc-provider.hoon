@@ -153,14 +153,14 @@
 ++  handle-action
   |=  act=action
   ^-  (quip card _state)
-  ?.  ?|(connected.host-info =(-.act %ping))
+  ?.  ?|(connected.host-info ?=(%ping -.act))
     ~&  >>>  "Not connected to RPC"
     [~[(send-update [%| %not-connected 500])] state]
   ?:  ?&(?=(%check-network -.act) ?!(=(network.act network.host-info)))
     %-  (slog ~[leaf+"network mismatch with client {<src.bowl>}"])
     (kick-client src.bowl)
   =/  ract=action:rpc-types
-    ?+  -.act  ~|("Invalid action" !!)
+    ?-  -.act  ::  ~|("Invalid action" !!)
         %address-info
       [%get-address-info address.act]
       ::
@@ -172,6 +172,9 @@
       ::
         %broadcast-tx
       [%broadcast-tx rawtx.act]
+      ::
+        %ping
+      [%get-block-info ~]
     ==
   [~[(req-card act ract)] state]
 ::
