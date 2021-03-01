@@ -55,8 +55,9 @@ class GcpManager {
   }
 
   restart() {
-    if (this.#running)
+    if (this.#running) {
       this.stop();
+    }
     this.start();
   }
 
@@ -105,8 +106,9 @@ class GcpManager {
   }
 
   private refreshAfter(durationMs) {
-    if (!this.#running)
+    if (!this.#running) {
       return;
+    }
     if (this.#timeoutId !== null) {
       console.warn('GcpManager already has a timeout set');
       return;
