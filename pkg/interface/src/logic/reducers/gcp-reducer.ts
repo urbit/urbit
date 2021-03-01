@@ -13,7 +13,7 @@ export default class GcpReducer<S extends GcpState>{
   reduceConfigured(json, state) {
     let data = json['gcp-configured'];
     if (data !== undefined) {
-      state.gcp.configured = data;
+      state.storage.gcp.configured = data;
     }
   }
 
@@ -26,7 +26,7 @@ export default class GcpReducer<S extends GcpState>{
 
   setToken(data: any, state: S) {
     if (this.isToken(data)) {
-      state.gcp.token = data;
+      state.storage.gcp.token = data;
     }
   }
 

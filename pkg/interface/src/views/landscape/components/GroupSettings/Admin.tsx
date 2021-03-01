@@ -22,7 +22,7 @@ import { ColorInput } from "~/views/components/ColorInput";
 import { useHistory } from "react-router-dom";
 
 import { uxToHex } from "~/logic/lib/util";
-import {GcpState, S3State} from "~/types";
+import {StorageState} from "~/types";
 import {ImageInput} from "~/views/components/ImageInput";
 
 interface FormSchema {
@@ -46,12 +46,11 @@ interface GroupAdminSettingsProps {
   group: Group;
   association: Association;
   api: GlobalApi;
-  gcp: GcpState;
-  s3: S3State;
+  storage: StorageState;
 }
 
 export function GroupAdminSettings(props: GroupAdminSettingsProps) {
-  const { group, association, gcp, s3 } = props;
+  const { group, association, storage } = props;
   const { metadata } = association;
   const history = useHistory();
   const currentPrivate = "invite" in props.group.policy;
@@ -133,8 +132,7 @@ export function GroupAdminSettings(props: GroupAdminSettingsProps) {
             caption="A picture for your group"
             placeholder="Enter URL"
             disabled={disabled}
-            gcp={gcp}
-            s3={s3}
+            storage={storage}
           />
           <Checkbox
             id="isPrivate"

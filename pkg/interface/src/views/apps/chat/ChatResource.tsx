@@ -179,8 +179,7 @@ export function ChatResource(props: ChatResourceProps) {
           (!showBanner && hasLoadedAllowed) ? contacts : modifiedContacts
         }
         onUnmount={appendUnsent}
-        gcp={props.gcp}
-        s3={props.s3}
+        storage={props.storage}
         placeholder="Message..."
         message={unsent[station] || ''}
         deleteMessage={clearUnsent}

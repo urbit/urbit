@@ -107,8 +107,7 @@ export function Profile(props: any) {
           <EditProfile
             ship={ship}
             contact={contact}
-            gcp={props.gcp}
-            s3={props.s3}
+            storage={props.storage}
             api={props.api}
             groups={props.groups}
             associations={props.associations}

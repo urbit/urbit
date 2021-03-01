@@ -7,7 +7,7 @@ import { createPost } from '~/logic/api/graph';
 import tokenizeMessage, { isUrl } from '~/logic/lib/tokenizeMessage';
 import GlobalApi from '~/logic/api/global';
 import { Envelope } from '~/types/chat-update';
-import { Contacts, Content } from '~/types';
+import { StorageState, Contacts, Content } from '~/types';
 import { Row, BaseImage, Box, Icon, LoadingSpinner } from '@tlon/indigo-react';
 import withStorage from '~/views/components/withStorage';
 import { withLocalState } from '~/logic/state/local';
@@ -20,8 +20,7 @@ type ChatInputProps = IuseStorage & {
   envelopes: Envelope[];
   contacts: Contacts;
   onUnmount(msg: string): void;
-  gcp: any;
-  s3: any;
+  storage: StorageState;
   placeholder: string;
   message: string;
   deleteMessage(): void;

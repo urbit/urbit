@@ -3,8 +3,7 @@ import { Invites } from '~/types/invite-update';
 import { Associations } from '~/types/metadata-update';
 import { Rolodex } from '~/types/contact-update';
 import { Groups } from '~/types/group-update';
-import { GcpState } from '~/types/gcp-state';
-import { S3State } from '~/types/s3-update';
+import { StorageState } from '~/types/storage-state';
 import { LaunchState, WeatherState } from '~/types/launch-update';
 import { ConnectionStatus } from '~/types/connection';
 import {Graphs} from '~/types/graph-update';
@@ -32,8 +31,7 @@ export interface StoreState {
   groups: Groups;
   groupKeys: Set<Path>;
   nackedContacts: Set<Patp>
-  s3: S3State;
-  gcp: GcpState;
+  storage: StorageState;
   graphs: Graphs;
   graphKeys: Set<string>;
 

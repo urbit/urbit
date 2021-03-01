@@ -3,22 +3,21 @@ import React, { useCallback, useState } from "react";
 import GlobalApi from "~/logic/api/global";
 import { useFileDrag } from "~/logic/lib/useDrag";
 import useStorage from "~/logic/lib/useStorage";
-import { GcpState, S3State } from "~/types";
+import { StorageState } from "~/types";
 import SubmitDragger from "~/views/components/SubmitDragger";
 import { createPost } from "~/logic/api/graph";
 import { hasProvider } from "oembed-parser";
 
 interface LinkSubmitProps {
   api: GlobalApi;
-  gcp: GcpState;
-  s3: S3State;
+  storage: StorageState;
   name: string;
   ship: string;
 };
 
 const LinkSubmit = (props: LinkSubmitProps) => {
   let { canUpload, uploadDefault, uploading, promptUpload } =
-    useStorage(props.s3, props.gcp);
+    useStorage(props.storage);
 
   const [submitFocused, setSubmitFocused] = useState(false);
   const [urlFocused, setUrlFocused] = useState(false);

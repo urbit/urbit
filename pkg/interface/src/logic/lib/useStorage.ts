@@ -1,6 +1,9 @@
 import {useCallback, useMemo, useEffect, useRef, useState} from 'react';
-import {S3State} from '../../types/s3-update';
-import {GcpState} from '../../types/gcp-state';
+import {
+  GcpState,
+  S3State,
+  StorageState
+} from '../../types';
 import S3 from "aws-sdk/clients/s3";
 import GcpClient from './GcpClient';
 import {StorageClient, StorageAcl} from './StorageClient';
@@ -15,7 +18,7 @@ export interface IuseStorage {
   promptUpload: () => Promise<string | undefined>;
 }
 
-const useStorage = (s3: S3State, gcp: GcpState,
+const useStorage = ({gcp, s3}: StorageState,
                     { accept = '*' } = { accept: '*' }): IuseStorage => {
   const [uploading, setUploading] = useState(false);
 

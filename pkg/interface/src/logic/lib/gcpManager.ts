@@ -64,7 +64,7 @@ class GcpManager {
   #consecutiveFailures: number = 0;
 
   private isConfigured() {
-    return this.#store.state.gcp.configured;
+    return this.#store.state.storage.gcp.configured;
   }
 
   private refreshLoop() {
@@ -88,7 +88,7 @@ class GcpManager {
     }
     this.#api.gcp.getToken()
       .then(() => {
-        const token = this.#store.state.gcp?.token;
+        const token = this.#store.state.storage.gcp?.token;
         if (token) {
           this.#consecutiveFailures = 0;
           const interval = this.refreshInterval(token.expiresIn);

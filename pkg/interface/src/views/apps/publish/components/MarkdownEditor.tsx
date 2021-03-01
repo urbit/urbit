@@ -17,7 +17,7 @@ import { Box } from "@tlon/indigo-react";
 import { useFileDrag } from "~/logic/lib/useDrag";
 import SubmitDragger from "~/views/components/SubmitDragger";
 import useStorage from "~/logic/lib/useStorage";
-import { GcpState, S3State } from "~/types";
+import { StorageState } from "~/types";
 
 const MARKDOWN_CONFIG = {
   name: "markdown",
@@ -28,8 +28,7 @@ interface MarkdownEditorProps {
   value: string;
   onChange: (s: string) => void;
   onBlur?: (e: any) => void;
-  gcp: GcpState;
-  s3: S3State;
+  storage: StorageState;
 }
 
 const PromptIfDirty = () => {
@@ -75,7 +74,7 @@ export function MarkdownEditor(
     [onBlur]
   );
 
-  const { uploadDefault, canUpload } = useStorage(props.s3, props.gcp);
+  const { uploadDefault, canUpload } = useStorage(props.storage);
 
   const onFileDrag = useCallback(
     async (files: FileList | File[], e: DragEvent) => {

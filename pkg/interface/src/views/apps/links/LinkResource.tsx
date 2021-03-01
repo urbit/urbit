@@ -34,8 +34,7 @@ export function LinkResource(props: LinkResourceProps) {
     associations,
     graphKeys,
     unreads,
-    gcp,
-    s3,
+    storage,
     history
   } = props;
 
@@ -71,8 +70,7 @@ export function LinkResource(props: LinkResourceProps) {
           render={(props) => {
             return (
               <LinkWindow
-                gcp={gcp}
-                s3={s3}
+                storage={storage}
                 association={resource}
                 contacts={contacts}
                 resource={resourcePath}

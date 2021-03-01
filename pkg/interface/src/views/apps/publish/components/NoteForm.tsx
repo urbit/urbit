@@ -21,8 +21,7 @@ interface PostFormProps {
   ) => Promise<any>;
   submitLabel: string;
   loadingText: string;
-  gcp: GcpState;
-  s3: S3State;
+  storage: StorageState;
 }
 
 const formSchema = Yup.object({
@@ -36,7 +35,7 @@ export interface PostFormSchema {
 }
 
 export function PostForm(props: PostFormProps) {
-  const { initial, onSubmit, submitLabel, loadingText, gcp, s3, cancel, history } = props;
+  const { initial, onSubmit, submitLabel, loadingText, storage, cancel, history } = props;
 
   return (
     <Col width="100%" height="100%" p={[2, 4]}>
@@ -67,7 +66,7 @@ export function PostForm(props: PostFormProps) {
               type="button">Cancel</Button>}
             </Row>
           </Row>
-          <MarkdownField flexGrow={1} id="body" gcp={gcp} s3={s3} />
+          <MarkdownField flexGrow={1} id="body" storage={storage} />
         </Form>
       </Formik>
     </Col>

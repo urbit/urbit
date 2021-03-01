@@ -11,8 +11,7 @@ import {
   Graph,
   Contacts,
   Association,
-  GcpState,
-  S3State,
+  StorageState,
   Group
 } from "~/types";
 
@@ -28,8 +27,7 @@ interface NoteRoutesProps {
   baseUrl?: string;
   rootUrl?: string;
   group: Group;
-  gcp: GcpState;
-  s3: S3State;
+  storage: StorageState;
 }
 
 export function NoteRoutes(props: NoteRoutesProps & RouteComponentProps) {

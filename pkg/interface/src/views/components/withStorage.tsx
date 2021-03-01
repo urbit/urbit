@@ -3,7 +3,7 @@ import useStorage from "~/logic/lib/useStorage";
 
 const withStorage = (Component, params = {}) => {
   return React.forwardRef((props: any, ref) => {
-    const storage = useStorage(props.s3, props.gcp, params);
+    const storage = useStorage(props.storage, params);
 
     return <Component ref={ref} {...storage} {...props} />;
   });
