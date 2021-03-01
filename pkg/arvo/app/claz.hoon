@@ -133,6 +133,7 @@
     %single     [(single nonce network as +.batch) ~]
     %deed       (deed nonce network as +.batch)
     %invites    (invites nonce network as +.batch)
+    %prefab     (prefab nonce network as +.batch)
     %lock-prep  (lock-prep nonce network as +.batch)
     %lock       (lock nonce network as +.batch)
     ::
@@ -259,6 +260,49 @@
       delegated-sending:(get-contracts network)
       (send-point:dat as-who [ship address]:friend)
   ==
+::
+++  prefab
+  |=  [nonce=@ud =network as=address file=path]
+  ^-  (list transaction:rpc)
+  =/  prefabs=(list [=ship @q owner=address manager=address crypt=@ux auth=@ux])
+    (read-prefabs file)
+  =|  txs=(list transaction:rpc)
+  |-
+  ?~  prefabs  ~
+  =*  prefab  i.prefabs
+  =^  spawn=transaction:rpc  nonce
+    :_  +(nonce)
+    %-  do
+    :*  network
+        nonce
+        ecliptic:(get-contracts network)
+        (spawn:dat ship.prefab as)
+    ==
+  =^  configure=transaction:rpc  nonce
+    :_  +(nonce)
+    %-  do
+    :*  network
+        nonce
+        ecliptic:(get-contracts network)
+        (configure-keys:dat [ship crypt auth]:prefab)
+    ==
+  =^  manage=transaction:rpc  nonce
+    :_  +(nonce)
+    %-  do
+    :*  network
+        nonce
+        ecliptic:(get-contracts network)
+        (set-management-proxy:dat [ship manager]:prefab)
+    ==
+  =^  transfer=transaction:rpc  nonce
+    :_  +(nonce)
+    %-  do
+    :*  network
+        nonce
+        ecliptic:(get-contracts network)
+        (transfer-ship:dat [ship owner]:prefab)
+    ==
+  [spawn configure manage transfer $(prefabs t.prefabs)]
 ::
 ++  parse-registration
   |=  reg=cord

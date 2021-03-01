@@ -1,6 +1,9 @@
 ::  azimuth: constants and utilities
 ::
-/+  ethereum
+::NOTE  only used in /ted/azimuth-tracker
+::TODO  replace/rewrite with /lib/azio/azimuth?
+/+  ethereum, strandio
+=,  strand=strand:strandio
 ::
 =>  =>  [azimuth-types ethereum-types .]
     |%
