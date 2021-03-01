@@ -156,9 +156,6 @@
   ?.  ?|(connected.host-info =(-.act %ping))
     ~&  >>>  "Not connected to RPC"
     [~[(send-update [%| %not-connected 500])] state]
-  ?:  ?&(?=(%check-network -.act) ?!(=(network.act network.host-info)))
-    %-  (slog ~[leaf+"network mismatch with client {<src.bowl>}"])
-    (kick-client src.bowl)
   ::  TODO: turn each of these into a gate call in rpc that creates a thread.
   ::  poke spider example:
   ::  https://github.com/urbit/urbit/blob/fab9a47a925f73f026c39f124e543e009d211978/pkg/arvo/app/eth-watcher.hoon#L461
@@ -179,9 +176,6 @@
       ::
         %broadcast-tx
       [%broadcast-tx rawtx.act]
-      ::
-        %ping
-      [%get-block-info ~]
     ==
   [~[(req-card act ract)] state]
 ::

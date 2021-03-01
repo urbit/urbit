@@ -31,9 +31,7 @@
       [%raw-tx txid=hexb]
       [%broadcast-tx rawtx=hexb]
       [%ping ~]
-      check-network
   ==
-+$  check-network  [%check-network =network]
 ::
 +$  result
   $%  [%address-info =address utxos=(set utxo) used=? block=@ud]

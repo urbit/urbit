@@ -151,8 +151,8 @@
     =/  ins=(list in:psbt:bc)
       %+  murn  txis.t
       |=  =txi
-      ?~  ur.txi  ~
-      `[utxo.txi u.ur.txi hdkey.txi]
+      ?~  rawtx.txi  ~
+      `[utxo.txi u.rawtx.txi hdkey.txi]
     ?:  (lth (lent ins) (lent txis.t))
       ~
     =/  outs=(list out:psbt:bc)
