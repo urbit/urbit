@@ -2,7 +2,8 @@ import React from 'react';
 import moment from 'moment';
 import { Box, Icon, Text, BaseAnchor, BaseInput } from '@tlon/indigo-react';
 import ErrorBoundary from '~/views/components/ErrorBoundary';
-import { withLaunchState } from '~/logic/state/launch';
+import withState from '~/logic/lib/withState';
+import useLaunchState from '~/logic/state/launch';
 
 import Tile from './tile';
 
@@ -290,4 +291,4 @@ class WeatherTile extends React.Component {
   }
 }
 
-export default withLaunchState(WeatherTile);
+export default withState(useLaunchState, WeatherTile);

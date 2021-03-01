@@ -35,7 +35,7 @@ import styled from 'styled-components';
 import useLocalState from '~/logic/state/local';
 import useSettingsState, {selectCalmState} from "~/logic/state/settings";
 import Timestamp from '~/views/components/Timestamp';
-import useContactState from '~/logic/state/contacts';
+import useContactState from '~/logic/state/contact';
 
 export const DATESTAMP_FORMAT = '[~]YYYY.M.D';
 

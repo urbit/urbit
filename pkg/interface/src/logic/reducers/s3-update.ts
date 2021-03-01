@@ -2,6 +2,7 @@ import _ from 'lodash';
 import { compose } from 'lodash/fp';
 import { Cage } from '~/types/cage';
 import { S3Update } from '~/types/s3-update';
+import { reduceState } from '../lib/util';
 import useS3State, { S3State } from '../state/s3';
 
 
@@ -9,19 +10,16 @@ export default class S3Reducer {
   reduce(json: Cage) {
     const data = _.get(json, 's3-update', false);
     if (data) {
-      useS3State.setState(
-        compose([
-          credentials,
-          configuration,
-          currentBucket,
-          addBucket,
-          removeBucket,
-          endpoint,
-          accessKeyId,
-          secretAccessKey,
-        ].map(reducer => reducer.bind(reducer, data))
-        )(useS3State.getState())
-      )
+      reduceState<S3State, S3Update>(useS3State, data, [
+        credentials,
+        configuration,
+        currentBucket,
+        addBucket,
+        removeBucket,
+        endpoint,
+        accessKeyId,
+        secretAccessKey,
+      ]);
     }
   }
 }

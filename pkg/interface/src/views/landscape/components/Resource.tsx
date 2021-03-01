@@ -11,8 +11,8 @@ import { StoreState } from '~/logic/store/type';
 import GlobalApi from '~/logic/api/global';
 import { ResourceSkeleton } from './ResourceSkeleton';
 import { ChannelPopoverRoutes } from './ChannelPopoverRoutes';
-import useGroupState from '~/logic/state/groups';
-import useContactState from '~/logic/state/contacts';
+import useGroupState from '~/logic/state/group';
+import useContactState from '~/logic/state/contact';
 import useHarkState from '~/logic/state/hark';
 import useMetadataState from '~/logic/state/metadata';
 

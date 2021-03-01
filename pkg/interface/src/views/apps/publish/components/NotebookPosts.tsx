@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Col } from '@tlon/indigo-react';
 import { NotePreview } from './NotePreview';
 import { Contacts, Graph, Unreads, Group } from '@urbit/api';
-import useContactState from '~/logic/state/contacts';
+import useContactState from '~/logic/state/contact';
 
 interface NotebookPostsProps {
   graph: Graph;

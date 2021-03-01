@@ -3,31 +3,33 @@ import { LaunchState, LaunchUpdate, WeatherState } from '~/types/launch-update';
 import { Cage } from '~/types/cage';
 import useLaunchState from '../state/launch';
 import { compose } from 'lodash/fp';
+import { reduceState } from '../lib/util';
 
 export default class LaunchReducer {
   reduce(json: Cage) {
     const data = _.get(json, 'launch-update', false);
     if (data) {
-      useLaunchState.setState(
-        compose([
-          initial,
-          changeFirstTime,
-          changeOrder,
-          changeFirstTime,
-          changeIsShown,
-        ].map(reducer => reducer.bind(reducer, data))
-        )(useLaunchState.getState())
-      )
+      reduceState<LaunchState, LaunchUpdate>(useLaunchState, data, [
+        initial,
+        changeFirstTime,
+        changeOrder,
+        changeFirstTime,
+        changeIsShown,
+      ]);
     }
 
     const weatherData: WeatherState = _.get(json, 'weather', false);
     if (weatherData) {
-      useLaunchState.setState({ weather: weatherData });
+      useLaunchState.getState().set(state => {
+        state.weather = weatherData;
+      });
     }
 
     const locationData = _.get(json, 'location', false);
     if (locationData) {
-      useLaunchState.setState({ userLocation: locationData });
+      useLaunchState.getState().set(state => {
+        state.userLocation = locationData;
+      });
     }
   }
 }

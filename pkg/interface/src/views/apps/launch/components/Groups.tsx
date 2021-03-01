@@ -9,7 +9,7 @@ import { getUnreadCount, getNotificationCount } from '~/logic/lib/hark';
 import Tile from '../components/tiles/tile';
 import { useTutorialModal } from '~/views/components/useTutorialModal';
 import { TUTORIAL_HOST, TUTORIAL_GROUP } from '~/logic/lib/tutorialModal';
-import useGroupState from '~/logic/state/groups';
+import useGroupState from '~/logic/state/group';
 import useHarkState from '~/logic/state/hark';
 import useMetadataState from '~/logic/state/metadata';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';

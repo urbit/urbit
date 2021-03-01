@@ -5,22 +5,20 @@ import { InviteUpdate } from '@urbit/api/invite';
 
 import { Cage } from '~/types/cage';
 import useInviteState, { InviteState } from '../state/invite';
+import { reduceState } from '../lib/util';
 
 export default class InviteReducer {
   reduce(json: Cage) {
     const data = json['invite-update'];
     if (data) {
-      useInviteState.setState(
-        compose([
-          initial,
-          create,
-          deleteInvite,
-          invite,
-          accepted,
-          decline,
-        ].map(reducer => reducer.bind(reducer, data))
-        )(useInviteState.getState())
-      );
+      reduceState<InviteState, InviteUpdate>(useInviteState, data, [
+        initial,
+        create,
+        deleteInvite,
+        invite,
+        accepted,
+        decline,
+      ]);
     }
   }
 }

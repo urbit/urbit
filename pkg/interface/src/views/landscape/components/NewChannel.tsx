@@ -22,7 +22,7 @@ import { Rolodex } from '@urbit/api';
 import { IconRadio } from '~/views/components/IconRadio';
 import { ChannelWriteFieldSchema, ChannelWritePerms } from './ChannelWritePerms';
 import { Workspace } from '~/types/workspace';
-import useGroupState from '~/logic/state/groups';
+import useGroupState from '~/logic/state/group';
 
 type FormSchema = {
   name: string;

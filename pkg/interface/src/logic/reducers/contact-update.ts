@@ -3,22 +3,20 @@ import { compose } from 'lodash/fp';
 
 import { ContactUpdate } from '@urbit/api';
 
-import useContactState, { ContactState } from '../state/contacts';
+import useContactState, { ContactState } from '../state/contact';
+import { reduceState } from '../lib/util';
 
 
 export const ContactReducer = (json) => {
   const data: ContactUpdate = _.get(json, 'contact-update', false);
   if (data) {
-    useContactState.setState(
-      compose([
-        initial,
-        add,
-        remove,
-        edit,
-        setPublic
-      ].map(reducer => reducer.bind(reducer, data))
-      )(useContactState.getState())
-    );
+    reduceState<ContactState, ContactUpdate>(useContactState, data, [
+      initial,
+      add,
+      remove,
+      edit,
+      setPublic
+    ]);
   }
 
   // TODO: better isolation

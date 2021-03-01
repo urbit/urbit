@@ -27,8 +27,8 @@ import '~/views/apps/publish/css/custom.css';
 import { getGroupFromWorkspace } from '~/logic/lib/workspace';
 import { GroupSummary } from './GroupSummary';
 import { Workspace } from '~/types/workspace';
-import useContactState from '~/logic/state/contacts';
-import useGroupState from '~/logic/state/groups';
+import useContactState from '~/logic/state/contact';
+import useGroupState from '~/logic/state/group';
 import useHarkState from '~/logic/state/hark';
 import useMetadataState from '~/logic/state/metadata';
 

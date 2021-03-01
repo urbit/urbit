@@ -15,7 +15,7 @@ import RichText from '~/views/components/RichText';
 import { GroupLink } from '~/views/components/GroupLink';
 import { lengthOrder } from '~/logic/lib/util';
 import useLocalState from '~/logic/state/local';
-import useContactState from '~/logic/state/contacts';
+import useContactState from '~/logic/state/contact';
 
 export function ViewProfile(props: any): ReactElement {
   const { hideNicknames } = useSettingsState(selectCalmState);

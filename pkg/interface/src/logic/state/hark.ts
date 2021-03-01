@@ -1,17 +1,12 @@
-import React from "react";
-import create, { State }  from 'zustand';
-import { persist } from 'zustand/middleware';
-
 import { NotificationGraphConfig, Timebox, Unreads, dateToDa } from "@urbit/api";
 import BigIntOrderedMap from "@urbit/api/lib/BigIntOrderedMap";
 
-// import useApi from "~/logic/lib/useApi";
 // import { harkGraphHookReducer, harkGroupHookReducer, harkReducer } from "~/logic/subscription/hark";
-import { stateSetter } from "~/logic/lib/util";
+import { BaseState, createState } from "./base";
 
 export const HARK_FETCH_MORE_COUNT = 3;
 
-export interface HarkState extends State {
+export interface HarkState extends BaseState<HarkState> {
   archivedNotifications: BigIntOrderedMap<Timebox>;
   doNotDisturb: boolean;
   // getMore: () => Promise<boolean>;
@@ -21,11 +16,10 @@ export interface HarkState extends State {
   notificationsCount: number;
   notificationsGraphConfig: NotificationGraphConfig; // TODO unthread this everywhere
   notificationsGroupConfig: []; // TODO type this
-  set: (fn: (state: HarkState) => void) => void;
   unreads: Unreads;
 };
 
-const useHarkState = create<HarkState>(persist((set, get) => ({
+const useHarkState = createState('Hark', {
   archivedNotifications: new BigIntOrderedMap<Timebox>(),
   doNotDisturb: false,
   // getMore: async (): Promise<boolean> => {
@@ -65,25 +59,11 @@ const useHarkState = create<HarkState>(persist((set, get) => ({
     watching: []
   },
   notificationsGroupConfig: [],
-  set: fn => stateSetter(fn, set),
   unreads: {
     graph: {},
     group: {}
   },
-}), {
-  blacklist: ['notifications', 'archivedNotifications', 'unreads'],
-  name: 'LandscapeHarkState'
-}));
+}, ['notifications', 'archivedNotifications', 'unreads']);
 
-function withHarkState<P, S extends keyof HarkState>(Component: any, stateMemberKeys?: S[]) {
-  return React.forwardRef((props: Omit<P, S>, ref) => {
-    const harkState = stateMemberKeys ? useHarkState(
-      state => stateMemberKeys.reduce(
-        (object, key) => ({ ...object, [key]: state[key] }), {}
-      )
-    ): useHarkState();
-    return <Component ref={ref} {...harkState} {...props} />
-  });
-}
 
-export { useHarkState as default, withHarkState };
+export default useHarkState;

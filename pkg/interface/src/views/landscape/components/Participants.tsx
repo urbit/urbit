@@ -30,7 +30,7 @@ import { Dropdown } from '~/views/components/Dropdown';
 import GlobalApi from '~/logic/api/global';
 import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
 import useLocalState from '~/logic/state/local';
-import useContactState from '~/logic/state/contacts';
+import useContactState from '~/logic/state/contact';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 
 const TruncText = styled(Text)`

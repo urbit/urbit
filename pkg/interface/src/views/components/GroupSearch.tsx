@@ -18,7 +18,7 @@ import { Associations, Association } from '@urbit/api/metadata';
 
 import { roleForShip } from '~/logic/lib/group';
 import { DropdownSearch } from './DropdownSearch';
-import useGroupState from '~/logic/state/groups';
+import useGroupState from '~/logic/state/group';
 import useMetadataState from '~/logic/state/metadata';
 
 interface GroupSearchProps<I extends string> {

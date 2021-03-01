@@ -16,7 +16,7 @@ import { AsyncButton } from '~/views/components/AsyncButton';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
 import GlobalApi from '~/logic/api/global';
 import { stringToSymbol } from '~/logic/lib/util';
-import useGroupState from '~/logic/state/groups';
+import useGroupState from '~/logic/state/group';
 import useMetadataState from '~/logic/state/metadata';
 
 const formSchema = Yup.object({

@@ -6,7 +6,7 @@ import RichText from '~/views/components/RichText';
 import { cite, useShowNickname, uxToHex } from '~/logic/lib/util';
 import OverlaySigil from '~/views/components/OverlaySigil';
 import { useHistory } from 'react-router-dom';
-import useContactState from '~/logic/state/contacts';
+import useContactState from '~/logic/state/contact';
 
 interface MentionTextProps {
   contact?: Contact;

@@ -3,9 +3,10 @@ import { Box, Row, Icon, Text } from '@tlon/indigo-react';
 import defaultApps from '~/logic/lib/default-apps';
 import Sigil from '~/logic/lib/sigil';
 import { uxToHex, cite } from '~/logic/lib/util';
-import { withHarkState } from '~/logic/state/hark';
-import { withContactState } from '~/logic/state/contacts';
-import { withInviteState } from '~/logic/state/invite';
+import withState from '~/logic/lib/withState';
+import useHarkState from '~/logic/state/hark';
+import useContactState from '~/logic/state/contact';
+import useInviteState from '~/logic/state/invite';
 
 export class OmniboxResult extends Component {
   constructor(props) {
@@ -122,4 +123,4 @@ export class OmniboxResult extends Component {
   }
 }
 
-export default withInviteState(withHarkState(withContactState(OmniboxResult), ['notificationsCount']));
+export default withState(useInviteState, withState(useHarkState, withState(useContactState, OmniboxResult), ['notificationsCount']));

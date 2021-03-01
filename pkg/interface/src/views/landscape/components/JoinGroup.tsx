@@ -22,7 +22,7 @@ import { StatelessAsyncButton } from '~/views/components/StatelessAsyncButton';
 import { getModuleIcon } from '~/logic/lib/util';
 import { FormError } from '~/views/components/FormError';
 import { GroupSummary } from './GroupSummary';
-import useGroupState from '~/logic/state/groups';
+import useGroupState from '~/logic/state/group';
 import useMetadataState from '~/logic/state/metadata';
 
 const formSchema = Yup.object({

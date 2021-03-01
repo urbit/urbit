@@ -9,7 +9,7 @@ import { Groups, Associations, Association } from '@urbit/api';
 import GlobalApi from '~/logic/api/global';
 import GroupSearch from '~/views/components/GroupSearch';
 import { AsyncButton } from '~/views/components/AsyncButton';
-import useGroupState from '~/logic/state/groups';
+import useGroupState from '~/logic/state/group';
 
 const formSchema = Yup.object({
   group: Yup.string().nullable()

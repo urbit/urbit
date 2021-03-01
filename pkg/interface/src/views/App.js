@@ -27,9 +27,10 @@ import GlobalSubscription from '~/logic/subscription/global';
 import GlobalApi from '~/logic/api/global';
 import { uxToHex } from '~/logic/lib/util';
 import { foregroundFromBackground } from '~/logic/lib/sigil';
-import { withLocalState } from '~/logic/state/local';
-import { withContactState } from '~/logic/state/contacts';
-import { withGroupState } from '~/logic/state/groups';
+import withState from '~/logic/lib/withState';
+import useLocalState from '~/logic/state/local';
+import useContactState from '~/logic/state/contact';
+import useGroupState from '~/logic/state/group';
 import { withSettingsState } from '~/logic/state/settings';
 
 
@@ -175,7 +176,6 @@ class App extends React.Component {
                 ship={this.ship}
                 api={this.api}
                 subscription={this.subscription}
-                {...state}
               />
             </ErrorBoundary>
           </Router>
@@ -186,5 +186,6 @@ class App extends React.Component {
   }
 }
 
-export default withGroupState(withContactState(withLocalState(process.env.NODE_ENV === 'production' ? App : hot(App))));
+export default withState(useGroupState, withState(useContactState, withState(useLocalState, process.env.NODE_ENV === 'production' ? App : hot(App))));
+
 

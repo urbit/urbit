@@ -7,7 +7,7 @@ import _ from 'lodash';
 import { Col, Button, Box, Row, Icon, Text } from '@tlon/indigo-react';
 
 import './css/custom.css';
-import useContactState from '~/logic/state/contacts';
+import useContactState from '~/logic/state/contact';
 import Tiles from './components/tiles';
 import Tile from './components/tiles/tile';
 import Groups from './components/Groups';

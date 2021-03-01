@@ -18,8 +18,8 @@ import { getSnippet } from '~/logic/lib/publish';
 import styled from 'styled-components';
 import { MentionText } from '~/views/components/MentionText';
 import ChatMessage from '../chat/components/ChatMessage';
-import useContactState from '~/logic/state/contacts';
-import useGroupState from '~/logic/state/groups';
+import useContactState from '~/logic/state/contact';
+import useGroupState from '~/logic/state/group';
 
 function getGraphModuleIcon(module: string) {
   if (module === 'link') {

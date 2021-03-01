@@ -1,13 +1,8 @@
 import { Graphs, decToUd, numToUd } from "@urbit/api";
-import React from "react";
-import create, { State } from "zustand";
-import { persist } from "zustand/middleware";
 
-// import useApi from "~/logic/lib/useApi";
-import { stateSetter } from "~/logic/lib/util";
-// import { graphReducer } from "~/logic/subscription/graph";
+import { BaseState, createState } from "./base";
 
-export interface GraphState extends State {
+export interface GraphState extends BaseState<GraphState> {
   graphs: Graphs;
   graphKeys: Set<string>;
   // getKeys: () => Promise<void>;
@@ -19,10 +14,9 @@ export interface GraphState extends State {
   // getYoungerSiblings: (ship: string, resource: string, count: number, index?: string) => Promise<void>;
   // getGraphSubset: (ship: string, resource: string, start: string, end: string) => Promise<void>;
   // getNode: (ship: string, resource: string, index: string) => Promise<void>;
-  set: (fn: (state: GraphState) => void) => void;
 };
 
-const useGraphState = create<GraphState>(persist((set, get) => ({
+const useGraphState = createState<GraphState>('Graph', {
   graphs: {},
   graphKeys: new Set(),
   // getKeys: async () => {
@@ -124,21 +118,6 @@ const useGraphState = create<GraphState>(persist((set, get) => ({
   //   });
   //   graphReducer(node);
   // },
-  set: fn => stateSetter(fn, set)
-}), {
-  blacklist: ['graphKeys', 'graphs'],
-  name: 'LandscapeGraphState'
-}));
+}, ['graphs', 'graphKeys']);
 
-function withGraphState<P, S extends keyof GraphState>(Component: any, stateMemberKeys?: S[]) {
-  return React.forwardRef((props: Omit<P, S>, ref) => {
-    const graphState = stateMemberKeys ? useGraphState(
-      state => stateMemberKeys.reduce(
-        (object, key) => ({ ...object, [key]: state[key] }), {}
-      )
-    ): useGraphState();
-    return <Component ref={ref} {...graphState} {...props} />
-  });
-}
-
-export { useGraphState as default, withGraphState };
+export default useGraphState;

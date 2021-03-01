@@ -13,8 +13,8 @@ import {
   InvitePolicy
 } from '@urbit/api/groups';
 import { Enc, PatpNoSig } from '@urbit/api';
-import { resourceAsPath } from '../lib/util';
-import useGroupState, { GroupState } from '../state/groups';
+import { reduceState, resourceAsPath } from '../lib/util';
+import useGroupState, { GroupState } from '../state/group';
 import { compose } from 'lodash/fp';
 
 function decodeGroup(group: Enc<Group>): Group {
@@ -61,22 +61,18 @@ export default class GroupReducer {
   reduce(json: Cage) {
     const data = json.groupUpdate;
     if (data) {
-      useGroupState.setState(
-        compose([
-          initial,
-          addMembers,
-          addTag,
-          removeMembers,
-          initialGroup,
-          removeTag,
-          initial,
-          addGroup,
-          removeGroup,
-          changePolicy,
-          expose,
-        ].map(reducer => reducer.bind(reducer, data))
-        )(useGroupState.getState())
-      );
+      reduceState<GroupState, GroupUpdate>(useGroupState, data, [
+        initial,
+        addMembers,
+        addTag,
+        removeMembers,
+        initialGroup,
+        removeTag,
+        addGroup,
+        removeGroup,
+        changePolicy,
+        expose,
+      ]);
     }
   }
 
@@ -84,9 +80,7 @@ export default class GroupReducer {
 const initial = (json: GroupUpdate, state: GroupState): GroupState => {
   const data = json['initial'];
   if (data) {
-    state.set(st => {
-      st.groups = _.mapValues(data, decodeGroup);
-    });
+    state.groups = _.mapValues(data, decodeGroup);
   }
   return state;
 }
@@ -148,6 +142,7 @@ const removeMembers = (json: GroupUpdate, state: GroupState): GroupState => {
       state.groups[resourcePath].members.delete(member);
     }
   }
+  return state;
 }
 
 const addTag = (json: GroupUpdate, state: GroupState): GroupState => {

@@ -18,7 +18,8 @@ import { Loading } from '../components/Loading';
 import { Workspace } from '~/types/workspace';
 import GlobalSubscription from '~/logic/subscription/global';
 import useGraphState from '~/logic/state/graph';
-import { withHarkState } from '~/logic/state/hark';
+import useHarkState, { withHarkState } from '~/logic/state/hark';
+import withState from '~/logic/lib/withState';
 
 type LandscapeProps = StoreState & {
   ship: PatpNoSig;
@@ -155,4 +156,6 @@ class Landscape extends Component<LandscapeProps, Record<string, never>> {
   }
 }
 
-export default withHarkState(Landscape);
+export default withState(useHarkState, Landscape, ['notificationsCount']);
+
+// export default withHarkState(Landscape);

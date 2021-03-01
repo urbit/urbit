@@ -3,20 +3,18 @@ import { BigIntOrderedMap } from "~/logic/lib/BigIntOrderedMap";
 import bigInt, { BigInteger } from "big-integer";
 import useGraphState, { GraphState } from '../state/graph';
 import { compose } from 'lodash/fp';
+import { reduceState } from '../lib/util';
 
 export const GraphReducer = (json) => {
   const data = _.get(json, 'graph-update', false);
   if (data) {
-    useGraphState.setState(
-      compose([
-        keys,
-        addGraph,
-        removeGraph,
-        addNodes,
-        removeNodes
-      ].map(reducer => reducer.bind(reducer, data))
-      )(useGraphState.getState())
-    );
+    reduceState<GraphState, any>(useGraphState, data, [
+      keys,
+      addGraph,
+      removeGraph,
+      addNodes,
+      removeNodes
+    ]);
   }
 };
 

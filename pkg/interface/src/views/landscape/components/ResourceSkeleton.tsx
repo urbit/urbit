@@ -11,8 +11,8 @@ import RichText from '~/views/components/RichText';
 import GlobalApi from '~/logic/api/global';
 import { isWriter } from '~/logic/lib/group';
 import { getItemTitle } from '~/logic/lib/util';
-import useContactState from '~/logic/state/contacts';
-import useGroupState from '~/logic/state/groups';
+import useContactState from '~/logic/state/contact';
+import useGroupState from '~/logic/state/group';
 
 const TruncatedText = styled(RichText)`
   white-space: pre;
@@ -55,7 +55,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
     recipient = title;
     title = (contacts?.[title]?.nickname) ? contacts[title].nickname : title;
   } else {
-    recipient = Array.from(group.members).map(e => `~${e}`).join(", ")
+    recipient = Array.from(group ? group.members : []).map(e => `~${e}`).join(", ")
   }
 
   const [, , ship, resource] = rid.split('/');

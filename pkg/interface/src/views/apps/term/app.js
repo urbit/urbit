@@ -10,7 +10,8 @@ import { Box, Col } from '@tlon/indigo-react';
 import Api from './api';
 import Store from './store';
 import Subscription from './subscription';
-import { withHarkState } from '~/logic/state/hark';
+import withState from '~/logic/lib/withState';
+import useHarkState from '~/logic/state/hark';
 
 import './css/custom.css';
 
@@ -94,4 +95,4 @@ class TermApp extends Component {
   }
 }
 
-export default withHarkState(TermApp);
+export default withState(useHarkState, TermApp);

@@ -21,7 +21,7 @@ import { roleForShip } from '~/logic/lib/group';
 import { NewChannel } from '~/views/landscape/components/NewChannel';
 import GlobalApi from '~/logic/api/global';
 import { Workspace } from '~/types/workspace';
-import useGroupState from '~/logic/state/groups';
+import useGroupState from '~/logic/state/group';
 import useMetadataState from '~/logic/state/metadata';
 
 export function SidebarListHeader(props: {

@@ -5,28 +5,25 @@ import { MetadataUpdate } from '@urbit/api/metadata';
 
 import { Cage } from '~/types/cage';
 import useMetadataState, { MetadataState } from '../state/metadata';
+import { reduceState } from '../lib/util';
 
 export default class MetadataReducer {
   reduce(json: Cage) {
     const data = json['metadata-update'];
     if (data) {
-      useMetadataState.setState(
-        compose([
-          associations,
-          add,
-          update,
-          remove,
-          groupInitial,
-        ].map(reducer => reducer.bind(reducer, data))
-        )(useMetadataState.getState())
-      );
+      reduceState<MetadataState, MetadataUpdate>(useMetadataState, data, [
+        associations,
+        add,
+        update,
+        remove,
+        groupInitial,
+      ]);
     }
   }
 }
 
 const groupInitial = (json: MetadataUpdate, state: MetadataState): MetadataState => {
   const data = _.get(json, 'initial-group', false);
-  console.log(data);
   if(data) {
     state = associations(data, state);
   }

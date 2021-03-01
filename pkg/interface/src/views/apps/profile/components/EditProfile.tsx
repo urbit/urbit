@@ -20,7 +20,7 @@ import { ImageInput } from '~/views/components/ImageInput';
 import { MarkdownField } from '~/views/apps/publish/components/MarkdownField';
 import { resourceFromPath } from '~/logic/lib/group';
 import GroupSearch from '~/views/components/GroupSearch';
-import useContactState from '~/logic/state/contacts';
+import useContactState from '~/logic/state/contact';
 
 const formSchema = Yup.object({
   nickname: Yup.string(),

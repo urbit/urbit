@@ -17,7 +17,7 @@ import { EditProfile } from './EditProfile';
 import { SetStatusBarModal } from '~/views/components/SetStatusBarModal';
 import { uxToHex } from '~/logic/lib/util';
 import { useTutorialModal } from '~/views/components/useTutorialModal';
-import useContactState from '~/logic/state/contacts';
+import useContactState from '~/logic/state/contact';
 
 
 

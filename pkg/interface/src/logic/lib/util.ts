@@ -1,11 +1,16 @@
 import { useEffect, useState } from 'react';
 import _ from 'lodash';
-import f, { memoize } from 'lodash/fp';
+import f, { compose, memoize } from 'lodash/fp';
 import bigInt, { BigInteger } from 'big-integer';
 import { Association, Contact } from '@urbit/api';
 import useLocalState from '../state/local';
-import produce from 'immer';
+import produce, { enableMapSet } from 'immer';
 import useSettingsState from '../state/settings';
+import { State, UseStore } from 'zustand';
+import { Cage } from '~/types/cage';
+import { BaseState } from '../state/base';
+
+enableMapSet();
 
 export const MOBILE_BROWSER_REGEX = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i;
 
@@ -411,7 +416,43 @@ export function getItemTitle(association: Association) {
   return association.metadata.title || association.resource;
 }
 
-export const stateSetter = <StateType>(fn: (state: StateType) => void, set): void => {
-  // TODO this is a stub for the store debugging
+export const stateSetter = <StateType>(
+  fn: (state: StateType) => void,
+  set
+): void => {
+  // fn = (state: StateType) => {
+  //   // TODO this is a stub for the store debugging
+  //   fn(state);
+  // }
+  return set(fn);
+  // TODO we want to use the below, but it makes everything read-only
   return set(produce(fn));
 };
+
+export const reduceState = <
+  StateType extends BaseState<StateType>,
+  UpdateType
+>(
+  state: UseStore<StateType>,
+  data: UpdateType,
+  reducers: ((data: UpdateType, state: StateType) => StateType)[]
+): void => {
+  const oldState = state.getState();
+  const reducer = compose(reducers.map(reducer => reducer.bind(reducer, data)));
+  const newState = reducer(oldState);
+  state.getState().set(state => state = newState);
+};
+
+export let stateStorageKeys: string[] = [];
+
+export const stateStorageKey = (stateName: string) => {
+  stateName = `Landcape${stateName}State`;
+  stateStorageKeys = [...new Set([...stateStorageKeys, stateName])];
+  return stateName;
+};
+
+(window as any).clearStates = () => {
+  stateStorageKeys.forEach(key => {
+    localStorage.removeItem(key);
+  });
+}

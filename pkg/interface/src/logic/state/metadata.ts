@@ -1,27 +1,21 @@
-import React from "react";
-import create, { State }  from 'zustand';
-import { persist } from 'zustand/middleware';
-
 import { MetadataUpdatePreview, Associations } from "@urbit/api";
 
-// import useApi from "~/logic/lib/useApi";
-import { stateSetter } from "~/logic/lib/util";
+import { BaseState, createState } from "./base";
 
 export const METADATA_MAX_PREVIEW_WAIT = 150000;
 
-export interface MetadataState extends State {
+export interface MetadataState extends BaseState<MetadataState> {
   associations: Associations;
   // preview: (group: string) => Promise<MetadataUpdatePreview>;
-  set: (fn: (state: MetadataState) => void) => void;
 };
 
-const useMetadataState = create<MetadataState>(persist((set, get) => ({
+const useMetadataState = createState<MetadataState>('Metadata', {
   associations: { groups: {}, graph: {}, contacts: {}, chat: {}, link: {}, publish: {} },
   // preview: async (group): Promise<MetadataUpdatePreview> => {
   //   return new Promise<MetadataUpdatePreview>((resolve, reject) => {
   //     const api = useApi();
   //     let done = false;
-
+  
   //     setTimeout(() => {
   //       if (done) {
   //         return;
@@ -29,7 +23,7 @@ const useMetadataState = create<MetadataState>(persist((set, get) => ({
   //       done = true;
   //       reject(new Error('offline'));
   //     }, METADATA_MAX_PREVIEW_WAIT);
-
+  
   //     api.subscribe({
   //       app: 'metadata-pull-hook',
   //       path: `/preview${group}`,
@@ -57,20 +51,7 @@ const useMetadataState = create<MetadataState>(persist((set, get) => ({
   //     });
   //   });
   // },
-  set: fn => stateSetter(fn, set),
-}), {
-  name: 'LandscapeMetadataState'
-}));
+});
 
-function withMetadataState<P, S extends keyof MetadataState>(Component: any, stateMemberKeys?: S[]) {
-  return React.forwardRef((props: Omit<P, S>, ref) => {
-    const metadataState = stateMemberKeys ? useMetadataState(
-      state => stateMemberKeys.reduce(
-        (object, key) => ({ ...object, [key]: state[key] }), {}
-      )
-    ): useMetadataState();
-    return <Component ref={ref} {...metadataState} {...props} />
-  });
-}
 
-export { useMetadataState as default, withMetadataState };
+export default useMetadataState;

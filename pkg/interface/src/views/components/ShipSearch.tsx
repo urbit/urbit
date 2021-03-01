@@ -24,8 +24,8 @@ import { Rolodex, Groups } from '@urbit/api';
 import { DropdownSearch } from './DropdownSearch';
 import { cite, deSig } from '~/logic/lib/util';
 import { HoverBox } from './HoverBox';
-import useContactState from '~/logic/state/contacts';
-import useGroupState from '~/logic/state/groups';
+import useContactState from '~/logic/state/contact';
+import useGroupState from '~/logic/state/group';
 
 interface InviteSearchProps<I extends string> {
   autoFocus?: boolean;

@@ -18,7 +18,7 @@ import { GroupInvite } from './Group';
 import { InviteSkeleton } from './InviteSkeleton';
 import { JoinSkeleton } from './JoinSkeleton';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
-import useGroupState from '~/logic/state/groups';
+import useGroupState from '~/logic/state/group';
 import useMetadataState from '~/logic/state/metadata';
 
 interface InviteItemProps {

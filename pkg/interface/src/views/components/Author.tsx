@@ -11,7 +11,7 @@ import OverlaySigil from './OverlaySigil';
 import { Sigil } from '~/logic/lib/sigil';
 import GlobalApi from '~/logic/api/global';
 import Timestamp from './Timestamp';
-import useContactState from '~/logic/state/contacts';
+import useContactState from '~/logic/state/contact';
 
 interface AuthorProps {
   ship: string;

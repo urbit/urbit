@@ -17,9 +17,9 @@ import useS3 from '~/logic/lib/useS3';
 import { isWriter, resourceFromPath } from '~/logic/lib/group';
 
 import './css/custom.css';
-import useContactState from '~/logic/state/contacts';
+import useContactState from '~/logic/state/contact';
 import useGraphState from '~/logic/state/graph';
-import useGroupState from '~/logic/state/groups';
+import useGroupState from '~/logic/state/group';
 import useHarkState from '~/logic/state/hark';
 
 type ChatResourceProps = StoreState & {

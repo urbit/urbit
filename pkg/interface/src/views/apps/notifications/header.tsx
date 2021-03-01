@@ -9,7 +9,7 @@ import { Associations, Contact, Contacts, Rolodex } from '@urbit/api';
 import { PropFunc } from '~/types/util';
 import { useShowNickname } from '~/logic/lib/util';
 import Timestamp from '~/views/components/Timestamp';
-import useContactState from '~/logic/state/contacts';
+import useContactState from '~/logic/state/contact';
 import useMetadataState from '~/logic/state/metadata';
 
 const Text = (props: PropFunc<typeof Text>) => (

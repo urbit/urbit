@@ -5,7 +5,7 @@ import Helmet from 'react-helmet';
 import { Box } from '@tlon/indigo-react';
 
 import { Profile } from './components/Profile';
-import useContactState from '~/logic/state/contacts';
+import useContactState from '~/logic/state/contact';
 import useHarkState from '~/logic/state/hark';
 
 export default function ProfileScreen(props: any) {

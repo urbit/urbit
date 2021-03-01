@@ -18,7 +18,7 @@ import Notebook from './Notebook';
 import NewPost from './new-post';
 import { NoteRoutes } from './NoteRoutes';
 import useGraphState from '~/logic/state/graph';
-import useGroupState from '~/logic/state/groups';
+import useGroupState from '~/logic/state/group';
 
 interface NotebookRoutesProps {
   api: GlobalApi;

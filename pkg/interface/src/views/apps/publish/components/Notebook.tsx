@@ -7,8 +7,8 @@ import { Contacts, Rolodex, Groups, Associations, Graph, Association, Unreads } 
 import { NotebookPosts } from './NotebookPosts';
 import GlobalApi from '~/logic/api/global';
 import { useShowNickname } from '~/logic/lib/util';
-import useContactState from '~/logic/state/contacts';
-import useGroupState from '~/logic/state/groups';
+import useContactState from '~/logic/state/contact';
+import useGroupState from '~/logic/state/group';
 
 interface NotebookProps {
   api: GlobalApi;

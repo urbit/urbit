@@ -11,8 +11,8 @@ import { useTutorialModal } from '~/views/components/useTutorialModal';
 import { TUTORIAL_HOST, TUTORIAL_GROUP } from '~/logic/lib/tutorialModal';
 import { SidebarAppConfigs, SidebarItemStatus } from './types';
 import { Workspace } from '~/types/workspace';
-import useContactState from '~/logic/state/contacts';
-import useGroupState from '~/logic/state/groups';
+import useContactState from '~/logic/state/contact';
+import useGroupState from '~/logic/state/group';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 
 

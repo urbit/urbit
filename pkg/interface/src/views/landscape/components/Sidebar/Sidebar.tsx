@@ -20,7 +20,7 @@ import { SidebarAppConfigs } from './types';
 import { SidebarList } from './SidebarList';
 import { roleForShip } from '~/logic/lib/group';
 import { useTutorialModal } from '~/views/components/useTutorialModal';
-import useGroupState from '~/logic/state/groups';
+import useGroupState from '~/logic/state/group';
 import useMetadataState from '~/logic/state/metadata';
 
 const ScrollbarLessCol = styled(Col)`
