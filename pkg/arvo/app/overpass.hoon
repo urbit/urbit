@@ -104,7 +104,7 @@
     |=  [=wire =sign-arvo]
     ^-  (quip card _this)
     ?+  sign-arvo  (on-arvo:def wire sign-arvo)
-        [%e %bound *]
+        [%eyre %bound *]
       ?:  accepted.sign-arvo  [~ this]
       ~&  [dap.bowl %failed-to-bind path.binding.sign-arvo]
       [~ this]
@@ -137,12 +137,11 @@
   =;  =json
     %+  give-simple-payload:app:server
       eyre-id
-    %-  json-response:gen:server
-    (as-octt:mimes:html (en-json:html json))
-  =+  !<(invites=(list [=ship code=@q =address:ethereum]) vase)
+    (json-response:gen:server json)
+  =+  !<(invites=(list [=ship code=@q address=@ux]) vase)
   :-  %a
   %+  turn  (scag 1 invites)
-  |=  [=ship code=@q =address:ethereum]
+  |=  [=ship code=@q address=@ux]
   ^-  json
   %-  pairs:enjs:format
   :~  'ship'^(ship:enjs:format ship)
