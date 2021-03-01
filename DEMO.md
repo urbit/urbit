@@ -1,6 +1,5 @@
 # Bitcoin Demo/Integration Test
-Dec 9, 2020
-Can use as the base of an integration test.
+Use only one of `%main` or `%testnet` for `=network` in the examples below, and use the corresponding `xpubmain` or `xpubtest`.
 
 ## Start Services
 Runs the full node API services.
@@ -61,7 +60,7 @@ Using 1 confirmation for testing.
 
 `~dopzod`
 ```
-:btc-wallet|command [%req-pay-address ~zod 20.000 feyb=10]
+:btc-wallet|command [%init-payment ~zod 20.000 feyb=10]
 ```
 
 ### Check State on ~zod/~dopzod
@@ -78,11 +77,11 @@ Using 1 confirmation for testing.
 ### Idempotent
 `~dopzod`
 ```
-:btc-wallet|command [%req-pay-address ~zod 3.000 feyb=100]
+:btc-wallet|command [%init-payment ~zod 3.000 feyb=100]
 ```
 Or can change amount:
 ```
-:btc-wallet|command [%req-pay-address ~zod 3.000 feyb=100]
+:btc-wallet|command [%init-payment ~zod 3.000 feyb=100]
 ```
 
 ### Broadcast the Signed TX
