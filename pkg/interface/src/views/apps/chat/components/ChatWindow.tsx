@@ -77,7 +77,6 @@ export default class ChatWindow extends Component<
     this.handleWindowBlur = this.handleWindowBlur.bind(this);
     this.handleWindowFocus = this.handleWindowFocus.bind(this);
     this.stayLockedIfActive = this.stayLockedIfActive.bind(this);
-    this.dismissIfLineVisible = this.dismissIfLineVisible.bind(this);
 
     this.virtualList = null;
     this.unreadMarkerRef = React.createRef();
@@ -111,6 +110,7 @@ export default class ChatWindow extends Component<
       });
       return;
     }
+    console.log(`found unread: ${unreadIndex}`);
     this.setState({
       unreadIndex
     });
@@ -157,15 +157,15 @@ export default class ChatWindow extends Component<
       return;
     }
 
-    //this.virtualList?.scrollToData(unreadIndex);
+    this.virtualList?.scrollToIndex(this.state.unreadIndex);
   }
 
   dismissUnread() {
     const { association } = this.props;
     if (this.state.fetchPending) return;
     if (this.props.unreadCount === 0) return;
+    console.log('dismissing unreads');
     this.props.api.hark.markCountAsRead(association, '/', 'message');
-    this.props.api.hark.markCountAsRead(association, '/', 'mention');
   }
 
   async fetchMessages(newer: boolean): Promise<boolean> {
@@ -184,12 +184,12 @@ export default class ChatWindow extends Component<
       await api.graph.getYoungerSiblings(
         ship,
         name,
-        20,
+        100,
         `/${index.toString()}`
       );
     } else {
       const [index] = graph.peekSmallest()!;
-      await api.graph.getOlderSiblings(ship, name, 20, `/${index.toString()}`);
+      await api.graph.getOlderSiblings(ship, name, 100, `/${index.toString()}`);
       this.calculateUnreadIndex();
     }
     this.setState({ fetchPending: false });
@@ -202,22 +202,8 @@ export default class ChatWindow extends Component<
       this.setState({ idle: true });
     }
 
-    this.dismissIfLineVisible();
   }
 
-  dismissIfLineVisible() {
-    if (this.props.unreadCount === 0) return;
-    if (!this.unreadMarkerRef.current || !this.virtualList?.window) return;
-    const parent = this.unreadMarkerRef.current.parentElement?.parentElement;
-    if (!parent) return;
-    const { scrollTop, scrollHeight, offsetHeight } = this.virtualList.window;
-    if (
-      scrollHeight - parent.offsetTop > scrollTop &&
-      scrollHeight - parent.offsetTop < scrollTop + offsetHeight
-    ) {
-      this.dismissUnread();
-    }
-  }
 
   renderer = React.forwardRef(({ index, scrollWindow }, ref) => {
     const {
@@ -256,8 +242,7 @@ export default class ChatWindow extends Component<
     const isLastMessage = index.eq(
       graph.peekLargest()?.[0] ?? bigInt.zero
     );
-    const highlighted = bigInt(this.props.scrollTo || -1).eq(index);
-
+    const highlighted = false; // this.state.unreadIndex.eq(index);
     const keys = graph.keys().reverse();
     const graphIdx = keys.findIndex((idx) => idx.eq(index));
     const prevIdx = keys[graphIdx + 1];
@@ -330,16 +315,18 @@ export default class ChatWindow extends Component<
           ref={(list) => {
             this.virtualList = list;
           }}
+          offset={unreadCount}
           origin='bottom'
           style={{ height: '100%' }}
           onStartReached={() => {
             this.setState({ idle: false });
-            this.dismissUnread();
+            //this.dismissUnread();
           }}
           onScroll={this.onScroll.bind(this)}
           data={graph}
           size={graph.size}
           id={association.resource}
+          averageHeight={22}
           renderer={this.renderer}
           loadRows={this.fetchMessages.bind(this)}
         />

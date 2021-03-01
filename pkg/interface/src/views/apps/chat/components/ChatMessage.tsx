@@ -182,6 +182,7 @@ class ChatMessage extends Component<ChatMessageProps> {
         pt={renderSigil ? 2 : 0}
         pb={isLastMessage ? 4 : 2}
         className={containerClass}
+        backgroundColor={highlighted ? 'blue' : 'white'}
         style={style}
       >
         {dayBreak && !isLastRead ? (
@@ -409,6 +410,7 @@ export const Message = ({
                   color='black'
                 >
                   <RemoteContent
+                    key={content.url}
                     url={content.url}
                     imageProps={{
                       style: {
