@@ -153,18 +153,13 @@
 ++  handle-action
   |=  act=action
   ^-  (quip card _state)
-  ?.  ?|(connected.host-info =(-.act %ping))
+  ?.  ?|(connected.host-info ?=(%ping -.act))
     ~&  >>>  "Not connected to RPC"
     [~[(send-update [%| %not-connected 500])] state]
   ::  TODO: turn each of these into a gate call in rpc that creates a thread.
-  ::  poke spider example:
-  ::  https://github.com/urbit/urbit/blob/fab9a47a925f73f026c39f124e543e009d211978/pkg/arvo/app/eth-watcher.hoon#L461
-  ::  +$ start-args: [parent-tid=(unit tid) use=(unit tid) file=term =vase]
-  ::
-  ::  You may receive the return value or be notified of failure by subscribing to Spider at /thread-result/[tid]
   ::
   =/  ract=action:rpc-types
-    ?+  -.act  ~|("Invalid action" !!)
+    ?-  -.act  ::  ~|("Invalid action" !!)
         %address-info
       [%get-address-info address.act]
       ::
@@ -176,6 +171,9 @@
       ::
         %broadcast-tx
       [%broadcast-tx rawtx.act]
+      ::
+        %ping
+      [%get-block-info ~]
     ==
   [~[(req-card act ract)] state]
 ::

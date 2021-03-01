@@ -11,8 +11,8 @@ Runs the full node API services.
 ## Start Agents and set XPUBs
 On `~zod`. Uses "abandon abandon..." mnemonic
 ```
-=network %main
 =network %testnet
+=network %main
 |commit %home
 |start %btc-provider
 |start %btc-wallet
