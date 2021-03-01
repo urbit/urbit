@@ -173,7 +173,7 @@
     ::
     ::  overwrites any payment being built in poym
     ::
-      %req-pay-address
+      %init-payment
     ~|  "Can't pay ourselves; no comets; can't do while tx is being signed"
     ?<  =(src.bowl payee.comm)
     ?<  ?=(%pawn (clan:title payee.comm))
@@ -217,7 +217,7 @@
     =.  state  state(num-fam.piym (~(put by num-fam.piym) f +(n)))
     =^  a=address  state
       (generate-address u.curr-xpub %0)
-    :-  ~[(poke-peer src.bowl [%recv-pay-address a value.act])]
+    :-  ~[(poke-peer src.bowl [%give-pay-address a value.act])]
     state(ps.piym (~(put by ps.piym) src.bowl [~ u.curr-xpub a src.bowl value.act]))
     ::
     ++  generate-address
@@ -237,10 +237,10 @@
       ?^  pend.u.p  ~|("%gen-address: {<payer>} already has pending payment to us" !!)
       =+  newp=u.p(value value.act)
       :_  state(ps.piym (~(put by ps.piym) payer newp))
-      ~[(poke-peer payer [%recv-pay-address address.newp value.act])]
+      ~[(poke-peer payer [%give-pay-address address.newp value.act])]
     --
     ::
-      %recv-pay-address
+      %give-pay-address
     ?:  =(src.bowl our.bowl)  ~|("Can't pay ourselves" !!)
     ?:  is-broadcasting  ~|("Broadcasting a transaction" !!)
     ?~  curr-xpub  ~|("btc-wallet-hook: no curr-xpub set" !!)
@@ -293,6 +293,15 @@
       ?&  =(payer.p src.bowl)
           =(value.p value.act)
       ==
+    ::
+    ++  update-pend-piym
+      |=  [txid=hexb p=payment]
+      ^-  _state
+      ?~  pend.p  ~|("update-pend-piym: no pending payment" !!)
+      %=  state
+          ps.piym  (~(put by ps.piym) payer.p p)
+          pend.piym  (~(put by pend.piym) txid p)
+      ==
     --
   ==
 ::
@@ -301,6 +310,7 @@
   ^-  (quip card _state)
   ?-    -.intr
         %add-poym-raw-txi
+    |^
     ?>  =(src.bowl our.bowl)
     ?~  poym  `state
     =.  txis.u.poym
@@ -313,6 +323,18 @@
     ~&  >>  "{<vb>} vbytes, {<(div fee vb)>} sats/byte, {<fee>} sats fee"
     %-  (slog [%leaf "PSBT: {<u.pb>}"]~)
     ~
+    ::    update outgoing payment with a rawtx, if the txid is in poym's txis
+    ::
+    ++  update-poym-txis
+      |=  [txis=(list txi) txid=hexb rawtx=hexb]
+      ^-  (list txi)
+      =|  i=@
+      |-  ?:  (gte i (lent txis))  txis
+      =/  ith=txi  (snag i txis)
+      =?  txis  =(txid txid.utxo.ith)
+       (snap txis i `txi`ith(rawtx `rawtx))
+      $(i +(i))
+    --
     ::  delete an incoming/outgoing payment when we see it included in a tx
     ::
       %close-pym
@@ -491,6 +513,7 @@
     ?:  ?|(?!(connected.p) (lth block.btc-state block))
       ;:  weld
           (retry-pend-piym network)
+          (retry-poym network)
           (retry-addrs network)
           (retry-txs network)
           (retry-scans network)
@@ -767,34 +790,6 @@
   =^  cards1=(list card)  state
     (bump-batch xpub %1)
   [(weld cards0 cards1) state]
-::
-::
-
-::  +update-pend.piym
-::   - set pend.payment to txid (lock)
-::   - add txid to pend.piym
-::
-++  update-pend-piym
-  |=  [txid=hexb p=payment]
-  ^-  _state
-  ?~  pend.p  ~|("update-pend-piym: no pending payment" !!)
-  %=  state
-      ps.piym  (~(put by ps.piym) payer.p p)
-      pend.piym  (~(put by pend.piym) txid p)
-  ==
-::
-::  +update-poym-txis:
-::    update outgoing payment with a rawtx, if the txid is in poym's txis
-::
-++  update-poym-txis
-  |=  [txis=(list txi) txid=hexb rt=hexb]
-  ^-  (list txi)
-  =|  i=@
-  |-  ?:  (gte i (lent txis))  txis
-  =/  ith=txi  (snag i txis)
-  =?  txis  =(txid txid.utxo.ith)
-   (snap txis i `txi`ith(ur `rt))
-  $(i +(i))
 ::
 ::
 ::

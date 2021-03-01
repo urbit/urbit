@@ -1,4 +1,4 @@
-/-  *bitcoin, *resource
+/-  *bitcoin, resource
 |%
 +$  host-info
   $:  api-url=@t
@@ -11,14 +11,14 @@
   $:  public=?
       kids=?
       users=(set ship)
-      groups=(set resource)
+      groups=(set resource:resource)
   ==
 ::
 +$  whitelist-target
   $%  [%public ~]
       [%kids ~]
       [%users users=(set ship)]
-      [%groups groups=(set resource)]
+      [%groups groups=(set resource:resource)]
   ==
 +$  command
   $%  [%set-credentials api-url=@t =network]
@@ -31,9 +31,7 @@
       [%raw-tx txid=hexb]
       [%broadcast-tx rawtx=hexb]
       [%ping ~]
-      check-network
   ==
-+$  check-network  [%check-network =network]
 ::
 +$  result
   $%  [%address-info =address utxos=(set utxo) used=? block=@ud]
