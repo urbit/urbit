@@ -1,4 +1,4 @@
-/-  sur=graph-view
+/-  sur=graph-view, store=graph-store
 /+  resource, group-store
 ^?
 =<  [sur .]
@@ -53,12 +53,7 @@
           to+(uf ~ (mu dejs:resource))
       ==
     ::
-    ++  pending-indices  (op nu ;~(pfix fas (more fas dem)))
-    ::  NOTE: move these functions to zuse
-    ++  nu                                              ::  parse number as hex
-      |=  jon=json
-      ?>  ?=([%s *] jon)
-      (rash p.jon hex)
+    ++  pending-indices  (op hex (su ;~(pfix fas (more fas dem))))
     ::
     ++  invite    !!
     ::
@@ -69,24 +64,25 @@
       ==
     --
   --
+::
 ++  enjs
   =,  enjs:format
   |%
   ++  action
-    |=  act=action
+    |=  act=^action
     ^-  json
     ?>  ?=(%pending-indices -.act)
     %+  frond  %pending-indices
-    :-  %a
+    %-  pairs
     %+  turn  ~(tap by pending.act)
     |=  [h=hash:store i=index:store]
-    %-  pairs
-    :~  [%index (index i)]
-        [%hash s+(scot %ux h)]
-    ==
+    ^-  [@t json]
+    =/  idx  (index i)
+    ?>  ?=(%s -.idx)
+    [p.idx s+(scot %ux h)]
   ::
   ++  index
-    |=  i=^index
+    |=  i=index:store
     ^-  json
     ?:  =(~ i)  s+'/'
     =/  j=^tape  ""

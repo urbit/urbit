@@ -95,15 +95,18 @@ const mapifyChildren = (children) => {
 };
 
 const addNodes = (json, state) => {
+  console.log(json);
   const _addNode = (graph, index, node) => {
     //  set child of graph
     if (index.length === 1) {
+      console.log(node.post);
       graph.set(index[0], node);
       return graph;
     }
 
     // set parent of graph
     let parNode = graph.get(index[0]);
+    console.log(parNode.post);
     if (!parNode) {
       console.error('parent node does not exist, cannot add child');
       return;
@@ -138,7 +141,6 @@ const addNodes = (json, state) => {
       if (index.length === 0) { return; }
 
       node.children = mapifyChildren(node?.children || {});
-
       
       state.graphs[resource] = _addNode(
         state.graphs[resource],

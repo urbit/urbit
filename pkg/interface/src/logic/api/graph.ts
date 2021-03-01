@@ -192,14 +192,6 @@ export default class GraphApi extends BaseApi<StoreState> {
     });
   }
 
-  addHashedNodes(action: Object) {
-    return this.spider(
-      'graph-update',
-      'graph-view-action',
-      'graph-add-nodes',
-      action
-    );
-  }
 
   addGraph(ship: Patp, name: string, graph: any, mark: any) {
     return this.storeAction({
@@ -235,17 +227,30 @@ export default class GraphApi extends BaseApi<StoreState> {
       }
     };
 
-    //  TODO: send a request to the -graph-add-nodes thread and wait for its return
-    //  once it returns, it should give us a { pending: {'/1': '0x.239823'} } 
-    //  then, mark those pending nodes with their corresponding hash
-    //  and store the pending map we were given
-    //const promise = this.hookAction(ship, action);
-    const promise = this.addHashedNodes(action);
+    const pendingPromise = this.spider(
+      'graph-update',
+      'graph-view-action',
+      'graph-add-nodes',
+      action
+    );
+
     markPending(action['add-nodes'].nodes);
-    action['add-nodes'].resource.ship = action['add-nodes'].resource.ship.slice(1);
-    console.log(action);
-    this.store.handleEvent({ data: { 'graph-update': action } });
-    return promise;
+    action['add-nodes'].resource.ship =
+      action['add-nodes'].resource.ship.slice(1);
+
+    return pendingPromise.then((pendingHashes) => {
+      action['add-nodes'].nodes =
+        Object.keys(action['add-nodes'].nodes).map((ind) => {
+          action['add-nodes'].nodes[ind].post.hash =
+            pendingHashes['pending-indices'][ind] || null;
+          return action['add-nodes'].nodes[ind];
+        });
+
+      this.store.handleEvent({ data: {
+        'graph-update': action,
+        'pending-indices': pendingHashes
+      } });
+    });
   }
 
   removeNodes(ship: Patp, name: string, indices: string[]) {
