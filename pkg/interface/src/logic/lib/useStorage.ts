@@ -41,7 +41,7 @@ const useStorage = ({gcp, s3}: StorageState,
         endpoint: s3.credentials.endpoint
       });
     }
-  }, [gcp.accessKey, s3.credentials]);
+  }, [gcp.token, s3.credentials]);
 
   const canUpload = useMemo(
     () =>
