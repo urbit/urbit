@@ -1,5 +1,5 @@
 /-  spider
-/+  strandio, store=graph-store, graph, graph-view
+/+  strandio, store=graph-store, graph, graph-view, sig=signatures
 =,  strand=strand:spider
 ^-  thread:spider
 |=  arg=vase
@@ -8,6 +8,7 @@
 =+  !<([~ =update:store] arg)
 ?>  ?=(%add-nodes -.q.update)
 =*  poke-our  poke-our:strandio
+;<  =bowl:spider  bind:m  get-bowl:strandio
 |^
 =.  nodes.q.update
   %-  ~(gas by *(map index:store node:store))
@@ -61,8 +62,7 @@
   =*  loop  $
   :-  index
   =*  p  post.node
-  =/  hash=(unit hash:store)
-    :-  ~
+  =/  =hash:store
     =-  `@ux`(sham -)
     :^  ?^  parent-hash
           parent-hash
@@ -71,7 +71,12 @@
       time-sent.p
     contents.p
   %_  node
-    hash.post  hash
+    hash.post  `hash
+  ::
+  ::  TODO: enable signing our own post as soon as we're ready
+  ::    signatures.post
+  ::  %-  ~(gas in *signatures:store)
+  ::  [(sign:sig our.bowl now.bowl hash)]~
   ::
       children
     ?:  ?=(%empty -.children.node)
@@ -84,7 +89,7 @@
       |=  [=index:store =node:store]
       ^-  [index:store node:store]
       %_  loop
-        parent-hash  hash
+        parent-hash  `hash
         index        index
         node         node
       ==
