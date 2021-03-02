@@ -7,9 +7,6 @@ jobs:
   publish-api:
     runs-on: ubuntu-latest
     name: "Publish '@urbit/api' if a new version is available"
-    defaults:
-      run:
-        working-directory: 'pkg/npm/api'
     steps:
       - uses: actions/checkout@v2
         with:
@@ -18,6 +15,7 @@ jobs:
         with:
           node-version: '14'
       - run: 'npm install'
+        working-directory: 'pkg/npm/api'
       - uses: JS-DevTools/npm-publish@v1
         with:
           check-version: true
@@ -28,9 +26,6 @@ jobs:
   publish-http-api:
     runs-on: ubuntu-latest
     name: "Publish '@urbit/http-api' if a new version is available"
-    defaults:
-      run:
-        working-directory: 'pkg/npm/http-api'
     steps:
       - uses: actions/checkout@v2
         with:
@@ -39,6 +34,7 @@ jobs:
         with:
           node-version: '14'
       - run: 'npm install'
+        working-directory: 'pkg/npm/http-api'
       - uses: JS-DevTools/npm-publish@v1
         with:
           check-version: true
@@ -49,9 +45,6 @@ jobs:
   publish-eslint-config:
     runs-on: ubuntu-latest
     name: "Publish '@urbit/eslint-config' if a new version is available"
-    defaults:
-      run:
-        working-directory: 'pkg/npm/eslint-config'
     steps:
       - uses: actions/checkout@v2
         with:
@@ -60,6 +53,7 @@ jobs:
         with:
           node-version: '14'
       - run: 'npm install'
+        working-directory: 'pkg/npm/eslint-config'
       - uses: JS-DevTools/npm-publish@v1
         with:
           check-version: true
