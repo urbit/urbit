@@ -55,6 +55,8 @@ const log = (level: LogLevel, message: string) => {
 
 }
 
+const ZONE_SIZE = IS_IOS ? 10 : 40;
+
 
 // nb: in this file, an index refers to a BigInteger and an offset refers to a
 // number used to index a listified BigIntOrderedMap
@@ -301,7 +303,7 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     const { scrollTop, scrollHeight } = this.window;
 
     const startOffset = this.startOffset();
-    if (scrollTop < 30) {
+    if (scrollTop < ZONE_SIZE) {
       log('scroll', `Entered start zone ${scrollTop}`);
       if (startOffset === 0 && onStartReached) {
         onStartReached();
@@ -318,7 +320,7 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
         this.updateVisible(newOffset);
       }
     } 
-    else if (scrollTop + windowHeight >= scrollHeight - 20) {
+    else if (scrollTop + windowHeight >= scrollHeight - ZONE_SIZE) {
       this.scrollLocked = false;
       log('scroll', `Entered end zone ${scrollTop}`);
 

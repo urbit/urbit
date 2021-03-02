@@ -61,6 +61,7 @@ export default class ChatWindow extends Component<
   private prevSize = 0;
   private loadedNewest = false;
   private loadedOldest = false;
+  private fetchPending = false;
 
   INITIALIZATION_MAX_TIME = 100;
 
@@ -132,8 +133,8 @@ export default class ChatWindow extends Component<
   componentDidUpdate(prevProps: ChatWindowProps, prevState) {
     const { history, graph, unreadCount, station } = this.props;
 
-    if (graph.size !== prevProps.graph.size && this.state.fetchPending) {
-      this.setState({ fetchPending: false });
+    if (graph.size !== prevProps.graph.size && this.fetchPending) {
+      this.fetchPending = false;
     }
 
     if (unreadCount > prevProps.unreadCount && this.state.idle) {
@@ -166,7 +167,6 @@ export default class ChatWindow extends Component<
     const { association } = this.props;
     if (this.state.fetchPending) return;
     if (this.props.unreadCount === 0) return;
-    console.log('dismissing unreads');
     this.props.api.hark.markCountAsRead(association, '/', 'message');
   }
 
@@ -178,12 +178,12 @@ export default class ChatWindow extends Component<
 
   fetchMessages = async (newer: boolean): Promise<boolean> => {
     const { api, station, graph } = this.props;
-    if(this.state.fetchPending) {
+    if(this.fetchPending) {
       return false;
     }
     
 
-    this.setState({ fetchPending: true });
+    this.fetchPending = true;
 
     const [, , ship, name] = station.split('/');
     const currSize = graph.size;
@@ -200,7 +200,7 @@ export default class ChatWindow extends Component<
       await api.graph.getOlderSiblings(ship, name, 100, `/${index.toString()}`);
       this.calculateUnreadIndex();
     }
-    this.setState({ fetchPending: false });
+    this.fetchPending = false;
     console.log(currSize, graph.size);
     return currSize === graph.size;
   }
