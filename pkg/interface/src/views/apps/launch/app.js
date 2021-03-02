@@ -30,6 +30,8 @@ import {
   TUTORIAL_CHAT,
   TUTORIAL_LINKS
 } from '~/logic/lib/tutorialModal';
+import useSettingsState, { selectCalmState } from '~/logic/state/settings';
+
 
 const ScrollbarLessBox = styled(Box)`
   scrollbar-width: none !important;
@@ -39,7 +41,7 @@ const ScrollbarLessBox = styled(Box)`
   }
 `;
 
-const tutSelector = f.pick(['tutorialProgress', 'nextTutStep']);
+const tutSelector = f.pick(['tutorialProgress', 'nextTutStep', 'hideGroups']);
 
 export default function LaunchApp(props) {
   const history = useHistory();
@@ -84,6 +86,8 @@ export default function LaunchApp(props) {
   }, [query]);
 
   const { tutorialProgress, nextTutStep } = useLocalState(tutSelector);
+  let { hideGroups } = useLocalState(tutSelector);
+  !hideGroups ? { hideGroups } = useSettingsState(selectCalmState) : null;
 
   const waiter = useWaitForProps(props);
 
@@ -211,8 +215,9 @@ export default function LaunchApp(props) {
           >
             <JoinGroup {...props} />
           </ModalButton>
-
-          <Groups unreads={props.unreads} groups={props.groups} associations={props.associations} />
+          {!hideGroups &&
+            (<Groups unreads={props.unreads} groups={props.groups} associations={props.associations} />)
+          }
         </Box>
         <Box alignSelf="flex-start" display={["block", "none"]}>{hashBox}</Box>
       </ScrollbarLessBox>

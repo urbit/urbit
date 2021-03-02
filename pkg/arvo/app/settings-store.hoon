@@ -6,16 +6,8 @@
   $%  state-0
       state-1
   ==
-+$  state-0
-  $:  %0
-      =settings
-  ==
-::
-+$  state-1
-  $:  %1
-      =settings
-  ==
-
++$  state-0  [%0 settings=settings-0]
++$  state-1  [%1 =settings]
 --
 =|  state-1
 =*  state  -
@@ -43,19 +35,10 @@
     |=  =old=vase
     ^-  (quip card _this)
     =/  old  !<(versioned-state old-vase)
-    =|  cards=(list card)
     |-
     ?-  -.old
-      %1  [cards this(state old)]
-      ::
-        %0  
-      %_  $
-        -.old  %1
-        ::
-          cards  
-        :_  cards
-        (poke-self:pass:io settngs-event+!>([%put-entry %tutorial %seen b+|]))
-      ==
+      %0  $(old [%1 +.old])
+      %1  [~ this(state old)]
     ==
   ::
   ++  on-poke

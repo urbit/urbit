@@ -9,12 +9,13 @@ import { Associations, Contacts, Groups, Invites } from '@urbit/api';
 import makeIndex from '~/logic/lib/omnibox';
 import OmniboxInput from './OmniboxInput';
 import OmniboxResult from './OmniboxResult';
-import { withLocalState } from '~/logic/state/local';
 import { deSig } from '~/logic/lib/util';
+import { withLocalState } from '~/logic/state/local';
 
 import defaultApps from '~/logic/lib/default-apps';
-import { useOutsideClick } from '~/logic/lib/useOutsideClick';
-import { Portal } from '../Portal';
+import {useOutsideClick} from '~/logic/lib/useOutsideClick';
+import {Portal} from '../Portal';
+import useSettingsState, {SettingsState} from '~/logic/state/settings';
 import { Tile } from '~/types';
 
 interface OmniboxProps {
@@ -31,11 +32,13 @@ interface OmniboxProps {
 }
 
 const SEARCHED_CATEGORIES = ['ships', 'other', 'commands', 'groups', 'subscriptions', 'apps'];
+const settingsSel = (s: SettingsState) => s.leap;
 
 export function Omnibox(props: OmniboxProps) {
   const location = useLocation();
   const history = useHistory();
-  const omniboxRef = useRef<HTMLDivElement | null>(null);
+  const leapConfig = useSettingsState(settingsSel);
+  const omniboxRef = useRef<HTMLDivElement | null>(null)
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const [query, setQuery] = useState('');
@@ -48,18 +51,30 @@ export function Omnibox(props: OmniboxProps) {
       : props.contacts;
   }, [props.contacts, query]);
 
-  const index = useMemo(() => {
-    const selectedGroup = location.pathname.startsWith('/~landscape/ship/')
+  const selectedGroup =  useMemo(
+    () => location.pathname.startsWith('/~landscape/ship/')
       ? '/' + location.pathname.split('/').slice(2,5).join('/')
-      : null;
+      : null,
+    [location.pathname]
+  );
+
+  const index = useMemo(() => {
     return makeIndex(
       contacts,
       props.associations,
       props.tiles,
       selectedGroup,
-      props.groups
+      props.groups,
+      leapConfig,
     );
-  }, [location.pathname, contacts, props.associations, props.groups, props.tiles]);
+  }, [
+    selectedGroup,
+    leapConfig,
+    contacts,
+    props.associations,
+    props.groups,
+    props.tiles
+  ]);
 
   const onOutsideClick = useCallback(() => {
     props.show && props.toggle();

@@ -3,12 +3,13 @@ import { Box, Text, Col } from '@tlon/indigo-react';
 import f from 'lodash/fp';
 import _ from 'lodash';
 
-import { Associations, Association, Unreads, UnreadStats } from "@urbit/api";
-import { alphabeticalOrder } from "~/logic/lib/util";
-import { getUnreadCount, getNotificationCount } from "~/logic/lib/hark";
-import Tile from "../components/tiles/tile";
-import { useTutorialModal } from "~/views/components/useTutorialModal";
-import { TUTORIAL_GROUP_RESOURCE, TUTORIAL_HOST, TUTORIAL_GROUP} from "~/logic/lib/tutorialModal";
+import { Associations, Association, Unreads, UnreadStats } from '@urbit/api';
+import { alphabeticalOrder } from '~/logic/lib/util';
+import { getUnreadCount, getNotificationCount } from '~/logic/lib/hark';
+import Tile from '../components/tiles/tile';
+import { useTutorialModal } from '~/views/components/useTutorialModal';
+import { TUTORIAL_HOST, TUTORIAL_GROUP, TUTORIAL_GROUP_RESOURCE } from '~/logic/lib/tutorialModal';
+import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 
 interface GroupsProps {
   associations: Associations;
@@ -84,11 +85,12 @@ function Group(props: GroupProps) {
     isTutorialGroup,
     anchorRef
   );
+  const { hideUnreads } = useSettingsState(selectCalmState)
   return (
     <Tile ref={anchorRef} position="relative" bg={isTutorialGroup ? 'lightBlue' : undefined} to={`/~landscape${path}`} gridColumnStart={first ? '1' : null}>
       <Col height="100%" justifyContent="space-between">
         <Text>{title}</Text>
-        <Col>
+        {!hideUnreads && (<Col>
           {updates > 0 &&
             (<Text mt="1" color="blue">{updates} update{updates !== 1 && 's'} </Text>)
           }
@@ -96,7 +98,7 @@ function Group(props: GroupProps) {
             (<Text color="lightGray">{unreads}</Text>)
           }
         </Col>
-
+        )}
       </Col>
     </Tile>
   );
