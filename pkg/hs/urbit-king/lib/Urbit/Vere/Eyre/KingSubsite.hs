@@ -116,7 +116,7 @@ kingSubsite who scry stat func = do
               => Text
               -> RIO e (Maybe Bool)
     scryAuth cookie =
-      scryNow scry "ex" "" ["authenticated", "cookie", textAsTa cookie]
+      scryNow scry "ex" "" ["authenticated", "cookie", textAsT cookie]
 
 fourOhFourSubsite :: Ship -> KingSubsite
 fourOhFourSubsite who = KS $ \req respond ->

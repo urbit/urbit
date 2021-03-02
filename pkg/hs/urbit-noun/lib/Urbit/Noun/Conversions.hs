@@ -13,7 +13,7 @@ module Urbit.Noun.Conversions
   , Path(..), EvilPath(..), Ship(..)
   , Lenient(..), pathToFilePath, filePathToPath
   , showUD, tshowUD
-  , textAsTa
+  , textAsT
   ) where
 
 import ClassyPrelude hiding (hash)
@@ -556,8 +556,8 @@ instance FromNoun Knot where
       else fail ("Non-ASCII chars in knot: " <> unpack txt)
 
 -- equivalent of (cury scot %t)
-textAsTa :: Text -> Text
-textAsTa = ("~~" <>) . concatMap \case
+textAsT :: Text -> Text
+textAsT = ("~~" <>) . concatMap \case
   ' ' -> "."
   '.' -> "~."
   '~' -> "~~"
