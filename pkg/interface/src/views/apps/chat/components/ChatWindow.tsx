@@ -171,7 +171,9 @@ export default class ChatWindow extends Component<
   }
 
   setActive = () => { 
-    this.setState({ idle: false });
+    if(this.state.idle) {
+      this.setState({ idle: false });
+    }
   }
 
   fetchMessages = async (newer: boolean): Promise<boolean> => {
