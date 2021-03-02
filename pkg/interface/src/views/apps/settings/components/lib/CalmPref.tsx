@@ -18,6 +18,7 @@ interface FormSchema {
   hideNicknames: boolean;
   hideUnreads: boolean;
   hideGroups: boolean;
+  hideUtilities: boolean;
   imageShown: boolean;
   audioShown: boolean;
   oembedShown: boolean;
@@ -35,7 +36,8 @@ export function CalmPrefs(props: {
       hideAvatars,
       hideNicknames,
       hideUnreads,
-      hideGroups
+      hideGroups,
+      hideUtilities
     },
     remoteContentPolicy: {
       imageShown,
@@ -51,6 +53,7 @@ export function CalmPrefs(props: {
     hideNicknames,
     hideUnreads,
     hideGroups,
+    hideUtilities,
     imageShown,
     videoShown,
     oembedShown,
@@ -63,6 +66,7 @@ export function CalmPrefs(props: {
       api.settings.putEntry('calm', 'hideNicknames', v.hideNicknames),
       api.settings.putEntry('calm', 'hideUnreads', v.hideUnreads),
       api.settings.putEntry('calm', 'hideGroups', v.hideGroups),
+      api.settings.putEntry('calm', 'hideUtilities', v.hideUtilities),
       api.settings.putEntry('remoteContentPolicy', 'imageShown', v.imageShown),
       api.settings.putEntry('remoteContentPolicy', 'videoShown', v.videoShown),
       api.settings.putEntry('remoteContentPolicy', 'audioShown', v.audioShown),
@@ -89,6 +93,11 @@ export function CalmPrefs(props: {
             label="Hide unread counts"
             id="hideUnreads"
             caption="Do not show unread counts on group tiles"
+          />
+          <Toggle
+            label="Hide utility tiles"
+            id="hideUtilities"
+            caption="Do not show home screen utilities"
           />
           <Toggle
             label="Hide group tiles"

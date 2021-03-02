@@ -17,6 +17,7 @@ export interface SettingsState {
     hideAvatars: boolean;
     hideUnreads: boolean;
     hideGroups: boolean;
+    hideUtilities: boolean;
   };
   remoteContentPolicy: RemoteContentPolicy;
   leap: {
@@ -42,7 +43,8 @@ const useSettingsState = create<SettingsStateZus>((set) => ({
     hideNicknames: false,
     hideAvatars: false,
     hideUnreads: false,
-    hideGroups: false
+    hideGroups: false,
+    hideUtilities: false
   },
   remoteContentPolicy: {
     imageShown: true,
