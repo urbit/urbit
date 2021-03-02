@@ -40,15 +40,15 @@ const emptyContact = {
   bio: '',
   status: '',
   color: '0',
-  avatar: null,
-  cover: null,
+  avatar: '',
+  cover: '',
   groups: [],
   'last-updated': 0,
   isPublic: false
 };
 
 export function ProfileHeaderImageEdit(props: any): ReactElement {
-  const { contact, s3, setFieldValue, fieldValues } = { ...props };
+  const { contact, s3, setFieldValue } = { ...props };
   const [editCover, setEditCover] = useState(false);
   const [removedCoverLabel, setRemovedCoverLabel] = useState('Remove Header');
   const handleClear = (e) => {
@@ -56,6 +56,7 @@ export function ProfileHeaderImageEdit(props: any): ReactElement {
     setFieldValue('cover', '');
     setRemovedCoverLabel('Header Removed');
   };
+
   return (
     <>
       {contact?.cover ? (
@@ -88,12 +89,9 @@ export function EditProfile(props: any): ReactElement {
   }
 
   const onSubmit = async (values: any, actions: any) => {
-    console.log(values);
     try {
       await Object.keys(values).reduce((acc, key) => {
-        console.log(key);
         const newValue = key !== 'color' ? values[key] : uxToHex(values[key]);
-
         if (newValue !== contact[key]) {
           if (key === 'isPublic') {
             return acc.then(() => api.contacts.setPublic(newValue));
@@ -102,14 +100,11 @@ export function EditProfile(props: any): ReactElement {
               contact?.groups || [],
               newValue
             );
-            console.log(toRemove);
             const toAdd: string[] = _.difference(
               newValue,
               contact?.groups || []
             );
-            console.log(toAdd);
             const promises: Promise<any>[] = [];
-
             promises.concat(
               toRemove.map((e) =>
                 api.contacts.edit(ship, { 'remove-group': resourceFromPath(e) })
@@ -142,7 +137,7 @@ export function EditProfile(props: any): ReactElement {
         initialValues={contact || emptyContact}
         onSubmit={onSubmit}
       >
-        {({ setFieldValue, values }) => (
+        {({ setFieldValue }) => (
           <Form width='100%' height='100%'>
             <ProfileHeader>
               <ProfileControls>
@@ -173,7 +168,6 @@ export function EditProfile(props: any): ReactElement {
                 <ProfileHeaderImageEdit
                   contact={contact}
                   s3={props.s3}
-                  fieldValues={values}
                   setFieldValue={setFieldValue}
                 />
               </ProfileImages>

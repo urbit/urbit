@@ -47,6 +47,7 @@ export function ColorInput(props: ColorInputProps): ReactElement {
       ) : null}
       <Row mt="2" alignItems="flex-end">
         <Input
+          id={id}
           borderTopRightRadius={0}
           borderBottomRightRadius={0}
           onBlur={onBlur}
