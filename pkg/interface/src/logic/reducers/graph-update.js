@@ -4,12 +4,15 @@ import bigInt, { BigInteger } from "big-integer";
 
 export const GraphReducer = (json, state) => {
   const data = _.get(json, 'graph-update', false);
+  
   if (data) {
     keys(data, state);
     addGraph(data, state);
     removeGraph(data, state);
     addNodes(data, state);
     removeNodes(data, state);
+
+    pendingIndices(data, state);
   }
 };
 
@@ -94,19 +97,25 @@ const mapifyChildren = (children) => {
     }));
 };
 
+const pendingIndices = (json, state) => {
+  const data = _.get(json, 'pending-indices', false);
+  if (data) {
+    Object.keys(data).forEach((key) => {
+      state.pendingIndices[data[key]] = key;
+    });
+  }
+};
+
 const addNodes = (json, state) => {
-  console.log(json);
-  const _addNode = (graph, index, node) => {
+  const _addNode = (graph, index, node, resource) => {
     //  set child of graph
     if (index.length === 1) {
-      console.log(node.post);
       graph.set(index[0], node);
       return graph;
     }
 
     // set parent of graph
     let parNode = graph.get(index[0]);
-    console.log(parNode.post);
     if (!parNode) {
       console.error('parent node does not exist, cannot add child');
       return;
@@ -114,6 +123,22 @@ const addNodes = (json, state) => {
     parNode.children = _addNode(parNode.children, index.slice(1), node);
     graph.set(index[0], parNode);
     return graph;
+  };
+
+  const _removePending = (resource, index, post) => {
+    if (post.hash && state.pendingIndices[post.hash]) {
+      let pendingIndex = state.pendingIndices[post.hash];
+      removeNodes({
+        'graph-update': {
+          'remove-nodes': {
+            resource,
+            indices: [pendingIndex]
+          }
+        }
+      });
+
+      delete state.pendingIndices[post.hash];
+    }
   };
 
   const data = _.get(json, 'add-nodes', false);
@@ -126,14 +151,11 @@ const addNodes = (json, state) => {
     }
     state.graphKeys.add(resource);
 
-    //  TODO: 
-    //  check if any of these hashes already exist. if they do, delete the 
-    //  old index before adding
-
     for (let index in data.nodes) {
       let node = data.nodes[index];
-      if (index.split('/').length === 0) { return; }
+      _removePending(data.resource, index, node.post);
 
+      if (index.split('/').length === 0) { return; }
       index = index.split('/').slice(1).map((ind) => {
         return bigInt(ind);
       });

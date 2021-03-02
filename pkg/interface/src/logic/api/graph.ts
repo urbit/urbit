@@ -247,8 +247,10 @@ export default class GraphApi extends BaseApi<StoreState> {
         });
 
       this.store.handleEvent({ data: {
-        'graph-update': action,
-        'pending-indices': pendingHashes
+        'graph-update': {
+          'pending-indices': pendingHashes['pending-indices'],
+          ...action
+        }
       } });
     });
   }
