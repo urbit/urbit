@@ -144,7 +144,7 @@ export const progressDetails: Record<TutorialProgress, StepDetail> = {
     alignY: 'top',
     alignX: 'left',
     arrow: 'North',
-    offsetX: (MODAL_WIDTH / 2) - 16,
+    offsetX: 0,
     offsetY: -48
   },
   profile: {

@@ -104,6 +104,7 @@ export default function LaunchApp(props) {
         e.stopPropagation();
         if(!hasTutorialGroup(props)) {
           await props.api.groups.join(TUTORIAL_HOST, TUTORIAL_GROUP);
+          await props.api.settings.putEntry('tutorial', 'joined', Date.now());
           await waiter(hasTutorialGroup);
           await Promise.all(
             [TUTORIAL_BOOK, TUTORIAL_CHAT, TUTORIAL_LINKS].map(graph =>

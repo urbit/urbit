@@ -21,7 +21,11 @@ export interface SettingsState {
   remoteContentPolicy: RemoteContentPolicy;
   leap: {
     categories: LeapCategories[];
-  }
+  };
+  tutorial: {
+    seen: boolean;
+    joined?: number;
+  };
   set: (fn: (state: SettingsState) => void) => void
 };
 
@@ -52,6 +56,10 @@ const useSettingsState = create<SettingsStateZus>((set) => ({
   },
   leap: {
     categories: leapCategories,
+  },
+  tutorial: {
+    seen: false,
+    joined: undefined
   },
   set: (fn: (state: SettingsState) => void) => set(produce(fn))
 }));
