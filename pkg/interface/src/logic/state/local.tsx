@@ -12,6 +12,7 @@ export interface LocalState {
   remoteContentPolicy: RemoteContentPolicy;
   tutorialProgress: TutorialProgress;
   hideGroups: boolean;
+  hideUtilities: boolean;
   tutorialRef: HTMLElement | null,
   hideTutorial: () => void;
   nextTutStep: () => void;
@@ -28,7 +29,7 @@ export interface LocalState {
 
 type LocalStateZus = LocalState & State;
 
-export const selectLocalState = 
+export const selectLocalState =
   <K extends keyof LocalState>(keys: K[]) => f.pick<LocalState, K>(keys);
 
 const useLocalState = create<LocalStateZus>(persist((set, get) => ({
@@ -38,6 +39,7 @@ const useLocalState = create<LocalStateZus>(persist((set, get) => ({
   hideNicknames: false,
   hideLeapCats: [],
   hideGroups: false,
+  hideUtilities: false,
   tutorialProgress: 'hidden',
   tutorialRef: null,
   setTutorialRef: (el: HTMLElement | null) => set(produce((state) => {
