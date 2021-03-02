@@ -48,11 +48,12 @@ const emptyContact = {
 };
 
 export function ProfileHeaderImageEdit(props: any): ReactElement {
-  const { contact, s3, setFieldValue } = { ...props };
+  const { contact, s3, setFieldValue, handleHideCover } = { ...props };
   const [editCover, setEditCover] = useState(false);
   const [removedCoverLabel, setRemovedCoverLabel] = useState('Remove Header');
   const handleClear = (e) => {
     e.preventDefault();
+    handleHideCover(true);
     setFieldValue('cover', '');
     setRemovedCoverLabel('Header Removed');
   };
@@ -83,6 +84,12 @@ export function ProfileHeaderImageEdit(props: any): ReactElement {
 
 export function EditProfile(props: any): ReactElement {
   const { contact, ship, api, isPublic } = props;
+  const [hideCover, setHideCover] = useState(false);
+
+  const handleHideCover = (value) => {
+    setHideCover(value);
+  };
+
   const history = useHistory();
   if (contact) {
     contact.isPublic = isPublic;
@@ -164,11 +171,12 @@ export function EditProfile(props: any): ReactElement {
                 </Row>
                 <ProfileStatus contact={contact} />
               </ProfileControls>
-              <ProfileImages contact={contact}>
+              <ProfileImages hideCover={hideCover} contact={contact}>
                 <ProfileHeaderImageEdit
                   contact={contact}
                   s3={props.s3}
                   setFieldValue={setFieldValue}
+                  handleHideCover={handleHideCover}
                 />
               </ProfileImages>
             </ProfileHeader>

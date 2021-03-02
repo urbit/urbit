@@ -29,24 +29,25 @@ export function ProfileImages(props: any): ReactElement {
   const { hideAvatars } = useLocalState(({ hideAvatars }) => ({
     hideAvatars
   }));
-  const { contact } = { ...props };
+  const { contact, hideCover } = { ...props };
   const hexColor = contact?.color ? `#${uxToHex(contact.color)}` : '#000000';
 
-  const cover = contact?.cover ? (
-    <BaseImage
-      src={contact.cover}
-      width='100%'
-      height='100%'
-      style={{ objectFit: 'cover' }}
-    />
-  ) : (
-    <Box
-      display='block'
-      width='100%'
-      height='100%'
-      backgroundColor='washedGray'
-    />
-  );
+  const cover =
+    contact?.cover && !hideCover ? (
+      <BaseImage
+        src={contact.cover}
+        width='100%'
+        height='100%'
+        style={{ objectFit: 'cover' }}
+      />
+    ) : (
+      <Box
+        display='block'
+        width='100%'
+        height='100%'
+        backgroundColor='washedGray'
+      />
+    );
 
   const image =
     !hideAvatars && contact?.avatar ? (
