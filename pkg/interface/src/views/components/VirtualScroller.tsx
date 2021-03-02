@@ -138,7 +138,7 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     const loadedCen = (scrollTop / scrollHeight);
     const loaded = (loadedCen / (this.pageSize / this.props.averageHeight));
     const result = (unloaded + loaded)*this.window.offsetHeight;
-    this.scrollRef.style.bottom = `${result}px`;
+    this.scrollRef.style[this.props.origin] = `${result}px`;
   }, 50);
 
 
@@ -459,7 +459,7 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     
     return (
       <>
-        {!IS_IOS && (<Box borderRadius="3" bottom="0" ref={el => { this.scrollRef = el; }} right="0" height="50px" position="absolute" width="4px" backgroundColor="lightGray" />)}
+        {!IS_IOS && (<Box borderRadius="3" top ={isTop ? "0" : undefined} bottom={!isTop ? "0" : undefined} ref={el => { this.scrollRef = el; }} right="0" height="50px" position="absolute" width="4px" backgroundColor="lightGray" />)}
 
       <ScrollbarLessBox overflowY='scroll' ref={this.setWindow} onScroll={this.onScroll} style={{ ...style, ...{ transform }, "-webkit-overflow-scrolling": "auto" }}>
         <Box style={{ transform, width: 'calc(100% - 4px)' }}>

@@ -35,6 +35,7 @@ export function LinkWindow(props: LinkWindowProps) {
   const { graph, api, association } = props;
   const fetchLinks = useCallback(
     async (newer: boolean) => {
+      return true;
       /* stubbed, should we generalize the display of graphs in virtualscroller? */
     }, []
   );
@@ -66,12 +67,14 @@ export function LinkWindow(props: LinkWindowProps) {
   }
 
   return (
+    <Col width="100%" height="100%" position="relative">
     <VirtualScroller
       origin="top"
       style={style}
       onStartReached={() => {}}
       onScroll={() => {}}
       data={graph}
+      averageHeight={100}
       size={graph.size}
       renderer={({ index, scrollWindow }) => {
         const node = graph.get(index);
@@ -96,5 +99,6 @@ return null;
       }}
       loadRows={fetchLinks}
     />
+    </Col>
   );
 }
