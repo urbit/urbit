@@ -9,7 +9,7 @@ import {
   Contacts,
   Rolodex,
   Unreads,
-  S3State
+  StorageState
 } from "~/types";
 import { Center, LoadingSpinner } from "@tlon/indigo-react";
 import bigInt from 'big-integer';
@@ -33,7 +33,7 @@ interface NotebookRoutesProps {
   rootUrl: string;
   association: Association;
   associations: Associations;
-  s3: S3State;
+  storage: StorageState;
 }
 
 export function NotebookRoutes(
@@ -80,7 +80,7 @@ export function NotebookRoutes(
             association={props.association}
             graph={graph}
             baseUrl={baseUrl}
-            s3={props.s3}
+            storage={props.storage}
           />
         )}
       />
@@ -112,7 +112,7 @@ export function NotebookRoutes(
               contacts={notebookContacts}
               association={props.association}
               group={group}
-              s3={props.s3}
+              storage={props.storage}
               {...routeProps}
             />
           );

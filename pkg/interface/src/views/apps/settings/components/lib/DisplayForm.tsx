@@ -10,7 +10,7 @@ import * as Yup from 'yup';
 
 import GlobalApi from '~/logic/api/global';
 import { uxToHex } from '~/logic/lib/util';
-import { S3State, BackgroundConfig } from '~/types';
+import { StorageState, BackgroundConfig } from '~/types';
 import { BackgroundPicker, BgType } from './BackgroundPicker';
 import useLocalState, { LocalState } from '~/logic/state/local';
 
@@ -34,11 +34,11 @@ interface FormSchema {
 
 interface DisplayFormProps {
   api: GlobalApi;
-  s3: S3State;
+  storage: StorageState;
 }
 
 export default function DisplayForm(props: DisplayFormProps) {
-  const { api, s3 } = props;
+  const { api, storage } = props;
 
   const { hideAvatars, hideNicknames, background, set: setLocalState } = useLocalState();
 
@@ -94,7 +94,7 @@ export default function DisplayForm(props: DisplayFormProps) {
               bgType={props.values.bgType}
               bgUrl={props.values.bgUrl}
               api={api}
-              s3={s3}
+              storage={storage}
             />
             <Checkbox
               label="Disable avatars"

@@ -6,7 +6,7 @@ import GlobalApi from "~/logic/api/global";
 
 import { GroupAdminSettings } from "./Admin";
 import { GroupPersonalSettings } from "./Personal";
-import { GroupNotificationsConfig, S3State } from "~/types";
+import { GroupNotificationsConfig, StorageState } from "~/types";
 import { GroupChannelSettings } from "./Channels";
 import { useHistory } from "react-router-dom";
 import {resourceFromPath, roleForShip} from "~/logic/lib/group";
@@ -21,7 +21,7 @@ interface GroupSettingsProps {
   associations: Associations;
   api: GlobalApi;
   notificationsGroupConfig: GroupNotificationsConfig;
-  s3: S3State;
+  storage: StorageState;
   baseUrl: string;
 }
 export function GroupSettings(props: GroupSettingsProps) {

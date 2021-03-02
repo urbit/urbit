@@ -71,7 +71,7 @@ export function GroupsPane(props: GroupsPaneProps) {
           association={groupAssociation!}
           group={group!}
           api={api}
-          s3={props.s3}
+          storage={props.storage}
           notificationsGroupConfig={props.notificationsGroupConfig}
           associations={associations}
 

@@ -1,9 +1,16 @@
-import { useCallback, useMemo, useEffect, useRef, useState } from "react";
-import { S3State } from "../../types/s3-update";
+import {useCallback, useMemo, useEffect, useRef, useState} from 'react';
+import {
+  GcpState,
+  S3State,
+  StorageState
+} from '../../types';
 import S3 from "aws-sdk/clients/s3";
-import { dateToDa, deSig } from "./util";
+import GcpClient from './GcpClient';
+import {StorageClient, StorageAcl} from './StorageClient';
+import {dateToDa, deSig} from "./util";
 
-export interface IuseS3 {
+
+export interface IuseStorage {
   canUpload: boolean;
   upload: (file: File, bucket: string) => Promise<string>;
   uploadDefault: (file: File) => Promise<string>;
@@ -11,31 +18,43 @@ export interface IuseS3 {
   promptUpload: () => Promise<string | undefined>;
 }
 
-const useS3 = (s3: S3State, { accept = '*' } = { accept: '*' }): IuseS3 => {
+const useStorage = ({gcp, s3}: StorageState,
+                    { accept = '*' } = { accept: '*' }): IuseStorage => {
   const [uploading, setUploading] = useState(false);
 
-  const client = useRef<S3 | null>(null);
+  const client = useRef<StorageClient | null>(null);
 
   useEffect(() => {
-    if (!s3.credentials) {
-      return;
+    // prefer GCP if available, else use S3.
+    if (gcp.token !== undefined) {
+      client.current = new GcpClient(gcp.token.accessKey);
+    } else {
+      // XX ships currently always have S3 credentials, but the fields are all
+      // set to '' if they are not configured.
+      if (!s3.credentials ||
+          !s3.credentials.accessKeyId ||
+          !s3.credentials.secretAccessKey) {
+        return;
+      }
+      client.current = new S3({
+        credentials: s3.credentials,
+        endpoint: s3.credentials.endpoint
+      });
     }
-    client.current = new S3({
-      credentials: s3.credentials,
-      endpoint: s3.credentials.endpoint
-    });
-  }, [s3.credentials]);
+  }, [gcp.token, s3.credentials]);
 
   const canUpload = useMemo(
     () =>
-      (client && s3.credentials && s3.configuration.currentBucket !== "") || false,
-    [s3.credentials, s3.configuration.currentBucket, client]
+      ((gcp.token || (s3.credentials && s3.credentials.accessKeyId &&
+                      s3.credentials.secretAccessKey)) &&
+       s3.configuration.currentBucket !== "") || false,
+    [s3.credentials, gcp.token, s3.configuration.currentBucket]
   );
 
   const upload = useCallback(
     async (file: File, bucket: string) => {
-      if (!client.current) {
-        throw new Error("S3 not ready");
+      if (client.current === null) {
+        throw new Error("Storage not ready");
       }
 
       const fileParts = file.name.split('.');
@@ -47,7 +66,7 @@ const useS3 = (s3: S3State, { accept = '*' } = { accept: '*' }): IuseS3 => {
         Bucket: bucket,
         Key: `${window.ship}/${timestamp}-${fileName}.${fileExtension}`,
         Body: file,
-        ACL: "public-read",
+        ACL: StorageAcl.PublicRead,
         ContentType: file.type,
       };
 
@@ -63,11 +82,11 @@ const useS3 = (s3: S3State, { accept = '*' } = { accept: '*' }): IuseS3 => {
   );
 
   const uploadDefault = useCallback(async (file: File) => {
-    if (s3.configuration.currentBucket === "") {
+    if (s3.configuration.currentBucket === '') {
       throw new Error("current bucket not set");
     }
     return upload(file, s3.configuration.currentBucket);
-  }, [s3]);
+  }, [s3, upload]);
 
   const promptUpload = useCallback(
     () => {
@@ -88,12 +107,11 @@ const useS3 = (s3: S3State, { accept = '*' } = { accept: '*' }): IuseS3 => {
         document.body.appendChild(fileSelector);
         fileSelector.click();
       })
-
     },
     [uploadDefault]
   );
 
-  return { canUpload, upload, uploadDefault, uploading, promptUpload };
+  return {canUpload, upload, uploadDefault, uploading, promptUpload};
 };
 
-export default useS3;
+export default useStorage;
