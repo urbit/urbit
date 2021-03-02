@@ -132,8 +132,6 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
       return;
     }
     const { scrollTop, scrollHeight, offsetHeight } = this.window;
-    console.log(this.props.size);
-    console.log(this.pageSize);
 
     const unloaded = (this.startOffset() / this.props.size);
 
@@ -148,19 +146,15 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
   componentDidUpdate(prevProps: VirtualScrollerProps<T>, _prevState: VirtualScrollerState<T>) {
     const { id, size, data, offset } = this.props;
     const { visibleItems } = this.state;
-    if(id !== prevProps.id) {
-      console.log('changed id');
-      //this.resetScroll();
-      //this.updateVisible(offset ?? 0);
-    } else if(size !== prevProps.size) {
+    if(size !== prevProps.size) {
       if(this.scrollLocked) {
-        console.log('locked');
         this.updateVisible(0);
         if(IS_IOS) {
           (this.updateVisible as any).flush();
 
         }
         this.resetScroll();
+
       }
     }
   }
@@ -189,6 +183,7 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     if (!this.window) {
       return;
     }
+    log('reflow', `from: ${this.startOffset()} to: ${newOffset}`);
     this.isUpdating = true;
 
     const { data, onCalculateVisibleItems } = this.props;
@@ -254,7 +249,7 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     const { averageHeight } = this.props;
 
     this.window = element;
-    this.pageSize = Math.floor(element.offsetHeight / Math.floor(averageHeight / 5));
+    this.pageSize = Math.floor(element.offsetHeight / Math.floor(averageHeight / 6));
     this.pageDelta = Math.floor(this.pageSize / 3);
     if (this.props.origin === 'bottom') {
        element.addEventListener('wheel', (event) => {
@@ -279,16 +274,17 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     this.saveDepth = 0;
   }
 
-  async loadRows(newer: boolean) {
+  loadRows = _.throttle(async (newer: boolean) => {
     const dir = newer ? 'bottom' : 'top';
     if(this.loaded[dir]) {
       return;
     }
+    log('network', `loading more at ${dir}`);
     const done = await this.props.loadRows(newer);
     if(done) {
       this.loaded[dir] = true;
     }
-  }
+  }, 100);
 
   onScroll(event: UIEvent) {
     this.updateScroll();
@@ -312,7 +308,7 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
       }
       const newOffset = Math.max(0, startOffset - this.pageDelta);
       if(newOffset < 10) {
-        setTimeout(() => this.loadRows(true));
+        this.loadRows(true);
       }
 
       if(newOffset === 0) {
@@ -332,7 +328,7 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
       }
 
       if((newOffset + (3 * this.pageSize) > this.props.data.size)) {
-        setTimeout(() => this.loadRows(false));
+        this.loadRows(false)
       }
 
       if(newOffset !== startOffset) {
@@ -348,10 +344,9 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
       return;
     }
     if(this.saveDepth !== 1) {
-      console.log('bail', 'Deep restore');
+      log('bail', 'Deep restore');
       return;
     }
-    console.log(this.childRefs.size);
   
     const ref = this.childRefs.get(this.savedIndex)!;
     const newScrollTop = this.window.scrollHeight - ref.offsetTop - this.savedDistance;
@@ -371,7 +366,7 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
       if(offset === -1) {
         return;
       }
-      this.updateVisible(offset - this.pageDelta);
+      this.updateVisible(Math.max(offset - this.pageDelta, 0));
       if(IS_IOS) {
         (this.updateVisible as any).flush();
       }

@@ -50,6 +50,8 @@ interface ChatWindowState {
   unreadIndex: BigInteger;
 }
 
+const virtScrollerStyle = { height: '100%' };
+
 export default class ChatWindow extends Component<
   ChatWindowProps,
   ChatWindowState
@@ -91,8 +93,8 @@ export default class ChatWindow extends Component<
       if (this.props.scrollTo) {
         this.scrollToUnread();
       }
-
       this.setState({ initialized: true });
+      
     }, this.INITIALIZATION_MAX_TIME);
   }
 
@@ -168,7 +170,11 @@ export default class ChatWindow extends Component<
     this.props.api.hark.markCountAsRead(association, '/', 'message');
   }
 
-  async fetchMessages(newer: boolean): Promise<boolean> {
+  setActive = () => { 
+    this.setState({ idle: false });
+  }
+
+  fetchMessages = async (newer: boolean): Promise<boolean> => {
     const { api, station, graph } = this.props;
     if(this.state.fetchPending) {
       return false;
@@ -197,11 +203,10 @@ export default class ChatWindow extends Component<
     return currSize === graph.size;
   }
 
-  onScroll({ scrollTop, scrollHeight, windowHeight }) {
+  onScroll = ({ scrollTop, scrollHeight, windowHeight }) => {
     if (!this.state.idle && scrollTop > IDLE_THRESHOLD) {
       this.setState({ idle: true });
     }
-
   }
 
 
@@ -317,18 +322,15 @@ export default class ChatWindow extends Component<
           }}
           offset={unreadCount}
           origin='bottom'
-          style={{ height: '100%' }}
-          onStartReached={() => {
-            this.setState({ idle: false });
-            //this.dismissUnread();
-          }}
-          onScroll={this.onScroll.bind(this)}
+          style={virtScrollerStyle}
+          onStartReached={this.setActive}
+          onScroll={this.onScroll}
           data={graph}
           size={graph.size}
           id={association.resource}
           averageHeight={22}
           renderer={this.renderer}
-          loadRows={this.fetchMessages.bind(this)}
+          loadRows={this.fetchMessages}
         />
       </Col>
     );

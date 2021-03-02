@@ -5,6 +5,7 @@ import EmbedContainer from 'react-oembed-container';
 import { withLocalState } from '~/logic/state/local';
 import { RemoteContentPolicy } from '~/types/local-update';
 import { VirtualContextProps, withVirtual } from "~/logic/lib/virtualContext";
+import { IS_IOS } from '~/logic/lib/platform';
 
 type RemoteContentProps = VirtualContextProps & {
   url: string;
@@ -30,10 +31,11 @@ const IMAGE_REGEX = new RegExp(/(jpg|img|png|gif|tiff|jpeg|webp|webm|svg)$/i);
 const AUDIO_REGEX = new RegExp(/(mp3|wav|ogg)$/i);
 const VIDEO_REGEX = new RegExp(/(mov|mp4|ogv)$/i);
 
+
 class RemoteContent extends Component<RemoteContentProps, RemoteContentState> {
   private fetchController: AbortController | undefined;
   containerRef: HTMLDivElement | null = null;
-  private saving = true;
+  private saving = false;
   constructor(props) {
     super(props);
     this.state = {
@@ -47,7 +49,25 @@ class RemoteContent extends Component<RemoteContentProps, RemoteContentState> {
     this.onError = this.onError.bind(this);
   }
 
+  save = () => {
+    console.log(`saving for: ${this.props.url}`);
+    if(this.saving) {
+      return;
+    }
+    this.saving = true;
+    this.props.save();
+  };
+
+  restore = () => {
+    console.log(`restoring for: ${this.props.url}`);
+    this.saving = false;
+    this.props.restore();
+  }
+
   componentWillUnmount() {
+    if(this.saving) {
+      this.restore();
+    }
     if (this.fetchController) {
       this.fetchController.abort();
     }
@@ -57,10 +77,10 @@ class RemoteContent extends Component<RemoteContentProps, RemoteContentState> {
     event.stopPropagation();
     let unfoldState = this.state.unfold;
     unfoldState = !unfoldState;
-    this.props.save();
+    this.save();
     this.setState({ unfold: unfoldState });
     requestAnimationFrame(() => {
-      this.props.restore();
+      this.restore();
     });
   }
 
@@ -70,10 +90,20 @@ class RemoteContent extends Component<RemoteContentProps, RemoteContentState> {
       //console.log('remotecontent: restoring');
       //prevProps.shiftLayout.restore();
     }
+    const { url } = this.props;
+    if(url !== prevProps.url && (IMAGE_REGEX.test(url) || AUDIO_REGEX.test(url) || VIDEO_REGEX.test(url))) {
+      this.save();
+    };
+
+  }
+
+  componentDidMount() {
   }
 
   onLoad = () => {
     window.requestAnimationFrame(() => {
+      const { restore } = this;
+      restore();
     });
 
   }
@@ -109,6 +139,7 @@ return;
   }
 
   onError(e: Event) {
+    this.restore();
     this.setState({ noCors: true });
   }
 
@@ -158,6 +189,7 @@ return;
             className="db"
             src={url}
             style={style}
+            onLoad={onLoad}
             {...audioProps}
             {...props}
           />

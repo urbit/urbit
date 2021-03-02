@@ -7,12 +7,6 @@ import Timestamp from '~/views/components/Timestamp';
 
 export const UnreadNotice = (props) => {
   const { unreadCount, unreadMsg, dismissUnread, onClick } = props;
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    if(visible && unreadCount) {
-      dismissUnread();
-    }
-  }, [visible])
 
   if (!unreadMsg || (unreadCount === 0)) {
     return null;
@@ -28,7 +22,6 @@ export const UnreadNotice = (props) => {
   }
 
   return (
-    <VisibilitySensor onChange={setVisible}>
     <Box style={{ left: '0px', top: '0px' }}
       p='4'
       width='100%'
@@ -61,6 +54,5 @@ export const UnreadNotice = (props) => {
         </Text>
       </Box>
     </Box>
-    </VisibilitySensor>
   );
 }

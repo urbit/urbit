@@ -4,10 +4,12 @@ import React, {
   useEffect,
   useRef,
   Component,
-  PureComponent
+  PureComponent,
+  useCallback
 } from 'react';
 import moment from 'moment';
 import _ from 'lodash';
+import VisibilitySensor from 'react-visibility-sensor';
 import { Box, Row, Text, Rule, BaseImage } from '@tlon/indigo-react';
 import { Sigil } from '~/logic/lib/sigil';
 import OverlaySigil from '~/views/components/OverlaySigil';
@@ -58,7 +60,20 @@ export const DayBreak = ({ when, shimTop = false }: DayBreakProps) => (
   </Row>
 );
 
-export const UnreadMarker = React.forwardRef(({ dayBreak, when }, ref) => (
+export const UnreadMarker = React.forwardRef(({ dayBreak, when, api, association }, ref) => {
+  const [visible, setVisible] = useState(false);
+  const dismiss = useCallback(() => {
+    api.hark.markCountAsRead(association, '/', 'message');
+  }, [api, association]);
+
+  useEffect(() => {
+    if(visible) {
+      console.log('dismissing');
+      dismiss();
+    }
+  }, [visible]);
+
+  return (
   <Row
     position='absolute'
     ref={ref}
@@ -70,12 +85,14 @@ export const UnreadMarker = React.forwardRef(({ dayBreak, when }, ref) => (
     width='100%'
   >
     <Rule borderColor='lightBlue' />
+    <VisibilitySensor onChange={setVisible}>
     <Text color='blue' fontSize={0} flexShrink='0' px={2}>
       New messages below
     </Text>
+    </VisibilitySensor>
     <Rule borderColor='lightBlue' />
   </Row>
-));
+)});
 
 interface ChatMessageProps {
   msg: Post;
@@ -199,6 +216,8 @@ class ChatMessage extends Component<ChatMessageProps> {
         <Box style={unreadContainerStyle}>
           {isLastRead ? (
             <UnreadMarker
+              association={association}
+              api={api}
               dayBreak={dayBreak}
               when={msg['time-sent']}
               ref={unreadMarkerRef}
