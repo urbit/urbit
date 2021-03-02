@@ -118,6 +118,23 @@
     (snoc lis [child-index childless-node])
   (tap-deep child-index p.children.node)
 ::
+++  got-deep
+  |=  [=graph:store =index:store]
+  ^-  node:store
+  =/  ind  index
+  ?>  ?=(^ index)
+  =/  =node:store  (need (get:orm:store graph `atom`i.index))
+  =.  ind  t.index
+  |-  ^-  node:store
+  ?~  ind
+    node
+  ?:  ?=(%empty -.children.node)
+    !!
+  %_  $
+    ind    t.ind
+    node   (need (get:orm:store p.children.node i.ind))
+  ==
+::
 ++  get-mark
   |=  res=resource
   (scry-for ,(unit mark) /graph-mark/(scot %p entity.res)/[name.res])

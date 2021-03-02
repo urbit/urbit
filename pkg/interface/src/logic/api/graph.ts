@@ -245,7 +245,7 @@ export default class GraphApi extends BaseApi<StoreState> {
             pendingHashes['pending-indices'][ind] || null;
           return action['add-nodes'].nodes[ind];
         });
-
+  
       this.store.handleEvent({ data: {
         'graph-update': {
           'pending-indices': pendingHashes['pending-indices'],

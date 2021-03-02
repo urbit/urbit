@@ -1,6 +1,20 @@
 /-  spider
-/+  strandio, store=graph-store, graph, graph-view, sig=signatures
+/+  strandio, store=graph-store, gra=graph, graph-view, sig=signatures
 =,  strand=strand:spider
+=>
+|%
+++  scry-graph
+  |=  rid=resource:store
+  =/  m  (strand ,graph:store)
+  ^-  form:m
+  ;<  =update:store  bind:m
+    %+  scry:strandio  update:store
+    /gx/graph-store/graph/(scot %p entity.rid)/[name.rid]/noun
+  ?>  ?=(%0 -.update)
+  ?>  ?=(%add-graph -.q.update)
+  (pure:m graph.q.update)
+--
+::
 ^-  thread:spider
 |=  arg=vase
 =/  m  (strand:spider ,vase)
@@ -9,6 +23,7 @@
 ?>  ?=(%add-nodes -.q.update)
 =*  poke-our  poke-our:strandio
 ;<  =bowl:spider  bind:m  get-bowl:strandio
+;<  =graph:store  bind:m  (scry-graph resource.q.update)
 |^
 =.  nodes.q.update
   %-  ~(gas by *(map index:store node:store))
@@ -83,19 +98,15 @@
       children.node
     :-  %graph
     %+  gas:orm:store  *graph:store
-    %+  turn
-      %+  turn
-        (tap-deep:graph index p.children.node)
-      |=  [=index:store =node:store]
-      ^-  [index:store node:store]
+    %+  turn  (tap:orm:store p.children.node)
+    |=  [=atom =node:store]
+    =/  [* nod=node:store]
       %_  loop
         parent-hash  `hash
-        index        index
+        index        (snoc index atom)
         node         node
       ==
-    |=  [=index:store =node:store]
-    ^-  [atom node:store]
-    [(rear index) node]
+    [atom nod]
   ==
 ::
 ++  index-to-parent-hash
@@ -105,10 +116,7 @@
     !!
   ?:  ?=([@ ~] index)
     ~
-  =/  node
-    %+  got-node:graph
-      resource.q.update
-    (snip `(list atom)`index)
+  =/  node  (got-deep:gra graph (snip `(list atom)`index))
   hash.post.node
 ::
 ++  nodes-to-pending-indices
