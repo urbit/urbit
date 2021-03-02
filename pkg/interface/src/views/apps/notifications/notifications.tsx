@@ -8,7 +8,6 @@ import { Box, Col, Text, Row } from '@tlon/indigo-react';
 import { Body } from '~/views/components/Body';
 import { PropFunc } from '~/types/util';
 import Inbox from './inbox';
-import NotificationPreferences from './preferences';
 import { Dropdown } from '~/views/components/Dropdown';
 import { FormikOnBlur } from '~/views/components/FormikOnBlur';
 import GroupSearch from '~/views/components/GroupSearch';
@@ -80,18 +79,6 @@ export default function NotificationsScreen(props: any): ReactElement {
                     borderBottomColor="washedGray"
                   >
                     <Text>Updates</Text>
-                    <Row>
-                      <Box>
-                        <HeaderLink ref={anchorRef} current={view} view="">
-                          Inbox
-                        </HeaderLink>
-                      </Box>
-                      <Box>
-                        <HeaderLink current={view} view="preferences">
-                          Preferences
-                        </HeaderLink>
-                      </Box>
-                    </Row>
                     <Row
                       justifyContent="space-between"
                     >
@@ -140,11 +127,6 @@ export default function NotificationsScreen(props: any): ReactElement {
                       </Dropdown>
                     </Row>
                   </Row>
-                  {view === 'preferences' && (
-                    <NotificationPreferences
-                      api={props.api}
-                    />
-                  )}
                   {!view && <Inbox {...props} filter={filter.groups} />}
                 </Col>
               </Body>

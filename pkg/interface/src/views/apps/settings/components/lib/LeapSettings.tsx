@@ -75,6 +75,7 @@ export function LeapSettings(props: { api: GlobalApi; }) {
 
   return (
     <Col p="5" pt="4" gapY="5">
+      <BackButton/>
       <Col gapY="1">
         <Text fontSize="2" fontWeight="medium">
           Leap

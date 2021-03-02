@@ -13,6 +13,7 @@ import { S3State, BackgroundConfig } from "~/types";
 import { BackgroundPicker, BgType } from "./BackgroundPicker";
 import useSettingsState, { SettingsState, selectSettingsState } from "~/logic/state/settings";
 import {AsyncButton} from "~/views/components/AsyncButton";
+import { BackButton } from "./BackButton";
 
 const formSchema = Yup.object().shape({
   bgType: Yup.string()
@@ -86,6 +87,7 @@ export default function DisplayForm(props: DisplayFormProps) {
       {(props) => (
         <Form>
           <Col p="5" pt="4" gapY="5">
+            <BackButton/>
             <Col gapY="2">
               <Text color="black" fontSize={2} fontWeight="medium">
                 Display Preferences
