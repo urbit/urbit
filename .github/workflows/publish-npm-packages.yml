@@ -2,7 +2,7 @@ name: publish-npm-packages
 on:
   push:
     branches:
-      - 'jt/npm-publish'
+      - 'master'
 jobs:
   publish-api:
     runs-on: ubuntu-latest
@@ -19,7 +19,6 @@ jobs:
       - uses: JS-DevTools/npm-publish@v1
         with:
           check-version: true
-          dry-run: true
           package: './pkg/npm/api/package.json'
           token: ${{ secrets.NPM_TOKEN }}
 
@@ -38,7 +37,6 @@ jobs:
       - uses: JS-DevTools/npm-publish@v1
         with:
           check-version: true
-          dry-run: true
           package: './pkg/npm/http-api/package.json'
           token: ${{ secrets.NPM_TOKEN }}
 
@@ -57,7 +55,6 @@ jobs:
       - uses: JS-DevTools/npm-publish@v1
         with:
           check-version: true
-          dry-run: true
           package: './pkg/npm/eslint-config/package.json'
           token: ${{ secrets.NPM_TOKEN }}
 
