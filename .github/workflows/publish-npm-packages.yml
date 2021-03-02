@@ -22,6 +22,7 @@ jobs:
         with:
           check-version: true
           dry-run: true
+          package: './pkg/npm/api/package.json'
           token: ${{ secrets.NPM_TOKEN }}
 
   publish-http-api:
@@ -42,6 +43,7 @@ jobs:
         with:
           check-version: true
           dry-run: true
+          package: './pkg/npm/http-api/package.json'
           token: ${{ secrets.NPM_TOKEN }}
 
   publish-eslint-config:
@@ -62,5 +64,6 @@ jobs:
         with:
           check-version: true
           dry-run: true
+          package: './pkg/npm/eslint-config/package.json'
           token: ${{ secrets.NPM_TOKEN }}
 
