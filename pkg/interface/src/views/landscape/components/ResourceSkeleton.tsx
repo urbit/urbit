@@ -90,7 +90,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
         >
           <Link to={`/~landscape${workspace}`}> {'<- Back'}</Link>
         </Box>
-        <Box px={1} mr={2} minWidth={0} display="flex" flexShrink={0}>
+        <Box px={1} mr={2} minWidth={0} display="flex" flexShrink={[1, 0]}>
           <Text
             mono={urbitOb.isValidPatp(title)}
             fontSize='2'
@@ -101,7 +101,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
             overflow="hidden"
             whiteSpace="pre"
             minWidth={0}
-            flexShrink={0}
+            flexShrink={1}
           >
             {title}
           </Text>
@@ -109,7 +109,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
         <Row
           display={['none', 'flex']}
           verticalAlign="middle"
-          flexShrink={1}
+          flexShrink={2}
           minWidth={0}
           title={association?.metadata?.description}
         >
@@ -125,7 +125,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
             {(workspace === '/messages') ? recipient : association?.metadata?.description}
           </TruncatedText>
         </Row>
-        <Box flexGrow={1} />
+        <Box flexGrow={1} flexShrink={0} />
         {canWrite && (
           <Link to={resourcePath('/new')} style={{ flexShrink: '0' }}>
             <Text bold pr='3' color='blue'>+ New Post</Text>

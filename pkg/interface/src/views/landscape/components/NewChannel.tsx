@@ -115,10 +115,14 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps): ReactE
 
   return (
     <Col overflowY="auto" p={3} backgroundColor="white">
-      <Box pb='3' display={['block', 'none']} onClick={() => history.push(props.baseUrl)}>
-        <Text fontSize='0' bold>{'<- Back'}</Text>
+      <Box
+        pb='3'
+        display={workspace?.type === 'messages' ? 'none' : ['block', 'none']}
+        onClick={() => history.push(props.baseUrl)}
+      >
+        <Text>{'<- Back'}</Text>
       </Box>
-      <Box color="black">
+      <Box>
         <Text fontSize={2} bold>{workspace?.type === 'messages' ? 'Direct Message' : 'New Channel'}</Text>
       </Box>
       <Formik
