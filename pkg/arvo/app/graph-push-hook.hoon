@@ -63,6 +63,11 @@
     =*  mark  i.t.wire
     :_  this
     (build-permissions mark i.t.t.wire %next)^~
+  ::
+      [%transform-add @ ~]
+    =*  mark  i.t.wire
+    :_  this
+    (build-transform-add mark %next)^~
   ==
 ::
 ++  on-fail   on-fail:def
@@ -193,6 +198,7 @@
     :_  this(marks (~(put in marks) mark))
     :~  (build-permissions:hc mark %add %sing)
         (build-permissions:hc mark %remove %sing)
+        (build-transform-add:hc mark %sing)
     ==
   ::
       %remove-graph
@@ -329,6 +335,14 @@
   ^-  card
   =/  =wire  /perms/[mark]/[kind]
   =/  =mood:clay  [%c da+now.bowl /[mark]/(perm-mark-name kind)]
+  =/  =rave:clay  ?:(?=(%sing mode) [mode mood] [mode mood])
+  [%pass wire %arvo %c %warp our.bowl %home `rave]
+::
+++  build-transform-add
+  |=  [=mark mode=?(%sing %next)]
+  ^-  card
+  =/  =wire  /transform-add/[mark]
+  =/  =mood:clay  [%c da+now.bowl /[mark]/transform-add-nodes]
   =/  =rave:clay  ?:(?=(%sing mode) [mode mood] [mode mood])
   [%pass wire %arvo %c %warp our.bowl %home `rave]
 --
