@@ -9,7 +9,7 @@ import { Sigil } from '~/logic/lib/sigil';
 import { ViewProfile } from './ViewProfile';
 import { EditProfile } from './EditProfile';
 import { SetStatusBarModal } from '~/views/components/SetStatusBarModal';
-import { uxToHex, useHovering } from '~/logic/lib/util';
+import { uxToHex } from '~/logic/lib/util';
 import { useTutorialModal } from '~/views/components/useTutorialModal';
 
 export function ProfileHeader(props: any): ReactElement {
@@ -18,7 +18,7 @@ export function ProfileHeader(props: any): ReactElement {
       border='1px solid'
       borderColor='lightGray'
       borderRadius='2'
-      marginBottom='calc(64px + 0.5rem)'
+      marginBottom='calc(64px + 2rem)'
     >
       {props.children}
     </Box>
@@ -26,7 +26,6 @@ export function ProfileHeader(props: any): ReactElement {
 }
 
 export function ProfileImages(props: any): ReactElement {
-  const { hovering, bind } = useHovering();
   const { hideAvatars } = useLocalState(({ hideAvatars }) => ({
     hideAvatars
   }));
@@ -62,18 +61,11 @@ export function ProfileImages(props: any): ReactElement {
     );
 
   return (
-    <Row width='100%' height='300px' position='relative' {...bind}>
+    <Row width='100%' height='300px' position='relative'>
       {cover}
-
-      <Center
-        position='absolute'
-        width='100%'
-        height='100%'
-        display={hovering ? 'flex' : 'none'}
-      >
+      <Center position='absolute' width='100%' height='100%'>
         {props.children}
       </Center>
-
       <Box
         height='128px'
         width='128px'

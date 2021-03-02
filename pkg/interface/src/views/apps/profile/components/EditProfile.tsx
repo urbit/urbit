@@ -1,4 +1,4 @@
-import React, { ReactElement, useRef } from 'react';
+import React, { ReactElement, useRef, useState } from 'react';
 import * as Yup from 'yup';
 import _ from 'lodash';
 import { Formik } from 'formik';
@@ -10,7 +10,8 @@ import {
   ManagedCheckboxField as Checkbox,
   Col,
   Text,
-  Row
+  Row,
+  Button
 } from '@tlon/indigo-react';
 
 import { uxToHex } from '~/logic/lib/util';
@@ -45,6 +46,39 @@ const emptyContact = {
   'last-updated': 0,
   isPublic: false
 };
+
+export function ProfileHeaderImageEdit(props: any): ReactElement {
+  const { contact, s3, setFieldValue, fieldValues } = { ...props };
+  const [editCover, setEditCover] = useState(false);
+  const [removedCoverLabel, setRemovedCoverLabel] = useState('Remove Header');
+  const handleClear = (e) => {
+    e.preventDefault();
+    setFieldValue('cover', '');
+    setRemovedCoverLabel('Header Removed');
+  };
+  return (
+    <>
+      {contact?.cover ? (
+        <div>
+          {editCover ? (
+            <ImageInput id='cover' s3={s3} marginTop='-8px' />
+          ) : (
+            <Row>
+              <Button mr='2' onClick={() => setEditCover(true)}>
+                Replace Header
+              </Button>
+              <Button onClick={(e) => handleClear(e)}>
+                {removedCoverLabel}
+              </Button>
+            </Row>
+          )}
+        </div>
+      ) : (
+        <ImageInput id='cover' s3={s3} marginTop='-8px' />
+      )}
+    </>
+  );
+}
 
 export function EditProfile(props: any): ReactElement {
   const { contact, ship, api, isPublic } = props;
@@ -108,57 +142,72 @@ export function EditProfile(props: any): ReactElement {
         initialValues={contact || emptyContact}
         onSubmit={onSubmit}
       >
-        <Form width='100%' height='100%'>
-          <ProfileHeader>
-            <ProfileControls>
-              <Row>
-                <button type='submit' style={{ appearance: 'none' }}>
-                  <Text py='2' cursor='pointer' fontWeight='500' color='blue'>
-                    Save Edits
+        {({ setFieldValue, values }) => (
+          <Form width='100%' height='100%'>
+            <ProfileHeader>
+              <ProfileControls>
+                <Row>
+                  <button
+                    type='submit'
+                    style={{ appearance: 'none', background: 'transparent' }}
+                  >
+                    <Text py='2' cursor='pointer' fontWeight='500' color='blue'>
+                      Save Edits
+                    </Text>
+                  </button>
+                  <Text
+                    py='2'
+                    ml='3'
+                    fontWeight='500'
+                    cursor='pointer'
+                    onClick={() => {
+                      history.push(`/~profile/${ship}`);
+                    }}
+                  >
+                    Cancel
                   </Text>
-                </button>
-                <Text
-                  py='2'
-                  ml='3'
-                  fontWeight='500'
-                  cursor='pointer'
-                  onClick={() => {
-                    history.push(`/~profile/${ship}`);
-                  }}
-                >
-                  Cancel
-                </Text>
-              </Row>
-              <ProfileStatus contact={contact} />
-            </ProfileControls>
-            <ProfileImages contact={contact} />
-          </ProfileHeader>
-          <Input id='nickname' label='Name' mb={3} />
-          <Col width='100%'>
-            <Text mb={2}>Description</Text>
-            <MarkdownField id='bio' mb={3} s3={props.s3} />
-          </Col>
-          <ColorInput id='color' label='Sigil Color' mb={3} />
-          <Row mb={3} width='100%'>
-            <Col pr={2} width='50%'>
-              <ImageInput id='cover' label='Cover Image' s3={props.s3} />
+                </Row>
+                <ProfileStatus contact={contact} />
+              </ProfileControls>
+              <ProfileImages contact={contact}>
+                <ProfileHeaderImageEdit
+                  contact={contact}
+                  s3={props.s3}
+                  fieldValues={values}
+                  setFieldValue={setFieldValue}
+                />
+              </ProfileImages>
+            </ProfileHeader>
+            <Row mb={3} pt={5} width='100%'>
+              <Col pr={2} width='25%'>
+                <ColorInput id='color' label='Sigil Color' />
+              </Col>
+              <Col pl={2} width='75%'>
+                <ImageInput
+                  id='avatar'
+                  label='Overlay Avatar (may be hidden by other users)'
+                  s3={props.s3}
+                />
+              </Col>
+            </Row>
+            <Input id='nickname' label='Custom Name' mb={3} />
+            <Col width='100%'>
+              <Text mb={2}>Description</Text>
+              <MarkdownField id='bio' mb={3} s3={props.s3} />
             </Col>
-            <Col pl={2} width='50%'>
-              <ImageInput id='avatar' label='Profile Image' s3={props.s3} />
-            </Col>
-          </Row>
-          <Checkbox mb={3} id='isPublic' label='Public Profile' />
-          <GroupSearch
-            label='Pinned Groups'
-            id='groups'
-            groups={props.groups}
-            associations={props.associations}
-            publicOnly
-          />
-          <AsyncButton primary loadingText='Updating...' border mt={3}>
-            Submit
-          </AsyncButton>
-        </Form>
+            <Checkbox mb={3} id='isPublic' label='Public Profile' />
+            <GroupSearch
+              label='Pinned Groups'
+              id='groups'
+              groups={props.groups}
+              associations={props.associations}
+              publicOnly
+            />
+            <AsyncButton primary loadingText='Updating...' border mt={3}>
+              Submit
+            </AsyncButton>
+          </Form>
+        )}
       </Formik>
     </>
   );
