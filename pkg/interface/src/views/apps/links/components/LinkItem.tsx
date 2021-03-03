@@ -21,7 +21,7 @@ interface LinkItemProps {
   unreads: Unreads;
 }
 
-export const LinkItem = (props: LinkItemProps): ReactElement => {
+export const LinkItem = React.forwardRef((props: LinkItemProps, ref: any): ReactElement => {
   const {
     node,
     resource,
@@ -32,7 +32,6 @@ export const LinkItem = (props: LinkItemProps): ReactElement => {
     ...rest
   } = props;
 
-  const ref = useRef<HTMLDivElement | null>(null);
   const remoteRef = useRef<typeof RemoteContent | null>(null);
 
   const markRead = useCallback(() => {
@@ -43,9 +42,8 @@ export const LinkItem = (props: LinkItemProps): ReactElement => {
     function onBlur() {
       // FF will only update on next tick
       setTimeout(() => {
-        console.log(remoteRef.current);
         if(document.activeElement instanceof HTMLIFrameElement
-          && remoteRef?.current?.containerRef?.contains(document.activeElement)) {
+          && remoteRef?.current?.ref?.contains(document.activeElement)) {
           markRead();
         }
       });
@@ -185,5 +183,5 @@ export const LinkItem = (props: LinkItemProps): ReactElement => {
 
     </Row>
   </Box>);
-};
+});
 

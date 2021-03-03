@@ -34,7 +34,6 @@ const VIDEO_REGEX = new RegExp(/(mov|mp4|ogv)$/i);
 
 class RemoteContent extends Component<RemoteContentProps, RemoteContentState> {
   private fetchController: AbortController | undefined;
-  containerRef: HTMLDivElement | null = null;
   private saving = false;
   constructor(props) {
     super(props);
@@ -50,7 +49,6 @@ class RemoteContent extends Component<RemoteContentProps, RemoteContentState> {
   }
 
   save = () => {
-    console.log(`saving for: ${this.props.url}`);
     if(this.saving) {
       return;
     }
@@ -59,7 +57,6 @@ class RemoteContent extends Component<RemoteContentProps, RemoteContentState> {
   };
 
   restore = () => {
-    console.log(`restoring for: ${this.props.url}`);
     this.saving = false;
     this.props.restore();
   }
@@ -248,15 +245,8 @@ return;
             {...props}
           >
             {this.state.embed && this.state.embed.html && this.state.unfold
-            ? <EmbedContainer markup={this.state.embed.html}>
-              <div className="embed-container" ref={(el) => {
-                this.onLoad();
- this.containerRef = el;
-}}
-                dangerouslySetInnerHTML={{ __html: this.state.embed.html }}
-              ></div>
-            </EmbedContainer>
-            : null}
+              ?  <Embed html={this.state.embed.html} onLoad={this.onLoad} />             
+              : null}
           </Box>
         </Fragment>
       );
@@ -267,5 +257,21 @@ return;
     }
   }
 }
+
+const Embed = React.memo((props: { html: string; onLoad: () => void; }) => {
+  const { html, onLoad } = props;
+  return (
+    <EmbedContainer markup={html}>
+      <div
+        className="embed-container" 
+        ref={(el) => {
+          onLoad();
+        }}
+        dangerouslySetInnerHTML={{ __html: html }}
+      ></div>
+    </EmbedContainer>
+
+  )
+});
 
 export default withLocalState(withVirtual(RemoteContent), ['remoteContentPolicy']);
