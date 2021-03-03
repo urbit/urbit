@@ -137,7 +137,7 @@ export default class ChatWindow extends Component<
       this.fetchPending = false;
     }
 
-    if (unreadCount > prevProps.unreadCount && this.state.idle) {
+    if (unreadCount > prevProps.unreadCount) {
       this.calculateUnreadIndex();
     }
 

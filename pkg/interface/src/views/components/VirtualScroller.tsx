@@ -115,7 +115,7 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
       : this.updateVisible.bind(this);
 
     this.invertedKeyHandler = this.invertedKeyHandler.bind(this);
-    this.onScroll = IS_IOS ? _.debounce(this.onScroll.bind(this), 100) : this.onScroll.bind(this);
+    this.onScroll = IS_IOS ? _.debounce(this.onScroll.bind(this), 150) : this.onScroll.bind(this);
     this.scrollKeyMap = this.scrollKeyMap.bind(this);
     this.setWindow = this.setWindow.bind(this);
   }
@@ -124,6 +124,7 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     if(true) {
       this.updateVisible(0);
       this.resetScroll();
+      this.loadRows(false);
       return;
     }
   }
@@ -251,7 +252,7 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     const { averageHeight } = this.props;
 
     this.window = element;
-    this.pageSize = Math.floor(element.offsetHeight / Math.floor(averageHeight / 6));
+    this.pageSize = Math.floor(element.offsetHeight / Math.floor(averageHeight / 5.5));
     this.pageDelta = Math.floor(this.pageSize / 3);
     if (this.props.origin === 'bottom') {
        element.addEventListener('wheel', (event) => {
