@@ -63,7 +63,7 @@ const ZONE_SIZE = IS_IOS ? 10 : 40;
 
 export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T>, VirtualScrollerState<T>> {
   /**
-   * A reference to our scroll container 
+   * A reference to our scroll container
    */
   private window: HTMLDivElement | null = null;
   /**
@@ -110,7 +110,7 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
       scrollbar: 0
     };
 
-    this.updateVisible = IS_IOS 
+    this.updateVisible = IS_IOS
       ? _.debounce(this.updateVisible.bind(this), 100)
       : this.updateVisible.bind(this);
 
@@ -168,7 +168,7 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
   }
 
   startOffset() {
-    const startIndex = this.state.visibleItems.peekLargest()?.[0];
+    const startIndex = this.state?.visibleItems?.peekLargest()?.[0];
     if(!startIndex) {
       return 0;
     }
@@ -321,7 +321,7 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
       if(newOffset !== startOffset) {
         this.updateVisible(newOffset);
       }
-    } 
+    }
     else if (scrollTop + windowHeight >= scrollHeight - ZONE_SIZE) {
       this.scrollLocked = false;
       log('scroll', `Entered end zone ${scrollTop}`);
@@ -351,7 +351,7 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
       log('bail', 'Deep restore');
       return;
     }
-  
+
     const ref = this.childRefs.get(this.savedIndex)!;
     const newScrollTop = this.window.scrollHeight - ref.offsetTop - this.savedDistance;
 
@@ -382,7 +382,7 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
 
         ref?.scrollIntoView({ block: 'center' });
       });
-    } else { 
+    } else {
       this.savedIndex = null;
       this.savedDistance = 0;
       this.saveDepth = 0;
@@ -458,9 +458,9 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
 
     const transform = isTop ? 'scale3d(1, 1, 1)' : 'scale3d(1, -1, 1)';
 
-    const atStart = this.props.data.peekLargest()![0].eq(visibleItems.peekLargest()?.[0] || bigInt.zero)
-    const atEnd = false; 
-    
+    const atStart = this.props.data.peekLargest()?.[0].eq(visibleItems.peekLargest()?.[0] || bigInt.zero);
+    const atEnd = false;
+
     return (
       <>
         {!IS_IOS && (<Box borderRadius="3" top ={isTop ? "0" : undefined} bottom={!isTop ? "0" : undefined} ref={el => { this.scrollRef = el; }} right="0" height="50px" position="absolute" width="4px" backgroundColor="lightGray" />)}
@@ -477,11 +477,11 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
                 setRef={this.setRef}
                 index={index}
                 scrollWindow={this.window}
-                renderer={renderer} 
+                renderer={renderer}
               />
             ))}
           </VirtualContext.Provider>
-          {(!isTop ? !atStart : !atEnd) && 
+          {(!isTop ? !atStart : !atEnd) &&
             (<Center height="5">
               <LoadingSpinner />
             </Center>)}
@@ -508,4 +508,4 @@ function VirtualChild(props: VirtualChildProps) {
 
   return (<Renderer ref={ref} {...rest} />);
 };
-  
+
