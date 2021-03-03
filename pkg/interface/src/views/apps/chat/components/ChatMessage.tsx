@@ -4,10 +4,12 @@ import React, {
   useEffect,
   useRef,
   Component,
-  PureComponent
+  PureComponent,
+  useCallback
 } from 'react';
 import moment from 'moment';
 import _ from 'lodash';
+import VisibilitySensor from 'react-visibility-sensor';
 import { Box, Row, Text, Rule, BaseImage } from '@tlon/indigo-react';
 import { Sigil } from '~/logic/lib/sigil';
 import OverlaySigil from '~/views/components/OverlaySigil';
@@ -60,7 +62,20 @@ export const DayBreak = ({ when, shimTop = false }: DayBreakProps) => (
   </Row>
 );
 
-export const UnreadMarker = React.forwardRef(({ dayBreak, when }, ref) => (
+export const UnreadMarker = React.forwardRef(({ dayBreak, when, api, association }, ref) => {
+  const [visible, setVisible] = useState(false);
+  const dismiss = useCallback(() => {
+    api.hark.markCountAsRead(association, '/', 'message');
+  }, [api, association]);
+
+  useEffect(() => {
+    if(visible) {
+      console.log('dismissing');
+      dismiss();
+    }
+  }, [visible]);
+
+  return (
   <Row
     position='absolute'
     ref={ref}
@@ -72,15 +87,16 @@ export const UnreadMarker = React.forwardRef(({ dayBreak, when }, ref) => (
     width='100%'
   >
     <Rule borderColor='lightBlue' />
+    <VisibilitySensor onChange={setVisible}>
     <Text color='blue' fontSize={0} flexShrink='0' px={2}>
       New messages below
     </Text>
+    </VisibilitySensor>
     <Rule borderColor='lightBlue' />
   </Row>
-));
+)});
 
 interface ChatMessageProps {
-  measure(element): void;
   msg: Post;
   previousMsg?: Post;
   nextMsg?: Post;
@@ -98,9 +114,10 @@ interface ChatMessageProps {
   api: GlobalApi;
   highlighted?: boolean;
   renderSigil?: boolean;
+  innerRef: (el: HTMLDivElement | null) => void;
 }
 
-export default class ChatMessage extends Component<ChatMessageProps> {
+class ChatMessage extends Component<ChatMessageProps> {
   private divRef: React.RefObject<HTMLDivElement>;
 
   constructor(props) {
@@ -109,9 +126,6 @@ export default class ChatMessage extends Component<ChatMessageProps> {
   }
 
   componentDidMount() {
-    if (this.divRef.current) {
-      this.props.measure(this.divRef.current);
-    }
   }
 
   render() {
@@ -126,7 +140,6 @@ export default class ChatMessage extends Component<ChatMessageProps> {
       className = '',
       isPending,
       style,
-      measure,
       scrollWindow,
       isLastMessage,
       unreadMarkerRef,
@@ -159,9 +172,6 @@ export default class ChatMessage extends Component<ChatMessageProps> {
       .unix(msg['time-sent'] / 1000)
       .format(renderSigil ? 'h:mm A' : 'h:mm');
 
-    const reboundMeasure = (event) => {
-      return measure(this.divRef.current);
-    };
 
     const messageProps = {
       msg,
@@ -169,7 +179,6 @@ export default class ChatMessage extends Component<ChatMessageProps> {
       contacts,
       association,
       group,
-      measure: reboundMeasure.bind(this),
       style,
       containerClass,
       isPending,
@@ -179,7 +188,7 @@ export default class ChatMessage extends Component<ChatMessageProps> {
       highlighted,
       fontSize,
       associations,
-      groups
+      groups,
     };
 
     const unreadContainerStyle = {
@@ -188,10 +197,11 @@ export default class ChatMessage extends Component<ChatMessageProps> {
 
     return (
       <Box
-        ref={this.divRef}
+        ref={this.props.innerRef}
         pt={renderSigil ? 2 : 0}
         pb={isLastMessage ? 4 : 2}
         className={containerClass}
+        backgroundColor={highlighted ? 'blue' : 'white'}
         style={style}
       >
         {dayBreak && !isLastRead ? (
@@ -208,6 +218,8 @@ export default class ChatMessage extends Component<ChatMessageProps> {
         <Box style={unreadContainerStyle}>
           {isLastRead ? (
             <UnreadMarker
+              association={association}
+              api={api}
               dayBreak={dayBreak}
               when={msg['time-sent']}
               ref={unreadMarkerRef}
@@ -219,11 +231,12 @@ export default class ChatMessage extends Component<ChatMessageProps> {
   }
 }
 
+export default React.forwardRef((props, ref) => <ChatMessage {...props} innerRef={ref} />);
+
 export const MessageAuthor = ({
   timestamp,
   contacts,
   msg,
-  measure,
   group,
   api,
   associations,
@@ -368,7 +381,6 @@ export const Message = ({
   timestamp,
   contacts,
   msg,
-  measure,
   group,
   api,
   associations,
@@ -402,7 +414,6 @@ export const Message = ({
                 <TextContent
                   associations={associations}
                   groups={groups}
-                  measure={measure}
                   api={api}
                   fontSize={1}
                   lineHeight={'20px'}
@@ -420,8 +431,8 @@ export const Message = ({
                   color='black'
                 >
                   <RemoteContent
+                    key={content.url}
                     url={content.url}
-                    onLoad={measure}
                     imageProps={{
                       style: {
                         maxWidth: 'min(100%,18rem)',
