@@ -136,11 +136,12 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     }
     const { scrollTop, scrollHeight, offsetHeight } = this.window;
 
-    const unloaded = (this.startOffset() / this.props.size);
+    const unloaded = (this.startOffset() / this.pageSize);
+    const totalpages = this.props.size / this.pageSize;
 
-    const loadedCen = (scrollTop / scrollHeight);
-    const loaded = (loadedCen / (this.pageSize / this.props.averageHeight));
-    const result = (unloaded + loaded)*this.window.offsetHeight;
+    const loaded = (scrollTop / scrollHeight);
+    const total = unloaded +  loaded;
+    const result = ((unloaded + loaded) / totalpages) *this.window.offsetHeight;
     this.scrollRef.style[this.props.origin] = `${result}px`;
   }, 50);
 
