@@ -184,7 +184,7 @@
         ::
             %thread-done
           =^  cards  state
-            (initiate-part-2:do ship study)
+            (initiate-part-2:do & ship study)
           [cards this]
         ==
       ==
@@ -333,14 +333,14 @@
     ~&  [%opening-chat-with ship study]
     [(create:talk ship study) state]
   ?-  -.u.far
-    %quiet  (initiate-part-2 ship study)
+    %quiet  (initiate-part-2 | ship study)
     %block  ~&  [ship 'doesn\'t want to talk to the bot']  [~ state]
     %convo  ~&  [ship 'is still talking to the bot']       [~ state]
   ==
 ::  +initiate-part-2: start survey with ship
 ::
 ++  initiate-part-2
-  |=  [=ship =study]
+  |=  [new=? =ship =study]
   ^-  (quip card _state)
   ~&  [%starting-convo-with ship study]
   =/  =chain  (~(got by chains) study)
@@ -351,9 +351,8 @@
   ::      because we inject a consent query at the start of every chain.
   :_  ~
   %+  send:talk  ship
-  :~  hiya:phrases
-      (point:render (~(got by bits.chain) i.flow.chain))
-  ==
+  =-  ?.(new - [hiya:phrases -])
+  [(point:render (~(got by bits.chain) i.flow.chain))]~
 ::  +process-graph-update: per-response logic
 ::
 ++  process-graph-update
