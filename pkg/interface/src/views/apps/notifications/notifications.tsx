@@ -75,7 +75,7 @@ export default function NotificationsScreen(props: any): ReactElement {
                     borderBottomColor="washedGray"
                   >
 
-                    <Text ref={anchorRef}>Updates</Text>
+                    <Text ref={anchorRef}>Notifications</Text>
                     <Row
                       justifyContent="space-between"
                     >
