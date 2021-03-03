@@ -125,20 +125,34 @@ const addNodes = (json, state) => {
     return graph;
   };
 
-  const _removePending = (resource, index, post) => {
+  const _remove = (graph, index) => {
+    if (index.length === 1) {
+      graph.delete(index[0]);
+    } else {
+      const child = graph.get(index[0]);
+      if (child) {
+        graph = _remove(child.children, index.slice(1));
+        graph.set(index[0], child);
+      }
+    }
+
+    return graph;
+  };
+
+  const _removePending = (graph, post) => {
     if (post.hash && state.pendingIndices[post.hash]) {
-      let pendingIndex = state.pendingIndices[post.hash];
-      removeNodes({
-        'graph-update': {
-          'remove-nodes': {
-            resource,
-            indices: [pendingIndex]
-          }
-        }
+      let index = state.pendingIndices[post.hash];
+
+      if (index.split('/').length === 0) { return; }
+      let indexArr = index.split('/').slice(1).map((ind) => {
+        return bigInt(ind);
       });
 
+      graph = _remove(graph, indexArr);
       delete state.pendingIndices[post.hash];
     }
+    
+    return graph;
   };
 
   const data = _.get(json, 'add-nodes', false);
@@ -150,10 +164,20 @@ const addNodes = (json, state) => {
       state.graphs[resource] = new BigIntOrderedMap();
     }
     state.graphKeys.add(resource);
+    
+    let indices = Array.from(Object.keys(data.nodes));
 
-    for (let index in data.nodes) {
+    indices.sort((a, b) => {
+      let aArr = a.split('/');
+      let bArr = b.split('/');
+      return bArr.length < aArr.length;
+    });
+
+    let graph = state.graphs[resource];
+
+    indices.forEach((index) => {
       let node = data.nodes[index];
-      _removePending(data.resource, index, node.post);
+      graph = _removePending(graph, node.post);
 
       if (index.split('/').length === 0) { return; }
       index = index.split('/').slice(1).map((ind) => {
@@ -163,15 +187,18 @@ const addNodes = (json, state) => {
       if (index.length === 0) { return; }
 
       node.children = mapifyChildren(node?.children || {});
-      
-      state.graphs[resource] = _addNode(
-        state.graphs[resource],
+     
+      graph = _addNode(
+        graph,
         index,
         node
       );
-    }
+    });
+    
+    state.graphs[resource] = graph;
   }
 };
+
 
 const removeNodes = (json, state) => {
   const _remove = (graph, index) => {
@@ -179,10 +206,13 @@ const removeNodes = (json, state) => {
         graph.delete(index[0]);
       } else {
         const child = graph.get(index[0]);
-        _remove(child.children, index.slice(1));
-        graph.set(index[0], child);
+        if (child) {
+          _remove(child.children, index.slice(1));
+          graph.set(index[0], child);
+        }
       }
   };
+
   const data = _.get(json, 'remove-nodes', false);
   if (data) {
     const { ship, name } = data.resource;

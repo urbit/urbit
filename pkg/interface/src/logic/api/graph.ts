@@ -239,13 +239,11 @@ export default class GraphApi extends BaseApi<StoreState> {
       action['add-nodes'].resource.ship.slice(1);
 
     return pendingPromise.then((pendingHashes) => {
-      action['add-nodes'].nodes =
-        Object.keys(action['add-nodes'].nodes).map((ind) => {
-          action['add-nodes'].nodes[ind].post.hash =
-            pendingHashes['pending-indices'][ind] || null;
-          return action['add-nodes'].nodes[ind];
-        });
-  
+      for (let index in action['add-nodes'].nodes) {
+        action['add-nodes'].nodes[index].post.hash =
+          pendingHashes['pending-indices'][index] || null;
+      }
+
       this.store.handleEvent({ data: {
         'graph-update': {
           'pending-indices': pendingHashes['pending-indices'],
