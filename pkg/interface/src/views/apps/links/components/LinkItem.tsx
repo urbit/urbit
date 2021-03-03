@@ -65,6 +65,7 @@ export const LinkItem = (props: LinkItemProps): ReactElement => {
   const size = node.children ? node.children.size : 0;
   const contents = node.post.contents;
   const hostname = URLparser.exec(contents[1].url) ? URLparser.exec(contents[1].url)[4] : null;
+  const href = URLparser.exec(contents[1].url) ? contents[1].url : `http://${contents[1].url}`
 
   const baseUrl = props.baseUrl || `/~404/${resource}`;
 
@@ -110,7 +111,7 @@ export const LinkItem = (props: LinkItemProps): ReactElement => {
         <RemoteContent
           ref={r => { remoteRef.current = r }}
           renderUrl={false}
-          url={contents[1].url}
+          url={href}
           text={contents[0].text}
           unfold={true}
           style={{ alignSelf: 'center' }}
@@ -134,7 +135,7 @@ export const LinkItem = (props: LinkItemProps): ReactElement => {
           }}
         />
         <Text color="gray" p={2} flexShrink={0}>
-          <Anchor  target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }} href={contents[1].url}>
+          <Anchor  target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }} href={href}>
             <Box display='flex'>
               <Icon icon='ArrowExternal' mr={1} />{hostname}
             </Box>

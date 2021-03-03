@@ -1,5 +1,5 @@
 import { Serial, PatpNoSig, Path } from '..';
-import { Resource } from "../groups/update.d";
+import { Resource } from "../groups";
 
 export type InviteUpdate =
   InviteUpdateInitial
@@ -10,30 +10,30 @@ export type InviteUpdate =
 | InviteUpdateAccepted
 | InviteUpdateDecline;
 
-interface InviteUpdateAccept {
+export interface InviteUpdateAccept {
   accept: {
     term: string;
     uid: Serial;
   }
 }
 
-interface InviteUpdateInitial {
+export interface InviteUpdateInitial {
   initial: Invites;
 }
 
-interface InviteUpdateCreate {
+export interface InviteUpdateCreate {
   create: {
     term: string;
   };
 }
 
-interface InviteUpdateDelete {
+export interface InviteUpdateDelete {
   delete: {
     term: string;
   };
 }
 
-interface InviteUpdateInvite {
+export interface InviteUpdateInvite {
   invite: {
     term: string;
     uid: Serial;
@@ -41,14 +41,14 @@ interface InviteUpdateInvite {
   };
 }
 
-interface InviteUpdateAccepted {
+export interface InviteUpdateAccepted {
   accepted: {
     term: string;
     uid: Serial;
   };
 }
 
-interface InviteUpdateDecline {
+export interface InviteUpdateDecline {
   decline: {
     term: string;
     uid: Serial;

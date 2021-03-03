@@ -50,7 +50,7 @@
     %-  pairs
     :~  bucket-key+s+b
         entry-key+s+k
-        value+(val v)
+        value+(value v)
     ==
   ::
   ++  del-entry
@@ -68,6 +68,7 @@
       %s  val
       %b  val
       %n  (numb p.val)
+      %a  [%a (turn p.val value)]
     ==
   ::
   ++  bucket
@@ -105,7 +106,7 @@
     %-  ot
     :~  bucket-key+so
         entry-key+so
-        value+val
+        value+value
     ==
   ::
   ++  del-entry
@@ -121,6 +122,7 @@
       %s  jon
       %b  jon
       %n  [%n (rash p.jon dem)]
+      %a  [%a (turn p.jon value)]
     ==
   ::
   ++  bucket

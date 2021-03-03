@@ -34,7 +34,7 @@ export const SidebarItem = ({
       justifyContent="space-between"
       {...rest}
     >
-      <Row>
+      <Row alignItems="center">
         <Icon color={color} icon={icon as any} mr="2" />
         <Text color={color}>{text}</Text>
       </Row>

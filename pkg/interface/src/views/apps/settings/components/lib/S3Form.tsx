@@ -5,13 +5,16 @@ import {
   ManagedTextInputField as Input,
   ManagedForm as Form,
   Box,
+  Text,
   Button,
-  Col
+  Col,
+  Anchor
 } from '@tlon/indigo-react';
 
-import { BucketList } from './BucketList';
-import GlobalApi from '~/logic/api/global';
+import GlobalApi from "~/logic/api/global";
+import { BucketList } from "./BucketList";
 import { S3State } from '~/types/s3-update';
+import { BackButton } from './BackButton';
 
 interface FormSchema {
   s3bucket: string;
@@ -47,7 +50,7 @@ export default function S3Form(props: S3FormProps): ReactElement {
   );
   return (
     <>
-      <Col>
+      <Col p="5" pt="4" borderBottom="1" borderBottomColor="washedGray">
         <Formik
           initialValues={
             {
@@ -60,30 +63,50 @@ export default function S3Form(props: S3FormProps): ReactElement {
           }
           onSubmit={onSubmit}
         >
-          <Form
-            display="grid"
-            gridTemplateColumns="100%"
-            gridAutoRows="auto"
-            gridRowGap={5}
-          >
-            <Box color="black" fontSize={1} fontWeight={900}>
-              S3 Credentials
-            </Box>
-            <Input label="Endpoint" id="s3endpoint" />
-            <Input label="Access Key ID" id="s3accessKeyId" />
-            <Input
-              type="password"
-              label="Secret Access Key"
-              id="s3secretAccessKey"
-            />
-            <Button style={{ cursor: 'pointer' }} type="submit">Submit</Button>
+          <Form>
+            <Col maxWidth="600px" gapY="5">
+              <BackButton/>
+              <Col gapY="1">
+                <Text color="black" fontSize={2} fontWeight="medium">
+                  S3 Storage Setup
+                </Text>
+                <Text gray>
+                  Store credentials for your S3 object storage buckets on your
+                  Urbit ship, and upload media freely to various modules.
+                  <Anchor
+                    target="_blank"
+                    style={{ textDecoration: 'none' }}
+                    borderBottom="1"
+                    ml="1"
+                    href="https://urbit.org/using/operations/using-your-ship/#bucket-setup">
+                    Learn more
+                  </Anchor>
+                </Text>
+              </Col>
+              <Input label="Endpoint" id="s3endpoint" />
+              <Input label="Access Key ID" id="s3accessKeyId" />
+              <Input
+                type="password"
+                label="Secret Access Key"
+                id="s3secretAccessKey"
+              />
+              <Button style={{ cursor: "pointer" }} type="submit">
+                Submit
+              </Button>
+            </Col>
           </Form>
         </Formik>
       </Col>
-      <Col>
-        <Box color="black" mb={4} fontSize={1} fontWeight={700}>
-          S3 Buckets
-        </Box>
+      <Col maxWidth="600px" p="5" gapY="4">
+        <Col gapY="1">
+          <Text color="black" mb={4} fontSize={2} fontWeight="medium">
+            S3 Buckets
+          </Text>
+          <Text gray>
+            Your 'active' bucket will be the one used when Landscape uploads a
+            file
+          </Text>
+        </Col>
         <BucketList
           buckets={s3.configuration.buckets}
           selected={s3.configuration.currentBucket}

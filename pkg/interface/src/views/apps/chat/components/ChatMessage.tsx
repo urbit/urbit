@@ -18,6 +18,7 @@ import {
   cite,
   writeText,
   useShowNickname,
+  useHideAvatar,
   useHovering
 } from '~/logic/lib/util';
 import {
@@ -34,6 +35,7 @@ import RemoteContent from '~/views/components/RemoteContent';
 import { Mention } from '~/views/components/MentionText';
 import styled from 'styled-components';
 import useLocalState from '~/logic/state/local';
+import useSettingsState, {selectCalmState} from "~/logic/state/settings";
 import Timestamp from '~/views/components/Timestamp';
 
 export const DATESTAMP_FORMAT = '[~]YYYY.M.D';
@@ -251,7 +253,7 @@ export const MessageAuthor = ({
   const contact =
     `~${msg.author}` in contacts ? contacts[`~${msg.author}`] : false;
   const showNickname = useShowNickname(contact);
-  const { hideAvatars } = useLocalState(({ hideAvatars }) => ({ hideAvatars }));
+  const { hideAvatars } = useSettingsState(selectCalmState);
   const shipName = showNickname ? contact.nickname : cite(msg.author);
   const copyNotice = 'Copied';
   const color = contact

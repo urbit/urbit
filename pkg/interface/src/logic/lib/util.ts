@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import _ from 'lodash';
-import f, { memoize } from 'lodash/fp';
-import bigInt, { BigInteger } from 'big-integer';
-import { Contact } from '@urbit/api';
-import useLocalState from '../state/local';
+import _ from "lodash";
+import f, { memoize } from "lodash/fp";
+import bigInt, { BigInteger } from "big-integer";
+import { Contact } from '~/types';
+import useSettingsState from '../state/settings';
 
 export const MOBILE_BROWSER_REGEX = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i;
 
@@ -376,8 +376,8 @@ export function pluralize(text: string, isPlural = false, vowel = false) {
 
 // Hide is an optional second parameter for when this function is used in class components
 export function useShowNickname(contact: Contact | null, hide?: boolean): boolean {
-  const hideNicknames = typeof hide !== 'undefined' ? hide : useLocalState(state => state.hideNicknames);
-  return Boolean(contact && contact.nickname && !hideNicknames);
+  const hideNicknames = typeof hide !== 'undefined' ? hide : useSettingsState(state => state.calm.hideNicknames);
+  return !!(contact && contact.nickname && !hideNicknames);
 }
 
 interface useHoveringInterface {

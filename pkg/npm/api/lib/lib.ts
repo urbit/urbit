@@ -1,22 +1,13 @@
 import _ from "lodash";
 import f from "lodash/fp";
 import bigInt, { BigInteger } from "big-integer";
-import { Resource } from "../groups/index.d";
+
+import { Resource } from "../groups/types";
+import { Post, GraphNode } from "../graph/types";
 
 const DA_UNIX_EPOCH = bigInt("170141184475152167957503069145530368000"); // `@ud` ~1970.1.1
 
 const DA_SECOND = bigInt("18446744073709551616"); // `@ud` ~s1
-
-/**
- * Returns true if an app uses a graph backend
- *
- * @param   {string}   app  The name of the app
- *
- * @return  {boolean}       Whether or not it uses a graph backend
- */
-export function appIsGraph(app: string): boolean {
-  return app === 'publish' || app == 'link';
-}
 
 /**
  * Given a bigint representing an urbit date, returns a unix timestamp.
@@ -136,27 +127,48 @@ export function deSig(ship: string): string | null {
 }
 
 // trim patps to match dojo, chat-cli
-export function cite(ship: string): string {
+export function cite(ship: string) {
   let patp = ship,
-    shortened = "";
-  if (patp === null || patp === "") {
-    return "";
+    shortened = '';
+  if (patp === null || patp === '') {
+    return null;
   }
-  if (patp.startsWith("~")) {
+  if (patp.startsWith('~')) {
     patp = patp.substr(1);
   }
   // comet
   if (patp.length === 56) {
-    shortened = "~" + patp.slice(0, 6) + "_" + patp.slice(50, 56);
+    shortened = '~' + patp.slice(0, 6) + '_' + patp.slice(50, 56);
     return shortened;
   }
   // moon
   if (patp.length === 27) {
-    shortened = "~" + patp.slice(14, 20) + "^" + patp.slice(21, 27);
+    shortened = '~' + patp.slice(14, 20) + '^' + patp.slice(21, 27);
     return shortened;
   }
   return `~${patp}`;
 }
+
+
+export function uxToHex(ux: string) {
+  if (ux.length > 2 && ux.substr(0, 2) === '0x') {
+    const value = ux.substr(2).replace('.', '').padStart(6, '0');
+    return value;
+  }
+
+  const value = ux.replace('.', '').padStart(6, '0');
+  return value;
+}
+
+export const hexToUx = (hex: string): string => {
+  const ux = f.flow(
+    f.chunk(4),
+    f.map(x => _.dropWhile(x, (y: unknown) => y === 0).join('')),
+    f.join('.')
+  )(hex.split(''));
+  return `0x${ux}`;
+};
+
 
 // encode the string into @ta-safe format, using logic from +wood.
 // for example, 'some Chars!' becomes '~.some.~43.hars~21.'
@@ -208,4 +220,21 @@ export function numToUd(num: number): string {
     f.map(s => s.join('')),
     f.join('.')
   )(num.toString())
+}
+
+export const buntPost = (): Post => ({
+  author: '',
+  contents: [],
+  hash: null,
+  index: '',
+  signatures: [],
+  'time-sent': 0
+});
+
+export function makeNodeMap(posts: Post[]): Record<string, GraphNode> {
+  const nodes: Record<string, GraphNode> = {};
+  posts.forEach((p: Post) => {
+    nodes[String(p.index)] = { children: null, post: p };
+  });
+  return nodes;
 }
