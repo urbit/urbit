@@ -9,48 +9,53 @@ import { Profile } from './components/Profile';
 export default function ProfileScreen(props: any) {
   return (
     <>
-    <Helmet defer={false}>
-      <title>{ props.notificationsCount ? `(${String(props.notificationsCount) }) `: '' }Landscape - Profile</title>
-    </Helmet>
-    <Route
-      path={'/~profile/:ship/:edit?'}
-      render={({ match }) => {
-        const ship = match.params.ship;
-        const isEdit = match.url.includes('edit');
-        const isPublic = props.isContactPublic;
-        const contact = props.contacts?.[ship];
+      <Helmet defer={false}>
+        <title>
+          {props.notificationsCount
+            ? `(${String(props.notificationsCount)}) `
+            : ''}
+          Landscape - Profile
+        </title>
+      </Helmet>
+      <Route
+        path={'/~profile/:ship/:edit?'}
+        render={({ match }) => {
+          const ship = match.params.ship;
+          const isEdit = match.url.includes('edit');
+          const isPublic = props.isContactPublic;
+          const contact = props.contacts?.[ship];
 
-        return (
-          <Box height="100%" px={[0, 3]} pb={[0, 3]} borderRadius={1}>
-            <Box
-              height="100%"
-              width="100%"
-              borderRadius={1}
-              bg="white"
-              border={1}
-              borderColor="washedGray"
-              overflowY="auto"
-              flexGrow
-            >
-              <Box>
-                <Profile
-                  ship={ship}
-                  hasLoaded={Object.keys(props.contacts).length !== 0}
-                  associations={props.associations}
-                  groups={props.groups}
-                  contact={contact}
-                  api={props.api}
-                  s3={props.s3}
-                  isEdit={isEdit}
-                  isPublic={isPublic}
-                  nackedContacts={props.nackedContacts}
-                />
+          return (
+            <Box height='100%' px={[0, 3]} pb={[0, 3]} borderRadius={2}>
+              <Box
+                height='100%'
+                width='100%'
+                borderRadius={2}
+                bg='white'
+                border={1}
+                borderColor='washedGray'
+                overflowY='auto'
+                flexGrow
+              >
+                <Box>
+                  <Profile
+                    ship={ship}
+                    hasLoaded={Object.keys(props.contacts).length !== 0}
+                    associations={props.associations}
+                    groups={props.groups}
+                    contact={contact}
+                    api={props.api}
+                    s3={props.s3}
+                    isEdit={isEdit}
+                    isPublic={isPublic}
+                    nackedContacts={props.nackedContacts}
+                  />
+                </Box>
               </Box>
             </Box>
-          </Box>
-        );
-      }}
-    />
+          );
+        }}
+      />
     </>
   );
 }
