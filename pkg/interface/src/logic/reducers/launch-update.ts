@@ -1,7 +1,7 @@
 import _ from 'lodash';
-import { LaunchState, LaunchUpdate, WeatherState } from '~/types/launch-update';
+import { LaunchUpdate, WeatherState } from '~/types/launch-update';
 import { Cage } from '~/types/cage';
-import useLaunchState from '../state/launch';
+import useLaunchState, { LaunchState } from '../state/launch';
 import { compose } from 'lodash/fp';
 import { reduceState } from '../lib/util';
 
@@ -30,6 +30,13 @@ export default class LaunchReducer {
       useLaunchState.getState().set(state => {
         state.userLocation = locationData;
       });
+    }
+
+    const baseHash = _.get(json, 'baseHash', false);
+    if (baseHash) {
+      useLaunchState.getState().set(state => {
+        state.baseHash = baseHash;
+      })
     }
   }
 }

@@ -18,10 +18,6 @@ export function useMigrateSettings(api: GlobalApi) {
   const { display, remoteContentPolicy, calm } = useSettingsState();
 
   return async () => {
-    if (!localStorage?.has("localReducer")) {
-      return;
-    }
-
     let promises: Promise<any>[] = [];
 
     if (local.hideAvatars !== calm.hideAvatars) {

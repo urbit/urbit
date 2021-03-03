@@ -11,6 +11,7 @@ export interface LaunchState extends BaseState<LaunchState> {
   },
   weather: WeatherState | null,
   userLocation: string | null;
+  baseHash: string | null;
 };
 
 const useLaunchState = createState<LaunchState>('Launch', {
@@ -19,6 +20,7 @@ const useLaunchState = createState<LaunchState>('Launch', {
   tiles: {},
   weather: null,
   userLocation: null,
+  baseHash: null
 });
 
 

@@ -1,6 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import styled from 'styled-components';
-import { useHistory } from 'react-router-dom';
 import f from 'lodash/fp';
 import _ from 'lodash';
 
@@ -30,6 +29,7 @@ import {
   TUTORIAL_CHAT,
   TUTORIAL_LINKS
 } from '~/logic/lib/tutorialModal';
+import useLaunchState from '~/logic/state/launch';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 
 
@@ -44,7 +44,8 @@ const ScrollbarLessBox = styled(Box)`
 const tutSelector = f.pick(['tutorialProgress', 'nextTutStep', 'hideGroups']);
 
 export default function LaunchApp(props) {
-  const [hashText, setHashText] = useState(props.baseHash);
+  const baseHash = useLaunchState(state => state.baseHash);
+  const [hashText, setHashText] = useState(baseHash);
   const hashBox = (
     <Box
       position={["relative", "absolute"]}
@@ -58,15 +59,15 @@ export default function LaunchApp(props) {
       fontSize={0}
       cursor="pointer"
       onClick={() => {
-        writeText(props.baseHash);
+        writeText(baseHash);
         setHashText('copied');
         setTimeout(() => {
-          setHashText(props.baseHash);
+          setHashText(baseHash);
         }, 2000);
       }}
     >
       <Box backgroundColor="washedGray" p={2}>
-        <Text mono bold>{hashText || props.baseHash}</Text>
+        <Text mono bold>{hashText || baseHash}</Text>
       </Box>
     </Box>
   );

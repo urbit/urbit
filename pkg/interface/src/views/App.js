@@ -31,10 +31,10 @@ import withState from '~/logic/lib/withState';
 import useLocalState from '~/logic/state/local';
 import useContactState from '~/logic/state/contact';
 import useGroupState from '~/logic/state/group';
-import { withSettingsState } from '~/logic/state/settings';
+import useSettingsState from '~/logic/state/settings';
 
 
-const Root = withSettingsState(styled.div`
+const Root = withState(useSettingsState, styled.div`
   font-family: ${p => p.theme.fonts.sans};
   height: 100%;
   width: 100%;
@@ -100,7 +100,6 @@ class App extends React.Component {
     }, 500);
     this.api.local.getBaseHash();
     this.api.settings.getAll();
-    this.store.rehydrate();
     Mousetrap.bindGlobal(['command+/', 'ctrl+/'], (e) => {
       e.preventDefault();
       e.stopImmediatePropagation();

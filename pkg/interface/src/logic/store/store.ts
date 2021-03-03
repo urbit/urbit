@@ -23,7 +23,6 @@ import { GroupViewReducer } from '../reducers/group-view';
 export default class GlobalStore extends BaseStore<StoreState> {
   inviteReducer = new InviteReducer();
   metadataReducer = new MetadataReducer();
-  localReducer = new LocalReducer();
   s3Reducer = new S3Reducer();
   groupReducer = new GroupReducer();
   launchReducer = new LaunchReducer();
@@ -42,56 +41,9 @@ export default class GlobalStore extends BaseStore<StoreState> {
     console.log(_.pick(this.state, stateKeys));
   }
 
-  rehydrate() {
-    this.localReducer.rehydrate(this.state);
-  }
-
-  dehydrate() {
-    this.localReducer.dehydrate(this.state);
-  }
-
   initialState(): StoreState {
     return {
       connection: 'connected',
-      baseHash: null,
-      invites: {},
-      associations: {
-        groups: {},
-        graph: {}
-      },
-      groups: {},
-      groupKeys: new Set(),
-      graphs: {},
-      graphKeys: new Set(),
-      launch: {
-        firstTime: false,
-        tileOrdering: [],
-        tiles: {}
-      },
-      weather: {},
-      userLocation: null,
-      s3: {
-        configuration: {
-          buckets: new Set(),
-          currentBucket: ''
-        },
-        credentials: null
-      },
-      notifications: new BigIntOrderedMap<Timebox>(),
-      archivedNotifications: new BigIntOrderedMap<Timebox>(),
-      notificationsGroupConfig: [],
-      notificationsGraphConfig: {
-        watchOnSelf: false,
-        mentions: false,
-        watching: []
-      },
-      unreads: {
-        graph: {},
-        group: {}
-      },
-      notificationsCount: 0,
-      settings: {},
-      pendingJoin: {}
     };
   }
 
@@ -100,10 +52,8 @@ export default class GlobalStore extends BaseStore<StoreState> {
     const tag = Object.keys(data)[0];
     const oldActions = this.pastActions[tag] || [];
     this.pastActions[tag] = [data[tag], ...oldActions.slice(0,14)];
-
     this.inviteReducer.reduce(data);
     this.metadataReducer.reduce(data);
-    this.localReducer.reduce(data, this.state);
     this.s3Reducer.reduce(data);
     this.groupReducer.reduce(data);
     this.launchReducer.reduce(data);
@@ -112,6 +62,6 @@ export default class GlobalStore extends BaseStore<StoreState> {
     HarkReducer(data);
     ContactReducer(data);
     this.settingsReducer.reduce(data);
-    GroupViewReducer(data, this.state);
+    GroupViewReducer(data);
   }
 }
