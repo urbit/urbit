@@ -142,6 +142,8 @@ class App extends React.Component {
     const doNotDisturb = state.doNotDisturb || false;
     const ourContact = this.state.contacts[`~${this.ship}`] || null;
 
+    console.log(this.props.display);
+
     return (
       <ThemeProvider theme={theme}>
         <Helmet>
@@ -196,5 +198,5 @@ class App extends React.Component {
   }
 }
 
-export default withLocalState(process.env.NODE_ENV === 'production' ? App : hot(App));
+export default withSettingsState(withLocalState(process.env.NODE_ENV === 'production' ? App : hot(App)), ['display']);
 
