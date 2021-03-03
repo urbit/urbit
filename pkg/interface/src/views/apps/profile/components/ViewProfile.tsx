@@ -1,31 +1,23 @@
-import React, {useEffect, useState} from "react";
+import React from 'react';
 import _ from 'lodash';
-import { Sigil } from "~/logic/lib/sigil";
+import { useHistory } from 'react-router-dom';
 
 import {
   Center,
   Box,
   Text,
   Row,
-  Button,
   Col,
-  LoadingSpinner
 } from "@tlon/indigo-react";
-import { AsyncButton } from "~/views/components/AsyncButton";
 import RichText from "~/views/components/RichText";
-import { useHistory } from "react-router-dom";
-import {GroupSummary} from "~/views/landscape/components/GroupSummary";
-import {MetadataUpdatePreview} from "~/types";
 import {GroupLink} from "~/views/components/GroupLink";
 import {lengthOrder} from "~/logic/lib/util";
-import useLocalState from "~/logic/state/local";
+import useSettingsState, {selectCalmState} from "~/logic/state/settings";
 
 
 export function ViewProfile(props: any) {
   const history = useHistory();
-  const { hideNicknames } = useLocalState(({ hideNicknames }) => ({
-    hideNicknames
-  }));
+  const { hideNicknames } = useSettingsState(selectCalmState);
   const { api, contact, nacked, isPublic, ship, associations, groups } = props;
 
   return (
@@ -33,17 +25,19 @@ export function ViewProfile(props: any) {
       <Row
         pb={2}
         alignItems="center"
-        width="100%">
+        width="100%"
+      >
         <Center width="100%">
           <Text>
-            {((!hideNicknames && contact?.nickname) ? contact.nickname : "")}
+            {((!hideNicknames && contact?.nickname) ? contact.nickname : '')}
           </Text>
         </Center>
       </Row>
       <Row
         pb={2}
         alignItems="center"
-        width="100%">
+        width="100%"
+      >
         <Center width="100%">
           <Text mono color="darkGray">{ship}</Text>
         </Center>
@@ -52,10 +46,11 @@ export function ViewProfile(props: any) {
         pb={2}
         alignItems="center"
         justifyContent="center"
-        width="100%">
+        width="100%"
+      >
           <Center flexDirection="column" maxWidth='32rem'>
           <RichText width='100%' disableRemoteContent>
-            {(contact?.bio ? contact.bio : "")}
+            {(contact?.bio ? contact.bio : '')}
           </RichText>
           </Center>
         </Col>
@@ -82,7 +77,8 @@ export function ViewProfile(props: any) {
           borderRadius={1}
           bg="white"
           border={1}
-          borderColor="washedGray">
+          borderColor="washedGray"
+        >
           <Center height="100%">
             <Text mono pr={1} color="gray">{ship}</Text>
             <Text color="gray">remains private</Text>

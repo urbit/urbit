@@ -1,14 +1,14 @@
 import BaseApi from './base';
 import { StoreState } from '../store/type';
-import { Patp, Path, PatpNoSig } from '~/types/noun';
+import { Patp, Path } from '@urbit/api';
 import _ from 'lodash';
-import {makeResource, resourceFromPath} from '../lib/group';
-import {GroupPolicy, Enc, Post, NodeMap, Content, Resource} from '~/types';
+import { makeResource, resourceFromPath } from '../lib/group';
+import { GroupPolicy, Enc, Post, Content } from '@urbit/api';
 import { numToUd, unixToDa, decToUd, deSig, resourceAsPath } from '~/logic/lib/util';
 
 export const createBlankNodeWithChildPost = (
-  parentIndex: string = '',
-  childIndex: string = '',
+  parentIndex = '',
+  childIndex = '',
   contents: Content[]
 ) => {
   const date = unixToDa(Date.now()).toString();
@@ -37,11 +37,11 @@ export const createBlankNodeWithChildPost = (
       signatures: []
     },
     children: childGraph
-  };  
+  };
 };
 
 function markPending(nodes: any) {
-  _.forEach(nodes, node => {
+  _.forEach(nodes, (node) => {
     node.post.author = deSig(node.post.author);
     node.post.pending = true;
     markPending(node.children || {});
@@ -50,8 +50,8 @@ function markPending(nodes: any) {
 
 export const createPost = (
   contents: Content[],
-  parentIndex: string = '',
-  childIndex:string = 'DATE_PLACEHOLDER'
+  parentIndex = '',
+  childIndex = 'DATE_PLACEHOLDER'
 ) => {
   if (childIndex === 'DATE_PLACEHOLDER') {
     childIndex = unixToDa(Date.now()).toString();
@@ -80,11 +80,10 @@ function moduleToMark(mod: string): string | undefined {
 }
 
 export default class GraphApi extends BaseApi<StoreState> {
-
   joiningGraphs = new Set<string>();
 
   private storeAction(action: any): Promise<any> {
-    return this.action('graph-store', 'graph-update', action)
+    return this.action('graph-store', 'graph-update', action);
   }
 
   private viewAction(threadName: string, action: any) {
@@ -106,12 +105,12 @@ export default class GraphApi extends BaseApi<StoreState> {
     const resource = makeResource(`~${window.ship}`, name);
 
     return this.viewAction('graph-create', {
-      "create": {
+      'create': {
         resource,
         title,
         description,
         associated,
-        "module": mod,
+        'module': mod,
         mark: moduleToMark(mod)
       }
     });
@@ -127,12 +126,12 @@ export default class GraphApi extends BaseApi<StoreState> {
     const resource = makeResource(`~${window.ship}`, name);
 
     return this.viewAction('graph-create', {
-      "create": {
+      'create': {
         resource,
         title,
         description,
         associated: { policy },
-        "module": mod,
+        'module': mod,
         mark: moduleToMark(mod)
       }
     });
@@ -148,9 +147,9 @@ export default class GraphApi extends BaseApi<StoreState> {
     return this.viewAction('graph-join', {
       join: {
         resource,
-        ship,
+        ship
       }
-    }).then(res => {
+    }).then((res) => {
       this.joiningGraphs.delete(rid);
       return res;
     });
@@ -159,7 +158,7 @@ export default class GraphApi extends BaseApi<StoreState> {
   deleteGraph(name: string) {
     const resource = makeResource(`~${window.ship}`, name);
     return this.viewAction('graph-delete', {
-      "delete": {
+      'delete': {
         resource
       }
     });
@@ -168,7 +167,7 @@ export default class GraphApi extends BaseApi<StoreState> {
   leaveGraph(ship: Patp, name: string) {
     const resource = makeResource(ship, name);
     return this.viewAction('graph-leave', {
-      "leave": {
+      'leave': {
         resource
       }
     });
@@ -204,7 +203,7 @@ export default class GraphApi extends BaseApi<StoreState> {
   }
 
   addPost(ship: Patp, name: string, post: Post) {
-    let nodes = {};
+    const nodes = {};
     nodes[post.index] = {
       post,
       children: null
@@ -213,7 +212,7 @@ export default class GraphApi extends BaseApi<StoreState> {
   }
 
   addNode(ship: Patp, name: string, node: Object) {
-    let nodes = {};
+    const nodes = {};
     nodes[node.post.index] = node;
 
     return this.addNodes(ship, name, nodes);
@@ -318,7 +317,6 @@ export default class GraphApi extends BaseApi<StoreState> {
      );
     this.store.handleEvent({ data });
   }
-
 
   getGraphSubset(ship: string, resource: string, start: string, end: string) {
     return this.scry<any>(

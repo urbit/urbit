@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import _ from 'lodash';
 import { Text, Box } from '@tlon/indigo-react';
-import { Contact, Contacts, Content, Group } from '~/types';
+import { Contact, Contacts, Content, Group } from '@urbit/api';
 import RichText from '~/views/components/RichText';
 import { cite, useShowNickname, uxToHex } from '~/logic/lib/util';
 import OverlaySigil from '~/views/components/OverlaySigil';
@@ -38,31 +38,31 @@ export function Mention(props: {
   group: Group;
   scrollWindow?: HTMLElement;
   ship: string;
+  first?: Boolean;
 }) {
-  const { contacts, ship, scrollWindow } = props;
+  const { contacts, ship, scrollWindow, first, ...rest } = props;
   let { contact } = props;
-  contact = contact?.color ? contact : contacts?.[ship];
+  contact = contact?.color ? contact : contacts?.[`~${ship}`];
   const history = useHistory();
   const showNickname = useShowNickname(contact);
   const name = showNickname ? contact?.nickname : cite(ship);
   const group = props.group ?? { hidden: true };
   const [showOverlay, setShowOverlay] = useState(false);
 
-  const toggleOverlay = useCallback(
-    () => {
-      setShowOverlay(value => !value);
-    },
-    [showOverlay]
-  );
+  const toggleOverlay = useCallback(() => {
+    setShowOverlay((value) => !value);
+  }, [showOverlay]);
 
   return (
-    <Box position='relative' display='inline-block' cursor='pointer'>
+    <Box position='relative' display='inline-block' cursor='pointer' {...rest}>
       <Text
         onClick={() => toggleOverlay()}
-        mx='2px'
-        px='2px'
+        marginLeft={first? 0 : 1}
+        marginRight={1}
+        px={1}
         bg='washedBlue'
         color='blue'
+        fontSize={showNickname ? 1 : 0}
         mono={!showNickname}
       >
         {name}

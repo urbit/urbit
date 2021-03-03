@@ -1,12 +1,15 @@
-import React, { useEffect, useState, useLayoutEffect } from "react";
+import React, { useEffect, useState, useLayoutEffect, ReactElement } from 'react';
 
-import { Box, Text, Row, Col, Button, Action } from "@tlon/indigo-react";
-import GlobalApi from "~/logic/api/global";
-import { Associations, Groups, PropFunc } from "~/types";
-import { MetadataIcon } from "../landscape/components/MetadataIcon";
-import { JoinGroup } from "../landscape/components/JoinGroup";
-import { useModal } from "~/logic/lib/useModal";
-import { GroupSummary } from "../landscape/components/GroupSummary";
+import { Box, Text, Row, Col } from '@tlon/indigo-react';
+import { Associations, Groups } from '@urbit/api';
+
+import GlobalApi from '~/logic/api/global';
+import { MetadataIcon } from '../landscape/components/MetadataIcon';
+import { JoinGroup } from '../landscape/components/JoinGroup';
+import { useModal } from '~/logic/lib/useModal';
+import { GroupSummary } from '../landscape/components/GroupSummary';
+import { PropFunc } from '~/types';
+import {useVirtual} from '~/logic/lib/virtualContext';
 
 export function GroupLink(
   props: {
@@ -14,15 +17,16 @@ export function GroupLink(
     resource: string;
     associations: Associations;
     groups: Groups;
-    measure: () => void;
     detailed?: boolean;
   } & PropFunc<typeof Row>
-) {
-  const { resource, api, associations, groups, measure, ...rest } = props;
+): ReactElement {
+  const { resource, api, associations, groups, ...rest } = props;
   const name = resource.slice(6);
   const [preview, setPreview] = useState<MetadataUpdatePreview | null>(null);
 
   const joined = resource in props.associations.groups;
+
+  const { save, restore } = useVirtual();
 
   const { modal, showModal } = useModal({
     modal:
@@ -31,7 +35,7 @@ export function GroupLink(
           <GroupSummary
             metadata={preview.metadata}
             memberCount={preview.members}
-            channelCount={preview?.["channel-count"]}
+            channelCount={preview?.['channel-count']}
           />
         </Box>
       ) : (
@@ -41,21 +45,24 @@ export function GroupLink(
           api={api}
           autojoin={name}
         />
-      ),
+      )
   });
 
   useEffect(() => {
     (async () => {
-      setPreview(await api.metadata.preview(resource));
+      const prev = await api.metadata.preview(resource);
+      save();
+      setPreview(prev);
     })();
 
     return () => {
+      save();
       setPreview(null);
     };
   }, [resource]);
 
   useLayoutEffect(() => {
-    measure();
+    restore();
   }, [preview]);
 
   return (
@@ -69,20 +76,15 @@ export function GroupLink(
         pr="2"
         onClick={showModal}
         cursor='pointer'
+        opacity={preview ? '1' : '0.6'}
       >
-        {preview ? (
-          <>
-            <MetadataIcon height={6} width={6} metadata={preview.metadata} />
-            <Col>
-            <Text ml="2" fontWeight="medium">
-              {preview.metadata.title}
-            </Text>
-            <Text pt='1' ml='2'>{preview.members} members</Text>
-            </Col>
-          </>
-        ) : (
-          <Text mono>{name}</Text>
-        )}
+        <MetadataIcon height={6} width={6} metadata={preview ? preview.metadata : {"color": "0x0"}} />
+          <Col>
+          <Text ml="2" fontWeight="medium" mono={!preview}>
+            {preview ? preview.metadata.title : name}
+          </Text>
+          <Text pt='1' ml='2'>{preview ? `${preview.members} members` : "Fetching member count"}</Text>
+        </Col>
       </Row>
     </Box>
   );

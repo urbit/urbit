@@ -1,20 +1,20 @@
-import React from "react";
+import React from 'react';
 import {
   Box,
   Button,
-  ManagedCheckboxField as Checkbox,
-} from "@tlon/indigo-react";
-import { Formik, Form } from "formik";
-import * as Yup from "yup";
+  ManagedCheckboxField as Checkbox
+} from '@tlon/indigo-react';
+import { Formik, Form } from 'formik';
+import * as Yup from 'yup';
 
-import GlobalApi from "~/logic/api/global";
-import useLocalState from "~/logic/state/local";
+import GlobalApi from '~/logic/api/global';
+import useLocalState from '~/logic/state/local';
 
 const formSchema = Yup.object().shape({
   imageShown: Yup.boolean(),
   audioShown: Yup.boolean(),
   videoShown: Yup.boolean(),
-  oembedShown: Yup.boolean(),
+  oembedShown: Yup.boolean()
 });
 
 interface FormSchema {
@@ -44,17 +44,17 @@ export default function RemoteContentForm(props: RemoteContentFormProps) {
           imageShown,
           audioShown,
           videoShown,
-          oembedShown,
+          oembedShown
         } as FormSchema
       }
       onSubmit={(values, actions) => {
-        setRemoteContentPolicy(state => {
+        setRemoteContentPolicy((state) => {
           Object.assign(state.remoteContentPolicy, values);
         });
         actions.setSubmitting(false);
       }}
     >
-      {(props) => (
+      {props => (
         <Form>
           <Box
             display="grid"

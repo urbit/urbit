@@ -291,6 +291,8 @@
   %-  some  
   %+  levy  ~(tap by nodes)
   |=  [=index:store =node:store]
+  ?.  =(author.post.node src.bowl)
+    %.n
   =/  =permissions:store
     %^  add-mark  resource  vip
     (node-to-indexed-post node)

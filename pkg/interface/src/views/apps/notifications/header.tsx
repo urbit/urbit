@@ -1,18 +1,21 @@
-import React from "react";
-import { Text as NormalText, Row, Icon, Rule, Box } from "@tlon/indigo-react";
-import f from "lodash/fp";
-import _ from "lodash";
-import moment from "moment";
-import { PropFunc } from "~/types/util";
-import { getContactDetails, useShowNickname } from "~/logic/lib/util";
-import { Associations, Contact, Contacts, Rolodex } from "~/types";
+import React, { ReactElement } from 'react';
+import f from 'lodash/fp';
+import _ from 'lodash';
+import moment from 'moment';
+
+import { Text as NormalText, Row, Icon, Rule } from '@tlon/indigo-react';
+import { Associations, Contact, Contacts, Rolodex } from '@urbit/api';
+
+import { PropFunc } from '~/types/util';
+import { useShowNickname } from '~/logic/lib/util';
+import Timestamp from '~/views/components/Timestamp';
 
 const Text = (props: PropFunc<typeof Text>) => (
   <NormalText fontWeight="500" {...props} />
 );
 
-function Author(props: { patp: string; contacts: Contacts; last?: boolean }) {
-  const contact: Contact | undefined = props.contacts?.[props.patp];
+function Author(props: { patp: string; contacts: Contacts; last?: boolean }): ReactElement {
+  const contact: Contact | undefined = props.contacts?.[`~${props.patp}`];
 
   const showNickname = useShowNickname(contact);
   const name = contact?.nickname || `~${props.patp}`;
@@ -20,7 +23,7 @@ function Author(props: { patp: string; contacts: Contacts; last?: boolean }) {
   return (
     <Text mono={!showNickname}>
       {name}
-      {!props.last && ", "}
+      {!props.last && ', '}
     </Text>
   );
 }
@@ -36,9 +39,8 @@ export function Header(props: {
   time: number;
   read: boolean;
   associations: Associations;
-} & PropFunc<typeof Row> ) {
-  const { description, channel, group, moduleIcon, read } = props;
-  const contacts = props.contacts[group] || {};
+} & PropFunc<typeof Row> ): ReactElement {
+  const { description, channel, contacts, moduleIcon, read } = props;
 
   const authors = _.uniq(props.authors);
 
@@ -50,17 +52,17 @@ export function Header(props: {
       const last = lent - 1 === parseInt(idx, 10);
       return <Author key={idx} contacts={contacts} patp={p} last={last} />;
     }),
-    (auths) => (
+    auths => (
       <React.Fragment>
         {auths}
 
         {authors.length > 3 &&
-          ` and ${authors.length - 3} other${authors.length === 4 ? "" : "s"}`}
+          ` and ${authors.length - 3} other${authors.length === 4 ? '' : 's'}`}
       </React.Fragment>
     )
   )(authors);
 
-  const time = moment(props.time).format("HH:mm");
+  const time = moment(props.time).format('HH:mm');
   const groupTitle =
     props.associations.groups?.[props.group]?.metadata?.title;
 
@@ -84,8 +86,8 @@ export function Header(props: {
         {authorDesc}
       </Text>
       <Text mr="1">{description}</Text>
-      {!!moduleIcon && <Icon icon={moduleIcon as any} mr={1} />}
-      {!!channel && <Text fontWeight="500" mr={1}>{channelTitle}</Text>}
+      {Boolean(moduleIcon) && <Icon icon={moduleIcon as any} mr={1} />}
+      {Boolean(channel) && <Text fontWeight="500" mr={1}>{channelTitle}</Text>}
       <Rule vertical height="12px" mr={1} />
       {groupTitle &&
          <>
@@ -93,9 +95,7 @@ export function Header(props: {
           <Rule vertical height="12px" mr={1} />
         </>
       }
-      <Text fontWeight="regular" color="lightGray">
-        {time}
-      </Text>
+      <Timestamp stamp={moment(props.time)} color="lightGray" date={false} />
     </Row>
   );
 }

@@ -6,7 +6,7 @@ import MetadataReducer from '../reducers/metadata-update';
 import LocalReducer from '../reducers/local';
 
 import { StoreState } from './type';
-import { Timebox } from '~/types';
+import { Timebox } from '@urbit/api';
 import { Cage } from '~/types/cage';
 import S3Reducer from '../reducers/s3-update';
 import { GraphReducer } from '../reducers/graph-update';
@@ -16,10 +16,9 @@ import GroupReducer from '../reducers/group-update';
 import LaunchReducer from '../reducers/launch-update';
 import ConnectionReducer from '../reducers/connection';
 import SettingsReducer from '../reducers/settings-update';
-import {OrderedMap} from '../lib/OrderedMap';
+import { OrderedMap } from '../lib/OrderedMap';
 import { BigIntOrderedMap } from '../lib/BigIntOrderedMap';
-import {GroupViewReducer} from '../reducers/group-view';
-
+import { GroupViewReducer } from '../reducers/group-view';
 
 export default class GlobalStore extends BaseStore<StoreState> {
   inviteReducer = new InviteReducer();
@@ -58,7 +57,7 @@ export default class GlobalStore extends BaseStore<StoreState> {
       invites: {},
       associations: {
         groups: {},
-        graph: {},
+        graph: {}
       },
       groups: {},
       groupKeys: new Set(),
@@ -67,7 +66,7 @@ export default class GlobalStore extends BaseStore<StoreState> {
       launch: {
         firstTime: false,
         tileOrdering: [],
-        tiles: {},
+        tiles: {}
       },
       weather: {},
       userLocation: null,
@@ -87,7 +86,7 @@ export default class GlobalStore extends BaseStore<StoreState> {
       notificationsGraphConfig: {
         watchOnSelf: false,
         mentions: false,
-        watching: [],
+        watching: []
       },
       unreads: {
         graph: {},
@@ -116,7 +115,7 @@ export default class GlobalStore extends BaseStore<StoreState> {
     GraphReducer(data, this.state);
     HarkReducer(data, this.state);
     ContactReducer(data, this.state);
-    this.settingsReducer.reduce(data, this.state);
+    this.settingsReducer.reduce(data);
     GroupViewReducer(data, this.state);
   }
 }

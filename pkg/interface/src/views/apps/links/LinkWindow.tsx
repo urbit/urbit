@@ -1,21 +1,21 @@
-import React, { useRef, useCallback, useEffect, useMemo } from "react";
-import { Col, Text } from "@tlon/indigo-react";
+import React, { useRef, useCallback, useEffect, useMemo } from 'react';
+
+import { Col, Text } from '@tlon/indigo-react';
 import bigInt from 'big-integer';
 import {
   Association,
   Graph,
-  Contacts,
   Unreads,
-  LocalUpdateRemoteContentPolicy,
   Group,
   Rolodex,
-  S3State,
-} from "~/types";
-import GlobalApi from "~/logic/api/global";
-import VirtualScroller from "~/views/components/VirtualScroller";
-import { LinkItem } from "./components/LinkItem";
-import LinkSubmit from "./components/LinkSubmit";
-import {isWriter} from "~/logic/lib/group";
+} from '@urbit/api';
+
+import GlobalApi from '~/logic/api/global';
+import VirtualScroller from '~/views/components/VirtualScroller';
+import { LinkItem } from './components/LinkItem';
+import LinkSubmit from './components/LinkSubmit';
+import { isWriter } from '~/logic/lib/group';
+import { S3State } from '~/types/s3-update';
 
 interface LinkWindowProps {
   association: Association;
@@ -33,29 +33,21 @@ interface LinkWindowProps {
 }
 export function LinkWindow(props: LinkWindowProps) {
   const { graph, api, association } = props;
-  const loadedNewest = useRef(true);
-  const loadedOldest = useRef(false);
-  const virtualList = useRef<VirtualScroller>();
   const fetchLinks = useCallback(
     async (newer: boolean) => {
+      return true;
       /* stubbed, should we generalize the display of graphs in virtualscroller? */
     }, []
   );
 
-  useEffect(() => {
-    const list = virtualList?.current;
-    if(!list) return;
-    list.calculateVisibleItems();
-  }, [graph.size]);
-
   const first = graph.peekLargest()?.[0];
   const [,,ship, name] = association.resource.split('/');
-  const canWrite = isWriter(props.group, association.resource)
+  const canWrite = isWriter(props.group, association.resource);
 
     const style = useMemo(() =>
     ({
-      height: "100%",
-      width: "100%",
+      height: '100%',
+      width: '100%',
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center'
@@ -75,22 +67,23 @@ export function LinkWindow(props: LinkWindowProps) {
   }
 
   return (
+    <Col width="100%" height="100%" position="relative">
     <VirtualScroller
-      ref={(l) => (virtualList.current = l ?? undefined)}
       origin="top"
       style={style}
       onStartReached={() => {}}
       onScroll={() => {}}
       data={graph}
+      averageHeight={100}
       size={graph.size}
-      renderer={({ index, measure, scrollWindow }) => {
+      renderer={({ index, scrollWindow }) => {
         const node = graph.get(index);
         const post = node?.post;
-        if (!node || !post) return null;
+        if (!node || !post)
+return null;
         const linkProps = {
           ...props,
           node,
-          measure,
         };
         if(canWrite && index.eq(first ?? bigInt.zero)) {
           return (
@@ -100,11 +93,12 @@ export function LinkWindow(props: LinkWindowProps) {
             </Col>
               <LinkItem {...linkProps} />
             </React.Fragment>
-          )
+          );
         }
         return <LinkItem key={index.toString()} {...linkProps} />;
       }}
       loadRows={fetchLinks}
     />
+    </Col>
   );
 }

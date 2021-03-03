@@ -3,7 +3,7 @@ import { RouteComponentProps } from 'react-router-dom';
 import { Col } from '@tlon/indigo-react';
 import _ from 'lodash';
 
-import { Association } from '~/types/metadata-update';
+import { Association } from '@urbit/api/metadata';
 import { StoreState } from '~/logic/store/type';
 import { useFileDrag } from '~/logic/lib/useDrag';
 import ChatWindow from './components/ChatWindow';
@@ -38,7 +38,7 @@ export function ChatResource(props: ChatResourceProps) {
   const canWrite = isWriter(group, station);
 
   useEffect(() => {
-    const count = Math.min(50, unreadCount + 15);
+    const count = 100 + unreadCount;
     props.api.graph.getNewest(owner, name, count);
   }, [station]);
 
@@ -114,7 +114,6 @@ export function ChatResource(props: ChatResourceProps) {
         } else {
           setShowBanner(false);
         }
-
       } else {
         const groupShared = await props.api.contacts.fetchIsAllowed(
           `~${window.ship}`,
@@ -127,14 +126,13 @@ export function ChatResource(props: ChatResourceProps) {
 
       setHasLoadedAllowed(true);
     })();
-
-  }, [groupPath]);
+  }, [groupPath, group]);
 
   if(!graph) {
     return <Loading />;
   }
 
-  var modifiedContacts = { ...contacts };
+  const modifiedContacts = { ...contacts };
   delete  modifiedContacts[`~${window.ship}`];
 
   return (
@@ -148,9 +146,10 @@ export function ChatResource(props: ChatResourceProps) {
         setShowBanner={setShowBanner}
         group={group}
         groupPath={groupPath}
-       />
+      />
       {dragging && <SubmitDragger />}
       <ChatWindow
+        key={station}
         history={props.history}
         graph={graph}
         unreadCount={unreadCount}

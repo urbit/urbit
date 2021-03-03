@@ -1,29 +1,26 @@
-import React, { useEffect } from "react";
-import { AsyncButton } from "~/views/components/AsyncButton";
-import * as Yup from "yup";
+import React from 'react';
+import { Formik, Form, FormikHelpers } from 'formik';
+import * as Yup from 'yup';
+
 import {
   Box,
   ManagedTextInputField as Input,
   ManagedToggleSwitchField as Checkbox,
-  Col,
-  Label,
-  Button,
-  Text,
-} from "@tlon/indigo-react";
-import { Formik, Form, useFormikContext, FormikHelpers } from "formik";
-import { FormError } from "~/views/components/FormError";
-import { Group, GroupPolicy } from "~/types/group-update";
-import { Enc } from "~/types/noun";
-import { Association } from "~/types/metadata-update";
-import GlobalApi from "~/logic/api/global";
-import { resourceFromPath, roleForShip } from "~/logic/lib/group";
-import { StatelessAsyncButton } from "~/views/components/StatelessAsyncButton";
-import { ColorInput } from "~/views/components/ColorInput";
-import { useHistory } from "react-router-dom";
+  Col
+} from '@tlon/indigo-react';
+import { Enc } from '@urbit/api';
+import { Group, GroupPolicy } from '@urbit/api/groups';
+import { Association } from '@urbit/api/metadata';
 
-import { uxToHex } from "~/logic/lib/util";
-import {S3State} from "~/types";
-import {ImageInput} from "~/views/components/ImageInput";
+import { AsyncButton } from '~/views/components/AsyncButton';
+import { FormError } from '~/views/components/FormError';
+import GlobalApi from '~/logic/api/global';
+import { resourceFromPath, roleForShip } from '~/logic/lib/group';
+import { ColorInput } from '~/views/components/ColorInput';
+import { useHistory } from 'react-router-dom';
+import { uxToHex } from '~/logic/lib/util';
+import { ImageInput } from '~/views/components/ImageInput';
+import { S3State } from '~/types/s3-update';
 
 interface FormSchema {
   title: string;
@@ -35,7 +32,7 @@ interface FormSchema {
 }
 
 const formSchema = Yup.object({
-  title: Yup.string().required("Group must have a name"),
+  title: Yup.string().required('Group must have a name'),
   description: Yup.string(),
   color: Yup.string(),
   isPrivate: Yup.boolean(),
@@ -53,7 +50,7 @@ export function GroupAdminSettings(props: GroupAdminSettingsProps) {
   const { group, association, s3 } = props;
   const { metadata } = association;
   const history = useHistory();
-  const currentPrivate = "invite" in props.group.policy;
+  const currentPrivate = 'invite' in props.group.policy;
   const initialValues: FormSchema = {
     title: metadata?.title,
     description: metadata?.description,
@@ -96,8 +93,9 @@ export function GroupAdminSettings(props: GroupAdminSettingsProps) {
 
   const disabled =
     resourceFromPath(association.group).ship.slice(1) !== window.ship &&
-    roleForShip(group, window.ship) !== "admin";
-  if(disabled) return null;
+    roleForShip(group, window.ship) !== 'admin';
+  if(disabled)
+return null;
 
   return (
     <Formik
