@@ -121,11 +121,12 @@ export default function LaunchApp(props) {
       }
       return exitingTut ?  (
         <Col maxWidth="350px" p="3">
-          <Text>
-            You can always restart the tutorial by typing 'tutorial' in leap
+          <Icon icon="Info" fill="black"></Icon>
+          <Text my="3" lineHeight="tall">
+            You can always restart the tutorial by typing "tutorial" in Leap
           </Text>
           <Row gapX="2" justifyContent="flex-end">
-             <Button primary onClick={onDismiss}>OK</Button>
+             <Button primary onClick={onDismiss}>Ok</Button>
           </Row>
         </Col>
       ) : (
