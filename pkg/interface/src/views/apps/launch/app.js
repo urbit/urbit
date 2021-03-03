@@ -83,6 +83,7 @@ export default function LaunchApp(props) {
     }
   }, [query]);
 
+  const { hideUtilities } = useSettingsState(selectCalmState);
   const { tutorialProgress, nextTutStep } = useLocalState(tutSelector);
   let { hideGroups } = useLocalState(tutSelector);
   !hideGroups ? { hideGroups } = useSettingsState(selectCalmState) : null;
@@ -164,6 +165,7 @@ export default function LaunchApp(props) {
           p={2}
           pt={0}
         >
+        {!hideUtilities && <>
           <Tile
             bg="white"
             color="scales.black20"
@@ -200,6 +202,7 @@ export default function LaunchApp(props) {
           >
             <JoinGroup {...props} />
           </ModalButton>
+          </>}
           {!hideGroups &&
             (<Groups />)
           }

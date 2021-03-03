@@ -42,7 +42,7 @@ export function Mention(props: {
   const { ship, scrollWindow, first, ...rest } = props;
   let { contact } = props;
   const contacts = useContactState(state => state.contacts);
-  contact = contact?.color ? contact : contacts?.[ship];
+  contact = contact?.color ? contact : contacts?.[`~${ship}`];
   const history = useHistory();
   const showNickname = useShowNickname(contact);
   const name = showNickname ? contact?.nickname : cite(ship);

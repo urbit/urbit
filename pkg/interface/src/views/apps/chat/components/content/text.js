@@ -131,7 +131,6 @@ export default function TextContent(props) {
     const resource = `/ship/${content.text}`;
     return (
       <GroupLink
-        measure={props.measure}
         resource={resource}
         api={props.api}
         pl='2'

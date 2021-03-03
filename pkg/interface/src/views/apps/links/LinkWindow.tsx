@@ -30,19 +30,12 @@ interface LinkWindowProps {
 }
 export function LinkWindow(props: LinkWindowProps) {
   const { graph, api, association } = props;
-  const virtualList = useRef<VirtualScroller>();
   const fetchLinks = useCallback(
     async (newer: boolean) => {
+      return true;
       /* stubbed, should we generalize the display of graphs in virtualscroller? */
     }, []
   );
-
-  useEffect(() => {
-    const list = virtualList?.current;
-    if(!list)
-return;
-    list.calculateVisibleItems();
-  }, [graph.size]);
 
   const first = graph.peekLargest()?.[0];
   const [,,ship, name] = association.resource.split('/');
@@ -71,15 +64,16 @@ return;
   }
 
   return (
+    <Col width="100%" height="100%" position="relative">
     <VirtualScroller
-      ref={l => (virtualList.current = l ?? undefined)}
       origin="top"
       style={style}
       onStartReached={() => {}}
       onScroll={() => {}}
       data={graph}
+      averageHeight={100}
       size={graph.size}
-      renderer={({ index, measure, scrollWindow }) => {
+      renderer={({ index, scrollWindow }) => {
         const node = graph.get(index);
         const post = node?.post;
         if (!node || !post)
@@ -87,7 +81,6 @@ return null;
         const linkProps = {
           ...props,
           node,
-          measure
         };
         if(canWrite && index.eq(first ?? bigInt.zero)) {
           return (
@@ -103,5 +96,6 @@ return null;
       }}
       loadRows={fetchLinks}
     />
+    </Col>
   );
 }

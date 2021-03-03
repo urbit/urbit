@@ -132,7 +132,6 @@ const GraphNodeContent = ({
         <ChatMessage
           renderSigil={false}
           containerClass='items-top cf hide-child'
-          measure={() => {}}
           group={group}
           groups={{}}
           associations={{ graph: {}, groups: {} }}

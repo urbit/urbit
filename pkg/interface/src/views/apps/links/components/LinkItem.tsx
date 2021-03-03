@@ -18,7 +18,6 @@ interface LinkItemProps {
   api: GlobalApi;
   group: Group;
   path: string;
-  measure: (el: any) => void;
 }
 
 export const LinkItem = (props: LinkItemProps): ReactElement => {
@@ -28,7 +27,6 @@ export const LinkItem = (props: LinkItemProps): ReactElement => {
     api,
     group,
     path,
-    measure,
     ...rest
   } = props;
 
@@ -93,14 +91,6 @@ export const LinkItem = (props: LinkItemProps): ReactElement => {
   const commColor = (unreads.graph?.[appPath]?.[`/${index}`]?.unreads ?? 0) > 0 ? 'blue' : 'gray';
   const isUnread = unreads.graph?.[appPath]?.['/']?.unreads?.has(node.post.index);
 
-  const onMeasure = useCallback(() => {
-    ref.current && measure(ref.current);
-  }, [ref.current, measure]);
-
-  useEffect(() => {
-    onMeasure();
-  }, [onMeasure]);
-
   return (
     <Box mx="auto" px={3} maxWidth="768px" ref={ref} width="100%" {...rest}>
       <Box
@@ -123,7 +113,6 @@ export const LinkItem = (props: LinkItemProps): ReactElement => {
           url={href}
           text={contents[0].text}
           unfold={true}
-          onLoad={onMeasure}
           style={{ alignSelf: 'center' }}
           oembedProps={{
             p: 2,
