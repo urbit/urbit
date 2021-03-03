@@ -149,14 +149,19 @@ export function EditProfile(props: any): ReactElement {
             <ProfileHeader>
               <ProfileControls>
                 <Row>
-                  <button
+                  <Button
                     type='submit'
+                    display='inline'
+                    cursor='pointer'
+                    fontWeight='500'
+                    color='blue'
+                    pl='0'
+                    pr='0'
+                    border='0'
                     style={{ appearance: 'none', background: 'transparent' }}
                   >
-                    <Text py='2' cursor='pointer' fontWeight='500' color='blue'>
-                      Save Edits
-                    </Text>
-                  </button>
+                    Save Edits
+                  </Button>
                   <Text
                     py='2'
                     ml='3'

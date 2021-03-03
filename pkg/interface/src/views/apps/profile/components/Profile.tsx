@@ -18,6 +18,7 @@ export function ProfileHeader(props: any): ReactElement {
       border='1px solid'
       borderColor='lightGray'
       borderRadius='2'
+      overflow='hidden'
       marginBottom='calc(64px + 2rem)'
     >
       {props.children}
@@ -62,11 +63,13 @@ export function ProfileImages(props: any): ReactElement {
     );
 
   return (
-    <Row width='100%' height='300px' position='relative'>
-      {cover}
-      <Center position='absolute' width='100%' height='100%'>
-        {props.children}
-      </Center>
+    <>
+      <Row width='100%' height='300px' position='relative'>
+        {cover}
+        <Center position='absolute' width='100%' height='100%'>
+          {props.children}
+        </Center>
+      </Row>
       <Box
         height='128px'
         width='128px'
@@ -74,12 +77,12 @@ export function ProfileImages(props: any): ReactElement {
         overflow='hidden'
         position='absolute'
         left='50%'
-        bottom='-64px'
+        marginTop='-64px'
         marginLeft='-64px'
       >
         {image}
       </Box>
-    </Row>
+    </>
   );
 }
 
