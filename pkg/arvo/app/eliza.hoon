@@ -542,8 +542,8 @@
   ++  point
     |=  =^point
     ^-  @t
-    ?@  point  point
-    ?+  -.point  q.point
+    ?@  point  (unbreak point)
+    ?+  -.point  (unbreak q.point)
       %drift  $(point q.point)
     ::
         %multi
@@ -567,6 +567,11 @@
       %multi  (cat 3 'choose one of A through ' (add 'A' (lent a.query)))
       %drift  $(query q.query)
     ==
+  ::  +unbreak: replace newlines with spaces
+  ::
+  ++  unbreak
+    |=  t=@t
+    (crip (turn (trip t) |=(c=@ ?:(=('\0a' c) ' ' c))))
   --
 ::  +hop: drift function builders
 ::
