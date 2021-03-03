@@ -17,7 +17,6 @@ export default class CustomTile extends React.PureComponent {
         >
           <BaseImage
             position='absolute'
-            className="invert-d"
             style={{ left: 38, top: 38 }}
             src='/~launch/img/UnknownCustomTile.png'
             width='48px'

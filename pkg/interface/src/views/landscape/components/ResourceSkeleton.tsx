@@ -88,7 +88,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
           display={['block', 'none']}
           flexShrink={0}
         >
-          <Link to={`/~landscape${workspace}`}> {'<- Back'}</Link>
+          <Link to={`/~landscape${workspace}`}><Text>{'<- Back'}</Text></Link>
         </Box>
         <Box px={1} mr={2} minWidth={0} display="flex" flexShrink={[1, 0]}>
           <Text
