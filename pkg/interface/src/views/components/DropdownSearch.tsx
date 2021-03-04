@@ -114,7 +114,7 @@ export function DropdownSearch<C>(props: DropdownSearchProps<C>): ReactElement {
       search(e.target.value);
       setQuery(e.target.value);
     },
-    [setQuery]
+    [search, onChange]
   );
 
   const dropdown = useMemo(() => {
