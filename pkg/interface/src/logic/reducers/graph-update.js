@@ -131,7 +131,7 @@ const addNodes = (json, state) => {
     } else {
       const child = graph.get(index[0]);
       if (child) {
-        graph = _remove(child.children, index.slice(1));
+        child.children = _remove(child.children, index.slice(1));
         graph.set(index[0], child);
       }
     }
@@ -194,7 +194,7 @@ const addNodes = (json, state) => {
         node
       );
     });
-    
+
     state.graphs[resource] = graph;
   }
 };
