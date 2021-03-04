@@ -47,7 +47,7 @@ export function Profile(props: any): ReactElement {
 
   const anchorRef = useRef<HTMLElement | null>(null);
 
-  useTutorialModal('profile', ship === `~${window.ship}`, anchorRef.current);
+  useTutorialModal('profile', ship === `~${window.ship}`, anchorRef);
 
   return (
     <Center

@@ -49,7 +49,7 @@ export function SidebarItem(props: {
   useTutorialModal(
     mod as any,
     groupPath === `/ship/${TUTORIAL_HOST}/${TUTORIAL_GROUP}`,
-    anchorRef.current
+    anchorRef
   );
   const app = apps[appName];
   const isUnmanaged = groups?.[groupPath]?.hidden || false;
