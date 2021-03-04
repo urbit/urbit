@@ -11,7 +11,7 @@ export default class SettingsApi extends BaseApi<StoreState> {
   }
 
   putBucket(key: Key, bucket: Bucket) {
-    this.storeAction({
+    return this.storeAction({
       'put-bucket': {
         'bucket-key': key,
         'bucket': bucket
@@ -20,7 +20,7 @@ export default class SettingsApi extends BaseApi<StoreState> {
   }
 
   delBucket(key: Key) {
-    this.storeAction({
+    return this.storeAction({
       'del-bucket': {
         'bucket-key': key
       }
@@ -38,7 +38,7 @@ export default class SettingsApi extends BaseApi<StoreState> {
   }
 
   delEntry(buc: Key, key: Key) {
-    this.storeAction({
+    return this.storeAction({
       'put-entry': {
         'bucket-key': buc,
         'entry-key': key
@@ -47,8 +47,10 @@ export default class SettingsApi extends BaseApi<StoreState> {
   }
 
   async getAll() {
-    const data = await this.scry('settings-store', '/all');
-    this.store.handleEvent({ data: { 'settings-data': data.all } });
+    const { all } = await this.scry("settings-store", "/all");
+    this.store.handleEvent({data: 
+      {"settings-data": { all } }
+    });
   }
 
   async getBucket(bucket: Key) {
