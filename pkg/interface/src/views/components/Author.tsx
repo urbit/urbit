@@ -7,6 +7,7 @@ import { Contacts } from '@urbit/api/contacts';
 import { Group } from '@urbit/api';
 
 import { uxToHex, cite, useShowNickname, deSig } from '~/logic/lib/util';
+import useSettingsState, {selectCalmState} from "~/logic/state/settings";
 import OverlaySigil from './OverlaySigil';
 import { Sigil } from '~/logic/lib/sigil';
 import GlobalApi from '~/logic/api/global';
@@ -33,6 +34,7 @@ export default function Author(props: AuthorProps): ReactElement {
   }
   const color = contact?.color ? `#${uxToHex(contact?.color)}` : '#000000';
   const showNickname = useShowNickname(contact);
+  const { hideAvatars } = useSettingsState(selectCalmState);
   const name = showNickname ? contact.nickname : cite(ship);
   const stamp = moment(date);
 
@@ -43,7 +45,7 @@ export default function Author(props: AuthorProps): ReactElement {
   };
 
   const img =
-    contact && contact.avatar !== null ? (
+    contact?.avatar && !hideAvatars ? (
       <BaseImage
         display='inline-block'
         src={contact.avatar}
