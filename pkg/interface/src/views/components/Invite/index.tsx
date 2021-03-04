@@ -94,6 +94,8 @@ export function InviteItem(props: InviteItemProps) {
   if (preview) {
     return (
       <GroupInvite
+        resource={resource}
+        api={api}
         preview={preview}
         invite={invite}
         status={status}
@@ -119,7 +121,7 @@ export function InviteItem(props: InviteItemProps) {
     );
   } else if (status && name.startsWith('dm--')) {
     return (
-      <JoinSkeleton status={status} gapY="3">
+      <JoinSkeleton api={api} resource={resource} status={status} gapY="3">
         <Row py="1" alignItems="center">
           <Icon display="block" color="blue" icon="Bullet" mr="2" />
           <Text mr="1">Joining direct message...</Text>
@@ -131,6 +133,7 @@ export function InviteItem(props: InviteItemProps) {
       <InviteSkeleton
         acceptDesc="Accept Invite"
         declineDesc="Decline Invite"
+        resource={resource}
         {...handlers}
         gapY="3"
       >
@@ -148,7 +151,7 @@ export function InviteItem(props: InviteItemProps) {
   } else if (status) {
     const [, , ship, name] = resource.split('/');
     return (
-      <JoinSkeleton status={status}>
+      <JoinSkeleton api={api} resource={resource} status={status}>
         <Row py="1" alignItems="center">
           <Icon display="block" color="blue" icon="Bullet" mr="2" />
           <Text mr="1">
