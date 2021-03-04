@@ -68,7 +68,6 @@ const Root = withSettingsState(styled.div`
 `, ['display']);
 
 const StatusBarWithRouter = withRouter(StatusBar);
-
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -135,13 +134,14 @@ class App extends React.Component {
     const { state, props } = this;
     const associations = state.associations ?
       state.associations : { contacts: {} };
-    const theme = props.dark ? dark : light;
-    const background = this.props.background;
+    const theme =
+    ((props.dark && props?.display?.theme == "auto") ||
+      props?.display?.theme == "dark"
+    ) ? dark : light;
 
     const notificationsCount = state.notificationsCount || 0;
     const doNotDisturb = state.doNotDisturb || false;
     const ourContact = this.state.contacts[`~${this.ship}`] || null;
-
     return (
       <ThemeProvider theme={theme}>
         <Helmet>
@@ -196,5 +196,4 @@ class App extends React.Component {
   }
 }
 
-export default withLocalState(process.env.NODE_ENV === 'production' ? App : hot(App));
-
+export default withSettingsState(withLocalState(process.env.NODE_ENV === 'production' ? App : hot(App)), ['display']);

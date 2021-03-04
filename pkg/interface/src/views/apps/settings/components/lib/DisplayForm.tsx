@@ -3,6 +3,8 @@ import React from "react";
 import {
   Col,
   Text,
+  Label,
+  ManagedRadioButtonField as Radio
 } from "@tlon/indigo-react";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
@@ -20,13 +22,16 @@ const formSchema = Yup.object().shape({
     .oneOf(["none", "color", "url"], "invalid")
     .required("Required"),
   background: Yup.string(),
-
+  theme: Yup.string()
+    .oneOf(["light", "dark", "auto"])
+    .required("Required")
 });
 
 interface FormSchema {
   bgType: BgType;
   bgColor: string | undefined;
   bgUrl: string | undefined;
+  theme: string;
 }
 
 interface DisplayFormProps {
@@ -43,6 +48,7 @@ export default function DisplayForm(props: DisplayFormProps) {
     display: {
       background,
       backgroundType,
+      theme
     }
   } = useSettingsState(settingsSel);
 
@@ -63,13 +69,13 @@ export default function DisplayForm(props: DisplayFormProps) {
         {
           bgType: backgroundType,
           bgColor: bgColor || "",
-          bgUrl
+          bgUrl,
+          theme
         } as FormSchema
       }
       onSubmit={async (values, actions) => {
         let promises = [] as Promise<any>[];
         promises.push(api.settings.putEntry('display', 'backgroundType', values.bgType));
-
         promises.push(
           api.settings.putEntry('display', 'background',
             values.bgType === "color"
@@ -79,6 +85,7 @@ export default function DisplayForm(props: DisplayFormProps) {
             : false
           ));
 
+        promises.push(api.settings.putEntry('display', 'theme', values.theme));
         await Promise.all(promises);
 
         actions.setStatus({ success: null });
@@ -87,9 +94,9 @@ export default function DisplayForm(props: DisplayFormProps) {
     >
       {(props) => (
         <Form>
+          <BackButton/>
           <Col p="5" pt="4" gapY="5">
-            <BackButton/>
-            <Col gapY="2">
+              <Col gapY="1" mt="0">
               <Text color="black" fontSize={2} fontWeight="medium">
                 Display Preferences
               </Text>
@@ -103,6 +110,10 @@ export default function DisplayForm(props: DisplayFormProps) {
               api={api}
               s3={s3}
             />
+            <Label>Theme</Label>
+            <Radio name="theme" id="light" label="Light"/>
+            <Radio name="theme" id="dark" label="Dark" />
+            <Radio name="theme" id="auto" label="Auto" />
             <AsyncButton primary width="fit-content" type="submit">
               Save
             </AsyncButton>

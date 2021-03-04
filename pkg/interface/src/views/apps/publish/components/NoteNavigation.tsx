@@ -3,7 +3,7 @@ import moment from 'moment';
 import { Link } from 'react-router-dom';
 import { BigInteger } from 'big-integer';
 
-import { Box } from '@tlon/indigo-react';
+import { Box, Text } from '@tlon/indigo-react';
 import { Graph } from '@urbit/api';
 
 import { getLatestRevision } from '~/logic/lib/publish';
@@ -24,13 +24,14 @@ function NavigationItem(props: {
       textAlign={props.prev ? 'left' : 'right'}
     >
       <Link to={props.url}>
-        <Box color="gray" mb={2}>
+        <Text display='block' color="gray">
           {props.prev ? 'Previous' : 'Next'}
-        </Box>
-        <Box mb={1}>{props.title}</Box>
+        </Text>
+        <Text display='block' lineHeight="tall">{props.title}</Text>
         <Timestamp
           stamp={moment(props.date)}
           time={false}
+          fontSize="1"
           justifyContent={props.prev ? 'flex-start' : 'flex-end'}
         />
       </Link>

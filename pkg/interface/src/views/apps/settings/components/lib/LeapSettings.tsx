@@ -74,9 +74,10 @@ export function LeapSettings(props: { api: GlobalApi; }) {
   };
 
   return (
+    <>
+    <BackButton/>
     <Col p="5" pt="4" gapY="5">
-      <BackButton/>
-      <Col gapY="1">
+      <Col gapY="1" mt="0">
         <Text fontSize="2" fontWeight="medium">
           Leap
         </Text>
@@ -97,5 +98,6 @@ export function LeapSettings(props: { api: GlobalApi; }) {
         </Form>
       </FormikOnBlur>
     </Col>
+    </>
   );
 }

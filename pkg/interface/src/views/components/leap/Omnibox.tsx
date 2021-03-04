@@ -100,7 +100,7 @@ export function Omnibox(props: OmniboxProps) {
   const initialResults = useMemo(() => {
     return new Map(SEARCHED_CATEGORIES.map((category) => {
      if (category === 'other') {
-        return ['other', index.get('other')];
+       return ['other', index.get('other').filter(({ app }) => app !== 'tutorial')];
      }
      return [category, []];
     }));
@@ -133,6 +133,7 @@ export function Omnibox(props: OmniboxProps) {
     if (defaultApps.includes(app.toLowerCase())
         || app === 'profile'
         || app === 'messages'
+        || app === 'tutorial'
         || app === 'Links'
         || app === 'Terminal'
         || app === 'home'

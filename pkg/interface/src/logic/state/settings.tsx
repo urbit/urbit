@@ -11,6 +11,7 @@ export interface SettingsState {
     backgroundType: 'none' | 'url' | 'color';
     background?: string;
     dark: boolean;
+    theme: "light" | "dark" | "auto";
   };
   calm: {
     hideNicknames: boolean;
@@ -22,7 +23,11 @@ export interface SettingsState {
   remoteContentPolicy: RemoteContentPolicy;
   leap: {
     categories: LeapCategories[];
-  }
+  };
+  tutorial: {
+    seen: boolean;
+    joined?: number;
+  };
   set: (fn: (state: SettingsState) => void) => void
 };
 
@@ -33,11 +38,14 @@ export const selectSettingsState =
 
 export const selectCalmState = (s: SettingsState) => s.calm;
 
+export const selectDisplayState = (s: SettingsState) => s.display;
+
 const useSettingsState = create<SettingsStateZus>((set) => ({
   display: {
     backgroundType: 'none',
     background: undefined,
     dark: false,
+    theme: "auto"
   },
   calm: {
     hideNicknames: false,
@@ -54,6 +62,10 @@ const useSettingsState = create<SettingsStateZus>((set) => ({
   },
   leap: {
     categories: leapCategories,
+  },
+  tutorial: {
+    seen: false,
+    joined: undefined
   },
   set: (fn: (state: SettingsState) => void) => set(produce(fn))
 }));

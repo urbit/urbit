@@ -37,6 +37,7 @@ import styled from 'styled-components';
 import useLocalState from '~/logic/state/local';
 import useSettingsState, {selectCalmState} from "~/logic/state/settings";
 import Timestamp from '~/views/components/Timestamp';
+import {useIdlingState} from '~/logic/lib/idling';
 
 export const DATESTAMP_FORMAT = '[~]YYYY.M.D';
 
@@ -64,16 +65,16 @@ export const DayBreak = ({ when, shimTop = false }: DayBreakProps) => (
 
 export const UnreadMarker = React.forwardRef(({ dayBreak, when, api, association }, ref) => {
   const [visible, setVisible] = useState(false);
+  const idling = useIdlingState();
   const dismiss = useCallback(() => {
     api.hark.markCountAsRead(association, '/', 'message');
   }, [api, association]);
 
   useEffect(() => {
-    if(visible) {
-      console.log('dismissing');
+    if(visible && !idling) {
       dismiss();
     }
-  }, [visible]);
+  }, [visible, idling]);
 
   return (
   <Row
@@ -293,6 +294,7 @@ export const MessageAuthor = ({
     contact?.avatar && !hideAvatars ? (
       <BaseImage
         display='inline-block'
+        style={{ objectFit: 'cover' }}
         src={contact.avatar}
         height={16}
         width={16}

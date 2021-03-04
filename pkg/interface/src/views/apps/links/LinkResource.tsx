@@ -69,6 +69,7 @@ export function LinkResource(props: LinkResourceProps) {
           render={(props) => {
             return (
               <LinkWindow
+                key={rid}
                 s3={s3}
                 association={resource}
                 contacts={contacts}

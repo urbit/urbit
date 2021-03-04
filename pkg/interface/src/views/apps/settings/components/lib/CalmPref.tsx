@@ -78,9 +78,9 @@ export function CalmPrefs(props: {
   return (
     <Formik initialValues={initialValues} onSubmit={onSubmit}>
       <Form>
+        <BackButton/>
         <Col borderBottom="1" borderBottomColor="washedGray" p="5" pt="4" gapY="5">
-          <BackButton/>
-          <Col gapY="1">
+            <Col gapY="1" mt="0">
             <Text color="black" fontSize={2} fontWeight="medium">
               CalmEngine
             </Text>

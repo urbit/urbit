@@ -22,6 +22,7 @@ import { StatelessAsyncButton } from '~/views/components/StatelessAsyncButton';
 import { getModuleIcon } from '~/logic/lib/util';
 import { FormError } from '~/views/components/FormError';
 import { GroupSummary } from './GroupSummary';
+import {TUTORIAL_GROUP_RESOURCE} from '~/logic/lib/tutorialModal';
 
 const formSchema = Yup.object({
   group: Yup.string()
@@ -72,6 +73,9 @@ export function JoinGroup(props: JoinGroupProps): ReactElement {
 
   const onConfirm = useCallback(async (group: string) => {
     const [,,ship,name] = group.split('/');
+    if(group === TUTORIAL_GROUP_RESOURCE) {
+      await api.settings.putEntry('tutorial', 'joined', Date.now());
+    }
     await api.groups.join(ship, name);
     try {
       await waiter((p: JoinGroupProps) => {
