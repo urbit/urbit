@@ -110,12 +110,10 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
       scrollbar: 0
     };
 
-    this.updateVisible = IS_IOS
-      ? _.debounce(this.updateVisible.bind(this), 100)
-      : this.updateVisible.bind(this);
+    this.updateVisible = this.updateVisible.bind(this);
 
     this.invertedKeyHandler = this.invertedKeyHandler.bind(this);
-    this.onScroll = IS_IOS ? _.debounce(this.onScroll.bind(this), 150) : this.onScroll.bind(this);
+    this.onScroll = IS_IOS ? _.debounce(this.onScroll.bind(this), 400) : this.onScroll.bind(this);
     this.scrollKeyMap = this.scrollKeyMap.bind(this);
     this.setWindow = this.setWindow.bind(this);
   }
@@ -458,8 +456,10 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
 
     const transform = isTop ? 'scale3d(1, 1, 1)' : 'scale3d(1, -1, 1)';
 
-    const atStart = this.props.data.peekLargest()?.[0].eq(visibleItems.peekLargest()?.[0] || bigInt.zero);
-    const atEnd = false;
+    const loaded = this.props.data.size > 0;
+
+    const atStart = loaded && this.props.data.peekLargest()?.[0].eq(visibleItems.peekLargest()?.[0] || bigInt.zero);
+    const atEnd = this.loaded.top;
 
     return (
       <>
