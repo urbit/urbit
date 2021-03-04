@@ -119,7 +119,7 @@ export default function Inbox(props: {
 
   return (
     <Col ref={scrollRef} position="relative" height="100%" overflowY="auto">
-      <Invites groups={props.groups} pendingJoin={props.pendingJoin} invites={invites} api={api} associations={associations} />
+      <Invites contacts={props.contacts} groups={props.groups} pendingJoin={props.pendingJoin} invites={invites} api={api} associations={associations} />
       {[...notificationsByDayMap.keys()].sort().reverse().map((day, index) => {
         const timeboxes = notificationsByDayMap.get(day)!;
         return timeboxes.length > 0 && (
@@ -137,16 +137,17 @@ export default function Inbox(props: {
           />
         );
       })}
-      {isDone && (
+      {isDone ? (
         <Center mt="2" borderTop={notifications.length !== 0 ? 1 : 0} borderTopColor="washedGray" width="100%" height="96px">
           <Text gray fontSize="1">No more notifications</Text>
         </Center>
-    )}
-      {isLoading && (
+    )  : isLoading ? (
         <Center mt="2" borderTop={notifications.length !== 0 ? 1 : 0} borderTopColor="washedGray" width="100%" height="96px">
           <LoadingSpinner />
         </Center>
-      )}
+    ) : (
+      <Box mt="2" height="96px" />
+    )}
 
     </Col>
   );

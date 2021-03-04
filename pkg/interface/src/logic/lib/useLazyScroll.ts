@@ -41,10 +41,9 @@ export function useLazyScroll(
   }, [count]);
 
   useEffect(() => {
-    if (!ref.current) {
+    if (!ref.current || isDone) {
       return;
     }
-    setIsDone(false);
     const scroll = ref.current;
     loadUntil(scroll);
 
