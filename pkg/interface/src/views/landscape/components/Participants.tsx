@@ -10,6 +10,7 @@ import {
   Row,
   Text,
   Icon,
+  Image,
   Action,
   StatelessTextInput as Input
 } from '@tlon/indigo-react';
@@ -297,7 +298,7 @@ function Participant(props: {
 
   const avatar =
     contact?.avatar !== null && !hideAvatars ? (
-      <img 
+      <Image 
         src={contact.avatar} 
         height={32} 
         width={32} 
