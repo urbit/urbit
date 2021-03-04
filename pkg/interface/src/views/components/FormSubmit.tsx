@@ -1,13 +1,13 @@
-import React, { useCallback, ReactNode } from "react";
-import { useFormikContext } from "formik";
-import { Row, Button } from "@tlon/indigo-react";
-import { AsyncButton } from "./AsyncButton";
+import React, { useCallback, ReactNode, ReactElement } from 'react';
+import { useFormikContext } from 'formik';
+import { Row, Button } from '@tlon/indigo-react';
+import { AsyncButton } from './AsyncButton';
 
 interface FormSubmitProps {
   children?: ReactNode;
 }
 
-export function FormSubmit<T = any>(props: FormSubmitProps) {
+export function FormSubmit<T = unknown>(props: FormSubmitProps): ReactElement {
   const { children } = props;
   const { initialValues, values, dirty, resetForm, isSubmitting } = useFormikContext<T>();
 
@@ -18,7 +18,6 @@ export function FormSubmit<T = any>(props: FormSubmitProps) {
   const handleRevert = useCallback(() => {
     resetForm({ errors: {}, touched: {}, values: initialValues, status: {} });
   }, [resetForm, initialValues]);
-
 
   return (
     <Row

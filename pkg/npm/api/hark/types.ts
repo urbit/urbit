@@ -1,9 +1,8 @@
-import _ from "lodash";
-import { Post } from "./graph-update";
-import { GroupUpdate } from "./group-update";
-import { BigIntOrderedMap } from "~/logic/lib/BigIntOrderedMap";
+import { Post } from "../graph/types";
+import { GroupUpdate } from "../groups/types";
+import BigIntOrderedMap from "../lib/BigIntOrderedMap";
 
-export type GraphNotifDescription = "link" | "comment" | "note" | "mention";
+export type GraphNotifDescription = "link" | "comment" | "note" | "mention" | "message";
 
 export interface UnreadStats {
   unreads: Set<string> | number;

@@ -1,6 +1,6 @@
-import { PatpNoSig, Path, Jug, ShipRank, Enc } from './noun';
+import { PatpNoSig, Path, Jug, ShipRank, Enc } from '..';
+import { roleTags } from './index';
 
-export const roleTags = ['janitor', 'moderator', 'admin'] as const;
 export type RoleTags = typeof roleTags[number];
 interface RoleTag {
   tag: 'admin' | 'moderator' | 'janitor';
@@ -38,33 +38,33 @@ export type OpenPolicyDiff =
   | AllowShipsDiff
   | BanShipsDiff;
 
-interface AllowRanksDiff {
+export interface AllowRanksDiff {
   allowRanks: ShipRank[];
 }
 
-interface BanRanksDiff {
+export interface BanRanksDiff {
   banRanks: ShipRank[];
 }
 
-interface AllowShipsDiff {
+export interface AllowShipsDiff {
   allowShips: PatpNoSig[];
 }
 
-interface BanShipsDiff {
+export interface BanShipsDiff {
   banShips: PatpNoSig[];
 }
 
 export type InvitePolicyDiff = AddInvitesDiff | RemoveInvitesDiff;
 
-interface AddInvitesDiff {
+export interface AddInvitesDiff {
   addInvites: PatpNoSig[];
 }
 
-interface RemoveInvitesDiff {
+export interface RemoveInvitesDiff {
   removeInvites: PatpNoSig[];
 }
 
-interface ReplacePolicyDiff {
+export interface ReplacePolicyDiff {
   replace: GroupPolicy;
 }
 
@@ -75,7 +75,7 @@ export type GroupPolicyDiff =
 
 export type GroupPolicy = OpenPolicy | InvitePolicy;
 
-interface TaggedShips {
+export interface TaggedShips {
   [tag: string]: Set<PatpNoSig>;
 }
 
@@ -95,11 +95,11 @@ export type Groups = {
   [p in Path]: Group;
 };
 
-interface GroupUpdateInitial {
+export interface GroupUpdateInitial {
   initial: Enc<Groups>;
 }
 
-interface GroupUpdateAddGroup {
+export interface GroupUpdateAddGroup {
   addGroup: {
     resource: Resource;
     policy: Enc<GroupPolicy>;
@@ -107,21 +107,21 @@ interface GroupUpdateAddGroup {
   };
 }
 
-interface GroupUpdateAddMembers {
+export interface GroupUpdateAddMembers {
   addMembers: {
     ships: PatpNoSig[];
     resource: Resource;
   };
 }
 
-interface GroupUpdateRemoveMembers {
+export interface GroupUpdateRemoveMembers {
   removeMembers: {
     ships: PatpNoSig[];
     resource: Resource;
   };
 }
 
-interface GroupUpdateAddTag {
+export interface GroupUpdateAddTag {
   addTag: {
     tag: Tag;
     resource: Resource;
@@ -129,31 +129,31 @@ interface GroupUpdateAddTag {
   };
 }
 
-interface GroupUpdateRemoveTag {
+export interface GroupUpdateRemoveTag {
   removeTag: {
     tag: Tag;
     resource: Resource;
-    ships: PatpNoSig;
+    ships: PatpNoSig[];
   };
 }
 
-interface GroupUpdateChangePolicy {
+export interface GroupUpdateChangePolicy {
   changePolicy: { resource: Resource; diff: GroupPolicyDiff };
 }
 
-interface GroupUpdateRemoveGroup {
+export interface GroupUpdateRemoveGroup {
   removeGroup: {
     resource: Resource;
   };
 }
 
-interface GroupUpdateExpose {
+export interface GroupUpdateExpose {
   expose: {
     resource: Resource;
   };
 }
 
-interface GroupUpdateInitialGroup {
+export interface GroupUpdateInitialGroup {
   initialGroup: {
     resource: Resource;
     group: Enc<Group>;
@@ -174,7 +174,4 @@ export type GroupUpdate =
 
 export type GroupAction = Omit<GroupUpdate, 'initialGroup' | 'initial'>;
 
-export const groupBunts = {
-  group: (): Group => ({ members: new Set(), tags: { role: {} }, hidden: false, policy: groupBunts.policy() }),
-  policy: (): GroupPolicy => ({ open: { banned: new Set(), banRanks: new Set() } })
-};
+

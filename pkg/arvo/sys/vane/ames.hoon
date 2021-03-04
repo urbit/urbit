@@ -1217,7 +1217,7 @@
       on-hear-forward
     ::
     ?:  ?&  ?=(%pawn (clan:title sndr.packet))
-            !(~(has by peers.ames-state) sndr.packet)
+            !?=([~ %known *] (~(get by peers.ames-state) sndr.packet))
         ==
       on-hear-open
     on-hear-shut
@@ -1289,14 +1289,9 @@
     |=  [=lane =packet dud=(unit goof)]
     ^+  event-core
     =/  sndr-state  (~(get by peers.ames-state) sndr.packet)
-    ::  if we don't know them, maybe enqueue a jael %public-keys request
-    ::
-    ::    Ignore encrypted packets from alien comets.
-    ::    TODO: maybe crash?
+    ::  if we don't know them, ask jael for their keys and enqueue
     ::
     ?.  ?=([~ %known *] sndr-state)
-      ?:  =(%pawn (clan:title sndr.packet))
-        event-core
       (enqueue-alien-todo sndr.packet |=(alien-agenda +<))
     ::  decrypt packet contents using symmetric-key.channel
     ::

@@ -4,13 +4,12 @@
 +$  card  card:agent:gall
 +$  versioned-state
   $%  state-0
+      state-1
   ==
-+$  state-0
-  $:  %0
-      =settings
-  ==
++$  state-0  [%0 settings=settings-0]
++$  state-1  [%1 =settings]
 --
-=|  state-0
+=|  state-1
 =*  state  -
 ::
 %-  agent:dbug
@@ -32,8 +31,10 @@
     |=  =old=vase
     ^-  (quip card _this)
     =/  old  !<(versioned-state old-vase)
+    |-
     ?-  -.old
-      %0  [~ this(state old)]
+      %0  $(old [%1 +.old])
+      %1  [~ this(state old)]
     ==
   ::
   ++  on-poke

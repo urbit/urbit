@@ -10,7 +10,8 @@ import * as Yup from 'yup';
 
 import GlobalApi from '~/logic/api/global';
 import { uxToHex } from '~/logic/lib/util';
-import { StorageState, BackgroundConfig } from '~/types';
+import { BackgroundConfig } from '@urbit/api';
+import { StorageState } from '~/types';
 import { BackgroundPicker, BgType } from './BackgroundPicker';
 import useLocalState, { LocalState } from '~/logic/state/local';
 

@@ -1,5 +1,4 @@
-import { AppName, Path, Patp } from './noun';
-
+import { AppName, Path, Patp } from "../lib";
 
 export type MetadataUpdate =
   MetadataUpdateInitial
@@ -7,26 +6,32 @@ export type MetadataUpdate =
 | MetadataUpdateUpdate
 | MetadataUpdateRemove;
 
-interface MetadataUpdateInitial {
+export interface MetadataUpdateInitial {
   associations: ResourceAssociations;
 }
 
-type ResourceAssociations = {
+export type ResourceAssociations = {
   [p in Path]: Association;
 }
 
-type MetadataUpdateAdd = {
-  add: Association;
+export type MetadataUpdateAdd = {
+  add: AssociationPoke;
 }
 
-type MetadataUpdateUpdate = {
-  update: Association;
+export type MetadataUpdateUpdate = {
+  update: AssociationPoke;
 }
 
-type MetadataUpdateRemove = {
-  remove: Resource & {
-    group: Path;
+export type MetadataUpdateRemove = {
+  remove: {
+    resource: MdResource;
+    group: string;
   }
+}
+
+export interface MdResource {
+  resource: string;
+  app: AppName;
 }
 
 export interface MetadataUpdatePreview {
@@ -43,15 +48,18 @@ export type AppAssociations = {
   [p in Path]: Association;
 }
 
-interface Resource {
-  resource: Path;
-  'app-name': AppName;
-}
 
-export type Association = Resource & {
+
+export type Association = MdResource & {
   group: Path;
   metadata: Metadata;
 };
+
+export interface AssociationPoke {
+  group: Path;
+  resource: MdResource;
+  metadata: Metadata;
+}
 
 export interface Metadata {
   color: string;

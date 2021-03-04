@@ -1,49 +1,56 @@
-import { Serial, PatpNoSig, Path } from './noun';
-import {Resource} from './group-update';
+import { Serial, PatpNoSig, Path } from '..';
+import { Resource } from "../groups";
 
 export type InviteUpdate =
   InviteUpdateInitial
 | InviteUpdateCreate
 | InviteUpdateDelete
 | InviteUpdateInvite
+| InviteUpdateAccept
 | InviteUpdateAccepted
 | InviteUpdateDecline;
 
+export interface InviteUpdateAccept {
+  accept: {
+    term: string;
+    uid: Serial;
+  }
+}
 
-interface InviteUpdateInitial {
+export interface InviteUpdateInitial {
   initial: Invites;
 }
 
-interface InviteUpdateCreate {
+export interface InviteUpdateCreate {
   create: {
-    path: Path;
+    term: string;
   };
 }
 
-interface InviteUpdateDelete {
+export interface InviteUpdateDelete {
   delete: {
-    path: Path;
+    term: string;
   };
 }
 
-interface InviteUpdateInvite {
+export interface InviteUpdateInvite {
   invite: {
-    path: Path;
+    term: string;
     uid: Serial;
     invite: Invite;
   };
 }
 
-interface InviteUpdateAccepted {
+export interface InviteUpdateAccepted {
   accepted: {
-    path: Path;
+    term: string;
     uid: Serial;
   };
 }
 
-interface InviteUpdateDecline {
+export interface InviteUpdateDecline {
   decline: {
-    path: Path;
+    term: string;
     uid: Serial;
   };
 }

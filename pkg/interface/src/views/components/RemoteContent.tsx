@@ -23,6 +23,7 @@ interface RemoteContentProps {
 interface RemoteContentState {
   unfold: boolean;
   embed: any | undefined;
+  noCors: boolean;
 }
 
 const IMAGE_REGEX = new RegExp(/(jpg|img|png|gif|tiff|jpeg|webp|webm|svg)$/i);
@@ -36,11 +37,13 @@ class RemoteContent extends PureComponent<RemoteContentProps, RemoteContentState
     super(props);
     this.state = {
       unfold: props.unfold || false,
-      embed: undefined
+      embed: undefined,
+      noCors: false
     };
     this.unfoldEmbed = this.unfoldEmbed.bind(this);
     this.loadOembed = this.loadOembed.bind(this);
     this.wrapInLink = this.wrapInLink.bind(this);
+    this.onError = this.onError.bind(this);
   }
 
   componentWillUnmount() {
@@ -66,7 +69,8 @@ class RemoteContent extends PureComponent<RemoteContentProps, RemoteContentState
     .then((result) => {
       this.setState({ embed: result });
     }).catch((error) => {
-      if (error.name === 'AbortError') return;
+      if (error.name === 'AbortError')
+return;
       this.setState({ embed: 'error' });
     });
   }
@@ -81,9 +85,13 @@ class RemoteContent extends PureComponent<RemoteContentProps, RemoteContentState
       target="_blank"
       width="100%"
       rel="noopener noreferrer"
-    >
+            >
       {contents}
     </BaseAnchor>);
+  }
+
+  onError(e: Event) {
+    this.setState({ noCors: true });
   }
 
   render() {
@@ -102,6 +110,7 @@ class RemoteContent extends PureComponent<RemoteContentProps, RemoteContentState
       onLoad = () => {},
       ...props
     } = this.props;
+    const { noCors } = this.state;
     const isImage = IMAGE_REGEX.test(url);
     const isAudio = AUDIO_REGEX.test(url);
     const isVideo = VIDEO_REGEX.test(url);
@@ -110,10 +119,12 @@ class RemoteContent extends PureComponent<RemoteContentProps, RemoteContentState
     if (isImage && remoteContentPolicy.imageShown) {
       return this.wrapInLink(
         <BaseImage
+          {...(noCors ? {} : { crossOrigin: "anonymous" })}
           flexShrink={0}
           src={url}
           style={style}
           onLoad={onLoad}
+          onError={this.onError}
           {...imageProps}
           {...props}
         />
@@ -171,7 +182,7 @@ class RemoteContent extends PureComponent<RemoteContentProps, RemoteContentState
             onClick={this.unfoldEmbed}
             flexShrink={0}
             style={{ cursor: 'pointer' }}
-          >
+                                                                               >
             {this.state.unfold ? 'collapse' : 'expand'}
           </Button> : null}
           <Box
@@ -188,8 +199,11 @@ class RemoteContent extends PureComponent<RemoteContentProps, RemoteContentState
           >
             {this.state.embed && this.state.embed.html && this.state.unfold
             ? <EmbedContainer markup={this.state.embed.html}>
-              <div className="embed-container" ref={el => { this.containerRef = el; }}
-                dangerouslySetInnerHTML={{__html: this.state.embed.html}}></div>
+              <div className="embed-container" ref={(el) => {
+ this.containerRef = el;
+}}
+                dangerouslySetInnerHTML={{ __html: this.state.embed.html }}
+              ></div>
             </EmbedContainer>
             : null}
           </Box>

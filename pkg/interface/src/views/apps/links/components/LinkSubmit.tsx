@@ -1,22 +1,22 @@
-import { BaseInput, Box, Button, LoadingSpinner, Text } from "@tlon/indigo-react";
-import React, { useCallback, useState } from "react";
-import GlobalApi from "~/logic/api/global";
-import { useFileDrag } from "~/logic/lib/useDrag";
-import useStorage from "~/logic/lib/useStorage";
-import { StorageState } from "~/types";
-import SubmitDragger from "~/views/components/SubmitDragger";
-import { createPost } from "~/logic/api/graph";
-import { hasProvider } from "oembed-parser";
+import { BaseInput, Box, Button, LoadingSpinner, Text } from '@tlon/indigo-react';
+import React, { useCallback, useState } from 'react';
+import GlobalApi from '~/logic/api/global';
+import { useFileDrag } from '~/logic/lib/useDrag';
+import useStorage from '~/logic/lib/useStorage';
+import { StorageState } from '~/types';
+import SubmitDragger from '~/views/components/SubmitDragger';
+import { createPost } from '~/logic/api/graph';
+import { hasProvider } from 'oembed-parser';
 
 interface LinkSubmitProps {
   api: GlobalApi;
   storage: StorageState;
   name: string;
   ship: string;
-};
+}
 
 const LinkSubmit = (props: LinkSubmitProps) => {
-  let { canUpload, uploadDefault, uploading, promptUpload } =
+  const { canUpload, uploadDefault, uploading, promptUpload } =
     useStorage(props.storage);
 
   const [submitFocused, setSubmitFocused] = useState(false);
@@ -101,7 +101,7 @@ const LinkSubmit = (props: LinkSubmitProps) => {
 
   const onLinkChange = (linkValue: string) => {
     setLinkValueHook(linkValue);
-    const link = validateLink(linkValue)
+    const link = validateLink(linkValue);
     setLinkValid(link);
   };
 
@@ -134,7 +134,7 @@ const LinkSubmit = (props: LinkSubmitProps) => {
     px={2}
     pt={2}
     style={{ pointerEvents: 'none' }}
-  >{canUpload
+                      >{canUpload
     ? <>
       Drop or{' '}
       <Text
@@ -170,7 +170,7 @@ const LinkSubmit = (props: LinkSubmitProps) => {
           zIndex={9}
           alignItems="center"
           justifyContent="center"
-        >
+                      >
           <LoadingSpinner />
         </Box>}
         {dragging && <SubmitDragger />}

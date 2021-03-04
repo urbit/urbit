@@ -1,13 +1,14 @@
-import React from "react";
-import { FormikHelpers } from "formik";
-import GlobalApi from "~/logic/api/global";
-import { useWaitForProps } from "~/logic/lib/useWaitForProps";
-import { RouteComponentProps } from "react-router-dom";
-import { PostForm, PostFormSchema } from "./NoteForm";
-import {createPost} from "~/logic/api/graph";
-import {Graph} from "~/types/graph-update";
-import {Association, StorageState} from "~/types";
-import {newPost} from "~/logic/lib/publish";
+import React from 'react';
+import { FormikHelpers } from 'formik';
+import GlobalApi from '~/logic/api/global';
+import { useWaitForProps } from '~/logic/lib/useWaitForProps';
+import { RouteComponentProps } from 'react-router-dom';
+import { PostForm, PostFormSchema } from './NoteForm';
+import { createPost } from '~/logic/api/graph';
+import { Graph } from '@urbit/api/graph';
+import { Association } from '@urbit/api';
+import { StorageState } from '~/types';
+import { newPost } from '~/logic/lib/publish';
 
 interface NewPostProps {
   api: GlobalApi;
@@ -30,21 +31,21 @@ export default function NewPost(props: NewPostProps & RouteComponentProps) {
   ) => {
     const { title, body } = values;
     try {
-      const [noteId, nodes] = newPost(title, body)
-      await api.graph.addNodes(ship, book, nodes)
-      await waiter(p => 
+      const [noteId, nodes] = newPost(title, body);
+      await api.graph.addNodes(ship, book, nodes);
+      await waiter(p =>
         p.graph.has(noteId) && !p.graph.get(noteId)?.post?.pending
       );
       history.push(`${props.baseUrl}/note/${noteId}`);
     } catch (e) {
       console.error(e);
-      actions.setStatus({ error: "Posting note failed" });
+      actions.setStatus({ error: 'Posting note failed' });
     }
   };
 
   const initialValues: PostFormSchema = {
-    title: "",
-    body: "",
+    title: '',
+    body: ''
   };
 
   return (

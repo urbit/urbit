@@ -1,13 +1,13 @@
-import {useCallback, useMemo, useEffect, useRef, useState} from 'react';
+import { useCallback, useMemo, useEffect, useRef, useState } from 'react';
 import {
   GcpState,
   S3State,
   StorageState
 } from '../../types';
-import S3 from "aws-sdk/clients/s3";
+import S3 from 'aws-sdk/clients/s3';
 import GcpClient from './GcpClient';
-import {StorageClient, StorageAcl} from './StorageClient';
-import {dateToDa, deSig} from "./util";
+import { StorageClient, StorageAcl } from './StorageClient';
+import { dateToDa, deSig } from './util';
 
 
 export interface IuseStorage {
@@ -47,14 +47,14 @@ const useStorage = ({gcp, s3}: StorageState,
     () =>
       ((gcp.token || (s3.credentials && s3.credentials.accessKeyId &&
                       s3.credentials.secretAccessKey)) &&
-       s3.configuration.currentBucket !== "") || false,
+       s3.configuration.currentBucket !== '') || false,
     [s3.credentials, gcp.token, s3.configuration.currentBucket]
   );
 
   const upload = useCallback(
     async (file: File, bucket: string) => {
       if (client.current === null) {
-        throw new Error("Storage not ready");
+        throw new Error('Storage not ready');
       }
 
       const fileParts = file.name.split('.');
@@ -67,7 +67,7 @@ const useStorage = ({gcp, s3}: StorageState,
         Key: `${window.ship}/${timestamp}-${fileName}.${fileExtension}`,
         Body: file,
         ACL: StorageAcl.PublicRead,
-        ContentType: file.type,
+        ContentType: file.type
       };
 
       setUploading(true);
@@ -83,7 +83,7 @@ const useStorage = ({gcp, s3}: StorageState,
 
   const uploadDefault = useCallback(async (file: File) => {
     if (s3.configuration.currentBucket === '') {
-      throw new Error("current bucket not set");
+      throw new Error('current bucket not set');
     }
     return upload(file, s3.configuration.currentBucket);
   }, [s3, upload]);
@@ -103,10 +103,10 @@ const useStorage = ({gcp, s3}: StorageState,
           }
           uploadDefault(files[0]).then(resolve);
           document.body.removeChild(fileSelector);
-        })
+        });
         document.body.appendChild(fileSelector);
         fileSelector.click();
-      })
+      });
     },
     [uploadDefault]
   );

@@ -1,17 +1,18 @@
-import React from "react";
-import { RouteComponentProps, Link } from "react-router-dom";
-import { NotebookPosts } from "./NotebookPosts";
-import { Col, Box, Text, Button, Row } from "@tlon/indigo-react";
-import GlobalApi from "~/logic/api/global";
-import { Contacts, Rolodex, Groups, Associations, Graph, Association, Unreads } from "~/types";
-import { useShowNickname } from "~/logic/lib/util";
+import React, { ReactElement } from 'react';
+import { RouteComponentProps } from 'react-router-dom';
+
+import { Col, Box, Text, Row } from '@tlon/indigo-react';
+import { Contacts, Rolodex, Groups, Associations, Graph, Association, Unreads } from '@urbit/api';
+
+import { NotebookPosts } from './NotebookPosts';
+import GlobalApi from '~/logic/api/global';
+import { useShowNickname } from '~/logic/lib/util';
 
 interface NotebookProps {
   api: GlobalApi;
   ship: string;
   book: string;
   graph: Graph;
-  notebookContacts: Contacts;
   association: Association;
   associations: Associations;
   contacts: Rolodex;
@@ -21,11 +22,11 @@ interface NotebookProps {
   unreads: Unreads;
 }
 
-export function Notebook(props: NotebookProps & RouteComponentProps) {
+export function Notebook(props: NotebookProps & RouteComponentProps): ReactElement {
   const {
     ship,
     book,
-    notebookContacts,
+    contacts,
     groups,
     association,
     graph
@@ -36,11 +37,9 @@ export function Notebook(props: NotebookProps & RouteComponentProps) {
     return null; // Waiting on groups to populate
   }
 
-
   const relativePath = (p: string) => props.baseUrl + p;
 
-  const contact = notebookContacts?.[ship];
-  const isOwn = `~${window.ship}` === ship;
+  const contact = contacts?.[`~${ship}`];
   console.log(association.resource);
 
   const showNickname = useShowNickname(contact);
@@ -61,7 +60,7 @@ export function Notebook(props: NotebookProps & RouteComponentProps) {
         graph={graph}
         host={ship}
         book={book}
-        contacts={notebookContacts ? notebookContacts : {}}
+        contacts={contacts}
         unreads={props.unreads}
         baseUrl={props.baseUrl}
         api={props.api}

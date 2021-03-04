@@ -1,4 +1,4 @@
-import { Patp } from '~/types/noun';
+import { Patp } from '@urbit/api';
 import BaseApi from './base';
 import { StoreState } from '../store/type';
 import GlobalStore from '../store/store';
@@ -11,7 +11,7 @@ import LaunchApi from './launch';
 import GraphApi from './graph';
 import S3Api from './s3';
 import GcpApi from './gcp';
-import {HarkApi} from './hark';
+import { HarkApi } from './hark';
 import SettingsApi from './settings';
 
 export default class GlobalApi extends BaseApi<StoreState> {

@@ -1,5 +1,5 @@
-import React from "react";
-import useStorage from "~/logic/lib/useStorage";
+import React from 'react';
+import useStorage from '~/logic/lib/useStorage';
 
 const withStorage = (Component, params = {}) => {
   return React.forwardRef((props: any, ref) => {

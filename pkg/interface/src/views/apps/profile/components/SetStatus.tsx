@@ -3,14 +3,13 @@ import React, {
   useCallback,
   useEffect,
   ChangeEvent
-} from "react";
+} from 'react';
 
 import {
   Row,
   Button,
-  StatelessTextInput as Input,
-} from "@tlon/indigo-react";
-
+  StatelessTextInput as Input
+} from '@tlon/indigo-react';
 
 export function SetStatus(props: any) {
   const { contact, ship, api, callback } = props;
@@ -23,11 +22,11 @@ export function SetStatus(props: any) {
   );
 
   useEffect(() => {
-    setStatus(!!contact ? contact.status : '');
+    setStatus(contact ? contact.status : '');
   }, [contact]);
 
   const editStatus = () => {
-    api.contacts.edit(ship, {status: _status});
+    api.contacts.edit(ship, { status: _status });
 
     if (callback) {
       callback();
@@ -53,7 +52,8 @@ export function SetStatus(props: any) {
         color="white"
         ml={2}
         width="25%"
-        onClick={editStatus}>
+        onClick={editStatus}
+      >
         Set Status
       </Button>
     </Row>
