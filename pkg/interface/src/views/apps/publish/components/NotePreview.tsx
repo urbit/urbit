@@ -68,7 +68,15 @@ export function NotePreview(props: NotePreviewProps) {
               unwrapDisallowed
               allowedTypes={['text', 'root', 'break', 'paragraph', 'image']}
               renderers={{
-                image: props => <Image src={props.src} maxHeight='300px' style={{ objectFit: 'cover' }} />
+                image: props => (
+                  <Box
+                    backgroundImage={`url(${props.src})`}
+                    style={{ backgroundSize: 'cover',
+                      backgroundPosition: "center" }}
+                  >
+                    <Image src={props.src} opacity="0" maxHeight="300px"/>
+                  </Box>
+                )
               }}
               source={snippet}
             />
