@@ -11,6 +11,7 @@ export interface SettingsState {
     backgroundType: 'none' | 'url' | 'color';
     background?: string;
     dark: boolean;
+    theme: "light" | "dark" | "auto";
   };
   calm: {
     hideNicknames: boolean;
@@ -33,11 +34,14 @@ export const selectSettingsState =
 
 export const selectCalmState = (s: SettingsState) => s.calm;
 
+export const selectDisplayState = (s: SettingsState) => s.display;
+
 const useSettingsState = create<SettingsStateZus>((set) => ({
   display: {
     backgroundType: 'none',
     background: undefined,
     dark: false,
+    theme: "auto"
   },
   calm: {
     hideNicknames: false,
