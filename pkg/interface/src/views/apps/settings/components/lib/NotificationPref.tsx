@@ -51,9 +51,10 @@ export function NotificationPreferences(props: {
   }, [api]);
 
   return (
+    <>
+    <BackButton/>
     <Col p="5" pt="4" gapY="5">
-      <BackButton/>
-      <Col gapY="1">
+      <Col gapY="1" mt="0">
         <Text fontSize="2" fontWeight="medium">
           Notification Preferences
         </Text>
@@ -84,5 +85,6 @@ export function NotificationPreferences(props: {
         </Form>
       </FormikOnBlur>
     </Col>
+    </>
   );
 }

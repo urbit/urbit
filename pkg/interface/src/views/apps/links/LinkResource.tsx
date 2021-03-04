@@ -65,6 +65,7 @@ export function LinkResource(props: LinkResourceProps) {
           render={(props) => {
             return (
               <LinkWindow
+                key={rid}
                 association={resource}
                 resource={resourcePath}
                 graph={graph}

@@ -50,10 +50,6 @@ const Root = withState(styled.div`
   display: flex;
   flex-flow: column nowrap;
 
-  a {
-    text-decoration: none;
-  }
-
   * {
     scrollbar-width: thin;
     scrollbar-color: ${ p => p.theme.colors.gray } transparent;

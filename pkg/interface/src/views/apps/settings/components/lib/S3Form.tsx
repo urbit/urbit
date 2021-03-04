@@ -65,9 +65,9 @@ export default function S3Form(props: S3FormProps): ReactElement {
           onSubmit={onSubmit}
         >
           <Form>
+            <BackButton/>
             <Col maxWidth="600px" gapY="5">
-              <BackButton/>
-              <Col gapY="1">
+              <Col gapY="1" mt="0">
                 <Text color="black" fontSize={2} fontWeight="medium">
                   S3 Storage Setup
                 </Text>

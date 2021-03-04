@@ -3,7 +3,7 @@ import RemoteContent from '~/views/components/RemoteContent';
 import { hasProvider } from 'oembed-parser';
 import ReactMarkdown from 'react-markdown';
 import RemarkDisableTokenizers from 'remark-disable-tokenizers';
-import { BaseAnchor, Text } from '@tlon/indigo-react';
+import { Anchor, Text } from '@tlon/indigo-react';
 import { isValidPatp } from 'urbit-ob';
 
 import { deSig } from '~/logic/lib/util';
@@ -37,7 +37,7 @@ const RichText = React.memo(({ disableRemoteContent, ...props }) => (
           return <RemoteContent className="mw-100" url={linkProps.href} />;
         }
 
-        return <BaseAnchor target='_blank' rel='noreferrer noopener' borderBottom='1px solid' remoteContentPolicy={remoteContentPolicy} {...linkProps}>{linkProps.children}</BaseAnchor>;
+        return <Anchor target='_blank' rel='noreferrer noopener' borderBottom='1px solid' remoteContentPolicy={remoteContentPolicy} {...linkProps}>{linkProps.children}</Anchor>;
       },
       linkReference: (linkProps) => {
         const linkText = String(linkProps.children[0].props.children);

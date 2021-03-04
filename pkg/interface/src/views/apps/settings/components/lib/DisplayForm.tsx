@@ -93,9 +93,9 @@ export default function DisplayForm(props: DisplayFormProps) {
     >
       {(props) => (
         <Form>
+          <BackButton/>
           <Col p="5" pt="4" gapY="5">
-            <BackButton/>
-            <Col gapY="2">
+              <Col gapY="1" mt="0">
               <Text color="black" fontSize={2} fontWeight="medium">
                 Display Preferences
               </Text>
