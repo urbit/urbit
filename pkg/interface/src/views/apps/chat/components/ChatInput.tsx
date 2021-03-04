@@ -130,11 +130,12 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
         props.ourContact &&
         ((props.ourContact.avatar !== null) && !props.hideAvatars)
       )
-      ? <BaseImage 
-          src={props.ourContact.avatar} 
-          height={16} 
-          width={16} 
+      ? <BaseImage
+          src={props.ourContact.avatar}
+          height={16}
+          width={16}
           style={{ objectFit: 'cover' }}
+          borderRadius={1}
           display='inline-block'
         />
       : <Sigil
