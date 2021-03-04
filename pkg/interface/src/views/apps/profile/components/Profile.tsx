@@ -165,7 +165,7 @@ export function Profile(props: any): ReactElement {
   const ViewInterface = () => {
     return (
       <Center p={[0, 4]} height='100%' width='100%'>
-        <Box ref={anchorRef} maxWidth='600px' width='100%'>
+        <Box ref={anchorRef} maxWidth='600px' width='100%' position='relative'>
           <ViewProfile
             api={props.api}
             nacked={nacked}
@@ -183,7 +183,7 @@ export function Profile(props: any): ReactElement {
   const EditInterface = () => {
     return (
       <Center p={[0, 4]} height='100%' width='100%'>
-        <Box ref={anchorRef} maxWidth='600px' width='100%'>
+        <Box ref={anchorRef} maxWidth='600px' width='100%' position='relative'>
           <EditProfile
             ship={ship}
             contact={contact}
