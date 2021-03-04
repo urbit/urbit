@@ -40,6 +40,18 @@ const renderers = {
       </Text>
     );
   },
+  blockquote: ({ children }) => {
+    return (
+      <Text
+        lineHeight="20px"
+        display="block"
+        borderLeft="1px solid"
+        color="black"
+        paddingLeft={2}>
+        {children}
+      </Text>
+    )
+  },
   paragraph: ({ children }) => {
     return (
       <Text fontSize='1' lineHeight={'20px'}>

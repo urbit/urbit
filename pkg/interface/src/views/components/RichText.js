@@ -46,6 +46,18 @@ const RichText = React.memo(({ disableRemoteContent, ...props }) => (
         }
         return linkText;
       },
+      blockquote: (blockquoteProps) => {
+        return (
+          <Text
+            lineHeight="20px"
+            display="block"
+            borderLeft="1px solid"
+            color="black"
+            paddingLeft={2} {...props}>
+            {blockquoteProps.children}
+          </Text>
+        )
+      },
       paragraph: (paraProps) => {
         return <Text display={props.inline ? 'inline' : 'block'} mb='2' {...props}>{paraProps.children}</Text>;
       }

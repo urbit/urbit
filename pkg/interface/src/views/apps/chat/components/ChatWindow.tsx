@@ -85,8 +85,6 @@ export default class ChatWindow extends Component<
 
   componentDidMount() {
     this.calculateUnreadIndex();
-    window.addEventListener('blur', this.handleWindowBlur);
-    window.addEventListener('focus', this.handleWindowFocus);
     setTimeout(() => {
       if (this.props.scrollTo) {
         this.scrollToUnread();
@@ -94,11 +92,6 @@ export default class ChatWindow extends Component<
       this.setState({ initialized: true });
       
     }, this.INITIALIZATION_MAX_TIME);
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('blur', this.handleWindowBlur);
-    window.removeEventListener('focus', this.handleWindowFocus);
   }
 
   calculateUnreadIndex() {
@@ -110,7 +103,6 @@ export default class ChatWindow extends Component<
       });
       return;
     }
-    console.log(`found unread: ${unreadIndex}`);
     this.setState({
       unreadIndex
     });
@@ -198,7 +190,6 @@ export default class ChatWindow extends Component<
       this.calculateUnreadIndex();
     }
     this.fetchPending = false;
-    console.log(currSize, graph.size);
     return currSize === graph.size;
   }
 

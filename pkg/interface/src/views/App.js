@@ -34,7 +34,7 @@ import useGroupState from '~/logic/state/group';
 import useSettingsState from '~/logic/state/settings';
 
 
-const Root = withState(useSettingsState, styled.div`
+const Root = withState(styled.div`
   font-family: ${p => p.theme.fonts.sans};
   height: 100%;
   width: 100%;
@@ -49,6 +49,10 @@ const Root = withState(useSettingsState, styled.div`
   }
   display: flex;
   flex-flow: column nowrap;
+
+  a {
+    text-decoration: none;
+  }
 
   * {
     scrollbar-width: thin;
@@ -68,10 +72,9 @@ const Root = withState(useSettingsState, styled.div`
     border-radius: 1rem;
     border: 0px solid transparent;
   }
-`, ['display']);
+`, [[useSettingsState, 'display']]);
 
 const StatusBarWithRouter = withRouter(StatusBar);
-
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -137,11 +140,14 @@ class App extends React.Component {
     const { state, props } = this;
     const associations = state.associations ?
       state.associations : { contacts: {} };
-    const theme = props.dark ? dark : light;
-    const background = this.props.background;
+    const theme =
+    ((props.dark && props?.display?.theme == "auto") ||
+      props?.display?.theme == "dark"
+    ) ? dark : light;
 
-    const ourContact = this.props.contacts[`~${this.ship}`] || null;
-
+    const notificationsCount = state.notificationsCount || 0;
+    const doNotDisturb = state.doNotDisturb || false;
+    const ourContact = this.state.contacts[`~${this.ship}`] || null;
     return (
       <ThemeProvider theme={theme}>
         <Helmet>
@@ -185,6 +191,9 @@ class App extends React.Component {
   }
 }
 
-export default withState(useGroupState, withState(useContactState, withState(useLocalState, process.env.NODE_ENV === 'production' ? App : hot(App))));
-
-
+export default withState(process.env.NODE_ENV === 'production' ? App : hot(App), [
+  [useGroupState],
+  [useContactState],
+  [useSettingsState, ['display']],
+  [useLocalState]
+]);
