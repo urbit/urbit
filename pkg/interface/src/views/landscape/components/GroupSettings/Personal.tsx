@@ -4,7 +4,7 @@ import {
   Col,
   Label,
   BaseLabel,
-  BaseAnchor
+  Text
 } from '@tlon/indigo-react';
 import { GroupNotificationsConfig } from '@urbit/api';
 import { Association } from '@urbit/api/metadata';
@@ -28,7 +28,7 @@ export function GroupPersonalSettings(props: {
 
   return (
     <Col px="4" pb="4" gapY="4">
-      <BaseAnchor pt="4" fontWeight="600" id="notifications" fontSize="2">Group Notifications</BaseAnchor>
+      <Text pt="4" fontWeight="600" id="notifications" fontSize="2">Group Notifications</Text>
       <BaseLabel
         htmlFor="asyncToggle"
         display="flex"
