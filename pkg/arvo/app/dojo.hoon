@@ -1077,7 +1077,12 @@
       ::
           %thread-done
         ?>  ?=(^ poy)
-        (~(dy-hand dy u.poy(pux ~)) %noun q.cage.sign)
+        ::  print the vase as a tang if it nests in tang
+        =/  =mark
+            ?:  (~(nest ut -:!>(*tang)) | p.q.cage.sign)
+              %tang
+            %noun
+        (~(dy-hand dy u.poy(pux ~)) mark q.cage.sign)
       ==
     ::
         %kick  +>.$
