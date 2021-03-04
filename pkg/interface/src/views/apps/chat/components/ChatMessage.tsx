@@ -293,6 +293,7 @@ export const MessageAuthor = ({
     contact?.avatar && !hideAvatars ? (
       <BaseImage
         display='inline-block'
+        style={{ objectFit: 'cover' }}
         src={contact.avatar}
         height={16}
         width={16}

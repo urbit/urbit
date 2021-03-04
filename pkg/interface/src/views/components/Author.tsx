@@ -47,6 +47,7 @@ export default function Author(props: AuthorProps): ReactElement {
       <BaseImage
         display='inline-block'
         src={contact.avatar}
+        style={{ objectFit: 'cover' }}
         height={16}
         width={16}
       />

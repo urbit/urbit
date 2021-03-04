@@ -98,6 +98,7 @@ class ProfileOverlay extends PureComponent<
       contact?.avatar && !hideAvatars ? (
         <BaseImage
           display='inline-block'
+          style={{ objectFit: 'cover' }}
           src={contact.avatar}
           height={72}
           width={72}
