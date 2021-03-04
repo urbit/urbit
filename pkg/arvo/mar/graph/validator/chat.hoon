@@ -20,6 +20,12 @@
     ?+  index.p.i  ~
       [@ ~]  `[%message [0 1] %count %none]
     ==
+  ::
+  ++  transform-add-nodes
+    |=  [=index =post =atom was-parent-modified=?]
+    ^-  [^index ^post]
+    =-  [- post(index -)]
+    [atom ~]
   --
 ++  grab
   |%

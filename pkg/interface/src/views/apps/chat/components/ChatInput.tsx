@@ -78,7 +78,7 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
 
     props.deleteMessage();
 
-    props.api.graph.addPost(ship,name, post);
+    props.api.graph.addPost(ship, name, post);
   }
 
   uploadSuccess(url) {

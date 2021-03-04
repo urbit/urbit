@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 import { Box, Text } from '@tlon/indigo-react';
+import VisibilitySensor from 'react-visibility-sensor';
 
 import Timestamp from '~/views/components/Timestamp';
 

@@ -30,6 +30,19 @@
       [@ @ %1 ~]  `[%comment [1 2] %count %siblings]
       [@ @ @ ~]   `[%edit-comment [1 2] %none %none]
     ==
+  ::
+  ++  transform-add-nodes
+    |=  [=index =post =atom was-parent-modified=?]
+    ^-  [^index ^post]
+    =-  [- post(index -)]
+    ?+    index  ~|(transform+[index post] !!)
+        [@ ~]    [atom ~]
+        [@ @ ~]  [i.index atom ~]
+        [@ @ @ ~]
+      ?:  was-parent-modified
+        [i.index atom i.t.t.index ~]
+      index
+    ==
   --
 ++  grab
   |%

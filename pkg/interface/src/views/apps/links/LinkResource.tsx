@@ -34,7 +34,8 @@ export function LinkResource(props: LinkResourceProps) {
     graphKeys,
     unreads,
     s3,
-    history
+    history,
+    pendingIndices
   } = props;
 
   const rid = association.resource;
@@ -77,6 +78,7 @@ export function LinkResource(props: LinkResourceProps) {
                 baseUrl={resourceUrl}
                 group={group}
                 path={resource.group}
+                pendingSize={Object.keys(props.pendingIndices || {}).length}
                 api={api}
                 mb={3}
               />
