@@ -160,6 +160,7 @@ export function ChatResource(props: ChatResourceProps) {
         association={props.association}
         associations={props.associations}
         groups={props.groups}
+        pendingSize={Object.keys(props.pendingIndices || {}).length}
         group={group}
         ship={owner}
         station={station}

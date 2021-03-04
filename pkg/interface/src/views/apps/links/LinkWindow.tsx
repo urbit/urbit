@@ -32,7 +32,7 @@ interface LinkWindowProps {
   s3: S3State;
 }
 export function LinkWindow(props: LinkWindowProps) {
-  const { graph, api, association } = props;
+  const { graph, api, association, pendingSize } = props;
   const fetchLinks = useCallback(
     async (newer: boolean) => {
       return true;
@@ -76,6 +76,7 @@ export function LinkWindow(props: LinkWindowProps) {
       data={graph}
       averageHeight={100}
       size={graph.size}
+      pendingSize={pendingSize}
       renderer={({ index, scrollWindow }) => {
         const node = graph.get(index);
         const post = node?.post;

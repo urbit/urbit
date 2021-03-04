@@ -32,6 +32,7 @@ interface VirtualScrollerProps<T> {
   onStartReached?(): void;
   onEndReached?(): void;
   size: number;
+  pendingSize: number;
   totalSize: number;
   averageHeight: number;
   offset: number;
@@ -148,9 +149,10 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
 
 
   componentDidUpdate(prevProps: VirtualScrollerProps<T>, _prevState: VirtualScrollerState<T>) {
-    const { id, size, data, offset } = this.props;
+    const { id, size, data, offset, pendingSize } = this.props;
     const { visibleItems } = this.state;
-    if(size !== prevProps.size) {
+
+    if(size !== prevProps.size || pendingSize !== prevProps.pendingSize) {
       if(this.scrollLocked) {
         this.updateVisible(0);
         if(IS_IOS) {
@@ -174,7 +176,9 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     }
     const offset = [...this.props.data].findIndex(([i]) => i.eq(startIndex))
     if(offset === -1) {
-      throw new Error("a");
+      // TODO: revisit when we remove nodes for any other reason than
+      // pending indices being removed
+      return 0;
     }
     return offset;
   }
