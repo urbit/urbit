@@ -135,6 +135,7 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
           height={16}
           width={16}
           style={{ objectFit: 'cover' }}
+          borderRadius={1}
           display='inline-block'
         />
       : <Sigil
