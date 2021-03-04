@@ -7,11 +7,11 @@
 ::  +en-base64url: url-safe base64 encoding, without padding
 ::
 ++  en-base64url
-  ~(en base64:mimes:html | &)
+  ~(en base64:mimes:encoding | &)
 ::  +de-base64url: url-safe base64 decoding, without padding
 ::
 ++  de-base64url
-  ~(de base64:mimes:html | &)
+  ~(de base64:mimes:encoding | &)
 ::  +join-turf
 ::
 ++  join-turf
@@ -19,7 +19,7 @@
   ^-  cord
   %+  rap  3
   %-  (bake join ,[cord wain])
-  [', ' (turn hot en-turf:html)]
+  [', ' (turn hot en-turf:encoding)]
 ::  |octn: encode/decode unsigned atoms as big-endian octet stream
 ::
 ++  octn
@@ -60,7 +60,7 @@
   |%
   ::  +json-purl: parse url
   ::
-  ++  json-purl  (su auri:de-purl:html)
+  ++  json-purl  (su auri:de-purl:encoding)
   ::  +json-date: parse iso-8601
   ::
   ::    XX actually parse
@@ -114,7 +114,7 @@
         --
     ^-  $-(json auth:body)
     %-  ot
-    :~  'identifier'^(cu iden (ot type+so value+(su thos:de-purl:html) ~))
+    :~  'identifier'^(cu iden (ot type+so value+(su thos:de-purl:encoding) ~))
         'status'^so
         'expires'^json-date
         'challenges'^(cu trial (ar challenge))
@@ -391,7 +391,7 @@
 ::  directory-base: LetsEncrypt service directory url
 ::
 =/  directory-base=purl
-  =-  (need (de-purl:html -))
+  =-  (need (de-purl:encoding -))
   'https://acme-v02.api.letsencrypt.org/directory'
 ::  cards: list of outgoing moves for the current transaction
 ::
@@ -449,7 +449,7 @@
 ++  request
   |=  [wir=wire req=hiss]
   ^-  card
-  [%pass wir %arvo %i %request (hiss-to-request:html req) *outbound-config:iris]
+  [%pass wir %arvo %i %request (hiss-to-request:encoding req) *outbound-config:iris]
 ::  +signed-request: JWS JSON POST
 ::
 ++  signed-request
@@ -460,10 +460,10 @@
   :-  ~
   ^-  octs
   =;  pro=json
-    (as-octt:mimes:html (en-json:html (sign:jws key.act pro bod)))
+    (as-octt:mimes:encoding (en-json:encoding (sign:jws key.act pro bod)))
   :-  %o  %-  my  :~
     nonce+s+non
-    url+s+(crip (en-purl:html url))
+    url+s+(crip (en-purl:encoding url))
     ?^  reg.act
       kid+s+kid.u.reg.act
     jwk+(pass:en:jwk key.act)
@@ -487,7 +487,7 @@
   ::
   ?.  =(400 p.rep)  |
   ?~  r.rep  |
-  =/  jon=(unit json)  (de-json:html q.u.r.rep)
+  =/  jon=(unit json)  (de-json:encoding q.u.r.rep)
   ?~  jon  |
   =('urn:ietf:params:acme:error:badNonce' type:(error:grab u.jon))
 ::  +rate-limited: handle Acme service rate-limits
@@ -496,7 +496,7 @@
   |=  [try=@ud act=@tas spur=wire bod=(unit octs)]
   ^+  this
   =/  jon=(unit json)
-    ?~(bod ~ (de-json:html q.u.bod))
+    ?~(bod ~ (de-json:encoding q.u.bod))
   ?~  jon
     ::  no details, back way off
     ::  XX specifically based on wire
@@ -520,7 +520,7 @@
           ?~  rod
             ::  XX shouldn't happen
             ::
-            (en-turf:html /network/arvo/(crip +:(scow %p our.bow)))
+            (en-turf:encoding /network/arvo/(crip +:(scow %p our.bow)))
           (join-turf ~(tap in dom.u.rod))
           '. retrying in ~d7.'
       ==
@@ -537,7 +537,7 @@
           ' too many certificates issued for '
           ::  XX get from detail
           ::
-          (en-turf:html /network/arvo)
+          (en-turf:encoding /network/arvo)
           '. retrying in '
           (scot %dr lul)  '.'
       ==
@@ -559,7 +559,7 @@
   ^-  cord
   %+  rap  3
   :~  'unable to reach '
-      (crip (en-purl:html purl))  '. '
+      (crip (en-purl:encoding purl))  '. '
       'please confirm your urbit has network connectivity.'
   ==
 ::  |effect: send moves to advance
@@ -651,7 +651,7 @@
         :-  %a
         %+  turn
           ~(tap in ~(key by `(map turf *)`dom.u.next-order))
-        |=(a=turf [%o (my type+s+'dns' value+s+(en-turf:html a) ~)])
+        |=(a=turf [%o (my type+s+'dns' value+s+(en-turf:encoding a) ~)])
       ==
     =/  wire-params  [try %new-order /(scot %da now.bow)]
     (stateful-request wire-params new-order.dir json)
@@ -824,7 +824,7 @@
       =/  msg=cord
         %+  rap  3
         :~  'unable to reach '  (scot %p our.bow)
-            ' via http at '  (en-turf:html turf.i.item)  ':80'
+            ' via http at '  (en-turf:encoding turf.i.item)  ':80'
         ==
       (emil(next-order ~) (notify msg [(sell !>(rep)) ~]))
     ?:  ?=(~ (skip ~(val by dom.u.next-order) |=([@ud valid=?] valid)))
@@ -839,7 +839,7 @@
       ?:  (lth try 10)
         (retry:effect try %directory / (min ~m30 (backoff try)))
       (emil (notify (failure-message directory-base) [(sell !>(rep)) ~]))
-    =.  dir  (directory:grab (need (de-json:html q:(need r.rep))))
+    =.  dir  (directory:grab (need (de-json:encoding q:(need r.rep))))
     ?~(reg.act register:effect this)
   ::  +nonce: accept new nonce and trigger next effect
   ::
@@ -883,7 +883,7 @@
       ?~  r.rep
         (scot %da now.bow)
       =/  bod=acct:body
-        (acct:grab (need (de-json:html q.u.r.rep)))
+        (acct:grab (need (de-json:encoding q.u.r.rep)))
       ?>  ?=(%valid sas.bod)
       wen.bod
     =.  reg.act  `[wen loc]
@@ -908,12 +908,12 @@
     ?>  ?=(^ next-order)
     =/  loc=@t
       q:(head (skim q.rep |=((pair @t @t) ?=(%location p))))
-    =/  ego=purl  (need (de-purl:html loc))
+    =/  ego=purl  (need (de-purl:encoding loc))
     ::  XX parse identifiers, confirm equal to pending domains
     ::  XX check status
     ::
     =/  bod=order:body
-      (order:grab (need (de-json:html q:(need r.rep))))
+      (order:grab (need (de-json:encoding q:(need r.rep))))
     =/  dom=(set turf)  ~(key by dom.u.next-order)
     ::  XX maybe generate key here?
     ::
@@ -956,7 +956,7 @@
       ::
       (emil (notify (failure-message ego.u.rod) [(sell !>(rep)) ~]))
     =/  bod=order:body
-      (order:grab (need (de-json:html q:(need r.rep))))
+      (order:grab (need (de-json:encoding q:(need r.rep))))
     ?+  sas.bod
       ~&  [%check-order-status-unknown sas.bod]
       this
@@ -1063,7 +1063,7 @@
       ::
       (emil (notify (failure-message i.pending.aut.u.rod) [(sell !>(rep)) ~]))
     =/  bod=auth:body
-      (auth:grab (need (de-json:html q:(need r.rep))))
+      (auth:grab (need (de-json:encoding q:(need r.rep))))
     =/  cal=trial
        ::  XX parse token to verify url-safe base64?
        ::
@@ -1103,12 +1103,12 @@
       =/  msg=cord
         %+  rap  3
         :~  'unable to retrieve self-hosted domain validation token '
-            'via '  (en-turf:html dom.aut)  '. '
+            'via '  (en-turf:encoding dom.aut)  '. '
             'please confirm your urbit has network connectivity.'
         ==
       (emil (notify msg [(sell !>(rep)) ~]))
     =/  bod
-      %-  as-octs:mimes:html
+      %-  as-octs:mimes:encoding
       (rap 3 [tok.cal.aut '.' (pass:thumb:jwk key.act) ~])
     ?.  ?&  ?=(^ r.rep)
             =(bod u.r.rep)
@@ -1147,7 +1147,7 @@
       ::  XX get challenge, confirm urn:ietf:params:acme:error:connection
       ::
       ::  =/  err=error:body
-      ::    (error:grab (need (de-json:html q:(need r.rep))))
+      ::    (error:grab (need (de-json:encoding q:(need r.rep))))
       ::  ?:  =('urn:ietf:params:acme:error:malformed' status.err)
       ::
       =<  cancel-order:effect
@@ -1155,7 +1155,7 @@
        'unable to finalize domain validation challenge'
       (emil (notify msg [(sell !>(rep)) ~]))
     =/  bod=challenge:body
-      (challenge:grab (need (de-json:html q:(need r.rep))))
+      (challenge:grab (need (de-json:encoding q:(need r.rep))))
     ::  XX check for other possible values in 200 response
     ::  note: may have already been validated
     ::

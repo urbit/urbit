@@ -5,7 +5,7 @@
   ::
 ::::  compute
   ::
-=,  html
+=,  encoding
 ^|
 |_  htm=@t
 ++  grow                                                ::  convert to

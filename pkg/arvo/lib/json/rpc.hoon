@@ -10,8 +10,8 @@
     %-  ~(gas in *math:eyre)
     ~['Content-Type'^['application/json']~]
   %-  some
-  %-  as-octt:mimes:html
-  (en-json:html (request-to-json req))
+  %-  as-octt:mimes:encoding
+  (en-json:encoding (request-to-json req))
 ::
 ++  request-to-json
   |=  request

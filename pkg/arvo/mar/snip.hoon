@@ -2,7 +2,7 @@
 ::::  /hoon/snip/mar
   ::
 /?    310
-=,  html
+=,  encoding
 |%
   ++  words  1
   ++  hedtal
@@ -41,7 +41,7 @@
 --
 ::
 ::
-=,  mimes:html
+=,  mimes:encoding
 |_  [hed=marl tal=marl]
 ++  grad  %mime
 ::

@@ -69,7 +69,7 @@
                 ==
             ::
                 :-  ~
-                %-  as-octs:mimes:html
+                %-  as-octs:mimes:encoding
                 '''
                 <html><body>Response</body></html>
                 '''
@@ -90,7 +90,7 @@
             ::
                 :-  ~
                 :-  'text/html'
-                %-  as-octs:mimes:html
+                %-  as-octs:mimes:encoding
                 '''
                 <html><body>Response</body></html>
                 '''
@@ -163,7 +163,7 @@
                 :~  ['content-type' 'text/html']
                     ['content-length' '34']
                 ==
-                [~ (as-octs:mimes:html '<html><body>')]
+                [~ (as-octs:mimes:encoding '<html><body>')]
                 complete=%.n
         ==  ==
       ^=  expected-moves
@@ -180,7 +180,7 @@
             ::
                 bytes-read=12
                 expected-size=`34
-                [~ (as-octs:mimes:html '<html><body>')]
+                [~ (as-octs:mimes:encoding '<html><body>')]
     ==  ==  ==
   ::  returns the second 1/3 of the payload
   ::
@@ -196,7 +196,7 @@
             id=0
             ^-  http-event:http
             :*  %continue
-                [~ (as-octs:mimes:html 'Response')]
+                [~ (as-octs:mimes:encoding 'Response')]
                 complete=%.n
         ==  ==
       ^=  expected-moves
@@ -213,7 +213,7 @@
             ::
                 bytes-read=20
                 expected-size=`34
-                [~ (as-octs:mimes:html 'Response')]
+                [~ (as-octs:mimes:encoding 'Response')]
     ==  ==  ==
   ::  returns the last part
   ::
@@ -229,7 +229,7 @@
             id=0
             ^-  http-event:http
             :*  %continue
-                [~ (as-octs:mimes:html '</body></html>')]
+                [~ (as-octs:mimes:encoding '</body></html>')]
                 complete=%.y
         ==  ==
       ^=  expected-moves
@@ -246,7 +246,7 @@
             ::
                 :-  ~
                 :-  'text/html'
-                %-  as-octs:mimes:html
+                %-  as-octs:mimes:encoding
                 '''
                 <html><body>Response</body></html>
                 '''
@@ -320,7 +320,7 @@
                 :~  ['content-type' 'text/html']
                     ['content-length' '34']
                 ==
-                [~ (as-octs:mimes:html '<html><body>')]
+                [~ (as-octs:mimes:encoding '<html><body>')]
                 complete=%.n
         ==  ==
       ^=  expected-moves
@@ -337,7 +337,7 @@
             ::
                 bytes-read=12
                 expected-size=`34
-                [~ (as-octs:mimes:html '<html><body>')]
+                [~ (as-octs:mimes:encoding '<html><body>')]
     ==  ==  ==
   ::  lol, now we don't care about the rest so send a cancel to vere
   ::

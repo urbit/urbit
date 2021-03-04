@@ -2,7 +2,7 @@
 ::::  /hoon/helm-hi/mar
   ::
 /?    310
-=,  mimes:html
+=,  mimes:encoding
 =,  format
 |_  txt=cord
 ::

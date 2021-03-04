@@ -3,7 +3,7 @@
   ::
 /?    310
 =,  eyre
-=,  mimes:html
+=,  mimes:encoding
 |_  mud=@t
 ++  grow                                                ::  convert to
   |%  ++  mime  [/text/css (as-octs mud)]               ::  convert to %mime

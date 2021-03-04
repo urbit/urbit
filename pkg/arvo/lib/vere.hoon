@@ -52,8 +52,8 @@
     ::
     ++  bloq
       ^-  octs
-      %-  as-octt:mimes:html
-      %-  en-json:html
+      %-  as-octt:mimes:encoding
+      %-  en-json:encoding
       %+  request-to-json
         `~.0
       [%eth-block-number ~]
@@ -62,8 +62,8 @@
     ++  czar
       |=  boq=@ud
       ^-  octs
-      %-  as-octt:mimes:html
-      %-  en-json:html
+      %-  as-octt:mimes:encoding
+      %-  en-json:encoding
       :-  %a
       %+  turn  (gulf 0 255)
       |=  gal=@
@@ -78,8 +78,8 @@
     ++  point
       |=  [boq=@ud who=ship]
       ^-  octs
-      %-  as-octt:mimes:html
-      %-  en-json:html
+      %-  as-octt:mimes:encoding
+      %-  en-json:encoding
       %+  request-to-json
         `~.0
       :+  %eth-call
@@ -91,8 +91,8 @@
     ++  turf
       |=  boq=@ud
       ^-  octs
-      %-  as-octt:mimes:html
-      %-  en-json:html
+      %-  as-octt:mimes:encoding
+      %-  en-json:encoding
       :-  %a
       %+  turn  (gulf 0 2)
       |=  idx=@
@@ -116,7 +116,7 @@
     ++  bloq
       |=  rep=octs
       ^-  (unit @ud)
-      =/  jon=(unit json)  (de-json:html q.rep)
+      =/  jon=(unit json)  (de-json:encoding q.rep)
       ?~  jon
         ~&([%bloq-take-dawn %invalid-json] ~)
       =/  res=(unit cord)  ((ot result+so ~) u.jon)
@@ -133,7 +133,7 @@
     ++  czar
       |=  rep=octs
       ^-  (unit (map ship [=rift =life =pass]))
-      =/  jon=(unit json)  (de-json:html q.rep)
+      =/  jon=(unit json)  (de-json:encoding q.rep)
       ?~  jon
         ~&([%czar-take-dawn %invalid-json] ~)
       =/  res=(unit (list [@t @t]))
@@ -170,7 +170,7 @@
     ++  point
       |=  [who=ship rep=octs]
       ^-  (unit point:azimuth)
-      =/  jon=(unit json)  (de-json:html q.rep)
+      =/  jon=(unit json)  (de-json:encoding q.rep)
       ?~  jon
         ~&([%point-take-dawn %invalid-json] ~)
       =/  res=(unit cord)  ((ot result+so ~) u.jon)
@@ -193,7 +193,7 @@
     ++  turf
       |=  rep=octs
       ^-  (unit (list ^turf))
-      =/  jon=(unit json)  (de-json:html q.rep)
+      =/  jon=(unit json)  (de-json:encoding q.rep)
       ?~  jon
         ~&([%turf-take-dawn %invalid-json] ~)
       =/  res=(unit (list [@t @t]))
@@ -210,7 +210,7 @@
         =/  dom=tape
           (decode-results result [%string]~)
         =/  hot=host:eyre
-          (scan dom thos:de-purl:html)
+          (scan dom thos:de-purl:encoding)
         ?>(?=(%& -.hot) p.hot)
       ?~  dat
         ~&([%turf-take-dawn %invalid-domains] ~)

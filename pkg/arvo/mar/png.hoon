@@ -1,7 +1,7 @@
 |_  dat=@t
 ++  grow
   |%
-  ++  mime  [/image/png (as-octs:mimes:html dat)]
+  ++  mime  [/image/png (as-octs:mimes:encoding dat)]
   --
 ++  grab
   |%

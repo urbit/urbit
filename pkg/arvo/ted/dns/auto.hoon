@@ -24,8 +24,8 @@
 ;<  good=?   bind:m  (turf-confirm-install:dns turf)
 =/  msg=(pair cord tang)
   ?:  good
-    [(cat 3 'confirmed access via ' (en-turf:html turf)) ~]
-  :-  (cat 3 'unable to access via ' (en-turf:html turf))
+    [(cat 3 'confirmed access via ' (en-turf:encoding turf)) ~]
+  :-  (cat 3 'unable to access via ' (en-turf:encoding turf))
   :~  leaf+"XX check via nslookup"
       leaf+"XX confirm port 80"
   ==

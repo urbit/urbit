@@ -5,7 +5,7 @@
 |=  [authorized=? =request:http]
 ^-  simple-payload:http
 =/  url=(unit pork:eyre)
-  (rush url.request apat:de-purl:html)
+  (rush url.request apat:de-purl:encoding)
 ::
 ::  url doesn't match expected binding from :launch
 ::

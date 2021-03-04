@@ -1,5 +1,5 @@
 /+  *graph-store
-=*  as-octs  as-octs:mimes:html
+=*  as-octs  as-octs:mimes:encoding
 ::
 |_  upd=update
 ++  grad  %noun

@@ -642,7 +642,7 @@
       =-  (sear - text)
       |=  t=cord
       ^-  (unit cord)
-      ?~((rush t aurf:de-purl:html) ~ `t)
+      ?~((rush t aurf:de-purl:encoding) ~ `t)
     ::  +text: text message body
     ::
     ++  text
@@ -1129,7 +1129,7 @@
       =.  wyd  (sub wyd 2)
       :-  '_'
       =-  (weld - "_")
-      =+  prl=(rust ful aurf:de-purl:html)
+      =+  prl=(rust ful aurf:de-purl:encoding)
       ?~  prl  (scag wyd ful)
       =+  hok=r.p.p.u.prl
       =;  domain=tape

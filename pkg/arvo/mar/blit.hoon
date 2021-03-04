@@ -28,13 +28,13 @@
         %sag
       %-  pairs
       :~  'path'^(path p.blit)
-          'file'^s+(en:base64:mimes:html (as-octs:mimes:html (jam q.blit)))
+          'file'^s+(en:base64:mimes:encoding (as-octs:mimes:encoding (jam q.blit)))
       ==
     ::
         %sav
       %-  pairs
       :~  'path'^(path p.blit)
-          'file'^s+(en:base64:mimes:html (as-octs:mimes:html q.blit))
+          'file'^s+(en:base64:mimes:encoding (as-octs:mimes:encoding q.blit))
       ==
     ::
         %klr

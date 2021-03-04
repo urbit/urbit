@@ -19,7 +19,7 @@
     (fun.q.q [%& dom.arg])
 %+  prompt
   [%& %oauth-hostname "api hostname: https://"]
-%+  parse  thos:de-purl:html
+%+  parse  thos:de-purl:encoding
 |=  hot=host:eyre
 ?:  ?=(%| -.hot)
   ~|(%ips-unsupported !!)

@@ -9,9 +9,9 @@
 ^-  simple-payload:http
 :-  [200 ['content-type' 'text/html']~]
 :-  ~
-%-  as-octs:mimes:html
+%-  as-octs:mimes:encoding
 %-  crip
-%-  en-xml:html
+%-  en-xml:encoding
 ^-  manx
 ;html
   ;head

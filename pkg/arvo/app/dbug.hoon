@@ -410,7 +410,7 @@
     ==
   ?.  .^(? %cu path)  ~
   %-  some
-  %-  as-octs:mimes:html
+  %-  as-octs:mimes:encoding
   .^(@ %cx path)
 ::
 ::  applications

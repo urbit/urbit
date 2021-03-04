@@ -20,7 +20,7 @@
     ?.  =((snag (dec (lent pat)) pat) %hoon)
       ~
     =/  clay-pax=path  (weld /(scot %p our)/home/(scot %da now) pat)
-    =/  file  [/text/plain (as-octs:mimes:html .^(@ %cx clay-pax))]
+    =/  file  [/text/plain (as-octs:mimes:encoding .^(@ %cx clay-pax))]
     `[pat `file]
   :-  //sync/0v1n.2m9vh
   [%into %home | mod]

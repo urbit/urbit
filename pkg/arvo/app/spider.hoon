@@ -291,7 +291,7 @@
     ==
   ?>  ?=(^ body.request.inbound-request)
   =/  body=json
-    (need (de-json:html q.u.body.request.inbound-request))
+    (need (de-json:encoding q.u.body.request.inbound-request))
   =/  input=vase
     (slop !>(~) (tube !>(body)))
   =/  =start-args

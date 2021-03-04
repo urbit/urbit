@@ -6,6 +6,6 @@
 ^-  aqua-event:aquarium
 :+  %event  her
 ?>  ?=([@ @ @ *] pax)
-=/  file  [/text/plain (as-octs:mimes:html .^(@ %cx pax))]
+=/  file  [/text/plain (as-octs:mimes:encoding .^(@ %cx pax))]
 :-  //sync/0v1n.2m9vh
 [%into `desk`i.t.pax | `mode:clay`[t.t.t.pax `file]~]

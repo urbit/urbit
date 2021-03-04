@@ -255,12 +255,12 @@
   ++  parse-iden-url
     %+  cook
       |=([a=(unit knot) b=purl:eyre] [`(fall a *knot) b])
-    auru:de-purl:html
+    auru:de-purl:encoding
   ::
   ++  parse-url
     %+  cook
-      |=(a=purl:eyre (crip (en-purl:html a)))
-    auri:de-purl:html
+      |=(a=purl:eyre (crip (en-purl:encoding a)))
+    auri:de-purl:encoding
   ::
   ++  parse-model   ;~(plug parse-server parse-config)
   ++  parse-server  (stag 0 (most fas sym))
@@ -577,7 +577,7 @@
         %+  dy-request  /show
         :*  ?:(=(%put p.p.mad) %'PUT' %'POST')
             r.p.mad
-            ~[['content-type' (en-mite:mimes:html p.mim)]]
+            ~[['content-type' (en-mite:mimes:encoding p.mim)]]
             `q.mim
         ==
       ::
@@ -1137,7 +1137,7 @@
           %+  rash  pax.source.com
           rood:(vang | /(scot %p our.hid)/home/(scot %da now.hid))
         ::
-            %url         [%ur (crip (en-purl:html url.source.com))]
+            %url         [%ur (crip (en-purl:encoding url.source.com))]
             %api         !!
             %get-api
           :-  %ex
@@ -1184,7 +1184,7 @@
           %output-file  $(sink.com [%command (cat 3 '@' pax.sink.com)])
           %output-pill  $(sink.com [%command (cat 3 '.' pax.sink.com)])
           %output-clay  [%file (need (de-beam pax.sink.com))]
-          %url          [%http %post (crip (en-purl:html url.sink.com))]
+          %url          [%http %post (crip (en-purl:encoding url.sink.com))]
           %to-api       !!
           %send-api     [%poke our.hid api.sink.com]
           %command      (rash command.sink.com parse-sink:he-parser)

@@ -7,7 +7,7 @@
 |_  mud=@
 ++  grow
   |%
-  ++  mime  [/application/javascript (as-octs:mimes:html (@t mud))]
+  ++  mime  [/application/javascript (as-octs:mimes:encoding (@t mud))]
   ++  elem  ;script
               ;-  (trip (@t mud))
             ==

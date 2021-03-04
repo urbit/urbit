@@ -1,4 +1,4 @@
-=,  mimes:html
+=,  mimes:encoding
 |_  non=*
 ++  grab
   |%

@@ -560,7 +560,7 @@ _cttp_creq_new(u3_cttp* ctp_u, c3_l num_l, u3_noun hes)
   }
 
   // Parse the url out of the new style url passed to us.
-  u3_noun unit_pul = u3do("de-purl:html", u3k(url));
+  u3_noun unit_pul = u3do("de-purl:encoding", u3k(url));
   if (c3n == u3r_du(unit_pul)) {
     u3l_log("cttp: url parsing failed\n");
     u3z(hes);

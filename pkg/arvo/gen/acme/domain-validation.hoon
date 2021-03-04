@@ -5,7 +5,7 @@
 ^-  simple-payload:http
 =/  url=(unit (pair pork:eyre quay:eyre))
   %+  rush  url.request
-  ;~(plug ;~(pose apat:de-purl:html (easy *pork:eyre)) yque:de-purl:html)
+  ;~(plug ;~(pose apat:de-purl:encoding (easy *pork:eyre)) yque:de-purl:encoding)
 ::
 ::  url doesn't match expected binding from :acme
 ::
@@ -30,4 +30,4 @@
 ?~  response
   [[%404 ~] ~]
 :-  [200 ['content-type' 'text/html']~]
-(some (as-octs:mimes:html u.response))
+(some (as-octs:mimes:encoding u.response))

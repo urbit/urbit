@@ -512,7 +512,7 @@
             ^-  sign:eyre-gate
             :*  %gall  %unto  %fact
                 %http-response-data
-                !>(`(as-octs:mimes:html 'ya!'))
+                !>(`(as-octs:mimes:encoding 'ya!'))
             ==
          ==
       ^=  expected-move
@@ -756,12 +756,12 @@
     %+  expect-eq
       !>  `[%ack 5]~
       !>  %-  parse-channel-request:eyre-gate
-          (need (de-json:html '[{"action": "ack", "event-id": 5}]'))
+          (need (de-json:encoding '[{"action": "ack", "event-id": 5}]'))
   ::
     %+  expect-eq
       !>  `[%poke 0 ~nec %app1 %app-type [%n '5']]~
       !>  %-  parse-channel-request:eyre-gate
-          %-  need  %-  de-json:html
+          %-  need  %-  de-json:encoding
           '''
           [{"action": "poke",
             "id": 0,
@@ -774,7 +774,7 @@
     %+  expect-eq
       !>  `[%subscribe 1 ~sampyl-sipnym %hall /this/path]~
       !>  %-  parse-channel-request:eyre-gate
-          %-  need  %-  de-json:html
+          %-  need  %-  de-json:encoding
           '''
           [{"action": "subscribe",
             "id": 1,
@@ -786,7 +786,7 @@
     %+  expect-eq
       !>  `[%unsubscribe 2 1]~
       !>  %-  parse-channel-request:eyre-gate
-          %-  need  %-  de-json:html
+          %-  need  %-  de-json:encoding
           '''
           [{"action": "unsubscribe",
             "id": 2,
@@ -796,19 +796,19 @@
       %+  expect-eq
         !>  ~
         !>  %-  parse-channel-request:eyre-gate
-            %-  need  %-  de-json:html
+            %-  need  %-  de-json:encoding
             '[{"noaction": "noaction"}]'
   ::
       %+  expect-eq
         !>  ~
         !>  %-  parse-channel-request:eyre-gate
-            %-  need  %-  de-json:html
+            %-  need  %-  de-json:encoding
             '[{"action": "bad-action"}]'
   ::
       %+  expect-eq
         !>  ~
         !>  %-  parse-channel-request:eyre-gate
-            %-  need  %-  de-json:html
+            %-  need  %-  de-json:encoding
             '[{"action": "ack", "event-id": 5}, {"action": "bad-action"}]'
   ::
       %+  expect-eq
@@ -817,7 +817,7 @@
                 [%poke 3 ~bud %wut %wut-type [%a [%n '2'] [%n '1'] ~]]
             ==
         !>  %-  parse-channel-request:eyre-gate
-            %-  need  %-  de-json:html
+            %-  need  %-  de-json:encoding
             '''
             [{"action": "ack", "event-id": 9},
              {"action": "poke",
@@ -996,7 +996,7 @@
                 ==
               ::
                 :-  ~
-                %-  as-octs:mimes:html
+                %-  as-octs:mimes:encoding
                 '''
                 id: 0
                 data: {"ok":"ok","id":0,"response":"poke"}
@@ -1076,7 +1076,7 @@
             ['cookie' cookie-value]~
         ::
             :-  ~
-            %-  as-octs:mimes:html
+            %-  as-octs:mimes:encoding
             '''
             [{"action": "poke",
               "id": 2,
@@ -1175,7 +1175,7 @@
             ['cookie' cookie-value]~
         ::
             :-  ~
-            %-  as-octs:mimes:html
+            %-  as-octs:mimes:encoding
             '''
             [{"action": "unsubscribe",
               "id": 2,
@@ -1275,7 +1275,7 @@
             ['cookie' cookie-value]~
         ::
             :-  ~
-            %-  as-octs:mimes:html
+            %-  as-octs:mimes:encoding
             '''
             [{"action": "subscribe",
               "id": 2,
@@ -1384,7 +1384,7 @@
                 ==
               ::
                 :-  ~
-                %-  as-octs:mimes:html
+                %-  as-octs:mimes:encoding
                 '''
                 id: 0
                 data: {"ok":"ok","id":0,"response":"poke"}
@@ -1426,7 +1426,7 @@
             ['cookie' cookie-value]~
         ::
             :-  ~
-            %-  as-octs:mimes:html
+            %-  as-octs:mimes:encoding
             '''
             [{"action": "unsubscribe",
               "id": 3,
@@ -1477,7 +1477,7 @@
         %+  expect-eq
           !>  :*  ~[/http-get-open]  %give  %response  %continue
                   :-  ~
-                  %-  as-octs:mimes:html
+                  %-  as-octs:mimes:encoding
                   '''
                   id: 4
                   data: {"json":[1,2],"id":2,"response":"diff"}
@@ -1593,7 +1593,7 @@
                 ==
               ::
                 :-  ~
-                %-  as-octs:mimes:html
+                %-  as-octs:mimes:encoding
                 '''
                 id: 0
                 data: {"ok":"ok","id":0,"response":"poke"}
@@ -1632,7 +1632,7 @@
                 %response
                 %continue
                 :-  ~
-                %-  as-octs:mimes:html
+                %-  as-octs:mimes:encoding
                 '''
                 id: 2
                 data: {"json":[1],"id":1,"response":"diff"}
@@ -1660,7 +1660,7 @@
             ['cookie' cookie-value]~
         ::
             :-  ~
-            %-  as-octs:mimes:html
+            %-  as-octs:mimes:encoding
             '''
             [{"action": "ack",
               "event-id": 1}
@@ -1754,7 +1754,7 @@
                 ==
               ::
                 :-  ~
-                %-  as-octs:mimes:html
+                %-  as-octs:mimes:encoding
                 '''
                 id: 2
                 data: {"json":[1],"id":1,"response":"diff"}
@@ -1871,7 +1871,7 @@
               %response
               %continue
               :-  ~
-              %-  as-octt:mimes:html
+              %-  as-octt:mimes:encoding
               """
               id: {((d-co:co 1) +(clog-threshold:eyre-gate))}
               data: \{"json":[1],"id":1,"response":"diff"}
@@ -1889,7 +1889,7 @@
                 %response
                 %continue
                 :-  ~
-                %-  as-octt:mimes:html
+                %-  as-octt:mimes:encoding
                 """
                 id: {((d-co:co 1) (add 2 clog-threshold:eyre-gate))}
                 data: \{"id":1,"response":"quit"}
@@ -2225,7 +2225,7 @@
             '/~/login'
             ~
             :-  ~
-            %-  as-octs:mimes:html
+            %-  as-octs:mimes:encoding
             'password=lidlut-tabwed-pillex-ridrup&redirect=/~landscape'
         ==
       ^=  expected-moves
@@ -2290,7 +2290,7 @@
             ['cookie' cookie-value]~
         ::
             :-  ~
-            %-  as-octs:mimes:html
+            %-  as-octs:mimes:encoding
             '''
             [{"action": "poke",
               "id": 0,

@@ -72,7 +72,7 @@
     ^-  card:agent:gall
     [%pass /import-all %agent [our.bowl app] %poke %import !>(data)]
   =/  jon=json
-    (need (de-json:html body))
+    (need (de-json:encoding body))
   =/  com=command:lens
     (json:grab:lens-mark jon)
   ::
@@ -85,7 +85,7 @@
     [%pass /export %agent [our.bowl app.source.com] %watch /export]~
   ::
       %import
-    ?~  enc=(de:base64:mimes:html base64-jam.source.com)
+    ?~  enc=(de:base64:mimes:encoding base64-jam.source.com)
       !!
     ::
     =/  c=*  (cue q.u.enc)
@@ -98,7 +98,7 @@
     =/  jon
       =/  =atom  (jam (export-all our.bowl now.bowl))
       =/  =octs  [(met 3 atom) atom]
-      =/  enc    (en:base64:mimes:html octs)
+      =/  enc    (en:base64:mimes:encoding octs)
       (pairs:enjs:format file+s+output data+s+enc ~)
     :_  this
     %+  give-simple-payload:app  eyre-id
@@ -106,7 +106,7 @@
   ::
       %import-all
     ~&  %import-all
-    =/  enc  (de:base64:mimes:html base64-jam.source.com)
+    =/  enc  (de:base64:mimes:encoding base64-jam.source.com)
     ?~  enc  !!
     =/  by-app  ;;((list [@tas *]) (cue q.u.enc))
     :_  this
@@ -142,7 +142,7 @@
     ?>  ?=(^ job.state)
     :_  this(job.state ~)
     %+  give-simple-payload:app  eyre-id.u.job.state
-    [[200 ~] `(as-octt:mimes:html "\"Imported data\"")]
+    [[200 ~] `(as-octt:mimes:encoding "\"Imported data\"")]
   ::
       [%export ~]
     ?+    -.sign  (on-agent:def wire sign)
@@ -194,7 +194,7 @@
     =/  jon=json
       =/  =atom  (jam data)
       =/  =octs  [(met 3 atom) atom]
-      =/  enc  (en:base64:mimes:html octs)
+      =/  enc  (en:base64:mimes:encoding octs)
       (pairs:enjs:format file+s+output data+s+enc ~)
     ::
     :_  this
@@ -221,14 +221,14 @@
       ::
           %sag
         %-  some
-        [%mime p.fec (as-octs:mimes:html (jam q.fec))]
+        [%mime p.fec (as-octs:mimes:encoding (jam q.fec))]
       ::
           %sav
         %-  some
         :-  %json
         %-  pairs:enjs:format
         :~  file+s+(crip <`path`p.fec>)
-            data+s+(en:base64:mimes:html (met 3 q.fec) q.fec)
+            data+s+(en:base64:mimes:encoding (met 3 q.fec) q.fec)
         ==
       ::
           %mor

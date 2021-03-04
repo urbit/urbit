@@ -430,7 +430,7 @@
   =/  m  (strand ,json)
   ^-  form:m
   ;<  =cord  bind:m  (fetch-cord url)
-  =/  json=(unit json)  (de-json:html cord)
+  =/  json=(unit json)  (de-json:encoding cord)
   ?~  json
     (strand-fail %json-parse-error ~)
   (pure:m u.json)
@@ -439,7 +439,7 @@
   |=  =hiss:eyre
   =/  m  (strand ,(unit httr:eyre))
   ^-  form:m
-  ;<  ~  bind:m  (send-request (hiss-to-request:html hiss))
+  ;<  ~  bind:m  (send-request (hiss-to-request:encoding hiss))
   take-maybe-sigh
 ::
 ::  +build-fail: build the source file at the specified $beam

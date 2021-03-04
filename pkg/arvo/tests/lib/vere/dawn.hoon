@@ -31,7 +31,7 @@
 ::
 ++  test-give-bloq
   =/  oct
-    %-  as-octs:mimes:html
+    %-  as-octs:mimes:encoding
     '{"params":[],"id":"0","jsonrpc":"2.0","method":"eth_blockNumber"}'
   %+  expect-eq
     !>  oct
@@ -47,7 +47,7 @@
 ::
 ++  test-give-point
   =/  oct
-    %-  as-octs:mimes:html
+    %-  as-octs:mimes:encoding
     %+  rap  3
     :~  '{"params":[{"to":"'  azimuth  '","data":"'
         '0x63fa9a87'
@@ -60,7 +60,7 @@
 ::
 ++  test-give-turf
   =/  oct
-    %-  as-octs:mimes:html
+    %-  as-octs:mimes:encoding
     %+  rap  3
     :~  '[{"params":[{"to":"'  azimuth  '","data":"'
         '0xeccc8ff1'
@@ -81,7 +81,7 @@
 ::
 ++  test-take-bloq
   =/  oct
-    %-  as-octs:mimes:html
+    %-  as-octs:mimes:encoding
     '{"id":"0","jsonrpc":"2.0","result":"0x20"}'
   =/  boq  32
   %+  expect-eq
@@ -90,7 +90,7 @@
 ::
 ++  test-take-czar
   =/  oct
-    %-  as-octs:mimes:html
+    %-  as-octs:mimes:encoding
     %+  rap  3
     :~  '[{"id":"gal-0","jsonrpc":"2.0","result":"'
         '0xb69b6818b17b7cc22f8e0a2291f58e4aa840cbf44cb2f1c94dc3d71e3cda0d94'
@@ -144,7 +144,7 @@
 ::
 ++  test-take-point
   =/  oct
-    %-  as-octs:mimes:html
+    %-  as-octs:mimes:encoding
     %+  rap  3
     :~  '{"jsonrpc":"2.0","result":"'
         '0xb69b6818b17b7cc22f8e0a2291f58e4aa840cbf44cb2f1c94dc3d71e3cda0d94'
@@ -165,7 +165,7 @@
 ::
 ++  test-take-turf
   =/  oct
-    %-  as-octs:mimes:html
+    %-  as-octs:mimes:encoding
     %+  rap  3
     :~  '[{"id":"turf-0","jsonrpc":"2.0","result":"'
         '0x0000000000000000000000000000000000000000000000000000000000000020'

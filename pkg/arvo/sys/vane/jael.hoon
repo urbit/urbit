@@ -208,7 +208,7 @@
         app
         %poke
         %azimuth-tracker-poke
-        !>([%watch (crip (en-purl:html purl))])
+        !>([%watch (crip (en-purl:encoding purl))])
     ==
   ::
   ++  sein                                              ::  sponsor
@@ -261,7 +261,7 @@
       ::
       =.  nod.own.pki
         %+  fall  node.tac
-        (need (de-purl:html 'http://eth-mainnet.urbit.org:8545'))
+        (need (de-purl:encoding 'http://eth-mainnet.urbit.org:8545'))
       ::  save our parent signature (only for moons)
       ::
       =.  sig.own.pki  sig.seed.tac

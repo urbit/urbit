@@ -69,7 +69,7 @@
   =-  abet:(emit %pass /write %arvo %c %info -)
   =/  byk=path  (en-beam byk.bowl(r da+now.bowl) ~)
   =+  .^(=tube:clay cc+(welp byk /mime/atom))
-  =/  =cage  atom+(tube !>([/ (as-octs:mimes:html dat)]))
+  =/  =cage  atom+(tube !>([/ (as-octs:mimes:encoding dat)]))
   (foal:space:userlib :(welp byk sec+p.hot /atom) cage)
 ::
 ++  poke-moon                                        ::  rotate moon keys

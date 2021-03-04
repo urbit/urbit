@@ -5,8 +5,8 @@
   ::
 ::::  compute
   ::
-=,  mimes:html
-=,  html
+=,  mimes:encoding
+=,  encoding
 |_  xml=@t
 ::
 ++  grad  %mime
