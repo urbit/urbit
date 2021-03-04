@@ -19,7 +19,6 @@ interface LinkItemProps {
   path: string;
   contacts: Rolodex;
   unreads: Unreads;
-  measure: (el: any) => void;
 }
 
 export const LinkItem = (props: LinkItemProps): ReactElement => {
@@ -30,7 +29,6 @@ export const LinkItem = (props: LinkItemProps): ReactElement => {
     group,
     path,
     contacts,
-    measure,
     ...rest
   } = props;
 
@@ -67,6 +65,7 @@ export const LinkItem = (props: LinkItemProps): ReactElement => {
   const size = node.children ? node.children.size : 0;
   const contents = node.post.contents;
   const hostname = URLparser.exec(contents[1].url) ? URLparser.exec(contents[1].url)[4] : null;
+  const href = URLparser.exec(contents[1].url) ? contents[1].url : `http://${contents[1].url}`
 
   const baseUrl = props.baseUrl || `/~404/${resource}`;
 
@@ -93,14 +92,6 @@ export const LinkItem = (props: LinkItemProps): ReactElement => {
   const commColor = (props.unreads.graph?.[appPath]?.[`/${index}`]?.unreads ?? 0) > 0 ? 'blue' : 'gray';
   const isUnread = props.unreads.graph?.[appPath]?.['/']?.unreads?.has(node.post.index);
 
-  const onMeasure = useCallback(() => {
-    ref.current && measure(ref.current);
-  }, [ref.current, measure]);
-
-  useEffect(() => {
-    onMeasure();
-  }, [onMeasure]);
-
   return (
     <Box mx="auto" px={3} maxWidth="768px" ref={ref} width="100%" {...rest}>
       <Box
@@ -120,10 +111,9 @@ export const LinkItem = (props: LinkItemProps): ReactElement => {
         <RemoteContent
           ref={r => { remoteRef.current = r }}
           renderUrl={false}
-          url={contents[1].url}
+          url={href}
           text={contents[0].text}
           unfold={true}
-          onLoad={onMeasure}
           style={{ alignSelf: 'center' }}
           oembedProps={{
             p: 2,
@@ -145,7 +135,7 @@ export const LinkItem = (props: LinkItemProps): ReactElement => {
           }}
         />
         <Text color="gray" p={2} flexShrink={0}>
-          <Anchor  target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }} href={contents[1].url}>
+          <Anchor  target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }} href={href}>
             <Box display='flex'>
               <Icon icon='ArrowExternal' mr={1} />{hostname}
             </Box>

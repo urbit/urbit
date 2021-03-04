@@ -4,9 +4,10 @@ import Helmet from 'react-helmet';
 
 import { Box } from '@tlon/indigo-react';
 
-import { Profile } from './components/Profile';
+import { Profile } from "./components/Profile";
 
 export default function ProfileScreen(props: any) {
+  const { dark } = props;
   return (
     <>
       <Helmet defer={false}>

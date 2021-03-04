@@ -3,6 +3,8 @@ import _ from 'lodash';
 import { useHistory } from 'react-router-dom';
 import { Center, Box, Text, Row, Col } from '@tlon/indigo-react';
 import RichText from '~/views/components/RichText';
+import useSettingsState, { selectCalmState } from '~/logic/state/settings';
+import { Sigil } from '~/logic/lib/sigil';
 import { GroupLink } from '~/views/components/GroupLink';
 import { lengthOrder } from '~/logic/lib/util';
 import useLocalState from '~/logic/state/local';
@@ -14,10 +16,9 @@ import {
   ProfileImages
 } from './Profile';
 
-export function ViewProfile(props: any): ReactElement {
-  const { hideNicknames } = useLocalState(({ hideNicknames }) => ({
-    hideNicknames
-  }));
+export function ViewProfile(props: any) {
+  const history = useHistory();
+  const { hideNicknames } = useSettingsState(selectCalmState);
   const { api, contact, nacked, isPublic, ship, associations, groups } = props;
 
   return (

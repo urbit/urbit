@@ -1,5 +1,5 @@
-import React, { ReactElement, useCallback } from 'react';
-import { Formik } from 'formik';
+import React, { ReactElement, useCallback, useState } from "react";
+import { Formik, FormikHelpers } from 'formik';
 
 import {
   ManagedTextInputField as Input,
@@ -10,8 +10,9 @@ import {
   Menu,
   MenuButton,
   MenuList,
-  MenuItem
-} from '@tlon/indigo-react';
+  MenuItem,
+  Row,
+} from "@tlon/indigo-react";
 
 import GlobalApi from '~/logic/api/global';
 
@@ -26,9 +27,12 @@ export function BucketList({
 }): ReactElement {
   const _buckets = Array.from(buckets);
 
+  const [adding, setAdding] = useState(false);
+
   const onSubmit = useCallback(
-    (values: { newBucket: string }) => {
+    (values: { newBucket: string }, actions: FormikHelpers<any>) => {
       api.s3.addBucket(values.newBucket);
+      actions.resetForm({ values: { newBucket: "" } });
     },
     [api]
   );
@@ -67,7 +71,7 @@ export function BucketList({
             alignItems="center"
             borderRadius={1}
             border={1}
-            borderColor="washedGray"
+            borderColor="lightGray"
             fontSize={1}
             pl={2}
             mb={2}
@@ -91,10 +95,27 @@ export function BucketList({
             )}
           </Box>
         ))}
-        <Input mt="2" label="New Bucket" id="newBucket" />
-        <Button mt="2" style={{ cursor: 'pointer' }} borderColor="washedGray" type="submit">
-          Add
-        </Button>
+        {adding && (
+          <Input
+            placeholder="Enter your new bucket"
+            mt="2"
+            label="New Bucket"
+            id="newBucket"
+          />
+        )}
+        <Row gapX="3" mt="3">
+          <Button type="button" onClick={() => setAdding(false)}>
+            Cancel
+          </Button>
+          <Button
+            width="fit-content"
+            primary
+            type={adding ? "submit" : "button"}
+            onClick={() => setAdding((s) => !s)}
+          >
+            {adding ? "Submit" : "Add new bucket"}
+          </Button>
+        </Row>
       </Form>
     </Formik>
   );

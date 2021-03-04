@@ -1,10 +1,8 @@
 import React, { ReactElement, useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-
 import { Center, Box, Row, BaseImage, Text } from '@tlon/indigo-react';
-
 import RichText from '~/views/components/RichText';
-import useLocalState from '~/logic/state/local';
+import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import { Sigil } from '~/logic/lib/sigil';
 import { ViewProfile } from './ViewProfile';
 import { EditProfile } from './EditProfile';
@@ -27,9 +25,7 @@ export function ProfileHeader(props: any): ReactElement {
 }
 
 export function ProfileImages(props: any): ReactElement {
-  const { hideAvatars } = useLocalState(({ hideAvatars }) => ({
-    hideAvatars
-  }));
+  const { hideAvatars } = useSettingsState(selectCalmState);
   const { contact, hideCover } = { ...props };
   const hexColor = contact?.color ? `#${uxToHex(contact.color)}` : '#000000';
 

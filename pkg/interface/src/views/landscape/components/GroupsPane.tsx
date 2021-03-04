@@ -206,7 +206,7 @@ export function GroupsPane(props: GroupsPaneProps) {
               resource={groupAssociation.group}
                       />;
           } else {
-            summary = (<Box p="4"><Text fontSize="0" color='gray'>
+            summary = (<Box p="4"><Text color='gray'>
                         Create or select a channel to get started
                       </Text></Box>);
           }
