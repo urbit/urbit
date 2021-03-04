@@ -52,6 +52,7 @@ export default function Author(props: AuthorProps): ReactElement {
         style={{ objectFit: 'cover' }}
         height={16}
         width={16}
+        borderRadius={1}
       />
     ) : (
       <Sigil ship={ship} size={16} color={color} icon padding={2} />
