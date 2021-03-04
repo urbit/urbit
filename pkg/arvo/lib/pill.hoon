@@ -92,11 +92,11 @@
       ?-    tyl
           [%json *]
         =/  dat  .^(json %cx pax)
-        (as-octt:mimes:html (en-json:html dat))
+        (as-octt:mimes:encoding (en-json:encoding dat))
       ::
           [?(%md %txt) *]
         =/  dat  .^(wain %cx pax)
-        (as-octs:mimes:html (of-wain:format dat))
+        (as-octs:mimes:encoding (of-wain:format dat))
       ::
           *
         =/  dat  .^(@t %cx pax)

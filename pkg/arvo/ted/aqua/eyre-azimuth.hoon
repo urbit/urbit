@@ -114,7 +114,7 @@
   ++  get-single-req
     |=  req=@t
     =/  batch
-      ((ar:dejs:format same) (need (de-json:html req)))
+      ((ar:dejs:format same) (need (de-json:encoding req)))
     ?>  ?=([* ~] batch)
     i.batch
   ::
@@ -168,7 +168,7 @@
     ^-  card:agent:gall
     =/  resp
       %-  crip
-      %-  en-json:html
+      %-  en-json:encoding
       :-  %a  :_  ~
       %-  pairs
       :~  id+s+(get-id req)
@@ -182,7 +182,7 @@
           //http-client/0v1n.2m9vh
           %receive
           num.u.ask
-          [%start [200 ~] `(as-octs:mimes:html resp) &]
+          [%start [200 ~] `(as-octs:mimes:encoding resp) &]
       ==
     :*  %pass  /aqua-events
         %agent  [our %aqua]
@@ -312,8 +312,8 @@
       =/  =rift  rut.life-rift
       =/  =pass
         %^    pass-from-eth:azimuth
-            (as-octs:mimes:html (get-public ship life %crypt))
-          (as-octs:mimes:html (get-public ship life %auth))
+            (as-octs:mimes:encoding (get-public ship life %crypt))
+          (as-octs:mimes:encoding (get-public ship life %auth))
         1
       :^    ship
           *[address address address address]:azimuth
@@ -333,7 +333,7 @@
       get-czars
       ~[~['arvo' 'netw' 'ork']]
       0
-      `(need (de-purl:html 'http://localhost:8545'))
+      `(need (de-purl:encoding 'http://localhost:8545'))
   ==
 ::
 ::  Should only do galaxies
@@ -349,8 +349,8 @@
   %-  some
   :^  who  rut  lyfe
   %^    pass-from-eth:azimuth
-      (as-octs:mimes:html (get-public who lyfe %crypt))
-    (as-octs:mimes:html (get-public who lyfe %auth))
+      (as-octs:mimes:encoding (get-public who lyfe %crypt))
+    (as-octs:mimes:encoding (get-public who lyfe %auth))
   1
 ::
 ++  spawn

@@ -312,7 +312,7 @@
     ::
     ++  token                                         ::  7230 token
       %+  cook  crip
-      ::NOTE  this is ptok:de-purl:html, but can't access that here
+      ::NOTE  this is ptok:de-purl:encoding, but can't access that here
       %-  plus
       ;~  pose
         aln  zap  hax  buc  cen  pam  soq  tar  lus

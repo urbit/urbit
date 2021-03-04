@@ -1,9 +1,9 @@
 ::   tests for html
 ::
 /+  *test
-=,  html
-=,  de-xml:html
-=,  en-xml:html
+=,  encoding
+=,  de-xml:encoding
+=,  en-xml:encoding
 |%
 ::  de-xml takes a cord but en-xml returns a tape?
 ::
@@ -12,7 +12,7 @@
     ::  Basic use
     ::
     %+  expect-eq
-      !>  ^-  manx  +:(de-xml:html (crip "<html><head><title>My first webpage</title></head><body><h1>Welcome!</h1>Hello, world! We are on the web.\0a<div></div><script src=\"http://unsafely.tracking.you/cookiemonster.js\"></script></body></html>"))
+      !>  ^-  manx  +:(de-xml:encoding (crip "<html><head><title>My first webpage</title></head><body><h1>Welcome!</h1>Hello, world! We are on the web.\0a<div></div><script src=\"http://unsafely.tracking.you/cookiemonster.js\"></script></body></html>"))
     !>  ^-  manx
     ;html
         ;head
@@ -29,7 +29,7 @@
     ::
     %+  expect-eq
       !>  ^-  manx
-      +:(de-xml:html (crip "<elem><![CDATA[text]]></elem>"))
+      +:(de-xml:encoding (crip "<elem><![CDATA[text]]></elem>"))
     !>  ^-  manx
     ;elem: text
     ::  comments
@@ -37,23 +37,23 @@
     %+  expect-eq
       !>  ^-  manx
       ;elem: text
-    !>  +:(de-xml:html (crip "<elem>text<!-- comment --></elem>"))
+    !>  +:(de-xml:encoding (crip "<elem>text<!-- comment --></elem>"))
     %+  expect-eq
       !>  ^-  manx
       ;elem;
-    !>  +:(de-xml:html (crip "<elem><!-- comment --></elem>"))
+    !>  +:(de-xml:encoding (crip "<elem><!-- comment --></elem>"))
     ::  entities
     ::
     %+  expect-eq
       !>  ^-  manx
-      +:(de-xml:html (crip "<elem>&#62;</elem>"))
+      +:(de-xml:encoding (crip "<elem>&#62;</elem>"))
       !>  ^-  manx
       ;elem: >
     :: self-closing tag
     ::
     %+  expect-eq
       !>  ^-  manx
-      +:(de-xml:html (crip "<img />"))
+      +:(de-xml:encoding (crip "<img />"))
       !>  ^-  manx
       ;img;
 
@@ -66,12 +66,12 @@
     ::
     %+  expect-eq
       !>  "<elem>&gt;</elem>"
-    !>  %-  en-xml:html
+    !>  %-  en-xml:encoding
     ;elem: >
     ::  Basic use
     ::
     %+  expect-eq
-      !>   %-  en-xml:html
+      !>   %-  en-xml:encoding
       ;html
         ;head
           ;title: My first webpage
@@ -89,7 +89,7 @@
     ::
     %+  expect-eq
       !>  "<input type=\"submit\">Submit</input>"
-      !>  %-  en-xml:html
+      !>  %-  en-xml:encoding
       ;input(type "submit"): Submit
   ==
 ::  JSON encoding/decoding
@@ -114,7 +114,7 @@
   :-  specs
   |=  spec=json-parse-spec
   ^-  tang
-  =+  result=(expect-eq !>(`expected.spec) !>((de-json:html input.spec)))
+  =+  result=(expect-eq !>(`expected.spec) !>((de-json:encoding input.spec)))
   ?~  result  ~
   `tang`[[%leaf "in {name.spec}:"] result]
 ::  Checks that a list of examples all fail to parse
@@ -126,7 +126,7 @@
   :-  specs
   |=  spec=json-parse-rejection-spec
   ^-  tang
-  =+  result=(expect-eq !>(~) !>((de-json:html input.spec)))
+  =+  result=(expect-eq !>(~) !>((de-json:encoding input.spec)))
   ?~  result  ~
   `tang`[[%leaf "in {name.spec}:"] result]
 ::  example values used in tests
@@ -260,7 +260,7 @@
     ::  [{}, 4, [[], [{foo: {"4": 4, "true": true}}]]]
     ::
     !>  "[\{},4,[[],[\{\"foo\":\{\"4\":4,\"true\":true}}]]]"
-    !>  %-  en-json:html
+    !>  %-  en-json:encoding
         :-  %a
         :~  [%o ~]
             [%n '4']
@@ -276,7 +276,7 @@
 ::  decoding naked values
 ::
 ++  test-de-json-simple-values
-  =,  html
+  =,  encoding
   ;:  weld
     %+  expect-eq
       !>  `~

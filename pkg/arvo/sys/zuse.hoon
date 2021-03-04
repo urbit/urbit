@@ -1948,7 +1948,7 @@
     ::  TODO: as-octs and hmc are outside of jet parent
     =>  :+  ..part
           hmc=hmac-sha256l:hmac:crypto
-        as-octs=as-octs:mimes:html
+        as-octs=as-octs:mimes:encoding
     ~%  %secp  +<  ~
     |%
     +$  jacobian   [x=@ y=@ z=@]                    ::  jacobian point
@@ -3857,26 +3857,27 @@
     --  ::
   --  ::differ
 ::                                                      ::
-::::                      ++html                        ::  (2e) text encodings
+::::                      ++encoding                    ::  (2e) encodings
   ::                                                    ::::
-++  html  ^?  ::  XX rename to web-txt
+++  html  encoding                                      ::  deprecated name
+++  encoding  ^?
   =,  eyre
   |%
   ::                                                    ::
-  ::::                    ++mimes:html                  ::  (2e1) MIME
+  ::::                    ++mimes:encoding              ::  (2e1) MIME
     ::                                                  ::::
   ++  mimes  ^?
     ~%  %mimes  ..part  ~
     |%
-    ::                                                  ::  ++as-octs:mimes:html
+    ::                                                  ::  ++as-octs:mimes:encoding
     ++  as-octs                                         ::  atom to octstream
       |=  tam=@  ^-  octs
       [(met 3 tam) tam]
-    ::                                                  ::  ++as-octt:mimes:html
+    ::                                                  ::  ++as-octt:mimes:encoding
     ++  as-octt                                         ::  tape to octstream
       |=  tep=tape  ^-  octs
       (as-octs (rap 3 tep))
-    ::                                                  ::  ++en-mite:mimes:html
+    ::                                                  ::  ++en-mite:mimes:encoding
     ++  en-mite                                         ::  mime type to text
       |=  myn=mite
       %-  crip
@@ -4063,10 +4064,10 @@
         (cook |=(a=@ (sub a 49)) (shim '1' '9'))
       ==
     --  ::mimes
-  ::                                                    ::  ++en-json:html
+  ::                                                    ::  ++en-json:encoding
   ++  en-json                                           ::  print json
     |^  |=(val=json (apex val ""))
-    ::                                                  ::  ++apex:en-json:html
+    ::                                                  ::  ++apex:en-json:encoding
     ++  apex
       |=  [val=json rez=tape]
       ^-  tape
@@ -4106,7 +4107,7 @@
         =.  rez  [',' $(viz t.viz)]
         ^$(val [%s p.i.viz], rez [':' ^$(val q.i.viz)])
       ==
-    ::                                                  ::  ++jesc:en-json:html
+    ::                                                  ::  ++jesc:en-json:encoding
     ++  jesc                                            ::  escaped
       =+  utf=|=(a=@ ['\\' 'u' ((x-co 4):co a)])
       |=  a=@  ^-  tape
@@ -4116,15 +4117,15 @@
         %92  "\\\\"
       ==
     --  ::en-json
-  ::                                                    ::  ++de-json:html
+  ::                                                    ::  ++de-json:encoding
   ++  de-json                                           ::  parse JSON
     =<  |=(a=cord `(unit json)`(rush a apex))
     |%
-    ::                                                  ::  ++abox:de-json:html
+    ::                                                  ::  ++abox:de-json:encoding
     ++  abox                                            ::  array
       %+  stag  %a
       (ifix [sel (wish ser)] (more (wish com) apex))
-    ::                                                  ::  ++apex:de-json:html
+    ::                                                  ::  ++apex:de-json:encoding
     ++  apex                                            ::  any value
       %+  knee  *json  |.  ~+
       %+  ifix  [spac spac]
@@ -4136,16 +4137,16 @@
         abox
         obox
       ==
-    ::                                                  ::  ++bool:de-json:html
+    ::                                                  ::  ++bool:de-json:encoding
     ++  bool                                            ::  boolean
       ;~  pose
         (cold & (jest 'true'))
         (cold | (jest 'false'))
       ==
-    ::                                                  ::  ++digs:de-json:html
+    ::                                                  ::  ++digs:de-json:encoding
     ++  digs                                            ::  digits
       (star (shim '0' '9'))
-    ::                                                  ::  ++esca:de-json:html
+    ::                                                  ::  ++esca:de-json:encoding
     ++  esca                                            ::  escaped character
       ;~  pfix  bas
         =*  loo
@@ -4157,23 +4158,23 @@
         =*  tuf  ;~(pfix (just 'u') (cook tuft qix:ab))
         ;~(pose doq fas soq bas loo tuf)
       ==
-    ::                                                  ::  ++expo:de-json:html
+    ::                                                  ::  ++expo:de-json:encoding
     ++  expo                                            ::  exponent
       ;~  (comp twel)
         (piec (mask "eE"))
         (mayb (piec (mask "+-")))
         digs
       ==
-    ::                                                  ::  ++frac:de-json:html
+    ::                                                  ::  ++frac:de-json:encoding
     ++  frac                                            ::  fraction
       ;~(plug dot digs)
-    ::                                                  ::  ++jcha:de-json:html
+    ::                                                  ::  ++jcha:de-json:encoding
     ++  jcha                                            ::  string character
       ;~(pose ;~(less doq bas prn) esca)
-    ::                                                  ::  ++mayb:de-json:html
+    ::                                                  ::  ++mayb:de-json:encoding
     ++  mayb                                            ::  optional
       |*(bus=rule ;~(pose bus (easy ~)))
-    ::                                                  ::  ++numb:de-json:html
+    ::                                                  ::  ++numb:de-json:encoding
     ++  numb                                            ::  number
       ;~  (comp twel)
         (mayb (piec hep))
@@ -4184,41 +4185,41 @@
         (mayb frac)
         (mayb expo)
       ==
-    ::                                                  ::  ++obje:de-json:html
+    ::                                                  ::  ++obje:de-json:encoding
     ++  obje                                            ::  object list
       %+  ifix  [(wish kel) (wish ker)]
       (more (wish com) pear)
-    ::                                                  ::  ++obox:de-json:html
+    ::                                                  ::  ++obox:de-json:encoding
     ++  obox                                            ::  object
       (stag %o (cook malt obje))
-    ::                                                  ::  ++pear:de-json:html
+    ::                                                  ::  ++pear:de-json:encoding
     ++  pear                                            ::  key-value
       ;~(plug ;~(sfix (wish stri) (wish col)) apex)
-    ::                                                  ::  ++piec:de-json:html
+    ::                                                  ::  ++piec:de-json:encoding
     ++  piec                                            ::  listify
       |*  bus=rule
       (cook |=(a=@ [a ~]) bus)
-    ::                                                  ::  ++stri:de-json:html
+    ::                                                  ::  ++stri:de-json:encoding
     ++  stri                                            ::  string
       (cook crip (ifix [doq doq] (star jcha)))
-    ::                                                  ::  ++tops:de-json:html
+    ::                                                  ::  ++tops:de-json:encoding
     ++  tops                                            ::  strict value
       ;~(pose abox obox)
-    ::                                                  ::  ++spac:de-json:html
+    ::                                                  ::  ++spac:de-json:encoding
     ++  spac                                            ::  whitespace
       (star (mask [`@`9 `@`10 `@`13 ' ' ~]))
-    ::                                                  ::  ++twel:de-json:html
+    ::                                                  ::  ++twel:de-json:encoding
     ++  twel                                            ::  tape weld
       |=([a=tape b=tape] (weld a b))
-    ::                                                  ::  ++wish:de-json:html
+    ::                                                  ::  ++wish:de-json:encoding
     ++  wish                                            ::  with whitespace
       |*(sef=rule ;~(pfix spac sef))
     --  ::de-json
-  ::                                                    ::  ++en-xml:html
+  ::                                                    ::  ++en-xml:encoding
   ++  en-xml                                            ::  xml printer
     =<  |=(a=manx `tape`(apex a ~))
     |_  _[unq=`?`| cot=`?`|]
-    ::                                                  ::  ++apex:en-xml:html
+    ::                                                  ::  ++apex:en-xml:encoding
     ++  apex                                            ::  top level
       |=  [mex=manx rez=tape]
       ^-  tape
@@ -4236,7 +4237,7 @@
         [' ' '/' '>' rez]
       :-  '>'
       (many c.mex :(weld "</" tam ">" rez))
-    ::                                                  ::  ++attr:en-xml:html
+    ::                                                  ::  ++attr:en-xml:encoding
     ++  attr                                            ::  attributes to tape
       |=  [tat=mart rez=tape]
       ^-  tape
@@ -4247,7 +4248,7 @@
         "=\""
         (escp(unq |) v.i.tat '"' ?~(t.tat rez [' ' rez]))
       ==
-    ::                                                  ::  ++escp:en-xml:html
+    ::                                                  ::  ++escp:en-xml:encoding
     ++  escp                                            ::  escape for xml
       |=  [tex=tape rez=tape]
       ?:  unq
@@ -4267,18 +4268,18 @@
                *    [i.xet rez]
              ==
       ==
-    ::                                                  ::  ++many:en-xml:html
+    ::                                                  ::  ++many:en-xml:encoding
     ++  many                                            ::  nodelist to tape
       |=  [lix=(list manx) rez=tape]
       |-  ^-  tape
       ?~  lix  rez
       (apex i.lix $(lix t.lix))
-    ::                                                  ::  ++name:en-xml:html
+    ::                                                  ::  ++name:en-xml:encoding
     ++  name                                            ::  name to tape
       |=  man=mane  ^-  tape
       ?@  man  (trip man)
       (weld (trip -.man) `tape`[':' (trip +.man)])
-    ::                                                  ::  ++clot:en-xml:html
+    ::                                                  ::  ++clot:en-xml:encoding
     ++  clot  ~+                                        ::  self-closing tags
       %~  has  in
       %-  silt  ^-  (list term)  :~
@@ -4286,11 +4287,11 @@
         %keygen  %link  %meta  %param     %source   %track  %wbr
       ==
     --  ::en-xml
-  ::                                                    ::  ++de-xml:html
+  ::                                                    ::  ++de-xml:encoding
   ++  de-xml                                            ::  xml parser
     =<  |=(a=cord (rush a apex))
     |_  ent=_`(map term @t)`[[%apos '\''] ~ ~]
-    ::                                                  ::  ++apex:de-xml:html
+    ::                                                  ::  ++apex:de-xml:encoding
     ++  apex                                            ::  top level
       =+  spa=;~(pose comt whit)
       %+  knee  *manx  |.  ~+
@@ -4301,7 +4302,7 @@
           ;~(plug head many tail)
         empt
       ==
-    ::                                                  ::  ++attr:de-xml:html
+    ::                                                  ::  ++attr:de-xml:encoding
     ++  attr                                            ::  attributes
       %+  knee  *mart  |.  ~+
       %-  star
@@ -4321,7 +4322,7 @@
           (easy ~)
         ==
       ==
-    ::                                                  ::  ++cdat:de-xml:html
+    ::                                                  ::  ++cdat:de-xml:encoding
     ++  cdat                                            ::  CDATA section
       %+  cook
         |=(a=tape ^-(mars ;/(a)))
@@ -4329,11 +4330,11 @@
         [(jest '<![CDATA[') (jest ']]>')]
       %-  star
       ;~(less (jest ']]>') next)
-    ::                                                  ::  ++chrd:de-xml:html
+    ::                                                  ::  ++chrd:de-xml:encoding
     ++  chrd                                            ::  character data
       %+  cook  |=(a=tape ^-(mars ;/(a)))
       (plus ;~(less doq ;~(pose (just `@`10) escp)))
-    ::                                                  ::  ++comt:de-xml:html
+    ::                                                  ::  ++comt:de-xml:encoding
     ++  comt                                            ::  comments
       =-  (ifix [(jest '<!--') (jest '-->')] (star -))
       ;~  pose
@@ -4342,15 +4343,15 @@
         ;~(less (jest '-->') hep)
       ==
     ::
-    ++  decl                                            ::  ++decl:de-xml:html
+    ++  decl                                            ::  ++decl:de-xml:encoding
       %+  ifix                                          ::  XML declaration
         [(jest '<?xml') (jest '?>')]
       %-  star
       ;~(less (jest '?>') prn)
-    ::                                                  ::  ++escp:de-xml:html
+    ::                                                  ::  ++escp:de-xml:encoding
     ++  escp                                            ::
       ;~(pose ;~(less gal gar pam prn) enty)
-    ::                                                  ::  ++enty:de-xml:html
+    ::                                                  ::  ++enty:de-xml:encoding
     ++  enty                                            ::  entity
       %+  ifix  pam^mic
       ;~  pose
@@ -4362,17 +4363,17 @@
         :-  (bass 10 (stun 1^8 dit))
         (bass 16 ;~(pfix (mask "xX") (stun 1^8 hit)))
       ==
-    ::                                                  ::  ++empt:de-xml:html
+    ::                                                  ::  ++empt:de-xml:encoding
     ++  empt                                            ::  self-closing tag
       %+  ifix  [gal (jest '/>')]
       ;~(plug ;~(plug name attr) (cold ~ (star whit)))
-    ::                                                  ::  ++head:de-xml:html
+    ::                                                  ::  ++head:de-xml:encoding
     ++  head                                            ::  opening tag
       (ifix [gal gar] ;~(plug name attr))
-    ::                                                  ::  ++many:de-xml:html
+    ::                                                  ::  ++many:de-xml:encoding
     ++  many                                            ::  contents
       ;~(pfix (star comt) (star ;~(sfix ;~(pose apex chrd cdat) (star comt))))
-    ::                                                  ::  ++name:de-xml:html
+    ::                                                  ::  ++name:de-xml:encoding
     ++  name                                            ::  tag name
       =+  ^=  chx
           %+  cook  crip
@@ -4381,14 +4382,14 @@
               (star ;~(pose cab dot alp))
           ==
       ;~(pose ;~(plug ;~(sfix chx col) chx) chx)
-    ::                                                  ::  ++tail:de-xml:html
+    ::                                                  ::  ++tail:de-xml:encoding
     ++  tail                                            ::  closing tag
       (ifix [(jest '</') gar] name)
-    ::                                                  ::  ++whit:de-xml:html
+    ::                                                  ::  ++whit:de-xml:encoding
     ++  whit                                            ::  whitespace
       (mask ~[' ' `@`0x9 `@`0xa])
     --  ::de-xml
-  ::                                                    ::  ++en-urlt:html
+  ::                                                    ::  ++en-urlt:encoding
   ++  en-urlt                                           ::  url encode
     |=  tep=tape
     ^-  tape
@@ -4406,7 +4407,7 @@
         ==
       [tap ~]
     ['%' (xen (rsh [0 4] tap)) (xen (end [0 4] tap)) ~]
-  ::                                                    ::  ++de-urlt:html
+  ::                                                    ::  ++de-urlt:encoding
   ++  de-urlt                                           ::  url decode
     |=  tep=tape
     ^-  (unit tape)
@@ -4420,22 +4421,22 @@
       ?~(nex ~ [~ [`@`u.val u.nex]])
     =+  nex=$(tep t.tep)
     ?~(nex ~ [~ i.tep u.nex])
-  ::                                                    ::  ++en-purl:html
+  ::                                                    ::  ++en-purl:encoding
   ++  en-purl                                           ::  print purl
     =<  |=(pul=purl `tape`(apex %& pul))
     |%
-    ::                                                  ::  ++apex:en-purl:html
+    ::                                                  ::  ++apex:en-purl:encoding
     ++  apex                                            ::
       |=  qur=quri  ^-  tape
       ?-  -.qur
         %&  (weld (head p.p.qur) `tape`$(qur [%| +.p.qur]))
         %|  ['/' (weld (body p.qur) (tail q.qur))]
       ==
-    ::                                                  ::  ++apix:en-purl:html
+    ::                                                  ::  ++apix:en-purl:encoding
     ++  apix                                            ::  purf to tape
       |=  purf
       (weld (apex %& p) ?~(q "" `tape`['#' (trip u.q)]))
-    ::                                                  ::  ++body:en-purl:html
+    ::                                                  ::  ++body:en-purl:encoding
     ++  body                                            ::
       |=  pok=pork  ^-  tape
       ?~  q.pok  ~
@@ -4444,7 +4445,7 @@
       ?~  t.q.pok
         ?~(p.pok seg (welp seg '.' (trip u.p.pok)))
       (welp seg '/' $(q.pok t.q.pok))
-    ::                                                  ::  ++head:en-purl:html
+    ::                                                  ::  ++head:en-purl:encoding
     ++  head                                            ::
       |=  har=hart
       ^-  tape
@@ -4461,7 +4462,7 @@
       ::
         ?~(q.har ~ `tape`[':' ((d-co:co 1) u.q.har)])
       ==
-    ::                                                  ::  ++tail:en-purl:html
+    ::                                                  ::  ++tail:en-purl:encoding
     ++  tail                                            ::
       |=  kay=quay
       ^-  tape
@@ -4475,11 +4476,11 @@
         ?~(t.kay ~ `tape`['&' $(kay t.kay)])
       ==
     --  ::
-  ::                                                    ::  ++de-purl:html
+  ::                                                    ::  ++de-purl:encoding
   ++  de-purl                                           ::  url+header parser
     =<  |=(a=cord `(unit purl)`(rush a auri))
     |%
-    ::                                                  ::  ++deft:de-purl:html
+    ::                                                  ::  ++deft:de-purl:encoding
     ++  deft                                            ::  parse url extension
       |=  rax=(list @t)
       |-  ^-  pork
@@ -4500,21 +4501,21 @@
       =+  `[ext=term [@ @] fyl=tape]`u.q.raf
       :-  `ext
       ?:(=(~ fyl) ~ [(crip (flop fyl)) ~])
-    ::                                                  ::  ++apat:de-purl:html
+    ::                                                  ::  ++apat:de-purl:encoding
     ++  apat                                            ::  2396 abs_path
       %+  cook  deft
       ;~(pfix fas (more fas smeg))
-    ::                                                  ::  ++aurf:de-purl:html
+    ::                                                  ::  ++aurf:de-purl:encoding
     ++  aurf                                            ::  2396 with fragment
       %+  cook  |~(a=purf a)
       ;~(plug auri (punt ;~(pfix hax (cook crip (star pque)))))
-    ::                                                  ::  ++auri:de-purl:html
+    ::                                                  ::  ++auri:de-purl:encoding
     ++  auri                                            ::  2396 URL
       ;~  plug
         ;~(plug htts thor)
         ;~(plug ;~(pose apat (easy *pork)) yque)
       ==
-    ::                                                  ::  ++auru:de-purl:html
+    ::                                                  ::  ++auru:de-purl:encoding
     ++  auru                                            ::  2396 with maybe user
       %+  cook
         |=  $:  a=[p=? q=(unit user) r=[(unit @ud) host]]
@@ -4527,84 +4528,84 @@
         ;~(plug htts (punt ;~(sfix urt:ab pat)) thor)
         ;~(plug ;~(pose apat (easy *pork)) yque)
       ==
-    ::                                                  ::  ++htts:de-purl:html
+    ::                                                  ::  ++htts:de-purl:encoding
     ++  htts                                            ::  scheme
       %+  sear  ~(get by (malt `(list (pair term ?))`[http+| https+& ~]))
       ;~(sfix scem ;~(plug col fas fas))
-    ::                                                  ::  ++cock:de-purl:html
+    ::                                                  ::  ++cock:de-purl:encoding
     ++  cock                                            ::  cookie
       %+  most  ;~(plug mic ace)
       ;~(plug toke ;~(pfix tis tosk))
-    ::                                                  ::  ++dlab:de-purl:html
+    ::                                                  ::  ++dlab:de-purl:encoding
     ++  dlab                                            ::  2396 domainlabel
       %+  sear
         |=  a=@ta
         ?.(=('-' (rsh [3 (dec (met 3 a))] a)) [~ u=a] ~)
       %+  cook  |=(a=tape (crip (cass a)))
       ;~(plug aln (star alp))
-    ::                                                  ::  ++fque:de-purl:html
+    ::                                                  ::  ++fque:de-purl:encoding
     ++  fque                                            ::  normal query field
       (cook crip (plus pquo))
-    ::                                                  ::  ++fquu:de-purl:html
+    ::                                                  ::  ++fquu:de-purl:encoding
     ++  fquu                                            ::  optional query field
       (cook crip (star pquo))
-    ::                                                  ::  ++pcar:de-purl:html
+    ::                                                  ::  ++pcar:de-purl:encoding
     ++  pcar                                            ::  2396 path char
       ;~(pose pure pesc psub col pat)
-    ::                                                  ::  ++pcok:de-purl:html
+    ::                                                  ::  ++pcok:de-purl:encoding
     ++  pcok                                            ::  cookie char
       ;~(less bas mic com doq prn)
-    ::                                                  ::  ++pesc:de-purl:html
+    ::                                                  ::  ++pesc:de-purl:encoding
     ++  pesc                                            ::  2396 escaped
       ;~(pfix cen mes)
-    ::                                                  ::  ++pold:de-purl:html
+    ::                                                  ::  ++pold:de-purl:encoding
     ++  pold                                            ::
       (cold ' ' (just '+'))
-    ::                                                  ::  ++pque:de-purl:html
+    ::                                                  ::  ++pque:de-purl:encoding
     ++  pque                                            ::  3986 query char
       ;~(pose pcar fas wut)
-    ::                                                  ::  ++pquo:de-purl:html
+    ::                                                  ::  ++pquo:de-purl:encoding
     ++  pquo                                            ::  normal query char
       ;~(pose pure pesc pold fas wut col com)
-    ::                                                  ::  ++pure:de-purl:html
+    ::                                                  ::  ++pure:de-purl:encoding
     ++  pure                                            ::  2396 unreserved
       ;~(pose aln hep cab dot zap sig tar soq pal par)
-    ::                                                  ::  ++psub:de-purl:html
+    ::                                                  ::  ++psub:de-purl:encoding
     ++  psub                                            ::  3986 sub-delims
       ;~  pose
         zap  buc  pam  soq  pal  par
         tar  lus  com  mic  tis
       ==
-    ::                                                  ::  ++ptok:de-purl:html
+    ::                                                  ::  ++ptok:de-purl:encoding
     ++  ptok                                            ::  2616 token
       ;~  pose
         aln  zap  hax  buc  cen  pam  soq  tar  lus
         hep  dot  ket  cab  tic  bar  sig
       ==
-    ::                                                  ::  ++scem:de-purl:html
+    ::                                                  ::  ++scem:de-purl:encoding
     ++  scem                                            ::  2396 scheme
       %+  cook  |=(a=tape (crip (cass a)))
       ;~(plug alf (star ;~(pose aln lus hep dot)))
-    ::                                                  ::  ++smeg:de-purl:html
+    ::                                                  ::  ++smeg:de-purl:encoding
     ++  smeg                                            ::  2396 segment
       (cook crip (star pcar))
-    ::                                                  ::  ++tock:de-purl:html
+    ::                                                  ::  ++tock:de-purl:encoding
     ++  tock                                            ::  6265 raw value
       (cook crip (plus pcok))
-    ::                                                  ::  ++tosk:de-purl:html
+    ::                                                  ::  ++tosk:de-purl:encoding
     ++  tosk                                            ::  6265 quoted value
       ;~(pose tock (ifix [doq doq] tock))
-    ::                                                  ::  ++toke:de-purl:html
+    ::                                                  ::  ++toke:de-purl:encoding
     ++  toke                                            ::  2616 token
       (cook crip (plus ptok))
-    ::                                                  ::  ++thor:de-purl:html
+    ::                                                  ::  ++thor:de-purl:encoding
     ++  thor                                            ::  2396 host+port
       %+  cook  |*([* *] [+<+ +<-])
       ;~  plug
         thos
         ;~((bend) (easy ~) ;~(pfix col dim:ag))
       ==
-    ::                                                  ::  ++thos:de-purl:html
+    ::                                                  ::  ++thos:de-purl:encoding
     ++  thos                                            ::  2396 host, no local
       ;~  plug
         ;~  pose
@@ -4623,13 +4624,13 @@
           ;~(plug tod (stun [3 3] ;~(pfix dot tod)))
         ==
       ==
-    ::                                                  ::  ++yque:de-purl:html
+    ::                                                  ::  ++yque:de-purl:encoding
     ++  yque                                            ::  query ending
       ;~  pose
         ;~(pfix wut yquy)
         (easy ~)
       ==
-    ::                                                  ::  ++yquy:de-purl:html
+    ::                                                  ::  ++yquy:de-purl:encoding
     ++  yquy                                            ::  query
       ;~  pose
         ::  proper query
@@ -4644,7 +4645,7 @@
           |=(a=tape [[%$ (crip a)] ~])
         (star pque)
       ==
-    ::                                                  ::  ++zest:de-purl:html
+    ::                                                  ::  ++zest:de-purl:encoding
     ++  zest                                            ::  2616 request-uri
       ;~  pose
         (stag %& (cook |=(a=purl a) auri))
@@ -4666,10 +4667,10 @@
     %+  sear
       |=  =host:eyre
       ?.(?=(%& -.host) ~ (some p.host))
-    thos:de-purl:html
+    thos:de-purl:encoding
   ::
   ::  MOVEME
-  ::                                                    ::  ++fuel:html
+  ::                                                    ::  ++fuel:encoding
   ++  fuel                                              ::  parse urbit fcgi
       |=  [bem=beam ced=noun:cred quy=quer]
       ^-  epic
@@ -4691,7 +4692,7 @@
           %trac  %'TRACE'
         ==
     ::
-      (crip (en-purl:html p.hiss))
+      (crip (en-purl:encoding p.hiss))
     ::
       ^-  header-list:http
       ~!  q.q.hiss
@@ -4703,7 +4704,7 @@
     ::
       r.q.hiss
     ==
-  --  ::  html
+  --  ::  encoding
 ::                                                      ::
 ::::                      ++wired                       ::  wire formatting
   ::                                                    ::::

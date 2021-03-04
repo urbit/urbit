@@ -7,7 +7,7 @@
   ::
 =,  eyre
 =,  format
-=,  html
+=,  encoding
 |_  jon=json
 ::
 ++  grow                                                ::  convert to

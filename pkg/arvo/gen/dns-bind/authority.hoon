@@ -26,7 +26,7 @@
     (fun.q.q [%& dom.arg])
 %+  prompt
   [%& %dns-domain "dns domain: "]
-%+  parse  thos:de-purl:html
+%+  parse  thos:de-purl:encoding
 |=  hot=host:eyre
 ?:  ?=(%| -.hot)
   ~|(%ips-unsupported !!)

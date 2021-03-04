@@ -119,12 +119,12 @@
   ::
     %+  expect-eq
       !>  hedt
-      !>  (en-base64url (as-octt:mimes:html (en-json-sort aor hed)))
+      !>  (en-base64url (as-octt:mimes:encoding (en-json-sort aor hed)))
   ::
     %+  expect-eq
       !>  lodt
       !>  %-  en-base64url
-          (as-octt:mimes:html (en-json-sort (eor lte lod-order) lod))
+          (as-octt:mimes:encoding (en-json-sort (eor lte lod-order) lod))
   ::
     %+  expect-eq
       !>  exp-ws
@@ -180,7 +180,7 @@
   =/  protected-header=json
     :-  %o  %-  my  :~
       nonce+s+non
-      url+s+(crip (en-purl:html url))
+      url+s+(crip (en-purl:encoding url))
       kid+s+kid
     ==
   =/  bod=json

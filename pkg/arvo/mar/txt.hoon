@@ -6,7 +6,7 @@
 =,  clay
 =,  differ
 =,  format
-=,  mimes:html
+=,  mimes:encoding
 |_  txt=wain
 ::
 ++  grab                                                ::  convert from

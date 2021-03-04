@@ -231,9 +231,9 @@
   |=  [redirect-url=(unit @t) our=@p failed=?]
   ^-  octs
   =+  redirect-str=?~(redirect-url "" (trip u.redirect-url))
-  %-  as-octs:mimes:html
+  %-  as-octs:mimes:encoding
   %-  crip
-  %-  en-xml:html
+  %-  en-xml:encoding
   =/  favicon  %+
     weld  "<svg width='10' height='10' viewBox='0 0 10 10' xmlns='http://www.w3.org/2000/svg'>"
           "<circle r='3.09' cx='5' cy='5' /></svg>"
@@ -423,7 +423,7 @@
     ~
   ::
   :-  ~
-  %-  as-octs:mimes:html
+  %-  as-octs:mimes:encoding
   %-  crip
   %-  zing
   %+  turn  wall
@@ -434,9 +434,9 @@
 ++  internal-server-error
   |=  [authorized=? url=@t t=tang]
   ^-  octs
-  %-  as-octs:mimes:html
+  %-  as-octs:mimes:encoding
   %-  crip
-  %-  en-xml:html
+  %-  en-xml:encoding
   ;html
     ;head
       ;title:"500 Internal Server Error"
@@ -467,9 +467,9 @@
       %500  "Internal Server Error"
     ==
   ::
-  %-  as-octs:mimes:html
+  %-  as-octs:mimes:encoding
   %-  crip
-  %-  en-xml:html
+  %-  en-xml:encoding
   ;html
     ;head
       ;title:"{code-as-tape} {message}"
@@ -853,7 +853,7 @@
         (return-static-data-on-duct 400 'text/html' (login-page ~ our %.n))
       ::
       =/  parsed=(unit (list [key=@t value=@t]))
-        (rush q.u.body.request yquy:de-purl:html)
+        (rush q.u.body.request yquy:de-purl:encoding)
       ?~  parsed
         (return-static-data-on-duct 400 'text/html' (login-page ~ our %.n))
       ::
@@ -940,7 +940,7 @@
           ?~  body.request  |
           =-  ?=(^ -)
           %+  get-header:http  'all'
-          (fall (rush q.u.body.request yquy:de-purl:html) ~)
+          (fall (rush q.u.body.request yquy:de-purl:encoding) ~)
         ?.  all
           :_  (~(del by sessions) u.session-id)
           %~  tap  in
@@ -975,7 +975,7 @@
         ~
       ::  is the cookie line is valid?
       ::
-      ?~  cookies=(rush u.cookie-header cock:de-purl:html)
+      ?~  cookies=(rush u.cookie-header cock:de-purl:encoding)
         ~
       ::  is there an urbauth cookie?
       ::
@@ -1302,7 +1302,7 @@
         (error-page 400 %.y url.request "no put body")
       ::  if the incoming body isn't json, this is a bad request, 400.
       ::
-      ?~  maybe-json=(de-json:html q.u.body.request)
+      ?~  maybe-json=(de-json:encoding q.u.body.request)
         %^  return-static-data-on-duct  400  'text/html'
         (error-page 400 %.y url.request "put body not json")
       ::  parse the json into an array of +channel-request items
@@ -1680,7 +1680,7 @@
       |=  [event-id=@ud =json]
       ^-  wall
       :~  (weld "id: " (format-ud-as-integer event-id))
-          (weld "data: " (en-json:html json))
+          (weld "data: " (en-json:encoding json))
           ""
       ==
     ::
@@ -1691,7 +1691,7 @@
       =/  res
         %-  handle-response
         :*  %continue
-            data=(some (as-octs:mimes:html '\0a'))
+            data=(some (as-octs:mimes:encoding '\0a'))
             complete=%.n
         ==
       =/  http-moves  -.res
@@ -2046,7 +2046,7 @@
 ++  parse-request-line
   |=  url=@t
   ^-  [[ext=(unit @ta) site=(list @t)] args=(list [key=@t value=@t])]
-  (fall (rush url ;~(plug apat:de-purl:html yque:de-purl:html)) [[~ ~] ~])
+  (fall (rush url ;~(plug apat:de-purl:encoding yque:de-purl:encoding)) [[~ ~] ~])
 ::
 ++  insert-binding
   |=  [[=binding =duct =action] bindings=(list [=binding =duct =action])]

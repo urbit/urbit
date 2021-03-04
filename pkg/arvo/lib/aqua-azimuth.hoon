@@ -57,7 +57,7 @@
   ++  get-single-req
     |=  req=@t
     =/  batch
-      ((ar:dejs:format same) (need (de-json:html req)))
+      ((ar:dejs:format same) (need (de-json:encoding req)))
     ?>  ?=([* ~] batch)
     i.batch
   ::
@@ -111,7 +111,7 @@
     ^-  card:agent:gall
     =/  resp
       %-  crip
-      %-  en-json:html
+      %-  en-json:encoding
       :-  %a  :_  ~
       %-  pairs
       :~  id+s+(get-id req)
@@ -125,7 +125,7 @@
           //http-client/0v1n.2m9vh
           %receive
           num.u.ask
-          [%start [200 ~] `(as-octs:mimes:html resp) &]
+          [%start [200 ~] `(as-octs:mimes:encoding resp) &]
       ==
     :*  %pass  /aqua-events
         %agent  [our %aqua]

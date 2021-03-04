@@ -1,7 +1,7 @@
-::  tests for |mimes:html
+::  tests for |mimes:encoding
 ::
 /+  *test
-=,  mimes:html
+=,  mimes:encoding
 ::  helpers
 ::
 |%
@@ -120,7 +120,7 @@
     :: echo "hello" | base64
     %+  expect-eq
       !>  'aGVsbG8K'
-      !>  (en:base64 (as-octs:mimes:html 'hello\0a'))
+      !>  (en:base64 (as-octs:mimes:encoding 'hello\0a'))
   ::
     %+  expect-eq
       !>  'hello\0a'

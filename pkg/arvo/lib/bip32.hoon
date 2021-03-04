@@ -200,7 +200,7 @@
 ::
 ++  en-b58c-bip32
   |=  [v=@ k=@]
-  %-  en-base58:mimes:html
+  %-  en-base58:mimes:encoding
   (en-base58check [4 v] [74 k])
 ::
 ::  base58check
@@ -217,7 +217,7 @@
 ++  de-base58check
   ::  vw: amount of version bytes
   |=  [vw=@u t=tape]
-  =+  x=(de-base58:mimes:html t)
+  =+  x=(de-base58:mimes:encoding t)
   =+  hash=(sha-256l:sha 32 (sha-256:sha (rsh [3 4] x)))
   ?>  =((end [3 4] x) (rsh [3 28] hash))
   (cut 3 [vw (sub (met 3 x) (add 4 vw))] x)

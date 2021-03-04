@@ -2,8 +2,8 @@
 ::::  /hoon/elem/mar
   ::
 /?    310
-=,  mimes:html
-=,  html
+=,  mimes:encoding
+=,  encoding
 |_  own=manx
 ::
 ++  grad  %mime

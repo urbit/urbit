@@ -3,7 +3,7 @@
   ::
 /?    310
 ::
-=,  mimes:html
+=,  mimes:encoding
 |_  mud=@
 ++  grow
   |%

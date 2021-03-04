@@ -51,7 +51,7 @@
   =/  input
     %+  turn  files
     |=  [=path txt=@t]
-    [path ~ /text/plain (as-octs:mimes:html txt)]
+    [path ~ /text/plain (as-octs:mimes:encoding txt)]
   %+  send-events-to  who
   :~
     [//sync/0v1n.2m9vh %into des | input]

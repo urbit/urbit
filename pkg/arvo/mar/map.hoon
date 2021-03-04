@@ -7,7 +7,7 @@
 |_  mud=@
 ++  grow
   |%
-  ++  mime  [/application/octet-stream (as-octs:mimes:html (@t mud))]
+  ++  mime  [/application/octet-stream (as-octs:mimes:encoding (@t mud))]
   --
 ++  grab
   |%                                                    ::  convert from

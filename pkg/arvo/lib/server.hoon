@@ -9,17 +9,17 @@
 ++  parse-request-line
   |=  url=@t
   ^-  request-line
-  (fall (rush url ;~(plug apat:de-purl:html yque:de-purl:html)) [[~ ~] ~])
+  (fall (rush url ;~(plug apat:de-purl:encoding yque:de-purl:encoding)) [[~ ~] ~])
 ::
 ++  manx-to-octs
   |=  man=manx
   ^-  octs
-  (as-octt:mimes:html (en-xml:html man))
+  (as-octt:mimes:encoding (en-xml:encoding man))
 ::
 ++  json-to-octs
   |=  jon=json
   ^-  octs
-  (as-octt:mimes:html (en-json:html jon))
+  (as-octt:mimes:encoding (en-json:encoding jon))
 ::
 ++  app
   |%

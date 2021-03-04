@@ -3,7 +3,7 @@
   ::
 /-  aquarium
 =,  aquarium
-=,  mimes:html
+=,  mimes:encoding
 |_  pil=pill
 ++  grow
   |%

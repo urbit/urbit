@@ -4,11 +4,11 @@
 ::  +en-base64url: url-safe base64 encoding, without padding
 ::
 ++  en-base64url
-  ~(en base64:mimes:html | &)
+  ~(en base64:mimes:encoding | &)
 ::  +de-base64url: url-safe base64 decoding, without padding
 ::
 ++  de-base64url
-  ~(de base64:mimes:html | &)
+  ~(de base64:mimes:encoding | &)
 ::  |octn: encode/decode unsigned atoms as big-endian octet stream
 ::
 ++  octn
@@ -31,9 +31,9 @@
 ::
 ++  en-json-sort                                 ::  XX rename
   |^  |=([sor=$-(^ ?) val=json] (apex val sor ""))
-  ::                                                  ::  ++apex:en-json:html
+  ::                                                  ::  ++apex:en-json:encoding
   ++  apex
-    =,  en-json:html
+    =,  en-json:encoding
     |=  [val=json sor=$-(^ ?) rez=tape]
     ^-  tape
     ?~  val  (weld "null" rez)
@@ -194,7 +194,7 @@
     ++  encode
       |=  jon=json
       %-  en-base64url
-      %-  as-octt:mimes:html
+      %-  as-octt:mimes:encoding
       (en-json-sort aor jon)
     ::  +sign:sign:jws: compute signature
     ::

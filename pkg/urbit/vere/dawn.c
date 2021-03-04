@@ -250,7 +250,7 @@ _dawn_purl(u3_noun rac)
   else {
     //  XX call de-purl directly
     //
-    u3_noun par = u3v_wish("auru:de-purl:html");
+    u3_noun par = u3v_wish("auru:de-purl:encoding");
     u3_noun lur = u3i_string(u3_Host.ops_u.eth_c);
     u3_noun rul = u3dc("rush", u3k(lur), u3k(par));
 
@@ -264,7 +264,7 @@ _dawn_purl(u3_noun rac)
     }
     else {
       //  XX revise for de-purl
-      //  auru:de-purl:html parses to (pair user purl)
+      //  auru:de-purl:encoding parses to (pair user purl)
       //  we need (unit purl)
       //
       url = u3nc(u3_nul, u3k(u3t(u3t(rul))));
@@ -283,7 +283,7 @@ _dawn_turf(c3_c* dns_c)
 {
   u3_noun tuf;
 
-  u3_noun par = u3v_wish("thos:de-purl:html");
+  u3_noun par = u3v_wish("thos:de-purl:encoding");
   u3_noun dns = u3i_string(dns_c);
   u3_noun rul = u3dc("rush", u3k(dns), u3k(par));
 

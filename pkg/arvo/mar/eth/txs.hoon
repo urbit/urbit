@@ -3,7 +3,7 @@
 /+  *ethereum
 =,  format
 =,  rpc
-=,  mimes:html
+=,  mimes:encoding
 ::
 |_  txs=(list transaction)
 ++  u-parser

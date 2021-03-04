@@ -27,8 +27,8 @@
     !>  %-  encode-args:abi:ethereum
         :~  [%uint `@ud`0x123]
             [%array [%uint `@ud`0x456] [%uint `@ud`0x789] ~]
-            [%bytes-n (as-octt:mimes:html (flop "1234567890"))]
-            [%bytes (as-octt:mimes:html (flop "Hello, world!"))]
+            [%bytes-n (as-octt:mimes:encoding (flop "1234567890"))]
+            [%bytes (as-octt:mimes:encoding (flop "Hello, world!"))]
         ==
     !>  %-  zing
         :~  "0000000000000000000000000000000000000000000000000000000000000123"

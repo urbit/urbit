@@ -31,7 +31,7 @@
         data+so
         dojo+so
         clay+so
-        url+(su auri:de-purl:html)
+        url+(su auri:de-purl:encoding)
         api+(su ;~(plug sym ;~(pfix col prn)))
         :-  %get-api
         %-  su
@@ -55,7 +55,7 @@
         output-file+so
         output-pill+so
         output-clay+(su (easy /sentinel/path))
-        url+(su auri:de-purl:html)
+        url+(su auri:de-purl:encoding)
         to-api+(su ;~(plug sym ;~(pfix col prn)))
         :-  %send-api
         %-  su

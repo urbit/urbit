@@ -5,7 +5,7 @@
 ::
 =,  eyre
 =,  format
-=,  html
+=,  encoding
 |_  hit=httr
 ++  grad  %noun
 ++  grow  |%  ++  wall  (turn wain trip)

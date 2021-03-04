@@ -16,7 +16,7 @@
     ^-  response
     ~|  hit
     ?:  ?=(%2 (div p.hit 100))
-      =,  html
+      =,  encoding
       %-  json
       ?~  r.hit
         a+~

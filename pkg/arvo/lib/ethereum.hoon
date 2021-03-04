@@ -212,7 +212,7 @@
             [%bytes p=octs]
         ==
       --
-  =,  mimes:html
+  =,  mimes:encoding
   |%
   ::  encoding
   ::
@@ -557,7 +557,7 @@
     %+  scag  8
     %+  render-hex-bytes  32
     %-  keccak-256:keccak:crypto
-    (as-octs:mimes:html function)
+    (as-octs:mimes:encoding function)
   ::
   ::  building requests
   ::
@@ -568,7 +568,7 @@
     :^  url  %post
       %-  ~(gas in *math)
       ~['Content-Type'^['application/json']~]
-    (some (as-octt (en-json:html jon)))
+    (some (as-octt (en-json:encoding jon)))
   ::  +light-json-request: like json-request, but for %l
   ::
   ::    TODO: Exorcising +purl from our system is a much longer term effort;
@@ -579,9 +579,9 @@
     ^-  request:http
     ::
     :*  %'POST'
-        (crip (en-purl:html url))
+        (crip (en-purl:encoding url))
         ~[['content-type' 'application/json']]
-        (some (as-octt (en-json:html jon)))
+        (some (as-octt (en-json:encoding jon)))
     ==
   ::
   ++  batch-read-request
@@ -824,7 +824,7 @@
   ?:  =(0 n)
     "0"
   %-  render-hex-bytes
-  (as-octs:mimes:html n)
+  (as-octs:mimes:encoding n)
 ::
 ++  address-to-hex
   |=  a=address

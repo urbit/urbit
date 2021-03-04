@@ -64,7 +64,7 @@
           %arvo
           %i
           %request
-          (hiss-to-request:html u.req)
+          (hiss-to-request:encoding u.req)
           *outbound-config:iris
       ==
     ..abet-pe

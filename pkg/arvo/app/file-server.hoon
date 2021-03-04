@@ -189,7 +189,7 @@
       %+  require-authorization-simple:app
         inbound-request
       %-  js-response:gen
-      (as-octt:mimes:html "window.ship = '{+:(scow %p our.bowl)}';")
+      (as-octt:mimes:encoding "window.ship = '{+:(scow %p our.bowl)}';")
     ::
     =/  [payload=simple-payload:http public=?]  (get-file req-line is-file)
     ?:  public  payload
@@ -216,7 +216,7 @@
         ?:  ?=([~ %woff2] ext.req-line)
           :_  public.u.content
           [[200 [['content-type' '/font/woff2'] ~]] `.^(octs %cx scry-path)]
-        =/  file  (as-octs:mimes:html .^(@ %cx scry-path))
+        =/  file  (as-octs:mimes:encoding .^(@ %cx scry-path))
         :_  public.u.content
         ?+  ext.req-line  not-found:gen
             [~ %js]    (js-response:gen file)

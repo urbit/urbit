@@ -1,7 +1,7 @@
 ::  .pem file to list of lines
 ::
 =,  format
-=,  mimes:html
+=,  mimes:encoding
 |_  pem=wain
 ::
 ++  grab                                                ::  convert from

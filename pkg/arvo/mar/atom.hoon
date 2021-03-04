@@ -5,7 +5,7 @@
 ::
 ::::  A minimal atom mark
   ::
-=,  mimes:html
+=,  mimes:encoding
 |_  ato=@
 ++  grab  |%
           ++  noun  @

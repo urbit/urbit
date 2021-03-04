@@ -740,8 +740,8 @@
       =/  =rift  rut.life-rift
       =/  =pass
         %^    pass-from-eth:azimuth
-            (as-octs:mimes:html (get-public:aqua-azimuth ship life %crypt))
-          (as-octs:mimes:html (get-public:aqua-azimuth ship life %auth))
+            (as-octs:mimes:encoding (get-public:aqua-azimuth ship life %crypt))
+          (as-octs:mimes:encoding (get-public:aqua-azimuth ship life %auth))
         1
       :^    ship
           *[address address address address]:azimuth
@@ -759,7 +759,7 @@
       get-czars
       ~[~['arvo' 'netw' 'ork']]
       0
-      `(need (de-purl:html 'http://localhost:8545'))
+      `(need (de-purl:encoding 'http://localhost:8545'))
   ==
 ::
 ::  Should only do galaxies
@@ -775,7 +775,7 @@
   %-  some
   :^  who  rut  lyfe
   %^    pass-from-eth:azimuth
-      (as-octs:mimes:html (get-public:aqua-azimuth who lyfe %crypt))
-    (as-octs:mimes:html (get-public:aqua-azimuth who lyfe %auth))
+      (as-octs:mimes:encoding (get-public:aqua-azimuth who lyfe %crypt))
+    (as-octs:mimes:encoding (get-public:aqua-azimuth who lyfe %auth))
   1
 --

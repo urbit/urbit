@@ -76,8 +76,8 @@
           header-list=['Content-Type'^'application/json' ~]
         ::
           ^=  body
-          %-  some  %-  as-octt:mimes:html
-          %-  en-json:html
+          %-  some  %-  as-octt:mimes:encoding
+          %-  en-json:encoding
           a+(turn reqs request-to-json:rpc:ethereum)
       ==
     ;<  ~  bind:m
@@ -96,7 +96,7 @@
     ?~  full-file.client-response
       (pure:m ~)
     =/  body=@t  q.data.u.full-file.client-response
-    =/  jon=(unit json)  (de-json:html body)
+    =/  jon=(unit json)  (de-json:encoding body)
     ?~  jon
       (pure:m ~)
     =/  array=(unit (list response:rpc))
