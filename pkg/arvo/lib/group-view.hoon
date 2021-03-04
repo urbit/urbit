@@ -15,6 +15,7 @@
         join+join
         leave+leave
         invite+invite
+        hide+dejs-path:resource
     ==
   ::
   ++  create
@@ -53,6 +54,7 @@
     ?-  -.upd
       %initial  (initial +.upd)
       %progress  (progress +.upd)
+      %hide      s+(enjs-path:resource +.upd)
     ==
   ::
   ++  progress
@@ -61,13 +63,21 @@
     :~  resource+s+(enjs-path:resource rid)
         progress+s+prog
     ==
+  ++  request
+    |=  req=^request
+    %-  pairs
+    :~  hidden+b+hidden.req
+        started+(time started.req)
+        ship+(ship ship.req)
+        progress+s+progress.req
+    ==
   ::
   ++  initial
-    |=  init=(map resource ^progress)
+    |=  init=(map resource ^request)
     %-  pairs
     %+  turn  ~(tap by init)
-    |=  [rid=resource prog=^progress]
-    :_  s+prog
+    |=  [rid=resource req=^request]
+    :_  (request req)
     (enjs-path:resource rid)
   --
 ++  cleanup-md
