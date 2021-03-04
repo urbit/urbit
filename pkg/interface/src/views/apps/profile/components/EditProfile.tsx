@@ -176,7 +176,7 @@ export function EditProfile(props: any): ReactElement {
                 </Row>
                 <ProfileStatus contact={contact} />
               </ProfileControls>
-              <ProfileImages hideCover={hideCover} contact={contact}>
+              <ProfileImages hideCover={hideCover} contact={contact} ship={ship}>
                 <ProfileHeaderImageEdit
                   contact={contact}
                   s3={props.s3}
