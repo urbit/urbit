@@ -10,6 +10,7 @@ import {
   Row,
   Text,
   Icon,
+  Image,
   Action,
   StatelessTextInput as Input
 } from '@tlon/indigo-react';
@@ -296,7 +297,13 @@ function Participant(props: {
 
   const avatar =
     contact?.avatar !== null && !hideAvatars ? (
-      <img src={contact.avatar} height={32} width={32} className="dib" />
+      <Image 
+        src={contact.avatar} 
+        height={32} 
+        width={32} 
+        display='inline-block'
+        style={{ objectFit: 'cover' }} 
+      />
     ) : (
       <Sigil ship={contact.patp} size={32} color={`#${color}`} />
     );
