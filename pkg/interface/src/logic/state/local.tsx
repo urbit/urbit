@@ -7,6 +7,7 @@ import { BackgroundConfig, RemoteContentPolicy, TutorialProgress, tutorialProgre
 
 
 export interface LocalState {
+  theme: "light" | "dark" | "auto";
   hideAvatars: boolean;
   hideNicknames: boolean;
   remoteContentPolicy: RemoteContentPolicy;
@@ -35,6 +36,7 @@ export const selectLocalState =
 const useLocalState = create<LocalStateZus>(persist((set, get) => ({
   dark: false,
   background: undefined,
+  theme: "auto",
   hideAvatars: false,
   hideNicknames: false,
   hideLeapCats: [],
