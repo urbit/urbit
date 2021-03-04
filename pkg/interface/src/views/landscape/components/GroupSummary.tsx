@@ -20,7 +20,7 @@ export function GroupSummary(props: GroupSummaryProps & PropFunc<typeof Col>): R
   useTutorialModal(
     'group-desc',
     resource === `/ship/${TUTORIAL_HOST}/${TUTORIAL_GROUP}`,
-    anchorRef.current
+    anchorRef
   );
   return (
     <Col {...rest} ref={anchorRef} gapY="4">
