@@ -151,10 +151,6 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     if(size !== prevProps.size) {
       if(this.scrollLocked) {
         this.updateVisible(0);
-        if(IS_IOS) {
-          (this.updateVisible as any).flush();
-
-        }
         this.resetScroll();
 
       }
@@ -369,9 +365,6 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
         return;
       }
       this.updateVisible(Math.max(offset - this.pageDelta, 0));
-      if(IS_IOS) {
-        (this.updateVisible as any).flush();
-      }
       requestAnimationFrame(() => {
         ref = this.childRefs.get(index);
         this.savedIndex = null;
