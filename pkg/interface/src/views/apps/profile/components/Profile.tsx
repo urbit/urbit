@@ -26,7 +26,7 @@ export function ProfileHeader(props: any): ReactElement {
 
 export function ProfileImages(props: any): ReactElement {
   const { hideAvatars } = useSettingsState(selectCalmState);
-  const { contact, hideCover } = { ...props };
+  const { contact, hideCover, ship } = { ...props };
   const hexColor = contact?.color ? `#${uxToHex(contact.color)}` : '#000000';
 
   const cover =
