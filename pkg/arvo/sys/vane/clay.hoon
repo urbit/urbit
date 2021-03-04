@@ -4172,7 +4172,7 @@
       +$  ford-cache-7  ford-cache
       +$  raft-6
         $:  rom=room-6                                  ::  domestic
-            hoy=(map ship rung)                         ::  foreign
+            hoy=(map ship rung-6)                       ::  foreign
             ran=rang                                    ::  hashes
             mon=(map term beam)                         ::  mount points
             hez=(unit duct)                             ::  sync duct
@@ -4195,13 +4195,24 @@
             fod=ford-cache-6                            ::  ford cache
             fer=(unit reef-cache)                       ::  reef cache
         ==
+      +$  rung-6
+        $:  rus=(map desk rede-6)
+        ==
+      +$  rede-6
+        $:  lim=@da
+            ref=(unit rind)
+            qyx=cult
+            dom=dome-6
+            per=regs
+            pew=regs
+        ==
       +$  ford-cache-6  *                               ::  discard old cache
       --
   |=  old=raft-any
   |^
   =?  old  ?=(%6 -.old)  7+(raft-6-to-7 +.old)
   ?>  ?=(%7 -.old)
-  ..^$(ruf +.old)
+  ..^^$(ruf +.old)
   ::  +raft-6-to-7: delete stale ford caches (they could all be invalid)
   ::
   ++  raft-6-to-7
@@ -4213,6 +4224,13 @@
       |=  doj=dojo-6
       ^-  dojo-7
       doj(fod.dom *ford-cache-7)
+    ::
+        hoy
+      %-  ~(run by hoy.raf)
+      |=  =rung-6
+      %-  ~(run by rus.rung-6)
+      |=  =rede-6
+      rede-6(dom dom.rede-6(fod *ford-cache-7))
     ==
   --
 ::
