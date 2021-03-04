@@ -17,9 +17,10 @@ interface SecuritySettingsProps {
 export default function SecuritySettings({ api }: SecuritySettingsProps) {
   const [allSessions, setAllSessions] = useState(false);
   return (
+    <>
+    <BackButton/>
     <Col gapY="5" p="5" pt="4">
-      <BackButton/>
-      <Col gapY="1">
+      <Col gapY="1" mt="0">
         <Text fontSize={2} fontWeight="medium">
           Security Preferences
         </Text>
@@ -56,5 +57,6 @@ export default function SecuritySettings({ api }: SecuritySettingsProps) {
         </form>
       </Col>
     </Col>
+    </>
   );
 }
