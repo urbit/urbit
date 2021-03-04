@@ -354,7 +354,7 @@
     [%| p.res]
   :-  %&
   ~?  >  debug  %parsed-good
-  ((cury tab-list-hoon sut) hoon.p.res)
+  ((cury tab-list-hoon sut) hoon:`pile:clay`p.res)
 ::
 :: Generators
 ++  tab-generators
