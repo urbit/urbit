@@ -95,4 +95,4 @@ class TermApp extends Component {
   }
 }
 
-export default withState(useHarkState, TermApp);
+export default withState(TermApp, [[useHarkState]]);

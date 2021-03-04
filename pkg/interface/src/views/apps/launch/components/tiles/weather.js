@@ -291,4 +291,4 @@ class WeatherTile extends React.Component {
   }
 }
 
-export default withState(useLaunchState, WeatherTile);
+export default withState(WeatherTile, [[useLaunchState]]);

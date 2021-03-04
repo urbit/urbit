@@ -123,4 +123,8 @@ export class OmniboxResult extends Component {
   }
 }
 
-export default withState(useInviteState, withState(useHarkState, withState(useContactState, OmniboxResult), ['notificationsCount']));
+export default withState(OmniboxResult, [
+  [useInviteState],
+  [useHarkState, ['notificationsCount']],
+  [useContactState]
+]);
