@@ -50,7 +50,31 @@ export function SidebarListHeader(props: {
 
   const noun = (props.workspace?.type === 'messages') ? 'Messages' : 'Channels';
 
+  //  TODO: also do not show group feed button
+  //  if we do not have group feed enabled
   return (
+    <Col>
+    {( groupPath ) ? (
+       <Row
+         flexShrink="0"
+         alignItems="center"
+         justifyContent="space-between"
+         py={2}
+         px={3}
+         height='48px'
+         borderBottom={1}
+         borderColor="washedGray"
+         cursor="pointer"
+         onClick={() => {
+           props.history.push(`/~landscape${groupPath}/feed`);
+         }}
+       >
+         <Text>
+           Group Feed
+         </Text>
+       </Row>
+     ) : null
+    }
     <Row
       flexShrink="0"
       alignItems="center"
@@ -143,5 +167,6 @@ export function SidebarListHeader(props: {
       </Dropdown>
       </Box>
     </Row>
+    </Col>
   );
 }
