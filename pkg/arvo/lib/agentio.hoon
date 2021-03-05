@@ -6,11 +6,9 @@
 |_  =bowl:gall
 ++  scry
   |*  [desk=@tas =path]
-  ?>  ?=(^ path)
-  ?>  ?=(^ t.path)
   %+  weld
     /(scot %p our.bowl)/[desk]/(scot %da now.bowl)
-  t.t.path
+  path
 ::
 ++  pass
   |_  =wire
@@ -86,6 +84,11 @@
     =/  =rave:clay
       ?:(?=(%sing genre) [genre mood] [genre mood])
     (warp-our q.byk.bowl `rave)
+  ::
+  ++  request
+    =|  =outbound-config:iris
+    |=  =request:http
+    (arvo %i %request request outbound-config)
   --
 ::
 ++  fact-curry
