@@ -6,7 +6,8 @@ import { RouteComponentProps } from 'react-router-dom';
 import Note from './Note';
 import { EditPost } from './EditPost';
 
-import { GraphNode, Graph, Contacts, Association, S3State, Group } from '@urbit/api';
+import { GraphNode, Graph, Contacts, Association, Group } from '@urbit/api';
+import { StorageState } from '~/types';
 
 interface NoteRoutesProps {
   ship: string;
@@ -20,7 +21,7 @@ interface NoteRoutesProps {
   baseUrl?: string;
   rootUrl?: string;
   group: Group;
-  s3: S3State;
+  storage: StorageState;
 }
 
 export function NoteRoutes(props: NoteRoutesProps & RouteComponentProps) {

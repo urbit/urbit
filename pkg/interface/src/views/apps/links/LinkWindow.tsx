@@ -15,7 +15,7 @@ import VirtualScroller from '~/views/components/VirtualScroller';
 import { LinkItem } from './components/LinkItem';
 import LinkSubmit from './components/LinkSubmit';
 import { isWriter } from '~/logic/lib/group';
-import { S3State } from '~/types/s3-update';
+import { StorageState } from '~/types';
 
 interface LinkWindowProps {
   association: Association;
@@ -29,7 +29,7 @@ interface LinkWindowProps {
   group: Group;
   path: string;
   api: GlobalApi;
-  s3: S3State;
+  storage: StorageState;
 }
 export function LinkWindow(props: LinkWindowProps) {
   const { graph, api, association } = props;
@@ -64,7 +64,7 @@ return;
     return (
       <Col key={0} mx="auto" mt="4" maxWidth="768px" width="100%" flexShrink={0} px={3}>
         { canWrite ? (
-            <LinkSubmit s3={props.s3} name={name} ship={ship.slice(1)} api={api} />
+            <LinkSubmit storage={props.storage} name={name} ship={ship.slice(1)} api={api} />
           ) : (
             <Text>There are no links here yet. You do not have permission to post to this collection.</Text>
           )
@@ -96,7 +96,7 @@ return null;
           return (
             <React.Fragment key={index.toString()}>
             <Col key={index.toString()} mx="auto" mt="4" maxWidth="768px" width="100%" flexShrink={0} px={3}>
-              <LinkSubmit s3={props.s3} name={name} ship={ship.slice(1)} api={api} />
+              <LinkSubmit storage={props.storage} name={name} ship={ship.slice(1)} api={api} />
             </Col>
               <LinkItem {...linkProps} />
             </React.Fragment>

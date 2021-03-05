@@ -29,6 +29,7 @@
     "normalize-wheel": "1.0.1",
     "oembed-parser": "^1.4.5",
     "prop-types": "^15.7.2",
+    "querystring": "^0.2.0",
     "react": "^16.14.0",
     "react-codemirror2": "^6.0.1",
     "react-dom": "^16.14.0",

@@ -11,7 +11,7 @@ import { GroupPersonalSettings } from './Personal';
 import { GroupChannelSettings } from './Channels';
 import { useHistory } from 'react-router-dom';
 import { resourceFromPath, roleForShip } from '~/logic/lib/group';
-import { S3State } from '~/types';
+import { StorageState } from '~/types';
 
 const Section = ({ children }) => (
   <Box boxShadow="inset 0px 1px 0px rgba(0, 0, 0, 0.2)">{children}</Box>
@@ -23,7 +23,7 @@ interface GroupSettingsProps {
   associations: Associations;
   api: GlobalApi;
   notificationsGroupConfig: GroupNotificationsConfig;
-  s3: S3State;
+  storage: StorageState;
   baseUrl: string;
 }
 export function GroupSettings(props: GroupSettingsProps) {
