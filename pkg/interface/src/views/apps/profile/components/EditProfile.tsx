@@ -48,7 +48,7 @@ const emptyContact = {
 };
 
 export function ProfileHeaderImageEdit(props: any): ReactElement {
-  const { contact, s3, setFieldValue, handleHideCover } = { ...props };
+  const { contact, storage, setFieldValue, handleHideCover } = { ...props };
   const [editCover, setEditCover] = useState(false);
   const [removedCoverLabel, setRemovedCoverLabel] = useState('Remove Header');
   const handleClear = (e) => {
@@ -63,7 +63,7 @@ export function ProfileHeaderImageEdit(props: any): ReactElement {
       {contact?.cover ? (
         <div>
           {editCover ? (
-            <ImageInput id='cover' s3={s3} marginTop='-8px' />
+            <ImageInput id='cover' storage={storage} marginTop='-8px' />
           ) : (
             <Row>
               <Button mr='2' onClick={() => setEditCover(true)}>
@@ -76,14 +76,14 @@ export function ProfileHeaderImageEdit(props: any): ReactElement {
           )}
         </div>
       ) : (
-        <ImageInput id='cover' s3={s3} marginTop='-8px' />
+        <ImageInput id='cover' storage={storage} marginTop='-8px' />
       )}
     </>
   );
 }
 
 export function EditProfile(props: any): ReactElement {
-  const { contact, ship, api, isPublic } = props;
+  const { contact, storage, ship, api, isPublic } = props;
   const [hideCover, setHideCover] = useState(false);
 
   const handleHideCover = (value) => {
@@ -179,7 +179,7 @@ export function EditProfile(props: any): ReactElement {
               <ProfileImages hideCover={hideCover} contact={contact} ship={ship}>
                 <ProfileHeaderImageEdit
                   contact={contact}
-                  s3={props.s3}
+                  storage={storage}
                   setFieldValue={setFieldValue}
                   handleHideCover={handleHideCover}
                 />
@@ -193,14 +193,14 @@ export function EditProfile(props: any): ReactElement {
                 <ImageInput
                   id='avatar'
                   label='Overlay Avatar (may be hidden by other users)'
-                  s3={props.s3}
+                  storage={storage}
                 />
               </Col>
             </Row>
             <Input id='nickname' label='Custom Name' mb={3} />
             <Col width='100%'>
               <Text mb={2}>Description</Text>
-              <MarkdownField id='bio' mb={3} s3={props.s3} />
+              <MarkdownField id='bio' mb={3} storage={storage} />
             </Col>
             <Checkbox mb={3} id='isPublic' label='Public Profile' />
             <GroupSearch

@@ -61,14 +61,24 @@
   ::NOTE  we only count graphs for now
   ?.  &(=(%graph app-name.m) =(our creator.metadatum))  ~
   `[module.metadatum resource.m]
+::  for sanity checks
+::
+=/  real=(set resource:re)
+  =/  upd=update:ga
+    %+  scry  update:ga
+    [%x %graph-store /keys/graph-update]
+  ?>  ?=(%keys -.q.upd)
+  resources.q.upd
 ::  count activity per channel
 ::
 =/  activity=(list [resource:re members=@ud (list [resource:re mod=term week=@ud authors=@ud])])
   %+  turn  crowds
   |=  [g=resource:re m=@ud]
   :+  g  m
-  %+  turn  (~(got by channels) g)
+  %+  murn  (~(got by channels) g)
   |=  [m=term r=resource:re]
+  ?.  (~(has in real) r)  ~
+  %-  some
   :+  r  m
   ::NOTE  graph-store doesn't use the full resource-style path here!
   =/  upd=update:ga

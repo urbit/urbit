@@ -2,21 +2,22 @@ import { BaseInput, Box, Button, LoadingSpinner, Text } from '@tlon/indigo-react
 import React, { useCallback, useState } from 'react';
 import GlobalApi from '~/logic/api/global';
 import { useFileDrag } from '~/logic/lib/useDrag';
-import useS3 from '~/logic/lib/useS3';
-import { S3State } from '@urbit/api';
+import useStorage from '~/logic/lib/useStorage';
+import { StorageState } from '~/types';
 import SubmitDragger from '~/views/components/SubmitDragger';
 import { createPost } from '~/logic/api/graph';
 import { hasProvider } from 'oembed-parser';
 
 interface LinkSubmitProps {
   api: GlobalApi;
-  s3: S3State;
+  storage: StorageState;
   name: string;
   ship: string;
 }
 
 const LinkSubmit = (props: LinkSubmitProps) => {
-  const { canUpload, uploadDefault, uploading, promptUpload } = useS3(props.s3);
+  const { canUpload, uploadDefault, uploading, promptUpload } =
+    useStorage(props.storage);
 
   const [submitFocused, setSubmitFocused] = useState(false);
   const [urlFocused, setUrlFocused] = useState(false);

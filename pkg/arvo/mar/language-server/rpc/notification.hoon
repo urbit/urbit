@@ -4,7 +4,7 @@
 ++  grad  %noun
 ++  grab
   |%
-  ++  noun  not
+  ++  noun  all:notification
   ++  json
     |=  jon=^json
     (notification:dejs:lsp-json jon)

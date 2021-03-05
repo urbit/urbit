@@ -9,9 +9,9 @@ import {
   Contacts,
   Rolodex,
   Unreads,
-  S3State
 } from '@urbit/api';
 import { Center, LoadingSpinner } from '@tlon/indigo-react';
+import { StorageState } from '~/types';
 import bigInt from 'big-integer';
 
 import Notebook from './Notebook';
@@ -30,7 +30,7 @@ interface NotebookRoutesProps {
   rootUrl: string;
   association: Association;
   associations: Associations;
-  s3: S3State;
+  storage: StorageState;
 }
 
 export function NotebookRoutes(
@@ -77,7 +77,7 @@ export function NotebookRoutes(
             association={props.association}
             graph={graph}
             baseUrl={baseUrl}
-            s3={props.s3}
+            storage={props.storage}
           />
         )}
       />
@@ -109,7 +109,7 @@ export function NotebookRoutes(
               contacts={contacts}
               association={props.association}
               group={group}
-              s3={props.s3}
+              storage={props.storage}
               {...routeProps}
             />
           );
