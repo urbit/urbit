@@ -21,7 +21,7 @@
 |^  :-  %kiln-merge
     ^-  $@(~ [syd=desk her=ship sud=desk cas=case gem=?(germ %auto)])
     ?-  arg
-      ~  ((slog (turn help-text |=(=@t leaf+(trip t)))) ~)
+      ~  ((slog (turn `wain`help-text |=(=@t leaf+(trip t)))) ~)
       [@ @ ~]
         =+(arg [sud ?.(=(our her) her (sein:title p.bek now her)) sud (opt-case da+now) gem])
     ::
