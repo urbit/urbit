@@ -259,65 +259,12 @@
   |=  =path
   ^-  (quip card _this)
   ?>  (team:title [src our]:bowl)
-  |^
   ?+    path   (on-watch:def path)
     ::
       [%updates ~]
     :_  this
-    [%give %fact ~ hark-update+!>(initial-updates)]~
+    [%give %fact ~ hark-update+!>(initial-updates:ha)]~
   ==
-  ::
-  ++  initial-updates
-    ^-  update:store
-    :-  %more
-    ^-  (list update:store)
-    :-  give-unreads
-    [%set-dnd dnd]~
-  ::
-  ++  give-since-unreads
-    ^-  (list [stats-index:store stats:store])
-    %+  turn
-      ~(tap by unreads-count)
-    |=  [=stats-index:store count=@ud]
-    :*  stats-index
-        ~(wyt in (~(gut by by-index) stats-index ~))
-        [%count count]
-        (~(gut by last-seen) stats-index *time)
-    ==
-  ::
-  ++  give-each-unreads
-    ^-  (list [stats-index:store stats:store])
-    %+  turn
-      ~(tap by unreads-each)
-    |=  [=stats-index:store indices=(set index:graph-store)]
-    :*  stats-index
-        ~(wyt in (~(gut by by-index) stats-index ~))
-        [%each indices]
-        (~(gut by last-seen) stats-index *time)
-    ==
-  ::
-  ++  give-group-unreads
-    ^-  (list [stats-index:store stats:store])
-    %+  murn  ~(tap by by-index)
-    |=  [=stats-index:store nots=(set [time index:store])]
-    ?.  ?=(%group -.stats-index)
-      ~
-    :-  ~
-    :*  stats-index
-        ~(wyt in nots)
-        [%count 0]
-        *time
-    ==
-  ::
-  ++  give-unreads
-    ^-  update:store
-    :-  %unreads
-    ;:  weld 
-      give-each-unreads 
-      give-since-unreads
-      give-group-unreads
-    ==
-  --
 ::
 ++  on-peek   
   |=  =path
@@ -343,6 +290,9 @@
     ^-  update:store
     :^  %timebox  time  is-archive
     ~(tap by timebox)
+    ::
+      [%x %initial ~]
+    ``hark-update+!>(initial-updates:ha)
   ==
 ::
 ++  on-poke
@@ -682,6 +632,59 @@
   ++  set-dnd
     |=  d=?
     (give:poke-core(dnd d) %set-dnd d)
+  --
+::
+++  initial-updates
+  ^-  update:store
+  |^
+  :-  %more
+  ^-  (list update:store)
+  :-  unreads
+  [%set-dnd dnd]~
+  ::
+  ++  since-unreads
+    ^-  (list [stats-index:store stats:store])
+    %+  turn
+      ~(tap by unreads-count)
+    |=  [=stats-index:store count=@ud]
+    :*  stats-index
+        ~(wyt in (~(gut by by-index) stats-index ~))
+        [%count count]
+        (~(gut by last-seen) stats-index *time)
+    ==
+  ::
+  ++  each-unreads
+    ^-  (list [stats-index:store stats:store])
+    %+  turn
+      ~(tap by unreads-each)
+    |=  [=stats-index:store indices=(set index:graph-store)]
+    :*  stats-index
+        ~(wyt in (~(gut by by-index) stats-index ~))
+        [%each indices]
+        (~(gut by last-seen) stats-index *time)
+    ==
+  ::
+  ++  group-unreads
+    ^-  (list [stats-index:store stats:store])
+    %+  murn  ~(tap by by-index)
+    |=  [=stats-index:store nots=(set [time index:store])]
+    ?.  ?=(%group -.stats-index)
+      ~
+    :-  ~
+    :*  stats-index
+        ~(wyt in nots)
+        [%count 0]
+        *time
+    ==
+  ::
+  ++  unreads
+    ^-  update:store
+    :-  %unreads
+    ;:  weld 
+      each-unreads 
+      since-unreads
+      group-unreads
+    ==
   --
 ::
 ++  merge-notification
