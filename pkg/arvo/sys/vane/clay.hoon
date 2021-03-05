@@ -701,6 +701,8 @@
         (compose-casts a !<(mark p.jum) b)
       ?:  ?=(%& -.rab)
         (compose-casts a !<(mark p.rab) b)
+      ?:  ?=(%noun b)
+        :_(nub !>(|=(* +<)))
       ~|(no-cast-from+[a b] !!)
     ::
     ++  compose-casts
