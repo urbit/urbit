@@ -7,15 +7,20 @@
 =/  m  (strand ,vase)
 ^-  form:m
 |^
-=+  !<([~ =a=path =b=path shallow=flag] arg)
+::  workaround to make the shallow flag optional. if it's specified we
+::  do require a non-empty path - however this shouldn't be called with
+::  empty paths to begin with.
+=+  !<([~ =a=path b=$~([/hi &] $^([(lest @ta) flag] path))] arg)
+=/  [b-path=path shallow=flag]  ?:(?=([^ *] b) b [`path`b |])
 =/  a-beam  (need (de-beam a-path))
 =/  b-beam  (need (de-beam b-path))
 ;<  a-dome=dome  bind:m  (get-from-clay a-beam dome %v)
 ;<  b-dome=dome  bind:m  (get-from-clay b-beam dome %v)
-;<  diff=vase  bind:m  (diff-beams a-beam ank.a-dome b-beam ank.b-dome)
-=/  diffs=(list diff-type)  !<((list diff-type) diff)
+;<  diffs=(list diff-type)  bind:m  (diff-beams a-beam b-beam)
 %-  pure:m
 !>  ^-  tang
+::  our tang is built in reverse order
+%-  flop
 ?:  shallow
   (format-shallow diffs q.a-beam q.b-beam)
 (format-deep diffs q.a-beam q.b-beam)
@@ -26,8 +31,9 @@
 ::    3. %other is for files that don't use txt-diff - we just take
 ::       the mug of the files
 +$  diff-type
-  :: path of the diffed beams
-  $:  pax=path
+  :: paths of the diffed beams
+  $:  a=path
+      b=path
       $%  [%txt-diff diff=(urge cord)]
           [%directory-diff p=(list path) q=(list path)]
           [%other p=@ q=@]
@@ -37,17 +43,17 @@
 ::
 ++  diff-is-empty
   |=  d=diff-type
+  ^-  flag
+  ?:  ?=([%txt-diff *] +.+.d)
+    :: levy produces & on empty lists
+    %+  levy
+      diff.d
+    |=  u=(unce cord)
     ^-  flag
-    ?:  ?=([%txt-diff *] +.d)
-      :: levy produces & on empty lists
-      %+  levy
-        diff.d
-      |=  u=(unce cord)
-      ^-  flag
-      -:u
-    ?:  ?=([%directory-diff *] +.d)
-      =(p.d q.d)
+    -:u
+  ?:  ?=([%directory-diff *] +.+.d)
     =(p.d q.d)
+  =(p.d q.d)
 ::  +get-file: retrieve a cage of a file from clay
 ::
 ++  get-file
@@ -75,26 +81,26 @@
 ::
 ++  diff-beams
   =<
-  |=  [a=beam a-ankh=ankh b=beam b-ankh=ankh]
-  =/  m  (strand ,vase)
+  |=  [a=beam b=beam]
+  =/  m  (strand ,(list diff-type))
   ^-  form:m
-  ?>  =(s.a s.b)
   ;<  hash-a=@  bind:m  (get-from-clay a @ %z)
   ;<  hash-b=@  bind:m  (get-from-clay b @ %z)
   ::  if the recursive hashes for each beam are the same we bail early
   ?:  =(hash-a hash-b)
-    (pure:m !>(*(list diff-type)))
-  ::  vase of a (unit diff-type)
-  ;<  file-diff=vase  bind:m  (diff-file-contents a a-ankh b b-ankh)
+    (pure:m *(list diff-type))
+  ;<  a-arch=arch  bind:m  (get-from-clay a arch %y)
+  ;<  b-arch=arch  bind:m  (get-from-clay b arch %y)
+  ;<  file-diff=(unit diff-type)  bind:m  (diff-file-contents a a-arch b b-arch)
   ::  get distinct files along with shared files
-  =/  a-keys=(set @t)  ~(key by dir.a-ankh)
-  =/  b-keys=(set @t)  ~(key by dir.b-ankh)
+  =/  a-keys=(set @t)  ~(key by dir.a-arch)
+  =/  b-keys=(set @t)  ~(key by dir.b-arch)
   ::  unique children
   =/  a-unique-children=(set @t)  (~(dif in a-keys) b-keys)
   =/  b-unique-children=(set @t)  (~(dif in b-keys) a-keys)
-  =/  a-unique=(list path)  (format-unique-children a a-ankh a-unique-children)
-  =/  b-unique=(list path)  (format-unique-children b b-ankh b-unique-children)
-  =/  unique-diff=diff-type  [s.a %directory-diff a-unique b-unique]
+  ;<  a-unique=(list path)  bind:m  (format-unique-children a a-arch a-unique-children)
+  ;<  b-unique=(list path)  bind:m  (format-unique-children b b-arch b-unique-children)
+  =/  unique-diff=diff-type  [s.a s.b %directory-diff a-unique b-unique]
   ::  shared children
   =/  find-common-diffs
     |.
@@ -105,25 +111,25 @@
     =*  loop  $
     ^-  form:m
     ?~  common-children
-      (pure:m !>(acc))
+      (pure:m acc)
     =/  child=@t  i.common-children
     =/  new-a=beam  a(s (snoc s.a child))
     =/  new-b=beam  b(s (snoc s.b child))
-    ;<  res=vase  bind:m
-      (diff-beams new-a (~(got by dir.a-ankh) child) new-b (~(got by dir.b-ankh) child))
+    ;<  diffs=(list diff-type)  bind:m
+      (diff-beams new-a new-b)
     ::  ;< introduces another $ so we use "loop" instead.
     %=  loop
-      acc  (weld !<((list diff-type) res) acc)
+      acc  (weld diffs acc)
       common-children  t.common-children
     ==
-  ;<  common-diffs=vase  bind:m  (find-common-diffs)
+  ;<  common-diffs=(list diff-type)  bind:m  (find-common-diffs)
   %-  pure:m
-  !>  ^-  (list diff-type)
+  ^-  (list diff-type)
   %+  skip
     ;:  weld
-      (drop !<((unit diff-type) file-diff))
+      (drop file-diff)
       [unique-diff ~]
-      !<((list diff-type) common-diffs)
+      common-diffs
     ==
   diff-is-empty
   |%
@@ -131,66 +137,62 @@
   ::  files that are unique within a directory.
   ::
   ++  format-unique-children
-    =<
-    |=  [bem=beam ank=ankh children=(set @t)]
-    ^-  (list path)
-    %-  ~(rep by dir.ank)
-    |=  [[key=@t node=ankh] acc=(list path)]
-    ^-  (list path)
-    ?.  (~(has in children) key)
-      acc
-    (weld (get-all-paths node (snoc s.bem key)) acc)
-    |%
-    ++  get-all-paths
-      |=  [ank=ankh cur-path=path]
-      ^-  (list path)
-      ::  check for terminal node
-      ?:  =(~(wyt by dir.ank) 0)
-        ~[cur-path]
-      %-  ~(rep by dir.ank)
-      |=  [[key=@t node=ankh] acc=(list path)]
-      ^-  (list path)
-      =/  new-path=path  (snoc cur-path key)
-      =/  child-paths=(list path)  (get-all-paths node new-path)
-      (weld child-paths acc)
-    --
+    |=  [bem=beam ark=arch children=(set @t)]
+    =/  m  (strand ,(list path))
+    ^-  form:m
+    =/  children=(list @t)  ~(tap in children)
+    =|  acc=(list path)
+    |-
+    =*  loop  $
+    ^-  form:m
+    ?~  children
+      (pure:m acc)
+    ::  the %t care gives all paths with the specified prefix
+    ;<  res=(list path)  bind:m  (get-from-clay bem(s (snoc s.bem i.children)) (list path) %t)
+    %=  loop
+      acc  (weld res acc)
+      children  t.children
+    ==
   ::  +diff-file-contents: diff two files at specified beams,
   ::  producing a vase of (unit diff-type)
   ++  diff-file-contents
     =<
-    |=  [a=beam a-ankh=ankh b=beam b-ankh=ankh]
-    =/  m  (strand ,vase)
+    |=  [a=beam a-arch=arch b=beam b-arch=arch]
+    =/  m  (strand ,(unit diff-type))
     ^-  form:m
-    ::  the files must be at the same path
-    ?>  =(s.a s.b)
-    ?:  =(fil.a-ankh fil.b-ankh)
-      (pure:m !>(*(unit diff-type)))
-    ?~  fil.a-ankh
+    ?:  =(fil.a-arch fil.b-arch)
+      (pure:m *(unit diff-type))
+    ?~  fil.a-arch
       :: only b has contents
       %-  pure:m
-      !>  ^-  (unit diff-type)
+      ^-  (unit diff-type)
       %-  some
-      :+  s.a
+      :^    s.a
+          s.b
         %txt-diff
       :_  ~
       ^-  (unce cord)
       :+  %|
         ~
       ~[(format-file-content-missing s.b q.b)]
-    ?~  fil.b-ankh
+    ?~  fil.b-arch
       :: only a has contents
       %-  pure:m
-      !>  ^-  (unit diff-type)
+      ^-  (unit diff-type)
       %-  some
-      :+  s.a
+      :^    s.a
+          s.b
         %txt-diff
       :_  ~
       ^-  (unce cord)
       :+  %|
         ~[(format-file-content-missing s.a q.a)]
       ~
-    ::  have two file contents - diff them
+    ::  have two file contents - check that they have
+    ::  the same mark.
     =/  mar=mark  -:(flop s.a)
+    ?:  !=(mar -:(flop s.b))
+      (strand-fail:strandio %files-not-same-type >s.a< >s.b< ~)
     ;<  =a=cage     bind:m  (get-file a)
     ;<  =b=cage     bind:m  (get-file b)
     ;<  =dais:clay  bind:m  (build-mark:strandio -.a mar)
@@ -198,14 +200,16 @@
     ::  for all other marks we just take the mug)
     %-  pure:m
     ?:  =(form:dais %txt-diff)
-      !>  ^-  (unit diff-type)
+      ^-  (unit diff-type)
       %-  some
-      :+  s.a
+      :^    s.a
+          s.b
         %txt-diff
       !<((urge cord) (~(diff dais q.a-cage) q.b-cage))
-    !>  ^-  (unit diff-type)
+    ^-  (unit diff-type)
     %-  some
-    :+  s.a
+    :^    s.a
+        s.b
       %other
     ::  For some reason, vases for identical files on different desks
     ::  can sometimes have different types. for this reason, we only
@@ -225,6 +229,12 @@
       ==
     --
   --
+::  +format-paths: helper to combine two paths into a tape
+::
+++  format-paths
+  |=  [a=path b=path]
+  ^-  tape
+  ;:(weld <a> " " <b>)
 ::  +format-directory-diff: helper for producing a tank based on
 ::  a %directory-diff
 ::
@@ -244,11 +254,11 @@
     diffs
   |=  [d=diff-type acc=tang]
   ^-  tang
-  ?:  ?=([%txt-diff *] +.d)
-    [`tank`>pax.d< acc]
-  ?:  ?=([%other *] +.d)
-    [`tank`>pax.d< acc]
-  ?:  ?=([%directory-diff *] +.d)
+  ?:  ?=([%txt-diff *] +.+.d)
+    [leaf+(format-paths a.d b.d) acc]
+  ?:  ?=([%other *] +.+.d)
+    [leaf+(format-paths a.d b.d) acc]
+  ?:  ?=([%directory-diff *] +.+.d)
     ;:  weld
       (format-directory-diff p.d a)
       (format-directory-diff q.d b)
@@ -265,25 +275,22 @@
     diffs
   |=  [d=diff-type acc=tang]
   ^-  tang
-  ?:  ?=([%txt-diff *] +.d)
-    ::  TODO come up with some more readable formatting
-    ::  super ugly when printed.
-    :-  >pax.d<
-    %+  weld
-      (turn diff.d |=(u=(unce cord) >u<))
+  ?:  ?=([%txt-diff *] +.+.d)
+    :+  leaf+(format-paths a.d b.d)
+      >diff.d<
     acc
-  ?:  ?=([%directory-diff *] +.d)
+  ?:  ?=([%directory-diff *] +.+.d)
     ;:  weld
       (format-directory-diff p.d a)
       (format-directory-diff q.d b)
       acc
     ==
-  ?:  ?=([%other *] +.d)
+  ?:  ?=([%other *] +.+.d)
     :_  acc
     :-  %leaf
     ;:  weld
       "file "
-      <pax.d>
+      <a.d>
       " has mug "
       <p.d>
       " on desk "
