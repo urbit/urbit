@@ -25,8 +25,7 @@ import { Loading } from '~/views/components/Loading';
 import '~/views/apps/links/css/custom.css';
 import '~/views/apps/publish/css/custom.css';
 import { getGroupFromWorkspace } from '~/logic/lib/workspace';
-import { GroupHome } from './GroupHome';
-import { GroupSummary } from './GroupSummary';
+import { GroupHome } from './Home/GroupHome';
 import { Workspace } from '~/types/workspace';
 
 type GroupsPaneProps = StoreState & {

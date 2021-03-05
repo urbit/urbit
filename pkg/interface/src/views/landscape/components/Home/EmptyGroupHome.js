@@ -1,8 +1,7 @@
-import React, { ReactElement, useRef } from 'react';
-import { Col, Box, Text } from '@tlon/indigo-react';
-import { Link } from 'react-router-dom';
+import React from 'react';
+import { Box, Text } from '@tlon/indigo-react';
 
-import { GroupSummary } from './GroupSummary';
+import { GroupSummary } from '../GroupSummary';
 
 
 export function EmptyGroupHome(props) {
@@ -31,31 +30,4 @@ export function EmptyGroupHome(props) {
   );
 }
 
-export function GroupFeed(props) {
-  const { baseUrl } = props;
-  return (
-    <>
-      <Link to={baseUrl}><Text>{'<- Back'}</Text></Link>
-    </>
-  );
-}
 
-export function GroupHome(props) {
-  //  TODO: store a backend config for whether the feed is enabled or not
-  const isFeedEnabled = true;
-
-  return (
-    <Col
-      alignItems="center"
-      justifyContent="center"
-      display="flex"
-      p='4'
-    >
-      { isFeedEnabled ? (
-        <GroupFeed {...props} />
-      ) : (
-        <EmptyGroupHome {...props} />
-      )}
-    </Col>
-  );
-}
