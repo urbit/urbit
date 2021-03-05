@@ -33,7 +33,7 @@
   --
 ++  grab
   |%
-  :: +noun: validate publish post
+  :: +noun: validate publish note
   :: 
   ++  noun
     |=  p=*
