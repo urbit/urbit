@@ -1,18 +1,19 @@
 import React, { Component } from 'react';
 import ChatEditor from './chat-editor';
-import { IuseS3 } from '~/logic/lib/useS3';
+import { IuseStorage } from '~/logic/lib/useStorage';
 import { uxToHex } from '~/logic/lib/util';
 import { Sigil } from '~/logic/lib/sigil';
 import { createPost } from '~/logic/api/graph';
 import tokenizeMessage, { isUrl } from '~/logic/lib/tokenizeMessage';
 import GlobalApi from '~/logic/api/global';
 import { Envelope } from '~/types/chat-update';
+import { StorageState } from '~/types';
 import { Contacts, Content } from '@urbit/api';
 import { Row, BaseImage, Box, Icon, LoadingSpinner } from '@tlon/indigo-react';
-import withS3 from '~/views/components/withS3';
+import withStorage from '~/views/components/withStorage';
 import { withLocalState } from '~/logic/state/local';
 
-type ChatInputProps = IuseS3 & {
+type ChatInputProps = IuseStorage & {
   api: GlobalApi;
   numMsgs: number;
   station: unknown;
@@ -20,7 +21,7 @@ type ChatInputProps = IuseS3 & {
   envelopes: Envelope[];
   contacts: Contacts;
   onUnmount(msg: string): void;
-  s3: unknown;
+  storage: StorageState;
   placeholder: string;
   message: string;
   deleteMessage(): void;
@@ -207,4 +208,4 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
   }
 }
 
-export default withLocalState(withS3(ChatInput, { accept: 'image/*' }), ['hideAvatars']);
+export default withLocalState(withStorage(ChatInput, { accept: 'image/*' }), ['hideAvatars']);

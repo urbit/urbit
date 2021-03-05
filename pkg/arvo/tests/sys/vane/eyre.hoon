@@ -2360,7 +2360,6 @@
     ++  mash  !!
     ++  pact  !!
     ++  vale  |=(=noun !>(;;(json noun)))
-    ++  volt  !!
     --
   ::
   ?>  =(%j view)

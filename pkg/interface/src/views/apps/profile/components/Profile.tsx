@@ -167,11 +167,11 @@ export function Profile(props: any): ReactElement {
       <Center p={[0, 4]} height='100%' width='100%'>
         <Box ref={anchorRef} maxWidth='600px' width='100%' position='relative'>
           <ViewProfile
-            api={props.api}
             nacked={nacked}
             ship={ship}
             contact={contact}
             isPublic={isPublic}
+            api={props.api}
             groups={props.groups}
             associations={props.associations}
           />
@@ -187,7 +187,7 @@ export function Profile(props: any): ReactElement {
           <EditProfile
             ship={ship}
             contact={contact}
-            s3={props.s3}
+            storage={props.storage}
             api={props.api}
             groups={props.groups}
             associations={props.associations}
