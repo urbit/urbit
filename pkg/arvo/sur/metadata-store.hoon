@@ -34,7 +34,7 @@
       =color
       date-created=time
       creator=ship
-      module=term
+      module=(each term (unit (unit md-resource)))
       picture=url
       preview=?
       vip=vip-metadata

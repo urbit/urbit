@@ -279,7 +279,10 @@
     =/  metadatum=(unit metadatum:metadata)
       (peek-metadatum:met %graph rid)
     ?~  metadatum  `state
-    abet:check:(abed:handle-update:ha rid nodes u.group module.u.metadatum)
+    =/  module=term
+      ?.  ?=(%& -.module.u.metadatum)  %$
+      p.module.u.metadatum
+    abet:check:(abed:handle-update:ha rid nodes u.group module)
   --
 ::
 ++  on-peek  on-peek:def
