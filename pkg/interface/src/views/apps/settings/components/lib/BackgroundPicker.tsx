@@ -12,7 +12,7 @@ import {
 import GlobalApi from '~/logic/api/global';
 import { ImageInput } from '~/views/components/ImageInput';
 import { ColorInput } from '~/views/components/ColorInput';
-import { S3State } from '~/types/s3-update';
+import { StorageState } from '~/types';
 
 export type BgType = 'none' | 'url' | 'color';
 
@@ -20,13 +20,13 @@ export function BackgroundPicker({
   bgType,
   bgUrl,
   api,
-  s3
+  storage
 }: {
   bgType: BgType;
   bgUrl?: string;
   api: GlobalApi;
-  s3: S3State;
-}): ReactElement {
+  storage: StorageState;
+}) {
   const rowSpace = { my: 0, alignItems: 'center' };
   const colProps = { my: 3, mr: 4, gapY: 1 };
   return (
@@ -39,7 +39,7 @@ export function BackgroundPicker({
           <ImageInput
             ml="5"
             api={api}
-            s3={s3}
+            storage={storage}
             id="bgUrl"
             placeholder="Drop or upload a file, or paste a link here"
             name="bgUrl"

@@ -3,6 +3,8 @@ export * from './connection';
 export * from './global';
 export * from './launch-update';
 export * from './local-update';
+export * from './storage-state';
+export * from './gcp-state';
 export * from './s3-update';
 export * from './workspace';
 export * from './util';

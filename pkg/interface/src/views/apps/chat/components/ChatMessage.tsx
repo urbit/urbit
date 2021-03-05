@@ -298,6 +298,7 @@ export const MessageAuthor = ({
         src={contact.avatar}
         height={16}
         width={16}
+        borderRadius={1}
       />
     ) : (
       <Sigil

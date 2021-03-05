@@ -51,7 +51,7 @@ export default function NotificationsScreen(props: any): ReactElement {
           .map(g => props.associations?.groups?.[g]?.metadata?.title)
     .join(', ');
   const anchorRef = useRef<HTMLElement | null>(null);
-  useTutorialModal('notifications', true, anchorRef.current);
+  useTutorialModal('notifications', true, anchorRef);
   return (
     <Switch>
       <Route
@@ -74,7 +74,8 @@ export default function NotificationsScreen(props: any): ReactElement {
                     borderBottom="1"
                     borderBottomColor="washedGray"
                   >
-                    <Text>Updates</Text>
+
+                    <Text ref={anchorRef}>Notifications</Text>
                     <Row
                       justifyContent="space-between"
                     >

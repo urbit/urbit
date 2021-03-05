@@ -20,15 +20,12 @@ export function GroupSummary(props: GroupSummaryProps & PropFunc<typeof Col>): R
   useTutorialModal(
     'group-desc',
     resource === `/ship/${TUTORIAL_HOST}/${TUTORIAL_GROUP}`,
-    anchorRef.current
+    anchorRef
   );
   return (
     <Col {...rest} ref={anchorRef} gapY="4">
       <Row gapX="2" width="100%">
         <MetadataIcon
-          borderRadius="1"
-          border="1"
-          borderColor="lightGray"
           width="40px"
           height="40px"
           metadata={metadata}
