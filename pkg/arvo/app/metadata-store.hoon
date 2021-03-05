@@ -271,7 +271,7 @@
       color         color.m
       date-created  date-created.m
       creator       creator.m
-      preview       %.n
+      preview       preview.m
     ::
         module        
       ?:  =(module.m %$)
