@@ -2353,7 +2353,6 @@
     :^  ~  ~  %dais
     !>  ^-  dais:clay
     |_  sam=vase
-    ++  bunt  !!
     ++  diff  !!
     ++  form  !!
     ++  join  !!
