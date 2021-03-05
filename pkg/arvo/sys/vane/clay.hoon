@@ -2713,6 +2713,8 @@
           %b  ~|  %i-guess-you-ought-to-build-your-own-marks  !!
           %c  ~|  %casts-should-be-compiled-on-your-own-ship  !!
           %d  ~|  %totally-temporary-error-please-replace-me  !!
+          %e  ~|  %yes-naves-also-shouldnt-cross-the-network  !!
+          %f  ~|  %even-static-casts-should-be-built-locally  !!
           %p  ~|  %requesting-foreign-permissions-is-invalid  !!
           %r  ~|  %no-cages-please-they-are-just-way-too-big  !!
           %s  ~|  %please-dont-get-your-takos-over-a-network  !!
@@ -3514,6 +3516,38 @@
         (build-tube:(ford:fusion static-ford-args) [i i.t]:path)
       :_(fod.dom [~ ~ %& %tube !>(tube)])
     ::
+    ++  read-e
+      !.
+      |=  [=aeon =path]
+      ^-  [(unit (unit (each cage lobe))) ford-cache]
+      ?.  =(aeon let.dom)
+        [~ fod.dom]
+      ?.  ?=([@ ~] path)
+        [[~ ~] fod.dom]
+      =/  cached=(unit [=vase *])  (~(get by naves.fod.dom) i.path)
+      ?^  cached
+        :_(fod.dom [~ ~ %& %nave !>(vase.u.cached)])
+      =^  =vase  fod.dom
+        %-  wrap:fusion
+        (build-nave:(ford:fusion static-ford-args) i.path)
+      :_(fod.dom [~ ~ %& %nave !>(vase)])
+    ::
+    ++  read-f
+      !.
+      |=  [=aeon =path]
+      ^-  [(unit (unit (each cage lobe))) ford-cache]
+      ?.  =(aeon let.dom)
+        [~ fod.dom]
+      ?.  ?=([@ @ ~] path)
+        [[~ ~] fod.dom]
+      =/  cached=(unit [=vase *])  (~(get by casts.fod.dom) [i i.t]:path)
+      ?^  cached
+        :_(fod.dom [~ ~ %& %cast vase.u.cached])
+      =^  =vase  fod.dom
+        %-  wrap:fusion
+        (build-cast:(ford:fusion static-ford-args) [i i.t]:path)
+      :_(fod.dom [~ ~ %& %cast vase])
+    ::
     ::  Gets the permissions that apply to a particular node.
     ::
     ::  If the node has no permissions of its own, we use its parent's.
@@ -3875,6 +3909,8 @@
         %a  (read-a yon path.mun)
         %b  (read-b yon path.mun)
         %c  (read-c yon path.mun)
+        %e  (read-e yon path.mun)
+        %f  (read-f yon path.mun)
         %p  :_(fod (read-p path.mun))
         %r  :_(fod (bind (read-r yon path.mun) (lift |=(a=cage [%& a]))))
         %s  :_(fod (bind (read-s yon path.mun) (lift |=(a=cage [%& a]))))

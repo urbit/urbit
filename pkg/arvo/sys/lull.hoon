@@ -796,7 +796,7 @@
     $:  face=(unit term)
         file-path=term
     ==
-  +$  care  ?(%a %b %c %d %p %r %s %t %u %v %w %x %y %z)  ::  clay submode
+  +$  care  ?(%a %b %c %d %e %f %p %r %s %t %u %v %w %x %y %z)  ::  clay submode
   +$  case                                              ::  ship desk case spur
     $%  [%da p=@da]                                     ::  date
         [%tas p=@tas]                                   ::  label

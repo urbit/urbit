@@ -8,6 +8,6 @@
 =+  !<([~ pax=path] arg)
 ?~  bem=(de-beam pax)
   (strand-fail:strand %path-not-beam >pax< ~)
-=/  =mars:clay  [i i.t]:?>(?=([@ @ ~] s.u.bem) s.u.bem)
-;<  =vase  bind:m  (build-cast:strandio -.u.bem mars)
+=/  =mark  (rear s.u.bem)
+;<  =vase  bind:m  (build-nave:strandio -.u.bem mark)
 (pure:m vase)
