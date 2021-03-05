@@ -77,7 +77,7 @@
       ?^  error
         ::  Should pass through errors to aqua, but doesn't
         ::
-        %-  (slog leaf+'aqua-behn: timer failed' u.error)
+        %-  (slog leaf+"aqua-behn: timer failed" u.error)
         ~
       :_  ~
       ^-  aqua-event
