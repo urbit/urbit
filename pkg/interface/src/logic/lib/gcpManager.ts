@@ -5,10 +5,11 @@
 // 1. call configure with a GlobalApi and GlobalStore.
 // 2. call start() to start the token refresh loop.
 //
-// If the ship has S3 credentials set, we don't try to get a token, but we keep
-// checking at regular intervals to see if they get unset. Otherwise, we try to
-// invoke the GCP token thread on the ship until it gives us an access token.
-// Once we have a token, we refresh it every hour or so, since it has an
+// If the ship does not have GCP storage configured, we don't try to get
+// a token, but we keep checking at regular intervals to see if it gets
+// configured. If GCP storage is configured, we try to invoke the GCP
+// get-token thread on the ship until it gives us an access token.  Once
+// we have a token, we refresh it every hour or so according to its
 // intrinsic expiry.
 //
 //
