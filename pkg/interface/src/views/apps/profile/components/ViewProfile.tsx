@@ -11,7 +11,7 @@ import useLocalState from '~/logic/state/local';
 import {
   ProfileHeader,
   ProfileControls,
-  ProfileOwnControls,
+  ProfileActions,
   ProfileStatus,
   ProfileImages
 } from './Profile';
@@ -25,7 +25,7 @@ export function ViewProfile(props: any) {
     <>
       <ProfileHeader>
         <ProfileControls>
-          <ProfileOwnControls
+          <ProfileActions
             ship={ship}
             isPublic={isPublic}
             contact={contact}
