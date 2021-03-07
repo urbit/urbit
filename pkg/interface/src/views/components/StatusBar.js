@@ -14,7 +14,7 @@ import { Dropdown } from './Dropdown';
 import { StatusBarItem } from './StatusBarItem';
 import { Sigil } from '~/logic/lib/sigil';
 import { uxToHex } from '~/logic/lib/util';
-import { SetStatusBarModal } from './SetStatusBarModal';
+import { SetStatus } from '~/views/apps/profile/components/SetStatus';
 import { useTutorialModal } from './useTutorialModal';
 
 import useLocalState, { selectLocalState } from '~/logic/state/local';
@@ -128,14 +128,14 @@ const StatusBar = (props) => {
           <Icon icon='Users' />
         </StatusBarItem>
         <Dropdown
-          dropWidth='150px'
+          dropWidth='250px'
           width='auto'
           alignY='top'
           alignX='right'
           flexShrink={'0'}
           options={
             <Col
-              mt='6'
+              mt='42px'
               py={2}
               backgroundColor='white'
               color='washedGray'
@@ -155,14 +155,6 @@ const StatusBar = (props) => {
               >
                 View Profile
               </Row>
-              <SetStatusBarModal
-                ship={`~${ship}`}
-                contact={ourContact}
-                isControl={true}
-                px={3}
-                py={2}
-                api={api}
-              />
               <Row
                 color='black'
                 cursor='pointer'
@@ -172,7 +164,15 @@ const StatusBar = (props) => {
                 py={2}
                 onClick={() => props.history.push('/~settings')}
               >
-                System Settings
+                System Preferences
+              </Row>
+              <Row px={3} py={2} flexDirection='column'>
+                <SetStatus
+                  ship={`~${ship}`}
+                  contact={ourContact}
+                  api={api}
+                  smallControl={true}
+                />
               </Row>
             </Col>
           }
