@@ -166,7 +166,7 @@ const StatusBar = (props) => {
               >
                 System Preferences
               </Row>
-              <Row px={3} py={2} flexDirection='column'>
+              <Row px={3} pt={2} pb={1} flexDirection='column'>
                 <SetStatus
                   ship={`~${ship}`}
                   contact={ourContact}
