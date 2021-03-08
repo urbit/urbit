@@ -6,7 +6,8 @@ import { RouteComponentProps } from 'react-router-dom';
 import { PostForm, PostFormSchema } from './NoteForm';
 import { createPost } from '~/logic/api/graph';
 import { Graph } from '@urbit/api/graph';
-import { Association, S3State } from '@urbit/api';
+import { Association } from '@urbit/api';
+import { StorageState } from '~/types';
 import { newPost } from '~/logic/lib/publish';
 
 interface NewPostProps {
@@ -16,7 +17,7 @@ interface NewPostProps {
   graph: Graph;
   association: Association;
   baseUrl: string;
-  s3: S3State;
+  storage: StorageState;
 }
 
 export default function NewPost(props: NewPostProps & RouteComponentProps) {
@@ -50,7 +51,7 @@ export default function NewPost(props: NewPostProps & RouteComponentProps) {
       onSubmit={onSubmit}
       submitLabel="Publish"
       loadingText="Posting..."
-      s3={props.s3}
+      storage={props.storage}
     />
   );
 }

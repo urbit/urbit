@@ -27,6 +27,7 @@ import GlobalSubscription from '~/logic/subscription/global';
 import GlobalApi from '~/logic/api/global';
 import { uxToHex } from '~/logic/lib/util';
 import { foregroundFromBackground } from '~/logic/lib/sigil';
+import gcpManager from '~/logic/lib/gcpManager';
 import { withLocalState } from '~/logic/state/local';
 import { withSettingsState } from '~/logic/state/settings';
 
@@ -78,6 +79,7 @@ class App extends React.Component {
 
     this.appChannel = new window.channel();
     this.api = new GlobalApi(this.ship, this.appChannel, this.store);
+    gcpManager.configure(this.api, this.store);
     this.subscription =
       new GlobalSubscription(this.store, this.api, this.appChannel);
 
@@ -97,6 +99,7 @@ class App extends React.Component {
     this.api.local.getBaseHash();
     this.api.settings.getAll();
     this.store.rehydrate();
+    gcpManager.start();
     Mousetrap.bindGlobal(['command+/', 'ctrl+/'], (e) => {
       e.preventDefault();
       e.stopImmediatePropagation();
@@ -116,8 +119,8 @@ class App extends React.Component {
 
   faviconString() {
     let background = '#ffffff';
-    if (this.state.contacts.hasOwnProperty('/~/default')) {
-      background = `#${uxToHex(this.state.contacts['/~/default'][window.ship].color)}`;
+    if (this.state.contacts.hasOwnProperty(`~${window.ship}`)) {
+      background = `#${uxToHex(this.state.contacts[`~${window.ship}`].color)}`;
     }
     const foreground = foregroundFromBackground(background);
     const svg = sigiljs({

@@ -33,9 +33,9 @@ export function LinkResource(props: LinkResourceProps) {
     associations,
     graphKeys,
     unreads,
-    s3,
-    history,
-    pendingIndices
+    pendingIndices,
+    storage,
+    history
   } = props;
 
   const rid = association.resource;
@@ -70,7 +70,7 @@ export function LinkResource(props: LinkResourceProps) {
             return (
               <LinkWindow
                 key={rid}
-                s3={s3}
+                storage={storage}
                 association={resource}
                 contacts={contacts}
                 resource={resourcePath}

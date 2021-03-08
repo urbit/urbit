@@ -41,6 +41,8 @@
   cursor: text;
   font-size: 12px;
   line-height: 20px;
+  background: inherit;
+  color: inherit;
 }
 
 .publish .CodeMirror * {

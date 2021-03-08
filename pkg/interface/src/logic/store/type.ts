@@ -3,7 +3,7 @@ import { Invites } from '@urbit/api/invite';
 import { Associations } from '@urbit/api/metadata';
 import { Rolodex } from '@urbit/api/contacts';
 import { Groups } from '@urbit/api/groups';
-import { S3State } from '~/types/s3-update';
+import { StorageState } from '~/types/storage-state';
 import { LaunchState, WeatherState } from '~/types/launch-update';
 import { ConnectionStatus } from '~/types/connection';
 import { Graphs } from '@urbit/api/graph';
@@ -31,7 +31,7 @@ export interface StoreState {
   groups: Groups;
   groupKeys: Set<Path>;
   nackedContacts: Set<Patp>
-  s3: S3State;
+  storage: StorageState;
   graphs: Graphs;
   graphKeys: Set<string>;
 
