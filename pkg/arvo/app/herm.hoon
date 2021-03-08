@@ -49,14 +49,9 @@
   |=  =path
   ^-  (quip card:agent:gall _this)
   ?>  ?=([%session @ ~] path)
-  :_  this
-  ::  scry prompt and cursor position out of dill for initial response
-  ::
-  =/  base=^path
-    /dx/(scot %p our.bowl)//(scot %da now.bowl)/sessions
-  :~  [%give %fact ~ %blit !>(.^(blit:dill (weld base //line)))]
-      [%give %fact ~ %blit !>(`blit:dill`hop+.^(@ud (weld base //cursor)))]
-  ==
+  ::  tell session to refresh, so new client knows what's on screen
+  ::TODO  should client be responsible for this?
+  [[%pass [%view %$ ~] %arvo %d %hail ~]~ this]
 ::
 ++  on-arvo
   |=  [=wire =sign-arvo]

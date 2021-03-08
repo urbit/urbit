@@ -44,6 +44,8 @@
     "styled-system": "^5.1.5",
     "suncalc": "^1.8.0",
     "urbit-ob": "^5.0.1",
+    "xterm": "^4.10.0",
+    "xterm-addon-fit": "^0.5.0",
     "yup": "^0.29.3",
     "zustand": "^3.3.1"
   },

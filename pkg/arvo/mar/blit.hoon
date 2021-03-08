@@ -25,6 +25,7 @@
       %lin  a+(turn p.blit |=(c=@c s+(tuft c)))
       %nel  b+&
       %url  s+p.blit
+      %wyp  b+&
     ::
         %sag
       %-  pairs
@@ -54,7 +55,8 @@
           ++  color
             |=  =tint
             ?@  tint  ?~(tint ~ s+tint)
-            s+(crip ((x-co:co 6) (rep 3 ~[b g r]:tint)))
+            =,  tint
+            (pairs r+(numb r) g+(numb g) b+(numb b) ~)
           --
       ==
     ==
