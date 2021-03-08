@@ -43,9 +43,9 @@ export function NewGroup(props: NewGroupProps & RouteComponentProps): ReactEleme
     isPrivate: false
   };
 
-  const waiter = useWaitForProps(props);
   const groups = useGroupState(state => state.groups);
   const associations = useMetadataState(state => state.associations);
+  const waiter = useWaitForProps({ groups, associations });
 
   const onSubmit = useCallback(
     async (values: FormSchema, actions: FormikHelpers<FormSchema>) => {
@@ -66,8 +66,8 @@ export function NewGroup(props: NewGroupProps & RouteComponentProps): ReactEleme
             };
         await api.groups.create(name, policy, title, description);
         const path = `/ship/~${window.ship}/${name}`;
-        await waiter(() => {
-          return path in groups && path in associations.groups;
+        await waiter((p) => {
+          return path in p.groups && path in p.associations.groups;
         });
 
         actions.setStatus({ success: null });

@@ -34,10 +34,10 @@ export function InviteItem(props: InviteItemProps) {
   const [preview, setPreview] = useState<MetadataUpdatePreview | null>(null);
   const { pendingJoin, invite, resource, uid, app, api } = props;
   const { ship, name } = resourceFromPath(resource);
-  const waiter = useWaitForProps(props, 50000);
   const status = pendingJoin[resource];
   const groups = useGroupState(state => state.groups);
   const associations = useMetadataState(state => state.associations);
+  const waiter = useWaitForProps({ associations, groups, pendingJoin}, 50000);
 
   const history = useHistory();
   const inviteAccept = useCallback(async () => {
@@ -51,7 +51,7 @@ export function InviteItem(props: InviteItemProps) {
     api.invite.accept(app, uid);
     await waiter((p) => {
       return (
-        resource in groups &&
+        resource in p.groups &&
         (resource in (p.associations?.graph ?? {}) ||
           resource in (p.associations?.groups ?? {}))
       );

@@ -49,9 +49,9 @@ interface NewChannelProps {
 export function NewChannel(props: NewChannelProps & RouteComponentProps): ReactElement {
   const { history, api, group, workspace } = props;
 
-  const waiter = useWaitForProps(props, 5000);
   const groups = useGroupState(state => state.groups);
-
+  const waiter = useWaitForProps({ groups }, 5000);
+  
   const onSubmit = async (values: FormSchema, actions) => {
     const name = (values.name) ? values.name : values.moduleType;
     const resId: string = stringToSymbol(values.name)
@@ -97,7 +97,7 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps): ReactE
       }
 
       if (!group) {
-        await waiter(p => Boolean(groups?.[`/ship/~${window.ship}/${resId}`]));
+        await waiter(p => Boolean(p.groups?.[`/ship/~${window.ship}/${resId}`]));
       }
       actions.setStatus({ success: null });
       const resourceUrl = (location.pathname.includes("/messages")) ? "/~landscape/messages" : parentPath(location.pathname);

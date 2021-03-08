@@ -70,14 +70,14 @@ export function JoinGroup(props: JoinGroupProps): ReactElement {
     MetadataUpdatePreview | string | null
   >(null);
 
-  const waiter = useWaitForProps(props, _.isString(preview) ? 1 : 5000);
+  const waiter = useWaitForProps({ associations, groups }, _.isString(preview) ? 1 : 5000);
 
   const onConfirm = useCallback(async (group: string) => {
     const [,,ship,name] = group.split('/');
     await api.groups.join(ship, name);
     try {
-      await waiter((p: JoinGroupProps) => {
-        return group in groups &&
+      await waiter((p) => {
+        return group in p.groups &&
           (group in (p.associations?.graph ?? {})
             || group in (p.associations?.groups ?? {}));
       });
