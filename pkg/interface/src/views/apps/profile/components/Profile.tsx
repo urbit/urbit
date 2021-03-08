@@ -143,7 +143,7 @@ export function ProfileActions(props: any): ReactElement {
             py='2'
             cursor='pointer'
             fontWeight='500'
-            onClick={() => history.push(`/~landscape/dm/${ship}`)}
+            onClick={() => history.push(`/~landscape/dm/${ship.substring(1)}`)}
           >
             Message
           </Text>
