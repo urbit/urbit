@@ -167,7 +167,7 @@ export default function TermApp(props: TermAppProps) {
         out += csi('H', term.rows, blit.hop + 1);
       }
       else {
-        out += csi('H', term.rows - blit.hop.row, blit.hop.col + 1);
+        out += csi('H', term.rows - blit.hop.r, blit.hop.c + 1);
       }
       out += csi('s');  //  save cursor position
     }

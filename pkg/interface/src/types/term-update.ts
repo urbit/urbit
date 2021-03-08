@@ -23,8 +23,8 @@ export type Stub = {
 export type Blit =
   | { bel: null }                                       //  make a noise
   | { clr: null }                                       //  clear the screen
-  | { hop: number | { row: number, col: number } }      //  set cursor col/pos
-  | { klr: Array<Stub> }                            //  put styled
+  | { hop: number | { r: number, c: number } }          //  set cursor col/pos
+  | { klr: Array<Stub> }                                //  put styled
   | { lin: Array<string> }                              //  put text at cursor
   | { nel: null }                                       //  newline
   | { sag: { path: string, file: string } }             //  save to jamfile
