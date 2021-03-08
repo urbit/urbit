@@ -33,7 +33,7 @@ export function ViewProfile(props: any) {
           />
           <ProfileStatus contact={contact} />
         </ProfileControls>
-        <ProfileImages contact={contact} ship={ship} />
+        <ProfileImages key={ship} contact={contact} ship={ship} />
       </ProfileHeader>
       <Row pb={2} alignItems='center' width='100%'>
         <Center width='100%'>
