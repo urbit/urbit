@@ -50,6 +50,9 @@ export function SetStatus(props: any) {
             value={_status}
             autocomplete='off'
             width='100%'
+            onBlur={() => {
+              editStatus();
+            }}
             onKeyPress={(evt) => {
               if (evt.key === 'Enter') {
                 editStatus();
