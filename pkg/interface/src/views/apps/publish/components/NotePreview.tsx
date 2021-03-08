@@ -52,7 +52,7 @@ export function NotePreview(props: NotePreviewProps) {
     <Box width='100%' opacity={post.pending ? '0.5' : '1'}>
       <Link
         to={post.pending ? '#' : url}
-        cursor={post.pending ? 'none' : 'pointer'}>
+        cursor={post.pending ? 'default' : 'pointer'}>
         <Col
           lineHeight='tall'
           width='100%'
