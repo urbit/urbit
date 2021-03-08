@@ -49,8 +49,10 @@ export function NotePreview(props: NotePreviewProps) {
 
   const commColor = (props.unreads.graph?.[appPath]?.[`/${noteId}`]?.unreads ?? 0) > 0 ? 'blue' : 'gray';
   return (
-    <Box width='100%'>
-      <Link to={url}>
+    <Box width='100%' opacity={post.pending ? '0.5' : '1'}>
+      <Link
+        to={post.pending ? '#' : url}
+        cursor={post.pending ? 'none' : 'pointer'}>
         <Col
           lineHeight='tall'
           width='100%'
