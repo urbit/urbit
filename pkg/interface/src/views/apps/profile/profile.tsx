@@ -13,42 +13,47 @@ export default function ProfileScreen(props: any) {
   const notificationsCount = useHarkState(state => state.notificationsCount);
   return (
     <>
-    <Helmet defer={false}>
-      <title>{ notificationsCount ? `(${String(notificationsCount) }) `: '' }Landscape - Profile</title>
-    </Helmet>
-    <Route
-      path={'/~profile/:ship/:edit?'}
-      render={({ match }) => {
-        const ship = match.params.ship;
-        const isEdit = match.url.includes('edit');
-        const contact = contacts?.[ship];
+      <Helmet defer={false}>
+        <title>
+          {notificationsCount
+            ? `(${String(notificationsCount)}) `
+            : ''}
+          Landscape - Profile
+        </title>
+      </Helmet>
+      <Route
+        path={'/~profile/:ship/:edit?'}
+        render={({ match }) => {
+          const ship = match.params.ship;
+          const isEdit = match.url.includes('edit');
+          const contact = contacts?.[ship];
 
-        return (
-          <Box height="100%" px={[0, 3]} pb={[0, 3]} borderRadius={1}>
-            <Box
-              height="100%"
-              width="100%"
-              borderRadius={1}
-              bg="white"
-              border={1}
-              borderColor="washedGray"
-              overflowY="auto"
-              flexGrow
-            >
-              <Box>
-                <Profile
-                  ship={ship}
-                  hasLoaded={Object.keys(contacts).length !== 0}
-                  contact={contact}
-                  api={props.api}
-                  isEdit={isEdit}
-                />
+          return (
+            <Box height='100%' px={[0, 3]} pb={[0, 3]} borderRadius={2}>
+              <Box
+                height='100%'
+                width='100%'
+                borderRadius={2}
+                bg='white'
+                border={1}
+                borderColor='washedGray'
+                overflowY='auto'
+                flexGrow
+              >
+                <Box>
+                  <Profile
+                    ship={ship}
+                    hasLoaded={Object.keys(contacts).length !== 0}
+                    contact={contact}
+                    api={props.api}
+                    isEdit={isEdit}
+                  />
+                </Box>
               </Box>
             </Box>
-          </Box>
-        );
-      }}
-    />
+          );
+        }}
+      />
     </>
   );
 }

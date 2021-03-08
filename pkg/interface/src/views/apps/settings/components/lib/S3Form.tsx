@@ -14,8 +14,10 @@ import {
 import GlobalApi from "~/logic/api/global";
 import { BucketList } from "./BucketList";
 import { S3State } from '~/types/s3-update';
-import useS3State from '~/logic/state/s3';
+import useS3State from '~/logic/state/storage';
 import { BackButton } from './BackButton';
+import {StorageState} from '~/types';
+import useStorageState from '~/logic/state/storage';
 
 interface FormSchema {
   s3bucket: string;
@@ -31,7 +33,7 @@ interface S3FormProps {
 
 export default function S3Form(props: S3FormProps): ReactElement {
   const { api } = props;
-  const s3 = useS3State();
+  const s3 = useStorageState(state => state.s3);
 
   const onSubmit = useCallback(
     (values: FormSchema) => {
@@ -49,6 +51,7 @@ export default function S3Form(props: S3FormProps): ReactElement {
     },
     [api, s3]
   );
+
   return (
     <>
       <Col p="5" pt="4" borderBottom="1" borderBottomColor="washedGray">

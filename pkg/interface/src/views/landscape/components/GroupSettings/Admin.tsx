@@ -21,7 +21,7 @@ import { ColorInput } from '~/views/components/ColorInput';
 import { useHistory } from 'react-router-dom';
 import { uxToHex } from '~/logic/lib/util';
 import { ImageInput } from '~/views/components/ImageInput';
-import { S3State } from '~/types/s3-update';
+import { StorageState } from '~/types';
 
 interface FormSchema {
   title: string;

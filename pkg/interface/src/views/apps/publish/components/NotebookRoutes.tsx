@@ -9,9 +9,9 @@ import {
   Contacts,
   Rolodex,
   Unreads,
-  S3State
 } from '@urbit/api';
 import { Center, LoadingSpinner } from '@tlon/indigo-react';
+import { StorageState } from '~/types';
 import bigInt from 'big-integer';
 
 import Notebook from './Notebook';

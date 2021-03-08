@@ -15,7 +15,7 @@ import { DeleteGroup } from './DeleteGroup';
 import { resourceFromPath } from '~/logic/lib/group';
 import { ModalOverlay } from '~/views/components/ModalOverlay';
 import { SidebarItem } from '~/views/landscape/components/SidebarItem';
-import { S3State } from '~/types';
+import { StorageState } from '~/types';
 
 export function PopoverRoutes(
   props: {

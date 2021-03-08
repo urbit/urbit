@@ -12,7 +12,7 @@ import {
 import GlobalApi from '~/logic/api/global';
 import { ImageInput } from '~/views/components/ImageInput';
 import { ColorInput } from '~/views/components/ColorInput';
-import { S3State } from '~/types/s3-update';
+import { StorageState } from '~/types';
 
 export type BgType = 'none' | 'url' | 'color';
 

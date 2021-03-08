@@ -16,8 +16,8 @@ import 'codemirror/lib/codemirror.css';
 import { Box } from '@tlon/indigo-react';
 import { useFileDrag } from '~/logic/lib/useDrag';
 import SubmitDragger from '~/views/components/SubmitDragger';
-import useS3 from '~/logic/lib/useS3';
-import { S3State } from '@urbit/api';
+import useStorage from '~/logic/lib/useStorage';
+import { StorageState } from '~/types';
 
 const MARKDOWN_CONFIG = {
   name: 'markdown'
@@ -73,7 +73,7 @@ export function MarkdownEditor(
     [onBlur]
   );
 
-  const { uploadDefault, canUpload } = useS3();
+  const { uploadDefault, canUpload } = useStorage();
 
   const onFileDrag = useCallback(
     async (files: FileList | File[], e: DragEvent) => {

@@ -32,6 +32,7 @@ import useLocalState from '~/logic/state/local';
 import useContactState from '~/logic/state/contact';
 import useGroupState from '~/logic/state/group';
 import useSettingsState from '~/logic/state/settings';
+import gcpManager from '~/logic/lib/gcpManager';
 
 
 const Root = withState(styled.div`
@@ -81,6 +82,7 @@ class App extends React.Component {
 
     this.appChannel = new window.channel();
     this.api = new GlobalApi(this.ship, this.appChannel, this.store);
+    gcpManager.configure(this.api, this.store);
     this.subscription =
       new GlobalSubscription(this.store, this.api, this.appChannel);
 
@@ -99,6 +101,7 @@ class App extends React.Component {
     }, 500);
     this.api.local.getBaseHash();
     this.api.settings.getAll();
+    gcpManager.start();
     Mousetrap.bindGlobal(['command+/', 'ctrl+/'], (e) => {
       e.preventDefault();
       e.stopImmediatePropagation();

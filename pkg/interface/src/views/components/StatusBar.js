@@ -55,7 +55,7 @@ const StatusBar = (props) => {
 
   const anchorRef = useRef(null);
 
-  const leapHighlight = useTutorialModal('leap', true, anchorRef.current);
+  const leapHighlight = useTutorialModal('leap', true, anchorRef);
 
   const floatLeap = leapHighlight && window.matchMedia('(max-width: 550px)').matches;
 

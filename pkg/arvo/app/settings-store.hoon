@@ -1,5 +1,5 @@
 /-  *settings
-/+  verb, dbug, default-agent
+/+  verb, dbug, default-agent, agentio
 |%
 +$  card  card:agent:gall
 +$  versioned-state
@@ -20,10 +20,14 @@
   +*  this  .
       do    ~(. +> bol)
       def   ~(. (default-agent this %|) bol)
+      io    ~(. agentio bol)
   ::
   ++  on-init
     ^-  (quip card _this)
-    `this
+    =^  cards  state
+      (put-entry:do %tutorial %seen b+|)
+    [cards this]
+
   ::
   ++  on-save  !>(state)
   ::

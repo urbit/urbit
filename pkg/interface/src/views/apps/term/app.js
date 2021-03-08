@@ -69,6 +69,7 @@ class TermApp extends Component {
                     backgroundColor='white'
                     width='100%'
                     minHeight='0'
+                    minWidth='0'
                     color='washedGray'
                     borderRadius='2'
                     mx={['0','3']}

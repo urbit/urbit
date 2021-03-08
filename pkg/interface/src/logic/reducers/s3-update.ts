@@ -3,14 +3,14 @@ import { compose } from 'lodash/fp';
 import { Cage } from '~/types/cage';
 import { S3Update } from '~/types/s3-update';
 import { reduceState } from '../lib/util';
-import useS3State, { S3State } from '../state/s3';
+import useStorageState, { StorageState } from '../state/storage';
 
 
 export default class S3Reducer {
   reduce(json: Cage) {
     const data = _.get(json, 's3-update', false);
     if (data) {
-      reduceState<S3State, S3Update>(useS3State, data, [
+      reduceState<StorageState, S3Update>(useStorageState, data, [
         credentials,
         configuration,
         currentBucket,
@@ -24,18 +24,18 @@ export default class S3Reducer {
   }
 }
 
-const credentials = (json: S3Update, state: S3State): S3State => {
+const credentials = (json: S3Update, state: StorageState): StorageState => {
   const data = _.get(json, 'credentials', false);
   if (data) {
-    state.credentials = data;
+    state.s3.credentials = data;
   }
   return state;
 }
 
-const configuration = (json: S3Update, state: S3State): S3State => {
+const configuration = (json: S3Update, state: StorageState): StorageState => {
   const data = _.get(json, 'configuration', false);
   if (data) {
-    state.configuration = {
+    state.s3.configuration = {
       buckets: new Set(data.buckets),
       currentBucket: data.currentBucket
     };
@@ -43,51 +43,51 @@ const configuration = (json: S3Update, state: S3State): S3State => {
   return state;
 }
 
-const currentBucket = (json: S3Update, state: S3State): S3State => {
+const currentBucket = (json: S3Update, state: StorageState): StorageState => {
   const data = _.get(json, 'setCurrentBucket', false);
   if (data && state.s3) {
-    state.configuration.currentBucket = data;
+    state.s3.configuration.currentBucket = data;
   }
   return state;
 }
 
-const addBucket = (json: S3Update, state: S3State): S3State => {
+const addBucket = (json: S3Update, state: StorageState): StorageState => {
   const data = _.get(json, 'addBucket', false);
   if (data) {
-    state.configuration.buckets =
-      state.configuration.buckets.add(data);
+    state.s3.configuration.buckets =
+      state.s3.configuration.buckets.add(data);
   }
   return state;
 }
 
-const removeBucket = (json: S3Update, state: S3State): S3State => {
+const removeBucket = (json: S3Update, state: StorageState): StorageState => {
   const data = _.get(json, 'removeBucket', false);
   if (data) {
-    state.configuration.buckets.delete(data);
+    state.s3.configuration.buckets.delete(data);
   }
   return state;
 }
 
-const endpoint = (json: S3Update, state: S3State): S3State => {
+const endpoint = (json: S3Update, state: StorageState): StorageState => {
   const data = _.get(json, 'setEndpoint', false);
-  if (data && state.credentials) {
-    state.credentials.endpoint = data;
+  if (data && state.s3.credentials) {
+    state.s3.credentials.endpoint = data;
   }
   return state;
 }
 
-const accessKeyId = (json: S3Update , state: S3State): S3State => {
+const accessKeyId = (json: S3Update , state: StorageState): StorageState => {
   const data = _.get(json, 'setAccessKeyId', false);
-  if (data && state.credentials) {
-    state.credentials.accessKeyId = data;
+  if (data && state.s3.credentials) {
+    state.s3.credentials.accessKeyId = data;
   }
   return state;
 }
 
-const secretAccessKey = (json: S3Update, state: S3State): S3State => {
+const secretAccessKey = (json: S3Update, state: StorageState): StorageState => {
   const data = _.get(json, 'setSecretAccessKey', false);
-  if (data && state.credentials) {
-    state.credentials.secretAccessKey = data;
+  if (data && state.s3.credentials) {
+    state.s3.credentials.secretAccessKey = data;
   }
   return state;
 }

@@ -67,7 +67,7 @@ export function Sidebar(props: SidebarProps): ReactElement | null {
   const isAdmin = (role === 'admin') || (workspace?.type === 'home');
 
   const anchorRef = useRef<HTMLElement | null>(null);
-  useTutorialModal('channels', true, anchorRef.current);
+  useTutorialModal('channels', true, anchorRef);
 
   return (
     <ScrollbarLessCol

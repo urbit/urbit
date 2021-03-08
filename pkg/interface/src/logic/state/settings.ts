@@ -20,7 +20,11 @@ export interface SettingsState extends BaseState<SettingsState> {
   remoteContentPolicy: RemoteContentPolicy;
   leap: {
     categories: LeapCategories[];
-  }
+  };
+  tutorial: {
+    seen: boolean;
+    joined?: number;
+  };
 };
 
 export const selectSettingsState =
@@ -53,6 +57,10 @@ const useSettingsState = createState<SettingsState>('Settings', {
   leap: {
     categories: leapCategories,
   },
+  tutorial: {
+    seen: false,
+    joined: undefined
+  }
 });
 
 export default useSettingsState;

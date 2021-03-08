@@ -11,8 +11,8 @@ import {
   BaseInput
 } from '@tlon/indigo-react';
 
-import { S3State } from '~/types/s3-update';
-import useS3 from '~/logic/lib/useS3';
+import { StorageState } from '~/types';
+import useStorage from '~/logic/lib/useStorage';
 
 type ImageInputProps = Parameters<typeof Box>[0] & {
   id: string;
@@ -23,7 +23,7 @@ type ImageInputProps = Parameters<typeof Box>[0] & {
 export function ImageInput(props: ImageInputProps): ReactElement {
   const { id, label, caption, placeholder } = props;
 
-  const { uploadDefault, canUpload, uploading } = useS3();
+  const { uploadDefault, canUpload, uploading } = useStorage();
 
   const [field, meta, { setValue, setError }] = useField(id);
 

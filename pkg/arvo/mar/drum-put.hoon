@@ -11,6 +11,6 @@
   --
 ++  grab                                                ::  convert from
   |%
-  ++  noun  [path @]                                    ::  clam from %noun
+  +$  noun  [path @]                                    ::  clam from %noun
   --
 --

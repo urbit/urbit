@@ -6,7 +6,8 @@ import { RouteComponentProps } from 'react-router-dom';
 import { PostForm, PostFormSchema } from './NoteForm';
 import { createPost } from '~/logic/api/graph';
 import { Graph } from '@urbit/api/graph';
-import { Association, S3State } from '@urbit/api';
+import { Association } from '@urbit/api';
+import { StorageState } from '~/types';
 import { newPost } from '~/logic/lib/publish';
 
 interface NewPostProps {

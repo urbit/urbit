@@ -16,6 +16,7 @@ import GroupReducer from '../reducers/group-update';
 import LaunchReducer from '../reducers/launch-update';
 import ConnectionReducer from '../reducers/connection';
 import SettingsReducer from '../reducers/settings-update';
+import GcpReducer from '../reducers/gcp-reducer';
 import { OrderedMap } from '../lib/OrderedMap';
 import { BigIntOrderedMap } from '../lib/BigIntOrderedMap';
 import { GroupViewReducer } from '../reducers/group-view';
@@ -28,6 +29,7 @@ export default class GlobalStore extends BaseStore<StoreState> {
   launchReducer = new LaunchReducer();
   connReducer = new ConnectionReducer();
   settingsReducer = new SettingsReducer();
+  gcpReducer = new GcpReducer();
 
   pastActions: Record<string, any> = {}
 
@@ -62,6 +64,6 @@ export default class GlobalStore extends BaseStore<StoreState> {
     HarkReducer(data);
     ContactReducer(data);
     this.settingsReducer.reduce(data);
-    GroupViewReducer(data);
+    this.gcpReducer.reduce(data);
   }
 }

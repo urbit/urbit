@@ -11,7 +11,7 @@ import * as Yup from "yup";
 
 import GlobalApi from "~/logic/api/global";
 import { uxToHex } from "~/logic/lib/util";
-import { S3State, BackgroundConfig } from "~/types";
+import { S3State, BackgroundConfig, StorageState } from "~/types";
 import { BackgroundPicker, BgType } from "./BackgroundPicker";
 import useSettingsState, { SettingsState, selectSettingsState } from "~/logic/state/settings";
 import {AsyncButton} from "~/views/components/AsyncButton";

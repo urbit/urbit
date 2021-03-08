@@ -116,10 +116,10 @@ export default function SettingsScreen(props: any) {
                 />
               )}
               {hash === "display" && (
-                <DisplayForm s3={props.s3} api={props.api} />
+                <DisplayForm storage={props.storage} api={props.api} />
               )}
               {hash === "s3" && (
-                <S3Form s3={props.s3} api={props.api} />
+                <S3Form storage={props.storage} api={props.api} />
               )}
               {hash === "leap" && (
                 <LeapSettings api={props.api} />

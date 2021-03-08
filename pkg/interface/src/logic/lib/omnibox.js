@@ -79,7 +79,7 @@ const otherIndex = function(config) {
     messages: result('Messages', '/~landscape/messages', 'messages', null),
     logout: result('Log Out', '/~/logout', 'logout', null)
   };
-
+  other.push(result('Tutorial', '/?tutorial=true', 'tutorial', null));
   for(let cat of config.categories) {
     if(idx[cat]) {
       other.push(idx[cat]);

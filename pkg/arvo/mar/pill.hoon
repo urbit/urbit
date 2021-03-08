@@ -15,7 +15,7 @@
   ++  mime
     |=  (pair mite octs)
     =+  o=(pair ,* ,*) :: ,*)
-    =+  (,[boot-ova=* kernel-ova=(list o) userspace-ova=(list o)] (cue q.q))
+    =+  (,[%pill nam=term boot-ova=(list) kernel-ova=(list o) userspace-ova=(list o)] (cue q.q))
     =/  convert
       |=  ova=(list o)
       ^-  (list unix-event)
@@ -30,7 +30,7 @@
     ::  =/  boot-ova  (convert boot-ova)
     =/  kernel-ova  (convert kernel-ova)
     =/  userspace-ova  (convert userspace-ova)
-    [boot-ova kernel-ova userspace-ova]
+    [%pill nam boot-ova kernel-ova userspace-ova]
   --
 ++  grad  %mime
 --
