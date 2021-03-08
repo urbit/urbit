@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Text, Col } from '@tlon/indigo-react';
+import { Box, Text, Col, Anchor } from '@tlon/indigo-react';
 import ReactMarkdown from 'react-markdown';
 import bigInt from 'big-integer';
 
@@ -29,6 +29,14 @@ export function Note(props: NoteProps & RouteComponentProps) {
 
   const { notebook, note, ship, book, api, rootUrl, baseUrl, group } = props;
   const editCommentId = props.match.params.commentId;
+
+  const renderers = {
+    link: ({ href, children }) => {
+      return (
+        <Anchor display="inline" target="_blank" href={href}>{children}</Anchor>
+      )
+    }
+  };
 
   const deletePost = async () => {
     setDeleting(true);
@@ -104,7 +112,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
         </Box>
       </Col>
       <Box color="black" className="md" style={{ overflowWrap: 'break-word', overflow: 'hidden' }}>
-        <ReactMarkdown source={body} linkTarget={'_blank'} />
+        <ReactMarkdown source={body} linkTarget={'_blank'} renderers={renderers} />
       </Box>
       <NoteNavigation
         notebook={notebook}

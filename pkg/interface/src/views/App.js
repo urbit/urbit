@@ -121,8 +121,8 @@ class App extends React.Component {
 
   faviconString() {
     let background = '#ffffff';
-    if (this.props.contacts.hasOwnProperty('/~/default')) {
-      background = `#${uxToHex(this.props.contacts['/~/default'][window.ship].color)}`;
+    if (this.props.contacts.hasOwnProperty(`~${window.ship}`)) {
+      background = `#${uxToHex(this.props.contacts[`~${window.ship}`].color)}`;
     }
     const foreground = foregroundFromBackground(background);
     const svg = sigiljs({
