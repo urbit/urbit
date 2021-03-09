@@ -28,6 +28,31 @@ static u3_serf        u3V;             //  one serf per process
 static u3_moat      inn_u;             //  input stream
 static u3_mojo      out_u;             //  output stream
 static u3_cue_xeno* sil_u;             //  cue handle
+static u3_disk*     log_u;
+//  completed events awaiting commit queue
+
+// open_tx()
+// while ( eve_d < gol_d ) {
+//   mdb_get()
+//   cue()
+//   arvo_poke()
+//   // error handling logic
+//   eve_d++
+// }
+// abort_tx()
+
+//  get potential event (ipc read)
+//  enqueue
+//  timestamp
+//  poke
+//    maybe crud
+//    maybe complete failure reponse
+//  queue write (accumulate batch)
+//  stash effects
+
+//  write batch
+//  release effects (ipc write)
+
 
 #undef SERF_TRACE_JAM
 #undef SERF_TRACE_CUE
@@ -424,6 +449,659 @@ _cw_pack(c3_i argc, c3_c* argv[])
   u3e_save();
 }
 
+// static void
+// _urth_epoch_init(c3_d poc_d)
+// {
+//   //  XX wat do
+//   //
+//   {
+//     c3_c* log_c[2048];
+//     snprintf(log_c, 2048, "%s/.urb/log", u3V.dir_c);
+
+//     if (  (0 != mkdir(log_c, 0700))
+//        && (EEXISTS != errno) )
+//     {
+//       fprintf(stderr, "urth: epoch mkdir .urb/log %s\n", strerror(errno));
+//       exit(1);
+//     }
+//   }
+
+//   {
+//     c3_c* poc_c[2048];
+//     snprintf(poc_c, 2048, "%s/.urb/log/0i%" PRIu64, u3V.dir_c, poc_d);
+
+//     if ( 0 != mkdir(poc_c, 0700) ) {
+//       fprintf(stderr, "urth: epoch mkdir %s\n", strerror(errno));
+//       exit(1);
+//     }
+//   }
+// }
+
+#define VERE_NAME  "vere"
+#define VERE_VERSION  "~.1.2"
+#define VERE_ZUSE  420
+
+/* _urth_wyrd_init(): construct %wyrd.
+*/
+static u3_noun
+_urth_wyrd_card(void)
+{
+  fprintf(stderr, "boot: wyrd card %s %s\n", VERE_NAME, URBIT_VERSION);
+  u3_noun ver = u3nt(u3i_string(VERE_NAME),
+                     u3i_string(VERE_VERSION),
+                     u3_nul);
+  fprintf(stderr, "boot: wyrd card ver\n");
+  u3_noun kel = u3nl(u3nc(c3__zuse, VERE_ZUSE),  //  XX from both king and serf?
+                     u3nc(c3__lull, 330),        //  XX define
+                     u3nc(c3__arvo, 240),        //  XX from both king and serf?
+                     u3nc(c3__hoon, 140),        //  god_u->hon_y
+                     u3nc(c3__nock, 4),          //  god_u->noc_y
+                     u3_none);
+  fprintf(stderr, "boot: wyrd card kel\n");
+  u3_noun wir = u3nc(c3__arvo, u3_nul);
+  fprintf(stderr, "boot: wyrd card wir\n");
+  return u3nt(c3__wyrd, u3nc(u3i_string("0v1s.vu178"), ver), kel);
+}
+
+/* _urth_pill_parse(): extract boot formulas and module/userspace ova from pill
+*/
+static u3_boot
+_urth_pill_parse(u3_noun pil)
+{
+  fprintf(stderr, "boot: pill parse\n");
+  u3_boot bot_u;
+  u3_noun pil_p, pil_q;
+
+  c3_assert( c3y == u3du(pil) );
+  u3x_cell(pil, &pil_p, &pil_q);
+
+  {
+    //  XX use faster cue
+    //
+    u3_noun pro = u3m_soft(0, u3ke_cue, u3k(pil_p));
+    u3_noun mot, tag, dat;
+
+    if (  (c3n == u3r_trel(pro, &mot, &tag, &dat))
+       || (u3_blip != mot) )
+    {
+      u3m_p("mot", u3h(pro));
+      fprintf(stderr, "boot: failed: unable to parse pill\r\n");
+      u3_king_bail();
+      exit(1);
+    }
+
+    if ( c3y == u3r_sing_c("ivory", tag) ) {
+      fprintf(stderr, "boot: failed: unable to boot from ivory pill\r\n");
+      u3_king_bail();
+      exit(1);
+    }
+    else if ( c3__pill != tag ) {
+      if ( c3y == u3a_is_atom(tag) ) {
+        u3m_p("pill", tag);
+      }
+      fprintf(stderr, "boot: failed: unrecognized pill\r\n");
+      u3_king_bail();
+      exit(1);
+    }
+
+    {
+      u3_noun typ;
+      c3_c* typ_c;
+
+      if ( c3n == u3r_qual(dat, &typ, &bot_u.bot, &bot_u.mod, &bot_u.use) ) {
+        fprintf(stderr, "boot: failed: unable to extract pill\r\n");
+        u3_king_bail();
+        exit(1);
+      }
+
+      if ( c3y == u3a_is_atom(typ) ) {
+        c3_c* typ_c = u3r_string(typ);
+        fprintf(stderr, "boot: parsing %%%s pill\r\n", typ_c);
+        c3_free(typ_c);
+      }
+    }
+
+    u3k(bot_u.bot); u3k(bot_u.mod); u3k(bot_u.use);
+    u3z(pro);
+  }
+
+  //  optionally replace filesystem in userspace
+  //
+  if ( u3_nul != pil_q ) {
+    c3_w len_w = 0;
+    u3_noun ova = bot_u.use;
+    u3_noun new = u3_nul;
+    u3_noun ovo;
+
+    while ( u3_nul != ova ) {
+      ovo = u3h(ova);
+
+      if ( c3__into == u3h(u3t(ovo)) ) {
+        c3_assert( 0 == len_w );
+        len_w++;
+        ovo = u3t(pil_q);
+      }
+
+      new = u3nc(u3k(ovo), new);
+      ova = u3t(ova);
+    }
+
+    c3_assert( 1 == len_w );
+
+    u3z(bot_u.use);
+    bot_u.use = u3kb_flop(new);
+  }
+
+  u3z(pil);
+
+  return bot_u;
+}
+
+/* _urth_boot_make(): construct boot sequence
+*/
+static u3_boot
+_urth_boot_make(u3_noun who, u3_noun wyr, u3_noun ven, u3_noun pil)
+{
+    fprintf(stderr, "boot: make\n");
+  u3_boot bot_u = _urth_pill_parse(pil); // transfer
+
+  fprintf(stderr, "boot: make prepare\n");
+
+  //  prepend entropy and identity to the module sequence
+  //
+  {
+    u3_noun cad, wir = u3nt(u3_blip, c3__arvo, u3_nul);
+    c3_w    eny_w[16];
+    c3_rand(eny_w);
+
+    cad = u3nt(c3__verb, u3_nul, ( c3y == u3_Host.ops_u.veb ) ? c3n : c3y);
+    bot_u.mod = u3nc(u3nc(u3k(wir), cad), bot_u.mod);
+
+    cad = u3nc(c3__wack, u3i_words(16, eny_w));
+    bot_u.mod = u3nc(u3nc(u3k(wir), cad), bot_u.mod);
+
+    cad = u3nc(c3__whom, who);                    // transfer [who]
+    bot_u.mod = u3nc(u3nc(u3k(wir), cad), bot_u.mod);
+
+    wir = u3nt(u3_blip, c3__arvo, u3_nul);
+    bot_u.mod = u3nc(u3nc(wir, wyr), bot_u.mod);  // transfer [wir] and [wyr]
+  }
+
+  //  prepend legacy boot event to the userspace sequence
+  //
+  {
+    //  XX do something about this wire
+    //  XX route directly to %jael?
+    //
+    c3_assert( c3y == u3a_is_cell(ven) );
+
+    u3_noun wir = u3nq(c3__d, c3__term, '1', u3_nul);
+    u3_noun cad = u3nt(c3__boot, u3_Host.ops_u.lit, ven); // transfer
+
+    bot_u.use = u3nc(u3nc(wir, cad), bot_u.use);
+  }
+
+  return bot_u;
+}
+
+typedef struct _event_list {
+  u3_noun eve;
+  c3_l  mug_l;
+} event_list;
+
+
+/* _disk_read_one_cb(): lmdb read callback, invoked for each event in order
+*/
+static c3_o
+_disk_read_one_cb(void* ptr_v, c3_d eve_d, size_t val_i, void* val_p)
+{
+  event_list* ven_u = ptr_v;
+
+  if ( 4 >= val_i ) {
+    return c3n;
+  }
+
+  {
+    u3_noun job;
+    c3_y* dat_y = val_p;
+    c3_l  mug_l = dat_y[0]
+                ^ (dat_y[1] <<  8)
+                ^ (dat_y[2] << 16)
+                ^ (dat_y[3] << 24);
+
+    //  XX u3m_soft?
+    //
+    job = u3ke_cue(u3i_bytes(val_i - 4, dat_y + 4));
+
+    ven_u->mug_l = mug_l;
+    ven_u->eve   = u3nc(job, ven_u->eve);
+  }
+
+  return c3y;
+}
+
+/* _disk_read_start_cb(): the read from the db, trigger response
+*/
+static u3_weak
+_disk_read_list(void)
+{
+  event_list ven_u = { u3_nul, 0 };
+
+  if ( c3n == u3_lmdb_read(log_u->mdb_u,
+                           &ven_u,
+                           1,
+                           log_u->dun_d,
+                           _disk_read_one_cb) )
+  {
+    return u3_none;
+  }
+  else {
+    return u3kb_flop(ven_u.eve);
+  }
+}
+
+static c3_o
+_cw_boot_boot(u3_noun jar)
+{
+  fprintf(stderr, "boot: boot\n");
+  u3_noun tag, dat;
+
+  if ( c3n == u3r_cell(jar, &tag, &dat) ) {
+    return c3n;
+  }
+  else if ( c3__boot != tag ) {
+    return c3n;
+  }
+  else {
+    u3_noun pill, vent, lull, verb;
+
+    //  XX put lull in commandline args?
+
+    fprintf(stderr, "boot: boot: qual\n");
+    //
+    if ( c3n == u3r_qual(dat, &pill, &vent, &lull, &verb) ) {
+      fprintf(stderr, "boot: boot: qual no\n");
+      return c3n;
+    }
+    else {
+      fprintf(stderr, "boot: boot: qual yes\n");
+      c3_o  fak_o;
+      u3_noun who;
+
+      if ( c3__fake == u3h(vent) ) {
+        fak_o = c3y;
+        who   = u3t(vent);
+      }
+      else {
+        c3_assert( c3__dawn == u3h(vent) );
+        fak_o = c3n;
+        who   = u3h(u3t(vent));
+      }
+
+      fprintf(stderr, "boot: boot: bout to wyrd\n");
+
+      u3_noun wyr = _urth_wyrd_card();
+      fprintf(stderr, "boot: boot: bout to make\n");
+      u3_boot bot_u = _urth_boot_make(who, wyr, vent, pill);
+
+      // _urth_epoch_init(0);
+      // _urth_epoch_arvo(u3_noun);
+      // _urth_epoch_log()
+      // _urth_epoch_done()
+
+      {
+        c3_w lif_w = u3qb_lent(bot_u.bot);
+        // XX validate
+        c3_d who_d[2];
+        u3r_chubs(0, 2, who_d, who);
+
+        u3m_p("who", who);
+        u3m_p("fak", fak_o);
+        u3m_p("lif", lif_w);
+
+        //  XX
+        if ( c3n == u3_disk_save_meta(log_u, who_d, fak_o, lif_w) ) {
+          exit(1);
+        }
+      }
+
+      //  insert boot sequence directly
+      //
+      //    Note that these are not ovum or (pair @da ovum) events,
+      //    but raw nock formulas to be directly evaluated as the
+      //    subject of the lifecycle formula [%2 [%0 3] %0 2].
+      //    All subsequent events will be (pair date ovum).
+      //
+      {
+        u3_noun fol = bot_u.bot;
+
+        while ( u3_nul != fol ) {
+          u3_disk_boot_plan(log_u, u3k(u3h(fol)));
+          fol = u3t(fol);
+        }
+      }
+
+      //  insert module and userspace events
+      //
+      {
+        u3_noun ova = bot_u.mod;
+        u3_noun bit = u3qc_bex(48);   //  1/2^16 seconds
+        u3_noun now;
+
+        {
+          struct timeval tim_tv;
+          gettimeofday(&tim_tv, 0);
+          now = u3_time_in_tv(&tim_tv);
+        }
+
+
+        while ( u3_nul != ova ) {
+          u3_disk_boot_plan(log_u, u3nc(u3k(now), u3k(u3h(ova))));
+          now = u3ka_add(now, u3k(bit));
+          ova = u3t(ova);
+        }
+
+        ova = bot_u.use;
+
+        while ( u3_nul != ova ) {
+          u3_disk_boot_plan(log_u, u3nc(u3k(now), u3k(u3h(ova))));
+          now = u3ka_add(now, u3k(bit));
+          ova = u3t(ova);
+        }
+
+        u3z(bit); u3z(now);
+      }
+
+      u3_disk_boot_save_sync(log_u);
+
+      u3z(bot_u.bot);
+      u3z(bot_u.mod);
+      u3z(bot_u.use);
+
+      fprintf(stderr, "boot: finished commit\r\n");
+
+      //  XX boot
+
+      {
+        u3_noun eve;
+
+        if ( u3_none == (eve = _disk_read_list()) ) {
+          fprintf(stderr, "boot: read failed\r\n");
+          return c3n;
+        }
+        else {
+          fprintf(stderr, "boot: bout to play\r\n");
+          u3_serf_play(&u3V, 1, eve);
+        }
+      }
+
+      fprintf(stderr, "boot: bout to save\r\n");
+
+      u3e_save();
+
+      return c3y;
+    }
+  }
+}
+
+/* _cw_boot_writ(): process boot command
+*/
+static void
+_cw_boot_writ(void* vod_p, c3_d len_d, c3_y* byt_y)
+{
+  fprintf(stderr, "boot: writ\n");
+
+  u3_noun jar = u3s_cue_xeno_with(sil_u, len_d, byt_y);
+
+  if (  (u3_none == jar)
+     || (c3n == _cw_boot_boot(jar)) )
+  {
+    fprintf(stderr, "boot: fail\n");
+    exit(1);
+  }
+  else {
+    fprintf(stderr, "boot: good\n");
+    exit(0);
+  }
+}
+
+
+
+/* _pier_on_disk_read_done(): event log read success.
+*/
+static void
+_pier_on_disk_read_done(void* ptr_v, u3_info fon_u)
+{
+  fprintf(stderr, "pier: disk read done\r\n");
+  // u3_pier* pir_u = ptr_v;
+
+  // c3_assert( u3_psat_play == pir_u->sat_e );
+
+  // _pier_play_plan(pir_u->pay_u, fon_u);
+  // _pier_play(pir_u->pay_u);
+}
+
+/* _pier_on_disk_read_bail(): event log read failure.
+*/
+static void
+_pier_on_disk_read_bail(void* ptr_v, c3_d eve_d)
+{
+  // u3_pier* pir_u = ptr_v;
+
+  // c3_assert( u3_psat_play == pir_u->sat_e );
+
+  //  XX s/b play_bail_cb
+  //
+  fprintf(stderr, "pier: disk read bail\r\n");
+  // u3_term_stop_spinner();
+  // u3_pier_bail(pir_u);
+}
+
+/* _pier_on_disk_write_done(): event log write success.
+*/
+static void
+_pier_on_disk_write_done(void* ptr_v, c3_d eve_d)
+{
+//   u3_pier* pir_u = ptr_v;
+//   u3_disk* log_u = pir_u->log_u;
+
+// #ifdef VERBOSE_PIER
+  fprintf(stderr, "pier: (%" PRIu64 "): db commit: complete\r\n", eve_d);
+// #endif
+
+//   if ( u3_psat_boot == pir_u->sat_e ) {
+//     //  lord already live
+//     //
+//     if ( c3y == pir_u->god_u->liv_o ) {
+//       //  XX print bootstrap commit complete
+//       //  XX s/b boot_complete_cb
+//       //
+//       _pier_play_init(pir_u, log_u->dun_d);
+//     }
+//   }
+//   else {
+//     c3_assert(  (u3_psat_work == pir_u->sat_e)
+//              || (u3_psat_done == pir_u->sat_e) );
+
+//     _pier_work(pir_u->wok_u);
+//   }
+}
+
+/* _pier_on_disk_write_bail(): event log write failure.
+*/
+static void
+_pier_on_disk_write_bail(void* ptr_v, c3_d eve_d)
+{
+  // u3_pier* pir_u = ptr_v;
+
+  // if ( u3_psat_boot == pir_u->sat_e ) {
+  //   //  XX nice message
+  //   //
+  // }
+
+  // XX
+  //
+  fprintf(stderr, "pier: disk write bail\r\n");
+  // u3_pier_bail(pir_u);
+}
+
+static void
+_cw_boot(c3_i argc, c3_c* argv[])
+{
+  if ( 6 > argc ) {
+    fprintf(stderr, "boot: missing args\n");
+    exit(1);
+  }
+
+  c3_i inn_i, out_i;
+  _cw_serf_stdio(&inn_i, &out_i);
+
+  uv_loop_t* lup_u = uv_default_loop();
+  c3_c*      dir_c = argv[2];
+    c3_c*      key_c = argv[3];
+  c3_c*      wag_c = argv[4];
+  c3_c*      hap_c = argv[5];
+
+  fprintf(stderr, "boot: %s\n", dir_c);
+
+  memset(&u3V, 0, sizeof(u3V));
+  memset(&u3_Host.tra_u, 0, sizeof(u3_Host.tra_u));
+
+  //  load passkey
+  //
+  //    XX and then ... use passkey
+  //
+  {
+    sscanf(key_c, "%" PRIx64 ":%" PRIx64 ":%" PRIx64 ":%" PRIx64 "",
+                  &u3V.key_d[0],
+                  &u3V.key_d[1],
+                  &u3V.key_d[2],
+                  &u3V.key_d[3]);
+  }
+
+  //  load runtime config
+  //
+  {
+    sscanf(wag_c, "%" SCNu32, &u3C.wag_w);
+    sscanf(hap_c, "%" SCNu32, &u3_Host.ops_u.hap_w);
+  }
+
+  //  Ignore SIGPIPE signals.
+  //
+  {
+    struct sigaction sig_s = {{0}};
+    sigemptyset(&(sig_s.sa_mask));
+    sig_s.sa_handler = SIG_IGN;
+    sigaction(SIGPIPE, &sig_s, 0);
+  }
+
+  //  configure pipe to daemon process
+  //
+  {
+    c3_i err_i;
+
+    err_i = uv_timer_init(lup_u, &inn_u.tim_u);
+    c3_assert(!err_i);
+    err_i = uv_pipe_init(lup_u, &inn_u.pyp_u, 0);
+    c3_assert(!err_i);
+    uv_pipe_open(&inn_u.pyp_u, inn_i);
+
+    err_i = uv_pipe_init(lup_u, &out_u.pyp_u, 0);
+    c3_assert(!err_i);
+    uv_pipe_open(&out_u.pyp_u, out_i);
+
+    uv_stream_set_blocking((uv_stream_t*)&out_u.pyp_u, 1);
+  }
+
+  sil_u = u3s_cue_xeno_init();
+
+  //  set up writing
+  //
+  out_u.ptr_v = &u3V;
+  out_u.bal_f = _cw_serf_fail;
+
+  //  set up reading
+  //
+  inn_u.ptr_v = &u3V;
+  inn_u.pok_f = _cw_boot_writ;
+  inn_u.bal_f = _cw_serf_fail;
+
+  //  setup loom
+  //
+  {
+    //  XX create directory, error if exists (non-empty?)
+    u3V.dir_c = strdup(dir_c);
+
+    // if ( 0 != mkdir(dir_c, 0700) ) {
+    //   fprintf(stderr, "boot: mkdir %s\n", strerror(errno));
+    //   exit(1);
+    // }
+
+    // {
+    //   c3_c* urb_c[2048];
+    //   snprintf(urb_c, 2048, "%s/.urb", u3V.dir_c);
+
+    //   if ( 0 != mkdir(urb_c, 0700) ) {
+    //     fprintf(stderr, "boot: mkdir .urb %s\n", strerror(errno));
+    //     exit(1);
+    //   }
+    // }
+
+
+  //  initialize persistence
+  //
+  {
+    //  XX load/set secrets
+    //
+    u3_disk_cb cb_u = {
+      .ptr_v = 0,
+      .read_done_f = _pier_on_disk_read_done,
+      .read_bail_f = _pier_on_disk_read_bail,
+      .write_done_f = _pier_on_disk_write_done,
+      .write_bail_f = _pier_on_disk_write_bail
+    };
+
+    if ( !(log_u = u3_disk_init(dir_c, cb_u)) ) {
+      // c3_free(pir_u);
+      // return 0;
+      fprintf(stderr, "boot: dist init fail\n");
+      exit(1);
+    }
+  }
+
+    u3V.sen_d = u3V.dun_d = u3m_boot(dir_c);
+  }
+
+  //  set up logging
+  //
+  //    XX must be after u3m_boot due to u3l_log
+  //
+  {
+    u3C.stderr_log_f = _cw_serf_send_stdr;
+    u3C.slog_f = _cw_serf_send_slog;
+  }
+
+  u3V.xit_f = _cw_serf_exit;
+
+// #if defined(SERF_TRACE_JAM) || defined(SERF_TRACE_CUE)
+//   u3t_trace_open(u3V.dir_c);
+// #endif
+
+  //  send boot status message
+  //
+  {
+    _cw_serf_send(u3nc(c3__boot, u3_nul));
+  }
+
+  //  start reading
+  //
+  u3_newt_read_sync(&inn_u);
+
+  //  enter loop
+  //
+  uv_run(lup_u, UV_RUN_DEFAULT);
+}
+
 /* _cw_usage(): print urbit-worker usage.
 */
 static void
@@ -472,6 +1150,9 @@ main(c3_i argc, c3_c* argv[])
   else {
     if ( 0 == strcmp("serf", argv[1]) ) {
       _cw_serf_commence(argc, argv);
+    }
+    else if ( 0 == strcmp("boot", argv[1]) ) {
+      _cw_boot(argc, argv);
     }
     else if ( 0 == strcmp("info", argv[1]) ) {
       _cw_info(argc, argv);
