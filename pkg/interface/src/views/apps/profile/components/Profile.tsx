@@ -111,7 +111,7 @@ export function ProfileStatus(props: any): ReactElement {
   );
 }
 
-export function ProfileOwnControls(props: any): ReactElement {
+export function ProfileActions(props: any): ReactElement {
   const { ship, isPublic, contact, api } = { ...props };
   const history = useHistory();
   return (
@@ -137,7 +137,18 @@ export function ProfileOwnControls(props: any): ReactElement {
             contact={contact}
           />
         </>
-      ) : null}
+      ) : (
+        <>
+          <Text
+            py='2'
+            cursor='pointer'
+            fontWeight='500'
+            onClick={() => history.push(`/~landscape/dm/${ship.substring(1)}`)}
+          >
+            Message
+          </Text>
+        </>
+      )}
     </Row>
   );
 }
