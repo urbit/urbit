@@ -42,6 +42,8 @@ export default function CommentInput(props: CommentInputProps) {
       validationSchema={formSchema}
       onSubmit={props.onSubmit}
       initialValues={initialValues}
+      validateOnBlur={false}
+      validateOnChange={false}
     >
       <Form>
         <SubmitTextArea

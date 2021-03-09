@@ -110,12 +110,12 @@
 ++  on-arvo   on-arvo:def
 ++  on-fail   on-fail:def
 ::
-++  should-proxy-update
-  |=  =vase
-  =/  =update:store
-    !<(update:store vase)
+++  transform-proxy-update
+  |=  vas=vase
+  ^-  (unit vase)
+  =/  =update:store  !<(update:store vas)
   ?:  ?=(%initial -.update)
-    %.n
+    ~
   |^
   =/  role=(unit (unit role-tag))
     (role-for-ship:grp resource.update src.bowl)
@@ -128,24 +128,36 @@
     %moderator  moderator
     %janitor    member
   ==
+  ::
   ++  member
-    ?:  ?=(%add-members -.update)
-      =(~(tap in ships.update) ~[src.bowl])
-    ?:  ?=(%remove-members -.update)
-      =(~(tap in ships.update) ~[src.bowl])
-    %.n
+    ?:  ?|  ?&  ?=(%add-members -.update)
+                =(~(tap in ships.update) ~[src.bowl])    
+            ==
+            ?&  ?=(%remove-members -.update)
+                =(~(tap in ships.update) ~[src.bowl])    
+        ==  ==
+      `vas
+    ~
+  ::
   ++  admin
-    !?=(?(%remove-group %add-group) -.update)
+    ?.  ?=(?(%remove-group %add-group) -.update)
+      `vas
+    ~
+  ::
   ++  moderator
-    ?=  $?  %add-members  %remove-members
-            %add-tag      %remove-tag   ==
-    -.update
+    ?:  ?=(?(%add-members %remove-members %add-tag %remove-tag) -.update)
+      `vas
+    ~
+  ::
   ++  non-member
-    ?&  ?=(%add-members -.update)
-        (can-join:grp resource.update src.bowl)
-        =(~(tap in ships.update) ~[src.bowl])
-    ==
+    ?:  ?&  ?=(%add-members -.update)
+            (can-join:grp resource.update src.bowl)
+            =(~(tap in ships.update) ~[src.bowl])
+        ==
+      `vas
+    ~
   --
+::
 ++  resource-for-update  resource-for-update:grp
 ::
 ++  take-update

@@ -156,7 +156,8 @@ h2 {
 blockquote {
   padding: 0 0 0 16px;
   margin: 0;
-  border-left: 1px solid black;
+  color: inherit;
+  border-left: 1px solid;
 }
 
 :root {
@@ -173,6 +174,7 @@ blockquote {
   height: 100% !important;
   width: 100% !important;
   cursor: text;
+  color: inherit;
   background: transparent;
 }
 
@@ -242,7 +244,7 @@ pre.CodeMirror-placeholder.CodeMirror-line-like {
 }
 .chat .cm-s-tlon span.cm-comment {
   font-family: 'Source Code Pro';
-  color: black;
+  color: inherit;
   background-color: var(--light-gray);
   display: inline-block;
   border-radius: 2px;
@@ -308,9 +310,6 @@ pre.CodeMirror-placeholder.CodeMirror-line-like {
 /* dark */
 
 @media (prefers-color-scheme: dark) {
-  blockquote {
-    border-left: 1px solid inherit;
-  }
 
   /* codemirror */
   .chat .cm-s-tlon.CodeMirror {
@@ -366,13 +365,5 @@ pre.CodeMirror-placeholder.CodeMirror-line-like {
   .chat .CodeMirror-selected {
     background: var(--medium-gray) !important;
     color: inherit;
-  }
-
-  .chat .cm-s-tlon span.cm-comment {
-    color: black;
-    display: inline-block;
-    padding: 0;
-    background-color: rgba(255, 255, 255, 0.3);
-    border-radius: 2px;
   }
 }

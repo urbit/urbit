@@ -246,7 +246,10 @@ export const MessageAuthor = ({
   scrollWindow,
   ...rest
 }) => {
-  const dark = useLocalState((state) => state.dark);
+  const osDark = useLocalState((state) => state.dark);
+
+  const theme = useSettingsState(s => s.display.theme);
+  const dark = theme === 'dark' || (theme === 'auto' && osDark)
 
   const datestamp = moment
     .unix(msg['time-sent'] / 1000)
