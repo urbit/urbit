@@ -228,6 +228,7 @@ export function TutorialModal(props: { api: GlobalApi }) {
             direction={arrow}
             height="0px"
             width="0px"
+            display={["none", "block"]}
           />
 
           <Box
