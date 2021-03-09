@@ -5,7 +5,7 @@ import { MetadataUpdate } from '@urbit/api/metadata';
 
 import { Cage } from '~/types/cage';
 import useMetadataState, { MetadataState } from '../state/metadata';
-import { reduceState } from '../lib/util';
+import { reduceState } from '../state/base';
 
 export default class MetadataReducer {
   reduce(json: Cage) {

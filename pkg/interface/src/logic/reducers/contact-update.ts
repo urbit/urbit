@@ -4,7 +4,7 @@ import { compose } from 'lodash/fp';
 import { ContactUpdate } from '@urbit/api';
 
 import useContactState, { ContactState } from '../state/contact';
-import { reduceState } from '../lib/util';
+import { reduceState } from '../state/base';
 
 
 export const ContactReducer = (json) => {

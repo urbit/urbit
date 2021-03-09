@@ -19,7 +19,7 @@ export interface HarkState extends BaseState<HarkState> {
   unreads: Unreads;
 };
 
-const useHarkState = createState('Hark', {
+const useHarkState = createState<HarkState>('Hark', {
   archivedNotifications: new BigIntOrderedMap<Timebox>(),
   doNotDisturb: false,
   // getMore: async (): Promise<boolean> => {

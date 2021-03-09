@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import useSettingsState, { SettingsState } from "~/logic/state/settings";
 import { SettingsUpdate } from '@urbit/api/dist/settings';
-import { reduceState } from '../lib/util';
+import { reduceState } from '../state/base';
 
 export default class SettingsReducer {
   reduce(json: any) {

@@ -3,7 +3,7 @@ import { LaunchUpdate, WeatherState } from '~/types/launch-update';
 import { Cage } from '~/types/cage';
 import useLaunchState, { LaunchState } from '../state/launch';
 import { compose } from 'lodash/fp';
-import { reduceState } from '../lib/util';
+import { reduceState } from '../state/base';
 
 export default class LaunchReducer {
   reduce(json: Cage) {

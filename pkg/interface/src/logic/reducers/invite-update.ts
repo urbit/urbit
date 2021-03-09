@@ -5,7 +5,7 @@ import { InviteUpdate } from '@urbit/api/invite';
 
 import { Cage } from '~/types/cage';
 import useInviteState, { InviteState } from '../state/invite';
-import { reduceState } from '../lib/util';
+import { reduceState } from '../state/base';
 
 export default class InviteReducer {
   reduce(json: Cage) {

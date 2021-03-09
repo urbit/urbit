@@ -15,6 +15,7 @@ import './css/custom.css';
 import { Association } from '@urbit/api/metadata';
 import useGraphState from '~/logic/state/graph';
 import useMetadataState from '~/logic/state/metadata';
+import useGroupState from '../../../logic/state/group';
 
 const emptyMeasure = () => {};
 
@@ -29,7 +30,6 @@ export function LinkResource(props: LinkResourceProps) {
     association,
     api,
     baseUrl,
-    groups,
   } = props;
 
   const rid = association.resource;
@@ -42,6 +42,7 @@ export function LinkResource(props: LinkResourceProps) {
   const resource = associations.graph[rid]
     ? associations.graph[rid]
     : { metadata: {} };
+  const groups = useGroupState(state => state.groups);
   const group = groups[resource?.group] || {};
 
   const graphs = useGraphState(state => state.graphs);

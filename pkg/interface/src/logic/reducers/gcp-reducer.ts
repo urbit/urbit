@@ -3,7 +3,7 @@ import {StoreState} from '../store/type';
 import {GcpToken} from '../../types/gcp-state';
 import { Cage } from '~/types/cage';
 import useStorageState, { StorageState } from '../state/storage';
-import { reduceState } from '../lib/util';
+import { reduceState } from '../state/base';
 
 export default class GcpReducer {
   reduce(json: Cage) {

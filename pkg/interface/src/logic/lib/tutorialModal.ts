@@ -107,7 +107,7 @@ export const progressDetails: Record<TutorialProgress, StepDetail> = {
   chat: {
     title: 'Chat',
     description:
-      'Chat channels are for messaging within your group. Direct Messages can be accessed from Messages in the top right,
+      'Chat channels are for messaging within your group. Direct Messages can be accessed from Messages in the top right',
     url: `/~landscape/ship/${TUTORIAL_HOST}/${TUTORIAL_GROUP}/resource/chat/ship/${TUTORIAL_HOST}/${TUTORIAL_CHAT}`,
     alignY: 'top',
     arrow: 'North',

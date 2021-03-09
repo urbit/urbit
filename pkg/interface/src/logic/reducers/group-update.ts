@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import { StoreState } from '../../store/type';
 import { Cage } from '~/types/cage';
 import {
   GroupUpdate,
@@ -13,9 +12,10 @@ import {
   InvitePolicy
 } from '@urbit/api/groups';
 import { Enc, PatpNoSig } from '@urbit/api';
-import { reduceState, resourceAsPath } from '../lib/util';
+import { resourceAsPath } from '../lib/util';
 import useGroupState, { GroupState } from '../state/group';
 import { compose } from 'lodash/fp';
+import { reduceState } from '../state/base';
 
 function decodeGroup(group: Enc<Group>): Group {
   const members = new Set(group.members);

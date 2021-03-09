@@ -1,5 +1,6 @@
 import { GroupUpdate } from '@urbit/api/groups';
-import { reduceState, resourceAsPath } from '~/logic/lib/util';
+import { resourceAsPath } from '~/logic/lib/util';
+import { reduceState } from '../state/base';
 import useGroupState, { GroupState } from '../state/group';
 
 const initial = (json: any, state: GroupState): GroupState => {

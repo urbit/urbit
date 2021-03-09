@@ -30,15 +30,13 @@ const withState = <
   return React.forwardRef((props, ref) => {
     let stateProps: unknown = {};
     stores.forEach(([store, keys]) => {
-      const storeProps = keys && keys.length
-        ? store(state => {
-          keys.reduce(
-            (object, key) => ({ ...object, [key]: state[key] }), {}
-          )
-        })
+      const storeProps = Array.isArray(keys)
+        ? store(state => keys.reduce(
+          (object, key) => ({ ...object, [key]: state[key] }), {}
+        ))
         : store();
       Object.assign(stateProps, storeProps);
-    })
+    });
     return <Component ref={ref} {...stateProps} {...props} />
   });
 }

@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { compose } from 'lodash/fp';
 import { Cage } from '~/types/cage';
 import { S3Update } from '~/types/s3-update';
-import { reduceState } from '../lib/util';
+import { reduceState } from '../state/base';
 import useStorageState, { StorageState } from '../state/storage';
 
 

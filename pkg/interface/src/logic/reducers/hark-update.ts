@@ -6,12 +6,13 @@ import {
   UnreadStats,
   Timebox
 } from '@urbit/api';
-import { makePatDa, reduceState } from '~/logic/lib/util';
+import { makePatDa } from '~/logic/lib/util';
 import _ from 'lodash';
 import { StoreState } from '../store/type';
 import { BigIntOrderedMap } from '../lib/BigIntOrderedMap';
 import useHarkState, { HarkState } from '../state/hark';
 import { compose } from 'lodash/fp';
+import { reduceState } from '../state/base';
 
 export const HarkReducer = (json: any) => {
   const data = _.get(json, 'harkUpdate', false);

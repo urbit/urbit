@@ -69,7 +69,9 @@ const Root = withState(styled.div`
     border-radius: 1rem;
     border: 0px solid transparent;
   }
-`, [[useSettingsState, 'display']]);
+`, [
+  [useSettingsState, ['display']]
+]);
 
 const StatusBarWithRouter = withRouter(StatusBar);
 class App extends React.Component {
@@ -82,7 +84,7 @@ class App extends React.Component {
 
     this.appChannel = new window.channel();
     this.api = new GlobalApi(this.ship, this.appChannel, this.store);
-    gcpManager.configure(this.api, this.store);
+    gcpManager.configure(this.api);
     this.subscription =
       new GlobalSubscription(this.store, this.api, this.appChannel);
 
@@ -137,16 +139,12 @@ class App extends React.Component {
 
   render() {
     const { state, props } = this;
-    const associations = state.associations ?
-      state.associations : { contacts: {} };
     const theme =
     ((props.dark && props?.display?.theme == "auto") ||
       props?.display?.theme == "dark"
     ) ? dark : light;
 
-    const notificationsCount = state.notificationsCount || 0;
-    const doNotDisturb = state.doNotDisturb || false;
-    const ourContact = this.state.contacts[`~${this.ship}`] || null;
+    const ourContact = this.props.contacts[`~${this.ship}`] || null;
     return (
       <ThemeProvider theme={theme}>
         <Helmet>
