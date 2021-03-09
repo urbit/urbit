@@ -19,7 +19,7 @@
 ::   %pull-hook-action: Add/remove a resource from pulling.
 ::
 /-  *pull-hook
-/+  default-agent, resource
+/+  default-agent, resource, versioning
 |%
 ::  JSON conversions
 ++  dejs
@@ -44,7 +44,8 @@
 ::  $config: configuration for the pull hook
 ::
 ::    .store-name: name of the store to send subscription updates to.
-::    .update-mark: mark that updates will be tagged with
+::    .update-mark: mark that updates will be tagged with, without
+::    version number
 ::    .push-hook-name: name of the corresponding push-hook
 ::    .no-validate: If true, don't validate that resource/wire/src match
 ::    up
@@ -54,6 +55,7 @@
       update=mold
       update-mark=term
       push-hook-name=term
+      version=@ud
       no-validate=_|
   ==
 ::  
@@ -185,6 +187,7 @@
         og   ~(. pull-hook bowl)
         hc   ~(. +> bowl)
         def  ~(. (default-agent this %|) bowl)
+        ver  ~(. versioning [bowl update-mark.config version.config])
     ::
     ++  on-init
       ^-  [(list card:agent:gall) agent:gall]
@@ -316,10 +319,12 @@
         [give-update cards]
       ::
           %fact
-        ?.  =(update-mark.config p.cage.sign)
+        ?.  (is-root:ver p.cage.sign)
           =^  cards  pull-hook
             (on-agent:og wire sign)
           [cards this]
+        =/  =vase
+          (convert:ver cage.sign)
         :_  this
         ~[(update-store:hc rid q.cage.sign)]
       ==
@@ -487,7 +492,7 @@
       (~(get by tracking) rid)
     ?~  ship  ~
     =/  =path
-      (welp resource+(en-path:resource rid) pax)
+      (welp (snoc resource+(en-path:resource rid) (scot %ud version.config)) pax)
     =/  =wire
       (make-wire pull+resource+(en-path:resource rid))
     [%pass wire %agent [u.ship push-hook-name.config] %watch path]~

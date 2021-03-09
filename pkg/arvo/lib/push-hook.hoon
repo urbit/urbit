@@ -25,7 +25,7 @@
 ::   foreign push-hook
 ::
 /-  *push-hook
-/+  default-agent, resource, verb
+/+  default-agent, resource, verb, versioning
 |%
 +$  card  card:agent:gall
 ::
@@ -43,6 +43,7 @@
       update=mold
       update-mark=term
       pull-hook-name=term
+      version=@ud
   ==
 ::
 ::  $base-state-0: state for the push hook
@@ -299,6 +300,7 @@
     --
   |_  =bowl:gall
   +*  og   ~(. push-hook bowl)
+      ver  ~(. versioning [bowl update-mark.config version.config])
   ::
   ++  poke-update
     |=  vas=vase
@@ -378,7 +380,7 @@
     [%pass wire %agent [our.bowl store-name.config] %watch store-path.config]
   ::
   ++  push-updates
-    |=  =vase
+    |=  =cage
     ^-  (list card:agent:gall)
     =/  rids=(list resource)  (resource-for-update vase)
     =|  cards=(list card:agent:gall)
@@ -386,16 +388,24 @@
     ?~  rids  cards
     =/  prefix=path
       resource+(en-path:resource i.rids)
-    =/  paths=(list path)
-      %~  tap  in
-      %-  silt
-      %+  turn
+    =/  paths=(jug @ud path)
+      %+  roll
         (incoming-subscriptions prefix)
-      |=([ship pax=path] pax)
+      |=  [[ship =path] out=(jug @ud path)]
+      ?>  ?=(^ path)
+      =/  path-ver
+        (slaw %ud i.path)
+      (~(put ju out) path-ver path)
+    =/  caz=(list card)
+      %+  turn  ~(tap by paths)
+      |=  [fact-ver=@ud paths=(set path)]
+      =/  =mark
+        (append-version:ver fact-ver)
+      [%give %fact ~(tap in paths) mark (convert-from:ver mark q.cage)]
     ?~  paths  $(rids t.rids)
     %_  $
       rids   t.rids
-      cards  (snoc cards [%give %fact paths update-mark.config vase])
+      cards  (welp cards caz)
     ==
   ::
   ++  forward-update
