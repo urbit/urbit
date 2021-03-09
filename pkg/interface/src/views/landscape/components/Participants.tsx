@@ -286,8 +286,15 @@ function Participant(props: {
 
   const onKick = useCallback(async () => {
     const resource = resourceFromPath(association.group);
-    await api.groups.remove(resource, [`~${contact.patp}`]);
-  }, [api, association]);
+    if(contact.pending) {
+      await api.groups.changePolicy(
+        resource, 
+        { invite: { removeInvites: [`~${contact.patp}`] } }
+      );
+    } else {
+      await api.groups.remove(resource, [`~${contact.patp}`]);
+    }
+  }, [api, contact, association]);
 
   const avatar =
     contact?.avatar !== null && !hideAvatars ? (

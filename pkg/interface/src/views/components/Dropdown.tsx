@@ -21,6 +21,8 @@ interface DropdownProps {
   options: ReactNode;
   alignY: AlignY | AlignY[];
   alignX: AlignX | AlignX[];
+  offsetX?: number;
+  offsetY?: number;
   width?: string;
   dropWidth?: string;
 }
@@ -37,7 +39,7 @@ const DropdownOptions = styled(Box)`
 `;
 
 export function Dropdown(props: DropdownProps): ReactElement {
-  const { children, options } = props;
+  const { children, options, offsetX = 0, offsetY = 0 } = props;
   const dropdownRef = useRef<HTMLElement>(null);
   const anchorRef = useRef<HTMLElement>(null);
   const { pathname } = useLocation();
@@ -45,7 +47,7 @@ export function Dropdown(props: DropdownProps): ReactElement {
   const [coords, setCoords] = useState({});
 
   const updatePos = useCallback(() => {
-    const newCoords = getRelativePosition(anchorRef.current, props.alignX, props.alignY);
+    const newCoords = getRelativePosition(anchorRef.current, props.alignX, props.alignY, offsetX, offsetY);
     if(newCoords) {
       setCoords(newCoords);
     }
