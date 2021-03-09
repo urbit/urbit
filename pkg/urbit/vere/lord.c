@@ -1204,3 +1204,204 @@ u3_lord_init(c3_c* pax_c, c3_w wag_w, c3_d key_d[4], u3_lord_cb cb_u)
   }
   return god_u;
 }
+
+typedef struct _u3_lboot {
+  uv_process_t         cub_u;           //  process handle
+  uv_process_options_t ops_u;           //  process configuration
+  uv_stdio_container_t cod_u[3];        //  process options
+  u3_cue_xeno*         sil_u;           //  cue handle
+  u3_mojo              inn_u;           //  client's stdin
+  u3_moat              out_u;           //  client's stdout
+  c3_w                 wag_w;           //  config flags
+  c3_c*                bin_c;           //  binary path
+  c3_c*                pax_c;           //  directory
+  c3_d                 key_d[4];        //  image key
+  u3_noun                msg;
+  void (*slog_f)(void*, c3_w, u3_noun);
+  void (*done_f)(void*, c3_o);
+} u3_lboot;
+
+
+/* _lord_on_serf_boot_bail(): handle subprocess error.
+*/
+static void
+_lord_on_serf_boot_bail(void*       ptr_v,
+                        ssize_t     err_i,
+                        const c3_c* err_c)
+{
+  //  XX fatal error
+  fprintf(stderr, "king: bail: %s\r\n", err_c);
+}
+
+/* _lord_on_serf_boot_exit(): handle subprocess exit.
+*/
+static void
+_lord_on_serf_boot_exit(uv_process_t* req_u,
+                        c3_ds         sas_i,
+                        c3_i          sig_i)
+{
+  fprintf(stderr, "king: exit\r\n");
+  //  if we haven't sent boot fatal error
+  //  else check exit code, call done_f success/failure
+}
+
+/* _lord_on_plea_boot(): handle plea from serf.
+*/
+static void
+_lord_on_plea_boot(void* ptr_v, c3_d len_d, c3_y* byt_y)
+{
+  fprintf(stderr, "king: plea\r\n");
+  u3_lboot* god_u = ptr_v;
+  u3_noun     jar = u3s_cue_xeno_with(god_u->sil_u, len_d, byt_y);
+  u3_noun tag, dat;
+
+  if ( u3_none == jar ) {
+    //  XX fatal error
+    // return _lord_plea_foul(god_u, 0, u3_blip);
+  }
+  else if ( c3n == u3r_cell(jar, &tag, &dat) ) {
+    //  XX fatal error
+    // return _lord_plea_foul(god_u, 0, jar);
+  }
+  else {
+    switch ( tag ) {
+      default: {
+        //  XX fatal error
+        // return _lord_plea_foul(god_u, 0, jar);
+      }
+
+      case c3__boot: {
+
+        //  if ( state == init ) {
+        c3_d  len_d;
+        c3_y* byt_y;
+        u3s_jam_xeno(god_u->msg, &len_d, &byt_y);
+
+        u3_newt_send(&god_u->inn_u, len_d, byt_y);
+        //  XX change state
+        // }
+        // else fatal error
+      } break;
+
+      case c3__slog: {
+        u3_noun pri, tan;
+        c3_w pri_w;
+
+        if (  (c3n == u3r_cell(dat, &pri, &tan))
+           || (c3n == u3r_safe_word(pri, &pri_w)) )
+        {
+          //  XX fatal error
+          // return _lord_plea_foul(god_u, c3__slog, dat);
+        }
+        else {
+          u3_pier_tank(0, pri_w, u3k(tan));
+        }
+      } break;
+
+      case c3__flog: {
+        c3_c* tan_c = u3r_string(dat);
+        u3C.stderr_log_f(tan_c);
+        c3_free(tan_c);
+      } break;
+    }
+  }
+
+  u3z(jar);
+}
+
+/* u3_lord_boot(): instantiate child process.
+*/
+void
+u3_lord_boot(c3_c* pax_c, c3_w wag_w, c3_d key_d[4], u3_noun msg)
+{
+  fprintf(stderr, "king: boot\r\n");
+  u3_lboot* god_u = c3_calloc(sizeof *god_u);
+  god_u->wag_w = wag_w;
+  god_u->bin_c = u3_Host.wrk_c; //  XX strcopy
+  god_u->pax_c = pax_c;  //  XX strcopy
+  god_u->msg   = msg;
+
+  god_u->key_d[0] = key_d[0];
+  god_u->key_d[1] = key_d[1];
+  god_u->key_d[2] = key_d[2];
+  god_u->key_d[3] = key_d[3];
+
+  //  spawn new process and connect to it
+  //
+  {
+    c3_c* arg_c[8];
+    c3_c  key_c[256];
+    c3_c  wag_c[11];
+    c3_c  hap_c[11];
+    c3_i  err_i;
+
+    sprintf(key_c, "%" PRIx64 ":%" PRIx64 ":%" PRIx64 ":%" PRIx64 "",
+                   god_u->key_d[0],
+                   god_u->key_d[1],
+                   god_u->key_d[2],
+                   god_u->key_d[3]);
+
+    sprintf(wag_c, "%u", god_u->wag_w);
+
+    sprintf(hap_c, "%u", u3_Host.ops_u.hap_w);
+
+    arg_c[0] = god_u->bin_c;            //  executable
+    arg_c[1] = "boot";                  //  protocol
+    arg_c[2] = god_u->pax_c;            //  path to checkpoint directory
+    arg_c[3] = key_c;                   //  disk key
+    arg_c[4] = wag_c;                   //  runtime config
+    arg_c[5] = hap_c;                   //  hash table size
+    arg_c[6] = 0;
+
+    uv_pipe_init(u3L, &god_u->inn_u.pyp_u, 0);
+    uv_timer_init(u3L, &god_u->out_u.tim_u);
+    uv_pipe_init(u3L, &god_u->out_u.pyp_u, 0);
+
+    god_u->cod_u[0].flags = UV_CREATE_PIPE | UV_READABLE_PIPE;
+    god_u->cod_u[0].data.stream = (uv_stream_t *)&god_u->inn_u;
+
+    god_u->cod_u[1].flags = UV_CREATE_PIPE | UV_WRITABLE_PIPE;
+    god_u->cod_u[1].data.stream = (uv_stream_t *)&god_u->out_u;
+
+    god_u->cod_u[2].flags = UV_INHERIT_FD;
+    god_u->cod_u[2].data.fd = 2;
+
+    god_u->ops_u.stdio = god_u->cod_u;
+    god_u->ops_u.stdio_count = 3;
+
+    god_u->ops_u.exit_cb = _lord_on_serf_boot_exit;
+    god_u->ops_u.file = arg_c[0];
+    god_u->ops_u.args = arg_c;
+
+    if ( (err_i = uv_spawn(u3L, &god_u->cub_u, &god_u->ops_u)) ) {
+      fprintf(stderr, "spawn: %s: %s\r\n", arg_c[0], uv_strerror(err_i));
+
+      // return 0;
+      return;
+    }
+  }
+
+#if defined(LORD_TRACE_JAM) || defined(LORD_TRACE_CUE)
+  u3t_trace_open(god_u->pax_c);
+#endif
+
+  {
+    god_u->sil_u = u3s_cue_xeno_init();
+  }
+
+  //  start reading from proc
+  //
+  {
+    god_u->out_u.ptr_v = god_u;
+    god_u->out_u.pok_f = _lord_on_plea_boot;
+    god_u->out_u.bal_f = _lord_on_serf_boot_bail;
+
+    //  XX distinguish from out_u.bal_f ?
+    //
+    god_u->inn_u.ptr_v = god_u;
+    god_u->inn_u.bal_f = _lord_on_serf_boot_bail;
+
+    u3_newt_read(&god_u->out_u);
+  }
+  // return god_u;
+}
