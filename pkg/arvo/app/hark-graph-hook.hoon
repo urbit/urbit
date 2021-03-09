@@ -280,8 +280,9 @@
       (peek-metadatum:met %graph rid)
     ?~  metadatum  `state
     =/  module=term
-      ?.  ?=(%& -.module.u.metadatum)  %$
-      p.module.u.metadatum
+      ?:  ?=(%empty -.config.u.metadatum)  %$
+      ?:  ?=(%group -.config.u.metadatum)  %$
+      module.config.u.metadatum
     abet:check:(abed:handle-update:ha rid nodes u.group module)
   --
 ::

@@ -47,16 +47,22 @@
         [%date-created s+(scot %da date-created.met)]
         [%creator s+(scot %p creator.met)]
       ::
-        :-  %module
-        ?:  ?=(%& -.module.met)
-          s+p.module.met
-        ?~  p.module.met
-          ~
-        ?~  u.p.module.met
-          o+~
-        %-  pairs
-        :~  [%app-name s+app-name.u.u.p.module.met]
-            [%resource s+(enjs-path:resource resource.u.u.p.module.met)]
+        :-  %config
+        ?+    -.config.met  o+~
+            %graph
+          %+  frond  %graph
+          s+module.config.met
+        ::
+            %group
+          %+  frond  %group
+          ?~  feed.config.met
+            ~
+          ?~  u.feed.config.met
+            o+~
+          %-  pairs
+          :~  [%app-name s+app-name.u.u.feed.config.met]
+              [%resource s+(enjs-path:resource resource.u.u.feed.config.met)]
+          ==
         ==
       ::
         [%picture s+picture.met]
@@ -168,21 +174,21 @@
         [%color nu]
         [%date-created (se %da)]
         [%creator (su ;~(pfix sig fed:ag))]
-        [%module module]
+        [%config config]
         [%picture so]
         [%preview bo]
         [%vip vip]
     ==
   ::
-  ++  module
+  ++  config
     |=  jon=^json
-    ^-  (each term (unit (unit ^md-resource)))
+    ^-  md-config
     ?~  jon
-      [%| ~]
+      [%group ~]
     ?:  ?=(%s -.jon)
-      [%& p.jon]
+      [%graph p.jon]
     ?>  ?=(%o -.jon)
-    :+  %|  ~
+    :+  %group  ~
     ?.  ?&  (~(has by p.jon) 'app-name')
             (~(has by p.jon) 'resource')
         ==

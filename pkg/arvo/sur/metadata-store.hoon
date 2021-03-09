@@ -28,13 +28,20 @@
 ::    %$: No variation
 ::
 +$  vip-metadata  ?(%reader-comments %member-metadata %$)
++$  md-config
+  $~  [%empty ~]
+  $%  [%group feed=(unit (unit md-resource))]
+      [%graph module=term] 
+      [%empty ~]
+  ==
+::
 +$  metadatum
   $:  title=cord
       description=cord
       =color
       date-created=time
       creator=ship
-      module=(each term (unit (unit md-resource)))
+      config=md-config
       picture=url
       preview=?
       vip=vip-metadata

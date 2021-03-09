@@ -273,10 +273,10 @@
       creator       creator.m
       preview       preview.m
     ::
-        module        
+        config
       ?:  =(module.m %$)
-        [%| ~]
-      [%& module.m]
+        [%group ~]
+      [%graph module.m]
     ==
   ::
   ++  associations-1-to-2
@@ -303,7 +303,7 @@
   ::
   ++  metadata-1-to-2
     |=  m=metadata-1
-    %*  .  *metadatum:store
+    %*  .  *metadatum-2
       title         title.m
       description   description.m
       color         color.m
