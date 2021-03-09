@@ -114,8 +114,6 @@ _disk_commit_done(struct _cd_save* req_u)
   }
 
   _disk_free_save(req_u);
-
-  _disk_commit(log_u);
 }
 
 /* _disk_commit_after_cb(): on the main thread, finish write
@@ -129,9 +127,12 @@ _disk_commit_after_cb(uv_work_t* ted_u, c3_i sas_i)
     _disk_free_save(req_u);
   }
   else {
-    ted_u->data = 0;
-    req_u->log_u->ted_o = c3n;
+    u3_disk* log_u = req_u->log_u;
+
+    ted_u->data  = 0;
+    log_u->ted_o = c3n;
     _disk_commit_done(req_u);
+    _disk_commit(log_u);
   }
 }
 
@@ -303,6 +304,31 @@ u3_disk_boot_save(u3_disk* log_u)
 {
   c3_assert( !log_u->dun_d );
   _disk_commit(log_u);
+}
+
+/* u3_disk_boot_save_sync(): commit boot sequence.
+*/
+c3_o
+u3_disk_boot_save_sync(u3_disk* log_u)
+{
+  if (  log_u->dun_d
+     || (log_u->sen_d <= log_u->dun_d) ) {
+    return c3n;
+  }
+  else {
+    c3_o ret_o;
+    c3_d len_d = log_u->sen_d - log_u->dun_d;
+    struct _cd_save* req_u = _disk_batch(log_u, len_d);
+
+    ret_o = req_u->ret_o = u3_lmdb_save(req_u->log_u->mdb_u,
+                              req_u->eve_d,
+                              req_u->len_d,
+                              (void**)req_u->byt_y, // XX safe?
+                              req_u->siz_i);
+
+    _disk_commit_done(req_u);
+    return ret_o;
+  }
 }
 
 static void
