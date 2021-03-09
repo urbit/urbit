@@ -98,6 +98,7 @@ export function TutorialModal(props: { api: GlobalApi }) {
   }, [tutorialRef]);
 
   const dismiss = useCallback(async () => {
+    setPaused(false);
     hideTutorial();
     await props.api.settings.putEntry('tutorial', 'seen', true);
   }, [hideTutorial, props.api]);

@@ -161,9 +161,6 @@ export function Profile(props: any): ReactElement {
 
   const anchorRef = useRef<HTMLElement | null>(null);
 
-  console.log(ship);
-
-
   if (!props.ship) {
     return null;
   }
