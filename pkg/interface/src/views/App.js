@@ -29,19 +29,20 @@ import { uxToHex } from '~/logic/lib/util';
 import { foregroundFromBackground } from '~/logic/lib/sigil';
 import gcpManager from '~/logic/lib/gcpManager';
 import { withLocalState } from '~/logic/state/local';
+import { withSettingsState } from '~/logic/state/settings';
 
 
-const Root = styled.div`
+const Root = withSettingsState(styled.div`
   font-family: ${p => p.theme.fonts.sans};
   height: 100%;
   width: 100%;
   padding: 0;
   margin: 0;
-  ${p => p.background?.type === 'url' ? `
-    background-image: url('${p.background?.url}');
+  ${p => p.display.backgroundType === 'url' ? `
+    background-image: url('${p.display.background}');
     background-size: cover;
-    ` : p.background?.type === 'color' ? `
-    background-color: ${p.background.color};
+    ` : p.display.backgroundType === 'color' ? `
+    background-color: ${p.display.background};
     ` : `background-color: ${p.theme.colors.white};`
   }
   display: flex;
@@ -65,10 +66,9 @@ const Root = styled.div`
     border-radius: 1rem;
     border: 0px solid transparent;
   }
-`;
+`, ['display']);
 
 const StatusBarWithRouter = withRouter(StatusBar);
-
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -119,8 +119,8 @@ class App extends React.Component {
 
   faviconString() {
     let background = '#ffffff';
-    if (this.state.contacts.hasOwnProperty('/~/default')) {
-      background = `#${uxToHex(this.state.contacts['/~/default'][window.ship].color)}`;
+    if (this.state.contacts.hasOwnProperty(`~${window.ship}`)) {
+      background = `#${uxToHex(this.state.contacts[`~${window.ship}`].color)}`;
     }
     const foreground = foregroundFromBackground(background);
     const svg = sigiljs({
@@ -137,13 +137,14 @@ class App extends React.Component {
     const { state, props } = this;
     const associations = state.associations ?
       state.associations : { contacts: {} };
-    const theme = props.dark ? dark : light;
-    const background = this.props.background;
+    const theme =
+    ((props.dark && props?.display?.theme == "auto") ||
+      props?.display?.theme == "dark"
+    ) ? dark : light;
 
     const notificationsCount = state.notificationsCount || 0;
     const doNotDisturb = state.doNotDisturb || false;
     const ourContact = this.state.contacts[`~${this.ship}`] || null;
-
     return (
       <ThemeProvider theme={theme}>
         <Helmet>
@@ -151,7 +152,7 @@ class App extends React.Component {
             ? <link rel="icon" type="image/svg+xml" href={this.faviconString()} />
             : null}
         </Helmet>
-        <Root background={background}>
+        <Root>
           <Router>
             <TutorialModal api={this.api} />
             <ErrorBoundary>
@@ -198,5 +199,4 @@ class App extends React.Component {
   }
 }
 
-export default withLocalState(process.env.NODE_ENV === 'production' ? App : hot(App));
-
+export default withSettingsState(withLocalState(process.env.NODE_ENV === 'production' ? App : hot(App)), ['display']);

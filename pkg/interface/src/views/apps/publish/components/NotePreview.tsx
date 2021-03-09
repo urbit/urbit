@@ -48,9 +48,14 @@ export function NotePreview(props: NotePreviewProps) {
   const snippet = getSnippet(body);
 
   const commColor = (props.unreads.graph?.[appPath]?.[`/${noteId}`]?.unreads ?? 0) > 0 ? 'blue' : 'gray';
+
+  const cursorStyle = post.pending ? 'default' : 'pointer';
+
   return (
-    <Box width='100%'>
-      <Link to={url}>
+    <Box width='100%' opacity={post.pending ? '0.5' : '1'}>
+      <Link
+        to={post.pending ? '#' : url}
+        style={ { cursor: cursorStyle } }>
         <Col
           lineHeight='tall'
           width='100%'
@@ -68,7 +73,15 @@ export function NotePreview(props: NotePreviewProps) {
               unwrapDisallowed
               allowedTypes={['text', 'root', 'break', 'paragraph', 'image']}
               renderers={{
-                image: props => <Image src={props.src} maxHeight='300px' style={{ objectFit: 'cover' }} />
+                image: props => (
+                  <Box
+                    backgroundImage={`url(${props.src})`}
+                    style={{ backgroundSize: 'cover',
+                      backgroundPosition: "center" }}
+                  >
+                    <Image src={props.src} opacity="0" maxHeight="300px"/>
+                  </Box>
+                )
               }}
               source={snippet}
             />

@@ -5,41 +5,6 @@
   --light-gray: rgba(0,0,0,0.08);
 }
 
-.bg-welcome-green {
-  background-color: #ECF6F2;
-}
-
-@media all and (max-width: 34.375em) {
-  .dn-s {
-    display: none;
-  }
-  .flex-basis-100-s, .flex-basis-full-s {
-    flex-basis: 100%;
-  }
-  .h-100-m-40-s {
-    height: calc(100% - 40px);
-  }
-  .black-s {
-    color: #000;
-  }
-}
-
-@media all and (min-width: 34.375em) {
-  .db-ns {
-    display: block;
-  }
-  .flex-basis-250-ns {
-    flex-basis: 250px;
-  }
-  .h-100-m-40-ns {
-    height: calc(100% - 40px);
-  }
-}
-
-.bg-light-green {
-  background: rgba(42, 167, 121, 0.1);
-}
-
 .NotebookButton {
   border-radius:2px;
   cursor: pointer;
@@ -76,6 +41,8 @@
   cursor: text;
   font-size: 12px;
   line-height: 20px;
+  background: inherit;
+  color: inherit;
 }
 
 .publish .CodeMirror * {
@@ -207,57 +174,6 @@
 }
 
 @media all and (prefers-color-scheme: dark) {
-  .bg-black-d {
-    background-color: black;
-  }
-  .white-d {
-    color: white;
-  }
-  .gray1-d {
-    color: #4d4d4d;
-  }
-  .gray2-d {
-    color: #7f7f7f;
-  }
-  .gray3-d {
-    color: #b1b2b3;
-  }
-  .gray4-d {
-    color: #e6e6e6;
-  }
-  .bg-gray0-d {
-    background-color: #333;
-  }
-  .bg-gray1-d {
-    background-color: #4d4d4d;
-  }
-  .b--gray0-d {
-    border-color: #333;
-  }
-  .b--gray1-d {
-    border-color: #4d4d4d;
-  }
-  .b--gray2-d {
-    border-color: #7f7f7f;
-  }
-  .b--white-d {
-    border-color: #fff;
-  }
-  .invert-d {
-    filter: invert(1);
-  }
-  .o-60-d {
-    opacity: .6;
-  }
-  a {
-    color: #fff;
-  }
-  .focus-b--white-d:focus {
-    border-color: #fff;
-  }
-  .hover-bg-gray1-d:hover {
-    background-color: #4d4d4d;
-  }
   .options.open {
     background-color: #4d4d4d;
   }
@@ -266,32 +182,32 @@
   }
   .publish .cm-s-tlon.CodeMirror {
     background: unset;
-    color: #fff;
+    color: inherit;
   }
 
   .publish .cm-s-tlon span.cm-def {
-    color: white;
+    color: inherit;
   }
 
   .publish .cm-s-tlon span.cm-variable {
-    color: white;
+    color: inherit;
   }
 
   .publish .cm-s-tlon span.cm-variable-2 {
-    color: white;
+    color: inherit;
   }
 
   .publish .cm-s-tlon span.cm-variable-3,
   .publish .cm-s-tlon span.cm-type {
-    color: white;
+    color: inherit;
   }
 
   .publish .cm-s-tlon span.cm-property {
-    color: white;
+    color: inherit;
   }
 
   .publish .cm-s-tlon span.cm-operator {
-    color: white;
+    color: inherit;
   }
 
 
@@ -325,7 +241,7 @@
     color: black;
     display: inline-block;
     padding: 0;
-    background-color: rgba(255,255,255, 0.3);
+    background-color: rgba(0,255,255, 0.3);
     border-radius: 2px;
   }
 }

@@ -10,6 +10,7 @@ import {
   Row,
   Text,
   Icon,
+  Image,
   Action,
   StatelessTextInput as Input
 } from '@tlon/indigo-react';
@@ -29,7 +30,7 @@ import { roleForShip, resourceFromPath } from '~/logic/lib/group';
 import { Dropdown } from '~/views/components/Dropdown';
 import GlobalApi from '~/logic/api/global';
 import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
-import useLocalState from '~/logic/state/local';
+import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 
 const TruncText = styled(Text)`
   white-space: nowrap;
@@ -79,13 +80,14 @@ function getParticipants(cs: Contacts, group: Group) {
 
 const emptyContact = (patp: string, pending: boolean): Participant => ({
   nickname: '',
-  email: '',
-  phone: '',
+  bio: '',
+  status: '',
   color: '',
   avatar: null,
-  notes: '',
-  website: '',
+  cover: null,
+  groups: [],
   patp,
+  'last-updated': 0,
   pending
 });
 
@@ -209,13 +211,7 @@ export function Participants(props: {
             onChange={onSearchChange}
           />
         </Row>
-        <Box
-          display="grid"
-          gridAutoRows={['48px 48px 1px', '48px 1px']}
-          gridTemplateColumns={['48px 1fr', '48px 2fr 1fr', '48px 3fr 1fr']}
-          gridRowGap={2}
-          alignItems="center"
-        >
+        <Col alignItems="center" >
           {filtered.map((cs, idx) => (
             <VisibilitySensor
               key={idx}
@@ -241,7 +237,7 @@ export function Participants(props: {
               }
             </VisibilitySensor>
           ))}
-        </Box>
+        </Col>
       </Col>
     </Col>
   );
@@ -256,9 +252,7 @@ function Participant(props: {
 }) {
   const { contact, association, group, api } = props;
   const { title } = association.metadata;
-  const { hideAvatars, hideNicknames } = useLocalState(
-    ({ hideAvatars, hideNicknames }) => ({ hideAvatars, hideNicknames })
-  );
+  const { hideAvatars, hideNicknames } = useSettingsState(selectCalmState);
 
   const color = uxToHex(contact.color);
   const isInvite = 'invite' in group.policy;
@@ -292,12 +286,25 @@ function Participant(props: {
 
   const onKick = useCallback(async () => {
     const resource = resourceFromPath(association.group);
-    await api.groups.remove(resource, [`~${contact.patp}`]);
-  }, [api, association]);
+    if(contact.pending) {
+      await api.groups.changePolicy(
+        resource, 
+        { invite: { removeInvites: [`~${contact.patp}`] } }
+      );
+    } else {
+      await api.groups.remove(resource, [`~${contact.patp}`]);
+    }
+  }, [api, contact, association]);
 
   const avatar =
     contact?.avatar !== null && !hideAvatars ? (
-      <img src={contact.avatar} height={32} width={32} className="dib" />
+      <Image 
+        src={contact.avatar} 
+        height={32} 
+        width={32} 
+        display='inline-block'
+        style={{ objectFit: 'cover' }} 
+      />
     ) : (
       <Sigil ship={contact.patp} size={32} color={`#${color}`} />
     );
@@ -306,10 +313,12 @@ function Participant(props: {
 
   return (
     <>
+      <Row flexDirection={["column", "row"]} gapX="2" alignItems={["flex-start", "center"]} width="100%" justifyContent="space-between" height={["96px", "60px"]}>
+        <Row gapX="4" alignItems="center" height="100%">
       <Box>{avatar}</Box>
-      <Col justifyContent="center" gapY="1" height="100%" minWidth='0'>
+      <Col alignItems="self-start" justifyContent="center" gapY="1" height="100%" minWidth='0'>
         {hasNickname && (
-          <Row minWidth='0' flexShrink='1'>
+          <Row minWidth='0' flexShrink={1}>
           <TruncText title={contact.nickname} color="black">
             {contact.nickname}
           </TruncText>
@@ -319,10 +328,12 @@ function Participant(props: {
           {cite(contact.patp)}
         </Text>
       </Col>
+    </Row>
       <Row
         justifyContent="space-between"
-        gridColumn={['1 / 3', 'auto']}
+        width={["100%", "128px"]}
         alignItems="center"
+        gapX="4"
       >
         <Col>
           <Text color="lightGray" mb="1">
@@ -381,21 +392,19 @@ function Participant(props: {
           <Icon display="block" icon="Ellipsis" />
         </Dropdown>
       </Row>
+    </Row>
       <Box
         borderBottom={1}
         borderBottomColor="washedGray"
-        gridColumn={['1 / 3', '1 / 4']}
+        width="100%"
       />
-    </>
+  </>
   );
 }
 
 function BlankParticipant({ length }) {
+  const height = [`${length * 97}px`, `${length * 61}px`];
   return (
-    <Box
-      gridRow={[`auto / span ${3 * length}`, `auto / span ${2 * length}`]}
-      gridColumn={['1 / 3', '1 / 4']}
-      height="100%"
-    />
+    <Box width="100%" height={height} />
   );
 }

@@ -3,17 +3,22 @@ import f from 'lodash/fp';
 import create, { State }  from 'zustand';
 import { persist } from 'zustand/middleware';
 import produce from 'immer';
-import { BackgroundConfig, RemoteContentPolicy, TutorialProgress, tutorialProgress } from '~/types/local-update';
+import { BackgroundConfig, RemoteContentPolicy, TutorialProgress, tutorialProgress, LeapCategories } from "~/types/local-update";
 
-export interface LocalState extends State {
+
+export interface LocalState {
+  theme: "light" | "dark" | "auto";
   hideAvatars: boolean;
   hideNicknames: boolean;
   remoteContentPolicy: RemoteContentPolicy;
   tutorialProgress: TutorialProgress;
+  hideGroups: boolean;
+  hideUtilities: boolean;
   tutorialRef: HTMLElement | null,
   hideTutorial: () => void;
   nextTutStep: () => void;
   prevTutStep: () => void;
+  hideLeapCats: LeapCategories[];
   setTutorialRef: (el: HTMLElement | null) => void;
   dark: boolean;
   background: BackgroundConfig;
@@ -21,15 +26,22 @@ export interface LocalState extends State {
   suspendedFocus?: HTMLElement;
   toggleOmnibox: () => void;
   set: (fn: (state: LocalState) => void) => void
-}
+};
+
+type LocalStateZus = LocalState & State;
+
 export const selectLocalState =
   <K extends keyof LocalState>(keys: K[]) => f.pick<LocalState, K>(keys);
 
-const useLocalState = create<LocalState>(persist((set, get) => ({
+const useLocalState = create<LocalStateZus>(persist((set, get) => ({
   dark: false,
   background: undefined,
+  theme: "auto",
   hideAvatars: false,
   hideNicknames: false,
+  hideLeapCats: [],
+  hideGroups: false,
+  hideUtilities: false,
   tutorialProgress: 'hidden',
   tutorialRef: null,
   setTutorialRef: (el: HTMLElement | null) => set(produce((state) => {

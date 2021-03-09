@@ -79,7 +79,7 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
 
     props.deleteMessage();
 
-    props.api.graph.addPost(ship,name, post);
+    props.api.graph.addPost(ship, name, post);
   }
 
   uploadSuccess(url) {
@@ -129,9 +129,16 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
 
     const avatar = (
         props.ourContact &&
-        ((props.ourContact.avatar !== null) && !props.hideAvatars)
+        ((props.ourContact?.avatar) && !props.hideAvatars)
       )
-      ? <BaseImage src={props.ourContact.avatar} height={16} width={16} className="dib" />
+      ? <BaseImage
+          src={props.ourContact.avatar}
+          height={16}
+          width={16}
+          style={{ objectFit: 'cover' }}
+          borderRadius={1}
+          display='inline-block'
+        />
       : <Sigil
         ship={window.ship}
         size={16}

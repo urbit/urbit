@@ -8,10 +8,11 @@ import { HoverBoxLink } from '~/views/components/HoverBox';
 import { Sigil } from '~/logic/lib/sigil';
 import { getModuleIcon, getItemTitle, uxToHex } from '~/logic/lib/util';
 import { useTutorialModal } from '~/views/components/useTutorialModal';
-import useLocalState from '~/logic/state/local';
 import { TUTORIAL_HOST, TUTORIAL_GROUP } from '~/logic/lib/tutorialModal';
 import { SidebarAppConfigs, SidebarItemStatus } from './types';
 import { Workspace } from '~/types/workspace';
+import useSettingsState, { selectCalmState } from '~/logic/state/settings';
+
 
 function SidebarItemIndicator(props: { status?: SidebarItemStatus }) {
   switch (props.status) {
@@ -48,7 +49,7 @@ export function SidebarItem(props: {
   useTutorialModal(
     mod as any,
     groupPath === `/ship/${TUTORIAL_HOST}/${TUTORIAL_GROUP}`,
-    anchorRef.current
+    anchorRef
   );
   const app = apps[appName];
   const isUnmanaged = groups?.[groupPath]?.hidden || false;
@@ -56,9 +57,8 @@ export function SidebarItem(props: {
     return null;
   }
   const DM = (isUnmanaged && props.workspace?.type === 'messages');
-  const { hideAvatars, hideNicknames } = useLocalState(({ hideAvatars, hideNicknames }) => ({
-    hideAvatars, hideNicknames
-  }));
+  const { hideAvatars, hideNicknames } = useSettingsState(selectCalmState);
+
   const itemStatus = app.getStatus(path);
   const hasUnread = itemStatus === 'unread' || itemStatus === 'mention';
 

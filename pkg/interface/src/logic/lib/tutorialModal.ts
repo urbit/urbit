@@ -12,6 +12,7 @@ export const TUTORIAL_GROUP = process.env.TUTORIAL_GROUP!;
 export const TUTORIAL_CHAT = process.env.TUTORIAL_CHAT!;
 export const TUTORIAL_BOOK = process.env.TUTORIAL_BOOK!;
 export const TUTORIAL_LINKS = process.env.TUTORIAL_LINKS!;
+export const TUTORIAL_GROUP_RESOURCE = `/ship/${TUTORIAL_HOST}/${TUTORIAL_GROUP}` ;
 
 interface StepDetail {
   title: string;
@@ -26,7 +27,7 @@ interface StepDetail {
 
 export function hasTutorialGroup(props: { associations: Associations }) {
   return (
-    `/ship/${TUTORIAL_HOST}/${TUTORIAL_GROUP}` in props.associations.groups
+    TUTORIAL_GROUP_RESOURCE in props.associations.groups
   );
 }
 
@@ -90,7 +91,7 @@ export const progressDetails: Record<TutorialProgress, StepDetail> = {
     alignY: 'top',
     arrow: 'East',
     offsetX: MODAL_WIDTH + 24,
-    offsetY: MODAL_HEIGHT / 2 - 8
+    offsetY: 80,
   },
   channels: {
     title: 'Channels',
@@ -106,7 +107,7 @@ export const progressDetails: Record<TutorialProgress, StepDetail> = {
   chat: {
     title: 'Chat',
     description:
-      'Chat channels are for messaging within your group. Direct Messages are also supported, and are accessible from the “DMs” tile on the homescreen',
+      'Chat channels are for messaging within your group. Direct Messages can be accessed from Messages in the top right',
     url: `/~landscape/ship/${TUTORIAL_HOST}/${TUTORIAL_GROUP}/resource/chat/ship/${TUTORIAL_HOST}/${TUTORIAL_CHAT}`,
     alignY: 'top',
     arrow: 'North',
@@ -143,7 +144,7 @@ export const progressDetails: Record<TutorialProgress, StepDetail> = {
     alignY: 'top',
     alignX: 'left',
     arrow: 'North',
-    offsetX: (MODAL_WIDTH / 2) - 16,
+    offsetX: 0,
     offsetY: -48
   },
   profile: {
@@ -155,17 +156,17 @@ export const progressDetails: Record<TutorialProgress, StepDetail> = {
     alignX: 'right',
     arrow: 'South',
     offsetX: -300 + MODAL_WIDTH / 2,
-    offsetY: -120 + MODAL_HEIGHT / 2
+    offsetY: -4,
   },
   leap: {
     title: 'Leap',
     description:
       'Leap allows you to go to a specific channel, message, collection, profile or group simply by typing in a command or selecting a shortcut from the dropdown menu.',
     url: `/~profile/~${window.ship}`,
-    alignY: 'top',
-    alignX: 'left',
-    arrow: 'North',
-    offsetX: 0.3 *MODAL_HEIGHT,
-    offsetY: -48
-  }
+    alignY: "top",
+    alignX: "left",
+    arrow: "North",
+    offsetX: 76,
+    offsetY: -48,
+  },
 };

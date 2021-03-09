@@ -8,7 +8,6 @@ import { Box, Col, Text, Row } from '@tlon/indigo-react';
 import { Body } from '~/views/components/Body';
 import { PropFunc } from '~/types/util';
 import Inbox from './inbox';
-import NotificationPreferences from './preferences';
 import { Dropdown } from '~/views/components/Dropdown';
 import { FormikOnBlur } from '~/views/components/FormikOnBlur';
 import GroupSearch from '~/views/components/GroupSearch';
@@ -52,7 +51,7 @@ export default function NotificationsScreen(props: any): ReactElement {
           .map(g => props.associations?.groups?.[g]?.metadata?.title)
     .join(', ');
   const anchorRef = useRef<HTMLElement | null>(null);
-  useTutorialModal('notifications', true, anchorRef.current);
+  useTutorialModal('notifications', true, anchorRef);
   return (
     <Switch>
       <Route
@@ -75,19 +74,8 @@ export default function NotificationsScreen(props: any): ReactElement {
                     borderBottom="1"
                     borderBottomColor="washedGray"
                   >
-                    <Text>Updates</Text>
-                    <Row>
-                      <Box>
-                        <HeaderLink ref={anchorRef} current={view} view="">
-                          Inbox
-                        </HeaderLink>
-                      </Box>
-                      <Box>
-                        <HeaderLink current={view} view="preferences">
-                          Preferences
-                        </HeaderLink>
-                      </Box>
-                    </Row>
+
+                    <Text ref={anchorRef}>Notifications</Text>
                     <Row
                       justifyContent="space-between"
                     >
@@ -137,13 +125,6 @@ export default function NotificationsScreen(props: any): ReactElement {
                       </Dropdown>
                     </Row>
                   </Row>
-                  {view === 'preferences' && (
-                    <NotificationPreferences
-                      graphConfig={props.notificationsGraphConfig}
-                      api={props.api}
-                      dnd={props.doNotDisturb}
-                    />
-                  )}
                   {!view && <Inbox {...props} filter={filter.groups} />}
                 </Col>
               </Body>

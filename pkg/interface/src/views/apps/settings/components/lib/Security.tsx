@@ -1,41 +1,62 @@
-import React from 'react';
-import { Box, Button } from '@tlon/indigo-react';
+import React, { useState } from "react";
+import {
+  Box,
+  Text,
+  Button,
+  Col,
+  StatelessCheckboxField,
+} from "@tlon/indigo-react";
 
-import GlobalApi from '../../../../api/global';
+import GlobalApi from "~/logic/api/global";
+import { BackButton } from "./BackButton";
 
 interface SecuritySettingsProps {
   api: GlobalApi;
 }
 
 export default function SecuritySettings({ api }: SecuritySettingsProps) {
+  const [allSessions, setAllSessions] = useState(false);
   return (
-    <Box display="grid" gridTemplateRows="auto" gridTemplateColumns="1fr" gridRowGap={2}>
-      <Box color="black" fontSize={1} mb={4} fontWeight={900}>
-        Security
-      </Box>
-      <Box color="black" fontSize={0} fontWeight={700}>
-        Log out of this session
-      </Box>
-      <Box fontSize={0} mt={2} color="gray">
-        You will be logged out of your Urbit on this browser.
+    <>
+    <BackButton/>
+    <Col gapY="5" p="5" pt="4">
+      <Col gapY="1" mt="0">
+        <Text fontSize={2} fontWeight="medium">
+          Security Preferences
+        </Text>
+        <Text gray>
+          Manage sessions, login credentials and Landscape access
+        </Text>
+      </Col>
+      <Col gapY="1">
+        <Text color="black">
+          Log out of this session
+        </Text>
+        <Text mb="3" gray>
+          {allSessions
+            ? "You will be logged out of all browsers that have currently logged into your Urbit."
+            : "You will be logged out of your Urbit on this browser."}
+        </Text>
+        <StatelessCheckboxField
+          mb="3"
+          selected={allSessions}
+          onChange={() => setAllSessions((s) => !s)}
+        >
+          <Text>Log out of all sessions</Text>
+        </StatelessCheckboxField>
         <form method="post" action="/~/logout">
-          <Button mt='4' border={1} style={{ cursor: 'pointer' }}>
+          {allSessions && <input type="hidden" name="all" />}
+          <Button
+            primary
+            destructive
+            border={1}
+            style={{ cursor: "pointer" }}
+          >
             Logout
           </Button>
         </form>
-      </Box>
-      <Box color="black" fontSize={0} mt={4} fontWeight={700}>
-        Log out of all sessions
-      </Box>
-      <Box fontSize={0} mt={2} color="gray">
-        You will be logged out of all browsers that have currently logged into your Urbit.
-        <form method="post" action="/~/logout">
-          <input type="hidden" name="all" />
-          <Button destructive mt={4} border={1} style={{ cursor: 'pointer' }}>
-            Logout
-          </Button>
-        </form>
-      </Box>
-    </Box>
+      </Col>
+    </Col>
+    </>
   );
 }

@@ -56,22 +56,27 @@
 ++  on-arvo   on-arvo:def
 ++  on-fail   on-fail:def
 ::
-++  should-proxy-update
-  |=  =vase
-  =+  !<(=update:store vase)
+++  transform-proxy-update
+  |=  vas=vase
+  ^-  (unit vase)
+  =/  =update:store  !<(update:store vas)
   ?.  ?=(?(%add %remove) -.update)
-    %.n
+    ~
   =/  role=(unit (unit role-tag))
     (role-for-ship:grp group.update src.bowl)
   =/  =metadatum:store
     (need (peek-metadatum:met %groups group.update))
-  ?~  role  %.n
+  ?~  role  ~
   ?^  u.role  
-    ?=(?(%admin %moderator) u.u.role)
-  ?.  ?=(%add -.update)  %.n
-  ?&  =(src.bowl entity.resource.resource.update)
-      ?=(%member-metadata vip.metadatum)
-  ==
+    ?:  ?=(?(%admin %moderator) u.u.role)
+      `vas
+    ~
+  ?.  ?=(%add -.update)  ~
+  ?:  ?&  =(src.bowl entity.resource.resource.update)
+          ?=(%member-metadata vip.metadatum)
+      ==
+    `vas
+  ~
 ::
 ++  resource-for-update  resource-for-update:met
 ++  take-update
