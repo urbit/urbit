@@ -102,7 +102,7 @@ const mapifyChildren = (children) => {
     }));
 };
 
-const pendingIndices = (json, state) => {
+const pendingIndices = (json, state: GraphState): GraphState => {
   const data = _.get(json, 'pending-indices', false);
   if (data) {
     Object.keys(data).forEach((key) => {

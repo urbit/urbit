@@ -8,7 +8,7 @@ import { StoreState } from '~/logic/store/type';
 import { RouteComponentProps } from 'react-router-dom';
 
 import { LinkItem } from './components/LinkItem';
-import { LinkWindow } from './LinkWindow';
+import LinkWindow from './LinkWindow';
 import { Comments } from '~/views/components/Comments';
 
 import './css/custom.css';

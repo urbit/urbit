@@ -5,6 +5,7 @@ import { BaseState, createState } from "./base";
 export interface GraphState extends BaseState<GraphState> {
   graphs: Graphs;
   graphKeys: Set<string>;
+  pendingIndices: Record<string, any>;
   // getKeys: () => Promise<void>;
   // getTags: () => Promise<void>;
   // getTagQueries: () => Promise<void>;
@@ -19,6 +20,7 @@ export interface GraphState extends BaseState<GraphState> {
 const useGraphState = createState<GraphState>('Graph', {
   graphs: {},
   graphKeys: new Set(),
+  pendingIndices: {},
   // getKeys: async () => {
   //   const api = useApi();
   //   const keys = await api.scry({
