@@ -100,8 +100,6 @@ export default class GlobalStore extends BaseStore<StoreState> {
       notificationsCount: 0,
       settings: {},
       pendingJoin: {},
-      pendingIndices: {},
-      graphHashMap: {},
       graphTimesentMap: {}
     };
   }
