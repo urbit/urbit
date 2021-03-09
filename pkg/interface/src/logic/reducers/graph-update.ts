@@ -6,13 +6,15 @@ import { reduceState } from '../state/base';
 
 export const GraphReducer = (json) => {
   const data = _.get(json, 'graph-update', false);
+  
   if (data) {
     reduceState<GraphState, any>(useGraphState, data, [
       keys,
       addGraph,
       removeGraph,
       addNodes,
-      removeNodes
+      removeNodes,
+      pendingIndices
     ]);
   }
 };
@@ -100,7 +102,17 @@ const mapifyChildren = (children) => {
     }));
 };
 
-const addNodes = (json, state: GraphState): GraphState => {
+const pendingIndices = (json, state) => {
+  const data = _.get(json, 'pending-indices', false);
+  if (data) {
+    Object.keys(data).forEach((key) => {
+      state.pendingIndices[data[key]] = key;
+    });
+  }
+  return state;
+};
+
+const addNodes = (json, state) => {
   const _addNode = (graph, index, node) => {
     //  set child of graph
     if (index.length === 1) {
@@ -119,6 +131,36 @@ const addNodes = (json, state: GraphState): GraphState => {
     return graph;
   };
 
+  const _remove = (graph, index) => {
+    if (index.length === 1) {
+      graph.delete(index[0]);
+    } else {
+      const child = graph.get(index[0]);
+      if (child) {
+        child.children = _remove(child.children, index.slice(1));
+        graph.set(index[0], child);
+      }
+    }
+
+    return graph;
+  };
+
+  const _removePending = (graph, post) => {
+    if (post.hash && state.pendingIndices[post.hash]) {
+      let index = state.pendingIndices[post.hash];
+
+      if (index.split('/').length === 0) { return; }
+      let indexArr = index.split('/').slice(1).map((ind) => {
+        return bigInt(ind);
+      });
+
+      graph = _remove(graph, indexArr);
+      delete state.pendingIndices[post.hash];
+    }
+    
+    return graph;
+  };
+
   const data = _.get(json, 'add-nodes', false);
   if (data) {
     if (!('graphs' in state)) { return state; }
@@ -128,11 +170,22 @@ const addNodes = (json, state: GraphState): GraphState => {
       state.graphs[resource] = new BigIntOrderedMap();
     }
     state.graphKeys.add(resource);
+    
+    let indices = Array.from(Object.keys(data.nodes));
 
-    for (let index in data.nodes) {
+    indices.sort((a, b) => {
+      let aArr = a.split('/');
+      let bArr = b.split('/');
+      return bArr.length < aArr.length;
+    });
+
+    let graph = state.graphs[resource];
+
+    indices.forEach((index) => {
       let node = data.nodes[index];
-      if (index.split('/').length === 0) { return state; }
+      graph = _removePending(graph, node.post);
 
+      if (index.split('/').length === 0) { return; }
       index = index.split('/').slice(1).map((ind) => {
         return bigInt(ind);
       });
@@ -140,14 +193,15 @@ const addNodes = (json, state: GraphState): GraphState => {
       if (index.length === 0) { return state; }
 
       node.children = mapifyChildren(node?.children || {});
-
-      
-      state.graphs[resource] = _addNode(
-        state.graphs[resource],
+     
+      graph = _addNode(
+        graph,
         index,
         node
       );
-    }
+    });
+
+    state.graphs[resource] = graph;
   }
   return state;
 };
@@ -158,10 +212,13 @@ const removeNodes = (json, state: GraphState): GraphState => {
         graph.delete(index[0]);
       } else {
         const child = graph.get(index[0]);
-        _remove(child.children, index.slice(1));
-        graph.set(index[0], child);
+        if (child) {
+          _remove(child.children, index.slice(1));
+          graph.set(index[0], child);
+        }
       }
   };
+
   const data = _.get(json, 'remove-nodes', false);
   if (data) {
     const { ship, name } = data.resource;

@@ -20,6 +20,10 @@ import VirtualScroller from '~/views/components/VirtualScroller';
 
 import ChatMessage, { MessagePlaceholder } from './ChatMessage';
 import { UnreadNotice } from './unread-notice';
+import withState from '~/logic/lib/withState';
+import useGroupState from '~/logic/state/group';
+import useMetadataState from '~/logic/state/metadata';
+import useGraphState from '~/logic/state/graph';
 
 const INITIAL_LOAD = 20;
 const DEFAULT_BACKLOG_SIZE = 100;
@@ -49,7 +53,7 @@ interface ChatWindowState {
 
 const virtScrollerStyle = { height: '100%' };
 
-export default class ChatWindow extends Component<
+class ChatWindow extends Component<
   ChatWindowProps,
   ChatWindowState
 > {
@@ -271,7 +275,9 @@ export default class ChatWindow extends Component<
       group,
       graph,
       history,
-      associations
+      groups,
+      associations,
+      pendingSize
     } = this.props;
 
     const unreadMarkerRef = this.unreadMarkerRef;
@@ -311,6 +317,7 @@ export default class ChatWindow extends Component<
           onScroll={this.onScroll}
           data={graph}
           size={graph.size}
+          pendingSize={pendingSize}
           id={association.resource}
           averageHeight={22}
           renderer={this.renderer}
@@ -320,3 +327,9 @@ export default class ChatWindow extends Component<
     );
   }
 }
+
+export default withState(ChatWindow, [
+  [useGroupState, ['groups']],
+  [useMetadataState, ['associations']],
+  [useGraphState, ['pendingSize']]
+]);

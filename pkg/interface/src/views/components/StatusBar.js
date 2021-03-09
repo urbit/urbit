@@ -116,9 +116,9 @@ const StatusBar = (props) => {
           alignY="top"
           alignX="right"
           flexShrink={'0'}
+          offsetY={-48}
           options={
             <Col
-              mt='6'
               p='1'
               backgroundColor="white"
               color="washedGray"

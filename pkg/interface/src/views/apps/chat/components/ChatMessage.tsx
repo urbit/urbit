@@ -237,7 +237,10 @@ export const MessageAuthor = ({
   scrollWindow,
   ...rest
 }) => {
-  const dark = useLocalState((state) => state.dark);
+  const osDark = useLocalState((state) => state.dark);
+
+  const theme = useSettingsState(s => s.display.theme);
+  const dark = theme === 'dark' || (theme === 'auto' && osDark);
   const contacts = useContactState(state => state.contacts);
 
   const datestamp = moment

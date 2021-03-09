@@ -156,7 +156,7 @@ export const progressDetails: Record<TutorialProgress, StepDetail> = {
     alignX: 'right',
     arrow: 'South',
     offsetX: -300 + MODAL_WIDTH / 2,
-    offsetY: -60,
+    offsetY: -4,
   },
   leap: {
     title: 'Leap',

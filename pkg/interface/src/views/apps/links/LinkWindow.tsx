@@ -16,6 +16,8 @@ import { LinkItem } from "./components/LinkItem";
 import LinkSubmit from "./components/LinkSubmit";
 import { isWriter } from "~/logic/lib/group";
 import { StorageState } from "~/types";
+import withState from "~/logic/lib/withState";
+import useGraphState from "~/logic/state/graph";
 
 interface LinkWindowProps {
   association: Association;
@@ -27,6 +29,7 @@ interface LinkWindowProps {
   group: Group;
   path: string;
   api: GlobalApi;
+  pendingIndices: Record<string, any>;
 }
 
 const style = {
@@ -37,7 +40,7 @@ const style = {
   alignItems: "center",
 };
 
-export class LinkWindow extends Component<LinkWindowProps, {}> {
+class LinkWindow extends Component<LinkWindowProps, {}> {
   fetchLinks = async () => true;
 
   canWrite() {
@@ -124,6 +127,7 @@ export class LinkWindow extends Component<LinkWindowProps, {}> {
           data={graph}
           averageHeight={100}
           size={graph.size}
+          pendingSize={Object.keys(this.props.pendingIndices).length}
           renderer={this.renderItem}
           loadRows={this.fetchLinks}
         />
@@ -131,3 +135,7 @@ export class LinkWindow extends Component<LinkWindowProps, {}> {
     );
   }
 }
+
+export default withState(LinkWindow, [
+  [useGraphState, ['pendingIndices']]
+]);

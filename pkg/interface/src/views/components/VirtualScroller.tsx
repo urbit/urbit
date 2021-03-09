@@ -50,6 +50,8 @@ interface VirtualScrollerProps<T> {
   onStartReached?(): void;
   onEndReached?(): void;
   size: number;
+  pendingSize: number;
+  totalSize: number;
   /**
    * Average height of a single rendered item
    *
@@ -151,12 +153,14 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
   }
 
   componentDidMount() {
-    if(true) {
-      this.updateVisible(0);
-      this.resetScroll();
-      this.loadRows(false);
-      return;
+    if(this.props.size < 100) {
+      this.loaded.top = true;
+      this.loaded.bottom = true;
     }
+      
+    this.updateVisible(0);
+    this.resetScroll();
+    this.loadRows(false);
   }
 
   // manipulate scrollbar manually, to dodge change detection
@@ -178,9 +182,10 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
 
 
   componentDidUpdate(prevProps: VirtualScrollerProps<T>, _prevState: VirtualScrollerState<T>) {
-    const { id, size, data, offset } = this.props;
+    const { id, size, data, offset, pendingSize } = this.props;
     const { visibleItems } = this.state;
-    if(size !== prevProps.size) {
+
+    if(size !== prevProps.size || pendingSize !== prevProps.pendingSize) {
       if(this.scrollLocked) {
         this.updateVisible(0);
         this.resetScroll();
@@ -200,7 +205,9 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     }
     const offset = [...this.props.data].findIndex(([i]) => i.eq(startIndex))
     if(offset === -1) {
-      throw new Error("a");
+      // TODO: revisit when we remove nodes for any other reason than
+      // pending indices being removed
+      return 0;
     }
     return offset;
   }
@@ -478,9 +485,8 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
 
     const transform = isTop ? 'scale3d(1, 1, 1)' : 'scale3d(1, -1, 1)';
 
-    const loaded = this.props.data.size > 0;
 
-    const atStart = loaded && this.props.data.peekLargest()?.[0].eq(visibleItems.peekLargest()?.[0] || bigInt.zero);
+    const atStart = (this.props.data.peekLargest()?.[0] ?? bigInt.zero).eq(visibleItems.peekLargest()?.[0] || bigInt.zero);
     const atEnd = this.loaded.top;
 
     return (

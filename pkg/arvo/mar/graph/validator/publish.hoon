@@ -25,10 +25,31 @@
   ::
   ++  notification-kind
     ?+  index.p.i   ~
-      [@ %1 %1 ~]    `[%note 0 %each %.n]
-      [@ %1 @ ~]     `[%edit-note 0 %none %.n]
-      [@ %2 @ %1 ~]  `[%comment 1 %count %.n]
-      [@ %2 @ @ ~]   `[%edit-comment 1 %none %.n]
+      [@ %1 %1 ~]    `[%note [0 1] %each %children]
+      [@ %1 @ ~]     `[%edit-note [0 1] %none %none]
+      [@ %2 @ %1 ~]  `[%comment [1 3] %count %siblings]
+      [@ %2 @ @ ~]   `[%edit-comment [1 3] %none %none]
+    ==
+  ::
+  ++  transform-add-nodes
+    |=  [=index =post =atom was-parent-modified=?]
+    ^-  [^index ^post]
+    =-  [- post(index -)]
+    ?+    index  ~|(transform+[index post] !!)
+        [@ ~]         [atom ~]
+        [@ %1 ~]      [atom %1 ~]
+    ::
+        [@ %1 @ ~]
+      ?:  was-parent-modified
+        [atom %1 i.t.t.index ~]
+      index
+    ::
+        [@ %2 ~]      [atom %2 ~]
+        [@ %2 @ ~]    [i.index %2 atom ~]
+        [@ %2 @ @ ~]
+      ?:  was-parent-modified
+        [i.index %2 atom i.t.t.t.index ~]
+      index
     ==
   --
 ++  grab
