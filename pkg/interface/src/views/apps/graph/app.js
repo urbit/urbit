@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, useHistory } from 'react-router-dom';
 import { Center, Text } from "@tlon/indigo-react";
 import { deSig } from '~/logic/lib/util';
 import useGraphState from '~/logic/state/graph';
@@ -8,13 +8,14 @@ import useMetadataState from '~/logic/state/metadata';
 const GraphApp = (props) => {
   const associations= useMetadataState(state => state.associations);
   const graphKeys = useGraphState(state => state.graphKeys);
+  const history = useHistory();
 
-  const { api } = this.props;
+  const { api } = props;
 
   return (
     <Switch>
       <Route exact path="/~graph/join/ship/:ship/:name/:module?"
-        render={ (props) => {
+        render={(props) => {
           const resource =
             `${deSig(props.match.params.ship)}/${props.match.params.name}`;
           const { ship, name } = props.match.params;
@@ -38,7 +39,7 @@ const GraphApp = (props) => {
           if(!graphKeys.has(resource)) {
             autoJoin();
           } else if(!!association) {
-            props.history.push(`/~landscape/home/resource/${association.metadata.module}${path}`);
+            history.push(`/~landscape/home/resource/${association.metadata.module}${path}`);
           }
           return (
             <Center width="100%" height="100%">
