@@ -237,6 +237,12 @@ export default class GraphApi extends BaseApi<StoreState> {
     action['add-nodes'].resource.ship =
       action['add-nodes'].resource.ship.slice(1);
 
+    this.store.handleEvent({ data: {
+      'graph-update': action
+    } });
+
+    return pendingPromise;
+    /* TODO: stop lying to our users about pending states
     return pendingPromise.then((pendingHashes) => {
       for (let index in action['add-nodes'].nodes) {
         action['add-nodes'].nodes[index].post.hash =
@@ -250,6 +256,7 @@ export default class GraphApi extends BaseApi<StoreState> {
         }
       } });
     });
+    */
   }
 
   removeNodes(ship: Patp, name: string, indices: string[]) {
