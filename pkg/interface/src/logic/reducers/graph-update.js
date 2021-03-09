@@ -58,12 +58,16 @@ const addGraph = (json, state) => {
 
     let resource = data.resource.ship + '/' + data.resource.name;
     state.graphs[resource] = new BigIntOrderedMap();
+    state.graphHashmap[resource] = {};
 
     for (let idx in data.graph) {
       let item = data.graph[idx];
       let index = bigInt(idx);
       
       let node = _processNode(item);
+      if (node.post.hash) {
+        state.graphHashmap[resource][node.post.hash] = true;
+      }
 
       state.graphs[resource].set(
         index,
@@ -140,7 +144,11 @@ const addNodes = (json, state) => {
   };
 
   const _removePending = (graph, post) => {
-    if (post.hash && state.pendingIndices[post.hash]) {
+    if (!post.hash) {
+      return graph;
+    }
+
+    if (state.pendingIndices[post.hash]) {
       let index = state.pendingIndices[post.hash];
 
       if (index.split('/').length === 0) { return; }
@@ -151,7 +159,7 @@ const addNodes = (json, state) => {
       graph = _remove(graph, indexArr);
       delete state.pendingIndices[post.hash];
     }
-    
+
     return graph;
   };
 
@@ -163,6 +171,11 @@ const addNodes = (json, state) => {
     if (!(resource in state.graphs)) { 
       state.graphs[resource] = new BigIntOrderedMap();
     }
+
+    if (!(resource in state.graphHashmap)) { 
+      state.graphHashmap[resource] = {};
+    }
+
     state.graphKeys.add(resource);
     
     let indices = Array.from(Object.keys(data.nodes));
@@ -178,21 +191,32 @@ const addNodes = (json, state) => {
     indices.forEach((index) => {
       let node = data.nodes[index];
       graph = _removePending(graph, node.post);
-
+      
       if (index.split('/').length === 0) { return; }
-      index = index.split('/').slice(1).map((ind) => {
+      let indexArr = index.split('/').slice(1).map((ind) => {
         return bigInt(ind);
       });
 
-      if (index.length === 0) { return; }
+      if (indexArr.length === 0) { return; }
+
+      if (node.post.hash) {
+        if (node.post.pending &&
+            node.post.hash in state.graphHashmap[resource]) {
+          return;
+        }
+
+        state.graphHashmap[resource][node.post.hash] = true;
+      }
+
 
       node.children = mapifyChildren(node?.children || {});
      
       graph = _addNode(
         graph,
-        index,
+        indexArr,
         node
       );
+      
     });
 
     state.graphs[resource] = graph;

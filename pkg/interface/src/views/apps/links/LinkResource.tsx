@@ -79,7 +79,7 @@ export function LinkResource(props: LinkResourceProps) {
                 baseUrl={resourceUrl}
                 group={group}
                 path={resource.group}
-                pendingSize={Object.keys(props.pendingIndices || {}).length}
+                pendingSize={Object.keys(pendingIndices || {}).length}
                 api={api}
                 mb={3}
               />
