@@ -386,14 +386,14 @@
         ::
         ?~  t.index
           =*  p  post.node
+          ?~  hash.p  node(signatures.post *signatures:store)
           =/  =validated-portion:store
             [parent-hash author.p time-sent.p contents.p]
           =/  =hash:store  `@ux`(sham validated-portion)
-          ?~  hash.p  node(signatures.post *signatures:store)
-          ~|  "signatures do not match the calculated hash"
-          ?>  (are-signatures-valid:sigs our.bowl signatures.p hash now.bowl)
           ~|  "hash of post does not match calculated hash"
           ?>  =(hash u.hash.p)
+          ~|  "signatures do not match the calculated hash"
+          ?>  (are-signatures-valid:sigs our.bowl signatures.p hash now.bowl)
           node
         ::  recurse children
         ::

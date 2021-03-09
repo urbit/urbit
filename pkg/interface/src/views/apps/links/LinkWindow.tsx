@@ -89,7 +89,7 @@ export class LinkWindow extends Component<LinkWindowProps, {}> {
   };
 
   render() {
-    const { graph, api, association, storage } = this.props;
+    const { graph, api, association, storage, pendingSize } = this.props;
     const first = graph.peekLargest()?.[0];
     const [, , ship, name] = association.resource.split("/");
     if (!first) {
@@ -129,6 +129,7 @@ export class LinkWindow extends Component<LinkWindowProps, {}> {
           data={graph}
           averageHeight={100}
           size={graph.size}
+          pendingSize={pendingSize}
           renderer={this.renderItem}
           loadRows={this.fetchLinks}
         />
