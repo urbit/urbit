@@ -45,7 +45,7 @@ export function InviteItem(props: InviteItemProps) {
       return;
     }
     if(resource in props.groups) {
-      await api.invite.accept(app, uid);
+      await api.invite.decline(app, uid);
       return;
     }
 
