@@ -278,7 +278,8 @@ export default class ChatWindow extends Component<
       graph,
       history,
       groups,
-      associations
+      associations,
+      pendingSize
     } = this.props;
 
     const unreadMarkerRef = this.unreadMarkerRef;
@@ -320,6 +321,7 @@ export default class ChatWindow extends Component<
           onScroll={this.onScroll}
           data={graph}
           size={graph.size}
+          pendingSize={pendingSize}
           id={association.resource}
           averageHeight={22}
           renderer={this.renderer}

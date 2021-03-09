@@ -33,6 +33,7 @@ export function LinkResource(props: LinkResourceProps) {
     associations,
     graphKeys,
     unreads,
+    pendingIndices,
     storage,
     history
   } = props;
@@ -78,6 +79,7 @@ export function LinkResource(props: LinkResourceProps) {
                 baseUrl={resourceUrl}
                 group={group}
                 path={resource.group}
+                pendingSize={Object.keys(props.pendingIndices || {}).length}
                 api={api}
                 mb={3}
               />
