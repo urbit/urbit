@@ -29,6 +29,10 @@ export function ProfileImages(props: any): ReactElement {
   const { contact, hideCover, ship } = { ...props };
   const hexColor = contact?.color ? `#${uxToHex(contact.color)}` : '#000000';
 
+  const anchorRef = useRef<HTMLElement | null>(null)
+
+  useTutorialModal('profile', ship === `~${window.ship}`, anchorRef);
+
   const cover =
     contact?.cover && !hideCover ? (
       <BaseImage
@@ -60,7 +64,7 @@ export function ProfileImages(props: any): ReactElement {
 
   return (
     <>
-      <Row width='100%' height='300px' position='relative'>
+      <Row ref={anchorRef} width='100%' height='300px' position='relative'>
         {cover}
         <Center position='absolute' width='100%' height='100%'>
           {props.children}
@@ -111,7 +115,7 @@ export function ProfileStatus(props: any): ReactElement {
   );
 }
 
-export function ProfileOwnControls(props: any): ReactElement {
+export function ProfileActions(props: any): ReactElement {
   const { ship, isPublic, contact, api } = { ...props };
   const history = useHistory();
   return (
@@ -137,7 +141,18 @@ export function ProfileOwnControls(props: any): ReactElement {
             contact={contact}
           />
         </>
-      ) : null}
+      ) : (
+        <>
+          <Text
+            py='2'
+            cursor='pointer'
+            fontWeight='500'
+            onClick={() => history.push(`/~landscape/dm/${ship.substring(1)}`)}
+          >
+            Message
+          </Text>
+        </>
+      )}
     </Row>
   );
 }
@@ -145,9 +160,6 @@ export function ProfileOwnControls(props: any): ReactElement {
 export function Profile(props: any): ReactElement {
   const history = useHistory();
 
-  if (!props.ship) {
-    return null;
-  }
   const { contact, nackedContacts, hasLoaded, isPublic, isEdit, ship } = props;
   const nacked = nackedContacts.has(ship);
   const formRef = useRef(null);
@@ -160,30 +172,14 @@ export function Profile(props: any): ReactElement {
 
   const anchorRef = useRef<HTMLElement | null>(null);
 
-  useTutorialModal('profile', ship === `~${window.ship}`, anchorRef);
+  if (!props.ship) {
+    return null;
+  }
 
-  const ViewInterface = () => {
-    return (
-      <Center p={[0, 4]} height='100%' width='100%'>
-        <Box ref={anchorRef} maxWidth='600px' width='100%' position='relative'>
-          <ViewProfile
-            nacked={nacked}
-            ship={ship}
-            contact={contact}
-            isPublic={isPublic}
-            api={props.api}
-            groups={props.groups}
-            associations={props.associations}
-          />
-        </Box>
-      </Center>
-    );
-  };
-
-  const EditInterface = () => {
-    return (
-      <Center p={[0, 4]} height='100%' width='100%'>
-        <Box ref={anchorRef} maxWidth='600px' width='100%' position='relative'>
+  return (
+    <Center p={[0, 4]} height='100%' width='100%'>
+      <Box maxWidth='600px' width='100%' position='relative'>
+        { isEdit ? (
           <EditProfile
             ship={ship}
             contact={contact}
@@ -193,10 +189,18 @@ export function Profile(props: any): ReactElement {
             associations={props.associations}
             isPublic={isPublic}
           />
-        </Box>
-      </Center>
-    );
-  };
-
-  return isEdit ? <EditInterface /> : <ViewInterface />;
+        ) : (
+          <ViewProfile
+            nacked={nacked}
+            ship={ship}
+            contact={contact}
+            isPublic={isPublic}
+            api={props.api}
+            groups={props.groups}
+            associations={props.associations}
+          />
+        )}
+      </Box>
+    </Center>
+  );
 }
