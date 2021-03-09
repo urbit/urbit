@@ -58,7 +58,9 @@ const addGraph = (json, state) => {
 
     let resource = data.resource.ship + '/' + data.resource.name;
     state.graphs[resource] = new BigIntOrderedMap();
-    state.graphHashmap[resource] = {};
+    state.graphHashMap[resource] = {};
+    state.graphTimesentMap[resource] = {};
+
 
     for (let idx in data.graph) {
       let item = data.graph[idx];
@@ -66,7 +68,7 @@ const addGraph = (json, state) => {
       
       let node = _processNode(item);
       if (node.post.hash) {
-        state.graphHashmap[resource][node.post.hash] = true;
+        state.graphHashMap[resource][node.post.hash] = true;
       }
 
       state.graphs[resource].set(
@@ -143,7 +145,7 @@ const addNodes = (json, state) => {
     return graph;
   };
 
-  const _removePending = (graph, post) => {
+  const _removePending = (graph, post, resource) => {
     if (!post.hash) {
       return graph;
     }
@@ -160,6 +162,18 @@ const addNodes = (json, state) => {
       delete state.pendingIndices[post.hash];
     }
 
+    if (state.graphTimesentMap[resource][post['time-sent']]) {
+      let index = state.graphTimesentMap[resource][post['time-sent']];
+
+      if (index.split('/').length === 0) { return; }
+      let indexArr = index.split('/').slice(1).map((ind) => {
+        return bigInt(ind);
+      });
+
+      graph = _remove(graph, indexArr);
+      delete state.graphTimesentMap[resource][post['time-sent']];
+    }
+
     return graph;
   };
 
@@ -172,8 +186,12 @@ const addNodes = (json, state) => {
       state.graphs[resource] = new BigIntOrderedMap();
     }
 
-    if (!(resource in state.graphHashmap)) { 
-      state.graphHashmap[resource] = {};
+    if (!(resource in state.graphHashMap)) { 
+      state.graphHashMap[resource] = {};
+    }
+
+    if (!(resource in state.graphTimesentMap)) {
+      state.graphTimesentMap[resource] = {};
     }
 
     state.graphKeys.add(resource);
@@ -190,7 +208,7 @@ const addNodes = (json, state) => {
 
     indices.forEach((index) => {
       let node = data.nodes[index];
-      graph = _removePending(graph, node.post);
+      graph = _removePending(graph, node.post, resource);
       
       if (index.split('/').length === 0) { return; }
       let indexArr = index.split('/').slice(1).map((ind) => {
@@ -201,13 +219,16 @@ const addNodes = (json, state) => {
 
       if (node.post.hash) {
         if (node.post.pending &&
-            node.post.hash in state.graphHashmap[resource]) {
+            node.post.hash in state.graphHashMap[resource]) {
           return;
         }
 
-        state.graphHashmap[resource][node.post.hash] = true;
+        state.graphHashMap[resource][node.post.hash] = true;
       }
 
+      if (node.post.pending) {
+        state.graphTimesentMap[resource][node.post['time-sent']] = index;
+      }
 
       node.children = mapifyChildren(node?.children || {});
      
