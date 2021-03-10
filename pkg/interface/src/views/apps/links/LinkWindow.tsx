@@ -1,21 +1,21 @@
-import React, { useRef, useCallback, useEffect, useMemo } from "react";
+import React, {
+  useRef,
+  useCallback,
+  useEffect,
+  useMemo,
+  Component,
+} from "react";
+
 import { Col, Text } from "@tlon/indigo-react";
-import bigInt from 'big-integer';
-import {
-  Association,
-  Graph,
-  Contacts,
-  Unreads,
-  LocalUpdateRemoteContentPolicy,
-  Group,
-  Rolodex,
-  S3State,
-} from "~/types";
+import bigInt from "big-integer";
+import { Association, Graph, Unreads, Group, Rolodex } from "@urbit/api";
+
 import GlobalApi from "~/logic/api/global";
 import VirtualScroller from "~/views/components/VirtualScroller";
 import { LinkItem } from "./components/LinkItem";
 import LinkSubmit from "./components/LinkSubmit";
-import {isWriter} from "~/logic/lib/group";
+import { isWriter } from "~/logic/lib/group";
+import { StorageState } from "~/types";
 
 interface LinkWindowProps {
   association: Association;
@@ -29,82 +29,111 @@ interface LinkWindowProps {
   group: Group;
   path: string;
   api: GlobalApi;
-  s3: S3State;
+  storage: StorageState;
 }
-export function LinkWindow(props: LinkWindowProps) {
-  const { graph, api, association } = props;
-  const loadedNewest = useRef(true);
-  const loadedOldest = useRef(false);
-  const virtualList = useRef<VirtualScroller>();
-  const fetchLinks = useCallback(
-    async (newer: boolean) => {
-      /* stubbed, should we generalize the display of graphs in virtualscroller? */
-    }, []
-  );
 
-  useEffect(() => {
-    const list = virtualList?.current;
-    if(!list) return;
-    list.calculateVisibleItems();
-  }, [graph.size]);
+const style = {
+  height: "100%",
+  width: "100%",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+};
 
-  const first = graph.peekLargest()?.[0];
-  const [,,ship, name] = association.resource.split('/');
-  const canWrite = isWriter(props.group, association.resource)
+export class LinkWindow extends Component<LinkWindowProps, {}> {
+  fetchLinks = async () => true;
 
-    const style = useMemo(() =>
-    ({
-      height: "100%",
-      width: "100%",
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center'
-    }), []);
+  canWrite() {
+    const { group, association } = this.props;
+    return isWriter(group, association.resource);
+  }
 
-  if (!first) {
-    return (
-      <Col key={0} mx="auto" mt="4" maxWidth="768px" width="100%" flexShrink={0} px={3}>
-        { canWrite ? (
-            <LinkSubmit s3={props.s3} name={name} ship={ship.slice(1)} api={api} />
+  renderItem = ({ index, scrollWindow }) => {
+    const { props } = this;
+    const { association, graph, api } = props;
+    const [, , ship, name] = association.resource.split("/");
+    const node = graph.get(index);
+    const first = graph.peekLargest()?.[0];
+    const post = node?.post;
+    if (!node || !post) {
+      return null;
+    }
+    const linkProps = {
+      ...props,
+      node,
+    };
+    if (this.canWrite() && index.eq(first ?? bigInt.zero)) {
+      return (
+        <React.Fragment key={index.toString()}>
+          <Col
+            key={index.toString()}
+            mx="auto"
+            mt="4"
+            maxWidth="768px"
+            width="100%"
+            flexShrink={0}
+            px={3}
+          >
+            <LinkSubmit
+              storage={props.storage}
+              name={name}
+              ship={ship.slice(1)}
+              api={api}
+            />
+          </Col>
+          <LinkItem {...linkProps} />
+        </React.Fragment>
+      );
+    }
+    return <LinkItem key={index.toString()} {...linkProps} />;
+  };
+
+  render() {
+    const { graph, api, association, storage, pendingSize } = this.props;
+    const first = graph.peekLargest()?.[0];
+    const [, , ship, name] = association.resource.split("/");
+    if (!first) {
+      return (
+        <Col
+          key={0}
+          mx="auto"
+          mt="4"
+          maxWidth="768px"
+          width="100%"
+          flexShrink={0}
+          px={3}
+        >
+          {this.canWrite() ? (
+            <LinkSubmit
+              storage={storage}
+              name={name}
+              ship={ship.slice(1)}
+              api={api}
+            />
           ) : (
-            <Text>There are no links here yet. You do not have permission to post to this collection.</Text>
-          )
-        }
+            <Text>
+              There are no links here yet. You do not have permission to post to
+              this collection.
+            </Text>
+          )}
+        </Col>
+      );
+    }
+
+    return (
+      <Col width="100%" height="100%" position="relative">
+        <VirtualScroller
+          origin="top"
+          offset={0}
+          style={style}
+          data={graph}
+          averageHeight={100}
+          size={graph.size}
+          pendingSize={pendingSize}
+          renderer={this.renderItem}
+          loadRows={this.fetchLinks}
+        />
       </Col>
     );
   }
-
-  return (
-    <VirtualScroller
-      ref={(l) => (virtualList.current = l ?? undefined)}
-      origin="top"
-      style={style}
-      onStartReached={() => {}}
-      onScroll={() => {}}
-      data={graph}
-      size={graph.size}
-      renderer={({ index, measure, scrollWindow }) => {
-        const node = graph.get(index);
-        const post = node?.post;
-        if (!node || !post) return null;
-        const linkProps = {
-          ...props,
-          node,
-          measure,
-        };
-        if(canWrite && index.eq(first ?? bigInt.zero)) {
-          return (
-            <React.Fragment key={index.toString()}>
-            <Col key={index.toString()} mx="auto" mt="4" maxWidth="768px" width="100%" flexShrink={0} px={3}>
-              <LinkSubmit s3={props.s3} name={name} ship={ship.slice(1)} api={api} />
-            </Col>
-              <LinkItem {...linkProps} />
-            </React.Fragment>
-          )
-        }
-        return <LinkItem key={index.toString()} {...linkProps} />;
-      }}
-      loadRows={fetchLinks}
-    />
-  );
 }

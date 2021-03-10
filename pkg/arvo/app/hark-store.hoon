@@ -23,6 +23,7 @@
       state-2
       state-3
       state-4
+      state-5
   ==
 +$  unread-stats
   [indices=(set index:graph-store) last=@da]
@@ -46,8 +47,11 @@
 +$  state-4
   [%4 base-state]
 ::
++$  state-5
+  [%5 base-state]
+::
 +$  inflated-state
-  $:  state-4
+  $:  state-5
       cache
   ==
 ::  $cache: useful to have precalculated, but can be derived from state
@@ -88,9 +92,18 @@
   =|  cards=(list card)
   |^  
   ?-  -.old
-      %4  
+      %5  
     :-  (flop cards)
     this(-.state old, +.state (inflate-cache:ha old))
+    ::
+      %4
+    %_  $
+      -.old  %5
+      ::
+        last-seen.old
+      %-  ~(run by last-seen.old)
+      |=(old=@da (min old now.bowl))
+    ==
     ::
       %3
     %_  $
@@ -279,7 +292,6 @@
     %+  turn
       ~(tap by unreads-count)
     |=  [=stats-index:store count=@ud]
-    ?>  ?=(%graph -.stats-index)
     :*  stats-index
         ~(wyt in (~(gut by by-index) stats-index ~))
         [%count count]
@@ -297,10 +309,27 @@
         (~(gut by last-seen) stats-index *time)
     ==
   ::
+  ++  give-group-unreads
+    ^-  (list [stats-index:store stats:store])
+    %+  murn  ~(tap by by-index)
+    |=  [=stats-index:store nots=(set [time index:store])]
+    ?.  ?=(%group -.stats-index)
+      ~
+    :-  ~
+    :*  stats-index
+        ~(wyt in nots)
+        [%count 0]
+        *time
+    ==
+  ::
   ++  give-unreads
     ^-  update:store
     :-  %unreads
-    (weld give-each-unreads give-since-unreads)
+    ;:  weld 
+      give-each-unreads 
+      give-since-unreads
+      give-group-unreads
+    ==
   --
 ::
 ++  on-peek   
@@ -749,8 +778,10 @@
   ==
 ::
 ++  inflate-cache
-  |=  state-4
+  |=  state-5
   ^+  +.state
+  =.  +.state
+    *cache
   =/  nots=(list [p=@da =timebox:store])
     (tap:orm notifications)
   |-  =*  outer  $

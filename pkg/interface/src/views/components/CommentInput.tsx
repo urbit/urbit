@@ -1,15 +1,15 @@
-import React from "react";
-import * as Yup from "yup";
-import { Formik, FormikHelpers, Form, useFormikContext } from "formik";
-import { AsyncButton } from "./AsyncButton";
-import { ManagedTextAreaField as TextArea } from "@tlon/indigo-react";
+import React from 'react';
+import * as Yup from 'yup';
+import { Formik, FormikHelpers, Form, useFormikContext } from 'formik';
+import { AsyncButton } from './AsyncButton';
+import { ManagedTextAreaField as TextArea } from '@tlon/indigo-react';
 
 interface FormSchema {
   comment: string;
 }
 
 const formSchema = Yup.object({
-  comment: Yup.string().required("Comment can't be empty"),
+  comment: Yup.string().required('Comment can\'t be empty')
 });
 
 interface CommentInputProps {
@@ -25,7 +25,7 @@ interface CommentInputProps {
 const SubmitTextArea = (props) => {
   const { submitForm } = useFormikContext<FormSchema>();
   const onKeyDown = (e: KeyboardEvent) => {
-    if ((e.getModifierState("Control") || e.metaKey) && e.key === "Enter") {
+    if ((e.getModifierState('Control') || e.metaKey) && e.key === 'Enter') {
       submitForm();
     }
   };
@@ -33,20 +33,22 @@ const SubmitTextArea = (props) => {
 };
 
 export default function CommentInput(props: CommentInputProps) {
-  const initialValues: FormSchema = { comment: props.initial || "" };
-  const label = props.label || "Add Comment";
-  const loading = props.loadingText || "Commenting...";
+  const initialValues: FormSchema = { comment: props.initial || '' };
+  const label = props.label || 'Add Comment';
+  const loading = props.loadingText || 'Commenting...';
 
   return (
     <Formik
       validationSchema={formSchema}
       onSubmit={props.onSubmit}
       initialValues={initialValues}
+      validateOnBlur={false}
+      validateOnChange={false}
     >
       <Form>
         <SubmitTextArea
           id="comment"
-          placeholder={props.placeholder || ""}
+          placeholder={props.placeholder || ''}
         />
         <AsyncButton mt={2} loadingText={loading} border type="submit">
           {label}

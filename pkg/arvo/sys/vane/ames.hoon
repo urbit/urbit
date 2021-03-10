@@ -829,10 +829,17 @@
     ::  lifecycle arms; mostly pass-throughs to the contained adult ames
     ::
     ++  scry  scry:adult-core
-    ++  stay  [%4 %larva queued-events ames-state.adult-gate]
+    ++  stay  [%5 %larva queued-events ames-state.adult-gate]
     ++  load
       |=  $=  old
           $%  $:  %4
+              $%  $:  %larva
+                      events=(qeu queued-event)
+                      state=_ames-state.adult-gate
+                  ==
+                  [%adult state=_ames-state.adult-gate]
+              ==  ==
+              $:  %5
               $%  $:  %larva
                       events=(qeu queued-event)
                       state=_ames-state.adult-gate
@@ -847,6 +854,14 @@
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  queued-events  events.old
         =.  adult-gate     (load:adult-core %4 state.old)
+        larval-gate
+      ::
+          [%5 %adult *]  (load:adult-core %5 state.old)
+      ::
+          [%5 %larva *]
+        ~>  %slog.1^leaf/"ames: larva: load"
+        =.  queued-events  events.old
+        =.  adult-gate     (load:adult-core %5 state.old)
         larval-gate
       ==
     --
@@ -919,13 +934,38 @@
   [moves ames-gate]
 ::  +stay: extract state before reload
 ::
-++  stay  [%4 %adult ames-state]
+++  stay  [%5 %adult ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load
-  |=  old-state=[%4 ^ames-state]
+  |=  $=  old-state
+      $%  [%4 ^ames-state]
+          [%5 ^ames-state]
+      ==
+  |^
   ^+  ames-gate
+  =?  old-state  ?=(%4 -.old-state)  %5^(state-4-to-5 +.old-state)
+  ::
+  ?>  ?=(%5 -.old-state)
   ames-gate(ames-state +.old-state)
+  ::
+  ++  state-4-to-5
+    |=  =^ames-state
+    ^-  ^^ames-state
+    =.  peers.ames-state
+      %-  ~(run by peers.ames-state)
+      |=  =ship-state
+      ?.  ?=(%known -.ship-state)
+        ship-state
+      =.  snd.ship-state
+        %-  ~(run by snd.ship-state)
+        |=  =message-pump-state
+        =.  num-live.metrics.packet-pump-state.message-pump-state
+          ~(wyt in live.packet-pump-state.message-pump-state)
+        message-pump-state
+      ship-state
+    ames-state
+  --
 ::  +scry: dereference namespace
 ::
 ++  scry
@@ -1217,7 +1257,7 @@
       on-hear-forward
     ::
     ?:  ?&  ?=(%pawn (clan:title sndr.packet))
-            !(~(has by peers.ames-state) sndr.packet)
+            !?=([~ %known *] (~(get by peers.ames-state) sndr.packet))
         ==
       on-hear-open
     on-hear-shut
@@ -1289,14 +1329,9 @@
     |=  [=lane =packet dud=(unit goof)]
     ^+  event-core
     =/  sndr-state  (~(get by peers.ames-state) sndr.packet)
-    ::  if we don't know them, maybe enqueue a jael %public-keys request
-    ::
-    ::    Ignore encrypted packets from alien comets.
-    ::    TODO: maybe crash?
+    ::  if we don't know them, ask jael for their keys and enqueue
     ::
     ?.  ?=([~ %known *] sndr-state)
-      ?:  =(%pawn (clan:title sndr.packet))
-        event-core
       (enqueue-alien-todo sndr.packet |=(alien-agenda +<))
     ::  decrypt packet contents using symmetric-key.channel
     ::
@@ -1909,6 +1944,11 @@
       =/  =bone  bone.shut-packet
       ::
       ?:  ?=(%& -.meat.shut-packet)
+        =+  ?~  dud  ~
+            %.  ~
+            %+  slog
+              leaf+"ames: {<her.channel>} fragment crashed {<mote.u.dud>}"
+            ?.(msg.veb ~ tang.u.dud)
         (run-message-sink bone %hear lane shut-packet ?=(~ dud))
       ::  Just try again on error, printing trace
       ::
@@ -1917,7 +1957,10 @@
       ::
       =+  ?~  dud  ~
           %.  ~
-          (slog leaf+"ames: crashed on message ack" >mote.u.dud< tang.u.dud)
+          %+  slog  leaf+"ames: {<her.channel>} ack crashed {<mote.u.dud>}"
+          ?.  msg.veb  ~
+          :-  >[bone=bone message-num=message-num meat=meat]:shut-packet<
+          tang.u.dud
       (run-message-pump bone %hear [message-num +.meat]:shut-packet)
     ::  +on-memo: handle request to send message
     ::
@@ -2203,12 +2246,15 @@
         ?.  ?=([%hear * * ok=%.n] task)
           ::  fresh boon; give message to client vane
           ::
-          %-  (trace msg.veb |.("boon {<her.channel^bone=bone -.task>}"))
+          %-  %+  trace  msg.veb
+              =/  dat  [her.channel bone=bone message-num=message-num -.task]
+              |.("sink boon {<dat>}")
           peer-core
         ::  we previously crashed on this message; notify client vane
         ::
         %-  %+  trace  msg.veb
-            |.("crashed on boon {<her.channel^bone=bone -.task>}")
+            =/  dat  [her.channel bone=bone message-num=message-num -.task]
+            |.("crashed on sink boon {<dat>}")
         boon-to-lost
       ::  +boon-to-lost: convert all boons to losts
       ::
@@ -2226,7 +2272,9 @@
       ++  on-sink-nack-trace
         |=  [=message-num message=*]
         ^+  peer-core
-        %-  (trace msg.veb |.("nack trace {<her.channel^bone=bone>}"))
+        %-  %+  trace  msg.veb
+            =/  dat  [her.channel bone=bone message-num=message-num]
+            |.("sink naxplanation {<dat>}")
         ::
         =+  ;;  =naxplanation  message
         ::  ack nack-trace message (only applied if we don't later crash)
@@ -2243,7 +2291,9 @@
       ++  on-sink-plea
         |=  [=message-num message=*]
         ^+  peer-core
-        %-  (trace msg.veb |.("plea {<her.channel^bone=bone>}"))
+        %-  %+  trace  msg.veb
+            =/  dat  [her.channel bone=bone message-num=message-num]
+            |.("sink plea {<dat>}")
         ::  is this the first time we're trying to process this message?
         ::
         ?.  ?=([%hear * * ok=%.n] task)

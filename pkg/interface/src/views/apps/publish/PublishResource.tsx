@@ -1,11 +1,11 @@
-import React from "react";
-import { Box } from "@tlon/indigo-react";
+import React from 'react';
+import { Box } from '@tlon/indigo-react';
 
-import GlobalApi from "~/logic/api/global";
-import { StoreState } from "~/logic/store/type";
-import { Association } from "~/types";
-import { RouteComponentProps } from "react-router-dom";
-import { NotebookRoutes } from "./components/NotebookRoutes";
+import GlobalApi from '~/logic/api/global';
+import { StoreState } from '~/logic/store/type';
+import { Association } from '@urbit/api';
+import { RouteComponentProps } from 'react-router-dom';
+import { NotebookRoutes } from './components/NotebookRoutes';
 
 type PublishResourceProps = StoreState & {
   association: Association;
@@ -16,8 +16,7 @@ type PublishResourceProps = StoreState & {
 export function PublishResource(props: PublishResourceProps) {
   const { association, api, baseUrl, notebooks } = props;
   const rid = association.resource;
-  const [, , ship, book] = rid.split("/");
-  const notebookContacts = props.contacts[association.group];
+  const [, , ship, book] = rid.split('/');
 
   return (
     <Box height="100%" width="100%" overflowY="auto">
@@ -29,7 +28,6 @@ export function PublishResource(props: PublishResourceProps) {
         groups={props.groups}
         associations={props.associations}
         association={association}
-        notebookContacts={notebookContacts}
         rootUrl={baseUrl}
         baseUrl={`${baseUrl}/resource/publish/ship/${ship}/${book}`}
         history={props.history}
@@ -37,7 +35,7 @@ export function PublishResource(props: PublishResourceProps) {
         location={props.location}
         unreads={props.unreads}
         graphs={props.graphs}
-        s3={props.s3}
+        storage={props.storage}
       />
     </Box>
   );

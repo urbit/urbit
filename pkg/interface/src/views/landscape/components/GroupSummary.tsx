@@ -1,9 +1,9 @@
-import React, { ReactNode, useRef } from "react";
-import { Metadata, PropFunc } from "~/types";
-import { Col, Row, Text } from "@tlon/indigo-react";
-import { MetadataIcon } from "./MetadataIcon";
-import { useTutorialModal } from "~/views/components/useTutorialModal";
-import {TUTORIAL_HOST, TUTORIAL_GROUP} from "~/logic/lib/tutorialModal";
+import React, { ReactElement, ReactNode, useRef } from 'react';
+import { Metadata, PropFunc } from '@urbit/api';
+import { Col, Row, Text } from '@tlon/indigo-react';
+import { MetadataIcon } from './MetadataIcon';
+import { useTutorialModal } from '~/views/components/useTutorialModal';
+import { TUTORIAL_HOST, TUTORIAL_GROUP } from '~/logic/lib/tutorialModal';
 
 interface GroupSummaryProps {
   metadata: Metadata;
@@ -14,21 +14,18 @@ interface GroupSummaryProps {
   gray?: boolean;
 }
 
-export function GroupSummary(props: GroupSummaryProps & PropFunc<typeof Col>) {
+export function GroupSummary(props: GroupSummaryProps & PropFunc<typeof Col>): ReactElement {
   const { channelCount, memberCount, metadata, resource, children, ...rest } = props;
   const anchorRef = useRef<HTMLElement | null>(null);
   useTutorialModal(
-    "group-desc",
+    'group-desc',
     resource === `/ship/${TUTORIAL_HOST}/${TUTORIAL_GROUP}`,
-    anchorRef.current
+    anchorRef
   );
   return (
     <Col {...rest} ref={anchorRef} gapY="4">
       <Row gapX="2" width="100%">
         <MetadataIcon
-          borderRadius="1"
-          border="1"
-          borderColor="lightGray"
           width="40px"
           height="40px"
           metadata={metadata}
@@ -39,7 +36,8 @@ export function GroupSummary(props: GroupSummaryProps & PropFunc<typeof Col>) {
             fontSize="1"
             textOverflow="ellipsis"
             whiteSpace="nowrap"
-            overflow="hidden">{metadata.title}</Text>
+            overflow="hidden"
+          >{metadata.title}</Text>
           <Row gapX="4" >
             <Text fontSize="1" gray>
               {memberCount} participants
@@ -57,7 +55,8 @@ export function GroupSummary(props: GroupSummaryProps & PropFunc<typeof Col>) {
             width="100%"
             fontSize="1"
             textOverflow="ellipsis"
-            overflow="hidden">
+            overflow="hidden"
+        >
             {metadata.description}
           </Text>
         }

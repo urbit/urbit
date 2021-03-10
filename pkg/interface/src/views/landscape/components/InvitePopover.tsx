@@ -1,26 +1,26 @@
-import React, { useCallback, useRef, useMemo } from "react";
+import React, { useCallback, useRef } from 'react';
 import _ from 'lodash';
-import { Switch, Route, useHistory } from "react-router-dom";
-import { Formik, Form } from "formik";
+import { Switch, Route, useHistory } from 'react-router-dom';
+import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import {
   ManagedTextInputField as Input,
   Box,
   Text,
   Col,
-  Button,
   Row
-} from "@tlon/indigo-react";
+} from '@tlon/indigo-react';
 
-import { ShipSearch } from "~/views/components/ShipSearch";
-import { Association } from "~/types/metadata-update";
-import { AsyncButton } from "~/views/components/AsyncButton";
-import { useOutsideClick } from "~/logic/lib/useOutsideClick";
-import { FormError } from "~/views/components/FormError";
-import { resourceFromPath } from "~/logic/lib/group";
-import GlobalApi from "~/logic/api/global";
-import { Groups, Rolodex, Workspace } from "~/types";
-import { deSig } from "~/logic/lib/util";
+import { ShipSearch } from '~/views/components/ShipSearch';
+import { Association } from '@urbit/api/metadata';
+import { AsyncButton } from '~/views/components/AsyncButton';
+import { useOutsideClick } from '~/logic/lib/useOutsideClick';
+import { FormError } from '~/views/components/FormError';
+import { resourceFromPath } from '~/logic/lib/group';
+import GlobalApi from '~/logic/api/global';
+import { Groups, Rolodex } from '@urbit/api';
+import { deSig } from '~/logic/lib/util';
+import { Workspace } from '~/types/workspace';
 
 interface InvitePopoverProps {
   baseUrl: string;
@@ -38,15 +38,15 @@ interface FormSchema {
 }
 
 const formSchema = Yup.object({
-  emails: Yup.array(Yup.string().email("Invalid email")),
-  ships: Yup.array(Yup.string()).min(1, "Must invite at least one ship")
+  emails: Yup.array(Yup.string().email('Invalid email')),
+  ships: Yup.array(Yup.string()).min(1, 'Must invite at least one ship')
 });
 
 export function InvitePopover(props: InvitePopoverProps) {
   const { baseUrl, api, association } = props;
 
   const relativePath = (p: string) => baseUrl + p;
-  const { title } = association?.metadata || "";
+  const { title } = association?.metadata || '';
   const innerRef = useRef(null);
   const history = useHistory();
 
@@ -75,10 +75,9 @@ export function InvitePopover(props: InvitePopoverProps) {
 
   const initialValues: FormSchema = { ships: [], emails: [], description: '' };
 
-
   return (
     <Switch>
-      <Route path={[relativePath("/invites")]}>
+      <Route path={[relativePath('/invites')]}>
         <Box
           display="flex"
           justifyContent="center"

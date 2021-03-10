@@ -1,40 +1,39 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, ReactElement } from 'react';
 import _ from 'lodash';
-import { Body } from "~/views/components/Body";
+import { Formik, Form, FormikHelpers, useFormikContext } from 'formik';
+import * as Yup from 'yup';
+import { useHistory } from 'react-router-dom';
+import urbitOb from 'urbit-ob';
+
 import {
   Col,
   Row,
   Icon,
   Box,
   Text,
-  ManagedTextInputField as Input,
-  LoadingSpinner,
-} from "@tlon/indigo-react";
-import { Formik, Form, FormikHelpers, useFormikContext } from "formik";
-import { AsyncButton } from "~/views/components/AsyncButton";
-import * as Yup from "yup";
-import { Groups, Rolodex, MetadataUpdatePreview, Associations } from "~/types";
-import { useWaitForProps } from "~/logic/lib/useWaitForProps";
-import GlobalApi from "~/logic/api/global";
-import { RouteComponentProps, useHistory } from "react-router-dom";
-import urbitOb from "urbit-ob";
-import { resourceFromPath } from "~/logic/lib/group";
-import { StatelessAsyncButton } from "~/views/components/StatelessAsyncButton";
-import { uxToHex, getModuleIcon } from "~/logic/lib/util";
-import { FormError } from "~/views/components/FormError";
-import { MetadataIcon } from "./MetadataIcon";
-import { GroupSummary } from "./GroupSummary";
+  ManagedTextInputField as Input
+} from '@tlon/indigo-react';
+import { Groups, MetadataUpdatePreview, Associations } from '@urbit/api';
+
+import { AsyncButton } from '~/views/components/AsyncButton';
+import { useWaitForProps } from '~/logic/lib/useWaitForProps';
+import GlobalApi from '~/logic/api/global';
+import { StatelessAsyncButton } from '~/views/components/StatelessAsyncButton';
+import { getModuleIcon } from '~/logic/lib/util';
+import { FormError } from '~/views/components/FormError';
+import { GroupSummary } from './GroupSummary';
+import {TUTORIAL_GROUP_RESOURCE} from '~/logic/lib/tutorialModal';
 
 const formSchema = Yup.object({
   group: Yup.string()
-    .required("Must provide group to join")
-    .test("is-valid", "Invalid group", (group: string | null | undefined) => {
+    .required('Must provide group to join')
+    .test('is-valid', 'Invalid group', (group: string | null | undefined) => {
       if (!group) {
         return false;
       }
-      const [patp, name] = group.split("/");
+      const [patp, name] = group.split('/');
       return urbitOb.isValidPatp(patp) && name.length > 0;
-    }),
+    })
 });
 
 interface FormSchema {
@@ -60,27 +59,29 @@ function Autojoin(props: { autojoin: string | null }) {
   return null;
 }
 
-export function JoinGroup(props: JoinGroupProps) {
+export function JoinGroup(props: JoinGroupProps): ReactElement {
   const { api, autojoin, associations, groups } = props;
   const history = useHistory();
   const initialValues: FormSchema = {
-    group: autojoin || "",
+    group: autojoin || ''
   };
   const [preview, setPreview] = useState<
     MetadataUpdatePreview | string | null
   >(null);
 
-
   const waiter = useWaitForProps(props, _.isString(preview) ? 1 : 5000);
 
   const onConfirm = useCallback(async (group: string) => {
     const [,,ship,name] = group.split('/');
+    if(group === TUTORIAL_GROUP_RESOURCE) {
+      await api.settings.putEntry('tutorial', 'joined', Date.now());
+    }
     await api.groups.join(ship, name);
     try {
       await waiter((p: JoinGroupProps) => {
-        return group in p.groups && 
+        return group in p.groups &&
           (group in (p.associations?.graph ?? {})
-            || group in (p.associations?.groups ?? {}))
+            || group in (p.associations?.groups ?? {}));
       });
 
       if(props.groups?.[group]?.hidden) {
@@ -98,7 +99,7 @@ export function JoinGroup(props: JoinGroupProps) {
 
   const onSubmit = useCallback(
     async (values: FormSchema, actions: FormikHelpers<FormSchema>) => {
-      const [ship, name] = values.group.split("/");
+      const [ship, name] = values.group.split('/');
       const path = `/ship/${ship}/${name}`;
       //  skip if it's unmanaged
       try {
@@ -107,13 +108,13 @@ export function JoinGroup(props: JoinGroupProps) {
         setPreview(prev);
       } catch (e) {
         if (!(e instanceof Error)) {
-          actions.setStatus({ error: "Unknown error" });
-        } else if (e.message === "no-permissions") {
+          actions.setStatus({ error: 'Unknown error' });
+        } else if (e.message === 'no-permissions') {
           actions.setStatus({
             error:
-              "Unable to join group, you do not have the correct permissions",
+              'Unable to join group, you do not have the correct permissions'
           });
-        } else if (e.message === "offline") {
+        } else if (e.message === 'offline') {
           setPreview(path);
         }
       }
@@ -131,8 +132,8 @@ export function JoinGroup(props: JoinGroupProps) {
       {_.isString(preview) ? (
         <Col width="100%" gapY="4">
           <Text>The host appears to be offline. Join anyway?</Text>
-          <StatelessAsyncButton 
-            primary 
+          <StatelessAsyncButton
+            primary
             name="join"
             onClick={() => onConfirm(preview)}
           >
@@ -173,7 +174,7 @@ export function JoinGroup(props: JoinGroupProps) {
                 </Box>
             </Col>
           )}
-          <StatelessAsyncButton 
+          <StatelessAsyncButton
             primary
             name="join"
             onClick={() => onConfirm(preview.group)}
@@ -188,7 +189,7 @@ export function JoinGroup(props: JoinGroupProps) {
             initialValues={initialValues}
             onSubmit={onSubmit}
           >
-            <Form style={{ display: "contents" }}>
+            <Form style={{ display: 'contents' }}>
               <Autojoin autojoin={autojoin ?? null} />
               <Input
                 id="group"

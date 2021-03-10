@@ -13,6 +13,7 @@ import Tile from './components/tiles/tile';
 import Groups from './components/Groups';
 import ModalButton from './components/ModalButton';
 import { StatelessAsyncButton } from '~/views/components/StatelessAsyncButton';
+import { StarIcon } from '~/views/components/StarIcon';
 import { writeText } from '~/logic/lib/util';
 import { useModal } from "~/logic/lib/useModal";
 import { NewGroup } from "~/views/landscape/components/NewGroup";
@@ -21,7 +22,7 @@ import { Helmet } from 'react-helmet';
 import useLocalState from "~/logic/state/local";
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
 import { useQuery } from "~/logic/lib/useQuery";
-import { 
+import {
   hasTutorialGroup,
   TUTORIAL_GROUP,
   TUTORIAL_HOST,
@@ -29,6 +30,8 @@ import {
   TUTORIAL_CHAT,
   TUTORIAL_LINKS
 } from '~/logic/lib/tutorialModal';
+import useSettingsState, { selectCalmState } from '~/logic/state/settings';
+
 
 const ScrollbarLessBox = styled(Box)`
   scrollbar-width: none !important;
@@ -38,25 +41,23 @@ const ScrollbarLessBox = styled(Box)`
   }
 `;
 
-const tutSelector = f.pick(['tutorialProgress', 'nextTutStep']);
+const tutSelector = f.pick(['tutorialProgress', 'nextTutStep', 'hideGroups']);
 
 export default function LaunchApp(props) {
   const history = useHistory();
   const [hashText, setHashText] = useState(props.baseHash);
+  const [exitingTut, setExitingTut] = useState(false);
   const hashBox = (
     <Box
       position={["relative", "absolute"]}
-      fontFamily="mono"
       left="0"
       bottom="0"
-      color="washedGray"
-      bg="white"
+      backgroundColor="white"
       ml={3}
       mb={3}
       borderRadius={2}
+      overflow='hidden'
       fontSize={0}
-      p={2}
-      boxShadow="0 0 0px 1px inset"
       cursor="pointer"
       onClick={() => {
         writeText(props.baseHash);
@@ -66,7 +67,9 @@ export default function LaunchApp(props) {
         }, 2000);
       }}
     >
-      <Text color="gray">{hashText || props.baseHash}</Text>
+      <Box backgroundColor="washedGray" p={2}>
+        <Text mono bold>{hashText || props.baseHash}</Text>
+      </Box>
     </Box>
   );
 
@@ -82,12 +85,15 @@ export default function LaunchApp(props) {
     }
   }, [query]);
 
+  const { hideUtilities } = useSettingsState(selectCalmState);
   const { tutorialProgress, nextTutStep } = useLocalState(tutSelector);
+  let { hideGroups } = useLocalState(tutSelector);
+  !hideGroups ? { hideGroups } = useSettingsState(selectCalmState) : null;
 
   const waiter = useWaitForProps(props);
 
   const { modal, showModal } = useModal({
-    position: 'relative', 
+    position: 'relative',
     maxWidth: '350px',
     modal: (dismiss) => {
       const onDismiss = (e) => {
@@ -99,10 +105,11 @@ export default function LaunchApp(props) {
         e.stopPropagation();
         if(!hasTutorialGroup(props)) {
           await props.api.groups.join(TUTORIAL_HOST, TUTORIAL_GROUP);
+          await props.api.settings.putEntry('tutorial', 'joined', Date.now());
           await waiter(hasTutorialGroup);
           await Promise.all(
             [TUTORIAL_BOOK, TUTORIAL_CHAT, TUTORIAL_LINKS].map(graph =>
-              props.api.graph.join(TUTORIAL_HOST, graph)));
+              props.api.graph.joinGraph(TUTORIAL_HOST, graph)));
 
           await waiter(p => {
             return `/ship/${TUTORIAL_HOST}/${TUTORIAL_CHAT}` in p.associations.graph &&
@@ -113,26 +120,39 @@ export default function LaunchApp(props) {
         nextTutStep();
         dismiss();
       }
-      return (
-      <Col maxWidth="350px" gapY="2" p="3">
-        <Box position="absolute" left="-16px" top="-16px">
-          <Icon width="32px" height="32px" color="blue" display="block" icon="LargeBullet" />
-        </Box>
-        <Text lineHeight="tall" fontWeight="medium">Welcome</Text>
-        <Text lineHeight="tall">
-          You have been invited to use Landscape, an interface to chat 
-          and interact with communities
-          <br />
-          Would you like a tour of Landscape?
-        </Text>
-        <Row gapX="2" justifyContent="flex-end">
-          <Button backgroundColor="washedGray" onClick={onDismiss}>Skip</Button>
-          <StatelessAsyncButton primary onClick={onContinue}>
-            Yes
-          </StatelessAsyncButton>
-        </Row>
-      </Col>
-    )}
+      return exitingTut ?  (
+        <Col maxWidth="350px" p="3">
+          <Icon icon="Info" fill="black"></Icon>
+          <Text my="3" lineHeight="tall">
+            You can always restart the tutorial by typing "tutorial" in Leap
+          </Text>
+          <Row gapX="2" justifyContent="flex-end">
+             <Button primary onClick={onDismiss}>Ok</Button>
+          </Row>
+        </Col>
+      ) : (
+        <Col maxWidth="350px" p="3">
+          <Box position="absolute" left="-16px" top="-16px">
+            <StarIcon width="32px" height="32px" color="blue" display="block" />
+          </Box>
+          <Text mb="3" lineHeight="tall" fontWeight="medium">Welcome</Text>
+          <Text mb="3" lineHeight="tall">
+            You have been invited to use Landscape, an interface to chat 
+            and interact with communities
+            <br />
+            Would you like a tour of Landscape?
+          </Text>
+          <Row gapX="2" justifyContent="flex-end">
+            <Button
+              backgroundColor="washedGray" 
+              onClick={() => setExitingTut(true)}
+            >Skip</Button>
+            <StatelessAsyncButton primary onClick={onContinue}>
+              Yes
+            </StatelessAsyncButton>
+          </Row>
+        </Col>
+      )}
   });
   const hasLoaded = useMemo(() => Object.keys(props.contacts).length > 0, [props.contacts]);
 
@@ -158,6 +178,7 @@ export default function LaunchApp(props) {
           p={2}
           pt={0}
         >
+        {!hideUtilities && <>
           <Tile
             bg="white"
             color="scales.black20"
@@ -183,22 +204,25 @@ export default function LaunchApp(props) {
           />
           <ModalButton
             icon="Plus"
-            bg="blue"
-            color="#fff"
-            text="Join a Group"
+            bg="washedGray"
+            color="black"
+            text="New Group"
             style={{ gridColumnStart: 1 }}
-          >
-            <JoinGroup {...props} />
-          </ModalButton>
-          <ModalButton
-            icon="CreateGroup"
-            bg="green"
-            color="#fff"
-            text="Create Group"
           >
             <NewGroup {...props} />
           </ModalButton>
-          <Groups unreads={props.unreads} groups={props.groups} associations={props.associations} />
+          <ModalButton
+            icon="Boot"
+            bg="washedGray"
+            color="black"
+            text="Join Group"
+          >
+            <JoinGroup {...props} />
+          </ModalButton>
+          </>}
+          {!hideGroups &&
+            (<Groups unreads={props.unreads} groups={props.groups} associations={props.associations} />)
+          }
         </Box>
         <Box alignSelf="flex-start" display={["block", "none"]}>{hashBox}</Box>
       </ScrollbarLessBox>

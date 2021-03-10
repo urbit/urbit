@@ -1,26 +1,26 @@
-import React, { createRef, useCallback, useRef } from "react";
-import { IUnControlledCodeMirror, UnControlled as CodeEditor } from "react-codemirror2";
+import React, { createRef, useCallback, useRef } from 'react';
+import { IUnControlledCodeMirror, UnControlled as CodeEditor } from 'react-codemirror2';
 import { useFormikContext } from 'formik';
 import { Prompt } from 'react-router-dom';
 import { Editor } from 'codemirror';
 
-import { MOBILE_BROWSER_REGEX, usePreventWindowUnload } from "~/logic/lib/util";
-import { PropFunc } from "~/types/util";
-import CodeMirror from "codemirror";
+import { MOBILE_BROWSER_REGEX, usePreventWindowUnload } from '~/logic/lib/util';
+import { PropFunc } from '~/types/util';
+import CodeMirror from 'codemirror';
 
-import "codemirror/mode/markdown/markdown";
-import "codemirror/addon/display/placeholder";
-import "codemirror/addon/edit/continuelist";
+import 'codemirror/mode/markdown/markdown';
+import 'codemirror/addon/display/placeholder';
+import 'codemirror/addon/edit/continuelist';
 
-import "codemirror/lib/codemirror.css";
-import { Box } from "@tlon/indigo-react";
-import { useFileDrag } from "~/logic/lib/useDrag";
-import SubmitDragger from "~/views/components/SubmitDragger";
-import useS3 from "~/logic/lib/useS3";
-import { S3State } from "~/types";
+import 'codemirror/lib/codemirror.css';
+import { Box } from '@tlon/indigo-react';
+import { useFileDrag } from '~/logic/lib/useDrag';
+import SubmitDragger from '~/views/components/SubmitDragger';
+import useStorage from '~/logic/lib/useStorage';
+import { StorageState } from '~/types';
 
 const MARKDOWN_CONFIG = {
-  name: "markdown",
+  name: 'markdown'
 };
 
 interface MarkdownEditorProps {
@@ -28,7 +28,7 @@ interface MarkdownEditorProps {
   value: string;
   onChange: (s: string) => void;
   onBlur?: (e: any) => void;
-  s3: S3State;
+  storage: StorageState;
 }
 
 const PromptIfDirty = () => {
@@ -49,12 +49,12 @@ export function MarkdownEditor(
 
   const options = {
     mode: MARKDOWN_CONFIG,
-    theme: "tlon",
+    theme: 'tlon',
     lineNumbers: false,
     lineWrapping: true,
-    scrollbarStyle: "native",
+    scrollbarStyle: 'native',
     // cursorHeight: 0.85,
-    placeholder: placeholder || "",
+    placeholder: placeholder || '',
     extraKeys: { 'Enter': 'newlineAndIndentContinueMarkdownList' }
   };
 
@@ -74,7 +74,7 @@ export function MarkdownEditor(
     [onBlur]
   );
 
-  const { uploadDefault, canUpload } = useS3(props.s3);
+  const { uploadDefault, canUpload } = useStorage(props.storage);
 
   const onFileDrag = useCallback(
     async (files: FileList | File[], e: DragEvent) => {
@@ -84,7 +84,7 @@ export function MarkdownEditor(
       const codeMirror: Editor = editor.current.editor;
       const doc = codeMirror.getDoc();
 
-      Array.from(files).forEach(async file => {
+      Array.from(files).forEach(async (file) => {
         const placeholder = `![Uploading ${file.name}](...)`;
         doc.setValue(doc.getValue() + placeholder);
         const url = await uploadDefault(file);

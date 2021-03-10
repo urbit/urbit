@@ -1,32 +1,39 @@
-import React, { Component } from "react";
-import moment from "moment";
-import { Box } from "@tlon/indigo-react";
-import { Link } from "react-router-dom";
-import { Graph, GraphNode } from "~/types";
-import { getLatestRevision } from "~/logic/lib/publish";
-import { BigInteger } from "big-integer";
+import React, { ReactElement } from 'react';
+import moment from 'moment';
+import { Link } from 'react-router-dom';
+import { BigInteger } from 'big-integer';
+
+import { Box, Text } from '@tlon/indigo-react';
+import { Graph } from '@urbit/api';
+
+import { getLatestRevision } from '~/logic/lib/publish';
+import Timestamp from '~/views/components/Timestamp';
 
 function NavigationItem(props: {
   url: string;
   title: string;
   date: number;
   prev?: boolean;
-}) {
-  const date = moment(props.date).fromNow();
+}): ReactElement {
   return (
     <Box
-      justifySelf={props.prev ? "start" : "end"}
+      justifySelf={props.prev ? 'start' : 'end'}
       display="flex"
       flexDirection="column"
       justifyContent="flex-end"
-      textAlign={props.prev ? "left" : "right"}
+      textAlign={props.prev ? 'left' : 'right'}
     >
       <Link to={props.url}>
-        <Box color="gray" mb={2}>
-          {props.prev ? "Previous" : "Next"}
-        </Box>
-        <Box mb={1}>{props.title}</Box>
-        <Box color="gray">{date}</Box>
+        <Text display='block' color="gray">
+          {props.prev ? 'Previous' : 'Next'}
+        </Text>
+        <Text display='block' lineHeight="tall">{props.title}</Text>
+        <Timestamp
+          stamp={moment(props.date)}
+          time={false}
+          fontSize="1"
+          justifyContent={props.prev ? 'flex-start' : 'flex-end'}
+        />
       </Link>
     </Box>
   );
@@ -53,7 +60,7 @@ interface NoteNavigationProps {
   baseUrl: string;
 }
 
-export function NoteNavigation(props: NoteNavigationProps) {
+export function NoteNavigation(props: NoteNavigationProps): ReactElement {
   let nextComponent = <Box />;
   let prevComponent = <Box />;
   const { noteId, notebook } = props;
@@ -72,13 +79,13 @@ export function NoteNavigation(props: NoteNavigationProps) {
   if (next && nextId) {
     const nextUrl = makeNoteUrl(nextId);
     const [, title, , post] = getLatestRevision(next);
-    const date = post["time-sent"];
+    const date = post['time-sent'];
     nextComponent = <NavigationItem title={title} date={date} url={nextUrl} />;
   }
   if (prev && prevId) {
     const prevUrl = makeNoteUrl(prevId);
     const [, title, , post] = getLatestRevision(prev);
-    const date = post["time-sent"];
+    const date = post['time-sent'];
     prevComponent = (
       <NavigationItem title={title} date={date} url={prevUrl} prev />
     );

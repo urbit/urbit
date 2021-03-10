@@ -23,14 +23,14 @@ export default class S3Reducer<S extends S3State> {
   credentials(json: S3Update, state: S) {
     const data = _.get(json, 'credentials', false);
     if (data) {
-      state.s3.credentials = data;
+      state.storage.s3.credentials = data;
     }
   }
 
   configuration(json: S3Update, state: S) {
     const data = _.get(json, 'configuration', false);
     if (data) {
-      state.s3.configuration = {
+      state.storage.s3.configuration = {
         buckets: new Set(data.buckets),
         currentBucket: data.currentBucket
       };
@@ -39,44 +39,44 @@ export default class S3Reducer<S extends S3State> {
 
   currentBucket(json: S3Update, state: S) {
     const data = _.get(json, 'setCurrentBucket', false);
-    if (data && state.s3) {
-      state.s3.configuration.currentBucket = data;
+    if (data && state.storage.s3) {
+      state.storage.s3.configuration.currentBucket = data;
     }
   }
 
   addBucket(json: S3Update, state: S) {
     const data = _.get(json, 'addBucket', false);
     if (data) {
-      state.s3.configuration.buckets =
-        state.s3.configuration.buckets.add(data);
+      state.storage.s3.configuration.buckets =
+        state.storage.s3.configuration.buckets.add(data);
     }
   }
 
   removeBucket(json: S3Update, state: S) {
     const data = _.get(json, 'removeBucket', false);
     if (data) {
-      state.s3.configuration.buckets.delete(data);
+      state.storage.s3.configuration.buckets.delete(data);
     }
   }
 
   endpoint(json: S3Update, state: S) {
     const data = _.get(json, 'setEndpoint', false);
-    if (data && state.s3.credentials) {
-      state.s3.credentials.endpoint = data;
+    if (data && state.storage.s3.credentials) {
+      state.storage.s3.credentials.endpoint = data;
     }
   }
 
   accessKeyId(json: S3Update , state: S) {
     const data = _.get(json, 'setAccessKeyId', false);
-    if (data && state.s3.credentials) {
-      state.s3.credentials.accessKeyId = data;
+    if (data && state.storage.s3.credentials) {
+      state.storage.s3.credentials.accessKeyId = data;
     }
   }
 
   secretAccessKey(json: S3Update, state: S) {
     const data = _.get(json, 'setSecretAccessKey', false);
-    if (data && state.s3.credentials) {
-      state.s3.credentials.secretAccessKey = data;
+    if (data && state.storage.s3.credentials) {
+      state.storage.s3.credentials.secretAccessKey = data;
     }
   }
 }

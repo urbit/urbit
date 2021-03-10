@@ -1,8 +1,8 @@
-import { useEffect, RefObject } from "react";
+import { useEffect, RefObject } from 'react';
 
 export function useOutsideClick(
   ref: RefObject<HTMLElement | null | undefined>,
-  onClick: () => void,
+  onClick: () => void
 ) {
   useEffect(() => {
     function handleClick(event: MouseEvent) {
@@ -16,17 +16,16 @@ export function useOutsideClick(
     }
 
     function handleKeyDown(ev) {
-      if(ev.key === "Escape") {
+      if(ev.key === 'Escape') {
         onClick();
-
       }
     }
-    document.addEventListener("mousedown", handleClick);
-    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener('mousedown', handleClick);
+    document.addEventListener('keydown', handleKeyDown);
 
     return () => {
-      document.removeEventListener("mousedown", handleClick);
-      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener('mousedown', handleClick);
+      document.removeEventListener('keydown', handleKeyDown);
     };
   }, [ref.current, onClick]);
 }

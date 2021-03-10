@@ -9,11 +9,11 @@ import {
 import { uxToHex } from '~/logic/lib/util';
 import { Link } from 'react-router-dom';
 
-import { Associations } from '~/types/metadata-update';
+import { Associations } from '@urbit/api/metadata';
 import { Dropdown } from '~/views/components/Dropdown';
-import { Workspace } from '~/types';
 import { getTitleFromWorkspace } from '~/logic/lib/workspace';
-import {MetadataIcon} from './MetadataIcon';
+import { MetadataIcon } from './MetadataIcon';
+import { Workspace } from '~/types/workspace';
 
 const GroupSwitcherItem = ({ to, children, bottom = false, ...rest }) => (
   <Link to={to}>
@@ -93,7 +93,8 @@ export function GroupSwitcher(props: {
       top="0px"
       pl='3'
       borderBottom='1px solid'
-      borderColor='washedGray'>
+      borderColor='washedGray'
+    >
       <Col
         bg="white"
         width="100%"
@@ -177,7 +178,7 @@ export function GroupSwitcher(props: {
             }
           >
             <Row flexGrow={1} alignItems="center" width='100%' minWidth='0' flexShrink={0}>
-              { metadata && <MetadataIcon flexShrink={0} mr="2" border="1" borderColor="lightGray" borderRadius="1" metadata={metadata} height="24px" width="24px" /> }
+              { metadata && <MetadataIcon flexShrink={0} mr="2" metadata={metadata} height="24px" width="24px" /> }
               <Text flexShrink={1} lineHeight="1.1" fontSize='2' fontWeight="700" overflow='hidden' display='inline-block' flexShrink='1' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}>{title}</Text>
               </Row>
           </Dropdown>

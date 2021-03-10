@@ -1,33 +1,32 @@
-import React, { useState, useEffect, ReactNode } from "react";
+import React, { useEffect, ReactNode } from 'react';
 import {
   Switch,
   Route,
-  useLocation,
-  RouteComponentProps,
-} from "react-router-dom";
-import { Col, Box, Text } from "@tlon/indigo-react";
-import _ from "lodash";
+  RouteComponentProps
+} from 'react-router-dom';
+import { Col, Box, Text } from '@tlon/indigo-react';
+import _ from 'lodash';
 import Helmet from 'react-helmet';
 
-import { Resource } from "./Resource";
-import { PopoverRoutes } from "./PopoverRoutes";
-import { Skeleton } from "./Skeleton";
-import { InvitePopover } from "./InvitePopover";
-import { NewChannel } from "./NewChannel";
+import { AppName } from '@urbit/api';
 
-import { appIsGraph } from "~/logic/lib/util";
-import { AppName } from "~/types/noun";
-import GlobalApi from "~/logic/api/global";
-import { StoreState } from "~/logic/store/type";
-import { UnjoinedResource } from "~/views/components/UnjoinedResource";
-import { useLocalStorageState } from "~/logic/lib/useLocalStorageState";
+import { Resource } from './Resource';
+import { PopoverRoutes } from './PopoverRoutes';
+import { Skeleton } from './Skeleton';
+import { InvitePopover } from './InvitePopover';
+import { NewChannel } from './NewChannel';
+
+import GlobalApi from '~/logic/api/global';
+import { StoreState } from '~/logic/store/type';
+import { UnjoinedResource } from '~/views/components/UnjoinedResource';
+import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
 import { Loading } from '~/views/components/Loading';
 
-import "~/views/apps/links/css/custom.css";
-import "~/views/apps/publish/css/custom.css";
-import { Workspace } from "~/types";
-import { getGroupFromWorkspace } from "~/logic/lib/workspace";
-import {GroupSummary} from "./GroupSummary";
+import '~/views/apps/links/css/custom.css';
+import '~/views/apps/publish/css/custom.css';
+import { getGroupFromWorkspace } from '~/logic/lib/workspace';
+import { GroupSummary } from './GroupSummary';
+import { Workspace } from '~/types/workspace';
 
 type GroupsPaneProps = StoreState & {
   baseUrl: string;
@@ -48,15 +47,15 @@ export function GroupsPane(props: GroupsPaneProps) {
     (groupPath && associations.groups[groupPath]) || undefined;
   const group = (groupPath && groups[groupPath]) || undefined;
   const [recentGroups, setRecentGroups] = useLocalStorageState<string[]>(
-    "recent-groups",
+    'recent-groups',
     []
   );
 
   useEffect(() => {
-    if (workspace.type !== "group") {
+    if (workspace.type !== 'group') {
       return;
     }
-    setRecentGroups((gs) => _.uniq([workspace.group, ...gs]));
+    setRecentGroups(gs => _.uniq([workspace.group, ...gs]));
   }, [workspace]);
 
   if (!(associations && (groupPath ? groupPath in groups : true))) {
@@ -71,13 +70,13 @@ export function GroupsPane(props: GroupsPaneProps) {
           association={groupAssociation!}
           group={group!}
           api={api}
-          s3={props.s3}
+          storage={props.storage}
           notificationsGroupConfig={props.notificationsGroupConfig}
           associations={associations}
 
           {...routeProps}
           baseUrl={baseUrl}
-        />)}
+                        />)}
         <InvitePopover
           api={api}
           association={groupAssociation!}
@@ -87,12 +86,12 @@ export function GroupsPane(props: GroupsPaneProps) {
           workspace={workspace}
         />
       </>
-    )
+    );
 
   return (
     <Switch>
       <Route
-        path={[relativePath("/resource/:app/(ship)?/:host/:name")]}
+        path={[relativePath('/resource/:app/(ship)?/:host/:name')]}
         render={(routeProps) => {
           const { app, host, name } = routeProps.match.params as Record<
             string,
@@ -102,7 +101,7 @@ export function GroupsPane(props: GroupsPaneProps) {
           const appName = app as AppName;
 
           const resource = `/ship/${host}/${name}`;
-          const association = associations.graph[resource]
+          const association = associations.graph[resource];
           const resourceUrl = `${baseUrl}/resource/${app}${resource}`;
 
           if (!association) {
@@ -130,7 +129,7 @@ export function GroupsPane(props: GroupsPaneProps) {
         }}
       />
       <Route
-        path={relativePath("/join/:app/(ship)?/:host/:name")}
+        path={relativePath('/join/:app/(ship)?/:host/:name')}
         render={(routeProps) => {
           const { app, host, name } = routeProps.match.params;
           const appPath = `/ship/${host}/${name}`;
@@ -170,7 +169,7 @@ export function GroupsPane(props: GroupsPaneProps) {
         }}
       />
       <Route
-        path={relativePath("/new")}
+        path={relativePath('/new')}
         render={(routeProps) => {
           const newUrl = `${baseUrl}/new`;
           return (
@@ -191,10 +190,10 @@ export function GroupsPane(props: GroupsPaneProps) {
         }}
       />
       <Route
-        path={relativePath("")}
+        path={relativePath('')}
         render={(routeProps) => {
           const hasDescription = groupAssociation?.metadata?.description;
-          const channelCount = Object.keys(props?.associations?.graph ?? {}).filter(e => {
+          const channelCount = Object.keys(props?.associations?.graph ?? {}).filter((e) => {
             return props?.associations?.graph?.[e]?.['group'] === groupPath;
           }).length;
           let summary: ReactNode;
@@ -205,13 +204,11 @@ export function GroupsPane(props: GroupsPaneProps) {
               channelCount={channelCount}
               metadata={groupAssociation.metadata}
               resource={groupAssociation.group}
-            />
+                      />;
           } else {
-            summary = (<Box p="4"><Text fontSize="0" color='gray'>
+            summary = (<Box p="4"><Text color='gray'>
                         Create or select a channel to get started
                       </Text></Box>);
-
-
           }
           const title = groupAssociation?.metadata?.title ?? 'Landscape';
           return (
@@ -223,7 +220,7 @@ export function GroupsPane(props: GroupsPaneProps) {
                 <Col
                   alignItems="center"
                   justifyContent="center"
-                  display={["none", "flex"]}
+                  display={['none', 'flex']}
                   p='4'
                 >
                 {summary}
