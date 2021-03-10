@@ -14,15 +14,6 @@
   |=  x=@rs  ^-  @rs
   ?:  (gth:rs x .0)  x
   (sub:rs .0 x)
-::    Closeness of two vectors
-++  all-close  ^+  %.y
-|=  [u=@lvs v=@lvs]  ^-  @rs
-  =/  n  `@ud`(length u)
-  =/  count  0
-  =/  off  0
-  |-  ^-  @rs
-    ?:  =(count n)  =(0 off)
-  $(count +(count), sum (add off `@`(isclose:lvs (get u +(count)) (get v +(count)))))
 ::
 ::  Tests for vector creation
 ::
