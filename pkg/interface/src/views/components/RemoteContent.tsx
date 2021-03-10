@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 import { BaseAnchor, BaseImage, Box, Button, Text } from '@tlon/indigo-react';
 import { hasProvider } from 'oembed-parser';
 import EmbedContainer from 'react-oembed-container';
-import { withLocalState } from '~/logic/state/local';
+import { withSettingsState } from '~/logic/state/settings';
 import { RemoteContentPolicy } from '~/types/local-update';
 import { VirtualContextProps, withVirtual } from "~/logic/lib/virtualContext";
 import { IS_IOS } from '~/logic/lib/platform';
@@ -268,4 +268,4 @@ return;
   }
 }
 
-export default withLocalState(withVirtual(RemoteContent), ['remoteContentPolicy']);
+export default withSettingsState(withVirtual(RemoteContent), ['remoteContentPolicy']);
