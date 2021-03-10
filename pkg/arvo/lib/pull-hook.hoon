@@ -365,7 +365,7 @@
         ?:  gone
           (~(del by tracking) rid)
         (~(put by tracking) rid [ship status])
-      [(flop cards) state]
+      [[(flop cards) pull-hook] state]
     ::
     ++  tr-emit
       |=  =card

@@ -103,6 +103,13 @@
   ^-  card
   [%give %fact ~ cage]
 ::
+++  fact-init-kick
+  |=  =cage
+  ^-  (list card)
+  :~  (fact cage ~)
+      (kick ~)
+  ==
+::
 ++  fact
   |=  [=cage paths=(list path)]
   ^-  card

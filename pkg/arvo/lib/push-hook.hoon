@@ -25,7 +25,7 @@
 ::   foreign push-hook
 ::
 /-  *push-hook
-/+  default-agent, resource, verb, versioning
+/+  default-agent, resource, verb, versioning, agentio
 |%
 +$  card  card:agent:gall
 ::
@@ -44,6 +44,7 @@
       update-mark=term
       pull-hook-name=term
       version=@ud
+      min-version=@ud
   ==
 ::
 ::  $base-state-0: state for the push hook
@@ -161,6 +162,8 @@
         og   ~(. push-hook bowl)
         hc   ~(. +> bowl)
         def  ~(. (default-agent this %|) bowl)
+        io   ~(. agentio bowl)
+        pass  pass:io
     ::
     ++  on-init
       =^  cards  push-hook
@@ -178,7 +181,9 @@
           %1  
         =^  og-cards   push-hook
           (on-load:og inner-state.old)
-        [(weld cards og-cards) this(state old)]
+        =/  version=(list card)
+          (fact:io version+!>(version.config) /version ~)^~
+        [:(weld cards og-cards version) this(state old)]
         ::
           %0
         %_    $
@@ -234,15 +239,23 @@
     ++  on-watch
       |=  =path
       ^-  (quip card:agent:gall agent:gall)
+      ?:  ?=([%version ~] path)
+        :_  this
+        (fact-init:io version+!>(version.config))^~
       ?.  ?=([%resource *] path)
         =^  cards  push-hook
           (on-watch:og path)
         [cards this]
-      ?>  ?=([%ship @ @ *] t.path)
+      ?>  ?=([%ship @ @ @ *] t.path)
       =/  =resource
         (de-path:resource t.path)
+      =/  sub-ver=@ud
+        (slav %ud i.t.t.t.t.path)
+      ?.  (gte sub-ver min-version.config)
+        :_  this
+        (fact-init-kick:io hook-meta-update+!>(min-version.config))^~
       =/  =vase
-        (initial-watch:og t.t.t.t.path resource)
+        (initial-watch:og t.t.t.t.t.path resource)
       :_  this
       [%give %fact ~ update-mark.config vase]~
     ::
@@ -392,9 +405,11 @@
       %+  roll
         (incoming-subscriptions prefix)
       |=  [[ship =path] out=(jug @ud path)]
-      ?>  ?=(^ path)
+      =/  extra=^path
+        (scag 4 path)
+      ?>  ?=(^ extra)
       =/  path-ver
-        (slaw %ud i.path)
+        (slaw %ud i.extra)
       (~(put ju out) path-ver path)
     =/  caz=(list card)
       %+  turn  ~(tap by paths)
