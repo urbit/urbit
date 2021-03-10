@@ -229,10 +229,12 @@
   ==
 ++  test-isclose  ^-  tang
   ;:  weld
-    %+  expect
+    %+  expect-eq
       !>  (isclose:lvs .1 .1.00001 .0.0001)
-    %+  expect
-      !>  !(isclose:lvs .1 .1.001 .0.001)
+      !>  %.y
+    %+  expect-eq
+      !>  !(isclose:lvs .1 .1.001 .0.0001)
+      !>  %.n
     ::  XX should probably test some pathological cases too
     %+  expect-eq
       !>  (isclose:lvs .1e-6 .0 .1e-6)
