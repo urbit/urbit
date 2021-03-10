@@ -63,7 +63,7 @@ const useHarkState = createState<HarkState>('Hark', {
     graph: {},
     group: {}
   },
-}, ['notifications', 'archivedNotifications', 'unreads']);
+}, ['notifications', 'archivedNotifications', 'unreads', 'notificationsCount']);
 
 
 export default useHarkState;
