@@ -6,6 +6,7 @@ export interface GraphState extends BaseState<GraphState> {
   graphs: Graphs;
   graphKeys: Set<string>;
   pendingIndices: Record<string, any>;
+  graphTimesentMap: Record<string, any>;
   // getKeys: () => Promise<void>;
   // getTags: () => Promise<void>;
   // getTagQueries: () => Promise<void>;
@@ -21,6 +22,7 @@ const useGraphState = createState<GraphState>('Graph', {
   graphs: {},
   graphKeys: new Set(),
   pendingIndices: {},
+  graphTimesentMap: {},
   // getKeys: async () => {
   //   const api = useApi();
   //   const keys = await api.scry({

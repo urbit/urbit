@@ -34,11 +34,11 @@ export function ChatResource(props: ChatResourceProps) {
   const group = groups[groupPath];
   const contacts = useContactState(state => state.contacts);
   const graphs = useGraphState(state => state.graphs);
-  const graph = graphs[station.slice(7)];
-  const graphKeys = useGraphState(state => state.graphKeys);
-  const isChatMissing = !graphKeys.has(station.slice(7));
+  const graphPath = station.slice(7);
+  const graph = graphs[graphPath];
   const unreads = useHarkState(state => state.unreads);
   const unreadCount = unreads.graph?.[station]?.['/']?.unreads || 0;
+  const graphTimesentMap = useGraphState(state => state.graphTimesentMap);
   const [,, owner, name] = station.split('/');
   const ourContact = contacts?.[`~${window.ship}`];
   const chatInput = useRef<ChatInput>();
@@ -165,6 +165,7 @@ export function ChatResource(props: ChatResourceProps) {
           contacts : modifiedContacts
         }
         association={props.association}
+        pendingSize={Object.keys(graphTimesentMap[graphPath] || {}).length}
         group={group}
         ship={owner}
         station={station}

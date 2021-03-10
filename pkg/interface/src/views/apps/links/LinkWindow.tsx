@@ -29,7 +29,7 @@ interface LinkWindowProps {
   group: Group;
   path: string;
   api: GlobalApi;
-  pendingIndices: Record<string, any>;
+  pendingSize: number;
 }
 
 const style = {
@@ -127,7 +127,7 @@ class LinkWindow extends Component<LinkWindowProps, {}> {
           data={graph}
           averageHeight={100}
           size={graph.size}
-          pendingSize={Object.keys(this.props.pendingIndices).length}
+          pendingSize={this.props.pendingSize}
           renderer={this.renderItem}
           loadRows={this.fetchLinks}
         />
@@ -136,6 +136,4 @@ class LinkWindow extends Component<LinkWindowProps, {}> {
   }
 }
 
-export default withState(LinkWindow, [
-  [useGraphState, ['pendingIndices']]
-]);
+export default LinkWindow;

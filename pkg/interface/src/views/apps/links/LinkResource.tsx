@@ -47,6 +47,7 @@ export function LinkResource(props: LinkResourceProps) {
 
   const graphs = useGraphState(state => state.graphs);
   const graph = graphs[resourcePath] || null;
+  const graphTimesentMap = useGraphState(state => state.graphTimesentMap);
 
   useEffect(() => {
     api.graph.getGraph(ship, name);
@@ -73,6 +74,7 @@ export function LinkResource(props: LinkResourceProps) {
                 baseUrl={resourceUrl}
                 group={group}
                 path={resource.group}
+                pendingSize={Object.keys(graphTimesentMap[resourcePath] || {}).length}
                 api={api}
                 mb={3}
               />
