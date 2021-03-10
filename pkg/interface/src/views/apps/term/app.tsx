@@ -171,8 +171,8 @@ export default function TermApp(props: TermAppProps) {
       }
       out += csi('s');  //  save cursor position
     }
-    else if ('lin' in blit) {
-      out += blit.lin.join('');
+    else if ('put' in blit) {
+      out += blit.put.join('');
       out += csi('u');
     }
     else if ('klr' in blit) {

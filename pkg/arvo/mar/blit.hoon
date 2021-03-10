@@ -22,7 +22,7 @@
       %clr  b+&
       %hop  ?@  p.blit  (numb p.blit)
             (pairs 'r'^(numb r.p.blit) 'c'^(numb c.p.blit) ~)
-      %lin  a+(turn p.blit |=(c=@c s+(tuft c)))
+      %put  a+(turn p.blit |=(c=@c s+(tuft c)))
       %nel  b+&
       %url  s+p.blit
       %wyp  b+&

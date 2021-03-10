@@ -644,7 +644,7 @@
   ?.  ((sane %t) (crip i.wol))  :: XX upstream validation
     ~&  bad-text+<`*`i.wol>
     $(wol t.wol)
-  $(wol t.wol, +>.^$ (se-blin %lin (tuba i.wol)))
+  $(wol t.wol, +>.^$ (se-blin %put (tuba i.wol)))
 ::
 ++  se-join                                           ::  confirm connection
   |=  gyl=gill:gall
@@ -723,7 +723,7 @@
   ?.  ((sane %t) (crip txt))  :: XX upstream validation
     ~&  bad-text+<`*`txt>
     +>
-  (se-blin %lin (tuba txt))
+  (se-blin %put (tuba txt))
 ::
 ++  se-poke                                           ::  send a poke
   |=  [gyl=gill:gall par=cage]

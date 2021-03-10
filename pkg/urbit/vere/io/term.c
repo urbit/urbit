@@ -1480,7 +1480,7 @@ _term_ef_blit(u3_utty* uty_u,
       _term_it_show_stub(uty_u, u3k(u3t(blt)));
     } break;
 
-    case c3__lin: {
+    case c3__put: {
       _term_it_show_tour(uty_u, u3k(u3t(blt)));
     } break;
 

@@ -67,7 +67,7 @@
     ::
       %+  lien  p.q.uf
       |=  =blit:dill
-      ?.  ?=(%lin -.blit)
+      ?.  ?=(%put -.blit)
         |
       !=(~ (find what p.blit))
   ==

@@ -25,7 +25,7 @@ export type Blit =
   | { clr: null }                                       //  clear the screen
   | { hop: number | { r: number, c: number } }          //  set cursor col/pos
   | { klr: Array<Stub> }                                //  put styled
-  | { lin: Array<string> }                              //  put text at cursor
+  | { put: Array<string> }                              //  put text at cursor
   | { nel: null }                                       //  newline
   | { sag: { path: string, file: string } }             //  save to jamfile
   | { sav: { path: string, file: string } }             //  save to file

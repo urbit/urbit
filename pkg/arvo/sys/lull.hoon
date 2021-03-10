@@ -1082,7 +1082,7 @@
         [%clr ~]                                        ::  clear the screen
         [%hop p=$@(@ud [r=@ud c=@ud])]                  ::  set cursor col/pos
         [%klr p=stub]                                   ::  put styled
-        [%lin p=(list @c)]                              ::  put text at cursor
+        [%put p=(list @c)]                              ::  put text at cursor
         [%nel ~]                                        ::  newline
         [%sag p=path q=*]                               ::  save to jamfile
         [%sav p=path q=@]                               ::  save to file
