@@ -230,12 +230,12 @@
 ++  test-isclose  ^-  tang
   ;:  weld
     %+  expect
-      !>  (isclose:lvs .1 .1.00001)
+      !>  (isclose:lvs .1 .1.00001 .0.0001)
     %+  expect
-      !>  !(isclose:lvs .1 .1.001)
+      !>  !(isclose:lvs .1 .1.001 .0.001)
     ::  XX should probably test some pathological cases too
     %+  expect-eq
-      !>  (isclose:lvs .1e-6 .0)
+      !>  (isclose:lvs .1e-6 .0 .1e-6)
       !>  (near0:lvs .1e-6)
   ==
 ++  test-get  ^-  tang
