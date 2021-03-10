@@ -415,10 +415,16 @@
   ::
   +$  axon-4
     $:  ram=term
-        tem=(unit (list dill-belt))
+        tem=(unit (list dill-belt-4))
         wid=_80
         pos=$@(@ud [@ud @ud])
         see=$%([%lin (list @c)] [%klr stub])
+    ==
+  ::
+  +$  dill-belt-4
+    $%  [%ctl p=@c]
+        [%met p=@c]
+        dill-belt
     ==
   ::
   ++  axle-4-to-5
@@ -435,7 +441,17 @@
     %+  ~(put by nay)  ses
     (~(put in (~(get ju eye) duct)) duct)
   ::
-  ++  axon-4-to-5  |=(axon-4 `axon`[ram tem wid])
+  ++  axon-4-to-5
+    |=  axon-4
+    ^-  axon
+    =;  tem  [ram tem wid]
+    ?~  tem  ~
+    %-  some
+    %+  turn  u.tem
+    |=  b=dill-belt-4
+    ^-  dill-belt
+    ?.  ?=(?(%ctl %met) -.b)  b
+    [%key -.b p.b]
   --
 ::
 ++  scry

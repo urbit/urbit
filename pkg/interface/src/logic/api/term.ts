@@ -1,14 +1,20 @@
 import BaseApi from './base';
 import { StoreState } from '../store/type';
 
-export type Belt =
+type Bork =
   | { aro: 'd' | 'l' | 'r' | 'u' }
   | { bac: null }
-  | { ctl: string }
   | { del: null }
   | { hit: { r: number, c: number } }
-  | { met: string }
   | { ret: null }
+
+export type Bolt =
+  | string
+  | Bork
+
+export type Belt =
+  | Bork
+  | { key: { mod: null | 'ctl' | 'met' | 'hyp', key: Bolt } }
   | { txt: Array<string> };
 
 export default class TermApi extends BaseApi<StoreState> {

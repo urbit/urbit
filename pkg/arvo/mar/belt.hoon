@@ -11,15 +11,31 @@
     ^-  $-(^json belt:dill)
     =,  dejs:format
     %-  of
-    :~  aro+(su (perk %d %l %r %u ~))
-        bac+ul
-        ctl+(cu taft so)
-        del+ul
-        hit+(ot 'r'^ni 'c'^ni ~)
-        met+(cu taft so)
-        ret+ul
-        txt+(ar (cu taft so))
-    ==
+    |^  :*  key+(ot 'mod'^mod 'key'^bot ~)
+            txt+(ar (cu taft so))
+            bol
+        ==
+    ::
+    ++  bol
+      :~  aro+(su (perk %d %l %r %u ~))
+          bac+ul
+          del+ul
+          hit+(ot 'r'^ni 'c'^ni ~)
+          ret+ul
+      ==
+    ::
+    ++  bot
+      |=  jon=json
+      ?+  jon  !!
+        [%s *]  ((cu taft so) jon)
+        [%o *]  ((of bol) jon)
+      ==
+    ::
+    ++  mod
+      |=  jon=json
+      ?~  jon  ~
+      ((su (perk %ctl %met %hyp ~)) jon)
+    --
   --
 ::  +grow: convert to
 ::

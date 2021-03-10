@@ -1,10 +1,10 @@
 /-  *sole
 /+  sole
 |%
-+$  any-state  $%(state)
-+$  state  [%2 pith-2]
++$  any-state  $%(state state-2)
++$  state  [%3 pith]
 ::
-++  pith-2                                              ::
+++  pith                                                ::
   $:  eel=(set gill:gall)                               ::  connect to
       ray=(set well:gall)                               ::
       fur=(map dude:gall (unit server))                 ::  servers
@@ -49,6 +49,42 @@
       pom=sole-prompt                                   ::  static prompt
       inp=sole-command                                  ::  input state
   ==                                                    ::
+::
+::
++$  state-2    [%2 pith-2]
+::
++$  pith-2
+  $:  eel=(set gill:gall)
+      ray=(set well:gall)
+      fur=(map dude:gall (unit server))
+      bin=(map bone source-2)
+  ==
+::
++$  source-2
+  $:  edg=_80
+      off=@ud
+      kil=kill
+      inx=@ud
+      fug=(map gill:gall (unit target-2))
+      mir=(pair @ud stub)
+  ==
+::
++$  target-2
+  $:  $=  blt
+        %+  pair
+          (unit dill-belt-2)
+        (unit dill-belt-2)
+      ris=(unit search)
+      hit=history
+      pom=sole-prompt
+      inp=sole-command
+  ==
+::
++$  dill-belt-2
+  $%  [%ctl p=@c]
+      [%met p=@c]
+      dill-belt:dill
+  ==
 --
 ::                                                      ::  ::
 ::::                                                    ::  ::
@@ -217,49 +253,85 @@
   ==
 ::
 ++  on-load
-  |=  [hood-version=@ud old=any-state]
-  =<  se-abet  =<  se-view
-  =.  sat  old
-  =.  dev  (~(gut by bin) ost *source)
-  =?  ..on-load  (lte hood-version %4)
-    ~>  %slog.0^leaf+"drum: starting os1 agents"
-    =>  (se-born | %home %s3-store)
-    =>  (se-born | %home %contact-view)
-    =>  (se-born | %home %contact-hook)
-    =>  (se-born | %home %contact-store)
-    =>  (se-born | %home %metadata-hook)
-    =>  (se-born | %home %metadata-store)
-    =>  (se-born | %home %goad)
-    ~>  %slog.0^leaf+"drum: resubscribing to %dojo and %chat-cli"
-    =>  (se-drop:(se-pull our.hid %dojo) | our.hid %dojo)
-    (se-drop:(se-pull our.hid %chat-cli) | our.hid %chat-cli)
-  =?  ..on-load  (lte hood-version %5)
-    (se-born | %home %file-server)
-  =?  ..on-load  (lte hood-version %7)
-    (se-born | %home %glob)
-  =?  ..on-load  (lte hood-version %8)
-    =>  (se-born | %home %group-push-hook)
-    (se-born | %home %group-pull-hook)
-  =?  ..on-load  (lte hood-version %9)
-    (se-born | %home %graph-store)
-  =?  ..on-load  (lte hood-version %10)
-    =>  (se-born | %home %graph-push-hook)
-    (se-born | %home %graph-pull-hook)
-  =?  ..on-load  (lte hood-version %11)
-    =>  (se-born | %home %hark-graph-hook)
-    =>  (se-born | %home %hark-group-hook)
-    =>  (se-born | %home %hark-chat-hook)
-    =>  (se-born | %home %hark-store)
-    =>  (se-born | %home %observe-hook)
-    =>  (se-born | %home %metadata-pull-hook)
-    =>  (se-born | %home %metadata-push-hook)
-    (se-born | %home %herm)
-  =?  ..on-load  (lte hood-version %12)
-    =>  (se-born | %home %contact-push-hook)
-    =>  (se-born | %home %contact-pull-hook)
-    =>  (se-born | %home %settings-store)
-    (se-born | %home %group-view)
-  ..on-load
+  |^  |=  [hood-version=@ud old=any-state]
+      =<  se-abet  =<  se-view
+      =.  sat  (load-state old)
+      =.  dev  (~(gut by bin) ost *source)
+      (load-apps hood-version)
+  ::
+  ++  load-state
+    |=  old=any-state
+    ^-  state
+    ?-  -.old
+      %3  old
+      %2  [%3 (pith-2-to-3 +.old)]
+    ==
+  ::
+  ++  pith-2-to-3
+    |=  p=pith-2
+    ^-  pith
+    p(bin (~(run by bin.p) source-2-to-3))
+  ::
+  ++  source-2-to-3
+    |=  s=source-2
+    ^-  source
+    s(fug (~(run by fug.s) |=(t=(unit target-2) (bind t target-2-to-3))))
+  ::
+  ++  target-2-to-3
+    |=  t=target-2
+    ^-  target
+    :_  +.t
+    :-  (bind p.blt.t belt-2-to-3)
+    (bind q.blt.t belt-2-to-3)
+  ::
+  ++  belt-2-to-3
+    |=  b=dill-belt-2
+    ^-  dill-belt:dill
+    ?.  ?=(?(%ctl %met) -.b)  b
+    [%key -.b p.b]
+  ::
+  ++  load-apps
+    |=  hood-version=@ud
+    =?  ..on-load  (lte hood-version %4)
+      ~>  %slog.0^leaf+"drum: starting os1 agents"
+      =>  (se-born | %home %s3-store)
+      =>  (se-born | %home %contact-view)
+      =>  (se-born | %home %contact-hook)
+      =>  (se-born | %home %contact-store)
+      =>  (se-born | %home %metadata-hook)
+      =>  (se-born | %home %metadata-store)
+      =>  (se-born | %home %goad)
+      ~>  %slog.0^leaf+"drum: resubscribing to %dojo and %chat-cli"
+      =>  (se-drop:(se-pull our.hid %dojo) | our.hid %dojo)
+      (se-drop:(se-pull our.hid %chat-cli) | our.hid %chat-cli)
+    =?  ..on-load  (lte hood-version %5)
+      (se-born | %home %file-server)
+    =?  ..on-load  (lte hood-version %7)
+      (se-born | %home %glob)
+    =?  ..on-load  (lte hood-version %8)
+      =>  (se-born | %home %group-push-hook)
+      (se-born | %home %group-pull-hook)
+    =?  ..on-load  (lte hood-version %9)
+      (se-born | %home %graph-store)
+    =?  ..on-load  (lte hood-version %10)
+      =>  (se-born | %home %graph-push-hook)
+      (se-born | %home %graph-pull-hook)
+    =?  ..on-load  (lte hood-version %11)
+      =>  (se-born | %home %hark-graph-hook)
+      =>  (se-born | %home %hark-group-hook)
+      =>  (se-born | %home %hark-chat-hook)
+      =>  (se-born | %home %hark-store)
+      =>  (se-born | %home %observe-hook)
+      =>  (se-born | %home %metadata-pull-hook)
+      =>  (se-born | %home %metadata-push-hook)
+      (se-born | %home %herm)
+    =?  ..on-load  (lte hood-version %12)
+      =>  (se-born | %home %contact-push-hook)
+      =>  (se-born | %home %contact-pull-hook)
+      =>  (se-born | %home %settings-store)
+      (se-born | %home %group-view)
+    ..on-load
+  --
 ::
 ++  reap-phat                                         ::  ack connect
   |=  [way=wire saw=(unit tang)]
@@ -721,12 +793,19 @@
     ?-  bet
       [%aro *]  (ta-aro p.bet)
       [%bac *]  ta-bac
-      [%ctl *]  (ta-ctl p.bet)
       [%del *]  ta-del
       [%hit *]  (ta-hit +.bet)
-      [%met *]  (ta-met p.bet)
       [%ret *]  ta-ret
       [%txt *]  (ta-txt p.bet)
+    ::
+        [%key *]
+      ?+  mod.bet
+        ?^  key.bet  $(bet key.bet)
+        (ta-txt key.bet ~)
+      ::
+        %ctl  (ta-ctl key.bet)
+        %met  (ta-met key.bet)
+      ==
     ==
   ::
   ++  ta-det                                          ::  send edit
@@ -750,7 +829,7 @@
     (ta-hom %del (dec pos.inp))
   ::
   ++  ta-ctl                                          ::  hear control
-    |=  key=@c
+    |=  key=bolt:dill
     ^+  +>
     =.  ris  ?.(?=(?(%g %r) key) ~ ris)
     ?+    key    ta-bel
@@ -891,8 +970,8 @@
         kil
       ?.  ?&  ?=(^ old.kil)
               ?=(^ p.blt)
-              ?|  ?=([%ctl ?(%k %u %w)] u.p.blt)
-                  ?=([%met ?(%d %bac)] u.p.blt)
+              ?|  ?=([%key %ctl ?(%k %u %w)] u.p.blt)
+                  ?=([%key %met ?(%d [%bac ~])] u.p.blt)
           ==  ==
         %=  kil                                       ::  prepend
           num  +(num.kil)
@@ -909,17 +988,18 @@
     ==
   ::
   ++  ta-met                                          ::  meta key
-    |=  key=@c
+    |=  key=bolt:dill
     ^+  +>
     =.  ris  ~
     ?+    key    ta-bel
-      %dot  ?.  &(?=(^ old.hit) ?=(^ i.old.hit))      ::  last "arg" from hist
+      %'.'  ?.  &(?=(^ old.hit) ?=(^ i.old.hit))      ::  last "arg" from hist
               ta-bel
             =+  old=`(list @c)`i.old.hit
             =+  sop=(ta-jump(buf.say.inp old) %l %ace (lent old))
             (ta-hom (cat:edit pos.inp (slag sop old)))
             ::
-      %bac  ?:  =(0 pos.inp)                          ::  kill left-word
+      [%bac ~]
+            ?:  =(0 pos.inp)                          ::  kill left-word
               ta-bel
             =+  sop=(ta-pos %l %edg pos.inp)
             (ta-kil %l [(sub pos.inp sop) sop])
@@ -975,8 +1055,8 @@
             ::
       %y    ?.  ?&  ?=(^ old.kil)                     ::  rotate & yank
                     ?=(^ p.blt)
-                    ?|  ?=([%ctl %y] u.p.blt)
-                        ?=([%met %y] u.p.blt)
+                    ?|  ?=([%key %ctl %y] u.p.blt)
+                        ?=([%key %met %y] u.p.blt)
                 ==  ==
               ta-bel
             =+  las=(lent ta-yan)

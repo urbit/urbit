@@ -800,15 +800,11 @@ _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
     else {
       if ( (cay_y >= 'a') && (cay_y <= 'z') ) {
         tat_u->esc.ape = c3n;
-        _term_io_belt(uty_u, u3nc(c3__met, cay_y));
-      }
-      else if ( '.' == cay_y ) {
-        tat_u->esc.ape = c3n;
-        _term_io_belt(uty_u, u3nc(c3__met, c3__dot));
+        _term_io_belt(uty_u, u3nt(c3__key, c3__met, cay_y));
       }
       else if ( 8 == cay_y || 127 == cay_y ) {
         tat_u->esc.ape = c3n;
-        _term_io_belt(uty_u, u3nc(c3__met, c3__bac));
+        _term_io_belt(uty_u, u3nq(c3__key, c3__met, c3__bac, u3_nul));
       }
       else if ( ('[' == cay_y) || ('O' == cay_y) ) {
         tat_u->esc.bra = c3y;
@@ -877,7 +873,7 @@ _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
     }
 #endif
     else if ( cay_y <= 26 ) {
-      _term_io_belt(uty_u, u3nc(c3__ctl, ('a' + (cay_y - 1))));
+      _term_io_belt(uty_u, u3nt(c3__key, c3__ctl, ('a' + (cay_y - 1))));
     }
     else if ( 27 == cay_y ) {
       tat_u->esc.ape = c3y;
@@ -1211,7 +1207,7 @@ u3_term_ef_ctlc(void)
 
   {
     u3_noun wir = u3nt(c3__term, '1', u3_nul);
-    u3_noun cad = u3nt(c3__belt, c3__ctl, 'c');
+    u3_noun cad = u3nq(c3__belt, c3__key, c3__ctl, 'c');
 
     c3_assert( 1 == uty_u->tid_l );
     c3_assert( uty_u->car_u );

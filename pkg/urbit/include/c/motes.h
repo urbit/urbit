@@ -603,6 +603,7 @@
 #   define c3__just   c3_s4('j','u','s','t')
 #   define c3__keep   c3_s4('k','e','e','p')
 #   define c3__kern   c3_s4('k','e','r','n')
+#   define c3__key    c3_s3('k','e','y')
 #   define c3__kgo    c3_s3('k','g','o')
 #   define c3__kick   c3_s4('k','i','c','k')
 #   define c3__king   c3_s4('k','i','n','g')

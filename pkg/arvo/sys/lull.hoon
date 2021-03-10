@@ -1068,13 +1068,15 @@
   +$  belt                                              ::  outside belt
     $%  [%aro p=?(%d %l %r %u)]                         ::  arrow key
         [%bac ~]                                        ::  true backspace
-        [%ctl p=@c]                                     ::  control-key
         [%del ~]                                        ::  true delete
         [%hit r=@ud c=@ud]                              ::  mouse click
-        [%met p=@c]                                     ::  meta-key
+        [%key mod=?(~ %ctl %met %hyp) key=bolt]         ::  input w/ modifier
         [%ret ~]                                        ::  return
         [%txt p=(list @c)]                              ::  utf32 text
     ==                                                  ::
+  +$  bolt                                              ::  single input
+    $@  @cF                                             ::  simple
+    $<(?(%txt %key) belt)                               ::  special
   +$  blit                                              ::  outside blit
     $%  [%bel ~]                                        ::  make a noise
         [%clr ~]                                        ::  clear the screen
