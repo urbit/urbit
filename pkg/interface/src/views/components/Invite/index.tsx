@@ -24,7 +24,6 @@ import useMetadataState from '~/logic/state/metadata';
 interface InviteItemProps {
   invite?: Invite;
   resource: string;
-  pendingJoin: JoinRequests;
   app?: string;
   uid?: string;
   api: GlobalApi;
@@ -32,8 +31,9 @@ interface InviteItemProps {
 
 export function InviteItem(props: InviteItemProps) {
   const [preview, setPreview] = useState<MetadataUpdatePreview | null>(null);
-  const { pendingJoin, invite, resource, uid, app, api } = props;
+  const { invite, resource, uid, app, api } = props;
   const { ship, name } = resourceFromPath(resource);
+  const pendingJoin = useGroupState(state => state.pendingJoin);
   const status = pendingJoin[resource];
   const groups = useGroupState(state => state.groups);
   const associations = useMetadataState(state => state.associations);
@@ -44,7 +44,7 @@ export function InviteItem(props: InviteItemProps) {
     if (!(app && invite && uid)) {
       return;
     }
-    if(resource in props.groups) {
+    if(resource in groups) {
       await api.invite.decline(app, uid);
       return;
     }

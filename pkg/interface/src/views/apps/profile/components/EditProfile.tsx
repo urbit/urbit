@@ -206,8 +206,6 @@ export function EditProfile(props: any): ReactElement {
             <GroupSearch
               label='Pinned Groups'
               id='groups'
-              groups={props.groups}
-              associations={props.associations}
               publicOnly
             />
             <AsyncButton primary loadingText='Updating...' border mt={3}>
