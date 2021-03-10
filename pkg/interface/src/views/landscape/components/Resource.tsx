@@ -20,7 +20,7 @@ type ResourceProps = StoreState & {
 
 export function Resource(props: ResourceProps): ReactElement {
   const { association, api, notificationsGraphConfig, groups, contacts } = props;
-  const app = association.metadata.module || association['app-name'];
+  const app = association.metadata?.config?.graph || association['app-name'];
   const rid = association.resource;
   const selectedGroup = association.group;
   const relativePath = (p: string) =>

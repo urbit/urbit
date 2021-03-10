@@ -10,6 +10,7 @@ export function GroupHome(props) {
   //  TODO: store a backend config for whether the feed is enabled or not
   console.log(props);
   const metadata = props.associations?.groups[props.groupPath]?.metadata;
+  console.log(metadata);
   const askFeedBanner = metadata && metadata.module === null;
   const isFeedEnabled = false;
 

@@ -55,11 +55,17 @@ export function SidebarList(props: {
     .filter((a) => {
       const assoc = associations[a];
       if (workspace?.type === 'messages') {
-        return (!(assoc.group in props.associations.groups) && assoc.metadata.module === 'chat');
+        return (
+          !(assoc.group in props.associations.groups) &&
+          'graph' in assoc.metadata.config &&
+          assoc.metadata.config.graph === 'chat'
+        );
       } else {
-        return group
-          ? assoc.group === group
-          : (!(assoc.group in props.associations.groups) && assoc.metadata.module !== 'chat');
+        return group ? assoc.group === group : (
+          !(assoc.group in props.associations.groups) &&
+          'graph' in assoc.metadata.config &&
+          assoc.metadata.config.graph !== 'chat'
+        );
       }
     })
     .sort(sidebarSort(associations, props.apps)[config.sortBy]);

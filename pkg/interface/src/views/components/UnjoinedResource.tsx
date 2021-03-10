@@ -34,9 +34,9 @@ export function UnjoinedResource(props: UnjoinedResourceProps) {
   const history = useHistory();
   const rid = props.association.resource;
   const appName = props.association['app-name'];
-  const { title, description, module } = props.association.metadata;
+  const { title, description, config } = props.association.metadata;
   const waiter = useWaitForProps(props);
-  const app = useMemo(() => module || appName, [props.association]);
+  const app = useMemo(() => config.graph || appName, [props.association]);
 
   const onJoin = async () => {
     const [, , ship, name] = rid.split('/');

@@ -31,7 +31,7 @@ type ResourceSkeletonProps = {
 
 export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
   const { association, baseUrl, children, groups } = props;
-  const app = association?.metadata?.module || association['app-name'];
+  const app = association?.metadata?.config?.graph || association['app-name'];
   const rid = association.resource;
   const group = groups[association.group];
   let workspace = association.group;
