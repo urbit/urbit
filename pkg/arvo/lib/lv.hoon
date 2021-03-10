@@ -244,7 +244,7 @@
   ++  ones
     |=  n=@ud  ^-  @lvd
     ~_  leaf+"lagoon-fail"
-    (fill n .1)
+    (fill n .~1)
   ::
   ::    Length of vector
   ++  length
@@ -282,7 +282,7 @@
   ::  |x|
   ++  abs
     |=  [s=@rd]
-    ?:  (gth s .0)  s  (sub:rd .0 s)
+    ?:  (gth s .~0)  s  (sub:rd .~0 s)
   ::
   ::  |x-y| <= tol
   ++  isclose
@@ -290,7 +290,7 @@
     (lth:rd (abs (sub:rd s t)) tol)
   ++  near0
     |=  s=@rd
-    (isclose s .0 .1e-6)
+    (isclose s .~0 .~1e-6)
   ::
   ::    Get the value at an index, using mathematical indices 1..n.
   ++  get
@@ -310,7 +310,7 @@
     |=  [u=@lvd i=@ud s=@rd]  ^-  @lvd
     ~_  leaf+"lagoon-fail"
     ?:  (gth i (length u))  !!
-    =/  full  0xffff.ffff
+    =/  full  0xffff.ffff.ffff.ffff
     =/  n  (length u)
     =/  mask  (mix (fil 6 +(n) full) (lsh [6 (dec i)] full))
     =/  cleared  (dis mask u)
