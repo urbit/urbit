@@ -1,5 +1,5 @@
 /+  agentio
-|_  [=bowl:gall root=mark version=@ud]
+|_  [=bowl:gall root=mark version=@ud min=@ud]
 +*  io  ~(. agentio bowl)
 ++  is-root
   |=  =mark
@@ -22,6 +22,12 @@
 ++  current-version
   (append-version version)
 ::
+++  supported
+  |=  =mark
+  =/  ver
+    (parse mark)
+  &((gte min ver) (lte version ver))
+::
 ++  convert-to
   |=  =cage
   ^-  vase
@@ -43,6 +49,5 @@
   ?:  =(p.cage current-version)
     q.cage
   ((tube-from p.cage) q.cage)
-  
 --
 
