@@ -13,7 +13,7 @@ import {
 } from '@tlon/indigo-react';
 
 export function SetStatus(props: any) {
-  const { contact, ship, api, callback, smallControl } = props;
+  const { contact, ship, api, callback } = props;
   const inputRef = useRef(null);
   const [_status, setStatus] = useState('');
   const onStatusChange = useCallback(
@@ -34,35 +34,6 @@ export function SetStatus(props: any) {
       callback();
     }
   };
-
-  if (smallControl) {
-    return (
-      <>
-        <Row mb='2'>
-          <Text color='gray' fontWeight='500'>
-            Set Status:
-          </Text>
-        </Row>
-        <Row>
-          <Input
-            ref={inputRef}
-            onChange={onStatusChange}
-            value={_status}
-            autocomplete='off'
-            width='100%'
-            onBlur={() => {
-              editStatus();
-            }}
-            onKeyPress={(evt) => {
-              if (evt.key === 'Enter') {
-                editStatus();
-              }
-            }}
-          />
-        </Row>
-      </>
-    );
-  }
 
   return (
     <Row width='100%' my={3}>

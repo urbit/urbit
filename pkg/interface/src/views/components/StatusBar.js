@@ -14,7 +14,7 @@ import { Dropdown } from './Dropdown';
 import { StatusBarItem } from './StatusBarItem';
 import { Sigil } from '~/logic/lib/sigil';
 import { uxToHex } from '~/logic/lib/util';
-import { SetStatus } from '~/views/apps/profile/components/SetStatus';
+import { ProfileStatus } from './ProfileStatus';
 import { useTutorialModal } from './useTutorialModal';
 
 import useLocalState, { selectLocalState } from '~/logic/state/local';
@@ -167,11 +167,13 @@ const StatusBar = (props) => {
                 System Preferences
               </Row>
               <Row px={3} pt={2} pb={1} flexDirection='column'>
-                <SetStatus
-                  ship={`~${ship}`}
+                <Text color='gray' fontWeight='500' mb='1'>
+                  Set Status:
+                </Text>
+                <ProfileStatus
                   contact={ourContact}
+                  ship={`~${ship}`}
                   api={api}
-                  smallControl={true}
                 />
               </Row>
             </Col>
