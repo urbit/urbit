@@ -18,17 +18,13 @@ import { GroupNotification } from './group';
 import { GraphNotification } from './graph';
 import { BigInteger } from 'big-integer';
 import { useHovering } from '~/logic/lib/util';
+import useHarkState from '~/logic/state/hark';
 
 interface NotificationProps {
   notification: IndexedNotification;
   time: BigInteger;
-  associations: Associations;
   api: GlobalApi;
   archived: boolean;
-  groups: Groups;
-  contacts: Contacts;
-  graphConfig: NotificationGraphConfig;
-  groupConfig: GroupNotificationsConfig;
 }
 
 function getMuted(
@@ -61,8 +57,6 @@ function NotificationWrapper(props: {
   notif: IndexedNotification;
   children: ReactNode;
   archived: boolean;
-  graphConfig: NotificationGraphConfig;
-  groupConfig: GroupNotificationsConfig;
 }) {
   const { api, time, notif, children } = props;
 
@@ -70,10 +64,13 @@ function NotificationWrapper(props: {
     return api.hark.archive(time, notif.index);
   }, [time, notif]);
 
+  const groupConfig = useHarkState(state => state.notificationsGroupConfig);
+  const graphConfig = useHarkState(state => state.notificationsGraphConfig);
+
   const isMuted = getMuted(
     notif,
-    props.groupConfig,
-    props.graphConfig
+    groupConfig,
+    graphConfig
   );
 
   const onChangeMute = useCallback(async () => {
@@ -119,8 +116,6 @@ export function Notification(props: NotificationProps) {
       notif={notification}
       time={props.time}
       api={props.api}
-      graphConfig={props.graphConfig}
-      groupConfig={props.groupConfig}
     >
       {children}
     </NotificationWrapper>
@@ -136,13 +131,10 @@ export function Notification(props: NotificationProps) {
           api={props.api}
           index={index}
           contents={c}
-          contacts={props.contacts}
-          groups={props.groups}
           read={read}
           archived={archived}
           timebox={props.time}
           time={time}
-          associations={associations}
         />
       </Wrapper>
     );
@@ -156,13 +148,10 @@ export function Notification(props: NotificationProps) {
           api={props.api}
           index={index}
           contents={c}
-          contacts={props.contacts}
-          groups={props.groups}
           read={read}
           timebox={props.time}
           archived={archived}
           time={time}
-          associations={associations}
         />
       </Wrapper>
     );

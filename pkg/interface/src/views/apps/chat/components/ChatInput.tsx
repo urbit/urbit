@@ -19,9 +19,7 @@ type ChatInputProps = IuseStorage & {
   station: unknown;
   ourContact: unknown;
   envelopes: Envelope[];
-  contacts: Contacts;
   onUnmount(msg: string): void;
-  storage: StorageState;
   placeholder: string;
   message: string;
   deleteMessage(): void;

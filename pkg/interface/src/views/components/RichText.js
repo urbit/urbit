@@ -42,7 +42,7 @@ const RichText = React.memo(({ disableRemoteContent, ...props }) => (
       linkReference: (linkProps) => {
         const linkText = String(linkProps.children[0].props.children);
         if (isValidPatp(linkText)) {
-          return <Mention contacts={props.contacts || {}} contact={props.contact || {}} group={props.group} ship={deSig(linkText)} />;
+          return <Mention contact={props.contact || {}} group={props.group} ship={deSig(linkText)} />;
         }
         return linkText;
       },

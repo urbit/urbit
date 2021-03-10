@@ -28,7 +28,6 @@ interface MarkdownEditorProps {
   value: string;
   onChange: (s: string) => void;
   onBlur?: (e: any) => void;
-  storage: StorageState;
 }
 
 const PromptIfDirty = () => {
@@ -74,7 +73,7 @@ export function MarkdownEditor(
     [onBlur]
   );
 
-  const { uploadDefault, canUpload } = useStorage(props.storage);
+  const { uploadDefault, canUpload } = useStorage();
 
   const onFileDrag = useCallback(
     async (files: FileList | File[], e: DragEvent) => {

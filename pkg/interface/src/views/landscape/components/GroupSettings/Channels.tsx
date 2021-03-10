@@ -7,16 +7,17 @@ import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
 import { getModuleIcon } from '~/logic/lib/util';
 import { Dropdown } from '~/views/components/Dropdown';
 import { resourceFromPath, roleForShip } from '~/logic/lib/group';
+import useMetadataState from '~/logic/state/metadata';
 
 interface GroupChannelSettingsProps {
   group: Group;
   association: Association;
-  associations: Associations;
   api: GlobalApi;
 }
 
 export function GroupChannelSettings(props: GroupChannelSettingsProps) {
-  const { api, associations, association, group } = props;
+  const { api, association, group } = props;
+  const associations = useMetadataState(state => state.associations);
   const channels = Object.values(associations.graph).filter(
     ({ group }) => association.group === group
   );

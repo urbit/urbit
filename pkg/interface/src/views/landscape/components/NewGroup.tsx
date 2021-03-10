@@ -16,6 +16,8 @@ import { AsyncButton } from '~/views/components/AsyncButton';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
 import GlobalApi from '~/logic/api/global';
 import { stringToSymbol } from '~/logic/lib/util';
+import useGroupState from '~/logic/state/group';
+import useMetadataState from '~/logic/state/metadata';
 
 const formSchema = Yup.object({
   title: Yup.string().required('Group must have a name'),
@@ -30,9 +32,6 @@ interface FormSchema {
 }
 
 interface NewGroupProps {
-  groups: Groups;
-  contacts: Rolodex;
-  associations: Associations;
   api: GlobalApi;
 }
 
@@ -44,7 +43,9 @@ export function NewGroup(props: NewGroupProps & RouteComponentProps): ReactEleme
     isPrivate: false
   };
 
-  const waiter = useWaitForProps(props);
+  const groups = useGroupState(state => state.groups);
+  const associations = useMetadataState(state => state.associations);
+  const waiter = useWaitForProps({ groups, associations });
 
   const onSubmit = useCallback(
     async (values: FormSchema, actions: FormikHelpers<FormSchema>) => {
@@ -65,8 +66,8 @@ export function NewGroup(props: NewGroupProps & RouteComponentProps): ReactEleme
             };
         await api.groups.create(name, policy, title, description);
         const path = `/ship/~${window.ship}/${name}`;
-        await waiter(({ groups, associations }) => {
-          return path in groups && path in associations.groups;
+        await waiter((p) => {
+          return path in p.groups && path in p.associations.groups;
         });
 
         actions.setStatus({ success: null });

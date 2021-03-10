@@ -17,6 +17,9 @@ import { uxToHex } from '~/logic/lib/util';
 import { ProfileStatus } from './ProfileStatus';
 import { useTutorialModal } from './useTutorialModal';
 
+import useHarkState from '~/logic/state/hark';
+import useInviteState from '~/logic/state/invite';
+import { useHistory } from 'react-router-dom';
 import useLocalState, { selectLocalState } from '~/logic/state/local';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 
@@ -24,8 +27,12 @@ const localSel = selectLocalState(['toggleOmnibox']);
 
 const StatusBar = (props) => {
   const { ourContact, api, ship } = props;
+  const history = useHistory();
+  const notificationsCount = useHarkState((state) => state.notificationsCount);
+  const doNotDisturb = useHarkState((state) => state.doNotDisturb);
+  const inviteState = useInviteState((state) => state.invites);
   const invites = [].concat(
-    ...Object.values(props.invites).map((obj) => Object.values(obj))
+    ...Object.values(inviteState).map((obj) => Object.values(obj))
   );
   const metaKey = window.navigator.platform.includes('Mac') ? '⌘' : 'Ctrl+';
   const { toggleOmnibox } = useLocalState(localSel);
@@ -70,18 +77,17 @@ const StatusBar = (props) => {
           borderColor='washedGray'
           mr='2'
           px='2'
-          onClick={() => props.history.push('/')}
+          onClick={() => history.push('/')}
           {...props}
         >
           <Icon icon='Spaces' color='black' />
         </Button>
         <StatusBarItem float={floatLeap} mr={2} onClick={() => toggleOmnibox()}>
-          {!props.doNotDisturb &&
-            (props.notificationsCount > 0 || invites.length > 0) && (
-              <Box display='block' right='-8px' top='-8px' position='absolute'>
-                <Icon color='blue' icon='Bullet' />
-              </Box>
-            )}
+          {!doNotDisturb && (notificationsCount > 0 || invites.length > 0) && (
+            <Box display='block' right='-8px' top='-8px' position='absolute'>
+              <Icon color='blue' icon='Bullet' />
+            </Box>
+          )}
           <Icon icon='LeapArrow' />
           <Text ref={anchorRef} ml={2} color='black'>
             Leap
@@ -151,7 +157,7 @@ const StatusBar = (props) => {
                 fontWeight='500'
                 px={3}
                 py={2}
-                onClick={() => props.history.push(`/~profile/~${ship}`)}
+                onClick={() => history.push(`/~profile/~${ship}`)}
               >
                 View Profile
               </Row>
@@ -162,7 +168,7 @@ const StatusBar = (props) => {
                 fontWeight='500'
                 px={3}
                 py={2}
-                onClick={() => props.history.push('/~settings')}
+                onClick={() => history.push('/~settings')}
               >
                 System Preferences
               </Row>
