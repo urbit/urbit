@@ -24,19 +24,50 @@ interface RendererProps {
 }
 
 interface VirtualScrollerProps<T> {
+  /**
+   * Start scroll from
+   */
   origin: 'top' | 'bottom';
+  /**
+   * Load more of the graph
+   *
+   * @returns boolean whether or not the graph is now fully loaded
+   */
   loadRows(newer: boolean): Promise<boolean>;
+  /**
+   * The data to iterate over
+   */
   data: BigIntOrderedMap<T>;
-  id: string;
+  /**
+   * The component to render the items
+   * 
+   * @remarks
+   *
+   * This component must be referentially stable, so either use `useCallback` or
+   * a instance method. It must also forward the DOM ref from its root DOM node
+   */
   renderer: (props: RendererProps) => JSX.Element | null;
   onStartReached?(): void;
   onEndReached?(): void;
   size: number;
+  pendingSize: number;
   totalSize: number;
+  /**
+   * Average height of a single rendered item
+   *
+   * @remarks
+   * This is used primarily to calculate how many items should be onscreen. If
+   * size is variable, err on the lower side.
+   */
   averageHeight: number;
+  /**
+   * The offset to begin rendering at, on load.
+   *
+   * @remarks
+   * This is only looked up once, on component creation. Subsequent changes to
+   * this prop will have no effect
+   */
   offset: number;
-  onCalculateVisibleItems?(visibleItems: BigIntOrderedMap<T>): void;
-  onScroll?({ scrollTop, scrollHeight, windowHeight }): void;
   style?: any;
 }
 
@@ -61,6 +92,12 @@ const ZONE_SIZE = IS_IOS ? 10 : 40;
 // nb: in this file, an index refers to a BigInteger and an offset refers to a
 // number used to index a listified BigIntOrderedMap
 
+/**
+ * A virtualscroller for a `BigIntOrderedMap`.
+ *
+ * VirtualScroller does not clean up or reset itself, so please use `key`
+ * to ensure a new instance is created for each BigIntOrderedMap
+ */
 export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T>, VirtualScrollerState<T>> {
   /**
    * A reference to our scroll container
@@ -87,8 +124,6 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
    */
   private saveDepth = 0;
 
-  private isUpdating = false;
-
   private scrollLocked = true;
 
   private pageSize = 50;
@@ -96,7 +131,6 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
   private pageDelta = 15;
 
   private scrollRef: HTMLElement | null = null;
-
 
   private loaded = {
     top: false,
@@ -119,12 +153,14 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
   }
 
   componentDidMount() {
-    if(true) {
-      this.updateVisible(0);
-      this.resetScroll();
-      this.loadRows(false);
-      return;
+    if(this.props.size < 100) {
+      this.loaded.top = true;
+      this.loaded.bottom = true;
     }
+      
+    this.updateVisible(0);
+    this.resetScroll();
+    this.loadRows(false);
   }
 
   // manipulate scrollbar manually, to dodge change detection
@@ -146,9 +182,10 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
 
 
   componentDidUpdate(prevProps: VirtualScrollerProps<T>, _prevState: VirtualScrollerState<T>) {
-    const { id, size, data, offset } = this.props;
+    const { id, size, data, offset, pendingSize } = this.props;
     const { visibleItems } = this.state;
-    if(size !== prevProps.size) {
+
+    if(size !== prevProps.size || pendingSize !== prevProps.pendingSize) {
       if(this.scrollLocked) {
         this.updateVisible(0);
         this.resetScroll();
@@ -168,7 +205,9 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     }
     const offset = [...this.props.data].findIndex(([i]) => i.eq(startIndex))
     if(offset === -1) {
-      throw new Error("a");
+      // TODO: revisit when we remove nodes for any other reason than
+      // pending indices being removed
+      return 0;
     }
     return offset;
   }
@@ -182,7 +221,6 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
       return;
     }
     log('reflow', `from: ${this.startOffset()} to: ${newOffset}`);
-    this.isUpdating = true;
 
     const { data, onCalculateVisibleItems } = this.props;
     const visibleItems = new BigIntOrderedMap<any>(
@@ -191,14 +229,12 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
 
     this.save();
 
-    onCalculateVisibleItems ? onCalculateVisibleItems(visibleItems) : null;
     this.setState({
       visibleItems,
     }, () => {
       requestAnimationFrame(() => {
         this.restore();
         requestAnimationFrame(() => {
-          this.isUpdating = false;
 
         });
       });
@@ -449,9 +485,8 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
 
     const transform = isTop ? 'scale3d(1, 1, 1)' : 'scale3d(1, -1, 1)';
 
-    const loaded = this.props.data.size > 0;
 
-    const atStart = loaded && this.props.data.peekLargest()?.[0].eq(visibleItems.peekLargest()?.[0] || bigInt.zero);
+    const atStart = (this.props.data.peekLargest()?.[0] ?? bigInt.zero).eq(visibleItems.peekLargest()?.[0] || bigInt.zero);
     const atEnd = this.loaded.top;
 
     return (

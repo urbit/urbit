@@ -191,6 +191,7 @@ export default class GraphApi extends BaseApi<StoreState> {
     });
   }
 
+
   addGraph(ship: Patp, name: string, graph: any, mark: any) {
     return this.storeAction({
       'add-graph': {
@@ -225,12 +226,37 @@ export default class GraphApi extends BaseApi<StoreState> {
       }
     };
 
-    const promise = this.hookAction(ship, action);
+    const pendingPromise = this.spider(
+      'graph-update',
+      'graph-view-action',
+      'graph-add-nodes',
+      action
+    );
+
     markPending(action['add-nodes'].nodes);
-    action['add-nodes'].resource.ship = action['add-nodes'].resource.ship.slice(1);
-    console.log(action);
-    this.store.handleEvent({ data: { 'graph-update': action } });
-    return promise;
+    action['add-nodes'].resource.ship =
+      action['add-nodes'].resource.ship.slice(1);
+
+    this.store.handleEvent({ data: {
+      'graph-update': action
+    } });
+
+    return pendingPromise;
+    /* TODO: stop lying to our users about pending states
+    return pendingPromise.then((pendingHashes) => {
+      for (let index in action['add-nodes'].nodes) {
+        action['add-nodes'].nodes[index].post.hash =
+          pendingHashes['pending-indices'][index] || null;
+      }
+
+      this.store.handleEvent({ data: {
+        'graph-update': {
+          'pending-indices': pendingHashes['pending-indices'],
+          ...action
+        }
+      } });
+    });
+    */
   }
 
   removeNodes(ship: Patp, name: string, indices: string[]) {

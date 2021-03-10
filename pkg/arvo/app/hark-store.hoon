@@ -23,6 +23,7 @@
       state-2
       state-3
       state-4
+      state-5
   ==
 +$  unread-stats
   [indices=(set index:graph-store) last=@da]
@@ -46,8 +47,11 @@
 +$  state-4
   [%4 base-state]
 ::
++$  state-5
+  [%5 base-state]
+::
 +$  inflated-state
-  $:  state-4
+  $:  state-5
       cache
   ==
 ::  $cache: useful to have precalculated, but can be derived from state
@@ -88,9 +92,18 @@
   =|  cards=(list card)
   |^  
   ?-  -.old
-      %4  
+      %5  
     :-  (flop cards)
     this(-.state old, +.state (inflate-cache:ha old))
+    ::
+      %4
+    %_  $
+      -.old  %5
+      ::
+        last-seen.old
+      %-  ~(run by last-seen.old)
+      |=(old=@da (min old now.bowl))
+    ==
     ::
       %3
     %_  $
@@ -765,7 +778,7 @@
   ==
 ::
 ++  inflate-cache
-  |=  state-4
+  |=  state-5
   ^+  +.state
   =.  +.state
     *cache

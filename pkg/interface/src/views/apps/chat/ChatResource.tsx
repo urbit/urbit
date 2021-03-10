@@ -28,6 +28,7 @@ export function ChatResource(props: ChatResourceProps) {
   const groupPath = props.association.group;
   const group = props.groups[groupPath];
   const contacts = props.contacts;
+  const graphPath = station.slice(7);
   const graph = props.graphs[station.slice(7)];
   const isChatMissing = !props.graphKeys.has(station.slice(7));
   const unreadCount = props.unreads.graph?.[station]?.['/']?.unreads || 0;
@@ -159,6 +160,7 @@ export function ChatResource(props: ChatResourceProps) {
         association={props.association}
         associations={props.associations}
         groups={props.groups}
+        pendingSize={Object.keys(props.graphTimesentMap[graphPath] || {}).length}
         group={group}
         ship={owner}
         station={station}

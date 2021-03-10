@@ -8,6 +8,7 @@ import { Group } from '@urbit/api';
 
 import { uxToHex, cite, useShowNickname, deSig } from '~/logic/lib/util';
 import useSettingsState, {selectCalmState} from "~/logic/state/settings";
+import useLocalState from "~/logic/state/local";
 import OverlaySigil from './OverlaySigil';
 import { Sigil } from '~/logic/lib/sigil';
 import GlobalApi from '~/logic/api/global';
@@ -28,11 +29,16 @@ interface AuthorProps {
 export default function Author(props: AuthorProps): ReactElement {
   const { contacts, ship = '', date, showImage, group } = props;
   const history = useHistory();
+  const osDark = useLocalState((state) => state.dark);
+
+  const theme = useSettingsState(s => s.display.theme);
+  const dark = theme === 'dark' || (theme === 'auto' && osDark)
+
   let contact;
   if (contacts) {
     contact = `~${deSig(ship)}` in contacts ? contacts[`~${deSig(ship)}`] : null;
   }
-  const color = contact?.color ? `#${uxToHex(contact?.color)}` : '#000000';
+  const color = contact?.color ? `#${uxToHex(contact?.color)}` : dark ? '#000000' : '#FFFFFF';
   const showNickname = useShowNickname(contact);
   const { hideAvatars } = useSettingsState(selectCalmState);
   const name = showNickname ? contact.nickname : cite(ship);

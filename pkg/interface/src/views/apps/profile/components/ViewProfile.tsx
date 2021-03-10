@@ -11,7 +11,7 @@ import useLocalState from '~/logic/state/local';
 import {
   ProfileHeader,
   ProfileControls,
-  ProfileOwnControls,
+  ProfileActions,
   ProfileStatus,
   ProfileImages
 } from './Profile';
@@ -25,7 +25,7 @@ export function ViewProfile(props: any) {
     <>
       <ProfileHeader>
         <ProfileControls>
-          <ProfileOwnControls
+          <ProfileActions
             ship={ship}
             isPublic={isPublic}
             contact={contact}
@@ -33,7 +33,7 @@ export function ViewProfile(props: any) {
           />
           <ProfileStatus contact={contact} />
         </ProfileControls>
-        <ProfileImages contact={contact} ship={ship} />
+        <ProfileImages key={ship} contact={contact} ship={ship} />
       </ProfileHeader>
       <Row pb={2} alignItems='center' width='100%'>
         <Center width='100%'>

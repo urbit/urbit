@@ -44,6 +44,10 @@ export function InviteItem(props: InviteItemProps) {
     if (!(app && invite && uid)) {
       return;
     }
+    if(resource in props.groups) {
+      await api.invite.decline(app, uid);
+      return;
+    }
 
     api.groups.join(ship, name);
     await waiter(p => resource in p.pendingJoin);

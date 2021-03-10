@@ -60,7 +60,7 @@ export default class SettingsStateZusettingsReducer{
   getAll(json: any, state: SettingsStateZus) {
     const data = _.get(json, 'all');
     if(data) {
-      _.merge(state, data);
+      _.mergeWith(state, data, (obj, src) => _.isArray(src) ? src : undefined)
     }
   }
 
