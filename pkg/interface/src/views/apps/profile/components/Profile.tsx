@@ -192,6 +192,7 @@ export function Profile(props: any): ReactElement | null {
           <ViewProfile
             nacked={nacked}
             ship={ship}
+            api={props.api}
             contact={contact}
           />
         )}
