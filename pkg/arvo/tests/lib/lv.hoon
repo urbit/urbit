@@ -1,4 +1,4 @@
-/+  *test, *lv
+1 ./+  *test, *lv
 ::
 ::::
   ::
@@ -206,8 +206,8 @@
       !>  `(list @rs)`~[.1 .2 .3 .4 .5]
       !>  (unmake:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]))
     %+  expect-eq
-      !>  0x5.40a0.0000.4080.0000.4040.0000.4000.0000.3f80.0000
-      !>  (make:lvs (unmake:lvs 0x5.40a0.0000.4080.0000.4040.0000.4000.0000.3f80.0000))
+      !>  `@lvs`0x5.40a0.0000.4080.0000.4040.0000.4000.0000.3f80.0000
+      !>  (make:lvs (unmake:lvs `@lvs`0x5.40a0.0000.4080.0000.4040.0000.4000.0000.3f80.0000))
   ==
 ::
 ::  Tests for utility functions
@@ -241,7 +241,7 @@
     %+  expect
       !>  (isclose:lvs .1 .1.00001)
     %+  expect
-      !>  !(isclose:lvs .1 .1001)
+      !>  !(isclose:lvs .1 .1.001)
     ::  XX should probably test some pathological cases too
     %+  expect-eq
       !>  (isclose:lvs .1e-6 .0)
