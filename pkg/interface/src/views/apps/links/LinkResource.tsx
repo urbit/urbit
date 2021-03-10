@@ -8,11 +8,14 @@ import { StoreState } from '~/logic/store/type';
 import { RouteComponentProps } from 'react-router-dom';
 
 import { LinkItem } from './components/LinkItem';
-import { LinkWindow } from './LinkWindow';
+import LinkWindow from './LinkWindow';
 import { Comments } from '~/views/components/Comments';
 
 import './css/custom.css';
 import { Association } from '@urbit/api/metadata';
+import useGraphState from '~/logic/state/graph';
+import useMetadataState from '~/logic/state/metadata';
+import useGroupState from '../../../logic/state/group';
 
 const emptyMeasure = () => {};
 
@@ -27,29 +30,24 @@ export function LinkResource(props: LinkResourceProps) {
     association,
     api,
     baseUrl,
-    graphs,
-    contacts,
-    groups,
-    associations,
-    graphKeys,
-    unreads,
-    graphTimesentMap,
-    storage,
-    history
   } = props;
 
   const rid = association.resource;
 
   const relativePath = (p: string) => `${baseUrl}/resource/link${rid}${p}`;
+  const associations = useMetadataState(state => state.associations);
 
   const [, , ship, name] = rid.split('/');
   const resourcePath = `${ship.slice(1)}/${name}`;
   const resource = associations.graph[rid]
     ? associations.graph[rid]
     : { metadata: {} };
+  const groups = useGroupState(state => state.groups);
   const group = groups[resource?.group] || {};
 
+  const graphs = useGraphState(state => state.graphs);
   const graph = graphs[resourcePath] || null;
+  const graphTimesentMap = useGraphState(state => state.graphTimesentMap);
 
   useEffect(() => {
     api.graph.getGraph(ship, name);
@@ -70,12 +68,9 @@ export function LinkResource(props: LinkResourceProps) {
             return (
               <LinkWindow
                 key={rid}
-                storage={storage}
                 association={resource}
-                contacts={contacts}
                 resource={resourcePath}
                 graph={graph}
-                unreads={unreads}
                 baseUrl={resourceUrl}
                 group={group}
                 path={resource.group}
@@ -106,12 +101,10 @@ export function LinkResource(props: LinkResourceProps) {
               <Col width="100%" p={3} maxWidth="768px">
                 <Link to={resourceUrl}><Text px={3} bold>{'<- Back'}</Text></Link>
                 <LinkItem
-                  contacts={contacts}
                   key={node.post.index}
                   resource={resourcePath}
                   node={node}
                   baseUrl={resourceUrl}
-                  unreads={unreads}
                   group={group}
                   path={resource?.group}
                   api={api}
@@ -124,8 +117,6 @@ export function LinkResource(props: LinkResourceProps) {
                   comments={node}
                   resource={resourcePath}
                   association={association}
-                  unreads={unreads}
-                  contacts={contacts}
                   api={api}
                   editCommentId={editCommentId}
                   history={props.history}

@@ -6,18 +6,18 @@ import RichText from '~/views/components/RichText';
 import { cite, useShowNickname, uxToHex } from '~/logic/lib/util';
 import OverlaySigil from '~/views/components/OverlaySigil';
 import { useHistory } from 'react-router-dom';
+import useContactState from '~/logic/state/contact';
 
 interface MentionTextProps {
   contact?: Contact;
-  contacts?: Contacts;
   content: Content[];
   group: Group;
 }
 export function MentionText(props: MentionTextProps) {
-  const { content, contacts, contact, group, ...rest } = props;
+  const { content, contact, group, ...rest } = props;
 
   return (
-    <RichText contacts={contacts} contact={contact} group={group} {...rest}>
+    <RichText contact={contact} group={group} {...rest}>
       {content.reduce((accum, c) => {
         if ('text' in c) {
           return accum + c.text;
@@ -34,14 +34,14 @@ export function MentionText(props: MentionTextProps) {
 
 export function Mention(props: {
   contact: Contact;
-  contacts?: Contacts;
   group: Group;
   scrollWindow?: HTMLElement;
   ship: string;
   first?: Boolean;
 }) {
-  const { contacts, ship, scrollWindow, first, ...rest } = props;
+  const { ship, scrollWindow, first, ...rest } = props;
   let { contact } = props;
+  const contacts = useContactState(state => state.contacts);
   contact = contact?.color ? contact : contacts?.[`~${ship}`];
   const history = useHistory();
   const showNickname = useShowNickname(contact);

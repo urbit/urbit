@@ -1,62 +1,72 @@
 import _ from 'lodash';
-import { StoreState } from '../../store/type';
-import { Cage } from '~/types/cage';
+import { compose } from 'lodash/fp';
+
 import { InviteUpdate } from '@urbit/api/invite';
 
-type InviteState = Pick<StoreState, 'invites'>;
+import { Cage } from '~/types/cage';
+import useInviteState, { InviteState } from '../state/invite';
+import { reduceState } from '../state/base';
 
-export default class InviteReducer<S extends InviteState> {
-  reduce(json: Cage, state: S) {
+export default class InviteReducer {
+  reduce(json: Cage) {
     const data = json['invite-update'];
     if (data) {
-      this.initial(data, state);
-      this.create(data, state);
-      this.delete(data, state);
-      this.invite(data, state);
-      this.accepted(data, state);
-      this.decline(data, state);
+      reduceState<InviteState, InviteUpdate>(useInviteState, data, [
+        initial,
+        create,
+        deleteInvite,
+        invite,
+        accepted,
+        decline,
+      ]);
     }
   }
+}
 
-  initial(json: InviteUpdate, state: S) {
-    const data = _.get(json, 'initial', false);
-    if (data) {
-      state.invites = data;
-    }
+const initial = (json: InviteUpdate, state: InviteState): InviteState => {
+  const data = _.get(json, 'initial', false);
+  if (data) {
+    state.invites = data;
   }
+  return state;
+}
 
-  create(json: InviteUpdate, state: S) {
-    const data = _.get(json, 'create', false);
-    if (data) {
-      state.invites[data] = {};
-    }
+const create = (json: InviteUpdate, state: InviteState): InviteState => {
+  const data = _.get(json, 'create', false);
+  if (data) {
+    state.invites[data] = {};
   }
+  return state;
+}
 
-  delete(json: InviteUpdate, state: S) {
-    const data = _.get(json, 'delete', false);
-    if (data) {
-      delete state.invites[data];
-    }
+const deleteInvite = (json: InviteUpdate, state: InviteState): InviteState => {
+  const data = _.get(json, 'delete', false);
+  if (data) {
+    delete state.invites[data];
   }
+  return state;
+}
 
-  invite(json: InviteUpdate, state: S) {
-    const data = _.get(json, 'invite', false);
-    if (data) {
-      state.invites[data.term][data.uid] = data.invite;
-    }
+const invite = (json: InviteUpdate, state: InviteState): InviteState => {
+  const data = _.get(json, 'invite', false);
+  if (data) {
+    state.invites[data.term][data.uid] = data.invite;
   }
+  return state;
+}
 
-  accepted(json: InviteUpdate, state: S) {
-    const data = _.get(json, 'accepted', false);
-    if (data) {
-      delete state.invites[data.term][data.uid];
-    }
+const accepted = (json: InviteUpdate, state: InviteState): InviteState => {
+  const data = _.get(json, 'accepted', false);
+  if (data) {
+    delete state.invites[data.term][data.uid];
   }
+  return state;
+}
 
-  decline(json: InviteUpdate, state: S) {
-    const data = _.get(json, 'decline', false);
-    if (data) {
-      delete state.invites[data.term][data.uid];
-    }
+const decline = (json: InviteUpdate, state: InviteState): InviteState => {
+  const data = _.get(json, 'decline', false);
+  if (data) {
+    delete state.invites[data.term][data.uid];
   }
+  return state;
 }

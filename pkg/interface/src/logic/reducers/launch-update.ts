@@ -1,61 +1,79 @@
 import _ from 'lodash';
-import { LaunchUpdate } from '~/types/launch-update';
+import { LaunchUpdate, WeatherState } from '~/types/launch-update';
 import { Cage } from '~/types/cage';
-import { StoreState } from '../../store/type';
+import useLaunchState, { LaunchState } from '../state/launch';
+import { compose } from 'lodash/fp';
+import { reduceState } from '../state/base';
 
-type LaunchState = Pick<StoreState, 'launch' | 'weather' | 'userLocation'>;
-
-export default class LaunchReducer<S extends LaunchState> {
-  reduce(json: Cage, state: S) {
+export default class LaunchReducer {
+  reduce(json: Cage) {
     const data = _.get(json, 'launch-update', false);
     if (data) {
-      this.initial(data, state);
-      this.changeFirstTime(data, state);
-      this.changeOrder(data, state);
-      this.changeFirstTime(data, state);
-      this.changeIsShown(data, state);
+      reduceState<LaunchState, LaunchUpdate>(useLaunchState, data, [
+        initial,
+        changeFirstTime,
+        changeOrder,
+        changeFirstTime,
+        changeIsShown,
+      ]);
     }
 
-    const weatherData = _.get(json, 'weather', false);
+    const weatherData: WeatherState = _.get(json, 'weather', false);
     if (weatherData) {
-      state.weather = weatherData;
+      useLaunchState.getState().set(state => {
+        state.weather = weatherData;
+      });
     }
 
     const locationData = _.get(json, 'location', false);
     if (locationData) {
-      state.userLocation = locationData;
+      useLaunchState.getState().set(state => {
+        state.userLocation = locationData;
+      });
     }
-  }
 
-  initial(json: LaunchUpdate, state: S) {
-    const data = _.get(json, 'initial', false);
-    if (data) {
-      state.launch = data;
+    const baseHash = _.get(json, 'baseHash', false);
+    if (baseHash) {
+      useLaunchState.getState().set(state => {
+        state.baseHash = baseHash;
+      })
     }
   }
+}
 
-  changeFirstTime(json: LaunchUpdate, state: S) {
-    const data = _.get(json, 'changeFirstTime', false);
-    if (data) {
-      state.launch.firstTime = data;
-    }
+export const initial = (json: LaunchUpdate, state: LaunchState): LaunchState => {
+  const data = _.get(json, 'initial', false);
+  if (data) {
+    Object.keys(data).forEach(key => {
+      state[key] = data[key];
+    });
   }
+  return state;
+}
 
-  changeOrder(json: LaunchUpdate, state: S) {
-    const data = _.get(json, 'changeOrder', false);
-    if (data) {
-      state.launch.tileOrdering = data;
-    }
+export const changeFirstTime = (json: LaunchUpdate, state: LaunchState): LaunchState => {
+  const data = _.get(json, 'changeFirstTime', false);
+  if (data) {
+    state.firstTime = data;
   }
+  return state;
+}
 
-  changeIsShown(json: LaunchUpdate, state: S) {
-    const data = _.get(json, 'changeIsShown', false);
-    if (data) {
-      const tile = state.launch.tiles[data.name];
-      console.log(tile);
-      if (tile) {
-        tile.isShown = data.isShown;
-      }
+export const changeOrder = (json: LaunchUpdate, state: LaunchState): LaunchState => {
+  const data = _.get(json, 'changeOrder', false);
+  if (data) {
+    state.tileOrdering = data;
+  }
+  return state;
+}
+
+export const changeIsShown = (json: LaunchUpdate, state: LaunchState): LaunchState => {
+  const data = _.get(json, 'changeIsShown', false);
+  if (data) {
+    const tile = state.tiles[data.name];
+    if (tile) {
+      tile.isShown = data.isShown;
     }
   }
+  return state;
 }

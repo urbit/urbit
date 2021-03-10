@@ -1,9 +1,16 @@
 import { useEffect, useState } from 'react';
-import _ from "lodash";
-import f, { memoize } from "lodash/fp";
-import bigInt, { BigInteger } from "big-integer";
-import { Contact } from '~/types';
+import _ from 'lodash';
+import f, { compose, memoize } from 'lodash/fp';
+import bigInt, { BigInteger } from 'big-integer';
+import { Association, Contact } from '@urbit/api';
+import useLocalState from '../state/local';
+import produce, { enableMapSet } from 'immer';
 import useSettingsState from '../state/settings';
+import { State, UseStore } from 'zustand';
+import { Cage } from '~/types/cage';
+import { BaseState } from '../state/base';
+
+enableMapSet();
 
 export const MOBILE_BROWSER_REGEX = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i;
 
@@ -408,3 +415,4 @@ export function getItemTitle(association: Association) {
   }
   return association.metadata.title || association.resource;
 }
+

@@ -6,7 +6,6 @@ import { MarkdownEditor } from './MarkdownEditor';
 
 export const MarkdownField = ({
   id,
-  storage,
   ...rest
 }: { id: string } & Parameters<typeof Box>[0]) => {
   const [{ value, onBlur }, { error, touched }, { setValue }] = useField(id);
@@ -36,7 +35,6 @@ export const MarkdownField = ({
         onBlur={handleBlur}
         value={value}
         onChange={setValue}
-        storage={storage}
       />
       <ErrorLabel mt="2" hasError={Boolean(error && touched)}>
         {error}

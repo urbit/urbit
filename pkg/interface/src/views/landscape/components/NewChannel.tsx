@@ -22,6 +22,7 @@ import { Rolodex } from '@urbit/api';
 import { IconRadio } from '~/views/components/IconRadio';
 import { ChannelWriteFieldSchema, ChannelWritePerms } from './ChannelWritePerms';
 import { Workspace } from '~/types/workspace';
+import useGroupState from '~/logic/state/group';
 
 type FormSchema = {
   name: string;
@@ -41,18 +42,16 @@ const formSchema = (members?: string[]) => Yup.object({
 
 interface NewChannelProps {
   api: GlobalApi;
-  associations: Associations;
-  contacts: Rolodex;
-  groups: Groups;
   group?: string;
   workspace: Workspace;
 }
 
 export function NewChannel(props: NewChannelProps & RouteComponentProps): ReactElement {
-  const { history, api, group, workspace, groups } = props;
+  const { history, api, group, workspace } = props;
 
-  const waiter = useWaitForProps(props, 5000);
-
+  const groups = useGroupState(state => state.groups);
+  const waiter = useWaitForProps({ groups }, 5000);
+  
   const onSubmit = async (values: FormSchema, actions) => {
     const name = (values.name) ? values.name : values.moduleType;
     const resId: string = stringToSymbol(values.name)
@@ -98,7 +97,7 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps): ReactE
       }
 
       if (!group) {
-        await waiter(p => Boolean(p?.groups?.[`/ship/~${window.ship}/${resId}`]));
+        await waiter(p => Boolean(p.groups?.[`/ship/~${window.ship}/${resId}`]));
       }
       actions.setStatus({ success: null });
       const resourceUrl = (location.pathname.includes("/messages")) ? "/~landscape/messages" : parentPath(location.pathname);
@@ -181,15 +180,10 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps): ReactE
             />
             {(workspace?.type === 'home' || workspace?.type === 'messages') ? (
             <ShipSearch
-            groups={props.groups}
-            contacts={props.contacts}
             id="ships"
             label="Invitees"
             />) : (
-            <ChannelWritePerms
-              groups={props.groups}
-              contacts={props.contacts}
-            />
+            <ChannelWritePerms />
           )}
             <Box justifySelf="start">
               <AsyncButton
