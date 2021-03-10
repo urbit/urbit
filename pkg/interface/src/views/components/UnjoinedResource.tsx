@@ -24,9 +24,9 @@ function isJoined(path: string) {
   return function (
     props: Pick<UnjoinedResourceProps, 'graphKeys'>
   ) {
-    const graphKeys = useGraphState(state => state.graphKeys);
+
     const graphKey = path.substr(7);
-    return graphKeys.has(graphKey);
+    return props.graphKeys.has(graphKey);
   };
 }
 
@@ -35,10 +35,11 @@ export function UnjoinedResource(props: UnjoinedResourceProps) {
   const history = useHistory();
   const rid = props.association.resource;
   const appName = props.association['app-name'];
-  const { title, description, module } = props.association.metadata;
-  const waiter = useWaitForProps(props);
-  const app = useMemo(() => module || appName, [props.association]);
+  const { title, description, module: mod } = props.association.metadata;
   const graphKeys = useGraphState(state => state.graphKeys);
+
+  const waiter = useWaitForProps({...props, graphKeys });
+  const app = useMemo(() => mod || appName, [props.association]);
 
   const onJoin = async () => {
     const [, , ship, name] = rid.split('/');
