@@ -71,7 +71,7 @@
     description   description.action
     date-created  now.bowl
     creator       our.bowl
-    module        module.action
+    config        [%graph module.action]
     preview       %.n
   ==
 =/  met-action=action:met
