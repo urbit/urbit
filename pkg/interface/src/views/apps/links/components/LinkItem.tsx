@@ -167,7 +167,7 @@ export const LinkItem = (props: LinkItemProps): ReactElement => {
           style={{ cursor: node.post.pending ? 'default' : 'pointer' }}>
         <Box display='flex'>
           <Icon color={commColor} icon='Chat' />
-          <Text color={commColor} ml={1}>{node.children.size}</Text>
+          <Text color={commColor} ml={1}>{size}</Text>
         </Box>
       </Link>
         </Box>
