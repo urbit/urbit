@@ -22,8 +22,8 @@
 ::  our tang is built in reverse order
 %-  flop
 ?:  shallow
-  (format-shallow diffs q.a-beam q.b-beam)
-(format-deep diffs q.a-beam q.b-beam)
+  (format-shallow diffs a-beam b-beam)
+(format-deep diffs a-beam b-beam)
 ::
 ::  $diff-type: type for diffs produced.
 ::    1. %txt-diff is a standard diff (i.e. for hoon and txt files)
@@ -229,35 +229,39 @@
       ==
     --
   --
-::  +format-paths: helper to combine two paths into a tape
+::  +format-beams: helper to combine two beams into a tank
 ::
-++  format-paths
-  |=  [a=path b=path]
-  ^-  tape
-  ;:(weld <a> " " <b>)
+++  format-beams
+  |=  [a=beam b=beam]
+  ^-  tank
+  [%rose [" " ~ ~] ~[(smyt (en-beam a)) (smyt (en-beam b))]]
 ::  +format-directory-diff: helper for producing a tank based on
 ::  a %directory-diff
 ::
 ++  format-directory-diff
-  |=  [paths=(list path) =desk]
+  |=  [paths=(list path) =beam]
   ^-  tang
-  =/  prefix=tape  ;:(weld "only in " (trip desk) ": ")
-  (turn paths |=(p=path >(weld prefix <p>)<))
+  =/  prefix=tape  (weld "only in " <(en-beam beam)>)
+  %+  turn
+    paths
+  |=  p=path
+  ^-  tank
+  [%rose [": " ~ ~] [leaf+prefix (smyt p) ~]]
 ::  +format-shallow: converts a list of diff-type generated
 ::  between desks a and b into a tang in a shallow manner (just
 ::  listing files that differ).
 ::
 ++  format-shallow
-|=  [diffs=(list diff-type) a=desk b=desk]
+|=  [diffs=(list diff-type) a=beam b=beam]
   ^-  tang
   %+  reel
     diffs
   |=  [d=diff-type acc=tang]
   ^-  tang
   ?:  ?=([%txt-diff *] +.+.d)
-    [leaf+(format-paths a.d b.d) acc]
+    [(format-beams a(s a.d) b(s b.d)) acc]
   ?:  ?=([%other *] +.+.d)
-    [leaf+(format-paths a.d b.d) acc]
+    [(format-beams a(s a.d) b(s b.d)) acc]
   ?:  ?=([%directory-diff *] +.+.d)
     ;:  weld
       (format-directory-diff p.d a)
@@ -269,14 +273,14 @@
 ::  between desks a and b into a tang in a deep manner (preserving
 ::  diff information for files)
 ++  format-deep
-|=  [diffs=(list diff-type) a=desk b=desk]
+|=  [diffs=(list diff-type) a=beam b=beam]
   ^-  tang
   %+  reel
     diffs
   |=  [d=diff-type acc=tang]
   ^-  tang
   ?:  ?=([%txt-diff *] +.+.d)
-    :+  leaf+(format-paths a.d b.d)
+    :+  (format-beams a(s a.d) b(s b.d))
       >diff.d<
     acc
   ?:  ?=([%directory-diff *] +.+.d)
@@ -286,19 +290,10 @@
       acc
     ==
   ?:  ?=([%other *] +.+.d)
-    :_  acc
-    :-  %leaf
-    ;:  weld
-      "file "
-      <a.d>
-      " has mug "
-      <p.d>
-      " on desk "
-      <a>
-      " but mug "
-      <q.d>
-      " on desk "
-      <b>
-    ==
+    =/  a-tank=tank  (smyt (en-beam a(s a.d)))
+    =/  b-tank=tank  (smyt (en-beam b(s b.d)))
+    :+  [%rose [" " "files " ~] ~[a-tank b-tank]]
+      [%rose [" and " "have mugs: " ~] ~[leaf+<p.d> leaf+<q.d>]]
+    acc
   !!
 --
