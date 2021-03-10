@@ -255,7 +255,7 @@
   ::    Produce a vector from `(list @u)` (of natural numbers)
   ++  make-nat
     |=  a=(list @u)  ^-  @lvd
-    (make (turn a sun:rs))
+    (make (turn a sun:rd))
   ::
   ::    APL-style index list
   ++  iota
@@ -282,12 +282,12 @@
   ::  |x|
   ++  abs
     |=  [s=@rd]
-    ?:  (gth s .0)  s  (sub:rs .0 s)
+    ?:  (gth s .0)  s  (sub:rd .0 s)
   ::
   ::  |x-y| <= tol
   ++  isclose
     |=  [s=@rd t=@rd tol=@rd]
-    (lth:rs (abs (sub:rs s t)) tol)
+    (lth:rd (abs (sub:rd s t)) tol)
   ++  near0
     |=  s=@rd
     (isclose s .0 .1e-6)
@@ -320,7 +320,7 @@
   ::    Return larger of two single-precision floats.
   ++  max-rs
     |=  [s=@rd t=@rd]  ^-  @rd
-    ?:  (gth:rs s t)  s  t
+    ?:  (gth:rd s t)  s  t
   ::
   ::    Find maximum value in array.
   ++  max
@@ -383,21 +383,21 @@
     (make (turn2 [(unmake u) (unmake v)] f))
   ::
   ::    Vector addition
-  ++  addv  (funv add:rs)
+  ++  addv  (funv add:rd)
   ::
   ::    Vector subtraction
-  ++  subv  (funv sub:rs)
+  ++  subv  (funv sub:rd)
   ::
   ::    Vector multiplication
-  ++  mulv  (funv mul:rs)
+  ++  mulv  (funv mul:rd)
   ::
   ::    Vector division
-  ++  divv  (funv div:rs)
+  ++  divv  (funv div:rd)
   ::
   ::    Sum of elements
   ++  sum
     |=  [u=@lvd]  ^-  @rd
-    (roll (unmake u) add:rs)
+    (roll (unmake u) add:rd)
   ::
   ::    Cumulative sum of elements
   ++  cumsum
@@ -413,7 +413,7 @@
   ::    Product of elements
   ++  product
     |=  [u=@lvd]  ^-  @rd
-    (roll (unmake u) mul:rs)
+    (roll (unmake u) mul:rd)
   ::
   ::  Linear algebraic operators
   ::
