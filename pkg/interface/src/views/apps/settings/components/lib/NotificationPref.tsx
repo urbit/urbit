@@ -8,7 +8,8 @@ import { Form, FormikHelpers } from "formik";
 import { FormikOnBlur } from "~/views/components/FormikOnBlur";
 import { BackButton } from "./BackButton";
 import GlobalApi from "~/logic/api/global";
-import {NotificationGraphConfig} from "~/types";
+import useHarkState from "~/logic/state/hark";
+import _ from "lodash";
 
 interface FormSchema {
   mentions: boolean;
@@ -18,10 +19,10 @@ interface FormSchema {
 
 export function NotificationPreferences(props: {
   api: GlobalApi;
-  graphConfig: NotificationGraphConfig;
-  dnd: boolean;
 }) {
-  const { graphConfig, api, dnd } = props;
+  const { api } = props;
+  const dnd = useHarkState(state => state.doNotDisturb);
+  const graphConfig = useHarkState(state => state.notificationsGraphConfig);
   const initialValues = {
     mentions: graphConfig.mentions,
     dnd: dnd,

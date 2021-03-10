@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import _ from 'lodash';
 import { useHistory } from 'react-router-dom';
 import { Center, Box, Text, Row, Col } from '@tlon/indigo-react';
@@ -15,11 +15,13 @@ import {
   ProfileStatus,
   ProfileImages
 } from './Profile';
+import useContactState from '~/logic/state/contact';
 
-export function ViewProfile(props: any) {
-  const history = useHistory();
+export function ViewProfile(props: any): ReactElement {
   const { hideNicknames } = useSettingsState(selectCalmState);
-  const { api, contact, nacked, isPublic, ship, associations, groups } = props;
+  const { api, contact, nacked, ship } = props;
+
+  const isPublic = useContactState(state => state.isContactPublic);
 
   return (
     <>
@@ -64,8 +66,6 @@ export function ViewProfile(props: any) {
               <GroupLink
                 api={api}
                 resource={g}
-                groups={groups}
-                associations={associations}
                 measure={() => {}}
               />
             ))}

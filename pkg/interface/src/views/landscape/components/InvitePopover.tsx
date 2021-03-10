@@ -25,8 +25,6 @@ import { Workspace } from '~/types/workspace';
 interface InvitePopoverProps {
   baseUrl: string;
   association: Association;
-  groups: Groups;
-  contacts: Rolodex;
   api: GlobalApi;
   workspace: Workspace;
 }
@@ -114,8 +112,6 @@ export function InvitePopover(props: InvitePopoverProps) {
                     <Text fontWeight="800">{title}</Text>
                   </Box>
                   <ShipSearch
-                    groups={props.groups}
-                    contacts={props.contacts}
                     id="ships"
                     label=""
                     autoFocus

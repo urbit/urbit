@@ -10,13 +10,13 @@ import {
   StatelessAsyncButton
 } from './StatelessAsyncButton';
 import { Notebooks, Graphs, Inbox } from '@urbit/api';
+import useGraphState from '~/logic/state/graph';
 
 interface UnjoinedResourceProps {
   association: Association;
   api: GlobalApi;
   baseUrl: string;
   notebooks: Notebooks;
-  graphKeys: Set<string>;
   inbox: Inbox;
 }
 
@@ -24,19 +24,22 @@ function isJoined(path: string) {
   return function (
     props: Pick<UnjoinedResourceProps, 'graphKeys'>
   ) {
+
     const graphKey = path.substr(7);
     return props.graphKeys.has(graphKey);
   };
 }
 
 export function UnjoinedResource(props: UnjoinedResourceProps) {
-  const { api, notebooks, graphKeys, inbox } = props;
+  const { api, notebooks, inbox } = props;
   const history = useHistory();
   const rid = props.association.resource;
   const appName = props.association['app-name'];
-  const { title, description, module } = props.association.metadata;
-  const waiter = useWaitForProps(props);
-  const app = useMemo(() => module || appName, [props.association]);
+  const { title, description, module: mod } = props.association.metadata;
+  const graphKeys = useGraphState(state => state.graphKeys);
+
+  const waiter = useWaitForProps({...props, graphKeys });
+  const app = useMemo(() => mod || appName, [props.association]);
 
   const onJoin = async () => {
     const [, , ship, name] = rid.split('/');

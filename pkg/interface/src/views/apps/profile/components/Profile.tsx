@@ -9,6 +9,7 @@ import { EditProfile } from './EditProfile';
 import { SetStatusBarModal } from '~/views/components/SetStatusBarModal';
 import { uxToHex } from '~/logic/lib/util';
 import { useTutorialModal } from '~/views/components/useTutorialModal';
+import useContactState from '~/logic/state/contact';
 
 export function ProfileHeader(props: any): ReactElement {
   return (
@@ -157,10 +158,12 @@ export function ProfileActions(props: any): ReactElement {
   );
 }
 
-export function Profile(props: any): ReactElement {
+export function Profile(props: any): ReactElement | null {
+  const { hideAvatars } = useSettingsState(selectCalmState);
   const history = useHistory();
+  const nackedContacts = useContactState(state => state.nackedContacts);
 
-  const { contact, nackedContacts, hasLoaded, isPublic, isEdit, ship } = props;
+  const { contact, hasLoaded, isEdit, ship } = props;
   const nacked = nackedContacts.has(ship);
   const formRef = useRef(null);
 
@@ -183,21 +186,14 @@ export function Profile(props: any): ReactElement {
           <EditProfile
             ship={ship}
             contact={contact}
-            storage={props.storage}
             api={props.api}
-            groups={props.groups}
-            associations={props.associations}
-            isPublic={isPublic}
           />
         ) : (
           <ViewProfile
             nacked={nacked}
             ship={ship}
-            contact={contact}
-            isPublic={isPublic}
             api={props.api}
-            groups={props.groups}
-            associations={props.associations}
+            contact={contact}
           />
         )}
       </Box>

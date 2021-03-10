@@ -9,13 +9,16 @@ import { Associations, Contact, Contacts, Rolodex } from '@urbit/api';
 import { PropFunc } from '~/types/util';
 import { useShowNickname } from '~/logic/lib/util';
 import Timestamp from '~/views/components/Timestamp';
+import useContactState from '~/logic/state/contact';
+import useMetadataState from '~/logic/state/metadata';
 
 const Text = (props: PropFunc<typeof Text>) => (
   <NormalText fontWeight="500" {...props} />
 );
 
-function Author(props: { patp: string; contacts: Contacts; last?: boolean }): ReactElement {
-  const contact: Contact | undefined = props.contacts?.[`~${props.patp}`];
+function Author(props: { patp: string; last?: boolean }): ReactElement {
+  const contacts = useContactState(state => state.contacts);
+  const contact: Contact | undefined = contacts?.[`~${props.patp}`];
 
   const showNickname = useShowNickname(contact);
   const name = contact?.nickname || `~${props.patp}`;
@@ -33,14 +36,13 @@ export function Header(props: {
   archived?: boolean;
   channel?: string;
   group: string;
-  contacts: Rolodex;
   description: string;
   moduleIcon?: string;
   time: number;
   read: boolean;
-  associations: Associations;
 } & PropFunc<typeof Row> ): ReactElement {
-  const { description, channel, contacts, moduleIcon, read } = props;
+  const { description, channel, moduleIcon, read } = props;
+  const associations = useMetadataState(state => state.associations);
 
   const authors = _.uniq(props.authors);
 
@@ -50,7 +52,7 @@ export function Header(props: {
     f.map(([idx, p]: [string, string]) => {
       const lent = Math.min(3, authors.length);
       const last = lent - 1 === parseInt(idx, 10);
-      return <Author key={idx} contacts={contacts} patp={p} last={last} />;
+      return <Author key={idx} patp={p} last={last} />;
     }),
     auths => (
       <React.Fragment>
@@ -64,11 +66,11 @@ export function Header(props: {
 
   const time = moment(props.time).format('HH:mm');
   const groupTitle =
-    props.associations.groups?.[props.group]?.metadata?.title;
+    associations.groups?.[props.group]?.metadata?.title;
 
   const app = 'graph';
   const channelTitle =
-    (channel && props.associations?.[app]?.[channel]?.metadata?.title) ||
+    (channel && associations?.[app]?.[channel]?.metadata?.title) ||
     channel;
 
   return (

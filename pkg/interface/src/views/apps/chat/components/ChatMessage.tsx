@@ -37,6 +37,7 @@ import styled from 'styled-components';
 import useLocalState from '~/logic/state/local';
 import useSettingsState, {selectCalmState} from "~/logic/state/settings";
 import Timestamp from '~/views/components/Timestamp';
+import useContactState from '~/logic/state/contact';
 import {useIdlingState} from '~/logic/lib/idling';
 
 export const DATESTAMP_FORMAT = '[~]YYYY.M.D';
@@ -104,7 +105,6 @@ interface ChatMessageProps {
   isLastRead: boolean;
   group: Group;
   association: Association;
-  contacts: Contacts;
   className?: string;
   isPending: boolean;
   style?: unknown;
@@ -137,7 +137,6 @@ class ChatMessage extends Component<ChatMessageProps> {
       isLastRead,
       group,
       association,
-      contacts,
       className = '',
       isPending,
       style,
@@ -148,8 +147,6 @@ class ChatMessage extends Component<ChatMessageProps> {
       api,
       highlighted,
       fontSize,
-      groups,
-      associations
     } = this.props;
 
     let { renderSigil } = this.props;
@@ -177,7 +174,6 @@ class ChatMessage extends Component<ChatMessageProps> {
     const messageProps = {
       msg,
       timestamp,
-      contacts,
       association,
       group,
       style,
@@ -188,8 +184,6 @@ class ChatMessage extends Component<ChatMessageProps> {
       scrollWindow,
       highlighted,
       fontSize,
-      associations,
-      groups,
     };
 
     const unreadContainerStyle = {
@@ -236,12 +230,9 @@ export default React.forwardRef((props, ref) => <ChatMessage {...props} innerRef
 
 export const MessageAuthor = ({
   timestamp,
-  contacts,
   msg,
   group,
   api,
-  associations,
-  groups,
   history,
   scrollWindow,
   ...rest
@@ -249,7 +240,8 @@ export const MessageAuthor = ({
   const osDark = useLocalState((state) => state.dark);
 
   const theme = useSettingsState(s => s.display.theme);
-  const dark = theme === 'dark' || (theme === 'auto' && osDark)
+  const dark = theme === 'dark' || (theme === 'auto' && osDark);
+  const contacts = useContactState(state => state.contacts);
 
   const datestamp = moment
     .unix(msg['time-sent'] / 1000)
@@ -385,17 +377,15 @@ export const MessageAuthor = ({
 
 export const Message = ({
   timestamp,
-  contacts,
   msg,
   group,
   api,
-  associations,
-  groups,
   scrollWindow,
   timestampHover,
   ...rest
 }) => {
   const { hovering, bind } = useHovering();
+  const contacts = useContactState(state => state.contacts);
   return (
     <Box position='relative' {...rest}>
       {timestampHover ? (
@@ -418,8 +408,6 @@ export const Message = ({
             case 'text':
               return (
                 <TextContent
-                  associations={associations}
-                  groups={groups}
                   api={api}
                   fontSize={1}
                   lineHeight={'20px'}

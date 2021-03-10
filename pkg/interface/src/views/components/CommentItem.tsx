@@ -21,7 +21,6 @@ interface CommentItemProps {
   pending?: boolean;
   comment: GraphNode;
   baseUrl: string;
-  contacts: Contacts;
   unread: boolean;
   name: string;
   ship: string;
@@ -30,7 +29,7 @@ interface CommentItemProps {
 }
 
 export function CommentItem(props: CommentItemProps): ReactElement {
-  const { ship, contacts, name, api, comment, group } = props;
+  const { ship, name, api, comment, group } = props;
   const [, post] = getLatestCommentRevision(comment);
   const disabled = props.pending || window.ship !== post?.author;
 
@@ -47,7 +46,6 @@ export function CommentItem(props: CommentItemProps): ReactElement {
       <Row bg="white" my={3}>
         <Author
           showImage
-          contacts={contacts}
           ship={post?.author}
           date={post?.['time-sent']}
           unread={props.unread}
@@ -73,7 +71,6 @@ export function CommentItem(props: CommentItemProps): ReactElement {
       </Row>
       <Box mb={2}>
         <MentionText
-          contacts={contacts}
           group={group}
           content={post?.contents}
         />
