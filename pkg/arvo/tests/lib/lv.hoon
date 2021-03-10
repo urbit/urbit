@@ -119,9 +119,6 @@
 ++  test-make  ^-  tang
   ;:  weld
     %+  expect-eq
-      !>  `@lvs`0x0
-      !>  (make:lvs 0 .0)  :: XX should fail? check how to test crash
-    %+  expect-eq
       !>  `@lvs`0x1.0000.0000
       !>  (make:lvs ~[.0])
     %+  expect-eq
