@@ -83,7 +83,7 @@
         %kick  [~[watch-contacts] state]
         ::
           %fact
-        ?>  ?=(%contact-update p.cage.sign)
+        ?>  ?=(%contact-update-0 p.cage.sign)
         =+  !<(=update:contact q.cage.sign)
         ?+  -.update  `state
             %add
