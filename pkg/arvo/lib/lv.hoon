@@ -121,7 +121,7 @@
   ++  argmax
     |=  [u=@lvs]
     ~_  leaf+"lagoon-fail"
-    (find ~[(max u)] (unmake u))
+    +(+:(find ~[(max u)] (unmake u)))
   ::
   ::  Arithmetic operators
   ::
@@ -318,7 +318,7 @@
     (con cleared value)
   ::
   ::    Return larger of two single-precision floats.
-  ++  max-rs
+  ++  max-rd
     |=  [s=@rd t=@rd]  ^-  @rd
     ?:  (gth:rd s t)  s  t
   ::
@@ -326,14 +326,14 @@
   ++  max
     |=  [u=@lvd]  ^-  @rd
     ~_  leaf+"lagoon-fail"
-    `@rd`(reel (unmake u) max-rs)
+    `@rd`(reel (unmake u) max-rd)
   ::
   ::    Return index of maximum value in array, 1-indexed
   ::    DOES NOT handle repeated values, returns first match
   ++  argmax
     |=  [u=@lvd]
     ~_  leaf+"lagoon-fail"
-    (find ~[(max u)] (unmake u))
+    +(+.(find ~[(max u)] (unmake u)))
   ::
   ::  Arithmetic operators
   ::
