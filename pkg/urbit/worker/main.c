@@ -21,6 +21,7 @@
 #include "all.h"
 #include <vere/vere.h>
 #include <vere/serf.h>
+#include <vere/db/lmdb.h>
 
 #include "ur/hashcons.h"
 
@@ -683,20 +684,38 @@ _disk_read_one_cb(void* ptr_v, c3_d eve_d, size_t val_i, void* val_p)
 /* _disk_read_start_cb(): the read from the db, trigger response
 */
 static u3_weak
-_disk_read_list(void)
+_disk_read_list(c3_d fin_d)
 {
   event_list ven_u = { u3_nul, 0 };
 
   if ( c3n == u3_lmdb_read(log_u->mdb_u,
                            &ven_u,
                            1,
-                           log_u->dun_d,
+                           fin_d,
                            _disk_read_one_cb) )
   {
     return u3_none;
   }
   else {
     return u3kb_flop(ven_u.eve);
+  }
+}
+
+/* _cw_bootstrap(): run the Arvo bootstrap sequence
+*/
+static c3_o
+_cw_bootstrap(c3_d fin_d)
+{
+  u3_noun eve;
+
+  if ( u3_none == (eve = _disk_read_list(fin_d)) ) {
+    fprintf(stderr, "boot: read failed\r\n");
+    return c3n;
+  }
+  else {
+    fprintf(stderr, "boot: bout to play\r\n");
+    u3_serf_play(&u3V, 1, eve);
+    return c3y;
   }
 }
 
@@ -820,19 +839,8 @@ _cw_boot_boot(u3_noun jar)
 
       fprintf(stderr, "boot: finished commit\r\n");
 
-      //  XX boot
-
-      {
-        u3_noun eve;
-
-        if ( u3_none == (eve = _disk_read_list()) ) {
-          fprintf(stderr, "boot: read failed\r\n");
-          return c3n;
-        }
-        else {
-          fprintf(stderr, "boot: bout to play\r\n");
-          u3_serf_play(&u3V, 1, eve);
-        }
+      if ( c3n == _cw_bootstrap(log_u->dun_d) ) {
+        return c3n;
       }
 
       fprintf(stderr, "boot: bout to save\r\n");
@@ -1102,6 +1110,122 @@ _cw_boot(c3_i argc, c3_c* argv[])
   uv_run(lup_u, UV_RUN_DEFAULT);
 }
 
+static void _cw_replay();
+/* _cw_work(): resume and run; replay and start event processing
+*/
+static void
+_cw_work(c3_i argc, c3_c* argv[])
+{
+  c3_c*      dir_c = argv[2];
+  //  initialize persistence
+  //
+  {
+    //  XX load/set secrets
+    //
+    u3_disk_cb cb_u = {
+      .ptr_v = 0,
+      .read_done_f = _pier_on_disk_read_done,
+      .read_bail_f = _pier_on_disk_read_bail,
+      .write_done_f = _pier_on_disk_write_done,
+      .write_bail_f = _pier_on_disk_write_bail
+    };
+
+    if ( !(log_u = u3_disk_init(dir_c, cb_u)) ) {
+      // c3_free(pir_u);
+      // return 0;
+      fprintf(stderr, "boot: dist init fail\n");
+      exit(1);
+    }
+  }
+
+  u3C.wag_w = 128;  //  super advanced
+
+  u3V.sen_d = u3V.dun_d = u3m_boot(dir_c);
+
+  c3_d who_d[2];
+  c3_o fak_o;
+  c3_w lif_w;
+  c3_o ret_o = u3_disk_read_meta(log_u, who_d, &fak_o, &lif_w);
+
+  if ( 0 == u3V.dun_d ) {
+    if ( c3n == _cw_bootstrap(lif_w) ) {
+      exit(1);
+    }
+  }
+
+  _cw_replay();
+  u3e_save();
+
+  exit(0);
+}
+
+/* _cw_replay(): replay events on disk
+*/
+static void
+_cw_replay()
+{
+  u3_lmdb_iter itr_u;
+
+  if ( u3V.dun_d < log_u->dun_d ) {
+    c3_o ret_o = u3_lmdb_iter_init(log_u->mdb_u,
+                                   &itr_u,
+                                   u3V.dun_d + 1,
+                                   log_u->dun_d);
+    if ( c3n == ret_o ) {
+      fprintf(stderr, "urth: replay: db iter init fail\r\n");
+      exit(1);
+    }
+    fprintf(stderr, "replaying from event %" PRIu64 "\r\n", itr_u.eve_d);
+
+    size_t len_i;
+    void*  buf_v;
+    while ( itr_u.eve_d <= itr_u.fin_d ) {
+      ret_o = u3_lmdb_read_one_sync(&itr_u, &len_i, &buf_v);
+      if ( c3n == ret_o ) {
+        fprintf(stderr, "urth: replay: db event #%" PRIu64 " read fail\r\n",
+                        itr_u.eve_d);
+        exit(1);
+      }
+      else {
+        fprintf(stderr, ".");
+
+        if ( 4 >= len_i ) {
+          fprintf(stderr, "replay: bad event\r\n");
+          exit(1);
+        }
+
+        {
+          c3_y* dat_y = buf_v;
+          c3_l  mug_l = dat_y[0]
+                      ^ (dat_y[1] <<  8)
+                      ^ (dat_y[2] << 16)
+                      ^ (dat_y[3] << 24);
+
+          u3_noun job = u3ke_cue(u3i_bytes(len_i - 4, dat_y + 4));
+          u3_noun res = u3_serf_play(&u3V, itr_u.eve_d - 1, u3nc(job, u3_nul));
+
+          u3_noun mug, tal;
+          c3_assert( c3y == u3r_p(res, c3__play, &tal) );
+
+          if ( c3n == u3r_p(tal, c3__done, &mug) ) {
+            fprintf(stderr, "replay: event failed\r\n");
+            exit(1);
+          }
+          else if ( mug_l && (mug_l != mug) ) {
+            fprintf(stderr, "replay: result mug mismatch expected %x, actual %x\r\n",
+                            mug_l, mug);
+            exit(1);
+          }
+
+          u3z(res);
+        }
+      }
+    }
+    u3_lmdb_iter_shut(&itr_u);
+    fprintf(stderr, "\r\nreplay: complete\r\n");
+  }
+}
+
 /* _cw_usage(): print urbit-worker usage.
 */
 static void
@@ -1148,6 +1272,9 @@ main(c3_i argc, c3_c* argv[])
     exit(1);
   }
   else {
+    if ( 0 == strcmp("work", argv[1]) ) {
+      _cw_work(argc, argv);
+    }
     if ( 0 == strcmp("serf", argv[1]) ) {
       _cw_serf_commence(argc, argv);
     }
