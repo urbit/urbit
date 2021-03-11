@@ -230,7 +230,7 @@
       !>  (isclose:lvs .1 .1.00001 .0.0001)
       !>  %.y
     %+  expect-eq
-      !>  (isclose .1 .1.00001 .0.00001)
+      !>  (isclose:lvs .1 .1.00001 .0.00001)
       !>  %.n
     ::  XX should probably test some pathological cases too
     %+  expect-eq
