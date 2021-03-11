@@ -148,17 +148,13 @@ export const LinkItem = (props: LinkItemProps): ReactElement => {
           </Anchor>
         </Text>
       </Box>
-
       <Row minWidth='0' flexShrink={0} width="100%" justifyContent="space-between" py={3} bg="white">
-
       <Author
         showImage
         ship={author}
         date={node.post['time-sent']}
         group={group}
-        api={api}
-      ></Author>
-
+      />
       <Box ml="auto">
         <Link
           to={node.post.pending ? '#' : `${baseUrl}/${index}`}

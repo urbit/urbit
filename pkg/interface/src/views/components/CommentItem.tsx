@@ -74,7 +74,6 @@ export function CommentItem(props: CommentItemProps): ReactElement {
           date={post?.['time-sent']}
           unread={props.unread}
           group={group}
-          api={api}
         >
           <Row alignItems="center">
             {adminLinks}

@@ -11,7 +11,6 @@ import useSettingsState, {selectCalmState} from "~/logic/state/settings";
 import useLocalState from "~/logic/state/local";
 import OverlaySigil from './OverlaySigil';
 import { Sigil } from '~/logic/lib/sigil';
-import GlobalApi from '~/logic/api/global';
 import Timestamp from './Timestamp';
 import useContactState from '~/logic/state/contact';
 
@@ -22,7 +21,6 @@ interface AuthorProps {
   children?: ReactNode;
   unread?: boolean;
   group: Group;
-  api?: GlobalApi;
 }
 
 // eslint-disable-next-line max-lines-per-function

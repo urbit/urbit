@@ -12,7 +12,6 @@ import {
   getSnippet
 } from '~/logic/lib/publish';
 import { Unreads } from '@urbit/api';
-import GlobalApi from '~/logic/api/global';
 import ReactMarkdown from 'react-markdown';
 import useHarkState from '~/logic/state/hark';
 
@@ -21,7 +20,6 @@ interface NotePreviewProps {
   book: string;
   node: GraphNode;
   baseUrl: string;
-  api: GlobalApi;
   group: Group;
 }
 
@@ -96,7 +94,6 @@ export function NotePreview(props: NotePreviewProps) {
           date={post?.['time-sent']}
           group={group}
           unread={isUnread}
-          api={props.api}
         />
         <Box ml="auto" mr={1}>
           <Link to={url}>
