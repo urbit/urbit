@@ -1,435 +1,501 @@
+/+  *test, *lv
 ::
-::::  Vector type in single-precision floating-point @rs
+::::
   ::
-::  Conventions:
-::
-::  m,n,p   always dimensions
-::  i,j,k   always indices (also ii,jj,kk for coder-spec not user-spec)
-::  a,b,c   always lists
-::  u,v,w   always vector/matrix atoms
-::  s,t     always real/floats
+=/  rtol  .1e-6
 |%
-++  lvs
-  ^|
-  ::~%  %lvs  +>  ~
-  |_  r=$?(%n %u %d %z)   :: round nearest, round up, round down, round to zero
-  ::
-  ::  Manipulators
-  ::
-  ::    Zeroes
-  ++  zeros
-    ::~/  %zeros
-    |=  n=@ud  ^-  @lvs
-    ~_  leaf+"lagoon-fail"
-    `@lvs`(lsh [5 n] 1)   :: pin at head for leading zeros
-  ::
-  ::    Fill value
-  ++  fill
-    |=  [n=@ud s=@rs]  ^-  @lvs
-    `@lvs`(mix (zeros n) (fil 5 n s))
-  ::
-  ::    Ones
-  ++  ones
-    |=  n=@ud  ^-  @lvs
-    ~_  leaf+"lagoon-fail"
-    (fill n .1)
-  ::
-  ::    Length of vector
-  ++  length
-    |=  u=@lvs  ^-  @ud
-    ~_  leaf+"lagoon-fail"
-    =/  ell  (met 5 u)
-    ?:  (gth ell 1)  (dec ell)  0
-  ::
-  ::    Produce a vector from `(list @u)` (of natural numbers)
-  ++  make-nat
-    |=  a=(list @u)  ^-  @lvs
-    (make (turn a sun:rs))
-  ::
-  ::    APL-style index list
-  ++  iota
-    |=  n=@u  ^-  @lvs
-    (make-nat (gulf 1 n))
-  ++  make
-    |=  [a=(list @rs)]  ^-  @lvs
-    ~_  leaf+"lagoon-fail"
-    `@lvs`(mix (rep [5 1] a) (zeros (lent a)))
-  ++  unmake
-    |=  [u=@lvs]  ^-  (list @rs)
-    ~_  leaf+"lagoon-fail"
-    (flop `(list @rs)`+:(flop (rip 5 u)))
-  ++  append
-    |=  [u=@lvs s=@rs]  ^-  @lvs
-    (make (snoc (unmake u) s))
-    ::  XX could be done faster with a mix/lsh
-  ::
-  ::  Yield the substring [lhs:rhs] inclusive
-  ++  subvector
-    |=  [u=@lvs lhs=@ud rhs=@ud]
-    (mix (zeros +((sub rhs lhs))) (cut 5 [(dec lhs) +((sub rhs lhs))] u))
-  ::
-  ::  |x|
-  ++  abs
-    |=  [s=@rs]
-    ?:  (gth:rs s .0)  s  (sub:rs .0 s)
-  ::
-  ::  |x-y| <= tol
-  ++  isclose
-    |=  [s=@rs t=@rs tol=@rs]
-    (lth:rs (abs (sub:rs s t)) tol)
-  ++  near0
-    |=  s=@rs
-    (isclose s .0 .1e-6)
-  ::
-  ::    Get the value at an index, using mathematical indices 1..n.
-  ++  get
-    ::~/  %get
-    |=  [u=@lvs i=@ud]  ^-  @rs
-    ~_  leaf+"lagoon-fail"
-    (cut 5 [(dec i) 1] u)
-  ::
-  ::    Pretty-print the contents of the vector.
-  ++  pprint
-    |=  u=@lvs  ^-  tape
-    `tape`(zing (join " " (turn (unmake u) |=(s=@rs <s>))))
-  ::
-  ::    Set the value of an element within a vector, using math indices 1..n.
-  ++  set
-    ::~/  %set
-    |=  [u=@lvs i=@ud s=@rs]  ^-  @lvs
-    ~_  leaf+"lagoon-fail"
-    ?:  (gth i (length u))  !!
-    =/  full  0xffff.ffff
-    =/  n  (length u)
-    =/  mask  (mix (fil 5 +(n) full) (lsh [5 (dec i)] full))
-    =/  cleared  (dis mask u)
-    =/  value  (lsh [5 (dec i)] s)
-    (con cleared value)
-  ::
-  ::    Return larger of two single-precision floats.
-  ++  max-rs
-    |=  [s=@rs t=@rs]  ^-  @rs
-    ?:  (gth:rs s t)  s  t
-  ::
-  ::    Find maximum value in array.
-  ++  max
-    |=  [u=@lvs]  ^-  @rs
-    ~_  leaf+"lagoon-fail"
-    `@rs`(reel (unmake u) max-rs)
-  ::
-  ::    Return index of maximum value in array, 1-indexed
-  ::    DOES NOT handle repeated values, returns first match
-  ++  argmax
-    |=  [u=@lvs]
-    ~_  leaf+"lagoon-fail"
-    +(+:(find ~[(max u)] (unmake u)))
-  ::
-  ::  Arithmetic operators
-  ::
-  ::    Scalar addition
-  ++  adds
-    |=  [u=@lvs s=@rs]  ^-  @lvs
-    ::~/  %adds
-    =/  ss  (fill (length u) s)
-    (addv u ss)
-  ::
-  ::    Scalar subtraction
-  ++  subs
-    |=  [u=@lvs s=@rs]  ^-  @lvs
-    ::~/  %subs
-    =/  ss  (fill (length u) s)
-    (subv u ss)
-  ::
-  ::    Scalar multiplication
-  ++  muls
-    |=  [u=@lvs s=@rs]  ^-  @lvs
-    ::~/  %muls
-    =/  ss  (fill (length u) s)
-    (mulv u ss)
-  ::
-  ::    Scalar division
-  ++  divs
-    |=  [u=@lvs s=@rs]  ^-  @lvs
-    ::~/  %divs
-    =/  ss  (fill (length u) s)
-    (divv u ss)
-  ::
-  ::    Turn on a gate of two variables.
-  ++  turn2  :: I guess not in hoon.hoon
-    |=  [[a=(list @rs) b=(list @rs)] f=$-([@rs @rs] @rs)]
-    ^-  (list @rs)
-    ?+  +<-  ~|(%turn2-length !!)
-      [~ ~]  ~
-      [^ ^]  [(f i.a i.b) $(a t.a, b t.b)]
-    ==
-  ::
-  ::    Apply a two-variable function across a vector input.
-  ++  funv
-    ::~/  %funv
-    |=  f=$-([@rs @rs] @rs)
-    |=  [u=@lvs v=@lvs]  ^-  @lvs
-    ~_  leaf+"lagoon-fail"
-    (make (turn2 [(unmake u) (unmake v)] f))
-  ::
-  ::    Vector addition
-  ++  addv  (funv add:rs)
-  ::
-  ::    Vector subtraction
-  ++  subv  (funv sub:rs)
-  ::
-  ::    Vector multiplication
-  ++  mulv  (funv mul:rs)
-  ::
-  ::    Vector division
-  ++  divv  (funv div:rs)
-  ::
-  ::    Sum of elements
-  ++  sum
-    |=  [u=@lvs]  ^-  @rs
-    (roll (unmake u) add:rs)
-  ::
-  ::    Cumulative sum of elements
-  ++  cumsum
-    |=  [u=@lvs]  ^-  @lvs
-    =/  n  (length u)
-    =/  uu  (unmake u)
-    =/  v  (zeros n)
-    =/  index  1
-    |-  ^-  @lvs
-      ?:  (gth index n)  v
-    $(index +(index), v (set v index (sum (subvector u 1 index))))
-  ::
-  ::    Product of elements
-  ++  product
-    |=  [u=@lvs]  ^-  @rs
-    (roll (unmake u) |:([a=.1 b=.1] (mul:rs a b)))
-  ::
-  ::  Linear algebraic operators
-  ::
-  ::    Inner or Euclidean dot product, a · b
-  ++  inner
-    ::~/  %inner
-    |=  [u=@lvs v=@lvs]  ^-  @rs
-    ~_  leaf+"lagoon-fail"
-    (sum (mulv u v))
-  ++  outer  !!  :: unimplemented pending @lm type
-  ++  catenate
-    |=  [u=@lvs v=@lvs]
-    ~_  leaf+"lagoon-fail"
-    (make (weld (unmake u) (unmake v)))
-    :: XX slow way, do in bits
-  --
+::  Auxiliary tools
+::    Replace element of c at index a with item b
+++  nick
+  |*  [a=@ b=* c=(list @)]
+  (weld (scag a c) [b (slag +(a) c)])
+::    Absolute value
+++  absolute
+  |=  x=@rs  ^-  @rs
+  ?:  (gth:rs x .0)  x
+  (sub:rs .0 x)
 ::
-::::  Vector type in double-precision floating-point @rd
-  ::
-++  lvd
-  ^|
-  ::~%  %lvd  +>  ~
-  |_  r=$?(%n %u %d %z)   :: round nearest, round up, round down, round to zero
-  ::
-  ::  Manipulators
-  ::
-  ::    Zeroes
-  ++  zeros
-    ::~/  %zeros
-    |=  n=@ud  ^-  @lvd
-    ~_  leaf+"lagoon-fail"
-    `@lvd`(lsh [6 n] 1)   :: pin at head for leading zeros
-  ::
-  ::    Fill value
-  ++  fill
-    |=  [n=@ud s=@rd]  ^-  @lvd
-    `@lvd`(mix (zeros n) (fil 6 n s))
-  ::
-  ::    Ones
-  ++  ones
-    |=  n=@ud  ^-  @lvd
-    ~_  leaf+"lagoon-fail"
-    (fill n .~1)
-  ::
-  ::    Length of vector
-  ++  length
-    |=  u=@lvd  ^-  @ud
-    ~_  leaf+"lagoon-fail"
-    =/  ell  (met 6 u)
-    ?:  (gth ell 1)  (dec ell)  0
-  ::
-  ::    Produce a vector from `(list @u)` (of natural numbers)
-  ++  make-nat
-    |=  a=(list @u)  ^-  @lvd
-    (make (turn a sun:rd))
-  ::
-  ::    APL-style index list
-  ++  iota
-    |=  n=@u  ^-  @lvd
-    (make-nat (gulf 1 n))
-  ++  make
-    |=  [a=(list @rd)]  ^-  @lvd
-    ~_  leaf+"lagoon-fail"
-    `@lvd`(mix (rep [6 1] a) (zeros (lent a)))
-  ++  unmake
-    |=  [u=@lvd]  ^-  (list @rd)
-    ~_  leaf+"lagoon-fail"
-    (flop `(list @rd)`+:(flop (rip 6 u)))
-  ++  append
-    |=  [u=@lvd s=@rd]  ^-  @lvd
-    (make (snoc (unmake u) s))
-    ::  XX could be done faster with a mix/lsh
-  ::
-  ::  Yield the substring [lhs:rhs] inclusive
-  ++  subvector
-    |=  [u=@lvd lhs=@ud rhs=@ud]
-    (mix (zeros +((sub rhs lhs))) (cut 6 [(dec lhs) +((sub rhs lhs))] u))
-  ::
-  ::  |x|
-  ++  abs
-    |=  [s=@rd]
-    ?:  (gth s .~0)  s  (sub:rd .~0 s)
-  ::
-  ::  |x-y| <= tol
-  ++  isclose
-    |=  [s=@rd t=@rd tol=@rd]
-    (lth:rd (abs (sub:rd s t)) tol)
-  ++  near0
-    |=  s=@rd
-    (isclose s .~0 .~1e-6)
-  ::
-  ::    Get the value at an index, using mathematical indices 1..n.
-  ++  get
-    ::~/  %get
-    |=  [u=@lvd i=@ud]  ^-  @rd
-    ~_  leaf+"lagoon-fail"
-    (cut 6 [(dec i) 1] u)
-  ::
-  ::    Pretty-print the contents of the vector.
-  ++  pprint
-    |=  u=@lvd  ^-  tape
-    `tape`(zing (join " " (turn (unmake u) |=(s=@rd <s>))))
-  ::
-  ::    Set the value of an element within a vector, using math indices 1..n.
-  ++  set
-    ::~/  %set
-    |=  [u=@lvd i=@ud s=@rd]  ^-  @lvd
-    ~_  leaf+"lagoon-fail"
-    ?:  (gth i (length u))  !!
-    =/  full  0xffff.ffff.ffff.ffff
-    =/  n  (length u)
-    =/  mask  (mix (fil 6 +(n) full) (lsh [6 (dec i)] full))
-    =/  cleared  (dis mask u)
-    =/  value  (lsh [6 (dec i)] s)
-    (con cleared value)
-  ::
-  ::    Return larger of two single-precision floats.
-  ++  max-rd
-    |=  [s=@rd t=@rd]  ^-  @rd
-    ?:  (gth:rd s t)  s  t
-  ::
-  ::    Find maximum value in array.
-  ++  max
-    |=  [u=@lvd]  ^-  @rd
-    ~_  leaf+"lagoon-fail"
-    `@rd`(reel (unmake u) max-rd)
-  ::
-  ::    Return index of maximum value in array, 1-indexed
-  ::    DOES NOT handle repeated values, returns first match
-  ++  argmax
-    |=  [u=@lvd]
-    ~_  leaf+"lagoon-fail"
-    +(+:(find ~[(max u)] (unmake u)))
-  ::
-  ::  Arithmetic operators
-  ::
-  ::    Scalar addition
-  ++  adds
-    |=  [u=@lvd s=@rd]  ^-  @lvd
-    ::~/  %adds
-    =/  ss  (fill (length u) s)
-    (addv u ss)
-  ::
-  ::    Scalar subtraction
-  ++  subs
-    |=  [u=@lvd s=@rd]  ^-  @lvd
-    ::~/  %subs
-    =/  ss  (fill (length u) s)
-    (subv u ss)
-  ::
-  ::    Scalar multiplication
-  ++  muls
-    |=  [u=@lvd s=@rd]  ^-  @lvd
-    ::~/  %muls
-    =/  ss  (fill (length u) s)
-    (mulv u ss)
-  ::
-  ::    Scalar division
-  ++  divs
-    |=  [u=@lvd s=@rd]  ^-  @lvd
-    ::~/  %divs
-    =/  ss  (fill (length u) s)
-    (divv u ss)
-  ::
-  ::    Turn on a gate of two variables.
-  ++  turn2  :: I guess not in hoon.hoon
-    |=  [[a=(list @rd) b=(list @rd)] f=$-([@rd @rd] @rd)]
-    ^-  (list @rd)
-    ?+  +<-  ~|(%turn2-length !!)
-      [~ ~]  ~
-      [^ ^]  [(f i.a i.b) $(a t.a, b t.b)]
-    ==
-  ::
-  ::    Apply a two-variable function across a vector input.
-  ++  funv
-    ::~/  %funv
-    |=  f=$-([@rd @rd] @rd)
-    |=  [u=@lvd v=@lvd]  ^-  @lvd
-    ~_  leaf+"lagoon-fail"
-    (make (turn2 [(unmake u) (unmake v)] f))
-  ::
-  ::    Vector addition
-  ++  addv  (funv add:rd)
-  ::
-  ::    Vector subtraction
-  ++  subv  (funv sub:rd)
-  ::
-  ::    Vector multiplication
-  ++  mulv  (funv mul:rd)
-  ::
-  ::    Vector division
-  ++  divv  (funv div:rd)
-  ::
-  ::    Sum of elements
-  ++  sum
-    |=  [u=@lvd]  ^-  @rd
-    (roll (unmake u) add:rd)
-  ::
-  ::    Cumulative sum of elements
-  ++  cumsum
-    |=  [u=@lvd]  ^-  @lvd
-    =/  n  (length u)
-    =/  uu  (unmake u)
-    =/  v  (zeros n)
-    =/  index  1
-    |-  ^-  @lvd
-      ?:  (gth index n)  v
-    $(index +(index), v (set v index (sum (subvector u 1 index))))
-  ::
-  ::    Product of elements
-  ++  product
-    |=  [u=@lvd]  ^-  @rd
-    (roll (unmake u) |:([a=.~1 b=.~1] (mul:rd a b)))
-  ::
-  ::  Linear algebraic operators
-  ::
-  ::    Inner or Euclidean dot product, a · b
-  ++  inner
-    ::~/  %inner
-    |=  [u=@lvd v=@lvd]  ^-  @rd
-    ~_  leaf+"lagoon-fail"
-    (sum (mulv u v))
-  ++  outer  !!  :: unimplemented pending @lm type
-  ++  catenate
-    |=  [u=@lvd v=@lvd]
-    ~_  leaf+"lagoon-fail"
-    (make (weld (unmake u) (unmake v)))
-    :: XX slow way, do in bits
-  --
+::  Tests for vector creation
+::
+++  test-zeros  ^-  tang
+  ;:  weld
+    %+  expect-eq
+      !>  `@lvs`0x1
+      !>  (zeros:lvs 0)
+    %+  expect-eq
+      !>  `@lvs`0x1.0000.0000
+      !>  (zeros:lvs 1)
+    %+  expect-eq
+      !>  (zeros:lvs 1)
+      !>  (make:lvs ~[.0])
+    %+  expect-eq
+      !>  `@lvs`0x1.0000.0000.0000.0000.0000.0000
+      !>  (zeros:lvs 3)
+    %+  expect-eq
+      !>  (zeros:lvs 3)
+      !>  (make:lvs ~[.0 .0 .0])
+    %+  expect-eq
+      !>  `@lvs`0x1.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000
+      !>  (zeros:lvs 5)
+    %+  expect-eq
+      !>  (zeros:lvs 5)
+      !>  (make:lvs `(list @rs)`(reap 5 .0))
+    %+  expect-eq
+      !>  (zeros:lvs 16)
+      !>  `@lvs`0x1.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000
+    %+  expect-eq
+      !>  (zeros:lvs 16)
+      !>  (make:lvs `(list @rs)`(reap 16 .0))
+  ==
+++  test-ones  ^-  tang
+  ;:  weld
+    %+  expect-eq
+      !>  (ones:lvs 0)
+      !>  `@lvs`0x1
+    %+  expect-eq
+      !>  (ones:lvs 1)
+      !>  `@lvs`0x1.3f80.0000
+    %+  expect-eq
+      !>  (ones:lvs 1)
+      !>  (make:lvs ~[.1])
+    %+  expect-eq
+      !>  (ones:lvs 3)
+      !>  `@lvs`0x1.3f80.0000.3f80.0000.3f80.0000
+    %+  expect-eq
+      !>  (ones:lvs 3)
+      !>  (make:lvs ~[.1 .1 .1])
+    %+  expect-eq
+      !>  (ones:lvs 5)
+      !>  `@lvs`0x1.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000
+    %+  expect-eq
+      !>  (ones:lvs 5)
+      !>  (make:lvs `(list @rs)`(reap 5 .1))
+    %+  expect-eq
+      !>  (ones:lvs 16)
+      !>  `@lvs`0x1.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000
+    %+  expect-eq
+      !>  (ones:lvs 16)
+      !>  (make:lvs `(list @rs)`(reap 16 .1))
+  ==
+++  test-fill  ^-  tang
+  ;:  weld
+    %+  expect-eq
+      !>  `@lvs`0x1
+      !>  (fill:lvs 0 .0)
+    %+  expect-eq
+      !>  `@lvs`0x1
+      !>  (fill:lvs 0 .1)
+    %+  expect-eq
+      !>  (fill:lvs 1 .0)
+      !>  `@lvs`0x1.0000.0000
+    %+  expect-eq
+      !>  (fill:lvs 1 .0)
+      !>  (make:lvs ~[.0])
+    %+  expect-eq
+      !>  (fill:lvs 1 .1)
+      !>  `@lvs`0x1.3f80.0000
+    %+  expect-eq
+      !>  (fill:lvs 1 .1)
+      !>  (make:lvs ~[.1])
+    %+  expect-eq
+      !>  (fill:lvs 1 .-1)
+      !>  `@lvs`0x1.bf80.0000
+    %+  expect-eq
+      !>  (fill:lvs 1 .-1)
+      !>  (make:lvs ~[.-1])
+    %+  expect-eq
+      !>  (fill:lvs 3 .1)
+      !>  `@lvs`0x1.3f80.0000.3f80.0000.3f80.0000
+    %+  expect-eq
+      !>  (fill:lvs 3 .1)
+      !>  (make:lvs ~[.1 .1 .1])
+    %+  expect-eq
+      !>  (fill:lvs 5 .1)
+      !>  `@lvs`0x1.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000
+    %+  expect-eq
+      !>  (fill:lvs 5 .1)
+      !>  (make:lvs `(list @rs)`(reap 5 .1))
+  ==
+++  test-make  ^-  tang
+  ;:  weld
+    %+  expect-eq
+      !>  `@lvs`0x1.0000.0000
+      !>  (make:lvs ~[.0])
+    %+  expect-eq
+      !>  `@lvs`0x1.0000.0000.0000.0000.0000.0000
+      !>  (make:lvs ~[.0 .0 .0])
+    %+  expect-eq
+      !>  `@lvs`0x1.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000
+      !>  (make:lvs `(list @rs)`(reap 5 .0))
+    %+  expect-eq
+      !>  `@lvs`0x1.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000
+      !>  (make:lvs `(list @rs)`(reap 16 .0))
+    %+  expect-eq
+      !>  `@lvs`0x1.3f80.0000
+      !>  (make:lvs ~[.1])
+    %+  expect-eq
+      !>  `@lvs`0x1.3f80.0000.3f80.0000.3f80.0000
+      !>  (make:lvs ~[.1 .1 .1])
+    %+  expect-eq
+      !>  `@lvs`0x1.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000
+      !>  (make:lvs `(list @rs)`(reap 5 .1))
+    %+  expect-eq
+      !>  (make:lvs `(list @rs)`(reap 16 .1))
+      !>  `@lvs`0x1.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000
+    %+  expect-eq
+      !>  `@lvs`0x1.4000.0000.3f80.0000
+      !>  (make:lvs ~[.1 .2])
+    %+  expect-eq
+      !>  `@lvs`0x1.4040.0000.4000.0000.3f80.0000
+      !>  (make:lvs ~[.1 .2 .3])
+    %+  expect-eq
+      !>  `@lvs`0x1.4080.0000.4040.0000.4000.0000.3f80.0000.0000.0000.bf80.0000.c000.0000.c040.0000
+      !>  (make:lvs ~[.-3 .-2 .-1 .0 .1 .2 .3 .4])
+  ==
+++  test-unmake  ^-  tang
+  ;:  weld
+    %+  expect-eq
+      !>  `(list @rs)`~[.0]
+      !>  (unmake:lvs `@lvs`0x1.0000.0000)
+    %+  expect-eq
+      !>  `(list @rs)`~[.0 .0 .0]
+      !>  (unmake:lvs `@lvs`0x1.0000.0000.0000.0000.0000.0000)
+    %+  expect-eq
+      !>  `(list @rs)`(reap 5 .0)
+      !>  (unmake:lvs `@lvs`0x1.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000)
+    %+  expect-eq
+      !>  `(list @rs)`(reap 16 .0)
+      !>  (unmake:lvs `@lvs`0x1.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000)
+    %+  expect-eq
+      !>  `(list @rs)`~[.1]
+      !>  (unmake:lvs `@lvs`0x1.3f80.0000)
+    %+  expect-eq
+      !>  `(list @rs)`~[.1 .1 .1]
+      !>  (unmake:lvs `@lvs`0x1.3f80.0000.3f80.0000.3f80.0000)
+    %+  expect-eq
+      !>  `(list @rs)`(reap 5 .1)
+      !>  (unmake:lvs `@lvs`0x1.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000)
+    %+  expect-eq
+      !>  `(list @rs)`(reap 16 .1)
+      !>  (unmake:lvs `@lvs`0x1.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000)
+    %+  expect-eq
+      !>  `(list @rs)`~[.1 .2]
+      !>  (unmake:lvs `@lvs`0x1.4000.0000.3f80.0000)
+    %+  expect-eq
+      !>  `(list @rs)`~[.1 .2 .3]
+      !>  (unmake:lvs `@lvs`0x1.4040.0000.4000.0000.3f80.0000)
+    %+  expect-eq
+      !>  `(list @rs)`~[.-3 .-2 .-1 .0 .1 .2 .3 .4]
+      !>  (unmake:lvs `@lvs`0x1.4080.0000.4040.0000.4000.0000.3f80.0000.0000.0000.bf80.0000.c000.0000.c040.0000)
+  ==
+++  test-make-unmake  ^-  tang
+  ;:  weld
+    %+  expect-eq
+      !>  `(list @rs)`~[.1 .2 .3 .4 .5]
+      !>  (unmake:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]))
+    %+  expect-eq
+      !>  `@lvs`0x1.40a0.0000.4080.0000.4040.0000.4000.0000.3f80.0000
+      !>  (make:lvs (unmake:lvs `@lvs`0x1.40a0.0000.4080.0000.4040.0000.4000.0000.3f80.0000))
+  ==
+::
+::  Tests for utility functions
+::
+++  test-length  ^-  tang
+  ;:  weld
+    %+  expect-eq
+      !>  0
+      !>  (length:lvs `@lvs`0x1)
+    %+  expect-eq
+      !>  1
+      !>  (length:lvs `@lvs`0x1.3ff0.0000)
+    %+  expect-eq
+      !>  5
+      !>  (length:lvs `@lvs`0x1.40a0.0000.4080.0000.4040.0000.4000.0000.3f80.0000)
+  ==
+++  test-make-nat  ^-  tang
+  ;:  weld
+    %+  expect-eq
+      !>  `@lvs`0x1.40a0.0000.4080.0000.4040.0000.4000.0000.3f80.0000
+      !>  (make-nat:lvs (gulf 1 5))
+  ==
+++  test-iota  ^-  tang
+  ;:  weld
+    %+  expect-eq
+      !>  `@lvs`0x1.40a0.0000.4080.0000.4040.0000.4000.0000.3f80.0000
+      !>  (iota:lvs 5)
+  ==
+++  test-isclose  ^-  tang
+  ;:  weld
+    %+  expect-eq
+      !>  (isclose:lvs .1 .1.00001 .0.0001)
+      !>  %.y
+    %+  expect-eq
+      !>  (isclose .1 .1.00001 .0.00001)
+      !>  %.n
+    ::  XX should probably test some pathological cases too
+    %+  expect-eq
+      !>  (isclose:lvs .1e-6 .0 .1e-6)
+      !>  (near0:lvs .1e-6)
+    %+  expect-eq
+      !>  (isclose:lvs .1e-6 .0 .1e-7)
+      !>  (near0:lvs .1e-7)
+  ==
+++  test-get  ^-  tang
+  ;:  weld
+    %+  expect-eq
+      !>  .1
+      !>  (get:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4]) 1)
+    %+  expect-eq
+      !>  .2
+      !>  (get:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4]) 2)
+    %+  expect-eq
+      !>  .3
+      !>  (get:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4]) 3)
+    %+  expect-eq
+      !>  .4
+      !>  (get:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4]) 4)
+    %-  expect-fail
+      |.  (get:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4]) 0)
+  ==
+++  test-max  ^-  tang
+  ;:  weld
+    %+  expect-eq
+      !>  .5
+      !>  (max:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]))
+    %+  expect-eq
+      !>  .5
+      !>  (max:lvs (make:lvs `(list @rs)`~[.1 .2 .5 .4 .3]))
+    %+  expect-eq
+      !>  .5
+      !>  (max-rs:lvs .1 .5)
+    %+  expect-eq
+      !>  .-1
+      !>  (max-rs:lvs .-1 .-5)
+    %+  expect-eq
+      !>  5
+      !>  (argmax:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]))
+    %+  expect-eq
+      !>  3
+      !>  (argmax:lvs (make:lvs `(list @rs)`~[.1 .2 .5 .4 .3]))
+  ==
+::
+::  Tests for vector alteration
+::
+++  test-append  ^-  tang
+  ;:  weld
+    %+  expect-eq
+      !>  (make:lvs `(list @rs)`~[.2 .3 .4 .5 .6])
+      !>  (append:lvs (make:lvs `(list @rs)`~[.2 .3 .4 .5]) .6)
+  ==
+++  test-set  ^-  tang
+  ;:  weld
+  %+  expect-eq
+    !>  (make:lvs `(list @rs)`~[.5 .2 .3 .4 .5])
+    !>  (set:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]) 1 .5)
+  %+  expect-eq
+    !>  (make:lvs `(list @rs)`~[.1 .2 .5 .4 .5])
+    !>  (set:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]) 3 .5)
+  %+  expect-eq
+    !>  (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5])
+    !>  (set:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]) 5 .5)
+    ::  TODO XX test out-of-bounds
+  ==
+++  test-catenate  ^-  tang
+  ;:  weld
+    %+  expect-eq
+      !>  (make:lvs `(list @rs)`~[.2 .3 .4 .5 .6 .7 .8 .9])
+      !>  (catenate:lvs (make:lvs `(list @rs)`~[.2 .3 .4 .5]) (make:lvs `(list @rs)`~[.6 .7 .8 .9]))
+    %+  expect-eq
+      !>  (make:lvs `(list @rs)`~[.2 .3 .4 .5 .6 .7 .8 .9])
+      !>  (catenate:lvs (make:lvs `(list @rs)`~[.2 .3 .4 .5]) (make:lvs `(list @rs)`~[.6 .7 .8 .9]))
+  ==
+::
+::  Tests for vector arithmetic
+::
+++  test-adds  ^-  tang
+  ;:  weld
+    %+  expect-eq
+      !>  (make:lvs `(list @rs)`~[.2 .3 .4 .5 .6])
+      !>  (adds:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]) .1)
+      :: argh, we really XX need an expect-close in lib/test
+      :: XX or switch to expect isclose instead
+    %+  expect-eq
+      !>  (make:lvs `(list @rs)`~[.11 .12 .13 .14 .15])
+      !>  (adds:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]) .10)
+  ==
+++  test-subs  ^-  tang
+  ;:  weld
+    %+  expect-eq
+      !>  (make:lvs `(list @rs)`~[.0 .1 .2 .3 .4])
+      !>  (subs:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]) .1)
+    %+  expect-eq
+      !>  (make:lvs `(list @rs)`~[.-9 .-8 .-7 .-6 .-5])
+      !>  (subs:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]) .10)
+  ==
+++  test-muls  ^-  tang
+  ;:  weld
+    %+  expect-eq
+      !>  (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5])
+      !>  (muls:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]) .1)
+    %+  expect-eq
+      !>  (make:lvs `(list @rs)`~[.2 .4 .6 .8 .10])
+      !>  (muls:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]) .2)
+    %+  expect-eq
+      !>  (make:lvs `(list @rs)`~[.-1 .-2 .-3 .-4 .-5])
+      !>  (muls:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]) .-1)
+    %+  expect-eq
+      !>  (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5])
+      !>  (muls:lvs (make:lvs `(list @rs)`~[.0.1 .0.2 .0.3 .0.4 .0.5]) .10)
+  ==
+++  test-divs  ^-  tang
+  ;:  weld
+    %+  expect-eq
+      !>  (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5])
+      !>  (divs:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]) .1)
+    %+  expect-eq
+      !>  (make:lvs `(list @rs)`~[.5e-1 .1 .1.5 .2 .2.5])
+      !>  (divs:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]) .2)
+    %+  expect-eq
+      !>  (make:lvs `(list @rs)`~[.-1 .-2 .-3 .-4 .-5])
+      !>  (divs:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]) .-1)
+    %+  expect-eq
+      !>  (make:lvs `(list @rs)`~[.0.1 .0.2 .0.3 .0.4 .0.5])
+      !>  (divs:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]) .10)
+  ==
+++  test-addv  ^-  tang
+  =/  vec00000  (zeros:lvs 5)
+  =/  vec11111  (ones:lvs 5)
+  =/  vec12345  (iota:lvs 5)
+  =/  vec54321  (make:lvs `(list @rs)`~[.5 .4 .3 .2 .1])
+  =/  vec21012  (make:lvs `(list @rs)`~[.-2 .-1 .0 .1 .2])
+  ;:  weld
+    %+  expect-eq
+      !>  (iota:lvs 5)
+      !>  (addv:lvs vec00000 vec12345)
+    %+  expect-eq
+      !>  (fill:lvs 5 .2)
+      !>  (addv:lvs vec11111 vec11111)
+    %+  expect-eq
+      !>  (make:lvs `(list @rs)`~[.6 .5 .4 .3 .2])
+      !>  (addv:lvs vec11111 vec54321)
+    %+  expect-eq
+      !>  (make:lvs `(list @rs)`~[.-1 .1 .3 .5 .7])
+      !>  (addv:lvs vec12345 vec21012)
+    %+  expect-eq
+      !>  (make:lvs `(list @rs)`~[.2 .3 .4 .5 .6])
+      !>  (addv:lvs vec11111 vec12345)
+    %+  expect-eq
+      !>  (make:lvs `(list @rs)`~[.-4 .-2 .0 .2 .4])
+      !>  (addv:lvs vec21012 vec21012)
+  ::  TODO XX test expected failures like diff sizes
+  ==
+++  test-subv  ^-  tang
+  =/  vec00000  (zeros:lvs 5)
+  =/  vec11111  (ones:lvs 5)
+  =/  vec12345  (iota:lvs 5)
+  =/  vec54321  (make:lvs `(list @rs)`~[.5 .4 .3 .2 .1])
+  =/  vec21012  (make:lvs `(list @rs)`~[.-2 .-1 .0 .1 .2])
+  ;:  weld
+    %+  expect-eq
+      !>  (make:lvs `(list @rs)`~[.-1 .-2 .-3 .-4 .-5])
+      !>  (subv:lvs vec00000 vec12345)
+    %+  expect-eq
+      !>  (zeros:lvs 5)
+      !>  (subv:lvs vec11111 vec11111)
+    %+  expect-eq
+      !>  (make:lvs `(list @rs)`~[.4 .3 .2 .1 .0])
+      !>  (subv:lvs vec54321 vec11111)
+    %+  expect-eq
+      !>  (make:lvs `(list @rs)`~[.3 .2 .1 .0 .-1])
+      !>  (subv:lvs vec11111 vec21012)
+    %+  expect-eq
+      !>  (make:lvs `(list @rs)`~[.0 .-1 .-2 .-3 .-4])
+      !>  (subv:lvs vec11111 vec12345)
+    %+  expect-eq
+      !>  (zeros:lvs 5)
+      !>  (subv:lvs vec21012 vec21012)
+  ::  TODO XX test expected failures like diff sizes
+  ==
+++  test-mulv  ^-  tang
+  =/  vec00000  (zeros:lvs 5)
+  =/  vec11111  (ones:lvs 5)
+  =/  vec12345  (iota:lvs 5)
+  =/  vec54321  (make:lvs `(list @rs)`~[.5 .4 .3 .2 .1])
+  =/  vec21012  (make:lvs `(list @rs)`~[.-2 .-1 .0 .1 .2])
+  ;:  weld
+    %+  expect-eq
+      !>  (zeros:lvs 5)
+      !>  (mulv:lvs vec00000 vec12345)
+    %+  expect-eq
+      !>  (ones:lvs 5)
+      !>  (mulv:lvs vec11111 vec11111)
+    %+  expect-eq
+      !>  vec54321
+      !>  (mulv:lvs vec11111 vec54321)
+    %+  expect-eq
+      !>  (make:lvs `(list @rs)`~[.1 .4 .9 .16 .25])
+      !>  (mulv:lvs vec12345 vec12345)
+    %+  expect-eq
+      !>  vec21012
+      !>  (mulv:lvs vec11111 vec21012)
+    %+  expect-eq
+      !>  (make:lvs `(list @rs)`~[.4 .1 .0 .1 .4])
+      !>  (mulv:lvs vec21012 vec21012)
+  ::  TODO XX test expected failures like diff sizes
+  ==
+++  test-divv  ^-  tang
+  =/  vec11111  (ones:lvs 5)
+  =/  vec12345  (iota:lvs 5)
+  =/  vec54321  (make:lvs `(list @rs)`~[.5 .4 .3 .2 .1])
+  =/  vec21012  (make:lvs `(list @rs)`~[.-2 .-1 .0 .1 .2])
+  ;:  weld
+    %+  expect-eq
+      !>  (make:lvs `(list @rs)`~[.1 .0.5 (div:rs .1 .3) .0.25 .0.2])
+      !>  (divv:lvs vec11111 vec12345)
+    %+  expect-eq
+      !>  (ones:lvs 5)
+      !>  (divv:lvs vec11111 vec11111)
+  ::  TODO XX test expected failures like diff sizes and div-by-zero
+  ==
+++  test-sum  ^-  tang
+  ;:  weld
+    %+  expect-eq
+      !>  .15
+      !>  (sum:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]))
+  ==
+++  test-product  ^-  tang
+  ;:  weld
+    %+  expect-eq
+      !>  .120
+      !>  (product:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]))
+  ==
+++  test-inner  ^-  tang
+  =/  vec00000  (zeros:lvs 5)
+  =/  vec11111  (ones:lvs 5)
+  =/  vec12345  (iota:lvs 5)
+  =/  vec54321  (make:lvs `(list @rs)`~[.5 .4 .3 .2 .1])
+  =/  vec21012  (make:lvs `(list @rs)`~[.-2 .-1 .0 .1 .2])
+  ;:  weld
+    %+  expect-eq
+      !>  .0
+      !>  (inner:lvs vec00000 vec11111)
+    %+  expect-eq
+      !>  .5
+      !>  (inner:lvs vec11111 vec11111)
+    %+  expect-eq
+      !>  .15
+      !>  (inner:lvs vec11111 vec12345)
+    %+  expect-eq
+      !>  .35
+      !>  (inner:lvs vec54321 vec12345)
+    %+  expect-eq
+      !>  .0
+      !>  (inner:lvs vec11111 vec21012)
+    %+  expect-eq
+      !>  .-10
+      !>  (inner:lvs vec54321 vec21012)
+    %+  expect-eq
+      !>  .10
+      !>  (inner:lvs vec21012 vec21012)
+  ==
 --
