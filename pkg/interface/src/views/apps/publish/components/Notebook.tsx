@@ -40,7 +40,6 @@ export function Notebook(props: NotebookProps & RouteComponentProps): ReactEleme
   const contacts = useContactState(state => state.contacts);
 
   const contact = contacts?.[`~${ship}`];
-  console.log(association.resource);
 
   const showNickname = useShowNickname(contact);
 
