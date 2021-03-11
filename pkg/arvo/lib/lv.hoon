@@ -71,7 +71,7 @@
   ::  |x|
   ++  abs
     |=  [s=@rs]
-    ?:  (gth s .0)  s  (sub:rs .0 s)
+    ?:  (gth:rs s .0)  s  (sub:rs .0 s)
   ::
   ::  |x-y| <= tol
   ++  isclose
@@ -284,7 +284,7 @@
   ::  |x|
   ++  abs
     |=  [s=@rd]
-    ?:  (gth s .~0)  s  (sub:rd .~0 s)
+    ?:  (gth:rd s .~0)  s  (sub:rd .~0 s)
   ::
   ::  |x-y| <= tol
   ++  isclose
