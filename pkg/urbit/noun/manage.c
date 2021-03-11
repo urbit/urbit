@@ -1593,7 +1593,7 @@ _cm_limits(void)
 
   // Moar core.
   //
-# ifndef ASAN_ENABLED
+# ifdef URBIT_DUMP_CORE
   {
     getrlimit(RLIMIT_CORE, &rlm);
     rlm.rlim_cur = RLIM_INFINITY;
