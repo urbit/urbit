@@ -16,6 +16,10 @@ import { Loading } from '~/views/components/Loading';
 import { isWriter, resourceFromPath } from '~/logic/lib/group';
 
 import './css/custom.css';
+import useContactState from '~/logic/state/contact';
+import useGraphState from '~/logic/state/graph';
+import useGroupState from '~/logic/state/group';
+import useHarkState from '~/logic/state/hark';
 
 type ChatResourceProps = StoreState & {
   association: Association;
@@ -26,11 +30,15 @@ type ChatResourceProps = StoreState & {
 export function ChatResource(props: ChatResourceProps) {
   const station = props.association.resource;
   const groupPath = props.association.group;
-  const group = props.groups[groupPath];
-  const contacts = props.contacts;
-  const graph = props.graphs[station.slice(7)];
-  const isChatMissing = !props.graphKeys.has(station.slice(7));
-  const unreadCount = props.unreads.graph?.[station]?.['/']?.unreads || 0;
+  const groups = useGroupState(state => state.groups);
+  const group = groups[groupPath];
+  const contacts = useContactState(state => state.contacts);
+  const graphs = useGraphState(state => state.graphs);
+  const graphPath = station.slice(7);
+  const graph = graphs[graphPath];
+  const unreads = useHarkState(state => state.unreads);
+  const unreadCount = unreads.graph?.[station]?.['/']?.unreads || 0;
+  const graphTimesentMap = useGraphState(state => state.graphTimesentMap);
   const [,, owner, name] = station.split('/');
   const ourContact = contacts?.[`~${window.ship}`];
   const chatInput = useRef<ChatInput>();
@@ -157,9 +165,7 @@ export function ChatResource(props: ChatResourceProps) {
           contacts : modifiedContacts
         }
         association={props.association}
-        associations={props.associations}
-        groups={props.groups}
-        pendingSize={Object.keys(props.pendingIndices || {}).length}
+        pendingSize={Object.keys(graphTimesentMap[graphPath] || {}).length}
         group={group}
         ship={owner}
         station={station}
@@ -179,7 +185,6 @@ export function ChatResource(props: ChatResourceProps) {
           (!showBanner && hasLoadedAllowed) ? contacts : modifiedContacts
         }
         onUnmount={appendUnsent}
-        storage={props.storage}
         placeholder="Message..."
         message={unsent[station] || ''}
         deleteMessage={clearUnsent}

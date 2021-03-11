@@ -9,7 +9,6 @@ import { PostFormSchema, PostForm } from './NoteForm';
 import GlobalApi from '~/logic/api/global';
 import { getLatestRevision, editPost } from '~/logic/lib/publish';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
-import { StorageState } from '~/types';
 
 interface EditPostProps {
   ship: string;
@@ -17,11 +16,10 @@ interface EditPostProps {
   note: GraphNode;
   api: GlobalApi;
   book: string;
-  storage: StorageState;
 }
 
 export function EditPost(props: EditPostProps & RouteComponentProps): ReactElement {
-  const { note, book, noteId, api, ship, history, storage } = props;
+  const { note, book, noteId, api, ship, history } = props;
   const [revNum, title, body] = getLatestRevision(note);
   const location = useLocation();
 
@@ -58,7 +56,6 @@ export function EditPost(props: EditPostProps & RouteComponentProps): ReactEleme
       cancel
       history={history}
       onSubmit={onSubmit}
-      storage={storage}
       submitLabel="Update"
       loadingText="Updating..."
     />
