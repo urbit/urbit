@@ -227,7 +227,7 @@
     ::
     ++  groups-fact
       |=  =cage
-      ?.  ?=(%group-update p.cage)  jn-core
+      ?.  ?=(%group-update-0 p.cage)  jn-core
       =+  !<(=update:group-store q.cage)
       ?.  ?=(%initial-group -.update)  jn-core
       ?.  =(rid resource.update)  jn-core
@@ -246,7 +246,7 @@
     ::
     ++  md-fact
       |=  [=mark =vase]
-      ?.  ?=(%metadata-update mark)    jn-core
+      ?.  ?=(%metadata-update-0 mark)    jn-core
       =+  !<(=update:metadata vase)
       ?.  ?=(%initial-group -.update)  jn-core
       ?.  =(group.update rid)          jn-core

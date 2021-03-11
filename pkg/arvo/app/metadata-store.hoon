@@ -126,7 +126,7 @@
     ?>  (team:title our.bowl src.bowl)
     =^  cards  state
       ?+  mark  (on-poke:def mark vase)
-          ?(%metadata-action %metadata-update)
+          ?(%metadata-action %metadata-update-0)
         (poke-metadata-update:mc !<(update:store vase))
       ::
           %import
@@ -144,7 +144,7 @@
     =/  cards=(list card)
       ?+  path  (on-watch:def path)
           [%all ~]
-        (give %metadata-update !>([%associations associations]))
+        (give %metadata-update-0 !>([%associations associations]))
       ::
           [%updates ~]
         ~
@@ -152,7 +152,7 @@
           [%app-name @ ~]
         =/  =app-name:store  i.t.path
         =/  app-indices  (metadata-for-app:mc app-name)
-        (give %metadata-update !>([%associations app-indices]))
+        (give %metadata-update-0 !>([%associations app-indices]))
       ==
     [cards this]
     ::
@@ -443,6 +443,6 @@
   ++  update-subscribers
     |=  [pax=path =update:store]
     ^-  (list card)
-    [%give %fact ~[pax] %metadata-update !>(update)]~
+    [%give %fact ~[pax] %metadata-update-0 !>(update)]~
   --
 --
