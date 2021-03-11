@@ -80,6 +80,14 @@
   ++  near0
     |=  s=@rs
     (isclose s .0 .1e-6)
+  ++  all-close
+    |=  [u=@lvs v=@lvs]
+      =/  n  `@ud`(length u)
+      =/  count  1
+      =/  off  0
+      |-
+        ?:  (gth count n)  =(0 off)
+      $(count +(count), sum (add off `@`(isclose (get u +(count)) (get v +(count)))))
   ::
   ::    Get the value at an index, using mathematical indices 1..n.
   ++  get
@@ -293,6 +301,14 @@
   ++  near0
     |=  s=@rd
     (isclose s .~0 .~1e-6)
+  ++  all-close
+    |=  [u=@lvd v=@lvd]
+      =/  n  `@ud`(length u)
+      =/  count  1
+      =/  off  0
+      |-
+        ?:  (gth count n)  =(0 off)
+      $(count +(count), sum (add off `@`(isclose (get u +(count)) (get v +(count)))))
   ::
   ::    Get the value at an index, using mathematical indices 1..n.
   ++  get
