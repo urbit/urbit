@@ -226,35 +226,44 @@
         =^  og-cards   pull-hook
           (on-load:og inner-state.old)
         =.  state  old
-        =^  retry-cards  state
-          retry-failed-kicks
+        =^  [restart-cards=(list card) hook=_pull-hook]  state
+          restart-subs
+        =.  pull-hook  hook
         :_  this
-        :(weld cards og-cards retry-cards) 
-          %2  !!
-        ::
+        :(weld cards og-cards restart-cards)
+       ::
+          %2  $(old (state-to-3 old))
           %1  $(old [%2 +.old ~])
-        ::
-          %0
-        %_    $
-            -.old  %1
-          ::
-          ::  cards
-          :: (weld cards (missing-subscriptions tracking.old))
-        ==
+          %0  !!  :: pre-breach
       ==
       ::
-      ++  retry-failed-kicks
+      ++  state-to-3
+        |=  old=state-2
+        %*  .  *state-3
+          tracking     (tracking-to-3 tracking.old)
+          inner-state  inner-state.old
+        ==
+      ::
+      ++  tracking-to-3
+        |=  trk=(map resource ship)
+        %-  ~(gas by *(map resource track))
+        %+  turn  ~(tap by trk)
+        |=  [=resource =ship]
+        :-  resource
+        [ship %active ~]
+      ::
+      ++  restart-subs
         =|  acc-cards=(list card)
-        =/  fail=(list resource)
+        =/  subs=(list resource)
           ~(tap in ~(key by tracking))
-        |-  ^-  (quip card _state)
-        ?~  fail
-          [acc-cards state]
-        =*  rid  i.fail
+        |-  ^-  [[(list card) _pull-hook] _state]
+        ?~  subs
+          [[acc-cards pull-hook] state]
+        =*  rid  i.subs
         =^  [crds=(list card) hook=_pull-hook]  state
-          tr-abet:tr-restart-if-failed:(tr-abed:track-engine:hc rid)
+          tr-abet:tr-restart-on-load:(tr-abed:track-engine:hc rid)
         =.  pull-hook  hook
-        $(fail t.fail, acc-cards (weld acc-cards crds))
+        $(subs t.subs, acc-cards (weld acc-cards crds))
       --
     ::
     ++  on-save
@@ -471,10 +480,12 @@
       |=  ver=@ud
       tr-core(status [%sub-ver ver])
     ::
-    ++  tr-restart-if-failed
-      ?.  ?=(%failed-kick -.status)
-        tr-core
-      tr-restart
+    ++  tr-restart-on-load
+      ?:  ?=(%failed-kick -.status)
+        tr-restart
+      ?:  &(?=(%sub-ver -.status) =(min-version.config ver.status))
+        tr-restart
+      tr-core
     ::
     ++  tr-restart
       =.  status  [%active ~]
@@ -566,9 +577,7 @@
   ++  leave-version
     |=  =ship
     (~(leave pass version-wir) [ship push-hook-name.config])
-
-
-
+  ::
   ++  poke-sane
     ^-  (quip card:agent:gall _state)
     =/  cards
