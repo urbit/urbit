@@ -10,7 +10,7 @@ import ./default.nix {
   inherit pkgs;
   debug = false;
   inherit (tlon)
-    ent urcrypt libaes_siv;
+    ent urcrypt;
   inherit (deps)
-    argon2 ed25519 h2o murmur3 secp256k1 softfloat3 uv ivory-header ca-header;
+    argon2 libaes_siv ed25519 h2o murmur3 secp256k1 softfloat3 uv ivory-header ca-header;
 }
