@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Text, Col, Anchor } from '@tlon/indigo-react';
+import { Box, Text, Col, Anchor, Row } from '@tlon/indigo-react';
 import ReactMarkdown from 'react-markdown';
 import bigInt from 'big-integer';
 
@@ -9,6 +9,7 @@ import { Comments } from '~/views/components/Comments';
 import { NoteNavigation } from './NoteNavigation';
 import GlobalApi from '~/logic/api/global';
 import { getLatestRevision, getComments } from '~/logic/lib/publish';
+import { roleForShip } from '~/logic/lib/group';
 import Author from '~/views/components/Author';
 import { Contacts, GraphNode, Graph, Association, Unreads, Group } from '@urbit/api';
 
@@ -54,29 +55,37 @@ export function Note(props: NoteProps & RouteComponentProps) {
     api.hark.markEachAsRead(props.association, '/',`/${index[1]}/1/1`, 'note', 'publish');
   }, [props.association, props.note]);
 
-  let adminLinks: JSX.Element | null = null;
+  let adminLinks: JSX.Element[] = [];
+  const ourRole = roleForShip(group, window.ship);
   if (window.ship === note?.post?.author) {
-    adminLinks = (
-      <Box display="inline-block" verticalAlign="middle">
-        <Link to={`${baseUrl}/edit`}>
-        <Text
-          color="green"
-          ml={2}
+    adminLinks.push(
+        <Link
+          style={{ 'display': 'inline-block' }}
+          to={`${baseUrl}/edit`}
         >
-          Update
-        </Text>
+          <Text
+            color="blue"
+            ml={2}
+          >
+            Update
+          </Text>
       </Link>
-        <Text
-          color="red"
-          ml={2}
-          onClick={deletePost}
-          style={{ cursor: 'pointer' }}
-        >
-          Delete
-        </Text>
-      </Box>
-    );
-  }
+    )
+  };
+
+  if (window.ship === note?.post?.author || ourRole === "admin") {
+    adminLinks.push(
+      <Text
+        color="red"
+        display='inline-block'
+        ml={2}
+        onClick={deletePost}
+        style={{ cursor: 'pointer' }}
+      >
+        Delete
+      </Text>
+    )
+  };
 
   const windowRef = React.useRef(null);
   useEffect(() => {
@@ -103,13 +112,14 @@ export function Note(props: NoteProps & RouteComponentProps) {
       </Link>
       <Col>
         <Text display="block" mb={2}>{title || ''}</Text>
-        <Box display="flex">
+        <Row alignItems="center">
           <Author
             ship={post?.author}
             date={post?.['time-sent']}
+            group={group}
           />
-          <Text ml={2}>{adminLinks}</Text>
-        </Box>
+          <Text ml={1}>{adminLinks}</Text>
+        </Row>
       </Col>
       <Box color="black" className="md" style={{ overflowWrap: 'break-word', overflow: 'hidden' }}>
         <ReactMarkdown source={body} linkTarget={'_blank'} renderers={renderers} />

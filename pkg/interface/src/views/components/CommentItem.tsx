@@ -10,6 +10,7 @@ import { Group } from '@urbit/api';
 import GlobalApi from '~/logic/api/global';
 import Author from '~/views/components/Author';
 import { MentionText } from '~/views/components/MentionText';
+import { roleForShip } from '~/logic/lib/group';
 import { getLatestCommentRevision } from '~/logic/lib/publish';
 
 const ClickBox = styled(Box)`
@@ -31,7 +32,7 @@ interface CommentItemProps {
 export function CommentItem(props: CommentItemProps): ReactElement {
   const { ship, name, api, comment, group } = props;
   const [, post] = getLatestCommentRevision(comment);
-  const disabled = props.pending || window.ship !== post?.author;
+  const disabled = props.pending;
 
   const onDelete = async () => {
     await api.graph.removeNodes(ship, name, [comment.post?.index]);
@@ -40,6 +41,29 @@ export function CommentItem(props: CommentItemProps): ReactElement {
   const commentIndexArray = (comment.post?.index || '/').split('/');
   const commentIndex = commentIndexArray[commentIndexArray.length - 1];
   const updateUrl = `${props.baseUrl}/${commentIndex}`;
+
+  const adminLinks: JSX.Element[] = [];
+  const ourRole = roleForShip(group, window.ship);
+  if (window.ship == post?.author && !disabled) {
+    adminLinks.push(
+      <Link to={updateUrl}>
+        <Text
+          color="blue"
+          ml={2}
+        >
+          Update
+        </Text>
+      </Link>
+    )
+  };
+
+  if ((window.ship == post?.author || ourRole == "admin") && !disabled) {
+    adminLinks.push(
+      <ClickBox display="inline-block" color="red" onClick={onDelete}>
+        <Text color='red'>Delete</Text>
+      </ClickBox>
+    )
+  };
 
   return (
     <Box mb={4} opacity={post?.pending ? '60%' : '100%'}>
@@ -52,21 +76,9 @@ export function CommentItem(props: CommentItemProps): ReactElement {
           group={group}
           api={api}
         >
-          {!disabled && (
-            <Box display="inline-block" verticalAlign="middle">
-              <Link to={updateUrl}>
-                <Text
-                  color="green"
-                  ml={2}
-                >
-                  Update
-                </Text>
-              </Link>
-              <ClickBox display="inline-block" color="red" onClick={onDelete}>
-                <Text color='red'>Delete</Text>
-              </ClickBox>
-            </Box>
-          )}
+          <Row alignItems="center">
+            {adminLinks}
+          </Row>
         </Author>
       </Row>
       <Box mb={2}>
