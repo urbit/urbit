@@ -82,8 +82,8 @@
 +$  status
   $%  [%active ~]
       [%failed-kick ~]
-      [%pub-ver @ud]
-      [%sub-ver @ud]
+      [%pub-ver ver=@ud]
+      [%sub-ver ver=@ud]
   ==
 ::
 +$  base-state-2
@@ -303,6 +303,11 @@
         =^  cards  pull-hook
           (on-agent:og wire sign)
         [cards this]
+      ?:  ?=([%version ~] t.t.wire)
+        =^  [cards=(list card) hook=_pull-hook]  state
+          (take-version:hc src.bowl sign)
+        =.  pull-hook  hook
+        [cards this]
       ?.  ?=([%pull %resource *] t.t.wire)
         (on-agent:def wire sign)
       =/  rid=resource
@@ -483,7 +488,7 @@
       (make-wire /version)
     ::
     ++  tr-watch-ver
-      (tr-emit (~(watch pass tr-ver-wire) tr-sub-dock /version))
+      (tr-emit (watch-version ship))
     ::
     ++  tr-leave-ver
       (tr-emit (~(leave pass tr-ver-wire) tr-sub-dock))
@@ -509,6 +514,61 @@
     ++  tr-leave
       (tr-emit (~(leave pass tr-sub-wire) tr-sub-dock))
     --
+  ::
+  ++  take-version
+    |=  [who=ship =sign:agent:gall]
+    ^-  [[(list card) _pull-hook] _state]
+    ?+  -.sign  !!
+        %watch-ack
+      ?~  p.sign  [~^pull-hook state]
+      =/  =tank  leaf+"subscribe failed from {<dap.bowl>} on wire {<wire>}"
+      %-  (slog tank u.p.sign)
+      [~^pull-hook state]
+      ::
+        %kick
+      :_  state
+      [(watch-version who)^~ pull-hook]
+      ::
+        %fact
+      ?.  =(%version p.cage.sign)
+        [~^pull-hook state]
+      =+  !<(version=@ud q.cage.sign)
+      =/  tracks=(list [rid=resource =track])
+        ~(tap by tracking)
+      =|  cards=(list card)
+      =|  leave=_|
+      |-
+      ?~  tracks
+        =?  cards  leave
+          :_(cards (leave-version who))
+        [[cards pull-hook] state]
+      ?.  ?=(%pub-ver -.status.track.i.tracks)
+        $(tracks t.tracks)
+      ~!  -.status.track.i.tracks
+      ?.  =(who ship.track.i.tracks)
+        $(tracks t.tracks)
+      ?.  =(ver.status.track.i.tracks version)
+        =.  leave  %.y
+        $(tracks t.tracks)
+      =^  [caz=(list card) hook=_pull-hook]  state
+        tr-abet:tr-restart:(tr-abed:track-engine rid.i.tracks)
+      =.  pull-hook  hook
+      $(tracks t.tracks, cards (weld cards caz))
+    ==
+  ::
+  ++  version-wir 
+    (make-wire /version)
+  ::
+  ++  watch-version
+    |=  =ship
+    (~(watch pass version-wir) [ship push-hook-name.config] /version)
+  ::
+  ++  leave-version
+    |=  =ship
+    (~(leave pass version-wir) [ship push-hook-name.config])
+
+
+
   ++  poke-sane
     ^-  (quip card:agent:gall _state)
     =/  cards
