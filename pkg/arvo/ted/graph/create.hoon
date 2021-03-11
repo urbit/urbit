@@ -54,7 +54,7 @@
 =/  =update:graph
   [%0 now.bowl %add-graph rid.action *graph:graph mark.action overwrite]
 ;<  ~  bind:m
-  (poke-our %graph-store graph-update+!>(update))
+  (poke-our %graph-store graph-update-0+!>(update))
 ;<  ~  bind:m
   (poke-our %graph-push-hook %push-hook-action !>([%add rid.action]))
 ::

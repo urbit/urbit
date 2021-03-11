@@ -9,6 +9,7 @@
       update:store
       %graph-update
       %graph-push-hook
+      0  0
       %.n
   ==
 --
