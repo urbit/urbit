@@ -204,10 +204,10 @@
   ;:  weld
     %+  expect-eq
       !>  0
-      !>  (length:lvs `@lvs`0x0)
+      !>  (length:lvs `@lvs`0x1)
     %+  expect-eq
       !>  1
-      !>  (length:lvs `@lvs`0x13ff.0000)
+      !>  (length:lvs `@lvs`0x1.3ff0.0000)
     %+  expect-eq
       !>  5
       !>  (length:lvs `@lvs`0x1.40a0.0000.4080.0000.4040.0000.4000.0000.3f80.0000)
