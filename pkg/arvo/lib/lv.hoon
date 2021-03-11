@@ -38,7 +38,8 @@
   ++  length
     |=  u=@lvs  ^-  @ud
     ~_  leaf+"lagoon-fail"
-    (dec (met 5 u))
+    =/  ell  (met 5 u)
+    ?:  (gth ell 1)  (dec ell)  0
   ::
   ::    Produce a vector from `(list @u)` (of natural numbers)
   ++  make-nat
@@ -250,7 +251,8 @@
   ++  length
     |=  u=@lvd  ^-  @ud
     ~_  leaf+"lagoon-fail"
-    (dec (met 6 u))
+    =/  ell  (met 6 u)
+    ?:  (gth ell 1)  (dec ell)  0
   ::
   ::    Produce a vector from `(list @u)` (of natural numbers)
   ++  make-nat
