@@ -5,8 +5,9 @@ import React, {
   useRef,
   useCallback
 } from 'react';
-import { Route } from 'react-router-dom';
 import Helmet from 'react-helmet';
+
+import useTermState, { TermState } from '~/logic/state/term';
 
 import { Terminal, ITerminalOptions } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
@@ -19,20 +20,12 @@ import GlobalApi from '~/logic/api/global';
 import { Belt } from '~/logic/api/term';
 import { Blit, Stye, Stub, Tint, Deco } from '~/types/term-update';
 
-import bel from '../../../logic/lib/bel';
+import bel from '~/logic/lib/bel';
 
 type TermAppProps = {
   api: GlobalApi;
   ship: string;
   notificationsCount: number;
-}
-
-type Sessions = {
-  [id: string]: {
-    term: Terminal,
-    fit: FitAddon,
-    sub: boolean
-  };
 }
 
 const termConfig: ITerminalOptions = {
@@ -118,15 +111,16 @@ export default function TermApp(props: TermAppProps) {
   const { api } = props;
 
   const container = useRef<HTMLElement>(null);
-  const [sessions, setSessions] = useState<Sessions>({});
-  const [selected, setSelected] = useState('default');  //TODO  allow switching
+
+  //TODO  allow switching of selected
+  const { sessions, selected, set } = useTermState();
 
   const onSlog = useCallback((slog) => {
-    if (!sessions['default']) {
+    if (!sessions['']) {
       console.log('default session mia!', 'slog:', slog);
       return;
     }
-    const term = sessions['default'].term;
+    const term = sessions[''].term;
 
     //  set scroll region to exclude the bottom line,
     //  scroll up one line,
@@ -143,8 +137,9 @@ export default function TermApp(props: TermAppProps) {
              + csi('m', 0)
              + csi('r')
              + csi('u'));
-  }, []);
+  }, [sessions['']]);
 
+  //TODO  could be static function if we pass in Terminal explicitly?
   const onBlit = useCallback((ses: string, blit: Blit) => {
     //TODO
     if (!sessions[ses]) {
@@ -205,8 +200,8 @@ export default function TermApp(props: TermAppProps) {
       console.log('weird blit', blit);
     }
 
-    sessions[ses].term.write(out);
-  }, []);
+    term.write(out);
+  }, [sessions]);
 
   const setupSlog = useCallback(() => {
     console.log('slog: setting up...');
@@ -234,7 +229,7 @@ export default function TermApp(props: TermAppProps) {
     }
   }, [onSlog]);
 
-  const onInput = useCallback((ses: string, e) => {
+  const onInput = useCallback((ses: string, e: string) => {
     const term = sessions[ses].term;
     let belts: Array<Belt> = [];
     let strap = '';
@@ -328,15 +323,14 @@ export default function TermApp(props: TermAppProps) {
     };
   }, []);
 
-  //  when switching sessions, initialize if necessary
-  //
   useEffect(() => {
+    let ses = sessions[selected];
+
     //  initialize terminal
     //
-    if (!sessions[selected]) {
+    if (!ses) {
       //  set up terminal
       //
-      console.log('new term!', selected);
       let term = new Terminal(termConfig);
       const fit = new FitAddon();
       term.loadAddon(fit);
@@ -349,42 +343,41 @@ export default function TermApp(props: TermAppProps) {
       //
       term.onData((e) => onInput(selected, e));
       term.onBinary((e) => onInput(selected, e));
+      //TODO  term.onResize
 
-      //TODO  open subscription
+      ses = { term, fit };
 
-      //  persist in state
+      //  open subscription
       //
-      sessions[selected] = { term, fit, sub: false };
-      setSessions(sessions);
-    }
-
-    if (container.current) {
-      sessions[selected].term.open(container.current);  //TODO  once
-      sessions[selected].fit.fit();  //TODO  if not default, send %blew
-    }
-
-    console.log('need sub?', selected, sessions[selected].sub);
-    if (!sessions[selected].sub) {
-      //TODO  BaseSubscribe?
-      let ses = selected;
-      if (ses === 'default') ses = '';
-      //TODO  get from a SubscriptionBase somewhere?
-      console.log('starting sub', selected);
-      api.subscribe('/session/', 'PUT', api.ship, 'herm',
+      //TODO  start default session alongside other landscape subscriptions,
+      //      once subscription refactor is in.
+      api.subscribe('/session/'+selected, 'PUT', api.ship, 'herm',
         (e) => {
           onBlit(selected, e.data);
         },
         (err) => {  //  fail
-          console.log(err);
+          console.log('sub error', selected, err);
           //TODO  resubscribe
         },
         () => {  //  quit
           //TODO  resubscribe
-        });
-      //TODO  set in state
+        }
+      );
     }
-  //TODO  can we do sessions[selected]?
-  }, [container.current, sessions, selected, onBlit]);
+
+    if (container.current && !container.current.contains(ses.term.element || null)) {
+      ses.term.open(container.current);
+      ses.fit.fit();  //TODO  if not default, send %blew
+      ses.term.focus();
+    }
+
+    set(state => { state.sessions[selected] = ses; });
+
+    return () => {
+      //TODO  unload term from container
+      //      but term.dispose is too powerful? maybe just empty the container?
+    }
+  }, [set, sessions[selected], container.current]);
 
   return (
     <>
@@ -404,6 +397,7 @@ export default function TermApp(props: TermAppProps) {
             mx={['0','3']}
             mb={['0','3']}
             border={['0','1']}
+            //@ts-ignore  //NOTE  fix in indigo Soon™
             ref={container}  //TODO  might somehow be undefined?
           >
         </Col>
