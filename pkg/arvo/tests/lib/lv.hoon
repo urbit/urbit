@@ -14,6 +14,28 @@
   |=  x=@rs  ^-  @rs
   ?:  (gth:rs x .0)  x
   (sub:rs .0 x)
+++  expect-near
+  |=  [expected=vase actual=vase]
+  ^-  tang
+  ::
+  =|  result=tang
+  ::
+  =?  result  !(all-close:lvs `@lvs`q.expected `@lvs`q.actual .1e-6)
+    %+  weld  result
+    ^-  tang
+    :~  [%palm [": " ~ ~ ~] [leaf+"expected" (sell expected) ~]]
+        [%palm [": " ~ ~ ~] [leaf+"actual" (sell actual) ~]]
+    ==
+  ::
+  =?  result  !(~(nest ut p.actual) | p.expected)
+    %+  weld  result
+    ^-  tang
+    :~  :+  %palm  [": " ~ ~ ~]
+        :~  [%leaf "failed to nest"]
+            (~(dunk ut p.actual) %actual)
+            (~(dunk ut p.expected) %expected)
+    ==  ==
+  result
 ::
 ::  Tests for vector creation
 ::
@@ -449,10 +471,10 @@
   =/  vec54321  (make:lvs `(list @rs)`~[.5 .4 .3 .2 .1])
   =/  vec21012  (make:lvs `(list @rs)`~[.-2 .-1 .0 .1 .2])
   ;:  weld
-    %+  expect-eq
+    %+  expect-near
       !>  (make:lvs `(list @rs)`~[.1 .0.5 (div:rs .1 .3) .0.25 .0.2])
       !>  (divv:lvs vec11111 vec12345)
-    %+  expect-eq
+    %+  expect-near
       !>  (ones:lvs 5)
       !>  (divv:lvs vec11111 vec11111)
   ::  TODO XX test expected failures like diff sizes and div-by-zero
