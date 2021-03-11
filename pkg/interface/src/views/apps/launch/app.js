@@ -86,10 +86,11 @@ export default function LaunchApp(props) {
     }
   }, [query]);
 
-  const { hideUtilities } = useSettingsState(selectCalmState);
+  const calmState = useSettingsState(selectCalmState);
+  const { hideUtilities } = calmState;
   const { tutorialProgress, nextTutStep } = useLocalState(tutSelector);
   let { hideGroups } = useLocalState(tutSelector);
-  !hideGroups ? { hideGroups } = useSettingsState(selectCalmState) : null;
+  !hideGroups ? { hideGroups } = calmState : null;
 
   const waiter = useWaitForProps(props);
 

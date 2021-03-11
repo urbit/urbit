@@ -383,7 +383,8 @@ export function pluralize(text: string, isPlural = false, vowel = false) {
 
 // Hide is an optional second parameter for when this function is used in class components
 export function useShowNickname(contact: Contact | null, hide?: boolean): boolean {
-  const hideNicknames = typeof hide !== 'undefined' ? hide : useSettingsState(state => state.calm.hideNicknames);
+  const hideState = useSettingsState(state => state.calm.hideNicknames);
+  const hideNicknames = typeof hide !== 'undefined' ? hide : hideState;
   return !!(contact && contact.nickname && !hideNicknames);
 }
 

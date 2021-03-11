@@ -11,6 +11,7 @@ import { Body } from '~/views/components/Body';
 import { Workspace } from '~/types/workspace';
 import useGraphState from '~/logic/state/graph';
 import useHarkState from '~/logic/state/hark';
+import ErrorBoundary from '~/views/components/ErrorBoundary';
 
 interface SkeletonProps {
   children: ReactNode;
@@ -46,16 +47,18 @@ export function Skeleton(props: SkeletonProps): ReactElement {
       }
       gridTemplateRows="100%"
     >
-      <Sidebar
-        api={props.api}
-        recentGroups={props.recentGroups}
-        selected={props.selected}
-        apps={config}
-        baseUrl={props.baseUrl}
-        mobileHide={props.mobileHide}
-        workspace={props.workspace}
-        history={props.history}
-      />
+      <ErrorBoundary>
+        <Sidebar
+          api={props.api}
+          recentGroups={props.recentGroups}
+          selected={props.selected}
+          apps={config}
+          baseUrl={props.baseUrl}
+          mobileHide={props.mobileHide}
+          workspace={props.workspace}
+          history={props.history}
+          />
+      </ErrorBoundary>
       {props.children}
     </Body>
   );
