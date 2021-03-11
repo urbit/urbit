@@ -408,6 +408,7 @@ export const Message = ({
             case 'text':
               return (
                 <TextContent
+                  key={i}
                   api={api}
                   fontSize={1}
                   lineHeight={'20px'}
@@ -415,10 +416,11 @@ export const Message = ({
                 />
               );
             case 'code':
-              return <CodeContent content={content} />;
+              return <CodeContent key={i} content={content} />;
             case 'url':
               return (
                 <Box
+                  key={i}
                   flexShrink={0}
                   fontSize={1}
                   lineHeight='20px'
@@ -455,6 +457,7 @@ export const Message = ({
               const first = (i) => (i === 0);
               return (
                 <Mention
+                  key={i}
                   first={first(i)}
                   group={group}
                   scrollWindow={scrollWindow}
