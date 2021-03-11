@@ -46,12 +46,8 @@ interface SidebarProps {
 
 export function Sidebar(props: SidebarProps): ReactElement | null {
   const { selected, workspace } = props;
-  const associations = useMetadataState(state => state.associations);
   const groupPath = getGroupFromWorkspace(workspace);
   const display = props.mobileHide ? ['none', 'flex'] : 'flex';
-  if (!associations) {
-    return null;
-  }
 
   const [config, setConfig] = useLocalStorageState<SidebarListConfig>(
     `group-config:${groupPath || 'home'}`,

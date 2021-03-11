@@ -47,6 +47,8 @@ export function SidebarItem(props: {
   const groupPath = association?.group;
   const groups = useGroupState(state => state.groups);
   const anchorRef = useRef<HTMLElement | null>(null);
+  const { hideAvatars, hideNicknames } = useSettingsState(selectCalmState);
+  const contacts = useContactState(state => state.contacts);
   useTutorialModal(
     mod as any,
     groupPath === `/ship/${TUTORIAL_HOST}/${TUTORIAL_GROUP}`,
@@ -58,7 +60,6 @@ export function SidebarItem(props: {
     return null;
   }
   const DM = (isUnmanaged && props.workspace?.type === 'messages');
-  const { hideAvatars, hideNicknames } = useSettingsState(selectCalmState);
 
   const itemStatus = app.getStatus(path);
   const hasUnread = itemStatus === 'unread' || itemStatus === 'mention';
@@ -84,8 +85,6 @@ export function SidebarItem(props: {
   }
 
   let img = null;
-
-  const contacts = useContactState(state => state.contacts);
 
   if (urbitOb.isValidPatp(title)) {
     if (contacts?.[title]?.avatar && !hideAvatars) {
