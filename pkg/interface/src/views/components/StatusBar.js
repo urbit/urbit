@@ -9,6 +9,7 @@ import {
   Button,
   BaseImage
 } from '@tlon/indigo-react';
+
 import ReconnectButton from './ReconnectButton';
 import { Dropdown } from './Dropdown';
 import { StatusBarItem } from './StatusBarItem';
@@ -19,6 +20,7 @@ import { useTutorialModal } from './useTutorialModal';
 
 import useHarkState from '~/logic/state/hark';
 import useInviteState from '~/logic/state/invite';
+import useContactState from '~/logic/state/contact';
 import { useHistory } from 'react-router-dom';
 import useLocalState, { selectLocalState } from '~/logic/state/local';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
@@ -60,6 +62,8 @@ const StatusBar = (props) => {
 
   const floatLeap =
     leapHighlight && window.matchMedia('(max-width: 550px)').matches;
+
+  const contact = useContactState((state) => state.contacts[`~${ship}`]);
 
   return (
     <Box
@@ -176,11 +180,7 @@ const StatusBar = (props) => {
                 <Text color='gray' fontWeight='500' mb='1'>
                   Set Status:
                 </Text>
-                <ProfileStatus
-                  contact={ourContact}
-                  ship={`~${ship}`}
-                  api={api}
-                />
+                <ProfileStatus contact={contact} ship={`~${ship}`} api={api} />
               </Row>
             </Col>
           }

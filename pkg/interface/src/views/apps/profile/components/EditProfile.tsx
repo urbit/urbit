@@ -85,7 +85,7 @@ export function ProfileHeaderImageEdit(props: any): ReactElement {
 
 export function EditProfile(props: any): ReactElement {
   const { contact, ship, api } = props;
-  const isPublic = useContactState(state => state.isContactPublic);
+  const isPublic = useContactState((state) => state.isContactPublic);
   const [hideCover, setHideCover] = useState(false);
 
   const handleHideCover = (value) => {
@@ -150,7 +150,7 @@ export function EditProfile(props: any): ReactElement {
           <Form width='100%' height='100%'>
             <ProfileHeader>
               <ProfileControls>
-                <Row>
+                <Row alignItems='baseline'>
                   <Button
                     type='submit'
                     display='inline'
@@ -178,7 +178,11 @@ export function EditProfile(props: any): ReactElement {
                 </Row>
                 <ProfileStatus contact={contact} />
               </ProfileControls>
-              <ProfileImages hideCover={hideCover} contact={contact} ship={ship}>
+              <ProfileImages
+                hideCover={hideCover}
+                contact={contact}
+                ship={ship}
+              >
                 <ProfileHeaderImageEdit
                   contact={contact}
                   setFieldValue={setFieldValue}
@@ -203,11 +207,7 @@ export function EditProfile(props: any): ReactElement {
               <MarkdownField id='bio' mb={3} />
             </Col>
             <Checkbox mb={3} id='isPublic' label='Public Profile' />
-            <GroupSearch
-              label='Pinned Groups'
-              id='groups'
-              publicOnly
-            />
+            <GroupSearch label='Pinned Groups' id='groups' publicOnly />
             <AsyncButton primary loadingText='Updating...' border mt={3}>
               Submit
             </AsyncButton>
