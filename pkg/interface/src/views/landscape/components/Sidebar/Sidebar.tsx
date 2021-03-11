@@ -37,7 +37,6 @@ interface SidebarProps {
   api: GlobalApi;
   selected?: string;
   selectedGroup?: string;
-  includeUnmanaged?: boolean;
   apps: SidebarAppConfigs;
   baseUrl: string;
   mobileHide?: boolean;
