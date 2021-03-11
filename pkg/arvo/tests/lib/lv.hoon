@@ -350,14 +350,14 @@
       !>  (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5])
       !>  (divs:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]) .1)
     %+  expect-eq
-      !>  (make:lvs `(list @rs)`~[.2 .4 .6 .8 .10])
+      !>  (make:lvs `(list @rs)`~[.5e-1 .1 .1.5 .2 .2.5])
       !>  (divs:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]) .2)
     %+  expect-eq
       !>  (make:lvs `(list @rs)`~[.-1 .-2 .-3 .-4 .-5])
       !>  (divs:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]) .-1)
     %+  expect-eq
       !>  (make:lvs `(list @rs)`~[.0.1 .0.2 .0.3 .0.4 .0.5])
-      !>  (divs:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]) .0.1)
+      !>  (divs:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]) .10)
   ==
 ++  test-addv  ^-  tang
   =/  vec00000  (zeros:lvs 5)
