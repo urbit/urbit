@@ -13,7 +13,9 @@
   |=  =mark
   %+  slav  %ud
   %-  crip
-  (rash (swp 3 mark) (star nud))
+  =/  txt
+    ((star nud) [1 1] (trip (swp 3 mark)))
+  p:(need q.txt)
 ::
 ++  append-version
   |=  ver=@ud

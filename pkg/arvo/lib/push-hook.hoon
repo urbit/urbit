@@ -164,6 +164,7 @@
         def  ~(. (default-agent this %|) bowl)
         io   ~(. agentio bowl)
         pass  pass:io
+        ver  ~(. versioning [bowl [update-mark version min-version]:config])
     ::
     ++  on-init
       =^  cards  push-hook
@@ -184,6 +185,7 @@
         =/  version=(list card)
           (fact:io version+!>(version.config) /version ~)^~
         [:(weld cards og-cards version) this(state old)]
+        ::
         ::
           %0
         %_    $
@@ -224,7 +226,7 @@
           (poke-hook-action:hc !<(action vase))
         [cards this]
       ::
-      ?:  =(mark update-mark.config)
+      ?:  (is-root:ver mark)
         ?:  (team:title [our src]:bowl)
           :_  this
           (forward-update:hc vase)
@@ -253,11 +255,11 @@
         (slav %ud i.t.t.t.t.path)
       ?.  (gte sub-ver min-version.config)
         :_  this
-        (fact-init-kick:io hook-meta-update+!>(min-version.config))^~
+        (fact-init-kick:io hook-meta-update+!>(min-version.config))
       =/  =vase
         (initial-watch:og t.t.t.t.t.path resource)
       :_  this
-      [%give %fact ~ update-mark.config vase]~
+      [%give %fact ~ (append-version:ver sub-ver) vase]~
     ::
     ++  on-agent
       |=  [=wire =sign:agent:gall]
@@ -272,7 +274,7 @@
         %kick  [~[watch-store:hc] this]
       ::
           %fact
-        ?.  =(update-mark.config p.cage.sign)
+        ?.  (is-root:ver p.cage.sign)
           =^  cards  push-hook
             (on-agent:og wire sign)
           [cards this]
@@ -280,7 +282,7 @@
           (take-update:og q.cage.sign)
         :_  this
         %+  weld
-          (push-updates:hc q.cage.sign)
+          (push-updates:hc cage.sign)
         cards
       ==
       ::
@@ -313,7 +315,7 @@
     --
   |_  =bowl:gall
   +*  og   ~(. push-hook bowl)
-      ver  ~(. versioning [bowl update-mark.config version.config])
+      ver  ~(. versioning [bowl [update-mark version min-version]:config])
   ::
   ++  poke-update
     |=  vas=vase
@@ -395,7 +397,7 @@
   ++  push-updates
     |=  =cage
     ^-  (list card:agent:gall)
-    =/  rids=(list resource)  (resource-for-update vase)
+    =/  rids=(list resource)  (resource-for-update q.cage)
     =|  cards=(list card:agent:gall)
     |-
     ?~  rids  cards
@@ -409,7 +411,7 @@
         (scag 4 path)
       ?>  ?=(^ extra)
       =/  path-ver
-        (slaw %ud i.extra)
+        (slav %ud i.extra)
       (~(put ju out) path-ver path)
     =/  caz=(list card)
       %+  turn  ~(tap by paths)

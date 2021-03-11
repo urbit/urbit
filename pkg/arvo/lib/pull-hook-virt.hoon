@@ -29,10 +29,10 @@
   ``.^(* u.pax)
 ::
 ++  kick-mule
-  |=  [rid=resource =trap]
+  |=  [rid=resource trp=(trap *)]
   ^-  (unit (unit path))
   =/  res=toon
-    (mock [trap %9 2 %0 1] mule-scry)
+    (mock [trp %9 2 %0 1] mule-scry)
   =/  pax=(unit path)
     !<  (unit path) 
     :-  -:!>(*(unit path)) 

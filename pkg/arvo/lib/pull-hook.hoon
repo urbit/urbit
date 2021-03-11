@@ -207,7 +207,7 @@
         og   ~(. pull-hook bowl)
         hc   ~(. +> bowl)
         def  ~(. (default-agent this %|) bowl)
-        ver  ~(. versioning [bowl update-mark.config version.config])
+        ver  ~(. versioning [bowl [update-mark version min-version]:config])
     ::
     ++  on-init
       ^-  [(list card:agent:gall) agent:gall]
@@ -230,6 +230,7 @@
           retry-failed-kicks
         :_  this
         :(weld cards og-cards retry-cards) 
+          %2  !!
         ::
           %1  $(old [%2 +.old ~])
         ::
@@ -260,7 +261,7 @@
       ^-  vase
       =.  inner-state
         on-save:og
-      !>(-.state)
+      !>(state)
     ::
     ++  on-poke
       |=  [=mark =vase]
@@ -279,7 +280,7 @@
           %pull-hook-action
         ?>  (team:title [our src]:bowl)
         =^  [cards=(list card) hook=_pull-hook]  state
-          tr-abet:(tr-hook-act:track-engine:hc action)
+          tr-abet:(tr-hook-act:track-engine:hc !<(action vase))
         =.  pull-hook  hook
         [cards this]
       ==
@@ -346,7 +347,7 @@
       io   ~(. agentio bowl)
       pass  pass:io
       virt  ~(. pull-hook-virt bowl)
-      ver  ~(. versioning [bowl update-mark.config version.config])
+      ver  ~(. versioning [bowl [update-mark version min-version]:config])
   ::
   ++  track-engine
     |_  [cards=(list card) rid=resource =ship =status gone=_|]
@@ -376,8 +377,9 @@
       tr-core(cards (welp (flop cards) cards))
     ::
     ++  tr-ap-og
-      |=  [caz=(list card) hook=_pull-hook]
-      =.  pull-hook  hook
+      |=  ap=_^?(|.(*(quip card _pull-hook)))
+      =^  caz  pull-hook
+        (ap)
       (tr-emis caz)
     ::  +|  %sign: sign handling
     ::
@@ -390,14 +392,16 @@
         %fact       (tr-fact +.sign)
       ==
     ::
+    ::
     ++  tr-wack
       |=  tan=(unit tang)
       ?~  tan  tr-core
-      (tr-ap-og:tr-cleanup (on-pull-nack:og rid u.tan))
+      (tr-ap-og:tr-cleanup |.((on-pull-nack:og rid u.tan)))
     ::
     ++  tr-kick
       ?.  ?=(%active -.status)  tr-core
-      =/  pax=(unit (unit path))
+      =/  pax
+        ~!  kick-mule
         (kick-mule:virt rid |.((on-pull-kick:og rid)))
       ?~  pax  tr-failed-kick
       ?~  u.pax  tr-cleanup
@@ -410,7 +414,7 @@
       ?>  (is-root:ver p.cage)
       =/  fact-ver=@ud
         (parse:ver p.cage)
-      ?.  (lth fact-ver min-version.config)
+      ?.  (gte fact-ver min-version.config)
         (tr-suspend-pub-ver fact-ver)
       =/  =vase
         (convert-to:ver cage)
@@ -421,7 +425,9 @@
           ?&  (check-src resources)
               (~(has in resources) rid)
           ==  ==
-      (tr-emit (~(poke-our pass wire) store-name.config update-mark.config vase))
+      =/  =mark
+        (append-version:ver version.config)
+      (tr-emit (~(poke-our pass wire) store-name.config mark vase))
     ::  +|  %lifecycle: lifecycle management for tracked resource
     ::
     ::
@@ -497,7 +503,7 @@
       |=  pax=path
       ^+  tr-core
       =/  =path
-        (welp (snoc resource+(en-path:resource rid) (scot %ud version.config)) pax)
+        (weld (snoc `path`resource+(en-path:resource rid) (scot %ud version.config)) pax)
       (tr-emit (~(watch pass tr-sub-wire) tr-sub-dock path))
     ::
     ++  tr-leave
@@ -543,8 +549,8 @@
     %+  roll  ~(tap in resources)
     |=  [rid=resource out=_|]
     ?:  out  %.y
-    ?~  ship=(~(get by tracking) rid)
+    ?~  status=(~(get by tracking) rid)
       %.n
-    =(src.bowl u.ship)
+    =(src.bowl ship.u.status)
   --
 --
