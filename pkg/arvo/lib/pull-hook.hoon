@@ -423,7 +423,7 @@
     ::
     ++  tr-fact
       |=  =cage
-      ?:  ?=(%hook-meta-update p.cage)
+      ?:  ?=(%version p.cage)
         (tr-suspend-sub-ver !<(@ud q.cage))
       ?>  (is-root:ver p.cage)
       =/  fact-ver=@ud
