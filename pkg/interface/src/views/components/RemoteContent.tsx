@@ -51,7 +51,6 @@ class RemoteContent extends Component<RemoteContentProps, RemoteContentState> {
   }
 
   save = () => {
-    console.log(`saving for: ${this.props.url}`);
     if(this.saving) {
       return;
     }
@@ -60,7 +59,6 @@ class RemoteContent extends Component<RemoteContentProps, RemoteContentState> {
   };
 
   restore = () => {
-    console.log(`restoring for: ${this.props.url}`);
     this.saving = false;
     this.props.restore();
   }
