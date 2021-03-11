@@ -231,7 +231,7 @@
           :_  this
           (forward-update:hc vase)
         =^  cards  state
-          (poke-update:hc vase)
+          (poke-update:hc mark vase)
         [cards this]
       ::
       =^  cards  push-hook
@@ -318,8 +318,10 @@
       ver  ~(. versioning [bowl [update-mark version min-version]:config])
   ::
   ++  poke-update
-    |=  vas=vase
+    |=  =cage
     ^-  (quip card:agent:gall _state)
+    =/  vas=vase
+      (convert-to:ver cage)
     =/  vax=(unit vase)  (transform-proxy-update:og vas)
     ?>  ?=(^ vax)
     =/  wire  (make-wire /store)
