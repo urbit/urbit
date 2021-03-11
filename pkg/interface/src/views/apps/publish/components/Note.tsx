@@ -114,6 +114,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
         <Text display="block" mb={2}>{title || ''}</Text>
         <Row alignItems="center">
           <Author
+            showImage
             ship={post?.author}
             date={post?.['time-sent']}
             group={group}
