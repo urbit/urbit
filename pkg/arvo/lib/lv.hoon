@@ -333,7 +333,7 @@
   ++  argmax
     |=  [u=@lvd]
     ~_  leaf+"lagoon-fail"
-    +(+.(find ~[(max u)] (unmake u)))
+    +(+:(find ~[(max u)] (unmake u)))
   ::
   ::  Arithmetic operators
   ::
