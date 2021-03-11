@@ -283,7 +283,9 @@
       ?.  ?=(%initial-group -.update)  jn-core
       ?.  =(group.update rid)          jn-core
       =.  jn-core  (cleanup %done)
-      ?.  hidden:(need (scry-group:grp rid))  jn-core
+      ?.  hidden:(need (scry-group:grp rid))
+        ::  TODO: join group feed if one is present
+        jn-core
       %-  emit-many
       %+  murn  ~(tap by associations.update)
       |=  [=md-resource:metadata =association:metadata]

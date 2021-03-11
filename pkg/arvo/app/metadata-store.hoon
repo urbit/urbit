@@ -272,6 +272,7 @@
       date-created  date-created.m
       creator       creator.m
       preview       preview.m
+      hidden        %|
     ::
         config
       ?:  =(module.m %$)

@@ -43,6 +43,7 @@
     [%forward rid=resource =update:store]
     [%eval =cord]
     [%pending-indices pending=(map hash:store index:store)]
+    [%create-group-feed group=resource]
   ==
 --
 
