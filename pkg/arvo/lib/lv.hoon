@@ -202,7 +202,7 @@
   ::    Product of elements
   ++  product
     |=  [u=@lvs]  ^-  @rs
-    (roll (unmake u) mul:rs)
+    (roll (unmake u) |:([a=.1 b=.1] (mul:rs a b)))
   ::
   ::  Linear algebraic operators
   ::
@@ -415,7 +415,7 @@
   ::    Product of elements
   ++  product
     |=  [u=@lvd]  ^-  @rd
-    (roll (unmake u) mul:rd)
+    (roll (unmake u) |:([a=.~1 b=.~1] (mul:rd a b)))
   ::
   ::  Linear algebraic operators
   ::
