@@ -17,6 +17,7 @@
       update:store
       %group-update
       %group-pull-hook
+      0  0
   ==
 ::
 +$  agent  (push-hook:push-hook config)

@@ -14,6 +14,7 @@
       update:store
       %group-update
       %group-push-hook
+      0  0
       %.n
   ==
 ::
@@ -44,6 +45,7 @@
 ++  on-pull-nack
   |=   [=resource =tang]
   ^-  (quip card _this)
+  %-  (slog tang)
   :_  this
   =-  [%pass / %agent [our.bowl %group-store] %poke -]~
   group-update+!>([%remove-group resource ~])
