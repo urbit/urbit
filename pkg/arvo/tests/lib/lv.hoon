@@ -51,7 +51,7 @@
   ;:  weld
     %+  expect-eq
       !>  (ones:lvs 0)
-      !>  `@lvs`0x0
+      !>  `@lvs`0x1
     %+  expect-eq
       !>  (ones:lvs 1)
       !>  `@lvs`0x1.3f80.0000
@@ -80,11 +80,11 @@
 ++  test-fill  ^-  tang
   ;:  weld
     %+  expect-eq
+      !>  `@lvs`0x1
       !>  (fill:lvs 0 .0)
-      !>  `@lvs`0x0
     %+  expect-eq
+      !>  `@lvs`0x1
       !>  (fill:lvs 0 .1)
-      !>  `@lvs`0x0
     %+  expect-eq
       !>  (fill:lvs 1 .0)
       !>  `@lvs`0x1.0000.0000
@@ -140,8 +140,8 @@
       !>  `@lvs`0x1.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000
       !>  (make:lvs `(list @rs)`(reap 5 .1))
     %+  expect-eq
+      !>  (make:lvs `(list @rs)`(reap 16 .1))
       !>  `@lvs`0x1.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000
-      !>  (make:lvs `(list @rs)`(reap 16 .0))
     %+  expect-eq
       !>  `@lvs`0x1.4000.0000.3f80.0000
       !>  (make:lvs ~[.1 .2])
@@ -176,7 +176,7 @@
       !>  `(list @rs)`(reap 5 .1)
       !>  (unmake:lvs `@lvs`0x1.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000)
     %+  expect-eq
-      !>  `(list @rs)`(reap 16 .0)
+      !>  `(list @rs)`(reap 16 .1)
       !>  (unmake:lvs `@lvs`0x1.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000)
     %+  expect-eq
       !>  `(list @rs)`~[.1 .2]
@@ -341,8 +341,8 @@
       !>  (make:lvs `(list @rs)`~[.-1 .-2 .-3 .-4 .-5])
       !>  (muls:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]) .-1)
     %+  expect-eq
-      !>  (make:lvs `(list @rs)`~[.0.1 .0.2 .0.3 .0.4 .0.5])
-      !>  (muls:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]) .10)
+      !>  (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5])
+      !>  (muls:lvs (make:lvs `(list @rs)`~[.0.1 .0.2 .0.3 .0.4 .0.5]) .10)
   ==
 ++  test-divs  ^-  tang
   ;:  weld
@@ -351,7 +351,7 @@
       !>  (divs:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]) .1)
     %+  expect-eq
       !>  (make:lvs `(list @rs)`~[.2 .4 .6 .8 .10])
-      !>  (divs:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]) .0.5)
+      !>  (divs:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]) .2)
     %+  expect-eq
       !>  (make:lvs `(list @rs)`~[.-1 .-2 .-3 .-4 .-5])
       !>  (divs:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]) .-1)
@@ -403,7 +403,7 @@
       !>  (make:lvs `(list @rs)`~[.4 .3 .2 .1 .0])
       !>  (subv:lvs vec54321 vec11111)
     %+  expect-eq
-      !>  (make:lvs `(list @rs)`~[.-1 .0 .1 .0 .-1])
+      !>  (make:lvs `(list @rs)`~[.3 .2 .1 .0 .-1])
       !>  (subv:lvs vec11111 vec21012)
     %+  expect-eq
       !>  (make:lvs `(list @rs)`~[.0 .-1 .-2 .-3 .-4])
@@ -436,7 +436,7 @@
       !>  vec21012
       !>  (mulv:lvs vec11111 vec21012)
     %+  expect-eq
-      !>  (make:lvs `(list @rs)`~[.4 .2 .0 .2 .4])
+      !>  (make:lvs `(list @rs)`~[.4 .1 .0 .1 .4])
       !>  (mulv:lvs vec21012 vec21012)
   ::  TODO XX test expected failures like diff sizes
   ==
