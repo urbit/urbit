@@ -235,11 +235,11 @@
 ++  test-isclose  ^-  tang
   ;:  weld
     %+  expect-eq
-      !>  (isclose:lvs .1 .1.00001 .0.0001)
       !>  %.y
+      !>  (isclose:lvs .1 .1.00001 .0.0001)
     %+  expect-eq
-      !>  (isclose:lvs .1 .1.00001 .0.00001)
       !>  %.n
+      !>  (isclose:lvs .1 .1.00001 .0.00001)
     ::  XX should probably test some pathological cases too
     %+  expect-eq
       !>  (isclose:lvs .1e-6 .0 .1e-6)
@@ -325,8 +325,7 @@
     %+  expect-eq
       !>  (make:lvs `(list @rs)`~[.2 .3 .4 .5 .6])
       !>  (adds:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]) .1)
-      :: argh, we really XX need an expect-close in lib/test
-      :: XX or switch to expect isclose instead
+      :: XX switch to expect-near-lvs instead
     %+  expect-eq
       !>  (make:lvs `(list @rs)`~[.11 .12 .13 .14 .15])
       !>  (adds:lvs (make:lvs `(list @rs)`~[.1 .2 .3 .4 .5]) .10)
