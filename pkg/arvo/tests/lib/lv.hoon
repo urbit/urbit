@@ -14,7 +14,7 @@
   |=  x=@rs  ^-  @rs
   ?:  (gth:rs x .0)  x
   (sub:rs .0 x)
-++  expect-near
+++  expect-near-lvs
   |=  [expected=@lvs actual=@lvs]
   ^-  tang
   ?:  (all-close:lvs `@lvs`expected `@lvs`actual .1e-6)
@@ -22,7 +22,6 @@
   :~  [%palm [": " ~ ~ ~] [leaf+"expected" leaf+(pprint:lvs expected) ~]]
       [%palm [": " ~ ~ ~] [leaf+"actual" leaf+(pprint:lvs actual) ~]]
   ==
-  result
 ::
 ::  Tests for vector creation
 ::
@@ -458,10 +457,10 @@
   =/  vec54321  (make:lvs `(list @rs)`~[.5 .4 .3 .2 .1])
   =/  vec21012  (make:lvs `(list @rs)`~[.-2 .-1 .0 .1 .2])
   ;:  weld
-    %+  expect-near
+    %+  expect-near-lvs
       !>  (make:lvs `(list @rs)`~[.1 .0.5 (div:rs .1 .3) .0.25 .0.2])
       !>  (divv:lvs vec11111 vec12345)
-    %+  expect-near
+    %+  expect-near-lvs
       !>  (ones:lvs 5)
       !>  (divv:lvs vec11111 vec11111)
   ::  TODO XX test expected failures like diff sizes and div-by-zero
