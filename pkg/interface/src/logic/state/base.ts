@@ -34,7 +34,7 @@ export const reduceState = <
 export let stateStorageKeys: string[] = [];
 
 export const stateStorageKey = (stateName: string) => {
-  stateName = `Landcape${stateName}State`;
+  stateName = `Landscape${stateName}State`;
   stateStorageKeys = [...new Set([...stateStorageKeys, stateName])];
   return stateName;
 };

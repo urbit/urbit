@@ -133,7 +133,7 @@ function graphWatchSelf(json: any, state: HarkState): HarkState {
 function readAll(json: any, state: HarkState): HarkState {
   const data = _.get(json, 'read-all');
   if(data) { 
-    clearState(state);
+    state = clearState(state);
   }
   return state;
 }
@@ -149,15 +149,15 @@ function removeGraph(json: any, state: HarkState): HarkState {
 function seenIndex(json: any, state: HarkState): HarkState {
   const data = _.get(json, 'seen-index');
   if(data) {
-    updateNotificationStats(state, data.index, 'last', () => data.time);
+    state = updateNotificationStats(state, data.index, 'last', () => data.time);
   }
   return state;
 }
 
 function readEach(json: any, state: HarkState): HarkState {
   const data = _.get(json, 'read-each');
-  if(data) {
-    updateUnreads(state, data.index, u => u.delete(data.target));
+  if (data) {
+    state = updateUnreads(state, data.index, u => u.delete(data.target));
   }
   return state;
 }
@@ -165,7 +165,7 @@ function readEach(json: any, state: HarkState): HarkState {
 function readSince(json: any, state: HarkState): HarkState {
   const data = _.get(json, 'read-count');
   if(data) {
-    updateUnreadCount(state, data, () => 0);
+    state = updateUnreadCount(state, data, () => 0);
   }
   return state;
 }
@@ -173,7 +173,7 @@ function readSince(json: any, state: HarkState): HarkState {
 function unreadSince(json: any, state: HarkState): HarkState {
   const data = _.get(json, 'unread-count');
   if(data) {
-    updateUnreadCount(state, data.index, u => u + 1);
+    state = updateUnreadCount(state, data.index, u => u + 1);
   }
   return state;
 }
@@ -181,7 +181,7 @@ function unreadSince(json: any, state: HarkState): HarkState {
 function unreadEach(json: any, state: HarkState): HarkState {
   const data = _.get(json, 'unread-each');
   if(data) {
-    updateUnreads(state, data.index, us => us.add(data.target));
+    state = updateUnreads(state, data.index, us => us.add(data.target));
   }
   return state;
 }
@@ -191,13 +191,14 @@ function unreads(json: any, state: HarkState): HarkState {
   if(data) {
     data.forEach(({ index, stats }) => {
       const { unreads, notifications, last } = stats;
-      updateNotificationStats(state, index, 'notifications', x => x + notifications);
-      updateNotificationStats(state, index, 'last', () => last);
+      state = updateNotificationStats(state, index, 'notifications', x => x + notifications);
+      state = updateNotificationStats(state, index, 'last', () => last);
       if('count' in unreads) {
-        updateUnreadCount(state, index, (u = 0) => u + unreads.count);
+        state = updateUnreadCount(state, index, (u = 0) => u + unreads.count);
       } else {
+        state = updateUnreads(state, index, s => new Set());
         unreads.each.forEach((u: string) => {
-          updateUnreads(state, index, s => s.add(u));
+          state = updateUnreads(state, index, s => s.add(u));
         });
       }
     });
@@ -205,7 +206,7 @@ function unreads(json: any, state: HarkState): HarkState {
   return state;
 }
 
-function clearState(state: HarkState) {
+function clearState(state: HarkState): HarkState {
   const initialState = {
     notifications: new BigIntOrderedMap<Timebox>(),
     archivedNotifications: new BigIntOrderedMap<Timebox>(),
@@ -225,6 +226,7 @@ function clearState(state: HarkState) {
   Object.keys(initialState).forEach((key) => {
     state[key] = initialState[key];
   });
+  return state;
 }
 
 function updateUnreadCount(state: HarkState, index: NotifIndex, count: (c: number) => number): HarkState {
@@ -242,10 +244,9 @@ function updateUnreads(state: HarkState, index: NotifIndex, f: (us: Set<string>)
   if(!('graph' in index)) {
     return state;
   }
-  const unreads = _.get(state.unreads.graph, [index.graph.graph, index.graph.index, 'unreads'], new Set<string>());
-  const oldSize = unreads.size;
+  let unreads = _.get(state.unreads.graph, [index.graph.graph, index.graph.index, 'unreads'], new Set<string>());
   f(unreads);
-  const newSize = unreads.size;
+
   _.set(state.unreads.graph, [index.graph.graph, index.graph.index, 'unreads'], unreads);
   return state;
 }
@@ -254,7 +255,7 @@ function updateNotificationStats(state: HarkState, index: NotifIndex, statField:
   if(statField === 'notifications') {
     state.notificationsCount = f(state.notificationsCount);
   }
-  if('graph' in index) {
+  if ('graph' in index) {
     const curr = _.get(state.unreads.graph, [index.graph.graph, index.graph.index, statField], 0);
     _.set(state.unreads.graph, [index.graph.graph, index.graph.index, statField], f(curr));
   } else if('group' in index) {
@@ -276,7 +277,6 @@ function added(json: any, state: HarkState): HarkState {
     );
     if (arrIdx !== -1) {
       if (timebox[arrIdx]?.notification?.read) {
-        // TODO this is additive, and with a persistent state it keeps incrementing
         state = updateNotificationStats(state, index, 'notifications', x => x+1);
       }
       timebox[arrIdx] = { index, notification };
@@ -361,7 +361,7 @@ function read(json: any, state: HarkState): HarkState {
   const data = _.get(json, 'read-note', false);
   if (data) {
     const { time, index } = data;
-    updateNotificationStats(state, index, 'notifications', x => x-1);
+    state = updateNotificationStats(state, index, 'notifications', x => x-1);
     setRead(time, index, true, state);
   }
   return state;
@@ -371,7 +371,7 @@ function unread(json: any, state: HarkState): HarkState {
   const data = _.get(json, 'unread-note', false);
   if (data) {
     const { time, index } = data;
-    updateNotificationStats(state, index, 'notifications', x => x+1);
+    state = updateNotificationStats(state, index, 'notifications', x => x+1);
     setRead(time, index, false, state);
   }
   return state;
@@ -397,7 +397,7 @@ function archive(json: any, state: HarkState): HarkState {
       state.notifications.set(time, unarchived);
     }
     const newlyRead = archived.filter(x => !x.notification.read).length;
-    updateNotificationStats(state, index, 'notifications', x => x - newlyRead);
+    state = updateNotificationStats(state, index, 'notifications', x => x - newlyRead);
   }
   return state;
 }
