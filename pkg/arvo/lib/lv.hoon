@@ -85,7 +85,7 @@
     =/  n  `@ud`(length u)
     =/  count  1
     =/  off  0
-    |-
+    |-  ^-  ?
       ?:  (gth off 0)  %.n
       ?:  (gth count n)  %.y
     $(count +(count), off (add off ?:((isclose (get u count) (get v count) tol) 0 1)))
@@ -307,7 +307,7 @@
     =/  n  `@ud`(length u)
     =/  count  1
     =/  off  0
-    |-
+    |-   ^-  ?
       ?:  (gth off 0)  %.n
       ?:  (gth count n)  %.y
     $(count +(count), off (add off ?:((isclose (get u count) (get v count) tol) 0 1)))
