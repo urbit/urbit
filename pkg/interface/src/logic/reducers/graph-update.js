@@ -109,7 +109,7 @@ const addNodes = (json, state) => {
     let parNode = graph.get(index[0]);
     if (!parNode) {
       console.error('parent node does not exist, cannot add child');
-      return;
+      return graph;
     }
     parNode.children = _addNode(parNode.children, index.slice(1), node);
     graph.set(index[0], parNode);
@@ -134,7 +134,7 @@ const addNodes = (json, state) => {
     if (state.graphTimesentMap[resource][timestamp]) {
       let index = state.graphTimesentMap[resource][timestamp];
 
-      if (index.split('/').length === 0) { return; }
+      if (index.split('/').length === 0) { return graph; }
       let indexArr = index.split('/').slice(1).map((ind) => {
         return bigInt(ind);
       });
@@ -178,7 +178,7 @@ const addNodes = (json, state) => {
     indices.sort((a, b) => {
       let aArr = a.split('/');
       let bArr = b.split('/');
-      return bArr.length < aArr.length;
+      return aArr.length - bArr.length;
     });
 
     let graph = state.graphs[resource];
