@@ -1,21 +1,21 @@
 import React, {
-  Component,
-  useState,
   useEffect,
   useRef,
   useCallback
 } from 'react';
 import Helmet from 'react-helmet';
 
-import useTermState, { TermState } from '~/logic/state/term';
+import useTermState from '~/logic/state/term';
+import useSettingsState from "~/logic/state/settings";
+import useLocalState from "~/logic/state/local";
 
-import { Terminal, ITerminalOptions } from 'xterm';
+import { Terminal, ITerminalOptions, ITheme } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { saveAs } from 'file-saver';
 
 import { Box, Col } from '@tlon/indigo-react';
 
-import './css/custom.css';
+import '../../../../node_modules/xterm/css/xterm.css'
 import GlobalApi from '~/logic/api/global';
 import { Belt } from '~/logic/api/term';
 import { Blit, Stye, Stub, Tint, Deco } from '~/types/term-update';
@@ -28,6 +28,26 @@ type TermAppProps = {
   notificationsCount: number;
 }
 
+const makeTheme = (dark: boolean): ITheme => {
+  let fg, bg: string;
+  if (dark) {
+    fg = 'white';
+    bg = 'black';
+  } else {
+    fg = 'black';
+    bg = 'white';
+  }
+  //TODO  indigo colors.
+  //      we can't pluck these from ThemeContext because they have transparency.
+  //      technically xterm supports transparency, but it degrades performance.
+  return {
+    foreground: fg,
+    background: bg,
+    brightBlack: '#7f7f7f',  //NOTE  slogs
+    cursor: fg,
+  }
+}
+
 const termConfig: ITerminalOptions = {
   logLevel: 'warn',
   //
@@ -37,13 +57,9 @@ const termConfig: ITerminalOptions = {
   cols: 80,
   scrollback: 10000,
   //
-  theme: { //TODO  vary with landscape theme?
-    foreground: 'black',
-    background: 'white',
-    cursor: 'black',
-    cursorAccent: 'white',
-    //TODO  selection color
-  },
+  fontFamily: '"Source Code Pro","Roboto mono","Courier New",monospace',
+  //NOTE  theme colors configured dynamically
+  //
   bellStyle: 'sound',
   bellSound: bel,
   //
@@ -111,9 +127,12 @@ export default function TermApp(props: TermAppProps) {
   const { api } = props;
 
   const container = useRef<HTMLElement>(null);
-
   //TODO  allow switching of selected
   const { sessions, selected, set } = useTermState();
+
+  const osDark = useLocalState((state) => state.dark);
+  const theme = useSettingsState(s => s.display.theme);
+  const dark = theme === 'dark' || (theme === 'auto' && osDark);
 
   const onSlog = useCallback((slog) => {
     if (!sessions['']) {
@@ -323,6 +342,20 @@ export default function TermApp(props: TermAppProps) {
     };
   }, []);
 
+  //  on dark mode change, change terminals' theme
+  //
+  useEffect(() => {
+    const theme = makeTheme(dark);
+    for (let ses in sessions) {
+      sessions[ses].term.setOption('theme', theme);
+    }
+    if (container.current) {
+      container.current.style.backgroundColor = theme.background || '';
+    }
+  }, [dark, sessions]);
+
+  //  on selected change, maybe setup the term, or put it into the container
+  //
   useEffect(() => {
     let ses = sessions[selected];
 
@@ -332,6 +365,7 @@ export default function TermApp(props: TermAppProps) {
       //  set up terminal
       //
       let term = new Terminal(termConfig);
+      term.setOption('theme', makeTheme(dark));
       const fit = new FitAddon();
       term.loadAddon(fit);
 
