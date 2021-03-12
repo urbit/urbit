@@ -9,15 +9,13 @@ import {
   StatelessAsyncButton as AsyncButton,
   StatelessAsyncButton
 } from './StatelessAsyncButton';
-import { Notebooks, Graphs, Inbox } from '@urbit/api';
+import { Graphs } from '@urbit/api';
 import useGraphState from '~/logic/state/graph';
 
 interface UnjoinedResourceProps {
   association: Association;
   api: GlobalApi;
   baseUrl: string;
-  notebooks: Notebooks;
-  inbox: Inbox;
 }
 
 function isJoined(path: string) {
@@ -31,7 +29,7 @@ function isJoined(path: string) {
 }
 
 export function UnjoinedResource(props: UnjoinedResourceProps) {
-  const { api, notebooks, inbox } = props;
+  const { api } = props;
   const history = useHistory();
   const rid = props.association.resource;
   const appName = props.association['app-name'];
@@ -52,7 +50,7 @@ export function UnjoinedResource(props: UnjoinedResourceProps) {
     if (isJoined(rid)({ graphKeys })) {
       history.push(`${props.baseUrl}/resource/${app}${rid}`);
     }
-  }, [props.association, inbox, graphKeys, notebooks]);
+  }, [props.association, graphKeys]);
 
   return (
     <Center p={6}>
