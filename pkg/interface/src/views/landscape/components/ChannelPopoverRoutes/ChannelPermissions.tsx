@@ -15,6 +15,7 @@ import GlobalApi from '~/logic/api/global';
 import { resourceFromPath } from '~/logic/lib/group';
 import { FormSubmit } from '~/views/components/FormSubmit';
 import { ChannelWritePerms } from '../ChannelWritePerms';
+import {DirtyFormRouteBlock} from '~/views/components/DirtyFormRouteBlock';
 
 function PermissionsSummary(props: {
   writersSize: number;
@@ -158,6 +159,7 @@ export function GraphPermissions(props: GraphPermissionsProps) {
       onSubmit={onSubmit}
     >
       <Form style={{ display: 'contents' }}>
+        <DirtyFormRouteBlock />
         <Col mt="4" flexShrink={0} gapY="5">
           <Col gapY="1" mt="0">
             <Text id="permissions" fontWeight="bold" fontSize="2">

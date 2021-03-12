@@ -14,6 +14,7 @@ import { ColorInput } from '~/views/components/ColorInput';
 import { uxToHex } from '~/logic/lib/util';
 import GlobalApi from '~/logic/api/global';
 import { FormSubmit } from '~/views/components/FormSubmit';
+import {DirtyFormRouteBlock} from '~/views/components/DirtyFormRouteBlock';
 
 interface FormSchema {
   title: string;
@@ -45,6 +46,7 @@ export function ChannelDetails(props: ChannelDetailsProps) {
   return (
     <Formik initialValues={initialValues} onSubmit={onSubmit}>
       <Form style={{ display: 'contents' }}>
+        <DirtyFormRouteBlock />
         <Col mb="4" flexShrink={0} gapY="4">
           <Col mb={3}>
             <Text id="details" fontSize="2" fontWeight="bold">
