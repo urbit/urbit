@@ -15,8 +15,8 @@ export function ProfileHeader(props: any): ReactElement {
   return (
     <Box
       border='1px solid'
-      borderColor='lightGray'
-      borderRadius='2'
+      borderColor='washedGray'
+      borderRadius='3'
       overflow='hidden'
       marginBottom='calc(64px + 2rem)'
     >
@@ -65,7 +65,7 @@ export function ProfileImages(props: any): ReactElement {
 
   return (
     <>
-      <Row ref={anchorRef} width='100%' height='300px' position='relative'>
+      <Row ref={anchorRef} width='100%' height='400px' position='relative'>
         {cover}
         <Center position='absolute' width='100%' height='100%'>
           {props.children}
@@ -74,7 +74,7 @@ export function ProfileImages(props: any): ReactElement {
       <Box
         height='128px'
         width='128px'
-        borderRadius='2'
+        borderRadius='3'
         overflow='hidden'
         position='absolute'
         left='50%'
