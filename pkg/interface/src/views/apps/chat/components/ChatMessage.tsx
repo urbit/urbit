@@ -299,14 +299,25 @@ export const MessageAuthor = ({
         borderRadius={1}
       />
     ) : (
-      <Sigil
-        ship={msg.author}
-        size={24}
-        color={color}
-        classes={sigilClass}
-        icon
-        padding={3}
-      />
+      <Box
+        width={24}
+        height={24}
+        display='flex'
+        justifyContent='center'
+        alignItems='center'
+        backgroundColor={color}
+        borderRadius={1}
+      >
+        <Sigil
+          ship={msg.author}
+          size={12}
+          display='block'
+          color={color}
+          classes={sigilClass}
+          icon
+          padding={0}
+        />
+      </Box>
     );
   return (
     <Box display='flex' alignItems='center' {...rest}>

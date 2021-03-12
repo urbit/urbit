@@ -138,14 +138,24 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
           display='inline-block'
         />
       ) : (
-        <Sigil
-          ship={window.ship}
-          size={24}
-          color={`#${color}`}
-          classes={sigilClass}
-          icon
-          padding={2}
-        />
+        <Box
+          width={24}
+          height={24}
+          display='flex'
+          justifyContent='center'
+          alignItems='center'
+          backgroundColor={`#${color}`}
+          borderRadius={1}
+        >
+          <Sigil
+            ship={window.ship}
+            size={16}
+            color={`#${color}`}
+            classes={sigilClass}
+            icon
+            padding={2}
+          />
+        </Box>
       );
 
     return (
