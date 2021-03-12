@@ -245,7 +245,7 @@
       !>  (isclose:lvs .1e-6 .0 .1e-6)
       !>  (near0:lvs .1e-6)
     %+  expect-eq
-      !>  (isclose:lvs .1e-6 .0 .1e-7)
+      !>  (isclose:lvs .1e-7 .0 .1e-6)
       !>  (near0:lvs .1e-7)
   ==
 ++  test-get  ^-  tang
