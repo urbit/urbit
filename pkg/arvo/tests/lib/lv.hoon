@@ -458,11 +458,11 @@
   =/  vec21012  (make:lvs `(list @rs)`~[.-2 .-1 .0 .1 .2])
   ;:  weld
     %+  expect-near-lvs
-      !>  (make:lvs `(list @rs)`~[.1 .0.5 (div:rs .1 .3) .0.25 .0.2])
-      !>  (divv:lvs vec11111 vec12345)
+      (make:lvs `(list @rs)`~[.1 .0.5 (div:rs .1 .3) .0.25 .0.2])
+      (divv:lvs vec11111 vec12345)
     %+  expect-near-lvs
-      !>  (ones:lvs 5)
-      !>  (divv:lvs vec11111 vec11111)
+      (ones:lvs 5)
+      (divv:lvs vec11111 vec11111)
   ::  TODO XX test expected failures like diff sizes and div-by-zero
   ==
 ++  test-sum  ^-  tang
