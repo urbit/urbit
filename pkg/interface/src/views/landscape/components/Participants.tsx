@@ -61,11 +61,10 @@ function getParticipants(cs: Contacts, group: Group) {
     f.toPairs,
     f.map(([patp, c]: [string, Contact]) => ({
       ...c,
-      patp,
+      patp: patp.slice(1),
       pending: false
     }))
   )(cs);
-  console.log(contacts);
   const members: Participant[] = _.map(
     Array.from(group.members)
     .filter(e => group?.policy?.invite?.pending ? !group.policy.invite.pending.has(e) : true), m =>
