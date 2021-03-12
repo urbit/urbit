@@ -15,26 +15,13 @@
   ?:  (gth:rs x .0)  x
   (sub:rs .0 x)
 ++  expect-near
-  |=  [expected=vase actual=vase]
+  |=  [expected=@lvs actual=@lvs]
   ^-  tang
-  ::
-  =|  result=tang
-  ::
-  =?  result  !(all-close:lvs `@lvs`q.expected `@lvs`q.actual .1e-6)
-    %+  weld  result
-    ^-  tang
-    :~  [%palm [": " ~ ~ ~] [leaf+"expected" (sell expected) ~]]
-        [%palm [": " ~ ~ ~] [leaf+"actual" (sell actual) ~]]
-    ==
-  ::
-  =?  result  !(~(nest ut p.actual) | p.expected)
-    %+  weld  result
-    ^-  tang
-    :~  :+  %palm  [": " ~ ~ ~]
-        :~  [%leaf "failed to nest"]
-            (~(dunk ut p.actual) %actual)
-            (~(dunk ut p.expected) %expected)
-    ==  ==
+  ?:  (all-close:lvs `@lvs`expected `@lvs`actual .1e-6)
+    ~
+  :~  [%palm [": " ~ ~ ~] [leaf+"expected" leaf+(pprint:lvs expected) ~]]
+      [%palm [": " ~ ~ ~] [leaf+"actual" leaf+(pprint:lvs actual) ~]]
+  ==
   result
 ::
 ::  Tests for vector creation
