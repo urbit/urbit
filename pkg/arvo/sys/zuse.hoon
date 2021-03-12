@@ -5535,7 +5535,8 @@
     ::                                                  ::  ++unm:chrono:userlib
     ++  unm                                             ::  Urbit to Unix ms
       |=  a=@da
-      (div (mul (sub a ~1970.1.1) 1.000) ~s1)
+      =-  (div (mul - 1.000) ~s1)
+      (sub (add a (div ~s1 2.000)) ~1970.1.1)
     ::                                                  ::  ++unt:chrono:userlib
     ++  unt                                             ::  Urbit to Unix time
       |=  a=@da
