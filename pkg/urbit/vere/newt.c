@@ -28,10 +28,10 @@
 #include "all.h"
 #include "vere/vere.h"
 
-/* _newt_mess_head(): await next msg header.
+/* u3_newt_mess_head(): await next msg header.
 */
-static void
-_newt_mess_head(u3_mess* mes_u)
+void
+u3_newt_mess_head(u3_mess* mes_u)
 {
   mes_u->sat_e = u3_mess_head;
   mes_u->hed_u.has_y = 0;
@@ -194,17 +194,17 @@ u3_newt_decode(u3_moat* mot_u, c3_y* buf_y, c3_d len_d)
         //
         else {
           _newt_meat_plan(mot_u, met_u);
-          _newt_mess_head(mes_u);
+          u3_newt_mess_head(mes_u);
         }
       } break;
     }
   }
 }
 
-/* _newt_read(): handle async read result.
+/* u3_newt_read_next(): handle read result.
 */
-static c3_o
-_newt_read(u3_moat*        mot_u,
+c3_o
+u3_newt_read_next(u3_moat*        mot_u,
            ssize_t         len_i,
            const uv_buf_t* buf_u)
 {
@@ -241,7 +241,7 @@ _newt_read_sync_cb(uv_stream_t*    str_u,
 {
   u3_moat* mot_u = (void *)str_u;
 
-  if ( c3y == _newt_read(mot_u, len_i, buf_u) ) {
+  if ( c3y == u3_newt_read_next(mot_u, len_i, buf_u) ) {
     _newt_meat_next_sync(mot_u);
   }
 }
@@ -255,7 +255,7 @@ _newt_read_cb(uv_stream_t*    str_u,
 {
   u3_moat* mot_u = (void *)str_u;
 
-  if ( c3y == _newt_read(mot_u, len_i, buf_u) ) {
+  if ( c3y == u3_newt_read_next(mot_u, len_i, buf_u) ) {
     _newt_meat_next(mot_u);
   }
 }
@@ -288,7 +288,7 @@ _newt_read_init(u3_moat* mot_u, uv_read_cb read_cb_f)
 
   //  await next msg header
   //
-  _newt_mess_head(&mot_u->mes_u);
+  u3_newt_mess_head(&mot_u->mes_u);
 
   {
     c3_i sas_i;
@@ -330,7 +330,7 @@ u3_newt_moat_stop(u3_moat* mot_u, u3_moor_bail bal_f)
   //
   if ( u3_mess_tail == mot_u->mes_u.sat_e ) {
     c3_free(mot_u->mes_u.tal_u.met_u);
-    _newt_mess_head(&mot_u->mes_u);
+    u3_newt_mess_head(&mot_u->mes_u);
   }
 
   //  dispose pending messages

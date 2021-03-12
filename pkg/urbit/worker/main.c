@@ -1111,6 +1111,7 @@ _cw_boot(c3_i argc, c3_c* argv[])
 }
 
 static void _cw_replay();
+static void _cw_loop();
 /* _cw_work(): resume and run; replay and start event processing
 */
 static void
@@ -1156,7 +1157,49 @@ _cw_work(c3_i argc, c3_c* argv[])
   _cw_replay();
   u3e_save();
 
+  _cw_loop();
+
   exit(0);
+}
+
+#define READ_BUF_LEN 2048
+
+static void
+_cw_loop()
+{
+  //  initialize IPC data structures
+  //
+  inn_u.ent_u = inn_u.ext_u = 0;
+  u3_newt_mess_head(&inn_u.mes_u);
+
+  c3_y* buf_y = c3_malloc(READ_BUF_LEN);  //  allocate statically?
+  while (1) {
+    //  read IPC message from stdin
+    //
+    while ( 0 == inn_u.ext_u ) {
+      ssize_t red = 0;
+      red = read(stdin, buf_y, READ_BUF_LEN);
+      if ( 0 >= red ) {
+        fprintf(stderr, "stdin fail %zd\r\n", red);
+        exit(1);
+      }
+      u3_newt_decode(&inn_u, buf_y, red);
+    }
+
+    //  apply IPC message
+    //
+    //    XX handle event failure
+    //
+    _cw_serf_writ((void*)0, inn_u.ext_u->hun_y, inn_u.ext_u->len_d);
+
+    //  dequeue and free message
+    //
+    {
+      u3_meat* met_u = &inn_u.ext_u;
+      inn_u.ext_u = met_u->nex_u;
+      c3_free(met_u);
+    }
+  }
 }
 
 /* _cw_replay(): replay events on disk
