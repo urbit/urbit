@@ -11,7 +11,6 @@ interface NotebookPostsProps {
   baseUrl: string;
   hideAvatars?: boolean;
   hideNicknames?: boolean;
-  api: GlobalApi;
   group: Group;
 }
 
@@ -29,7 +28,6 @@ export function NotebookPosts(props: NotebookPostsProps) {
               contact={contacts[`~${node.post.author}`]}
               node={node}
               baseUrl={props.baseUrl}
-              api={props.api}
               group={props.group}
             />
           )

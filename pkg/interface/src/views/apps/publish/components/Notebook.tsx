@@ -5,13 +5,11 @@ import { Col, Box, Text, Row } from '@tlon/indigo-react';
 import { Contacts, Rolodex, Groups, Associations, Graph, Association, Unreads } from '@urbit/api';
 
 import { NotebookPosts } from './NotebookPosts';
-import GlobalApi from '~/logic/api/global';
 import { useShowNickname } from '~/logic/lib/util';
 import useContactState from '~/logic/state/contact';
 import useGroupState from '~/logic/state/group';
 
 interface NotebookProps {
-  api: GlobalApi;
   ship: string;
   book: string;
   graph: Graph;
@@ -60,7 +58,6 @@ export function Notebook(props: NotebookProps & RouteComponentProps): ReactEleme
         host={ship}
         book={book}
         baseUrl={props.baseUrl}
-        api={props.api}
         group={group}
       />
     </Col>
