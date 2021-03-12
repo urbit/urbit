@@ -87,7 +87,8 @@
       =/  off  0
       |-
         ?:  (gth count n)  =(0 off)
-      $(count +(count), sum (add off `@`(isclose (get u +(count)) (get v +(count)) .1e-6)))
+        ?:  (gth off 0)  %.n
+      $(count +(count), off (add off `@`(isclose (get u +(count)) (get v +(count)) .1e-6)))
   ::
   ::    Get the value at an index, using mathematical indices 1..n.
   ++  get
@@ -308,7 +309,8 @@
       =/  off  0
       |-
         ?:  (gth count n)  =(0 off)
-      $(count +(count), sum (add off `@`(isclose (get u +(count)) (get v +(count)) .~1e-6)))
+        ?:  (gth off 0)  %.n
+      $(count +(count), off (add off `@`(isclose (get u +(count)) (get v +(count)) .~1e-6)))
   ::
   ::    Get the value at an index, using mathematical indices 1..n.
   ++  get
