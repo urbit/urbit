@@ -82,13 +82,13 @@
     (isclose s .0 .1e-6)
   ++  all-close
     |=  [u=@lvs v=@lvs tol=@rs]
-      =/  n  `@ud`(length u)
-      =/  count  1
-      =/  off  0
-      |-
-        ?:  (gth off 0)  %.n
-        ?:  (gth count n)  %.y
-      $(count +(count), off (add off ?:((isclose (get u count) (get v count) tol) 0 1)))
+    =/  n  `@ud`(length u)
+    =/  count  1
+    =/  off  0
+    |-
+      ?:  (gth off 0)  %.n
+      ?:  (gth count n)  %.y
+    $(count +(count), off (add off ?:((isclose (get u count) (get v count) tol) 0 1)))
   ::
   ::    Get the value at an index, using mathematical indices 1..n.
   ++  get
@@ -304,13 +304,13 @@
     (isclose s .~0 .~1e-6)
   ++  all-close
     |=  [u=@lvd v=@lvd tol=@rd]
-      =/  n  `@ud`(length u)
-      =/  count  1
-      =/  off  0
-      |-
-        ?:  (gth off 0)  %.n
-        ?:  (gth count n)  %.y
-      $(count +(count), off (add off ?:((isclose (get u count) (get v count) tol) 0 1)))
+    =/  n  `@ud`(length u)
+    =/  count  1
+    =/  off  0
+    |-
+      ?:  (gth off 0)  %.n
+      ?:  (gth count n)  %.y
+    $(count +(count), off (add off ?:((isclose (get u count) (get v count) tol) 0 1)))
   ::
   ::    Get the value at an index, using mathematical indices 1..n.
   ++  get
