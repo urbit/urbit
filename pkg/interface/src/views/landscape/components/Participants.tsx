@@ -33,6 +33,7 @@ import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
 import useLocalState from '~/logic/state/local';
 import useContactState from '~/logic/state/contact';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
+import {deSig} from '@urbit/api';
 
 const TruncText = styled(Text)`
   white-space: nowrap;
@@ -55,11 +56,16 @@ const searchParticipant = (search: string) => (p: Participant) => {
 };
 
 function getParticipants(cs: Contacts, group: Group) {
-  const contacts: Participant[] = _.map(cs, (c, patp) => ({
-    ...c,
-    patp,
-    pending: false
-  }));
+  const contacts: Participant[] = _.flow(
+    f.omitBy<Contacts>((_c, patp) => !group.members.has(patp.slice(1))),
+    f.toPairs,
+    f.map(([patp, c]: [string, Contact]) => ({
+      ...c,
+      patp,
+      pending: false
+    }))
+  )(cs);
+  console.log(contacts);
   const members: Participant[] = _.map(
     Array.from(group.members)
     .filter(e => group?.policy?.invite?.pending ? !group.policy.invite.pending.has(e) : true), m =>
@@ -84,7 +90,7 @@ const emptyContact = (patp: string, pending: boolean): Participant => ({
   nickname: '',
   bio: '',
   status: '',
-  color: '',
+  color: '0x0',
   avatar: null,
   cover: null,
   groups: [],
