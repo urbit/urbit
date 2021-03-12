@@ -85,10 +85,10 @@ export default function SettingsScreen(props: any) {
           width='100%'
           overflowY='auto'
         >
-          <Text display='block' my='4' mx='3' fontSize='2' fontWeight='700'>
+          <Text display='block' mt='4' mb='3' mx='3' fontSize='2' fontWeight='700'>
             System Preferences
           </Text>
-          <Col gapY='1'>
+          <Col>
             <SidebarItem
               icon='Inbox'
               text='Notifications'
