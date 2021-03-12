@@ -15,6 +15,16 @@
   ::  +notification-kind: no notifications for now
   ::
   ++  notification-kind  ~
+  ++  transform-add-nodes
+    |=  [=index =post =atom was-parent-modified=?]
+    ^-  [^index ^post]
+    =-  [- post(index -)]
+    ?~  index  !!
+    ?:  ?=([@ ~] index)
+      [atom ~]
+    ?:  was-parent-modified
+      ~|(%cannot-submit-parents-with-prepopulated-children !!)
+    `^index`(snoc `^index`(snip index) atom)
   --
 ++  grab
   |%
