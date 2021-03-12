@@ -40,7 +40,7 @@ interface VirtualScrollerProps<T> {
   data: BigIntOrderedMap<T>;
   /**
    * The component to render the items
-   * 
+   *
    * @remarks
    *
    * This component must be referentially stable, so either use `useCallback` or
@@ -157,7 +157,7 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
       this.loaded.top = true;
       this.loaded.bottom = true;
     }
-      
+
     this.updateVisible(0);
     this.resetScroll();
     this.loadRows(false);
@@ -493,7 +493,7 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
       <>
         {!IS_IOS && (<Box borderRadius="3" top ={isTop ? "0" : undefined} bottom={!isTop ? "0" : undefined} ref={el => { this.scrollRef = el; }} right="0" height="50px" position="absolute" width="4px" backgroundColor="lightGray" />)}
 
-      <ScrollbarLessBox overflowY='scroll' ref={this.setWindow} onScroll={this.onScroll} style={{ ...style, ...{ transform }, "-webkit-overflow-scrolling": "auto" }}>
+      <ScrollbarLessBox overflowY='scroll' ref={this.setWindow} onScroll={this.onScroll} style={{ ...style, ...{ transform }, "WebkitOverflowScrolling": "auto" }}>
         <Box style={{ transform, width: 'calc(100% - 4px)' }}>
           {(isTop ? !atStart : !atEnd) && (<Center height="5">
             <LoadingSpinner />

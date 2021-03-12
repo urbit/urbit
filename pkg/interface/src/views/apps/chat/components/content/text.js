@@ -91,7 +91,7 @@ const MessageMarkdown = React.memo((props) => {
   }, []);
 
   return lines.map((line, i) => (
-    <>
+    <React.Fragment key={i}>
       {i !== 0 && <Row height={2} />}
       <ReactMarkdown
         {...rest}
@@ -123,7 +123,7 @@ const MessageMarkdown = React.memo((props) => {
           ]
         ]}
       />
-    </>
+    </React.Fragment>
   ));
 });
 
