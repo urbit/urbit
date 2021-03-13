@@ -836,7 +836,7 @@
       !>  (make:lvd `(list @rd)`~[.~1 .~2 .~3 .~4 .~5])
       !>  (muls:lvd (make:lvd `(list @rd)`~[.~1 .~2 .~3 .~4 .~5]) .~1)
     %+  expect-eq
-      !>  (make:lvd `(list @rd)`~[.2 .~4 .~6 .~8 .~10])
+      !>  (make:lvd `(list @rd)`~[.~2 .~4 .~6 .~8 .~10])
       !>  (muls:lvd (make:lvd `(list @rd)`~[.~1 .~2 .~3 .~4 .~5]) .~2)
     %+  expect-eq
       !>  (make:lvd `(list @rd)`~[.~-1 .~-2 .~-3 .~-4 .~-5])
