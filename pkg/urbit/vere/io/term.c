@@ -433,24 +433,31 @@ _term_it_send_csi(u3_utty *uty_u, c3_c cmd_c, c3_w num_w, ...)
   va_list ap;
   va_start(ap, num_w);
 
-  uv_buf_t esc_u = TERM_LIT_BUF("\033[");
-  _term_it_dump_buf(uty_u, &esc_u);
+  //  allocate for escape sequence (2), command char (1),
+  //  argument digits (5 per arg) and separators (1 per arg, minus 1).
+  //  freed via _term_it_write.
+  //
+  c3_c* pas_c = malloc( sizeof(*pas_c) * (2 + num_w * 6) );
+  c3_c  was_c = 0;
 
-  uv_buf_t sep_u = TERM_LIT_BUF(";");  //REVIEW  re-use works fine, but is it?
+  pas_c[was_c++] = '\033';
+  pas_c[was_c++] = '[';
+
   while ( num_w > 0 ) {
     c3_w par_w = va_arg(ap, c3_w);
-    c3_c pas_c[5];
-    c3_c was_c = sprintf(pas_c, "%d", par_w);
-    uv_buf_t pas_u = uv_buf_init(pas_c, was_c);
-    _term_it_dump_buf(uty_u, &pas_u);
+    was_c += sprintf(pas_c+was_c, "%d", par_w);
 
     if ( --num_w > 0 ) {
-      _term_it_dump_buf(uty_u, &sep_u);
+      pas_c[was_c++] = ';';
     }
   }
 
-  uv_buf_t cmd_u = uv_buf_init(&cmd_c, 1);
-  _term_it_dump_buf(uty_u, &cmd_u);
+  pas_c[was_c++] = cmd_c;
+
+  uv_buf_t pas_u = uv_buf_init(pas_c, was_c);
+  _term_it_write(uty_u, &pas_u, pas_c);
+
+  va_end(ap);
 }
 
 /* _term_it_free_line(): wipe line stored by _term_it_save_line
