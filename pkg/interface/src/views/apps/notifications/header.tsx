@@ -21,7 +21,7 @@ function Author(props: { patp: string; last?: boolean }): ReactElement {
   const contact: Contact | undefined = contacts?.[`~${props.patp}`];
 
   const showNickname = useShowNickname(contact);
-  const name = contact?.nickname || `~${props.patp}`;
+  const name = showNickname ? contact.nickname : `~${props.patp}`;
 
   return (
     <Text mono={!showNickname}>
