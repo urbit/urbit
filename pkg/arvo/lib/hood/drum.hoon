@@ -622,7 +622,9 @@
   leaf+tape
 ::
 ++  se-blin                                           ::  print and newline
-  |=  lin=dill-blit:dill
+  |=  $=  lin
+      $~  [%put ~]
+      $>(?(%put %klr) dill-blit:dill)
   ^+  +>
   ::  newline means we need to redraw the prompt,
   ::  so update the prompt mirror accordingly.
