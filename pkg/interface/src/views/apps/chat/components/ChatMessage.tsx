@@ -101,6 +101,37 @@ export const UnreadMarker = React.forwardRef(
   }
 );
 
+const MessageActions = (props) => {
+  return (
+    <Box
+      borderRadius={1}
+      width={6}
+      height={4}
+      background='white'
+      border='1px solid'
+      borderColor='lightGray'
+      position='absolute'
+      top='-12px'
+      right={2}
+    />
+  );
+};
+
+const MessageWrapper = (props) => {
+  const { hovering, bind } = useHovering();
+  return (
+    <Box
+      py='1'
+      backgroundColor={hovering ? 'washedGray' : 'transparent'}
+      position='relative'
+      {...bind}
+    >
+      {props.children}
+      {/* {hovering ? <MessageActions /> : null} */}
+    </Box>
+  );
+};
+
 interface ChatMessageProps {
   msg: Post;
   previousMsg?: Post;
@@ -195,7 +226,7 @@ class ChatMessage extends Component<ChatMessageProps> {
       <Box
         ref={this.props.innerRef}
         pt={renderSigil ? 2 : 0}
-        pb={isLastMessage ? 4 : 2}
+        pb={isLastMessage ? '20px' : 0}
         className={containerClass}
         backgroundColor={highlighted ? 'blue' : 'white'}
         style={style}
@@ -204,12 +235,14 @@ class ChatMessage extends Component<ChatMessageProps> {
           <DayBreak when={msg['time-sent']} shimTop={renderSigil} />
         ) : null}
         {renderSigil ? (
-          <>
+          <MessageWrapper>
             <MessageAuthor pb={1} {...messageProps} />
             <Message pl={'44px'} pr={4} {...messageProps} />
-          </>
+          </MessageWrapper>
         ) : (
-          <Message pl={'44px'} pr={4} timestampHover {...messageProps} />
+          <MessageWrapper>
+            <Message pl={'44px'} pr={4} timestampHover {...messageProps} />
+          </MessageWrapper>
         )}
         <Box style={unreadContainerStyle}>
           {isLastRead ? (
@@ -406,8 +439,8 @@ export const Message = ({
         <Text
           display={hovering ? 'block' : 'none'}
           position='absolute'
-          width='40px'
-          textAlign='center'
+          width='36px'
+          textAlign='right'
           left='0'
           top='3px'
           fontSize={0}
