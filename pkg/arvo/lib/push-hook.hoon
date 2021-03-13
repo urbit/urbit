@@ -380,44 +380,36 @@
   ++  push-updates
     |=  =vase
     ^-  (list card:agent:gall)
-    =/  rids=(list resource)  (resource-for-update vase)
-    =|  cards=(list card:agent:gall)
-    |-
-    ?~  rids  cards
-    =/  prefix=path
-      resource+(en-path:resource i.rids)
+    %+  murn  (resource-for-update vase)
+    |=  rid=resource
+    ^-  (unit card:agent:gall)
+    =/  prefix=path  resource+(en-path:resource rid)
     =/  paths=(list path)
       %~  tap  in
       %-  silt
       %+  turn
         (incoming-subscriptions prefix)
-      |=([ship pax=path] pax)
-    ?~  paths  $(rids t.rids)
-    %_  $
-      rids   t.rids
-      cards  (snoc cards [%give %fact paths update-mark.config vase])
-    ==
+      tail
+    ?~  paths  ~
+    `[%give %fact paths update-mark.config vase]
   ::
   ++  forward-update
-    |=  =vase
+    |=  vas=vase
     ^-  (list card:agent:gall)
-    =/  rids=(list resource)  (resource-for-update vase)
-    =|  cards=(list card:agent:gall)
-    |-
-    ?~  rids  cards
-    =/  =path
-      resource+(en-path:resource i.rids)
-    =/  =wire
-      (make-wire resource+(en-path:resource i.rids))
-    =/  dap=term
-      ?:(=(our.bowl entity.i.rids) store-name.config dap.bowl)
-    %_  $
-      rids  t.rids
-    ::
-        cards
-      %+  snoc  cards
-      [%pass wire %agent [entity.i.rids dap] %poke update-mark.config vase]
-    ==
+    %+  murn  (resource-for-update vas)
+    |=  rid=resource
+    ^-  (unit card:agent:gall)
+    =/  =path  resource+(en-path:resource rid)
+    =/  =wire  (make-wire path)
+    =*  ship   entity.rid
+    =/  [=dock vax=(unit vase)]
+      ?.  =(our.bowl entity.rid)
+        :_  `vas
+        [ship dap.bowl]
+      :-  [ship store-name.config]
+      (transform-proxy-update:og vas)
+    ?~  vax  ~
+    `[%pass wire %agent dock %poke update-mark.config u.vax]
   ::
   ++  resource-for-update
     |=  =vase
