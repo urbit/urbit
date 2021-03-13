@@ -597,11 +597,11 @@
       !>  (fill:lvd 1 .~1)
       !>  (make:lvd ~[.~1])
     %+  expect-eq
-      !>  (fill:lvd 1 .-1)
+      !>  (fill:lvd 1 .~-1)
       !>  `@lvd`0x1.bf80.0000
     %+  expect-eq
-      !>  (fill:lvd 1 .-1)
-      !>  (make:lvd ~[.-1])
+      !>  (fill:lvd 1 .~-1)
+      !>  (make:lvd ~[.~-1])
     %+  expect-eq
       !>  (fill:lvd 3 .~1)
       !>  `@lvd`0x1.3ff0.0000.0000.0000.3ff0.0000.0000.0000.3ff0.0000.0000.0000
@@ -769,7 +769,7 @@
       !>  (max-rd:lvd .~1 .~5)
     %+  expect-eq
       !>  .~-1
-      !>  (max-rd:lvd .-1 .-5)
+      !>  (max-rd:lvd .~-1 .~-5)
     %+  expect-eq
       !>  5
       !>  (argmax:lvd (make:lvd `(list @rd)`~[.~1 .~2 .~3 .~4 .~5]))
@@ -827,7 +827,7 @@
       !>  (make:lvd `(list @rd)`~[.~0 .~1 .~2 .~3 .~4])
       !>  (subs:lvd (make:lvd `(list @rd)`~[.~1 .~2 .~3 .~4 .~5]) .~1)
     %+  expect-eq
-      !>  (make:lvd `(list @rd)`~[.-9 .-8 .-7 .-6 .-5])
+      !>  (make:lvd `(list @rd)`~[.~-9 .~-8 .~-7 .~-6 .~-5])
       !>  (subs:lvd (make:lvd `(list @rd)`~[.~1 .~2 .~3 .~4 .~5]) .~10)
   ==
 ++  test-lvd-muls  ^-  tang
@@ -839,8 +839,8 @@
       !>  (make:lvd `(list @rd)`~[.2 .~4 .~6 .~8 .~10])
       !>  (muls:lvd (make:lvd `(list @rd)`~[.~1 .~2 .~3 .~4 .~5]) .~2)
     %+  expect-eq
-      !>  (make:lvd `(list @rd)`~[.-1 .-2 .-3 .-4 .-5])
-      !>  (muls:lvd (make:lvd `(list @rd)`~[.~1 .~2 .~3 .~4 .~5]) .-1)
+      !>  (make:lvd `(list @rd)`~[.~-1 .~-2 .~-3 .~-4 .~-5])
+      !>  (muls:lvd (make:lvd `(list @rd)`~[.~1 .~2 .~3 .~4 .~5]) .~-1)
     %+  expect-eq
       !>  (make:lvd `(list @rd)`~[.~1 .~2 .~3 .~4 .~5])
       !>  (muls:lvd (make:lvd `(list @rd)`~[.~0.1 .~0.2 .~0.3 .~0.4 .~0.5]) .~10)
@@ -854,8 +854,8 @@
       (make:lvd `(list @rd)`~[.~5e-1 .~1 .~1.5 .~2 .~2.5])
       (divs:lvd (make:lvd `(list @rd)`~[.~1 .~2 .~3 .~4 .~5]) .~2)
     %+  expect-near-lvd
-      (make:lvd `(list @rd)`~[.~-1 .-2 .-3 .-4 .-5])
-      (divs:lvd (make:lvd `(list @rd)`~[.~1 .~2 .~3 .~4 .~5]) .-1)
+      (make:lvd `(list @rd)`~[.~-1 .~-2 .~-3 .~-4 .~-5])
+      (divs:lvd (make:lvd `(list @rd)`~[.~1 .~2 .~3 .~4 .~5]) .~-1)
     %+  expect-near-lvd
       (make:lvd `(list @rd)`~[.~0.1 .~0.2 .~0.3 .~0.4 .~0.5])
       (divs:lvd (make:lvd `(list @rd)`~[.~1 .~2 .~3 .~4 .~5]) .~10)
@@ -865,7 +865,7 @@
   =/  vec11111  (ones:lvd 5)
   =/  vec12345  (iota:lvd 5)
   =/  vec54321  (make:lvd `(list @rd)`~[.~5 .~4 .~3 .~2 .~1])
-  =/  vec21012  (make:lvd `(list @rd)`~[.~-2 .-1 .~0 .~1 .~2])
+  =/  vec21012  (make:lvd `(list @rd)`~[.~-2 .~-1 .~0 .~1 .~2])
   ;:  weld
     %+  expect-eq
       !>  (iota:lvd 5)
@@ -883,7 +883,7 @@
       !>  (make:lvd `(list @rd)`~[.~2 .~3 .~4 .~5 .~6])
       !>  (addv:lvd vec11111 vec12345)
     %+  expect-eq
-      !>  (make:lvd `(list @rd)`~[.~-4 .-2 .~0 .~2 .~4])
+      !>  (make:lvd `(list @rd)`~[.~-4 .~-2 .~0 .~2 .~4])
       !>  (addv:lvd vec21012 vec21012)
   ::  TODO XX test expected failures like diff sizes
   ==
@@ -892,10 +892,10 @@
   =/  vec11111  (ones:lvd 5)
   =/  vec12345  (iota:lvd 5)
   =/  vec54321  (make:lvd `(list @rd)`~[.~5 .~4 .~3 .~2 .~1])
-  =/  vec21012  (make:lvd `(list @rd)`~[.~-2 .-1 .~0 .~1 .~2])
+  =/  vec21012  (make:lvd `(list @rd)`~[.~-2 .~-1 .~0 .~1 .~2])
   ;:  weld
     %+  expect-eq
-      !>  (make:lvd `(list @rd)`~[.~-1 .-2 .-3 .-4 .-5])
+      !>  (make:lvd `(list @rd)`~[.~-1 .~-2 .~-3 .~-4 .~-5])
       !>  (subv:lvd vec00000 vec12345)
     %+  expect-eq
       !>  (zeros:lvd 5)
@@ -945,7 +945,7 @@
   =/  vec11111  (ones:lvd 5)
   =/  vec12345  (iota:lvd 5)
   =/  vec54321  (make:lvd `(list @rd)`~[.~5 .~4 .~3 .~2 .~1])
-  =/  vec21012  (make:lvd `(list @rd)`~[.~-2 .-1 .~0 .~1 .~2])
+  =/  vec21012  (make:lvd `(list @rd)`~[.~-2 .~-1 .~0 .~1 .~2])
   ;:  weld
     %+  expect-near-lvd
       (make:lvd `(list @rd)`~[.~1 .~0.5 (div:rd .~1 .~3) .~0.25 .~0.2])
@@ -990,7 +990,7 @@
       !>  .~0
       !>  (inner:lvd vec11111 vec21012)
     %+  expect-eq
-      !>  .-10
+      !>  .~-10
       !>  (inner:lvd vec54321 vec21012)
     %+  expect-eq
       !>  .~10
