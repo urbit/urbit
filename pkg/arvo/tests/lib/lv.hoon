@@ -598,7 +598,7 @@
       !>  (make:lvd ~[.~1])
     %+  expect-eq
       !>  (fill:lvd 1 .~-1)
-      !>  `@lvd`0x1.bf80.0000
+      !>  `@lvd`0x1.bff0.0000.0000.0000
     %+  expect-eq
       !>  (fill:lvd 1 .~-1)
       !>  (make:lvd ~[.~-1])
@@ -832,18 +832,18 @@
   ==
 ++  test-lvd-muls  ^-  tang
   ;:  weld
-    %+  expect-eq
-      !>  (make:lvd `(list @rd)`~[.~1 .~2 .~3 .~4 .~5])
-      !>  (muls:lvd (make:lvd `(list @rd)`~[.~1 .~2 .~3 .~4 .~5]) .~1)
-    %+  expect-eq
-      !>  (make:lvd `(list @rd)`~[.~2 .~4 .~6 .~8 .~10])
-      !>  (muls:lvd (make:lvd `(list @rd)`~[.~1 .~2 .~3 .~4 .~5]) .~2)
-    %+  expect-eq
-      !>  (make:lvd `(list @rd)`~[.~-1 .~-2 .~-3 .~-4 .~-5])
-      !>  (muls:lvd (make:lvd `(list @rd)`~[.~1 .~2 .~3 .~4 .~5]) .~-1)
-    %+  expect-eq
-      !>  (make:lvd `(list @rd)`~[.~1 .~2 .~3 .~4 .~5])
-      !>  (muls:lvd (make:lvd `(list @rd)`~[.~0.1 .~0.2 .~0.3 .~0.4 .~0.5]) .~10)
+    %+  expect-near-lvd
+      (make:lvd `(list @rd)`~[.~1 .~2 .~3 .~4 .~5])
+      (muls:lvd (make:lvd `(list @rd)`~[.~1 .~2 .~3 .~4 .~5]) .~1)
+    %+  expect-near-lvd
+      (make:lvd `(list @rd)`~[.~2 .~4 .~6 .~8 .~10])
+      (muls:lvd (make:lvd `(list @rd)`~[.~1 .~2 .~3 .~4 .~5]) .~2)
+    %+  expect-near-lvd
+      (make:lvd `(list @rd)`~[.~-1 .~-2 .~-3 .~-4 .~-5])
+      (muls:lvd (make:lvd `(list @rd)`~[.~1 .~2 .~3 .~4 .~5]) .~-1)
+    %+  expect-near-lvd
+      (make:lvd `(list @rd)`~[.~1 .~2 .~3 .~4 .~5])
+      (muls:lvd (make:lvd `(list @rd)`~[.~0.1 .~0.2 .~0.3 .~0.4 .~0.5]) .~10)
   ==
 ++  test-lvd-divs  ^-  tang
   ;:  weld
