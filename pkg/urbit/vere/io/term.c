@@ -1329,11 +1329,11 @@ _term_it_show_stub(u3_utty* uty_u,
 
   //  allocate enough memory for every display character, plus styles
   //
-  //NOTE  we use max 31 characters per styl for escape codes:
-  //      3 for opening, 4 for decorations, 15 for colors, 4 for closing,
-  //      and 5 as separators between decorations and colors.
+  //NOTE  we use max 48 characters per styl for escape codes:
+  //      2 for opening, 7 for decorations, 2x16 for colors, 4 for closing,
+  //      and 3 as separators between decorations and colors.
   //
-  c3_w* lin_w = c3_malloc(  sizeof(c3_w) * (lec_w + (31 * tuc_w))  );
+  c3_w* lin_w = c3_malloc(  sizeof(c3_w) * (lec_w + (48 * tuc_w))  );
 
   //  write the contents to the buffer,
   //  tracking total and escape characters written
