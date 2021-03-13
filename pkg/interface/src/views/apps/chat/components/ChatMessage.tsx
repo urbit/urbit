@@ -10,7 +10,7 @@ import React, {
 import moment from 'moment';
 import _ from 'lodash';
 import VisibilitySensor from 'react-visibility-sensor';
-import { Box, Row, Text, Rule, BaseImage } from '@tlon/indigo-react';
+import { Box, Row, Text, Rule, BaseImage, Icon, Col } from '@tlon/indigo-react';
 import { Sigil } from '~/logic/lib/sigil';
 import OverlaySigil from '~/views/components/OverlaySigil';
 import {
@@ -33,6 +33,7 @@ import TextContent from './content/text';
 import CodeContent from './content/code';
 import RemoteContent from '~/views/components/RemoteContent';
 import { Mention } from '~/views/components/MentionText';
+import { Dropdown } from '~/views/components/Dropdown';
 import styled from 'styled-components';
 import useLocalState from '~/logic/state/local';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
@@ -100,6 +101,120 @@ export const UnreadMarker = React.forwardRef(
     );
   }
 );
+
+const MessageActionItem = (props) => {
+  return (
+    <Row
+      color='black'
+      cursor='pointer'
+      fontSize={1}
+      fontWeight='500'
+      px={3}
+      py={2}
+      onClick={props.onClick}
+    >
+      <Text fontWeight='500' color={props.color}>
+        {props.children}
+      </Text>
+    </Row>
+  );
+};
+
+const MessageActions = ({ api, history, msg, group }) => {
+  const isAdmin = () => group.tags.role.admin.has(window.ship);
+  const isOwn = () => msg.author === window.ship;
+  return (
+    <Box
+      borderRadius={1}
+      background='white'
+      border='1px solid'
+      borderColor='lightGray'
+      position='absolute'
+      top='-12px'
+      right={2}
+    >
+      <Row>
+        {isOwn() ? (
+          <Box
+            padding={1}
+            size={'24px'}
+            cursor='pointer'
+            onClick={(e) => console.log(e)}
+          >
+            <Icon icon='NullIcon' size={3} />
+          </Box>
+        ) : null}
+        <Box
+          padding={1}
+          size={'24px'}
+          cursor='pointer'
+          onClick={(e) => console.log(e)}
+        >
+          <Icon icon='Chat' size={3} />
+        </Box>
+        <Dropdown
+          dropWidth='250px'
+          width='auto'
+          alignY='top'
+          alignX='right'
+          flexShrink={'0'}
+          offsetY={8}
+          offsetX={-24}
+          options={
+            <Col
+              py={2}
+              backgroundColor='white'
+              color='washedGray'
+              border={1}
+              borderRadius={2}
+              borderColor='lightGray'
+              boxShadow='0px 0px 0px 3px'
+            >
+              {isOwn() ? (
+                <MessageActionItem onClick={(e) => console.log(e)}>
+                  Edit Message
+                </MessageActionItem>
+              ) : null}
+              <MessageActionItem onClick={(e) => console.log(e)}>
+                Reply
+              </MessageActionItem>
+              <MessageActionItem onClick={(e) => console.log(e)}>
+                Copy Message Link
+              </MessageActionItem>
+              {isAdmin() || isOwn() ? (
+                <MessageActionItem onClick={(e) => console.log(e)} color='red'>
+                  Delete Message
+                </MessageActionItem>
+              ) : null}
+              <MessageActionItem onClick={(e) => console.log(e)}>
+                View Signature
+              </MessageActionItem>
+            </Col>
+          }
+        >
+          <Box padding={1} size={'24px'} cursor='pointer'>
+            <Icon icon='Menu' size={3} />
+          </Box>
+        </Dropdown>
+      </Row>
+    </Box>
+  );
+};
+
+const MessageWrapper = (props) => {
+  const { hovering, bind } = useHovering();
+  return (
+    <Box
+      py='1'
+      backgroundColor={hovering ? 'washedGray' : 'transparent'}
+      position='relative'
+      {...bind}
+    >
+      {props.children}
+      {/* {hovering ? <MessageActions {...props} /> : null} */}
+    </Box>
+  );
+};
 
 interface ChatMessageProps {
   msg: Post;
@@ -195,7 +310,7 @@ class ChatMessage extends Component<ChatMessageProps> {
       <Box
         ref={this.props.innerRef}
         pt={renderSigil ? 2 : 0}
-        pb={isLastMessage ? 4 : 2}
+        pb={isLastMessage ? '20px' : 0}
         className={containerClass}
         backgroundColor={highlighted ? 'blue' : 'white'}
         style={style}
@@ -204,12 +319,14 @@ class ChatMessage extends Component<ChatMessageProps> {
           <DayBreak when={msg['time-sent']} shimTop={renderSigil} />
         ) : null}
         {renderSigil ? (
-          <>
+          <MessageWrapper {...messageProps}>
             <MessageAuthor pb={1} {...messageProps} />
             <Message pl={'44px'} pr={4} {...messageProps} />
-          </>
+          </MessageWrapper>
         ) : (
-          <Message pl={'44px'} pr={4} timestampHover {...messageProps} />
+          <MessageWrapper {...messageProps}>
+            <Message pl={'44px'} pr={4} timestampHover {...messageProps} />
+          </MessageWrapper>
         )}
         <Box style={unreadContainerStyle}>
           {isLastRead ? (
@@ -406,8 +523,8 @@ export const Message = ({
         <Text
           display={hovering ? 'block' : 'none'}
           position='absolute'
-          width='40px'
-          textAlign='center'
+          width='36px'
+          textAlign='right'
           left='0'
           top='3px'
           fontSize={0}

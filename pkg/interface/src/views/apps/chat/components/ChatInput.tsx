@@ -170,7 +170,7 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
         className='cf'
         zIndex={0}
       >
-        <Row p='12px 8px 12px 12px' alignItems='center'>
+        <Row p='12px 4px 12px 12px' alignItems='center'>
           {avatar}
         </Row>
         <ChatEditor
