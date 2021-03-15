@@ -437,13 +437,14 @@ export const MessageAuthor = ({
       </Box>
     );
   return (
-    <Box display='flex' alignItems='center' {...rest}>
+    <Box display='flex' alignItems='flex-start' {...rest}>
       <Box
         onClick={() => {
           setShowOverlay(true);
         }}
         height={24}
         pr={2}
+        mt={'1px'}
         pl={'12px'}
         cursor='pointer'
         position='relative'
@@ -476,7 +477,7 @@ export const MessageAuthor = ({
           <Text
             fontSize={1}
             mr={2}
-            flexShrink={0}
+            flexShrink={1}
             mono={nameMono}
             fontWeight={nameMono ? '400' : '500'}
             cursor='pointer'
