@@ -207,7 +207,7 @@ class ChatWindow extends Component<
       api,
       association,
       group,
-      contacts,
+      showOurContact,
       graph,
       history,
       groups,
@@ -217,13 +217,14 @@ class ChatWindow extends Component<
     const messageProps = {
       association,
       group,
-      contacts,
+      showOurContact,
       unreadMarkerRef,
       history,
       api,
       groups,
       associations
     };
+
     const msg = graph.get(index)?.post;
     if (!msg) return null;
     if (!this.state.initialized) {
@@ -254,6 +255,7 @@ class ChatWindow extends Component<
       msg,
       ...messageProps
     };
+
     return (
       <ChatMessage
         key={index.toString()}
@@ -275,6 +277,7 @@ class ChatWindow extends Component<
       history,
       groups,
       associations,
+      showOurContact,
       pendingSize
     } = this.props;
 
@@ -288,6 +291,10 @@ class ChatWindow extends Component<
       associations
     };
     const unreadMsg = graph.get(this.state.unreadIndex);
+
+    // hack to force a re-render when we toggle showing contact
+    const contactsModified =
+      showOurContact ? 0 : 100;
 
     return (
       <Col height='100%' overflow='hidden' position='relative'>
@@ -314,7 +321,7 @@ class ChatWindow extends Component<
           onScroll={this.onScroll}
           data={graph}
           size={graph.size}
-          pendingSize={pendingSize}
+          pendingSize={pendingSize + contactsModified}
           id={association.resource}
           averageHeight={22}
           renderer={this.renderer}
