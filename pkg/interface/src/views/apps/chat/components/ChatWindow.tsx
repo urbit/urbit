@@ -295,6 +295,7 @@ class ChatWindow extends Component<
     const unreadIndex = graph.keys()[this.props.unreadCount];
     const unreadMsg = unreadIndex && graph.get(unreadIndex);
 
+    // hack to force a re-render when we toggle showing contact
     const contactsModified =
       showOurContact ? 0 : 100;
 
