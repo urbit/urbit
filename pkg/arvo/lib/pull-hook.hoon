@@ -261,7 +261,7 @@
           [[acc-cards pull-hook] state]
         =*  rid  i.subs
         =^  [crds=(list card) hook=_pull-hook]  state
-          tr-abet:tr-restart-on-load:(tr-abed:track-engine:hc rid)
+          tr-abet:tr-on-load:(tr-abed:track-engine:hc rid)
         =.  pull-hook  hook
         $(subs t.subs, acc-cards (weld acc-cards crds))
       --
@@ -415,7 +415,6 @@
     ++  tr-kick
       ?.  ?=(%active -.status)  tr-core
       =/  pax
-        ~!  kick-mule
         (kick-mule:virt rid |.((on-pull-kick:og rid)))
       ?~  pax  tr-failed-kick
       ?~  u.pax  tr-cleanup
@@ -424,12 +423,16 @@
     ++  tr-fact
       |=  =cage
       ?:  ?=(%version p.cage)
-        (tr-suspend-sub-ver !<(@ud q.cage))
+        =/  req-ver=@ud
+          !<(@ud q.cage)
+        ?:  (lth req-ver min-version.config)
+          (tr-suspend-pub-ver min-version.config)
+        (tr-suspend-sub-ver req-ver)
       ?>  (is-root:ver p.cage)
       =/  fact-ver=@ud
         (read-version:ver p.cage)
       ?.  (gte fact-ver min-version.config)
-        (tr-suspend-pub-ver fact-ver)
+        (tr-suspend-pub-ver min-version.config)
       =/  =vase
         (convert-to:ver cage)
       =/  =wire
@@ -476,20 +479,28 @@
       =.  status  [%pub-ver ver]
       tr-leave:tr-watch-ver
     ::
+    ::  
     ++  tr-suspend-sub-ver
       |=  ver=@ud
       tr-core(status [%sub-ver ver])
     ::
-    ++  tr-restart-on-load
-      ?:  ?=(%failed-kick -.status)
+    ++  tr-on-load
+      ?+  -.status  tr-core
+        %failed-kick  tr-restart
+        %active       tr-rewatch
+        ::
+          %sub-ver
+        ?.  (supported:ver (append-version:ver ver.status))
+          tr-core
         tr-restart
-      ?:  &(?=(%sub-ver -.status) =(min-version.config ver.status))
-        tr-restart
-      tr-core
+      ==
     ::
     ++  tr-restart
       =.  status  [%active ~]
       tr-kick
+    ::
+    ++  tr-rewatch
+      tr-kick:tr-leave
     ::
     ::
     ::  +|  %subscription: subscription cards
@@ -547,7 +558,7 @@
       =/  tracks=(list [rid=resource =track])
         ~(tap by tracking)
       =|  cards=(list card)
-      =|  leave=_|
+      =|  leave=_&
       |-
       ?~  tracks
         =?  cards  leave
@@ -555,11 +566,10 @@
         [[cards pull-hook] state]
       ?.  ?=(%pub-ver -.status.track.i.tracks)
         $(tracks t.tracks)
-      ~!  -.status.track.i.tracks
       ?.  =(who ship.track.i.tracks)
         $(tracks t.tracks)
       ?.  =(ver.status.track.i.tracks version)
-        =.  leave  %.y
+        =.  leave  %.n
         $(tracks t.tracks)
       =^  [caz=(list card) hook=_pull-hook]  state
         tr-abet:tr-restart:(tr-abed:track-engine rid.i.tracks)

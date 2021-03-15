@@ -182,9 +182,13 @@
           %1  
         =^  og-cards   push-hook
           (on-load:og inner-state.old)
-        =/  version=(list card)
-          (fact:io version+!>(version.config) /version ~)^~
-        [:(weld cards og-cards version) this(state old)]
+        =/  old-subs
+          find-old-subs
+        =/  version-cards
+          :-  (fact:io version+!>(version.config) /version ~)
+          ?~  old-subs  ~
+          (kick:io old-subs)^~
+        [:(weld cards og-cards version-cards) this(state old)]
         ::
         ::
           %0
@@ -199,6 +203,17 @@
           [%give %kick paths ~]
         ==
       ==
+      ::
+      ++  find-old-subs
+        %~  tap  in
+        %+  roll
+          ~(val by sup.bowl)
+        |=  [[=ship =path] out=(set path)]
+        ?.  ?=([%resource *] path)  out
+        =/  path-ver=@ud
+          (ver-from-path:hc path)
+        ?:  (supported:ver (append-version:ver path-ver))  out
+        (~(put in out) path)
       ::
       ++  kicked-watches
         ^-  (list path)
@@ -243,7 +258,7 @@
       ^-  (quip card:agent:gall agent:gall)
       ?:  ?=([%version ~] path)
         :_  this
-        (fact-init:io version+!>(version.config))^~
+        (fact-init:io version+!>(min-version.config))^~
       ?.  ?=([%resource *] path)
         =^  cards  push-hook
           (on-watch:og path)
@@ -253,9 +268,9 @@
         (de-path:resource t.path)
       =/  sub-ver=@ud
         (slav %ud i.t.t.t.t.path)
-      ?.  (gte sub-ver min-version.config)
+      ?.  (supported:ver (append-version:ver sub-ver))
         :_  this
-        (fact-init-kick:io hook-meta-update+!>(min-version.config))
+        (fact-init-kick:io version+!>(min-version.config))
       =/  =vase
         (initial-watch:og t.t.t.t.t.path resource)
       :_  this
@@ -409,11 +424,8 @@
       %+  roll
         (incoming-subscriptions prefix)
       |=  [[ship =path] out=(jug @ud path)]
-      =/  extra=^path
-        (scag 4 path)
-      ?>  ?=(^ extra)
-      =/  path-ver
-        (slav %ud i.extra)
+      =/  path-ver=@ud
+        (ver-from-path path)
       (~(put ju out) path-ver path)
     =/  caz=(list card)
       %+  turn  ~(tap by paths)
@@ -426,6 +438,14 @@
       rids   t.rids
       cards  (welp cards caz)
     ==
+  ::
+  ++  ver-from-path
+    |=  =path
+    =/  extra=^path
+      (slag 4 path)
+    ?>  ?=(^ extra)
+    (slav %ud i.extra)
+
   ::
   ++  forward-update
     |=  =vase
