@@ -153,14 +153,10 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
   }
 
   componentDidMount() {
-    if(this.props.size < 100) {
-      this.loaded.top = true;
-      this.loaded.bottom = true;
-    }
-
     this.updateVisible(0);
     this.resetScroll();
     this.loadRows(false);
+    this.loadRows(true);
   }
 
   // manipulate scrollbar manually, to dodge change detection
@@ -484,7 +480,6 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     const indexesToRender = isTop ? visibleItems.keys() : visibleItems.keys().reverse();
 
     const transform = isTop ? 'scale3d(1, 1, 1)' : 'scale3d(1, -1, 1)';
-
 
     const atStart = (this.props.data.peekLargest()?.[0] ?? bigInt.zero).eq(visibleItems.peekLargest()?.[0] || bigInt.zero);
     const atEnd = this.loaded.top;
