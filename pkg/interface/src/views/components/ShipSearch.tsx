@@ -159,6 +159,14 @@ export function ShipSearch<I extends string, V extends Value<I>>(
 
   const error = _.compact(errors[id] as string[]);
 
+  const isExact = useCallback((s: string) => {
+    const ship = `~${deSig(s)}`;
+    const result = ob.isValidPatp(ship);
+    return (result && !selected.includes(deSig(s)))
+      ? deSig(s) ?? undefined
+      : undefined;
+  }, [selected]);
+
   return (
     <FieldArray
       name={id}
@@ -185,11 +193,7 @@ export function ShipSearch<I extends string, V extends Value<I>>(
 
             <DropdownSearch<string>
               mt="2"
-              isExact={(s) => {
-                const ship = `~${deSig(s)}`;
-                const result = ob.isValidPatp(ship);
-                return result ? deSig(s) ?? undefined : undefined;
-              }}
+              isExact={isExact}
               placeholder="Search for ships"
               candidates={peers}
               renderCandidate={renderCandidate}
