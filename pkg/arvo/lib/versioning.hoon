@@ -3,19 +3,16 @@
 +*  io  ~(. agentio bowl)
 ++  is-root
   |=  =mark
-  =/  tape-mark
-    (trip mark)
-  =/  tape-version
-    (trip root)
-  =((scag (lent tape-version) tape-mark) tape-version)
+  ?~  (rush mark mark-parser)
+    %.n
+  %.y
 ::
-++  parse
+++  mark-parser
+  ;~(pfix (jest root) ;~(pose ;~(pfix hep dum:ag) (easy `@ud`0)))
+::
+++  read-version
   |=  =mark
-  %+  slav  %ud
-  %-  crip
-  =/  txt
-    ((star nud) [1 1] (trip (swp 3 mark)))
-  p:(need q.txt)
+  (rash mark mark-parser)
 ::
 ++  append-version
   |=  ver=@ud
@@ -27,8 +24,8 @@
 ++  supported
   |=  =mark
   =/  ver
-    (parse mark)
-  &((gte min ver) (lte version ver))
+    (read-version mark)
+  &((gte ver min) (lte ver version))
 ::
 ++  convert-to
   |=  =cage

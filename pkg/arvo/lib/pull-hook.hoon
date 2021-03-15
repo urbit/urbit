@@ -427,7 +427,7 @@
         (tr-suspend-sub-ver !<(@ud q.cage))
       ?>  (is-root:ver p.cage)
       =/  fact-ver=@ud
-        (parse:ver p.cage)
+        (read-version:ver p.cage)
       ?.  (gte fact-ver min-version.config)
         (tr-suspend-pub-ver fact-ver)
       =/  =vase
