@@ -25,4 +25,15 @@ in {
     ldapSupport = false;
     brotliSupport = false;
   };
+
+  lmdb = prev.lmdb.overrideAttrs (attrs: {
+    patches =
+      if builtins.currentSystem != "x86_64-darwin"
+      then
+        attrs.patches
+      else
+        optionalList attrs.patches ++ [
+          ../pkgs/lmdb/darwin-fsync.patch
+        ];
+  });
 }
