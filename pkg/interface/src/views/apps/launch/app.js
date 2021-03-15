@@ -35,6 +35,7 @@ import useLaunchState from '~/logic/state/launch';
 import useGraphState from '~/logic/state/graph';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import useApi from '~/logic/api';
+import useMetadataState from '~/logic/state/metadata';
 
 
 const ScrollbarLessBox = styled(Box)`
@@ -52,6 +53,7 @@ export default function LaunchApp(props) {
   const [hashText, setHashText] = useState(baseHash);
   const [exitingTut, setExitingTut] = useState(false);
   const api = useApi();
+  const associations = useMetadataState(s => s.associations);
   const hashBox = (
     <Box
       position={["relative", "absolute"]}
@@ -82,7 +84,7 @@ export default function LaunchApp(props) {
 
   useEffect(() => {
     if(query.get('tutorial')) {
-      if(hasTutorialGroup(props)) {
+      if(hasTutorialGroup({ associations })) {
         nextTutStep();
       } else {
         showModal();
@@ -96,7 +98,7 @@ export default function LaunchApp(props) {
   let { hideGroups } = useLocalState(tutSelector);
   !hideGroups ? { hideGroups } = calmState : null;
 
-  const waiter = useWaitForProps(props);
+  const waiter = useWaitForProps({ ...props, associations });
 
   const joinGraph = useGraphState(state => state.joinGraph);
 
@@ -111,7 +113,7 @@ export default function LaunchApp(props) {
       };
       const onContinue = async (e) => {
         e.stopPropagation();
-        if(!hasTutorialGroup(props)) {
+        if(!hasTutorialGroup({ associations })) {
           await api.poke(groups.join(TUTORIAL_HOST, TUTORIAL_GROUP));
           await api.poke(settings.putEntry('tutorial', 'joined', Date.now()));
           await waiter(hasTutorialGroup);

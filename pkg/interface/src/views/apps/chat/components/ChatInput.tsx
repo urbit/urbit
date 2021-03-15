@@ -27,7 +27,7 @@ type ChatInputProps = IuseStorage & {
   message: string;
   deleteMessage(): void;
   hideAvatars: boolean;
-}
+};
 
 interface ChatInputState {
   inCodeMode: boolean;
@@ -76,7 +76,7 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
       return;
     }
 
-    const post = createPost(tokenizeMessage((text)));
+    const post = createPost(tokenizeMessage(text));
 
     props.deleteMessage();
 
@@ -113,7 +113,8 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
       return;
     }
     Array.from(files).forEach((file) => {
-      this.props.uploadDefault(file)
+      this.props
+        .uploadDefault(file)
         .then(this.uploadSuccess)
         .catch(this.uploadError);
     });
@@ -122,32 +123,40 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
   render() {
     const { props, state } = this;
 
-    const color = props.ourContact
-      ? uxToHex(props.ourContact.color) : '000000';
+    const color = props.ourContact ? uxToHex(props.ourContact.color) : '000000';
 
-    const sigilClass = props.ourContact
-      ? '' : 'mix-blend-diff';
+    const sigilClass = props.ourContact ? '' : 'mix-blend-diff';
 
-    const avatar = (
-        props.ourContact &&
-        ((props.ourContact?.avatar) && !props.hideAvatars)
-      )
-      ? <BaseImage
+    const avatar =
+      props.ourContact && props.ourContact?.avatar && !props.hideAvatars ? (
+        <BaseImage
           src={props.ourContact.avatar}
-          height={16}
-          width={16}
+          height={24}
+          width={24}
           style={{ objectFit: 'cover' }}
           borderRadius={1}
           display='inline-block'
         />
-      : <Sigil
-        ship={window.ship}
-        size={16}
-        color={`#${color}`}
-        classes={sigilClass}
-        icon
-        padding={2}
-        />;
+      ) : (
+        <Box
+          width={24}
+          height={24}
+          display='flex'
+          justifyContent='center'
+          alignItems='center'
+          backgroundColor={`#${color}`}
+          borderRadius={1}
+        >
+          <Sigil
+            ship={window.ship}
+            size={16}
+            color={`#${color}`}
+            classes={sigilClass}
+            icon
+            padding={2}
+          />
+        </Box>
+      );
 
     return (
       <Row
@@ -161,7 +170,7 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
         className='cf'
         zIndex={0}
       >
-        <Row p='2' alignItems='center'>
+        <Row p='12px 4px 12px 12px' alignItems='center'>
           {avatar}
         </Row>
         <ChatEditor
@@ -173,31 +182,23 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
           onPaste={this.onPaste.bind(this)}
           placeholder='Message...'
         />
-        <Box
-          mx={2}
-          flexShrink={0}
-          height='16px'
-          width='16px'
-          flexBasis='16px'
-        >
-          {this.props.canUpload
-            ? this.props.uploading
-              ? <LoadingSpinner />
-              : <Icon icon='Links'
-                width="16"
-                height="16"
-                onClick={() => this.props.promptUpload().then(this.uploadSuccess)}
-                />
-            : null
-          }
+        <Box mx={2} flexShrink={0} height='16px' width='16px' flexBasis='16px'>
+          {this.props.canUpload ? (
+            this.props.uploading ? (
+              <LoadingSpinner />
+            ) : (
+              <Icon
+                icon='Links'
+                width='16'
+                height='16'
+                onClick={() =>
+                  this.props.promptUpload().then(this.uploadSuccess)
+                }
+              />
+            )
+          ) : null}
         </Box>
-        <Box
-          mr={2}
-          flexShrink={0}
-          height='16px'
-          width='16px'
-          flexBasis='16px'
-        >
+        <Box mr={2} flexShrink={0} height='16px' width='16px' flexBasis='16px'>
           <Icon
             icon='Dojo'
             onClick={this.toggleCode}

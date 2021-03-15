@@ -38,7 +38,7 @@ export function ViewProfile(props: any): ReactElement {
       </ProfileHeader>
       <Row pb={2} alignItems='center' width='100%'>
         <Center width='100%'>
-          <Text>
+          <Text fontWeight='500'>
             {!hideNicknames && contact?.nickname ? contact.nickname : ''}
           </Text>
         </Center>
@@ -50,7 +50,7 @@ export function ViewProfile(props: any): ReactElement {
           </Text>
         </Center>
       </Row>
-      <Col pb={2} alignItems='center' justifyContent='center' width='100%'>
+      <Col pb={2} mt='3' alignItems='center' justifyContent='center' width='100%'>
         <Center flexDirection='column' maxWidth='32rem'>
           <RichText width='100%' disableRemoteContent>
             {contact?.bio ? contact.bio : ''}
