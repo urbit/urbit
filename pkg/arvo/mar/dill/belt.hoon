@@ -45,8 +45,8 @@
       =+  cha=(tuba (trip q.kev))
       ?>  ?=([@ ~] cha)               ::  of a single character
       ?+  mod  !!                     ::  modified by one buckykey
-        [%ctrl ~ ~]  [%ctl i.cha]
-        [%alt ~ ~]   [%met i.cha]
+        [%ctrl ~ ~]  [%key %ctl i.cha]
+        [%alt ~ ~]   [%key %met i.cha]
       ==
     ?@  q.kev
       [%txt (tuba (trip q.kev))]
