@@ -67,6 +67,7 @@
       ::
         [%picture s+picture.met]
         [%preview b+preview.met]
+        [%hidden b+hidden.met]
         [%vip s+`@t`vip.met]
     ==
   ::
@@ -177,6 +178,7 @@
         [%config config]
         [%picture so]
         [%preview bo]
+        [%hidden bo]
         [%vip vip]
     ==
   ::

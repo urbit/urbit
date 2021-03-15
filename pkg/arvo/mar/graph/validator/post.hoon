@@ -24,7 +24,8 @@
       [atom ~]
     ?:  was-parent-modified
       ~|(%cannot-submit-parents-with-prepopulated-children !!)
-    `^index`(snoc `^index`(snip index) atom)
+    =/  ind=^index  index
+    (snoc (snip ind) atom)
   --
 ++  grab
   |%
@@ -34,6 +35,7 @@
     |=  p=*
     =/  ip  ;;(indexed-post p)
     ?>  ?=(^ contents.p.ip)
+    ip
   --
 ::
 ++  grad  %noun

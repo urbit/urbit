@@ -23,18 +23,19 @@
   %+  weld  (trip name.group.action)
   %+  weld  "-"
   (trip (scot %ud (mod eny.bowl 10.000)))
-;<  metadatum=(unit metadatum:met)  bind:m
-  %+  scry:strandio  (unit metadatum:met)
+;<  association=(unit association:met)  bind:m
+  %+  scry:strandio  (unit association:met)
   %-  zing
-  :~  /gx/metadata-store/metadata/group
+  :~  /gx/metadata-store/metadata/groups
       (en-path:resource group.action)
       /noun
   ==
-?~  metadatum
+?~  association
   ~|('No group exists, cannot make group feed.' !!)
-?>  ?=(%group -.config.u.metadatum)
-?>  ?|  ?=(~ feed.config.u.metadatum)
-        ?=([~ ~] feed.config.u.metadatum)
+=*  metadatum  metadatum.u.association
+?>  ?=(%group -.config.metadatum)
+?>  ?|  ?=(~ feed.config.metadatum)
+        ?=([~ ~] feed.config.metadatum)
     ==
 ;<  ~  bind:m
   %+  poke-our  %graph-store
@@ -49,8 +50,8 @@
   !>  ^-  action:met
   :^  %add
       group.action
-    group+group.action
-  u.metadatum(feed.config ``[%graph feed-rid])
+    groups+group.action
+  metadatum(feed.config ``[%graph feed-rid])
 ;<  ~  bind:m
   %+  poke-our  %metadata-push-hook
   :-  %metadata-update
