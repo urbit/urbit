@@ -54,7 +54,7 @@ export const SetStatusBarModal = (props) => {
               <SetStatus
                 ship={ship}
                 contact={contact}
-                api={api}
+                
                 callback={() => {
                   setModalShown(false);
                 }}

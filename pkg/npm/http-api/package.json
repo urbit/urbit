@@ -16,6 +16,7 @@
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "onchange './*.ts' -- npm run build",
     "build": "npm run clean && tsc -p tsconfig.json",
     "clean": "rm -rf dist/*"
   },
@@ -40,6 +41,7 @@
     "@typescript-eslint/parser": "^4.7.0",
     "babel-loader": "^8.2.1",
     "clean-webpack-plugin": "^3.0.0",
+    "onchange": "^7.1.0",
     "tslib": "^2.0.3",
     "typescript": "^3.9.7",
     "util": "^0.12.3",

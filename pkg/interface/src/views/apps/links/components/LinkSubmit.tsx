@@ -1,15 +1,17 @@
 import { BaseInput, Box, Button, LoadingSpinner, Text } from '@tlon/indigo-react';
 import React, { useCallback, useState } from 'react';
-import GlobalApi from '~/logic/api/global';
+import GlobalApi from '~/logic/api-old/global';
 import { useFileDrag } from '~/logic/lib/useDrag';
 import useStorage from '~/logic/lib/useStorage';
 import { StorageState } from '~/types';
 import SubmitDragger from '~/views/components/SubmitDragger';
-import { createPost } from '~/logic/api/graph';
+import { createPost } from '~/logic/api-old/graph';
 import { hasProvider } from 'oembed-parser';
+import { addPost } from '@urbit/api/graph';
+import useApi from '~/logic/api';
+import { graph } from '@urbit/api/dist';
 
 interface LinkSubmitProps {
-  api: GlobalApi;
   name: string;
   ship: string;
 }
@@ -24,6 +26,7 @@ const LinkSubmit = (props: LinkSubmitProps) => {
   const [linkTitle, setLinkTitle] = useState('');
   const [disabled, setDisabled] = useState(false);
   const [linkValid, setLinkValid] = useState(false);
+  const api = useApi();
 
   const doPost = () => {
     const url = linkValue;
@@ -35,11 +38,11 @@ const LinkSubmit = (props: LinkSubmitProps) => {
       { url }
     ], parentIndex);
 
-    props.api.graph.addPost(
+    api.poke(graph.addPost(
       `~${props.ship}`,
       props.name,
       post
-    ).then(() => {
+    )).then(() => {
       setDisabled(false);
       setLinkValue('');
       setLinkTitle('');

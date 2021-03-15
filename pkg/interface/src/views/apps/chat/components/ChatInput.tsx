@@ -3,18 +3,21 @@ import ChatEditor from './chat-editor';
 import { IuseStorage } from '~/logic/lib/useStorage';
 import { uxToHex } from '~/logic/lib/util';
 import { Sigil } from '~/logic/lib/sigil';
-import { createPost } from '~/logic/api/graph';
+import { createPost } from '~/logic/api-old/graph';
 import tokenizeMessage, { isUrl } from '~/logic/lib/tokenizeMessage';
-import GlobalApi from '~/logic/api/global';
+import GlobalApi from '~/logic/api-old/global';
 import { Envelope } from '~/types/chat-update';
 import { StorageState } from '~/types';
-import { Contacts, Content } from '@urbit/api';
+import { Content, graph } from '@urbit/api';
 import { Row, BaseImage, Box, Icon, LoadingSpinner } from '@tlon/indigo-react';
 import withStorage from '~/views/components/withStorage';
 import { withLocalState } from '~/logic/state/local';
+import { evalCord } from '@urbit/api/graph';
+import useApi, { withApi } from '~/logic/api';
+import { UrbitInterface } from '@urbit/http-api';
 
 type ChatInputProps = IuseStorage & {
-  api: GlobalApi;
+  api: UrbitInterface;
   numMsgs: number;
   station: unknown;
   ourContact: unknown;
@@ -60,15 +63,15 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
 
   submit(text) {
     const { props, state } = this;
-    const [,,ship,name] = props.station.split('/');
+    const [, , ship, name] = props.station.split('/');
     if (state.inCodeMode) {
       this.setState({
         inCodeMode: false
       }, async () => {
-        const output = await props.api.graph.eval(text);
+        const output = await props.api.thread(graph.evalCord(text));
         const contents: Content[] = [{ code: { output, expression: text } }];
         const post = createPost(contents);
-        props.api.graph.addPost(ship, name, post);
+        props.api.poke(graph.addPost(ship, name, post));
       });
       return;
     }
@@ -77,7 +80,7 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
 
     props.deleteMessage();
 
-    props.api.graph.addPost(ship, name, post);
+    props.api.poke(graph.addPost(ship, name, post));
   }
 
   uploadSuccess(url) {
@@ -87,7 +90,7 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
       this.setState({ uploadingPaste: false });
     } else {
       const [,,ship,name] = props.station.split('/');
-      props.api.graph.addPost(ship,name, createPost([{ url }]));
+      props.api.poke(graph.addPost(ship,name, createPost([{ url }])));
     }
   }
 
@@ -206,4 +209,4 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
   }
 }
 
-export default withLocalState(withStorage(ChatInput, { accept: 'image/*' }), ['hideAvatars']);
+export default withLocalState(withStorage(withApi(ChatInput), { accept: 'image/*' }), ['hideAvatars']);

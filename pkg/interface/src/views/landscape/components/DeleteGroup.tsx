@@ -2,19 +2,20 @@ import React from 'react';
 import { Icon, Text, Col, Label, Row, Button } from '@tlon/indigo-react';
 import { useHistory } from 'react-router-dom';
 
-import { Association } from '@urbit/api';
+import { Association, groups } from '@urbit/api';
 
-import GlobalApi from '~/logic/api/global';
+import GlobalApi from '~/logic/api-old/global';
 import { resourceFromPath } from '~/logic/lib/group';
 import { StatelessAsyncButton } from '~/views/components/StatelessAsyncButton';
 import { useModal } from '~/logic/lib/useModal';
+import useApi from '~/logic/api';
 
 export function DeleteGroup(props: {
   owner: boolean;
-  api: GlobalApi;
   association: Association;
 }) {
   const history = useHistory();
+  const api = useApi();
   const onDelete = async () => {
     const { ship, name } = resourceFromPath(props.association.group);
     if (props.owner) {
@@ -24,9 +25,9 @@ export function DeleteGroup(props: {
 return;
     }
     if(props.owner) {
-      await props.api.groups.deleteGroup(ship, name);
+      await api.thread(groups.deleteGroup(ship, name));
     } else {
-      await props.api.groups.leaveGroup(ship, name);
+      await api.thread(groups.leaveGroup(ship, name));
     }
     history.push('/');
   };

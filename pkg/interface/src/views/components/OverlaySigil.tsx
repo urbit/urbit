@@ -85,7 +85,7 @@ export const OverlaySigil = (props: OverlaySigilProps): React.FC => {
       style={{ visibility: visible ? 'visible' : 'hidden' }}
     >
       <ProfileOverlay
-        api={api}
+        
         bottomSpace={space.bottom}
         color={color}
         contact={contact}

@@ -45,7 +45,6 @@ export default function ProfileScreen(props: any) {
                     ship={ship}
                     hasLoaded={Object.keys(contacts).length !== 0}
                     contact={contact}
-                    api={props.api}
                     isEdit={isEdit}
                   />
                 </Box>

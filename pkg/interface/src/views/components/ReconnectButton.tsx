@@ -1,9 +1,24 @@
 import React from "react";
 import { Text, LoadingSpinner, Button } from "@tlon/indigo-react";
+import useApi from "~/logic/api";
+import useLocalState from "~/logic/state/local";
+import { restartSubscription } from "~/logic/lib/subscriptionHandlers";
 
-const ReconnectButton = ({ connection, subscription }) => {
-  const connectedStatus = connection || "connected";
-  const reconnect = subscription.restart.bind(subscription);
+const ReconnectButton = () => {
+  const api = useApi();
+  const connectedStatus = useLocalState(state => state.connection);
+  const set = useLocalState(state => state.set);
+  const reconnect = async () => {
+    set(state => {
+      state.connection = 'reconnecting';
+    });
+    await Promise.all(Array.from(api.outstandingSubscriptions.entries()).map(([existingId, subscription]) => {
+      return restartSubscription(existingId, subscription);
+    }));
+    set(state => {
+      state.connection = 'connected';
+    });
+  }
 
   if (connectedStatus === "disconnected") {
     return (

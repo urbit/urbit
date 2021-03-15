@@ -7,11 +7,13 @@ import {
   GroupNotificationContents,
   GroupNotifIndex,
   GroupUpdate,
+  hark,
   Rolodex
 } from '@urbit/api';
 
 import { Header } from './header';
-import GlobalApi from '~/logic/api/global';
+import GlobalApi from '~/logic/api-old/global';
+import useApi from '~/logic/api';
 
 function describeNotification(description: string, plural: boolean) {
   switch (description) {
@@ -41,11 +43,11 @@ interface GroupNotificationProps {
   read: boolean;
   time: number;
   timebox: BigInteger;
-  api: GlobalApi;
 }
 
 export function GroupNotification(props: GroupNotificationProps): ReactElement {
-  const { contents, index, read, time, api, timebox } = props;
+  const { contents, index, read, time, timebox } = props;
+  const api = useApi();
 
   const authors = _.flatten(_.map(contents, getGroupUpdateParticipants));
 
@@ -57,7 +59,7 @@ export function GroupNotification(props: GroupNotificationProps): ReactElement {
       return;
     }
     const func = read ? 'unread' : 'read';
-    return api.hark[func](timebox, { group: index });
+    return api.poke(hark[func](timebox, { group: index }));
   }, [api, timebox, index, read]);
 
   return (

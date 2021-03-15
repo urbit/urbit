@@ -7,11 +7,12 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 import { Spinner } from '~/views/components/Spinner';
 import { Comments } from '~/views/components/Comments';
 import { NoteNavigation } from './NoteNavigation';
-import GlobalApi from '~/logic/api/global';
+import GlobalApi from '~/logic/api-old/global';
 import { getLatestRevision, getComments } from '~/logic/lib/publish';
 import { roleForShip } from '~/logic/lib/group';
 import Author from '~/views/components/Author';
-import { Contacts, GraphNode, Graph, Association, Unreads, Group } from '@urbit/api';
+import { Contacts, GraphNode, Graph, Association, Unreads, Group, removeNodes, markEachAsRead, graph, hark } from '@urbit/api';
+import useApi from '~/logic/api';
 
 interface NoteProps {
   ship: string;
@@ -19,7 +20,6 @@ interface NoteProps {
   note: GraphNode;
   association: Association;
   notebook: Graph;
-  api: GlobalApi;
   rootUrl: string;
   baseUrl: string;
   group: Group;
@@ -28,7 +28,8 @@ interface NoteProps {
 export function Note(props: NoteProps & RouteComponentProps) {
   const [deleting, setDeleting] = useState(false);
 
-  const { notebook, note, ship, book, api, rootUrl, baseUrl, group } = props;
+  const { notebook, note, ship, book, rootUrl, baseUrl, group } = props;
+  const api = useApi();
   const editCommentId = props.match.params.commentId;
 
   const renderers = {
@@ -42,7 +43,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
   const deletePost = async () => {
     setDeleting(true);
     const indices = [note.post.index];
-    await api.graph.removeNodes(ship, book, indices);
+    await api.poke(graph.removeNodes(ship, book, indices));
     props.history.push(rootUrl);
   };
 
@@ -52,7 +53,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
 
   const noteId = bigInt(index[1]);
   useEffect(() => {
-    api.hark.markEachAsRead(props.association, '/',`/${index[1]}/1/1`, 'note', 'publish');
+    api.poke(hark.markEachAsRead(props.association, '/', `/${index[1]}/1/1`, 'note', 'publish'));
   }, [props.association, props.note]);
 
   let adminLinks: JSX.Element[] = [];
@@ -136,7 +137,6 @@ export function Note(props: NoteProps & RouteComponentProps) {
         name={props.book}
         comments={comments}
         association={props.association}
-        api={props.api}
         baseUrl={baseUrl}
         editCommentId={editCommentId}
         history={props.history}

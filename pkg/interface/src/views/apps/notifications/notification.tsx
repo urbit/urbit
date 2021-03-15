@@ -9,9 +9,13 @@ import {
   GroupNotificationsConfig,
   Groups,
   Associations,
-  Contacts
+  Contacts,
+  archive,
+  unmute,
+  mute,
+  hark
 } from '@urbit/api';
-import GlobalApi from '~/logic/api/global';
+import GlobalApi from '~/logic/api-old/global';
 import { getParentIndex } from '~/logic/lib/notification';
 import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
 import { GroupNotification } from './group';
@@ -19,11 +23,11 @@ import { GraphNotification } from './graph';
 import { BigInteger } from 'big-integer';
 import { useHovering } from '~/logic/lib/util';
 import useHarkState from '~/logic/state/hark';
+import useApi from '~/logic/api';
 
 interface NotificationProps {
   notification: IndexedNotification;
   time: BigInteger;
-  api: GlobalApi;
   archived: boolean;
 }
 
@@ -52,16 +56,16 @@ function getMuted(
 }
 
 function NotificationWrapper(props: {
-  api: GlobalApi;
   time: BigInteger;
   notif: IndexedNotification;
   children: ReactNode;
   archived: boolean;
 }) {
-  const { api, time, notif, children } = props;
+  const { time, notif, children } = props;
+  const api = useApi();
 
   const onArchive = useCallback(async () => {
-    return api.hark.archive(time, notif.index);
+    return api.poke(hark.archive(time, notif.index));
   }, [time, notif]);
 
   const groupConfig = useHarkState(state => state.notificationsGroupConfig);
@@ -75,7 +79,7 @@ function NotificationWrapper(props: {
 
   const onChangeMute = useCallback(async () => {
     const func = isMuted ? 'unmute' : 'mute';
-    return api.hark[func](notif);
+    return api.poke(hark[func](notif));
   }, [notif, api, isMuted]);
 
   const { hovering, bind } = useHovering();
@@ -115,7 +119,6 @@ export function Notification(props: NotificationProps) {
       archived={archived}
       notif={notification}
       time={props.time}
-      api={props.api}
     >
       {children}
     </NotificationWrapper>
@@ -128,7 +131,6 @@ export function Notification(props: NotificationProps) {
     return (
       <Wrapper>
         <GraphNotification
-          api={props.api}
           index={index}
           contents={c}
           read={read}
@@ -145,7 +147,6 @@ export function Notification(props: NotificationProps) {
     return (
       <Wrapper>
         <GroupNotification
-          api={props.api}
           index={index}
           contents={c}
           read={read}

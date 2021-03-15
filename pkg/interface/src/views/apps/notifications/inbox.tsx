@@ -3,6 +3,7 @@ import f from 'lodash/fp';
 import _ from 'lodash';
 import moment from 'moment';
 import { BigInteger } from 'big-integer';
+import { hark, seen as markSeen } from '@urbit/api';
 
 import { Col, Center, Box, Text, LoadingSpinner } from '@tlon/indigo-react';
 import {
@@ -19,12 +20,13 @@ import {
 } from '@urbit/api';
 
 import { MOMENT_CALENDAR_DATE, daToUnix } from '~/logic/lib/util';
-import GlobalApi from '~/logic/api/global';
+import GlobalApi from '~/logic/api-old/global';
 import { Notification } from './notification';
 import { Invites } from './invites';
 import { useLazyScroll } from '~/logic/lib/useLazyScroll';
 import useHarkState from '~/logic/state/hark';
 import useInviteState from '~/logic/state/invite';
+import useApi from '~/logic/api';
 
 type DatedTimebox = [BigInteger, Timebox];
 
@@ -47,11 +49,10 @@ function filterNotification(groups: string[]) {
 export default function Inbox(props: {
   archive: Notifications;
   showArchive?: boolean;
-  api: GlobalApi;
   filter: string[];
   pendingJoin: JoinRequests;
 }) {
-  const { api } = props;
+  const api = useApi();
   useEffect(() => {
     let seen = false;
     setTimeout(() => {
@@ -59,7 +60,7 @@ export default function Inbox(props: {
     }, 3000);
     return () => {
       if (seen) {
-        api.hark.seen();
+        api.poke(hark.seen());
       }
     };
   }, []);
@@ -103,9 +104,11 @@ export default function Inbox(props: {
 
   const scrollRef = useRef(null);
 
+  const getMore = useHarkState(state => state.getMore);
+
   const loadMore = useCallback(async () => {
-    return api.hark.getMore();
-  }, [api]);
+    return getMore();
+  }, [getMore]);
 
   const { isDone, isLoading } = useLazyScroll(
     scrollRef,
@@ -116,7 +119,7 @@ export default function Inbox(props: {
 
   return (
     <Col ref={scrollRef} position="relative" height="100%" overflowY="auto">
-      <Invites pendingJoin={props.pendingJoin} api={api} />
+      <Invites pendingJoin={props.pendingJoin} />
       {[...notificationsByDayMap.keys()].sort().reverse().map((day, index) => {
         const timeboxes = notificationsByDayMap.get(day)!;
         return timeboxes.length > 0 && (
@@ -125,7 +128,6 @@ export default function Inbox(props: {
             label={day === 'latest' ? 'Today' : moment(day).calendar(null, calendar)}
             timeboxes={timeboxes}
             archive={Boolean(props.showArchive)}
-            api={api}
           />
         );
       })}
@@ -182,7 +184,7 @@ function DaySection({
               <Box flexShrink={0} height="4px" bg="scales.black05" />
             )}
             <Notification
-              api={api}
+              
               notification={not}
               archived={archive}
               time={date}

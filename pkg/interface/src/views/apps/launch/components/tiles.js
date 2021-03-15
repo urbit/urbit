@@ -30,10 +30,7 @@ const Tiles = (props) => {
     } else if ('custom' in tile.type) {
       if (key === 'weather') {
         return (
-          <WeatherTile
-            key={key}
-            api={props.api}
-          />
+          <WeatherTile key={key} />
         );
       } else if (key === 'clock') {
         const location = weather && 'nearest-area' in weather ? weather['nearest-area'][0] : '';

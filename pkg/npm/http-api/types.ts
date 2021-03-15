@@ -37,9 +37,10 @@ export interface UrbitInterface {
   sseClientInitialized: boolean;
   cookie?: string | undefined;
   outstandingPokes: Map<number, PokeHandlers>;
-  outstandingSubscriptions: Map<number, SubscriptionInterface>;
+  outstandingSubscriptions: Map<number, SubscriptionRequestInterface>;
   verbose?: boolean;
   ship?: string | null;
+  onError?: (error: any) => void;
   connect(): void;
   connect(): Promise<void>;
   eventSource(): void;
@@ -48,8 +49,8 @@ export interface UrbitInterface {
   sendMessage(action: Action, data?: object): Promise<void | number>;
   poke<T>(params: PokeInterface<T>): Promise<void | number>;
   subscribe(params: SubscriptionRequestInterface): Promise<void | number>;
-  unsubscribe(subscription: string): Promise<void | number>;
-  delete(): Promise<void | number>;
+  unsubscribe(subscription: number): Promise<void | number>;
+  delete(): void;
   scry(params: Scry): Promise<void | any>;
   thread<T>(params: Thread<T>): Promise<T>;
 }
@@ -63,4 +64,9 @@ export interface SSEOptions {
     Cookie?: string
   };
   withCredentials?: boolean;
+}
+
+export interface Message extends Record<string, any> {
+  action: Action;
+  id: number;
 }

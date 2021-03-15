@@ -10,19 +10,20 @@ import {
   Center,
 } from "@tlon/indigo-react";
 import { Formik, Form, useFormikContext, FormikHelpers } from "formik";
-import GlobalApi from "~/logic/api/global";
+import GlobalApi from "~/logic/api-old/global";
 import { Notebook } from "~/types/publish-update";
 import { Contacts } from "@urbit/api/contacts";
 import { FormError } from "~/views/components/FormError";
 import { RouteComponentProps, useHistory } from "react-router-dom";
 import {Association} from "@urbit/api";
 import { uxToHex } from "~/logic/lib/util";
+import useApi from "~/logic/api";
+import { add, metadata as metadataApi } from "@urbit/api";
 
 interface MetadataFormProps {
   host: string;
   book: string;
   association: Association;
-  api: GlobalApi;
 }
 
 interface FormSchema {
@@ -46,8 +47,9 @@ const ResetOnPropsChange = (props: { init: FormSchema; book: string }) => {
 
 
 export function MetadataForm(props: MetadataFormProps) {
-  const { api, book } = props;
+  const { book } = props;
   const { metadata } = props.association || {};
+  const api = useApi();
 
   const initialValues: FormSchema = {
     name: metadata?.title,
@@ -61,7 +63,8 @@ export function MetadataForm(props: MetadataFormProps) {
   ) => {
     try {
       const { name, description } = values;
-      await api.metadata.metadataAdd(
+      await api.poke(metadataApi.add(
+        window.ship,
         "publish",
         props.association.resource,
         props.association.group,
@@ -69,7 +72,7 @@ export function MetadataForm(props: MetadataFormProps) {
         description,
         props.association.metadata["date-created"],,
         uxToHex(props.association.metadata.color)
-      );
+      ));
       actions.setStatus({ success: null });
     } catch (e) {
       console.log(e);

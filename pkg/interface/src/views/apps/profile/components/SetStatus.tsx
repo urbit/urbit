@@ -11,9 +11,12 @@ import {
   Button,
   StatelessTextInput as Input
 } from '@tlon/indigo-react';
+import useApi from '~/logic/api';
+import { contacts, editContact } from '@urbit/api';
 
 export function SetStatus(props: any) {
-  const { contact, ship, api, callback } = props;
+  const { contact, ship, callback } = props;
+  const api = useApi();
   const inputRef = useRef(null);
   const [_status, setStatus] = useState('');
   const onStatusChange = useCallback(
@@ -28,7 +31,7 @@ export function SetStatus(props: any) {
   }, [contact]);
 
   const editStatus = () => {
-    api.contacts.edit(ship, { status: _status });
+    api.poke(contacts.editContact(ship, { status: _status }));
     inputRef.current.blur();
     if (callback) {
       callback();

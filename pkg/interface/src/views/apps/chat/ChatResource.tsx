@@ -8,7 +8,7 @@ import { StoreState } from '~/logic/store/type';
 import { useFileDrag } from '~/logic/lib/useDrag';
 import ChatWindow from './components/ChatWindow';
 import ChatInput from './components/ChatInput';
-import GlobalApi from '~/logic/api/global';
+import GlobalApi from '~/logic/api-old/global';
 import { ShareProfile } from '~/views/apps/chat/components/ShareProfile';
 import SubmitDragger from '~/views/components/SubmitDragger';
 import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
@@ -23,7 +23,6 @@ import useHarkState from '~/logic/state/hark';
 
 type ChatResourceProps = StoreState & {
   association: Association;
-  api: GlobalApi;
   baseUrl: string;
 } & RouteComponentProps;
 
@@ -33,6 +32,7 @@ export function ChatResource(props: ChatResourceProps) {
   const groups = useGroupState(state => state.groups);
   const group = groups[groupPath];
   const contacts = useContactState(state => state.contacts);
+  const fetchIsAllowed = useContactState(state => state.fetchIsAllowed);
   const graphs = useGraphState(state => state.graphs);
   const graphPath = station.slice(7);
   const graph = graphs[graphPath];
@@ -43,10 +43,11 @@ export function ChatResource(props: ChatResourceProps) {
   const ourContact = contacts?.[`~${window.ship}`];
   const chatInput = useRef<ChatInput>();
   const canWrite = isWriter(group, station);
+  const getNewest = useGraphState(state => state.getNewest);
 
   useEffect(() => {
     const count = 100 + unreadCount;
-    props.api.graph.getNewest(owner, name, count);
+    getNewest(owner, name, count);
   }, [station]);
 
   const onFileDrag = useCallback(
@@ -104,7 +105,7 @@ export function ChatResource(props: ChatResourceProps) {
               if(s === window.ship) {
                 return Promise.resolve(null);
               }
-              return props.api.contacts.fetchIsAllowed(
+              return fetchIsAllowed(
                 `~${window.ship}`,
                 'personal',
                 ship,
@@ -122,7 +123,7 @@ export function ChatResource(props: ChatResourceProps) {
           setShowBanner(false);
         }
       } else {
-        const groupShared = await props.api.contacts.fetchIsAllowed(
+        const groupShared = await fetchIsAllowed(
           `~${window.ship}`,
           'personal',
           res.ship,
@@ -146,7 +147,6 @@ export function ChatResource(props: ChatResourceProps) {
     <Col {...bind} height="100%" overflow="hidden" position="relative">
       <ShareProfile
         our={ourContact}
-        api={props.api}
         recipient={owner}
         recipients={recipients}
         showBanner={showBanner}
@@ -157,7 +157,6 @@ export function ChatResource(props: ChatResourceProps) {
       {dragging && <SubmitDragger />}
       <ChatWindow
         key={station}
-        history={props.history}
         graph={graph}
         unreadCount={unreadCount}
         contacts={
@@ -169,13 +168,11 @@ export function ChatResource(props: ChatResourceProps) {
         group={group}
         ship={owner}
         station={station}
-        api={props.api}
         scrollTo={scrollTo ? parseInt(scrollTo, 10) : undefined}
       />
       { canWrite && (
       <ChatInput
         ref={chatInput}
-        api={props.api}
         station={station}
         ourContact={
           (!showBanner && hasLoadedAllowed) ? ourContact : null

@@ -2,20 +2,21 @@ import React, { useState, useEffect, useRef, useCallback, ReactElement }  from '
 import { Link } from 'react-router-dom';
 
 import { Row, Col, Anchor, Box, Text, Icon, Action } from '@tlon/indigo-react';
-import { GraphNode, Group, Rolodex, Unreads } from '@urbit/api';
+import { graph, GraphNode, Group, hark, markEachAsRead, Rolodex, Unreads } from '@urbit/api';
 
 import { writeText } from '~/logic/lib/util';
 import Author from '~/views/components/Author';
 import { roleForShip } from '~/logic/lib/group';
-import GlobalApi from '~/logic/api/global';
+import GlobalApi from '~/logic/api-old/global';
 import { Dropdown } from '~/views/components/Dropdown';
 import RemoteContent from '~/views/components/RemoteContent';
 import useHarkState from '~/logic/state/hark';
+import { removeNodes } from '@urbit/api/graph';
+import useApi from '~/logic/api';
 
 interface LinkItemProps {
   node: GraphNode;
   resource: string;
-  api: GlobalApi;
   group: Group;
   path: string;
 }
@@ -24,17 +25,18 @@ export const LinkItem = (props: LinkItemProps): ReactElement => {
   const {
     node,
     resource,
-    api,
     group,
     path,
     ...rest
   } = props;
 
+  const api = useApi();
+
   const ref = useRef<HTMLDivElement | null>(null);
   const remoteRef = useRef<typeof RemoteContent | null>(null);
 
   const markRead = useCallback(() => {
-    api.hark.markEachAsRead(props.association, '/', `/${index}`, 'link', 'link');
+    api.poke(hark.markEachAsRead(props.association, '/', `/${index}`, 'link', 'link'));
   }, [props.association, index]);
 
   useEffect(() => {
@@ -82,7 +84,7 @@ export const LinkItem = (props: LinkItemProps): ReactElement => {
 
   const deleteLink = () => {
     if (confirm('Are you sure you want to delete this link?')) {
-      api.graph.removeNodes(`~${ship}`, name, [node.post.index]);
+      api.poke(graph.removeNodes(`~${ship}`, name, [node.post.index]));
     }
   };
 

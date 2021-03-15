@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import { Box, Text } from '@tlon/indigo-react';
+import { groups } from '@urbit/api';
 import { ShipSearch } from '~/views/components/ShipSearch';
 import { Formik, Form } from 'formik';
 import { resourceFromPath } from '~/logic/lib/group';
 import { AsyncButton } from '~/views/components/AsyncButton';
+import { withApi } from '~/logic/api';
 
 export class Writers extends Component {
   render() {
@@ -14,11 +16,11 @@ export class Writers extends Component {
     const onSubmit = async (values, actions) => {
       try {
         const ships = values.ships.map(e => `~${e}`);
-        await api.groups.addTag(
+        await api.poke(groups.addTag(
           resource,
           { app: 'graph', resource: association.resource, tag: `writers` },
           ships
-        );
+        ));
         actions.resetForm();
         actions.setStatus({ success: null });
       } catch (e) {
@@ -61,4 +63,4 @@ export class Writers extends Component {
   }
 }
 
-export default Writers;
+export default withApi(Writers);

@@ -9,19 +9,20 @@ import {
   Col,
   Text
 } from '@tlon/indigo-react';
-import { Enc } from '@urbit/api';
+import { Enc, groups, metadata as metadataApi } from '@urbit/api';
 import { Group, GroupPolicy } from '@urbit/api/groups';
-import { Association } from '@urbit/api/metadata';
+import { Association, update } from '@urbit/api/metadata';
 
 import { AsyncButton } from '~/views/components/AsyncButton';
 import { FormError } from '~/views/components/FormError';
-import GlobalApi from '~/logic/api/global';
+import GlobalApi from '~/logic/api-old/global';
 import { resourceFromPath, roleForShip } from '~/logic/lib/group';
 import { ColorInput } from '~/views/components/ColorInput';
 import { useHistory } from 'react-router-dom';
 import { uxToHex } from '~/logic/lib/util';
 import { ImageInput } from '~/views/components/ImageInput';
 import { StorageState } from '~/types';
+import useApi from '~/logic/api';
 
 interface FormSchema {
   title: string;
@@ -49,7 +50,7 @@ interface GroupAdminSettingsProps {
 export function GroupAdminSettings(props: GroupAdminSettingsProps) {
   const { group, association } = props;
   const { metadata } = association;
-  const history = useHistory();
+  const api = useApi();
   const currentPrivate = 'invite' in props.group.policy;
   const initialValues: FormSchema = {
     title: metadata?.title,
@@ -68,20 +69,20 @@ export function GroupAdminSettings(props: GroupAdminSettingsProps) {
       const { title, description, picture, color, isPrivate, adminMetadata } = values;
       const uxColor = uxToHex(color);
       const vip = adminMetadata ? '' : 'member-metadata';
-      await props.api.metadata.update(props.association, {
+      await api.poke(metadataApi.update(props.association, {
         title,
         description,
         picture,
         color: uxColor,
         vip
-      });
+      }));
       if (isPrivate !== currentPrivate) {
         const resource = resourceFromPath(props.association.group);
         const newPolicy: Enc<GroupPolicy> = isPrivate
           ? { invite: { pending: [] } }
           : { open: { banRanks: [], banned: [] } };
         const diff = { replace: newPolicy };
-        await props.api.groups.changePolicy(resource, diff);
+        await api.poke(groups.changePolicy(resource, diff));
       }
 
       actions.setStatus({ success: null });

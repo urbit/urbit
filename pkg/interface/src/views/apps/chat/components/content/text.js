@@ -144,7 +144,6 @@ export default function TextContent(props) {
     return (
       <GroupLink
         resource={resource}
-        api={props.api}
         pl='2'
         border='1'
         borderRadius='2'

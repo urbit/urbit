@@ -13,8 +13,10 @@ import { BigIntOrderedMap } from '../lib/BigIntOrderedMap';
 import useHarkState, { HarkState } from '../state/hark';
 import { compose } from 'lodash/fp';
 import { reduceState } from '../state/base';
+import { SubscriptionRequestInterface, UrbitInterface } from '@urbit/http-api';
+import { handleSubscriptionError, handleSubscriptionQuit } from '../lib/subscriptionHandlers';
 
-export const HarkReducer = (json: any) => {
+const HarkReducer = (json: any) => {
   const data = _.get(json, 'harkUpdate', false);
   if (data) {
     reduce(data);
@@ -401,3 +403,39 @@ function archive(json: any, state: HarkState): HarkState {
   }
   return state;
 }
+
+
+export function harkSubscription(channel: UrbitInterface): SubscriptionRequestInterface {
+  const event = HarkReducer;
+  const err = handleSubscriptionError(channel, harkSubscription);
+  const quit = handleSubscriptionQuit(channel, harkSubscription);
+  return {
+    app: 'hark-store',
+    path: '/updates',
+    event, err, quit
+  };
+};
+
+export function harkGraphHookSubscription(channel: UrbitInterface): SubscriptionRequestInterface {
+  const event = HarkReducer;
+  const err = handleSubscriptionError(channel, harkGraphHookSubscription);
+  const quit = handleSubscriptionQuit(channel, harkGraphHookSubscription);
+  return {
+    app: 'hark-graph-hook',
+    path: '/updates',
+    event, err, quit
+  };
+};
+
+export function harkGroupHookSubscription(channel: UrbitInterface): SubscriptionRequestInterface {
+  const event = HarkReducer;
+  const err = handleSubscriptionError(channel, harkGroupHookSubscription);
+  const quit = handleSubscriptionQuit(channel, harkGroupHookSubscription);
+  return {
+    app: 'hark-group-hook',
+    path: '/updates',
+    event, err, quit
+  };
+};
+
+export default HarkReducer;

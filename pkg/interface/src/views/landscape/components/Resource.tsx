@@ -8,7 +8,7 @@ import { ChatResource } from '~/views/apps/chat/ChatResource';
 import { PublishResource } from '~/views/apps/publish/PublishResource';
 import { LinkResource } from '~/views/apps/links/LinkResource';
 import { StoreState } from '~/logic/store/type';
-import GlobalApi from '~/logic/api/global';
+import GlobalApi from '~/logic/api-old/global';
 import { ResourceSkeleton } from './ResourceSkeleton';
 import { ChannelPopoverRoutes } from './ChannelPopoverRoutes';
 import useGroupState from '~/logic/state/group';
@@ -65,7 +65,6 @@ export function Resource(props: ResourceProps): ReactElement {
               <ChannelPopoverRoutes
                 association={association}
                 group={groups?.[selectedGroup]}
-                api={props.api}
                 baseUrl={relativePath('')}
                 rootUrl={props.baseUrl}
               />

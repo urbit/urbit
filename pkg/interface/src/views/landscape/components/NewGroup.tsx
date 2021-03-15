@@ -1,7 +1,7 @@
 import React, { ReactElement, useCallback } from 'react';
 import { Formik, Form, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
-import { RouteComponentProps } from 'react-router-dom';
+import { RouteComponentProps, useHistory } from 'react-router-dom';
 
 import {
   Col,
@@ -10,14 +10,15 @@ import {
   ManagedTextInputField as Input,
   ManagedCheckboxField as Checkbox
 } from '@tlon/indigo-react';
-import { Groups, Rolodex, GroupPolicy, Enc, Associations } from '@urbit/api';
+import { Groups, Rolodex, GroupPolicy, Enc, Associations, groups as groupsApi } from '@urbit/api';
 
 import { AsyncButton } from '~/views/components/AsyncButton';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
-import GlobalApi from '~/logic/api/global';
+import GlobalApi from '~/logic/api-old/global';
 import { stringToSymbol } from '~/logic/lib/util';
 import useGroupState from '~/logic/state/group';
 import useMetadataState from '~/logic/state/metadata';
+import useApi from '~/logic/api';
 
 const formSchema = Yup.object({
   title: Yup.string().required('Group must have a name'),
@@ -31,12 +32,10 @@ interface FormSchema {
   isPrivate: boolean;
 }
 
-interface NewGroupProps {
-  api: GlobalApi;
-}
 
-export function NewGroup(props: NewGroupProps & RouteComponentProps): ReactElement {
-  const { api, history } = props;
+export function NewGroup(): ReactElement {
+  const api = useApi();
+  const history = useHistory();
   const initialValues: FormSchema = {
     title: '',
     description: '',
@@ -64,7 +63,7 @@ export function NewGroup(props: NewGroupProps & RouteComponentProps): ReactEleme
                 banned: []
               }
             };
-        await api.groups.create(name, policy, title, description);
+        await api.thread(groupsApi.createGroup(name, policy, title, description));
         const path = `/ship/~${window.ship}/${name}`;
         await waiter((p) => {
           return path in p.groups && path in p.associations.groups;

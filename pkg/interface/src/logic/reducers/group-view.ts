@@ -1,5 +1,7 @@
 import { GroupUpdate } from '@urbit/api/groups';
+import { SubscriptionRequestInterface, UrbitInterface } from '@urbit/http-api';
 import { resourceAsPath } from '~/logic/lib/util';
+import { handleSubscriptionError, handleSubscriptionQuit } from '../lib/subscriptionHandlers';
 import { reduceState } from '../state/base';
 import useGroupState, { GroupState } from '../state/group';
 
@@ -25,7 +27,7 @@ const progress = (json: any, state: GroupState): GroupState => {
   return state;
 };
 
-export const GroupViewReducer = (json: any) => {
+const GroupViewReducer = (json: any) => {
   const data = json['group-view-update'];
   if (data) {
     reduceState<GroupState, GroupUpdate>(useGroupState, data, [
@@ -34,3 +36,16 @@ export const GroupViewReducer = (json: any) => {
     ]);
   }
 };
+
+export const groupViewSubscription = (channel: UrbitInterface): SubscriptionRequestInterface => {
+  const event = GroupViewReducer;
+  const err = handleSubscriptionError(channel, groupViewSubscription);
+  const quit = handleSubscriptionQuit(channel, groupViewSubscription);
+  return {
+    app: 'group-view',
+    path: '/all',
+    event, err, quit
+  };
+}
+
+export default GroupViewReducer;

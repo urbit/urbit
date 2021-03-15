@@ -28,8 +28,8 @@ import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 const localSel = selectLocalState(['toggleOmnibox']);
 
 const StatusBar = (props) => {
-  const { api, ship } = props;
   const history = useHistory();
+  const ship = window.ship;
   const ourContact = useContactState((state) => state.contacts[`~${ship}`]);
   const notificationsCount = useHarkState((state) => state.notificationsCount);
   const doNotDisturb = useHarkState((state) => state.doNotDisturb);
@@ -99,10 +99,7 @@ const StatusBar = (props) => {
             {metaKey}/
           </Text>
         </StatusBarItem>
-        <ReconnectButton
-          connection={props.connection}
-          subscription={props.subscription}
-        />
+        <ReconnectButton />
       </Row>
       <Row justifyContent='flex-end' collapse>
         <StatusBarItem
@@ -182,7 +179,7 @@ const StatusBar = (props) => {
                 <ProfileStatus
                   contact={ourContact}
                   ship={`~${ship}`}
-                  api={api}
+                  
                 />
               </Row>
             </Col>

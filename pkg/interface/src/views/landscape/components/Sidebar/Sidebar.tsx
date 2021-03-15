@@ -4,7 +4,7 @@ import {
   Col
 } from '@tlon/indigo-react';
 
-import GlobalApi from '~/logic/api/global';
+import GlobalApi from '~/logic/api-old/global';
 import { GroupSwitcher } from '../GroupSwitcher';
 import {
   Associations,
@@ -90,7 +90,6 @@ export function Sidebar(props: SidebarProps): ReactElement | null {
         handleSubmit={setConfig}
         selected={selected || ''}
         workspace={workspace}
-        api={props.api}
         history={props.history}
       />
       <SidebarList

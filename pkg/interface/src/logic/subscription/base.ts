@@ -1,5 +1,5 @@
 import BaseStore from '../store/base';
-import BaseApi from '../api/base';
+import BaseApi from '../api-old/base';
 import { Path } from '@urbit/api';
 
 export default class BaseSubscription<S extends object> {

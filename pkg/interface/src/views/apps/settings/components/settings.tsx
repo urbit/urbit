@@ -2,7 +2,7 @@ import React from "react";
 
 import { Row, Icon, Box, Col, Text } from "@tlon/indigo-react";
 
-import GlobalApi from "~/logic/api/global";
+import GlobalApi from "~/logic/api-old/global";
 import { StoreState } from "~/logic/store/type";
 import DisplayForm from "./lib/DisplayForm";
 import S3Form from "./lib/S3Form";

@@ -4,12 +4,13 @@ import * as Yup from 'yup';
 import { Formik, FormikHelpers, Form } from 'formik';
 import { useHistory } from 'react-router-dom';
 
-import { Groups, Associations, Association } from '@urbit/api';
+import { Groups, Associations, Association, groupifyGraph, graph } from '@urbit/api';
 
-import GlobalApi from '~/logic/api/global';
+import GlobalApi from '~/logic/api-old/global';
 import GroupSearch from '~/views/components/GroupSearch';
 import { AsyncButton } from '~/views/components/AsyncButton';
 import useGroupState from '~/logic/state/group';
+import useApi from '~/logic/api';
 
 const formSchema = Yup.object({
   group: Yup.string().nullable()
@@ -27,6 +28,7 @@ interface GroupifyFormProps {
 export function GroupifyForm(props: GroupifyFormProps) {
   const history = useHistory();
   const { association } = props;
+  const api = useApi();
   const onGroupify = async (
     values: FormSchema,
     actions: FormikHelpers<FormSchema>
@@ -34,11 +36,11 @@ export function GroupifyForm(props: GroupifyFormProps) {
     try {
       const rid = association.resource;
       const [, , ship, name] = rid;
-      await props.api.graph.groupifyGraph(
+      await api.thread(graph.groupifyGraph(
         ship,
         name,
         values.group?.toString() || undefined
-      );
+      ));
       const mod = association.metadata.module || association['app-name'];
       const newGroup = values.group || association.group;
       history.push(`/~landscape${newGroup}/resource/${mod}${rid}`);

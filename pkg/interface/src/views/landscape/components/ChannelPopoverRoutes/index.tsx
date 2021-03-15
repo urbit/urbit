@@ -6,19 +6,25 @@ import {
   Groups,
   Group,
   Rolodex,
-  NotificationGraphConfig
+  NotificationGraphConfig,
+  remove,
+  leaveGraph,
+  deleteGraph,
+  metadata,
+  graph
 } from '@urbit/api';
 
 import { ModalOverlay } from '~/views/components/ModalOverlay';
 import { GraphPermissions } from './ChannelPermissions';
 import { ChannelPopoverRoutesSidebar } from './Sidebar';
 import { ChannelDetails } from './Details';
-import GlobalApi from '~/logic/api/global';
+import GlobalApi from '~/logic/api-old/global';
 import { useHashLink } from '~/logic/lib/useHashLink';
 import { useHistory, Link } from 'react-router-dom';
 import { ChannelNotifications } from './Notifications';
 import { StatelessAsyncButton } from '~/views/components/StatelessAsyncButton';
 import { isChannelAdmin, isHost } from '~/logic/lib/group';
+import useApi from '~/logic/api';
 
 interface ChannelPopoverRoutesProps {
   baseUrl: string;
@@ -29,27 +35,28 @@ interface ChannelPopoverRoutesProps {
 }
 
 export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {
-  const { association, group, api } = props;
+  const { association, group } = props;
   useHashLink();
   const overlayRef = useRef<HTMLElement>();
   const history = useHistory();
+  const api = useApi();
 
   const onDismiss = useCallback(() => {
     history.push(props.baseUrl);
   }, [history, props.baseUrl]);
 
   const handleUnsubscribe = async () => {
-    const [,,ship,name] = association.resource.split('/');
-    await api.graph.leaveGraph(ship, name);
+    const [, , ship, name] = association.resource.split('/');
+    await api.thread(graph.leaveGraph(ship, name));
     history.push(props.rootUrl);
   };
   const handleRemove = async () => {
-    await api.metadata.remove('graph', association.resource, association.group);
+    await api.poke(metadata.remove('graph', association.resource, association.group));
     history.push(props.rootUrl);
   };
   const handleArchive = async () => {
-    const [,,,name] = association.resource.split('/');
-    api.graph.deleteGraph(name);
+    const [, , , name] = association.resource.split('/');
+    api.thread(graph.deleteGraph(window.ship, name));
     return history.push(props.rootUrl);
   };
 

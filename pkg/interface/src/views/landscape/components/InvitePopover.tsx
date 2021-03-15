@@ -17,10 +17,11 @@ import { AsyncButton } from '~/views/components/AsyncButton';
 import { useOutsideClick } from '~/logic/lib/useOutsideClick';
 import { FormError } from '~/views/components/FormError';
 import { resourceFromPath } from '~/logic/lib/group';
-import GlobalApi from '~/logic/api/global';
-import { Groups, Rolodex } from '@urbit/api';
+import GlobalApi from '~/logic/api-old/global';
+import { groups, Groups, Rolodex } from '@urbit/api';
 import { deSig } from '~/logic/lib/util';
 import { Workspace } from '~/types/workspace';
+import useApi from '~/logic/api';
 
 interface InvitePopoverProps {
   baseUrl: string;
@@ -41,7 +42,8 @@ const formSchema = Yup.object({
 });
 
 export function InvitePopover(props: InvitePopoverProps) {
-  const { baseUrl, api, association } = props;
+  const { baseUrl, association } = props;
+  const api = useApi();
 
   const relativePath = (p: string) => baseUrl + p;
   const { title } = association?.metadata || '';
@@ -57,11 +59,11 @@ export function InvitePopover(props: InvitePopoverProps) {
     //  TODO: how to invite via email?
     try {
       const { ship, name }  = resourceFromPath(association.group);
-      await api.groups.invite(
+      await api.thread(groups.invite(
         ship, name,
         _.compact(ships).map(s => `~${deSig(s)}`),
         description
-      );
+      ));
 
       actions.setStatus({ success: null });
       onOutsideClick();

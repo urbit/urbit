@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { RouteComponentProps, Route, Switch } from 'react-router-dom';
-import GlobalApi from '~/logic/api/global';
+import GlobalApi from '~/logic/api-old/global';
 import {
   Association,
   Associations,
@@ -21,7 +21,6 @@ import useGraphState from '~/logic/state/graph';
 import useGroupState from '~/logic/state/group';
 
 interface NotebookRoutesProps {
-  api: GlobalApi;
   ship: string;
   book: string;
   baseUrl: string;
@@ -32,10 +31,11 @@ interface NotebookRoutesProps {
 export function NotebookRoutes(
   props: NotebookRoutesProps & RouteComponentProps
 ) {
-  const { ship, book, api, baseUrl, rootUrl } = props;
+  const { ship, book, baseUrl, rootUrl } = props;
+  const getGraph = useGraphState(state => state.getGraph);
 
   useEffect(() => {
-    ship && book && api.graph.getGraph(ship, book);
+    ship && book && getGraph(ship, book);
   }, [ship, book]);
 
   const graphs = useGraphState(state => state.graphs);
@@ -70,7 +70,7 @@ export function NotebookRoutes(
         render={routeProps => (
           <NewPost
             {...routeProps}
-            api={api}
+            
             book={book}
             ship={ship}
             association={props.association}
@@ -97,7 +97,7 @@ export function NotebookRoutes(
             <NoteRoutes
               rootUrl={baseUrl}
               baseUrl={noteUrl}
-              api={api}
+              
               book={book}
               ship={ship}
               note={note}

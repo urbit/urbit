@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useLayoutEffect, ReactElement } from 'react';
 
 import { Box, Text, Row, Col } from '@tlon/indigo-react';
-import { Associations, Groups } from '@urbit/api';
+import { Associations, Groups, MetadataUpdatePreview } from '@urbit/api';
 
-import GlobalApi from '~/logic/api/global';
+import GlobalApi from '~/logic/api-old/global';
 import { MetadataIcon } from '../landscape/components/MetadataIcon';
 import { JoinGroup } from '../landscape/components/JoinGroup';
 import { useModal } from '~/logic/lib/useModal';
@@ -22,6 +22,7 @@ export function GroupLink(
   const { resource, api, ...rest } = props;
   const name = resource.slice(6);
   const [preview, setPreview] = useState<MetadataUpdatePreview | null>(null);
+  const getPreview = useMetadataState(state => state.preview);
   const associations = useMetadataState(state => state.associations);
 
   const joined = resource in associations.groups;
@@ -40,7 +41,7 @@ export function GroupLink(
         </Box>
       ) : (
         <JoinGroup
-          api={api}
+          
           autojoin={name}
         />
       )
@@ -48,7 +49,7 @@ export function GroupLink(
 
   useEffect(() => {
     (async () => {
-      const prev = await api.metadata.preview(resource);
+      const prev = await getPreview(resource);
       save();
       setPreview(prev);
     })();

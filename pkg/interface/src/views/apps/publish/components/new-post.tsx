@@ -1,17 +1,17 @@
 import React from 'react';
 import { FormikHelpers } from 'formik';
-import GlobalApi from '~/logic/api/global';
+import GlobalApi from '~/logic/api-old/global';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
 import { RouteComponentProps } from 'react-router-dom';
 import { PostForm, PostFormSchema } from './NoteForm';
-import { createPost } from '~/logic/api/graph';
+import { createPost } from '~/logic/api-old/graph';
 import { Graph } from '@urbit/api/graph';
-import { Association } from '@urbit/api';
+import { addNodes, Association, graph } from '@urbit/api';
 import { StorageState } from '~/types';
 import { newPost } from '~/logic/lib/publish';
+import useApi from '~/logic/api';
 
 interface NewPostProps {
-  api: GlobalApi;
   book: string;
   ship: string;
   graph: Graph;
@@ -20,7 +20,8 @@ interface NewPostProps {
 }
 
 export default function NewPost(props: NewPostProps & RouteComponentProps) {
-  const { api, book, ship, history } = props;
+  const { book, ship, history } = props;
+  const api = useApi();
 
   const waiter = useWaitForProps(props, 20000);
 
@@ -31,7 +32,7 @@ export default function NewPost(props: NewPostProps & RouteComponentProps) {
     const { title, body } = values;
     try {
       const [noteId, nodes] = newPost(title, body);
-      await api.graph.addNodes(ship, book, nodes);
+      await api.poke(graph.addNodes(ship, book, nodes));
       history.push(`${props.baseUrl}`);
     } catch (e) {
       console.error(e);

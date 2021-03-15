@@ -1,16 +1,18 @@
 import React, { PureComponent } from 'react';
 import { Switch, Route, useHistory } from 'react-router-dom';
 import { Center, Text } from "@tlon/indigo-react";
+import { graph } from '@urbit/api';
 import { deSig } from '~/logic/lib/util';
 import useGraphState from '~/logic/state/graph';
 import useMetadataState from '~/logic/state/metadata';
+import useApi from '~/logic/api';
 
 const GraphApp = (props) => {
   const associations= useMetadataState(state => state.associations);
   const graphKeys = useGraphState(state => state.graphKeys);
   const history = useHistory();
 
-  const { api } = props;
+  const api = useApi();
 
   return (
     <Switch>
@@ -25,10 +27,10 @@ const GraphApp = (props) => {
 
           const autoJoin = () => {
             try {
-              api.graph.joinGraph(
+              api.thread(graph.joinGraph(
                 `~${deSig(props.match.params.ship)}`,
                 props.match.params.name
-              );
+              ));
               
               
             } catch(err) {

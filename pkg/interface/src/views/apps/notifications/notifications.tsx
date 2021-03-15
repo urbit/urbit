@@ -14,6 +14,8 @@ import GroupSearch from '~/views/components/GroupSearch';
 import { useTutorialModal } from '~/views/components/useTutorialModal';
 import useHarkState from '~/logic/state/hark';
 import useMetadataState from '~/logic/state/metadata';
+import { hark, readAll } from '@urbit/api/dist';
+import useApi from '~/logic/api';
 
 const baseUrl = '/~notifications';
 
@@ -39,13 +41,15 @@ interface NotificationFilter {
 export default function NotificationsScreen(props: any): ReactElement {
   const relativePath = (p: string) => baseUrl + p;
 
+  const api = useApi();
+
   const [filter, setFilter] = useState<NotificationFilter>({ groups: [] });
   const associations = useMetadataState(state => state.associations);
   const onSubmit = async ({ groups } : NotificationFilter) => {
     setFilter({ groups });
   };
   const onReadAll = useCallback(() => {
-    props.api.hark.readAll();
+    api.poke(hark.readAll());
   }, []);
   const groupFilterDesc =
     filter.groups.length === 0

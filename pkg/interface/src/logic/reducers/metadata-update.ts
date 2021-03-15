@@ -6,19 +6,19 @@ import { MetadataUpdate } from '@urbit/api/metadata';
 import { Cage } from '~/types/cage';
 import useMetadataState, { MetadataState } from '../state/metadata';
 import { reduceState } from '../state/base';
+import { SubscriptionRequestInterface, UrbitInterface } from '@urbit/http-api';
+import { handleSubscriptionError, handleSubscriptionQuit } from '../lib/subscriptionHandlers';
 
-export default class MetadataReducer {
-  reduce(json: Cage) {
-    const data = json['metadata-update'];
-    if (data) {
-      reduceState<MetadataState, MetadataUpdate>(useMetadataState, data, [
-        associations,
-        add,
-        update,
-        remove,
-        groupInitial,
-      ]);
-    }
+const MetadataReducer = (json: Cage): void => {
+  const data = json['metadata-update'];
+  if (data) {
+    reduceState<MetadataState, MetadataUpdate>(useMetadataState, data, [
+      associations,
+      add,
+      update,
+      remove,
+      groupInitial,
+    ]);
   }
 }
 
@@ -106,3 +106,16 @@ const remove = (json: MetadataUpdate, state: MetadataState): MetadataState => {
   }
   return state;
 }
+
+export const metadataSubscription = (channel: UrbitInterface): SubscriptionRequestInterface => {
+  const event = MetadataReducer;
+  const err = handleSubscriptionError(channel, metadataSubscription);
+  const quit = handleSubscriptionQuit(channel, metadataSubscription);
+  return {
+    app: 'metadata-store',
+    path: '/all',
+    event, err, quit
+  };
+}
+
+export default MetadataReducer;

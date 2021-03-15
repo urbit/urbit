@@ -14,24 +14,25 @@ import {
   Row,
 } from "@tlon/indigo-react";
 
-import GlobalApi from '~/logic/api/global';
+import GlobalApi from '~/logic/api-old/global';
+import useApi from "~/logic/api";
+import { s3 } from "@urbit/api/dist";
 
 export function BucketList({
   buckets,
   selected,
-  api
 }: {
   buckets: Set<string>;
   selected: string;
-  api: GlobalApi;
 }): ReactElement {
   const _buckets = Array.from(buckets);
+  const api = useApi();
 
   const [adding, setAdding] = useState(false);
 
   const onSubmit = useCallback(
     (values: { newBucket: string }, actions: FormikHelpers<any>) => {
-      api.s3.addBucket(values.newBucket);
+      api.poke(s3.addBucket(values.newBucket));
       actions.resetForm({ values: { newBucket: "" } });
     },
     [api]
@@ -40,7 +41,7 @@ export function BucketList({
   const onSelect = useCallback(
     (bucket: string) => {
       return function () {
-        api.s3.setCurrentBucket(bucket);
+        api.poke(s3.setCurrentBucket(bucket));
       };
     },
     [api]
@@ -49,7 +50,7 @@ export function BucketList({
   const onDelete = useCallback(
     (bucket: string) => {
       return function () {
-        api.s3.removeBucket(bucket);
+        api.poke(s3.removeBucket(bucket));
       };
     },
     [api]

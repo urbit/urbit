@@ -16,6 +16,8 @@ import { resourceAsPath } from '../lib/util';
 import useGroupState, { GroupState } from '../state/group';
 import { compose } from 'lodash/fp';
 import { reduceState } from '../state/base';
+import { SubscriptionRequestInterface, UrbitInterface } from '@urbit/http-api';
+import { handleSubscriptionError, handleSubscriptionQuit } from '../lib/subscriptionHandlers';
 
 function decodeGroup(group: Enc<Group>): Group {
   const members = new Set(group.members);
@@ -57,26 +59,24 @@ function decodeTags(tags: Enc<Tags>): Tags {
   );
 }
 
-export default class GroupReducer {
-  reduce(json: Cage) {
-    const data = json.groupUpdate;
-    if (data) {
-      reduceState<GroupState, GroupUpdate>(useGroupState, data, [
-        initial,
-        addMembers,
-        addTag,
-        removeMembers,
-        initialGroup,
-        removeTag,
-        addGroup,
-        removeGroup,
-        changePolicy,
-        expose,
-      ]);
-    }
+const GroupReducer = (json: Cage) => {
+  const data = json.groupUpdate;
+  if (data) {
+    reduceState<GroupState, GroupUpdate>(useGroupState, data, [
+      initial,
+      addMembers,
+      addTag,
+      removeMembers,
+      initialGroup,
+      removeTag,
+      addGroup,
+      removeGroup,
+      changePolicy,
+      expose,
+    ]);
   }
-
 }
+
 const initial = (json: GroupUpdate, state: GroupState): GroupState => {
   const data = json['initial'];
   if (data) {
@@ -249,3 +249,16 @@ const openChangePolicy = (diff: OpenPolicyDiff, policy: OpenPolicy) => {
     console.log('bad policy change');
   }
 }
+
+export const groupSubscription = (channel: UrbitInterface): SubscriptionRequestInterface => {
+  const event = GroupReducer;
+  const err = handleSubscriptionError(channel, groupSubscription);
+  const quit = handleSubscriptionQuit(channel, groupSubscription);
+  return {
+    app: 'group-store',
+    path: '/groups',
+    event, err, quit
+  };
+}
+
+export default GroupReducer;

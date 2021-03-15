@@ -5,7 +5,7 @@ import { Group } from '@urbit/api/groups';
 import { Association, Associations } from '@urbit/api/metadata';
 import { GroupNotificationsConfig } from '@urbit/api';
 
-import GlobalApi from '~/logic/api/global';
+import GlobalApi from '~/logic/api-old/global';
 import { GroupAdminSettings } from './Admin';
 import { GroupPersonalSettings } from './Personal';
 import { GroupChannelSettings } from './Channels';

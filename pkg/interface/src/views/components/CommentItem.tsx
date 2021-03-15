@@ -5,13 +5,14 @@ import styled from 'styled-components';
 import { Box, Row, Text } from '@tlon/indigo-react';
 import { Contacts } from '@urbit/api/contacts';
 import { GraphNode } from '@urbit/api/graph';
-import { Group } from '@urbit/api';
+import { graph, Group, removeNodes } from '@urbit/api';
 
-import GlobalApi from '~/logic/api/global';
+import GlobalApi from '~/logic/api-old/global';
 import Author from '~/views/components/Author';
 import { MentionText } from '~/views/components/MentionText';
 import { roleForShip } from '~/logic/lib/group';
 import { getLatestCommentRevision } from '~/logic/lib/publish';
+import useApi from '~/logic/api';
 
 const ClickBox = styled(Box)`
   cursor: pointer;
@@ -30,12 +31,13 @@ interface CommentItemProps {
 }
 
 export function CommentItem(props: CommentItemProps): ReactElement {
-  const { ship, name, api, comment, group } = props;
+  const { ship, name, comment, group } = props;
+  const api = useApi();
   const [, post] = getLatestCommentRevision(comment);
   const disabled = props.pending;
 
   const onDelete = async () => {
-    await api.graph.removeNodes(ship, name, [comment.post?.index]);
+    await api.poke(graph.removeNodes(ship, name, [comment.post?.index]));
   };
 
   const commentIndexArray = (comment.post?.index || '/').split('/');

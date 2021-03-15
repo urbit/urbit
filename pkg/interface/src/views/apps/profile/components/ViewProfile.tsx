@@ -31,7 +31,6 @@ export function ViewProfile(props: any): ReactElement {
             ship={ship}
             isPublic={isPublic}
             contact={contact}
-            api={props.api}
           />
           <ProfileStatus contact={contact} />
         </ProfileControls>
@@ -64,7 +63,7 @@ export function ViewProfile(props: any): ReactElement {
           <Col>
             {contact?.groups.sort(lengthOrder).map((g) => (
               <GroupLink
-                api={api}
+                
                 resource={g}
                 measure={() => {}}
               />

@@ -1,13 +1,15 @@
 import React, { useCallback } from 'react';
 import { Icon, Text, Row, Col } from '@tlon/indigo-react';
 import { Formik } from 'formik';
-import { Association, Associations, Group } from '@urbit/api';
-import GlobalApi from '~/logic/api/global';
+import { Association, Associations, Group, metadata, remove } from '@urbit/api';
+import GlobalApi from '~/logic/api-old/global';
 import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
 import { getModuleIcon } from '~/logic/lib/util';
 import { Dropdown } from '~/views/components/Dropdown';
 import { resourceFromPath, roleForShip } from '~/logic/lib/group';
 import useMetadataState from '~/logic/state/metadata';
+import useApi from '~/logic/api';
+import { update } from '@urbit/api/metadata';
 
 interface GroupChannelSettingsProps {
   group: Group;
@@ -16,22 +18,23 @@ interface GroupChannelSettingsProps {
 }
 
 export function GroupChannelSettings(props: GroupChannelSettingsProps) {
-  const { api, association, group } = props;
+  const { association, group } = props;
   const associations = useMetadataState(state => state.associations);
   const channels = Object.values(associations.graph).filter(
     ({ group }) => association.group === group
   );
+  const api = useApi();
 
   const onChange = useCallback(
     async (resource: string, preview: boolean) => {
-      return api.metadata.update(associations.graph[resource], { preview });
+      return api.poke(metadata.update(associations.graph[resource], { preview }));
     },
     [associations, api]
   );
 
   const onRemove = useCallback(
     async (resource: string) => {
-      return api.metadata.remove('graph', resource, association.group);
+      return api.poke(metadata.remove('graph', resource, association.group));
     },
     [api, association]
   );

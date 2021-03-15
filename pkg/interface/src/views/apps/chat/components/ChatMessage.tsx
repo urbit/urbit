@@ -18,17 +18,8 @@ import {
   cite,
   writeText,
   useShowNickname,
-  useHideAvatar,
   useHovering
 } from '~/logic/lib/util';
-import {
-  Group,
-  Association,
-  Contacts,
-  Post,
-  Groups,
-  Associations
-} from '~/types';
 import TextContent from './content/text';
 import CodeContent from './content/code';
 import RemoteContent from '~/views/components/RemoteContent';
@@ -36,9 +27,10 @@ import { Mention } from '~/views/components/MentionText';
 import styled from 'styled-components';
 import useLocalState from '~/logic/state/local';
 import useSettingsState, {selectCalmState} from "~/logic/state/settings";
-import Timestamp from '~/views/components/Timestamp';
 import useContactState from '~/logic/state/contact';
 import {useIdlingState} from '~/logic/lib/idling';
+import { Association, Group, hark, Post } from '@urbit/api/dist';
+import useApi from '~/logic/api';
 
 export const DATESTAMP_FORMAT = '[~]YYYY.M.D';
 
@@ -64,11 +56,12 @@ export const DayBreak = ({ when, shimTop = false }: DayBreakProps) => (
   </Row>
 );
 
-export const UnreadMarker = React.forwardRef(({ dayBreak, when, api, association }, ref) => {
+export const UnreadMarker = React.forwardRef(({ dayBreak, when, association }, ref) => {
   const [visible, setVisible] = useState(false);
+  const api = useApi();
   const idling = useIdlingState();
   const dismiss = useCallback(() => {
-    api.hark.markCountAsRead(association, '/', 'message');
+    api.poke(hark.markCountAsRead(association, '/', 'message'));
   }, [api, association]);
 
   useEffect(() => {
@@ -112,7 +105,6 @@ interface ChatMessageProps {
   isLastMessage?: boolean;
   unreadMarkerRef: React.RefObject<HTMLDivElement>;
   history: unknown;
-  api: GlobalApi;
   highlighted?: boolean;
   renderSigil?: boolean;
   innerRef: (el: HTMLDivElement | null) => void;
@@ -144,7 +136,6 @@ class ChatMessage extends Component<ChatMessageProps> {
       isLastMessage,
       unreadMarkerRef,
       history,
-      api,
       highlighted,
       fontSize,
     } = this.props;
@@ -180,7 +171,6 @@ class ChatMessage extends Component<ChatMessageProps> {
       containerClass,
       isPending,
       history,
-      api,
       scrollWindow,
       highlighted,
       fontSize,
@@ -214,7 +204,6 @@ class ChatMessage extends Component<ChatMessageProps> {
           {isLastRead ? (
             <UnreadMarker
               association={association}
-              api={api}
               dayBreak={dayBreak}
               when={msg['time-sent']}
               ref={unreadMarkerRef}
@@ -328,7 +317,7 @@ export const MessageAuthor = ({
             history={history}
             className='relative'
             scrollWindow={scrollWindow}
-            api={api}
+            
           />
         )}
         {img}
@@ -409,7 +398,7 @@ export const Message = ({
               return (
                 <TextContent
                   key={i}
-                  api={api}
+                  
                   fontSize={1}
                   lineHeight={'20px'}
                   content={content}

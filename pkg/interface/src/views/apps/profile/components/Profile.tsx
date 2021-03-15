@@ -10,6 +10,9 @@ import { SetStatusBarModal } from '~/views/components/SetStatusBarModal';
 import { uxToHex } from '~/logic/lib/util';
 import { useTutorialModal } from '~/views/components/useTutorialModal';
 import useContactState from '~/logic/state/contact';
+import { retrieve } from '@urbit/api/contacts';
+import useApi from '~/logic/api';
+import { contacts } from '@urbit/api/dist';
 
 export function ProfileHeader(props: any): ReactElement {
   return (
@@ -137,7 +140,7 @@ export function ProfileActions(props: any): ReactElement {
             isControl
             py='2'
             ml='3'
-            api={api}
+            
             ship={`~${window.ship}`}
             contact={contact}
           />
@@ -162,6 +165,7 @@ export function Profile(props: any): ReactElement | null {
   const { hideAvatars } = useSettingsState(selectCalmState);
   const history = useHistory();
   const nackedContacts = useContactState(state => state.nackedContacts);
+  const api = useApi();
 
   const { contact, hasLoaded, isEdit, ship } = props;
   const nacked = nackedContacts.has(ship);
@@ -169,7 +173,7 @@ export function Profile(props: any): ReactElement | null {
 
   useEffect(() => {
     if (hasLoaded && !contact && !nacked) {
-      props.api.contacts.retrieve(ship);
+      api.poke(contacts.retrieve(ship));
     }
   }, [hasLoaded, contact]);
 
@@ -186,13 +190,11 @@ export function Profile(props: any): ReactElement | null {
           <EditProfile
             ship={ship}
             contact={contact}
-            api={props.api}
           />
         ) : (
           <ViewProfile
             nacked={nacked}
             ship={ship}
-            api={props.api}
             contact={contact}
           />
         )}

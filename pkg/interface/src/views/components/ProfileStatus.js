@@ -6,9 +6,13 @@ import {
   StatelessTextInput as Input,
   Text
 } from '@tlon/indigo-react';
+import { contacts } from '@urbit/api';
+
+import useApi from '~/logic/api';
 
 export const ProfileStatus = (props) => {
-  const { contact, ship, api, callback } = props;
+  const { contact, ship, callback } = props;
+  const api = useApi();
   const [_status, setStatus] = useState('');
   const [notice, setNotice] = useState(' ');
 
@@ -24,7 +28,7 @@ export const ProfileStatus = (props) => {
   }, [contact]);
 
   const editStatus = () => {
-    api.contacts.edit(ship, { status: _status });
+    api.poke(contacts.editContact(ship, { status: _status }));
 
     setNotice('Success!');
     setTimeout(() => {

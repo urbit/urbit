@@ -7,13 +7,15 @@ import {
   Label,
   Text
 } from '@tlon/indigo-react';
-import { Association } from '@urbit/api';
+import { Association, metadata as metadataApi } from '@urbit/api';
 
 import { FormError } from '~/views/components/FormError';
 import { ColorInput } from '~/views/components/ColorInput';
 import { uxToHex } from '~/logic/lib/util';
-import GlobalApi from '~/logic/api/global';
+import GlobalApi from '~/logic/api-old/global';
 import { FormSubmit } from '~/views/components/FormSubmit';
+import useApi from '~/logic/api';
+import { update } from '@urbit/api/metadata';
 
 interface FormSchema {
   title: string;
@@ -27,8 +29,9 @@ interface ChannelDetailsProps {
 }
 
 export function ChannelDetails(props: ChannelDetailsProps) {
-  const { association, api } = props;
+  const { association } = props;
   const { metadata } = association;
+  const api = useApi();
   const initialValues: FormSchema = {
     title: metadata?.title || '',
     description: metadata?.description || '',
@@ -38,7 +41,7 @@ export function ChannelDetails(props: ChannelDetailsProps) {
   const onSubmit = async (values: FormSchema, actions) => {
     const { title, description } = values;
     const color = uxToHex(values.color);
-    await api.metadata.update(association, { title, color, description });
+    await api.poke(metadataApi.update(association, { title, color, description }));
     actions.setStatus({ success: null });
   };
 

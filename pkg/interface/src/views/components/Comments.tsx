@@ -4,16 +4,18 @@ import { Col } from '@tlon/indigo-react';
 import { CommentItem } from './CommentItem';
 import CommentInput from './CommentInput';
 import { Contacts } from '@urbit/api/contacts';
-import GlobalApi from '~/logic/api/global';
+import GlobalApi from '~/logic/api-old/global';
 import { FormikHelpers } from 'formik';
-import { Group, GraphNode, Association } from '@urbit/api';
-import { createPost, createBlankNodeWithChildPost } from '~/logic/api/graph';
+import { Group, GraphNode, Association, addPost, markCountAsRead, graph, hark } from '@urbit/api';
+import { createPost, createBlankNodeWithChildPost } from '~/logic/api-old/graph';
 import { getLatestCommentRevision } from '~/logic/lib/publish';
 import tokenizeMessage from '~/logic/lib/tokenizeMessage';
 import { getUnreadCount } from '~/logic/lib/hark';
 import { PropFunc } from '~/types/util';
 import { isWriter } from '~/logic/lib/group';
 import useHarkState from '~/logic/state/hark';
+import useApi from '~/logic/api';
+import { addNode } from '@urbit/api/graph';
 
 interface CommentsProps {
   comments: GraphNode;
@@ -33,12 +35,12 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
     ship,
     name,
     editCommentId,
-    api,
     history,
     baseUrl,
     group,
     ...rest
   } = props;
+  const api = useApi();
 
   const onSubmit = async (
     { comment },
@@ -51,7 +53,7 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
         '1',
         content
       );
-      await api.graph.addNode(ship, name, node);
+      await api.poke(graph.addNode(ship, name, node));
       actions.resetForm();
       actions.setStatus({ success: null });
     } catch (e) {
@@ -74,7 +76,7 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
         commentNode.post.index,
         parseInt(idx + 1, 10)
       );
-      await api.graph.addPost(ship, name, post);
+      await api.poke(graph.addPost(ship, name, post));
       history.push(baseUrl);
     } catch (e) {
       console.error(e);
@@ -105,7 +107,7 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
 
   useEffect(() => {
     return () => {
-      api.hark.markCountAsRead(association, parentIndex, 'comment');
+      api.poke(hark.markCountAsRead(association, parentIndex, 'comment'));
     };
   }, [comments.post.index]);
 
@@ -131,7 +133,7 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
             <CommentItem
               comment={comment}
               key={idx.toString()}
-              api={api}
+              
               name={name}
               ship={ship}
               unread={i >= readCount}

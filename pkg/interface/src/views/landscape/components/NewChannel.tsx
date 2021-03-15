@@ -8,7 +8,7 @@ import {
 import _ from 'lodash';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
-import GlobalApi from '~/logic/api/global';
+import GlobalApi from '~/logic/api-old/global';
 import { AsyncButton } from '~/views/components/AsyncButton';
 import { FormError } from '~/views/components/FormError';
 import { RouteComponentProps } from 'react-router-dom';
@@ -18,11 +18,13 @@ import { Associations } from '@urbit/api/metadata';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
 import { Groups } from '@urbit/api/groups';
 import { ShipSearch, shipSearchSchemaInGroup, shipSearchSchema } from '~/views/components/ShipSearch';
-import { Rolodex } from '@urbit/api';
+import { addTag, createUnmanagedGraph, graph, groups as groupsApi } from '@urbit/api';
 import { IconRadio } from '~/views/components/IconRadio';
 import { ChannelWriteFieldSchema, ChannelWritePerms } from './ChannelWritePerms';
 import { Workspace } from '~/types/workspace';
 import useGroupState from '~/logic/state/group';
+import { createManagedGraph } from '@urbit/api/graph';
+import useApi from '~/logic/api';
 
 type FormSchema = {
   name: string;
@@ -47,10 +49,11 @@ interface NewChannelProps {
 }
 
 export function NewChannel(props: NewChannelProps & RouteComponentProps): ReactElement {
-  const { history, api, group, workspace } = props;
+  const { history, group, workspace } = props;
 
   const groups = useGroupState(state => state.groups);
   const waiter = useWaitForProps({ groups }, 5000);
+  const api = useApi();
   
   const onSubmit = async (values: FormSchema, actions) => {
     const name = (values.name) ? values.name : values.moduleType;
@@ -64,13 +67,14 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps): ReactE
         return history.push(`/~landscape/dm/${deSig(ships[0])}`);
       }
       if (group) {
-        await api.graph.createManagedGraph(
+        await api.thread(graph.createManagedGraph(
+          window.ship,
           resId,
           name,
           description,
           group,
           moduleType
-        );
+        ));
         const tag = {
           app: 'graph',
           resource: `/ship/~${window.ship}/${resId}`,
@@ -80,20 +84,21 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps): ReactE
         const resource = resourceFromPath(group);
         writers = _.compact(writers).map(s => `~${s}`);
         const us = `~${window.ship}`;
-        if(values.writePerms === 'self') {
-          await api.groups.addTag(resource, tag, [us]);
+        if (values.writePerms === 'self') {
+          await api.poke(groupsApi.addTag(resource, tag, [us]));
         } else if(values.writePerms === 'subset') {
           writers.push(us);
-          await api.groups.addTag(resource, tag, writers);
+          await api.poke(groupsApi.addTag(resource, tag, writers));
         }
       } else {
-        await api.graph.createUnmanagedGraph(
+        await api.thread(graph.createUnmanagedGraph(
+          window.ship,
           resId,
           name,
           description,
           { invite: { pending: ships.map(s => `~${deSig(s)}`) } },
           moduleType
-        );
+        ));
       }
 
       if (!group) {

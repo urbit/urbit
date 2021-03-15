@@ -6,22 +6,22 @@ import { InviteUpdate } from '@urbit/api/invite';
 import { Cage } from '~/types/cage';
 import useInviteState, { InviteState } from '../state/invite';
 import { reduceState } from '../state/base';
+import { SubscriptionRequestInterface, UrbitInterface } from '@urbit/http-api';
+import { handleSubscriptionError, handleSubscriptionQuit } from '../lib/subscriptionHandlers';
 
-export default class InviteReducer {
-  reduce(json: Cage) {
-    const data = json['invite-update'];
-    if (data) {
-      reduceState<InviteState, InviteUpdate>(useInviteState, data, [
-        initial,
-        create,
-        deleteInvite,
-        invite,
-        accepted,
-        decline,
-      ]);
-    }
+const InviteReducer = (json: Cage) => {
+  const data = json['invite-update'];
+  if (data) {
+    reduceState<InviteState, InviteUpdate>(useInviteState, data, [
+      initial,
+      create,
+      deleteInvite,
+      invite,
+      accepted,
+      decline,
+    ]);
   }
-}
+};
 
 const initial = (json: InviteUpdate, state: InviteState): InviteState => {
   const data = _.get(json, 'initial', false);
@@ -70,3 +70,16 @@ const decline = (json: InviteUpdate, state: InviteState): InviteState => {
   }
   return state;
 }
+
+export const inviteSubscription = (channel: UrbitInterface): SubscriptionRequestInterface => {
+  const event = InviteReducer;
+  const err = handleSubscriptionError(channel, inviteSubscription);
+  const quit = handleSubscriptionQuit(channel, inviteSubscription);
+  return {
+    app: 'invite-store',
+    path: '/all',
+    event, err, quit
+  };
+}
+
+export default InviteReducer;

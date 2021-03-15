@@ -13,11 +13,11 @@ import {
   Text,
   ManagedTextInputField as Input
 } from '@tlon/indigo-react';
-import { Groups, MetadataUpdatePreview, Associations } from '@urbit/api';
+import { Groups, MetadataUpdatePreview, Associations, settings, groups as groupsApi } from '@urbit/api';
 
 import { AsyncButton } from '~/views/components/AsyncButton';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
-import GlobalApi from '~/logic/api/global';
+import GlobalApi from '~/logic/api-old/global';
 import { StatelessAsyncButton } from '~/views/components/StatelessAsyncButton';
 import { getModuleIcon } from '~/logic/lib/util';
 import { FormError } from '~/views/components/FormError';
@@ -25,6 +25,7 @@ import { GroupSummary } from './GroupSummary';
 import useGroupState from '~/logic/state/group';
 import useMetadataState from '~/logic/state/metadata';
 import {TUTORIAL_GROUP_RESOURCE} from '~/logic/lib/tutorialModal';
+import useApi from '~/logic/api';
 
 const formSchema = Yup.object({
   group: Yup.string()
@@ -60,25 +61,27 @@ function Autojoin(props: { autojoin: string | null }) {
 }
 
 export function JoinGroup(props: JoinGroupProps): ReactElement {
-  const { api, autojoin } = props;
+  const { autojoin } = props;
   const associations = useMetadataState(state => state.associations);
   const groups = useGroupState(state => state.groups);
   const history = useHistory();
+  const api = useApi();
   const initialValues: FormSchema = {
     group: autojoin || ''
   };
   const [preview, setPreview] = useState<
     MetadataUpdatePreview | string | null
-  >(null);
+    >(null);
+  const getPreview = useMetadataState(state => state.preview);
 
   const waiter = useWaitForProps({ associations, groups }, _.isString(preview) ? 1 : 5000);
 
   const onConfirm = useCallback(async (group: string) => {
     const [,,ship,name] = group.split('/');
     if(group === TUTORIAL_GROUP_RESOURCE) {
-      await api.settings.putEntry('tutorial', 'joined', Date.now());
+      await api.poke(settings.putEntry('tutorial', 'joined', Date.now()));
     }
-    await api.groups.join(ship, name);
+    await api.poke(groupsApi.join(ship, name));
     try {
       await waiter((p) => {
         return group in p.groups &&
@@ -105,7 +108,7 @@ export function JoinGroup(props: JoinGroupProps): ReactElement {
       const path = `/ship/${ship}/${name}`;
       //  skip if it's unmanaged
       try {
-        const prev = await api.metadata.preview(path);
+        const prev = await getPreview(path);
         actions.setStatus({ success: null });
         setPreview(prev);
       } catch (e) {

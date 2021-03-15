@@ -16,7 +16,7 @@ import { Skeleton } from './Skeleton';
 import { InvitePopover } from './InvitePopover';
 import { NewChannel } from './NewChannel';
 
-import GlobalApi from '~/logic/api/global';
+import GlobalApi from '~/logic/api-old/global';
 import { StoreState } from '~/logic/store/type';
 import { UnjoinedResource } from '~/views/components/UnjoinedResource';
 import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
@@ -77,13 +77,13 @@ export function GroupsPane(props: GroupsPaneProps) {
           rootIdentity={rootIdentity}
           association={groupAssociation!}
           group={group!}
-          api={api}
+          
 
           {...routeProps}
           baseUrl={baseUrl}
                         />)}
         <InvitePopover
-          api={api}
+          
           association={groupAssociation!}
           baseUrl={baseUrl}
           workspace={workspace}
@@ -159,7 +159,7 @@ export function GroupsPane(props: GroupsPaneProps) {
               >
                 <UnjoinedResource
                   baseUrl={baseUrl}
-                  api={api}
+                  
                   association={association}
                 />
                 {popovers(routeProps, resourceUrl)}
@@ -176,7 +176,7 @@ export function GroupsPane(props: GroupsPaneProps) {
             <Skeleton mobileHide recentGroups={recentGroups} {...props} baseUrl={baseUrl}>
               <NewChannel
                 {...routeProps}
-                api={api}
+                
                 baseUrl={baseUrl}
                 group={groupPath}
                 workspace={workspace}

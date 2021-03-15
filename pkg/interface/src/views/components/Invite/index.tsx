@@ -6,13 +6,18 @@ import {
   Contacts,
   JoinRequests,
   Groups,
-  Associations
+  Associations,
+  decline,
+  accept,
+  join,
+  invite as inviteApi,
+  groups as groupsApi
 } from '@urbit/api';
 import { Invite } from '@urbit/api/invite';
 import { Text, Icon, Row } from '@tlon/indigo-react';
 
 import { cite } from '~/logic/lib/util';
-import GlobalApi from '~/logic/api/global';
+import GlobalApi from '~/logic/api-old/global';
 import { resourceFromPath } from '~/logic/lib/group';
 import { GroupInvite } from './Group';
 import { InviteSkeleton } from './InviteSkeleton';
@@ -20,6 +25,7 @@ import { JoinSkeleton } from './JoinSkeleton';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
 import useGroupState from '~/logic/state/group';
 import useMetadataState from '~/logic/state/metadata';
+import useApi from '~/logic/api';
 
 interface InviteItemProps {
   invite?: Invite;
@@ -31,28 +37,30 @@ interface InviteItemProps {
 
 export function InviteItem(props: InviteItemProps) {
   const [preview, setPreview] = useState<MetadataUpdatePreview | null>(null);
-  const { invite, resource, uid, app, api } = props;
+  const { invite, resource, uid, app } = props;
   const { ship, name } = resourceFromPath(resource);
   const pendingJoin = useGroupState(state => state.pendingJoin);
   const status = pendingJoin[resource];
   const groups = useGroupState(state => state.groups);
   const associations = useMetadataState(state => state.associations);
-  const waiter = useWaitForProps({ associations, groups, pendingJoin}, 50000);
+  const getPreview = useMetadataState(state => state.preview);
+  const waiter = useWaitForProps({ associations, groups, pendingJoin }, 50000);
+  const api = useApi();
 
   const history = useHistory();
   const inviteAccept = useCallback(async () => {
     if (!(app && invite && uid)) {
       return;
     }
-    if(resource in groups) {
-      await api.invite.decline(app, uid);
+    if (resource in groups) {
+      await api.poke(inviteApi.decline(app, uid));
       return;
     }
 
-    api.groups.join(ship, name);
+    api.poke(groupsApi.join(ship, name));
     await waiter(p => resource in p.pendingJoin);
 
-    api.invite.accept(app, uid);
+    api.poke(inviteApi.accept(app, uid));
     await waiter((p) => {
       return (
         resource in p.groups &&
@@ -77,7 +85,7 @@ export function InviteItem(props: InviteItemProps) {
     if(!(app && uid)) {
       return;
     }
-    await api.invite.decline(app, uid);
+    await api.poke(inviteApi.decline(app, uid));
   }, [app, uid]);
 
   const handlers = { onAccept: inviteAccept, onDecline: inviteDecline };
@@ -85,7 +93,7 @@ export function InviteItem(props: InviteItemProps) {
   useEffect(() => {
     if (!app || app === 'groups') {
       (async () => {
-        setPreview(await api.metadata.preview(resource));
+        setPreview(await getPreview(resource));
       })();
       return () => {
         setPreview(null);

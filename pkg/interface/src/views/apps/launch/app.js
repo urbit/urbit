@@ -4,6 +4,7 @@ import f from 'lodash/fp';
 import _ from 'lodash';
 
 import { Col, Button, Box, Row, Icon, Text } from '@tlon/indigo-react';
+import { settings, groups } from '@urbit/api';
 
 import './css/custom.css';
 import useContactState from '~/logic/state/contact';
@@ -31,7 +32,9 @@ import {
   TUTORIAL_LINKS
 } from '~/logic/lib/tutorialModal';
 import useLaunchState from '~/logic/state/launch';
+import useGraphState from '~/logic/state/graph';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
+import useApi from '~/logic/api';
 
 
 const ScrollbarLessBox = styled(Box)`
@@ -48,6 +51,7 @@ export default function LaunchApp(props) {
   const baseHash = useLaunchState(state => state.baseHash);
   const [hashText, setHashText] = useState(baseHash);
   const [exitingTut, setExitingTut] = useState(false);
+  const api = useApi();
   const hashBox = (
     <Box
       position={["relative", "absolute"]}
@@ -94,24 +98,26 @@ export default function LaunchApp(props) {
 
   const waiter = useWaitForProps(props);
 
+  const joinGraph = useGraphState(state => state.joinGraph);
+
   const { modal, showModal } = useModal({
     position: 'relative',
     maxWidth: '350px',
     modal: (dismiss) => {
       const onDismiss = (e) => {
         e.stopPropagation();
-        props.api.settings.putEntry('tutorial', 'seen', true);
+        api.poke(settings.putEntry('tutorial', 'seen', true));
         dismiss();
       };
       const onContinue = async (e) => {
         e.stopPropagation();
         if(!hasTutorialGroup(props)) {
-          await props.api.groups.join(TUTORIAL_HOST, TUTORIAL_GROUP);
-          await props.api.settings.putEntry('tutorial', 'joined', Date.now());
+          await api.poke(groups.join(TUTORIAL_HOST, TUTORIAL_GROUP));
+          await api.poke(settings.putEntry('tutorial', 'joined', Date.now()));
           await waiter(hasTutorialGroup);
           await Promise.all(
             [TUTORIAL_BOOK, TUTORIAL_CHAT, TUTORIAL_LINKS].map(graph =>
-              props.api.graph.joinGraph(TUTORIAL_HOST, graph)));
+              joinGraph(TUTORIAL_HOST, graph)));
 
           await waiter(p => {
             return `/ship/${TUTORIAL_HOST}/${TUTORIAL_CHAT}` in p.associations.graph &&
@@ -200,9 +206,7 @@ export default function LaunchApp(props) {
               </Row>
             </Box>
           </Tile>
-          <Tiles
-            api={props.api}
-          />
+          <Tiles />
           <ModalButton
             icon="Plus"
             bg="washedGray"

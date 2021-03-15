@@ -9,13 +9,15 @@ import {
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 
-import GlobalApi from "~/logic/api/global";
+import GlobalApi from "~/logic/api-old/global";
 import { uxToHex } from "~/logic/lib/util";
 import { S3State, BackgroundConfig, StorageState } from "~/types";
 import { BackgroundPicker, BgType } from "./BackgroundPicker";
 import useSettingsState, { SettingsState, selectSettingsState } from "~/logic/state/settings";
 import {AsyncButton} from "~/views/components/AsyncButton";
 import { BackButton } from "./BackButton";
+import { settings } from "@urbit/api/dist";
+import useApi from "~/logic/api";
 
 const formSchema = Yup.object().shape({
   bgType: Yup.string()
@@ -34,15 +36,9 @@ interface FormSchema {
   theme: string;
 }
 
-interface DisplayFormProps {
-  api: GlobalApi;
-}
-
 const settingsSel = selectSettingsState(["display"]);
 
-export default function DisplayForm(props: DisplayFormProps) {
-  const { api } = props;
-
+export default function DisplayForm() {
   const {
     display: {
       background,
@@ -50,6 +46,7 @@ export default function DisplayForm(props: DisplayFormProps) {
       theme
     }
   } = useSettingsState(settingsSel);
+  const api = useApi();
 
 
   let bgColor, bgUrl;
@@ -74,17 +71,17 @@ export default function DisplayForm(props: DisplayFormProps) {
       }
       onSubmit={async (values, actions) => {
         let promises = [] as Promise<any>[];
-        promises.push(api.settings.putEntry('display', 'backgroundType', values.bgType));
+        promises.push(api.poke(settings.putEntry('display', 'backgroundType', values.bgType)));
         promises.push(
-          api.settings.putEntry('display', 'background',
+          api.poke(settings.putEntry('display', 'background',
             values.bgType === "color"
             ? `#${uxToHex(values.bgColor || "0x0")}`
             : values.bgType === "url"
             ? values.bgUrl || ""
             : false
-          ));
+          )));
 
-        promises.push(api.settings.putEntry('display', 'theme', values.theme));
+        promises.push(api.poke(settings.putEntry('display', 'theme', values.theme)));
         await Promise.all(promises);
 
         actions.setStatus({ success: null });
@@ -106,7 +103,7 @@ export default function DisplayForm(props: DisplayFormProps) {
             <BackgroundPicker
               bgType={props.values.bgType}
               bgUrl={props.values.bgUrl}
-              api={api}
+              
             />
             <Label>Theme</Label>
             <Radio name="theme" id="light" label="Light"/>

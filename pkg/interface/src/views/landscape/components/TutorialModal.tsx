@@ -18,9 +18,11 @@ import {
 } from '~/logic/lib/tutorialModal';
 import { getRelativePosition } from '~/logic/lib/relativePosition';
 import { StatelessAsyncButton } from '~/views/components/StatelessAsyncButton';
-import GlobalApi from '~/logic/api/global';
+import GlobalApi from '~/logic/api-old/global';
 import { Triangle } from '~/views/components/Triangle';
 import { ModalOverlay } from '~/views/components/ModalOverlay';
+import useApi from '~/logic/api';
+import { groups, settings } from '@urbit/api/dist';
 
 const localSelector = selectLocalState([
   'tutorialProgress',
@@ -31,7 +33,7 @@ const localSelector = selectLocalState([
   'set'
 ]);
 
-export function TutorialModal(props: { api: GlobalApi }) {
+export function TutorialModal() {
   const {
     tutorialProgress,
     tutorialRef,
@@ -50,6 +52,7 @@ export function TutorialModal(props: { api: GlobalApi }) {
     offsetY
   } = progressDetails[tutorialProgress];
 
+  const api = useApi();
   const [coords, setCoords] = useState({});
   const [paused, setPaused] = useState(false);
 
@@ -100,8 +103,8 @@ export function TutorialModal(props: { api: GlobalApi }) {
   const dismiss = useCallback(async () => {
     setPaused(false);
     hideTutorial();
-    await props.api.settings.putEntry('tutorial', 'seen', true);
-  }, [hideTutorial, props.api]);
+    await api.poke(settings.putEntry('tutorial', 'seen', true));
+  }, [hideTutorial, api]);
 
   const bailExit = useCallback(() => {
     setPaused(false);
@@ -112,9 +115,9 @@ export function TutorialModal(props: { api: GlobalApi }) {
   }, []);
 
   const leaveGroup = useCallback(async () => {
-    await props.api.groups.leaveGroup(TUTORIAL_HOST, TUTORIAL_GROUP);
+    await api.thread(groups.leaveGroup(TUTORIAL_HOST, TUTORIAL_GROUP));
     await dismiss();
-  }, [props.api, dismiss]);
+  }, [api, dismiss]);
 
   const progressIdx = progress.findIndex(p => p === tutorialProgress);
 

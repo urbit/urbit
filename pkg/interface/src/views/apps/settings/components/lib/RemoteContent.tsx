@@ -7,7 +7,7 @@ import {
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 
-import GlobalApi from '~/logic/api/global';
+import GlobalApi from '~/logic/api-old/global';
 import useSettingsState, {selectSettingsState} from '~/logic/state/settings';
 
 const formSchema = Yup.object().shape({
@@ -24,13 +24,9 @@ interface FormSchema {
   oembedShown: boolean;
 }
 
-interface RemoteContentFormProps {
-  api: GlobalApi;
-}
 const selState = selectSettingsState(['remoteContentPolicy', 'set']);
 
-export default function RemoteContentForm(props: RemoteContentFormProps) {
-  const { api } = props;
+export default function RemoteContentForm() {
   const { remoteContentPolicy, set: setRemoteContentPolicy} = useSettingsState(selState);
   const imageShown = remoteContentPolicy.imageShown;
   const audioShown = remoteContentPolicy.audioShown;

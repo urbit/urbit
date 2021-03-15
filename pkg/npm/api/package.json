@@ -11,6 +11,7 @@
   "types": "dist/index.d",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "onchange './**/*.ts' -e './dist/**' -- npm run build",
     "build": "npm run clean && tsc -p tsconfig.json",
     "clean": "rm -rf dist/*"
   },
@@ -22,5 +23,8 @@
     "@urbit/eslint-config": "^1.0.0",
     "big-integer": "^1.6.48",
     "lodash": "^4.17.20"
+  },
+  "devDependencies": {
+    "onchange": "^7.1.0"
   }
 }

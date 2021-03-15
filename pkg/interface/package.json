@@ -13,6 +13,7 @@
     "@tlon/indigo-react": "^1.2.19",
     "@tlon/sigil-js": "^1.4.3",
     "@urbit/api": "file:../npm/api",
+    "@urbit/http-api": "file:../npm/http-api",
     "aws-sdk": "^2.830.0",
     "big-integer": "^1.6.48",
     "classnames": "^2.2.6",

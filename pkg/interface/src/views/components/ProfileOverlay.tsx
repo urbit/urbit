@@ -156,7 +156,6 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
           </Row>
           {isOwn ? (
             <ProfileStatus
-              api={props.api}
               ship={`~${ship}`}
               contact={contact}
             />

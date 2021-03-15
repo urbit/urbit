@@ -1,7 +1,7 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
-import GlobalApi from '~/logic/api/global';
+import GlobalApi from '~/logic/api-old/global';
 import { RouteComponentProps } from 'react-router-dom';
 import Note from './Note';
 import { EditPost } from './EditPost';
@@ -15,7 +15,6 @@ interface NoteRoutesProps {
   note: GraphNode;
   noteId: number;
   notebook: Graph;
-  api: GlobalApi;
   association: Association;
   baseUrl?: string;
   rootUrl?: string;

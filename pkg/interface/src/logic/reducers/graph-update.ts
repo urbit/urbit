@@ -3,8 +3,10 @@ import { BigIntOrderedMap } from "~/logic/lib/BigIntOrderedMap";
 import bigInt, { BigInteger } from "big-integer";
 import useGraphState, { GraphState } from '../state/graph';
 import { reduceState } from '../state/base';
+import { SubscriptionRequestInterface, UrbitInterface } from '@urbit/http-api';
+import { handleSubscriptionError, handleSubscriptionQuit } from '../lib/subscriptionHandlers';
 
-export const GraphReducer = (json) => {
+const GraphReducer = (json) => {
   const data = _.get(json, 'graph-update', false);
   
   if (data) {
@@ -248,3 +250,16 @@ const removeNodes = (json, state: GraphState): GraphState => {
   }
   return state;
 };
+
+export const graphSubscription = (channel: UrbitInterface): SubscriptionRequestInterface => {
+  const event = GraphReducer;
+  const err = handleSubscriptionError(channel, graphSubscription);
+  const quit = handleSubscriptionQuit(channel, graphSubscription);
+  return {
+    app: 'graph-store',
+    path: '/keys',
+    event, err, quit
+  };
+};
+
+export default GraphReducer;

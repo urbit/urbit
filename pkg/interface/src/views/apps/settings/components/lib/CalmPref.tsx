@@ -10,8 +10,10 @@ import { Formik, Form, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import { BackButton } from "./BackButton";
 import useSettingsState, {selectSettingsState} from "~/logic/state/settings";
-import GlobalApi from "~/logic/api/global";
+import GlobalApi from "~/logic/api-old/global";
 import {AsyncButton} from "~/views/components/AsyncButton";
+import useApi from "~/logic/api";
+import { putEntry, settings } from "@urbit/api/dist";
 
 interface FormSchema {
   hideAvatars: boolean;
@@ -27,10 +29,8 @@ interface FormSchema {
 
 const settingsSel = selectSettingsState(["calm", "remoteContentPolicy"]);
 
-export function CalmPrefs(props: {
-  api: GlobalApi;
-}) {
-  const { api } = props;
+export function CalmPrefs() {
+  const api = useApi();
   const {
     calm: {
       hideAvatars,
@@ -62,15 +62,15 @@ export function CalmPrefs(props: {
 
   const onSubmit = useCallback(async (v: FormSchema, actions: FormikHelpers<FormSchema>) => {
     await Promise.all([
-      api.settings.putEntry('calm', 'hideAvatars', v.hideAvatars),
-      api.settings.putEntry('calm', 'hideNicknames', v.hideNicknames),
-      api.settings.putEntry('calm', 'hideUnreads', v.hideUnreads),
-      api.settings.putEntry('calm', 'hideGroups', v.hideGroups),
-      api.settings.putEntry('calm', 'hideUtilities', v.hideUtilities),
-      api.settings.putEntry('remoteContentPolicy', 'imageShown', v.imageShown),
-      api.settings.putEntry('remoteContentPolicy', 'videoShown', v.videoShown),
-      api.settings.putEntry('remoteContentPolicy', 'audioShown', v.audioShown),
-      api.settings.putEntry('remoteContentPolicy', 'oembedShown', v.oembedShown),
+      api.poke(settings.putEntry('calm', 'hideAvatars', v.hideAvatars)),
+      api.poke(settings.putEntry('calm', 'hideNicknames', v.hideNicknames)),
+      api.poke(settings.putEntry('calm', 'hideUnreads', v.hideUnreads)),
+      api.poke(settings.putEntry('calm', 'hideGroups', v.hideGroups)),
+      api.poke(settings.putEntry('calm', 'hideUtilities', v.hideUtilities)),
+      api.poke(settings.putEntry('remoteContentPolicy', 'imageShown', v.imageShown)),
+      api.poke(settings.putEntry('remoteContentPolicy', 'videoShown', v.videoShown)),
+      api.poke(settings.putEntry('remoteContentPolicy', 'audioShown', v.audioShown)),
+      api.poke(settings.putEntry('remoteContentPolicy', 'oembedShown', v.oembedShown)),
     ]);
     actions.setStatus({ success: null });
   }, [api]);

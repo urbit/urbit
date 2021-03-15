@@ -19,7 +19,7 @@ import { SidebarListConfig  } from './types';
 import { getGroupFromWorkspace } from '~/logic/lib/workspace';
 import { roleForShip } from '~/logic/lib/group';
 import { NewChannel } from '~/views/landscape/components/NewChannel';
-import GlobalApi from '~/logic/api/global';
+import GlobalApi from '~/logic/api-old/global';
 import { Workspace } from '~/types/workspace';
 import useGroupState from '~/logic/state/group';
 import useMetadataState from '~/logic/state/metadata';
@@ -85,7 +85,6 @@ export function SidebarListHeader(props: {
                 borderColor="washedGray"
               >
               <NewChannel
-                api={props.api}
                 history={props.history}
                 workspace={props.workspace}
               />

@@ -4,6 +4,7 @@ import create, { State }  from 'zustand';
 import { persist } from 'zustand/middleware';
 import produce from 'immer';
 import { BackgroundConfig, RemoteContentPolicy, TutorialProgress, tutorialProgress, LeapCategories } from "~/types/local-update";
+import { ConnectionStatus } from '~/types';
 
 
 export interface LocalState {
@@ -25,6 +26,7 @@ export interface LocalState {
   omniboxShown: boolean;
   suspendedFocus?: HTMLElement;
   toggleOmnibox: () => void;
+  connection: ConnectionStatus;
   set: (fn: (state: LocalState) => void) => void
 };
 
@@ -81,6 +83,7 @@ const useLocalState = create<LocalStateZus>(persist((set, get) => ({
       state.suspendedFocus.blur();
     }
   })),
+  connection: 'reconnecting',
   set: fn => set(produce(fn))
   }), {
     blacklist: [

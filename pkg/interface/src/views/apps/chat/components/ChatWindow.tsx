@@ -11,10 +11,10 @@ import {
   Associations,
   Group,
   Groups,
-  Graph
+  Graph,
+  markCountAsRead,
+  hark
 } from '@urbit/api';
-
-import GlobalApi from '~/logic/api/global';
 
 import VirtualScroller from '~/views/components/VirtualScroller';
 
@@ -24,6 +24,8 @@ import withState from '~/logic/lib/withState';
 import useGroupState from '~/logic/state/group';
 import useMetadataState from '~/logic/state/metadata';
 import useGraphState from '~/logic/state/graph';
+import { withApi } from '~/logic/api';
+import { UrbitInterface } from '@urbit/http-api';
 
 const INITIAL_LOAD = 20;
 const DEFAULT_BACKLOG_SIZE = 100;
@@ -40,7 +42,7 @@ type ChatWindowProps = RouteComponentProps<{
   group: Group;
   ship: Patp;
   station: any;
-  api: GlobalApi;
+  api: UrbitInterface;
   scrollTo?: number;
 };
 
@@ -160,7 +162,7 @@ class ChatWindow extends Component<
     const { association } = this.props;
     if (this.state.fetchPending) return;
     if (this.props.unreadCount === 0) return;
-    this.props.api.hark.markCountAsRead(association, '/', 'message');
+    this.props.api.poke(hark.markCountAsRead(association, '/', 'message'));
   }
 
   setActive = () => { 
@@ -170,7 +172,7 @@ class ChatWindow extends Component<
   }
 
   fetchMessages = async (newer: boolean): Promise<boolean> => {
-    const { api, station, graph } = this.props;
+    const { station, graph } = this.props;
     if(this.fetchPending) {
       return false;
     }
@@ -182,7 +184,7 @@ class ChatWindow extends Component<
     const currSize = graph.size;
     if (newer) {
       const [index] = graph.peekLargest()!;
-      await api.graph.getYoungerSiblings(
+      await props.getYoungerSiblings(
         ship,
         name,
         100,
@@ -190,7 +192,7 @@ class ChatWindow extends Component<
       );
     } else {
       const [index] = graph.peekSmallest()!;
-      await api.graph.getOlderSiblings(ship, name, 100, `/${index.toString()}`);
+      await props.getOlderSiblings(ship, name, 100, `/${index.toString()}`);
       this.calculateUnreadIndex();
     }
     this.fetchPending = false;
@@ -328,8 +330,8 @@ class ChatWindow extends Component<
   }
 }
 
-export default withState(ChatWindow, [
+export default withApi(withState(ChatWindow, [
   [useGroupState, ['groups']],
   [useMetadataState, ['associations']],
-  [useGraphState, ['pendingSize']]
-]);
+  [useGraphState, ['pendingSize', 'getYoungerSiblings', 'getOlderSiblings']],
+]));

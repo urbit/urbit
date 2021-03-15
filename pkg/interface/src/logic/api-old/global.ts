@@ -3,9 +3,6 @@ import BaseApi from './base';
 import { StoreState } from '../store/type';
 import GlobalStore from '../store/store';
 import LocalApi from './local';
-import InviteApi from './invite';
-import MetadataApi from './metadata';
-import ContactsApi from './contacts';
 import GroupsApi from './groups';
 import LaunchApi from './launch';
 import GraphApi from './graph';
@@ -16,9 +13,6 @@ import SettingsApi from './settings';
 
 export default class GlobalApi extends BaseApi<StoreState> {
   local = new LocalApi(this.ship, this.channel, this.store);
-  invite = new InviteApi(this.ship, this.channel, this.store);
-  metadata = new MetadataApi(this.ship, this.channel, this.store);
-  contacts = new ContactsApi(this.ship, this.channel, this.store);
   groups = new GroupsApi(this.ship, this.channel, this.store);
   launch = new LaunchApi(this.ship, this.channel, this.store);
   gcp = new GcpApi(this.ship, this.channel, this.store);

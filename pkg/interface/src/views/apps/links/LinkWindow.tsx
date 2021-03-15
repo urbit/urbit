@@ -10,7 +10,7 @@ import { Col, Text } from "@tlon/indigo-react";
 import bigInt from "big-integer";
 import { Association, Graph, Unreads, Group, Rolodex } from "@urbit/api";
 
-import GlobalApi from "~/logic/api/global";
+import GlobalApi from "~/logic/api-old/global";
 import VirtualScroller from "~/views/components/VirtualScroller";
 import { LinkItem } from "./components/LinkItem";
 import LinkSubmit from "./components/LinkSubmit";
@@ -23,12 +23,9 @@ interface LinkWindowProps {
   association: Association;
   resource: string;
   graph: Graph;
-  hideNicknames: boolean;
-  hideAvatars: boolean;
   baseUrl: string;
   group: Group;
   path: string;
-  api: GlobalApi;
   pendingSize: number;
 }
 
@@ -77,7 +74,7 @@ class LinkWindow extends Component<LinkWindowProps, {}> {
             <LinkSubmit
               name={name}
               ship={ship.slice(1)}
-              api={api}
+              
             />
           </Col>
           <LinkItem {...linkProps} />
@@ -106,7 +103,7 @@ class LinkWindow extends Component<LinkWindowProps, {}> {
             <LinkSubmit
               name={name}
               ship={ship.slice(1)}
-              api={api}
+              
             />
           ) : (
             <Text>

@@ -5,9 +5,11 @@ import { ContactUpdate } from '@urbit/api';
 
 import useContactState, { ContactState } from '../state/contact';
 import { reduceState } from '../state/base';
+import { SubscriptionRequestInterface, UrbitInterface } from '@urbit/http-api';
+import { handleSubscriptionError, handleSubscriptionQuit } from '../lib/subscriptionHandlers';
 
 
-export const ContactReducer = (json) => {
+const ContactReducer = (json) => {
   const data: ContactUpdate = _.get(json, 'contact-update', false);
   if (data) {
     reduceState<ContactState, ContactUpdate>(useContactState, data, [
@@ -88,3 +90,15 @@ const setPublic = (json: ContactUpdate, state: ContactState): ContactState => {
   return state;
 };
 
+export const contactSubscription = (channel: UrbitInterface): SubscriptionRequestInterface => {
+  const event = ContactReducer;
+  const err = handleSubscriptionError(channel, contactSubscription);
+  const quit = handleSubscriptionQuit(channel, contactSubscription);
+  return {
+    app: 'contact-store',
+    path: '/all',
+    event, err, quit
+  };
+};
+
+export default ContactReducer;

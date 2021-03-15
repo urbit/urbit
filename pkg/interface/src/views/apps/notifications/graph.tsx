@@ -13,13 +13,15 @@ import {
 import { Header } from './header';
 import { cite, deSig, pluralize, useShowNickname } from '~/logic/lib/util';
 import Author from '~/views/components/Author';
-import GlobalApi from '~/logic/api/global';
+import GlobalApi from '~/logic/api-old/global';
 import { getSnippet } from '~/logic/lib/publish';
 import styled from 'styled-components';
 import { MentionText } from '~/views/components/MentionText';
 import ChatMessage from '../chat/components/ChatMessage';
 import useContactState from '~/logic/state/contact';
 import useGroupState from '~/logic/state/group';
+import useApi from '~/logic/api';
+import { hark, read as markRead } from '@urbit/api/dist';
 
 function getGraphModuleIcon(module: string) {
   if (module === 'link') {
@@ -232,9 +234,9 @@ export function GraphNotification(props: {
   read: boolean;
   time: number;
   timebox: BigInteger;
-  api: GlobalApi;
 }) {
-  const { contents, index, read, time, api, timebox } = props;
+  const { contents, index, read, time, timebox } = props;
+  const api = useApi();
 
   const authors = _.map(contents, 'author');
   const { graph, group } = index;
@@ -245,8 +247,7 @@ export function GraphNotification(props: {
     if (props.archived || read) {
       return;
     }
-
-    return api.hark['read'](timebox, { graph: index });
+    return api.poke(hark.read(timebox, { graph: index }));
   }, [api, timebox, index, read]);
 
   const groups = useGroupState(state => state.groups);

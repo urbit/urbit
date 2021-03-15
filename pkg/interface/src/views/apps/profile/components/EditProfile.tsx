@@ -28,6 +28,8 @@ import {
   ProfileStatus,
   ProfileImages
 } from './Profile';
+import useApi from '~/logic/api';
+import { contacts, editContact, setPublic } from '@urbit/api';
 
 const formSchema = Yup.object({
   nickname: Yup.string(),
@@ -84,7 +86,8 @@ export function ProfileHeaderImageEdit(props: any): ReactElement {
 }
 
 export function EditProfile(props: any): ReactElement {
-  const { contact, ship, api } = props;
+  const { contact, ship } = props;
+  const api = useApi();
   const isPublic = useContactState((state) => state.isContactPublic);
   const [hideCover, setHideCover] = useState(false);
 
@@ -103,7 +106,7 @@ export function EditProfile(props: any): ReactElement {
         const newValue = key !== 'color' ? values[key] : uxToHex(values[key]);
         if (newValue !== contact[key]) {
           if (key === 'isPublic') {
-            return acc.then(() => api.contacts.setPublic(newValue));
+            return acc.then(() => api.poke(contacts.setPublic(newValue)));
           } else if (key === 'groups') {
             const toRemove: string[] = _.difference(
               contact?.groups || [],
@@ -116,17 +119,17 @@ export function EditProfile(props: any): ReactElement {
             const promises: Promise<any>[] = [];
             promises.concat(
               toRemove.map((e) =>
-                api.contacts.edit(ship, { 'remove-group': resourceFromPath(e) })
+                api.poke(contacts.editContact(ship, { 'remove-group': resourceFromPath(e) }))
               )
             );
             promises.concat(
               toAdd.map((e) =>
-                api.contacts.edit(ship, { 'add-group': resourceFromPath(e) })
+                api.poke(contacts.editContact(ship, { 'add-group': resourceFromPath(e) }))
               )
             );
             return acc.then(() => Promise.all(promises));
           } else if (key !== 'last-updated' && key !== 'isPublic') {
-            return acc.then(() => api.contacts.edit(ship, { [key]: newValue }));
+            return acc.then(() => api.poke(contacts.editContact(ship, { [key]: newValue })));
           }
         }
         return acc;

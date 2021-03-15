@@ -10,14 +10,16 @@ import {
   Col,
   Anchor
 } from '@tlon/indigo-react';
+import { s3 as s3Api } from '@urbit/api';
 
-import GlobalApi from '~/logic/api/global';
+import GlobalApi from '~/logic/api-old/global';
 import { BucketList } from './BucketList';
 import { S3State } from '~/types/s3-update';
 import useS3State from '~/logic/state/storage';
 import { BackButton } from './BackButton';
 import { StorageState } from '~/types';
 import useStorageState from '~/logic/state/storage';
+import useApi from '~/logic/api';
 
 interface FormSchema {
   s3bucket: string;
@@ -27,26 +29,22 @@ interface FormSchema {
   s3secretAccessKey: string;
 }
 
-interface S3FormProps {
-  api: GlobalApi;
-}
-
-export default function S3Form(props: S3FormProps): ReactElement {
-  const { api } = props;
+export default function S3Form(): ReactElement {
   const s3 = useStorageState((state) => state.s3);
+  const api = useApi();
 
   const onSubmit = useCallback(
     (values: FormSchema) => {
       if (values.s3secretAccessKey !== s3.credentials?.secretAccessKey) {
-        api.s3.setSecretAccessKey(values.s3secretAccessKey);
+        api.poke(s3Api.setSecretAccessKey(values.s3secretAccessKey));
       }
 
       if (values.s3endpoint !== s3.credentials?.endpoint) {
-        api.s3.setEndpoint(values.s3endpoint);
+        api.poke(s3Api.setEndpoint(values.s3endpoint));
       }
 
       if (values.s3accessKeyId !== s3.credentials?.accessKeyId) {
-        api.s3.setAccessKeyId(values.s3accessKeyId);
+        api.poke(s3Api.setAccessKeyId(values.s3accessKeyId));
       }
     },
     [api, s3]
@@ -115,7 +113,7 @@ export default function S3Form(props: S3FormProps): ReactElement {
         <BucketList
           buckets={s3.configuration.buckets}
           selected={s3.configuration.currentBucket}
-          api={api}
+          
         />
       </Col>
     </>

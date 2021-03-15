@@ -6,18 +6,19 @@ import {
   BaseLabel,
   Text
 } from '@tlon/indigo-react';
-import { GroupNotificationsConfig } from '@urbit/api';
+import { GroupNotificationsConfig, hark } from '@urbit/api';
 import { Association } from '@urbit/api/metadata';
 
-import GlobalApi from '~/logic/api/global';
+import GlobalApi from '~/logic/api-old/global';
 import { StatelessAsyncToggle } from '~/views/components/StatelessAsyncToggle';
 import useHarkState from '~/logic/state/hark';
+import useApi from '~/logic/api';
 
 export function GroupPersonalSettings(props: {
-  api: GlobalApi;
   association: Association;
 }) {
   const groupPath = props.association.group;
+  const api = useApi();
 
   const notificationsGroupConfig = useHarkState(state => state.notificationsGroupConfig);
 
@@ -25,7 +26,7 @@ export function GroupPersonalSettings(props: {
 
   const onClick = async () => {
     const func = !watching ? 'listenGroup' : 'ignoreGroup';
-    await props.api.hark[func](groupPath);
+    await api.poke(hark[func](groupPath));
   };
 
   return (

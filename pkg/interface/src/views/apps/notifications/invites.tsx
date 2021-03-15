@@ -4,15 +4,11 @@ import _ from 'lodash';
 import { Col } from '@tlon/indigo-react';
 import { Invites as IInvites, Associations, Invite, JoinRequests, Groups, Contacts, AppInvites, JoinProgress } from '@urbit/api';
 
-import GlobalApi from '~/logic/api/global';
+import GlobalApi from '~/logic/api-old/global';
 import { resourceAsPath, alphabeticalOrder } from '~/logic/lib/util';
 import InviteItem from '~/views/components/Invite';
 import useInviteState from '~/logic/state/invite';
-
-interface InvitesProps {
-  api: GlobalApi;
-  pendingJoin: JoinRequests;
-}
+import useGroupState from '~/logic/state/group';
 
 interface InviteRef {
   uid: string;
@@ -20,8 +16,8 @@ interface InviteRef {
   invite: Invite;
 }
 
-export function Invites(props: InvitesProps): ReactElement {
-  const { api, pendingJoin } = props;
+export function Invites(): ReactElement {
+  const pendingJoin = useGroupState(state => state.pendingJoin);
   const invites = useInviteState(state => state.invites);
 
   const inviteArr: InviteRef[] = _.reduce(invites, (acc: InviteRef[], val: AppInvites, app: string) => {
@@ -53,8 +49,7 @@ export function Invites(props: InvitesProps): ReactElement {
              <InviteItem
                key={resource}
                resource={resource}
-               pendingJoin={pendingJoin}
-               api={api}
+               
              />
           );
         } else {
@@ -63,11 +58,9 @@ export function Invites(props: InvitesProps): ReactElement {
           return (
             <InviteItem
               key={resource}
-              api={api}
               invite={invite}
               app={app}
               uid={uid}
-              pendingJoin={pendingJoin}
               resource={resource}
             />
             );

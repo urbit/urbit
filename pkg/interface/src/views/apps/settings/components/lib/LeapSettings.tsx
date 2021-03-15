@@ -10,7 +10,7 @@ import {
 import { Form, FormikHelpers, useField, useFormikContext } from "formik";
 import { FormikOnBlur } from "~/views/components/FormikOnBlur";
 import { BackButton } from "./BackButton";
-import GlobalApi from "~/logic/api/global";
+import GlobalApi from "~/logic/api-old/global";
 import {
   NotificationGraphConfig,
   LeapCategories,
@@ -18,6 +18,8 @@ import {
 } from "~/types";
 import useSettingsState, { selectSettingsState } from "~/logic/state/settings";
 import { ShuffleFields } from "~/views/components/ShuffleFields";
+import { settings } from "@urbit/api/dist";
+import useApi from "~/logic/api";
 
 const labels: Record<LeapCategories, string> = {
   mychannel: "My Channel",
@@ -48,12 +50,11 @@ function CategoryCheckbox(props: { index: number }) {
 
 const settingsSel = selectSettingsState(["leap", "set"]);
 
-export function LeapSettings(props: { api: GlobalApi; }) {
-  const { api } = props;
+export function LeapSettings() {
   const { leap, set: setSettingsState } = useSettingsState(settingsSel);
   const categories = leap.categories as LeapCategories[];
   const missing = _.difference(leapCategories, categories);
-  console.log(categories);
+  const api = useApi();
 
   const initialValues = {
     categories: [
@@ -70,7 +71,7 @@ export function LeapSettings(props: { api: GlobalApi; }) {
       (acc, { display, category }) => (display ? [...acc, category] : acc),
       [] as LeapCategories[]
     );
-    await api.settings.putEntry('leap', 'categories', result);
+    await api.poke(settings.putEntry('leap', 'categories', result));
   };
 
   return (

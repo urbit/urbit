@@ -1,8 +1,8 @@
 import { isBrowser, isNode } from 'browser-or-node';
 import { Action, Scry, Thread } from '@urbit/api';
-import { fetchEventSource, EventSourceMessage } from '@microsoft/fetch-event-source';
+import { fetchEventSource, EventSourceMessage, EventStreamContentType } from '@microsoft/fetch-event-source';
 
-import { AuthenticationInterface, SubscriptionInterface, CustomEventHandler, PokeInterface, SubscriptionRequestInterface, headers, UrbitInterface, SSEOptions, PokeHandlers } from './types';
+import { AuthenticationInterface, SubscriptionInterface, CustomEventHandler, PokeInterface, SubscriptionRequestInterface, headers, UrbitInterface, SSEOptions, PokeHandlers, Message } from './types';
 import { uncamelize, hexString } from './utils';
 
 /**
@@ -52,7 +52,7 @@ export class Urbit implements UrbitInterface {
    * disconnect function may be called exactly once.
    */
 
-  outstandingSubscriptions: Map<number, SubscriptionInterface> = new Map();
+  outstandingSubscriptions: Map<number, SubscriptionRequestInterface> = new Map();
 
   /**
    * Ship can be set, in which case we can do some magic stuff like send chats
@@ -63,6 +63,8 @@ export class Urbit implements UrbitInterface {
    * If verbose, logs output eagerly.
    */
   verbose?: boolean;
+
+  onError?: (error: any) => void = null;
 
   /** This is basic interpolation to get the channel URL of an instantiated Urbit connection. */
   get channelUrl(): string {
@@ -92,6 +94,9 @@ export class Urbit implements UrbitInterface {
     public url: string,
     public code: string
   ) {
+    if (isBrowser) {
+      window.addEventListener('beforeunload', this.delete);
+    }
     return this;
   }
 
@@ -144,7 +149,7 @@ export class Urbit implements UrbitInterface {
   /**
    * Initializes the SSE pipe for the appropriate channel.
    */
-  eventSource(): void{
+  eventSource(): void {
     if (!this.sseClientInitialized) {
       const sseOptions: SSEOptions = {
         headers: {}
@@ -154,7 +159,37 @@ export class Urbit implements UrbitInterface {
       } else if (isNode) {
         sseOptions.headers.Cookie = this.cookie;
       }
+      if (this.lastEventId === 0) {
+        // Can't receive events until the channel is open
+        this.poke({ app: 'hood', mark: 'helm-hi', json: 'Opening API channel' });
+      }
       fetchEventSource(this.channelUrl, {
+        headers: {
+          Cookie: this.cookie,
+          accept: '*'
+        },
+        onopen: async (response) => {
+          if (response.ok && response.headers.get('content-type') === EventStreamContentType) {
+            if (this.verbose) {
+              console.log('Opened eventsource', response);
+            }
+            return; // everything's good
+          } else if (response.status >= 400 && response.status < 500 && response.status !== 429) {
+            if (this.onError) {
+              this.onError(response.text);
+            } else {
+              throw new Error();
+            }
+          } else {
+            if (this.onError) {
+              response.text().then(value => {
+                this.onError(value);
+              });
+            } else {
+              throw new Error();
+            }
+          }
+      },
         // withCredentials: true,
         onmessage: (event: EventSourceMessage) => {
           if (this.verbose) {
@@ -162,7 +197,13 @@ export class Urbit implements UrbitInterface {
           }
           this.ack(Number(event.id));
           if (event.data && JSON.parse(event.data)) {
+            
             const data: any = JSON.parse(event.data);
+
+            if (data.response === 'diff') {
+              this.clearQueue();
+            }
+
             if (data.response === 'poke' && this.outstandingPokes.has(data.id)) {
               const funcs = this.outstandingPokes.get(data.id);
               if (data.hasOwnProperty('ok')) {
@@ -193,7 +234,11 @@ export class Urbit implements UrbitInterface {
           }
         },
         onerror: (error) => {
-          console.error('pipe error', error);
+          if (this.onError) {
+            this.onError(error);
+          } else {
+            throw error;
+          }
         }
       });
       this.sseClientInitialized = true;
@@ -214,7 +259,7 @@ export class Urbit implements UrbitInterface {
    *
    * @param eventId The event to acknowledge.
    */
-   ack(eventId: number): Promise<void | number> {
+  async ack(eventId: number): Promise<number | void> {
     return this.sendMessage('ack', { 'event-id': eventId });
   }
 
@@ -229,31 +274,79 @@ export class Urbit implements UrbitInterface {
    * 
    * @returns void | number If successful, returns the number of the message that was sent
    */
-  async sendMessage(action: Action, data?: object): Promise<void | number> {
-    
+  async sendMessage(action: Action, data?: object): Promise<number | void> {
     const id = this.getEventId();
     if (this.verbose) {
       console.log(`Sending message ${id}:`, action, data,);
     }
-    let response: Response | undefined;
-    try {
-      response = await fetch(this.channelUrl, {
-        ...this.fetchOptions,
-        method: 'put',
-        body: JSON.stringify([{
-          id,
-          action,
-          ...data,
-        }]),
-      });
-    } catch (error) {
-      console.error('message error', error);
-      response = undefined;
-    }
-    if (this.verbose) {
-      console.log(`Received from message ${id}: `, response);
-    }
+    const message: Message = { id, action, ...data };
+    await this.sendJSONtoChannel(message);
     return id;
+  }
+
+  async sendJSONtoChannel(json?: Message) {
+    if (this.lastEventId == this.lastAcknowledgedEventId) {
+      if (json) {
+        this.outstandingJson.push(json);
+      }
+      await this.processQueue();
+    } else {
+      //  we add an acknowledgment to clear the server side queue
+      //
+      //    The server side puts messages it sends us in a queue until we
+      //    acknowledge that we received it.
+      //
+      this.outstandingJson.push({
+        action: 'ack',
+        id: this.getEventId(),
+        'event-id': this.lastEventId
+      });
+      if (json) {
+        this.outstandingJson.push(json);
+      }
+      await this.processQueue();
+      this.lastAcknowledgedEventId = this.lastEventId;
+    }
+  }
+
+  async processQueue() {
+    if (this.outstandingJson.length === 0) return;
+    const json = this.outstandingJson;
+    fetch(this.channelUrl, {
+      ...this.fetchOptions,
+      method: 'PUT',
+      body: JSON.stringify(json)
+    }).then((response) => {
+    }).catch(error => {
+      json.forEach(failed => this.outstandingJson.push(failed));
+      if (this.onError) {
+        this.onError(error);
+      } else {
+        throw error;
+      }
+    })
+    this.outstandingJson = [];
+  }
+
+  outstandingJson: Message[] = [];
+
+  debounceTimer: any = null;
+  debounceInterval = 500;
+
+  resetDebouncetimer() {
+    if (this.debounceTimer) {
+      clearTimeout(this.debounceTimer);
+      this.debounceTimer = null;
+    }
+    this.debounceTimer = setTimeout(() => {
+      this.processQueue();
+    }, this.debounceInterval);
+  }
+
+  clearQueue() {
+    clearTimeout(this.debounceTimer);
+    this.debounceTimer = null;
+    this.processQueue();
   }
 
   /**
@@ -265,27 +358,22 @@ export class Urbit implements UrbitInterface {
    */
   poke<T>(params: PokeInterface<T>): Promise<void | number> {
     const { app, mark, json, onSuccess, onError } = { onSuccess: () => {}, onError: () => {}, ...params };
-    return new Promise((resolve, reject) => {
-      this
-        .sendMessage('poke', { ship: this.ship, app, mark, json })
-        .then(pokeId => {
-          if (!pokeId) {
-            return reject('Poke failed');
-          }
-          if (!this.sseClientInitialized) resolve(pokeId); // A poke may occur before a listener has been opened
-          this.outstandingPokes.set(pokeId, {
-            onSuccess: () => {
-              onSuccess();
-              resolve(pokeId);
-            },
-            onError: (event) => {
-              onError(event);
-              reject(event.err);
-            }
-          });
-        }).catch(error => {
-          console.error(error);
-        });
+    return new Promise(async (resolve, reject) => {
+      const pokeId = await this.sendMessage('poke', { ship: this.ship, app, mark, json });
+      if (!pokeId) {
+        return reject('Poke failed');
+      }
+      if (!this.sseClientInitialized) resolve(pokeId);
+      this.outstandingPokes.set(pokeId, {
+        onSuccess: () => {
+          onSuccess();
+          resolve(pokeId);
+        },
+        onError: (event) => {
+          onError(event);
+          reject(event.err);
+        }
+      });
     });
   }
 
@@ -296,7 +384,7 @@ export class Urbit implements UrbitInterface {
    * @param path The path to which to subscribe
    * @param handlers Handlers to deal with various events of the subscription
    */
-  async subscribe(params: SubscriptionRequestInterface): Promise<void | number> {
+  async subscribe(params: SubscriptionRequestInterface): Promise<number | void> {
     const { app, path, err, event, quit } = { err: () => {}, event: () => {}, quit: () => {}, ...params };
 
     const subscriptionId = await this.sendMessage('subscribe', { ship: this.ship, app, path });
@@ -304,8 +392,10 @@ export class Urbit implements UrbitInterface {
     if (!subscriptionId) return;
 
     this.outstandingSubscriptions.set(subscriptionId, {
-      err, event, quit
+      app, path, err, event, quit
     });
+
+    this.resetDebouncetimer();
 
     return subscriptionId;
   }
@@ -315,15 +405,21 @@ export class Urbit implements UrbitInterface {
    *
    * @param subscription
    */
-  unsubscribe(subscription: string): Promise<void | number> {
+  async unsubscribe(subscription: number): Promise<number | void> {
     return this.sendMessage('unsubscribe', { subscription });
   }
 
   /**
    * Deletes the connection to a channel.
    */
-  delete(): Promise<void | number> {
-    return this.sendMessage('delete');
+  delete() {
+    if (isBrowser) {
+      navigator.sendBeacon(this.channelUrl, JSON.stringify([{
+        action: 'delete'
+      }]));
+    } else {
+      this.sendMessage('delete');
+    }
   }
 
   /**

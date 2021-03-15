@@ -6,16 +6,19 @@ import _  from 'lodash';
 import { Box, Row, Text, BaseImage } from '@tlon/indigo-react';
 import { uxToHex } from '~/logic/lib/util';
 import { Sigil } from '~/logic/lib/sigil';
+import useApi from '~/logic/api';
+import { allowShips, allowGroup, share, contact } from '@urbit/api';
 
 export const ShareProfile = (props) => {
   const {
-    api,
     showBanner,
     setShowBanner,
     group,
     groupPath,
     recipients
   } = props;
+
+  const api = useApi();
 
   const image = (props?.our?.avatar)
   ? (
@@ -41,14 +44,14 @@ export const ShareProfile = (props) => {
 
   const onClick = async () => {
     if(group.hidden && recipients.length > 0) {
-      await api.contacts.allowShips(recipients);
-      await Promise.all(recipients.map(r => api.contacts.share(r)))
+      await api.poke(contact.allowShips(recipients));
+      await Promise.all(recipients.map(r => api.poke(contact.share(r))))
       setShowBanner(false);
     } else if (!group.hidden) {
       const [,,ship,name] = groupPath.split('/');
-      await api.contacts.allowGroup(ship,name);
+      await api.poke(contact.allowGroup(ship,name));
       if(ship !== `~${window.ship}`) {
-        await api.contacts.share(ship);
+        await api.poke(contact.share(ship));
       }
       setShowBanner(false);
     }

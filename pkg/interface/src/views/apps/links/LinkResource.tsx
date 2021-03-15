@@ -3,7 +3,7 @@ import { Box, Col, Center, LoadingSpinner, Text } from '@tlon/indigo-react';
 import { Switch, Route, Link } from 'react-router-dom';
 import bigInt from 'big-integer';
 
-import GlobalApi from '~/logic/api/global';
+import GlobalApi from '~/logic/api-old/global';
 import { StoreState } from '~/logic/store/type';
 import { RouteComponentProps } from 'react-router-dom';
 
@@ -21,14 +21,12 @@ const emptyMeasure = () => {};
 
 type LinkResourceProps = StoreState & {
   association: Association;
-  api: GlobalApi;
   baseUrl: string;
 } & RouteComponentProps;
 
 export function LinkResource(props: LinkResourceProps) {
   const {
     association,
-    api,
     baseUrl,
   } = props;
 
@@ -48,9 +46,10 @@ export function LinkResource(props: LinkResourceProps) {
   const graphs = useGraphState(state => state.graphs);
   const graph = graphs[resourcePath] || null;
   const graphTimesentMap = useGraphState(state => state.graphTimesentMap);
+  const getGraph = useGraphState(state => state.getGraph);
 
   useEffect(() => {
-    api.graph.getGraph(ship, name);
+    getGraph(ship, name);
   }, [association]);
 
   const resourceUrl = `${baseUrl}/resource/link${rid}`;
@@ -75,7 +74,6 @@ export function LinkResource(props: LinkResourceProps) {
                 group={group}
                 path={resource.group}
                 pendingSize={Object.keys(graphTimesentMap[resourcePath] || {}).length}
-                api={api}
                 mb={3}
               />
             );
@@ -107,7 +105,6 @@ export function LinkResource(props: LinkResourceProps) {
                   baseUrl={resourceUrl}
                   group={group}
                   path={resource?.group}
-                  api={api}
                   mt={3}
                   measure={emptyMeasure}
                 />
@@ -117,7 +114,6 @@ export function LinkResource(props: LinkResourceProps) {
                   comments={node}
                   resource={resourcePath}
                   association={association}
-                  api={api}
                   editCommentId={editCommentId}
                   history={props.history}
                   baseUrl={`${resourceUrl}/${props.match.params.index}`}

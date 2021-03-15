@@ -113,11 +113,11 @@ export default function SettingsScreen(props: any) {
                 graphConfig={props.notificationsGraphConfig}
               />
             )}
-            {hash === 'display' && <DisplayForm api={props.api} />}
-            {hash === 's3' && <S3Form api={props.api} />}
-            {hash === 'leap' && <LeapSettings api={props.api} />}
-            {hash === 'calm' && <CalmPrefs api={props.api} />}
-            {hash === 'security' && <SecuritySettings api={props.api} />}
+            {hash === 'display' && <DisplayForm />}
+            {hash === 's3' && <S3Form />}
+            {hash === 'leap' && <LeapSettings />}
+            {hash === 'calm' && <CalmPrefs />}
+            {hash === 'security' && <SecuritySettings />}
           </SettingsItem>
         </Col>
       </Skeleton>

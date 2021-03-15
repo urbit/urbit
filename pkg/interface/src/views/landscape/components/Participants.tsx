@@ -28,11 +28,13 @@ import { Sigil } from '~/logic/lib/sigil';
 import { cite, uxToHex } from '~/logic/lib/util';
 import { roleForShip, resourceFromPath } from '~/logic/lib/group';
 import { Dropdown } from '~/views/components/Dropdown';
-import GlobalApi from '~/logic/api/global';
+import GlobalApi from '~/logic/api-old/global';
 import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
 import useLocalState from '~/logic/state/local';
 import useContactState from '~/logic/state/contact';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
+import useApi from '~/logic/api';
+import { groups } from '@urbit/api/dist';
 
 const TruncText = styled(Text)`
   white-space: nowrap;
@@ -225,7 +227,7 @@ export function Participants(props: {
                 isVisible ? (
                   cs.map(c => (
                     <Participant
-                      api={api}
+                      
                       key={c.patp}
                       role={ourRole}
                       group={props.group}
@@ -250,9 +252,9 @@ function Participant(props: {
   association: Association;
   group: Group;
   role?: RoleTags;
-  api: GlobalApi;
 }) {
-  const { contact, association, group, api } = props;
+  const { contact, association, group } = props;
+  const api = useApi();
   const { title } = association.metadata;
   const { hideAvatars, hideNicknames } = useSettingsState(selectCalmState);
 
@@ -269,32 +271,32 @@ function Participant(props: {
 
   const onPromote = useCallback(async () => {
     const resource = resourceFromPath(association.group);
-    await api.groups.addTag(resource, { tag: 'admin' }, [`~${contact.patp}`]);
+    await api.poke(groups.addTag(resource, { tag: 'admin' }, [`~${contact.patp}`]));
   }, [api, association]);
 
   const onDemote = useCallback(async () => {
     const resource = resourceFromPath(association.group);
-    await api.groups.removeTag(resource, { tag: 'admin' }, [
+    await api.poke(groups.removeTag({ tag: 'admin' }, resource, [
       `~${contact.patp}`
-    ]);
+    ]));
   }, [api, association]);
 
   const onBan = useCallback(async () => {
     const resource = resourceFromPath(association.group);
-    await api.groups.changePolicy(resource, {
+    await api.poke(groups.changePolicy(resource, {
       open: { banShips: [`~${contact.patp}`] }
-    });
+    }));
   }, [api, association]);
 
   const onKick = useCallback(async () => {
     const resource = resourceFromPath(association.group);
     if(contact.pending) {
-      await api.groups.changePolicy(
+      await api.poke(groups.changePolicy(
         resource, 
         { invite: { removeInvites: [`~${contact.patp}`] } }
-      );
+      ));
     } else {
-      await api.groups.remove(resource, [`~${contact.patp}`]);
+      await api.poke(groups.removeMembers(resource, [`~${contact.patp}`]));
     }
   }, [api, contact, association]);
 

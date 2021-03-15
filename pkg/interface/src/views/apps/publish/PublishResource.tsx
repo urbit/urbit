@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box } from '@tlon/indigo-react';
 
-import GlobalApi from '~/logic/api/global';
+import GlobalApi from '~/logic/api-old/global';
 import { StoreState } from '~/logic/store/type';
 import { Association } from '@urbit/api';
 import { RouteComponentProps } from 'react-router-dom';
@@ -9,7 +9,6 @@ import { NotebookRoutes } from './components/NotebookRoutes';
 
 type PublishResourceProps = StoreState & {
   association: Association;
-  api: GlobalApi;
   baseUrl: string;
 } & RouteComponentProps;
 
@@ -21,7 +20,7 @@ export function PublishResource(props: PublishResourceProps) {
   return (
     <Box height="100%" width="100%" overflowY="auto">
       <NotebookRoutes
-        api={api}
+        
         ship={ship}
         book={book}
         association={association}
