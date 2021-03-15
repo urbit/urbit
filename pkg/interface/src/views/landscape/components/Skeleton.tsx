@@ -5,7 +5,6 @@ import { Associations } from '@urbit/api/metadata';
 
 import { Sidebar } from './Sidebar/Sidebar';
 import GlobalApi from '~/logic/api/global';
-import GlobalSubscription from '~/logic/subscription/global';
 import { useGraphModule } from './Sidebar/Apps';
 import { Body } from '~/views/components/Body';
 import { Workspace } from '~/types/workspace';
@@ -16,14 +15,11 @@ import ErrorBoundary from '~/views/components/ErrorBoundary';
 interface SkeletonProps {
   children: ReactNode;
   recentGroups: string[];
-  linkListening: Set<Path>;
   selected?: string;
   selectedApp?: AppName;
   baseUrl: string;
   mobileHide?: boolean;
   api: GlobalApi;
-  subscription: GlobalSubscription;
-  includeUnmanaged: boolean;
   workspace: Workspace;
 }
 

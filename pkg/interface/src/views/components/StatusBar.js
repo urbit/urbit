@@ -9,6 +9,7 @@ import {
   Button,
   BaseImage
 } from '@tlon/indigo-react';
+
 import ReconnectButton from './ReconnectButton';
 import { Dropdown } from './Dropdown';
 import { StatusBarItem } from './StatusBarItem';
@@ -19,6 +20,7 @@ import { useTutorialModal } from './useTutorialModal';
 
 import useHarkState from '~/logic/state/hark';
 import useInviteState from '~/logic/state/invite';
+import useContactState from '~/logic/state/contact';
 import { useHistory } from 'react-router-dom';
 import useLocalState, { selectLocalState } from '~/logic/state/local';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
@@ -26,8 +28,9 @@ import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 const localSel = selectLocalState(['toggleOmnibox']);
 
 const StatusBar = (props) => {
-  const { ourContact, api, ship } = props;
+  const { api, ship } = props;
   const history = useHistory();
+  const ourContact = useContactState((state) => state.contacts[`~${ship}`]);
   const notificationsCount = useHarkState((state) => state.notificationsCount);
   const doNotDisturb = useHarkState((state) => state.doNotDisturb);
   const inviteState = useInviteState((state) => state.invites);
@@ -38,7 +41,7 @@ const StatusBar = (props) => {
   const { toggleOmnibox } = useLocalState(localSel);
   const { hideAvatars } = useSettingsState(selectCalmState);
 
-  const color = !!ourContact ? `#${uxToHex(props.ourContact.color)}` : '#000';
+  const color = !!ourContact ? `#${uxToHex(ourContact.color)}` : '#000';
   const xPadding = !hideAvatars && ourContact?.avatar ? '0' : '2';
   const bgColor = !hideAvatars && ourContact?.avatar ? '' : color;
   const profileImage =

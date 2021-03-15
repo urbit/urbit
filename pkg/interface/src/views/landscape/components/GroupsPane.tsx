@@ -158,8 +158,6 @@ export function GroupsPane(props: GroupsPaneProps) {
                 baseUrl={baseUrl}
               >
                 <UnjoinedResource
-                  notebooks={props.notebooks}
-                  inbox={props.inbox}
                   baseUrl={baseUrl}
                   api={api}
                   association={association}
@@ -191,9 +189,8 @@ export function GroupsPane(props: GroupsPaneProps) {
       <Route
         path={relativePath('')}
         render={(routeProps) => {
-          const hasDescription = groupAssociation?.metadata?.description;
-          const channelCount = Object.keys(props?.associations?.graph ?? {}).filter((e) => {
-            return props?.associations?.graph?.[e]?.['group'] === groupPath;
+          const channelCount = Object.keys(associations?.graph ?? {}).filter((e) => {
+            return associations?.graph?.[e]?.['group'] === groupPath;
           }).length;
           let summary: ReactNode;
           if(groupAssociation?.group) {
