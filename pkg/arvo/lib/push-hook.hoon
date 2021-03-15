@@ -396,20 +396,38 @@
   ++  forward-update
     |=  vas=vase
     ^-  (list card:agent:gall)
-    %+  murn  (resource-for-update vas)
-    |=  rid=resource
-    ^-  (unit card:agent:gall)
-    =/  =path  resource+(en-path:resource rid)
+    =-  lis
+    %+  roll  (resource-for-update vas)
+    |=  [rid=resource [lis=(list card:agent:gall) tf-vas=(unit vase)]]
+    ^-  [(list card:agent:gall) (unit vase)]
+    =/  =path
+      resource+(en-path:resource rid)
     =/  =wire  (make-wire path)
     =*  ship   entity.rid
-    =/  [=dock vax=(unit vase)]
-      ?.  =(our.bowl entity.rid)
-        :_  `vas
-        [ship dap.bowl]
-      :-  [ship store-name.config]
+    =.  tf-vas
+      ?.  =(our.bowl ship)
+        ::  do not transform before forwarding
+        ::
+        `vas
+      ::  use cached transform
+      ::
+      ?^  tf-vas  tf-vas
+      ::  transform before poking store
+      ::
       (transform-proxy-update:og vas)
-    ?~  vax  ~
-    `[%pass wire %agent dock %poke update-mark.config u.vax]
+    ~|  "forwarding failed during transform. mark: {<p.vas>} resource: {<rid>}"
+    ?>  ?=(^ tf-vas)
+    =/  =dock
+      :-  ship
+      ?.  =(our.bowl ship)
+        ::  forward to host
+        ::
+        dap.bowl
+      ::  poke our store
+      ::
+      store-name.config
+    :_  tf-vas
+    [[%pass wire %agent dock %poke update-mark.config u.tf-vas] lis]
   ::
   ++  resource-for-update
     |=  =vase
