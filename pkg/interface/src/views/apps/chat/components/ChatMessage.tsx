@@ -134,9 +134,17 @@ const MessageActionItem = (props) => {
   );
 };
 
-const MessageActions = ({ api, history, msg, group }) => {
+const MessageActions = ({ api, association, history, msg, group }) => {
   const isAdmin = () => group.tags.role.admin.has(window.ship);
   const isOwn = () => msg.author === window.ship;
+  const [copied, setCopied] = useState(false);
+  const copyLink = useCallback(() => {
+    writeText(`arvo://~graph/graph${association.resource}${msg.index}`);
+    setCopied(true);;
+    setTimeout(() => {
+      setCopied(false)
+    }, 2000);
+  }, [setCopied, association, msg]);
   return (
     <Box
       borderRadius={1}
@@ -192,8 +200,8 @@ const MessageActions = ({ api, history, msg, group }) => {
               <MessageActionItem onClick={(e) => console.log(e)}>
                 Reply
               </MessageActionItem>
-              <MessageActionItem onClick={(e) => console.log(e)}>
-                Copy Message Link
+              <MessageActionItem onClick={copyLink}>
+                { copied ? 'Copied' : 'Copy Message Link'}
               </MessageActionItem>
               {isAdmin() || isOwn() ? (
                 <MessageActionItem onClick={(e) => console.log(e)} color='red'>
@@ -227,7 +235,7 @@ const MessageWrapper = (props) => {
       {...bind}
     >
       {props.children}
-      {/* {hovering ? <MessageActions {...props} /> : null} */}
+      {hovering ? <MessageActions {...props} /> : null}
     </Box>
   );
 };

@@ -7,6 +7,7 @@ import { RemoteContentPolicy } from '~/types/local-update';
 import { VirtualContextProps, withVirtual } from "~/logic/lib/virtualContext";
 import { IS_IOS } from '~/logic/lib/platform';
 import withState from '~/logic/lib/withState';
+import {Link} from 'react-router-dom';
 
 type RemoteContentProps = VirtualContextProps & {
   url: string;
@@ -124,6 +125,14 @@ return;
 
   wrapInLink(contents) {
     const { style } = this.props;
+    if(this.props.url.startsWith('arvo://')) {
+      return (
+        <Link to={this.props.url.slice(6)}>
+          {contents}
+        </Link>
+      );
+
+    }
     return (<BaseAnchor
       href={this.props.url}
       flexShrink={0}

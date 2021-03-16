@@ -82,8 +82,12 @@ export function ChatResource(props: ChatResourceProps) {
     const clear = () => {
       props.history.replace(location.pathname);
     };
-    setTimeout(clear, 10000);
-    return clear;
+    const timId = setTimeout(clear, 10000);
+
+    return () => {
+      clearTimeout(timId);
+    };
+  
   }, [station]);
 
   const [showBanner, setShowBanner] = useState(false);
