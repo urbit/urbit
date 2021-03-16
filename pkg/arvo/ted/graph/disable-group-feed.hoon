@@ -10,7 +10,7 @@
 =/  m  (strand ,vase)
 ^-  form:m
 =+  !<([~ =action:graph-view] arg)
-?>  ?=(%dismiss-group-feed -.action)
+?>  ?=(%disable-group-feed -.action)
 ;<  =bowl:spider  bind:m  get-bowl:strandio
 ?.  =(our.bowl entity.group.action)
   (strand-fail:strandio %bad-request ~)

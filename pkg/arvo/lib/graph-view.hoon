@@ -19,7 +19,7 @@
         eval+so
         pending-indices+pending-indices
         create-group-feed+create-group-feed
-        dismiss-group-feed+dismiss-group-feed
+        disable-group-feed+disable-group-feed
         ::invite+invite
     ==
     ::
@@ -70,7 +70,7 @@
       :~  resource+dejs:resource
       ==
     ::
-    ++  dismiss-group-feed
+    ++  disable-group-feed
       %-  ot
       :~  resource+dejs:resource
       ==
