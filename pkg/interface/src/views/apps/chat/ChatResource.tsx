@@ -139,9 +139,6 @@ export function ChatResource(props: ChatResourceProps) {
     return <Loading />;
   }
 
-  const modifiedContacts = { ...contacts };
-  delete  modifiedContacts[`~${window.ship}`];
-
   return (
     <Col {...bind} height="100%" overflow="hidden" position="relative">
       <ShareProfile
@@ -158,10 +155,7 @@ export function ChatResource(props: ChatResourceProps) {
         key={station}
         graph={graph}
         unreadCount={unreadCount}
-        contacts={
-          (!showBanner && hasLoadedAllowed) ?
-          contacts : modifiedContacts
-        }
+        showOurContact={ !showBanner && hasLoadedAllowed }
         association={props.association}
         pendingSize={Object.keys(graphTimesentMap[graphPath] || {}).length}
         group={group}
@@ -177,9 +171,6 @@ export function ChatResource(props: ChatResourceProps) {
           (!showBanner && hasLoadedAllowed) ? ourContact : null
         }
         envelopes={[]}
-        contacts={
-          (!showBanner && hasLoadedAllowed) ? contacts : modifiedContacts
-        }
         onUnmount={appendUnsent}
         placeholder="Message..."
         message={unsent[station] || ''}

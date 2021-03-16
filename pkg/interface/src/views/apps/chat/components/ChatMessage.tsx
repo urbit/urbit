@@ -254,6 +254,7 @@ class ChatMessage extends Component<ChatMessageProps> {
       unreadMarkerRef,
       history,
       highlighted,
+      showOurContact,
       fontSize
     } = this.props;
 
@@ -286,6 +287,7 @@ class ChatMessage extends Component<ChatMessageProps> {
       style,
       containerClass,
       isPending,
+      showOurContact,
       history,
       scrollWindow,
       highlighted,
@@ -343,6 +345,7 @@ export const MessageAuthor = ({
   group,
   history,
   scrollWindow,
+  showOurContact,
   ...rest
 }) => {
   const osDark = useLocalState((state) => state.dark);
@@ -355,7 +358,11 @@ export const MessageAuthor = ({
     .unix(msg['time-sent'] / 1000)
     .format(DATESTAMP_FORMAT);
   const contact =
-    `~${msg.author}` in contacts ? contacts[`~${msg.author}`] : false;
+    ( ( (msg.author === window.ship && showOurContact) || 
+         msg.author !== window.ship) && 
+      `~${msg.author}` in contacts
+    ) ? contacts[`~${msg.author}`] : false;
+
   const showNickname = useShowNickname(contact);
   const { hideAvatars } = useSettingsState(selectCalmState);
   const shipName = showNickname ? contact.nickname : cite(msg.author);

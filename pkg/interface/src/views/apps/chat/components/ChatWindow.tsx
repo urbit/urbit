@@ -62,9 +62,6 @@ class ChatWindow extends Component<
   private virtualList: VirtualScroller | null;
   private unreadMarkerRef: React.RefObject<HTMLDivElement>;
   private prevSize = 0;
-  private loadedNewest = false;
-  private loadedOldest = false;
-  private fetchPending = false;
 
   INITIALIZATION_MAX_TIME = 100;
 
@@ -128,8 +125,11 @@ class ChatWindow extends Component<
   componentDidUpdate(prevProps: ChatWindowProps, prevState) {
     const { history, graph, unreadCount, station } = this.props;
 
-    if (graph.size !== prevProps.graph.size && this.fetchPending) {
-      this.fetchPending = false;
+    if (graph.size !== this.prevSize) {
+      this.prevSize = graph.size;
+      if(!this.state.unreadIndex && this.virtualList?.loaded.top) {
+        this.calculateUnreadIndex();
+      }
     }
 
     if (unreadCount > prevProps.unreadCount) {
@@ -173,30 +173,28 @@ class ChatWindow extends Component<
 
   fetchMessages = async (newer: boolean): Promise<boolean> => {
     const { station, graph } = this.props;
-    if(this.fetchPending) {
-      return false;
-    }
-    
-
-    this.fetchPending = true;
+    const pageSize = 100;
 
     const [, , ship, name] = station.split('/');
-    const currSize = graph.size;
+    const expectedSize = graph.size + pageSize;
     if (newer) {
       const [index] = graph.peekLargest()!;
       await this.props.getYoungerSiblings(
         ship,
         name,
-        100,
+        pageSize,
         `/${index.toString()}`
       );
+      return expectedSize !== graph.size;
     } else {
       const [index] = graph.peekSmallest()!;
       await this.props.getOlderSiblings(ship, name, 100, `/${index.toString()}`);
-      this.calculateUnreadIndex();
+      const done = expectedSize !== graph.size;
+      if(done) {
+        this.calculateUnreadIndex();
+      }
+      return done;
     }
-    this.fetchPending = false;
-    return currSize === graph.size;
   }
 
   onScroll = ({ scrollTop, scrollHeight, windowHeight }) => {
@@ -211,7 +209,7 @@ class ChatWindow extends Component<
       api,
       association,
       group,
-      contacts,
+      showOurContact,
       graph,
       history,
       groups,
@@ -221,13 +219,14 @@ class ChatWindow extends Component<
     const messageProps = {
       association,
       group,
-      contacts,
+      showOurContact,
       unreadMarkerRef,
       history,
       api,
       groups,
       associations
     };
+
     const msg = graph.get(index)?.post;
     if (!msg) return null;
     if (!this.state.initialized) {
@@ -258,6 +257,7 @@ class ChatWindow extends Component<
       msg,
       ...messageProps
     };
+
     return (
       <ChatMessage
         key={index.toString()}
@@ -279,6 +279,7 @@ class ChatWindow extends Component<
       history,
       groups,
       associations,
+      showOurContact,
       pendingSize
     } = this.props;
 
@@ -291,8 +292,11 @@ class ChatWindow extends Component<
       api,
       associations
     };
-    const unreadIndex = graph.keys()[this.props.unreadCount];
-    const unreadMsg = unreadIndex && graph.get(unreadIndex);
+    const unreadMsg = graph.get(this.state.unreadIndex);
+
+    // hack to force a re-render when we toggle showing contact
+    const contactsModified =
+      showOurContact ? 0 : 100;
 
     return (
       <Col height='100%' overflow='hidden' position='relative'>
@@ -319,7 +323,7 @@ class ChatWindow extends Component<
           onScroll={this.onScroll}
           data={graph}
           size={graph.size}
-          pendingSize={pendingSize}
+          pendingSize={pendingSize + contactsModified}
           id={association.resource}
           averageHeight={22}
           renderer={this.renderer}
