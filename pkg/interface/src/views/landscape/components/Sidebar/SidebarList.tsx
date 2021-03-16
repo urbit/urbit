@@ -61,10 +61,14 @@ export function SidebarList(props: {
           assoc.metadata.config.graph === 'chat'
         );
       } else {
-        return group ? assoc.group === group : (
+        return group ? (
+          assoc.group === group &&
+          !assoc.metadata.hidden
+        ) : (
           !(assoc.group in props.associations.groups) &&
           'graph' in assoc.metadata.config &&
-          assoc.metadata.config.graph !== 'chat'
+          assoc.metadata.config.graph !== 'chat' &&
+          !assoc.metadata.hidden
         );
       }
     })

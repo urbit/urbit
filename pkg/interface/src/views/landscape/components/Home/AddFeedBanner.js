@@ -1,11 +1,7 @@
-import React, {
-  useState,
-  useEffect
-} from 'react';
-import _  from 'lodash';
-import { Box, Row, Text, BaseImage } from '@tlon/indigo-react';
-import { uxToHex } from '~/logic/lib/util';
-import { Sigil } from '~/logic/lib/sigil';
+import React from 'react';
+import { Box, Row, Col, Text, BaseImage } from '@tlon/indigo-react';
+import { resourceFromPath } from '~/logic/lib/group';
+
 
 export const AddFeedBanner = (props) => {
   const {
@@ -14,27 +10,62 @@ export const AddFeedBanner = (props) => {
     groupPath,
   } = props;
 
-  const onClick = async () => {
-    //  TODO: implement api action to turn on group feed or dismiss
+  const disableFeed = () => {
+    if (!groupPath) {
+      console.error('no group path, cannot enable feed');
+      return;
+    }
+    const resource = resourceFromPath(groupPath);
+    if (!resource) {
+      console.error('cannot make resource, cannot enable feed');
+      return;
+    }
+
+    api.spider(
+      'graph-view-action',
+      'json',
+      'graph-disable-group-feed',
+      { 'disable-group-feed': { resource } }
+    );
+  };
+
+  const enableFeed = () => {
+    if (!groupPath) {
+      console.error('no group path, cannot enable feed');
+      return;
+    }
+    const resource = resourceFromPath(groupPath);
+    if (!resource) {
+      console.error('cannot make resource, cannot enable feed');
+      return;
+    }
+
+    api.spider(
+      'graph-view-action',
+      'json',
+      'graph-create-group-feed',
+      { 'create-group-feed': { resource } }
+    );
   };
 
   return (
     <Row
       height="48px"
+      width="100%"
       alignItems="center"
       justifyContent="space-between"
       borderBottom={1}
       borderColor="washedGray"
+      pl={2}
+      pr={2}
     >
-      <Row pl={3} alignItems="center">
-        <Text verticalAlign="middle" pl={2}>Enable Group Feed?</Text>
-      </Row>
-      <Box pr={2} onClick={onClick}>
-        <Text color="blue" bold cursor="pointer">Dismiss</Text>
-      </Box>
-      <Box pr={2} onClick={onClick}>
-        <Text color="blue" bold cursor="pointer">Enable Feed</Text>
-      </Box>
+      <Text verticalAlign="middle">Enable Group Feed?</Text>
+      <Text color="gray" bold cursor="pointer" onClick={disableFeed}>
+        Dismiss
+      </Text>
+      <Text color="blue" bold cursor="pointer" onClick={enableFeed}>
+        Enable Feed
+      </Text>
     </Row>
   );
 };

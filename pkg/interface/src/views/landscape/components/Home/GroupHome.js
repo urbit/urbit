@@ -7,25 +7,37 @@ import { AddFeedBanner } from './AddFeedBanner';
 
 
 export function GroupHome(props) {
-  //  TODO: store a backend config for whether the feed is enabled or not
-  console.log(props);
-  const metadata = props.associations?.groups[props.groupPath]?.metadata;
-  console.log(metadata);
-  const askFeedBanner = metadata && metadata.module === null;
-  const isFeedEnabled = false;
+  const {
+    associations,
+    api,
+    groupPath,
+    groups
+  } = props;
+
+  const metadata = associations?.groups[groupPath]?.metadata;
+  const askFeedBanner =
+    metadata &&
+    metadata.config &&
+    'group' in metadata.config &&
+    metadata.config.group === null;
+  const isFeedEnabled =
+    metadata &&
+    metadata.config &&
+    metadata.config.group &&
+    'resource' in metadata.config.group;
 
   return (
     <Col
       alignItems="center"
-      justifyContent="center"
       display="flex"
-      p='4'
+      width="100%"
+      height="100%"
     >
       { askFeedBanner ? (
         <AddFeedBanner 
-          api={props.api}
-          groupPath={props.groupPath}
-          group={props.groups[props.groupPath]}
+          api={api}
+          groupPath={groupPath}
+          group={groups[groupPath]}
         /> 
       ) : null }
       { isFeedEnabled ? (

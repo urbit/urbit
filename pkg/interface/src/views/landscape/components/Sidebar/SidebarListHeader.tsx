@@ -43,18 +43,24 @@ export function SidebarListHeader(props: {
 
   const groupPath = getGroupFromWorkspace(props.workspace);
   const role = groupPath && props.groups?.[groupPath] ? roleForShip(props.groups[groupPath], window.ship) : undefined;
+
+  const metadata = props.associations.groups?.[groupPath].metadata;
   const memberMetadata =
-    groupPath ? props.associations.groups?.[groupPath].metadata.vip === 'member-metadata' : false;
+    groupPath ? metadata?.vip === 'member-metadata' : false;
 
   const isAdmin = memberMetadata || (role === 'admin') || (props.workspace?.type === 'home') || (props.workspace?.type === 'messages');
 
   const noun = (props.workspace?.type === 'messages') ? 'Messages' : 'Channels';
 
-  //  TODO: also do not show group feed button
-  //  if we do not have group feed enabled
+  const isFeedEnabled =
+    metadata &&
+    metadata.config &&
+    metadata.config.group &&
+    'resource' in metadata.config.group;
+
   return (
     <Col>
-    {( groupPath ) ? (
+    {( isFeedEnabled ) ? (
        <Row
          flexShrink="0"
          alignItems="center"
