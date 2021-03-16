@@ -1,5 +1,5 @@
 import React from 'react';
-import { Col } from '@tlon/indigo-react';
+import { Box, Col } from '@tlon/indigo-react';
 
 import { EmptyGroupHome } from './EmptyGroupHome';
 import { GroupFeed } from './GroupFeed';
@@ -27,12 +27,7 @@ export function GroupHome(props) {
     'resource' in metadata.config.group;
 
   return (
-    <Col
-      alignItems="center"
-      display="flex"
-      width="100%"
-      height="100%"
-    >
+    <Box width="100%" height="100%">
       { askFeedBanner ? (
         <AddFeedBanner 
           api={api}
@@ -45,6 +40,6 @@ export function GroupHome(props) {
       ) : (
         <EmptyGroupHome {...props} />
       )}
-    </Col>
+    </Box>
   );
 }
