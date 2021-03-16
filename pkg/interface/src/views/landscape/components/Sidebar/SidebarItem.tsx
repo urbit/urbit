@@ -88,7 +88,7 @@ export function SidebarItem(props: {
 
   if (urbitOb.isValidPatp(title)) {
     if (contacts?.[title]?.avatar && !hideAvatars) {
-      img = <BaseImage src={contacts[title].avatar} width='16px' height='16px' borderRadius={2} />;
+      img = <BaseImage referrerPolicy="no-referrer" src={contacts[title].avatar} width='16px' height='16px' borderRadius={2} />;
     } else {
       img = <Sigil ship={title} color={`#${uxToHex(contacts?.[title]?.color || '0x0')}`} icon padding={2} size={16} />;
     }
