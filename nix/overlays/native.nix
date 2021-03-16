@@ -28,12 +28,8 @@ in {
 
   lmdb = prev.lmdb.overrideAttrs (attrs: {
     patches =
-      if builtins.currentSystem != "x86_64-darwin"
-      then
-        attrs.patches
-      else
-        optionalList attrs.patches ++ [
-          ../pkgs/lmdb/darwin-fsync.patch
-        ];
+      optionalList attrs.patches ++ prev.lib.optional prev.stdenv.isDarwin [
+        ../pkgs/lmdb/darwin-fsync.patch
+      ];
   });
 }
