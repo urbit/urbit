@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useRef} from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -27,10 +27,12 @@ interface CommentItemProps {
   ship: string;
   api: GlobalApi;
   group: Group;
+  highlighted: boolean;
 }
 
 export function CommentItem(props: CommentItemProps): ReactElement {
   const { ship, name, api, comment, group } = props;
+  const ref = useRef<HTMLElement | null>(null);
   const [, post] = getLatestCommentRevision(comment);
   const disabled = props.pending;
 
@@ -40,13 +42,12 @@ export function CommentItem(props: CommentItemProps): ReactElement {
 
   const commentIndexArray = (comment.post?.index || '/').split('/');
   const commentIndex = commentIndexArray[commentIndexArray.length - 1];
-  const updateUrl = `${props.baseUrl}/${commentIndex}`;
 
   const adminLinks: JSX.Element[] = [];
   const ourRole = roleForShip(group, window.ship);
   if (window.ship == post?.author && !disabled) {
     adminLinks.push(
-      <Link to={updateUrl}>
+      <Link to={{ pathname: props.baseUrl, search: `?edit=${commentIndex}`}}>
         <Text
           color="blue"
           ml={2}
@@ -65,9 +66,16 @@ export function CommentItem(props: CommentItemProps): ReactElement {
     )
   };
 
+  useEffect(() => {
+    if(props.highlighted) {
+      ref.current.scrollIntoView();
+    }
+
+  }, [props.highlighted]);
+
   return (
-    <Box mb={4} opacity={post?.pending ? '60%' : '100%'}>
-      <Row bg="white" my={3}>
+    <Box ref={ref} border={props.highlighted ? 1 : 0} borderRadius={1} borderColor="blue" mb={4} opacity={post?.pending ? '60%' : '100%'}>
+      <Row my={3}>
         <Author
           showImage
           ship={post?.author}

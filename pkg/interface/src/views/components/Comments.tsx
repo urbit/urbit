@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import bigInt from 'big-integer';
 import { Col } from '@tlon/indigo-react';
 import { CommentItem } from './CommentItem';
@@ -14,6 +14,7 @@ import { getUnreadCount } from '~/logic/lib/hark';
 import { PropFunc } from '~/types/util';
 import { isWriter } from '~/logic/lib/group';
 import useHarkState from '~/logic/state/hark';
+import {useQuery} from '~/logic/lib/useQuery';
 
 interface CommentsProps {
   comments: GraphNode;
@@ -32,13 +33,24 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
     comments,
     ship,
     name,
-    editCommentId,
     api,
     history,
     baseUrl,
     group,
     ...rest
   } = props;
+
+  const { query } = useQuery();
+  const selectedComment = useMemo(() => {
+    const id = query.get('selected')
+    return id ? bigInt(id) : null;
+  }, [query]);
+
+  const editCommentId = useMemo(() => {
+    const id = query.get('edit')
+    return id || '';
+  }, [query]);
+
 
   const onSubmit = async (
     { comment },
@@ -116,8 +128,8 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
 
   return (
     <Col {...rest}>
-      {( !props.editCommentId && canComment ? <CommentInput onSubmit={onSubmit} /> : null )}
-      {( props.editCommentId ? (
+      {( !editCommentId && canComment ? <CommentInput onSubmit={onSubmit} /> : null )}
+      {( editCommentId ? (
         <CommentInput
           onSubmit={onEdit}
           label='Edit Comment'
@@ -126,9 +138,11 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
         />
       ) : null )}
       {children.reverse()
-        .map(([idx, comment], i) => {
+          .map(([idx, comment], i) => {
+          const highlighted = selectedComment?.eq(idx) ?? false;
           return (
             <CommentItem
+              highlighted={highlighted}
               comment={comment}
               key={idx.toString()}
               api={api}
