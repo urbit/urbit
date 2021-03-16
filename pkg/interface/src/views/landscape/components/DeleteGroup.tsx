@@ -4,7 +4,6 @@ import { useHistory } from 'react-router-dom';
 
 import { Association, groups } from '@urbit/api';
 
-import GlobalApi from '~/logic/api-old/global';
 import { resourceFromPath } from '~/logic/lib/group';
 import { StatelessAsyncButton } from '~/views/components/StatelessAsyncButton';
 import { useModal } from '~/logic/lib/useModal';

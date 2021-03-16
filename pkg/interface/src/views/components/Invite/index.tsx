@@ -17,7 +17,6 @@ import { Invite } from '@urbit/api/invite';
 import { Text, Icon, Row } from '@tlon/indigo-react';
 
 import { cite } from '~/logic/lib/util';
-import GlobalApi from '~/logic/api-old/global';
 import { resourceFromPath } from '~/logic/lib/group';
 import { GroupInvite } from './Group';
 import { InviteSkeleton } from './InviteSkeleton';
@@ -32,7 +31,6 @@ interface InviteItemProps {
   resource: string;
   app?: string;
   uid?: string;
-  api: GlobalApi;
 }
 
 export function InviteItem(props: InviteItemProps) {

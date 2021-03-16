@@ -2,7 +2,6 @@ import React, { useCallback } from 'react';
 import { Icon, Text, Row, Col } from '@tlon/indigo-react';
 import { Formik } from 'formik';
 import { Association, Associations, Group, metadata, remove } from '@urbit/api';
-import GlobalApi from '~/logic/api-old/global';
 import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
 import { getModuleIcon } from '~/logic/lib/util';
 import { Dropdown } from '~/views/components/Dropdown';
@@ -14,7 +13,6 @@ import { update } from '@urbit/api/metadata';
 interface GroupChannelSettingsProps {
   group: Group;
   association: Association;
-  api: GlobalApi;
 }
 
 export function GroupChannelSettings(props: GroupChannelSettingsProps) {

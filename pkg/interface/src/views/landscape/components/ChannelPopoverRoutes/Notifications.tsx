@@ -1,6 +1,5 @@
 import React, { useRef } from 'react';
 import { Col, Text, BaseLabel, Label } from '@tlon/indigo-react';
-import GlobalApi from '~/logic/api-old/global';
 import { Association, hark, NotificationGraphConfig } from '@urbit/api';
 import { StatelessAsyncToggle } from '~/views/components/StatelessAsyncToggle';
 import useHarkState from '~/logic/state/hark';

@@ -9,7 +9,6 @@ import {
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 
-import GlobalApi from "~/logic/api-old/global";
 import { uxToHex } from "~/logic/lib/util";
 import { S3State, BackgroundConfig, StorageState } from "~/types";
 import { BackgroundPicker, BgType } from "./BackgroundPicker";

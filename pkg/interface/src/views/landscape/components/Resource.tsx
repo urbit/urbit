@@ -8,7 +8,6 @@ import { ChatResource } from '~/views/apps/chat/ChatResource';
 import { PublishResource } from '~/views/apps/publish/PublishResource';
 import { LinkResource } from '~/views/apps/links/LinkResource';
 import { StoreState } from '~/logic/store/type';
-import GlobalApi from '~/logic/api-old/global';
 import { ResourceSkeleton } from './ResourceSkeleton';
 import { ChannelPopoverRoutes } from './ChannelPopoverRoutes';
 import useGroupState from '~/logic/state/group';
@@ -18,12 +17,11 @@ import useMetadataState from '~/logic/state/metadata';
 
 type ResourceProps = StoreState & {
   association: Association;
-  api: GlobalApi;
   baseUrl: string;
 } & RouteComponentProps;
 
 export function Resource(props: ResourceProps): ReactElement {
-  const { association, api, notificationsGraphConfig } = props;
+  const { association } = props;
   const groups = useGroupState(state => state.groups);
   const notificationsCount = useHarkState(state => state.notificationsCount);
   const associations = useMetadataState(state => state.associations);
@@ -33,7 +31,7 @@ export function Resource(props: ResourceProps): ReactElement {
   const selectedGroup = association.group;
   const relativePath = (p: string) =>
     `${props.baseUrl}/resource/${app}${rid}${p}`;
-  const skelProps = { api, association, groups, contacts };
+  const skelProps = { association, groups, contacts };
   let title = props.association.metadata.title;
   if ('workspace' in props) {
     if ('group' in props.workspace && props.workspace.group in associations.groups) {

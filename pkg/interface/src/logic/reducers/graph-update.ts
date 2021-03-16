@@ -8,15 +8,16 @@ import { handleSubscriptionError, handleSubscriptionQuit } from '../lib/subscrip
 
 const GraphReducer = (json) => {
   const data = _.get(json, 'graph-update', false);
-  
   if (data) {
-    reduceState<GraphState, any>(useGraphState, data, [
-      keys,
-      addGraph,
-      removeGraph,
-      addNodes,
-      removeNodes
-    ]);
+    useGraphState.getState().set(state => {
+      state = reduceState<GraphState, any>(useGraphState, data, [
+        keys,
+        addGraph,
+        removeGraph,
+        addNodes,
+        removeNodes
+      ]);
+    })
   }
 };
 
@@ -261,5 +262,16 @@ export const graphSubscription = (channel: UrbitInterface): SubscriptionRequestI
     event, err, quit
   };
 };
+
+export const graphUpdateSubscription = (channel: UrbitInterface): SubscriptionRequestInterface => {
+  const event = GraphReducer;
+  const err = handleSubscriptionError(channel, graphUpdateSubscription);
+  const quit = handleSubscriptionQuit(channel, graphUpdateSubscription);
+  return {
+    app: 'graph-store',
+    path: '/updates',
+    event, err, quit
+  };
+}
 
 export default GraphReducer;

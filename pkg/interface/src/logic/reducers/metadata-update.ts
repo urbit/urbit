@@ -12,13 +12,15 @@ import { handleSubscriptionError, handleSubscriptionQuit } from '../lib/subscrip
 const MetadataReducer = (json: Cage): void => {
   const data = json['metadata-update'];
   if (data) {
-    reduceState<MetadataState, MetadataUpdate>(useMetadataState, data, [
-      associations,
-      add,
-      update,
-      remove,
-      groupInitial,
-    ]);
+    useMetadataState.getState().set(state => {
+      state = reduceState<MetadataState, MetadataUpdate>(useMetadataState, data, [
+        associations,
+        add,
+        update,
+        remove,
+        groupInitial,
+      ]);
+    })
   }
 }
 

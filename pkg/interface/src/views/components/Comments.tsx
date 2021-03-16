@@ -4,10 +4,8 @@ import { Col } from '@tlon/indigo-react';
 import { CommentItem } from './CommentItem';
 import CommentInput from './CommentInput';
 import { Contacts } from '@urbit/api/contacts';
-import GlobalApi from '~/logic/api-old/global';
 import { FormikHelpers } from 'formik';
-import { Group, GraphNode, Association, addPost, markCountAsRead, graph, hark } from '@urbit/api';
-import { createPost, createBlankNodeWithChildPost } from '~/logic/api-old/graph';
+import { Group, GraphNode, Association, addPost, markCountAsRead, graph, hark, createBlankNodeWithChildPost, createPost, Patp, Post } from '@urbit/api';
 import { getLatestCommentRevision } from '~/logic/lib/publish';
 import tokenizeMessage from '~/logic/lib/tokenizeMessage';
 import { getUnreadCount } from '~/logic/lib/hark';
@@ -16,6 +14,7 @@ import { isWriter } from '~/logic/lib/group';
 import useHarkState from '~/logic/state/hark';
 import useApi from '~/logic/api';
 import { addNode } from '@urbit/api/graph';
+import useGraphState from '~/logic/state/graph';
 
 interface CommentsProps {
   comments: GraphNode;
@@ -24,7 +23,6 @@ interface CommentsProps {
   ship: string;
   editCommentId: string;
   baseUrl: string;
-  api: GlobalApi;
   group: Group;
 }
 
@@ -41,6 +39,20 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
     ...rest
   } = props;
   const api = useApi();
+  const addNodes = useGraphState(state => state.addNodes);
+  const addNode = (ship: Patp, name: string, node: GraphNode) => {
+    const nodes: Record<string, GraphNode> = {};
+    nodes[node.post.index] = node;
+    return addNodes(ship, name, nodes);
+  };
+  const addPost = (ship: Patp, name: string, post: Post) => {
+    const nodes: Record<string, GraphNode> = {};
+    nodes[post.index] = {
+      post,
+      children: null
+    };
+    return addNodes(ship, name, nodes);
+  }
 
   const onSubmit = async (
     { comment },
@@ -49,11 +61,12 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
     try {
       const content = tokenizeMessage(comment);
       const node = createBlankNodeWithChildPost(
+        window.ship,
         comments?.post?.index,
         '1',
         content
       );
-      await api.poke(graph.addNode(ship, name, node));
+      await addNode(ship, name, node);
       actions.resetForm();
       actions.setStatus({ success: null });
     } catch (e) {
@@ -72,11 +85,12 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
 
       const content = tokenizeMessage(comment);
       const post = createPost(
+        window.ship,
         content,
         commentNode.post.index,
         parseInt(idx + 1, 10)
       );
-      await api.poke(graph.addPost(ship, name, post));
+      await addPost(ship, name, post);
       history.push(baseUrl);
     } catch (e) {
       console.error(e);

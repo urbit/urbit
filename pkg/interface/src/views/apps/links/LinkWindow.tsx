@@ -10,7 +10,6 @@ import { Col, Text } from "@tlon/indigo-react";
 import bigInt from "big-integer";
 import { Association, Graph, Unreads, Group, Rolodex } from "@urbit/api";
 
-import GlobalApi from "~/logic/api-old/global";
 import VirtualScroller from "~/views/components/VirtualScroller";
 import { LinkItem } from "./components/LinkItem";
 import LinkSubmit from "./components/LinkSubmit";
@@ -85,7 +84,7 @@ class LinkWindow extends Component<LinkWindowProps, {}> {
   };
 
   render() {
-    const { graph, api, association } = this.props;
+    const { graph, association } = this.props;
     const first = graph.peekLargest()?.[0];
     const [, , ship, name] = association.resource.split("/");
     if (!first) {

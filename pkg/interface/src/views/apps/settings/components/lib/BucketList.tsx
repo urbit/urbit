@@ -14,7 +14,6 @@ import {
   Row,
 } from "@tlon/indigo-react";
 
-import GlobalApi from '~/logic/api-old/global';
 import useApi from "~/logic/api";
 import { s3 } from "@urbit/api/dist";
 

@@ -16,7 +16,6 @@ import { Skeleton } from './Skeleton';
 import { InvitePopover } from './InvitePopover';
 import { NewChannel } from './NewChannel';
 
-import GlobalApi from '~/logic/api-old/global';
 import { StoreState } from '~/logic/store/type';
 import { UnjoinedResource } from '~/views/components/UnjoinedResource';
 import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
@@ -35,11 +34,10 @@ import useMetadataState from '~/logic/state/metadata';
 type GroupsPaneProps = StoreState & {
   baseUrl: string;
   workspace: Workspace;
-  api: GlobalApi;
 };
 
 export function GroupsPane(props: GroupsPaneProps) {
-  const { baseUrl, api, workspace } = props;
+  const { baseUrl, workspace } = props;
   const associations = useMetadataState(state => state.associations);
   const contacts = useContactState(state => state.contacts);
   const notificationsCount = useHarkState(state => state.notificationsCount);

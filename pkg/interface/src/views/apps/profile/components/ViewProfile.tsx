@@ -19,7 +19,7 @@ import useContactState from '~/logic/state/contact';
 
 export function ViewProfile(props: any): ReactElement {
   const { hideNicknames } = useSettingsState(selectCalmState);
-  const { api, contact, nacked, ship } = props;
+  const { contact, nacked, ship } = props;
 
   const isPublic = useContactState(state => state.isContactPublic);
 

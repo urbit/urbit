@@ -4,7 +4,6 @@ import _ from 'lodash';
 import { Col } from '@tlon/indigo-react';
 import { Invites as IInvites, Associations, Invite, JoinRequests, Groups, Contacts, AppInvites, JoinProgress } from '@urbit/api';
 
-import GlobalApi from '~/logic/api-old/global';
 import { resourceAsPath, alphabeticalOrder } from '~/logic/lib/util';
 import InviteItem from '~/views/components/Invite';
 import useInviteState from '~/logic/state/invite';

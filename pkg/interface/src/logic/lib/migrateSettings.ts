@@ -1,6 +1,5 @@
 import useLocalState, { LocalState } from "~/logic/state/local";
 import useSettingsState from "~/logic/state/settings";
-import GlobalApi from "../api-old/global";
 import { BackgroundConfig, RemoteContentPolicy } from "~/types";
 import { putEntry } from "@urbit/api/dist";
 import { UrbitInterface } from "@urbit/http-api";

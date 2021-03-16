@@ -28,7 +28,6 @@ import { Sigil } from '~/logic/lib/sigil';
 import { cite, uxToHex } from '~/logic/lib/util';
 import { roleForShip, resourceFromPath } from '~/logic/lib/group';
 import { Dropdown } from '~/views/components/Dropdown';
-import GlobalApi from '~/logic/api-old/global';
 import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
 import useLocalState from '~/logic/state/local';
 import useContactState from '~/logic/state/contact';
@@ -111,7 +110,6 @@ const Tab = ({ selected, id, label, setSelected }) => (
 export function Participants(props: {
   group: Group;
   association: Association;
-  api: GlobalApi;
 }): ReactElement {
   const { api } = props;
   const tabFilters: Record<

@@ -113,7 +113,7 @@ const MessageActionItem = (props) => {
   );
 };
 
-const MessageActions = ({ api, history, msg, group }) => {
+const MessageActions = ({ msg, group }) => {
   const isAdmin = () => group.tags.role.admin.has(window.ship);
   const isOwn = () => msg.author === window.ship;
   return (
@@ -341,7 +341,6 @@ export const MessageAuthor = ({
   timestamp,
   msg,
   group,
-  api,
   history,
   scrollWindow,
   ...rest
@@ -499,7 +498,6 @@ export const Message = ({
   timestamp,
   msg,
   group,
-  api,
   scrollWindow,
   timestampHover,
   ...rest

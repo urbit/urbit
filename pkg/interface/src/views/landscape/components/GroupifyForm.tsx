@@ -6,7 +6,6 @@ import { useHistory } from 'react-router-dom';
 
 import { Groups, Associations, Association, groupifyGraph, graph } from '@urbit/api';
 
-import GlobalApi from '~/logic/api-old/global';
 import GroupSearch from '~/views/components/GroupSearch';
 import { AsyncButton } from '~/views/components/AsyncButton';
 import useGroupState from '~/logic/state/group';
@@ -21,7 +20,6 @@ interface FormSchema {
 }
 
 interface GroupifyFormProps {
-  api: GlobalApi;
   association: Association;
 }
 

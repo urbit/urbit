@@ -1,4 +1,5 @@
-import { Graphs, decToUd, numToUd } from "@urbit/api";
+import { Graphs, decToUd, numToUd, Patp, markPending } from "@urbit/api";
+import { addNodes } from "@urbit/api/graph";
 import useApi from "../api";
 import GraphReducer from "../reducers/graph-update";
 
@@ -18,6 +19,7 @@ export interface GraphState extends BaseState<GraphState> {
   getYoungerSiblings: (ship: string, resource: string, count: number, index?: string) => Promise<void>;
   getGraphSubset: (ship: string, resource: string, start: string, end: string) => Promise<void>;
   getNode: (ship: string, resource: string, index: string) => Promise<void>;
+  addNodes: (ship: Patp, name: string, nodes: Object) => Promise<void>;
 };
 
 const useGraphState = createState<GraphState>('Graph', {
@@ -124,6 +126,37 @@ const useGraphState = createState<GraphState>('Graph', {
     });
     GraphReducer(node);
   },
+  addNodes: (
+    ship: Patp,
+    name: string,
+    nodes: Object
+  ) => {
+    const api = useApi();
+    const thread = addNodes(ship, name, nodes);
+    const pendingPromise = api.thread(thread);
+    markPending(thread.body['add-nodes'].nodes);
+    thread.body['add-nodes'].resource.ship =
+      thread.body['add-nodes'].resource.ship.slice(1);
+    GraphReducer({
+      'graph-update': thread.body
+    });
+    return pendingPromise;
+     /* TODO: stop lying to our users about pending states
+  return pendingPromise.then((pendingHashes) => {
+    for (let index in action['add-nodes'].nodes) {
+      action['add-nodes'].nodes[index].post.hash =
+        pendingHashes['pending-indices'][index] || null;
+    }
+
+    this.store.handleEvent({ data: {
+      'graph-update': {
+        'pending-indices': pendingHashes['pending-indices'],
+        ...action
+      }
+    } });
+  });
+  */
+  }
 }, ['graphs', 'graphKeys']);
 
 export default useGraphState;

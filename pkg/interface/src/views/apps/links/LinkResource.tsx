@@ -3,7 +3,6 @@ import { Box, Col, Center, LoadingSpinner, Text } from '@tlon/indigo-react';
 import { Switch, Route, Link } from 'react-router-dom';
 import bigInt from 'big-integer';
 
-import GlobalApi from '~/logic/api-old/global';
 import { StoreState } from '~/logic/store/type';
 import { RouteComponentProps } from 'react-router-dom';
 

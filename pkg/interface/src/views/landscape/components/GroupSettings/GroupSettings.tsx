@@ -5,7 +5,6 @@ import { Group } from '@urbit/api/groups';
 import { Association, Associations } from '@urbit/api/metadata';
 import { GroupNotificationsConfig } from '@urbit/api';
 
-import GlobalApi from '~/logic/api-old/global';
 import { GroupAdminSettings } from './Admin';
 import { GroupPersonalSettings } from './Personal';
 import { GroupChannelSettings } from './Channels';
@@ -20,7 +19,6 @@ const Section = ({ children }) => (
 interface GroupSettingsProps {
   group: Group;
   association: Association;
-  api: GlobalApi;
   baseUrl: string;
 }
 export function GroupSettings(props: GroupSettingsProps) {

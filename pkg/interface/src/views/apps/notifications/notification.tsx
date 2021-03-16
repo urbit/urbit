@@ -15,7 +15,6 @@ import {
   mute,
   hark
 } from '@urbit/api';
-import GlobalApi from '~/logic/api-old/global';
 import { getParentIndex } from '~/logic/lib/notification';
 import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
 import { GroupNotification } from './group';

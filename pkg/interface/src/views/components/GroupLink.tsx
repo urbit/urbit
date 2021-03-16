@@ -3,7 +3,6 @@ import React, { useEffect, useState, useLayoutEffect, ReactElement } from 'react
 import { Box, Text, Row, Col } from '@tlon/indigo-react';
 import { Associations, Groups, MetadataUpdatePreview } from '@urbit/api';
 
-import GlobalApi from '~/logic/api-old/global';
 import { MetadataIcon } from '../landscape/components/MetadataIcon';
 import { JoinGroup } from '../landscape/components/JoinGroup';
 import { useModal } from '~/logic/lib/useModal';
@@ -14,12 +13,11 @@ import {useVirtual} from '~/logic/lib/virtualContext';
 
 export function GroupLink(
   props: {
-    api: GlobalApi;
     resource: string;
     detailed?: boolean;
   } & PropFunc<typeof Row>
 ): ReactElement {
-  const { resource, api, ...rest } = props;
+  const { resource, ...rest } = props;
   const name = resource.slice(6);
   const [preview, setPreview] = useState<MetadataUpdatePreview | null>(null);
   const getPreview = useMetadataState(state => state.preview);

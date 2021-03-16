@@ -8,20 +8,24 @@ import { handleSubscriptionError, handleSubscriptionQuit } from '../lib/subscrip
 const SettingsReducer = (json: any) => {
   let data = json["settings-event"];
   if (data) {
-    reduceState<SettingsState, SettingsUpdate>(useSettingsState, data, [
-      putBucket,
-      delBucket,
-      putEntry,
-      delEntry,
-    ]);
+    useSettingsState.getState().set(state => {
+      state = reduceState<SettingsState, SettingsUpdate>(useSettingsState, data, [
+        putBucket,
+        delBucket,
+        putEntry,
+        delEntry,
+      ]);
+    })
   }
   data = json["settings-data"];
   if (data) {
-    reduceState<SettingsState, SettingsUpdate>(useSettingsState, data, [
-      getAll,
-      getBucket,
-      getEntry,
-    ]);
+    useSettingsState.getState().set(state => {
+      state = reduceState<SettingsState, SettingsUpdate>(useSettingsState, data, [
+        getAll,
+        getBucket,
+        getEntry,
+      ]);
+    })
   }
 }
 

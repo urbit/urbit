@@ -18,7 +18,6 @@ import { ModalOverlay } from '~/views/components/ModalOverlay';
 import { GraphPermissions } from './ChannelPermissions';
 import { ChannelPopoverRoutesSidebar } from './Sidebar';
 import { ChannelDetails } from './Details';
-import GlobalApi from '~/logic/api-old/global';
 import { useHashLink } from '~/logic/lib/useHashLink';
 import { useHistory, Link } from 'react-router-dom';
 import { ChannelNotifications } from './Notifications';
@@ -31,7 +30,6 @@ interface ChannelPopoverRoutesProps {
   rootUrl: string;
   association: Association;
   group: Group;
-  api: GlobalApi;
 }
 
 export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {

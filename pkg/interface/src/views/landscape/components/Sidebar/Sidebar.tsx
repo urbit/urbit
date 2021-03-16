@@ -4,7 +4,6 @@ import {
   Col
 } from '@tlon/indigo-react';
 
-import GlobalApi from '~/logic/api-old/global';
 import { GroupSwitcher } from '../GroupSwitcher';
 import {
   Associations,
@@ -34,7 +33,6 @@ const ScrollbarLessCol = styled(Col)`
 interface SidebarProps {
   children: ReactNode;
   recentGroups: string[];
-  api: GlobalApi;
   selected?: string;
   selectedGroup?: string;
   apps: SidebarAppConfigs;

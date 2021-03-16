@@ -17,7 +17,6 @@ import { AsyncButton } from '~/views/components/AsyncButton';
 import { useOutsideClick } from '~/logic/lib/useOutsideClick';
 import { FormError } from '~/views/components/FormError';
 import { resourceFromPath } from '~/logic/lib/group';
-import GlobalApi from '~/logic/api-old/global';
 import { groups, Groups, Rolodex } from '@urbit/api';
 import { deSig } from '~/logic/lib/util';
 import { Workspace } from '~/types/workspace';
@@ -26,7 +25,6 @@ import useApi from '~/logic/api';
 interface InvitePopoverProps {
   baseUrl: string;
   association: Association;
-  api: GlobalApi;
   workspace: Workspace;
 }
 

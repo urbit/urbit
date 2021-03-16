@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { RouteComponentProps, Route, Switch } from 'react-router-dom';
-import GlobalApi from '~/logic/api-old/global';
 import {
   Association,
   Associations,

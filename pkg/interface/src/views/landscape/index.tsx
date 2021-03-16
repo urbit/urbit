@@ -5,7 +5,6 @@ import Helmet from 'react-helmet';
 import './css/custom.css';
 
 import { graph, PatpNoSig } from '@urbit/api';
-import GlobalApi from '~/logic/api-old/global';
 import { StoreState } from '~/logic/store/type';
 import { GroupsPane } from './components/GroupsPane';
 import { NewGroup } from './components/NewGroup';
@@ -16,16 +15,14 @@ import { Body } from '../components/Body';
 import { Box } from '@tlon/indigo-react';
 import { Loading } from '../components/Loading';
 import { Workspace } from '~/types/workspace';
-import GlobalSubscription from '~/logic/subscription/global';
 import useGraphState from '~/logic/state/graph';
-import useHarkState, { withHarkState } from '~/logic/state/hark';
+import useHarkState from '~/logic/state/hark';
 import withState from '~/logic/lib/withState';
 import { createUnmanagedGraph } from '@urbit/api/graph';
 import useApi from '~/logic/api';
 
 type LandscapeProps = StoreState & {
   ship: PatpNoSig;
-  subscription: GlobalSubscription;
 }
 
 export function DMRedirect(props: LandscapeProps & RouteComponentProps & { ship: string; }): ReactElement {

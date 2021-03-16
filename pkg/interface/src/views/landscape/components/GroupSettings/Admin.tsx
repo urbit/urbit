@@ -15,7 +15,6 @@ import { Association, update } from '@urbit/api/metadata';
 
 import { AsyncButton } from '~/views/components/AsyncButton';
 import { FormError } from '~/views/components/FormError';
-import GlobalApi from '~/logic/api-old/global';
 import { resourceFromPath, roleForShip } from '~/logic/lib/group';
 import { ColorInput } from '~/views/components/ColorInput';
 import { useHistory } from 'react-router-dom';
@@ -44,7 +43,6 @@ const formSchema = Yup.object({
 interface GroupAdminSettingsProps {
   group: Group;
   association: Association;
-  api: GlobalApi;
 }
 
 export function GroupAdminSettings(props: GroupAdminSettingsProps) {

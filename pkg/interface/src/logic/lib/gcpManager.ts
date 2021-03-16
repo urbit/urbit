@@ -14,7 +14,6 @@
 //
 //
 import useApi from '../api';
-import GlobalApi from '../api-old/global';
 import useStorageState from '../state/storage';
 
 
@@ -58,42 +57,55 @@ class GcpManager {
   }
 
   private refreshLoop() {
+    const api = useApi();
     if (!this.isConfigured()) {
-      const api = useApi();
-      this.#api.gcp.isConfigured()
-        .then(() => {
-          if (this.isConfigured() === undefined) {
-            throw new Error("can't check whether GCP is configured?");
-          }
-          if (this.isConfigured()) {
-            this.refreshLoop();
-          } else {
-            this.refreshAfter(10_000);
-          }
-        })
-        .catch((reason) => {
-          console.error('GcpManager failure; stopping.', reason);
-          this.stop();
+      api.thread({
+        inputMark: 'noun',
+        outputMark: 'json',
+        threadName: 'gcp-is-configured',
+        body: {}
+      }).then(data => {
+        console.log('received gcp is configured', data);
+        useStorageState.getState().set(state => {
+          state.gcp.configured = data.configured;
         });
+        if (this.isConfigured() === undefined) {
+          throw new Error("can't check whether GCP is configured?");
+        }
+        if (this.isConfigured()) {
+          this.refreshLoop();
+        } else {
+          this.refreshAfter(10_000);
+        }
+      }).catch((reason) => {
+        console.error('GcpManager failure; stopping.', reason);
+        this.stop();
+      });
       return;
     }
-    this.#api.gcp.getToken()
-      .then(() => {
-        const token = useStorageState.getState().gcp.token;
-        if (token) {
-          this.#consecutiveFailures = 0;
-          const interval = this.refreshInterval(token.expiresIn);
-          console.log('GcpManager got token; refreshing after', interval);
-          this.refreshAfter(interval);
-        } else {
-          throw new Error('thread succeeded, but returned no token?');
-        }
-      })
-      .catch((reason) => {
-        this.#consecutiveFailures++;
-        console.warn('GcpManager token refresh failed; retrying with backoff');
-        this.refreshAfter(this.backoffInterval());
+    api.thread({
+      inputMark: 'noun',
+      outputMark: 'json',
+      threadName: 'gcp-get-token',
+      body: {}
+    }).then(data => {
+      useStorageState.getState().set(state => {
+        (state.gcp.token as any) = data;
       });
+      const token = useStorageState.getState().gcp.token;
+      if (token) {
+        this.#consecutiveFailures = 0;
+        const interval = this.refreshInterval(token.expiresIn);
+        console.log('GcpManager got token; refreshing after', interval);
+        this.refreshAfter(interval);
+      } else {
+        throw new Error('thread succeeded, but returned no token?');
+      }
+    }).catch((reason) => {
+      this.#consecutiveFailures++;
+      console.warn('GcpManager token refresh failed; retrying with backoff');
+      this.refreshAfter(this.backoffInterval());
+    });
   }
 
   private refreshAfter(durationMs) {

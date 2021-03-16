@@ -3,13 +3,13 @@ import _ from 'lodash';
 import { FormikHelpers } from 'formik';
 import { RouteComponentProps, useLocation } from 'react-router-dom';
 
-import { addNodes, graph, GraphNode } from '@urbit/api';
+import { graph, GraphNode } from '@urbit/api';
 
 import { PostFormSchema, PostForm } from './NoteForm';
-import GlobalApi from '~/logic/api-old/global';
 import { getLatestRevision, editPost } from '~/logic/lib/publish';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
 import useApi from '~/logic/api';
+import useGraphState from '~/logic/state/graph';
 
 interface EditPostProps {
   ship: string;
@@ -23,6 +23,7 @@ export function EditPost(props: EditPostProps & RouteComponentProps): ReactEleme
   const api = useApi();
   const [revNum, title, body] = getLatestRevision(note);
   const location = useLocation();
+  const addNodes = useGraphState(state => state.addNodes);
 
   const waiter = useWaitForProps(props);
   const initial: PostFormSchema = {
@@ -38,7 +39,7 @@ export function EditPost(props: EditPostProps & RouteComponentProps): ReactEleme
     try {
       const newRev = revNum + 1;
       const nodes = editPost(newRev, noteId, title, body);
-      await api.poke(graph.addNodes(ship, book, nodes));
+      await addNodes(ship, book, nodes);
       await waiter((p) => {
         const [rev] = getLatestRevision(p.note);
         return rev === newRev;

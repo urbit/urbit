@@ -12,20 +12,22 @@ import { handleSubscriptionError, handleSubscriptionQuit } from '../lib/subscrip
 const ContactReducer = (json) => {
   const data: ContactUpdate = _.get(json, 'contact-update', false);
   if (data) {
-    reduceState<ContactState, ContactUpdate>(useContactState, data, [
-      initial,
-      add,
-      remove,
-      edit,
-      setPublic
-    ]);
+    useContactState.getState().set(state => {
+      state = reduceState<ContactState, ContactUpdate>(useContactState, data, [
+        initial,
+        add,
+        remove,
+        edit,
+        setPublic
+      ]);
+    })
   }
 
   // TODO: better isolation
   const res = _.get(json, 'resource', false);
   if (res) {
-    useContactState.setState({
-      nackedContacts: useContactState.getState().nackedContacts.add(`~${res.ship}`)
+    useContactState.getState().set(state => {
+      state.nackedContacts = useContactState.getState().nackedContacts.add(`~${res.ship}`);
     });
   }
 };

@@ -30,10 +30,12 @@ const progress = (json: any, state: GroupState): GroupState => {
 const GroupViewReducer = (json: any) => {
   const data = json['group-view-update'];
   if (data) {
-    reduceState<GroupState, GroupUpdate>(useGroupState, data, [
-      progress,
-      initial
-    ]);
+    useGroupState.getState().set(state => {
+      state = reduceState<GroupState, GroupUpdate>(useGroupState, data, [
+        progress,
+        initial
+      ]);
+    })
   }
 };
 

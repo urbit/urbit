@@ -7,7 +7,6 @@ import {
 import { Form, FormikHelpers } from "formik";
 import { FormikOnBlur } from "~/views/components/FormikOnBlur";
 import { BackButton } from "./BackButton";
-import GlobalApi from "~/logic/api-old/global";
 import useHarkState from "~/logic/state/hark";
 import _ from "lodash";
 import useApi from "~/logic/api";

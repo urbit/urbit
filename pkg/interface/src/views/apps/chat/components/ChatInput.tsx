@@ -3,18 +3,18 @@ import ChatEditor from './chat-editor';
 import { IuseStorage } from '~/logic/lib/useStorage';
 import { uxToHex } from '~/logic/lib/util';
 import { Sigil } from '~/logic/lib/sigil';
-import { createPost } from '~/logic/api-old/graph';
 import tokenizeMessage, { isUrl } from '~/logic/lib/tokenizeMessage';
-import GlobalApi from '~/logic/api-old/global';
 import { Envelope } from '~/types/chat-update';
 import { StorageState } from '~/types';
-import { Content, graph } from '@urbit/api';
+import { Content, createPost, graph, GraphNode, Patp, Post } from '@urbit/api';
 import { Row, BaseImage, Box, Icon, LoadingSpinner } from '@tlon/indigo-react';
 import withStorage from '~/views/components/withStorage';
 import { withLocalState } from '~/logic/state/local';
 import { evalCord } from '@urbit/api/graph';
 import useApi, { withApi } from '~/logic/api';
 import { UrbitInterface } from '@urbit/http-api';
+import withState from '~/logic/lib/withState';
+import useGraphState from '~/logic/state/graph';
 
 type ChatInputProps = IuseStorage & {
   api: UrbitInterface;
@@ -27,6 +27,7 @@ type ChatInputProps = IuseStorage & {
   message: string;
   deleteMessage(): void;
   hideAvatars: boolean;
+  addNodes: (ship: Patp, name: string, nodes: Object) => Promise<void>;
 };
 
 interface ChatInputState {
@@ -53,12 +54,22 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
     this.toggleCode = this.toggleCode.bind(this);
     this.uploadSuccess = this.uploadSuccess.bind(this);
     this.uploadError = this.uploadError.bind(this);
+    this.addPost = this.addPost.bind(this);
   }
 
   toggleCode() {
     this.setState({
       inCodeMode: !this.state.inCodeMode
     });
+  }
+
+  addPost(ship: Patp, name: string, post: Post) {
+    const nodes: Record<string, GraphNode> = {};
+    nodes[post.index] = {
+      post,
+      children: null
+    };
+    return this.props.addNodes(ship, name, nodes);
   }
 
   submit(text) {
@@ -70,17 +81,17 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
       }, async () => {
         const output = await props.api.thread(graph.evalCord(text));
         const contents: Content[] = [{ code: { output, expression: text } }];
-        const post = createPost(contents);
-        props.api.poke(graph.addPost(ship, name, post));
+        const post = createPost(window.ship, contents);
+        this.addPost(ship, name, post);
       });
       return;
     }
 
-    const post = createPost(tokenizeMessage(text));
+    const post = createPost(window.ship, tokenizeMessage(text));
 
     props.deleteMessage();
 
-    props.api.poke(graph.addPost(ship, name, post));
+    this.addPost(ship, name, post);
   }
 
   uploadSuccess(url) {
@@ -90,7 +101,7 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
       this.setState({ uploadingPaste: false });
     } else {
       const [,,ship,name] = props.station.split('/');
-      props.api.poke(graph.addPost(ship,name, createPost([{ url }])));
+      this.addPost(ship,name, createPost(window.ship, [{ url }]));
     }
   }
 
@@ -210,4 +221,9 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
   }
 }
 
-export default withLocalState(withStorage(withApi(ChatInput), { accept: 'image/*' }), ['hideAvatars']);
+export default withState(
+  withLocalState(withStorage(withApi(ChatInput), { accept: 'image/*' }), ['hideAvatars']),
+  [
+    [useGraphState, ['addNodes']]
+  ]
+);

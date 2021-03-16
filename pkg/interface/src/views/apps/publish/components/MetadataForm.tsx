@@ -10,7 +10,6 @@ import {
   Center,
 } from "@tlon/indigo-react";
 import { Formik, Form, useFormikContext, FormikHelpers } from "formik";
-import GlobalApi from "~/logic/api-old/global";
 import { Notebook } from "~/types/publish-update";
 import { Contacts } from "@urbit/api/contacts";
 import { FormError } from "~/views/components/FormError";

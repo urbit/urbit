@@ -10,13 +10,15 @@ import { handleSubscriptionError, handleSubscriptionQuit } from '../lib/subscrip
 const LaunchReducer = (json: Cage) => {
   const data = _.get(json, 'launch-update', false);
   if (data) {
-    reduceState<LaunchState, LaunchUpdate>(useLaunchState, data, [
-      initial,
-      changeFirstTime,
-      changeOrder,
-      changeFirstTime,
-      changeIsShown,
-    ]);
+    useLaunchState.getState().set(state => {
+      state = reduceState<LaunchState, LaunchUpdate>(useLaunchState, data, [
+        initial,
+        changeFirstTime,
+        changeOrder,
+        changeFirstTime,
+        changeIsShown,
+      ]);
+    })
   }
   
   const weatherData: WeatherState = _.get(json, 'weather', false);
@@ -84,6 +86,17 @@ export const launchSubscription = (channel: UrbitInterface): SubscriptionRequest
   const quit = handleSubscriptionQuit(channel, launchSubscription);
   return {
     app: 'launch',
+    path: '/all',
+    event, err, quit
+  };
+}
+
+export const weatherSubscription = (channel: UrbitInterface): SubscriptionRequestInterface => {
+  const event = LaunchReducer;
+  const err = handleSubscriptionError(channel, weatherSubscription);
+  const quit = handleSubscriptionQuit(channel, weatherSubscription);
+  return {
+    app: 'weather',
     path: '/all',
     event, err, quit
   };

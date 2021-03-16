@@ -24,11 +24,13 @@ export const reduceState = <
   state: UseStore<StateType>,
   data: UpdateType,
   reducers: ((data: UpdateType, state: StateType) => StateType)[]
-): void => {
+): StateType=> {
   const oldState = state.getState();
   const reducer = compose(reducers.map(reducer => reducer.bind(reducer, data)));
   const newState = reducer(oldState);
-  state.getState().set(state => state = newState);
+  return newState;
+  // state.setState(newState);
+  // state.getState().set(state => state = newState);
 };
 
 export let stateStorageKeys: string[] = [];

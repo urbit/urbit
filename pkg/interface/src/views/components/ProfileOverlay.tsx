@@ -16,6 +16,7 @@ import {
 import RichText from './RichText';
 import { ProfileStatus } from './ProfileStatus';
 import useSettingsState from '~/logic/state/settings';
+import { useHistory } from 'react-router';
 
 export const OVERLAY_HEIGHT = 250;
 
@@ -27,10 +28,6 @@ type ProfileOverlayProps = ColProps & {
   bottomSpace: number | 'auto';
   group?: Group;
   onDismiss(): void;
-  hideAvatars: boolean;
-  hideNicknames: boolean;
-  history: any;
-  api: any;
 };
 
 const ProfileOverlay = (props: ProfileOverlayProps) => {
@@ -40,13 +37,13 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
     color,
     topSpace,
     bottomSpace,
-    history,
     onDismiss,
     ...rest
   } = props;
   const hideAvatars = useSettingsState(state => state.calm.hideAvatars);
   const hideNicknames = useSettingsState(state => state.calm.hideNicknames);
   const popoverRef = useRef<typeof Col>(null);
+  const history = useHistory();
 
   const onDocumentClick = useCallback((event) => {
     if (!popoverRef.current || popoverRef?.current?.contains(event.target)) {

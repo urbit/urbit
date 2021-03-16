@@ -184,7 +184,7 @@ class ChatWindow extends Component<
     const currSize = graph.size;
     if (newer) {
       const [index] = graph.peekLargest()!;
-      await props.getYoungerSiblings(
+      await this.props.getYoungerSiblings(
         ship,
         name,
         100,
@@ -192,7 +192,7 @@ class ChatWindow extends Component<
       );
     } else {
       const [index] = graph.peekSmallest()!;
-      await props.getOlderSiblings(ship, name, 100, `/${index.toString()}`);
+      await this.props.getOlderSiblings(ship, name, 100, `/${index.toString()}`);
       this.calculateUnreadIndex();
     }
     this.fetchPending = false;

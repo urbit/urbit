@@ -9,7 +9,6 @@ import {
 import { GroupNotificationsConfig, hark } from '@urbit/api';
 import { Association } from '@urbit/api/metadata';
 
-import GlobalApi from '~/logic/api-old/global';
 import { StatelessAsyncToggle } from '~/views/components/StatelessAsyncToggle';
 import useHarkState from '~/logic/state/hark';
 import useApi from '~/logic/api';

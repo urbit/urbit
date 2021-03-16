@@ -11,7 +11,6 @@ import {
 import { Formik, Form } from 'formik';
 import { PermVariation, Association, Group, Groups, Rolodex, metadata, groups } from '@urbit/api';
 import { shipSearchSchemaInGroup } from '~/views/components/ShipSearch';
-import GlobalApi from '~/logic/api-old/global';
 import { resourceFromPath } from '~/logic/lib/group';
 import { FormSubmit } from '~/views/components/FormSubmit';
 import { ChannelWritePerms } from '../ChannelWritePerms';
@@ -55,7 +54,6 @@ function PermissionsSummary(props: {
 interface GraphPermissionsProps {
   association: Association;
   group: Group;
-  api: GlobalApi;
 }
 
 interface FormSchema {

@@ -9,7 +9,6 @@ import {
   ManagedRadioButtonField as Radio,
 } from '@tlon/indigo-react';
 
-import GlobalApi from '~/logic/api-old/global';
 import { ImageInput } from '~/views/components/ImageInput';
 import { ColorInput } from '~/views/components/ColorInput';
 import { StorageState } from '~/types';

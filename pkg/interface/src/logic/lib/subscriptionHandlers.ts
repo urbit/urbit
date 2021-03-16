@@ -54,5 +54,6 @@ export const handleSubscriptionQuit = (
 export const restartSubscription = async (existingId: number, subscription: SubscriptionRequestInterface) => {
   const api = useApi();
   await api.unsubscribe(existingId);
-  return api.subscribe(subscription);
+  api.subscribe(subscription);
+  return;
 };

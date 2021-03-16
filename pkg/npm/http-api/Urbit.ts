@@ -169,32 +169,30 @@ export class Urbit implements UrbitInterface {
           accept: '*'
         },
         onopen: async (response) => {
+          if (this.verbose) {
+            console.log('Opened eventsource', response);
+          }
           if (response.ok && response.headers.get('content-type') === EventStreamContentType) {
-            if (this.verbose) {
-              console.log('Opened eventsource', response);
-            }
             return; // everything's good
           } else if (response.status >= 400 && response.status < 500 && response.status !== 429) {
             if (this.onError) {
-              this.onError(response.text);
+              this.onError(response.statusText);
             } else {
               throw new Error();
             }
           } else {
             if (this.onError) {
-              response.text().then(value => {
-                this.onError(value);
-              });
+              this.onError(response.statusText);
             } else {
               throw new Error();
             }
           }
-      },
-        // withCredentials: true,
+        },
         onmessage: (event: EventSourceMessage) => {
           if (this.verbose) {
             console.log('Received SSE: ', event);
           }
+          if (!event.id) return;
           this.ack(Number(event.id));
           if (event.data && JSON.parse(event.data)) {
             
@@ -260,7 +258,12 @@ export class Urbit implements UrbitInterface {
    * @param eventId The event to acknowledge.
    */
   async ack(eventId: number): Promise<number | void> {
-    return this.sendMessage('ack', { 'event-id': eventId });
+    const message: Message = {
+      action: 'ack',
+      'event-id': eventId
+    };
+    await this.sendJSONtoChannel(message);
+    return eventId;
   }
 
   /**
@@ -274,79 +277,88 @@ export class Urbit implements UrbitInterface {
    * 
    * @returns void | number If successful, returns the number of the message that was sent
    */
-  async sendMessage(action: Action, data?: object): Promise<number | void> {
-    const id = this.getEventId();
-    if (this.verbose) {
-      console.log(`Sending message ${id}:`, action, data,);
-    }
-    const message: Message = { id, action, ...data };
-    await this.sendJSONtoChannel(message);
-    return id;
-  }
+  // async sendMessage(action: Action, data?: object): Promise<number | void> {
+  //   const id = this.getEventId();
+  //   if (this.verbose) {
+  //     console.log(`Sending message ${id}:`, action, data,);
+  //   }
+  //   const message: Message = { id, action, ...data };
+  //   await this.sendJSONtoChannel(message);
+  //   return id;
+  // }
 
-  async sendJSONtoChannel(json?: Message) {
-    if (this.lastEventId == this.lastAcknowledgedEventId) {
-      if (json) {
-        this.outstandingJson.push(json);
-      }
-      await this.processQueue();
-    } else {
-      //  we add an acknowledgment to clear the server side queue
-      //
-      //    The server side puts messages it sends us in a queue until we
-      //    acknowledge that we received it.
-      //
-      this.outstandingJson.push({
-        action: 'ack',
-        id: this.getEventId(),
-        'event-id': this.lastEventId
-      });
-      if (json) {
-        this.outstandingJson.push(json);
-      }
-      await this.processQueue();
-      this.lastAcknowledgedEventId = this.lastEventId;
-    }
-  }
-
-  async processQueue() {
-    if (this.outstandingJson.length === 0) return;
-    const json = this.outstandingJson;
-    fetch(this.channelUrl, {
-      ...this.fetchOptions,
-      method: 'PUT',
-      body: JSON.stringify(json)
-    }).then((response) => {
-    }).catch(error => {
-      json.forEach(failed => this.outstandingJson.push(failed));
-      if (this.onError) {
-        this.onError(error);
-      } else {
-        throw error;
-      }
-    })
-    this.outstandingJson = [];
-  }
-
-  outstandingJson: Message[] = [];
+  outstandingJSON: Message[] = [];
 
   debounceTimer: any = null;
   debounceInterval = 500;
+  calm = true;
 
-  resetDebouncetimer() {
-    if (this.debounceTimer) {
-      clearTimeout(this.debounceTimer);
-      this.debounceTimer = null;
-    }
-    this.debounceTimer = setTimeout(() => {
-      this.processQueue();
-    }, this.debounceInterval);
+  sendJSONtoChannel(json: Message): Promise<boolean | void> {
+    this.outstandingJSON.push(json);
+    return this.processQueue();
   }
+
+  processQueue(): Promise<boolean | void> {
+    return new Promise(async (resolve, reject) => {
+      const process = async () => {
+        if (this.calm) {
+          if (this.outstandingJSON.length === 0) resolve(true);
+          this.calm = false; // We are now occupied
+          const json = this.outstandingJSON;
+          const body = JSON.stringify(json);
+          if (body === '[]') {
+            this.calm = true;
+            return resolve(false);
+          }
+          try {
+            await fetch(this.channelUrl, {
+              ...this.fetchOptions,
+              method: 'PUT',
+              body
+            });
+          } catch (error) {
+            json.forEach(failed => this.outstandingJSON.push(failed));
+            if (this.onError) {
+              this.onError(error);
+            } else {
+              throw error;
+            }
+          }
+          this.calm = true;
+          this.outstandingJSON = [];
+          if (!this.sseClientInitialized) {
+            this.eventSource(); // We can open the channel for subscriptions once we've sent data over it
+          }
+          resolve(true);
+        } else {
+          clearTimeout(this.debounceTimer);
+          this.debounceTimer = setTimeout(process, this.debounceInterval);
+          resolve(false);
+        }
+      }
+  
+      this.debounceTimer = setTimeout(process, this.debounceInterval);
+
+      
+    });
+  }
+
+  
+
+  // resetDebounceTimer() {
+  //   if (this.debounceTimer) {
+  //     clearTimeout(this.debounceTimer);
+  //     this.debounceTimer = null;
+  //   }
+  //   this.calm = false;
+  //   this.debounceTimer = setTimeout(() => {
+  //     this.calm = true;
+  //   }, this.debounceInterval);
+  // }
 
   clearQueue() {
     clearTimeout(this.debounceTimer);
     this.debounceTimer = null;
-    this.processQueue();
   }
 
   /**
@@ -358,21 +370,27 @@ export class Urbit implements UrbitInterface {
    */
   poke<T>(params: PokeInterface<T>): Promise<void | number> {
     const { app, mark, json, onSuccess, onError } = { onSuccess: () => {}, onError: () => {}, ...params };
-    return new Promise(async (resolve, reject) => {
-      const pokeId = await this.sendMessage('poke', { ship: this.ship, app, mark, json });
-      if (!pokeId) {
-        return reject('Poke failed');
-      }
-      if (!this.sseClientInitialized) resolve(pokeId);
-      this.outstandingPokes.set(pokeId, {
+    return new Promise((resolve, reject) => {
+      const message: Message = {
+        id: this.getEventId(),
+        action: 'poke',
+        ship: this.ship,
+        app,
+        mark,
+        json
+      };
+      this.outstandingPokes.set(message.id, {
         onSuccess: () => {
           onSuccess();
-          resolve(pokeId);
+          resolve(message.id);
         },
         onError: (event) => {
           onError(event);
           reject(event.err);
         }
+      });
+      this.sendJSONtoChannel(message).then(() => {
+        resolve(message.id);
       });
     });
   }
@@ -384,20 +402,33 @@ export class Urbit implements UrbitInterface {
    * @param path The path to which to subscribe
    * @param handlers Handlers to deal with various events of the subscription
    */
-  async subscribe(params: SubscriptionRequestInterface): Promise<number | void> {
-    const { app, path, err, event, quit } = { err: () => {}, event: () => {}, quit: () => {}, ...params };
+  async subscribe(params: SubscriptionRequestInterface): Promise<boolean | void> {
+    const {
+      app,
+      path,
+      err,
+      event,
+      quit
+    } = {
+      err: () => { },
+      event: () => { },
+      quit: () => { },
+      ...params
+    };
 
-    const subscriptionId = await this.sendMessage('subscribe', { ship: this.ship, app, path });
+    const message: Message = {
+      id: this.getEventId(),
+      action: 'subscribe',
+      ship: this.ship,
+      app,
+      path
+    };
 
-    if (!subscriptionId) return;
-
-    this.outstandingSubscriptions.set(subscriptionId, {
+    this.outstandingSubscriptions.set(message.id, {
       app, path, err, event, quit
     });
 
-    this.resetDebouncetimer();
-
-    return subscriptionId;
+    return this.sendJSONtoChannel(message);
   }
 
   /**
@@ -405,8 +436,14 @@ export class Urbit implements UrbitInterface {
    *
    * @param subscription
    */
-  async unsubscribe(subscription: number): Promise<number | void> {
-    return this.sendMessage('unsubscribe', { subscription });
+  async unsubscribe(subscription: number) {
+    return this.sendJSONtoChannel({
+      id: this.getEventId(),
+      action: 'unsubscribe',
+      subscription
+    }).then(() => {
+      this.outstandingSubscriptions.delete(subscription);
+    });
   }
 
   /**
@@ -418,7 +455,8 @@ export class Urbit implements UrbitInterface {
         action: 'delete'
       }]));
     } else {
-      this.sendMessage('delete');
+      // TODO
+      // this.sendMessage('delete');
     }
   }
 

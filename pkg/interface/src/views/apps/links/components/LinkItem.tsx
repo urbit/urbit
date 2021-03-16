@@ -7,7 +7,6 @@ import { graph, GraphNode, Group, hark, markEachAsRead, Rolodex, Unreads } from 
 import { writeText } from '~/logic/lib/util';
 import Author from '~/views/components/Author';
 import { roleForShip } from '~/logic/lib/group';
-import GlobalApi from '~/logic/api-old/global';
 import { Dropdown } from '~/views/components/Dropdown';
 import RemoteContent from '~/views/components/RemoteContent';
 import useHarkState from '~/logic/state/hark';

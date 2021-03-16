@@ -10,7 +10,6 @@ import {
 import { Form, FormikHelpers, useField, useFormikContext } from "formik";
 import { FormikOnBlur } from "~/views/components/FormikOnBlur";
 import { BackButton } from "./BackButton";
-import GlobalApi from "~/logic/api-old/global";
 import {
   NotificationGraphConfig,
   LeapCategories,

@@ -7,7 +7,6 @@ import { Contacts, Contact } from '@urbit/api/contacts';
 import { Group } from '@urbit/api/groups';
 import { Association } from '@urbit/api/metadata';
 
-import GlobalApi from '~/logic/api-old/global';
 import { GroupSettings } from './GroupSettings/GroupSettings';
 import { Participants } from './Participants';
 import { useHashLink } from '~/logic/lib/useHashLink';
@@ -22,8 +21,6 @@ export function PopoverRoutes(
     baseUrl: string;
     group: Group;
     association: Association;
-    api: GlobalApi;
-    notificationsGroupConfig: GroupNotificationsConfig;
     rootIdentity: Contact;
   } & RouteComponentProps
 ): ReactElement {
@@ -104,7 +101,7 @@ export function PopoverRoutes(
                         />
                       </>
                     )}
-                    <DeleteGroup owner={owner} api={props.api} association={props.association} />
+                    <DeleteGroup owner={owner} association={props.association} />
                   </Col>
                 </Col>
                 <Box

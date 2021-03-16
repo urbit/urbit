@@ -3,7 +3,6 @@ import { Association } from '@urbit/api/metadata';
 import { Box, Text, Button, Col, Center } from '@tlon/indigo-react';
 import RichText from '~/views/components/RichText';
 import { Link, useHistory } from 'react-router-dom';
-import GlobalApi from '~/logic/api-old/global';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
 import {
   StatelessAsyncButton as AsyncButton,
@@ -15,7 +14,6 @@ import useApi from '~/logic/api';
 
 interface UnjoinedResourceProps {
   association: Association;
-  api: GlobalApi;
   baseUrl: string;
 }
 

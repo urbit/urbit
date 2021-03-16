@@ -7,7 +7,6 @@ import {
   StatelessCheckboxField,
 } from "@tlon/indigo-react";
 
-import GlobalApi from "~/logic/api-old/global";
 import { BackButton } from "./BackButton";
 
 

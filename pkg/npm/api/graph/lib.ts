@@ -223,22 +223,23 @@ export const addNodes = (
   ship: Patp,
   name: string,
   nodes: Object
-): Poke<any> => {
-  const action = {
+): Thread<any> => ({
+  inputMark: 'graph-update',
+  outputMark: 'graph-view-action',
+  threadName: 'graph-add-nodes',
+  body: {
     'add-nodes': {
       resource: { ship, name },
       nodes
     }
-  };
-
-  return hookAction(action);
-};
+  }
+});
 
 export const addPost = (
   ship: Patp,
   name: string,
   post: Post
-) => {
+): Thread<any> => {
   let nodes: Record<string, GraphNode> = {};
   nodes[post.index] = {
     post,
@@ -251,7 +252,7 @@ export const addNode = (
   ship: Patp,
   name: string,
   node: GraphNode
-): Poke<any> => {
+): Thread<any> => {
   let nodes: Record<string, GraphNode> = {};
   nodes[node.post.index] = node;
 

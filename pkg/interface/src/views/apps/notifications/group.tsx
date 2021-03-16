@@ -12,7 +12,6 @@ import {
 } from '@urbit/api';
 
 import { Header } from './header';
-import GlobalApi from '~/logic/api-old/global';
 import useApi from '~/logic/api';
 
 function describeNotification(description: string, plural: boolean) {

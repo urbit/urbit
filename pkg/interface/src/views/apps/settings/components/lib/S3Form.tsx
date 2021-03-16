@@ -12,7 +12,6 @@ import {
 } from '@tlon/indigo-react';
 import { s3 as s3Api } from '@urbit/api';
 
-import GlobalApi from '~/logic/api-old/global';
 import { BucketList } from './BucketList';
 import { S3State } from '~/types/s3-update';
 import useS3State from '~/logic/state/storage';

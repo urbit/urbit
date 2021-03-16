@@ -4,7 +4,6 @@ import { Groups, Graphs, Invites, Rolodex, Path, AppName } from '@urbit/api';
 import { Associations } from '@urbit/api/metadata';
 
 import { Sidebar } from './Sidebar/Sidebar';
-import GlobalApi from '~/logic/api-old/global';
 import { useGraphModule } from './Sidebar/Apps';
 import { Body } from '~/views/components/Body';
 import { Workspace } from '~/types/workspace';
@@ -19,7 +18,6 @@ interface SkeletonProps {
   selectedApp?: AppName;
   baseUrl: string;
   mobileHide?: boolean;
-  api: GlobalApi;
   workspace: Workspace;
 }
 

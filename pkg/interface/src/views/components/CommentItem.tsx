@@ -7,7 +7,6 @@ import { Contacts } from '@urbit/api/contacts';
 import { GraphNode } from '@urbit/api/graph';
 import { graph, Group, removeNodes } from '@urbit/api';
 
-import GlobalApi from '~/logic/api-old/global';
 import Author from '~/views/components/Author';
 import { MentionText } from '~/views/components/MentionText';
 import { roleForShip } from '~/logic/lib/group';
@@ -26,7 +25,6 @@ interface CommentItemProps {
   unread: boolean;
   name: string;
   ship: string;
-  api: GlobalApi;
   group: Group;
 }
 

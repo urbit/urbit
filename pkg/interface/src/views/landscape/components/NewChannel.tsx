@@ -8,7 +8,6 @@ import {
 import _ from 'lodash';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
-import GlobalApi from '~/logic/api-old/global';
 import { AsyncButton } from '~/views/components/AsyncButton';
 import { FormError } from '~/views/components/FormError';
 import { RouteComponentProps } from 'react-router-dom';
@@ -43,7 +42,6 @@ const formSchema = (members?: string[]) => Yup.object({
 });
 
 interface NewChannelProps {
-  api: GlobalApi;
   group?: string;
   workspace: Workspace;
 }

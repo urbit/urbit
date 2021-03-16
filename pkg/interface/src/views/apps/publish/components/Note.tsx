@@ -7,7 +7,6 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 import { Spinner } from '~/views/components/Spinner';
 import { Comments } from '~/views/components/Comments';
 import { NoteNavigation } from './NoteNavigation';
-import GlobalApi from '~/logic/api-old/global';
 import { getLatestRevision, getComments } from '~/logic/lib/publish';
 import { roleForShip } from '~/logic/lib/group';
 import Author from '~/views/components/Author';

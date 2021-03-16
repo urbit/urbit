@@ -40,7 +40,7 @@ const getGraphNotifications = (associations: Associations, unreads: Unreads) => 
     f.reduce(f.add, 0)
   )(associations.graph);
 
-export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
+const Groups = (props: GroupsProps & Parameters<typeof Box>[0]) => {
   const { inbox, ...boxProps } = props;
   const unreads = useHarkState(state => state.unreads);
   const groupState = useGroupState(state => state.groups);
@@ -74,6 +74,9 @@ export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
   );
 }
 
+export default Groups;
+
+
 interface GroupProps {
   path: string;
   title: string;
@@ -82,7 +85,7 @@ interface GroupProps {
   first: boolean;
 }
 const selectJoined = (s: SettingsState) => s.tutorial.joined;
-function Group(props: GroupProps) {
+const Group = (props: GroupProps) => {
   const { path, title, unreads, updates, first = false } = props;
   const anchorRef = useRef<HTMLElement>(null);
   const isTutorialGroup = path === `/ship/${TUTORIAL_HOST}/${TUTORIAL_GROUP}`;

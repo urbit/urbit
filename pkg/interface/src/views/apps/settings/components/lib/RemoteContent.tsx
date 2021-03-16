@@ -7,7 +7,6 @@ import {
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 
-import GlobalApi from '~/logic/api-old/global';
 import useSettingsState, {selectSettingsState} from '~/logic/state/settings';
 
 const formSchema = Yup.object().shape({

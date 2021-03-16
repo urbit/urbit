@@ -1,7 +1,6 @@
 import React from 'react';
 import { Box } from '@tlon/indigo-react';
 
-import GlobalApi from '~/logic/api-old/global';
 import { StoreState } from '~/logic/store/type';
 import { Association } from '@urbit/api';
 import { RouteComponentProps } from 'react-router-dom';
@@ -13,7 +12,7 @@ type PublishResourceProps = StoreState & {
 } & RouteComponentProps;
 
 export function PublishResource(props: PublishResourceProps) {
-  const { association, api, baseUrl, notebooks } = props;
+  const { association, baseUrl } = props;
   const rid = association.resource;
   const [, , ship, book] = rid.split('/');
 

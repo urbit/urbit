@@ -17,7 +17,6 @@ import { Groups, MetadataUpdatePreview, Associations, settings, groups as groups
 
 import { AsyncButton } from '~/views/components/AsyncButton';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
-import GlobalApi from '~/logic/api-old/global';
 import { StatelessAsyncButton } from '~/views/components/StatelessAsyncButton';
 import { getModuleIcon } from '~/logic/lib/util';
 import { FormError } from '~/views/components/FormError';
@@ -44,7 +43,6 @@ interface FormSchema {
 }
 
 interface JoinGroupProps {
-  api: GlobalApi;
   autojoin?: string;
 }
 

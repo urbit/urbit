@@ -13,7 +13,6 @@ import {
 import { Header } from './header';
 import { cite, deSig, pluralize, useShowNickname } from '~/logic/lib/util';
 import Author from '~/views/components/Author';
-import GlobalApi from '~/logic/api-old/global';
 import { getSnippet } from '~/logic/lib/publish';
 import styled from 'styled-components';
 import { MentionText } from '~/views/components/MentionText';

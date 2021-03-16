@@ -10,7 +10,6 @@ import { Formik, Form, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import { BackButton } from "./BackButton";
 import useSettingsState, {selectSettingsState} from "~/logic/state/settings";
-import GlobalApi from "~/logic/api-old/global";
 import {AsyncButton} from "~/views/components/AsyncButton";
 import useApi from "~/logic/api";
 import { putEntry, settings } from "@urbit/api/dist";

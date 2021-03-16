@@ -19,47 +19,49 @@ import { handleSubscriptionError, handleSubscriptionQuit } from '../lib/subscrip
 const HarkReducer = (json: any) => {
   const data = _.get(json, 'harkUpdate', false);
   if (data) {
-    reduce(data);
+    useHarkState.getState().set(state => {
+      state = reduceState<HarkState, any>(useHarkState, data, [
+        unread,
+        read,
+        archive,
+        timebox,
+        more,
+        dnd,
+        added,
+        unreads,
+        readEach,
+        readSince,
+        unreadSince,
+        unreadEach,
+        seenIndex,
+        removeGraph,
+        readAll,
+      ]);
+    });
   }
   const graphHookData = _.get(json, 'hark-graph-hook-update', false);
   if (graphHookData) {
-    reduceState<HarkState, any>(useHarkState, graphHookData, [
-      graphInitial,
-      graphIgnore,
-      graphListen,
-      graphWatchSelf,
-      graphMentions,
-    ]);
+    useHarkState.getState().set(state => {
+      state = reduceState<HarkState, any>(useHarkState, graphHookData, [
+        graphInitial,
+        graphIgnore,
+        graphListen,
+        graphWatchSelf,
+        graphMentions,
+      ]);
+    })
   }
   const groupHookData = _.get(json, 'hark-group-hook-update', false);
   if (groupHookData) {
-    reduceState<HarkState, any>(useHarkState, groupHookData, [
-      groupInitial,
-      groupListen,
-      groupIgnore,
-    ]);
+    useHarkState.getState().set(state => {
+      state = reduceState<HarkState, any>(useHarkState, groupHookData, [
+        groupInitial,
+        groupListen,
+        groupIgnore,
+      ]);
+    })
   }
 };
-
-function reduce(data) {
-  reduceState<HarkState, any>(useHarkState, data, [
-    unread,
-    read,
-    archive,
-    timebox,
-    more,
-    dnd,
-    added,
-    unreads,
-    readEach,
-    readSince,
-    unreadSince,
-    unreadEach,
-    seenIndex,
-    removeGraph,
-    readAll,
-  ]);
-}
 
 function groupInitial(json: any, state: HarkState): HarkState {
   const data = _.get(json, 'initial', false);
@@ -313,7 +315,7 @@ const timebox = (json: any, state: HarkState): HarkState => {
 function more(json: any, state: HarkState): HarkState {
   const data = _.get(json, 'more', false);
   if (data) {
-    _.forEach(data, d => reduce(d));
+    _.forEach(data, d => HarkReducer(d));
   }
   return state;
 }

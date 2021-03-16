@@ -4,7 +4,6 @@ import ProfileOverlay, { OVERLAY_HEIGHT } from './ProfileOverlay';
 import { Box, ColProps } from '@tlon/indigo-react';
 
 type OverlaySigilProps = ColProps & {
-  api: any;
   className: string;
   color: string;
   contact?: Contact;
@@ -24,7 +23,6 @@ interface OverlaySigilState {
 
 export const OverlaySigil = (props: OverlaySigilProps): React.FC => {
   const {
-    api,
     className,
     color,
     contact,

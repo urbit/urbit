@@ -20,7 +20,6 @@ import {
 } from '@urbit/api';
 
 import { MOMENT_CALENDAR_DATE, daToUnix } from '~/logic/lib/util';
-import GlobalApi from '~/logic/api-old/global';
 import { Notification } from './notification';
 import { Invites } from './invites';
 import { useLazyScroll } from '~/logic/lib/useLazyScroll';
@@ -160,8 +159,7 @@ function sortIndexedNotification(
 function DaySection({
   label,
   archive,
-  timeboxes,
-  api,
+  timeboxes
 }) {
   const lent = timeboxes.map(([,nots]) => nots.length).reduce(f.add, 0);
   if (lent === 0 || timeboxes.length === 0) {

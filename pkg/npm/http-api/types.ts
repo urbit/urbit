@@ -46,10 +46,10 @@ export interface UrbitInterface {
   eventSource(): void;
   getEventId(): number;
   ack(eventId: number): Promise<void | number>;
-  sendMessage(action: Action, data?: object): Promise<void | number>;
+  // sendMessage(action: Action, data?: object): Promise<void | number>;
   poke<T>(params: PokeInterface<T>): Promise<void | number>;
-  subscribe(params: SubscriptionRequestInterface): Promise<void | number>;
-  unsubscribe(subscription: number): Promise<void | number>;
+  subscribe(params: SubscriptionRequestInterface): Promise<boolean | void>;
+  unsubscribe(subscription: number): Promise<boolean | void>;
   delete(): void;
   scry(params: Scry): Promise<void | any>;
   thread<T>(params: Thread<T>): Promise<T>;
@@ -68,5 +68,5 @@ export interface SSEOptions {
 
 export interface Message extends Record<string, any> {
   action: Action;
-  id: number;
+  id?: number;
 }

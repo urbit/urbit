@@ -7,10 +7,12 @@ import { reduceState } from '../state/base';
 
 export default class GcpReducer {
   reduce(json: Cage) {
-    reduceState<StorageState, any>(useStorageState, json, [
-      reduceConfigured,
-      reduceToken
-    ]);
+    useStorageState.getState().set(state => {
+      state = reduceState<StorageState, any>(useStorageState, json, [
+        reduceConfigured,
+        reduceToken
+      ]);
+    })
   }
 }
 

@@ -18,7 +18,6 @@ import {
 } from '~/logic/lib/tutorialModal';
 import { getRelativePosition } from '~/logic/lib/relativePosition';
 import { StatelessAsyncButton } from '~/views/components/StatelessAsyncButton';
-import GlobalApi from '~/logic/api-old/global';
 import { Triangle } from '~/views/components/Triangle';
 import { ModalOverlay } from '~/views/components/ModalOverlay';
 import useApi from '~/logic/api';

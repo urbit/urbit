@@ -8,17 +8,22 @@ const ReconnectButton = () => {
   const api = useApi();
   const connectedStatus = useLocalState(state => state.connection);
   const set = useLocalState(state => state.set);
-  const reconnect = async () => {
+  const reconnect = () => {
     set(state => {
       state.connection = 'reconnecting';
     });
-    await Promise.all(Array.from(api.outstandingSubscriptions.entries()).map(([existingId, subscription]) => {
+    const promises = Array.from(api.outstandingSubscriptions.entries()).map(([existingId, subscription]) => {
       return restartSubscription(existingId, subscription);
-    }));
-    set(state => {
-      state.connection = 'connected';
+    });
+    Promise.all(promises).then(() => {
+      set(state => {
+        state.connection = 'connected';
+      });
+    }).catch(e => {
+      console.log('could not restart', e);
     });
   }
+  (window as any).reconnect = reconnect;
 
   if (connectedStatus === "disconnected") {
     return (

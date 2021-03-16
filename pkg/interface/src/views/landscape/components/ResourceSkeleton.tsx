@@ -8,7 +8,6 @@ import { Association } from '@urbit/api/metadata';
 import { Groups, Rolodex } from '@urbit/api';
 
 import RichText from '~/views/components/RichText';
-import GlobalApi from '~/logic/api-old/global';
 import { isWriter } from '~/logic/lib/group';
 import { getItemTitle } from '~/logic/lib/util';
 import useContactState from '~/logic/state/contact';
@@ -22,7 +21,6 @@ const TruncatedText = styled(RichText)`
 
 type ResourceSkeletonProps = {
   association: Association;
-  api: GlobalApi;
   baseUrl: string;
   children: ReactNode;
   title?: string;

@@ -12,14 +12,16 @@ import { handleSubscriptionError, handleSubscriptionQuit } from '../lib/subscrip
 const InviteReducer = (json: Cage) => {
   const data = json['invite-update'];
   if (data) {
-    reduceState<InviteState, InviteUpdate>(useInviteState, data, [
-      initial,
-      create,
-      deleteInvite,
-      invite,
-      accepted,
-      decline,
-    ]);
+    useInviteState.getState().set(state => {
+      state = reduceState<InviteState, InviteUpdate>(useInviteState, data, [
+        initial,
+        create,
+        deleteInvite,
+        invite,
+        accepted,
+        decline,
+      ]);
+    })
   }
 };
 

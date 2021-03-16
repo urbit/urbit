@@ -12,7 +12,6 @@ import { Association, metadata as metadataApi } from '@urbit/api';
 import { FormError } from '~/views/components/FormError';
 import { ColorInput } from '~/views/components/ColorInput';
 import { uxToHex } from '~/logic/lib/util';
-import GlobalApi from '~/logic/api-old/global';
 import { FormSubmit } from '~/views/components/FormSubmit';
 import useApi from '~/logic/api';
 import { update } from '@urbit/api/metadata';
@@ -24,7 +23,6 @@ interface FormSchema {
 }
 
 interface ChannelDetailsProps {
-  api: GlobalApi;
   association: Association;
 }
 

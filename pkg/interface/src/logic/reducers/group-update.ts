@@ -62,18 +62,20 @@ function decodeTags(tags: Enc<Tags>): Tags {
 const GroupReducer = (json: Cage) => {
   const data = json.groupUpdate;
   if (data) {
-    reduceState<GroupState, GroupUpdate>(useGroupState, data, [
-      initial,
-      addMembers,
-      addTag,
-      removeMembers,
-      initialGroup,
-      removeTag,
-      addGroup,
-      removeGroup,
-      changePolicy,
-      expose,
-    ]);
+    useGroupState.getState().set(state => {
+      state = reduceState<GroupState, GroupUpdate>(useGroupState, data, [
+        initial,
+        addMembers,
+        addTag,
+        removeMembers,
+        initialGroup,
+        removeTag,
+        addGroup,
+        removeGroup,
+        changePolicy,
+        expose,
+      ]);
+    });
   }
 }
 

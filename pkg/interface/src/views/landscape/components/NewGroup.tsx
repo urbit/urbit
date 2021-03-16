@@ -14,7 +14,6 @@ import { Groups, Rolodex, GroupPolicy, Enc, Associations, groups as groupsApi } 
 
 import { AsyncButton } from '~/views/components/AsyncButton';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
-import GlobalApi from '~/logic/api-old/global';
 import { stringToSymbol } from '~/logic/lib/util';
 import useGroupState from '~/logic/state/group';
 import useMetadataState from '~/logic/state/metadata';
