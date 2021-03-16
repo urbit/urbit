@@ -20,11 +20,14 @@ export function GroupHome(props) {
     metadata.config &&
     'group' in metadata.config &&
     metadata.config.group === null;
+
   const isFeedEnabled =
     metadata &&
     metadata.config &&
     metadata.config.group &&
     'resource' in metadata.config.group;
+
+  const graphPath = metadata?.config?.group?.resource;
 
   return (
     <Box width="100%" height="100%">
@@ -36,7 +39,7 @@ export function GroupHome(props) {
         /> 
       ) : null }
       { isFeedEnabled ? (
-        <GroupFeed {...props} />
+        <GroupFeed graphPath={graphPath} {...props} />
       ) : (
         <EmptyGroupHome {...props} />
       )}

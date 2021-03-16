@@ -6,7 +6,7 @@ import { PostFeed } from './PostFeed';
 
 
 export function GroupFeed(props) {
-  const { baseUrl, api, history } = props;
+  const { baseUrl, api, history, groupPath, graphPath } = props;
 
   return (
     <Box
@@ -16,12 +16,11 @@ export function GroupFeed(props) {
       flexDirection="column"
       alignItems="center">
       <GroupFeedHeader baseUrl={baseUrl} history={history} />
-      <Row width="100%" maxWidth="616px" pt="4" pl="" pr="2" flexGrow="1">
-        <PostInput api={api} />
+      <Row width="100%" maxWidth="616px" pt="4" pl="2" pr="2" flexGrow="1">
+        <PostInput api={api} graphPath={graphPath} />
         <PostFeed />
       </Row> 
     </Box>
   );
 }
-
 
