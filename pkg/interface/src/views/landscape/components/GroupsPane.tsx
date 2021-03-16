@@ -35,7 +35,7 @@ type GroupsPaneProps = StoreState & {
 };
 
 export function GroupsPane(props: GroupsPaneProps) {
-  const { baseUrl, associations, groups, contacts, api, workspace } = props;
+  const { baseUrl, associations, groups, contacts, graphs, api, workspace } = props;
   const relativePath = (path: string) => baseUrl + path;
   const groupPath = getGroupFromWorkspace(workspace);
 
@@ -210,9 +210,10 @@ export function GroupsPane(props: GroupsPaneProps) {
                   api={api}
                   baseUrl={baseUrl}
                   associations={associations}
+                  graphs={graphs}
                   groups={groups}
                   groupPath={groupPath}
-                  contacts={props.contacts}
+                  contacts={contacts}
                   workspace={workspace}
                 />
                 {popovers(routeProps, baseUrl)}

@@ -289,8 +289,10 @@ export default class GraphApi extends BaseApi<StoreState> {
   }
 
   getGraph(ship: string, resource: string) {
+    console.log(ship, resource);
     return this.scry<any>('graph-store', `/graph/${ship}/${resource}`)
       .then((graph) => {
+        console.log(graph);
         this.store.handleEvent({
           data: graph
         });
