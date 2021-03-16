@@ -530,7 +530,10 @@
       |=  pax=path
       ^+  tr-core
       =/  =path
-        (weld (snoc `path`resource+(en-path:resource rid) (scot %ud version.config)) pax)
+        :+  %resource  %ver
+        %+  weld
+          (snoc (en-path:resource rid) (scot %ud version.config))
+        pax
       (tr-emit (~(watch pass tr-sub-wire) tr-sub-dock path))
     ::
     ++  tr-leave

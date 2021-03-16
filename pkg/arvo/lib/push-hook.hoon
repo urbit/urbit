@@ -210,6 +210,8 @@
           ~(val by sup.bowl)
         |=  [[=ship =path] out=(set path)]
         ?.  ?=([%resource *] path)  out
+        ?.  ?=([%resource %ver] path)
+          (~(put in out) path)
         =/  path-ver=@ud
           (ver-from-path:hc path)
         ?:  (supported:ver (append-version:ver path-ver))  out
@@ -263,18 +265,32 @@
         =^  cards  push-hook
           (on-watch:og path)
         [cards this]
-      ?>  ?=([%ship @ @ @ *] t.path)
+      ~&  t.path
+      |^
+      ?.  ?=([%ver %ship @ @ @ *] t.path)
+        unversioned
       =/  =resource
-        (de-path:resource t.path)
-      =/  sub-ver=@ud
-        (slav %ud i.t.t.t.t.path)
-      ?.  (supported:ver (append-version:ver sub-ver))
+        (de-path:resource t.t.path)
+      =/  =mark
+        (append-version:ver (slav %ud i.t.t.t.t.t.path))
+      ?.  (supported:ver mark)
         :_  this
         (fact-init-kick:io version+!>(min-version.config))
       =/  =vase
-        (initial-watch:og t.t.t.t.t.path resource)
+        (convert-to:ver mark (initial-watch:og t.t.t.t.t.t.path resource))
       :_  this
-      [%give %fact ~ (append-version:ver sub-ver) vase]~
+      [%give %fact ~ mark vase]~
+      ::
+      ++  unversioned
+        ?>  ?=([%ship @ @ @ *] t.path)
+        =/  =resource
+          (de-path:resource t.path)
+        =/  =vase
+          %+  convert-to:ver  update-mark.config
+          (initial-watch:og t.t.t.t.t.path resource)
+        :_  this
+        [%give %fact ~ update-mark.config vase]~
+      --
     ::
     ++  on-agent
       |=  [=wire =sign:agent:gall]
@@ -419,7 +435,12 @@
     |-
     ?~  rids  cards
     =/  prefix=path
-      resource+(en-path:resource i.rids)
+      resource+ver+(en-path:resource i.rids)
+    =/  unversioned=(set path)
+      %-  ~(gas in *(set path))
+      =/  pfix=path
+        resource+(en-path:resource i.rids)
+      (turn (incoming-subscriptions pfix) tail)
     =/  paths=(jug @ud path)
       %+  roll
         (incoming-subscriptions prefix)
@@ -432,7 +453,12 @@
       |=  [fact-ver=@ud paths=(set path)]
       =/  =mark
         (append-version:ver fact-ver)
-      [%give %fact ~(tap in paths) mark (convert-from:ver mark q.cage)]
+      [%give %fact ~(tap in paths) mark (convert-to:ver mark q.cage)]
+    =?  caz  !=(0 ~(wyt in unversioned))
+      =/  =vase
+        (convert-to:ver update-mark.config q.cage)
+      :_  caz
+      [%give %fact ~(tap in unversioned) update-mark.config vase]
     ?~  paths  $(rids t.rids)
     %_  $
       rids   t.rids
@@ -442,7 +468,7 @@
   ++  ver-from-path
     |=  =path
     =/  extra=^path
-      (slag 4 path)
+      (slag 5 path)
     ?>  ?=(^ extra)
     (slav %ud i.extra)
 
