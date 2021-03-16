@@ -190,7 +190,7 @@ export function GroupsPane(props: GroupsPaneProps) {
         }}
       />
       <Route
-        path={[relativePath('/'), relativePath('/feed')]}
+        path={[relativePath('/'), relativePath('/feed+')]}
         render={(routeProps) => {
           const shouldHideSidebar =
             routeProps.location.pathname.includes('/feed');
