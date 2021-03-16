@@ -44,7 +44,7 @@
       config=md-config
       picture=url
       preview=?
-      hidden=_|
+      hidden=?
       vip=vip-metadata
   ==
 ::

@@ -18,6 +18,8 @@
         groupify+groupify
         eval+so
         pending-indices+pending-indices
+        create-group-feed+create-group-feed
+        dismiss-group-feed+dismiss-group-feed
         ::invite+invite
     ==
     ::
@@ -61,6 +63,16 @@
       %-  of
       :~  group+dejs:resource
           policy+policy:dejs:group-store
+      ==
+    ::
+    ++  create-group-feed
+      %-  ot
+      :~  resource+dejs:resource
+      ==
+    ::
+    ++  dismiss-group-feed
+      %-  ot
+      :~  resource+dejs:resource
       ==
     --
   --

@@ -44,6 +44,7 @@
     [%eval =cord]
     [%pending-indices pending=(map hash:store index:store)]
     [%create-group-feed group=resource]
+    [%dismiss-group-feed group=resource]
   ==
 --
 
