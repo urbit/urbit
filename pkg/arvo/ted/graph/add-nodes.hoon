@@ -88,10 +88,9 @@
   %_  node
     hash.post  `hash
   ::
-  ::  TODO: enable signing our own post as soon as we're ready
-  ::    signatures.post
-  ::  %-  ~(gas in *signatures:store)
-  ::  [(sign:sig our.bowl now.bowl hash)]~
+      signatures.post
+    %-  ~(gas in *signatures:store)
+    [(sign:sig our.bowl now.bowl hash)]~
   ::
       children
     ?:  ?=(%empty -.children.node)
