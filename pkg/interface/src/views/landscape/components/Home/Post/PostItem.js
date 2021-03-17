@@ -15,13 +15,11 @@ class PostItem extends React.PureComponent {
         pr="1"
         mb="3"
         width="100%"
-        height="100px"
         justifyContent="center">
         <Box
           p="2"
           border={1}
           borderColor="washedGray"
-          height="100px"
           width="100%"
           maxWidth="600px">
           <PostHeader post={node.post} contacts={contacts} />

@@ -58,7 +58,7 @@ export function PostFeed(props) {
       origin="top"
       offset={0}
       data={graph}
-      averageHeight={80}
+      averageHeight={106}
       size={graph.size}
       style={virtualScrollerStyle}
       pendingSize={0}
