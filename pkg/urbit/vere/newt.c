@@ -37,10 +37,10 @@ u3_newt_mess_head(u3_mess* mes_u)
   mes_u->hed_u.has_y = 0;
 }
 
-/* _newt_mess_tail(): await msg body.
+/* u3_newt_mess_tail(): await msg body.
 */
-static void
-_newt_mess_tail(u3_mess* mes_u, c3_d len_d)
+void
+u3_newt_mess_tail(u3_mess* mes_u, c3_d len_d)
 {
   u3_meat* met_u = c3_malloc(len_d + sizeof(*met_u));
   met_u->nex_u   = 0;
@@ -170,7 +170,7 @@ u3_newt_decode(u3_moat* mot_u, c3_y* buf_y, c3_d len_d)
 
           //  await body
           //
-          _newt_mess_tail(mes_u, met_d);
+          u3_newt_mess_tail(mes_u, met_d);
         }
       } break;
 

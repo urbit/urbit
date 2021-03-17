@@ -1172,16 +1172,18 @@ _cw_loop()
   inn_u.ent_u = inn_u.ext_u = 0;
   u3_newt_mess_head(&inn_u.mes_u);
 
-  c3_y* buf_y = c3_malloc(READ_BUF_LEN);  //  allocate statically?
-  while (1) {
+  while ( 1 ) {
+    _cw_read_msg();
     //  read IPC message from stdin
     //
     while ( 0 == inn_u.ext_u ) {
       ssize_t red = 0;
-      red = read(stdin, buf_y, READ_BUF_LEN);
+      red = read(stdin, buf_y, 8);
       if ( 0 >= red ) {
         fprintf(stderr, "stdin fail %zd\r\n", red);
         exit(1);
+      }
+      if ( 8 > red ) {
       }
       u3_newt_decode(&inn_u, buf_y, red);
     }
@@ -1200,6 +1202,23 @@ _cw_loop()
       c3_free(met_u);
     }
   }
+}
+
+c3_y hed_y[8];
+
+static void
+_cw_read_msg()
+{
+  ssize_t red = 0;
+  do {
+    red += read(stdin, hed_y + red, 8 - red);
+    if ( 0 >= red ) {
+      fprintf(stderr, "stdin fail %zd\r\n", red);
+      exit(1);
+    }
+  } while ( 8 > red );
+
+  u3_newt_mess_tail(inn_u.mes_u, *(c3_d*)hed_y);
 }
 
 /* _cw_replay(): replay events on disk
