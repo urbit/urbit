@@ -7,7 +7,7 @@ import { PostFooter } from './PostFooter';
 
 class PostItem extends React.PureComponent {
   render() {
-    const { index, node, groups, associations, api, contacts, innerRef } = this.props;
+    const { node, contacts, innerRef } = this.props;
     return (
       <Row
         ref={innerRef}
@@ -24,9 +24,11 @@ class PostItem extends React.PureComponent {
           height="100px"
           width="100%"
           maxWidth="600px">
-          <PostHeader node={node} contacts={contacts} />
-          <PostContent {...this.props} />
-          <PostFooter /> 
+          <PostHeader post={node.post} contacts={contacts} />
+          <PostContent
+            post={node.post}
+            contacts={contacts} />
+          <PostFooter replyCount={node.children.size} /> 
         </Box>
       </Row>
     );

@@ -4,30 +4,26 @@ import React, {
 import VirtualScroller from "~/views/components/VirtualScroller";
 import PostItem from './Post/PostItem';
 
+const virtualScrollerStyle = {
+  height: "100%"
+};
 
 export function PostFeed(props) {
-  const { graph, graphResource, associations, groups, contacts, api } = props;
+  const { graph, graphResource, contacts, api } = props;
   const [isFetching, setIsFetching] = useState(false);
 
   const renderItem = React.forwardRef(({ index, scrollWindow }, ref) => {
     const node = graph.get(index);
-    if (!node) {
-      console.log('null');
-      return null;
-    }
+    if (!node) { return null; }
 
     return (
       <PostItem
         key={index.toString()}
         ref={ref}
         node={node}
-        associations={associations}
-        groups={groups}
         contacts={contacts}
-        api={api}
       />
     );
-
   });
 
   const fetchPosts = async (newer) => {
@@ -64,7 +60,7 @@ export function PostFeed(props) {
       data={graph}
       averageHeight={80}
       size={graph.size}
-      style={{ height: '100%' }}
+      style={virtualScrollerStyle}
       pendingSize={0}
       renderer={renderItem}
       loadRows={fetchPosts}

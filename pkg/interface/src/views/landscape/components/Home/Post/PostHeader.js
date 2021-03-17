@@ -13,8 +13,8 @@ export const DATESTAMP_FORMAT = '[~]YYYY.M.D';
 
 
 export function PostHeader(props) {
-  const { node } = props;
-  const contact = props.contacts[`~${node.post.author}`];
+  const { post, contacts } = props;
+  const contact = contacts[`~${post.author}`];
   const osDark = useLocalState((state) => state.dark);
   const theme = useSettingsState(s => s.display.theme);
   const dark = theme === 'dark' || (theme === 'auto' && osDark)
@@ -37,7 +37,7 @@ export function PostHeader(props) {
       />
     ) : (
       <Sigil
-        ship={node.post.author}
+        ship={post.author}
         size={36}
         color={color}
         classes={sigilClass}
@@ -48,7 +48,7 @@ export function PostHeader(props) {
     );
 
     const timestamp = moment
-      .unix(node.post['time-sent'] / 1000)
+      .unix(post['time-sent'] / 1000)
       .format('h:mm A');
 
   return (
@@ -57,7 +57,7 @@ export function PostHeader(props) {
         <Box width="36px" height="36px" mr={2}>{img}</Box>
       </Col>
       <Col>
-        <Text mono>~{node.post.author}</Text>
+        <Text mono>~{post.author}</Text>
         <Text gray>{timestamp}</Text>
       </Col>
     </Row>
