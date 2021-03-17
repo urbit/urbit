@@ -9,7 +9,7 @@ const virtualScrollerStyle = {
 };
 
 export function PostFeed(props) {
-  const { graph, graphResource, contacts, api } = props;
+  const { graph, graphResource, contacts, api, history, baseUrl } = props;
   const [isFetching, setIsFetching] = useState(false);
 
   const renderItem = React.forwardRef(({ index, scrollWindow }, ref) => {
@@ -25,6 +25,8 @@ export function PostFeed(props) {
         graphResource={graphResource}
         api={api}
         index={index}
+        baseUrl={baseUrl}
+        history={history}
       />
     );
   });

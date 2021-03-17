@@ -13,10 +13,16 @@ class PostItem extends React.Component {
 
     this.state = { inReplyMode: false };
     this.toggleReplyMode = this.toggleReplyMode.bind(this);
+    this.navigateToReplies = this.navigateToReplies.bind(this);
   }
 
   toggleReplyMode() {
     this.setState({ inReplyMode: !this.state.inReplyMode });
+  }
+
+  navigateToReplies() {
+    const { history, baseUrl, index } = this.props;
+    history.push(`${baseUrl}/feed/${index.toString()}`);
   }
 
   render() {
@@ -37,7 +43,8 @@ class PostItem extends React.Component {
           borderColor="lightGray"
           borderRadius="2"
           width="100%"
-          maxWidth="600px">
+          maxWidth="600px"
+          onClick={this.navigateToReplies}>
           <PostHeader post={node.post} contacts={contacts} />
           <PostContent
             post={node.post}

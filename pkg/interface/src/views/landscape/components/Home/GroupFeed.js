@@ -61,6 +61,8 @@ export function GroupFeed(props) {
               groups={groups}
               contacts={contacts}
               api={api}
+              history={history}
+              baseUrl={baseUrl}
             />
           ) : <Loading />
         }
