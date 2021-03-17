@@ -37,7 +37,7 @@ const RichText = React.memo(({ disableRemoteContent, ...props }) => (
           return <RemoteContent className="mw-100" url={linkProps.href} />;
         }
 
-        return <Anchor display="inline" target='_blank' rel='noreferrer noopener' borderBottom='1px solid' remoteContentPolicy={remoteContentPolicy} {...linkProps}>{linkProps.children}</Anchor>;
+        return <Anchor display="inline" target='_blank' referrerPolicy='noreferrer noopener' borderBottom='1px solid' remoteContentPolicy={remoteContentPolicy} {...linkProps}>{linkProps.children}</Anchor>;
       },
       linkReference: (linkProps) => {
         const linkText = String(linkProps.children[0].props.children);

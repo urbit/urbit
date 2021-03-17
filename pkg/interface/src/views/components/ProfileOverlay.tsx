@@ -82,6 +82,7 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
     const img =
       contact?.avatar && !hideAvatars ? (
         <BaseImage
+          referrerPolicy="no-referrer"
           display='inline-block'
           style={{ objectFit: 'cover' }}
           src={contact.avatar}

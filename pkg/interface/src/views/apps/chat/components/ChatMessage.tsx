@@ -370,8 +370,8 @@ export const MessageAuthor = ({
     .unix(msg['time-sent'] / 1000)
     .format(DATESTAMP_FORMAT);
   const contact =
-    ( ( (msg.author === window.ship && showOurContact) || 
-         msg.author !== window.ship) && 
+    ( ( (msg.author === window.ship && showOurContact) ||
+         msg.author !== window.ship) &&
       `~${msg.author}` in contacts
     ) ? contacts[`~${msg.author}`] : false;
 
@@ -416,6 +416,7 @@ export const MessageAuthor = ({
     contact?.avatar && !hideAvatars ? (
       <BaseImage
         display='inline-block'
+        referrerPolicy="no-referrer"
         style={{ objectFit: 'cover' }}
         src={contact.avatar}
         height={24}
