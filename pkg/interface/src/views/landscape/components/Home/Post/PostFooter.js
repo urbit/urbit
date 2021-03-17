@@ -3,15 +3,14 @@ import { Box, Col, Row, Text, Icon } from '@tlon/indigo-react';
 
 
 export function PostFooter(props) {
-  const navigateToReplies = () => {
-    console.log('TODO');
-  };
+  const { replyCount, toggleReplyMode } = props;
+
   return (
     <Row mt={2} justify-content="flex-start">
-      <Row cursor="pointer" onClick={navigateToReplies}>
+      <Row cursor="pointer" onClick={toggleReplyMode}>
         <Icon icon="Chat" />
-        { props.replyCount > 0 ? (
-          <Text pl="1" gray>{props.replyCount}</Text>
+        { replyCount > 0 ? (
+          <Text pl="1" gray>{replyCount}</Text>
         ) : null }
       </Row>
     </Row>

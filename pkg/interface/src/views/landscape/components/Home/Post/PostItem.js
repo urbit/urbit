@@ -1,22 +1,37 @@
 import React from 'react';
-import { Box, Row } from '@tlon/indigo-react';
+import { Box, Col } from '@tlon/indigo-react';
 import { PostHeader } from './PostHeader';
 import { PostContent } from './PostContent';
 import { PostFooter } from './PostFooter';
+import { PostInput } from './PostInput';
 
 
-class PostItem extends React.PureComponent {
+class PostItem extends React.Component {
+  
+  constructor(props) {
+    super(props);
+
+    this.state = { inReplyMode: false };
+    this.toggleReplyMode = this.toggleReplyMode.bind(this);
+  }
+
+  toggleReplyMode() {
+    this.setState({ inReplyMode: !this.state.inReplyMode });
+  }
+
   render() {
-    const { node, contacts, innerRef } = this.props;
+    const { node, contacts, api, graphResource, index, innerRef } = this.props;
+    const { inReplyMode } = this.state;
+
     return (
-      <Row
+      <Col
         ref={innerRef}
         pl="1"
         pr="1"
         mb="3"
         width="100%"
-        justifyContent="center">
-        <Box
+        alignItems="center">
+        <Col
           p="2"
           border={1}
           borderColor="lightGray"
@@ -27,9 +42,24 @@ class PostItem extends React.PureComponent {
           <PostContent
             post={node.post}
             contacts={contacts} />
-          <PostFooter replyCount={node.children.size} /> 
-        </Box>
-      </Row>
+          <PostFooter
+            replyCount={node.children.size}
+            toggleReplyMode={this.toggleReplyMode} /> 
+        </Col>
+        { inReplyMode ? (
+          <Col width="100%" maxWidth="600px">
+            <Box
+              ml="3"
+              height="16px"
+              borderLeft={1}
+              borderLeftColor="lightGray"></Box>
+            <PostInput
+              api={api}
+              graphResource={graphResource}
+              index={`/${index.toString()}`} />
+          </Col>
+        ) : null }
+      </Col>
     );
 
   }

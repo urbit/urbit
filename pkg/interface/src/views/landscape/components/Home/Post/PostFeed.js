@@ -2,7 +2,7 @@ import React, {
   useState
 } from 'react';
 import VirtualScroller from "~/views/components/VirtualScroller";
-import PostItem from './Post/PostItem';
+import PostItem from './PostItem';
 
 const virtualScrollerStyle = {
   height: "100%"
@@ -22,6 +22,9 @@ export function PostFeed(props) {
         ref={ref}
         node={node}
         contacts={contacts}
+        graphResource={graphResource}
+        api={api}
+        index={index}
       />
     );
   });

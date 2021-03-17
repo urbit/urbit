@@ -3,28 +3,27 @@ import React, {
 } from 'react';
 import { Button, Text, Box, Row, BaseTextArea } from '@tlon/indigo-react';
 import tokenizeMessage from '~/logic/lib/tokenizeMessage';
-import { resourceFromPath } from '~/logic/lib/group';
 import { createPost } from '~/logic/api/graph';
 
 
 export function PostInput(props) {
-  const { api, graphPath } = props;
+  const { api, graphResource, index } = props;
   const [disabled, setDisabled] = useState(false);
   const [postContent, setPostContent] = useState('');
 
   const sendPost = () => {
-    if (!graphPath) {
-      console.error("graphPath is undefined, cannot post");
+    if (!graphResource) {
+      console.error("graphResource is undefined, cannot post");
       return;
     }
 
     setDisabled(true);
-    const post = createPost(tokenizeMessage(postContent));
-    const resource = resourceFromPath(graphPath);
+    const post = createPost(tokenizeMessage(postContent), index || '');
+    console.log(post);
 
     api.graph.addPost(
-      resource.ship,
-      resource.name,
+      graphResource.ship,
+      graphResource.name,
       post
     ).then(() => {
       setDisabled(false);
@@ -34,7 +33,6 @@ export function PostInput(props) {
 
   return (
     <Box
-      mb="3"
       width="100%"
       height="96px"
       borderRadius="2"

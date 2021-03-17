@@ -3,8 +3,8 @@ import React, {
 } from 'react';
 import { Box, Row, Text } from '@tlon/indigo-react'
 import { GroupFeedHeader } from './GroupFeedHeader';
-import { PostInput } from './PostInput';
-import { PostFeed } from './PostFeed';
+import { PostInput } from './Post/PostInput';
+import { PostFeed } from './Post/PostFeed';
 import { Loading } from '~/views/components/Loading';
 import { resourceFromPath } from '~/logic/lib/group';
 
@@ -44,10 +44,11 @@ export function GroupFeed(props) {
         pt="3"
         pl="2"
         pr="2"
+        mb="3"
         flexDirection="column"
         alignItems="center">
         { shouldRenderFeed ? (
-            <PostInput api={api} graphPath={graphPath} />
+            <PostInput api={api} graphResource={graphResource} />
           ) : null
         }
       </Box> 
