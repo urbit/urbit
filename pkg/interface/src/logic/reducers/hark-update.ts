@@ -8,7 +8,6 @@ import {
 } from '@urbit/api';
 import { makePatDa } from '~/logic/lib/util';
 import _ from 'lodash';
-import { StoreState } from '../store/type';
 import { BigIntOrderedMap } from '../lib/BigIntOrderedMap';
 import useHarkState, { HarkState } from '../state/hark';
 import { compose } from 'lodash/fp';
@@ -19,25 +18,7 @@ import { handleSubscriptionError, handleSubscriptionQuit } from '../lib/subscrip
 const HarkReducer = (json: any) => {
   const data = _.get(json, 'harkUpdate', false);
   if (data) {
-    useHarkState.getState().set(state => {
-      state = reduceState<HarkState, any>(useHarkState, data, [
-        unread,
-        read,
-        archive,
-        timebox,
-        more,
-        dnd,
-        added,
-        unreads,
-        readEach,
-        readSince,
-        unreadSince,
-        unreadEach,
-        seenIndex,
-        removeGraph,
-        readAll,
-      ]);
-    });
+    reduce(data);
   }
   const graphHookData = _.get(json, 'hark-graph-hook-update', false);
   if (graphHookData) {
@@ -62,6 +43,28 @@ const HarkReducer = (json: any) => {
     })
   }
 };
+
+const reduce = (data: any) => {
+  useHarkState.getState().set(state => {
+    state = reduceState<HarkState, any>(useHarkState, data, [
+      unread,
+      read,
+      archive,
+      timebox,
+      more,
+      dnd,
+      added,
+      unreads,
+      readEach,
+      readSince,
+      unreadSince,
+      unreadEach,
+      seenIndex,
+      removeGraph,
+      readAll,
+    ]);
+  });
+}
 
 function groupInitial(json: any, state: HarkState): HarkState {
   const data = _.get(json, 'initial', false);
@@ -315,7 +318,7 @@ const timebox = (json: any, state: HarkState): HarkState => {
 function more(json: any, state: HarkState): HarkState {
   const data = _.get(json, 'more', false);
   if (data) {
-    _.forEach(data, d => HarkReducer(d));
+    _.forEach(data, d => reduce(d));
   }
   return state;
 }

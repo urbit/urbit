@@ -15,7 +15,7 @@ export interface HarkState extends BaseState<HarkState> {
   notifications: BigIntOrderedMap<Timebox>;
   notificationsCount: number;
   notificationsGraphConfig: NotificationGraphConfig; // TODO unthread this everywhere
-  notificationsGroupConfig: []; // TODO type this
+  notificationsGroupConfig: any[]; // TODO type this
   unreads: Unreads;
 };
 
