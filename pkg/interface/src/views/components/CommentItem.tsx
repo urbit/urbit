@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useRef, useCallback} from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -13,6 +13,8 @@ import { MentionText } from '~/views/components/MentionText';
 import { roleForShip } from '~/logic/lib/group';
 import { getLatestCommentRevision } from '~/logic/lib/publish';
 import {useCopy} from '~/logic/lib/useCopy';
+import {usePermalinkForGraph} from '~/logic/lib/permalinks';
+import useMetadataState from '~/logic/state/metadata';
 
 const ClickBox = styled(Box)`
   cursor: pointer;
@@ -33,6 +35,9 @@ interface CommentItemProps {
 
 export function CommentItem(props: CommentItemProps): ReactElement {
   const { ship, name, api, comment, group } = props;
+  const association = useMetadataState(
+    useCallback(s => s.associations.graph[`/ship/${ship}/${name}`], [ship,name])
+  );
   const ref = useRef<HTMLElement | null>(null);
   const [, post] = getLatestCommentRevision(comment);
   const disabled = props.pending;
@@ -82,7 +87,7 @@ export function CommentItem(props: CommentItemProps): ReactElement {
   }, []);
 
 
-  const { copyDisplay, doCopy } = useCopy(`arvo://~graph/graph/ship/${ship}/${name}${comment.post.index}`, 'Copy Link')
+  const { copyDisplay, doCopy } = useCopy(usePermalinkForGraph(association), 'Copy Link');
 
   return (
     <Box ref={ref} mb={4} opacity={post?.pending ? '60%' : '100%'}>

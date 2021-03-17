@@ -1,7 +1,7 @@
 import produce from "immer";
 import { compose } from "lodash/fp";
 import create, { State, UseStore } from "zustand";
-import { persist } from "zustand/middleware";
+import { persist, devtools } from "zustand/middleware";
 
 
 export const stateSetter = <StateType>(
@@ -53,12 +53,16 @@ export const createState = <StateType extends BaseState<any>>(
   name: string,
   properties: Omit<StateType, 'set'>,
   blacklist: string[] = []
-): UseStore<StateType> => create(persist((set, get) => ({
-  // TODO why does this typing break?
-  set: fn => stateSetter(fn, set),
-  ...properties
-}), {
-  blacklist,
-  name: stateStorageKey(name),
-  version: 1, // TODO version these according to base hash
-}));
+): UseStore<StateType> => {
+  const storageKey = stateStorageKey(name);
+
+  return create(devtools(persist((set, get) => ({
+    // TODO why does this typing break?
+    set: fn => stateSetter(fn, set),
+    ...properties
+  }), {
+    blacklist,
+    name: storageKey,
+    version: 1, // TODO version these according to base hash
+  }), storageKey));
+}

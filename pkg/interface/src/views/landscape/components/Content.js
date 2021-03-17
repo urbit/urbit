@@ -11,6 +11,7 @@ import Settings from '~/views/apps/settings/settings';
 import ErrorComponent from '~/views/components/Error';
 import Notifications from '~/views/apps/notifications/notifications';
 import GraphApp from '../../apps/graph/app';
+import { PermalinkRoutes } from '~/views/apps/permalinks/app';
 
 import { useMigrateSettings } from '~/logic/lib/migrateSettings';
 
@@ -89,6 +90,7 @@ export const Content = (props) => {
           )}
         />
         <GraphApp path="/~graph" {...props} />
+        <PermalinkRoutes {...props} />
         <Route
           render={p => (
             <ErrorComponent

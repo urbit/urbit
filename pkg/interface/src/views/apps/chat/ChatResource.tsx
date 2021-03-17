@@ -139,6 +139,8 @@ export function ChatResource(props: ChatResourceProps) {
     })();
   }, [groupPath, group]);
 
+  console.log(graph);
+
   if(!graph) {
     return <Loading />;
   }

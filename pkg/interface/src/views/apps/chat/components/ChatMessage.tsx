@@ -40,6 +40,7 @@ import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import Timestamp from '~/views/components/Timestamp';
 import useContactState from '~/logic/state/contact';
 import { useIdlingState } from '~/logic/lib/idling';
+import {useCopy} from '~/logic/lib/useCopy';
 
 export const DATESTAMP_FORMAT = '[~]YYYY.M.D';
 
@@ -137,14 +138,8 @@ const MessageActionItem = (props) => {
 const MessageActions = ({ api, association, history, msg, group }) => {
   const isAdmin = () => group.tags.role.admin.has(window.ship);
   const isOwn = () => msg.author === window.ship;
-  const [copied, setCopied] = useState(false);
-  const copyLink = useCallback(() => {
-    writeText(`arvo://~graph/graph${association.resource}${msg.index}`);
-    setCopied(true);;
-    setTimeout(() => {
-      setCopied(false)
-    }, 2000);
-  }, [setCopied, association, msg]);
+  const { doCopy, copyDisplay } = useCopy(`web+urbit://group${association.group.slice(5)}/graph${association.resource.slice(5)}${msg.index}`, 'Copy Message Link');
+
   return (
     <Box
       borderRadius={1}
@@ -200,8 +195,8 @@ const MessageActions = ({ api, association, history, msg, group }) => {
               <MessageActionItem onClick={(e) => console.log(e)}>
                 Reply
               </MessageActionItem>
-              <MessageActionItem onClick={copyLink}>
-                { copied ? 'Copied' : 'Copy Message Link'}
+              <MessageActionItem onClick={doCopy}>
+                {copyDisplay}
               </MessageActionItem>
               {isAdmin() || isOwn() ? (
                 <MessageActionItem onClick={(e) => console.log(e)} color='red'>
