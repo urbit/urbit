@@ -34,7 +34,8 @@ export function GroupFeed(props) {
       height="100%"
       display="flex"
       flexDirection="column"
-      alignItems="center">
+      alignItems="center"
+      overflow="hidden">
       <GroupFeedHeader baseUrl={baseUrl} history={history} />
       <Box
         width="100%"
@@ -49,10 +50,10 @@ export function GroupFeed(props) {
           ) : null
         }
       </Box> 
-      <Box flexGrow="1" width="100%" alignItems="center" pl="1">
+      <Box height="calc(100% - 136px)" width="100%" alignItems="center" pl="1">
         { shouldRenderFeed ? (
             <PostFeed
-              graphPath={graphPath}
+              graphResource={graphResource}
               graph={graphs[graphId]}
               associations={associations}
               groups={groups}

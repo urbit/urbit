@@ -6,15 +6,8 @@ import { Sigil } from '~/logic/lib/sigil';
 import useLocalState from '~/logic/state/local';
 import useSettingsState, {selectCalmState} from "~/logic/state/settings";
 import {
-  uxToHex,
-  cite,
-  writeText,
-  useShowNickname,
-  useHideAvatar,
-  useHovering
+  uxToHex
 } from '~/logic/lib/util';
-
-import { PostContent } from './PostContent';
 
 export const DATESTAMP_FORMAT = '[~]YYYY.M.D';
 
@@ -22,7 +15,6 @@ export const DATESTAMP_FORMAT = '[~]YYYY.M.D';
 export function PostHeader(props) {
   const { node } = props;
   const contact = props.contacts[`~${node.post.author}`];
-  console.log(contact);
   const osDark = useLocalState((state) => state.dark);
   const theme = useSettingsState(s => s.display.theme);
   const dark = theme === 'dark' || (theme === 'auto' && osDark)
@@ -68,35 +60,6 @@ export function PostHeader(props) {
         <Text mono>~{node.post.author}</Text>
         <Text gray>{timestamp}</Text>
       </Col>
-    </Row>
-  );
-}
-export function PostFooter(props) {
-  return <div></div>
-}
-
-
-export function PostItem(props) {
-  const { index, node, groups, associations, api, contacts } = props;
-  return (
-    <Row
-      pl="1"
-      pr="1"
-      mb="3"
-      width="100%"
-      height="100px"
-      justifyContent="center">
-      <Box
-        p="3"
-        border={1}
-        borderColor="washedGray"
-        height="100px"
-        width="100%"
-        maxWidth="600px">
-        <PostHeader node={node} contacts={contacts} />
-        <PostContent {...props} />
-        <PostFooter /> 
-      </Box>
     </Row>
   );
 }
