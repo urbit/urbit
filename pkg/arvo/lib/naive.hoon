@@ -34,6 +34,12 @@
 ::  involving multiple possible sponsors owned/managed by the same
 ::  address?
 ::
+::  TODO: add nonces to txs.  how to keep track of them?  need replay
+::  protection.  maybe we can add nonces to ships instead of addresses?
+::  Then what about operators?
+::
+::  TODO: if sig fails to verify, skip instead of crashing
+::
 /+  ethereum, azimuth
 ::  Constants
 ::
@@ -58,7 +64,8 @@
   $%  [%transfer-point =ship =address reset=?]
       [%spawn =ship =address]
       [%set-dns-domains primary=@t secondary=@t tertiary=@t]
-      [%configure-keys =ship encrypt=@ auth=@ crypto-version=@ breach=?]
+      [%set-operator operator=address add=?]
+      [%configure-keys =ship encrypt=@ auth=@ crypto-suite=@ breach=?]
       [%escape =ship parent=ship]
       [%cancel-escape =ship parent=ship]
       [%adopt =ship parent=ship]
@@ -69,6 +76,7 @@
       [%set-voting-proxy =ship =address]
       [%set-transfer-proxy =ship =address]
   ==
+::
 +$  input
   [%bat batch=@]
   [%log =event-log:rpc:ethereum]
@@ -77,41 +85,116 @@
 ::
 =,  ethereum-types
 |%
-++  take
-  |=  [=bite txdata=@]
-  [(end bite txdata) (rsh bite txdata)]
+++  parse-batch
+  |=  batch=@
+  ^-  (list [address tx])
+  ?~  batch
+    ~
+  =^  [signer=address =tx]  batch  (parse-tx batch)
+  [[signer tx] $]
 ::
 ++  parse-tx
-  |=  txdata=@
-  ^-  tx
-  =^  op  txdata  (take [0 7] txdata)
+  |=  [batch=@ =verifier]
+  ^-  [[address tx] rest=@]
+  =/  batch  [0 batch]
+  |^
+  =^  sig  batch  (take 3 65)
+  =/  signed-batch  batch
+  =-  =/  signer=address
+        (verify-tx sig (end [0 len] signed-batch) verifier)
+      [[signer tx] rest]
+  ^-  [=tx [len=@ rest=@]]
+  =^  op   batch  (take 0 7)
   ?-    op
       %0
     :-  %transfer-point
-    =^  reset=?   txdata  (take [0 1] txdata)
-    =^  =ship     txdata  (take [3 4] txdata)
-    =^  =address  txdata  (take [3 20] txdata)
-    ?>  =(0 txdata)
-    [ship address reset]
+    =^  reset=?         batch  (take 0)
+    =^  =ship           batch  (take 3 4)
+    =^  =address        batch  (take 3 20)
+    [[ship address reset] batch]
   ::
-      %1
-    :-  %spawn
-    =^  pad=?     txdata  (take [0 1] txdata)
-    =^  =ship     txdata  (take [3 4] txdata)
-    =^  =address  txdata  (take [3 20] txdata)
-    ?>  =(0 txdata)
-    [ship address]
+      %1  [%spawn take-ship-address]
+      %2
+    :-  %configure-keys
+    =^  breach=?        batch  (take 0)
+    =^  =ship           batch  (take 3 4)
+    =^  encrypt=@       batch  (take 3 32)
+    =^  auth=@          batch  (take 3 32)
+    =^  crypto-suite=@  batch  (take 3 4)
+    [[ship encrypt auth crypto-suite breach] batch]
+  ::
+      %3   [%escape take-escape]
+      %4   [%cancel-escape take-escape]
+      %5   [%adopt take-escape]
+      %6   [%reject take-escape]
+      %7   [%detach take-escape]
+      %8   [%set-management-proxy take-ship-address]
+      %9  [%set-spawn-proxy take-ship-address]
+      %10  [%set-voting-proxy take-ship-address]
+      %11  [%set-transfer-proxy take-ship-address]
+      %12
+    :-  %set-dns-domains
+    =^  pad=?           batch  (take 0)
+    =^  primary=@t      batch  take-string
+    =^  secondary=@t    batch  take-string
+    =^  tertiary=@t     batch  take-string
+    [[primary secondary tertiary] batch]
+  ::
+      %13
+    :-  %set-operator
+    =^  add=?           batch  (take 0)
+    =^  =address        batch  (take 3 20)
+    [[address add] batch]
   ==
-::
-++  verify-tx
-  |=  [txdata=@ =verifier]
-  ^-  [address @]
-  =^  v  txdata  (take 3 txdata)
-  =^  r  txdata  (take [3 32] txdata)
-  =^  s  txdata  (take [3 32] txdata)
-  :_  txdata
-  %-  address-from-pub:key:ethereum
-  (verifier txdata v r s)
+  ::
+  ::  Take a bite
+  ::
+  ++  take
+    |=  =bite
+    ^-  [@ _batch]
+    :-  (end bite batch)
+    :-  ?@  bite  (bex bite)
+        (mul step.bite (bex bloq.bite))
+    (rsh bite batch)
+  ::  Dumb encoding of strings up to 255 bytes
+  ::
+  ++  take-string
+    ^-  [string=@t _batch]
+    =^  len=@      batch  (take 3)
+    (take [3 len] batch)
+  ::
+  ::  Encode ship and address
+  ::
+  ++  take-ship-address
+    ^-  [[ship address] _batch]
+    =^  pad=?     batch  (take 0)
+    =^  =ship     batch  (take 3 4)
+    =^  =address  batch  (take 3 20)
+    [ship address]
+  ::  Encode escape-related txs
+  ::
+  ++  take-escape
+    ^-  [[ship ship] _batch]
+    =^  pad=?        batch  (take 0)
+    =^  child=ship   batch  (take 3 4)
+    =^  parent=ship  batch  (take 3 4)
+    [child parent]
+  ::
+  ++  verify-tx
+    |=  [sig=@ txdata=@ =verifier]
+    ^-  address
+    |^
+    =^  v  sig  (take 3)
+    =^  r  sig  (take 3 32)
+    =^  s  sig  (take 3 32)
+    %-  address-from-pub:key:ethereum
+    (verifier txdata v r s)
+    ::
+    ++  take
+      |=  =bite
+      [(end bite sig) (rsh bite sig)]
+    --
+  --
 ::
 ++  get-point-size
   |=  =ship
@@ -147,7 +230,7 @@
 :: Receive log from L1 transaction
 ::
 ++  receive-log
-  |=  [log=event-log:rpc:ethereum =state]
+  |=  [=state log=event-log:rpc:ethereum]
   ^-  [(list [ship udiff:point:jael]) ^state]
   =*  log-name  i.topics.log
   ?:  =(log-name ^~((hash-log-name 'ChangedDns(string,string,string)')))
@@ -263,21 +346,31 @@
     point(voting-proxy.own to)
   ::
   ~|  [%unknown-log log]
-  !!  ::  TODO: handle operators
+  !!
 ::
 ::  Receive batch of L2 transactions
 ::
 ++  receive-batch
-  |=  [batch=@ =state]
-  =/  txs=(list @)  (split-batch batch.input)
-  =^  signer=address  txdata  (verify-tx txdata verifier)
+  |=  [=state batch=@]
+  =/  txs=(list [signer=address =tx])  (parse-batch batch.input)
+  |-  ^-  [effects ^state]
+  ?~  txs
+    [~ state]
+  =^  effects-1  state  (receive-tx state signer.i.txs tx.i.txs)
+  =^  effects-2  state  $(txs t.txs)
+  [(welp effects-1 effects-2) state]
+::
+::  Receive an individual L2 transaction
+::
+++  receive-tx
+  |=  [=state =signer =tx]
+  ^-  [effects ^state]
   |^
-  =/  =tx  (parse-tx txdata)
-  ?-  -.tx
-    %transfer-point         (w-point process-transfer-point +.tx)
-    %spawn                  (process-spawn +.tx)
+  ?-  +<.tx
     %set-dns-domains        (process-set-dns-domains +.tx)
     %set-operator           (process-set-operator +.tx)
+    %spawn                  (process-spawn +.tx)
+    %transfer-point         (w-point process-transfer-point +.tx)
     %configure-keys         (w-point-fx process-configure-keys +.tx)
     %escape                 (w-point process-escape +.tx)
     %cancel-escape          (w-point process-cancel-escape +.tx)
@@ -305,6 +398,19 @@
     ?>  ?=(%l2 -.point)
     =/  new-point=point-state  (fun ship point rest)
     `state(points.state (~(put by points.state) ship new-point))
+  ::
+  ++  process-set-dns-domains
+    |=  [primary=@t secondary=@t tertiary=@t]
+    ?>  =(signer 0x0)  ::  TODO: who?
+    `state(dns ~[primary secondary tertiary])
+  ::
+  ++  process-set-operator
+    |=  [operator=address add=?]
+    =-  `state(operators -)
+    ?<  =(0x0 operator)
+    ?:  add
+      (~(put ju operators.state) signer operator)
+    (~(del ju operators.state) signer operator)
   ::
   ++  process-transfer-point
     |=  [=ship point=point-state to=address reset=?]
@@ -368,19 +474,6 @@
         transfer-proxy.own  to
       ==
     [~ points]
-  ::
-  ++  process-set-dns-domains
-    |=  [primary=@t secondary=@t tertiary=@t]
-    ?>  =(signer 0x0)  ::  TODO: who?
-    `state(dns ~[primary secondary tertiary])
-  ::
-  ++  process-set-operator
-    |=  [operator=address add=?]
-    =-  `state(operators -)
-    ?<  =(0x0 operator)
-    ?:  add
-      (~(put ju operators.state) signer operator)
-    (~(del ju operators.state) signer operator)
   ::
   ++  process-configure-keys
     |=  [=ship point=point-state encrypt=@ auth=@ crypto-suite=@ breach=?]
@@ -499,7 +592,7 @@
 ?:  ?=(%log -.input)
   :: Received log from L1 transaction
   ::
-  (receive-log event-log.input state)
+  (receive-log state event-log.input)
 ::  Received batch
 ::
 (receive-batch batch.input state)
