@@ -25,7 +25,8 @@ export function GroupFeed(props) {
   const shouldRenderFeed = graphId in graphs;
 
   useEffect(() => {
-    api.graph.getGraph(graphResource.ship, graphResource.name);
+    //  TODO: VirtualScroller should support lower starting values than 100
+    props.api.graph.getNewest(graphResource.ship, graphResource.name, 100);
   }, [graphPath]);
 
   return (
