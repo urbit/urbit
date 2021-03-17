@@ -149,3 +149,9 @@ gap (Wen x) (Wen y) | x > y     = x - y
 
 addGap :: Wen -> Gap -> Wen
 addGap (Wen x) y = Wen (x+y)
+
+-- | Produce a Wen with precision compatible to that from vere's time.c
+chop :: Wen -> Wen
+chop (Wen (Gap g)) = Wen (Gap (mop g))
+  where
+      mop n = shiftL (shiftR n 48) 48
