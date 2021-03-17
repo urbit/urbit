@@ -66,9 +66,8 @@ function getParticipants(cs: Contacts, group: Group) {
     }))
   )(cs);
   const members: Participant[] = _.map(
-    Array.from(group.members)
-    .filter(e => group?.policy?.invite?.pending ? !group.policy.invite.pending.has(e) : true), m =>
-      emptyContact(m, false)
+    Array.from(group.members),
+    s => contacts[s] ?? emptyContact(s, false)
   );
   const allMembers = _.unionBy(contacts, members, 'patp');
   const pending: Participant[] =
@@ -78,10 +77,11 @@ function getParticipants(cs: Contacts, group: Group) {
         )
       : [];
 
+  const incPending = _.unionBy(allMembers, pending, 'patp');
   return [
-    _.unionBy(allMembers, pending, 'patp'),
-    pending.length,
-    allMembers.length
+    incPending,
+    incPending.length - group.members.size,
+    group.members.size
   ] as const;
 }
 
