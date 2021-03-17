@@ -3141,7 +3141,7 @@
     ^+  message-sink
     ::
     =^  pending  pending-vane-ack.state  ~(get to pending-vane-ack.state)
-    =/  =message-num  message-num.p.pending
+    =/  =message-num  message-num.pending
     ::
     =.  last-acked.state  +(last-acked.state)
     =?  nax.state  !ok  (~(put in nax.state) message-num)

@@ -8637,12 +8637,12 @@
       [%tsdt p.gen [%wtcl q.gen r.gen [%wing p.gen]] s.gen]
     ::
         [%tskt *]                                       ::                  =^
-      =+  wuy=(weld q.gen `wing`[%v ~])                 ::
       :+  %tsgr  [%ktts %v %$ 1]                        ::  =>  v=.
       :+  %tsls  [%ktts %a %tsgr [%limb %v] r.gen]      ::  =+  a==>(v \r.gen)
-      :^  %tsdt  wuy  [%tsgl [%$ 3] [%limb %a]]
+      :^  %tsdt  (weld q.gen `wing`[%v ~])
+        [%tsgr [%limb %a] [%wing [|+[0 ~] &+3 ~]]]
       :+  %tsgr  :-  :+  %ktts  [%over [%v ~] p.gen]
-                     [%tsgl [%$ 2] [%limb %a]]
+                     [%tsgr [%limb %a] [%wing [|+[0 ~] &+2 ~]]]
                  [%limb %v]
       s.gen
     ::

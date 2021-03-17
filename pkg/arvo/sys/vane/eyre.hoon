@@ -1224,7 +1224,7 @@
         ?:  =(~ queue)
           events
         =^  head  queue  ~(get to queue)
-        =,  p.head
+        =,  head
         ::NOTE  these will only fail if the mark and/or json types changed,
         ::      since conversion failure also gets caught during first receive.
         ::      we can't do anything about this, so consider it unsupported.

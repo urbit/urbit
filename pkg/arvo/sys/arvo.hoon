@@ -944,8 +944,9 @@
           =^  lab  sac  (~(spot wa sac) 7 vax)
           $(vax lab)
         ::
-        ?>  ?=(?(%pass %give) -.p.bal)
-        [[%hurl goof p.bal] sac]
+        ~!  bal
+        ?>  ?=(?(%pass %give) -.bal)
+        [[%hurl goof bal] sac]
       ==
     ::  +refine-card: card from vase
     ::
