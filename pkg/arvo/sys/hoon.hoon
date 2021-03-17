@@ -6627,7 +6627,7 @@
 +$  seminoun
   ::  partial noun; blocked subtrees are ~
   ::
-  $~  [[%full ~] ~]
+  $~  [[%full / ~ ~] ~]
   [mask=stencil data=noun]
 ::
 ::  +stencil: noun knowledge map
