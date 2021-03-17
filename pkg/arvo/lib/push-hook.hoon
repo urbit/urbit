@@ -380,44 +380,54 @@
   ++  push-updates
     |=  =vase
     ^-  (list card:agent:gall)
-    =/  rids=(list resource)  (resource-for-update vase)
-    =|  cards=(list card:agent:gall)
-    |-
-    ?~  rids  cards
-    =/  prefix=path
-      resource+(en-path:resource i.rids)
+    %+  murn  (resource-for-update vase)
+    |=  rid=resource
+    ^-  (unit card:agent:gall)
+    =/  prefix=path  resource+(en-path:resource rid)
     =/  paths=(list path)
       %~  tap  in
       %-  silt
       %+  turn
         (incoming-subscriptions prefix)
-      |=([ship pax=path] pax)
-    ?~  paths  $(rids t.rids)
-    %_  $
-      rids   t.rids
-      cards  (snoc cards [%give %fact paths update-mark.config vase])
-    ==
+      tail
+    ?~  paths  ~
+    `[%give %fact paths update-mark.config vase]
   ::
   ++  forward-update
-    |=  =vase
+    |=  vas=vase
     ^-  (list card:agent:gall)
-    =/  rids=(list resource)  (resource-for-update vase)
-    =|  cards=(list card:agent:gall)
-    |-
-    ?~  rids  cards
+    =-  lis
+    %+  roll  (resource-for-update vas)
+    |=  [rid=resource [lis=(list card:agent:gall) tf-vas=(unit vase)]]
+    ^-  [(list card:agent:gall) (unit vase)]
     =/  =path
-      resource+(en-path:resource i.rids)
-    =/  =wire
-      (make-wire resource+(en-path:resource i.rids))
-    =/  dap=term
-      ?:(=(our.bowl entity.i.rids) store-name.config dap.bowl)
-    %_  $
-      rids  t.rids
-    ::
-        cards
-      %+  snoc  cards
-      [%pass wire %agent [entity.i.rids dap] %poke update-mark.config vase]
-    ==
+      resource+(en-path:resource rid)
+    =/  =wire  (make-wire path)
+    =*  ship   entity.rid
+    =.  tf-vas
+      ?.  =(our.bowl ship)
+        ::  do not transform before forwarding
+        ::
+        `vas
+      ::  use cached transform
+      ::
+      ?^  tf-vas  tf-vas
+      ::  transform before poking store
+      ::
+      (transform-proxy-update:og vas)
+    ~|  "forwarding failed during transform. mark: {<p.vas>} resource: {<rid>}"
+    ?>  ?=(^ tf-vas)
+    =/  =dock
+      :-  ship
+      ?.  =(our.bowl ship)
+        ::  forward to host
+        ::
+        dap.bowl
+      ::  poke our store
+      ::
+      store-name.config
+    :_  tf-vas
+    [[%pass wire %agent dock %poke update-mark.config u.tf-vas] lis]
   ::
   ++  resource-for-update
     |=  =vase
