@@ -40,7 +40,7 @@
 ::
 ::  TODO: if sig fails to verify, skip instead of crashing
 ::
-/+  ethereum, azimuth
+/+  ethereum
 ::  Constants
 ::
 |%
@@ -49,17 +49,56 @@
 ++  deposit-address  0x1234.5678.9012.3456.7890.1234.5678.9012.3456.7890
 --
 ::  Types
-=,  ethereum-types
 |%
+::  ethereum address, 20 bytes.
+::
++$  address  @ux
+++  point
+  $:  ::  domain
+      ::
+      dominion=?(%l1 %l2 %spawn)
+    ::
+      ::  ownership
+      ::
+      $=  own
+      $:  owner=address
+          management-proxy=address
+          voting-proxy=address
+          transfer-proxy=address
+      ==
+    ::
+      ::  networking
+      ::
+      $=  net
+      $:  =life
+          =pass
+          continuity-number=@ud
+          sponsor=[has=? who=@p]
+          escape=(unit @p)
+      ==
+    ::
+      ::  spawning
+      ::
+      $=  kid
+      $:  spawn-proxy=address
+          spawned=(set @p)
+      ==
+  ==
+::
+++  diff
+  $%  [%rift =rift]
+      [%keys =life crypto-suite=@ud =pass]
+      [%spon sponsor=(unit @p)]
+  ==
+::
 +$  state
   $:  =points
       =operators
       dns=(list @t)
   ==
-+$  points       (map ship point-state)
++$  points       (map ship point)
 +$  operators    (jug address address)
-+$  point-state  [dominion=?(%l1 %l2 %spawn) point:azimuth-types]
-+$  effects      (list [ship udiff:point:jael])
++$  effects      (list [ship diff])
 +$  tx
   $%  [%transfer-point =ship =address reset=?]
       [%spawn =ship =address]
@@ -78,19 +117,20 @@
   ==
 ::
 +$  input
-  [%bat batch=@]
-  [%log =event-log:rpc:ethereum]
+  $%  [%bat batch=@]
+      [%log =event-log:rpc:ethereum]
+  ==
+::
 +$  verifier  $-([dat=@ v=@ r=@ s=@] pub=@)
 --
 ::
-=,  ethereum-types
 |%
 ++  parse-batch
-  |=  batch=@
+  |=  [batch=@ =verifier]
   ^-  (list [address tx])
   ?~  batch
     ~
-  =^  [signer=address =tx]  batch  (parse-tx batch)
+  =^  [signer=address =tx]  batch  (parse-tx batch verifier)
   [[signer tx] $]
 ::
 ++  parse-tx
@@ -99,52 +139,48 @@
   =/  batch  [0 batch]
   |^
   =^  sig  batch  (take 3 65)
-  =/  signed-batch  batch
+  =/  signed-batch  +.batch
   =-  =/  signer=address
-        (verify-tx sig (end [0 len] signed-batch) verifier)
+        (verify-tx sig (end [0 len] signed-batch))
       [[signer tx] rest]
   ^-  [=tx [len=@ rest=@]]
   =^  op   batch  (take 0 7)
-  ?-    op
+  ?+    op  ~|([%strange-opcode op] !!)
       %0
-    :-  %transfer-point
-    =^  reset=?         batch  (take 0)
+    =^  reset=@         batch  (take 0)
     =^  =ship           batch  (take 3 4)
     =^  =address        batch  (take 3 20)
-    [[ship address reset] batch]
+    [[%transfer-point ship address (,? reset)] batch]
   ::
-      %1  [%spawn take-ship-address]
+      %1   =^(res batch take-ship-address [[%spawn res] batch])
       %2
-    :-  %configure-keys
-    =^  breach=?        batch  (take 0)
+    =^  breach=@        batch  (take 0)
     =^  =ship           batch  (take 3 4)
     =^  encrypt=@       batch  (take 3 32)
     =^  auth=@          batch  (take 3 32)
     =^  crypto-suite=@  batch  (take 3 4)
-    [[ship encrypt auth crypto-suite breach] batch]
+    [[%configure-keys ship encrypt auth crypto-suite (,? breach)] batch]
   ::
-      %3   [%escape take-escape]
-      %4   [%cancel-escape take-escape]
-      %5   [%adopt take-escape]
-      %6   [%reject take-escape]
-      %7   [%detach take-escape]
-      %8   [%set-management-proxy take-ship-address]
-      %9  [%set-spawn-proxy take-ship-address]
-      %10  [%set-voting-proxy take-ship-address]
-      %11  [%set-transfer-proxy take-ship-address]
+      %3   =^(res batch take-escape [[%escape res] batch])
+      %4   =^(res batch take-escape [[%cancel-escape res] batch])
+      %5   =^(res batch take-escape [[%adopt res] batch])
+      %6   =^(res batch take-escape [[%reject res] batch])
+      %7   =^(res batch take-escape [[%detach res] batch])
+      %8   =^(res batch take-ship-address [[%set-management-proxy res] batch])
+      %9   =^(res batch take-ship-address [[%set-spawn-proxy res] batch])
+      %10  =^(res batch take-ship-address [[%set-voting-proxy res] batch])
+      %11  =^(res batch take-ship-address [[%set-transfer-proxy res] batch])
       %12
-    :-  %set-dns-domains
-    =^  pad=?           batch  (take 0)
+    =^  pad=@           batch  (take 0)
     =^  primary=@t      batch  take-string
     =^  secondary=@t    batch  take-string
     =^  tertiary=@t     batch  take-string
-    [[primary secondary tertiary] batch]
+    [[%set-dns-domains primary secondary tertiary] batch]
   ::
       %13
-    :-  %set-operator
-    =^  add=?           batch  (take 0)
+    =^  add=@           batch  (take 0)
     =^  =address        batch  (take 3 20)
-    [[address add] batch]
+    [[%set-operator address (,? add)] batch]
   ==
   ::
   ::  Take a bite
@@ -152,36 +188,37 @@
   ++  take
     |=  =bite
     ^-  [@ _batch]
-    :-  (end bite batch)
-    :-  ?@  bite  (bex bite)
+    :-  (end bite +.batch)
+    :-  %+  add  -.batch
+        ?@  bite  (bex bite)
         (mul step.bite (bex bloq.bite))
-    (rsh bite batch)
+    (rsh bite +.batch)
   ::  Dumb encoding of strings up to 255 bytes
   ::
   ++  take-string
     ^-  [string=@t _batch]
     =^  len=@      batch  (take 3)
-    (take [3 len] batch)
-  ::
+    (take 3 len)
   ::  Encode ship and address
   ::
   ++  take-ship-address
     ^-  [[ship address] _batch]
-    =^  pad=?     batch  (take 0)
+    =^  pad=@     batch  (take 0)
     =^  =ship     batch  (take 3 4)
     =^  =address  batch  (take 3 20)
-    [ship address]
+    [[ship address] batch]
   ::  Encode escape-related txs
   ::
   ++  take-escape
     ^-  [[ship ship] _batch]
-    =^  pad=?        batch  (take 0)
+    =^  pad=@        batch  (take 0)
     =^  child=ship   batch  (take 3 4)
     =^  parent=ship  batch  (take 3 4)
-    [child parent]
+    [[child parent] batch]
+  ::  Verify signature and produce signer address
   ::
   ++  verify-tx
-    |=  [sig=@ txdata=@ =verifier]
+    |=  [sig=@ txdata=@]
     ^-  address
     |^
     =^  v  sig  (take 3)
@@ -200,29 +237,39 @@
   |=  =ship
   ^-  @
   ?:  (lth ship 0x100)     0
-  ?:  (lth ship 0X1.0000)  1
+  ?:  (lth ship 0x1.0000)  1
   2
 ::
 ++  hash-log-name
   |=  name=@t
   ^-  @ux
-  (keccack-256:keccak:crypto (as-octs:mimes:html name))
+  (keccak-256:keccak:crypto (as-octs:mimes:html name))
+::
+++  pass-from-eth
+  |=  [enc=octs aut=octs sut=@ud]
+  ^-  pass
+  %^  cat  3  'b'
+  ?.  &(=(1 sut) =(p.enc 32) =(p.aut 32))
+    (cat 8 0 0)
+  (cat 8 q.aut q.enc)
 ::
 ++  get-point
   |=  [=state =ship]
-  ^-  point-state
+  ^-  point
   =/  existing  (~(get by points.state) ship)
   ?^  existing
     u.existing
-  :_  *point:azimuth-types
-  ?+    (clan:title ship)  ~|(%strange-point !!)
-      %czar  %l1
-      ?(%king %duke)
-    =/  existing-parent  $(ship (^sein:title ship))
-    ?-  dominion.existing-parent
-      %l1     %l1
-      %l2     %l2
-      %spawn  %l2
+  %*    .  *point
+      dominion
+    ?+    (clan:title ship)  ~|(%strange-point !!)
+        %czar  %l1
+        ?(%king %duke)
+      =/  existing-parent  $(ship (^sein:title ship))
+      ?-  dominion.existing-parent
+        %l1     %l1
+        %l2     %l2
+        %spawn  %l2
+      ==
     ==
   ==
 --
@@ -231,7 +278,7 @@
 ::
 ++  receive-log
   |=  [=state log=event-log:rpc:ethereum]
-  ^-  [(list [ship udiff:point:jael]) ^state]
+  ^-  [(list [ship diff]) ^state]
   =*  log-name  i.topics.log
   ?:  =(log-name ^~((hash-log-name 'ChangedDns(string,string,string)')))
     ?>  ?=(~ t.topics.log)
@@ -246,7 +293,7 @@
     ?>  ?=([@ @ ~] t.topics.log)
     =*  owner     i.t.topics.log
     =*  operator  i.t.t.topics.log
-    =/  approved  !data.log
+    =/  approved  !(,? data.log)
     =-  `state(operators -)
     ?:  approved
       (~(put ju operators.state) owner operator)
@@ -258,9 +305,9 @@
   ::
   ?>  ?=([@ *] t.topics.log)
   =*  ship  i.t.topics.log
-  =/  point  (get-point state ship)
-  =-  [effects state(points.state (~(put by points.state) ship new-point))]
-  ^-  [=effects new-point=point-state]
+  =/  point  (get-point state `@`ship)
+  =-  [effects state(points (~(put by points.state) `@`ship new-point))]
+  ^-  [=effects new-point=^point]
   ::
   ?:  =(log-name ^~((hash-log-name 'ChangedSpawnProxy(uint32,address)')))
     ?>  ?=(%l1 -.point)
@@ -279,8 +326,8 @@
   ?:  =(log-name ^~((hash-log-name 'BrokeContinuity(uint32,uint32)')))
     ?>  ?=(~ t.t.topics.log)
     =*  rift  data.log
-    :-  [ship %rift rift]~
-    point(continuity-number.net.point rift)
+    :-  [`@`ship %rift `@`rift]~
+    point(continuity-number.net `@`rift)
   ::
   =/  changed-keys-hash
     ^~((hash-log-name 'ChangedKeys(uint32,bytes32,bytes32,uint32,uint32)'))
@@ -293,20 +340,20 @@
     =*  crypto-suite    i.t.t.words  ::  TODO: store in state, or add to pass
     =*  life            i.t.t.t.words
     =/  =pass  (pass-from-eth 32^encryption 32^authentication crypto-suite)
-    :-  [ship %keys life crypto-suite pass]~
-    point(life.net.point life, pass.net.point pass)
+    :-  [`@`ship %keys life crypto-suite pass]~
+    point(life.net life, pass.net pass)
   ::
   ?:  =(log-name ^~((hash-log-name 'EscapeAccepted(uint32,uint32)')))
     ?>  ?=([@ ~] t.t.topics.log)
     =*  parent  i.t.t.topics.log
-    :-  [ship %spon `parent]~
-    point(escape.net.point ~, sponsor.net.point [%& parent])
+    :-  [`@`ship %spon ``@`parent]~
+    point(escape.net ~, sponsor.net [%& `@`parent])
   ::
   ?:  =(log-name ^~((hash-log-name 'LostSponsor(uint32,uint32)')))
     ?>  ?=([@ ~] t.t.topics.log)
     =*  parent  i.t.t.topics.log
-    :-  [ship %spon ~]~
-    point(has.sponsor.net.point %|)
+    :-  [`@`ship %spon ~]~
+    point(has.sponsor.net %|)
   ::
   ::  The rest do not produce effects
   ::
@@ -315,22 +362,22 @@
   ?:  =(log-name ^~((hash-log-name 'EscapeRequested(uint32,uint32)')))
     ?>  ?=([@ ~] t.t.topics.log)
     =*  parent  i.t.t.topics.log
-    point(escape.net.point `parent)
+    point(escape.net ``@`parent)
   ::
   ?:  =(log-name ^~((hash-log-name 'EscapeCanceled(uint32,uint32)')))
     ?>  ?=([@ ~] t.t.topics.log)
     =*  parent  i.t.t.topics.log
-    point(escape.net.point ~)
+    point(escape.net ~)
   ::
   ?:  =(log-name ^~((hash-log-name 'OwnerChanged(uint32,address)')))
     ?>  ?=([@ ~] t.t.topics.log)
     =*  to  i.t.t.topics.log
     ::
     ?:  =(deposit-address to)
-      point(dominion.point %l2)
-    point(owner.own.point to)
+      point(dominion %l2)
+    point(owner.own to)
   ::
-  ?:  =(log-name ^~((hash-log-name 'ChangedTransferProxy(uint32,address)')))  !!
+  ?:  =(log-name ^~((hash-log-name 'ChangedTransferProxy(uint32,address)')))
     ?>  ?=([@ ~] t.t.topics.log)
     =*  to  i.t.t.topics.log
     point(transfer-proxy.own to)
@@ -340,8 +387,8 @@
     =*  to  i.t.t.topics.log
     point(management-proxy.own to)
   ::
-  ?:  =(log-name ^~((hash-log-name 'ChangedVotingProxy(uint32,address)')))    !!
-    ?>  ?=([@ ~] t.topics.log)
+  ?:  =(log-name ^~((hash-log-name 'ChangedVotingProxy(uint32,address)')))
+    ?>  ?=([@ ~] t.t.topics.log)
     =*  to  i.t.t.topics.log
     point(voting-proxy.own to)
   ::
@@ -351,8 +398,8 @@
 ::  Receive batch of L2 transactions
 ::
 ++  receive-batch
-  |=  [=state batch=@]
-  =/  txs=(list [signer=address =tx])  (parse-batch batch.input)
+  |=  [=state batch=@ =verifier]
+  =/  txs=(list [signer=address =tx])  (parse-batch batch verifier)
   |-  ^-  [effects ^state]
   ?~  txs
     [~ state]
@@ -363,10 +410,10 @@
 ::  Receive an individual L2 transaction
 ::
 ++  receive-tx
-  |=  [=state =signer =tx]
-  ^-  [effects ^state]
+  |=  [=state signer=address =tx]
   |^
-  ?-  +<.tx
+  ^-  [effects ^state]
+  ?-  -.tx
     %set-dns-domains        (process-set-dns-domains +.tx)
     %set-operator           (process-set-operator +.tx)
     %spawn                  (process-spawn +.tx)
@@ -384,20 +431,20 @@
   ==
   ::
   ++  w-point-fx
-    |*  [fun=$-([ship point-state *] [effects point-state]) =ship rest=*]
+    |*  [fun=$-([ship point *] [effects point]) =ship rest=*]
     ^-  [effects ^state]
     =/  point  (get-point state ship)
     ?>  ?=(%l2 -.point)
-    =/  [=effects new-point=point-state]  (fun ship point rest)
-    [effects state(points.state (~(put by points.state) ship new-point))]
+    =/  [=effects new-point=^point]  (fun ship point rest)
+    [effects state(points (~(put by points.state) ship new-point))]
   ::
   ++  w-point
-    |*  [=ship fun=$-([ship point-state *] point-state) =ship rest=*]
+    |*  [fun=$-([ship point *] point) =ship rest=*]
     ^-  [effects ^state]
     =/  point  (get-point state ship)
     ?>  ?=(%l2 -.point)
-    =/  new-point=point-state  (fun ship point rest)
-    `state(points.state (~(put by points.state) ship new-point))
+    =/  new-point  (fun ship point rest)
+    `state(points (~(put by points.state) ship new-point))
   ::
   ++  process-set-dns-domains
     |=  [primary=@t secondary=@t tertiary=@t]
@@ -413,7 +460,7 @@
     (~(del ju operators.state) signer operator)
   ::
   ++  process-transfer-point
-    |=  [=ship point=point-state to=address reset=?]
+    |=  [=ship =point to=address reset=?]
     ::  Assert ship is on L2
     ::
     ::  Assert signer is owner or transfer prxoy
@@ -431,14 +478,15 @@
     ?.  reset
       point
     ::
-    =?  net.point  &(?=(^ net.point) (gth life.u.net.point 0))
-      `[+(life) 0 +(continuity-number) sponsor escape]:u.net.point
+    =?  net.point  (gth life.net.point 0)
+      [+(life) 0 +(continuity-number) sponsor escape]:net.point
     =.  own.point  [owner.own.point *address *address *address]
     =.  spawn-proxy.kid.point  *address
     point
   ::
   ++  process-spawn
     |=  [=ship to=address]
+    ^-  [effects ^state]
     =/  parent=^ship  (^sein:title ship)
     ::  Assert parent is on L2
     ::
@@ -460,23 +508,25 @@
     ::  TODO check spawnlimit
     ::
     =.  points.state
-      %^  ~(put by points.state)  ship  %l2
+      %+  ~(put by points.state)  ship
       ?:  =(to signer)
         ::  If spawning to self, just do it
         ::
-        %*  .  *point:azimuth-types
+        %*  .  *point
+          dominion   %l2
           owner.own  to
         ==
       ::  Else spawn to parent and set transfer proxy
       ::
-      %*  .  *point:azimuth-types
+      %*  .  *point
+        dominion   %l2
         owner.own           owner.own.parent-point
         transfer-proxy.own  to
       ==
-    [~ points]
+    `state
   ::
   ++  process-configure-keys
-    |=  [=ship point=point-state encrypt=@ auth=@ crypto-suite=@ breach=?]
+    |=  [=ship =point encrypt=@ auth=@ crypto-suite=@ breach=?]
     ::
     ?>  ?|  =(owner.own.point signer)
             =(management-proxy.own.point signer)
@@ -496,7 +546,7 @@
     [(welp rift-effects keys-effects) point]
   ::
   ++  process-escape
-    |=  [=ship point=point-state parent=ship]
+    |=  [=ship =point parent=ship]
     ?>  ?|  =(owner.own.point signer)
             =(management-proxy.own.point signer)
         ==
@@ -504,18 +554,18 @@
     ::  TODO: don't allow "peer escape"?
     ?>  =(+((get-point-size parent)) (get-point-size ship))
     ::
-    point(escape.net.point `parent)  ::  TODO: omitting a lot of source material?
+    point(escape.net `parent)  ::  TODO: omitting a lot of source material?
   ::
   ++  process-cancel-escape
-    |=  [=ship point=point-state parent=ship]
+    |=  [=ship =point parent=ship]
     ?>  ?|  =(owner.own.point signer)
             =(management-proxy.own.point signer)
         ==
     ::
-    point(escape.net.point ~)
+    point(escape.net ~)
   ::
   ++  process-adopt
-    |=  [=ship point=point-state parent=ship]
+    |=  [=ship =point parent=ship]
     =/  parent-point  (get-point state parent) :: TODO: assert child/parent on L2?
     ::
     ?>  ?|  =(owner.own.parent-point signer)
@@ -524,20 +574,20 @@
     ::
     ?>  =(escape.net.point `ship)
     :-  [ship %spon `parent]~
-    point(escape.net.point ~, sponsor.net.point [%& parent])
+    point(escape.net ~, sponsor.net [%& parent])
   ::
   ++  process-reject
-    |=  [=ship point=point-state parent=ship]
+    |=  [=ship =point parent=ship]
     =/  parent-point  (get-point state parent) :: TODO: assert child/parent on L2?
     ::
     ?>  ?|  =(owner.own.parent-point signer)
             =(management-proxy.own.parent-point signer)
         ==
     ::
-    point(escape.net.point ~)
+    point(escape.net ~)
   ::
   ++  process-detach
-    |=  [=ship point=point-state parent=ship]
+    |=  [=ship =point parent=ship]
     =/  parent-point  (get-point state parent) :: TODO: assert child/parent on L2?
     ::
     ?>  ?|  =(owner.own.parent-point signer)
@@ -545,39 +595,39 @@
         ==
     ::
     :-  [ship %spon ~]~
-    point(has.sponsor.net.point %|)
+    point(has.sponsor.net %|)
   ::
   ++  process-set-management-proxy
-    |=  [=ship point=point-state =address]
+    |=  [=ship =point =address]
     ?>  ?|  =(owner.own.point signer)
-            =(management-proxy.own.parent-point signer)
+            =(management-proxy.own.point signer)
         ==
     ::
-    point(management-proxy.own.point address)
+    point(management-proxy.own address)
   ::
   ++  process-set-spawn-proxy
-    |=  [=ship point=point-state =address]
+    |=  [=ship =point =address]
     ?>  ?|  =(owner.own.point signer)
-            =(spawn-proxy.own.parent-point signer)
+            =(spawn-proxy.kid.point signer)
         ==
     ::
-    point(spawn-proxy.own.point address)
+    point(spawn-proxy.kid address)
   ::
   ++  process-set-voting-proxy
-    |=  [=ship point=point-state =address]
+    |=  [=ship =point =address]
     ?>  ?|  =(owner.own.point signer)
-            =(voting-proxy.own.parent-point signer)
+            =(voting-proxy.own.point signer)
         ==
     ::
-    point(voting-proxy.own.point address)
+    point(voting-proxy.own address)
   ::
   ++  process-set-transfer-proxy
-    |=  [=ship point=point-state =address]
+    |=  [=ship =point =address]
     ?>  ?|  =(owner.own.point signer)
-            =(transfer-proxy.own.parent-point signer)
+            =(transfer-proxy.own.point signer)
         ==
     ::
-    point(transfer-proxy.own.point address)
+    point(transfer-proxy.own address)
   --
 --
 ::
@@ -586,13 +636,12 @@
 ::  TODO: wrap in mule to no-op instead of crash?  perhaps that's better
 ::  as part of the spec?  it's not a clear part of the nock spec, though
 ::
-=,  ethereum-types
 |=  [=input =state =verifier]
-^-  [(list [ship udiff:point:jael]) ^state]
+^-  [effects ^state]
 ?:  ?=(%log -.input)
   :: Received log from L1 transaction
   ::
   (receive-log state event-log.input)
 ::  Received batch
 ::
-(receive-batch batch.input state)
+(receive-batch state batch.input verifier)
