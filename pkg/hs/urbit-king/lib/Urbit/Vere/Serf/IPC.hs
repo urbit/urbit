@@ -604,7 +604,7 @@ processWork serf maxSize q onResp spin = do
       Nothing -> do
         atomically (writeTVar vDone True)
       Just evErr@(EvErr ev _) -> do
-        now <- Time.now
+        now <- Time.chop <$> Time.now
         let cb = onResp now evErr
         atomically $ modifyTVar' vInFlight (:|> (ev, cb))
         sendWrit serf (WWork 0 now ev)
