@@ -99,6 +99,7 @@ import qualified Data.Set                as Set
 import qualified Data.Text               as T
 import qualified Network.HTTP.Client     as C
 import qualified System.Posix.Signals    as Sys
+import qualified System.Posix.Resource   as Sys
 import qualified System.ProgressBar      as PB
 import qualified System.Random           as Sys
 import qualified Urbit.EventLog.LMDB     as Log
@@ -460,6 +461,13 @@ pillFrom = \case
     noun <- cueBS body & either throwIO pure
     fromNounErr noun & either (throwIO . uncurry ParseErr) pure
 
+multiOnFatal :: HasKingEnv e => e -> IO ()
+multiOnFatal env = runRIO env $ do
+  (view stderrLogFuncL >>=) $ flip runRIO $ logError
+    ("Urbit is shutting down because of a problem with the HTTP server.\n"
+    <> "Please restart it at your leisure.")
+  view killKingActionL >>= atomically
+
 newShip :: CLI.New -> CLI.Opts -> RIO KingEnv ()
 newShip CLI.New{..} opts = do
   {-
@@ -472,7 +480,8 @@ newShip CLI.New{..} opts = do
     "run ship" flow, and possibly sequence them from the outside if
     that's really needed.
   -}
-  multi <- multiEyre (MultiEyreConf Nothing Nothing True)
+  env <- ask
+  multi <- multiEyre (multiOnFatal env) (MultiEyreConf Nothing Nothing True)
 
   -- TODO: We hit the same problem as above: we need a host env to boot a ship
   -- because it may autostart the ship, so build an inactive port configuration.
@@ -660,6 +669,7 @@ main = do
 
   hSetBuffering stdout NoBuffering
   setupSignalHandlers
+  setRLimits
 
   runKingEnv args log $ case args of
     CLI.CmdRun ko ships                       -> runShips ko ships
@@ -693,6 +703,11 @@ main = do
     for_ [Sys.sigTERM, Sys.sigINT] $ \sig -> do
       Sys.installHandler sig (Sys.Catch onKillSig) Nothing
 
+  setRLimits = do
+    nofiles <- Sys.getResourceLimit Sys.ResourceOpenFiles
+    Sys.setResourceLimit Sys.ResourceOpenFiles
+      nofiles { Sys.softLimit = Sys.ResourceLimit 10240 }
+
   verboseLogging :: CLI.Cmd -> Bool
   verboseLogging = \case
     CLI.CmdRun ko ships -> any CLI.oVerbose (ships <&> \(_, o, _) -> o)
@@ -715,7 +730,6 @@ main = do
                                    | otherwise -> CLI.LogFile Nothing
       CLI.CmdRun ko _                          -> CLI.LogStderr
       _                                        -> CLI.LogStderr
-
 
 {-
   Runs a ship but restarts it if it crashes or shuts down on it's own.
@@ -792,7 +806,8 @@ runShips CLI.Host {..} ships = do
                                    -- a king-wide option.
         }
 
-  multi <- multiEyre meConf
+  env <- ask
+  multi <- multiEyre (multiOnFatal env) meConf
 
   ports <- buildPortHandler hUseNatPmp
 
