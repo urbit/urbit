@@ -39,7 +39,7 @@ export function PostInput(props) {
       height="96px"
       borderRadius="2"
       border={1}
-      borderColor="washedGray">
+      borderColor="lightGray">
       <BaseTextArea
         p={2}
         backgroundColor="transparent"
@@ -58,7 +58,7 @@ export function PostInput(props) {
       />
       <Row
         borderTop={1}
-        borderTopColor="washedGray"
+        borderTopColor="lightGray"
         width="100%"
         height="32px"
         pl="2"

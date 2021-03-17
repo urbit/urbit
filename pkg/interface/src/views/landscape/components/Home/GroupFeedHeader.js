@@ -8,7 +8,7 @@ export function GroupFeedHeader(props) {
 
   return (
     <Row 
-      flexShrink="1"
+      flexShrink="0"
       width="100%"
       height="48px"
       pl="2"

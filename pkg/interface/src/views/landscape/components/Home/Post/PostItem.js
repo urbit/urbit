@@ -19,7 +19,8 @@ class PostItem extends React.PureComponent {
         <Box
           p="2"
           border={1}
-          borderColor="washedGray"
+          borderColor="lightGray"
+          borderRadius="2"
           width="100%"
           maxWidth="600px">
           <PostHeader post={node.post} contacts={contacts} />

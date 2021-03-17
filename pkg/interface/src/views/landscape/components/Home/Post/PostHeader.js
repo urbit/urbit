@@ -1,7 +1,7 @@
 import React from 'react';
 import moment from 'moment';
 
-import { Box, Col, Row, BaseImage, Text } from '@tlon/indigo-react';
+import { Box, Col, Row, BaseImage, Text, Icon } from '@tlon/indigo-react';
 import { Sigil } from '~/logic/lib/sigil';
 import useLocalState from '~/logic/state/local';
 import useSettingsState, {selectCalmState} from "~/logic/state/settings";
@@ -52,14 +52,17 @@ export function PostHeader(props) {
       .format('h:mm A');
 
   return (
-    <Row width="100%" height="36px" mb={2}>
-      <Col>
-        <Box width="36px" height="36px" mr={2}>{img}</Box>
-      </Col>
-      <Col>
-        <Text mono>~{post.author}</Text>
-        <Text gray>{timestamp}</Text>
-      </Col>
+    <Row width="100%" height="36px" mb={3} justifyContent="space-between">
+      <Row>
+        <Col>
+          <Box width="36px" height="36px" mr={2}>{img}</Box>
+        </Col>
+        <Col>
+          <Text mono>~{post.author}</Text>
+          <Text gray>{timestamp}</Text>
+        </Col>
+      </Row>
+      <Icon icon="Ellipsis" />
     </Row>
   );
 }

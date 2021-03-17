@@ -40,7 +40,7 @@ export function GroupFeed(props) {
       <Box
         width="100%"
         maxWidth="616px"
-        pt="4"
+        pt="3"
         pl="2"
         pr="2"
         flexDirection="column"

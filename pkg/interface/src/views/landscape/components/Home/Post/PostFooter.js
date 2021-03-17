@@ -7,13 +7,13 @@ export function PostFooter(props) {
     console.log('TODO');
   };
   return (
-    <Row justify-content="flex-start">
-      <Box cursor="pointer" onClick={navigateToReplies}>
-        <Icon icon="Chat" size="12" />
+    <Row mt={2} justify-content="flex-start">
+      <Row cursor="pointer" onClick={navigateToReplies}>
+        <Icon icon="Chat" />
         { props.replyCount > 0 ? (
-          <Text pl="1">{props.replyCount}</Text>
+          <Text pl="1" gray>{props.replyCount}</Text>
         ) : null }
-      </Box>
+      </Row>
     </Row>
   );
 }
