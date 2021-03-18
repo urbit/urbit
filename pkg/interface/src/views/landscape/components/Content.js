@@ -13,7 +13,7 @@ import Notifications from '~/views/apps/notifications/notifications';
 import GraphApp from '../../apps/graph/app';
 import { PermalinkRoutes } from '~/views/apps/permalinks/app';
 
-import { useMigrateSettings } from '~/logic/lib/migrateSettings';
+import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
 
 
 export const Container = styled(Box)`
@@ -26,12 +26,23 @@ export const Container = styled(Box)`
 
 export const Content = (props) => {
 
-  const doMigrate = useMigrateSettings();
+  const [hasProtocol, setHasProtocol] = useLocalStorageState(
+    'registeredProtocol', false
+  );
+
   useEffect(() => {
-    setTimeout(() => {
-      doMigrate();
-    }, 10000);
-  }, []);
+    console.log('a');
+    if(!hasProtocol && window?.navigator?.registerProtocolHandler) {
+      try {
+        window.navigator.registerProtocolHandler('web+urbit', '/perma?ext=%s', 'Urbit Links');
+        console.log('registered protocol');
+        setHasProtocol(true);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }, [hasProtocol]);
+
 
   return (
     <Container>
