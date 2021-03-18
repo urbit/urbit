@@ -32,6 +32,30 @@ const keys = (json, state: GraphState): GraphState => {
   return state;
 };
 
+const findTimestampInResource = (resource, exactTimestamp) => {
+  if (exactTimestamp in resource) {
+    return exactTimestamp;
+  } else if (exactTimestamp - 1 in resource) {
+    return exactTimestamp - 1;
+  } else if (exactTimestamp + 1 in resource) {
+    return exactTimestamp + 1;
+  }
+  return exactTimestamp;
+}
+
+const removeIndexFromGraph = (graph, index) => {
+  if (index.length === 1) {
+    graph.delete(index[0]);
+  } else {
+    const child = graph.get(index[0]);
+    if (child) {
+      graph.children = removeIndexFromGraph(child.children, index.slice(1));
+      graph.set(index[0], child);
+    }
+  }
+  return graph;
+}
+
 const addGraph = (json, state: GraphState): GraphState => {
 
   const _processNode = (node) => {
@@ -125,48 +149,6 @@ const addNodes = (json, state) => {
     return graph;
   };
 
-  const _remove = (graph, index) => {
-    if (index.length === 1) {
-      graph.delete(index[0]);
-    } else {
-      const child = graph.get(index[0]);
-      if (child) {
-        child.children = _remove(child.children, index.slice(1));
-        graph.set(index[0], child);
-      }
-    }
-
-    return graph;
-  };
-
-  const _killByFuzzyTimestamp = (graph, resource, timestamp) => {
-    if (state.graphTimesentMap[resource][timestamp]) {
-      let index = state.graphTimesentMap[resource][timestamp];
-
-      if (index.split('/').length === 0) { return graph; }
-      let indexArr = index.split('/').slice(1).map((ind) => {
-        return bigInt(ind);
-      });
-
-      graph = _remove(graph, indexArr);
-      delete state.graphTimesentMap[resource][timestamp];
-    }
-
-    return graph;
-  };
-
-  const _removePending = (graph, post, resource) => {
-    if (!post.hash) {
-      return graph;
-    }
-
-    graph = _killByFuzzyTimestamp(graph, resource, post['time-sent']);
-    graph = _killByFuzzyTimestamp(graph, resource, post['time-sent'] - 1);
-    graph = _killByFuzzyTimestamp(graph, resource, post['time-sent'] + 1);
-
-    return graph;
-  };
-
   const data = _.get(json, 'add-nodes', false);
   if (data) {
     if (!('graphs' in state)) { return state; }
@@ -194,14 +176,27 @@ const addNodes = (json, state) => {
 
     indices.forEach((index) => {
       let node = data.nodes[index];
-      graph = _removePending(graph, node.post, resource);
+
+      if (node.post.hash) {
+        const actualTimestamp = findTimestampInResource(state.graphTimesentMap[resource], node.post['time-sent']);
+        let postIndex = state.graphTimesentMap[resource][actualTimestamp];
+
+        if (postIndex && postIndex.split('/').length !== 0) {
+          let postIndexArr = postIndex.split('/').slice(1).map(idx => {
+            return bigInt(idx);
+          });
+
+          graph = removeIndexFromGraph(graph, postIndexArr);
+          delete state.graphTimesentMap[resource][actualTimestamp];
+        }
+      }
       
       if (index.split('/').length === 0) { return; }
-      let indexArr = index.split('/').slice(1).map((ind) => {
-        return bigInt(ind);
+      let indexArr = index.split('/').slice(1).map(idx => {
+        return bigInt(idx);
       });
 
-      if (indexArr.length === 0) { return state; }
+      if (indexArr.length === 0) { return; }
 
       if (node.post.pending) {
         state.graphTimesentMap[resource][node.post['time-sent']] = index;
@@ -223,18 +218,6 @@ const addNodes = (json, state) => {
 };
 
 const removeNodes = (json, state: GraphState): GraphState => {
-  const _remove = (graph, index) => {
-    if (index.length === 1) {
-        graph.delete(index[0]);
-      } else {
-        const child = graph.get(index[0]);
-        if (child) {
-          _remove(child.children, index.slice(1));
-          graph.set(index[0], child);
-        }
-      }
-  };
-
   const data = _.get(json, 'remove-nodes', false);
   if (data) {
     const { ship, name } = data.resource;
@@ -246,7 +229,7 @@ const removeNodes = (json, state: GraphState): GraphState => {
       let indexArr = index.split('/').slice(1).map((ind) => {
         return bigInt(ind);
       });
-      _remove(state.graphs[res], indexArr);
+      state.graphs[res] = removeIndexFromGraph(state.graphs[res], indexArr);
     });
   }
   return state;

@@ -3,7 +3,7 @@ import { GroupPolicy, makeResource, resourceFromPath } from '../groups';
 
 import { deSig, unixToDa } from '../lib';
 import { Enc, Path, Patp, PatpNoSig, Poke, Thread } from '../lib/types';
-import { Content, GraphChildrenPoke, GraphNode, GraphNodePoke, Post } from './types';
+import { Content, Graph, GraphChildrenPoke, GraphNode, GraphNodePoke, Post } from './types';
 
 export const createBlankNodeWithChildPost = (
   ship: PatpNoSig,
@@ -40,12 +40,15 @@ export const createBlankNodeWithChildPost = (
   };  
 };
 
-export const markPending = (nodes: any): void => {
-  _.forEach(nodes, node => {
-    node.post.author = deSig(node.post.author);
-    node.post.pending = true;
-    markPending(node.children || {});
+export const markPending = (nodes: any): any => {
+  Object.keys(nodes).forEach((key) => {
+    nodes[key].post.author = deSig(nodes[key].post.author);
+    nodes[key].post.pending = true;
+    if (nodes[key].children) {
+      nodes[key].children = markPending(nodes[key].children);
+    }
   });
+  return nodes;
 };
 
 export const createPost = (

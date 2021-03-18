@@ -280,7 +280,8 @@ class ChatWindow extends Component<
       groups,
       associations,
       showOurContact,
-      pendingSize
+      station,
+      graphTimesentMap
     } = this.props;
 
     const unreadMarkerRef = this.unreadMarkerRef;
@@ -293,6 +294,8 @@ class ChatWindow extends Component<
       associations
     };
     const unreadMsg = graph.get(this.state.unreadIndex);
+
+    const pendingSize = Object.keys(graphTimesentMap[station.slice(7)] || {}).length;
 
     // hack to force a re-render when we toggle showing contact
     const contactsModified =
@@ -337,5 +340,5 @@ class ChatWindow extends Component<
 export default withApi(withState(ChatWindow, [
   [useGroupState, ['groups']],
   [useMetadataState, ['associations']],
-  [useGraphState, ['pendingSize', 'getYoungerSiblings', 'getOlderSiblings']],
+  [useGraphState, ['graphTimesentMap', 'getYoungerSiblings', 'getOlderSiblings']],
 ]));

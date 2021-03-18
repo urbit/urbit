@@ -9,7 +9,7 @@ export interface GraphState extends BaseState<GraphState> {
   graphs: Graphs;
   graphKeys: Set<string>;
   pendingIndices: Record<string, any>;
-  graphTimesentMap: Record<string, any>;
+  graphTimesentMap: Record<string, string>;
   getKeys: () => Promise<void>;
   getTags: () => Promise<void>;
   getTagQueries: () => Promise<void>;
@@ -134,7 +134,7 @@ const useGraphState = createState<GraphState>('Graph', {
     const api = useApi();
     const thread = addNodes(ship, name, nodes);
     const pendingPromise = api.thread(thread);
-    markPending(thread.body['add-nodes'].nodes);
+    thread.body['add-nodes'].nodes = markPending(thread.body['add-nodes'].nodes);
     thread.body['add-nodes'].resource.ship =
       thread.body['add-nodes'].resource.ship.slice(1);
     GraphReducer({
