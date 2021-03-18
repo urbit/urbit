@@ -83,7 +83,13 @@
       |=(a=* *update-log:zero:store)
     ==
   ::
-    %2  !!
+      %2  
+    %_  $
+      -.old            %3
+      update-logs.old  (~(run by update-logs.old) update-log-to-one:store)
+      graphs.old       (~(run by graphs.old) marked-graph-to-one:store)
+      archive.old      (~(run by archive.old) marked-graph-to-one:store)
+    ==
   ::
     %3  [cards this(state old)]
   ==

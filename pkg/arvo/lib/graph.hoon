@@ -32,6 +32,47 @@
       %run-updates        ~[resource.q.update]
   ==
 ::
+++  upgrade
+  |*  [pst=mold out-pst=mold]
+  =>
+    |%
+    ++  orm
+      ((ordered-map atom node) gth)
+    +$  node
+      [post=pst children=internal-graph]
+    +$  graph
+      ((mop atom node) gth)
+    +$  internal-graph
+      $~  [%empty ~]
+      $%  [%graph p=graph]
+          [%empty ~]
+      ==
+    ::
+    ++  out-orm
+      ((ordered-map atom out-node) gth)
+    +$  out-node
+      [post=out-pst children=out-internal-graph]
+    +$  out-graph
+      ((mop atom out-node) gth)
+    +$  out-internal-graph
+      $~  [%empty ~]
+      $%  [%graph p=out-graph]
+          [%empty ~]
+      ==
+    --
+
+  |=  $:  gra=graph
+          fn=$-(pst out-pst)
+      ==
+  ^-  out-graph
+  %-  gas:out-orm
+  %+  turn  (tap:orm gra)
+  |=  [=atom =node]
+  :-  (fn post.node)
+  ?:  ?=(%empty -.children.node)
+    [%empty ~]
+  $(gra p.children.node)
+::
 ++  get-graph
   |=  res=resource
   ^-  update:store
