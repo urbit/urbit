@@ -4,6 +4,7 @@
 ++  grow
   |%
   ++  noun  upd
+  ++  group-update  upd
   ++  json
     %+  frond:enjs:format  'groupUpdate'
     (update:enjs upd)

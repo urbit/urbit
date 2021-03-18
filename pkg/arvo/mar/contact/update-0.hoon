@@ -5,6 +5,7 @@
 ++  grow
   |%
   ++  noun  upd
+  ++  contact-update  upd
   ++  json  (update:enjs upd)
   --
 ::
