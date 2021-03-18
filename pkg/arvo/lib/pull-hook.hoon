@@ -317,12 +317,14 @@
           (take-version:hc src.bowl sign)
         =.  pull-hook  hook
         [cards this]
-      ?.  ?=([%pull %resource *] t.t.wire)
+      ?.  ?=([%pull ?(%unver-resource %resource) *] t.t.wire)
         (on-agent:def wire sign)
       =/  rid=resource
         (de-path:resource t.t.t.t.wire)
+      =/  versioned=?
+        ?=(%resource i.t.t.t.wire)
       =^  [cards=(list card) hook=_pull-hook]  state
-        tr-abet:(tr-sign:(tr-abed:track-engine:hc rid) sign)
+        tr-abet:(tr-sign:(tr-abed:track-engine:hc rid) sign versioned)
       =.  pull-hook  hook
       [cards this]
     ::
@@ -399,18 +401,24 @@
     ::
     ::
     ++  tr-sign
-      |=  =sign:agent:gall
+      |=  [=sign:agent:gall versioned=?]
       ?+   -.sign  !!
         %kick       tr-kick
-        %watch-ack  (tr-wack +.sign)
+        %watch-ack  (tr-wack +.sign versioned)
         %fact       (tr-fact +.sign)
       ==
     ::
     ::
     ++  tr-wack
-      |=  tan=(unit tang)
+      |=  [tan=(unit tang) versioned=?]
       ?~  tan  tr-core
-      (tr-ap-og:tr-cleanup |.((on-pull-nack:og rid u.tan)))
+      ?.  versioned
+        (tr-ap-og:tr-cleanup |.((on-pull-nack:og rid u.tan)))
+      =/  pax
+        (kick-mule:virt rid |.((on-pull-kick:og rid)))
+      ?~  pax  tr-failed-kick
+      ?~  u.pax  tr-cleanup
+      (tr-watch-unver u.u.pax)
     ::
     ++  tr-kick
       ?.  ?=(%active -.status)  tr-core
@@ -516,6 +524,8 @@
       (tr-emit (~(leave pass tr-ver-wire) tr-sub-dock))
     ++  tr-sub-wire
       (make-wire pull+resource+(en-path:resource rid))
+    ++  tr-unver-sub-wire
+      (make-wire pull+unver-resource+(en-path:resource rid))
     ::
     ++  tr-sub-dock
       ^-  dock
@@ -525,6 +535,13 @@
       ?:  (~(has by wex.bowl) [tr-sub-wire tr-sub-dock])
         tr-core
       tr-kick
+    ::
+    ++  tr-watch-unver
+      |=  pax=path
+      =/  =path
+        :-  %resource
+        (weld (en-path:resource rid) pax)
+      (tr-emit (~(watch pass tr-unver-sub-wire) tr-sub-dock path))
     ::
     ++  tr-watch
       |=  pax=path
