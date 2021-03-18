@@ -95,8 +95,9 @@ function TranscludedPublishNode(props: {
 export function TranscludedNode(props: {
   assoc: Association;
   node: GraphNode;
+  transcluded: number;
 }) {
-  const { node, assoc } = props;
+  const { node, assoc, transcluded } = props;
   const group = useGroupForAssoc(assoc)!;
   switch (assoc.metadata.module) {
     case "chat":
@@ -104,7 +105,7 @@ export function TranscludedNode(props: {
         <Row width="100%" flexShrink={0} flexGrow={1} flexWrap="wrap">
           <ChatMessage
             renderSigil
-            transcluded
+            transcluded={transcluded + 1}
             containerClass="items-top cf hide-child"
             association={assoc}
             group={group}

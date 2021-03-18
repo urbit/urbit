@@ -28,8 +28,10 @@ function GroupPermalink(props: { group: string; api: GlobalApi }) {
   );
 }
 
-function GraphPermalink(props: IGraphPermalink & { api: GlobalApi }) {
-  const { link, graph, group, index, api } = props;
+function GraphPermalink(
+  props: IGraphPermalink & { api: GlobalApi; transcluded: number }
+) {
+  const { link, graph, group, index, api, transcluded } = props;
   const { ship, name } = resourceFromPath(graph);
   const node = useGraphState(
     useCallback((s) => s.looseNodes?.[`${ship.slice(1)}/${name}`]?.[index], [
@@ -53,7 +55,7 @@ function GraphPermalink(props: IGraphPermalink & { api: GlobalApi }) {
       }
     })();
   }, [graph, index]);
-  const showTransclusion = !!(association && node);
+  const showTransclusion = !!(association && node && transcluded < 2);
 
   const rowTransclusionStyle = showTransclusion
     ? {
@@ -72,9 +74,13 @@ function GraphPermalink(props: IGraphPermalink & { api: GlobalApi }) {
         borderColor="lightGray"
         borderRadius="2"
       >
-        {association && node && (
+        {showTransclusion && (
           <Box p="2">
-            <TranscludedNode node={node} assoc={association} />
+            <TranscludedNode
+              transcluded={transcluded}
+              node={node}
+              assoc={association!}
+            />
           </Box>
         )}
         <Row
@@ -101,7 +107,11 @@ function GraphPermalink(props: IGraphPermalink & { api: GlobalApi }) {
   );
 }
 
-export function PermalinkEmbed(props: { link: string; api: GlobalApi }) {
+export function PermalinkEmbed(props: {
+  link: string;
+  api: GlobalApi;
+  transcluded: number;
+}) {
   const permalink = parsePermalink(props.link);
 
   if (!permalink) {
@@ -112,6 +122,12 @@ export function PermalinkEmbed(props: { link: string; api: GlobalApi }) {
     case "group":
       return <GroupPermalink group={permalink.group} api={props.api} />;
     case "graph":
-      return <GraphPermalink {...permalink} api={props.api} />;
+      return (
+        <GraphPermalink
+          transcluded={props.transcluded}
+          {...permalink}
+          api={props.api}
+        />
+      );
   }
 }

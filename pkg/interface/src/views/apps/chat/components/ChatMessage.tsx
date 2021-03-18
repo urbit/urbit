@@ -221,7 +221,7 @@ const MessageActions = ({ api, onReply, association, history, msg, group }) => {
 
 const MessageWrapper = (props) => {
   const { hovering, bind } = useHovering();
-  const showHover = !props.transcluded && hovering && !props.hideHover;
+  const showHover = (props.transcluded === 0) && hovering && !props.hideHover;
   return (
     <Box
       py='1'
@@ -242,7 +242,7 @@ interface ChatMessageProps {
   isLastRead: boolean;
   group: Group;
   association: Association;
-  transcluded?: boolean;
+  transcluded?: number;
   className?: string;
   isPending: boolean;
   style?: unknown;
@@ -289,7 +289,7 @@ class ChatMessage extends Component<ChatMessageProps> {
       fontSize,
       hideHover
       onReply = () => {},
-      transcluded = false
+      transcluded = 0
     } = this.props;
 
     let { renderSigil } = this.props;
@@ -327,12 +327,9 @@ class ChatMessage extends Component<ChatMessageProps> {
       scrollWindow,
       highlighted,
       fontSize,
-<<<<<<< HEAD
-      hideHover
-=======
+      hideHover,
       transcluded,
       onReply
->>>>>>> 8c4e175200 (permalinks: add transclusion)
     };
 
     const unreadContainerStyle = {
@@ -554,6 +551,7 @@ export const Message = ({
   api,
   scrollWindow,
   timestampHover,
+  transcluded,
   ...rest
 }) => {
   const { hovering, bind } = useHovering();
@@ -594,7 +592,11 @@ export const Message = ({
             case 'url':
               if(content.url.startsWith('web+urbit:/')) {
                 return (
-                  <PermalinkEmbed api={api} link={content.url} />
+                  <PermalinkEmbed 
+                    transcluded={transcluded}
+                    api={api}
+                    link={content.url} 
+                  />
                 );
               }
               return (
