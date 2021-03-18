@@ -20,8 +20,6 @@
 ::  know about it.  Should L1 check whether the escape target is on L2
 ::  for some reason?
 ::
-::  TODO: make kid and net in point not a unit
-::
 ::  TODO: consider the implications of having two operator lists, on L1
 ::  and L2.  Are they the same list, or different?
 ::
@@ -45,6 +43,14 @@
 ::
 ::  TODO: should we add any protection in the L1 contracts that you
 ::  don't deposit from a contract?
+::
+::  TODO: check operator anywhere you check for owner
+::
+::  TODO: batch tx type to reduce signatures
+::
+::  TODO: how to implement claims on L2?
+::
+::  TODO: on L1, when depositing, clear proxies (maybe require reset)
 ::
 /+  ethereum
 ::  Constants
@@ -71,6 +77,7 @@
           management-proxy=address
           voting-proxy=address
           transfer-proxy=address
+          spawn-proxy=address
       ==
     ::
       ::  networking
@@ -78,24 +85,21 @@
       $=  net
       $:  =life
           =pass
-          continuity-number=@ud
+          rift=@ud
           sponsor=[has=? who=@p]
           escape=(unit @p)
       ==
-    ::
-      ::  spawning
-      ::
-      $=  kid
-      $:  spawn-proxy=address
-          spawned=(set @p)
-      ==
   ==
 ::
+::  TODO: add effects for all changes
+::  TODO: add ship
+::
 ++  diff
-  $%  [%rift =rift]
-      [%keys =life crypto-suite=@ud =pass]
-      [%spon sponsor=(unit @p)]
-  ==
+  $:  =ship
+      $%  [%rift =rift]
+          [%keys =life crypto-suite=@ud =pass]
+          [%spon sponsor=(unit @p)]
+  ==  ==
 ::
 +$  state
   $:  =points
@@ -104,12 +108,10 @@
   ==
 +$  points       (map ship point)
 +$  operators    (jug address address)
-+$  effects      (list [ship diff])
++$  effects      (list diff)
 +$  tx
   $%  [%transfer-point =ship =address reset=?]
       [%spawn =ship =address]
-      [%set-dns-domains primary=@t secondary=@t tertiary=@t]
-      [%set-operator operator=address add=?]
       [%configure-keys =ship encrypt=@ auth=@ crypto-suite=@ breach=?]
       [%escape =ship parent=ship]
       [%cancel-escape =ship parent=ship]
@@ -177,17 +179,6 @@
       %9   =^(res batch take-ship-address [[%set-spawn-proxy res] batch])
       %10  =^(res batch take-ship-address [[%set-voting-proxy res] batch])
       %11  =^(res batch take-ship-address [[%set-transfer-proxy res] batch])
-      %12
-    =^  pad=@           batch  (take 0)
-    =^  primary=@t      batch  take-string
-    =^  secondary=@t    batch  take-string
-    =^  tertiary=@t     batch  take-string
-    [[%set-dns-domains primary secondary tertiary] batch]
-  ::
-      %13
-    =^  add=@           batch  (take 0)
-    =^  =address        batch  (take 3 20)
-    [[%set-operator address (,? add)] batch]
   ==
   ::
   ::  Take a bite
@@ -200,12 +191,6 @@
         ?@  bite  (bex bite)
         (mul step.bite (bex bloq.bite))
     (rsh bite +.batch)
-  ::  Dumb encoding of strings up to 255 bytes
-  ::
-  ++  take-string
-    ^-  [string=@t _batch]
-    =^  len=@      batch  (take 3)
-    (take 3 len)
   ::  Encode ship and address
   ::
   ++  take-ship-address
@@ -256,7 +241,7 @@
   ^-  pass
   %^  cat  3  'b'
   ?.  &(=(1 sut) =(p.enc 32) =(p.aut 32))
-    (cat 8 0 0)
+    (cat 8 0 0)  ::  TODO: fix
   (cat 8 q.aut q.enc)
 ::
 ++  get-point
@@ -267,6 +252,8 @@
     u.existing
   %*    .  *point
       dominion
+    ::  TODO: use get-point-size
+    ::
     ?+    (clan:title ship)  ~|(%strange-point !!)
         %czar  %l1
         ?(%king %duke)
@@ -284,15 +271,15 @@
 ::
 ++  receive-log
   |=  [=state log=event-log:rpc:ethereum]
-  ^-  [(list [ship diff]) ^state]
+  ^-  [effects ^state]
   =*  log-name  i.topics.log
   ?:  =(log-name ^~((hash-log-name 'ChangedDns(string,string,string)')))
     ?>  ?=(~ t.topics.log)
     =/  words  (rip 8 data.log)
-    ?>  ?=([a=@ @ b=@ @ c=@ @ @ @ @ ~] words)
-    =*  one  &1.words
+    ?>  ?=([c=@ @ b=@ @ a=@ @ @ @ @ ~] words)  ::  TODO: not always true
+    =*  one  &5.words
     =*  two  &3.words
-    =*  tri  &5.words
+    =*  tri  &1.words
     `state(dns (turn ~[one two tri] (cury swp 3)))
   ::
   ?:  =(log-name ^~((hash-log-name 'ApprovalForAll(address,address,bool)')))
@@ -319,10 +306,13 @@
     ?>  ?=(%l1 -.point)
     ?>  ?=([@ ~] t.t.topics.log)
     =*  to  i.t.t.topics.log
+    ::  Depositing to L2 is represented by a spawn proxy change on L1,
+    ::  but it doesn't change the actual spawn proxy.
+    ::
     :-  ~
-    ?.  =(deposit-address to)
-      point(spawn-proxy.kid to)
-    point(dominion %spawn)
+    ?:  =(deposit-address to)
+      point(dominion %spawn)
+    point(spawn-proxy.own to)
   ::
   ::  The rest can be done by any ship on L1, even if their spawn proxy
   ::  is set to L2
@@ -333,14 +323,14 @@
     ?>  ?=(~ t.t.topics.log)
     =*  rift  data.log
     :-  [`@`ship %rift `@`rift]~
-    point(continuity-number.net `@`rift)
+    point(rift.net `@`rift)
   ::
   =/  changed-keys-hash
     ^~((hash-log-name 'ChangedKeys(uint32,bytes32,bytes32,uint32,uint32)'))
   ?:  =(log-name changed-keys-hash)
     ?>  ?=(~ t.t.topics.log)
     =/  words  (rip 8 data.log)
-    ?>  ?=([@ @ @ @ ~] words)
+    ?>  ?=([@ @ @ @ ~] words)  :: TODO: reverse order?
     =*  encryption      i.words
     =*  authentication  i.t.words
     =*  crypto-suite    i.t.t.words  ::  TODO: store in state, or add to pass
@@ -378,6 +368,8 @@
   ?:  =(log-name ^~((hash-log-name 'OwnerChanged(uint32,address)')))
     ?>  ?=([@ ~] t.t.topics.log)
     =*  to  i.t.t.topics.log
+    ::  Depositing to L2 is represented by an ownership change on L1,
+    ::  but it doesn't change who actually owns the ship.
     ::
     ?:  =(deposit-address to)
       point(dominion %l2)
@@ -398,8 +390,8 @@
     =*  to  i.t.t.topics.log
     point(voting-proxy.own to)
   ::
-  ~|  [%unknown-log log]
-  !!
+  ~&  [%unknown-log log]
+  point  ::  TODO: crash?
 ::
 ::  Receive batch of L2 transactions
 ::
@@ -420,8 +412,6 @@
   |^
   ^-  [effects ^state]
   ?-  -.tx
-    %set-dns-domains        (process-set-dns-domains +.tx)
-    %set-operator           (process-set-operator +.tx)
     %spawn                  (process-spawn +.tx)
     %transfer-point         (w-point process-transfer-point +.tx)
     %configure-keys         (w-point-fx process-configure-keys +.tx)
@@ -452,23 +442,8 @@
     =/  new-point  (fun ship point rest)
     `state(points (~(put by points.state) ship new-point))
   ::
-  ++  process-set-dns-domains
-    |=  [primary=@t secondary=@t tertiary=@t]
-    ?>  =(signer 0x0)  ::  TODO: who?
-    `state(dns ~[primary secondary tertiary])
-  ::
-  ++  process-set-operator
-    |=  [operator=address add=?]
-    =-  `state(operators -)
-    ?<  =(0x0 operator)
-    ?:  add
-      (~(put ju operators.state) signer operator)
-    (~(del ju operators.state) signer operator)
-  ::
   ++  process-transfer-point
     |=  [=ship =point to=address reset=?]
-    ::  Assert ship is on L2
-    ::
     ::  Assert signer is owner or transfer prxoy
     ::
     ?>  ?|  =(owner.own.point signer)
@@ -485,9 +460,8 @@
       point
     ::
     =?  net.point  (gth life.net.point 0)
-      [+(life) 0 +(continuity-number) sponsor escape]:net.point
-    =.  own.point  [owner.own.point *address *address *address]
-    =.  spawn-proxy.kid.point  *address
+      [+(life) 0 +(rift) sponsor escape]:net.point
+    =.  own.point  [owner.own.point *address *address *address *address]
     point
   ::
   ++  process-spawn
@@ -501,7 +475,7 @@
     ::  Assert signer is owner or spawn proxy
     ::
     ?>  ?|  =(owner.own.parent-point signer)
-            =(spawn-proxy.kid.parent-point signer)
+            =(spawn-proxy.own.parent-point signer)
         ==
     ::  Assert child not already spawned
     ::
@@ -538,14 +512,16 @@
             =(management-proxy.own.point signer)
         ==
     ::
-    =?  continuity-number.net.point  breach  +(continuity-number.net.point)
-    =/  rift-effects  ?:(breach [ship %rift continuity-number.net.point]~ ~)
+    =^  rift-effects  rift.net.point
+      ?.  breach
+        `rift.net.point
+      [[ship %rift +(rift.net.point)]~ +(rift.net.point)]
     ::
     =/  =pass  (pass-from-eth 32^encrypt 32^auth crypto-suite)
     =?  net.point  !=(pass.net.point pass)  ::  TODO: check crypto-suite
       net.point(life +(life.net.point), pass pass)
     =/  keys-effects
-      ?:  =(pass.net.point pass)
+      ?:  =(pass.net.point pass)  ::  TODO: check will always be true
         ~
       [ship %keys life.net.point crypto-suite pass]~
     ::
@@ -556,8 +532,8 @@
     ?>  ?|  =(owner.own.point signer)
             =(management-proxy.own.point signer)
         ==
-    ::
     ::  TODO: don't allow "peer escape"?
+    ::
     ?>  =(+((get-point-size parent)) (get-point-size ship))
     ::
     point(escape.net `parent)  ::  TODO: omitting a lot of source material?
@@ -614,10 +590,10 @@
   ++  process-set-spawn-proxy
     |=  [=ship =point =address]
     ?>  ?|  =(owner.own.point signer)
-            =(spawn-proxy.kid.point signer)
+            =(spawn-proxy.own.point signer)
         ==
     ::
-    point(spawn-proxy.kid address)
+    point(spawn-proxy.own address)
   ::
   ++  process-set-voting-proxy
     |=  [=ship =point =address]

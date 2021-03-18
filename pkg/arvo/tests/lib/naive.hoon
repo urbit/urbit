@@ -2,6 +2,8 @@
 |%
 ++  address  @ux
 ++  n  |=([=^state:naive =^input:naive] (naive dumver +<))
+::  TODO: does this uniquely produce the pubkey?
+::
 ++  dumver
   ^-  ^verifier:naive
   |=  [dat=@ v=@ r=@ s=@]
