@@ -99,7 +99,7 @@ export function ChatResource(props: ChatResourceProps) {
   const res = resourceFromPath(groupPath);
   const onReply = useCallback((msg: Post) => {
     const url = getPermalinkForGraph(props.association, group, msg.index)
-    const message = `${url}\n~${msg.author} `;
+    const message = `${url}\n~${msg.author} : `;
     setUnsent(s => ({...s, [props.association.resource]: message }));
   }, [props.association, group, setUnsent]);
 

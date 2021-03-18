@@ -152,21 +152,11 @@ const MessageActions = ({ api, onReply, association, history, msg, group }) => {
       right={2}
     >
       <Row>
-        {isOwn() ? (
-          <Box
-            padding={1}
-            size={'24px'}
-            cursor='pointer'
-            onClick={(e) => console.log(e)}
-          >
-            <Icon icon='NullIcon' size={3} />
-          </Box>
-        ) : null}
         <Box
           padding={1}
           size={'24px'}
           cursor='pointer'
-          onClick={(e) => console.log(e)}
+          onClick={() => onReply(msg)}
         >
           <Icon icon='Chat' size={3} />
         </Box>
@@ -188,18 +178,13 @@ const MessageActions = ({ api, onReply, association, history, msg, group }) => {
               borderColor='lightGray'
               boxShadow='0px 0px 0px 3px'
             >
-              {isOwn() ? (
-                <MessageActionItem onClick={(e) => console.log(e)}>
-                  Edit Message
-                </MessageActionItem>
-              ) : null}
               <MessageActionItem onClick={() => onReply(msg)}>
                 Reply
               </MessageActionItem>
               <MessageActionItem onClick={doCopy}>
                 {copyDisplay}
               </MessageActionItem>
-              {isAdmin() || isOwn() ? (
+              {false && (isAdmin() || isOwn()) ? (
                 <MessageActionItem onClick={(e) => console.log(e)} color='red'>
                   Delete Message
                 </MessageActionItem>

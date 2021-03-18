@@ -1,4 +1,5 @@
 import urbitOb from 'urbit-ob';
+import { parsePermalink, permalinkToReference } from "~/logic/lib/permalinks";
 
 const URL_REGEX = new RegExp(String(/^(([\w\+]+:\/\/)[-a-zA-Z0-9:@;?&=\/%\+\.\*!'\(\),\$_\{\}\^~\[\]`#|]+\w)/.source));
 

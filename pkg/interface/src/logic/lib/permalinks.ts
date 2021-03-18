@@ -19,13 +19,7 @@ export function getPermalinkForGraph(
 function getPermalinkForAssociatedGroup(assoc: Association, group: Group) {
   const mod = assoc.metadata.module;
   const { ship, name } = resourceFromPath(assoc.group);
-  if (!group?.hidden) {
-    return `web+urbit://group/${ship}/${name}`;
-  }
-  if (mod === "chat") {
-    return `web+urbit://messages`;
-  }
-  return `web+urbit://mychannel`;
+  return `web+urbit://group/${ship}/${name}`;
 }
 
 
