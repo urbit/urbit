@@ -14,6 +14,7 @@ class PostItem extends React.Component {
     this.state = { inReplyMode: false };
     this.toggleReplyMode = this.toggleReplyMode.bind(this);
     this.navigateToReplies = this.navigateToReplies.bind(this);
+    this.submitCallback = this.submitCallback.bind(this);
   }
 
   toggleReplyMode() {
@@ -22,7 +23,12 @@ class PostItem extends React.Component {
 
   navigateToReplies() {
     const { history, baseUrl, index } = this.props;
-    history.push(`${baseUrl}/feed/${index.toString()}`);
+    //history.push(`${baseUrl}/feed/${index.toString()}`);
+  }
+
+  submitCallback() {
+    this.toggleReplyMode();
+    // or navigate to replies
   }
 
   render() {
@@ -63,12 +69,12 @@ class PostItem extends React.Component {
             <PostInput
               api={api}
               graphResource={graphResource}
-              index={`/${index.toString()}`} />
+              index={`/${index.toString()}`}
+              submitCallback={this.submitCallback} />
           </Col>
         ) : null }
       </Col>
     );
-
   }
 }
 

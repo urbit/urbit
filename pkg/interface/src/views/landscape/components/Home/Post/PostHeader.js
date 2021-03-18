@@ -62,7 +62,7 @@ export function PostHeader(props) {
           <Text gray>{timestamp}</Text>
         </Col>
       </Row>
-      <Icon icon="Ellipsis" />
+      <Icon icon="Ellipsis" color="gray" />
     </Row>
   );
 }

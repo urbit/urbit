@@ -60,12 +60,14 @@ export const AddFeedBanner = (props) => {
       pr={2}
     >
       <Text verticalAlign="middle">Enable Group Feed?</Text>
-      <Text color="gray" bold cursor="pointer" onClick={disableFeed}>
-        Dismiss
-      </Text>
-      <Text color="blue" bold cursor="pointer" onClick={enableFeed}>
-        Enable Feed
-      </Text>
+      <Row>
+        <Text mr="2" color="gray" bold cursor="pointer" onClick={disableFeed}>
+          Dismiss
+        </Text>
+        <Text color="blue" bold cursor="pointer" onClick={enableFeed}>
+          Enable Feed
+        </Text>
+      </Row>
     </Row>
   );
 };

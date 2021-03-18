@@ -7,7 +7,7 @@ import { createPost } from '~/logic/api/graph';
 
 
 export function PostInput(props) {
-  const { api, graphResource, index } = props;
+  const { api, graphResource, index, submitCallback } = props;
   const [disabled, setDisabled] = useState(false);
   const [postContent, setPostContent] = useState('');
 
@@ -19,7 +19,6 @@ export function PostInput(props) {
 
     setDisabled(true);
     const post = createPost(tokenizeMessage(postContent), index || '');
-    console.log(post);
 
     api.graph.addPost(
       graphResource.ship,
@@ -28,6 +27,10 @@ export function PostInput(props) {
     ).then(() => {
       setDisabled(false);
       setPostContent('');
+
+      if (submitCallback) {
+        submitCallback();
+      }
     });
   };
 

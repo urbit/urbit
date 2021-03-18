@@ -1,6 +1,4 @@
-import React, {
-  useState
-} from 'react';
+import React from 'react';
 import VirtualScroller from "~/views/components/VirtualScroller";
 import PostItem from './PostItem';
 
@@ -8,35 +6,43 @@ const virtualScrollerStyle = {
   height: "100%"
 };
 
-export function PostFeed(props) {
-  const { graph, graphResource, contacts, api, history, baseUrl } = props;
-  const [isFetching, setIsFetching] = useState(false);
 
-  const renderItem = React.forwardRef(({ index, scrollWindow }, ref) => {
-    const node = graph.get(index);
-    if (!node) { return null; }
+export class PostFeed extends React.Component {
+  constructor(props) {
+    super(props);
 
-    return (
-      <PostItem
-        key={index.toString()}
-        ref={ref}
-        node={node}
-        contacts={contacts}
-        graphResource={graphResource}
-        api={api}
-        index={index}
-        baseUrl={baseUrl}
-        history={history}
-      />
-    );
-  });
+    this.isFetching = false;
+    this.renderItem = React.forwardRef(({ index, scrollWindow }, ref) => {
+      const { graph, graphResource, contacts, api, history, baseUrl } = this.props;
+      const node = graph.get(index);
+      if (!node) { return null; }
 
-  const fetchPosts = async (newer) => {
-    if (isFetching) {
+      return (
+        <PostItem
+          key={index.toString()}
+          ref={ref}
+          node={node}
+          contacts={contacts}
+          graphResource={graphResource}
+          api={api}
+          index={index}
+          baseUrl={baseUrl}
+          history={history}
+        />
+      );
+    });
+
+    this.fetchPosts = this.fetchPosts.bind(this);
+  }
+
+  async fetchPosts(newer) {
+    const { graph, graphResource, api } = this.props;
+
+    if (this.isFetching) {
       return false;
     }
-    
-    setIsFetching(true);
+
+    this.isFetching = true;
     const { ship, name } = graphResource;
     const currSize = graph.size;
 
@@ -53,23 +59,25 @@ export function PostFeed(props) {
       await api.graph.getOlderSiblings(ship, name, 100, `/${index.toString()}`);
     }
 
-    setIsFetching(false);
+    this.isFetching = false;
     return currSize === graph.size;
-  };
+  }
 
+  render() {
+    const { graph } = this.props;
 
-  return (
-    <VirtualScroller
-      origin="top"
-      offset={0}
-      data={graph}
-      averageHeight={106}
-      size={graph.size}
-      style={virtualScrollerStyle}
-      pendingSize={0}
-      renderer={renderItem}
-      loadRows={fetchPosts}
-    />
-  );
+    return (
+      <VirtualScroller
+        origin="top"
+        offset={0}
+        data={graph}
+        averageHeight={106}
+        size={graph.size}
+        style={virtualScrollerStyle}
+        pendingSize={0}
+        renderer={this.renderItem}
+        loadRows={this.fetchPosts}
+      />
+    );
+  }
 }
-
