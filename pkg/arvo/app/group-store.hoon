@@ -234,8 +234,8 @@
     sane+(en-path:resource rid)
   =*  poke-self  ~(poke-self pass:io wire)
   %+  weld  out
-  :~  (poke-self group-update+!>([%add-members rid (silt our.bol ~)]))
-      (poke-self group-update+!>([%add-tag rid %admin (silt our.bol ~)]))
+  :~  (poke-self group-update-0+!>([%add-members rid (silt our.bol ~)]))
+      (poke-self group-update-0+!>([%add-tag rid %admin (silt our.bol ~)]))
   ==
 ::
 ++  poke-import

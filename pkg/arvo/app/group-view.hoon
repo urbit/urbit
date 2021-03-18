@@ -166,7 +166,7 @@
       %-  emit
       %+  poke:(jn-pass-io /add)
         [ship %group-push-hook]
-      group-update+!>([%add-members rid (silt our.bowl ~)])
+      group-update-0+!>([%add-members rid (silt our.bowl ~)])
     =.  jn-core  (tx-progress %start)
     =>  watch-md
     watch-groups

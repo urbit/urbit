@@ -48,7 +48,7 @@
   %-  (slog tang)
   :_  this
   =-  [%pass / %agent [our.bowl %group-store] %poke -]~
-  group-update+!>([%remove-group resource ~])
+  group-update-0+!>([%remove-group resource ~])
 ::
 ++  on-pull-kick
   |=  =resource

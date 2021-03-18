@@ -63,7 +63,7 @@
     (pure:m ~)
   ;<  ~  bind:m
     %+  poke  [entity.grp-rid %group-push-hook]
-    :-  %group-update
+    :-  %group-update-0
     !>  ^-  update:group-store
     [%remove-tag grp-rid tag.i.tags tagged.i.tags]
   loop(tags t.tags)
