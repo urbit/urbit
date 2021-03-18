@@ -15,6 +15,7 @@ import { PropFunc } from '~/types/util';
 import { isWriter } from '~/logic/lib/group';
 import useHarkState from '~/logic/state/hark';
 import {useQuery} from '~/logic/lib/useQuery';
+import {referenceToPermalink} from '~/logic/lib/permalinks';
 
 interface CommentsProps {
   comments: GraphNode;
@@ -107,7 +108,10 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
         val = val + curr.url;
       } else if ('code' in curr) {
         val = val + curr.code.expression;
+      } else if ('reference' in curr) {
+        val = `${val}web+urbit:/${referenceToPermalink(curr).link}`;
       }
+
       return val;
     }, '');
   }

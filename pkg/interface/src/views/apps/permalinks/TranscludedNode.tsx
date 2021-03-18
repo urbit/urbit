@@ -9,9 +9,15 @@ import { NoteContent } from "../publish/components/Note";
 import bigInt from "big-integer";
 import { getSnippet } from "~/logic/lib/publish";
 import { NotePreviewContent } from "../publish/components/NotePreview";
+import GlobalApi from "~/logic/api/global";
 
-function TranscludedLinkNode(props: { node: GraphNode; assoc: Association }) {
-  const { node, assoc } = props;
+function TranscludedLinkNode(props: {
+  node: GraphNode;
+  assoc: Association;
+  transcluded: number;
+  api: GlobalApi;
+}) {
+  const { node, assoc, transcluded } = props;
   const idx = node.post.index.slice(1).split("/");
 
   switch (idx.length) {
@@ -26,14 +32,26 @@ function TranscludedLinkNode(props: { node: GraphNode; assoc: Association }) {
         </Box>
       );
     case 2:
-      return <TranscludedComment node={node} assoc={assoc} />;
+      return (
+        <TranscludedComment
+          api={api}
+          transcluded={transcluded}
+          node={node}
+          assoc={assoc}
+        />
+      );
     default:
       return null;
   }
 }
 
-function TranscludedComment(props: { node: GraphNode; assoc: Association }) {
-  const { assoc, node } = props;
+function TranscludedComment(props: {
+  node: GraphNode;
+  assoc: Association;
+  api: GlobalApi;
+  transcluded: number;
+}) {
+  const { assoc, node, api, transcluded } = props;
   const group = useGroupForAssoc(assoc)!;
 
   const comment = node.children?.peekLargest()![1]!;
@@ -47,7 +65,12 @@ function TranscludedComment(props: { node: GraphNode; assoc: Association }) {
         group={group}
       />
       <Box p="2">
-        <MentionText content={comment.post.contents} group={group} />;
+        <MentionText
+          api={api}
+          transcluded={transcluded}
+          content={comment.post.contents}
+          group={group}
+        />
       </Box>
     </Col>
   );
@@ -56,8 +79,10 @@ function TranscludedComment(props: { node: GraphNode; assoc: Association }) {
 function TranscludedPublishNode(props: {
   node: GraphNode;
   assoc: Association;
+  api: GlobalApi;
+  transcluded: number;
 }) {
-  const { node, assoc } = props;
+  const { node, assoc, transcluded, api } = props;
   const group = useGroupForAssoc(assoc)!;
   const idx = node.post.index.slice(1).split("/");
   switch (idx.length) {
@@ -86,7 +111,14 @@ function TranscludedPublishNode(props: {
       );
 
     case 3:
-      return <TranscludedComment node={node} assoc={assoc} />;
+      return (
+        <TranscludedComment
+          transcluded={transcluded}
+          api={api}
+          node={node}
+          assoc={assoc}
+        />
+      );
     default:
       return null;
   }

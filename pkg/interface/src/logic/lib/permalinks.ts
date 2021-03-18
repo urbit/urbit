@@ -57,6 +57,25 @@ function parseGraphPermalink(
   };
 }
 
+export function referenceToPermalink({ reference }: ReferenceContent): Permalink {
+  if('graph' in reference) {
+    const { graph, group, index } = reference.graph;
+    const link = `web+urbit://group${group.slice(5)}/graph${graph.slice(5)}${index}`;
+    return {
+      type: 'graph',
+      link,
+      ...reference.graph
+    };
+  } else {
+    const link = `web+urbit://group${reference.group.slice(5)}`;
+    return {
+      type: 'group',
+      link,
+      ...reference
+    }
+  }
+}
+
 export function parsePermalink(url: string): Permalink | null {
   const [kind, ...rest] = url.slice(12).split("/");
   if (kind === "group") {

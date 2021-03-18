@@ -108,6 +108,8 @@ export function CommentItem(props: CommentItemProps): ReactElement {
         backgroundColor={props.highlighted ? 'lightGray' : 'white'}
       >
         <MentionText
+          transcluded={0}
+          api={api}
           group={group}
           content={post?.contents}
         />

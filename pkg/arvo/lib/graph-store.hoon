@@ -202,8 +202,8 @@
     ++  graph
       |=  [grp=res gra=res idx=^index]
       %-  pairs
-      :~  graph+s+(enjs-path:res grp)
-          group+s+(enjs-path:res gra)
+      :~  graph+s+(enjs-path:res gra)
+          group+s+(enjs-path:res grp)
           index+(index idx)
       ==
     ::

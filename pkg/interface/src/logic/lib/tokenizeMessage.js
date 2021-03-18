@@ -45,7 +45,20 @@ const tokenizeMessage = (text) => {
           isInCodeBlock = false;
         }
 
-        if (isUrl(str) && !isInCodeBlock) {
+        if(isRef(str) && !isInCodeBlock) {
+          if (message.length > 0) {
+            // If we're in the middle of a message, add it to the stack and reset
+            messages.push({ text: message.join(' ') });
+          }
+          const link = parsePermalink(str);
+          if(!link) {
+            messages.push({ url: str });
+          } else {
+            const reference = permalinkToReference(link);
+            messages.push({ reference });
+          }
+          message = [];
+        } else if (isUrl(str) && !isInCodeBlock) {
           if (message.length > 0) {
             // If we're in the middle of a message, add it to the stack and reset
             messages.push({ text: message.join(' ') });

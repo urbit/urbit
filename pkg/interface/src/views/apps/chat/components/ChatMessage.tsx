@@ -42,6 +42,7 @@ import useContactState from '~/logic/state/contact';
 import { useIdlingState } from '~/logic/lib/idling';
 import {useCopy} from '~/logic/lib/useCopy';
 import {PermalinkEmbed} from '../../permalinks/embed';
+import {referenceToPermalink} from '~/logic/lib/permalinks';
 
 export const DATESTAMP_FORMAT = '[~]YYYY.M.D';
 
@@ -573,18 +574,18 @@ export const Message = ({
                 />
               );
             case 'code':
-              return <CodeContent key={i} content={content} />;
-            case 'url':
-              if(content.url.startsWith('web+urbit:/')) {
-                return (
-                  <PermalinkEmbed 
-                    transcluded={transcluded}
-                    api={api}
-                    link={content.url} 
-                  />
-                );
-              }
+            return <CodeContent key={i} content={content} />;
+            case 'reference':
+              const { link } = referenceToPermalink(content);
               return (
+                <PermalinkEmbed 
+                  link={link}
+                  api={api}
+                  transcluded={transcluded}
+                />
+              );
+            case 'url':
+             return (
                 <Box
                   key={i}
                   flexShrink={0}

@@ -55,7 +55,7 @@ function GraphPermalink(
       }
     })();
   }, [graph, index]);
-  const showTransclusion = !!(association && node && transcluded < 2);
+  const showTransclusion = !!(association && node && transcluded < 1);
 
   const rowTransclusionStyle = showTransclusion
     ? {
@@ -77,7 +77,7 @@ function GraphPermalink(
         {showTransclusion && (
           <Box p="2">
             <TranscludedNode
-              transcluded={transcluded}
+              transcluded={transcluded + 1}
               node={node}
               assoc={association!}
             />

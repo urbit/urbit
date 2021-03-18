@@ -5,6 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import RemarkDisableTokenizers from 'remark-disable-tokenizers';
 import { Anchor, Text } from '@tlon/indigo-react';
 import { isValidPatp } from 'urbit-ob';
+import { PermalinkEmbed } from "~/views/apps/permalinks/embed"
 
 import { deSig } from '~/logic/lib/util';
 import { Mention } from '~/views/components/MentionText';
@@ -22,7 +23,7 @@ const DISABLED_BLOCK_TOKENS = [
 
 const DISABLED_INLINE_TOKENS = [];
 
-const RichText = React.memo(({ disableRemoteContent, ...props }) => (
+const RichText = React.memo(({ disableRemoteContent, api, ...props }) => (
   <ReactMarkdown
     {...props}
     renderers={{
@@ -43,6 +44,9 @@ const RichText = React.memo(({ disableRemoteContent, ...props }) => (
         const linkText = String(linkProps.children[0].props.children);
         if (isValidPatp(linkText)) {
           return <Mention contact={props.contact || {}} group={props.group} ship={deSig(linkText)} />;
+        } else if(linkText.startsWith('web+urbit://')) {
+          return <PermalinkEmbed link={linkText} transcluded={props.transcluded} api={api}/>;
+
         }
         return linkText;
       },
