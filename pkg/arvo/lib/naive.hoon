@@ -40,6 +40,12 @@
 ::
 ::  TODO: if sig fails to verify, skip instead of crashing
 ::
+::  TODO: is it possible to spawn directly to the deposit address?  if
+::  so, should we find its parent's owner to control it?
+::
+::  TODO: should we add any protection in the L1 contracts that you
+::  don't deposit from a contract?
+::
 /+  ethereum
 ::  Constants
 ::
@@ -123,17 +129,6 @@
 ::  ECDSA verifier
 ::
 +$  verifier  $-([dat=@ v=@ r=@ s=@] =address)
-::  stdlib verifier, for testing
-::
-::  TODO: does this uniquely produce the pubkey?
-::
-++  dumver
-  ^-  verifier
-  |=  [dat=@ v=@ r=@ s=@]
-  =,  secp256k1:secp:crypto
-  %-  address-from-pub:key:ethereum
-  %-  serialize-point
-  (ecdsa-raw-recover dat v r s)
 --
 ::
 |%
