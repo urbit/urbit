@@ -42,6 +42,7 @@ type ChatWindowProps = RouteComponentProps<{
   station: any;
   api: GlobalApi;
   scrollTo?: number;
+  onReply: (msg: Post) => void;
 };
 
 interface ChatWindowState {
@@ -211,7 +212,8 @@ class ChatWindow extends Component<
       graph,
       history,
       groups,
-      associations
+      associations,
+      onReply
     } = this.props;
     const { unreadMarkerRef } = this;
     const messageProps = {
@@ -222,7 +224,8 @@ class ChatWindow extends Component<
       history,
       api,
       groups,
-      associations
+      associations,
+      onReply
     };
 
     const msg = graph.get(index)?.post;
@@ -278,7 +281,8 @@ class ChatWindow extends Component<
       groups,
       associations,
       showOurContact,
-      pendingSize
+      pendingSize,
+      onReply,
     } = this.props;
 
     const unreadMarkerRef = this.unreadMarkerRef;

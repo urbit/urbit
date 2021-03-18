@@ -105,6 +105,7 @@ export function LinkResource(props: LinkResourceProps) {
                   resource={resourcePath}
                   node={node}
                   baseUrl={resourceUrl}
+                  association={association}
                   group={group}
                   path={resource?.group}
                   api={api}

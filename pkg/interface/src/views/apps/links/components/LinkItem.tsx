@@ -11,6 +11,8 @@ import GlobalApi from '~/logic/api/global';
 import { Dropdown } from '~/views/components/Dropdown';
 import RemoteContent from '~/views/components/RemoteContent';
 import useHarkState from '~/logic/state/hark';
+import {useCopy} from '~/logic/lib/useCopy';
+import {usePermalinkForGraph} from '~/logic/lib/permalinks';
 
 interface LinkItemProps {
   node: GraphNode;
@@ -70,16 +72,18 @@ export const LinkItem = (props: LinkItemProps): ReactElement => {
   const ourRole = group ? roleForShip(group, window.ship) : undefined;
   const [ship, name] = resource.split('/');
 
-  const [locationText, setLocationText] = useState('Copy Link Location');
 
-  const copyLocation = () => {
-    setLocationText('Copied');
-    writeText(contents[1].url);
-    setTimeout(() => {
-      setLocationText('Copy Link Location');
-    }, 2000);
-  };
+  const permalink = usePermalinkForGraph(props.association, node.post.index);
 
+  const { doCopy: doCopyLink, copyDisplay: locationText } = useCopy(
+    contents[1].url,
+    'Copy Link Location'
+  );
+  const { doCopy: doCopyNode, copyDisplay: nodeText } = useCopy(
+    permalink,
+    'Copy Node Permalink'
+  );
+  
   const deleteLink = () => {
     if (confirm('Are you sure you want to delete this link?')) {
       api.graph.removeNodes(`~${ship}`, name, [node.post.index]);
@@ -173,8 +177,12 @@ export const LinkItem = (props: LinkItemProps): ReactElement => {
         options={
           <Col backgroundColor="white" border={1} borderRadius={1} borderColor="lightGray">
             <Row alignItems="center" p={1}>
-              <Action bg="white" m={1} color="black" onClick={copyLocation}>{locationText}</Action>
+              <Action bg="white" m={1} color="black" onClick={doCopyLink}>{locationText}</Action>
             </Row>
+            <Row alignItems="center" p={1}>
+              <Action bg="white" m={1} color="black" onClick={doCopyNode}>{nodeText}</Action>
+            </Row>
+
             {(ourRole === 'admin' || node.post.author === window.ship) &&
               <Row alignItems="center" p={1}>
                 <Action bg="white" m={1} color="red" destructive onClick={deleteLink}>Delete Link</Action>

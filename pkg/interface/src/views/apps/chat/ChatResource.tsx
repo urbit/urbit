@@ -20,6 +20,8 @@ import useContactState from '~/logic/state/contact';
 import useGraphState from '~/logic/state/graph';
 import useGroupState from '~/logic/state/group';
 import useHarkState from '~/logic/state/hark';
+import {Post} from '@urbit/api';
+import {getPermalinkForGraph} from '~/logic/lib/permalinks';
 
 type ChatResourceProps = StoreState & {
   association: Association;
@@ -95,6 +97,11 @@ export function ChatResource(props: ChatResourceProps) {
   const [recipients, setRecipients] = useState([]);
 
   const res = resourceFromPath(groupPath);
+  const onReply = useCallback((msg: Post) => {
+    const url = getPermalinkForGraph(props.association, group, msg.index)
+    const message = `${url}\n~${msg.author} `;
+    setUnsent(s => ({...s, [props.association.resource]: message }));
+  }, [props.association, group, setUnsent]);
 
   useEffect(() => {
     (async () => {
@@ -139,8 +146,6 @@ export function ChatResource(props: ChatResourceProps) {
     })();
   }, [groupPath, group]);
 
-  console.log(graph);
-
   if(!graph) {
     return <Loading />;
   }
@@ -168,6 +173,7 @@ export function ChatResource(props: ChatResourceProps) {
         pendingSize={Object.keys(graphTimesentMap[graphPath] || {}).length}
         group={group}
         ship={owner}
+        onReply={onReply}
         station={station}
         api={props.api}
         scrollTo={scrollTo ? parseInt(scrollTo, 10) : undefined}

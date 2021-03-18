@@ -25,19 +25,29 @@ interface NoteProps {
   group: Group;
 }
 
+const renderers = {
+  link: ({ href, children }) => {
+    return (
+      <Anchor display="inline" target="_blank" href={href}>{children}</Anchor>
+    )
+  }
+};
+
+export function NoteContent({ body }) {
+  return (
+
+      <Box color="black" className="md" style={{ overflowWrap: 'break-word', overflow: 'hidden' }}>
+        <ReactMarkdown source={body} linkTarget={'_blank'} renderers={renderers} />
+      </Box>
+  );
+
+}
+
 export function Note(props: NoteProps & RouteComponentProps) {
   const [deleting, setDeleting] = useState(false);
 
   const { notebook, note, ship, book, api, rootUrl, baseUrl, group } = props;
   const editCommentId = props.match.params.commentId;
-
-  const renderers = {
-    link: ({ href, children }) => {
-      return (
-        <Anchor display="inline" target="_blank" href={href}>{children}</Anchor>
-      )
-    }
-  };
 
   const deletePost = async () => {
     setDeleting(true);
@@ -122,9 +132,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
           <Text ml={1}>{adminLinks}</Text>
         </Row>
       </Col>
-      <Box color="black" className="md" style={{ overflowWrap: 'break-word', overflow: 'hidden' }}>
-        <ReactMarkdown source={body} linkTarget={'_blank'} renderers={renderers} />
-      </Box>
+      <NoteContent body={body} />
       <NoteNavigation
         notebook={notebook}
         noteId={noteId}

@@ -27,6 +27,27 @@ const WrappedBox = styled(Box)`
   overflow-wrap: break-word;
 `;
 
+export function NotePreviewContent({ snippet }) {
+  return (
+    <ReactMarkdown
+      unwrapDisallowed
+      allowedTypes={['text', 'root', 'break', 'paragraph', 'image']}
+      renderers={{
+        image: props => (
+          <Box
+            backgroundImage={`url(${props.src})`}
+            style={{ backgroundSize: 'cover',
+              backgroundPosition: "center" }}
+          >
+            <Image src={props.src} opacity="0" maxHeight="300px"/>
+          </Box>
+        )
+      }}
+      source={snippet}
+    />
+  );
+}
+
 export function NotePreview(props: NotePreviewProps) {
   const { node, group } = props;
   const { post } = node;
@@ -66,23 +87,8 @@ export function NotePreview(props: NotePreviewProps) {
         >
           <WrappedBox mb={2}><Text bold>{title}</Text></WrappedBox>
           <WrappedBox>
-          <Text fontSize='14px' lineHeight='tall'>
-            <ReactMarkdown
-              unwrapDisallowed
-              allowedTypes={['text', 'root', 'break', 'paragraph', 'image']}
-              renderers={{
-                image: props => (
-                  <Box
-                    backgroundImage={`url(${props.src})`}
-                    style={{ backgroundSize: 'cover',
-                      backgroundPosition: "center" }}
-                  >
-                    <Image src={props.src} opacity="0" maxHeight="300px"/>
-                  </Box>
-                )
-              }}
-              source={snippet}
-            />
+            <Text fontSize='14px' lineHeight='tall'>
+              <NotePreviewContent snippet={snippet} /> 
             </Text>
           </WrappedBox>
         </Col>

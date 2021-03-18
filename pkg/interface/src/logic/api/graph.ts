@@ -336,15 +336,17 @@ export default class GraphApi extends BaseApi<StoreState> {
     });
   }
 
-  getNode(ship: string, resource: string, index: string) {
-    const idx = index.split('/').map(numToUd).join('/');
-    return this.scry<any>(
+  async getNode(ship: string, resource: string, index: string) {
+    const idx = index.split('/').map(decToUd).join('/');
+    const data = await this.scry<any>(
       'graph-store',
       `/node/${ship}/${resource}${idx}`
-    ).then((node) => {
-      this.store.handleEvent({
-        data: node
-      });
+    );
+    const node = data['graph-update'];
+    this.store.handleEvent({
+      data: {
+        "graph-update-loose": node
+      }
     });
   }
 }

@@ -79,15 +79,11 @@ export function CommentItem(props: CommentItemProps): ReactElement {
 
   }, [ref, props.highlighted]);
   const history = useHistory();
-  useEffect(() => {
-    return history.listen((location, action) => {
-      console.log(location);
-      console.log(action);
-    });
-  }, []);
 
-
-  const { copyDisplay, doCopy } = useCopy(usePermalinkForGraph(association), 'Copy Link');
+  const { copyDisplay, doCopy } = useCopy(
+    usePermalinkForGraph(association, post.index.split('/').slice(0, -1).join('/')),
+    'Copy Link'
+  );
 
   return (
     <Box ref={ref} mb={4} opacity={post?.pending ? '60%' : '100%'}>

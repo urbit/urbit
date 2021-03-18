@@ -41,6 +41,7 @@ import Timestamp from '~/views/components/Timestamp';
 import useContactState from '~/logic/state/contact';
 import { useIdlingState } from '~/logic/lib/idling';
 import {useCopy} from '~/logic/lib/useCopy';
+import {PermalinkEmbed} from '../../permalinks/embed';
 
 export const DATESTAMP_FORMAT = '[~]YYYY.M.D';
 
@@ -135,7 +136,7 @@ const MessageActionItem = (props) => {
   );
 };
 
-const MessageActions = ({ api, association, history, msg, group }) => {
+const MessageActions = ({ api, onReply, association, history, msg, group }) => {
   const isAdmin = () => group.tags.role.admin.has(window.ship);
   const isOwn = () => msg.author === window.ship;
   const { doCopy, copyDisplay } = useCopy(`web+urbit://group${association.group.slice(5)}/graph${association.resource.slice(5)}${msg.index}`, 'Copy Message Link');
@@ -143,7 +144,7 @@ const MessageActions = ({ api, association, history, msg, group }) => {
   return (
     <Box
       borderRadius={1}
-      background='white'
+      backgroundColor='white'
       border='1px solid'
       borderColor='lightGray'
       position='absolute'
@@ -192,7 +193,7 @@ const MessageActions = ({ api, association, history, msg, group }) => {
                   Edit Message
                 </MessageActionItem>
               ) : null}
-              <MessageActionItem onClick={(e) => console.log(e)}>
+              <MessageActionItem onClick={() => onReply(msg)}>
                 Reply
               </MessageActionItem>
               <MessageActionItem onClick={doCopy}>
@@ -220,17 +221,16 @@ const MessageActions = ({ api, association, history, msg, group }) => {
 
 const MessageWrapper = (props) => {
   const { hovering, bind } = useHovering();
+  const showHover = !props.transcluded && hovering && !props.hideHover;
   return (
     <Box
       py='1'
-      backgroundColor={
-        hovering && !props.hideHover ? 'washedGray' : 'transparent'
-      }
+      backgroundColor={showHover ? 'washedGray' : 'transparent'}
       position='relative'
       {...bind}
     >
       {props.children}
-      {hovering ? <MessageActions {...props} /> : null}
+      {showHover ? <MessageActions {...props} /> : null}
     </Box>
   );
 };
@@ -242,6 +242,7 @@ interface ChatMessageProps {
   isLastRead: boolean;
   group: Group;
   association: Association;
+  transcluded?: boolean;
   className?: string;
   isPending: boolean;
   style?: unknown;
@@ -254,6 +255,7 @@ interface ChatMessageProps {
   renderSigil?: boolean;
   hideHover?: boolean;
   innerRef: (el: HTMLDivElement | null) => void;
+  onReply?: (msg: Post) => void;
 }
 
 class ChatMessage extends Component<ChatMessageProps> {
@@ -286,6 +288,8 @@ class ChatMessage extends Component<ChatMessageProps> {
       showOurContact,
       fontSize,
       hideHover
+      onReply = () => {},
+      transcluded = false
     } = this.props;
 
     let { renderSigil } = this.props;
@@ -323,7 +327,12 @@ class ChatMessage extends Component<ChatMessageProps> {
       scrollWindow,
       highlighted,
       fontSize,
+<<<<<<< HEAD
       hideHover
+=======
+      transcluded,
+      onReply
+>>>>>>> 8c4e175200 (permalinks: add transclusion)
     };
 
     const unreadContainerStyle = {
@@ -583,6 +592,11 @@ export const Message = ({
             case 'code':
               return <CodeContent key={i} content={content} />;
             case 'url':
+              if(content.url.startsWith('web+urbit:/')) {
+                return (
+                  <PermalinkEmbed api={api} link={content.url} />
+                );
+              }
               return (
                 <Box
                   key={i}

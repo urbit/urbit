@@ -66,13 +66,11 @@ const GraphUrl = ({ url, title }) => (
   </Box>
 );
 
-const GraphNodeContent = ({
+export const GraphNodeContent = ({
   group,
   post,
   mod,
-  description,
   index,
-  remoteContentPolicy
 }) => {
   const { contents } = post;
   const idx = index.slice(1).split('/');

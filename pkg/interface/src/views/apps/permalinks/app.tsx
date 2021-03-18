@@ -85,7 +85,8 @@ function GroupRoutes(props: { group: string; url: string }) {
           if(!association) {
             return null;
           }
-          if(!graphKeys.has(`${ship}/${name}`)) {
+          console.log(graphKeys);
+          if(!graphKeys.has(`${ship.slice(1)}/${name}`)) {
             if(graphKeys.size > 0) {
               return <Redirect
                 to={toQuery(

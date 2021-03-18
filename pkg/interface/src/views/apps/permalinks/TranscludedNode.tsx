@@ -1,0 +1,127 @@
+import React from "react";
+import { Anchor, Icon, Box, Row, Col, Text } from "@tlon/indigo-react";
+import ChatMessage from "../chat/components/ChatMessage";
+import { Association, GraphNode } from "@urbit/api";
+import { useGroupForAssoc } from "~/logic/state/group";
+import { MentionText } from "~/views/components/MentionText";
+import Author from "~/views/components/Author";
+import { NoteContent } from "../publish/components/Note";
+import bigInt from "big-integer";
+import { getSnippet } from "~/logic/lib/publish";
+import { NotePreviewContent } from "../publish/components/NotePreview";
+
+function TranscludedLinkNode(props: { node: GraphNode; assoc: Association }) {
+  const { node, assoc } = props;
+  const idx = node.post.index.slice(1).split("/");
+
+  switch (idx.length) {
+    case 1:
+      const [{ text }, { url }] = node.post.contents;
+      return (
+        <Box borderRadius="2" p="2" bg="scales.black05">
+          <Anchor underline={false} target="_blank" color="black" href={url}>
+            <Icon verticalAlign="bottom" mr="2" icon="ArrowExternal" />
+            {text}
+          </Anchor>
+        </Box>
+      );
+    case 2:
+      return <TranscludedComment node={node} assoc={assoc} />;
+    default:
+      return null;
+  }
+}
+
+function TranscludedComment(props: { node: GraphNode; assoc: Association }) {
+  const { assoc, node } = props;
+  const group = useGroupForAssoc(assoc)!;
+
+  const comment = node.children?.peekLargest()![1]!;
+  return (
+    <Col>
+      <Author
+        p="2"
+        showImage
+        ship={comment.post.author}
+        date={comment.post?.["time-sent"]}
+        group={group}
+      />
+      <Box p="2">
+        <MentionText content={comment.post.contents} group={group} />;
+      </Box>
+    </Col>
+  );
+}
+
+function TranscludedPublishNode(props: {
+  node: GraphNode;
+  assoc: Association;
+}) {
+  const { node, assoc } = props;
+  const group = useGroupForAssoc(assoc)!;
+  const idx = node.post.index.slice(1).split("/");
+  switch (idx.length) {
+    case 1:
+      const post = node.children
+        ?.get(bigInt.one)
+        ?.children?.peekLargest()?.[1]!;
+      return (
+        <Col>
+          <Author
+            p="2"
+            showImage
+            ship={post.post.author}
+            date={post.post?.["time-sent"]}
+            group={group}
+          />
+          <Text px="2" fontSize="2" fontWeight="medium">
+            {post.post.contents[0]?.text}
+          </Text>
+          <Box p="2">
+            <NotePreviewContent
+              snippet={getSnippet(post?.post.contents[1]?.text)}
+            />
+          </Box>
+        </Col>
+      );
+
+    case 3:
+      return <TranscludedComment node={node} assoc={assoc} />;
+    default:
+      return null;
+  }
+}
+
+export function TranscludedNode(props: {
+  assoc: Association;
+  node: GraphNode;
+}) {
+  const { node, assoc } = props;
+  const group = useGroupForAssoc(assoc)!;
+  switch (assoc.metadata.module) {
+    case "chat":
+      return (
+        <Row width="100%" flexShrink={0} flexGrow={1} flexWrap="wrap">
+          <ChatMessage
+            renderSigil
+            transcluded
+            containerClass="items-top cf hide-child"
+            association={assoc}
+            group={group}
+            groups={{}}
+            msg={node.post}
+            fontSize="0"
+            ml="0"
+            mr="0"
+            pt="2"
+          />
+        </Row>
+      );
+    case "publish":
+      return <TranscludedPublishNode {...props} />;
+    case "link":
+      return <TranscludedLinkNode {...props} />;
+    default:
+      return null;
+  }
+}

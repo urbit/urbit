@@ -13,6 +13,7 @@ import OverlaySigil from './OverlaySigil';
 import { Sigil } from '~/logic/lib/sigil';
 import Timestamp from './Timestamp';
 import useContactState from '~/logic/state/contact';
+import {PropFunc} from '~/types';
 
 interface AuthorProps {
   ship: string;
@@ -24,8 +25,8 @@ interface AuthorProps {
 }
 
 // eslint-disable-next-line max-lines-per-function
-export default function Author(props: AuthorProps): ReactElement {
-  const { ship = '', date, showImage, group } = props;
+export default function Author(props: AuthorProps & PropFunc<typeof Box>): ReactElement {
+  const { ship = '', date, showImage, children, unread, group, ...rest } = props;
   const history = useHistory();
   const osDark = useLocalState((state) => state.dark);
 
@@ -65,7 +66,7 @@ export default function Author(props: AuthorProps): ReactElement {
     );
 
   return (
-    <Row alignItems='center' width='auto'>
+    <Row {...rest} alignItems='center' width='auto'>
       <Box
         onClick={() => toggleOverlay()}
         height={16}
@@ -95,8 +96,8 @@ export default function Author(props: AuthorProps): ReactElement {
       >
         {name}
       </Box>
-      <Timestamp stamp={stamp} fontSize={1} time={false} ml={2} color={props.unread ? 'blue' : 'gray'} />
-      {props.children}
+      <Timestamp stamp={stamp} fontSize={1} time={false} ml={2} color={unread ? 'blue' : 'gray'} />
+      {children}
     </Row>
   );
 }
