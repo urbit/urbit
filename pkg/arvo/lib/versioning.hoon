@@ -19,6 +19,7 @@
   :((cury cat 3) root '-' (scot %ud ver))
 ::
 ++  current-version
+  ^-  mark
   (append-version version)
 ::
 ++  supported

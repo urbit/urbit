@@ -244,12 +244,8 @@
         [cards this]
       ::
       ?:  (is-root:ver mark)
-        ?:  (team:title [our src]:bowl)
-          :_  this
-          (forward-update:hc vase)
-        =^  cards  state
-          (poke-update:hc mark vase)
-        [cards this]
+        :_  this
+        (forward-update:hc mark vase)
       ::
       =^  cards  push-hook
         (on-poke:og mark vase)
@@ -265,7 +261,6 @@
         =^  cards  push-hook
           (on-watch:og path)
         [cards this]
-      ~&  t.path
       |^
       ?.  ?=([%ver %ship @ @ @ *] t.path)
         unversioned
@@ -282,12 +277,12 @@
       [%give %fact ~ mark vase]~
       ::
       ++  unversioned
-        ?>  ?=([%ship @ @ @ *] t.path)
+        ?>  ?=([%ship @ @ *] t.path)
         =/  =resource
           (de-path:resource t.path)
         =/  =vase
           %+  convert-to:ver  update-mark.config
-          (initial-watch:og t.t.t.t.t.path resource)
+          (initial-watch:og t.t.t.t.path resource)
         :_  this
         [%give %fact ~ update-mark.config vase]~
       --
@@ -347,17 +342,6 @@
   |_  =bowl:gall
   +*  og   ~(. push-hook bowl)
       ver  ~(. versioning [bowl [update-mark version min-version]:config])
-  ::
-  ++  poke-update
-    |=  =cage
-    ^-  (quip card:agent:gall _state)
-    =/  vas=vase
-      (convert-to:ver cage)
-    =/  vax=(unit vase)  (transform-proxy-update:og vas)
-    ?>  ?=(^ vax)
-    =/  wire  (make-wire /store)
-    :_  state
-    [%pass wire %agent [our.bowl store-name.config] %poke update-mark.config u.vax]~
   ::
   ++  poke-hook-action
     |=  =action
