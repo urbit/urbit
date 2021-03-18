@@ -120,8 +120,20 @@
   $%  [%bat batch=@]
       [%log =event-log:rpc:ethereum]
   ==
+::  ECDSA verifier
 ::
-+$  verifier  $-([dat=@ v=@ r=@ s=@] pub=@)
++$  verifier  $-([dat=@ v=@ r=@ s=@] =address)
+::  stdlib verifier, for testing
+::
+::  TODO: does this uniquely produce the pubkey?
+::
+++  dumver
+  ^-  verifier
+  |=  [dat=@ v=@ r=@ s=@]
+  =,  secp256k1:secp:crypto
+  %-  address-from-pub:key:ethereum
+  %-  serialize-point
+  (ecdsa-raw-recover dat v r s)
 --
 ::
 |%
@@ -224,7 +236,6 @@
     =^  v  sig  (take 3)
     =^  r  sig  (take 3 32)
     =^  s  sig  (take 3 32)
-    %-  address-from-pub:key:ethereum
     (verifier txdata v r s)
     ::
     ++  take
@@ -636,7 +647,7 @@
 ::  TODO: wrap in mule to no-op instead of crash?  perhaps that's better
 ::  as part of the spec?  it's not a clear part of the nock spec, though
 ::
-|=  [=input =state =verifier]
+|=  [=verifier =state =input]
 ^-  [effects ^state]
 ?:  ?=(%log -.input)
   :: Received log from L1 transaction
