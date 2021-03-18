@@ -1,8 +1,8 @@
 /-  *demo
 :-  %say
 |=  $:  [now=@da eny=@uvJ =beak]
-        [[=term lst=(list action) ~] ~]
+        [[=term lst=(list update) ~] ~]
     ==
 :-  %demo-update-0
-^-  action
+^-  update
 [%run [p.beak term] lst]

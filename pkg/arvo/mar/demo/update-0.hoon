@@ -6,6 +6,7 @@
   |%
   ++  noun  upd
   ++  demo-update-1  upd
+  ++  demo-update  upd
   --
 ::
 ++  grab
