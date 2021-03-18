@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Text } from '@tlon/indigo-react';
+import { Box, Row, Text } from '@tlon/indigo-react';
 import { Link } from 'react-router-dom';
 
 
@@ -16,10 +16,16 @@ export function GroupFeedHeader(props) {
       alignItems="center"
       borderBottom={1}
       borderColor="washedGray">
-      { baseUrl !== history.location.pathname ? (
-          <Link to={baseUrl}><Text>{'<- Back'}</Text></Link>
-        ) : null
-      }
+      <Box display={['block', 'none']}>
+        { baseUrl !== history.location.pathname ? (
+          <Link to={baseUrl}>
+            <Text pr="2">{'<- Back'}</Text>
+          </Link>
+          ) : null
+        }
+      </Box>
+      <Text bold fontSize="2" pr="2">Group Feed</Text>
+      <Text fontSize="0" p="1" backgroundColor="washedGray">Everyone can post</Text>
     </Row>
   );
 }

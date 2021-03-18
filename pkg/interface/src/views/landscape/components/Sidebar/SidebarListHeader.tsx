@@ -70,7 +70,19 @@ export function SidebarListHeader(props: {
          height='48px'
          borderBottom={1}
          borderColor="washedGray"
-         cursor="pointer"
+         backgroundColor={['transparent',
+           props.history.location.pathname === `/~landscape${groupPath}` ||
+           props.history.location.pathname === `/~landscape${groupPath}/feed` 
+           ? (
+            'washedGray'
+           ) : (
+            'transparent'
+           )]}
+           cursor={['pointer', (
+             props.history.location.pathname === `/~landscape${groupPath}` ||
+             props.history.location.pathname === `/~landscape${groupPath}/feed`
+             ? 'default' : 'pointer'
+           )]}
          onClick={() => {
            props.history.push(`/~landscape${groupPath}/feed`);
          }}
