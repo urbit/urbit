@@ -77,7 +77,7 @@ export const UnreadMarker = React.forwardRef(({ dayBreak, when, association }, r
         position='absolute'
         ref={ref}
         px={2}
-        mt={2}
+        mt={0}
         height={5}
         justifyContent='center'
         alignItems='center'
@@ -358,8 +358,8 @@ export const MessageAuthor = ({
     .unix(msg['time-sent'] / 1000)
     .format(DATESTAMP_FORMAT);
   const contact =
-    ( ( (msg.author === window.ship && showOurContact) || 
-         msg.author !== window.ship) && 
+    ( ( (msg.author === window.ship && showOurContact) ||
+         msg.author !== window.ship) &&
       `~${msg.author}` in contacts
     ) ? contacts[`~${msg.author}`] : false;
 
@@ -404,6 +404,7 @@ export const MessageAuthor = ({
     contact?.avatar && !hideAvatars ? (
       <BaseImage
         display='inline-block'
+        referrerPolicy="no-referrer"
         style={{ objectFit: 'cover' }}
         src={contact.avatar}
         height={24}
@@ -432,13 +433,14 @@ export const MessageAuthor = ({
       </Box>
     );
   return (
-    <Box display='flex' alignItems='center' {...rest}>
+    <Box display='flex' alignItems='flex-start' {...rest}>
       <Box
         onClick={() => {
           setShowOverlay(true);
         }}
         height={24}
         pr={2}
+        mt={'1px'}
         pl={'12px'}
         cursor='pointer'
         position='relative'
@@ -471,7 +473,7 @@ export const MessageAuthor = ({
           <Text
             fontSize={1}
             mr={2}
-            flexShrink={0}
+            flexShrink={1}
             mono={nameMono}
             fontWeight={nameMono ? '400' : '500'}
             cursor='pointer'

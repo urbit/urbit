@@ -43,6 +43,7 @@ export function ProfileImages(props: any): ReactElement {
         src={contact.cover}
         width='100%'
         height='100%'
+        referrerPolicy="no-referrer"
         style={{ objectFit: 'cover' }}
       />
     ) : (
@@ -60,6 +61,7 @@ export function ProfileImages(props: any): ReactElement {
         src={contact.avatar}
         width='100%'
         height='100%'
+        referrerPolicy="no-referrer"
         style={{ objectFit: 'cover' }}
       />
     ) : (
