@@ -17,7 +17,7 @@ function TranscludedLinkNode(props: {
   transcluded: number;
   api: GlobalApi;
 }) {
-  const { node, assoc, transcluded } = props;
+  const { node, api, assoc, transcluded } = props;
   const idx = node.post.index.slice(1).split("/");
 
   switch (idx.length) {

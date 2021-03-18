@@ -54,21 +54,18 @@ export function CommentItem(props: CommentItemProps): ReactElement {
   if (window.ship == post?.author && !disabled) {
     adminLinks.push(
       <Link to={{ pathname: props.baseUrl, search: `?edit=${commentIndex}`}}>
-        <Text
-          color="blue"
-          ml={2}
-        >
+        <Action>
           Update
-        </Text>
+        </Action>
       </Link>
     )
   };
 
   if ((window.ship == post?.author || ourRole == "admin") && !disabled) {
     adminLinks.push(
-      <ClickBox display="inline-block" color="red" onClick={onDelete}>
-        <Text color='red'>Delete</Text>
-      </ClickBox>
+      <Action onClick={onDelete} destructive>
+        Delete
+      </Action>
     )
   };
 
@@ -95,9 +92,9 @@ export function CommentItem(props: CommentItemProps): ReactElement {
           unread={props.unread}
           group={group}
         >
-          <Row alignItems="center">
+          <Row px="2" gapX="2" alignItems="center">
+            <Action bg="white" onClick={doCopy}>{copyDisplay}</Action>
             {adminLinks}
-            <Action ml="2" bg="white" onClick={doCopy}>{copyDisplay}</Action>
           </Row>
         </Author>
       </Row>
@@ -105,7 +102,7 @@ export function CommentItem(props: CommentItemProps): ReactElement {
         borderRadius="1"
         p="1"
         mb="1"
-        backgroundColor={props.highlighted ? 'lightGray' : 'white'}
+        backgroundColor={props.highlighted ? 'lightBlue' : 'white'}
       >
         <MentionText
           transcluded={0}

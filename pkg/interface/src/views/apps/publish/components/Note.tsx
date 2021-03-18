@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Text, Col, Anchor, Row } from '@tlon/indigo-react';
+import { Box, Text, Col, Anchor, Row, Action } from '@tlon/indigo-react';
 import ReactMarkdown from 'react-markdown';
 import bigInt from 'big-integer';
 
@@ -12,6 +12,8 @@ import { getLatestRevision, getComments } from '~/logic/lib/publish';
 import { roleForShip } from '~/logic/lib/group';
 import Author from '~/views/components/Author';
 import { Contacts, GraphNode, Graph, Association, Unreads, Group } from '@urbit/api';
+import {useCopy} from '~/logic/lib/useCopy';
+import {usePermalinkForGraph} from '~/logic/lib/permalinks';
 
 interface NoteProps {
   ship: string;
@@ -69,33 +71,23 @@ export function Note(props: NoteProps & RouteComponentProps) {
   const ourRole = roleForShip(group, window.ship);
   if (window.ship === note?.post?.author) {
     adminLinks.push(
-        <Link
-          style={{ 'display': 'inline-block' }}
-          to={`${baseUrl}/edit`}
-        >
-          <Text
-            color="blue"
-            ml={2}
-          >
-            Update
-          </Text>
+      <Link to={`${baseUrl}/edit`}>
+        <Action>Update</Action>
       </Link>
     )
   };
 
   if (window.ship === note?.post?.author || ourRole === "admin") {
     adminLinks.push(
-      <Text
-        color="red"
-        display='inline-block'
-        ml={2}
-        onClick={deletePost}
-        style={{ cursor: 'pointer' }}
-      >
+      <Action destructive onClick={deletePost}>
         Delete
-      </Text>
+      </Action>
     )
   };
+
+  const permalink = usePermalinkForGraph(props.association, `/${noteId.toString()}`)
+
+  const { doCopy, copyDisplay } = useCopy(permalink, 'Copy Link');
 
   const windowRef = React.useRef(null);
   useEffect(() => {
@@ -128,8 +120,12 @@ export function Note(props: NoteProps & RouteComponentProps) {
             ship={post?.author}
             date={post?.['time-sent']}
             group={group}
-          />
-          <Text ml={1}>{adminLinks}</Text>
+          >
+            <Row px="2" gapX="2" alignItems="flex-end">
+              <Action bg="white" onClick={doCopy}>{copyDisplay}</Action>
+              {adminLinks}
+            </Row>
+          </Author>
         </Row>
       </Col>
       <NoteContent body={body} />

@@ -3,7 +3,15 @@ import {
   parsePermalink,
   GraphPermalink as IGraphPermalink,
 } from "~/logic/lib/permalinks";
-import { Box, Text, BaseAnchor, Row, Icon, Col } from "@tlon/indigo-react";
+import {
+  Action,
+  Box,
+  Text,
+  BaseAnchor,
+  Row,
+  Icon,
+  Col,
+} from "@tlon/indigo-react";
 import { GroupLink } from "~/views/components/GroupLink";
 import GlobalApi from "~/logic/api/global";
 import { getModuleIcon } from "~/logic/lib/util";
@@ -29,9 +37,13 @@ function GroupPermalink(props: { group: string; api: GlobalApi }) {
 }
 
 function GraphPermalink(
-  props: IGraphPermalink & { api: GlobalApi; transcluded: number }
+  props: IGraphPermalink & {
+    api: GlobalApi;
+    transcluded: number;
+    pending?: boolean;
+  }
 ) {
-  const { link, graph, group, index, api, transcluded } = props;
+  const { pending, link, graph, group, index, api, transcluded } = props;
   const { ship, name } = resourceFromPath(graph);
   const node = useGraphState(
     useCallback((s) => s.looseNodes?.[`${ship.slice(1)}/${name}`]?.[index], [
@@ -47,6 +59,9 @@ function GraphPermalink(
   );
   useEffect(() => {
     (async () => {
+      if (pending) {
+        return;
+      }
       try {
         await api.graph.getNode(ship, name, index);
       } catch (e) {
@@ -54,7 +69,7 @@ function GraphPermalink(
         setErrored(true);
       }
     })();
-  }, [graph, index]);
+  }, [pending, graph, index]);
   const showTransclusion = !!(association && node && transcluded < 1);
 
   const rowTransclusionStyle = showTransclusion
@@ -66,31 +81,25 @@ function GraphPermalink(
     : {};
 
   return (
-    <Link to={`/perma${link}`}>
-      <Col
-        my="1"
-        bg="white"
-        border="1"
-        borderColor="lightGray"
-        borderRadius="2"
+    <Col my="1" bg="white" border="1" borderColor="lightGray" borderRadius="2">
+      {showTransclusion && (
+        <Box p="2">
+          <TranscludedNode
+            transcluded={transcluded + 1}
+            node={node}
+            assoc={association!}
+          />
+        </Box>
+      )}
+      <Row
+        {...rowTransclusionStyle}
+        alignItems="center"
+        justifyContent="space-between"
+        width="100%"
+        px="2"
+        py="1"
       >
-        {showTransclusion && (
-          <Box p="2">
-            <TranscludedNode
-              transcluded={transcluded + 1}
-              node={node}
-              assoc={association!}
-            />
-          </Box>
-        )}
-        <Row
-          {...rowTransclusionStyle}
-          alignItems="center"
-          height="32px"
-          gapX="2"
-          width="100%"
-          px="2"
-        >
+        <Row gapX="2" alignItems="center">
           <Icon
             icon={
               association
@@ -102,13 +111,15 @@ function GraphPermalink(
             {association?.metadata.title ?? graph.slice(6)}
           </Text>
         </Row>
-      </Col>
-    </Link>
+        <Action onClick={() => {}}>Go to link</Action>
+      </Row>
+    </Col>
   );
 }
 
 export function PermalinkEmbed(props: {
   link: string;
+  association?: Association;
   api: GlobalApi;
   transcluded: number;
 }) {

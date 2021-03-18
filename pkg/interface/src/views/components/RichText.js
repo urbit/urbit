@@ -45,7 +45,7 @@ const RichText = React.memo(({ disableRemoteContent, api, ...props }) => (
         if (isValidPatp(linkText)) {
           return <Mention contact={props.contact || {}} group={props.group} ship={deSig(linkText)} />;
         } else if(linkText.startsWith('web+urbit://')) {
-          return <PermalinkEmbed link={linkText} transcluded={props.transcluded} api={api}/>;
+          return <PermalinkEmbed pending={props.pending} link={linkText} transcluded={props.transcluded} api={api}/>;
 
         }
         return linkText;

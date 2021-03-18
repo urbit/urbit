@@ -10,7 +10,7 @@ export function getGraphPermalink(
 ) {
   const mod = assoc.metadata.module;
   const groupPath = group.hidden
-    ? "/~/landscape/home"
+    ? "/~landscape/home"
     : `/~landscape${assoc.group}`;
   if (mod === "chat") {
     return getChatPermalink(

@@ -66,7 +66,7 @@ export default function Author(props: AuthorProps & PropFunc<typeof Box>): React
     );
 
   return (
-    <Row {...rest} alignItems='center' width='auto'>
+    <Row height="20px" {...rest} alignItems='center' width='auto'>
       <Box
         onClick={() => toggleOverlay()}
         height={16}
