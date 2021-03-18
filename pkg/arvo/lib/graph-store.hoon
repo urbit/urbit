@@ -78,7 +78,7 @@
         %mention    (frond %mention (ship ship.c))
         %text       (frond %text s+text.c)
         %url        (frond %url s+url.c)
-        %reference  (frond %reference (uid uid.c))
+        %reference  (frond %reference (reference +.c))
         %code
       %+  frond  %code
       %-  pairs
@@ -94,6 +94,28 @@
         %|  a+[a+[%s '[[output rendering error]]']~]~
       ==
     ==
+  ::
+  ++  reference
+    |=  ref=^reference
+    |^
+    %+  frond  -.ref
+    ?-  -.ref
+      %graph  (graph +.ref)
+      %group  (group +.ref)
+    ==
+    ::
+    ++  graph
+      |=  [grp=res gra=res idx=^index]
+      %-  pairs
+      :~  graph+s+(enjs-path:res grp)
+          group+s+(enjs-path:res gra)
+          index+(index idx)
+      ==
+    ::
+    ++  group
+      |=  grp=res
+      s+(enjs-path:res grp)
+    --
   ::
   ++  post
     |=  p=^post
@@ -114,7 +136,7 @@
     |^  (frond %graph-update (pairs ~[(encode q.upd)]))
     ::
     ++  encode
-      |=  upd=update-0
+      |=  upd=action
       ^-  [cord json]
       ?-  -.upd
           %add-graph
@@ -247,9 +269,8 @@
   ++  update
     |=  jon=json
     ^-  ^update
-    :-  %0
     :-  *time
-    ^-  update-0
+    ^-  action
     =<  (decode jon)
     |%
     ++  decode
@@ -333,9 +354,24 @@
       :~  [%mention (su ;~(pfix sig fed:ag))]
           [%text so]
           [%url so]
-          [%reference uid]
+          [%reference reference]
           [%code eval]
       ==
+    ::
+    ++  reference
+      |^
+      %-  of
+      :~  graph+graph
+          group+dejs-path:res
+      ==
+      ::
+      ++  graph
+        %-  ot
+        :~  group+dejs-path:res
+            graph+dejs-path:res
+            index+index
+        ==
+      --
     ::
     ++  tang 
       |=  jon=^json

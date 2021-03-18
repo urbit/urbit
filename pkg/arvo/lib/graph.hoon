@@ -43,7 +43,6 @@
   ^-  graph:store
   =/  =update:store
     (get-graph res)
-  ?>  ?=(%0 -.update)
   ?>  ?=(%add-graph -.q.update)
   graph.q.update
 ::
@@ -54,7 +53,6 @@
       %+  weld
         /node-siblings/younger/(scot %p entity.res)/[name.res]/all
       (turn index (cury scot %ud))
-  ?>  ?=(%0 -.update)
   ?>  ?=(%add-nodes -.q.update)
   nodes.q.update
 ::
@@ -65,7 +63,6 @@
       %+  weld
         /node/(scot %p entity.res)/[name.res]
       (turn index (cury scot %ud))
-  ?>  ?=(%0 -.update)
   ?>  ?=(%add-nodes -.q.update)
   ?>  ?=(^ nodes.q.update)
   q.n.nodes.q.update
@@ -99,7 +96,6 @@
   ^-  resources
   =+  %+  scry-for  ,=update:store
       /keys
-  ?>  ?=(%0 -.update)
   ?>  ?=(%keys -.q.update)
   resources.q.update
 ::
