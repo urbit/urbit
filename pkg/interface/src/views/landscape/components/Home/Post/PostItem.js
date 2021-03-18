@@ -51,7 +51,7 @@ class PostItem extends React.Component {
           width="100%"
           maxWidth="600px"
           onClick={this.navigateToReplies}>
-          <PostHeader post={node.post} contacts={contacts} />
+          <PostHeader post={node.post} contacts={contacts} api={api} />
           <PostContent
             post={node.post}
             contacts={contacts} />

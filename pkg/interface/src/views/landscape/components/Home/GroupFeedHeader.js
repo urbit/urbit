@@ -18,9 +18,9 @@ export function GroupFeedHeader(props) {
       borderColor="washedGray">
       <Box display={['block', 'none']}>
         { baseUrl !== history.location.pathname ? (
-          <Link to={baseUrl}>
-            <Text pr="2">{'<- Back'}</Text>
-          </Link>
+            <Text pr="2" cursor="pointer" onClick={() => {
+              history.goBack();
+            }}>{'<- Back'}</Text>
           ) : null
         }
       </Box>

@@ -2,7 +2,7 @@ import React, { ReactElement, ReactNode, useState } from 'react';
 import moment from 'moment';
 import { useHistory } from 'react-router-dom';
 
-import { Row, Box, BaseImage } from '@tlon/indigo-react';
+import { Col, Row, Box, BaseImage } from '@tlon/indigo-react';
 import { Contacts } from '@urbit/api/contacts';
 import { Group } from '@urbit/api';
 
@@ -23,11 +23,19 @@ interface AuthorProps {
   unread?: boolean;
   group: Group;
   api?: GlobalApi;
+  size?: number;
 }
 
 // eslint-disable-next-line max-lines-per-function
 export default function Author(props: AuthorProps): ReactElement {
   const { contacts, ship = '', date, showImage, group } = props;
+
+  const showAsCol = props.showAsCol || false;
+  const time = props.time || false;
+  const size = props.size || 16;
+  const sigilPadding = props.sigilPadding || 2;
+  const fullNotIcon = !!props.fullNotIcon;
+
   const history = useHistory();
   const osDark = useLocalState((state) => state.dark);
 
@@ -50,25 +58,59 @@ export default function Author(props: AuthorProps): ReactElement {
     setShowOverlay(value => !value);
   };
 
+  const sigil = fullNotIcon ? (
+    <Sigil ship={ship} size={size} color={color} padding={sigilPadding} />
+  ) : (
+    <Sigil ship={ship} size={size} color={color} icon padding={sigilPadding} />
+    );
+
+  const rowOrCol = showAsCol ? (
+    <Col>
+      <Box
+        ml={showImage ? 2 : 0}
+        color='black'
+        fontSize='1'
+        lineHeight='tall'
+        fontFamily={showNickname ? 'sans' : 'mono'}
+        fontWeight={showNickname ? '500' : '400'}
+      >
+        {name}
+      </Box>
+      <Timestamp stamp={stamp} fontSize={1} time={time} ml={2} color={props.unread ? 'blue' : 'gray'} />
+    </Col>
+  ) : (
+    <> 
+      <Box
+        ml={showImage ? 2 : 0}
+        color='black'
+        fontSize='1'
+        lineHeight='tall'
+        fontFamily={showNickname ? 'sans' : 'mono'}
+        fontWeight={showNickname ? '500' : '400'}
+      >
+        {name}
+      </Box>
+      <Timestamp stamp={stamp} fontSize={1} time={time} ml={2} color={props.unread ? 'blue' : 'gray'} />
+    </>
+  );
+
   const img =
     contact?.avatar && !hideAvatars ? (
       <BaseImage
         display='inline-block'
         src={contact.avatar}
         style={{ objectFit: 'cover' }}
-        height={16}
-        width={16}
+        height={size}
+        width={size}
         borderRadius={1}
       />
-    ) : (
-      <Sigil ship={ship} size={16} color={color} icon padding={2} />
-    );
+    ) : sigil;
 
   return (
     <Row alignItems='center' width='auto'>
       <Box
         onClick={() => toggleOverlay()}
-        height={16}
+        height={size}
         position='relative'
         cursor='pointer'
       >
@@ -85,17 +127,7 @@ export default function Author(props: AuthorProps): ReactElement {
           />
         )}
       </Box>
-      <Box
-        ml={showImage ? 2 : 0}
-        color='black'
-        fontSize='1'
-        lineHeight='tall'
-        fontFamily={showNickname ? 'sans' : 'mono'}
-        fontWeight={showNickname ? '500' : '400'}
-      >
-        {name}
-      </Box>
-      <Timestamp stamp={stamp} fontSize={1} time={false} ml={2} color={props.unread ? 'blue' : 'gray'} />
+      {rowOrCol}
       {props.children}
     </Row>
   );
