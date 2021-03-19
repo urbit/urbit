@@ -17,22 +17,22 @@ import Data.Time.Clock.System (systemToUTCTime, utcToSystemTime)
 import Data.Time.LocalTime    (TimeOfDay(..), timeToTimeOfDay)
 import Data.Word              (Word64)
 import Text.Printf            (printf)
-import Urbit.Noun             (FromNoun, ToNoun)
+import Urbit.Noun             (deriveToNoun, FromNoun, ToNoun(..))
 
 
 -- Types -----------------------------------------------------------------------
 
 newtype Gap = Gap { _fractoSecs :: Integer }
-  deriving newtype (Eq, Ord, Show, Num, ToNoun, FromNoun)
+  deriving newtype (Eq, Ord, Show, Num, FromNoun)
 
 newtype Unix = Unix { _sinceUnixEpoch :: Gap }
-  deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
+  deriving newtype (Eq, Ord, Show, FromNoun)
 
 newtype Wen = Wen { _sinceUrbitEpoch :: Gap }
-  deriving newtype (Eq, Ord, Show, Num, ToNoun, FromNoun)
+  deriving newtype (Eq, Ord, Show, Num, FromNoun)
 
 newtype Date = MkDate { _dateWen :: Wen }
-  deriving newtype (Eq, Ord, Num, ToNoun, FromNoun)
+  deriving newtype (Eq, Ord, Num, FromNoun)
 
 
 -- Record Lenses ---------------------------------------------------------------
@@ -44,6 +44,20 @@ makeLenses ''Date
 
 
 -- Instances -------------------------------------------------------------------
+
+instance ToNoun Gap where
+  toNoun (reducePrecision -> Gap fs) = toNoun fs
+
+-- | Produce a Gap with fewer digits after the binary point, more
+-- appropriately capturing the precision our clock gives us.
+reducePrecision :: Gap -> Gap
+reducePrecision (Gap fs) = Gap (chop fs)
+  where
+      chop fs = shiftL (shiftR fs 32) 32
+
+deriveToNoun ''Unix
+deriveToNoun ''Wen
+deriveToNoun ''Date
 
 instance Show Date where
   show (MkDate wen) = if fs == 0
@@ -149,9 +163,3 @@ gap (Wen x) (Wen y) | x > y     = x - y
 
 addGap :: Wen -> Gap -> Wen
 addGap (Wen x) y = Wen (x+y)
-
--- | Produce a Wen with precision compatible to that from vere's time.c
-chop :: Wen -> Wen
-chop (Wen (Gap g)) = Wen (Gap (mop g))
-  where
-      mop n = shiftL (shiftR n 48) 48
