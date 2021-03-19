@@ -288,7 +288,7 @@
     |=  b=dill-belt-2
     ^-  dill-belt:dill
     ?.  ?=(?(%ctl %met) -.b)  b
-    [%key -.b p.b]
+    [%mod -.b p.b]
   ::
   ++  load-apps
     |=  hood-version=@ud
@@ -793,6 +793,7 @@
     ?<  ?=([?(%cru %hey %rez %yow) *] bet)            ::  target-specific
     =.  blt  [q.blt `bet]                             ::  remember belt
     ?-  bet
+      @         (ta-txt bet ~)
       [%aro *]  (ta-aro p.bet)
       [%bac *]  ta-bac
       [%del *]  ta-del
@@ -800,11 +801,8 @@
       [%ret *]  ta-ret
       [%txt *]  (ta-txt p.bet)
     ::
-        [%key *]
-      ?+  mod.bet
-        ?^  key.bet  $(bet key.bet)
-        (ta-txt key.bet ~)
-      ::
+        [%mod *]
+      ?+  mod.bet  $(bet key.bet)
         %ctl  (ta-ctl key.bet)
         %met  (ta-met key.bet)
       ==
@@ -972,8 +970,8 @@
         kil
       ?.  ?&  ?=(^ old.kil)
               ?=(^ p.blt)
-              ?|  ?=([%key %ctl ?(%k %u %w)] u.p.blt)
-                  ?=([%key %met ?(%d [%bac ~])] u.p.blt)
+              ?|  ?=([%mod %ctl ?(%k %u %w)] u.p.blt)
+                  ?=([%mod %met ?(%d [%bac ~])] u.p.blt)
           ==  ==
         %=  kil                                       ::  prepend
           num  +(num.kil)
@@ -1057,8 +1055,8 @@
             ::
       %y    ?.  ?&  ?=(^ old.kil)                     ::  rotate & yank
                     ?=(^ p.blt)
-                    ?|  ?=([%key %ctl %y] u.p.blt)
-                        ?=([%key %met %y] u.p.blt)
+                    ?|  ?=([%mod %ctl %y] u.p.blt)
+                        ?=([%mod %met %y] u.p.blt)
                 ==  ==
               ta-bel
             =+  las=(lent ta-yan)

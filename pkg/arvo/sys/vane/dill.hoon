@@ -451,7 +451,7 @@
     |=  b=dill-belt-4
     ^-  dill-belt
     ?.  ?=(?(%ctl %met) -.b)  b
-    [%key -.b p.b]
+    [%mod -.b p.b]
   --
 ::
 ++  scry

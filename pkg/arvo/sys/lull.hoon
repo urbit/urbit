@@ -1065,19 +1065,21 @@
   ::::                                                  ::  (1d2)
     ::
   +$  blew  [p=@ud q=@ud]                               ::  columns rows
-  +$  belt                                              ::  outside belt
+  +$  belt                                              ::  client input
+    $?  bolt                                            ::  simple input
+        [%mod mod=?(%ctl %met %hyp) key=bolt]           ::  w/ modifier
+        [%txt p=(list @c)]                              ::  utf32 text
+        ::TODO  consider moving %hey, %rez, %yow here   ::
+    ==                                                  ::
+  +$  bolt                                              ::  simple input
+    $@  @c                                              ::  simple keystroke
     $%  [%aro p=?(%d %l %r %u)]                         ::  arrow key
         [%bac ~]                                        ::  true backspace
         [%del ~]                                        ::  true delete
         [%hit r=@ud c=@ud]                              ::  mouse click
-        [%key mod=?(~ %ctl %met %hyp) key=bolt]         ::  input w/ modifier
         [%ret ~]                                        ::  return
-        [%txt p=(list @c)]                              ::  utf32 text
     ==                                                  ::
-  +$  bolt                                              ::  single input
-    $@  @cF                                             ::  simple
-    $<(?(%txt %key) belt)                               ::  special
-  +$  blit                                              ::  outside blit
+  +$  blit                                              ::  client output
     $%  [%bel ~]                                        ::  make a noise
         [%clr ~]                                        ::  clear the screen
         [%hop p=$@(@ud [r=@ud c=@ud])]                  ::  set cursor col/pos
@@ -1089,15 +1091,15 @@
         [%url p=@t]                                     ::  activate url
         [%wyp ~]                                        ::  wipe cursor line
     ==                                                  ::
-  +$  dill-belt                                         ::  inside belt
-    $%  belt                                            ::  outside belt
+  +$  dill-belt                                         ::  arvo input
+    $%  belt                                            ::  client input
         [%cru p=@tas q=(list tank)]                     ::  echo error
         [%hey ~]                                        ::  refresh
         [%rez p=@ud q=@ud]                              ::  resize, cols, rows
         [%yow p=gill:gall]                              ::  connect to app
     ==                                                  ::
-  +$  dill-blit                                         ::  inside blit
-    $%  blit                                            ::  outside blit
+  +$  dill-blit                                         ::  arvo output
+    $%  blit                                            ::  client output
         [%mor p=(list dill-blit)]                       ::  multiple blits
         [%qit ~]                                        ::  close console
     ==                                                  ::

@@ -28,8 +28,8 @@
   %+  send-events-to  who
   ^-  (list unix-event)
   :~
-    [//term/1 %belt %key %ctl `@c`%e]
-    [//term/1 %belt %key %ctl `@c`%u]
+    [//term/1 %belt %mod %ctl `@c`%e]
+    [//term/1 %belt %mod %ctl `@c`%u]
     [//term/1 %belt %txt ((list @c) what)]
     [//term/1 %belt %ret ~]
   ==
@@ -40,7 +40,7 @@
   |=  [who=ship what=term]
   ^-  (list ph-event)
   %+  send-events-to  who
-  :~  [//term/1 %belt %key %ctl (,@c what)]
+  :~  [//term/1 %belt %mod %ctl (,@c what)]
   ==
 ::
 ::  Inject a file into a ship

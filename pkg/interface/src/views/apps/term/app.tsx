@@ -278,7 +278,7 @@ export default function TermApp(props: TermAppProps) {
         belts.push({ ret: null });
       }
       else if (c <= 26) {
-        belts.push({ key: { mod: 'ctl', key: String.fromCharCode(96 + c) } });
+        belts.push({ mod: { mod: 'ctl', key: String.fromCharCode(96 + c) } });
       }
 
       //  escape sequences
@@ -309,13 +309,13 @@ export default function TermApp(props: TermAppProps) {
           }
         }
         else if (c >= 97 && c <= 122) {  //  a <= c <= z
-          belts.push({ key: { mod: 'met', key: e[0] } });
+          belts.push({ mod: { mod: 'met', key: e[0] } });
         }
         else if (c === 46) {  //  .
-          belts.push({ key: { mod: 'met', key: '.' } });
+          belts.push({ mod: { mod: 'met', key: '.' } });
         }
         else if (c === 8 || c === 127) {
-          belts.push({ key: { mod: 'met', key: { bac: null } } });
+          belts.push({ mod: { mod: 'met', key: { bac: null } } });
         }
         else {
           term.write('\x07'); break;  //  bel

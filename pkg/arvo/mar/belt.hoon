@@ -8,10 +8,14 @@
   |%
   ++  noun  belt:dill
   ++  json
-    ^-  $-(^json belt:dill)
+    |=  jon=^json
+    ^-  belt:dill
+    ?:  ?=([%s *] jon)
+      (taft p.jon)
     =,  dejs:format
+    %.  jon
     %-  of
-    |^  :*  key+(ot 'mod'^mod 'key'^bot ~)
+    |^  :*  mod+(ot 'mod'^mod 'key'^bot ~)
             txt+(ar (cu taft so))
             bol
         ==
@@ -25,16 +29,16 @@
       ==
     ::
     ++  bot
-      |=  jon=json
-      ?+  jon  !!
-        [%s *]  ((cu taft so) jon)
-        [%o *]  ((of bol) jon)
+      |=  j=json
+      ^-  bolt:dill
+      ?+  j  !!
+        [%s *]  (taft p.j)
+        [%o *]  ((of bol) j)
       ==
     ::
     ++  mod
-      |=  jon=json
-      ?~  jon  ~
-      ((su (perk %ctl %met %hyp ~)) jon)
+      |=  j=json
+      ((su (perk %ctl %met %hyp ~)) j)
     --
   --
 ::  +grow: convert to
