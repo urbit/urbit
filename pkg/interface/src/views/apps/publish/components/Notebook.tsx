@@ -5,32 +5,29 @@ import { Col, Box, Text, Row } from '@tlon/indigo-react';
 import { Contacts, Rolodex, Groups, Associations, Graph, Association, Unreads } from '@urbit/api';
 
 import { NotebookPosts } from './NotebookPosts';
-import GlobalApi from '~/logic/api/global';
 import { useShowNickname } from '~/logic/lib/util';
+import useContactState from '~/logic/state/contact';
+import useGroupState from '~/logic/state/group';
 
 interface NotebookProps {
-  api: GlobalApi;
   ship: string;
   book: string;
   graph: Graph;
   association: Association;
-  associations: Associations;
-  contacts: Rolodex;
-  groups: Groups;
   baseUrl: string;
   rootUrl: string;
   unreads: Unreads;
 }
 
-export function Notebook(props: NotebookProps & RouteComponentProps): ReactElement {
+export function Notebook(props: NotebookProps & RouteComponentProps): ReactElement | null {
   const {
     ship,
     book,
-    contacts,
-    groups,
     association,
     graph
   } = props;
+
+  const groups = useGroupState(state => state.groups);
 
   const group = groups[association?.group];
   if (!group) {
@@ -38,9 +35,9 @@ export function Notebook(props: NotebookProps & RouteComponentProps): ReactEleme
   }
 
   const relativePath = (p: string) => props.baseUrl + p;
+  const contacts = useContactState(state => state.contacts);
 
   const contact = contacts?.[`~${ship}`];
-  console.log(association.resource);
 
   const showNickname = useShowNickname(contact);
 
@@ -60,10 +57,7 @@ export function Notebook(props: NotebookProps & RouteComponentProps): ReactEleme
         graph={graph}
         host={ship}
         book={book}
-        contacts={contacts}
-        unreads={props.unreads}
         baseUrl={props.baseUrl}
-        api={props.api}
         group={group}
       />
     </Col>

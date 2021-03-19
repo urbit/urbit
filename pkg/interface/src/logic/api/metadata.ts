@@ -77,7 +77,6 @@ export default class MetadataApi extends BaseApi<StoreState> {
           tempChannel.delete();
         },
         (ev: any) => {
-          console.log(ev);
           if ('metadata-hook-update' in ev) {
             done = true;
             tempChannel.delete();

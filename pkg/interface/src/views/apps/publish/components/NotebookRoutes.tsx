@@ -17,32 +17,32 @@ import bigInt from 'big-integer';
 import Notebook from './Notebook';
 import NewPost from './new-post';
 import { NoteRoutes } from './NoteRoutes';
+import useGraphState from '~/logic/state/graph';
+import useGroupState from '~/logic/state/group';
 
 interface NotebookRoutesProps {
   api: GlobalApi;
   ship: string;
   book: string;
-  graphs: Graphs;
-  unreads: Unreads;
-  contacts: Rolodex;
-  groups: Groups;
   baseUrl: string;
   rootUrl: string;
   association: Association;
-  associations: Associations;
-  storage: StorageState;
 }
 
 export function NotebookRoutes(
   props: NotebookRoutesProps & RouteComponentProps
 ) {
-  const { ship, book, api, contacts, baseUrl, rootUrl, groups } = props;
+  const { ship, book, api, baseUrl, rootUrl } = props;
 
   useEffect(() => {
     ship && book && api.graph.getGraph(ship, book);
   }, [ship, book]);
 
-  const graph = props.graphs[`${ship.slice(1)}/${book}`];
+  const graphs = useGraphState(state => state.graphs);
+
+  const graph = graphs[`${ship.slice(1)}/${book}`];
+
+  const groups = useGroupState(state => state.groups);
 
   const group = groups?.[props.association?.group];
 
@@ -59,7 +59,6 @@ export function NotebookRoutes(
           return <Notebook
             {...props}
             graph={graph}
-            contacts={contacts}
             association={props.association}
             rootUrl={rootUrl}
             baseUrl={baseUrl}
@@ -77,7 +76,6 @@ export function NotebookRoutes(
             association={props.association}
             graph={graph}
             baseUrl={baseUrl}
-            storage={props.storage}
           />
         )}
       />
@@ -104,12 +102,9 @@ export function NotebookRoutes(
               ship={ship}
               note={note}
               notebook={graph}
-              unreads={props.unreads}
               noteId={noteIdNum}
-              contacts={contacts}
               association={props.association}
               group={group}
-              storage={props.storage}
               {...routeProps}
             />
           );

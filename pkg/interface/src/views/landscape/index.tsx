@@ -17,6 +17,9 @@ import { Box } from '@tlon/indigo-react';
 import { Loading } from '../components/Loading';
 import { Workspace } from '~/types/workspace';
 import GlobalSubscription from '~/logic/subscription/global';
+import useGraphState from '~/logic/state/graph';
+import useHarkState, { withHarkState } from '~/logic/state/hark';
+import withState from '~/logic/lib/withState';
 
 type LandscapeProps = StoreState & {
   ship: PatpNoSig;
@@ -25,10 +28,11 @@ type LandscapeProps = StoreState & {
 }
 
 export function DMRedirect(props: LandscapeProps & RouteComponentProps & { ship: string; }): ReactElement {
-  const { ship, api, history, graphKeys } = props;
+  const { ship, api, history } = props;
   const goToGraph = useCallback((graph: string) => {
     history.push(`/~landscape/messages/resource/chat/ship/~${graph}`);
   }, [history]);
+  const graphKeys = useGraphState(state => state.graphKeys);
 
   useEffect(() => {
     const station = `${window.ship}/dm--${ship}`;
@@ -63,7 +67,7 @@ export function DMRedirect(props: LandscapeProps & RouteComponentProps & { ship:
   );
 }
 
-export default class Landscape extends Component<LandscapeProps, Record<string, never>> {
+class Landscape extends Component<LandscapeProps, Record<string, never>> {
   componentDidMount(): void {
     this.props.subscription.startApp('groups');
     this.props.subscription.startApp('graph');
@@ -115,9 +119,6 @@ export default class Landscape extends Component<LandscapeProps, Record<string, 
                 <Body>
                   <Box maxWidth="300px">
                     <NewGroup
-                      associations={props.associations}
-                      groups={props.groups}
-                      contacts={props.contacts}
                       api={props.api}
                       {...routeProps}
                     />
@@ -140,8 +141,6 @@ export default class Landscape extends Component<LandscapeProps, Record<string, 
                 <Body>
                   <Box maxWidth="300px">
                     <JoinGroup
-                      groups={props.groups}
-                      contacts={props.contacts}
                       api={props.api}
                       autojoin={autojoin}
                       {...routeProps}
@@ -157,3 +156,6 @@ export default class Landscape extends Component<LandscapeProps, Record<string, 
   }
 }
 
+export default withState(Landscape, [
+  [useHarkState, ['notificationsCount']]
+]);

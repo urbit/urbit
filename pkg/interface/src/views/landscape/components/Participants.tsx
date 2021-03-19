@@ -30,7 +30,10 @@ import { roleForShip, resourceFromPath } from '~/logic/lib/group';
 import { Dropdown } from '~/views/components/Dropdown';
 import GlobalApi from '~/logic/api/global';
 import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
+import useLocalState from '~/logic/state/local';
+import useContactState from '~/logic/state/contact';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
+import {deSig} from '@urbit/api';
 
 const TruncText = styled(Text)`
   white-space: nowrap;
@@ -53,15 +56,18 @@ const searchParticipant = (search: string) => (p: Participant) => {
 };
 
 function getParticipants(cs: Contacts, group: Group) {
-  const contacts: Participant[] = _.map(cs, (c, patp) => ({
-    ...c,
-    patp,
-    pending: false
-  }));
+  const contacts: Participant[] = _.flow(
+    f.omitBy<Contacts>((_c, patp) => !group.members.has(patp.slice(1))),
+    f.toPairs,
+    f.map(([patp, c]: [string, Contact]) => ({
+      ...c,
+      patp: patp.slice(1),
+      pending: false
+    }))
+  )(cs);
   const members: Participant[] = _.map(
-    Array.from(group.members)
-    .filter(e => group?.policy?.invite?.pending ? !group.policy.invite.pending.has(e) : true), m =>
-      emptyContact(m, false)
+    Array.from(group.members),
+    s => contacts[s] ?? emptyContact(s, false)
   );
   const allMembers = _.unionBy(contacts, members, 'patp');
   const pending: Participant[] =
@@ -71,10 +77,11 @@ function getParticipants(cs: Contacts, group: Group) {
         )
       : [];
 
+  const incPending = _.unionBy(allMembers, pending, 'patp');
   return [
-    _.unionBy(allMembers, pending, 'patp'),
-    pending.length,
-    allMembers.length
+    incPending,
+    incPending.length - group.members.size,
+    group.members.size
   ] as const;
 }
 
@@ -82,7 +89,7 @@ const emptyContact = (patp: string, pending: boolean): Participant => ({
   nickname: '',
   bio: '',
   status: '',
-  color: '',
+  color: '0x0',
   avatar: null,
   cover: null,
   groups: [],
@@ -105,7 +112,6 @@ const Tab = ({ selected, id, label, setSelected }) => (
 );
 
 export function Participants(props: {
-  contacts: Contacts;
   group: Group;
   association: Association;
   api: GlobalApi;
@@ -138,9 +144,10 @@ export function Participants(props: {
 
   const adminCount = props.group.tags?.role?.admin?.size || 0;
   const isInvite = 'invite' in props.group.policy;
+  const contacts = useContactState(state => state.contacts);
 
   const [participants, pendingCount, memberCount] = getParticipants(
-    props.contacts,
+    contacts,
     props.group
   );
 

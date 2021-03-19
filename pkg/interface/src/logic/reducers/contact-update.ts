@@ -1,44 +1,51 @@
 import _ from 'lodash';
-import { StoreState } from '../../store/type';
-import { Cage } from '~/types/cage';
-import { ContactUpdate } from '@urbit/api/contacts';
-import { resourceAsPath } from '../lib/util';
+import { compose } from 'lodash/fp';
 
-type ContactState  = Pick<StoreState, 'contacts'>;
+import { ContactUpdate } from '@urbit/api';
 
-export const ContactReducer = (json, state) => {
-  const data = _.get(json, 'contact-update', false);
+import useContactState, { ContactState } from '../state/contact';
+import { reduceState } from '../state/base';
+
+
+export const ContactReducer = (json) => {
+  const data: ContactUpdate = _.get(json, 'contact-update', false);
   if (data) {
-    initial(data, state);
-    add(data, state);
-    remove(data, state);
-    edit(data, state);
-    setPublic(data, state);
+    reduceState<ContactState, ContactUpdate>(useContactState, data, [
+      initial,
+      add,
+      remove,
+      edit,
+      setPublic
+    ]);
   }
 
   // TODO: better isolation
   const res = _.get(json, 'resource', false);
-  if(res) {
-    state.nackedContacts = state.nackedContacts.add(`~${res.ship}`);
+  if (res) {
+    useContactState.setState({
+      nackedContacts: useContactState.getState().nackedContacts.add(`~${res.ship}`)
+    });
   }
 };
 
-const initial = (json: ContactUpdate, state: S) => {
+const initial = (json: ContactUpdate, state: ContactState): ContactState => {
   const data = _.get(json, 'initial', false);
   if (data) {
     state.contacts = data.rolodex;
     state.isContactPublic = data['is-public'];
   }
+  return state;
 };
 
-const  add = (json: ContactUpdate, state: S) => {
+const  add = (json: ContactUpdate, state: ContactState): ContactState => {
   const data = _.get(json, 'add', false);
   if (data) {
     state.contacts[data.ship] = data.contact;
   }
+  return state;
 };
 
-const remove = (json: ContactUpdate, state: S) => {
+const remove = (json: ContactUpdate, state: ContactState): ContactState => {
   const data = _.get(json, 'remove', false);
   if (
     data &&
@@ -46,9 +53,10 @@ const remove = (json: ContactUpdate, state: S) => {
   ) {
     delete state.contacts[data.ship];
   }
+  return state;
 };
 
-const edit = (json: ContactUpdate, state: S) => {
+const edit = (json: ContactUpdate, state: ContactState): ContactState => {
   const data = _.get(json, 'edit', false);
   const ship = `~${data.ship}`;
   if (
@@ -57,7 +65,7 @@ const edit = (json: ContactUpdate, state: S) => {
   ) {
     const [field] = Object.keys(data['edit-field']);
     if (!field) {
-      return;
+      return state;
     }
 
     const value = data['edit-field'][field];
@@ -71,10 +79,12 @@ const edit = (json: ContactUpdate, state: S) => {
       state.contacts[ship][field] = value;
     }
   }
+  return state;
 };
 
-const setPublic = (json: ContactUpdate, state: S) => {
+const setPublic = (json: ContactUpdate, state: ContactState): ContactState => {
   const data = _.get(json, 'set-public', state.isContactPublic);
   state.isContactPublic = data;
+  return state;
 };
 

@@ -20,13 +20,11 @@ export function BackgroundPicker({
   bgType,
   bgUrl,
   api,
-  storage
 }: {
   bgType: BgType;
   bgUrl?: string;
   api: GlobalApi;
-  storage: StorageState;
-}) {
+}): ReactElement {
   const rowSpace = { my: 0, alignItems: 'center' };
   const colProps = { my: 3, mr: 4, gapY: 1 };
   return (
@@ -39,7 +37,6 @@ export function BackgroundPicker({
           <ImageInput
             ml="5"
             api={api}
-            storage={storage}
             id="bgUrl"
             placeholder="Drop or upload a file, or paste a link here"
             name="bgUrl"

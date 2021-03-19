@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { PureComponent, useCallback, useEffect, useRef } from 'react';
 import { Contact, Group } from '@urbit/api';
 import { cite, useShowNickname } from '~/logic/lib/util';
 import { Sigil } from '~/logic/lib/sigil';
@@ -14,8 +14,8 @@ import {
   Icon
 } from '@tlon/indigo-react';
 import RichText from './RichText';
-import { withLocalState } from '~/logic/state/local';
 import { ProfileStatus } from './ProfileStatus';
+import useSettingsState from '~/logic/state/settings';
 
 export const OVERLAY_HEIGHT = 250;
 
@@ -33,54 +33,39 @@ type ProfileOverlayProps = ColProps & {
   api: any;
 };
 
-class ProfileOverlay extends PureComponent<
-  ProfileOverlayProps,
-  Record<string, never>
-> {
-  public popoverRef: React.Ref<typeof Col>;
+const ProfileOverlay = (props: ProfileOverlayProps) => {
+  const {
+    contact,
+    ship,
+    color,
+    topSpace,
+    bottomSpace,
+    history,
+    onDismiss,
+    ...rest
+  } = props;
+  const hideAvatars = useSettingsState(state => state.calm.hideAvatars);
+  const hideNicknames = useSettingsState(state => state.calm.hideNicknames);
+  const popoverRef = useRef<typeof Col>(null);
 
-  constructor(props) {
-    super(props);
-
-    this.popoverRef = React.createRef();
-    this.onDocumentClick = this.onDocumentClick.bind(this);
-  }
-
-  componentDidMount() {
-    document.addEventListener('mousedown', this.onDocumentClick);
-    document.addEventListener('touchstart', this.onDocumentClick);
-  }
-
-  componentWillUnmount() {
-    document.removeEventListener('mousedown', this.onDocumentClick);
-    document.removeEventListener('touchstart', this.onDocumentClick);
-  }
-
-  onDocumentClick(event) {
-    const { popoverRef } = this;
-    // Do nothing if clicking ref's element or descendent elements
+  const onDocumentClick = useCallback((event) => {
     if (!popoverRef.current || popoverRef?.current?.contains(event.target)) {
       return;
     }
+    onDismiss();
+  }, [onDismiss, popoverRef]);
 
-    this.props.onDismiss();
-  }
+  useEffect(() => {
+    document.addEventListener('mousedown', onDocumentClick);
+    document.addEventListener('touchstart', onDocumentClick);
 
-  render() {
-    const {
-      contact,
-      ship,
-      color,
-      topSpace,
-      bottomSpace,
-      hideAvatars,
-      hideNicknames,
-      history,
-      onDismiss,
-      ...rest
-    } = this.props;
+    return () => {
+      document.removeEventListener('mousedown', onDocumentClick);
+      document.removeEventListener('touchstart', onDocumentClick);
+    }
+  }, [onDocumentClick]);
 
-    let top, bottom;
+  let top, bottom;
     if (topSpace < OVERLAY_HEIGHT / 2) {
       top = '0px';
     }
@@ -97,6 +82,7 @@ class ProfileOverlay extends PureComponent<
     const img =
       contact?.avatar && !hideAvatars ? (
         <BaseImage
+          referrerPolicy="no-referrer"
           display='inline-block'
           style={{ objectFit: 'cover' }}
           src={contact.avatar}
@@ -111,7 +97,7 @@ class ProfileOverlay extends PureComponent<
 
     return (
       <Col
-        ref={this.popoverRef}
+        ref={popoverRef}
         backgroundColor='white'
         color='washedGray'
         border={1}
@@ -171,7 +157,7 @@ class ProfileOverlay extends PureComponent<
           </Row>
           {isOwn ? (
             <ProfileStatus
-              api={this.props.api}
+              api={props.api}
               ship={`~${ship}`}
               contact={contact}
             />
@@ -193,7 +179,6 @@ class ProfileOverlay extends PureComponent<
         </Col>
       </Col>
     );
-  }
-}
+};
 
-export default withLocalState(ProfileOverlay, ['hideAvatars', 'hideNicknames']);
+export default ProfileOverlay;

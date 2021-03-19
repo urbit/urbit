@@ -16,20 +16,20 @@ import { LinkItem } from "./components/LinkItem";
 import LinkSubmit from "./components/LinkSubmit";
 import { isWriter } from "~/logic/lib/group";
 import { StorageState } from "~/types";
+import withState from "~/logic/lib/withState";
+import useGraphState from "~/logic/state/graph";
 
 interface LinkWindowProps {
   association: Association;
-  contacts: Rolodex;
   resource: string;
   graph: Graph;
-  unreads: Unreads;
   hideNicknames: boolean;
   hideAvatars: boolean;
   baseUrl: string;
   group: Group;
   path: string;
   api: GlobalApi;
-  storage: StorageState;
+  pendingSize: number;
 }
 
 const style = {
@@ -40,7 +40,7 @@ const style = {
   alignItems: "center",
 };
 
-export class LinkWindow extends Component<LinkWindowProps, {}> {
+class LinkWindow extends Component<LinkWindowProps, {}> {
   fetchLinks = async () => true;
 
   canWrite() {
@@ -75,7 +75,6 @@ export class LinkWindow extends Component<LinkWindowProps, {}> {
             px={3}
           >
             <LinkSubmit
-              storage={props.storage}
               name={name}
               ship={ship.slice(1)}
               api={api}
@@ -89,7 +88,7 @@ export class LinkWindow extends Component<LinkWindowProps, {}> {
   };
 
   render() {
-    const { graph, api, association, storage, pendingSize } = this.props;
+    const { graph, api, association } = this.props;
     const first = graph.peekLargest()?.[0];
     const [, , ship, name] = association.resource.split("/");
     if (!first) {
@@ -105,7 +104,6 @@ export class LinkWindow extends Component<LinkWindowProps, {}> {
         >
           {this.canWrite() ? (
             <LinkSubmit
-              storage={storage}
               name={name}
               ship={ship.slice(1)}
               api={api}
@@ -129,7 +127,7 @@ export class LinkWindow extends Component<LinkWindowProps, {}> {
           data={graph}
           averageHeight={100}
           size={graph.size}
-          pendingSize={pendingSize}
+          pendingSize={this.props.pendingSize}
           renderer={this.renderItem}
           loadRows={this.fetchLinks}
         />
@@ -137,3 +135,5 @@ export class LinkWindow extends Component<LinkWindowProps, {}> {
     );
   }
 }
+
+export default LinkWindow;

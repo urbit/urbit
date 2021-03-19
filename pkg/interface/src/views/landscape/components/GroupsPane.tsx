@@ -27,6 +27,10 @@ import '~/views/apps/publish/css/custom.css';
 import { getGroupFromWorkspace } from '~/logic/lib/workspace';
 import { GroupSummary } from './GroupSummary';
 import { Workspace } from '~/types/workspace';
+import useContactState from '~/logic/state/contact';
+import useGroupState from '~/logic/state/group';
+import useHarkState from '~/logic/state/hark';
+import useMetadataState from '~/logic/state/metadata';
 
 type GroupsPaneProps = StoreState & {
   baseUrl: string;
@@ -35,9 +39,13 @@ type GroupsPaneProps = StoreState & {
 };
 
 export function GroupsPane(props: GroupsPaneProps) {
-  const { baseUrl, associations, groups, contacts, api, workspace } = props;
+  const { baseUrl, api, workspace } = props;
+  const associations = useMetadataState(state => state.associations);
+  const contacts = useContactState(state => state.contacts);
+  const notificationsCount = useHarkState(state => state.notificationsCount);
   const relativePath = (path: string) => baseUrl + path;
   const groupPath = getGroupFromWorkspace(workspace);
+  const groups = useGroupState(state => state.groups);
 
   const groupContacts = Object.assign({}, ...Array.from(groups?.[groupPath]?.members ?? []).filter(e => contacts[`~${e}`]).map(e => {
       return {[e]: contacts[`~${e}`]};
@@ -70,9 +78,6 @@ export function GroupsPane(props: GroupsPaneProps) {
           association={groupAssociation!}
           group={group!}
           api={api}
-          storage={props.storage}
-          notificationsGroupConfig={props.notificationsGroupConfig}
-          associations={associations}
 
           {...routeProps}
           baseUrl={baseUrl}
@@ -81,8 +86,6 @@ export function GroupsPane(props: GroupsPaneProps) {
           api={api}
           association={groupAssociation!}
           baseUrl={baseUrl}
-          groups={props.groups}
-          contacts={props.contacts}
           workspace={workspace}
         />
       </>
@@ -145,7 +148,7 @@ export function GroupsPane(props: GroupsPaneProps) {
           return (
             <>
               <Helmet defer={false}>
-                <title>{props.notificationsCount ? `(${String(props.notificationsCount)}) ` : ''}{ title }</title>
+                <title>{notificationsCount ? `(${String(notificationsCount)}) ` : ''}{ title }</title>
               </Helmet>
               <Skeleton
                 recentGroups={recentGroups}
@@ -155,9 +158,6 @@ export function GroupsPane(props: GroupsPaneProps) {
                 baseUrl={baseUrl}
               >
                 <UnjoinedResource
-                  graphKeys={props.graphKeys}
-                  notebooks={props.notebooks}
-                  inbox={props.inbox}
                   baseUrl={baseUrl}
                   api={api}
                   association={association}
@@ -178,10 +178,7 @@ export function GroupsPane(props: GroupsPaneProps) {
                 {...routeProps}
                 api={api}
                 baseUrl={baseUrl}
-                associations={associations}
-                groups={groups}
                 group={groupPath}
-                contacts={props.contacts}
                 workspace={workspace}
               />
               {popovers(routeProps, baseUrl)}
@@ -192,13 +189,12 @@ export function GroupsPane(props: GroupsPaneProps) {
       <Route
         path={relativePath('')}
         render={(routeProps) => {
-          const hasDescription = groupAssociation?.metadata?.description;
-          const channelCount = Object.keys(props?.associations?.graph ?? {}).filter((e) => {
-            return props?.associations?.graph?.[e]?.['group'] === groupPath;
+          const channelCount = Object.keys(associations?.graph ?? {}).filter((e) => {
+            return associations?.graph?.[e]?.['group'] === groupPath;
           }).length;
           let summary: ReactNode;
           if(groupAssociation?.group) {
-            const memberCount = props.groups[groupAssociation.group].members.size;
+            const memberCount = groups[groupAssociation.group].members.size;
             summary = <GroupSummary
               memberCount={memberCount}
               channelCount={channelCount}
@@ -214,7 +210,7 @@ export function GroupsPane(props: GroupsPaneProps) {
           return (
             <>
               <Helmet defer={false}>
-                <title>{props.notificationsCount ? `(${String(props.notificationsCount)}) ` : ''}{ title }</title>
+                <title>{notificationsCount ? `(${String(notificationsCount)}) ` : ''}{ title }</title>
               </Helmet>
               <Skeleton recentGroups={recentGroups} {...props} baseUrl={baseUrl}>
                 <Col
