@@ -220,7 +220,9 @@ const MessageWrapper = (props) => {
   return (
     <Box
       py='1'
-      backgroundColor={hovering ? 'washedGray' : 'transparent'}
+      backgroundColor={
+        hovering && !props.hideHover ? 'washedGray' : 'transparent'
+      }
       position='relative'
       {...bind}
     >
@@ -247,6 +249,7 @@ interface ChatMessageProps {
   api: GlobalApi;
   highlighted?: boolean;
   renderSigil?: boolean;
+  hideHover?: boolean;
   innerRef: (el: HTMLDivElement | null) => void;
 }
 
@@ -278,7 +281,8 @@ class ChatMessage extends Component<ChatMessageProps> {
       api,
       highlighted,
       showOurContact,
-      fontSize
+      fontSize,
+      hideHover
     } = this.props;
 
     let { renderSigil } = this.props;
@@ -315,7 +319,8 @@ class ChatMessage extends Component<ChatMessageProps> {
       api,
       scrollWindow,
       highlighted,
-      fontSize
+      fontSize,
+      hideHover
     };
 
     const unreadContainerStyle = {
