@@ -206,7 +206,9 @@ const MessageWrapper = (props) => {
   return (
     <Box
       py='1'
-      backgroundColor={hovering ? 'washedGray' : 'transparent'}
+      backgroundColor={
+        hovering && props.hoverMarker !== false ? 'washedGray' : 'transparent'
+      }
       position='relative'
       {...bind}
     >
@@ -233,6 +235,7 @@ interface ChatMessageProps {
   api: GlobalApi;
   highlighted?: boolean;
   renderSigil?: boolean;
+  hoverMarker?: boolean;
   innerRef: (el: HTMLDivElement | null) => void;
 }
 
@@ -264,7 +267,8 @@ class ChatMessage extends Component<ChatMessageProps> {
       api,
       highlighted,
       showOurContact,
-      fontSize
+      fontSize,
+      hoverMarker
     } = this.props;
 
     let { renderSigil } = this.props;
@@ -301,7 +305,8 @@ class ChatMessage extends Component<ChatMessageProps> {
       api,
       scrollWindow,
       highlighted,
-      fontSize
+      fontSize,
+      hoverMarker
     };
 
     const unreadContainerStyle = {
@@ -370,10 +375,11 @@ export const MessageAuthor = ({
     .unix(msg['time-sent'] / 1000)
     .format(DATESTAMP_FORMAT);
   const contact =
-    ( ( (msg.author === window.ship && showOurContact) ||
-         msg.author !== window.ship) &&
-      `~${msg.author}` in contacts
-    ) ? contacts[`~${msg.author}`] : false;
+    ((msg.author === window.ship && showOurContact) ||
+      msg.author !== window.ship) &&
+    `~${msg.author}` in contacts
+      ? contacts[`~${msg.author}`]
+      : false;
 
   const showNickname = useShowNickname(contact);
   const { hideAvatars } = useSettingsState(selectCalmState);
@@ -416,7 +422,7 @@ export const MessageAuthor = ({
     contact?.avatar && !hideAvatars ? (
       <BaseImage
         display='inline-block'
-        referrerPolicy="no-referrer"
+        referrerPolicy='no-referrer'
         style={{ objectFit: 'cover' }}
         src={contact.avatar}
         height={24}
