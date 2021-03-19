@@ -207,7 +207,7 @@ const MessageWrapper = (props) => {
     <Box
       py='1'
       backgroundColor={
-        hovering && props.hoverMarker !== false ? 'washedGray' : 'transparent'
+        hovering && !props.hideHover ? 'washedGray' : 'transparent'
       }
       position='relative'
       {...bind}
@@ -235,7 +235,7 @@ interface ChatMessageProps {
   api: GlobalApi;
   highlighted?: boolean;
   renderSigil?: boolean;
-  hoverMarker?: boolean;
+  hideHover?: boolean;
   innerRef: (el: HTMLDivElement | null) => void;
 }
 
@@ -268,7 +268,7 @@ class ChatMessage extends Component<ChatMessageProps> {
       highlighted,
       showOurContact,
       fontSize,
-      hoverMarker
+      hideHover
     } = this.props;
 
     let { renderSigil } = this.props;
@@ -306,7 +306,7 @@ class ChatMessage extends Component<ChatMessageProps> {
       scrollWindow,
       highlighted,
       fontSize,
-      hoverMarker
+      hideHover
     };
 
     const unreadContainerStyle = {

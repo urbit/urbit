@@ -136,7 +136,7 @@ const GraphNodeContent = ({
           msg={post}
           fontSize='0'
           pt='2'
-          hoverMarker={false}
+          hideHover={true}
         />
       </Row>
     );
