@@ -1944,11 +1944,11 @@
       =/  =bone  bone.shut-packet
       ::
       ?:  ?=(%& -.meat.shut-packet)
-        =+  ?~  dud  ~
+        =+  ?.  &(?=(^ dud) msg.veb)  ~
             %.  ~
-            %+  slog
-              leaf+"ames: {<her.channel>} fragment crashed {<mote.u.dud>}"
-            ?.(msg.veb ~ tang.u.dud)
+            %-  slog
+            :_  tang.u.dud
+            leaf+"ames: {<her.channel>} fragment crashed {<mote.u.dud>}"
         (run-message-sink bone %hear lane shut-packet ?=(~ dud))
       ::  Just try again on error, printing trace
       ::
