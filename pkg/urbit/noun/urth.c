@@ -401,13 +401,16 @@ _cu_realloc(FILE* fil_u, ur_root_t** tor_u, ur_nvec_t* doc_u)
   //
   _cu_all_to_loom(rot_u, ken, &cod_u);
 
+  //  allocate new hot jet state
+  //
+  u3j_boot(c3y);
+
   //  establish correct refcounts via tracing
   //
   u3m_grab(u3_none);
 
-  //  allocate new hot jet state; re-establish warm
+  //  re-establish warm jet statse
   //
-  u3j_boot(c3y);
   u3j_ream();
 
   //  restore event number
