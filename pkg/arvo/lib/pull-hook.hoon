@@ -402,24 +402,50 @@
     ::
     ++  tr-sign
       |=  [=sign:agent:gall versioned=?]
+      |^
       ?+   -.sign  !!
         %kick       tr-kick
-        %watch-ack  (tr-wack +.sign versioned)
+        %watch-ack  (tr-wack +.sign)
         %fact       (tr-fact +.sign)
       ==
-    ::
-    ::
-    ++  tr-wack
-      |=  [tan=(unit tang) versioned=?]
-      ?~  tan  tr-core
-      ?.  versioned
-        (tr-ap-og:tr-cleanup |.((on-pull-nack:og rid u.tan)))
-      =/  pax
-        (kick-mule:virt rid |.((on-pull-kick:og rid)))
-      ?~  pax  tr-failed-kick
-      ?~  u.pax  tr-cleanup
-      (tr-watch-unver u.u.pax)
-    ::
+      ::
+      ++  tr-wack
+        |=  tan=(unit tang)
+        ?~  tan  tr-core
+        ?.  versioned
+          (tr-ap-og:tr-cleanup |.((on-pull-nack:og rid u.tan)))
+        =/  pax
+          (kick-mule:virt rid |.((on-pull-kick:og rid)))
+        ?~  pax  tr-failed-kick
+        ?~  u.pax  tr-cleanup
+        (tr-watch-unver u.u.pax)
+      ::
+      ++  tr-fact
+        |=  =cage
+        ?:  ?=(%version p.cage)
+          =/  req-ver=@ud
+            !<(@ud q.cage)
+          ?:  (lth req-ver min-version.config)
+            (tr-suspend-pub-ver min-version.config)
+          (tr-suspend-sub-ver req-ver)
+        ?>  (is-root:ver p.cage)
+        =/  fact-ver=@ud
+          (read-version:ver p.cage)
+        ?.  (gte fact-ver min-version.config)
+          (tr-suspend-pub-ver min-version.config)
+        =/  =vase
+          (convert-to:ver cage)
+        =/  =wire
+          (make-wire /store)
+        =+  resources=(~(gas in *(set resource)) (resource-for-update:og vase))
+        ?>  ?|  no-validate.config
+            ?&  (check-src resources)
+                (~(has in resources) rid)
+            ==  ==
+        =/  =mark
+          (append-version:ver version.config)
+        (tr-emit (~(poke-our pass wire) store-name.config mark vase))
+
     ++  tr-kick
       ?.  ?=(%active -.status)  tr-core
       =/  pax
@@ -427,32 +453,6 @@
       ?~  pax  tr-failed-kick
       ?~  u.pax  tr-cleanup
       (tr-watch u.u.pax)
-    ::
-    ++  tr-fact
-      |=  =cage
-      ?:  ?=(%version p.cage)
-        =/  req-ver=@ud
-          !<(@ud q.cage)
-        ?:  (lth req-ver min-version.config)
-          (tr-suspend-pub-ver min-version.config)
-        (tr-suspend-sub-ver req-ver)
-      ?>  (is-root:ver p.cage)
-      =/  fact-ver=@ud
-        (read-version:ver p.cage)
-      ?.  (gte fact-ver min-version.config)
-        (tr-suspend-pub-ver min-version.config)
-      =/  =vase
-        (convert-to:ver cage)
-      =/  =wire
-        (make-wire /store)
-      =+  resources=(~(gas in *(set resource)) (resource-for-update:og vase))
-      ?>  ?|  no-validate.config
-          ?&  (check-src resources)
-              (~(has in resources) rid)
-          ==  ==
-      =/  =mark
-        (append-version:ver version.config)
-      (tr-emit (~(poke-our pass wire) store-name.config mark vase))
     ::  +|  %lifecycle: lifecycle management for tracked resource
     ::
     ::
@@ -611,11 +611,12 @@
   ++  poke-sane
     ^-  (quip card:agent:gall _state)
     =/  cards
+      ::  TODO revive
       ~ :: restart-subscriptions
     ~?  >  ?=(^ cards)
       "Fixed subscriptions in {<dap.bowl>}"
-    :_  state
-    ~  :: restart-subscriptions
+    [cards state]
+
   ::
   ++  check-subscription
     |=  [rid=resource =ship]
