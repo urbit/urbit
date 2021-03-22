@@ -1,4 +1,4 @@
-resolver: lts-16.15
+resolver: lts-17.2
 
 packages:
   - natpmp-static
@@ -19,7 +19,7 @@ extra-deps:
   - para-1.1@sha256:a90eebb063ad70271e6e2a7f00a93e8e8f8b77273f100f39852fbf8301926f81
   - web3-0.9.1.0@sha256:6b7faac0b63e7d0aae46588dd9a42e11f54ce0fdf4c2744bdf4cc6c5cbf39aa2
   - vinyl-0.12.3@sha256:66553fc71cabfa86837bf5f98558e3e6d1807c47af5f5f1cd758081d3fb023ea
-
+  - cryptohash-sha512-0.11.100.1@sha256:8279dab0daa2ffaeb0b1a9da02de780f1c19cb0a898241daa2d4d673f5c89b31,4415
 # This allows building on NixOS.
 nix:
   packages:
@@ -29,3 +29,5 @@ nix:
 # TODO: Why is this here?
 ghc-options:
   urbit-king: '-optP-Wno-nonportable-include-path'
+  "$targets": -Wno-unused-record-wildcards
+  "$locals": -Wno-unused-record-wildcards

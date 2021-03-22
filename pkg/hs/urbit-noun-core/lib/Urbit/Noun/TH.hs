@@ -227,10 +227,10 @@ tagNoun = AppE (VarE 'textToUtf8Atom)
         . StringL
 
 tagTup :: String -> [Name] -> Exp
-tagTup tag args = AppE (VarE 'toNoun) $ TupE (tagNoun tag : fmap VarE args)
+tagTup tag args = AppE (VarE 'toNoun) $ TupE ((Just . tagNoun) tag : fmap (Just . VarE) args)
 
 tup :: [Name] -> Exp
-tup = AppE (VarE 'toNoun) . TupE . fmap VarE
+tup = AppE (VarE 'toNoun) . TupE . fmap (Just . VarE)
 
 --------------------------------------------------------------------------------
 
