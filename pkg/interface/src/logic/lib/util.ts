@@ -1,9 +1,16 @@
 import { useEffect, useState } from 'react';
-import _ from "lodash";
-import f, { memoize } from "lodash/fp";
-import bigInt, { BigInteger } from "big-integer";
-import { Contact } from '~/types';
+import _ from 'lodash';
+import f, { compose, memoize } from 'lodash/fp';
+import bigInt, { BigInteger } from 'big-integer';
+import { Association, Contact } from '@urbit/api';
+import useLocalState from '../state/local';
+import produce, { enableMapSet } from 'immer';
 import useSettingsState from '../state/settings';
+import { State, UseStore } from 'zustand';
+import { Cage } from '~/types/cage';
+import { BaseState } from '../state/base';
+
+enableMapSet();
 
 export const MOBILE_BROWSER_REGEX = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i;
 
@@ -373,7 +380,8 @@ export function pluralize(text: string, isPlural = false, vowel = false) {
 
 // Hide is an optional second parameter for when this function is used in class components
 export function useShowNickname(contact: Contact | null, hide?: boolean): boolean {
-  const hideNicknames = typeof hide !== 'undefined' ? hide : useSettingsState(state => state.calm.hideNicknames);
+  const hideState = useSettingsState(state => state.calm.hideNicknames);
+  const hideNicknames = typeof hide !== 'undefined' ? hide : hideState;
   return !!(contact && contact.nickname && !hideNicknames);
 }
 
@@ -405,3 +413,4 @@ export function getItemTitle(association: Association) {
   }
   return association.metadata.title || association.resource;
 }
+

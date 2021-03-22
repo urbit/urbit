@@ -16,9 +16,7 @@ export function useTutorialModal(
       setTutorialRef(anchorRef.current);
     }
 
-    return () => {
-      console.log(tutorialProgress);
-    }
+    return () => {}
   }, [tutorialProgress, show, anchorRef]);
 
   return show && onProgress === tutorialProgress;

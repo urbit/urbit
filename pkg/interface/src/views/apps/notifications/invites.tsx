@@ -14,16 +14,14 @@ import {
   JoinRequest,
 } from "@urbit/api";
 
-import GlobalApi from "~/logic/api/global";
-import { resourceAsPath, alphabeticalOrder } from "~/logic/lib/util";
-import InviteItem from "~/views/components/Invite";
+
+import GlobalApi from '~/logic/api/global';
+import { resourceAsPath, alphabeticalOrder } from '~/logic/lib/util';
+import InviteItem from '~/views/components/Invite';
+import useInviteState from '~/logic/state/invite';
 
 interface InvitesProps {
   api: GlobalApi;
-  invites: IInvites;
-  groups: Groups;
-  contacts: Contacts;
-  associations: Associations;
   pendingJoin: JoinRequests;
 }
 
@@ -33,8 +31,9 @@ interface InviteRef {
   invite: Invite;
 }
 
-export function Invites(props: InvitesProps): ReactNode {
-  const { api, invites } = props;
+export function Invites(props: InvitesProps): ReactElement {
+  const { api } = props;
+  const invites = useInviteState(state => state.invites);
 
   const inviteArr: InviteRef[] = _.reduce(
     invites,
@@ -72,20 +71,15 @@ export function Invites(props: InvitesProps): ReactNode {
         .map((resource) => {
           const inviteOrStatus = invitesAndStatus[resource];
           if ("progress" in inviteOrStatus) {
-            return (
-              <InviteItem
-                key={resource}
-                contacts={props.contacts}
-                groups={props.groups}
-                associations={props.associations}
-                resource={resource}
-                pendingJoin={pendingJoin}
-                api={api}
-              />
+           return (
+             <InviteItem
+               key={resource}
+               resource={resource}
+               api={api}
+             />
             );
           } else {
             const { app, uid, invite } = inviteOrStatus;
-            console.log(inviteOrStatus);
             return (
               <InviteItem
                 key={resource}
@@ -93,15 +87,12 @@ export function Invites(props: InvitesProps): ReactNode {
                 invite={invite}
                 app={app}
                 uid={uid}
-                pendingJoin={pendingJoin}
                 resource={resource}
-                contacts={props.contacts}
-                groups={props.groups}
-                associations={props.associations}
               />
-            );
+              );
           }
-        })}
+        })
+      }
     </>
   );
 }

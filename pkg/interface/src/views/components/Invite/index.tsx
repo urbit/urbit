@@ -18,33 +18,33 @@ import { GroupInvite } from './Group';
 import { InviteSkeleton } from './InviteSkeleton';
 import { JoinSkeleton } from './JoinSkeleton';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
+import useGroupState from '~/logic/state/group';
+import useMetadataState from '~/logic/state/metadata';
 
 interface InviteItemProps {
   invite?: Invite;
   resource: string;
-  groups: Groups;
-  associations: Associations;
-
-  pendingJoin: JoinRequests;
   app?: string;
   uid?: string;
   api: GlobalApi;
-  contacts: Contacts;
 }
 
 export function InviteItem(props: InviteItemProps) {
   const [preview, setPreview] = useState<MetadataUpdatePreview | null>(null);
-  const { associations, pendingJoin, invite, resource, uid, app, api } = props;
+  const { invite, resource, uid, app, api } = props;
   const { ship, name } = resourceFromPath(resource);
-  const waiter = useWaitForProps(props, 50000);
+  const pendingJoin = useGroupState(state => state.pendingJoin);
   const status = pendingJoin[resource];
+  const groups = useGroupState(state => state.groups);
+  const associations = useMetadataState(state => state.associations);
+  const waiter = useWaitForProps({ associations, groups, pendingJoin}, 50000);
 
   const history = useHistory();
   const inviteAccept = useCallback(async () => {
     if (!(app && invite && uid)) {
       return;
     }
-    if(resource in props.groups) {
+    if(resource in groups) {
       await api.invite.decline(app, uid);
       return;
     }
@@ -61,7 +61,7 @@ export function InviteItem(props: InviteItemProps) {
       );
     });
 
-    if (props.groups?.[resource]?.hidden) {
+    if (groups?.[resource]?.hidden) {
       const { metadata } = associations.graph[resource];
       if (metadata && 'graph' in metadata.config) {
         if (metadata.config.graph === 'chat') {
@@ -75,7 +75,7 @@ export function InviteItem(props: InviteItemProps) {
     } else {
       history.push(`/~landscape${resource}`);
     }
-  }, [app, invite, uid, resource, props.groups, associations]);
+  }, [app, invite, uid, resource, groups, associations]);
 
   const inviteDecline = useCallback(async () => {
     if(!(app && uid)) {
@@ -98,6 +98,10 @@ export function InviteItem(props: InviteItemProps) {
       return () => {};
     }
   }, [invite]);
+
+  if(status.hidden) {
+    return null;
+  }
 
   if (preview) {
     return (

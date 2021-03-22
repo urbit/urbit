@@ -53,8 +53,6 @@ function PermissionsSummary(props: {
 interface GraphPermissionsProps {
   association: Association;
   group: Group;
-  groups: Groups;
-  contacts: Rolodex;
   api: GlobalApi;
 }
 
@@ -177,7 +175,7 @@ export function GraphPermissions(props: GraphPermissionsProps) {
               vip={association.metadata.vip}
             />
           </Col>
-          <ChannelWritePerms contacts={props.contacts} groups={props.groups} />
+          <ChannelWritePerms />
           { ( association.metadata &&
               'graph' in association.metadata.config &&
               association.metadata.config.graph !== 'chat'

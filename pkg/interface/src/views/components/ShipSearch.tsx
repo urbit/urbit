@@ -24,6 +24,8 @@ import { Rolodex, Groups } from '@urbit/api';
 import { DropdownSearch } from './DropdownSearch';
 import { cite, deSig } from '~/logic/lib/util';
 import { HoverBox } from './HoverBox';
+import useContactState from '~/logic/state/contact';
+import useGroupState from '~/logic/state/group';
 
 interface InviteSearchProps<I extends string> {
   autoFocus?: boolean;
@@ -31,8 +33,6 @@ interface InviteSearchProps<I extends string> {
   label?: string;
   caption?: string;
   id: I;
-  contacts: Rolodex;
-  groups: Groups;
   hideSelection?: boolean;
   maxLength?: number;
 }
@@ -124,9 +124,12 @@ export function ShipSearch<I extends string, V extends Value<I>>(
 
   const pills = selected.slice(0, inputIdx.current);
 
+  const contacts = useContactState(state => state.contacts);
+  const groups = useGroupState(state => state.groups);
+
   const [peers, nicknames] = useMemo(
-    () => getNicknameForShips(props.groups, props.contacts, selected),
-    [props.contacts, props.groups, selected]
+    () => getNicknameForShips(groups, contacts, selected),
+    [contacts, groups, selected]
   );
 
   const renderCandidate = useCallback(

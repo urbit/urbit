@@ -71,6 +71,7 @@
     "@types/yup": "^0.29.11",
     "@typescript-eslint/eslint-plugin": "^4.15.0",
     "@urbit/eslint-config": "file:../npm/eslint-config",
+    "@welldone-software/why-did-you-render": "^6.1.0",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.2.2",
     "babel-plugin-lodash": "^3.3.4",

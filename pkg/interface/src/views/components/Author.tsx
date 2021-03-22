@@ -11,11 +11,10 @@ import useSettingsState, {selectCalmState} from "~/logic/state/settings";
 import useLocalState from "~/logic/state/local";
 import OverlaySigil from './OverlaySigil';
 import { Sigil } from '~/logic/lib/sigil';
-import GlobalApi from '~/logic/api/global';
 import Timestamp from './Timestamp';
+import useContactState from '~/logic/state/contact';
 
 interface AuthorProps {
-  contacts: Contacts;
   ship: string;
   date: number;
   showImage?: boolean;
@@ -28,8 +27,6 @@ interface AuthorProps {
 
 // eslint-disable-next-line max-lines-per-function
 export default function Author(props: AuthorProps): ReactElement {
-  const { contacts, ship = '', date, showImage, group } = props;
-
   const showAsCol = props.showAsCol || false;
   const time = props.time || false;
   const size = props.size || 16;
@@ -43,6 +40,7 @@ export default function Author(props: AuthorProps): ReactElement {
   const dark = theme === 'dark' || (theme === 'auto' && osDark)
 
   let contact;
+  const contacts = useContactState(state => state.contacts);
   if (contacts) {
     contact = `~${deSig(ship)}` in contacts ? contacts[`~${deSig(ship)}`] : null;
   }
@@ -62,7 +60,7 @@ export default function Author(props: AuthorProps): ReactElement {
     <Sigil ship={ship} size={size} color={color} padding={sigilPadding} />
   ) : (
     <Sigil ship={ship} size={size} color={color} icon padding={sigilPadding} />
-    );
+  );
 
   const rowOrCol = showAsCol ? (
     <Col>

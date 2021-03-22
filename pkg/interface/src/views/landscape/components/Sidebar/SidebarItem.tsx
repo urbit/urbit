@@ -11,6 +11,8 @@ import { useTutorialModal } from '~/views/components/useTutorialModal';
 import { TUTORIAL_HOST, TUTORIAL_GROUP } from '~/logic/lib/tutorialModal';
 import { SidebarAppConfigs, SidebarItemStatus } from './types';
 import { Workspace } from '~/types/workspace';
+import useContactState from '~/logic/state/contact';
+import useGroupState from '~/logic/state/group';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 
 
@@ -32,20 +34,21 @@ function SidebarItemIndicator(props: { status?: SidebarItemStatus }) {
 export function SidebarItem(props: {
   hideUnjoined: boolean;
   association: Association;
-  contacts: Rolodex;
-  groups: Groups;
   path: string;
   selected: boolean;
   apps: SidebarAppConfigs;
   workspace: Workspace;
 }): ReactElement {
-  const { association, path, selected, apps, groups } = props;
+  const { association, path, selected, apps } = props;
   let title = getItemTitle(association);
   const appName = association?.['app-name'];
   const mod = association?.metadata?.config?.graph || appName;
   const rid = association?.resource;
   const groupPath = association?.group;
+  const groups = useGroupState(state => state.groups);
   const anchorRef = useRef<HTMLElement | null>(null);
+  const { hideAvatars, hideNicknames } = useSettingsState(selectCalmState);
+  const contacts = useContactState(state => state.contacts);
   useTutorialModal(
     mod as any,
     groupPath === `/ship/${TUTORIAL_HOST}/${TUTORIAL_GROUP}`,
@@ -57,7 +60,6 @@ export function SidebarItem(props: {
     return null;
   }
   const DM = (isUnmanaged && props.workspace?.type === 'messages');
-  const { hideAvatars, hideNicknames } = useSettingsState(selectCalmState);
 
   const itemStatus = app.getStatus(path);
   const hasUnread = itemStatus === 'unread' || itemStatus === 'mention';
@@ -85,13 +87,13 @@ export function SidebarItem(props: {
   let img = null;
 
   if (urbitOb.isValidPatp(title)) {
-    if (props.contacts?.[title]?.avatar && !hideAvatars) {
-      img = <BaseImage src={props.contacts[title].avatar} width='16px' height='16px' borderRadius={2} />;
+    if (contacts?.[title]?.avatar && !hideAvatars) {
+      img = <BaseImage src={contacts[title].avatar} width='16px' height='16px' borderRadius={2} />;
     } else {
-      img = <Sigil ship={title} color={`#${uxToHex(props.contacts?.[title]?.color || '0x0')}`} icon padding={2} size={16} />;
+      img = <Sigil ship={title} color={`#${uxToHex(contacts?.[title]?.color || '0x0')}`} icon padding={2} size={16} />;
     }
-    if (props.contacts?.[title]?.nickname && !hideNicknames) {
-      title = props.contacts[title].nickname;
+    if (contacts?.[title]?.nickname && !hideNicknames) {
+      title = contacts[title].nickname;
     }
   } else {
     img = <Box flexShrink={0} height={16} width={16} borderRadius={2} backgroundColor={`#${uxToHex(props?.association?.metadata?.color)}` || '#000000'} />;
