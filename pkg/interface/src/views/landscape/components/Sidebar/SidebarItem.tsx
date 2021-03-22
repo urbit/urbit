@@ -14,6 +14,7 @@ import { Workspace } from '~/types/workspace';
 import useContactState from '~/logic/state/contact';
 import useGroupState from '~/logic/state/group';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
+import Dot from '~/views/components/Dot';
 
 
 function SidebarItemIndicator(props: { status?: SidebarItemStatus }) {
@@ -31,6 +32,7 @@ function SidebarItemIndicator(props: { status?: SidebarItemStatus }) {
   }
 }
 
+// eslint-disable-next-line max-lines-per-function
 export function SidebarItem(props: {
   hideUnjoined: boolean;
   association: Association;
@@ -38,9 +40,9 @@ export function SidebarItem(props: {
   selected: boolean;
   apps: SidebarAppConfigs;
   workspace: Workspace;
-}): ReactElement {
+}): ReactElement | null {
   const { association, path, selected, apps } = props;
-  let title = getItemTitle(association);
+  let title = getItemTitle(association) || '';
   const appName = association?.['app-name'];
   const mod = association?.metadata?.module || appName;
   const rid = association?.resource;
@@ -62,7 +64,10 @@ export function SidebarItem(props: {
   const DM = (isUnmanaged && props.workspace?.type === 'messages');
 
   const itemStatus = app.getStatus(path);
-  const hasUnread = itemStatus === 'unread' || itemStatus === 'mention';
+
+  const hasNotification = itemStatus === 'notification';
+
+  const hasUnread = itemStatus === 'unread';
 
   const isSynced = itemStatus !== 'unsubscribed';
 
@@ -78,7 +83,15 @@ export function SidebarItem(props: {
     ? `${baseUrl}/resource/${mod}${rid}`
     : `${baseUrl}/join/${mod}${rid}`;
 
-  const color = selected ? 'black' : isSynced ? 'gray' : 'lightGray';
+  let color = 'lightGray';
+
+  if (isSynced) {
+    if (hasUnread || hasNotification) {
+      color = 'black';
+    } else {
+      color = 'gray';
+    }
+  }
 
   if (props.hideUnjoined && !isSynced) {
     return null;
@@ -115,6 +128,9 @@ export function SidebarItem(props: {
       selected={selected}
     >
       <Row width='100%' alignItems="center" flex='1 auto' minWidth='0'>
+        {hasNotification && <Text color='black' marginLeft={-2} width={2} display='flex' alignItems='center'>
+          <Dot />
+        </Text>}
         {DM ? img : (
               <Icon
                 display="block"
@@ -131,8 +147,7 @@ export function SidebarItem(props: {
             overflow='hidden'
             width='100%'
             mono={urbitOb.isValidPatp(title)}
-            fontWeight={hasUnread ? 'bold' : 'regular'}
-            color={selected || isSynced ? 'black' : 'lightGray'}
+            color={color}
             style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}
           >
             {title}
