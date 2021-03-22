@@ -60,6 +60,9 @@ haskell-nix.stackProject {
 
     # Override various project-local flags and build configuration.
     packages = {
+      urbit-king.patches = lib.optional stdenv.isDarwin [
+        ../../pkgs/lmdb/darwin-fsync.patch
+      ];
       urbit-king.components.exes.urbit-king = {
         enableStatic = enableStatic;
         enableShared = !enableStatic;
