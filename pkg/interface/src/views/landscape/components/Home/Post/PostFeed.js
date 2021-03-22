@@ -125,17 +125,19 @@ export class PostFeed extends React.Component {
     const { graph, pendingSize } = this.props;
 
     return (
-      <VirtualScroller
-        origin="top"
-        offset={0}
-        data={graph}
-        averageHeight={106}
-        size={graph.size}
-        style={virtualScrollerStyle}
-        pendingSize={pendingSize}
-        renderer={this.renderItem}
-        loadRows={this.fetchPosts}
-      />
+      <Col width="100%" height="100%" position="relative">
+        <VirtualScroller
+          origin="top"
+          offset={0}
+          data={graph}
+          averageHeight={106}
+          size={graph.size}
+          style={virtualScrollerStyle}
+          pendingSize={pendingSize}
+          renderer={this.renderItem}
+          loadRows={this.fetchPosts}
+        />
+      </Col>
     );
   }
 }

@@ -19,8 +19,13 @@ export function GroupFeed(props) {
     graphPath
   } = props;
   const graphs = useGraphState(state => state.graphs);
-  const pendingSize = useGraphState(state => state.pendingSize);
   const graphResource = resourceFromPath(graphPath);
+  const graphTimesentMap = useGraphState(state => state.graphTimesentMap);
+  const pendingSize = Object.keys(
+    graphTimesentMap[`${graphResource.ship.slice(1)}/${graphResource.name}`] ||
+    {}
+  ).length;
+
   const relativePath = (path) => baseUrl + path;
 
   useEffect(() => {

@@ -5,6 +5,11 @@ import { Link } from 'react-router-dom';
 
 export function GroupFeedHeader(props) {
   const { baseUrl, history } = props;
+  const historyLocation = history.location.pathname;
+
+  const isHome =
+    historyLocation === baseUrl ||
+    historyLocation === `${baseUrl}/feed`;
 
   return (
     <Row 
@@ -17,15 +22,24 @@ export function GroupFeedHeader(props) {
       borderBottom={1}
       borderColor="washedGray">
       <Box display={['block', 'none']}>
-        { baseUrl !== history.location.pathname ? (
+        { baseUrl !== historyLocation ? (
             <Text pr="2" cursor="pointer" onClick={() => {
               history.goBack();
             }}>{'<- Back'}</Text>
           ) : null
         }
       </Box>
-      <Text bold fontSize="2" pr="2">Group Feed</Text>
-      <Text fontSize="0" p="1" backgroundColor="washedGray">Everyone can post</Text>
+      { isHome ? (
+        <>
+          <Text bold fontSize="2" pr="2">Group Feed</Text>
+          <Text fontSize="0" p="1" backgroundColor="washedGray">Everyone can post</Text>
+        </>
+      ) : (
+        <>
+          <Text bold fontSize="2" pr="2">Post by </Text>
+          <Text bold fontSize="2" mono>{'TODO'}</Text>
+        </>
+      )}
     </Row>
   );
 }
