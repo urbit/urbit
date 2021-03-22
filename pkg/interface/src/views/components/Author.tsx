@@ -27,11 +27,12 @@ interface AuthorProps {
 
 // eslint-disable-next-line max-lines-per-function
 export default function Author(props: AuthorProps): ReactElement {
+  const { date, showImage, fullNotIcon } = props;
+
   const showAsCol = props.showAsCol || false;
   const time = props.time || false;
   const size = props.size || 16;
   const sigilPadding = props.sigilPadding || 2;
-  const fullNotIcon = !!props.fullNotIcon;
 
   const history = useHistory();
   const osDark = useLocalState((state) => state.dark);
@@ -47,7 +48,7 @@ export default function Author(props: AuthorProps): ReactElement {
   const color = contact?.color ? `#${uxToHex(contact?.color)}` : dark ? '#000000' : '#FFFFFF';
   const showNickname = useShowNickname(contact);
   const { hideAvatars } = useSettingsState(selectCalmState);
-  const name = showNickname ? contact.nickname : cite(ship);
+  const name = showNickname && contact ? contact.nickname : cite(ship);
   const stamp = moment(date);
 
   const [showOverlay, setShowOverlay] = useState(false);

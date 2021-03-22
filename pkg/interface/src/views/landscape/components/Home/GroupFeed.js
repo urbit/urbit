@@ -7,6 +7,7 @@ import { PostInput } from './Post/PostInput';
 import { PostFeed } from './Post/PostFeed';
 import { Loading } from '~/views/components/Loading';
 import { resourceFromPath } from '~/logic/lib/group';
+import useGraphState from '~/logic/state/graph';
 
 
 export function GroupFeed(props) {
@@ -14,7 +15,6 @@ export function GroupFeed(props) {
     baseUrl,
     api,
     history,
-    graphs,
     associations,
     groups,
     contacts,
@@ -22,11 +22,13 @@ export function GroupFeed(props) {
   } = props;
   const graphResource = resourceFromPath(graphPath);
   const graphId = `${graphResource.ship.slice(1)}/${graphResource.name}`;
+  const graphs = useGraphState(state => state.graphs);
+
   const shouldRenderFeed = graphId in graphs;
 
   useEffect(() => {
     //  TODO: VirtualScroller should support lower starting values than 100
-    props.api.graph.getNewest(graphResource.ship, graphResource.name, 100);
+    api.graph.getNewest(graphResource.ship, graphResource.name, 100);
   }, [graphPath]);
 
   return (

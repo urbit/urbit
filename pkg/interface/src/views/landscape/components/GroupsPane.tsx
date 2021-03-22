@@ -39,7 +39,7 @@ type GroupsPaneProps = StoreState & {
 };
 
 export function GroupsPane(props: GroupsPaneProps) {
-  const { baseUrl, api, workspace, graphs } = props;
+  const { baseUrl, api, workspace } = props;
   const associations = useMetadataState(state => state.associations);
   const contacts = useContactState(state => state.contacts);
   const notificationsCount = useHarkState(state => state.notificationsCount);
@@ -208,7 +208,6 @@ export function GroupsPane(props: GroupsPaneProps) {
                   api={api}
                   baseUrl={baseUrl}
                   associations={associations}
-                  graphs={graphs}
                   groups={groups}
                   groupPath={groupPath}
                   contacts={contacts}
