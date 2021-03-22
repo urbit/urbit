@@ -704,9 +704,13 @@ main = do
       Sys.installHandler sig (Sys.Catch onKillSig) Nothing
 
   setRLimits = do
-    nofiles <- Sys.getResourceLimit Sys.ResourceOpenFiles
+    openFiles <- Sys.getResourceLimit Sys.ResourceOpenFiles
+    let soft = case Sys.hardLimit openFiles of
+          Sys.ResourceLimit lim     -> Sys.ResourceLimit lim
+          Sys.ResourceLimitInfinity -> Sys.ResourceLimit 10240  -- macOS
+          Sys.ResourceLimitUnknown  -> Sys.ResourceLimit 10240
     Sys.setResourceLimit Sys.ResourceOpenFiles
-      nofiles { Sys.softLimit = Sys.ResourceLimit 10240 }
+      openFiles { Sys.softLimit = soft }
 
   verboseLogging :: CLI.Cmd -> Bool
   verboseLogging = \case

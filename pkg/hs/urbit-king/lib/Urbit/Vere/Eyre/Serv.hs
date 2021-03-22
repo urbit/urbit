@@ -264,18 +264,28 @@ startServer typ hos por sok red vLive onFatal = do
         SHLocalhost -> "127.0.0.1"
         SHAnyHostOk -> "*"
 
-  let handler r e
+  let handler r e = do
+        when (isFatal e) $ do
+          runRIO envir $ logError $ display $ msg r e
+          onFatal
+        when (W.defaultShouldDisplayException e) $ do
+          runRIO envir $ logWarn $ display $ msg r e
+
+      isFatal e
         | Just (IOError {ioe_type = ResourceExhausted}) <- fromException e
-        = runRIO envir $ do
-            logError (displayShow e)
-            io onFatal
-        | otherwise = W.defaultOnException r e
+        = True
+        | otherwise = False
+
+      msg r e = case r of
+        Just r  -> "eyre: failed request from " <> (tshow $ W.remoteHost r)
+                <> " for " <> (tshow $ W.rawPathInfo r) <> ": " <> tshow e
+        Nothing -> "eyre: server exception: " <> tshow e
 
   let opts =
         W.defaultSettings
           & W.setHost host
           & W.setPort (fromIntegral por)
-          & W.setTimeout (5 * 60)
+          & W.setTimeout 30
           & W.setOnException handler
 
   -- TODO build Eyre.Site.app in pier, thread through here

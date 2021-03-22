@@ -363,7 +363,7 @@ eyre env who plan isFake stderr sub = (initialEvents, runHttpServer)
     logInfo "Restarting http server"
     let onFatal = runRIO env $ do
           -- XX instead maybe restart following logic under HSESetConfig below
-          stderr "You've been DDoSed. Please restart your ship."
+          stderr "A web server problem has occurred. Please restart your ship."
           view killKingActionL >>= atomically
     let startAct = startServ who isFake conf plan stderr onFatal sub
     res <- fromEither =<< restartService var startAct kill
