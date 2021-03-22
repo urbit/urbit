@@ -73,6 +73,7 @@
     creator       our.bowl
     config        [%graph module.action]
     preview       %.n
+    hidden        %.n
   ==
 =/  met-action=action:met
   [%add group graph+rid.action metadatum]

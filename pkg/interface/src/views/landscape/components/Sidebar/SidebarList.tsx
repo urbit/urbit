@@ -55,7 +55,7 @@ export function SidebarList(props: {
       const assoc = associations[a];
       if (workspace?.type === 'messages') {
         return (
-          !(assoc.group in props.associations.groups) &&
+          !(assoc.group in associationState.groups) &&
           'graph' in assoc.metadata.config &&
           assoc.metadata.config.graph === 'chat'
         );
@@ -64,7 +64,6 @@ export function SidebarList(props: {
           assoc.group === group &&
           !assoc.metadata.hidden
         ) : (
-          !(assoc.group in props.associations.groups) &&
           'graph' in assoc.metadata.config &&
           assoc.metadata.config.graph !== 'chat' &&
           !assoc.metadata.hidden
