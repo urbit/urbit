@@ -64,7 +64,7 @@ export class PostFeed extends React.Component {
   }
 
   render() {
-    const { graph } = this.props;
+    const { graph, pendingSize } = this.props;
 
     return (
       <VirtualScroller
@@ -74,7 +74,7 @@ export class PostFeed extends React.Component {
         averageHeight={106}
         size={graph.size}
         style={virtualScrollerStyle}
-        pendingSize={0}
+        pendingSize={pendingSize}
         renderer={this.renderItem}
         loadRows={this.fetchPosts}
       />

@@ -23,6 +23,7 @@ export function GroupFeed(props) {
   const graphResource = resourceFromPath(graphPath);
   const graphId = `${graphResource.ship.slice(1)}/${graphResource.name}`;
   const graphs = useGraphState(state => state.graphs);
+  const pendingSize = useGraphState(state => state.pendingSize);
 
   const shouldRenderFeed = graphId in graphs;
 
@@ -59,6 +60,7 @@ export function GroupFeed(props) {
             <PostFeed
               graphResource={graphResource}
               graph={graphs[graphId]}
+              pendingSize={pendingSize}
               associations={associations}
               groups={groups}
               contacts={contacts}
