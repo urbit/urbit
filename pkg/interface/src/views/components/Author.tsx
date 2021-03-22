@@ -96,6 +96,7 @@ export default function Author(props: AuthorProps): ReactElement {
   const img =
     contact?.avatar && !hideAvatars ? (
       <BaseImage
+        referrerPolicy="no-referrer"
         display='inline-block'
         src={contact.avatar}
         style={{ objectFit: 'cover' }}

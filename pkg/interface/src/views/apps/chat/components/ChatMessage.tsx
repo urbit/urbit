@@ -58,7 +58,14 @@ export const DayBreak = ({ when, shimTop = false }: DayBreakProps) => (
     mt={shimTop ? '-8px' : '0'}
   >
     <Rule borderColor='lightGray' />
-    <Text gray flexShrink='0' fontSize={0} px={2}>
+    <Text
+      gray
+      flexShrink='0'
+      whiteSpace='nowrap'
+      textAlign='center'
+      fontSize={0}
+      px={2}
+    >
       {moment(when).calendar(null, { sameElse: DATESTAMP_FORMAT })}
     </Text>
     <Rule borderColor='lightGray' />
@@ -84,7 +91,7 @@ export const UnreadMarker = React.forwardRef(
         position='absolute'
         ref={ref}
         px={2}
-        mt={2}
+        mt={0}
         height={5}
         justifyContent='center'
         alignItems='center'
@@ -92,7 +99,14 @@ export const UnreadMarker = React.forwardRef(
       >
         <Rule borderColor='lightBlue' />
         <VisibilitySensor onChange={setVisible}>
-          <Text color='blue' fontSize={0} flexShrink='0' px={2}>
+          <Text
+            color='blue'
+            fontSize={0}
+            flexShrink='0'
+            whiteSpace='nowrap'
+            textAlign='center'
+            px={2}
+          >
             New messages below
           </Text>
         </VisibilitySensor>
@@ -206,7 +220,9 @@ const MessageWrapper = (props) => {
   return (
     <Box
       py='1'
-      backgroundColor={hovering ? 'washedGray' : 'transparent'}
+      backgroundColor={
+        hovering && !props.hideHover ? 'washedGray' : 'transparent'
+      }
       position='relative'
       {...bind}
     >
@@ -233,6 +249,7 @@ interface ChatMessageProps {
   api: GlobalApi;
   highlighted?: boolean;
   renderSigil?: boolean;
+  hideHover?: boolean;
   innerRef: (el: HTMLDivElement | null) => void;
 }
 
@@ -263,7 +280,9 @@ class ChatMessage extends Component<ChatMessageProps> {
       history,
       api,
       highlighted,
-      fontSize
+      showOurContact,
+      fontSize,
+      hideHover
     } = this.props;
 
     let { renderSigil } = this.props;
@@ -295,11 +314,13 @@ class ChatMessage extends Component<ChatMessageProps> {
       style,
       containerClass,
       isPending,
+      showOurContact,
       history,
       api,
       scrollWindow,
       highlighted,
-      fontSize
+      fontSize,
+      hideHover
     };
 
     const unreadContainerStyle = {
@@ -355,6 +376,7 @@ export const MessageAuthor = ({
   api,
   history,
   scrollWindow,
+  showOurContact,
   ...rest
 }) => {
   const osDark = useLocalState((state) => state.dark);
@@ -367,7 +389,12 @@ export const MessageAuthor = ({
     .unix(msg['time-sent'] / 1000)
     .format(DATESTAMP_FORMAT);
   const contact =
-    `~${msg.author}` in contacts ? contacts[`~${msg.author}`] : false;
+    ((msg.author === window.ship && showOurContact) ||
+      msg.author !== window.ship) &&
+    `~${msg.author}` in contacts
+      ? contacts[`~${msg.author}`]
+      : false;
+
   const showNickname = useShowNickname(contact);
   const { hideAvatars } = useSettingsState(selectCalmState);
   const shipName = showNickname ? contact.nickname : cite(msg.author);
@@ -409,6 +436,7 @@ export const MessageAuthor = ({
     contact?.avatar && !hideAvatars ? (
       <BaseImage
         display='inline-block'
+        referrerPolicy='no-referrer'
         style={{ objectFit: 'cover' }}
         src={contact.avatar}
         height={24}
@@ -437,13 +465,14 @@ export const MessageAuthor = ({
       </Box>
     );
   return (
-    <Box display='flex' alignItems='center' {...rest}>
+    <Box display='flex' alignItems='flex-start' {...rest}>
       <Box
         onClick={() => {
           setShowOverlay(true);
         }}
         height={24}
         pr={2}
+        mt={'1px'}
         pl={'12px'}
         cursor='pointer'
         position='relative'
@@ -476,7 +505,7 @@ export const MessageAuthor = ({
           <Text
             fontSize={1}
             mr={2}
-            flexShrink={0}
+            flexShrink={1}
             mono={nameMono}
             fontWeight={nameMono ? '400' : '500'}
             cursor='pointer'

@@ -9,6 +9,7 @@ import useSettingsState from '../state/settings';
 import { State, UseStore } from 'zustand';
 import { Cage } from '~/types/cage';
 import { BaseState } from '../state/base';
+import anyAscii from 'any-ascii';
 
 enableMapSet();
 
@@ -24,7 +25,7 @@ export const MOMENT_CALENDAR_DATE = {
 };
 
 export const getModuleIcon = (mod: string) => {
- if (mod === 'link') {
+  if (mod === 'link') {
     return 'Collection';
   }
 
@@ -54,7 +55,7 @@ export function daToUnix(da: BigInteger) {
 }
 
 export function unixToDa(unix: number) {
-  const timeSinceEpoch =  bigInt(unix).multiply(DA_SECOND).divide(bigInt(1000));
+  const timeSinceEpoch = bigInt(unix).multiply(DA_SECOND).divide(bigInt(1000));
   return DA_UNIX_EPOCH.add(timeSinceEpoch);
 }
 
@@ -304,7 +305,7 @@ export function stringToTa(str: string) {
 
 export function amOwnerOfGroup(groupPath: string) {
   if (!groupPath)
-return false;
+    return false;
   const groupOwner = /(\/~)?\/~([a-z-]{3,})\/.*/.exec(groupPath)?.[2];
   return window.ship === groupOwner;
 }
@@ -323,11 +324,12 @@ export function getContactDetails(contact: any) {
 }
 
 export function stringToSymbol(str: string) {
+  const ascii = anyAscii(str);
   let result = '';
-  for (let i = 0; i < str.length; i++) {
-    const n = str.charCodeAt(i);
+  for (let i = 0; i < ascii.length; i++) {
+    const n = ascii.charCodeAt(i);
     if ((n >= 97 && n <= 122) || (n >= 48 && n <= 57)) {
-      result += str[i];
+      result += ascii[i];
     } else if (n >= 65 && n <= 90) {
       result += String.fromCharCode(n + 32);
     } else {
@@ -341,7 +343,6 @@ export function stringToSymbol(str: string) {
   }
   return result;
 }
-
 /**
  * Formats a numbers as a `@ud` inserting dot where needed
  */
@@ -359,7 +360,7 @@ export function numToUd(num: number) {
 export function usePreventWindowUnload(shouldPreventDefault: boolean, message = 'You have unsaved changes. Are you sure you want to exit?') {
   useEffect(() => {
     if (!shouldPreventDefault)
-return;
+      return;
     const handleBeforeUnload = (event) => {
       event.preventDefault();
       return message;
@@ -375,7 +376,7 @@ return;
 }
 
 export function pluralize(text: string, isPlural = false, vowel = false) {
-  return isPlural ? `${text}s`: `${vowel ? 'an' : 'a'} ${text}`;
+  return isPlural ? `${text}s` : `${vowel ? 'an' : 'a'} ${text}`;
 }
 
 // Hide is an optional second parameter for when this function is used in class components
@@ -404,9 +405,9 @@ export const useHovering = (): useHoveringInterface => {
 
 const DM_REGEX = /ship\/~([a-z]|-)*\/dm--/;
 export function getItemTitle(association: Association) {
-  if(DM_REGEX.test(association.resource)) {
-    const [,,ship,name] = association.resource.split('/');
-    if(ship.slice(1) === window.ship) {
+  if (DM_REGEX.test(association.resource)) {
+    const [, , ship, name] = association.resource.split('/');
+    if (ship.slice(1) === window.ship) {
       return cite(`~${name.slice(4)}`);
     }
     return cite(ship);

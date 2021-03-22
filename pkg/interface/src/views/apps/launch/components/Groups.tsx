@@ -91,15 +91,16 @@ function Group(props: GroupProps) {
     isTutorialGroup,
     anchorRef
   );
-  const { hideUnreads } = useSettingsState(selectCalmState)
+  const { hideUnreads } = useSettingsState(selectCalmState);
   const joined = useSettingsState(selectJoined);
+  const days = Math.floor(moment.duration(moment(joined).add(14, 'days').diff(moment())).as('days'));
   return (
     <Tile ref={anchorRef} position="relative" bg={isTutorialGroup ? 'lightBlue' : undefined} to={`/~landscape${path}`} gridColumnStart={first ? '1' : null}>
       <Col height="100%" justifyContent="space-between">
         <Text>{title}</Text>
         {!hideUnreads && (<Col>
-          {isTutorialGroup && joined && 
-            (<Text>{Math.floor(moment.duration(moment(joined).add(14, 'days').diff(moment())).as('days'))} days remaining</Text>)
+          {isTutorialGroup && joined &&
+            (<Text>{days} day{days !== 1 && 's'} remaining</Text>)
           }
           {updates > 0 &&
             (<Text mt="1" color="blue">{updates} update{updates !== 1 && 's'} </Text>)

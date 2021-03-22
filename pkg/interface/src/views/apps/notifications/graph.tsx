@@ -32,7 +32,7 @@ const FilterBox = styled(Box)`
   background: linear-gradient(
     to bottom,
     transparent,
-    ${p => p.theme.colors.white}
+    ${(p) => p.theme.colors.white}
   );
 `;
 
@@ -81,9 +81,7 @@ const GraphNodeContent = ({
       const [{ text }, { url }] = contents;
       return <GraphUrl title={text} url={url} />;
     } else if (idx.length === 3) {
-      return (
-        <MentionText content={contents} group={group} />
-      );
+      return <MentionText content={contents} group={group} />;
     }
     return null;
   }
@@ -138,6 +136,7 @@ const GraphNodeContent = ({
           msg={post}
           fontSize='0'
           pt='2'
+          hideHover={true}
         />
       </Row>
     );
@@ -182,11 +181,11 @@ const GraphNode = ({
   group,
   read,
   onRead,
-  showContact = false,
+  showContact = false
 }) => {
   author = deSig(author);
   const history = useHistory();
-  const contacts = useContactState(state => state.contacts);
+  const contacts = useContactState((state) => state.contacts);
 
   const nodeUrl = getNodeUrl(mod, group?.hidden, groupPath, graph, index);
 
@@ -198,17 +197,15 @@ const GraphNode = ({
   }, [read, onRead]);
 
   const showNickname = useShowNickname(contacts?.[`~${author}`]);
-  const nickname = (contacts?.[`~${author}`]?.nickname && showNickname) ? contacts[`~${author}`].nickname : cite(author);
+  const nickname =
+    contacts?.[`~${author}`]?.nickname && showNickname
+      ? contacts[`~${author}`].nickname
+      : cite(author);
   return (
     <Row onClick={onClick} gapX='2' pt={showContact ? 2 : 0}>
       <Col flexGrow={1} alignItems='flex-start'>
         {showContact && (
-          <Author
-            showImage
-            ship={author}
-            date={time}
-            group={group}
-          />
+          <Author showImage ship={author} date={time} group={group} />
         )}
         <Row width='100%' p='1' flexDirection='column'>
           <GraphNodeContent
@@ -249,7 +246,7 @@ export function GraphNotification(props: {
     return api.hark['read'](timebox, { graph: index });
   }, [api, timebox, index, read]);
 
-  const groups = useGroupState(state => state.groups);
+  const groups = useGroupState((state) => state.groups);
 
   return (
     <>
