@@ -85,6 +85,7 @@ dependencies:
   - regex-tdfa
   - resourcet
   - rio
+  - rio-orphans
   - semigroups
   - smallcheck
   - stm
