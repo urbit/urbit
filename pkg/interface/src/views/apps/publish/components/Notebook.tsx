@@ -28,18 +28,18 @@ export function Notebook(props: NotebookProps & RouteComponentProps): ReactEleme
   } = props;
 
   const groups = useGroupState(state => state.groups);
+  const contacts = useContactState(state => state.contacts);
 
   const group = groups[association?.group];
-  if (!group) {
-    return null; // Waiting on groups to populate
-  }
-
   const relativePath = (p: string) => props.baseUrl + p;
-  const contacts = useContactState(state => state.contacts);
 
   const contact = contacts?.[`~${ship}`];
 
   const showNickname = useShowNickname(contact);
+
+  if (!group) {
+    return null; // Waiting on groups to populate
+  }
 
   return (
     <Col gapY="4" pt={4} mx="auto" px={3} maxWidth="768px">
