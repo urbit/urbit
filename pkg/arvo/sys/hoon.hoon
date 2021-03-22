@@ -10374,31 +10374,34 @@
         =>  (def make:arc)
         |%
         ++  halp  |~  a=hoon
-                  ^-  fleg
-                  -:(caching-mint %noun a)
+                  ^-  [fleg _grub]
+                  (caching-mint %noun a)
         ++  vant
           |%  ++  trep  |:  $:{a/type b/wing c/type}
-                        ^-  {axis type}
-                        -:(caching-tack(sut a) b c)
+                        ^-  [[axis type] _grub]
+                        (caching-tack(sut a) b c)
               ++  tasp  |:  $:{a/(pair axis type) b/fleg c/foat}
                         ^-  foat
                         [q.a [[p.a (skin b)] (skin c)]]
-              ++  tyle  |:($:foat +<)
+              ++  tyle  |:($:foat [+< grub])
           --
         ++  vunt
           |%  ++  trep  |:  $:{a/claw b/wing c/bath}
-                        ^-  (pair axis claw)
-                        -:(caching-toss b c a)
+                        ^-  [(pair axis claw) _grub]
+                        (caching-toss b c a)
               ++  tasp  |:  $:{a/(pair axis claw) b/fleg c/fult}
                         ^-  fult
                         [q.a [[p.a (skin b)] (skin c)]]
               ++  tyle  |:  $:fult
-                        ^-  foat
-                        [-:(caching-fire +<-) +<+]
+                        ^-  [foat _grub]
+                        =/  sam  +<
+                        =^  val  grub  (caching-fire -.sam)
+                        :_  grub
+                        [val +.sam]
       --  --  --
     ::
-    ++  bin
-      =+  deft:lib
+    ++  caching-bin
+      =+  make:lib
       |@  ++  $
       =>  +<
       |%
@@ -10421,18 +10424,20 @@
         |@  ++  $
         =>  +<
         |:  $:{rum/clom rig/(list (pair wing hoon))}
-        ^-  foat
-        %-  tyle
-        |-  ^-  ceut
-        ?~  rig  (rosh rum)
-        =+  mor=$(rig t.rig)
-        =+  zil=(halp q.i.rig)
-        =+  dar=(trep (meat mor) p.i.rig (meat zil))
+        ^-  [foat _grub]
+        =;  [=ceut =_grub]
+          (tyle ceut)
+        |-  ^-  [ceut _grub]
+        ?~  rig  :_  grub  (rosh rum)
+        =^  mor  grub  $(rig t.rig)
+        =^  zil  grub  (halp q.i.rig)
+        =^  dar  grub  (trep (meat mor) p.i.rig (meat zil))
+        :_  grub
         (tasp dar zil mor)
       --  --  --  --
   ::
   ++  caching-oc
-    =/  inc  (bin:caching-ad)
+    =/  inc  (caching-bin:caching-ad)
     |@  ++  $
     =>  inc
     |%
@@ -10614,14 +10619,18 @@
   ::
   ++  caching-etco
     |=  {lop/palo rig/(list (pair wing hoon))}
-    ^-  (pair type nock)
-    =/  cin  (caching-oc (bin:caching-ad make:lib:caching-ad))
+    ^-  [(pair type nock) _grub]
+    =/  cin  (caching-oc (caching-bin:caching-ad make:lib:caching-ad))
     =.  rig  (flop rig)         ::  XX this unbreaks, void order in devulc
     =/  axe  (tend p.lop)
     ?:  ?=(%& -.q.lop)
-      =-  [p.- (hike axe q.-)]
+      =;  [=foat:cin =_grub]
+        :_  grub
+        [p.foat (hike axe q.foat)]
       (echo:cin p.q.lop rig)
-    =-  [p.- [%9 p.q.lop (hike axe q.-)]]
+    =;  [=foat:cin =_grub]
+      :_  grub
+      [p.foat [%9 p.q.lop (hike axe q.foat)]]
     (ecmo:cin ~(tap in q.q.lop) rig)
   ::
   ++  caching-et
@@ -10644,7 +10653,7 @@
         ~>  %mean.'hoon'
         ?>  ?=(~ rig)
         [p.lug grub]
-      =;  par=(pair type nock)
+      =;  [par=(pair type nock) =_grub]
         ?.  vet
           [par grub]
         =^  nests  grub  (caching-nest(sut gol) & p.par)
