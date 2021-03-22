@@ -64,7 +64,7 @@ function getLinkPermalink(
     (acc, val, i) => {
       console.log(acc);
       if (i === 0) {
-        return {...acc, pathname: `${acc.pathname}/${val}` };
+        return {...acc, pathname: `${acc.pathname}/index/${val}` };
       } else if (i === 1) {
         return {...acc, search: `?selected=${val}` };
       }

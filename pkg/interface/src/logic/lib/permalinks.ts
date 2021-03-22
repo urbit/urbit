@@ -1,24 +1,23 @@
-import { Association, resourceFromPath, Group } from "@urbit/api";
-import { useGroupForAssoc } from "../state/group";
 
-export function usePermalinkForGraph(assoc: Association, index = "") {
-  const group = useGroupForAssoc(assoc)!;
-  return getPermalinkForGraph(assoc, group, index);
-}
+import {
+  Association,
+  resourceFromPath,
+  Group,
+  ReferenceContent,
+} from "@urbit/api";
 
 export function getPermalinkForGraph(
-  assoc: Association,
-  group: Group,
+  group: string,
+  graph: string,
   index = ""
 ) {
-  const groupLink = getPermalinkForAssociatedGroup(assoc, group);
-  const { ship, name } = resourceFromPath(assoc.resource);
+  const groupLink = getPermalinkForAssociatedGroup(group);
+  const { ship, name } = resourceFromPath(graph);
   return `${groupLink}/graph/${ship}/${name}${index}`;
 }
 
-function getPermalinkForAssociatedGroup(assoc: Association, group: Group) {
-  const mod = assoc.metadata.module;
-  const { ship, name } = resourceFromPath(assoc.group);
+function getPermalinkForAssociatedGroup(group: string) {
+  const { ship, name } = resourceFromPath(group);
   return `web+urbit://group/${ship}/${name}`;
 }
 

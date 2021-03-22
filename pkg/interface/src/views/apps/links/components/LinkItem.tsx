@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback, ReactElement }  from '
 import { Link } from 'react-router-dom';
 
 import { Row, Col, Anchor, Box, Text, Icon, Action } from '@tlon/indigo-react';
-import { GraphNode, Group, Rolodex, Unreads } from '@urbit/api';
+import { GraphNode, Group, Rolodex, Unreads, Association } from '@urbit/api';
 
 import { writeText } from '~/logic/lib/util';
 import Author from '~/views/components/Author';
@@ -12,18 +12,15 @@ import { Dropdown } from '~/views/components/Dropdown';
 import RemoteContent from '~/views/components/RemoteContent';
 import useHarkState from '~/logic/state/hark';
 import {useCopy} from '~/logic/lib/useCopy';
-import {usePermalinkForGraph} from '~/logic/lib/permalinks';
+import {usePermalinkForGraph, getPermalinkForGraph} from '~/logic/lib/permalinks';
 
 interface LinkItemProps {
   node: GraphNode;
-  resource: string;
-  api: GlobalApi;
-  group: Group;
-  path: string;
-}
-
-export const LinkItem = (props: LinkItemProps): ReactElement => {
+  association: Association;
+  resource: string; api: GlobalApi; group: Group; path: string; }
+export const LinkItem = (props: LinkItemProps): ReactElement => { 
   const {
+    association,
     node,
     resource,
     api,
@@ -34,10 +31,11 @@ export const LinkItem = (props: LinkItemProps): ReactElement => {
 
   const ref = useRef<HTMLDivElement | null>(null);
   const remoteRef = useRef<typeof RemoteContent | null>(null);
+  const index = node.post.index.split('/')[1];
 
   const markRead = useCallback(() => {
     api.hark.markEachAsRead(props.association, '/', `/${index}`, 'link', 'link');
-  }, [props.association, index]);
+  }, [association, index]);
 
   useEffect(() => {
     function onBlur() {
@@ -61,7 +59,6 @@ export const LinkItem = (props: LinkItemProps): ReactElement => {
   );
 
   const author = node.post.author;
-  const index = node.post.index.split('/')[1];
   const size = node.children ? node.children.size : 0;
   const contents = node.post.contents;
   const hostname = URLparser.exec(contents[1].url) ? URLparser.exec(contents[1].url)[4] : null;
@@ -73,7 +70,11 @@ export const LinkItem = (props: LinkItemProps): ReactElement => {
   const [ship, name] = resource.split('/');
 
 
-  const permalink = usePermalinkForGraph(props.association, node.post.index);
+  const permalink = getPermalinkForGraph(
+    association.group,
+    association.resource,
+    `/${index}`
+  );
 
   const { doCopy: doCopyLink, copyDisplay: locationText } = useCopy(
     contents[1].url,
@@ -161,7 +162,7 @@ export const LinkItem = (props: LinkItemProps): ReactElement => {
       />
       <Box ml="auto">
         <Link
-          to={node.post.pending ? '#' : `${baseUrl}/${index}`}
+          to={node.post.pending ? '#' : `${baseUrl}/index/${index}`}
           style={{ cursor: node.post.pending ? 'default' : 'pointer' }}>
         <Box display='flex'>
           <Icon color={commColor} icon='Chat' />

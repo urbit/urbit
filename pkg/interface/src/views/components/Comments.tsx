@@ -22,7 +22,6 @@ interface CommentsProps {
   association: Association;
   name: string;
   ship: string;
-  editCommentId: string;
   baseUrl: string;
   api: GlobalApi;
   group: Group;

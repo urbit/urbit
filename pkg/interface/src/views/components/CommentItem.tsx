@@ -13,7 +13,7 @@ import { MentionText } from '~/views/components/MentionText';
 import { roleForShip } from '~/logic/lib/group';
 import { getLatestCommentRevision } from '~/logic/lib/publish';
 import {useCopy} from '~/logic/lib/useCopy';
-import {usePermalinkForGraph} from '~/logic/lib/permalinks';
+import { getPermalinkForGraph} from '~/logic/lib/permalinks';
 import useMetadataState from '~/logic/state/metadata';
 
 const ClickBox = styled(Box)`
@@ -71,14 +71,17 @@ export function CommentItem(props: CommentItemProps): ReactElement {
 
   useEffect(() => {
     if(ref.current && props.highlighted) {
-      ref.current.scrollIntoView();
+      ref.current.scrollIntoView({ block: 'center' });
     }
-
   }, [ref, props.highlighted]);
   const history = useHistory();
 
   const { copyDisplay, doCopy } = useCopy(
-    usePermalinkForGraph(association, post.index.split('/').slice(0, -1).join('/')),
+    getPermalinkForGraph(
+      association.group,
+      association.resource,
+      post.index.split('/').slice(0, -1).join('/')
+    ),
     'Copy Link'
   );
 
@@ -102,7 +105,7 @@ export function CommentItem(props: CommentItemProps): ReactElement {
         borderRadius="1"
         p="1"
         mb="1"
-        backgroundColor={props.highlighted ? 'lightBlue' : 'white'}
+        backgroundColor={props.highlighted ? 'washedBlue' : 'white'}
       >
         <MentionText
           transcluded={0}

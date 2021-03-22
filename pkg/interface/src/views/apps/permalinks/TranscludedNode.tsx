@@ -91,9 +91,9 @@ function TranscludedPublishNode(props: {
         ?.get(bigInt.one)
         ?.children?.peekLargest()?.[1]!;
       return (
-        <Col>
+        <Col gapY="2">
           <Author
-            p="2"
+            px="2"
             showImage
             ship={post.post.author}
             date={post.post?.["time-sent"]}
@@ -128,6 +128,7 @@ export function TranscludedNode(props: {
   assoc: Association;
   node: GraphNode;
   transcluded: number;
+  api: GlobalApi;
 }) {
   const { node, assoc, transcluded } = props;
   const group = useGroupForAssoc(assoc)!;
@@ -136,6 +137,7 @@ export function TranscludedNode(props: {
       return (
         <Row width="100%" flexShrink={0} flexGrow={1} flexWrap="wrap">
           <ChatMessage
+            width="100%"
             renderSigil
             transcluded={transcluded + 1}
             containerClass="items-top cf hide-child"

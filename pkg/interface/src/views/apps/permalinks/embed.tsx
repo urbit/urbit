@@ -2,6 +2,8 @@ import React, { useCallback, useEffect, useState } from "react";
 import {
   parsePermalink,
   GraphPermalink as IGraphPermalink,
+  getPermalinkForGraph,
+  usePermalinkForGraph,
 } from "~/logic/lib/permalinks";
 import {
   Action,
@@ -71,7 +73,54 @@ function GraphPermalink(
     })();
   }, [pending, graph, index]);
   const showTransclusion = !!(association && node && transcluded < 1);
+  const permalink = getPermalinkForGraph(group, graph, index);
 
+  return (
+    <Col
+      width="100%"
+      my="1"
+      bg="white"
+      border="1"
+      borderColor="lightGray"
+      borderRadius="2"
+    >
+      {showTransclusion && (
+        <Box p="2">
+          <TranscludedNode
+            api={api}
+            transcluded={transcluded + 1}
+            node={node}
+            assoc={association!}
+          />
+        </Box>
+      )}
+      {!!association ? (
+        <PermalinkDetails
+          known
+          showTransclusion={showTransclusion}
+          icon={getModuleIcon(association.metadata.module)}
+          title={association.metadata.title}
+          permalink={permalink}
+        />
+      ) : (
+        <PermalinkDetails
+          icon="Groups"
+          title={graph.slice(5)}
+          permalink={permalink}
+        />
+      )}
+    </Col>
+  );
+}
+
+function PermalinkDetails(props: {
+  title: string;
+  icon: any;
+  permalink: string;
+  showTransclusion?: boolean;
+  known?: boolean;
+}) {
+  const { title, icon, permalink, known, showTransclusion } = props;
   const rowTransclusionStyle = showTransclusion
     ? {
         borderTop: "1",
@@ -81,39 +130,24 @@ function GraphPermalink(
     : {};
 
   return (
-    <Col my="1" bg="white" border="1" borderColor="lightGray" borderRadius="2">
-      {showTransclusion && (
-        <Box p="2">
-          <TranscludedNode
-            transcluded={transcluded + 1}
-            node={node}
-            assoc={association!}
-          />
-        </Box>
-      )}
-      <Row
-        {...rowTransclusionStyle}
-        alignItems="center"
-        justifyContent="space-between"
-        width="100%"
-        px="2"
-        py="1"
-      >
-        <Row gapX="2" alignItems="center">
-          <Icon
-            icon={
-              association
-                ? (getModuleIcon(association.metadata.module) as any)
-                : "Groups"
-            }
-          />
-          <Text lineHeight="20px" mono={!association}>
-            {association?.metadata.title ?? graph.slice(6)}
-          </Text>
-        </Row>
-        <Action onClick={() => {}}>Go to link</Action>
+    <Row
+      {...rowTransclusionStyle}
+      alignItems="center"
+      justifyContent="space-between"
+      width="100%"
+      px="2"
+      py="1"
+    >
+      <Row gapX="2" alignItems="center">
+        <Icon icon={icon} />
+        <Text lineHeight="20px" mono={!known}>
+          {title}
+        </Text>
       </Row>
-    </Col>
+      <Link to={`/perma${permalink.slice(11)}`}>
+        <Text color="blue">Go to link</Text>
+      </Link>
+    </Row>
   );
 }
 

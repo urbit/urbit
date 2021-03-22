@@ -13,7 +13,8 @@ import { roleForShip } from '~/logic/lib/group';
 import Author from '~/views/components/Author';
 import { Contacts, GraphNode, Graph, Association, Unreads, Group } from '@urbit/api';
 import {useCopy} from '~/logic/lib/useCopy';
-import {usePermalinkForGraph} from '~/logic/lib/permalinks';
+import {usePermalinkForGraph, getPermalinkForGraph} from '~/logic/lib/permalinks';
+import {useQuery} from '~/logic/lib/useQuery';
 
 interface NoteProps {
   ship: string;
@@ -48,8 +49,7 @@ export function NoteContent({ body }) {
 export function Note(props: NoteProps & RouteComponentProps) {
   const [deleting, setDeleting] = useState(false);
 
-  const { notebook, note, ship, book, api, rootUrl, baseUrl, group } = props;
-  const editCommentId = props.match.params.commentId;
+  const { association, notebook, note, ship, book, api, rootUrl, baseUrl, group } = props;
 
   const deletePost = async () => {
     setDeleting(true);
@@ -58,6 +58,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
     props.history.push(rootUrl);
   };
 
+  const { query } = useQuery();
   const comments = getComments(note);
   const [revNum, title, body, post] = getLatestRevision(note);
   const index = note.post.index.split('/');
@@ -85,16 +86,20 @@ export function Note(props: NoteProps & RouteComponentProps) {
     )
   };
 
-  const permalink = usePermalinkForGraph(props.association, `/${noteId.toString()}`)
+  const permalink = getPermalinkForGraph(
+    association.group,
+    association.resource,
+    `/${noteId.toString()}`
+  );
 
   const { doCopy, copyDisplay } = useCopy(permalink, 'Copy Link');
 
   const windowRef = React.useRef(null);
   useEffect(() => {
-    if (windowRef.current) {
+    if (windowRef.current && !query.has('selected')) {
       windowRef.current.parentElement.scrollTop = 0;
     }
-  }, [windowRef, note]);
+  }, [note, windowRef]);
 
   return (
     <Box
@@ -142,7 +147,6 @@ export function Note(props: NoteProps & RouteComponentProps) {
         association={props.association}
         api={props.api}
         baseUrl={baseUrl}
-        editCommentId={editCommentId}
         history={props.history}
         group={group}
       />

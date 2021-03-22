@@ -190,9 +190,11 @@ const MessageActions = ({ api, onReply, association, history, msg, group }) => {
                   Delete Message
                 </MessageActionItem>
               ) : null}
-              <MessageActionItem onClick={(e) => console.log(e)}>
-                View Signature
-              </MessageActionItem>
+              {false && (
+                <MessageActionItem onClick={(e) => console.log(e)}>
+                  View Signature
+                </MessageActionItem>
+              )}
             </Col>
           }
         >
@@ -211,7 +213,10 @@ const MessageWrapper = (props) => {
   return (
     <Box
       py='1'
-      backgroundColor={showHover ? 'washedGray' : 'transparent'}
+      backgroundColor={props.highlighted 
+        ? showHover ? 'lightBlue' : 'washedBlue'
+        : showHover ? 'washedGray' : 'transparent'
+      }
       position='relative'
       {...bind}
     >
@@ -326,9 +331,9 @@ class ChatMessage extends Component<ChatMessageProps> {
       <Box
         ref={this.props.innerRef}
         pt={renderSigil ? 2 : 0}
+        width="100%"
         pb={isLastMessage ? '20px' : 0}
         className={containerClass}
-        backgroundColor={highlighted ? 'blue' : 'white'}
         style={style}
       >
         {dayBreak && !isLastRead ? (
@@ -543,7 +548,7 @@ export const Message = ({
   const { hovering, bind } = useHovering();
   const contacts = useContactState((state) => state.contacts);
   return (
-    <Box position='relative' {...rest}>
+    <Box width="100%" position='relative' {...rest}>
       {timestampHover ? (
         <Text
           display={hovering ? 'block' : 'none'}
@@ -560,7 +565,7 @@ export const Message = ({
       ) : (
         <></>
       )}
-      <Box {...bind}>
+      <Box width="100%" {...bind}>
         {msg.contents.map((content, i) => {
           switch (Object.keys(content)[0]) {
             case 'text':
