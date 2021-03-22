@@ -20,6 +20,7 @@ import GcpReducer from '../reducers/gcp-reducer';
 import { OrderedMap } from '../lib/OrderedMap';
 import { BigIntOrderedMap } from '../lib/BigIntOrderedMap';
 import { GroupViewReducer } from '../reducers/group-view';
+import { unstable_batchedUpdates } from 'react-dom';
 
 export default class GlobalStore extends BaseStore<StoreState> {
   inviteReducer = new InviteReducer();
@@ -50,21 +51,23 @@ export default class GlobalStore extends BaseStore<StoreState> {
   }
 
   reduce(data: Cage, state: StoreState) {
-    //  debug shim
-    const tag = Object.keys(data)[0];
-    const oldActions = this.pastActions[tag] || [];
-    this.pastActions[tag] = [data[tag], ...oldActions.slice(0,14)];
-    this.inviteReducer.reduce(data);
-    this.metadataReducer.reduce(data);
-    this.s3Reducer.reduce(data);
-    this.groupReducer.reduce(data);
-    GroupViewReducer(data);
-    this.launchReducer.reduce(data);
-    this.connReducer.reduce(data, this.state);
-    GraphReducer(data);
-    HarkReducer(data);
-    ContactReducer(data);
-    this.settingsReducer.reduce(data);
-    this.gcpReducer.reduce(data);
+    unstable_batchedUpdates(() => {
+      //  debug shim
+      const tag = Object.keys(data)[0];
+      const oldActions = this.pastActions[tag] || [];
+      this.pastActions[tag] = [data[tag], ...oldActions.slice(0, 14)];
+      this.inviteReducer.reduce(data);
+      this.metadataReducer.reduce(data);
+      this.s3Reducer.reduce(data);
+      this.groupReducer.reduce(data);
+      GroupViewReducer(data);
+      this.launchReducer.reduce(data);
+      this.connReducer.reduce(data, this.state);
+      GraphReducer(data);
+      HarkReducer(data);
+      ContactReducer(data);
+      this.settingsReducer.reduce(data);
+      this.gcpReducer.reduce(data);
+    });
   }
 }
