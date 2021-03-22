@@ -168,6 +168,7 @@ return;
       return this.wrapInLink(
         <BaseImage
           {...(noCors ? {} : { crossOrigin: "anonymous" })}
+          referrerPolicy="no-referrer"
           flexShrink={0}
           src={url}
           style={style}
