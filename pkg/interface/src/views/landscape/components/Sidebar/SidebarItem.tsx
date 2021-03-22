@@ -93,6 +93,8 @@ export function SidebarItem(props: {
     }
   }
 
+  const fontWeight = (hasUnread || hasNotification) ? '500' : 'normal';
+
   if (props.hideUnjoined && !isSynced) {
     return null;
   }
@@ -134,7 +136,7 @@ export function SidebarItem(props: {
         {DM ? img : (
               <Icon
                 display="block"
-                color={color}
+                color={isSynced ? 'black' : 'gray'}
                 icon={getModuleIcon(mod) as any}
               />
             )
@@ -148,6 +150,7 @@ export function SidebarItem(props: {
             width='100%'
             mono={urbitOb.isValidPatp(title)}
             color={color}
+            fontWeight={fontWeight}
             style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}
           >
             {title}
