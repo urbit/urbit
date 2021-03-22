@@ -25,6 +25,8 @@
 #include "all.h"
 #include "vere/vere.h"
 
+#include <vere/db/lmdb.h>
+
 #include "ca-bundle.h"
 
 /* Require unsigned char
@@ -602,6 +604,32 @@ _stop_on_boot_completed_cb()
   u3_king_exit();
 }
 
+static c3_i
+_debug_db_stats(const c3_c* dir_c)
+{
+#if defined(U3_CPU_aarch64) && defined(U3_OS_linux)
+  const size_t siz_i = 64424509440;
+#else
+  const size_t siz_i = 1099511627776;
+#endif
+
+  c3_c* log_c = c3_malloc(10 + strlen(dir_c));
+
+  strcpy(log_c, dir_c);
+  strcat(log_c, "/.urb/log");
+
+  MDB_env* mdb_u = u3_lmdb_init(log_c, siz_i);
+
+  if ( mdb_u ) {
+    u3_lmdb_stat(mdb_u, stdout);
+    u3_lmdb_exit(mdb_u);
+    return 0;
+  }
+  else {
+    return 1;
+  }
+}
+
 c3_i
 main(c3_i   argc,
      c3_c** argv)
@@ -609,6 +637,12 @@ main(c3_i   argc,
   //  Parse options.
   //
   if ( c3n == _main_getopt(argc, argv) ) {
+    if (  (3 == argc)
+       && (0 == strcmp("db-info", argv[1])) )
+    {
+      return _debug_db_stats(argv[2]);
+    }
+
     u3_ve_usage(argc, argv);
     return 1;
   }
