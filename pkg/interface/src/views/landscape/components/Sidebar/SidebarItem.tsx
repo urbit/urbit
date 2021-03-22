@@ -136,7 +136,7 @@ export function SidebarItem(props: {
         {DM ? img : (
               <Icon
                 display="block"
-                color={color}
+                color={isSynced ? 'black' : 'gray'}
                 icon={getModuleIcon(mod) as any}
               />
             )
