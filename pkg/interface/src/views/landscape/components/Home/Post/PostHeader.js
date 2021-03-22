@@ -4,10 +4,11 @@ import Author from '~/views/components/Author';
 
 
 export function PostHeader(props) {
-  const { post, contacts, api} = props;
+  const { post, contacts, api, isReply } = props;
+  const mb = isReply ? "2" : "3";
 
   return (
-    <Row width="100%" height="36px" mb={3} justifyContent="space-between">
+    <Row width="100%" height="36px" mb={mb} justifyContent="space-between">
       <Author
         showImage
         contacts={contacts}

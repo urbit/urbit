@@ -73,7 +73,7 @@ export function SidebarListHeader(props: {
          borderColor="washedGray"
          backgroundColor={['transparent',
            props.history.location.pathname === `/~landscape${groupPath}` ||
-           props.history.location.pathname === `/~landscape${groupPath}/feed` 
+           props.history.location.pathname.includes(`/~landscape${groupPath}/feed`) 
            ? (
             'washedGray'
            ) : (

@@ -1,13 +1,13 @@
 import React, {
   useEffect
 } from 'react';
-import { Box, Row, Text } from '@tlon/indigo-react'
-import { GroupFeedHeader } from './GroupFeedHeader';
-import { PostInput } from './Post/PostInput';
-import { PostFeed } from './Post/PostFeed';
-import { Loading } from '~/views/components/Loading';
+import { Switch, Route } from 'react-router-dom';
+import { Box } from '@tlon/indigo-react'
 import { resourceFromPath } from '~/logic/lib/group';
 import useGraphState from '~/logic/state/graph';
+import { GroupFeedHeader } from './GroupFeedHeader';
+import { PostTimeline } from './Post/PostTimeline';
+import { PostReplies } from './Post/PostReplies';
 
 
 export function GroupFeed(props) {
@@ -16,16 +16,12 @@ export function GroupFeed(props) {
     api,
     history,
     associations,
-    groups,
-    contacts,
     graphPath
   } = props;
-  const graphResource = resourceFromPath(graphPath);
-  const graphId = `${graphResource.ship.slice(1)}/${graphResource.name}`;
   const graphs = useGraphState(state => state.graphs);
   const pendingSize = useGraphState(state => state.pendingSize);
-
-  const shouldRenderFeed = graphId in graphs;
+  const graphResource = resourceFromPath(graphPath);
+  const relativePath = (path) => baseUrl + path;
 
   useEffect(() => {
     //  TODO: VirtualScroller should support lower starting values than 100
@@ -41,36 +37,31 @@ export function GroupFeed(props) {
       alignItems="center"
       overflow="hidden">
       <GroupFeedHeader baseUrl={baseUrl} history={history} />
-      <Box
-        width="100%"
-        maxWidth="616px"
-        pt="3"
-        pl="2"
-        pr="2"
-        mb="3"
-        flexDirection="column"
-        alignItems="center">
-        { shouldRenderFeed ? (
-            <PostInput api={api} graphResource={graphResource} />
-          ) : null
-        }
-      </Box> 
-      <Box height="calc(100% - 136px)" width="100%" alignItems="center" pl="1">
-        { shouldRenderFeed ? (
-            <PostFeed
-              graphResource={graphResource}
-              graph={graphs[graphId]}
-              pendingSize={pendingSize}
-              associations={associations}
-              groups={groups}
-              contacts={contacts}
-              api={api}
-              history={history}
-              baseUrl={baseUrl}
-            />
-          ) : <Loading />
-        }
-      </Box>
+      <Switch>
+        <Route
+          exact
+          path={[relativePath('/'), relativePath('/feed')]}
+          render={(routeProps) => {
+            return (
+              <PostTimeline
+                {...props}
+                graphs={graphs}
+                pendingSize={pendingSize}
+                graphResource={graphResource} />
+            );
+          }} />
+        <Route
+          path={relativePath('/feed/:index+')}
+          render={(routeProps) => {
+            return (
+              <PostReplies
+                {...props}
+                graphs={graphs}
+                pendingSize={pendingSize}
+                graphResource={graphResource} />
+            );
+          }} />
+      </Switch>
     </Box>
   );
 }

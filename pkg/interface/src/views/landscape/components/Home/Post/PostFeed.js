@@ -1,6 +1,9 @@
 import React from 'react';
+import bigInt from 'big-integer';
 import VirtualScroller from "~/views/components/VirtualScroller";
 import PostItem from './PostItem';
+import { Col } from '@tlon/indigo-react';
+
 
 const virtualScrollerStyle = {
   height: "100%"
@@ -13,9 +16,62 @@ export class PostFeed extends React.Component {
 
     this.isFetching = false;
     this.renderItem = React.forwardRef(({ index, scrollWindow }, ref) => {
-      const { graph, graphResource, contacts, api, history, baseUrl } = this.props;
+      const {
+        graph,
+        graphResource,
+        contacts,
+        api,
+        history,
+        baseUrl,
+        parentNode
+      } = this.props;
       const node = graph.get(index);
       if (!node) { return null; }
+
+      const first = graph.peekLargest()?.[0];
+      const post = node?.post;
+      if (!node || !post) {
+        return null;
+      }
+     
+      if (parentNode && index.eq(first ?? bigInt.zero)) {
+        return (
+          <React.Fragment key={index.toString()}>
+            <Col
+              key={index.toString()}
+              mb="3"
+              width="100%"
+              flexShrink={0}
+            >
+              <PostItem
+                key={parentNode.post.index}
+                ref={ref}
+                node={parentNode}
+                contacts={contacts}
+                graphResource={graphResource}
+                api={api}
+                index={bigInt(parentNode.post.index.slice(1))}
+                baseUrl={baseUrl}
+                history={history}
+                isParent={true}
+              />
+            </Col>
+            <PostItem
+              key={index.toString()}
+              ref={ref}
+              node={node}
+              contacts={contacts}
+              graphResource={graphResource}
+              api={api}
+              index={index}
+              baseUrl={baseUrl}
+              history={history}
+              isReply={true}
+              parentPost={parentNode.post}
+            />
+          </React.Fragment>
+        );
+      }
 
       return (
         <PostItem
@@ -28,6 +84,8 @@ export class PostFeed extends React.Component {
           index={index}
           baseUrl={baseUrl}
           history={history}
+          parentPost={parentNode?.post}
+          isReply={!!parentNode}
         />
       );
     });

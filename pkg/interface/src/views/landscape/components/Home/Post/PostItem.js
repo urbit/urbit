@@ -1,9 +1,10 @@
 import React from 'react';
-import { Box, Col } from '@tlon/indigo-react';
+import { Box, Col, Row, Text } from '@tlon/indigo-react';
 import { PostHeader } from './PostHeader';
 import { PostContent } from './PostContent';
 import { PostFooter } from './PostFooter';
 import { PostInput } from './PostInput';
+import { Mention } from "~/views/components/MentionText";
 
 
 class PostItem extends React.Component {
@@ -23,7 +24,7 @@ class PostItem extends React.Component {
 
   navigateToReplies() {
     const { history, baseUrl, index } = this.props;
-    //history.push(`${baseUrl}/feed/${index.toString()}`);
+    history.push(`${baseUrl}/feed/${index.toString()}`);
   }
 
   submitCallback() {
@@ -32,7 +33,17 @@ class PostItem extends React.Component {
   }
 
   render() {
-    const { node, contacts, api, graphResource, index, innerRef } = this.props;
+    const {
+      node,
+      contacts,
+      api,
+      graphResource,
+      index,
+      innerRef,
+      isParent,
+      isReply,
+      parentPost
+    } = this.props;
     const { inReplyMode } = this.state;
 
     return (
@@ -46,12 +57,19 @@ class PostItem extends React.Component {
         <Col
           p="2"
           border={1}
-          borderColor="lightGray"
+          borderColor={ isParent ? "gray" : "lightGray" }
           borderRadius="2"
           width="100%"
           maxWidth="600px"
-          onClick={this.navigateToReplies}>
-          <PostHeader post={node.post} contacts={contacts} api={api} />
+          onClick={this.navigateToReplies}
+          cursor="pointer">
+          <PostHeader post={node.post} contacts={contacts} api={api} isReply={isReply} />
+          { isReply ? (
+            <Row width="100%" alignItems="center" mb="3">
+              <Text color="gray" pr="1">Replying to</Text>
+              <Mention ship={parentPost.author} />
+            </Row>
+          ) : null }
           <PostContent
             post={node.post}
             contacts={contacts} />

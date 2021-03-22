@@ -20,7 +20,6 @@ interface AuthorProps {
   showImage?: boolean;
   children?: ReactNode;
   unread?: boolean;
-  group: Group;
   api?: GlobalApi;
   size?: number;
 }
@@ -109,7 +108,10 @@ export default function Author(props: AuthorProps): ReactElement {
   return (
     <Row alignItems='center' width='auto'>
       <Box
-        onClick={() => toggleOverlay()}
+        onClick={(e) => {
+          e.stopPropagation();
+          toggleOverlay();
+        }}
         height={size}
         position='relative'
         cursor='pointer'
@@ -120,7 +122,6 @@ export default function Author(props: AuthorProps): ReactElement {
             ship={ship}
             contact={contact}
             color={`#${uxToHex(contact?.color ?? '0x0')}`}
-            group={group}
             onDismiss={() => toggleOverlay()}
             history={history}
             className='relative'
