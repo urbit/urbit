@@ -1,17 +1,14 @@
-import React, { ReactNode, useEffect, useMemo } from 'react';
-import { Box, Text } from '@tlon/indigo-react';
-import { Link } from 'react-router-dom';
+import React, { ReactElement, ReactNode, useMemo } from 'react';
+
+import { Groups, Graphs, Invites, Rolodex, Path, AppName } from '@urbit/api';
+import { Associations } from '@urbit/api/metadata';
 
 import { Sidebar } from './Sidebar/Sidebar';
-import { Associations } from '~/types/metadata-update';
-import { Notebooks } from '~/types/publish-update';
 import GlobalApi from '~/logic/api/global';
-import { Path, AppName } from '~/types/noun';
-import { LinkCollections } from '~/types/link-update';
 import GlobalSubscription from '~/logic/subscription/global';
-import { Workspace, Groups, Graphs, Invites, Rolodex } from '~/types';
 import { useGraphModule } from './Sidebar/Apps';
 import { Body } from '~/views/components/Body';
+import { Workspace } from '~/types/workspace';
 
 interface SkeletonProps {
   contacts: Rolodex;
@@ -22,8 +19,6 @@ interface SkeletonProps {
   graphKeys: Set<string>;
   graphs: Graphs;
   linkListening: Set<Path>;
-  links: LinkCollections;
-  notebooks: Notebooks;
   invites: Invites;
   selected?: string;
   selectedApp?: AppName;
@@ -33,10 +28,10 @@ interface SkeletonProps {
   subscription: GlobalSubscription;
   includeUnmanaged: boolean;
   workspace: Workspace;
-  unreads: any;
+  unreads: unknown;
 }
 
-export function Skeleton(props: SkeletonProps) {
+export function Skeleton(props: SkeletonProps): ReactElement {
   const graphConfig = useGraphModule(props.graphKeys, props.graphs, props.unreads.graph);
   const config = useMemo(
     () => ({

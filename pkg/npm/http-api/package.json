@@ -1,0 +1,61 @@
+{
+  "name": "@urbit/http-api",
+  "version": "1.1.0",
+  "license": "MIT",
+  "description": "Library to interact with an Urbit ship over HTTP",
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/urbit/urbit.git",
+    "directory": "pkg/npm/http-api"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npm run clean && tsc -p tsconfig.json",
+    "clean": "rm -rf dist/*"
+  },
+  "peerDependencies": {},
+  "prettier": {
+    "printWidth": 80,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "author": "",
+  "devDependencies": {
+    "@babel/core": "^7.12.3",
+    "@babel/plugin-proposal-class-properties": "^7.12.1",
+    "@babel/plugin-proposal-object-rest-spread": "^7.12.1",
+    "@babel/plugin-proposal-optional-chaining": "^7.12.1",
+    "@babel/preset-typescript": "^7.12.1",
+    "@types/browser-or-node": "^1.2.0",
+    "@types/eventsource": "^1.1.5",
+    "@types/react": "^16.9.56",
+    "@typescript-eslint/eslint-plugin": "^4.7.0",
+    "@typescript-eslint/parser": "^4.7.0",
+    "babel-loader": "^8.2.1",
+    "clean-webpack-plugin": "^3.0.0",
+    "tslib": "^2.0.3",
+    "typescript": "^3.9.7",
+    "util": "^0.12.3",
+    "webpack": "^5.4.0",
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.12.5",
+    "@microsoft/fetch-event-source": "^2.0.0",
+    "@urbit/api": "file:../api",
+    "browser-or-node": "^1.3.0",
+    "browserify-zlib": "^0.2.0",
+    "buffer": "^6.0.3",
+    "node-fetch": "^2.6.1",
+    "stream-browserify": "^3.0.0",
+    "stream-http": "^3.1.1"
+  }
+}

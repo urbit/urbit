@@ -1,6 +1,6 @@
-import React, { ReactNode } from "react";
-import { Row as _Row, Icon, Button } from "@tlon/indigo-react";
-import styled from "styled-components";
+import React, { ReactNode } from 'react';
+import { Row as _Row, Icon, Button } from '@tlon/indigo-react';
+import styled from 'styled-components';
 
 const Row = styled(_Row)`
   cursor: pointer;

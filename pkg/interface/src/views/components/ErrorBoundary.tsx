@@ -13,7 +13,7 @@ class ErrorBoundary extends Component<
     history.listen((location, action) => {
       if (this.state.error) {
         this.setState({
-          error: undefined,
+          error: undefined
         });
       }
     });
@@ -26,7 +26,7 @@ class ErrorBoundary extends Component<
 
   render() {
     if (this.state.error) {
-      return (<ErrorComponent error={this.state.error} />)
+      return (<ErrorComponent error={this.state.error} />);
     }
     return this.props.children;
   }

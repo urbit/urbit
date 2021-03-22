@@ -1,7 +1,6 @@
 
 export class OrderedMap<V> extends Map<number, V>
   implements Iterable<[number, V]> {
-
   [Symbol.iterator](): IterableIterator<[number, V]> {
     const sorted = Array.from(super[Symbol.iterator]()).sort(
       ([a], [b]) => b - a
@@ -15,7 +14,7 @@ export class OrderedMap<V> extends Map<number, V>
         } else {
           return { done: true, value: null };
         }
-      },
+      }
     };
   }
 }

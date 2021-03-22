@@ -291,7 +291,7 @@
     ++  tab
       |=  pos=@ud
       ^-  (quip card _cli-state)
-      =+  (get-id:auto pos (tufa buf.cli-state))
+      =+  (get-id-cord:auto pos (tufa buf.cli-state))
       =/  needle=term
         (fall id %$)
       ::  autocomplete empty command iff user at start of command

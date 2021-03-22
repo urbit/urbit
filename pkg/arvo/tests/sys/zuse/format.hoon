@@ -170,11 +170,15 @@
     %+  expect-eq
       !>  [%o (molt props)]
       !>  (pairs props)
+    ::  sect - stored as integer number of seconds since the unix epoch
+    %+  expect-eq
+      !>  [%n '1']
+      !>  (sect ~1970.1.1..0.0.1)
     ::  time - stored as integer number of milliseconds since the unix epoch
     ::
     %+  expect-eq
-      !>   [%n '1000']
-      !>   (time ~1970.1.1..0.0.1)
+      !>  [%n '1000']
+      !>  (time ~1970.1.1..0.0.1)
     :: ship - store ship identity as a string
     ::
     %+  expect-eq

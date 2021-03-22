@@ -1,4 +1,4 @@
-/-  spider, graph=graph-store, *metadata-store, *group, group-store
+/-  spider, graph=graph-store, met=metadata-store, *group, group-store, push-hook
 /+  strandio, resource, graph-view
 =>
 |%
@@ -23,17 +23,22 @@
 ::
 ::  Setup metadata
 ::
-=/  =metadata
-  %*  .  *metadata
+=/  =metadatum:met
+  %*  .  *metadatum:met
     title         title
     description   description
     date-created  now.bowl
     creator       our.bowl
     module        module
   ==
-=/  act=metadata-action
-  [%add (en-path:resource group) graph+(en-path:resource rid) metadata]
-;<  ~  bind:m  (poke-our %metadata-hook %metadata-action !>(act))
 ;<  ~  bind:m
-  (poke-our %metadata-hook %metadata-hook-action !>([%add-owned (en-path:resource group)]))
+  %+  poke-our  %metadata-push-hook
+  :-  %metadata-action
+  !>  ^-  action:met
+  [%add group [%graph rid] metadatum]
+;<  ~  bind:m
+  %+  poke-our  %metadata-push-hook
+  :-  %push-hook-action
+  !>  ^-  action:push-hook
+  [%add group]
 (pure:m !>(~))

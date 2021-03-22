@@ -1,8 +1,8 @@
-import React, { ReactNode } from "react";
-import { Text, Box, Button, Icon, Row, Rule, Col } from "@tlon/indigo-react";
+import React, { ReactElement, ReactNode } from 'react';
+import { Row, Rule, Col } from '@tlon/indigo-react';
 
-import { StatelessAsyncAction } from "~/views/components/StatelessAsyncAction";
-import { PropFunc } from "~/types";
+import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
+import { PropFunc } from '~/types';
 
 export interface InviteSkeletonProps {
   onAccept: () => Promise<any>;
@@ -14,7 +14,7 @@ export interface InviteSkeletonProps {
 
 export function InviteSkeleton(
   props: InviteSkeletonProps & PropFunc<typeof Col>
-) {
+): ReactElement {
   const {
     children,
     acceptDesc,

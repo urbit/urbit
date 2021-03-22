@@ -1,15 +1,17 @@
-import React, { useEffect, useCallback } from "react";
-import { Box, Col, Button, Text } from "@tlon/indigo-react";
-import { Group } from "~/types/group-update";
-import { Association, Associations } from "~/types/metadata-update";
-import GlobalApi from "~/logic/api/global";
+import React, { useCallback } from 'react';
 
-import { GroupAdminSettings } from "./Admin";
-import { GroupPersonalSettings } from "./Personal";
-import { GroupNotificationsConfig, S3State } from "~/types";
-import { GroupChannelSettings } from "./Channels";
-import { useHistory } from "react-router-dom";
-import {resourceFromPath, roleForShip} from "~/logic/lib/group";
+import { Box, Col, Button, Text } from '@tlon/indigo-react';
+import { Group } from '@urbit/api/groups';
+import { Association, Associations } from '@urbit/api/metadata';
+import { GroupNotificationsConfig } from '@urbit/api';
+
+import GlobalApi from '~/logic/api/global';
+import { GroupAdminSettings } from './Admin';
+import { GroupPersonalSettings } from './Personal';
+import { GroupChannelSettings } from './Channels';
+import { useHistory } from 'react-router-dom';
+import { resourceFromPath, roleForShip } from '~/logic/lib/group';
+import { StorageState } from '~/types';
 
 const Section = ({ children }) => (
   <Box boxShadow="inset 0px 1px 0px rgba(0, 0, 0, 0.2)">{children}</Box>
@@ -21,7 +23,7 @@ interface GroupSettingsProps {
   associations: Associations;
   api: GlobalApi;
   notificationsGroupConfig: GroupNotificationsConfig;
-  s3: S3State;
+  storage: StorageState;
   baseUrl: string;
 }
 export function GroupSettings(props: GroupSettingsProps) {
@@ -35,8 +37,7 @@ export function GroupSettings(props: GroupSettingsProps) {
 
   const isAdmin =
     resourceFromPath(props.association.group).ship.slice(1) === window.ship ||
-    roleForShip(props.group, window.ship) === "admin";
-
+    roleForShip(props.group, window.ship) === 'admin';
 
   return (
     <Box height="100%" overflowY="auto">
@@ -48,7 +49,7 @@ export function GroupSettings(props: GroupSettingsProps) {
               Participants
             </Text>
             <Text gray>View list of all group participants and statuses</Text>
-            <Button primary mt="4" onClick={linkRelative("/participants")}>View List</Button>
+            <Button primary mt="4" onClick={linkRelative('/participants')}>View List</Button>
           </Col>
         </Section>
         { isAdmin && (

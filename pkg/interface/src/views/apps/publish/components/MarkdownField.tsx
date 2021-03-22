@@ -1,25 +1,25 @@
-import React, { useCallback } from "react";
-import _ from "lodash";
-import { Box, ErrorLabel } from "@tlon/indigo-react";
-import { useField } from "formik";
-import { MarkdownEditor } from "./MarkdownEditor";
+import React, { useCallback } from 'react';
+import _ from 'lodash';
+import { Box, ErrorLabel } from '@tlon/indigo-react';
+import { useField } from 'formik';
+import { MarkdownEditor } from './MarkdownEditor';
 
 export const MarkdownField = ({
   id,
-  s3,
+  storage,
   ...rest
 }: { id: string } & Parameters<typeof Box>[0]) => {
   const [{ value, onBlur }, { error, touched }, { setValue }] = useField(id);
 
   const handleBlur = useCallback(
     (e: any) => {
-      _.set(e, "target.id", id);
+      _.set(e, 'target.id', id);
       onBlur && onBlur(e);
     },
     [onBlur, id]
   );
 
-  const hasError = !!(error && touched);
+  const hasError = Boolean(error && touched);
 
   return (
     <Box
@@ -28,16 +28,17 @@ export const MarkdownField = ({
       width="100%"
       display="flex"
       flexDirection="column"
+      color="black"
       {...rest}
     >
       <MarkdownEditor
-        borderColor={hasError ? "red" : "lightGray"}
+        borderColor={hasError ? 'red' : 'lightGray'}
         onBlur={handleBlur}
         value={value}
         onChange={setValue}
-        s3={s3}
+        storage={storage}
       />
-      <ErrorLabel mt="2" hasError={!!(error && touched)}>
+      <ErrorLabel mt="2" hasError={Boolean(error && touched)}>
         {error}
       </ErrorLabel>
     </Box>

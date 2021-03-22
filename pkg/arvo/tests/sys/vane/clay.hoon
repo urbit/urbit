@@ -1,9 +1,15 @@
 /+  *test
 /=  clay-raw  /sys/vane/clay
-/*  hello-gen     %hoon  /gen/hello/hoon
-/*  strandio-lib  %hoon  /lib/strandio/hoon
-/*  strand-lib    %hoon  /lib/strand/hoon
-/*  spider-sur    %hoon  /sur/spider/hoon
+/*  gen-hello     %hoon  /gen/hello/hoon
+/*  lib-cram      %hoon  /lib/cram/hoon
+/*  lib-strandio  %hoon  /lib/strandio/hoon
+/*  lib-strand    %hoon  /lib/strand/hoon
+/*  sur-spider    %hoon  /sur/spider/hoon
+/*  mar-html      %hoon  /mar/html/hoon
+/*  mar-mime      %hoon  /mar/mime/hoon
+/*  mar-udon      %hoon  /mar/udon/hoon
+/*  mar-txt       %hoon  /mar/txt/hoon
+/*  mar-txt-diff  %hoon  /mar/txt-diff/hoon
 ::
 !:
 =,  format
@@ -14,32 +20,48 @@
 ::
 |%
 ++  test-parse-pile  ^-  tang
+  =/  src  "."
   %+  expect-eq
     !>  ^-  pile:fusion
-        :*  ~  ~  ~  ~
+        :*  ~  ~  ~  ~  ~  ~
             tssg+[%dbug [/sur/foo/hoon [[1 1] [1 2]]] [%cnts ~[[%.y 1]] ~]]~
         ==
-    !>  (parse-pile:(ford):fusion /sur/foo/hoon ".")
+    !>  (parse-pile:(ford):fusion /sur/foo/hoon src)
+::
+++  test-parse-fascen  ^-  tang
+  =/  src  "/%  moo  %mime\0a."
+  %+  expect-eq
+    !>  ^-  pile:fusion
+        :*  sur=~  lib=~  raw=~
+            maz=[face=%moo mark=%mime]~
+            caz=~  bar=~
+            tssg+[%dbug [/sur/foo/hoon [[2 1] [2 2]]] [%cnts ~[[%.y 1]] ~]]~
+        ==
+    !>  (parse-pile:(ford):fusion /sur/foo/hoon src)
+::
+++  test-parse-fasbuc  ^-  tang
+  =/  src  "/$  goo  %mime  %txt\0a."
+  %+  expect-eq
+    !>  ^-  pile:fusion
+        :*  sur=~  lib=~  raw=~  maz=~
+            caz=[face=%goo from=%mime to=%txt]~
+            bar=~
+            tssg+[%dbug [/sur/foo/hoon [[2 1] [2 2]]] [%cnts ~[[%.y 1]] ~]]~
+        ==
+    !>  (parse-pile:(ford):fusion /sur/foo/hoon src)
 ::
 ++  test-parse-multiline-faslus  ^-  tang
   =/  src
     """
-    ::                                                      ::  ::
-    ::::  /hoon/hood/app                                    ::  ::
-      ::                                                    ::  ::
+    ::
     /?    310                                               ::  zuse version
+    ::
     /-  *sole
+    ::
     /+  sole                                                ::  libraries
-        ::  XX these should really be separate apps, as
-        ::     none of them interact with each other in
-        ::     any fashion; however, to reduce boot-time
-        ::     complexity and work around the current
-        ::     non-functionality of end-to-end acknowledgments,
-        ::     they have been bundled into :hood
-        ::
-        ::  |command handlers
+    ::
     /+  hood-helm, hood-kiln, hood-drum, hood-write
-    ::                                                      ::  ::
+    ::
     .
     """
   %+  expect-eq
@@ -52,34 +74,21 @@
                 [`%hood-drum %hood-drum]
                 [`%hood-write %hood-write]
             ==
-            raw=~  bar=~
-            hoon=tssg+[p:(need q:(tall:(vang & /app/hood/hoon) [17 1] "."))]~
+            raw=~  maz=~  caz=~  bar=~
+            tssg+[%dbug [/sur/foo/hoon [[10 1] [10 2]]] [%cnts ~[[%.y 1]] ~]]~
         ==
-    !>  (parse-pile:(ford):fusion /app/hood/hoon src)
+    !>  (parse-pile:(ford):fusion /sur/foo/hoon src)
 ::
 ++  test-cycle  ^-  tang
-  =/  source=@t
-    '''
-    /+  self
-    .
-    '''
-  =/  =ankh:clay
-    :-  fil=~
-    %-  ~(gas by *(map @tas ankh:clay))
-    :~  :+  %lib  fil=~
-        %-  ~(gas by *(map @tas ankh:clay))
-        :~  :+  %self  fil=~
-            %-  ~(gas by *(map @tas ankh:clay))
-            :~  :+  %hoon  fil=`[*lobe:clay hoon+!>(source)]  dir=~
-    ==  ==  ==
+  =/  source=@t  '/+  self\0a.'
   %-  expect-fail
   |.
   =/  ford
     %:  ford:fusion
       bud
-      ankh
+      *ankh:clay
       deletes=~
-      changes=~
+      changes=(my [/lib/self/hoon &+hoon+source]~)
       file-store=~
       *ford-cache:fusion
     ==
@@ -89,22 +98,122 @@
   %-  expect-fail
   |.  (parse-pile:(ford):fusion /sur/foo/hoon "[")
 ::
-++  test-hello-gen  ^-  tang
-  =/  =ankh:clay
-    :-  fil=~
-    %-  ~(gas by *(map @tas ankh:clay))
-    :~  :+  %gen  fil=~
-        %-  ~(gas by *(map @tas ankh:clay))
-        :~  :+  %hello  fil=~
-            %-  ~(gas by *(map @tas ankh:clay))
-            :~  :+  %hoon  fil=`[*lobe:clay hoon+!>(hello-gen)]  dir=~
-    ==  ==  ==
+++  test-mar-mime  ^-  tang
   =/  ford
     %:  ford:fusion
       bud
-      ankh
+      *ankh:clay
       deletes=~
-      changes=(my [/gen/hello/hoon &+hoon+hello-gen]~)
+      changes=(my [/mar/mime/hoon &+hoon+mar-mime]~)
+      file-store=~
+      *ford-cache:fusion
+    ==
+    =/  [res=vase nub=state:ford:fusion]  (build-nave:ford %mime)
+    ;:  weld
+      %+  expect-eq
+        !>(*mime)
+        (slap res limb/%bunt)
+    ::
+      %+  expect-eq
+        !>  (~(gas in *(set path)) /mar/mime/hoon ~)
+        !>  dez:(~(got by files.cache.nub) /mar/mime/hoon)
+    ==
+::
+++  test-mar-udon  ^-  tang
+  =/  ford
+    %:  ford:fusion
+      bud
+      *ankh:clay
+      deletes=~
+      ^=  changes
+      %-  my
+      :~  [/mar/udon/hoon &+hoon+mar-udon]
+          [/lib/cram/hoon &+hoon+lib-cram]
+          [/mar/txt/hoon &+hoon+mar-txt]
+          [/mar/txt-diff/hoon &+hoon+mar-txt-diff]
+      ==
+      file-store=~
+      *ford-cache:fusion
+    ==
+    =/  [res=vase nub=state:ford:fusion]  (build-nave:ford %udon)
+    ;:  weld
+      %+  expect-eq
+        !>(*@t)
+        (slap res limb/%bunt)
+    ::
+      %+  expect-eq
+        !>  (~(gas in *(set path)) /mar/udon/hoon /lib/cram/hoon ~)
+        !>  dez:(~(got by files.cache.nub) /mar/udon/hoon)
+    ==
+::
+++  test-cast-html-mime  ^-  tang
+  =/  changes
+    %-  my
+    :~  [/mar/mime/hoon &+hoon+mar-mime]
+        [/mar/html/hoon &+hoon+mar-html]
+    ==
+  =/  ford
+    %:  ford:fusion
+      bud
+      *ankh:clay
+      deletes=~
+      changes
+      file-store=~
+      *ford-cache:fusion
+    ==
+  =/  [res=vase nub=state:ford:fusion]  (build-cast:ford %html %mime)
+  %+  expect-eq
+    (slam res !>('<html></html>'))
+    !>  `mime`[/text/html 13 '<html></html>']
+::
+++  test-fascen  ^-  tang
+  =/  changes
+    %-  my
+    :~  [/mar/mime/hoon &+hoon+mar-mime]
+        [/lib/foo/hoon &+hoon+'/%  moo  %mime\0abunt:moo']
+    ==
+  =/  ford
+    %:  ford:fusion
+      bud
+      *ankh:clay
+      deletes=~
+      changes
+      file-store=~
+      *ford-cache:fusion
+    ==
+  =/  [res=vase nub=state:ford:fusion]  (build-file:ford /lib/foo/hoon)
+  %+  expect-eq
+    res
+    !>  *mime
+::
+++  test-fasbuc  ^-  tang
+  =/  changes
+    %-  my
+    :~  [/mar/mime/hoon &+hoon+mar-mime]
+        [/mar/html/hoon &+hoon+mar-html]
+        [/lib/foo/hoon &+hoon+'/$  foo  %mime  %html\0a*foo']
+    ==
+  =/  ford
+    %:  ford:fusion
+      bud
+      *ankh:clay
+      deletes=~
+      changes
+      file-store=~
+      *ford-cache:fusion
+    ==
+  =/  [res=vase nub=state:ford:fusion]  (build-file:ford /lib/foo/hoon)
+  %+  expect-eq
+    res
+    !>  ''
+::
+++  test-gen-hello  ^-  tang
+  =/  ford
+    %:  ford:fusion
+      bud
+      *ankh:clay
+      deletes=~
+      changes=(my [/gen/hello/hoon &+hoon+gen-hello]~)
       file-store=~
       *ford-cache:fusion
     ==
@@ -116,37 +225,21 @@
   ::
     %+  expect-eq
       !>  (~(gas in *(set path)) /gen/hello/hoon ~)
-      !>  dez:(~(got by vases.cache.nub) /gen/hello/hoon)
+      !>  dez:(~(got by files.cache.nub) /gen/hello/hoon)
   ==
 ::
-++  test-strandio-lib  ^-  tang
-  =/  =ankh:clay
-    :-  fil=~
-    %-  ~(gas by *(map @tas ankh:clay))
-    :~  :+  %lib  fil=~
-        %-  ~(gas by *(map @tas ankh:clay))
-        :~  :+  %strandio  fil=~
-            %-  ~(gas by *(map @tas ankh:clay))
-            :~  :+  %hoon  fil=`[*lobe:clay hoon+!>(strandio-lib)]  dir=~
-            ==
-        ::
-            :+  %strand  fil=~
-            %-  ~(gas by *(map @tas ankh:clay))
-            :~  :+  %hoon  fil=`[*lobe:clay hoon+!>(strand-lib)]  dir=~
-        ==  ==
-    ::
-        :+  %sur  fil=~
-        %-  ~(gas by *(map @tas ankh:clay))
-        :~  :+  %spider  fil=~
-            %-  ~(gas by *(map @tas ankh:clay))
-            :~  :+  %hoon  fil=`[*lobe:clay hoon+!>(spider-sur)]  dir=~
-    ==  ==  ==
+++  test-lib-strandio  ^-  tang
   =/  ford
     %:  ford:fusion
       bud
-      ankh
+      *ankh:clay
       deletes=~
-      changes=~
+      ^=  changes
+      %-  my
+      :~  [/lib/strand/hoon &+hoon+lib-strand]
+          [/lib/strandio/hoon &+hoon+lib-strandio]
+          [/sur/spider/hoon &+hoon+sur-spider]
+      ==
       file-store=~
       *ford-cache:fusion
     ==
@@ -161,7 +254,7 @@
               /lib/strand/hoon
               /sur/spider/hoon
           ==
-      !>  dez:(~(got by vases.cache.nub) /lib/strandio/hoon)
+      !>  dez:(~(got by files.cache.nub) /lib/strandio/hoon)
   ==
 ::
 ::  |utilities: helper functions for testing

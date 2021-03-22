@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Box, Row, Icon, Text } from '@tlon/indigo-react';
 import defaultApps from '~/logic/lib/default-apps';
 import Sigil from '~/logic/lib/sigil';
-import { uxToHex } from '~/logic/lib/util';
+import { uxToHex, cite } from '~/logic/lib/util';
 
 export class OmniboxResult extends Component {
   constructor(props) {
@@ -58,7 +58,10 @@ export class OmniboxResult extends Component {
       graphic = <Icon display='inline-block' verticalAlign='middle' icon='Inbox' mr='2' size='18px' color={iconFill} />;
     } else if (icon === 'messages') {
       graphic = <Icon display='inline-block' verticalAlign='middle' icon='Users' mr='2' size='18px' color={iconFill} />;
-    } else {
+    } else if (icon === 'tutorial') {
+      graphic = <Icon display='inline-block' verticalAlign='middle' icon='Tutorial' mr='2' size='18px' color={iconFill} />;
+    } 
+    else {
       graphic = <Icon display='inline-block' icon='NullIcon' verticalAlign="middle" mr='2' size="16px" color={iconFill} />;
     }
 
@@ -87,25 +90,29 @@ export class OmniboxResult extends Component {
       }
       onClick={navigate}
       width="100%"
+      justifyContent="space-between"
       ref={this.result}
       >
+      <Box display="flex" verticalAlign="middle" maxWidth="60%" flexShrink={0}>
         {graphic}
         <Text
-        display="inline-block"
-        verticalAlign="middle"
         mono={(icon == 'profile' && text.startsWith('~'))}
         color={this.state.hovered || selected === link ? 'white' : 'black'}
-        maxWidth="60%"
-        style={{ flexShrink: 0 }}
         mr='1'
         >
-          {text}
+          {text.startsWith("~") ? cite(text) : text}
         </Text>
+        </Box>
         <Text pr='2'
         display="inline-block"
         verticalAlign="middle"
         color={this.state.hovered || selected === link ? 'white' : 'black'}
         width='100%'
+        minWidth={0}
+        textOverflow="ellipsis"
+        whiteSpace="pre"
+        overflow="hidden"
+        maxWidth="40%"
         textAlign='right'
         >
           {subtext}

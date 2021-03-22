@@ -1,24 +1,18 @@
-import React, { ReactNode } from "react";
-import { Row, Icon, Box, Col, Text } from "@tlon/indigo-react";
-import styled from "styled-components";
-import { Link } from "react-router-dom";
-
-import { ChatResource } from "~/views/apps/chat/ChatResource";
-import { PublishResource } from "~/views/apps/publish/PublishResource";
-
-import RichText from "~/views/components/RichText";
-
-import { Association } from "~/types/metadata-update";
-import GlobalApi from "~/logic/api/global";
-import { RouteComponentProps, Route, Switch } from "react-router-dom";
-import { ChannelSettings } from "./ChannelSettings";
-import { ChannelMenu } from "./ChannelMenu";
-import { NotificationGraphConfig, Groups } from "~/types";
-import {isWriter} from "~/logic/lib/group";
+import React, { ReactElement, ReactNode } from 'react';
+import { Icon, Box, Col, Row, Text } from '@tlon/indigo-react';
+import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 import urbitOb from 'urbit-ob';
+
+import { Association } from '@urbit/api/metadata';
+import { Groups, Rolodex } from '@urbit/api';
+
+import RichText from '~/views/components/RichText';
+import GlobalApi from '~/logic/api/global';
+import { isWriter } from '~/logic/lib/group';
 import { getItemTitle } from '~/logic/lib/util';
 
-const TruncatedBox = styled(Box)`
+const TruncatedText = styled(RichText)`
   white-space: pre;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -26,7 +20,7 @@ const TruncatedBox = styled(Box)`
 
 type ResourceSkeletonProps = {
   groups: Groups;
-  contacts: any;
+  contacts: Rolodex;
   association: Association;
   api: GlobalApi;
   baseUrl: string;
@@ -35,31 +29,33 @@ type ResourceSkeletonProps = {
   groupTags?: any;
 };
 
-export function ResourceSkeleton(props: ResourceSkeletonProps) {
-  const { association, api, baseUrl, children, atRoot, groups } = props;
-  const app = association?.metadata?.module || association["app-name"];
+export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
+  const { association, baseUrl, children, groups } = props;
+  const app = association?.metadata?.module || association['app-name'];
   const rid = association.resource;
   const group = groups[association.group];
   let workspace = association.group;
 
-  if (group?.hidden && app === "chat") {
-    workspace = "/messages";
+  if (group?.hidden && app === 'chat') {
+    workspace = '/messages';
   } else if (group?.hidden) {
-    workspace = "/home";
+    workspace = '/home';
   }
 
-  let title = (workspace === "/messages")
+  let title = (workspace === '/messages')
     ? getItemTitle(association)
     : association?.metadata?.title;
 
-  let recipient = false;
+  let recipient = "";
 
   if (urbitOb.isValidPatp(title)) {
     recipient = title;
     title = (props.contacts?.[title]?.nickname) ? props.contacts[title].nickname : title;
+  } else {
+    recipient = Array.from(group.members).map(e => `~${e}`).join(", ")
   }
 
-  const [, , ship, resource] = rid.split("/");
+  const [, , ship, resource] = rid.split('/');
 
   const resourcePath = (p: string) => baseUrl + p;
 
@@ -89,12 +85,12 @@ export function ResourceSkeleton(props: ResourceSkeletonProps) {
           fontSize='1'
           mr={3}
           my="1"
-          display={["block", "none"]}
+          display={['block', 'none']}
           flexShrink={0}
         >
-          <Link to={`/~landscape${workspace}`}> {"<- Back"}</Link>
+          <Link to={`/~landscape${workspace}`}><Text>{'<- Back'}</Text></Link>
         </Box>
-        <Box px={1} mr={2} minWidth={0} display="flex">
+        <Box px={1} mr={2} minWidth={0} display="flex" flexShrink={[1, 0]}>
           <Text
             mono={urbitOb.isValidPatp(title)}
             fontSize='2'
@@ -104,29 +100,32 @@ export function ResourceSkeleton(props: ResourceSkeletonProps) {
             textOverflow="ellipsis"
             overflow="hidden"
             whiteSpace="pre"
-            minWidth={0}>
+            minWidth={0}
+            flexShrink={1}
+          >
             {title}
           </Text>
         </Box>
-        <TruncatedBox
-          display={["none", "block"]}
+        <Row
+          display={['none', 'flex']}
           verticalAlign="middle"
-          maxWidth='60%'
-          flexShrink={1}
+          flexShrink={2}
+          minWidth={0}
           title={association?.metadata?.description}
-          color="gray"
         >
-          <RichText
-            display={(workspace === '/messages' && (urbitOb.isValidPatp(title))) ? "none" : "inline-block"}
+          <TruncatedText
+            display={(workspace === '/messages' && (urbitOb.isValidPatp(title))) ? 'none' : 'inline-block'}
             mono={(workspace === '/messages' && !(urbitOb.isValidPatp(title)))}
             color="gray"
+            minWidth={0}
+            width="100%"
             mb="0"
             disableRemoteContent
           >
-            {(workspace === "/messages") ? recipient : association?.metadata?.description}
-          </RichText>
-        </TruncatedBox>
-        <Box flexGrow={1} />
+            {(workspace === '/messages') ? recipient : association?.metadata?.description}
+          </TruncatedText>
+        </Row>
+        <Box flexGrow={1} flexShrink={0} />
         {canWrite && (
           <Link to={resourcePath('/new')} style={{ flexShrink: '0' }}>
             <Text bold pr='3' color='blue'>+ New Post</Text>

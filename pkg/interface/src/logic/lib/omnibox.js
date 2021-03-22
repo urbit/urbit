@@ -1,7 +1,7 @@
 import { cite } from '~/logic/lib/util';
 import { isChannelAdmin } from '~/logic/lib/group';
 
-  const indexes = new Map([
+const makeIndexes = () => new Map([
     ['ships', []],
     ['commands', []],
     ['subscriptions', []],
@@ -70,18 +70,27 @@ const appIndex = function (apps) {
   return applications;
 };
 
-const otherIndex = function() {
+const otherIndex = function(config) {
   const other = [];
-  other.push(result('My Channels', '/~landscape/home', 'home', null));
-  other.push(result('Notifications', '/~notifications', 'inbox', null));
-  other.push(result('Profile and Settings', `/~profile/~${window.ship}`, 'profile', null));
-  other.push(result('Messages', '/~landscape/messages', 'messages', null));
-  other.push(result('Log Out', '/~/logout', 'logout', null));
+  const idx = {
+    mychannel: result('My Channels', '/~landscape/home', 'home', null),
+    updates: result('Notifications', '/~notifications', 'inbox', null),
+    profile: result('Profile', `/~profile/~${window.ship}`, 'profile', null),
+    messages: result('Messages', '/~landscape/messages', 'messages', null),
+    logout: result('Log Out', '/~/logout', 'logout', null)
+  };
+  other.push(result('Tutorial', '/?tutorial=true', 'tutorial', null));
+  for(let cat of config.categories) {
+    if(idx[cat]) {
+      other.push(idx[cat]);
+    }
+  }
 
   return other;
 };
 
-export default function index(contacts, associations, apps, currentGroup, groups) {
+export default function index(contacts, associations, apps, currentGroup, groups, hide) {
+  const indexes = makeIndexes();
   indexes.set('ships', shipIndex(contacts));
   // all metadata from all apps is indexed
   // into subscriptions and landscape
@@ -141,7 +150,7 @@ export default function index(contacts, associations, apps, currentGroup, groups
   indexes.set('subscriptions', subscriptions);
   indexes.set('groups', landscape);
   indexes.set('apps', appIndex(apps));
-  indexes.set('other', otherIndex());
+  indexes.set('other', otherIndex(hide));
 
   return indexes;
 };

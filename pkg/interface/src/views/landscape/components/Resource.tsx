@@ -1,25 +1,16 @@
-import React, { useCallback } from "react";
-import { Row, Box, Col } from "@tlon/indigo-react";
-import styled from "styled-components";
+import React, { ReactElement } from 'react';
 import Helmet from 'react-helmet';
+import { RouteComponentProps, Route, Switch } from 'react-router-dom';
 
-import { ChatResource } from "~/views/apps/chat/ChatResource";
-import { PublishResource } from "~/views/apps/publish/PublishResource";
-import { LinkResource } from "~/views/apps/links/LinkResource";
+import { Association } from '@urbit/api/metadata';
 
-import { Association } from "~/types/metadata-update";
-import { StoreState } from "~/logic/store/type";
-import GlobalApi from "~/logic/api/global";
-import { RouteComponentProps, Route, Switch } from "react-router-dom";
-import { ChannelSettings } from "./ChannelSettings";
-import { ResourceSkeleton } from "./ResourceSkeleton";
-import {ChannelPopoverRoutes} from "./ChannelPopoverRoutes";
-
-const TruncatedBox = styled(Box)`
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-`;
+import { ChatResource } from '~/views/apps/chat/ChatResource';
+import { PublishResource } from '~/views/apps/publish/PublishResource';
+import { LinkResource } from '~/views/apps/links/LinkResource';
+import { StoreState } from '~/logic/store/type';
+import GlobalApi from '~/logic/api/global';
+import { ResourceSkeleton } from './ResourceSkeleton';
+import { ChannelPopoverRoutes } from './ChannelPopoverRoutes';
 
 type ResourceProps = StoreState & {
   association: Association;
@@ -27,9 +18,9 @@ type ResourceProps = StoreState & {
   baseUrl: string;
 } & RouteComponentProps;
 
-export function Resource(props: ResourceProps) {
+export function Resource(props: ResourceProps): ReactElement {
   const { association, api, notificationsGraphConfig, groups, contacts } = props;
-  const app = association.metadata.module || association["app-name"];
+  const app = association.metadata.module || association['app-name'];
   const rid = association.resource;
   const selectedGroup = association.group;
   const relativePath = (p: string) =>
@@ -48,11 +39,11 @@ export function Resource(props: ResourceProps) {
       </Helmet>
       <ResourceSkeleton
         {...skelProps}
-        baseUrl={relativePath("")}
+        baseUrl={relativePath('')}
       >
-        {app === "chat" ? (
+        {app === 'chat' ? (
           <ChatResource {...props} />
-        ) : app === "publish" ? (
+        ) : app === 'publish' ? (
           <PublishResource {...props} />
         ) : (
           <LinkResource {...props} />
@@ -60,7 +51,7 @@ export function Resource(props: ResourceProps) {
       </ResourceSkeleton>
       <Switch>
         <Route
-          path={relativePath("/settings")}
+          path={relativePath('/settings')}
           render={(routeProps) => {
             return (
               <ChannelPopoverRoutes
@@ -69,7 +60,7 @@ export function Resource(props: ResourceProps) {
                 groups={props.groups}
                 contacts={props.contacts}
                 api={props.api}
-                baseUrl={relativePath("")}
+                baseUrl={relativePath('')}
                 rootUrl={props.baseUrl}
                 notificationsGraphConfig={notificationsGraphConfig}
               />

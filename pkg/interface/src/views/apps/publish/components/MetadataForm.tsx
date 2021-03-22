@@ -12,10 +12,10 @@ import {
 import { Formik, Form, useFormikContext, FormikHelpers } from "formik";
 import GlobalApi from "~/logic/api/global";
 import { Notebook } from "~/types/publish-update";
-import { Contacts } from "~/types/contact-update";
+import { Contacts } from "@urbit/api/contacts";
 import { FormError } from "~/views/components/FormError";
 import { RouteComponentProps, useHistory } from "react-router-dom";
-import {Association} from "~/types";
+import {Association} from "@urbit/api";
 import { uxToHex } from "~/logic/lib/util";
 
 interface MetadataFormProps {

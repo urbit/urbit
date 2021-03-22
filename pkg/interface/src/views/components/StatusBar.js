@@ -21,17 +21,18 @@ import { uxToHex } from "~/logic/lib/util";
 import { SetStatusBarModal } from './SetStatusBarModal';
 import { useTutorialModal } from './useTutorialModal';
 
-import useLocalState from '~/logic/state/local';
+import useLocalState, { selectLocalState } from '~/logic/state/local';
+import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 
+
+const localSel = selectLocalState(['toggleOmnibox']);
 
 const StatusBar = (props) => {
   const { ourContact, api, ship } = props;
   const invites = [].concat(...Object.values(props.invites).map(obj => Object.values(obj)));
   const metaKey = (window.navigator.platform.includes('Mac')) ? '⌘' : 'Ctrl+';
-  const { toggleOmnibox, hideAvatars } =
-    useLocalState(({ toggleOmnibox, hideAvatars }) =>
-      ({ toggleOmnibox, hideAvatars })
-    );
+  const { toggleOmnibox } = useLocalState(localSel);
+  const { hideAvatars } = useSettingsState(selectCalmState);
 
   const color = !!ourContact ? `#${uxToHex(props.ourContact.color)}` : '#000';
   const xPadding = (!hideAvatars && ourContact?.avatar) ? '0' : '2';
@@ -47,7 +48,7 @@ const StatusBar = (props) => {
 
   const anchorRef = useRef(null);
 
-  const leapHighlight = useTutorialModal('leap', true, anchorRef.current);
+  const leapHighlight = useTutorialModal('leap', true, anchorRef);
 
   const floatLeap = leapHighlight && window.matchMedia('(max-width: 550px)').matches;
 
@@ -108,9 +109,9 @@ const StatusBar = (props) => {
           alignY="top"
           alignX="right"
           flexShrink={'0'}
+          offsetY={-48}
           options={
             <Col
-              mt='6'
               p='1'
               backgroundColor="white"
               color="washedGray"

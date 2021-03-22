@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 import { Box, Text } from '@tlon/indigo-react';
+import VisibilitySensor from 'react-visibility-sensor';
+
+import Timestamp from '~/views/components/Timestamp';
 
 export const UnreadNotice = (props) => {
   const { unreadCount, unreadMsg, dismissUnread, onClick } = props;
@@ -8,6 +11,8 @@ export const UnreadNotice = (props) => {
   if (!unreadMsg || (unreadCount === 0)) {
     return null;
   }
+
+  const stamp = moment.unix(unreadMsg.post['time-sent'] / 1000);
 
   let datestamp = moment.unix(unreadMsg.post['time-sent'] / 1000).format('YYYY.M.D');
   const timestamp = moment.unix(unreadMsg.post['time-sent'] / 1000).format('HH:mm');
@@ -34,14 +39,9 @@ export const UnreadNotice = (props) => {
         borderRadius='1'
         border='1'
         borderColor='blue'>
-        <Text flexShrink='1' textOverflow='ellipsis' whiteSpace='pre' overflow='hidden' display='block' cursor='pointer' onClick={onClick}>
+        <Text flexShrink='1' textOverflow='ellipsis' whiteSpace='pre' overflow='hidden' display='flex' cursor='pointer' onClick={onClick}>
           {unreadCount} new message{unreadCount > 1 ? 's' : ''} since{' '}
-          {datestamp && (
-            <>
-              <Text color='blue'>~{datestamp}</Text> at{' '}
-            </>
-          )}
-          <Text color='blue'>{timestamp}</Text>
+          <Timestamp stamp={stamp} color='blue' date={true} fontSize={1} />
         </Text>
         <Text
           ml='4'

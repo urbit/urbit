@@ -85,15 +85,15 @@
   ++  take-update
     |~  vase
     *[(list card) _^|(..on-init)]
-  ::  +should-proxy-update: should forward update to store
+  ::  +transform-proxy-update: optionally transform update
   ::
-  ::    If %.y is produced, then the update is forwarded to the local
-  ::    store. If %.n is produced then the update is not forwarded and
-  ::    the poke fails.
+  ::  If ^ is produced, then the update is forwarded to the local
+  ::  store. If ~ is produced, the update is not forwarded and the
+  ::  poke fails.
   ::
-  ++  should-proxy-update
+  ++  transform-proxy-update
     |~  vase
-    *?
+    *(unit vase)
   ::  +initial-watch: produce initial state for a subscription
   ::
   ::    .resource is the resource being subscribed to.
@@ -301,20 +301,20 @@
   +*  og   ~(. push-hook bowl)
   ::
   ++  poke-update
-    |=  =vase
+    |=  vas=vase
     ^-  (quip card:agent:gall _state)
-    ?>  (should-proxy-update:og vase)
-    =/  wire
-      (make-wire /store)
+    =/  vax=(unit vase)  (transform-proxy-update:og vas)
+    ?>  ?=(^ vax)
+    =/  wire  (make-wire /store)
     :_  state
-    [%pass wire %agent [our.bowl store-name.config] %poke update-mark.config vase]~
+    [%pass wire %agent [our.bowl store-name.config] %poke update-mark.config u.vax]~
   ::
   ++  poke-hook-action
     |=  =action
     ^-  (quip card:agent:gall _state)
     |^
     ?-  -.action
-      %add  (add +.action)
+      %add     (add +.action)
       %remove  (remove +.action)
       %revoke  (revoke +.action)
     ==

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect } from 'react';
 import { Box } from '@tlon/indigo-react';
 import { Route, Switch } from 'react-router-dom';
 import styled from 'styled-components';
@@ -12,6 +12,8 @@ import ErrorComponent from '~/views/components/Error';
 import Notifications from '~/views/apps/notifications/notifications';
 import GraphApp from '../../apps/graph/app';
 
+import { useMigrateSettings } from '~/logic/lib/migrateSettings';
+
 
 export const Container = styled(Box)`
    flex-grow: 1;
@@ -22,6 +24,14 @@ export const Container = styled(Box)`
 
 
 export const Content = (props) => {
+
+  const doMigrate = useMigrateSettings();
+  useEffect(() => {
+    setTimeout(() => {
+      doMigrate();
+    }, 10000);
+  }, []);
+
   return (
     <Container>
       <Switch>

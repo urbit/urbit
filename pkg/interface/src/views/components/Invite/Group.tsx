@@ -1,11 +1,11 @@
-import React, { ReactNode } from "react";
-import { Text, Box, Button, Icon, Row, Rule, Col } from "@tlon/indigo-react";
+import React, { ReactElement, ReactNode } from 'react';
+import { Text, Box, Icon, Row } from '@tlon/indigo-react';
 
-import { cite } from "~/logic/lib/util";
-import { MetadataUpdatePreview, JoinProgress, Invite } from "~/types";
-import { GroupSummary } from "~/views/landscape/components/GroupSummary";
-import { InviteSkeleton } from "./InviteSkeleton";
-import { JoinSkeleton } from "./JoinSkeleton";
+import { cite } from '~/logic/lib/util';
+import { MetadataUpdatePreview, JoinProgress, Invite } from '@urbit/api';
+import { GroupSummary } from '~/views/landscape/components/GroupSummary';
+import { InviteSkeleton } from './InviteSkeleton';
+import { JoinSkeleton } from './JoinSkeleton';
 
 interface GroupInviteProps {
   preview: MetadataUpdatePreview;
@@ -15,12 +15,12 @@ interface GroupInviteProps {
   onDecline: () => Promise<any>;
 }
 
-export function GroupInvite(props: GroupInviteProps) {
+export function GroupInvite(props: GroupInviteProps): ReactElement {
   const { preview, invite, status, onAccept, onDecline } = props;
   const { metadata, members } = props.preview;
 
   let inner: ReactNode = null;
-  let Outer: (p: { children: ReactNode }) => JSX.Element = (p) => (
+  let Outer: (p: { children: ReactNode }) => JSX.Element = p => (
     <>{p.children}</>
   );
 
@@ -68,7 +68,7 @@ export function GroupInvite(props: GroupInviteProps) {
           gray
           metadata={metadata}
           memberCount={members}
-          channelCount={preview?.["channel-count"]}
+          channelCount={preview?.['channel-count']}
         />
       </Box>
     </Outer>

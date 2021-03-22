@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useRef, useCallback }  from 'react';
+import React, { useState, useEffect, useRef, useCallback, ReactElement }  from 'react';
 import { Link } from 'react-router-dom';
+
 import { Row, Col, Anchor, Box, Text, Icon, Action } from '@tlon/indigo-react';
+import { GraphNode, Group, Rolodex, Unreads } from '@urbit/api';
 
 import { writeText } from '~/logic/lib/util';
 import Author from '~/views/components/Author';
-
 import { roleForShip } from '~/logic/lib/group';
-import { Contacts, GraphNode, Group, Rolodex, Unreads } from '~/types';
 import GlobalApi from '~/logic/api/global';
 import { Dropdown } from '~/views/components/Dropdown';
 import RemoteContent from '~/views/components/RemoteContent';
@@ -19,10 +19,9 @@ interface LinkItemProps {
   path: string;
   contacts: Rolodex;
   unreads: Unreads;
-  measure: (el: any) => void;
 }
 
-export const LinkItem = (props: LinkItemProps) => {
+export const LinkItem = (props: LinkItemProps): ReactElement => {
   const {
     node,
     resource,
@@ -30,7 +29,6 @@ export const LinkItem = (props: LinkItemProps) => {
     group,
     path,
     contacts,
-    measure,
     ...rest
   } = props;
 
@@ -46,7 +44,7 @@ export const LinkItem = (props: LinkItemProps) => {
       // FF will only update on next tick
       setTimeout(() => {
         console.log(remoteRef.current);
-        if(document.activeElement instanceof HTMLIFrameElement 
+        if(document.activeElement instanceof HTMLIFrameElement
           && remoteRef?.current?.containerRef?.contains(document.activeElement)) {
           markRead();
         }
@@ -55,8 +53,7 @@ export const LinkItem = (props: LinkItemProps) => {
     window.addEventListener('blur', onBlur);
     return () => {
       window.removeEventListener('blur', onBlur);
-    }
-
+    };
   }, [markRead]);
 
   const URLparser = new RegExp(
@@ -68,6 +65,7 @@ export const LinkItem = (props: LinkItemProps) => {
   const size = node.children ? node.children.size : 0;
   const contents = node.post.contents;
   const hostname = URLparser.exec(contents[1].url) ? URLparser.exec(contents[1].url)[4] : null;
+  const href = URLparser.exec(contents[1].url) ? contents[1].url : `http://${contents[1].url}`
 
   const baseUrl = props.baseUrl || `/~404/${resource}`;
 
@@ -94,18 +92,15 @@ export const LinkItem = (props: LinkItemProps) => {
   const commColor = (props.unreads.graph?.[appPath]?.[`/${index}`]?.unreads ?? 0) > 0 ? 'blue' : 'gray';
   const isUnread = props.unreads.graph?.[appPath]?.['/']?.unreads?.has(node.post.index);
 
-
-
-  const onMeasure = useCallback(() => {
-    ref.current && measure(ref.current);
-  }, [ref.current, measure])
-
-  useEffect(() => {
-    onMeasure();
-  }, [onMeasure]);
-
   return (
-    <Box mx="auto" px={3} maxWidth="768px" ref={ref} width="100%" {...rest}>
+    <Box
+      mx="auto"
+      px={3}
+      maxWidth="768px"
+      ref={ref}
+      width="100%"
+      opacity={node.post.pending ? '0.5' : '1'}
+      {...rest}>
       <Box
         lineHeight="tall"
         display='flex'
@@ -119,12 +114,13 @@ export const LinkItem = (props: LinkItemProps) => {
         overflow="hidden"
         onClick={markRead}
       >
+        <Text p={2}>{contents[0].text}</Text>
         <RemoteContent
-          ref={r => { remoteRef.current = r}}
-          url={contents[1].url}
+          ref={r => { remoteRef.current = r }}
+          renderUrl={false}
+          url={href}
           text={contents[0].text}
           unfold={true}
-          onLoad={onMeasure}
           style={{ alignSelf: 'center' }}
           oembedProps={{
             p: 2,
@@ -143,9 +139,10 @@ export const LinkItem = (props: LinkItemProps) => {
             alignSelf: 'center',
             style: { textOverflow: 'ellipsis', whiteSpace: 'pre', width: '100%' },
             p: 2
-          }} />
+          }}
+        />
         <Text color="gray" p={2} flexShrink={0}>
-          <Anchor  target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }} href={contents[1].url}>
+          <Anchor  target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }} href={href}>
             <Box display='flex'>
               <Icon icon='ArrowExternal' mr={1} />{hostname}
             </Box>
@@ -165,10 +162,12 @@ export const LinkItem = (props: LinkItemProps) => {
       ></Author>
 
       <Box ml="auto">
-        <Link to={`${baseUrl}/${index}`}>
+        <Link
+          to={node.post.pending ? '#' : `${baseUrl}/${index}`}
+          style={{ cursor: node.post.pending ? 'default' : 'pointer' }}>
         <Box display='flex'>
           <Icon color={commColor} icon='Chat' />
-          <Text color={commColor} ml={1}>{node.children.size}</Text>
+          <Text color={commColor} ml={1}>{size}</Text>
         </Box>
       </Link>
         </Box>
@@ -189,7 +188,7 @@ export const LinkItem = (props: LinkItemProps) => {
             }
           </Col>
         }
-        >
+      >
         <Icon ml="2" display="block" icon="Ellipsis" color="gray" />
       </Dropdown>
 

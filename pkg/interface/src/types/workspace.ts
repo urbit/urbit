@@ -1,5 +1,3 @@
-
-
 interface GroupWorkspace {
   type: 'group';
   group: string;

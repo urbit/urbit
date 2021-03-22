@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import { StoreState } from '../../store/type';
 import { Cage } from '~/types/cage';
-import { ContactUpdate } from '~/types/contact-update';
-import {resourceAsPath} from '../lib/util';
+import { ContactUpdate } from '@urbit/api/contacts';
+import { resourceAsPath } from '../lib/util';
 
 type ContactState  = Pick<StoreState, 'contacts'>;
 
@@ -77,5 +77,4 @@ const setPublic = (json: ContactUpdate, state: S) => {
   const data = _.get(json, 'set-public', state.isContactPublic);
   state.isContactPublic = data;
 };
-
 

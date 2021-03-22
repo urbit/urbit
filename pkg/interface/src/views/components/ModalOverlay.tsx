@@ -1,9 +1,9 @@
-import React, { useCallback, UIEvent, MouseEvent, useRef } from "react";
-import { Box } from "@tlon/indigo-react";
-import { PropFunc } from "~/types/util";
+import React, { useCallback, UIEvent, MouseEvent, useRef } from 'react';
+import { Box } from '@tlon/indigo-react';
+import { PropFunc } from '~/types/util';
 
 interface ModalOverlayProps {
-  spacing: PropFunc<typeof Box>["m"];
+  spacing: PropFunc<typeof Box>['m'];
   dismiss: () => void;
 }
 type Props = ModalOverlayProps & PropFunc<typeof Box>;
@@ -22,7 +22,7 @@ export const ModalOverlay = (props: Props) => {
 
   const onKeyDown = useCallback(
     (e: any) => {
-      if (e.key === "Escape") {
+      if (e.key === 'Escape') {
         props.dismiss();
         e.stopPropagation();
       }
@@ -49,4 +49,4 @@ export const ModalOverlay = (props: Props) => {
       <Box ref={ref} {...rest} />
     </Box>
   );
-}
+};

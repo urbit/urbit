@@ -10,9 +10,9 @@ import {
   OpenPolicyDiff,
   OpenPolicy,
   InvitePolicyDiff,
-  InvitePolicy,
-} from '~/types/group-update';
-import { Enc, PatpNoSig } from '~/types/noun';
+  InvitePolicy
+} from '@urbit/api/groups';
+import { Enc, PatpNoSig } from '@urbit/api';
 import { resourceAsPath } from '../lib/util';
 
 type GroupState = Pick<StoreState, 'groups' | 'groupKeys'>;
@@ -23,7 +23,7 @@ function decodeGroup(group: Enc<Group>): Group {
     ...group,
     members,
     tags: decodeTags(group.tags),
-    policy: decodePolicy(group.policy),
+    policy: decodePolicy(group.policy)
   };
   return res;
 }
@@ -35,7 +35,7 @@ function decodePolicy(policy: Enc<GroupPolicy>): GroupPolicy {
   } else {
     const { open } = policy;
     return {
-      open: { banned: new Set(open.banned), banRanks: new Set(open.banRanks) },
+      open: { banned: new Set(open.banned), banRanks: new Set(open.banRanks) }
     };
   }
 }
@@ -61,6 +61,7 @@ export default class GroupReducer<S extends GroupState> {
   reduce(json: Cage, state: S) {
     const data = json.groupUpdate;
     if (data) {
+      console.log(data);
       this.initial(data, state);
       this.addMembers(data, state);
       this.addTag(data, state);
@@ -98,7 +99,7 @@ export default class GroupReducer<S extends GroupState> {
         members: new Set(),
         tags: { role: { admin: new Set([window.ship]) } },
         policy: decodePolicy(policy),
-        hidden,
+        hidden
       };
     }
   }
@@ -116,6 +117,12 @@ export default class GroupReducer<S extends GroupState> {
       const resourcePath = resourceAsPath(resource);
       for (const member of ships) {
         state.groups[resourcePath].members.add(member);
+        if (
+            'invite' in state.groups[resourcePath].policy &&
+            state.groups[resourcePath].policy.invite.pending.has(member)
+           ) {
+             state.groups[resourcePath].policy.invite.pending.delete(member)
+           }
       }
     }
   }
@@ -188,7 +195,6 @@ export default class GroupReducer<S extends GroupState> {
       state.groups[resourcePath].hidden = false;
     }
   }
-
 
   private inviteChangePolicy(diff: InvitePolicyDiff, policy: InvitePolicy) {
     if ('addInvites' in diff) {

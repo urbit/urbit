@@ -1,13 +1,9 @@
 import BaseApi from './base';
 import { StoreState } from '../store/type';
-import {
-  SettingsUpdate,
-  SettingsData,
-  Key,
+import { Key,
   Value,
-  Bucket,
-} from '~/types/settings';
-
+  Bucket
+} from '@urbit/api/settings';
 
 export default class SettingsApi extends BaseApi<StoreState> {
   private storeAction(action: SettingsEvent): Promise<any> {
@@ -15,60 +11,62 @@ export default class SettingsApi extends BaseApi<StoreState> {
   }
 
   putBucket(key: Key, bucket: Bucket) {
-    this.storeAction({
-      "put-bucket": {
-        "bucket-key": key,
-        "bucket": bucket,
+    return this.storeAction({
+      'put-bucket': {
+        'bucket-key': key,
+        'bucket': bucket
       }
     });
   }
 
   delBucket(key: Key) {
-    this.storeAction({
-      "del-bucket": {
-        "bucket-key": key,
+    return this.storeAction({
+      'del-bucket': {
+        'bucket-key': key
       }
     });
   }
 
   putEntry(buc: Key, key: Key, val: Value) {
     return this.storeAction({
-      "put-entry": {
-        "bucket-key": buc,
-        "entry-key": key,
-        "value": val,
+      'put-entry': {
+        'bucket-key': buc,
+        'entry-key': key,
+        'value': val
       }
     });
   }
 
   delEntry(buc: Key, key: Key) {
-    this.storeAction({
-      "put-entry": {
-        "bucket-key": buc,
-        "entry-key": key,
+    return this.storeAction({
+      'put-entry': {
+        'bucket-key': buc,
+        'entry-key': key
       }
     });
   }
 
   async getAll() {
-    const data = await this.scry("settings-store", "/all");
-    this.store.handleEvent({data: {"settings-data": data.all}});
+    const { all } = await this.scry("settings-store", "/all");
+    this.store.handleEvent({data: 
+      {"settings-data": { all } }
+    });
   }
 
   async getBucket(bucket: Key) {
     const data = await this.scry('settings-store', `/bucket/${bucket}`);
-    this.store.handleEvent({data: {"settings-data": {
-      "bucket-key": bucket,
-      "bucket": data.bucket,
-    }}});
+    this.store.handleEvent({ data: { 'settings-data': {
+      'bucket-key': bucket,
+      'bucket': data.bucket
+    } } });
   }
 
   async getEntry(bucket: Key, entry: Key) {
     const data = await this.scry('settings-store', `/entry/${bucket}/${entry}`);
-    this.store.handleEvent({data: {"settings-data": {
-      "bucket-key": bucket,
-      "entry-key": entry,
-      "entry": data.entry,
-    }}});
+    this.store.handleEvent({ data: { 'settings-data': {
+      'bucket-key': bucket,
+      'entry-key': entry,
+      'entry': data.entry
+    } } });
   }
 }

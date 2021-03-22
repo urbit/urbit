@@ -1,4 +1,8 @@
-import React, { useMemo, useState } from 'react';
+import React, { ReactElement, useMemo, useState } from 'react';
+import { useFormikContext, FieldArray } from 'formik';
+import _ from 'lodash';
+import styled from 'styled-components';
+
 import {
   Box,
   Text,
@@ -8,15 +12,12 @@ import {
   Icon,
   ErrorLabel
 } from '@tlon/indigo-react';
-import _ from 'lodash';
-import { useField, useFormikContext, FieldArray } from 'formik';
-import styled from 'styled-components';
+import { Groups } from '@urbit/api';
+import { Associations, Association } from '@urbit/api/metadata';
+
 
 import { roleForShip } from '~/logic/lib/group';
-
 import { DropdownSearch } from './DropdownSearch';
-import { Groups } from '~/types';
-import { Associations, Association } from '~/types/metadata-update';
 
 interface GroupSearchProps<I extends string> {
   disabled?: boolean;
@@ -36,10 +37,11 @@ const CandidateBox = styled(Box)<{ selected: boolean }>`
   }
 `;
 
-const Candidate = ({ title, selected, onClick }) => (
+const Candidate = ({ title, selected, onClick }): ReactElement => (
   <CandidateBox
     onClick={onClick}
     selected={selected}
+    cursor="pointer"
     borderColor="washedGray"
     color="black"
     fontSize={0}
@@ -54,7 +56,7 @@ function renderCandidate(
   a: Association,
   selected: boolean,
   onSelect: (a: Association) => void
-) {
+): ReactElement {
   const { title } = a.metadata;
 
   const onClick = () => {
@@ -68,7 +70,7 @@ type FormValues<I extends string> = {
   [id in I]: string[];
 };
 
-export function GroupSearch<I extends string, V extends FormValues<I>>(props: GroupSearchProps<I>) {
+export function GroupSearch<I extends string, V extends FormValues<I>>(props: GroupSearchProps<I>): ReactElement {
   const { id, caption, label } = props;
   const {
     values,
@@ -76,7 +78,7 @@ export function GroupSearch<I extends string, V extends FormValues<I>>(props: Gr
     errors,
     initialValues,
     setFieldValue,
-    setFieldTouched,
+    setFieldTouched
   } = useFormikContext<V>();
   const [inputIdx, setInputIdx] = useState(initialValues[id].length);
   const name = `${id}[${inputIdx}]`;
@@ -144,7 +146,7 @@ export function GroupSearch<I extends string, V extends FormValues<I>>(props: Gr
                 disabled={props.maxLength ? value.length >= props.maxLength : false}
                 renderCandidate={renderCandidate}
                 search={(s: string, a: Association) =>
-                  a.metadata.title.toLowerCase().startsWith(s.toLowerCase())
+                  a.metadata.title.toLowerCase().includes(s.toLowerCase())
                 }
                 getKey={(a: Association) => a.group}
                 onSelect={onSelect}
@@ -177,7 +179,8 @@ export function GroupSearch<I extends string, V extends FormValues<I>>(props: Gr
             </ErrorLabel>
           </Col>
         );
-      }} />
+      }}
+    />
   );
 }
 

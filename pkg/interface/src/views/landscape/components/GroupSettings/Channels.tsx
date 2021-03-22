@@ -1,12 +1,12 @@
-import React, { useCallback } from "react";
-import { Icon, Text, Row, Col } from "@tlon/indigo-react";
-import { Formik } from "formik";
-import { Association, Associations, Group } from "~/types";
-import GlobalApi from "~/logic/api/global";
-import { StatelessAsyncAction } from "~/views/components/StatelessAsyncAction";
-import { getModuleIcon } from "~/logic/lib/util";
-import { Dropdown } from "~/views/components/Dropdown";
-import { resourceFromPath, roleForShip } from "~/logic/lib/group";
+import React, { useCallback } from 'react';
+import { Icon, Text, Row, Col } from '@tlon/indigo-react';
+import { Formik } from 'formik';
+import { Association, Associations, Group } from '@urbit/api';
+import GlobalApi from '~/logic/api/global';
+import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
+import { getModuleIcon } from '~/logic/lib/util';
+import { Dropdown } from '~/views/components/Dropdown';
+import { resourceFromPath, roleForShip } from '~/logic/lib/group';
 
 interface GroupChannelSettingsProps {
   group: Group;
@@ -30,14 +30,14 @@ export function GroupChannelSettings(props: GroupChannelSettingsProps) {
 
   const onRemove = useCallback(
     async (resource: string) => {
-      return api.metadata.remove("graph", resource, association.group);
+      return api.metadata.remove('graph', resource, association.group);
     },
     [api, association]
   );
 
   const disabled =
     resourceFromPath(association.group).ship.slice(1) !== window.ship &&
-    roleForShip(group, window.ship) !== "admin";
+    roleForShip(group, window.ship) !== 'admin';
 
   return (
     <Col maxWidth="384px" width="100%">
@@ -69,7 +69,7 @@ export function GroupChannelSettings(props: GroupChannelSettingsProps) {
                       name={`pin-${resource}`}
                       onClick={() => onChange(resource, !metadata.preview)}
                     >
-                      {metadata.preview ? "Unpin" : "Pin"}
+                      {metadata.preview ? 'Unpin' : 'Pin'}
                     </StatelessAsyncAction>
                     <StatelessAsyncAction
                       bg="transparent"

@@ -1,8 +1,8 @@
-import React, {useRef} from "react";
-import { Col, Text, BaseLabel, Label } from "@tlon/indigo-react";
-import GlobalApi from "~/logic/api/global";
-import { Association, NotificationGraphConfig } from "~/types";
-import { StatelessAsyncToggle } from "~/views/components/StatelessAsyncToggle";
+import React, { useRef } from 'react';
+import { Col, Text, BaseLabel, Label } from '@tlon/indigo-react';
+import GlobalApi from '~/logic/api/global';
+import { Association, NotificationGraphConfig } from '@urbit/api';
+import { StatelessAsyncToggle } from '~/views/components/StatelessAsyncToggle';
 
 interface ChannelNotificationsProps {
   api: GlobalApi;
@@ -16,16 +16,15 @@ export function ChannelNotifications(props: ChannelNotificationsProps) {
 
   const isMuted =
     props.notificationsGraphConfig.watching.findIndex(
-      (a) => a.graph === rid && a.index === "/"
+      a => a.graph === rid && a.index === '/'
     ) === -1;
 
   const onChangeMute = async () => {
-    const func = isMuted ? "listenGraph" : "ignoreGraph";
-    await api.hark[func](rid, "/");
+    const func = isMuted ? 'listenGraph' : 'ignoreGraph';
+    await api.hark[func](rid, '/');
   };
 
-  const anchorRef = useRef<HTMLElement | null>(null)
-
+  const anchorRef = useRef<HTMLElement | null>(null);
 
   return (
     <Col mb="6" gapY="4" flexShrink={0}>

@@ -1,5 +1,7 @@
-import React, { useCallback } from "react";
-import * as Yup from "yup";
+import React, { ReactElement, useCallback } from 'react';
+import { FormikHelpers } from 'formik';
+import { Link } from 'react-router-dom';
+
 import {
   Row,
   Box,
@@ -7,18 +9,18 @@ import {
   ManagedRadioButtonField as Radio,
   ManagedCheckboxField as Checkbox,
   Col,
-  Text,
-} from "@tlon/indigo-react";
-import { FormikOnBlur } from "~/views/components/FormikOnBlur";
-import { Dropdown } from "~/views/components/Dropdown";
-import { FormikHelpers } from "formik";
-import { SidebarListConfig, Workspace } from "./types";
-import { Link, useHistory } from 'react-router-dom';
-import { getGroupFromWorkspace } from "~/logic/lib/workspace";
-import { roleForShip } from "~/logic/lib/group";
-import {Groups, Rolodex, Associations} from "~/types";
-import { NewChannel } from "~/views/landscape/components/NewChannel";
-import GlobalApi from "~/logic/api/global";
+  Text
+} from '@tlon/indigo-react';
+import { Groups, Rolodex, Associations } from '@urbit/api';
+
+import { FormikOnBlur } from '~/views/components/FormikOnBlur';
+import { Dropdown } from '~/views/components/Dropdown';
+import { SidebarListConfig  } from './types';
+import { getGroupFromWorkspace } from '~/logic/lib/workspace';
+import { roleForShip } from '~/logic/lib/group';
+import { NewChannel } from '~/views/landscape/components/NewChannel';
+import GlobalApi from '~/logic/api/global';
+import { Workspace } from '~/types/workspace';
 
 export function SidebarListHeader(props: {
   api: GlobalApi;
@@ -30,9 +32,7 @@ export function SidebarListHeader(props: {
   selected: string;
   workspace: Workspace;
   handleSubmit: (c: SidebarListConfig) => void;
-}) {
-
-  const history = useHistory();
+}): ReactElement {
   const onSubmit = useCallback(
     (values: SidebarListConfig, actions: FormikHelpers<SidebarListConfig>) => {
       props.handleSubmit(values);
@@ -46,9 +46,9 @@ export function SidebarListHeader(props: {
   const memberMetadata =
     groupPath ? props.associations.groups?.[groupPath].metadata.vip === 'member-metadata' : false;
 
-  const isAdmin = memberMetadata || (role === "admin") || (props.workspace?.type === 'home') || (props.workspace?.type === "messages");
+  const isAdmin = memberMetadata || (role === 'admin') || (props.workspace?.type === 'home') || (props.workspace?.type === 'messages');
 
-  const noun = (props.workspace?.type === "messages") ? "Messages" : "Channels";
+  const noun = (props.workspace?.type === 'messages') ? 'Messages' : 'Channels';
 
   return (
     <Row
@@ -69,14 +69,14 @@ export function SidebarListHeader(props: {
         display='flex'
         alignItems='center'
       >
-        {props.workspace?.type === "messages"
+        {props.workspace?.type === 'messages'
         ? (
           <Dropdown
             flexShrink={0}
             dropWidth="300px"
             width="auto"
             alignY="top"
-            alignX={["right", "left"]}
+            alignX={['right', 'left']}
             options={
               <Col
                 background="white"
@@ -94,16 +94,17 @@ export function SidebarListHeader(props: {
               </Col>
             }
           >
-           <Icon icon="Plus" color="gray" pr='12px'/>
+           <Icon icon="Plus" color="gray" pr='12px' />
           </Dropdown>
         )
         : (
        <Link style={{
-          display: isAdmin ? "inline-block" : "none" }}
-        to={!!groupPath
+          display: isAdmin ? 'inline-block' : 'none' }}
+        to={groupPath
           ? `/~landscape${groupPath}/new`
-          : `/~landscape/${props.workspace?.type}/new`}>
-           <Icon icon="Plus" color="gray" pr='12px'/>
+          : `/~landscape/${props.workspace?.type}/new`}
+       >
+           <Icon icon="Plus" color="gray" pr='12px' />
        </Link>
           )
         }
@@ -111,7 +112,7 @@ export function SidebarListHeader(props: {
         flexShrink='0'
         width="auto"
         alignY="top"
-        alignX={["right", "left"]}
+        alignX={['right', 'left']}
         options={
           <FormikOnBlur initialValues={props.initialValues} onSubmit={onSubmit}>
             <Col bg="white" borderRadius={1} border={1} borderColor="lightGray">

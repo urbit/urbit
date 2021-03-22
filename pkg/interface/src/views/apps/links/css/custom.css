@@ -17,22 +17,3 @@
   width: 100%;
   height: 100%;
 }
-
-/* responsive */
-@media all and (max-width: 34.375em) {
-  .dn-s {
-    display: none;
-  }
-  .flex-basis-100-s, .flex-basis-full-s {
-    flex-basis: 100%;
-  }
-}
-
-@media all and (min-width: 34.375em) {
-  .db-ns {
-    display: block;
-  }
-  .flex-basis-30-ns {
-    flex-basis: 30vw;
-  }
-}

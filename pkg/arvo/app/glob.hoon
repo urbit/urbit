@@ -5,7 +5,7 @@
 /-  glob
 /+  default-agent, verb, dbug
 |%
-++  hash  0v5.pmklm.qttdl.n8bs0.0tnc4.gg633
+++  hash  0vtbs05.a6mkl.r5ark.jfj84.3fa4h
 +$  state-0  [%0 hash=@uv glob=(unit (each glob:glob tid=@ta))]
 +$  all-states
   $%  state-0
@@ -105,12 +105,15 @@
       (cat 3 js-name '.js')
     =+  .^(js=@t %cx :(weld home /app/landscape/js/bundle /[js-name]/js))
     =+  .^(map=@t %cx :(weld home /app/landscape/js/bundle /[map-name]/map))
+    =+  .^(sw=@t %cx :(weld home /app/landscape/js/bundle /serviceworker/js))
     =+  !<(=js=mime (js-tube !>(js)))
+    =+  !<(=sw=mime (js-tube !>(sw)))
     =+  !<(=map=mime (map-tube !>(map)))
     =/  =glob:glob
       %-  ~(gas by *glob:glob)
       :~  /[js-name]/js^js-mime
           /[map-name]/map^map-mime
+          /serviceworker/js^sw-mime
       ==
     =/  =path  /(cat 3 'glob-' (scot %uv (sham glob)))/glob
     [%pass /make %agent [our.bowl %hood] %poke %drum-put !>([path (jam glob)])]~
