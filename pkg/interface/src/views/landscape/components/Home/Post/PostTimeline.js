@@ -37,7 +37,7 @@ export function PostTimeline(props) {
           ) : null
         }
       </Box> 
-      <Box height="calc(100% - 136px)" width="100%" alignItems="center" pl="1">
+      <Box height="calc(100% - 176px)" width="100%" alignItems="center" pl="1">
         { shouldRenderFeed ? (
             <PostFeed
               graphResource={graphResource}
