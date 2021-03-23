@@ -13,6 +13,7 @@ import OverlaySigil from './OverlaySigil';
 import { Sigil } from '~/logic/lib/sigil';
 import Timestamp from './Timestamp';
 import useContactState from '~/logic/state/contact';
+import ProfileOverlay from './ProfileOverlay';
 
 interface AuthorProps {
   ship: string;
@@ -26,7 +27,7 @@ interface AuthorProps {
 
 // eslint-disable-next-line max-lines-per-function
 export default function Author(props: AuthorProps): ReactElement {
-  const { date, showImage, fullNotIcon } = props;
+  const { ship, date, showImage, fullNotIcon } = props;
 
   const showAsCol = props.showAsCol || false;
   const time = props.time || false;
@@ -116,16 +117,10 @@ export default function Author(props: AuthorProps): ReactElement {
         position='relative'
         cursor='pointer'
       >
-        {showImage && img}
-        {showOverlay && (
-          <OverlaySigil
-            ship={ship}
-            contact={contact}
-            color={`#${uxToHex(contact?.color ?? '0x0')}`}
-            onDismiss={() => toggleOverlay()}
-            history={history}
-            className='relative'
-          />
+        {showImage && (
+          <ProfileOverlay ship={ship} api={props.api} >
+            {img}
+          </ProfileOverlay>
         )}
       </Box>
       {rowOrCol}
