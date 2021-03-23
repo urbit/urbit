@@ -23,7 +23,8 @@ class PostItem extends React.Component {
   }
 
   navigateToReplies() {
-    const { history, baseUrl, index } = this.props;
+    const { history, baseUrl, index, isParent } = this.props;
+    if (isParent) { return; }
     let indexString = '';
     
     index.forEach((i) => {
@@ -74,7 +75,7 @@ class PostItem extends React.Component {
           width="100%"
           maxWidth="600px"
           onClick={this.navigateToReplies}
-          cursor="pointer">
+          cursor={isParent ? "default": "pointer"}>
           <PostHeader post={node.post} contacts={contacts} api={api} isReply={isReply} />
           { isReply ? (
             <Row width="100%" alignItems="center" mb="3">

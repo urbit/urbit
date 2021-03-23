@@ -2,6 +2,7 @@ import React from 'react';
 import bigInt from 'big-integer';
 import { Text, Col, Box } from '@tlon/indigo-react'
 import { PostInput } from './PostInput';
+import PostItem from './PostItem';
 import { PostFeed } from './PostFeed';
 import { Loading } from '~/views/components/Loading';
 
@@ -32,7 +33,6 @@ export function PostReplies(props) {
 
   const locationUrl =
     history.location.pathname.replace(`${baseUrl}/feed`, '');
-  console.log(locationUrl);
   let nodeIndex = locationUrl.split('/').slice(1).map((ind) => {
     return bigInt(ind);
   });
@@ -62,22 +62,19 @@ export function PostReplies(props) {
         width="100%"
         height="100%"
         alignItems="center">
-        <Col
-          width="100%"
-          maxWidth="616px"
-          pt="3"
-          pl="2"
-          pr="2"
-          mb="3"
-          alignItems="center">
-          { shouldRenderFeed ? (
-              <PostInput
-                api={api}
-                index={locationUrl}
-                graphResource={graphResource} />
-            ) : null
-          }
-        </Col> 
+        <Box width="100%" alignItems="center">
+          <PostItem
+            key={node.post.index}
+            node={node}
+            contacts={contacts}
+            graphResource={graphResource}
+            api={api}
+            index={nodeIndex}
+            baseUrl={baseUrl}
+            history={history}
+            isParent={true}
+          />
+        </Box>
         <Box
           pl="2"
           pr="2"
@@ -86,7 +83,7 @@ export function PostReplies(props) {
           alignItems="center">
           <Col bg="washedGray" width="100%" alignItems="center" p="3">
             <Text textAlign="center" width="100%">
-              No one has posted anything here yet.
+              No one has posted any replies yet.
             </Text>
           </Col>
         </Box>
@@ -97,6 +94,7 @@ export function PostReplies(props) {
   return (
     <Box height="100%" width="100%" alignItems="center" pl="1" pt="3">
       <PostFeed
+        key={locationUrl}
         graphResource={graphResource}
         graph={graph}
         parentNode={node}

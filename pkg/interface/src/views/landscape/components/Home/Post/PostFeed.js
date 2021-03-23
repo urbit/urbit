@@ -61,7 +61,6 @@ export class PostFeed extends React.Component {
               />
             </Col>
             <PostItem
-              key={index.toString()}
               ref={ref}
               node={node}
               contacts={contacts}
