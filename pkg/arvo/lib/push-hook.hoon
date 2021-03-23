@@ -25,7 +25,7 @@
 ::   foreign push-hook
 ::
 /-  *push-hook
-/+  default-agent, resource, verb
+/+  default-agent, resource, verb, versioning, agentio
 |%
 +$  card  card:agent:gall
 ::
@@ -43,6 +43,8 @@
       update=mold
       update-mark=term
       pull-hook-name=term
+      version=@ud
+      min-version=@ud
   ==
 ::
 ::  $base-state-0: state for the push hook
@@ -160,6 +162,9 @@
         og   ~(. push-hook bowl)
         hc   ~(. +> bowl)
         def  ~(. (default-agent this %|) bowl)
+        io   ~(. agentio bowl)
+        pass  pass:io
+        ver  ~(. versioning [bowl [update-mark version min-version]:config])
     ::
     ++  on-init
       =^  cards  push-hook
@@ -177,7 +182,14 @@
           %1  
         =^  og-cards   push-hook
           (on-load:og inner-state.old)
-        [(weld cards og-cards) this(state old)]
+        =/  old-subs
+          find-old-subs
+        =/  version-cards
+          :-  (fact:io version+!>(version.config) /version ~)
+          ?~  old-subs  ~
+          (kick:io old-subs)^~
+        [:(weld cards og-cards version-cards) this(state old)]
+        ::
         ::
           %0
         %_    $
@@ -191,6 +203,19 @@
           [%give %kick paths ~]
         ==
       ==
+      ::
+      ++  find-old-subs
+        %~  tap  in
+        %+  roll
+          ~(val by sup.bowl)
+        |=  [[=ship =path] out=(set path)]
+        ?.  ?=([%resource *] path)  out
+        ?.  ?=([%resource %ver] path)
+          (~(put in out) path)
+        =/  path-ver=@ud
+          (ver-from-path:hc path)
+        ?:  (supported:ver (append-version:ver path-ver))  out
+        (~(put in out) path)
       ::
       ++  kicked-watches
         ^-  (list path)
@@ -218,13 +243,9 @@
           (poke-hook-action:hc !<(action vase))
         [cards this]
       ::
-      ?:  =(mark update-mark.config)
-        ?:  (team:title [our src]:bowl)
-          :_  this
-          (forward-update:hc vase)
-        =^  cards  state
-          (poke-update:hc vase)
-        [cards this]
+      ?:  (is-root:ver mark)
+        :_  this
+        (forward-update:hc mark vase)
       ::
       =^  cards  push-hook
         (on-poke:og mark vase)
@@ -233,17 +254,38 @@
     ++  on-watch
       |=  =path
       ^-  (quip card:agent:gall agent:gall)
+      ?:  ?=([%version ~] path)
+        :_  this
+        (fact-init:io version+!>(min-version.config))^~
       ?.  ?=([%resource *] path)
         =^  cards  push-hook
           (on-watch:og path)
         [cards this]
-      ?>  ?=([%ship @ @ *] t.path)
+      |^
+      ?.  ?=([%ver %ship @ @ @ *] t.path)
+        unversioned
       =/  =resource
-        (de-path:resource t.path)
+        (de-path:resource t.t.path)
+      =/  =mark
+        (append-version:ver (slav %ud i.t.t.t.t.t.path))
+      ?.  (supported:ver mark)
+        :_  this
+        (fact-init-kick:io version+!>(min-version.config))
       =/  =vase
-        (initial-watch:og t.t.t.t.path resource)
+        (convert-to:ver mark (initial-watch:og t.t.t.t.t.t.path resource))
       :_  this
-      [%give %fact ~ update-mark.config vase]~
+      [%give %fact ~ mark vase]~
+      ::
+      ++  unversioned
+        ?>  ?=([%ship @ @ *] t.path)
+        =/  =resource
+          (de-path:resource t.path)
+        =/  =vase
+          %+  convert-to:ver  update-mark.config
+          (initial-watch:og t.t.t.t.path resource)
+        :_  this
+        [%give %fact ~ update-mark.config vase]~
+      --
     ::
     ++  on-agent
       |=  [=wire =sign:agent:gall]
@@ -258,7 +300,7 @@
         %kick  [~[watch-store:hc] this]
       ::
           %fact
-        ?.  =(update-mark.config p.cage.sign)
+        ?.  (is-root:ver p.cage.sign)
           =^  cards  push-hook
             (on-agent:og wire sign)
           [cards this]
@@ -266,7 +308,7 @@
           (take-update:og q.cage.sign)
         :_  this
         %+  weld
-          (push-updates:hc q.cage.sign)
+          (push-updates:hc cage.sign)
         cards
       ==
       ::
@@ -299,15 +341,9 @@
     --
   |_  =bowl:gall
   +*  og   ~(. push-hook bowl)
-  ::
-  ++  poke-update
-    |=  vas=vase
-    ^-  (quip card:agent:gall _state)
-    =/  vax=(unit vase)  (transform-proxy-update:og vas)
-    ?>  ?=(^ vax)
-    =/  wire  (make-wire /store)
-    :_  state
-    [%pass wire %agent [our.bowl store-name.config] %poke update-mark.config u.vax]~
+      ver  ~(. versioning [bowl [update-mark version min-version]:config])
+      io   ~(. agentio bowl)
+      pass  pass:io
   ::
   ++  poke-hook-action
     |=  =action
@@ -378,46 +414,66 @@
     [%pass wire %agent [our.bowl store-name.config] %watch store-path.config]
   ::
   ++  push-updates
-    |=  =vase
+    |=  =cage
     ^-  (list card:agent:gall)
-    =/  rids=(list resource)  (resource-for-update vase)
-    =|  cards=(list card:agent:gall)
-    |-
-    ?~  rids  cards
-    =/  prefix=path
-      resource+(en-path:resource i.rids)
-    =/  paths=(list path)
-      %~  tap  in
-      %-  silt
-      %+  turn
-        (incoming-subscriptions prefix)
-      |=([ship pax=path] pax)
-    ?~  paths  $(rids t.rids)
-    %_  $
-      rids   t.rids
-      cards  (snoc cards [%give %fact paths update-mark.config vase])
-    ==
+    %+  roll  (resource-for-update q.cage)
+    |=  [rid=resource cards=(list card)]
+    |^
+    :(weld cards versioned unversioned)
+    ::
+    ++  versioned
+      ^-  (list card:agent:gall)
+      =/  prefix=path
+        resource+ver+(en-path:resource rid)
+      =/  paths=(jug @ud path)
+        %+  roll
+          (incoming-subscriptions prefix)
+        |=  [[ship =path] out=(jug @ud path)]
+        =/  path-ver=@ud
+          (ver-from-path path)
+        (~(put ju out) path-ver path)
+      %+  turn  ~(tap by paths)
+      |=  [fact-ver=@ud paths=(set path)]
+      =/  =mark
+        (append-version:ver fact-ver)
+      =/  =^cage
+        :-  mark
+        (convert-from:ver mark q.cage)
+      (fact:io cage ~(tap in paths))
+    ::  TODO: deprecate
+    ++  unversioned
+      =/  prefix=path
+        resource+(en-path:resource rid)
+      =/  unversioned=(set path)
+        %-  ~(gas in *(set path))
+        (turn (incoming-subscriptions prefix) tail)
+      ?:  =(0 ~(wyt in unversioned))  ~
+      =/  =^cage
+        :-  update-mark.config
+        (convert-from:ver update-mark.config q.cage)
+      (fact:io cage ~(tap in unversioned))^~
+    --
+  ::
+  ++  ver-from-path
+    |=  =path
+    =/  extra=^path
+      (slag 5 path)
+    ?>  ?=(^ extra)
+    (slav %ud i.extra)
   ::
   ++  forward-update
-    |=  =vase
+    |=  =cage
     ^-  (list card:agent:gall)
-    =/  rids=(list resource)  (resource-for-update vase)
-    =|  cards=(list card:agent:gall)
-    |-
-    ?~  rids  cards
-    =/  =path
-      resource+(en-path:resource i.rids)
+    =/  =vase
+      (need (transform-proxy-update:og (convert-to:ver cage)))
+    %+  roll  (resource-for-update vase)
+    |=  [rid=resource cards=(list card:agent:gall)]
     =/  =wire
-      (make-wire resource+(en-path:resource i.rids))
-    =/  dap=term
-      ?:(=(our.bowl entity.i.rids) store-name.config dap.bowl)
-    %_  $
-      rids  t.rids
-    ::
-        cards
-      %+  snoc  cards
-      [%pass wire %agent [entity.i.rids dap] %poke update-mark.config vase]
-    ==
+      (make-wire resource+(en-path:resource rid))
+    =/  =dock:agent:gall
+      :-  entity.rid
+      ?:(=(our.bowl entity.rid) store-name.config dap.bowl)
+    :_(cards (~(poke pass wire) dock current-version:ver vase))
   ::
   ++  resource-for-update
     |=  =vase
