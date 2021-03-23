@@ -14,8 +14,11 @@
     [%yes %self %self]
   ::  +notification-kind: no notifications for now
   ::
-  ++  notification-kind  ~
-  ++  transform-add-nodes
+  ++  notification-kind  
+    =/  len  (lent index.p.i)
+    `[%post [(dec len) len] %none %children]
+  ::
+    ++  transform-add-nodes
     |=  [=index =post =atom was-parent-modified=?]
     ^-  [^index ^post]
     =-  [- post(index -)]
