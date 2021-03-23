@@ -38,6 +38,7 @@ export function GroupFeed(props) {
       width="100%"
       height="100%"
       display="flex"
+      position="relative"
       alignItems="center"
       overflow="hidden">
       <GroupFeedHeader baseUrl={baseUrl} history={history} />

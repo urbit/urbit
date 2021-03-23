@@ -1,9 +1,11 @@
 import React from 'react';
-import { Box, Col } from '@tlon/indigo-react';
+import { Box } from '@tlon/indigo-react';
 
+import { EnableGroupFeed } from './EnableGroupFeed';
 import { EmptyGroupHome } from './EmptyGroupHome';
 import { GroupFeed } from './GroupFeed';
 import { AddFeedBanner } from './AddFeedBanner';
+import {Route, useHistory} from 'react-router-dom';
 
 
 export function GroupHome(props) {
@@ -15,7 +17,6 @@ export function GroupHome(props) {
     graphs,
     baseUrl,
     contacts,
-    history
   } = props;
 
   const metadata = associations?.groups[groupPath]?.metadata;
@@ -32,9 +33,21 @@ export function GroupHome(props) {
     'resource' in metadata.config.group;
 
   const graphPath = metadata?.config?.group?.resource;
+  const history = useHistory();
 
   return (
     <Box width="100%" height="100%">
+      <Route path={`${baseUrl}/enable`}
+        render={() => {
+          return (
+            <EnableGroupFeed
+              groupPath={groupPath}
+              dismiss={() => history.push(baseUrl)}
+              api={api}
+            />
+          );
+        }}
+      />
       { askFeedBanner ? (
         <AddFeedBanner 
           api={api}

@@ -1,24 +1,52 @@
 import React, {
-  useState
+  useState,
+  useCallback
 } from 'react';
-import { Button, Text, Box, Row, BaseTextArea } from '@tlon/indigo-react';
+import { LoadingSpinner, Icon, Button, Text, Box, Row, BaseTextArea } from '@tlon/indigo-react';
 import tokenizeMessage from '~/logic/lib/tokenizeMessage';
+import { useToggleState } from '~/logic/lib/useToggleState';
 import { createPost } from '~/logic/api/graph';
+import useStorage from '~/logic/lib/useStorage';
 
 
 export function PostInput(props) {
   const { api, graphResource, index, submitCallback } = props;
-  const [disabled, setDisabled] = useState(false);
-  const [postContent, setPostContent] = useState('');
 
-  const sendPost = () => {
+  const [disabled, setDisabled] = useState(false);
+  const [code, toggleCode] = useToggleState(false);
+  const { canUpload, promptUpload, uploading } = useStorage();
+  const [postContent, setPostContent] = useState('');
+  const uploadImage = useCallback(async () => {
+    try {
+      setDisabled(true);
+      const url = await promptUpload();
+      const { ship, name } = graphResource;
+      await api.graph.addPost(ship, name, createPost([{ url }]));
+    } catch (e) {
+      // TODO: better handling
+      console.error(e);
+    } finally {
+      setDisabled(false);
+
+    }
+
+  }, [promptUpload]);
+
+  const sendPost = async () => {
     if (!graphResource) {
       console.error("graphResource is undefined, cannot post");
       return;
     }
+    let contents = [];
+    if(code) {
+      const output = await props.api.graph.eval(postContent);
+      contents = [{ code: { output, expression: postContent } }];
+    } else {
+      contents = tokenizeMessage(postContent);
+    }
 
     setDisabled(true);
-    const post = createPost(tokenizeMessage(postContent), index || '');
+    const post = createPost(contents, index || '');
 
     api.graph.addPost(
       graphResource.ship,
@@ -26,6 +54,9 @@ export function PostInput(props) {
       post
     ).then(() => {
       setDisabled(false);
+      if(code) {
+        toggleCode();
+      }
       setPostContent('');
 
       if (submitCallback) {
@@ -48,11 +79,12 @@ export function PostInput(props) {
         color="black"
         fontSize={1}
         height="62px"
+        fontFamily={code ? 'mono' : 'sans'}
         lineNumber={3}
         style={{
           resize: 'none',
         }}
-        placeholder="What's on your mind?"
+        placeholder={code ? "(add 2 2)" : "What's on your mind?"}
         spellCheck="false"
         value={postContent}
         onChange={e => setPostContent(e.target.value)}
@@ -66,7 +98,31 @@ export function PostInput(props) {
         display="flex"
         justifyContent="space-between"
         alignItems="center">
-        <Box></Box>
+        <Row>
+          {false && (
+            <Box mr={2} flexShrink={0} height='16px' width='16px' flexBasis='16px'>
+              <Icon
+                icon='Dojo'
+                onClick={toggleCode}
+                color={code ? 'blue' : 'black'}
+              />
+            </Box>
+          )}
+          { canUpload && (
+            <Box mr={2} flexShrink={0} height='16px' width='16px' flexBasis='16px'>
+              { uploading ? (
+                <LoadingSpinner />
+              ) : (
+                <Icon
+                  icon='Links'
+                  width='16'
+                  height='16'
+                  onClick={uploadImage}
+                />
+              )}
+            </Box>
+          )}
+        </Row>
         <Button
           pl="2"
           pr="2"

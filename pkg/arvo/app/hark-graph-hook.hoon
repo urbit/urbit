@@ -459,7 +459,6 @@
             =notif-kind:hook
         ==
     ^+  update-core 
-    ?:  ?=(%none mode.notif-kind)  update-core
     =/  =stats-index:store
       (to-stats-index:store index)
     =.  update-core
