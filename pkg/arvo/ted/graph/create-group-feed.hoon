@@ -67,4 +67,4 @@
     preview       %.n
     hidden        %.y
   ==
-(pure:m !>(~))
+(pure:m !>(feed-rid))

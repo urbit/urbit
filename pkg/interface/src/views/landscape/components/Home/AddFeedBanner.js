@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, Row, Col, Text, BaseImage } from '@tlon/indigo-react';
+import { Link } from 'react-router-dom';
 import { resourceFromPath } from '~/logic/lib/group';
 
 
@@ -29,25 +30,6 @@ export const AddFeedBanner = (props) => {
     );
   };
 
-  const enableFeed = () => {
-    if (!groupPath) {
-      console.error('no group path, cannot enable feed');
-      return;
-    }
-    const resource = resourceFromPath(groupPath);
-    if (!resource) {
-      console.error('cannot make resource, cannot enable feed');
-      return;
-    }
-
-    api.spider(
-      'graph-view-action',
-      'json',
-      'graph-create-group-feed',
-      { 'create-group-feed': { resource } }
-    );
-  };
-
   return (
     <Row
       height="48px"
@@ -64,9 +46,11 @@ export const AddFeedBanner = (props) => {
         <Text mr="2" color="gray" bold cursor="pointer" onClick={disableFeed}>
           Dismiss
         </Text>
-        <Text color="blue" bold cursor="pointer" onClick={enableFeed}>
-          Enable Feed
-        </Text>
+        <Link to={`/~landscape${groupPath}/enable`}>
+          <Text color="blue" bold cursor="pointer">
+            Enable Feed
+          </Text>
+        </Link>
       </Row>
     </Row>
   );
