@@ -2,8 +2,7 @@
 , enableStatic ? stdenv.hostPlatform.isStatic }:
 
 haskell-nix.stackProject {
-  compiler-nix-name = "ghc884";
-  index-state = "2020-09-24T00:00:00Z";
+  compiler-nix-name = "ghc8104";
 
   # This is incredibly difficult to get right, almost everything goes wrong.
   # See: https://github.com/input-output-hk/haskell.nix/issues/496

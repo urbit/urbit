@@ -18,7 +18,7 @@ in {
     ];
   });
 
-  curlMinimal = prev.curlMinimal.override {
+  curlMinimal = prev.curl.override {
     http2Support = false;
     scpSupport = false;
     gssSupport = false;

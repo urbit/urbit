@@ -29,10 +29,10 @@
         "homepage": "https://h2o.examp1e.net",
         "owner": "h2o",
         "repo": "h2o",
-        "rev": "06d0e88c06c823c6cc9f7baa35901b2993148366",
-        "sha256": "061y3af4jy13dhmpqzc63qrs7p8y1ljjhld16jl14zqadqsfyyyg",
+        "rev": "v2.2.4",
+        "sha256": "0176x0bzjry19zs074a9i5vhncc842xikmx43wj61jky318nq4w4",
         "type": "tarball",
-        "url": "https://github.com/h2o/h2o/archive/06d0e88c06c823c6cc9f7baa35901b2993148366.tar.gz",
+        "url": "https://github.com/h2o/h2o/archive/v2.2.4.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "hackage.nix": {
@@ -101,10 +101,10 @@
         "homepage": null,
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "db21819e91aee7d2bc2edb5845bdad65cddb5cee",
-        "sha256": "1b5wbd2k3lwkr2krr1mfggczkg7cv0qqqvnf0bv7h3k3ckk8nawq",
+        "rev": "166ab9d237409c4b74b1f8ca31476ead35e8fe53",
+        "sha256": "13i43kvbkdl3dh8b986j6mxbn355mqjhcxrd8cni8zfx1z0wrscr",
         "type": "tarball",
-        "url": "https://github.com/nixos/nixpkgs/archive/db21819e91aee7d2bc2edb5845bdad65cddb5cee.tar.gz",
+        "url": "https://github.com/nixos/nixpkgs/archive/166ab9d237409c4b74b1f8ca31476ead35e8fe53.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "softfloat3": {
