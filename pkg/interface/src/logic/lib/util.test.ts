@@ -8,4 +8,12 @@ describe('#deSig', () => {
         expect(deSig(input)).toEqual('zod');
     });
   });
+
+  describe('when string does not have a sig', () => {
+    it('returns string without the sig', () => {
+        const input = 'zod';
+
+        expect(deSig(input)).toEqual('zod');
+    });
+  });
 });
