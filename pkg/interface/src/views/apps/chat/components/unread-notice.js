@@ -55,8 +55,7 @@ export const UnreadNotice = (props) => {
               cursor='pointer'
               onClick={onClick}
             >
-              {unreadCount} new message{unreadCount > 1 ? 's' : ''}{' '}
-              <Text color='lightGray'>since </Text>
+              {unreadCount} new message{unreadCount > 1 ? 's' : ''} since{' '}
               <Timestamp stamp={stamp} color='black' date={true} fontSize={1} />
             </Text>
             <Icon
