@@ -24,12 +24,17 @@ class PostItem extends React.Component {
 
   navigateToReplies() {
     const { history, baseUrl, index } = this.props;
-    history.push(`${baseUrl}/feed/${index.toString()}`);
+    let indexString = '';
+    
+    index.forEach((i) => {
+      indexString = indexString + '/' + i.toString();
+    });
+
+    history.push(`${baseUrl}/feed${indexString}`);
   }
 
   submitCallback() {
     this.toggleReplyMode();
-    // or navigate to replies
   }
 
   render() {
@@ -44,6 +49,13 @@ class PostItem extends React.Component {
       isReply,
       parentPost
     } = this.props;
+
+    let indexString = '';
+    
+    index.forEach((i) => {
+      indexString = indexString + '/' + i.toString();
+    });
+
     const { inReplyMode } = this.state;
 
     return (
@@ -87,7 +99,7 @@ class PostItem extends React.Component {
             <PostInput
               api={api}
               graphResource={graphResource}
-              index={`/${index.toString()}`}
+              index={indexString}
               submitCallback={this.submitCallback} />
           </Col>
         ) : null }

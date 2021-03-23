@@ -21,8 +21,10 @@ export function GroupFeedHeader(props) {
       alignItems="center"
       borderBottom={1}
       borderColor="washedGray">
-      <Box display={['block', 'none']}>
-        { baseUrl !== historyLocation ? (
+      <Box display='block'>
+        { ( baseUrl !== historyLocation &&
+            `${baseUrl}/feed` !== historyLocation
+          ) ? (
             <Text pr="2" cursor="pointer" onClick={() => {
               history.goBack();
             }}>{'<- Back'}</Text>

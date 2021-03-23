@@ -35,6 +35,10 @@ export class PostFeed extends React.Component {
       }
      
       if (parentNode && index.eq(first ?? bigInt.zero)) {
+        let nodeIndex = parentNode.post.index.split('/').slice(1).map((ind) => {
+          return bigInt(ind);
+        });
+
         return (
           <React.Fragment key={index.toString()}>
             <Col
@@ -50,7 +54,7 @@ export class PostFeed extends React.Component {
                 contacts={contacts}
                 graphResource={graphResource}
                 api={api}
-                index={bigInt(parentNode.post.index.slice(1))}
+                index={nodeIndex}
                 baseUrl={baseUrl}
                 history={history}
                 isParent={true}
@@ -63,7 +67,7 @@ export class PostFeed extends React.Component {
               contacts={contacts}
               graphResource={graphResource}
               api={api}
-              index={index}
+              index={[...nodeIndex, index]}
               baseUrl={baseUrl}
               history={history}
               isReply={true}
@@ -81,7 +85,7 @@ export class PostFeed extends React.Component {
           contacts={contacts}
           graphResource={graphResource}
           api={api}
-          index={index}
+          index={[index]}
           baseUrl={baseUrl}
           history={history}
           parentPost={parentNode?.post}
@@ -91,6 +95,7 @@ export class PostFeed extends React.Component {
     });
 
     this.fetchPosts = this.fetchPosts.bind(this);
+    this.doNotFetch = this.doNotFetch.bind(this);
   }
 
   async fetchPosts(newer) {
@@ -121,8 +126,12 @@ export class PostFeed extends React.Component {
     return currSize === graph.size;
   }
 
+  async doNotFetch(newer) {
+    return true;
+  }
+
   render() {
-    const { graph, pendingSize } = this.props;
+    const { graph, pendingSize, parentNode } = this.props;
 
     return (
       <Col width="100%" height="100%" position="relative">
@@ -135,7 +144,7 @@ export class PostFeed extends React.Component {
           style={virtualScrollerStyle}
           pendingSize={pendingSize}
           renderer={this.renderItem}
-          loadRows={this.fetchPosts}
+          loadRows={parentNode ? this.doNotFetch : this.fetchPosts}
         />
       </Col>
     );

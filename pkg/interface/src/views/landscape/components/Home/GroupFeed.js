@@ -2,7 +2,7 @@ import React, {
   useEffect
 } from 'react';
 import { Switch, Route } from 'react-router-dom';
-import { Box } from '@tlon/indigo-react'
+import { Col } from '@tlon/indigo-react'
 import { resourceFromPath } from '~/logic/lib/group';
 import useGraphState from '~/logic/state/graph';
 import { GroupFeedHeader } from './GroupFeedHeader';
@@ -34,11 +34,10 @@ export function GroupFeed(props) {
   }, [graphPath]);
 
   return (
-    <Box
+    <Col
       width="100%"
       height="100%"
       display="flex"
-      flexDirection="column"
       alignItems="center"
       overflow="hidden">
       <GroupFeedHeader baseUrl={baseUrl} history={history} />
@@ -67,7 +66,7 @@ export function GroupFeed(props) {
             );
           }} />
       </Switch>
-    </Box>
+    </Col>
   );
 }
 
