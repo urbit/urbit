@@ -30,7 +30,7 @@ interface OmniboxProps {
   notifications: number;
 }
 
-const SEARCHED_CATEGORIES = ['ships', 'other', 'commands', 'groups', 'subscriptions', 'apps'];
+const SEARCHED_CATEGORIES = ['commands', 'ships', 'other', 'groups', 'subscriptions', 'apps'];
 const settingsSel = (s: SettingsState) => s.leap;
 
 export function Omnibox(props: OmniboxProps) {
