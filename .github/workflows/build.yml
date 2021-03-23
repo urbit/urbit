@@ -32,7 +32,17 @@
 
 name: build
 
-on: [push, pull_request]
+on:
+  push:
+    paths:
+      - 'pkg/arvo'
+      - 'pkg/hs'
+      - 'pkg/urbit'
+  pull_request:
+    paths:
+      - 'pkg/arvo'
+      - 'pkg/hs'
+      - 'pkg/urbit'
 
 jobs:
   urbit:
