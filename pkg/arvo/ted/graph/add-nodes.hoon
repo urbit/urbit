@@ -33,7 +33,7 @@
 =/  hashes  (nodes-to-pending-indices nodes.q.update)
 ;<  ~  bind:m
   %^  poke-our  %graph-push-hook
-    %graph-update
+    %graph-update-0
   !>(update)
 (pure:m !>(`action:graph-view`[%pending-indices hashes]))
 ::

@@ -15,6 +15,7 @@
       update:metadata
       %metadata-update
       %metadata-push-hook
+      0  0
       %.n
   ==
 +$  state-zero
@@ -82,7 +83,7 @@
         %kick  [~[watch-contacts] state]
         ::
           %fact
-        ?>  ?=(%contact-update p.cage.sign)
+        ?>  ?=(%contact-update-0 p.cage.sign)
         =+  !<(=update:contact q.cage.sign)
         ?+  -.update  `state
             %add
@@ -151,7 +152,7 @@
         %kick  [watch-store^~ state]
         ::
           %fact
-        ?>  ?=(%metadata-update p.cage.sign)
+        ?>  ?=(%metadata-update-0 p.cage.sign)
         =+  !<(=update:metadata q.cage.sign)
         ?.  ?=(%initial-group -.update)  `state
         `state(previews (~(del by previews) group.update))
@@ -255,7 +256,7 @@
   %+  turn  ~(tap by associations)
   |=  [=md-resource:metadata =association:metadata]
   %+  poke-our:pass:io  %metadata-store
-  :-  %metadata-update
+  :-  %metadata-update-0
   !>  ^-   update:metadata
   [%remove resource md-resource]
 ::

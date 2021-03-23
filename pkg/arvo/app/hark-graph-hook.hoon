@@ -182,7 +182,7 @@
     ~[watch-graph:ha]
   ::
       %fact
-    ?.  ?=(%graph-update p.cage.sign)
+    ?.  ?=(%graph-update-0 p.cage.sign)
       (on-agent:def wire sign)
     =^  cards  state
       (graph-update !<(update:graph-store q.cage.sign))
