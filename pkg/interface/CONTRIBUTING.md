@@ -83,6 +83,22 @@ $ npm run lint-file ./src/apps/chat/**/*.js # lints all .js files in `interface/
 $ npm run lint-file ./src/chat/app.js # lints a single chosen file
 ```
 
+## Testing
+
+The Urbit interface uses [Jest](https://jestjs.io/) to test the Javascript code.
+
+To run the test suite:
+
+```bash
+npm run test
+```
+
+To run an individual test:
+
+```bash
+npm run test path/to/test.js
+```
+
 ## Creating your own applications
 
 If you'd like to create your own application for Landscape, the easiest way to
