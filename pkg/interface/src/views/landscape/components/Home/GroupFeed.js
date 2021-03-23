@@ -41,7 +41,11 @@ export function GroupFeed(props) {
       position="relative"
       alignItems="center"
       overflow="hidden">
-      <GroupFeedHeader baseUrl={baseUrl} history={history} />
+      <GroupFeedHeader
+        baseUrl={baseUrl}
+        history={history}
+        graphs={graphs}
+        graphResource={graphResource} />
       <Switch>
         <Route
           exact
