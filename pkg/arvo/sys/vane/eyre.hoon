@@ -2528,6 +2528,26 @@
         %rejected  ``noun+!>((~(has in rejected.cors-registry) u.origin))
       ==
     ::
+        [%scry @ @ ~]
+      =/  host  `i.t.tyl
+      =/  url  i.t.t.tyl
+      =/  server  (per-server-event [eny *duct now rof] server-state.ax)
+      =/  [=action suburl=@t]
+        (get-action-for-binding:server host url)
+      =/  invalid  (error-page 400 %.y url "invalid scry: {<action>} {<suburl>}")
+      :^  ~  ~  %noun
+      !>  ^-  octs
+      ?+    -.action  !!
+        %gen
+      invalid
+        %scry
+      (handle-scry %.y (need host) url)
+::      %*  .  *request:http
+::        header-list   [host+host cookie+u.cookies]~
+::        url  url
+::        method  'GET'
+::      ==
+    ==
         [%authenticated %cookie @ ~]
       ?~  cookies=(slaw %t i.t.t.tyl)  [~ ~]
       :^  ~  ~  %noun
@@ -2567,4 +2587,72 @@
       ``[secure port host]
     ==
   ==
+++  return-static-data
+    |=  [code=@ content-type=@t data=octs]
+    ::
+    :*  %start
+        :-  status-code=code
+        ^=  headers
+          :~  ['content-type' content-type]
+              ['content-length' (crip (format-ud-as-integer p.data))]
+          ==
+        data=[~ data]
+        complete=%.y
+    ==
+++  handle-scry
+  |=  [authenticated=? host=@t url=@t]
+  |^  ^-  octs
+  ?.  authenticated
+    (error-response 403 ~)
+  ::  make sure the path contains an app to scry into
+  ::
+  =+  req=(parse-request-line url)
+  ?.  ?=(^ site.req)
+    (error-response 400 "scry path must start with app name")
+  ::  attempt the scry that was asked for
+  ::
+  ~&  req+req 
+  ~&  site+site.req
+  =/  res=(unit (unit cage))
+    (do-scry %gx i.site.req (snoc t.site.req (fall ext.req %mime)))
+  ?~  res    (error-response 500 "failed scry")
+  ?~  u.res  (error-response 404 "no scry result")
+  =*  mark   p.u.u.res
+  =*  vase   q.u.u.res
+  ::  attempt to find conversion gate to mime
+  ::
+  =/  tub=(unit tube:clay)
+    (find-tube mark %mime)
+  ?~  tub  (error-response 500 "no tube from {(trip mark)} to mime")
+  ::  attempt conversion, then send results
+  ::
+  =/  mym=(each mime tang)
+    (mule |.(!<(mime (u.tub vase))))
+  ?-  -.mym
+    %|  (error-response 500 "failed tube from {(trip mark)} to mime")
+    %&  (as-octs:mimes:html q.q.p.mym)
+  ==
+  ::
+  ++  find-tube
+    |=  [from=mark to=mark]
+    ^-  (unit tube:clay)
+    ?:  =(from to)  `(bake same vase)
+    =/  tub=(unit (unit cage))
+      (do-scry %cc %home /[from]/[to])
+    ?.  ?=([~ ~ %tube *] tub)  ~
+    `!<(tube:clay q.u.u.tub)
+  ::
+  ++  do-scry
+    |=  [care=term =desk =path]
+    ^-  (unit (unit cage))
+    ~&  path+path
+    =/  event-args  [[eny *duct now rof] server-state.ax]
+    =/  server  (per-server-event event-args)
+    (rof:server ~ care [our desk [%da now:server]] path)
+  ::
+  ++  error-response
+    |=  [status=@ud =tape]
+::    %^  return-static-data  status  'text/html'
+    (error-page status authenticated url tape)
+  --
 --
