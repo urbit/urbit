@@ -75,8 +75,8 @@ leaveMultiEyre MultiEyreApi {..} who = do
   modifyTVar' meaTlsC (deleteMap who)
   modifyTVar' meaSite (deleteMap who)
 
-multiEyre :: HasLogFunc e => MultiEyreConf -> RIO e MultiEyreApi
-multiEyre conf@MultiEyreConf {..} = do
+multiEyre :: HasLogFunc e => IO () -> MultiEyreConf -> RIO e MultiEyreApi
+multiEyre onFatal conf@MultiEyreConf {..} = do
   logInfo (displayShow ("EYRE", "MULTI", conf))
 
   vLive <- io emptyLiveReqs >>= newTVarIO
@@ -108,7 +108,7 @@ multiEyre conf@MultiEyreConf {..} = do
 
   mIns <- for mecHttpPort $ \por -> do
     logInfo (displayShow ("EYRE", "MULTI", "HTTP", por))
-    serv vLive $ ServConf
+    serv vLive onFatal $ ServConf
       { scHost = host
       , scPort = SPChoices $ singleton $ fromIntegral por
       , scRedi = Nothing -- TODO
@@ -121,7 +121,7 @@ multiEyre conf@MultiEyreConf {..} = do
 
   mSec <- for mecHttpsPort $ \por -> do
     logInfo (displayShow ("EYRE", "MULTI", "HTTPS", por))
-    serv vLive $ ServConf
+    serv vLive onFatal $ ServConf
       { scHost = host
       , scPort = SPChoices $ singleton $ fromIntegral por
       , scRedi = Nothing
