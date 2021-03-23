@@ -14,16 +14,14 @@
 //
 //
 import GlobalApi from '../api/global';
-import GlobalStore from '../store/store';
+import useStorageState from '../state/storage';
 
 
 class GcpManager {
   #api: GlobalApi | null = null;
-  #store: GlobalStore | null = null;
 
-  configure(api: GlobalApi, store: GlobalStore) {
+  configure(api: GlobalApi) {
     this.#api = api;
-    this.#store = store;
   }
 
   #running = false;
@@ -34,8 +32,8 @@ class GcpManager {
       console.warn('GcpManager already running');
       return;
     }
-    if (!this.#api || !this.#store) {
-      console.error('GcpManager must have api and store set');
+    if (!this.#api) {
+      console.error('GcpManager must have api set');
       return;
     }
     this.#running = true;
@@ -65,7 +63,7 @@ class GcpManager {
   #consecutiveFailures: number = 0;
 
   private isConfigured() {
-    return this.#store.state.storage.gcp.configured;
+    return useStorageState.getState().gcp.configured;
   }
 
   private refreshLoop() {
@@ -78,7 +76,8 @@ class GcpManager {
           if (this.isConfigured()) {
             this.refreshLoop();
           } else {
-            this.refreshAfter(10_000);
+            console.log('GcpManager: GCP storage not configured; stopping.');
+            this.stop();
           }
         })
         .catch((reason) => {
@@ -89,7 +88,7 @@ class GcpManager {
     }
     this.#api.gcp.getToken()
       .then(() => {
-        const token = this.#store.state.storage.gcp?.token;
+        const token = useStorageState.getState().gcp.token;
         if (token) {
           this.#consecutiveFailures = 0;
           const interval = this.refreshInterval(token.expiresIn);

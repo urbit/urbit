@@ -30,7 +30,7 @@ export const SidebarItem = ({
       bgActive="washedGray"
       display="flex"
       px="3"
-      py="1"
+      py="2"
       justifyContent="space-between"
       {...rest}
     >
