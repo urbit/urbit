@@ -112,6 +112,7 @@ export function ProfileStatus(props: any): ReactElement {
       display='inline-block'
       verticalAlign='middle'
       color='gray'
+      title={contact?.status ?? ''}
     >
       {contact?.status ?? ''}
     </RichText>

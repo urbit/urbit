@@ -176,8 +176,9 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
             marginBottom='0'
             disableRemoteContent
             gray
+            title={contact?.status ?? ''}
           >
-            {contact?.status ? contact.status : ''}
+            {contact?.status ?? ''}
           </RichText>
         )}
       </Col>
