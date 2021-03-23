@@ -97,18 +97,11 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@babel/preset-env', '@babel/typescript', ['@babel/preset-react', {
+            presets: ['@babel/preset-env', '@babel/preset-typescript', ['@babel/preset-react', {
               runtime: 'automatic',
               development: true,
               importSource: '@welldone-software/why-did-you-render',
-            }]],
-            plugins: [
-              '@babel/transform-runtime',
-              '@babel/plugin-proposal-object-rest-spread',
-              '@babel/plugin-proposal-optional-chaining',
-              '@babel/plugin-proposal-class-properties',
-              'react-hot-loader/babel'
-            ]
+            }]]
           }
         },
         exclude: /node_modules\/(?!(@tlon\/indigo-dark|@tlon\/indigo-light)\/).*/

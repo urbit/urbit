@@ -1,7 +1,6 @@
 import f from 'lodash/fp';
-import { RemoteContentPolicy, LeapCategories, leapCategories } from "~/types/local-update";
+import { RemoteContentPolicy, LeapCategories, leapCategories } from "../../types/local-update";
 import { BaseState, createState } from '~/logic/state/base';
-
 
 export interface SettingsState extends BaseState<SettingsState> {
   display: {
@@ -55,7 +54,7 @@ const useSettingsState = createState<SettingsState>('Settings', {
     videoShown: true
   },
   leap: {
-    categories: leapCategories,
+    categories: leapCategories.slice()
   },
   tutorial: {
     seen: false,

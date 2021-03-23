@@ -1,14 +1,11 @@
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import _ from 'lodash';
-import f, { compose, memoize } from 'lodash/fp';
 import bigInt, { BigInteger } from 'big-integer';
-import { Association, Contact } from '@urbit/api';
-import useLocalState from '../state/local';
-import produce, { enableMapSet } from 'immer';
+import { enableMapSet } from 'immer';
+import f from "lodash/fp";
+import { Contact } from '@urbit/api';
+import { Association } from '@urbit/api/metadata';
 import useSettingsState from '../state/settings';
-import { State, UseStore } from 'zustand';
-import { Cage } from '~/types/cage';
-import { BaseState } from '../state/base';
 import anyAscii from 'any-ascii';
 
 enableMapSet();
@@ -189,10 +186,10 @@ export function uxToHex(ux: string) {
   return value;
 }
 
-export const hexToUx = (hex) => {
+export const hexToUx = (hex: string): string => {
   const ux = f.flow(
     f.chunk(4),
-    f.map(x => _.dropWhile(x, y => y === 0).join('')),
+    f.map((x: string[]) => _.dropWhile(x, (y: string) => y === '0').join('')),
     f.join('.')
   )(hex.split(''));
   return `0x${ux}`;
