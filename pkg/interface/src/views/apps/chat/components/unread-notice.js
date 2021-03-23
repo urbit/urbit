@@ -28,7 +28,7 @@ export const UnreadNotice = (props) => {
   return (
     <Box
       style={{ left: '0px', top: '0px' }}
-      p='4'
+      p='12px'
       width='100%'
       position='absolute'
       zIndex='1'
