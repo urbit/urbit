@@ -1,0 +1,39 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.34.4.
+--
+-- see: https://github.com/sol/hpack
+
+name:           urbit-termsize
+version:        0.1.0
+license:        MIT
+license-file:   LICENSE
+build-type:     Simple
+
+library
+  exposed-modules:
+      Urbit.TermSize
+  other-modules:
+      Paths_urbit_termsize
+  hs-source-dirs:
+      lib
+  ghc-options: -Wall -Werror -Wno-type-defaults -Wno-unused-matches -Wno-name-shadowing -Wno-unused-do-bind -O2
+  build-depends:
+      base
+    , terminal-size
+    , unix
+  default-language: Haskell2010
+
+executable urbit-test-termsize-updates
+  main-is: Main.hs
+  other-modules:
+      Paths_urbit_termsize
+  hs-source-dirs:
+      app
+  ghc-options: -Wall -Werror -Wno-type-defaults -Wno-unused-matches -Wno-name-shadowing -Wno-unused-do-bind -O2
+  build-depends:
+      base
+    , terminal-size
+    , unix
+    , urbit-termsize
+  default-language: Haskell2010

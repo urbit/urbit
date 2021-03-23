@@ -1,4 +1,4 @@
-resolver: lts-17.2
+resolver: lts-17.5
 
 packages:
   - natpmp-static

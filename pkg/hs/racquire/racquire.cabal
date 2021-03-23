@@ -1,0 +1,72 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.34.4.
+--
+-- see: https://github.com/sol/hpack
+
+name:           racquire
+version:        0.10.4
+license:        MIT
+license-file:   LICENSE
+build-type:     Simple
+
+library
+  exposed-modules:
+      Data.RAcquire
+  other-modules:
+      Paths_racquire
+  hs-source-dirs:
+      lib
+  default-extensions:
+      ApplicativeDo
+      BangPatterns
+      BlockArguments
+      ConstraintKinds
+      DataKinds
+      DefaultSignatures
+      DeriveAnyClass
+      DeriveDataTypeable
+      DeriveFoldable
+      DeriveGeneric
+      DeriveTraversable
+      DerivingStrategies
+      EmptyCase
+      EmptyDataDecls
+      FlexibleContexts
+      FlexibleInstances
+      FunctionalDependencies
+      GADTs
+      GeneralizedNewtypeDeriving
+      LambdaCase
+      MagicHash
+      MultiParamTypeClasses
+      NamedFieldPuns
+      NoImplicitPrelude
+      NumericUnderscores
+      OverloadedStrings
+      PackageImports
+      PartialTypeSignatures
+      PatternSynonyms
+      QuasiQuotes
+      Rank2Types
+      RankNTypes
+      RecordWildCards
+      ScopedTypeVariables
+      StandaloneDeriving
+      TemplateHaskell
+      TupleSections
+      TypeApplications
+      TypeFamilies
+      TypeOperators
+      UnboxedTuples
+      UnicodeSyntax
+      ViewPatterns
+  ghc-options: -Wall -Werror -Wno-type-defaults -Wno-unused-matches -Wno-name-shadowing -O2
+  build-depends:
+      base
+    , exceptions
+    , mtl
+    , resourcet
+    , rio
+    , unliftio-core
+  default-language: Haskell2010

@@ -1,0 +1,209 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.34.4.
+--
+-- see: https://github.com/sol/hpack
+
+name:           proto
+version:        0.1.0
+license:        MIT
+license-file:   LICENSE
+build-type:     Simple
+
+library
+  exposed-modules:
+      Dashboard
+      Deppy.Core
+      Nock
+      SimpleNoun
+      Untyped.Core
+      Untyped.CST
+      Untyped.Hoon
+      Untyped.Parser
+      Untyped.ShittyCorePrinter
+  other-modules:
+      Paths_proto
+  hs-source-dirs:
+      lib
+  default-extensions:
+      ApplicativeDo
+      BangPatterns
+      BlockArguments
+      DeriveAnyClass
+      DeriveDataTypeable
+      DeriveFoldable
+      DeriveGeneric
+      DeriveTraversable
+      DerivingStrategies
+      EmptyDataDecls
+      FlexibleContexts
+      FlexibleInstances
+      FunctionalDependencies
+      GADTs
+      GeneralizedNewtypeDeriving
+      LambdaCase
+      MultiParamTypeClasses
+      NamedFieldPuns
+      NoImplicitPrelude
+      NumericUnderscores
+      OverloadedStrings
+      PartialTypeSignatures
+      PatternSynonyms
+      QuasiQuotes
+      Rank2Types
+      RankNTypes
+      RecordWildCards
+      ScopedTypeVariables
+      StandaloneDeriving
+      TemplateHaskell
+      TupleSections
+      TypeApplications
+      TypeFamilies
+      UnicodeSyntax
+      ViewPatterns
+  ghc-options: -fwarn-incomplete-patterns -fwarn-unused-binds -fwarn-unused-imports -Wwarn -O2
+  build-depends:
+      base
+    , bound
+    , classy-prelude
+    , containers
+    , deriving-compat
+    , lens
+    , megaparsec
+    , mtl
+    , multimap
+    , para
+    , pretty-show
+    , text
+    , transformers
+    , transformers-compat
+    , unordered-containers
+    , urbit-noun
+  default-language: Haskell2010
+
+executable proto
+  main-is: Main.hs
+  other-modules:
+      Paths_proto
+  hs-source-dirs:
+      app
+  default-extensions:
+      ApplicativeDo
+      BangPatterns
+      BlockArguments
+      DeriveAnyClass
+      DeriveDataTypeable
+      DeriveFoldable
+      DeriveGeneric
+      DeriveTraversable
+      DerivingStrategies
+      EmptyDataDecls
+      FlexibleContexts
+      FlexibleInstances
+      FunctionalDependencies
+      GADTs
+      GeneralizedNewtypeDeriving
+      LambdaCase
+      MultiParamTypeClasses
+      NamedFieldPuns
+      NoImplicitPrelude
+      NumericUnderscores
+      OverloadedStrings
+      PartialTypeSignatures
+      PatternSynonyms
+      QuasiQuotes
+      Rank2Types
+      RankNTypes
+      RecordWildCards
+      ScopedTypeVariables
+      StandaloneDeriving
+      TemplateHaskell
+      TupleSections
+      TypeApplications
+      TypeFamilies
+      UnicodeSyntax
+      ViewPatterns
+  ghc-options: -threaded -rtsopts -O2 -with-rtsopts=-N -fwarn-incomplete-patterns
+  build-depends:
+      base
+    , bound
+    , classy-prelude
+    , containers
+    , deriving-compat
+    , lens
+    , megaparsec
+    , mtl
+    , multimap
+    , para
+    , pretty-show
+    , proto
+    , text
+    , transformers
+    , transformers-compat
+    , unordered-containers
+    , urbit-noun
+  default-language: Haskell2010
+
+test-suite proto-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Paths_proto
+  hs-source-dirs:
+      test
+  default-extensions:
+      ApplicativeDo
+      BangPatterns
+      BlockArguments
+      DeriveAnyClass
+      DeriveDataTypeable
+      DeriveFoldable
+      DeriveGeneric
+      DeriveTraversable
+      DerivingStrategies
+      EmptyDataDecls
+      FlexibleContexts
+      FlexibleInstances
+      FunctionalDependencies
+      GADTs
+      GeneralizedNewtypeDeriving
+      LambdaCase
+      MultiParamTypeClasses
+      NamedFieldPuns
+      NoImplicitPrelude
+      NumericUnderscores
+      OverloadedStrings
+      PartialTypeSignatures
+      PatternSynonyms
+      QuasiQuotes
+      Rank2Types
+      RankNTypes
+      RecordWildCards
+      ScopedTypeVariables
+      StandaloneDeriving
+      TemplateHaskell
+      TupleSections
+      TypeApplications
+      TypeFamilies
+      UnicodeSyntax
+      ViewPatterns
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base
+    , bound
+    , classy-prelude
+    , containers
+    , deriving-compat
+    , lens
+    , megaparsec
+    , mtl
+    , multimap
+    , para
+    , pretty-show
+    , proto
+    , text
+    , transformers
+    , transformers-compat
+    , unordered-containers
+    , urbit-noun
+  default-language: Haskell2010
