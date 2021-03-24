@@ -10117,7 +10117,6 @@
       [sut grub]
     ::
         %&
-      :: XX WEIRD grub
       =;  [val=(pair axis type) =_grub]
         [q.val grub]
       %+  caching-take  p.p.fid
@@ -12683,10 +12682,11 @@
       $(sut q.sut)
     ::
         [%hold *]
+      =/  gilled  (~(has in gil) sut)
+      ?:  gilled
+        [gilled grub]
       =^  val  grub  caching-repo
-      =^  rig  grub  $(gil (~(put in gil) sut), sut val)
-      :_  grub
-      |((~(has in gil) sut) rig)
+      $(gil (~(put in gil) sut), sut val)
     ::
         %noun
       [| grub]
@@ -13403,6 +13403,9 @@
               :_  grub
               =(q.r.q.sut q.r.q.ref)
             =/  case-per-zod  (~(has in gil) [sut ref])
+            ?:  case-per-zod
+              :_  grub
+              case-per-zod
             =^  case-per-nec  grub
               %.  [q.r.q.sut q.r.q.ref]
               %=  deep
@@ -13410,8 +13413,7 @@
                 sut   sut(p q.q.sut, r.p.q %gold)
                 ref   ref(p q.q.ref, r.p.q %gold)
               ==
-            :_  grub
-            |(case-per-zod case-per-nec)
+            [case-per-nec grub]
         ::
         :_  grub
         ?&  case-zod
