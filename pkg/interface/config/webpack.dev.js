@@ -97,15 +97,11 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: [
-              '@babel/preset-env',
-              '@babel/preset-typescript',
-              ['@babel/preset-react', {
-                runtime: 'automatic',
-                development: true,
-                importSource: '@welldone-software/why-did-you-render',
-              }]
-            ],
+            presets: ['@babel/preset-env', '@babel/typescript', ['@babel/preset-react', {
+              runtime: 'automatic',
+              development: true,
+              importSource: '@welldone-software/why-did-you-render',
+            }]],
             plugins: [
               '@babel/transform-runtime',
               '@babel/plugin-proposal-object-rest-spread',
