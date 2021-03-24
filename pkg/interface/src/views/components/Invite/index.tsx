@@ -20,10 +20,12 @@ import { JoinSkeleton } from './JoinSkeleton';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
 import useGroupState from '~/logic/state/group';
 import useMetadataState from '~/logic/state/metadata';
+import useGraphState from '~/logic/state/graph';
 
 interface InviteItemProps {
   invite?: Invite;
   resource: string;
+  pendingJoin?: string;
   app?: string;
   uid?: string;
   api: GlobalApi;
@@ -31,13 +33,15 @@ interface InviteItemProps {
 
 export function InviteItem(props: InviteItemProps) {
   const [preview, setPreview] = useState<MetadataUpdatePreview | null>(null);
-  const { invite, resource, uid, app, api } = props;
+  const { pendingJoin, invite, resource, uid, app, api } = props;
   const { ship, name } = resourceFromPath(resource);
-  const pendingJoin = useGroupState(state => state.pendingJoin);
-  const status = pendingJoin[resource];
   const groups = useGroupState(state => state.groups);
+  const graphKeys = useGraphState(s => s.graphKeys);
   const associations = useMetadataState(state => state.associations);
-  const waiter = useWaitForProps({ associations, groups, pendingJoin}, 50000);
+  const waiter = useWaitForProps(
+    { associations, groups, pendingJoin, graphKeys: Array.from(graphKeys) },
+    50000
+  );
 
   const history = useHistory();
   const inviteAccept = useCallback(async () => {
@@ -50,7 +54,7 @@ export function InviteItem(props: InviteItemProps) {
     }
 
     api.groups.join(ship, name);
-    await waiter(p => resource in p.pendingJoin);
+    await waiter(p => !!p.pendingJoin);
 
     api.invite.accept(app, uid);
     await waiter((p) => {
@@ -62,6 +66,7 @@ export function InviteItem(props: InviteItemProps) {
     });
 
     if (groups?.[resource]?.hidden) {
+      await waiter(p => p.graphKeys.includes(resource.slice(7)));
       const { metadata } = associations.graph[resource];
       if (metadata?.module === 'chat') {
         history.push(`/~landscape/messages/resource/${metadata.module}${resource}`);
@@ -71,7 +76,7 @@ export function InviteItem(props: InviteItemProps) {
     } else {
       history.push(`/~landscape${resource}`);
     }
-  }, [app, invite, uid, resource, groups, associations]);
+  }, [app, history, waiter, invite, uid, resource, groups, associations]);
 
   const inviteDecline = useCallback(async () => {
     if(!(app && uid)) {
@@ -149,10 +154,10 @@ export function InviteItem(props: InviteItemProps) {
         </Row>
       </InviteSkeleton>
     );
-  } else if (status) {
+  } else if (pendingJoin) {
     const [, , ship, name] = resource.split('/');
     return (
-      <JoinSkeleton status={status}>
+      <JoinSkeleton status={pendingJoin}>
         <Row py="1" alignItems="center">
           <Icon display="block" color="blue" icon="Bullet" mr="2" />
           <Text mr="1">

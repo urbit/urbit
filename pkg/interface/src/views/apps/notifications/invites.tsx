@@ -8,10 +8,10 @@ import GlobalApi from '~/logic/api/global';
 import { resourceAsPath, alphabeticalOrder } from '~/logic/lib/util';
 import InviteItem from '~/views/components/Invite';
 import useInviteState from '~/logic/state/invite';
+import useGroupState from '~/logic/state/group';
 
 interface InvitesProps {
   api: GlobalApi;
-  pendingJoin: JoinRequests;
 }
 
 interface InviteRef {
@@ -21,7 +21,8 @@ interface InviteRef {
 }
 
 export function Invites(props: InvitesProps): ReactElement {
-  const { api, pendingJoin } = props;
+  const { api } = props;
+  const pendingJoin = useGroupState(s => s.pendingJoin);
   const invites = useInviteState(state => state.invites);
 
   const inviteArr: InviteRef[] = _.reduce(invites, (acc: InviteRef[], val: AppInvites, app: string) => {
@@ -32,7 +33,7 @@ export function Invites(props: InvitesProps): ReactElement {
   }, []);
 
   const invitesAndStatus: { [rid: string]: JoinProgress | InviteRef } =
-    { ..._.keyBy(inviteArr, ({ invite }) => resourceAsPath(invite.resource)), ...props.pendingJoin };
+    { ..._.keyBy(inviteArr, ({ invite }) => resourceAsPath(invite.resource)), ...pendingJoin };
 
   return (
     <Col
@@ -48,26 +49,26 @@ export function Invites(props: InvitesProps): ReactElement {
          .sort(alphabeticalOrder)
          .map((resource) => {
            const inviteOrStatus = invitesAndStatus[resource];
-          if(typeof inviteOrStatus === 'string') {
+           const join = pendingJoin[resource];
+           if(typeof inviteOrStatus === 'string') {
            return (
              <InviteItem
                key={resource}
                resource={resource}
-               pendingJoin={pendingJoin}
+               pendingJoin={join}
                api={api}
              />
           );
         } else {
           const { app, uid, invite } = inviteOrStatus;
-          console.log(inviteOrStatus);
           return (
             <InviteItem
               key={resource}
               api={api}
               invite={invite}
+              pendingJoin={join}
               app={app}
               uid={uid}
-              pendingJoin={pendingJoin}
               resource={resource}
             />
             );
