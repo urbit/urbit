@@ -98,6 +98,10 @@ class ChatWindow extends Component<
 
   calculateUnreadIndex() {
     const { graph, unreadCount } = this.props;
+    const { state } = this;
+    if(state.unreadIndex.neq(bigInt.zero)) {
+      return;
+    }
     const unreadIndex = graph.keys()[unreadCount];
     if (!unreadIndex || unreadCount === 0) {
       this.setState({
