@@ -35,13 +35,13 @@ export function UnjoinedResource(props: UnjoinedResourceProps) {
   const { query } = useQuery();
   const rid = props.association.resource;
   const appName = props.association['app-name'];
-  const { title, description, module: mod } = props.association.metadata;
+  
+  const { title, description, config } = props.association.metadata;
   const graphKeys = useGraphState(state => state.graphKeys);
 
   const [loading, setLoading] = useState(false);
-
-  const waiter = useWaitForProps({...props, graphKeys });
-  const app = useMemo(() => mod || appName, [props.association]);
+  const waiter = useWaitForProps({ ...props, graphKeys });
+  const app = useMemo(() => config.graph || appName, [props.association]);
 
   const onJoin = async () => {
     const [, , ship, name] = rid.split('/');

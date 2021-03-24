@@ -278,12 +278,27 @@
     ::
     ++  md-fact
       |=  [=mark =vase]
-      ?.  ?=(%metadata-update-0 mark)    jn-core
+      ?.  ?=(%metadata-update-1 mark)    jn-core
       =+  !<(=update:metadata vase)
       ?.  ?=(%initial-group -.update)  jn-core
       ?.  =(group.update rid)          jn-core
       =.  jn-core  (cleanup %done)
-      ?.  hidden:(need (scry-group:grp rid))  jn-core
+      ?.  hidden:(need (scry-group:grp rid))
+        =/  list-md=(list [=md-resource:metadata =association:metadata])
+          %+  skim  ~(tap by associations.update)
+          |=  [=md-resource:metadata =association:metadata]
+          =(app-name.md-resource %groups)
+        ?>  ?=(^ list-md)
+        =*  metadatum  metadatum.association.i.list-md
+        ?.  ?&  ?=(%group -.config.metadatum)
+                ?=(^ feed.config.metadatum)
+                ?=(^ u.feed.config.metadatum)
+            ==
+          jn-core
+        =*  feed  resource.u.u.feed.config.metadatum
+        %-  emit
+        %+  poke-our:(jn-pass-io /pull-feed)  %graph-pull-hook
+        pull-hook-action+!>([%add [entity .]:feed])
       %-  emit-many
       %+  murn  ~(tap by associations.update)
       |=  [=md-resource:metadata =association:metadata]

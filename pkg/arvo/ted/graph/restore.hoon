@@ -29,7 +29,7 @@
     description   description
     date-created  now.bowl
     creator       our.bowl
-    module        module
+    config        [%graph module]
   ==
 ;<  ~  bind:m
   %+  poke-our  %metadata-push-hook

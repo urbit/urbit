@@ -25,7 +25,7 @@ import { Loading } from '~/views/components/Loading';
 import '~/views/apps/links/css/custom.css';
 import '~/views/apps/publish/css/custom.css';
 import { getGroupFromWorkspace } from '~/logic/lib/workspace';
-import { GroupSummary } from './GroupSummary';
+import { GroupHome } from './Home/GroupHome';
 import { Workspace } from '~/types/workspace';
 import useContactState from '~/logic/state/contact';
 import useGroupState from '~/logic/state/group';
@@ -43,6 +43,7 @@ export function GroupsPane(props: GroupsPaneProps) {
   const associations = useMetadataState(state => state.associations);
   const contacts = useContactState(state => state.contacts);
   const notificationsCount = useHarkState(state => state.notificationsCount);
+  
   const relativePath = (path: string) => baseUrl + path;
   const groupPath = getGroupFromWorkspace(workspace);
   const groups = useGroupState(state => state.groups);
@@ -187,40 +188,31 @@ export function GroupsPane(props: GroupsPaneProps) {
         }}
       />
       <Route
-        path={relativePath('')}
+        path={[relativePath('/'), relativePath('/feed+')]}
         render={(routeProps) => {
-          const channelCount = Object.keys(associations?.graph ?? {}).filter((e) => {
-            return associations?.graph?.[e]?.['group'] === groupPath;
-          }).length;
-          let summary: ReactNode;
-          if(groupAssociation?.group) {
-            const memberCount = groups[groupAssociation.group].members.size;
-            summary = <GroupSummary
-              memberCount={memberCount}
-              channelCount={channelCount}
-              metadata={groupAssociation.metadata}
-              resource={groupAssociation.group}
-                      />;
-          } else {
-            summary = (<Box p="4"><Text color='gray'>
-                        Create or select a channel to get started
-                      </Text></Box>);
-          }
+          const shouldHideSidebar =
+            routeProps.location.pathname.includes('/feed');
           const title = groupAssociation?.metadata?.title ?? 'Landscape';
           return (
             <>
               <Helmet defer={false}>
                 <title>{notificationsCount ? `(${String(notificationsCount)}) ` : ''}{ title }</title>
               </Helmet>
-              <Skeleton recentGroups={recentGroups} {...props} baseUrl={baseUrl}>
-                <Col
-                  alignItems="center"
-                  justifyContent="center"
-                  display={['none', 'flex']}
-                  p='4'
-                >
-                {summary}
-                </Col>
+              <Skeleton
+                mobileHide={shouldHideSidebar}
+                recentGroups={recentGroups}
+                baseUrl={baseUrl}
+                {...props}>
+                <GroupHome 
+                  {...routeProps}
+                  api={api}
+                  baseUrl={baseUrl}
+                  associations={associations}
+                  groups={groups}
+                  groupPath={groupPath}
+                  contacts={contacts}
+                  workspace={workspace}
+                />
                 {popovers(routeProps, baseUrl)}
               </Skeleton>
             </>

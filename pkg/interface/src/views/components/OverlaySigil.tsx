@@ -22,7 +22,7 @@ interface OverlaySigilState {
   };
 }
 
-export const OverlaySigil = (props: OverlaySigilProps): React.FC => {
+export const OverlaySigil = (props: OverlaySigilProps) => {
   const {
     api,
     className,

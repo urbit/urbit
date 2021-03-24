@@ -15,6 +15,10 @@ const useGroupState = createState<GroupState>('Group', {
   pendingJoin: {},
 }, ['groups']);
 
+export function useGroup(group: string) {
+  return useGroupState(useCallback(s => s.groups[group], [group]));
+}
+
 export function useGroupForAssoc(association: Association) {
   return useGroupState(
     useCallback(s => s.groups[association.group] as Group | undefined, [association])

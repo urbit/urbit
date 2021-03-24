@@ -96,7 +96,7 @@ export function JoinGroup(props: JoinGroupProps): ReactElement {
 
       if(groups?.[group]?.hidden) {
         const { metadata } = associations.graph[group];
-        history.push(`/~landscape/home/resource/${metadata.module}${group}`);
+        history.push(`/~landscape/home/resource/${metadata.config.graph}${group}`);
         return;
       } else {
         history.push(`/~landscape${group}`);
@@ -176,7 +176,7 @@ export function JoinGroup(props: JoinGroupProps): ReactElement {
                     <Icon
                       mr="2"
                       color="blue"
-                      icon={getModuleIcon(metadata.module) as any}
+                      icon={getModuleIcon(metadata?.config?.graph) as any}
                     />
                     <Text color="blue">{metadata.title} </Text>
                   </Row>

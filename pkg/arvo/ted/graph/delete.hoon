@@ -41,7 +41,7 @@
     (poke-our %graph-push-hook %push-hook-action !>([%remove rid]))
   ;<  ~  bind:m
     %+  poke-our  %metadata-push-hook
-    :-  %metadata-update-0
+    :-  %metadata-update-1
     !>  ^-  action:metadata
     [%remove group-rid [%graph rid]]
   (pure:m ~)

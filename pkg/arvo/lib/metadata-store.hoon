@@ -46,9 +46,28 @@
         [%color s+(scot %ux color.met)]
         [%date-created s+(scot %da date-created.met)]
         [%creator s+(scot %p creator.met)]
-        [%module s+module.met]
+      ::
+        :-  %config
+        ?+    -.config.met  o+~
+            %graph
+          %+  frond  %graph
+          s+module.config.met
+        ::
+            %group
+          %+  frond  %group
+          ?~  feed.config.met
+            ~
+          ?~  u.feed.config.met
+            o+~
+          %-  pairs
+          :~  [%app-name s+app-name.u.u.feed.config.met]
+              [%resource s+(enjs-path:resource resource.u.u.feed.config.met)]
+          ==
+        ==
+      ::
         [%picture s+picture.met]
         [%preview b+preview.met]
+        [%hidden b+hidden.met]
         [%vip s+`@t`vip.met]
     ==
   ::
@@ -156,11 +175,32 @@
         [%color nu]
         [%date-created (se %da)]
         [%creator (su ;~(pfix sig fed:ag))]
-        [%module so]
+        [%config config]
         [%picture so]
         [%preview bo]
+        [%hidden bo]
         [%vip vip]
     ==
+  ::
+  ++  config
+    |=  jon=^json
+    ^-  md-config
+    ?~  jon
+      [%group ~]
+    ?:  ?=(%s -.jon)
+      [%graph p.jon]
+    ?>  ?=(%o -.jon)
+    :+  %group  ~
+    ?.  ?&  (~(has by p.jon) 'app-name')
+            (~(has by p.jon) 'resource')
+        ==
+      ~
+    =/  app-name=^json  (~(got by p.jon) 'app-name')
+    ?>  ?=(%s -.app-name)
+    :+  ~
+      p.app-name
+    =/  res=^json  (~(got by p.jon) 'resource')
+    (dejs-path:resource res)
   ::
   ++  md-resource
     ^-  $-(json ^md-resource)

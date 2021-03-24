@@ -26,6 +26,9 @@ function getGraphModuleIcon(module: string) {
   if (module === 'link') {
     return 'Collection';
   }
+  if(module === 'post') {
+    return 'Groups';
+  }
   return _.capitalize(module);
 }
 
@@ -39,6 +42,8 @@ const FilterBox = styled(Box)`
 
 function describeNotification(description: string, plural: boolean): string {
   switch (description) {
+    case 'post':
+      return 'replied to you';
     case 'link':
       return `added ${pluralize('new link', plural)} to`;
     case 'comment':
@@ -117,6 +122,9 @@ export const GraphNodeContent = ({
       );
     }
   }
+  if(mod === 'post') {
+    return <MentionText content={contents} group={group} />;
+  }
 
   if (mod === 'chat') {
     return (
@@ -170,6 +178,9 @@ function getNodeUrl(
       return `${graphUrl}?msg=${idx[0]}`;
     }
     return graphUrl;
+  } else if( mod === 'post') {
+    const [last, ...rest] = idx.reverse();
+    return `/~landscape${groupPath}/feed/${rest.join('/')}?post=${last}`;
   }
   return '';
 }

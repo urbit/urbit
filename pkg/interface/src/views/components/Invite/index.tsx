@@ -63,10 +63,14 @@ export function InviteItem(props: InviteItemProps) {
 
     if (groups?.[resource]?.hidden) {
       const { metadata } = associations.graph[resource];
-      if (metadata?.module === 'chat') {
-        history.push(`/~landscape/messages/resource/${metadata.module}${resource}`);
+      if (metadata && 'graph' in metadata.config) {
+        if (metadata.config.graph === 'chat') {
+          history.push(`/~landscape/messages/resource/${metadata.config.graph}${resource}`);
+        } else {
+          history.push(`/~landscape/home/resource/${metadata.config.graph}${resource}`);
+        }
       } else {
-        history.push(`/~landscape/home/resource/${metadata.module}${resource}`);
+        console.error('unknown metadata: ', metadata);
       }
     } else {
       history.push(`/~landscape${resource}`);

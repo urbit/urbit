@@ -28,7 +28,6 @@
     ?+  index.p.i  ~
       [@ ~]       `[%link [0 1] %each %children]
       [@ @ %1 ~]  `[%comment [1 2] %count %siblings]
-      [@ @ @ ~]   `[%edit-comment [1 2] %none %none]
     ==
   ::
   ++  transform-add-nodes

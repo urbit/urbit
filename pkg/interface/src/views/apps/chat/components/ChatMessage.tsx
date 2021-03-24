@@ -40,9 +40,11 @@ import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import Timestamp from '~/views/components/Timestamp';
 import useContactState from '~/logic/state/contact';
 import { useIdlingState } from '~/logic/lib/idling';
+import ProfileOverlay from '~/views/components/ProfileOverlay';
 import {useCopy} from '~/logic/lib/useCopy';
 import {PermalinkEmbed} from '../../permalinks/embed';
 import {referenceToPermalink} from '~/logic/lib/permalinks';
+
 
 export const DATESTAMP_FORMAT = '[~]YYYY.M.D';
 
@@ -50,6 +52,7 @@ interface DayBreakProps {
   when: string;
   shimTop?: boolean;
 }
+
 
 export const DayBreak = ({ when, shimTop = false }: DayBreakProps) => (
   <Row
@@ -478,21 +481,9 @@ export const MessageAuthor = ({
         cursor='pointer'
         position='relative'
       >
-        {showOverlay && (
-          <OverlaySigil
-            cursor='auto'
-            ship={msg.author}
-            contact={contact}
-            color={`#${uxToHex(contact?.color ?? '0x0')}`}
-            group={group}
-            onDismiss={() => toggleOverlay()}
-            history={history}
-            className='relative'
-            scrollWindow={scrollWindow}
-            api={api}
-          />
-        )}
-        {img}
+        <ProfileOverlay cursor='auto' ship={msg.author} api={api}>
+          {img}
+        </ProfileOverlay>
       </Box>
       <Box flexGrow={1} display='block' className='clamp-message' {...bind}>
         <Box

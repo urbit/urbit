@@ -71,13 +71,14 @@
     description   description.action
     date-created  now.bowl
     creator       our.bowl
-    module        module.action
+    config        [%graph module.action]
     preview       %.n
+    hidden        %.n
   ==
 =/  met-action=action:met
   [%add group graph+rid.action metadatum]
 ;<  ~  bind:m
-  (poke-our %metadata-push-hook metadata-update-0+!>(met-action))
+  (poke-our %metadata-push-hook metadata-update-1+!>(met-action))
 ::
 ::  Send invites
 ::

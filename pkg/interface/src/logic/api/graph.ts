@@ -1,6 +1,6 @@
 import BaseApi from './base';
 import { StoreState } from '../store/type';
-import { Patp, Path } from '@urbit/api';
+import { Patp, Path, Resource } from '@urbit/api';
 import _ from 'lodash';
 import { makeResource, resourceFromPath } from '../lib/group';
 import { GroupPolicy, Enc, Post, Content } from '@urbit/api';
@@ -259,6 +259,18 @@ export default class GraphApi extends BaseApi<StoreState> {
     */
   }
 
+  async enableGroupFeed(group: Resource): Promise<Resource> {
+    const { resource } = await this.spider(
+      'graph-view-action',
+      'resource',
+      'graph-create-group-feed',
+      {
+        "create-group-feed": { resource: group }
+      }
+    );
+    return resource;
+  }
+
   removeNodes(ship: Patp, name: string, indices: string[]) {
     return this.hookAction(ship, {
       'remove-nodes': {
@@ -296,8 +308,10 @@ export default class GraphApi extends BaseApi<StoreState> {
   }
 
   getGraph(ship: string, resource: string) {
+    console.log(ship, resource);
     return this.scry<any>('graph-store', `/graph/${ship}/${resource}`)
       .then((graph) => {
+        console.log(graph);
         this.store.handleEvent({
           data: graph
         });

@@ -5,6 +5,7 @@
   |%
   ++  noun  update
   ++  metadata-update-0  update
+  ++  metadata-update-1  update
   ++  json  (update:enjs:store update)
   --
 ::

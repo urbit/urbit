@@ -50,7 +50,7 @@ export function GroupChannelSettings(props: GroupChannelSettingsProps) {
         {channels.map(({ resource, metadata }) => (
           <Row justifyContent="space-between" width="100%" key={resource}>
             <Row gapX="2">
-              <Icon icon={getModuleIcon(metadata.module)} />
+              <Icon icon={getModuleIcon(metadata?.config?.graph)} />
               <Text>{metadata.title}</Text>
               {metadata.preview && <Text gray>Pinned</Text>}
             </Row>

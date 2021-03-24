@@ -40,8 +40,8 @@ const GraphApp = (props) => {
 
           if(!graphKeys.has(resource)) {
             autoJoin();
-          } else if(!!association) {
-            history.push(`/~landscape/home/resource/${association.metadata.module}${path}`);
+          } else if(!!association && 'graph' in association.config) {
+            history.push(`/~landscape/home/resource/${association.metadata.config.graph}${path}`);
           }
           return (
             <Center width="100%" height="100%">

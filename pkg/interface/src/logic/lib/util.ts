@@ -28,6 +28,7 @@ export const getModuleIcon = (mod: string) => {
   if (mod === 'link') {
     return 'Collection';
   }
+
   return _.capitalize(mod);
 };
 
@@ -35,10 +36,6 @@ export function wait(ms: number) {
   return new Promise((resolve, reject) => {
     setTimeout(resolve, ms);
   });
-}
-
-export function appIsGraph(app: string) {
-  return app === 'publish' || app == 'link';
 }
 
 export function parentPath(path: string) {
