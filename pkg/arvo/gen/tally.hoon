@@ -60,7 +60,8 @@
   |=  [m=md-resource:md association:md]
   ::NOTE  we only count graphs for now
   ?.  &(=(%graph app-name.m) =(our creator.metadatum))  ~
-  `[module.metadatum resource.m]
+  ?.  ?=(%graph -.config.metadatum)  ~
+  `[module.config.metadatum resource.m]
 ::  for sanity checks
 ::
 =/  real=(set resource:re)
