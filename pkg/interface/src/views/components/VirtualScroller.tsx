@@ -69,6 +69,10 @@ interface VirtualScrollerProps<T> {
    */
   offset: number;
   style?: any;
+  /**
+   * Callback to execute when finished loading from start
+  */
+  onBottomLoaded?: () => void;
 }
 
 interface VirtualScrollerState<T> {
@@ -155,8 +159,8 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
   componentDidMount() {
     this.updateVisible(0);
     this.resetScroll();
-    this.loadRows(false);
-    this.loadRows(true);
+    this.loadTop();
+    this.loadBottom();
   }
 
   // manipulate scrollbar manually, to dodge change detection
@@ -303,8 +307,10 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     this.savedDistance = 0;
     this.saveDepth = 0;
   }
+  loadTop = _.throttle(() => this.loadRows(false), 100);
+  loadBottom = _.throttle(() => this.loadRows(true), 100);
 
-  loadRows = _.throttle(async (newer: boolean) => {
+  loadRows = async (newer: boolean) => {
     const dir = newer ? 'bottom' : 'top';
     if(this.loaded[dir]) {
       return;
@@ -313,8 +319,11 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     const done = await this.props.loadRows(newer);
     if(done) {
       this.loaded[dir] = true;
+      if(newer && this.props.onBottomLoaded) {
+        this.props.onBottomLoaded()
+      }
     }
-  }, 100);
+  };
 
   onScroll(event: UIEvent) {
     this.updateScroll();
@@ -338,7 +347,7 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
       }
       const newOffset = Math.max(0, startOffset - this.pageDelta);
       if(newOffset < 10) {
-        this.loadRows(true);
+        this.loadBottom();
       }
 
       if(newOffset === 0) {
@@ -358,7 +367,7 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
       }
 
       if((newOffset + (3 * this.pageSize) > this.props.data.size)) {
-        this.loadRows(false)
+        this.loadTop();
       }
 
       if(newOffset !== startOffset) {
