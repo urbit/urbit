@@ -1,7 +1,7 @@
-import React, { ReactElement, ReactNode } from "react";
-import _ from "lodash";
+import React, { ReactElement, ReactNode } from 'react';
+import _ from 'lodash';
 
-import { Col, Box, Text } from "@tlon/indigo-react";
+import { Col, Box, Text } from '@tlon/indigo-react';
 import {
   Invites as IInvites,
   Associations,
@@ -11,18 +11,18 @@ import {
   Contacts,
   AppInvites,
   JoinProgress,
-  JoinRequest,
-} from "@urbit/api";
-
+  JoinRequest
+} from '@urbit/api';
 
 import GlobalApi from '~/logic/api/global';
 import { resourceAsPath, alphabeticalOrder } from '~/logic/lib/util';
 import InviteItem from '~/views/components/Invite';
 import useInviteState from '~/logic/state/invite';
+import useGroupState from '~/logic/state/group';
 
 interface InvitesProps {
   api: GlobalApi;
-  pendingJoin: JoinRequests;
+  pendingJoin?: any;
 }
 
 interface InviteRef {
@@ -50,11 +50,11 @@ export function Invites(props: InvitesProps): ReactElement {
     []
   );
 
-  const pendingJoin = _.omitBy(props.pendingJoin, "hidden");
+  const pendingJoin = _.omitBy(props.pendingJoin, 'hidden');
 
   const invitesAndStatus: { [rid: string]: JoinRequest | InviteRef } = {
     ..._.keyBy(inviteArr, ({ invite }) => resourceAsPath(invite.resource)),
-    ...pendingJoin,
+    ...pendingJoin
   };
 
   return (
@@ -70,12 +70,15 @@ export function Invites(props: InvitesProps): ReactElement {
         .sort(alphabeticalOrder)
         .map((resource) => {
           const inviteOrStatus = invitesAndStatus[resource];
-          if ("progress" in inviteOrStatus) {
+          const join = pendingJoin[resource];
+          if (typeof inviteOrStatus === 'string') {
+          if ('progress' in inviteOrStatus) {
            return (
              <InviteItem
                key={resource}
                resource={resource}
                api={api}
+               pendingJoin={join}
              />
             );
           } else {
@@ -91,6 +94,7 @@ export function Invites(props: InvitesProps): ReactElement {
               />
               );
           }
+        }
         })
       }
     </>

@@ -14,7 +14,9 @@ import {
   Text,
   BaseImage,
   Icon,
-  BoxProps
+  BoxProps,
+  ColProps,
+  Center
 } from '@tlon/indigo-react';
 import RichText from './RichText';
 import { ProfileStatus } from './ProfileStatus';
@@ -87,7 +89,7 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
         const spaceAtTop = top > 300;
         const spaceAtRight = right > 300 || right > left;
         setCoords(getRelativePosition(
-          outer, 
+          outer,
           spaceAtRight ? 'left' : 'right',
           spaceAtTop ? 'bottom' : 'top',
           -1* outer.clientWidth,
@@ -106,19 +108,23 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
   }, [open]);
 
   const img =
-      contact?.avatar && !hideAvatars ? (
-        <BaseImage
-          referrerPolicy="no-referrer"
-          display='inline-block'
-          style={{ objectFit: 'cover' }}
-          src={contact.avatar}
-          height={72}
-          width={72}
-          borderRadius={2}
-        />
-      ) : (
-        <Sigil ship={ship} size={72} color={color} />
-      );
+    contact?.avatar && !hideAvatars ? (
+      <BaseImage
+        referrerPolicy='no-referrer'
+        display='inline-block'
+        style={{ objectFit: 'cover' }}
+        src={contact.avatar}
+        height={60}
+        width={60}
+        borderRadius={2}
+      />
+    ) : (
+      <Box size={60} backgroundColor={color}>
+        <Center height={60}>
+          <Sigil ship={ship} size={32} color={color} />
+        </Center>
+      </Box>
+    );
 
   return (
     <Box ref={outerRef} {...rest} onClick={setOpen} cursor="pointer">
@@ -143,15 +149,17 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
         padding={3}
         justifyContent='center'
       >
-        <Row color='black' padding={3} position='absolute' top={0} left={0}>
-          {!isOwn && (
-            <Icon
-              icon='Chat'
-              size={16}
-              cursor='pointer'
-              onClick={() => history.push(`/~landscape/dm/${ship}`)}
-            />
-          )}
+        <Row width='100%'>
+          <Text
+            fontWeight='600'
+            mono={!showNickname}
+            textOverflow='ellipsis'
+            overflow='hidden'
+            whiteSpace='pre'
+            marginBottom='0'
+          >
+            {showNickname ? contact?.nickname : cite(ship)}
+          </Text>
         </Row>
         <Box
           alignSelf='center'
@@ -201,6 +209,7 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
               marginBottom='0'
               disableRemoteContent
               gray
+              title={contact?.status ? contact.status : ''}
             >
               {contact?.status ? contact.status : ''}
             </RichText>

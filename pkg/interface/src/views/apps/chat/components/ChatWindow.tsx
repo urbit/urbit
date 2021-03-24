@@ -36,6 +36,7 @@ type ChatWindowProps = RouteComponentProps<{
 }> & {
   unreadCount: number;
   graph: Graph;
+  graphSize: number;
   association: Association;
   group: Group;
   ship: Patp;
@@ -101,6 +102,10 @@ class ChatWindow extends Component<
 
   calculateUnreadIndex() {
     const { graph, unreadCount } = this.props;
+    const { state } = this;
+    if(state.unreadIndex.neq(bigInt.zero)) {
+      return;
+    }
     const unreadIndex = graph.keys()[unreadCount];
     if (!unreadIndex || unreadCount === 0) {
       this.setState({
@@ -111,6 +116,11 @@ class ChatWindow extends Component<
     this.setState({
       unreadIndex
     });
+  }
+
+  dismissedInitialUnread() {
+    const { unreadCount, graph } = this.props;
+    return this.state.unreadIndex.neq(graph.keys()?.[unreadCount]?.[0] ?? bigInt.zero)
   }
 
   handleWindowBlur() {
@@ -125,11 +135,15 @@ class ChatWindow extends Component<
   }
 
   componentDidUpdate(prevProps: ChatWindowProps, prevState) {
-    const { history, graph, unreadCount, station } = this.props;
+    const { history, graph, unreadCount, graphSize, station } = this.props;
 
-    if (graph.size !== this.prevSize) {
-      this.prevSize = graph.size;
-      if(!this.state.unreadIndex && this.virtualList?.loaded.top) {
+    if(this.prevSize !== graphSize) {
+      this.prevSize = graphSize;
+      if(this.dismissedInitialUnread() &&
+        this.virtualList?.startOffset() < 5) {
+        this.dismissUnread();
+      }
+      if(this.state.unreadIndex.eq(bigInt.zero)) {
         this.calculateUnreadIndex();
       }
     }
@@ -148,6 +162,12 @@ class ChatWindow extends Component<
     if (this.virtualList && !this.state.idle) {
       this.virtualList.resetScroll();
       this.dismissUnread();
+    }
+  }
+
+  onBottomLoaded = () => {
+    if(this.state.unreadIndex.eq(bigInt.zero)) {
+      this.calculateUnreadIndex();
     }
   }
 
@@ -305,7 +325,8 @@ class ChatWindow extends Component<
 
     return (
       <Col height='100%' overflow='hidden' position='relative'>
-        <UnreadNotice
+        { !this.dismissedInitialUnread() && 
+         (<UnreadNotice
           unreadCount={unreadCount}
           unreadMsg={
             unreadCount === 1 &&
@@ -316,7 +337,7 @@ class ChatWindow extends Component<
           }
           dismissUnread={this.dismissUnread}
           onClick={this.scrollToUnread}
-        />
+        />)}
         <VirtualScroller
           ref={(list) => {
             this.virtualList = list;
@@ -325,6 +346,7 @@ class ChatWindow extends Component<
           origin='bottom'
           style={virtScrollerStyle}
           onStartReached={this.setActive}
+          onBottomLoaded={this.onBottomLoaded}
           onScroll={this.onScroll}
           data={graph}
           size={graph.size}

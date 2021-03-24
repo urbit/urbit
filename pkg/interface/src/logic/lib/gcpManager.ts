@@ -76,7 +76,8 @@ class GcpManager {
           if (this.isConfigured()) {
             this.refreshLoop();
           } else {
-            this.refreshAfter(10_000);
+            console.log('GcpManager: GCP storage not configured; stopping.');
+            this.stop();
           }
         })
         .catch((reason) => {
