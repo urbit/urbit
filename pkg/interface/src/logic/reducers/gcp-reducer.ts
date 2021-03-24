@@ -1,7 +1,6 @@
-import _ from 'lodash';
 import {StoreState} from '../store/type';
-import {GcpToken} from '../../types/gcp-state';
-import { Cage } from '~/types/cage';
+import type {GcpToken} from '../../types/gcp-state';
+import type {Cage} from '~/types/cage';
 import useStorageState, { StorageState } from '../state/storage';
 import { reduceState } from '../state/base';
 
@@ -37,7 +36,7 @@ const setToken = (data: any, state: StorageState): StorageState => {
   return state;
 }
 
-const isToken = (token: any): boolean => {
+const isToken = (token: any): token is GcpToken => {
   return (typeof(token.accessKey) === 'string' &&
           typeof(token.expiresIn) === 'number');
 }
