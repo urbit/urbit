@@ -5,6 +5,7 @@
   |%
   ++  noun               update
   ++  metadata-update    update
+  ++  json               (update:enjs:store update)
   --
 ::
 ++  grab

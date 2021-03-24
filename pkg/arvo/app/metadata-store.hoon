@@ -148,7 +148,7 @@
     ?>  (team:title our.bowl src.bowl)
     =^  cards  state
       ?+  mark  (on-poke:def mark vase)
-          ?(%metadata-action %metadata-update-0)
+          ?(%metadata-action %metadata-update-1)
         (poke-metadata-update:mc !<(update:store vase))
       ::
           %import
@@ -166,7 +166,7 @@
     =/  cards=(list card)
       ?+  path  (on-watch:def path)
           [%all ~]
-        (give %metadata-update-0 !>([%associations associations]))
+        (give %metadata-update-1 !>([%associations associations]))
       ::
           [%updates ~]
         ~
@@ -174,7 +174,7 @@
           [%app-name @ ~]
         =/  =app-name:store  i.t.path
         =/  app-indices  (metadata-for-app:mc app-name)
-        (give %metadata-update-0 !>([%associations app-indices]))
+        (give %metadata-update-1 !>([%associations app-indices]))
       ==
     [cards this]
     ::
@@ -351,6 +351,8 @@
       ship+path.md-resource
     [[path [%graph new-path]] m(module app)]
   --
+::
+::  TODO: refactor into a |^ inside the agent core
 ++  poke-metadata-update
   |=  upd=update:store
   ^-  (quip card _state)
@@ -361,6 +363,7 @@
       %initial-group  (handle-initial-group +.upd)
   ==
 ::
+::  TODO: refactor into a |^ inside the agent core
 ++  poke-import
   |=  arc=*
   ^-  (quip card _state)
@@ -485,6 +488,6 @@
   ++  update-subscribers
     |=  [pax=path =update:store]
     ^-  (list card)
-    [%give %fact ~[pax] %metadata-update-0 !>(update)]~
+    [%give %fact ~[pax] %metadata-update-1 !>(update)]~
   --
 --

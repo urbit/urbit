@@ -30,7 +30,7 @@
     ==
 ;<  ~  bind:m
   %+  poke-our  %metadata-push-hook
-  :-  %metadata-update
+  :-  %metadata-update-1
   !>  ^-  action:met
   :^  %add
       group.action

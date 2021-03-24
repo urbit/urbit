@@ -278,7 +278,7 @@
     ::
     ++  md-fact
       |=  [=mark =vase]
-      ?.  ?=(%metadata-update-0 mark)    jn-core
+      ?.  ?=(%metadata-update-1 mark)    jn-core
       =+  !<(=update:metadata vase)
       ?.  ?=(%initial-group -.update)  jn-core
       ?.  =(group.update rid)          jn-core
