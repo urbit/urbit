@@ -36,6 +36,7 @@ type ChatWindowProps = RouteComponentProps<{
 }> & {
   unreadCount: number;
   graph: Graph;
+  graphSize: number;
   association: Association;
   group: Group;
   ship: Patp;
@@ -121,11 +122,11 @@ class ChatWindow extends Component<
   }
 
   componentDidUpdate(prevProps: ChatWindowProps, prevState) {
-    const { history, graph, unreadCount, station } = this.props;
+    const { history, graph, unreadCount, graphSize, station } = this.props;
 
-    if (graph.size !== this.prevSize) {
-      this.prevSize = graph.size;
-      if(!this.state.unreadIndex && this.virtualList?.loaded.top) {
+    if(this.prevSize !== graphSize) {
+      this.prevSize = graphSize;
+      if(this.state.unreadIndex.eq(bigInt.zero)) {
         this.calculateUnreadIndex();
       }
     }
@@ -144,6 +145,12 @@ class ChatWindow extends Component<
     if (this.virtualList && !this.state.idle) {
       this.virtualList.resetScroll();
       this.dismissUnread();
+    }
+  }
+
+  onBottomLoaded = () => {
+    if(this.state.unreadIndex.eq(bigInt.zero)) {
+      this.calculateUnreadIndex();
     }
   }
 
@@ -318,6 +325,7 @@ class ChatWindow extends Component<
           origin='bottom'
           style={virtScrollerStyle}
           onStartReached={this.setActive}
+          onBottomLoaded={this.onBottomLoaded}
           onScroll={this.onScroll}
           data={graph}
           size={graph.size}
