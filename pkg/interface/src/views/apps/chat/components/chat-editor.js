@@ -199,7 +199,7 @@ export default class ChatEditor extends Component {
         width='calc(100% - 88px)'
         className={inCodeMode ? 'chat code' : 'chat'}
         color="black"
-        overflow='scroll'
+        overflow='auto'
       >
         {MOBILE_BROWSER_REGEX.test(navigator.userAgent)
           ? <MobileBox
