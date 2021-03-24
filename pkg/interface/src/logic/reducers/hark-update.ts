@@ -60,7 +60,7 @@ function reduce(data) {
   ]);
 }
 
-function calculateCount(state: HarkState) {
+function calculateCount(json: any, state: HarkState) {
   let count = 0;
   _.forEach(state.unreads.graph, (graphs) => {
     _.forEach(graphs, graph => {
