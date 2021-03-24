@@ -445,7 +445,8 @@
         =/  =mark
           (append-version:ver version.config)
         (tr-emit (~(poke-our pass wire) store-name.config mark vase))
-
+      --
+    ::
     ++  tr-kick
       ?.  ?=(%active -.status)  tr-core
       =/  pax
