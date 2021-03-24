@@ -36,7 +36,7 @@
   ^-  form:m
   ;<  =bowl:spider  bind:m  get-bowl:strandio
   ;<  ~  bind:m
-    (poke-our %graph-store %graph-update-0 !>([%0 now.bowl %remove-graph rid]))
+    (poke-our %graph-store %graph-update-1 !>([now.bowl %remove-graph rid]))
   ;<  ~  bind:m
     (poke-our %graph-push-hook %push-hook-action !>([%remove rid]))
   ;<  ~  bind:m

@@ -14,6 +14,7 @@ import { Sigil } from '~/logic/lib/sigil';
 import Timestamp from './Timestamp';
 import useContactState from '~/logic/state/contact';
 import ProfileOverlay from './ProfileOverlay';
+import {PropFunc} from '~/types';
 
 interface AuthorProps {
   ship: string;
@@ -26,8 +27,17 @@ interface AuthorProps {
 }
 
 // eslint-disable-next-line max-lines-per-function
-export default function Author(props: AuthorProps): ReactElement {
-  const { ship, date, showImage, fullNotIcon } = props;
+export default function Author(props: AuthorProps & PropFunc<typeof Box>): ReactElement {
+  const {
+    ship = '',
+    date,
+    showImage,
+    fullNotIcon,
+    children,
+    unread,
+    group,
+    ...rest
+  } = props;
 
   const showAsCol = props.showAsCol || false;
   const time = props.time || false;
@@ -75,7 +85,7 @@ export default function Author(props: AuthorProps): ReactElement {
       >
         {name}
       </Box>
-      <Timestamp stamp={stamp} fontSize={1} time={time} ml={2} color={props.unread ? 'blue' : 'gray'} />
+      <Timestamp stamp={stamp} fontSize={1} time={time} ml={2} color={unread ? 'blue' : 'gray'} />
     </Col>
   ) : (
     <> 
@@ -89,7 +99,7 @@ export default function Author(props: AuthorProps): ReactElement {
       >
         {name}
       </Box>
-      <Timestamp stamp={stamp} fontSize={1} time={time} ml={2} color={props.unread ? 'blue' : 'gray'} />
+      <Timestamp stamp={stamp} fontSize={1} time={time} ml={2} color={unread ? 'blue' : 'gray'} />
     </>
   );
 
@@ -107,7 +117,7 @@ export default function Author(props: AuthorProps): ReactElement {
     ) : sigil;
 
   return (
-    <Row alignItems='center' width='auto'>
+    <Row height="20px" {...rest} alignItems='center' width='auto'>
       <Box
         onClick={(e) => {
           e.stopPropagation();
@@ -124,7 +134,7 @@ export default function Author(props: AuthorProps): ReactElement {
         )}
       </Box>
       {rowOrCol}
-      {props.children}
+      {children}
     </Row>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Association } from '@urbit/api/metadata';
 import { Box, Text, Button, Col, Center } from '@tlon/indigo-react';
 import RichText from '~/views/components/RichText';
@@ -11,6 +11,7 @@ import {
 } from './StatelessAsyncButton';
 import { Graphs } from '@urbit/api';
 import useGraphState from '~/logic/state/graph';
+import {useQuery} from '~/logic/lib/useQuery';
 
 interface UnjoinedResourceProps {
   association: Association;
@@ -31,12 +32,14 @@ function isJoined(path: string) {
 export function UnjoinedResource(props: UnjoinedResourceProps) {
   const { api } = props;
   const history = useHistory();
+  const { query } = useQuery();
   const rid = props.association.resource;
   const appName = props.association['app-name'];
   
   const { title, description, config } = props.association.metadata;
   const graphKeys = useGraphState(state => state.graphKeys);
 
+  const [loading, setLoading] = useState(false);
   const waiter = useWaitForProps({ ...props, graphKeys });
   const app = useMemo(() => config.graph || appName, [props.association]);
 
@@ -44,7 +47,8 @@ export function UnjoinedResource(props: UnjoinedResourceProps) {
     const [, , ship, name] = rid.split('/');
     await api.graph.joinGraph(ship, name);
     await waiter(isJoined(rid));
-    history.push(`${props.baseUrl}/resource/${app}${rid}`);
+    const redir = query.get('redir') ?? `${props.baseUrl}/resource/${app}${rid}`;
+    history.push(redir);
   };
 
   useEffect(() => {
@@ -52,6 +56,17 @@ export function UnjoinedResource(props: UnjoinedResourceProps) {
       history.push(`${props.baseUrl}/resource/${app}${rid}`);
     }
   }, [props.association, graphKeys]);
+
+  useEffect(() => {
+    (async () => {
+      if(query.has('auto')) {
+        setLoading(true);
+        await onJoin();
+        setLoading(false);
+      }
+
+    })();
+  }, [query]);
 
   return (
     <Center p={6}>
@@ -72,6 +87,7 @@ export function UnjoinedResource(props: UnjoinedResourceProps) {
         <StatelessAsyncButton
           name={rid}
           primary
+          loading={loading}
           width="fit-content"
           onClick={onJoin}
         >

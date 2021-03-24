@@ -99,7 +99,7 @@ export function InviteItem(props: InviteItemProps) {
     }
   }, [invite]);
 
-  if(status.hidden) {
+  if(status?.hidden) {
     return null;
   }
 

@@ -1,6 +1,7 @@
 import urbitOb from 'urbit-ob';
+import { parsePermalink, permalinkToReference } from "~/logic/lib/permalinks";
 
-const URL_REGEX = new RegExp(String(/^((\w+:\/\/)[-a-zA-Z0-9:@;?&=\/%\+\.\*!'\(\),\$_\{\}\^~\[\]`#|]+\w)/.source));
+const URL_REGEX = new RegExp(String(/^(([\w\+]+:\/\/)[-a-zA-Z0-9:@;?&=\/%\+\.\*!'\(\),\$_\{\}\^~\[\]`#|]+\w)/.source));
 
 const isUrl = (string) => {
   try {
@@ -44,7 +45,20 @@ const tokenizeMessage = (text) => {
           isInCodeBlock = false;
         }
 
-        if (isUrl(str) && !isInCodeBlock) {
+        if(isRef(str) && !isInCodeBlock) {
+          if (message.length > 0) {
+            // If we're in the middle of a message, add it to the stack and reset
+            messages.push({ text: message.join(' ') });
+          }
+          const link = parsePermalink(str);
+          if(!link) {
+            messages.push({ url: str });
+          } else {
+            const reference = permalinkToReference(link);
+            messages.push({ reference });
+          }
+          message = [];
+        } else if (isUrl(str) && !isInCodeBlock) {
           if (message.length > 0) {
             // If we're in the middle of a message, add it to the stack and reset
             messages.push({ text: message.join(' ') });

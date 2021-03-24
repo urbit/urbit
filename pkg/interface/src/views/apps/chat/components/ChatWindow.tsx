@@ -41,7 +41,8 @@ type ChatWindowProps = RouteComponentProps<{
   ship: Patp;
   station: any;
   api: GlobalApi;
-  scrollTo?: number;
+  scrollTo?: BigInteger;
+  onReply: (msg: Post) => void;
 };
 
 interface ChatWindowState {
@@ -87,10 +88,13 @@ class ChatWindow extends Component<
   componentDidMount() {
     this.calculateUnreadIndex();
     setTimeout(() => {
-      if (this.props.scrollTo) {
-        this.scrollToUnread();
-      }
-      this.setState({ initialized: true });
+      this.setState({ initialized: true }, () => {
+        if(this.props.scrollTo) {
+          this.virtualList.scrollToIndex(this.props.scrollTo);
+
+        }
+
+      });
       
     }, this.INITIALIZATION_MAX_TIME);
   }
@@ -211,7 +215,8 @@ class ChatWindow extends Component<
       graph,
       history,
       groups,
-      associations
+      associations,
+      onReply
     } = this.props;
     const { unreadMarkerRef } = this;
     const messageProps = {
@@ -222,7 +227,8 @@ class ChatWindow extends Component<
       history,
       api,
       groups,
-      associations
+      associations,
+      onReply
     };
 
     const msg = graph.get(index)?.post;
@@ -240,7 +246,7 @@ class ChatWindow extends Component<
     const isLastMessage = index.eq(
       graph.peekLargest()?.[0] ?? bigInt.zero
     );
-    const highlighted = false; // this.state.unreadIndex.eq(index);
+    const highlighted = index.eq(this.props.scrollTo ?? bigInt.zero);
     const keys = graph.keys().reverse();
     const graphIdx = keys.findIndex((idx) => idx.eq(index));
     const prevIdx = keys[graphIdx + 1];
@@ -278,7 +284,8 @@ class ChatWindow extends Component<
       groups,
       associations,
       showOurContact,
-      pendingSize
+      pendingSize,
+      onReply,
     } = this.props;
 
     const unreadMarkerRef = this.unreadMarkerRef;
