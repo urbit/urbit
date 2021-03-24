@@ -18,7 +18,7 @@
     =/  len  (lent index.p.i)
     `[%post [(dec len) len] %none %children]
   ::
-    ++  transform-add-nodes
+  ++  transform-add-nodes
     |=  [=index =post =atom was-parent-modified=?]
     ^-  [^index ^post]
     =-  [- post(index -)]
