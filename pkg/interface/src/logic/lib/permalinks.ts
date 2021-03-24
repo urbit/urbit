@@ -56,6 +56,11 @@ function parseGraphPermalink(
   };
 }
 
+export function permalinkToReference({ any }: any): any {
+  //TODO write this function
+  return { reference: '' }
+}
+
 export function referenceToPermalink({ reference }: ReferenceContent): Permalink {
   if('graph' in reference) {
     const { graph, group, index } = reference.graph;
