@@ -135,8 +135,8 @@ class ChatWindow extends Component<
 
     if(this.prevSize !== graphSize) {
       this.prevSize = graphSize;
-      if(this.dismissedInitialUnread() 
-        && this.virtualList?.startOffset() === 0) {
+      if(this.dismissedInitialUnread() &&
+        this.virtualList?.startOffset() < 5) {
         this.dismissUnread();
       }
       if(this.state.unreadIndex.eq(bigInt.zero)) {
@@ -318,7 +318,8 @@ class ChatWindow extends Component<
 
     return (
       <Col height='100%' overflow='hidden' position='relative'>
-        <UnreadNotice
+        { !this.dismissedInitialUnread() && 
+         (<UnreadNotice
           unreadCount={unreadCount}
           unreadMsg={
             unreadCount === 1 &&
@@ -329,7 +330,7 @@ class ChatWindow extends Component<
           }
           dismissUnread={this.dismissUnread}
           onClick={this.scrollToUnread}
-        />
+        />)}
         <VirtualScroller
           ref={(list) => {
             this.virtualList = list;
