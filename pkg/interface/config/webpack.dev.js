@@ -82,7 +82,7 @@ if(urbitrc.URL) {
 }
 
 module.exports = {
-  mode: 'production',
+  mode: 'development',
   entry: {
     app: './src/index.js',
     serviceworker: './src/serviceworker.js'
@@ -94,13 +94,12 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@babel/preset-env', '@babel/typescript', ['@babel/preset-react', {} /*{
+            presets: ['@babel/preset-env', '@babel/typescript', ['@babel/preset-react', {
               runtime: 'automatic',
               development: true,
               importSource: '@welldone-software/why-did-you-render',
-            }*/]],
+            }]],
             plugins: [
-              'lodash',
               '@babel/transform-runtime',
               '@babel/plugin-proposal-object-rest-spread',
               '@babel/plugin-proposal-optional-chaining',
