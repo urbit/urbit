@@ -7,11 +7,15 @@ import { cite, useShowNickname, uxToHex } from '~/logic/lib/util';
 import OverlaySigil from '~/views/components/OverlaySigil';
 import { useHistory } from 'react-router-dom';
 import useContactState from '~/logic/state/contact';
+import {referenceToPermalink} from '~/logic/lib/permalinks';
+import GlobalApi from '~/logic/api/global';
 
 interface MentionTextProps {
   contact?: Contact;
   content: Content[];
   group: Group;
+  transcluded: number;
+  api: GlobalApi;
 }
 export function MentionText(props: MentionTextProps) {
   const { content, contact, group, ...rest } = props;
@@ -25,6 +29,9 @@ export function MentionText(props: MentionTextProps) {
           return accum + `[~${c.mention}]`;
         } else if ('url' in c) {
           return accum + `\n ${c.url}`;
+        } else if ('reference' in c) {
+          const { link } = referenceToPermalink(c);
+          return accum + `\n [${link}]`;
         }
         return accum;
       }, '')}

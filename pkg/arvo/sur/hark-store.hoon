@@ -33,7 +33,7 @@
     ==
   ::
   +$  contents
-    $%  [%graph =(list post:post)]
+    $%  [%graph =(list post:post-zero:post)]
         [%group =(list group-contents)]
         [%chat =(list envelope:chat-store)]
     ==
@@ -75,12 +75,44 @@
     [date=@da read=? =contents]
   ::
   +$  contents
-    $%  [%graph =(list post:post)]
+    $%  [%graph =(list post:post-zero:post)]
         [%group =(list group-contents)]
     ==
   ::
   +$  group-contents
     group-contents:state-zero
+  ::
+  +$  timebox
+    (map index notification)
+  ::
+  +$  notifications
+    ((mop @da timebox) gth)
+  ::
+  --
+::
+++  state-three
+  =<  state
+  |% 
+  +$  state
+    $:  unreads-each=(jug stats-index index:graph-store)
+        unreads-count=(map stats-index @ud)
+        last-seen=(map stats-index @da)
+        =notifications
+        archive=notifications
+        current-timebox=@da
+        dnd=_|
+    ==
+  ::
+  ++  orm
+    ((ordered-map @da timebox) gth)
+  ::
+  +$  notification
+    [date=@da read=? =contents]
+  ::
+  +$  contents
+    $%  [%graph =(list post:post-zero:post)]
+        [%group =(list group-contents)]
+    ==
   ::
   +$  timebox
     (map index notification)

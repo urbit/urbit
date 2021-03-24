@@ -20,6 +20,7 @@ import { MentionText } from '~/views/components/MentionText';
 import ChatMessage from '../chat/components/ChatMessage';
 import useContactState from '~/logic/state/contact';
 import useGroupState from '~/logic/state/group';
+import useMetadataState from '~/logic/state/metadata';
 
 function getGraphModuleIcon(module: string) {
   if (module === 'link') {
@@ -66,13 +67,12 @@ const GraphUrl = ({ url, title }) => (
   </Box>
 );
 
-const GraphNodeContent = ({
+export const GraphNodeContent = ({
   group,
+  association,
   post,
   mod,
-  description,
   index,
-  remoteContentPolicy
 }) => {
   const { contents } = post;
   const idx = index.slice(1).split('/');
@@ -132,6 +132,7 @@ const GraphNodeContent = ({
           containerClass='items-top cf hide-child'
           group={group}
           groups={{}}
+          association={association}
           associations={{ graph: {}, groups: {} }}
           msg={post}
           fontSize='0'
@@ -165,6 +166,9 @@ function getNodeUrl(
     const [linkId] = idx;
     return `${graphUrl}/${linkId}`;
   } else if (mod === 'chat') {
+    if(idx.length > 0) {
+      return `${graphUrl}?msg=${idx[0]}`;
+    }
     return graphUrl;
   }
   return '';
@@ -188,6 +192,9 @@ const GraphNode = ({
   const contacts = useContactState((state) => state.contacts);
 
   const nodeUrl = getNodeUrl(mod, group?.hidden, groupPath, graph, index);
+  const association = useMetadataState(
+    useCallback(s => s.associations.graph[graph], [graph])
+  );
 
   const onClick = useCallback(() => {
     if (!read) {
@@ -196,11 +203,6 @@ const GraphNode = ({
     history.push(nodeUrl);
   }, [read, onRead]);
 
-  const showNickname = useShowNickname(contacts?.[`~${author}`]);
-  const nickname =
-    contacts?.[`~${author}`]?.nickname && showNickname
-      ? contacts[`~${author}`].nickname
-      : cite(author);
   return (
     <Row onClick={onClick} gapX='2' pt={showContact ? 2 : 0}>
       <Col flexGrow={1} alignItems='flex-start'>
@@ -212,6 +214,7 @@ const GraphNode = ({
             post={post}
             mod={mod}
             description={description}
+            association={association}
             index={index}
             group={group}
             remoteContentPolicy={{}}

@@ -246,7 +246,6 @@
       ?:  (is-root:ver mark)
         :_  this
         (forward-update:hc mark vase)
-      ::
       =^  cards  push-hook
         (on-poke:og mark vase)
       [cards this]

@@ -25,6 +25,7 @@ import { GroupSummary } from './GroupSummary';
 import useGroupState from '~/logic/state/group';
 import useMetadataState from '~/logic/state/metadata';
 import {TUTORIAL_GROUP_RESOURCE} from '~/logic/lib/tutorialModal';
+import {useQuery} from '~/logic/lib/useQuery';
 
 const formSchema = Yup.object({
   group: Yup.string()
@@ -71,7 +72,9 @@ export function JoinGroup(props: JoinGroupProps): ReactElement {
     MetadataUpdatePreview | string | null
   >(null);
 
-  const waiter = useWaitForProps({ associations, groups }, _.isString(preview) ? 1 : 5000);
+  const waiter = useWaitForProps({ associations, groups }, _.isString(preview) ? 1 : 30000);
+
+  const { query } = useQuery();
 
   const onConfirm = useCallback(async (group: string) => {
     const [,,ship,name] = group.split('/');
@@ -85,6 +88,11 @@ export function JoinGroup(props: JoinGroupProps): ReactElement {
           (group in (p.associations?.graph ?? {})
             || group in (p.associations?.groups ?? {}));
       });
+
+      if(query.has('redir')) {
+        const redir = query.get('redir')!;
+        history.push(redir);
+      }
 
       if(groups?.[group]?.hidden) {
         const { metadata } = associations.graph[group];

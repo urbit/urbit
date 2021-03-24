@@ -4,10 +4,12 @@ import { Center, Text } from "@tlon/indigo-react";
 import { deSig } from '~/logic/lib/util';
 import useGraphState from '~/logic/state/graph';
 import useMetadataState from '~/logic/state/metadata';
+import useGroupState from '~/logic/state/group';
 
 const GraphApp = (props) => {
   const associations= useMetadataState(state => state.associations);
   const graphKeys = useGraphState(state => state.graphKeys);
+  const groups = useGroupState(state => state.groups);
   const history = useHistory();
 
   const { api } = props;

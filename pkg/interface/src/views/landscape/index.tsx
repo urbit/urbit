@@ -136,7 +136,7 @@ class Landscape extends Component<LandscapeProps, Record<string, never>> {
           <Route path="/~landscape/join/:ship?/:name?"
             render={(routeProps) => {
               const { ship, name } = routeProps.match.params;
-              const autojoin = ship && name ? `${ship}/${name}` : null;
+              const autojoin = ship && name ? `${ship}/${name}` : undefined;
               return (
                 <Body>
                   <Box maxWidth="300px">

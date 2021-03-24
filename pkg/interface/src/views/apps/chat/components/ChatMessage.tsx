@@ -40,6 +40,9 @@ import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import Timestamp from '~/views/components/Timestamp';
 import useContactState from '~/logic/state/contact';
 import { useIdlingState } from '~/logic/lib/idling';
+import {useCopy} from '~/logic/lib/useCopy';
+import {PermalinkEmbed} from '../../permalinks/embed';
+import {referenceToPermalink} from '~/logic/lib/permalinks';
 
 export const DATESTAMP_FORMAT = '[~]YYYY.M.D';
 
@@ -134,13 +137,15 @@ const MessageActionItem = (props) => {
   );
 };
 
-const MessageActions = ({ api, history, msg, group }) => {
+const MessageActions = ({ api, onReply, association, history, msg, group }) => {
   const isAdmin = () => group.tags.role.admin.has(window.ship);
   const isOwn = () => msg.author === window.ship;
+  const { doCopy, copyDisplay } = useCopy(`web+urbit-graph://group${association.group.slice(5)}/graph${association.resource.slice(5)}${msg.index}`, 'Copy Message Link');
+
   return (
     <Box
       borderRadius={1}
-      background='white'
+      backgroundColor='white'
       border='1px solid'
       borderColor='lightGray'
       position='absolute'
@@ -148,21 +153,11 @@ const MessageActions = ({ api, history, msg, group }) => {
       right={2}
     >
       <Row>
-        {isOwn() ? (
-          <Box
-            padding={1}
-            size={'24px'}
-            cursor='pointer'
-            onClick={(e) => console.log(e)}
-          >
-            <Icon icon='NullIcon' size={3} />
-          </Box>
-        ) : null}
         <Box
           padding={1}
           size={'24px'}
           cursor='pointer'
-          onClick={(e) => console.log(e)}
+          onClick={() => onReply(msg)}
         >
           <Icon icon='Chat' size={3} />
         </Box>
@@ -184,25 +179,22 @@ const MessageActions = ({ api, history, msg, group }) => {
               borderColor='lightGray'
               boxShadow='0px 0px 0px 3px'
             >
-              {isOwn() ? (
-                <MessageActionItem onClick={(e) => console.log(e)}>
-                  Edit Message
-                </MessageActionItem>
-              ) : null}
-              <MessageActionItem onClick={(e) => console.log(e)}>
+              <MessageActionItem onClick={() => onReply(msg)}>
                 Reply
               </MessageActionItem>
-              <MessageActionItem onClick={(e) => console.log(e)}>
-                Copy Message Link
+              <MessageActionItem onClick={doCopy}>
+                {copyDisplay}
               </MessageActionItem>
-              {isAdmin() || isOwn() ? (
+              {false && (isAdmin() || isOwn()) ? (
                 <MessageActionItem onClick={(e) => console.log(e)} color='red'>
                   Delete Message
                 </MessageActionItem>
               ) : null}
-              <MessageActionItem onClick={(e) => console.log(e)}>
-                View Signature
-              </MessageActionItem>
+              {false && (
+                <MessageActionItem onClick={(e) => console.log(e)}>
+                  View Signature
+                </MessageActionItem>
+              )}
             </Col>
           }
         >
@@ -217,17 +209,19 @@ const MessageActions = ({ api, history, msg, group }) => {
 
 const MessageWrapper = (props) => {
   const { hovering, bind } = useHovering();
+  const showHover = (props.transcluded === 0) && hovering && !props.hideHover;
   return (
     <Box
       py='1'
-      backgroundColor={
-        hovering && !props.hideHover ? 'washedGray' : 'transparent'
+      backgroundColor={props.highlighted
+        ? showHover ? 'lightBlue' : 'washedBlue'
+        : showHover ? 'washedGray' : 'transparent'
       }
       position='relative'
       {...bind}
     >
       {props.children}
-      {/* {hovering ? <MessageActions {...props} /> : null} */}
+      {showHover ? <MessageActions {...props} /> : null}
     </Box>
   );
 };
@@ -239,6 +233,7 @@ interface ChatMessageProps {
   isLastRead: boolean;
   group: Group;
   association: Association;
+  transcluded?: number;
   className?: string;
   isPending: boolean;
   style?: unknown;
@@ -251,6 +246,7 @@ interface ChatMessageProps {
   renderSigil?: boolean;
   hideHover?: boolean;
   innerRef: (el: HTMLDivElement | null) => void;
+  onReply?: (msg: Post) => void;
 }
 
 class ChatMessage extends Component<ChatMessageProps> {
@@ -283,6 +279,8 @@ class ChatMessage extends Component<ChatMessageProps> {
       showOurContact,
       fontSize,
       hideHover
+      onReply = () => {},
+      transcluded = 0
     } = this.props;
 
     let { renderSigil } = this.props;
@@ -320,7 +318,9 @@ class ChatMessage extends Component<ChatMessageProps> {
       scrollWindow,
       highlighted,
       fontSize,
-      hideHover
+      hideHover,
+      transcluded,
+      onReply
     };
 
     const unreadContainerStyle = {
@@ -331,9 +331,9 @@ class ChatMessage extends Component<ChatMessageProps> {
       <Box
         ref={this.props.innerRef}
         pt={renderSigil ? 2 : 0}
+        width="100%"
         pb={isLastMessage ? '20px' : 0}
         className={containerClass}
-        backgroundColor={highlighted ? 'blue' : 'white'}
         style={style}
       >
         {dayBreak && !isLastRead ? (
@@ -542,12 +542,13 @@ export const Message = ({
   api,
   scrollWindow,
   timestampHover,
+  transcluded,
   ...rest
 }) => {
   const { hovering, bind } = useHovering();
   const contacts = useContactState((state) => state.contacts);
   return (
-    <Box position='relative' {...rest}>
+    <Box width="100%" position='relative' {...rest}>
       {timestampHover ? (
         <Text
           display={hovering ? 'block' : 'none'}
@@ -564,7 +565,7 @@ export const Message = ({
       ) : (
         <></>
       )}
-      <Box {...bind}>
+      <Box width="100%" {...bind}>
         {msg.contents.map((content, i) => {
           switch (Object.keys(content)[0]) {
             case 'text':
@@ -578,9 +579,18 @@ export const Message = ({
                 />
               );
             case 'code':
-              return <CodeContent key={i} content={content} />;
-            case 'url':
+            return <CodeContent key={i} content={content} />;
+            case 'reference':
+              const { link } = referenceToPermalink(content);
               return (
+                <PermalinkEmbed
+                  link={link}
+                  api={api}
+                  transcluded={transcluded}
+                />
+              );
+            case 'url':
+             return (
                 <Box
                   key={i}
                   flexShrink={0}
