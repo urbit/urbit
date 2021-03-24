@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Helmet from 'react-helmet';
 
@@ -13,6 +13,8 @@ import { LeapSettings } from './components/lib/LeapSettings';
 import { useHashLink } from '~/logic/lib/useHashLink';
 import { SidebarItem as BaseSidebarItem } from '~/views/landscape/components/SidebarItem';
 import { PropFunc } from '~/types';
+import DebugPane from './components/lib/Debug';
+import useHarkState from '~/logic/state/hark';
 
 export const Skeleton = (props: { children: ReactNode }) => (
   <Box height='100%' width='100%' px={[0, 3]} pb={[0, 3]} borderRadius={1}>
@@ -70,11 +72,26 @@ function SettingsItem(props: { children: ReactNode }) {
 export default function SettingsScreen(props: any) {
   const location = useLocation();
   const hash = location.hash.slice(1);
+  const notificationsCount = useHarkState(state => state.notificationsCount);
+
+  useEffect(() => {
+    const debugShower = (event) => {
+      if (hash) return;
+      if (event.key === '~') {
+        window.location.hash = 'debug';
+      }
+    };
+    document.addEventListener('keyup', debugShower);
+
+    return () => {
+      document.removeEventListener('keyup', debugShower);
+    }
+  }, [hash]);
 
   return (
     <>
       <Helmet defer={false}>
-        <title>Landscape - Settings</title>
+        <title>{ notificationsCount ? `(${String(notificationsCount) }) `: '' }Landscape - Settings</title>
       </Helmet>
       <Skeleton>
         <Col
@@ -118,6 +135,7 @@ export default function SettingsScreen(props: any) {
             {hash === 'leap' && <LeapSettings />}
             {hash === 'calm' && <CalmPrefs />}
             {hash === 'security' && <SecuritySettings />}
+            {hash === 'debug' && <DebugPane />}
           </SettingsItem>
         </Col>
       </Skeleton>

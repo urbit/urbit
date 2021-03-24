@@ -11,7 +11,8 @@ import {
   Text,
   BaseImage,
   ColProps,
-  Icon
+  Icon,
+  Center
 } from '@tlon/indigo-react';
 import RichText from './RichText';
 import { ProfileStatus } from './ProfileStatus';
@@ -40,17 +41,20 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
     onDismiss,
     ...rest
   } = props;
-  const hideAvatars = useSettingsState(state => state.calm.hideAvatars);
-  const hideNicknames = useSettingsState(state => state.calm.hideNicknames);
+  const hideAvatars = useSettingsState((state) => state.calm.hideAvatars);
+  const hideNicknames = useSettingsState((state) => state.calm.hideNicknames);
   const popoverRef = useRef<typeof Col>(null);
   const history = useHistory();
 
-  const onDocumentClick = useCallback((event) => {
-    if (!popoverRef.current || popoverRef?.current?.contains(event.target)) {
-      return;
-    }
-    onDismiss();
-  }, [onDismiss, popoverRef]);
+  const onDocumentClick = useCallback(
+    (event) => {
+      if (!popoverRef.current || popoverRef?.current?.contains(event.target)) {
+        return;
+      }
+      onDismiss();
+    },
+    [onDismiss, popoverRef]
+  );
 
   useEffect(() => {
     document.addEventListener('mousedown', onDocumentClick);
@@ -59,122 +63,124 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
     return () => {
       document.removeEventListener('mousedown', onDocumentClick);
       document.removeEventListener('touchstart', onDocumentClick);
-    }
+    };
   }, [onDocumentClick]);
 
   let top, bottom;
-    if (topSpace < OVERLAY_HEIGHT / 2) {
-      top = '0px';
-    }
-    if (bottomSpace < OVERLAY_HEIGHT / 2) {
-      bottom = '0px';
-    }
-    if (!(top || bottom)) {
-      bottom = `-${Math.round(OVERLAY_HEIGHT / 2)}px`;
-    }
-    const containerStyle = { top, bottom, left: '100%' };
+  if (topSpace < OVERLAY_HEIGHT / 2) {
+    top = '0px';
+  }
+  if (bottomSpace < OVERLAY_HEIGHT / 2) {
+    bottom = '0px';
+  }
+  if (!(top || bottom)) {
+    bottom = `-${Math.round(OVERLAY_HEIGHT / 2)}px`;
+  }
+  const containerStyle = { top, bottom, left: '100%' };
 
-    const isOwn = window.ship === ship;
+  const isOwn = window.ship === ship;
 
-    const img =
-      contact?.avatar && !hideAvatars ? (
-        <BaseImage
-          referrerPolicy="no-referrer"
-          display='inline-block'
-          style={{ objectFit: 'cover' }}
-          src={contact.avatar}
-          height={72}
-          width={72}
-          borderRadius={2}
-        />
-      ) : (
-        <Sigil ship={ship} size={72} color={color} />
-      );
-    const showNickname = useShowNickname(contact, hideNicknames);
-
-    return (
-      <Col
-        ref={popoverRef}
-        backgroundColor='white'
-        color='washedGray'
-        border={1}
+  const img =
+    contact?.avatar && !hideAvatars ? (
+      <BaseImage
+        referrerPolicy='no-referrer'
+        display='inline-block'
+        style={{ objectFit: 'cover' }}
+        src={contact.avatar}
+        height={60}
+        width={60}
         borderRadius={2}
-        borderColor='lightGray'
-        boxShadow='0px 0px 0px 3px'
-        position='absolute'
-        zIndex='3'
-        fontSize='0'
-        height='250px'
-        width='250px'
-        padding={3}
-        justifyContent='center'
-        style={containerStyle}
-        {...rest}
-      >
-        <Row color='black' padding={3} position='absolute' top={0} left={0}>
-          {!isOwn && (
-            <Icon
-              icon='Chat'
-              size={16}
-              cursor='pointer'
-              onClick={() => history.push(`/~landscape/dm/${ship}`)}
-            />
-          )}
-        </Row>
-        <Box
-          alignSelf='center'
-          height='72px'
-          cursor='pointer'
-          onClick={() => history.push(`/~profile/~${ship}`)}
-          overflow='hidden'
-          borderRadius={2}
-        >
-          {img}
-        </Box>
-        <Col
-          position='absolute'
-          overflow='hidden'
-          minWidth='0'
-          width='100%'
-          padding={3}
-          bottom={0}
-          left={0}
-        >
-          <Row width='100%'>
-            <Text
-              fontWeight='600'
-              mono={!showNickname}
-              textOverflow='ellipsis'
-              overflow='hidden'
-              whiteSpace='pre'
-              marginBottom='0'
-            >
-              {showNickname ? contact?.nickname : cite(ship)}
-            </Text>
-          </Row>
-          {isOwn ? (
-            <ProfileStatus
-              ship={`~${ship}`}
-              contact={contact}
-            />
-          ) : (
-            <RichText
-              display='inline-block'
-              width='100%'
-              minWidth='0'
-              textOverflow='ellipsis'
-              overflow='hidden'
-              whiteSpace='pre'
-              marginBottom='0'
-              disableRemoteContent
-              gray
-            >
-              {contact?.status ? contact.status : ''}
-            </RichText>
-          )}
-        </Col>
-      </Col>
+      />
+    ) : (
+      <Box size={60} backgroundColor={color}>
+        <Center height={60}>
+          <Sigil ship={ship} size={32} color={color} />
+        </Center>
+      </Box>
     );
+  const showNickname = useShowNickname(contact, hideNicknames);
+
+  return (
+    <Col
+      ref={popoverRef}
+      backgroundColor='white'
+      color='washedGray'
+      border={1}
+      borderRadius={2}
+      borderColor='lightGray'
+      boxShadow='0px 0px 0px 3px'
+      position='absolute'
+      zIndex='3'
+      fontSize='0'
+      height='250px'
+      width='250px'
+      padding={3}
+      justifyContent='center'
+      style={containerStyle}
+      {...rest}
+    >
+      <Row color='black' padding={3} position='absolute' top={0} left={0}>
+        {!isOwn && (
+          <Icon
+            icon='Chat'
+            size={16}
+            cursor='pointer'
+            onClick={() => history.push(`/~landscape/dm/${ship}`)}
+          />
+        )}
+      </Row>
+      <Box
+        alignSelf='center'
+        height='60px'
+        cursor='pointer'
+        onClick={() => history.push(`/~profile/~${ship}`)}
+        overflow='hidden'
+        borderRadius={2}
+      >
+        {img}
+      </Box>
+      <Col
+        position='absolute'
+        overflow='hidden'
+        minWidth='0'
+        width='100%'
+        padding={3}
+        bottom={0}
+        left={0}
+      >
+        <Row width='100%'>
+          <Text
+            fontWeight='600'
+            mono={!showNickname}
+            textOverflow='ellipsis'
+            overflow='hidden'
+            whiteSpace='pre'
+            marginBottom='0'
+          >
+            {showNickname ? contact?.nickname : cite(ship)}
+          </Text>
+        </Row>
+        {isOwn ? (
+          <ProfileStatus ship={`~${ship}`} contact={contact} />
+        ) : (
+          <RichText
+            display='inline-block'
+            width='100%'
+            minWidth='0'
+            textOverflow='ellipsis'
+            overflow='hidden'
+            whiteSpace='pre'
+            marginBottom='0'
+            disableRemoteContent
+            gray
+            title={contact?.status ?? ''}
+          >
+            {contact?.status ?? ''}
+          </RichText>
+        )}
+      </Col>
+    </Col>
+  );
 };
 
 export default ProfileOverlay;

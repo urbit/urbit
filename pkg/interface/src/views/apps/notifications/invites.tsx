@@ -27,7 +27,7 @@ export function Invites(): ReactElement {
   }, []);
 
   const invitesAndStatus: { [rid: string]: JoinProgress | InviteRef } =
-    { ..._.keyBy(inviteArr, ({ invite }) => resourceAsPath(invite.resource)), ...props.pendingJoin };
+    { ..._.keyBy(inviteArr, ({ invite }) => resourceAsPath(invite.resource)), ...pendingJoin };
 
   return (
     <Col
@@ -43,21 +43,22 @@ export function Invites(): ReactElement {
          .sort(alphabeticalOrder)
          .map((resource) => {
            const inviteOrStatus = invitesAndStatus[resource];
-          if(typeof inviteOrStatus === 'string') {
+           const join = pendingJoin[resource];
+           if(typeof inviteOrStatus === 'string') {
            return (
              <InviteItem
                key={resource}
                resource={resource}
-               
+               pendingJoin={join}
              />
           );
         } else {
           const { app, uid, invite } = inviteOrStatus;
-          console.log(inviteOrStatus);
           return (
             <InviteItem
               key={resource}
               invite={invite}
+              pendingJoin={join}
               app={app}
               uid={uid}
               resource={resource}

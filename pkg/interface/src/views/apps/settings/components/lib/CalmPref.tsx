@@ -53,10 +53,10 @@ export function CalmPrefs() {
     hideUnreads,
     hideGroups,
     hideUtilities,
-    imageShown,
-    videoShown,
-    oembedShown,
-    audioShown,
+    imageShown: !imageShown,
+    videoShown: !videoShown,
+    oembedShown: !oembedShown,
+    audioShown: !audioShown
   };
 
   const onSubmit = useCallback(async (v: FormSchema, actions: FormikHelpers<FormSchema>) => {
@@ -66,10 +66,10 @@ export function CalmPrefs() {
       api.poke(settings.putEntry('calm', 'hideUnreads', v.hideUnreads)),
       api.poke(settings.putEntry('calm', 'hideGroups', v.hideGroups)),
       api.poke(settings.putEntry('calm', 'hideUtilities', v.hideUtilities)),
-      api.poke(settings.putEntry('remoteContentPolicy', 'imageShown', v.imageShown)),
-      api.poke(settings.putEntry('remoteContentPolicy', 'videoShown', v.videoShown)),
-      api.poke(settings.putEntry('remoteContentPolicy', 'audioShown', v.audioShown)),
-      api.poke(settings.putEntry('remoteContentPolicy', 'oembedShown', v.oembedShown)),
+      api.poke(settings.putEntry('remoteContentPolicy', 'imageShown', !v.imageShown)),
+      api.poke(settings.putEntry('remoteContentPolicy', 'videoShown', !v.videoShown)),
+      api.poke(settings.putEntry('remoteContentPolicy', 'audioShown', !v.audioShown)),
+      api.poke(settings.putEntry('remoteContentPolicy', 'oembedShown', !v.oembedShown)),
     ]);
     actions.setStatus({ success: null });
   }, [api]);
@@ -79,7 +79,7 @@ export function CalmPrefs() {
       <Form>
         <BackButton/>
         <Col borderBottom="1" borderBottomColor="washedGray" p="5" pt="4" gapY="5">
-            <Col gapY="1" mt="0">
+          <Col gapY="1" mt="0">
             <Text color="black" fontSize={2} fontWeight="medium">
               CalmEngine
             </Text>
@@ -114,24 +114,24 @@ export function CalmPrefs() {
             id="hideNicknames"
             caption="Do not show user-set nicknames"
           />
-          <Text fontWeight="medium">Remote Content</Text>
+          <Text fontWeight="medium">Remote content</Text>
           <Toggle
-            label="Load images"
+            label="Disable images"
             id="imageShown"
             caption="Images will be replaced with an inline placeholder that must be clicked to be viewed"
           />
           <Toggle
-            label="Load audio files"
+            label="Disable audio files"
             id="audioShown"
             caption="Audio content will be replaced with an inline placeholder that must be clicked to be viewed"
           />
           <Toggle
-            label="Load video files"
+            label="Disable video files"
             id="videoShown"
             caption="Video content will be replaced with an inline placeholder that must be clicked to be viewed"
           />
           <Toggle
-            label="Load embedded content"
+            label="Disable embedded content"
             id="oembedShown"
             caption="Embedded content may contain scripts that can track you"
           />

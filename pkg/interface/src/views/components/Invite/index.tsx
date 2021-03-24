@@ -16,34 +16,42 @@ import {
 import { Invite } from '@urbit/api/invite';
 import { Text, Icon, Row } from '@tlon/indigo-react';
 
-import { cite } from '~/logic/lib/util';
+import { cite, useShowNickname } from '~/logic/lib/util';
 import { resourceFromPath } from '~/logic/lib/group';
 import { GroupInvite } from './Group';
 import { InviteSkeleton } from './InviteSkeleton';
 import { JoinSkeleton } from './JoinSkeleton';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
 import useGroupState from '~/logic/state/group';
+import useContactState from '~/logic/state/contact';
 import useMetadataState from '~/logic/state/metadata';
 import useApi from '~/logic/api';
+import useGraphState from '~/logic/state/graph';
 
 interface InviteItemProps {
   invite?: Invite;
   resource: string;
+  pendingJoin?: string;
   app?: string;
   uid?: string;
 }
 
 export function InviteItem(props: InviteItemProps) {
   const [preview, setPreview] = useState<MetadataUpdatePreview | null>(null);
-  const { invite, resource, uid, app } = props;
+  const { pendingJoin, invite, resource, uid, app} = props;
   const { ship, name } = resourceFromPath(resource);
-  const pendingJoin = useGroupState(state => state.pendingJoin);
-  const status = pendingJoin[resource];
   const groups = useGroupState(state => state.groups);
+  const graphKeys = useGraphState(s => s.graphKeys);
   const associations = useMetadataState(state => state.associations);
+  const contacts = useContactState(state => state.contacts);
   const getPreview = useMetadataState(state => state.preview);
-  const waiter = useWaitForProps({ associations, groups, pendingJoin }, 50000);
+  const contact = contacts?.[`~${invite?.ship}`] ?? {};
+  const showNickname = useShowNickname(contact);
   const api = useApi();
+  const waiter = useWaitForProps(
+    { associations, groups, pendingJoin, graphKeys: Array.from(graphKeys) },
+    50000
+  );
 
   const history = useHistory();
   const inviteAccept = useCallback(async () => {
@@ -56,7 +64,7 @@ export function InviteItem(props: InviteItemProps) {
     }
 
     api.poke(groupsApi.join(ship, name));
-    await waiter(p => resource in p.pendingJoin);
+    await waiter(p => !!p.pendingJoin);
 
     api.poke(inviteApi.accept(app, uid));
     await waiter((p) => {
@@ -68,6 +76,7 @@ export function InviteItem(props: InviteItemProps) {
     });
 
     if (groups?.[resource]?.hidden) {
+      await waiter(p => p.graphKeys.includes(resource.slice(7)));
       const { metadata } = associations.graph[resource];
       if (metadata?.module === 'chat') {
         history.push(`/~landscape/messages/resource/${metadata.module}${resource}`);
@@ -77,7 +86,7 @@ export function InviteItem(props: InviteItemProps) {
     } else {
       history.push(`/~landscape${resource}`);
     }
-  }, [app, invite, uid, resource, groups, associations]);
+  }, [app, history, waiter, invite, uid, resource, groups, associations]);
 
   const inviteDecline = useCallback(async () => {
     if(!(app && uid)) {
@@ -120,8 +129,10 @@ export function InviteItem(props: InviteItemProps) {
       >
         <Row py="1" alignItems="center">
           <Icon display="block" color="blue" icon="Bullet" mr="2" />
-          <Text mr="1" mono>
-            {cite(`~${invite!.ship}`)}
+          <Text mr="1"
+            mono={!showNickname}
+            fontWeight={showNickname ? '500' : '400'}>
+            {showNickname ? contact?.nickname : cite(`~${invite!.ship}`)}
           </Text>
           <Text mr="1">invited you to a DM</Text>
         </Row>
@@ -146,8 +157,10 @@ export function InviteItem(props: InviteItemProps) {
       >
         <Row py="1" alignItems="center">
           <Icon display="block" color="blue" icon="Bullet" mr="2" />
-          <Text mr="1" mono>
-            {cite(`~${invite!.ship}`)}
+          <Text mr="1"
+            mono={!showNickname}
+            fontWeight={showNickname ? '500' : '400'}>
+            {showNickname ? contact?.nickname : cite(`~${invite!.ship}`)}
           </Text>
           <Text mr="1">
             invited you to ~{invite.resource.ship}/{invite.resource.name}
@@ -155,10 +168,10 @@ export function InviteItem(props: InviteItemProps) {
         </Row>
       </InviteSkeleton>
     );
-  } else if (status) {
+  } else if (pendingJoin) {
     const [, , ship, name] = resource.split('/');
     return (
-      <JoinSkeleton status={status}>
+      <JoinSkeleton status={pendingJoin}>
         <Row py="1" alignItems="center">
           <Icon display="block" color="blue" icon="Bullet" mr="2" />
           <Text mr="1">

@@ -51,7 +51,14 @@ export const DayBreak = ({ when, shimTop = false }: DayBreakProps) => (
     mt={shimTop ? '-8px' : '0'}
   >
     <Rule borderColor='lightGray' />
-    <Text gray flexShrink='0' fontSize={0} px={2}>
+    <Text
+      gray
+      flexShrink='0'
+      whiteSpace='nowrap'
+      textAlign='center'
+      fontSize={0}
+      px={2}
+    >
       {moment(when).calendar(null, { sameElse: DATESTAMP_FORMAT })}
     </Text>
     <Rule borderColor='lightGray' />
@@ -85,7 +92,14 @@ export const UnreadMarker = React.forwardRef(({ dayBreak, when, association }, r
       >
         <Rule borderColor='lightBlue' />
         <VisibilitySensor onChange={setVisible}>
-          <Text color='blue' fontSize={0} flexShrink='0' px={2}>
+          <Text
+            color='blue'
+            fontSize={0}
+            flexShrink='0'
+            whiteSpace='nowrap'
+            textAlign='center'
+            px={2}
+          >
             New messages below
           </Text>
         </VisibilitySensor>
@@ -199,7 +213,9 @@ const MessageWrapper = (props) => {
   return (
     <Box
       py='1'
-      backgroundColor={hovering ? 'washedGray' : 'transparent'}
+      backgroundColor={
+        hovering && !props.hideHover ? 'washedGray' : 'transparent'
+      }
       position='relative'
       {...bind}
     >
@@ -225,6 +241,7 @@ interface ChatMessageProps {
   history: unknown;
   highlighted?: boolean;
   renderSigil?: boolean;
+  hideHover?: boolean;
   innerRef: (el: HTMLDivElement | null) => void;
 }
 
@@ -255,7 +272,8 @@ class ChatMessage extends Component<ChatMessageProps> {
       history,
       highlighted,
       showOurContact,
-      fontSize
+      fontSize,
+      hideHover
     } = this.props;
 
     let { renderSigil } = this.props;
@@ -291,7 +309,8 @@ class ChatMessage extends Component<ChatMessageProps> {
       history,
       scrollWindow,
       highlighted,
-      fontSize
+      fontSize,
+      hideHover
     };
 
     const unreadContainerStyle = {
@@ -358,10 +377,11 @@ export const MessageAuthor = ({
     .unix(msg['time-sent'] / 1000)
     .format(DATESTAMP_FORMAT);
   const contact =
-    ( ( (msg.author === window.ship && showOurContact) ||
-         msg.author !== window.ship) &&
-      `~${msg.author}` in contacts
-    ) ? contacts[`~${msg.author}`] : false;
+    ((msg.author === window.ship && showOurContact) ||
+      msg.author !== window.ship) &&
+    `~${msg.author}` in contacts
+      ? contacts[`~${msg.author}`]
+      : false;
 
   const showNickname = useShowNickname(contact);
   const { hideAvatars } = useSettingsState(selectCalmState);
@@ -404,7 +424,7 @@ export const MessageAuthor = ({
     contact?.avatar && !hideAvatars ? (
       <BaseImage
         display='inline-block'
-        referrerPolicy="no-referrer"
+        referrerPolicy='no-referrer'
         style={{ objectFit: 'cover' }}
         src={contact.avatar}
         height={24}

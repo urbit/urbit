@@ -154,6 +154,7 @@ export function ChatResource(props: ChatResourceProps) {
       <ChatWindow
         key={station}
         graph={graph}
+        graphSize={graph.size}
         unreadCount={unreadCount}
         showOurContact={ !showBanner && hasLoadedAllowed }
         association={props.association}
