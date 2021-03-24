@@ -12,6 +12,8 @@ import { Dropdown } from '~/views/components/Dropdown';
 import { FormikOnBlur } from '~/views/components/FormikOnBlur';
 import GroupSearch from '~/views/components/GroupSearch';
 import { useTutorialModal } from '~/views/components/useTutorialModal';
+import useHarkState from '~/logic/state/hark';
+import useMetadataState from '~/logic/state/metadata';
 
 const baseUrl = '/~notifications';
 
@@ -38,6 +40,7 @@ export default function NotificationsScreen(props: any): ReactElement {
   const relativePath = (p: string) => baseUrl + p;
 
   const [filter, setFilter] = useState<NotificationFilter>({ groups: [] });
+  const associations = useMetadataState(state => state.associations);
   const onSubmit = async ({ groups } : NotificationFilter) => {
     setFilter({ groups });
   };
@@ -48,10 +51,11 @@ export default function NotificationsScreen(props: any): ReactElement {
     filter.groups.length === 0
       ? 'All'
       : filter.groups
-          .map(g => props.associations?.groups?.[g]?.metadata?.title)
+          .map(g => associations.groups?.[g]?.metadata?.title)
     .join(', ');
   const anchorRef = useRef<HTMLElement | null>(null);
   useTutorialModal('notifications', true, anchorRef);
+  const notificationsCount = useHarkState(state => state.notificationsCount);
   return (
     <Switch>
       <Route
@@ -61,7 +65,7 @@ export default function NotificationsScreen(props: any): ReactElement {
           return (
             <>
               <Helmet defer={false}>
-                <title>{ props.notificationsCount ? `(${String(props.notificationsCount) }) `: '' }Landscape - Notifications</title>
+                <title>{ notificationsCount ? `(${String(notificationsCount) }) `: '' }Landscape - Notifications</title>
               </Helmet>
               <Body>
                 <Col overflowY="hidden" height="100%">
@@ -110,7 +114,6 @@ export default function NotificationsScreen(props: any): ReactElement {
                                 id="groups"
                                 label="Filter Groups"
                                 caption="Only show notifications from this group"
-                                associations={props.associations}
                               />
                             </FormikOnBlur>
                           </Col>

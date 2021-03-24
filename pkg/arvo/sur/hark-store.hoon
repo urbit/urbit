@@ -150,7 +150,7 @@
   [index notification]
 ::
 +$  stats
-  [notifications=@ud =unreads last-seen=@da]
+  [notifications=(set [time index]) =unreads last-seen=@da]
 ::
 +$  unreads
   $%  [%count num=@ud]

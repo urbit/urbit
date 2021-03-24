@@ -1,13 +1,17 @@
+import { GroupUpdate } from '@urbit/api/groups';
 import { resourceAsPath } from '~/logic/lib/util';
+import { reduceState } from '../state/base';
+import useGroupState, { GroupState } from '../state/group';
 
-const initial = (json: any, state: any) => {
+const initial = (json: any, state: GroupState): GroupState => {
   const data = json.initial;
   if(data) {
     state.pendingJoin = data;
   }
+  return state;
 };
 
-const progress = (json: any, state: any) => {
+const progress = (json: any, state: GroupState): GroupState => {
   const data = json.progress;
   if(data) {
     const { progress, resource } = data;
@@ -18,12 +22,15 @@ const progress = (json: any, state: any) => {
       }, 10000);
     }
   }
+  return state;
 };
 
-export const GroupViewReducer = (json: any, state: any) => {
+export const GroupViewReducer = (json: any) => {
   const data = json['group-view-update'];
-  if(data) {
-    progress(data, state);
-    initial(data, state);
+  if (data) {
+    reduceState<GroupState, GroupUpdate>(useGroupState, data, [
+      progress,
+      initial
+    ]);
   }
 };

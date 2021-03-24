@@ -10,6 +10,7 @@ import { roleForShip } from '~/logic/lib/group';
 import GlobalApi from '~/logic/api/global';
 import { Dropdown } from '~/views/components/Dropdown';
 import RemoteContent from '~/views/components/RemoteContent';
+import useHarkState from '~/logic/state/hark';
 
 interface LinkItemProps {
   node: GraphNode;
@@ -17,8 +18,6 @@ interface LinkItemProps {
   api: GlobalApi;
   group: Group;
   path: string;
-  contacts: Rolodex;
-  unreads: Unreads;
 }
 
 export const LinkItem = (props: LinkItemProps): ReactElement => {
@@ -28,7 +27,6 @@ export const LinkItem = (props: LinkItemProps): ReactElement => {
     api,
     group,
     path,
-    contacts,
     ...rest
   } = props;
 
@@ -89,8 +87,9 @@ export const LinkItem = (props: LinkItemProps): ReactElement => {
   };
 
   const appPath = `/ship/~${resource}`;
-  const commColor = (props.unreads.graph?.[appPath]?.[`/${index}`]?.unreads ?? 0) > 0 ? 'blue' : 'gray';
-  const isUnread = props.unreads.graph?.[appPath]?.['/']?.unreads?.has(node.post.index);
+  const unreads = useHarkState(state => state.unreads);
+  const commColor = (unreads.graph?.[appPath]?.[`/${index}`]?.unreads ?? 0) > 0 ? 'blue' : 'gray';
+  const isUnread = unreads.graph?.[appPath]?.['/']?.unreads?.has(node.post.index);
 
   return (
     <Box
@@ -149,18 +148,13 @@ export const LinkItem = (props: LinkItemProps): ReactElement => {
           </Anchor>
         </Text>
       </Box>
-
       <Row minWidth='0' flexShrink={0} width="100%" justifyContent="space-between" py={3} bg="white">
-
       <Author
         showImage
-        contacts={contacts}
         ship={author}
         date={node.post['time-sent']}
         group={group}
-        api={api}
-      ></Author>
-
+      />
       <Box ml="auto">
         <Link
           to={node.post.pending ? '#' : `${baseUrl}/${index}`}

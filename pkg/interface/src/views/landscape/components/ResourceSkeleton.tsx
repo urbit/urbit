@@ -11,6 +11,8 @@ import RichText from '~/views/components/RichText';
 import GlobalApi from '~/logic/api/global';
 import { isWriter } from '~/logic/lib/group';
 import { getItemTitle } from '~/logic/lib/util';
+import useContactState from '~/logic/state/contact';
+import useGroupState from '~/logic/state/group';
 
 const TruncatedText = styled(RichText)`
   white-space: pre;
@@ -19,8 +21,6 @@ const TruncatedText = styled(RichText)`
 `;
 
 type ResourceSkeletonProps = {
-  groups: Groups;
-  contacts: Rolodex;
   association: Association;
   api: GlobalApi;
   baseUrl: string;
@@ -30,9 +30,10 @@ type ResourceSkeletonProps = {
 };
 
 export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
-  const { association, baseUrl, children, groups } = props;
+  const { association, baseUrl, children } = props;
   const app = association?.metadata?.module || association['app-name'];
   const rid = association.resource;
+  const groups = useGroupState(state => state.groups);
   const group = groups[association.group];
   let workspace = association.group;
 
@@ -48,11 +49,13 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
 
   let recipient = "";
 
+  const contacts = useContactState(state => state.contacts);
+
   if (urbitOb.isValidPatp(title)) {
     recipient = title;
-    title = (props.contacts?.[title]?.nickname) ? props.contacts[title].nickname : title;
+    title = (contacts?.[title]?.nickname) ? contacts[title].nickname : title;
   } else {
-    recipient = Array.from(group.members).map(e => `~${e}`).join(", ")
+    recipient = Array.from(group ? group.members : []).map(e => `~${e}`).join(", ")
   }
 
   const [, , ship, resource] = rid.split('/');

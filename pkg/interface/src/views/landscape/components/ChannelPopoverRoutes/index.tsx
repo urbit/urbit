@@ -25,10 +25,7 @@ interface ChannelPopoverRoutesProps {
   rootUrl: string;
   association: Association;
   group: Group;
-  groups: Groups;
-  contacts: Rolodex;
   api: GlobalApi;
-  notificationsGraphConfig: NotificationGraphConfig;
 }
 
 export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {

@@ -36,13 +36,12 @@ interface FormSchema {
 
 interface DisplayFormProps {
   api: GlobalApi;
-  storage: StorageState;
 }
 
 const settingsSel = selectSettingsState(["display"]);
 
 export default function DisplayForm(props: DisplayFormProps) {
-  const { api, storage } = props;
+  const { api } = props;
 
   const {
     display: {
@@ -108,7 +107,6 @@ export default function DisplayForm(props: DisplayFormProps) {
               bgType={props.values.bgType}
               bgUrl={props.values.bgUrl}
               api={api}
-              storage={storage}
             />
             <Label>Theme</Label>
             <Radio name="theme" id="light" label="Light"/>
