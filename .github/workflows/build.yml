@@ -38,11 +38,15 @@ on:
       - 'pkg/arvo'
       - 'pkg/hs'
       - 'pkg/urbit'
+      - 'bin'
+      - 'nix'
   pull_request:
     paths:
       - 'pkg/arvo'
       - 'pkg/hs'
       - 'pkg/urbit'
+      - 'bin'
+      - 'nix'
 
 jobs:
   urbit:
