@@ -108,7 +108,7 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
       } else if ('code' in curr) {
         val = val + curr.code.expression;
       } else if ('reference' in curr) {
-        val = `${val}web+urbit:/${referenceToPermalink(curr).link}`;
+        val = `${val}web+urbit-graph:/${referenceToPermalink(curr).link}`;
       }
 
       return val;

@@ -140,7 +140,7 @@ const MessageActionItem = (props) => {
 const MessageActions = ({ api, onReply, association, history, msg, group }) => {
   const isAdmin = () => group.tags.role.admin.has(window.ship);
   const isOwn = () => msg.author === window.ship;
-  const { doCopy, copyDisplay } = useCopy(`web+urbit://group${association.group.slice(5)}/graph${association.resource.slice(5)}${msg.index}`, 'Copy Message Link');
+  const { doCopy, copyDisplay } = useCopy(`web+urbit-graph://group${association.group.slice(5)}/graph${association.resource.slice(5)}${msg.index}`, 'Copy Message Link');
 
   return (
     <Box
@@ -213,7 +213,7 @@ const MessageWrapper = (props) => {
   return (
     <Box
       py='1'
-      backgroundColor={props.highlighted 
+      backgroundColor={props.highlighted
         ? showHover ? 'lightBlue' : 'washedBlue'
         : showHover ? 'washedGray' : 'transparent'
       }
@@ -583,7 +583,7 @@ export const Message = ({
             case 'reference':
               const { link } = referenceToPermalink(content);
               return (
-                <PermalinkEmbed 
+                <PermalinkEmbed
                   link={link}
                   api={api}
                   transcluded={transcluded}

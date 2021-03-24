@@ -18,7 +18,7 @@ export function getPermalinkForGraph(
 
 function getPermalinkForAssociatedGroup(group: string) {
   const { ship, name } = resourceFromPath(group);
-  return `web+urbit://group/${ship}/${name}`;
+  return `web+urbit-graph://group/${ship}/${name}`;
 }
 
 
@@ -59,14 +59,14 @@ function parseGraphPermalink(
 export function referenceToPermalink({ reference }: ReferenceContent): Permalink {
   if('graph' in reference) {
     const { graph, group, index } = reference.graph;
-    const link = `web+urbit://group${group.slice(5)}/graph${graph.slice(5)}${index}`;
+    const link = `web+urbit-graph://group${group.slice(5)}/graph${graph.slice(5)}${index}`;
     return {
       type: 'graph',
       link,
       ...reference.graph
     };
   } else {
-    const link = `web+urbit://group${reference.group.slice(5)}`;
+    const link = `web+urbit-graph://group${reference.group.slice(5)}`;
     return {
       type: 'group',
       link,

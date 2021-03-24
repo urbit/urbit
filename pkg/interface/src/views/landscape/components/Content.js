@@ -34,7 +34,7 @@ export const Content = (props) => {
     console.log('a');
     if(!hasProtocol && window?.navigator?.registerProtocolHandler) {
       try {
-        window.navigator.registerProtocolHandler('web+urbit', '/perma?ext=%s', 'Urbit Links');
+        window.navigator.registerProtocolHandler('web+urbit-graph', '/perma?ext=%s', 'Urbit Links');
         console.log('registered protocol');
         setHasProtocol(true);
       } catch (e) {
