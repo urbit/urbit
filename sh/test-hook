@@ -1,0 +1,172 @@
+#!/usr/bin/env bash
+reset_ship() {
+  ship=$1
+  pier=../../$ship
+
+  downgrade $ship
+
+  herb ./$pier -p hood -d "+hood/fade %demo-store"
+  herb ./$pier -p hood -d "+hood/fade %demo-pull-hook"
+  herb ./$pier -p hood -d "+hood/fade %demo-push-hook"
+
+  herb ./$pier -p hood -d "+hood/start %demo-store"
+  herb ./$pier -p hood -d "+hood/start %demo-pull-hook"
+  herb ./$pier -p hood -d "+hood/start %demo-push-hook"
+
+  #herb ./$pier -p demo-store -d "+verb"
+  #herb ./$pier -p demo-push-hook -d "+verb"
+  #herb ./$pier -p demo-pull-hook -d "+verb"
+
+}
+
+start() {
+  ship=$1
+  pier=../../$ship
+
+  herb ./$pier -p demo-store -d "+demo/ini %foo"
+  herb ./$pier -p demo-push-hook -d "+push/add %foo"
+  herb ./$pier -p demo-store -d "+demo/add 0 %foo 3"
+}
+
+poke_store() {
+  ship=$1
+  num=$2
+  ver=$3
+  pier=../../$ship
+  herb ./$pier -p demo-store -d "+demo/add $ver %foo $num"
+}
+sub() {
+  us=$1
+  them=$2
+  
+  pier=../../$us
+
+  herb ./$pier -p demo-pull-hook -d "+pull/add ~$them %foo"
+}
+
+print() {
+  ship=$1
+  pier=../../$ship
+
+  herb ./$pier -p demo-store -d "+dbug"
+  herb ./$pier -p demo-push-hook -d "+dbug"
+  herb ./$pier -p demo-pull-hook -d "+dbug"
+}
+
+
+
+upgrade() {
+  ship=$1
+  pier=../../$ship
+  desk=$pier/home
+  gsed --in-place "s/demo-update-0/demo-update-1/g" $desk/app/demo-store.hoon
+  gsed --in-place "14s/.*/1/" $desk/app/demo-pull-hook.hoon
+  gsed --in-place "14s/.*/1/" $desk/app/demo-push-hook.hoon
+  herb ./$pier -p hood -d "+hood/commit %home"
+}
+
+upgrade_incompat() {
+  ship=$1
+  pier=../../$ship
+  desk=$pier/home
+  gsed --in-place "s/demo-update-0/demo-update-1/g" $desk/app/demo-store.hoon
+  gsed --in-place "14s/.*/1/" $desk/app/demo-pull-hook.hoon
+  gsed --in-place "15s/.*/1/" $desk/app/demo-pull-hook.hoon
+  gsed --in-place "14s/.*/1/" $desk/app/demo-push-hook.hoon
+  gsed --in-place "15s/.*/1/" $desk/app/demo-push-hook.hoon
+  herb ./$pier -p hood -d "+hood/commit %home"
+}
+
+downgrade() {
+  ship=$1
+  pier=../../$ship
+  desk=$pier/home
+  gsed --in-place "s/demo-update-1/demo-update-0/g" $desk/app/demo-store.hoon
+  gsed --in-place "14s/.*/0/" $desk/app/demo-pull-hook.hoon
+  gsed --in-place "15s/.*/0/" $desk/app/demo-pull-hook.hoon
+  gsed --in-place "14s/.*/0/" $desk/app/demo-push-hook.hoon
+  gsed --in-place "15s/.*/0/" $desk/app/demo-push-hook.hoon
+  herb ./$pier -p hood -d "+hood/commit %home"
+}
+
+
+sub_ahead() {
+  echo "subscriber ahead"
+  reset_ship "zod"
+  reset_ship "bus"
+  start "zod"
+  sub "bus" "zod"
+  sleep 2
+  print "zod"
+  print "bus"
+  sleep 2
+  upgrade "zod"
+  sleep 1
+  poke_store "zod" 5 1
+  sleep 2
+  print "zod"
+  print "bus"
+}
+
+
+sub_ahead_incompat() {
+  echo "subscriber ahead, incompatible"
+  reset_ship "zod"
+  reset_ship "bus"
+  start "zod"
+  sub "bus" "zod"
+  sleep 2
+  print "zod"
+  print "bus"
+  sleep 2
+  upgrade_incompat "bus"
+  sleep 1
+  print "bus"
+  poke_store "zod" 5 0
+  sleep 2
+  upgrade_incompat "zod"
+  sleep 3
+  print "zod"
+  print "bus"
+}
+
+pub_ahead() {
+  echo "publisher ahead"
+  reset_ship "zod"
+  reset_ship "bus"
+  start "zod"
+  sub "bus" "zod"
+  sleep 2
+  print "zod"
+  print "bus"
+  sleep 2
+  upgrade "zod"
+  sleep 1
+  poke_store "zod" 5 1
+  sleep 2
+  print "zod"
+  print "bus"
+}
+
+
+pub_ahead_incompat() {
+  echo "publisher ahead, incompatible"
+  reset_ship "zod"
+  reset_ship "bus"
+  start "zod"
+  sub "bus" "zod"
+  sleep 2
+  print "zod"
+  print "bus"
+  sleep 2
+  upgrade_incompat "zod"
+  sleep 1
+  poke_store "zod" 5 1
+  sleep 2
+  upgrade_incompat "bus"
+  sleep 3
+  print "zod"
+  print "bus"
+}
+
+pub_ahead_incompat

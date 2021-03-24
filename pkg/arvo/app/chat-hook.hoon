@@ -154,7 +154,7 @@
   ++  poke-graph-store
     |=  =update:graph-store
     ^-  card
-    (poke-our %graph-store %graph-update !>(update))
+    (poke-our %graph-store %graph-update-0 !>(update))
   ::
   ++  nobody
     ^-  @p

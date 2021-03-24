@@ -103,6 +103,6 @@ export default class MetadataApi extends BaseApi<StoreState> {
   }
 
   private metadataAction(data) {
-    return this.action('metadata-push-hook', 'metadata-update', data);
+    return this.action('metadata-push-hook', 'metadata-update-0', data);
   }
 }

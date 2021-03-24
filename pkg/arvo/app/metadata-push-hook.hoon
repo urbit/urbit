@@ -14,6 +14,7 @@
       update:store
       %metadata-update
       %metadata-pull-hook
+      0  0
   ==
 ::
 +$  agent  (push-hook:push-hook config)
@@ -65,7 +66,7 @@
   =/  role=(unit (unit role-tag))
     (role-for-ship:grp group.update src.bowl)
   =/  =metadatum:store
-    (need (peek-metadatum:met %groups group.update))
+    (fall (peek-metadatum:met %groups group.update) *metadatum:store)
   ?~  role  ~
   ?^  u.role  
     ?:  ?=(?(%admin %moderator) u.u.role)
