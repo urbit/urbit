@@ -1,5 +1,5 @@
 import React, { ReactElement, useCallback } from 'react';
-import { Formik } from 'formik';
+import { Formik, FormikHelpers } from 'formik';
 
 import {
   ManagedTextInputField as Input,
@@ -10,6 +10,7 @@ import {
   Col,
   Anchor
 } from '@tlon/indigo-react';
+import { AsyncButton } from "~/views/components/AsyncButton";
 
 import GlobalApi from '~/logic/api/global';
 import { BucketList } from './BucketList';
@@ -35,19 +36,19 @@ export default function S3Form(props: S3FormProps): ReactElement {
   const { api } = props;
   const s3 = useStorageState((state) => state.s3);
 
-  const onSubmit = useCallback(
-    (values: FormSchema) => {
+  const onSubmit = useCallback(async (values: FormSchema, actions: FormikHelpers<FormSchema>) => {
       if (values.s3secretAccessKey !== s3.credentials?.secretAccessKey) {
-        api.s3.setSecretAccessKey(values.s3secretAccessKey);
+        await api.s3.setSecretAccessKey(values.s3secretAccessKey);
       }
 
       if (values.s3endpoint !== s3.credentials?.endpoint) {
-        api.s3.setEndpoint(values.s3endpoint);
+        await api.s3.setEndpoint(values.s3endpoint);
       }
 
       if (values.s3accessKeyId !== s3.credentials?.accessKeyId) {
-        api.s3.setAccessKeyId(values.s3accessKeyId);
+        await api.s3.setAccessKeyId(values.s3accessKeyId);
       }
+      actions.setStatus({ success: null });
     },
     [api, s3]
   );
@@ -95,9 +96,9 @@ export default function S3Form(props: S3FormProps): ReactElement {
                 label='Secret Access Key'
                 id='s3secretAccessKey'
               />
-              <Button style={{ cursor: 'pointer' }} type='submit'>
+              <AsyncButton primary style={{ cursor: 'pointer' }} type='submit'>
                 Submit
-              </Button>
+              </AsyncButton>
             </Col>
           </Form>
         </Formik>

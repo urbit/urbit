@@ -11,7 +11,7 @@ import {
 import { Invite } from '@urbit/api/invite';
 import { Text, Icon, Row } from '@tlon/indigo-react';
 
-import { cite } from '~/logic/lib/util';
+import { cite, useShowNickname } from '~/logic/lib/util';
 import GlobalApi from '~/logic/api/global';
 import { resourceFromPath } from '~/logic/lib/group';
 import { GroupInvite } from './Group';
@@ -19,6 +19,7 @@ import { InviteSkeleton } from './InviteSkeleton';
 import { JoinSkeleton } from './JoinSkeleton';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
 import useGroupState from '~/logic/state/group';
+import useContactState from '~/logic/state/contact';
 import useMetadataState from '~/logic/state/metadata';
 import useGraphState from '~/logic/state/graph';
 
@@ -38,6 +39,9 @@ export function InviteItem(props: InviteItemProps) {
   const groups = useGroupState(state => state.groups);
   const graphKeys = useGraphState(s => s.graphKeys);
   const associations = useMetadataState(state => state.associations);
+  const contacts = useContactState(state => state.contacts);
+  const contact = contacts?.[`~${invite?.ship}`] ?? {};
+  const showNickname = useShowNickname(contact);
   const waiter = useWaitForProps(
     { associations, groups, pendingJoin, graphKeys: Array.from(graphKeys) },
     50000
@@ -119,8 +123,10 @@ export function InviteItem(props: InviteItemProps) {
       >
         <Row py="1" alignItems="center">
           <Icon display="block" color="blue" icon="Bullet" mr="2" />
-          <Text mr="1" mono>
-            {cite(`~${invite!.ship}`)}
+          <Text mr="1"
+            mono={!showNickname}
+            fontWeight={showNickname ? '500' : '400'}>
+            {showNickname ? contact?.nickname : cite(`~${invite!.ship}`)}
           </Text>
           <Text mr="1">invited you to a DM</Text>
         </Row>
@@ -145,8 +151,10 @@ export function InviteItem(props: InviteItemProps) {
       >
         <Row py="1" alignItems="center">
           <Icon display="block" color="blue" icon="Bullet" mr="2" />
-          <Text mr="1" mono>
-            {cite(`~${invite!.ship}`)}
+          <Text mr="1"
+            mono={!showNickname}
+            fontWeight={showNickname ? '500' : '400'}>
+            {showNickname ? contact?.nickname : cite(`~${invite!.ship}`)}
           </Text>
           <Text mr="1">
             invited you to ~{invite.resource.ship}/{invite.resource.name}

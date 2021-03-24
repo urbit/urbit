@@ -93,7 +93,10 @@ function Group(props: GroupProps) {
   );
   const { hideUnreads } = useSettingsState(selectCalmState);
   const joined = useSettingsState(selectJoined);
-  const days = Math.floor(moment.duration(moment(joined).add(14, 'days').diff(moment())).as('days'));
+  const days = Math.max(0, Math.floor(moment.duration(moment(joined)
+        .add(14, 'days')
+        .diff(moment()))
+    .as('days'))) || 0;
   return (
     <Tile ref={anchorRef} position="relative" bg={isTutorialGroup ? 'lightBlue' : undefined} to={`/~landscape${path}`} gridColumnStart={first ? '1' : null}>
       <Col height="100%" justifyContent="space-between">

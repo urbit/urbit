@@ -64,7 +64,7 @@ export class OmniboxResult extends Component {
       graphic = <Icon display='inline-block' verticalAlign='middle' icon='Users' mr='2' size='18px' color={iconFill} />;
     } else if (icon === 'tutorial') {
       graphic = <Icon display='inline-block' verticalAlign='middle' icon='Tutorial' mr='2' size='18px' color={iconFill} />;
-    } 
+    }
     else {
       graphic = <Icon display='inline-block' icon='NullIcon' verticalAlign="middle" mr='2' size="16px" color={iconFill} />;
     }
@@ -102,6 +102,12 @@ export class OmniboxResult extends Component {
         <Text
         mono={(icon == 'profile' && text.startsWith('~'))}
         color={this.state.hovered || selected === link ? 'white' : 'black'}
+        display='inline-block'
+        verticalAlign='middle'
+        width='100%'
+        overflow='hidden'
+        textOverflow='ellipsis'
+        whiteSpace='pre'
         mr='1'
         >
           {text.startsWith("~") ? cite(text) : text}
