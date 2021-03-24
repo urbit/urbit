@@ -1706,7 +1706,8 @@
       (snoc http-moves (set-heartbeat-move channel-id heartbeat-time))
     ::  +discard-channel: remove a channel from state
     ::
-    ::    cleans up state, timers, and gall subscriptions of the channel
+    ::    cleans up state, timers, gall subscriptions, and connection
+    ::    of the channel
     ::
     ++  discard-channel
       |=  [channel-id=@t expired=?]
@@ -1725,6 +1726,9 @@
               duct-to-key.channel-state
             ?.  ?=(%| -.state.session)  duct-to-key.channel-state.state
             (~(del by duct-to-key.channel-state.state) p.state.session)
+          ::
+              connections
+            (~(del by connections.state) p.state.session)
           ==
       =/  heartbeat-cancel=(list move)
         ?~  heartbeat.session  ~
