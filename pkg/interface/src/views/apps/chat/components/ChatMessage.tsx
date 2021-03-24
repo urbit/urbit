@@ -281,11 +281,12 @@ class ChatMessage extends Component<ChatMessageProps> {
       highlighted,
       showOurContact,
       fontSize,
-      hideHover,
-      onReply = () => {},
-      transcluded = 0
+      hideHover
     } = this.props;
 
+    let onReply = this.props?.onReply;
+    onReply ??= () => {};
+    const transcluded = this.props?.transcluded ?? 0;
     let { renderSigil } = this.props;
 
     if (renderSigil === undefined) {
