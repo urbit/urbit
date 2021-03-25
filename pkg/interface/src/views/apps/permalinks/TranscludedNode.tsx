@@ -132,7 +132,7 @@ export function TranscludedNode(props: {
 }) {
   const { node, assoc, transcluded } = props;
   const group = useGroupForAssoc(assoc)!;
-  switch (assoc.metadata.module) {
+  switch (assoc.metadata.config.graph) {
     case "chat":
       return (
         <Row width="100%" flexShrink={0} flexGrow={1} flexWrap="wrap">

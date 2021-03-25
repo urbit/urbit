@@ -98,7 +98,7 @@ function GraphPermalink(
         <PermalinkDetails
           known
           showTransclusion={showTransclusion}
-          icon={getModuleIcon(association.metadata.module)}
+          icon={getModuleIcon(association.metadata.config.graph)}
           title={association.metadata.title}
           permalink={permalink}
         />

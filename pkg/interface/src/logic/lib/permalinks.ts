@@ -56,9 +56,22 @@ function parseGraphPermalink(
   };
 }
 
-export function permalinkToReference({ any }: any): any {
-  //TODO write this function
-  return { reference: '' }
+export function permalinkToReference(link: Permalink): ReferenceContent {
+  if(link.type === 'graph') {
+    const reference = {
+      graph: {
+        graph: link.graph,
+        group: link.group,
+        index: link.index
+      }
+    }
+    return { reference };
+  } else {
+    const reference = {
+      group: link.group
+    };
+    return { reference };
+  }
 }
 
 export function referenceToPermalink({ reference }: ReferenceContent): Permalink {
@@ -81,7 +94,7 @@ export function referenceToPermalink({ reference }: ReferenceContent): Permalink
 }
 
 export function parsePermalink(url: string): Permalink | null {
-  const [kind, ...rest] = url.slice(12).split("/");
+  const [kind, ...rest] = url.slice(18).split("/");
   if (kind === "group") {
     const [ship, name, ...graph] = rest;
     const group = `/ship/${ship}/${name}`;
