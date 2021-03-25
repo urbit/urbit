@@ -227,7 +227,6 @@
   ++  update
     |=  upd=^update
     ^-  json
-    ?>  ?=(%0 -.upd)
     |^  (frond %graph-update (pairs ~[(encode q.upd)]))
     ::
     ++  encode
