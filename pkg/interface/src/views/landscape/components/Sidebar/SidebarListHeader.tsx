@@ -23,6 +23,7 @@ import GlobalApi from '~/logic/api/global';
 import { Workspace } from '~/types/workspace';
 import useGroupState from '~/logic/state/group';
 import useMetadataState from '~/logic/state/metadata';
+import {IS_SAFARI} from '~/logic/lib/platform';
 
 export function SidebarListHeader(props: {
   api: GlobalApi;
@@ -60,7 +61,7 @@ export function SidebarListHeader(props: {
     'resource' in metadata.config.group;
 
   return (
-    <Col>
+    <Box>
     {( isFeedEnabled ) ? (
        <Row
          flexShrink="0"
@@ -183,6 +184,6 @@ export function SidebarListHeader(props: {
       </Dropdown>
       </Box>
     </Row>
-    </Col>
+    </Box>
   );
 }
