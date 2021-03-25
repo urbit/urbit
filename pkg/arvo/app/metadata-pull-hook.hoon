@@ -9,6 +9,29 @@
 |%
 +$  card  card:agent:gall
 ::
++$  group-preview-0
+  $:  group=resource
+      channels=associations-0
+      members=@ud
+      channel-count=@ud
+      metadatum=metadatum-0
+  ==
+::
++$  associations-0
+  (map md-resource:metadata [group=resource metadatum=metadatum-0])
+::
++$  metadatum-0
+  $:  title=cord
+      description=cord
+      =color:metadata
+      date-created=time
+      creator=ship
+      module=term
+      picture=url:metadata
+      preview=?
+      vip=vip-metadata:metadata
+  ==
+::
 ++  config
   ^-  config:pull-hook
   :*  %metadata-store
@@ -19,10 +42,16 @@
       %.n
   ==
 +$  state-zero
-  [%0 previews=(map resource group-preview:metadata)]
+  [%0 previews=(map resource group-preview-0)]
 ::
 +$  state-one
   $:  %1
+      pending=(set resource)
+      previews=(map resource group-preview-0)
+  ==
+::
++$  state-two
+  $:  %2
       pending=(set resource)
       previews=(map resource group-preview:metadata)
   ==
@@ -30,6 +59,7 @@
 +$  versioned-state
   $%  state-zero
       state-one
+      state-two
   ==
 --
 ::
@@ -38,7 +68,7 @@
 ^-  agent:gall
 %-  (agent:pull-hook config)
 ^-  (pull-hook:pull-hook config)
-=|  state-one
+=|  state-two
 =*  state  -
 =>  |_  =bowl:gall
     ++  def   ~(. (default-agent state %|) bowl)
@@ -174,9 +204,17 @@
 ++  on-load  
   |=  =vase
   =+  !<(old=versioned-state vase)
-  |-  
+  |^  
   ?-  -.old
-    %1  `this(state old)
+    %2  `this(state old)
+    ::
+      %1
+    %_    $
+        old
+      %*  .  *state-two
+        previews  (~(run by previews.old) preview-to-1)
+      ==
+    ==
     ::
       %0
     %_    $
@@ -186,6 +224,39 @@
       ==
     ==
   ==
+  ::
+  ++  metadatum-to-1
+    |=  m=metadatum-0
+    %*  .  *metadatum:metadata
+      title         title.m
+      description   description.m
+      color         color.m
+      date-created  date-created.m
+      creator       creator.m
+      preview       preview.m
+      hidden        %|
+    ::
+        config
+      ?:  =(module.m %$)
+        [%group ~]
+      [%graph module.m]
+    ==
+  ::
+  ++  preview-to-1
+    |=  preview=group-preview-0
+    ^-  group-preview:metadata
+    %=    preview
+      metadatum  (metadatum-to-1 metadatum.preview)
+      channels   (associations-to-1 channels.preview)
+    ==
+  ::
+  ++  associations-to-1
+    |=  a=associations-0
+    ^-  associations:metadata
+    %-  ~(run by a)
+    |=  [g=resource m=metadatum-0]
+    [g (metadatum-to-1 m)]
+  --
 ::
 ++  on-poke  
   |=  [=mark =vase]
