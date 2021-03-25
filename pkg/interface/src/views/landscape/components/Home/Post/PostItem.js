@@ -46,6 +46,7 @@ class PostItem extends React.Component {
       contacts,
       api,
       graphResource,
+      association,
       index,
       innerRef,
       isParent,
@@ -82,7 +83,12 @@ class PostItem extends React.Component {
           onClick={this.navigateToReplies}
           cursor={isParent ? "default": "pointer"}
           {...bind}>
-          <PostHeader post={node.post} contacts={contacts} api={api} isReply={isReply} />
+          <PostHeader
+            post={node.post}
+            contacts={contacts}
+            api={api}
+            association={association}
+            isReply={isReply} />
           { isReply ? (
             <Row width="100%" alignItems="center" mb="3">
               <Text color="gray" pr="1">Replying to</Text>

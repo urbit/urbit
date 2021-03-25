@@ -13,7 +13,7 @@ import { roleForShip } from '~/logic/lib/group';
 import Author from '~/views/components/Author';
 import { Contacts, GraphNode, Graph, Association, Unreads, Group } from '@urbit/api';
 import {useCopy} from '~/logic/lib/useCopy';
-import {usePermalinkForGraph, getPermalinkForGraph} from '~/logic/lib/permalinks';
+import { getPermalinkForGraph } from '~/logic/lib/permalinks';
 import {useQuery} from '~/logic/lib/useQuery';
 
 interface NoteProps {
