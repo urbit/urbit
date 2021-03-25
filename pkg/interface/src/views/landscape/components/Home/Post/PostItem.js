@@ -92,6 +92,7 @@ class PostItem extends React.Component {
           <PostContent
             post={node.post}
             isParent={isParent}
+            api={api}
             contacts={contacts} />
           <PostFooter
             replyCount={node.children.size}

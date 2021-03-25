@@ -4,7 +4,7 @@ import { MentionText } from '~/views/components/MentionText';
 
 
 export function PostContent(props) {
-  const { post, contacts, isParent } = props;
+  const { post, contacts, isParent, api } = props;
   return (
     <Col
       width="100%"
@@ -15,6 +15,7 @@ export function PostContent(props) {
       <MentionText
         contacts={contacts}
         content={post.contents}
+        api={api}
       />
     </Col>
   );

@@ -34,19 +34,33 @@ const RichText = React.memo(({ disableRemoteContent, api, ...props }) => (
           videoShown: false,
           oembedShown: false
         } : null;
-        if (!disableRemoteContent && hasProvider(linkProps.href)) {
+        if (!disableRemoteContent) {
           return <RemoteContent className="mw-100" url={linkProps.href} />;
         }
 
-        return <Anchor display="inline" target='_blank' rel='noreferrer noopener' borderBottom='1px solid' remoteContentPolicy={remoteContentPolicy} {...linkProps}>{linkProps.children}</Anchor>;
+        return (
+          <Anchor
+            display="inline"
+            target='_blank'
+            rel='noreferrer noopener'
+            borderBottom='1px solid'
+            remoteContentPolicy={remoteContentPolicy}
+            onClick={(e) => { e.stopPropagation(); }}
+            {...linkProps}>{linkProps.children}</Anchor>
+        );
       },
       linkReference: (linkProps) => {
         const linkText = String(linkProps.children[0].props.children);
         if (isValidPatp(linkText)) {
           return <Mention contact={props.contact || {}} group={props.group} ship={deSig(linkText)} />;
         } else if(linkText.startsWith('web+urbitgraph://')) {
-          return <PermalinkEmbed pending={props.pending} link={linkText} transcluded={props.transcluded} api={api}/>;
-
+          return (
+            <PermalinkEmbed
+              pending={props.pending}
+              link={linkText}
+              transcluded={props.transcluded}
+              api={api}/>
+          );
         }
         return linkText;
       },
