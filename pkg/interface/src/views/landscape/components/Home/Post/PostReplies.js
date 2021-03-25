@@ -62,7 +62,7 @@ export function PostReplies(props) {
         width="100%"
         height="100%"
         alignItems="center" overflowY="scroll">
-        <Box width="100%" alignItems="center">
+        <Box mt="3" width="100%" alignItems="center">
           <PostItem
             key={node.post.index}
             node={node}
