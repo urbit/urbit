@@ -194,7 +194,13 @@ export default function LaunchApp(props) {
             to="/~landscape/home"
             p={0}
           >
-            <Box p={2} height='100%' width='100%' bg='scales.black20'>
+            <Box
+              p={2}
+              height='100%'
+              width='100%'
+              bg='scales.black20'
+              border={1}
+              borderColor="lightGray">
               <Row alignItems='center'>
                 <Icon
                   color="black"

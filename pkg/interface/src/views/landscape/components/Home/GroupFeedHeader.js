@@ -16,7 +16,6 @@ export function GroupFeedHeader(props) {
 
   const locationUrl =
     history.location.pathname.replace(`${baseUrl}`, '').replace(/^\/[a-z]*/, '');
-  console.log(locationUrl);
   let nodeIndex = locationUrl.split('/').slice(1).map((ind) => {
     return bigInt(ind);
   });
@@ -48,7 +47,7 @@ export function GroupFeedHeader(props) {
       pr="2"
       alignItems="center"
       borderBottom={1}
-      borderColor="washedGray">
+      borderColor="lightGray">
       <Box display='block'>
         { ( baseUrl !== historyLocation &&
             `${baseUrl}/feed` !== historyLocation

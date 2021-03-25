@@ -112,7 +112,7 @@ export const LinkItem = (props: LinkItemProps): ReactElement => {
         width="100%"
         color='washedGray'
         border={1}
-        borderColor={isUnread ? 'blue' : 'washedGray'}
+        borderColor={isUnread ? 'blue' : 'lightGray'}
         borderRadius={2}
         alignItems="flex-start"
         overflow="hidden"

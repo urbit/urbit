@@ -37,7 +37,7 @@ export const AddFeedBanner = (props) => {
       alignItems="center"
       justifyContent="space-between"
       borderBottom={1}
-      borderColor="washedGray"
+      borderColor="lightGray"
       pl={2}
       pr={2}
     >

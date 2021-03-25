@@ -73,7 +73,7 @@ export function Sidebar(props: SidebarProps): ReactElement | null {
       gridColumn="1/2"
       borderTopLeftRadius='2'
       borderRight={1}
-      borderRightColor="washedGray"
+      borderRightColor="lightGray"
       overflowY="scroll"
       fontSize={0}
       position="relative"

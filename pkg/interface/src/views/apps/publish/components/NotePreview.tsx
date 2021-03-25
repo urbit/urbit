@@ -78,7 +78,7 @@ export function NotePreview(props: NotePreviewProps) {
         <Col
           lineHeight='tall'
           width='100%'
-          color={!isUnread ? 'washedGray' : 'blue'}
+          color={!isUnread ? 'lightGray' : 'blue'}
           border={1}
           borderRadius={2}
           alignItems='flex-start'

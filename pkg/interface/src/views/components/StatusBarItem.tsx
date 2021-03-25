@@ -19,7 +19,7 @@ export function StatusBarItem({
     <Button
       style={{ position: 'relative', ...floatPos }}
       border={1}
-      color="washedGray"
+      color="lightGray"
       bg="white"
       px={2}
       overflow='visible'
