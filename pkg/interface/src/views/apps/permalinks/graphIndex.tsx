@@ -22,9 +22,21 @@ export function getGraphPermalink(
     return getPublishPermalink(groupPath, assoc, index);
   } else if (mod === "link") {
     return getLinkPermalink(groupPath, assoc, index);
+  } else if (mod === "post") {
+    return getPostPermalink(groupPath, assoc, index);
   }
   return "/~404";
 }
+
+function getPostPermalink(
+  groupPath: string,
+  assoc: Association,
+  index: string
+) {
+  const base = `${groupPath}/feed`;
+  return base + index;
+}
+
 
 function getPublishPermalink(
   groupPath: string,
