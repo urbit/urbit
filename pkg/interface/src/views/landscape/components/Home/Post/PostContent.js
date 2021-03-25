@@ -4,9 +4,15 @@ import { MentionText } from '~/views/components/MentionText';
 
 
 export function PostContent(props) {
-  const { post, contacts } = props;
+  const { post, contacts, isParent } = props;
   return (
-    <Col width="100%">
+    <Col
+      width="100%"
+      maxHeight={ isParent ? "none" : "300px" }
+      textOverflow="ellipsis"
+      whiteSpace="pre"
+      overflow="hidden"
+      display="inline-block">
       <MentionText
         contacts={contacts}
         content={post.contents}

@@ -53,7 +53,7 @@ export function GroupFeedHeader(props) {
         { ( baseUrl !== historyLocation &&
             `${baseUrl}/feed` !== historyLocation
           ) ? (
-            <Text pr="2" cursor="pointer" onClick={() => {
+            <Text pl="1" pr="1" cursor="pointer" onClick={() => {
               history.goBack();
             }}>{'<- Back'}</Text>
           ) : null
@@ -61,12 +61,12 @@ export function GroupFeedHeader(props) {
       </Box>
       { isHome ? (
         <>
-          <Text bold fontSize="2" pr="2">Group Feed</Text>
+          <Text bold fontSize="2" pl="1" pr="2">Group Feed</Text>
           <Text fontSize="0" p="1" backgroundColor="washedGray">Everyone can post</Text>
         </>
       ) : ( !authorText ? null : (
         <>
-          <Text bold fontSize="2" pr="2">Post by </Text>
+          <Text bold fontSize="2" pl="1" pr="2">Post by </Text>
           <Text bold fontSize="2" mono>{`~${authorText}`}</Text>
         </>
       ))}
