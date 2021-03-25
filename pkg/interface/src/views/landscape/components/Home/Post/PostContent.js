@@ -10,7 +10,6 @@ export function PostContent(props) {
       width="100%"
       maxHeight={ isParent ? "none" : "300px" }
       textOverflow="ellipsis"
-      whiteSpace="pre"
       overflow="hidden"
       display="inline-block">
       <MentionText
