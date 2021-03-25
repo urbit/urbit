@@ -208,6 +208,8 @@
         hc   ~(. +> bowl)
         def  ~(. (default-agent this %|) bowl)
         ver  ~(. versioning [bowl [update-mark version min-version]:config])
+        io   ~(. agentio bowl)
+        pass  pass:io
     ::
     ++  on-init
       ^-  [(list card:agent:gall) agent:gall]
@@ -226,11 +228,8 @@
         =^  og-cards   pull-hook
           (on-load:og inner-state.old)
         =.  state  old
-        =^  [restart-cards=(list card) hook=_pull-hook]  state
-          restart-subs
-        =.  pull-hook  hook
         :_  this
-        :(weld cards og-cards restart-cards)
+        :(weld cards og-cards (poke-self:pass kick+!>(%kick))^~)
        ::
           %2  $(old (state-to-3 old))
           %1  $(old [%2 +.old ~])
@@ -252,18 +251,6 @@
         :-  resource
         [ship %active ~]
       ::
-      ++  restart-subs
-        =|  acc-cards=(list card)
-        =/  subs=(list resource)
-          ~(tap in ~(key by tracking))
-        |-  ^-  [[(list card) _pull-hook] _state]
-        ?~  subs
-          [[acc-cards pull-hook] state]
-        =*  rid  i.subs
-        =^  [crds=(list card) hook=_pull-hook]  state
-          tr-abet:tr-on-load:(tr-abed:track-engine:hc rid)
-        =.  pull-hook  hook
-        $(subs t.subs, acc-cards (weld acc-cards crds))
       --
     ::
     ++  on-save
@@ -278,6 +265,13 @@
       ?+   mark
         =^  cards  pull-hook
           (on-poke:og mark vase)
+        [cards this]
+        ::
+          %kick
+        ?>  (team:title [our src]:bowl)
+        =^  [cards=(list card:agent:gall) hook=_pull-hook]  state
+          restart-subs:hc
+        =.  pull-hook  hook
         [cards this]
       ::
           %sane
@@ -364,6 +358,20 @@
       pass  pass:io
       virt  ~(. pull-hook-virt bowl)
       ver  ~(. versioning [bowl [update-mark version min-version]:config])
+  ::
+  ++  restart-subs
+    =|  acc-cards=(list card)
+    =/  subs=(list resource)
+      ~(tap in ~(key by tracking))
+    |-  ^-  [[(list card) _pull-hook] _state]
+    ?~  subs
+      [[acc-cards pull-hook] state]
+    =*  rid  i.subs
+    =^  [crds=(list card) hook=_pull-hook]  state
+      tr-abet:tr-on-load:(tr-abed:track-engine rid)
+    =.  pull-hook  hook
+    $(subs t.subs, acc-cards (weld acc-cards crds))
+
   ::
   ++  track-engine
     |_  [cards=(list card) rid=resource =ship =status gone=_|]
