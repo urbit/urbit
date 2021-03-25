@@ -95,7 +95,7 @@ export function GroupSwitcher(props: {
       top="0px"
       pl='3'
       borderBottom='1px solid'
-      borderColor='washedGray'
+      borderColor='lightGray'
     >
       <Col
         bg="white"

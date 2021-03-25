@@ -153,7 +153,7 @@ const LinkSubmit = (props: LinkSubmitProps) => {
         flexShrink={0}
         position='relative'
         border='1px solid'
-        borderColor={submitFocused ? 'black' : 'washedGray'}
+        borderColor={submitFocused ? 'black' : 'lightGray'}
         width='100%'
         borderRadius={2}
         {...bind}

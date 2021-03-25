@@ -79,7 +79,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
         display="flex"
         alignItems="center"
         borderBottom={1}
-        borderBottomColor="washedGray"
+        borderBottomColor="lightGray"
       >
         <Box
           borderRight={1}
