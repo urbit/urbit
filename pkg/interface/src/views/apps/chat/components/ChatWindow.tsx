@@ -61,6 +61,7 @@ class ChatWindow extends Component<
   private virtualList: VirtualScroller | null;
   private unreadMarkerRef: React.RefObject<HTMLDivElement>;
   private prevSize = 0;
+  private unreadSet = false;
 
   INITIALIZATION_MAX_TIME = 100;
 
@@ -116,7 +117,9 @@ class ChatWindow extends Component<
 
   dismissedInitialUnread() {
     const { unreadCount, graph } = this.props;
-    return this.state.unreadIndex.neq(graph.keys()?.[unreadCount]?.[0] ?? bigInt.zero)
+  
+    return this.state.unreadIndex.neq(bigInt.zero) &&
+      this.state.unreadIndex.neq(graph.keys()?.[unreadCount]?.[0] ?? bigInt.zero);
   }
 
   handleWindowBlur() {
@@ -132,16 +135,21 @@ class ChatWindow extends Component<
 
   componentDidUpdate(prevProps: ChatWindowProps, prevState) {
     const { history, graph, unreadCount, graphSize, station } = this.props;
+    if(unreadCount === 0 && prevProps.unreadCount !== unreadCount) {
+      this.unreadSet = true;
+    }
 
     if(this.prevSize !== graphSize) {
       this.prevSize = graphSize;
-      if(this.dismissedInitialUnread() &&
-        this.virtualList?.startOffset() < 5) {
-        this.dismissUnread();
-      }
       if(this.state.unreadIndex.eq(bigInt.zero)) {
         this.calculateUnreadIndex();
       }
+      if(this.unreadSet &&
+        this.dismissedInitialUnread() &&
+        this.virtualList?.startOffset() < 5) {
+        this.dismissUnread();
+      }
+
     }
 
     if (unreadCount > prevProps.unreadCount) {
@@ -318,7 +326,7 @@ class ChatWindow extends Component<
 
     return (
       <Col height='100%' overflow='hidden' position='relative'>
-        { !this.dismissedInitialUnread() && 
+        { this.dismissedInitialUnread() && 
          (<UnreadNotice
           unreadCount={unreadCount}
           unreadMsg={
