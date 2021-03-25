@@ -27,6 +27,7 @@ export function GroupFeed(props) {
   ).length;
 
   const relativePath = (path) => baseUrl + path;
+  const association = associations.graph[graphPath];
 
   useEffect(() => {
     //  TODO: VirtualScroller should support lower starting values than 100
@@ -39,8 +40,7 @@ export function GroupFeed(props) {
       height="100%"
       display="flex"
       position="relative"
-      alignItems="center"
-      overflow="hidden">
+      alignItems="center">
       <GroupFeedHeader
         baseUrl={baseUrl}
         history={history}
@@ -54,6 +54,7 @@ export function GroupFeed(props) {
             return (
               <PostTimeline
                 {...props}
+                association={association}
                 graphs={graphs}
                 pendingSize={pendingSize}
                 graphResource={graphResource} />
@@ -65,6 +66,7 @@ export function GroupFeed(props) {
             return (
               <PostReplies
                 {...props}
+                association={association}
                 graphs={graphs}
                 pendingSize={pendingSize}
                 graphResource={graphResource} />

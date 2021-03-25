@@ -10,7 +10,7 @@ export function PostTimeline(props) {
     baseUrl,
     api,
     history,
-    associations,
+    association,
     groups,
     contacts,
     graphPath,
@@ -85,7 +85,7 @@ export function PostTimeline(props) {
           graphResource={graphResource}
           graph={graphs[graphId]}
           pendingSize={pendingSize}
-          associations={associations}
+          association={association}
           groups={groups}
           contacts={contacts}
           api={api}

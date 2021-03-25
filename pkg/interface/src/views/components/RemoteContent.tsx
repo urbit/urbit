@@ -134,6 +134,7 @@ return;
 
     }
     return (<BaseAnchor
+      onClick={(e) => { e.stopPropagation(); }}
       href={this.props.url}
       flexShrink={0}
       style={{ color: 'inherit', textDecoration: 'none', ...style }}
@@ -194,6 +195,7 @@ return;
             ? this.wrapInLink(<Text {...textProps}>{text || url}</Text>)
             : null}
           <audio
+            onClick={(e) => { e.stopPropagation(); }}
             controls
             className="db"
             src={url}
@@ -211,6 +213,7 @@ return;
             ? this.wrapInLink(<Text {...textProps}>{text || url}</Text>)
             : null}
           <video
+            onClick={(e) => { e.stopPropagation(); }}
             controls
             className="db"
             src={url}

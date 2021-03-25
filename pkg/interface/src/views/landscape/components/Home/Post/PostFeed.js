@@ -23,7 +23,8 @@ export class PostFeed extends React.Component {
         api,
         history,
         baseUrl,
-        parentNode
+        parentNode,
+        association
       } = this.props;
       const node = graph.get(index);
       if (!node) { return null; }
@@ -53,6 +54,7 @@ export class PostFeed extends React.Component {
                 node={parentNode}
                 contacts={contacts}
                 graphResource={graphResource}
+                association={association}
                 api={api}
                 index={nodeIndex}
                 baseUrl={baseUrl}
@@ -65,6 +67,7 @@ export class PostFeed extends React.Component {
               node={node}
               contacts={contacts}
               graphResource={graphResource}
+              association={association}
               api={api}
               index={[...nodeIndex, index]}
               baseUrl={baseUrl}
@@ -83,6 +86,7 @@ export class PostFeed extends React.Component {
           node={node}
           contacts={contacts}
           graphResource={graphResource}
+          association={association}
           api={api}
           index={[index]}
           baseUrl={baseUrl}

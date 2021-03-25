@@ -83,6 +83,7 @@ function GraphPermalink(
       border="1"
       borderColor="lightGray"
       borderRadius="2"
+      onClick={(e) => { e.stopPropagation(); }}
     >
       {showTransclusion && (
         <Box p="2">

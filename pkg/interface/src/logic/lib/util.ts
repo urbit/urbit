@@ -29,6 +29,10 @@ export const getModuleIcon = (mod: string) => {
     return 'Collection';
   }
 
+  if (mod === 'post') {
+    return 'Spaces';
+  }
+
   return _.capitalize(mod);
 };
 

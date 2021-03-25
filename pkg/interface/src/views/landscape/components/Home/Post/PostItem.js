@@ -5,6 +5,8 @@ import { PostContent } from './PostContent';
 import { PostFooter } from './PostFooter';
 import { PostInput } from './PostInput';
 import { Mention } from "~/views/components/MentionText";
+import withState from '~/logic/lib/withState';
+import { useHovering } from '~/logic/lib/util';
 
 
 class PostItem extends React.Component {
@@ -44,11 +46,14 @@ class PostItem extends React.Component {
       contacts,
       api,
       graphResource,
+      association,
       index,
       innerRef,
       isParent,
       isReply,
-      parentPost
+      parentPost,
+      hovering,
+      bind
     } = this.props;
 
     let indexString = '';
@@ -74,9 +79,16 @@ class PostItem extends React.Component {
           borderRadius="2"
           width="100%"
           maxWidth="600px"
+          backgroundColor={ hovering ? 'washedGray' : 'transparent' }
           onClick={this.navigateToReplies}
-          cursor={isParent ? "default": "pointer"}>
-          <PostHeader post={node.post} contacts={contacts} api={api} isReply={isReply} />
+          cursor={isParent ? "default": "pointer"}
+          {...bind}>
+          <PostHeader
+            post={node.post}
+            contacts={contacts}
+            api={api}
+            association={association}
+            isReply={isReply} />
           { isReply ? (
             <Row width="100%" alignItems="center" mb="3">
               <Text color="gray" pr="1">Replying to</Text>
@@ -85,6 +97,8 @@ class PostItem extends React.Component {
           ) : null }
           <PostContent
             post={node.post}
+            isParent={isParent}
+            api={api}
             contacts={contacts} />
           <PostFooter
             replyCount={node.children.size}
@@ -109,7 +123,8 @@ class PostItem extends React.Component {
   }
 }
 
-export default React.forwardRef(
-  (props, ref) => <PostItem {...props} innerRef={ref} />
-);
+
+export default withState(PostItem, [
+  [useHovering, ['hovering', 'bind']],
+]);
 

@@ -12,7 +12,7 @@ export function PostReplies(props) {
     baseUrl,
     api,
     history,
-    associations,
+    association,
     groups,
     contacts,
     graphPath,
@@ -61,13 +61,14 @@ export function PostReplies(props) {
         key={0}
         width="100%"
         height="100%"
-        alignItems="center">
-        <Box width="100%" alignItems="center">
+        alignItems="center" overflowY="scroll">
+        <Box mt="3" width="100%" alignItems="center">
           <PostItem
             key={node.post.index}
             node={node}
             contacts={contacts}
             graphResource={graphResource}
+            association={association}
             api={api}
             index={nodeIndex}
             baseUrl={baseUrl}
@@ -99,7 +100,7 @@ export function PostReplies(props) {
         graph={graph}
         parentNode={node}
         pendingSize={pendingSize}
-        associations={associations}
+        association={association}
         groups={groups}
         contacts={contacts}
         api={api}
