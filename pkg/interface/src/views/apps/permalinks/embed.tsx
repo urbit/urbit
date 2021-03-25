@@ -33,7 +33,7 @@ function GroupPermalink(props: { group: string; api: GlobalApi }) {
       pl="2"
       border="1"
       borderRadius="2"
-      borderColor="washedGray"
+      borderColor="lightGray"
     />
   );
 }
@@ -125,7 +125,7 @@ function PermalinkDetails(props: {
   const rowTransclusionStyle = showTransclusion
     ? {
         borderTop: "1",
-        borderTopColor: "washedGray",
+        borderTopColor: "lightGray",
         my: "1",
       }
     : {};

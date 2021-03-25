@@ -15,7 +15,7 @@ export function ProfileHeader(props: any): ReactElement {
   return (
     <Box
       border='1px solid'
-      borderColor='washedGray'
+      borderColor='lightGray'
       borderRadius='3'
       overflow='hidden'
       marginBottom='calc(64px + 2rem)'
