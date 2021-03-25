@@ -12,7 +12,7 @@ const isUrl = (string) => {
 }
 
 const isRef = (str) => {
-  return isUrl(str) && str.startsWith("web+urbit-graph://");
+  return isUrl(str) && str.startsWith("web+urbitgraph://");
 }
 
 const tokenizeMessage = (text) => {

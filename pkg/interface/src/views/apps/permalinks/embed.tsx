@@ -144,7 +144,7 @@ function PermalinkDetails(props: {
           {title}
         </Text>
       </Row>
-      <Link to={`/perma${permalink.slice(11)}`}>
+      <Link to={`/perma${permalink.slice(16)}`}>
         <Text color="blue">Go to link</Text>
       </Link>
     </Row>

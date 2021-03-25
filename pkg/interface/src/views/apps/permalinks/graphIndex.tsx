@@ -8,7 +8,7 @@ export function getGraphPermalink(
   group: Group,
   index: string
 ) {
-  const mod = assoc.metadata.module;
+  const mod = assoc.metadata.config.graph;
   const groupPath = group.hidden
     ? "/~landscape/home"
     : `/~landscape${assoc.group}`;

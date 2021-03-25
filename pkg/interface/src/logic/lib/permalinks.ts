@@ -18,7 +18,7 @@ export function getPermalinkForGraph(
 
 function getPermalinkForAssociatedGroup(group: string) {
   const { ship, name } = resourceFromPath(group);
-  return `web+urbit-graph://group/${ship}/${name}`;
+  return `web+urbitgraph://group/${ship}/${name}`;
 }
 
 
@@ -49,7 +49,7 @@ function parseGraphPermalink(
   const graph = `/ship/${ship}/${name}`;
   return {
     type: "graph",
-    link: link.slice(11),
+    link: link.slice(16),
     graph,
     group,
     index: `/${index.join("/")}`,
@@ -77,14 +77,14 @@ export function permalinkToReference(link: Permalink): ReferenceContent {
 export function referenceToPermalink({ reference }: ReferenceContent): Permalink {
   if('graph' in reference) {
     const { graph, group, index } = reference.graph;
-    const link = `web+urbit-graph://group${group.slice(5)}/graph${graph.slice(5)}${index}`;
+    const link = `web+urbitgraph://group${group.slice(5)}/graph${graph.slice(5)}${index}`;
     return {
       type: 'graph',
       link,
       ...reference.graph
     };
   } else {
-    const link = `web+urbit-graph://group${reference.group.slice(5)}`;
+    const link = `web+urbitgraph://group${reference.group.slice(5)}`;
     return {
       type: 'group',
       link,
@@ -94,7 +94,7 @@ export function referenceToPermalink({ reference }: ReferenceContent): Permalink
 }
 
 export function parsePermalink(url: string): Permalink | null {
-  const [kind, ...rest] = url.slice(18).split("/");
+  const [kind, ...rest] = url.slice(17).split("/");
   if (kind === "group") {
     const [ship, name, ...graph] = rest;
     const group = `/ship/${ship}/${name}`;

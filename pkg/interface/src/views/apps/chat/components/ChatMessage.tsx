@@ -143,7 +143,7 @@ const MessageActionItem = (props) => {
 const MessageActions = ({ api, onReply, association, history, msg, group }) => {
   const isAdmin = () => group.tags.role.admin.has(window.ship);
   const isOwn = () => msg.author === window.ship;
-  const { doCopy, copyDisplay } = useCopy(`web+urbit-graph://group${association.group.slice(5)}/graph${association.resource.slice(5)}${msg.index}`, 'Copy Message Link');
+  const { doCopy, copyDisplay } = useCopy(`web+urbitgraph://group${association.group.slice(5)}/graph${association.resource.slice(5)}${msg.index}`, 'Copy Message Link');
 
   return (
     <Box

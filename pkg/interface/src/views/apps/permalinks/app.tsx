@@ -56,11 +56,11 @@ function FallbackRoutes(props: { query: URLSearchParams }) {
 
   if (query.has("ext")) {
     const ext = query.get("ext")!;
-    console.log(ext);
-    const url = `/perma${ext.slice(11)}`;
-    console.log(url);
+    const url = `/perma${ext.slice(15)}`;
     return <Redirect to={{ pathname: url }} />;
   }
+
+  console.log('aaaaa');
   return <Redirect to="/~404" />;
 }
 
@@ -91,7 +91,7 @@ function GroupRoutes(props: { group: string; url: string }) {
               return <Redirect
                 to={toQuery(
                   { auto: 'y', redir: location.pathname },
-                  `${groupUrl}/join/${association.metadata.module}${path}`
+                  `${groupUrl}/join/${association.metadata.config.graph}${path}`
                 )}
               />;
             }

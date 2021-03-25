@@ -1,5 +1,6 @@
 import React, { PureComponent, useCallback, useEffect, useRef, useState, useMemo } from 'react';
 import { Contact, Group, uxToHex } from '@urbit/api';
+import _ from 'lodash';
 import VisibilitySensor from 'react-visibility-sensor';
 import styled from 'styled-components';
 
@@ -30,10 +31,10 @@ import {getRelativePosition} from '~/logic/lib/relativePosition';
 export const OVERLAY_HEIGHT = 250;
 const FixedOverlay = styled(Col)`
   position: fixed;
-  -webkit-transition: all 0.2s ease-out;
-  -moz-transition: all 0.2s ease-out;
-  -o-transition: all 0.2s ease-out;
-  transition: all 0.2s ease-out;
+  -webkit-transition: all 0.1s ease-out;
+  -moz-transition: all 0.1s ease-out;
+  -o-transition: all 0.1s ease-out;
+  transition: all 0.1s ease-out;
 `;
 
 type ProfileOverlayProps = BoxProps & {
@@ -56,7 +57,7 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
   const innerRef = useRef<HTMLElement | null>(null);
   const hideAvatars = useSettingsState(state => state.calm.hideAvatars);
   const hideNicknames = useSettingsState(state => state.calm.hideNicknames);
-  const isOwn = useMemo(() => `~${window.ship}` === ship, [ship])
+  const isOwn = useMemo(() => `~${window.ship}` === ship, [ship]);
 
   const contact = useContact(ship)
   const color = uxToHex(contact?.color ?? '0x0');
@@ -97,7 +98,7 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
         ));
       }
     }
-    const updateCoords = _.throttle(_updateCoords, 50);
+    const updateCoords = _.throttle(_updateCoords, 25);
     updateCoords();
     const interval = setInterval(updateCoords, 300);
     window.addEventListener('scroll', updateCoords);
@@ -149,18 +150,6 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
         padding={3}
         justifyContent='center'
       >
-        <Row width='100%'>
-          <Text
-            fontWeight='600'
-            mono={!showNickname}
-            textOverflow='ellipsis'
-            overflow='hidden'
-            whiteSpace='pre'
-            marginBottom='0'
-          >
-            {showNickname ? contact?.nickname : cite(ship)}
-          </Text>
-        </Row>
         <Box
           alignSelf='center'
           height='72px'
