@@ -46,13 +46,14 @@ const ScrollbarLessBox = styled(Box)`
 const tutSelector = f.pick(['tutorialProgress', 'nextTutStep', 'hideGroups']);
 
 export default function LaunchApp(props) {
+  const connection = { props };
   const baseHash = useLaunchState(state => state.baseHash);
   const [hashText, setHashText] = useState(baseHash);
   const [exitingTut, setExitingTut] = useState(false);
   const seen = useSettingsState(s => s?.tutorial?.seen) ?? true;
   const associations = useMetadataState(s => s.associations);
   const contacts = useContactState(state => state.contacts);
-  const hasLoaded = useMemo(() => Object.keys(contacts).length > 0, [contacts]);
+  const hasLoaded = useMemo(() => Boolean(connection === "connected"), [connection]);
   const notificationsCount = useHarkState(state => state.notificationsCount);
   const calmState = useSettingsState(selectCalmState);
   const { hideUtilities } = calmState;
