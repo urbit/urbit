@@ -3,7 +3,7 @@ import { Box, Col, Row, Text } from '@tlon/indigo-react';
 import { PostHeader } from './PostHeader';
 import { PostContent } from './PostContent';
 import { PostFooter } from './PostFooter';
-import { PostInput } from './PostInput';
+import { PostInput } from '../PostInput';
 import { Mention } from "~/views/components/MentionText";
 import withState from '~/logic/lib/withState';
 import { useHovering } from '~/logic/lib/util';
@@ -86,7 +86,6 @@ class PostItem extends React.Component {
           {...bind}>
           <PostHeader
             post={node.post}
-            contacts={contacts}
             api={api}
             association={association}
             isReply={isReply} />
@@ -99,8 +98,7 @@ class PostItem extends React.Component {
           <PostContent
             post={node.post}
             isParent={isParent}
-            api={api}
-            contacts={contacts} />
+            api={api} />
           <PostFooter
             replyCount={node.children.size}
             toggleReplyMode={this.toggleReplyMode} /> 

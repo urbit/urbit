@@ -2,7 +2,7 @@ import React from 'react';
 import bigInt from 'big-integer';
 import { Text, Col, Box } from '@tlon/indigo-react'
 import { PostInput } from './PostInput';
-import PostItem from './PostItem';
+import PostItem from './PostItem/PostItem';
 import { PostFeed } from './PostFeed';
 import { Loading } from '~/views/components/Loading';
 import { resourceFromPath } from '~/logic/lib/group';

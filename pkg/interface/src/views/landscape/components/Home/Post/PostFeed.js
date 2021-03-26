@@ -1,7 +1,7 @@
 import React from 'react';
 import bigInt from 'big-integer';
 import VirtualScroller from "~/views/components/VirtualScroller";
-import PostItem from './PostItem';
+import PostItem from './PostItem/PostItem';
 import { Col } from '@tlon/indigo-react';
 import { resourceFromPath } from '~/logic/lib/group';
 
