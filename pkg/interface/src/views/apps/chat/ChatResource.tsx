@@ -1,9 +1,9 @@
 import React, { useRef, useCallback, useEffect, useState } from 'react';
-import { RouteComponentProps } from 'react-router-dom';
+import { RouteComponentProps, useHistory } from 'react-router-dom';
 import { Col } from '@tlon/indigo-react';
 import _ from 'lodash';
 
-import { Association } from '@urbit/api/metadata';
+import { Association } from '@urbit/api';
 import { StoreState } from '~/logic/store/type';
 import { useFileDrag } from '~/logic/lib/useDrag';
 import ChatWindow from './components/ChatWindow';
@@ -21,11 +21,11 @@ import useGraphState from '~/logic/state/graph';
 import useGroupState from '~/logic/state/group';
 import useHarkState from '~/logic/state/hark';
 
-type ChatResourceProps = StoreState & {
+type ChatResourceProps = {
   association: Association;
   api: GlobalApi;
   baseUrl: string;
-} & RouteComponentProps;
+};
 
 export function ChatResource(props: ChatResourceProps) {
   const station = props.association.resource;
@@ -77,14 +77,6 @@ export function ChatResource(props: ChatResourceProps) {
   );
 
   const scrollTo = new URLSearchParams(location.search).get('msg');
-
-  useEffect(() => {
-    const clear = () => {
-      props.history.replace(location.pathname);
-    };
-    setTimeout(clear, 10000);
-    return clear;
-  }, [station]);
 
   const [showBanner, setShowBanner] = useState(false);
   const [hasLoadedAllowed, setHasLoadedAllowed] = useState(false);
@@ -154,7 +146,6 @@ export function ChatResource(props: ChatResourceProps) {
       {dragging && <SubmitDragger />}
       <ChatWindow
         key={station}
-        history={props.history}
         graph={graph}
         graphSize={graph.size}
         unreadCount={unreadCount}

@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useCallback } from 'react';
 import Helmet from 'react-helmet';
 import { RouteComponentProps, Route, Switch } from 'react-router-dom';
 
@@ -11,35 +11,39 @@ import { StoreState } from '~/logic/store/type';
 import GlobalApi from '~/logic/api/global';
 import { ResourceSkeleton } from './ResourceSkeleton';
 import { ChannelPopoverRoutes } from './ChannelPopoverRoutes';
-import useGroupState from '~/logic/state/group';
+import useGroupState, {useGroupForAssoc} from '~/logic/state/group';
 import useContactState from '~/logic/state/contact';
 import useHarkState from '~/logic/state/hark';
-import useMetadataState from '~/logic/state/metadata';
+import useMetadataState, {useAssocForGraph, useAssocForWorkspace} from '~/logic/state/metadata';
+import {Workspace} from '~/types';
 
-type ResourceProps = StoreState & {
-  association: Association;
+type ResourceProps = {
+  resource: string;
   api: GlobalApi;
   baseUrl: string;
-} & RouteComponentProps;
+  workspace: Workspace;
+};
 
 export function Resource(props: ResourceProps): ReactElement {
-  const { association, api, notificationsGraphConfig } = props;
-  const groups = useGroupState(state => state.groups);
+  const { workspace, resource, api, baseUrl } = props;
+  const association = useAssocForGraph(resource)!;
+  const group = useGroupForAssoc(association)!;
+  const groupAssociation = useAssocForWorkspace(workspace);
   const notificationsCount = useHarkState(state => state.notificationsCount);
-  const associations = useMetadataState(state => state.associations);
   const contacts = useContactState(state => state.contacts);
   const app = association.metadata.module || association['app-name'];
   const rid = association.resource;
-  const selectedGroup = association.group;
-  const relativePath = (p: string) =>
-    `${props.baseUrl}/resource/${app}${rid}${p}`;
-  const skelProps = { api, association, groups, contacts };
-  let title = props.association.metadata.title;
-  if ('workspace' in props) {
-    if ('group' in props.workspace && props.workspace.group in associations.groups) {
-      title = `${associations.groups[props.workspace.group].metadata.title} - ${props.association.metadata.title}`;
-    }
+  const relativePath = useCallback(p => 
+    `${baseUrl}/resource/${app}${rid}${p}`,
+    [baseUrl, association]
+  );
+  const skelProps = { api, association, contacts };
+  const resourceProps = { api, association, baseUrl };
+  let title = association.metadata.title;
+  if (groupAssociation) {
+    title = `${groupAssociation.metadata.title} - ${title}`;
   }
+
   return (
     <>
       <Helmet defer={false}>
@@ -50,11 +54,11 @@ export function Resource(props: ResourceProps): ReactElement {
         baseUrl={relativePath('')}
       >
         {app === 'chat' ? (
-          <ChatResource {...props} />
+          <ChatResource {...resourceProps} />
         ) : app === 'publish' ? (
-          <PublishResource {...props} />
+          <PublishResource {...resourceProps} />
         ) : (
-          <LinkResource {...props} />
+          <LinkResource {...resourceProps} />
         )}
       </ResourceSkeleton>
       <Switch>
@@ -64,8 +68,8 @@ export function Resource(props: ResourceProps): ReactElement {
             return (
               <ChannelPopoverRoutes
                 association={association}
-                group={groups?.[selectedGroup]}
-                api={props.api}
+                group={group}
+                api={api}
                 baseUrl={relativePath('')}
                 rootUrl={props.baseUrl}
               />
@@ -76,3 +80,5 @@ export function Resource(props: ResourceProps): ReactElement {
     </>
   );
 }
+
+Resource.whyDidYouRender = true;

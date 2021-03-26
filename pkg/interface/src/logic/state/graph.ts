@@ -1,6 +1,7 @@
-import { Graphs, decToUd, numToUd } from "@urbit/api";
+import { Graphs, decToUd, numToUd, Graph } from "@urbit/api";
 
 import { BaseState, createState } from "./base";
+import {useCallback} from "react";
 
 export interface GraphState extends BaseState<GraphState> {
   graphs: Graphs;
@@ -17,6 +18,10 @@ export interface GraphState extends BaseState<GraphState> {
   // getGraphSubset: (ship: string, resource: string, start: string, end: string) => Promise<void>;
   // getNode: (ship: string, resource: string, index: string) => Promise<void>;
 };
+
+export function useGraph(resource: string): Graph | undefined {
+  return useGraphState(useCallback(s => s.graphs[resource], [resource]));
+}
 
 const useGraphState = createState<GraphState>('Graph', {
   graphs: {},

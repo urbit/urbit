@@ -11,9 +11,10 @@ import {
 } from './StatelessAsyncButton';
 import { Graphs } from '@urbit/api';
 import useGraphState from '~/logic/state/graph';
+import {useAssocForGraph} from '~/logic/state/metadata';
 
 interface UnjoinedResourceProps {
-  association: Association;
+  resource: string;
   api: GlobalApi;
   baseUrl: string;
 }
@@ -31,13 +32,14 @@ function isJoined(path: string) {
 export function UnjoinedResource(props: UnjoinedResourceProps) {
   const { api } = props;
   const history = useHistory();
-  const rid = props.association.resource;
-  const appName = props.association['app-name'];
-  const { title, description, module: mod } = props.association.metadata;
+  const association = useAssocForGraph(props.resource)!;
+  const rid = association.resource;
+  const appName = association['app-name'];
+  const { title, description, module: mod } = association.metadata;
   const graphKeys = useGraphState(state => state.graphKeys);
 
   const waiter = useWaitForProps({...props, graphKeys });
-  const app = useMemo(() => mod || appName, [props.association]);
+  const app = useMemo(() => mod || appName, [association]);
 
   const onJoin = async () => {
     const [, , ship, name] = rid.split('/');
@@ -50,7 +52,7 @@ export function UnjoinedResource(props: UnjoinedResourceProps) {
     if (isJoined(rid)({ graphKeys })) {
       history.push(`${props.baseUrl}/resource/${app}${rid}`);
     }
-  }, [props.association, graphKeys]);
+  }, [association, graphKeys]);
 
   return (
     <Center p={6}>

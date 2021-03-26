@@ -39,31 +39,19 @@ export const Content = (props) => {
           exact
           path='/'
           render={p => (
-            <LaunchApp
-              history={p.history}
-              location={p.location}
-              match={p.match}
-              {...props} />
+            <LaunchApp {...props} />
           )}
         />
         <Route
           path='/~term'
           render={p => (
-            <TermApp
-              history={p.history}
-              location={p.location}
-              match={p.match}
-              {...props} />
+            <TermApp {...props} />
           )}
         />
         <Route
           path='/~landscape'
-          render={p => (
-            <Landscape
-              history={p.history}
-              location={p.location}
-              match={p.match}
-              {...props} />
+          render={() => (
+            <Landscape {...props} />
           )}
         />
         <Route
@@ -77,9 +65,7 @@ export const Content = (props) => {
         <Route
           path="/~settings"
           render={ p => (
-            <Settings
-             {...props}
-            />
+            <Settings {...props} />
           )}
         />
         <Route

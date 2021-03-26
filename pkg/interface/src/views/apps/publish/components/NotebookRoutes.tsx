@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { RouteComponentProps, Route, Switch } from 'react-router-dom';
 import GlobalApi from '~/logic/api/global';
 import {
@@ -17,47 +17,41 @@ import bigInt from 'big-integer';
 import Notebook from './Notebook';
 import NewPost from './new-post';
 import { NoteRoutes } from './NoteRoutes';
-import useGraphState from '~/logic/state/graph';
-import useGroupState from '~/logic/state/group';
+import useGraphState, {useGraph} from '~/logic/state/graph';
+import useGroupState, {useGroupForAssoc} from '~/logic/state/group';
 
 interface NotebookRoutesProps {
   api: GlobalApi;
-  ship: string;
-  book: string;
   baseUrl: string;
   rootUrl: string;
   association: Association;
 }
 
-export function NotebookRoutes(
-  props: NotebookRoutesProps & RouteComponentProps
-) {
-  const { ship, book, api, baseUrl, rootUrl } = props;
+export function NotebookRoutes(props: NotebookRoutesProps) {
+  const { association, api, baseUrl, rootUrl } = props;
+  const [,,ship,book] = association.resource.split('/');
 
   useEffect(() => {
     ship && book && api.graph.getGraph(ship, book);
   }, [ship, book]);
 
-  const graphs = useGraphState(state => state.graphs);
 
-  const graph = graphs[`${ship.slice(1)}/${book}`];
+  const graph = useGraph(`${ship.slice(1)}/${book}`)!;
+  const group = useGroupForAssoc(association)!;
 
-  const groups = useGroupState(state => state.groups);
-
-  const group = groups?.[props.association?.group];
-
-  const relativePath = (path: string) => `${baseUrl}${path}`;
+  const relativePath = useCallback((path: string) => `${baseUrl}${path}`, [baseUrl]);
   return (
     <Switch>
       <Route
         path={baseUrl}
         exact
-        render={(routeProps) => {
+        render={() => {
           if (!graph) {
             return <Center height="100%"><LoadingSpinner /></Center>;
           }
           return <Notebook
-            {...props}
+            ship={ship}
+            name={book}
             graph={graph}
             association={props.association}
             rootUrl={rootUrl}
@@ -67,9 +61,8 @@ export function NotebookRoutes(
       />
       <Route
         path={relativePath('/new')}
-        render={routeProps => (
+        render={() => (
           <NewPost
-            {...routeProps}
             api={api}
             book={book}
             ship={ship}

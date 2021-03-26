@@ -1,4 +1,4 @@
-import React, { useEffect, ReactNode } from 'react';
+import React, { useEffect, ReactNode, useCallback } from 'react';
 import {
   Switch,
   Route,
@@ -28,32 +28,25 @@ import { getGroupFromWorkspace } from '~/logic/lib/workspace';
 import { GroupSummary } from './GroupSummary';
 import { Workspace } from '~/types/workspace';
 import useContactState from '~/logic/state/contact';
-import useGroupState from '~/logic/state/group';
+import useGroupState, {useGroupForAssoc} from '~/logic/state/group';
 import useHarkState from '~/logic/state/hark';
-import useMetadataState from '~/logic/state/metadata';
+import useMetadataState, {useAssocForWorkspace} from '~/logic/state/metadata';
+import { ConnectionStatus } from '~/types';
 
-type GroupsPaneProps = StoreState & {
+type GroupsPaneProps = {
   baseUrl: string;
   workspace: Workspace;
   api: GlobalApi;
+  connection: ConnectionStatus;
 };
 
 export function GroupsPane(props: GroupsPaneProps) {
   const { baseUrl, api, workspace } = props;
-  const associations = useMetadataState(state => state.associations);
-  const contacts = useContactState(state => state.contacts);
+  const groupAssociation = useAssocForWorkspace(workspace)
   const notificationsCount = useHarkState(state => state.notificationsCount);
-  const relativePath = (path: string) => baseUrl + path;
-  const groupPath = getGroupFromWorkspace(workspace);
-  const groups = useGroupState(state => state.groups);
+  const group = useGroupForAssoc(groupAssociation)
+  const relativePath = useCallback(p => `${baseUrl}${p}`, [baseUrl]);
 
-  const groupContacts = Object.assign({}, ...Array.from(groups?.[groupPath]?.members ?? []).filter(e => contacts[`~${e}`]).map(e => {
-      return {[e]: contacts[`~${e}`]};
-  })) || {};
-  const rootIdentity = contacts?.["/~/default"]?.[window.ship];
-  const groupAssociation =
-    (groupPath && associations.groups[groupPath]) || undefined;
-  const group = (groupPath && groups[groupPath]) || undefined;
   const [recentGroups, setRecentGroups] = useLocalStorageState<string[]>(
     'recent-groups',
     []
@@ -66,20 +59,17 @@ export function GroupsPane(props: GroupsPaneProps) {
     setRecentGroups(gs => _.uniq([workspace.group, ...gs]));
   }, [workspace]);
 
-  if (!(associations && (groupPath ? groupPath in groups : true))) {
+  if (workspace.type === 'group' && !groupAssociation) {
     return null;
   }
 
   const popovers = (routeProps: RouteComponentProps, baseUrl: string) =>
      ( <>
-        {groupPath && ( <PopoverRoutes
-          contacts={groupContacts || {}}
-          rootIdentity={rootIdentity}
+     {groupAssociation && 
+       ( <PopoverRoutes
           association={groupAssociation!}
           group={group!}
           api={api}
-
-          {...routeProps}
           baseUrl={baseUrl}
                         />)}
         <InvitePopover
@@ -104,12 +94,8 @@ export function GroupsPane(props: GroupsPaneProps) {
           const appName = app as AppName;
 
           const resource = `/ship/${host}/${name}`;
-          const association = associations.graph[resource];
           const resourceUrl = `${baseUrl}/resource/${app}${resource}`;
 
-          if (!association) {
-            return <Loading />;
-          }
 
           return (
             <Skeleton
@@ -121,9 +107,9 @@ export function GroupsPane(props: GroupsPaneProps) {
               baseUrl={resourceUrl}
             >
               <Resource
-                {...props}
-                {...routeProps}
-                association={association}
+                workspace={workspace}
+                api={api}
+                resource={resource}
                 baseUrl={baseUrl}
               />
               {popovers(routeProps, resourceUrl)}
@@ -136,20 +122,12 @@ export function GroupsPane(props: GroupsPaneProps) {
         render={(routeProps) => {
           const { app, host, name } = routeProps.match.params;
           const appPath = `/ship/${host}/${name}`;
-          const association = associations.graph[appPath];
           const resourceUrl = `${baseUrl}/join/${app}${appPath}`;
           let title = groupAssociation?.metadata?.title ?? 'Landscape';
 
-          if (!association) {
-            return <Loading />;
-          }
 
-          title += ` - ${association.metadata.title}`;
           return (
             <>
-              <Helmet defer={false}>
-                <title>{notificationsCount ? `(${String(notificationsCount)}) ` : ''}{ title }</title>
-              </Helmet>
               <Skeleton
                 recentGroups={recentGroups}
                 mobileHide
@@ -160,7 +138,7 @@ export function GroupsPane(props: GroupsPaneProps) {
                 <UnjoinedResource
                   baseUrl={baseUrl}
                   api={api}
-                  association={association}
+                  resource={appPath}
                 />
                 {popovers(routeProps, resourceUrl)}
               </Skeleton>

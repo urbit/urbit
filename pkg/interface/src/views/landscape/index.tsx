@@ -67,6 +67,12 @@ export function DMRedirect(props: LandscapeProps & RouteComponentProps & { ship:
   );
 }
 
+const makeGroupWorkspace = _.memoize(
+  (group: string): Workspace => ({ type: 'group', group })
+);
+const messagesWorkspace: Workspace = { type: 'messages' };
+const myChannelWorkspace: Workspace = { type: 'home' };
+
 class Landscape extends Component<LandscapeProps, Record<string, never>> {
   componentDidMount(): void {
     this.props.subscription.startApp('groups');
@@ -90,7 +96,7 @@ class Landscape extends Component<LandscapeProps, Record<string, never>> {
               } = routeProps.match.params as Record<string, string>;
               const groupPath = `/ship/${host}/${name}`;
               const baseUrl = `/~landscape${groupPath}`;
-              const ws: Workspace = { type: 'group', group: groupPath };
+              const ws = makeGroupWorkspace(groupPath);
 
               return (
                 <GroupsPane workspace={ws} baseUrl={baseUrl} {...props} />
@@ -99,17 +105,23 @@ class Landscape extends Component<LandscapeProps, Record<string, never>> {
           />
           <Route path="/~landscape/home"
             render={() => {
-              const ws: Workspace = { type: 'home' };
               return (
-                <GroupsPane workspace={ws} baseUrl="/~landscape/home" {...props} />
+                <GroupsPane
+                  workspace={myChannelWorkspace}
+                  baseUrl="/~landscape/home" 
+                  {...props} 
+                />
               );
             }}
           />
           <Route path="/~landscape/messages"
             render={() => {
-              const ws: Workspace = { type: 'messages' };
               return (
-                <GroupsPane workspace={ws} baseUrl="/~landscape/messages" {...props} />
+                <GroupsPane
+                  workspace={messagesWorkspace}
+                  baseUrl="/~landscape/messages" 
+                  {...props}
+                />
               );
             }}
           />

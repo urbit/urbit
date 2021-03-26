@@ -13,17 +13,17 @@ import { Comments } from '~/views/components/Comments';
 
 import './css/custom.css';
 import { Association } from '@urbit/api/metadata';
-import useGraphState from '~/logic/state/graph';
+import useGraphState, {useGraph} from '~/logic/state/graph';
 import useMetadataState from '~/logic/state/metadata';
-import useGroupState from '../../../logic/state/group';
+import useGroupState, {useGroupForAssoc} from '../../../logic/state/group';
 
 const emptyMeasure = () => {};
 
-type LinkResourceProps = StoreState & {
+type LinkResourceProps = {
   association: Association;
   api: GlobalApi;
   baseUrl: string;
-} & RouteComponentProps;
+};
 
 export function LinkResource(props: LinkResourceProps) {
   const {
@@ -35,18 +35,12 @@ export function LinkResource(props: LinkResourceProps) {
   const rid = association.resource;
 
   const relativePath = (p: string) => `${baseUrl}/resource/link${rid}${p}`;
-  const associations = useMetadataState(state => state.associations);
 
   const [, , ship, name] = rid.split('/');
   const resourcePath = `${ship.slice(1)}/${name}`;
-  const resource = associations.graph[rid]
-    ? associations.graph[rid]
-    : { metadata: {} };
-  const groups = useGroupState(state => state.groups);
-  const group = groups[resource?.group] || {};
+  const group = useGroupForAssoc(association)!;
 
-  const graphs = useGraphState(state => state.graphs);
-  const graph = graphs[resourcePath] || null;
+  const graph = useGraph(resourcePath);
   const graphTimesentMap = useGraphState(state => state.graphTimesentMap);
 
   useEffect(() => {
@@ -68,12 +62,12 @@ export function LinkResource(props: LinkResourceProps) {
             return (
               <LinkWindow
                 key={rid}
-                association={resource}
+                association={association}
                 resource={resourcePath}
                 graph={graph}
                 baseUrl={resourceUrl}
                 group={group}
-                path={resource.group}
+                path={association.group}
                 pendingSize={Object.keys(graphTimesentMap[resourcePath] || {}).length}
                 api={api}
                 mb={3}
@@ -106,7 +100,7 @@ export function LinkResource(props: LinkResourceProps) {
                   node={node}
                   baseUrl={resourceUrl}
                   group={group}
-                  path={resource?.group}
+                  path={association?.group}
                   api={api}
                   mt={3}
                   measure={emptyMeasure}

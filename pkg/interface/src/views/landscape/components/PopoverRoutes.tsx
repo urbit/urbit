@@ -1,5 +1,5 @@
 import React, { useRef, useCallback, ReactElement } from 'react';
-import { Route, Switch, RouteComponentProps, Link } from 'react-router-dom';
+import { Route, Switch, RouteComponentProps, Link, useHistory } from 'react-router-dom';
 import { Box,  Col, Text } from '@tlon/indigo-react';
 
 import { GroupNotificationsConfig, Associations } from '@urbit/api';
@@ -23,16 +23,18 @@ export function PopoverRoutes(
     group: Group;
     association: Association;
     api: GlobalApi;
-    notificationsGroupConfig: GroupNotificationsConfig;
-    rootIdentity: Contact;
-  } & RouteComponentProps
+  } 
 ): ReactElement {
-  const relativeUrl = (url: string) => `${props.baseUrl}/popover${url}`;
+  const relativeUrl = useCallback(
+    (url: string) => `${props.baseUrl}/popover${url}`, 
+    [props.baseUrl]
+  );
+  const history = useHistory();
   const innerRef = useRef(null);
 
   const onDismiss = useCallback(() => {
-    props.history.push(props.baseUrl);
-  }, [props.history.push, props.baseUrl]);
+    history.push(props.baseUrl);
+  }, [history.push, props.baseUrl]);
 
   useHashLink();
 
