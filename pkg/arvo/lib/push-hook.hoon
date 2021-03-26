@@ -334,9 +334,11 @@
         ^-  (unit (unit cage))
         ?:  =(/x/dbug/state path)
           ``noun+(slop !>(state(inner-state *vase)) on-save:og)
-        ?.  =(/x/sharing path)
-          (on-peek:og path)
-        ``noun+!>(sharing)
+        ?+  path  (on-peek:og path)
+          [%x %sharing ~]  ``noun+!>(sharing)
+          [%x %version ~]  ``version+!>(version.config)
+          [%x %min-version ~]  ``version+!>(version.config)
+        ==
     --
   |_  =bowl:gall
   +*  og   ~(. push-hook bowl)
