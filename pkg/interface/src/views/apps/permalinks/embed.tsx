@@ -80,6 +80,7 @@ function GraphPermalink(
       width="100%"
       my="1"
       bg="white"
+      maxWidth="500px"
       border="1"
       borderColor="lightGray"
       borderRadius="2"

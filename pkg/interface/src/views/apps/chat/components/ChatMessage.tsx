@@ -589,6 +589,7 @@ export const Message = ({
                   fontSize={1}
                   lineHeight='20px'
                   color='black'
+                  maxWidth="500px"
                 >
                   <RemoteContent
                     key={content.url}
@@ -610,8 +611,6 @@ export const Message = ({
                     textProps={{
                       style: {
                         fontSize: 'inherit',
-                        borderBottom: '1px solid',
-                        textDecoration: 'none'
                       }
                     }}
                   />

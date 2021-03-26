@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { BaseAnchor, BaseImage, Box, Button, Text } from '@tlon/indigo-react';
+import { BaseAnchor, BaseImage, Box, Button, Text, Row, Icon } from '@tlon/indigo-react';
 import { hasProvider } from 'oembed-parser';
 import EmbedContainer from 'react-oembed-container';
 import useSettingsState from '~/logic/state/settings';
@@ -125,26 +125,27 @@ return;
 
   wrapInLink(contents) {
     const { style } = this.props;
-    if(this.props.url.startsWith('arvo://')) {
-      return (
-        <Link to={this.props.url.slice(6)}>
-          {contents}
-        </Link>
-      );
-
-    }
-    return (<BaseAnchor
-      onClick={(e) => { e.stopPropagation(); }}
-      href={this.props.url}
-      flexShrink={0}
-      style={{ color: 'inherit', textDecoration: 'none', ...style }}
-      className={`word-break-all ${(typeof contents === 'string') ? 'bb' : ''}`}
-      target="_blank"
-      width="100%"
-      rel="noopener noreferrer"
-            >
-      {contents}
-    </BaseAnchor>);
+    return (
+      <Row gapX="1" borderRadius="1" p="1" backgroundColor="washedGray">
+        <Icon display="block" icon="ArrowExternal" />
+        <BaseAnchor
+        display="block"
+        onClick={(e) => { e.stopPropagation(); }}
+        href={this.props.url}
+        flexShrink={0}
+        whiteSpace="nowrap"
+        overflow="hidden"
+        textOverflow="ellipsis"
+        width="calc(100% - 24px)"
+        style={{ color: 'inherit', textDecoration: 'none', ...style }}
+        className="word-break-all"
+        target="_blank"
+        rel="noopener noreferrer"
+              >
+        {contents}
+      </BaseAnchor>
+    </Row>
+    );
   }
 
   onError(e: Event) {
