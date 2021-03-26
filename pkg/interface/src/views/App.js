@@ -178,6 +178,7 @@ class App extends React.Component {
                 ship={this.ship}
                 api={this.api}
                 subscription={this.subscription}
+                connection={this.state.connection}
               />
             </ErrorBoundary>
           </Router>
