@@ -93,7 +93,7 @@ export function PostReplies(props) {
   }
 
   return (
-    <Box height="100%" width="100%" alignItems="center" pl="1" pt="3">
+    <Box height="calc(100% - 48px)" width="100%" alignItems="center" pl="1" pt="3">
       <PostFeed
         key={locationUrl}
         graphResource={graphResource}
