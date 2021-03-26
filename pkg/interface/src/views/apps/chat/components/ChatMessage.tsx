@@ -535,6 +535,7 @@ export const Message = ({
   scrollWindow,
   timestampHover,
   transcluded,
+  showOurContact,
   ...rest
 }) => {
   const { hovering, bind } = useHovering();
@@ -579,6 +580,7 @@ export const Message = ({
                   link={link}
                   api={api}
                   transcluded={transcluded}
+                  showOurContact={showOurContact}
                 />
               );
             case 'url':

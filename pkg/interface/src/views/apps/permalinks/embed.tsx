@@ -43,9 +43,10 @@ function GraphPermalink(
     api: GlobalApi;
     transcluded: number;
     pending?: boolean;
+    showOurContact?: boolean;
   }
 ) {
-  const { pending, link, graph, group, index, api, transcluded } = props;
+  const { showOurContact, pending, link, graph, group, index, api, transcluded } = props;
   const { ship, name } = resourceFromPath(graph);
   const node = useGraphState(
     useCallback((s) => s.looseNodes?.[`${ship.slice(1)}/${name}`]?.[index], [
@@ -93,6 +94,7 @@ function GraphPermalink(
             transcluded={transcluded + 1}
             node={node}
             assoc={association!}
+            showOurContact={showOurContact}
           />
         </Box>
       )}
@@ -158,6 +160,7 @@ export function PermalinkEmbed(props: {
   association?: Association;
   api: GlobalApi;
   transcluded: number;
+  showOurContact?: boolean;
 }) {
   const permalink = parsePermalink(props.link);
 
@@ -174,6 +177,7 @@ export function PermalinkEmbed(props: {
           transcluded={props.transcluded}
           {...permalink}
           api={props.api}
+          showOurContact={props.showOurContact}
         />
       );
   }
