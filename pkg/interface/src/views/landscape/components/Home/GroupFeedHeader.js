@@ -15,7 +15,7 @@ export function GroupFeedHeader(props) {
     historyLocation === `${baseUrl}/feed`;
 
   const locationUrl =
-    history.location.pathname.replace(`${baseUrl}`, '').replace(/^\/[a-z]*/, '');
+    history.location.pathname.replace(`${baseUrl}`, '').replace(/^\/[a-z|\/]*/, '');
   let nodeIndex = locationUrl.split('/').slice(1).map((ind) => {
     return bigInt(ind);
   });
