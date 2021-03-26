@@ -45,17 +45,16 @@ Most parts of Arvo have dedicated maintainers.
 * `/sys/vane/ames`: @belisarius222 (~rovnys-ricfer) & @philipcmonk (~wicdev-wisryt)
 * `/sys/vane/behn`: @belisarius222 (~rovnys-ricfer)
 * `/sys/vane/clay`: @philipcmonk (~wicdev-wisryt) & @belisarius222 (~rovnys-ricfer)
-* `/sys/vane/dill`: @joemfb (~master-morzod)
-* `/sys/vane/eyre`: @eglaysher (~littel-ponnys)
+* `/sys/vane/dill`: @fang- (~palfun-foslup)
+* `/sys/vane/eyre`: @fang- (~palfun-foslup)
 * `/sys/vane/gall`: @philipcmonk (~wicdev-wisryt)
 * `/sys/vane/jael`: @fang- (~palfun-foslup) & @philipcmonk (~wicdev-wisryt)
 * `/app/acme`: @joemfb (~master-morzod)
 * `/app/dns`: @joemfb (~master-morzod)
 * `/app/aqua`: @philipcmonk (~wicdev-wisryt)
 * `/app/hood`: @belisarius222 (~rovnys-ricfer)
-* `/lib/hood/drum`: @philipcmonk (~wicdev-wisryt)
+* `/lib/hood/drum`: @fang- (~palfun-foslup)
 * `/lib/hood/kiln`: @philipcmonk (~wicdev-wisryt)
-* `/lib/test`: @eglaysher (~littel-ponnys)
 
 ## Contributing
 
