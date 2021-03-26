@@ -99,7 +99,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.kno_w = DefaultKernel;
 
   while ( -1 != (ch_i=getopt(argc, argv,
-                 "X:Y:G:J:B:K:A:H:I:C:w:u:e:F:k:n:p:r:i:Z:LljacdgqstvxPDRS")) )
+                 "X:Y:G:J:B:b:K:A:H:I:C:w:u:e:F:k:n:p:r:i:Z:LljacdgqstvxPDRS")) )
   {
     switch ( ch_i ) {
       case 'X': {
@@ -120,6 +120,10 @@ _main_getopt(c3_i argc, c3_c** argv)
       }
       case 'B': {
         u3_Host.ops_u.pil_c = strdup(optarg);
+        break;
+      }
+      case 'b': {
+        u3_Host.ops_u.bin_c = strdup(optarg);
         break;
       }
       case 'G': {
@@ -302,6 +306,12 @@ _main_getopt(c3_i argc, c3_c** argv)
     return c3n;
   }
 
+  struct sockaddr_in t;
+  if ( u3_Host.ops_u.bin_c != 0 && inet_aton(u3_Host.ops_u.bin_c, &t.sin_addr) == 0 ) {
+    fprintf(stderr, "-b invalid IP address\n");
+    return c3n;
+  }
+
   if ( u3_Host.ops_u.nuu != c3y && u3_Host.ops_u.dns_c != 0) {
     fprintf(stderr, "-H only makes sense when bootstrapping a new instance\n");
     return c3n;
@@ -402,6 +412,7 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "\n",
     "-A dir        Use dir for initial clay sync\n",
     "-B pill       Bootstrap from this pill\n",
+    "-b ip         Bind HTTP server to this IP address\n",
     "-C limit      Set memo cache max size; 0 means uncapped\n",
     "-c pier       Create a new urbit in pier/\n",
     "-D            Recompute from events\n",
