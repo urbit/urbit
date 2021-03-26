@@ -49,7 +49,18 @@ export default function LaunchApp(props) {
   const baseHash = useLaunchState(state => state.baseHash);
   const [hashText, setHashText] = useState(baseHash);
   const [exitingTut, setExitingTut] = useState(false);
+  const seen = useSettingsState(s => s?.tutorial?.seen) ?? true;
   const associations = useMetadataState(s => s.associations);
+  const contacts = useContactState(state => state.contacts);
+  const hasLoaded = useMemo(() => Object.keys(contacts).length > 0, [contacts]);
+  const notificationsCount = useHarkState(state => state.notificationsCount);
+  const calmState = useSettingsState(selectCalmState);
+  const { hideUtilities } = calmState;
+  const { tutorialProgress, nextTutStep } = useLocalState(tutSelector);
+  let { hideGroups } = useLocalState(tutSelector);
+  !hideGroups ? { hideGroups } = calmState : null;
+
+  const waiter = useWaitForProps({ ...props, associations });
   const hashBox = (
     <Box
       position={["relative", "absolute"]}
@@ -87,14 +98,6 @@ export default function LaunchApp(props) {
       }
     }
   }, [query]);
-
-  const calmState = useSettingsState(selectCalmState);
-  const { hideUtilities } = calmState;
-  const { tutorialProgress, nextTutStep } = useLocalState(tutSelector);
-  let { hideGroups } = useLocalState(tutSelector);
-  !hideGroups ? { hideGroups } = calmState : null;
-
-  const waiter = useWaitForProps({ ...props, associations });
 
   const { modal, showModal } = useModal({
     position: 'relative',
@@ -141,14 +144,14 @@ export default function LaunchApp(props) {
           </Box>
           <Text mb="3" lineHeight="tall" fontWeight="medium">Welcome</Text>
           <Text mb="3" lineHeight="tall">
-            You have been invited to use Landscape, an interface to chat 
+            You have been invited to use Landscape, an interface to chat
             and interact with communities
             <br />
             Would you like a tour of Landscape?
           </Text>
           <Row gapX="2" justifyContent="flex-end">
             <Button
-              backgroundColor="washedGray" 
+              backgroundColor="washedGray"
               onClick={() => setExitingTut(true)}
             >Skip</Button>
             <StatelessAsyncButton primary onClick={onContinue}>
@@ -158,17 +161,12 @@ export default function LaunchApp(props) {
         </Col>
       )}
   });
-  const contacts = useContactState(state => state.contacts);
-  const hasLoaded = useMemo(() => Object.keys(contacts).length > 0, [contacts]);
-
-  const notificationsCount = useHarkState(state => state.notificationsCount);
 
   useEffect(() => {
-    const seenTutorial = _.get(props.settings, ['tutorial', 'seen'], true);
-    if(hasLoaded && !seenTutorial && tutorialProgress === 'hidden') {
+    if(hasLoaded && !seen && tutorialProgress === 'hidden') {
       showModal();
     }
-  }, [props.settings, hasLoaded]);
+  }, [seen, hasLoaded]);
 
   return (
     <>
