@@ -16,6 +16,7 @@ import { resourceFromPath } from '~/logic/lib/group';
 import { ModalOverlay } from '~/views/components/ModalOverlay';
 import { SidebarItem } from '~/views/landscape/components/SidebarItem';
 import { StorageState } from '~/types';
+import BackButton from '~/views/components/BackButton';
 
 export function PopoverRoutes(
   props: {
@@ -112,9 +113,7 @@ export function PopoverRoutes(
                   p={2}
                   display={['auto', 'none']}
                 >
-                  <Link to={view ? relativeUrl('') : props.baseUrl}>
-                    <Text>{'<- Back'}</Text>
-                  </Link>
+                  <BackButton to={view ? relativeUrl('') : props.baseUrl} />
                 </Box>
                 <Box overflow="hidden">
                   {view === 'settings' && (

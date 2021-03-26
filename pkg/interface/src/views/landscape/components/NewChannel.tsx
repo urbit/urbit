@@ -23,6 +23,7 @@ import { IconRadio } from '~/views/components/IconRadio';
 import { ChannelWriteFieldSchema, ChannelWritePerms } from './ChannelWritePerms';
 import { Workspace } from '~/types/workspace';
 import useGroupState from '~/logic/state/group';
+import BackButton from '~/views/components/BackButton';
 
 type FormSchema = {
   name: string;
@@ -114,13 +115,11 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps): ReactE
 
   return (
     <Col overflowY="auto" p={3} backgroundColor="white">
-      <Box
-        pb='3'
-        display={workspace?.type === 'messages' ? 'none' : ['block', 'none']}
-        onClick={() => history.push(props.baseUrl)}
-      >
-        <Text>{'<- Back'}</Text>
-      </Box>
+      <BackButton
+        pb={3}
+        display={workspace?.type === 'messages' ? 'none' : ['flex', 'none']}
+        to={props.baseUrl}
+      />
       <Box>
         <Text fontSize={2} bold>{workspace?.type === 'messages' ? 'Direct Message' : 'New Channel'}</Text>
       </Box>
