@@ -57,10 +57,10 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
   const innerRef = useRef<HTMLElement | null>(null);
   const hideAvatars = useSettingsState(state => state.calm.hideAvatars);
   const hideNicknames = useSettingsState(state => state.calm.hideNicknames);
-  const isOwn = useMemo(() => `~${window.ship}` === ship, [ship]);
+  const isOwn = useMemo(() => window.ship === ship, [ship]);
 
-  const contact = useContact(ship)
-  const color = uxToHex(contact?.color ?? '0x0');
+  const contact = useContact(`~${ship}`)
+  const color = `#${uxToHex(contact?.color ?? '0x0')}`;
   const showNickname = useShowNickname(contact, hideNicknames);
 
   const setClosed = useCallback(() => {
