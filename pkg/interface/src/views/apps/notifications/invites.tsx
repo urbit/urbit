@@ -71,7 +71,6 @@ export function Invites(props: InvitesProps): ReactElement {
         .map((resource) => {
           const inviteOrStatus = invitesAndStatus[resource];
           const join = pendingJoin[resource];
-          if (typeof inviteOrStatus === 'string') {
           if ('progress' in inviteOrStatus) {
            return (
              <InviteItem
@@ -94,7 +93,6 @@ export function Invites(props: InvitesProps): ReactElement {
               />
               );
           }
-        }
         })
       }
     </>

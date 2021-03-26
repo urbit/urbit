@@ -34,11 +34,11 @@ export class PostFeed extends React.Component {
       if (!node || !post) {
         return null;
       }
-     
+      let nodeIndex = parentNode ? parentNode.post.index.split('/').slice(1).map((ind) => {
+        return bigInt(ind);
+      }) : [];
+
       if (parentNode && index.eq(first ?? bigInt.zero)) {
-        let nodeIndex = parentNode.post.index.split('/').slice(1).map((ind) => {
-          return bigInt(ind);
-        });
 
         return (
           <React.Fragment key={index.toString()}>
@@ -88,7 +88,7 @@ export class PostFeed extends React.Component {
           graphResource={graphResource}
           association={association}
           api={api}
-          index={[index]}
+          index={[...nodeIndex, index]}
           baseUrl={baseUrl}
           history={history}
           parentPost={parentNode?.post}

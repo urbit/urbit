@@ -129,8 +129,9 @@ export function TranscludedNode(props: {
   node: GraphNode;
   transcluded: number;
   api: GlobalApi;
+  showOurContact?: boolean;
 }) {
-  const { node, assoc, transcluded } = props;
+  const { node, showOurContact, assoc, transcluded } = props;
   const group = useGroupForAssoc(assoc)!;
   switch (assoc.metadata.config.graph) {
     case "chat":
@@ -148,6 +149,7 @@ export function TranscludedNode(props: {
             fontSize="0"
             ml="0"
             mr="0"
+            showOurContact={showOurContact}
             pt="2"
           />
         </Row>

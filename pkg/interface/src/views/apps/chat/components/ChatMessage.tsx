@@ -535,6 +535,7 @@ export const Message = ({
   scrollWindow,
   timestampHover,
   transcluded,
+  showOurContact,
   ...rest
 }) => {
   const { hovering, bind } = useHovering();
@@ -579,6 +580,7 @@ export const Message = ({
                   link={link}
                   api={api}
                   transcluded={transcluded}
+                  showOurContact={showOurContact}
                 />
               );
             case 'url':
@@ -589,31 +591,12 @@ export const Message = ({
                   fontSize={1}
                   lineHeight='20px'
                   color='black'
+                  width="fit-content"
+                  maxWidth="500px"
                 >
                   <RemoteContent
                     key={content.url}
                     url={content.url}
-                    imageProps={{
-                      style: {
-                        maxWidth: 'min(100%,18rem)',
-                        display: 'inline-block',
-                        marginTop: '0.5rem'
-                      }
-                    }}
-                    videoProps={{
-                      style: {
-                        maxWidth: '18rem',
-                        display: 'block',
-                        marginTop: '0.5rem'
-                      }
-                    }}
-                    textProps={{
-                      style: {
-                        fontSize: 'inherit',
-                        borderBottom: '1px solid',
-                        textDecoration: 'none'
-                      }
-                    }}
                   />
                 </Box>
               );

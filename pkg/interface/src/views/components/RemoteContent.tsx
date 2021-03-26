@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from 'react';
-import { BaseAnchor, BaseImage, Box, Button, Text } from '@tlon/indigo-react';
+import { BaseAnchor, BaseImage, Box, Button, Text, Row, Icon } from '@tlon/indigo-react';
+import styled from 'styled-components';
 import { hasProvider } from 'oembed-parser';
 import EmbedContainer from 'react-oembed-container';
 import useSettingsState from '~/logic/state/settings';
@@ -33,6 +34,12 @@ const IMAGE_REGEX = new RegExp(/(jpg|img|png|gif|tiff|jpeg|webp|webm|svg)$/i);
 const AUDIO_REGEX = new RegExp(/(mp3|wav|ogg)$/i);
 const VIDEO_REGEX = new RegExp(/(mov|mp4|ogv)$/i);
 
+const TruncatedText = styled(Text)`
+  white-space: pre;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  min-width: 0;
+`;
 
 class RemoteContent extends Component<RemoteContentProps, RemoteContentState> {
   private fetchController: AbortController | undefined;
@@ -123,28 +130,34 @@ return;
     });
   }
 
-  wrapInLink(contents) {
+  wrapInLink(contents, textOnly = false) {
     const { style } = this.props;
-    if(this.props.url.startsWith('arvo://')) {
-      return (
-        <Link to={this.props.url.slice(6)}>
-          {contents}
-        </Link>
-      );
-
-    }
-    return (<BaseAnchor
-      onClick={(e) => { e.stopPropagation(); }}
-      href={this.props.url}
-      flexShrink={0}
-      style={{ color: 'inherit', textDecoration: 'none', ...style }}
-      className={`word-break-all ${(typeof contents === 'string') ? 'bb' : ''}`}
-      target="_blank"
-      width="100%"
-      rel="noopener noreferrer"
-            >
-      {contents}
-    </BaseAnchor>);
+    return (
+      <Row
+        alignItems="center"
+        maxWidth="20rem"
+        gapX="1" borderRadius="1" backgroundColor="washedGray">
+        { textOnly && (<Icon ml="2" display="block" icon="ArrowExternal" />)}
+        <BaseAnchor
+          display="flex"
+          p="2"
+        onClick={(e) => { e.stopPropagation(); }}
+        href={this.props.url}
+        flexShrink={0}
+        whiteSpace="nowrap"
+        overflow="hidden"
+        textOverflow="ellipsis"
+        minWidth="0"
+        width={textOnly ? "calc(100% - 24px)" : "fit-content"}
+        style={{ color: 'inherit', textDecoration: 'none', ...style }}
+        className="word-break-all"
+        target="_blank"
+        rel="noopener noreferrer"
+              >
+        {contents}
+      </BaseAnchor>
+    </Row>
+    );
   }
 
   onError(e: Event) {
@@ -184,6 +197,9 @@ return;
           style={style}
           onLoad={onLoad}
           onError={this.onError}
+          height="100%"
+          width="100%"
+          objectFit="contain"
           {...imageProps}
           {...props}
         />
@@ -192,7 +208,7 @@ return;
       return (
         <>
           {renderUrl
-            ? this.wrapInLink(<Text {...textProps}>{text || url}</Text>)
+            ? this.wrapInLink(<TruncatedText {...textProps}>{text || url}</TruncatedText>)
             : null}
           <audio
             onClick={(e) => { e.stopPropagation(); }}
@@ -210,7 +226,7 @@ return;
       return (
         <>
           {renderUrl
-            ? this.wrapInLink(<Text {...textProps}>{text || url}</Text>)
+            ? this.wrapInLink(<TruncatedText {...textProps}>{text || url}</TruncatedText>)
             : null}
           <video
             onClick={(e) => { e.stopPropagation(); }}
@@ -232,9 +248,9 @@ return;
       return (
         <Fragment>
           {renderUrl
-            ? this.wrapInLink(<Text {...textProps}>{(this.state.embed && this.state.embed.title)
+            ? this.wrapInLink(<TruncatedText {...textProps}>{(this.state.embed && this.state.embed.title)
               ? this.state.embed.title
-              : (text || url)}</Text>)
+              : (text || url)}</TruncatedText>, true)
             : null}
           {this.state.embed !== 'error' && this.state.embed?.html && !unfold ? <Button
             display='inline-flex'
@@ -274,7 +290,7 @@ return;
       );
     } else {
       return renderUrl
-        ? this.wrapInLink(<Text {...textProps}>{text || url}</Text>)
+        ? this.wrapInLink(<TruncatedText {...textProps}>{text || url}</TruncatedText>, true)
         : null;
     }
   }
