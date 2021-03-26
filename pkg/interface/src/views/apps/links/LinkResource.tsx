@@ -16,6 +16,7 @@ import { Association } from '@urbit/api/metadata';
 import useGraphState from '~/logic/state/graph';
 import useMetadataState from '~/logic/state/metadata';
 import useGroupState from '../../../logic/state/group';
+import BackButton from '~/views/components/BackButton';
 
 const emptyMeasure = () => {};
 
@@ -98,8 +99,8 @@ export function LinkResource(props: LinkResourceProps) {
             }
             return (
               <Col alignItems="center" overflowY="auto" width="100%">
-              <Col width="100%" p={3} maxWidth="768px">
-                <Link to={resourceUrl}><Text px={3} bold>{'<- Back'}</Text></Link>
+                <Col width="100%" p={3} maxWidth="768px">
+                  <BackButton to={resourceUrl} mx={3} />
                 <LinkItem
                   key={node.post.index}
                   resource={resourcePath}

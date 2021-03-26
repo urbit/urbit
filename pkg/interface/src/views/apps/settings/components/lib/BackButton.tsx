@@ -1,19 +1,14 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Text } from '@tlon/indigo-react';
+import React, { ReactElement } from 'react';
+import { default as GenericBackButton } from '~/views/components/BackButton';
 
-export function BackButton(props: {}) {
+export function BackButton(): ReactElement {
   return (
-    <Link to='/~settings'>
-      <Text
-        display={['block', 'none']}
-        fontSize='2'
-        fontWeight='medium'
-        p={4}
-        pb={0}
-      >
-        {'<- Back to System Preferences'}
-      </Text>
-    </Link>
+    <GenericBackButton
+      to='/~settings'
+      text="Back to System Preferences"
+      display={['flex', 'none']}
+      p={4}
+      pb={0}
+    />
   );
 }

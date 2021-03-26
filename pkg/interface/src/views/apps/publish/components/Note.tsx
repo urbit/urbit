@@ -12,6 +12,7 @@ import { getLatestRevision, getComments } from '~/logic/lib/publish';
 import { roleForShip } from '~/logic/lib/group';
 import Author from '~/views/components/Author';
 import { Contacts, GraphNode, Graph, Association, Unreads, Group } from '@urbit/api';
+import BackButton from '~/views/components/BackButton';
 
 interface NoteProps {
   ship: string;
@@ -107,9 +108,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
       mx="auto"
       ref={windowRef}
     >
-      <Link to={rootUrl}>
-        <Text>{'<- Notebook Index'}</Text>
-      </Link>
+      <BackButton text="Notebook Index" to={rootUrl} />
       <Col>
         <Text display="block" mb={2}>{title || ''}</Text>
         <Row alignItems="center">

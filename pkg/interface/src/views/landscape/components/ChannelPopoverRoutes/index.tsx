@@ -19,6 +19,7 @@ import { useHistory, Link } from 'react-router-dom';
 import { ChannelNotifications } from './Notifications';
 import { StatelessAsyncButton } from '~/views/components/StatelessAsyncButton';
 import { isChannelAdmin, isHost } from '~/logic/lib/group';
+import BackButton from '~/views/components/BackButton';
 
 interface ChannelPopoverRoutesProps {
   baseUrl: string;
@@ -74,9 +75,7 @@ export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {
         height="100%"
       >
         <Box pt="4" px="4" display={['block', 'none']}>
-          <Link to={props.baseUrl}>
-            <Text fontSize="1">{'<- Back'}</Text>
-          </Link>
+          <BackButton to={props.baseUrl} />
         </Box>
         <ChannelPopoverRoutesSidebar
           isAdmin={canAdmin}

@@ -13,6 +13,7 @@ import { isWriter } from '~/logic/lib/group';
 import { getItemTitle } from '~/logic/lib/util';
 import useContactState from '~/logic/state/contact';
 import useGroupState from '~/logic/state/group';
+import BackButton from '~/views/components/BackButton';
 
 const TruncatedText = styled(RichText)`
   white-space: pre;
@@ -91,7 +92,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
           display={['block', 'none']}
           flexShrink={0}
         >
-          <Link to={`/~landscape${workspace}`}><Text>{'<- Back'}</Text></Link>
+          <BackButton to={`/~landscape${workspace}`} />
         </Box>
         <Box px={1} mr={2} minWidth={0} display="flex" flexShrink={[1, 0]}>
           <Text
