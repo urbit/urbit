@@ -3,6 +3,7 @@
 ++  grow
   |%
   ++  noun  ver
+  ++  json  (numb:enjs:format ver)
   --
 ++  grab
   |%
