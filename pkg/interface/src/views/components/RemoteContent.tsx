@@ -123,20 +123,24 @@ return;
     });
   }
 
-  wrapInLink(contents) {
+  wrapInLink(contents, textOnly = false) {
     const { style } = this.props;
     return (
-      <Row gapX="1" borderRadius="1" p="1" backgroundColor="washedGray">
-        <Icon display="block" icon="ArrowExternal" />
+      <Row
+        alignItems="center"
+        maxWidth="20rem"
+        gapX="1" borderRadius="1" backgroundColor="washedGray">
+        { textOnly && (<Icon ml="2" display="block" icon="ArrowExternal" />)}
         <BaseAnchor
-        display="block"
+          display="block"
+          p="2"
         onClick={(e) => { e.stopPropagation(); }}
         href={this.props.url}
         flexShrink={0}
         whiteSpace="nowrap"
         overflow="hidden"
         textOverflow="ellipsis"
-        width="calc(100% - 24px)"
+        width={textOnly ? "calc(100%-24px)" : "fit-content"}
         style={{ color: 'inherit', textDecoration: 'none', ...style }}
         className="word-break-all"
         target="_blank"
@@ -185,6 +189,9 @@ return;
           style={style}
           onLoad={onLoad}
           onError={this.onError}
+          height="100%"
+          width="100%"
+          objectFit="contain"
           {...imageProps}
           {...props}
         />
@@ -235,7 +242,7 @@ return;
           {renderUrl
             ? this.wrapInLink(<Text {...textProps}>{(this.state.embed && this.state.embed.title)
               ? this.state.embed.title
-              : (text || url)}</Text>)
+              : (text || url)}</Text>, true)
             : null}
           {this.state.embed !== 'error' && this.state.embed?.html && !unfold ? <Button
             display='inline-flex'
@@ -275,7 +282,7 @@ return;
       );
     } else {
       return renderUrl
-        ? this.wrapInLink(<Text {...textProps}>{text || url}</Text>)
+        ? this.wrapInLink(<Text {...textProps}>{text || url}</Text>, true)
         : null;
     }
   }
