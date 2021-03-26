@@ -4,11 +4,12 @@ import Author from '~/views/components/Author';
 import { useCopy } from '~/logic/lib/useCopy';
 import { getPermalinkForGraph } from '~/logic/lib/permalinks';
 import { Dropdown } from '~/views/components/Dropdown';
-
+import useContactState from '~/logic/state/contact';
 
 
 export function PostHeader(props) {
-  const { post, contacts, api, association, isReply } = props;
+  const { post, api, association, isReply } = props;
+  const contacts = useContactState(state => state.contacts);
   const mb = isReply ? "2" : "3";
 
   const permalink = !!association ? getPermalinkForGraph(

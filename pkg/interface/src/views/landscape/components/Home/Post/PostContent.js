@@ -1,10 +1,13 @@
 import React from 'react';
 import { Col } from '@tlon/indigo-react';
 import { MentionText } from '~/views/components/MentionText';
+import useContactState from '~/logic/state/contact';
 
 
 export function PostContent(props) {
-  const { post, contacts, isParent, api } = props;
+  const { post, isParent, api } = props;
+  const contacts = useContactState(state => state.contacts);
+
   return (
     <Col
       width="100%"

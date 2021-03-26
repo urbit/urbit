@@ -210,7 +210,6 @@ export function GroupsPane(props: GroupsPaneProps) {
                   associations={associations}
                   groups={groups}
                   groupPath={groupPath}
-                  contacts={contacts}
                   workspace={workspace}
                 />
                 {popovers(routeProps, baseUrl)}

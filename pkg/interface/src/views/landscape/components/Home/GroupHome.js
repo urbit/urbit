@@ -15,8 +15,7 @@ export function GroupHome(props) {
     groupPath,
     groups,
     graphs,
-    baseUrl,
-    contacts,
+    baseUrl
   } = props;
 
   const metadata = associations?.groups[groupPath]?.metadata;
@@ -59,7 +58,6 @@ export function GroupHome(props) {
         <GroupFeed
           associations={associations}
           groups={groups}
-          contacts={contacts}
           graphPath={graphPath}
           graphs={graphs}
           api={api}

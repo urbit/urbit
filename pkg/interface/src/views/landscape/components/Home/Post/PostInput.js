@@ -7,10 +7,12 @@ import tokenizeMessage from '~/logic/lib/tokenizeMessage';
 import { useToggleState } from '~/logic/lib/useToggleState';
 import { createPost } from '~/logic/api/graph';
 import useStorage from '~/logic/lib/useStorage';
+import { resourceFromPath } from '~/logic/lib/group';
 
 
 export function PostInput(props) {
-  const { api, graphResource, index, submitCallback } = props;
+  const { api, graphPath, index, submitCallback } = props;
+  const graphResource = resourceFromPath(graphPath);
 
   const [disabled, setDisabled] = useState(false);
   const [code, toggleCode] = useToggleState(false);

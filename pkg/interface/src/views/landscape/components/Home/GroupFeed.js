@@ -6,8 +6,8 @@ import { Col } from '@tlon/indigo-react'
 import { resourceFromPath } from '~/logic/lib/group';
 import useGraphState from '~/logic/state/graph';
 import { GroupFeedHeader } from './GroupFeedHeader';
-import { PostTimeline } from './Post/PostTimeline';
-import { PostReplies } from './Post/PostReplies';
+import PostTimeline from './Post/PostTimeline';
+import PostReplies from './Post/PostReplies';
 
 
 export function GroupFeed(props) {
@@ -16,7 +16,7 @@ export function GroupFeed(props) {
     api,
     history,
     associations,
-    graphPath
+    graphPath,
   } = props;
   const graphs = useGraphState(state => state.graphs);
   const graphResource = resourceFromPath(graphPath);
@@ -28,6 +28,9 @@ export function GroupFeed(props) {
 
   const relativePath = (path) => baseUrl + path;
   const association = associations.graph[graphPath];
+
+  const graphId = `${graphResource.ship.slice(1)}/${graphResource.name}`;
+  const graph = graphs[graphId];
 
   useEffect(() => {
     //  TODO: VirtualScroller should support lower starting values than 100
@@ -53,11 +56,13 @@ export function GroupFeed(props) {
           render={(routeProps) => {
             return (
               <PostTimeline
-                {...props}
+                baseUrl={baseUrl}
+                api={api}
+                history={history}
+                graphPath={graphPath}
                 association={association}
-                graphs={graphs}
-                pendingSize={pendingSize}
-                graphResource={graphResource} />
+                graph={graph}
+                pendingSize={pendingSize} />
             );
           }} />
         <Route
@@ -65,11 +70,13 @@ export function GroupFeed(props) {
           render={(routeProps) => {
             return (
               <PostReplies
-                {...props}
+                baseUrl={baseUrl}
+                api={api}
+                history={history}
+                graphPath={graphPath}
                 association={association}
-                graphs={graphs}
-                pendingSize={pendingSize}
-                graphResource={graphResource} />
+                graph={graph}
+                pendingSize={pendingSize} />
             );
           }} />
       </Switch>
