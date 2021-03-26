@@ -9409,10 +9409,13 @@
           ::
               [%fork *]
             =/  yed  ~(tap in p.ref)
-            =^  wiz  grub
-              (spin yed grub |=([=type grun=_grub] ^$(ref type, grub grun)))
-            :_  grub
-            (fork wiz)
+            =|  wiz=(list type)
+            |-  ^-  [type _grub]
+            ?~  yed
+              :_  grub
+              (fork wiz)
+            =^  val  grub  ^$(ref i.yed)
+            $(yed t.yed, wiz [val wiz])
           ::
               [%hint *]
             =^  rig  grub  $(ref q.ref)
@@ -9463,10 +9466,13 @@
         ::
             [%fork *]
           =/  yed  ~(tap in p.ref)
-          =^  wiz  grub
-            (spin yed grub |=([=type grun=_grub] ^$(ref type, grub grun)))
-          :_  grub
-          (fork wiz)
+          =|  wiz=(list type)
+          |-  ^-  [type _grub]
+          ?~  yed
+            :_  grub
+            (fork wiz)
+          =^  val  grub  ^$(ref i.yed)
+          $(yed t.yed, wiz [val wiz])
         ::
             [%hint *]
           =^  val  grub  $(ref q.ref)
@@ -9513,10 +9519,13 @@
         ::
             [%fork *]
           =/  yed  ~(tap in p.ref)
-          =^  wiz  grub
-            (spin yed grub |=([=type grun=_grub] ^$(ref type, grub grun)))
-          :_  grub
-          (fork wiz)
+          =|  wiz=(list type)
+          |-  ^-  [type _grub]
+          ?~  yed
+            :_  grub
+            (fork wiz)
+          =^  val  grub  ^$(ref i.yed)
+          $(yed t.yed, wiz [val wiz])
         ::
             [%hint *]
           =^  val  grub  $(ref q.ref)
@@ -9611,10 +9620,13 @@
           ::
               [%fork *]
             =/  yed  ~(tap in p.ref)
-            =^  wiz  grub
-              (spin yed grub |=([=type grun=_grub] ^$(ref type, grub grun)))
-            :_  grub
-            (fork wiz)
+            =|  wiz=(list type)
+            |-  ^-  [type _grub]
+            ?~  yed
+              :_  grub
+              (fork wiz)
+            =^  val  grub  ^$(ref i.yed)
+            $(yed t.yed, wiz [val wiz])
           ::
               [%hint *]
             =^  rig  grub  $(ref q.ref)
@@ -9666,10 +9678,13 @@
         ::
             [%fork *]
           =/  yed  ~(tap in p.ref)
-          =^  wiz  grub
-            (spin yed grub |=([=type grun=_grub] ^$(ref type, grub grun)))
-          :_  grub
-          (fork wiz)
+          =|  wiz=(list type)
+          |-  ^-  [type _grub]
+          ?~  yed
+            :_  grub
+            (fork wiz)
+          =^  val  grub  ^$(ref i.yed)
+          $(yed t.yed, wiz [val wiz])
         ::
             [%hint *]
           =^  val  grub  $(ref q.ref)
@@ -9711,10 +9726,13 @@
         ::
             [%fork *]
           =/  yed  ~(tap in p.ref)
-          =^  wiz  grub
-            (spin yed grub |=([=type grun=_grub] ^$(ref type, grub grun)))
-          :_  grub
-          (fork wiz)
+          =|  wiz=(list type)
+          |-  ^-  [type _grub]
+          ?~  yed
+            :_  grub
+            (fork wiz)
+          =^  val  grub  ^$(ref i.yed)
+          $(yed t.yed, wiz [val wiz])
         ::
             [%hint *]
           =^  val  grub  $(ref q.ref)
@@ -10003,10 +10021,13 @@
       ::
           [%fork *]
         =/  yed  ~(tap in p.sut)
-        =^  wiz  grub
-          (spin yed grub |=([=type grun=_grub] dext(sut type, grub grun)))
-        :_  grub
-        (fork wiz)
+        =|  wiz=(list type)
+        |-  ^-  [type _grub]
+        ?~  yed
+          :_  grub
+          (fork wiz)
+        =^  val  grub  dext(sut i.yed)
+        $(yed t.yed, wiz [val wiz])
       ::
           [%hint *]
         =^  rig  grub  dext(sut q.sut)
@@ -10946,13 +10967,19 @@
             ::
               [%fork *]
             =/  yed  ~(tap in p.sut)
-            =^  wiz=(list pony)  grub
-              (spin yed grub |=([=type grun=_grub] ^$(sut type, grub grun)))
+            =|  wiz=(list pony)
+            =^  woz  grub
+              |-  ^-  [(list pony) _grub]
+              ?~  yed
+                :_  grub
+                wiz
+              =^  val  grub  ^$(sut i.yed)
+              $(yed t.yed, wiz [val wiz])
             :_  grub
-            ?~  wiz  ~
+            ?~  woz  ~
             |-  ^-  pony
-            ?~  t.wiz  i.wiz
-            (twin i.wiz $(wiz t.wiz))
+            ?~  t.woz  i.woz
+            (twin i.woz $(woz t.woz))
           ::
               [%hold *]
             ?:  (~(has in gil) sut)
@@ -11210,39 +11237,42 @@
     ?:  ?=([[* [%wet ~ %1]] ~] hag)
       :_  grub
       p.i.hag
-    =^  wiz  grub
-      %^  spin  hag.$  grub
-      |=  [[p=type q=foot] grun=_grub]
-      ?.  ?=([%core *] p)
-        ~_  (dunk %fire-type)
-        ~_  leaf+"expected-fork-to-be-core"
-        ~_  (dunk(sut p) %fork-type)
-        ~>(%mean.'fire-core' !!)
-      =/  dox  [%core q.q.p q.p(r.p %gold)]
+    =|  wiz=(list type)
+    |-  ^-  [type _grub]
+    ?~  hag
+      :_  grub
+      (fork wiz)
+    =/  [p=type q=foot]  i.hag
+    ?.  ?=([%core *] p)
+      ~_  (dunk %fire-type)
+      ~_  leaf+"expected-fork-to-be-core"
+      ~_  (dunk(sut p) %fork-type)
+      ~>(%mean.'fire-core' !!)
+    =/  dox  [%core q.q.p q.p(r.p %gold)]
+    =^  val  grub
       ?:  ?=(%dry -.q)
         ?.  vet
-          :_  grun
+          :_  grub
           [%hold [dox p.q]]
-        =^  nests  grun  (caching-nest(sut q.q.p, grub grun) & p.p)
+        =^  nests  grub  (caching-nest(sut q.q.p) & p.p)
         ?>  nests
-        :_  grun
+        :_  grub
         [%hold [dox p.q]]
       ?>  ?=(%wet -.q)
-      =^  done  grun  (caching-redo(sut p.p, grub grun) q.q.p)
+      =^  done  grub  (caching-redo(sut p.p) q.q.p)
       =.  p.p  done
       ?:  |(!vet (~(has in rib) [sut dox p.q]))
-        :_  grun
+        :_  grub
         [%hold [p p.q]]
-      =^  rumi  grun
-        %^    caching-mull(sut p, rib (~(put in rib) sut dox p.q), grub grun)
+      =^  rumi  grub
+        %^    caching-mull(sut p, rib (~(put in rib) sut dox p.q))
             %noun
           dox
         p.q
       ?>  !=(** rumi)
-      :_  grun
+      :_  grub
       [%hold [p p.q]]
-    :_  grub
-    (fork wiz)
+    $(hag t.hag, wiz [val wiz])
   ::
   ++  fire
     |=  hag/(list {p/type q/foot})
@@ -11458,10 +11488,13 @@
     ::
         [%fork *]
       =/  yed  ~(tap in p.sut)
-      =^  wiz  grub
-        (spin yed grub |=([=type grun=_grub] ^$(sut type, grub grun)))
-      :_  grub
-      (fork wiz)
+      =|  wiz=(list type)
+      |-  ^-  [type _grub]
+      ?~  yed
+        :_  grub
+        (fork wiz)
+      =^  val  grub  ^$(sut i.yed)
+      $(yed t.yed, wiz [val wiz])
     ::
         [%hint *]
       =^  rig  grub  $(sut q.sut)
@@ -12467,7 +12500,7 @@
     ::
     ++  caching-nice
       |=  =type
-      ~_  leaf+"mint-nice"
+      ~_  leaf+"caching-mint-nice"
       ?.  vet
         [type grub]
       =^  nests  grub  (caching-nest(sut gol) & type)
@@ -12673,10 +12706,13 @@
     ::
         [%fork *]
       =/  yed  ~(tap in p.sut)
-      =^  wiz=(list ?)  grub
-        (spin yed grub |=([=type grun=_grub] ^$(sut type, grub grun)))
-      :_  grub
-      (levy wiz same)
+      |-  ^-  [? _grub]
+      ?~  yed
+        [& grub]
+      =^  moots  grub  ^$(sut i.yed)
+      ?.  moots
+        [| grub]
+      $(yed t.yed)
     ::
         [%hint *]
       $(sut q.sut)
@@ -12838,8 +12874,8 @@
           ?:  =(%void q.fex)
             :_  grub
             [%void %void]
-          =^  wor  grub  (caching-play(sut q.fex) q.gen)
           ~>  %mean.'if-z'
+          =^  wor  grub  (caching-play(sut q.fex) q.gen)
           :_  grub
           [%void wor]
         ?:  =(%void q.fex)
@@ -12854,8 +12890,8 @@
           ?:  =(%void q.wux)
             :_  grub
             [%void %void]
-          =^  wor  grub  (caching-play(sut q.wux) r.gen)
           ~>  %mean.'if-a'
+          =^  wor  grub  (caching-play(sut q.wux) r.gen)
           :_  grub
           [%void wor]
         ?:  =(%void q.wux)
@@ -13224,10 +13260,13 @@
       ::
           [%fork *]
         =/  yed  ~(tap in p.sut)
-        =^  wiz=(list ?)  grub
-          (spin yed grub |=([=type grun=_grub] dext(sut type, grub grun)))
-        :_  grub
-        (levy wiz same)
+        |-  ^-  [? _grub]
+        ?~  yed
+          [& grub]
+        =^  bol  grub  dext(sut i.yed)
+        ?.  bol
+          [| grub]
+        $(yed t.yed)
       ::
           [%face *]
         dext(sut q.sut)
@@ -13429,10 +13468,13 @@
           [%fork *]
         ?.  ?=(?([%atom *] %noun [%cell *] [%core *]) ref)  sint
         =/  yed  ~(tap in p.sut)
-        =^  wiz=(list ?)  grub
-          (spin yed grub |=([=type grun=_grub] dext(tel |, sut type, grub grun))) :: FIXME too long
-        :_  grub
-        (lien wiz same)
+        |-
+        ?~  yed
+          [| grub]
+        =^  nests  grub  dext(tel |, sut i.yed)
+        ?:  nests
+          [nests grub]
+        $(yed t.yed)
       ::
           [%hint *]
         dext(sut q.sut)
@@ -13480,10 +13522,13 @@
       ::
           [%fork *]
         =/  yed  ~(tap in p.ref)
-        =^  wiz=(list ?)  grub
-          (spin yed grub |=([=type grun=_grub] dext(ref type, grub grun)))
-        :_  grub
-        (levy wiz same)
+        |-  ^-  [? _grub]
+        ?~  yed
+          [& grub]
+        =^  bol  grub  dext(ref i.yed)
+        ?.  bol
+          [| grub]
+        $(yed t.yed)
       ::
           [%hint *]
         dext(ref q.ref)
@@ -13665,10 +13710,13 @@
     ::
         [%fork *]
       =/  yed  ~(tap in p.sut)
-      =^  wiz  grub
-        (spin yed grub |=([=type grun=_grub] ^$(sut type, grub grun)))
-      :_  grub
-      (fork wiz)
+      =|  wiz=(list type)
+      |-  ^-  [type _grub]
+      ?~  yed
+        :_  grub
+        (fork wiz)
+      =^  val  grub  ^$(sut i.yed)
+      $(yed t.yed, wiz [val wiz])
     ::
         [%hold *]
       ?:  (~(has in gil) sut)
@@ -13865,7 +13913,7 @@
           [%void grub]
         $(sut wux, gen r.gen)
       :_  grub
-      (fork ~[won tew])
+      (fork won tew ~)
     ::
         [%fits *]
       [bool grub]
@@ -14112,10 +14160,13 @@
         ::  reconstruct each case in fork
         ::
         =/  yed  ~(tap in p.sut)
-        =^  wiz  grub
-          (spin yed grub |=([=type grun=_grub] dext(sut type, grub grun)))
-        :_  grub
-        (fork wiz)
+        =|  wiz=(list type)
+        |-  ^-  [type _grub]
+        ?~  yed
+          :_  grub
+          (fork wiz)
+        =^  val  grub  dext(sut i.yed)
+        $(yed t.yed, wiz [val wiz])
       ::
           [%hold *]
         ::  reduce to hard
@@ -14501,10 +14552,13 @@
       ::
           [%fork *]
         =/  yed  ~(tap in p.sut)
-        =^  wiz  grub
-          (spin yed grub |=([=type grun=_grub] ^$(sut type, grub grun)))
-        :_  grub
-        (fork wiz)
+        =|  wiz=(list type)
+        |-  ^-  [type _grub]
+        ?~  yed
+          :_  grub
+          (fork wiz)
+        =^  val  grub  ^$(sut i.yed)
+        $(yed t.yed, wiz [val wiz])
       ::
           [%hold *]
         =^  rig  grub  caching-repo
@@ -14550,10 +14604,13 @@
     ::
         [%fork *]
       =/  yed  ~(tap in p.sut)
-      =^  wiz  grub
-        (spin yed grub |=([=type grun=_grub] ^$(sut type, grub grun)))
-      :_  grub
-      (fork wiz)
+      =|  wiz=(list type)
+      |-  ^-  [type _grub]
+      ?~  yed
+        :_  grub
+        (fork wiz)
+      =^  val  grub  ^$(sut i.yed)
+      $(yed t.yed, wiz [val wiz])
     ::
         [%hint *]
       =^  rig  grub  $(sut q.sut)
@@ -14689,10 +14746,13 @@
     ::
         [%fork *]
       =/  yed  ~(tap in p.sut)
-      =^  wiz  grub
-        (spin yed grub |=([=type grun=_grub] ^$(sut type, grub grun)))
-      :_  grub
-      (fork wiz)
+      =|  wiz=(list type)
+      |-  ^-  [type _grub]
+      ?~  yed
+        :_  grub
+        (fork wiz)
+      =^  val  grub  ^$(sut i.yed)
+      $(yed t.yed, wiz [val wiz])
     ::
         [%hint *]
       =^  rig  grub  $(sut q.sut)
