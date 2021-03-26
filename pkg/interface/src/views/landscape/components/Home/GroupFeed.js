@@ -29,6 +29,8 @@ export function GroupFeed(props) {
   const relativePath = (path) => baseUrl + path;
   const association = associations.graph[graphPath];
 
+  const locationUrl = history.location.pathname;
+
   const graphId = `${graphResource.ship.slice(1)}/${graphResource.name}`;
   const graph = graphs[graphId];
 
@@ -70,6 +72,7 @@ export function GroupFeed(props) {
           render={(routeProps) => {
             return (
               <PostReplies
+                locationUrl={locationUrl}
                 baseUrl={baseUrl}
                 api={api}
                 history={history}

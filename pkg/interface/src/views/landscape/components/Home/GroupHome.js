@@ -32,6 +32,7 @@ export function GroupHome(props) {
     'resource' in metadata.config.group;
 
   const graphPath = metadata?.config?.group?.resource;
+
   const history = useHistory();
 
   return (

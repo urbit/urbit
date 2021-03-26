@@ -15,7 +15,6 @@ export default class PostReplies extends React.PureComponent {
   }
 
   render() {
-    let graph = this.props.graph;
     const {
       baseUrl,
       api,
@@ -28,6 +27,8 @@ export default class PostReplies extends React.PureComponent {
 
     const graphResource = resourceFromPath(graphPath);
     const graphId = `${graphResource.ship.slice(1)}/${graphResource.name}`;
+
+    let graph = this.props.graph;
     const shouldRenderFeed = !!graph;
 
     if (!shouldRenderFeed) {
@@ -39,7 +40,7 @@ export default class PostReplies extends React.PureComponent {
     }
 
     const locationUrl =
-      history.location.pathname.replace(`${baseUrl}/feed`, '');
+      this.props.locationUrl.replace(`${baseUrl}/feed`, '');
     let nodeIndex = locationUrl.split('/').slice(1).map((ind) => {
       return bigInt(ind);
     });
@@ -64,7 +65,7 @@ export default class PostReplies extends React.PureComponent {
     if (!first) {
       return (
         <Col
-          key={0}
+          key={locationUrl}
           width="100%"
           height="100%"
           alignItems="center" overflowY="scroll">
