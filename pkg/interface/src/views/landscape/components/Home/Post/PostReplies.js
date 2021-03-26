@@ -107,7 +107,6 @@ export default class PostReplies extends React.PureComponent {
           pendingSize={pendingSize}
           association={association}
           groups={groups}
-          contacts={contacts}
           api={api}
           history={history}
           baseUrl={baseUrl}
