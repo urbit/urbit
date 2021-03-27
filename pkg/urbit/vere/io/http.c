@@ -1605,11 +1605,12 @@ _http_write_ports_file(u3_httd* htd_u, c3_c *pax_c)
 
   u3_http* htp_u = htd_u->htp_u;
 
+  c3_c temp[32];
   while ( 0 != htp_u ) {
     if ( 0 < htp_u->por_s ) {
-      dprintf(por_i, "%u %s %s\n", htp_u->por_s,
+      write(por_i, temp, snprintf(temp, 32, "%u %s %s\n", htp_u->por_s,
                      (c3y == htp_u->sec) ? "secure" : "insecure",
-                     (c3y == htp_u->lop) ? "loopback" : "public");
+                     (c3y == htp_u->lop) ? "loopback" : "public"));
     }
 
     htp_u = htp_u->nex_u;
