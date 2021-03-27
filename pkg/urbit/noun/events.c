@@ -1,11 +1,10 @@
 /* g/e.c
 **
 */
+#include "all.h"
 #include <errno.h>
 #include <fcntl.h>
 #include <sys/stat.h>
-
-#include "all.h"
 
 #ifdef U3_SNAPSHOT_VALIDATION
 /* Image check.

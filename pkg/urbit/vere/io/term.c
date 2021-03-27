@@ -1,6 +1,8 @@
 /* vere/term.c
 **
 */
+#include "all.h"
+#include "vere/vere.h"
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
@@ -9,9 +11,6 @@
 #include <uv.h>
 #include <errno.h>
 #include <termios.h>
-
-#include "all.h"
-#include "vere/vere.h"
 
 //  macros for string literal args/buffers
 //

@@ -1,15 +1,6 @@
 /* vere/ames.c
 **
 */
-#include <fcntl.h>
-#include <sys/ioctl.h>
-#include <sys/stat.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netdb.h>
-#include <uv.h>
-#include <errno.h>
-
 #include "all.h"
 #include "vere/vere.h"
 #include "ur/serial.h"

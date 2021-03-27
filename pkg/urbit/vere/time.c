@@ -1,12 +1,6 @@
 /* vere/time.c
 **
 */
-#include <fcntl.h>
-#include <sys/ioctl.h>
-#include <sys/stat.h>
-#include <dirent.h>
-#include <uv.h>
-
 #include "all.h"
 #include "vere/vere.h"
 

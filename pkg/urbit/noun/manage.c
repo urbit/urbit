@@ -1,6 +1,8 @@
 /* n/m.c
 **
 */
+#include "all.h"
+#include "vere/vere.h"
 #include <errno.h>
 #include <fcntl.h>
 #include <sys/stat.h>
@@ -8,9 +10,6 @@
 #include <sigsegv.h>
 #include <curl/curl.h>
 #include <openssl/crypto.h>
-
-#include "all.h"
-#include "vere/vere.h"
 
 //  XX stack-overflow recovery should be gated by -a
 //

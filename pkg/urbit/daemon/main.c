@@ -1,16 +1,12 @@
 /* vere/main.c
 **
 */
-#include <fcntl.h>
-#include <sys/ioctl.h>
-#include <sys/stat.h>
-#include <sys/wait.h>
-#include <limits.h>
-#include <uv.h>
+#define U3_GLOBAL
+#define C3_GLOBAL
+#include "all.h"
+#include "vere/vere.h"
 #include <sigsegv.h>
-#include <stdlib.h>
 #include <termios.h>
-#include <dirent.h>
 #include <openssl/conf.h>
 #include <openssl/engine.h>
 #include <openssl/err.h>
@@ -19,11 +15,6 @@
 #include <curl/curl.h>
 #include <argon2.h>
 #include <lmdb.h>
-
-#define U3_GLOBAL
-#define C3_GLOBAL
-#include "all.h"
-#include "vere/vere.h"
 
 #include "ca-bundle.h"
 

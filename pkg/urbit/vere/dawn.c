@@ -2,11 +2,10 @@
 **
 ** ethereum-integrated pre-boot validation
 */
-#include <curl/curl.h>
-#include <uv.h>
-
 #include "all.h"
 #include "vere/vere.h"
+#include <curl/curl.h>
+#include <uv.h>
 
 /* _dawn_oct_to_buf(): +octs to uv_buf_t
 */

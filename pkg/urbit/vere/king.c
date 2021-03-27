@@ -2,13 +2,11 @@
 **
 ** the main loop of the daemon process
 */
-#include <curl/curl.h>
-#include <unistd.h>
-#include <uv.h>
-
 #include "all.h"
 #include "vere/vere.h"
 #include "ur/ur.h"
+#include <curl/curl.h>
+#include <uv.h>
 
 #include "ivory.h"
 

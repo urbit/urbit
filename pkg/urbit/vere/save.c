@@ -1,13 +1,6 @@
 /* vere/save.c
 **
 */
-#include <fcntl.h>
-#include <sys/ioctl.h>
-#include <sys/stat.h>
-#include <sys/wait.h>
-#include <termios.h>
-#include <uv.h>
-
 #include "all.h"
 #include "vere/vere.h"
 

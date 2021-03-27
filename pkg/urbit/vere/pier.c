@@ -1,24 +1,8 @@
 /* vere/pier.c
 */
-#include <ent.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <fcntl.h>
-#include <sys/ioctl.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <setjmp.h>
-#include <gmp.h>
-#include <sigsegv.h>
-#include <stdint.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <uv.h>
-#include <errno.h>
-
 #include "all.h"
 #include "vere/vere.h"
+#include <ent.h>
 
 #define PIER_READ_BATCH 1000ULL
 #define PIER_PLAY_BATCH 500ULL
