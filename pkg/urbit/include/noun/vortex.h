@@ -73,10 +73,20 @@
       u3_noun
       u3v_peek(u3_noun hap);
 
+    /* u3v_soft_peek(): softly query the reck namespace.
+    */
+      u3_noun
+      u3v_soft_peek(c3_w mil_w, u3_noun sam);
+
     /* u3v_poke(): insert and apply an input ovum (protected).
     */
       u3_noun
       u3v_poke(u3_noun ovo);
+
+    /* u3v_poke_sure(): inject an event, saving new state if successful.
+    */
+      u3_noun
+      u3_poke_sure(c3_w mil_w, u3_noun eve);
 
     /* u3v_tank(): dump single tank.
     */

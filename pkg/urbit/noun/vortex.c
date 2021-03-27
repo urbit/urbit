@@ -193,6 +193,36 @@ u3v_peek(u3_noun sam)
   return u3n_slam_on(fun, sam);
 }
 
+/* u3v_soft_peek(): softly query the reck namespace.
+*/
+u3_noun
+u3v_soft_peek(c3_w mil_w, u3_noun sam)
+{
+  u3_noun gon = u3m_soft(mil_w, u3v_peek, sam);
+  u3_noun pro;
+
+  {
+    u3_noun tag, dat;
+    u3x_cell(gon, &tag, &dat);
+
+    //  read succeeded, produce result
+    //
+    if ( u3_blip == tag ) {
+      pro = u3nc(c3y, u3k(dat));
+      u3z(gon);
+    }
+    //  read failed, produce trace
+    //
+    //    NB, reads should *not* fail deterministically
+    //
+    else {
+      pro = u3nc(c3n, gon);
+    }
+  }
+
+  return pro;
+}
+
 #if 0
 /* _cv_mole(): parse simple atomic mole.
 */
@@ -254,6 +284,57 @@ u3v_poke(u3_noun ovo)
     c3_w cod_w = u3a_lush(u3h(u3t(ovo)));
     pro = u3n_slam_on(fun, sam);
     u3a_lop(cod_w);
+  }
+
+  return pro;
+}
+
+static u3_noun
+_cv_poke_eve(u3_noun sam)
+{
+  u3_noun fun = u3n_nock_on(u3k(u3A->roc), u3k(u3x_at(_CVX_POKE, u3A->roc)));
+  u3_noun pro;
+
+  {
+    c3_w cod_w = u3a_lush(u3h(u3t(u3t(sam)))); // XX MEMORY_DEBUG
+    pro = u3n_slam_on(fun, sam);
+    u3a_lop(cod_w);
+  }
+
+  return pro;
+}
+
+/* u3v_poke_sure(): inject an event, saving new state if successful.
+*/
+u3_noun
+u3_poke_sure(c3_w mil_w, u3_noun eve)
+{
+  u3_noun gon = u3m_soft(mil_w, u3v_poke, eve);
+  u3_noun pro;
+
+  {
+    u3_noun tag, dat;
+    u3x_cell(gon, &tag, &dat);
+
+    //  event succeeded, persist state and produce effects
+    //
+    if ( u3_blip == tag ) {
+      u3_noun vir, cor;
+      u3x_cell(dat, &vir, &cor);
+
+      u3z(u3A->roc);
+      u3A->roc = u3k(cor);
+      u3A->eve_d++;
+
+      pro = u3nc(c3y, u3k(vir));
+
+      u3z(gon);
+    }
+    //  event failed, produce trace
+    //
+    else {
+      pro = u3nc(c3n, gon);
+    }
   }
 
   return pro;
