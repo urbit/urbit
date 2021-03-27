@@ -902,6 +902,23 @@
         u3_disk*
         u3_disk_init(c3_c* pax_c, u3_disk_cb cb_u);
 
+      /* u3_disk_etch(): serialize an event for persistence.
+      */
+        c3_w
+        u3_disk_etch(u3_disk* log_u,
+                     u3_noun    eve,
+                     c3_l     mug_l,
+                     c3_y**   out_y);
+
+      /* u3_disk_sift(): parse a persisted event buffer.
+      */
+        c3_o
+        u3_disk_sift(u3_disk* log_u,
+                     size_t   len_i,
+                     c3_y*    dat_y,
+                     c3_l*    mug_l,
+                     u3_noun*   job);
+
       /* u3_disk_info(): print status info.
       */
         void
