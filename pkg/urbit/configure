@@ -60,12 +60,15 @@ esac
 case $(tr A-Z a-z <<< $os) in
   *linux*)
      defmacro U3_OS_linux 1
+     defmacro U3_OS_PROF 1
      ;;
   *darwin*)
      defmacro U3_OS_osx 1
+     defmacro U3_OS_PROF 1
      ;;
   *apple*)
      defmacro U3_OS_osx 1
+     defmacro U3_OS_PROF 1
      ;;
   *freebsd*)
      defmacro U3_OS_bsd 1

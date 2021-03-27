@@ -207,9 +207,9 @@ _main_getopt(c3_i argc, c3_c** argv)
     }
   }
 
-#if defined(U3_OS_bsd)
+#if !defined(U3_OS_PROF)
   if (u3_Host.ops_u.pro == c3y) {
-    fprintf(stderr, "profiling isn't yet supported on BSD\r\n");
+    fprintf(stderr, "profiling isn't yet supported on your OS\r\n");
     return c3n;
   }
 #endif
@@ -670,6 +670,7 @@ main(c3_i   argc,
   //
   //    XX review, may be unnecessary due to similar in u3m_init()
   //
+#if defined(U3_OS_PROF)
   if ( _(u3_Host.ops_u.pro) ) {
     sigset_t set;
 
@@ -680,6 +681,7 @@ main(c3_i   argc,
       exit(1);
     }
   }
+#endif
 
   //  Handle SIGTSTP as if it was SIGTERM.
   //
