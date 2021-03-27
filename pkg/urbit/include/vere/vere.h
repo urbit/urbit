@@ -40,7 +40,7 @@
 
     /* u3_moor_poke: poke callback function.
     */
-      typedef void (*u3_moor_poke)(void*, c3_d, c3_y*);
+      typedef c3_o (*u3_moor_poke)(void*, c3_d, c3_y*);
 
     /* u3_moor_bail: bailout callback function.
     */
@@ -1219,12 +1219,7 @@
         void
         u3_newt_send(u3_mojo* moj_u, c3_d len_d, c3_y* byt_y);
 
-      /* u3_newt_read_sync(): start reading; multiple msgs synchronous.
-      */
-        void
-        u3_newt_read_sync(u3_moat* mot_u);
-
-      /* u3_newt_read(): start reading; each msg asynchronous.
+      /* u3_newt_read(): activate reading on input stream.
       */
         void
         u3_newt_read(u3_moat* mot_u);

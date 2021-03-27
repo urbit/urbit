@@ -65,52 +65,28 @@ _newt_meat_plan(u3_moat* mot_u, u3_meat* met_u)
   }
 }
 
-/* _newt_meat_poke(): deliver completed msg.
-*/
-static void
-_newt_meat_poke(u3_moat* mot_u, u3_meat* met_u)
-{
-  mot_u->pok_f(mot_u->ptr_v, met_u->len_d, met_u->hun_y);
-  c3_free(met_u);
-}
-
-/* _newt_meat_next_sync(): deliver completed msgs, synchronously.
-*/
-static void
-_newt_meat_next_sync(u3_moat* mot_u)
-{
-  u3_meat* met_u = mot_u->ext_u;
-
-  while ( met_u ) {
-    u3_meat* nex_u = met_u->nex_u;
-    _newt_meat_poke(mot_u, met_u);
-    met_u = nex_u;
-  }
-
-  mot_u->ent_u = mot_u->ext_u = 0;
-}
-
 static void
 _newt_meat_next_cb(uv_timer_t* tim_u);
 
-/* _newt_meat_next(): deliver completed msgs, asynchronously.
+/* _newt_meat_poke(): deliver completed msg.
 */
 static void
-_newt_meat_next(u3_moat* mot_u)
+_newt_meat_poke(u3_moat* mot_u)
 {
   u3_meat* met_u = mot_u->ext_u;
 
   if ( met_u ) {
-    mot_u->ext_u = met_u->nex_u;
+    uv_timer_start(&mot_u->tim_u, _newt_meat_next_cb, 0, 0);
 
-    if ( mot_u->ext_u ) {
-      uv_timer_start(&mot_u->tim_u, _newt_meat_next_cb, 0, 0);
-    }
-    else {
-      mot_u->ent_u = 0;
-    }
+    if ( c3y == mot_u->pok_f(mot_u->ptr_v, met_u->len_d, met_u->hun_y) ) {
+      mot_u->ext_u = met_u->nex_u;
 
-    _newt_meat_poke(mot_u, met_u);
+      if ( !mot_u->ext_u ) {
+        mot_u->ent_u = 0;
+      }
+
+      c3_free(met_u);
+    }
   }
 }
 
@@ -120,7 +96,7 @@ static void
 _newt_meat_next_cb(uv_timer_t* tim_u)
 {
   u3_moat* mot_u = tim_u->data;
-  _newt_meat_next(mot_u);
+  _newt_meat_poke(mot_u);
 }
 
 /* u3_newt_decode(): decode a (partial) length-prefixed byte buffer
@@ -201,13 +177,15 @@ u3_newt_decode(u3_moat* mot_u, c3_y* buf_y, c3_d len_d)
   }
 }
 
-/* _newt_read(): handle async read result.
+/* _newt_read_cb(): stream input callback.
 */
-static c3_o
-_newt_read(u3_moat*        mot_u,
-           ssize_t         len_i,
-           const uv_buf_t* buf_u)
+static void
+_newt_read_cb(uv_stream_t*    str_u,
+              ssize_t         len_i,
+              const uv_buf_t* buf_u)
 {
+  u3_moat* mot_u = (void *)str_u;
+
   if ( 0 > len_i ) {
     c3_free(buf_u->base);
     uv_read_stop((uv_stream_t*)&mot_u->pyp_u);
@@ -217,46 +195,17 @@ _newt_read(u3_moat*        mot_u,
     }
 
     mot_u->bal_f(mot_u->ptr_v, len_i, uv_strerror(len_i));
-    return c3n;
   }
   //  EAGAIN/EWOULDBLOCK
   //
   else if ( 0 == len_i ) {
     c3_free(buf_u->base);
-    return c3n;
   }
   else {
     u3_newt_decode(mot_u, (c3_y*)buf_u->base, (c3_d)len_i);
     c3_free(buf_u->base);
-    return c3y;
-  }
-}
 
-/* _newt_read_sync_cb(): async read callback, sync msg delivery.
-*/
-static void
-_newt_read_sync_cb(uv_stream_t*    str_u,
-                   ssize_t         len_i,
-                   const uv_buf_t* buf_u)
-{
-  u3_moat* mot_u = (void *)str_u;
-
-  if ( c3y == _newt_read(mot_u, len_i, buf_u) ) {
-    _newt_meat_next_sync(mot_u);
-  }
-}
-
-/* _newt_read_cb(): async read callback, async msg delivery.
-*/
-static void
-_newt_read_cb(uv_stream_t*    str_u,
-              ssize_t         len_i,
-              const uv_buf_t* buf_u)
-{
-  u3_moat* mot_u = (void *)str_u;
-
-  if ( c3y == _newt_read(mot_u, len_i, buf_u) ) {
-    _newt_meat_next(mot_u);
+    _newt_meat_poke(mot_u);
   }
 }
 
@@ -274,8 +223,10 @@ _newt_alloc(uv_handle_t* had_u,
   *buf_u = uv_buf_init(ptr_v, len_i);
 }
 
-static void
-_newt_read_init(u3_moat* mot_u, uv_read_cb read_cb_f)
+/* u3_newt_read(): start stream reading.
+*/
+void
+u3_newt_read(u3_moat* mot_u)
 {
   //  zero-initialize completed msg queue
   //
@@ -295,7 +246,7 @@ _newt_read_init(u3_moat* mot_u, uv_read_cb read_cb_f)
 
     if ( 0 != (sas_i = uv_read_start((uv_stream_t*)&mot_u->pyp_u,
                                      _newt_alloc,
-                                     read_cb_f)) )
+                                     _newt_read_cb)) )
     {
       fprintf(stderr, "newt: read failed %s\r\n", uv_strerror(sas_i));
       mot_u->bal_f(mot_u->ptr_v, sas_i, uv_strerror(sas_i));
@@ -346,22 +297,6 @@ u3_newt_moat_stop(u3_moat* mot_u, u3_moor_bail bal_f)
 
     mot_u->ent_u = mot_u->ext_u = 0;
   }
-}
-
-/* u3_newt_read_sync(): start reading; multiple msgs synchronous.
-*/
-void
-u3_newt_read_sync(u3_moat* mot_u)
-{
-  _newt_read_init(mot_u, _newt_read_sync_cb);
-}
-
-/* u3_newt_read(): start reading; each msg asynchronous.
-*/
-void
-u3_newt_read(u3_moat* mot_u)
-{
-  _newt_read_init(mot_u, _newt_read_cb);
 }
 
 /* u3_newt_moat_info(); print status info.

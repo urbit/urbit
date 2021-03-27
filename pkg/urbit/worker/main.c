@@ -130,7 +130,7 @@ _cw_serf_step_trace(void)
 
 /* _cw_serf_writ(): process a command from the king.
 */
-static void
+static c3_o
 _cw_serf_writ(void* vod_p, c3_d len_d, c3_y* byt_y)
 {
   u3_weak jar;
@@ -160,6 +160,8 @@ _cw_serf_writ(void* vod_p, c3_d len_d, c3_y* byt_y)
     //
     u3_serf_post(&u3V);
   }
+
+  return c3y;
 }
 
 /* _cw_serf_stdio(): fix up std io handles
@@ -317,7 +319,7 @@ _cw_serf_commence(c3_i argc, c3_c* argv[])
 
   //  start reading
   //
-  u3_newt_read_sync(&inn_u);
+  u3_newt_read(&inn_u);
 
   //  enter loop
   //
@@ -802,7 +804,7 @@ _cw_boot_boot(u3_noun jar)
 
 /* _cw_boot_writ(): process boot command
 */
-static void
+static c3_o
 _cw_boot_writ(void* vod_p, c3_d len_d, c3_y* byt_y)
 {
   fprintf(stderr, "boot: writ\n");
@@ -819,6 +821,8 @@ _cw_boot_writ(void* vod_p, c3_d len_d, c3_y* byt_y)
     fprintf(stderr, "boot: good\n");
     exit(0);
   }
+
+  return c3y;
 }
 
 
@@ -1051,7 +1055,7 @@ _cw_boot(c3_i argc, c3_c* argv[])
 
   //  start reading
   //
-  u3_newt_read_sync(&inn_u);
+  u3_newt_read(&inn_u);
 
   //  enter loop
   //

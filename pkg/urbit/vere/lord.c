@@ -699,7 +699,7 @@ _lord_plea_work(u3_lord* god_u, u3_noun dat)
 
 /* _lord_on_plea(): handle plea from serf.
 */
-static void
+static c3_o
 _lord_on_plea(void* ptr_v, c3_d len_d, c3_y* byt_y)
 {
   u3_lord* god_u = ptr_v;
@@ -717,16 +717,16 @@ _lord_on_plea(void* ptr_v, c3_d len_d, c3_y* byt_y)
 #endif
 
   if ( u3_none == jar ) {
-    return _lord_plea_foul(god_u, 0, u3_blip);
+    _lord_plea_foul(god_u, 0, u3_blip);
   }
   else if ( c3n == u3r_cell(jar, &tag, &dat) ) {
-    return _lord_plea_foul(god_u, 0, jar);
+    _lord_plea_foul(god_u, 0, jar);
   }
 
   switch ( tag ) {
     default: {
-      return _lord_plea_foul(god_u, 0, jar);
-    }
+      _lord_plea_foul(god_u, 0, jar);
+    } break;
 
     case c3__work: {
       _lord_plea_work(god_u, u3k(dat));
@@ -758,6 +758,7 @@ _lord_on_plea(void* ptr_v, c3_d len_d, c3_y* byt_y)
   }
 
   u3z(jar);
+  return c3y;
 }
 
 /* _lord_writ_new(): allocate a new writ.
@@ -1247,7 +1248,7 @@ _lord_on_serf_boot_exit(uv_process_t* req_u,
 
 /* _lord_on_plea_boot(): handle plea from serf.
 */
-static void
+static c3_o
 _lord_on_plea_boot(void* ptr_v, c3_d len_d, c3_y* byt_y)
 {
   fprintf(stderr, "king: plea\r\n");
@@ -1307,6 +1308,7 @@ _lord_on_plea_boot(void* ptr_v, c3_d len_d, c3_y* byt_y)
   }
 
   u3z(jar);
+  return c3y;
 }
 
 /* u3_lord_boot(): instantiate child process.
