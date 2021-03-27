@@ -1668,7 +1668,7 @@ u3m_init(void)
       u3l_log("boot: mapping %dMB failed\r\n", (len_w / (1024 * 1024)));
       u3l_log("see urbit.org/using/install/#about-swap-space"
               " for adding swap space\r\n");
-      if ( -1 != (c3_ps)map_v ) {
+      if ( -1 != (c3_ps)dyn_v ) {
         u3l_log("if porting to a new platform, try U3_OS_LoomBase %p\r\n",
                 dyn_v);
       }
