@@ -645,75 +645,23 @@ _urth_boot_make(u3_noun who, u3_noun wyr, u3_noun ven, u3_noun pil)
   return bot_u;
 }
 
-typedef struct _event_list {
-  u3_noun eve;
-  c3_l  mug_l;
-} event_list;
-
-
-/* _disk_read_one_cb(): lmdb read callback, invoked for each event in order
-*/
-static c3_o
-_disk_read_one_cb(void* ptr_v, c3_d eve_d, size_t val_i, void* val_p)
-{
-  event_list* ven_u = ptr_v;
-
-  if ( 4 >= val_i ) {
-    return c3n;
-  }
-
-  {
-    u3_noun job;
-    c3_y* dat_y = val_p;
-    c3_l  mug_l = dat_y[0]
-                ^ (dat_y[1] <<  8)
-                ^ (dat_y[2] << 16)
-                ^ (dat_y[3] << 24);
-
-    //  XX u3m_soft?
-    //
-    job = u3ke_cue(u3i_bytes(val_i - 4, dat_y + 4));
-
-    ven_u->mug_l = mug_l;
-    ven_u->eve   = u3nc(job, ven_u->eve);
-  }
-
-  return c3y;
-}
-
-/* _disk_read_start_cb(): the read from the db, trigger response
-*/
-static u3_weak
-_disk_read_list(c3_d fin_d)
-{
-  event_list ven_u = { u3_nul, 0 };
-
-  if ( c3n == u3_lmdb_read(log_u->mdb_u,
-                           &ven_u,
-                           1,
-                           fin_d,
-                           _disk_read_one_cb) )
-  {
-    return u3_none;
-  }
-  else {
-    return u3kb_flop(ven_u.eve);
-  }
-}
-
 /* _cw_bootstrap(): run the Arvo bootstrap sequence
 */
 static c3_o
 _cw_bootstrap(c3_d fin_d)
 {
   u3_noun eve;
+  c3_l  mug_l;
 
-  if ( u3_none == (eve = _disk_read_list(fin_d)) ) {
+  if ( u3_none == (eve = u3_disk_read_list(log_u, 1, fin_d, &mug_l)) ) {
     fprintf(stderr, "boot: read failed\r\n");
     return c3n;
   }
   else {
     fprintf(stderr, "boot: bout to play\r\n");
+
+    //  XX check return, mug
+    //
     u3_serf_play(&u3V, 1, eve);
     return c3y;
   }
@@ -1187,21 +1135,17 @@ _cw_replay()
         exit(1);
       }
       else {
-        fprintf(stderr, ".");
+        u3_noun job;
+        c3_l  mug_l;
 
-        if ( 4 >= len_i ) {
+        if ( c3n == u3_disk_sift(log_u, len_i, (c3_y*)buf_v, &mug_l, &job) ) {
           fprintf(stderr, "replay: bad event\r\n");
           exit(1);
         }
 
-        {
-          c3_y* dat_y = buf_v;
-          c3_l  mug_l = dat_y[0]
-                      ^ (dat_y[1] <<  8)
-                      ^ (dat_y[2] << 16)
-                      ^ (dat_y[3] << 24);
+        fprintf(stderr, ".");
 
-          u3_noun job = u3ke_cue(u3i_bytes(len_i - 4, dat_y + 4));
+        {
           u3_noun res = u3_serf_play(&u3V, itr_u.eve_d - 1, u3nc(job, u3_nul));
 
           u3_noun mug, tal;
