@@ -80,6 +80,7 @@ export class Urbit implements UrbitInterface {
     }
     return {
       credentials: 'include',
+      accept: '*',
       headers
     };
   }
@@ -164,10 +165,8 @@ export class Urbit implements UrbitInterface {
         this.poke({ app: 'hood', mark: 'helm-hi', json: 'Opening API channel' });
       }
       fetchEventSource(this.channelUrl, {
-        headers: {
-          Cookie: this.cookie,
-          accept: '*'
-        },
+        ...this.fetchOptions,
+        openWhenHidden: true,
         onopen: async (response) => {
           if (this.verbose) {
             console.log('Opened eventsource', response);
@@ -368,7 +367,7 @@ export class Urbit implements UrbitInterface {
    * @param mark The mark of the data being sent
    * @param json The data to send
    */
-  poke<T>(params: PokeInterface<T>): Promise<void | number> {
+  poke<T>(params: PokeInterface<T>): Promise<number> {
     const { app, mark, json, onSuccess, onError } = { onSuccess: () => {}, onError: () => {}, ...params };
     return new Promise((resolve, reject) => {
       const message: Message = {
@@ -402,7 +401,7 @@ export class Urbit implements UrbitInterface {
    * @param path The path to which to subscribe
    * @param handlers Handlers to deal with various events of the subscription
    */
-  async subscribe(params: SubscriptionRequestInterface): Promise<boolean | void> {
+  async subscribe(params: SubscriptionRequestInterface): Promise<number> {
     const {
       app,
       path,
@@ -428,7 +427,9 @@ export class Urbit implements UrbitInterface {
       app, path, err, event, quit
     });
 
-    return this.sendJSONtoChannel(message);
+    await this.sendJSONtoChannel(message);
+    
+    return message.id;
   }
 
   /**

@@ -47,8 +47,8 @@ export interface UrbitInterface {
   getEventId(): number;
   ack(eventId: number): Promise<void | number>;
   // sendMessage(action: Action, data?: object): Promise<void | number>;
-  poke<T>(params: PokeInterface<T>): Promise<void | number>;
-  subscribe(params: SubscriptionRequestInterface): Promise<boolean | void>;
+  poke<T>(params: PokeInterface<T>): Promise<number>;
+  subscribe(params: SubscriptionRequestInterface): Promise<number>;
   unsubscribe(subscription: number): Promise<boolean | void>;
   delete(): void;
   scry(params: Scry): Promise<void | any>;
