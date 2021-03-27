@@ -486,7 +486,7 @@ _disk_read_one_cb(void* ptr_v, c3_d eve_d, size_t val_i, void* val_p)
   return c3y;
 }
 
-/* _disk_read_start_cb(): the read from the db, trigger response
+/* _disk_read_start_cb(): read from the db, trigger response
 */
 static void
 _disk_read_start_cb(uv_timer_t* tim_u)
