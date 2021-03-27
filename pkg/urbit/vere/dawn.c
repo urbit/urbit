@@ -79,7 +79,7 @@ _dawn_post_json(c3_c* url_c, uv_buf_t lod_u)
 
   //  XX require TLS, pin default cert?
   //
-  curl_easy_setopt(curl, CURLOPT_CAINFO, u3K.certs_c);
+  u3K.ssl_curl_f(curl);
   curl_easy_setopt(curl, CURLOPT_URL, url_c);
   curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, _dawn_curl_alloc);
   curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void*)&buf_u);
@@ -126,7 +126,7 @@ _dawn_get_jam(c3_c* url_c)
 
   //  XX require TLS, pin default cert?
   //
-  curl_easy_setopt(curl, CURLOPT_CAINFO, u3K.certs_c);
+  u3K.ssl_curl_f(curl);
   curl_easy_setopt(curl, CURLOPT_URL, url_c);
   curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, _dawn_curl_alloc);
   curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void*)&buf_u);

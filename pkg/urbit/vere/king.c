@@ -244,7 +244,7 @@ _king_get_atom(c3_c* url_c)
     exit(1);
   }
 
-  curl_easy_setopt(curl, CURLOPT_CAINFO, u3K.certs_c);
+  u3K.ssl_curl_f(curl);
   curl_easy_setopt(curl, CURLOPT_URL, url_c);
   curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, _king_curl_alloc);
   curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void*)&buf_u);
@@ -677,7 +677,6 @@ _king_loop_init()
 void
 _king_loop_exit()
 {
-  unlink(u3K.certs_c);
 }
 
 static void

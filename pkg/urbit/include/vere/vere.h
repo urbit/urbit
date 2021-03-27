@@ -640,7 +640,8 @@
       /* u3_king: all executing piers.
       */
         typedef struct _u3_king {
-          c3_c*          certs_c;               //  ssl certificate dump
+          void           (*ssl_curl_f)(void*);  //  setup ssl CAs in CURL*
+          void           (*ssl_x509_f)(void*);  //  setup ssl CAs in X509_STORE*
           u3_pier*         pir_u;               //  pier list
           uv_timer_t       tim_u;               //  gc timer
         } u3_king;

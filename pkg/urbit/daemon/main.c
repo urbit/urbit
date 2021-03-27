@@ -352,26 +352,62 @@ _main_getopt(c3_i argc, c3_c** argv)
   return c3y;
 }
 
-/* _setup_cert_store: writes our embedded certificate database to a temp file
+/* _cert_store: decoded CA certificates
+ */
+static STACK_OF(X509_INFO)* _cert_store;
+
+/* _setup_cert_store(): decodes embedded CA certificates
  */
 static void
-_setup_cert_store(char* tmp_cert_file_name)
+_setup_cert_store()
 {
-  errno = 0;
-  int fd = mkstemp(tmp_cert_file_name);
-  if (fd < 1) {
-    printf("boot: failed to write local ssl temporary certificate store: %s\n",
-           strerror(errno));
+  BIO* cbio = BIO_new_mem_buf(include_ca_bundle_crt, include_ca_bundle_crt_len);
+  if ( !cbio || !(_cert_store = PEM_X509_INFO_read_bio(cbio, NULL, NULL, NULL)) ) {
+    u3l_log("boot: failed to decode embedded CA certificates\r\n");
     exit(1);
   }
 
-  if (-1 == write(fd, include_ca_bundle_crt, include_ca_bundle_crt_len)) {
-    printf("boot: failed to write local ssl temporary certificate store: %s\n",
-           strerror(errno));
-    exit(1);
-  }
+  BIO_free(cbio);
+}
 
-  setenv("SSL_CERT_FILE", tmp_cert_file_name, 1);
+/* _setup_ssl_x509(): adds embedded CA certificates to a X509_STORE
+ */
+static void
+_setup_ssl_x509(X509_STORE* cts)
+{
+  int i;
+  for ( i = 0; i < sk_X509_INFO_num(_cert_store); i++ ) {
+    X509_INFO *itmp = sk_X509_INFO_value(_cert_store, i);
+    if(itmp->x509) {
+      X509_STORE_add_cert(cts, itmp->x509);
+    }
+    if(itmp->crl) {
+      X509_STORE_add_crl(cts, itmp->crl);
+    }
+  }
+}
+
+/* _curl_ssl_ctx_cb(): curl SSL context callback
+ */
+static CURLcode
+_curl_ssl_ctx_cb(CURL* curl, SSL_CTX* sslctx, void* param)
+{
+  X509_STORE* cts = SSL_CTX_get_cert_store(sslctx);
+  if (!cts || !_cert_store)
+    return CURLE_ABORTED_BY_CALLBACK;
+
+  _setup_ssl_x509(cts);
+  return CURLE_OK;
+}
+
+/* _setup_ssl_curl(): adds embedded CA certificates to a curl context
+ */
+static void
+_setup_ssl_curl(CURL* curl)
+{
+  curl_easy_setopt(curl, CURLOPT_CAINFO, NULL);
+  curl_easy_setopt(curl, CURLOPT_CAPATH, NULL);
+  curl_easy_setopt(curl, CURLOPT_SSL_CTX_FUNCTION, _curl_ssl_ctx_cb);
 }
 
 
@@ -681,9 +717,6 @@ main(c3_i   argc,
   }
   // printf("vere: hostname is %s\n", u3_Host.ops_u.nam_c);
 
-  u3K.certs_c = strdup("/tmp/urbit-ca-cert-XXXXXX");
-  _setup_cert_store(u3K.certs_c);
-
   if ( c3y == u3_Host.ops_u.dem ) {
     printf("boot: running as daemon\n");
   }
@@ -763,6 +796,10 @@ main(c3_i   argc,
       u3l_log("boot: curl initialization failed\r\n");
       exit(1);
     }
+
+    _setup_cert_store();
+    u3K.ssl_curl_f = _setup_ssl_curl;
+    u3K.ssl_x509_f = _setup_ssl_x509;
 
     u3_king_commence();
 

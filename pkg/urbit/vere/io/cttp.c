@@ -939,8 +939,8 @@ _cttp_init_tls(void)
                              // SSL_OP_NO_TLSv1 | // XX test
                              SSL_OP_NO_COMPRESSION);
 
+  u3K.ssl_x509_f(SSL_CTX_get_cert_store(tls_u));
   SSL_CTX_set_verify(tls_u, SSL_VERIFY_PEER, 0);
-  SSL_CTX_set_default_verify_paths(tls_u);
   SSL_CTX_set_session_cache_mode(tls_u, SSL_SESS_CACHE_OFF);
   SSL_CTX_set_cipher_list(tls_u,
                           "ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:"
