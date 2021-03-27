@@ -1,0 +1,63 @@
+@font-face {
+  font-family: 'Inter';
+  font-style:  normal;
+  font-weight: 400;
+  src: url("https://media.urbit.org/fonts/Inter-Regular.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style:  italic;
+  font-weight: 400;
+  src: url("https://media.urbit.org/fonts/Inter-Italic.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style:  normal;
+  font-weight: 700;
+  src: url("https://media.urbit.org/fonts/Inter-Bold.woff2") format("woff2");
+}
+@font-face {
+  font-family: 'Inter';
+  font-style:  italic;
+  font-weight: 700;
+  src: url("https://media.urbit.org/fonts/Inter-BoldItalic.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Source Code Pro";
+  src: url("https://storage.googleapis.com/media.urbit.org/fonts/scp-extralight.woff");
+  font-weight: 200;
+}
+
+@font-face {
+  font-family: "Source Code Pro";
+  src: url("https://storage.googleapis.com/media.urbit.org/fonts/scp-light.woff");
+  font-weight: 300;
+}
+
+@font-face {
+  font-family: "Source Code Pro";
+  src: url("https://storage.googleapis.com/media.urbit.org/fonts/scp-regular.woff");
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "Source Code Pro";
+  src: url("https://storage.googleapis.com/media.urbit.org/fonts/scp-medium.woff");
+  font-weight: 500;
+}
+
+@font-face {
+  font-family: "Source Code Pro";
+  src: url("https://storage.googleapis.com/media.urbit.org/fonts/scp-semibold.woff");
+  font-weight: 600;
+}
+
+@font-face {
+  font-family: "Source Code Pro";
+  src: url("https://storage.googleapis.com/media.urbit.org/fonts/scp-bold.woff");
+  font-weight: 700;
+}
+
