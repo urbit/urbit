@@ -127,7 +127,7 @@ static void _cm_overflow(void *arg1, void *arg2, void *arg3)
   (void)(arg1);
   (void)(arg2);
   (void)(arg3);
-  siglongjmp(u3_Signal, c3__over);
+  u3m_signal(c3__over);
 }
 
 /* _cm_signal_handle(): handle a signal in general.
@@ -139,7 +139,7 @@ _cm_signal_handle(c3_l sig_l)
     sigsegv_leave_handler(_cm_overflow, NULL, NULL, NULL);
   }
   else {
-    siglongjmp(u3_Signal, sig_l);
+    u3m_signal(sig_l);
   }
 }
 
