@@ -814,8 +814,8 @@ u3e_save(void)
 
   _ce_image_sync(&u3P.nor_u);
   _ce_image_sync(&u3P.sou_u);
-  _ce_patch_delete();
   _ce_patch_free(pat_u);
+  _ce_patch_delete();
 }
 
 /* u3e_live(): start the checkpointing system.
@@ -852,8 +852,8 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
         _ce_patch_apply(pat_u);
         _ce_image_sync(&u3P.nor_u);
         _ce_image_sync(&u3P.sou_u);
-        _ce_patch_delete();
         _ce_patch_free(pat_u);
+        _ce_patch_delete();
       }
 
       /* Write image files to memory; reinstate protection.
