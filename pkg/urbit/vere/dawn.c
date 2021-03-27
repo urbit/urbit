@@ -521,7 +521,7 @@ _dawn_come(u3_noun stars)
         c3_c  pat_c[64];
         snprintf(pat_c, 64, "%s.key", who_c + 1);
 
-        FILE* fil_u = fopen(pat_c, "w");
+        FILE* fil_u = fopen(pat_c, "wb");
         fprintf(fil_u, "%s\n", key_c);
         fclose(fil_u);
       }

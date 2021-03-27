@@ -39,7 +39,7 @@ u3_noun
 u3_walk_safe(c3_c* pas_c)
 {
   struct stat buf_b;
-  c3_i        fid_i = open(pas_c, O_RDONLY, 0644);
+  c3_i        fid_i = open(pas_c, O_RDONLY | O_BINARY, 0644);
   c3_w        fln_w, red_w;
   c3_y*       pad_y;
 
@@ -71,7 +71,7 @@ u3_noun
 u3_walk_load(c3_c* pas_c)
 {
   struct stat buf_b;
-  c3_i        fid_i = open(pas_c, O_RDONLY, 0644);
+  c3_i        fid_i = open(pas_c, O_RDONLY | O_BINARY, 0644);
   c3_w        fln_w, red_w;
   c3_y*       pad_y;
 
@@ -137,7 +137,7 @@ _walk_mkdirp(c3_c* bas_c, u3_noun pax)
 void
 u3_walk_save(c3_c* pas_c, u3_noun tim, u3_atom pad, c3_c* bas_c, u3_noun pax)
 {
-  c3_i  fid_i = open(pas_c, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+  c3_i  fid_i = open(pas_c, O_WRONLY | O_BINARY | O_CREAT | O_TRUNC, 0666);
   c3_w  fln_w, rit_w;
   c3_y* pad_y;
 

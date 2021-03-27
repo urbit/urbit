@@ -226,7 +226,7 @@ _serf_grab(u3_serf* sef_u)
       c3_c man_c[2054];
       snprintf(man_c, 2053, "%s/%s-serf.txt", nam_c, wen_c);
 
-      fil_u = fopen(man_c, "w");
+      fil_u = fopen(man_c, "wb");
       fprintf(fil_u, "%s\r\n", wen_c);
 
       c3_free(wen_c);
@@ -825,7 +825,7 @@ _serf_writ_live_exit(u3_serf* sef_u, c3_w cod_w)
       c3_c man_c[2054];
       snprintf(man_c, 2053, "%s/%s.txt", nam_c, wen_c);
 
-      fil_u = fopen(man_c, "w");
+      fil_u = fopen(man_c, "wb");
 
       c3_free(wen_c);
       u3z(wen);

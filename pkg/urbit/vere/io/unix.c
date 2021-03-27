@@ -233,7 +233,7 @@ _unix_mkdir(c3_c* pax_c)
 static c3_w
 _unix_write_file_hard(c3_c* pax_c, u3_noun mim)
 {
-  c3_i  fid_i = open(pax_c, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+  c3_i  fid_i = open(pax_c, O_WRONLY | O_BINARY | O_CREAT | O_TRUNC, 0666);
   c3_w  len_w, rit_w, siz_w, mug_w = 0;
   c3_y* dat_y;
 
@@ -276,7 +276,7 @@ static void
 _unix_write_file_soft(u3_ufil* fil_u, u3_noun mim)
 {
   struct stat buf_u;
-  c3_i  fid_i = open(fil_u->pax_c, O_RDONLY, 0644);
+  c3_i  fid_i = open(fil_u->pax_c, O_RDONLY | O_BINARY, 0644);
   c3_ws len_ws, red_ws;
   c3_w  old_w;
   c3_y* old_y;
@@ -700,7 +700,7 @@ _unix_update_file(u3_unix* unx_u, u3_ufil* fil_u)
   fil_u->dry = c3n;
 
   struct stat buf_u;
-  c3_i  fid_i = open(fil_u->pax_c, O_RDONLY, 0644);
+  c3_i  fid_i = open(fil_u->pax_c, O_RDONLY | O_BINARY, 0644);
   c3_ws len_ws, red_ws;
   c3_y* dat_y;
 
@@ -803,7 +803,7 @@ _unix_update_dir(u3_unix* unx_u, u3_udir* dir_u)
         }
         else {
           struct stat buf_u;
-          c3_i  fid_i = open(nod_u->pax_c, O_RDONLY, 0644);
+          c3_i  fid_i = open(nod_u->pax_c, O_RDONLY | O_BINARY, 0644);
 
           if ( (fid_i < 0) || (fstat(fid_i, &buf_u) < 0) ) {
             if ( ENOENT != errno ) {
@@ -973,7 +973,7 @@ static u3_noun
 _unix_initial_update_file(c3_c* pax_c, c3_c* bas_c)
 {
   struct stat buf_u;
-  c3_i  fid_i = open(pax_c, O_RDONLY, 0644);
+  c3_i  fid_i = open(pax_c, O_RDONLY | O_BINARY, 0644);
   c3_ws len_ws, red_ws;
   c3_y* dat_y;
 
@@ -1289,7 +1289,7 @@ u3_unix_acquire(c3_c* pax_c)
   c3_w pid_w;
   FILE* loq_u;
 
-  if ( NULL != (loq_u = fopen(paf_c, "r")) ) {
+  if ( NULL != (loq_u = fopen(paf_c, "rb")) ) {
     if ( 1 != fscanf(loq_u, "%" SCNu32, &pid_w) ) {
       u3l_log("lockfile %s is corrupt!\n", paf_c);
       kill(getpid(), SIGTERM);
@@ -1327,7 +1327,7 @@ u3_unix_acquire(c3_c* pax_c)
     unlink(paf_c);
   }
 
-  if ( NULL == (loq_u = fopen(paf_c, "w")) ) {
+  if ( NULL == (loq_u = fopen(paf_c, "wb")) ) {
     u3l_log("unix: unable to open %s\n", paf_c);
     c3_assert(0);
   }

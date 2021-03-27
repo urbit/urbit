@@ -412,7 +412,7 @@ u3_noun
 u3m_file(c3_c* pas_c)
 {
   struct stat buf_b;
-  c3_i        fid_i = open(pas_c, O_RDONLY, 0644);
+  c3_i        fid_i = open(pas_c, O_RDONLY | O_BINARY, 0644);
   c3_w        fln_w, red_w;
   c3_y*       pad_y;
 

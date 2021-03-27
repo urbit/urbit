@@ -550,7 +550,7 @@ _cu_rock_save(c3_c* dir_c, c3_d eve_d, c3_d len_d, c3_y* byt_y)
       return c3n;
     }
 
-    if ( -1 == (fid_i = open(nam_c, O_RDWR | O_CREAT | O_TRUNC, 0644)) ) {
+    if ( -1 == (fid_i = open(nam_c, O_RDWR | O_BINARY | O_CREAT | O_TRUNC, 0644)) ) {
       fprintf(stderr, "rock: open failed (%s, %" PRIu64 "): %s\r\n",
                       dir_c, eve_d, strerror(errno));
       c3_free(nam_c);
@@ -689,7 +689,7 @@ u3u_mmap_read(c3_c* cap_c, c3_c* pat_c, c3_d* out_d, c3_y** out_y)
 
   //  open file
   //
-  if ( -1 == (fid_i = open(pat_c, O_RDONLY, 0644)) ) {
+  if ( -1 == (fid_i = open(pat_c, O_RDONLY | O_BINARY, 0644)) ) {
     fprintf(stderr, "%s: open failed (%s): %s\r\n",
                     cap_c, pat_c, strerror(errno));
     return c3n;
@@ -742,7 +742,7 @@ u3u_mmap(c3_c* cap_c, c3_c* pat_c, c3_d len_d, c3_y** out_y)
 
   //  open file
   //
-  if ( -1 == (fid_i = open(pat_c, O_RDWR | O_CREAT | O_TRUNC, 0644)) ) {
+  if ( -1 == (fid_i = open(pat_c, O_RDWR | O_BINARY | O_CREAT | O_TRUNC, 0644)) ) {
     fprintf(stderr, "%s: open failed (%s): %s\r\n",
                     cap_c, pat_c, strerror(errno));
     return c3n;
