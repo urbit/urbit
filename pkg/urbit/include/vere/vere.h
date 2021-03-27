@@ -950,6 +950,11 @@
         void
         u3_disk_read(u3_disk* log_u, c3_d eve_d, c3_d len_d);
 
+      /* u3_disk_read_list(): synchronously read a cons list of events.
+      */
+        u3_weak
+        u3_disk_read_list(u3_disk* log_u, c3_d eve_d, c3_d len_d, c3_l* mug_l);
+
       /* u3_disk_boot_plan(): enqueue boot sequence, without autocommit.
       */
         void

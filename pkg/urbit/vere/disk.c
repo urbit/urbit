@@ -538,6 +538,56 @@ u3_disk_read(u3_disk* log_u, c3_d eve_d, c3_d len_d)
   uv_timer_start(&red_u->tim_u, _disk_read_start_cb, 0, 0);
 }
 
+struct _cd_list {
+  u3_disk* log_u;
+  u3_noun    eve;
+  c3_l     mug_l;
+};
+
+/* _disk_read_list_cb(): lmdb read callback, invoked for each event in order
+*/
+static c3_o
+_disk_read_list_cb(void* ptr_v, c3_d eve_d, size_t val_i, void* val_p)
+{
+  struct _cd_list* ven_u = ptr_v;
+  u3_disk* log_u = ven_u->log_u;
+
+  {
+    u3_noun job;
+    c3_l  mug_l;
+
+    if ( c3n == u3_disk_sift(log_u, val_i, (c3_y*)val_p, &mug_l, &job) ) {
+      return c3n;
+    }
+
+    ven_u->mug_l = mug_l;
+    ven_u->eve   = u3nc(job, ven_u->eve);
+  }
+
+  return c3y;
+}
+
+/* u3_disk_read_list(): synchronously read a cons list of events.
+*/
+u3_weak
+u3_disk_read_list(u3_disk* log_u, c3_d eve_d, c3_d len_d, c3_l* mug_l)
+{
+  struct _cd_list ven_u = { log_u, u3_nul, 0 };
+
+  if ( c3n == u3_lmdb_read(log_u->mdb_u,
+                           &ven_u,
+                           eve_d,
+                           len_d,
+                           _disk_read_list_cb) )
+  {
+    return u3_none;
+  }
+  else {
+    *mug_l = ven_u.mug_l;
+    return u3kb_flop(ven_u.eve);
+  }
+}
+
 /* _disk_save_meta(): serialize atom, save as metadata at [key_c].
 */
 static c3_o
