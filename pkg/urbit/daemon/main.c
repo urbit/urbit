@@ -590,6 +590,10 @@ static void _on_boot_completed_cb() {
 static void
 _fork_into_background_process()
 {
+#if defined(U3_OS_mingw)
+  fprintf(stderr, "Daemon mode is not yet supported on MingW\r\n");
+  exit(1);
+#else
   c3_i pipefd[2];
 
   if ( 0 != pipe(pipefd) ) {
@@ -618,6 +622,7 @@ _fork_into_background_process()
   c3_i status;
   wait(&status);
   exit(WEXITSTATUS(status));
+#endif
 }
 
 /* _stop_on_boot_completed_cb(): exit gracefully after boot is complete
@@ -642,7 +647,12 @@ main(c3_i   argc,
   //  Set `u3_Host.wrk_c` to the worker executable path.
   c3_i worker_exe_len = 1 + strlen(argv[0]) + strlen("-worker");
   u3_Host.wrk_c = c3_malloc(worker_exe_len);
+  #if defined(U3_OS_mingw)
+  strcpy(u3_Host.wrk_c, argv[0]);
+  strcpy(u3_Host.wrk_c + strlen(argv[0]) - 4, "-worker.exe");
+  #else
   snprintf(u3_Host.wrk_c, worker_exe_len, "%s-worker", argv[0]);
+  #endif
 
   if ( c3y == u3_Host.ops_u.dem ) {
     _fork_into_background_process();

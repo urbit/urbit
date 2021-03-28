@@ -195,12 +195,16 @@ _cw_serf_commence(c3_i argc, c3_c* argv[])
 
   //  Ignore SIGPIPE signals.
   //
+  #ifndef U3_OS_mingw
   {
     struct sigaction sig_s = {{0}};
     sigemptyset(&(sig_s.sa_mask));
     sig_s.sa_handler = SIG_IGN;
     sigaction(SIGPIPE, &sig_s, 0);
   }
+  #else
+  signal(SIGPIPE, SIG_IGN);
+  #endif
 
   //  configure pipe to daemon process
   //

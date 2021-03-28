@@ -6,7 +6,7 @@ URBIT_VERSION="$(cat ./version)"
 
 deps="                                                                \
   curl gmp sigsegv argon2 ed25519 ent h2o scrypt uv murmur3 secp256k1 \
-  softfloat3 ssl crypto z lmdb ge-additions aes_siv pthread           \
+  softfloat3 aes_siv ssl crypto z lmdb ge-additions pthread           \
 "
 
 headers="             \
@@ -58,6 +58,15 @@ esac
 
 # TODO Determine if the target cpu is little or big endian.
 case $(tr A-Z a-z <<< $os) in
+  *mingw*)
+     defmacro U3_OS_mingw 1
+
+     # increase default thread stack size and link Windows implibs
+     ldextra="-Wl,--stack,67108864 -lbcrypt -lws2_32"
+     mkextra="use_dumb_terminal = 1"
+     vcompat="compat = mingw"
+     CFLAGS="${CFLAGS-} -DH2O_NO_UNIX_SOCKETS -Icompat/mingw"
+     ;;
   *linux*)
      defmacro U3_OS_linux 1
      defmacro U3_OS_PROF 1
@@ -94,8 +103,10 @@ done
 
 cat >config.mk <<EOF
 CFLAGS  := ${CFLAGS-} -funsigned-char -ffast-math -fcommon -std=gnu99
-LDFLAGS := $LDFLAGS
+LDFLAGS := $LDFLAGS ${ldextra-}
 CC      := ${CC-cc}
+${vcompat-}
+${mkextra-}
 EOF
 
 echo == config.mk == >&2

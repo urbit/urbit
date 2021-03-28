@@ -717,7 +717,7 @@
       */
         u3_atom
         u3_time_in_ts(struct timespec* tim_ts);
-#if defined(U3_OS_linux)
+#if defined(U3_OS_linux) || defined(U3_OS_mingw)
       /* u3_time_t_in_ts(): urbit time from time_t.
        */
          u3_atom

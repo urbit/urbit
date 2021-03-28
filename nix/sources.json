@@ -3,6 +3,10 @@
         "branch": "master",
         "description": "With argon2u. Based off https://github.com/P-H-C/phc-winner-argon2",
         "homepage": "",
+        "mingw": {
+            "include": ["include", "src/blake2"],
+            "make": "libargon2.a"
+        },
         "owner": "urbit",
         "repo": "argon2",
         "rev": "4da94a611ee62bad87ab2b131ffda3bcc0723d9c",
@@ -15,6 +19,10 @@
         "branch": "master",
         "description": "Submodule included by Urbit",
         "homepage": null,
+        "mingw": {
+            "strip": 1,
+            "make": "all"
+        },
         "owner": "urbit",
         "repo": "ed25519",
         "rev": "76385f2ebbbc9580a9c236952d68d11d73a6135c",
@@ -27,12 +35,17 @@
         "branch": "master",
         "description": "H2O - the optimized HTTP/1, HTTP/2, HTTP/3 server",
         "homepage": "https://h2o.examp1e.net",
+        "mingw": {
+             "include": "include",
+             "prepare": "cmake -G\"MSYS Makefiles\" .",
+             "make": "libh2o"
+        },
         "owner": "h2o",
         "repo": "h2o",
-        "rev": "v2.2.4",
-        "sha256": "0176x0bzjry19zs074a9i5vhncc842xikmx43wj61jky318nq4w4",
+        "rev": "v2.2.6",
+        "sha256": "0qni676wqvxx0sl0pw9j0ph7zf2krrzqc1zwj73mgpdnsr8rsib7",
         "type": "tarball",
-        "url": "https://github.com/h2o/h2o/archive/v2.2.4.tar.gz",
+        "url": "https://github.com/h2o/h2o/archive/v2.2.6.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "hackage.nix": {
@@ -63,6 +76,9 @@
         "branch": "master",
         "description": null,
         "homepage": null,
+        "mingw": {
+            "make": "libscrypt.a CFLAGS_EXTRA=-ffast-math"
+        },
         "owner": "urbit",
         "repo": "libscrypt",
         "rev": "029693ff1cbe4f69d3a2da87d0f4f034f92cc0c2",
@@ -75,6 +91,9 @@
         "branch": "master",
         "description": null,
         "homepage": null,
+        "mingw": {
+            "make": "static"
+        },
         "owner": "urbit",
         "repo": "murmur3",
         "rev": "71a75d57ca4e7ca0f7fc2fd84abd93595b0624ca",
@@ -111,6 +130,11 @@
         "branch": "master",
         "description": null,
         "homepage": null,
+        "mingw": {
+            "include": "source/include",
+            "lib": "build/Win64-MinGW-w64",
+            "make": "-C build/Win64-MinGW-w64 libsoftfloat3.a"
+        },
         "owner": "urbit",
         "repo": "berkeley-softfloat-3",
         "rev": "ec4c7e31b32e07aad80e52f65ff46ac6d6aad986",

@@ -749,12 +749,16 @@ u3_king_commence()
   u3C.sign_move_f = _king_sign_move;
 
   //  Ignore SIGPIPE signals.
+  #ifndef U3_OS_mingw
   {
     struct sigaction sig_s = {{0}};
     sigemptyset(&(sig_s.sa_mask));
     sig_s.sa_handler = SIG_IGN;
     sigaction(SIGPIPE, &sig_s, 0);
   }
+  #else
+  signal(SIGPIPE, SIG_IGN);
+  #endif
 
   //  boot the ivory pill
   //
@@ -762,6 +766,7 @@ u3_king_commence()
 
   //  disable core dumps (due to lmdb size)
   //
+  #ifndef U3_OS_mingw
   {
     struct rlimit rlm;
 
@@ -773,6 +778,7 @@ u3_king_commence()
       exit(1);
     }
   }
+  #endif
 
   //  run the loop
   //

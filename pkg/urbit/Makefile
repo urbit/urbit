@@ -9,7 +9,17 @@ worker = $(wildcard worker/*.c)
 tests  = $(wildcard tests/*.c)
 bench  = $(wildcard bench/*.c)
 
-common  = $(jets) $(noun) $(ur) $(vere)
+ifdef use_dumb_terminal
+vere  := $(filter-out vere/io/term.c,$(vere))
+else
+vere  := $(filter-out vere/io/dumb.c,$(vere))
+endif
+
+ifdef compat
+compat := $(wildcard compat/$(compat)/*.c)
+endif
+
+common  = $(jets) $(noun) $(ur) $(vere) $(compat)
 headers = $(shell find include -type f)
 
 common_objs = $(shell echo $(common) | sed 's/\.c/.o/g')

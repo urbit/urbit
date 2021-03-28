@@ -72,6 +72,23 @@
 #     include <sys/resource.h>
 #     include <sys/mman.h>
 
+#   elif defined(U3_OS_mingw)
+#     define _POSIX
+#     include <openssl/opensslv.h>
+#     include <inttypes.h>
+#     include <stdlib.h>
+#     include <string.h>
+#     include <stdarg.h>
+#     include <unistd.h>
+#     include <stdint.h>
+#     include <assert.h>
+#     include <stdio.h>
+#     include <dirent.h>
+#     include <signal.h>
+#     include <sys/time.h>
+#     include "mman.h"
+#     include "compat.h"
+
 #   else
       #error "port: headers"
 #   endif
@@ -101,19 +118,15 @@
 #       define U3_OS_LoomBase 0x36000000
 #     endif
 #       define U3_OS_LoomBits 29            //  ie, 2^29 words == 2GB
-#   elif defined(U3_OS_osx)
+#   elif defined(U3_OS_osx) || defined(U3_OS_bsd)
 #     ifdef __LP64__
 #       define U3_OS_LoomBase 0x200000000
 #     else
 #       define U3_OS_LoomBase 0x4000000
 #     endif
 #       define U3_OS_LoomBits 29            //  ie, 2^29 words == 2GB
-#   elif defined(U3_OS_bsd)
-#     ifdef __LP64__
-#       define U3_OS_LoomBase 0x200000000
-#     else
-#       define U3_OS_LoomBase 0x4000000
-#     endif
+#   elif defined(U3_OS_mingw)
+#       define U3_OS_LoomBase 0x28000000000
 #       define U3_OS_LoomBits 29            //  ie, 2^29 words == 2GB
 #   else
 #     error "port: LoomBase"
@@ -157,7 +170,7 @@
 
     /* Byte swapping.
     */
-#     if defined(U3_OS_linux) || defined(U3_OS_bsd)
+#     if defined(U3_OS_linux) || defined(U3_OS_bsd) || defined(U3_OS_mingw)
 #       define c3_bswap_16(x)  bswap_16(x)
 #       define c3_bswap_32(x)  bswap_32(x)
 #       define c3_bswap_64(x)  bswap_64(x)
@@ -171,7 +184,7 @@
 
     /* Sync.
     */
-#     if defined(U3_OS_linux)
+#     if defined(U3_OS_linux) || defined(U3_OS_mingw)
 #       define c3_sync(fd) (fdatasync(fd))
 #     elif defined(U3_OS_osx)
 #       define c3_sync(fd) (fcntl(fd, F_FULLFSYNC, 0))
@@ -186,7 +199,7 @@
 #     if defined(U3_OS_linux)
 #       include <stdio_ext.h>
 #       define c3_fpurge __fpurge
-#     elif defined(U3_OS_bsd) || defined(U3_OS_osx)
+#     elif defined(U3_OS_bsd) || defined(U3_OS_osx) || defined(U3_OS_mingw)
 #       define c3_fpurge fpurge
 #     else
 #       error "port: fpurge"
@@ -194,7 +207,7 @@
 
     /* Stat.
     */
-#     if defined(U3_OS_linux)
+#     if defined(U3_OS_linux) || defined(U3_OS_mingw)
 #       define c3_stat_mtime(dp) (u3_time_t_in_ts((dp)->st_mtime))
 #     elif defined(U3_OS_osx)
 #       define c3_stat_mtime(dp) (u3_time_in_ts(&((dp)->st_mtimespec)))

@@ -1,0 +1,47 @@
+{
+    "lmdb": {
+        "branch": "mdb.master",
+        "description": "LMDB library",
+        "homepage": "http://www.lmdb.tech/",
+        "mingw": {
+            "strip": 2,
+            "make": "liblmdb.a"
+        },
+        "owner": "LMDB",
+        "repo": "lmdb",
+        "rev": "48a7fed59a8aae623deff415dda27097198ca0c1",
+        "type": "tarball",
+        "url": "https://github.com/LMDB/lmdb/archive/48a7fed59a8aae623deff415dda27097198ca0c1.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "secp256k1": {
+        "branch": "master",
+        "description": "Optimized C library for ECDSA signatures and secret/public key operations on curve secp256k1.",
+        "homepage": null,
+        "mingw": {
+            "include": "include",
+            "lib": ".libs",
+            "prepare": "./autogen.sh && ./configure --enable-module-recovery"
+        },
+        "owner": "bitcoin-core",
+        "repo": "secp256k1",
+        "rev": "26de4dfeb1f1436dae1fcf17f57bdaa43540f940",
+        "type": "tarball",
+        "url": "https://github.com/bitcoin-core/secp256k1/archive/26de4dfeb1f1436dae1fcf17f57bdaa43540f940.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "ent": {
+        "mingw": {
+            "prepare": "./configure"
+        }
+    },
+    "ge-additions": {
+        "mingw": {
+            "make": "CFLAGS=-I../ed25519"
+        }
+    },
+    "libaes_siv": {
+        "mingw": {
+        }
+    }
+}
