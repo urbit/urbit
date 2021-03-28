@@ -2,6 +2,7 @@
 */
 
 #include <uv.h>
+#include <termios.h>
 
   /** Quasi-tunable parameters.
   **/

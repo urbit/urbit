@@ -6,7 +6,6 @@
 #include "all.h"
 #include "vere/vere.h"
 #include <sigsegv.h>
-#include <termios.h>
 #include <openssl/conf.h>
 #include <openssl/engine.h>
 #include <openssl/err.h>

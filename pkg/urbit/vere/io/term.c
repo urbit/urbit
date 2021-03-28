@@ -10,7 +10,6 @@
 #include <netinet/in.h>
 #include <uv.h>
 #include <errno.h>
-#include <termios.h>
 
 //  macros for string literal args/buffers
 //
