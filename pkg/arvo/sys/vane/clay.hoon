@@ -3962,8 +3962,10 @@
         ruf=raft                                      ::  revision tree
     ==                                                ::
 |=  [now=@da eny=@uvJ rof=roof]                       ::  current invocation
+~%  %clay-top  ..part  ~
 |%                                                    ::
 ++  call                                              ::  handle request
+  ~/  %clay-call
   |=  $:  hen=duct
           dud=(unit goof)
           wrapped-task=(hobo task)
@@ -4273,6 +4275,7 @@
   --
 ::
 ++  scry                                              ::  inspect
+  ~/  %clay-scry
   ^-  roon
   |=  [lyc=gang car=term bem=beam]
   ^-  (unit (unit cage))
@@ -4334,6 +4337,7 @@
   ==
 ::
 ++  take                                              ::  accept response
+  ~/  %clay-take
   |=  [tea=wire hen=duct dud=(unit goof) hin=sign]
   ^+  [*(list move) ..^$]
   ?^  dud
