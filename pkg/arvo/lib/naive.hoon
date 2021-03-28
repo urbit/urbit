@@ -4,7 +4,8 @@
 ::  - Enforce that once spawn proxy is set to deposit address, you can't
 ::    spawn children
 ::  - Possibly the same for approveForAll
-::  - Enforce that only ownership key can set spawn proxy to rollup
+::  - Enforce that only ownership key can set spawn proxy to rollup.
+::    maybe not though
 ::  - Disallow depositing galaxy to L2
 ::
 ::  TODO: maybe split out a generic "modify state" core, and have both
@@ -92,7 +93,6 @@
   ==
 ::
 ::  TODO: add effects for all changes
-::  TODO: add ship
 ::
 ++  diff
   $:  =ship
@@ -130,28 +130,34 @@
   ==
 ::  ECDSA verifier
 ::
-+$  verifier  $-([dat=@ v=@ r=@ s=@] =address)
++$  verifier  $-([dat=@ v=@ r=@ s=@] (unit address))
 --
 ::
 |%
 ++  parse-batch
-  |=  [batch=@ =verifier]
+  |=  [=verifier batch=@]
   ^-  (list [address tx])
   ?~  batch
     ~
-  =^  [signer=address =tx]  batch  (parse-tx batch verifier)
-  [[signer tx] $]
+  =^  parsed=(unit [signer=address =tx])  batch  (parse-tx batch verifier)
+  ?~  parsed
+    $
+  [u.parsed $]
+::
+::  TODO: change batch to be a cursor to avoid allocating atoms
 ::
 ++  parse-tx
   |=  [batch=@ =verifier]
-  ^-  [[address tx] rest=@]
-  =/  batch  [0 batch]
+  ^-  [(unit [address tx]) rest=@]
+  =/  batch  [len=0 rest=batch]
   |^
   =^  sig  batch  (take 3 65)
   =/  signed-batch  +.batch
-  =-  =/  signer=address
+  =-  =/  signer=(unit address)
         (verify-tx sig (end [0 len] signed-batch))
-      [[signer tx] rest]
+      ?~  signer
+        [~ rest]
+      [`[u.signer tx] rest]
   ^-  [=tx [len=@ rest=@]]
   =^  op   batch  (take 0 7)
   ?+    op  ~|([%strange-opcode op] !!)
@@ -159,7 +165,7 @@
     =^  reset=@         batch  (take 0)
     =^  =ship           batch  (take 3 4)
     =^  =address        batch  (take 3 20)
-    [[%transfer-point ship address (,? reset)] batch]
+    [[%transfer-point ship address =(0 reset)] batch]
   ::
       %1   =^(res batch take-ship-address [[%spawn res] batch])
       %2
@@ -168,7 +174,7 @@
     =^  encrypt=@       batch  (take 3 32)
     =^  auth=@          batch  (take 3 32)
     =^  crypto-suite=@  batch  (take 3 4)
-    [[%configure-keys ship encrypt auth crypto-suite (,? breach)] batch]
+    [[%configure-keys ship encrypt auth crypto-suite =(0 breach)] batch]
   ::
       %3   =^(res batch take-escape [[%escape res] batch])
       %4   =^(res batch take-escape [[%cancel-escape res] batch])
@@ -211,7 +217,7 @@
   ::
   ++  verify-tx
     |=  [sig=@ txdata=@]
-    ^-  address
+    ^-  (unit address)
     |^
     =^  v  sig  (take 3)
     =^  r  sig  (take 3 32)
@@ -286,7 +292,7 @@
     ?>  ?=([@ @ ~] t.topics.log)
     =*  owner     i.t.topics.log
     =*  operator  i.t.t.topics.log
-    =/  approved  !(,? data.log)
+    =/  approved  !=(0 data.log)
     =-  `state(operators -)
     ?:  approved
       (~(put ju operators.state) owner operator)
@@ -296,10 +302,12 @@
   ::  second topic.  We fetch it, and insert the modification back into
   ::  our state.
   ::
+  ::  TODO: cast in =* instead of after
+  ::
   ?>  ?=([@ *] t.topics.log)
-  =*  ship  i.t.topics.log
-  =/  point  (get-point state `@`ship)
-  =-  [effects state(points (~(put by points.state) `@`ship new-point))]
+  =*  ship=@  i.t.topics.log
+  =/  point  (get-point state ship)
+  =-  [effects state(points (~(put by points.state) ship new-point))]
   ^-  [=effects new-point=^point]
   ::
   ?:  =(log-name ^~((hash-log-name 'ChangedSpawnProxy(uint32,address)')))
@@ -321,9 +329,9 @@
   ::
   ?:  =(log-name ^~((hash-log-name 'BrokeContinuity(uint32,uint32)')))
     ?>  ?=(~ t.t.topics.log)
-    =*  rift  data.log
-    :-  [`@`ship %rift `@`rift]~
-    point(rift.net `@`rift)
+    =*  rift=@  data.log
+    :-  [ship %rift rift]~
+    point(rift.net rift)
   ::
   =/  changed-keys-hash
     ^~((hash-log-name 'ChangedKeys(uint32,bytes32,bytes32,uint32,uint32)'))
@@ -331,24 +339,24 @@
     ?>  ?=(~ t.t.topics.log)
     =/  words  (rip 8 data.log)
     ?>  ?=([@ @ @ @ ~] words)  :: TODO: reverse order?
-    =*  encryption      i.words
-    =*  authentication  i.t.words
-    =*  crypto-suite    i.t.t.words  ::  TODO: store in state, or add to pass
-    =*  life            i.t.t.t.words
+    =*  encryption=@      i.words
+    =*  authentication=@  i.t.words
+    =*  crypto-suite=@    i.t.t.words  ::  TODO: store in state, or add to pass
+    =*  life=@            i.t.t.t.words
     =/  =pass  (pass-from-eth 32^encryption 32^authentication crypto-suite)
-    :-  [`@`ship %keys life crypto-suite pass]~
+    :-  [ship %keys life crypto-suite pass]~
     point(life.net life, pass.net pass)
   ::
   ?:  =(log-name ^~((hash-log-name 'EscapeAccepted(uint32,uint32)')))
     ?>  ?=([@ ~] t.t.topics.log)
-    =*  parent  i.t.t.topics.log
-    :-  [`@`ship %spon ``@`parent]~
-    point(escape.net ~, sponsor.net [%& `@`parent])
+    =*  parent=@  i.t.t.topics.log
+    :-  [ship %spon `parent]~
+    point(escape.net ~, sponsor.net [%& parent])
   ::
   ?:  =(log-name ^~((hash-log-name 'LostSponsor(uint32,uint32)')))
     ?>  ?=([@ ~] t.t.topics.log)
     =*  parent  i.t.t.topics.log
-    :-  [`@`ship %spon ~]~
+    :-  [ship %spon ~]~
     point(has.sponsor.net %|)
   ::
   ::  The rest do not produce effects
@@ -357,8 +365,8 @@
   ::
   ?:  =(log-name ^~((hash-log-name 'EscapeRequested(uint32,uint32)')))
     ?>  ?=([@ ~] t.t.topics.log)
-    =*  parent  i.t.t.topics.log
-    point(escape.net ``@`parent)
+    =*  parent=@  i.t.t.topics.log
+    point(escape.net `parent)
   ::
   ?:  =(log-name ^~((hash-log-name 'EscapeCanceled(uint32,uint32)')))
     ?>  ?=([@ ~] t.t.topics.log)
@@ -396,12 +404,12 @@
 ::  Receive batch of L2 transactions
 ::
 ++  receive-batch
-  |=  [=state batch=@ =verifier]
-  =/  txs=(list [signer=address =tx])  (parse-batch batch verifier)
+  |=  [=verifier =state batch=@]
+  =/  txs=(list [signer=address =tx])  (parse-batch verifier batch)
   |-  ^-  [effects ^state]
   ?~  txs
     [~ state]
-  =^  effects-1  state  (receive-tx state signer.i.txs tx.i.txs)
+  =^  effects-1  state  (receive-tx state i.txs)
   =^  effects-2  state  $(txs t.txs)
   [(welp effects-1 effects-2) state]
 ::
@@ -499,7 +507,7 @@
       ::  Else spawn to parent and set transfer proxy
       ::
       %*  .  *point
-        dominion   %l2
+        dominion            %l2
         owner.own           owner.own.parent-point
         transfer-proxy.own  to
       ==
@@ -624,6 +632,6 @@
   :: Received log from L1 transaction
   ::
   (receive-log state event-log.input)
-::  Received batch
+::  Received L2 batch
 ::
-(receive-batch state batch.input verifier)
+(receive-batch verifier state batch.input)

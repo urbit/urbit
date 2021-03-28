@@ -1,16 +1,23 @@
 /+  *test, naive, ethereum
 |%
 ++  address  @ux
-++  n  |=([=^state:naive =^input:naive] (naive dumver +<))
+++  n  |=([=^state:naive =^input:naive] (naive verifier +<))
 ::  TODO: does this uniquely produce the pubkey?
 ::
-++  dumver
+++  verifier
   ^-  ^verifier:naive
   |=  [dat=@ v=@ r=@ s=@]
-  =,  secp256k1:secp:crypto
-  %-  address-from-pub:key:ethereum
-  %-  serialize-point
-  (ecdsa-raw-recover dat v r s)
+  =/  result
+    %-  mule
+    |.
+    =,  secp256k1:secp:crypto
+    %-  address-from-pub:key:ethereum
+    %-  serialize-point
+    (ecdsa-raw-recover dat v r s)
+  ?-  -.result
+    %|  ~
+    %&  `p.result
+  ==
 ::
 ++  key  address-from-prv:key:ethereum
 ++  log
@@ -57,7 +64,7 @@
     `[[[~bud %*(. *point:naive dominion %l1, owner.own 0x123)] ~ ~] ~ ~]
   ::
     !>
-    %^  naive  dumver  *^state:naive
+    %^  naive  verifier  *^state:naive
     :*  %log  ~  *@ux  *@t
         (hash-log-name:naive 'OwnerChanged(uint32,address)')  (@ux ~bud)  0x123  ~
     ==
