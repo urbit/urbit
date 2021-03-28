@@ -425,10 +425,12 @@
   :-  ~
   %-  as-octs:mimes:html
   %-  crip
-  %-  zing
+  %-  zing  ^-  ^wall
+  %-  zing  ^-  (list ^wall)
   %+  turn  wall
   |=  t=tape
-  "{t}\0a"
+  ^-  ^wall
+  ~[t "\0a"]
 ::  +internal-server-error: 500 page, with a tang
 ::
 ++  internal-server-error
