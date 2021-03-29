@@ -1,11 +1,10 @@
-import React, { ReactElement, ReactNode, useRef, useState } from 'react';
-import { Icon, Box, Col, Row, Text } from '@tlon/indigo-react';
+import React, { ReactElement, ReactNode, useRef } from 'react';
+import { Icon, Box, Col, Text } from '@tlon/indigo-react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import urbitOb from 'urbit-ob';
 
 import { Association } from '@urbit/api/metadata';
-import { Groups, Rolodex } from '@urbit/api';
 
 import RichText from '~/views/components/RichText';
 import GlobalApi from '~/logic/api/global';
@@ -143,7 +142,6 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
     actionsWidth = actRef.clientWidth;
   }
   
-
   return (
     <Col width='100%' height='100%' overflow='hidden'>
       <Box
