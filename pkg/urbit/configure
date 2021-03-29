@@ -79,6 +79,9 @@ case $(tr A-Z a-z <<< $os) in
      mpkgs=(cmake curl gcc jq libsigsegv libuv make wslay)
      pacman -S --needed autoconf automake-wrapper libtool patch ${mpkgs[@]/#/mingw-w64-x86_64-}
 
+     # support running off a tarball that doesn't contain binary pills
+     (( $(stat -c %s ../../bin/ivory.pill) > 512 )) || curl -L https://github.com/urbit/urbit/raw/urbit-v$URBIT_VERSION/bin/ivory.pill > ../../bin/ivory.pill
+
      # poor man's nix-shell
      declare -a cdirs
      declare -a ldirs
