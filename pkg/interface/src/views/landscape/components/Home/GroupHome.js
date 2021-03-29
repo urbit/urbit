@@ -62,7 +62,10 @@ function GroupHome(props) {
           api={api}
           baseUrl={baseUrl} />
       ) : (
-        <EmptyGroupHome {...props} />
+        <EmptyGroupHome
+          groups={groups}
+          associations={associations}
+          groupPath={groupPath} />
       )}
     </Box>
   );
