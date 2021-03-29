@@ -5,18 +5,21 @@ import { EnableGroupFeed } from './EnableGroupFeed';
 import { EmptyGroupHome } from './EmptyGroupHome';
 import { GroupFeed } from './GroupFeed';
 import { AddFeedBanner } from './AddFeedBanner';
-import {Route, useHistory} from 'react-router-dom';
+import { Route } from 'react-router-dom';
+
+import useGroupState from '~/logic/state/group';
+import useMetadataState from '~/logic/state/metadata';
 
 
-export function GroupHome(props) {
+function GroupHome(props) {
   const {
-    associations,
     api,
     groupPath,
-    groups,
-    graphs,
     baseUrl
   } = props;
+
+  const associations = useMetadataState(state => state.associations);
+  const groups = useGroupState(state => state.groups);
 
   const metadata = associations?.groups[groupPath]?.metadata;
   const askFeedBanner =
@@ -33,8 +36,6 @@ export function GroupHome(props) {
 
   const graphPath = metadata?.config?.group?.resource;
 
-  const history = useHistory();
-
   return (
     <Box width="100%" height="100%" overflow="hidden">
       <Route path={`${baseUrl}/enable`}
@@ -42,7 +43,7 @@ export function GroupHome(props) {
           return (
             <EnableGroupFeed
               groupPath={groupPath}
-              dismiss={() => history.push(baseUrl)}
+              baseUrl={baseUrl}
               api={api}
             />
           );
@@ -57,12 +58,8 @@ export function GroupHome(props) {
       ) : null }
       { isFeedEnabled ? (
         <GroupFeed
-          associations={associations}
-          groups={groups}
           graphPath={graphPath}
-          graphs={graphs}
           api={api}
-          history={history}
           baseUrl={baseUrl} />
       ) : (
         <EmptyGroupHome {...props} />
@@ -70,3 +67,5 @@ export function GroupHome(props) {
     </Box>
   );
 }
+
+export { GroupHome };

@@ -6,21 +6,26 @@ import { Col } from '@tlon/indigo-react'
 import { resourceFromPath } from '~/logic/lib/group';
 import useGraphState from '~/logic/state/graph';
 import { GroupFeedHeader } from './GroupFeedHeader';
+import { useHistory } from 'react-router-dom';
+
 import PostTimeline from './Post/PostTimeline';
 import PostReplies from './Post/PostReplies';
 
+import useMetadataState from '~/logic/state/metadata';
 
-export function GroupFeed(props) {
+
+function GroupFeed(props) {
   const {
     baseUrl,
     api,
-    history,
-    associations,
-    graphPath,
+    graphPath
   } = props;
+
+  const associations = useMetadataState(state => state.associations);
   const graphs = useGraphState(state => state.graphs);
   const graphResource = resourceFromPath(graphPath);
   const graphTimesentMap = useGraphState(state => state.graphTimesentMap);
+
   const pendingSize = Object.keys(
     graphTimesentMap[`${graphResource.ship.slice(1)}/${graphResource.name}`] ||
     {}
@@ -29,6 +34,7 @@ export function GroupFeed(props) {
   const relativePath = (path) => baseUrl + path;
   const association = associations.graph[graphPath];
 
+  const history = useHistory();
   const locationUrl = history.location.pathname;
 
   const graphId = `${graphResource.ship.slice(1)}/${graphResource.name}`;
@@ -87,3 +93,6 @@ export function GroupFeed(props) {
   );
 }
 
+GroupFeed.whyDidYouRender = true;
+
+export { GroupFeed };

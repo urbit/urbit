@@ -196,7 +196,10 @@ export function GroupsPane(props: GroupsPaneProps) {
           return (
             <>
               <Helmet defer={false}>
-                <title>{notificationsCount ? `(${String(notificationsCount)}) ` : ''}{ title }</title>
+                <title>
+                  {notificationsCount ? `(${String(notificationsCount)}) ` : ''}
+                  { title }
+                </title>
               </Helmet>
               <Skeleton
                 mobileHide={shouldHideSidebar}
@@ -204,13 +207,9 @@ export function GroupsPane(props: GroupsPaneProps) {
                 baseUrl={baseUrl}
                 {...props}>
                 <GroupHome 
-                  {...routeProps}
                   api={api}
                   baseUrl={baseUrl}
-                  associations={associations}
-                  groups={groups}
                   groupPath={groupPath}
-                  workspace={workspace}
                 />
                 {popovers(routeProps, baseUrl)}
               </Skeleton>
