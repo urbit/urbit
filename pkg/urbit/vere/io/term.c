@@ -4,33 +4,10 @@
 #include "all.h"
 #include "vere/vere.h"
 
-#if !defined(U3_OS_TERM_dumb)
-#include <fcntl.h>
-#include <sys/ioctl.h>
-#include <sys/stat.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <uv.h>
-#include <errno.h>
-
-//  macros for string literal args/buffers
-//
-//    since (sizeof(s) - 1) is used for vector length, parameters
-//    must be appropriately typed. use with care!
-//
-#define TERM_LIT(s)      sizeof(s) - 1, (const c3_y*)(s)
-#define TERM_LIT_BUF(s)  uv_buf_init(s, sizeof(s) - 1)
-
-static u3_utty* _term_main();
-static void     _term_read_cb(uv_stream_t*    tcp_u,
-                              ssize_t         siz_i,
-                              const uv_buf_t* buf_u);
-static c3_i     _term_tcsetattr(c3_i, c3_i, const struct termios*);
-
-/* _write(): retry interrupts, continue partial writes, assert errors.
+/* u3_write_fd(): retry interrupts, continue partial writes, assert errors.
 */
-static void
-_write(c3_i fid_i, const void* buf_v, size_t len_i)
+void
+u3_write_fd(c3_i fid_i, const void* buf_v, size_t len_i)
 {
   ssize_t ret_i;
 
@@ -54,7 +31,7 @@ _write(c3_i fid_i, const void* buf_v, size_t len_i)
 
     //  assert on true errors
     //
-    //    NB: can't call u3l_log here or we would re-enter _write()
+    //    NB: can't call u3l_log here or we would re-enter u3_write_fd()
     //
     if ( ret_i < 0 ) {
       fprintf(stderr, "term: write failed %s\r\n", strerror(errno));
@@ -68,6 +45,23 @@ _write(c3_i fid_i, const void* buf_v, size_t len_i)
     }
   }
 }
+
+#if !defined(U3_OS_TERM_dumb)
+#include <sys/ioctl.h>
+
+//  macros for string literal args/buffers
+//
+//    since (sizeof(s) - 1) is used for vector length, parameters
+//    must be appropriately typed. use with care!
+//
+#define TERM_LIT(s)      sizeof(s) - 1, (const c3_y*)(s)
+#define TERM_LIT_BUF(s)  uv_buf_init(s, sizeof(s) - 1)
+
+static u3_utty* _term_main();
+static void     _term_read_cb(uv_stream_t*    tcp_u,
+                              ssize_t         siz_i,
+                              const uv_buf_t* buf_u);
+static c3_i     _term_tcsetattr(c3_i, c3_i, const struct termios*);
 
 /* _term_msc_out_host(): unix microseconds from current host time.
 */
@@ -297,7 +291,7 @@ u3_term_log_exit(void)
       if ( -1 == fcntl(uty_u->fid_i, F_SETFL, uty_u->cug_i) ) {
         c3_assert(!"exit-fcntl");
       }
-      _write(uty_u->fid_i, "\r\n", 2);
+      u3_write_fd(uty_u->fid_i, "\r\n", 2);
     }
   }
 
@@ -1510,10 +1504,10 @@ u3_term_io_hija(void)
           perror("hija-fcntl-0");
           c3_assert(!"hija-fcntl");
         }
-        _write(uty_u->fid_i, "\r", 1);
+        u3_write_fd(uty_u->fid_i, "\r", 1);
         {
           uv_buf_t* buf_u = &uty_u->ufo_u.out.el_u;
-          _write(uty_u->fid_i, buf_u->base, buf_u->len);
+          u3_write_fd(uty_u->fid_i, buf_u->base, buf_u->len);
         }
       }
     }
