@@ -29,13 +29,11 @@ export function PermalinkRoutes(props: {}) {
         path="/perma/group/:ship/:name"
         render={({ match, history, location }) => {
           const { ship, name } = match.params as ResourceRouteProps;
-          console.log(ship);
           const { url } = match;
           const path = `/ship/${ship}/${name}`;
           const group = groups[path];
           if(!group) {
             if (Object.keys(groups).length > 0) {
-              console.log(groups);
               const redir = location.pathname;
               const to = toQuery({ redir }, `/~landscape/join/${ship}/${name}`);
               return <Redirect to={to} />;
@@ -60,7 +58,6 @@ function FallbackRoutes(props: { query: URLSearchParams }) {
     return <Redirect to={{ pathname: url }} />;
   }
 
-  console.log('aaaaa');
   return <Redirect to="/~404" />;
 }
 
@@ -71,7 +68,6 @@ function GroupRoutes(props: { group: string; url: string }) {
   const graphKeys = useGraphState(s => s.graphKeys);
   const { toQuery } = useQuery();
   const groupUrl = `/~landscape${group}`;
-  console.log(group);
 
   return (
     <Switch>
@@ -85,7 +81,6 @@ function GroupRoutes(props: { group: string; url: string }) {
           if(!association) {
             return null;
           }
-          console.log(graphKeys);
           if(!graphKeys.has(`${ship.slice(1)}/${name}`)) {
             if(graphKeys.size > 0) {
               return <Redirect

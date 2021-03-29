@@ -6,7 +6,6 @@ import useGroupState, { GroupState } from '../state/group';
 const initial = (json: any, state: GroupState): GroupState => {
   const data = json.initial;
   if(data) {
-    console.log(data);
     state.pendingJoin = data;
   }
   return state;
@@ -24,7 +23,6 @@ const started = (json: any, state: GroupState): GroupState => {
 const progress = (json: any, state: GroupState): GroupState => {
   const data = json.progress;
   if(data) {
-    console.log(data);
     const { progress, resource } = data;
     state.pendingJoin[resource].progress = progress;
     if(progress === 'done') {
