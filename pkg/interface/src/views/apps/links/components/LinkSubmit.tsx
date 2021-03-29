@@ -7,6 +7,7 @@ import { StorageState } from '~/types';
 import SubmitDragger from '~/views/components/SubmitDragger';
 import { createPost } from '~/logic/api/graph';
 import { hasProvider } from 'oembed-parser';
+import {parsePermalink, permalinkToReference} from '~/logic/lib/permalinks';
 
 interface LinkSubmitProps {
   api: GlobalApi;
@@ -28,12 +29,13 @@ const LinkSubmit = (props: LinkSubmitProps) => {
   const doPost = () => {
     const url = linkValue;
     const text = linkTitle ? linkTitle : linkValue;
+    const contents = url.startsWith('web+urbitgraph:/') 
+      ?  [{ text }, permalinkToReference(parsePermalink(url)!) ]
+      :  [{ text }, { url }];
+
     setDisabled(true);
     const parentIndex = props.parentIndex || '';
-    const post = createPost([
-      { text },
-      { url }
-    ], parentIndex);
+    const post = createPost(contents, parentIndex);
 
     props.api.graph.addPost(
       `~${props.ship}`,
@@ -59,6 +61,13 @@ const LinkSubmit = (props: LinkSubmitProps) => {
       if (linkValid) {
         link = `http://${link}`;
         setLinkValue(link);
+      }
+    }
+    if(link.startsWith('web+urbitgraph://')) {
+      const permalink = parsePermalink(link);
+      if(!permalink) {
+        setLinkValid(false);
+        return;
       }
     }
 
