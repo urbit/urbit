@@ -64,12 +64,12 @@ if(urbitrc.URL) {
           return '/index.js'
         }
       },
-      '/~landscape/js/serviceworker.js': {
-        target: 'http://localhost:9000',
-        pathRewrite: (req, path) => {
-          return '/serviceworker.js'
-        }
-      },
+      // '/~landscape/js/serviceworker.js': {
+      //   target: 'http://localhost:9000',
+      //   pathRewrite: (req, path) => {
+      //     return '/serviceworker.js'
+      //   }
+      // },
       '**': {
         changeOrigin: true,
         target: urbitrc.URL,
@@ -85,7 +85,7 @@ module.exports = {
   mode: 'development',
   entry: {
     app: './src/index.js',
-    serviceworker: './src/serviceworker.js'
+    // serviceworker: './src/serviceworker.js'
   },
   module: {
     rules: [
