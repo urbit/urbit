@@ -22,7 +22,7 @@ export default function PostReplies(props) {
   const graphResource = resourceFromPath(graphPath);
   const graphId = `${graphResource.ship.slice(1)}/${graphResource.name}`;
 
-  let graph = this.props.graph;
+  let graph = props.graph;
   const shouldRenderFeed = !!graph;
 
   if (!shouldRenderFeed) {
@@ -34,7 +34,7 @@ export default function PostReplies(props) {
   }
 
   const locationUrl =
-    this.props.locationUrl.replace(`${baseUrl}/feed`, '');
+    props.locationUrl.replace(`${baseUrl}/feed`, '');
   let nodeIndex = locationUrl.split('/').slice(1).map((ind) => {
     return bigInt(ind);
   });
