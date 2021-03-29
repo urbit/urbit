@@ -21,7 +21,8 @@
         "mingw": {
             "include": "include",
             "lib": ".libs",
-            "prepare": "./autogen.sh && ./configure --enable-module-recovery"
+            "prepare": "./autogen.sh && ./configure --enable-module-recovery && make",
+            "make": "libsecp256k1.la"
         },
         "owner": "bitcoin-core",
         "repo": "secp256k1",
