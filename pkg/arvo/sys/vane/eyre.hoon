@@ -2541,7 +2541,7 @@
         %gen
       invalid
         %scry
-      (handle-scry %.y (need host) url)
+      (handle-scry %.y (need host) suburl)
 ::      %*  .  *request:http
 ::        header-list   [host+host cookie+u.cookies]~
 ::        url  url
