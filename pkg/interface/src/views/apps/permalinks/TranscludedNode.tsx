@@ -10,6 +10,8 @@ import bigInt from "big-integer";
 import { getSnippet } from "~/logic/lib/publish";
 import { NotePreviewContent } from "../publish/components/NotePreview";
 import GlobalApi from "~/logic/api/global";
+import {PermalinkEmbed} from "./embed";
+import {referenceToPermalink} from "~/logic/lib/permalinks";
 
 function TranscludedLinkNode(props: {
   node: GraphNode;
@@ -22,10 +24,16 @@ function TranscludedLinkNode(props: {
 
   switch (idx.length) {
     case 1:
-      const [{ text }, { url }] = node.post.contents;
+    const [{ text }, link] = node.post.contents;
+      if('reference' in link) {
+        const permalink = referenceToPermalink(link).link;
+        return <PermalinkEmbed transcluded={transcluded + 1} api={api} link={permalink} association={assoc} />
+
+      }
+      
       return (
         <Box borderRadius="2" p="2" bg="scales.black05">
-          <Anchor underline={false} target="_blank" color="black" href={url}>
+          <Anchor underline={false} target="_blank" color="black" href={link.url}>
             <Icon verticalAlign="bottom" mr="2" icon="ArrowExternal" />
             {text}
           </Anchor>

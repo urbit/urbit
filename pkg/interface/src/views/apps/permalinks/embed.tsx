@@ -44,9 +44,10 @@ function GraphPermalink(
     transcluded: number;
     pending?: boolean;
     showOurContact?: boolean;
+    full?: boolean;
   }
 ) {
-  const { showOurContact, pending, link, graph, group, index, api, transcluded } = props;
+  const { full = false, showOurContact, pending, link, graph, group, index, api, transcluded } = props;
   const { ship, name } = resourceFromPath(graph);
   const node = useGraphState(
     useCallback((s) => s.looseNodes?.[`${ship.slice(1)}/${name}`]?.[index], [
@@ -79,10 +80,9 @@ function GraphPermalink(
   return (
     <Col
       width="100%"
-      my="1"
       bg="white"
-      maxWidth="500px"
-      border="1"
+      maxWidth={full ? null : "500px"}
+      border={full ? null : "1"}
       borderColor="lightGray"
       borderRadius="2"
       onClick={(e) => { e.stopPropagation(); }}
@@ -161,6 +161,7 @@ export function PermalinkEmbed(props: {
   api: GlobalApi;
   transcluded: number;
   showOurContact?: boolean;
+  full?: boolean;
 }) {
   const permalink = parsePermalink(props.link);
 
@@ -177,6 +178,7 @@ export function PermalinkEmbed(props: {
           transcluded={props.transcluded}
           {...permalink}
           api={props.api}
+          full={props.full}
           showOurContact={props.showOurContact}
         />
       );

@@ -21,6 +21,8 @@ import ChatMessage from '../chat/components/ChatMessage';
 import useContactState from '~/logic/state/contact';
 import useGroupState from '~/logic/state/group';
 import useMetadataState from '~/logic/state/metadata';
+import {PermalinkEmbed} from '../permalinks/embed';
+import {parsePermalink, referenceToPermalink} from '~/logic/lib/permalinks';
 
 function getGraphModuleIcon(module: string) {
   if (module === 'link') {
@@ -63,14 +65,27 @@ function describeNotification(description: string, plural: boolean): string {
   }
 }
 
-const GraphUrl = ({ url, title }) => (
-  <Box borderRadius='2' p='2' bg='scales.black05'>
-    <Anchor underline={false} target='_blank' color='black' href={url}>
-      <Icon verticalAlign='bottom' mr='2' icon='ArrowExternal' />
-      {title}
-    </Anchor>
-  </Box>
-);
+const GraphUrl = ({ contents, api }) => {
+  const [{ text }, link] = contents;
+  
+
+  if('reference' in link) {
+    return (
+      <PermalinkEmbed 
+        transcluded={1}
+        link={referenceToPermalink(link).link}
+        api={api}
+      />);
+  }
+  return (
+    <Box borderRadius='2' p='2' bg='scales.black05'>
+      <Anchor underline={false} target='_blank' color='black' href={link.url}>
+        <Icon verticalAlign='bottom' mr='2' icon='ArrowExternal' />
+        {text}
+      </Anchor>
+    </Box>
+  );
+}
 
 export const GraphNodeContent = ({
   group,
@@ -83,8 +98,7 @@ export const GraphNodeContent = ({
   const idx = index.slice(1).split('/');
   if (mod === 'link') {
     if (idx.length === 1) {
-      const [{ text }, { url }] = contents;
-      return <GraphUrl title={text} url={url} />;
+      return <GraphUrl contents={contents} />;
     } else if (idx.length === 3) {
       return <MentionText content={contents} group={group} />;
     }
@@ -172,7 +186,7 @@ function getNodeUrl(
     return `${graphUrl}/note/${noteId}`;
   } else if (mod === 'link') {
     const [linkId] = idx;
-    return `${graphUrl}/${linkId}`;
+    return `${graphUrl}/index/${linkId}`;
   } else if (mod === 'chat') {
     if(idx.length > 0) {
       return `${graphUrl}?msg=${idx[0]}`;

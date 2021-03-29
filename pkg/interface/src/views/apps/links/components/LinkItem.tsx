@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback, ReactElement }  from 'react';
 import { Link } from 'react-router-dom';
 
-import { Row, Col, Anchor, Box, Text, Icon, Action } from '@tlon/indigo-react';
+import { Row, Col, Anchor, Box, Text, Icon, Action, Rule } from '@tlon/indigo-react';
 import { GraphNode, Group, Rolodex, Unreads, Association } from '@urbit/api';
 
 import { writeText } from '~/logic/lib/util';
@@ -12,7 +12,8 @@ import { Dropdown } from '~/views/components/Dropdown';
 import RemoteContent from '~/views/components/RemoteContent';
 import useHarkState from '~/logic/state/hark';
 import {useCopy} from '~/logic/lib/useCopy';
-import {usePermalinkForGraph, getPermalinkForGraph} from '~/logic/lib/permalinks';
+import {usePermalinkForGraph, getPermalinkForGraph, referenceToPermalink} from '~/logic/lib/permalinks';
+import {PermalinkEmbed} from '../../permalinks/embed';
 
 interface LinkItemProps {
   node: GraphNode;
@@ -119,6 +120,13 @@ export const LinkItem = (props: LinkItemProps): ReactElement => {
         onClick={markRead}
       >
         <Text p={2}>{contents[0].text}</Text>
+        { 'reference' in contents[1] ? (
+          <>
+            <Rule />
+            <PermalinkEmbed full link={referenceToPermalink(contents[1]).link} api={api} transcluded={0} />
+          </>
+        ) : (
+        <>
         <RemoteContent
           ref={r => { remoteRef.current = r }}
           renderUrl={false}
@@ -146,12 +154,14 @@ export const LinkItem = (props: LinkItemProps): ReactElement => {
           }}
         />
         <Text color="gray" p={2} flexShrink={0}>
-          <Anchor  target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }} href={href}>
-            <Box display='flex'>
-              <Icon icon='ArrowExternal' mr={1} />{hostname}
-            </Box>
-          </Anchor>
-        </Text>
+            <Anchor  target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }} href={href}>
+              <Box display='flex'>
+                <Icon icon='ArrowExternal' mr={1} />{hostname}
+              </Box>
+            </Anchor>
+          </Text>
+        </>
+      )}
       </Box>
       <Row minWidth='0' flexShrink={0} width="100%" justifyContent="space-between" py={3} bg="white">
       <Author
