@@ -115,9 +115,13 @@ popd
 
      # increase default thread stack size and link Windows implibs
      ldextra="-Wl,--stack,67108864 -lbcrypt -lws2_32"
+     # libcurl implibs
+     ldextra="$ldextra -lzstd"
+     # libuv implibs
+     ldextra="$ldextra -luserenv -liphlpapi -lpsapi"
      vcompat="compat = mingw"
-     CFLAGS="${CFLAGS-} ${cdirs[@]} -DH2O_NO_UNIX_SOCKETS -Icompat/mingw"
-     LDFLAGS="${LDFLAGS-} ${ldirs[@]}"
+     CFLAGS="${CFLAGS-} ${cdirs[@]} -DCURL_STATICLIB -DH2O_NO_UNIX_SOCKETS -Icompat/mingw"
+     LDFLAGS="${LDFLAGS-} -static ${ldirs[@]}"
      PKG_CONFIG="echo"
      ;;
   *linux*)

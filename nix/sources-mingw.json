@@ -1,4 +1,21 @@
 {
+    "curl": {
+        "branch": "master",
+        "description": "A command line tool and library for transferring data with URL syntax",
+        "homepage": "http://curl.se/",
+        "mingw": {
+            "include": "include",
+            "lib": "lib/.libs",
+            "prepare": "autoreconf -vfi && ./configure --disable-shared --disable-ldap --disable-rtsp --without-brotli --without-libidn2 --without-libpsl --without-nghttp2",
+            "make": "-C lib libcurl.la"
+        },
+        "owner": "curl",
+        "repo": "curl",
+        "rev": "curl-7_75_0",
+        "type": "tarball",
+        "url": "https://github.com/curl/curl/archive/curl-7_75_0.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
     "lmdb": {
         "branch": "mdb.master",
         "description": "LMDB library",
