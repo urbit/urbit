@@ -1,15 +1,18 @@
 import React from "react";
 import { Anchor, Icon, Box, Row, Col, Text } from "@tlon/indigo-react";
 import ChatMessage from "../chat/components/ChatMessage";
-import { Association, GraphNode } from "@urbit/api";
+import { Association, GraphNode, Post, Group } from "@urbit/api";
 import { useGroupForAssoc } from "~/logic/state/group";
 import { MentionText } from "~/views/components/MentionText";
 import Author from "~/views/components/Author";
 import { NoteContent } from "../publish/components/Note";
+import { PostContent } from "~/views/landscape/components/Home/Post/PostContent";
 import bigInt from "big-integer";
 import { getSnippet } from "~/logic/lib/publish";
 import { NotePreviewContent } from "../publish/components/NotePreview";
 import GlobalApi from "~/logic/api/global";
+import {PermalinkEmbed} from "./embed";
+import {referenceToPermalink} from "~/logic/lib/permalinks";
 
 function TranscludedLinkNode(props: {
   node: GraphNode;
@@ -22,10 +25,16 @@ function TranscludedLinkNode(props: {
 
   switch (idx.length) {
     case 1:
-      const [{ text }, { url }] = node.post.contents;
+    const [{ text }, link] = node.post.contents;
+      if('reference' in link) {
+        const permalink = referenceToPermalink(link).link;
+        return <PermalinkEmbed transcluded={transcluded + 1} api={api} link={permalink} association={assoc} />
+
+      }
+      
       return (
         <Box borderRadius="2" p="2" bg="scales.black05">
-          <Anchor underline={false} target="_blank" color="black" href={url}>
+          <Anchor underline={false} target="_blank" color="black" href={link.url}>
             <Icon verticalAlign="bottom" mr="2" icon="ArrowExternal" />
             {text}
           </Anchor>
@@ -124,6 +133,34 @@ function TranscludedPublishNode(props: {
   }
 }
 
+export function TranscludedPost(props: {
+  post: Post;
+  api: GlobalApi;
+  transcluded: number;
+  group: Group;
+}) {
+  const { transcluded, post, group, api } = props;
+  return (
+    <Col>
+      <Author
+        p="2"
+        showImage
+        ship={post.author}
+        date={post?.["time-sent"]}
+        group={group}
+      />
+      <Box p="2">
+        <MentionText
+          api={api}
+          transcluded={transcluded}
+          content={post.contents}
+          group={group}
+        />
+      </Box>
+    </Col>
+  );
+}
+
 export function TranscludedNode(props: {
   assoc: Association;
   node: GraphNode;
@@ -158,6 +195,15 @@ export function TranscludedNode(props: {
       return <TranscludedPublishNode {...props} />;
     case "link":
       return <TranscludedLinkNode {...props} />;
+    case "post":
+    return (
+      <TranscludedPost
+        api={props.api}
+        post={node.post}
+        group={group} 
+        transcluded={transcluded} 
+      />)
+      ;
     default:
       return null;
   }

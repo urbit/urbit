@@ -89,6 +89,7 @@ export function Invites(props: InvitesProps): ReactElement {
                 invite={invite}
                 app={app}
                 uid={uid}
+                join={join}
                 resource={resource}
               />
               );

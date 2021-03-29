@@ -12,10 +12,11 @@
   ++  graph-permissions-remove
     |=  vip=vip-metadata:met
     [%yes %self %self]
-  ::  +notification-kind: no notifications for now
+  ::  +notification-kind: don't track unreads, notify on replies
   ::
   ++  notification-kind  
     =/  len  (lent index.p.i)
+    ?:  =(1 len)  ~
     `[%post [(dec len) len] %none %children]
   ::
   ++  transform-add-nodes

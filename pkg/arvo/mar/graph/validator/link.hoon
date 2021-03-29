@@ -52,7 +52,7 @@
         ::  top-level link post; title and url
         ::
         [@ ~]
-      ?>  ?=([[%text @] [%url @] ~] contents.p.ip)
+      ?>  ?=([[%text @] $%([%url @] [%reference *]) ~] contents.p.ip)
       ip
     ::
         ::  comment on link post; container structure

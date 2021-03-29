@@ -19,6 +19,7 @@ export function PostContent(props) {
         contacts={contacts}
         content={post.contents}
         api={api}
+        transcluded={0}
       />
     </Col>
   );
