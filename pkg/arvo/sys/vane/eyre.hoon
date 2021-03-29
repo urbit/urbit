@@ -2611,8 +2611,6 @@
     (error-response 400 "scry path must start with app name")
   ::  attempt the scry that was asked for
   ::
-  ~&  req+req 
-  ~&  site+site.req
   =/  res=(unit (unit cage))
     (do-scry %gx i.site.req (snoc t.site.req (fall ext.req %mime)))
   ?~  res    (error-response 500 "failed scry")
@@ -2645,7 +2643,6 @@
   ++  do-scry
     |=  [care=term =desk =path]
     ^-  (unit (unit cage))
-    ~&  path+path
     =/  event-args  [[eny *duct now rof] server-state.ax]
     =/  server  (per-server-event event-args)
     (rof:server ~ care [our desk [%da now:server]] path)
