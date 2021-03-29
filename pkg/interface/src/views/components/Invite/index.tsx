@@ -119,7 +119,7 @@ export function InviteItem(props: InviteItemProps) {
         api={api}
         preview={preview}
         invite={invite}
-        status={pendingJoin.progress}
+        status={pendingJoin}
         {...handlers}
       />
     );

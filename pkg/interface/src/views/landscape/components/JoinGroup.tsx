@@ -72,7 +72,7 @@ export function JoinGroup(props: JoinGroupProps): ReactElement {
     MetadataUpdatePreview | string | null
   >(null);
 
-  const waiter = useWaitForProps({ associations, groups }, _.isString(preview) ? 1 : 30000);
+  const waiter = useWaitForProps({ associations, groups }, _.isString(preview) ? 1 : 10);
 
   const { query } = useQuery();
 
