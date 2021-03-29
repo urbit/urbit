@@ -74,7 +74,6 @@
 
 #   elif defined(U3_OS_mingw)
 #     define _POSIX
-#     include <openssl/opensslv.h>
 #     include <inttypes.h>
 #     include <stdlib.h>
 #     include <string.h>

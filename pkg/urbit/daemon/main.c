@@ -5,6 +5,9 @@
 #define C3_GLOBAL
 #include "all.h"
 #include "vere/vere.h"
+#if !defined(U3_OS_mingw)
+#include <sys/wait.h>
+#endif
 #include <sigsegv.h>
 #include <openssl/conf.h>
 #include <openssl/engine.h>
@@ -372,8 +375,9 @@ _setup_cert_store()
 /* _setup_ssl_x509(): adds embedded CA certificates to a X509_STORE
  */
 static void
-_setup_ssl_x509(X509_STORE* cts)
+_setup_ssl_x509(void* arg)
 {
+  X509_STORE* cts = arg;
   int i;
   for ( i = 0; i < sk_X509_INFO_num(_cert_store); i++ ) {
     X509_INFO *itmp = sk_X509_INFO_value(_cert_store, i);
@@ -402,8 +406,9 @@ _curl_ssl_ctx_cb(CURL* curl, SSL_CTX* sslctx, void* param)
 /* _setup_ssl_curl(): adds embedded CA certificates to a curl context
  */
 static void
-_setup_ssl_curl(CURL* curl)
+_setup_ssl_curl(void* arg)
 {
+  CURL* curl = arg;
   curl_easy_setopt(curl, CURLOPT_CAINFO, NULL);
   curl_easy_setopt(curl, CURLOPT_CAPATH, NULL);
   curl_easy_setopt(curl, CURLOPT_SSL_CTX_FUNCTION, _curl_ssl_ctx_cb);
