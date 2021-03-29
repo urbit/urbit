@@ -3,10 +3,11 @@ import { Box, Col, Row, Text } from '@tlon/indigo-react';
 import { PostHeader } from './PostHeader';
 import { PostContent } from './PostContent';
 import { PostFooter } from './PostFooter';
-import { PostInput } from './PostInput';
+import { PostInput } from '../PostInput';
 import { Mention } from "~/views/components/MentionText";
 import withState from '~/logic/lib/withState';
 import { useHovering } from '~/logic/lib/util';
+import { resourceFromPath } from '~/logic/lib/group';
 
 
 class PostItem extends React.Component {
@@ -43,9 +44,8 @@ class PostItem extends React.Component {
   render() {
     const {
       node,
-      contacts,
       api,
-      graphResource,
+      graphPath,
       association,
       index,
       innerRef,
@@ -55,6 +55,7 @@ class PostItem extends React.Component {
       hovering,
       bind
     } = this.props;
+    const graphResource = resourceFromPath(graphPath);
 
     let indexString = '';
     
@@ -85,7 +86,6 @@ class PostItem extends React.Component {
           {...bind}>
           <PostHeader
             post={node.post}
-            contacts={contacts}
             api={api}
             association={association}
             isReply={isReply} />
@@ -98,8 +98,7 @@ class PostItem extends React.Component {
           <PostContent
             post={node.post}
             isParent={isParent}
-            api={api}
-            contacts={contacts} />
+            api={api} />
           <PostFooter
             replyCount={node.children.size}
             toggleReplyMode={this.toggleReplyMode} /> 
@@ -113,7 +112,7 @@ class PostItem extends React.Component {
               borderLeftColor="lightGray"></Box>
             <PostInput
               api={api}
-              graphResource={graphResource}
+              graphPath={graphPath}
               index={indexString}
               submitCallback={this.submitCallback} />
           </Col>

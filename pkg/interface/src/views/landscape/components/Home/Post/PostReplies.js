@@ -2,26 +2,28 @@ import React from 'react';
 import bigInt from 'big-integer';
 import { Text, Col, Box } from '@tlon/indigo-react'
 import { PostInput } from './PostInput';
-import PostItem from './PostItem';
+import PostItem from './PostItem/PostItem';
 import { PostFeed } from './PostFeed';
 import { Loading } from '~/views/components/Loading';
+import { resourceFromPath } from '~/logic/lib/group';
 
 
-export function PostReplies(props) {
+export default function PostReplies(props) {
   const {
     baseUrl,
     api,
     history,
     association,
     groups,
-    contacts,
     graphPath,
-    graphs,
-    pendingSize,
-    graphResource
+    pendingSize
   } = props;
+
+  const graphResource = resourceFromPath(graphPath);
   const graphId = `${graphResource.ship.slice(1)}/${graphResource.name}`;
-  const shouldRenderFeed = graphId in graphs;
+
+  let graph = props.graph;
+  const shouldRenderFeed = !!graph;
 
   if (!shouldRenderFeed) {
     return (
@@ -32,13 +34,12 @@ export function PostReplies(props) {
   }
 
   const locationUrl =
-    history.location.pathname.replace(`${baseUrl}/feed`, '');
+    props.locationUrl.replace(`${baseUrl}/feed`, '');
   let nodeIndex = locationUrl.split('/').slice(1).map((ind) => {
     return bigInt(ind);
   });
 
   let node;
-  let graph = graphs[graphId];
   nodeIndex.forEach((i) => {
     if (!graph) {
       return null;
@@ -58,7 +59,7 @@ export function PostReplies(props) {
   if (!first) {
     return (
       <Col
-        key={0}
+        key={locationUrl}
         width="100%"
         height="100%"
         alignItems="center" overflowY="scroll">
@@ -66,8 +67,7 @@ export function PostReplies(props) {
           <PostItem
             key={node.post.index}
             node={node}
-            contacts={contacts}
-            graphResource={graphResource}
+            graphPath={graphPath}
             association={association}
             api={api}
             index={nodeIndex}
@@ -96,13 +96,12 @@ export function PostReplies(props) {
     <Box height="calc(100% - 48px)" width="100%" alignItems="center" pl="1" pt="3">
       <PostFeed
         key={locationUrl}
-        graphResource={graphResource}
+        graphPath={graphPath}
         graph={graph}
         parentNode={node}
         pendingSize={pendingSize}
         association={association}
         groups={groups}
-        contacts={contacts}
         api={api}
         history={history}
         baseUrl={baseUrl}

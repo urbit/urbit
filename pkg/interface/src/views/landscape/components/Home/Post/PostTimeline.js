@@ -3,23 +3,21 @@ import { Text, Col, Box } from '@tlon/indigo-react'
 import { PostInput } from './PostInput';
 import { PostFeed } from './PostFeed';
 import { Loading } from '~/views/components/Loading';
+import { resourceFromPath } from '~/logic/lib/group';
 
 
-export function PostTimeline(props) {
+export default function PostTimeline(props) {
   const {
     baseUrl,
     api,
     history,
     association,
-    groups,
-    contacts,
     graphPath,
-    graphs,
+    graph,
     pendingSize,
-    graphResource
   } = props;
-  const graphId = `${graphResource.ship.slice(1)}/${graphResource.name}`;
-  const shouldRenderFeed = graphId in graphs;
+  const graphResource = resourceFromPath(graphPath);
+  const shouldRenderFeed = !!graph;
 
   if (!shouldRenderFeed) {
     return (
@@ -29,7 +27,6 @@ export function PostTimeline(props) {
     );
   }
 
-  const graph = graphs[graphId];
   const first = graph.peekLargest()?.[0];
   if (!first) {
     return (
@@ -48,7 +45,7 @@ export function PostTimeline(props) {
           alignItems="center">
           <PostInput
             api={api}
-            graphResource={graphResource} />
+            graphPath={graphPath} />
         </Col> 
         <Box
           pl="2"
@@ -77,17 +74,15 @@ export function PostTimeline(props) {
         mb="3"
         flexDirection="column"
         alignItems="center">
-        <PostInput api={api} graphResource={graphResource} />
+        <PostInput api={api} graphPath={graphPath} />
       </Box> 
       <Box height="calc(100% - 176px)" width="100%" alignItems="center" pl="1">
         <PostFeed
           key={graphPath}
-          graphResource={graphResource}
-          graph={graphs[graphId]}
+          graphPath={graphPath}
+          graph={graph}
           pendingSize={pendingSize}
           association={association}
-          groups={groups}
-          contacts={contacts}
           api={api}
           history={history}
           baseUrl={baseUrl}

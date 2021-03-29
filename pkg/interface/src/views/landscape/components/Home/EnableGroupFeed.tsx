@@ -10,6 +10,8 @@ import { AsyncButton } from "~/views/components/AsyncButton";
 import GlobalApi from "~/logic/api/global";
 import { resourceFromPath, Tag, resourceAsPath } from "@urbit/api";
 import useGroupState, { useGroup } from "~/logic/state/group";
+import { useHistory } from 'react-router-dom';
+
 
 interface FormSchema {
   permissions: GroupFeedPermissions;
@@ -20,7 +22,13 @@ export function EnableGroupFeed(props: {
   dismiss: () => void;
   api: GlobalApi;
 }) {
-  const { api, groupPath, dismiss } = props;
+  const { api, groupPath, baseUrl } = props;
+
+  const history = useHistory();
+  const dismiss = () => {
+    history.push(baseUrl);
+  };
+
   const initialValues: FormSchema = {
     permissions: "everyone",
   };
@@ -44,7 +52,7 @@ export function EnableGroupFeed(props: {
       actions.setStatus({ success: null });
       dismiss();
     },
-    [groupPath, dismiss]
+    [groupPath, baseUrl]
   );
 
   return (

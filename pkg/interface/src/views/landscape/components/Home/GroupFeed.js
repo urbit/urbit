@@ -6,21 +6,26 @@ import { Col } from '@tlon/indigo-react'
 import { resourceFromPath } from '~/logic/lib/group';
 import useGraphState from '~/logic/state/graph';
 import { GroupFeedHeader } from './GroupFeedHeader';
-import { PostTimeline } from './Post/PostTimeline';
-import { PostReplies } from './Post/PostReplies';
+import { useHistory } from 'react-router-dom';
+
+import PostTimeline from './Post/PostTimeline';
+import PostReplies from './Post/PostReplies';
+
+import useMetadataState from '~/logic/state/metadata';
 
 
-export function GroupFeed(props) {
+function GroupFeed(props) {
   const {
     baseUrl,
     api,
-    history,
-    associations,
     graphPath
   } = props;
+
+  const associations = useMetadataState(state => state.associations);
   const graphs = useGraphState(state => state.graphs);
   const graphResource = resourceFromPath(graphPath);
   const graphTimesentMap = useGraphState(state => state.graphTimesentMap);
+
   const pendingSize = Object.keys(
     graphTimesentMap[`${graphResource.ship.slice(1)}/${graphResource.name}`] ||
     {}
@@ -28,6 +33,12 @@ export function GroupFeed(props) {
 
   const relativePath = (path) => baseUrl + path;
   const association = associations.graph[graphPath];
+
+  const history = useHistory();
+  const locationUrl = history.location.pathname;
+
+  const graphId = `${graphResource.ship.slice(1)}/${graphResource.name}`;
+  const graph = graphs[graphId];
 
   useEffect(() => {
     //  TODO: VirtualScroller should support lower starting values than 100
@@ -53,11 +64,13 @@ export function GroupFeed(props) {
           render={(routeProps) => {
             return (
               <PostTimeline
-                {...props}
+                baseUrl={baseUrl}
+                api={api}
+                history={history}
+                graphPath={graphPath}
                 association={association}
-                graphs={graphs}
-                pendingSize={pendingSize}
-                graphResource={graphResource} />
+                graph={graph}
+                pendingSize={pendingSize} />
             );
           }} />
         <Route
@@ -65,11 +78,14 @@ export function GroupFeed(props) {
           render={(routeProps) => {
             return (
               <PostReplies
-                {...props}
+                locationUrl={locationUrl}
+                baseUrl={baseUrl}
+                api={api}
+                history={history}
+                graphPath={graphPath}
                 association={association}
-                graphs={graphs}
-                pendingSize={pendingSize}
-                graphResource={graphResource} />
+                graph={graph}
+                pendingSize={pendingSize} />
             );
           }} />
       </Switch>
@@ -77,3 +93,6 @@ export function GroupFeed(props) {
   );
 }
 
+GroupFeed.whyDidYouRender = true;
+
+export { GroupFeed };
