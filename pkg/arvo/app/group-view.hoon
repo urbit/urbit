@@ -193,6 +193,11 @@
       (~(put by joining) rid [%.n now.bowl ship %start])
     =.  jn-core
       (jn-abed rid)
+    =.  jn-core
+      %-  emit
+      %+  fact:io
+        group-view-update+!>([%started rid (~(got by joining) rid)])
+      ~[/all]
     ?<  ~|("already joined {<rid>}" (has-joined rid)) 
     =.  jn-core
       %-  emit

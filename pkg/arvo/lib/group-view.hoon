@@ -54,7 +54,15 @@
     ?-  -.upd
       %initial  (initial +.upd)
       %progress  (progress +.upd)
+      %started   (started +.upd)
       %hide      s+(enjs-path:resource +.upd)
+    ==
+  ::
+  ++  started
+    |=  [rid=resource req=^request]
+    %-  pairs
+    :~  resource+s+(enjs-path:resource rid)
+        request+(request req)
     ==
   ::
   ++  progress

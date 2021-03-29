@@ -144,7 +144,6 @@ export default class ChatEditor extends Component {
 
   messageChange(editor, data, value) {
     if(value.endsWith('/')) {
-      console.log('showing');
       editor.showHint(['test', 'foo']);
     }
     if (this.state.message !== '' && value == '') {

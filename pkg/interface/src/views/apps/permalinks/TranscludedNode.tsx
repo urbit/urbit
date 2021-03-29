@@ -1,11 +1,12 @@
 import React from "react";
 import { Anchor, Icon, Box, Row, Col, Text } from "@tlon/indigo-react";
 import ChatMessage from "../chat/components/ChatMessage";
-import { Association, GraphNode } from "@urbit/api";
+import { Association, GraphNode, Post, Group } from "@urbit/api";
 import { useGroupForAssoc } from "~/logic/state/group";
 import { MentionText } from "~/views/components/MentionText";
 import Author from "~/views/components/Author";
 import { NoteContent } from "../publish/components/Note";
+import { PostContent } from "~/views/landscape/components/Home/Post/PostContent";
 import bigInt from "big-integer";
 import { getSnippet } from "~/logic/lib/publish";
 import { NotePreviewContent } from "../publish/components/NotePreview";
@@ -124,6 +125,34 @@ function TranscludedPublishNode(props: {
   }
 }
 
+export function TranscludedPost(props: {
+  post: Post;
+  api: GlobalApi;
+  transcluded: number;
+  group: Group;
+}) {
+  const { transcluded, post, group, api } = props;
+  return (
+    <Col>
+      <Author
+        p="2"
+        showImage
+        ship={post.author}
+        date={post?.["time-sent"]}
+        group={group}
+      />
+      <Box p="2">
+        <MentionText
+          api={api}
+          transcluded={transcluded}
+          content={post.contents}
+          group={group}
+        />
+      </Box>
+    </Col>
+  );
+}
+
 export function TranscludedNode(props: {
   assoc: Association;
   node: GraphNode;
@@ -158,6 +187,15 @@ export function TranscludedNode(props: {
       return <TranscludedPublishNode {...props} />;
     case "link":
       return <TranscludedLinkNode {...props} />;
+    case "post":
+    return (
+      <TranscludedPost
+        api={props.api}
+        post={node.post}
+        group={group} 
+        transcluded={transcluded} 
+      />)
+      ;
     default:
       return null;
   }

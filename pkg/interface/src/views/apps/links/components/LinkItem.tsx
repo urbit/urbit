@@ -78,11 +78,12 @@ export const LinkItem = (props: LinkItemProps): ReactElement => {
 
   const { doCopy: doCopyLink, copyDisplay: locationText } = useCopy(
     contents[1].url,
-    'Copy Link Location'
+    'Copy block source'
   );
+
   const { doCopy: doCopyNode, copyDisplay: nodeText } = useCopy(
     permalink,
-    'Copy Node Permalink'
+    'Copy reference'
   );
   
   const deleteLink = () => {
