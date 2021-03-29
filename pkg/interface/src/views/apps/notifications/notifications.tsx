@@ -14,6 +14,7 @@ import GroupSearch from '~/views/components/GroupSearch';
 import { useTutorialModal } from '~/views/components/useTutorialModal';
 import useHarkState from '~/logic/state/hark';
 import useMetadataState from '~/logic/state/metadata';
+import useGroupState from '~/logic/state/group';
 
 const baseUrl = '/~notifications';
 
@@ -41,6 +42,7 @@ export default function NotificationsScreen(props: any): ReactElement {
 
   const [filter, setFilter] = useState<NotificationFilter>({ groups: [] });
   const associations = useMetadataState(state => state.associations);
+  const pendingJoin = useGroupState(s => s.pendingJoin);
   const onSubmit = async ({ groups } : NotificationFilter) => {
     setFilter({ groups });
   };
@@ -128,7 +130,11 @@ export default function NotificationsScreen(props: any): ReactElement {
                       </Dropdown>
                     </Row>
                   </Row>
-                  {!view && <Inbox {...props} filter={filter.groups} />}
+                  {!view && <Inbox
+                    pendingJoin={pendingJoin}
+                    {...props}
+                    filter={filter.groups} 
+                    />}
                 </Col>
               </Body>
             </>

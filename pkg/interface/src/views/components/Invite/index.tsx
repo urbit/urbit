@@ -108,7 +108,7 @@ export function InviteItem(props: InviteItemProps) {
     }
   }, [invite]);
 
-  if(status?.hidden) {
+  if(pendingJoin?.hidden) {
     return null;
   }
 
@@ -119,7 +119,7 @@ export function InviteItem(props: InviteItemProps) {
         api={api}
         preview={preview}
         invite={invite}
-        status={status}
+        status={pendingJoin.progress}
         {...handlers}
       />
     );
