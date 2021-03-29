@@ -204,6 +204,7 @@ function unreadEach(json: any, state: HarkState): HarkState {
 function unreads(json: any, state: HarkState): HarkState {
   const data = _.get(json, 'unreads');
   if(data) {
+    state = clearState(state);
     data.forEach(({ index, stats }) => {
       const { unreads, notifications, last } = stats;
       updateNotificationStats(state, index, 'last', () => last);
