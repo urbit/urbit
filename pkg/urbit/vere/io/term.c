@@ -3,6 +3,8 @@
 */
 #include "all.h"
 #include "vere/vere.h"
+
+#if !defined(U3_OS_TERM_dumb)
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
@@ -125,12 +127,14 @@ _term_close_cb(uv_handle_t* han_t)
   c3_free(tty_u);
 }
 #endif
+#endif // U3_OS_TERM_dumb
 
 /* u3_term_log_init(): initialize terminal for logging
 */
 void
 u3_term_log_init(void)
 {
+  #if !defined(U3_OS_TERM_dumb)
   u3_utty* uty_u = c3_calloc(sizeof(u3_utty));
 
   if ( c3y == u3_Host.ops_u.tem ) {
@@ -273,6 +277,7 @@ u3_term_log_init(void)
       uty_u->tat_u.sun_u.tim_u.data = uty_u;
     }
   }
+  #endif // U3_OS_TERM_dumb
 }
 
 /* u3_term_log_exit(): clean up terminal.
@@ -280,6 +285,7 @@ u3_term_log_init(void)
 void
 u3_term_log_exit(void)
 {
+  #if !defined(U3_OS_TERM_dumb)
   if ( c3n == u3_Host.ops_u.tem ) {
     u3_utty* uty_u;
 
@@ -298,7 +304,10 @@ u3_term_log_exit(void)
   if ( u3_Host.uty_u ) {
     uv_close((uv_handle_t*)&u3_Host.uty_u->pop_u, 0);
   }
+  #endif // U3_OS_TERM_dumb
 }
+
+#if !defined(U3_OS_TERM_dumb)
 
 /*  _term_tcsetattr(): tcsetattr w/retry on EINTR.
 */
@@ -670,6 +679,8 @@ _term_it_save(u3_noun pax, u3_noun pad)
   c3_free(bas_c);
 }
 
+#endif // U3_OS_TERM_dumb
+
 /* _term_ovum_plan(): plan term ovums, configuring spinner.
 */
 static u3_ovum*
@@ -684,6 +695,8 @@ _term_ovum_plan(u3_auto* car_u, u3_noun wir, u3_noun cad)
 
   return egg_u;
 }
+
+#if !defined(U3_OS_TERM_dumb)
 
 /* _term_io_belt(): send belt.
 */
@@ -975,11 +988,14 @@ _term_spin_timer_cb(uv_timer_t* tim_u)
 #define _SPIN_RATE_US 250UL  //  spinner rate (ms/frame)
 #define _SPIN_IDLE_US 500UL  //  spinner cools down if stopped this long
 
+#endif // U3_OS_TERM_dumb
+
 /* u3_term_start_spinner(): prepare spinner state. RETAIN.
 */
 void
 u3_term_start_spinner(u3_atom say, c3_o del_o)
 {
+  #if !defined(U3_OS_TERM_dumb)
   if ( c3n == u3_Host.ops_u.tem ) {
     u3_utty* uty_u = _term_main();
     u3_utat* tat_u = &uty_u->tat_u;
@@ -1003,6 +1019,7 @@ u3_term_start_spinner(u3_atom say, c3_o del_o)
                      wen_d, _SPIN_RATE_US);
     }
   }
+  #endif // U3_OS_TERM_dumb
 }
 
 /* u3_term_stop_spinner(): reset spinner state and restore input line.
@@ -1010,6 +1027,7 @@ u3_term_start_spinner(u3_atom say, c3_o del_o)
 void
 u3_term_stop_spinner(void)
 {
+  #if !defined(U3_OS_TERM_dumb)
   if ( c3n == u3_Host.ops_u.tem ) {
     u3_utty* uty_u = _term_main();
     u3_utat* tat_u = &uty_u->tat_u;
@@ -1027,7 +1045,10 @@ u3_term_stop_spinner(void)
       tat_u->sun_u.end_d = 0;
     }
   }
+  #endif // U3_OS_TERM_dumb
 }
+
+#if !defined(U3_OS_TERM_dumb)
 
 /* _term_main(): return main or console terminal.
 */
@@ -1061,11 +1082,14 @@ _term_ef_get(c3_l tid_l)
   return _term_main();
 }
 
+#endif // U3_OS_TERM_dumb
+
 /* u3_term_get_blew(): return window size [columns rows].
 */
 u3_noun
 u3_term_get_blew(c3_l tid_l)
 {
+  #if !defined(U3_OS_TERM_dumb)
   u3_utty*       uty_u = _term_ef_get(tid_l);
   c3_l           col_l, row_l;
 
@@ -1087,6 +1111,9 @@ u3_term_get_blew(c3_l tid_l)
   }
 
   return u3nc(col_l, row_l);
+  #else
+  return u3nc(80, 24);
+  #endif // U3_OS_TERM_dumb
 }
 
 /* u3_term_ef_winc(): window change.  Just console right now.
@@ -1094,6 +1121,7 @@ u3_term_get_blew(c3_l tid_l)
 void
 u3_term_ef_winc(void)
 {
+  #if !defined(U3_OS_TERM_dumb)
   //  XX groace, this should be a global handler sent to each pier
   //
   if ( u3_Host.uty_u->car_u ) {
@@ -1104,6 +1132,7 @@ u3_term_ef_winc(void)
 
     _term_ovum_plan(u3_Host.uty_u->car_u, wir, cad);
   }
+  #endif
 }
 
 /* u3_term_ef_ctlc(): send ^C on console.
@@ -1111,6 +1140,7 @@ u3_term_ef_winc(void)
 void
 u3_term_ef_ctlc(void)
 {
+  #if !defined(U3_OS_TERM_dumb)
   u3_utty* uty_u = _term_main();
 
   {
@@ -1124,7 +1154,10 @@ u3_term_ef_ctlc(void)
   }
 
   _term_it_refresh_line(uty_u);
+  #endif
 }
+
+#if !defined(U3_OS_TERM_dumb)
 
 /*  _term_it_put_value(): put numeric color value on lin_w.
 */
@@ -1442,11 +1475,14 @@ _term_ef_blit(u3_utty* uty_u,
   u3z(blt);
 }
 
+#endif // U3_OS_TERM_dumb
+
 /* u3_term_io_hija(): hijack console for fprintf, returning FILE*.
 */
 FILE*
 u3_term_io_hija(void)
 {
+  #if !defined(U3_OS_TERM_dumb)
   u3_utty* uty_u = _term_main();
 
   if ( uty_u ) {
@@ -1480,10 +1516,10 @@ u3_term_io_hija(void)
           _write(uty_u->fid_i, buf_u->base, buf_u->len);
         }
       }
-      return stdout;
     }
   }
-  else return stdout;
+  #endif // U3_OS_TERM_dumb
+  return stdout;
 }
 
 /* u3_term_io_loja(): release console from fprintf.
@@ -1491,6 +1527,7 @@ u3_term_io_hija(void)
 void
 u3_term_io_loja(int x)
 {
+  #if !defined(U3_OS_TERM_dumb)
   u3_utty* uty_u = _term_main();
 
   if ( uty_u ) {
@@ -1525,6 +1562,9 @@ u3_term_io_loja(int x)
       }
     }
   }
+  #else
+  fflush(stdout);
+  #endif // U3_OS_TERM_dumb
 }
 
 /* u3_term_it_log(): writes a log message
@@ -1535,6 +1575,8 @@ u3_term_io_log(c3_c* line)
   FILE* stream = u3_term_io_hija();
   u3_term_io_loja(fprintf(stream, "%s", line));
 }
+
+#if !defined(U3_OS_TERM_dumb)
 
 /* u3_term_tape_to(): dump a tape to a file.
 */
@@ -1589,11 +1631,14 @@ u3_term_wall(u3_noun wol)
   u3z(wol);
 }
 
+#endif // U3_OS_TERM_dumb
+
 /* _term_io_talk():
 */
 static void
 _term_io_talk(u3_auto* car_u)
 {
+  #if !defined(U3_OS_TERM_dumb)
   if ( c3n == u3_Host.ops_u.tem ) {
     u3_utty* uty_u = _term_main();
 
@@ -1601,6 +1646,7 @@ _term_io_talk(u3_auto* car_u)
                   _term_alloc,
                   _term_read_cb);
   }
+  #endif
 
   //  XX groace hardcoded terminal number
   //
@@ -1688,6 +1734,7 @@ _term_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
         case c3__blit: {
           ret_o = c3y;
 
+          #if !defined(U3_OS_TERM_dumb)
           {
             u3_utty* uty_u = _term_ef_get(tid_l);
             if ( 0 == uty_u ) {
@@ -1703,6 +1750,7 @@ _term_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
               }
             }
           }
+          #endif
         } break;
 
         //  XX obsolete %ames
@@ -1756,6 +1804,7 @@ _term_io_exit_cb(uv_handle_t* han_u)
 static void
 _term_io_exit(u3_auto* car_u)
 {
+  #if !defined(U3_OS_TERM_dumb)
   u3_utty* uty_u = _term_main();
 
   //  NB, closed in u3_term_log_exit()
@@ -1771,6 +1820,9 @@ _term_io_exit(u3_auto* car_u)
   else {
     c3_free(car_u);
   }
+  #else
+  c3_free(car_u);
+  #endif
 }
 
 /* u3_term_io_init(): initialize terminal
@@ -1780,8 +1832,10 @@ u3_term_io_init(u3_pier* pir_u)
 {
   u3_auto* car_u = c3_calloc(sizeof(*car_u));
 
+  #if !defined(U3_OS_TERM_dumb)
   c3_assert( u3_Host.uty_u );
   u3_Host.uty_u->car_u = car_u;
+  #endif
 
   car_u->nam_m = c3__term;
   car_u->liv_o = c3y;

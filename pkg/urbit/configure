@@ -60,10 +60,10 @@ esac
 case $(tr A-Z a-z <<< $os) in
   *mingw*)
      defmacro U3_OS_mingw 1
+     defmacro U3_OS_TERM_dumb 1
 
      # increase default thread stack size and link Windows implibs
      ldextra="-Wl,--stack,67108864 -lbcrypt -lws2_32"
-     mkextra="use_dumb_terminal = 1"
      vcompat="compat = mingw"
      CFLAGS="${CFLAGS-} -DH2O_NO_UNIX_SOCKETS -Icompat/mingw"
      ;;
@@ -106,7 +106,6 @@ CFLAGS  := ${CFLAGS-} -funsigned-char -ffast-math -fcommon -std=gnu99
 LDFLAGS := $LDFLAGS ${ldextra-}
 CC      := ${CC-cc}
 ${vcompat-}
-${mkextra-}
 EOF
 
 echo == config.mk == >&2

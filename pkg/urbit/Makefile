@@ -9,12 +9,6 @@ worker = $(wildcard worker/*.c)
 tests  = $(wildcard tests/*.c)
 bench  = $(wildcard bench/*.c)
 
-ifdef use_dumb_terminal
-vere  := $(filter-out vere/io/term.c,$(vere))
-else
-vere  := $(filter-out vere/io/dumb.c,$(vere))
-endif
-
 ifdef compat
 compat := $(wildcard compat/$(compat)/*.c)
 endif
