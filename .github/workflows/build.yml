@@ -94,3 +94,21 @@ jobs:
       - run: nix-build -A hs.urbit-king.components.exes.urbit-king --arg enableStatic true
       - run: nix-build -A hs-checks
       - run: nix-build shell.nix
+
+  mingw:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: C:\msys64\msys2_shell.cmd -mingw64 -defterm -no-start -here -c ". <(cygpath '{0}')"
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
+
+      # echo suppresses pacman prompt
+      - run: echo|./configure
+        working-directory: ./pkg/urbit
+
+      - run: make build/urbit build/urbit-worker
+        working-directory: ./pkg/urbit
