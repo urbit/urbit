@@ -440,12 +440,7 @@
     =.  contacts.state  (~(put in contacts.state) ship)
     ::  ask ames to track .ship's connectivity
     ::
-    =.  moves  [[system-duct.state %pass /sys/lag %a %heed ship] moves]
-    ::  ask jael to track .ship's breaches
-    ::
-    =/  =note-arvo  [%j %public-keys (silt ship ~)]
-    =.  moves
-      [[system-duct.state %pass /sys/era note-arvo] moves]
+    =.  moves  [[system-duct.state %pass /sys/pal %a %heed ship] moves]
     mo-core
   ::  +mo-untrack-ship: cancel subscriptions to ames and jael for .ship
   ::
@@ -460,11 +455,7 @@
     ::
     =.  contacts.state  (~(del in contacts.state) ship)
     ::
-    =.  moves  [[system-duct.state %pass /sys/lag %a %jilt ship] moves]
-    ::
-    =/  =note-arvo  [%j %nuke (silt ship ~)]
-    =.  moves
-      [[system-duct.state %pass /sys/era note-arvo] moves]
+    =.  moves  [[system-duct.state %pass /sys/pal %a %jilt ship] moves]
     mo-core
   ::  +mo-breach: ship breached, so forget about them
   ::
@@ -488,6 +479,22 @@
       =/  app  (ap-abed:ap name.i.agents routes)
       ap-abet:(ap-breach:app ship)
     $(agents t.agents)
+  ::  +mo-clog: handle an ames %clog notification
+  ::
+  ++  mo-clog
+    |=  =ship
+    ^+  mo-core
+    ::
+    =/  agents=(list term)  ~(tap in ~(key by yokes.state))
+    |-  ^+  mo-core
+    ?~  agents  mo-core
+    ::
+    =.  mo-core
+      =/  =routes  [disclosing=~ attributing=our]
+      =/  app  (ap-abed:ap i.agents routes)
+      ap-abet:(ap-clog:app ship)
+    ::
+    $(agents t.agents)
   ::  +mo-handle-sys: handle a +sign incoming over /sys.
   ::
   ::    (Note that /sys implies the +sign should be routed to a vane.)
@@ -499,22 +506,20 @@
     ::
     ?+  -.path  !!
       %lyv  (mo-handle-sys-lyv path sign-arvo)
-      %era  (mo-handle-sys-era path sign-arvo)
+      %pal  (mo-handle-sys-pal path sign-arvo)
       %cor  (mo-handle-sys-cor path sign-arvo)
-      %lag  (mo-handle-sys-lag path sign-arvo)
       %req  (mo-handle-sys-req path sign-arvo)
       %way  (mo-handle-sys-way path sign-arvo)
     ==
-  ::  +mo-handle-sys-era: receive update about contact
+  ::  +mo-handle-sys-pal: receive update about contact
   ::
-  ++  mo-handle-sys-era
+  ++  mo-handle-sys-pal
     |=  [=path =sign-arvo]
     ^+  mo-core
-    ?>  ?=([%jael %public-keys *] sign-arvo)
-    ?>  ?=([%era ~] path)
-    ?.  ?=(%breach -.public-keys-result.sign-arvo)
-      mo-core
-    (mo-breach who.public-keys-result.sign-arvo)
+    ?+  sign-arvo  ~|(gall-sys-pal+[path [- +<]:sign-arvo] !!)
+      [%ames %torn *]  (mo-breach ship.sign-arvo)
+      [%ames %clog *]  (mo-clog ship.sign-arvo)
+    ==
   ::  +mo-handle-sys-cor: receive a built agent from %clay
   ::
   ++  mo-handle-sys-cor
@@ -572,25 +577,6 @@
     ?:  ?=(%| -.rag)
       (mean p.rag)
     (mo-receive-core:cor dap bek p.rag)
-  ::  +mo-handle-sys-lag: handle an ames %clog notification
-  ::
-  ++  mo-handle-sys-lag
-    |=  [=path =sign-arvo]
-    ^+  mo-core
-    ::
-    ?>  ?=([%lag ~] path)
-    ?>  ?=([%ames %clog *] sign-arvo)
-    ::
-    =/  agents=(list term)  ~(tap in ~(key by yokes.state))
-    |-  ^+  mo-core
-    ?~  agents  mo-core
-    ::
-    =.  mo-core
-      =/  =routes  [disclosing=~ attributing=our]
-      =/  app  (ap-abed:ap i.agents routes)
-      ap-abet:(ap-clog:app ship.sign-arvo)
-    ::
-    $(agents t.agents)
   ::  +mo-handle-sys-req: TODO description
   ::
   ::    TODO: what should we do if the remote nacks our %pull?

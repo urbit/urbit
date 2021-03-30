@@ -349,8 +349,8 @@
   ::    Messaging Tasks
   ::
   ::    %hear: packet from unix
-  ::    %heed: track peer's responsiveness; gives %clog if slow
-  ::    %jilt: stop tracking peer's responsiveness
+  ::    %heed: track peer; gives %clog if slow, %torn on breach
+  ::    %jilt: stop tracking peer
   ::    %plea: request to send message
   ::
   ::    System and Lifecycle Tasks
@@ -381,10 +381,11 @@
   ::    Messaging Gifts
   ::
   ::    %boon: response message from remote ship
-  ::    %clog: notify vane that %boon's to peer are backing up locally
-  ::    %done: notify vane that peer (n)acked our message
-  ::    %lost: notify vane that we crashed on %boon
+  ::    %clog: %boon's to peer are backing up locally
+  ::    %done: peer (n)acked our message
+  ::    %lost: we crashed on %boon
   ::    %send: packet to unix
+  ::    %torn: peer breached
   ::
   ::    System and Lifecycle Gifts
   ::
@@ -396,6 +397,7 @@
         [%done error=(unit error)]
         [%lost ~]
         [%send =lane =blob]
+        [%torn =ship]
     ::
         [%turf turfs=(list turf)]
     ==
