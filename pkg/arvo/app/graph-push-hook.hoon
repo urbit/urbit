@@ -24,20 +24,20 @@
   state-zero
 --
 ::
-=|  state-zero
-=*  state  -
 %-  agent:dbug
 %+  verb  |
 ^-  agent:gall
 %-  (agent:push-hook config)
 ^-  agent
-=<
+=-
+=|  state-zero
+=*  state  -
 |_  =bowl:gall
 +*  this  .
     def   ~(. (default-agent this %|) bowl)
     grp   ~(. group bowl)
     gra   ~(. graph bowl)
-    hc    ~(. +> bowl)
+    hc    ~(. hook-core bowl)
 ::
 ++  on-init   on-init:def
 ++  on-save   !>(state)
@@ -63,12 +63,12 @@
     ?>  ?=(?(%add %remove) i.t.t.wire)
     =*  mark  i.t.wire
     :_  this
-    (build-permissions mark i.t.t.wire %next)^~
+    (build-permissions:hc mark i.t.t.wire %next)^~
   ::
       [%transform-add @ ~]
     =*  mark  i.t.wire
     :_  this
-    (build-transform-add mark %next)^~
+    (build-transform-add:hc mark %next)^~
   ==
 ::
 ++  on-fail   on-fail:def
@@ -211,6 +211,7 @@
     [%give %kick ~[resource+(en-path:res resource.q.update)] ~]~
   ==
 --
+^|  ^=  hook-core
 |_  =bowl:gall
 +*  grp  ~(. group bowl)
     met  ~(. mdl bowl)
