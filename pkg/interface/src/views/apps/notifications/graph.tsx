@@ -18,6 +18,8 @@ import { getSnippet } from '~/logic/lib/publish';
 import styled from 'styled-components';
 import { MentionText } from '~/views/components/MentionText';
 import ChatMessage from '../chat/components/ChatMessage';
+import useContactState from '~/logic/state/contact';
+import useGroupState from '~/logic/state/group';
 
 function getGraphModuleIcon(module: string) {
   if (module === 'link') {
@@ -30,7 +32,7 @@ const FilterBox = styled(Box)`
   background: linear-gradient(
     to bottom,
     transparent,
-    ${p => p.theme.colors.white}
+    ${(p) => p.theme.colors.white}
   );
 `;
 
@@ -67,7 +69,6 @@ const GraphUrl = ({ url, title }) => (
 const GraphNodeContent = ({
   group,
   post,
-  contacts,
   mod,
   description,
   index,
@@ -80,9 +81,7 @@ const GraphNodeContent = ({
       const [{ text }, { url }] = contents;
       return <GraphUrl title={text} url={url} />;
     } else if (idx.length === 3) {
-      return (
-        <MentionText content={contents} contacts={contacts} group={group} />
-      );
+      return <MentionText content={contents} group={group} />;
     }
     return null;
   }
@@ -92,7 +91,6 @@ const GraphNodeContent = ({
         <MentionText
           content={contents}
           group={group}
-          contacts={contacts}
           fontSize='14px'
           lineHeight='tall'
         />
@@ -133,12 +131,12 @@ const GraphNodeContent = ({
           renderSigil={false}
           containerClass='items-top cf hide-child'
           group={group}
-          contacts={contacts}
           groups={{}}
           associations={{ graph: {}, groups: {} }}
           msg={post}
           fontSize='0'
           pt='2'
+          hideHover={true}
         />
       </Row>
     );
@@ -173,7 +171,6 @@ function getNodeUrl(
 }
 const GraphNode = ({
   post,
-  contacts,
   author,
   mod,
   description,
@@ -184,10 +181,11 @@ const GraphNode = ({
   group,
   read,
   onRead,
-  showContact = false,
+  showContact = false
 }) => {
   author = deSig(author);
   const history = useHistory();
+  const contacts = useContactState((state) => state.contacts);
 
   const nodeUrl = getNodeUrl(mod, group?.hidden, groupPath, graph, index);
 
@@ -199,22 +197,18 @@ const GraphNode = ({
   }, [read, onRead]);
 
   const showNickname = useShowNickname(contacts?.[`~${author}`]);
-  const nickname = (contacts?.[`~${author}`]?.nickname && showNickname) ? contacts[`~${author}`].nickname : cite(author);
+  const nickname =
+    contacts?.[`~${author}`]?.nickname && showNickname
+      ? contacts[`~${author}`].nickname
+      : cite(author);
   return (
     <Row onClick={onClick} gapX='2' pt={showContact ? 2 : 0}>
       <Col flexGrow={1} alignItems='flex-start'>
         {showContact && (
-          <Author
-            showImage
-            contacts={contacts}
-            ship={author}
-            date={time}
-            group={group}
-          />
+          <Author showImage ship={author} date={time} group={group} />
         )}
         <Row width='100%' p='1' flexDirection='column'>
           <GraphNodeContent
-            contacts={contacts}
             post={post}
             mod={mod}
             description={description}
@@ -235,12 +229,9 @@ export function GraphNotification(props: {
   read: boolean;
   time: number;
   timebox: BigInteger;
-  associations: Associations;
-  groups: Groups;
-  contacts: Rolodex;
   api: GlobalApi;
 }) {
-  const { contents, index, read, time, api, timebox, groups } = props;
+  const { contents, index, read, time, api, timebox } = props;
 
   const authors = _.map(contents, 'author');
   const { graph, group } = index;
@@ -255,6 +246,8 @@ export function GraphNotification(props: {
     return api.hark['read'](timebox, { graph: index });
   }, [api, timebox, index, read]);
 
+  const groups = useGroupState((state) => state.groups);
+
   return (
     <>
       <Header
@@ -265,17 +258,14 @@ export function GraphNotification(props: {
         authors={authors}
         moduleIcon={icon}
         channel={graph}
-        contacts={props.contacts}
         group={group}
         description={desc}
-        associations={props.associations}
       />
       <Box flexGrow={1} width='100%' pl={5} gridArea='main'>
         {_.map(contents, (content, idx) => (
           <GraphNode
             post={content}
             author={content.author}
-            contacts={props.contacts}
             mod={index.module}
             time={content?.['time-sent']}
             description={index.description}

@@ -17,21 +17,20 @@ import {useOutsideClick} from '~/logic/lib/useOutsideClick';
 import {Portal} from '../Portal';
 import useSettingsState, {SettingsState} from '~/logic/state/settings';
 import { Tile } from '~/types';
+import useContactState from '~/logic/state/contact';
+import useGroupState from '~/logic/state/group';
+import useHarkState from '~/logic/state/hark';
+import useInviteState from '~/logic/state/invite';
+import useLaunchState from '~/logic/state/launch';
+import useMetadataState from '~/logic/state/metadata';
 
 interface OmniboxProps {
-  associations: Associations;
-  contacts: Contacts;
-  groups: Groups;
-  tiles: {
-    [app: string]: Tile;
-  };
   show: boolean;
   toggle: () => void;
   notifications: number;
-  invites: Invites;
 }
 
-const SEARCHED_CATEGORIES = ['ships', 'other', 'commands', 'groups', 'subscriptions', 'apps'];
+const SEARCHED_CATEGORIES = ['commands', 'ships', 'other', 'groups', 'subscriptions', 'apps'];
 const settingsSel = (s: SettingsState) => s.leap;
 
 export function Omnibox(props: OmniboxProps) {
@@ -43,13 +42,20 @@ export function Omnibox(props: OmniboxProps) {
 
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState<[] | [string, string]>([]);
+  const contactState = useContactState(state => state.contacts);
+  const notifications = useHarkState(state => state.notifications);
+  const invites = useInviteState(state => state.invites);
+  const tiles = useLaunchState(state => state.tiles);
 
   const contacts = useMemo(() => {
     const maybeShip = `~${deSig(query)}`;
     return ob.isValidPatp(maybeShip)
-      ? { ...props.contacts, [maybeShip]: {} }
-      : props.contacts;
-  }, [props.contacts, query]);
+      ? { ...contactState, [maybeShip]: {} }
+      : contactState;
+  }, [contactState, query]);
+
+  const groups = useGroupState(state => state.groups);
+  const associations = useMetadataState(state => state.associations);
 
   const selectedGroup =  useMemo(
     () => location.pathname.startsWith('/~landscape/ship/')
@@ -61,19 +67,19 @@ export function Omnibox(props: OmniboxProps) {
   const index = useMemo(() => {
     return makeIndex(
       contacts,
-      props.associations,
-      props.tiles,
+      associations,
+      tiles,
       selectedGroup,
-      props.groups,
+      groups,
       leapConfig,
     );
   }, [
     selectedGroup,
     leapConfig,
     contacts,
-    props.associations,
-    props.groups,
-    props.tiles
+    associations,
+    groups,
+    tiles
   ]);
 
   const onOutsideClick = useCallback(() => {
@@ -245,6 +251,15 @@ export function Omnibox(props: OmniboxProps) {
     setQuery(event.target.value);
   }, []);
 
+  // Sort Omnibox results alphabetically
+  const sortResults = (a: Record<'title', string>, b: Record<'title', string>) => {
+    // Do not sort unless searching (preserves order of menu actions)
+    if (query === '') { return 0 };
+    if (a.title < b.title) { return -1 };
+    if (a.title > b.title) { return 1 };
+    return 0;
+  }
+
   const renderResults = useCallback(() => {
     return <Box
             maxHeight={['200px', '400px']}
@@ -262,26 +277,25 @@ export function Omnibox(props: OmniboxProps) {
           const sel = selected?.length ? selected[1] : '';
           return (<Box key={i} width='max(50vw, 300px)' maxWidth='600px'>
             {categoryTitle}
-            {categoryResults.map((result, i2) => (
-              <OmniboxResult
-                key={i2}
-                icon={result.app}
-                text={result.title}
-                subtext={result.host}
-                link={result.link}
-                navigate={() => navigate(result.app, result.link)}
-                selected={sel}
-                invites={props.invites}
-                notifications={props.notifications}
-                contacts={props.contacts}
-              />
+            {categoryResults
+              .sort(sortResults)
+              .map((result, i2) => (
+                <OmniboxResult
+                  key={i2}
+                  icon={result.app}
+                  text={result.title}
+                  subtext={result.host}
+                  link={result.link}
+                  navigate={() => navigate(result.app, result.link)}
+                  selected={sel}
+                />
             ))}
           </Box>
         );
       })
       }
     </Box>;
-  }, [results, navigate, selected, props.contacts, props.notifications, props.invites]);
+  }, [results, navigate, selected, contactState, notifications, invites]);
 
   return (
     <Portal>

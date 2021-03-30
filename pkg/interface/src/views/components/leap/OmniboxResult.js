@@ -3,6 +3,10 @@ import { Box, Row, Icon, Text } from '@tlon/indigo-react';
 import defaultApps from '~/logic/lib/default-apps';
 import Sigil from '~/logic/lib/sigil';
 import { uxToHex, cite } from '~/logic/lib/util';
+import withState from '~/logic/lib/withState';
+import useHarkState from '~/logic/state/hark';
+import useContactState from '~/logic/state/contact';
+import useInviteState from '~/logic/state/invite';
 
 export class OmniboxResult extends Component {
   constructor(props) {
@@ -60,7 +64,7 @@ export class OmniboxResult extends Component {
       graphic = <Icon display='inline-block' verticalAlign='middle' icon='Users' mr='2' size='18px' color={iconFill} />;
     } else if (icon === 'tutorial') {
       graphic = <Icon display='inline-block' verticalAlign='middle' icon='Tutorial' mr='2' size='18px' color={iconFill} />;
-    } 
+    }
     else {
       graphic = <Icon display='inline-block' icon='NullIcon' verticalAlign="middle" mr='2' size="16px" color={iconFill} />;
     }
@@ -73,10 +77,10 @@ export class OmniboxResult extends Component {
   }
 
   render() {
-    const { icon, text, subtext, link, navigate, selected, invites, notifications, contacts } = this.props;
+    const { icon, text, subtext, link, navigate, selected, invites, notificationsCount, contacts } = this.props;
 
     const color = contacts?.[text] ? `#${uxToHex(contacts[text].color)}` : "#000000";
-    const graphic = this.getIcon(icon, selected, link, invites, notifications, text, color);
+    const graphic = this.getIcon(icon, selected, link, invites, notificationsCount, text, color);
 
     return (
       <Row
@@ -98,6 +102,12 @@ export class OmniboxResult extends Component {
         <Text
         mono={(icon == 'profile' && text.startsWith('~'))}
         color={this.state.hovered || selected === link ? 'white' : 'black'}
+        display='inline-block'
+        verticalAlign='middle'
+        width='100%'
+        overflow='hidden'
+        textOverflow='ellipsis'
+        whiteSpace='pre'
         mr='1'
         >
           {text.startsWith("~") ? cite(text) : text}
@@ -122,4 +132,8 @@ export class OmniboxResult extends Component {
   }
 }
 
-export default OmniboxResult;
+export default withState(OmniboxResult, [
+  [useInviteState],
+  [useHarkState, ['notificationsCount']],
+  [useContactState]
+]);

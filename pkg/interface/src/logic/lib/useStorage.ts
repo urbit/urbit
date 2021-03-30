@@ -8,6 +8,7 @@ import S3 from 'aws-sdk/clients/s3';
 import GcpClient from './GcpClient';
 import { StorageClient, StorageAcl } from './StorageClient';
 import { dateToDa, deSig } from './util';
+import useStorageState from '../state/storage';
 
 
 export interface IuseStorage {
@@ -18,9 +19,10 @@ export interface IuseStorage {
   promptUpload: () => Promise<string | undefined>;
 }
 
-const useStorage = ({gcp, s3}: StorageState,
-                    { accept = '*' } = { accept: '*' }): IuseStorage => {
+const useStorage = ({ accept = '*' } = { accept: '*' }): IuseStorage => {
   const [uploading, setUploading] = useState(false);
+  const gcp = useStorageState(state => state.gcp);
+  const s3 = useStorageState(state => state.s3);
 
   const client = useRef<StorageClient | null>(null);
 

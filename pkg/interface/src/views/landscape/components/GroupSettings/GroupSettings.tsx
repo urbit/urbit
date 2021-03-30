@@ -20,10 +20,7 @@ const Section = ({ children }) => (
 interface GroupSettingsProps {
   group: Group;
   association: Association;
-  associations: Associations;
   api: GlobalApi;
-  notificationsGroupConfig: GroupNotificationsConfig;
-  storage: StorageState;
   baseUrl: string;
 }
 export function GroupSettings(props: GroupSettingsProps) {
