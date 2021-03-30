@@ -71,8 +71,8 @@ export function FormGroup(props: PropFunc<typeof Box>) {
     setSubmits((ss) => ({ ...ss, [id]: s }));
   }, []);
 
-  const submitAll = useCallback(() => {
-    return Promise.all(
+  const submitAll = useCallback(async () => {
+    await Promise.all(
       _.map(
         _.pickBy(submits, (_v, k) => dirty[k]),
         (f) => f()
@@ -125,7 +125,7 @@ export function FormGroup(props: PropFunc<typeof Box>) {
             disabled={hasErrors}
             primary
           >
-            Update
+            Save Changes
           </StatelessAsyncButton>
         </Row>
       )}
