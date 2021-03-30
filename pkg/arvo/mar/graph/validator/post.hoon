@@ -1,20 +1,23 @@
-/-  *post, met=metadata-store
+/-  *post, met=metadata-store, graph=graph-store, hark=hark-graph-hook
 |_  i=indexed-post
 ++  grow
   |%
   ++  noun  i
   ++  graph-permissions-add
     |=  vip=vip-metadata:met
+    ^-  permissions:graph
     ?:  ?=([@ ~] index.p.i)
       [%yes %yes %no]
     [%yes %yes ?:(?=(%reader-comments vip) %yes %no)]
   ::
   ++  graph-permissions-remove
     |=  vip=vip-metadata:met
+    ^-  permissions:graph
     [%yes %self %self]
   ::  +notification-kind: don't track unreads, notify on replies
   ::
   ++  notification-kind  
+    ^-  (unit notif-kind:hark)
     =/  len  (lent index.p.i)
     ?:  =(1 len)  ~
     `[%post [(dec len) len] %none %children]
