@@ -8,11 +8,11 @@
     +$  move  [p=duct q=(wite note gift)]
     +$  note                                            ::  out request $->
       $~  [%b %wait *@da]                               ::
-      $%  $:  %b                                        ::   to self
-              $>(%wait task)                       ::  set timer
+      $%  $:  %b                                        ::  to self
+              $>(%wait task)                            ::  set timer
           ==                                            ::
-          $:  %d                                        ::    to %dill
-              $>(%flog task:dill)                  ::  log output
+          $:  %d                                        ::  to %dill
+              $>(%flog task:dill)                       ::  log output
       ==  ==                                            ::
     +$  sign
       $~  [%behn %wake ~]
