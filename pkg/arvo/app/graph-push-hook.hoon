@@ -31,12 +31,13 @@
 %-  (agent:push-hook config)
 ^-  agent
 =<
+=,  context:hcc
 |_  =bowl:gall
 +*  this  .
     def   ~(. (default-agent this %|) bowl)
     grp   ~(. group bowl)
     gra   ~(. graph bowl)
-    hc    ~(. +> bowl)
+    hc    ~(. hcc bowl)
 ::
 ++  on-init   on-init:def
 ++  on-save   !>(state)
@@ -46,7 +47,7 @@
   =?  old  ?=(~ old)
     [%0 ~]
   ?>  ?=(%0 -.old)
-  `this(state old)
+  `this(state.hcc old)
 ::
 ++  on-poke   on-poke:def
 ++  on-agent  on-agent:def
@@ -62,12 +63,12 @@
     ?>  ?=(?(%add %remove) i.t.t.wire)
     =*  mark  i.t.wire
     :_  this
-    (build-permissions mark i.t.t.wire %next)^~
+    (build-permissions:hc mark i.t.t.wire %next)^~
   ::
       [%transform-add @ ~]
     =*  mark  i.t.wire
     :_  this
-    (build-transform-add mark %next)^~
+    (build-transform-add:hc mark %next)^~
   ==
 ::
 ++  on-fail   on-fail:def
@@ -195,7 +196,7 @@
     ?~  mark.q.update  `this
     =*  mark  u.mark.q.update
     ?:  (~(has in marks) mark)  `this
-    :_  this(marks (~(put in marks) mark))
+    :_  this(marks.hcc (~(put in marks) mark))
     :~  (build-permissions:hc mark %add %sing)
         (build-permissions:hc mark %remove %sing)
         (build-transform-add:hc mark %sing)
@@ -210,6 +211,8 @@
     [%give %kick ~[resource+(en-path:res resource.q.update)] ~]~
   ==
 --
+=*  context  .
+^=  hcc
 |_  =bowl:gall
 +*  grp  ~(. group bowl)
     met  ~(. mdl bowl)
