@@ -245,6 +245,59 @@ _test_base16(void)
   return ret_i;
 }
 
+static c3_w
+_fein_ob_w(c3_w inp_w)
+{
+  u3_atom inp = u3i_word(inp_w);
+  u3_atom act = u3qe_fein_ob(inp);
+  c3_w  act_w = u3r_word(0, act);
+  u3z(inp); u3z(act);
+  return act_w;
+}
+
+static c3_i
+_expect_fein_ob_w(c3_w inp_w, c3_w exp_w)
+{
+  c3_w act_w = _fein_ob_w(inp_w);
+
+  if ( act_w != exp_w ) {
+    fprintf(stderr, "fein: inp=0x%08x exp=0x%08x act=0x%08x\n",
+                    inp_w, exp_w, act_w);
+    return 0;
+  }
+
+  return 1;
+}
+
+static c3_i
+_test_fein_ob(void)
+{
+  c3_i ret_i = 1;
+
+  ret_i &= _expect_fein_ob_w(0, 0);
+  ret_i &= _expect_fein_ob_w(0xffff, 0xffff);
+  ret_i &= _expect_fein_ob_w(0x1b08f, 0x76b920e5);
+  ret_i &= _expect_fein_ob_w(0x10000, 0x423e60bf);
+  ret_i &= _expect_fein_ob_w(0x10001, 0xd4400acb);
+  ret_i &= _expect_fein_ob_w(0x10002, 0xf429043);
+  ret_i &= _expect_fein_ob_w(0x10000000, 0xa04bc7fa);
+  ret_i &= _expect_fein_ob_w(0x1234abcd, 0x686f6c25);
+  ret_i &= _expect_fein_ob_w(0xabcd1234, 0x4a220c8);
+  ret_i &= _expect_fein_ob_w(0xdeadbeef, 0x909bc4a9);
+  ret_i &= _expect_fein_ob_w(0xfffff, 0x6746b96b);
+  ret_i &= _expect_fein_ob_w(0xffffffff, 0xbba4dcce);
+
+  return ret_i;
+}
+
+static c3_i
+_test_ob(void)
+{
+  c3_i ret_i = 1;
+  ret_i &= _test_fein_ob();
+  return ret_i;
+}
+
 static c3_i
 _test_jets(void)
 {
@@ -252,6 +305,11 @@ _test_jets(void)
 
   if ( !_test_base16() ) {
     fprintf(stderr, "test jets: base16: failed\r\n");
+    ret_i = 0;
+  }
+
+  if ( !_test_ob() ) {
+    fprintf(stderr, "test jets: ob: failed\r\n");
     ret_i = 0;
   }
 

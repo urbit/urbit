@@ -1,0 +1,82 @@
+/* j/3/fein.c
+**
+*/
+#include "all.h"
+#include <murmur3.h>
+
+//  +feis:ob constant parameters to +fe:ob
+//
+static const c3_w a_w =     0xffff;
+static const c3_w b_w =    0x10000;
+static const c3_w k_w = 0xffff0000;
+
+//  +raku:ob
+//
+static const c3_w rak_w[4] = { 0xb76d5eed, 0xee281300, 0x85bcae01, 0x4b387af7 };
+
+static c3_w
+_feis_fe(c3_w m_w)
+{
+  c3_w l_w = m_w % a_w;
+  c3_w r_w = m_w / a_w;
+  c3_w f_w, tmp_w;
+  c3_d tmp_d;
+  c3_y k_y[2];
+  c3_y j_y;
+
+  for ( j_y = 0; j_y < 4; j_y++ ) {
+    k_y[0] = r_w & 0xff;
+    k_y[1] = (r_w >> 8) & 0xff;
+
+    MurmurHash3_x86_32(k_y, 2, rak_w[j_y], &f_w);
+
+    tmp_d = (c3_d)f_w + l_w;
+    tmp_w = tmp_d % (!(j_y & 1) ? a_w: b_w);
+    l_w   = r_w;
+    r_w   = tmp_w;
+  }
+
+  return ( a_w == r_w ) ? (r_w * a_w) + l_w : (l_w * a_w) + r_w;
+}
+
+static c3_w
+_feis(c3_w m_w)
+{
+  c3_w c_w = _feis_fe(m_w);
+  return ( c_w < k_w ) ? c_w : _feis_fe(c_w);
+}
+
+u3_atom
+u3qe_fein_ob(u3_atom pyn)
+{
+  c3_w sor_w = u3r_met(4, pyn);
+
+  if ( (sor_w < 2) || (sor_w > 4) ) {
+    return u3k(pyn);
+  }
+
+  if ( 2 == sor_w ) {
+    c3_w pyn_w = u3r_word(0, pyn);
+    c3_w out_w = b_w + _feis(pyn_w - b_w);
+
+    return u3i_word(out_w);
+  }
+  else {
+    c3_w pyn_w[2];
+    u3r_words(0, 2, pyn_w, pyn);
+
+    if ( pyn_w[0] < b_w ) {
+      return u3k(pyn);
+    }
+    else {
+      pyn_w[0] = b_w + _feis(pyn_w[0] - b_w);
+      return u3i_words(2, pyn_w);
+    }
+  }
+}
+
+u3_noun
+u3we_fein_ob(u3_noun cor)
+{
+  return u3qe_fein_ob(u3x_atom(u3x_at(u3x_sam, cor)));
+}
