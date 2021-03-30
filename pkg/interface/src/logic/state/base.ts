@@ -60,5 +60,5 @@ export const createState = <StateType extends BaseState<any>>(
 }), {
   blacklist,
   name: stateStorageKey(name),
-  version: 1, // TODO version these according to base hash
+  version: process.env.LANDSCAPE_SHORTHASH
 }));
