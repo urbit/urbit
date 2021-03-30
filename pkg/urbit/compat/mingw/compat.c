@@ -1,6 +1,12 @@
 #include "c/portable.h"
+#include <fcntl.h>
 #include <sys/utime.h>
 #include <windows.h>
+
+// set default CRT file mode to binary
+// note that mingw binmode.o does nothing
+#undef _fmode
+int _fmode = _O_BINARY;
 
 // from https://github.com/git/git/blob/master/compat/mingw.c
 // -----------------------------------------------------------------------

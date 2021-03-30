@@ -170,7 +170,7 @@ u3e_fault(void* adr_v, c3_i ser_i)
 static c3_o
 _ce_image_open(u3e_image* img_u)
 {
-  c3_i mod_i = O_RDWR | O_BINARY | O_CREAT;
+  c3_i mod_i = O_RDWR | O_CREAT;
   c3_c ful_c[8193];
 
   snprintf(ful_c, 8192, "%s", u3P.dir_c);
@@ -274,13 +274,13 @@ _ce_patch_create(u3_ce_patch* pat_u)
   mkdir(ful_c, 0700);
 
   snprintf(ful_c, 8192, "%s/.urb/chk/control.bin", u3P.dir_c);
-  if ( -1 == (pat_u->ctl_i = open(ful_c, O_RDWR | O_BINARY | O_CREAT | O_EXCL, 0600)) ) {
+  if ( -1 == (pat_u->ctl_i = open(ful_c, O_RDWR | O_CREAT | O_EXCL, 0600)) ) {
     fprintf(stderr, "loom: patch open control.bin: %s\r\n", strerror(errno));
     c3_assert(0);
   }
 
   snprintf(ful_c, 8192, "%s/.urb/chk/memory.bin", u3P.dir_c);
-  if ( -1 == (pat_u->mem_i = open(ful_c, O_RDWR | O_BINARY | O_CREAT | O_EXCL, 0600)) ) {
+  if ( -1 == (pat_u->mem_i = open(ful_c, O_RDWR | O_CREAT | O_EXCL, 0600)) ) {
     fprintf(stderr, "loom: patch open memory.bin: %s\r\n", strerror(errno));
     c3_assert(0);
   }
@@ -376,12 +376,12 @@ _ce_patch_open(void)
   mkdir(ful_c, 0700);
 
   snprintf(ful_c, 8192, "%s/.urb/chk/control.bin", u3P.dir_c);
-  if ( -1 == (ctl_i = open(ful_c, O_RDWR | O_BINARY)) ) {
+  if ( -1 == (ctl_i = open(ful_c, O_RDWR)) ) {
     return 0;
   }
 
   snprintf(ful_c, 8192, "%s/.urb/chk/memory.bin", u3P.dir_c);
-  if ( -1 == (mem_i = open(ful_c, O_RDWR | O_BINARY)) ) {
+  if ( -1 == (mem_i = open(ful_c, O_RDWR)) ) {
     close(ctl_i);
 
     _ce_patch_delete();

@@ -92,10 +92,6 @@
       #error "port: headers"
 #   endif
 
-#   ifndef O_BINARY
-#     define O_BINARY 0
-#   endif
-
 #   ifndef __has_feature
 #     define __has_feature(x) 0
 #   endif

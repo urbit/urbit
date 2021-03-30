@@ -1600,7 +1600,7 @@ _http_write_ports_file(u3_httd* htd_u, c3_c *pax_c)
   c3_c* paf_c = c3_malloc(len_w);
   snprintf(paf_c, len_w, "%s/%s", pax_c, nam_c);
 
-  c3_i por_i = open(paf_c, O_WRONLY | O_BINARY | O_CREAT | O_TRUNC, 0666);
+  c3_i por_i = open(paf_c, O_WRONLY | O_CREAT | O_TRUNC, 0666);
   c3_free(paf_c);
 
   u3_http* htp_u = htd_u->htp_u;
