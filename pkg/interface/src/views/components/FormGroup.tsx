@@ -11,6 +11,8 @@ import { useFormikContext } from "formik";
 import { PropFunc } from "~/types";
 import { FormGroupContext, SubmitHandler } from "~/logic/lib/formGroup";
 import { StatelessAsyncButton } from "./StatelessAsyncButton";
+import { Prompt } from "react-router-dom";
+import { usePreventWindowUnload } from "~/logic/lib/util";
 
 export function useFormGroupContext(id: string) {
   const ctx = React.useContext(FormGroupContext);
@@ -35,17 +37,31 @@ export function useFormGroupContext(id: string) {
     [ctx.onErrors, id]
   );
 
+  const addReset = useCallback(
+    (r: () => void) => {
+      ctx.addReset(id, r);
+    },
+    [ctx.addReset, id]
+  );
+
   return {
     onDirty,
     addSubmit,
     onErrors,
+    addReset,
   };
 }
 
 export function FormGroupChild(props: { id: string }) {
   const { id } = props;
-  const { addSubmit, onDirty, onErrors } = useFormGroupContext(id);
-  const { submitForm, dirty, errors } = useFormikContext();
+  const { addSubmit, onDirty, onErrors, addReset } = useFormGroupContext(id);
+  const {
+    submitForm,
+    dirty,
+    errors,
+    resetForm,
+    initialValues,
+  } = useFormikContext();
 
   useEffect(() => {
     addSubmit(submitForm);
@@ -59,12 +75,20 @@ export function FormGroupChild(props: { id: string }) {
     onErrors(_.keys(_.pickBy(errors, (s) => !!s)).length > 0);
   }, [errors, onErrors]);
 
+  useEffect(() => {
+    const reset = () => {
+      resetForm({ errors: {}, touched: {}, values: initialValues, status: {} });
+    };
+    addReset(reset);
+  }, [resetForm, initialValues]);
+
   return <Box display="none" />;
 }
 
 export function FormGroup(props: PropFunc<typeof Box>) {
   const { children, ...rest } = props;
   const [submits, setSubmits] = useState({} as { [id: string]: SubmitHandler });
+  const [resets, setResets] = useState({} as Record<string, () => void>);
   const [dirty, setDirty] = useState({} as Record<string, boolean>);
   const [errors, setErrors] = useState({} as Record<string, boolean>);
   const addSubmit = useCallback((id: string, s: SubmitHandler) => {
@@ -80,6 +104,10 @@ export function FormGroup(props: PropFunc<typeof Box>) {
     );
   }, [submits, dirty]);
 
+  const resetAll = useCallback(() => {
+    _.map(resets, (r) => r());
+  }, [resets]);
+
   const onDirty = useCallback(
     (id: string, t: boolean) => {
       setDirty((ts) => ({ ...ts, [id]: t }));
@@ -90,8 +118,11 @@ export function FormGroup(props: PropFunc<typeof Box>) {
   const onErrors = useCallback((id: string, e: boolean) => {
     setErrors((es) => ({ ...es, [id]: e }));
   }, []);
+  const addReset = useCallback((id: string, reset: () => void) => {
+    setResets((rs) => ({ ...rs, [id]: reset }));
+  }, []);
 
-  const context = { addSubmit, submitAll, onErrors, onDirty };
+  const context = { addSubmit, submitAll, onErrors, onDirty, addReset };
 
   const hasErrors = useMemo(
     () => _.keys(_.pickBy(errors, (s) => !!s)).length > 0,
@@ -101,9 +132,15 @@ export function FormGroup(props: PropFunc<typeof Box>) {
     () => _.keys(_.pickBy(dirty, _.identity)).length > 0,
     [dirty]
   );
+  usePreventWindowUnload(isDirty);
 
   return (
     <Box {...rest} position="relative">
+      <Prompt
+        when={isDirty}
+        message="Are you sure you want to leave? You have unsaved changes"
+      />
+
       <FormGroupContext.Provider value={context}>
         {children}
       </FormGroupContext.Provider>
@@ -119,7 +156,7 @@ export function FormGroup(props: PropFunc<typeof Box>) {
           borderTop="1"
           borderTopColor="washedGray"
         >
-          <Button>Cancel</Button>
+          <Button onClick={resetAll}>Cancel</Button>
           <StatelessAsyncButton
             onClick={submitAll}
             disabled={hasErrors}
