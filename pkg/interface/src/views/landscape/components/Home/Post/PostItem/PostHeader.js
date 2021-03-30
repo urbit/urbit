@@ -27,6 +27,7 @@ export function PostHeader(props) {
       justifyContent="space-between"
       onClick={(e) => { e.stopPropagation(); }}>
       <Author
+        relativeTime
         showImage
         contacts={contacts}
         ship={post.author}

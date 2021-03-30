@@ -24,6 +24,10 @@ interface AuthorProps {
   unread?: boolean;
   api?: GlobalApi;
   size?: number;
+  relativeTime?: boolean;
+  time?: boolean;
+  sigilPadding?: number;
+  showAsCol?: boolean;
 }
 
 // eslint-disable-next-line max-lines-per-function
@@ -36,13 +40,14 @@ export default function Author(props: AuthorProps & PropFunc<typeof Box>): React
     children,
     unread,
     group,
+    relativeTime = false,
+    time = false,
+    showAsCol = false,
+    size = 16,
+    sigilPadding = 2,
     ...rest
   } = props;
 
-  const showAsCol = props.showAsCol || false;
-  const time = props.time || false;
-  const size = props.size || 16;
-  const sigilPadding = props.sigilPadding || 2;
 
   const history = useHistory();
   const osDark = useLocalState((state) => state.dark);
@@ -85,7 +90,7 @@ export default function Author(props: AuthorProps & PropFunc<typeof Box>): React
       >
         {name}
       </Box>
-      <Timestamp stamp={stamp} fontSize={1} time={time} ml={2} color={unread ? 'blue' : 'gray'} />
+      <Timestamp relativeTime={relativeTime} stamp={stamp} fontSize={1} time={time} ml={2} color={unread ? 'blue' : 'gray'} />
     </Col>
   ) : (
     <> 
@@ -117,7 +122,7 @@ export default function Author(props: AuthorProps & PropFunc<typeof Box>): React
     ) : sigil;
 
   return (
-    <Row height="20px" {...rest} alignItems='center' width='auto'>
+    <Row height={showAsCol ? null : '20px'} {...rest} alignItems='center' width='auto'>
       <Box
         onClick={(e) => {
           e.stopPropagation();

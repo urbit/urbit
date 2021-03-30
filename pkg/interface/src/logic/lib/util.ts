@@ -21,8 +21,23 @@ export const MOMENT_CALENDAR_DATE = {
   nextWeek: 'dddd',
   lastDay: '[Yesterday]',
   lastWeek: '[Last] dddd',
-  sameElse: '~YYYY.M.D'
+  sameElse: 'YYYY.M.D'
 };
+
+export const MOMENT_RELATIVE_TIME = {
+  sameElse: 'HH:mm',
+  sameDay: function(this: moment.Moment, now: moment.Moment) {
+    const minDiff = now.diff(this, 'minutes');
+    const hourDiff = now.diff(this, 'hours');
+    if(hourDiff >= 1) {
+      return `[${hourDiff}h]`;
+    } else if(minDiff > 1) {
+      return `[${minDiff}m]`;
+    } else {
+      return '[now]';
+    }
+  }
+}
 
 export const getModuleIcon = (mod: string) => {
   if (mod === 'link') {
