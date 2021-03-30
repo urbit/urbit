@@ -29,7 +29,7 @@ where
 
 import Urbit.Prelude hiding (Builder)
 
-import Data.Binary.Builder         (Builder, fromByteString)
+import Data.Binary.Builder         (fromByteString)
 import Data.Bits                   (shiftL, (.|.))
 import Data.Conduit                (ConduitT, Flush(Chunk, Flush), yield)
 import Network.Socket              (SockAddr(..))
