@@ -16,18 +16,26 @@ u3qa_lth(u3_atom a, u3_atom b)
     return c3n;
   }
   else {
-    mpz_t   a_mp, b_mp;
-    u3_noun cmp;
+    c3_w a_w = u3r_met(0, a);
+    c3_w b_w = u3r_met(0, b);
 
-    u3r_mp(a_mp, a);
-    u3r_mp(b_mp, b);
+    if ( a_w != b_w ) {
+      return __(a_w < b_w);
+    }
+    else {
+      mpz_t   a_mp, b_mp;
+      u3_noun cmp;
 
-    cmp = (mpz_cmp(a_mp, b_mp) < 0) ? c3y : c3n;
+      u3r_mp(a_mp, a);
+      u3r_mp(b_mp, b);
 
-    mpz_clear(a_mp);
-    mpz_clear(b_mp);
+      cmp = (mpz_cmp(a_mp, b_mp) < 0) ? c3y : c3n;
 
-    return cmp;
+      mpz_clear(a_mp);
+      mpz_clear(b_mp);
+
+      return cmp;
+    }
   }
 }
 
