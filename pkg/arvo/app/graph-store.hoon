@@ -676,12 +676,13 @@
     |=  [=graph:store mark=(unit mark:store)]
     ^-  ?
     ?~  mark   %.y
-    ?~  graph  %.y
     =/  =dais:clay
       .^  =dais:clay
           %cb
           /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/[u.mark]
       ==
+    |-  ^-  ?
+    ?~  graph  %.y
     %+  roll  (tap:orm graph)
     |=  [[=atom =node:store] out=?]
     ^-  ?
