@@ -37,6 +37,24 @@ xxd () {
 
 defmacro URBIT_VERSION "\"$URBIT_VERSION\""
 
+while test $# != 0
+do
+  case $1 in
+  --enable-debug)
+    CFLAGS="${CFLAGS-} -O0 -g"
+    MEMORY_DEBUG=1
+    CPU_DEBUG=1
+    ;;
+  --disable-debug)
+    CFLAGS="${CFLAGS-} -O3 -g"
+    ;;
+  *)
+    echo "unrecognized option: $1"
+    ;;
+  esac
+  shift
+done
+
 [ -n "${MEMORY_DEBUG-}" ]     && defmacro U3_MEMORY_DEBUG 1
 [ -n "${MEMORY_LOG-}" ]       && defmacro U3_MEMORY_LOG 1
 [ -n "${CPU_DEBUG-}" ]        && defmacro U3_CPU_DEBUG 1
@@ -120,8 +138,8 @@ popd
      ldextra="$ldextra -luserenv -liphlpapi -lpsapi"
      vcompat=mingw
      CFLAGS="${CFLAGS-} ${cdirs[@]} -DCURL_STATICLIB -DH2O_NO_UNIX_SOCKETS -Icompat/mingw"
-     LDFLAGS="${LDFLAGS-} -static ${ldirs[@]}"
-     PKG_CONFIG="echo"
+     LDFLAGS="${LDFLAGS-} ${ldirs[@]} -static"
+     PKG_CONFIG=">/dev/null echo"
      ;;
   *linux*)
      defmacro U3_OS_linux 1
