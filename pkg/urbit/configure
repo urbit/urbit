@@ -119,7 +119,7 @@ popd
      ldextra="$ldextra -lzstd"
      # libuv implibs
      ldextra="$ldextra -luserenv -liphlpapi -lpsapi"
-     vcompat="compat = mingw"
+     vcompat=mingw
      CFLAGS="${CFLAGS-} ${cdirs[@]} -DCURL_STATICLIB -DH2O_NO_UNIX_SOCKETS -Icompat/mingw"
      LDFLAGS="${LDFLAGS-} -static ${ldirs[@]}"
      PKG_CONFIG="echo"
@@ -162,7 +162,7 @@ cat >config.mk <<EOF
 CFLAGS  := ${CFLAGS-} -funsigned-char -ffast-math -fcommon -std=gnu99
 LDFLAGS := $LDFLAGS ${ldextra-}
 CC      := ${CC-cc}
-${vcompat-}
+compat  := ${vcompat-posix}
 EOF
 
 echo == config.mk == >&2

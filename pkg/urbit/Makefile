@@ -9,9 +9,7 @@ worker = $(wildcard worker/*.c)
 tests  = $(wildcard tests/*.c)
 bench  = $(wildcard bench/*.c)
 
-ifdef compat
-compat := $(wildcard compat/$(compat)/*.c)
-endif
+compat := $(foreach dir,$(compat),$(wildcard compat/$(dir)/*.c))
 
 common  = $(jets) $(noun) $(ur) $(vere) $(compat)
 headers = $(shell find include -type f)
