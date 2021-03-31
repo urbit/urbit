@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Row, Col, Text, BaseImage } from '@tlon/indigo-react';
+import { Box, Row, Button, Col, Text, BaseImage } from '@tlon/indigo-react';
 import { Link } from 'react-router-dom';
 import { resourceFromPath } from '~/logic/lib/group';
 
@@ -22,12 +22,7 @@ export const AddFeedBanner = (props) => {
       return;
     }
 
-    api.spider(
-      'graph-view-action',
-      'json',
-      'graph-disable-group-feed',
-      { 'disable-group-feed': { resource } }
-    );
+    api.graph.disableGroupFeed(resource);
   };
 
   return (
@@ -46,10 +41,10 @@ export const AddFeedBanner = (props) => {
         <Text mr="2" color="gray" bold cursor="pointer" onClick={disableFeed}>
           Dismiss
         </Text>
-        <Link to={`/~landscape${groupPath}/enable`}>
-          <Text color="blue" bold cursor="pointer">
+        <Link replace to={`/~landscape${groupPath}/enable`}>
+          <Button color="blue" bold cursor="pointer">
             Enable Feed
-          </Text>
+          </Button>
         </Link>
       </Row>
     </Row>

@@ -26,7 +26,7 @@ export function EnableGroupFeed(props: {
 
   const history = useHistory();
   const dismiss = () => {
-    history.push(baseUrl);
+    history.replace(baseUrl);
   };
 
   const initialValues: FormSchema = {
@@ -71,7 +71,7 @@ export function EnableGroupFeed(props: {
             <GroupFeedPermsInput id="permissions" />
             <Row gapX="2">
               <AsyncButton primary>Enable Feed</AsyncButton>
-              <Button gray onClick={dismiss}>Cancel</Button>
+              <Button color="gray" onClick={dismiss}>Cancel</Button>
             </Row>
           </Col>
         </Form>

@@ -271,6 +271,18 @@ export default class GraphApi extends BaseApi<StoreState> {
     return resource;
   }
 
+  async disableGroupFeed(group: Resource): Promise<void> {
+    await this.spider(
+      'graph-view-action',
+      'resource',
+      'graph-disable-group-feed',
+      {
+        "disable-group-feed": { resource: group }
+      }
+    );
+  }
+
+
   removeNodes(ship: Patp, name: string, indices: string[]) {
     return this.hookAction(ship, {
       'remove-nodes': {
