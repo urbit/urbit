@@ -8,7 +8,13 @@ import useContactState from '~/logic/state/contact';
 
 
 export function PostHeader(props) {
-  const { post, api, association, isReply } = props;
+  const {
+    post,
+    api,
+    association,
+    isReply,
+    showTimestamp
+  } = props;
   const contacts = useContactState(state => state.contacts);
   const mb = isReply ? "2" : "3";
 
@@ -22,8 +28,9 @@ export function PostHeader(props) {
   return (
     <Row
       width="100%"
-      height="36px"
       mb={mb}
+      pl="2"
+      pr="2"
       justifyContent="space-between"
       onClick={(e) => { e.stopPropagation(); }}>
       <Author
@@ -33,10 +40,12 @@ export function PostHeader(props) {
         date={post['time-sent']}
         unread={false}
         api={api}
-        size={36}
-        sigilPadding={8}
+        size={24}
+        sigilPadding={6}
+        dontShowTime={!showTimestamp}
+        isRelativeTime={true}
+        showTime={false}
         time={true}
-        showAsCol={true}
       />
       <Dropdown
         dropWidth="200px"

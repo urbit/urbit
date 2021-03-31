@@ -20,6 +20,29 @@ import GlobalSubscription from '~/logic/subscription/global';
 import useGraphState from '~/logic/state/graph';
 import useHarkState, { withHarkState } from '~/logic/state/hark';
 import withState from '~/logic/lib/withState';
+import moment from 'moment';
+
+
+moment.updateLocale('en', {
+  relativeTime : {
+    future: "%s",
+    past:   "%s",
+    s  : "1s",
+    ss : "%ds",
+    m:  "1m",
+    mm: "%dm",
+    h:  "1h",
+    hh: "%dh",
+    d:  "1d",
+    dd: "%dd",
+    w:  "1w",
+    ww: "%dw",
+    M:  "1mo",
+    MM: "%dmo",
+    y:  "1y",
+    yy: "%dy"
+  }
+});
 
 
 type LandscapeProps = StoreState & {
