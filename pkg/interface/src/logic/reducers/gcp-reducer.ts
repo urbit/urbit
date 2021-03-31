@@ -25,7 +25,7 @@ const reduceConfigured = (json, state: StorageState): StorageState => {
 const reduceToken = (json: Cage, state: StorageState): StorageState => {
   let data = json['gcp-token'];
   if (data) {
-    state = setToken(data, state);
+    setToken(data, state);
   }
   return state;
 }
