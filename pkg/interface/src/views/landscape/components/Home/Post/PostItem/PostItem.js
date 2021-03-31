@@ -100,11 +100,13 @@ class PostItem extends React.Component {
           <PostContent
             post={node.post}
             isParent={isParent}
+            isReply={isReply}
             api={api} />
           <PostFooter
             timeSent={node.post['time-sent']}
             replyCount={node.children.size}
             showTimestamp={!isRelativeTime}
+            isParent={isParent}
             toggleReplyMode={this.toggleReplyMode} /> 
         </Col>
         { inReplyMode ? (

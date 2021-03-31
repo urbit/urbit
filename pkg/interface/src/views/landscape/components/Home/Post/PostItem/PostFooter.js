@@ -9,10 +9,11 @@ export function PostFooter(props) {
     replyCount,
     toggleReplyMode,
     showTimestamp,
+    isParent,
     timeSent
   } = props;
   const stamp = moment(timeSent);
-  const mt = showTimestamp ? "2" : "0";
+  const mt = showTimestamp && isParent ? "2" : "0";
 
   const replyText = replyCount === 1 ? ' reply' : ' replies';
 
