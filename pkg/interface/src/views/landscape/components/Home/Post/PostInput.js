@@ -34,6 +34,12 @@ export function PostInput(props) {
 
   }, [promptUpload]);
 
+  const handleKeyDown = (e) => {
+    if((e.getModifierState('Control') || e.metaKey) && e.key === 'Enter') {
+      sendPost();
+    }
+  }
+
   const sendPost = async () => {
     if (!graphResource) {
       console.error("graphResource is undefined, cannot post");
@@ -90,6 +96,7 @@ export function PostInput(props) {
         spellCheck="false"
         value={postContent}
         onChange={e => setPostContent(e.target.value)}
+        onKeyDown={handleKeyDown}
       />
       <Row
         borderTop={1}
