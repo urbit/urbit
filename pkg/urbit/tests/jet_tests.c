@@ -389,6 +389,8 @@ _test_ob(void)
   c3_i ret_i = 1;
   ret_i &= _test_fein_ob();
   ret_i &= _test_fynd_ob();
+  //  disabled, takes almost ~m15
+  //
   // ret_i &= _exhaust_roundtrip_fein_fynd_ob();
   return ret_i;
 }
