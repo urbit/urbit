@@ -114,7 +114,7 @@ popd
      defmacro U3_OS_TERM_dumb 1
 
      # increase default thread stack size and link Windows implibs
-     ldextra="-Wl,--stack,67108864 -lbcrypt -lws2_32"
+     ldextra="-Wl,--stack,67108864 -lbcrypt -lntdll -lws2_32"
      # libcurl implibs
      ldextra="$ldextra -lzstd"
      # libuv implibs

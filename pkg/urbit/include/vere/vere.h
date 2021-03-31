@@ -2,7 +2,6 @@
 */
 
 #include <uv.h>
-#include <termios.h>
 
   /** Quasi-tunable parameters.
   **/
@@ -225,20 +224,38 @@
 
     /* u3_utty: unix tty.
     */
+      struct _u3_utty;
+
+    /* u3_ustm: uv stream.
+    */
+      typedef union _u3_ustm {
+        uv_pipe_t  pop_u;
+        uv_tcp_t   wax_u;
+        uv_tty_t   tty_u;
+      } u3_ustm;
+
+    /* u3_ttyf: simple unix tty function.
+    */
+      typedef c3_o (*u3_ttyf)(struct _u3_utty* uty_u);
+
+    /* u3_utty: unix tty.
+    */
       typedef struct _u3_utty {
-        union {
-          uv_pipe_t      pop_u;
-          uv_tcp_t       wax_u;
-        };
+        u3_ustm          pin_u;             //  input stream
+        u3_ustm          pop_u;             //  output stream
         struct _u3_utty* nex_u;             //  next in host list
+        u3_ttyf          sta_f;             //  start tty
+        u3_ttyf          sto_f;             //  clean up tty
+        u3_ttyf          hij_f;             //  hijack tty for cooked print
+        u3_ttyf          loj_f;             //  release tty from cooked print
+        c3_o           (*wsz_f)
+                       (struct _u3_utty* uty_u,
+                        c3_l* col_l,
+                        c3_l* row_l);       //  return tty window size
         c3_i             fid_i;             //  file descriptor
         c3_w             tid_l;             //  terminal identity number
         u3_utfo          ufo_u;             //  terminfo strings
-        c3_i             cug_i;             //  blocking fcntl flags
-        c3_i             nob_i;             //  nonblocking fcntl flags
         u3_utat          tat_u;             //  control state
-        struct termios   bak_u;             //  cooked terminal state
-        struct termios   raw_u;             //  raw terminal state
         struct _u3_auto* car_u;             //  driver hack
       } u3_utty;
 
@@ -1103,6 +1120,11 @@
       */
         void
         u3_term_log_exit(void);
+
+      /* u3_ptty_init(): initialize platform-specific tty.
+      */
+        u3_utty*
+        u3_ptty_init(uv_loop_t* lup_u, const c3_c** err_c);
 
 
     /**  Ames, packet networking.
