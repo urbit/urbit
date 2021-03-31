@@ -259,6 +259,7 @@
               ?&  !(~(has by archive) resource)
                   !(~(has by graphs) resource)
           ==  ==
+      ~|  "validation of graph {<resource>} failed using mark {<mark>}"
       ?>  (validate-graph graph mark)
       =/  =logged-update:store
         [%0 time %add-graph resource graph mark overwrite]
@@ -681,15 +682,16 @@
           %cb
           /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/[u.mark]
       ==
-    %+  roll  (tap:orm graph)
-    |=  [[=atom =node:store] out=?]
-    ?&  out
-        =(%& -:(mule |.((vale:dais [atom post.node]))))
-        ?-  -.children.node
-            %empty  %.y
-            %graph  ^$(graph p.children.node)
-        ==
-    ==
+    =/  unused
+      %+  turn  (tap:orm graph)
+      |=  [=atom =node:store]
+      ^-  ?
+      =/  side  (vale:dais [atom post.node])
+      ?-  -.children.node
+          %empty  %.y
+          %graph  ^$(graph p.children.node)
+      ==
+    %.y
   ::
   ++  poke-import
     |=  arc=*
