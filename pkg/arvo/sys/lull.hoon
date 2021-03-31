@@ -741,7 +741,6 @@
         [%hill p=(list @tas)]                           ::  mount points
         [%done error=(unit error:ames)]                 ::  ames message (n)ack
         [%mere p=(each (set path) (pair term tang))]    ::  merge result
-        [%note p=@tD q=tank]                            ::  debug message
         [%ogre p=@tas]                                  ::  delete mount point
         [%rule red=dict wit=dict]                       ::  node r+w permissions
         [%writ p=riot]                                  ::  response

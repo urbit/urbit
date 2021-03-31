@@ -70,7 +70,6 @@
       ==  ==                                            ::
       $:  %clay                                         ::
           $>  $?  %mere                                 ::
-                  %note                                 ::
                   %writ                                 ::
               ==                                        ::
           gift:clay                                     ::
@@ -262,9 +261,6 @@
                         (dump:(crud %reap u.p.p.+>.sih) %logo ~)
             %fact       (from ;;(dill-blit q:`vase`+>+>.sih))
           ==
-        ::
-            [%clay %note *]
-          (fore (tuba p.sih ' ' ~(ram re q.sih)) ~)
         ::
             [?(%behn %clay) %writ *]
           init
