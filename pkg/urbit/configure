@@ -111,7 +111,6 @@ popd
      [ -e include/ivory.h     ] || xxd ../../bin/ivory.pill u3_Ivory_pill >include/ivory.h
 
      defmacro U3_OS_mingw 1
-     defmacro U3_OS_TERM_dumb 1
 
      # increase default thread stack size and link Windows implibs
      ldextra="-Wl,--stack,67108864 -lbcrypt -lntdll -lws2_32"
