@@ -682,16 +682,14 @@
           %cb
           /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/[u.mark]
       ==
-    =/  unused
-      %+  turn  (tap:orm graph)
-      |=  [=atom =node:store]
-      ^-  ?
-      =/  side  (vale:dais [atom post.node])
-      ?-  -.children.node
+    %+  roll  (tap:orm graph)
+    |=  [[=atom =node:store] out=?]
+    ^-  ?
+    ?&  ?=(^ (vale:dais [atom post.node]))
+        ?-  -.children.node
           %empty  %.y
           %graph  ^$(graph p.children.node)
-      ==
-    %.y
+    ==  ==
   ::
   ++  poke-import
     |=  arc=*
