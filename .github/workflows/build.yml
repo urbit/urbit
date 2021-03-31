@@ -34,6 +34,10 @@ name: build
 
 on:
   push:
+    branches:
+      - 'release/**'
+      - 'na-release/**'
+      - 'pre-release/**'
     paths:
       - 'pkg/arvo/**'
       - 'pkg/docker-image/**'
