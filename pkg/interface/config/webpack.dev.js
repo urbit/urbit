@@ -6,7 +6,10 @@ const urbitrc = require('./urbitrc');
 const fs = require('fs');
 const util = require('util');
 const _ = require('lodash');
-const exec = util.promisify(require('child_process').exec);
+const { execSync } = require('child_process');
+
+const GIT_DESC = execSync('git describe --always', { encoding: 'utf8' }).trim();
+
 
 function copyFile(src,dest) {
   return new Promise((res,rej) =>
@@ -131,6 +134,7 @@ module.exports = {
   plugins: [
     new UrbitShipPlugin(urbitrc),
     new webpack.DefinePlugin({
+      'process.env.LANDSCAPE_SHORTHASH': JSON.stringify(GIT_DESC),
       'process.env.TUTORIAL_HOST': JSON.stringify('~difmex-passed'),
       'process.env.TUTORIAL_GROUP': JSON.stringify('beginner-island'),
       'process.env.TUTORIAL_CHAT': JSON.stringify('introduce-yourself-7010'),
