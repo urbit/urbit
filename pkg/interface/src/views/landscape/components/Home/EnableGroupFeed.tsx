@@ -59,14 +59,19 @@ export function EnableGroupFeed(props: {
     <ModalOverlay spacing={[3, 5, 7]} bg="white" dismiss={dismiss}>
       <Formik initialValues={initialValues} onSubmit={onSubmit}>
         <Form>
-          <Col gapY="4" p="4">
-            <Text fontWeight="medium" fontSize="2">
-              Enable Feed
-            </Text>
+          <Col gapY="3" p="3">
+            <Col gapY="1">
+              <Text fontWeight="medium" fontSize="2">
+                Enable Feed
+              </Text>
+              <Text gray>
+                A central place to broadcast short posts with your group
+              </Text>
+            </Col>
             <GroupFeedPermsInput id="permissions" />
             <Row gapX="2">
               <AsyncButton primary>Enable Feed</AsyncButton>
-              <Button onClick={dismiss}>Cancel</Button>
+              <Button gray onClick={dismiss}>Cancel</Button>
             </Row>
           </Col>
         </Form>
