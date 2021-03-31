@@ -56,17 +56,18 @@ function GroupHome(props) {
           group={groups[groupPath]}
         /> 
       ) : null }
-      { isFeedEnabled ? (
+      <Route path={`${baseUrl}/feed`}>
         <GroupFeed
           graphPath={graphPath}
           api={api}
           baseUrl={baseUrl} />
-      ) : (
+      </Route>
+      <Route path={baseUrl} exact>
         <EmptyGroupHome
           groups={groups}
           associations={associations}
           groupPath={groupPath} />
-      )}
+      </Route>
     </Box>
   );
 }
