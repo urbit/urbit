@@ -58,6 +58,7 @@ export class PostFeed extends React.Component {
                 baseUrl={baseUrl}
                 history={history}
                 isParent={true}
+                isRelativeTime={false}
               />
             </Col>
             <PostItem
@@ -71,6 +72,7 @@ export class PostFeed extends React.Component {
               history={history}
               isReply={true}
               parentPost={parentNode.post}
+              isRelativeTime={true}
             />
           </React.Fragment>
         );
@@ -89,6 +91,7 @@ export class PostFeed extends React.Component {
           history={history}
           parentPost={parentNode?.post}
           isReply={!!parentNode}
+          isRelativeTime={true}
         />
       );
     });
@@ -131,7 +134,12 @@ export class PostFeed extends React.Component {
   }
 
   render() {
-    const { graph, pendingSize, parentNode, history } = this.props;
+    const {
+      graph,
+      pendingSize,
+      parentNode,
+      history
+    } = this.props;
 
     return (
       <Col width="100%" height="100%" position="relative">

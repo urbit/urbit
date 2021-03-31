@@ -51,6 +51,7 @@ class PostItem extends React.Component {
       innerRef,
       isParent,
       isReply,
+      isRelativeTime,
       parentPost,
       hovering,
       bind
@@ -74,7 +75,7 @@ class PostItem extends React.Component {
         width="100%"
         alignItems="center">
         <Col
-          p="2"
+          pt="2"
           border={1}
           borderColor={ isParent ? "gray" : "lightGray" }
           borderRadius="2"
@@ -88,9 +89,10 @@ class PostItem extends React.Component {
             post={node.post}
             api={api}
             association={association}
+            showTimestamp={isRelativeTime}
             isReply={isReply} />
           { isReply ? (
-            <Row width="100%" alignItems="center" mb="3">
+            <Row width="100%" alignItems="center" mb="2" pl="2" pr="2">
               <Text color="gray" pr="1">Replying to</Text>
               <Mention ship={parentPost.author} />
             </Row>
@@ -100,7 +102,9 @@ class PostItem extends React.Component {
             isParent={isParent}
             api={api} />
           <PostFooter
+            timeSent={node.post['time-sent']}
             replyCount={node.children.size}
+            showTimestamp={!isRelativeTime}
             toggleReplyMode={this.toggleReplyMode} /> 
         </Col>
         { inReplyMode ? (

@@ -36,10 +36,11 @@ export default function Author(props: AuthorProps & PropFunc<typeof Box>): React
     children,
     unread,
     group,
+    isRelativeTime,
+    dontShowTime,
     ...rest
   } = props;
 
-  const showAsCol = props.showAsCol || false;
   const time = props.time || false;
   const size = props.size || 16;
   const sigilPadding = props.sigilPadding || 2;
@@ -73,36 +74,6 @@ export default function Author(props: AuthorProps & PropFunc<typeof Box>): React
     <Sigil ship={ship} size={size} color={color} icon padding={sigilPadding} />
   );
 
-  const rowOrCol = showAsCol ? (
-    <Col>
-      <Box
-        ml={showImage ? 2 : 0}
-        color='black'
-        fontSize='1'
-        lineHeight='tall'
-        fontFamily={showNickname ? 'sans' : 'mono'}
-        fontWeight={showNickname ? '500' : '400'}
-      >
-        {name}
-      </Box>
-      <Timestamp stamp={stamp} fontSize={1} time={time} ml={2} color={unread ? 'blue' : 'gray'} />
-    </Col>
-  ) : (
-    <> 
-      <Box
-        ml={showImage ? 2 : 0}
-        color='black'
-        fontSize='1'
-        lineHeight='tall'
-        fontFamily={showNickname ? 'sans' : 'mono'}
-        fontWeight={showNickname ? '500' : '400'}
-      >
-        {name}
-      </Box>
-      <Timestamp stamp={stamp} fontSize={1} time={time} ml={2} color={unread ? 'blue' : 'gray'} />
-    </>
-  );
-
   const img =
     contact?.avatar && !hideAvatars ? (
       <BaseImage
@@ -133,7 +104,25 @@ export default function Author(props: AuthorProps & PropFunc<typeof Box>): React
           </ProfileOverlay>
         )}
       </Box>
-      {rowOrCol}
+      <Box
+        ml={showImage ? 2 : 0}
+        color='black'
+        fontSize='1'
+        lineHeight='tall'
+        fontFamily={showNickname ? 'sans' : 'mono'}
+        fontWeight={showNickname ? '500' : '400'}
+      >
+        {name}
+      </Box>
+      { !dontShowTime && (
+        <Timestamp
+          relative={isRelativeTime}
+          stamp={stamp}
+          fontSize={1}
+          time={time}
+          ml={2}
+          color={unread ? 'blue' : 'gray'} />
+      )}
       {children}
     </Row>
   );

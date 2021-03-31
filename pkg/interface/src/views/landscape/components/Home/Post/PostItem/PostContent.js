@@ -11,6 +11,8 @@ export function PostContent(props) {
   return (
     <Col
       width="100%"
+      pl="2"
+      pr="2"
       maxHeight={ isParent ? "none" : "300px" }
       textOverflow="ellipsis"
       overflow="hidden"
