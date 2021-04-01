@@ -13,8 +13,10 @@ export default function PostTimeline(props) {
     history,
     association,
     graphPath,
+    group,
     graph,
     pendingSize,
+    vip
   } = props;
   const graphResource = resourceFromPath(graphPath);
   const shouldRenderFeed = !!graph;
@@ -45,7 +47,8 @@ export default function PostTimeline(props) {
           alignItems="center">
           <PostInput
             api={api}
-            graphPath={graphPath} />
+            graphPath={graphPath}
+            vip={vip} />
         </Col> 
         <Box
           pl="2"
@@ -83,6 +86,8 @@ export default function PostTimeline(props) {
           graph={graph}
           pendingSize={pendingSize}
           association={association}
+          group={group}
+          vip={vip}
           api={api}
           history={history}
           baseUrl={baseUrl}

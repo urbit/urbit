@@ -7,7 +7,7 @@ import { PostInput } from '../PostInput';
 import { Mention } from "~/views/components/MentionText";
 import withState from '~/logic/lib/withState';
 import { useHovering } from '~/logic/lib/util';
-import { resourceFromPath } from '~/logic/lib/group';
+import { resourceFromPath, isWriter } from '~/logic/lib/group';
 
 
 class PostItem extends React.Component {
@@ -19,6 +19,11 @@ class PostItem extends React.Component {
     this.toggleReplyMode = this.toggleReplyMode.bind(this);
     this.navigateToReplies = this.navigateToReplies.bind(this);
     this.submitCallback = this.submitCallback.bind(this);
+  }
+
+  canWrite() {
+    const { group, association } = this.props;
+    return isWriter(group, association.resource);
   }
 
   toggleReplyMode() {
@@ -120,6 +125,7 @@ class PostItem extends React.Component {
               api={api}
               graphPath={graphPath}
               index={indexString}
+              canWrite={canWrite}
               submitCallback={this.submitCallback} />
           </Col>
         ) : null }

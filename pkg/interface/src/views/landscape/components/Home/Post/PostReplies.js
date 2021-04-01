@@ -16,6 +16,8 @@ export default function PostReplies(props) {
     association,
     groups,
     graphPath,
+    group,
+    vip,
     pendingSize
   } = props;
 
@@ -74,6 +76,7 @@ export default function PostReplies(props) {
             baseUrl={baseUrl}
             history={history}
             isParent={true}
+            vip={vip}
           />
         </Box>
         <Box
@@ -101,7 +104,9 @@ export default function PostReplies(props) {
         parentNode={node}
         pendingSize={pendingSize}
         association={association}
+        group={group}
         groups={groups}
+        vip={vip}
         api={api}
         history={history}
         baseUrl={baseUrl}

@@ -59,6 +59,8 @@ function GroupHome(props) {
       <Route path={`${baseUrl}/feed`}>
         <GroupFeed
           graphPath={graphPath}
+          groupPath={groupPath}
+          vip={metadata.vip}
           api={api}
           baseUrl={baseUrl} />
       </Route>

@@ -7,7 +7,7 @@ import tokenizeMessage from '~/logic/lib/tokenizeMessage';
 import { useToggleState } from '~/logic/lib/useToggleState';
 import { createPost } from '~/logic/api/graph';
 import useStorage from '~/logic/lib/useStorage';
-import { resourceFromPath } from '~/logic/lib/group';
+import { resourceFromPath, isWriter } from '~/logic/lib/group';
 
 
 export function PostInput(props) {
