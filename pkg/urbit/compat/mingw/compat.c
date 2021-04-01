@@ -418,8 +418,8 @@ int mprotect (void *addr, size_t len, int prot)
 
 int utimes(const char *path, const struct timeval times[2])
 {
-    // TODO: implement in terms of utime
-    return -1;
+    struct _utimbuf utb = {.actime = times[0].tv_sec, .modtime = times[1].tv_sec};
+    return _utime(path, &utb);
 }
 
 int fdatasync(int fildes)
