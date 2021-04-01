@@ -1635,9 +1635,12 @@ _http_release_ports_file(c3_c *pax_c)
 {
   c3_c* nam_c = ".http.ports";
   c3_w len_w = 1 + strlen(pax_c) + 1 + strlen(nam_c);
-
   c3_c* paf_c = c3_malloc(len_w);
-  snprintf(paf_c, len_w, "%s/%s", pax_c, nam_c);
+  c3_i  wit_i;
+
+  wit_i = snprintf(paf_c, len_w, "%s/%s", pax_c, nam_c);
+  c3_assert(wit_i > 0);
+  c3_assert(len_w == (c3_w)wit_i + 1);
 
   unlink(paf_c);
   c3_free(paf_c);
