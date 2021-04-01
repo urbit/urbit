@@ -20,7 +20,7 @@
     c3_l              sev_l;            //  instance number
   } u3_khan;
 
-static const c3_c* const URB_SOCK_PATH = ".urb/khan.sock";
+static const c3_c URB_SOCK_PATH[] = ".urb/khan.sock";
 
 /* _khan_io_talk(): notify %khan that we're live
 */
@@ -62,14 +62,23 @@ _khan_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
   return ret_o;
 }
 
-/* _khan_io_exit(): close socket.
+/* _khan_io_exit(): unlink socket.
 */
 static void
 _khan_io_exit(u3_auto* car_u)
 {
   u3_khan* cop_u = (u3_khan*)car_u;
+  c3_c*    pax_c = u3_Host.dir_c;
+  c3_w     len_w = strlen(pax_c) + 1 + sizeof(URB_SOCK_PATH);
+  c3_c*    paf_c = c3_malloc(len_w);
+  c3_i     wit_i;
 
-  // TODO close socket
+  wit_i = snprintf(paf_c, len_w, "%s/%s", pax_c, URB_SOCK_PATH);
+  c3_assert(wit_i > 0);
+  c3_assert(len_w == (c3_w)wit_i + 1);
+
+  unlink(paf_c);
+  c3_free(paf_c);
 }
 
 /* _khan_conn_cb(): socket connection callback.
