@@ -384,7 +384,7 @@ scry serf g r = withSerfLockIO serf $ \ss -> do
   the serf can determine the length of the boot sequence.
 -}
 boot :: Serf -> [Noun] -> IO (Maybe PlayBail)
-boot serf@Serf {..} seq = do
+boot serf@Serf {} seq = do
   withSerfLockIO serf $ \ss -> do
     sendWrit serf (WPlay 1 seq)
     recvPlay serf >>= \case
