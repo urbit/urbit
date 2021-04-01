@@ -12,6 +12,7 @@
 +$  bite  ^bite
 +$  octs  [p=@ud q=@]
 ++  ruth  |=([a=* b=*] ?>(?=(@ b) b))
+++  dec   ^dec
 ++  add   ^add
 ++  bex   ^bex
 ++  mul   ^mul

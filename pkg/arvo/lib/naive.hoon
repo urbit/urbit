@@ -8,36 +8,19 @@
 ::    maybe not though
 ::  - Disallow depositing galaxy to L2
 ::
-::  TODO: maybe split out a generic "modify state" core, and have both
-::  L1 and L2 transactions reduce to that?  Would need to see what that
-::  looks like for L2 transactions, since they need to assert various
-::  things, but maybe those reduce to just asserting the signer is
-::  correct?  Also need to handle depositing and managing l1 vs l2 to
-::  some extent.
-::
 ::  TODO: can an L1 star adopt an L2 planet?  It's not obvious how --
 ::  maybe they need to adopt as an L2 transaction?  That sounds right I
 ::  think.  Can an L2 star adopt an L1 planet?  I guess, but L1 wouldn't
 ::  know about it.  Should L1 check whether the escape target is on L2
-::  for some reason?
-::
-::  TODO: consider the implications of having two operator lists, on L1
-::  and L2.  Are they the same list, or different?
+::  for some reason?  IMO if either side is on L2, then both sides
+::  should operate on L2
 ::
 ::  TODO: should we emit all the events azimuth.sol does?  might be
-::  convenient for tracking edges?
-::
-::  TODO: decide about adopt/reject/detach.  right now i add specifying
-::  the parent because it feels safer and cleaner, at the cost of four
-::  bytes.  without specifying the parent, are there race conditions
-::  involving multiple possible sponsors owned/managed by the same
-::  address?
+::  convenient for tracking edges?  Yes
 ::
 ::  TODO: add nonces to txs.  how to keep track of them?  need replay
 ::  protection.  maybe we can add nonces to ships instead of addresses?
 ::  Then what about operators?
-::
-::  TODO: if sig fails to verify, skip instead of crashing
 ::
 ::  TODO: is it possible to spawn directly to the deposit address?  if
 ::  so, should we find its parent's owner to control it?
@@ -45,7 +28,7 @@
 ::  TODO: should we add any protection in the L1 contracts that you
 ::  don't deposit from a contract?
 ::
-::  TODO: check operator anywhere you check for owner
+::  TODO: check operator anywhere you check for owner?
 ::
 ::  TODO: batch tx type to reduce signatures
 ::
@@ -152,18 +135,14 @@
   ::
   ?~  parse-result
     ~
-  =^  signed=(unit [signer=address =tx])  batch  u.parse-result
-  ::  Signature failed, skip transaction
-  ::
-  ?~  signed
-    $
-  [u.signed $(txs [u.signed txs])]
+  =^  signed=(list [signer=address =tx])  batch  u.parse-result
+  $(txs (welp (flop signed) txs))
 ::
 ::  TODO: change batch to be a cursor to avoid allocating atoms
 ::
 ++  parse-tx
   |=  [batch=@ =verifier]
-  ^-  (unit [(unit [address tx]) rest=@])
+  ^-  (unit [(list [address tx]) rest=@])
   =/  batch  [len=0 rest=batch]
   |^
   =^  sig  batch  (take 3 65)
@@ -172,37 +151,54 @@
         ~
       :-  ~
       =/  signer=(unit address)
-        (verify-tx sig (end [0 len.u.res] signed-batch))
+        (verify-tx sig (end [0 len.batch.u.res] signed-batch))
       ?~  signer
-        [~ rest.u.res]
-      [`[u.signer tx.u.res] rest.u.res]
-  ^-  res=(unit [=tx [len=@ rest=@]])
+        [~ rest.batch.u.res]
+      [(turn txs.u.res |=(=tx [u.signer tx])) rest.batch.u.res]
+  |-  ^-  res=(unit [txs=(list tx) =_batch])
+  =*  parse-loop  $
   =^  op   batch  (take 0 7)
   ?+    op  ~>(%slog.%strange-opcode ~)
       %0
     =^  reset=@         batch  (take 0)
     =^  =ship           batch  (take 3 4)
     =^  =address        batch  (take 3 20)
-    `[[%transfer-point ship address =(0 reset)] batch]
+    `[[%transfer-point ship address =(0 reset)]~ batch]
   ::
-      %1   =^(res batch take-ship-address `[[%spawn res] batch])
+      %1   =^(res batch take-ship-address `[[%spawn res]~ batch])
       %2
     =^  breach=@        batch  (take 0)
     =^  =ship           batch  (take 3 4)
     =^  encrypt=@       batch  (take 3 32)
     =^  auth=@          batch  (take 3 32)
     =^  crypto-suite=@  batch  (take 3 4)
-    `[[%configure-keys ship encrypt auth crypto-suite =(0 breach)] batch]
+    `[[%configure-keys ship encrypt auth crypto-suite =(0 breach)]~ batch]
   ::
-      %3   =^(res batch take-escape `[[%escape res] batch])
-      %4   =^(res batch take-escape `[[%cancel-escape res] batch])
-      %5   =^(res batch take-escape `[[%adopt res] batch])
-      %6   =^(res batch take-escape `[[%reject res] batch])
-      %7   =^(res batch take-escape `[[%detach res] batch])
-      %8   =^(res batch take-ship-address `[[%set-management-proxy res] batch])
-      %9   =^(res batch take-ship-address `[[%set-spawn-proxy res] batch])
-      %10  =^(res batch take-ship-address `[[%set-voting-proxy res] batch])
-      %11  =^(res batch take-ship-address `[[%set-transfer-proxy res] batch])
+      %3   =^(res batch take-escape `[[%escape res]~ batch])
+      %4   =^(res batch take-escape `[[%cancel-escape res]~ batch])
+      %5   =^(res batch take-escape `[[%adopt res]~ batch])
+      %6   =^(res batch take-escape `[[%reject res]~ batch])
+      %7   =^(res batch take-escape `[[%detach res]~ batch])
+      %8   =^(res batch take-ship-address `[[%set-management-proxy res]~ batch])
+      %9   =^(res batch take-ship-address `[[%set-spawn-proxy res]~ batch])
+      %10  =^(res batch take-ship-address `[[%set-voting-proxy res]~ batch])
+      %11  =^(res batch take-ship-address `[[%set-transfer-proxy res]~ batch])
+      %12
+    =^  count=@           batch  (take 3 2)
+    ::
+    |-  ^-  (unit [txs=(list tx) =_batch])
+    =*  batch-loop  $
+    ?:  =(count 0)
+      `[~ batch]
+    =/  next-res=(unit [txs=(list tx) batch=_batch])  parse-loop
+    ?~  next-res
+      ~
+    =.  batch  batch.u.next-res
+    =/  rest-res  batch-loop(count (dec count))
+    ?~  rest-res
+      ~
+    =.  batch  batch.u.rest-res
+    `[(welp txs.u.next-res txs.u.rest-res) batch]
   ==
   ::
   ::  Take a bite
