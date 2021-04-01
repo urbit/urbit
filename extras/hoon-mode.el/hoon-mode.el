@@ -59,10 +59,10 @@
 
 (defvar hoon-font-lock-keywords
   '(
-    ("\\+\\+  \\(\\w+\\)" (1 font-lock-function-name-face))
-    ("\\(%\\w+\\)" (1 font-lock-keyword-face))
-    ("\\(\\w+\\)=" (1 font-lock-variable-name-face))
-    ("[=,]\\(\\w+\\|@\\w*\\)" (1 font-lock-type-face))
+    ("\\+\\+  \\(\\(-\\|\\w\\)+\\)" (1 font-lock-function-name-face))
+    ("\\(%\\w\\(-\\|\\w\\)*\\)" (1 font-lock-keyword-face))
+    ("\\(\\(-\\|\\w\\)+\\)=" (1 font-lock-variable-name-face))
+    ("[=,]\\(\\(-\\|\\w\\)+\\|@\\(-\\|\\w\\)*\\)" (1 font-lock-type-face))
     )
   "Keyword highlighting specification for `hoon-mode'.")
 
