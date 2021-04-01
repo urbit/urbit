@@ -207,7 +207,7 @@
   ++  give
     |=  =update-0:store
     ^-  (list card)
-    [%give %fact ~ [%graph-update !>([%0 now.bowl update-0])]]~
+    [%give %fact ~ [%graph-update-0 !>([%0 now.bowl update-0])]]~
   --
 ::
 ++  on-poke
@@ -218,7 +218,7 @@
   ?>  (team:title our.bowl src.bowl)
   =^  cards  state
     ?+  mark           (on-poke:def mark vase)
-        %graph-update  (graph-update !<(update:store vase))
+        %graph-update-0  (graph-update !<(update:store vase))
         %noun          (debug !<(debug-input vase))
         %import        (poke-import q.vase)
     ==
@@ -259,6 +259,7 @@
               ?&  !(~(has by archive) resource)
                   !(~(has by graphs) resource)
           ==  ==
+      ~|  "validation of graph {<resource>} failed using mark {<mark>}"
       ?>  (validate-graph graph mark)
       =/  =logged-update:store
         [%0 time %add-graph resource graph mark overwrite]
@@ -646,7 +647,7 @@
         [cards state]
       =*  update  upd.i.updates
       =^  crds  state
-        %-  graph-update 
+        %-  graph-update
         ^-  update:store
         ?-  -.q.update
             %add-graph          update(resource.q resource)
@@ -660,7 +661,7 @@
     ++  give
       |=  [paths=(list path) update=update-0:store]
       ^-  (list card)
-      [%give %fact paths [%graph-update !>([%0 now.bowl update])]]~
+      [%give %fact paths [%graph-update-0 !>([%0 now.bowl update])]]~
     --
   ::
   ++  debug
@@ -675,21 +676,21 @@
     |=  [=graph:store mark=(unit mark:store)]
     ^-  ?
     ?~  mark   %.y
-    ?~  graph  %.y
     =/  =dais:clay
       .^  =dais:clay
           %cb
           /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/[u.mark]
       ==
+    |-  ^-  ?
+    ?~  graph  %.y
     %+  roll  (tap:orm graph)
     |=  [[=atom =node:store] out=?]
-    ?&  out
-        =(%& -:(mule |.((vale:dais [atom post.node]))))
+    ^-  ?
+    ?&  ?=(^ (vale:dais [atom post.node]))
         ?-  -.children.node
-            %empty  %.y
-            %graph  ^$(graph p.children.node)
-        ==
-    ==
+          %empty  %.y
+          %graph  ^$(graph p.children.node)
+    ==  ==
   ::
   ++  poke-import
     |=  arc=*
@@ -862,15 +863,15 @@
     ``noun+!>(q.u.result)
   ::
       [%x %keys ~]
-    :-  ~  :-  ~  :-  %graph-update
+    :-  ~  :-  ~  :-  %graph-update-0
     !>(`update:store`[%0 now.bowl [%keys ~(key by graphs)]])
   ::
       [%x %tags ~]
-    :-  ~  :-  ~  :-  %graph-update
+    :-  ~  :-  ~  :-  %graph-update-0
     !>(`update:store`[%0 now.bowl [%tags ~(key by tag-queries)]])
   ::
       [%x %tag-queries ~]
-    :-  ~  :-  ~  :-  %graph-update
+    :-  ~  :-  ~  :-  %graph-update-0
     !>(`update:store`[%0 now.bowl [%tag-queries tag-queries]])
   ::
       [%x %graph @ @ ~]
@@ -879,7 +880,7 @@
     =/  result=(unit marked-graph:store)
       (~(get by graphs) [ship term])
     ?~  result  [~ ~]
-    :-  ~  :-  ~  :-  %graph-update
+    :-  ~  :-  ~  :-  %graph-update-0
     !>  ^-  update:store
     :+  %0
       now.bowl
@@ -895,7 +896,7 @@
     ?~  result
       ~&  no-archived-graph+[ship term]
       [~ ~]
-    :-  ~  :-  ~  :-  %graph-update
+    :-  ~  :-  ~  :-  %graph-update-0
     !>  ^-  update:store
     :+  %0
       now.bowl
@@ -912,7 +913,7 @@
     =/  graph=(unit marked-graph:store)
       (~(get by graphs) [ship term])
     ?~  graph  [~ ~]
-    :-  ~  :-  ~  :-  %graph-update
+    :-  ~  :-  ~  :-  %graph-update-0
     !>  ^-  update:store
     :+  %0  now.bowl
     :+  %add-nodes
@@ -939,7 +940,7 @@
       (turn t.t.t.t.path (cury slav %ud))
     =/  node=(unit node:store)  (get-node ship term index)
     ?~  node  [~ ~]
-    :-  ~  :-  ~  :-  %graph-update
+    :-  ~  :-  ~  :-  %graph-update-0
     !>  ^-  update:store
     :+  %0
       now.bowl
@@ -959,7 +960,7 @@
     =/  graph
       (get-node-children ship term parent)
     ?~  graph  [~ ~]
-    :-  ~  :-  ~  :-  %graph-update
+    :-  ~  :-  ~  :-  %graph-update-0
     !>  ^-  update:store
     :+  %0
       now.bowl
@@ -990,7 +991,7 @@
     =/  children
       (get-node-children ship term index)
     ?~  children  [~ ~]
-    :-  ~  :-  ~  :-  %graph-update
+    :-  ~  :-  ~  :-  %graph-update-0
     !>  ^-  update:store
     :+  %0
       now.bowl
@@ -1017,7 +1018,7 @@
     ?-  -.children.u.node
         %empty  [~ ~]
         %graph
-      :-  ~  :-  ~  :-  %graph-update
+      :-  ~  :-  ~  :-  %graph-update-0
       !>  ^-  update:store
       :+  %0
         now.bowl

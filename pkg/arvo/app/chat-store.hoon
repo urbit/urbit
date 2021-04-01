@@ -293,12 +293,12 @@
   |=  group=resource
   ^-  card
   =-  [%pass / %agent [our.bol %group-store] %poke -]
-  group-update+!>([%remove-group group ~])
+  group-update-0+!>([%remove-group group ~])
 ::
 ++  poke-graph-store
   |=  =update:graph-store
   ^-  card
-  [%pass / %agent [our.bol %graph-store] %poke %graph-update !>(update)]
+  [%pass / %agent [our.bol %graph-store] %poke %graph-update-0 !>(update)]
 ::
 ++  letter-to-contents
   |=  =letter:store
