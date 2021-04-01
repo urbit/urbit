@@ -461,6 +461,7 @@
           time_t               wen_t;           //  process creation time
           u3_mojo              inn_u;           //  client's stdin
           u3_moat              out_u;           //  client's stdout
+          uv_pipe_t            err_u;           //  client's stderr
           c3_w                 wag_w;           //  config flags
           c3_c*                bin_c;           //  binary path
           c3_c*                pax_c;           //  directory

@@ -155,6 +155,11 @@ _cw_serf_stdio(c3_i* inn_i, c3_i* out_i)
   dup2(2, 1);
 
   close(nul_i);
+
+  //  set stream I/O to unbuffered because it's now a pipe not a console
+  //
+  setvbuf(stdout, NULL, _IONBF, 0);
+  setvbuf(stderr, NULL, _IONBF, 0);
 }
 
 /* _cw_serf_stdio(): cleanup on serf exit.
