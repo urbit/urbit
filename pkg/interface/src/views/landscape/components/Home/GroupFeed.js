@@ -7,6 +7,7 @@ import { resourceFromPath } from '~/logic/lib/group';
 import useGraphState from '~/logic/state/graph';
 import { GroupFeedHeader } from './GroupFeedHeader';
 import { useHistory } from 'react-router-dom';
+import { Loading } from '~/views/components/Loading';
 
 import PostTimeline from './Post/PostTimeline';
 import PostReplies from './Post/PostReplies';
@@ -29,7 +30,8 @@ function GroupFeed(props) {
 
   const associations = useMetadataState(state => state.associations);
   const graphs = useGraphState(state => state.graphs);
-  const graphResource = resourceFromPath(graphPath);
+  const graphResource =
+    graphPath ? resourceFromPath(graphPath) : resourceFromPath('/ship/~zod/null');
   const graphTimesentMap = useGraphState(state => state.graphTimesentMap);
 
   const pendingSize = Object.keys(
@@ -48,8 +50,15 @@ function GroupFeed(props) {
 
   useEffect(() => {
     //  TODO: VirtualScroller should support lower starting values than 100
+    if (graphResource.ship === '~zod' && graphResource.name === 'null') {
+      return;
+    }
     api.graph.getNewest(graphResource.ship, graphResource.name, 100);
   }, [graphPath]);
+
+  if (!graphPath) {
+    return <Loading />;
+  }
 
   return (
     <Col

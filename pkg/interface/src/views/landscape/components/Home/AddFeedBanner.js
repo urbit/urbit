@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Box, Row, Button, Col, Text, BaseImage, Icon } from '@tlon/indigo-react';
 import { Link } from 'react-router-dom';
 import { resourceFromPath } from '~/logic/lib/group';
+import { useHistory } from 'react-router-dom';
 
 
 export const AddFeedBanner = (props) => {
@@ -9,8 +10,12 @@ export const AddFeedBanner = (props) => {
     api,
     group,
     groupPath,
+    baseUrl
   } = props;
+
   const [dismissing, setDismissing] = useState(false);
+
+  const history = useHistory();
 
   const disableFeed = () => {
     if (!groupPath) {
@@ -24,6 +29,7 @@ export const AddFeedBanner = (props) => {
     }
 
     api.graph.disableGroupFeed(resource);
+    history.push(baseUrl);
   };
 
   return (
@@ -37,7 +43,7 @@ export const AddFeedBanner = (props) => {
       pl={2}
       pr={2}
     >
-      <Row gapX="2">
+      <Row gapX="2" flexShrink={1}>
         { dismissing ? (
           <>
             <Icon icon="Info" />
@@ -46,16 +52,22 @@ export const AddFeedBanner = (props) => {
 
         ) : (
           <>
-            <Text fontWeight="medium" verticalAlign="middle">
+            <Text fontWeight="medium" verticalAlign="middle" flexShrink={0}>
               Enable Group Feed?
             </Text>
-            <Text gray>
+            <Text
+              gray
+              textOverflow="ellipsis"
+              overflow="hidden"
+              whiteSpace="nowrap"
+              minWidth="0"
+              flexShrink={1}>
               A central place to broadcast short posts with your group
             </Text>
           </>
         )}
       </Row>
-      <Row gapX="2">
+      <Row gapX="2" flexShrink={0}>
         { dismissing ? (
           <Button primary onClick={disableFeed}>
             OK
