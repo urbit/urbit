@@ -108,6 +108,17 @@
   |=  pax=path
   ^-  (unit (unit cage))
   ?+  pax  (on-peek:def pax)
+      [%x %configured ~]
+    =/  provider=json
+      ?~  prov  ~
+      [%s (scot %p host.u.prov)]
+    =/  result=json
+      %-  pairs:enjs:format
+      :~  [%'provider' provider]
+          [%'hasWallet' b+?=(^ walts)]
+      ==
+    ``json+!>(result)
+  ::
       [%x %scanned ~]
     ``noun+!>(scanned-wallets)
   ::
@@ -135,11 +146,43 @@
         ::
           %btc-provider-update
         (handle-provider-update:hc !<(update:bp q.cage.sign))
+        ::
+          %json
+        ?>  ?=([%permitted @ ~] wire)
+        =/  who  (slav %p i.t.wire)
+        :_  state
+        :~  [%give %fact ~[/all] cage.sign]
+            [%pass wire %agent [who %btc-provider] %leave ~]
+        ==
       ==
   [cards this]
   ==
 ::
-++  on-watch  on-watch:def
+++  on-watch
+  |=  =path
+  ^-  (quip card _this)
+  ?>  (team:title our.bowl src.bowl)
+  ?>  ?=([%all ~] path)
+  =/  provider=json
+    ?~  prov  ~
+    [%s (scot %p host.u.prov)]
+  =/  cb=(unit sats)  current-balance:hc
+  =/  wallet=json
+    ?~  walts  ~
+    %-  pairs:enjs:format
+    :~  balance+?~(cb ~ (numb:enjs:format u.cb))
+    ==
+  =/  initial=json
+    %+  frond:enjs:format
+      %initial
+    %-  pairs:enjs:format
+    :~  [%'provider' provider]
+        [%'hasWallet' b+?=(^ walts)]
+        [%wallet wallet]
+    ==
+  :_  this
+  [%give %fact ~ %json !>(initial)]~
+::
 ++  on-leave  on-leave:def
 ++  on-arvo   on-arvo:def
 ++  on-fail   on-fail:def
@@ -159,6 +202,11 @@
     :~  [%pass /set-provider/[(scot %p host.u.prov)] %agent [host.u.prov %btc-provider] %leave ~]
         sub-card
     ==
+    ::
+      %check-provider
+    =/  pax  /permitted/(scot %p provider.comm)
+    :_  state
+    [%pass pax %agent [provider.comm %btc-provider] %watch pax]~
     ::
       %set-current-wallet
     (set-curr-xpub xpub.comm)
@@ -493,18 +541,22 @@
   |=  s=status:bp
   ^-  (quip card _state)
   |^
-  ?~  prov  `state
-  ?.  =(host.u.prov src.bowl)  `state
-  ?-  -.s
-      %new-block
-    (on-connected u.prov network.s block.s fee.s `blockhash.s `blockfilter.s)
-    ::
-      %connected
-    (on-connected u.prov network.s block.s fee.s ~ ~)
-    ::
-      %disconnected
-    `state(prov `u.prov(connected %.n))
-  ==
+  =^  cards  state
+    ?~  prov  `state
+    ?.  =(host.u.prov src.bowl)  `state
+    ?-  -.s
+        %new-block
+      (on-connected u.prov network.s block.s fee.s `blockhash.s `blockfilter.s)
+      ::
+        %connected
+      (on-connected u.prov network.s block.s fee.s ~ ~)
+      ::
+        %disconnected
+      `state(prov `u.prov(connected %.n))
+    ==
+  :_  state
+  :_  cards
+  [%give %fact ~[/all] %btc-provider-status !>(s)]
   ::
   ++  on-connected
     |=  $:  p=provider
@@ -854,4 +906,10 @@
     add
   `(roll values add)
   ::
+::
+++  current-balance
+  ^-  (unit sats)
+  ?~  curr-xpub  ~
+  (balance u.curr-xpub)
+::
 --
