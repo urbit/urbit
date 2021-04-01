@@ -161,7 +161,7 @@ u3_khan_io_init(u3_pier* pir_u)
       c3_assert(!"khan-getcwd");
     }
     else {
-      if ( 0 != chdir(u3_Local) ) {
+      if ( 0 != chdir(u3_Host.dir_c) ) {
         c3_assert(!"khan-chdir");
       }
       else {
