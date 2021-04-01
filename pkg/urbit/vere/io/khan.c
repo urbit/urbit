@@ -94,13 +94,36 @@ _khan_conn_cb(uv_stream_t* sem_u, c3_i tas_i)
   // 3. peek, arvo
   // 4. poke, arvo
   //
-  // For 1, we support a few simple text commands:
-  // ok - says "ok" (basic health test)
-  // dump - dumps runtime stat counters in simple machine/human-readable format
+  // For 1, the driver itself parses and responds to a few basic text-mode
+  // commands:
+  // `ok`:   driver responds with "ok\n" (basic health test)
+  // `dump`: dumps runtime stat counters in simple machine/human-readable format
   //
   // There is not yet a use case for 2.
   //
-  // For 3 and 4, we speak the language documented in the khan vane in arvo.
+  // For 3 and 4, we speak a binary protocol using jammed nouns, as (to be)
+  // documented in pkg/arvo/sys/vane/khan.hoon.
+  //
+  // The transition to arvo is signalled by a 0x80 (i.e. byte with MSB high) at
+  // the start of a line (i.e. as first character, or immediately following a
+  // '\n'.) Everything after that is simply forwarded to arvo, and responses
+  // forwarded back, for the rest of the duration of the connection.
+  //
+  // Some alternate protocol designs:
+  //
+  // a. Forward everything to arvo.
+  // b. Add a command that sends a single-shot jammed noun, which receives a
+  //    single-shot response.
+  // c. Listen on two or more different sockets.
+  //
+  // (a) is undesirable since we don't want to sync the runtime stats with
+  // arvo. Continuous sync would add unnecessary load, and on-demand sync would
+  // add unnecessary implementation complexity in the form of extra round-trips
+  // between arvo and the runtime. (b) is probably fine, but I'm not smart
+  // enough to know how to tell from the runtime when a jammed noun has
+  // finished sending without base64-encoding it or something. (c) is tedious;
+  // the same effect can be achieved by just opening two connections to the
+  // socket, keeping one in text mode, and sending a 0x80 over the other.
 }
 
 /* u3_khan(): initialize control plane socket.
