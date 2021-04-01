@@ -293,6 +293,9 @@
   %-  some  
   %+  levy  ~(tap by nodes)
   |=  [=index:store =node:store]
+  =/  parent-index=index:store
+    (scag (dec (lent index)) index)
+  ?:  (~(has by nodes) parent-index)  %.y
   ?.  =(author.post.node src.bowl)
     %.n
   =/  =permissions:store
@@ -305,8 +308,6 @@
       %no   %.n
     ::
         %self
-      =/  parent-index=index:store
-        (scag (dec (lent index)) index)
       =/  parent-node=node:store
         (got-node:gra resource parent-index)
       =(author.post.parent-node src.bowl)
