@@ -43,7 +43,7 @@ export const AddFeedBanner = (props) => {
       pl={2}
       pr={2}
     >
-      <Row gapX="2" flexShrink={1}>
+      <Row gapX="2" flexShrink={1} minWidth='0'>
         { dismissing ? (
           <>
             <Icon icon="Info" />
@@ -84,7 +84,7 @@ export const AddFeedBanner = (props) => {
             </Link>
           </>
         )}
-          
+
       </Row>
     </Row>
   );
