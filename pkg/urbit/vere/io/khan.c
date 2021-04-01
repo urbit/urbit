@@ -15,9 +15,8 @@
 */
   typedef struct _u3_khan {
     u3_auto           car_u;            //  driver
-    uv_pipe_t         pyp_u;            //  socket pipe
-    uv_connect_t      con_u;            //  connection state
-    c3_l              sev_l;            //  instance number
+    uv_pipe_t         pyp_u;            //  socket
+    c3_l              sev_l;            //  number (of instance)
   } u3_khan;
 
 static const c3_c URB_SOCK_PATH[] = ".urb/khan.sock";
