@@ -69,6 +69,20 @@
 ++  on-watch
   |=  pax=path
   ^-  (quip card _this)
+  ::  checking provider permissions before trying to subscribe
+  ::  terrible hack until we have cross-ship scries
+  ::
+  ?:  ?=([%permitted @ ~] pax)
+    :_  this
+    =/  jon=json
+      %+  frond:enjs:format
+        %'providerStatus'
+      %-  pairs:enjs:format
+      :~  provider+s+(scot %p our.bowl)
+          permitted+b+(is-whitelisted:hc src.bowl)
+      ==
+    [%give %fact ~ %json !>(jon)]~
+  ::
   ?>  ?=([%clients *] pax)
   ?.  (is-whitelisted:hc src.bowl)
     ~&  >>>  "btc-provider: blocked client {<src.bowl>}"
