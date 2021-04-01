@@ -124,7 +124,7 @@ u3_khan_io_init(u3_pier* pir_u)
         uv_listen((uv_stream_t*)&cop_u->pyp_u, 0, _khan_conn_cb);
 
         if ( 0 != chdir(pax_c) ) {
-          c3_assert(!"khan-chdir2");
+          c3_assert(!"khan-back");
         }
       }
     }
