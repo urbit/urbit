@@ -475,7 +475,6 @@
   ++  w-point-fx
     |*  [fun=$-([ship point *] (unit [effects point])) =ship rest=*]
     ^-  (unit [effects ^state])
-    ?:  (gth (ship-rank ship) 2)  ~  ::  ensure get-point won't crash
     =/  point  (get-point state ship)
     ?~  point  ~
     ?>  ?=(%l2 -.u.point)
@@ -487,7 +486,6 @@
   ++  w-point
     |*  [fun=$-([ship point *] (unit point)) =ship rest=*]
     ^-  (unit [effects ^state])
-    ?:  (gth (ship-rank ship) 2)  ~  ::  ensure get-point won't crash
     =/  point  (get-point state ship)
     ?~  point  ~
     ?>  ?=(%l2 -.u.point)
