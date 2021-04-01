@@ -12,6 +12,7 @@ import { GroupChannelSettings } from './Channels';
 import { useHistory } from 'react-router-dom';
 import { resourceFromPath, roleForShip } from '~/logic/lib/group';
 import { StorageState } from '~/types';
+import {GroupFeedSettings} from './GroupFeed';
 
 const Section = ({ children }) => (
   <Box boxShadow="inset 0px 1px 0px rgba(0, 0, 0, 0.2)">{children}</Box>
@@ -57,6 +58,10 @@ export function GroupSettings(props: GroupSettingsProps) {
             <Section>
               <GroupChannelSettings {...props} />
             </Section>
+            <Section>
+              <GroupFeedSettings {...props} />
+            </Section>
+
           </>
         )}
       </Col>

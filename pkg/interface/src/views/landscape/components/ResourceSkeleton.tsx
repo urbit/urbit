@@ -90,7 +90,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
     <Text
       mono={urbitOb.isValidPatp(title)}
       fontSize='2'
-      fontWeight='700'
+      fontWeight='600'
       textOverflow='ellipsis'
       overflow='hidden'
       whiteSpace='nowrap'

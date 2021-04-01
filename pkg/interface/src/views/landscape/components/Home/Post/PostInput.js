@@ -76,7 +76,7 @@ export function PostInput(props) {
   return (
     <Box
       width="100%"
-      height="96px"
+      minHeight="96px"
       borderRadius="2"
       border={1}
       borderColor="lightGray">
@@ -86,11 +86,11 @@ export function PostInput(props) {
         width="100%"
         color="black"
         fontSize={1}
-        height="62px"
+        minHeight="62px"
         fontFamily={code ? 'mono' : 'sans'}
         lineNumber={3}
         style={{
-          resize: 'none',
+          resize: 'vertical',
         }}
         placeholder={code ? "(add 2 2)" : "What's on your mind?"}
         spellCheck="false"

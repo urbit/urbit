@@ -17,7 +17,7 @@ export function GroupFeedPermsInput(
   const { id, ...rest } = props;
 
   return (
-    <Col gapY="2" {...rest}>
+    <Col gapY="4" {...rest}>
       <Text fontWeight="medium">Permissions</Text>
       <Radio
         name={id}

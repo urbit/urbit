@@ -1,5 +1,5 @@
-import React from 'react';
-import { Box, Row, Col, Text, BaseImage } from '@tlon/indigo-react';
+import React, { useState } from 'react';
+import { Box, Row, Button, Col, Text, BaseImage, Icon } from '@tlon/indigo-react';
 import { Link } from 'react-router-dom';
 import { resourceFromPath } from '~/logic/lib/group';
 
@@ -10,6 +10,7 @@ export const AddFeedBanner = (props) => {
     group,
     groupPath,
   } = props;
+  const [dismissing, setDismissing] = useState(false);
 
   const disableFeed = () => {
     if (!groupPath) {
@@ -22,12 +23,7 @@ export const AddFeedBanner = (props) => {
       return;
     }
 
-    api.spider(
-      'graph-view-action',
-      'json',
-      'graph-disable-group-feed',
-      { 'disable-group-feed': { resource } }
-    );
+    api.graph.disableGroupFeed(resource);
   };
 
   return (
@@ -41,16 +37,42 @@ export const AddFeedBanner = (props) => {
       pl={2}
       pr={2}
     >
-      <Text verticalAlign="middle">Enable Group Feed?</Text>
-      <Row>
-        <Text mr="2" color="gray" bold cursor="pointer" onClick={disableFeed}>
-          Dismiss
-        </Text>
-        <Link to={`/~landscape${groupPath}/enable`}>
-          <Text color="blue" bold cursor="pointer">
-            Enable Feed
-          </Text>
-        </Link>
+      <Row gapX="2">
+        { dismissing ? (
+          <>
+            <Icon icon="Info" />
+            <Text>You can always enable group feed from settings</Text>
+          </>
+
+        ) : (
+          <>
+            <Text fontWeight="medium" verticalAlign="middle">
+              Enable Group Feed?
+            </Text>
+            <Text gray>
+              A central place to broadcast short posts with your group
+            </Text>
+          </>
+        )}
+      </Row>
+      <Row gapX="2">
+        { dismissing ? (
+          <Button primary onClick={disableFeed}>
+            OK
+          </Button>
+        ) : (
+          <>
+            <Button onClick={() => setDismissing(true)}>
+              Dismiss
+            </Button>
+            <Link replace to={`/~landscape${groupPath}/enable`}>
+              <Button primary cursor="pointer">
+                Enable Feed
+              </Button>
+            </Link>
+          </>
+        )}
+          
       </Row>
     </Row>
   );
