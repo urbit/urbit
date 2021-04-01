@@ -569,6 +569,17 @@ static void _on_boot_completed_cb() {
   _child_process_booted_signal_fd = -1;
 }
 
+/* _fix_std_handle(): replaces given stdio fd with a handle to null.
+*/
+#if defined(U3_OS_mingw)
+static void
+_fix_std_handle(c3_i fid_i, DWORD typ_u)
+{
+  dup2(open(c3_dev_null, O_RDWR, 0), fid_i); // this closes the system-provided handle
+  SetStdHandle(typ_u, (HANDLE)_get_osfhandle(fid_i));
+}
+#endif
+
 /*
   In daemon mode, run the urbit as a background process, but don't
   exit from the parent process until the ship is finished booting.
@@ -596,8 +607,13 @@ static void
 _fork_into_background_process()
 {
 #if defined(U3_OS_mingw)
-  fprintf(stderr, "Daemon mode is not yet supported on MingW\r\n");
-  exit(1);
+  // detect stdout/stderr redirection
+  DWORD dum_u;
+  BOOL do1_u = GetConsoleMode(GetStdHandle(STD_OUTPUT_HANDLE), &dum_u);
+  BOOL do2_u = GetConsoleMode(GetStdHandle(STD_ERROR_HANDLE), &dum_u);
+  FreeConsole();
+  if ( do1_u ) _fix_std_handle(1, STD_OUTPUT_HANDLE);
+  if ( do2_u ) _fix_std_handle(2, STD_ERROR_HANDLE);
 #else
   c3_i pipefd[2];
 
