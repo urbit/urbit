@@ -666,11 +666,15 @@ main(c3_i   argc,
   }
 
   //  Set `u3_Host.wrk_c` to the worker executable path.
-  c3_i worker_exe_len = 1 + strlen(argv[0]) + strlen("-worker");
+  c3_i urbit_exe_len = strlen(argv[0]);
+  c3_i worker_exe_len = 1 + urbit_exe_len + strlen("-worker");
   u3_Host.wrk_c = c3_malloc(worker_exe_len);
   #if defined(U3_OS_mingw)
-  strcpy(u3_Host.wrk_c, argv[0]);
-  strcpy(u3_Host.wrk_c + strlen(argv[0]) - 4, "-worker.exe");
+  if ( urbit_exe_len >= 4 && !strcmp(argv[0] + urbit_exe_len - 4, ".exe")) {
+    snprintf(u3_Host.wrk_c, worker_exe_len, "%.*s-worker.exe", urbit_exe_len - 4, argv[0]);
+  } else {
+    snprintf(u3_Host.wrk_c, worker_exe_len, "%s-worker", argv[0]);
+  }
   #else
   snprintf(u3_Host.wrk_c, worker_exe_len, "%s-worker", argv[0]);
   #endif
