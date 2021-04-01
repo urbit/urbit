@@ -109,7 +109,7 @@ u3_khan_io_init(u3_pier* pir_u)
   {
     c3_c pax_c[2048];
 
-    // XX better error handling
+    // XX needs better error handling
     if ( NULL == getcwd(pax_c, sizeof(pax_c)) ) {
       c3_assert(!"khan-getcwd");
     }
@@ -118,8 +118,9 @@ u3_khan_io_init(u3_pier* pir_u)
         c3_assert(!"khan-chdir");
       }
       else {
-        uv_pipe_init(u3L, &cop_u->pyp_u, 0);
+        // TODO handle errors
         unlink(URB_SOCK_PATH);
+        uv_pipe_init(u3L, &cop_u->pyp_u, 0);
         uv_pipe_bind(&cop_u->pyp_u, URB_SOCK_PATH);
         uv_listen((uv_stream_t*)&cop_u->pyp_u, 0, _khan_conn_cb);
 
