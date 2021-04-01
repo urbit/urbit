@@ -6,6 +6,9 @@ export class InitialReducer {
     let data = _.get(json, 'initial', false);
     console.log('data', data);
     if (data) {
+      state.provider = data.provider;
+      state.hasWallet = data.hasWallet;
+      state.wallet = data.wallet;
     }
   }
 }

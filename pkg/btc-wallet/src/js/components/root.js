@@ -8,7 +8,7 @@ import styled, { ThemeProvider, createGlobalStyle } from 'styled-components';
 import light from './themes/light';
 import dark from './themes/dark';
 import { Text, Box } from '@tlon/indigo-react';
-//import StartupModal from './lib/startupModal.js';
+import StartupModal from './lib/startupModal.js';
 //import Header from './lib/header.js'
 //import Balance from './lib/balance.js'
 //import Transactions from './lib/transactions.js'
@@ -31,7 +31,7 @@ export class Root extends Component {
     return (
       <BrowserRouter>
         <ThemeProvider theme={light}>
-      {//        <StartupModal api={api} state={this.state}/> }
+        <StartupModal api={api} state={this.state}/>
         <Box display='flex'
           flexDirection='column'
           position='absolute'

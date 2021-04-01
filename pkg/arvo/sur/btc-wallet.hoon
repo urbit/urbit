@@ -13,6 +13,7 @@
 ::
 +$  command
   $%  [%set-provider provider=ship]
+      [%check-provider provider=ship]
       [%set-current-wallet =xpub]
       [%add-wallet =xpub =fprint scan-to=(unit scon) max-gap=(unit @ud) confs=(unit @ud)]
       [%delete-wallet =xpub]
