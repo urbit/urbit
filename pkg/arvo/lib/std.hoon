@@ -24,9 +24,9 @@
 ++  rip   ^rip
 ++  turn  ^turn
 ++  welp  ^welp
+++  flop  ^flop
 ++  by    ^by
 ++  ju    ^ju
-++  mule  ^mule
 ::  TODO: delete
 ::
 ++  crypto  ^crypto

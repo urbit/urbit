@@ -146,7 +146,7 @@
   =|  txs=(list [address tx])
   |-  ^-  (list [address tx])
   ?~  batch
-    txs
+    (flop txs)
   =/  parse-result  (parse-tx batch verifier)
   ::  Parsing failed, abort batch
   ::
@@ -284,17 +284,19 @@
 ::
 ++  get-point
   |=  [=state =ship]
-  ^-  point
+  ^-  (unit point)
   =/  existing  (~(get by points.state) ship)
   ?^  existing
-    u.existing
-  %*    .  *point
-      dominion
-    ?+    (ship-rank ship)  ~>(%mean.%strange-point !!)
-        %0  %l1
-        ?(%1 %2)
-      =/  existing-parent  $(ship (sein ship))
-      ?-  dominion.existing-parent
+    `u.existing
+  ?+    (ship-rank ship)  ~>(%slog.%strange-point ~)
+      %0  `%*(. *point dominion %l1)
+      ?(%1 %2)
+    =/  existing-parent  $(ship (sein ship))
+    ?~  existing-parent  ~
+    :-  ~
+    %*    .  *point
+        dominion
+      ?-  dominion.u.existing-parent
         %l1     %l1
         %l2     %l2
         %spawn  %l2
@@ -336,7 +338,9 @@
   ::
   ?>  ?=([@ *] t.topics.log)
   =*  ship=@  i.t.topics.log
-  =/  point  (get-point state ship)
+  =/  the-point  (get-point state ship)
+  ?>  ?=(^ the-point)
+  =*  point  u.the-point
   =-  [effects state(points (~(put by points.state) ship new-point))]
   ^-  [=effects new-point=^point]
   ::
@@ -440,12 +444,10 @@
   ?~  txs
     [~ state]
   =^  effects-1  state
-    =/  tx-result=$%([%& p=[effects ^state]] [%| *])
-      (mule |.((receive-tx state i.txs)))
-    ?-  -.tx-result
-      %&  p.tx-result
-      %|  `state
-    ==
+    =/  tx-result=(unit [effects ^state])  (receive-tx state i.txs)
+    ?~  tx-result
+      `state
+    u.tx-result
   =^  effects-2  state  $(txs t.txs)
   [(welp effects-1 effects-2) state]
 ::
@@ -454,7 +456,7 @@
 ++  receive-tx
   |=  [=state signer=address =tx]
   |^
-  ^-  [effects ^state]
+  ^-  (unit [effects ^state])
   ?-  -.tx
     %spawn                  (process-spawn +.tx)
     %transfer-point         (w-point process-transfer-point +.tx)
@@ -471,28 +473,37 @@
   ==
   ::
   ++  w-point-fx
-    |*  [fun=$-([ship point *] [effects point]) =ship rest=*]
-    ^-  [effects ^state]
+    |*  [fun=$-([ship point *] (unit [effects point])) =ship rest=*]
+    ^-  (unit [effects ^state])
+    ?:  (gth (ship-rank ship) 2)  ~  ::  ensure get-point won't crash
     =/  point  (get-point state ship)
-    ?>  ?=(%l2 -.point)
-    =/  [=effects new-point=^point]  (fun ship point rest)
-    [effects state(points (~(put by points.state) ship new-point))]
+    ?~  point  ~
+    ?>  ?=(%l2 -.u.point)
+    =/  res=(unit [=effects new-point=^point])  (fun ship u.point rest)
+    ?~  res
+      ~
+    `[effects.u.res state(points (~(put by points.state) ship new-point.u.res))]
   ::
   ++  w-point
-    |*  [fun=$-([ship point *] point) =ship rest=*]
-    ^-  [effects ^state]
+    |*  [fun=$-([ship point *] (unit point)) =ship rest=*]
+    ^-  (unit [effects ^state])
+    ?:  (gth (ship-rank ship) 2)  ~  ::  ensure get-point won't crash
     =/  point  (get-point state ship)
-    ?>  ?=(%l2 -.point)
-    =/  new-point  (fun ship point rest)
-    `state(points (~(put by points.state) ship new-point))
+    ?~  point  ~
+    ?>  ?=(%l2 -.u.point)
+    =/  new-point=(unit ^point)  (fun ship u.point rest)
+    ?~  new-point
+      ~
+    ``state(points (~(put by points.state) ship u.new-point))
   ::
   ++  process-transfer-point
     |=  [=ship =point to=address reset=?]
     ::  Assert signer is owner or transfer prxoy
     ::
-    ?>  ?|  =(owner.own.point signer)
+    ?.  ?|  =(owner.own.point signer)
             =(transfer-proxy.own.point signer)
         ==
+      ~
     ::  Execute transfer
     ::
     =:  owner.own.point           to
@@ -501,34 +512,36 @@
     ::  Execute reset if requested
     ::
     ?.  reset
-      point
+      `point
     ::
     =?  net.point  (gth life.net.point 0)
       [+(life) 0 +(rift) sponsor escape]:net.point
     =.  own.point  [owner.own.point *address *address *address *address]
-    point
+    `point
   ::
   ++  process-spawn
     |=  [=ship to=address]
-    ^-  [effects ^state]
+    ^-  (unit [effects ^state])
     =/  parent=^ship  (sein ship)
     ::  Assert parent is on L2
     ::
     =/  parent-point  (get-point state parent)
-    ?>  ?=(?(%l2 %spawn) -.parent-point)
+    ?~  parent-point  ~
+    ?.  ?=(?(%l2 %spawn) -.u.parent-point)  ~
     ::  Assert signer is owner or spawn proxy
     ::
-    ?>  ?|  =(owner.own.parent-point signer)
-            =(spawn-proxy.own.parent-point signer)
+    ?.  ?|  =(owner.own.u.parent-point signer)
+            =(spawn-proxy.own.u.parent-point signer)
         ==
+      ~
     ::  Assert child not already spawned
     ::
     ::  TODO: verify this means the ship exists on neither L1 nor L2
     ::
-    ?<  (~(has by points.state) ship)
+    ?:  (~(has by points.state) ship)  ~
     ::  Assert one-level-down
     ::
-    ?>  =(+((ship-rank parent)) (ship-rank ship))
+    ?.  =(+((ship-rank parent)) (ship-rank ship))  ~
     ::  TODO check spawnlimit
     ::
     =.  points.state
@@ -544,17 +557,18 @@
       ::
       %*  .  *point
         dominion            %l2
-        owner.own           owner.own.parent-point
+        owner.own           owner.own.u.parent-point
         transfer-proxy.own  to
       ==
-    `state
+    ``state
   ::
   ++  process-configure-keys
     |=  [=ship =point encrypt=@ auth=@ crypto-suite=@ breach=?]
     ::
-    ?>  ?|  =(owner.own.point signer)
+    ?.  ?|  =(owner.own.point signer)
             =(management-proxy.own.point signer)
         ==
+      ~
     ::
     =^  rift-effects  rift.net.point
       ?.  breach
@@ -569,91 +583,103 @@
         ~
       [ship %keys life.net.point crypto-suite pass]~
     ::
-    [(welp rift-effects keys-effects) point]
+    `[(welp rift-effects keys-effects) point]
   ::
   ++  process-escape
     |=  [=ship =point parent=ship]
-    ?>  ?|  =(owner.own.point signer)
+    ?.  ?|  =(owner.own.point signer)
             =(management-proxy.own.point signer)
         ==
+      ~
     ::  TODO: don't allow "peer escape"?
     ::
-    ?>  =(+((ship-rank parent)) (ship-rank ship))
+    ?.  =(+((ship-rank parent)) (ship-rank ship))  ~
     ::
-    point(escape.net `parent)  ::  TODO: omitting a lot of source material?
+    `point(escape.net `parent)  ::  TODO: omitting a lot of source material?
   ::
   ++  process-cancel-escape
     |=  [=ship =point parent=ship]
-    ?>  ?|  =(owner.own.point signer)
+    ?.  ?|  =(owner.own.point signer)
             =(management-proxy.own.point signer)
         ==
+      ~
     ::
-    point(escape.net ~)
+    `point(escape.net ~)
   ::
   ++  process-adopt
     |=  [=ship =point parent=ship]
     =/  parent-point  (get-point state parent) :: TODO: assert child/parent on L2?
+    ?~  parent-point  ~
     ::
-    ?>  ?|  =(owner.own.parent-point signer)
-            =(management-proxy.own.parent-point signer)
+    ?.  ?|  =(owner.own.u.parent-point signer)
+            =(management-proxy.own.u.parent-point signer)
         ==
+      ~
     ::
-    ?>  =(escape.net.point `ship)
-    :-  [ship %spon `parent]~
+    ?.  =(escape.net.point `ship)  ~
+    :+  ~  [ship %spon `parent]~
     point(escape.net ~, sponsor.net [%& parent])
   ::
   ++  process-reject
     |=  [=ship =point parent=ship]
     =/  parent-point  (get-point state parent) :: TODO: assert child/parent on L2?
+    ?~  parent-point  ~
     ::
-    ?>  ?|  =(owner.own.parent-point signer)
-            =(management-proxy.own.parent-point signer)
+    ?.  ?|  =(owner.own.u.parent-point signer)
+            =(management-proxy.own.u.parent-point signer)
         ==
+      ~
     ::
-    point(escape.net ~)
+    `point(escape.net ~)
   ::
   ++  process-detach
     |=  [=ship =point parent=ship]
     =/  parent-point  (get-point state parent) :: TODO: assert child/parent on L2?
+    ?~  parent-point  ~
     ::
-    ?>  ?|  =(owner.own.parent-point signer)
-            =(management-proxy.own.parent-point signer)
+    ?.  ?|  =(owner.own.u.parent-point signer)
+            =(management-proxy.own.u.parent-point signer)
         ==
+      ~
     ::
-    :-  [ship %spon ~]~
+    :+  ~  [ship %spon ~]~
     point(has.sponsor.net %|)
   ::
   ++  process-set-management-proxy
     |=  [=ship =point =address]
-    ?>  ?|  =(owner.own.point signer)
+    ?.  ?|  =(owner.own.point signer)
             =(management-proxy.own.point signer)
         ==
+      ~
     ::
-    point(management-proxy.own address)
+    `point(management-proxy.own address)
   ::
   ++  process-set-spawn-proxy
     |=  [=ship =point =address]
-    ?>  ?|  =(owner.own.point signer)
+    ?.  ?|  =(owner.own.point signer)
             =(spawn-proxy.own.point signer)
         ==
+      ~
     ::
-    point(spawn-proxy.own address)
+    `point(spawn-proxy.own address)
   ::
   ++  process-set-voting-proxy
     |=  [=ship =point =address]
-    ?>  ?|  =(owner.own.point signer)
+    ?.  ?|  =(owner.own.point signer)
             =(voting-proxy.own.point signer)
         ==
+      ~
     ::
-    point(voting-proxy.own address)
+    `point(voting-proxy.own address)
   ::
   ++  process-set-transfer-proxy
     |=  [=ship =point =address]
-    ?>  ?|  =(owner.own.point signer)
+    ?.  ?|  =(owner.own.point signer)
             =(transfer-proxy.own.point signer)
         ==
+      ~
     ::
-    point(transfer-proxy.own address)
+    `point(transfer-proxy.own address)
   --
 --
 ::
