@@ -23,7 +23,7 @@
 ++  log
   |=  [event=@t data=@t topics=(lest @)]
   ^-  ^input:naive
-  [%log ~ *@ux data (hash-log-name:naive event) topics]
+  [%log *@ux data (hash-log-name:naive event) topics]
 ::
 ::
 ++  owner-changed
@@ -65,7 +65,7 @@
   ::
     !>
     %^  naive  verifier  *^state:naive
-    :*  %log  ~  *@ux  *@t
+    :*  %log  *@ux  *@t
         (hash-log-name:naive 'OwnerChanged(uint32,address)')  (@ux ~bud)  0x123  ~
     ==
 ::

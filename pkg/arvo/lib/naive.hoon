@@ -53,7 +53,8 @@
 ::
 ::  TODO: on L1, when depositing, clear proxies (maybe require reset)
 ::
-/+  ethereum
+/+  std
+=>  std
 ::  Constants
 ::
 |%
@@ -124,9 +125,14 @@
       [%set-transfer-proxy =ship =address]
   ==
 ::
++$  event-log
+  $:  address=@ux
+      data=@t
+      topics=(lest @ux)
+  ==
 +$  input
   $%  [%bat batch=@]
-      [%log =event-log:rpc:ethereum]
+      [%log =event-log]
   ==
 ::  ECDSA verifier
 ::
@@ -160,7 +166,7 @@
       [`[u.signer tx] rest]
   ^-  [=tx [len=@ rest=@]]
   =^  op   batch  (take 0 7)
-  ?+    op  ~|([%strange-opcode op] !!)
+  ?+    op  ~>(%mean.%strange-opcode !!)
       %0
     =^  reset=@         batch  (take 0)
     =^  =ship           batch  (take 3 4)
@@ -230,12 +236,26 @@
     --
   --
 ::
-++  get-point-size
+++  ship-rank
   |=  =ship
-  ^-  @
-  ?:  (lth ship 0x100)     0
-  ?:  (lth ship 0x1.0000)  1
-  2
+  ^-  ?(%0 %1 %2 %3 %4)
+  ?:  (lth ship 0x100)                    %0
+  ?:  (lth ship 0x1.0000)                 %1
+  ?:  (lth ship 0x1.0000.0000)            %2
+  ?:  (lth ship 0x1.0000.0000.0000.0000)  %3
+  %4
+::
+++  sein                                          ::  autoboss
+  |=  who=ship
+  ^-  ship
+  =/  mir  (ship-rank who)
+  ?-  mir
+    %0  who
+    %1  (end 3 who)
+    %2  (end 4 who)
+    %3  (end 5 who)
+    %4  (end 4 who)
+  ==
 ::
 ++  hash-log-name
   |=  name=@t
@@ -258,12 +278,10 @@
     u.existing
   %*    .  *point
       dominion
-    ::  TODO: use get-point-size
-    ::
-    ?+    (clan:title ship)  ~|(%strange-point !!)
-        %czar  %l1
-        ?(%king %duke)
-      =/  existing-parent  $(ship (^sein:title ship))
+    ?+    (ship-rank ship)  ~>(%mean.%strange-point !!)
+        %0  %l1
+        ?(%1 %2)
+      =/  existing-parent  $(ship (sein ship))
       ?-  dominion.existing-parent
         %l1     %l1
         %l2     %l2
@@ -276,7 +294,7 @@
 :: Receive log from L1 transaction
 ::
 ++  receive-log
-  |=  [=state log=event-log:rpc:ethereum]
+  |=  [=state log=event-log]
   ^-  [effects ^state]
   =*  log-name  i.topics.log
   ?:  =(log-name ^~((hash-log-name 'ChangedDns(string,string,string)')))
@@ -286,7 +304,7 @@
     =*  one  &5.words
     =*  two  &3.words
     =*  tri  &1.words
-    `state(dns (turn ~[one two tri] (cury swp 3)))
+    `state(dns (turn ~[one two tri] |=(a=@ (swp 3 a))))
   ::
   ?:  =(log-name ^~((hash-log-name 'ApprovalForAll(address,address,bool)')))
     ?>  ?=([@ @ ~] t.topics.log)
@@ -398,18 +416,28 @@
     =*  to  i.t.t.topics.log
     point(voting-proxy.own to)
   ::
-  ~&  [%unknown-log log]
+  ~>  %slog.%unknown-log
   point  ::  TODO: crash?
 ::
 ::  Receive batch of L2 transactions
 ::
 ++  receive-batch
   |=  [=verifier =state batch=@]
-  =/  txs=(list [signer=address =tx])  (parse-batch verifier batch)
+  =/  parse-result=$%([%& txs=(list [signer=address =tx])] [%| *])
+    (mule |.((parse-batch verifier batch)))
+  ?:  ?=(%| -.parse-result)
+    `state
+  =/  txs  txs.parse-result
   |-  ^-  [effects ^state]
   ?~  txs
     [~ state]
-  =^  effects-1  state  (receive-tx state i.txs)
+  =^  effects-1  state
+    =/  tx-result=$%([%& p=[effects ^state]] [%| *])
+      (mule |.((receive-tx state i.txs)))
+    ?-  -.tx-result
+      %&  p.tx-result
+      %|  `state
+    ==
   =^  effects-2  state  $(txs t.txs)
   [(welp effects-1 effects-2) state]
 ::
@@ -475,7 +503,7 @@
   ++  process-spawn
     |=  [=ship to=address]
     ^-  [effects ^state]
-    =/  parent=^ship  (^sein:title ship)
+    =/  parent=^ship  (sein ship)
     ::  Assert parent is on L2
     ::
     =/  parent-point  (get-point state parent)
@@ -492,7 +520,7 @@
     ?<  (~(has by points.state) ship)
     ::  Assert one-level-down
     ::
-    ?>  =(+((get-point-size parent)) (get-point-size ship))
+    ?>  =(+((ship-rank parent)) (ship-rank ship))
     ::  TODO check spawnlimit
     ::
     =.  points.state
@@ -542,7 +570,7 @@
         ==
     ::  TODO: don't allow "peer escape"?
     ::
-    ?>  =(+((get-point-size parent)) (get-point-size ship))
+    ?>  =(+((ship-rank parent)) (ship-rank ship))
     ::
     point(escape.net `parent)  ::  TODO: omitting a lot of source material?
   ::
