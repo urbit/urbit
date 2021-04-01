@@ -166,7 +166,7 @@
       %-  emit
       %+  poke:(jn-pass-io /add)
         [ship %group-push-hook]
-      group-update+!>([%add-members rid (silt our.bowl ~)])
+      group-update-0+!>([%add-members rid (silt our.bowl ~)])
     =.  jn-core  (tx-progress %start)
     =>  watch-md
     watch-groups
@@ -227,7 +227,7 @@
     ::
     ++  groups-fact
       |=  =cage
-      ?.  ?=(%group-update p.cage)  jn-core
+      ?.  ?=(%group-update-0 p.cage)  jn-core
       =+  !<(=update:group-store q.cage)
       ?.  ?=(%initial-group -.update)  jn-core
       ?.  =(rid resource.update)  jn-core
@@ -246,7 +246,7 @@
     ::
     ++  md-fact
       |=  [=mark =vase]
-      ?.  ?=(%metadata-update mark)    jn-core
+      ?.  ?=(%metadata-update-0 mark)    jn-core
       =+  !<(=update:metadata vase)
       ?.  ?=(%initial-group -.update)  jn-core
       ?.  =(group.update rid)          jn-core

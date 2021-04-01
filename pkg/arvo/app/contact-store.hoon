@@ -71,7 +71,7 @@
   ++  give
     |=  =update:store
     ^-  (list card)
-    [%give %fact ~ [%contact-update !>(update)]]~
+    [%give %fact ~ [%contact-update-0 !>(update)]]~
   --
 ::
 ++  on-poke
@@ -81,7 +81,7 @@
   |^
   =^  cards  state
     ?+  mark  (on-poke:def mark vase)
-      %contact-update  (update !<(update:store vase))
+      %contact-update-0  (update !<(update:store vase))
       %import          (import q.vase)
     ==
   [cards this]
@@ -203,7 +203,7 @@
         ?:  our
           [/updates /our /all ~]
         [/updates /all ~]
-      [%give %fact paths %contact-update !>(update)]~
+      [%give %fact paths %contact-update-0 !>(update)]~
     --
   ::
   ++  import
@@ -223,7 +223,7 @@
     =/  =ship  (slav %p i.t.t.path)
     =/  contact=(unit contact:store)  (~(get by rolodex) ship)
     ?~  contact  [~ ~]
-    :-  ~  :-  ~  :-  %contact-update
+    :-  ~  :-  ~  :-  %contact-update-0
     !>  ^-  update:store
     [%add ship u.contact]
   ::

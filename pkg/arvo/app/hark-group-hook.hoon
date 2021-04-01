@@ -108,12 +108,12 @@
   ::
       %fact
     ?+  p.cage.sign  (on-agent:def wire sign)
-        %group-update
+        %group-update-0
       =^  cards  state
         (group-update !<(update:group-store q.cage.sign))
       [cards this]
     ::
-        %metadata-update
+        %metadata-update-0
       =^  cards  state
         (metadata-update !<(update:metadata q.cage.sign))
       [cards this]

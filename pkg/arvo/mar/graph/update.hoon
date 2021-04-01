@@ -7,6 +7,7 @@
   |%
   ++  noun  upd
   ++  json  (update:enjs upd)
+  ++  graph-update-0  upd
   ++  mime  [/application/x-urb-graph-update (as-octs (jam upd))]
   --
 ::

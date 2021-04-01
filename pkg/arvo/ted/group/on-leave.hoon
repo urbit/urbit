@@ -19,7 +19,7 @@
 ;<  ~  bind:m
   %+  raw-poke
     [entity.resource.update %group-push-hook]
-  :-  %group-update
+  :-  %group-update-0
   !>  ^-  update:grp
   [%remove-members resource.update (silt [our.bowl ~])]
 ::  stop serving or syncing group updates
@@ -70,7 +70,7 @@
 ;<  ~  bind:m
   %+  raw-poke
     [our.bowl %graph-store]
-  :-  %graph-update
+  :-  %graph-update-0
   !>  ^-  update:gra
   [%0 now.bowl [%archive-graph app-resource]]
 ;<  ~  bind:m

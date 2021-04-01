@@ -4,6 +4,7 @@
 ++  grow
   |%
   ++  noun  update
+  ++  metadata-update-0  update
   ++  json  (update:enjs:store update)
   --
 ::
