@@ -15,8 +15,12 @@
 */
   typedef struct _u3_khan {
     u3_auto           car_u;            //  driver
+    uv_pipe_t         pyp_u;            //  socket pipe
+    uv_connect_t      con_u;            //  connection state
     c3_l              sev_l;            //  instance number
   } u3_khan;
+
+static const c3_c* const URB_SOCK_PATH = ".urb/khan.sock";
 
 /* _khan_io_talk(): notify %khan that we're live
 */
@@ -64,7 +68,16 @@ static void
 _khan_io_exit(u3_auto* car_u)
 {
   u3_khan* cop_u = (u3_khan*)car_u;
+
   // TODO close socket
+}
+
+/* _khan_conn_cb(): socket connection callback.
+*/
+static void
+_khan_conn_cb(uv_stream_t* sem_u, c3_i tas_i)
+{
+  // TODO interact
 }
 
 /* u3_khan(): initialize control plane socket.
@@ -80,7 +93,33 @@ u3_khan_io_init(u3_pier* pir_u)
   car_u->io.kick_f = _khan_io_kick;
   car_u->io.exit_f = _khan_io_exit;
 
-  // TODO open socket
+  // Open socket. The full socket path is limited to about 108 characters, and
+  // we want it to be relative to the pier. So we save our current path, chdir
+  // to the pier, open the socket at the desired path, then chdir back.
+  // Hopefully there aren't any threads.
+  {
+    c3_c pax_c[2048];
+
+    // XX better error handling
+    if ( NULL == getcwd(pax_c, sizeof(pax_c)) ) {
+      c3_assert(!"khan-getcwd");
+    }
+    else {
+      if ( 0 != chdir(u3_Local) ) {
+        c3_assert(!"khan-chdir");
+      }
+      else {
+        uv_pipe_init(u3L, &cop_u->pyp_u, 0);
+        unlink(URB_SOCK_PATH);
+        uv_pipe_bind(&cop_u->pyp_u, URB_SOCK_PATH);
+        uv_listen((uv_stream_t*)&cop_u->pyp_u, 0, _khan_conn_cb);
+
+        if ( 0 != chdir(pax_c) ) {
+          c3_assert(!"khan-chdir2");
+        }
+      }
+    }
+  }
 
   {
     u3_noun now;
