@@ -143,54 +143,66 @@
 ++  parse-batch
   |=  [=verifier batch=@]
   ^-  (list [address tx])
+  =|  txs=(list [address tx])
+  |-  ^-  (list [address tx])
   ?~  batch
+    txs
+  =/  parse-result  (parse-tx batch verifier)
+  ::  Parsing failed, abort batch
+  ::
+  ?~  parse-result
     ~
-  =^  parsed=(unit [signer=address =tx])  batch  (parse-tx batch verifier)
-  ?~  parsed
+  =^  signed=(unit [signer=address =tx])  batch  u.parse-result
+  ::  Signature failed, skip transaction
+  ::
+  ?~  signed
     $
-  [u.parsed $]
+  [u.signed $(txs [u.signed txs])]
 ::
 ::  TODO: change batch to be a cursor to avoid allocating atoms
 ::
 ++  parse-tx
   |=  [batch=@ =verifier]
-  ^-  [(unit [address tx]) rest=@]
+  ^-  (unit [(unit [address tx]) rest=@])
   =/  batch  [len=0 rest=batch]
   |^
   =^  sig  batch  (take 3 65)
   =/  signed-batch  +.batch
-  =-  =/  signer=(unit address)
-        (verify-tx sig (end [0 len] signed-batch))
+  =-  ?~  res
+        ~
+      :-  ~
+      =/  signer=(unit address)
+        (verify-tx sig (end [0 len.u.res] signed-batch))
       ?~  signer
-        [~ rest]
-      [`[u.signer tx] rest]
-  ^-  [=tx [len=@ rest=@]]
+        [~ rest.u.res]
+      [`[u.signer tx.u.res] rest.u.res]
+  ^-  res=(unit [=tx [len=@ rest=@]])
   =^  op   batch  (take 0 7)
-  ?+    op  ~>(%mean.%strange-opcode !!)
+  ?+    op  ~>(%slog.%strange-opcode ~)
       %0
     =^  reset=@         batch  (take 0)
     =^  =ship           batch  (take 3 4)
     =^  =address        batch  (take 3 20)
-    [[%transfer-point ship address =(0 reset)] batch]
+    `[[%transfer-point ship address =(0 reset)] batch]
   ::
-      %1   =^(res batch take-ship-address [[%spawn res] batch])
+      %1   =^(res batch take-ship-address `[[%spawn res] batch])
       %2
     =^  breach=@        batch  (take 0)
     =^  =ship           batch  (take 3 4)
     =^  encrypt=@       batch  (take 3 32)
     =^  auth=@          batch  (take 3 32)
     =^  crypto-suite=@  batch  (take 3 4)
-    [[%configure-keys ship encrypt auth crypto-suite =(0 breach)] batch]
+    `[[%configure-keys ship encrypt auth crypto-suite =(0 breach)] batch]
   ::
-      %3   =^(res batch take-escape [[%escape res] batch])
-      %4   =^(res batch take-escape [[%cancel-escape res] batch])
-      %5   =^(res batch take-escape [[%adopt res] batch])
-      %6   =^(res batch take-escape [[%reject res] batch])
-      %7   =^(res batch take-escape [[%detach res] batch])
-      %8   =^(res batch take-ship-address [[%set-management-proxy res] batch])
-      %9   =^(res batch take-ship-address [[%set-spawn-proxy res] batch])
-      %10  =^(res batch take-ship-address [[%set-voting-proxy res] batch])
-      %11  =^(res batch take-ship-address [[%set-transfer-proxy res] batch])
+      %3   =^(res batch take-escape `[[%escape res] batch])
+      %4   =^(res batch take-escape `[[%cancel-escape res] batch])
+      %5   =^(res batch take-escape `[[%adopt res] batch])
+      %6   =^(res batch take-escape `[[%reject res] batch])
+      %7   =^(res batch take-escape `[[%detach res] batch])
+      %8   =^(res batch take-ship-address `[[%set-management-proxy res] batch])
+      %9   =^(res batch take-ship-address `[[%set-spawn-proxy res] batch])
+      %10  =^(res batch take-ship-address `[[%set-voting-proxy res] batch])
+      %11  =^(res batch take-ship-address `[[%set-transfer-proxy res] batch])
   ==
   ::
   ::  Take a bite
@@ -423,11 +435,7 @@
 ::
 ++  receive-batch
   |=  [=verifier =state batch=@]
-  =/  parse-result=$%([%& txs=(list [signer=address =tx])] [%| *])
-    (mule |.((parse-batch verifier batch)))
-  ?:  ?=(%| -.parse-result)
-    `state
-  =/  txs  txs.parse-result
+  =/  txs=(list [signer=address =tx])  (parse-batch verifier batch)
   |-  ^-  [effects ^state]
   ?~  txs
     [~ state]
