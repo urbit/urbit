@@ -5,10 +5,10 @@ import bigInt from 'big-integer';
 
 
 export function GroupFeedHeader(props) {
-  const { baseUrl, history, graphs, graphResource } = props;
+  const { baseUrl, history, graphResource, vip } = props;
+  let graph = props.graph;
   const historyLocation = history.location.pathname;
   const graphId = `${graphResource.ship.slice(1)}/${graphResource.name}`;
-  const shouldRenderFeed = graphId in graphs;
 
   const isHome =
     historyLocation === baseUrl ||
@@ -21,7 +21,6 @@ export function GroupFeedHeader(props) {
   });
 
   let node;
-  let graph = graphs[graphId];
   nodeIndex.forEach((i) => {
     if (!graph) {
       return null;
@@ -37,6 +36,10 @@ export function GroupFeedHeader(props) {
   if (node) {
     authorText = node.post.author;
   }
+
+  const permText = (
+    vip === 'reader-comments'
+  ) ? 'Select ships can post' : 'Everyone can post';
 
   return (
     <Row 
@@ -61,7 +64,7 @@ export function GroupFeedHeader(props) {
       { isHome ? (
         <>
           <Text bold fontSize="2" pl="1" pr="2">Group Feed</Text>
-          <Text fontSize="0" p="1" backgroundColor="washedGray">Everyone can post</Text>
+          <Text fontSize="0" p="1" backgroundColor="washedGray">{permText}</Text>
         </>
       ) : ( !authorText ? null : (
         <>

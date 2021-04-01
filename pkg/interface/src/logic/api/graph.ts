@@ -259,13 +259,13 @@ export default class GraphApi extends BaseApi<StoreState> {
     */
   }
 
-  async enableGroupFeed(group: Resource): Promise<Resource> {
+  async enableGroupFeed(group: Resource, vip: any): Promise<Resource> {
     const { resource } = await this.spider(
       'graph-view-action',
       'resource',
       'graph-create-group-feed',
       {
-        "create-group-feed": { resource: group }
+        "create-group-feed": { resource: group, vip }
       }
     );
     return resource;
