@@ -11,20 +11,24 @@ export type TimestampProps = BoxProps & {
   stamp: MomentType;
   date?: boolean;
   time?: boolean;
-}
+};
 
-const Timestamp = (props: TimestampProps): ReactElement | null=> {
+const Timestamp = (props: TimestampProps): ReactElement | null => {
   const { stamp, date, time, color, fontSize, ...rest } = {
-    time: true, color: 'gray', fontSize: 0, ...props
+    time: true,
+    color: 'gray',
+    fontSize: 0,
+    ...props
   };
   if (!stamp) return null;
-  const { hovering, bind } = date === true
-    ? { hovering: true, bind: {} }
-    : useHovering();
+  const { hovering, bind } =
+    date === true ? { hovering: true, bind: {} } : useHovering();
   let datestamp = stamp.format(DateFormat);
   if (stamp.format(DateFormat) === moment().format(DateFormat)) {
     datestamp = 'Today';
-  } else if (stamp.format(DateFormat) === moment().subtract(1, 'day').format(DateFormat)) {
+  } else if (
+    stamp.format(DateFormat) === moment().subtract(1, 'day').format(DateFormat)
+  ) {
     datestamp = 'Yesterday';
   }
   const timestamp = stamp.format(TimeFormat);
@@ -33,22 +37,28 @@ const Timestamp = (props: TimestampProps): ReactElement | null=> {
       {...bind}
       display='flex'
       flex='row'
-      flexWrap="nowrap"
+      flexWrap='nowrap'
       {...rest}
       title={stamp.format(DateFormat + ' ' + TimeFormat)}
     >
-      {time && <Text flexShrink={0} color={color} fontSize={fontSize}>{timestamp}</Text>}
-      {date !== false && <Text
-        flexShrink={0}
-        color={color}
-        fontSize={fontSize}
-        ml={time ? 2 : 0}
-        display={time ? ['none', hovering ? 'block' : 'none'] : 'block'}
-      >
-        {datestamp}
-      </Text>}
+      {time && (
+        <Text flexShrink={0} color={color} fontSize={fontSize}>
+          {timestamp}
+        </Text>
+      )}
+      {date !== false && (
+        <Text
+          flexShrink={0}
+          color={color}
+          fontSize={fontSize}
+          display={time ? ['none', hovering ? 'block' : 'none'] : 'block'}
+        >
+          {time ? '\u00A0' : ''}
+          {datestamp}
+        </Text>
+      )}
     </Box>
-  )
-}
+  );
+};
 
 export default Timestamp;

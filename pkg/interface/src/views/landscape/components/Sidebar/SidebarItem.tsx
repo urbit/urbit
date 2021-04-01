@@ -11,7 +11,10 @@ import { useTutorialModal } from '~/views/components/useTutorialModal';
 import { TUTORIAL_HOST, TUTORIAL_GROUP } from '~/logic/lib/tutorialModal';
 import { SidebarAppConfigs, SidebarItemStatus } from './types';
 import { Workspace } from '~/types/workspace';
+import useContactState from '~/logic/state/contact';
+import useGroupState from '~/logic/state/group';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
+import Dot from '~/views/components/Dot';
 
 
 function SidebarItemIndicator(props: { status?: SidebarItemStatus }) {
@@ -29,23 +32,25 @@ function SidebarItemIndicator(props: { status?: SidebarItemStatus }) {
   }
 }
 
+// eslint-disable-next-line max-lines-per-function
 export function SidebarItem(props: {
   hideUnjoined: boolean;
   association: Association;
-  contacts: Rolodex;
-  groups: Groups;
   path: string;
   selected: boolean;
   apps: SidebarAppConfigs;
   workspace: Workspace;
-}): ReactElement {
-  const { association, path, selected, apps, groups } = props;
-  let title = getItemTitle(association);
+}): ReactElement | null {
+  const { association, path, selected, apps } = props;
+  let title = getItemTitle(association) || '';
   const appName = association?.['app-name'];
   const mod = association?.metadata?.module || appName;
   const rid = association?.resource;
   const groupPath = association?.group;
+  const groups = useGroupState(state => state.groups);
   const anchorRef = useRef<HTMLElement | null>(null);
+  const { hideAvatars, hideNicknames } = useSettingsState(selectCalmState);
+  const contacts = useContactState(state => state.contacts);
   useTutorialModal(
     mod as any,
     groupPath === `/ship/${TUTORIAL_HOST}/${TUTORIAL_GROUP}`,
@@ -57,10 +62,12 @@ export function SidebarItem(props: {
     return null;
   }
   const DM = (isUnmanaged && props.workspace?.type === 'messages');
-  const { hideAvatars, hideNicknames } = useSettingsState(selectCalmState);
 
   const itemStatus = app.getStatus(path);
-  const hasUnread = itemStatus === 'unread' || itemStatus === 'mention';
+
+  const hasNotification = itemStatus === 'notification';
+
+  const hasUnread = itemStatus === 'unread';
 
   const isSynced = itemStatus !== 'unsubscribed';
 
@@ -76,7 +83,17 @@ export function SidebarItem(props: {
     ? `${baseUrl}/resource/${mod}${rid}`
     : `${baseUrl}/join/${mod}${rid}`;
 
-  const color = selected ? 'black' : isSynced ? 'gray' : 'lightGray';
+  let color = 'lightGray';
+
+  if (isSynced) {
+    if (hasUnread || hasNotification) {
+      color = 'black';
+    } else {
+      color = 'gray';
+    }
+  }
+
+  const fontWeight = (hasUnread || hasNotification) ? '500' : 'normal';
 
   if (props.hideUnjoined && !isSynced) {
     return null;
@@ -85,13 +102,13 @@ export function SidebarItem(props: {
   let img = null;
 
   if (urbitOb.isValidPatp(title)) {
-    if (props.contacts?.[title]?.avatar && !hideAvatars) {
-      img = <BaseImage src={props.contacts[title].avatar} width='16px' height='16px' borderRadius={2} />;
+    if (contacts?.[title]?.avatar && !hideAvatars) {
+      img = <BaseImage referrerPolicy="no-referrer" src={contacts[title].avatar} width='16px' height='16px' borderRadius={2} />;
     } else {
-      img = <Sigil ship={title} color={`#${uxToHex(props.contacts?.[title]?.color || '0x0')}`} icon padding={2} size={16} />;
+      img = <Sigil ship={title} color={`#${uxToHex(contacts?.[title]?.color || '0x0')}`} icon padding={2} size={16} />;
     }
-    if (props.contacts?.[title]?.nickname && !hideNicknames) {
-      title = props.contacts[title].nickname;
+    if (contacts?.[title]?.nickname && !hideNicknames) {
+      title = contacts[title].nickname;
     }
   } else {
     img = <Box flexShrink={0} height={16} width={16} borderRadius={2} backgroundColor={`#${uxToHex(props?.association?.metadata?.color)}` || '#000000'} />;
@@ -113,10 +130,13 @@ export function SidebarItem(props: {
       selected={selected}
     >
       <Row width='100%' alignItems="center" flex='1 auto' minWidth='0'>
+        {hasNotification && <Text color='black' marginLeft={-2} width={2} display='flex' alignItems='center'>
+          <Dot />
+        </Text>}
         {DM ? img : (
               <Icon
                 display="block"
-                color={color}
+                color={isSynced ? 'black' : 'gray'}
                 icon={getModuleIcon(mod) as any}
               />
             )
@@ -129,8 +149,8 @@ export function SidebarItem(props: {
             overflow='hidden'
             width='100%'
             mono={urbitOb.isValidPatp(title)}
-            fontWeight={hasUnread ? 'bold' : 'regular'}
-            color={selected || isSynced ? 'black' : 'lightGray'}
+            color={color}
+            fontWeight={fontWeight}
             style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}
           >
             {title}

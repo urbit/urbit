@@ -11,6 +11,10 @@ import { StoreState } from '~/logic/store/type';
 import GlobalApi from '~/logic/api/global';
 import { ResourceSkeleton } from './ResourceSkeleton';
 import { ChannelPopoverRoutes } from './ChannelPopoverRoutes';
+import useGroupState from '~/logic/state/group';
+import useContactState from '~/logic/state/contact';
+import useHarkState from '~/logic/state/hark';
+import useMetadataState from '~/logic/state/metadata';
 
 type ResourceProps = StoreState & {
   association: Association;
@@ -19,7 +23,11 @@ type ResourceProps = StoreState & {
 } & RouteComponentProps;
 
 export function Resource(props: ResourceProps): ReactElement {
-  const { association, api, notificationsGraphConfig, groups, contacts } = props;
+  const { association, api, notificationsGraphConfig } = props;
+  const groups = useGroupState(state => state.groups);
+  const notificationsCount = useHarkState(state => state.notificationsCount);
+  const associations = useMetadataState(state => state.associations);
+  const contacts = useContactState(state => state.contacts);
   const app = association.metadata.module || association['app-name'];
   const rid = association.resource;
   const selectedGroup = association.group;
@@ -28,14 +36,14 @@ export function Resource(props: ResourceProps): ReactElement {
   const skelProps = { api, association, groups, contacts };
   let title = props.association.metadata.title;
   if ('workspace' in props) {
-    if ('group' in props.workspace && props.workspace.group in props.associations.groups) {
-      title = `${props.associations.groups[props.workspace.group].metadata.title} - ${props.association.metadata.title}`;
+    if ('group' in props.workspace && props.workspace.group in associations.groups) {
+      title = `${associations.groups[props.workspace.group].metadata.title} - ${props.association.metadata.title}`;
     }
   }
   return (
     <>
       <Helmet defer={false}>
-        <title>{props.notificationsCount ? `(${String(props.notificationsCount)}) ` : ''}{ title }</title>
+        <title>{notificationsCount ? `(${String(notificationsCount)}) ` : ''}{ title }</title>
       </Helmet>
       <ResourceSkeleton
         {...skelProps}
@@ -56,13 +64,10 @@ export function Resource(props: ResourceProps): ReactElement {
             return (
               <ChannelPopoverRoutes
                 association={association}
-                group={props.groups?.[selectedGroup]}
-                groups={props.groups}
-                contacts={props.contacts}
+                group={groups?.[selectedGroup]}
                 api={props.api}
                 baseUrl={relativePath('')}
                 rootUrl={props.baseUrl}
-                notificationsGraphConfig={notificationsGraphConfig}
               />
             );
           }}

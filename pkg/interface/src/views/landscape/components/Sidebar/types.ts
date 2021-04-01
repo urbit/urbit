@@ -1,6 +1,6 @@
 export type SidebarItemStatus =
   | 'unread'
-  | 'mention'
+  | 'notification'
   | 'unsubscribed'
   | 'disconnected'
   | 'loading';

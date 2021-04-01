@@ -151,7 +151,7 @@
       ^-  json
       %-  pairs
       :~  unreads+(unread unreads.s)
-          notifications+(numb notifications.s)
+          notifications+a+(turn ~(tap in notifications.s) notif-ref)
           last+(time last-seen.s)
       ==
     ++  added

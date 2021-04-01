@@ -142,6 +142,10 @@
   margin-bottom: 16px;
 }
 
+.md ul ul {
+  margin-bottom: 0px;
+}
+
 .md h2, .md h3, .md h4, .md h5, .md p, .md a, .md ul {
   font-weight: 400;
 }

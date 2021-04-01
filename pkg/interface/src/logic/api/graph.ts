@@ -83,7 +83,7 @@ export default class GraphApi extends BaseApi<StoreState> {
   joiningGraphs = new Set<string>();
 
   private storeAction(action: any): Promise<any> {
-    return this.action('graph-store', 'graph-update', action);
+    return this.action('graph-store', 'graph-update-0', action);
   }
 
   private viewAction(threadName: string, action: any) {
@@ -91,7 +91,7 @@ export default class GraphApi extends BaseApi<StoreState> {
   }
 
   private hookAction(ship: Patp, action: any): Promise<any> {
-    return this.action('graph-push-hook', 'graph-update', action);
+    return this.action('graph-push-hook', 'graph-update-0', action);
   }
 
   createManagedGraph(
@@ -227,7 +227,7 @@ export default class GraphApi extends BaseApi<StoreState> {
     };
 
     const pendingPromise = this.spider(
-      'graph-update',
+      'graph-update-0',
       'graph-view-action',
       'graph-add-nodes',
       action

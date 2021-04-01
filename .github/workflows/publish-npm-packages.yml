@@ -3,6 +3,8 @@ on:
   push:
     branches:
       - 'master'
+    paths:
+      - 'pkg/npm/**'
 jobs:
   publish-api:
     runs-on: ubuntu-latest

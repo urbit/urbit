@@ -4,11 +4,12 @@ import {
   Text,
   ManagedToggleSwitchField as Toggle,
 } from "@tlon/indigo-react";
-import { Form, FormikHelpers } from "formik";
-import { FormikOnBlur } from "~/views/components/FormikOnBlur";
+import { Formik, Form, FormikHelpers } from "formik";
 import { BackButton } from "./BackButton";
 import GlobalApi from "~/logic/api/global";
-import {NotificationGraphConfig} from "~/types";
+import useHarkState from "~/logic/state/hark";
+import _ from "lodash";
+import {AsyncButton} from "~/views/components/AsyncButton";
 
 interface FormSchema {
   mentions: boolean;
@@ -18,10 +19,10 @@ interface FormSchema {
 
 export function NotificationPreferences(props: {
   api: GlobalApi;
-  graphConfig: NotificationGraphConfig;
-  dnd: boolean;
 }) {
-  const { graphConfig, api, dnd } = props;
+  const { api } = props;
+  const dnd = useHarkState(state => state.doNotDisturb);
+  const graphConfig = useHarkState(state => state.notificationsGraphConfig);
   const initialValues = {
     mentions: graphConfig.mentions,
     dnd: dnd,
@@ -43,12 +44,11 @@ export function NotificationPreferences(props: {
 
       await Promise.all(promises);
       actions.setStatus({ success: null });
-      actions.resetForm({ values: initialValues });
     } catch (e) {
       console.error(e);
       actions.setStatus({ error: e.message });
     }
-  }, [api]);
+  }, [api, graphConfig, dnd]);
 
   return (
     <>
@@ -63,7 +63,7 @@ export function NotificationPreferences(props: {
           messaging
         </Text>
       </Col>
-      <FormikOnBlur initialValues={initialValues} onSubmit={onSubmit}>
+      <Formik initialValues={initialValues} onSubmit={onSubmit}>
         <Form>
           <Col gapY="4">
             <Toggle
@@ -81,9 +81,12 @@ export function NotificationPreferences(props: {
               id="mentions"
               caption="Notify me if someone mentions my @p in a channel I've joined"
             />
+            <AsyncButton primary width="fit-content">
+              Save
+            </AsyncButton>
           </Col>
         </Form>
-      </FormikOnBlur>
+      </Formik>
     </Col>
     </>
   );

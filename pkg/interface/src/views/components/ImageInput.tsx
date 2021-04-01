@@ -17,14 +17,13 @@ import useStorage from '~/logic/lib/useStorage';
 type ImageInputProps = Parameters<typeof Box>[0] & {
   id: string;
   label: string;
-  storage: StorageState;
   placeholder?: string;
 };
 
 export function ImageInput(props: ImageInputProps): ReactElement {
-  const { id, label, storage, caption, placeholder } = props;
+  const { id, label, caption, placeholder } = props;
 
-  const { uploadDefault, canUpload, uploading } = useStorage(storage);
+  const { uploadDefault, canUpload, uploading } = useStorage();
 
   const [field, meta, { setValue, setError }] = useField(id);
 

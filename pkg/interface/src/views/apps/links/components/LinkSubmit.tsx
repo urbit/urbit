@@ -10,14 +10,13 @@ import { hasProvider } from 'oembed-parser';
 
 interface LinkSubmitProps {
   api: GlobalApi;
-  storage: StorageState;
   name: string;
   ship: string;
 }
 
 const LinkSubmit = (props: LinkSubmitProps) => {
   const { canUpload, uploadDefault, uploading, promptUpload } =
-    useStorage(props.storage);
+    useStorage();
 
   const [submitFocused, setSubmitFocused] = useState(false);
   const [urlFocused, setUrlFocused] = useState(false);
