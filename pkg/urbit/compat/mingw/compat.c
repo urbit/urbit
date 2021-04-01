@@ -8,6 +8,15 @@
 #undef _fmode
 int _fmode = _O_BINARY;
 
+// set standard I/O fds to binary too, because
+// MSVCRT creates them before MingW sets _fmode
+static void __attribute__ ((constructor)) _set_stdio_to_binary()
+{
+    _setmode(0, _O_BINARY);
+    _setmode(1, _O_BINARY);
+    _setmode(2, _O_BINARY);
+}
+
 // from https://github.com/git/git/blob/master/compat/mingw.c
 // -----------------------------------------------------------------------
 

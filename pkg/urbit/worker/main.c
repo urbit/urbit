@@ -130,7 +130,7 @@ _cw_serf_stdio(c3_i* inn_i, c3_i* out_i)
   //  we replace [FD 0] (stdin) with a fd pointing to /dev/null
   //  we replace [FD 1] (stdout) with a dup of [FD 2] (stderr)
   //
-  c3_i nul_i = open("/dev/null", O_RDWR, 0);
+  c3_i nul_i = open(c3_dev_null, O_RDWR, 0);
 
   *inn_i = dup(0);
   *out_i = dup(1);

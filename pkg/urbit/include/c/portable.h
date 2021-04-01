@@ -214,6 +214,16 @@
 #       error "port: timeconvert"
 #     endif
 
+    /* Null.
+    */
+#     if defined(U3_OS_linux) || defined(U3_OS_bsd) || defined(U3_OS_osx)
+#       define c3_dev_null "/dev/null"
+#     elif defined(U3_OS_mingw)
+#       define c3_dev_null "nul"
+#     else
+#       error "port: /dev/null"
+#     endif
+
     /* Static assertion.
     */
 #     define ASSERT_CONCAT_(a, b) a##b
