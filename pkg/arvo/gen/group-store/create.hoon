@@ -5,6 +5,6 @@
 |=  $:  [now=@da eny=@uvJ =beak]
         [[=term ~] ~]
     ==
-:-  %group-update
+:-  %group-action
 ^-  action
 [%add-group [p.beak term] *open:policy %.n]

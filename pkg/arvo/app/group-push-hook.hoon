@@ -17,6 +17,7 @@
       update:store
       %group-update
       %group-pull-hook
+      0  0
   ==
 ::
 +$  agent  (push-hook:push-hook config)
@@ -85,7 +86,7 @@
   ++  poke-store
     |=  =update:store
     ^-  card
-    =+  group-update+!>(update)
+    =+  group-update-0+!>(update)
     [%pass /sane %agent [our.bowl %group-store] %poke -]
   ::
   ++  get-subscribers-for-group

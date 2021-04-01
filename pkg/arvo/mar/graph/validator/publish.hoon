@@ -1,10 +1,11 @@
-/-  *post, met=metadata-store
+/-  *post, met=metadata-store, graph=graph-store, hark=hark-graph-hook
 |_  i=indexed-post
 ++  grow
   |%
   ++  noun  i
   ++  graph-permissions-add
     |=  vip=vip-metadata:met
+    ^-  permissions:graph
     ?+  index.p.i  !!
       [@ ~]            [%yes %yes %no]  :: new note
       [@ %1 @ ~]       [%self %self %no]
@@ -14,6 +15,7 @@
   ::
   ++  graph-permissions-remove
     |=  vip=vip-metadata:met
+    ^-  permissions:graph
     ?+  index.p.i  !!
       [@ ~]            [%yes %self %self]
       [@ %1 @ @ ~]     [%yes %self %self]
@@ -24,6 +26,7 @@
   ::    ignore all containers, only notify on content
   ::
   ++  notification-kind
+    ^-  (unit notif-kind:hark)
     ?+  index.p.i   ~
       [@ %1 %1 ~]    `[%note [0 1] %each %children]
       [@ %1 @ ~]     `[%edit-note [0 1] %none %none]
