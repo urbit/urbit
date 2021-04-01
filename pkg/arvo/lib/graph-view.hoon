@@ -68,11 +68,18 @@
     ++  create-group-feed
       %-  ot
       :~  resource+dejs:resource
+          vip+vip
       ==
     ::
     ++  disable-group-feed
       %-  ot
       :~  resource+dejs:resource
+      ==
+    ++  vip
+      %-  su
+      %-  perk
+      :~  %reader-comments
+          %$
       ==
     --
   --
