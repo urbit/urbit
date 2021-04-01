@@ -259,7 +259,7 @@ export default class GraphApi extends BaseApi<StoreState> {
     */
   }
 
-  async enableGroupFeed(group: Resource, vip: any): Promise<Resource> {
+  async enableGroupFeed(group: Resource, vip: any = ''): Promise<Resource> {
     const { resource } = await this.spider(
       'graph-view-action',
       'resource',
