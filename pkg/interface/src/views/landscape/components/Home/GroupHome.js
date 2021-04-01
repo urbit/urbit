@@ -5,6 +5,7 @@ import { EnableGroupFeed } from './EnableGroupFeed';
 import { EmptyGroupHome } from './EmptyGroupHome';
 import { GroupFeed } from './GroupFeed';
 import { AddFeedBanner } from './AddFeedBanner';
+
 import { Route } from 'react-router-dom';
 
 import useGroupState from '~/logic/state/group';
@@ -55,6 +56,7 @@ function GroupHome(props) {
         <AddFeedBanner 
           api={api}
           groupPath={groupPath}
+          baseUrl={baseUrl}
           group={groups[groupPath]}
         /> 
       ) : null }

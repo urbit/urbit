@@ -55,7 +55,7 @@ export function EnableGroupFeed(props: {
         await api.groups.addTag(resource, tag, [`~${window.ship}`]);
       }
       actions.setStatus({ success: null });
-      dismiss();
+      history.replace(`${baseUrl}/feed`);
     },
     [groupPath, baseUrl]
   );
