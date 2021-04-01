@@ -7,11 +7,24 @@ import tokenizeMessage from '~/logic/lib/tokenizeMessage';
 import { useToggleState } from '~/logic/lib/useToggleState';
 import { createPost } from '~/logic/api/graph';
 import useStorage from '~/logic/lib/useStorage';
-import { resourceFromPath } from '~/logic/lib/group';
+import { resourceFromPath, isWriter } from '~/logic/lib/group';
+
+function canWrite(props) {
+  const { group, association, vip, index } = props;
+  if (vip === '') {
+    return true;
+  }
+
+  if (!!index) {
+    return true;
+  }
+  
+  return isWriter(group, association.resource);
+}
 
 
 export function PostInput(props) {
-  const { api, graphPath, index, submitCallback } = props;
+  const { api, graphPath, index, submitCallback, vip } = props;
   const graphResource = resourceFromPath(graphPath);
 
   const [disabled, setDisabled] = useState(false);
@@ -72,6 +85,11 @@ export function PostInput(props) {
       }
     });
   };
+
+
+  if (!(canWrite(props))) {
+    return null;
+  }
 
   return (
     <Box

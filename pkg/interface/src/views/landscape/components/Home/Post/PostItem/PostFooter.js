@@ -10,7 +10,8 @@ export function PostFooter(props) {
     toggleReplyMode,
     showTimestamp,
     isParent,
-    timeSent
+    timeSent,
+    canComment
   } = props;
   const stamp = moment(timeSent);
   const mt = showTimestamp && isParent ? "2" : "0";
@@ -18,7 +19,11 @@ export function PostFooter(props) {
   const replyText = replyCount === 1 ? ' reply' : ' replies';
 
   return (
-    <Row mt={mt} justify-content="flex-start" width="100%">
+    <Row
+      mt={mt}
+      justify-content="flex-start"
+      width="100%"
+      opacity={canComment ? 1 : 0}>
       <Col width="100%">
         { showTimestamp && (
           <Row

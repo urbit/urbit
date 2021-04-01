@@ -7,7 +7,7 @@ import { PostInput } from '../PostInput';
 import { Mention } from "~/views/components/MentionText";
 import withState from '~/logic/lib/withState';
 import { useHovering } from '~/logic/lib/util';
-import { resourceFromPath } from '~/logic/lib/group';
+import { resourceFromPath, isWriter } from '~/logic/lib/group';
 
 
 class PostItem extends React.Component {
@@ -19,6 +19,25 @@ class PostItem extends React.Component {
     this.toggleReplyMode = this.toggleReplyMode.bind(this);
     this.navigateToReplies = this.navigateToReplies.bind(this);
     this.submitCallback = this.submitCallback.bind(this);
+  }
+
+  canWrite() {
+    const {
+      group,
+      association,
+      vip,
+      index
+    } = this.props;
+
+    if (vip === '') {
+      return true;
+    }
+
+    if (index && index.length > 0) {
+      return true;
+    }
+    
+    return isWriter(group, association.resource);
   }
 
   toggleReplyMode() {
@@ -53,6 +72,8 @@ class PostItem extends React.Component {
       isReply,
       isRelativeTime,
       parentPost,
+      vip,
+      group,
       hovering,
       bind
     } = this.props;
@@ -65,6 +86,8 @@ class PostItem extends React.Component {
     });
 
     const { inReplyMode } = this.state;
+
+    const canComment = this.canWrite();
 
     return (
       <Col
@@ -107,6 +130,7 @@ class PostItem extends React.Component {
             replyCount={node.children.size}
             showTimestamp={!isRelativeTime}
             isParent={isParent}
+            canComment={canComment}
             toggleReplyMode={this.toggleReplyMode} /> 
         </Col>
         { inReplyMode ? (
@@ -119,6 +143,9 @@ class PostItem extends React.Component {
             <PostInput
               api={api}
               graphPath={graphPath}
+              group={group}
+              association={association}
+              vip={vip}
               index={indexString}
               submitCallback={this.submitCallback} />
           </Col>

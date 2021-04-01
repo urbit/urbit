@@ -36,7 +36,12 @@ export function EnableGroupFeed(props: {
   const onSubmit = useCallback(
     async (values: FormSchema, actions: FormikHelpers<FormSchema>) => {
       const resource = resourceFromPath(groupPath);
-      const feed = resourceAsPath(await api.graph.enableGroupFeed(resource));
+      const vip = (
+        values.permissions === 'host' || values.permissions === 'admins'
+      ) ? 'reader-comments' : '';
+      const feed = resourceAsPath(
+        await api.graph.enableGroupFeed(resource, vip)
+      );
       const tag: Tag = {
         app: "graph",
         resource: feed,

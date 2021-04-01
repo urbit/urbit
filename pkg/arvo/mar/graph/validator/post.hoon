@@ -7,8 +7,8 @@
     |=  vip=vip-metadata:met
     ^-  permissions:graph
     ?:  ?=([@ ~] index.p.i)
-      [%yes %yes %no]
-    [%yes %yes ?:(?=(%reader-comments vip) %yes %no)]
+      [%yes %yes ?:(?=(%reader-comments vip) %no %yes)]
+    [%yes %yes %yes]
   ::
   ++  graph-permissions-remove
     |=  vip=vip-metadata:met

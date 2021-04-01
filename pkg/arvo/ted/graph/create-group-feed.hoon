@@ -66,5 +66,6 @@
     config        [%graph %post]
     preview       %.n
     hidden        %.y
+    vip           vip.action
   ==
 (pure:m !>(feed-rid))

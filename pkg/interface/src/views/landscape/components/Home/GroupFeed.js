@@ -12,14 +12,20 @@ import PostTimeline from './Post/PostTimeline';
 import PostReplies from './Post/PostReplies';
 
 import useMetadataState from '~/logic/state/metadata';
+import useGroupState from '~/logic/state/group';
 
 
 function GroupFeed(props) {
   const {
     baseUrl,
     api,
-    graphPath
+    graphPath,
+    groupPath,
+    vip
   } = props;
+
+  const groups = useGroupState(state => state.groups);
+  const group = groups[groupPath];
 
   const associations = useMetadataState(state => state.associations);
   const graphs = useGraphState(state => state.graphs);
@@ -56,6 +62,7 @@ function GroupFeed(props) {
         baseUrl={baseUrl}
         history={history}
         graphs={graphs}
+        vip={vip}
         graphResource={graphResource} />
       <Switch>
         <Route
@@ -68,7 +75,9 @@ function GroupFeed(props) {
                 api={api}
                 history={history}
                 graphPath={graphPath}
+                group={group}
                 association={association}
+                vip={vip}
                 graph={graph}
                 pendingSize={pendingSize} />
             );
@@ -83,7 +92,9 @@ function GroupFeed(props) {
                 api={api}
                 history={history}
                 graphPath={graphPath}
+                group={group}
                 association={association}
+                vip={vip}
                 graph={graph}
                 pendingSize={pendingSize} />
             );
@@ -92,7 +103,5 @@ function GroupFeed(props) {
     </Col>
   );
 }
-
-GroupFeed.whyDidYouRender = true;
 
 export { GroupFeed };
