@@ -24,7 +24,6 @@ function GroupFeed(props) {
     vip
   } = props;
 
-  console.log(vip);
   const groups = useGroupState(state => state.groups);
   const group = groups[groupPath];
 
@@ -63,6 +62,7 @@ function GroupFeed(props) {
         baseUrl={baseUrl}
         history={history}
         graphs={graphs}
+        vip={vip}
         graphResource={graphResource} />
       <Switch>
         <Route

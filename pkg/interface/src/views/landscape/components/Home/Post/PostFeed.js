@@ -24,6 +24,7 @@ export class PostFeed extends React.Component {
         baseUrl,
         parentNode,
         association,
+        group,
         vip
       } = this.props;
       const graphResource = resourceFromPath(graphPath);
@@ -61,6 +62,7 @@ export class PostFeed extends React.Component {
                 isParent={true}
                 isRelativeTime={false}
                 vip={vip}
+                group={group}
               />
             </Col>
             <PostItem
@@ -76,6 +78,7 @@ export class PostFeed extends React.Component {
               parentPost={parentNode.post}
               isRelativeTime={true}
               vip={vip}
+              group={group}
             />
           </React.Fragment>
         );
@@ -96,6 +99,7 @@ export class PostFeed extends React.Component {
           isReply={!!parentNode}
           isRelativeTime={true}
           vip={vip}
+          group={group}
         />
       );
     });

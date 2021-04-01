@@ -1,7 +1,6 @@
 import React from 'react';
 import bigInt from 'big-integer';
 import { Text, Col, Box } from '@tlon/indigo-react'
-import { PostInput } from './PostInput';
 import PostItem from './PostItem/PostItem';
 import { PostFeed } from './PostFeed';
 import { Loading } from '~/views/components/Loading';
@@ -77,6 +76,7 @@ export default function PostReplies(props) {
             history={history}
             isParent={true}
             vip={vip}
+            group={group}
           />
         </Box>
         <Box

@@ -22,7 +22,22 @@ class PostItem extends React.Component {
   }
 
   canWrite() {
-    const { group, association } = this.props;
+    const {
+      group,
+      association,
+      vip,
+      index
+    } = this.props;
+    console.log(index);
+
+    if (vip === '') {
+      return true;
+    }
+
+    if (index && index.length > 0) {
+      return true;
+    }
+    
     return isWriter(group, association.resource);
   }
 
@@ -58,6 +73,8 @@ class PostItem extends React.Component {
       isReply,
       isRelativeTime,
       parentPost,
+      vip,
+      group,
       hovering,
       bind
     } = this.props;
@@ -70,6 +87,8 @@ class PostItem extends React.Component {
     });
 
     const { inReplyMode } = this.state;
+
+    const canComment = this.canWrite();
 
     return (
       <Col
@@ -112,6 +131,7 @@ class PostItem extends React.Component {
             replyCount={node.children.size}
             showTimestamp={!isRelativeTime}
             isParent={isParent}
+            canComment={canComment}
             toggleReplyMode={this.toggleReplyMode} /> 
         </Col>
         { inReplyMode ? (
@@ -124,8 +144,10 @@ class PostItem extends React.Component {
             <PostInput
               api={api}
               graphPath={graphPath}
+              group={group}
+              association={association}
+              vip={vip}
               index={indexString}
-              canWrite={canWrite}
               submitCallback={this.submitCallback} />
           </Col>
         ) : null }

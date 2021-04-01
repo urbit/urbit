@@ -22,6 +22,7 @@ function GroupHome(props) {
   const groups = useGroupState(state => state.groups);
 
   const metadata = associations?.groups[groupPath]?.metadata;
+
   const askFeedBanner =
     metadata &&
     metadata.config &&
@@ -35,6 +36,7 @@ function GroupHome(props) {
     'resource' in metadata.config.group;
 
   const graphPath = metadata?.config?.group?.resource;
+  const graphMetadata = associations?.graph[graphPath]?.metadata;
 
   return (
     <Box width="100%" height="100%" overflow="hidden">
@@ -60,7 +62,7 @@ function GroupHome(props) {
         <GroupFeed
           graphPath={graphPath}
           groupPath={groupPath}
-          vip={metadata.vip}
+          vip={graphMetadata?.vip || ''}
           api={api}
           baseUrl={baseUrl} />
       </Route>

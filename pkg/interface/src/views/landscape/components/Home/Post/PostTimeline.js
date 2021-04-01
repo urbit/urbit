@@ -48,6 +48,8 @@ export default function PostTimeline(props) {
           <PostInput
             api={api}
             graphPath={graphPath}
+            group={group}
+            association={association}
             vip={vip} />
         </Col> 
         <Box
@@ -77,7 +79,12 @@ export default function PostTimeline(props) {
         mb="3"
         flexDirection="column"
         alignItems="center">
-        <PostInput api={api} graphPath={graphPath} />
+        <PostInput
+          api={api}
+          group={group}
+          association={association}
+          vip={vip}
+          graphPath={graphPath} />
       </Box> 
       <Box height="calc(100% - 176px)" width="100%" alignItems="center" pl="1">
         <PostFeed
