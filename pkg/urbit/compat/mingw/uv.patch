@@ -1,0 +1,17 @@
+diff --git a/src/win/pipe.c b/src/win/pipe.c
+index 0f2bb869b..f81245ec6 100644
+--- a/src/win/pipe.c
++++ b/src/win/pipe.c
+@@ -270,6 +270,12 @@ static int uv_set_pipe_handle(uv_loop_t* loop,
+ 
+   if (!SetNamedPipeHandleState(pipeHandle, &mode, NULL, NULL)) {
+     err = GetLastError();
++    if ((err == ERROR_INVALID_FUNCTION || err == ERROR_INVALID_PARAMETER) && (duplex_flags & UV_HANDLE_WRITABLE)) {
++      /*
++       * it's not a pipe, but simple writes should be fine
++       * let's trust callers to know what they're doing
++       */
++    } else
+     if (err == ERROR_ACCESS_DENIED) {
+       /*
+        * SetNamedPipeHandleState can fail if the handle doesn't have either

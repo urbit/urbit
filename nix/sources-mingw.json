@@ -48,6 +48,23 @@
         "url": "https://github.com/bitcoin-core/secp256k1/archive/26de4dfeb1f1436dae1fcf17f57bdaa43540f940.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
+    "uv": {
+        "branch": "v1.x",
+        "description": "Cross-platform asynchronous I/O",
+        "homepage": "http://libuv.org/",
+        "mingw": {
+            "include": "include",
+            "lib": ".libs",
+            "prepare": "./autogen.sh && ./configure --disable-shared",
+            "make": "libuv.la"
+        },
+        "owner": "libuv",
+        "repo": "libuv",
+        "rev": "v1.40.0",
+        "type": "tarball",
+        "url": "https://github.com/libuv/libuv/archive/v1.40.0.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
     "ent": {
         "mingw": {
             "prepare": "./configure"

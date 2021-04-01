@@ -213,6 +213,17 @@ u3_term_log_init(void)
     u3_Host.uty_u = uty_u;
   }
 
+  //  Disable I/O buffering on terminal streams.
+  //  This is not necessary if output is a tty,
+  //  but helps when output is redirected.
+  //
+  {
+    fflush(stdout);
+    fflush(stderr);
+    setvbuf(stdout, NULL, _IONBF, 0);
+    setvbuf(stderr, NULL, _IONBF, 0);
+  }
+
   //  if terminal/tty is enabled
   //
   if ( c3n == u3_Host.ops_u.tem ) {
@@ -711,7 +722,7 @@ _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
     else if ( 8 == cay_y || 127 == cay_y ) {
       _term_io_belt(uty_u, u3nc(c3__bac, u3_nul));
     }
-    else if ( 13 == cay_y ) {
+    else if ( 13 == cay_y || 10 == cay_y ) {
       _term_io_belt(uty_u, u3nc(c3__ret, u3_nul));
     }
 #if 0
