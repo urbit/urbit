@@ -102,6 +102,16 @@ u3_khan_io_init(u3_pier* pir_u)
   car_u->io.kick_f = _khan_io_kick;
   car_u->io.exit_f = _khan_io_exit;
 
+  {
+    u3_noun now;
+    struct timeval tim_u;
+    gettimeofday(&tim_u, 0);
+
+    now = u3_time_in_tv(&tim_u);
+    cop_u->sev_l = u3r_mug(now);
+    u3z(now);
+  }
+
   // Open socket. The full socket path is limited to about 108 characters, and
   // we want it to be relative to the pier. So we save our current path, chdir
   // to the pier, open the socket at the desired path, then chdir back.
@@ -129,16 +139,6 @@ u3_khan_io_init(u3_pier* pir_u)
         }
       }
     }
-  }
-
-  {
-    u3_noun now;
-    struct timeval tim_u;
-    gettimeofday(&tim_u, 0);
-
-    now = u3_time_in_tv(&tim_u);
-    cop_u->sev_l = u3r_mug(now);
-    u3z(now);
   }
 
   return car_u;
