@@ -63,6 +63,7 @@
     ("\\(%\\w\\(-\\|\\w\\)*\\)" (1 font-lock-keyword-face))
     ("\\(\\(-\\|\\w\\)+\\)=" (1 font-lock-variable-name-face))
     ("[=,]\\(\\(-\\|\\w\\)+\\|@\\(-\\|\\w\\)*\\)" (1 font-lock-type-face))
+    ("\\+\\$  \\(\\(-\\|\\w\\)+\\)" (1 font-lock-function-name-face))
     )
   "Keyword highlighting specification for `hoon-mode'.")
 
