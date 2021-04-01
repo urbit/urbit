@@ -28,7 +28,6 @@ class PostItem extends React.Component {
       vip,
       index
     } = this.props;
-    console.log(index);
 
     if (vip === '') {
       return true;
