@@ -7,6 +7,8 @@
 ::  - Enforce that only ownership key can set spawn proxy to rollup.
 ::    maybe not though
 ::  - Disallow depositing galaxy to L2
+::  - When depositing, clear proxies (maybe require reset)
+::  - Maybe require that we're not depositing from a contract?
 ::
 ::  TODO: can an L1 star adopt an L2 planet?  It's not obvious how --
 ::  maybe they need to adopt as an L2 transaction?  That sounds right I
@@ -20,21 +22,17 @@
 ::
 ::  TODO: add nonces to txs.  how to keep track of them?  need replay
 ::  protection.  maybe we can add nonces to ships instead of addresses?
-::  Then what about operators?
+::  Then what about operators?  Looks like we can keep nonces out of the
+::  tx data by just including it in the signed data.  If the signature
+::  succeeds but the tx fails, i guess the nonce should be advanced
+::
+::  TODO: think about whether nonces are safe when associated with
+::  ship/address
 ::
 ::  TODO: is it possible to spawn directly to the deposit address?  if
 ::  so, should we find its parent's owner to control it?
 ::
-::  TODO: should we add any protection in the L1 contracts that you
-::  don't deposit from a contract?
-::
-::  TODO: check operator anywhere you check for owner?
-::
-::  TODO: batch tx type to reduce signatures
-::
-::  TODO: how to implement claims on L2?
-::
-::  TODO: on L1, when depositing, clear proxies (maybe require reset)
+::  TODO: polymorphic addresses to save tx space?
 ::
 /+  std
 =>  std
@@ -49,6 +47,7 @@
 |%
 ::  ethereum address, 20 bytes.
 ::
++$  nonce    @ud
 +$  address  @ux
 ++  point
   $:  ::  domain
@@ -58,11 +57,11 @@
       ::  ownership
       ::
       $=  own
-      $:  owner=address
-          management-proxy=address
-          voting-proxy=address
-          transfer-proxy=address
-          spawn-proxy=address
+      $:  owner=[=address =nonce]
+          spawn-proxy=[=address =nonce]
+          management-proxy=[=address =nonce]
+          voting-proxy=[=address =nonce]
+          transfer-proxy=[=address =nonce]
       ==
     ::
       ::  networking
@@ -90,10 +89,13 @@
       =operators
       dns=(list @t)
   ==
-+$  points       (map ship point)
-+$  operators    (jug address address)
-+$  effects      (list diff)
++$  points     (map ship point)
++$  operators  (jug address address)
++$  effects    (list diff)
++$  proxy      ?(%own %spawn %manage %vote %transfer)
 +$  tx
+  [from=[=ship =proxy] skim-tx]
++$  skim-tx
   $%  [%transfer-point =ship =address reset=?]
       [%spawn =ship =address]
       [%configure-keys =ship encrypt=@ auth=@ crypto-suite=@ breach=?]
@@ -124,25 +126,25 @@
 ::
 |%
 ++  parse-batch
-  |=  [=verifier batch=@]
-  ^-  (list [address tx])
-  =|  txs=(list [address tx])
-  |-  ^-  (list [address tx])
+  |=  [=verifier =state batch=@]
+  ^-  (list tx)
+  =|  txs=(list tx)
+  |-  ^-  (list tx)
   ?~  batch
     (flop txs)
-  =/  parse-result  (parse-tx batch verifier)
+  =/  parse-result  (parse-tx verifier state batch)
   ::  Parsing failed, abort batch
   ::
   ?~  parse-result
     ~
-  =^  signed=(list [signer=address =tx])  batch  u.parse-result
+  =^  signed=(list tx)  batch  u.parse-result
   $(txs (welp (flop signed) txs))
 ::
 ::  TODO: change batch to be a cursor to avoid allocating atoms
 ::
 ++  parse-tx
-  |=  [batch=@ =verifier]
-  ^-  (unit [(list [address tx]) rest=@])
+  |=  [=verifier =state batch=@]
+  ^-  (unit [(list tx) rest=@])
   =/  batch  [len=0 rest=batch]
   |^
   =^  sig  batch  (take 3 65)
@@ -150,55 +152,80 @@
   =-  ?~  res
         ~
       :-  ~
-      =/  signer=(unit address)
-        (verify-tx sig (end [0 len.batch.u.res] signed-batch))
-      ?~  signer
+      ?.  (verify-sig-and-nonce txs.u.res sig len.batch.u.res signed-batch)
         [~ rest.batch.u.res]
-      [(turn txs.u.res |=(=tx [u.signer tx])) rest.batch.u.res]
-  |-  ^-  res=(unit [txs=(list tx) =_batch])
-  =*  parse-loop  $
+      [txs.u.res rest.batch.u.res]
+  ^-  res=(unit [txs=(list tx) =_batch])
+  =^  single=@   batch  (take 0)
+  ?:  =(0 single)
+    ::  Single tx
+    =/  single-res=(unit [=tx batch=_batch])  parse-single-tx
+    ?~  single-res
+      ~
+    `[[tx.u.single-res ~] batch.u.single-res]
+  ::  Multiple txs with a single signature
+  ::
+  =^  pad      batch  (take 0 7)
+  =^  count=@  batch  (take 3 2)
+  ::
+  |-  ^-  (unit [txs=(list tx) =_batch])
+  =*  batch-loop  $
+  ?:  =(count 0)
+    `[~ batch]
+  =/  next-res=(unit [=tx batch=_batch])  parse-single-tx
+  ?~  next-res
+    ~
+  =.  batch  batch.u.next-res
+  =/  rest-res  batch-loop(count (dec count))
+  ?~  rest-res
+    ~
+  =.  batch  batch.u.rest-res
+  `[[tx.u.next-res txs.u.rest-res] batch]
+::
+++  parse-single-tx
+  ^-  (unit [tx _batch])
+  =^  from-proxy=@      batch  (take 0 3)
+  ?:  (gth from-proxy 4)  ~
+  =^  pad               batch  (take 0 4)
+  =^  from-ship=ship    batch  (take 3 4)
+  =-  ?~  res
+        ~
+      =/  =proxy
+        ?+  from-proxy  !!  :: checked above that lte 4
+          %0  %own
+          %1  %spawn
+          %2  %manage
+          %3  %vote
+          %4  %transfer
+        ==
+      `[[[from-ship proxy] skim-tx.u.res] batch.u.res]
+  ^-  res=(unit [=skim-tx =_batch])
   =^  op   batch  (take 0 7)
-  ?+    op  ~>(%slog.%strange-opcode ~)
+  ?+    op  ~>(%slog.[0 %strange-opcode] ~)
       %0
     =^  reset=@         batch  (take 0)
     =^  =ship           batch  (take 3 4)
     =^  =address        batch  (take 3 20)
-    `[[%transfer-point ship address =(0 reset)]~ batch]
+    `[[%transfer-point ship address =(0 reset)] batch]
   ::
-      %1   =^(res batch take-ship-address `[[%spawn res]~ batch])
+      %1   =^(res batch take-ship-address `[[%spawn res] batch])
       %2
     =^  breach=@        batch  (take 0)
     =^  =ship           batch  (take 3 4)
     =^  encrypt=@       batch  (take 3 32)
     =^  auth=@          batch  (take 3 32)
     =^  crypto-suite=@  batch  (take 3 4)
-    `[[%configure-keys ship encrypt auth crypto-suite =(0 breach)]~ batch]
+    `[[%configure-keys ship encrypt auth crypto-suite =(0 breach)] batch]
   ::
-      %3   =^(res batch take-escape `[[%escape res]~ batch])
-      %4   =^(res batch take-escape `[[%cancel-escape res]~ batch])
-      %5   =^(res batch take-escape `[[%adopt res]~ batch])
-      %6   =^(res batch take-escape `[[%reject res]~ batch])
-      %7   =^(res batch take-escape `[[%detach res]~ batch])
-      %8   =^(res batch take-ship-address `[[%set-management-proxy res]~ batch])
-      %9   =^(res batch take-ship-address `[[%set-spawn-proxy res]~ batch])
-      %10  =^(res batch take-ship-address `[[%set-voting-proxy res]~ batch])
-      %11  =^(res batch take-ship-address `[[%set-transfer-proxy res]~ batch])
-      %12
-    =^  count=@           batch  (take 3 2)
-    ::
-    |-  ^-  (unit [txs=(list tx) =_batch])
-    =*  batch-loop  $
-    ?:  =(count 0)
-      `[~ batch]
-    =/  next-res=(unit [txs=(list tx) batch=_batch])  parse-loop
-    ?~  next-res
-      ~
-    =.  batch  batch.u.next-res
-    =/  rest-res  batch-loop(count (dec count))
-    ?~  rest-res
-      ~
-    =.  batch  batch.u.rest-res
-    `[(welp txs.u.next-res txs.u.rest-res) batch]
+      %3   =^(res batch take-escape `[[%escape res] batch])
+      %4   =^(res batch take-escape `[[%cancel-escape res] batch])
+      %5   =^(res batch take-escape `[[%adopt res] batch])
+      %6   =^(res batch take-escape `[[%reject res] batch])
+      %7   =^(res batch take-escape `[[%detach res] batch])
+      %8   =^(res batch take-ship-address `[[%set-management-proxy res] batch])
+      %9   =^(res batch take-ship-address `[[%set-spawn-proxy res] batch])
+      %10  =^(res batch take-ship-address `[[%set-voting-proxy res] batch])
+      %11  =^(res batch take-ship-address `[[%set-transfer-proxy res] batch])
   ==
   ::
   ::  Take a bite
@@ -227,9 +254,36 @@
     =^  child=ship   batch  (take 3 4)
     =^  parent=ship  batch  (take 3 4)
     [[child parent] batch]
+  ::
+  ++  verify-sig-and-nonce
+    |=  [txs=(list tx) sig=@ len=@ud signed-batch=@]
+    ^-  ?
+    =/  creds=(list [=address =nonce])
+      %+  turn  txs
+      |=  =tx
+      =/  point  (get-point state ship.from.tx)
+      ?>  ?=(^ point)  ::  we never parse more than four bytes
+      ?-  proxy.from.tx
+        %own       owner.own.u.point
+        %spawn     spawn-proxy.own.u.point
+        %manage    management-proxy.own.u.point
+        %vote      voting-proxy.own.u.point
+        %transfer  transfer-proxy.own.u.point
+      ==
+    =/  nonces  (turn creds |=([* =nonce] nonce))
+    =/  signed-data
+      %:  can  0
+        [(mul (bex 5) (lent nonces)) (rep 5 nonces)]
+        [len (end [0 len] signed-batch)]
+        ~
+      ==
+    =/  dress  (verify-sig sig signed-data)
+    ?~  dress
+      |
+    (levy creds |=([=address *] =(address u.dress)))
   ::  Verify signature and produce signer address
   ::
-  ++  verify-tx
+  ++  verify-sig
     |=  [sig=@ txdata=@]
     ^-  (unit address)
     |^
@@ -277,6 +331,7 @@
   ?.  &(=(1 sut) =(p.enc 32) =(p.aut 32))
     (cat 8 0 0)  ::  TODO: fix
   (cat 8 q.aut q.enc)
+::  Produces null only if ship is not a galaxy, star, or planet
 ::
 ++  get-point
   |=  [=state =ship]
@@ -284,7 +339,7 @@
   =/  existing  (~(get by points.state) ship)
   ?^  existing
     `u.existing
-  ?+    (ship-rank ship)  ~>(%slog.%strange-point ~)
+  ?+    (ship-rank ship)  ~>(%slog.[0 %strange-point] ~)
       %0  `%*(. *point dominion %l1)
       ?(%1 %2)
     =/  existing-parent  $(ship (sein ship))
@@ -350,7 +405,7 @@
     :-  ~
     ?:  =(deposit-address to)
       point(dominion %spawn)
-    point(spawn-proxy.own to)
+    point(address.spawn-proxy.own to)
   ::
   ::  The rest can be done by any ship on L1, even if their spawn proxy
   ::  is set to L2
@@ -411,34 +466,39 @@
     ::
     ?:  =(deposit-address to)
       point(dominion %l2)
-    point(owner.own to)
+    point(address.owner.own to)
   ::
   ?:  =(log-name ^~((hash-log-name 'ChangedTransferProxy(uint32,address)')))
     ?>  ?=([@ ~] t.t.topics.log)
     =*  to  i.t.t.topics.log
-    point(transfer-proxy.own to)
+    point(address.transfer-proxy.own to)
   ::
   ?:  =(log-name ^~((hash-log-name 'ChangedManagementProxy(uint32,address)')))
     ?>  ?=([@ ~] t.t.topics.log)
     =*  to  i.t.t.topics.log
-    point(management-proxy.own to)
+    point(address.management-proxy.own to)
   ::
   ?:  =(log-name ^~((hash-log-name 'ChangedVotingProxy(uint32,address)')))
     ?>  ?=([@ ~] t.t.topics.log)
     =*  to  i.t.t.topics.log
-    point(voting-proxy.own to)
+    point(address.voting-proxy.own to)
   ::
-  ~>  %slog.%unknown-log
+  ~>  %slog.[0 %unknown-log]
   point  ::  TODO: crash?
 ::
 ::  Receive batch of L2 transactions
 ::
 ++  receive-batch
   |=  [=verifier =state batch=@]
-  =/  txs=(list [signer=address =tx])  (parse-batch verifier batch)
+  =/  txs=(list tx)  (parse-batch verifier state batch)
   |-  ^-  [effects ^state]
   ?~  txs
     [~ state]
+  ::  Increment nonce, even if it later fails
+  ::
+  =.  points.state  (increment-nonce state from.i.txs)
+  ::  Process tx
+  ::
   =^  effects-1  state
     =/  tx-result=(unit [effects ^state])  (receive-tx state i.txs)
     ?~  tx-result
@@ -447,25 +507,41 @@
   =^  effects-2  state  $(txs t.txs)
   [(welp effects-1 effects-2) state]
 ::
+++  increment-nonce
+  |=  [=state =ship =proxy]
+  %+  ~(put by points.state)  ship
+  =/  point  (get-point state ship)
+  ?>  ?=(^ point)  ::  we only parsed 4 bytes
+  ?-    proxy
+      %own    u.point(nonce.owner.own +(nonce.owner.own.u.point))
+      %spawn  u.point(nonce.spawn-proxy.own +(nonce.spawn-proxy.own.u.point))
+      %manage
+    u.point(nonce.management-proxy.own +(nonce.management-proxy.own.u.point))
+  ::
+      %vote   u.point(nonce.voting-proxy.own +(nonce.voting-proxy.own.u.point))
+      %transfer
+    u.point(nonce.transfer-proxy.own +(nonce.transfer-proxy.own.u.point))
+  ==
+::
 ::  Receive an individual L2 transaction
 ::
 ++  receive-tx
-  |=  [=state signer=address =tx]
+  |=  [=state =tx]
   |^
   ^-  (unit [effects ^state])
-  ?-  -.tx
-    %spawn                  (process-spawn +.tx)
-    %transfer-point         (w-point process-transfer-point +.tx)
-    %configure-keys         (w-point-fx process-configure-keys +.tx)
-    %escape                 (w-point process-escape +.tx)
-    %cancel-escape          (w-point process-cancel-escape +.tx)
-    %adopt                  (w-point-fx process-adopt +.tx)
-    %reject                 (w-point process-reject +.tx)
-    %detach                 (w-point-fx process-detach +.tx)
-    %set-management-proxy   (w-point process-set-management-proxy +.tx)
-    %set-spawn-proxy        (w-point process-set-spawn-proxy +.tx)
-    %set-voting-proxy       (w-point process-set-voting-proxy +.tx)
-    %set-transfer-proxy     (w-point process-set-transfer-proxy +.tx)
+  ?-  +<.tx
+    %spawn                  (process-spawn +>.tx)
+    %transfer-point         (w-point process-transfer-point +>.tx)
+    %configure-keys         (w-point-fx process-configure-keys +>.tx)
+    %escape                 (w-point process-escape +>.tx)
+    %cancel-escape          (w-point process-cancel-escape +>.tx)
+    %adopt                  (w-point-fx process-adopt +>.tx)
+    %reject                 (w-point process-reject +>.tx)
+    %detach                 (w-point-fx process-detach +>.tx)
+    %set-management-proxy   (w-point process-set-management-proxy +>.tx)
+    %set-spawn-proxy        (w-point process-set-spawn-proxy +>.tx)
+    %set-voting-proxy       (w-point process-set-voting-proxy +>.tx)
+    %set-transfer-proxy     (w-point process-set-transfer-proxy +>.tx)
   ==
   ::
   ++  w-point-fx
@@ -492,16 +568,16 @@
   ::
   ++  process-transfer-point
     |=  [=ship =point to=address reset=?]
-    ::  Assert signer is owner or transfer prxoy
+    ::  Assert from owner or transfer prxoy
     ::
-    ?.  ?|  =(owner.own.point signer)
-            =(transfer-proxy.own.point signer)
+    ?.  ?&  =(ship ship.from.tx)
+            |(=(%own proxy.from.tx) =(%transfer proxy.from.tx))
         ==
       ~
     ::  Execute transfer
     ::
-    =:  owner.own.point           to
-        transfer-proxy.own.point  *address
+    =:  address.owner.own.point           to
+        address.transfer-proxy.own.point  *address
       ==
     ::  Execute reset if requested
     ::
@@ -510,7 +586,11 @@
     ::
     =?  net.point  (gth life.net.point 0)
       [+(life) 0 +(rift) sponsor escape]:net.point
-    =.  own.point  [owner.own.point *address *address *address *address]
+    =:  address.spawn-proxy.own.point       *address 
+        address.management-proxy.own.point  *address 
+        address.voting-proxy.own.point      *address 
+        address.transfer-proxy.own.point    *address 
+      ==
     `point
   ::
   ++  process-spawn
@@ -522,10 +602,10 @@
     =/  parent-point  (get-point state parent)
     ?~  parent-point  ~
     ?.  ?=(?(%l2 %spawn) -.u.parent-point)  ~
-    ::  Assert signer is owner or spawn proxy
+    ::  Assert from owner or spawn proxy
     ::
-    ?.  ?|  =(owner.own.u.parent-point signer)
-            =(spawn-proxy.own.u.parent-point signer)
+    ?.  ?&  =(parent ship.from.tx)
+            |(=(%own proxy.from.tx) =(%spawn proxy.from.tx))
         ==
       ~
     ::  Assert child not already spawned
@@ -540,27 +620,33 @@
     ::
     =.  points.state
       %+  ~(put by points.state)  ship
-      ?:  =(to signer)
-        ::  If spawning to self, just do it
-        ::
+      ::  If spawning to self, just do it
+      ::
+      ?:  ?|  ?&  =(%own proxy.from.tx)
+                  =(to address.owner.own.u.parent-point)
+              ==
+              ?&  =(%spawn proxy.from.tx)
+                  =(to address.spawn-proxy.own.u.parent-point)
+              ==
+          ==
         %*  .  *point
-          dominion   %l2
-          owner.own  to
+          dominion           %l2
+          address.owner.own  to
         ==
       ::  Else spawn to parent and set transfer proxy
       ::
       %*  .  *point
-        dominion            %l2
-        owner.own           owner.own.u.parent-point
-        transfer-proxy.own  to
+        dominion                    %l2
+        address.owner.own           address.owner.own.u.parent-point
+        address.transfer-proxy.own  to
       ==
     ``state
   ::
   ++  process-configure-keys
     |=  [=ship =point encrypt=@ auth=@ crypto-suite=@ breach=?]
     ::
-    ?.  ?|  =(owner.own.point signer)
-            =(management-proxy.own.point signer)
+    ?.  ?&  =(ship ship.from.tx)
+            |(=(%own proxy.from.tx) =(%manage proxy.from.tx))
         ==
       ~
     ::
@@ -581,8 +667,8 @@
   ::
   ++  process-escape
     |=  [=ship =point parent=ship]
-    ?.  ?|  =(owner.own.point signer)
-            =(management-proxy.own.point signer)
+    ?.  ?&  =(ship ship.from.tx)
+            |(=(%own proxy.from.tx) =(%manage proxy.from.tx))
         ==
       ~
     ::  TODO: don't allow "peer escape"?
@@ -593,8 +679,8 @@
   ::
   ++  process-cancel-escape
     |=  [=ship =point parent=ship]
-    ?.  ?|  =(owner.own.point signer)
-            =(management-proxy.own.point signer)
+    ?.  ?&  =(ship ship.from.tx)
+            |(=(%own proxy.from.tx) =(%manage proxy.from.tx))
         ==
       ~
     ::
@@ -602,11 +688,10 @@
   ::
   ++  process-adopt
     |=  [=ship =point parent=ship]
-    =/  parent-point  (get-point state parent) :: TODO: assert child/parent on L2?
-    ?~  parent-point  ~
+    :: TODO: assert child/parent on L2?
     ::
-    ?.  ?|  =(owner.own.u.parent-point signer)
-            =(management-proxy.own.u.parent-point signer)
+    ?.  ?&  =(parent ship.from.tx)
+            |(=(%own proxy.from.tx) =(%manage proxy.from.tx))
         ==
       ~
     ::
@@ -616,11 +701,8 @@
   ::
   ++  process-reject
     |=  [=ship =point parent=ship]
-    =/  parent-point  (get-point state parent) :: TODO: assert child/parent on L2?
-    ?~  parent-point  ~
-    ::
-    ?.  ?|  =(owner.own.u.parent-point signer)
-            =(management-proxy.own.u.parent-point signer)
+    ?.  ?&  =(parent ship.from.tx)
+            |(=(%own proxy.from.tx) =(%manage proxy.from.tx))
         ==
       ~
     ::
@@ -628,11 +710,8 @@
   ::
   ++  process-detach
     |=  [=ship =point parent=ship]
-    =/  parent-point  (get-point state parent) :: TODO: assert child/parent on L2?
-    ?~  parent-point  ~
-    ::
-    ?.  ?|  =(owner.own.u.parent-point signer)
-            =(management-proxy.own.u.parent-point signer)
+    ?.  ?&  =(parent ship.from.tx)
+            |(=(%own proxy.from.tx) =(%manage proxy.from.tx))
         ==
       ~
     ::
@@ -641,39 +720,39 @@
   ::
   ++  process-set-management-proxy
     |=  [=ship =point =address]
-    ?.  ?|  =(owner.own.point signer)
-            =(management-proxy.own.point signer)
+    ?.  ?&  =(ship ship.from.tx)
+            |(=(%own proxy.from.tx) =(%manage proxy.from.tx))
         ==
       ~
     ::
-    `point(management-proxy.own address)
+    `point(address.management-proxy.own address)
   ::
   ++  process-set-spawn-proxy
     |=  [=ship =point =address]
-    ?.  ?|  =(owner.own.point signer)
-            =(spawn-proxy.own.point signer)
+    ?.  ?&  =(ship ship.from.tx)
+            |(=(%own proxy.from.tx) =(%spawn proxy.from.tx))
         ==
       ~
     ::
-    `point(spawn-proxy.own address)
+    `point(address.spawn-proxy.own address)
   ::
   ++  process-set-voting-proxy
     |=  [=ship =point =address]
-    ?.  ?|  =(owner.own.point signer)
-            =(voting-proxy.own.point signer)
+    ?.  ?&  =(ship ship.from.tx)
+            |(=(%own proxy.from.tx) =(%vote proxy.from.tx))
         ==
       ~
     ::
-    `point(voting-proxy.own address)
+    `point(address.voting-proxy.own address)
   ::
   ++  process-set-transfer-proxy
     |=  [=ship =point =address]
-    ?.  ?|  =(owner.own.point signer)
-            =(transfer-proxy.own.point signer)
+    ?.  ?&  =(ship ship.from.tx)
+            |(=(%own proxy.from.tx) =(%transfer proxy.from.tx))
         ==
       ~
     ::
-    `point(transfer-proxy.own address)
+    `point(address.transfer-proxy.own address)
   --
 --
 ::

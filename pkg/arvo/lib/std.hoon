@@ -22,14 +22,25 @@
 ++  gth   ^gth
 ++  swp   ^swp
 ++  cat   ^cat
+++  can   ^can
+++  rep   ^rep
 ++  rip   ^rip
 ++  turn  ^turn
+++  levy  ^levy
 ++  welp  ^welp
 ++  flop  ^flop
+++  lent  ^lent
 ++  by    ^by
 ++  ju    ^ju
+::
+++  dad
+  |=  [=bite a=@ b=@]
+  (add a (lsh bite b))
 ::  TODO: delete
 ::
 ++  crypto  ^crypto
 ++  html    ^html
+++  cain    ^cain
+++  onan    ^onan
+++  abel    ^abel
 --

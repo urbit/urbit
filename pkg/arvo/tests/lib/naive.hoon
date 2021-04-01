@@ -42,14 +42,16 @@
   [:(welp f1 f2 f3) state]
 ::
 ++  sign-tx
-  |=  [pk=@ tx=@]
-  =+  (ecdsa-raw-sign:secp256k1:secp:crypto tx pk)
+  |=  [pk=@ nonce=@ud tx=@]
+  =+  (ecdsa-raw-sign:secp256k1:secp:crypto (dad:naive 5 nonce tx) pk)
   (cat 3 (can 3 1^v 32^r 32^s ~) tx)
 ::
 ++  transfer-point
-  |=  [=ship =address reset=?]
-  %+  sign-tx  ship
+  |=  [nonce=@ud =ship =address reset=?]
+  %^  sign-tx  ship  nonce
   %:  can  3
+    1^0
+    4^ship
     1^(can 0 7^%0 1^reset ~)
     4^ship
     20^address
@@ -61,7 +63,7 @@
 ++  test-log
   %+  expect-eq
     !>
-    `[[[~bud %*(. *point:naive dominion %l1, owner.own 0x123)] ~ ~] ~ ~]
+    `[[[~bud %*(. *point:naive dominion %l1, owner.own 0x123^0)] ~ ~] ~ ~]
   ::
     !>
     %^  naive  verifier  *^state:naive
@@ -80,11 +82,12 @@
 ::
 ++  test-batch
   %+  expect-eq
-    !>  0x234
+    !>  [0x234 2]
   ::
     !>
     =|  =^state:naive
     =^  f  state  (init-l2-marbud state)
-    =^  f  state  (n state %bat (transfer-point ~marbud 0x234 |))
+    =^  f  state  (n state %bat (transfer-point 0 ~marbud (key ~marbud) |))
+    =^  f  state  (n state %bat (transfer-point 1 ~marbud 0x234 |))
     owner.own:(~(got by points.state) ~marbud)
 --
