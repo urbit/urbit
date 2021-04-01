@@ -86,6 +86,21 @@ static void
 _khan_conn_cb(uv_stream_t* sem_u, c3_i tas_i)
 {
   // TODO interact
+  //
+  // There are four cases to think about here:
+  //
+  // 1. peek, runtime
+  // 2. poke, runtime
+  // 3. peek, arvo
+  // 4. poke, arvo
+  //
+  // For 1, we support a few simple text commands:
+  // ok - says "ok" (basic health test)
+  // dump - dumps runtime stat counters in simple machine/human-readable format
+  //
+  // There is not yet a use case for 2.
+  //
+  // For 3 and 4, we speak the language documented in the khan vane in arvo.
 }
 
 /* u3_khan(): initialize control plane socket.
