@@ -64,6 +64,9 @@ data ReadData = ReadData
   { rdBuf       :: Ptr Word8
   , rdEscape    :: Bool
   , rdBracket   :: Bool
+  , rdMouse     :: Bool
+  , rdMouseBut  :: Word8
+  , rdMouseCol  :: Word8
   , rdUTF8      :: ByteString
   , rdUTF8width :: Int
   }
@@ -206,6 +209,9 @@ localClient doneSignal = fst <$> mkRAcquire start stop
                               -- to the muxing client.
                               putTMVar tsSizeChange ts)
 
+      -- start mouse reporting
+      putStr "\x1b[?9h"
+
       pWriterThread <- asyncBound
         (writeTerminal tsWriteQueue spinnerMVar tsizeTVar)
 
@@ -222,7 +228,7 @@ localClient doneSignal = fst <$> mkRAcquire start stop
 
       tsReadQueue <- newTQueueIO
       pReaderThread <- asyncBound
-          (readTerminal tsReadQueue tsWriteQueue (bell tsWriteQueue))
+          (readTerminal tsReadQueue tsWriteQueue tsizeTVar (bell tsWriteQueue))
 
       let client = Client { take = Just <$> asum
                               [ readTQueue tsReadQueue <&> ClientTakeBelt,
@@ -242,6 +248,9 @@ localClient doneSignal = fst <$> mkRAcquire start stop
       -- block until the next piece of keyboard input. Since this only happens
       -- at shutdown, just leak the file descriptor.
       cancel pWriterThread
+
+      -- stop mouse reporting
+      putStr "\x1b[?9l"
 
       -- inject one final newline, as we're usually on the prompt.
       putStr "\r\n"
@@ -519,9 +528,14 @@ localClient doneSignal = fst <$> mkRAcquire start stop
     -- A better way to do this would be to get some sort of epoll on stdInput,
     -- since that's kinda closer to what libuv does?
     readTerminal :: forall e. HasLogFunc e
-                 => TQueue Belt -> TQueue [Term.Ev] -> (RIO e ()) -> RIO e ()
-    readTerminal rq wq bell =
-      rioAllocaBytes 1 $ \ buf -> loop (ReadData buf False False mempty 0)
+                 => TQueue Belt
+                 -> TQueue [Term.Ev]
+                 -> TVar TermSize
+                 -> RIO e ()
+                 -> RIO e ()
+    readTerminal rq wq ts bell =
+      rioAllocaBytes 1 $ \ buf
+        -> loop (ReadData buf False False False 0 0 mempty 0)
       where
         loop :: ReadData -> RIO e ()
         loop rd@ReadData{..} = do
@@ -545,8 +559,12 @@ localClient doneSignal = fst <$> mkRAcquire start stop
                     'B' -> sendBelt $ Bol $ Aro D
                     'C' -> sendBelt $ Bol $ Aro R
                     'D' -> sendBelt $ Bol $ Aro L
+                    'M' -> pure ()
                     _   -> bell
-                  loop rd { rdEscape = False, rdBracket = False}
+                  rd <- case c of
+                          'M' -> pure rd { rdMouse = True }
+                          _   -> pure rd
+                  loop rd { rdEscape = False, rdBracket = False }
                 else if isAsciiLower c then do
                   sendBelt $ Mod Met $ Key c
                   loop rd { rdEscape = False }
@@ -558,6 +576,20 @@ localClient doneSignal = fst <$> mkRAcquire start stop
                 else do
                   bell
                   loop rd { rdEscape = False }
+              else if rdMouse then
+                if rdMouseBut == 0 then do
+                  loop rd { rdMouseBut = w - 31 }
+                else if rdMouseCol == 0 then do
+                  loop rd { rdMouseCol = w - 32 }
+                else do
+                  if rdMouseBut == 1 then do
+                    let rdMouseRow = w - 32
+                    TermSize _ h <- readTVarIO ts
+                    sendBelt $ Bol $ Hit
+                      (fromIntegral h - fromIntegral rdMouseRow)
+                      (fromIntegral rdMouseCol - 1)
+                  else do pure ()
+                  loop rd { rdMouse = False, rdMouseBut = 0, rdMouseCol = 0 }
               else if rdUTF8width /= 0 then do
                 -- continue reading into the utf8 accumulation buffer
                 rd@ReadData{..} <- pure rd { rdUTF8 = snoc rdUTF8 w }
