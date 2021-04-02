@@ -11,6 +11,9 @@ import { FormSubmit } from "~/views/components/FormSubmit";
 import { StatelessAsyncToggle } from "~/views/components/StatelessAsyncToggle";
 import useMetadataState from "~/logic/state/metadata";
 
+import useMetadataState from '~/logic/state/metadata';
+
+
 interface FormSchema {
   permissions: PermVariation;
 }
@@ -21,18 +24,22 @@ export function GroupFeedSettings(props: {
   api: GlobalApi;
 }) {
   const { association, group, api } = props;
-  const isEnabled = !!association?.metadata?.config?.group;
   const resource = resourceFromPath(association.group);
   const feedResource = association?.metadata.config?.group?.resource;
   const feedAssoc = useMetadataState(s => s.associations.graph[feedResource]);
-  const toggleFeed = async () => {
+  const isEnabled = !!feedResource;
+
+  const associations = useMetadataState(state => state.associations);
+  const feedMetadata = associations?.graph[feedResource];
+
+  const vip = feedAssoc?.metadata?.vip || " "; 
+  const toggleFeed = async (actions: any) => {
     if (isEnabled) {
       await api.graph.disableGroupFeed(resource);
     } else {
-      await api.graph.enableGroupFeed(resource);
+      await api.graph.enableGroupFeed(resource, vip.trim());
     }
   };
-  const vip = feedAssoc?.metadata?.vip || " "; 
   const initialValues: FormSchema = {
     permissions: vip
   };
@@ -62,7 +69,7 @@ export function GroupFeedSettings(props: {
               </Label>
             </Col>
           </BaseLabel>
-          {isEnabled && (
+          {isEnabled && false && (
             <>
               <GroupFeedPermsInput id="permissions" />
               <FormSubmit start>Update Permissions</FormSubmit>
