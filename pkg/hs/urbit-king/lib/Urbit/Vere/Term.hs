@@ -46,12 +46,17 @@ import qualified Urbit.Vere.Term.Render   as T
 -- | All stateful data in the printing to stdOutput.
 data LineState = LineState
   { lsLine            :: Text
-  , lsCurPos          :: Int
+  , lsCurPos          :: CurPos
   , lsSpinTimer       :: Maybe (Async ())
   , lsSpinCause       :: Maybe Text
   , lsSpinFirstRender :: Bool
   , lsSpinFrame       :: Int
   , lsPrevEndTime     :: Wen
+  }
+
+data CurPos = CurPos
+  { row :: Int
+  , col :: Int
   }
 
 -- | A record used in reading data from stdInput.
@@ -269,7 +274,7 @@ localClient doneSignal = fst <$> mkRAcquire start stop
     writeTerminal :: TQueue [Term.Ev] -> TMVar () -> TVar TermSize -> RIO e ()
     writeTerminal q spinner termSizeVar = do
         currentTime <- io $ now
-        loop (LineState "" 0 Nothing Nothing True 0 currentTime)
+        loop (LineState "" (CurPos 0 0) Nothing Nothing True 0 currentTime)
       where
         writeBlank :: LineState -> RIO e LineState
         writeBlank ls = putStr "\r\n" $> ls
@@ -340,7 +345,7 @@ localClient doneSignal = fst <$> mkRAcquire start stop
 
         execEv :: LineState -> Term.Ev -> RIO e LineState
         execEv ls = \case
-            Term.Blits bs         -> foldM writeBlit ls bs
+            Term.Blits bs         -> foldM (writeBlit termSizeVar) ls bs
             Term.Trace p          -> writeTrace ls (unCord p)
             Term.Slog s           -> writeSlog ls s
             Term.Blank            -> writeBlank ls
@@ -370,20 +375,22 @@ localClient doneSignal = fst <$> mkRAcquire start stop
                 ]
 
     -- Writes an individual blit to the screen
-    writeBlit :: LineState -> Blit -> RIO e LineState
-    writeBlit ls = \case
+    writeBlit :: TVar TermSize -> LineState -> Blit -> RIO e LineState
+    writeBlit ts ls = \case
       Bel ()        -> T.soundBell $> ls
       Clr ()        -> do T.clearScreen
-                          termRefreshLine ls
-      Hop w         -> termShowCursor ls (fromIntegral w)
-      Klr s         -> do ls2 <- termShowClear ls
-                          termShowStub ls2 s
-      Lin c         -> do ls2 <- termShowClear ls
-                          termShowLine ls2 (pack c)
-      Mor ()        -> termShowMore ls
+                          T.cursorRestore
+                          pure ls
+      Hop t         -> case t of
+          Col c     -> termShowCursor ls ts 0 (fromIntegral c)
+          Roc r c   -> termShowCursor ls ts (fromIntegral r) (fromIntegral c)
+      Klr s         -> termShowStub ls s
+      Put c         -> termShowLine ls (pack c)
+      Nel ()        -> termShowNewline ls
       Sag path noun -> pure ls
       Sav path atom -> pure ls
       Url url       -> pure ls
+      Wyp ()        -> termShowClear ls
 
     termRenderDeco :: Deco -> Char
     termRenderDeco = \case
@@ -428,48 +435,56 @@ localClient doneSignal = fst <$> mkRAcquire start stop
 
         styled = mconcat [escape, styles, "m", tape, escape, "0m"]
 
-    -- Displays and sets styled text as the current line
+    -- Displays styled text at the cursor
     termShowStub :: LineState -> Stub -> RIO e LineState
-    termShowStub ls (Stub s) = do
-      let visualLength = sum $ fmap (length . snd) s
+    termShowStub ls@LineState{lsCurPos} (Stub s) = do
       let outText = pack $ mconcat $ fmap (uncurry termRenderStubSegment) s
       putStr outText
-      pure ls { lsLine = outText, lsCurPos = visualLength }
+      T.cursorRestore
+      case row lsCurPos of
+        0 -> --TODO  offset by col
+             pure ls { lsLine = outText }
+        _ -> pure ls
 
     -- Moves the cursor to the requested position
-    termShowCursor :: LineState -> Int -> RIO e LineState
-    termShowCursor ls@LineState{..} {-line pos)-} newPos = do
-      if newPos < lsCurPos then do
-        T.cursorLeft (lsCurPos - newPos)
-        pure ls { lsCurPos =  newPos }
-      else if newPos > lsCurPos then do
-        T.cursorRight (newPos - lsCurPos)
-        pure ls { lsCurPos =  newPos }
-      else
-        pure ls
+    termShowCursor :: LineState -> TVar TermSize -> Int -> Int -> RIO e LineState
+    termShowCursor ls ts row col = do
+      TermSize _ h <- readTVarIO ts
+      T.cursorMove (max 0 (fromIntegral h - row - 1)) col
+      T.cursorSave
+      pure ls { lsCurPos = CurPos row col }
 
     -- Moves the cursor left without any mutation of the LineState. Used only
     -- in cursor spinning.
     _termSpinnerMoveLeft :: Int -> RIO e ()
-    _termSpinnerMoveLeft = T.cursorLeft
+    _termSpinnerMoveLeft = liftIO . ANSI.cursorBackward
 
     -- Displays and sets the current line
     termShowLine :: LineState -> Text -> RIO e LineState
-    termShowLine ls newStr = do
+    termShowLine ls@LineState{lsCurPos} newStr = do
       putStr newStr
-      pure ls { lsLine = newStr, lsCurPos = (length newStr) }
+      T.cursorRestore
+      case row lsCurPos of
+        0 -> --TODO  offset by col
+             pure ls { lsLine = newStr }
+        _ -> pure ls
 
     termShowClear :: LineState -> RIO e LineState
-    termShowClear ls = do
+    termShowClear ls@LineState{lsCurPos} = do
         putStr "\r"
         T.clearLine
-        pure ls { lsLine = "", lsCurPos = 0  }
+        T.cursorRestore
+        case row lsCurPos of
+          0 -> pure ls { lsLine = "" }
+          _ -> pure ls
 
     -- New Current Line
-    termShowMore :: LineState -> RIO e LineState
-    termShowMore ls = do
+    termShowNewline :: LineState -> RIO e LineState
+    termShowNewline ls@LineState{lsCurPos} = do
       putStr "\r\n"
-      pure ls { lsLine = "", lsCurPos = 0  }
+      case row lsCurPos of
+        0 -> pure ls { lsLine = "", lsCurPos = lsCurPos { col = 0 } }
+        r -> pure ls { lsCurPos = CurPos (r-1) 0 }
 
     -- Redraw the current LineState, maintaining the current curpos
     termRefreshLine :: LineState -> RIO e LineState
@@ -513,20 +528,17 @@ localClient doneSignal = fst <$> mkRAcquire start stop
               if rdEscape then
                 if rdBracket then do
                   case c of
-                    'A' -> sendBelt $ Aro U
-                    'B' -> sendBelt $ Aro D
-                    'C' -> sendBelt $ Aro R
-                    'D' -> sendBelt $ Aro L
+                    'A' -> sendBelt $ Bol $ Aro U
+                    'B' -> sendBelt $ Bol $ Aro D
+                    'C' -> sendBelt $ Bol $ Aro R
+                    'D' -> sendBelt $ Bol $ Aro L
                     _   -> bell
                   loop rd { rdEscape = False, rdBracket = False}
                 else if isAsciiLower c then do
-                  sendBelt $ Met $ Cord $ pack [c]
-                  loop rd { rdEscape = False }
-                else if c == '.' then do
-                  sendBelt $ Met $ Cord "dot"
+                  sendBelt $ Mod Met $ Key c
                   loop rd { rdEscape = False }
                 else if w == 8 || w == 127 then do
-                  sendBelt $ Met $ Cord "bac"
+                  sendBelt $ Mod Met $ Bac ()
                   loop rd { rdEscape = False }
                 else if c == '[' || c == '0' then do
                   loop rd { rdBracket = True }
@@ -543,31 +555,31 @@ localClient doneSignal = fst <$> mkRAcquire start stop
                       error "empty utf8 accumulation buffer"
                     Just (c, bytes) | bytes /= rdUTF8width ->
                       error "utf8 character size mismatch?!"
-                    Just (c, bytes) -> sendBelt $ Txt $ Tour $ [c]
+                    Just (c, bytes) -> sendBelt $ Bol $ Key c
                   loop rd { rdUTF8 = mempty, rdUTF8width = 0 }
               else if w >= 32 && w < 127 then do
-                sendBelt $ Txt $ Tour $ [c]
+                sendBelt $ Bol $ Key c
                 loop rd
               else if w == 0 then do
                 bell
                 loop rd
               else if w == 8 || w == 127 then do
-                sendBelt $ Bac ()
+                sendBelt $ Bol $ Bac ()
                 loop rd
               else if w == 13 then do
-                sendBelt $ Ret ()
+                sendBelt $ Bol $ Ret ()
                 loop rd
               else if w == 3 then do
                 -- ETX (^C)
                 logInfo $ "Ctrl-c interrupt"
                 atomically $ do
                   writeTQueue wq [Term.Trace "interrupt\r\n"]
-                  writeTQueue rq $ Ctl $ Cord "c"
+                  writeTQueue rq $ Mod Ctl $ Key 'c'
                 loop rd
               else if w <= 26 then do
-                case pack [BS.w2c (w + 97 - 1)] of
-                    "d" -> atomically doneSignal
-                    c   -> do sendBelt $ Ctl $ Cord c
+                case BS.w2c (w + 97 - 1) of
+                    'd' -> atomically doneSignal
+                    c   -> do sendBelt $ Mod Ctl $ Key c
                               loop rd
               else if w == 27 then do
                 loop rd { rdEscape = True }
@@ -644,7 +656,7 @@ term env (tsize, Client{..}) plan stat serfSIGINT = runTerm
         atomically take >>= \case
             Nothing                              -> pure ()
             Just (ClientTakeBelt b)              -> do
-                when (b == Ctl (Cord "c")) $ do
+                when (b == Mod Ctl (Key 'c')) $ do
                   io serfSIGINT
                 let beltEv       = EvBlip $ BlipEvTerm $ TermEvBelt (UD 1, ()) $ b
                 let beltFailed _ = pure ()

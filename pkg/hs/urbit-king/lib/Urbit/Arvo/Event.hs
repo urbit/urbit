@@ -20,6 +20,7 @@ import Urbit.Arvo.Common (ReOrg(..), reorgThroughNoun)
 
 import qualified Crypto.Sign.Ed25519       as Ed
 import qualified Data.ByteString           as BS
+import qualified Data.Char                 as C
 import qualified Data.ByteString.Char8     as C
 import qualified Network.HTTP.Types.Method as H
 
@@ -277,18 +278,55 @@ data LegacyBootEvent
     | Dawn Dawn
   deriving (Eq, Show)
 
-data ArrowKey = D | L | R | U
+data Bolt
+    = Key Char
+    | Aro ArrowKey
+    | Bac ()
+    | Del ()
+    | Hit Word64 Word64
+    | Ret ()
   deriving (Eq, Ord, Show)
 
 data Belt
-    = Aro ArrowKey
-    | Bac ()
-    | Ctl Cord
-    | Del ()
-    | Met Cord
-    | Ret ()
+    = Bol Bolt
+    | Mod Modifier Bolt
     | Txt Tour
   deriving (Eq, Ord, Show)
+
+data ArrowKey = D | L | R | U
+  deriving (Eq, Ord, Show)
+
+data Modifier = Ctl | Met | Hyp
+  deriving (Eq, Ord, Show)
+
+--NOTE  required to get the above declarations into reify's type environment
+--      see also ghc/ghc#9813
+$(pure [])
+
+instance FromNoun Bolt where
+  parseNoun = \case
+    A c -> pure $ Key $ C.chr $ fromIntegral c
+    n   -> $(deriveFromNounFunc ''Bolt) n
+
+instance FromNoun Belt where
+  parseNoun = \case
+    A c       -> pure $ Bol $ Key $ C.chr $ fromIntegral c
+    n         -> runParser ($(deriveFromNounFunc ''Bolt) n) [] belt bolt
+                   where
+                    belt p m = $(deriveFromNounFunc ''Belt) n
+                    bolt !b  = pure $ Bol b
+
+instance ToNoun Bolt where
+  toNoun = \case
+    Key c -> A $ fromIntegral $ C.ord c
+    n     -> $(deriveToNounFunc ''Bolt) n
+
+instance ToNoun Belt where
+  toNoun = \case
+    Bol b -> case b of
+               Key c -> A $ fromIntegral $ C.ord c
+               b     -> $(deriveToNounFunc ''Bolt) b
+    n     -> $(deriveToNounFunc ''Belt) n
 
 data TermEv
     = TermEvBelt (UD, ()) Belt
@@ -300,7 +338,7 @@ data TermEv
 
 deriveNoun ''LegacyBootEvent
 deriveNoun ''ArrowKey
-deriveNoun ''Belt
+deriveNoun ''Modifier
 deriveNoun ''TermEv
 
 
@@ -353,6 +391,7 @@ instance FromNoun Ev where
     terminal event, but we don't display any name because the cause is
     really the user.
 -}
+--REVIEW  doesn't that hold for _any_ terminal event?
 getSpinnerNameForEvent :: Ev -> Maybe Text
 getSpinnerNameForEvent = \case
     EvBlip b -> case b of
@@ -367,8 +406,8 @@ getSpinnerNameForEvent = \case
         BlipEvTerm t | isRet t -> Nothing
         BlipEvTerm t           -> Just "term"
   where
-    isRet (TermEvBelt _ (Ret ())) = True
-    isRet _                       = False
+    isRet (TermEvBelt _ (Bol (Ret ()))) = True
+    isRet _                             = False
 
 summarizeEvent :: Ev -> Text
 summarizeEvent ev =
