@@ -610,6 +610,7 @@ export const Message = ({
                   scrollWindow={scrollWindow}
                   ship={content.mention}
                   contact={contacts?.[`~${content.mention}`]}
+                  api={api}
                 />
               );
             default:
