@@ -63,7 +63,8 @@
 ++  test-log
   %+  expect-eq
     !>
-    `[[[~bud %*(. *point:naive dominion %l1, owner.own 0x123^0)] ~ ~] ~ ~]
+    :-  [%point ~bud %owner 0x123]~
+    [[[~bud %*(. *point:naive dominion %l1, owner.own 0x123^0)] ~ ~] ~ ~]
   ::
     !>
     %^  naive  verifier  *^state:naive

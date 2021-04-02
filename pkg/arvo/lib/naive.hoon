@@ -35,7 +35,6 @@
 ::  TODO: polymorphic addresses to save tx space?
 ::
 /+  std
-!.
 =>  =>  std
 ::  Constants
 ::
@@ -127,12 +126,13 @@
 |%
 ::  ethereum address, 20 bytes.
 ::
-+$  nonce    @ud
-+$  address  @ux
++$  nonce     @ud
++$  address   @ux
++$  dominion  ?(%l1 %l2 %spawn)
 ++  point
   $:  ::  domain
       ::
-      dominion=?(%l1 %l2 %spawn)
+      =dominion
     ::
       ::  ownership
       ::
@@ -158,11 +158,21 @@
 ::  TODO: add effects for all changes
 ::
 ++  diff
-  $:  =ship
-      $%  [%rift =rift]
-          [%keys =life crypto-suite=@ud =pass]
-          [%spon sponsor=(unit @p)]
-  ==  ==
+  $%  [%nonce =ship =proxy =nonce]
+      [%operator owner=address operator=address approved=?]
+      [%dns domains=(list @t)]
+      $:  %point  =ship
+          $%  [%rift =rift]
+              [%keys =life crypto-suite=@ud =pass]
+              [%sponsor sponsor=(unit @p)]
+              [%escape to=(unit @p)]
+              [%owner =address]
+              [%spawn-proxy =address]
+              [%management-proxy =address]
+              [%voting-proxy =address]
+              [%transfer-proxy =address]
+              [%dominion =dominion]
+  ==  ==  ==
 ::
 +$  state
   $:  =points
@@ -400,6 +410,8 @@
     %4  (end 4 who)
   ==
 ::
+::  TODO: encode sut
+::
 ++  pass-from-eth
   |=  [enc=octs aut=octs sut=@ud]
   ^-  pass
@@ -445,14 +457,17 @@
     =*  one  &5.words
     =*  two  &3.words
     =*  tri  &1.words
-    `state(dns (turn ~[one two tri] |=(a=@ (swp 3 a))))
+    =/  domains  (turn ~[one two tri] |=(a=@ (swp 3 a)))
+    :-  [%dns domains]~
+    state(dns domains)
   ::
   ?:  =(log-name approval-for-all:log-names)
     ?>  ?=([@ @ ~] t.topics.log)
     =*  owner     i.t.topics.log
     =*  operator  i.t.t.topics.log
     =/  approved  !=(0 data.log)
-    =-  `state(operators -)
+    :-  [%operator owner operator approved]~
+    =-  state(operators -)
     ?:  approved
       (~(put ju operators.state) owner operator)
     (~(del ju operators.state) owner operator)
@@ -460,8 +475,6 @@
   ::  The rest of the logs modify a particular ship, specified in the
   ::  second topic.  We fetch it, and insert the modification back into
   ::  our state.
-  ::
-  ::  TODO: cast in =* instead of after
   ::
   ?>  ?=([@ *] t.topics.log)
   =*  ship=@  i.t.topics.log
@@ -478,9 +491,10 @@
     ::  Depositing to L2 is represented by a spawn proxy change on L1,
     ::  but it doesn't change the actual spawn proxy.
     ::
-    :-  ~
     ?:  =(deposit-address to)
+      :-  [%point ship %dominion %spawn]~
       point(dominion %spawn)
+    :-  [%point ship %spawn-proxy to]~
     point(address.spawn-proxy.own to)
   ::
   ::  The rest can be done by any ship on L1, even if their spawn proxy
@@ -491,7 +505,7 @@
   ?:  =(log-name broke-continuity:log-names)
     ?>  ?=(~ t.t.topics.log)
     =*  rift=@  data.log
-    :-  [ship %rift rift]~
+    :-  [%point ship %rift rift]~
     point(rift.net rift)
   ::
   ?:  =(log-name changed-keys:log-names)
@@ -503,33 +517,32 @@
     =*  crypto-suite=@    i.t.t.words  ::  TODO: store in state, or add to pass
     =*  life=@            i.t.t.t.words
     =/  =pass  (pass-from-eth 32^encryption 32^authentication crypto-suite)
-    :-  [ship %keys life crypto-suite pass]~
+    :-  [%point ship %keys life crypto-suite pass]~
     point(life.net life, pass.net pass)
   ::
   ?:  =(log-name escape-accepted:log-names)
     ?>  ?=([@ ~] t.t.topics.log)
     =*  parent=@  i.t.t.topics.log
-    :-  [ship %spon `parent]~
+    :-  [%point ship %sponsor `parent]~
     point(escape.net ~, sponsor.net [%& parent])
   ::
   ?:  =(log-name lost-sponsor:log-names)
     ?>  ?=([@ ~] t.t.topics.log)
     =*  parent  i.t.t.topics.log
-    :-  [ship %spon ~]~
+    :-  [%point ship %sponsor ~]~
     point(has.sponsor.net %|)
   ::
-  ::  The rest do not produce effects
-  ::
-  :-  ~
   ::
   ?:  =(log-name escape-requested:log-names)
     ?>  ?=([@ ~] t.t.topics.log)
     =*  parent=@  i.t.t.topics.log
+    :-  [%point ship %escape `parent]~
     point(escape.net `parent)
   ::
   ?:  =(log-name escape-canceled:log-names)
     ?>  ?=([@ ~] t.t.topics.log)
     =*  parent  i.t.t.topics.log
+    :-  [%point ship %escape ~]~
     point(escape.net ~)
   ::
   ?:  =(log-name owner-changed:log-names)
@@ -539,26 +552,31 @@
     ::  but it doesn't change who actually owns the ship.
     ::
     ?:  =(deposit-address to)
+      :-  [%point ship %dominion %l2]~
       point(dominion %l2)
+    :-  [%point ship %owner to]~
     point(address.owner.own to)
   ::
   ?:  =(log-name changed-transfer-proxy:log-names)
     ?>  ?=([@ ~] t.t.topics.log)
     =*  to  i.t.t.topics.log
+    :-  [%point ship %transfer-proxy to]~
     point(address.transfer-proxy.own to)
   ::
   ?:  =(log-name changed-management-proxy:log-names)
     ?>  ?=([@ ~] t.t.topics.log)
     =*  to  i.t.t.topics.log
+    :-  [%point ship %management-proxy to]~
     point(address.management-proxy.own to)
   ::
   ?:  =(log-name changed-voting-proxy:log-names)
     ?>  ?=([@ ~] t.t.topics.log)
     =*  to  i.t.t.topics.log
+    :-  [%point ship %voting-proxy to]~
     point(address.voting-proxy.own to)
   ::
   ~>  %slog.[0 %unknown-log]
-  point  ::  TODO: crash?
+  `point
 ::
 ::  Receive batch of L2 transactions
 ::
@@ -570,32 +588,47 @@
     [~ state]
   ::  Increment nonce, even if it later fails
   ::
-  =.  points.state  (increment-nonce state from.i.txs)
+  =^  effects-1  points.state  (increment-nonce state from.i.txs)
   ::  Process tx
   ::
-  =^  effects-1  state
+  =^  effects-2  state
     =/  tx-result=(unit [effects ^state])  (receive-tx state i.txs)
     ?~  tx-result
       `state
     u.tx-result
-  =^  effects-2  state  $(txs t.txs)
-  [(welp effects-1 effects-2) state]
+  =^  effects-3  state  $(txs t.txs)
+  [:(welp effects-1 effects-2 effects-3) state]
 ::
 ++  increment-nonce
   |=  [=state =ship =proxy]
-  %+  ~(put by points.state)  ship
   =/  point  (get-point state ship)
   ?>  ?=(^ point)  ::  we only parsed 4 bytes
-  ?-    proxy
-      %own    u.point(nonce.owner.own +(nonce.owner.own.u.point))
-      %spawn  u.point(nonce.spawn-proxy.own +(nonce.spawn-proxy.own.u.point))
-      %manage
-    u.point(nonce.management-proxy.own +(nonce.management-proxy.own.u.point))
+  =*  own  own.u.point
+  =^  nonce  u.point
+    ?-    proxy
+        %own
+      :-  nonce.owner.own
+      u.point(nonce.owner.own +(nonce.owner.own))
+    ::
+        %spawn
+      :-  nonce.spawn-proxy.own
+      u.point(nonce.spawn-proxy.own +(nonce.spawn-proxy.own))
+    ::
+        %manage
+      :-  nonce.management-proxy.own
+      u.point(nonce.management-proxy.own +(nonce.management-proxy.own))
+    ::
+        %vote
+      :-  nonce.voting-proxy.own
+      u.point(nonce.voting-proxy.own +(nonce.voting-proxy.own))
+    ::
+        %transfer
+      :-  nonce.transfer-proxy.own
+      u.point(nonce.transfer-proxy.own +(nonce.transfer-proxy.own))
+    ==
   ::
-      %vote   u.point(nonce.voting-proxy.own +(nonce.voting-proxy.own.u.point))
-      %transfer
-    u.point(nonce.transfer-proxy.own +(nonce.transfer-proxy.own.u.point))
-  ==
+  :-  [%nonce ship proxy nonce]~
+  (~(put by points.state) ship u.point)
 ::
 ::  Receive an individual L2 transaction
 ::
@@ -606,19 +639,19 @@
   ?-  +<.tx
     %spawn                  (process-spawn +>.tx)
     %transfer-point         (w-point process-transfer-point +>.tx)
-    %configure-keys         (w-point-fx process-configure-keys +>.tx)
+    %configure-keys         (w-point process-configure-keys +>.tx)
     %escape                 (w-point process-escape +>.tx)
     %cancel-escape          (w-point process-cancel-escape +>.tx)
-    %adopt                  (w-point-fx process-adopt +>.tx)
+    %adopt                  (w-point process-adopt +>.tx)
     %reject                 (w-point process-reject +>.tx)
-    %detach                 (w-point-fx process-detach +>.tx)
+    %detach                 (w-point process-detach +>.tx)
     %set-management-proxy   (w-point process-set-management-proxy +>.tx)
     %set-spawn-proxy        (w-point process-set-spawn-proxy +>.tx)
     %set-voting-proxy       (w-point process-set-voting-proxy +>.tx)
     %set-transfer-proxy     (w-point process-set-transfer-proxy +>.tx)
   ==
   ::
-  ++  w-point-fx
+  ++  w-point
     |*  [fun=$-([ship point *] (unit [effects point])) =ship rest=*]
     ^-  (unit [effects ^state])
     =/  point  (get-point state ship)
@@ -628,17 +661,6 @@
     ?~  res
       ~
     `[effects.u.res state(points (~(put by points.state) ship new-point.u.res))]
-  ::
-  ++  w-point
-    |*  [fun=$-([ship point *] (unit point)) =ship rest=*]
-    ^-  (unit [effects ^state])
-    =/  point  (get-point state ship)
-    ?~  point  ~
-    ?>  ?=(%l2 -.u.point)
-    =/  new-point=(unit ^point)  (fun ship u.point rest)
-    ?~  new-point
-      ~
-    ``state(points (~(put by points.state) ship u.new-point))
   ::
   ++  process-transfer-point
     |=  [=ship =point to=address reset=?]
@@ -650,22 +672,35 @@
       ~
     ::  Execute transfer
     ::
+    =/  effects-1
+      ~[[%point ship %owner to] [%point ship %transfer-proxy *address]]
     =:  address.owner.own.point           to
         address.transfer-proxy.own.point  *address
       ==
     ::  Execute reset if requested
     ::
     ?.  reset
-      `point
+      `[effects-1 point]
     ::
-    =?  net.point  (gth life.net.point 0)
+    =^  effects-2  net.point
+      ?:  =(0 life.net.point)
+        `net.point
+      :-  :~  [%point ship %rift +(rift.net.point)]
+              [%point ship %keys +(life.net.point) 0 0]  ::  TODO: 0?
+          ==
       [+(life) 0 +(rift) sponsor escape]:net.point
+    =/  effects-3
+      :~  [%point ship %spawn-proxy *address]
+          [%point ship %management-proxy *address]
+          [%point ship %voting-proxy *address]
+          [%point ship %transfer-proxy *address]
+      ==
     =:  address.spawn-proxy.own.point       *address 
         address.management-proxy.own.point  *address 
         address.voting-proxy.own.point      *address 
         address.transfer-proxy.own.point    *address 
       ==
-    `point
+    `[:(welp effects-1 effects-2 effects-3) point]
   ::
   ++  process-spawn
     |=  [=ship to=address]
@@ -692,8 +727,7 @@
     ?.  =(+((ship-rank parent)) (ship-rank ship))  ~
     ::  TODO check spawnlimit
     ::
-    =.  points.state
-      %+  ~(put by points.state)  ship
+    =/  [=effects new-point=point]
       ::  If spawning to self, just do it
       ::
       ?:  ?|  ?&  =(%own proxy.from.tx)
@@ -703,18 +737,23 @@
                   =(to address.spawn-proxy.own.u.parent-point)
               ==
           ==
+        :-  ~[[%point ship %dominion %l2] [%point ship %owner to]]
         %*  .  *point
           dominion           %l2
           address.owner.own  to
         ==
       ::  Else spawn to parent and set transfer proxy
       ::
+      :-  :~  [%point ship %dominion %l2]
+              [%point ship %owner address.owner.own.u.parent-point]
+              [%point ship %transfer-proxy to]
+          ==
       %*  .  *point
         dominion                    %l2
         address.owner.own           address.owner.own.u.parent-point
         address.transfer-proxy.own  to
       ==
-    ``state
+    `[effects state(points (~(put by points.state) ship new-point))]
   ::
   ++  process-configure-keys
     |=  [=ship =point encrypt=@ auth=@ crypto-suite=@ breach=?]
@@ -727,7 +766,7 @@
     =^  rift-effects  rift.net.point
       ?.  breach
         `rift.net.point
-      [[ship %rift +(rift.net.point)]~ +(rift.net.point)]
+      [[%point ship %rift +(rift.net.point)]~ +(rift.net.point)]
     ::
     =/  =pass  (pass-from-eth 32^encrypt 32^auth crypto-suite)
     =?  net.point  !=(pass.net.point pass)  ::  TODO: check crypto-suite
@@ -735,7 +774,7 @@
     =/  keys-effects
       ?:  =(pass.net.point pass)  ::  TODO: check will always be true
         ~
-      [ship %keys life.net.point crypto-suite pass]~
+      [%point ship %keys life.net.point crypto-suite pass]~
     ::
     `[(welp rift-effects keys-effects) point]
   ::
@@ -749,7 +788,8 @@
     ::
     ?.  =(+((ship-rank parent)) (ship-rank ship))  ~
     ::
-    `point(escape.net `parent)  ::  TODO: omitting a lot of source material?
+    :+  ~  [%point ship %escape `parent]~
+    point(escape.net `parent)  ::  TODO: omitting a lot of source material?
   ::
   ++  process-cancel-escape
     |=  [=ship =point parent=ship]
@@ -758,7 +798,8 @@
         ==
       ~
     ::
-    `point(escape.net ~)
+    :+  ~  [%point ship %escape ~]~
+    point(escape.net ~)
   ::
   ++  process-adopt
     |=  [=ship =point parent=ship]
@@ -770,7 +811,7 @@
       ~
     ::
     ?.  =(escape.net.point `ship)  ~
-    :+  ~  [ship %spon `parent]~
+    :+  ~  [%point ship %sponsor `parent]~
     point(escape.net ~, sponsor.net [%& parent])
   ::
   ++  process-reject
@@ -780,7 +821,8 @@
         ==
       ~
     ::
-    `point(escape.net ~)
+    :+  ~  [%point ship %escape ~]~
+    point(escape.net ~)
   ::
   ++  process-detach
     |=  [=ship =point parent=ship]
@@ -789,7 +831,7 @@
         ==
       ~
     ::
-    :+  ~  [ship %spon ~]~
+    :+  ~  [%point ship %sponsor ~]~
     point(has.sponsor.net %|)
   ::
   ++  process-set-management-proxy
@@ -799,7 +841,8 @@
         ==
       ~
     ::
-    `point(address.management-proxy.own address)
+    :+  ~  [%point ship %management-proxy address]~
+    point(address.management-proxy.own address)
   ::
   ++  process-set-spawn-proxy
     |=  [=ship =point =address]
@@ -808,7 +851,8 @@
         ==
       ~
     ::
-    `point(address.spawn-proxy.own address)
+    :+  ~  [%point ship %spawn-proxy address]~
+    point(address.spawn-proxy.own address)
   ::
   ++  process-set-voting-proxy
     |=  [=ship =point =address]
@@ -817,7 +861,8 @@
         ==
       ~
     ::
-    `point(address.voting-proxy.own address)
+    :+  ~  [%point ship %voting-proxy address]~
+    point(address.voting-proxy.own address)
   ::
   ++  process-set-transfer-proxy
     |=  [=ship =point =address]
@@ -826,7 +871,8 @@
         ==
       ~
     ::
-    `point(address.transfer-proxy.own address)
+    :+  ~  [%point ship %transfer-proxy address]~
+    point(address.transfer-proxy.own address)
   --
 --
 ::
