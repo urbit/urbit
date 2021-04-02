@@ -164,6 +164,8 @@
     %-  perk
     :~  %reader-comments
         %member-metadata
+        %admin-feed
+        %host-feed
         %$
     ==
   ::

@@ -114,10 +114,10 @@ class PostItem extends React.Component {
             association={association}
             showTimestamp={isRelativeTime}
             isReply={isReply} />
-          { isReply ? (
+          { (isReply || (parentPost && index.length > 1 && isParent)) ? (
             <Row width="100%" alignItems="center" mb="2" pl="2" pr="2">
               <Text color="gray" pr="1">Replying to</Text>
-              <Mention ship={parentPost.author} />
+              <Mention ship={parentPost?.author} />
             </Row>
           ) : null }
           <PostContent

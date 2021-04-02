@@ -7,16 +7,22 @@ import tokenizeMessage from '~/logic/lib/tokenizeMessage';
 import { useToggleState } from '~/logic/lib/useToggleState';
 import { createPost } from '~/logic/api/graph';
 import useStorage from '~/logic/lib/useStorage';
-import { resourceFromPath, isWriter } from '~/logic/lib/group';
+import { resourceFromPath, isWriter, isChannelAdmin, isHost } from '~/logic/lib/group';
 
 function canWrite(props) {
   const { group, association, vip, index } = props;
   if (vip === '') {
     return true;
   }
-
-  if (!!index) {
+  if(index) {
     return true;
+  }
+
+  if(vip === 'admin-feed') {
+    return isChannelAdmin(group, association.group);
+  }
+  if(vip === 'host-feed') {
+    return isHost(association.group);
   }
   
   return isWriter(group, association.resource);

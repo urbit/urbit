@@ -23,6 +23,7 @@ export class PostFeed extends React.Component {
         history,
         baseUrl,
         parentNode,
+        grandparentNode,
         association,
         group,
         vip
@@ -52,7 +53,9 @@ export class PostFeed extends React.Component {
               <PostItem
                 key={parentNode.post.index}
                 ref={ref}
+                parentPost={grandparentNode?.post}
                 node={parentNode}
+                parentNode={grandparentNode}
                 graphPath={graphPath}
                 association={association}
                 api={api}

@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Col, Row, Text, BaseLabel, Label } from "@tlon/indigo-react";
-import { Association, resourceFromPath, Group } from "@urbit/api";
+import { Association, resourceFromPath, Group, PermVariation } from "@urbit/api";
 import GlobalApi from "~/logic/api/global";
 import { Formik, Form, FormikHelpers } from "formik";
 import {
@@ -9,12 +9,13 @@ import {
 } from "../Home/Post/GroupFeedPerms";
 import { FormSubmit } from "~/views/components/FormSubmit";
 import { StatelessAsyncToggle } from "~/views/components/StatelessAsyncToggle";
+import useMetadataState from "~/logic/state/metadata";
 
 import useMetadataState from '~/logic/state/metadata';
 
 
 interface FormSchema {
-  permissions: GroupFeedPermissions;
+  permissions: PermVariation;
 }
 
 export function GroupFeedSettings(props: {
@@ -25,45 +26,30 @@ export function GroupFeedSettings(props: {
   const { association, group, api } = props;
   const resource = resourceFromPath(association.group);
   const feedResource = association?.metadata.config?.group?.resource;
+  const feedAssoc = useMetadataState(s => s.associations.graph[feedResource]);
   const isEnabled = !!feedResource;
 
   const associations = useMetadataState(state => state.associations);
   const feedMetadata = associations?.graph[feedResource];
-  const vip = feedMetadata?.vip || '';
 
+  const vip = feedAssoc?.metadata?.vip || " "; 
   const toggleFeed = async (actions: any) => {
     if (isEnabled) {
       await api.graph.disableGroupFeed(resource);
     } else {
-      await api.graph.enableGroupFeed(resource, vip);
+      await api.graph.enableGroupFeed(resource, vip.trim());
     }
   };
-  const writers: Set<string> | undefined =
-    group.tags.graph?.[feedResource]?.writers;
   const initialValues: FormSchema = {
-    permissions: vip === '' && !writers ? 'everyone' :
-      writers.size === 1 && writers.has(window.ship)
-      ? "host"
-      : "admins",
+    permissions: vip
   };
+
   const onSubmit = async (
     values: FormSchema,
     actions: FormikHelpers<FormSchema>
   ) => {
-    const tag = {
-      app: "graph",
-      resource: association.metadata.config?.group.resource,
-      tag: "writers",
-    };
+    await api.metadata.update(feedAssoc, { vip: values.permissions.trim() });
 
-    if (values.permissions === "admins") {
-      const admins =
-        Array.from(group.tags?.role?.admin).map((s) => `~${s}`) ?? [];
-
-      await api.groups.addTag(resource, tag, admins);
-    } else if (values.permissions === "host") {
-      await api.groups.addTag(resource, tag, [`~${window.ship}`]);
-    }
     actions.setStatus({ success: null });
   };
   return (
