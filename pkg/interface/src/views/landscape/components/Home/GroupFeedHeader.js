@@ -52,9 +52,7 @@ export function GroupFeedHeader(props) {
       borderBottom={1}
       borderColor="lightGray">
       <Box display='block'>
-        { ( baseUrl !== historyLocation &&
-            `${baseUrl}/feed` !== historyLocation
-          ) ? (
+        { ( baseUrl !== historyLocation ) ? (
             <Text pl="1" pr="1" cursor="pointer" onClick={() => {
               let loc = locationUrl.split('/');
               loc.pop();
