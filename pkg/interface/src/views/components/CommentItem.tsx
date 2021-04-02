@@ -54,7 +54,7 @@ export function CommentItem(props: CommentItemProps): ReactElement {
   if (window.ship == post?.author && !disabled) {
     adminLinks.push(
       <Link to={{ pathname: props.baseUrl, search: `?edit=${commentIndex}`}}>
-        <Action>
+        <Action bg="white">
           Update
         </Action>
       </Link>
@@ -63,7 +63,7 @@ export function CommentItem(props: CommentItemProps): ReactElement {
 
   if ((window.ship == post?.author || ourRole == "admin") && !disabled) {
     adminLinks.push(
-      <Action onClick={onDelete} destructive>
+      <Action bg="white" onClick={onDelete} destructive>
         Delete
       </Action>
     )
