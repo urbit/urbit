@@ -2,7 +2,7 @@ import React, { ReactElement, ReactNode, useState } from 'react';
 import moment from 'moment';
 import { useHistory } from 'react-router-dom';
 
-import { Row, Box, BaseImage } from '@tlon/indigo-react';
+import { Col, Row, Box, BaseImage } from '@tlon/indigo-react';
 import { Contacts } from '@urbit/api/contacts';
 import { Group } from '@urbit/api';
 
@@ -13,6 +13,8 @@ import OverlaySigil from './OverlaySigil';
 import { Sigil } from '~/logic/lib/sigil';
 import Timestamp from './Timestamp';
 import useContactState from '~/logic/state/contact';
+import ProfileOverlay from './ProfileOverlay';
+import {PropFunc} from '~/types';
 
 interface AuthorProps {
   ship: string;
@@ -20,12 +22,29 @@ interface AuthorProps {
   showImage?: boolean;
   children?: ReactNode;
   unread?: boolean;
-  group: Group;
+  api?: GlobalApi;
+  size?: number;
 }
 
 // eslint-disable-next-line max-lines-per-function
-export default function Author(props: AuthorProps): ReactElement {
-  const { ship = '', date, showImage, group } = props;
+export default function Author(props: AuthorProps & PropFunc<typeof Box>): ReactElement {
+  const {
+    ship = '',
+    date,
+    showImage,
+    fullNotIcon,
+    children,
+    unread,
+    group,
+    isRelativeTime,
+    dontShowTime,
+    ...rest
+  } = props;
+
+  const time = props.time || false;
+  const size = props.size || 16;
+  const sigilPadding = props.sigilPadding || 2;
+
   const history = useHistory();
   const osDark = useLocalState((state) => state.dark);
 
@@ -40,7 +59,7 @@ export default function Author(props: AuthorProps): ReactElement {
   const color = contact?.color ? `#${uxToHex(contact?.color)}` : dark ? '#000000' : '#FFFFFF';
   const showNickname = useShowNickname(contact);
   const { hideAvatars } = useSettingsState(selectCalmState);
-  const name = showNickname ? contact.nickname : cite(ship);
+  const name = showNickname && contact ? contact.nickname : cite(ship);
   const stamp = moment(date);
 
   const [showOverlay, setShowOverlay] = useState(false);
@@ -49,6 +68,12 @@ export default function Author(props: AuthorProps): ReactElement {
     setShowOverlay(value => !value);
   };
 
+  const sigil = fullNotIcon ? (
+    <Sigil ship={ship} size={size} color={color} padding={sigilPadding} />
+  ) : (
+    <Sigil ship={ship} size={size} color={color} icon padding={sigilPadding} />
+  );
+
   const img =
     contact?.avatar && !hideAvatars ? (
       <BaseImage
@@ -56,33 +81,27 @@ export default function Author(props: AuthorProps): ReactElement {
         display='inline-block'
         src={contact.avatar}
         style={{ objectFit: 'cover' }}
-        height={16}
-        width={16}
+        height={size}
+        width={size}
         borderRadius={1}
       />
-    ) : (
-      <Sigil ship={ship} size={16} color={color} icon padding={2} />
-    );
+    ) : sigil;
 
   return (
-    <Row alignItems='center' width='auto'>
+    <Row height="20px" {...rest} alignItems='center' width='auto'>
       <Box
-        onClick={() => toggleOverlay()}
-        height={16}
+        onClick={(e) => {
+          e.stopPropagation();
+          toggleOverlay();
+        }}
+        height={size}
         position='relative'
         cursor='pointer'
       >
-        {showImage && img}
-        {showOverlay && (
-          <OverlaySigil
-            ship={ship}
-            contact={contact}
-            color={`#${uxToHex(contact?.color ?? '0x0')}`}
-            group={group}
-            onDismiss={() => toggleOverlay()}
-            history={history}
-            className='relative'
-          />
+        {showImage && (
+          <ProfileOverlay ship={ship} api={props.api} >
+            {img}
+          </ProfileOverlay>
         )}
       </Box>
       <Box
@@ -95,8 +114,16 @@ export default function Author(props: AuthorProps): ReactElement {
       >
         {name}
       </Box>
-      <Timestamp stamp={stamp} fontSize={1} time={false} ml={2} color={props.unread ? 'blue' : 'gray'} />
-      {props.children}
+      { !dontShowTime && (
+        <Timestamp
+          relative={isRelativeTime}
+          stamp={stamp}
+          fontSize={1}
+          time={time}
+          ml={2}
+          color={unread ? 'blue' : 'gray'} />
+      )}
+      {children}
     </Row>
   );
 }

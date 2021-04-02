@@ -20,8 +20,9 @@ export default class MetadataApi extends BaseApi<StoreState> {
           color,
           'date-created': dateCreated,
           creator,
-          'module': moduleName,
+          config: { graph: moduleName },
           picture: '',
+          hidden: false,
           preview: false,
           vip: ''
         }
@@ -102,6 +103,6 @@ export default class MetadataApi extends BaseApi<StoreState> {
   }
 
   private metadataAction(data) {
-    return this.action('metadata-push-hook', 'metadata-update-0', data);
+    return this.action('metadata-push-hook', 'metadata-update-1', data);
   }
 }

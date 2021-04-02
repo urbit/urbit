@@ -169,7 +169,7 @@
       ::
           %fact
         ?+  p.cage.sign  ~|([dap.bowl %bad-sub-mark wire p.cage.sign] !!)
-            %graph-update-0
+            %graph-update-1
           %-  on-graph-update:tc
           !<(update:graph q.cage.sign)
         ==
@@ -758,9 +758,9 @@
       ::TODO  move creation into lib?
       %^  act  %out-message
         %graph-push-hook
-      :-  %graph-update-0
+      :-  %graph-update-1
       !>  ^-  update:graph
-      :+  %0  now.bowl
+      :-  now.bowl
       :+  %add-nodes  audience
       %-  ~(put by *(map index:post node:graph))
       :-  ~[now.bowl]
@@ -1185,7 +1185,15 @@
     ?-  -.content
       %text       txt+(trip text.content)
       %url        url+url.content
-      %reference  txt+"[reference to msg in {~(phat tr resource.uid.content)}]"
+    ::
+        %reference
+      ?-  -.reference.content
+          %graph
+        txt+"[reference to msg in {~(phat tr resource.uid.reference.content)}]"
+        ::
+          %group
+        txt+"[reference to msg in {~(phat tr group.reference.content)}]"
+      ==
     ::
         %mention
       ?.  =(ship.content our-self)  txt+(scow %p ship.content)

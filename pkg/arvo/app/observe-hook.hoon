@@ -12,6 +12,8 @@
   $%  [%0 observers=(map serial observer:sur)]
       [%1 observers=(map serial observer:sur)]
       [%2 observers=(map serial observer:sur)]
+      [%3 observers=(map serial observer:sur)]
+      [%4 observers=(map serial observer:sur)]
   ==
 ::
 +$  serial   @uv
@@ -25,7 +27,7 @@
 --
 ::
 %-  agent:dbug
-=|  [%2 observers=(map serial observer:sur)]
+=|  [%4 observers=(map serial observer:sur)]
 =*  state  -
 ::
 ^-  agent:gall
@@ -39,6 +41,7 @@
   :~  (act [%watch %invite-store /invitatory/graph %invite-accepted-graph])
       (act [%watch %group-store /groups %group-on-leave])
       (act [%watch %group-store /groups %group-on-remove-member])
+      (act [%watch %metadata-store /updates %md-on-add-group-feed])
   ==
   ::
   ++  act
@@ -50,8 +53,7 @@
         [our.bowl %observe-hook]
         %poke
         %observe-action
-        !>  ^-  action:sur
-        action
+        !>(action)
     ==
   --
 ::
@@ -63,20 +65,31 @@
   =/  old-state  !<(versioned-state old-vase)
   =|  cards=(list card)
   |-
-  ?:  ?=(%2 -.old-state)
-    =.  cards
-      :_  cards
-      (act [%watch %group-store /groups %group-on-leave])
+  ?-  -.old-state
+      %4
     [cards this(state old-state)]
-  ?:  ?=(%1 -.old-state)
+  ::
+      %3
+    =.  cards
+      :_  cards
+      (act [%watch %metadata-store /updates %md-on-add-group-feed])
+    $(-.old-state %4)
+  ::
+      %2
     =.  cards
       :_  cards
       (act [%watch %group-store /groups %group-on-leave])
+    $(-.old-state %3)
+  ::
+      %1
     $(-.old-state %2)
-  =.  cards
-    :_  cards
-    (act [%watch %group-store /groups %group-on-remove-member])
-  $(-.old-state %1)
+  ::
+      %0
+    =.  cards
+      :_  cards
+      (act [%watch %group-store /groups %group-on-remove-member])
+    $(-.old-state %1)
+  ==
   ::
   ++  act
     |=  =action:sur
@@ -87,8 +100,7 @@
         [our.bowl %observe-hook]
         %poke
         %observe-action
-        !>  ^-  action:sur
-        action
+        !>(action)
     ==
   --
 ::

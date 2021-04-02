@@ -15,8 +15,21 @@ export interface CodeContent {
 }
 
 export interface ReferenceContent {
-  uid: string;
+  reference: GraphReference | GroupReference;
 }
+
+export interface GraphReference {
+  graph: {
+    graph: string;
+    group: string;
+    index: string;
+  }
+}
+
+export interface GroupReference {
+  group: string;
+}
+
 export interface MentionContent {
   mention: string;
 }

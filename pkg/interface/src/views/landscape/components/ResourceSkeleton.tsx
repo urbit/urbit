@@ -30,7 +30,7 @@ type ResourceSkeletonProps = {
 
 export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
   const { association, baseUrl, children } = props;
-  const app = association?.metadata?.module || association['app-name'];
+  const app = association?.metadata?.config?.graph || association['app-name'];
   const rid = association.resource;
   const groups = useGroupState(state => state.groups);
   const group = groups[association.group];
@@ -90,7 +90,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
     <Text
       mono={urbitOb.isValidPatp(title)}
       fontSize='2'
-      fontWeight='700'
+      fontWeight='600'
       textOverflow='ellipsis'
       overflow='hidden'
       whiteSpace='nowrap'
@@ -141,7 +141,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
   if (actRef) {
     actionsWidth = actRef.clientWidth;
   }
-  
+
   return (
     <Col width='100%' height='100%' overflow='hidden'>
       <Box
@@ -150,7 +150,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
         py='2'
         px='2'
         borderBottom={1}
-        borderBottomColor='washedGray'
+        borderBottomColor='lightGray'
         display='flex'
         justifyContent='space-between'
         alignItems='center'

@@ -79,7 +79,7 @@ export function ViewProfile(props: any): ReactElement {
           borderRadius={1}
           bg='white'
           border={1}
-          borderColor='washedGray'
+          borderColor='lightGray'
         >
           <Center height='100%'>
             <Text mono pr={1} color='gray'>

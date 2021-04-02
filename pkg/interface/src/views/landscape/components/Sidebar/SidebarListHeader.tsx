@@ -23,6 +23,7 @@ import GlobalApi from '~/logic/api/global';
 import { Workspace } from '~/types/workspace';
 import useGroupState from '~/logic/state/group';
 import useMetadataState from '~/logic/state/metadata';
+import {IS_SAFARI} from '~/logic/lib/platform';
 
 export function SidebarListHeader(props: {
   api: GlobalApi;
@@ -44,14 +45,54 @@ export function SidebarListHeader(props: {
   const groupPath = getGroupFromWorkspace(props.workspace);
   const role = groupPath && groups?.[groupPath] ? roleForShip(groups[groupPath], window.ship) : undefined;
   const associations = useMetadataState(state => state.associations);
+
+  const metadata = associations?.groups?.[groupPath]?.metadata;
   const memberMetadata =
-    groupPath ? associations.groups?.[groupPath].metadata.vip === 'member-metadata' : false;
+    groupPath ? metadata.vip === 'member-metadata' : false;
 
   const isAdmin = memberMetadata || (role === 'admin') || (props.workspace?.type === 'home') || (props.workspace?.type === 'messages');
 
   const noun = (props.workspace?.type === 'messages') ? 'Messages' : 'Channels';
 
+  const isFeedEnabled =
+    metadata &&
+    metadata.config &&
+    metadata.config.group &&
+    'resource' in metadata.config.group;
+
   return (
+    <Box>
+    {( isFeedEnabled ) ? (
+       <Row
+         flexShrink="0"
+         alignItems="center"
+         justifyContent="space-between"
+         py={2}
+         px={3}
+         height='48px'
+         borderBottom={1}
+         borderColor="lightGray"
+         backgroundColor={['transparent',
+           props.history.location.pathname.includes(`/~landscape${groupPath}/feed`) 
+           ? (
+            'washedGray'
+           ) : (
+            'transparent'
+           )]}
+           cursor={['pointer', (
+             props.history.location.pathname === `/~landscape${groupPath}/feed`
+             ? 'default' : 'pointer'
+           )]}
+         onClick={() => {
+           props.history.push(`/~landscape${groupPath}/feed`);
+         }}
+       >
+         <Text>
+           Group Feed
+         </Text>
+       </Row>
+     ) : null
+    }
     <Row
       flexShrink="0"
       alignItems="center"
@@ -141,5 +182,6 @@ export function SidebarListHeader(props: {
       </Dropdown>
       </Box>
     </Row>
+    </Box>
   );
 }

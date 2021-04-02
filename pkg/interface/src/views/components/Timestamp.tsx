@@ -11,10 +11,20 @@ export type TimestampProps = BoxProps & {
   stamp: MomentType;
   date?: boolean;
   time?: boolean;
+  relative?: boolean;
 };
 
 const Timestamp = (props: TimestampProps): ReactElement | null => {
-  const { stamp, date, time, color, fontSize, ...rest } = {
+  const {
+    stamp,
+    date,
+    time,
+    color,
+    relative,
+    dateNotRelative,
+    fontSize,
+    ...rest
+  } = {
     time: true,
     color: 'gray',
     fontSize: 0,
@@ -24,14 +34,24 @@ const Timestamp = (props: TimestampProps): ReactElement | null => {
   const { hovering, bind } =
     date === true ? { hovering: true, bind: {} } : useHovering();
   let datestamp = stamp.format(DateFormat);
-  if (stamp.format(DateFormat) === moment().format(DateFormat)) {
-    datestamp = 'Today';
-  } else if (
-    stamp.format(DateFormat) === moment().subtract(1, 'day').format(DateFormat)
-  ) {
-    datestamp = 'Yesterday';
+  if (!dateNotRelative) {
+    if (stamp.format(DateFormat) === moment().format(DateFormat)) {
+      datestamp = 'Today';
+    } else if (
+      stamp.format(DateFormat) === moment().subtract(1, 'day').format(DateFormat)
+    ) {
+      datestamp = 'Yesterday';
+    }
+  } else {
+    datestamp = `~${datestamp}`;
   }
-  const timestamp = stamp.format(TimeFormat);
+
+  let timestamp;
+  if (relative) {
+    timestamp = stamp.fromNow();
+  } else {
+    timestamp = stamp.format(TimeFormat);
+  }
   return (
     <Box
       {...bind}
@@ -46,7 +66,7 @@ const Timestamp = (props: TimestampProps): ReactElement | null => {
           {timestamp}
         </Text>
       )}
-      {date !== false && (
+      {date !== false && relative !== true && (
         <Text
           flexShrink={0}
           color={color}

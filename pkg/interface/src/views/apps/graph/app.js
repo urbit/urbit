@@ -4,10 +4,12 @@ import { Center, Text } from "@tlon/indigo-react";
 import { deSig } from '~/logic/lib/util';
 import useGraphState from '~/logic/state/graph';
 import useMetadataState from '~/logic/state/metadata';
+import useGroupState from '~/logic/state/group';
 
 const GraphApp = (props) => {
   const associations= useMetadataState(state => state.associations);
   const graphKeys = useGraphState(state => state.graphKeys);
+  const groups = useGroupState(state => state.groups);
   const history = useHistory();
 
   const { api } = props;
@@ -38,8 +40,8 @@ const GraphApp = (props) => {
 
           if(!graphKeys.has(resource)) {
             autoJoin();
-          } else if(!!association) {
-            history.push(`/~landscape/home/resource/${association.metadata.module}${path}`);
+          } else if(!!association && 'graph' in association.config) {
+            history.push(`/~landscape/home/resource/${association.metadata.config.graph}${path}`);
           }
           return (
             <Center width="100%" height="100%">
