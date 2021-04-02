@@ -1459,7 +1459,7 @@ _http_serv_start(u3_http* htp_u)
                           INADDR_ANY;
 
   if ( 0 != u3_Host.ops_u.bin_c && c3n == htp_u->lop ) {
-    inet_aton(u3_Host.ops_u.bin_c, &adr_u.sin_addr);
+    inet_pton(AF_INET, u3_Host.ops_u.bin_c, &adr_u.sin_addr);
   }
 
   uv_tcp_init(u3L, &htp_u->wax_u);

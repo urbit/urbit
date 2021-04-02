@@ -444,6 +444,13 @@ int fdatasync(int fildes)
     }
 }
 
+intmax_t mdb_get_filesize(HANDLE han_u)
+{
+    LARGE_INTEGER li;
+    GetFileSizeEx(han_u, &li);
+    return li.QuadPart;
+}
+
 char *realpath(const char *path, char *resolved_path)
 {
     // TODO

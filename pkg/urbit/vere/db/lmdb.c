@@ -10,6 +10,10 @@
 */
 void mdb_logerror(FILE* f, int err, const char* fmt, ...);
 
+/* mdb_get_filesize(): gets the size of a lmdb database file on disk.
+*/
+intmax_t mdb_get_filesize(mdb_filehandle_t han_u);
+
 //  lmdb api wrapper
 //
 //    this module implements a simple persistence api on top of lmdb.
@@ -105,18 +109,17 @@ u3_lmdb_stat(MDB_env* env_u, FILE* fil_u)
   }
 
   {
-    c3_i        fid_i;
-    struct stat sat_u;
+    mdb_filehandle_t han_u;
+    mdb_env_get_fd(env_u, &han_u);
 
-    mdb_env_get_fd(env_u, &fid_i);
-    fstat(fid_i, &sat_u);
+    intmax_t dis_i = mdb_get_filesize(han_u);
 
-    if ( siz_i != sat_u.st_size ) {
+    if ( siz_i != dis_i ) {
       fprintf(fil_u, "MISMATCH:\n");
     }
 
     fprintf(fil_u, "  file size (page): %zu\n", siz_i);
-    fprintf(fil_u, "  file size (stat): %jd\n", (intmax_t)sat_u.st_size);
+    fprintf(fil_u, "  file size (stat): %jd\n", dis_i);
   }
 }
 
@@ -503,5 +506,14 @@ void mdb_logerror(FILE* f, int err, const char* fmt, ...)
   vfprintf(f, fmt, ap);
   va_end(ap);
   fprintf(f, ": %s\r\n", mdb_strerror(err));
+}
+
+/* mdb_get_filesize(): gets the size of a lmdb database file on disk.
+*/
+intmax_t mdb_get_filesize(mdb_filehandle_t han_u)
+{
+  struct stat sat_u;
+  fstat(han_u, &sat_u);
+  return (intmax_t)sat_u.st_size;
 }
 #endif

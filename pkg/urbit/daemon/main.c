@@ -298,7 +298,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   }
 
   struct sockaddr_in t;
-  if ( u3_Host.ops_u.bin_c != 0 && inet_aton(u3_Host.ops_u.bin_c, &t.sin_addr) == 0 ) {
+  if ( u3_Host.ops_u.bin_c != 0 && inet_pton(AF_INET, u3_Host.ops_u.bin_c, &t.sin_addr) == 0 ) {
     fprintf(stderr, "-b invalid IP address\n");
     return c3n;
   }
