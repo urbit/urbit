@@ -234,7 +234,7 @@ export default function LaunchApp(props) {
         </Box>
         <Box alignSelf="flex-start" display={["block", "none"]}>{hashBox}</Box>
       </ScrollbarLessBox>
-      <Box onClick={() => history.push('/~graph/graph/ship/~bitpyx-dildus/infrastructure-digests/170141184504958869914231288036524556288/2/170141184504958917566472168072435204096') } display={["none", "block"]}>{hashBox}</Box>
+      <Box display={["none", "block"]}>{hashBox}</Box>
     </>
   );
 }

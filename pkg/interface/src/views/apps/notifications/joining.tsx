@@ -44,7 +44,7 @@ export function JoiningStatus(props: JoiningStatusProps) {
       <Text display="block" flexShrink={0} color={isError ? 'red' : 'gray'}>
         {desc}
       </Text>
-      <StatelessAsyncAction onClick={onHide} flexShrink={1}>Hide</StatelessAsyncAction>
+      <StatelessAsyncAction backgroundColor="white" onClick={onHide} flexShrink={1}>Hide</StatelessAsyncAction>
     </Row>
   );
 }

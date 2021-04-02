@@ -75,6 +75,7 @@ const GraphUrl = ({ contents, api }) => {
         transcluded={1}
         link={referenceToPermalink(link).link}
         api={api}
+        showOurContact
       />);
   }
   return (
@@ -193,8 +194,7 @@ function getNodeUrl(
     }
     return graphUrl;
   } else if( mod === 'post') {
-    const [last, ...rest] = idx.reverse();
-    return `/~landscape${groupPath}/feed/${rest.join('/')}?post=${last}`;
+    return `/~landscape${groupPath}/feed${index}`;
   }
   return '';
 }
