@@ -33,9 +33,11 @@ export function GroupSettings(props: GroupSettingsProps) {
     [history, props.baseUrl]
   );
 
+  const isOwner = 
+    resourceFromPath(props.association.group).ship.slice(1) === window.ship;
+
   const isAdmin =
-    resourceFromPath(props.association.group).ship.slice(1) === window.ship ||
-    roleForShip(props.group, window.ship) === 'admin';
+    isOwner || roleForShip(props.group, window.ship) === 'admin';
 
   return (
     <Box height="100%" overflowY="auto">
@@ -58,10 +60,11 @@ export function GroupSettings(props: GroupSettingsProps) {
             <Section>
               <GroupChannelSettings {...props} />
             </Section>
-            <Section>
-              <GroupFeedSettings {...props} />
-            </Section>
-
+            { isOwner && (
+              <Section>
+                <GroupFeedSettings {...props} />
+              </Section>
+            )}
           </>
         )}
       </Col>
