@@ -70,7 +70,7 @@ function GraphPermalink(
         return;
       }
       try {
-        api.graph.getNode(ship, name, index);
+        await api.graph.getNode(ship, name, index);
       } catch (e) {
         console.log(e);
         setErrored(true);
