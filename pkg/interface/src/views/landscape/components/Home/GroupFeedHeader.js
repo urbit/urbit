@@ -56,7 +56,8 @@ export function GroupFeedHeader(props) {
       <Box display='block'>
         { ( baseUrl !== historyLocation ) ? (
             <Text pl="1" pr="1" cursor="pointer" onClick={() => {
-              let loc = locationUrl.split('/');
+              let loc = 
+                history.location.pathname.replace(`${baseUrl}`, '').split('/');
               loc.pop();
               loc = loc.join('/');
               history.push(`${baseUrl}${loc}`);
