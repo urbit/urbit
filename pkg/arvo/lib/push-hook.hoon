@@ -446,6 +446,7 @@
       (fact:io cage ~(tap in paths))
     ::  TODO: deprecate
     ++  unversioned
+      ?.  =(min-version.config 0)  ~
       =/  prefix=path
         resource+(en-path:resource rid)
       =/  unversioned=(set path)
