@@ -75,6 +75,7 @@ const GraphUrl = ({ contents, api }) => {
         transcluded={1}
         link={referenceToPermalink(link).link}
         api={api}
+        showOurContact
       />);
   }
   return (
