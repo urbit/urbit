@@ -277,6 +277,9 @@
       ::
       ++  unversioned
         ?>  ?=([%ship @ @ *] t.path)
+        ?.  =(min-version.config 0)
+           ~&  >>>  "unversioned req from: {<src.bowl>}, nooping"
+           `this
         =/  =resource
           (de-path:resource t.path)
         =/  =vase
@@ -443,6 +446,7 @@
       (fact:io cage ~(tap in paths))
     ::  TODO: deprecate
     ++  unversioned
+      ?.  =(min-version.config 0)  ~
       =/  prefix=path
         resource+(en-path:resource rid)
       =/  unversioned=(set path)

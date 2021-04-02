@@ -23,6 +23,7 @@ import { Link } from "react-router-dom";
 import useGraphState from "~/logic/state/graph";
 import { GraphNodeContent } from "../notifications/graph";
 import { TranscludedNode } from "./TranscludedNode";
+import {useVirtualResizeProp} from "~/logic/lib/virtualContext";
 
 function GroupPermalink(props: { group: string; api: GlobalApi }) {
   const { group, api } = props;
@@ -61,6 +62,8 @@ function GraphPermalink(
       graph,
     ])
   );
+
+  useVirtualResizeProp(node)
   useEffect(() => {
     (async () => {
       if (pending || !index) {

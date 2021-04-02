@@ -217,6 +217,7 @@ return;
             src={url}
             style={style}
             onLoad={onLoad}
+            objectFit="contain"
             {...audioProps}
             {...props}
           />
@@ -235,6 +236,7 @@ return;
             src={url}
             style={style}
             onLoad={onLoad}
+            objectFit="contain"
             {...videoProps}
             {...props}
           />

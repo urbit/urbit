@@ -66,7 +66,7 @@ export function GroupFeedSettings(props: {
               </Label>
             </Col>
           </BaseLabel>
-          {isEnabled && false && (
+          {isEnabled && (
             <>
               <GroupFeedPermsInput id="permissions" />
               <FormSubmit start>Update Permissions</FormSubmit>
