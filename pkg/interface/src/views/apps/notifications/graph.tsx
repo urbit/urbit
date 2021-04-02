@@ -193,8 +193,7 @@ function getNodeUrl(
     }
     return graphUrl;
   } else if( mod === 'post') {
-    const [last, ...rest] = idx.reverse();
-    return `/~landscape${groupPath}/feed/${rest.join('/')}?post=${last}`;
+    return `/~landscape${groupPath}/feed${index}`;
   }
   return '';
 }
