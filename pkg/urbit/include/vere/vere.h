@@ -645,6 +645,72 @@
           uv_timer_t       tim_u;               //  gc timer
         } u3_king;
 
+typedef enum {
+  _cwe_gift_poke = 0,
+  _cwe_gift_rest = 1
+} cw_gift_sate;
+
+typedef struct _cw_gift {
+  struct _cw_gift* nex_u;
+  c3_d             len_d;
+  c3_y*            hun_y;
+  cw_gift_sate     sat_e;
+  union {
+    c3_d           eve_d;
+    void*          ptr_v;
+  };
+} cw_gift;
+
+typedef enum {
+  _cwe_mars_work = 0,
+  _cwe_mars_save = 1,
+  _cwe_mars_exit = 2
+} cw_mars_sate;
+
+typedef struct _cw_fact {
+  c3_d             eve_d;
+  size_t           len_i;
+  c3_y*            hun_y;
+  struct _cw_fact* nex_u;
+} cw_fact;
+typedef struct _u3_mars {
+  c3_d    key_d[4];          //  disk key
+  c3_c*   dir_c;             //  execution directory (pier)
+  c3_d    sen_d;             //  last event requested
+  c3_d    dun_d;             //  last event processed
+  c3_l    mug_l;             //  hash of state
+  c3_o    pac_o;             //  pack kernel
+  c3_o    rec_o;             //  reclaim cache
+  c3_o    mut_o;             //  mutated kerne
+  u3_noun sac;               //  space measurementl
+  u3_disk* log_u;
+  u3_moat*     inn_u;             //  input stream
+  u3_mojo*     out_u;             //  output stream
+  u3_cue_xeno* sil_u;             //  cue handle
+  cw_mars_sate sat_e;
+  struct {
+    cw_fact* ent_u;
+    cw_fact* ext_u;
+  } fac_u;
+  struct {
+    cw_gift* ent_u;
+    cw_gift* ext_u;
+  } gif_u;
+  void  (*xit_f)(void);      //  exit callback
+} u3_mars;
+
+
+
+c3_o
+u3_mars_kick(u3_mars* mar_u, c3_d len_d, c3_y* hun_y);
+
+u3_mars*
+u3_mars_init(u3_disk* log_u,
+             u3_moat* inn_u,
+             u3_mojo* out_u,
+             c3_c*    dir_c,
+             u3_cue_xeno* sil_u);
+
       /* u3_pier_spin(): (re-)activate idle handler
       */
         void

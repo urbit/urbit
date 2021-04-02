@@ -918,7 +918,7 @@ _cw_boot(c3_i argc, c3_c* argv[])
 
   uv_loop_t* lup_u = uv_default_loop();
   c3_c*      dir_c = argv[2];
-    c3_c*      key_c = argv[3];
+  c3_c*      key_c = argv[3];
   c3_c*      wag_c = argv[4];
   c3_c*      hap_c = argv[5];
 
@@ -1068,7 +1068,89 @@ static void _cw_replay();
 static void
 _cw_work(c3_i argc, c3_c* argv[])
 {
+  if ( 6 > argc ) {
+    fprintf(stderr, "work: missing args\n");
+    exit(1);
+  }
+
+  c3_i inn_i, out_i;
+  _cw_serf_stdio(&inn_i, &out_i);
+
+  uv_loop_t* lup_u = u3_Host.lup_u = uv_default_loop();
   c3_c*      dir_c = argv[2];
+  c3_c*      key_c = argv[3];
+  c3_c*      wag_c = argv[4];
+  c3_c*      hap_c = argv[5];
+
+  fprintf(stderr, "work: %s\r\n", dir_c);
+
+  memset(&u3V, 0, sizeof(u3V));
+  memset(&u3_Host.tra_u, 0, sizeof(u3_Host.tra_u));
+
+  //  load passkey
+  //
+  //    XX and then ... use passkey
+  //
+  {
+    sscanf(key_c, "%" PRIx64 ":%" PRIx64 ":%" PRIx64 ":%" PRIx64 "",
+                  &u3V.key_d[0],
+                  &u3V.key_d[1],
+                  &u3V.key_d[2],
+                  &u3V.key_d[3]);
+  }
+
+  //  load runtime config
+  //
+  {
+    sscanf(wag_c, "%" SCNu32, &u3C.wag_w);
+    sscanf(hap_c, "%" SCNu32, &u3_Host.ops_u.hap_w);
+  }
+
+  //  Ignore SIGPIPE signals.
+  //
+  {
+    struct sigaction sig_s = {{0}};
+    sigemptyset(&(sig_s.sa_mask));
+    sig_s.sa_handler = SIG_IGN;
+    sigaction(SIGPIPE, &sig_s, 0);
+  }
+
+  //  configure pipe to daemon process
+  //
+  {
+    c3_i err_i;
+
+    err_i = uv_timer_init(lup_u, &inn_u.tim_u);
+    c3_assert(!err_i);
+    err_i = uv_pipe_init(lup_u, &inn_u.pyp_u, 0);
+    c3_assert(!err_i);
+    uv_pipe_open(&inn_u.pyp_u, inn_i);
+
+    err_i = uv_pipe_init(lup_u, &out_u.pyp_u, 0);
+    c3_assert(!err_i);
+    uv_pipe_open(&out_u.pyp_u, out_i);
+
+    uv_stream_set_blocking((uv_stream_t*)&out_u.pyp_u, 1);
+  }
+
+  sil_u = u3s_cue_xeno_init();
+
+  //  set up writing
+  //
+  out_u.ptr_v = &u3V;
+  out_u.bal_f = _cw_serf_fail;
+
+  //  set up reading
+  //
+  // inn_u.ptr_v = &u3V;
+  // inn_u.pok_f = _cw_boot_writ;
+  inn_u.bal_f = _cw_serf_fail;
+
+  //  setup loom
+  //
+  {
+    u3V.dir_c = strdup(dir_c);
+
   //  initialize persistence
   //
   {
@@ -1085,30 +1167,74 @@ _cw_work(c3_i argc, c3_c* argv[])
     if ( !(log_u = u3_disk_init(dir_c, cb_u)) ) {
       // c3_free(pir_u);
       // return 0;
-      fprintf(stderr, "boot: dist init fail\n");
+      fprintf(stderr, "work: dist init fail\n");
       exit(1);
     }
   }
 
-  u3C.wag_w = 128;  //  super advanced
+    u3V.sen_d = u3V.dun_d = u3m_boot(dir_c);
+  }
 
-  u3V.sen_d = u3V.dun_d = u3m_boot(dir_c);
+  //  set up logging
+  //
+  //    XX must be after u3m_boot due to u3l_log
+  //
+  {
+    u3C.stderr_log_f = _cw_serf_send_stdr;
+    u3C.slog_f = _cw_serf_send_slog;
+  }
 
-  c3_d who_d[2];
-  c3_o fak_o;
-  c3_w lif_w;
-  c3_o ret_o = u3_disk_read_meta(log_u, who_d, &fak_o, &lif_w);
+  u3V.xit_f = _cw_serf_exit;
 
-  if ( 0 == u3V.dun_d ) {
-    if ( c3n == _cw_bootstrap(lif_w) ) {
-      exit(1);
+// #if defined(SERF_TRACE_JAM) || defined(SERF_TRACE_CUE)
+//   u3t_trace_open(u3V.dir_c);
+// #endif
+
+  //  XX need to send status messages during replay
+  //
+
+  {
+    c3_d who_d[2];
+    c3_o fak_o;
+    c3_w lif_w;
+    c3_o ret_o = u3_disk_read_meta(log_u, who_d, &fak_o, &lif_w);
+
+    if ( 0 == u3V.dun_d ) {
+      if ( c3n == _cw_bootstrap(lif_w) ) {
+        exit(1);
+      }
+    }
+
+    _cw_replay();
+    u3e_save();
+
+
+    {
+      u3_mars* mar_u = u3_mars_init(log_u, &inn_u, &out_u, dir_c, sil_u);
+      inn_u.ptr_v = mar_u;
+      inn_u.pok_f = (u3_moor_poke)u3_mars_kick;
+    }
+
+    //  send ready status message
+    //
+    //    XX version negotiatioon
+    {
+      u3_noun wyn = u3_nul;
+      _cw_serf_send(u3nq(c3__ripe,
+                         u3nc(2, wyn),
+                         u3nc(u3i_chubs(2, who_d), fak_o),
+                         u3nc(u3i_chubs(1, &u3A->eve_d),
+                              u3r_mug(u3A->roc))));
     }
   }
 
-  _cw_replay();
-  u3e_save();
+  //  start reading
+  //
+  u3_newt_read(&inn_u);
 
-  exit(0);
+  //  enter loop
+  //
+  uv_run(lup_u, UV_RUN_DEFAULT);
 }
 
 /* _cw_replay(): replay events on disk
