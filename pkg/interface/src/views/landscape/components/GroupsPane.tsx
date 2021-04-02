@@ -26,6 +26,7 @@ import '~/views/apps/links/css/custom.css';
 import '~/views/apps/publish/css/custom.css';
 import { getGroupFromWorkspace } from '~/logic/lib/workspace';
 import { GroupHome } from './Home/GroupHome';
+import { EmptyGroupHome } from './Home/EmptyGroupHome';
 import { Workspace } from '~/types/workspace';
 import useContactState from '~/logic/state/contact';
 import useGroupState from '~/logic/state/group';
@@ -206,12 +207,18 @@ export function GroupsPane(props: GroupsPaneProps) {
                 recentGroups={recentGroups}
                 baseUrl={baseUrl}
                 {...props}>
-                <GroupHome 
-                  api={api}
-                  baseUrl={baseUrl}
-                  groupPath={groupPath}
-                />
-                {popovers(routeProps, baseUrl)}
+                { workspace.type === 'group' ? (
+                  <GroupHome 
+                    api={api}
+                    baseUrl={baseUrl}
+                    groupPath={groupPath}
+                  />
+                  ) : (
+                    <EmptyGroupHome
+                      associations={associations}
+                    />
+                )}
+               {popovers(routeProps, baseUrl)}
               </Skeleton>
             </>
           );

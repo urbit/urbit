@@ -4,14 +4,11 @@ import { Association, resourceFromPath, Group, PermVariation } from "@urbit/api"
 import GlobalApi from "~/logic/api/global";
 import { Formik, Form, FormikHelpers } from "formik";
 import {
-  GroupFeedPermissions,
   GroupFeedPermsInput,
 } from "../Home/Post/GroupFeedPerms";
 import { FormSubmit } from "~/views/components/FormSubmit";
 import { StatelessAsyncToggle } from "~/views/components/StatelessAsyncToggle";
 import useMetadataState from "~/logic/state/metadata";
-
-import useMetadataState from '~/logic/state/metadata';
 
 
 interface FormSchema {
