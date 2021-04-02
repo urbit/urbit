@@ -5,10 +5,12 @@ import { EnableGroupFeed } from './EnableGroupFeed';
 import { EmptyGroupHome } from './EmptyGroupHome';
 import { GroupFeed } from './GroupFeed';
 import { AddFeedBanner } from './AddFeedBanner';
+
 import { Route } from 'react-router-dom';
 
 import useGroupState from '~/logic/state/group';
 import useMetadataState from '~/logic/state/metadata';
+import {resourceFromPath} from '@urbit/api';
 
 
 function GroupHome(props) {
@@ -18,12 +20,15 @@ function GroupHome(props) {
     baseUrl
   } = props;
 
+  const { ship } = resourceFromPath(groupPath);
+
   const associations = useMetadataState(state => state.associations);
   const groups = useGroupState(state => state.groups);
 
   const metadata = associations?.groups[groupPath]?.metadata;
 
   const askFeedBanner =
+    ship === `~${window.ship}` &&
     metadata &&
     metadata.config &&
     'group' in metadata.config &&
@@ -55,6 +60,7 @@ function GroupHome(props) {
         <AddFeedBanner 
           api={api}
           groupPath={groupPath}
+          baseUrl={baseUrl}
           group={groups[groupPath]}
         /> 
       ) : null }

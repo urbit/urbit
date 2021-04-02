@@ -41,11 +41,15 @@ export default function PostReplies(props) {
   });
 
   let node;
-  nodeIndex.forEach((i) => {
+  let parentNode;
+  nodeIndex.forEach((i, idx) => {
     if (!graph) {
       return null;
     }
     node = graph.get(i);
+    if(idx < nodeIndex.length - 1) {
+      parentNode = node;
+    }
     if (!node) {
       return null;
     }
@@ -101,6 +105,7 @@ export default function PostReplies(props) {
         key={locationUrl}
         graphPath={graphPath}
         graph={graph}
+        grandparentNode={parentNode}
         parentNode={node}
         pendingSize={pendingSize}
         association={association}

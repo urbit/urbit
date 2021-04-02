@@ -15,7 +15,7 @@ export function GroupFeedHeader(props) {
     historyLocation === `${baseUrl}/feed`;
 
   const locationUrl =
-    history.location.pathname.replace(`${baseUrl}`, '').replace(/^\/[a-z|\/]*/, '');
+    history.location.pathname.replace(`${baseUrl}`, '');
   let nodeIndex = locationUrl.split('/').slice(1).map((ind) => {
     return bigInt(ind);
   });
@@ -37,9 +37,11 @@ export function GroupFeedHeader(props) {
     authorText = node.post.author;
   }
 
-  const permText = (
-    vip === 'reader-comments'
-  ) ? 'Select ships can post' : 'Everyone can post';
+  const permText = (vip === 'host-feed') 
+    ?  'Only host can post'
+    : vip === 'admin-feed'
+    ? 'Only admins can post'
+    : 'Everyone can post';
 
   return (
     <Row 
@@ -52,11 +54,12 @@ export function GroupFeedHeader(props) {
       borderBottom={1}
       borderColor="lightGray">
       <Box display='block'>
-        { ( baseUrl !== historyLocation &&
-            `${baseUrl}/feed` !== historyLocation
-          ) ? (
+        { ( baseUrl !== historyLocation ) ? (
             <Text pl="1" pr="1" cursor="pointer" onClick={() => {
-              history.goBack();
+              let loc = locationUrl.split('/');
+              loc.pop();
+              loc = loc.join('/');
+              history.push(`${baseUrl}${loc}`);
             }}>{'<- Back'}</Text>
           ) : null
         }

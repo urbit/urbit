@@ -11,6 +11,7 @@ import GlobalApi from "~/logic/api/global";
 import { resourceFromPath, Tag, resourceAsPath } from "@urbit/api";
 import useGroupState, { useGroup } from "~/logic/state/group";
 import { useHistory } from 'react-router-dom';
+import useMetadataState from "~/logic/state/metadata";
 
 
 interface FormSchema {
@@ -32,33 +33,15 @@ export function EnableGroupFeed(props: {
   const initialValues: FormSchema = {
     permissions: "everyone",
   };
-  const group = useGroup(groupPath);
-  const onSubmit = useCallback(
+  const onSubmit = 
     async (values: FormSchema, actions: FormikHelpers<FormSchema>) => {
       const resource = resourceFromPath(groupPath);
-      const vip = (
-        values.permissions === 'host' || values.permissions === 'admins'
-      ) ? 'reader-comments' : '';
       const feed = resourceAsPath(
-        await api.graph.enableGroupFeed(resource, vip)
+        await api.graph.enableGroupFeed(resource, values.permissions.trim())
       );
-      const tag: Tag = {
-        app: "graph",
-        resource: feed,
-        tag: "writers",
-      };
-      if (values.permissions === "admins") {
-        const admins =
-          Array.from(group.tags?.role?.admin).map((s) => `~${s}`) ?? [];
-        await api.groups.addTag(resource, tag, admins);
-      } else if (values.permissions === "host") {
-        await api.groups.addTag(resource, tag, [`~${window.ship}`]);
-      }
       actions.setStatus({ success: null });
-      dismiss();
-    },
-    [groupPath, baseUrl]
-  );
+      history.replace(`${baseUrl}/feed`);
+    };
 
   return (
     <ModalOverlay spacing={[3, 5, 7]} bg="white" dismiss={dismiss}>

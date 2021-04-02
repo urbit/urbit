@@ -1,5 +1,6 @@
 /-  spider,
-    met=metadata-store
+    met=metadata-store,
+    graph=graph-store
 /+  strandio, resource, graph-view
 ::
 =*  strand     strand:spider
@@ -36,4 +37,11 @@
       group.action
     groups+group.action
   metadatum(feed.config [~ ~])
+?:  ?=([~ ^] feed.config.metadatum)
+  ;<  ~  bind:m
+    %+  poke-our  %graph-store
+    :-  %graph-update-1
+    !>  ^-  update:graph
+    [now.bowl [%archive-graph resource.u.u.feed.config.metadatum]]
+  (pure:m !>(~))
 (pure:m !>(~))

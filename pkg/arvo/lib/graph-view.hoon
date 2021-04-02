@@ -1,5 +1,5 @@
 /-  sur=graph-view, store=graph-store
-/+  resource, group-store
+/+  resource, group-store, metadata-store
 ^?
 =<  [sur .]
 =,  sur
@@ -68,18 +68,12 @@
     ++  create-group-feed
       %-  ot
       :~  resource+dejs:resource
-          vip+vip
+          vip+vip:dejs:metadata-store
       ==
     ::
     ++  disable-group-feed
       %-  ot
       :~  resource+dejs:resource
-      ==
-    ++  vip
-      %-  su
-      %-  perk
-      :~  %reader-comments
-          %$
       ==
     --
   --
