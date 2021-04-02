@@ -204,7 +204,7 @@
       ::
           %fact
         ?+  p.cage.sign  (on-agent:def wire sign)
-            %graph-update
+            %graph-update-1
           =/  upd  !<(update:graph q.cage.sign)
           =^  cards  state
             (process-graph-update:do q.upd)
@@ -258,12 +258,12 @@
     |=  [=ship msgs=(list @t)]
     ^-  card
     =;  upd=update:graph
-      [%pass / %agent [our.bowl %graph-store] %poke %graph-update !>(upd)]
+      [%pass / %agent [our.bowl %graph-store] %poke %graph-update-1 !>(upd)]
     ::TODO  this is api, man... move into lib or w/e
     =|  nodes=(list [index:graph node:graph])
     |-  ^-  upd=update:graph
     ?~  msgs
-      :+  %0  now.bowl
+      :-  now.bowl
       :+  %add-nodes  (chat-id ship)
       (~(gas by *(map index:graph node:graph)) nodes)
     =.  now.bowl  +(now.bowl)  ::NOTE  so we don't re-use indices
@@ -356,7 +356,7 @@
 ::  +process-graph-update: per-response logic
 ::
 ++  process-graph-update
-  |=  upd=update-0:graph
+  |=  upd=action:graph
   ^-  (quip card _state)
   ::  relevancy and sanity checks
   ::
