@@ -98,9 +98,8 @@
     "lint-file": "eslint",
     "tsc": "tsc",
     "tsc:watch": "tsc --watch",
-    "preinstall": "./preinstall.sh",
     "build:dev": "cross-env NODE_ENV=development webpack --config config/webpack.dev.js",
-    "build:prod": "cross-env NODE_ENV=production webpack --config config/webpack.prod.js",
+    "build:prod": "cd ../npm/api && npm i && cd ../../interface && cross-env NODE_ENV=production webpack --config config/webpack.prod.js",
     "start": "webpack-dev-server --config config/webpack.dev.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
