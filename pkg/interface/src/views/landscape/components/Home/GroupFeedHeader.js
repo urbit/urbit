@@ -37,9 +37,11 @@ export function GroupFeedHeader(props) {
     authorText = node.post.author;
   }
 
-  const permText = (
-    vip === 'reader-comments'
-  ) ? 'Select ships can post' : 'Everyone can post';
+  const permText = (vip === 'host-feed') 
+    ?  'Only host can post'
+    : vip === 'admin-feed'
+    ? 'Only admins can post'
+    : 'Everyone can post';
 
   return (
     <Row 
