@@ -42,8 +42,20 @@ const MARKDOWN_CONFIG = {
 // we need to hack this into a regular input that has some funny behaviors
 const inputProxy = (input) => new Proxy(input, {
   get(target, property) {
+    if(property === 'focus') {
+      return () => {
+        target.focus();
+      }
+    }
     if (property in target) {
       return target[property];
+    }
+    if (property === 'execCommand') {
+      return () => {
+        target.setSelectionRange(target.value.length, target.value.length);
+        input.blur();
+        input.focus();
+      }
     }
     if (property === 'setOption') {
       return () => {};
@@ -108,7 +120,9 @@ export default class ChatEditor extends Component {
     if (prevProps.message !== props.message) {
       this.editor.setValue(props.message);
       this.editor.setOption('mode', MARKDOWN_CONFIG);
-      this.editor?.element?.focus();
+      this.editor?.focus();
+      this.editor.execCommand('goDocEnd');
+      this.editor?.focus();
       return;
     }
 
