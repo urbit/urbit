@@ -90,10 +90,9 @@
       %chat-cli
       %herm
       %contact-store
-      %contact-hook
-      %contact-view
+      %contact-push-hook
+      %contact-pull-hook
       %metadata-store
-      %metadata-hook
       %s3-store
       %file-server
       %glob
@@ -105,6 +104,10 @@
       %hark-group-hook
       %hark-chat-hook
       %observe-hook
+      %metadata-push-hook
+      %metadata-pull-hook
+      %group-view
+      %settings-store
   ==
 ::
 ++  deft-fish                                           ::  default connects
@@ -247,7 +250,14 @@
     =>  (se-born | %home %hark-chat-hook)
     =>  (se-born | %home %hark-store)
     =>  (se-born | %home %observe-hook)
+    =>  (se-born | %home %metadata-pull-hook)
+    =>  (se-born | %home %metadata-push-hook)
     (se-born | %home %herm)
+  =?  ..on-load  (lte hood-version %12)
+    =>  (se-born | %home %contact-push-hook)
+    =>  (se-born | %home %contact-pull-hook)
+    =>  (se-born | %home %settings-store)
+    (se-born | %home %group-view)
   ..on-load
 ::
 ++  reap-phat                                         ::  ack connect

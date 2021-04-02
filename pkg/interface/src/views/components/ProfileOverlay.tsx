@@ -1,11 +1,22 @@
-import React, { PureComponent } from 'react';
-
-import { Contact, Group } from '~/types';
+import React, { PureComponent, useCallback, useEffect, useRef } from 'react';
+import { Contact, Group } from '@urbit/api';
 import { cite, useShowNickname } from '~/logic/lib/util';
 import { Sigil } from '~/logic/lib/sigil';
 
-import { Box, Col, Button, Text, BaseImage, ColProps } from '@tlon/indigo-react';
-import { withLocalState } from '~/logic/state/local';
+import {
+  Box,
+  Row,
+  Col,
+  Button,
+  Text,
+  BaseImage,
+  ColProps,
+  Icon,
+  Center
+} from '@tlon/indigo-react';
+import RichText from './RichText';
+import { ProfileStatus } from './ProfileStatus';
+import useSettingsState from '~/logic/state/settings';
 
 export const OVERLAY_HEIGHT = 250;
 
@@ -21,132 +32,158 @@ type ProfileOverlayProps = ColProps & {
   hideNicknames: boolean;
   history: any;
   api: any;
-}
+};
 
-class ProfileOverlay extends PureComponent<ProfileOverlayProps, {}> {
-  public popoverRef: React.Ref<typeof Col>;
+const ProfileOverlay = (props: ProfileOverlayProps) => {
+  const {
+    contact,
+    ship,
+    color,
+    topSpace,
+    bottomSpace,
+    history,
+    onDismiss,
+    ...rest
+  } = props;
+  const hideAvatars = useSettingsState((state) => state.calm.hideAvatars);
+  const hideNicknames = useSettingsState((state) => state.calm.hideNicknames);
+  const popoverRef = useRef<typeof Col>(null);
 
-  constructor(props) {
-    super(props);
+  const onDocumentClick = useCallback(
+    (event) => {
+      if (!popoverRef.current || popoverRef?.current?.contains(event.target)) {
+        return;
+      }
+      onDismiss();
+    },
+    [onDismiss, popoverRef]
+  );
 
-    this.popoverRef = React.createRef();
-    this.onDocumentClick = this.onDocumentClick.bind(this);
+  useEffect(() => {
+    document.addEventListener('mousedown', onDocumentClick);
+    document.addEventListener('touchstart', onDocumentClick);
+
+    return () => {
+      document.removeEventListener('mousedown', onDocumentClick);
+      document.removeEventListener('touchstart', onDocumentClick);
+    };
+  }, [onDocumentClick]);
+
+  let top, bottom;
+  if (topSpace < OVERLAY_HEIGHT / 2) {
+    top = '0px';
   }
-
-  componentDidMount() {
-    document.addEventListener('mousedown', this.onDocumentClick);
-    document.addEventListener('touchstart', this.onDocumentClick);
+  if (bottomSpace < OVERLAY_HEIGHT / 2) {
+    bottom = '0px';
   }
-
-  componentWillUnmount() {
-    document.removeEventListener('mousedown', this.onDocumentClick);
-    document.removeEventListener('touchstart', this.onDocumentClick);
+  if (!(top || bottom)) {
+    bottom = `-${Math.round(OVERLAY_HEIGHT / 2)}px`;
   }
+  const containerStyle = { top, bottom, left: '100%' };
 
-  onDocumentClick(event) {
-    const { popoverRef } = this;
-    // Do nothing if clicking ref's element or descendent elements
-    if (!popoverRef.current || popoverRef.current.contains(event.target)) {
-      return;
-    }
+  const isOwn = window.ship === ship;
 
-    this.props.onDismiss();
-  }
-
-  render() {
-    const {
-      contact,
-      ship,
-      color,
-      topSpace,
-      bottomSpace,
-      group = false,
-      hideAvatars,
-      hideNicknames,
-      history,
-      onDismiss,
-      ...rest
-    } = this.props;
-
-    let top, bottom;
-    if (topSpace < OVERLAY_HEIGHT / 2) {
-      top = '0px';
-    }
-    if (bottomSpace < OVERLAY_HEIGHT / 2) {
-      bottom = '0px';
-    }
-    if (!(top || bottom)) {
-      bottom = `-${Math.round(OVERLAY_HEIGHT / 2)}px`;
-    }
-    const containerStyle = { top, bottom, left: '100%', maxWidth: '160px' };
-
-    const isOwn = window.ship === ship;
-
-    const img = contact?.avatar && !hideAvatars
-      ? <BaseImage display='inline-block' src={contact.avatar} height={160} width={160} className="brt2" />
-      : <Sigil
-        ship={ship}
-        size={160}
-        color={color}
-        classes="brt2"
-        svgClass="brt2"
-        />;
-    const showNickname = useShowNickname(contact, hideNicknames);
-
-    //  TODO: we need to rethink this "top-level profile view" of other ships
-    /* if (!group.hidden) {
-    }*/
-
-    const isHidden = group ? group.hidden : false;
-
-    const rootSettings = history.location.pathname.slice(0, history.location.pathname.indexOf("/resource"));
-
-    return (
-      <Col
-        ref={this.popoverRef}
-        boxShadow="2px 4px 20px rgba(0, 0, 0, 0.25)"
-        position='absolute'
-        backgroundColor='white'
-        zIndex='3'
-        fontSize='0'
-        style={containerStyle}
-        {...rest}
-      >
-        <Box height='160px' width='160px'>
-          {img}
-        </Box>
-        <Box p='3'>
-          {showNickname && (
-            <Text
-              fontWeight='600'
-              display='block'
-              textOverflow='ellipsis'
-              overflow='hidden'
-              whiteSpace='pre'
-            >
-              {contact.nickname}
-            </Text>
-          )}
-          <Text mono gray>{cite(`~${ship}`)}</Text>
-          {!isOwn && (
-            <Button mt={2} fontSize='0' width="100%" style={{ cursor: 'pointer' }} onClick={() => history.push(`/~landscape/dm/${ship}`)}>
-              Send Message
-            </Button>
-          )}
-          {(isOwn) ? (
-            <Button
-              mt='2'
-              width='100%'
-              style={{ cursor: 'pointer ' }}
-              onClick={() => (isHidden) ? history.push('/~profile/identity') : history.push(`${rootSettings}/popover/profile`)}
-            >
-              Edit Identity
-            </Button>
-          ) : <div />}
-        </Box>
-      </Col>
+  const img =
+    contact?.avatar && !hideAvatars ? (
+      <BaseImage
+        referrerPolicy='no-referrer'
+        display='inline-block'
+        style={{ objectFit: 'cover' }}
+        src={contact.avatar}
+        height={60}
+        width={60}
+        borderRadius={2}
+      />
+    ) : (
+      <Box size={60} backgroundColor={color}>
+        <Center height={60}>
+          <Sigil ship={ship} size={32} color={color} />
+        </Center>
+      </Box>
     );
-  }
-}
+  const showNickname = useShowNickname(contact, hideNicknames);
 
-export default withLocalState(ProfileOverlay, ['hideAvatars', 'hideNicknames']);
+  return (
+    <Col
+      ref={popoverRef}
+      backgroundColor='white'
+      color='washedGray'
+      border={1}
+      borderRadius={2}
+      borderColor='lightGray'
+      boxShadow='0px 0px 0px 3px'
+      position='absolute'
+      zIndex='3'
+      fontSize='0'
+      height='250px'
+      width='250px'
+      padding={3}
+      justifyContent='center'
+      style={containerStyle}
+      {...rest}
+    >
+      <Row color='black' padding={3} position='absolute' top={0} left={0}>
+        {!isOwn && (
+          <Icon
+            icon='Chat'
+            size={16}
+            cursor='pointer'
+            onClick={() => history.push(`/~landscape/dm/${ship}`)}
+          />
+        )}
+      </Row>
+      <Box
+        alignSelf='center'
+        height='60px'
+        cursor='pointer'
+        onClick={() => history.push(`/~profile/~${ship}`)}
+        overflow='hidden'
+        borderRadius={2}
+      >
+        {img}
+      </Box>
+      <Col
+        position='absolute'
+        overflow='hidden'
+        minWidth='0'
+        width='100%'
+        padding={3}
+        bottom={0}
+        left={0}
+      >
+        <Row width='100%'>
+          <Text
+            fontWeight='600'
+            mono={!showNickname}
+            textOverflow='ellipsis'
+            overflow='hidden'
+            whiteSpace='pre'
+            marginBottom='0'
+          >
+            {showNickname ? contact?.nickname : cite(ship)}
+          </Text>
+        </Row>
+        {isOwn ? (
+          <ProfileStatus api={props.api} ship={`~${ship}`} contact={contact} />
+        ) : (
+          <RichText
+            display='inline-block'
+            width='100%'
+            minWidth='0'
+            textOverflow='ellipsis'
+            overflow='hidden'
+            whiteSpace='pre'
+            marginBottom='0'
+            disableRemoteContent
+            gray
+            title={contact?.status ?? ''}
+          >
+            {contact?.status ?? ''}
+          </RichText>
+        )}
+      </Col>
+    </Col>
+  );
+};
+
+export default ProfileOverlay;

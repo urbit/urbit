@@ -76,6 +76,7 @@
         set-dnd+bo
         read-count+stats-index
         read-each+read-graph-index
+        read-all+ul
     ==
   --
 ::
@@ -150,7 +151,7 @@
       ^-  json
       %-  pairs
       :~  unreads+(unread unreads.s)
-          notifications+(numb notifications.s)
+          notifications+a+(turn ~(tap in notifications.s) notif-ref)
           last+(time last-seen.s)
       ==
     ++  added
@@ -245,11 +246,9 @@
         |=  =(list ^group-contents)
         ^-  json
         :-  %a
-        %+  murn  list
+        %+  turn  list
         |=  =^group-contents
-        ?.  ?=(?(%add-members %remove-members) -.group-contents)
-          ~
-        `(update:enjs:group-store group-contents)
+        (update:enjs:group-store group-contents)
       --
     :: 
     ++  indexed-notification

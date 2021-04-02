@@ -11,6 +11,27 @@
     (snoc `^path`path %noun)
   ==
 ::
+++  resource-for-update
+  |=  =vase
+  ^-  (list resource)
+  =/  =update:store  !<(update:store vase)
+  ?-  -.q.update
+      %add-graph          ~[resource.q.update]
+      %remove-graph       ~[resource.q.update]
+      %add-nodes          ~[resource.q.update]
+      %remove-nodes       ~[resource.q.update]
+      %add-signatures     ~[resource.uid.q.update]
+      %remove-signatures  ~[resource.uid.q.update]
+      %archive-graph      ~[resource.q.update]
+      %unarchive-graph    ~
+      %add-tag            ~
+      %remove-tag         ~
+      %keys               ~
+      %tags               ~
+      %tag-queries        ~
+      %run-updates        ~[resource.q.update]
+  ==
+::
 ++  get-graph
   |=  res=resource
   ^-  update:store
@@ -83,25 +104,38 @@
   resources.q.update
 ::
 ++  tap-deep
-  |=  =graph:store
+  |=  [=index:store =graph:store]
   ^-  (list [index:store node:store])
-  =|  =index:store
-  =/  nodes=(list [atom node:store])
-    (tap:orm:store graph)
-  |-  =*  tap-nodes  $
-  ^-  (list [index:store node:store])
-  %-  zing
-  %+  turn
-    nodes
-  |=  [=atom =node:store]
-  ^-  (list [index:store node:store])
-  %+  welp
-    ^-  (list [index:store node:store])
-    [(snoc index atom) node]~
-  ?.  ?=(%graph -.children.node)
-    ~
-  %_  tap-nodes
-    index  (snoc index atom)
-    nodes  (tap:orm:store p.children.node)
+  %+  roll  (tap:orm:store graph)
+  |=  $:  [=atom =node:store]
+          lis=(list [index:store node:store])
+      ==
+  =/  child-index     (snoc index atom)
+  =/  childless-node  node(children [%empty ~])
+  ?:  ?=(%empty -.children.node)
+    (snoc lis [child-index childless-node])
+  %+  weld
+    (snoc lis [child-index childless-node])
+  (tap-deep child-index p.children.node)
+::
+++  got-deep
+  |=  [=graph:store =index:store]
+  ^-  node:store
+  =/  ind  index
+  ?>  ?=(^ index)
+  =/  =node:store  (need (get:orm:store graph `atom`i.index))
+  =.  ind  t.index
+  |-  ^-  node:store
+  ?~  ind
+    node
+  ?:  ?=(%empty -.children.node)
+    !!
+  %_  $
+    ind    t.ind
+    node   (need (get:orm:store p.children.node i.ind))
   ==
+::
+++  get-mark
+  |=  res=resource
+  (scry-for ,(unit mark) /graph-mark/(scot %p entity.res)/[name.res])
 --

@@ -213,6 +213,9 @@
               (lowercase (weld path.content.u.content suffix.u.content))
           ==
         ?.  .^(? %cu scry-path)  [not-found:gen %.n]
+        ?:  ?=([~ %woff2] ext.req-line)
+          :_  public.u.content
+          [[200 [['content-type' '/font/woff2'] ~]] `.^(octs %cx scry-path)]
         =/  file  (as-octs:mimes:html .^(@ %cx scry-path))
         :_  public.u.content
         ?+  ext.req-line  not-found:gen
@@ -237,7 +240,12 @@
         =/  mime-type=@t  (rsh 3 (crip <p.u.data>))
         ::  Should maybe inspect to see how long cache should hold
         ::
-        [[200 ['content-type' mime-type] max-1-da:gen ~] `q.u.data]
+        =/  headers
+          :~  content-type+mime-type 
+              max-1-da:gen 
+              'Service-Worker-Allowed'^'/'
+          ==
+        [[200 headers] `q.u.data]
       ==
     ::
     ++  lowercase

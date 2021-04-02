@@ -1,9 +1,10 @@
 /-  spider,
     graph=graph-store,
-    *metadata-store,
+    met=metadata-store,
     *group,
     group-store,
-    inv=invite-store
+    inv=invite-store,
+    push-hook
 /+  strandio, resource, graph-view
 =>
 |% 
@@ -16,13 +17,22 @@
   =/  m  (strand ,resource)
   ?:  ?=(%group -.associated)
     (pure:m rid.associated)
-  =/  =action:group-store
-    [%add-group rid policy.associated %&]
-  ;<  ~  bind:m  (poke-our %group-store %group-action !>(action))
-  ;<  =bowl:spider  bind:m  get-bowl:strandio
-  ;<  ~  bind:m  (poke-our %group-store %group-action !>([%add-members rid (sy our.bowl ~)]))
+  =/  push-hook-act=cage
+    :-  %push-hook-action 
+    !>  ^-  action:push-hook
+    [%add rid]
+  ;<  ~  bind:m    
+    (poke-our %metadata-push-hook push-hook-act)
   ;<  ~  bind:m
-    (poke-our %group-push-hook %push-hook-action !>([%add rid]))
+     %+  poke-our  %group-store
+     :-  %group-update-0
+     !>  ^-  update:group-store
+     [%add-group rid policy.associated %.y]
+  ;<  =bowl:spider  bind:m  get-bowl:strandio
+  ;<  ~  bind:m
+    (poke-our %group-store group-update-0+!>([%add-members rid (sy our.bowl ~)]))
+  ;<  ~  bind:m
+    (poke-our %group-push-hook push-hook-act)
   (pure:m rid)
 --
 ::
@@ -44,7 +54,7 @@
 =/  =update:graph
   [%0 now.bowl %add-graph rid.action *graph:graph mark.action overwrite]
 ;<  ~  bind:m
-  (poke-our %graph-store graph-update+!>(update))
+  (poke-our %graph-store graph-update-0+!>(update))
 ;<  ~  bind:m
   (poke-our %graph-push-hook %push-hook-action !>([%add rid.action]))
 ::
@@ -52,25 +62,22 @@
 ::
 ;<  group=resource  bind:m
   (handle-group rid.action associated.action)
-=/  group-path=path
-  (en-path:resource group)
 ::
 ::  Setup metadata
 ::
-=/  =metadata
-  %*  .  *metadata
+=/  =metadatum:met
+  %*  .  *metadatum:met
     title         title.action
     description   description.action
     date-created  now.bowl
     creator       our.bowl
     module        module.action
+    preview       %.n
   ==
-=/  =metadata-action
-  [%add group-path graph+(en-path:resource rid.action) metadata]
+=/  met-action=action:met
+  [%add group graph+rid.action metadatum]
 ;<  ~  bind:m
-  (poke-our %metadata-hook %metadata-action !>(metadata-action))
-;<  ~  bind:m
-  (poke-our %metadata-hook %metadata-hook-action !>([%add-owned group-path]))
+  (poke-our %metadata-push-hook metadata-update-0+!>(met-action))
 ::
 ::  Send invites
 ::

@@ -1,8 +1,9 @@
-/-  spider, grp=group-store, gra=graph-store, met=metadata-store, con=contact-store
+/-  spider, grp=group-store, gra=graph-store, met=metadata-store
 /+  strandio, res=resource
 ::
 =*  strand    strand:spider
 =*  raw-poke  raw-poke:strandio
+=*  raw-poke-our  raw-poke-our:strandio
 =*  scry      scry:strandio
 ::
 ^-  thread:spider
@@ -18,7 +19,7 @@
 ;<  ~  bind:m
   %+  raw-poke
     [entity.resource.update %group-push-hook]
-  :-  %group-update
+  :-  %group-update-0
   !>  ^-  update:grp
   [%remove-members resource.update (silt [our.bowl ~])]
 ::  stop serving or syncing group updates
@@ -33,30 +34,15 @@
     [our.bowl %group-pull-hook]
   :-  %pull-hook-action
   !>([%remove resource.update])
-::  stop serving or syncing contacts associated with group
-::
-;<  ~  bind:m
-  %+  raw-poke
-    [our.bowl %contact-hook]
-  :-  %contact-hook-action
-  !>([%remove (en-path:res resource.update)])
-::  remove contact data associated with group
-::
-;<  ~  bind:m
-  %+  raw-poke
-    [our.bowl %contact-store]
-  :-  %contact-action
-  !>  ^-  contact-action:con
-  [%delete (en-path:res resource.update)]
 ::  stop serving or syncing metadata associated with group
 ::
 ;<  ~  bind:m
-  %+  raw-poke
-    [our.bowl %metadata-hook]
-  :-  %metadata-hook-action
-  !>([%remove (en-path:res resource.update)])
-::  get metadata associated with group
-::
+  %-  raw-poke-our
+  ?:  =(our.bowl entity.resource.update)
+    :-  %metadata-push-hook
+    push-hook-action+!>([%remove resource.update])
+  :-  %metadata-pull-hook
+  pull-hook-action+!>([%remove resource.update])
 ;<  =associations:met  bind:m
   %+  scry  associations:met
   ;:  weld
@@ -64,8 +50,8 @@
     (en-path:res resource.update)
     /noun
   ==
-=/  entries=(list [g=group-path:met m=md-resource:met])
-  ~(tap in ~(key by associations))
+=/  entries=(list [m=md-resource:met g=resource:res *])
+  ~(tap by associations)
 |-  ^-  form:m
 =*  loop  $
 ?~  entries
@@ -76,22 +62,20 @@
   %+  raw-poke
     [our.bowl %metadata-store]
   :-  %metadata-action
-  !>  ^-  metadata-action:met
+  !>  ^-  action:met
   [%remove g.i.entries m.i.entries]
 ::  archive graph associated with group
 ::
-=/  app-resource  (de-path-soft:res app-path.m.i.entries)
-?~  app-resource
-  loop(entries t.entries)
+=*  app-resource  resource.m.i.entries
 ;<  ~  bind:m
   %+  raw-poke
     [our.bowl %graph-store]
-  :-  %graph-update
+  :-  %graph-update-0
   !>  ^-  update:gra
-  [%0 now.bowl [%archive-graph u.app-resource]]
+  [%0 now.bowl [%archive-graph app-resource]]
 ;<  ~  bind:m
   %+  raw-poke
     [our.bowl %graph-pull-hook]
   :-  %pull-hook-action
-  !>([%remove u.app-resource])
+  !>([%remove app-resource])
 loop(entries t.entries)

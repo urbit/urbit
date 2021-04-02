@@ -6,6 +6,7 @@
 +$  versioned-state
   $%  state-0
       state-1
+      state-2
   ==
 ::
 +$  invitatory-0  (map serial:store invite-0)
@@ -19,9 +20,10 @@
 ::
 +$  state-0  [%0 invites=(map path invitatory-0)]
 +$  state-1  [%1 =invites:store]
++$  state-2  [%2 =invites:store]
 --
 ::
-=|  state-1
+=|  state-2
 =*  state  -
 %-  agent:dbug
 ^-  agent:gall
@@ -36,44 +38,31 @@
   %_  this
       invites.state
     %-  ~(gas by *invites:store)
-    [%graph *invitatory:store]~
+    :~  [%graph *invitatory:store]
+        [%groups *invitatory:store]
+    ==
   ==
 ::
 ++  on-save   !>(state)
 ++  on-load
   |=  old-vase=vase
   =/  old  !<(versioned-state old-vase)
+  =|  cards=(list card)
+  |-
+  ?:  ?=(%2 -.old)
+    [cards this(state old)]
   ?:  ?=(%1 -.old)
-   `this(state old)
-  :-  =-  [%pass / %agent [our.bowl %invite-store] %poke %invite-action -]~
-      !>  ^-  action:store
-      [%create %graph]
-  %=  this
-      state
-    :-  %1
-    %-  ~(gas by *invites:store)
-    %+  murn  ~(tap by invites.old)
-    |=  [=path =invitatory-0]
-    ^-  (unit [term invitatory:store])
-    ?.  ?=([@ ~] path)  ~
-    :-  ~
-    :-  i.path
-    %-  ~(gas by *invitatory:store)
-    %+  murn  ~(tap by invitatory-0)
-    |=  [=serial:store =invite-0]
-    ^-  (unit [serial:store invite:store])
-    =/  resource=(unit resource:res)  (de-path-soft:res path.invite-0)
-    ?~  resource  ~
-    :-  ~
-    :-  serial
-    ^-  invite:store
-    :*  ship.invite-0
-        app.invite-0
-        u.resource
-        recipient.invite-0
-        text.invite-0
-    ==
-  ==
+    =.  cards
+      :~  =-  [%pass / %agent [our.bowl %invite-store] %poke %invite-action -]
+          !>  ^-  action:store
+          [%create %groups]
+        ::
+          =-  [%pass / %agent [our.bowl %invite-store] %poke %invite-action -]
+          !>  ^-  action:store
+          [%delete %contacts]
+      ==
+    $(-.old %2)
+  $(old [%1 (~(gas by *invites:store) [%graph *invitatory:store]~)])
 ::
 ++  on-agent  on-agent:def
 ++  on-arvo   on-arvo:def
@@ -109,11 +98,19 @@
   ++  poke-import
     |=  arc=*
     ^-  (quip card _state)
-    =/  sty=state-1
-      :-  %1
+    =/  sty=state-2
+      :-  %2
       %-  remake-map-of-map
       ;;((tree [term (tree [serial:store invite:store])]) +.arc)
-    [~ sty]
+    :_  sty
+    :~  =-  [%pass / %agent [our.bowl %invite-store] %poke %invite-action -]
+        !>  ^-  action:store
+        [%create %groups]
+      ::
+        =-  [%pass / %agent [our.bowl %invite-store] %poke %invite-action -]
+        !>  ^-  action:store
+        [%delete %contacts]
+    ==
   ::
   ++  poke-invite-action
     |=  =action:store

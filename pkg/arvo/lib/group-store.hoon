@@ -127,38 +127,17 @@
   ++  tags
     |=  =^tags
     ^-  json
-    |^
-    :-  %o
-    (~(uni by app) group)
-    ++  group
-      ^-  (map @t json)
-      %-  malt
-      %+  murn
-        ~(tap by tags)
-      |=  [=^tag ships=(^set ^ship)]
-      ^-  (unit [@t json])
-      ?^  tag
-        ~
-      `[tag (set ship ships)]
-    ++  app
-      ^-  (map @t json)
-      =|  app-tags=(map @t json)
-      =/  tags  ~(tap by tags)
-      |-
-      ?~  tags
-        app-tags
-      =*  tag  i.tags
-      ?@  p.tag
-        $(tags t.tags)
-      =/  app=json
-        (~(gut by app-tags) app.p.tag [%o ~])
-      ?>  ?=(%o -.app)
-      =.  p.app
-        (~(put by p.app) tag.p.tag (set ship q.tag))
-      =.  app-tags
-        (~(put by app-tags) app.p.tag app)
-      $(tags t.tags)
-    --
+    %-  pairs
+    %+  turn  ~(tap by tags)
+    |=  [=^tag ships=(^set ^ship)]
+    ^-  [@t json]
+    :_  (set ship ships)
+    ?@  tag  tag
+    ;:  (cury cat 3)
+      app.tag  '\\'
+      tag.tag  '\\'
+      (enjs-path:resource resource.tag)
+    ==
   ::
   ++  set
     |*  [item=$-(* json) sit=(^set)]
@@ -167,6 +146,7 @@
     %+  turn
       ~(tap in sit)
     item
+  ::
   ++  tag
     |=  =^tag
     ^-  json
@@ -175,6 +155,7 @@
     %-  pairs
     :~  app+s+app.tag
         tag+s+tag.tag
+        resource+s+(enjs-path:resource resource.tag)
     ==
   ::
   ++  policy
@@ -366,6 +347,7 @@
     %.  json
     %-  ot
     :~  app+so
+        resource+dejs-path:resource
         tag+so
     ==
 

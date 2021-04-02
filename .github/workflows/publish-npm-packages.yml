@@ -1,0 +1,62 @@
+name: publish-npm-packages
+on:
+  push:
+    branches:
+      - 'master'
+    paths:
+      - 'pkg/npm/**'
+jobs:
+  publish-api:
+    runs-on: ubuntu-latest
+    name: "Publish '@urbit/api' if a new version is available"
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - run: 'npm install'
+        working-directory: 'pkg/npm/api'
+      - uses: JS-DevTools/npm-publish@v1
+        with:
+          check-version: true
+          package: './pkg/npm/api/package.json'
+          token: ${{ secrets.NPM_TOKEN }}
+
+  publish-http-api:
+    runs-on: ubuntu-latest
+    name: "Publish '@urbit/http-api' if a new version is available"
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - run: 'npm install'
+        working-directory: 'pkg/npm/http-api'
+      - uses: JS-DevTools/npm-publish@v1
+        with:
+          check-version: true
+          package: './pkg/npm/http-api/package.json'
+          token: ${{ secrets.NPM_TOKEN }}
+
+  publish-eslint-config:
+    runs-on: ubuntu-latest
+    name: "Publish '@urbit/eslint-config' if a new version is available"
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - run: 'npm install'
+        working-directory: 'pkg/npm/eslint-config'
+      - uses: JS-DevTools/npm-publish@v1
+        with:
+          check-version: true
+          package: './pkg/npm/eslint-config/package.json'
+          token: ${{ secrets.NPM_TOKEN }}
+

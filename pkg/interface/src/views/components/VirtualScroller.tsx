@@ -1,193 +1,250 @@
-import React, { PureComponent, Component } from 'react';
+import React, { Component, useCallback } from 'react';
 import _ from 'lodash';
-import { BigIntOrderedMap } from "~/logic/lib/BigIntOrderedMap";
 import normalizeWheel from 'normalize-wheel';
-import { Box } from '@tlon/indigo-react';
 import bigInt, { BigInteger } from 'big-integer';
-import * as bigIntUtils from '~/logic/lib/bigInt';
+import styled from 'styled-components';
+
+import { Box, LoadingSpinner, Row, Center } from '@tlon/indigo-react';
+import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
+import {VirtualContext} from '~/logic/lib/virtualContext';
+import { IS_IOS } from '~/logic/lib/platform';
+const ScrollbarLessBox = styled(Box)`
+  scrollbar-width: none !important;
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
+`;
+
 
 interface RendererProps {
   index: BigInteger;
-  measure: (el: any) => void;
-  scrollWindow: any
+  scrollWindow: any;
+  ref: (el: HTMLElement | null) => void;
 }
 
-interface VirtualScrollerProps {
+interface VirtualScrollerProps<T> {
+  /**
+   * Start scroll from
+   */
   origin: 'top' | 'bottom';
-  loadRows(newer: boolean): void;
-  data: BigIntOrderedMap<BigInteger, any>;
+  /**
+   * Load more of the graph
+   *
+   * @returns boolean whether or not the graph is now fully loaded
+   */
+  loadRows(newer: boolean): Promise<boolean>;
+  /**
+   * The data to iterate over
+   */
+  data: BigIntOrderedMap<T>;
+  /**
+   * The component to render the items
+   *
+   * @remarks
+   *
+   * This component must be referentially stable, so either use `useCallback` or
+   * a instance method. It must also forward the DOM ref from its root DOM node
+   */
   renderer: (props: RendererProps) => JSX.Element | null;
   onStartReached?(): void;
   onEndReached?(): void;
   size: number;
-  onCalculateVisibleItems?(visibleItems: BigIntOrderedMap<BigInteger, JSX.Element>): void;
-  onScroll?({ scrollTop, scrollHeight, windowHeight }): void;
-  style?: any;
-}
-
-interface VirtualScrollerState {
-  startgap: number | undefined;
-  visibleItems: BigIntOrderedMap<BigInteger, Element>;
-  endgap: number | undefined;
-  totalHeight: number;
+  pendingSize: number;
+  totalSize: number;
+  /**
+   * Average height of a single rendered item
+   *
+   * @remarks
+   * This is used primarily to calculate how many items should be onscreen. If
+   * size is variable, err on the lower side.
+   */
   averageHeight: number;
-  scrollTop: number;
+  /**
+   * The offset to begin rendering at, on load.
+   *
+   * @remarks
+   * This is only looked up once, on component creation. Subsequent changes to
+   * this prop will have no effect
+   */
+  offset: number;
+  style?: any;
+  /**
+   * Callback to execute when finished loading from start
+  */
+  onBottomLoaded?: () => void;
 }
 
-export default class VirtualScroller extends Component<VirtualScrollerProps, VirtualScrollerState> {
-  private scrollContainer: React.RefObject<HTMLDivElement>;
-  public window: HTMLDivElement | null;
-  private cache: BigIntOrderedMap<any>;
-  private pendingLoad: {
-    start: BigInteger;
-    end: BigInteger
-    timeout: ReturnType<typeof setTimeout>;
-  } | undefined;
+interface VirtualScrollerState<T> {
+  visibleItems: BigIntOrderedMap<T>;
+  scrollbar: number;
+}
 
-  overscan = 150;
+type LogLevel = 'scroll' | 'network' | 'bail' | 'reflow';
+let logLevel = ['bail', 'scroll', 'reflow'] as LogLevel[];
 
-  OVERSCAN_SIZE = 100; // Minimum number of messages on either side before loadRows is called
+const log = (level: LogLevel, message: string) => {
+  if(logLevel.includes(level)) {
+    console.log(`[${level}]: ${message}`);
+  }
 
-  constructor(props: VirtualScrollerProps) {
+}
+
+const ZONE_SIZE = IS_IOS ? 10 : 40;
+
+
+// nb: in this file, an index refers to a BigInteger and an offset refers to a
+// number used to index a listified BigIntOrderedMap
+
+/**
+ * A virtualscroller for a `BigIntOrderedMap`.
+ *
+ * VirtualScroller does not clean up or reset itself, so please use `key`
+ * to ensure a new instance is created for each BigIntOrderedMap
+ */
+export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T>, VirtualScrollerState<T>> {
+  /**
+   * A reference to our scroll container
+   */
+  private window: HTMLDivElement | null = null;
+  /**
+   * A map of child refs, used to calculate scroll position
+   */
+  private childRefs = new BigIntOrderedMap<HTMLElement>();
+  /**
+   *  If saving, the bottommost visible element that we pin our scroll to
+   */
+  private savedIndex: BigInteger | null = null;
+  /**
+   *  If saving, the distance between the top of `this.savedEl` and the bottom
+   *  of the screen
+   */
+  private savedDistance = 0;
+
+  /**
+   *  If saving, the number of requested saves. If several images are loading
+   *  at once, we save the scroll pos the first time we see it and restore
+   *  once the number of requested saves is zero
+   */
+  private saveDepth = 0;
+
+  private scrollLocked = true;
+
+  private pageSize = 50;
+
+  private pageDelta = 15;
+
+  private scrollRef: HTMLElement | null = null;
+
+  private loaded = {
+    top: false,
+    bottom: false
+  };
+
+  constructor(props: VirtualScrollerProps<T>) {
     super(props);
     this.state = {
-      startgap: props.origin === 'top' ? 0 : undefined,
       visibleItems: new BigIntOrderedMap(),
-      endgap: props.origin === 'bottom' ? 0 : undefined,
-      totalHeight: 0,
-      averageHeight: 130,
-      scrollTop: props.origin === 'top' ? 0 : undefined
+      scrollbar: 0
     };
 
-    this.scrollContainer = React.createRef();
-    this.window = null;
-    this.cache = new BigIntOrderedMap();
+    this.updateVisible = this.updateVisible.bind(this);
 
-    this.recalculateTotalHeight = _.throttle(this.recalculateTotalHeight.bind(this), 200);
-    this.calculateVisibleItems = _.throttle(this.calculateVisibleItems.bind(this), 200);
-    this.estimateIndexFromScrollTop = this.estimateIndexFromScrollTop.bind(this);
     this.invertedKeyHandler = this.invertedKeyHandler.bind(this);
-    this.heightOf = this.heightOf.bind(this);
-    this.setScrollTop = this.setScrollTop.bind(this);
-    this.scrollToData = this.scrollToData.bind(this);
+    this.onScroll = IS_IOS ? _.debounce(this.onScroll.bind(this), 400) : this.onScroll.bind(this);
     this.scrollKeyMap = this.scrollKeyMap.bind(this);
-    this.loadRows = _.debounce(this.loadRows, 300, { leading: true }).bind(this);
+    this.setWindow = this.setWindow.bind(this);
   }
 
   componentDidMount() {
-    this.calculateVisibleItems();
-
-    this.recalculateTotalHeight();
+    this.updateVisible(0);
+    this.resetScroll();
+    this.loadTop();
+    this.loadBottom();
   }
 
-  componentDidUpdate(prevProps: VirtualScrollerProps, prevState: VirtualScrollerState) {
-    const {
-      scrollContainer, window,
-      props: { origin },
-      state: { totalHeight, scrollTop }
-    } = this;
-  }
-
-  scrollToData(targetIndex: BigInteger): Promise<void> {
-    if (!this.window) {
-      return new Promise((resolve, reject) => {reject()});
+  // manipulate scrollbar manually, to dodge change detection
+  updateScroll = IS_IOS ? () => {} : _.throttle(() => {
+    if(!this.window || !this.scrollRef) {
+      return;
     }
-    const { offsetHeight } = this.window;
-    let scrollTop = 0;
-    let itemHeight = 0;
-    new BigIntOrderedMap([...this.props.data].reverse()).forEach((datum, index) => {
-      const height = this.heightOf(index);
-      if (index.geq(targetIndex)) {
-        scrollTop += height;
-        if (index.eq(targetIndex)) {
-          itemHeight = height;
-        }
+    const { scrollTop, scrollHeight, offsetHeight } = this.window;
+
+    const unloaded = (this.startOffset() / this.pageSize);
+    const totalpages = this.props.size / this.pageSize;
+
+    const loaded = (scrollTop / scrollHeight);
+    const total = unloaded +  loaded;
+    const result = ((unloaded + loaded) / totalpages) *this.window.offsetHeight;
+    this.scrollRef.style[this.props.origin] = `${result}px`;
+  }, 50);
+
+
+
+  componentDidUpdate(prevProps: VirtualScrollerProps<T>, _prevState: VirtualScrollerState<T>) {
+    const { id, size, data, offset, pendingSize } = this.props;
+    const { visibleItems } = this.state;
+
+    if(size !== prevProps.size || pendingSize !== prevProps.pendingSize) {
+      if(this.scrollLocked) {
+        this.updateVisible(0);
+        this.resetScroll();
+
       }
-    });
-    return this.setScrollTop(scrollTop - (offsetHeight / 2) + itemHeight);
-  }
-
-  recalculateTotalHeight() {
-    let { averageHeight } = this.state;
-    let totalHeight = 0;
-    this.props.data.forEach((datum, index) => {
-      totalHeight += Math.max(this.heightOf(index), 0);
-    });
-    averageHeight = Number((totalHeight / this.props.data.size).toFixed());
-    totalHeight += (this.props.size - this.props.data.size) * averageHeight;
-    this.setState({ totalHeight, averageHeight });
-  }
-
-  estimateIndexFromScrollTop(targetScrollTop: number): BigInteger | undefined {
-    if (!this.window) return undefined;
-    let index = bigInt(this.props.size);
-    const { averageHeight } = this.state;
-    let height = 0;
-    while (height < targetScrollTop) {
-      const itemHeight = this.cache.has(index) ? this.cache.get(index).height : averageHeight;
-      height += itemHeight;
-      index.subtract(bigInt.one);
     }
-    return index;
   }
 
-  heightOf(index: BigInteger): number {
-    return this.cache.has(index) ? this.cache.get(index).height : this.state.averageHeight;
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this.invertedKeyHandler);
   }
 
-  calculateVisibleItems() {
-    if (!this.window) return;
-    let startgap = 0, heightShown = 0, endgap = 0;
-    let startGapFilled = false;
-    let visibleItems = new BigIntOrderedMap<any>();
-    const { scrollTop, offsetHeight: windowHeight } = this.window;
-    const { averageHeight, totalHeight } = this.state;
-    const { data, size: totalSize, onCalculateVisibleItems } = this.props;
-
-
-    [...data].forEach(([index, datum]) => {
-      const height = this.heightOf(index);
-      if (startgap < (scrollTop - this.overscan) && !startGapFilled) {
-        startgap += height;
-      } else if (heightShown < (windowHeight + this.overscan)) {
-        startGapFilled = true;
-        visibleItems.set(index, datum);
-        heightShown += height;
-      } 
-    });
-
-    endgap = totalHeight - heightShown - startgap;
-
-    const firstVisibleKey = visibleItems.peekSmallest()?.[0] ?? this.estimateIndexFromScrollTop(scrollTop)!;
-    const smallest = data.peekSmallest();
-    if (smallest && smallest[0].eq(firstVisibleKey)) {
-      this.loadRows(false);
+  startOffset() {
+    const startIndex = this.state?.visibleItems?.peekLargest()?.[0];
+    if(!startIndex) {
+      return 0;
     }
-    const lastVisibleKey =
-      visibleItems.peekLargest()?.[0]
-      ?? bigInt(this.estimateIndexFromScrollTop(scrollTop + windowHeight)!);
-
-    const largest = data.peekLargest();
-
-    if (largest && largest[0].eq(lastVisibleKey)) {
-      this.loadRows(true);
+    const offset = [...this.props.data].findIndex(([i]) => i.eq(startIndex))
+    if(offset === -1) {
+      // TODO: revisit when we remove nodes for any other reason than
+      // pending indices being removed
+      return 0;
     }
-    onCalculateVisibleItems ? onCalculateVisibleItems(visibleItems) : null;
+    return offset;
+  }
+
+  /**
+   *  Updates the `startOffset` and adjusts visible items accordingly.
+   *  Saves the scroll positions before repainting and restores it afterwards
+   */
+  updateVisible(newOffset: number) {
+    if (!this.window) {
+      return;
+    }
+    log('reflow', `from: ${this.startOffset()} to: ${newOffset}`);
+
+    const { data, onCalculateVisibleItems } = this.props;
+    const visibleItems = new BigIntOrderedMap<any>(
+      [...data].slice(newOffset, newOffset + this.pageSize)
+    );
+
+    this.save();
+
     this.setState({
-      startgap: Number(startgap.toFixed()),
       visibleItems,
-      endgap: Number(endgap.toFixed()),
-    });
-  }
+    }, () => {
+      requestAnimationFrame(() => {
+        this.restore();
+        requestAnimationFrame(() => {
 
-  loadRows(newer: boolean) {
-    this.props.loadRows(newer);
+        });
+      });
+    });
   }
 
   scrollKeyMap(): Map<string, number> {
     return new Map([
-      ['ArrowUp', this.state.averageHeight],
-      ['ArrowDown', this.state.averageHeight * -1],
+      ['ArrowUp', this.props.averageHeight],
+      ['ArrowDown', this.props.averageHeight * -1],
       ['PageUp', this.window!.offsetHeight],
       ['PageDown', this.window!.offsetHeight * -1],
       ['Home', this.window!.scrollHeight],
@@ -210,12 +267,12 @@ export default class VirtualScroller extends Component<VirtualScrollerProps, Vir
     }
   }
 
-  componentWillUnmount() {
-    window.removeEventListener('keydown', this.invertedKeyHandler);
-  }
-
   setWindow(element) {
-    if (!element) return;
+    if (!element)
+      return;
+    console.log('resetting window');
+    this.save();
+
     if (this.window) {
       if (this.window.isSameNode(element)) {
         return;
@@ -223,10 +280,11 @@ export default class VirtualScroller extends Component<VirtualScrollerProps, Vir
         window.removeEventListener('keydown', this.invertedKeyHandler);
       }
     }
-
-    this.overscan = Math.max(element.offsetHeight * 3, 500);
+    const { averageHeight } = this.props;
 
     this.window = element;
+    this.pageSize = Math.floor(element.offsetHeight / Math.floor(averageHeight / 5.5));
+    this.pageDelta = Math.floor(this.pageSize / 3);
     if (this.props.origin === 'bottom') {
        element.addEventListener('wheel', (event) => {
         event.preventDefault();
@@ -237,42 +295,179 @@ export default class VirtualScroller extends Component<VirtualScrollerProps, Vir
 
       window.addEventListener('keydown', this.invertedKeyHandler, { passive: false });
     }
-    this.resetScroll();
+    this.restore();
   }
 
-  resetScroll(): Promise<void> {
-    if (!this.window) return new Promise((resolve, reject) => {reject()});
-    return this.setScrollTop(0);
+  resetScroll() {
+    if (!this.window) {
+      return;
+    }
+    this.window.scrollTop = 0;
+    this.savedIndex = null;
+    this.savedDistance = 0;
+    this.saveDepth = 0;
+  }
+  loadTop = _.throttle(() => this.loadRows(false), 100);
+  loadBottom = _.throttle(() => this.loadRows(true), 100);
+
+  loadRows = async (newer: boolean) => {
+    const dir = newer ? 'bottom' : 'top';
+    if(this.loaded[dir]) {
+      return;
+    }
+    log('network', `loading more at ${dir}`);
+    const done = await this.props.loadRows(newer);
+    if(done) {
+      this.loaded[dir] = true;
+      if(newer && this.props.onBottomLoaded) {
+        this.props.onBottomLoaded()
+      }
+    }
+  };
+
+  onScroll(event: UIEvent) {
+    this.updateScroll();
+    if(!this.window) {
+      // bail if we're going to adjust scroll anyway
+      return;
+    }
+    if(this.saveDepth > 0) {
+      log('bail', 'deep scroll queue');
+      return;
+    }
+    const { onStartReached, onEndReached } = this.props;
+    const windowHeight = this.window.offsetHeight;
+    const { scrollTop, scrollHeight } = this.window;
+
+    const startOffset = this.startOffset();
+    if (scrollTop < ZONE_SIZE) {
+      log('scroll', `Entered start zone ${scrollTop}`);
+      if (startOffset === 0 && onStartReached) {
+        onStartReached();
+      }
+      const newOffset = Math.max(0, startOffset - this.pageDelta);
+      if(newOffset < 10) {
+        this.loadBottom();
+      }
+
+      if(newOffset === 0) {
+        this.scrollLocked = true;
+      }
+      if(newOffset !== startOffset) {
+        this.updateVisible(newOffset);
+      }
+    }
+    else if (scrollTop + windowHeight >= scrollHeight - ZONE_SIZE) {
+      this.scrollLocked = false;
+      log('scroll', `Entered end zone ${scrollTop}`);
+
+      const newOffset = Math.min(startOffset + this.pageDelta, this.props.data.size - this.pageSize);
+      if (onEndReached && startOffset === 0) {
+        onEndReached();
+      }
+
+      if((newOffset + (3 * this.pageSize) > this.props.data.size)) {
+        this.loadTop();
+      }
+
+      if(newOffset !== startOffset) {
+        this.updateVisible(newOffset);
+      }
+    } else {
+      this.scrollLocked = false;
+    }
   }
 
-  setScrollTop(distance: number, delay: number = 100): Promise<void> {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        if (!this.window) {
-          reject();
-          return;
-        }
-        this.window.scrollTop = distance;
-        resolve();
-      }, delay);
+  restore() {
+    if(!this.window || !this.savedIndex) {
+      return;
+    }
+    if(this.saveDepth !== 1) {
+      log('bail', 'Deep restore');
+      return;
+    }
+
+    const ref = this.childRefs.get(this.savedIndex)!;
+    const newScrollTop = this.window.scrollHeight - ref.offsetTop - this.savedDistance;
+
+    this.window.scrollTo(0, newScrollTop);
+    requestAnimationFrame(() => {
+      this.savedIndex = null;
+      this.savedDistance = 0;
+      this.saveDepth--;
     });
   }
 
-  onScroll(event) {
-    if (!this.window) return;
-    const { onStartReached, onEndReached, onScroll } = this.props;
-    const windowHeight = this.window.offsetHeight
-    const { scrollTop, scrollHeight } = this.window;
-    if (scrollTop !== scrollHeight) {
-      this.setState({ scrollTop });
+  scrollToIndex = (index: BigInteger) => {
+    let ref = this.childRefs.get(index);
+    if(!ref) {
+      const offset = [...this.props.data].findIndex(([idx]) => idx.eq(index));
+      if(offset === -1) {
+        return;
+      }
+      this.updateVisible(Math.max(offset - this.pageDelta, 0));
+      requestAnimationFrame(() => {
+        ref = this.childRefs.get(index);
+        this.savedIndex = null;
+        this.savedDistance = 0;
+        this.saveDepth = 0;
+
+        ref?.scrollIntoView({ block: 'center' });
+      });
+    } else {
+      this.savedIndex = null;
+      this.savedDistance = 0;
+      this.saveDepth = 0;
+
+      ref?.scrollIntoView({ block: 'center' });
+    }
+  };
+
+  save() {
+    if(!this.window || this.savedIndex) {
+      return;
+    }
+    this.saveDepth++;
+    if(this.saveDepth !== 1) {
+      console.log('bail', 'deep save');
+      return;
     }
 
-    this.calculateVisibleItems();
-    onScroll ? onScroll({ scrollTop, scrollHeight, windowHeight }) : null;
-    if (scrollTop === 0) {
-      if (onStartReached) onStartReached();
-    } else if (scrollTop + windowHeight >= scrollHeight) {
-      if (onEndReached) onEndReached();
+    let bottomIndex: BigInteger | null = null;
+    const { scrollTop, scrollHeight } = this.window;
+    const topSpacing = scrollHeight - scrollTop;
+    [...Array.from(this.state.visibleItems)].reverse().forEach(([index, datum]) => {
+      const el = this.childRefs.get(index);
+      if(!el) {
+        return;
+      }
+      const { offsetTop } = el;
+      if(offsetTop < topSpacing) {
+        bottomIndex = index;
+      }
+    });
+
+    if(!bottomIndex) {
+      // weird, shouldn't really happen
+      this.saveDepth--;
+      return;
+    }
+
+    this.savedIndex = bottomIndex;
+    const ref = this.childRefs.get(bottomIndex)!;
+    const { offsetTop } = ref;
+    this.savedDistance = topSpacing - offsetTop
+  }
+
+  shiftLayout = { save: this.save.bind(this), restore: this.restore.bind(this) };
+
+  setRef = (element: HTMLElement | null, index: BigInteger) => {
+    if(element) {
+      this.childRefs.set(index, element);
+    } else {
+      setTimeout(() => {
+        this.childRefs.delete(index);
+      });
     }
   }
 
@@ -285,37 +480,64 @@ export default class VirtualScroller extends Component<VirtualScrollerProps, Vir
 
     const {
       origin = 'top',
-      loadRows,
       renderer,
       style,
-      data
     } = this.props;
 
-    const indexesToRender = origin === 'top' ? visibleItems.keys() : visibleItems.keys().reverse();
+    const isTop = origin === 'top';
 
-    const transform = origin === 'top' ? 'scale3d(1, 1, 1)' : 'scale3d(1, -1, 1)';
+    const indexesToRender = isTop ? visibleItems.keys() : visibleItems.keys().reverse();
 
-    const render = (index: BigInteger) => {
-      const measure = (element: any) => {
-        if (element) {
-          this.cache.set(index, {
-            height: element.offsetHeight,
-            element
-          });
-          this.recalculateTotalHeight();
-        }
-      };
-      return renderer({ index, measure, scrollWindow: this.window });
-    };
+    const transform = isTop ? 'scale3d(1, 1, 1)' : 'scale3d(1, -1, 1)';
+
+    const atStart = (this.props.data.peekLargest()?.[0] ?? bigInt.zero).eq(visibleItems.peekLargest()?.[0] || bigInt.zero);
+    const atEnd = this.loaded.top;
 
     return (
-      <Box overflowY='scroll' ref={this.setWindow.bind(this)} onScroll={this.onScroll.bind(this)} style={{ ...style, ...{ transform } }}>
-        <Box ref={this.scrollContainer} style={{ transform, width: '100%' }}>
-          <Box style={{ height: `${origin === 'top' ? startgap : endgap}px` }}></Box>
-          {indexesToRender.map(render)}
-          <Box style={{ height: `${origin === 'top' ? endgap : startgap}px` }}></Box>
+      <>
+        {!IS_IOS && (<Box borderRadius="3" top ={isTop ? "0" : undefined} bottom={!isTop ? "0" : undefined} ref={el => { this.scrollRef = el; }} right="0" height="50px" position="absolute" width="4px" backgroundColor="lightGray" />)}
+
+      <ScrollbarLessBox overflowY='scroll' ref={this.setWindow} onScroll={this.onScroll} style={{ ...style, ...{ transform }, "WebkitOverflowScrolling": "auto" }}>
+        <Box style={{ transform, width: 'calc(100% - 4px)' }}>
+          {(isTop ? !atStart : !atEnd) && (<Center height="5">
+            <LoadingSpinner />
+          </Center>)}
+          <VirtualContext.Provider value={this.shiftLayout}>
+            {indexesToRender.map(index => (
+              <VirtualChild
+                key={index.toString()}
+                setRef={this.setRef}
+                index={index}
+                scrollWindow={this.window}
+                renderer={renderer}
+              />
+            ))}
+          </VirtualContext.Provider>
+          {(!isTop ? !atStart : !atEnd) &&
+            (<Center height="5">
+              <LoadingSpinner />
+            </Center>)}
         </Box>
-      </Box>
+      </ScrollbarLessBox>
+    </>
     );
   }
 }
+
+interface VirtualChildProps {
+  index: BigInteger;
+  scrollWindow: any;
+  setRef: (el: HTMLElement | null, index: BigInteger) => void;
+  renderer: (p: RendererProps) => JSX.Element | null;
+}
+
+function VirtualChild(props: VirtualChildProps) {
+  const { setRef, renderer: Renderer, ...rest } = props;
+
+  const ref = useCallback((el: HTMLElement | null) => {
+    setRef(el, props.index);
+  }, [setRef, props.index])
+
+  return (<Renderer ref={ref} {...rest} />);
+};
+

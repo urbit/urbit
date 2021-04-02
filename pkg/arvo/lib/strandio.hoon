@@ -238,6 +238,13 @@
     `[%done ~]
   ==
 ::
+++  raw-poke-our
+  |=  [app=term =cage]
+  =/  m  (strand ,~)
+  ^-  form:m
+  ;<  =bowl:spider  bind:m  get-bowl
+  (raw-poke [our.bowl app] cage)
+::
 ++  poke-our
   |=  [=term =cage]
   =/  m  (strand ,~)
@@ -435,19 +442,19 @@
   ;<  ~  bind:m  (send-request (hiss-to-request:html hiss))
   take-maybe-sigh
 ::
-::  +build-fail: build the source file at the specified $beam
+::  +build-file: build the source file at the specified $beam
 ::
 ++  build-file
   |=  [[=ship =desk =case] =spur]
   =*  arg  +<
-  =/  m  (strand ,vase)
+  =/  m  (strand ,(unit vase))
   ^-  form:m
   ;<  =riot:clay  bind:m
     (warp ship desk ~ %sing %a case spur)
   ?~  riot
-    (strand-fail %build-file >arg< ~)
+    (pure:m ~)
   ?>  =(%vase p.r.u.riot)
-  (pure:m !<(vase q.r.u.riot))
+  (pure:m (some !<(vase q.r.u.riot)))
 ::  +build-mark: build a mark definition to a $dais
 ::
 ++  build-mark
@@ -461,9 +468,9 @@
     (strand-fail %build-mark >arg< ~)
   ?>  =(%dais p.r.u.riot)
   (pure:m !<(dais:clay q.r.u.riot))
-::  +build-cast: build a mark conversion gate ($tube)
+::  +build-tube: build a mark conversion gate ($tube)
 ::
-++  build-cast
+++  build-tube
   |=  [[=ship =desk =case] =mars:clay]
   =*  arg  +<
   =/  m  (strand ,tube:clay)
@@ -471,9 +478,36 @@
   ;<  =riot:clay  bind:m
     (warp ship desk ~ %sing %c case /[a.mars]/[b.mars])
   ?~  riot
-    (strand-fail %build-cast >arg< ~)
+    (strand-fail %build-tube >arg< ~)
   ?>  =(%tube p.r.u.riot)
   (pure:m !<(tube:clay q.r.u.riot))
+::
+::  +build-nave: build a mark definition to a $nave
+::
+++  build-nave
+  |=  [[=ship =desk =case] mak=mark]
+  =*  arg  +<
+  =/  m  (strand ,vase)
+  ^-  form:m
+  ;<  =riot:clay  bind:m
+    (warp ship desk ~ %sing %b case /[mak])
+  ?~  riot
+    (strand-fail %build-nave >arg< ~)
+  ?>  =(%nave p.r.u.riot)
+  (pure:m q.r.u.riot)
+::  +build-cast: build a mark conversion gate (static)
+::
+++  build-cast
+  |=  [[=ship =desk =case] =mars:clay]
+  =*  arg  +<
+  =/  m  (strand ,vase)
+  ^-  form:m
+  ;<  =riot:clay  bind:m
+    (warp ship desk ~ %sing %f case /[a.mars]/[b.mars])
+  ?~  riot
+    (strand-fail %build-cast >arg< ~)
+  ?>  =(%cast p.r.u.riot)
+  (pure:m q.r.u.riot)
 ::
 ::  Read from Clay
 ::

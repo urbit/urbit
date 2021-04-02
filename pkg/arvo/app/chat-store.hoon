@@ -278,7 +278,7 @@
   =/  app-rid=resource
     (path-to-resource path)
   =/  group-rid=resource
-    (fall (group-from-app-resource:met %graph app-rid) [nobody %bad-group])
+    (fall (peek-group:met %graph app-rid) [nobody %bad-group])
   =/  group=(unit group)
     (scry-group:grp group-rid)
   :-  (add-graph app-rid mailbox)
@@ -293,12 +293,12 @@
   |=  group=resource
   ^-  card
   =-  [%pass / %agent [our.bol %group-store] %poke -]
-  group-update+!>([%remove-group group ~])
+  group-update-0+!>([%remove-group group ~])
 ::
 ++  poke-graph-store
   |=  =update:graph-store
   ^-  card
-  [%pass / %agent [our.bol %graph-store] %poke %graph-update !>(update)]
+  [%pass / %agent [our.bol %graph-store] %poke %graph-update-0 !>(update)]
 ::
 ++  letter-to-contents
   |=  =letter:store

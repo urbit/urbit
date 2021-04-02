@@ -1,42 +1,44 @@
-import React from "react";
+import React, { ReactElement } from 'react';
 import _ from 'lodash';
-import { PostFormSchema, PostForm } from "./NoteForm";
-import { FormikHelpers } from "formik";
-import GlobalApi from "~/logic/api/global";
-import { RouteComponentProps, useLocation } from "react-router-dom";
-import { GraphNode, TextContent, Association, S3State } from "~/types";
-import { getLatestRevision, editPost } from "~/logic/lib/publish";
-import {useWaitForProps} from "~/logic/lib/useWaitForProps";
+import { FormikHelpers } from 'formik';
+import { RouteComponentProps, useLocation } from 'react-router-dom';
+
+import { GraphNode } from '@urbit/api';
+
+import { PostFormSchema, PostForm } from './NoteForm';
+import GlobalApi from '~/logic/api/global';
+import { getLatestRevision, editPost } from '~/logic/lib/publish';
+import { useWaitForProps } from '~/logic/lib/useWaitForProps';
+
 interface EditPostProps {
   ship: string;
   noteId: number;
   note: GraphNode;
   api: GlobalApi;
   book: string;
-  s3: S3State;
 }
 
-export function EditPost(props: EditPostProps & RouteComponentProps) {
-  const { note, book, noteId, api, ship, history, s3 } = props;
+export function EditPost(props: EditPostProps & RouteComponentProps): ReactElement {
+  const { note, book, noteId, api, ship, history } = props;
   const [revNum, title, body] = getLatestRevision(note);
   const location = useLocation();
 
   const waiter = useWaitForProps(props);
   const initial: PostFormSchema = {
     title,
-    body,
+    body
   };
 
   const onSubmit = async (
     values: PostFormSchema,
     actions: FormikHelpers<PostFormSchema>
-  ) => {
+  ): Promise<void> => {
     const { title, body } = values;
     try {
       const newRev = revNum + 1;
       const nodes = editPost(newRev, noteId, title, body);
       await api.graph.addNodes(ship, book, nodes);
-      await waiter(p => {
+      await waiter((p) => {
         const [rev] = getLatestRevision(p.note);
         return rev === newRev;
       });
@@ -44,7 +46,7 @@ export function EditPost(props: EditPostProps & RouteComponentProps) {
       history.push(noteUrl);
     } catch (e) {
       console.error(e);
-      actions.setStatus({ error: "Failed to edit notebook" });
+      actions.setStatus({ error: 'Failed to edit notebook' });
     }
   };
 
@@ -54,7 +56,6 @@ export function EditPost(props: EditPostProps & RouteComponentProps) {
       cancel
       history={history}
       onSubmit={onSubmit}
-      s3={s3}
       submitLabel="Update"
       loadingText="Updating..."
     />

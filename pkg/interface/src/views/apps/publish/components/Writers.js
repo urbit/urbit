@@ -1,24 +1,22 @@
 import React, { Component } from 'react';
 import { Box, Text } from '@tlon/indigo-react';
 import { ShipSearch } from '~/views/components/ShipSearch';
-import { Formik, Form, FormikHelpers } from 'formik';
+import { Formik, Form } from 'formik';
 import { resourceFromPath } from '~/logic/lib/group';
 import { AsyncButton } from '~/views/components/AsyncButton';
-import { cite } from '~/logic/lib/util';
 
 export class Writers extends Component {
   render() {
-    const { association, groups, contacts, api } = this.props;
+    const { association, groups, api } = this.props;
 
-    const [,,,name] = association?.['app-path'].split('/');
-    const resource = resourceFromPath(association?.['group-path']);
+    const resource = resourceFromPath(association?.group);
 
     const onSubmit = async (values, actions) => {
       try {
         const ships = values.ships.map(e => `~${e}`);
         await api.groups.addTag(
           resource,
-          { app: 'publish', tag: `writers-${name}` },
+          { app: 'graph', resource: association.resource, tag: `writers` },
           ships
         );
         actions.resetForm();
@@ -28,7 +26,8 @@ export class Writers extends Component {
         actions.setStatus({ error: e.message });
       }
     };
-    const writers = Array.from(groups?.[association?.['group-path']]?.tags.publish?.[`writers-${name}`] || new Set()).map(e => cite(`~${e}`)).join(', ');
+    const writers = Array.from(groups?.[association?.group]?.tags.graph[association.resource]?.writers || []).map(s => `~${s}`).join(', ');
+
 
     return (
       <Box maxWidth='512px'>
@@ -40,8 +39,6 @@ export class Writers extends Component {
         >
           <Form>
             <ShipSearch
-              groups={groups}
-              contacts={contacts}
               id="ships"
               label=""
               maxLength={undefined}
@@ -51,10 +48,14 @@ export class Writers extends Component {
             </AsyncButton>
           </Form>
         </Formik>
-        {writers.length > 0 && <>
+        {writers.length > 0 ? <>
         <Text display='block' mt='2'>Current writers:</Text>
         <Text mt='2' display='block' mono>{writers}</Text>
-        </>}
+        </> : 
+          <Text display='block' mt='2'>
+            All group members can write to this channel
+          </Text>
+        }
       </Box>
     );
   }

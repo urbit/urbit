@@ -1,22 +1,63 @@
-/-  *post
+/-  *post, met=metadata-store, graph=graph-store, hark=hark-graph-hook
 |_  i=indexed-post
 ++  grow
   |%
   ++  noun  i
+  ++  graph-permissions-add
+    |=  vip=vip-metadata:met
+    ^-  permissions:graph
+    ?+  index.p.i  !!
+      [@ ~]            [%yes %yes %no]  :: new note
+      [@ %1 @ ~]       [%self %self %no]
+      [@ %2 @ ~]       [%yes %yes ?:(?=(%reader-comments vip) %yes %no)]
+      [@ %2 @ @ ~]     [%self %self %self]
+    ==
+  ::
+  ++  graph-permissions-remove
+    |=  vip=vip-metadata:met
+    ^-  permissions:graph
+    ?+  index.p.i  !!
+      [@ ~]            [%yes %self %self]
+      [@ %1 @ @ ~]     [%yes %self %self]
+      [@ %2 @ ~]       [%yes %self %self]
+      [@ %2 @ @ ~]     [%yes %self %self]
+    ==
   ::  +notification-kind
-  ::    Ignore all containers, only notify on content
+  ::    ignore all containers, only notify on content
   ::
   ++  notification-kind
+    ^-  (unit notif-kind:hark)
     ?+  index.p.i   ~
-      [@ %1 %1 ~]    `[%note 0 %each %.n]
-      [@ %1 @ ~]     `[%edit-note 0 %none %.n]
-      [@ %2 @ %1 ~]  `[%comment 1 %count %.n]
-      [@ %2 @ @ ~]   `[%edit-comment 1 %none %.n]
+      [@ %1 %1 ~]    `[%note [0 1] %each %children]
+      [@ %1 @ ~]     `[%edit-note [0 1] %none %none]
+      [@ %2 @ %1 ~]  `[%comment [1 3] %count %siblings]
+      [@ %2 @ @ ~]   `[%edit-comment [1 3] %none %none]
+    ==
+  ::
+  ++  transform-add-nodes
+    |=  [=index =post =atom was-parent-modified=?]
+    ^-  [^index ^post]
+    =-  [- post(index -)]
+    ?+    index  ~|(transform+[index post] !!)
+        [@ ~]         [atom ~]
+        [@ %1 ~]      [atom %1 ~]
+    ::
+        [@ %1 @ ~]
+      ?:  was-parent-modified
+        [atom %1 i.t.t.index ~]
+      index
+    ::
+        [@ %2 ~]      [atom %2 ~]
+        [@ %2 @ ~]    [i.index %2 atom ~]
+        [@ %2 @ @ ~]
+      ?:  was-parent-modified
+        [i.index %2 atom i.t.t.t.index ~]
+      index
     ==
   --
 ++  grab
   |%
-  :: +noun: Validate publish post
+  :: +noun: validate publish post
   :: 
   ++  noun
     |=  p=*

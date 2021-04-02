@@ -4,7 +4,9 @@
 ++  grow
   |%
   ++  noun  rid
-  ++  json  (enjs:resource rid)
+  ++  json  
+    %+  frond:enjs:format  %resource
+    (enjs:resource rid)
   --
 ++  grab
   |%

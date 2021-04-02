@@ -1,21 +1,20 @@
-import React, { ReactNode } from "react";
-import { Row, Box, Col, Text } from "@tlon/indigo-react";
-import styled from "styled-components";
-import { Link } from "react-router-dom";
+import React, { ReactElement, ReactNode } from 'react';
+import { Icon, Box, Col, Row, Text } from '@tlon/indigo-react';
+import styled from 'styled-components';
+import { Link } from 'react-router-dom';
+import urbitOb from 'urbit-ob';
 
-import { ChatResource } from "~/views/apps/chat/ChatResource";
-import { PublishResource } from "~/views/apps/publish/PublishResource";
+import { Association } from '@urbit/api/metadata';
+import { Groups, Rolodex } from '@urbit/api';
 
-import RichText from "~/views/components/RichText";
+import RichText from '~/views/components/RichText';
+import GlobalApi from '~/logic/api/global';
+import { isWriter } from '~/logic/lib/group';
+import { getItemTitle } from '~/logic/lib/util';
+import useContactState from '~/logic/state/contact';
+import useGroupState from '~/logic/state/group';
 
-import { Association } from "~/types/metadata-update";
-import GlobalApi from "~/logic/api/global";
-import { RouteComponentProps, Route, Switch } from "react-router-dom";
-import { ChannelSettings } from "./ChannelSettings";
-import { ChannelMenu } from "./ChannelMenu";
-import { NotificationGraphConfig } from "~/types";
-
-const TruncatedBox = styled(Box)`
+const TruncatedText = styled(RichText)`
   white-space: pre;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -23,32 +22,51 @@ const TruncatedBox = styled(Box)`
 
 type ResourceSkeletonProps = {
   association: Association;
-  notificationsGraphConfig: NotificationGraphConfig;
   api: GlobalApi;
   baseUrl: string;
   children: ReactNode;
-  atRoot?: boolean;
   title?: string;
   groupTags?: any;
 };
 
-export function ResourceSkeleton(props: ResourceSkeletonProps) {
-  const { association, api, baseUrl, children, atRoot, groupTags } = props;
-  const app = association?.metadata?.module || association["app-name"];
-  const appPath = association["app-path"];
-  const workspace =
-    baseUrl === "/~landscape/home" ? "/home" : association["group-path"];
-  const title = props.title || association?.metadata?.title;
+export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
+  const { association, baseUrl, children } = props;
+  const app = association?.metadata?.module || association['app-name'];
+  const rid = association.resource;
+  const groups = useGroupState(state => state.groups);
+  const group = groups[association.group];
+  let workspace = association.group;
 
-  const [, , ship, resource] = appPath.split("/");
+  if (group?.hidden && app === 'chat') {
+    workspace = '/messages';
+  } else if (group?.hidden) {
+    workspace = '/home';
+  }
 
-  const resourcePath = (p: string) => baseUrl + `/resource/${app}/ship/${ship}/${resource}` + p;
+  let title = (workspace === '/messages')
+    ? getItemTitle(association)
+    : association?.metadata?.title;
+
+  let recipient = "";
+
+  const contacts = useContactState(state => state.contacts);
+
+  if (urbitOb.isValidPatp(title)) {
+    recipient = title;
+    title = (contacts?.[title]?.nickname) ? contacts[title].nickname : title;
+  } else {
+    recipient = Array.from(group ? group.members : []).map(e => `~${e}`).join(", ")
+  }
+
+  const [, , ship, resource] = rid.split('/');
+
+  const resourcePath = (p: string) => baseUrl + p;
 
   const isOwn = `~${window.ship}` === ship;
-  let isWriter = (app === 'publish') ? true : false;
+  let canWrite = (app === 'publish') ? true : false;
 
-  if (groupTags?.publish?.[`writers-${resource}`]) {
-    isWriter = isOwn || groupTags?.publish?.[`writers-${resource}`]?.has(window.ship);
+  if (!isWriter(group, association.resource)) {
+    canWrite = isOwn;
   }
 
   return (
@@ -63,65 +81,62 @@ export function ResourceSkeleton(props: ResourceSkeletonProps) {
         borderBottom={1}
         borderBottomColor="washedGray"
       >
-        {atRoot ? (
-          <Box
-            borderRight={1}
-            borderRightColor="gray"
-            pr={3}
-            fontSize='1'
-            mr={3}
-            my="1"
-            display={["block", "none"]}
-            flexShrink={0}
+        <Box
+          borderRight={1}
+          borderRightColor="gray"
+          pr={3}
+          fontSize='1'
+          mr={3}
+          my="1"
+          display={['block', 'none']}
+          flexShrink={0}
+        >
+          <Link to={`/~landscape${workspace}`}><Text>{'<- Back'}</Text></Link>
+        </Box>
+        <Box px={1} mr={2} minWidth={0} display="flex" flexShrink={[1, 0]}>
+          <Text
+            mono={urbitOb.isValidPatp(title)}
+            fontSize='2'
+            fontWeight='700'
+            display="inline-block"
+            verticalAlign="middle"
+            textOverflow="ellipsis"
+            overflow="hidden"
+            whiteSpace="pre"
+            minWidth={0}
+            flexShrink={1}
           >
-            <Link to={`/~landscape${workspace}`}> {"<- Back"}</Link>
-          </Box>
-        ) : (
-          <Box color="blue" pr={2} mr={2}>
-            <Link to={`/~landscape${workspace}/resource/${app}${appPath}`}>
-              <Text color="blue">Go back to channel</Text>
-            </Link>
-          </Box>
-        )}
-
-        {atRoot && (
-          <>
-            <Box px={1} mr={2} minWidth={0} display="flex">
-              <Text fontSize='2' fontWeight='700' display="inline-block" verticalAlign="middle" textOverflow="ellipsis" overflow="hidden" whiteSpace="pre" minWidth={0}>
-                {title}
-              </Text>
-            </Box>
-            <TruncatedBox
-              display={["none", "block"]}
-              verticalAlign="middle"
-              maxWidth='60%'
-              flexShrink={1}
-              title={association?.metadata?.description}
-              color="gray"
-            >
-              <RichText
-                color="gray"
-                mb="0"
-                display="inline-block"
-                disableRemoteContent
-              >
-                {association?.metadata?.description}
-              </RichText>
-            </TruncatedBox>
-            <Box flexGrow={1} />
-            {isWriter && (
-              <Link to={resourcePath('/new')} style={{ flexShrink: '0' }}>
-                <Text bold pr='3' color='blue'>+ New Post</Text>
-              </Link>
-            )}
-            <ChannelMenu
-              graphNotificationConfig={props.notificationsGraphConfig}
-              chatNotificationConfig={props.notificationsChatConfig}
-              association={association}
-              api={api}
-            />
-          </>
-        )}
+            {title}
+          </Text>
+        </Box>
+        <Row
+          display={['none', 'flex']}
+          verticalAlign="middle"
+          flexShrink={2}
+          minWidth={0}
+          title={association?.metadata?.description}
+        >
+          <TruncatedText
+            display={(workspace === '/messages' && (urbitOb.isValidPatp(title))) ? 'none' : 'inline-block'}
+            mono={(workspace === '/messages' && !(urbitOb.isValidPatp(title)))}
+            color="gray"
+            minWidth={0}
+            width="100%"
+            mb="0"
+            disableRemoteContent
+          >
+            {(workspace === '/messages') ? recipient : association?.metadata?.description}
+          </TruncatedText>
+        </Row>
+        <Box flexGrow={1} flexShrink={0} />
+        {canWrite && (
+          <Link to={resourcePath('/new')} style={{ flexShrink: '0' }}>
+            <Text bold pr='3' color='blue'>+ New Post</Text>
+          </Link>
+      )}
+      <Link to={`${baseUrl}/settings`}>
+        <Icon icon="Menu" color="gray" pr="2" />
+      </Link>
       </Box>
       {children}
     </Col>

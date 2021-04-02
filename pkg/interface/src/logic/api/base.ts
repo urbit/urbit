@@ -1,6 +1,5 @@
-import _ from "lodash";
-import { uuid } from "../lib/util";
-import { Patp, Path } from "~/types/noun";
+import _ from 'lodash';
+import { Patp, Path } from '@urbit/api';
 import BaseStore from '../store/base';
 
 export default class BaseApi<S extends object = {}> {
@@ -26,8 +25,8 @@ export default class BaseApi<S extends object = {}> {
           data: event,
           from: {
             ship,
-            path,
-          },
+            path
+          }
         });
       },
       (qui) => {
@@ -50,8 +49,12 @@ export default class BaseApi<S extends object = {}> {
         appl,
         mark,
         data,
-        (json) => { resolve(json); },
-        (err) => { reject(err); }
+        (json) => {
+ resolve(json);
+},
+        (err) => {
+ reject(err);
+}
       );
     });
   }
@@ -68,5 +71,4 @@ export default class BaseApi<S extends object = {}> {
 
     return res.json();
   }
-
 }

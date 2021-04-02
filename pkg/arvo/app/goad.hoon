@@ -7,6 +7,9 @@
     |=  force=?
     :~  [%pass /gall %arvo %g %goad force ~]
     ==
+  +$  state
+    $@  ~
+    [%0 ~]
   --
 |_  =bowl:gall
 +*  this  .
@@ -31,8 +34,13 @@
 ++  on-fail   on-fail:def
 ++  on-init   on-init:def
 ++  on-leave  on-leave:def
-++  on-load   on-load:def
+++  on-load   
+  |=  =vase
+  =+  !<(old=state vase)
+  ?^  old  `this
+  [(goad &) this]
+::
 ++  on-peek   on-peek:def
-++  on-save   on-save:def
+++  on-save   !>([%0 ~])
 ++  on-watch  on-watch:def
 --

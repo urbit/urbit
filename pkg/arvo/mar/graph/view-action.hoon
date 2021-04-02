@@ -4,6 +4,7 @@
 ++  grow
   |%
   ++  noun  act
+  ++  json  (action:enjs act)
   --
 ++  grab
   |%

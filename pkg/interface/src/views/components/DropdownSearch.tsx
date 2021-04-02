@@ -5,17 +5,18 @@ import React, {
   useCallback,
   useEffect,
   ChangeEvent,
-} from "react";
-import _ from "lodash";
-import Mousetrap from "mousetrap";
+  ReactElement
+} from 'react';
+import _ from 'lodash';
+import Mousetrap from 'mousetrap';
+
 import {
   Box,
-  Label,
-  ErrorLabel,
-  StatelessTextInput as Input,
-} from "@tlon/indigo-react";
-import { useDropdown } from "~/logic/lib/useDropdown";
-import { PropFunc } from "~/types/util";
+  StatelessTextInput as Input
+} from '@tlon/indigo-react';
+
+import { useDropdown } from '~/logic/lib/useDropdown';
+import { PropFunc } from '~/types/util';
 
 interface DropdownSearchExtraProps<C> {
   // check if entry is exact match
@@ -36,13 +37,14 @@ interface DropdownSearchExtraProps<C> {
   disabled?: boolean;
   placeholder?: string;
   onChange?: (e: ChangeEvent<HTMLTextAreaElement>) => void;
-  onBlur?: (e: any) => void;
+  onBlur?: (e: FocusEvent) => void;
+  onFocus?:  (e: FocusEvent) => void;
 }
 
 type DropdownSearchProps<C> = PropFunc<typeof Box> &
   DropdownSearchExtraProps<C>;
 
-export function DropdownSearch<C>(props: DropdownSearchProps<C>) {
+export function DropdownSearch<C>(props: DropdownSearchProps<C>): ReactElement {
   const textarea = useRef<HTMLTextAreaElement>();
   const {
     candidates,
@@ -53,12 +55,13 @@ export function DropdownSearch<C>(props: DropdownSearchProps<C>) {
     renderCandidate,
     disabled,
     placeholder,
-    onChange = () => {},
-    onBlur = () => {},
+    onFocus = (): void => {},
+    onChange = (): void => {},
+    onBlur = (): void => {},
     ...rest
   } = props;
 
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('');
   const exact = useCallback(
     (s: string) => {
       return isExact ? isExact(s) : undefined;
@@ -75,7 +78,7 @@ export function DropdownSearch<C>(props: DropdownSearchProps<C>) {
 
   const handleSelect = useCallback(
     (c: C) => {
-      setQuery("");
+      setQuery('');
       onSelect(c);
     },
     [setQuery, onSelect]
@@ -94,14 +97,14 @@ export function DropdownSearch<C>(props: DropdownSearchProps<C>) {
     }
 
     const mousetrap = Mousetrap(textarea.current);
-    mousetrap.bind(["down", "tab"], next);
-    mousetrap.bind(["up", "shift+tab"], back);
-    mousetrap.bind("enter", onEnter);
+    mousetrap.bind(['down', 'tab'], next);
+    mousetrap.bind(['up', 'shift+tab'], back);
+    mousetrap.bind('enter', onEnter);
 
     return () => {
-      mousetrap.unbind(["down", "tab"]);
-      mousetrap.unbind(["up", "shift+tab"]);
-      mousetrap.unbind("enter", onEnter);
+      mousetrap.unbind(['down', 'tab']);
+      mousetrap.unbind(['up', 'shift+tab']);
+      mousetrap.unbind('enter');
     };
   }, [textarea.current, next, back, onEnter]);
 
@@ -111,7 +114,7 @@ export function DropdownSearch<C>(props: DropdownSearchProps<C>) {
       search(e.target.value);
       setQuery(e.target.value);
     },
-    [setQuery]
+    [search, onChange]
   );
 
   const dropdown = useMemo(() => {

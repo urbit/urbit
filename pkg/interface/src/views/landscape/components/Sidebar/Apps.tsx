@@ -1,43 +1,8 @@
-import { useEffect, useCallback } from "react";
-import { Inbox, ChatHookUpdate, Notebooks, Graphs, UnreadStats } from "~/types";
-import { SidebarItemStatus, SidebarAppConfig } from "./types";
+import { useCallback } from 'react';
 
-export function useChat(
-  inbox: Inbox,
-  chatSynced: ChatHookUpdate | null
-): SidebarAppConfig {
-  const getStatus = useCallback(
-    (s: string): SidebarItemStatus | undefined => {
-      if (!(s in (chatSynced || {}))) {
-        return "unsubscribed";
-      }
-      const mailbox = inbox?.[s];
-      if (!mailbox) {
-        return undefined;
-      }
-      const { config } = mailbox;
-      if (config?.read !== config?.length) {
-        return "unread";
-      }
-      return undefined;
-    },
-    [inbox, chatSynced]
-  );
+import { Graphs, UnreadStats } from '@urbit/api';
 
-  const lastUpdated = useCallback(
-    (s: string) => {
-      const mailbox = inbox?.[s];
-      if (!mailbox) {
-        return 0;
-      }
-      return mailbox?.envelopes?.[0]?.when || 0;
-    },
-    [inbox]
-  );
-
-  return { lastUpdated, getStatus };
-}
-
+import { SidebarAppConfig } from './types';
 
 export function useGraphModule(
   graphKeys: Set<string>,
@@ -46,10 +11,15 @@ export function useGraphModule(
 ): SidebarAppConfig {
   const getStatus = useCallback(
     (s: string) => {
-      const [, , host, name] = s.split("/");
+      const [, , host, name] = s.split('/');
       const graphKey = `${host.slice(1)}/${name}`;
       if (!graphKeys.has(graphKey)) {
-        return "unsubscribed";
+        return 'unsubscribed';
+      }
+
+      const notifications = graphUnreads?.[s]?.['/']?.notifications;
+      if ( notifications > 0 ) {
+        return 'notification';
       }
 
       const unreads = graphUnreads?.[s]?.['/']?.unreads;
@@ -73,7 +43,6 @@ export function useGraphModule(
       return 0;
     }
     return 1;
-
   }, [getStatus, graphUnreads]);
 
   return { getStatus, lastUpdated };

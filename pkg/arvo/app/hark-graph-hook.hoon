@@ -1,7 +1,7 @@
 ::  hark-graph-hook: notifications for graph-store [landscape]
 ::
-/-  post, group-store, metadata-store, hook=hark-graph-hook, store=hark-store
-/+  resource, metadata, default-agent, dbug, graph-store, graph, grouplib=group, store=hark-store
+/-  post, group-store, metadata=metadata-store, hook=hark-graph-hook, store=hark-store
+/+  resource, mdl=metadata, default-agent, dbug, graph-store, graph, grouplib=group, store=hark-store
 ::
 ::
 ~%  %hark-graph-hook-top  ..part  ~
@@ -24,8 +24,6 @@
       watch-on-self=_&
   ==
 ::
-+$  notif-kind
-  [name=@t parent-lent=@ud mode=?(%each %count %none) watch=?]
 ::
 ++  scry
   |*  [[our=@p now=@da] =mold p=path]
@@ -53,7 +51,7 @@
 +*  this  .
     ha    ~(. +> bowl)
     def   ~(. (default-agent this %|) bowl)
-    met   ~(. metadata bowl)
+    met   ~(. mdl bowl)
     grp   ~(. grouplib bowl)
     gra   ~(. graph bowl)
 ::
@@ -184,7 +182,7 @@
     ~[watch-graph:ha]
   ::
       %fact
-    ?.  ?=(%graph-update p.cage.sign)
+    ?.  ?=(%graph-update-0 p.cage.sign)
       (on-agent:def wire sign)
     =^  cards  state
       (graph-update !<(update:graph-store q.cage.sign))
@@ -223,11 +221,11 @@
     |=  [=index:graph-store out=(list card)]
     =|  =indexed-post:graph-store
     =.  index.p.indexed-post  index
-    =+  !<(u-notif-kind=(unit notif-kind) (tube !>(indexed-post)))
+    =+  !<(u-notif-kind=(unit notif-kind:hook) (tube !>(indexed-post)))
     ?~  u-notif-kind  out
     =*  notif-kind  u.u-notif-kind
     =/  =stats-index:store
-      [%graph rid (scag parent-lent.notif-kind index)]
+      [%graph rid (scag parent.index-len.notif-kind index)]
     ?.  ?=(%each mode.notif-kind)  out
     :_  out 
     (poke-hark %read-each stats-index index)
@@ -272,14 +270,14 @@
             rid=resource
         ==
     =/  group=(unit resource)
-      (group-from-app-resource:met %graph rid)
+      (peek-group:met %graph rid)
     ?~  group  
       ~&  no-group+rid
       `state
-    =/  metadata=(unit metadata:metadata-store)
-      (peek-metadata:met %graph u.group rid)
-    ?~  metadata  `state
-    abet:check:(abed:handle-update:ha rid nodes u.group module.u.metadata)
+    =/  metadatum=(unit metadatum:metadata)
+      (peek-metadatum:met %graph rid)
+    ?~  metadatum  `state
+    abet:check:(abed:handle-update:ha rid nodes u.group module.u.metadatum)
   --
 ::
 ++  on-peek  on-peek:def
@@ -300,7 +298,7 @@
 --
 ::
 |_  =bowl:gall
-+*  met   ~(. metadata bowl)
++*  met   ~(. mdl bowl)
     grp   ~(. grouplib bowl)
     gra   ~(. graph bowl)
 ::
@@ -344,7 +342,7 @@
   |=  rid=resource
   ^-  ?
   =/  group-rid=(unit resource)
-    (group-from-app-resource:met %graph rid) 
+    (peek-group:met %graph rid) 
   ?~  group-rid  %.n
   ?|  !(is-managed:grp u.group-rid)
       &(watch-on-self =(our.bowl entity.rid))
@@ -382,8 +380,12 @@
     update-core(hark-pokes [action hark-pokes])
   ::
   ++  new-watch
-    |=  =index:graph-store
-    update-core(new-watches [index new-watches])
+    |=  [=index:graph-store =watch-for:hook =index-len:hook]
+    =?  new-watches  =(%siblings watch-for)
+      [(scag parent.index-len index) new-watches]
+    =?  new-watches  =(%children watch-for)
+      [(scag self.index-len index) new-watches]
+    update-core
   ::
   ++  check
     |-  ^+  update-core
@@ -411,7 +413,7 @@
     |=  =node:graph-store
     ^+  update-core
     =.  update-core  (check-node-children node)
-    =+  !<  notif-kind=(unit notif-kind)
+    =+  !<  notif-kind=(unit notif-kind:hook)
         (get-conversion !>([0 post.node]))
     ?~  notif-kind
       update-core
@@ -421,11 +423,11 @@
       name.u.notif-kind
     =*  not-kind  u.notif-kind
     =/  parent=index:post
-      (scag parent-lent.not-kind index.post.node)
+      (scag parent.index-len.not-kind index.post.node)
     =/  notif-index=index:store
       [%graph group rid module desc parent]
     ?:  =(our.bowl author.post.node)
-      (self-post node notif-index [mode watch]:not-kind)
+      (self-post node notif-index not-kind)
     =.  update-core
       (update-unread-count not-kind notif-index [time-sent index]:post.node)
     =?    update-core
@@ -438,7 +440,7 @@
     update-core
   ::
   ++  update-unread-count
-    |=  [=notif-kind =index:store time=@da ref=index:graph-store]
+    |=  [=notif-kind:hook =index:store time=@da ref=index:graph-store]
     =/  =stats-index:store
       (to-stats-index:store index)
     ?-  mode.notif-kind 
@@ -450,19 +452,18 @@
   ++  self-post
     |=  $:  =node:graph-store
             =index:store
-            mode=?(%count %each %none)
-            watch=?
+            =notif-kind:hook
         ==
     ^+  update-core 
-    ?:  ?=(%none mode)  update-core
+    ?:  ?=(%none mode.notif-kind)  update-core
     =/  =stats-index:store
       (to-stats-index:store index)
     =.  update-core
       (hark %seen-index time-sent.post.node stats-index)
-    =?  update-core  ?=(%count mode)
+    =?  update-core  ?=(%count mode.notif-kind)
       (hark %read-count stats-index)
-    =?  update-core  &(watch watch-on-self)
-      (new-watch index.post.node)
+    =?  update-core  watch-on-self
+      (new-watch index.post.node [watch-for index-len]:notif-kind)
     update-core
   ::
   ++  add-unread

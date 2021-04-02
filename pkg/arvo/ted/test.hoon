@@ -92,8 +92,12 @@
       ?.  =(%hoon (rear p))  ~
       (some [[-.i.bez p] ~])
     loop(bez t.bez, fiz (~(gas in fiz) foz))
-  ~|  bad-test-beam+i.bez
-  =/  tex=term  =-(?>(((sane %tas) -) -) (rear s.i.bez))
+  ::
+  ::  XX this logic appears to be vestigial
+  ::
+  =/  tex=term
+    ~|  bad-test-beam+i.bez
+    =-(?>(((sane %tas) -) -) (rear s.i.bez))
   =/  xup=path  (snip s.i.bez)
   ;<  hov=?  bind:m  (check-for-file:strandio i.bez(s (snoc xup %hoon)))
   ?.  hov
@@ -107,16 +111,23 @@
 =/  paz=(list path)
   (tail !<([~ (list path)] arg))
 =/  bez=(list beam)
-  (turn paz |=(p=path (need (de-beam p))))
+  (turn paz |=(p=path ~|([%test-not-beam p] (need (de-beam p)))))
 ;<  fiz=(set [=beam test=(unit term)])  bind:m  (find-test-files bez)
 =>  .(fiz (sort ~(tap in fiz) aor))
 =|  test-arms=(map path (list test-arm))
+=|  build-ok=?
 |-  ^-  form:m
 =*  gather-tests  $
 ?^  fiz
-  ~>  %slog.0^leaf+"test: building {(spud s.beam.i.fiz)}"
-  ;<  cor=vase  bind:m  (build-file:strandio beam.i.fiz)
-  =/  arms=(list test-arm)  (get-test-arms cor)
+  ;<  cor=(unit vase)  bind:m  (build-file:strandio beam.i.fiz)
+  ?~  cor
+    ~>  %slog.0^leaf+"FAILED  {(spud s.beam.i.fiz)} (build)"
+    gather-tests(fiz t.fiz, build-ok |)
+  ~>  %slog.0^leaf+"built   {(spud s.beam.i.fiz)}"
+  =/  arms=(list test-arm)  (get-test-arms u.cor)
+  ::
+  ::  XX this logic appears to be vestigial
+  ::
   =?  arms  ?=(^ test.i.fiz)
     |-  ^+  arms
     ?~  arms  ~|(no-test-arm+i.fiz !!)
@@ -127,7 +138,7 @@
   gather-tests(fiz t.fiz)
 %-  pure:m  !>  ^=  ok
 %+  roll  (resolve-test-paths test-arms)
-|=  [[=path =test-func] ok=_`?`%&]
+|=  [[=path =test-func] ok=_build-ok]
 ^+  ok
 =/  res  (run-test path test-func)
 %-  (slog (flop tang.res))

@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { ReactElement, ReactNode, useRef } from 'react';
 import styled from 'styled-components';
 import {
   Col
@@ -12,13 +12,16 @@ import {
   Groups,
   Invites,
   Rolodex
-} from '~/types';
+} from '@urbit/api';
 import { SidebarListHeader } from './SidebarListHeader';
 import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
 import { getGroupFromWorkspace } from '~/logic/lib/workspace';
 import { SidebarAppConfigs } from './types';
 import { SidebarList } from './SidebarList';
 import { roleForShip } from '~/logic/lib/group';
+import { useTutorialModal } from '~/views/components/useTutorialModal';
+import useGroupState from '~/logic/state/group';
+import useMetadataState from '~/logic/state/metadata';
 
 const ScrollbarLessCol = styled(Col)`
   scrollbar-width: none !important;
@@ -29,29 +32,21 @@ const ScrollbarLessCol = styled(Col)`
 `;
 
 interface SidebarProps {
-  contacts: Rolodex;
   children: ReactNode;
   recentGroups: string[];
-  invites: Invites ;
   api: GlobalApi;
-  associations: Associations;
   selected?: string;
   selectedGroup?: string;
-  includeUnmanaged?: boolean;
-  groups: Groups;
   apps: SidebarAppConfigs;
   baseUrl: string;
   mobileHide?: boolean;
   workspace: Workspace;
 }
 
-export function Sidebar(props: SidebarProps) {
-  const { associations, selected, workspace } = props;
+export function Sidebar(props: SidebarProps): ReactElement | null {
+  const { selected, workspace } = props;
   const groupPath = getGroupFromWorkspace(workspace);
   const display = props.mobileHide ? ['none', 'flex'] : 'flex';
-  if (!associations) {
-    return null;
-  }
 
   const [config, setConfig] = useLocalStorageState<SidebarListConfig>(
     `group-config:${groupPath || 'home'}`,
@@ -61,11 +56,17 @@ export function Sidebar(props: SidebarProps) {
     }
   );
 
-  const role = props.groups?.[groupPath] ? roleForShip(props.groups[groupPath], window.ship) : undefined;
+  const groups = useGroupState(state => state.groups);
+
+  const role = groups?.[groupPath] ? roleForShip(groups[groupPath], window.ship) : undefined;
   const isAdmin = (role === 'admin') || (workspace?.type === 'home');
+
+  const anchorRef = useRef<HTMLElement | null>(null);
+  useTutorialModal('channels', true, anchorRef);
 
   return (
     <ScrollbarLessCol
+      ref={anchorRef}
       display={display}
       width="100%"
       gridRow="1/2"
@@ -78,29 +79,27 @@ export function Sidebar(props: SidebarProps) {
       position="relative"
     >
       <GroupSwitcher
-        associations={associations}
         recentGroups={props.recentGroups}
         baseUrl={props.baseUrl}
         isAdmin={isAdmin}
         workspace={props.workspace}
       />
       <SidebarListHeader
-        contacts={props.contacts}
         baseUrl={props.baseUrl}
-        groups={props.groups}
         initialValues={config}
         handleSubmit={setConfig}
         selected={selected || ''}
         workspace={workspace}
+        api={props.api}
+        history={props.history}
       />
       <SidebarList
         config={config}
-        associations={associations}
         selected={selected}
         group={groupPath}
-        groups={props.groups}
         apps={props.apps}
         baseUrl={props.baseUrl}
+        workspace={workspace}
       />
     </ScrollbarLessCol>
   );

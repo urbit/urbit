@@ -27,7 +27,6 @@ struct _u3_ufil;
     c3_c*             pax_c;            //  absolute path
     struct _u3_udir*  par_u;            //  parent
     struct _u3_unod*  nex_u;            //  internal list
-    c3_w              mug_w;            //  mug of last %into
     c3_w              gum_w;            //  mug of last %ergo
   } u3_ufil;
 
@@ -618,7 +617,6 @@ _unix_watch_file(u3_unix* unx_u, u3_ufil* fil_u, u3_udir* par_u, c3_c* pax_c)
   strcpy(fil_u->pax_c, pax_c);
   fil_u->par_u = par_u;
   fil_u->nex_u = NULL;
-  fil_u->mug_w = 0;
   fil_u->gum_w = 0;
 
   if ( par_u ) {
@@ -677,8 +675,8 @@ static u3_noun _unix_update_node(u3_unix* unx_u, u3_unod* nod_u);
  * when scanning through files, if dry, do nothing.  otherwise, mark as
  * dry, then check if file exists.  if not, remove self from node list
  * and add path plus sig to %into event.  otherwise, read the file and
- * get a mug checksum.  if same as mug_w, move on.  otherwise, overwrite
- * mug_w with new mug and add path plus data to %into event.
+ * get a mug checksum.  if same as gum_w, move on.  otherwise, overwrite
+ * add path plus data to %into event.
 */
 static u3_noun
 _unix_update_file(u3_unix* unx_u, u3_ufil* fil_u)
@@ -731,18 +729,11 @@ _unix_update_file(u3_unix* unx_u, u3_ufil* fil_u)
   }
   else {
     c3_w mug_w = u3r_mug_bytes(dat_y, len_ws);
-    if ( mug_w == fil_u->mug_w ) {
-      c3_free(dat_y);
-      return u3_nul;
-    }
-    else if ( mug_w == fil_u->gum_w ) {
-      fil_u->mug_w = mug_w;
+    if ( mug_w == fil_u->gum_w ) {
       c3_free(dat_y);
       return u3_nul;
     }
     else {
-      fil_u->mug_w = mug_w;
-
       u3_noun pax = _unix_string_to_path(unx_u, fil_u->pax_c);
       u3_noun mim = u3nt(c3__text, u3i_string("plain"), u3_nul);
       u3_noun dat = u3nt(mim, len_ws, u3i_bytes(len_ws, dat_y));

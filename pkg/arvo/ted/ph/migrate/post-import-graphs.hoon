@@ -14,7 +14,7 @@
   =/  =post:post  [our index wen [%text body]~ ~ ~]
   =/  =node:graph-store  [post %empty ~]
   =/  act=update:graph-store  [%0 wen %add-nodes rid (my [index node] ~)]
-  (poke-app our %graph-push-hook %graph-update act)
+  (poke-app our %graph-push-hook %graph-update-0 act)
 --
 ::
 ^-  thread:spider

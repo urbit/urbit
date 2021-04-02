@@ -1,39 +1,43 @@
-import React, { useEffect } from "react";
-import { AsyncButton } from "~/views/components/AsyncButton";
-import * as Yup from "yup";
+import React from 'react';
+import { Formik, Form, FormikHelpers } from 'formik';
+import * as Yup from 'yup';
+
 import {
   Box,
   ManagedTextInputField as Input,
   ManagedToggleSwitchField as Checkbox,
   Col,
-  Label,
-  Button,
-} from "@tlon/indigo-react";
-import { Formik, Form, useFormikContext, FormikHelpers } from "formik";
-import { FormError } from "~/views/components/FormError";
-import { Group, GroupPolicy } from "~/types/group-update";
-import { Enc } from "~/types/noun";
-import { Association } from "~/types/metadata-update";
-import GlobalApi from "~/logic/api/global";
-import { resourceFromPath, roleForShip } from "~/logic/lib/group";
-import { StatelessAsyncButton } from "~/views/components/StatelessAsyncButton";
-import { ColorInput } from "~/views/components/ColorInput";
-import { useHistory } from "react-router-dom";
+  Text
+} from '@tlon/indigo-react';
+import { Enc } from '@urbit/api';
+import { Group, GroupPolicy } from '@urbit/api/groups';
+import { Association } from '@urbit/api/metadata';
 
-import { uxToHex } from "~/logic/lib/util";
+import { AsyncButton } from '~/views/components/AsyncButton';
+import { FormError } from '~/views/components/FormError';
+import GlobalApi from '~/logic/api/global';
+import { resourceFromPath, roleForShip } from '~/logic/lib/group';
+import { ColorInput } from '~/views/components/ColorInput';
+import { useHistory } from 'react-router-dom';
+import { uxToHex } from '~/logic/lib/util';
+import { ImageInput } from '~/views/components/ImageInput';
+import { StorageState } from '~/types';
 
 interface FormSchema {
   title: string;
   description: string;
   color: string;
   isPrivate: boolean;
+  picture: string;
+  adminMetadata: boolean;
 }
 
 const formSchema = Yup.object({
-  title: Yup.string().required("Group must have a name"),
+  title: Yup.string().required('Group must have a name'),
   description: Yup.string(),
   color: Yup.string(),
   isPrivate: Yup.boolean(),
+  adminMetadata: Yup.boolean()
 });
 
 interface GroupAdminSettingsProps {
@@ -46,12 +50,14 @@ export function GroupAdminSettings(props: GroupAdminSettingsProps) {
   const { group, association } = props;
   const { metadata } = association;
   const history = useHistory();
-  const currentPrivate = "invite" in props.group.policy;
+  const currentPrivate = 'invite' in props.group.policy;
   const initialValues: FormSchema = {
     title: metadata?.title,
     description: metadata?.description,
     color: metadata?.color,
+    picture: metadata?.picture,
     isPrivate: currentPrivate,
+    adminMetadata: metadata.vip !== 'member-metadata'
   };
 
   const onSubmit = async (
@@ -59,15 +65,18 @@ export function GroupAdminSettings(props: GroupAdminSettingsProps) {
     actions: FormikHelpers<FormSchema>
   ) => {
     try {
-      const { title, description, color, isPrivate } = values;
+      const { title, description, picture, color, isPrivate, adminMetadata } = values;
       const uxColor = uxToHex(color);
+      const vip = adminMetadata ? '' : 'member-metadata';
       await props.api.metadata.update(props.association, {
         title,
         description,
+        picture,
         color: uxColor,
+        vip
       });
       if (isPrivate !== currentPrivate) {
-        const resource = resourceFromPath(props.association["group-path"]);
+        const resource = resourceFromPath(props.association.group);
         const newPolicy: Enc<GroupPolicy> = isPrivate
           ? { invite: { pending: [] } }
           : { open: { banRanks: [], banned: [] } };
@@ -83,8 +92,10 @@ export function GroupAdminSettings(props: GroupAdminSettingsProps) {
   };
 
   const disabled =
-    resourceFromPath(association["group-path"]).ship.slice(1) !== window.ship &&
-    roleForShip(group, window.ship) !== "admin";
+    resourceFromPath(association.group).ship.slice(1) !== window.ship &&
+    roleForShip(group, window.ship) !== 'admin';
+  if(disabled)
+return null;
 
   return (
     <Formik
@@ -93,7 +104,8 @@ export function GroupAdminSettings(props: GroupAdminSettingsProps) {
       onSubmit={onSubmit}
     >
       <Form>
-        <Col gapY={4}>
+        <Box p="4" id="group-details"><Text fontWeight="600" fontSize="2">Group Details</Text></Box>
+        <Col pb="4" px="4" maxWidth="384px" gapY={4}>
           <Input
             id="title"
             label="Group Name"
@@ -112,12 +124,26 @@ export function GroupAdminSettings(props: GroupAdminSettingsProps) {
             caption="A color to represent your group"
             disabled={disabled}
           />
+          <ImageInput
+            id="picture"
+            label="Group picture"
+            caption="A picture for your group"
+            placeholder="Enter URL"
+            disabled={disabled}
+          />
           <Checkbox
             id="isPrivate"
             label="Private group"
             caption="If enabled, users must be invited to join the group"
             disabled={disabled}
           />
+          <Checkbox
+            id="adminMetadata"
+            label="Restrict channel adding to admins"
+            caption="If enabled, users must be an admin to add a channel to the group"
+            disabled={disabled}
+          />
+
           <AsyncButton
             disabled={disabled}
             primary

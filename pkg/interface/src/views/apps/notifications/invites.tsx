@@ -1,49 +1,39 @@
-import React, { useCallback } from "react";
-import { Box, Row, Col } from "@tlon/indigo-react";
-import GlobalApi from "~/logic/api/global";
-import { Invites as IInvites, Associations, Invite } from "~/types";
-import { resourceAsPath } from "~/logic/lib/util";
-import { useHistory } from "react-router-dom";
-import { useWaitForProps } from "~/logic/lib/useWaitForProps";
-import InviteItem from "~/views/components/Invite";
+import React, { ReactElement } from 'react';
+import _ from 'lodash';
+
+import { Col } from '@tlon/indigo-react';
+import { Invites as IInvites, Associations, Invite, JoinRequests, Groups, Contacts, AppInvites, JoinProgress } from '@urbit/api';
+
+import GlobalApi from '~/logic/api/global';
+import { resourceAsPath, alphabeticalOrder } from '~/logic/lib/util';
+import InviteItem from '~/views/components/Invite';
+import useInviteState from '~/logic/state/invite';
+import useGroupState from '~/logic/state/group';
 
 interface InvitesProps {
   api: GlobalApi;
-  invites: IInvites;
-  associations: Associations;
 }
 
-export function Invites(props: InvitesProps) {
-  const { api, invites } = props;
-  const history = useHistory();
-  const waiter = useWaitForProps(props);
+interface InviteRef {
+  uid: string;
+  app: string
+  invite: Invite;
+}
 
-  const acceptInvite = (
-    app: string,
-    uid: string,
-    invite: Invite
-  ) => async () => {
-    const resource = {
-      ship: `~${invite.resource.ship}`,
-      name: invite.resource.name,
-    };
+export function Invites(props: InvitesProps): ReactElement {
+  const { api } = props;
+  const pendingJoin = useGroupState(s => s.pendingJoin);
+  const invites = useInviteState(state => state.invites);
 
-    const resourcePath = resourceAsPath(invite.resource);
-    if (app === "contacts") {
-      await api.contacts.join(resource);
-      await waiter((p) => resourcePath in p.associations?.contacts);
-      await api.invite.accept(app, uid);
-      history.push(`/~landscape${resourcePath}`);
-    } else if (app === "graph") {
-      await api.invite.accept(app, uid);
-      history.push(`/~graph/join${resourcePath}`);
-    }
-  };
+  const inviteArr: InviteRef[] = _.reduce(invites, (acc: InviteRef[], val: AppInvites, app: string) => {
+    const appInvites = _.reduce(val, (invs: InviteRef[], invite: Invite, uid: string) => {
+      return [...invs, { invite, uid, app }];
+    }, []);
+    return [...acc, ...appInvites];
+  }, []);
 
-  const declineInvite = useCallback(
-    (app: string, uid: string) => () => api.invite.decline(app, uid),
-    [api]
-  );
+  const invitesAndStatus: { [rid: string]: JoinProgress | InviteRef } =
+    { ..._.keyBy(inviteArr, ({ invite }) => resourceAsPath(invite.resource)), ...pendingJoin };
 
   return (
     <Col
@@ -54,21 +44,36 @@ export function Invites(props: InvitesProps) {
       position="sticky"
       flexShrink={0}
     >
-      {Object.keys(invites).reduce((items, appKey) => {
-        const app = invites[appKey];
-        let appItems = Object.keys(app).map((uid) => {
-          const invite = app[uid];
+     { Object
+         .keys(invitesAndStatus)
+         .sort(alphabeticalOrder)
+         .map((resource) => {
+           const inviteOrStatus = invitesAndStatus[resource];
+           const join = pendingJoin[resource];
+           if(typeof inviteOrStatus === 'string') {
+           return (
+             <InviteItem
+               key={resource}
+               resource={resource}
+               pendingJoin={join}
+               api={api}
+             />
+          );
+        } else {
+          const { app, uid, invite } = inviteOrStatus;
           return (
             <InviteItem
-              key={uid}
+              key={resource}
+              api={api}
               invite={invite}
-              onAccept={acceptInvite(appKey, uid, invite)}
-              onDecline={declineInvite(appKey, uid)}
+              pendingJoin={join}
+              app={app}
+              uid={uid}
+              resource={resource}
             />
-          );
-        });
-        return [...items, ...appItems];
-      }, [] as JSX.Element[])}
+            );
+        }
+     })}
     </Col>
   );
 }

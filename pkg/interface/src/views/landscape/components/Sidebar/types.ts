@@ -1,11 +1,11 @@
 export type SidebarItemStatus =
-  | "unread"
-  | "mention"
-  | "unsubscribed"
-  | "disconnected"
-  | "loading";
+  | 'unread'
+  | 'notification'
+  | 'unsubscribed'
+  | 'disconnected'
+  | 'loading';
 
-export type SidebarSort = "asc" | "lastUpdated";
+export type SidebarSort = 'asc' | 'lastUpdated';
 
 export interface SidebarListConfig {
   sortBy: SidebarSort;
@@ -18,5 +18,5 @@ export interface SidebarAppConfig {
 }
 
 export type SidebarAppConfigs = {
-  [a in "chat" | "link" | "publish"]: SidebarAppConfig;
+  [a in 'chat' | 'link' | 'publish']: SidebarAppConfig;
 };

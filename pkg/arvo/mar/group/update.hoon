@@ -4,10 +4,7 @@
 ++  grow
   |%
   ++  noun  upd
-  ++  resource
-    ?<  ?=(%initial -.upd)
-    resource.upd
-  ::
+  ++  group-update-0  upd
   ++  json
     %+  frond:enjs:format  'groupUpdate'
     (update:enjs upd)

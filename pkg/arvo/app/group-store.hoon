@@ -29,34 +29,32 @@
 ::      Modify the group. Further documented in /sur/group-store.hoon
 ::
 ::
-/-  *group, *contact-view
-/+  store=group-store, default-agent, verb, dbug, resource, *migrate
+/-  *group
+/+  store=group-store, default-agent, verb, dbug, resource, *migrate, agentio
 |%
 +$  card  card:agent:gall
 ::
 +$  versioned-state
   $%  state-zero
       state-one
+      state-two
   ==
 ::
 +$  state-zero
-  $:  %0
-      =groups:state-zero:store
-  ==
-::
+  [%0 *]
 ::
 +$  state-one
   $:  %1
-      =groups
+      =groups:groups-state-one
   ==
 ::
-+$  diff
-  $%  [%group-update update:store]
-      [%group-initial groups]
++$  state-two
+  $:  %2
+      =groups
   ==
 --
 ::
-=|  state-one
+=|  state-two
 =*  state  -
 ::
 %-  agent:dbug
@@ -74,90 +72,37 @@
   ++  on-load
     |=  =old=vase
     =/  old  !<(versioned-state old-vase)
-    ?:  ?=(%1 -.old)
-      `this(state old)
     |^
-    :-  :~  [%pass / %agent [our.bowl dap.bowl] %poke %noun !>(%perm-upgrade)]
-            kick-all
-        ==
-    =*  paths  ~(key by groups.old)
-    =/  [unmanaged=(list path) managed=(list path)]
-      (skid ~(tap in paths) |=(=path =('~' (snag 0 path))))
-    =.  groups  (all-unmanaged unmanaged)
-    =.  groups  (all-managed managed)
-    this
-    ::
-    ++  all-managed
-      |=  paths=(list path)
-      ^+  groups
-      ?~  paths
-        groups
-      =/  [rid=resource =group]
-        (migrate-group i.paths)
-      %=    $
-          paths  t.paths
-        ::
-          groups
-        (~(put by groups) rid group)
+    ?-  -.old
+      %2  `this(state old)
+      ::
+        %1  
+      %_    $
+        -.old  %2
+        groups.old  (groups-1-to-2 groups.old)
       ==
+      ::
+      %0  $(old *state-two)
+    ==
     ::
-    ++  all-unmanaged
-      |=  paths=(list path)
-      ^+  groups
-      ?~  paths
-        groups
-      ?:  |(=(/~/default i.paths) =(4 (lent i.paths)))
-        $(paths t.paths)
-      =/  [=resource =group]
-        (migrate-unmanaged i.paths)
-      %=    $
-          paths  t.paths
-        ::
-          groups
-        (~(put by groups) resource group)
-      ==
-    ++  kick-all
-      ^-  card
-      :+  %give  %kick
-      :_  ~
-      %~  tap  by
-      %+  roll  ~(val by sup.bowl)
-      |=  [[=ship pax=path] paths=(set path)]
-      (~(put in paths) pax)
-    ::
-    ++  migrate-unmanaged
-      |=  pax=path
-      ^-  [resource group]
-      =/  members=(set ship)
-        (~(got by groups.old) pax)
-      =|  =invite:policy
-      ?>  ?=(^ pax)
-      =/  rid=resource
-        (resource-from-old-path t.pax)
+    ++  groups-1-to-2
+      |=  =groups:groups-state-one
+      ^+  ^groups
+      %-  ~(run by groups)
+      |=  =group:groups-state-one
       =/  =tags
-        (~(put ju *tags) %admin entity.rid)
-      :-  rid
-      [members tags invite %.y]
+        (tags-1-to-2 tags.group)
+      [members.group tags [policy hidden]:group]
     ::
-    ++  resource-from-old-path
-      |=  pax=path
-      ^-  resource
-      ?>  ?=([@ @ *] pax)
-      =/  ship
-        (slav %p i.pax)
-      [ship i.t.pax]
-    ::
-   ++  migrate-group
-      |=  pax=path
-      =/  members
-        (~(got by groups.old) pax)
-      =|  =invite:policy
-      =/  rid=resource
-        (resource-from-old-path pax)
-      =/  =tags
-        (~(put ju *tags) %admin entity.rid)
-      [rid members tags invite %.n]
-    ::
+    ++  tags-1-to-2
+      |=  =tags:groups-state-one
+      ^-  ^tags
+      %-  ~(gas by *^tags)
+      %+  murn
+        ~(tap by tags)
+      |=  [=tag:groups-state-one ships=(set ship)]
+      ?^  tag  ~
+      `[tag ships]
     --
   ::
   ++  on-poke
@@ -166,7 +111,9 @@
     ?>  (team:title our.bowl src.bowl)
     =^  cards  state
       ?+    mark  (on-poke:def mark vase)
-          ?(%group-update %group-action)
+        %sane  (poke-sane:gc !<(?(%check %fix) vase))
+      ::
+          ?(%group-update-0 %group-action)
         (poke-group-update:gc !<(update:store vase))
       ::
           %import
@@ -180,7 +127,7 @@
     ?>  (team:title our.bowl src.bowl)
     ?>  ?=([%groups ~] path)
     :_  this
-    [%give %fact ~ %group-update !>([%initial groups])]~
+    [%give %fact ~ %group-update-0 !>([%initial groups])]~
   ::
   ++  on-leave  on-leave:def
   ::
@@ -189,17 +136,7 @@
     ^-  (unit (unit cage))
     ?+  path  (on-peek:def path)
         [%y %groups ~]
-      =/  =arch
-        :-  ~
-        %-  malt
-        %+  turn
-          ~(tap by groups)
-        |=  [rid=resource *]
-        ^-  [@ta ~]
-        =/  group=^path
-          (en-path:resource rid)
-        [(spat group) ~]
-      ``noun+!>(arch)
+      ``noun+!>(~(key by groups))
     ::
         [%x %groups %ship @ @ ~]
       =/  rid=(unit resource)
@@ -254,6 +191,7 @@
   --
 ::
 |_  bol=bowl:gall
++*  io  ~(. agentio bol)
 ++  peek-group
   |=  rid=resource
   ^-  (unit group)
@@ -278,13 +216,34 @@
       (~(has in ban-ranks.policy) (clan:title ship))
     ==
   ==
+++  poke-sane
+  |=  input=?(%check %fix)
+  ^-  (quip card _state)
+  =;  cards=(list card)
+    ?:  =(%check input)
+      ~&  cards
+      `state
+    [cards state]
+  %+  roll  ~(tap in ~(key by groups))
+  |=  [rid=resource out=(list card)]
+  ?.  ?&  =(entity.rid our.bol)
+          !(~(has in members:(~(got by groups) rid)) our.bol)
+      ==
+    out
+  =/  =wire
+    sane+(en-path:resource rid)
+  =*  poke-self  ~(poke-self pass:io wire)
+  %+  weld  out
+  :~  (poke-self group-update-0+!>([%add-members rid (silt our.bol ~)]))
+      (poke-self group-update-0+!>([%add-tag rid %admin (silt our.bol ~)]))
+  ==
 ::
 ++  poke-import
   |=  arc=*
   ^-  (quip card _state)
   |^
-  =/  sty=state-one
-    [%1 (remake-groups ;;((tree [resource tree-group]) +.arc))]
+  =/  sty=state-two
+    [%2 (remake-groups ;;((tree [resource tree-group]) +.arc))]
   :_  sty
   %+  roll  ~(tap by groups.sty)
   |=  [[rid=resource grp=group] out=(list card)]
@@ -294,11 +253,8 @@
     |=  [recipient=@p out=(list card)]
     ?:  =(recipient our.bol)
       out
-    :_  out
-    %-  poke-contact
-    :*  %invite  rid  recipient
-        (crip "Rejoin disconnected group {<entity.rid>}/{<name.rid>}")
-    ==
+    ::  TODO: figure out contacts integration
+    out
   :_  out
   (try-rejoin rid 0)
   ::
@@ -342,7 +298,7 @@
   |=  [rid=resource nack-count=@ud]
   ^-  card
   =/  =cage
-    :-  %group-update
+    :-  %group-update-0
     !>  ^-  update:store
     [%add-members rid (sy our.bol ~)]
   =/  =wire
@@ -620,11 +576,6 @@
   |=  =action:store
   ^-  card
   [%pass / %agent [our.bol %group-store] %poke %group-action !>(action)]
-::
-++  poke-contact
-  |=  act=contact-view-action
-  ^-  card
-  [%pass / %agent [our.bol %contact-view] %poke %contact-view-action !>(act)]
 ::  +send-diff: update subscribers of new state
 ::
 ::    We only allow subscriptions on /groups
@@ -632,6 +583,6 @@
 ++  send-diff
   |=  =update:store
   ^-  (list card)
-  [%give %fact ~[/groups] %group-update !>(update)]~
+  [%give %fact ~[/groups] %group-update-0 !>(update)]~
 ::
 --

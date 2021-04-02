@@ -9,10 +9,12 @@ import {
 import { uxToHex } from '~/logic/lib/util';
 import { Link } from 'react-router-dom';
 
-import { Associations } from '~/types/metadata-update';
+import { Associations } from '@urbit/api/metadata';
 import { Dropdown } from '~/views/components/Dropdown';
-import { Workspace } from '~/types';
 import { getTitleFromWorkspace } from '~/logic/lib/workspace';
+import { MetadataIcon } from './MetadataIcon';
+import { Workspace } from '~/types/workspace';
+import useMetadataState from '~/logic/state/metadata';
 
 const GroupSwitcherItem = ({ to, children, bottom = false, ...rest }) => (
   <Link to={to}>
@@ -30,10 +32,11 @@ const GroupSwitcherItem = ({ to, children, bottom = false, ...rest }) => (
 );
 
 function RecentGroups(props: { recent: string[]; associations: Associations }) {
-  const { associations, recent } = props;
+  const { recent } = props;
   if (recent.length < 2) {
     return null;
   }
+  const associations = useMetadataState(state => state.associations);
 
   return (
     <Col borderBottom={1} borderBottomColor="lightGray" p={1}>
@@ -41,9 +44,9 @@ function RecentGroups(props: { recent: string[]; associations: Associations }) {
         Recent Groups
       </Box>
       {props.recent.filter((e) => {
-        return (e in associations?.contacts);
+        return (e in associations?.groups);
       }).slice(1, 5).map((g) => {
-        const assoc = associations.contacts[g];
+        const assoc = associations.groups[g];
         const color = uxToHex(assoc?.metadata?.color || '0x0');
         return (
           <Link key={g} style={{ minWidth: 0 }} to={`/~landscape${g}`}>
@@ -69,23 +72,39 @@ function RecentGroups(props: { recent: string[]; associations: Associations }) {
 }
 
 export function GroupSwitcher(props: {
-  associations: Associations;
   workspace: Workspace;
   baseUrl: string;
   recentGroups: string[];
   isAdmin: any;
 }) {
-  const { associations, workspace, isAdmin } = props;
+  const { workspace, isAdmin } = props;
+  const associations = useMetadataState(state => state.associations);
   const title = getTitleFromWorkspace(associations, workspace);
+  const metadata = (workspace.type === 'home' || workspace.type  === 'messages')
+    ? undefined
+    : associations.groups[workspace.group].metadata;
   const navTo = (to: string) => `${props.baseUrl}${to}`;
   return (
-    <Box height='48px' backgroundColor="white" zIndex="2" position="sticky" top="0px" py={3} pl='3' borderBottom='1px solid' borderColor='washedGray'>
+    <Row
+      width="100%"
+      alignItems="center"
+      flexShrink={0}
+      height='48px'
+      backgroundColor="white"
+      position="sticky"
+      top="0px"
+      pl='3'
+      borderBottom='1px solid'
+      borderColor='washedGray'
+    >
       <Col
         bg="white"
+        width="100%"
+        height="100%"
       >
-        <Row justifyContent="space-between">
+        <Row flexGrow={1} alignItems="center" justifyContent="space-between">
           <Dropdown
-            width="100%"
+            width="auto"
             dropWidth="231px"
             alignY="top"
             options={
@@ -113,13 +132,12 @@ export function GroupSwitcher(props: {
                     mr={2}
                     color="gray"
                     display="block"
-                    icon="Mail"
+                    icon="Home"
                   />
-                  <Text>DMs + Drafts</Text>
+                  <Text>My Channels</Text>
                 </GroupSwitcherItem>}
                 <RecentGroups
                   recent={props.recentGroups}
-                  associations={props.associations}
                 />
                 <GroupSwitcherItem to="/~landscape/new">
                   <Icon mr="2" color="gray" icon="CreateGroup" />
@@ -160,11 +178,10 @@ export function GroupSwitcher(props: {
               </Col>
             }
           >
-            <Row width='100%' minWidth='0' flexShrink={0}>
-              <Row justifyContent="space-between" mr={1} flexShrink={0} width='100%' minWidth='0'>
-                <Text lineHeight="1.1" fontSize='2' fontWeight="700" overflow='hidden' display='inline-block' flexShrink='1' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}>{title}</Text>
+            <Row flexGrow={1} alignItems="center" width='100%' minWidth='0' flexShrink={0}>
+              { metadata && <MetadataIcon flexShrink={0} mr="2" metadata={metadata} height="24px" width="24px" /> }
+              <Text flexShrink={1} lineHeight="1.1" fontSize='2' fontWeight="700" overflow='hidden' display='inline-block' flexShrink='1' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}>{title}</Text>
               </Row>
-            </Row>
           </Dropdown>
           <Row pr='3' verticalAlign="middle">
             {(workspace.type === 'group') && (
@@ -185,6 +202,6 @@ export function GroupSwitcher(props: {
           </Row>
         </Row>
       </Col>
-    </Box>
+    </Row>
   );
 }

@@ -12,17 +12,16 @@ import {
 import { Formik, Form, useFormikContext, FormikHelpers } from "formik";
 import GlobalApi from "~/logic/api/global";
 import { Notebook } from "~/types/publish-update";
-import { Contacts } from "~/types/contact-update";
+import { Contacts } from "@urbit/api/contacts";
 import { FormError } from "~/views/components/FormError";
 import { RouteComponentProps, useHistory } from "react-router-dom";
-import {Association} from "~/types";
+import {Association} from "@urbit/api";
 import { uxToHex } from "~/logic/lib/util";
 
 interface MetadataFormProps {
   host: string;
   book: string;
   association: Association;
-  contacts: Contacts;
   api: GlobalApi;
 }
 
@@ -64,11 +63,11 @@ export function MetadataForm(props: MetadataFormProps) {
       const { name, description } = values;
       await api.metadata.metadataAdd(
         "publish",
-        props.association["app-path"],
-        props.association["group-path"],
+        props.association.resource,
+        props.association.group,
         name,
         description,
-        props.association.metadata["date-created"],
+        props.association.metadata["date-created"],,
         uxToHex(props.association.metadata.color)
       );
       actions.setStatus({ success: null });

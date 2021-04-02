@@ -1,5 +1,7 @@
-import React, { useCallback } from "react";
-import * as Yup from "yup";
+import React, { ReactElement, useCallback } from 'react';
+import { FormikHelpers } from 'formik';
+import { Link } from 'react-router-dom';
+
 import {
   Row,
   Box,
@@ -7,28 +9,29 @@ import {
   ManagedRadioButtonField as Radio,
   ManagedCheckboxField as Checkbox,
   Col,
-  Text,
-} from "@tlon/indigo-react";
-import { FormikOnBlur } from "~/views/components/FormikOnBlur";
-import { Dropdown } from "~/views/components/Dropdown";
-import { FormikHelpers } from "formik";
-import { SidebarListConfig, Workspace } from "./types";
-import { Link, useHistory } from 'react-router-dom';
-import { getGroupFromWorkspace } from "~/logic/lib/workspace";
-import { roleForShip } from "~/logic/lib/group";
-import {Groups, Rolodex} from "~/types";
+  Text
+} from '@tlon/indigo-react';
+import { Groups, Rolodex, Associations } from '@urbit/api';
+
+import { FormikOnBlur } from '~/views/components/FormikOnBlur';
+import { Dropdown } from '~/views/components/Dropdown';
+import { SidebarListConfig  } from './types';
+import { getGroupFromWorkspace } from '~/logic/lib/workspace';
+import { roleForShip } from '~/logic/lib/group';
+import { NewChannel } from '~/views/landscape/components/NewChannel';
+import GlobalApi from '~/logic/api/global';
+import { Workspace } from '~/types/workspace';
+import useGroupState from '~/logic/state/group';
+import useMetadataState from '~/logic/state/metadata';
 
 export function SidebarListHeader(props: {
+  api: GlobalApi;
   initialValues: SidebarListConfig;
-  groups: Groups;
-  contacts: Rolodex;
   baseUrl: string;
   selected: string;
   workspace: Workspace;
   handleSubmit: (c: SidebarListConfig) => void;
-}) {
-
-  const history = useHistory();
+}): ReactElement {
   const onSubmit = useCallback(
     (values: SidebarListConfig, actions: FormikHelpers<SidebarListConfig>) => {
       props.handleSubmit(values);
@@ -36,10 +39,17 @@ export function SidebarListHeader(props: {
     },
     [props.handleSubmit]
   );
+  const groups = useGroupState(state => state.groups);
 
   const groupPath = getGroupFromWorkspace(props.workspace);
-  const role = props.groups?.[groupPath] ? roleForShip(props.groups[groupPath], window.ship) : undefined;
-  const isAdmin = (role === "admin") || (props.workspace?.type === 'home');
+  const role = groupPath && groups?.[groupPath] ? roleForShip(groups[groupPath], window.ship) : undefined;
+  const associations = useMetadataState(state => state.associations);
+  const memberMetadata =
+    groupPath ? associations.groups?.[groupPath].metadata.vip === 'member-metadata' : false;
+
+  const isAdmin = memberMetadata || (role === 'admin') || (props.workspace?.type === 'home') || (props.workspace?.type === 'messages');
+
+  const noun = (props.workspace?.type === 'messages') ? 'Messages' : 'Channels';
 
   return (
     <Row
@@ -52,7 +62,7 @@ export function SidebarListHeader(props: {
     >
       <Box flexShrink='0'>
         <Text>
-          {props.initialValues.hideUnjoined ? "Joined Channels" : "All Channels"}
+          {props.initialValues.hideUnjoined ? `Joined ${noun}` : `All ${noun}`}
         </Text>
       </Box>
       <Box
@@ -60,31 +70,47 @@ export function SidebarListHeader(props: {
         display='flex'
         alignItems='center'
       >
-       <Link
-        style={{
-          display: isAdmin ? "inline-block" : "none" }}
-        to={
-         !!groupPath ? `/~landscape${groupPath}/new` : `/~landscape/home/new`}>
-           <Icon icon="Plus" color="gray" pr='12px'/>
+        {props.workspace?.type === 'messages'
+        ? (
+          <Dropdown
+            flexShrink={0}
+            dropWidth="300px"
+            width="auto"
+            alignY="top"
+            alignX={['right', 'left']}
+            options={
+              <Col
+                background="white"
+                border={1}
+                borderColor="washedGray"
+              >
+              <NewChannel
+                api={props.api}
+                history={props.history}
+                workspace={props.workspace}
+              />
+              </Col>
+            }
+          >
+           <Icon icon="Plus" color="gray" pr='12px' />
+          </Dropdown>
+        )
+        : (
+       <Link style={{
+          display: isAdmin ? 'inline-block' : 'none' }}
+        to={groupPath
+          ? `/~landscape${groupPath}/new`
+          : `/~landscape/${props.workspace?.type}/new`}
+       >
+           <Icon icon="Plus" color="gray" pr='12px' />
        </Link>
-       <Link to={`${props.baseUrl}/invites`}
-        style={{ display: (props.workspace?.type === 'home') ? 'inline-block' : 'none'}}>
-          <Text
-            display='inline-block'
-            py='1px'
-            px='3px'
-            mr='12px'
-            backgroundColor='washedBlue'
-            color='blue'
-            borderRadius='1'>
-              + DM
-            </Text>
-        </Link>
+          )
+        }
       <Dropdown
         flexShrink='0'
         width="auto"
         alignY="top"
-        alignX={["right", "left"]}
+        alignX={['right', 'left']}
         options={
           <FormikOnBlur initialValues={props.initialValues} onSubmit={onSubmit}>
             <Col bg="white" borderRadius={1} border={1} borderColor="lightGray">
