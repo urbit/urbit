@@ -21,19 +21,19 @@ export function GroupFeedPermsInput(
         name={id}
         id=" "
         label="Everyone"
-        caption="Everyone in this group can post and edit this feed"
+        caption="Everyone in this group can post to this feed"
       />
       <Radio
         name={id}
         id="host-feed"
         label="Host Only"
-        caption="Only the host can post this feed. Everyone else may comment"
+        caption="Only the host can post to this feed. Everyone else may comment"
       />
       <Radio
         name={id}
         id="admin-feed"
         label="Host & Admins Only"
-        caption="Only Hosts and Admins can post this feed. Everyone else may comment"
+        caption="Only the host and admins can post to this feed. Everyone else may comment"
       />
     </Col>
   );
