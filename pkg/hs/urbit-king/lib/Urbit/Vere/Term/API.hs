@@ -22,7 +22,7 @@ import Urbit.TermSize
     Input Event for terminal driver:
 
     %blits -- list of blits from arvo.
-    %trace -- stderr line from runtime.
+    %trace -- stderr line from runtime (without trailing newline).
     %slog  -- nock worker logging with priority
     %blank -- print a blank line
     %spinr -- Start or stop the spinner

@@ -271,31 +271,41 @@ localClient doneSignal = fst <$> mkRAcquire start stop
 
     -- Writes data to the terminal. Both the terminal reading, normal logging,
     -- and effect handling can all emit bytes which go to the terminal.
+    --TODO  blanks, traces and slogs should only be written into the default
+    --      terminal session.
     writeTerminal :: TQueue [Term.Ev] -> TMVar () -> TVar TermSize -> RIO e ()
     writeTerminal q spinner termSizeVar = do
         currentTime <- io $ now
         loop (LineState "" (CurPos 0 0) Nothing Nothing True 0 currentTime)
       where
         writeBlank :: LineState -> RIO e LineState
-        writeBlank ls = putStr "\r\n" $> ls
+        writeBlank ls = do
+          TermSize _ height <- readTVarIO termSizeVar
+          --NOTE  hijack creates a blank line
+          T.hijack $ fromIntegral height
+          T.lojack
+          pure ls
 
         writeTrace :: LineState -> Text -> RIO e LineState
         writeTrace ls p = do
-            putStr "\r"
-            T.clearLine
+            TermSize _ height <- readTVarIO termSizeVar
+            T.hijack $ fromIntegral height
             putStr p
-            termRefreshLine ls
+            T.lojack
+            pure ls
 
         writeSlog :: LineState -> (Atom, Tank) -> RIO e LineState
         writeSlog ls slog = do
-            putStr "\r"
-            T.clearLine
-            TermSize width _ <- atomically $ readTVar termSizeVar
+            TermSize width height <- readTVarIO termSizeVar
+            T.hijack $ fromIntegral height
             -- TODO: Ignoring priority for now. Priority changes the color of,
             -- and adds a prefix of '>' to, the output.
             let lines = fmap unTape $ wash (WashCfg 0 width) $ tankTree $ snd slog
-            forM lines $ \line -> putStr (line <> "\r\n")
-            termRefreshLine ls
+            T.putCSI 'm' [90]  --NOTE  print slogs in grey
+            forM (intersperse "\n" lines) $ \line -> putStr line
+            T.putCSI 'm' [0]
+            T.lojack
+            pure ls
 
         {-
             Figure out how long to wait to show the spinner. When we
@@ -304,6 +314,7 @@ localClient doneSignal = fst <$> mkRAcquire start stop
             event shortly after a previous spin, use a shorter delay to
             avoid giving the impression of a half-idle system.
         -}
+        --TODO  this is too eager and does termRestoreLine on every keypress!
         doSpin :: LineState -> Maybe Text -> RIO e LineState
         doSpin ls@LineState{..} mTxt = do
             maybe (pure ()) cancel lsSpinTimer
@@ -331,14 +342,14 @@ localClient doneSignal = fst <$> mkRAcquire start stop
               maybe (pure ()) cancel lsSpinTimer
               -- We do a final flush of the spinner mvar to ensure we don't
               -- have a lingering signal which will redisplay the spinner after
-              -- we call termRefreshLine below.
+              -- we call termRestoreLine below.
               atomically $ tryTakeTMVar spinner
 
               -- If we ever actually ran the spinner display callback, we need
               -- to force a redisplay of the command prompt.
-              ls <- if not lsSpinFirstRender || True
-                    then termRefreshLine ls
-                    else pure ls
+              if not lsSpinFirstRender || True
+              then termRestoreLine ls termSizeVar
+              else pure ()
 
               endTime <- io $ now
               pure $ ls { lsSpinTimer = Nothing, lsPrevEndTime = endTime }
@@ -486,12 +497,14 @@ localClient doneSignal = fst <$> mkRAcquire start stop
         0 -> pure ls { lsLine = "", lsCurPos = lsCurPos { col = 0 } }
         r -> pure ls { lsCurPos = CurPos (r-1) 0 }
 
-    -- Redraw the current LineState, maintaining the current curpos
-    termRefreshLine :: LineState -> RIO e LineState
-    termRefreshLine ls@LineState{lsCurPos,lsLine} = do
-      ls <- termShowClear ls
-      ls <- termShowLine ls lsLine
-      termShowCursor ls lsCurPos
+    -- Redraw the bottom LineState, maintaining the current curpos
+    termRestoreLine :: LineState -> TVar TermSize -> RIO e ()
+    termRestoreLine ls@LineState{lsLine} ts = do
+      TermSize _ h <- readTVarIO ts
+      T.cursorMove (fromIntegral h - 1) 0
+      T.clearLine
+      putStr lsLine
+      T.cursorRestore
 
     -- ring my bell
     bell :: TQueue [Term.Ev] -> RIO e ()
@@ -573,7 +586,7 @@ localClient doneSignal = fst <$> mkRAcquire start stop
                 -- ETX (^C)
                 logInfo $ "Ctrl-c interrupt"
                 atomically $ do
-                  writeTQueue wq [Term.Trace "interrupt\r\n"]
+                  writeTQueue wq [Term.Trace "interrupt"]
                   writeTQueue rq $ Mod Ctl $ Key 'c'
                 loop rd
               else if w <= 26 then do
