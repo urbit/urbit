@@ -49,12 +49,6 @@ export default class GlobalSubscription extends BaseSubscription<StoreState> {
   }
 
   restart() {
-    for (let key in Object.keys(this.openSubscriptions)) {
-      let val = this.openSubscriptions[key];
-
-      this.unsubscribe(val.id);
-    }
-
     this.start();
   }
 }
