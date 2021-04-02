@@ -63,7 +63,7 @@ function GraphPermalink(
   );
   useEffect(() => {
     (async () => {
-      if (pending) {
+      if (pending || !index) {
         return;
       }
       try {
@@ -87,7 +87,7 @@ function GraphPermalink(
       borderRadius="2"
       onClick={(e) => { e.stopPropagation(); }}
     >
-      {showTransclusion && (
+      {showTransclusion && index && (
         <Box p="2">
           <TranscludedNode
             api={api}

@@ -7,6 +7,17 @@
 }
 
 a, a:any-link, a:-webkit-any-link {
-  text-decoration: none;
-  color: unset;
+  text-decoration: none !important;
+  color: none !important;
+}
+
+*|*:link {
+  text-decoration: none !important;
+  color: none !important;
+}
+
+a * {
+  text-decoration: none !important;
+  text-decoration-color: none;
+  text-decoration-line: none;
 }

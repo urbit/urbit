@@ -42,7 +42,7 @@ export function PostInput(props) {
       setDisabled(true);
       const url = await promptUpload();
       const { ship, name } = graphResource;
-      await api.graph.addPost(ship, name, createPost([{ url }]));
+      await api.graph.addPost(ship, name, createPost([{ url }], index || ''));
     } catch (e) {
       // TODO: better handling
       console.error(e);
