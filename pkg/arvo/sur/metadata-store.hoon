@@ -25,9 +25,18 @@
 ::    %reader-comments: Allow readers to comment, regardless
 ::      of whether they can write. (notebook, collections)
 ::    %member-metadata: Allow members to add channels (groups)
+::    %host-feed: Only host can post to group feed
+::    %admin-feed: Only admins and host can post to group feed
 ::    %$: No variation
 ::
-+$  vip-metadata  ?(%reader-comments %member-metadata %$)
++$  vip-metadata  
+  $?  %reader-comments
+      %member-metadata 
+      %host-feed
+      %admin-feed
+      %$
+  ==
+::
 +$  md-config
   $~  [%empty ~]
   $%  [%group feed=(unit (unit md-resource))]
