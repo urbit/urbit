@@ -60,13 +60,14 @@
   |=  [m=md-resource:md association:md]
   ::NOTE  we only count graphs for now
   ?.  &(=(%graph app-name.m) =(our creator.metadatum))  ~
-  `[module.metadatum resource.m]
+  ?.  ?=(%graph -.config.metadatum)  ~
+  `[module.config.metadatum resource.m]
 ::  for sanity checks
 ::
 =/  real=(set resource:re)
   =/  upd=update:ga
     %+  scry  update:ga
-    [%x %graph-store /keys/graph-update-0]
+    [%x %graph-store /keys/graph-update-1]
   ?>  ?=(%keys -.q.upd)
   resources.q.upd
 ::  count activity per channel

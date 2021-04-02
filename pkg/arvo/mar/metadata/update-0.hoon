@@ -3,9 +3,8 @@
 ++  grad  %noun
 ++  grow
   |%
-  ++  noun  update
-  ++  metadata-update  update
-  ++  json  (update:enjs:store update)
+  ++  noun               update
+  ++  metadata-update    update
   --
 ::
 ++  grab

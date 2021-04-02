@@ -73,4 +73,4 @@ export interface Metadata {
   vip: PermVariation;
 }
 
-export type PermVariation = '' | 'reader-comments' | 'member-metadata';
+export type PermVariation = '' | 'reader-comments' | 'member-metadata' | 'host-feed' | 'admin-feed';

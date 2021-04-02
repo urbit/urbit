@@ -96,14 +96,14 @@ export function NoteNavigation(props: NoteNavigationProps): ReactElement {
       px={2}
       borderTop={1}
       borderBottom={1}
-      borderColor="washedGray"
+      borderColor="lightGray"
       display="grid"
       alignItems="center"
       gridTemplateColumns="1fr 1px 1fr"
       gridTemplateRows="100px"
     >
       {prevComponent}
-      <Box borderRight={1} borderColor="washedGray" height="100%" />
+      <Box borderRight={1} borderColor="lightGray" height="100%" />
       {nextComponent}
     </Box>
   );

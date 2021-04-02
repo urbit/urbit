@@ -52,9 +52,9 @@
 =/  overwrite=?
   ?=(%policy -.associated.action)
 =/  =update:graph
-  [%0 now.bowl %add-graph rid.action *graph:graph mark.action overwrite]
+  [now.bowl %add-graph rid.action *graph:graph mark.action overwrite]
 ;<  ~  bind:m
-  (poke-our %graph-store graph-update-0+!>(update))
+  (poke-our %graph-store graph-update-1+!>(update))
 ;<  ~  bind:m
   (poke-our %graph-push-hook %push-hook-action !>([%add rid.action]))
 ::
@@ -71,13 +71,14 @@
     description   description.action
     date-created  now.bowl
     creator       our.bowl
-    module        module.action
+    config        [%graph module.action]
     preview       %.n
+    hidden        %.n
   ==
 =/  met-action=action:met
   [%add group graph+rid.action metadatum]
 ;<  ~  bind:m
-  (poke-our %metadata-push-hook metadata-update-0+!>(met-action))
+  (poke-our %metadata-push-hook metadata-update-1+!>(met-action))
 ::
 ::  Send invites
 ::

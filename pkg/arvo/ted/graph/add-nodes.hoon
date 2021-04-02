@@ -10,7 +10,6 @@
   ;<  =update:store  bind:m
     %+  scry:strandio  update:store
     /gx/graph-store/graph/(scot %p entity.rid)/[name.rid]/noun
-  ?>  ?=(%0 -.update)
   ?>  ?=(%add-graph -.q.update)
   (pure:m graph.q.update)
 --
@@ -33,7 +32,7 @@
 =/  hashes  (nodes-to-pending-indices nodes.q.update)
 ;<  ~  bind:m
   %^  poke-our  %graph-push-hook
-    %graph-update-0
+    %graph-update-1
   !>(update)
 (pure:m !>(`action:graph-view`[%pending-indices hashes]))
 ::
@@ -88,10 +87,9 @@
   %_  node
     hash.post  `hash
   ::
-  ::  TODO: enable signing our own post as soon as we're ready
-  ::    signatures.post
-  ::  %-  ~(gas in *signatures:store)
-  ::  [(sign:sig our.bowl now.bowl hash)]~
+      signatures.post
+    %-  ~(gas in *signatures:store)
+    [(sign:sig our.bowl now.bowl hash)]~
   ::
       children
     ?:  ?=(%empty -.children.node)

@@ -176,7 +176,11 @@ export function GraphPermissions(props: GraphPermissionsProps) {
             />
           </Col>
           <ChannelWritePerms />
-          {association.metadata.module !== 'chat' && (
+          { ( association.metadata &&
+              'graph' in association.metadata.config &&
+              association.metadata.config.graph !== 'chat'
+            )
+            && (
             <Checkbox
               id="readerComments"
               label="Allow readers to comment"
