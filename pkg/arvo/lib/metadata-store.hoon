@@ -201,9 +201,10 @@
     ?~  jin
       ~  
     ?>  ?=(%o -.jin)
-    ?>  ?&  (~(has by p.jin) 'app-name')
+    ?.  ?&  (~(has by p.jin) 'app-name')
             (~(has by p.jin) 'resource')
         ==
+      ~
     =/  app-name=^json  (~(got by p.jin) 'app-name')
     ?>  ?=(%s -.app-name)
     :+  ~
