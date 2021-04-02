@@ -296,9 +296,9 @@ _cv_poke_eve(u3_noun sam)
   u3_noun pro;
 
   {
-    c3_w cod_w = u3a_lush(u3h(u3t(u3t(sam)))); // XX MEMORY_DEBUG
+    // c3_w cod_w = u3a_lush(u3h(u3t(u3t(sam)))); // XX MEMORY_DEBUG
     pro = u3n_slam_on(fun, sam);
-    u3a_lop(cod_w);
+    // u3a_lop(cod_w);
   }
 
   return pro;
@@ -309,7 +309,7 @@ _cv_poke_eve(u3_noun sam)
 u3_noun
 u3_poke_sure(c3_w mil_w, u3_noun eve)
 {
-  u3_noun gon = u3m_soft(mil_w, u3v_poke, eve);
+  u3_noun gon = u3m_soft(mil_w, _cv_poke_eve, eve);
   u3_noun pro;
 
   {
