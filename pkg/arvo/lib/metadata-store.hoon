@@ -189,9 +189,12 @@
     ^-  md-config
     ?~  jon
       [%group ~]
-    ?:  ?=(%s -.jon)
-      [%graph p.jon]
     ?>  ?=(%o -.jon)
+    ?:  (~(has by p.jon) %graph)
+      =/  mod
+        (~(got by p.jon) %graph)
+      ?>  ?=(%s -.mod)
+      [%graph p.mod]
     =/  jin=json
       (~(got by p.jon) %group)
     ?>  ?=(%o -.jin)
