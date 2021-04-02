@@ -9,9 +9,9 @@ import light from './themes/light';
 import dark from './themes/dark';
 import { Text, Box } from '@tlon/indigo-react';
 import StartupModal from './lib/startupModal.js';
-//import Header from './lib/header.js'
-//import Balance from './lib/balance.js'
-//import Transactions from './lib/transactions.js'
+import Header from './lib/header.js'
+import Balance from './lib/balance.js'
+import Transactions from './lib/transactions.js'
 
 
 export class Root extends Component {
@@ -48,11 +48,9 @@ export class Root extends Component {
            height='100%'
            width='400px'
           >
-        { /*
             <Header />
             <Balance state={this.state}/>
             <Transactions state={this.state}/>
-            */ }
           </Box>
         </Box>
         </ThemeProvider>
