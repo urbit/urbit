@@ -10,6 +10,7 @@ import { Route } from 'react-router-dom';
 
 import useGroupState from '~/logic/state/group';
 import useMetadataState from '~/logic/state/metadata';
+import {resourceFromPath} from '@urbit/api';
 
 
 function GroupHome(props) {
@@ -19,12 +20,15 @@ function GroupHome(props) {
     baseUrl
   } = props;
 
+  const { ship } = resourceFromPath(groupPath);
+
   const associations = useMetadataState(state => state.associations);
   const groups = useGroupState(state => state.groups);
 
   const metadata = associations?.groups[groupPath]?.metadata;
 
   const askFeedBanner =
+    ship === `~${window.ship}` &&
     metadata &&
     metadata.config &&
     'group' in metadata.config &&
