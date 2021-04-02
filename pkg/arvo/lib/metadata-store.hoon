@@ -192,16 +192,19 @@
     ?:  ?=(%s -.jon)
       [%graph p.jon]
     ?>  ?=(%o -.jon)
+    =/  jin
+      (~(got by p.jon) %group)
+    ?>  ?=(%o -.jon)
     :+  %group  ~
-    ?.  ?&  (~(has by p.jon) 'app-name')
-            (~(has by p.jon) 'resource')
+    ?.  ?&  (~(has by p.jin) 'app-name')
+            (~(has by p.jin) 'resource')
         ==
       ~
-    =/  app-name=^json  (~(got by p.jon) 'app-name')
+    =/  app-name=^json  (~(got by p.jin) 'app-name')
     ?>  ?=(%s -.app-name)
     :+  ~
       p.app-name
-    =/  res=^json  (~(got by p.jon) 'resource')
+    =/  res=^json  (~(got by p.jin) 'resource')
     (dejs-path:resource res)
   ::
   ++  md-resource
