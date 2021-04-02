@@ -2065,8 +2065,72 @@ static c3_c* _k140_ha[] = {
   0
 };
 
+
+//  TODO: probably need different ha hashes
+
+static u3j_core _a50_two__by_d[] =
+  { { "apt", 7, _140_two__by_apt_a, 0, _140_two__by_apt_ha },
+    { "del", 7, _140_two__by_del_a, 0, _140_two__by_del_ha },
+    { "get", 7, _140_two__by_get_a, 0, _140_two__by_get_ha },
+    { "has", 7, _140_two__by_has_a, 0, _140_two__by_has_ha },
+    { "put", 7, _140_two__by_put_a, 0, _140_two__by_put_ha },
+    {}
+  };
+
+static u3j_core _a50_two__in_d[] =
+  { { "apt", 7, _140_two__in_apt_a, 0, _140_two__in_apt_ha },
+    { "del", 7, _140_two__in_del_a, 0, _140_two__in_del_ha },
+    { "put", 7, _140_two__in_put_a, 0, _140_two__in_put_ha },
+    {}
+  };
+
+u3j_core _a50_d[] =
+{ { "add", 7, _140_one_add_a, 0, _140_one_add_ha },
+  { "dec", 7, _140_one_dec_a, 0, _140_one_dec_ha },
+  { "div", 7, _140_one_div_a, 0, _140_one_div_ha },
+  { "gth", 7, _140_one_gth_a, 0, _140_one_gth_ha },
+  { "lte", 7, _140_one_lte_a, 0, _140_one_lte_ha },
+  { "lth", 7, _140_one_lth_a, 0, _140_one_lth_ha },
+  { "mod", 7, _140_one_mod_a, 0, _140_one_mod_ha },
+  { "mul", 7, _140_one_mul_a, 0, _140_one_mul_ha },
+  { "sub", 7, _140_one_sub_a, 0, _140_one_sub_ha },
+
+  { "bex", 7, _140_two_bex_a, 0, _140_two_bex_ha },
+  { "cat", 7, _140_two_cat_a, 0, _140_two_cat_ha },
+  { "can", 7, _140_two_can_a, 0, _140_two_can_ha },
+  { "con", 7, _140_two_con_a, 0, _140_two_con_ha },
+  { "dis", 7, _140_two_dis_a, 0, _140_two_dis_ha },
+  { "dor", 7, _140_two_dor_a, 0, _140_two_dor_ha },
+  { "end", 7, _140_two_end_a, 0, _140_two_end_ha },
+  { "gor", 7, _140_two_gor_a, 0, _140_two_gor_ha },
+  { "lsh", 7, _140_two_lsh_a, 0, _140_two_lsh_ha },
+  { "met", 7, _140_two_met_a, 0, _140_two_met_ha },
+  { "mix", 7, _140_two_mix_a, 0, _140_two_mix_ha },
+  { "mor", 7, _140_two_mor_a, 0, _140_two_mor_ha },
+  { "mug", 7, _140_two_mug_a, 0, _140_two_mug_ha },
+  { "muk", 59, _140_two_muk_a, 0, _140_two_muk_ha },  //  TODO: why 59?
+  { "rep", 7, _140_two_rep_a, 0, _140_two_rep_ha },
+  { "rip", 7, _140_two_rip_a, 0, _140_two_rip_ha },
+  { "rsh", 7, _140_two_rsh_a, 0, _140_two_rsh_ha },
+  { "swp", 7, _140_two_swp_a, 0, _140_two_swp_ha },
+
+  { "flop", 7, _140_two_flop_a, 0, _140_two_flop_ha },
+  { "lent", 7, _140_two_lent_a, 0, _140_two_lent_ha },
+  { "levy", 7, _140_two_levy_a, 0, _140_two_levy_ha },
+  { "reap", 7, _140_two_reap_a, 0, _140_two_reap_ha },
+  { "slag", 7, _140_two_slag_a, 0, _140_two_slag_ha },
+  { "snag", 7, _140_two_snag_a, 0, _140_two_snag_ha },
+  { "turn", 7, _140_two_turn_a, 0, _140_two_turn_ha },
+  { "welp", 7, _140_two_welp_a, 0, _140_two_welp_ha },
+
+  { "by",  7, 0, _a50_two__by_d, _140_two__by_ha },
+  { "in",  7, 0, _a50_two__in_d, _140_two__in_ha },
+  {}
+};
+
 static u3j_core _d[] = {
   { "k140", 0, 0, _k140_d, _k140_ha, 0, (u3j_core*) 140, 0 },
+  { "a50", 0, 0, _a50_d, _k140_ha, 0, (u3j_core*) c3__a50, 0 },
   {}
 };
 

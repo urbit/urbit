@@ -72,9 +72,9 @@
         c3_l              jax_l;        //  index in global dashboard
       } u3j_core;
 
-    /* u3e_dash, u3_Dash, u3D: jet dashboard singleton
+    /* u3j_dash, u3_Dash, u3D: jet dashboard singleton
     */
-      typedef struct _u3e_dash {
+      typedef struct _u3j_dash {
         u3j_core*     dev_u;            //  null-terminated static list
         c3_l          len_l;            //  dynamic array length
         c3_l          all_l;            //  allocated length

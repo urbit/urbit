@@ -35,14 +35,94 @@
 ::  TODO: polymorphic addresses to save tx space?
 ::
 /+  std
-=>  std
+!.
+=>  =>  std
 ::  Constants
 ::
 |%
 ::  Transfers on L1 to this address count as depositing to L2
 ::
 ++  deposit-address  0x1234.5678.9012.3456.7890.1234.5678.9012.3456.7890
---
+++  log-names
+  |%
+  ::  Generated with (keccak-256:keccak:crypto (as-octs:mimes:html name))
+  ::
+  ::  OwnerChanged(uint32,address)
+  ++  owner-changed
+    0x16d0.f539.d49c.6cad.822b.767a.9445.bfb1.
+      cf7e.a6f2.a6c2.b120.a7ea.4cc7.660d.8fda
+  ::
+  ::  Activated(uint32)
+  ++  activated
+    0xe74c.0380.9d07.69e1.b1f7.06cc.8414.258c.
+      d1f3.b6fe.020c.d15d.0165.c210.ba50.3a0f
+  ::
+  ::  Spawned(uint32,uint32)
+  ++  spawned
+    0xb2d3.a6e7.a339.f5c8.ff96.265e.2f03.a010.
+      a854.1070.f374.4a24.7090.9644.1508.1546
+  ::
+  ::  EscapeRequested(uint32,uint32)
+  ++  escape-requested
+    0xb4d4.850b.8f21.8218.141c.5665.cba3.79e5.
+      3e9b.b015.b51e.8d93.4be7.0210.aead.874a
+  ::
+  ::  EscapeCanceled(uint32,uint32)
+  ++  escape-canceled
+    0xd653.bb0e.0bb7.ce83.93e6.24d9.8fbf.17cd.
+      a590.2c83.28ed.0cd0.9988.f368.90d9.932a
+  ::
+  ::  EscapeAccepted(uint32,uint32)
+  ++  escape-accepted
+    0x7e44.7c9b.1bda.4b17.4b07.96e1.00bf.7f34.
+      ebf3.6dbb.7fe6.6549.0b1b.fce6.246a.9da5
+  ::
+  ::  LostSponsor(uint32,uint32)
+  ++  lost-sponsor
+    0xd770.4f9a.2519.3dbd.0b0c.b4a8.09fe.ffff.
+      a7f1.9d1a.ae88.17a7.1346.c194.4482.10d5
+  ::
+  ::  ChangedKeys(uint32,bytes32,bytes32,uint32,uint32)
+  ++  changed-keys
+    0xaa10.e7a0.117d.4323.f1d9.9d63.0ec1.69be.
+      bb3a.988e.8957.70e3.5198.7e01.ff54.23d5
+  ::
+  ::  BrokeContinuity(uint32,uint32)
+  ++  broke-continuity
+    0x2929.4799.f1c2.1a37.ef83.8e15.f79d.d91b.
+      cee2.df99.d63c.d1c1.8ac9.68b1.2951.4e6e
+  ::
+  ::  ChangedSpawnProxy(uint32,address)
+  ++  changed-spawn-proxy
+    0x9027.36af.7b3c.efe1.0d9e.840a.ed0d.687e.
+      35c8.4095.122b.2505.1a20.ead8.866f.006d
+  ::
+  ::  ChangedTransferProxy(uint32,address)
+  ++  changed-transfer-proxy
+    0xcfe3.69b7.197e.7f0c.f067.93ae.2472.a9b1.
+      3583.fecb.ed2f.78df.a14d.1f10.796b.847c
+  ::
+  ::  ChangedManagementProxy(uint32,address)
+  ++  changed-management-proxy
+    0xab9c.9327.cffd.2acc.168f.afed.be06.139f.
+      5f55.cb84.c761.df05.e051.1c25.1e2e.e9bf
+  ::
+  ::  ChangedVotingProxy(uint32,address)
+  ++  changed-voting-proxy
+    0xcbd6.269e.c714.57f2.c7b1.a227.74f2.46f6.
+      c5a2.eae3.795e.d730.0db5.1768.0c61.c805
+  ::
+  ::  ChangedDns(string,string,string)
+  ++  changed-dns
+    0xfafd.04ad.e1da.ae2e.1fdb.0fc1.cc6a.899f.
+      d424.063e.d5c9.2120.e67e.0730.53b9.4898
+  ::
+  ::  ApprovalForAll(address,address,bool)
+  ++  approval-for-all
+    0x1730.7eab.39ab.6107.e889.9845.ad3d.59bd.
+      9653.f200.f220.9204.89ca.2b59.3769.6c31
+  --
+--  =>
 ::  Types
 |%
 ::  ethereum address, 20 bytes.
@@ -112,7 +192,7 @@
 ::
 +$  event-log
   $:  address=@ux
-      data=@t
+      data=@
       topics=(lest @ux)
   ==
 +$  input
@@ -122,7 +202,7 @@
 ::  ECDSA verifier
 ::
 +$  verifier  $-([dat=@ v=@ r=@ s=@] (unit address))
---
+--  =>
 ::
 |%
 ++  parse-batch
@@ -172,6 +252,7 @@
   =*  batch-loop  $
   ?:  =(count 0)
     `[~ batch]
+  =^  pad  batch  (take 0)  ::  byte align
   =/  next-res=(unit [=tx batch=_batch])  parse-single-tx
   ?~  next-res
     ~
@@ -319,11 +400,6 @@
     %4  (end 4 who)
   ==
 ::
-++  hash-log-name
-  |=  name=@t
-  ^-  @ux
-  (keccak-256:keccak:crypto (as-octs:mimes:html name))
-::
 ++  pass-from-eth
   |=  [enc=octs aut=octs sut=@ud]
   ^-  pass
@@ -354,7 +430,7 @@
       ==
     ==
   ==
---
+--  =>
 |%
 :: Receive log from L1 transaction
 ::
@@ -362,7 +438,7 @@
   |=  [=state log=event-log]
   ^-  [effects ^state]
   =*  log-name  i.topics.log
-  ?:  =(log-name ^~((hash-log-name 'ChangedDns(string,string,string)')))
+  ?:  =(log-name changed-dns:log-names)
     ?>  ?=(~ t.topics.log)
     =/  words  (rip 8 data.log)
     ?>  ?=([c=@ @ b=@ @ a=@ @ @ @ @ ~] words)  ::  TODO: not always true
@@ -371,7 +447,7 @@
     =*  tri  &1.words
     `state(dns (turn ~[one two tri] |=(a=@ (swp 3 a))))
   ::
-  ?:  =(log-name ^~((hash-log-name 'ApprovalForAll(address,address,bool)')))
+  ?:  =(log-name approval-for-all:log-names)
     ?>  ?=([@ @ ~] t.topics.log)
     =*  owner     i.t.topics.log
     =*  operator  i.t.t.topics.log
@@ -395,7 +471,7 @@
   =-  [effects state(points (~(put by points.state) ship new-point))]
   ^-  [=effects new-point=^point]
   ::
-  ?:  =(log-name ^~((hash-log-name 'ChangedSpawnProxy(uint32,address)')))
+  ?:  =(log-name changed-spawn-proxy:log-names)
     ?>  ?=(%l1 -.point)
     ?>  ?=([@ ~] t.t.topics.log)
     =*  to  i.t.t.topics.log
@@ -412,15 +488,13 @@
   ::
   ?<  ?=(%l2 -.point)
   ::
-  ?:  =(log-name ^~((hash-log-name 'BrokeContinuity(uint32,uint32)')))
+  ?:  =(log-name broke-continuity:log-names)
     ?>  ?=(~ t.t.topics.log)
     =*  rift=@  data.log
     :-  [ship %rift rift]~
     point(rift.net rift)
   ::
-  =/  changed-keys-hash
-    ^~((hash-log-name 'ChangedKeys(uint32,bytes32,bytes32,uint32,uint32)'))
-  ?:  =(log-name changed-keys-hash)
+  ?:  =(log-name changed-keys:log-names)
     ?>  ?=(~ t.t.topics.log)
     =/  words  (rip 8 data.log)
     ?>  ?=([@ @ @ @ ~] words)  :: TODO: reverse order?
@@ -432,13 +506,13 @@
     :-  [ship %keys life crypto-suite pass]~
     point(life.net life, pass.net pass)
   ::
-  ?:  =(log-name ^~((hash-log-name 'EscapeAccepted(uint32,uint32)')))
+  ?:  =(log-name escape-accepted:log-names)
     ?>  ?=([@ ~] t.t.topics.log)
     =*  parent=@  i.t.t.topics.log
     :-  [ship %spon `parent]~
     point(escape.net ~, sponsor.net [%& parent])
   ::
-  ?:  =(log-name ^~((hash-log-name 'LostSponsor(uint32,uint32)')))
+  ?:  =(log-name lost-sponsor:log-names)
     ?>  ?=([@ ~] t.t.topics.log)
     =*  parent  i.t.t.topics.log
     :-  [ship %spon ~]~
@@ -448,17 +522,17 @@
   ::
   :-  ~
   ::
-  ?:  =(log-name ^~((hash-log-name 'EscapeRequested(uint32,uint32)')))
+  ?:  =(log-name escape-requested:log-names)
     ?>  ?=([@ ~] t.t.topics.log)
     =*  parent=@  i.t.t.topics.log
     point(escape.net `parent)
   ::
-  ?:  =(log-name ^~((hash-log-name 'EscapeCanceled(uint32,uint32)')))
+  ?:  =(log-name escape-canceled:log-names)
     ?>  ?=([@ ~] t.t.topics.log)
     =*  parent  i.t.t.topics.log
     point(escape.net ~)
   ::
-  ?:  =(log-name ^~((hash-log-name 'OwnerChanged(uint32,address)')))
+  ?:  =(log-name owner-changed:log-names)
     ?>  ?=([@ ~] t.t.topics.log)
     =*  to  i.t.t.topics.log
     ::  Depositing to L2 is represented by an ownership change on L1,
@@ -468,17 +542,17 @@
       point(dominion %l2)
     point(address.owner.own to)
   ::
-  ?:  =(log-name ^~((hash-log-name 'ChangedTransferProxy(uint32,address)')))
+  ?:  =(log-name changed-transfer-proxy:log-names)
     ?>  ?=([@ ~] t.t.topics.log)
     =*  to  i.t.t.topics.log
     point(address.transfer-proxy.own to)
   ::
-  ?:  =(log-name ^~((hash-log-name 'ChangedManagementProxy(uint32,address)')))
+  ?:  =(log-name changed-management-proxy:log-names)
     ?>  ?=([@ ~] t.t.topics.log)
     =*  to  i.t.t.topics.log
     point(address.management-proxy.own to)
   ::
-  ?:  =(log-name ^~((hash-log-name 'ChangedVotingProxy(uint32,address)')))
+  ?:  =(log-name changed-voting-proxy:log-names)
     ?>  ?=([@ ~] t.t.topics.log)
     =*  to  i.t.t.topics.log
     point(address.voting-proxy.own to)

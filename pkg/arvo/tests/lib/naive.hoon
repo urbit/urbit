@@ -21,14 +21,14 @@
 ::
 ++  key  address-from-prv:key:ethereum
 ++  log
-  |=  [event=@t data=@t topics=(lest @)]
+  |=  [log-name=@ux data=@t topics=(lest @)]
   ^-  ^input:naive
-  [%log *@ux data (hash-log-name:naive event) topics]
+  [%log *@ux data log-name topics]
 ::
 ::
 ++  owner-changed
   |=  [=ship =address]
-  (log 'OwnerChanged(uint32,address)' *@t ship address ~)
+  (log owner-changed:log-names:naive *@t ship address ~)
 ::
 ++  init-bud
   |=  =^state:naive
@@ -68,7 +68,7 @@
     !>
     %^  naive  verifier  *^state:naive
     :*  %log  *@ux  *@t
-        (hash-log-name:naive 'OwnerChanged(uint32,address)')  (@ux ~bud)  0x123  ~
+        owner-changed:log-names:naive  (@ux ~bud)  0x123  ~
     ==
 ::
 ++  test-deposit
