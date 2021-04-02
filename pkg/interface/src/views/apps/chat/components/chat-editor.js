@@ -8,6 +8,7 @@ import { Row, BaseTextArea, Box } from '@tlon/indigo-react';
 
 import 'codemirror/mode/markdown/markdown';
 import 'codemirror/addon/display/placeholder';
+import 'codemirror/addon/hint/show-hint';
 
 import 'codemirror/lib/codemirror.css';
 
@@ -142,6 +143,9 @@ export default class ChatEditor extends Component {
   }
 
   messageChange(editor, data, value) {
+    if(value.endsWith('/')) {
+      editor.showHint(['test', 'foo']);
+    }
     if (this.state.message !== '' && value == '') {
       this.setState({
         message: value

@@ -246,7 +246,6 @@
       ?:  (is-root:ver mark)
         :_  this
         (forward-update:hc mark vase)
-      ::
       =^  cards  push-hook
         (on-poke:og mark vase)
       [cards this]
@@ -456,26 +455,53 @@
       (fact:io cage ~(tap in unversioned))^~
     --
   ::
+  ++  forward-update
+    |=  =cage
+    ^-  (list card:agent:gall)
+    =-  lis
+    =/  vas
+      (convert-to:ver cage)
+    %+  roll  (resource-for-update q.cage)
+    |=  [rid=resource [lis=(list card:agent:gall) tf-vas=(unit vase)]]
+    ^-  [(list card:agent:gall) (unit vase)]
+    =/  =path
+      resource+(en-path:resource rid)
+    =/  =wire  (make-wire path)
+    =*  ship   entity.rid
+    =.  tf-vas
+      ?.  =(our.bowl ship)
+        ::  do not transform before forwarding
+        ::
+        `vas
+      ::  use cached transform
+      ::
+      ?^  tf-vas  tf-vas
+      ::  transform before poking store
+      ::
+      (transform-proxy-update:og vas)
+    ~|  "forwarding failed during transform. mark: {<p.cage>} resource: {<rid>}"
+    ?>  ?=(^ tf-vas)
+    =/  =dock
+      :-  ship
+      ?.  =(our.bowl ship)
+        ::  forward to host
+        ::
+        dap.bowl
+      ::  poke our store
+      ::
+      store-name.config
+    =/  cag=^cage
+      :-  current-version:ver
+      u.tf-vas
+    :_  tf-vas
+    [[%pass wire %agent dock %poke cag] lis]
+  ::
   ++  ver-from-path
     |=  =path
     =/  extra=^path
       (slag 5 path)
     ?>  ?=(^ extra)
     (slav %ud i.extra)
-  ::
-  ++  forward-update
-    |=  =cage
-    ^-  (list card:agent:gall)
-    =/  =vase
-      (need (transform-proxy-update:og (convert-to:ver cage)))
-    %+  roll  (resource-for-update vase)
-    |=  [rid=resource cards=(list card:agent:gall)]
-    =/  =wire
-      (make-wire resource+(en-path:resource rid))
-    =/  =dock:agent:gall
-      :-  entity.rid
-      ?:(=(our.bowl entity.rid) store-name.config dap.bowl)
-    :_(cards (~(poke pass wire) dock current-version:ver vase))
   ::
   ++  resource-for-update
     |=  =vase

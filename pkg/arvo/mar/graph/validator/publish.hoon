@@ -29,9 +29,7 @@
     ^-  (unit notif-kind:hark)
     ?+  index.p.i   ~
       [@ %1 %1 ~]    `[%note [0 1] %each %children]
-      [@ %1 @ ~]     `[%edit-note [0 1] %none %none]
       [@ %2 @ %1 ~]  `[%comment [1 3] %count %siblings]
-      [@ %2 @ @ ~]   `[%edit-comment [1 3] %none %none]
     ==
   ::
   ++  transform-add-nodes
@@ -57,7 +55,7 @@
   --
 ++  grab
   |%
-  :: +noun: validate publish post
+  :: +noun: validate publish note
   :: 
   ++  noun
     |=  p=*

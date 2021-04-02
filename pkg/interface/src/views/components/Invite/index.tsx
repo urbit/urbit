@@ -72,10 +72,14 @@ export function InviteItem(props: InviteItemProps) {
     if (groups?.[resource]?.hidden) {
       await waiter(p => p.graphKeys.includes(resource.slice(7)));
       const { metadata } = associations.graph[resource];
-      if (metadata?.module === 'chat') {
-        history.push(`/~landscape/messages/resource/${metadata.module}${resource}`);
+      if (metadata && 'graph' in metadata.config) {
+        if (metadata.config.graph === 'chat') {
+          history.push(`/~landscape/messages/resource/${metadata.config.graph}${resource}`);
+        } else {
+          history.push(`/~landscape/home/resource/${metadata.config.graph}${resource}`);
+        }
       } else {
-        history.push(`/~landscape/home/resource/${metadata.module}${resource}`);
+        console.error('unknown metadata: ', metadata);
       }
     } else {
       history.push(`/~landscape${resource}`);
@@ -104,12 +108,18 @@ export function InviteItem(props: InviteItemProps) {
     }
   }, [invite]);
 
+  if(pendingJoin?.hidden) {
+    return null;
+  }
+
   if (preview) {
     return (
       <GroupInvite
+        resource={resource}
+        api={api}
         preview={preview}
         invite={invite}
-        status={status}
+        status={pendingJoin}
         {...handlers}
       />
     );
@@ -134,7 +144,7 @@ export function InviteItem(props: InviteItemProps) {
     );
   } else if (status && name.startsWith('dm--')) {
     return (
-      <JoinSkeleton status={status} gapY="3">
+      <JoinSkeleton api={api} resource={resource} status={status} gapY="3">
         <Row py="1" alignItems="center">
           <Icon display="block" color="blue" icon="Bullet" mr="2" />
           <Text mr="1">Joining direct message...</Text>
@@ -146,6 +156,7 @@ export function InviteItem(props: InviteItemProps) {
       <InviteSkeleton
         acceptDesc="Accept Invite"
         declineDesc="Decline Invite"
+        resource={resource}
         {...handlers}
         gapY="3"
       >
@@ -165,7 +176,7 @@ export function InviteItem(props: InviteItemProps) {
   } else if (pendingJoin) {
     const [, , ship, name] = resource.split('/');
     return (
-      <JoinSkeleton status={pendingJoin}>
+      <JoinSkeleton api={api} resource={resource} status={pendingJoin}>
         <Row py="1" alignItems="center">
           <Icon display="block" color="blue" icon="Bullet" mr="2" />
           <Text mr="1">

@@ -1,8 +1,18 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, ReactNode } from 'react';
 import _ from 'lodash';
 
-import { Col } from '@tlon/indigo-react';
-import { Invites as IInvites, Associations, Invite, JoinRequests, Groups, Contacts, AppInvites, JoinProgress } from '@urbit/api';
+import { Col, Box, Text } from '@tlon/indigo-react';
+import {
+  Invites as IInvites,
+  Associations,
+  Invite,
+  JoinRequests,
+  Groups,
+  Contacts,
+  AppInvites,
+  JoinProgress,
+  JoinRequest
+} from '@urbit/api';
 
 import GlobalApi from '~/logic/api/global';
 import { resourceAsPath, alphabeticalOrder } from '~/logic/lib/util';
@@ -12,68 +22,80 @@ import useGroupState from '~/logic/state/group';
 
 interface InvitesProps {
   api: GlobalApi;
+  pendingJoin?: any;
 }
 
 interface InviteRef {
   uid: string;
-  app: string
+  app: string;
   invite: Invite;
 }
 
 export function Invites(props: InvitesProps): ReactElement {
   const { api } = props;
-  const pendingJoin = useGroupState(s => s.pendingJoin);
   const invites = useInviteState(state => state.invites);
 
-  const inviteArr: InviteRef[] = _.reduce(invites, (acc: InviteRef[], val: AppInvites, app: string) => {
-    const appInvites = _.reduce(val, (invs: InviteRef[], invite: Invite, uid: string) => {
-      return [...invs, { invite, uid, app }];
-    }, []);
-    return [...acc, ...appInvites];
-  }, []);
+  const inviteArr: InviteRef[] = _.reduce(
+    invites,
+    (acc: InviteRef[], val: AppInvites, app: string) => {
+      const appInvites = _.reduce(
+        val,
+        (invs: InviteRef[], invite: Invite, uid: string) => {
+          return [...invs, { invite, uid, app }];
+        },
+        []
+      );
+      return [...acc, ...appInvites];
+    },
+    []
+  );
 
-  const invitesAndStatus: { [rid: string]: JoinProgress | InviteRef } =
-    { ..._.keyBy(inviteArr, ({ invite }) => resourceAsPath(invite.resource)), ...pendingJoin };
+  const pendingJoin = _.omitBy(props.pendingJoin, 'hidden');
+
+  const invitesAndStatus: { [rid: string]: JoinRequest | InviteRef } = {
+    ..._.keyBy(inviteArr, ({ invite }) => resourceAsPath(invite.resource)),
+    ...pendingJoin
+  };
 
   return (
-    <Col
-      zIndex={4}
-      gapY={2}
-      bg="white"
-      top="0px"
-      position="sticky"
-      flexShrink={0}
-    >
-     { Object
-         .keys(invitesAndStatus)
-         .sort(alphabeticalOrder)
-         .map((resource) => {
-           const inviteOrStatus = invitesAndStatus[resource];
-           const join = pendingJoin[resource];
-           if(typeof inviteOrStatus === 'string') {
+    <>
+      {Object.keys(invitesAndStatus).length > 0 && (
+        <Box position="sticky" zIndex={3} top="-1px" bg="white">
+          <Box p="2" bg="scales.black05">
+            <Text>Invites</Text>
+          </Box>
+        </Box>
+      )}
+      {Object.keys(invitesAndStatus)
+        .sort(alphabeticalOrder)
+        .map((resource) => {
+          const inviteOrStatus = invitesAndStatus[resource];
+          const join = pendingJoin[resource];
+          if ('progress' in inviteOrStatus) {
            return (
              <InviteItem
                key={resource}
                resource={resource}
-               pendingJoin={join}
                api={api}
+               pendingJoin={join}
              />
-          );
-        } else {
-          const { app, uid, invite } = inviteOrStatus;
-          return (
-            <InviteItem
-              key={resource}
-              api={api}
-              invite={invite}
-              pendingJoin={join}
-              app={app}
-              uid={uid}
-              resource={resource}
-            />
             );
-        }
-     })}
-    </Col>
+          } else {
+            const { app, uid, invite } = inviteOrStatus;
+            return (
+              <InviteItem
+                key={resource}
+                api={api}
+                invite={invite}
+                app={app}
+                uid={uid}
+                join={join}
+                resource={resource}
+              />
+              );
+          }
+        })
+      }
+    </>
   );
 }

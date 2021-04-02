@@ -1,7 +1,7 @@
 import produce from "immer";
 import { compose } from "lodash/fp";
 import create, { State, UseStore } from "zustand";
-import { persist } from "zustand/middleware";
+import { persist, devtools } from "zustand/middleware";
 
 
 export const stateSetter = <StateType>(

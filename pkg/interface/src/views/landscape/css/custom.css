@@ -6,6 +6,7 @@
   margin: 0 auto;
 }
 
-a, a:any-link {
+a, a:any-link, a:-webkit-any-link {
   text-decoration: none;
+  color: unset;
 }

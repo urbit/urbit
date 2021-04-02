@@ -52,7 +52,7 @@ export function Notebook(props: NotebookProps & RouteComponentProps): ReactEleme
           </Text>
         </Box>
       </Row>
-      <Box borderBottom="1" borderBottomColor="washedGray" />
+      <Box borderBottom="1" borderBottomColor="lightGray" />
       <NotebookPosts
         graph={graph}
         host={ship}

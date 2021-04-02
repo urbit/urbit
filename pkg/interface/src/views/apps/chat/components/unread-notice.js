@@ -35,7 +35,7 @@ export const UnreadNotice = (props) => {
       className='unread-notice'
     >
       <Center>
-        <Box backgroundColor='white' borderRadius='2'>
+        <Box backgroundColor='white' borderRadius='3' overflow='hidden'>
           <Box
             backgroundColor='washedBlue'
             display='flex'

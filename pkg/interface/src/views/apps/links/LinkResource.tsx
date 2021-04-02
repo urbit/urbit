@@ -82,7 +82,7 @@ export function LinkResource(props: LinkResourceProps) {
           }}
         />
         <Route
-          path={relativePath('/:index(\\d+)/:commentId?')}
+          path={relativePath('/index/:index')}
           render={(props) => {
             const index = bigInt(props.match.params.index);
             const editCommentId = props.match.params.commentId || null;
@@ -105,6 +105,7 @@ export function LinkResource(props: LinkResourceProps) {
                   resource={resourcePath}
                   node={node}
                   baseUrl={resourceUrl}
+                  association={association}
                   group={group}
                   path={resource?.group}
                   api={api}

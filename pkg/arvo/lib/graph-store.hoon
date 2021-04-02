@@ -5,6 +5,101 @@
 =,  sur
 =,  pos
 |%
+::
+++  update-log-to-one
+  |=  =update-log:zero
+  ^-  ^update-log
+  %+  gas:orm-log  *^update-log
+  %+  turn  (tap:orm-log:zero update-log)
+  |=  [=time =logged-update:zero]
+  :-  time
+  :-  p.logged-update  
+  (logged-update-to-one q.logged-update)
+::
+++  logged-update-to-one
+  |=  upd=logged-update-0:zero
+  ?+  -.upd  upd
+    %add-graph  upd(graph (graph-to-one graph.upd))
+    %add-nodes  upd(nodes (~(run by nodes.upd) node-to-one))
+  ==
+::
+++  node-to-one
+  |=  =node:zero
+  (node:(upgrade ,post:zero ,post) node post-to-one)
+::
+++  graph-to-one
+  |=  =graph:zero
+  (graph:(upgrade ,post:zero ,post) graph post-to-one)
+::
+++  marked-graph-to-one
+  |=  [=graph:zero m=(unit mark)]
+  [(graph-to-one graph) m]
+::
+++  post-to-one
+  |=  p=post:zero
+  ^-  post
+  p(contents (contents-to-one contents.p))
+::
+++  contents-to-one
+  |=  cs=(list content:zero)
+  ^-  (list content)
+  %+  murn  cs
+  |=  =content:zero
+  ^-  (unit ^content)
+  ?:  ?=(%reference -.content)  ~
+  `content
+::
+++  upgrade
+  |*  [in-pst=mold out-pst=mold]
+  =>
+    |%
+    ++  in-orm
+      ((ordered-map atom in-node) gth)
+    +$  in-node
+      [post=in-pst children=in-internal-graph]
+    +$  in-graph
+      ((mop atom in-node) gth)
+    +$  in-internal-graph
+      $~  [%empty ~]
+      $%  [%graph p=in-graph]
+          [%empty ~]
+      ==
+    ::
+    ++  out-orm
+      ((ordered-map atom out-node) gth)
+    +$  out-node
+      [post=out-pst children=out-internal-graph]
+    +$  out-graph
+      ((mop atom out-node) gth)
+    +$  out-internal-graph
+      $~  [%empty ~]
+      $%  [%graph p=out-graph]
+          [%empty ~]
+      ==
+    --
+  |%
+  ::
+  ++  graph
+    |=  $:  gra=in-graph
+            fn=$-(in-pst out-pst)
+        ==
+    ^-  out-graph
+    %+  gas:out-orm  *out-graph
+    ^-  (list [atom out-node])
+    %+  turn  (tap:in-orm gra)
+    |=  [a=atom n=in-node]
+    ^-  [atom out-node]
+    [a (node n fn)]
+  ::
+  ++  node
+    |=  [nod=in-node fn=$-(in-pst out-pst)]
+    ^-  out-node
+    :-  (fn post.nod)
+    ^-  out-internal-graph
+    ?:  ?=(%empty -.children.nod)
+      [%empty ~]
+    [%graph (graph p.children.nod fn)]
+  --
 ::  NOTE: move these functions to zuse
 ++  nu                                              ::  parse number as hex
   |=  jon=json
@@ -78,7 +173,7 @@
         %mention    (frond %mention (ship ship.c))
         %text       (frond %text s+text.c)
         %url        (frond %url s+url.c)
-        %reference  (frond %reference (uid uid.c))
+        %reference  (frond %reference (reference +.c))
         %code
       %+  frond  %code
       %-  pairs
@@ -94,6 +189,28 @@
         %|  a+[a+[%s '[[output rendering error]]']~]~
       ==
     ==
+  ::
+  ++  reference
+    |=  ref=^reference
+    |^
+    %+  frond  -.ref
+    ?-  -.ref
+      %graph  (graph +.ref)
+      %group  (group +.ref)
+    ==
+    ::
+    ++  graph
+      |=  [grp=res gra=res idx=^index]
+      %-  pairs
+      :~  graph+s+(enjs-path:res gra)
+          group+s+(enjs-path:res grp)
+          index+(index idx)
+      ==
+    ::
+    ++  group
+      |=  grp=res
+      s+(enjs-path:res grp)
+    --
   ::
   ++  post
     |=  p=^post
@@ -113,7 +230,7 @@
     |^  (frond %graph-update (pairs ~[(encode q.upd)]))
     ::
     ++  encode
-      |=  upd=update-0
+      |=  upd=action
       ^-  [cord json]
       ?-  -.upd
           %add-graph
@@ -246,9 +363,8 @@
   ++  update
     |=  jon=json
     ^-  ^update
-    :-  %0
     :-  *time
-    ^-  update-0
+    ^-  action
     =<  (decode jon)
     |%
     ++  decode
@@ -332,9 +448,24 @@
       :~  [%mention (su ;~(pfix sig fed:ag))]
           [%text so]
           [%url so]
-          [%reference uid]
+          [%reference reference]
           [%code eval]
       ==
+    ::
+    ++  reference
+      |^
+      %-  of
+      :~  graph+graph
+          group+dejs-path:res
+      ==
+      ::
+      ++  graph
+        %-  ot
+        :~  group+dejs-path:res
+            graph+dejs-path:res
+            index+index
+        ==
+      --
     ::
     ++  tang 
       |=  jon=^json
