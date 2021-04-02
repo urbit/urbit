@@ -33,7 +33,7 @@ export function GroupFeedPermsInput(
         name={id}
         id="admin-feed"
         label="Host & Admins Only"
-        caption="Only Hosts and Admins can post and edit this feed"
+        caption="Only Hosts and Admins can post this feed. Everyone else may comment"
       />
     </Col>
   );

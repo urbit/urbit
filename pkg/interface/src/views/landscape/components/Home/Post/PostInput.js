@@ -14,6 +14,9 @@ function canWrite(props) {
   if (vip === '') {
     return true;
   }
+  if(index) {
+    return true;
+  }
 
   if(vip === 'admin-feed') {
     return isChannelAdmin(group, association.group);

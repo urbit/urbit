@@ -6,13 +6,11 @@
   ++  graph-permissions-add
     |=  vip=vip-metadata:met
     ^-  permissions:graph
-    ?+  vip  [%yes %yes %yes]
-      %admin-feed  [%yes %yes %no]
-      %host-feed   [%no %no %no]
-        %reader-comments  
-      ?:  ?=([@ ~] index.p.i)
-        [%yes %yes %no]
+    ?.  ?=([@ ~] index.p.i)
       [%yes %yes %yes]
+    ?+  vip  [%yes %yes %yes]
+      %admin-feed  [%yes %no %no]
+      %host-feed   [%no %no %no]
     ==
   ::
   ++  graph-permissions-remove
