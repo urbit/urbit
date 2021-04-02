@@ -15,7 +15,7 @@ export function GroupFeedHeader(props) {
     historyLocation === `${baseUrl}/feed`;
 
   const locationUrl =
-    history.location.pathname.replace(`${baseUrl}`, '').replace(/^\/[a-z|\/]*/, '');
+    history.location.pathname.replace(`${baseUrl}`, '');
   let nodeIndex = locationUrl.split('/').slice(1).map((ind) => {
     return bigInt(ind);
   });
@@ -56,7 +56,10 @@ export function GroupFeedHeader(props) {
             `${baseUrl}/feed` !== historyLocation
           ) ? (
             <Text pl="1" pr="1" cursor="pointer" onClick={() => {
-              history.goBack();
+              let loc = locationUrl.split('/');
+              loc.pop();
+              loc = loc.join('/');
+              history.push(`${baseUrl}${loc}`);
             }}>{'<- Back'}</Text>
           ) : null
         }
