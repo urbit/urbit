@@ -192,9 +192,9 @@
     ?:  ?=(%s -.jon)
       [%graph p.jon]
     ?>  ?=(%o -.jon)
-    =/  jin
+    =/  jin=json
       (~(got by p.jon) %group)
-    ?>  ?=(%o -.jon)
+    ?>  ?=(%o -.jin)
     :+  %group  ~
     ?.  ?&  (~(has by p.jin) 'app-name')
             (~(has by p.jin) 'resource')
