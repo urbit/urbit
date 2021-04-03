@@ -8,10 +8,10 @@ import {
   Button,
   Label,
   ErrorLabel,
-  BaseInput
+  BaseInput,
+  Text
 } from '@tlon/indigo-react';
 
-import { StorageState } from '~/types';
 import useStorage from '~/logic/lib/useStorage';
 
 type ImageInputProps = Parameters<typeof Box>[0] & {
@@ -21,12 +21,9 @@ type ImageInputProps = Parameters<typeof Box>[0] & {
 };
 
 export function ImageInput(props: ImageInputProps): ReactElement {
-  const { id, label, caption, placeholder } = props;
-
+  const { id, label, caption } = props;
   const { uploadDefault, canUpload, uploading } = useStorage();
-
   const [field, meta, { setValue, setError }] = useField(id);
-
   const ref = useRef<HTMLInputElement | null>(null);
 
   const onImageUpload = useCallback(async () => {
@@ -43,9 +40,54 @@ export function ImageInput(props: ImageInputProps): ReactElement {
     }
   }, [ref.current, uploadDefault, canUpload, setValue]);
 
-  const onClick = useCallback(() => {
+  const clickUploadButton = useCallback(() => {
     ref.current?.click();
   }, [ref]);
+
+  const Prompt = () => (
+    <Text
+      black
+      fontWeight='500'
+      position='absolute'
+      left={2}
+      top={2}
+      style={{ pointerEvents: 'none' }}
+    >
+      Paste a link here, or{' '}
+      <Text
+        fontWeight='500'
+        cursor='pointer'
+        color='blue'
+        style={{ pointerEvents: 'all' }}
+        onClick={clickUploadButton}
+      >
+        upload
+      </Text>{' '}
+      a file
+    </Text>
+  );
+
+  const Uploading = () => (
+    <Text position='absolute' left={2} top={2} gray>
+      Uploading...
+    </Text>
+  );
+
+  const ErrorRetry = () => (
+    <Text position='absolute' left={2} top={2} color='red'>
+      Error, please{' '}
+      <Text
+        fontWeight='500'
+        cursor='pointer'
+        color='blue'
+        style={{ pointerEvents: 'all' }}
+        onClick={clickUploadButton}
+      >
+        {' '}
+        retry
+      </Text>
+    </Text>
+  );
 
   return (
     <Box display="flex" flexDirection="column" {...props}>
@@ -55,25 +97,21 @@ export function ImageInput(props: ImageInputProps): ReactElement {
           {caption}
         </Label>
       ) : null}
-      <Row mt="2" alignItems="flex-end">
+      <Row mt="2" alignItems="flex-end" position='relative'>
+        {!field.value && !uploading && meta.error === undefined ? (<Prompt />) : null}
+        {uploading && meta.error === undefined ? (<Uploading />) : null}
+        {meta.touched && meta.error !== undefined ? (<ErrorRetry />) : null}
         <Input
           type={'text'}
           hasError={meta.touched && meta.error !== undefined}
-          placeholder={placeholder}
           {...field}
         />
         {canUpload && (
           <>
             <Button
-              type="button"
-              ml={1}
-              border={1}
-              borderColor="lightGray"
-              onClick={onClick}
-              flexShrink={0}
-            >
-              {uploading ? 'Uploading' : 'Upload'}
-            </Button>
+              display='none'
+              onClick={clickUploadButton}
+            />
             <BaseInput
               style={{ display: 'none' }}
               type="file"
