@@ -197,8 +197,10 @@
       [%graph p.mod]
     =/  jin=json
       (~(got by p.jon) %group)
-    ?>  ?=(%o -.jin)
     :+  %group  ~
+    ?~  jin
+      ~  
+    ?>  ?=(%o -.jin)
     ?.  ?&  (~(has by p.jin) 'app-name')
             (~(has by p.jin) 'resource')
         ==
