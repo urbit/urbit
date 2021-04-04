@@ -344,12 +344,6 @@
   ::
   (se-drop & gyl)
 ::
-++  take-arvo
-  |=  [=wire =sign-arvo]
-  %+  take-onto  wire
-  ?>  ?=(%onto +<.sign-arvo)
-  +>.sign-arvo
-::
 ++  take-coup-phat                                    ::  ack poke
   |=  [way=wire saw=(unit tang)]
   =<  se-abet  =<  se-view
@@ -359,19 +353,6 @@
   %-  se-dump:(se-drop:(se-pull gyl) & gyl)
   :_  u.saw
   >[%drum-coup-fail src.hid gyl]<
-::
-++  take-onto                                         ::  ack start
-  |=  [way=wire saw=(each suss:gall tang)]
-  =<  se-abet  =<  se-view
-  ?>  ?=([@ @ ~] way)
-  ?>  (~(has by fur) i.t.way)
-  =/  wel=well:gall  [i.way i.t.way]
-  ?-  saw
-    [%| *]  (se-dump p.saw)
-    [%& *]  ?>  =(q.wel p.p.saw)
-            ::  =.  +>.$  (se-text "live {<p.saw>}")
-            +>.$(fur (~(put by fur) q.wel `[p.wel %da r.p.saw]))
-  ==
 ::
 ++  take-agent
   |=  [=wire =sign:agent:gall]

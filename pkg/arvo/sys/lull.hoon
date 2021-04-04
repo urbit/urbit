@@ -1611,7 +1611,6 @@
   +$  gift                                              ::  outgoing result
     $%  [%boon payload=*]                               ::  ames response
         [%done error=(unit error:ames)]                 ::  ames message (n)ack
-        [%onto p=(each suss tang)]                      ::  about agent
         [%unto p=sign:agent]                            ::
     ==                                                  ::
   +$  task                                              ::  incoming request

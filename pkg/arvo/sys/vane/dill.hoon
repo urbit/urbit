@@ -78,10 +78,7 @@
           $>(%blit gift:dill)                           ::
       ==                                                ::
       $:  %gall                                         ::
-          $>  $?  %onto                                 ::
-                  %unto                                 ::
-              ==                                        ::
-          gift:gall                                     ::
+          $>(%unto gift:gall)                           ::
   ==  ==                                                ::
 ::::::::                                                ::  dill tiles
 --
@@ -248,12 +245,6 @@
         |=  [tea=wire sih=sign]
         ^+  +>
         ?-    sih
-            [%gall %onto *]
-          ?-  -.+>.sih
-            %|  (crud %onto p.p.+>.sih)
-            %&  (fore (tuba "{(t q)}ed %{(t p)}":[t=trip p.p.sih]) ~)
-          ==
-        ::
             [%gall %unto *]
           ::  ~&  [%take-gall-unto +>.sih]
           ?-  -.+>.sih
