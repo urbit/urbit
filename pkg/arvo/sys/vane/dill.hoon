@@ -103,6 +103,7 @@
           %flow  +>
           %hail  (send %hey ~)
           %belt  (send `dill-belt`p.kyz)
+          %talk  (talk p.kyz)
           %text  (fore (tuba p.kyz) ~)
           %crud  ::  (send `dill-belt`[%cru p.kyz q.kyz])
                  (crud p.kyz q.kyz)
@@ -121,17 +122,19 @@
         =/  lev=log-level  (~(gut by veb.all) err %loud)
         ::  apply log level for this error tag
         ::
-        =/  =wall
-          ?-  lev
-            %hush  ~
-            %soft  ~["crud: %{(trip err)} event failed"]
-            %loud  :-  "crud: %{(trip err)} event failed"
-                   %-  zing
-                   %+  turn  (flop tac)
-                   |=(a=tank (~(win re a) [0 wid]))
-          ==
-        ?:  =(~ wall)  +>.$
-        (fore (turn wall tuba))
+        ?-  lev
+          %hush  +>.$
+          %soft  (fore (tuba "crud: %{(trip err)} event failed") ~)
+          %loud  (talk leaf+"crud: %{(trip err)} event failed" (flop tac))
+        ==
+      ::
+      ++  talk
+        |=  tac=(list tank)
+        %-  fore
+        %-  zing
+        %+  turn  tac
+        |=  a=tank
+        (turn (~(win re a) [0 wid]) tuba)
       ::
       ++  dump                                          ::  pass down to hey
         |=  git=gift

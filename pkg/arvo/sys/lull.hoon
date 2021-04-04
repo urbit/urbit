@@ -1042,8 +1042,8 @@
         [%meld ~]                                       ::  unify memory
         [%pack ~]                                       ::  compact memory
         [%shot ses=@tas task=session-task]              ::  task for session
-        [%talk p=tank]                                  ::
-        [%text p=tape]                                  ::
+        [%talk p=(list tank)]                           ::  print tanks
+        [%text p=tape]                                  ::  print tape
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
         [%verb ~]                                       ::  verbose mode
