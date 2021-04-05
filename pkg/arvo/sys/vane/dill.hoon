@@ -509,8 +509,13 @@
           =(%$ syd)
       ==
     ~
-  ::TODO  scry endpoints for /sessions
-  ~
+  ::  /dy/sessions        (set @tas)    all existing sessions
+  ::  /du/sessions/[ses]  ?             does session ses exist?
+  ::
+  ?+  [ren tyl]  ~
+    [%y %sessions ~]    ``noun+!>(~(key by dug.all))
+    [%u %sessions @ ~]  ``noun+!>((~(has by dug.all) (snag 1 tyl)))
+  ==
 ::
 ++  stay  all
 ::
