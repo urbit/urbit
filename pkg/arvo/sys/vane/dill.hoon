@@ -228,7 +228,7 @@
       ::
       ++  shut
         ::TODO  send a %bye blit?
-        pull
+        pull(eye.all (~(del by eye.all) ses))
       ::
       ++  send                                          ::  send action
         |=  bet=dill-belt
