@@ -1,5 +1,6 @@
 ::  herm: stand-in for term.c with http interface
 ::
+/-  herm
 /+  default-agent, dbug, verb
 =,  jael
 |%
@@ -23,6 +24,10 @@
             [%next %c da+now /[from]/[to]]
           [%sing %c da+now /[from]/[to]]
       ==
+    ::
+    ++  pass-session
+      |=  [ses=@tas tas=session-task:dill]
+      [%pass /dill/[ses] %arvo %d %shot ses tas]
     --
 |_  =bowl:gall
 +*  this  .
@@ -31,12 +36,11 @@
 ++  on-init
   ^-  (quip card:agent:gall _this)
   :_  this
-  ::  set up dill session subscription,
-  ::  and ensure the tubes we use are in cache
+  ::  ensure the tubes we use are in cache
   ::
-  :~  [%pass [%view %$ ~] %arvo %d %view ~]
-      (request-tube bowl %blit %json |)
+  :~  (request-tube bowl %blit %json |)
       (request-tube bowl %json %belt |)
+      (request-tube bowl %json %herm-task |)
   ==
 ::
 ++  on-save   !>([%0 ~])
@@ -48,25 +52,37 @@
 ++  on-watch
   |=  =path
   ^-  (quip card:agent:gall _this)
+  :_  this
   ?>  ?=([%session @ ~] path)
-  ::  tell session to refresh, so new client knows what's on screen
-  ::TODO  should client be responsible for this?
-  [[%pass [%view %$ ~] %arvo %d %hail ~]~ this]
+  =*  ses  i.t.path
+  :~  ::  subscribe to the requested session
+      ::
+      ::NOTE  multiple views do not result in multiple subscriptions
+      ::      because they go over the same wire/duct
+      ::
+      (pass-session ses %view ~)
+      ::  tell session to refresh, so new client knows what's on screen
+      ::TODO  should client be responsible for this?
+      ::
+      (pass-session ses %hail ~)
+  ==
 ::
 ++  on-arvo
   |=  [=wire =sign-arvo]
   ^-  (quip card:agent:gall _this)
+  ~|  wire
   ?+  wire  !!
     ::  pass on dill blits for the session
     ::
-      [%view %$ ~]
+      [%dill @ ~]
+    =*  ses  i.t.wire
     ?.  ?=([%dill %blit *] sign-arvo)
       ~|  [%unexpected-sign [- +<]:sign-arvo]
       !!
     :_  this
     %+  turn  p.sign-arvo
     |=  =blit:dill
-    [%give %fact [%session %$ ~]~ %blit !>(blit)]
+    [%give %fact [%session ses ~]~ %blit !>(blit)]
   ::
     ::  ensure the tubes we need remain in cache
     ::
@@ -83,14 +99,27 @@
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card:agent:gall _this)
-  ?.  ?=(%belt mark)
-    ~|  [%unexpected-mark mark]
-    !!
   :_  this
-  [%pass [%belt %$ ~] %arvo %d %belt !<(belt:dill vase)]~
+  :_  ~
+  ?+  mark  ~|([%unexpected-mark mark] !!)
+    %belt       (pass-session %$ %belt !<(belt:dill vase))
+    %herm-task  (pass-session !<(task:herm vase))
+  ==
+::
+++  on-peek
+  |=  =path
+  ^-  (unit (unit cage))
+  ?+  path  ~
+      [%x %sessions ~]
+    :+  ~  ~
+    :-  %json
+    !>  ^-  json
+    =-  a+(turn ~(tap in -) (lead %s))
+    .^((set @tas) %dy /(scot %p our.bowl)//(scot %da now.bowl)/sessions)
+  ==
 ::
 ++  on-leave  on-leave:def
-++  on-peek   on-peek:def
+::
 ++  on-agent  on-agent:def
 ++  on-fail   on-fail:def
 --
