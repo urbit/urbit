@@ -103,7 +103,7 @@
           %text  (fore (tuba p.kyz) ~)
           %crud  ::  (send `dill-belt`[%cru p.kyz q.kyz])
                  (crud p.kyz q.kyz)
-          %blew  (send %rez p.p.kyz q.p.kyz)
+          %blew  (send(wid p.p.kyz) %rez p.p.kyz q.p.kyz)
           %heft  (pass /whey %$ whey/~)
           %meld  (dump kyz)
           %pack  (dump kyz)
