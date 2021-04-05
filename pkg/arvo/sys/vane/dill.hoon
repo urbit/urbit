@@ -26,7 +26,7 @@
 --  =>                                                  ::
 |%                                                      ::  protocol outward
 +$  mess                                                ::
-  $%  [%dill-belt p=(hypo dill-belt)]                   ::
+  $%  [%dill-poke p=(hypo poke)]                        ::
   ==                                                    ::
 +$  move  [p=duct q=(wind note gift)]                   ::  local move
 +$  note                                                ::  out request $->
@@ -97,7 +97,6 @@
         |=  kyz=task
         ^+  +>
         ?+    -.kyz  ~&  [%strange-kiss -.kyz]  +>
-          %flow  +>
           %hail  (send %hey ~)
           %belt  (send `dill-belt`p.kyz)
           %talk  (talk p.kyz)
@@ -220,18 +219,32 @@
         =.  tem  `(turn gyl |=(a=gill [%yow a]))
         (pass / [%c %warp our %home `[%sing %y [%ud 1] /]])
       ::
+      ++  open
+        |=  gyl=(list gill)
+        =.  +>  peer
+        %+  roll  gyl
+        |=  [g=gill _..open]
+        (send [%yow g])
+      ::
+      ++  shut
+        ::TODO  send a %bye blit?
+        pull
+      ::
       ++  send                                          ::  send action
         |=  bet=dill-belt
         ^+  +>
         ?^  tem
           +>(tem `[bet u.tem])
-        (deal /send/[ses] [%poke [%dill-belt -:!>(bet) bet]])
+        (deal /send/[ses] [%poke [%dill-poke !>([ses bet])]])
       ::
       ++  hood-set-boot-apps
         (deal / [%poke %drum-set-boot-apps !>(lit.all)])
       ::
       ++  peer
-        (deal /peer/[ses] [%watch /drum])  ::TODO  rename subscription path
+        (deal /peer/[ses] %watch /dill/[ses])
+      ::
+      ++  pull
+        (deal /peer/[ses] %leave ~)
       ::
       ++  show                                          ::  permit reads on desk
         |=  des=desk
@@ -352,6 +365,31 @@
   ?:  ?=(%knob -.task)
     =.  veb.all  (~(put by veb.all) tag.task level.task)
     [~ ..^$]
+  ::  %open opens a new dill session
+  ::
+  ?:  ?=(%open -.task)
+    ?:  (~(has by dug.all) ses)
+      ::TODO  should we allow, and just send the %yow blits?
+      ~|  [%cannot-open-existing ses]
+      !!
+    =/  zon=axon  [p.task ~ width=80]
+    =^  moz  all  abet:(~(open as hen ses zon) q.task)
+    ::REVIEW  we might want a separate, explicit %view,
+    ::        but then we could miss some initial blits...
+    ::        do we care about that?
+    =.  eye.all  (~(put ju eye.all) ses hen)
+    [moz ..^$]
+  ::  %shut closes an existing dill session
+  ::
+  ?:  ?=(%shut -.task)
+    ?:  =(%$ ses)
+      ~|  %cannot-shut-default-session
+      !!
+    =/  nus
+      ~|  [%no-session ses]
+      (need (ax hen ses))
+    =^  moz  all  abet:shut:nus
+    [moz ..^$]
   ::  %view opens a subscription to the target session, on the current duct
   ::
   ?:  ?=(%view -.task)

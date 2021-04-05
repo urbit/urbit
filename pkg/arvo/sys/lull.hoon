@@ -1055,9 +1055,9 @@
     $%  [%belt p=belt]                                  ::  terminal input
         [%blew p=blew]                                  ::  terminal config
         [%flee ~]                                       ::  unwatch session
-        [%flow p=@tas q=(list gill:gall)]               ::  terminal config
         [%hail ~]                                       ::  terminal refresh
-        [%hook ~]                                       ::  this term hung up
+        [%open p=dude:gall q=(list gill:gall)]          ::  setup session
+        [%shut ~]                                       ::  close session
         [%view ~]                                       ::  watch session blits
     ==                                                  ::
   ::
@@ -1110,6 +1110,11 @@
         [%pack ~]                                       ::  compact memory
         [%text p=tape]                                  ::
         [%verb ~]                                       ::  verbose mode
+    ==                                                  ::
+  ::                                                    ::
+  +$  poke                                              ::  dill to userspace
+    $:  ses=@tas                                        ::  target session
+        dill-belt                                       ::  input
     ==                                                  ::
   --  ::dill
 ::                                                      ::::
@@ -2133,9 +2138,6 @@
       ::  %ames: hear packet
       ::
       $>(%hear task:ames)
-      ::  %dill: hangup
-      ::
-      $>(%hook task:dill)
       ::  %clay: external edit
       ::
       $>(%into task:clay)
@@ -2151,6 +2153,9 @@
       ::  %eyre: starts handling an backdoor http request
       ::
       $>(%request-local task:eyre)
+      ::  %dill: close session
+      ::
+      $>(%shut task:dill)
       ::  %behn: wakeup
       ::
       $>(%wake task:behn)

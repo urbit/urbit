@@ -81,8 +81,7 @@
   ::
   ?+  mark  (on-poke:def mark vase)
     %atom            poke-helm(mark %helm-atom)
-    %dill-belt       poke-drum(mark %drum-dill-belt)
-    %dill-blit       poke-drum(mark %drum-dill-blit)
+    %dill-poke       poke-drum
     %hood-sync       poke-kiln(mark %kiln-sync)
     %write-sec-atom  poke-helm(mark %helm-write-sec-atom)
   ==
@@ -95,7 +94,7 @@
   |=  =path
   ^-  step:agent:gall
   ?+  path  (on-watch:def +<)
-    [%drum *]  =^(c drum.state (peer:drum-core +<) [c this])
+    [%dill *]  =^(c drum.state (peer:drum-core +<) [c this])
   ==
 ::
 ++  on-agent

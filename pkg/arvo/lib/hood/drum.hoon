@@ -8,7 +8,7 @@
   $:  eel=(set gill:gall)                               ::  connect to
       ray=(set well:gall)                               ::
       fur=(map dude:gall (unit server))                 ::  servers
-      bin=(map bone source)                             ::  terminals
+      bin=(map @ source)                                ::  terminals
   ==                                                    ::
 ::                                                      ::
 ++  server                                              ::  running server
@@ -155,18 +155,18 @@
 ++  en-gill                                           ::  gill to wire
   |=  gyl=gill:gall
   ^-  wire
+  ::TODO  include session?
   [%drum %phat (scot %p p.gyl) q.gyl ~]
 ::
 ++  de-gill                                           ::  gill from wire
   |=  way=wire  ^-  gill:gall
   ?>(?=([@ @ ~] way) [(slav %p i.way) i.t.way])
 --
-::  TODO: remove .ost
 ::
 |=  [hid=bowl:gall state]
 =*  sat  +<+
-=/  ost  0
-=+  (~(gut by bin) ost *source)
+=/  ses=@tas  %$
+=+  (~(gut by bin) ses *source)
 =*  dev  -
 =|  moz=(list card:agent:gall)
 =|  biz=(list dill-blit:dill)
@@ -176,6 +176,13 @@
 +$  state      ^state      ::  proxy
 +$  any-state  ^any-state  ::  proxy
 ++  on-init  se-abet:this(eel (deft-fish our.hid))
+::
+++  prep
+  |=  s=@tas
+  =.  ses  ses
+  =.  dev  (~(gut by bin) ses *source)
+  this
+::
 ++  diff-sole-effect-phat                             ::  app event
   |=  [way=wire fec=sole-effect]
   =<  se-abet  =<  se-view
@@ -185,6 +192,8 @@
 ::
 ++  peer                                              ::
   |=  pax=path
+  =?  this  ?=([%dill @ ~] pax)
+    (prep i.t.pax)
   ~|  [%drum-unauthorized our+our.hid src+src.hid]    ::  ourself
   ?>  (team:title our.hid src.hid)               ::  or our own moon
   =<  se-abet  =<  se-view
@@ -201,14 +210,14 @@
   =.  ray  (deft-apes our.hid lit)
   [~ sat]
 ::
+++  poke-dill
+  |=  [ses=@tas bet=dill-belt:dill]
+  (poke-dill-belt:(prep ses) bet)
+::
 ++  poke-dill-belt                                    ::  terminal event
   |=  bet=dill-belt:dill
   =<  se-abet  =<  se-view
   (se-belt bet)
-::
-++  poke-dill-blit                                    ::  terminal output
-  |=  bit=dill-blit:dill
-  se-abet:(se-blit-sys bit)
 ::
 ++  poke-start                                        ::  start app
   |=  wel=well:gall
@@ -241,8 +250,7 @@
 ++  poke
   |=  [=mark =vase]
   ?+  mark  ~|([%poke-drum-bad-mark mark] !!)
-    %drum-dill-belt      =;(f (f !<(_+<.f vase)) poke-dill-belt)
-    %drum-dill-blit      =;(f (f !<(_+<.f vase)) poke-dill-blit)
+    %dill-poke           =;(f (f !<(_+<.f vase)) poke-dill)
     %drum-exit           =;(f (f !<(_+<.f vase)) poke-exit)
     %drum-link           =;(f (f !<(_+<.f vase)) poke-link)
     %drum-put            =;(f (f !<(_+<.f vase)) poke-put)
@@ -256,7 +264,7 @@
   |^  |=  [hood-version=@ud old=any-state]
       =<  se-abet  =<  se-view
       =.  sat  (load-state old)
-      =.  dev  (~(gut by bin) ost *source)
+      =.  dev  (~(gut by bin) ses *source)
       (load-apps hood-version)
   ::
   ++  load-state
@@ -381,12 +389,13 @@
 ++  se-abet                                           ::  resolve
   ^-  (quip card:agent:gall state)
   =.  .  se-subze:se-adze:se-subit:se-adit
-  :_  sat(bin (~(put by bin) ost dev))
+  :_  sat(bin (~(put by bin) ses dev))
   ^-  (list card:agent:gall)
   ?~  biz  (flop moz)
   :_  (flop moz)
   =/  =dill-blit:dill  ?~(t.biz i.biz [%mor (flop biz)])
-  [%give %fact ~[/drum] %dill-blit !>(dill-blit)]
+  ::TODO  remove /drum after dill cleans up
+  [%give %fact ~[/drum /dill/[ses]] %dill-blit !>(dill-blit)]
 ::
 ++  se-adit                                           ::  update servers
   ^+  this
@@ -471,14 +480,14 @@
   (se-peer gil)
 ::
 ++  se-subze                                          ::  downdate connections
-  =<  .(dev (~(got by bin) ost))
-  =.  bin  (~(put by bin) ost dev)
+  =<  .(dev (~(got by bin) ses))
+  =.  bin  (~(put by bin) ses dev)
   ^+  .
   %-  ~(rep by bin)
   =<  .(con +>)
-  |:  $:,[[ost=bone dev=source] con=_.]  ^+  con
-  =+  xeno=se-subze-local:%_(con ost ost, dev dev)
-  xeno(ost ost.con, dev dev.con, bin (~(put by bin) ost dev.xeno))
+  |:  $:,[[ses=@tas dev=source] con=_.]  ^+  con
+  =+  xeno=se-subze-local:%_(con ses ses, dev dev)
+  xeno(ses ses.con, dev dev.con, bin (~(put by bin) ses dev.xeno))
 ::
 ++  se-subze-local
   ^+  .
@@ -493,7 +502,7 @@
 ++  se-aint                                           ::  ignore result
   |=  gyl=gill:gall
   ^-  ?
-  ?.  (~(has by bin) ost)  &
+  ?.  (~(has by bin) ses)  &
   =+  gyr=(~(get by fug) gyl)
   |(?=(~ gyr) ?=(~ u.gyr))
 ::
@@ -660,7 +669,8 @@
 ::
 ++  se-blit-sys                                       ::  output to system
   |=  bil=dill-blit:dill  ^+  +>
-  (se-emit %give %fact ~[/drum] %dill-blit !>(bil))
+  ::TODO  remove /drum after dill cleans up
+  (se-emit %give %fact ~[/drum /dill/[ses]] %dill-blit !>(bil))
 ::
 ++  se-show                                           ::  show buffer, raw
   |=  lin=(pair @ud stub)
@@ -714,6 +724,7 @@
 ::
 ++  se-peer                                           ::  send a peer
   |=  gyl=gill:gall
+  ::TODO  include session
   =/  =path  /sole/(cat 3 'drum_' (scot %p our.hid))
   %-  se-emit(fug (~(put by fug) gyl ~))
   [%pass (en-gill gyl) %agent gyl %watch path]
