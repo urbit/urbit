@@ -163,8 +163,8 @@
     ?:  warm-cache
       ~|('cannot warm up cache that is already warm' !!)
     :_  this(warm-cache %.y)
-    =/  =mood:clay  [%t da+now.bowl /mar]
-    [%pass /warm-cache %arvo %c %warp our.bowl %home `[%sing mood]]~
+    =/  =rave:clay  [%sing [%t da+now.bowl /mar]]
+    [%pass /warm-cache %arvo %c %warp our.bowl %home `rave]~
   ::
   ++  cool-cache-all
     ?.  warm-cache
@@ -291,17 +291,18 @@
 ++  on-arvo
   |=  [=wire =sign-arvo]
   ^-  (quip card _this)
+  :_  this
   ?+    wire  (on-arvo:def wire sign-arvo)
       [%warm-cache ~]
     ?.  warm-cache
-      [~ this]
+      ~
     ?>  ?=([%clay %writ *] sign-arvo)
-    :_  this
-    :-  =/  =rave:clay  [%next [%t da+now.bowl /mar]]
-        [%pass /warm-cache %arvo %c %warp our.bowl %home `rave]
     =*  riot  p.sign-arvo
     ?~  riot
-      ~
+      =/  =rave:clay  [%next [%t da+now.bowl /mar]]
+      [%pass /warm-cache %arvo %c %warp our.bowl %home `rave]~
+    :-  =/  =rave:clay  [%next [%t q.p.u.riot /mar]]
+        [%pass /warm-cache %arvo %c %warp our.bowl %home `rave]
     %+  turn  !<((list path) q.r.u.riot)
     |=  pax=path
     ^-  card
@@ -311,26 +312,20 @@
       |=  [=term mark=term]
       ?:  =(0 (lent (trip mark)))
         term
-      %-  crip
-      %-  zing
-      :~  (trip mark)
-          "-"
-          (trip term)
-      ==
-    =/  =rave:clay  [%sing %b [%da now.bowl] [mark ~]]
+      :((cury cat 3) mark '-' term)
+    =/  =rave:clay  [%sing %b da+now.bowl /[mark]]
     [%pass [%mar mark ~] %arvo %c %warp our.bowl %home `rave]
   ::
       [%mar ^]
     ?.  warm-cache
-      [~ this]
+      ~
     ?>  ?=([%clay %writ *] sign-arvo)
     =*  riot  p.sign-arvo
     =*  mark  t.wire
     ?~  riot
-      ~|('mark build failed for {<mark>}' !!)
-    :_  this
-    =/  =rave:clay  [%next %b [%da now.bowl] mark]
-    [%pass wire %arvo %c %warp our.bowl [%home `rave]]~
+      ~
+    =/  =rave:clay  [%next %b q.p.u.riot mark]
+    [%pass wire %arvo %c %warp our.bowl %home `rave]~
   ==
 ::
 ++  on-watch  on-watch:def
