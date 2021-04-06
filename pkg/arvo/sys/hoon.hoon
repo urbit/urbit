@@ -6598,7 +6598,6 @@
 +$  grub                                                     ::  ut cache
   $:  nes=(map (pair type type) ?)                           ::  +nest
       res=(map (pair type hoon) type)                        ::  +rest
-      pay=(map (pair type hoon) type)                        ::  +play
       mit=(map (pair type hoon) (pair type nock))            ::  +mint
       mul=(map (qual type type type hoon) (pair type type))  ::  +mull
       fis=(map (pair type axis) nock)                        ::  +fish
@@ -13786,12 +13785,6 @@
   ++  caching-play
     |=  gen=hoon
     ^-  [type _grub]
-    =/  cached  (~(get by pay.grub) [sut gen])
-    ?^  cached
-      [u.cached grub]
-    =;  [played=type =_grub]
-      :_  grub(pay (~(put by pay.grub) [sut gen] played))
-      played
     =.  vet  |
     ?-    gen
         [^ *]
