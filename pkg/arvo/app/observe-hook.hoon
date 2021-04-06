@@ -293,11 +293,15 @@
   ^-  (quip card _this)
   ?+    wire  (on-arvo:def wire sign-arvo)
       [%warm-cache ~]
+    ?.  warm-cache
+      [~ this]
     ?>  ?=([%clay %writ *] sign-arvo)
+    :_  this
+    :-  =/  =rave:clay  [%next [%t da+now.bowl /mar]]
+        [%pass /warm-cache %arvo %c %warp our.bowl %home `rave]
     =*  riot  p.sign-arvo
     ?~  riot
-      ~|('should always have data in %/mar directory' !!)
-    :_  this
+      ~
     %+  turn  !<((list path) q.r.u.riot)
     |=  pax=path
     ^-  card
@@ -314,7 +318,7 @@
           (trip term)
       ==
     =/  =rave:clay  [%sing %b [%da now.bowl] [mark ~]]
-    [%pass [%mar mark ~] %arvo %c %warp our.bowl [%home `rave]]
+    [%pass [%mar mark ~] %arvo %c %warp our.bowl %home `rave]
   ::
       [%mar ^]
     ?.  warm-cache
