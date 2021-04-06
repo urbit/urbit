@@ -677,6 +677,8 @@ _http_start_respond(u3_hreq* req_u,
     if ( 0 == strncmp(hed_u->nam_c, "content-length", 14) ) {
       has_len_i = 1;
     }
+    // ignore connection specific headers for HTTP2
+    else if ( 0 == strncmp(hed_u->nam_c, "connection", 10) ) {}
     else {
       h2o_add_header_by_str(&rec_u->pool, &rec_u->res.headers,
                             hed_u->nam_c, hed_u->nam_w, 0, 0,
