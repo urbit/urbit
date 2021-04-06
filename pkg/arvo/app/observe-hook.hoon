@@ -162,8 +162,7 @@
   ++  warm-cache-all
     ?:  warm-cache
       ~|('cannot warm up cache that is already warm' !!)
-    :::_  this(warm-cache %.y)
-    :_  this
+    :_  this(warm-cache %.y)
     =/  =mood:clay  [%t da+now.bowl /mar]
     [%pass /warm-cache %arvo %c %warp our.bowl %home `[%sing mood]]~
   ::
@@ -325,7 +324,6 @@
     =*  mark  t.wire
     ?~  riot
       ~|('mark build failed for {<mark>}' !!)
-    ~&  mark
     :_  this
     =/  =rave:clay  [%next %b [%da now.bowl] mark]
     [%pass wire %arvo %c %warp our.bowl [%home `rave]]~
