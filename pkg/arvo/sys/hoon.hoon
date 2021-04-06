@@ -13896,11 +13896,11 @@
     ::
         [%wtcl *]
       =^  fex  grub  (caching-gain p.gen)
-      =^  wux  grub  (caching-lose p.gen)
       =^  won  grub
         ?:  =(%void fex)
           [%void grub]
         $(sut fex, gen q.gen)
+      =^  wux  grub  (caching-lose p.gen)
       =^  tew  grub
         ?:  =(%void wux)
           [%void grub]
