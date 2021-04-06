@@ -43,6 +43,7 @@
       (act [%watch %group-store /groups %group-on-leave])
       (act [%watch %group-store /groups %group-on-remove-member])
       (act [%watch %metadata-store /updates %md-on-add-group-feed])
+      (act [%warm-cache-all ~])
   ==
   ::
   ++  act
