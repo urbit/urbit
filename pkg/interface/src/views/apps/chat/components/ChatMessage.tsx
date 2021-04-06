@@ -284,8 +284,7 @@ class ChatMessage extends Component<ChatMessageProps> {
       hideHover
     } = this.props;
 
-    let onReply = this.props?.onReply;
-    onReply ??= () => {};
+    let onReply = this.props?.onReply ?? (() => {});
     const transcluded = this.props?.transcluded ?? 0;
     let { renderSigil } = this.props;
 
