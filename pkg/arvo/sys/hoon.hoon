@@ -6599,7 +6599,7 @@
   $:  nes=(map (pair type type) ?)                           ::  +nest
       res=(map (pair type hoon) type)                        ::  +rest
       pay=(map (pair type hoon) type)                        ::  +play
-      mit=(map (trel type type hoon) (pair type nock))       ::  +mint
+      mit=(map (pair type hoon) (pair type nock))            ::  +mint
       mul=(map (qual type type type hoon) (pair type type))  ::  +mull
       fis=(map (pair type axis) nock)                        ::  +fish
       cro=(map (pair type type) type)                        ::  +crop
@@ -12230,11 +12230,11 @@
   ++  caching-mint
     |=  [gol=type gen=hoon]
     ^-  [(pair type nock) _grub]
-    =/  cached  (~(get by mit.grub) [sut gol gen])
+    =/  cached  (~(get by mit.grub) [sut gen])
     ?^  cached
       [u.cached grub]
     =;  [minted=(pair type nock) =_grub]
-      :_  grub(mit (~(put by mit.grub) [sut gol gen] minted))
+      :_  grub(mit (~(put by mit.grub) [sut gen] minted))
       minted
     |^  ^-  [(pair type nock) _grub]
     ?:  ?&(=(%void sut) !?=([%dbug *] gen))
