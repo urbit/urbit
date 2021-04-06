@@ -660,6 +660,7 @@ _http_start_respond(u3_hreq* req_u,
   uv_timer_stop(req_u->tim_u);
 
   h2o_req_t* rec_u = req_u->rec_u;
+  u3l_log("req: %i\n", rec_u->version);
 
   rec_u->res.status = status;
   rec_u->res.reason = (status < 200) ? "weird" :
@@ -676,6 +677,9 @@ _http_start_respond(u3_hreq* req_u,
   while ( 0 != hed_u ) {
     if ( 0 == strncmp(hed_u->nam_c, "content-length", 14) ) {
       has_len_i = 1;
+    }
+    if (0 == strncmp(hed_u->nam_c, "connection", 10) && rec_u->version == 0x200) {
+      continue;
     }
     else {
       h2o_add_header_by_str(&rec_u->pool, &rec_u->res.headers,
