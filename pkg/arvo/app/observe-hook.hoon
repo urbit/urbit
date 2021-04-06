@@ -14,6 +14,7 @@
       [%2 observers=(map serial observer:sur)]
       [%3 observers=(map serial observer:sur)]
       [%4 observers=(map serial observer:sur)]
+      [%5 observers=(map serial observer:sur) warm-cache=_|]
   ==
 ::
 +$  serial   @uv
@@ -27,7 +28,7 @@
 --
 ::
 %-  agent:dbug
-=|  [%4 observers=(map serial observer:sur)]
+=|  [%5 observers=(map serial observer:sur) warm-cache=_|]
 =*  state  -
 ::
 ^-  agent:gall
@@ -66,8 +67,13 @@
   =|  cards=(list card)
   |-
   ?-  -.old-state
-      %4
+      %5
     [cards this(state old-state)]
+      %4
+    =.  cards
+      :_  cards
+      (act [%warm-cache-all ~])
+    $(old-state [%5 observers.old-state %.n])
   ::
       %3
     =.  cards
@@ -110,11 +116,19 @@
   ?>  (team:title our.bowl src.bowl)
   ?.  ?=(%observe-action mark)
     (on-poke:def mark vase)
+  |^
   =/  =action:sur  !<(action:sur vase)
   =*  observer  observer.action
   =/  vals  (silt ~(val by observers))
   ?-  -.action
-      %watch
+    %watch           (watch observer vals)
+    %ignore          (ignore observer vals)
+    %warm-cache-all  warm-cache-all
+    %cool-cache-all  cool-cache-all
+  ==
+  ::
+  ++  watch
+    |=  [=observer:sur vals=(set observer:sur)]
     ?:  ?|(=(app.observer %spider) =(app.observer %observe-hook)) 
       ~|('we avoid infinite loops' !!)
     ?:  (~(has in vals) observer)
@@ -129,7 +143,8 @@
         path.observer
     == 
   ::
-      %ignore
+  ++  ignore
+    |=  [=observer:sur vals=(set observer:sur)]
     ?.  (~(has in vals) observer)
       ~|('cannot remove nonexistent observer' !!)
     =/  key  (got-by-val observers observer)
@@ -142,7 +157,20 @@
         %leave
         ~
     == 
-  ==
+  ::
+  ++  warm-cache-all
+    ?:  warm-cache
+      ~|('cannot warm up cache that is already warm' !!)
+    :::_  this(warm-cache %.y)
+    :_  this
+    =/  =mood:clay  [%t da+now.bowl /mar]
+    [%pass /warm-cache %arvo %c %warp our.bowl %home `[%sing mood]]~
+  ::
+  ++  cool-cache-all
+    ?.  warm-cache
+      ~|('cannot cool down cache that is already cool' !!)
+    [~ this(warm-cache %.n)]
+  --
 ::
 ++  on-agent
   |=  [=wire =sign:agent:gall]
@@ -260,9 +288,50 @@
     ==  == 
   --
 ::
+++  on-arvo
+  |=  [=wire =sign-arvo]
+  ^-  (quip card _this)
+  ?+    wire  (on-arvo:def wire sign-arvo)
+      [%warm-cache ~]
+    ?>  ?=([%clay %writ *] sign-arvo)
+    =*  riot  p.sign-arvo
+    ?~  riot
+      ~|('should always have data in %/mar directory' !!)
+    :_  this
+    %+  turn  !<((list path) q.r.u.riot)
+    |=  pax=path
+    ^-  card
+    =.  pax  `path`(snip (slag 1 `(list @)`pax))
+    =/  mark=@ta
+      %+  roll  pax
+      |=  [=term mark=term]
+      ?:  =(0 (lent (trip mark)))
+        term
+      %-  crip
+      %-  zing
+      :~  (trip mark)
+          "-"
+          (trip term)
+      ==
+    =/  =rave:clay  [%sing %b [%da now.bowl] [mark ~]]
+    [%pass [%mar mark ~] %arvo %c %warp our.bowl [%home `rave]]
+  ::
+      [%mar ^]
+    ?.  warm-cache
+      [~ this]
+    ?>  ?=([%clay %writ *] sign-arvo)
+    =*  riot  p.sign-arvo
+    =*  mark  t.wire
+    ?~  riot
+      ~|('mark build failed for {<mark>}' !!)
+    ~&  mark
+    :_  this
+    =/  =rave:clay  [%next %b [%da now.bowl] mark]
+    [%pass wire %arvo %c %warp our.bowl [%home `rave]]~
+  ==
+::
 ++  on-watch  on-watch:def
 ++  on-leave  on-leave:def
 ++  on-peek   on-peek:def
-++  on-arvo   on-arvo:def
 ++  on-fail   on-fail:def
 --
