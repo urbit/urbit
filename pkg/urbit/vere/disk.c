@@ -345,75 +345,6 @@ u3_disk_boot_save_sync(u3_disk* log_u)
   }
 }
 
-static void
-_disk_read_free(u3_read* red_u)
-{
-  //  free facts (if the read failed)
-  //
-  {
-    u3_fact* tac_u = red_u->ext_u;
-    u3_fact* nex_u;
-
-    while ( tac_u ) {
-      nex_u = tac_u->nex_u;
-      u3_fact_free(tac_u);
-      tac_u = nex_u;
-    }
-  }
-
-  c3_free(red_u);
-}
-
-/* _disk_read_close_cb():
-*/
-static void
-_disk_read_close_cb(uv_handle_t* had_u)
-{
-  u3_read* red_u = had_u->data;
-  _disk_read_free(red_u);
-}
-
-static void
-_disk_read_close(u3_read* red_u)
-{
-  u3_disk* log_u = red_u->log_u;
-
-  //  unlink request
-  //
-  {
-    if ( red_u->pre_u ) {
-      red_u->pre_u->nex_u = red_u->nex_u;
-    }
-    else {
-      log_u->red_u = red_u->nex_u;
-    }
-
-    if ( red_u->nex_u ) {
-      red_u->nex_u->pre_u = red_u->pre_u;
-    }
-  }
-
-  uv_close(&red_u->had_u, _disk_read_close_cb);
-}
-
-/* _disk_read_done_cb(): finalize read, invoke callback with response.
-*/
-static void
-_disk_read_done_cb(uv_timer_t* tim_u)
-{
-  u3_read* red_u = tim_u->data;
-  u3_disk* log_u = red_u->log_u;
-  u3_info  pay_u = { .ent_u = red_u->ent_u, .ext_u = red_u->ext_u };
-
-  c3_assert( red_u->ent_u );
-  c3_assert( red_u->ext_u );
-  red_u->ent_u = 0;
-  red_u->ext_u = 0;
-
-  log_u->cb_u.read_done_f(log_u->cb_u.ptr_v, pay_u);
-  _disk_read_close(red_u);
-}
-
 /* u3_disk_sift(): parse a persisted event buffer.
 */
 c3_o
@@ -449,93 +380,6 @@ u3_disk_sift(u3_disk* log_u,
 
     return c3y;
   }
-}
-
-/* _disk_read_one_cb(): lmdb read callback, invoked for each event in order
-*/
-static c3_o
-_disk_read_one_cb(void* ptr_v, c3_d eve_d, size_t val_i, void* val_p)
-{
-  u3_read* red_u = ptr_v;
-  u3_disk* log_u = red_u->log_u;
-  u3_fact* tac_u;
-
-  {
-    u3_noun job;
-    c3_l mug_l;
-
-    if ( c3n == u3_disk_sift(log_u, val_i, (c3_y*)val_p, &mug_l, &job) ) {
-      return c3n;
-    }
-
-    tac_u = u3_fact_init(eve_d, mug_l, job);
-  }
-
-  if ( !red_u->ent_u ) {
-    c3_assert( !red_u->ext_u );
-
-    c3_assert( red_u->eve_d == eve_d );
-    red_u->ent_u = red_u->ext_u = tac_u;
-  }
-  else {
-    c3_assert( (1ULL + red_u->ent_u->eve_d) == eve_d );
-    red_u->ent_u->nex_u = tac_u;
-    red_u->ent_u = tac_u;
-  }
-
-  return c3y;
-}
-
-/* _disk_read_start_cb(): read from the db, trigger response
-*/
-static void
-_disk_read_start_cb(uv_timer_t* tim_u)
-{
-  u3_read* red_u = tim_u->data;
-  u3_disk* log_u = red_u->log_u;
-
-  //  read events synchronously
-  //
-  if ( c3n == u3_lmdb_read(log_u->mdb_u,
-                           red_u,
-                           red_u->eve_d,
-                           red_u->len_d,
-                           _disk_read_one_cb) )
-  {
-    log_u->cb_u.read_bail_f(log_u->cb_u.ptr_v, red_u->eve_d);
-    _disk_read_close(red_u);
-  }
-  //  finish the read asynchronously
-  //
-  else {
-    uv_timer_start(&red_u->tim_u, _disk_read_done_cb, 0, 0);
-  }
-}
-
-/* u3_disk_read(): read [len_d] events starting at [eve_d].
-*/
-void
-u3_disk_read(u3_disk* log_u, c3_d eve_d, c3_d len_d)
-{
-  u3_read* red_u = c3_malloc(sizeof(*red_u));
-  red_u->log_u = log_u;
-  red_u->eve_d = eve_d;
-  red_u->len_d = len_d;
-  red_u->ent_u = red_u->ext_u = 0;
-  red_u->pre_u = 0;
-  red_u->nex_u = log_u->red_u;
-
-  if ( log_u->red_u ) {
-    log_u->red_u->pre_u = red_u;
-  }
-  log_u->red_u = red_u;
-
-  //  perform the read asynchronously
-  //
-  uv_timer_init(u3L, &red_u->tim_u);
-
-  red_u->tim_u.data = red_u;
-  uv_timer_start(&red_u->tim_u, _disk_read_start_cb, 0, 0);
 }
 
 struct _cd_list {
@@ -717,17 +561,6 @@ u3_disk_read_meta(u3_disk* log_u,
 void
 u3_disk_exit(u3_disk* log_u)
 {
-  //  cancel all outstanding reads
-  //
-  {
-    u3_read* red_u = log_u->red_u;
-
-    while ( red_u ) {
-      _disk_read_close(red_u);
-      red_u = red_u->nex_u;
-    }
-  }
-
   //  cancel write thread
   //
   //    XX can deadlock when called from signal handler
@@ -780,16 +613,6 @@ u3_disk_info(u3_disk* log_u)
           ( c3y == log_u->liv_o ) ? "&" : "|",
           log_u->dun_d);
 
-  {
-    u3_read* red_u = log_u->red_u;
-
-    while ( red_u ) {
-      u3l_log("    read: %" PRIu64 "-%" PRIu64 "\n",
-              red_u->eve_d,
-              (red_u->eve_d + red_u->len_d) - 1);
-    }
-  }
-
   if ( log_u->put_u.ext_u ) {
     if ( log_u->put_u.ext_u != log_u->put_u.ent_u ) {
       u3l_log("    save: %" PRIu64 "-%" PRIu64 "\n",
@@ -811,7 +634,6 @@ u3_disk_init(c3_c* pax_c, u3_disk_cb cb_u)
   log_u->liv_o = c3n;
   log_u->ted_o = c3n;
   log_u->cb_u  = cb_u;
-  log_u->red_u = 0;
   log_u->put_u.ent_u = log_u->put_u.ext_u = 0;
 
   //  create/load pier directory

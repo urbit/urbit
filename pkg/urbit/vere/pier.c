@@ -20,8 +20,6 @@
 #include "all.h"
 #include "vere/vere.h"
 
-#define PIER_READ_BATCH 1000ULL
-#define PIER_PLAY_BATCH 500ULL
 #define PIER_WORK_BATCH 10ULL
 
 #undef VERBOSE_PIER
@@ -891,419 +889,6 @@ _pier_wyrd_init(u3_pier* pir_u)
   }
 }
 
-/* _pier_play_plan(): enqueue events for replay.
-*/
-static void
-_pier_play_plan(u3_play* pay_u, u3_info fon_u)
-{
-  u3_fact** ext_u;
-  c3_d      old_d;
-
-  if ( !pay_u->ext_u ) {
-    c3_assert( !pay_u->ent_u );
-    ext_u = &pay_u->ext_u;
-    old_d = pay_u->sen_d;
-  }
-  else {
-    ext_u = &pay_u->ent_u->nex_u;
-    old_d = pay_u->ent_u->eve_d;
-  }
-
-#ifdef VERBOSE_PIER
-  fprintf(stderr, "pier: play plan %" PRIu64 "-%" PRIu64 " at %" PRIu64 "\r\n",
-                  fon_u.ext_u->eve_d,
-                  fon_u.ent_u->eve_d,
-                  old_d);
-#endif
-
-  c3_assert( (1ULL + old_d) == fon_u.ext_u->eve_d );
-
-  *ext_u = fon_u.ext_u;
-  pay_u->ent_u = fon_u.ent_u;
-}
-
-/* _pier_play_send(): detach a batch of up to [len_w] events from queue.
-*/
-static u3_info
-_pier_play_next(u3_play* pay_u, c3_w len_w)
-{
-  u3_fact* tac_u = pay_u->ext_u;
-  u3_info  fon_u;
-
-  //  XX just share batch with lord, save last sent to pay_u->sen_u
-  //
-
-  //  set batch entry and exit pointers
-  //
-  {
-    fon_u.ext_u = tac_u;
-
-    while ( len_w-- && tac_u->nex_u ) {
-      tac_u = tac_u->nex_u;
-    }
-
-    fon_u.ent_u = tac_u;
-  }
-
-  //  detatch batch from queue
-  //
-  if ( tac_u->nex_u ) {
-    pay_u->ext_u = tac_u->nex_u;
-    tac_u->nex_u = 0;
-  }
-  else {
-    pay_u->ent_u = pay_u->ext_u = 0;
-  }
-
-  return fon_u;
-}
-
-/* _pier_play_send(): send a batch of events to the worker for replay.
-*/
-static void
-_pier_play_send(u3_play* pay_u)
-{
-  u3_pier* pir_u = pay_u->pir_u;
-  c3_w     len_w;
-
-  //  awaiting read
-  //
-  if ( !pay_u->ext_u ) {
-    return;
-  }
-
-  //  XX fill the pipe how much?
-  // (god_u->dep_w > PIER_WORK_BATCH) )
-  //
-
-  //  the first batch must be >= the lifecycle barrier
-  //
-  if ( !pay_u->sen_d ) {
-    len_w = c3_max(pir_u->lif_w, PIER_PLAY_BATCH);
-  }
-  else {
-    c3_d lef_d = (pay_u->eve_d - pay_u->sen_d);
-    len_w = c3_min(lef_d, PIER_PLAY_BATCH);
-  }
-
-  {
-    u3_info fon_u = _pier_play_next(pay_u, len_w);
-
-    //  bump sent counter
-    //
-    pay_u->sen_d = fon_u.ent_u->eve_d;
-
-#ifdef VERBOSE_PIER
-    fprintf(stderr, "pier: play send %" PRIu64 "-%" PRIu64 "\r\n", fon_u.ext_u->eve_d, fon_u.ent_u->eve_d);
-#endif
-
-    u3_lord_play(pir_u->god_u, fon_u);
-  }
-}
-
-/* _pier_play_read(): read events from disk for replay.
-*/
-static void
-_pier_play_read(u3_play* pay_u)
-{
-  u3_pier* pir_u = pay_u->pir_u;
-  c3_d las_d;
-
-  if ( pay_u->ent_u ) {
-    las_d = pay_u->ent_u->eve_d;
-
-    //  cap the pir_u->pay_u queue depth
-    //
-    if ( (las_d - pay_u->ext_u->eve_d) >= PIER_PLAY_BATCH ) {
-      return;
-    }
-  }
-  else {
-    las_d = pay_u->sen_d;
-  }
-
-  {
-    c3_d nex_d = (1ULL + las_d);
-    c3_d len_d = c3_min(pay_u->eve_d - las_d, PIER_READ_BATCH);
-
-    if (  len_d
-       && (nex_d > pay_u->req_d) )
-    {
-      u3_disk_read(pir_u->log_u, nex_d, len_d);
-      pay_u->req_d = nex_d;
-
-#ifdef VERBOSE_PIER
-      fprintf(stderr, "pier: play read %" PRIu64 " at %" PRIu64 "\r\n", len_d, nex_d);
-#endif
-    }
-  }
-}
-
-/* _pier_play(): send a batch of events to the worker for log replay.
-*/
-static void
-_pier_play(u3_play* pay_u)
-{
-  u3_pier* pir_u = pay_u->pir_u;
-  u3_lord* god_u = pir_u->god_u;
-  u3_disk* log_u = pir_u->log_u;
-
-  if ( god_u->eve_d == pay_u->eve_d ) {
-    //  XX should be play_cb
-    //
-    u3l_log("---------------- playback complete ----------------\r\n");
-    u3_term_stop_spinner();
-
-    if ( pay_u->eve_d < log_u->dun_d ) {
-      // u3l_log("pier: replay barrier reached, shutting down\r\n");
-      // //  XX graceful shutdown
-      // //
-      // u3_lord_save(pir_u->god_u);
-      // u3_pier_bail(pir_u);
-      // exit(0);
-
-      //  XX temporary hack
-      //
-      u3l_log("pier: replay barrier reached, cramming\r\n");
-      u3_pier_cram(pir_u);
-    }
-    else if ( pay_u->eve_d == log_u->dun_d ) {
-      u3_lord_save(pir_u->god_u);
-      _pier_wyrd_init(pir_u);
-    }
-  }
-  else {
-    c3_assert( god_u->eve_d < pay_u->eve_d );
-    _pier_play_send(pay_u);
-    _pier_play_read(pay_u);
-  }
-}
-
-/* _pier_on_lord_play_done(): log replay batch completion from worker.
-*/
-static void
-_pier_on_lord_play_done(void* ptr_v, u3_info fon_u, c3_l mug_l)
-{
-  u3_pier* pir_u = ptr_v;
-  u3_fact* tac_u = fon_u.ent_u;
-  u3_fact* nex_u;
-
-  c3_assert( u3_psat_play == pir_u->sat_e );
-
-  u3l_log("pier: (%" PRIu64 "): play: done\r\n", tac_u->eve_d);
-
-  //  XX optional
-  //
-  if ( tac_u->mug_l && (tac_u->mug_l != mug_l) ) {
-    u3l_log("pier: (%" PRIu64 "): play: mug mismatch %x %x\r\n",
-            tac_u->eve_d,
-            tac_u->mug_l,
-            mug_l);
-    // u3_pier_bail(pir_u);
-  }
-
-  //  dispose successful
-  //
-  {
-    tac_u = fon_u.ext_u;
-
-    while ( tac_u ) {
-      nex_u = tac_u->nex_u;
-      u3_fact_free(tac_u);
-      tac_u = nex_u;
-    }
-  }
-
-  _pier_play(pir_u->pay_u);
-}
-
-/* _pier_on_lord_play_bail(): log replay batch failure from worker.
-*/
-static void
-_pier_on_lord_play_bail(void* ptr_v, u3_info fon_u,
-                        c3_l mug_l, c3_d eve_d, u3_noun dud)
-{
-  u3_pier* pir_u = ptr_v;
-
-  c3_assert( u3_psat_play == pir_u->sat_e );
-
-  {
-    u3_fact* tac_u = fon_u.ext_u;
-    u3_fact* nex_u;
-    c3_l     las_l = 0;
-
-    //  dispose successful
-    //
-    while ( tac_u->eve_d < eve_d ) {
-      nex_u = tac_u->nex_u;
-      las_l = tac_u->mug_l;
-      u3_fact_free(tac_u);
-      tac_u = nex_u;
-    }
-
-    //  XX optional
-    //
-    if ( las_l && (las_l != mug_l) ) {
-      u3l_log("pier: (%" PRIu64 "): play bail: mug mismatch %x %x\r\n",
-             (c3_d)(eve_d - 1ULL),
-             las_l,
-             mug_l);
-      // u3_pier_bail(pir_u);
-    }
-
-    //  XX enable to retry
-    //
-#if 0
-    {
-      u3l_log("pier: (%" PRIu64 "): play: retry\r\n", eve_d);
-
-      fon_u.ext_u = tac_u;
-
-      //  we're enqueuing here directly onto the exit.
-      //  like, _pier_play_plan() in reverse
-      //
-      if ( !pay_u->ext_u ) {
-        pay_u->ext_u = fon_u.ext_u;
-        pay_u->ent_u = fon_u.ent_u;
-      }
-      else {
-        fon_u.ent_u->nex_u = pay_u->ext_u;
-        pay_u->ext_u = fon_u.ext_u;
-      }
-
-      _pier_play(pir_u->pay_u);
-      u3z(dud);
-    }
-#else
-    {
-      u3l_log("pier: (%" PRIu64 "): play: bail\r\n", eve_d);
-      u3_pier_punt_goof("play", dud);
-      {
-        u3_noun wir, tag;
-        u3x_qual(tac_u->job, 0, &wir, &tag, 0);
-        u3_pier_punt_ovum("play", u3k(wir), u3k(tag));
-      }
-
-      u3_pier_bail(pir_u);
-      exit(1);
-    }
-#endif
-  }
-}
-
-/* _pier_play_init(): begin boot/replay up to [eve_d].
-*/
-static void
-_pier_play_init(u3_pier* pir_u, c3_d eve_d)
-{
-  u3_lord* god_u = pir_u->god_u;
-  u3_disk* log_u = pir_u->log_u;
-  u3_play* pay_u;
-
-  c3_assert(  (u3_psat_init == pir_u->sat_e)
-           || (u3_psat_boot == pir_u->sat_e) );
-
-  c3_assert( eve_d >  god_u->eve_d );
-  c3_assert( eve_d <= log_u->dun_d );
-
-  pir_u->sat_e = u3_psat_play;
-  pir_u->pay_u = pay_u = c3_calloc(sizeof(*pay_u));
-  pay_u->pir_u = pir_u;
-  pay_u->eve_d = eve_d;
-  pay_u->sen_d = god_u->eve_d;
-
-  u3l_log("---------------- playback starting ----------------\r\n");
-  if ( (1ULL + god_u->eve_d) == eve_d ) {
-    u3l_log("pier: replaying event %" PRIu64 "\r\n", eve_d);
-  }
-  else {
-    u3l_log("pier: replaying events %" PRIu64 "-%" PRIu64 "\r\n",
-            (c3_d)(1ULL + god_u->eve_d),
-            eve_d);
-  }
-
-  u3_term_start_spinner(c3__play, c3n);
-
-  _pier_play(pay_u);
-}
-
-/* _pier_on_disk_read_done(): event log read success.
-*/
-static void
-_pier_on_disk_read_done(void* ptr_v, u3_info fon_u)
-{
-  u3_pier* pir_u = ptr_v;
-
-  c3_assert( u3_psat_play == pir_u->sat_e );
-
-  _pier_play_plan(pir_u->pay_u, fon_u);
-  _pier_play(pir_u->pay_u);
-}
-
-/* _pier_on_disk_read_bail(): event log read failure.
-*/
-static void
-_pier_on_disk_read_bail(void* ptr_v, c3_d eve_d)
-{
-  u3_pier* pir_u = ptr_v;
-
-  c3_assert( u3_psat_play == pir_u->sat_e );
-
-  //  XX s/b play_bail_cb
-  //
-  fprintf(stderr, "pier: disk read bail\r\n");
-  u3_term_stop_spinner();
-  u3_pier_bail(pir_u);
-}
-
-/* _pier_on_disk_write_done(): event log write success.
-*/
-static void
-_pier_on_disk_write_done(void* ptr_v, c3_d eve_d)
-{
-  u3_pier* pir_u = ptr_v;
-  u3_disk* log_u = pir_u->log_u;
-
-#ifdef VERBOSE_PIER
-  fprintf(stderr, "pier: (%" PRIu64 "): db commit: complete\r\n", eve_d);
-#endif
-
-  if ( u3_psat_boot == pir_u->sat_e ) {
-    //  lord already live
-    //
-    if ( c3y == pir_u->god_u->liv_o ) {
-      //  XX print bootstrap commit complete
-      //  XX s/b boot_complete_cb
-      //
-      _pier_play_init(pir_u, log_u->dun_d);
-    }
-  }
-  else {
-    c3_assert(  (u3_psat_work == pir_u->sat_e)
-             || (u3_psat_done == pir_u->sat_e) );
-
-    _pier_work(pir_u->wok_u);
-  }
-}
-
-/* _pier_on_disk_write_bail(): event log write failure.
-*/
-static void
-_pier_on_disk_write_bail(void* ptr_v, c3_d eve_d)
-{
-  u3_pier* pir_u = ptr_v;
-
-  if ( u3_psat_boot == pir_u->sat_e ) {
-    //  XX nice message
-    //
-  }
-
-  // XX
-  //
-  fprintf(stderr, "pier: disk write bail\r\n");
-  u3_pier_bail(pir_u);
-}
-
 /* _pier_on_lord_slog(): debug printf from worker.
 */
 static void
@@ -1342,14 +927,6 @@ _pier_on_lord_cram(void* ptr_v)
 #ifdef VERBOSE_PIER
   fprintf(stderr, "pier: (%" PRIu64 "): lord: cram\r\n", pir_u->god_u->eve_d);
 #endif
-
-  //  XX temporary hack
-  //
-  if ( u3_psat_play == pir_u->sat_e ) {
-    u3l_log("pier: cram complete, shutting down\r\n");
-    u3_pier_bail(pir_u);
-    exit(0);
-  }
 
   // if ( u3_psat_done == pir_u->sat_e ) {
   //   fprintf(stderr, "snap cb exit\r\n");
@@ -1476,18 +1053,6 @@ u3_pier_info(u3_pier* pir_u)
       u3l_log("pier: boot\n");
     } break;
 
-    case u3_psat_play: {
-      u3l_log("pier: play\n");
-
-      {
-        u3_play* pay_u = pir_u->pay_u;
-
-        u3l_log("  target: %" PRIu64 "\n", pay_u->eve_d);
-        u3l_log("  sent: %" PRIu64 "\n", pay_u->sen_d);
-        u3l_log("  read: %" PRIu64 "\n", pay_u->req_d);
-      }
-    } break;
-
     case u3_psat_work: {
       u3l_log("pier: work\n");
 
@@ -1586,8 +1151,6 @@ _pier_init(c3_w wag_w, c3_c* pax_c)
       .spin_f = _pier_on_lord_work_spin,
       .spun_f = _pier_on_lord_work_spun,
       .slog_f = _pier_on_lord_slog,
-      // .play_done_f = _pier_on_lord_play_done,
-      // .play_bail_f = _pier_on_lord_play_bail,
       .work_done_f = _pier_on_lord_work_done,
       .work_bail_f = _pier_on_lord_work_bail,
       .save_f = _pier_on_lord_save,
@@ -1905,10 +1468,6 @@ u3_pier_save(u3_pier* pir_u)
 #ifdef VERBOSE_PIER
   fprintf(stderr, "pier: (%" PRIu64 "): save: plan\r\n", pir_u->god_u->eve_d);
 #endif
-  if ( u3_psat_play == pir_u->sat_e ) {
-    u3_lord_save(pir_u->god_u);
-    return c3y;
-  }
 
   if ( u3_psat_work == pir_u->sat_e ) {
     _pier_wall_plan(pir_u, 0, pir_u, _pier_save_cb);
@@ -1940,11 +1499,6 @@ u3_pier_cram(u3_pier* pir_u)
 #ifdef VERBOSE_PIER
   fprintf(stderr, "pier: (%" PRIu64 "): cram: plan\r\n", pir_u->god_u->eve_d);
 #endif
-
-  if ( u3_psat_play == pir_u->sat_e ) {
-    u3_lord_cram(pir_u->god_u);
-    return c3y;
-  }
 
   if ( u3_psat_work == pir_u->sat_e ) {
     _pier_wall_plan(pir_u, 0, pir_u, _pier_cram_cb);
@@ -2117,13 +1671,6 @@ u3_pier_exit(u3_pier* pir_u)
       //
       c3_free(pir_u->bot_u);
       pir_u->bot_u = 0;
-    } break;
-
-    case u3_psat_play: {
-      //  XX dispose play q
-      //
-      c3_free(pir_u->pay_u);
-      pir_u->pay_u = 0;
     } break;
   }
 

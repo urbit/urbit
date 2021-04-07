@@ -103,17 +103,6 @@ _lord_writ_free(u3_writ* wit_u)
       u3z(wit_u->pek_u->sam);
     } break;
 
-    case u3_writ_play: {
-      u3_fact* tac_u = wit_u->fon_u.ext_u;
-      u3_fact* nex_u;
-
-      while ( tac_u ) {
-        nex_u = tac_u->nex_u;
-        u3_fact_free(tac_u);
-        tac_u = nex_u;
-      }
-    } break;
-
     case u3_writ_save:
     case u3_writ_cram:
     case u3_writ_meld:
@@ -208,7 +197,6 @@ _lord_writ_str(u3_writ_type typ_e)
 
     case u3_writ_work: return "work";
     case u3_writ_peek: return "peek";
-    case u3_writ_play: return "play";
     case u3_writ_save: return "save";
     case u3_writ_cram: return "cram";
     case u3_writ_meld: return "meld";
@@ -460,85 +448,6 @@ _lord_plea_peek(u3_lord* god_u, u3_noun dat)
   u3z(dat);
 }
 
-/* _lord_plea_play_bail(): hear serf %play %bail
-*/
-static void
-_lord_plea_play_bail(u3_lord* god_u, u3_info fon_u, u3_noun dat)
-{
-  u3_noun eve, mug, dud;
-  c3_d eve_d;
-  c3_l mug_l;
-
-  if (  (c3n == u3r_trel(dat, &eve, &mug, &dud))
-     || (c3n == u3r_safe_chub(eve, &eve_d))
-     || (c3n == u3r_safe_word(mug, &mug_l))
-     || (c3n == u3a_is_cell(dud)) )
-  {
-    fprintf(stderr, "lord: invalid %%play\r\n");
-    return _lord_plea_foul(god_u, c3__bail, dat);
-  }
-
-  god_u->eve_d = (eve_d - 1ULL);
-  god_u->mug_l = mug_l;
-
-  god_u->cb_u.play_bail_f(god_u->cb_u.ptr_v,
-                          fon_u, mug_l, eve_d, u3k(dud));
-
-  u3z(dat);
-}
-/* _lord_plea_play_done(): hear serf %play %done
-*/
-static void
-_lord_plea_play_done(u3_lord* god_u, u3_info fon_u, u3_noun dat)
-{
-  c3_l mug_l;
-
-  if ( c3n == u3r_safe_word(dat, &mug_l) ) {
-    fprintf(stderr, "lord: invalid %%play\r\n");
-    return _lord_plea_foul(god_u, c3__done, dat);
-  }
-
-  god_u->eve_d = fon_u.ent_u->eve_d;
-  god_u->mug_l = mug_l;
-
-  god_u->cb_u.play_done_f(god_u->cb_u.ptr_v, fon_u, mug_l);
-
-  u3z(dat);
-}
-
-/* _lord_plea_play(): hear serf %play response
-*/
-static void
-_lord_plea_play(u3_lord* god_u, u3_noun dat)
-{
-  u3_info fon_u;
-  {
-    u3_writ* wit_u = _lord_writ_need(god_u, u3_writ_play);
-    fon_u = wit_u->fon_u;
-    c3_free(wit_u);
-  }
-
-  if ( c3n == u3a_is_cell(dat) ) {
-    return _lord_plea_foul(god_u, c3__play, dat);
-  }
-
-  switch ( u3h(dat) ) {
-    default: {
-      return _lord_plea_foul(god_u, c3__play, dat);
-    }
-
-    case c3__done: {
-      _lord_plea_play_done(god_u, fon_u, u3k(u3t(dat)));
-    } break;
-
-    case c3__bail: {
-      _lord_plea_play_bail(god_u, fon_u, u3k(u3t(dat)));
-    } break;
-  }
-
-  u3z(dat);
-}
-
 /* _lord_work_spin(): update spinner if more work is in progress.
  */
  static void
@@ -753,10 +662,6 @@ _lord_on_plea(void* ptr_v, c3_d len_d, c3_y* byt_y)
       _lord_plea_flog(god_u, u3k(dat));
     } break;
 
-    // case c3__play: {
-    //   _lord_plea_play(god_u, u3k(dat));
-    // } break;
-
     case c3__sync: {
       u3l_log("lord: sync\n");
     } break;
@@ -804,20 +709,6 @@ _lord_writ_make(u3_lord* god_u, u3_writ* wit_u)
       //
       msg = u3nc(c3__peek, u3nc(0, u3k(wit_u->pek_u->sam)));
     } break;
-
-    // case u3_writ_play: {
-    //   u3_fact* tac_u = wit_u->fon_u.ext_u;
-    //   c3_d     eve_d = tac_u->eve_d;
-    //   u3_noun    lit = u3_nul;
-
-    //   while ( tac_u ) {
-    //     lit   = u3nc(u3k(tac_u->job), lit);
-    //     tac_u = tac_u->nex_u;
-    //   }
-
-    //   msg = u3nt(c3__play, u3i_chubs(1, &eve_d), u3kb_flop(lit));
-
-    // } break;
 
     case u3_writ_save: {
       msg = u3nt(c3__sync, c3__save, u3_nul);
@@ -933,22 +824,6 @@ u3_lord_peek(u3_lord* god_u, u3_pico* pic_u)
 
   //  XX cache check, unless last
   //
-  _lord_writ_plan(god_u, wit_u);
-}
-
-/* u3_lord_play(): recompute batch.
-*/
-void
-u3_lord_play(u3_lord* god_u, u3_info fon_u)
-{
-  u3_writ* wit_u = _lord_writ_new(god_u);
-  wit_u->typ_e = u3_writ_play;
-  wit_u->fon_u = fon_u;
-
-  //  XX wat do?
-  //
-  // c3_assert( !pay_u.ent_u->nex_u );
-
   _lord_writ_plan(god_u, wit_u);
 }
 

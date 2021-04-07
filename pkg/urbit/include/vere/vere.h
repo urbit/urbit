@@ -416,7 +416,6 @@
         typedef enum {
           u3_writ_work = 0,
           u3_writ_peek = 1,
-          u3_writ_play = 2,
           u3_writ_save = 3,
           u3_writ_cram = 4,
           u3_writ_meld = 5,
@@ -448,8 +447,6 @@
           void (*slog_f)(void*, c3_w, u3_noun);
           void (*spin_f)(void*, u3_atom, c3_o);
           void (*spun_f)(void*);
-          void (*play_done_f)(void*, u3_info, c3_l mug_l);
-          void (*play_bail_f)(void*, u3_info, c3_l mug_l, c3_d eve_d, u3_noun dud);
           void (*work_done_f)(void*, u3_ovum*, u3_fact*, u3_gift*);
           void (*work_bail_f)(void*, u3_ovum*, u3_noun lud);
           void (*save_f)(void*);
@@ -484,28 +481,10 @@
           struct _u3_writ*     ext_u;           //  queue exit
         } u3_lord;
 
-      /* u3_read: event log read request
-      */
-        typedef struct _u3_read {
-          union {                               //  read timer/handle
-            uv_timer_t  tim_u;                  //
-            uv_handle_t had_u;                  //
-          };                                    //
-          c3_d             eve_d;               //  first event
-          c3_d             len_d;               //  read stride
-          struct _u3_fact* ent_u;               //  response entry
-          struct _u3_fact* ext_u;               //  response exit
-          struct _u3_read* nex_u;               //  next read
-          struct _u3_read* pre_u;               //  previous read
-          struct _u3_disk* log_u;               //  disk backpointer
-        } u3_read;
-
       /* u3_disk_cb: u3_disk callbacks
       */
         typedef struct _u3_disk_cb {
           void* ptr_v;
-          void (*read_done_f)(void*, u3_info);
-          void (*read_bail_f)(void*, c3_d eve_d);
           void (*write_done_f)(void*, c3_d eve_d);
           void (*write_bail_f)(void*, c3_d eve_d);
         } u3_disk_cb;
@@ -521,7 +500,6 @@
           c3_d             sen_d;               //  commit requested
           c3_d             dun_d;               //  committed
           u3_disk_cb        cb_u;               //  callbacks
-          u3_read*         red_u;               //  read requests
           union {                               //  write thread/request
             uv_work_t      ted_u;               //
             uv_req_t       req_u;               //
@@ -535,7 +513,6 @@
         typedef enum {
           u3_psat_init = 0,                   //  initialized
           u3_psat_boot = 1,                   //  bootstrap
-          u3_psat_play = 2,                   //  replaying
           u3_psat_wyrd = 3,                   //  versioning
           u3_psat_work = 4,                   //  working
           u3_psat_done = 5                    //  shutting down
@@ -548,17 +525,6 @@
           u3_noun mod;                          //  module ova
           u3_noun use;                          //  userpace ova
         } u3_boot;
-
-      /* u3_play: replay control.
-      */
-        typedef struct _u3_play {
-          c3_d             eve_d;               //  target
-          c3_d             req_d;               //  last read requested
-          c3_d             sen_d;               //  last sent
-          u3_fact*         ent_u;               //  queue entry
-          u3_fact*         ext_u;               //  queue exit
-          struct _u3_pier* pir_u;               //  pier backpointer
-        } u3_play;
 
       /* u3_auto_cb: i/o driver callbacks
       */
@@ -621,7 +587,6 @@
           u3_psat          sat_e;               //  type-tagged
           union {                               //
             u3_boot*       bot_u;               //    bootstrap
-            u3_play*       pay_u;               //    recompute
             u3_work*       wok_u;               //    work
           };
           struct {
@@ -1011,11 +976,6 @@ u3_mars_init(u3_disk* log_u,
                           c3_o     fak_o,
                           c3_w     lif_w);
 
-      /* u3_disk_read(): read [len_d] events starting at [eve_d].
-      */
-        void
-        u3_disk_read(u3_disk* log_u, c3_d eve_d, c3_d len_d);
-
       /* u3_disk_read_list(): synchronously read a cons list of events.
       */
         u3_weak
@@ -1088,11 +1048,6 @@ u3_mars_init(u3_disk* log_u,
       */
         void
         u3_lord_work(u3_lord* god_u, u3_ovum* egg_u, u3_noun job);
-
-      /* u3_lord_play(): recompute batch.
-      */
-        void
-        u3_lord_play(u3_lord* god_u, u3_info fon_u);
 
       /* u3_lord_peek(): read namespace, injecting what's missing.
       */

@@ -825,38 +825,6 @@ _cw_boot_writ(void* vod_p, c3_d len_d, c3_y* byt_y)
   return c3y;
 }
 
-
-
-/* _pier_on_disk_read_done(): event log read success.
-*/
-static void
-_pier_on_disk_read_done(void* ptr_v, u3_info fon_u)
-{
-  fprintf(stderr, "pier: disk read done\r\n");
-  // u3_pier* pir_u = ptr_v;
-
-  // c3_assert( u3_psat_play == pir_u->sat_e );
-
-  // _pier_play_plan(pir_u->pay_u, fon_u);
-  // _pier_play(pir_u->pay_u);
-}
-
-/* _pier_on_disk_read_bail(): event log read failure.
-*/
-static void
-_pier_on_disk_read_bail(void* ptr_v, c3_d eve_d)
-{
-  // u3_pier* pir_u = ptr_v;
-
-  // c3_assert( u3_psat_play == pir_u->sat_e );
-
-  //  XX s/b play_bail_cb
-  //
-  fprintf(stderr, "pier: disk read bail\r\n");
-  // u3_term_stop_spinner();
-  // u3_pier_bail(pir_u);
-}
-
 /* _pier_on_disk_write_done(): event log write success.
 */
 static void
@@ -1015,8 +983,6 @@ _cw_boot(c3_i argc, c3_c* argv[])
     //
     u3_disk_cb cb_u = {
       .ptr_v = 0,
-      .read_done_f = _pier_on_disk_read_done,
-      .read_bail_f = _pier_on_disk_read_bail,
       .write_done_f = _pier_on_disk_write_done,
       .write_bail_f = _pier_on_disk_write_bail
     };
@@ -1158,8 +1124,6 @@ _cw_work(c3_i argc, c3_c* argv[])
     //
     u3_disk_cb cb_u = {
       .ptr_v = 0,
-      .read_done_f = _pier_on_disk_read_done,
-      .read_bail_f = _pier_on_disk_read_bail,
       .write_done_f = _pier_on_disk_write_done,
       .write_bail_f = _pier_on_disk_write_bail
     };
