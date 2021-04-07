@@ -54,6 +54,7 @@ function GroupFeed(props) {
       return;
     }
     api.graph.getNewest(graphResource.ship, graphResource.name, 100);
+    api.hark.markCountAsRead(association, '/', 'post');
   }, [graphPath]);
 
   if (!graphPath) {
