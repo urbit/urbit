@@ -100,7 +100,7 @@ function TranscludedPublishNode(props: {
         ?.get(bigInt.one)
         ?.children?.peekLargest()?.[1]!;
       return (
-        <Col gapY="2">
+        <Col color="black" gapY="2">
           <Author
             px="2"
             showImage
