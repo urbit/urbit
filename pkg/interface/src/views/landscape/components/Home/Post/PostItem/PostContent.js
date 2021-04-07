@@ -1,30 +1,35 @@
 import React from 'react';
-import { Col } from '@tlon/indigo-react';
-import { MentionText } from '~/views/components/MentionText';
-import useContactState from '~/logic/state/contact';
+import { Col, Box } from '@tlon/indigo-react';
+import { GraphContentWide } from "~/views/landscape/components/Graph/GraphContentWide";
+import styled from 'styled-components';
 
+const TruncatedBox = styled(Col)`
+  display: -webkit-box;
+  -webkit-line-clamp: ${p => p.truncate ?? 'unset'};
+  -webkit-box-orient: vertical;
+
+`;
 
 export function PostContent(props) {
   const { post, isParent, api, isReply } = props;
-  const contacts = useContactState(state => state.contacts);
 
   return (
-    <Col
+    <TruncatedBox
+      display="-webkit-box"
       width="100%"
       pl="2"
       pr="2"
-      pb={isParent || isReply ? "0" : "2"}
-      maxHeight={ isParent ? "none" : "300px" }
+      truncate={isParent ? null : 8}
       textOverflow="ellipsis"
       overflow="hidden"
-      display="inline-block">
-      <MentionText
-        contacts={contacts}
-        content={post.contents}
-        api={api}
+     >
+      <GraphContentWide
         transcluded={0}
+        post={post}
+        api={api}
+        showOurContact
       />
-    </Col>
+    </TruncatedBox>
   );
 }
 
