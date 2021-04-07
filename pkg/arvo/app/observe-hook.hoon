@@ -306,11 +306,11 @@
     %+  turn  !<((list path) q.r.u.riot)
     |=  pax=path
     ^-  card
-    =.  pax  `path`(snip (slag 1 `(list @)`pax))
+    =.  pax  (snip (slag 1 pax))
     =/  mark=@ta
       %+  roll  pax
       |=  [=term mark=term]
-      ?:  =(0 (lent (trip mark)))
+      ?:  ?=(%$ mark)
         term
       :((cury cat 3) mark '-' term)
     =/  =rave:clay  [%sing %b da+now.bowl /[mark]]
