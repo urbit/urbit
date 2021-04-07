@@ -5965,9 +5965,8 @@
 ::
 ++  spat  |=(pax=path (crip (spud pax)))                ::  render path to cord
 ++  spud  |=(pax=path ~(ram re (smyt pax)))             ::  render path to tape
-++  stab                                                ::  parse cord to path
-  =+  fel=;~(pfix fas (more fas urs:ab))
-  |=(zep=@t `path`(rash zep fel))
+++  stab  |=(zep=@t `path`(rash zep stap))              ::  parse cord to path
+++  stap  ;~(pfix fas (more fas urs:ab))                ::  path parser
 ::
 ::::  4n: virtualization
   ::

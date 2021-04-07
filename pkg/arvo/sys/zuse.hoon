@@ -3458,7 +3458,7 @@
       [(rash a fel) b]
     ::                                                  ::  ++pa:dejs:format
     ++  pa                                              ::  string as path
-      (su ;~(pfix fas (more fas urs:ab)))
+      (su stap)
     ::                                                  ::  ++pe:dejs:format
     ++  pe                                              ::  prefix
       |*  [pre=* wit=fist]

@@ -21,7 +21,7 @@
     (most ;~(plug com gaw) taut-rule)
   ::
     %+  rune  tis
-    ;~(plug sym ;~(pfix gap fas (more fas urs:ab)))
+    ;~(plug sym ;~(pfix gap stap))
   ::
     %+  rune  cen
     ;~(plug sym ;~(pfix gap ;~(pfix cen sym)))
@@ -37,7 +37,7 @@
     ;~  (glue gap)
       sym
       ;~(pfix cen sym)
-      ;~(pfix fas (more fas urs:ab))
+      stap
     ==
   ::
     %+  stag  %tssg

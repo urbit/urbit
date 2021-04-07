@@ -215,7 +215,7 @@
   ?:  =('subscribe' u.maybe-key)
     %.  item
     %+  pe  %subscribe
-    (ot id+ni ship+(su fed:ag) app+so path+(su ;~(pfix fas (more fas urs:ab))) ~)
+    (ot id+ni ship+(su fed:ag) app+so path+(su stap) ~)
   ?:  =('unsubscribe' u.maybe-key)
     %.  item
     %+  pe  %unsubscribe
