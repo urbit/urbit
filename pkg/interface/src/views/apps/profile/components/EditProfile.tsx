@@ -93,9 +93,6 @@ export function EditProfile(props: any): ReactElement {
   };
 
   const history = useHistory();
-  if (contact) {
-    contact.isPublic = isPublic;
-  }
 
   const onSubmit = async (values: any, actions: any) => {
     try {
@@ -143,7 +140,7 @@ export function EditProfile(props: any): ReactElement {
     <>
       <Formik
         validationSchema={formSchema}
-        initialValues={contact || emptyContact}
+        initialValues={{...contact, isPublic } || emptyContact}
         onSubmit={onSubmit}
       >
         {({ setFieldValue }) => (
