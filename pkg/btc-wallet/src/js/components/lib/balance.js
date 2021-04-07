@@ -37,13 +37,14 @@ export default class Balance extends Component {
         CAD: 70000,
         BTC: 1,
       },
-      denomination: "CAD",
+      denomination: "USD",
     }
   }
 
 
   render() {
-    const sats = this.props.state.wallet.balance || 0;
+    const sats = (this.props.state.wallet) ?
+      (this.props.state.wallet.balance || 0) : 0;
     const value = currencyFormat(sats, this.state.conversion, this.state.denomination);
 
     return (
