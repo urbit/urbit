@@ -7,18 +7,9 @@ import { reduceState } from '../state/base';
 export default class GcpReducer {
   reduce(json: Cage) {
     reduceState<StorageState, any>(useStorageState, json, [
-      reduceConfigured,
       reduceToken
     ]);
   }
-}
-
-const reduceConfigured = (json, state: StorageState): StorageState => {
-  let data = json['gcp-configured'];
-  if (data !== undefined) {
-    state.gcp.configured = data;
-  }
-  return state;
 }
 
 const reduceToken = (json: Cage, state: StorageState): StorageState => {
