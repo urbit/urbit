@@ -46,19 +46,8 @@
       %0  
     %_    $
       -.old  %1
-    ::
-        validators.old
-      (~(put in validators.old) %graph-validator-link)
-    ::
-        cards
-      %+  weld  cards
-      %+  turn
-        ~(tap in (~(put in validators.old) %graph-validator-link))
-      |=  validator=@t
-      ^-  card
-      =/  =wire  /validator/[validator]
-      =/  =rave:clay  [%sing %b [%da now.bowl] /[validator]]
-      [%pass wire %arvo %c %warp our.bowl [%home `rave]]
+      cards  cards
+      validators.old  validators.old
     ::
         graphs.old
       %-  ~(run by graphs.old)
@@ -285,19 +274,10 @@
               graphs       (~(put by graphs) resource [graph mark])
               update-logs  (~(put by update-logs) resource update-log)
               archive      (~(del by archive) resource)
-            ::
-              validators
-            ?~  mark  validators
-            (~(put in validators) u.mark)
           ==
       %-  zing
       :~  (give [/keys ~] %keys (~(put in ~(key by graphs)) resource))
           (give [/updates ~] %add-graph resource *graph:store mark overwrite)
-          ?~  mark  ~
-          ?:  (~(has in validators) u.mark)  ~
-          =/  wire  /validator/[u.mark]
-          =/  =rave:clay  [%sing %b [%da now.bowl] /[u.mark]]
-          [%pass wire %arvo %c %warp our.bowl [%home `rave]]~
       ==
     ::
     ++  remove-graph
@@ -1119,13 +1099,8 @@
   ?+  wire  (on-arvo:def wire sign-arvo)
   ::
   ::  old wire, do nothing 
-      [%graph *]  [~ this]
-  ::
-      [%validator @ ~]
-    :_  this
-    =*  validator  i.t.wire
-    =/  =rave:clay  [%next %b [%da now.bowl] /[validator]]
-    [%pass wire %arvo %c %warp our.bowl [%home `rave]]~
+      [%graph *]        [~ this]
+      [%validator @ ~]  [~ this]
   ::
       [%try-rejoin @ *]
     =/  rid=resource:store  (de-path:res t.t.wire)
