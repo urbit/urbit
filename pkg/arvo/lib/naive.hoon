@@ -17,15 +17,6 @@
 ::  for some reason?  IMO if either side is on L2, then both sides
 ::  should operate on L2
 ::
-::  TODO: should we emit all the events azimuth.sol does?  might be
-::  convenient for tracking edges?  Yes
-::
-::  TODO: add nonces to txs.  how to keep track of them?  need replay
-::  protection.  maybe we can add nonces to ships instead of addresses?
-::  Then what about operators?  Looks like we can keep nonces out of the
-::  tx data by just including it in the signed data.  If the signature
-::  succeeds but the tx fails, i guess the nonce should be advanced
-::
 ::  TODO: think about whether nonces are safe when associated with
 ::  ship/address
 ::
@@ -34,8 +25,10 @@
 ::
 ::  TODO: polymorphic addresses to save tx space?
 ::
+::  TODO: default sponsor in get-point
+::
 /+  std
-=>  =>  std
+=>  =+  std
 ::  Constants
 ::
 |%
@@ -60,6 +53,11 @@
   ++  spawned
     0xb2d3.a6e7.a339.f5c8.ff96.265e.2f03.a010.
       a854.1070.f374.4a24.7090.9644.1508.1546
+  ::
+  ::  OwnershipTransferred(address,address)
+  ++  ownership-transferred
+    0x8be0.079c.5316.5914.1344.cd1f.d0a4.f284.
+      1949.7f97.22a3.daaf.e3b4.186f.6b64.57e0
   ::
   ::  EscapeRequested(uint32,uint32)
   ++  escape-requested
@@ -202,7 +200,7 @@
 ::
 +$  event-log
   $:  address=@ux
-      data=@
+      data=@ux
       topics=(lest @ux)
   ==
 +$  input
@@ -427,13 +425,15 @@
   =/  existing  (~(get by points.state) ship)
   ?^  existing
     `u.existing
-  ?+    (ship-rank ship)  ~>(%slog.[0 %strange-point] ~)
-      %0  `%*(. *point dominion %l1)
+  =|  =point
+  =.  who.sponsor.net.point  (sein ship)
+  ?+    (ship-rank ship)  ~>(%slog.[0 %strange-point] ~&(ship=ship ~))
+      %0  `point(dominion %l1)
       ?(%1 %2)
     =/  existing-parent  $(ship (sein ship))
     ?~  existing-parent  ~
     :-  ~
-    %*    .  *point
+    %=    point
         dominion
       ?-  dominion.u.existing-parent
         %l1     %l1
@@ -450,6 +450,9 @@
   |=  [=state log=event-log]
   ^-  [effects ^state]
   =*  log-name  i.topics.log
+  ?:  =(log-name activated:log-names)              `state
+  ?:  =(log-name spawned:log-names)                `state
+  ?:  =(log-name ownership-transferred:log-names)  `state
   ?:  =(log-name changed-dns:log-names)
     ?>  ?=(~ t.topics.log)
     =/  words  (rip 8 data.log)
@@ -479,6 +482,7 @@
   ?>  ?=([@ *] t.topics.log)
   =*  ship=@  i.t.topics.log
   =/  the-point  (get-point state ship)
+  ~|  log=log
   ?>  ?=(^ the-point)
   =*  point  u.the-point
   =-  [effects state(points (~(put by points.state) ship new-point))]
@@ -510,12 +514,12 @@
   ::
   ?:  =(log-name changed-keys:log-names)
     ?>  ?=(~ t.t.topics.log)
-    =/  words  (rip 8 data.log)
-    ?>  ?=([@ @ @ @ ~] words)  :: TODO: reverse order?
-    =*  encryption=@      i.words
-    =*  authentication=@  i.t.words
-    =*  crypto-suite=@    i.t.t.words  ::  TODO: store in state, or add to pass
-    =*  life=@            i.t.t.t.words
+    =/  encryption=@      (cut 8 [3 1] data.log)
+    =/  authentication=@  (cut 8 [2 1] data.log)
+    ::  TODO: store in state, or add to pass
+    ::
+    =/  crypto-suite=@    (cut 8 [1 1] data.log)
+    =/  life=@            (cut 8 [0 1] data.log)
     =/  =pass  (pass-from-eth 32^encryption 32^authentication crypto-suite)
     :-  [%point ship %keys life crypto-suite pass]~
     point(life.net life, pass.net pass)
@@ -576,6 +580,7 @@
     point(address.voting-proxy.own to)
   ::
   ~>  %slog.[0 %unknown-log]
+  ~&  log=i.topics.log
   `point
 ::
 ::  Receive batch of L2 transactions

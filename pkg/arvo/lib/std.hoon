@@ -202,6 +202,11 @@
   |=  [a=bloq b=@ c=@]
   (add (lsh [a (met a b)] c) b)
 ::
+++  cut                                                 ::  slice
+  ~/  %cut  ::  TODO: jet
+  |=  [a=bloq [b=step c=step] d=@]
+  (end [a c] (rsh [a b] d))
+::
 ++  dad                                                 ::  concatenate fixed
   ~/  %dad
   |=  [=bite a=@ b=@]

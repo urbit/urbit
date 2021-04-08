@@ -15,18 +15,18 @@
 ;<  =latest=block                 bind:m  (get-latest-block:ethio url.pup)
 ;<  pup=watchpup   bind:m         (zoom pup number.id.latest-block)
 =|  vows=disavows
-?.  eager.pup
+::?.  eager.pup
   (pure:m !>([vows pup]))
-|-  ^-  form:m
-=*  loop  $
-?:  (gth number.pup number.id.latest-block)
-  (pure:m !>([vows pup]))
-;<  =block  bind:m                (get-block-by-number:ethio url.pup number.pup)
-;<  [=new=disavows pup=watchpup]  bind:m  (take-block pup block)
-%=  loop
-  pup   pup
-  vows  (weld vows new-disavows)
-==
+:: |-  ^-  form:m
+:: =*  loop  $
+:: ?:  (gth number.pup number.id.latest-block)
+::   (pure:m !>([vows pup]))
+:: ;<  =block  bind:m                (get-block-by-number:ethio url.pup number.pup)
+:: ;<  [=new=disavows pup=watchpup]  bind:m  (take-block pup block)
+:: %=  loop
+::   pup   pup
+::   vows  (weld vows new-disavows)
+:: ==
 ::
 ::  Process a block, detecting and handling reorgs
 ::
@@ -81,11 +81,12 @@
   =/  m  (strand:strandio ,watchpup)
   ^-  form:m
   =/  zoom-margin=number:block  30
-  =/  zoom-step=number:block  100.000
+  =/  zoom-step=number:block  10.000
   ?:  (lth latest-number (add number.pup zoom-margin))
     (pure:m pup)
-  =/  up-to-number=number:block  (sub latest-number zoom-margin)
+  =/  up-to-number=number:block  (min (add 1.000.000 number.pup) (sub latest-number zoom-margin))
   |-
+  ~&  >  [%zooming number.pup up-to-number]
   =*  loop  $
   ?:  (gth number.pup up-to-number)
     (pure:m pup(blocks ~))
