@@ -14,18 +14,22 @@ const bitcoin = require('bitcoinjs-lib');
 const bs58check = require('bs58check')
 import { Buffer } from 'buffer';
 
-
-function xpubToZpub(xpub) {
+function bip44To84(network, xpub) {
+  var prefix = (network === 'bitcoin') ? '04b24746' : '045f1cf6';
+  console.log('xpub', xpub);
   var data = bs58check.decode(xpub);
   data = data.slice(4);
-  data = Buffer.concat([Buffer.from('04b24746', 'hex'), data]);
+  data = Buffer.concat([Buffer.from(prefix, 'hex'), data]);
   return bs58check.encode(data);
 }
 
-const BTC_DERIVATION_PATH = "m/84'/0'/0'"
+const NETWORK = "testnet" // "bitcoin"
+const DERIVATIONS = {
+  bitcoin: "m/84'/0'/0'/0",
+  testnet: "m/84'/1'/0'/0",
+}
 const BTC_DERIVATION_TYPE = 'bitcoin'
-// const NETWORK = bitcoin.networks.bitcoin
-const NETWORK = bitcoin.networks.testnet
+const BTC_DERIVATION_PATH = DERIVATIONS[NETWORK]
 
 export default class WalletModal extends Component {
   constructor(props) {
@@ -65,19 +69,20 @@ export default class WalletModal extends Component {
       BTC_DERIVATION_PATH
     );
 
-    const zpub = xpubToZpub(
+    const zpub = bip44To84(NETWORK,
       bitcoin.bip32.fromPublicKey(
         Buffer.from(node.keys.public, 'hex'),
         Buffer.from(node.keys.chain, 'hex'),
-        NETWORK
+        bitcoin.networks[NETWORK]
       ).toBase58()
     );
+
+    console.log('zpub', zpub);
 
     this.submitXPub(zpub);
   }
 
   submitXPub(xpub){
-    console.log("xpub", xpub);
     const command = {
       "add-wallet": {
         "xpub": xpub,
