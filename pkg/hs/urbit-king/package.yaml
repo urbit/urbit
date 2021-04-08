@@ -65,6 +65,7 @@ dependencies:
   - iproute
   - largeword
   - lens
+  - lmdb-static
   - lock-file
   - megaparsec
   - memory

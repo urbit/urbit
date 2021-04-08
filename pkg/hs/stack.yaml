@@ -1,6 +1,7 @@
 resolver: lts-16.15
 
 packages:
+  - lmdb-static
   - natpmp-static
   - proto
   - racquire
