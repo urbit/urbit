@@ -13314,12 +13314,6 @@
   ::
   ++  caching-nest
     |=  [tel=? ref=type]
-    =/  cached  (~(get by nes.grub) [sut ref])
-    ?^  cached
-      [u.cached grub]
-    =;  [nested=? =_grub]
-      :_  grub(nes (~(put by nes.grub) [sut ref] nested))
-      nested
     =|  $:  seg=(set type)                              ::  degenerate sut
             reg=(set type)                              ::  degenerate ref
             gil=(set (pair type type))                  ::  assume nest
@@ -13355,7 +13349,7 @@
           ==
       ^-  [? _grub]
       ?:  ?=(~ dom)  :_  grub  =(vim ~)
-      ?:  ?=(~ vim)  :_  grub  |
+      ?:  ?=(~ vim)  [| grub]
       ::
       ?.  =(p.n.dom p.n.vim)
         [| grub]
@@ -13381,14 +13375,24 @@
       =^  rig  grub  $(dab r.dab, hem r.hem)
       ?.  rig  [| grub]
       ::
-      =^  played-zod  grub  (caching-play q.n.dab)
-      =^  played-nec  grub  (caching-play(sut ref) q.n.hem)
+      =^  played-dab  grub  (caching-play q.n.dab)
+      =^  played-hem  grub  (caching-play(sut ref) q.n.hem)
       ::
-      dext(sut played-zod, ref played-nec)
+      dext(sut played-dab, ref played-hem)
     ::
     ++  dext
-      =<  $
-      |.
+      =/  cached  (~(get by nes.grub) [sut ref])
+      ?^  cached
+        [u.cached grub]
+      =;  [nests=? =_grub]
+        =?  nes.grub
+            ?|  &(nests =(~ reg))
+                &(!nests =(~ seg))
+            ==
+          (~(put by nes.grub) [sut ref] nests)
+        :_  grub
+        nests
+      |-
       ^-  [? _grub]
       =;  [checked=? =_grub]
         :_  grub
