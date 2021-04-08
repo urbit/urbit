@@ -4,7 +4,7 @@ import { Text, Box } from '@tlon/indigo-react';
 import { Contact, Contacts, Content, Group } from '@urbit/api';
 import RichText from '~/views/components/RichText';
 import { cite, useShowNickname, uxToHex } from '~/logic/lib/util';
-import OverlaySigil from '~/views/components/OverlaySigil';
+import ProfileOverlay from '~/views/components/ProfileOverlay';
 import { useHistory } from 'react-router-dom';
 import useContactState from '~/logic/state/contact';
 import {referenceToPermalink} from '~/logic/lib/permalinks';
@@ -45,8 +45,9 @@ export function Mention(props: {
   scrollWindow?: HTMLElement;
   ship: string;
   first?: Boolean;
+  api: any;
 }) {
-  const { ship, scrollWindow, first, ...rest } = props;
+  const { ship, scrollWindow, first, api, ...rest } = props;
   let { contact } = props;
   const contacts = useContactState(state => state.contacts);
   contact = contact?.color ? contact : contacts?.[`~${ship}`];
@@ -62,30 +63,23 @@ export function Mention(props: {
 
   return (
     <Box position='relative' display='inline-block' cursor='pointer' {...rest}>
-      <Text
-        onClick={() => toggleOverlay()}
-        marginLeft={first? 0 : 1}
-        marginRight={1}
-        px={1}
-        bg='washedBlue'
-        color='blue'
-        fontSize={showNickname ? 1 : 0}
-        mono={!showNickname}
-      >
-        {name}
-      </Text>
-      {showOverlay && (
-        <OverlaySigil
+        <ProfileOverlay
           ship={ship}
-          contact={contact}
-          color={`#${uxToHex(contact?.color ?? '0x0')}`}
-          group={group}
-          onDismiss={() => toggleOverlay()}
-          history={history}
-          className='relative'
-          scrollWindow={scrollWindow}
-        />
-      )}
+          api={api}
+        >
+          <Text
+            onClick={() => toggleOverlay()}
+            marginLeft={first? 0 : 1}
+            marginRight={1}
+            px={1}
+            bg='washedBlue'
+            color='blue'
+            fontSize={showNickname ? 1 : 0}
+            mono={!showNickname}
+          >
+          {name}
+        </Text>
+      </ProfileOverlay>
     </Box>
   );
 }

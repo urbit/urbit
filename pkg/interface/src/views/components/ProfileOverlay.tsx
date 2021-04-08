@@ -120,7 +120,7 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
         borderRadius={2}
       />
     ) : (
-      <Box size={60} backgroundColor={color}>
+      <Box size={60} borderRadius={2} backgroundColor={color}>
         <Center height={60}>
           <Sigil ship={ship} size={32} color={color} />
         </Center>

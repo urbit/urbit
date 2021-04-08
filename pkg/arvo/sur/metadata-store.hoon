@@ -78,4 +78,38 @@
           =metadatum
       ==
   ==
+::  historical
+++  zero
+  |%
+  ::
+  +$  association   [group=resource =metadatum]
+  ::
+  +$  associations  (map md-resource association)
+  ::
+  +$  metadatum
+    $:  title=cord
+        description=cord
+        =color
+        date-created=time
+        creator=ship
+        module=term
+        picture=url
+        preview=?
+        vip=vip-metadata
+    ==
+  ::
+  +$  update
+    $%  [%add group=resource resource=md-resource =metadatum]
+        [%remove group=resource resource=md-resource]
+        [%initial-group group=resource =associations]
+        [%associations =associations]
+        $:  %updated-metadata 
+            group=resource
+            resource=md-resource 
+            before=metadatum
+            =metadatum
+        ==
+    ==
+  ::
+  --
 --

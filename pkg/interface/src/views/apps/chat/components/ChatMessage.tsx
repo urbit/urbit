@@ -284,8 +284,7 @@ class ChatMessage extends Component<ChatMessageProps> {
       hideHover
     } = this.props;
 
-    let onReply = this.props?.onReply;
-    onReply ??= () => {};
+    let onReply = this.props?.onReply ?? (() => {});
     const transcluded = this.props?.transcluded ?? 0;
     let { renderSigil } = this.props;
 
@@ -592,7 +591,7 @@ export const Message = ({
                   lineHeight='20px'
                   color='black'
                   width="fit-content"
-                  maxWidth="500px"
+                  maxWidth="min(500px, 100%)"
                 >
                   <RemoteContent
                     key={content.url}
@@ -610,6 +609,7 @@ export const Message = ({
                   scrollWindow={scrollWindow}
                   ship={content.mention}
                   contact={contacts?.[`~${content.mention}`]}
+                  api={api}
                 />
               );
             default:

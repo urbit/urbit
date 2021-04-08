@@ -64,6 +64,7 @@ export function SidebarList(props: {
           assoc.group === group &&
           !assoc.metadata.hidden
         ) : (
+          !(assoc.group in associationState.groups) &&
           'graph' in assoc.metadata.config &&
           assoc.metadata.config.graph !== 'chat' &&
           !assoc.metadata.hidden
