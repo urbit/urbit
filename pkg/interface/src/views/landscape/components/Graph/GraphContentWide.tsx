@@ -56,7 +56,7 @@ function GraphContentWideInner(
                 lineHeight="20px"
                 color="black"
                 width="fit-content"
-                maxWidth="500px"
+                maxWidth="min(500px, 100%)"
               >
                 <RemoteContent key={content.url} url={content.url} />
               </Box>
