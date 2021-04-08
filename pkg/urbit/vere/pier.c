@@ -842,57 +842,7 @@ static void
 _pier_on_lord_live(void* ptr_v)
 {
   u3_pier* pir_u = ptr_v;
-//   u3_lord* god_u = pir_u->god_u;
-//   u3_disk* log_u = pir_u->log_u;
-
-// #ifdef VERBOSE_PIER
-//   fprintf(stderr, "pier: (%" PRIu64 "): boot at mug %x\r\n", god_u->eve_d, god_u->mug_l);
-// #endif
-
-//   c3_assert( god_u->eve_d <= log_u->dun_d );
-
-//   if ( u3_psat_boot == pir_u->sat_e ) {
-//     //  boot-sequence commit complete
-//     //
-//     if (  log_u->sen_d
-//        && (log_u->sen_d == log_u->dun_d) ) {
-//       //  XX print bootstrap commit complete
-//       //  XX s/b boot_complete_cb
-//       //
-//       _pier_play_init(pir_u, log_u->dun_d);
-//     }
-//   }
-//   else {
-//     c3_assert( u3_psat_init == pir_u->sat_e );
-//     c3_assert( log_u->sen_d == log_u->dun_d );
-
-//     if ( god_u->eve_d < log_u->dun_d ) {
-//       c3_d eve_d;
-
-//       //  XX revisit
-//       //
-//       if (  u3_Host.ops_u.til_c ) {
-//         if ( 1 == sscanf(u3_Host.ops_u.til_c, "%" PRIu64 "", &eve_d) ) {
-//           u3l_log("pier: replay till %" PRIu64 "\r\n", eve_d);
-//         }
-//         else {
-//           u3l_log("pier: ignoring invalid replay barrier '%s'\r\n",
-//                   u3_Host.ops_u.til_c);
-//           eve_d = log_u->dun_d;
-//         }
-//       }
-//       else {
-//         eve_d = log_u->dun_d;
-//       }
-
-//       _pier_play_init(pir_u, eve_d);
-//     }
-//     else {
-      _pier_wyrd_init(pir_u);
-  // pir_u->sat_e = u3_psat_wyrd;
-  // _pier_work_init(pir_u);
-  //   }
-  // }
+  _pier_wyrd_init(pir_u);
 }
 
 /* u3_pier_info(): print status info.
@@ -930,10 +880,6 @@ u3_pier_info(u3_pier* pir_u)
     } break;
   }
 
-  if ( pir_u->log_u ) {
-    u3_disk_info(pir_u->log_u);
-  }
-
   if ( pir_u->god_u ) {
     u3_lord_info(pir_u->god_u);
   }
@@ -956,25 +902,6 @@ _pier_init(c3_w wag_w, c3_c* pax_c)
   //
   pir_u->por_s = u3_Host.ops_u.por_s;
   pir_u->sav_u = c3_calloc(sizeof(u3_save));
-
-  //  initialize persistence
-  //
-  // {
-  //   //  XX load/set secrets
-  //   //
-  //   u3_disk_cb cb_u = {
-  //     .ptr_v = pir_u,
-  //     .read_done_f = _pier_on_disk_read_done,
-  //     .read_bail_f = _pier_on_disk_read_bail,
-  //     .write_done_f = _pier_on_disk_write_done,
-  //     .write_bail_f = _pier_on_disk_write_bail
-  //   };
-
-  //   if ( !(pir_u->log_u = u3_disk_init(pax_c, cb_u)) ) {
-  //     c3_free(pir_u);
-  //     return 0;
-  //   }
-  // }
 
   //  initialize compute
   //
@@ -1003,7 +930,6 @@ _pier_init(c3_w wag_w, c3_c* pax_c)
 
     if ( !(pir_u->god_u = u3_lord_init(pax_c, wag_w, key_d, cb_u)) )
     {
-      // u3_disk_exit(pir_u->log_u)
       c3_free(pir_u);
       return 0;
     }
@@ -1024,16 +950,6 @@ u3_pier_stay(c3_w wag_w, u3_noun pax)
     u3_king_bail();
     return 0;
   }
-
-  // if ( c3n == u3_disk_read_meta(pir_u->log_u,  pir_u->who_d,
-  //                              &pir_u->fak_o, &pir_u->lif_w) )
-  // {
-  //   fprintf(stderr, "pier: disk read meta fail\r\n");
-  //   //  XX dispose
-  //   //
-  //   u3_pier_bail(pir_u);
-  //   exit(1);
-  // }
 
   u3z(pax);
 
@@ -1157,11 +1073,6 @@ _pier_exit(u3_pier* pir_u)
 {
   c3_assert( u3_psat_done == pir_u->sat_e );
 
-  if ( pir_u->log_u ) {
-    u3_disk_exit(pir_u->log_u);
-    pir_u->log_u = 0;
-  }
-
   if ( pir_u->god_u ) {
     u3_lord_exit(pir_u->god_u);
     pir_u->god_u = 0;
@@ -1255,13 +1166,6 @@ u3_pier_bail(u3_pier* pir_u)
   {
     _pier_work_close(pir_u->wok_u);
     pir_u->wok_u = 0;
-  }
-
-  //  close db
-  //
-  if ( pir_u->log_u ) {
-    u3_disk_exit(pir_u->log_u);
-    pir_u->log_u = 0;
   }
 
   pir_u->sat_e = u3_psat_done;

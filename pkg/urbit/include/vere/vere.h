@@ -567,7 +567,6 @@
           c3_c*            who_c;               //  identity as C string
           c3_o             fak_o;               //  yes iff fake security
           c3_o             liv_o;               //  fully live
-          u3_disk*         log_u;               //  event log
           u3_lord*         god_u;               //  computer
           u3_psat          sat_e;               //  type-tagged
           union {                               //
