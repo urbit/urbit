@@ -600,12 +600,9 @@
     ?.  =(network network.w)  ~
     ^-  (unit (list card))
     :-  ~
-    %+  murn  ~(tap by wach.w)
-    |=  [a=address ad=addi]
-    ?:  %+  levy  ~(tap in utxos.ad)
-        |=(u=utxo (gth height.u (sub block.btc-state confs.w)))
-      ~
-    `(poke-provider [%address-info a])
+    %+  turn  ~(tap by wach.w)
+    |=  [a=address *]
+    (poke-provider [%address-info a])
   ::  +retry-txs: get info on txs without enough confirmations
   ::
   ++  retry-txs
